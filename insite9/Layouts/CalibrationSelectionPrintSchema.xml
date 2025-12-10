@@ -1,0 +1,49 @@
+<!-- CHANAGE HISTORY
+kf176   04/11/2012   DB_G00190132		Replace the OBJ:DS with ECM:DS to read from ECM.   
+-->
+
+<FlexGrid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Properties AllowUserResizing="1:VT_UI4" AutoResize="1:VT_I4" GridLines="1:VT_I4"/>
+	<FixedRows/>
+	<styles/>
+	<parameters/>
+	<icons/>
+	<data/>
+	<combolists/>
+	<resources>
+		<resource id="Res1" CLSID="{15D5809B-5253-4C91-A358-0E7DEA1E741B}" LoadDLL="TRUE"/>
+	</resources>
+	<printing HdrFontSize="8">
+		<header>
+			<line>
+				<center source="RES:Res1:12"/>
+			</line>
+			<line>
+				<left source="RES:Res1:81"/>
+				<left source="ECM:DS:Read(3003,1):DisplayValue"/>
+				<right source="OBJ:SYSTEMDATA:Value(TOOLNAME)PROP" />
+				<right source=" " />
+				<right source="OBJ:SYSTEMDATA:Value(TOOLVERSION)PROP" />
+			</line>
+			<line>
+				<left source="RES:Res1:80"/>
+				<left source="ECM:DS:Read(1011,1):DisplayValue"/>
+				<right source="RES:Res1:82"/>
+				<right source="OBJ:SYSTEMDATA:Value(COMPANYNAME)PROP"/>
+			</line>
+			<line>
+				<left source="RES:Res1:83"/>
+				<left source="NA"/>
+				<right source="RES:Res1:84"/>
+				<right source="NA"/>
+			</line>
+		</header>
+		<footer>
+			<line>
+				<left source="OBJ:SYSTEMDATA:Value(TIME)PROP"/>
+				<center source="Page %d"/>
+				<right source="OBJ:SYSTEMDATA:Value(DATE)PROP"/>
+			</line>
+		</footer>
+	</printing>
+</FlexGrid>

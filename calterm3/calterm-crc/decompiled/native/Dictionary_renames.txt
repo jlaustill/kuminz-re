@@ -1,0 +1,18 @@
+# Dictionary.dll Function Rename Mapping
+# Format: old_name|new_name
+# Source: Debug strings embedded in code (dict.h references)
+
+# CDict class methods (from debug strings)
+FUN_10003b00|CDict_Add
+FUN_10004520|CDict_Exists
+FUN_100055a0|CDict_Keys
+FUN_10005e50|CDict_Remove
+FUN_10005fa0|CDict_RemoveAll
+FUN_10007ba0|CDict_get_Count
+FUN_10007cf0|CDict_get_Item
+FUN_10007e70|CDict_put_Item
+FUN_10007fc0|CDict_put_Key
+FUN_10008110|CDict_putref_Item
+
+# Utility functions
+FUN_1000d570|throwExceptionWithFileInfo

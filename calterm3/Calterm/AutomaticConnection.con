@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CaltermConnectionInfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <ConnectionInfo>
+    <ConfigurationFile>C:\Users\jlaus\Documents\Cummins ECFG + E2M Files\Cummins ECFG + E2M Files\E2M\CM550 VP44\74c0 - Copy.e2m</ConfigurationFile>
+    <DeviceAddress>00</DeviceAddress>
+    <DlaID>0</DlaID>
+    <ProductID>ENC</ProductID>
+    <WorkingMode>EditECM</WorkingMode>
+  </ConnectionInfo>
+</CaltermConnectionInfo>

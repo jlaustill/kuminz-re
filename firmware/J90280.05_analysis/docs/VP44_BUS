@@ -1,0 +1,60 @@
+VERSION ""
+
+
+NS_ :
+    NS_DESC_
+    CM_
+    BA_DEF_
+    BA_
+    VAL_
+    CAT_DEF_
+    CAT_
+    FILTER
+    BA_DEF_DEF_
+    EV_DATA_
+    ENVVAR_DATA_
+    SGTYPE_
+    SGTYPE_VAL_
+    BA_DEF_SGTYPE_
+    BA_SGTYPE_
+    SIG_TYPE_REF_
+    VAL_TABLE_
+    SIG_GROUP_
+    SIG_VALTYPE_
+    SIGTYPE_VALTYPE_
+    BO_TX_BU_
+    BA_DEF_REL_
+    BA_REL_
+    BA_DEF_DEF_REL_
+    BU_SG_REL_
+    BU_EV_REL_
+    BU_BO_REL_
+    SG_MUL_VAL_
+
+BS_: 
+BU_: Main Communication 
+BO_ 2147483648 256: 8 Main Communication
+   SG_ Fuel_Percent_Requested : 1|16@1+ (0.024414,0) [0|100] "%" Main Communication
+   SG_ Reserved : 1|16@1+ (0.024414,0) [0|100] "%" Main Communication
+   SG_ Timing_Advance_Request : 1|16@1+ (0.0078125,0) [0|100] "Degrees" Main Communication
+   SG_ RPM_ECU : 1|16@1+ (0.25,0) [0|4000] "RPM" Main Communication
+
+BO_ 2147483649 1280: 8 Main Communication
+
+BO_ 2147483650 274: 8 Main Communication
+
+BO_ 2147483651 1298: 8 Main Communication
+
+CM_ BU_ Main Communication "Default node if none specified";
+CM_ SG_ 2147483648 Fuel_Percent_Requested "Fuel_Percent_Requested";
+CM_ SG_ 2147483648 Reserved "RPM";
+CM_ SG_ 2147483648 Timing_Advance_Request "128_bits_per_degree";
+CM_ SG_ 2147483648 RPM_ECU "RPM";
+BA_DEF_ BO_ "GenMsgBackgroundColor" STRING ;
+BA_DEF_ BO_ "GenMsgForegroundColor" STRING ;
+BA_DEF_ BO_ "matchingcriteria" INT 0 0;
+BA_DEF_ BO_ "filterlabeling" INT 0 0;
+BA_DEF_DEF_ "GenMsgBackgroundColor" "#ffffff";
+BA_DEF_DEF_ "GenMsgForegroundColor" "#000000";
+BA_DEF_DEF_ "matchingcriteria" 0;
+BA_DEF_DEF_ "filterlabeling" 1;

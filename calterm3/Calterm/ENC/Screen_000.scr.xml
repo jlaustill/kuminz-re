@@ -1,0 +1,154 @@
+<?xml version="1.0" standalone="yes"?>
+<NewDataSet>
+  <MonitorSession Version="2.4.0" ActiveScreen="AENBLFLG">
+    <Dotnetbarlayouts />
+    <RadDockLayout>&lt;?xml version="1.0" encoding="utf-8"?&gt;&lt;RadDocking&gt;&lt;DocumentHost&gt;&lt;RadSplitContainer&gt;&lt;Items&gt;&lt;RadPaneGroup SelectedIndex="1"&gt;&lt;Items&gt;&lt;RadDocumentPane SerializationTag="Screen 0" IsPinned="True" IsDockable="True" Title="Cummins.Editor.Screen" Header="Cummins.Editor.Screen" /&gt;&lt;RadDocumentPane SerializationTag="AENBLFLG" IsPinned="True" IsDockable="True" Title="Cummins.Editor.Screen" Header="Cummins.Editor.Screen" /&gt;&lt;/Items&gt;&lt;/RadPaneGroup&gt;&lt;/Items&gt;&lt;/RadSplitContainer&gt;&lt;/DocumentHost&gt;&lt;SplitContainers /&gt;&lt;/RadDocking&gt;</RadDockLayout>
+    <Screen Name="Screen 0" DataRefreshRate="20" UIRefreshRate="200" EDMRefreshRate="20" DataRefreshUnits="Milliseconds" UIRefreshUnits="Milliseconds" MonitorType="RequestReceive" BAMTrigger="Clock" IDLTrigger="Clock" Radix="Decimal" ScreenType="Normal" Status="Active" LogMode="Any Data" LogRate="1" LogUnit="ms" LogPrefix="Screen 0" PCTimestamp="false" ActiveFaults="false" InactiveFaults="false" StartCondition="" StopCondition="" PreTrigger="5" PostTrigger="60" RepeatCount="0" Dock="Document" DAQMultiplier="1" ResumeDAQEnableStatus="false">
+      <Group Name="Group" Comment="Comment" ShowUnits="true" ShowSourceAddress="true" ColumnWidths="Addr=35,Name=200,Value=75,Unit=1,Comment=1" CustomParamGrouping="false">
+        <Parameter>
+          <SourceAddress>00</SourceAddress>
+          <Name>AATBPEN</Name>
+          <Units>HEX</Units>
+          <ViewType>Normal</ViewType>
+          <IsBroadcast>false</IsBroadcast>
+          <IsCalculatedParameter>false</IsCalculatedParameter>
+        </Parameter>
+        <Parameter>
+          <SourceAddress>00</SourceAddress>
+          <Name>APAFEN</Name>
+          <Units>HEX</Units>
+          <ViewType>Normal</ViewType>
+          <IsBroadcast>false</IsBroadcast>
+          <IsCalculatedParameter>false</IsCalculatedParameter>
+        </Parameter>
+        <Parameter>
+          <SourceAddress>0</SourceAddress>
+          <Name />
+          <Units />
+          <ViewType>Normal</ViewType>
+          <IsBroadcast>false</IsBroadcast>
+          <IsCalculatedParameter>false</IsCalculatedParameter>
+        </Parameter>
+        <Parameter>
+          <SourceAddress>0</SourceAddress>
+          <Name />
+          <Units />
+          <ViewType>Normal</ViewType>
+          <IsBroadcast>false</IsBroadcast>
+          <IsCalculatedParameter>false</IsCalculatedParameter>
+        </Parameter>
+        <Parameter>
+          <SourceAddress>0</SourceAddress>
+          <Name />
+          <Units />
+          <ViewType>Normal</ViewType>
+          <IsBroadcast>false</IsBroadcast>
+          <IsCalculatedParameter>false</IsCalculatedParameter>
+        </Parameter>
+        <Parameter>
+          <SourceAddress>0</SourceAddress>
+          <Name />
+          <Units />
+          <ViewType>Normal</ViewType>
+          <IsBroadcast>false</IsBroadcast>
+          <IsCalculatedParameter>false</IsCalculatedParameter>
+        </Parameter>
+        <Parameter>
+          <SourceAddress>0</SourceAddress>
+          <Name />
+          <Units />
+          <ViewType>Normal</ViewType>
+          <IsBroadcast>false</IsBroadcast>
+          <IsCalculatedParameter>false</IsCalculatedParameter>
+        </Parameter>
+        <Parameter>
+          <SourceAddress>0</SourceAddress>
+          <Name />
+          <Units />
+          <ViewType>Normal</ViewType>
+          <IsBroadcast>false</IsBroadcast>
+          <IsCalculatedParameter>false</IsCalculatedParameter>
+        </Parameter>
+      </Group>
+      <Group Name="Group" Comment="Comment" ShowUnits="true" ShowSourceAddress="true" ColumnWidths="Addr=35,Name=200,Value=75,Unit=1,Comment=1" CustomParamGrouping="false">
+        <Parameter>
+          <SourceAddress>0</SourceAddress>
+          <Name />
+          <Units />
+          <ViewType>Normal</ViewType>
+          <IsBroadcast>false</IsBroadcast>
+          <IsCalculatedParameter>false</IsCalculatedParameter>
+        </Parameter>
+        <Parameter>
+          <SourceAddress>0</SourceAddress>
+          <Name />
+          <Units />
+          <ViewType>Normal</ViewType>
+          <IsBroadcast>false</IsBroadcast>
+          <IsCalculatedParameter>false</IsCalculatedParameter>
+        </Parameter>
+        <Parameter>
+          <SourceAddress>0</SourceAddress>
+          <Name />
+          <Units />
+          <ViewType>Normal</ViewType>
+          <IsBroadcast>false</IsBroadcast>
+          <IsCalculatedParameter>false</IsCalculatedParameter>
+        </Parameter>
+        <Parameter>
+          <SourceAddress>0</SourceAddress>
+          <Name />
+          <Units />
+          <ViewType>Normal</ViewType>
+          <IsBroadcast>false</IsBroadcast>
+          <IsCalculatedParameter>false</IsCalculatedParameter>
+        </Parameter>
+        <Parameter>
+          <SourceAddress>0</SourceAddress>
+          <Name />
+          <Units />
+          <ViewType>Normal</ViewType>
+          <IsBroadcast>false</IsBroadcast>
+          <IsCalculatedParameter>false</IsCalculatedParameter>
+        </Parameter>
+        <Parameter>
+          <SourceAddress>0</SourceAddress>
+          <Name />
+          <Units />
+          <ViewType>Normal</ViewType>
+          <IsBroadcast>false</IsBroadcast>
+          <IsCalculatedParameter>false</IsCalculatedParameter>
+        </Parameter>
+        <Parameter>
+          <SourceAddress>0</SourceAddress>
+          <Name />
+          <Units />
+          <ViewType>Normal</ViewType>
+          <IsBroadcast>false</IsBroadcast>
+          <IsCalculatedParameter>false</IsCalculatedParameter>
+        </Parameter>
+        <Parameter>
+          <SourceAddress>0</SourceAddress>
+          <Name />
+          <Units />
+          <ViewType>Normal</ViewType>
+          <IsBroadcast>false</IsBroadcast>
+          <IsCalculatedParameter>false</IsCalculatedParameter>
+        </Parameter>
+      </Group>
+    </Screen>
+    <Screen Name="AENBLFLG" DataRefreshRate="1000" UIRefreshRate="200" EDMRefreshRate="20" DataRefreshUnits="Milliseconds" UIRefreshUnits="Milliseconds" MonitorType="RequestReceive" BAMTrigger="Clock" IDLTrigger="Clock" Radix="Decimal" ScreenType="Complex" Status="Inactive" LogMode="Any Data" LogRate="1" LogUnit="ms" LogPrefix="" PCTimestamp="false" ActiveFaults="false" InactiveFaults="false" StartCondition="" StopCondition="" PreTrigger="5" PostTrigger="60" RepeatCount="0" Dock="Document" DAQMultiplier="1" ResumeDAQEnableStatus="false">
+      <Group Name="AENBLFLG" Comment="LENGTH OF ALGORITHM_ENABLE_FLAGS~NONE">
+        <Parameter>
+          <SourceAddress>00</SourceAddress>
+          <Name>AENBLFLG</Name>
+          <Units />
+          <ViewType>Normal</ViewType>
+          <IsBroadcast>false</IsBroadcast>
+          <IsCalculatedParameter>false</IsCalculatedParameter>
+        </Parameter>
+      </Group>
+    </Screen>
+    <CalculatedParameters />
+  </MonitorSession>
+</NewDataSet>

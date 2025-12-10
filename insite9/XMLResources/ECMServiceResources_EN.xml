@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE module SYSTEM "../htmlentities.dtd"> 
+<XML_RESOURCE>
+   <RESOURCE Tag="1001" Type="String Table" Description="Message String Table">
+      <STRING ID="100" Context="">ECMService</STRING>
+      <STRING ID="101" Context="">Not Available</STRING>
+      <STRING ID="102" Context="">ERROR</STRING>
+      <STRING ID="103" Context="">NOT DONE</STRING>
+      <STRING ID="2000" Context="">Time Not Set</STRING>
+	  <STRING ID="2001" Context="">Greater than</STRING> 
+      <STRING ID="2002" Context="">Less than</STRING> 
+	  <STRING ID="2003" Context="">Not Available</STRING>  <!-- Not Available -->
+	  <STRING ID="2004" Context="">Undefined</STRING>  <!-- Undefined -->
+      <STRING ID="2005" Context="">Not Applicable</STRING>  <!-- Not Applicable -->
+      <STRING ID="2006" Context="">Not Set</STRING>
+   </RESOURCE>
+</XML_RESOURCE>

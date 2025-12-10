@@ -1,0 +1,32 @@
+<Licenses>
+	<UserReqLicense Expiration="permanent" Name="Options-User-GeneralLoad" VendorDaemon="cummins" Key="1624CAA4DDC9" IsValid="" ID="Options-User-GeneralLoad" Version="1.0" Count="uncounted">
+		<Users>
+		</Users>
+		<Groups>
+		</Groups>
+	</UserReqLicense>
+	<UserReqLicense Expiration="permanent" Name="Options-User-AppearanceLoad" VendorDaemon="cummins" Key="147606EBAAE4" IsValid="" ID="Options-User-AppearanceLoad" Version="1.0" Count="uncounted">
+		<Users>
+		</Users>
+		<Groups>
+		</Groups>
+	</UserReqLicense>
+	<UserReqLicense Expiration="permanent" Name="Options-User-LocaleLoad" VendorDaemon="cummins" Key="99F74AC578E1" IsValid="" ID="Options-User-LocaleLoad" Version="1.0" Count="uncounted">
+		<Users>
+		</Users>
+		<Groups>
+		</Groups>
+	</UserReqLicense>
+	<UserReqLicense Expiration="permanent" Name="Options-User-FileLoad" VendorDaemon="cummins" Key="905076A12F82" IsValid="" ID="Options-User-FileLoad" Version="1.0" Count="uncounted">
+		<Users>
+		</Users>
+		<Groups>
+		</Groups>
+	</UserReqLicense>
+	<UserReqLicense Expiration="permanent" Name="Options-User-AdvancedLoad" VendorDaemon="cummins" Key="C65156E45EEC" IsValid="" ID="Options-User-AdvancedLoad" Version="1.0" Count="uncounted">
+		<Users>
+		</Users>
+		<Groups>
+		</Groups>
+	</UserReqLicense>
+</Licenses>

@@ -1,0 +1,719 @@
+sep=,
+
+"Current Date","07-Aug-2025"
+"Service Tool","INSITE"
+"Service Tool Version","9.0.0.94 / Datapack 9.0.00094"
+
+
+Inquire Data Extraction Properties
+
+File Name,I56511287_0_20250807081656.csv
+Engine Serial Number,56511287
+Customer Name,
+Customer Unit Number,
+Group Name,New Group
+Engine Serial Number,56511287
+Engine Make,CMMNS
+Engine Model,ISB 195          
+ECM Serial Number,4023570
+Vehicle ID,                    
+Vehicle Unit Number,          
+Vehicle Make,GENERIC        
+Vehicle Model,               
+
+
+
+
+
+ECM,CM550
+ECM State,Good
+
+
+Features and Parameters
+"ISB"
+CM550
+
+System ID and Dataplate
+System ID and Dataplate - Calibration Information
+"Calibration Software Phase","06041006"
+"Calibration Time/Date Stamp","100898231658"
+"Calibration Voltage Range High","0",V
+"Calibration Voltage Range Low","0",V
+"DO Option","9040"
+"ECM Code","J90350.00"
+"Other Options",""
+"SC Option","9945"
+System ID and Dataplate - Customer Information
+"Customer Location",""
+"Customer Name",""
+"Customer Unit Number",""
+System ID and Dataplate - ECM Information
+"ECM Name","EN"
+"ECM Option","CMMNS"
+"ECM Part Number","3942860"
+"ECM Serial Number","4023570"
+"ECM Voltage Range High","0",V
+"ECM Voltage Range Low","0",V
+System ID and Dataplate - Engine Information
+"Engine Build Date","100098"
+"Engine Make","CMMNS"
+"Engine Model","ISB 195"
+"Engine Serial Number","56511287"
+System ID and Dataplate - System Information
+"Advertised Power at RPM","195",hp
+"Advertised Power RPM","2500",RPM
+"Control Parts List","2570"
+"Fuel Code","98502"
+"Governed Speed","2500",RPM
+"Peak Torque at RPM","520",ft*lb
+"Peak Torque RPM","1600",RPM
+"Torque Rise","0",Percent
+System ID and Dataplate - Vehicle/OEM Information
+"OEM Name","GENERIC"
+"OEM Vehicle or Equipment Model",""
+"Vehicle Identification Number or Equipment Serial Number",""
+"Vehicle or Equipment Year",""
+
+Accelerator Options
+"Engine Governor Type","Automotive"
+"Remote Accelerator","Enable"
+
+Cruise Control,Enable
+"Auto-Resume","Disable"
+"Lower Droop","1",mph
+"Maximum Speed","65",mph
+"Switch Usage","Set/Accelerate"
+"Upper Droop","0",mph
+
+Engine Brake Control
+"Cruise Control Activation","Disable"
+"Vehicle Braking","Exhaust / Engine Brake"
+
+Engine Protection,Enable
+"Engine Protection Shutdown","Disable"
+
+Engine Speed
+"High Speed Governor Switched Speed","3000",RPM
+"Maximum Engine Speed without Vehicle Speed Sensor","3000",RPM
+
+Fan Control
+"Air Conditioner Pressure Switch Controls Fan","Disable"
+"Fan Clutch Logic","12/24V ON"
+"Fan On During Engine Braking","Disable"
+"Fan Type","On/Off"
+"Manual Fan Switch","Disable"
+
+Gear-Down Protection,Disable
+
+Idle Shutdown,Disable
+
+Idle Speed Adjustment
+"Low Idle Adjustment","Enable"
+"Low Idle Speed","800",RPM
+
+Maintenance Monitor,Enable
+"Alert Percentage","100",Percent
+"Mode","Time"
+"Time","250",hrs
+
+Powertrain Protection,Disable
+
+PTO/Remote PTO,Disable
+
+Transmission
+"Automatic Transmission","Disable"
+"Gear Down Ratio","1.36"
+"Top Gear Ratio","1.00"
+
+Trip Information,Enable
+"Engine Distance Offset","0",mi
+"Engine Hours Offset","0",hrs
+
+Vehicle Speed
+"Accelerator Maximum","70",mph
+"On-Highway Type","On/Off Highway"
+"Pulses Per Distance","1",revs/mi
+"Rear Axle Ratio","3.90"
+"Road Speed Governor Lower Droop","1",mph
+"Road Speed Governor Upper Droop","0",mph
+"Tailshaft Gear Teeth","16"
+"Tire Revolutions per Distance","520",revs/mi
+"Two Speed Rear Axle","Disable"
+"Two Speed Rear Axle Ratio","3.90"
+"Vehicle Speed Sensor Type","None"
+
+Vehicle Speed Sensor Anti-Tampering,Disable
+
+
+"Trip Information"
+
+,,
+All Trips (Cumulative),,
+,,
+    ECM Distance,335927.80,mi
+    ECM Time,12566:48:18,HH:MM:SS
+    Engine Average Load,19.47,Percent
+    Engine Distance,335927.80,mi
+    Engine Hours (Engine Run Time),12566:50:08,HH:MM:SS
+    Fuel Used,30480.9,gal
+    Idle Fuel,1463.5,gal
+    Idle Time,4648:58:38,HH:MM:SS
+,,
+Trip Since Last Reset,,
+,,
+    Average Fuel Economy,11.02,mpg
+    Average Fuel Rate,2.42,gph
+    Average Load Factor,19.47,Percent
+    Fuel Used,30480.9,gal
+    Maximum Engine Speed,3825,RPM
+    Maximum Vehicle Speed,77,mph
+    Trip Distance,335927.80,mi
+    Trip Time,12566:48:18,HH:MM:SS
+,,
+Trip Since Last Reset - Trip Since Last Reset - Drive (Vehicle Speed >0),,
+,,
+    Cruise Control Percent Time,7.35,Percent
+    Drive Fuel Economy,11.577,mpg
+    Drive Fuel Used,29014.6,gal
+    Idle Fuel Used,1463.5,gal
+    Idle Percent Time,36.99,Percent
+    Idle Time,4648:58:38,HH:MM:SS
+    In Top Gear Percent Time,38.95,Percent
+    Maximum Vehicle Speed Percent Time,1.82,Percent
+    Number of Sudden Decelerations,465, 
+    PTO Fuel Used,2.6,gal
+    PTO Percent Time,0.04,Percent
+    PTO Time,5:34:56,HH:MM:SS
+    Service Brake Actuations per 1000 miles,88,#/1000mi
+    Trip Percent Distance-Direct Drive,7.98,Percent
+
+"ECM Diagnostic Tests"
+
+Cylinder Cutout Test
+Fuel Lift Pump Override
+Intake Air Heater Override
+SAE J1939 Datalink Control Test
+Setup for Dynamometer
+
+
+"Data Monitors"
+"Accelerator Interlock Switch","Locked"," "
+"Battery Voltage","12.2","V"
+"Calibration Software Phase","06041006"," "
+"Cam Sensor Engine Speed","0","RPM"
+"Clutch Switch","Depressed"," "
+"Coolant Level","Fault"," "
+"Coolant Temperature","205.0","°F"
+"Coolant Temperature Signal Voltage","5.0","V"
+"Crank Sensor Engine Speed","0","RPM"
+"Cruise - Set/Resume Switch","None"," "
+"Cruise/PTO ON/OFF Switch","Off"," "
+"Diagnostic Switch","Off"," "
+"Engine Brake Switch","Off"," "
+"Engine Harness Supply Voltage","0.50","V"
+"Engine Oil Pressure","50.0","psi"
+"Engine Oil Pressure Signal Voltage","0.0","V"
+"Engine Speed","0","RPM"
+"Engine Speed Sensor Supply Voltage","5.0","V"
+"Engine Torque Limit Switch","On"," "
+"Fan Clutch Status","Off"," "
+"Fuel Economy","0.000","mpg"
+"Fuel Temperature","0.0","°F"
+"Idle Increment Switch","None"," "
+"Intake Manifold Pressure","0.0","InHg"
+"Intake Manifold Pressure Signal Voltage","0.0","V"
+"Intake Manifold Temperature","115.0","°F"
+"Intake Manifold Temperature Signal Voltage","5.0","V"
+"J1939 Engine Control Source","None"," "
+"J1939 Engine Control Status","Inactive"," "
+"J1939 Retarder Control Source","None"," "
+"J1939 Retarder Control Status","Inactive"," "
+"Key Offs","10155"," "
+"Key Switch","On"," "
+"OEM Harness Supply Voltage","5.0","V"
+"Percent Fuel","0.00","Percent"
+"Percent Throttle","0.0","Percent"
+"Powertrain Protection Torque Limit","0","ft*lb"
+"Remote PTO Switch","Off"," "
+"Remote Throttle Switch","Off"," "
+"Service Brake Switch","Depressed"," "
+"Throttle Signal Voltage","0.0","V"
+"Throttle Status (Idle Validation)","On Idle"," "
+"Throttle Supply Voltage","5.0","V"
+"Total ECM Time (Key On Time)","12600:28:46","HH:MM:SS"
+"User Fueling State","Engine Stop"," "
+"Vehicle Speed","0","mph"
+"VP44 Calculated Engine Speed","0","RPM"
+"VP44 Fault Status","0"," "
+"VP44 Voltage","12.0","V"
+"VP44 Voltage Drop","0.0","V"
+"Water-In-Fuel","No"," "
+
+
+"Fault Information"
+
+Fault Code,Status,Count,Lamp,Description,PID,SID,J1587 FMI,J1939 FMI,SPN
+CM550,Total ECM Time (Key On Time),12600:28:47,,HH:MM:SS,,,,,
+,Total Engine Hours (Engine Run Time),12566:50:08,,HH:MM:SS,,,,,
+,Keyoffs,10155,, ,,,,,
+0123,Active,1,Amber ,Engine will derate to no-boost fueling.,102,,4,,
+0132,Active,1,Amber ,Engine idles when idle validation switch indicates idle and ramps up to a default set speed when idle validation switch indicates off-idle.,91,,4,,
+0141,Active,1,Amber ,Default value used for oil pressure.  No engine protection for oil pressure.,100,,4,,
+0144,Active,1,Amber ,Default value used for coolant temperature.  No engine protection for coolant temperature.,110,,3,,
+0153,Active,1,Amber ,Default value used for intake manifold temperature.  No engine protection for intake manifold temperature.,105,,3,,
+0278,Active,3,Amber ,"Possible low power,  engine may die,  run rough or be difficult to start.",,73,11,,
+0364,Active,1,Amber ,Engine will run at a backup mode set speed when throttle is off idle ...OR... engine will not start.,,233,9,,
+0381,Active,3,Amber ,Intake air heater cannot be fully energized by the ECM.  Possible white smoke and/or hard starting.,,237,11,,
+0382,Active,3,Amber ,Intake air heater cannot be fully energized by the ECM.  Possible white smoke and/or hard starting.,,237,11,,
+0422,Active,1,Amber ,No engine protection for coolant level.,111,,2,,
+0434,Inactive,1,Amber ,"None on performance.  Fault code table,  trip information data and maintenance monitor data may be inaccurate.",,251,2,,
+
+
+
+"Fault Snapshot"
+
+Fault Code,Status,Count,Lamp,Description,PID,SID,J1587 FMI,J1939 FMI,SPN
+,Fault Parameters,First,Last,Units,,,,,
+CM550,Total ECM Time (Key On Time),12600:28:47,,HH:MM:SS,,,,,
+,Total Engine Hours (Engine Run Time),12566:50:08,,HH:MM:SS,,,,,
+,Keyoffs,10155,, ,,,,,
+0123,Active,1,Amber ,Engine will derate to no-boost fueling.,102,,4,,
+,Total ECM Time (Key On Time),12587:18:17,12587:18:17,HH:MM:SS,,,,,
+,Battery Voltage,12.3,12.3,V,,,,,
+,Clutch Switch,Depressed,Depressed, ,,,,,
+,Coolant Level,Low,Low, ,,,,,
+,Coolant Temperature,205.0,205.0,°F,,,,,
+,Cruise - Set/Resume Switch,None,None, ,,,,,
+,Cruise/PTO ON/OFF Switch,Off,Off, ,,,,,
+,Diagnostic Switch,Off,Off, ,,,,,
+,Engine Oil Pressure,50.0,50.0,psi,,,,,
+,Engine Speed,0,0,RPM,,,,,
+,Fan Clutch Status,Off,Off, ,,,,,
+,Fuel Temperature,0.0,0.0,°F,,,,,
+,Idle Increment Switch,None,None, ,,,,,
+,Idle Validation Status,Fault,Fault, ,,,,,
+,Intake Air Heater,On,On, ,,,,,
+,Intake Manifold Pressure,0.0,0.0,InHg,,,,,
+,Intake Manifold Temperature,115.0,115.0,°F,,,,,
+,Key Switch,On,On, ,,,,,
+,Percent Fuel,0.00,0.00,Percent,,,,,
+,Percent Throttle,0.0,0.0,Percent,,,,,
+,Remote PTO Switch,Off,Off, ,,,,,
+,Service Brake Switch,Depressed,Depressed, ,,,,,
+,Total Engine Hours (Engine Run Time),12566:50:08,12566:50:08,HH:MM:SS,,,,,
+,User Fueling State,Engine Stop,Engine Stop, ,,,,,
+,Vehicle Speed,0,0,mph,,,,,
+,VP44 Fault Status,0,0, ,,,,,
+0132,Active,1,Amber ,Engine idles when idle validation switch indicates idle and ramps up to a default set speed when idle validation switch indicates off-idle.,91,,4,,
+,Total ECM Time (Key On Time),12587:18:15,12587:18:15,HH:MM:SS,,,,,
+,Battery Voltage,12.3,12.3,V,,,,,
+,Clutch Switch,Depressed,Depressed, ,,,,,
+,Coolant Level,Low,Low, ,,,,,
+,Coolant Temperature,205.0,205.0,°F,,,,,
+,Cruise - Set/Resume Switch,None,None, ,,,,,
+,Cruise/PTO ON/OFF Switch,Off,Off, ,,,,,
+,Diagnostic Switch,Off,Off, ,,,,,
+,Engine Oil Pressure,0.0,0.0,psi,,,,,
+,Engine Speed,0,0,RPM,,,,,
+,Fan Clutch Status,Off,Off, ,,,,,
+,Fuel Temperature,0.0,0.0,°F,,,,,
+,Idle Increment Switch,None,None, ,,,,,
+,Idle Validation Status,Fault,Fault, ,,,,,
+,Intake Air Heater,On,On, ,,,,,
+,Intake Manifold Pressure,0.0,0.0,InHg,,,,,
+,Intake Manifold Temperature,115.0,115.0,°F,,,,,
+,Key Switch,On,On, ,,,,,
+,Percent Fuel,0.00,0.00,Percent,,,,,
+,Percent Throttle,0.0,0.0,Percent,,,,,
+,Remote PTO Switch,Off,Off, ,,,,,
+,Service Brake Switch,Depressed,Depressed, ,,,,,
+,Total Engine Hours (Engine Run Time),12566:50:08,12566:50:08,HH:MM:SS,,,,,
+,User Fueling State,Engine Stop,Engine Stop, ,,,,,
+,Vehicle Speed,0,0,mph,,,,,
+,VP44 Fault Status,0,0, ,,,,,
+0141,Active,1,Amber ,Default value used for oil pressure.  No engine protection for oil pressure.,100,,4,,
+,Total ECM Time (Key On Time),12587:18:17,12587:18:17,HH:MM:SS,,,,,
+,Battery Voltage,12.3,12.3,V,,,,,
+,Clutch Switch,Depressed,Depressed, ,,,,,
+,Coolant Level,Low,Low, ,,,,,
+,Coolant Temperature,205.0,205.0,°F,,,,,
+,Cruise - Set/Resume Switch,None,None, ,,,,,
+,Cruise/PTO ON/OFF Switch,Off,Off, ,,,,,
+,Diagnostic Switch,Off,Off, ,,,,,
+,Engine Oil Pressure,50.0,50.0,psi,,,,,
+,Engine Speed,0,0,RPM,,,,,
+,Fan Clutch Status,Off,Off, ,,,,,
+,Fuel Temperature,0.0,0.0,°F,,,,,
+,Idle Increment Switch,None,None, ,,,,,
+,Idle Validation Status,Fault,Fault, ,,,,,
+,Intake Air Heater,On,On, ,,,,,
+,Intake Manifold Pressure,0.0,0.0,InHg,,,,,
+,Intake Manifold Temperature,115.0,115.0,°F,,,,,
+,Key Switch,On,On, ,,,,,
+,Percent Fuel,0.00,0.00,Percent,,,,,
+,Percent Throttle,0.0,0.0,Percent,,,,,
+,Remote PTO Switch,Off,Off, ,,,,,
+,Service Brake Switch,Depressed,Depressed, ,,,,,
+,Total Engine Hours (Engine Run Time),12566:50:08,12566:50:08,HH:MM:SS,,,,,
+,User Fueling State,Engine Stop,Engine Stop, ,,,,,
+,Vehicle Speed,0,0,mph,,,,,
+,VP44 Fault Status,0,0, ,,,,,
+0144,Active,1,Amber ,Default value used for coolant temperature.  No engine protection for coolant temperature.,110,,3,,
+,Total ECM Time (Key On Time),12587:18:17,12587:18:17,HH:MM:SS,,,,,
+,Battery Voltage,12.3,12.3,V,,,,,
+,Clutch Switch,Depressed,Depressed, ,,,,,
+,Coolant Level,Low,Low, ,,,,,
+,Coolant Temperature,205.0,205.0,°F,,,,,
+,Cruise - Set/Resume Switch,None,None, ,,,,,
+,Cruise/PTO ON/OFF Switch,Off,Off, ,,,,,
+,Diagnostic Switch,Off,Off, ,,,,,
+,Engine Oil Pressure,50.0,50.0,psi,,,,,
+,Engine Speed,0,0,RPM,,,,,
+,Fan Clutch Status,Off,Off, ,,,,,
+,Fuel Temperature,0.0,0.0,°F,,,,,
+,Idle Increment Switch,None,None, ,,,,,
+,Idle Validation Status,Fault,Fault, ,,,,,
+,Intake Air Heater,On,On, ,,,,,
+,Intake Manifold Pressure,0.0,0.0,InHg,,,,,
+,Intake Manifold Temperature,115.0,115.0,°F,,,,,
+,Key Switch,On,On, ,,,,,
+,Percent Fuel,0.00,0.00,Percent,,,,,
+,Percent Throttle,0.0,0.0,Percent,,,,,
+,Remote PTO Switch,Off,Off, ,,,,,
+,Service Brake Switch,Depressed,Depressed, ,,,,,
+,Total Engine Hours (Engine Run Time),12566:50:08,12566:50:08,HH:MM:SS,,,,,
+,User Fueling State,Engine Stop,Engine Stop, ,,,,,
+,Vehicle Speed,0,0,mph,,,,,
+,VP44 Fault Status,0,0, ,,,,,
+0153,Active,1,Amber ,Default value used for intake manifold temperature.  No engine protection for intake manifold temperature.,105,,3,,
+,Total ECM Time (Key On Time),12587:18:17,12587:18:17,HH:MM:SS,,,,,
+,Battery Voltage,12.3,12.3,V,,,,,
+,Clutch Switch,Depressed,Depressed, ,,,,,
+,Coolant Level,Low,Low, ,,,,,
+,Coolant Temperature,205.0,205.0,°F,,,,,
+,Cruise - Set/Resume Switch,None,None, ,,,,,
+,Cruise/PTO ON/OFF Switch,Off,Off, ,,,,,
+,Diagnostic Switch,Off,Off, ,,,,,
+,Engine Oil Pressure,50.0,50.0,psi,,,,,
+,Engine Speed,0,0,RPM,,,,,
+,Fan Clutch Status,Off,Off, ,,,,,
+,Fuel Temperature,0.0,0.0,°F,,,,,
+,Idle Increment Switch,None,None, ,,,,,
+,Idle Validation Status,Fault,Fault, ,,,,,
+,Intake Air Heater,On,On, ,,,,,
+,Intake Manifold Pressure,0.0,0.0,InHg,,,,,
+,Intake Manifold Temperature,115.0,115.0,°F,,,,,
+,Key Switch,On,On, ,,,,,
+,Percent Fuel,0.00,0.00,Percent,,,,,
+,Percent Throttle,0.0,0.0,Percent,,,,,
+,Remote PTO Switch,Off,Off, ,,,,,
+,Service Brake Switch,Depressed,Depressed, ,,,,,
+,Total Engine Hours (Engine Run Time),12566:50:08,12566:50:08,HH:MM:SS,,,,,
+,User Fueling State,Engine Stop,Engine Stop, ,,,,,
+,Vehicle Speed,0,0,mph,,,,,
+,VP44 Fault Status,0,0, ,,,,,
+0278,Active,3,Amber ,"Possible low power,  engine may die,  run rough or be difficult to start.",,73,11,,
+,Total ECM Time (Key On Time),12600:27:08,12587:17:13,HH:MM:SS,,,,,
+,Battery Voltage,12.3,12.1,V,,,,,
+,Clutch Switch,Depressed,Released, ,,,,,
+,Coolant Level,Low,High, ,,,,,
+,Coolant Temperature,205.0,74.6,°F,,,,,
+,Cruise - Set/Resume Switch,None,None, ,,,,,
+,Cruise/PTO ON/OFF Switch,Off,On, ,,,,,
+,Diagnostic Switch,Off,Off, ,,,,,
+,Engine Oil Pressure,50.0,1.1,psi,,,,,
+,Engine Speed,0,0,RPM,,,,,
+,Fan Clutch Status,Off,Off, ,,,,,
+,Fuel Temperature,0.0,54.4,°F,,,,,
+,Idle Increment Switch,None,None, ,,,,,
+,Idle Validation Status,Fault,On Idle, ,,,,,
+,Intake Air Heater,On,On, ,,,,,
+,Intake Manifold Pressure,0.0,100.7,InHg,,,,,
+,Intake Manifold Temperature,115.0,73.4,°F,,,,,
+,Key Switch,On,On, ,,,,,
+,Percent Fuel,0.00,0.00,Percent,,,,,
+,Percent Throttle,0.0,0.0,Percent,,,,,
+,Remote PTO Switch,Off,Off, ,,,,,
+,Service Brake Switch,Depressed,Released, ,,,,,
+,Total Engine Hours (Engine Run Time),12566:50:08,12566:49:41,HH:MM:SS,,,,,
+,User Fueling State,Engine Stop,Engine Stop, ,,,,,
+,Vehicle Speed,0,0,mph,,,,,
+,VP44 Fault Status,0,4108, ,,,,,
+0364,Active,1,Amber ,Engine will run at a backup mode set speed when throttle is off idle ...OR... engine will not start.,,233,9,,
+,Total ECM Time (Key On Time),12587:18:18,12587:18:18,HH:MM:SS,,,,,
+,Battery Voltage,12.3,12.3,V,,,,,
+,Clutch Switch,Depressed,Depressed, ,,,,,
+,Coolant Level,Low,Low, ,,,,,
+,Coolant Temperature,205.0,205.0,°F,,,,,
+,Cruise - Set/Resume Switch,None,None, ,,,,,
+,Cruise/PTO ON/OFF Switch,Off,Off, ,,,,,
+,Diagnostic Switch,Off,Off, ,,,,,
+,Engine Oil Pressure,50.0,50.0,psi,,,,,
+,Engine Speed,0,0,RPM,,,,,
+,Fan Clutch Status,Off,Off, ,,,,,
+,Fuel Temperature,0.0,0.0,°F,,,,,
+,Idle Increment Switch,None,None, ,,,,,
+,Idle Validation Status,Fault,Fault, ,,,,,
+,Intake Air Heater,On,On, ,,,,,
+,Intake Manifold Pressure,0.0,0.0,InHg,,,,,
+,Intake Manifold Temperature,115.0,115.0,°F,,,,,
+,Key Switch,On,On, ,,,,,
+,Percent Fuel,0.00,0.00,Percent,,,,,
+,Percent Throttle,0.0,0.0,Percent,,,,,
+,Remote PTO Switch,Off,Off, ,,,,,
+,Service Brake Switch,Depressed,Depressed, ,,,,,
+,Total Engine Hours (Engine Run Time),12566:50:08,12566:50:08,HH:MM:SS,,,,,
+,User Fueling State,Engine Stop,Engine Stop, ,,,,,
+,Vehicle Speed,0,0,mph,,,,,
+,VP44 Fault Status,0,0, ,,,,,
+0381,Active,3,Amber ,Intake air heater cannot be fully energized by the ECM.  Possible white smoke and/or hard starting.,,237,11,,
+,Total ECM Time (Key On Time),12600:27:36,12587:18:20,HH:MM:SS,,,,,
+,Battery Voltage,12.3,12.3,V,,,,,
+,Clutch Switch,Depressed,Depressed, ,,,,,
+,Coolant Level,Low,Low, ,,,,,
+,Coolant Temperature,205.0,205.0,°F,,,,,
+,Cruise - Set/Resume Switch,None,None, ,,,,,
+,Cruise/PTO ON/OFF Switch,Off,Off, ,,,,,
+,Diagnostic Switch,Off,Off, ,,,,,
+,Engine Oil Pressure,50.0,50.0,psi,,,,,
+,Engine Speed,0,0,RPM,,,,,
+,Fan Clutch Status,Off,Off, ,,,,,
+,Fuel Temperature,0.0,0.0,°F,,,,,
+,Idle Increment Switch,None,None, ,,,,,
+,Idle Validation Status,Fault,Fault, ,,,,,
+,Intake Air Heater,On,On, ,,,,,
+,Intake Manifold Pressure,0.0,0.0,InHg,,,,,
+,Intake Manifold Temperature,115.0,115.0,°F,,,,,
+,Key Switch,On,On, ,,,,,
+,Percent Fuel,0.00,0.00,Percent,,,,,
+,Percent Throttle,0.0,0.0,Percent,,,,,
+,Remote PTO Switch,Off,Off, ,,,,,
+,Service Brake Switch,Depressed,Depressed, ,,,,,
+,Total Engine Hours (Engine Run Time),12566:50:08,12566:50:08,HH:MM:SS,,,,,
+,User Fueling State,Engine Stop,Engine Stop, ,,,,,
+,Vehicle Speed,0,0,mph,,,,,
+,VP44 Fault Status,0,0, ,,,,,
+0382,Active,3,Amber ,Intake air heater cannot be fully energized by the ECM.  Possible white smoke and/or hard starting.,,237,11,,
+,Total ECM Time (Key On Time),12600:27:36,12587:18:20,HH:MM:SS,,,,,
+,Battery Voltage,12.3,12.3,V,,,,,
+,Clutch Switch,Depressed,Depressed, ,,,,,
+,Coolant Level,Low,Low, ,,,,,
+,Coolant Temperature,205.0,205.0,°F,,,,,
+,Cruise - Set/Resume Switch,None,None, ,,,,,
+,Cruise/PTO ON/OFF Switch,Off,Off, ,,,,,
+,Diagnostic Switch,Off,Off, ,,,,,
+,Engine Oil Pressure,50.0,50.0,psi,,,,,
+,Engine Speed,0,0,RPM,,,,,
+,Fan Clutch Status,Off,Off, ,,,,,
+,Fuel Temperature,0.0,0.0,°F,,,,,
+,Idle Increment Switch,None,None, ,,,,,
+,Idle Validation Status,Fault,Fault, ,,,,,
+,Intake Air Heater,On,On, ,,,,,
+,Intake Manifold Pressure,0.0,0.0,InHg,,,,,
+,Intake Manifold Temperature,115.0,115.0,°F,,,,,
+,Key Switch,On,On, ,,,,,
+,Percent Fuel,0.00,0.00,Percent,,,,,
+,Percent Throttle,0.0,0.0,Percent,,,,,
+,Remote PTO Switch,Off,Off, ,,,,,
+,Service Brake Switch,Depressed,Depressed, ,,,,,
+,Total Engine Hours (Engine Run Time),12566:50:08,12566:50:08,HH:MM:SS,,,,,
+,User Fueling State,Engine Stop,Engine Stop, ,,,,,
+,Vehicle Speed,0,0,mph,,,,,
+,VP44 Fault Status,0,0, ,,,,,
+0422,Active,1,Amber ,No engine protection for coolant level.,111,,2,,
+,Total ECM Time (Key On Time),12587:18:15,12587:18:15,HH:MM:SS,,,,,
+,Battery Voltage,12.3,12.3,V,,,,,
+,Clutch Switch,Depressed,Depressed, ,,,,,
+,Coolant Level,Low,Low, ,,,,,
+,Coolant Temperature,205.0,205.0,°F,,,,,
+,Cruise - Set/Resume Switch,None,None, ,,,,,
+,Cruise/PTO ON/OFF Switch,Off,Off, ,,,,,
+,Diagnostic Switch,Off,Off, ,,,,,
+,Engine Oil Pressure,0.0,0.0,psi,,,,,
+,Engine Speed,0,0,RPM,,,,,
+,Fan Clutch Status,Off,Off, ,,,,,
+,Fuel Temperature,0.0,0.0,°F,,,,,
+,Idle Increment Switch,None,None, ,,,,,
+,Idle Validation Status,Fault,Fault, ,,,,,
+,Intake Air Heater,On,On, ,,,,,
+,Intake Manifold Pressure,0.0,0.0,InHg,,,,,
+,Intake Manifold Temperature,115.0,115.0,°F,,,,,
+,Key Switch,On,On, ,,,,,
+,Percent Fuel,0.00,0.00,Percent,,,,,
+,Percent Throttle,0.0,0.0,Percent,,,,,
+,Remote PTO Switch,Off,Off, ,,,,,
+,Service Brake Switch,Depressed,Depressed, ,,,,,
+,Total Engine Hours (Engine Run Time),12566:50:08,12566:50:08,HH:MM:SS,,,,,
+,User Fueling State,Engine Stop,Engine Stop, ,,,,,
+,Vehicle Speed,0,0,mph,,,,,
+,VP44 Fault Status,0,0, ,,,,,
+0434,Inactive,1,Amber ,"None on performance.  Fault code table,  trip information data and maintenance monitor data may be inaccurate.",,251,2,,
+,Total ECM Time (Key On Time),12587:18:21,12587:18:21,HH:MM:SS,,,,,
+,Battery Voltage,12.3,12.3,V,,,,,
+,Clutch Switch,Released,Released, ,,,,,
+,Coolant Level,Low,Low, ,,,,,
+,Coolant Temperature,-50.0,-50.0,°F,,,,,
+,Cruise - Set/Resume Switch,None,None, ,,,,,
+,Cruise/PTO ON/OFF Switch,Off,Off, ,,,,,
+,Diagnostic Switch,Off,Off, ,,,,,
+,Engine Oil Pressure,0.0,0.0,psi,,,,,
+,Engine Speed,0,0,RPM,,,,,
+,Fan Clutch Status,Off,Off, ,,,,,
+,Fuel Temperature,0.0,0.0,°F,,,,,
+,Idle Increment Switch,None,None, ,,,,,
+,Idle Validation Status,Fault,Fault, ,,,,,
+,Intake Air Heater,Off,Off, ,,,,,
+,Intake Manifold Pressure,0.0,0.0,InHg,,,,,
+,Intake Manifold Temperature,-50.0,-50.0,°F,,,,,
+,Key Switch,Off,Off, ,,,,,
+,Percent Fuel,0.00,0.00,Percent,,,,,
+,Percent Throttle,0.0,0.0,Percent,,,,,
+,Remote PTO Switch,Off,Off, ,,,,,
+,Service Brake Switch,Released,Released, ,,,,,
+,Total Engine Hours (Engine Run Time),12566:50:08,12566:50:08,HH:MM:SS,,,,,
+,User Fueling State,None,None, ,,,,,
+,Vehicle Speed,0,0,mph,,,,,
+,VP44 Fault Status,0,0, ,,,,,
+
+
+"Audit Trail"
+
+Record Number,Tool Name,Tool ID,User Type,User ID,ECM Time (Key on Time),ECM Real Time
+1,INSITE,900000942901,Software,0000007A,12600:24:51,Not Applicable
+,,A5 - Application Type,,,,
+,,C2 - Accelerate/Coast Flag (set/accel vs. set coast),,,,
+,,F2 - PTO Feature Enable/Disable,,,,
+,,F8 - Engine Protection Shutdown Enable/Disable,,,,
+,,FG - Remote Throttle,,,,
+,,M5 - Maintenance Monitor Enable/Disable,,,,
+,,V3 - Vehicle Speed Sensor Type,,,,
+2,INSITE,060421202901,Software,6DA818E9,9725:51:48,Not Applicable
+,,I3 - Idle Shutdown Override,,,,
+3,INSITE,060421202901,Software,6DA818E9,9317:16:53,Not Applicable
+,,I3 - Idle Shutdown Override,,,,
+4,INSITE,631001142901,Software,6DA818E9,8814:13:47,Not Applicable
+,,I3 - Idle Shutdown Override,,,,
+
+SAE J1939 Powertrain Control
+
+Event,Source,Destination,Modes,ECM Time(Start),ECM Real Time(Start),Duration,
+This feature is not supported by the current calibration,,,,,,,
+
+"Maintenance Monitor"
+
+"Most Recent""Oldest"
+"Maintenance Monitor-Interval Used","0.00","Percent"
+"Maintenance Monitor-Distance Used","335927.79","mi"
+"Maintenance Monitor-Time Used","12563","hrs"
+"Maintenance Monitor Error Log","No"," "
+"Maintenance Monitor-Fuel Used","30480.9","gal"
+
+
+"Engine Protection"
+
+
+Description,Fault Code,Occurrence,Value,Duration,ECM Time (Key On Time),ECM Real Time
+Engine Overspeed - Fuel to injectors disabled until engine speed falls below the overspeed limit.,234,Newest,3762 RPM,0:00:00,12358:54:00,Not Applicable
+ ,234,2,4452 RPM,0:00:00,8811:12:03,Not Applicable
+ ,234,Oldest,3744 RPM,0:00:00,4371:38:35,Not Applicable
+High Coolant Temperature (RPM) - Power derate and possible engine shutdown if engine protection shutdown feature is enabled.,151,Newest,232.5 °F,0:01:04,11546:57:40,Not Applicable
+ ,151,2,221.8 °F,0:00:09,11546:52:36,Not Applicable
+ ,151,3,236.5 °F,0:02:11,11546:45:35,Not Applicable
+ ,151,Oldest,236.5 °F,0:05:04,11546:45:26,Not Applicable
+Low Coolant Level - Power and/or speed derate and possible engine shutdown if engine protection shutdown feature enabled.,235,Newest,Low ,0:07:27,3904:36:16,Not Applicable
+ ,235,Oldest,Low ,0:00:55,3899:20:03,Not Applicable
+Low Oil Pressure - Power derate and possible engine shutdown if engine protection shutdown feature enabled.,143,Newest,12.5 psi,0:01:18,9475:15:00,Not Applicable
+ ,143,2,12.9 psi,0:00:09,9474:48:48,Not Applicable
+ ,143,3,32.0 psi,0:00:01,9474:47:46,Not Applicable
+ ,143,4,15.9 psi,0:00:05,9474:30:28,Not Applicable
+ ,143,Oldest,13.0 psi,0:00:13,9299:54:57,Not Applicable
+
+
+"Duty Cycle Monitor"
+
+"Short Term Map 1"
+
+"Torque (%)"
+"0.00"," "," "," ","0.5%","2.0%"," "," "," "," "
+"100.00"," "," "," ","0.2%","0.9%","2.2%","2.8%","2.5%"," "
+"90.00"," "," ","0.1%","0.5%","1.3%","0.7%","1.0%","3.0%"," "
+"70.00"," ","0.1%","0.3%","1.1%","2.0%","1.4%","1.8%","3.6%"," "
+"50.00"," ","0.5%","1.1%","2.3%","2.9%","2.0%","2.2%","1.9%"," "
+"30.00"," ","30.5%","0.7%","0.8%","0.9%","1.9%","1.5%","0.7%"," "
+"10.00"," "," "," "," "," ","0.4%","0.1%"," "," "
+"0.00"," "," "," ","0.4%"," "," "," ","12.3%"," "
+" "," "," "," "," "," "," "," "," "," "
+
+
+"Engine Speed (RPM)","1000","1300","1600","1900","2100","2300","2500","2800",
+
+"Peak Torque at RPM","520","ft*lb"
+"Peak Torque RPM","1600","RPM"
+"Advertised Power at RPM","195","hp"
+"Advertised Power RPM","2500","RPM"
+"Map Hours Remaining","0:00:00","HH:MM:SS"
+"Map Start Time","0:00:00","HH:MM:SS"
+
+"Short Term Map 2"
+
+"Torque (%)"
+"0.00"," "," "," ","0.5%","1.8%"," "," "," "," "
+"100.00"," "," "," ","0.2%","0.7%","2.4%","3.2%","2.8%"," "
+"90.00"," "," ","0.2%","0.4%","1.1%","0.7%","1.0%","2.5%"," "
+"70.00"," "," ","0.3%","0.7%","1.6%","1.5%","1.7%","3.2%"," "
+"50.00"," ","0.8%","1.1%","1.4%","2.1%","2.0%","2.0%","2.0%"," "
+"30.00"," ","30.8%","0.6%","0.6%","0.7%","2.0%","1.7%","1.0%"," "
+"10.00"," "," "," "," "," ","0.5%","0.3%","0.1%"," "
+"0.00"," "," "," ","2.6%"," "," "," ","11.9%"," "
+" "," "," "," "," "," "," "," "," "," "
+
+
+"Engine Speed (RPM)","1000","1300","1600","1900","2100","2300","2500","2800",
+
+"Peak Torque at RPM","520","ft*lb"
+"Peak Torque RPM","1600","RPM"
+"Advertised Power at RPM","195","hp"
+"Advertised Power RPM","2500","RPM"
+"Map Hours Remaining","0:00:00","HH:MM:SS"
+"Map Start Time","500:08:04","HH:MM:SS"
+
+"Long Term Map"
+
+"Torque (%)"
+"0.00"," "," ","0.1%","1.3%","3.4%"," "," "," "," "
+"100.00"," "," ","0.2%","0.6%","1.6%","2.1%","1.7%","0.9%"," "
+"90.00"," ","0.1%","0.3%","1.0%","3.3%","1.1%","0.7%","0.7%"," "
+"70.00"," ","0.1%","0.5%","1.6%","4.6%","2.4%","1.1%","0.8%"," "
+"50.00"," ","0.5%","1.1%","2.2%","3.3%","3.0%","1.0%","0.5%"," "
+"30.00"," ","39.1%","0.7%","0.9%","1.0%","1.9%","0.6%","0.3%"," "
+"10.00"," "," "," "," "," ","0.6%","0.2%","0.1%"," "
+"0.00"," "," "," ","0.3%"," "," "," ","12.3%"," "
+" "," "," "," "," "," "," "," "," "," "
+
+
+"Engine Speed (RPM)","1000","1300","1600","1900","2100","2300","2500","2800",
+
+"Peak Torque at RPM","520","ft*lb"
+"Peak Torque RPM","1600","RPM"
+"Advertised Power at RPM","195","hp"
+"Advertised Power RPM","2500","RPM"
+"Map Hours Remaining","87433:11:28","HH:MM:SS"
+"Map Start Time","0:00:00","HH:MM:SS"
+
+
+"Multi Level ECM Security"
+
+"ECM Passwords"
+"Master Password" , "Disabled"
+"Adjustable Password" , "Disabled"
+"Reset Password" , "Disabled"
+
+
+
+
+"OBD Monitors"
+MIL ON Distance (All Faults),,,
+MIL ON Time (All Faults),,,
+Fault Code,Description,Monitor Type,Readiness Code
+OBD values are not displayed in INSITE for this engine program.,,,
+

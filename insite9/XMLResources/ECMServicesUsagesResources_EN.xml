@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE module SYSTEM "../htmlentities.dtd">
+<!-- CHANGE LOG
+1.)  C. Colaco : Initial creation from names_en.icl ver. 6.31.01.44
+-->
+<!-- SM : Corrected the Usage List -->
+<!-- SM: Added display name overrides for usages 102,110,119 for ISB - CM2100MD, Moduletype 115 -->
+<!-- SR: Added display name overrides for usages 102,110,119 for ISB - CM850, Moduletype 103 and 104 -->
+<!-- KP: Added display name overrides for usages 110,119 for ISC/ISL - CM850, Moduletype 114 and 124 -->
+<!-- CD: Removed Double entry for display name of usage 102 and 110 for ISB CM850, Moduletype 103 -->
+<!-- DB : Changes to Insite Ver 6.40.0.116, 06/07/2005
+	DB_G00069037 : Added usages 122, 123, 124, 125, 126, 127    -->
+<!-- MT : Changes to Insite Ver 6.50.0.149, 01/17/2006
+	 DB_G00079962 : Modified display name overrides for usages 123 -->
+<!-- LK:  Changes to Insite Ver 6.50.0.0169, 02/07/2006 
+     DB_G00080995  Added display name override  for usage 110  for  ISBe-4and6 Cylinder , Moduletype 100-->
+<!--Changes to Insite Ver 6_50_1_0105, 3/27/2006
+    Insite 6.5 FP1 Development(AA)  
+    Bug Fixing Task - Added override for usage 102 for module id 135 -->
+<!--Changes to Insite Ver 6_50_1_0105, 3/27/2006
+    Insite 6.5 FP1 Development(VK)  Added usage 128 -->
+<!--Changes to Insite Ver 6.51.0.211, 04/13/2006
+    DB_G00083371(VK)  Added usage 30 -->
+<!--Changes to Insite Ver 6.51.0.219, 04/25/2006
+    DB_G00084202(VK)  Replaced usage 128 with usage 31-->
+<!--Changes to Insite Ver 7.0.00.0189, 05/04/2007
+    DB_G00096006(VM)  Added Usage 14-->
+<!--Changes to Insite Ver 7.0.01.167, 11/29/2007
+    DB_G00112283(KP) Modified and added more entries in Usage 119-->
+<!--PG: Changes to INSITE Ver 7.3, 8/19/2008
+     7.3 Base Feature Updates for KTA/GTA - Added Usage 128-->
+<!--PG: Changes to INSITE Ver 7.3, 9/5/2008
+     7.3 Base Feature Updates for QSV - Added Usage 129-->
+<!--TP: Changes to INSITE Ver 7.3FP2, 7/27/2009
+      DB_G00139272 Added usage 33 for SAE J1939 Source Address parameters-->
+<!-- CV: Changes to INSITE Ver 7.5, 09/27/2010 DB_G00141631 Added usage 35 for RSGR parameter-->
+<!--Changes to Insite Ver 7.5, 10/28/2010   
+    DB_G00161536(SaurabhA) Modified and added more entries in Usage 119 for 119_720 & 119_721-->
+<!--Changes to Insite Ver 7.5.1, 04/07/2011     DB_G00153184(PW) Added Usage 130 and 131. -->
+<!--Changes to Insite Ver 7.6, 03/12/2012
+    DB_G00182195(RomaM)7.6 Base Feature Updates - Added Usage 132-->
+<!-- READING THE DATA BELOW
+<STRING ID="USAGE NUMBER_MODULE ID OVERRIDE">USAGE CODE DESCRIPTION</STRING>  
+-->
+
+<XML_RESOURCE>
+  <RESOURCE Description="Usages Definitions">
+    <STRING ID="1_0">Normal Monitor</STRING>
+    <!-- Used by Monitor -->
+    <STRING ID="3_0">Normal adjustable parameters</STRING>
+    <!-- Used by FnP, Security, Caldownload -->
+    <STRING ID="4_0">Normal adjustable features</STRING>
+    <!-- Used by FnP, Security, Caldownload -->
+    <STRING ID="5_0">Dataplate</STRING>
+    <!-- Used by FnP, Caldownload, Calselection -->
+    <STRING ID="13_0">ECM internal datalogger</STRING>
+    <!-- UADL -->
+    <STRING ID="14_0">Reset Parameters</STRING>
+    <!-- Parameters Adjustable but not Save and Restored -->
+    <STRING ID="16_0">Save and Restore only</STRING>
+    <!-- Used by Caldownload only -->
+    <STRING ID="17_0">Feature Enable</STRING>
+    <!-- Used by FnP -->
+    <STRING ID="18_0">Feature Available</STRING>
+    <!-- Used by FnP -->
+    <STRING ID="19_0">Trip Information</STRING>
+    <!-- Used by FnP -->
+    <STRING ID="20_0">Feature Label</STRING>
+    <!-- Used by FnP, Trip -->
+    <STRING ID="21_0">Trip Fuel Report</STRING>
+    <!-- Filtered view of Trip Information -->
+    <STRING ID="22_0">Sub Feature Label</STRING>
+    <!-- Used by FnP -->
+    <STRING ID="23_0">OEM Security</STRING>
+    <!-- Used by Security -->
+    <STRING ID="24_0">Trim Passwords</STRING>
+    <!-- Used by Zap-it -->
+    <STRING ID="26_0">Automatic Request Changelock Request</STRING>
+    <!-- GTIS 4.5 usage -->
+    <STRING ID="27_0">Real Time parameters</STRING>
+    <!-- Used by real time parameters   -->
+    <STRING ID="28_0">Non Template parameters</STRING>
+    <!-- Parameters under this usage are not included in Template -->
+    <STRING ID="29_0">Mandatory SnR parameters</STRING>
+    <!-- GTIS4.5 parameters with mandatory SnR=true -->
+    <STRING ID="30_0">Date Time Stamp Parameters</STRING>
+    <!-- Usage will contain all parameters that have tool display format 		as "DD-MMM-YYYY HH:MM:SS" -->
+    <STRING ID="31_0">No Group Read Usage</STRING>
+    <!--Parameters will not be read in a group while creating a workorder -->
+    <STRING ID="32_0">Adjustable but non restorable parameters</STRING>    <!-- GTIS 4.5 usage -->
+    <STRING ID="33_0">SAE J1939 Source Address Parameters</STRING>    <!-- GTIS 4.5 usage -->
+    <STRING ID="34_0">OEM Domain 2 Parameters</STRING>
+    <!--Added usage number 34 for OEM domain 2 support-->
+    <STRING ID="35_0">Road Speed Governor Restriction</STRING>
+    <!--Added usage number 35 for RSGR Parameters-->
+    <!-- Usages 100 through 199 will be the Usages that list the tokens for each monitor group for a module. -->
+    <STRING ID="100_0">ECM Information</STRING>
+    <!--  -->
+    <STRING ID="101_0">ECM Commanded Values</STRING>
+    <!--  -->
+    <STRING ID="102_0">EGR Turbocharger Performance</STRING>
+    <!--  -->
+    <STRING ID="102_93">EGR and Turbocharger Performance</STRING>
+    <!--  -->
+    <STRING ID="102_94">EGR and Turbocharger Performance</STRING>
+    <!--  -->
+    <STRING ID="102_99">EGR and Turbocharger Performance</STRING>
+    <!--  -->
+    <STRING ID="102_103">EGR/Turbocharger Performance</STRING>
+    <!--  -->
+    <STRING ID="102_104">EGR and Turbocharger Performance</STRING>
+    <!--  -->
+    <STRING ID="102_107">EGR and Turbocharger Performance</STRING>
+    <!--  -->
+    <STRING ID="102_108">Turbocharger Performance</STRING>
+    <!--  -->
+    <STRING ID="102_115">Turbocharger Performance</STRING>
+    <!--  -->
+    <STRING ID="102_118">Turbocharger Performance</STRING>
+    <!--  -->
+    <STRING ID="102_135">EGR and Turbocharger Performance</STRING>
+    <!--  -->
+    <STRING ID="103_0">Engine Braking</STRING>
+    <!--  -->
+    <STRING ID="104_0">Engine Protection</STRING>
+    <!--  -->
+    <STRING ID="104_51">Engine Protection for ISB</STRING>
+    <!--  -->
+    <STRING ID="105_0">ESP</STRING>
+    <!--  -->
+    <STRING ID="106_0">Fuel System Operation</STRING>
+    <!--  -->
+    <STRING ID="107_0">Hard Start</STRING>
+    <!--  -->
+    <STRING ID="108_0">Icon</STRING>
+    <!--  -->
+    <STRING ID="109_0">Lamps</STRING>
+    <!--  -->
+    <STRING ID="109_131">Lamps and Outputs</STRING>
+    <!--  -->
+    <STRING ID="110_0">Low Power Fuel Economy</STRING>
+    <!--  -->
+    <STRING ID="110_93">Low Power and Fuel Economy</STRING>
+    <!--  -->
+    <STRING ID="110_94">Low Power and Fuel Economy</STRING>
+    <!--  -->
+    <STRING ID="110_99">Low Power and Fuel Economy</STRING>
+    <!--  -->
+    <STRING ID="110_100">Low Power/Fuel Economy</STRING>
+    <!--  -->
+    <STRING ID="110_103">Low Power/Fuel Economy</STRING>
+    <!--  -->
+    <STRING ID="110_104">Low Power and Fuel Economy</STRING>
+    <!--  -->
+    <STRING ID="110_107">Low Power and Fuel Economy</STRING>
+    <!--  -->
+    <STRING ID="110_108">Low Power and Fuel Economy</STRING>
+    <!--  -->
+    <STRING ID="110_114">Low Power and Fuel Economy</STRING>
+    <!--  -->
+    <STRING ID="110_115">Low Power/Fuel Economy</STRING>
+    <!--  -->
+    <STRING ID="110_118">Low Power and Fuel Economy</STRING>
+    <!--  -->
+    <STRING ID="110_124">Low Power and Fuel Economy</STRING>
+    <!--  -->
+    <STRING ID="110_135">Low Power/Fuel Economy</STRING>
+    <!--  -->
+    <STRING ID="110_250">Low Power/Fuel Economy</STRING>
+    <!--  -->
+    <STRING ID="110_260">Low Power/Fuel Economy</STRING>
+    <!--  -->
+    <STRING ID="110_270">Low Power/Fuel Economy</STRING>
+    <!--  -->
+    <STRING ID="110_280">Low Power/Fuel Economy</STRING>
+    <!--  -->
+    <STRING ID="110_290">Low Power/Fuel Economy</STRING>
+    <!--  -->
+    <STRING ID="110_291">Low Power/Fuel Economy</STRING>
+    <!--  -->
+    <STRING ID="110_292">Low Power/Fuel Economy</STRING>
+    <!--  -->
+    <STRING ID="110_300">Low Power/Fuel Economy</STRING>
+    <!--  -->
+    <STRING ID="110_301">Low Power/Fuel Economy</STRING>
+    <!--  -->
+    <STRING ID="110_302">Low Power/Fuel Economy</STRING>
+    <!--  -->
+    <STRING ID="111_0">Low Power ESP Smart Torque</STRING>
+    <!--  -->
+    <STRING ID="112_0">Low Power No ESP</STRING>
+    <!--  -->
+    <STRING ID="112_33">Low Power</STRING>
+    <!--  -->
+    <STRING ID="113_0">Performance</STRING>
+    <!--  -->
+    <STRING ID="114_0">Sea Trial Acceleration</STRING>
+    <!--  -->
+    <STRING ID="115_0">Sea Trial Steady State</STRING>
+    <!--  -->
+    <STRING ID="116_0">Sensors</STRING>
+    <!--  -->
+    <STRING ID="117_0">Switches</STRING>
+    <!--  -->
+    <STRING ID="118_0">Voltage</STRING>
+    <!--  -->
+    <STRING ID="119_0">White Smoke</STRING>
+    <!--  -->
+    <STRING ID="119_93">White Smoke and Engine Stumble</STRING>
+    <!--  -->
+    <STRING ID="119_94">White Smoke and Engine Stumble</STRING>
+    <!--  -->
+    <STRING ID="119_99">White Smoke and Engine Stumble</STRING>
+    <!--  -->
+    <STRING ID="119_100">White Smoke/Engine Stumble</STRING>
+    <!--  -->
+    <STRING ID="119_103">White Smoke/Engine Stumble</STRING>
+    <!--  -->
+    <STRING ID="119_104">White Smoke and Engine Stumble</STRING>
+    <!--  -->
+    <STRING ID="119_107">White Smoke and Engine Stumble</STRING>
+    <!--  -->
+    <STRING ID="119_108">White Smoke and Engine Stumble</STRING>
+    <!--  -->
+    <STRING ID="119_114">White Smoke and Engine Stumble</STRING>
+    <!--  -->
+    <STRING ID="119_115">White Smoke and Engine Stumble</STRING>
+    <!--  -->
+    <STRING ID="119_118">White Smoke and Engine Stumble</STRING>
+    <!--  -->
+    <STRING ID="119_124">White Smoke and Engine Stumble</STRING>
+    <!--  -->
+    <STRING ID="119_135">White Smoke/Engine Stumble</STRING>
+    <!--  -->
+    <STRING ID="119_250">White Smoke/Engine Stumble</STRING>
+    <!--  -->
+    <STRING ID="119_260">White Smoke/Engine Stumble</STRING>
+    <!--  -->
+    <STRING ID="119_270">White Smoke/Engine Stumble</STRING>
+    <!--  -->
+    <STRING ID="119_280">White Smoke/Engine Stumble</STRING>
+    <!--  -->
+    <STRING ID="119_290">White Smoke/Engine Stumble</STRING>
+    <!--  -->
+    <STRING ID="119_291">White Smoke/Engine Stumble</STRING>
+    <!--  -->
+    <STRING ID="119_292">White Smoke/Engine Stumble</STRING>
+    <!--  -->
+    <STRING ID="119_300">White Smoke/Engine Stumble</STRING>
+    <!--  -->
+    <STRING ID="119_301">White Smoke/Engine Stumble</STRING>
+    <!--  -->
+    <STRING ID="119_302">White Smoke/Engine Stumble</STRING>
+    <!--  -->
+    <STRING ID="119_370">White Smoke/Engine Stumble</STRING>
+    <!--  -->
+    <STRING ID="119_371">White Smoke/Engine Stumble</STRING>
+    <!--  -->
+    <STRING ID="119_390">White Smoke/Engine Stumble</STRING>
+    <!--  -->
+    <STRING ID="119_391">White Smoke/Engine Stumble</STRING>
+    <!--  -->
+    <STRING ID="119_720">White Smoke/Engine Stumble</STRING>
+    <!--  -->
+    <STRING ID="119_721">White Smoke/Engine Stumble</STRING>
+    <!--  -->
+    <STRING ID="121_0">Aftertreatment</STRING>
+    <!--  -->
+    <STRING ID="122_0">General</STRING>
+    <STRING ID="123_0">Fuel System</STRING>
+    <STRING ID="124_0">Ignition</STRING>
+    <STRING ID="125_0">Cooling and Lubrication</STRING>
+    <STRING ID="126_0">Electrical</STRING>
+    <STRING ID="127_0">No/Slow Start</STRING>
+    <STRING ID="128_0">Ignition Voltages</STRING>
+    <STRING ID="129_0">Knock Sensors</STRING>
+	<STRING ID="130_0">Aftertreatment - SCR</STRING>
+	<STRING ID="131_0">Aftertreatment - Diesel Particulate Filter</STRING>
+    <STRING ID="132_0">Power Electronics</STRING>
+  </RESOURCE>
+</XML_RESOURCE>

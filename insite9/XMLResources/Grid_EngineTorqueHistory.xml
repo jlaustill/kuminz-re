@@ -1,0 +1,121 @@
+<!-- This is a sample  -->
+<FlexGrid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Properties Cols="7:VT_I4" FixedCols="0:VT_I4" ExplorerBar="0:VT_I4" GridLines="1:VT_I4" OutlineBar="5:VT_I4"
+	AllowUserResizing="1:VT_UI4" AutoResize="1:VT_I4" Editable="0:VT_I4" />
+	<!-- Add properties to the "FlexGrid" element as attribute in Name=Value format -->
+<!--
+	<FixedRows>
+		<FixedRow styleid="s1">
+			<Column name="ECM Start Time" />
+			<Column name="High Power Rating" />
+			<Column name="Low Power Rating" />
+			<Column name="Peak High Torque" />
+			<Column name="Peak Low Torque" />
+			<Column name="Peak Torque Duration" />
+		</FixedRow>
+		<FixedRow>
+			<Column name="" />
+			<Column name="Description" />
+			<Column name="Value" />
+			<Column name="" />
+			<Column name="" />
+			<Column name="" />
+		</FixedRow>
+	</FixedRows>
+-->
+	<FixedRows>
+		<FixedRow styleid="s1">
+			<Column name="RES:Res1:101" />
+			<Column name="RES:Res1:102" />
+			<Column name="RES:Res1:103" />
+			<Column name="RES:Res1:104" />
+			<Column name="RES:Res1:105" />
+			<Column name="RES:Res1:106" />
+		</FixedRow>
+		<FixedRow>
+			<Column name="" />
+			<Column name="RES:Res1:107" />
+			<Column name="RES:Res1:108" />
+			<Column name="" />
+			<Column name="" />
+			<Column name="" />
+		</FixedRow>
+	</FixedRows>
+
+	<data loopEnd="1">
+		<Object name="objROWLIST" source="OBJ:DOM:selectNodes(ROW)"/>
+		<Node level = "0" loopStart="OBJ:DOM_ENBLTKN:selectSingleNode(pPTPEnable):getAttribute(V)" loopEnd="1" styleid="s0">
+      <!-- Feature Not Supported -->
+      <Column order = "0" datasource ="RES:Res1:122" />
+		</Node>
+		<Node level = "0" loopStart="0" loopEnd="OBJ:DOM_ENBLTKN:selectSingleNode(pPTPEnable):getAttribute(V)" styleid="s1">
+			<Node level = "0" loopStart="0" loopEnd="OBJ:objROWLIST:length" styleid="s1">
+				<Object name="objROW" source="OBJ:objROWLIST:nextNode"/>
+				<Column order = "0" datasource ="OBJ:objROW:getAttribute(ECM_TIME)" />
+				<Column order = "1" datasource ="OBJ:objROW:getAttribute(HIGH_POWER_RATING)" />
+				<Column order = "2" datasource ="OBJ:objROW:getAttribute(LOW_POWER_RATING)" />
+				<Column order = "3" datasource ="OBJ:objROW:getAttribute(PEAK_HIGH_TORQUE)" />
+				<Column order = "4" datasource ="OBJ:objROW:getAttribute(PEAK_LOW_TORQUE)" />
+				<Column order = "5" datasource ="OBJ:objROW:getAttribute(PEAK_TORQUE_DURATION)" />
+				<Object name="objSUBROWLIST" source="OBJ:objROW:childNodes" />
+				<Node level = "1" loopStart="0" loopEnd="OBJ:objSUBROWLIST:length">
+					<Object name="objSUBROW" source="OBJ:objSUBROWLIST:nextNode"/>
+					<Column order = "1" datasource ="OBJ:objSUBROW:getAttribute(DESCRIPTION)" />
+					<Column order = "2" datasource ="OBJ:objSUBROW:getAttribute(VALUE)" />
+				</Node>
+			</Node>
+		</Node>
+	</data>
+	
+	<parameters>
+		<parameter name="pPTPEnable" source="/Image/Parameters/P[@ID=21781]"/>
+	</parameters>
+
+	<icons>
+	</icons>
+	
+	<combolists>
+	</combolists>
+	
+	<styles>
+	<style id="s0" CellFontBold="1:VT_I4" CellAlignMent="0:VT_I4" ColWidthMin="1800" ColWidthMax="3500" AutoSizeMode="1:VT_I4"  WordWrap="1:VT_BOOL" />
+	<style id="s1" CellFontBold="1:VT_I4" CellAlignMent="0:VT_I4" />
+		<style id="s2"  CellAlignMent="0:VT_I4"/>
+		<style id="sort"  Row="5" RowSel="5" Col="1" ColSel="1" Sort="1:VT_I4"/>
+	</styles>
+	
+	<resources>
+		<resource id="Res1" CLSID="{1C628621-473B-4EA4-9DC6-7ED92C57DD9E}\Pages\{F397CD54-CC59-4D91-9322-452FE4B63CD9}" LoadDLL="TRUE" />
+	</resources>
+
+	<printing HdrFontSize="8">
+		<header>
+            <line>
+                <center source="RES:Res1:117"/>
+            </line>
+            <line>
+                <left source="RES:Res1:214"/>
+                <left source="OBJ:DOM_ENBLTKN:selectSingleNode(/Image/Header/ESerial):getAttribute(DisplayValue)"/>
+				<right source="INSITE - " />
+			    <right source="OBJ:DOM_ENBLTKN:selectSingleNode(/Image):getAttribute(ImageVersion)" />
+			</line>
+			<line>	
+				<left source="RES:Res1:213" />
+				<left source="OBJ:DOM_ENBLTKN:selectSingleNode(/Image/Header/UNumber):getAttribute(DisplayValue)" />
+				<right source="RES:Res1:212" />
+				<right source="OBJ:DOM_ENBLTKN:selectSingleNode(/Image/Header/VMake):getAttribute(DisplayValue)" />
+			</line>
+			<line>
+				<left source="RES:Res1:215" />
+				<left source="OBJ:DOM_ENBLTKN:selectSingleNode(/Image/Header/WOName):getAttribute(DisplayValue)" />
+				<right source="RES:Res1:216" />
+				<right source="OBJ:DOM_ENBLTKN:selectSingleNode(/Image/Header/IName):getAttribute(DisplayValue)" />
+			</line>
+			<line>
+				<right source="RES:Res1:211" />
+				<right source="OBJ:DOM_ENBLTKN:selectSingleNode(/Image/Header/CustomerName):getAttribute(DisplayValue)" />
+			</line>
+		</header>
+	</printing>
+
+</FlexGrid>

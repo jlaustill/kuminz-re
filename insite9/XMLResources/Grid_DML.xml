@@ -1,0 +1,103 @@
+<!-- CHANAGE HISTORY
+8/3/2005   fk669   DB_G00057615   Implemented sorting for DML parameters
+12/26/2007 ho482   DB_G00109427   Implemented Upper and lower limits column in WO Image
+8/19/2009  hk283   DB_G00144093	  Edited the header to add Customer Name
+03/06/2012 kf176   DB_G00177299   Right Alligned the Value column in Work Order Image Tool Print.
+-->
+
+<!-- This is a sample  -->
+<FlexGrid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+
+	<Properties Cols="5:VT_I4" FixedCols="0:VT_I4" ExplorerBar="0:VT_I4" GridLines="1:VT_I4" OutlineBar="5:VT_I4"
+	AllowUserResizing="1:VT_UI4" AutoResize="1:VT_I4" Editable="0:VT_I4"/>
+	<ColoumnRowDetail CustomRowHeight="1:VT_I4" ColoumnNumber="0:VT_I4"/>
+	<!-- Add properties to the "FlexGrid" element as attribute in Name=Value format -->
+	<FixedRows>
+		<FixedRow >
+			<Column name="RES:Res1:140" />
+			<Column name="RES:Res1:141" />
+			<Column name="RES:Res1:142" />
+			<Column name="RES:Res1:440" />
+			<Column name="RES:Res1:442" />
+		</FixedRow>
+	</FixedRows>
+	
+
+	<data loopEnd="1">
+		<Node level = "0" loopStart="0" loopEnd="1" >
+			<Column order = "0" datasource ="OBJ:DOM:selectSingleNode(pID199999):getAttribute(DV)" />
+			<Node level = "1" loopStart="0" loopEnd="1" styleid="s1">
+				<Column order = "0" datasource ="OBJ:DOM:selectSingleNode(pID15):getAttribute(DV)" />
+				<Object name="FList" source="OBJ:DOM:selectNodes(aMP)"/>
+				<Node level = "2" loopStart="0" loopEnd="OBJ:FList:length" >
+					<Object name="FItem" source="OBJ:FList:item(LOOPINDEX2)"/>
+					<Column order = "0" datasource ="OBJ:FItem:getAttribute(N)" />
+					<Column order = "1" datasource ="OBJ:DOM:selectSingleNode(pToken):getAttribute(DV)" styleid="s2"/>
+					<Column order = "2" datasource ="OBJ:DOM:selectSingleNode(pToken):getAttribute(U)" />
+					<Column order = "3" datasource ="OBJ:DOM:selectSingleNode(pToken):getAttribute(LL)" />
+					<Column order = "4" datasource ="OBJ:DOM:selectSingleNode(pToken):getAttribute(UL)" />
+				</Node>	
+				<!-- Followinng is for sorting -->
+				<Object name="FlexNode" source="OBJ:VSFLEXGRID:GetNode(NodeNum)" />	
+				<Object name="PlaceHolder" source="OBJ:FlexNode:Sort(1)" /> 
+			</Node>
+		</Node>
+		
+	</data>
+
+	<parameters>
+	 <parameter name="pID199999" source="/Image/Parameters/P[@ID=199999]"/>
+	 <parameter name="pID15" source="/Image/Parameters/P[@ID=15]"/>
+	 <parameter name="aMP" source="/Image/Usages/U[@ID=1]/P[@R=1 and @B=0]"/>
+	 <parameter name="pToken" source="/Image/Parameters/P[@R=1 and @ID=" source1="OBJ:FItem:getAttribute(ID)" source2="]" />
+	 <parameter name="NodeNum" source="OBJ:VSFLEXGRID:GetNodeRow(4,1)" type="VT_I4"/>
+	</parameters>
+
+	<icons>
+	</icons>
+	
+	<combolists>
+	</combolists>
+	
+	<styles>
+		<style id="s1" CellFontBold="1:VT_I4" CellAlignMent="0:VT_I4" />
+		<style id="s2"  CellAlignMent="6:VT_I4"/>
+	</styles>
+	
+	<resources>
+		<resource id="Res1" CLSID="{B0B2DB8D-6709-4D33-B0C0-33369D93EAED}" />
+	</resources>
+	
+	<printing HdrFontSize="8" >
+		<header>
+			<line>
+				<center source="RES:Res1:274" />
+			</line>
+			<line>
+				<left source="RES:Res1:270" />
+				<left source="OBJ:DOM:selectSingleNode(/Image/Header/ESerial):getAttribute(DisplayValue)" />
+				<right source="INSITE - " />
+				<right source="OBJ:DOM:selectSingleNode(/Image):getAttribute(ImageVersion)" />
+			</line>
+			<line>
+				<left source="RES:Res1:269" />
+				<left source="OBJ:DOM:selectSingleNode(/Image/Header/UNumber):getAttribute(DisplayValue)" />
+				<right source="RES:Res1:271" />
+				<right source="OBJ:DOM:selectSingleNode(/Image/Header/VMake):getAttribute(DisplayValue)" />
+			</line>
+			<line>
+				<left source="RES:Res1:272" />
+				<left source="OBJ:DOM:selectSingleNode(/Image/Header/WOName):getAttribute(DisplayValue)" />
+				<right source="RES:Res1:273" />
+				<right source="OBJ:DOM:selectSingleNode(/Image/Header/IName):getAttribute(DisplayValue)" />
+			</line>
+			<line>
+				<right source="RES:Res1:275"/>
+				<right source="OBJ:DOM:selectSingleNode(/Image/Header/CustomerName):getAttribute(DisplayValue)"/>
+			</line>
+		</header>
+		
+	</printing>
+
+</FlexGrid>

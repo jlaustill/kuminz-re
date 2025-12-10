@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE module SYSTEM "../htmlentities.dtd">
+<XML_RESOURCE>
+	<RESOURCE Tag="1001" Type="String Table" Description="Message String Table">
+		<STRING ID="12" Context="">EGR Valve / Turbocharger Operational Test</STRING>
+		<STRING ID="13" Context="">The EGR / Turbocharger Operational test is an automated test that exercises the EGR valve and Variable Geometry Turbocharger to determine if they are operating properly.</STRING>
+		<STRING ID="14" Context="">Tested Item</STRING>
+		<STRING ID="15" Context="">Result</STRING>
+		<STRING ID="16" Context="">Units</STRING>
+		<STRING ID="17" Context="">Parameter</STRING>
+		<STRING ID="18" Context="">Value</STRING>
+		<STRING ID="19" Context="">Unit</STRING>
+		<STRING ID="20" Context="">%</STRING>
+		<STRING ID="21" Context="">Percent Change</STRING>
+		<STRING ID="22" Context="">Start Turbocharger Speed</STRING>
+		<STRING ID="23" Context="">End Turbocharger Speed</STRING>
+		<STRING ID="24" Context="">Pass</STRING>
+		<STRING ID="25" Context="">Fail</STRING>
+		<STRING ID="26" Context="">EGR valve Test</STRING>
+		<STRING ID="27" Context="">Turbocharger Test</STRING>
+		<STRING ID="28" Context="">Instructions:</STRING>
+		<STRING ID="29" Context="">Test Choices:</STRING>
+		<STRING ID="30" Context="">Status:</STRING>
+		<STRING ID="31" Context="">EGR Valve</STRING>
+		<STRING ID="32" Context="">Turbocharger</STRING>
+		<STRING ID="33" Context="">All Components</STRING>
+		<STRING ID="34" Context="">Results:</STRING>
+		<STRING ID="35" Context="">The EGR Valve Test allows the operator to move the EGR Valve when the engine is not running and the vehicle is not moving.  The actuator contains a lightweight return spring. This may or may not cause the EGR valve to return to the open position when the EGR motor is turned off.  A high pitched frequency noise can normally be heard when the EGR Valve motor is on.</STRING>
+		<STRING ID="36" Context="">Help</STRING>
+		<STRING ID="37" Context="">The Turbocharger Operational Test is an automated test that exercises the Variable Geometry Turbocharger to determine if it is operating properly.</STRING>
+		<STRING ID="38" Context="">Current Parameter Values:</STRING>
+		<STRING ID="120" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16600&lt;/ErrorNumber&gt;&lt;Description&gt;An unknown error occurred.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="121" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16601&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while loading the title of this test.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="122" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16602&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while loading the subtitle of this test.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="123" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16603&lt;/ErrorNumber&gt;&lt;Description&gt;Unable to start the EGR/VGT Operational Test.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="124" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16604&lt;/ErrorNumber&gt;&lt;Description&gt;Base class initialization failed.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="125" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16605&lt;/ErrorNumber&gt;&lt;Description&gt;Could not Query logic.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="126" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16606&lt;/ErrorNumber&gt;&lt;Description&gt;Could not register as publisher.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="127" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16607&lt;/ErrorNumber&gt;&lt;Description&gt;Could not register as subscriber.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="128" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16608&lt;/ErrorNumber&gt;&lt;Description&gt;The UI has entered an invalid state.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="129" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16609&lt;/ErrorNumber&gt;&lt;Description&gt;Could not unpublish test events.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart INSITE before attempting to restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="130" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16610&lt;/ErrorNumber&gt;&lt;Description&gt;Could not unsubscribe from receiving system messages.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart INSITE before attempting to restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="131" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16611&lt;/ErrorNumber&gt;&lt;Description&gt;Logic returned an invalid status message.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="132" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16612&lt;/ErrorNumber&gt;&lt;Description&gt;Logic reported an error condition.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="133" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16613&lt;/ErrorNumber&gt;&lt;Description&gt;Logic could not properly fire a thread.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart INSITE.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="134" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16614&lt;/ErrorNumber&gt;&lt;Description&gt;Logic could not query the thread service.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="136" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16616&lt;/ErrorNumber&gt;&lt;Description&gt;Could not query the reason for the stop condition.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="137" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16617&lt;/ErrorNumber&gt;&lt;Description&gt;Could not correctly close the EGR Valve.  Aborting test.&lt;/Description&gt;&lt;Suggestion&gt;Verify the EGR Valve is in working order and try the test again.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="138" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16618&lt;/ErrorNumber&gt;&lt;Description&gt;Could not correctly open the VGT Actuator.  Aborting test.&lt;/Description&gt;&lt;Suggestion&gt;Verify the VGT Actuator is in working order and try the test again.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="139" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16619&lt;/ErrorNumber&gt;&lt;Description&gt;Invalid pointer passed into ECMRead.  Aborting read.&lt;/Description&gt;&lt;Suggestion&gt;Please verify connection to the ECM and reattempt this test.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="140" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16620&lt;/ErrorNumber&gt;&lt;Description&gt;ECMRead could not complete ReadNode call.  Aborting read.&lt;/Description&gt;&lt;Suggestion&gt;Please verify connection to the ECM and reattempt this test.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="141" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16621&lt;/ErrorNumber&gt;&lt;Description&gt;ECMWrite could not complete CommitNode call.  Aborting write.&lt;/Description&gt;&lt;Suggestion&gt;Please verify connection to the ECM and reattempt this test.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="142" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16622&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while setting up the test.  Aborting test.&lt;/Description&gt;&lt;Suggestion&gt;Please verify connection to the ECM and reattempt this test.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="143" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16623&lt;/ErrorNumber&gt;&lt;Description&gt;Could not correctly open the EGR Valve.  Aborting test.&lt;/Description&gt;&lt;Suggestion&gt;Verify the EGR Valve is in working order and try the test again.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="144" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16624&lt;/ErrorNumber&gt;&lt;Description&gt;Could not correctly close the VGT Actuator.  Aborting test.&lt;/Description&gt;&lt;Suggestion&gt;Verify the VGT Actuator is in working order and try the test again.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="145" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16625&lt;/ErrorNumber&gt;&lt;Description&gt;The EGR Valve position sensor indicates the valve is not fully closed.  The Turbocharger test will not run unless the EGR valve is fully closed.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="146" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16626&lt;/ErrorNumber&gt;&lt;Description&gt;A critical failure occurred while stopping the test.&lt;/Description&gt;&lt;Suggestion&gt;Please reset the test by closing ECM Diagnostic Tests and cycling the keyswitch.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="147" Context="">Failed EGR Valve</STRING>
+		<STRING ID="148" Context="">Failed EGR Valve Position Sensor</STRING>
+		<STRING ID="201" Context="">Choose the component to test and select Start to begin.  When the test starts, engine speed will be increased to 1200 rpm.</STRING>
+		<STRING ID="202" Context="">The vehicle air system must be fully charged to properly perform this test.  Choose the component to test and select Start to begin.  When the test starts, engine speed will be increased to 1200 rpm.</STRING>
+		<STRING ID="218" Context="">The test was stopped before completion.</STRING>
+		<STRING ID="219" Context="">No results will be displayed.</STRING>
+		<STRING ID="220" Context="">The EGR Valve/Turbocharger Operational Test is running. To stop the test, select Stop.</STRING>
+		<STRING ID="221" Context="">The test aborted due to an internal error.</STRING>
+		<STRING ID="222" Context="">The test stopped due to an invalid engine condition.</STRING>
+		<STRING ID="500" Context="">Starting test, Please Wait</STRING>
+		<STRING ID="501" Context="">Opening turbocharger, Please Wait</STRING>
+		<STRING ID="502" Context="">Closing turbocharger</STRING>
+		<STRING ID="503" Context="">Closing EGR Valve, Please Wait</STRING>
+		<STRING ID="504" Context="">Opening turbocharger</STRING>
+		<STRING ID="505" Context="">Test stopped</STRING>
+		<STRING ID="506" Context="">Starting EGR Valve Test</STRING>
+		<STRING ID="507" Context="">Recording value, Please Wait</STRING>
+		<STRING ID="508" Context="">Opening EGR Valve, Please Wait</STRING>
+		<STRING ID="509" Context="">Calculating results, Please Wait</STRING>
+		<STRING ID="510" Context="">EGR Test Complete</STRING>
+		<STRING ID="511" Context="">Starting Turbocharger Test</STRING>
+		<STRING ID="512" Context="">Cycling turbocharger</STRING>
+		<STRING ID="513" Context="">Closing turbocharger, Please Wait</STRING>
+		<STRING ID="514" Context="">Setting up for Turbocharger test, Please Wait</STRING>
+		<STRING ID="515" Context="">Turbocharger test complete</STRING>
+		<STRING ID="516" Context="">Test stopped by user</STRING>
+		<STRING ID="517" Context="">Stopping test...</STRING>
+		<STRING ID="518" Context="">The test was stopped due to the engine's state.</STRING>
+		<STRING ID="600" Context="">Test stopped, turbocharger speed too high. </STRING>
+		<STRING ID="601" Context="">Test stopped, engine speed NOT detected.  Start engine and restart test.</STRING>
+		<STRING ID="602" Context="">Test stopped, vehicle speed detected.  Stop vehicle and restart test.</STRING>
+		<STRING ID="603" Context="">Test stopped, turbocharger speed fault detected.  Troubleshoot turbocharger speed fault codes before proceeding with this test.</STRING>
+		<STRING ID="604" Context="">Test stopped, turbocharger speed fault detected.  Troubleshoot turbocharger speed fault codes before proceeding with this test.</STRING>
+		<STRING ID="605" Context="">Test stopped, turbocharger speed fault detected.  Troubleshoot turbocharger speed fault codes before proceeding with this test.</STRING>
+		<STRING ID="606" Context="">Test stopped, turbocharger control shutoff valve circuit fault detected.  Troubleshoot the turbocharger control shutoff valve circuit fault code before proceeding with this test.</STRING>
+		<STRING ID="607" Context="">Test stopped, turbocharger control shutoff valve circuit fault detected.  Troubleshoot the turbocharger control shutoff valve circuit fault code before proceeding with this test.</STRING>
+		<STRING ID="608" Context="">Test stopped, turbocharger control valve circuit fault detected.  Troubleshoot the turbocharger control valve circuit fault code before proceeding with this test</STRING>
+		<STRING ID="609" Context="">Test stopped, turbocharger control valve circuit fault detected.  Troubleshoot the turbocharger control valve circuit fault code before proceeding with this test</STRING>
+		<STRING ID="610" Context="">Test stopped, turbocharger position sensor circuit fault detected.</STRING>
+		<STRING ID="611" Context="">Test stopped, turbocharger position sensor circuit fault detected.</STRING>
+		<STRING ID="612" Context="">Test stopped, EGR valve position sensor circuit fault detected.  Troubleshoot the EGR valve position sensor circuit fault code before proceeding with this test.</STRING>
+		<STRING ID="613" Context="">Test stopped, EGR valve position sensor circuit fault detected.  Troubleshoot the EGR valve position sensor circuit fault code before proceeding with this test.</STRING>
+		<STRING ID="614" Context="">Engine speed cannot be set to required test speed.  Select Start to restart test.</STRING>
+		<STRING ID="615" Context="">Vehicle speed detected.  Stop vehicle and restart test.</STRING>
+		<STRING ID="616" Context="">ECM parameter Vehicle Speed Sensor Type parameter is set to "None".  This test will not run with a sensor type of None</STRING>
+		<STRING ID="617" Context="">Engine speed NOT detected.  Start engine and restart test.</STRING>
+		<STRING ID="618" Context="">Engine coolant temperature is below 175 degrees Fahrenheit (79 degrees Celsius).  Test will not run unless engine coolant temperature is above 175 degrees Fahrenheit (79 degrees Celsius).</STRING>
+		<STRING ID="619" Context="">ECM Calibration does not support this test</STRING>
+		<STRING ID="620" Context="">ECM Calibration does not support this test</STRING>
+		<STRING ID="621" Context="">Turbocharger speed fault detected.  Troubleshoot turbocharger speed fault codes before proceeding with this test.</STRING>
+		<STRING ID="622" Context="">Turbocharger speed fault detected.  Troubleshoot turbocharger speed fault codes before proceeding with this test.</STRING>
+		<STRING ID="623" Context="">Turbocharger speed fault detected.  Troubleshoot turbocharger speed fault codes before proceeding with this test.</STRING>
+		<STRING ID="624" Context="">Turbocharger control shutoff valve circuit fault detected.  Troubleshoot the turbocharger control shutoff valve circuit fault code before proceeding with this test.</STRING>
+		<STRING ID="625" Context="">Turbocharger control shutoff valve circuit fault detected.  Troubleshoot the turbocharger control shutoff valve circuit fault code before proceeding with this test.</STRING>
+		<STRING ID="626" Context="">Turbocharger control valve circuit fault detected.  Troubleshoot the turbocharger control valve circuit fault code before proceeding with this test.</STRING>
+		<STRING ID="627" Context="">Turbocharger control valve circuit fault detected.  Troubleshoot the turbocharger control valve circuit fault code before proceeding with this test.</STRING>
+		<STRING ID="628" Context="">EGR valve position sensor circuit fault detected.  Troubleshoot the EGR valve position sensor circuit fault code before proceeding with this test.</STRING>
+		<STRING ID="629" Context="">EGR valve position sensor circuit fault detected.  Troubleshoot the EGR valve position sensor circuit fault code before proceeding with this test.</STRING>
+		<STRING ID="630" Context="">Cruise Control/PTO On/Off switch is On. Turn the switch off and restart the test.</STRING>
+		<STRING ID="631" Context="">EGR valve position failed automatic calibration procedure.  Troubleshoot the EGR Valve fault code before proceeding with this test.</STRING>
+		<STRING ID="632" Context="">The EGR Valve position sensor indicates the valve is not fully closed.  The Turbocharger test will not run unless the EGR valve is fully closed.  Troubleshoot the EGR Valve before running this test.</STRING>
+		<STRING ID="633" Context="">The Turbocharger Actuator is not fully open.</STRING>
+		<STRING ID="634" Context="">Show</STRING>
+	</RESOURCE>
+</XML_RESOURCE>

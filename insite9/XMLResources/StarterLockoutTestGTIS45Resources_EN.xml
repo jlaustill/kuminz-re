@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE module SYSTEM "../htmlentities.dtd">
+<XML_RESOURCE>
+	<RESOURCE Tag="1001" Type="String Table" Description="Message String Table">
+	    <STRING ID="20" Context="">Cummins INSITE</STRING>
+		<STRING ID="200" Context="">Starter Lockout Relay Driver Override Test</STRING>
+		<STRING ID="201" Context="">This test allows the user to manually override the starter lockout relay driver.</STRING>
+		<STRING ID="202" Context="">This test is not supported by the current calibration.</STRING>
+		<STRING ID="203" Context="">Initial Conditions\r\n1. Engine stopped\r\nSteps\r\n1. Select the desired Override position\r\n2. Select Start\r\n3. Monitor operation of the Starter Lockout Relay\r\nAdditional Information\r\n1. If Close is selected, ensure that the engine can be started. If Open is selected, ensure that the engine cannot be started\r\n2. Test is used to manually override the starter lockout relay driver\r\n3. Test will run for a maximum of %1!d! seconds\r\n4. If required, select Stop to end the test early</STRING>
+		<STRING ID="204" Context="">This test is not enabled in ECM</STRING>
+		<STRING ID="205" Context="">Running</STRING>
+		<STRING ID="206" Context="">Test Stopped.</STRING>
+		<STRING ID="209" Context="">ECM Communication Lost. All test parameters will return to their original value when keyswitch is turned off.</STRING>
+		<STRING ID="210" Context="">The ECM detects a condition in which the Starter Lockout Relay Driver Override Test cannot be ran. Please select Help for further detail.\r\nECM Response Code : %ld </STRING>
+		<STRING ID="211" Context="">\r\n</STRING>
+		<STRING ID="212" Context="">This test is not supported by the current calibration.</STRING>
+		<STRING ID="213" Context="">ECM Communication Lost.  All test parameters will return to their original value when the keyswitch is turned off or the timer expires.</STRING>
+		<STRING ID="300" Context="">Instructions:</STRING>
+		<STRING ID="301" Context="">Overrides</STRING>
+		<STRING ID="302" Context="">Monitors</STRING>
+		<STRING ID="303" Context="">Status</STRING>
+		<STRING ID="304" Context="">Close</STRING>
+		<STRING ID="305" Context="">Open</STRING>
+		<STRING ID="306" Context="">Name</STRING>
+		<STRING ID="307" Context="">Value</STRING>
+		<STRING ID="308" Context="">Units</STRING>
+		<STRING ID="309" Context="">Starter Lockout Relay Override Time Remaining</STRING>
+    <STRING ID="310" Context="">Show</STRING>
+    <STRING ID="16500" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16500&lt;/ErrorNumber&gt;&lt;Description&gt;An unidentified error occurred in the ECM Test "StarterLockoutRelayDriverOverride Test".&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="16501" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16501&lt;/ErrorNumber&gt;&lt;Description&gt;An unidentified error occurred in the ECM Test "StarterLockoutRelayDriverOverride Test".&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="16550" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16550&lt;/ErrorNumber&gt;&lt;Description&gt;An unidentified error occurred in the ECM Test "StarterLockoutRelayDriverOverride Test".&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="16551" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16551&lt;/ErrorNumber&gt;&lt;Description&gt;An unidentified error occurred in the ECM Test "StarterLockoutRelayDriverOverride Test".&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="16560" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16560&lt;/ErrorNumber&gt;&lt;Description&gt;An unidentified error occurred in the ECM Test "StarterLockoutRelayDriverOverride Test".&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="16561" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16561&lt;/ErrorNumber&gt;&lt;Description&gt;An unidentified error occurred in the ECM Test "StarterLockoutRelayDriverOverride Test".&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="16563" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16563&lt;/ErrorNumber&gt;&lt;Description&gt;An unidentified error occurred in the ECM Test "StarterLockoutRelayDriverOverride Test".&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="16502" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16502&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to publish necessary events. &lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="16554" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16554&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to publish necessary events. &lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="16503" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16503&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to unpublish published events.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="16555" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16555&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to unpublish published events.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		
+		<STRING ID="16552" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16552&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to subscribe events.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="16553" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16553&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to unsubscribe events.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="16556" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16556&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to get logic interface pointer&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+
+		
+		<STRING ID="16508" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16508&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to acquire necessary kernel resources.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="16504" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16504&lt;/ErrorNumber&gt;&lt;Description&gt;Could not request the ECM to start test.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="16557" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16557&lt;/ErrorNumber&gt;&lt;Description&gt;Could not request the ECM to start test.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="16505" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16505&lt;/ErrorNumber&gt;&lt;Description&gt;Could not request the ECM to stop test.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="16558" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16558&lt;/ErrorNumber&gt;&lt;Description&gt;Could not request the ECM to stop test.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="16559" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16559&lt;/ErrorNumber&gt;&lt;Description&gt;Could not request the ECM to stop test.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="16506" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16506&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred during an internal operation on an XML DOM or DOC object.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="16565" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16565&lt;/ErrorNumber&gt;&lt;Description&gt;Failure while requesting data from ECM Services.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="16566" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16566&lt;/ErrorNumber&gt;&lt;Description&gt;Failure while requesting data from ECM Services.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="16567" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16567&lt;/ErrorNumber&gt;&lt;Description&gt;Failure while requesting data from ECM Services.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="16568" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16568&lt;/ErrorNumber&gt;&lt;Description&gt;Failure while writing data to ECM Services.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="16562" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16562&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to get test availability in ECM&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="16564" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16564&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to get connection type.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="16569" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16569&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to launch help.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="16570" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16570&lt;/ErrorNumber&gt;&lt;Description&gt;This test is not supported by the current calibration.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="16571" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16571&lt;/ErrorNumber&gt;&lt;Description&gt;Unable to load string in the ECM Test "Starter Lockout Relay Driver Override Test".&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		
+		<STRING ID="16509" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16509&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to add module to monitor service.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="16510" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16510&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to add parameter to monitor.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="16511" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16511&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to advise connection point server.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="16512" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16512&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to find logic events.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="16513" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16513&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to get connection point server.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="16514" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16514&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to get monitor id.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="16515" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16515&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to get monitors pointer.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="16516" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16516&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to read response code token.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="16517" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16517&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to read state token.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="16518" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16518&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to read test maximum time token.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="16519" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16519&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to subscribe events.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="16520" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16520&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to write driver token.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="16521" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16521&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to write start-stop token.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="16523" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16523&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to get TIS support&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="16524" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16524&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to get test enable&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+	</RESOURCE>
+</XML_RESOURCE>

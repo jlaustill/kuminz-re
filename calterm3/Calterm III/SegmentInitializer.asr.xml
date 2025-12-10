@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ActivationSpecificationRecord xmlns="http://www.macrovision.com/fnp/2004/11/activation">
+<Header>
+<Version>1</Version>
+<Id>100566</Id>
+<PublisherId>8258816</PublisherId>
+</Header>
+<ConfigData>
+<ClientConfig>
+<Id>2</Id>
+<Revision>1260814146405</Revision>
+<RevisionType>ASR</RevisionType>
+<Data>3BBA78E292668AB8388C7D2869E2F689D047DA8477EBC691CE84D4869EA8AFF51F2D80A811AD47624F661E5F66BA37E385DCE77687EBCB03C2179CC64D64D77A76955DF5AC8500002A15FE5C82240231D468883F0E4FA422B2486D61DCD7C2FEC96C67D0B4AAD5300C01445165798104AB59D64EB2F81CE0D2CB41FCD0D4943F62CB8FCFCD61A7CC346622ABD03DEC3B3304D981C7D04FD9697EE60B8067F16DC4D57C6D5A6338B0CAEC23E4EB5D806D1642D4AEA5A1B9E331775315117345680EC8AB09A0CB3D37CE1C272D4F171FB1E2BDFFE340061C727C</Data>
+</ClientConfig>
+</ConfigData>
+<DataDictionary>
+<Entries>
+<Entry>
+<Key>PUBLISHER_DEFINED_CRITERION</Key>
+<Value>LOCAL_ALWAYS</Value>
+</Entry>
+<Entry>
+<Key>PUBLISHER_DEFINED_DURATION</Key>
+<Value>2678400</Value>
+</Entry>
+</Entries>
+</DataDictionary>
+<FulfillmentRecord>
+<FulfillmentRecordHeader>
+<VersionNumber>1</VersionNumber>
+</FulfillmentRecordHeader>
+<FulfillmentRecordData>
+<FulfillmentId>LOCAL_TRIAL_FID_100566</FulfillmentId>
+<FulfillmentDictionary>
+<Entries>
+<Entry>
+<Key>ProductId</Key>
+<Value>NAME=Calterm;VERSION=1.0</Value>
+</Entry>
+<Entry>
+<Key>features</Key>
+<Value>
+
+INCREMENT AllowCalterm cummins 1.0 permanent 1 ISSUED=14-dec-2009 \
+	START=13-dec-2009 TS_OK SIGN="0D21 A716 8C14 5DF8 7A67 BBC4 \
+	A8B6 C481 7C92 12A6 6F98 77B1 F93F F4C8 64BE 012E A5DB 9144 \
+	387E 074A 2315 CEE8 ECF7 E4A1 B9C8 F1CA 7AC9 C439 84E3 83B3"
+</Value>
+</Entry>
+<Entry>
+<Key>availAct</Key>
+<Value>1</Value>
+</Entry>
+<Entry>
+<Key>servOrLocal</Key>
+<Value>2</Value>
+</Entry>
+<Entry>
+<Key>description</Key>
+<Value />
+</Entry>
+<Entry>
+<Key>serverHostID</Key>
+<Value>FLEXID=6-a6300155</Value>
+</Entry>
+<Entry>
+<Key>name</Key>
+<Value>CaltermSegmentInitializerASR</Value>
+</Entry>
+<Entry>
+<Key>expiry</Key>
+<Value>permanent</Value>
+</Entry>
+<Entry>
+<Key>fulfillmentType</Key>
+<Value>1</Value>
+</Entry>
+</Entries>
+</FulfillmentDictionary>
+</FulfillmentRecordData>
+</FulfillmentRecord>
+<Signature>148E3442289BF9A7D5956D6FD1D586554AA61A744EEEDC3698504428903D09C5A9803C4FDC28F1B33801BA5DC62684E1B77C667C2250A62B97C5404A</Signature>
+</ActivationSpecificationRecord>

@@ -1,0 +1,116 @@
+<!-- This is a sample  -->
+<FlexGrid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Properties Cols="6:VT_I4" FixedCols="0:VT_I4" ExtendLastCol="1:VT_I4" ExplorerBar="0:VT_I4" GridLines="1:VT_I4" OutlineBar="6:VT_I4" AllowUserResizing="1:VT_UI4" Editable="0:VT_I4" AutoResize="1:VT_I4"/>
+	<!-- Add properties to the &quot;FlexGrid&quot; element as attribute in Name=Value format -->
+	<FixedRows>
+		<FixedRow styleid="s1">
+			<Column name="RES:Res1:329"/>
+			<Column name="RES:Res1:330"/>
+			<Column name="RES:Res1:331"/>
+		</FixedRow>
+	</FixedRows>
+	<data level="0" loopEnd="1">
+	
+		<!-- If MM is not enabled in ECM , print "Maintenance Monitor is currently disabled in the ECM" -->
+		<Node level="0" loopStart="OBJ:DOM:selectSingleNode(pMonitor):getAttribute(rv)" loopEnd="1" styleid="s1">
+			<Column order="0" datasource="RES:Res1:334"/>
+		</Node>
+		
+		
+		<Node level="0" loopStart="0" loopEnd="OBJ:DOM:selectSingleNode(pMonitor):getAttribute(rv)" styleid="s1">
+			<Node level="0" loopEnd="1" styleid="s2">
+				<Column order="0" datasource="OBJ:DOM:selectSingleNode(pMonitor):getAttribute(n)"/>
+				<Column order="1" datasource="OBJ:DOM:selectSingleNode(pMonitor):getAttribute(v)"/>
+				<Object name="FData" source="OBJ:DOM:selectNodes(pFeature)"/>
+				<Node level="1" loopStart="0" loopEnd="OBJ:FData:length" styleid="s3">
+					<Object name="Item" source="OBJ:FData:nextNode"/>
+					<Column order="0" datasource="OBJ:Item:getAttribute(n)"/>
+					<Column order="1" datasource="OBJ:Item:getAttribute(v)"/>
+					<Column order="2" datasource="OBJ:Item:getAttribute(u)"/>
+				</Node>
+			</Node>
+			
+			<!-- One Blank Line -->
+			<Node level="0" loopEnd="1">
+				<Column order="0" datasource=""/>
+				<Column order="1" datasource=""/>
+				<Column order="2" datasource=""/>
+				<Column order="3" datasource=""/>
+				<Column order="4" datasource=""/>
+				<Column order="5" datasource=""/>
+			</Node>
+			
+			<!-- Log Data Heading -->
+			<Node level="0" loopStart="0" loopEnd="1" styleid="header">
+				<Object name="hdr" source="OBJ:DOM:selectSingleNode(pLog)"/>
+				<Column order="0" datasource="OBJ:hdr:getAttribute(text1)"/>
+				<Column order="1" datasource="OBJ:hdr:getAttribute(text2)"/>
+				<Column order="2" datasource="OBJ:hdr:getAttribute(text3)"/>
+				<Column order="3" datasource="OBJ:hdr:getAttribute(text4)"/>
+				<Column order="4" datasource="OBJ:hdr:getAttribute(text5)"/>
+				<Column order="5" datasource="OBJ:hdr:getAttribute(text6)"/>
+			</Node>
+			<Object name="LogData" source="OBJ:DOM:selectNodes(pLogData)"/>
+				<Node level="0" loopStart="0" loopEnd="OBJ:LogData:length">
+					<Object name="Row" source="OBJ:LogData:nextNode"/>
+					<Column order="0" datasource="OBJ:Row:getAttribute(n)" styleid="s4"/>
+					<Column order="1" datasource="OBJ:Row:getAttribute(text1)" styleid="s4"/>
+					<Column order="2" datasource="OBJ:Row:getAttribute(text2)" styleid="s4"/>
+					<Column order="3" datasource="OBJ:Row:getAttribute(text3)" styleid="s4"/>
+					<Column order="4" datasource="OBJ:Row:getAttribute(text4)" styleid="s4"/>
+					<Column order="5" datasource="OBJ:Row:getAttribute(text5)" styleid="s4"/>
+				</Node>
+		</Node> 
+	</data>
+	<parameters>
+		<parameter name="pMonitor" source="/root/obj[@objType=&apos;tree&apos;]"/>
+		<parameter name="pFeature" source="/root/obj[@objType=&apos;tree&apos;]/p"/>
+		<parameter name="pLog" source="/root/obj[@objType=&apos;grid&apos;]/row[@style=&apos;header&apos;]"/>
+		<parameter name="pLogData" source="/root/obj[@objType=&apos;grid&apos;]/row[not(@style)]"/>
+	</parameters>
+	<icons>
+	</icons>
+	<combolists>
+	</combolists>
+	<styles>
+		<style id="s1" CellFontBold="1:VT_I4" CellAlignMent="0:VT_I4"/>
+		<style id="s2" CellFontBold="1:VT_I4" CellAlignMent="0:VT_I4"/>
+		<style id="s3" CellFontBold="0:VT_I4" CellAlignMent="0:VT_I4"/>
+		<style id="s4" CellBackColor="OBJ:Row:getAttribute(backColor)"/> 
+		<style id="header" CellFontBold="1:VT_I4" CellBackColor="12632256"/>
+	</styles>
+	<resources>
+		<resource id="Res1" CLSID="{1C628621-473B-4EA4-9DC6-7ED92C57DD9E}\Pages\{EC922506-2466-11d5-A2E8-0004AC9685A1}" LoadDLL="TRUE"/>
+	</resources>
+
+	<printing HdrFontSize="8">
+		<header>
+            <line>
+                <center source="RES:Res1:337"/>
+            </line>
+            <line>
+                <left source="RES:Res1:338"/>
+                <left source="OBJ:DOM:selectSingleNode(/root/Image/Header/ESerial):getAttribute(DisplayValue)"/>
+				<right source="INSITE - " />
+			    <right source="OBJ:DOM:selectSingleNode(/root/Image):getAttribute(ImageVersion)" />
+			</line>
+			<line>	
+				<left source="RES:Res1:339" />
+				<left source="OBJ:DOM:selectSingleNode(/root/Image/Header/UNumber):getAttribute(DisplayValue)" />
+				<right source="RES:Res1:340" />
+				<right source="OBJ:DOM:selectSingleNode(/root/Image/Header/VMake):getAttribute(DisplayValue)" />
+			</line>
+			<line>
+				<left source="RES:Res1:341" />
+				<left source="OBJ:DOM:selectSingleNode(/root/Image/Header/WOName):getAttribute(DisplayValue)" />
+				<right source="RES:Res1:342" />
+				<right source="OBJ:DOM:selectSingleNode(/root/Image/Header/IName):getAttribute(DisplayValue)" />
+			</line>
+			<line>
+				<right source="RES:Res1:351" />
+				<right source="OBJ:DOM:selectSingleNode(/root/Image/Header/CustomerName):getAttribute(DisplayValue)" />
+			</line>
+		</header>
+	</printing>
+
+</FlexGrid>

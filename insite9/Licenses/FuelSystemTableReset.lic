@@ -1,0 +1,14 @@
+<LicenseFile>
+	<ECMReqLicense Expiration="permanent" Name="FuelSysTblReset_Reset_PWMaster" VendorDaemon="cummins" Key="BE307C60C0CE" IsValid="" ID="FuelSysTblReset_Reset_PWMaster" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="MASTER"/></ECMPasswords>
+	</ECMReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="FuelSysTblReset_Reset_PWAdjust" VendorDaemon="cummins" Key="4553900E5000" IsValid="" ID="FuelSysTblReset_Reset_PWAdjust" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="ADJUSTABLES"/></ECMPasswords>
+	</ECMReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="FuelSysTblReset_Reset_PWReset" VendorDaemon="cummins" Key="0F27C2DC8CB3" IsValid="" ID="FuelSysTblReset_Reset_PWReset" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="RESET"/></ECMPasswords>
+	</ECMReqLicense>
+</LicenseFile>

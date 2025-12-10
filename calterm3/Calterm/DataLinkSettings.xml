@@ -1,0 +1,17 @@
+<?xml version="1.0" standalone="yes"?>
+<Connections>
+  <Connection>
+    <DataLinkID>0</DataLinkID>
+    <DataLinkName>DefaultDataLinkSetting</DataLinkName>
+    <ProtocolType>Cummins Proprietary (CLIP/CPP)</ProtocolType>
+    <DataLinkProtocol>J1939</DataLinkProtocol>
+    <DLAPrefix>NXULNK32</DLAPrefix>
+    <DLAChannelID>1</DLAChannelID>
+    <Channel>1</Channel>
+    <Port />
+    <IPAddress />
+    <BaudRate>0</BaudRate>
+    <ECMCANID>0</ECMCANID>
+    <TOOLCANID>0</TOOLCANID>
+  </Connection>
+</Connections>

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE module SYSTEM "../htmlentities.dtd">
+<!-- CHANGE LOG -->
+<!-- RK: Changes to Insite Ver 7.1, 12/17/2007 
+     DB_G00105426 : Modified the description of the strings 201, 218, 232, 250 and added string 257.
+-->
+<!-- NK: Changes to Insite Ver 7.3, 12/15/2008 
+     DB_G00131859 : Modified the strings 218, 250.
+-->
+<!-- Paras: Changes to Insite Ver 7.3 FP1, 06/12/09
+	 DB_G00140172 : Modified the strings 216, 219.
+-->
+<!-- READING THE DATA BELOW
+<STRING ID="STRING ID" Context="">MESSAGE STRING</STRING>
+-->
+<XML_RESOURCE>
+	<RESOURCE Tag="1001" Type="String Table" Description="Message String Table">
+		<STRING ID="199" Context="">Inputs</STRING>
+		<STRING ID="200" Context="">Aftertreatment Shutoff Valve and Injector Override Test</STRING>
+		<STRING ID="202" Context="">Instructions</STRING>
+		<STRING ID="201" Context="">This test allows three modes of testing. Please refer to the Service Manual Section 14 - Engine Testing for more details.</STRING>
+		<STRING ID="204" Context="">Name</STRING>
+		<STRING ID="205" Context="">Value</STRING>
+		<STRING ID="206" Context="">Units</STRING>
+		<STRING ID="207" Context="">Status</STRING>
+		<STRING ID="208" Context="">Test Modes:</STRING>
+		<STRING ID="209" Context="">Delay Time:</STRING>
+		<STRING ID="210" Context="">MM:SS</STRING>
+		<STRING ID="211" Context="">System Test</STRING>
+		<STRING ID="212" Context="">Shutoff Valve</STRING>
+		<STRING ID="213" Context="">Injector Leak</STRING>
+		<STRING ID="214" Context="">Select OK to confirm the delay time setting of 0 second, select Cancel to reenter the delay time.</STRING>
+		<STRING ID="215" Context="">Restore the injector to its original setup in the Aftertreatment system</STRING>
+		<STRING ID="216" Context="">Caution: This test must be performed with the aftertreatment injector removed.\r\nIMPORTANT: Read and follow the steps in procedure 011-054 in the applicable service manual, before performing this test.</STRING>
+		<STRING ID="217" Context="">Test cannot proceed due to error conditions, please close the test.</STRING>
+		<STRING ID="218" Context="">Steps\r\n1.    Please specify the delay time.\r\n2.    Press the Start button.\r\n3.    The test will stop automatically.\r\n\r\nAdditional Information\r\n1.    The test will begin after the delay time.\r\n2.    Press the Stop button to manually end the test.</STRING>
+		<STRING ID="219" Context="">Cummins INSITE</STRING>
+		<!-- Status messages -->
+		<STRING ID="230" Context="">The Test has not started.</STRING>
+		<STRING ID="231" Context="">The System Test is currently running. This may take up to 3 minutes.</STRING>
+		<STRING ID="232" Context="">The Test has Stopped</STRING>
+		<STRING ID="233" Context="">There are one or more faults in the ECM preventing the test to start. Troubleshoot the fault(s) and then restart the test.</STRING>
+		<STRING ID="234" Context="">The ECM has detected a condition in which it will not allow the test to run. Engine speed is needed to run this test. Please start the engine, and restart the test.</STRING>
+		<STRING ID="235" Context="">Delay Time in progress.</STRING>
+		<!--modified string to reflect correct message when timer expires.-->
+		<STRING ID="236" Context="">The timer has expired.  Select Start to restart the test.</STRING>
+		<STRING ID="237" Context="">The Aftertreatment Injector Leak Test is currently running. Select Stop after verification of the Injector is complete.</STRING>
+		<STRING ID="238" Context="">The Aftertreatment Shutoff Valve Test is currently running. Select Stop after verification of the shutoff valve is complete.</STRING>
+		<STRING ID="239" Context="">INSITE detects an error in test status.\z Test Status Code : </STRING>
+		<STRING ID="240" Context="">The ECM detects a condition in which the Aftertreatment Shutoff Valve and Injector Override Test cannot be ran. Please select help for further detail.\z ECM Response Code : </STRING>
+		<!-- When Op_Res_code != SUCCESS -->
+		<STRING ID="241" Context="">INSITE detects an error in the ECMs. Please recalibrate the ECMs.</STRING>
+		<!-- When IsTestEnabled() fails because it is enabled in more than one ECMs-->
+		<STRING ID="242" Context="">Select appropriate Test, specify delay time and select Start to begin test.</STRING>
+		<!-- When IsTestEnabled() succeeds -->
+		<STRING ID="243" Context="">The Aftertreatment Shutoff Valve and Injector Override Test is not supported by the current calibration.</STRING>
+		<!-- When IsTestEnabled() fails with enable token != 1 -->
+		<STRING ID="244" Context="">Test stopped. Select Start to start the test.</STRING>
+		<!-- When Test is stopped -->
+		<STRING ID="257" Context="">The Test is Complete</STRING>
+		<!-- When the timer expires -->
+		<!-- End -->
+		<!-- Instruction messages -->
+		<STRING ID="250" Context="">1) The System Test involves opening both the injector and shutoff valve and injecting 300ml of fuel within 2.5 minutes allowing detection of problems with the aftertreatment system.\r\n2) The Aftertreatment Shutoff Valve Test involves opening the injector and closing the shutoff valve allowing detection of problems with the shutoff valve.\r\n3) The Aftertreatment Injector Leak Test involves opening the shutoff valve and closing the injector allowing detection of a leaking injector.\r\n\r\nInitial Conditions\r\n1.    Engine must be running.\r\nSteps\r\n1.    Select Test Mode.</STRING>
+		<STRING ID="252" Context="">The Test has successfully completed. Please verify the results.</STRING>
+		<STRING ID="254" Context="">The test cannot be started.</STRING>
+		<STRING ID="256" Context="">The System Test has failed. Please verify that the amount of injected fuel measures less than 300 ml.</STRING>
+		<STRING ID="258" Context="">Show</STRING>
+		<!-- End -->
+		<!-- Logic Error Entries -->
+		<STRING ID="20730" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20730&lt;/ErrorNumber&gt;&lt;Description&gt;An unidentified error occurred in the ECM Test "Aftertreatment Injector and SOV Override Test".&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20731" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20731&lt;/ErrorNumber&gt;&lt;Description&gt;An unidentified error occurred in the ECM Test "Aftertreatment Injector and SOV Override Test".&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20732" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20732&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to publish events.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20733" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20733&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to unpublish events.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20734" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20734&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to initialize the ECM.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20735" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20735&lt;/ErrorNumber&gt;&lt;Description&gt;An unidentified error occurred in starting the test.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20736" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20736&lt;/ErrorNumber&gt;&lt;Description&gt;An unidentified error occurred in stopping the test.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20737" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20737&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to get the thread facility.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20738" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20738&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to request a new thread.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20739" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20739&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE was unable to determine if the test is available on this ECM.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20740" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20740&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE failed to perform to perform ECM operation.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20741" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20741&lt;/ErrorNumber&gt;&lt;Description&gt;The test is not supported by the current calibration.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20742" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20742&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to read Test token.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20743" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20743&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to write Test token.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20744" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20744&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to find logic events.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20745" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20745&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to get monitors pointer.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20746" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20746&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to get monitor ID.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20747" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20747&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to get monitor service.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20748" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20748&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to get connection point server.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20749" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20749&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to add modules to monitor.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20750" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20750&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to add parameters to monitor.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20751" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20751&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to subscribe the event.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20752" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20752&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to unsubscribe the event.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20753" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20753&lt;/ErrorNumber&gt;&lt;Description&gt;An unidentified error occurred in invoking Advise.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20754" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20754&lt;/ErrorNumber&gt;&lt;Description&gt;An unidentified error occurred in invoking Unadvise.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20755" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20755&lt;/ErrorNumber&gt;&lt;Description&gt;An unidentified error occurred in stopping the monitor.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20756" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20756&lt;/ErrorNumber&gt;&lt;Description&gt;Out of memory.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20757" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20757&lt;/ErrorNumber&gt;&lt;Description&gt;Invalid Test Mode.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20758" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20758&lt;/ErrorNumber&gt;&lt;Description&gt;Invalid Response Code.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20759" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20759&lt;/ErrorNumber&gt;&lt;Description&gt;Error in firing a message.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20760" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20760&lt;/ErrorNumber&gt;&lt;Description&gt;Error in starting the monitor.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20761" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20761&lt;/ErrorNumber&gt;&lt;Description&gt;Error in stopping the monitor.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20762" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20762&lt;/ErrorNumber&gt;&lt;Description&gt;Error in reading a token.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20763" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20763&lt;/ErrorNumber&gt;&lt;Description&gt;Error in writing a token.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<!-- End -->
+		<!-- Page Error Entries -->
+		<STRING ID="20830" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20830&lt;/ErrorNumber&gt;&lt;Description&gt;An unidentified error occurred in the ECM Test "Aftertreatment Injector and SOV Override Test".&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20831" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20831&lt;/ErrorNumber&gt;&lt;Description&gt;An unidentified error occurred in the ECM Test "Aftertreatment Injector and SOV Override Test".&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20832" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20832&lt;/ErrorNumber&gt;&lt;Description&gt;An unidentified error occurred in the ECM Test "Aftertreatment Injector and SOV Override Test".&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20833" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20833&lt;/ErrorNumber&gt;&lt;Description&gt;An unidentified error occurred in the ECM Test "Aftertreatment Injector and SOV Override Test".&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20834" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20834&lt;/ErrorNumber&gt;&lt;Description&gt;An unidentified error occurred in the ECM Test "Aftertreatment Injector and SOV Override Test".&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20835" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20835&lt;/ErrorNumber&gt;&lt;Description&gt;An unidentified error occurred in the ECM Test "Aftertreatment Injector and SOV Override Test".&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20836" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20836&lt;/ErrorNumber&gt;&lt;Description&gt;An unidentified error occurred in the ECM Test "Aftertreatment Injector and SOV Override Test".&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20837" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20837&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE failed to Start the Test.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20838" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20838&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE failed to Stop the Test.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20839" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20839&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20840" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20840&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20841" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20841&lt;/ErrorNumber&gt;&lt;Description&gt;The test is not supported by the current calibration.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20842" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20842&lt;/ErrorNumber&gt;&lt;Description&gt;An unidentified error occurred in the ECM Test "Aftertreatment Injector and SOV Override Test".&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE. 1) Close and restart the operation.  Or 2) Close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20843" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20843&lt;/ErrorNumber&gt;&lt;Description&gt;An unidentified error occurred in the ECM Test "Aftertreatment Injector and SOV Override Test".&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE. 1) Close and restart the operation.  Or 2) Close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20844" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20844&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE has detected the PC is running low on system resources.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20845" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20845&lt;/ErrorNumber&gt;&lt;Description&gt;An unidentified error occurred in the ECM Test "Aftertreatment Injector and SOV Override Test".&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20846" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20846&lt;/ErrorNumber&gt;&lt;Description&gt;An unidentified error occurred in the ECM Test "Aftertreatment Injector and SOV Override Test".&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20847" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20847&lt;/ErrorNumber&gt;&lt;Description&gt;An unidentified error occurred in the ECM Test "Aftertreatment Injector and SOV Override Test".&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20848" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20848&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE failed to launch the help.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<!-- End -->
+	</RESOURCE>
+</XML_RESOURCE>

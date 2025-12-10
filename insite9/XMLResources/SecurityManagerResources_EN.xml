@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE module SYSTEM "../htmlentities.dtd">
+<XML_RESOURCE>
+   <RESOURCE Tag="1001" Type="String Table" Description="Message String Table">
+      <STRING ID="200" Context="">SecurityManagerAddInResources_en</STRING>
+      <STRING ID="201" Context="">&amp;User Options</STRING>
+      <STRING ID="203" Context="">Security</STRING>
+      <STRING ID="204" Context="">N/A</STRING>
+      <STRING ID="205" Context="">Security Options</STRING>
+      <STRING ID="206" Context="">Registration Required</STRING>
+      <STRING ID="207" Context="">New Functionality Password</STRING>
+      <STRING ID="225" Context="">INSITE has not been registered.  In order to use this application, you need to contact the local distributor and obtain a Basic password.  You will need to supply your PC ID when you call.</STRING>
+      <STRING ID="226" Context="">Functionality passwords unlock additional features in INSITE.  In order to obtain a functionality password, you will need to contact the local distributor.  You will need to supply your PC ID when you call.</STRING>
+      <STRING ID="227" Context="">You are about to change the current tool level license for INSITE.\r\nDo you wish to proceed?\r\n\r\n(Note: Feature windows currently open may not register the tool\r\nlevel change until they are closed and re-opened.)</STRING>
+      <STRING ID="228" Context="">Changing Tool Level License</STRING>
+	   <STRING ID="229" Context="">The license you have requested has a lesser tool level than your current license.\r\nSwitching to this license may result in fewer tool features and/or lesser tool functionality.\r\nAre you sure you wish to proceed?\r\n\r\n(Note: Feature windows currently open may not register the tool level change until they are closed and re-opened.)</STRING>
+      <STRING ID="230" Context="">The password that was entered is invalid.
+
+Please check the password and try again.  If the problem persists,
+please contact the local distributor for assistance.</STRING>
+      <STRING ID="231" Context="">The password that was entered is not a Basic password.  Please enter a Basic password.  If the problem persists, please contact the local distributor.</STRING>
+      <STRING ID="232" Context="">The password that was entered has expired.
+
+Please check the password and try again.  If the problem persists,
+please contact the local distributor for assistance.</STRING>
+      <STRING ID="233" Context="">The expiration warning threshold is invalid.  The valid range for the expiration warning is 1 to 99 days.</STRING>
+      <STRING ID="234" Context="">Expired</STRING>
+      <STRING ID="235" Context="">Active</STRING>
+      <STRING ID="236" Context="">Permanent</STRING>
+      <STRING ID="237" Context="">Inactive</STRING>
+      <STRING ID="238" Context="">Description</STRING>
+      <STRING ID="239" Context="">State</STRING>
+      <STRING ID="240" Context="">Expiration</STRING>
+      <STRING ID="241" Context="">Tool Level</STRING>
+      <STRING ID="242" Context="">Invalid</STRING>
+      <STRING ID="243" Context="">Your current '%s' password will expire in %s day(s).\r\n\r\nYou can manage existing passwords in the Security panel of Options from the Tools menu.\r\n\r\nTo enter a new password, click New.</STRING>
+      <STRING ID="244" Context="">Your current '%s' password has expired.\r\n\r\nYou can manage existing passwords in the Security panel of Options from the Tools menu.\r\n\r\nTo enter a new password, click New.</STRING>
+      <STRING ID="245" Context="">INSITE has detected an invalid PC Date and has been locked to read-only mode. Please verify the PC date and time is accurate, then select OK to enter a password or CANCEL to open INSITE in read-only mode.</STRING>
+      <STRING ID="246" Context="">INSITE has detected an invalid PC Date. Please note the PCID and Verification Code shown below and contact the local Cummins Distributor to obtain an Unlock password.</STRING>
+      <STRING ID="247" Context="">Verification Code:</STRING>
+      <STRING ID="248" Context="">Locked</STRING>
+      <STRING ID="249" Context="">Build Version: %s</STRING>
+      <STRING ID="250" Context="">INSITE has not been registered.  INSITE is also locked due to detecting an invalid PC date.  INSITE cannot be registered until it has been unlocked.  Please restart INSITE to receive instructions for unlocking INSITE.</STRING>
+      <STRING ID="251" Context="">Tool Functionality</STRING>
+      <STRING ID="252" Context="">Current functionality level:</STRING>
+      <STRING ID="253" Context="">To change functionality level, select from list and click Apply or OK.
+To enter a new password, click Add.</STRING>
+      <STRING ID="254" Context="">Number of Days Prior to Expiration To Start Warning:</STRING>
+      <STRING ID="255" Context="">&amp;Add</STRING>
+      <STRING ID="256" Context="">OK</STRING>
+      <STRING ID="257" Context="">&amp;New</STRING>
+      <STRING ID="258" Context="">Cummins INSITE</STRING>
+      <STRING ID="259" Context="">Security Information</STRING>
+      <STRING ID="260" Context="">PC ID:</STRING>
+      <STRING ID="261" Context="">Password</STRING>
+      <STRING ID="262" Context="">Cancel</STRING>
+      <STRING ID="263" Context="">"OBD-RSGR"</STRING>
+      <STRING ID="264" Context="">Help</STRING>
+      <STRING ID="265" Context="">Tool level changes are not allowed for the connected engine program.</STRING>
+      <STRING ID="266" Context="">The following password(s) will be deactivated on February 17, 2010.\r\n</STRING>
+      <STRING ID="267" Context="">\r\nPlease contact the local distributor for obtaining new passwords.\r\n</STRING>
+      <STRING ID="268" Context="">ECM Password Removal - Wrong Feature Password</STRING>
+      <STRING ID="269" Context="">The password detected is not for ECM Password Removal.
+
+Please check the password and try again. If problem persists,
+please contact a local distributor for assistance.</STRING>
+
+	   <STRING ID="270" Context="">Cummins INSITE</STRING>
+	   <STRING ID="271" Context="">The Basic Password was successfully entered.
+
+Do you want to enter the Functional Password now?
+
+Select Yes to enter the Functional Password.
+Select No to open INSITE in Read Only Mode.</STRING>
+       <STRING ID="272" Context="">Before registering INSITE, log into the Windows account that will\r\nbe used to access INSITE. This will help prevent unnecessary\r\nPCID transfer in case INSITE generates a different PCID for a\r\ndifferent Windows login account.\r\n\r\nIf this is the Windows account that will be used to access\r\nINSITE, select OK to continue with the registration. Otherwise,\r\nselect Cancel and log into the desired Windows account.</STRING>
+	   <STRING ID="26000" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;26000&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred in Security Manager Addin.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="26001" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;26300&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Close and restart the operation.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="26002" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;26301&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Close and restart the operation.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+	  <STRING ID="273" Context="">This version of INSITE has expired. To continue using INSITE, please upgrade it to the latest version.</STRING>
+	  <STRING ID="274" Context="">This version of INSITE will expire and be DISABLED in %s day(s). Please upgrade it to the latest version.</STRING>
+	  
+   </RESOURCE>
+</XML_RESOURCE>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE XML_RESOURCE SYSTEM "../htmlentities.dtd"[]>
+<XML_RESOURCE>
+  <PARAMETERS>
+    <PARAMETER ID="1" NAME="Title Font">microsoft sans serif,12</PARAMETER>
+    <PARAMETER ID="2" NAME="Standard Font">microsoft sans serif,10</PARAMETER>
+  </PARAMETERS>
+<STRINGS>
+  <STRING ID="1" Context="Title">Fuel Injector Reset</STRING>
+  <STRING ID="2" Context="Subtitle">This feature allows the user to reset the fuel injector when replacing or moving an injector between cylinders.</STRING>
+  <STRING ID="3" Context="Instructions">
+Initial Conditions
+1.     This reset may be run anytime the tool is connected to the ECM 
+Steps
+1.     Select all injectors that need to be reset
+2.     Select Reset to reset the selected injectors
+Additional Information:
+1.     ONLY select the injectors that have been replaced, or have been moved between cylinders during the troubleshooting process.
+  </STRING>
+  <STRING ID="4" Context="Instructions Box">Instructions</STRING>
+  <STRING ID="5" Context="Show Link">Show</STRING>
+  <STRING ID="6" Context="Injectors Groupbox">Injectors</STRING>
+  <STRING ID="7" Context="Single Injector Reset Confirmation">Injector {0} has been selected for reset. To perform the reset 
+  select Yes. To return to selections select No.
+  </STRING>
+  <STRING ID="8" Context="Injector Reset Title">Injector Reset</STRING>
+  <STRING ID="9" Context="Reset Successful">Injector {0} has been reset successfully.</STRING>
+  <STRING ID="10" Context="Status Header">Status</STRING>
+  <STRING ID="11" Context="Reset">Reset</STRING>
+  <STRING ID="12" Context="Help">Help</STRING>  
+  <STRING ID="13" Context="Help">Cancel Selections</STRING>
+  <STRING ID="14" Context="Not Supported">This feature is not supported by the current calibration.</STRING>
+  <STRING ID="15" Context="Multiple Injectors Reset Confirmation">Injectors {0} have been selected for reset.To perform the reset 
+  select Yes. To return to selections select No.
+  </STRING>
+  <STRING ID="22" Context="Reset Successful">Injector {0} has been reset successfully.</STRING>
+  <STRING ID="24" Context="Reset Failed">Injector {0} failed to reset.</STRING>  
+  <STRING ID="25" Context="Reset Complete">All injector reset commands have been sent to ECM.</STRING>   
+  <STRING ID="47000" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;47000&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE can not read the ECM parameters when connected to the ECM. Please contact technical support.&lt;/Description&gt;&lt;Suggestion&gt;Check if the parameter(s) is supported in the calibration.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+  <STRING ID="47001" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;47001&lt;/ErrorNumber&gt;&lt;Description&gt;One or more injectors have not been reset. A key off is required to complete the process on the injectors that were successfully reset.&lt;/Description&gt;&lt;Suggestion&gt;Please reconnect and retry the operation.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+</STRINGS>
+</XML_RESOURCE>

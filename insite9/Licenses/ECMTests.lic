@@ -1,0 +1,11 @@
+<LicenseFile>
+	<ToolReqLicense Expiration="permanent" Name="ECMTests_ToolLevel" VendorDaemon="cummins" Key="55C21992F28A" IsValid="" ID="ECMTests_ToolLevel" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="Lite"/>
+	</ToolReqLicense>
+	<ToolReqLicense Expiration="permanent" Name="RSGNR_Enabled" VendorDaemon="cummins" Key="F76B1E211537" IsValid="" ID="RSGNR_Enabled" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="Lite"/>
+		<ToolGroups>
+			<ToolGroup Name="RSGNR"/>
+		</ToolGroups>
+	</ToolReqLicense>
+</LicenseFile>

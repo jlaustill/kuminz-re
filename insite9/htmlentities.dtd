@@ -1,0 +1,464 @@
+<!ENTITY Aacute "&#193;">
+<!ENTITY aacute "&#225;">
+<!ENTITY aafs "&#8301;">
+<!ENTITY Acirc "&#194;">
+<!ENTITY acirc "&#226;">
+<!ENTITY acute "&#180;">
+<!ENTITY AElig "&#198;">
+<!ENTITY aelig "&#230;">
+<!ENTITY Agrave "&#192;">
+<!ENTITY agrave "&#224;">
+<!ENTITY alefsym "&#8501;">
+<!ENTITY Alpha "&#913;">
+<!ENTITY alpha "&#945;">
+<!ENTITY AMP "&amp;#38;">
+<!ENTITY and "&#8743;">
+<!ENTITY ang "&#8736;">
+<!ENTITY angst    "&#197;" >
+<!ENTITY Aring "&#197;">
+<!ENTITY aring "&#229;">
+<!ENTITY ass "&#8299;">
+<!ENTITY ast    "*" >
+<!ENTITY asymp "&#8776;">
+<!ENTITY Atilde "&#195;">
+<!ENTITY atilde "&#227;">
+<!ENTITY Auml "&#196;">
+<!ENTITY auml "&#228;">
+<!ENTITY bdquo "&#8222;">
+<!ENTITY Beta "&#914;">
+<!ENTITY beta "&#946;">
+<!ENTITY brvbar "&#166;">
+<!ENTITY bsol "\">
+<!ENTITY bull "&#8226;">
+<!ENTITY cap "&#8745;">
+<!ENTITY Ccedil "&#199;">
+<!ENTITY ccedil "&#231;">
+<!ENTITY cedil "&#184;">
+<!ENTITY cent "&#162;">
+<!ENTITY Chi "&#935;">
+<!ENTITY chi "&#967;">
+<!ENTITY circ "&#710;">
+<!ENTITY clubs "&#9827;">
+<!ENTITY colon ":">
+<!ENTITY comma ",">
+<!ENTITY commat "&#64;">
+<!ENTITY cong "&#8773;">
+<!ENTITY copy "&#169;">
+<!ENTITY COPY "&#169;">
+<!ENTITY crarr "&#8629;">
+<!ENTITY cup "&#8746;">
+<!ENTITY curren "&#164;">
+<!ENTITY dagger "&#8224;">
+<!ENTITY Dagger "&#8225;">
+<!ENTITY darr "&#8595;">
+<!ENTITY dArr "&#8659;">
+<!ENTITY deg "&#176;">
+<!ENTITY delta "&#948;">
+<!ENTITY Delta "delta ">
+<!ENTITY diams "&#9830;">
+<!ENTITY divide "&#247;">
+<!ENTITY dollar "&#36;">
+<!ENTITY Eacute "&#201;">
+<!ENTITY eacute "&#233;">
+<!ENTITY Ecirc "&#202;">
+<!ENTITY ecirc "&#234;">
+<!ENTITY Egrave "&#200;">
+<!ENTITY egrave "&#232;">
+<!ENTITY empty "&#8709;">
+<!ENTITY emsp "&nbsp;">
+<!ENTITY ensp "&nbsp;">
+<!ENTITY Epsilon "&#917;">
+<!ENTITY epsilon "&#949;">
+<!ENTITY equals "=">
+<!ENTITY equiv "&#8801;">
+<!ENTITY Eta "&#919;">
+<!ENTITY eta "&#951;">
+<!ENTITY ETH "&#208;">
+<!ENTITY eth "&#240;">
+<!ENTITY Euml "&#203;">
+<!ENTITY euml "&#235;">
+<!ENTITY excl "&#33;">
+<!ENTITY exist "&#8707;">
+<!ENTITY figsp "&nbsp;">
+<!ENTITY fnof "&#402;">
+<!ENTITY forall "&#8704;">
+<!ENTITY frac1116 "11/16"> <!-- fraction eleven-sixteenths -->
+<!ENTITY frac1132 "11/32"> <!-- fraction eleven-thirty-secondths -->
+<!ENTITY frac116 "1/16">   <!-- fraction one-sixteenth -->
+<!ENTITY frac1164 "11/64"> <!-- fraction eleven-sixty-fourths -->
+<!ENTITY frac12 "&#189;" > <!-- fraction one-half -->
+<!ENTITY frac13 "1/3" >    <!-- fraction one-third -->
+<!ENTITY frac1316 "13/16"> <!-- fraction thirteen-sixteenths -->
+<!ENTITY frac132 "1/32">   <!-- fraction one-thirty-secondth -->
+<!ENTITY frac1332 "13/32"> <!-- fraction thirteen-thirty-secondths -->
+<!ENTITY frac1364 "13/64"> <!-- fraction thirteen-sixty-fourths -->
+<!ENTITY frac14 "&#188;" > <!-- fraction one-quarter -->
+<!ENTITY frac1516 "15/16"> <!-- fraction fifteen-sixteenths -->
+<!ENTITY frac1532 "15/32"> <!-- fraction fifteen-thirty-secondths -->
+<!ENTITY frac1564 "15/64"> <!-- fraction fifteen-sixty-fourths -->
+<!ENTITY frac164 "1/64"> <!-- fraction one-sixty-fourth -->
+<!ENTITY frac1732 "17/32"> <!-- fraction seventeen-thirty-secondths -->
+<!ENTITY frac1764 "17/64"> <!-- fraction seventeen-sixty-fourths -->
+<!ENTITY frac18 "1/8" > <!-- fraction one-eighth -->
+<!ENTITY frac1932 "19/32"> <!-- fraction nineteen-thirty-secondths -->
+<!ENTITY frac1964 "19/64"> <!-- fraction nineteen-sixty-fourths -->
+<!ENTITY frac2132 "21/32"> <!-- fraction twenty-one thirty-secondths -->
+<!ENTITY frac2164 "21/64"> <!-- fraction twenty-one sixty-fourths -->
+<!ENTITY frac2332 "23/32"> <!-- fraction twenty-three thirty-secondths -->
+<!ENTITY frac2364 "23/64"> <!-- fraction twenty-three sixty-fourths -->
+<!ENTITY frac2532 "25/32"> <!-- fraction twenty-five thirty-secondths -->
+<!ENTITY frac2564 "25/64"> <!-- fraction twenty-five sixty-fourths -->
+<!ENTITY frac2732 "27/32"> <!-- fraction twenty-seven thirty-secondths -->
+<!ENTITY frac2764 "27/64"> <!-- fraction twenty-seven sixty-fourths -->
+<!ENTITY frac2932 "29/32"> <!-- fraction twenty-nine thirty-secondths -->
+<!ENTITY frac2964 "29/64"> <!-- fraction twenty-nine sixty-fourths -->
+<!ENTITY frac3132 "31/32"> <!-- fraction thirty-one thirty-secondths -->
+<!ENTITY frac316 "3/16"> <!-- fraction three-sixteenths -->
+<!ENTITY frac3164 "31/64"> <!-- fraction thirty-one sixty-fourths -->
+<!ENTITY frac332 "3/32"> <!-- fraction three-thirty-secondths -->
+<!ENTITY frac3364 "33/64"> <!-- fraction thirty-three-sixty-fourths -->
+<!ENTITY frac34 "&#190;" > <!-- fraction three-quarters -->
+<!ENTITY frac3564 "35/64"> <!-- fraction thirty-five-sixty-fourths -->
+<!ENTITY frac364 "3/64"> <!-- fraction three-sixty-fourths -->
+<!ENTITY frac3764 "37/64"> <!-- fraction thirty-seven-sixty-fourths -->
+<!ENTITY frac38 "3/8" > <!-- fraction three-eighths -->
+<!ENTITY frac3964 "39/64"> <!-- fraction thirty-nine-sixty-fourths -->
+<!ENTITY frac4164 "41/64"> <!-- fraction forty-one-sixty-fourths -->
+<!ENTITY frac4364 "43/64"> <!-- fraction forty-three-sixty-fourths -->
+<!ENTITY frac4564 "45/64"> <!-- fraction forty-five-sixty-fourths -->
+<!ENTITY frac4764 "47/64"> <!-- fraction forty-seven-sixty-fourths -->
+<!ENTITY frac4964 "49/64"> <!-- fraction forty-nine-sixty-fourths -->
+<!ENTITY frac516 "5/16"> <!-- fraction five-sixteenths -->
+<!ENTITY frac5164 "51/64"> <!-- fraction fifty-one sixty-fourths -->
+<!ENTITY frac532 "5/32"> <!-- fraction five-thirty-secondths -->
+<!ENTITY frac5364 "53/64"> <!-- fraction fifty-three sixty-fourths -->
+<!ENTITY frac5564 "55/64"> <!-- fraction fifty-five sixty-fourths -->
+<!ENTITY frac564 "5/64"> <!-- fraction five-sixty-fourths -->
+<!ENTITY frac5764 "57/64"> <!-- fraction fifty-seven sixty-fourths -->
+<!ENTITY frac58 "5/8" > <!-- fraction five-eighths -->
+<!ENTITY frac5964 "59/64"> <!-- fraction fifty-nine sixty-fourths -->
+<!ENTITY frac6164 "61/64"> <!-- fraction sixty-one sixty-fourths -->
+<!ENTITY frac6364 "63/64"> <!-- fraction sixty-three sixty-fourths -->
+<!ENTITY frac716 "7/16"> <!-- fraction seven-sixteenths -->
+<!ENTITY frac732 "7/32"> <!-- fraction seven-thirty-secondths -->
+<!ENTITY frac764 "7/64"> <!-- fraction seven-sixty-fourths -->
+<!ENTITY frac78 "7/8" > <!-- fraction seven-eighths -->
+<!ENTITY frac916 "9/16"> <!-- fraction nine-sixteenths -->
+<!ENTITY frac932 "9/32"> <!-- fraction nine-thirty-secondths -->
+<!ENTITY frac964 "9/64"> <!-- fraction nine-sixty-fourths -->
+<!ENTITY frasl "&#8260;">
+<!ENTITY Gamma "&#915;">
+<!ENTITY gamma "&#947;">
+<!ENTITY ge ">=">
+<!ENTITY GT "&#62;">
+<!ENTITY gbreve "&#287;">
+<!ENTITY Gbreve "&#286;">
+<!ENTITY harr "&#8596;">
+<!ENTITY hArr "&#8660;">
+<!ENTITY hearts "&#9829;">
+<!ENTITY hellip "&#8230;">
+<!ENTITY hyphen "-">
+<!ENTITY Iacute "&#205;">
+<!ENTITY iacute "&#237;">
+<!ENTITY iafs "&#8300;">
+<!ENTITY Icirc "&#206;">
+<!ENTITY icirc "&#238;">
+<!ENTITY iexcl "&#161;">
+<!ENTITY Igrave "&#204;">
+<!ENTITY igrave "&#236;">
+<!ENTITY image "&#8465;">
+<!ENTITY Idot "&#304;">
+<!ENTITY inodot "&#305;">
+<!ENTITY infin "&#8734;">
+<!ENTITY int "&#8747;">
+<!ENTITY Iota "&#921;">
+<!ENTITY iota "&#953;">
+<!ENTITY iquest "&#191;">
+<!ENTITY isin "&#8712;">
+<!ENTITY iss "&#8298;">
+<!ENTITY Iuml "&#207;">
+<!ENTITY iuml "&#239;">
+<!ENTITY Kappa "&#922;">
+<!ENTITY kappa "&#954;">
+<!ENTITY Lambda "&#923;">
+<!ENTITY lambda "&#955;">
+<!ENTITY lang "&#9001;">
+<!ENTITY laquo "&#171;">
+<!ENTITY larr "&#8592;">
+<!ENTITY lArr "&#8656;">
+<!ENTITY lceil "&#8968;">
+<!ENTITY lcub "{">
+<!ENTITY ldquo "&#8220;">
+<!ENTITY ldquor "&#8222;">
+<!ENTITY le "&lt;=">
+<!ENTITY lfloor "&#8970;">
+<!ENTITY lowast "&#8727;">
+<!ENTITY lowbar "_" ><!--=low line-->
+<!ENTITY loz "&#9674;">
+<!ENTITY lpar "(">
+<!ENTITY lre "&#8234;">
+<!ENTITY lrm "&#8206;">
+<!ENTITY lro "&#8237;">
+<!ENTITY lsaquo "&#8249;">
+<!ENTITY lsqb "[">
+<!ENTITY lsquo "&#8216;">
+<!ENTITY LT "&amp;#60;">
+<!ENTITY macr "&#175;">
+<!ENTITY mldr "&#8230;">
+<!ENTITY mdash "&#8212;">
+<!ENTITY micro "&#181;">
+<!ENTITY middot "&#183;">
+<!ENTITY minus "&#8722;">
+<!ENTITY Mu "&#924;">
+<!ENTITY mu "&#956;">
+<!ENTITY nabla "&#8711;">
+<!ENTITY nads "&#8302;">
+<!ENTITY nbsp "&#160;">
+<!ENTITY ndash "&#45;">
+<!ENTITY ne "&#8800;">
+<!ENTITY ni "&#8715;">
+<!ENTITY nods "&#8303;">
+<!ENTITY not "&#172;">
+<!ENTITY notin "&#8713;">
+<!ENTITY nsub "&#8836;">
+<!ENTITY Ntilde "&#209;">
+<!ENTITY ntilde "&#241;">
+<!ENTITY Nu "&#925;">
+<!ENTITY nu "&#957;">
+<!ENTITY num "#">
+<!ENTITY Oacute "&#211;">
+<!ENTITY oacute "&#243;">
+<!ENTITY Ocirc "&#212;">
+<!ENTITY ocirc "&#244;">
+<!ENTITY OElig "&#338;">
+<!ENTITY oelig "&#339;">
+<!ENTITY Ograve "&#210;">
+<!ENTITY ograve "&#242;">
+<!ENTITY oline "&#8254;">
+<!ENTITY omega "&#969;">
+<!ENTITY Omega "Ohms">
+<!ENTITY Omicron "&#927;">
+<!ENTITY omicron "&#959;">
+<!ENTITY oplus "&#8853;">
+<!ENTITY or "&#8744;">
+<!ENTITY ordf "&#170;">
+<!ENTITY ordm "&#186;">
+<!ENTITY Oslash "&#216;">
+<!ENTITY oslash "&#248;">
+<!ENTITY Otilde "&#213;">
+<!ENTITY otilde "&#245;">
+<!ENTITY otimes "&#8855;">
+<!ENTITY Ouml "&#214;">
+<!ENTITY ouml "&#246;">
+<!ENTITY para "&#182;">
+<!ENTITY part "&#8706;">
+<!ENTITY pdf "&#8236;">
+<!ENTITY percnt "&#37;">
+<!ENTITY period ".">
+<!ENTITY permil "&#8240;">
+<!ENTITY perp "&#8869;">
+<!ENTITY Phi "&#934;">
+<!ENTITY phi "&#966;">
+<!ENTITY Pi "&#928;">
+<!ENTITY pi "&#960;">
+<!ENTITY piv "&#982;">
+<!ENTITY plus "+">
+<!ENTITY plusmn "&#177;">
+<!ENTITY pound "&#163;">
+<!ENTITY prime "&#8242;">
+<!ENTITY Prime "&quot;">
+<!ENTITY prod "&#8719;">
+<!ENTITY prop "&#8733;">
+<!ENTITY Psi "&#936;">
+<!ENTITY psi "&#968;">
+<!ENTITY QUOT "&#34;">
+<!ENTITY quest "&#63;">
+<!ENTITY radic "&#8730;">
+<!ENTITY rang "&#9002;">
+<!ENTITY raquo "&#187;">
+<!ENTITY rArr "&#8658;">
+<!ENTITY rarr "-->">
+<!ENTITY rceil "&#8969;">
+<!ENTITY rcub "}">
+<!ENTITY rdquo "&#8221;">
+<!ENTITY rdquor "&#8221;">
+<!ENTITY real "&#8476;">
+<!ENTITY REG "&#174;">
+<!ENTITY reg "&#174;">
+<!ENTITY rfloor "&#8971;">
+<!ENTITY Rho "&#929;">
+<!ENTITY rho "&#961;">
+<!ENTITY rle "&#8235;">
+<!ENTITY rlm "&#8207;">
+<!ENTITY rlo "&#8238;">
+<!ENTITY rpar ")">
+<!ENTITY rsaquo "&#8250;">
+<!ENTITY rsqb "]">
+<!ENTITY rsquo "&#8217;">
+<!ENTITY sbquo "&#8218;">
+<!ENTITY Scaron "&#352;">
+<!ENTITY scaron "&#353;">
+<!ENTITY Scedil "&#350;">
+<!ENTITY scedil "&#351;">
+<!ENTITY sdot "&#8901;">
+<!ENTITY sect "&#167;">
+<!ENTITY semi "&#59;">
+<!ENTITY shy "&#173;">
+<!ENTITY Sigma "&#931;">
+<!ENTITY sigma "&#963;">
+<!ENTITY sigmaf "&#962;">
+<!ENTITY sim "&#8764;">
+<!ENTITY sol "/">
+<!ENTITY spades "&#9824;">
+<!ENTITY sub "&#8834;">
+<!ENTITY sube "&#8838;">
+<!ENTITY sum "&#8721;">
+<!ENTITY sup "&#8835;">
+<!ENTITY sup1 "&#185;">
+<!ENTITY sup2 "&#178;">
+<!ENTITY sup3 "&#179;">
+<!ENTITY supe "&#8839;">
+<!ENTITY szlig "&#223;">
+<!ENTITY Tau "&#932;">
+<!ENTITY tau "&#964;">
+<!ENTITY there4 "&#8756;">
+<!ENTITY Theta "&#920;">
+<!ENTITY theta "&#952;">
+<!ENTITY thetasym "&#977;">
+<!ENTITY thinsp "&nbsp;">
+<!ENTITY THORN "&#222;">
+<!ENTITY thorn "&#254;">
+<!ENTITY tilde "&#732;">
+<!ENTITY times "&#215;">
+<!ENTITY trade "&#8482;">
+<!ENTITY TRADE "&#8482;">
+<!ENTITY Uacute "&#218;">
+<!ENTITY uacute "&#250;">
+<!ENTITY uarr "&#8593;">
+<!ENTITY uArr "&#8657;">
+<!ENTITY Ucirc "&#219;">
+<!ENTITY ucirc "&#251;">
+<!ENTITY Ugrave "&#217;">
+<!ENTITY ugrave "&#249;">
+<!ENTITY uml "&#168;">
+<!ENTITY upsih "&#978;">
+<!ENTITY Upsilon "&#933;">
+<!ENTITY upsilon "&#965;">
+<!ENTITY Uuml "&#220;">
+<!ENTITY uuml "&#252;">
+<!ENTITY verbar "&#124;">
+<!ENTITY weierp "&#8472;">
+<!ENTITY Xi "&#926;">
+<!ENTITY xi "&#958;">
+<!ENTITY Yacute "&#221;">
+<!ENTITY yacute "&#253;">
+<!ENTITY yen "&#165;">
+<!ENTITY yuml "&#255;">
+<!ENTITY Yuml "&#376;">
+<!ENTITY Zeta "&#918;">
+<!ENTITY zeta "&#950;">
+<!ENTITY zwj "&#8205;">
+<!ENTITY zwnj "&#8204;">
+<!ENTITY zwsp "&nbsp;">
+
+<!ELEMENT AvailableFeatures (AvailableTemplateFeature* , Module* , AvailableFeature* )>
+
+<!ELEMENT AvailableTemplateFeature (AdditionalXMLs+ , FeatureName*)>
+<!ATTLIST AvailableTemplateFeature Name CDATA #IMPLIED>
+<!ATTLIST AvailableTemplateFeature FeatureGUID CDATA #IMPLIED>
+<!ATTLIST AvailableTemplateFeature ObjectCLSID CDATA #IMPLIED>
+<!ATTLIST AvailableTemplateFeature FlexGridSchema CDATA #IMPLIED>
+
+
+<!ELEMENT Module (AvailableFeature*)>
+<!ATTLIST Module ModuleId CDATA #IMPLIED>
+<!-- No need to mention Module Id as it is numeric , hence will have no problems with lang conversion -->
+
+<!ELEMENT AvailableFeature (AdditionalXMLs* , SubFeature* , FeatureName* )>
+<!ATTLIST AvailableFeature Name CDATA #IMPLIED>
+<!ATTLIST AvailableFeature Order CDATA #IMPLIED>
+<!ATTLIST AvailableFeature FeatureGUID CDATA #IMPLIED>
+<!ATTLIST AvailableFeature ObjectCLSID CDATA #IMPLIED>
+<!ATTLIST AvailableFeature FlexGridSchema CDATA #IMPLIED>
+
+<!ELEMENT AdditionalXMLs (AdditionalXML*)>
+
+<!ELEMENT AdditionalXML (#PCDATA)>
+<!ATTLIST AdditionalXML ObjectName CDATA #IMPLIED> 
+<!ATTLIST AdditionalXML XMLFileName CDATA #IMPLIED> 
+<!ATTLIST AdditionalXML I18NRequired CDATA #IMPLIED> 
+
+<!ELEMENT SubFeature (#PCDATA)>
+<!ATTLIST SubFeature Name CDATA #IMPLIED> 
+<!ATTLIST SubFeature Order CDATA #IMPLIED>
+<!ATTLIST SubFeature FeatureGUID CDATA #IMPLIED> 
+<!ATTLIST SubFeature ObjectCLSID CDATA #IMPLIED>
+<!ATTLIST SubFeature FlexGridSchema CDATA #IMPLIED>
+
+<!ELEMENT FeatureName (#PCDATA)>
+
+<!--
+Revisions
+=========
+Mon, 21 september 2009
+- added ELEMENT FeatureName in AvailableFeature and AvailableTemplateFeature for PR DB_G00144101 
+Thurs, 9 Dec 2004, WGS
+- added ELEMENTs for PR DB_G00058956
+Fri, 1 Oct 2004, WGS
+- Re-added "ldquor". Also added "rdquor".
+Wed, 3 Mar 2004, WGS
+- Added "frac13" (one third)
+Fri, 12 Sep 2003, WGS
+- added "ldquor" (looks like double-comma)
+- used in ge00-001-005 and ge00-001-006
+- backed out; they probably meant to use "ldquo"
+Thu, 24 Jul 2003, WGS
+- add "lsqb", "rsqb", "lcub", "rcub" (left / right square brackets; left / right curly brackets)
+- "lsqb" needed in "br99-010-059.xml"
+- added "num" ("#") number sign entity; needed for "br99-202-005", etc.
+- added "equals" ("=") sign entity; needed for "br44-008-039"
+Tue, 15 Jul 2003, WGS
+- add "bsol" = "backward solidus" = backslash = ""
+Fri, 25 Apr 2003, WGS
+- changed "&ge;" from "&#8805;" to ">="
+- was not displaying as single "greater-than-or-equal" in browser
+- appears non-trivial to fix "cleanly" (similar to approach for "&Omega;")
+- also "&le;" from "&#8804;" to "&lt;=" ("<=")
+Tue, 1 Apr 2003, WGS
+- tried changing "&#8594;" to "&amp;#8594;" for "rarr"
+- did not work; get "&amp;#8594;" in HTML; want to get "&#8594;" in HTML
+- use "- - >" (without blanks), similar to approach for "&Omega;"
+Mon, 10 Feb 2003, WGS
+- added "percen" and "percnt" (from "spechar.arbor" & "spechar.xy")
+- needed for processing "3824510"
+Thu, 12 Dec 2002, WGS
+- added "colon", "comma", "hyphen", "lpar", "period", "plus", "rpar", "sol" (solidus = right slash)
+- also "semi"
+Tues, 20 Aug 2002, WGS
+- switched "Omega" value from "&#937;" to "Ohms", for short-term fix to having the letter "O" appearing in the HTML
+- planning to have Zarella Rendon take a look at fixing the root cause so we can display the correct character next week
+Tues, 2 July 2002, WGS
+- added all missing "fracxx64" entities (i.e., "frac164", ... "frac6364")
+Wed, 19 June 2002, WGS
+- added all missing "frac..." entities above "frac916" and "frac932"
+- was previously uncertain of pattern for two-digit numerators; got "frac1116" today in "st832"
+Thurs, 23 May 2002, WGS
+- tried changing "Delta" from "&#916;" to "&Delta;", to fix character encoding problem in "44-010-027"
+- infinite entity reference loop on XML load
+- try "&amp;Delta;"; does not convert to proper symbol in HTML
+- gave up for now and used spelled-out "delta "
+- "&Delta;" would display as proper entity in HTML, if we could figure out how to get it in the HTML
+Tues, 14 May 2002, WGS
+- had to add "frac532" entity for "5/32"; used 4-character ASCII equivalent for quick fix
+- added other single-digit 16th's and 32nd's; not sure of naming convention for double-digit values
+Tues, 16 April 2002, WGS
+- added "frac116" entity; used 4-character ASCII equivalent for quick fix
+Wed, 19 Dev 2001, WGS
+- added "frac" entities (i.e., 1/2, 1/4, 3/4, 1/8, 3/8, 5/8, 7/8)
+- from "http://www.lists.ic.ac.uk/hypermail/xml-dev/xml-dev-Jul-1997/0026.html"
+- the "8th" symbols did not work well when trying to generate HTML, so changed to 3-character ASCII equivalents
+Thurs, 13 Dec 2001, WGS
+- changed "Prime" entity from "&#8243;" to "&quot;" to fix runtime error writing non-ASCII character
+Fri, 2 Nov 2001, WGS
+- added "<!ENTITY lowbar "_" > { low line, aka underscore}
+-->

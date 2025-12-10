@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE module SYSTEM "../htmlentities.dtd">
+<!-- CHANGE LOG
+1.)  C. Colaco : Initial creation from names_en.icl ver. 6.31.01.44
+2.)  fg801- DB_G00063067 : Modified short name of id 66 from 'Degrees' to 'deg' (GTR16661) 
+3)   DB : Insite 6.4 DB_G00061995, (DB)  Added Support for Speed Bias Calibration Test  , 02/22/2005
+4)   GS : Changes to insite ver 6.5 , (GS) Added units num 108, 8/30/2005
+5.)  DB_G00073602 (SR) :-ADDED UNIT NUM 110 
+6.)  AA : Changes to Insite Ver insite 6.50.0.66, 10/27/2005
+	 DB_G00074820 Modified unitsnum 108
+7.)  MP : Insite 6.5FP1 Development, 01/17/2006
+		  Added unitsnum 111.
+8.)  KP : Insite 6.5.2 Development, 06/09/2006
+		   Added unitsnum 112, 113 & 114.
+9)   SNG: Insite 6.5.2, 06/13/2006
+                     Merging Done.
+10) Changes to Insite Ver 6.52.0.0045, 06/29/2006
+   Insite 6.5FP2 Developemnt(MT) Added Unit 115 
+11) Changes to Insite Ver 7.00.0.0020, 11/14/2006
+   Insite 7.0 Developemnt(SV) Added Unit 116   
+12) Changes to Insite Ver 7.00.0.0063, 12/21/2006
+   DB_G00093088 :(SJ) Added Unit 117 
+13) Changes to Insite Ver  7.00.0.0105,02/06/2007
+     Insite 7.0 Developemnt(SV) Added Unit 118 and 119.
+     
+ 14) Changes to Insite Ver  7.00.0.0143,03/15/2007
+     DB_G00097075(SV) Modified Unit 82.
+ 15)Changes to Insite Ver 7.0, 5/2/2007
+    DB_G00100652 (PG) Added unit 120.  
+ 16)Modified the unit 37 under the PR DB_G00096852
+ 17) Changes to Insite Ver 7.2, 02/06/2008
+   Insite 7.2 Developemnt(LK) Added Unit 121
+    18) Changes to INSITE Ver 7.3, 10/21/2008
+ DB_G00124813 (PG) Added Units 122 and 123.
+ 19) Changes to Insite Ver 7.3FP2, 21/04/2009
+   DB_G00133423: Insite 7.3FP2(MA) Added Unit 124.
+   20) Changes to INSITE Ver 7.3FP1, 5/7/2009
+   DB_G00136162: INSITE 7.3FP1(PP) Added new units 125 and 126.
+   21) Changes to Insite Ver 7.4, 9/30/2009
+     DB_G00140119 (PPP): modified String of ID 65 from "rpm/sec" to "rpm/s"
+	 22))NB(jr617): INSITE 7.5.1: New TIS Implementation , 02/08/2011
+     Added Unit 127 and 128
+-->
+
+<!--  23)RM(jj392): INSITE 7.5.1: 02/08/2011 Added Unit 129  -->
+<!--  24)NM(jd067): INSITE 7.5.2: 09/15/2011 Added Unit 130  -->
+<!--  25)MN(js994): INSITE 7.5.3: 10/03/2011 Added Unit 131  -->
+<!--  26)RSR(iy600): INSITE 7.6.0: 11/01/2012 Modified string ID 0 from Undefined to a blank text.-->
+<!--  27)DP(jq870): INSITE 7.6: 05/10/2012 Added Unit 132  -->
+<!-- READING THE DATA BELOW
+<STRING ID="UNITS ID">UNITS - SHORT</STRING>
+-->
+
+<XML_RESOURCE>
+    <RESOURCE Description="Units - Short">
+        <STRING ID="0"></STRING> <!-- Removed Undefined as we do not need to display unit as undefined-->
+        <STRING ID="1">mi</STRING>
+        <STRING ID="2">F</STRING>
+        <STRING ID="3">InHg</STRING>
+        <STRING ID="4">psig</STRING>
+        <STRING ID="5">gal</STRING>
+        <STRING ID="6">hp</STRING>
+        <STRING ID="7">ft*lb</STRING>
+        <STRING ID="8">km</STRING>
+        <STRING ID="9">C</STRING>
+        <STRING ID="10">mmHg</STRING>
+        <STRING ID="11">kPa</STRING>
+        <STRING ID="13">igal</STRING>
+        <STRING ID="14">N*m</STRING>
+        <STRING ID="15">mpg</STRING>
+        <STRING ID="16">Ps</STRING>
+        <STRING ID="17">kgf*m</STRING>
+        <STRING ID="20">min</STRING>
+        <STRING ID="21">hrs</STRING>
+        <STRING ID="22">psia</STRING>
+        <STRING ID="23">Pa</STRING>
+        <STRING ID="24">km/L</STRING>
+        <STRING ID="25">gph</STRING>
+        <STRING ID="26">L/hr</STRING>
+        <STRING ID="29">L</STRING>
+        <STRING ID="30">mph</STRING>
+        <STRING ID="31">km/hr</STRING>
+        <STRING ID="32">igal/hr</STRING>
+        <STRING ID="33">mi/igal</STRING>
+        <STRING ID="34">#/1000mi</STRING>
+        <STRING ID="35">#/1000km</STRING>
+        <STRING ID="36">sec</STRING>
+        <STRING ID="37">RPM</STRING>
+        <STRING ID="38">Percent</STRING>
+        <STRING ID="39">kW</STRING>
+        <STRING ID="41">V</STRING>
+        <STRING ID="44">in*lb</STRING>
+        <STRING ID="45">bar</STRING>
+        <STRING ID="46">mmH2O</STRING>
+        <STRING ID="47">inH2O</STRING>
+        <STRING ID="49">qt</STRING>
+        <STRING ID="50">mi/L</STRING>
+        <STRING ID="51">km/gal</STRING>
+        <STRING ID="52">km/igal</STRING>
+        <STRING ID="57">A</STRING>
+        <STRING ID="58">kg/hr</STRING>
+        <STRING ID="62">lb/hr</STRING>
+        <STRING ID="63">kg/hr</STRING>
+        <STRING ID="65">rpm/s</STRING>
+        <STRING ID="66">deg</STRING>
+        <STRING ID="67">mph/s</STRING>
+        <STRING ID="68">kph/s</STRING>
+        <STRING ID="69">atdc</STRING>
+        <STRING ID="71">kV</STRING>
+        <STRING ID="72">psim</STRING>
+        <STRING ID="73">mm</STRING>
+        <STRING ID="76">Hz</STRING>
+        <STRING ID="77">ms</STRING>
+        <STRING ID="79">MPa</STRING>
+        <STRING ID="80">lb/min</STRING>
+      <STRING ID="81">revs/mi</STRING>
+        <STRING ID="82">Counts</STRING>
+        <STRING ID="83">rev/km</STRING>
+        <STRING ID="84">mA</STRING>
+        <STRING ID="85">psi</STRING>
+        <STRING ID="87">mV</STRING>
+        <STRING ID="88">KW/S</STRING>
+        <STRING ID="89">lbs</STRING>
+        <STRING ID="90">mi/lb</STRING>
+        <STRING ID="92">MWhrs</STRING>
+        <STRING ID="93">mg/stroke</STRING>
+        <STRING ID="94">%/R</STRING>
+        <STRING ID="95">Microseconds</STRING>
+        <STRING ID="96">g/sec</STRING>
+        <STRING ID="97">mm3/stroke</STRING>
+        <STRING ID="99">L/100 km</STRING>
+        <STRING ID="100">HH:MM:SS</STRING>
+        <STRING ID="101">g/lb</STRING>
+        <STRING ID="102">mSec</STRING>
+        <STRING ID="103">N_m</STRING>
+        <STRING ID="104">KRPM</STRING>
+        <STRING ID="105">kPa_G</STRING>
+        <STRING ID="107">% DC</STRING>
+        <STRING ID="108">HH:MM</STRING>
+        <STRING ID="110">deg F</STRING>
+        <STRING ID="111">MM:SS</STRING>
+        <STRING ID="112">kPa_A</STRING>
+        <STRING ID="113">g/kg</STRING>
+        <STRING ID="114">kg/min</STRING>
+        <STRING ID="115">Hr</STRING>
+        <STRING ID="116">gm</STRING>
+        <STRING ID="117">lbs/hr</STRING>
+        <STRING ID="118">kg</STRING>
+        <STRING ID="119">km/kg</STRING>
+        <STRING ID="120">KW/mA</STRING>
+        <STRING ID="121">Lambda</STRING>
+        <STRING ID="122">m3/s</STRING>
+        <STRING ID="123">ft3/s</STRING>
+        <STRING ID="124">in</STRING>
+        <STRING ID="125">pulses/km</STRING>
+        <STRING ID="126">pulses/mi</STRING>
+		    <STRING ID="127">ppm</STRING>
+        <STRING ID="128">ohm</STRING>
+        <STRING ID="129"></STRING>   <!-- Added blank unit for future use as needed can display MM/DD/YY  unit-->
+        <STRING ID="130"></STRING>   <!-- Added blank unit for future use as needed - Natural Number {0,1,2,3,4...}-->
+        <STRING ID="131">HHHHHH:MM</STRING>
+		<STRING ID="132">mg/stroke</STRING>
+    </RESOURCE>
+</XML_RESOURCE>

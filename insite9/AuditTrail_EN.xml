@@ -1,0 +1,783 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE module SYSTEM "htmlentities.dtd">
+<!--Insite6.5FP1 developement(SV),Updated bitnumber 97 and 127 -->
+<!--DB_G00113435 :-12/27/2007 by Rupesh T, Made changes during Insite 7.2 development task,Updated bitnumber 133,134,135,136,137 -->
+<!--INSITE 7.3 development(GK) on 07/23/2008, Added Support for DATALINK_BRIDGE tool in Audit Trail Records -->
+<!--DB_G00127006 :-09/05/2007 by Vedang M, Updated description for Audit Code BitNumbers 138,139,140,141 -->
+<!--DB_G00132171 :-02/26/2009 by Vikram S Vaish, Updated description for Audit Code BitNumbers 116,123 -->
+<!-- DB_G00127434 is308 05/15/09 Removed DisplayName attribute from <AUDIT_CODE> tag-->
+<!--DB_G00146668 hu589 01/22/10 Modifed the Bit value of ID 143 from Undefined to Remote Start-->
+<!--DB_G00161135 gz402(PG) 01/06/2011 Modifed the Bit value of ID 144 from Undefined to Oil Pressure Sensor-->
+<!--DB_G00167215 IY599(MRA) 02/28/2011 Modifed the Bit value of ID 63 to Battery Voltage Monitor-->
+<!--INSITE 7.5.2 development on 06/01/2011,
+  DB_G00162730 (AM):-Added Support for Particulate Matter Sensor Regeneration Operation by updating bit number 145 in Audit Code -->
+<!--DB_G00167959 jj600(SA) 06/30/2011 Modifed the Bit value of ID 10 to 'Maximum Engine Speed without Vehicle Speed Source'-->
+<!--INSITE 7.5.2 development on 09/12/2011 
+	DB_G00177825 (SG ju912):-Added Support for High Sulphur Protection Inhibit by updating bit number 150 in Audit Code -->
+<!--INSITE 7.5.3 development on 10/25/2011 
+	DB_G00174595 (MS Kd284):-Modifed the Bit value of ID 63 to Alternator Failure Warning -->
+<!--INSITE 7.5.3 development on 12/12/2011 
+	DB_G00183468 (AB Ko633):-Modifed the Bit value of ID 142 to Fault Acknowledge -->
+<!--INSITE 7.5.3 development on 03/15/2012 
+	DB_G00176109 (NM jd067):-Added Support for 'Air Supply Type' by updating bit number 149 in Audit Code -->
+<ROOT>
+	<ECM_MAP>
+		<ECM Name="1" Resource="1"/>
+		<ECM Name="2" Resource="1"/>
+		<ECM Name="3" Resource="1"/>
+		<ECM Name="4" Resource="1"/>
+		<ECM Name="5" Resource="5"/>
+		<ECM Name="6" Resource="6"/>
+		<ECM Name="12" Resource="12"/>
+		<ECM Name="14" Resource="14"/>
+		<ECM Name="15" Resource="15"/>
+		<ECM Name="18" Resource="18"/>
+		<ECM Name="19" Resource="19"/>
+		<ECM Name="20" Resource="20"/>
+		<ECM Name="22" Resource="20"/>
+		<ECM Name="41" Resource="14"/>
+		<ECM Name="42" Resource="14"/>
+		<ECM Name="44" Resource="14"/>
+		<ECM Name="47" Resource="47"/>
+		<ECM Name="50" Resource="50"/>
+		<ECM/>
+	</ECM_MAP>
+	<TOOL_ID_MAP>
+		<ID id="CEC0_VEPS" Name="VEPS" Type="Software"/>
+		<ID id="CEC0_Manta" Name="Manta" Type="Software"/>
+		<ID id="Generic" Name="Generic Cummins Handheld" Type="Software"/>
+		<ID id="QuickSpec" Name="QuickSpec" Type="Software"/>
+		<ID id="DAF0" Name="DAF" Type="Software"/>
+		<ID id="E510" Name="PowerSpec" Type="Software"/>
+		<ID id="0" Name="Compulink" Type="Cartridge"/>
+		<ID id="1" Name="Echek" Type="Cartridge"/>
+		<ID id="2" Name="INSITE" Type="Software"/>
+		<ID id="3" Name="Field Test Tool" Type="Software"/>
+		<ID id="9" Name="ESDN" Type="Software"/>
+		<ID id="Default" Name="Unknown" Type="Unknown"/>
+		<ID id="4" Name="Engineering ESDN" Type="Software"/>
+		<ID id="5" Name="INFORM" Type="Software"/>
+		<ID id="6" Name="ECM" Type="Software"/>
+		<ID id="8" Name="ESDN" Type="Software"/>
+		<ID id="NGET" Name="NGET" Type="Software"/>
+		<ID id="10" Name="CALTERM" Type="Software"/>
+		<ID id="12" Name="Engineering Unlock Tool" Type="Software"/>
+		<ID id="13" Name="INSPEC" Type="Software"/>
+		<ID id="14" Name="POWER_MATCH" Type="Software"/>
+		<ID id="16" Name="DAF" Type="Software"/>
+		<ID id="25" Name="DATALINK_BRIDGE" Type="Software"/>
+	</TOOL_ID_MAP>
+	<RESOURCE>
+		<AUDIT_INFO Ecm="Default">
+			<AUDIT_CODE BitNumber="0" Code="000">Unknown</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="1" Code="001">Idle Shutdown</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="2" Code="002">Remote PTO</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="3" Code="003">Cruise Control</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="4" Code="004">Vehicle Speed Sensor Anti-Tampering</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="5" Code="005">Road Speed Governor</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="6" Code="006">Automatic Transmission</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="7" Code="007">Vehicle Speed Sensor</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="8" Code="008">Application Type</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="9" Code="009">Maximum Vehicle Speed in Top Gear</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="10" Code="010">Maximum Engine Speed without Vehicle Speed Source</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="11" Code="011">Top Transmission Gear Ratio</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="12" Code="012">Rear Axle Ratio</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="13" Code="013">Tire Revolutions per Distance</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="14" Code="014">Tailshaft Gear Teeth</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="15" Code="015">Fan Clutch Control</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="16" Code="016">Engine Brake Control</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="17" Code="017">PTO</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="18" Code="018">Low Idle Adjustment</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="19" Code="019">Engine Protection</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="20" Code="020">Information Features</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="21" Code="021">Gear Down Protection</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="22" Code="022">Multi-Level ECM Security</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="23" Code="023">Throttle Control - Interlock</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="24" Code="024">Water In Fuel Sensor</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="25" Code="025">Driver Reward System</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="26" Code="026">Tool Resets</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="27" Code="027">Reset Inactive Fault Codes</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="28" Code="028">ECM Diagnostic Tests</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="29" Code="029">Setup For Dynamometer Test</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="30" Code="030">Calibration Download</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="31" Code="031">Vehicle Anti-Theft Protection</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="32" Code="032">Smart Air Compressor</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="33" Code="033">Programmable Speed</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="34" Code="034">Top 2 Autoshift</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="35" Code="035">Starter Lockout</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="36" Code="036">Emissions Heated Oxygen Sensor</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="37" Code="037">Customer/Vehicle Information</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="38" Code="038">Transmission Outputs</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="39" Code="039">Vehicle Acceleration Management</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="40" Code="040">Alternate Droop</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="41" Code="041">Alternate Torque</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="42" Code="042">Alternate Low Idle</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="43" Code="043">Progressive Shift</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="44" Code="044">Programmable Power</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="45" Code="045">Remote Throttle</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="46" Code="046">Powertrain Protection</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="47" Code="047">Vocational ESP</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="48" Code="048">Fuel Inlet Restriction Monitor</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="49" Code="049">PowerSpec</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="50" Code="050">Fast Idle Warmup</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="51" Code="051">Coolant Level Sensor Installed</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="52" Code="052">Light Fuel Feature Adjusted</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="53" Code="053">ECM Password Removal Tool Used</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="54" Code="054">Switched Maximum Engine Operating Speed</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="55" Code="055">J1939 Multiplexing</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="56" Code="056">J1939 Control Datalink Enable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="57" Code="057">Boost Power</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="58" Code="058">Multi-Unit Synchronization</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="59" Code="059">Throttle Diagnostic Switch</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="60" Code="060">Industrial Governor</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="61" Code="061">Tire Wear Adjustment</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="62" Code="062">J1939 Broadcast</AUDIT_CODE>
+      <AUDIT_CODE BitNumber="63" Code="063">Alternator Failure Warning</AUDIT_CODE>
+      <AUDIT_CODE BitNumber="64" Code="064">Ether Injection</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="65" Code="065">Power Generation Governor</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="66" Code="066">Output Meter Setup</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="67" Code="067">Power Generation Alternator Protection</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="68" Code="068">Power Generation Starting - Warm Up/Cool Down</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="69" Code="069">Automatic Voltage Regulation</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="70" Code="070">Generator Set Alternator Setup</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="71" Code="071">Generator Set Voltage Setup</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="72" Code="072">Generator Set Current Setup</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="73" Code="073">Generator Set Power Factor Setup</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="74" Code="074">Run Relay Setup</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="75" Code="075">Generator Set Operations Setup</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="76" Code="076">Modem Setup</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="77" Code="077">Low Fuel Warning Setup</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="78" Code="078">Low Battery Voltage Warning Setup</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="79" Code="079">Load Dump Setup</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="80" Code="080">LonWorks Network Setup</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="81" Code="081">Synchronizing Setup</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="82" Code="082">Buss Voltage Setup</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="83" Code="083">Load Share Setup</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="84" Code="084">Load Governing Setup</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="85" Code="085">Circuit Breaker Interface Setup</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="86" Code="086">Customer Supplied Switch Setup</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="87" Code="087">Clutch Pedal Position Switch</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="88" Code="088">Detonation Sensor</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="89" Code="089">Closed-Loop Fueling</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="90" Code="090">Cranking and Vent Cycle</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="91" Code="091">Kilowatt Load Sensor</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="92" Code="092">Speed Bias</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="93" Code="093">Commissioning Setup</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="94" Code="094">Electrical System Voltage</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="95" Code="095">Ignition Spark Timing</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="96" Code="096">Cylinder Cutout</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="97" Code="097">Customer Power Limiter</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="98" Code="098">Power transfer Control Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="99" Code="099">Power Transfer Control Fault Simulation</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="100" Code="100">Oil Prelube Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="101" Code="101">OEM Ambient Air Temperature Sensor</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="102" Code="102">Dedicated PWM Output</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="103" Code="103">Frequency Accelerator</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="104" Code="104">Intermediate Speed Control</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="105" Code="105">Accelerator Pedal or Lever Settings</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="106" Code="106">Sudden Deceleration</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="107" Code="107">Tank 2 LNG Fuel Tank</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="108" Code="108">I/O Multiplexing</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="109" Code="109">Battle Short Adjustment</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="110" Code="110">Delayed Shutdown Adjustment</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="111" Code="111">Reset Start/Stop Log</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="112" Code="112">Reset Shutdown Log</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="113" Code="113">Trend Log</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="114" Code="114">Reset Enhanced Fault Snapshot</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="115" Code="115">Dual Accelerator</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="116" Code="116">Diesel Exhaust Fluid Heater</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="117" Code="117">Immobilizer</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="118" Code="118">Intake Air Heater</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="119" Code="119">Reset All Fault Codes</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="120" Code="120">Rated Speed - Base</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="121" Code="121">Oil Level Electronic Dipstick</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="122" Code="122">OBD Misfire Alternate Gains</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="123" Code="123">Diesel Exhaust Fluid Tank Non-Linear Tank Type</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="124" Code="124">Grid Heater Adjustment</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="125" Code="125">Brake Pedal Position Switch</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="126" Code="126">Engine Protection Witness Test</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="127" Code="127">Starter Lockout Test</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="128" Code="128">Injector Barcode Trim Adjustment</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="129" Code="129">Aftertreatment Regeneration Setup</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="130" Code="130">Aftertreatment Lamp Setup</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="131" Code="131">Dual Fan Clutch Control</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="132" Code="132">Aftertreatment Diesel Particulate Filter Replacement</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="133" Code="133">OBD Derate Torque Available</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="134" Code="134">Idle Ramp Down</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="135" Code="135">Cyclical Load Acceptance</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="136" Code="136">Enhanced Auxiliary Shutdown Switch</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="137" Code="137">Fuel Usage Adjustment</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="138" Code="138">High Soot Load Shutdown</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="139" Code="139">Vehicle Classification</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="140" Code="140">Engine Air Shutoff Valve</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="141" Code="141">Aftertreatment Diesel Particulate Filter Temperature Stabilization</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="142" Code="142">Fault Acknowledge</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="143" Code="143">Remote Start</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="144" Code="144">Oil Pressure Sensor</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="145" Code="145">Particulate Matter Sensor Regeneration Operation</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="146" Code="146">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="147" Code="147">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="148" Code="148">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="149" Code="149">Air Supply Type</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="150" Code="150">High Sulphur Protection Inhibit</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="151" Code="151">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="152" Code="152">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="153" Code="153">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="154" Code="154">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="155" Code="155">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="156" Code="156">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="157" Code="157">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="158" Code="158">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="159" Code="159">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="160" Code="160">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="161" Code="161">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="162" Code="162">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="163" Code="163">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="164" Code="164">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="165" Code="165">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="166" Code="166">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="167" Code="167">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="168" Code="168">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="169" Code="169">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="170" Code="170">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="171" Code="171">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="172" Code="172">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="173" Code="173">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="174" Code="174">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="175" Code="175">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="176" Code="176">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="177" Code="177">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="178" Code="178">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="179" Code="179">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="180" Code="180">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="181" Code="181">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="182" Code="182">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="183" Code="183">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="184" Code="184">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="185" Code="185">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="186" Code="186">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="187" Code="187">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="188" Code="188">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="189" Code="189">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="190" Code="190">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="191" Code="191">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="192" Code="192">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="193" Code="193">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="194" Code="194">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="195" Code="195">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="196" Code="196">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="197" Code="197">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="198" Code="198">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="199" Code="199">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="200" Code="200">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="201" Code="201">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="202" Code="202">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="203" Code="203">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="204" Code="204">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="205" Code="205">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="206" Code="206">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="207" Code="207">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="208" Code="208">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="209" Code="209">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="210" Code="210">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="211" Code="211">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="212" Code="212">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="213" Code="213">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="214" Code="214">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="215" Code="215">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="216" Code="216">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="217" Code="217">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="218" Code="218">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="219" Code="219">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="220" Code="220">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="221" Code="221">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="222" Code="222">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="223" Code="223">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="224" Code="224">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="225" Code="225">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="226" Code="226">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="227" Code="227">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="228" Code="228">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="229" Code="229">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="230" Code="230">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="231" Code="231">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="232" Code="232">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="233" Code="233">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="234" Code="234">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="235" Code="235">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="236" Code="236">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="237" Code="237">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="238" Code="238">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="239" Code="239">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="240" Code="240">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="241" Code="241">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="242" Code="242">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="243" Code="243">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="244" Code="244">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="245" Code="245">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="246" Code="246">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="247" Code="247">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="248" Code="248">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="249" Code="249">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="250" Code="250">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="251" Code="251">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="252" Code="252">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="253" Code="253">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="254" Code="254">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="255" Code="255">Undefined</AUDIT_CODE>
+		</AUDIT_INFO>
+		<AUDIT_INFO Ecm="1">
+			<AUDIT_CODE BitNumber="0" Code="M1">Max Vehicle Speed in Top Gear</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="1" Code="M2">Max Cruise Control Speed</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="2" Code="P3">Set PTO Speed /Light Load PTO % Fuel</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="3" Code="P2">Resume PTO Speed</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="4" Code="P1">Max/Min/Remote PTO Speed</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="5" Code="E1">Max Engine Speed without VSS</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="6" Code="M3">Max Vehicle Speed in Lower Gear (Light and Heavy Engine Loads)</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="7" Code="I1">Low idle RPM</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="8" Code="V1">Tire Revolutions per Distance/Application Type</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="9" Code="V2">Rear Axle Ratio /VSS Anti-Tampering (Fault Code 242)</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="10" Code="V3">VSS Type /VSS Switch /Maintenance Monitor Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="11" Code="V4">Number of Tailshaft Gear Teeth /Automatic Transmission</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="12" Code="T1">Transmission Top Gear Ratio</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="13" Code="C2">Accelerate /Coast Flag</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="14" Code="S1">Max Progressive Shift RPM</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="15" Code="S2">Max Progressive Shift RPM at Zero Vehicle Speed</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="16" Code="M4">Vehicle Speed at Max Progressive Shift RPM</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="17" Code="P5">New Parameter File</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="18" Code="D1">Vehicle Information (Make, Model ID or Year)</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="19" Code="F2">PTO feature switch</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="20" Code="F1">Low Idle Adjust feature switch</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="21" Code="C1">New Calibration</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="22" Code="F3">Cruise Control or OptiCruise feature switch</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="23" Code="F4">Progressive Shift feature switch</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="24" Code="F5">All Speed feature switch</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="25" Code="F6">Idle Shut Down Switch</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="26" Code="I2">Idle Shut Down</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="27" Code="P4">CELECT Password</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="28" Code="F7">Gear Down Protection feature switch</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="29" Code="I3">Idle Shutdown Override</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="30" Code="F8">Engine Protection Shutdown</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="31" Code="I4">PTO Shutdown Enable</AUDIT_CODE>
+		</AUDIT_INFO>
+		<AUDIT_INFO Ecm="5">
+			<AUDIT_CODE BitNumber="0" Code="N1">Number of flywheel teeth</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="1" Code="E1">Engine fuel rail pressure @ governor break</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="2" Code="E2">Engine fuel rail pressure @ no load idle</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="3" Code="E3">Governor breakpoint speed</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="4" Code="SE">Transient smoke control enable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="5" Code="S1">Smoke control no air setting</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="6" Code="S2">Smoke control delay</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="7" Code="S3">Smoke control spring rate setting</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="8" Code="A0">ADVANTAGE curve rail pressure and speed values</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="9" Code="F1">Cranking fuel rail pressure at low engine crank speeds</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="10" Code="F2">Cranking fuel rail pressure at high engine crank speeds</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="11" Code="G1">Derivative gain</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="12" Code="G2">Loop gain</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="13" Code="C1">Calibration Code</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="14" Code="C2">Speed control trim</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="15" Code="IE">Isochronous low idle enable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="16" Code="I1">Low idle speed set point</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="17" Code="I2">Governor droop at minimum throttle</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="18" Code="I3">Governor droop at maximum throttle</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="19" Code="I4">Isochronous high idle speed</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="20" Code="P4">Intermediate speed switch set speed</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="21" Code="P5">Intermediate speed switch governor droop</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="22" Code="D3">Alternate Droop switch governor droop</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="23" Code="D4">Alternate Droop switch isochronous maximum speed</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="24" Code="A1">Alternate Torque speed switch 1 or rail pressure @ speed 1</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="25" Code="A2">Alternate Torque speed switch 2 or rail pressure @ speed 2</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="26" Code="A3">Alternate Torque speed switch 3 or rail pressure @ speed 3</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="27" Code="A4">Alternate Torque speed switch 4 or rail pressure @ speed 4</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="28" Code="A5">Alternate Torque speed switch 5 or rail pressure @ speed 5</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="29" Code="L1">Alternate low idle switch set point</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="30" Code="B1">Percent throttle in backup mode or engine overspeed threshold</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="31" Code="P1">Step Timing Control threshold rail pressure</AUDIT_CODE>
+		</AUDIT_INFO>
+		<AUDIT_INFO Ecm="6">
+			<AUDIT_CODE BitNumber="0" Code="I5">Low Idle RPM Adjustment (Cold Engine)</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="1" Code="I6">Low Idle RPM Adjustment (Hot Engine)</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="2" Code="O1">Coolant Overheat Shutdown Delay Adjustment</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="3" Code="O2">Intake Manifold Temperature Overheat Delay Adjustment</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="5" Code="F8">Engine Overheat Protection Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="6" Code="D2">Customer Information Adjustment (Name, Location, Unit Number)</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="7" Code="C1">New Calibration</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="9" Code="C3">Heated Oxygen Sensor Adjustment</AUDIT_CODE>
+		</AUDIT_INFO>
+		<AUDIT_INFO Ecm="12">
+			<AUDIT_CODE BitNumber="0" Code="A4">Automatic Transmission</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="1" Code="A5">Application Type</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="2" Code="C4">Cruise Control Governor Droop Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="3" Code="C6">Number of Engine Brake Sets</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="4" Code="C7">Engine Brake Levels, Vehicle Speeds Above Cruise Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="5" Code="D1">Dataplate Information</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="6" Code="D3">Road Speed Governor Droop Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="7" Code="E1">Maximum Engine Speed without Vehicle Speed Sensor</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="8" Code="E9">ESP Lock-In Mode (Base/High)</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="9" Code="C1">New Calibration</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="10" Code="EA">Engine Brakes (yes/no)</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="11" Code="F1">Low Idle Speed Adjust Switch Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="12" Code="F2">PTO/Remote PTO Feature Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="13" Code="F3">Cruise Control Feature Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="14" Code="F4">Progressive Shift Feature Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="15" Code="F5">Governor Type (Automotive or Variable Speed)</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="16" Code="F6">Idle Shutdown Feature Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="17" Code="F7">Geardown Protection Feature Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="18" Code="F8">Engine Protection Shutdown Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="19" Code="FC">Engine Brake in Cruise Control Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="20" Code="FD">Cruise Control Resume After Clutch Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="21" Code="FF">Fan On During Engine Braking Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="22" Code="FG">Fan Clutch 2 Enable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="23" Code="FH">Disable Air Conditioner Pressure Switch Input</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="24" Code="FI">Disable Fan Accessory Switch Input</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="25" Code="I1">Low Idle Speed</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="26" Code="I2">Idle Shutdown Time</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="27" Code="I3">Idle Shutdown Override</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="28" Code="I4">Idle Shutdown in PTO</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="29" Code="M1">Maximum Vehicle Speed Top Gear</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="30" Code="M2">Maximum Cruise Control Speed</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="31" Code="M3">Gear-Down Maximum Vehicle Speed Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="32" Code="PG">Brake/Clutch PTO Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="33" Code="M5">Maintenance Monitor Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="34" Code="M6">Maintenance Monitor Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="35" Code="P1">PTO RPM Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="36" Code="P4">ECM Password (Master)</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="37" Code="P5">New Feature/Parameter File</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="38" Code="PA">Adjustment Password</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="39" Code="PB">Reset Password</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="40" Code="PH">Minimum Fan On Time For Air Conditioner Pressure Switch</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="41" Code="PJ">Light Load PTO Percent Fuel</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="42" Code="R4">Remote PTO RPM</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="43" Code="S1">Progressive Shift Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="44" Code="S3">Setup for Dynamometer</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="45" Code="T1">Transmission Gear Ratio Adjustments, Top Transmission Gear Ratio, One Gear Down Gear Ratio, Two Gears Down Gear Ratio, Three Gears Down Gear Ratio</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="46" Code="T2">Trip Information System Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="47" Code="V1">Tire Revolutions per Distance</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="48" Code="V2">Rear Axle Ratio</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="49" Code="V3">Vehicle Speed Sensor Type</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="50" Code="V4">Number of Tailshaft Gear Teeth</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="51" Code="V5">Vehicle Speed Sensor (Yes/No)</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="52" Code="V6">Vehicle Speed Sensor Anti-Tampering (Fault Code 242) (Yes/No)</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="53" Code="EB">Vehicle Speed and Engine Brake Interactions Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="54" Code="EC">Pedal Tap For Brake Activation Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="55" Code="FJ">Fan Air Conditioner Vehicle Speed Interaction Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="56" Code="IC">Ambient Air Temperature Idle Shutdown Adjustments, Override (YES/NO), Cold Temperature, Intermediate Temperature, Hot Temperature</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="57" Code="A1">Alternate Droop Feature (Enable/Disable), Alternate Droop 2 Isochronous High Idle, Alternate Droop 3 Isochronous High Idle, Droop at Breakpoint 2, Droop at Breakpoint 3, Droop at Maximum Throttle 2, Droop at Minimum Throttle 2, Droop at Maximum Throttle 3</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="58" Code="A2">Alternate Torque Feature (Enable/Disable and Parameters)</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="59" Code="DB">Driver Reward Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="60" Code="D4">Accelerator Interlock Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="61" Code="DA">Driver Reward Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="62" Code="V7">Vehicle Anti-Theft Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="63" Code="T3">Top2 Cruise Control On/Off Switch Enable/Disable</AUDIT_CODE>
+		</AUDIT_INFO>
+		<AUDIT_INFO Ecm="14">
+			<AUDIT_CODE BitNumber="0" Code="A1">Alternate Droop Feature (Enable/Disable and Parameters)</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="1" Code="A2">Alternate Torque Feature (Enable/Disable and Parameters)</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="2" Code="D1">Vehicle Information (Make, Model, VIN or SN, Year)</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="3" Code="D2">Customer Information (Customer Name, Location, Unit Number)</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="4" Code="D3">Alternate Droop Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="5" Code="D4">Engine Information (ESN, Build Date)</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="6" Code="F1">Low Idle Speed Adjust Switch Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="7" Code="F2">Intermediate Speed Control Feature Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="8" Code="F5">All Speed Governor Feature Adjustment (Governor Type)</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="9" Code="C1">New Calibration</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="10" Code="F8">Engine Protection Shutdown Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="11" Code="FE">Engine Protection Feature Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="12" Code="P1">Intermediate Speed Control Maximum Speed</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="13" Code="P3">Intermediate Speed Control Set Speeds</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="14" Code="P4">ECM Password (Master)</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="15" Code="P5">New Feature/Parameter File</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="16" Code="PA">Access Password 1 and/or Associated Access Settings</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="17" Code="PB">Access Password 2 and/or Associated Access Settings</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="18" Code="PC">Access Password 3 and/or Associated Access Settings</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="19" Code="PF">Intermediate Speed Control Droop</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="20" Code="R2">Remote Throttle Features (Remote Throttle and Deceleration)</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="21" Code="R6">Switched Speed Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="22" Code="R7">Switched Speeds</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="23" Code="T5">Throttle Droop Feature</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="24" Code="I1">Low Idle Speed</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="25" Code="I8">High Idle Speed (Isochronous)</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="26" Code="A3">Alternate Low Idle Feature (Enable/Disable and Parameters)</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="27" Code="CA">Duty Cycle Monitor Data Clearing</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="28" Code="CB">Fuel Consumption Rate Data Clearing</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="29" Code="FJ">Engine Warm-up Protection Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="30" Code="M5">Information Features (Maintenance Monitor, OEM Sensor, Oil Level, Throttle Diagnostic Switch)</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="31" Code="M6">Maintenance Monitor Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="32" Code="FK">Engine Protection Restart Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="33" Code="B1">Ether Injection Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="34" Code="B2">Engine Derates</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="35" Code="B3">Centinel System</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="36" Code="B4">Auxiliary Speed Governor</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="37" Code="B5">Boost Power</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="38" Code="B6">Fan Clutch</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="39" Code="B7">Idle Shutdown</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="40" Code="B8">Hot Shutdown Load Percent</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="41" Code="B9">Hybrid Governor Enable/Disable</AUDIT_CODE>
+		</AUDIT_INFO>
+		<AUDIT_INFO Ecm="15">
+			<AUDIT_CODE BitNumber="0" Code="A4">Automatic Transmission</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="1" Code="A5">Application Type</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="2" Code="C4">Unknown</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="3" Code="C6">Number of Engine Brake Sets</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="4" Code="C7">Engine Brake Levels, Vehicle Speeds Above Cruise Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="5" Code="D1">Dataplate Information</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="6" Code="D3">Unknown</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="7" Code="E1">Maximum Engine Speed Without Vehicle Speed Sensor</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="8" Code="E9">Unknown</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="9" Code="C1">New Calibration</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="10" Code="EA">Engine Brakes (yes/no)</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="11" Code="F1">Low Idle Speed Adjust Switch Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="12" Code="F2">Unknown</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="13" Code="F3">Unknown</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="14" Code="F4">Unknown</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="15" Code="F5">Governor Type (Automotive or Variable Speed)</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="16" Code="F6">Idle Shutdown Feature Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="17" Code="F7">Geardown Protection Feature Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="18" Code="F8">Engine Protection Shutdown Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="19" Code="FC">Unknown</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="20" Code="FD">Unknown</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="21" Code="FF">Fan On During Engine Braking Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="22" Code="FG">Fan Clutch 2 Enable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="23" Code="FH">Disable Air Conditioner Pressure Switch Input</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="24" Code="FI">Disable Fan Accessory Switch Input</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="25" Code="I1">Low Idle Speed</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="26" Code="I2">Idle Shutdown Time</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="27" Code="I3">Idle Shutdown Override</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="28" Code="I4">Idle Shutdown in PTO</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="29" Code="M1">Unknown</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="30" Code="M2">Unknown</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="31" Code="M3">Gear-Down Maximum Vehicle Speed Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="32" Code="PG">Brake/Clutch PTO Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="33" Code="M5">Maintenance Monitor Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="34" Code="M6">Maintenance Monitor Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="35" Code="P1">PTO RPM Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="36" Code="P4">ECM Password (Master)</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="37" Code="P5">New Feature/Parameter File</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="38" Code="PA">Adjustment Password</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="39" Code="PB">Reset Password</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="40" Code="PH">Minimum Fan On Time For Air Conditioner Pressure Switch</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="41" Code="PJ">Light Load PTO % Fuel</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="42" Code="R4">Remote PTO RPM</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="43" Code="S1">Unknown</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="44" Code="S3">Unknown</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="45" Code="T1">Transmission Gear Ratio Adjustments, Top Transmission Gear Ratio, One Gear Down Gear Ratio, Two Gears Down Gear Ratio, Three Gears Down Gear Ratio</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="46" Code="T2">Trip Information System Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="47" Code="V1">Unknown</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="48" Code="V2">Rear Axle Ratio</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="49" Code="V3">Vehicle Speed Sensor Type</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="50" Code="V4">Number of Tailshaft Gear Teeth</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="51" Code="V5">Vehicle Speed Sensor (Yes/No)</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="52" Code="V6">Vehicle Speed Sensor Anti-Tampering (Fault Code 242) (Yes/No)</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="53" Code="EB">MPH and Engine Brake Interactions Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="54" Code="EC">Pedal Tap For Brake Activation Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="55" Code="FJ">Fan Air Conditioner MPH Interaction Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="56" Code="IC">Ambient Air Temperature Idle Shutdown Adjustments, Override (YES/NO), Cold Temperature, Intermediate Temperature, Hot Temperature</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="57" Code="A1">Alternate Droop Feature (Enable/Disable), Alternate Droop 2 Isochronous High Idle, Alternate Droop 3 Isochronous High Idle, Droop at Breakpoint 2, Droop at Breakpoint 3, Droop at Maximum Throttle 2, Droop at Minimum Throttle 2, Droop at Maximum Throttle 3</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="58" Code="A2">Alternate Torque Feature (Enable/Disable and Parameters)</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="59" Code="DB">Unknown</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="60" Code="D4">Accelerator Interlock Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="61" Code="DA">Unknown</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="62" Code="V7">Unknown</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="63" Code="T3">Unknown</AUDIT_CODE>
+		</AUDIT_INFO>
+		<AUDIT_INFO Ecm="18">
+			<AUDIT_CODE BitNumber="0" Code="00">Automatic Transmission</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="1" Code="01">Application Type</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="2" Code="02">Cruise Control Governor Droop Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="3" Code="03">Duty Cycle Monitor Data Clearing</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="4" Code="04">Accelerate/Coast Flag (set/accel vs. set coast)</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="5" Code="05">Dataplate Information</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="6" Code="06">Road Speed Governor Droop Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="7" Code="07">Maximum Engine Speed Without Vehicle Speed Sensor</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="8" Code="08">Vehicle Braking</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="9" Code="09">New Calibration</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="10" Code="10">Cruise Control Auto-Resume Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="11" Code="11">Low Idle Speed Adjust Switch Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="12" Code="12">PTO Feature Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="13" Code="13">Cruise Control Feature Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="14" Code="14">Vehicle Speed above Cruise Set Point, Automatic Exhaust Brake in Cruise Control</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="15" Code="15">Governor Type (Automotive or VS)</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="16" Code="16">Idle Shutdown Feature Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="17" Code="17">Geardown Protection Feature Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="18" Code="18">Engine Protection Shutdown Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="19" Code="19">Remote Throttle</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="20" Code="20">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="21" Code="21">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="22" Code="22">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="23" Code="23">Air Conditioner Pressure Switch Input</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="24" Code="24">Unknown</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="25" Code="25">Low Idle Speed</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="26" Code="26">Idle Shutdown Time</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="27" Code="27">Idle Shutdown Override</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="28" Code="28">Idle Shutdown in PTO</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="29" Code="29">Maximum Vehicle Speed Top Gear</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="30" Code="30">Maximum Cruise Control Speed</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="31" Code="31">Gear-Down Maximum Vehicle Speed Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="32" Code="32">Unknown</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="33" Code="33">Maintenance Monitor Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="34" Code="34">Maintenance Monitor Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="35" Code="35">PTO Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="36" Code="36">ECM Password (Master)</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="37" Code="37">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="38" Code="38">Adjustment Password</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="39" Code="39">Reset Password</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="40" Code="40">Unknown</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="41" Code="41">Powertrain Protection Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="42" Code="42">Remote PTO Feature Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="43" Code="43">Remote PTO Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="44" Code="44">Setup for Dynamometer</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="45" Code="45">Transmission Gear Ratio Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="46" Code="46">Trip Information System Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="47" Code="47">Tire Revolutions per Distance</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="48" Code="48">Rear Axle Ratio Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="49" Code="49">Vehicle Speed Sensor Type</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="50" Code="50">Number of Tailshaft Gear Teeth</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="51" Code="51">Minimum Fan on Time for Air Conditioner Pressure Switch</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="52" Code="52">Vehicle Speed Sensor Anti-Tampering (Fault Code 242) (Yes/No)</AUDIT_CODE>
+		</AUDIT_INFO>
+		<AUDIT_INFO Ecm="50">
+			<AUDIT_CODE BitNumber="0" Code="A4">Automatic Transmission</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="1" Code="A5">Application Type</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="2" Code="C4">Cruise Control Governor Droop Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="3" Code="CA">Duty Cycle Monitor Data Clearing</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="4" Code="C2">Accelerate/Coast Flag (set/accel vs. set coast)</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="5" Code="D1">Dataplate Information</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="6" Code="D3">Road Speed Governor Droop Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="7" Code="E1">Maximum Engine Speed Without Vehicle Speed Sensor</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="8" Code="EA">Vehicle Braking</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="9" Code="C1">New Calibration</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="10" Code="FD">Cruise Control Auto-Resume Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="11" Code="F1">Low Idle Speed Adjust Switch Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="12" Code="F2">PTO Feature Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="13" Code="F3">Cruise Control Feature Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="14" Code="C7">Vehicle Speed above Cruise Set Point, Automatic Exhaust Brake in Cruise Control</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="15" Code="F5">Governor Type (Automotive or VS)</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="16" Code="F6">Idle Shutdown Feature Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="17" Code="F7">Geardown Protection Feature Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="18" Code="F8">Engine Protection Shutdown Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="19" Code="FG">Remote Throttle</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="20" Code="??">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="21" Code="??">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="22" Code="??">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="23" Code="FH">Disable Air Conditioner Pressure Switch Input</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="24" Code="FG">Fan Clutch2/Manual Fan Switch</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="25" Code="I1">Low Idle Speed</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="26" Code="I2">Idle Shutdown Time</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="27" Code="I3">Idle Shutdown Override</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="28" Code="I4">Idle Shutdown in PTO</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="29" Code="M1">Maximum Vehicle Speed Top Gear</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="30" Code="M2">Maximum Cruise Control Speed</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="31" Code="M3">Gear-Down Maximum Vehicle Speed Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="32" Code="FI">Fan Control Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="33" Code="M5">Maintenance Monitor Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="34" Code="M6">Maintenance Monitor Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="35" Code="P1">PTO Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="36" Code="P4">ECM Password (Master)</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="37" Code="??">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="38" Code="PA">Adjustment Password</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="39" Code="PB">Reset Password</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="40" Code="PF">Programmable PTO Droop</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="41" Code="PF">Powertrain Protection Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="42" Code="R1">Remote PTO Feature Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="43" Code="R4">Remote PTO Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="44" Code="S3">Setup for Dynamometer</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="45" Code="T1">Transmission Gear Ratio Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="46" Code="T2">Trip Information System Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="47" Code="V1">Tire Revolutions per Distance</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="48" Code="V2">Rear Axle Ratio Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="49" Code="V3">Vehicle Speed Sensor Type</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="50" Code="V4">Number of Tailshaft Gear Teeth</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="51" Code="PH">Minimum Fan on Time for Air Conditioner Pressure Switch</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="52" Code="V6">Vehicle Speed Sensor Anti-Tampering (Fault Code 242) (Yes/No)</AUDIT_CODE>
+		</AUDIT_INFO>
+		<AUDIT_INFO Ecm="19">
+			<AUDIT_CODE BitNumber="3" Code="CA">Duty Cycle Monitor Data Clearing</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="5" Code="D1">Dataplate Information</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="9" Code="C1">New Calibration</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="26" Code="26">Tool Resets</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="27" Code="27">Reset Inactive Fault Codes</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="46" Code="T2">Trip Information System Adjustments</AUDIT_CODE>
+		</AUDIT_INFO>
+		<AUDIT_INFO Ecm="47">
+			<AUDIT_CODE BitNumber="0" Code="00">Automatic Transmission</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="1" Code="01">Application Type</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="2" Code="02">Cruise Control Governor Droop Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="3" Code="03">Duty Cycle Monitor Data Clearing</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="4" Code="04">Accelerate/Coast Flag (set/accel vs. set coast)</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="5" Code="05">Dataplate Information</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="6" Code="06">Road Speed Governor Droop Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="7" Code="07">Maximum Engine Speed Without Vehicle Speed Sensor</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="8" Code="08">Vehicle Braking</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="9" Code="09">New Calibration</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="10" Code="10">Cruise Control Auto-Resume Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="11" Code="11">Low Idle Speed Adjust Switch Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="12" Code="12">PTO Feature Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="13" Code="13">Cruise Control Feature Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="14" Code="14">Vehicle Speed above Cruise Set Point, Automatic Exhaust Brake in Cruise Control</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="15" Code="15">Governor Type (Automotive or VS)</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="16" Code="16">Idle Shutdown Feature Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="17" Code="17">Geardown Protection Feature Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="18" Code="18">Engine Protection Shutdown Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="19" Code="19">Remote Throttle</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="20" Code="20">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="21" Code="21">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="22" Code="22">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="23" Code="23">Air Conditioner Pressure Switch Input</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="24" Code="24">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="25" Code="25">Low Idle Speed</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="26" Code="26">Idle Shutdown Time</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="27" Code="27">Idle Shutdown Override</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="28" Code="28">Idle Shutdown in PTO</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="29" Code="29">Maximum Vehicle Speed Top Gear</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="30" Code="30">Maximum Cruise Control Speed</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="31" Code="31">Gear-Down Maximum Vehicle Speed Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="32" Code="32">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="33" Code="33">Maintenance Monitor Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="34" Code="34">Maintenance Monitor Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="35" Code="35">PTO Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="36" Code="36">ECM Password (Master)</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="37" Code="37">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="38" Code="38">Adjustment Password</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="39" Code="39">Reset Password</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="40" Code="40">Undefined</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="41" Code="41">Powertrain Protection Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="42" Code="42">Remote PTO Feature Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="43" Code="43">Remote PTO Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="44" Code="44">Setup for Dynamometer</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="45" Code="45">Transmission Gear Ratio Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="46" Code="46">Trip Information System Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="47" Code="47">Tire Revolutions per Distance</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="48" Code="48">Rear Axle Ratio Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="49" Code="49">Vehicle Speed Sensor Type</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="50" Code="50">Number of Tailshaft Gear Teeth</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="51" Code="51">Minimum Fan on Time for Air Conditioner Pressure Switch</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="52" Code="52">Vehicle Speed Sensor Anti-Tampering (Fault Code 242) (Yes/No)</AUDIT_CODE>
+		</AUDIT_INFO>
+		<AUDIT_INFO Ecm="20">
+			<AUDIT_CODE BitNumber="0" Code="A4">Transmission Output Voltages</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="1" Code="C2">Set/Accel Switch Configuration</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="2" Code="O1">Coolant Overheat Shutdown Delay</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="3" Code="O2">Intake Manifold Temperature Overheat Delay</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="4" Code="E1">Maximum Engine Speed W/O Vehicle Speed Sensor</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="5" Code="F8">Engine Overheat Protection Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="6" Code="D2">Customer Information</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="7" Code="C1">New Calibration</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="8" Code="F2">PTO/Remote PTO Feature Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="9" Code="C3">Heated Oxygen Sensor Adjustment</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="10" Code="F3">Cruise Control Feature Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="11" Code="I1">Low Idle Speed</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="12" Code="M1">Maximum Vehicle Speed Top Gear</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="13" Code="M2">Maximum Cruise Control Speed</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="14" Code="P1">PTO RPM Adjustments</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="15" Code="PJ">Light Load PTO Percent Fuel</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="16" Code="R4">Remote PTO RPM</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="17" Code="S3">Setup for Dynamometer</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="18" Code="V1">Tire Revolutions per Distance</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="19" Code="V2">Rear Axle Ratio</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="20" Code="V3">Vehicle Speed Sensor Type</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="21" Code="V4">Number of Tailshaft Gear Teeth</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="22" Code="V5">Vehicle Speed Sensor Enable/Disable</AUDIT_CODE>
+			<AUDIT_CODE BitNumber="23" Code="I7">Door Interlock Feature Enable/Disable</AUDIT_CODE>
+		</AUDIT_INFO>
+	</RESOURCE>
+</ROOT>

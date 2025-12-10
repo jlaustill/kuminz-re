@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE module SYSTEM "../htmlentities.dtd">
+<ROOT>
+<Setting Name = "DML_IDS_TEXTVIEW_HEADER_PARAM" Type = "float" DefaultVal= "35" MinimumVal= "0" MaximumVal= "1000"></Setting>
+<Setting Name = "DML_IDS_TEXTVIEW_HEADER_VALUE" Type = "float" DefaultVal= "20" MinimumVal= "0" MaximumVal= "1000"></Setting>
+<Setting Name = "DML_IDS_TEXTVIEW_HEADER_UNITS" Type = "float" DefaultVal= "15" MinimumVal= "0" MaximumVal= "1000"></Setting>
+<Setting Name = "DML_IDS_TEXTVIEW_HEADER_LOWERLIMIT" Type = "float" DefaultVal= "15" MinimumVal= "0" MaximumVal= "1000"></Setting>
+<Setting Name = "DML_IDS_TEXTVIEW_HEADER_UPPERLIMIT" Type = "float" DefaultVal= "15" MinimumVal= "0" MaximumVal= "1000"></Setting>
+<Setting Name = "DML_MULTI_IDS_TEXTVIEW_HEADER_PARAM" Type = "float" DefaultVal= "25" MinimumVal= "0" MaximumVal= "1000"></Setting>
+<Setting Name = "DML_MULTI_IDS_TEXTVIEW_HEADER_VALUE" Type = "float" DefaultVal= "20" MinimumVal= "0" MaximumVal= "1000"></Setting>
+<Setting Name = "DML_MULTI_IDS_TEXTVIEW_HEADER_UNITS" Type = "float" DefaultVal= "10" MinimumVal= "0" MaximumVal= "1000"></Setting>
+<Setting Name = "DML_MULTI_IDS_TEXTVIEW_HEADER_MODULE" Type = "float" DefaultVal= "15" MinimumVal= "0" MaximumVal= "1000"></Setting>
+<Setting Name = "DML_MULTI_IDS_TEXTVIEW_HEADER_ID" Type = "float" DefaultVal= "10" MinimumVal= "0" MaximumVal= "1000"></Setting>
+<Setting Name = "DML_MULTI_IDS_TEXTVIEW_HEADER_LOWERLIMIT" Type = "float" DefaultVal= "10" MinimumVal= "0" MaximumVal= "1000"></Setting>
+<Setting Name = "DML_MULTI_IDS_TEXTVIEW_HEADER_UPPERLIMIT" Type = "float" DefaultVal= "10" MinimumVal= "0" MaximumVal= "1000"></Setting>
+<Setting Name = "FNP_IDS_HEADER_FEATURESPARAM" Type = "float" DefaultVal= "56" MinimumVal= "0" MaximumVal= "1000"></Setting>
+<Setting Name = "FNP_IDS_HEADER_ECMVAL" Type = "float" DefaultVal= "17" MinimumVal= "0" MaximumVal= "1000"></Setting>
+<Setting Name = "FNP_IDS_HEADER_UNIT" Type = "float" DefaultVal= "10" MinimumVal= "0" MaximumVal= "1000"></Setting>
+<Setting Name = "FNP_IDS_HEADER_ORGVAL" Type = "float" DefaultVal= "17" MinimumVal= "0" MaximumVal= "1000"></Setting>
+</ROOT>

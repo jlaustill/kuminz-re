@@ -1,0 +1,31 @@
+# SymbolicTreeObj.dll Function Rename Mapping
+# Format: old_name|new_name
+# Source: Debug strings embedded in code (class::method references)
+
+# CSymbolicTreeComponent class methods
+FUN_100065f0|CSymbolicTreeComponent_AddToTree
+FUN_100073d7|CSymbolicTreeComponent_CreateNode
+FUN_10007790|CSymbolicTreeComponent_FinalConstruct
+FUN_10007ba0|CSymbolicTreeComponent_GetDataByID
+FUN_10007e60|CSymbolicTreeComponent_GetDataByName
+FUN_100081e0|CSymbolicTreeComponent_GetDataByPathName
+
+# CSymbolicTreeNode class methods
+FUN_10010380|CSymbolicTreeNode_DetachNode
+FUN_10010619|CSymbolicTreeNode_FinalConstruct
+FUN_10010940|CSymbolicTreeNode_InsertNode
+FUN_10011200|CSymbolicTreeNode_get_ChildCount
+FUN_1001140a|CSymbolicTreeNode_get_Data
+FUN_100115e7|CSymbolicTreeNode_get_FirstChild
+FUN_100117c7|CSymbolicTreeNode_get_Head
+FUN_10011a4e|CSymbolicTreeNode_get_Next
+FUN_10011c57|CSymbolicTreeNode_get_Parent
+FUN_10011e37|CSymbolicTreeNode_get_Previous
+FUN_10012017|CSymbolicTreeNode_get_SiblingCount
+FUN_10012316|CSymbolicTreeNode_get_Tail
+FUN_10012610|CSymbolicTreeNode_put_Data
+FUN_100127ec|CSymbolicTreeNode_put_FirstChild
+FUN_100129ac|CSymbolicTreeNode_put_Next
+FUN_10012b6c|CSymbolicTreeNode_put_Parent
+FUN_10012d2c|CSymbolicTreeNode_put_Previous
+

@@ -1,0 +1,24 @@
+name,address,length,data_type,unit,comment
+APLMES,0x0080d64c,2,0,RPM,RPM DERATE SUPPLIED BY APPLICATION GROUP.
+ZVCNLMES,0x01000648,2,0,RPM,MAXIMUM allowable engines peed when vehicle is below the breakpo
+CKCDLES,0x00807EFC,2,0,RPM,crank low coolant temperature RPM
+CKCDIMES,0x00807F04,2,0,rpm,crank low intake manifold temperature rpm
+CKFLRMES,0x00807F16,2,0,rpm,crank exit fuel ramp rpm
+CSCKES,0x00807ED8,2,0,rpm,rpm above which the engine is considered running (not cranking)
+DCMNHIES,0x00807D18,2,0,rpm,duty cycle mon high rpm limit for load fact, calc
+DCMNLOES,0x00807d1a,2,0,rpm,duty cycle mon low rpm limit for load fact, calc
+DGLSRSOF,0x00807c0a,2,0,rpm,offset added to lsg ref spd resulting in rpm limit for birh test
+EPCBRLSA,0x0080d1d4,4,0,address,pointer to crank blowby pressure rpm limit threshold
+EPCBSRRP,0x008070fc,2,0,rpm,rpm threshold that must be crossed in order to log crank blowby fault
+EPESLM,0x0080d288,2,0,rpm,maximum rpm allowed due to epf derating
+EPIMSRRP,0x00807090,2,0,rpm,rpm to reach before imt errors
+EPMXDQRP,0x00807f38,2,0,rpm,maximum engine rpm when fully derated, i.e. severity index = 1.0
+EPNTDQRP,0x01000436,2,0,rpm,max engine speed when no derate is in effect. (HSG BRAKE RPM)
+ESCS,0x01000416,4,0,RPM,conversion factor from hardware time units to rpm
+FLIVESTD,0x008074CC,2,0,rpm,idle select error disabled below this rpm
+FLMXRPCN,0x008074b0,2,0,rpm,max allowed rpm for calibration error sanity check
+FLPXRPTD,0x008074b6,2,0,rpm,engine rpm at which to start counting 112 messages for stuck relay err
+FLRPERTD,0x008074a8,2,0,rpm,max allowed diff betw rpm measured in ecm and pcm
+JC39P3RP,0x00808162,2,0,rpm,jcomm engine speed at pt 3 rpm at pt 3 of engine config map (follows h
+JC39P4RP,0x00808164,2,0,rpm, jcomm engine speed at pt 4 rpm at pt 4 of engine config map (follows h
+FLPIRP02,0x008074c2,2,0,rpm,speed threshold for high speed iat error debounce

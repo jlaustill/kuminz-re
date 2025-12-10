@@ -1,0 +1,34 @@
+<Configurations>
+  <DataLinkAdaptersConfiguration>
+    <DataLinkAdapter>
+      <DLAName>Peak_Systems</DLAName>
+      <MinFirmwareVersion>4.4</MinFirmwareVersion>
+      <MinDriverVersion>2.48.3.0</MinDriverVersion>
+    </DataLinkAdapter>
+    <DataLinkAdapter>
+      <DLAName>INLINE_II</DLAName>
+      <MinFirmwareVersion>9.28</MinFirmwareVersion>
+      <MinDriverVersion></MinDriverVersion>
+    </DataLinkAdapter>
+    <DataLinkAdapter>
+      <DLAName>RP1210a_Peak</DLAName>
+      <MinFirmwareVersion>4.4</MinFirmwareVersion>
+      <MinDriverVersion>2.48.3.0</MinDriverVersion>
+    </DataLinkAdapter>
+    <DataLinkAdapter>
+      <DLAName>RP1210a_INLINE4</DLAName>
+      <MinFirmwareVersion>4.20</MinFirmwareVersion>
+      <MinDriverVersion>5.4.0.9</MinDriverVersion>
+    </DataLinkAdapter>
+    <DataLinkAdapter>
+      <DLAName>RP1210a_INLINE5</DLAName>
+      <MinFirmwareVersion>5.32</MinFirmwareVersion>
+      <MinDriverVersion>5.4.0.9</MinDriverVersion>
+    </DataLinkAdapter>
+    <DataLinkAdapter>
+      <DLAName>RP1210a_INLINE6</DLAName>
+      <MinFirmwareVersion>6.26</MinFirmwareVersion>
+      <MinDriverVersion>5.4.0.9</MinDriverVersion>
+    </DataLinkAdapter>    
+  </DataLinkAdaptersConfiguration>
+<Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315" /><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1" /><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" /><DigestValue>0WLrlf6lczQHGrs8uIuOynTolM8=</DigestValue></Reference></SignedInfo><SignatureValue>ArcTKZ90HPOHHu9pfM6trpUzN/7DY7lKLftT5THzFo6WvRdck7Z3BxvTxllonno+vzZIBMU6vV8Xk/6L7iYvFKeCTDYUMJ/UcPeLAnclg241pRNP/FMLC8ohMGVOClAZQ/z8HFKfImGowWTGEBfjYwuY7tw2Bq9rz6IWEfiwZRUE/uOJuazlV3v9PGfQ1lYMvQK5zV6bRNJSKbw9NYtX2L4xL9rZzdOuO66ODICJX382S6AOcSewOorTliUImXFQqbluey62afyzIm5xpXtSSh5uDntnoCalXt3WUZV4YDY9uCrBc+VcCpbbxicZJk1GSNiF8EG1eVqsB4QdrjYzxg==</SignatureValue></Signature></Configurations>

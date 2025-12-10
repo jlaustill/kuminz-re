@@ -1,0 +1,8 @@
+flash_start,flash_end,ram_start,ram_end,size_bytes,copy_function,region_name,reverse_formula,notes
+0x00004000,0x0000400B,0x00804882,0x0080488D,12,calibrationDataCopyWithChecksum,calibration_block_1_header,ram - 0x804882 + 0x4000,Primary EEPROM block 1 header (3 dwords)
+0x00004400,0x00005A41,0x0080488E,0x008062CF,6722,calibrationDataCopyWithChecksum,calibration_block_2_data,ram - 0x80488E + 0x4400,Primary EEPROM calibration/INSITE data (0x8062D0-0x80488E=0x1A42 bytes)
+0x00006000,0x0000600B,0x00804882,0x0080488D,12,calibrationDataCopySecondary,calibration_block_1_header_backup,ram - 0x804882 + 0x6000,Secondary EEPROM block 1 header (fallback)
+0x00006400,0x00007A41,0x0080488E,0x008062CF,6722,calibrationDataCopySecondary,calibration_block_2_data_backup,ram - 0x80488E + 0x6400,Secondary EEPROM calibration/INSITE data (fallback)
+0x00037EAE,0x0003A68D,0x008062D2,0x00808AB1,10208,firmwareDataCopyToWorkingMemory,firmware_tables,ram - 0x8062D2 + 0x37EAE,Firmware CAN/parameter tables (0x808AB2-0x8062D2=0x27E0 bytes)
+0x00028C10,0x00028E9B,0x00FFE000,0x00FFE68B,652,initInternalRamAndCAN1,ebi_config,ram - 0xFFE000 + 0x28C10,EBI memory controller config (0xFFE68C-0xFFE000=0x68C bytes)
+0x0002929C,0x000293FB,0x00FFE700,0x00FFE7FE,256,initInternalRamAndCAN1,can1_mailboxes,ram - 0xFFE700 + 0x2929C,CAN1 controller mailbox config (0xFFE7FF-0xFFE700=0xFF bytes)

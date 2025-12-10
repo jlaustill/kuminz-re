@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE module SYSTEM "../htmlentities.dtd">
+<XML_RESOURCE>
+   <RESOURCE Tag="1001" Type="String Table" Description="Message String Table">
+      <STRING ID="100" Context="">AdditionalInfoResources_en</STRING>
+      <STRING ID="104" Context="">No ECM Connected</STRING>
+      <STRING ID="105" Context="">Advanced ECM Data</STRING>
+      <STRING ID="106" Context="">Advanced ECM Data</STRING>
+	  <STRING ID="107" Context="">Cummins INSITE</STRING>
+	  <STRING ID="108" Context="">Advanced ECM Data cannot be modified because INSITE is connected to an ECM image. ECM images are read-only.</STRING>
+	  
+      <STRING ID="208" Context="">Select Special Feature</STRING>
+      <STRING ID="300" Context="">Torque Derate</STRING>
+      <STRING ID="301" Context="">RPM Derate</STRING>
+      <STRING ID="302" Context="">ShutDown</STRING>
+      <STRING ID="209" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;17501&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="210" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;17502&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE was unable to detect a required component.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="211" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;17503&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE was unable to detect a required component.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="212" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;17504&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE was unable to detect a required component.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="213" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;17505&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="214" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;17506&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="215" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;17507&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="216" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;17508&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="217" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;17509&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="218" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;17002&lt;/ErrorNumber&gt;&lt;Description&gt;The additional information feature could not be closed.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="219" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;17003&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE was unable to detect a required component.&lt;/Description&gt;&lt;Suggestion&gt;Close and re-install the tool.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="220" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;17004&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE was unable to detect a required component.&lt;/Description&gt;&lt;Suggestion&gt;Close and re-install the tool.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="221" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;17005&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE was unable to detect a required component.&lt;/Description&gt;&lt;Suggestion&gt;Close and re-install the tool.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="222" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;17006&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE was unable to detect a required component.&lt;/Description&gt;&lt;Suggestion&gt;Close and re-install the tool.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="223" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;17007&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE was unable to detect a required component.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="224" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;17008&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE was unable to detect a required component.&lt;/Description&gt;&lt;Suggestion&gt;Close and re-install the tool.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="225" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;17009&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE was unable to detect a required component.&lt;/Description&gt;&lt;Suggestion&gt;Close and re-install the tool.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="226" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;17010&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE was unable to detect a required component.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="227" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;17011&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE was unable to determine the ECM type.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="228" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;17012&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE was unable to detect a required component.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="229" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;17013&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE was unable to detect a required component.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="230" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;17014&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE was unable to detect a required component.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="231" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;17015&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE was unable to detect a required component.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="232" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;17016&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE was unable to detect a required component.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="233" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;17017&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE was unable to detect a required component.&lt;/Description&gt;&lt;Suggestion&gt;Close and re-install the tool.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="234" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;17018&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE was unable to detect a required component.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="235" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;17019&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE was unable to detect a required component.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="236" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;17020&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE was unable to detect a required component.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="237" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;17021&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE was unable to detect a required component.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="238" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;17022&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE was unable to create a required component.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="239" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;17023&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE was unable to detect a required component.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="240" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;17024&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE was unable to detect a required component.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="241" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;17025&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE was unable to detect a required component.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="242" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;17026&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE was unable to detect a required component.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="243" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;17027&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE was unable to detect a required component.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="244" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;17028&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE was unable to convert a required file.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="245" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;17029&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE was unable to convert a required file.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="246" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;17030&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation.  Or 2) Close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+	   <STRING ID="248" Context="">No Advanced ECM data available for the connected ECM(s).</STRING>
+	   <STRING ID="249" Context="">No Advanced ECM Data available for this module.</STRING>
+	   <!-- Container Specific - Special Features TITLE STRINGS WILL BE DEFINED FROM 18001-20000 -->
+	   <STRING ID="18001" CONTEXT="title">Engine Protection</STRING>
+	   <STRING ID="18002" CONTEXT="title">J1922 Control History</STRING>
+	   <STRING ID="18003" CONTEXT="title">Maintenance Monitor</STRING>
+	   <STRING ID="18004" CONTEXT="title">SAE J1939 Powertrain Control</STRING>
+	   <STRING ID="18005" CONTEXT="title">Duty Cycle Monitor</STRING>
+	   <STRING ID="18006" CONTEXT="title">Engine Performance Rating</STRING>
+	   <STRING ID="18007" CONTEXT="title">Engine Torque History</STRING>
+	   <STRING ID="18008" CONTEXT="title">OEM Engine Performance Rating Blocking Table</STRING>
+	   <STRING ID="18009" CONTEXT="title">Real Time Clock</STRING>
+	   <STRING ID="18010" CONTEXT="title">Anti-Theft Protection</STRING>
+	   <STRING ID="18011" CONTEXT="title">Fuel Consumption Monitor</STRING>
+	   <STRING ID="18012" CONTEXT="title">Engine Abuse History</STRING>
+	   <STRING ID="18013" CONTEXT="title">Knock Count Reset</STRING>
+	   <STRING ID="18014" CONTEXT="title">SAE J1939 Multiplexed Fault Data</STRING>
+	   <STRING ID="18015" CONTEXT="title">Duty Cycle Monitor</STRING>
+	   <STRING ID="18016" CONTEXT="title">Engine Protection</STRING>
+	   <STRING ID="18017" CONTEXT="title">SAE J1939 Multiplexed Fault Data</STRING>
+	   <STRING ID="18018" CONTEXT="title">Engine Protection Setting</STRING>
+	   <STRING ID="18019" CONTEXT="title">Aftertreatment History</STRING>
+	   <STRING ID="18020" CONTEXT="title">Maintenance Monitor</STRING>
+	   <STRING ID="18021" CONTEXT="title">Engine Abuse History</STRING>
+	   <STRING ID="18022" CONTEXT="title">Anti-Theft Protection</STRING>
+	   <STRING ID="18023" CONTEXT="title">Aftertreatment Maintenance</STRING>
+	   <STRING ID="18024" CONTEXT="title">SAE J1939 Powertrain Control</STRING>
+	   <STRING ID="18025" CONTEXT="title">Aftertreatment Maintenance Filter Installation</STRING>
+	   <STRING ID="18026" CONTEXT="title">Fuel Consumption Monitor</STRING>
+	   <STRING ID="18027" CONTEXT="title">High Pressure Common Rail Injector Setup</STRING>
+	   <STRING ID="18028" CONTEXT="title">Ether Injection Reset</STRING>
+	   <STRING ID="18029" CONTEXT="title">Immobilizer Installation</STRING>
+	   <STRING ID="18030" CONTEXT="title">Idle Shutdown Override</STRING>
+	   <STRING ID="18031" CONTEXT="title">Rated Overspeed Protection</STRING>
+	   <STRING ID="18032" CONTEXT="title">Diesel Exhaust Fluid Doser Purge Counter</STRING>
+	   <STRING ID="18033" CONTEXT="title">Aftertreatment Particulate Matter Sensor Regeneration</STRING>
+	   <STRING ID="18034" CONTEXT="title">Real Time Clock</STRING>
+	   <STRING ID="18035" CONTEXT="title">AEM Engine Shutdown Log</STRING>
+	   <STRING ID="18036" CONTEXT="title">AEM Enhanced Fault Snapshot Log</STRING>
+	   <STRING ID="18037" CONTEXT="title">AEM Trend Log</STRING>
+	   <STRING ID="18038" CONTEXT="title">AEM Start Stop Log</STRING>
+	   <STRING ID="18039" CONTEXT="title">Fuel System Table Reset</STRING>
+	   <STRING ID="18040" CONTEXT="title">Engine Torque History</STRING>
+	   <STRING ID="18041" CONTEXT="title">Vehicle Classification</STRING>
+	   <STRING ID="18042" CONTEXT="title">Fuel Injector Reset</STRING>
+	   <STRING ID="18043" CONTEXT="title">Multi Level ECM Security</STRING>
+	   <STRING ID="18044" CONTEXT="title">Multi Level ECM Security</STRING>
+   </RESOURCE>
+</XML_RESOURCE>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE module SYSTEM "../htmlentities.dtd"[]>
+<XML_RESOURCE>
+   <RESOURCE Tag="1001" Type="String Table" Description="Message String Table">
+		<STRING ID="100" Context="">Starting EFC Actuator Override Test</STRING>
+		<STRING ID="120" Context="">Initial Conditions \r\n1.     Engine stopped \r\n2.     Key Switch on \r\nSteps \r\n1.     Select Start \r\n2.     Select desired Commanded Actuator Position to open or close actuator \r\n3.     Monitor Fuel Pump Actuator Position parameter \r\nAdditional Information \r\n1.     Test runs for a maximum of 60 seconds \r\n2.     If required, select Stop to end the test early</STRING>
+        <STRING ID="200" Context="">EFC Actuator Override Test</STRING>
+		<STRING ID="201" Context="">This test can be used to validate the EFC Actuator operation by allowing the user to open and close the actuator.</STRING>
+		<STRING ID="202" Context="">This test is not supported by the current calibration.</STRING>
+		<STRING ID="203" Context="">Press 'Start' to initialize the test and select the override position. \r\nThe test will run for a maximum of %d seconds.</STRING>
+		<STRING ID="204" Context="">This test is not enabled in ECM</STRING>
+		<STRING ID="205" Context="">Running</STRING>
+		<STRING ID="206" Context="">Test Stopped.</STRING>
+		<STRING ID="207" Context="">EFC Actuator Commanded Close.</STRING>
+		<STRING ID="208" Context="">EFC Actuator Commanded Open.</STRING>
+		<STRING ID="209" Context="">ECM Communication Lost. All test parameters will return to their original value when keyswitch is turned off.</STRING>
+		<STRING ID="210" Context="">The ECM detects a condition in which the Starter Lockout Relay Driver Override Test cannot be ran. Please select Help for further detail. \r\n\r\nECM Response Code : %d</STRING>
+		<STRING ID="211" Context="">\r\n</STRING>
+		<STRING ID="212" Context="">This test is not supported by the current calibration.</STRING>
+    <STRING ID="213" Context="">Electronic Fuel Control Actuator circuit fault detected. Troubleshoot the fault code before proceeding with this test.</STRING>
+		<STRING ID="214" Context="">The ECM detects a condition in which the EFC Actuator Test cannot be run. Please select Help for further detail.</STRING>
+		<STRING ID="216" Context="">Engine Speed detected. Shutdown engine, key on, and restart test.</STRING>
+		<STRING ID="266" Context="">Communication Lost.</STRING>	
+		<STRING ID="300" Context="">Instructions:</STRING>
+		<STRING ID="301" Context="">Commanded Actuator Position</STRING>
+		<STRING ID="302" Context="">Monitors</STRING>
+		<STRING ID="303" Context="">Status</STRING>
+		<STRING ID="304" Context="">Close</STRING>
+		<STRING ID="305" Context="">Open</STRING>
+		<STRING ID="306" Context="">Name</STRING>
+		<STRING ID="307" Context="">Value</STRING>
+		<STRING ID="308" Context="">Units</STRING>
+		<STRING ID="309" Context="">Time Remaining</STRING>
+		<STRING ID="310" Context="">Fuel Pump Actuator Position</STRING>
+    <STRING ID="311" Context="">Show</STRING>
+    <STRING ID="20800" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20800&lt;/ErrorNumber&gt;&lt;Description&gt;Unable to start the EFC Actuator Override Diagnostics Test.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;
+		</STRING>
+        <STRING ID="20801" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20801&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to load a necessary resource.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;
+        </STRING>
+        <STRING ID="20802" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20802&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to unsubscribe from necessary events.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+        <STRING ID="20803" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20803&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to unpublish published events.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+        <STRING ID="20804" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20804&lt;/ErrorNumber&gt;&lt;Description&gt;An unidentified error occurred in the ECM Test "EFC Actuator Override Diagnostics Test".&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+        <STRING ID="20805" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20805&lt;/ErrorNumber&gt;&lt;Description&gt;Unable to properly stop the EFC Actuator Override Diagnostics Test.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+           <STRING ID="20807" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20806&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to subscribe to necessary events. EFC Actuator Override Diagnostics Test may behave improperly.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+           <STRING ID="20808" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20808&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to publish necessary events.  EFC Actuator Override Diagnostics Test may behave improperly.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+           <STRING ID="20809" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20809&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to acquire necessary EFC Actuator Valve.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+           <STRING ID="20810" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20810&lt;/ErrorNumber&gt;&lt;Description&gt;An error has occurred while attempting to print.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+           <STRING ID="20811" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20811&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to acquire necessary kernel resources.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+           <STRING ID="20812" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20812&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to acquire necessary threading resources.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+           <STRING ID="20813" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20813&lt;/ErrorNumber&gt;&lt;Description&gt;An unidentified error occurred in the ECM Test "IEFC Actuator Override Diagnostics Test".&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+           <STRING ID="20814" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20814&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to publish necessary events.  EFC Actuator Override Diagnostics Test may behave improperly.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+           <STRING ID="20815" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20815&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to read Operation Response Code.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation.  Or 2) Close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+           <STRING ID="20816" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20816&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE failed to perform the requested ECM operation.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation.  Or 2) Close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+           <STRING ID="20817" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20817&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE failed to initialize Monitoring of parameters.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation.  Or 2) Close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+           <STRING ID="20818" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20818&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE failed to start Monitoring of parameters.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation.  Or 2) Close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+           <STRING ID="20819" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20819&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE failed to create required component.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation.  Or 2) Close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+           <STRING ID="20820" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20820&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE failed to stop Monitoring of parameters.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation.  Or 2) Close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+           <STRING ID="20821" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20821&lt;/ErrorNumber&gt;&lt;Description&gt;An error has occurred while attempting to get test result.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING> 
+           <STRING ID="20822" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20033&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to launch help.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+             </RESOURCE>
+</XML_RESOURCE>

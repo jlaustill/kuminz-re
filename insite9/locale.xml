@@ -1,0 +1,828 @@
+<!-- edited with XMLSPY v5 rel. 4 U (http://www.xmlspy.com) by Joseph Suever (Cummins, Inc.) -->
+<UOM>
+	<UnitGroups>
+		<UnitGroup resourceID="165" label="USA" UnitGroupID="1" editflag="N">
+			<UnitFamilys>
+				<UnitFamily UnitFamilyID="1" name="Engine Speed" CurrentICLUnitID="37" />
+				<UnitFamily UnitFamilyID="2" name="Road Distance" CurrentICLUnitID="1" />
+				<UnitFamily UnitFamilyID="3" name="Temperature" CurrentICLUnitID="2" />
+				<UnitFamily UnitFamilyID="4" name="Power" CurrentICLUnitID="6" />
+				<UnitFamily UnitFamilyID="5" name="Torque" CurrentICLUnitID="7" />
+				<UnitFamily UnitFamilyID="6" name="Diesel Fuel Rate" CurrentICLUnitID="25" />
+				<UnitFamily UnitFamilyID="7" name="Natural Gas Fuel Rate" CurrentICLUnitID="62" />
+				<UnitFamily UnitFamilyID="8" name="Intake Manifold Pressure" CurrentICLUnitID="3" />
+				<UnitFamily UnitFamilyID="9" name="Ambient Pressure" CurrentICLUnitID="3" />
+				<UnitFamily UnitFamilyID="10" name="Oil Pressure" CurrentICLUnitID="85" />
+				<UnitFamily UnitFamilyID="11" name="Volume" CurrentICLUnitID="5" />
+				<UnitFamily UnitFamilyID="12" name="Fuel Economy" CurrentICLUnitID="15" />
+				<UnitFamily UnitFamilyID="13" name="Road Speed" CurrentICLUnitID="30" />
+				<UnitFamily UnitFamilyID="14" name="Acceleration" CurrentICLUnitID="67" />
+				<UnitFamily UnitFamilyID="19" name="Tire Size" CurrentICLUnitID="81" />
+				<UnitFamily UnitFamilyID="21" name="Weight" CurrentICLUnitID="89" />
+				<UnitFamily UnitFamilyID="25" name="Fuel Pressure" CurrentICLUnitID="85" />
+				<UnitFamily UnitFamilyID="26" name="Time-HH:MM" CurrentICLUnitID="108" />
+        <UnitFamily UnitFamilyID="27" name="Time-MM:SS" CurrentICLUnitID="111" />
+        <UnitFamily UnitFamilyID="28" name="Gas Volume" CurrentICLUnitID="89" />
+				<UnitFamily UnitFamilyID="30" name="Real Time Adjustables" CurrentICLUnitID="100" />
+				<UnitFamily UnitFamilyID="31" name="Volumetric Flow Rate" CurrentICLUnitID="123" />
+                <UnitFamily UnitFamilyID="32" name="Distance" CurrentICLUnitID="124" />
+                <UnitFamily UnitFamilyID="34" name="Angular Acceleration" CurrentICLUnitID="65" />
+				<UnitFamily UnitFamilyID="35" name="Mass Flow Rate" CurrentICLUnitID="80" />
+                <UnitFamily UnitFamilyID="124" name="Distance(Pulses)" CurrentICLUnitID="126" />
+				<UnitFamily UnitFamilyID="161" name="Gas Fuel Economy Family" CurrentICLUnitID="90" />
+        <UnitFamily UnitFamilyID="162" name="Pressure(very small)" CurrentICLUnitID="47" />
+        <UnitFamily UnitFamilyID="165" name="Pressure(medium2)" CurrentICLUnitID="85" />
+		<UnitFamily UnitFamilyID="167" name="Time-HHHHHH:MM" CurrentICLUnitID="131" />
+		<UnitFamily UnitFamilyID="169" name="Fuel Injection Volume" CurrentICLUnitID="132" />
+		<UnitFamily UnitFamilyID="171" name="Pressure(medium1)" CurrentICLUnitID="85" />
+			</UnitFamilys>
+		</UnitGroup>
+		<UnitGroup resourceID="166" label="Latin America" UnitGroupID="2" editflag="N">
+			<UnitFamilys>
+				<UnitFamily UnitFamilyID="1" name="Engine Speed" CurrentICLUnitID="37" />
+				<UnitFamily UnitFamilyID="2" name="Road Distance" CurrentICLUnitID="8" />
+				<UnitFamily UnitFamilyID="3" name="Temperature" CurrentICLUnitID="9" />
+				<UnitFamily UnitFamilyID="4" name="Power" CurrentICLUnitID="6" />
+				<UnitFamily UnitFamilyID="5" name="Torque" CurrentICLUnitID="14" />
+				<UnitFamily UnitFamilyID="6" name="Diesel Fuel Rate" CurrentICLUnitID="26" />
+				<UnitFamily UnitFamilyID="7" name="Natural Gas Fuel Rate" CurrentICLUnitID="58" />
+				<UnitFamily UnitFamilyID="8" name="Intake Manifold Pressure" CurrentICLUnitID="85" />
+				<UnitFamily UnitFamilyID="9" name="Ambient Pressure" CurrentICLUnitID="85" />
+				<UnitFamily UnitFamilyID="10" name="Oil Pressure" CurrentICLUnitID="85" />
+				<UnitFamily UnitFamilyID="11" name="Volume" CurrentICLUnitID="29" />
+				<UnitFamily UnitFamilyID="12" name="Fuel Economy" CurrentICLUnitID="24" />
+				<UnitFamily UnitFamilyID="13" name="Road Speed" CurrentICLUnitID="31" />
+				<UnitFamily UnitFamilyID="14" name="Acceleration" CurrentICLUnitID="68" />
+				<UnitFamily UnitFamilyID="19" name="Tire Size" CurrentICLUnitID="83" />
+				<UnitFamily UnitFamilyID="21" name="Weight" CurrentICLUnitID="118" />
+				<UnitFamily UnitFamilyID="25" name="Fuel Pressure" CurrentICLUnitID="85" />
+				<UnitFamily UnitFamilyID="26" name="Time-HH:MM" CurrentICLUnitID="108" />
+        <UnitFamily UnitFamilyID="27" name="Time-MM:SS" CurrentICLUnitID="111" />
+        <UnitFamily UnitFamilyID="28" name="Gas Volume" CurrentICLUnitID="118" />
+				<UnitFamily UnitFamilyID="30" name="Real Time Adjustables" CurrentICLUnitID="100" />
+				<UnitFamily UnitFamilyID="31" name="Volumetric Flow Rate" CurrentICLUnitID="122" />
+                <UnitFamily UnitFamilyID="32" name="Distance" CurrentICLUnitID="73" />
+                <UnitFamily UnitFamilyID="34" name="Angular Acceleration" CurrentICLUnitID="65" />
+				<UnitFamily UnitFamilyID="35" name="Mass Flow Rate" CurrentICLUnitID="114" />
+                <UnitFamily UnitFamilyID="124" name="Distance(Pulses)" CurrentICLUnitID="125" />
+				<UnitFamily UnitFamilyID="161" name="Gas Fuel Economy Family" CurrentICLUnitID="119" />
+        <UnitFamily UnitFamilyID="162" name="Pressure(very small)" CurrentICLUnitID="11" />
+        <UnitFamily UnitFamilyID="165" name="Pressure(medium2)" CurrentICLUnitID="85" />
+		<UnitFamily UnitFamilyID="167" name="Time-HHHHHH:MM" CurrentICLUnitID="131" />
+		<UnitFamily UnitFamilyID="169" name="Fuel Injection Volume" CurrentICLUnitID="132" />
+		<UnitFamily UnitFamilyID="171" name="Pressure(medium1)" CurrentICLUnitID="85" />
+			</UnitFamilys>
+		</UnitGroup>
+		<UnitGroup resourceID="167" label="Metric" UnitGroupID="3" editflag="N">
+			<UnitFamilys>
+				<UnitFamily UnitFamilyID="1" name="Engine Speed" CurrentICLUnitID="37" />
+				<UnitFamily UnitFamilyID="2" name="Road Distance" CurrentICLUnitID="8" />
+				<UnitFamily UnitFamilyID="3" name="Temperature" CurrentICLUnitID="9" />
+				<UnitFamily UnitFamilyID="4" name="Power" CurrentICLUnitID="6" />
+				<UnitFamily UnitFamilyID="5" name="Torque" CurrentICLUnitID="14" />
+				<UnitFamily UnitFamilyID="6" name="Diesel Fuel Rate" CurrentICLUnitID="26" />
+				<UnitFamily UnitFamilyID="7" name="Natural Gas Fuel Rate" CurrentICLUnitID="58" />
+				<UnitFamily UnitFamilyID="8" name="Intake Manifold Pressure" CurrentICLUnitID="11" />
+				<UnitFamily UnitFamilyID="9" name="Ambient Pressure" CurrentICLUnitID="11" />
+				<UnitFamily UnitFamilyID="10" name="Oil Pressure" CurrentICLUnitID="11" />
+				<UnitFamily UnitFamilyID="11" name="Volume" CurrentICLUnitID="29" />
+				<UnitFamily UnitFamilyID="12" name="Fuel Economy" CurrentICLUnitID="24" />
+				<UnitFamily UnitFamilyID="13" name="Road Speed" CurrentICLUnitID="31" />
+				<UnitFamily UnitFamilyID="14" name="Acceleration" CurrentICLUnitID="68" />
+				<UnitFamily UnitFamilyID="19" name="Tire Size" CurrentICLUnitID="83" />
+				<UnitFamily UnitFamilyID="21" name="Weight" CurrentICLUnitID="118" />
+				<UnitFamily UnitFamilyID="25" name="Fuel Pressure" CurrentICLUnitID="45" />
+				<UnitFamily UnitFamilyID="26" name="Time-HH:MM" CurrentICLUnitID="108" />
+        <UnitFamily UnitFamilyID="27" name="Time-MM:SS" CurrentICLUnitID="111" />
+        <UnitFamily UnitFamilyID="28" name="Gas Volume" CurrentICLUnitID="118" />
+				<UnitFamily UnitFamilyID="30" name="Real Time Adjustables" CurrentICLUnitID="100" />
+				<UnitFamily UnitFamilyID="31" name="Volumetric Flow Rate" CurrentICLUnitID="122" />
+                <UnitFamily UnitFamilyID="32" name="Distance" CurrentICLUnitID="73" />
+				<UnitFamily UnitFamilyID="34" name="Angular Acceleration" CurrentICLUnitID="65" />
+				<UnitFamily UnitFamilyID="35" name="Mass Flow Rate" CurrentICLUnitID="114" />
+                <UnitFamily UnitFamilyID="124" name="Distance(Pulses)" CurrentICLUnitID="125" />
+				<UnitFamily UnitFamilyID="161" name="Gas Fuel Economy Family" CurrentICLUnitID="119" />
+        <UnitFamily UnitFamilyID="162" name="Pressure(very small)" CurrentICLUnitID="11" />
+        <UnitFamily UnitFamilyID="165" name="Pressure(medium2)" CurrentICLUnitID="11" />
+		<UnitFamily UnitFamilyID="167" name="Time-HHHHHH:MM" CurrentICLUnitID="131" />
+		<UnitFamily UnitFamilyID="169" name="Fuel Injection Volume" CurrentICLUnitID="132" />
+		<UnitFamily UnitFamilyID="171" name="Pressure(medium1)" CurrentICLUnitID="23" />
+			</UnitFamilys>
+		</UnitGroup>
+		<UnitGroup resourceID="168" label="UK" UnitGroupID="4" editflag="N">
+			<UnitFamilys>
+				<UnitFamily UnitFamilyID="1" name="Engine Speed" CurrentICLUnitID="37" />
+				<UnitFamily UnitFamilyID="2" name="Road Distance" CurrentICLUnitID="1" />
+				<UnitFamily UnitFamilyID="3" name="Temperature" CurrentICLUnitID="9" />
+				<UnitFamily UnitFamilyID="4" name="Power" CurrentICLUnitID="6" />
+				<UnitFamily UnitFamilyID="5" name="Torque" CurrentICLUnitID="7" />
+				<UnitFamily UnitFamilyID="6" name="Diesel Fuel Rate" CurrentICLUnitID="32" />
+				<UnitFamily UnitFamilyID="7" name="Natural Gas Fuel Rate" CurrentICLUnitID="58" />
+				<UnitFamily UnitFamilyID="8" name="Intake Manifold Pressure" CurrentICLUnitID="11" />
+				<UnitFamily UnitFamilyID="9" name="Ambient Pressure" CurrentICLUnitID="11" />
+				<UnitFamily UnitFamilyID="10" name="Oil Pressure" CurrentICLUnitID="11" />
+				<UnitFamily UnitFamilyID="11" name="Volume" CurrentICLUnitID="13" />
+				<UnitFamily UnitFamilyID="12" name="Fuel Economy" CurrentICLUnitID="33" />
+				<UnitFamily UnitFamilyID="13" name="Road Speed" CurrentICLUnitID="30" />
+				<UnitFamily UnitFamilyID="14" name="Acceleration" CurrentICLUnitID="67" />
+				<UnitFamily UnitFamilyID="19" name="Tire Size" CurrentICLUnitID="81" />
+				<UnitFamily UnitFamilyID="21" name="Weight" CurrentICLUnitID="89" />
+				<UnitFamily UnitFamilyID="25" name="Fuel Pressure" CurrentICLUnitID="45" />
+				<UnitFamily UnitFamilyID="26" name="Time-HH:MM" CurrentICLUnitID="108" />
+        <UnitFamily UnitFamilyID="27" name="Time-MM:SS" CurrentICLUnitID="111" />
+        <UnitFamily UnitFamilyID="28" name="Gas Volume" CurrentICLUnitID="89" />
+				<UnitFamily UnitFamilyID="30" name="Real Time Adjustables" CurrentICLUnitID="100" />
+				<UnitFamily UnitFamilyID="31" name="Volumetric Flow Rate" CurrentICLUnitID="123" />
+                <UnitFamily UnitFamilyID="32" name="Distance" CurrentICLUnitID="124" />
+				<UnitFamily UnitFamilyID="34" name="Angular Acceleration" CurrentICLUnitID="65" />
+				<UnitFamily UnitFamilyID="35" name="Mass Flow Rate" CurrentICLUnitID="114" />
+                <UnitFamily UnitFamilyID="124" name="Distance(Pulses)" CurrentICLUnitID="126" />
+				<UnitFamily UnitFamilyID="161" name="Gas Fuel Economy Family" CurrentICLUnitID="119" />
+        <UnitFamily UnitFamilyID="162" name="Pressure(very small)" CurrentICLUnitID="47" />
+        <UnitFamily UnitFamilyID="165" name="Pressure(medium2)" CurrentICLUnitID="11" />
+		<UnitFamily UnitFamilyID="167" name="Time-HHHHHH:MM" CurrentICLUnitID="131" />
+		<UnitFamily UnitFamilyID="169" name="Fuel Injection Volume" CurrentICLUnitID="132" />
+		<UnitFamily UnitFamilyID="171" name="Pressure(medium1)" CurrentICLUnitID="23" />
+			</UnitFamilys>
+		</UnitGroup>
+	</UnitGroups>
+	<UnitFamilyDefinitions>
+		<!-- Conversion Part of this Document -->
+		<!-- To convert to Value_to, start with Value_from and look up the converstion numbers based on ICL unit ID and the Convert DCODE in the PAM database -->
+		<!-- If Invert(ICLUnitID_from) = "False" AND Invert(ICLUnit_to) ="False" -->
+		<!--      Value_to = Value_from * ConvertDCODE(ICLUnitID_from) / ConvertDCODE(ICLUnitID_to) -->
+		<!-- If Invert(ICLUnitID_from) = "True" AND Invert(ICLUnit_to) ="False" -->
+		<!--      Value_to = (1/Value_from) * ConvertDCODE(ICLUnitID_from) / ConvertDCODE(ICLUnitID_to) -->
+		<!-- Invert(ICLUnitID_from) = "False" AND Invert(ICLUnit_to) ="True" -->
+		<!--      Value_to = 1/[Value_from * ConvertDCODE(ICLUnitID_from)] / ConvertDCODE(ICLUnitID_to) -->
+		<!-- If Invert(ICLUnitID_from) = "True" AND Invert(ICLUnit_to) ="True" -->
+		<!--      Value_to = Value_from * ConvertDCODE(ICLUnitID_to) / ConvertDCODE(ICLUnitID_from) -->
+		<!-- Road Distance Family -->
+		<UnitFamilyDefinition UnitFamilyID="2" DefaultID="207" BaseID="201">
+			<Units>
+				<Unit ICLUnitID="1" ConvertDCODE="207" />
+				<Unit ICLUnitID="8" ConvertDCODE="208" />
+			</Units>
+		</UnitFamilyDefinition>
+		<!-- Temperature Family -->
+		<UnitFamilyDefinition UnitFamilyID="3" DefaultID="2" BaseID="1">
+			<Units>
+				<Unit ICLUnitID="2" ConvertDCODE="2" />
+				<Unit ICLUnitID="9" ConvertDCODE="4" />
+			</Units>
+		</UnitFamilyDefinition>
+		<!-- Power Family -->
+		<UnitFamilyDefinition UnitFamilyID="4" DefaultID="1502" BaseID="1501">
+			<Units>
+				<Unit ICLUnitID="16" ConvertDCODE="1508" />
+				<Unit ICLUnitID="6" ConvertDCODE="1502" />
+				<Unit ICLUnitID="39" ConvertDCODE="1503" />
+			</Units>
+		</UnitFamilyDefinition>
+		<!-- Torque Family -->
+		<UnitFamilyDefinition UnitFamilyID="5" DefaultID="1402" BaseID="1401">
+			<Units>
+				<Unit ICLUnitID="7" ConvertDCODE="1402" />
+				<Unit ICLUnitID="14" ConvertDCODE="1401" />
+				<Unit ICLUnitID="17" ConvertDCODE="1408" />
+				<Unit ICLUnitID="44" ConvertDCODE="1403" />
+			</Units>
+		</UnitFamilyDefinition>
+		<!-- Diesel Fuel Rate Family -->
+		<UnitFamilyDefinition UnitFamilyID="6" DefaultID="7006" BaseID="7001">
+			<Units>
+				<Unit ICLUnitID="25" ConvertDCODE="7006" />
+				<Unit ICLUnitID="96" ConvertDCODE="7017" />
+				<Unit ICLUnitID="32" ConvertDCODE="7016" />
+				<Unit ICLUnitID="26" ConvertDCODE="7010" />
+				<Unit ICLUnitID="62" ConvertDCODE="7018" />
+				<Unit ICLUnitID="58" ConvertDCODE="7019" />
+			</Units>
+		</UnitFamilyDefinition>
+		<!-- Natural Gas Fuel Rate Family -->
+		<UnitFamilyDefinition UnitFamilyID="7" DefaultID="1003" BaseID="1001">
+			<Units>
+				<Unit ICLUnitID="62" ConvertDCODE="1003" />
+				<Unit ICLUnitID="58" ConvertDCODE="1004" />
+				<Unit ICLUnitID="114" ConvertDCODE="1006" />
+			</Units>
+		</UnitFamilyDefinition>
+		<!-- Ambient Pressure Family -->
+		<UnitFamilyDefinition UnitFamilyID="9" DefaultID="4102" BaseID="4101">
+			<Units>
+				<Unit ICLUnitID="3" ConvertDCODE="4104" />
+				<Unit ICLUnitID="10" ConvertDCODE="4105" />
+				<Unit ICLUnitID="45" ConvertDCODE="4108" />
+				<Unit ICLUnitID="85" ConvertDCODE="4102" />
+				<Unit ICLUnitID="23" ConvertDCODE="4116" />
+				<Unit ICLUnitID="11" ConvertDCODE="4106" />
+				<Unit ICLUnitID="79" ConvertDCODE="4109" />
+				<Unit ICLUnitID="47" ConvertDCODE="4103" />
+				<Unit ICLUnitID="46" ConvertDCODE="4111" />
+				<Unit ICLUnitID="22" ConvertDCODE="4102" />
+				<Unit ICLUnitID="4" ConvertDCODE="4102" />
+				<Unit ICLUnitID="112" ConvertDCODE="4106" />
+			</Units>
+		</UnitFamilyDefinition>
+		<!-- Oil Pressure Family -->
+		<UnitFamilyDefinition UnitFamilyID="10" DefaultID="102" BaseID="101">
+			<Units>
+				<Unit ICLUnitID="85" ConvertDCODE="102" />
+				<Unit ICLUnitID="10" ConvertDCODE="105" />
+				<Unit ICLUnitID="45" ConvertDCODE="108" />
+				<Unit ICLUnitID="3" ConvertDCODE="104" />
+				<Unit ICLUnitID="23" ConvertDCODE="116" />
+				<Unit ICLUnitID="11" ConvertDCODE="106" />
+				<Unit ICLUnitID="79" ConvertDCODE="109" />
+				<Unit ICLUnitID="47" ConvertDCODE="103" />
+				<Unit ICLUnitID="46" ConvertDCODE="111" />
+				<Unit ICLUnitID="22" ConvertDCODE="102" />
+				<Unit ICLUnitID="4" ConvertDCODE="102" />
+			</Units>
+		</UnitFamilyDefinition>
+		<!-- Volume Family -->
+		<UnitFamilyDefinition UnitFamilyID="11" DefaultID="408" BaseID="401">
+			<Units>
+				<Unit ICLUnitID="49" ConvertDCODE="409" />
+				<Unit ICLUnitID="5" ConvertDCODE="408" />
+				<Unit ICLUnitID="29" ConvertDCODE="406" />
+				<Unit ICLUnitID="13" ConvertDCODE="410" />
+			</Units>
+		</UnitFamilyDefinition>
+    <!-- Fuel Economy Family -->
+    <UnitFamilyDefinition UnitFamilyID="12" DefaultID="6003" BaseID="6001">
+      <Units>
+        <Unit ICLUnitID="15" ConvertDCODE="6003" />
+        <Unit ICLUnitID="33" ConvertDCODE="6002" />
+        <Unit ICLUnitID="99" ConvertDCODE="6008" />
+        <Unit ICLUnitID="24" ConvertDCODE="6001" />
+      </Units>
+    </UnitFamilyDefinition>
+    <!-- Gas Fuel Economy Family -->
+    <UnitFamilyDefinition UnitFamilyID="161" DefaultID="8004" BaseID="8004">
+      <Units>
+        <Unit ICLUnitID="90" ConvertDCODE="8005" />
+        <Unit ICLUnitID="119" ConvertDCODE="8004" />
+      </Units>
+    </UnitFamilyDefinition>
+    <!-- Gas Fuel Economy Family -->
+	<UnitFamilyDefinition UnitFamilyID="162" DefaultID="4103" BaseID="4101">
+			<Units>
+				<Unit ICLUnitID="11" ConvertDCODE="4106" />
+				<Unit ICLUnitID="47" ConvertDCODE="4103" />
+			</Units>
+	</UnitFamilyDefinition> 
+    <!-- Road Speed Family -->
+		<UnitFamilyDefinition UnitFamilyID="13" DefaultID="502" BaseID="501">
+			<Units>
+				<Unit ICLUnitID="30" ConvertDCODE="502" />
+				<Unit ICLUnitID="31" ConvertDCODE="504" />
+			</Units>
+		</UnitFamilyDefinition>
+		<!-- Acceleration Family -->
+		<UnitFamilyDefinition UnitFamilyID="14" DefaultID="606" BaseID="601">
+			<Units>
+				<Unit ICLUnitID="67" ConvertDCODE="606" />
+				<Unit ICLUnitID="68" ConvertDCODE="607" />
+			</Units>
+		</UnitFamilyDefinition>
+		<!-- Engine Speed Family -->
+		<UnitFamilyDefinition UnitFamilyID="1" DefaultID="1802" BaseID="1801">
+			<Units>
+				<Unit ICLUnitID="37" ConvertDCODE="1802" />
+				<Unit ICLUnitID="104" ConvertDCODE="1811" />
+			</Units>
+		</UnitFamilyDefinition>
+		<!-- Intake Manifold Pressure Family -->
+		<UnitFamilyDefinition UnitFamilyID="8" DefaultID="4102" BaseID="4101">
+			<Units>
+				<Unit ICLUnitID="3" ConvertDCODE="4104" />
+				<Unit ICLUnitID="10" ConvertDCODE="4105" />
+				<Unit ICLUnitID="45" ConvertDCODE="4108" />
+				<Unit ICLUnitID="85" ConvertDCODE="4102" />
+				<Unit ICLUnitID="23" ConvertDCODE="4116" />
+				<Unit ICLUnitID="11" ConvertDCODE="4106" />
+				<Unit ICLUnitID="79" ConvertDCODE="4109" />
+				<Unit ICLUnitID="47" ConvertDCODE="4103" />
+				<Unit ICLUnitID="46" ConvertDCODE="4111" />
+				<Unit ICLUnitID="22" ConvertDCODE="4102" />
+				<Unit ICLUnitID="4" ConvertDCODE="4102" />
+				<Unit ICLUnitID="112" ConvertDCODE="4106" />
+			</Units>
+		</UnitFamilyDefinition>
+		<!-- Tire Size Family -->
+		<UnitFamilyDefinition UnitFamilyID="19" DefaultID="81" BaseID="81">
+			<Units>
+				<Unit ICLUnitID="81" ConvertDCODE="81" />
+				<Unit ICLUnitID="83" ConvertDCODE="82" />
+			</Units>
+		</UnitFamilyDefinition>
+    <!-- Weight -->
+    <UnitFamilyDefinition UnitFamilyID="21" DefaultID="901" BaseID="901">
+      <Units>
+        <Unit ICLUnitID="118" ConvertDCODE="901" />
+        <Unit ICLUnitID="89" ConvertDCODE="902" />
+      </Units>
+    </UnitFamilyDefinition>
+		<!-- Brake Actuations Family -->
+		<UnitFamilyDefinition UnitFamilyID="23" DefaultID="4207" BaseID="4201">
+			<Units>
+				<Unit ICLUnitID="34" ConvertDCODE="4207" />
+				<Unit ICLUnitID="35" ConvertDCODE="4208" />
+			</Units>
+		</UnitFamilyDefinition>
+		<UnitFamilyDefinition UnitFamilyID="25" DefaultID="7022" BaseID="7020">
+			<Units>
+                <Unit ICLUnitID="11" ConvertDCODE="7021" />
+				<Unit ICLUnitID="45" ConvertDCODE="7020" />
+               	<Unit ICLUnitID="85" ConvertDCODE="7022" />				
+                <Unit ICLUnitID="4" ConvertDCODE="7023" />
+				<Unit ICLUnitID="22" ConvertDCODE="7022" />
+				<Unit ICLUnitID="3" ConvertDCODE="7024" />
+				<Unit ICLUnitID="112" ConvertDCODE="8003" />
+			</Units>
+		</UnitFamilyDefinition>
+    <!-- MM:SS (minutes:seconds) -->
+    <UnitFamilyDefinition UnitFamilyID="27" DefaultID="702" BaseID="701">
+      <Units>
+        <Unit ICLUnitID="111" ConvertDCODE="702" />
+      </Units>
+    </UnitFamilyDefinition>
+    <!-- HH:MM (hours:minutes) -->
+	<UnitFamilyDefinition UnitFamilyID="26" DefaultID="702" BaseID="701">
+      <Units>
+        <Unit ICLUnitID="108" ConvertDCODE="702" />
+      </Units>
+    </UnitFamilyDefinition>
+		 <!-- Gas volume -->
+      <UnitFamilyDefinition UnitFamilyID="28" DefaultID="901" BaseID="901">
+			<Units>
+				<Unit ICLUnitID="118" ConvertDCODE="901" />
+                <Unit ICLUnitID="89" ConvertDCODE="902" />
+				</Units>
+				</UnitFamilyDefinition>
+				<!-- Real Time Adjustables -->
+		<UnitFamilyDefinition UnitFamilyID="30" DefaultID="703" BaseID="701">				
+			<Units>												
+				<Unit ICLUnitID="36" ConvertDCODE="703" />						
+			</Units>
+		</UnitFamilyDefinition>
+    <!-- Volumetric Flow Rate -->
+    <UnitFamilyDefinition UnitFamilyID="31" DefaultID="7025" BaseID="7025">
+      <Units>
+        <Unit ICLUnitID="122" ConvertDCODE="7025" />
+        <Unit ICLUnitID="123" ConvertDCODE="7026" />
+      </Units>
+    </UnitFamilyDefinition>
+        <!-- Distance -->
+        <UnitFamilyDefinition UnitFamilyID="32" DefaultID="8001" BaseID="8001">
+            <Units>
+                <Unit ICLUnitID="73" ConvertDCODE="8001" />
+                <Unit ICLUnitID="124" ConvertDCODE="8002" />
+            </Units>
+        </UnitFamilyDefinition>
+		<!-- Angular Acceleration -->
+		<UnitFamilyDefinition UnitFamilyID="34" DefaultID="1902" BaseID="1901">
+			<Units>
+				<Unit ICLUnitID="65" ConvertDCODE="1902" />
+			</Units>
+		</UnitFamilyDefinition>
+		<!-- Mass Flow Rate -->
+        <UnitFamilyDefinition UnitFamilyID="35" DefaultID="1002" BaseID="1001">
+            <Units>
+				<Unit ICLUnitID="80" ConvertDCODE="1002" />                
+                <Unit ICLUnitID="114" ConvertDCODE="1006" />                
+            </Units>
+        </UnitFamilyDefinition>
+        <!-- Distance(Pulses) -->
+        <UnitFamilyDefinition UnitFamilyID="124" DefaultID="7027" BaseID="7027">
+            <Units>
+                <Unit ICLUnitID="125" ConvertDCODE="7027" />
+                <Unit ICLUnitID="126" ConvertDCODE="7028" />
+            </Units>
+        </UnitFamilyDefinition>
+    <!-- Concentration -->
+    <UnitFamilyDefinition UnitFamilyID="163" DefaultID="7029" BaseID="7029">
+      <Units>
+        <Unit ICLUnitID="127" ConvertDCODE="7029" />
+      </Units>
+    </UnitFamilyDefinition>
+    <!-- Resistance (Medium) -->
+    <UnitFamilyDefinition UnitFamilyID="164" DefaultID="7030" BaseID="7030">
+      <Units>
+        <Unit ICLUnitID="128" ConvertDCODE="7030" />
+      </Units>
+    </UnitFamilyDefinition>
+    <!-- Pressure(Medium) -->
+    <UnitFamilyDefinition UnitFamilyID="165" DefaultID="102" BaseID="101">
+      <Units>
+        <Unit ICLUnitID="85" ConvertDCODE="102" />
+        <Unit ICLUnitID="11" ConvertDCODE="106" />
+      </Units>
+    </UnitFamilyDefinition>
+	 <!-- Pressure(Medium1) -->
+    <UnitFamilyDefinition UnitFamilyID="171" DefaultID="102" BaseID="101">
+      <Units>
+        <Unit ICLUnitID="85" ConvertDCODE="102" />
+        <Unit ICLUnitID="23" ConvertDCODE="4116" />
+        <Unit ICLUnitID="11" ConvertDCODE="106" />
+      </Units>
+    </UnitFamilyDefinition>
+    <!-- HHHHHH:MM (hours:minutes:seconds) -->
+    <UnitFamilyDefinition UnitFamilyID="167" DefaultID="703" BaseID="701">
+      <Units>
+        <Unit ICLUnitID="131" ConvertDCODE="703" />
+      </Units>
+    </UnitFamilyDefinition>
+  </UnitFamilyDefinitions>
+	<UnitInvertList>
+		<ICLUnitInvertedID ICLUnitID="99" ConvertDCODE="6008" />
+	</UnitInvertList>
+	<UnitNotDisplayedList>
+		<ICLUnitNotDisplayedID ICLUnitID="22" ConvertDCODE="4102" />
+		<ICLUnitNotDisplayedID ICLUnitID="4" ConvertDCODE="4102" />
+		<ICLUnitNotDisplayedID ICLUnitID="22" ConvertDCODE="102" />
+		<ICLUnitNotDisplayedID ICLUnitID="4" ConvertDCODE="102" />
+	</UnitNotDisplayedList>
+	<UnitFamilyNotDisplayedList>
+  <UnitFamilyNotDisplayedID UnitFamilyID="27" />
+  <UnitFamilyNotDisplayedID UnitFamilyID="30" />
+  <UnitFamilyNotDisplayedID UnitFamilyID="165" />
+	<UnitFamilyNotDisplayedID UnitFamilyID="167" />
+	<UnitFamilyNotDisplayedID UnitFamilyID="171" />
+	<UnitFamilyNotDisplayedID UnitFamilyID="162" />
+	</UnitFamilyNotDisplayedList>
+	<!-- Modified PAM Database -->
+	<!-- Converts a unit from its base DCODE to selected DCODE -->
+	<UnitDataConversions>
+		<UnitDataConversion DCODE="-1" BIAS="0" FACTOR="1" /> <!-- DESC="Character" -->
+		<UnitDataConversion DCODE="1" BIAS="0" FACTOR="1" /> <!-- DESC="Degrees Kelvin" -->
+		<UnitDataConversion DCODE="2" BIAS="459.67" FACTOR="0.5555555" /> <!-- DESC="Degrees Faharenheit" -->
+		<UnitDataConversion DCODE="3" BIAS="0" FACTOR="0.5555555" /> <!-- DESC="Degrees Rankin" -->
+		<UnitDataConversion DCODE="4" BIAS="273.15" FACTOR="1" /> <!-- DESC="Degrees Celsius" -->
+		<UnitDataConversion DCODE="81" BIAS="0" FACTOR="1" /> <!-- DESC="Revolutions per Mile" -->
+		<UnitDataConversion DCODE="82" BIAS="0" FACTOR="1.609344" /> <!-- DESC="Revolutions per Kilometer" -->
+		<UnitDataConversion DCODE="101" BIAS="0" FACTOR="1" /> <!-- DESC="Newtons per meter squared" -->
+		<UnitDataConversion DCODE="102" BIAS="0" FACTOR="6894.757" /> <!-- DESC="Pounds per square inch"  -->
+		<UnitDataConversion DCODE="102" BIAS="0" FACTOR="6894.757" /> <!-- DESC="Pounds per square inch" -->
+		<UnitDataConversion DCODE="103" BIAS="0" FACTOR="248.84" /> <!--DESC="Inches of water"  -->
+		<UnitDataConversion DCODE="104" BIAS="0" FACTOR="3376.85" /> <!--DESC="Inches of mercury"  -->
+		<UnitDataConversion DCODE="105" BIAS="0" FACTOR="133.322" /> <!-- DESC="Millimeters of mercury" -->
+		<UnitDataConversion DCODE="106" BIAS="0" FACTOR="1000" /> <!-- DESC="Kilopascals" -->
+		<UnitDataConversion DCODE="107" BIAS="0" FACTOR="3386.38" /> <!--DESC="Inches of mercury at 32 degrees Fahrenheit"  -->
+		<UnitDataConversion DCODE="108" BIAS="0" FACTOR="100000" /> <!--DESC="Bars"  -->
+		<UnitDataConversion DCODE="109" BIAS="0" FACTOR="1000000" /> <!-- DESC="Megapascals" -->
+		<UnitDataConversion DCODE="110" BIAS="0" FACTOR="100" /> <!--DESC="Millibars"  -->
+		<UnitDataConversion DCODE="111" BIAS="0" FACTOR="9.79685" /> <!-- DESC="Millimeters of water" -->
+		<UnitDataConversion DCODE="112" BIAS="0" FACTOR="47.88026" /> <!-- DESC="Pounds per square foot" -->
+		<UnitDataConversion DCODE="113" BIAS="0" FACTOR="98043.44" /> <!--DESC="Kilograms per centimeter squared"  -->
+		<UnitDataConversion DCODE="114" BIAS="0" FACTOR="1.00E+09" /> <!--DESC="Gigapascals"  -->
+		<UnitDataConversion DCODE="115" BIAS="0" FACTOR="6.89E+09" /> <!--DESC="Million pounds per square inch"  -->
+		<UnitDataConversion DCODE="116" BIAS="0" FACTOR="1" /> <!--DESC="pascals"  -->
+		<UnitDataConversion DCODE="201" BIAS="0" FACTOR="1" /> <!--DESC="Meters"  -->
+		<UnitDataConversion DCODE="202" BIAS="0" FACTOR="2.54E-02" /> <!--DESC="Inches"  -->
+		<UnitDataConversion DCODE="203" BIAS="0" FACTOR="0.3048" /> <!--DESC="Feet"  -->
+		<UnitDataConversion DCODE="204" BIAS="0" FACTOR="1.00E-03" /> <!--DESC="Millimeters"  -->
+		<UnitDataConversion DCODE="205" BIAS="0" FACTOR="1.00E-02" /> <!--DESC="Centimeters"  -->
+		<UnitDataConversion DCODE="206" BIAS="0" FACTOR="0.9144" /> <!--DESC="Centimeters"  -->
+		<UnitDataConversion DCODE="207" BIAS="0" FACTOR="1609.347" /> <!--DESC="Miles"  -->
+		<UnitDataConversion DCODE="208" BIAS="0" FACTOR="1000" /> <!--DESC="Kilometers"  -->
+		<UnitDataConversion DCODE="209" BIAS="0" FACTOR="2.54E-05" /> <!--DESC="Microinch"  -->
+		<UnitDataConversion DCODE="210" BIAS="0" FACTOR="1.00E-06" /> <!--DESC="Micron"  -->
+		<UnitDataConversion DCODE="301" BIAS="0" FACTOR="1" /> <!--DESC="Square meters"  -->
+		<UnitDataConversion DCODE="302" BIAS="0" FACTOR="6.45E-04" /> <!--DESC="Square inches"  -->
+		<UnitDataConversion DCODE="303" BIAS="0" FACTOR="9.29E-02" /> <!--DESC="Square feet"  -->
+		<UnitDataConversion DCODE="304" BIAS="0" FACTOR="2589998" /> <!--DESC="Square miles"  -->
+		<UnitDataConversion DCODE="305" BIAS="0" FACTOR="4046.873" /> <!--DESC="Acres"  -->
+		<UnitDataConversion DCODE="306" BIAS="0" FACTOR="1.00E-06" /> <!--DESC="Square millimeters"  -->
+		<UnitDataConversion DCODE="307" BIAS="0" FACTOR="1.00E-04" /> <!--DESC="Square centimeters"  -->
+		<UnitDataConversion DCODE="401" BIAS="0" FACTOR="1" /> <!--DESC="Cubic meters"  -->
+		<UnitDataConversion DCODE="402" BIAS="0" FACTOR="1.64E-05" /> <!--DESC="Cubic inches"  -->
+		<UnitDataConversion DCODE="403" BIAS="0" FACTOR="2.83E-02" /> <!--DESC="Cubic feet"  -->
+		<UnitDataConversion DCODE="404" BIAS="0" FACTOR="1.00E-09" /> <!--DESC="Cubic millimeters"  -->
+		<UnitDataConversion DCODE="405" BIAS="0" FACTOR="1.00E-06" /> <!--DESC="Milliliters"  -->
+		<UnitDataConversion DCODE="406" BIAS="0" FACTOR="1.00E-03" /> <!--DESC="Liters"  -->
+		<UnitDataConversion DCODE="407" BIAS="0" FACTOR="1.00E-06" /> <!--DESC="Cubic centimeters"  -->
+		<UnitDataConversion DCODE="408" BIAS="0" FACTOR="3.785412E-03" /> <!--DESC="Gallons"  -->
+		<UnitDataConversion DCODE="409" BIAS="0" FACTOR="9.46E-04" /> <!--DESC="Quarts"  -->
+		<UnitDataConversion DCODE="410" BIAS="0" FACTOR="4.55E-03" /> <!--DESC="Imperial gallon"  -->
+		<UnitDataConversion DCODE="501" BIAS="0" FACTOR="1" /> <!--DESC="Meters per second"  -->
+		<UnitDataConversion DCODE="502" BIAS="0" FACTOR="0.44704" /> <!--DESC="Miles per hour"  -->
+		<UnitDataConversion DCODE="503" BIAS="0" FACTOR="0.3048" /> <!--DESC="Feet per second"  -->
+		<UnitDataConversion DCODE="504" BIAS="0" FACTOR="0.2777778" /> <!--DESC="Kilometers per hour"  -->
+		<UnitDataConversion DCODE="505" BIAS="0" FACTOR="1.00E-02" /> <!--DESC="Centimeters per second"  -->
+		<UnitDataConversion DCODE="506" BIAS="0" FACTOR="5.08E-03" /> <!--DESC="Feet per minute"  -->
+		<UnitDataConversion DCODE="507" BIAS="0" FACTOR="0.5144" /> <!--DESC="Knots"  -->
+		<UnitDataConversion DCODE="601" BIAS="0" FACTOR="1" /> <!--DESC="Meters per second squared"  -->
+		<UnitDataConversion DCODE="602" BIAS="0" FACTOR="1.24E-04" /> <!--DESC="Miles per second squared"  -->
+		<UnitDataConversion DCODE="603" BIAS="0" FACTOR="0.3048" /> <!--DESC="Feet per seconds quared"  -->
+		<UnitDataConversion DCODE="604" BIAS="0" FACTOR="7.72E-05" /> <!--DESC="Kilometers per hour squared"  -->
+		<UnitDataConversion DCODE="605" BIAS="0" FACTOR="1.00E-02" /> <!--DESC="Centimeters per second squared"  -->
+		<UnitDataConversion DCODE="606" BIAS="0" FACTOR="0.4470408" /> <!--DESC="Miles per hour per second"  -->
+		<UnitDataConversion DCODE="607" BIAS="0" FACTOR="0.2777778" /> <!--DESC="Kilometers per hour per second"  -->
+		<UnitDataConversion DCODE="701" BIAS="0" FACTOR="1" /> <!--DESC="Seconds"  -->
+		<UnitDataConversion DCODE="702" BIAS="0" FACTOR="60" /> <!--DESC="Minutes"  -->
+		<UnitDataConversion DCODE="703" BIAS="0" FACTOR="3600" /> <!--DESC="Hours"  -->
+		<UnitDataConversion DCODE="704" BIAS="0" FACTOR="1.00E-03" /> <!--DESC="Milliseconds"  -->
+		<UnitDataConversion DCODE="705" BIAS="0" FACTOR="1.00E-06" /> <!--DESC="Microseconds"  -->
+		<UnitDataConversion DCODE="706" BIAS="0" FACTOR="86400" /> <!--DESC="Day"  -->
+		<UnitDataConversion DCODE="707" BIAS="0" FACTOR="604800" /> <!--DESC="Week"  -->
+		<UnitDataConversion DCODE="801" BIAS="0" FACTOR="1" /> <!--DESC="Kilograms per cubic meter"  -->
+		<UnitDataConversion DCODE="802" BIAS="0" FACTOR="27679.9" /> <!--DESC="Pounds per cubic inch"  -->
+		<UnitDataConversion DCODE="803" BIAS="0" FACTOR="16.01846" /> <!--DESC="Pounds per cubic foot"  -->
+		<UnitDataConversion DCODE="804" BIAS="0" FACTOR="1000" /> <!--DESC="Grams per cubiccentimeter"  -->
+		<UnitDataConversion DCODE="804" BIAS="0" FACTOR="1000" /> <!--DESC="Grams per cubiccentimeter"  -->
+		<UnitDataConversion DCODE="805" BIAS="0" FACTOR="119.8264" /> <!--DESC="Pounds per gallon"  -->
+		<UnitDataConversion DCODE="806" BIAS="0" FACTOR="1000" /> <!--DESC="Kilograms per liter"  -->
+		<UnitDataConversion DCODE="807" BIAS="0" FACTOR="3.53E-02" /> <!-- DESC="Grams per  cubic foot" -->
+		<UnitDataConversion DCODE="808" BIAS="0" FACTOR="1.00E-06" /> <!-- DESC="Milligrams per cubic meter" -->
+		<UnitDataConversion DCODE="901" BIAS="0" FACTOR="1" /> <!--DESC="Kilograms"  -->
+		<UnitDataConversion DCODE="902" BIAS="0" FACTOR="0.4535924" /> <!--DESC="Pounds-Mass"  -->
+		<UnitDataConversion DCODE="902" BIAS="0" FACTOR="0.4535924" /> <!-- DESC="Pounds-Mass"  -->
+		<UnitDataConversion DCODE="903" BIAS="0" FACTOR="1.00E-03" /> <!--DESC="Grams"  -->
+		<UnitDataConversion DCODE="903" BIAS="0" FACTOR="1.00E-03" /> <!--DESC="Grams" -->
+		<UnitDataConversion DCODE="904" BIAS="0" FACTOR="2.83E-02" /> <!--DESC="Ounces"  -->
+		<UnitDataConversion DCODE="905" BIAS="0" FACTOR="14.5939" /> <!-- DESC="Slugs" -->
+		<UnitDataConversion DCODE="907" BIAS="0" FACTOR="1.00E-06" /> <!--DESC="Milligrams"  -->
+		<UnitDataConversion DCODE="907" BIAS="0" FACTOR="1.00E-06" /> <!--DESC="Milligrams"  -->
+		<UnitDataConversion DCODE="908" BIAS="0" FACTOR="6.48E-05" /> <!--DESC="Grains"  -->
+		<UnitDataConversion DCODE="909" BIAS="0" FACTOR="907.1848" /> <!--DESC="Tons(short)"  -->
+		<UnitDataConversion DCODE="910" BIAS="0" FACTOR="1000" /> <!--DESC="Tonnes(metric)"  -->
+		<UnitDataConversion DCODE="1001" BIAS="0" FACTOR="1" /> <!--DESC="Kilograms per second"  -->
+		<UnitDataConversion DCODE="1002" BIAS="0" FACTOR="7.56E-03" /> <!--DESC="Pounds per minute"  -->
+		<UnitDataConversion DCODE="1003" BIAS="0" FACTOR="1.26E-04" /> <!--DESC="Pounds per hour"  -->
+		<UnitDataConversion DCODE="1004" BIAS="0" FACTOR="2.777778e-004" /> <!--DESC="Kilograms per hour"  -->
+		<UnitDataConversion DCODE="1005" BIAS="0" FACTOR="0.4535924" /> <!--DESC="Pounds per second"  -->
+		<UnitDataConversion DCODE="1006" BIAS="0" FACTOR="1.666667e-002" /> <!--DESC="Kilograms per minute"  -->
+		<UnitDataConversion DCODE="1007" BIAS="0" FACTOR="1.00E-03" /> <!--DESC="Grams per second"  -->
+		<UnitDataConversion DCODE="1008" BIAS="0" FACTOR="2.78E-07" /> <!--DESC="Grams per hour"  -->
+		<UnitDataConversion DCODE="1009" BIAS="0" FACTOR="7.87E-06" /> <!--DESC="Ounces per hour"  -->
+		<UnitDataConversion DCODE="1010" BIAS="0" FACTOR="1.67E-08" /> <!--DESC="Milligrams per minute"  -->
+		<UnitDataConversion DCODE="1101" BIAS="0" FACTOR="1" /> <!--DESC="Cubic meters per second"  -->
+		<UnitDataConversion DCODE="1102" BIAS="0" FACTOR="4.72E-04" /> <!--DESC="Cubic feet per minute"  -->
+		<UnitDataConversion DCODE="1103" BIAS="0" FACTOR="1.67E-05" /> <!--DESC="Liters per minute"  -->
+		<UnitDataConversion DCODE="1104" BIAS="0" FACTOR="6.31E-05" /> <!--DESC="Gallons per minute"  -->
+		<UnitDataConversion DCODE="1105" BIAS="0" FACTOR="1.00E-03" /> <!--DESC="Liters per second"  -->
+		<UnitDataConversion DCODE="1106" BIAS="0" FACTOR="1.05E-06" /> <!--DESC="Gallons per hour"  -->
+		<UnitDataConversion DCODE="1107" BIAS="0" FACTOR="3.785412E-03" /> <!--DESC="Gallons per second"  -->
+		<UnitDataConversion DCODE="1108" BIAS="0" FACTOR="7.87E-06" /> <!-- DESC="Cubic feet per hour" -->
+		<UnitDataConversion DCODE="1109" BIAS="0" FACTOR="2.78E-04" /> <!--DESC="Cubic meters per hour"  -->
+		<UnitDataConversion DCODE="1110" BIAS="0" FACTOR="2.78E-07" /> <!--DESC="Liters per hour"  -->
+		<UnitDataConversion DCODE="1111" BIAS="0" FACTOR="1.67E-08" /> <!--DESC="Milliliters per minute"  -->
+		<UnitDataConversion DCODE="1112" BIAS="0" FACTOR="1.67E-08" /> <!--DESC="Cubic centimeters per minute"  -->
+		<UnitDataConversion DCODE="1113" BIAS="0" FACTOR="2.78E-10" /> <!--DESC="Milliliters per hour"  -->
+		<UnitDataConversion DCODE="1114" BIAS="0" FACTOR="1.67E-02" /> <!--DESC="Cubic meters per minute"  -->
+		<UnitDataConversion DCODE="1115" BIAS="0" FACTOR="1.00E-09" /> <!--DESC="Cubic millimeters per second"  -->
+		<UnitDataConversion DCODE="1116" BIAS="0" FACTOR="1.26E-06" /> <!--DESC="Imperial gallons per hour"  -->
+		<UnitDataConversion DCODE="1201" BIAS="0" FACTOR="1" /> <!--DESC="Hertz"  -->
+		<UnitDataConversion DCODE="1202" BIAS="0" FACTOR="1" /> <!--DESC="Cycles per second"  -->
+		<UnitDataConversion DCODE="1203" BIAS="0" FACTOR="1.67E-02" /> <!--DESC="Cycles per minute"  -->
+		<UnitDataConversion DCODE="1204" BIAS="0" FACTOR="2.78E-04" /> <!--DESC="Cycles per hour"  -->
+		<UnitDataConversion DCODE="1205" BIAS="0" FACTOR="1000" /> <!--DESC="Kilohertz"  -->
+		<UnitDataConversion DCODE="1206" BIAS="0" FACTOR="1000000" /> <!--DESC="Megahertz"  -->
+		<UnitDataConversion DCODE="1206" BIAS="0" FACTOR="1000000" /> <!--DESC="Megahertz"  -->
+		<UnitDataConversion DCODE="1207" BIAS="0" FACTOR="2" /> <!--DESC="Half hertz"  -->
+		<UnitDataConversion DCODE="1301" BIAS="0" FACTOR="1" /> <!--DESC="Joules(also Watt-Seconds)" -->
+		<UnitDataConversion DCODE="1302" BIAS="0" FACTOR="1055.056" /> <!--DESC="British thermal units"  -->
+		<UnitDataConversion DCODE="1303" BIAS="0" FACTOR="1.355818" /> <!--DESC="Foot-Pounds"  -->
+		<UnitDataConversion DCODE="1304" BIAS="0" FACTOR="2684520" /> <!--DESC="Brake horsepower-Hour"  -->
+		<UnitDataConversion DCODE="1305" BIAS="0" FACTOR="4.1868" /> <!--DESC="Calories"  -->
+		<UnitDataConversion DCODE="1306" BIAS="0" FACTOR="3600000" /> <!--DESC="Kilowatt-hours"  -->
+		<UnitDataConversion DCODE="1401" BIAS="0" FACTOR="1" /> <!--DESC="Newton-meters"  -->
+		<UnitDataConversion DCODE="1402" BIAS="0" FACTOR="1.355818" /> <!--DESC="Foot-pounds"  -->
+		<UnitDataConversion DCODE="1402" BIAS="0" FACTOR="1.355818" /> <!--DESC="Pound-feet"  -->
+		<UnitDataConversion DCODE="1403" BIAS="0" FACTOR="0.1129848" /> <!--DESC="Pound-inches"  -->
+		<UnitDataConversion DCODE="1404" BIAS="0" FACTOR="7.06E-03" /> <!--DESC="Ounces-inches"  -->
+		<UnitDataConversion DCODE="1405" BIAS="0" FACTOR="9.80665" /> <!--DESC="Grams mass-meters"  -->
+		<UnitDataConversion DCODE="1406" BIAS="0" FACTOR="1.00E-02" /> <!--DESC="Dyne-centimeters"  -->
+		<UnitDataConversion DCODE="1407" BIAS="0" FACTOR="1.00E-02" /> <!--DESC="Newton-centimeters"  -->
+		<UnitDataConversion DCODE="1408" BIAS="0" FACTOR="9.804001" /> <!--DESC="Kilogram-meters"  -->
+		<UnitDataConversion DCODE="1501" BIAS="0" FACTOR="1" /> <!--DESC="Watts"  -->
+		<UnitDataConversion DCODE="1502" BIAS="0" FACTOR="745.6999" /> <!--DESC="Horsepower"  -->
+		<UnitDataConversion DCODE="1503" BIAS="0" FACTOR="1000" /> <!--DESC="Kilowatts"  -->
+		<UnitDataConversion DCODE="1504" BIAS="0" FACTOR="1.355818" /> <!--DESC="Foot-pounds per second"  -->
+		<UnitDataConversion DCODE="1505" BIAS="0" FACTOR="1055.056" /> <!--DESC="BTU's per second"  -->
+		<UnitDataConversion DCODE="1506" BIAS="0" FACTOR="17.58427" /> <!-- DESC="BTU's per minute -->
+		<UnitDataConversion DCODE="1507" BIAS="0" FACTOR="0.2930711" /> <!--DESC="BTU's per hour"  -->
+		<UnitDataConversion DCODE="1508" BIAS="0" FACTOR="735.499" /> <!--DESC="Metric horsepower"  -->
+		<UnitDataConversion DCODE="1509" BIAS="0" FACTOR="735.4" /> <!--DESC="Power Standard"  -->
+		<UnitDataConversion DCODE="1510" BIAS="0" FACTOR="16.66667" /> <!--DESC="Kilojoules per minute"  -->
+		<UnitDataConversion DCODE="1511" BIAS="0" FACTOR="1.162994" /> <!--DESC="Kilocalories per hour"  -->
+		<UnitDataConversion DCODE="1601" BIAS="0" FACTOR="1" /> <!--DESC="Kilograms per joule"  -->
+		<UnitDataConversion DCODE="1602" BIAS="0" FACTOR="1.69E-07" /> <!--DESC="Pounds per horsepower per hour"  -->
+		<UnitDataConversion DCODE="1603" BIAS="0" FACTOR="1.00E-06" /> <!--DESC="Milligrams per joule"  -->
+		<UnitDataConversion DCODE="1604" BIAS="0" FACTOR="2.78E-07" /> <!--DESC="Kilograms per kilowatt per hour"  -->
+		<UnitDataConversion DCODE="1605" BIAS="0" FACTOR="2.78E-10" /> <!--DESC="Grams per kilowatt per hour"  -->
+		<UnitDataConversion DCODE="1606" BIAS="0" FACTOR="1.00E-03" /> <!--DESC="Grams per joule"  -->
+		<UnitDataConversion DCODE="1607" BIAS="0" FACTOR="3.73E-10" /> <!--DESC="Grams per horsepower per hour"  -->
+		<UnitDataConversion DCODE="1608" BIAS="0" FACTOR="1.06E-08" /> <!--DESC="Ounces per horsepower per hour"  -->
+		<UnitDataConversion DCODE="1609" BIAS="0" FACTOR="3.78E-10" /> <!--DESC="Grams per PS per hour"  -->
+		<UnitDataConversion DCODE="1701" BIAS="0" FACTOR="1" /> <!--DESC="Radians"  -->
+		<UnitDataConversion DCODE="1702" BIAS="0" FACTOR="1.75E-02" /> <!--DESC="Degrees"  -->
+		<UnitDataConversion DCODE="1703" BIAS="0" FACTOR="6.283185" /> <!--DESC="Revolutions"  -->
+		<UnitDataConversion DCODE="1704" BIAS="0" FACTOR="2.91E-04" /> <!--DESC="Arc-minutes"  -->
+		<UnitDataConversion DCODE="1705" BIAS="0" FACTOR="4.85E-06" /> <!--DESC="Arc-seconds"  -->
+		<UnitDataConversion DCODE="1801" BIAS="0" FACTOR="1" /> <!--DESC="Radians per second"  -->
+		<UnitDataConversion DCODE="1802" BIAS="0" FACTOR="0.1047198" /> <!--DESC="Revolutions per minute"  -->
+		<UnitDataConversion DCODE="1803" BIAS="0" FACTOR="1.67E-02" /> <!--DESC="Radians per minute"  -->
+		<UnitDataConversion DCODE="1804" BIAS="0" FACTOR="1.75E-02" /> <!--DESC="Degrees per second"  -->
+		<UnitDataConversion DCODE="1805" BIAS="0" FACTOR="6.283185" /> <!--DESC="Revolutions per second"  -->
+		<UnitDataConversion DCODE="1806" BIAS="0" FACTOR="0.3490638" /> <!--DESC="0.3*RPM"  -->
+		<UnitDataConversion DCODE="1807" BIAS="0" FACTOR="104.7197" /> <!--DESC="KiloRPM's"  -->
+		<UnitDataConversion DCODE="1808" BIAS="0" FACTOR="0.299199" /> <!--DESC="0.35*RPM"  -->
+		<UnitDataConversion DCODE="1809" BIAS="0" FACTOR="0.5235987" /> <!--DESC="0.2*RPM"  -->
+		<UnitDataConversion DCODE="1810" BIAS="0" FACTOR="0.5676913" /> <!--DESC="0.18*RPM"  -->
+		<UnitDataConversion DCODE="1811" BIAS="0" FACTOR="104.7198" /> <!--DESC="Revolutions per minute from KRPM"  -->
+		<UnitDataConversion DCODE="1901" BIAS="0" FACTOR="1" /> <!-- DESC="Radians per second squared" -->
+		<UnitDataConversion DCODE="1902" BIAS="0" FACTOR="0.1047198" /> <!--DESC="RPM's per second"  -->
+		<UnitDataConversion DCODE="2001" BIAS="0" FACTOR="1" /> <!--DESC="Joules per kilogram"  -->
+		<UnitDataConversion DCODE="2002" BIAS="0" FACTOR="2326" /> <!--DESC="BTU's per pound"  -->
+		<UnitDataConversion DCODE="2003" BIAS="0" FACTOR="1000" /> <!--DESC="Joules per gram"  -->
+		<UnitDataConversion DCODE="2004" BIAS="0" FACTOR="139560" /> <!--DESC="BTU-H/L/M"  -->
+		<UnitDataConversion DCODE="2005" BIAS="0" FACTOR="1.40E+08" /> <!--DESC="KBT-H/L/M"  -->
+		<UnitDataConversion DCODE="2101" BIAS="0" FACTOR="1" /> <!--DESC="Percent opacity"  -->
+		<UnitDataConversion DCODE="2201" BIAS="0" FACTOR="1" /> <!--DESC="Joules per kilogram per degree Kelvin"  -->
+		<UnitDataConversion DCODE="2202" BIAS="0" FACTOR="4186.8" /> <!--DESC="BTU's per pound per degree Rankin"  -->
+		<UnitDataConversion DCODE="2203" BIAS="0" FACTOR="1000" /> <!--DESC="Joules per gram per degree Kelvin"  -->
+		<UnitDataConversion DCODE="2301" BIAS="0" FACTOR="1" /> <!--DESC="Meters per meter per degree Kelvin"  -->
+		<UnitDataConversion DCODE="2302" BIAS="0" FACTOR="1.8" /> <!--DESC="Inches per inch per degree Rankin"  -->
+		<UnitDataConversion DCODE="2303" BIAS="0" FACTOR="1" /> <!--DESC="Centimeters per centimeter per degree Kelvin"  -->
+		<UnitDataConversion DCODE="2304" BIAS="0" FACTOR="1" /> <!--DESC="Millimeters per millimeter per degree Kelvin"  -->
+		<UnitDataConversion DCODE="2401" BIAS="0" FACTOR="1" /> <!--DESC="Watts per meter per degree Kelvin"  -->
+		<UnitDataConversion DCODE="2402" BIAS="0" FACTOR="1.730735" /> <!--DESC="BTU's per hour per foot per degree Rankin"  -->
+		<UnitDataConversion DCODE="2501" BIAS="0" FACTOR="1" /> <!--DESC="Pascal-rootmeters"  -->
+		<UnitDataConversion DCODE="2502" BIAS="0" FACTOR="1098.8" /> <!--DESC="Pounds per square inch-rootinches"  -->
+		<UnitDataConversion DCODE="2601" BIAS="0" FACTOR="1" /> <!--DESC="Bosch"  -->
+		<UnitDataConversion DCODE="2701" BIAS="0" FACTOR="1" /> <!--DESC="Square meters per second"  -->
+		<UnitDataConversion DCODE="2702" BIAS="0" FACTOR="9.29E-02" /> <!--DESC="Square feet per second"  -->
+		<UnitDataConversion DCODE="2703" BIAS="0" FACTOR="1.00E-04" /> <!--DESC="Stokes"  -->
+		<UnitDataConversion DCODE="2704" BIAS="0" FACTOR="1.00E-06" /> <!--DESC="Centistokes"  -->
+		<UnitDataConversion DCODE="2801" BIAS="0" FACTOR="1" /> <!-- DESC="Pascal-seconds" -->
+		<UnitDataConversion DCODE="2802" BIAS="0" FACTOR="1.488164" /> <!--DESC="Pounds mass per foot per second"  -->
+		<UnitDataConversion DCODE="2803" BIAS="0" FACTOR="4.13E-04" /> <!--DESC="Pounds mass per foot per hour"  -->
+		<UnitDataConversion DCODE="2804" BIAS="0" FACTOR="47.88026" /> <!--DESC="Pounds force-seconds per square foot"  -->
+		<UnitDataConversion DCODE="2805" BIAS="0" FACTOR="47.88026" /> <!--DESC="Slugs per foot per second"  -->
+		<UnitDataConversion DCODE="2806" BIAS="0" FACTOR="0.1" /> <!--DESC="Poise"  -->
+		<UnitDataConversion DCODE="2807" BIAS="0" FACTOR="1.00E-03" /> <!--DESC="Centipoise"  -->
+		<UnitDataConversion DCODE="2901" BIAS="0" FACTOR="1" /> <!-- DESC="Volts" -->
+		<UnitDataConversion DCODE="2902" BIAS="0" FACTOR="1.00E-03" /> <!--DESC="Millivolts"  -->
+		<UnitDataConversion DCODE="3001" BIAS="0" FACTOR="1" /> <!--DESC="Amperes"  -->
+		<UnitDataConversion DCODE="3002" BIAS="0" FACTOR="1.00E-03" /> <!--DESC="Milliamperes"  -->
+		<UnitDataConversion DCODE="3101" BIAS="0" FACTOR="1" /> <!--DESC="Temperature differential degrees Kelvin"  -->
+		<UnitDataConversion DCODE="3102" BIAS="0" FACTOR="0.5555555" /> <!--DESC="Temperature differential degrees Fahrenheit"  -->
+		<UnitDataConversion DCODE="3103" BIAS="0" FACTOR="0.5555555" /> <!--DESC="Temperature differential degrees Rankin"  -->
+		<UnitDataConversion DCODE="3104" BIAS="0" FACTOR="1" /> <!--DESC="Temperature differential degrees Celsius"  -->
+		<UnitDataConversion DCODE="3201" BIAS="0" FACTOR="1" /> <!--DESC="Kilogram-square meters per radian"  -->
+		<UnitDataConversion DCODE="3202" BIAS="0" FACTOR="4.21E-02" /> <!--DESC="pounds mass-square feet per radian" -->
+		<UnitDataConversion DCODE="3301" BIAS="0" FACTOR="2.36E-02" /> <!--DESC="BTU's per minute per horsepower"  -->
+		<UnitDataConversion DCODE="3302" BIAS="0" FACTOR="23.5886" /> <!--DESC="KiloBTU's per minute per horsepower"  -->
+		<UnitDataConversion DCODE="3303" BIAS="0" FACTOR="1.65E-03" /> <!--DESC="Kilocalories per PS per hour" -->
+		<UnitDataConversion DCODE="3401" BIAS="0" FACTOR="1" /> <!--DESC="Newtons"  -->
+		<UnitDataConversion DCODE="3402" BIAS="0" FACTOR="4.448222" /> <!--DESC="Poundsforce"  -->
+		<UnitDataConversion DCODE="3403" BIAS="0" FACTOR="1.00E-05" /> <!--DESC="Dynes"  -->
+		<UnitDataConversion DCODE="3501" BIAS="0" FACTOR="1" /> <!--DESC="Fraction Concentration"  -->
+		<UnitDataConversion DCODE="3502" BIAS="0" FACTOR="1.00E-02" /> <!--DESC="Percent Concentration"  -->
+		<UnitDataConversion DCODE="3503" BIAS="0" FACTOR="1.00E-06" /> <!--DESC="Parts Per Million"  -->
+		<UnitDataConversion DCODE="3504" BIAS="0" FACTOR="1.00E-09" /> <!--DESC="Parts Per Billion"  -->
+		<UnitDataConversion DCODE="3505" BIAS="0" FACTOR="1.00E-04" /> <!--DESC="Percent Concentration times 100"  -->
+		<UnitDataConversion DCODE="3506" BIAS="0" FACTOR="1.43E-04" /> <!--DESC="Grains/Pound(Avdp)"  -->
+		<UnitDataConversion DCODE="3507" BIAS="0" FACTOR="1.00E-03" /> <!--DESC="Grams/Kilogram"  -->
+		<UnitDataConversion DCODE="3601" BIAS="0" FACTOR="1.00E-03" /> <!--DESC="Newtons per millimeter"  -->
+		<UnitDataConversion DCODE="3602" BIAS="0" FACTOR="175.127" /> <!--DESC="Pounds force per inch"  -->
+		<UnitDataConversion DCODE="3701" BIAS="0" FACTOR="1" /> <!--DESC="Newtons-meters per radian"  -->
+		<UnitDataConversion DCODE="3702" BIAS="0" FACTOR="0.1129845" /> <!--DESC="Pounds force-inch per radian"  -->
+		<UnitDataConversion DCODE="3703" BIAS="0" FACTOR="112984.5" /> <!--DESC="MegaPounds force-inch per radian"  -->
+		<UnitDataConversion DCODE="3704" BIAS="0" FACTOR="1000000" /> <!--DESC="MegaNewtons-meters per radian" -->
+		<UnitDataConversion DCODE="3801" BIAS="0" FACTOR="1" /> <!--DESC="Grams per liter per second"  -->
+		<UnitDataConversion DCODE="3802" BIAS="0" FACTOR="5.89E-04" /> <!--DESC="Grams per  cubic foot per minute" -->
+		<UnitDataConversion DCODE="3901" BIAS="0" FACTOR="4184" /> <!--DESC="Kilocalories per second per square meter per degree C"  -->
+		<UnitDataConversion DCODE="3902" BIAS="0" FACTOR="340.691" /> <!--DESC="BTU per minute per square foot degree F"  -->
+		<UnitDataConversion DCODE="3903" BIAS="0" FACTOR="3.40691" /> <!--DESC="BTU/Min per ft2 per 100 Deg F"  -->
+		<UnitDataConversion DCODE="3904" BIAS="0" FACTOR="1000" /> <!--DESC="KW per min per M2 per Deg C"  -->
+		<UnitDataConversion DCODE="4001" BIAS="0" FACTOR="1" /> <!--DESC="Kilogram- meters squared"  -->
+		<UnitDataConversion DCODE="4002" BIAS="0" FACTOR="0.11295" /> <!--DESC="Inch-poundsforce-seconds squared"  -->
+		<UnitDataConversion DCODE="4003" BIAS="0" FACTOR="2.93E-04" /> <!--DESC="Pound mass-inch squared"  -->
+		<UnitDataConversion DCODE="4004" BIAS="0" FACTOR="1.00E-04" /> <!--DESC="Kilogram-centi meters squared" -->
+		<UnitDataConversion DCODE="4005" BIAS="0" FACTOR="1.83E-05" /> <!--DESC="Ounce-inch squared"  -->
+		<UnitDataConversion DCODE="4006" BIAS="0" FACTOR="7.06E-03" /> <!--DESC="Ounce-inch-seconds squared"  -->
+		<UnitDataConversion DCODE="4007" BIAS="0" FACTOR="4.21E-02" /> <!--DESC="Pound mass-foot squared"  -->
+		<UnitDataConversion DCODE="4008" BIAS="0" FACTOR="1.35582" /> <!--DESC="Pound force-foot-seconds squared"  -->
+		<UnitDataConversion DCODE="4101" BIAS="0" FACTOR="1" /> <!--DESC="Newtons per meter squared(absolute)" -->
+		<UnitDataConversion DCODE="4102" BIAS="0" FACTOR="6894.757" /> <!--DESC="Pounds per square inch(absolute)"  -->
+		<UnitDataConversion DCODE="4103" BIAS="0" FACTOR="248.84" /> <!--DESC="Inches of water(absolute)"  -->
+		<UnitDataConversion DCODE="4104" BIAS="0" FACTOR="3386.39" /> <!-- DESC="Inches of mercury(absolute)" -->
+		<UnitDataConversion DCODE="4105" BIAS="0" FACTOR="133.322" /> <!--DESC="Millimeters of mercury(absolute)"  -->
+		<UnitDataConversion DCODE="4106" BIAS="0" FACTOR="1000" /> <!--DESC="Kilopascals(absolute)"  -->
+		<UnitDataConversion DCODE="4107" BIAS="0" FACTOR="3386.38" /> <!--DESC="Inches of mercury at 32 degrees Fahrenheit(absolute)"-->
+		<UnitDataConversion DCODE="4108" BIAS="0" FACTOR="100000" /> <!--DESC="Bars(absolute)"  -->
+		<UnitDataConversion DCODE="4109" BIAS="0" FACTOR="1000000" /> <!--DESC="Megapascals(absolute)"  -->
+		<UnitDataConversion DCODE="4110" BIAS="0" FACTOR="100" /> <!--DESC="Millibars(absolute)"  -->
+		<UnitDataConversion DCODE="4111" BIAS="0" FACTOR="9.79685" /> <!--DESC="Millimeters of water(absolute)"  -->
+		<UnitDataConversion DCODE="4112" BIAS="0" FACTOR="47.88026" /> <!--DESC="Poundsper square foot(absolute)"  -->
+		<UnitDataConversion DCODE="4116" BIAS="0" FACTOR="1" /> <!--DESC="pascals"  -->
+		<UnitDataConversion DCODE="4201" BIAS="0" FACTOR="1" /> <!--DESC="One per Meter"  -->
+		<UnitDataConversion DCODE="4202" BIAS="0" FACTOR="39.37008" /> <!--DESC="One per Inch"  -->
+		<UnitDataConversion DCODE="4203" BIAS="0" FACTOR="3.28084" /> <!--DESC="One per Foot"  -->
+		<UnitDataConversion DCODE="4204" BIAS="0" FACTOR="1000" /> <!--DESC="One per Millimeter"  -->
+		<UnitDataConversion DCODE="4205" BIAS="0" FACTOR="100" /> <!-- DESC="One per Centimeter" -->
+		<UnitDataConversion DCODE="4206" BIAS="0" FACTOR="1.093613" /> <!--DESC="One per Yard"  -->
+		<UnitDataConversion DCODE="4207" BIAS="0" FACTOR="6.21E-04" /> <!--DESC="One per Mile"  -->
+		<UnitDataConversion DCODE="4208" BIAS="0" FACTOR="1.00E-03" /> <!--DESC="One per Kilometer"  -->
+		<UnitDataConversion DCODE="4301" BIAS="0" FACTOR="1" /> <!-- DESC="One per Square meter" -->
+		<UnitDataConversion DCODE="4302" BIAS="0" FACTOR="1550" /> <!--DESC="One per Squareinch"  -->
+		<UnitDataConversion DCODE="4303" BIAS="0" FACTOR="10.76391" /> <!--DESC="One per Square foot"  -->
+		<UnitDataConversion DCODE="4304" BIAS="0" FACTOR="3.86E-07" /> <!--DESC="One per Square mile"  -->
+		<UnitDataConversion DCODE="4305" BIAS="0" FACTOR="2.47E-04" /> <!--DESC="One per Acre"  -->
+		<UnitDataConversion DCODE="4306" BIAS="0" FACTOR="1000000" /> <!--DESC="One per Square millimeter"  -->
+		<UnitDataConversion DCODE="4307" BIAS="0" FACTOR="10000" /> <!--DESC="One per Square centimeter"  -->
+		<UnitDataConversion DCODE="4401" BIAS="0" FACTOR="1" /> <!--DESC="One per Cubic meter"  -->
+		<UnitDataConversion DCODE="4402" BIAS="0" FACTOR="61023.98" /> <!--DESC="One per Cubic inch"  -->
+		<UnitDataConversion DCODE="4403" BIAS="0" FACTOR="3.531467" /> <!--DESC="One per Cubic foot"  -->
+		<UnitDataConversion DCODE="4404" BIAS="0" FACTOR="1.00E+09" /> <!--DESC="One per Cubic millimeter" -->
+		<UnitDataConversion DCODE="4405" BIAS="0" FACTOR="1000000" /> <!--DESC="One per milliliter"  -->
+		<UnitDataConversion DCODE="4406" BIAS="0" FACTOR="1000" /> <!--DESC="One per Liter"  -->
+		<UnitDataConversion DCODE="4407" BIAS="0" FACTOR="1000000" /> <!--DESC="One per Cubic centimeter"  -->
+		<UnitDataConversion DCODE="4408" BIAS="0" FACTOR="264.172" /> <!--DESC="One per gallon"  -->
+		<UnitDataConversion DCODE="4409" BIAS="0" FACTOR="1056.688" /> <!--DESC="One per Quart"  -->
+		<UnitDataConversion DCODE="4501" BIAS="0" FACTOR="1" /> <!--DESC="Ohm"  -->
+		<UnitDataConversion DCODE="4601" BIAS="0" FACTOR="1" /> <!--DESC="Newtons Per Kilogram"  -->
+		<UnitDataConversion DCODE="4602" BIAS="0" FACTOR="4.90E-03" /> <!--DESC="Pounds Force per Ton"  -->
+		<UnitDataConversion DCODE="4701" BIAS="0" FACTOR="1000" /> <!--DESC="KW per Deg C" D -->
+		<UnitDataConversion DCODE="4702" BIAS="0" FACTOR="0.316517" /> <!--DESC="BTU/Minper 100 Deg F" -->
+		<UnitDataConversion DCODE="4703" BIAS="0" FACTOR="1" /> <!--DESC="Watts per degree Kelvin"  -->
+		<UnitDataConversion DCODE="4801" BIAS="0" FACTOR="1.00E-02" /> <!--DESC="Percent by Mass"  -->
+		<UnitDataConversion DCODE="4802" BIAS="0" FACTOR="1" /> <!--DESC="Fraction by mass"  -->
+		<UnitDataConversion DCODE="4901" BIAS="0" FACTOR="1" /> <!--DESC="Bels"  -->
+		<UnitDataConversion DCODE="4902" BIAS="0" FACTOR="0.1" /> <!--DESC="Decibels"  -->
+		<UnitDataConversion DCODE="5000" BIAS="0" FACTOR="1" /> <!--DESC="Integer"  -->
+		<UnitDataConversion DCODE="5100" BIAS="0" FACTOR="1" /> <!--DESC="Percent"  -->
+		<UnitDataConversion DCODE="5101" BIAS="0" FACTOR="1" /> <!--DESC="None"  -->
+		<UnitDataConversion DCODE="5102" BIAS="0" FACTOR="1" /> <!--DESC="Specific heat rejection" -->
+		<UnitDataConversion DCODE="5103" BIAS="0" FACTOR="1" /> <!--DESC="Raw data"  -->
+		<UnitDataConversion DCODE="5104" BIAS="0" FACTOR="1" /> <!--DESC="KG*SQRT/SEC/MEGA_PA" -->
+		<UnitDataConversion DCODE="5105" BIAS="0" FACTOR="1" /> <!--DESC="REV/SQRT/SEC"  -->
+		<UnitDataConversion DCODE="5201" BIAS="0" FACTOR="1" /> <!--DESC="Newton-meter second per radian"  -->
+		<UnitDataConversion DCODE="5202" BIAS="0" FACTOR="0.1129848" /> <!--DESC="Pound-inch second per radian"  -->
+		<UnitDataConversion DCODE="5301" BIAS="0" FACTOR="1" /> <!--DESC="Radians per Meter"  -->
+		<UnitDataConversion DCODE="5302" BIAS="0" FACTOR="6.283185" /> <!--DESC="Cycles per Meter"  -->
+		<UnitDataConversion DCODE="5303" BIAS="0" FACTOR="6.28E-03" /> <!--DESC="Cycles per Kilometer"  -->
+		<UnitDataConversion DCODE="5304" BIAS="0" FACTOR="3.280839" /> <!--DESC="Radians per Foot"  -->
+		<UnitDataConversion DCODE="5305" BIAS="0" FACTOR="20.61475" /> <!--DESC="Cycles per Foot"  -->
+		<UnitDataConversion DCODE="5306" BIAS="0" FACTOR="3.90E-03" /> <!--DESC="Cycles per Mile"  -->
+		<UnitDataConversion DCODE="5401" BIAS="0" FACTOR="1" /> <!--DESC="Filter Smoke Number"  -->
+		<UnitDataConversion DCODE="5501" BIAS="0" FACTOR="3600" /> <!--DESC="Mass concentration per 100 hours"  -->
+		<UnitDataConversion DCODE="5502" BIAS="0" FACTOR="1" /> <!--DESC="Mass concentration per second"  -->
+		<UnitDataConversion DCODE="5601" BIAS="0" FACTOR="1" /> <!--DESC="Watts per meter squared degree Kelvin"  -->
+		<UnitDataConversion DCODE="5701" BIAS="0" FACTOR="1" /> <!--DESC="Degree Kelvin per watt"  -->
+		<UnitDataConversion DCODE="5801" BIAS="0" FACTOR="1" /> <!-- DESC="Meters squared degree K per watt" -->
+		<UnitDataConversion DCODE="5901" BIAS="0" FACTOR="1" /> <!--DESC="Kilograms per Kilograms-mole"  -->
+		<UnitDataConversion DCODE="5902" BIAS="0" FACTOR="1" /> <!--DESC="Pounds per pound-mole"  -->
+		<UnitDataConversion DCODE="5903" BIAS="0" FACTOR="1" /> <!--DESC="Grams per grams-mole"  -->
+		<UnitDataConversion DCODE="6001" BIAS="0" FACTOR="1" /> <!--DESC="Kilometers per liter"  -->
+		<UnitDataConversion DCODE="6002" BIAS="0" FACTOR="0.354" /> <!--DESC="Miles per imperial gallon"  -->
+		<UnitDataConversion DCODE="6003" BIAS="0" FACTOR="0.4252" /> <!--DESC="Miles per gallon"  -->
+		<UnitDataConversion DCODE="6004" BIAS="0" FACTOR="1.609347" /> <!--DESC="miles per liter"  -->
+		<UnitDataConversion DCODE="6005" BIAS="0" FACTOR="0.264" /> <!--DESC="kilometers per gallon"  -->
+		<UnitDataConversion DCODE="6006" BIAS="0" FACTOR="0.22" /> <!--DESC="kilometers per imperial gallon"  -->
+		<UnitDataConversion DCODE="6007" BIAS="0" FACTOR="3.03" /> <!--DESC="miles per pound"  -->
+		<UnitDataConversion DCODE="6008" BIAS="0" FACTOR="100" /> <!--DESC="Liters per 100 kilometers"  -->
+		<UnitDataConversion DCODE="6009" BIAS="0" FACTOR="0.8539" /> <!--DESC="Kilometers per Kilograms"  -->
+		<UnitDataConversion DCODE="7001" BIAS="0" FACTOR="1" /> <!--DESC="Cubic meters per second"  -->
+		<UnitDataConversion DCODE="7002" BIAS="0" FACTOR="4.72E-04" /> <!--DESC="Cubic feet per minute"  -->
+		<UnitDataConversion DCODE="7003" BIAS="0" FACTOR="1.67E-05" /> <!--DESC="Liters per minute"  -->
+		<UnitDataConversion DCODE="7004" BIAS="0" FACTOR="6.31E-05" /> <!--DESC="Gallons per minute"  -->
+		<UnitDataConversion DCODE="7005" BIAS="0" FACTOR="1.00E-03" /> <!--DESC="Liters per second"  -->
+		<UnitDataConversion DCODE="7006" BIAS="0" FACTOR="1.05E-06" /> <!--DESC="Gallons per hour"  -->
+		<UnitDataConversion DCODE="7007" BIAS="0" FACTOR="3.785412E-03" /> <!--DESC="Gallons per second"  -->
+		<UnitDataConversion DCODE="7008" BIAS="0" FACTOR="7.87E-06" /> <!--DESC="Cubic feet per hour"  -->
+		<UnitDataConversion DCODE="7009" BIAS="0" FACTOR="2.78E-04" /> <!--DESC="Cubic meters per hour"  -->
+		<UnitDataConversion DCODE="7010" BIAS="0" FACTOR="2.78E-07" /> <!--DESC="Liters per hour"  -->
+		<UnitDataConversion DCODE="7011" BIAS="0" FACTOR="1.67E-08" /> <!--DESC="Milliliters per minute" -->
+		<UnitDataConversion DCODE="7012" BIAS="0" FACTOR="1.67E-08" /> <!--DESC="Cubic centimeters per minute"  -->
+		<UnitDataConversion DCODE="7013" BIAS="0" FACTOR="2.78E-10" /> <!--DESC="Milliliters per hour"  -->
+		<UnitDataConversion DCODE="7014" BIAS="0" FACTOR="1.67E-02" /> <!--DESC="Cubic meters per minute"  -->
+		<UnitDataConversion DCODE="7015" BIAS="0" FACTOR="1.00E-09" /> <!--DESC="Cubic millimeters per second"  -->
+		<UnitDataConversion DCODE="7016" BIAS="0" FACTOR="1.26E-06" /> <!--DESC="Imperial gallons per hour"  -->
+		<UnitDataConversion DCODE="7017" BIAS="0" FACTOR="9.39E-07" /> <!--DESC="grams per second"  -->
+		<UnitDataConversion DCODE="7018" BIAS="0" FACTOR="7.46E-06" /> <!--DESC="pounds per hour"  -->
+		<UnitDataConversion DCODE="7019" BIAS="0" FACTOR="3.36E-06" /> <!--DESC="kilograms per hour"  -->
+		<UnitDataConversion DCODE="7020" BIAS="0" FACTOR="1" /> <!--DESC="bar" -->
+		<UnitDataConversion DCODE="7021" BIAS="0" FACTOR="0.01" /> <!--DESC="kPa" -->
+		<UnitDataConversion DCODE="7022" BIAS="0" FACTOR="6.895E-002" /> <!--DESC="psi" -->
+		<UnitDataConversion DCODE="7023" BIAS="14.7" FACTOR="6.895E-002" /> <!--DESC="psig" -->
+		<UnitDataConversion DCODE="7024" BIAS="0" FACTOR="3.38639E-002" /> <!--DESC="Inches of Mercury" -->
+    <UnitDataConversion DCODE="7025" BIAS="0" FACTOR="1" /> <!--DESC="Cubic meteres per second" -->
+    <UnitDataConversion DCODE="7026" BIAS="0" FACTOR="0.028316847" /> <!--DESC="Cubic feet per second" -->
+        <UnitDataConversion DCODE="7027" BIAS="0" FACTOR="1" />  <!--DESC="pulses per kilometer" -->
+        <UnitDataConversion DCODE="7028" BIAS="0" FACTOR="0.62137" />  <!--DESC="pulses per mile" -->
+    <UnitDataConversion DCODE="7029" BIAS="0" FACTOR="1" /><!--DESC="parts per million" -->
+    <UnitDataConversion DCODE="7030" BIAS="0" FACTOR="1" /><!--DESC="ohms" -->
+        <UnitDataConversion DCODE="8001" BIAS="0" FACTOR="1" /> <!--DESC="millimeters" -->
+        <UnitDataConversion DCODE="8002" BIAS="0" FACTOR="25.400000025908" /> <!--DESC="inches" -->
+    <UnitDataConversion DCODE="8003" BIAS="0" FACTOR="1.0E-02" /> <!--DESC="Kilopascals(absolute) to bar"  -->
+    <UnitDataConversion DCODE="8004" BIAS="0" FACTOR="1" /> <!--DESC="kilometers per kilogram" -->
+    <UnitDataConversion DCODE="8005" BIAS="0" FACTOR="0.281681196759" /> <!--DESC="miles per pound" -->
+	<UnitDataConversion DCODE="8006" BIAS="0" FACTOR="1" /> <!--DESC="Pressure very small" -->
+	<UnitDataConversion DCODE="8007" BIAS="0" FACTOR="4.01463078662" /> <!--DESC="Pressure very small" -->
+	</UnitDataConversions>
+</UOM>

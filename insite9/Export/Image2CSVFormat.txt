@@ -1,0 +1,233 @@
+					  	  	  	  	  
+Format Specification for Export Image to external file Functionality of INSITE 6.x									
+(c) Copyright Cummins Inc. 2004. All rights reserved.									
+
+"This document details the output format of INSITE's ""Export Image to external file"" functionality."									
+"""Export Image to external file"" produces similarly formatted output as a printed ECM Image. "									
+The most significant difference is a comma-delimited file is created instead of printer output									
+The output file is stored in the user-specified directory (the default location is the directory in Tools-> Options-> File -> Export).									
+
+The following tables detail the organization of data contained within an external file:									
+NOTE: Some tables will not be present depending upon which features are available within the ECM. 									
+NOTE: Placement of blank lines in an image output may differ than those within this document.									
+ 									
+ECM Image  									
+               									
+Workorder Information
+
+WorkOrder Name		WO-XXXXXXXXXX
+Customer Name		Customer
+Description		Work Order Description
+Engine Serial Number	XXXXXXXXXXXXXX
+Vehicle ID		XXXXXXXXXXXXXX
+Vehicle Make		XXXXXXXXXXXXXX
+Vehicle Unit Number	XXXXXXXXXXXXXX
+Vehicle Odometer	XXXXXXXXXXXXXX
+Status			XXXXXXXXXXXXXX
+
+Image Information
+
+Date			XX/XX/XXXX XX:XX
+File Location		X-XXXXXXXX-XXXXXX
+ECM    			XXXXXXXXXXXXXX
+Status			XXXXXXXXXXXXXX
+
+
+System ID & Dataplate Information
+System ID & Dataplate Sub-Heading
+Feature or Parameter Name	Feature or Parameter Value	Units (if applicable)
+
+
+Features and Parameters
+Feature or Parameter Name	Feature or Parameter Value	Units (if applicable)
+
+         						
+Trip Information
+Trip Information Sub-Heading
+Data label	Value	Units (if applicable)
+
+
+Monitor Data
+Name of Data	Value of Data	Units (if applicable)
+
+
+Fault Information
+Total ECM Time (Key On Time)	Fault Code	Fault Status		Fault Count	Description
+XX:XX:XX	HH:MM:SS		XXX		Inactive /Active	X		(if available)
+      						
+
+Fault Snapshot
+Fault Code Number	First Occurrence	Last Occurrence 						
+Name of Data	Value of Data and Units( if applicable)	Value of Data and Units( if applicable)
+
+
+Audit Trail
+Tool Name/User Type	Tool ID	User ID		Total ECM Time(key on time)
+Audit Trail Change Codes - Description
+XXXX / XXXXX	XXXXXXXXX	XXXXXXXX	XXX:XX:XX
+XXX-XXXXXXX	XXX-XXXXXXX
+ 								
+
+J1939 Control History
+Total ECM Time (Key On Time) Format	J1939 Control Source Format (if applicable)	J1939 Control Destination Format (if applicable)	Control Duration
+XX:XX:XX HH:MM:SS			Device Name					Device Name						XX:XX:XX HH:MM:SS 	  
+
+
+J1939 Maintenance Monitor
+Data Label	Value	Units or Format	Second Value (if applicable)	Units or Format
+
+Maintenance Monitor (CORE II)
+	Current Maintenance Interval Data
+	Parameters	Value	Units
+
+	Reset Log Data
+	Event	Log Data	Maximum Threshold	Adjusted Threshold	Interval Reset at :	Cumulative Reset at :	Possible Error
+
+Engine Torque History
+Data Label	Value Units or Format (if applicable)	Second Value Units or Format (if applicable)
+
+
+Engine Abuse History
+Data Label	Value Units or Format (if applicable)	Second Value Units or Format (if applicable)
+
+
+Engine Protection
+Engine Protection Sub-Heading
+
+Total ECM Time (Key On Time) Format	Engine Parameter related to Engine Protection Sub-Heading Units (if applicable)		Fault Duration Format	Fault Code
+XX:XX:XX HH:MM:SS			XXX											XX:XX:XX HH:MM:SS	XXX
+
+
+Duty Cycle Monitor
+Map Name
+Torque (%)
+Value			Percentage	Percentage	Percentage	Percentage
+Value	Percentage 	Percentage 	Percentage 	Percentage 	Percentage 	Percentage 	Percentage 	Percentage
+Value	Percentage 	Percentage 	Percentage 	Percentage 	Percentage 	Percentage 	Percentage 	Percentage
+Value	Percentage 	Percentage 	Percentage 	Percentage 	Percentage 	Percentage 	Percentage 	Percentage
+Value	Percentage 	Percentage 	Percentage 	Percentage 	Percentage 	Percentage 	Percentage 	Percentage
+Value	Percentage 	Percentage 	Percentage 	Percentage 	Percentage 	Percentage 	Percentage 	Percentage
+Value	Percentage 	  	  	  	  	Percentage 	Percentage 	Percentage
+
+Engine Speed (RPM)	XXX	XXX	XXX	XXX	XXX	XXX	XXX
+
+Map Hours Remaining	XX:XX:XX	Format or Units
+Map Start Time	XX:XX:XX	Format or Units
+Advertised Power at RPM	XXX	Format or Units
+Advertised Power RPM	XXX	Format or Units
+Peak Torque at RPM	XXX	Format or Units
+Peak Torque RPM	XXX	Format or Units
+
+
+SAE J1939 Multiplexed Fault Data
+								Multiplexed Component or Data Parameter	Status	Total ECM Time (Key On Time)	ECM Real Time 
+Fault Code 285 - SAE J1939 Multiplexing PGN Timeout Error
+									XX				XX	XXX:XX:XX			XX XX, XXXX, XX:XX:XX
+Fault Code 286 - SAE J1939 Multiplexing Configuration Error
+									XX				XX	XXX:XX:XX			XX XX, XXXX, XX:XX:XX
+
+Fuel Consumption Monitor
+				Fuel Rate (gph)
+Fuel Rate at Hour		1	X.X	
+Fuel Rate at Hour		2	X.X
+Fuel Rate at Hour		3	X.X
+Fuel Rate at Hour		4	X.X
+Fuel Rate at Hour		5	X.X
+Fuel Rate at Hour		6	X.X
+Fuel Rate at Hour		7	X.X
+Fuel Rate at Hour		8	X.X
+Fuel Rate at Hour		9	X.X
+Fuel Rate at Hour		10	X.X
+Fuel Rate at Hour		11	X.X
+Fuel Rate at Hour		12	X.X
+Fuel Rate at Hour		13	X.X
+Fuel Rate at Hour		14	X.X
+Fuel Rate at Hour		15	X.X
+Fuel Rate at Hour		16	X.X
+Fuel Rate at Hour		17	X.X
+Fuel Rate at Hour		18	X.X
+Fuel Rate at Hour		19	X.X
+Fuel Rate at Hour		20	X.X
+Fuel Rate at Hour		21	X.X
+Fuel Rate at Hour		22	X.X
+Fuel Rate at Hour		23	X.X
+Fuel Rate at Hour		24	X.X
+Fuel Rate at Hour		25	X.X
+Fuel Rate at Hour		26	X.X
+Fuel Rate at Hour		27	X.X
+Fuel Rate at Hour		28	X.X
+Fuel Rate at Hour		29	X.X
+Fuel Rate at Hour		30	X.X
+Fuel Rate at Hour		31	X.X
+Fuel Rate at Hour		32	X.X
+Fuel Rate at Hour		33	X.X
+Fuel Rate at Hour		34	X.X
+Fuel Rate at Hour		35	X.X
+Fuel Rate at Hour		36	X.X
+Fuel Rate at Hour		37	X.X
+Fuel Rate at Hour		38	X.X
+Fuel Rate at Hour		39	X.X
+Fuel Rate at Hour		40	X.X
+
+Parameter		Value		Units
+Fuel Rate			X		Units
+Short Term Hour		X		Units
+Hours Counter		XX:XX:XX	Units
+Long Term Fuel Rate	X.XX		Units
+Long Term Time		XX:XX:XX	Units
+
+Anti-Theft Protection
+Vehicle Anti-Theft	Automatic Mode Enable	State
+Anti-theft Status	State
+New Anti-Theft Pin X	State
+
+Multi-Level ECM Security
+ECM Passwords
+Master Password	State
+Adjustable Password	State
+Reset Password	State
+OEM Password	State
+
+Engine Protection Settings
+
+Engine Protection Derate Suppress	Disable
+
+Channel				Torque Derate	Fault Code	Derate Type	Threshold		Delay Before Derate	Time Based Torque Shutdown	Time Before Lamp Flashes Because Of Torque Shutdown
+
+Engine Coolant Temperature	Enable		2963		Time		110.0 C			5 sec				N/A				N/A
+
+Engine Oil Pressure		Enable		143		Time		rpm	Oil Pressure	5 sec				Enable				10 sec
+										0	0.0 kPa			
+										550	0.0 kPa			
+										560	41.4 kPa			
+										800	55.2 kPa			
+										1150	124.1 kPa			
+										2600	193.1 kPa			
+
+Engine Coolant Level		Enable		197		Time	Low				20 sec				Enable				25 sec
+
+Intake Manifold Air Temperature	Enable		2964		Severity	121.1 C			5 sec				N/A				N/A
+
+Engine Overspeed		N/A		N/A		N/A		N/A			N/A				N/A				N/A
+
+Engine Oil Temperature		Enable		421		Severity	122.2 C			5 sec				N/A				N/A
+
+
+SAE J1939 Powertrain Control
+
+Event	      Source		Destination	Modes		    ECM Time(Start)		Duration
+
+Newest	3 - Transmission	   Engine	Torque Control,	    02/09/1996			6:37:34
+						Torque Control,     18:55:96
+						Speed Control,
+						Override Disable,
+						Override Disable
+1	      Unknown		   Unknown	Torque Control,	    02/31/1996			0:00:34
+						Torque Control,     15:55:96
+						Speed Control,
+						Override Disable,
+						Override Disable
+
+Calibration Information Log
+
+[repeat_list=[[Calibration_Verification_Number=-Not Available, Calibration_Identification=******* **], [Calibration_Verification_Number=0, Calibration_Identification=ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ], [Calibration_Verification_Number=0, Calibration_Identification=ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ], [Calibration_Verification_Number=0, Calibration_Identification=ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ]]]

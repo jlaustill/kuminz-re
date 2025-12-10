@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE module SYSTEM "../htmlentities.dtd">
+<XML_RESOURCE>
+   <RESOURCE Tag="1001" Type="String Table" Description="Message String Table">
+      <STRING ID="1" Context="">EGR Valve Test</STRING>
+      <STRING ID="2" Context="">This test can be used to open and close the EGR valve.</STRING>
+      <STRING ID="3" Context="">Opening EGR valve, Please wait.</STRING>
+      <STRING ID="4" Context="">Closing EGR valve, Please wait.</STRING>
+      <STRING ID="5" Context="">Opening EGR valve in %1!d! seconds</STRING>
+      <STRING ID="6" Context="">Closing EGR valve in %1!d! seconds</STRING>
+      <STRING ID="7" Context="">The EGR valve is not fully open</STRING>
+      <STRING ID="8" Context="">EGR Valve is not Closed.</STRING>
+      <STRING ID="9" Context="">Select Start to start the test.</STRING>
+      <STRING ID="10" Context="">To operate the EGR valve specify a delay time, then select the desired command to Open or Close the valve.  To stop the test select Stop.</STRING>
+      <STRING ID="11" Context="">Select the Desired Position.</STRING>
+      <STRING ID="12" Context="">Select the Desired Position.</STRING>
+      <STRING ID="13" Context="">Select the Desired Position.</STRING>
+      <STRING ID="14" Context="">Select the Desired Position.</STRING>
+      <STRING ID="15" Context="">To operate the EGR valve specify a delay time, then select the desired command to Open or Close the valve.  To stop the test select Stop.</STRING>
+      <STRING ID="16" Context="">To operate the EGR valve specify a delay time, then select the desired command to Open or Close the valve.  To stop the test select Stop.</STRING>
+      <STRING ID="17" Context="">EGR Valve is Closed.</STRING>
+      <STRING ID="18" Context="">EGR Valve is Open.</STRING>
+      <STRING ID="19" Context="">Initializing test, please wait</STRING>
+      <STRING ID="20" Context="">EGR Valve is not Closed.</STRING>
+      <STRING ID="21" Context="">EGR Valve is not Open.</STRING>
+      <STRING ID="22" Context="">EGR valve position sensor circuit fault detected.  Troubleshoot the EGR valve position sensor circuit fault code before proceeding with this test.</STRING>
+      <STRING ID="23" Context="">The EGR valve test could not be started. Please correct the error stated in the Status message and press Start to retry the test.</STRING>
+      <STRING ID="24" Context="">EGR valve position sensor circuit fault detected.  Troubleshoot the EGR valve position sensor circuit fault code before proceeding with this test.</STRING>
+      <STRING ID="25" Context="">Test stopped, vehicle speed detected.  Stop vehicle and restart test.</STRING>
+      <STRING ID="26" Context="">Instructions:</STRING>
+      <STRING ID="27" Context="">Command</STRING>
+      <STRING ID="28" Context="">Close Valve</STRING>
+      <STRING ID="29" Context="">Open Valve</STRING>
+      <STRING ID="30" Context="">Delay</STRING>
+      <STRING ID="31" Context="">Wait</STRING>
+      <STRING ID="32" Context="">second(s) before actuation.</STRING>
+      <STRING ID="33" Context="">Valve Position</STRING>
+      <STRING ID="34" Context="">Closed</STRING>
+      <STRING ID="35" Context="">Open</STRING>
+      <STRING ID="36" Context="">Status</STRING>
+      <STRING ID="37" Context="">Test stopped, vehicle  speed detected. Stop vehicle and restart test.</STRING>
+      <STRING ID="38" Context="">Test stopped, EGR valve position sensor circuit fault detected.</STRING>
+      <STRING ID="39" Context="">Test stopped, EGR valve position sensor circuit fault detected.</STRING>
+      <STRING ID="40" Context="">EGR Valve is not Closed.  Open position will not be accurate.</STRING>
+      <STRING ID="41" Context="">Test stopped.</STRING>
+      <STRING ID="42" Context="">Please correct the error stated in the Status message and press Start to retry the test.</STRING>
+      <STRING ID="43" Context="">EGR valve position failed automatic calibration procedure.  Troubleshoot the EGR Valve fault code before proceeding with this test.</STRING>
+      <STRING ID="44" Context="">The EGR Valve Test allows the operator to move the EGR Valve when the engine is not running and the vehicle is not moving.  The actuator contains a lightweight return spring. This may or may not cause the EGR valve to return to the open position when the EGR motor is turned off.  A high pitched frequency noise can normally be heard when the EGR Valve motor is on.</STRING>
+      <STRING ID="45" Context="">Help</STRING>
+      <STRING ID="46" Context="">Show</STRING>
+      <STRING ID="16700" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16700&lt;/ErrorNumber&gt;&lt;Description&gt;An unexpected error occurred in the EGR Valve Test.&lt;/Description&gt;&lt;Suggestion&gt;Please shut down and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="16701" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16701&lt;/ErrorNumber&gt;&lt;Description&gt;An invalid delay was specified.&lt;/Description&gt;&lt;Suggestion&gt;Please choose a delay of between zero and thirty seconds.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="16702" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16702&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while attempting to create the thread.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="16703" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16703&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while the page was unloading&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="16704" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16704&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while attempting to unsubscribe to mapped events&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="16705" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16705&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while attempting to unsubscribe to mapped events&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="16706" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16706&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while attempting to locate the Logic interface&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="16707" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16707&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while attempting to Initialize the page component&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="16708" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16708&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while attempting to Start the test&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="16709" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16709&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while attempting to Stop the test&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="16710" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16710&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while attempting to read a parameter&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="16711" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16711&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while attempting to write a parameter&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="16712" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16712&lt;/ErrorNumber&gt;&lt;Description&gt;Test stopped, vehicle speed detected&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="16713" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16713&lt;/ErrorNumber&gt;&lt;Description&gt;One or more of the preconditions have failed&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="16714" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16714&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while attempting to open the EGR valve.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="16715" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16715&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while attempting to close the EGR valve.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="16716" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16716&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred and the EGR valve could not be opened.&lt;/Description&gt;&lt;Suggestion&gt;Please shut down and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="16717" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16717&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred and the EGR valve could not be closed.&lt;/Description&gt;&lt;Suggestion&gt;Please shut down and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="16718" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16718&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while attempting to start the ECMPoller.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="16719" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16719&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while attempting to stop the ECMPoller.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="16720" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16720&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while attempting to stop the test.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="16721" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16721&lt;/ErrorNumber&gt;&lt;Description&gt;Test stopped, EGR valve position sensor circuit fault detected.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="16722" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16722&lt;/ErrorNumber&gt;&lt;Description&gt;Test stopped, EGR valve position sensor circuit fault detected.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+   </RESOURCE>
+</XML_RESOURCE>

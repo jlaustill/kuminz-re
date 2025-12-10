@@ -1,0 +1,41 @@
+<LicenseFile>
+	<!--
+		Special Feature: Fuel Consumption Monitor
+	 -->
+	<!--
+   Tool Licences
+     -->
+	<ToolReqLicense Expiration="permanent" Name="FCMReset_TOOL_LIC_BASIC" VendorDaemon="cummins" Key="C555EB815E15" IsValid="" ID="FCMReset_TOOL_LIC_BASIC" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="Basic"/>
+	</ToolReqLicense>
+	<ToolReqLicense Expiration="permanent" Name="FCMReset_TOOL_LIC_LITE" VendorDaemon="cummins" Key="78E6D0666466" IsValid="" ID="FCMReset_TOOL_LIC_LITE" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="Lite"/>
+	</ToolReqLicense>
+	<!--
+   User security
+     -->
+	<UserReqLicense Expiration="permanent" Name="FCMReset_AdvanceECMData" VendorDaemon="cummins" Key="B041D8292B3D" IsValid="" ID="FCMReset_AdvanceECMData" Version="1.0" Count="uncounted">
+		<Users>
+			<User NAME="Reset_Advance_ECM_Data"/></Users>
+	</UserReqLicense>
+	<!--
+   ECM Passwords
+     -->
+	<ECMReqLicense Expiration="permanent" Name="FCMReset_ECMPWMaster" VendorDaemon="cummins" Key="2A187185BFC2" IsValid="" ID="FCMReset_ECMPWMaster" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="MASTER"/></ECMPasswords>
+	</ECMReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="FCMReset_ECMPWAdjust" VendorDaemon="cummins" Key="2BD13D16333A" IsValid="" ID="FCMReset_ECMPWAdjust" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="ADJUSTABLES"/></ECMPasswords>
+	</ECMReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="FCMReset_ECMPWReset" VendorDaemon="cummins" Key="A7EFE1805170" IsValid="" ID="FCMReset_ECMPWReset" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="RESET"/></ECMPasswords>
+	</ECMReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="FCMReset_ECMPWResetPermission" VendorDaemon="cummins" Key="A388D43DFA4E" IsValid="" ID="FCMReset_ECMPWResetPermission" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="PERMIT_RESETS"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+</LicenseFile>

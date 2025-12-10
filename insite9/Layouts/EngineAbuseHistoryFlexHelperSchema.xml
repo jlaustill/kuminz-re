@@ -1,0 +1,158 @@
+<!--
+========================================================================================
+// FILENAME       : EngineAbuseHistoryFlexHelperSchema.xml
+// LEGAL          : Copyright (c) 2004 Cummins, Inc.
+// DESCRIPTION    :
+//
+// HISTORY        :
+========================================================================================
+//  RACFID/Name    Date        PRCR Number   Description
+========================================================================================
+//  kf176      07/04/2012   DB_G00195375		Modified the print header.
+
+//  kf176      04/11/2012   DB_G00190132		Replace the OBJ:DS with ECM:DS to read from ECM.   
+
+//  gb113	   04/03/2006   DB_G00083523  		Removed FIRSTPAGEONLY="TRUE" from Header lines.
+-->
+<FlexGrid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Properties Cols="6:VT_I4" FixedCols="0:VT_I4"  
+		AllowUserResizing="1:VT_UI4" AutoResize="1:VT_I4" GridLines="1:VT_I4" AllowSelection="0:VT_I4" SelectionMode="1:VT_I4" HighLight="0:VT_I4" />
+	<FixedRows>
+		<FixedRow>
+			<Column name="OBJ:EAHObj:GetResourceString(108:VT_I4)" />
+			<Column name="OBJ:EAHObj:GetResourceString(109:VT_I4)" />
+			<Column name="OBJ:EAHObj:GetResourceString(110:VT_I4)" />
+			<Column name="OBJ:EAHObj:GetResourceString(111:VT_I4)" />
+			<Column name="OBJ:EAHObj:GetResourceString(112:VT_I4)" />
+			<Column name="OBJ:EAHObj:GetResourceString(113:VT_I4)" />
+		</FixedRow>
+	</FixedRows>
+
+	<data level="0" loopEnd="OBJ:EAHObj:GetParamCount()">
+		<!-- Time Spent  -->
+		<Node level="1" loopEnd="1">
+		  <Column order="0" styleid="paramName" datasource="OBJ:EAHObj:GetParamName(LOOPINDEX0)"/>
+		  <Column order="1" datasource="OBJ:EAHObj:GetSeverity1Time(LOOPINDEX0)"/>
+		  <Column order="2" datasource="OBJ:EAHObj:GetSeverity2Time(LOOPINDEX0)"/>
+		  <Column order="3" datasource="OBJ:EAHObj:GetSeverity3Time(LOOPINDEX0)"/>
+		  <Column order="4" datasource="OBJ:EAHObj:GetSeverityTotalTime(LOOPINDEX0)"/>
+		  <Column order="5" datasource="OBJ:EAHObj:GetTimeUnit()"/>
+		</Node>
+		<!-- Boundary  -->
+		<Node level="1" loopEnd="1">
+		  <Column order="0" styleid="paramName" datasource="OBJ:EAHObj:GetParamBoundaryName(LOOPINDEX0)"/>
+		  <Column order="1" datasource="OBJ:EAHObj:GetSeverity1Boundary(LOOPINDEX0)"/>
+		  <Column order="2" datasource="OBJ:EAHObj:GetSeverity2Boundary(LOOPINDEX0)"/>
+		  <Column order="3" datasource="OBJ:EAHObj:GetSeverity3Boundary(LOOPINDEX0)"/>
+		  <Column order="4" datasource="OBJ:EAHObj:GetSeverityTotalBoundary(LOOPINDEX0)"/>
+		  <Column order="5" datasource="OBJ:EAHObj:GetBoundaryUnit(LOOPINDEX0)"/>
+		</Node>
+		<!-- Separator  -->
+		<Node level="1" loopEnd="1" styleid="sepstyle">
+		  <Column order="0" datasource=""/>
+		  <Column order="1" datasource=""/>
+		  <Column order="2" datasource=""/>
+		  <Column order="3" datasource=""/>
+		  <Column order="4" datasource=""/>
+		  <Column order="5" datasource=""/>
+		</Node>
+	</data>
+
+	<data level="1" loopEnd="1">
+		<Object name="DSS" source="OBJ:ES:DataServices"/>
+		<Object name="DS" source="OBJ:DSS:Add(ActiveConID)"/>
+		<Node level="1" loopEnd="1">
+		  <Column order="0" datasource=""/>
+		  <Column order="1" datasource=""/>
+		  <Column order="2" datasource=""/>
+		  <Column order="3" datasource=""/>
+		  <Column order="4" datasource=""/>
+		  <Column order="5" datasource=""/>
+		</Node>
+
+		<Node level="1" loopEnd="1">
+		  <Column order="0" datasource=""/>
+		  <Column order="1" datasource=""/>
+		  <Column order="2" datasource=""/>
+		  <Column order="3" datasource=""/>
+		  <Column order="4" datasource=""/>
+		  <Column order="5" datasource=""/>
+		</Node>
+
+		<Node level="1" loopEnd="1" styleid="header">
+			<Column order="0" datasource="OBJ:EAHObj:GetResourceString(108:VT_I4)" />
+			<Column order="1" datasource="OBJ:EAHObj:GetResourceString(114:VT_I4)" />
+			<Column order="2" datasource="OBJ:EAHObj:GetResourceString(113:VT_I4)" />
+			<Column order="3" datasource=""/>
+			<Column order="4" datasource=""/>
+			<Column order="5" datasource=""/>
+		</Node>
+
+		<Node level="1" loopEnd="1">
+			<Column order="0" styleid="paramName" datasource="OBJ:EAHObj:GetEngineHoursParamName()" />
+			<Column order="1" datasource="OBJ:EAHObj:GetTotalEngineHours()"/>
+			<Column order="2" datasource="OBJ:EAHObj:GetTimeUnit()"/>
+		</Node>
+	</data>
+
+	<styles>
+		<style id="sepstyle" CellBackColor="OBJ:EAHObj:GetSystemColor(13:VT_UI4)" CellForeColor="OBJ:EAHObj:GetSystemColor(14:VT_UI4)" CellFloodColor="OBJ:EAHObj:GetSystemColor(13:VT_UI4)">
+			<FONT COLOR="#FFFFFF:VT_I4" FACE="Arial" SIZE="1"/>
+		</style>
+		<style id="header" CellBackColor="OBJ:EAHObj:GetSystemColor(4:VT_UI4)" CellForeColor="OBJ:EAHObj:GetSystemColor(7:VT_UI4)" CellFloodColor="OBJ:EAHObj:GetSystemColor(4:VT_UI4)">
+			<FONT COLOR="#FFFFFF" FACE="Arial" SIZE="1"/>
+		</style>
+		<style id="paramName" CellAlignment="1:VT_I4" />
+	</styles>
+
+	<parameters>
+		<parameter name="ActiveConID" source="OBJ:ES:ActiveConnectionID"/>
+	</parameters>
+
+	<icons>
+	</icons>
+
+	<combolists>
+	</combolists>
+
+	<printing HdrFontSize="8" MarginHeader="10mm" CurrentY="50mm" >
+		<header>
+			<line>
+				<center source="OBJ:EAHObj:GetResourceString(100:VT_I4)"/>
+			</line>
+			<line>
+				<left source="OBJ:EAHObj:GetResourceString(118:VT_I4)"/>
+				<left source="ECM:DS:Read(3003,1):DisplayValue" />
+				<right source="OBJ:SYSTEMDATA:Value(TOOLNAME)PROP " />
+				<right source=" " />
+				<right source="OBJ:SYSTEMDATA:Value(TOOLVERSION)PROP" />
+			</line>
+			<line>
+				<left source="OBJ:EAHObj:GetResourceString(119:VT_I4)"/>				
+				<left source="ECM:DS:Read(1011,1):DisplayValue" />
+				<right source="OBJ:EAHObj:GetResourceString(120:VT_I4)" />
+				<right source="OBJ:SYSTEMDATA:Value(COMPANYNAME)PROP" />
+			</line>
+			<line>
+				<left source="OBJ:EAHObj:GetResourceString(121:VT_I4)"/>
+				<left source="NA" />
+				<right source="OBJ:EAHObj:GetResourceString(122:VT_I4)"/>
+				<right source="NA" />
+			</line>
+			<line>
+				<right source="OBJ:EAHObj:GetResourceString(123:VT_I4)"/>
+				<right source="ECM:DS:Read(1009,1):DisplayValue" />
+			</line>
+		</header>
+		<footer>
+			<line>
+				<left source="OBJ:SYSTEMDATA:Value(TIME)PROP" />
+				<center source="Page %d of " />
+				<center source="OBJ:VSPRINTER:PageCount" />
+				<right source="OBJ:SYSTEMDATA:Value(DATE)PROP" />
+			</line>
+		</footer>
+	</printing>
+
+	<resources/>
+</FlexGrid>

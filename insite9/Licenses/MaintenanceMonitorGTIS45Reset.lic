@@ -1,0 +1,41 @@
+<LicenseFile>
+	<!--
+		Special Feature: Maintenance Monitor Reset
+	 -->
+	<!--
+   Tool Licences
+     -->
+	<ToolReqLicense Expiration="permanent" Name="MMReset_TOOL_LIC_BASIC" VendorDaemon="cummins" Key="316DFB5FF6EA" IsValid="" ID="MMReset_TOOL_LIC_BASIC" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="Basic"/>
+	</ToolReqLicense>
+	<ToolReqLicense Expiration="permanent" Name="MMReset_TOOL_LIC_LITE" VendorDaemon="cummins" Key="8E0387F91E56" IsValid="" ID="MMReset_TOOL_LIC_LITE" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="Lite"/>
+	</ToolReqLicense>
+	<!--
+   User security
+     -->
+	<UserReqLicense Expiration="permanent" Name="MMReset_Reset_AdvanceECMData" VendorDaemon="cummins" Key="A7A3E9AD1BE4" IsValid="" ID="MMReset_Reset_AdvanceECMData" Version="1.0" Count="uncounted">
+		<Users>
+			<User NAME="Reset_Advance_ECM_Data"/></Users>
+	</UserReqLicense>
+	<!--
+   ECM Passwords
+     -->
+	<ECMReqLicense Expiration="permanent" Name="MMReset_ECMPWMaster" VendorDaemon="cummins" Key="3DD81B473736" IsValid="" ID="MMReset_ECMPWMaster" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="MASTER"/></ECMPasswords>
+	</ECMReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="MMReset_ECMPWAdjust" VendorDaemon="cummins" Key="14E9724301E7" IsValid="" ID="MMReset_ECMPWAdjust" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="ADJUSTABLES"/></ECMPasswords>
+	</ECMReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="MMReset_ECMPWReset" VendorDaemon="cummins" Key="366D0FEDC065" IsValid="" ID="MMReset_ECMPWReset" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="RESET"/></ECMPasswords>
+	</ECMReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="MMReset_ECMPWResetPermission" VendorDaemon="cummins" Key="ECB3D95C3FD5" IsValid="" ID="MMReset_ECMPWResetPermission" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="PERMIT_RESETS"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+</LicenseFile>

@@ -1,0 +1,23 @@
+<LicenseFile>
+	<ToolReqLicense Expiration="permanent" Name="AMFInstall_Tool_Lite" VendorDaemon="cummins" Key="2CC5EC040B3F" IsValid="" ID="AMFInstall_Tool_Lite" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="Lite"/>
+	</ToolReqLicense>
+	<ToolReqLicense Expiration="permanent" Name="AMFInstall_Tool_Pro" VendorDaemon="cummins" Key="4BD0B6CCF139" IsValid="" ID="AMFInstall_Tool_Pro" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="Pro"/>
+	</ToolReqLicense>
+	<ToolReqLicense Expiration="permanent" Name="AMFInstall_Tool_RSGR" VendorDaemon="cummins" Key="2ED8EF8B8BF8" IsValid="" ID="AMFInstall_Tool_RSGR" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="RSGR"/>
+	</ToolReqLicense>
+	<UserReqLicense Expiration="permanent" Name="AMFInstall_AdvanceECMData" VendorDaemon="cummins" Key="5D22E21AE656" IsValid="" ID="AMFInstall_AdvanceECMData" Version="1.0" Count="uncounted">
+		<Users>
+			<User NAME="Reset_Advance_ECM_Data"/></Users>
+	</UserReqLicense>
+	<!--
+   ECM Passwords
+     -->
+	<ECMReqLicense Expiration="permanent" Name="AMFInstall_ECMPwd_PermitResets" VendorDaemon="cummins" Key="7B7C4D17D8FA" IsValid="" ID="AMFInstall_ECMPwd_PermitResets" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="PERMIT_RESETS"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+</LicenseFile>

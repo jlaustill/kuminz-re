@@ -1,0 +1,84 @@
+<FlexGrid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+
+	<Properties Cols="6:VT_I4" FixedCols="0:VT_I4" ExplorerBar="0:VT_I4" OutlineBar="4:VT_UI4" AutoSizeMode="0:VT_I4" GridLines="1:VT_I4" Editable="0:VT_I4" AutoResize="1"/>
+	<!-- Add properties to the &quot;FlexGrid&quot; element as attribute in Name=Value format -->
+	<FixedRows>
+		<FixedRow>
+			<Column name="RES:Res1:127"/>
+			<Column name="RES:Res1:128"/>
+			<Column name="RES:Res1:129"/>
+			<Column name="RES:Res1:130"/>
+			<Column name="RES:Res1:131"/>
+			<Column name="RES:Res1:132"/>
+		</FixedRow>
+	</FixedRows>
+
+	<data level="0" loopEnd="1">
+
+		<Object name="ParamsRow" source="OBJ:DOM:selectNodes(paramRow)"/>
+		<Object name="n1" source="OBJ:VSFLEXGRID:ColWidth(1,1500)PROPPUT"/>
+		<Object name="n1" source="OBJ:VSFLEXGRID:ColWidth(2,1500)PROPPUT"/>
+		<Object name="n1" source="OBJ:VSFLEXGRID:ColWidth(3,2200)PROPPUT"/>
+		<Object name="n1" source="OBJ:VSFLEXGRID:ColWidth(4,1500)PROPPUT"/>
+		<Node level="0" loopStart="OBJ:DOM:selectSingleNode(enableRow):getAttribute(Enable)" loopEnd="1" styleid="s1">
+		<!-- If there is no Data for J1939 Powertrain in the ECM, &quot; -->
+			<Column order="0" datasource="RES:Res1:142"/> 
+		</Node>
+		<Node level="0" loopStart="0" loopEnd="OBJ:DOM:selectSingleNode(enableRow):getAttribute(Enable)" styleid="s1">
+			<Node level="0" loopStart="0" loopEnd="OBJ:ParamsRow:length">
+				<Object name="MyParams" source="OBJ:ParamsRow:nextNode"/>
+				<Column order="0" datasource="OBJ:MyParams:getAttribute(Event)" styleid="sepstyle"/>
+				<Column order="1" datasource="OBJ:MyParams:getAttribute(Source)"/>
+				<Column order="2" datasource="OBJ:MyParams:getAttribute(Destination)"/>
+				<Column order="3" datasource="OBJ:MyParams:getAttribute(Modes)" styleid="s1"/>
+				<Column order="4" datasource="OBJ:MyParams:getAttribute(ECM_Time_Start)"/>
+				<Column order="5" datasource="OBJ:MyParams:getAttribute(Duration)"/>
+			</Node>			
+		</Node>
+		<Object name="n1" source="OBJ:VSFLEXGRID:AutoSize(3)"/>
+	</data>
+	
+	<parameters>
+			<parameter name="paramRow" source="/J1939CtrlHistory/ROW"/>
+			<parameter name="enableRow" source="/J1939CtrlHistory/EnableTkn"/>
+	</parameters>
+
+	<styles>
+		<style id="sepstyle" CellAlignMent="4:VT_I4"/>
+		<style id="s1" AutoSizeMode="1" WordWrap="1"/>
+	</styles>	
+	<resources>
+		<resource id="Res1" CLSID="{1C628621-473B-4EA4-9DC6-7ED92C57DD9E}\Pages\{5282106A-2846-11D5-A2EA-0004AC9685A1}" LoadDLL="TRUE"/>
+	</resources>
+	
+	<icons/>
+	
+	<printing HdrFontSize="8">
+		<header>
+			<line>
+				<center source="RES:Res1:133"/>
+				<right source="INSITE - " />
+			    <right source="OBJ:DOM1:selectSingleNode(/Image):getAttribute(ImageVersion)" />
+			</line>
+			<line>	
+					<left source="RES:Res1:154"/>
+					<left source="OBJ:DOM1:selectSingleNode(/Image/Header/ESerial):getAttribute(DisplayValue)"/>
+					<right source="RES:Res1:152" />
+					<right source="OBJ:DOM1:selectSingleNode(/Image/Header/VMake):getAttribute(DisplayValue)" />
+			</line>
+			<line>
+					<left source="RES:Res1:153" />
+					<left source="OBJ:DOM1:selectSingleNode(/Image/Header/UNumber):getAttribute(DisplayValue)" />
+					<right source="RES:Res1:156" />
+					<right source="OBJ:DOM1:selectSingleNode(/Image/Header/IName):getAttribute(DisplayValue)" />
+			</line>
+			<line>
+					<left source="RES:Res1:155" />
+					<left source="OBJ:DOM1:selectSingleNode(/Image/Header/WOName):getAttribute(DisplayValue)" />
+					<right source="RES:Res1:151"/>
+					<right source="OBJ:DOM1:selectSingleNode(/Image/Header/CustomerName):getAttribute(DisplayValue)"/>
+			</line>
+		</header>
+	</printing>
+</FlexGrid>

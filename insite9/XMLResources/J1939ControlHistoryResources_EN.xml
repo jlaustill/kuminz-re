@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE module SYSTEM "../htmlentities.dtd">
+<XML_RESOURCE>
+   <RESOURCE Tag="1001" Type="String Table" Description="Message String Table">
+      <STRING ID="100" Context="">J1939CtrlHistory</STRING>
+      <STRING ID="101" Context="">Title</STRING>
+      <STRING ID="102" Context="">Help File Name</STRING>
+      <STRING ID="103" Context="">Your Help String</STRING>
+      <STRING ID="124" Context="">Newest</STRING>
+      <STRING ID="125" Context="">Oldest</STRING>
+      <STRING ID="126" Context="">Reading data from the ecm....</STRING>
+      <STRING ID="127" Context="">Event</STRING>
+      <STRING ID="128" Context="">Source</STRING>
+      <STRING ID="129" Context="">Destination</STRING>
+      <STRING ID="130" Context="">Modes</STRING>
+      <STRING ID="131" Context="">ECM Time(Start)</STRING>
+      <STRING ID="132" Context="">Duration</STRING>
+      <STRING ID="133" Context="">SAE J1939 Powertrain Control</STRING>
+      <STRING ID="134" Context="">Event</STRING>
+      <STRING ID="135" Context="">Source</STRING>
+      <STRING ID="136" Context="">Destination</STRING>
+      <STRING ID="137" Context="">Modes</STRING>
+      <STRING ID="138" Context="">ECM Time(Start)</STRING>
+      <STRING ID="139" Context="">Duration</STRING>
+      <STRING ID="140" Context="">ECM Time (Key On Time) :</STRING>
+      <STRING ID="141" Context="">No Data Available</STRING>
+      <STRING ID="142" Context="">This feature is not supported by the current calibration</STRING>
+      <STRING ID="143" Context="">&amp;Refresh</STRING>
+      <STRING ID="144" Context="">Print</STRING>
+      <STRING ID="145" Context="">Reset</STRING>
+      <STRING ID="146" Context="">Print Preview</STRING>
+      <STRING ID="147" Context="">Refreshing</STRING>
+	  <STRING ID="148" Context="">Refreshing Data please wait. ...</STRING>
+     <STRING ID="149" Context="Printer Not available title">Cummins INSITE</STRING>
+     <STRING ID="150" Context="Printer Not available text">Printer not found.</STRING>
+     
+     <STRING ID="1027" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;18700&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred with J1939 Control History.&lt;/Description&gt;&lt;Suggestion&gt;An error occurred in J1939 Control History. Close and reopen Advanced ECM Data.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="1028" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;18702&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred with J1939 Control History.&lt;/Description&gt;&lt;Suggestion&gt;An error occurred in J1939 Control History. Close and reopen Advanced ECM Data.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="1029" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;18703&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred with J1939 Control History.&lt;/Description&gt;&lt;Suggestion&gt;An error occurred in J1939 Control History. Close and reopen Advanced ECM Data.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="1030" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;18704&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred with J1939 Control History.&lt;/Description&gt;&lt;Suggestion&gt;An error occurred in J1939 Control History. Close and reopen Advanced ECM Data.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="1031" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;18701&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred with J1939 Control History.&lt;/Description&gt;&lt;Suggestion&gt;An error occurred in J1939 Control History. Close and reopen Advanced ECM Data.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="1032" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;18705&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred with J1939 Control History.&lt;/Description&gt;&lt;Suggestion&gt;An error occurred in J1939 Control History. Close and reopen Advanced ECM Data.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="1033" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;18706&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred with J1939 Control History.&lt;/Description&gt;&lt;Suggestion&gt;An error occurred in J1939 Control History. Close and reopen Advanced ECM Data.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="1034" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;18707&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred with J1939 Control History.&lt;/Description&gt;&lt;Suggestion&gt;An error occurred in J1939 Control History. Close and reopen Advanced ECM Data.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="1035" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;18708&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred with J1939 Control History.&lt;/Description&gt;&lt;Suggestion&gt;An error occurred in J1939 Control History. Close and reopen Advanced ECM Data.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="1036" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;18709&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred with J1939 Control History.&lt;/Description&gt;&lt;Suggestion&gt;An error occurred in J1939 Control History. Close and reopen Advanced ECM Data.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="1037" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;18710&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred with J1939 Control History.&lt;/Description&gt;&lt;Suggestion&gt;An error occurred in J1939 Control History. Close and reopen Advanced ECM Data.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="1038" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;18711&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred with J1939 Control History.&lt;/Description&gt;&lt;Suggestion&gt;An error occurred in J1939 Control History. Close and reopen Advanced ECM Data.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="1039" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;18712&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred with J1939 Control History.&lt;/Description&gt;&lt;Suggestion&gt;An error occurred in J1939 Control History. Close and reopen Advanced ECM Data.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="1040" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;18713&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred with J1939 Control History.&lt;/Description&gt;&lt;Suggestion&gt;An error occurred in J1939 Control History. Close and reopen Advanced ECM Data.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="1041" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;18714&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred with J1939 Control History.&lt;/Description&gt;&lt;Suggestion&gt;An error occurred in J1939 Control History. Close and reopen Advanced ECM Data.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="1042" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;18715&lt;/ErrorNumber&gt;&lt;Description&gt;System memory is low.&lt;/Description&gt;&lt;Suggestion&gt;System memory is low. Close all other applications and try the test again.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="1043" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;18716&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred with J1939 Control History.&lt;/Description&gt;&lt;Suggestion&gt;An error occurred in J1939 Control History. Close and reopen Advanced ECM Data.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="1044" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;18717&lt;/ErrorNumber&gt;&lt;Description&gt;No J1939 Control History data is available for printing.&lt;/Description&gt;&lt;Suggestion&gt;An error occurred in J1939 Control History. Close and reopen Advanced ECM Data.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="1045" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;18718&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred with J1939 Control History.&lt;/Description&gt;&lt;Suggestion&gt;An error occurred in J1939 Control History. Close and reopen Advanced ECM Data.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="1046" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;18719&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred with J1939 Control History.&lt;/Description&gt;&lt;Suggestion&gt;An error occurred in J1939 Control History. Close and reopen Advanced ECM Data.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="1047" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;18720&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred with J1939 Control History.&lt;/Description&gt;&lt;Suggestion&gt;An error occurred in J1939 Control History. Close and reopen Advanced ECM Data.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="1048" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;18721&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred with J1939 Control History.&lt;/Description&gt;&lt;Suggestion&gt;An error occurred in J1939 Control History. Close and reopen Advanced ECM Data.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="1049" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;18722&lt;/ErrorNumber&gt;&lt;Description&gt;Unable to reset J1939 Control History.&lt;/Description&gt;&lt;Suggestion&gt;An error occurred in J1939 Control History. Close and reopen Advanced ECM Data.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="151" Context="">Customer Name : </STRING>
+      <STRING ID="152" Context="">Company Name : </STRING>
+      <STRING ID="153" Context="">Customer Unit Number : </STRING>
+      <STRING ID="154" Context="">Engine Serial Number : </STRING>
+      <STRING ID="155" Context="">Work Order Name : </STRING>
+      <STRING ID="156" Context="">ECM Image Name : </STRING>
+      <STRING ID="157" Context="">SAE J1939 Powertrain Control Reset </STRING>
+      <STRING ID="158" Context="">Select OK to reset the SAE J1939 Powertrain Control History.\r\nSelect Cancel to cancel the reset.</STRING>
+      <STRING ID="159" Context="">ERROR</STRING>
+	  <STRING ID="160" Context="">Help</STRING>
+	</RESOURCE>
+</XML_RESOURCE>

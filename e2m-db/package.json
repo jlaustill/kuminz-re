@@ -1,0 +1,20 @@
+{
+  "name": "e2m-db-importer",
+  "version": "1.0.0",
+  "description": "CSV to PostgreSQL importer for E2M database",
+  "main": "import-e2m.ts",
+  "scripts": {
+    "import": "npx tsx import-e2m.ts"
+  },
+  "dependencies": {
+    "papaparse": "^5.5.3",
+    "pg": "^8.11.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/papaparse": "^5.3.16",
+    "@types/pg": "^8.10.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
+  }
+}

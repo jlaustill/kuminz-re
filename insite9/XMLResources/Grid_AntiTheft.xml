@@ -1,0 +1,125 @@
+<!-- This is a sample  -->
+<FlexGrid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<Properties Cols="3:VT_I4" FixedCols="0:VT_I4" AllowUserResizing="1:VT_UI4" AutoResize="1:VT_I4" GridLines="1:VT_I4" Editable="0:VT_I4" SelectionMode="1:VT_I4"/>
+	<FixedRows>
+		<FixedRow>
+			<Column name="RES:Res2:71"/>
+			<Column name="RES:Res2:72"/>
+		</FixedRow>
+	</FixedRows>
+	
+	<data loopEnd="1">
+
+    <Node level = "0" loopStart="0" loopEnd="OBJ:DOM:selectNodes(/Image/Parameters/P[@ID=44 and @V=000000]):length" >
+      <Column order="0" datasource="RES:Res2:69" datasource1="1"/>
+      <Column order="1" datasource="RES:Res2:110"/>
+    </Node>
+    <Node level = "0" loopStart="OBJ:DOM:selectNodes(/Image/Parameters/P[@ID=44 and @V=000000]):length" loopEnd="1" >
+      <Column order="0" datasource="RES:Res2:69" datasource1="1"/>
+      <Column order="1" datasource="RES:Res2:109"/>
+    </Node>
+
+    <Node level = "0" loopStart="0" loopEnd="OBJ:DOM:selectNodes(/Image/Parameters/P[@ID=47 and @V=000000]):length" >
+      <Column order="0" datasource="RES:Res2:69" datasource1="2"/>
+      <Column order="1" datasource="RES:Res2:110"/>
+    </Node>
+    <Node level = "0" loopStart="OBJ:DOM:selectNodes(/Image/Parameters/P[@ID=47 and @V=000000]):length" loopEnd="1" >
+      <Column order="0" datasource="RES:Res2:69" datasource1="2"/>
+      <Column order="1" datasource="RES:Res2:109"/>
+    </Node>
+
+    <Node level = "0" loopStart="0" loopEnd="OBJ:DOM:selectNodes(/Image/Parameters/P[@ID=50 and @V=000000]):length" >
+      <Column order="0" datasource="RES:Res2:69" datasource1="3"/>
+      <Column order="1" datasource="RES:Res2:110"/>
+    </Node>
+    <Node level = "0" loopStart="OBJ:DOM:selectNodes(/Image/Parameters/P[@ID=50 and @V=000000]):length" loopEnd="1" >
+      <Column order="0" datasource="RES:Res2:69" datasource1="3"/>
+      <Column order="1" datasource="RES:Res2:109"/>
+    </Node>
+
+    <Node level = "0" loopStart="0" loopEnd="OBJ:DOM:selectNodes(/Image/Parameters/P[@ID=53 and @V=000000]):length" >
+      <Column order="0" datasource="RES:Res2:69" datasource1="4"/>
+      <Column order="1" datasource="RES:Res2:110"/>
+    </Node>
+    <Node level = "0" loopStart="OBJ:DOM:selectNodes(/Image/Parameters/P[@ID=53 and @V=000000]):length" loopEnd="1" >
+      <Column order="0" datasource="RES:Res2:69" datasource1="4"/>
+      <Column order="1" datasource="RES:Res2:109"/>
+    </Node>
+
+    <Node level = "0" loopStart="0" loopEnd="OBJ:DOM:selectNodes(/Image/Parameters/P[@ID=56 and @V=000000]):length" >
+      <Column order="0" datasource="RES:Res2:69" datasource1="5"/>
+      <Column order="1" datasource="RES:Res2:110"/>
+    </Node>
+    <Node level = "0" loopStart="OBJ:DOM:selectNodes(/Image/Parameters/P[@ID=56 and @V=000000]):length" loopEnd="1" >
+      <Column order="0" datasource="RES:Res2:69" datasource1="5"/>
+      <Column order="1" datasource="RES:Res2:109"/>
+    </Node>
+
+    <Node level = "0" loopStart="0" loopEnd="OBJ:DOM:selectNodes(/Image/Parameters/P[@ID=59 and @V=000000]):length" >
+      <Column order="0" datasource="RES:Res2:69" datasource1="6"/>
+      <Column order="1" datasource="RES:Res2:110"/>
+    </Node>
+    <Node level = "0" loopStart="OBJ:DOM:selectNodes(/Image/Parameters/P[@ID=59 and @V=000000]):length" loopEnd="1" >
+      <Column order="0" datasource="RES:Res2:69" datasource1="6"/>
+      <Column order="1" datasource="RES:Res2:109"/>
+    </Node>
+    
+		<Node level="0" loopStart="0" loopEnd="1"/>
+		<Node level="0" loopStart="0" loopEnd="1"/>
+		
+		<Node level="0" loopStart="0" loopEnd="1">
+			<Column order="0" datasource="OBJ:DOM:selectSingleNode(/Image/Parameters/P[@ID=22041]):getAttribute(N)"/>
+			<Column order="2" datasource="OBJ:DOM:selectSingleNode(/Image/Parameters/P[@R=1 and @ID=22041]):getAttribute(DV)"/>
+		</Node>
+		<Node level="0" loopStart="0" loopEnd="1">
+			<Column order="0" datasource="OBJ:DOM:selectSingleNode(/Image/Parameters/P[@ID=22121]):getAttribute(N)"/>
+			<Column order="2" datasource="OBJ:DOM:selectSingleNode(/Image/Parameters/P[@R=1 and @ID=22121]):getAttribute(DV)"/>
+		</Node>
+	
+		<Node level="0" loopStart="0" loopEnd="1">
+			<Column order="0" datasource="OBJ:DOM:selectSingleNode(/Image/Parameters/P[@ID=199257]):getAttribute(N)"/>
+			<Column order="2" datasource="OBJ:DOM:selectSingleNode(/Image/Parameters/P[@R=1 and @ID=199257]):getAttribute(DV)"/>
+		</Node>
+	</data> 
+
+	<parameters>
+	</parameters>
+
+	
+	<resources>
+		<resource id="Res1" CLSID="{1ECBBE0B-836B-11D4-8A76-00062999E309}" LoadDLL="TRUE"/>
+            <resource id="Res2" CLSID="{1C628621-473B-4EA4-9DC6-7ED92C57DD9E}\Pages\{3471E4CA-C0FB-4143-8AA3-CFC0DBBBBDF8}" LoadDLL="TRUE"/>
+	</resources>
+	
+	<printing HdrFontSize="8">
+		<header>
+			<line>
+				<center source="RES:Res1:1082"/>
+			</line>
+			<line>
+				<left source="RES:Res1:2030"/>
+				<left source="OBJ:DOM:selectSingleNode(/Image/Header/ESerial):getAttribute(DisplayValue)"/>
+				<right source="INSITE - "/>
+				<right source="OBJ:DOM:selectSingleNode(/Image):getAttribute(ImageVersion)"/>
+			</line>
+			<line>
+				<left source="RES:Res1:2029"/>
+				<left source="OBJ:DOM:selectSingleNode(/Image/Header/UNumber):getAttribute(DisplayValue)"/>
+				<right source="RES:Res1:2031"/>
+				<right source="OBJ:DOM:selectSingleNode(/Image/Header/VMake):getAttribute(DisplayValue)"/>
+			</line>
+			<line>
+				<left source="RES:Res1:2032"/>
+				<left source="OBJ:DOM:selectSingleNode(/Image/Header/WOName):getAttribute(DisplayValue)"/>
+				<right source="RES:Res1:2033"/>
+				<right source="OBJ:DOM:selectSingleNode(/Image/Header/IName):getAttribute(DisplayValue)"/>
+			</line>
+			 <line>
+ 			<right source="RES:Res1:2036"/>
+			<right source="OBJ:DOM:selectSingleNode(/Image/Header/CustomerName):getAttribute(DisplayValue)"/>
+		</line>
+		</header>
+		
+	</printing>
+</FlexGrid>

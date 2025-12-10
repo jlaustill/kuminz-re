@@ -1,0 +1,581 @@
+<!-- CHANAGE HISTORY
+10/29/2009  hz228  DB_G00142431 Added a loop to check which one of token  ETH_Enable and ETH_EnableVer2 is supported
+
+06/09/2008   gn178   DB_G00116609   Implemented sorting for all the arrays according to Parameter IDs.
+									Inserted a dummy root node and transformed 3 arrays into a tree structure.
+									Applied sorting on each node.FlexGridHelper_IDD can be referred for more details.
+
+11/27/2009   in684   DB_G00148626   Removed sorting for MaxPowerLogArrayVer2, MaxTorqueLogArrayVer2 and 
+									TorqueDataLogArrayRecord1Ver2 in order to support specific display order
+									as mentioned under Service Parameter documents SP 4724, SP 4725 and SP 4726.
+									This specific ordering has been achieved through code implementation.
+                 
+12/17/2009  ho403  DB_G00149622 Removed the rows 1, 2 and hide all the columns if 
+                   Engine Torque History is not supported by the current Calibration.    
+                   
+07/12/2010  is311  DB_G00157005   Removed sorting for MaxPowerLogArray, MaxTorqueLogArray and 
+								  TorqueDataLogArrayRecord1 in order to support specific display order
+								  as mentioned under Service Parameter documents SP 2593, SP 2594 and SP 2595.
+								  This specific ordering has been achieved through code implementation.
+07/05/2011  jd067  DB_G00173740 Modifed for ETH Ver3 support.     
+06/28/2012 jr617  DB_G00193691  Modified to check the condition Powertain Protection for  is enabled or not                     
+-->
+
+<FlexGrid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Properties Cols="7:VT_I4" FixedCols="0:VT_I4" ExplorerBar="0:VT_I4" OutlineBar="5:VT_UI4" AllowUserResizing="1:VT_UI4" AutoResize="1:VT_I4" GridLines="1:VT_I4" Editable="0:VT_I4"  />
+
+    <FixedRows>
+        <FixedRow >
+            <Column name=" " />
+        </FixedRow>
+    </FixedRows>
+
+    <data loopEnd="1">
+
+        <Node level="0" loopEnd="1">
+            <Column order="0" datasource="Root"/>
+            <!-- one root is needed to sort -->
+
+            <Object name="ETH_Enable" source="OBJ:DOM:selectSingleNode(ETHEnable)" />
+            <Object name="ETH_EnableVer2" source="OBJ:DOM:selectSingleNode(ETHEnableVer2)" />
+            <Object name="ETH_EnableVer3" source="OBJ:DOM:selectSingleNode(ETHEnableVer3)" />
+
+            <Node level="1" loopStart="OBJ:ETH_Enable:getAttribute(V)" loopEnd="1" >
+
+                <Node level="1" loopStart="OBJ:ETH_EnableVer2:getAttribute(V)" loopEnd="1" >
+
+                    <Node level="1" loopStart="OBJ:ETH_EnableVer3:getAttribute(V)" loopEnd="1" >
+                        <Column order="0" datasource="RES:ETHResource:126" />
+                        <!-- Feature Not Supported -->
+                        <!-- Removed the root rows as the Feature is not supported -->
+                        <Object name="removerow" source="OBJ:VSFLEXGRID:RemoveItem(1)" />
+                        <Object name="removerow" source="OBJ:VSFLEXGRID:RemoveItem(2)" />
+                        <!-- Hiding all the columns except the 0th row -->
+                        <Object name="PlaceHolder" source="OBJ:VSFLEXGRID:ColHidden(1,1)PROPPUT" />
+                        <Object name="PlaceHolder" source="OBJ:VSFLEXGRID:ColHidden(2,1)PROPPUT" />
+                        <Object name="PlaceHolder" source="OBJ:VSFLEXGRID:ColHidden(3,1)PROPPUT" />
+                        <Object name="PlaceHolder" source="OBJ:VSFLEXGRID:ColHidden(4,1)PROPPUT" />
+                        <Object name="PlaceHolder" source="OBJ:VSFLEXGRID:ColHidden(5,1)PROPPUT" />
+                        <Object name="PlaceHolder" source="OBJ:VSFLEXGRID:ColHidden(6,1)PROPPUT" />
+                        <!-- Hide the outlines to hide the tree structure /-->
+                        <Object name="PlaceHolder" source="OBJ:VSFLEXGRID:OutlineBar(0)PROPPUT" />
+                    </Node>
+                </Node>
+			</Node>	
+
+               	 <Node level="1" loopStart="0" loopEnd="OBJ:DOM:selectNodes(/Image/Parameters/P[@ID=16824550 and @V=1]):length" >
+					<Node level="1" loopStart="0" loopEnd="OBJ:DOM:selectNodes(/Image/Parameters/P[@ID=16824031 and @V=1]):length" >
+                    <!-- Version3 -->
+                    <Column order="0" datasource="RES:ETHResource:102" styleid="s1" />
+                    <!-- Max Power Log Title -->
+
+                    <Node level="2" loopStart="0" loopEnd="1" >
+                        <!-- Max Power Log header -->
+                        <Column order="0" datasource="RES:ETHResource:113" styleid="s3" />
+                        <Column order="1" datasource="RES:ETHResource:114" styleid="s3" />
+                        <Column order="2" datasource="RES:ETHResource:115" styleid="s3" />
+                    </Node>
+
+                    <!-- Read the Max Power Log Array -->
+                    <Object name="MaxPowerLogVer3" source="OBJ:DOM:selectNodes(MaxPowerLogArrayVer3)" />
+
+                    <!-- Iterate through the Max Power Log Array and Add parameters -->
+                    <!-- We are making data rows( Level 2) as children of title node -->
+                    <Node level="2" loopStart="0" loopEnd="OBJ:MaxPowerLogVer3:length" >
+                        <Object name="LogIterator" source="OBJ:MaxPowerLogVer3:nextNode" />
+                        <Column order="0" datasource="OBJ:LogIterator:getAttribute(N)" styleid="s2" />
+                        <Column order="1" datasource="OBJ:LogIterator:getAttribute(U)" styleid="s2" />
+                        <Column order="2" datasource="OBJ:LogIterator:getAttribute(DV)" styleid="s2" />
+                        <Column order="3" datasource="OBJ:LogIterator:getAttribute(ID)" styleid="s2" />
+                    </Node>
+
+                    <Node level="2" loopStart="0" loopEnd="1" >
+                        <!-- Blank Line-->
+                        <Column order="0" datasource=" " />
+                        <Column order="1" datasource=" " />
+                        <Column order="2" datasource=" " />
+                    </Node>
+
+                    <Node level="1" loopStart="0" loopEnd="1" >
+                        <Column order="0" datasource="RES:ETHResource:103" styleid="s1" />
+                        <!-- Max Torque Log Title -->
+
+                        <Node level="2" loopStart="0" loopEnd="1" >
+                            <Column order="0" datasource="RES:ETHResource:113" styleid="s3" />
+                            <Column order="1" datasource="RES:ETHResource:114" styleid="s3" />
+                            <Column order="2" datasource="RES:ETHResource:115" styleid="s3" />
+                        </Node>
+
+                        <!-- Read the Max Torque Log Array -->
+                        <Object name="MaxTorqueLogVer3" source="OBJ:DOM:selectNodes(MaxTorqueLogArrayVer3)" />
+
+
+                        <!-- Iterate through the Max Power Log Array and Add parameters -->
+                        <Node level="2" loopStart="0" loopEnd="OBJ:MaxTorqueLogVer3:length" >
+                            <Object name="MTLogIterator" source="OBJ:MaxTorqueLogVer3:nextNode" />
+                            <Column order="0" datasource="OBJ:MTLogIterator:getAttribute(N)" styleid="s2" />
+                            <Column order="1" datasource="OBJ:MTLogIterator:getAttribute(U)" styleid="s2" />
+                            <Column order="2" datasource="OBJ:MTLogIterator:getAttribute(DV)" styleid="s2" />
+                            <Column order="3" datasource="OBJ:MTLogIterator:getAttribute(ID)" styleid="s2" />
+                        </Node>
+
+                    </Node>
+
+                    <Node level="2" loopStart="0" loopEnd="1" >
+                        <!-- Blank Line-->
+                        <Column order="0" datasource=" " />
+                        <Column order="1" datasource=" " />
+                        <Column order="2" datasource=" " />
+                    </Node>
+
+                    <!-- Third Array /-->
+
+                    <Node level="1" loopStart="0" loopEnd="1" >
+                        <Column order="0" datasource="RES:ETHResource:105"  styleid="s1" />
+                        <!-- Torque Data Title -->
+
+                        <!-- Read the Torque Data Array (7027) -->
+                        <Object name="TorqueDataLogVer3" source="OBJ:DOM:selectNodes(TorqueDataLogArrayVer3)" />
+
+                        <Node level="2" loopStart="0" loopEnd="1" >
+                            <!-- Torque Data Header-->
+                            <Column order="0" datasource="RES:ETHResource:116" styleid="s3" />
+                            <Column order="1" datasource=" " styleid="s3" />
+                            <Column order="2" datasource="RES:ETHResource:118" styleid="s3" />
+                            <Column order="4" datasource="2" styleid="s3" />
+                            <!-- 3rd column is for ID, we would be hiding it.So, other cols are shifted by 1 /-->
+                            <Column order="5" datasource="3" styleid="s3" />
+                            <Column order="6" datasource="RES:ETHResource:131" styleid="s3" />
+                        </Node>
+
+                        <Node level="2" loopStart="0" loopEnd="1" >
+
+                            <!-- Torque Data Header-->
+                            <Column order="0" datasource="RES:ETHResource:113" styleid="s3" />
+                            <Column order="1" datasource="RES:ETHResource:114" styleid="s3" />
+                            <Column order="2" datasource="RES:ETHResource:115" styleid="s3" />
+                            <Column order="4" datasource="RES:ETHResource:115" styleid="s3" />
+                            <Column order="5" datasource="RES:ETHResource:115" styleid="s3" />
+                            <Column order="6" datasource="RES:ETHResource:115" styleid="s3" />
+
+                            <Object name="RecordData1Ver3" source="OBJ:DOM:selectNodes(TorqueDataLogArrayRecord1Ver3)" />
+                            <Object name="RecordData2Ver3" source="OBJ:DOM:selectNodes(TorqueDataLogArrayRecord2Ver3)" />
+                            <Object name="RecordData3Ver3" source="OBJ:DOM:selectNodes(TorqueDataLogArrayRecord3Ver3)" />
+                            <Object name="RecordData4Ver3" source="OBJ:DOM:selectNodes(TorqueDataLogArrayRecord4Ver3)" />
+
+                            <!-- Iterate through the Torque data log array and Add parameters -->
+                            <Node level="2" loopStart="0" loopEnd="OBJ:RecordData1Ver3:length" >
+                                <Object name="ParameterIterator1" source="OBJ:RecordData1Ver3:nextNode" />
+                                <Object name="ParameterIterator2" source="OBJ:RecordData2Ver3:nextNode" />
+                                <Object name="ParameterIterator3" source="OBJ:RecordData3Ver3:nextNode" />
+                                <Object name="ParameterIterator4" source="OBJ:RecordData4Ver3:nextNode" />
+
+                                <Column order="0" datasource="OBJ:ParameterIterator1:getAttribute(N)" styleid="s2" />
+                                <Column order="1" datasource="OBJ:ParameterIterator1:getAttribute(U)" styleid="s2" />
+                                <Column order="2" datasource="OBJ:ParameterIterator1:getAttribute(DV)" styleid="s2" />
+                                <Column order="3" datasource="OBJ:ParameterIterator1:getAttribute(ID)" styleid="s2" />
+                                <Column order="4" datasource="OBJ:ParameterIterator2:getAttribute(DV)" styleid="s2" />
+                                <Column order="5" datasource="OBJ:ParameterIterator3:getAttribute(DV)" styleid="s2" />
+                                <Column order="6" datasource="OBJ:ParameterIterator4:getAttribute(DV)" styleid="s2" />
+                            </Node>
+
+                        </Node>
+                    </Node>
+
+                    <!--Remove the root node that we added for sorting -->
+                    <Object name="PlaceHolder" source="OBJ:VSFLEXGRID:RemoveItem(1)" />
+                    <!--Hide the third column which is used to sort -->
+                    <Object name="PlaceHolder" source="OBJ:VSFLEXGRID:ColHidden(3,1)PROPPUT" />
+                    <!-- Hide the outlines to hide the tree structure /-->
+                    <Object name="PlaceHolder" source="OBJ:VSFLEXGRID:OutlineBar(0)PROPPUT" />
+                </Node>
+				<Node level="1" loopStart="OBJ:DOM:selectNodes(/Image/Parameters/P[@ID=16824031 and @V=1]):length" loopEnd="1" styleid="s4"  >
+				<Column order="0" datasource="RES:ETHResource:1014" />	
+				<Object name="removerow" source="OBJ:VSFLEXGRID:RemoveItem(1)" />
+				<Object name="removerow" source="OBJ:VSFLEXGRID:RemoveItem(1)" />
+				<Object name="removerow" source="OBJ:VSFLEXGRID:RemoveItem(1)" />
+				<Object name="PlaceHolder" source="OBJ:VSFLEXGRID:ColHidden(1,1)PROPPUT" />
+                <Object name="PlaceHolder" source="OBJ:VSFLEXGRID:ColHidden(2,1)PROPPUT" />
+                <Object name="PlaceHolder" source="OBJ:VSFLEXGRID:ColHidden(3,1)PROPPUT" />
+                <Object name="PlaceHolder" source="OBJ:VSFLEXGRID:ColHidden(4,1)PROPPUT" />
+                <Object name="PlaceHolder" source="OBJ:VSFLEXGRID:ColHidden(5,1)PROPPUT" />
+                <Object name="PlaceHolder" source="OBJ:VSFLEXGRID:ColHidden(6,1)PROPPUT" />
+				<Column order="0" datasource="RES:ETHResource:1014" />	
+                       
+				
+				</Node>
+                </Node>
+                
+                <Node level="1" loopStart="0" loopEnd="OBJ:DOM:selectNodes(/Image/Parameters/P[@ID=16824054 and @V=1]):length" >
+					<Node level="1" loopStart="0" loopEnd="OBJ:DOM:selectNodes(/Image/Parameters/P[@ID=16824031 and @V=1]):length" >
+                    <!-- Version2 -->
+                    <Column order="0" datasource="RES:ETHResource:102" styleid="s1" />
+                    <!-- Max Power Log Title -->
+
+                    <Node level="2" loopStart="0" loopEnd="1" >
+                        <!-- Max Power Log header -->
+                        <Column order="0" datasource="RES:ETHResource:113" styleid="s3" />
+                        <Column order="1" datasource="RES:ETHResource:114" styleid="s3" />
+                        <Column order="2" datasource="RES:ETHResource:115" styleid="s3" />
+                    </Node>
+
+                    <!-- Read the Max Power Log Array -->
+                    <Object name="MaxPowerLogVer2" source="OBJ:DOM:selectNodes(MaxPowerLogArrayVer2)" />
+
+                    <!-- Iterate through the Max Power Log Array and Add parameters -->
+                    <!-- We are making data rows( Level 2) as children of title node -->
+                    <Node level="2" loopStart="0" loopEnd="OBJ:MaxPowerLogVer2:length" >
+                        <Object name="LogIterator" source="OBJ:MaxPowerLogVer2:nextNode" />
+                        <Column order="0" datasource="OBJ:LogIterator:getAttribute(N)" styleid="s2" />
+                        <Column order="1" datasource="OBJ:LogIterator:getAttribute(U)" styleid="s2" />
+                        <Column order="2" datasource="OBJ:LogIterator:getAttribute(DV)" styleid="s2" />
+                        <Column order="3" datasource="OBJ:LogIterator:getAttribute(ID)" styleid="s2" />
+                    </Node>
+
+                    <Node level="2" loopStart="0" loopEnd="1" >
+                        <!-- Blank Line-->
+                        <Column order="0" datasource=" " />
+                        <Column order="1" datasource=" " />
+                        <Column order="2" datasource=" " />
+                    </Node>
+
+                    <Node level="1" loopStart="0" loopEnd="1" >
+                        <Column order="0" datasource="RES:ETHResource:103" styleid="s1" />
+                        <!-- Max Torque Log Title -->
+
+                        <Node level="2" loopStart="0" loopEnd="1" >
+                            <Column order="0" datasource="RES:ETHResource:113" styleid="s3" />
+                            <Column order="1" datasource="RES:ETHResource:114" styleid="s3" />
+                            <Column order="2" datasource="RES:ETHResource:115" styleid="s3" />
+                        </Node>
+
+                        <!-- Read the Max Torque Log Array -->
+                        <Object name="MaxTorqueLogVer2" source="OBJ:DOM:selectNodes(MaxTorqueLogArrayVer2)" />
+
+
+                        <!-- Iterate through the Max Power Log Array and Add parameters -->
+                        <Node level="2" loopStart="0" loopEnd="OBJ:MaxTorqueLogVer2:length" >
+                            <Object name="MTLogIterator" source="OBJ:MaxTorqueLogVer2:nextNode" />
+                            <Column order="0" datasource="OBJ:MTLogIterator:getAttribute(N)" styleid="s2" />
+                            <Column order="1" datasource="OBJ:MTLogIterator:getAttribute(U)" styleid="s2" />
+                            <Column order="2" datasource="OBJ:MTLogIterator:getAttribute(DV)" styleid="s2" />
+                            <Column order="3" datasource="OBJ:MTLogIterator:getAttribute(ID)" styleid="s2" />
+                        </Node>
+
+                    </Node>
+
+                    <Node level="2" loopStart="0" loopEnd="1" >
+                        <!-- Blank Line-->
+                        <Column order="0" datasource=" " />
+                        <Column order="1" datasource=" " />
+                        <Column order="2" datasource=" " />
+                    </Node>
+
+                    <!-- Third Array /-->
+
+                    <Node level="1" loopStart="0" loopEnd="1" >
+                        <Column order="0" datasource="RES:ETHResource:105"  styleid="s1" />
+                        <!-- Torque Data Title -->
+
+                        <!-- Read the Torque Data Array (7003) -->
+                        <Object name="TorqueDataLogVer2" source="OBJ:DOM:selectNodes(TorqueDataLogArrayVer2)" />
+
+                        <Node level="2" loopStart="0" loopEnd="1" >
+                            <!-- Torque Data Header-->
+                            <Column order="0" datasource="RES:ETHResource:116" styleid="s3" />
+                            <Column order="1" datasource=" " styleid="s3" />
+                            <Column order="2" datasource="RES:ETHResource:118" styleid="s3" />
+                            <Column order="4" datasource="2" styleid="s3" />
+                            <!-- 3rd column is for ID, we would be hiding it.So, other cols are shifted by 1 /-->
+                            <Column order="5" datasource="3" styleid="s3" />
+                            <Column order="6" datasource="RES:ETHResource:131" styleid="s3" />
+                        </Node>
+
+                        <Node level="2" loopStart="0" loopEnd="1" >
+
+                            <!-- Torque Data Header-->
+                            <Column order="0" datasource="RES:ETHResource:113" styleid="s3" />
+                            <Column order="1" datasource="RES:ETHResource:114" styleid="s3" />
+                            <Column order="2" datasource="RES:ETHResource:115" styleid="s3" />
+                            <Column order="4" datasource="RES:ETHResource:115" styleid="s3" />
+                            <Column order="5" datasource="RES:ETHResource:115" styleid="s3" />
+                            <Column order="6" datasource="RES:ETHResource:115" styleid="s3" />
+
+                            <Object name="RecordData1Ver2" source="OBJ:DOM:selectNodes(TorqueDataLogArrayRecord1Ver2)" />
+                            <Object name="RecordData2Ver2" source="OBJ:DOM:selectNodes(TorqueDataLogArrayRecord2Ver2)" />
+                            <Object name="RecordData3Ver2" source="OBJ:DOM:selectNodes(TorqueDataLogArrayRecord3Ver2)" />
+                            <Object name="RecordData4Ver2" source="OBJ:DOM:selectNodes(TorqueDataLogArrayRecord4Ver2)" />
+
+                            <!-- Iterate through the Torque data log array and Add parameters -->
+                            <Node level="2" loopStart="0" loopEnd="OBJ:RecordData1Ver2:length" >
+                                <Object name="ParameterIterator1" source="OBJ:RecordData1Ver2:nextNode" />
+                                <Object name="ParameterIterator2" source="OBJ:RecordData2Ver2:nextNode" />
+                                <Object name="ParameterIterator3" source="OBJ:RecordData3Ver2:nextNode" />
+                                <Object name="ParameterIterator4" source="OBJ:RecordData4Ver2:nextNode" />
+
+                                <Column order="0" datasource="OBJ:ParameterIterator1:getAttribute(N)" styleid="s2" />
+                                <Column order="1" datasource="OBJ:ParameterIterator1:getAttribute(U)" styleid="s2" />
+                                <Column order="2" datasource="OBJ:ParameterIterator1:getAttribute(DV)" styleid="s2" />
+                                <Column order="3" datasource="OBJ:ParameterIterator1:getAttribute(ID)" styleid="s2" />
+                                <Column order="4" datasource="OBJ:ParameterIterator2:getAttribute(DV)" styleid="s2" />
+                                <Column order="5" datasource="OBJ:ParameterIterator3:getAttribute(DV)" styleid="s2" />
+                                <Column order="6" datasource="OBJ:ParameterIterator4:getAttribute(DV)" styleid="s2" />
+                            </Node>
+
+                        </Node>
+                    </Node>
+
+                    <!--Remove the root node that we added for sorting -->
+                    <Object name="PlaceHolder" source="OBJ:VSFLEXGRID:RemoveItem(1)" />
+                    <!--Hide the third column which is used to sort -->
+                    <Object name="PlaceHolder" source="OBJ:VSFLEXGRID:ColHidden(3,1)PROPPUT" />
+                    <!-- Hide the outlines to hide the tree structure /-->
+                    <Object name="PlaceHolder" source="OBJ:VSFLEXGRID:OutlineBar(0)PROPPUT" />
+
+                </Node>
+				<Node level="1" loopStart="OBJ:DOM:selectNodes(/Image/Parameters/P[@ID=16824031 and @V=1]):length" loopEnd="1" styleid="s4"  >
+				<Column order="0" datasource="RES:ETHResource:1014" />	
+				<Object name="removerow" source="OBJ:VSFLEXGRID:RemoveItem(1)" />
+				<Object name="removerow" source="OBJ:VSFLEXGRID:RemoveItem(1)" />
+				<Object name="removerow" source="OBJ:VSFLEXGRID:RemoveItem(1)" />
+				<Object name="PlaceHolder" source="OBJ:VSFLEXGRID:ColHidden(1,1)PROPPUT" />
+                <Object name="PlaceHolder" source="OBJ:VSFLEXGRID:ColHidden(2,1)PROPPUT" />
+                <Object name="PlaceHolder" source="OBJ:VSFLEXGRID:ColHidden(3,1)PROPPUT" />
+                <Object name="PlaceHolder" source="OBJ:VSFLEXGRID:ColHidden(4,1)PROPPUT" />
+                <Object name="PlaceHolder" source="OBJ:VSFLEXGRID:ColHidden(5,1)PROPPUT" />
+                <Object name="PlaceHolder" source="OBJ:VSFLEXGRID:ColHidden(6,1)PROPPUT" />
+				<Column order="0" datasource="RES:ETHResource:1014" />	
+                       
+				
+				</Node>
+				</Node>
+            
+        
+
+       <Node level="1" loopStart="0" loopEnd="OBJ:DOM:selectNodes(/Image/Parameters/P[@ID=16792341 and @V=1]):length" >
+					<Node level="1" loopStart="0" loopEnd="OBJ:DOM:selectNodes(/Image/Parameters/P[@ID=16824031 and @V=1]):length" >
+            <!-- Version1 -->
+            <Column order="0" datasource="RES:ETHResource:102" styleid="s1" />
+            <!-- Max Power Log Title -->
+
+            <Node level="2" loopStart="0" loopEnd="1" >
+                <!-- Max Power Log header -->
+                <Column order="0" datasource="RES:ETHResource:113" styleid="s3" />
+                <Column order="1" datasource="RES:ETHResource:114" styleid="s3" />
+                <Column order="2" datasource="RES:ETHResource:115" styleid="s3" />
+            </Node>
+
+            <!-- Read the Max Power Log Array -->
+            <Object name="MaxPowerLog" source="OBJ:DOM:selectNodes(MaxPowerLogArray)" />
+
+            <!-- Iterate through the Max Power Log Array and Add parameters -->
+            <!-- We are making data rows( Level 2) as children of title node -->
+            <Node level="2" loopStart="0" loopEnd="OBJ:MaxPowerLog:length" >
+                <Object name="LogIterator" source="OBJ:MaxPowerLog:nextNode" />
+                <Column order="0" datasource="OBJ:LogIterator:getAttribute(N)" styleid="s2" />
+                <Column order="1" datasource="OBJ:LogIterator:getAttribute(U)" styleid="s2" />
+                <Column order="2" datasource="OBJ:LogIterator:getAttribute(DV)" styleid="s2" />
+                <Column order="3" datasource="OBJ:LogIterator:getAttribute(ID)" styleid="s2" />
+            </Node>
+
+
+            <Node level="2" loopStart="0" loopEnd="1" >
+                <!-- Blank Line-->
+                <Column order="0" datasource=" " />
+                <Column order="1" datasource=" " />
+                <Column order="2" datasource=" " />
+            </Node>
+
+            <Node level="1" loopStart="0" loopEnd="1" >
+                <Column order="0" datasource="RES:ETHResource:103" styleid="s1" />
+                <!-- Max Torque Log Title -->
+
+                <Node level="2" loopStart="0" loopEnd="1" >
+                    <Column order="0" datasource="RES:ETHResource:113" styleid="s3" />
+                    <Column order="1" datasource="RES:ETHResource:114" styleid="s3" />
+                    <Column order="2" datasource="RES:ETHResource:115" styleid="s3" />
+                </Node>
+
+                <!-- Read the Max Torque Log Array -->
+                <Object name="MaxTorqueLog" source="OBJ:DOM:selectNodes(MaxTorqueLogArray)" />
+
+
+                <!-- Iterate through the Max Power Log Array and Add parameters -->
+                <Node level="2" loopStart="0" loopEnd="OBJ:MaxTorqueLog:length" >
+                    <Object name="MTLogIterator" source="OBJ:MaxTorqueLog:nextNode" />
+                    <Column order="0" datasource="OBJ:MTLogIterator:getAttribute(N)" styleid="s2" />
+                    <Column order="1" datasource="OBJ:MTLogIterator:getAttribute(U)" styleid="s2" />
+                    <Column order="2" datasource="OBJ:MTLogIterator:getAttribute(DV)" styleid="s2" />
+                    <Column order="3" datasource="OBJ:MTLogIterator:getAttribute(ID)" styleid="s2" />
+                </Node>
+
+
+
+            </Node>
+
+            <Node level="2" loopStart="0" loopEnd="1" >
+                <!-- Blank Line-->
+                <Column order="0" datasource=" " />
+                <Column order="1" datasource=" " />
+                <Column order="2" datasource=" " />
+            </Node>
+
+            <!-- Third Array /-->
+
+            <Node level="1" loopStart="0" loopEnd="1" >
+                <Column order="0" datasource="RES:ETHResource:105"  styleid="s1" />
+                <!-- Torque Data Title -->
+
+                <!-- Read the Torque Data Array (7003) -->
+                <Object name="TorqueDataLog" source="OBJ:DOM:selectNodes(TorqueDataLogArray)" />
+
+                <Node level="2" loopStart="0" loopEnd="1" >
+                    <!-- Torque Data Header-->
+                    <Column order="0" datasource="RES:ETHResource:116" styleid="s3" />
+                    <Column order="1" datasource=" " styleid="s3" />
+                    <Column order="2" datasource="RES:ETHResource:118" styleid="s3" />
+                    <Column order="4" datasource="2" styleid="s3" />
+                    <!-- 3rd column is for ID, we would be hiding it.So, other cols are shifted by 1 /-->
+                    <Column order="5" datasource="3" styleid="s3" />
+                    <Column order="6" datasource="RES:ETHResource:131" styleid="s3" />
+                </Node>
+
+                <Node level="2" loopStart="0" loopEnd="1" >
+
+                    <!-- Torque Data Header-->
+                    <Column order="0" datasource="RES:ETHResource:113" styleid="s3" />
+                    <Column order="1" datasource="RES:ETHResource:114" styleid="s3" />
+                    <Column order="2" datasource="RES:ETHResource:115" styleid="s3" />
+                    <Column order="4" datasource="RES:ETHResource:115" styleid="s3" />
+                    <Column order="5" datasource="RES:ETHResource:115" styleid="s3" />
+                    <Column order="6" datasource="RES:ETHResource:115" styleid="s3" />
+
+                    <Object name="RecordData1" source="OBJ:DOM:selectNodes(TorqueDataLogArrayRecord1)" />
+                    <Object name="RecordData2" source="OBJ:DOM:selectNodes(TorqueDataLogArrayRecord2)" />
+                    <Object name="RecordData3" source="OBJ:DOM:selectNodes(TorqueDataLogArrayRecord3)" />
+                    <Object name="RecordData4" source="OBJ:DOM:selectNodes(TorqueDataLogArrayRecord4)" />
+
+                    <!-- Iterate through the Torque data log array and Add parameters -->
+                    <Node level="2" loopStart="0" loopEnd="OBJ:RecordData1:length" >
+                        <Object name="ParameterIterator1" source="OBJ:RecordData1:nextNode" />
+                        <Object name="ParameterIterator2" source="OBJ:RecordData2:nextNode" />
+                        <Object name="ParameterIterator3" source="OBJ:RecordData3:nextNode" />
+                        <Object name="ParameterIterator4" source="OBJ:RecordData4:nextNode" />
+
+                        <Column order="0" datasource="OBJ:ParameterIterator1:getAttribute(N)" styleid="s2" />
+                        <Column order="1" datasource="OBJ:ParameterIterator1:getAttribute(U)" styleid="s2" />
+                        <Column order="2" datasource="OBJ:ParameterIterator1:getAttribute(DV)" styleid="s2" />
+                        <Column order="3" datasource="OBJ:ParameterIterator1:getAttribute(ID)" styleid="s2" />
+                        <Column order="4" datasource="OBJ:ParameterIterator2:getAttribute(DV)" styleid="s2" />
+                        <Column order="5" datasource="OBJ:ParameterIterator3:getAttribute(DV)" styleid="s2" />
+                        <Column order="6" datasource="OBJ:ParameterIterator4:getAttribute(DV)" styleid="s2" />
+                    </Node>
+
+                </Node>
+            </Node>
+
+
+
+            <!--Remove the root node that we added for sorting -->
+            <Object name="PlaceHolder" source="OBJ:VSFLEXGRID:RemoveItem(1)" />
+            <!--Hide the third column which is used to sort -->
+            <Object name="PlaceHolder" source="OBJ:VSFLEXGRID:ColHidden(3,1)PROPPUT" />
+            <!-- Hide the outlines to hide the tree structure /-->
+            <Object name="PlaceHolder" source="OBJ:VSFLEXGRID:OutlineBar(0)PROPPUT" />
+
+        </Node>
+		 	<Node level="1" loopStart="OBJ:DOM:selectNodes(/Image/Parameters/P[@ID=16824031 and @V=1]):length" loopEnd="1" styleid="s4"  >
+				<Column order="0" datasource="RES:ETHResource:1014" />	
+				<Object name="removerow" source="OBJ:VSFLEXGRID:RemoveItem(1)" />
+				<Object name="removerow" source="OBJ:VSFLEXGRID:RemoveItem(1)" />
+				<Object name="removerow" source="OBJ:VSFLEXGRID:RemoveItem(1)" />
+				<Object name="PlaceHolder" source="OBJ:VSFLEXGRID:ColHidden(1,1)PROPPUT" />
+                <Object name="PlaceHolder" source="OBJ:VSFLEXGRID:ColHidden(2,1)PROPPUT" />
+                <Object name="PlaceHolder" source="OBJ:VSFLEXGRID:ColHidden(3,1)PROPPUT" />
+                <Object name="PlaceHolder" source="OBJ:VSFLEXGRID:ColHidden(4,1)PROPPUT" />
+                <Object name="PlaceHolder" source="OBJ:VSFLEXGRID:ColHidden(5,1)PROPPUT" />
+                <Object name="PlaceHolder" source="OBJ:VSFLEXGRID:ColHidden(6,1)PROPPUT" />
+                       
+				
+				</Node>
+    </Node>
+	</Node>
+	</data>
+
+    <parameters>
+        <!-- Returns the index of the node's immediate parent i.e the header (Maximum Power Rating) which is parent node for first array)/-->
+        <parameter name="FirstChildNumber" source="OBJ:VSFLEXGRID:GetNodeRow(5,1)" type="VT_I4" />
+        <!--> Returns the index of the node's last sibling node /-->
+        <parameter name="LastChildNumber" source="OBJ:VSFLEXGRID:GetNodeRow(FirstChildNumber,5)" type="VT_I4" />
+        <!-- Array 7015, 7016, 7017 -->
+        <parameter name="MaxTorqueLogArrayVer2" source="/Image/Arrays/A[@ID=7015]/Dim[@Num=1]/I[@Num=0]/P" />
+        <parameter name="MaxPowerLogArrayVer2" source="/Image/Arrays/A[@ID=7016]/Dim[@Num=1]/I[@Num=0]/P" />
+        <parameter name="TorqueDataLogArrayVer2" source="/Image/Arrays/A[@ID=7017]/Dim[@Num=1]/I" />
+        <parameter name="TorqueDataLogArrayRecord1Ver2" source="/Image/Arrays/A[@ID=7017]/Dim[@Num=1]/I[@Num=0]/P" />
+        <parameter name="TorqueDataLogArrayRecord2Ver2" source="/Image/Arrays/A[@ID=7017]/Dim[@Num=1]/I[@Num=1]/P" />
+        <parameter name="TorqueDataLogArrayRecord3Ver2" source="/Image/Arrays/A[@ID=7017]/Dim[@Num=1]/I[@Num=2]/P" />
+        <parameter name="TorqueDataLogArrayRecord4Ver2" source="/Image/Arrays/A[@ID=7017]/Dim[@Num=1]/I[@Num=3]/P" />
+        <parameter name="ETHEnableVer2" source="/Image/Parameters/P[@ID=16824054]" />
+        <!-- Array 7001, 7002, 7003 -->
+        <parameter name="MaxTorqueLogArray" source="/Image/Arrays/A[@ID=7001]/Dim[@Num=1]/I[@Num=0]/P" />
+        <parameter name="MaxPowerLogArray" source="/Image/Arrays/A[@ID=7002]/Dim[@Num=1]/I[@Num=0]/P" />
+        <parameter name="TorqueDataLogArray" source="/Image/Arrays/A[@ID=7003]/Dim[@Num=1]/I" />
+        <parameter name="TorqueDataLogArrayRecord1" source="/Image/Arrays/A[@ID=7003]/Dim[@Num=1]/I[@Num=0]/P" />
+        <parameter name="TorqueDataLogArrayRecord2" source="/Image/Arrays/A[@ID=7003]/Dim[@Num=1]/I[@Num=1]/P" />
+        <parameter name="TorqueDataLogArrayRecord3" source="/Image/Arrays/A[@ID=7003]/Dim[@Num=1]/I[@Num=2]/P" />
+        <parameter name="TorqueDataLogArrayRecord4" source="/Image/Arrays/A[@ID=7003]/Dim[@Num=1]/I[@Num=3]/P" />
+        <parameter name="ETHEnable" source="/Image/Parameters/P[@ID=16792341]" />
+        <!--Version 3-->
+        <!-- Array 7025, 7026, 7027 -->
+        <parameter name="MaxTorqueLogArrayVer3" source="/Image/Arrays/A[@ID=7025]/Dim[@Num=1]/I[@Num=0]/P" />
+        <parameter name="MaxPowerLogArrayVer3" source="/Image/Arrays/A[@ID=7026]/Dim[@Num=1]/I[@Num=0]/P" />
+        <parameter name="TorqueDataLogArrayVer3" source="/Image/Arrays/A[@ID=7027]/Dim[@Num=1]/I" />
+        <parameter name="TorqueDataLogArrayRecord1Ver3" source="/Image/Arrays/A[@ID=7027]/Dim[@Num=1]/I[@Num=0]/P" />
+        <parameter name="TorqueDataLogArrayRecord2Ver3" source="/Image/Arrays/A[@ID=7027]/Dim[@Num=1]/I[@Num=1]/P" />
+        <parameter name="TorqueDataLogArrayRecord3Ver3" source="/Image/Arrays/A[@ID=7027]/Dim[@Num=1]/I[@Num=2]/P" />
+        <parameter name="TorqueDataLogArrayRecord4Ver3" source="/Image/Arrays/A[@ID=7027]/Dim[@Num=1]/I[@Num=3]/P" />
+        <parameter name="ETHEnableVer3" source="/Image/Parameters/P[@ID=16824550]" />
+    </parameters>
+
+    <styles>
+        <style id="s1" CellFontBold="1:VT_I4" CellAlignMent="1:VT_I4" />
+        <style id="s2" CellFontBold="0:VT_I4" CellAlignMent="1:VT_I4" />
+        <style id="s3" CellFontBold="1:VT_I4" CellAlignMent="1:VT_I4" CellBackColor="14607854" />
+		<style id="s4" CellAlignMent="1:VT_I4" ColWidthMin="16000" ColWidthMax="10000" AutoSizeMode="1:VT_I4" WordWrap="1" />
+    </styles>
+
+    <resources>
+        <resource id="ETHResource" CLSID="{1C628621-473B-4EA4-9DC6-7ED92C57DD9E}\Pages\{954A9C31-BEB7-47f2-99D6-ACD03A988D9E}" />
+    </resources>
+
+    <printing HdrFontSize="8">
+        <header>
+            <line>
+                <center source="RES:ETHResource:101" />
+            </line>
+            <line>
+                <left source="RES:ETHResource:125"/>
+                <left source="OBJ:DOM:selectSingleNode(/Image/Header/ESerial):getAttribute(DisplayValue)"/>
+                <right source="INSITE - "/>
+                <right source="OBJ:DOM:selectSingleNode(/Image):getAttribute(ImageVersion)"/>
+            </line>
+            <line>
+                <left source="RES:ETHResource:124"/>
+                <left source="OBJ:DOM:selectSingleNode(/Image/Header/UNumber):getAttribute(DisplayValue)"/>
+                <right source="RES:ETHResource:120"/>
+                <right source="OBJ:DOM:selectSingleNode(/Image/Header/VMake):getAttribute(DisplayValue)"/>
+            </line>
+            <line>
+                <left source="RES:ETHResource:121"/>
+                <left source="OBJ:DOM:selectSingleNode(/Image/Header/WOName):getAttribute(DisplayValue)"/>
+                <right source="RES:ETHResource:122"/>
+                <right source="OBJ:DOM:selectSingleNode(/Image/Header/IName):getAttribute(DisplayValue)"/>
+            </line>
+            <line>
+                <right source="RES:ETHResource:123"/>
+                <right source="OBJ:DOM:selectSingleNode(/Image/Header/CustomerName):getAttribute(DisplayValue)"/>
+            </line>
+        </header>
+    </printing>
+
+</FlexGrid>

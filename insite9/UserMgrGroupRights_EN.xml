@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE module SYSTEM "htmlentities.dtd">
+<user_manager_rights version="1.0" INSITE="6.3.25.0">
+	<user_right ID="1">System Administration</user_right>
+	<user_right ID="2">Calibration Download</user_right>
+	<user_right ID="3">Adjust ECM Features and Parameters</user_right>
+	<user_right ID="4">Change ECM Password</user_right>
+	<user_right ID="5">Import ECM Image Data</user_right>
+	<user_right ID="6">Export ECM Image Data</user_right>
+	<user_right ID="7">Reset Trip Information Data</user_right>
+	<user_right ID="8">Reset Faults</user_right>
+  <user_right ID="9">Reset Advance ECM Data</user_right>
+</user_manager_rights>

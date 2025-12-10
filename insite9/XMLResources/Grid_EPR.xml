@@ -1,0 +1,79 @@
+<!-- This is a sample  -->
+<FlexGrid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+   <Properties Cols="9:VT_I4" FixedCols="0:VT_I4" AllowUserResizing="1:VT_UI4" AutoResize="1:VT_I4" GridLines="1:VT_I4" Editable="0:VT_I4" SelectionMode="1:VT_I4" ColWidthMin="1500" ColWidthMax="2000" AutoSizeMode="1:VT_I4"  WordWrap="1:VT_BOOL" />
+   <FixedRows>
+      <FixedRow>
+         <Column name="Governed Speed"/>
+         <Column name="Horsepower Low Range"/>
+         <Column name="Horsepower High Range"/>
+         <Column name="Peak Torque Low Range"/>
+         <Column name="Peak Torque High Range"/>
+         <Column name="Current FR Number"/>
+         <Column name="Comment"/>
+         <Column name="Power Curve Blocked"/>
+         <Column name="Power Curve Available"/>
+      </FixedRow>
+   </FixedRows>
+   
+   <data loopEnd="1">
+      <Node level="0" loopStart="OBJ:DOM:selectSingleNode(pEnableTkn):getAttribute(V)" loopEnd="1" >
+          <!-- If there is no Data for Power Curve or in disbaled in the ECM, &quot; -->
+            <Column order="0" datasource="RES:Res1:2037"/> 
+      </Node>
+            
+      <Node level="0" loopStart="0" loopEnd="OBJ:DOM:selectSingleNode(pEnableTkn):getAttribute(V)" >
+         <Object name="AList" source="OBJ:DOM:selectNodes(/Image/Arrays/A[@ID=18 ]/Dim/I[./P[@ID=199447 and @V=1] and ./P[@ID=199446 and @V=0]]"/>
+         <Node level="0" loopStart="0" loopEnd="OBJ:AList:length">
+            <Object name="PList" source="OBJ:AList:nextNode():childNodes"/>
+            <Column order="0" datasource="OBJ:PList:item(0):getAttribute(DV)" datasource1="OBJ:PList:item(0):getAttribute(U)"/>
+            <Column order="1" datasource="OBJ:PList:item(1):getAttribute(DV)" datasource1="OBJ:PList:item(1):getAttribute(U)"/>
+            <Column order="2" datasource="OBJ:PList:item(2):getAttribute(DV)" datasource1="OBJ:PList:item(2):getAttribute(U)"/>
+            <Column order="3" datasource="OBJ:PList:item(3):getAttribute(DV)" datasource1="OBJ:PList:item(3):getAttribute(U)"/>
+            <Column order="4" datasource="OBJ:PList:item(4):getAttribute(DV)" datasource1="OBJ:PList:item(4):getAttribute(U)"/>
+            <Column order="5" datasource="OBJ:PList:item(5):getAttribute(DV)"/>
+            <Column order="6" datasource="OBJ:PList:item(7):getAttribute(DV)"/>
+            <Column order="7" datasource="OBJ:PList:item(8):getAttribute(DV)"/>
+            <Column order="8" datasource="OBJ:PList:item(9):getAttribute(DV)"/>
+         </Node>
+      </Node>
+   </data> 
+   <parameters>
+      <parameter name="pEnableTkn" source="/Image/Parameters/P[@ID=21771]"/>
+      </parameters>
+   <resources>
+   <resource id="Res1" CLSID="{1ECBBE0B-836B-11D4-8A76-00062999E309}"/>
+   </resources>
+   
+   <printing HdrFontSize="8">
+      <header>
+         <line>
+			<center source="RES:Res1:1049"/>
+         </line>
+         <line>
+            <left source="RES:Res1:2030"/>
+            <left source="OBJ:DOM:selectSingleNode(/Image/Header/ESerial):getAttribute(DisplayValue)"/>
+			<right source="INSITE - "/>
+			<right source="OBJ:DOM:selectSingleNode(/Image):getAttribute(ImageVersion)"/>
+         </line>
+         <line>
+            <left source="RES:Res1:2029"/>
+            <left source="OBJ:DOM:selectSingleNode(/Image/Header/UNumber):getAttribute(DisplayValue)"/>
+            <right source="RES:Res1:2031"/>
+            <right source="OBJ:DOM:selectSingleNode(/Image/Header/VMake):getAttribute(DisplayValue)"/>
+         </line>
+         <line>
+            <left source="RES:Res1:2032"/>
+            <left source="OBJ:DOM:selectSingleNode(/Image/Header/WOName):getAttribute(DisplayValue)"/>
+            <right source="RES:Res1:2033"/>
+            <right source="OBJ:DOM:selectSingleNode(/Image/Header/IName):getAttribute(DisplayValue)"/>
+         </line>
+		 <line>
+			<right source="RES:Res1:2036"/>
+			<right source="OBJ:DOM:selectSingleNode(/Image/Header/CustomerName):getAttribute(DisplayValue)"/>
+		 </line>
+      </header>
+      
+   </printing>
+
+</FlexGrid>

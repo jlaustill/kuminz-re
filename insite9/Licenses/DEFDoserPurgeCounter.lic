@@ -1,0 +1,12 @@
+<LicenseFile>
+	<!--ECM Passwords-->
+	<ECMReqLicense Expiration="permanent" Name="DEFDsrPurgeCntr_Reset" VendorDaemon="cummins" Key="E5A6F3CA1F6A" IsValid="" ID="DEFDsrPurgeCntr_Reset" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="PERMIT_RESETS"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+	<UserReqLicense Expiration="permanent" Name="DEFPCntrReset_AdvanceECMData" VendorDaemon="cummins" Key="1D3E811561D6" IsValid="" ID="DEFPCntrReset_AdvanceECMData" Version="1.0" Count="uncounted">
+		<Users>
+			<User NAME="Reset_Advance_ECM_Data"/></Users>
+	</UserReqLicense>
+</LicenseFile>

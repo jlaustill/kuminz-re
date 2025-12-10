@@ -1,0 +1,93 @@
+<?xml version="1.0" standalone="yes"?>
+<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
+  <file name="QSVGasTestSelection.dll" hashalg="SHA1">
+    <comClass clsid="{A8EEBC91-39CB-4BDD-B050-EA49502C9B97}" tlbid="{4C27A8C9-8DEB-4BAB-B09F-5804497BBC91}" description="Cummins SBCTestLogic Class" threadingModel="Free" progid="SpeedBiasCalibrationTest.SBCTestLogic">
+      <progid>SpeedBiasCalibrationTest.SBCTestLogic.1</progid>
+    </comClass>
+    <comClass clsid="{60F46D8B-3C6B-4B64-8B67-7B9AD3D9D5DE}" tlbid="{4C27A8C9-8DEB-4BAB-B09F-5804497BBC91}" description="DetonationSensorOffsetPage Class" progid="QSVGasTestSelection.DetonationSensorOffsetPage">
+      <progid>QSVGasTestSelection.DetonationSensorOffsetPage.1</progid>
+    </comClass>
+    <comClass clsid="{D5F5D6B3-4340-43D4-9E74-134B78737E1C}" tlbid="{4C27A8C9-8DEB-4BAB-B09F-5804497BBC91}" description="DetonationSensorOffsetLogic Class" threadingModel="Free" progid="QSVGasTestSelection.DetonationSensorOffsetLogic">
+      <progid>QSVGasTestSelection.DetonationSensorOffsetLogic.1</progid>
+    </comClass>
+    <comClass clsid="{BC5E025A-D67C-4CB0-88CB-AA1F16805606}" tlbid="{4C27A8C9-8DEB-4BAB-B09F-5804497BBC91}" description="OCFPage Class" progid="OCF.OCFPage">
+      <progid>OCF.OCFPage.1</progid>
+    </comClass>
+    <comClass clsid="{A5A3C607-0105-443C-B093-91BF92B1B93D}" tlbid="{4C27A8C9-8DEB-4BAB-B09F-5804497BBC91}" description="OCFPage2 Class" progid="QSVGasTestSelection.OCFPage2">
+      <progid>QSVGasTestSelection.OCFPage2.1</progid>
+    </comClass>
+    <comClass clsid="{7028FA87-B70E-4956-8B6A-C87DBD4C18CB}" tlbid="{4C27A8C9-8DEB-4BAB-B09F-5804497BBC91}" description="OCFPage3 Class" progid="QSVGasTestSelection.OCFPage3">
+      <progid>QSVGasTestSelection.OCFPage3.1</progid>
+    </comClass>
+    <comClass clsid="{542191B5-43B2-4221-92A9-E3934B7B14E6}" tlbid="{4C27A8C9-8DEB-4BAB-B09F-5804497BBC91}" description="OCFPage4 Class" progid="QSVGasTestSelection.OCFPage4">
+      <progid>QSVGasTestSelection.OCFPage4.1</progid>
+    </comClass>
+    <comClass clsid="{6DA211A9-51F5-4A21-AF24-8764D745B9D3}" tlbid="{4C27A8C9-8DEB-4BAB-B09F-5804497BBC91}" description="OCFLogic Class" threadingModel="Free" progid="OCF.OCFLogic">
+      <progid>OCF.OCFLogic.1</progid>
+    </comClass>
+    <comClass clsid="{2DDE9F9A-ECF1-4CE8-AABD-CB60C43FC369}" tlbid="{4C27A8C9-8DEB-4BAB-B09F-5804497BBC91}" description="KilowattLoadPage Class" progid="QSVGasTestSelection.KilowattLoadPage">
+      <progid>QSVGasTestSelection.KilowattLoadPage.1</progid>
+    </comClass>
+    <comClass clsid="{447AB0B2-B554-4C33-9815-58395CE0EB74}" tlbid="{4C27A8C9-8DEB-4BAB-B09F-5804497BBC91}" description="KilowattLoadLogic Class" threadingModel="Free" progid="QSVGasTestSelection.KilowattLoadLogic">
+      <progid>QSVGasTestSelection.KilowattLoadLogic.1</progid>
+    </comClass>
+    <comClass clsid="{AAA4CF6D-126E-4CB1-B371-8EAC98E5CAD8}" tlbid="{4C27A8C9-8DEB-4BAB-B09F-5804497BBC91}" description="Cummins SBCTestPage Class" progid="SpeedBiasCalibrationTest.SBCTestPage">
+      <progid>SpeedBiasCalibrationTest.SBCTestPage.1</progid>
+    </comClass>
+    <comClass clsid="{7D29A4BF-0477-4F92-93DD-34888C51D55B}" tlbid="{4C27A8C9-8DEB-4BAB-B09F-5804497BBC91}" description="QSVGasTestSelectionPage Class" progid="QSVGasTestSelection.QSVGasTestSelectionPage">
+      <progid>QSVGasTestSelection.QSVGasTestSelectionPage.1</progid>
+    </comClass>
+    <comClass clsid="{14652631-360E-404B-9EDD-E7F5B9C7A152}" tlbid="{4C27A8C9-8DEB-4BAB-B09F-5804497BBC91}" description="QSVGasTestSelectionLogic Class" threadingModel="Free" progid="QSVGasTestSelection.QSVGasTestSelectionLogic">
+      <progid>QSVGasTestSelection.QSVGasTestSelectionLogic.1</progid>
+    </comClass>
+    <comClass clsid="{820F0F7F-9261-468D-A29B-095186174A44}" tlbid="{4C27A8C9-8DEB-4BAB-B09F-5804497BBC91}" description="ConnectionInfo Class" threadingModel="Apartment" progid="QSVGasTestSelection.ConnectionInfo">
+      <progid>QSVGasTestSelection.ConnectionInfo.1</progid>
+    </comClass>
+    <typelib tlbid="{4C27A8C9-8DEB-4BAB-B09F-5804497BBC91}" version="1.0" helpdir="" flags="HASDISKIMAGE">
+    </typelib>
+  </file>
+  <comInterfaceExternalProxyStub name="IDetonationSensorOffsetEvents" iid="{C4F1CE1C-A7BB-46C2-8D1E-CDF344503530}" tlbid="{4C27A8C9-8DEB-4BAB-B09F-5804497BBC91}" proxyStubClsid32="{00020424-0000-0000-C000-000000000046}">
+  </comInterfaceExternalProxyStub>
+  <comInterfaceExternalProxyStub name="IDetonationSensorOffsetLogic" iid="{4D03DAC8-29D7-400C-A5F2-1B86D27D44EE}" tlbid="{4C27A8C9-8DEB-4BAB-B09F-5804497BBC91}" proxyStubClsid32="{00020424-0000-0000-C000-000000000046}">
+  </comInterfaceExternalProxyStub>
+  <comInterfaceExternalProxyStub name="IOCFPage" iid="{B1921D67-F081-43FD-809B-F5CD0AC4C556}" tlbid="{4C27A8C9-8DEB-4BAB-B09F-5804497BBC91}" proxyStubClsid32="{00020424-0000-0000-C000-000000000046}">
+  </comInterfaceExternalProxyStub>
+  <comInterfaceExternalProxyStub name="IOCFPage2" iid="{76FDCFA4-F80F-42C6-9603-304E9722C557}" tlbid="{4C27A8C9-8DEB-4BAB-B09F-5804497BBC91}" proxyStubClsid32="{00020424-0000-0000-C000-000000000046}">
+  </comInterfaceExternalProxyStub>
+  <comInterfaceExternalProxyStub name="IOCFPage3" iid="{BAE86B97-0C4F-4B9D-BEB5-E2455CE2A93B}" tlbid="{4C27A8C9-8DEB-4BAB-B09F-5804497BBC91}" proxyStubClsid32="{00020424-0000-0000-C000-000000000046}">
+  </comInterfaceExternalProxyStub>
+  <comInterfaceExternalProxyStub name="IOCFPage4" iid="{C0D10E88-103F-42B3-A649-EC954A63A71D}" tlbid="{4C27A8C9-8DEB-4BAB-B09F-5804497BBC91}" proxyStubClsid32="{00020424-0000-0000-C000-000000000046}">
+  </comInterfaceExternalProxyStub>
+  <comInterfaceExternalProxyStub name="IOCFLogic" iid="{5650CEE5-6094-4752-BFA3-13584D8C9816}" tlbid="{4C27A8C9-8DEB-4BAB-B09F-5804497BBC91}" proxyStubClsid32="{00020424-0000-0000-C000-000000000046}">
+  </comInterfaceExternalProxyStub>
+  <comInterfaceExternalProxyStub name="_IOCFEvents" iid="{EB7741A0-7D74-48E5-A353-A5EFB6A050F4}" tlbid="{4C27A8C9-8DEB-4BAB-B09F-5804497BBC91}" proxyStubClsid32="{00020424-0000-0000-C000-000000000046}">
+  </comInterfaceExternalProxyStub>
+  <comInterfaceExternalProxyStub name="_IRampTimerEvents" iid="{7DA84666-1971-4BC4-85A3-F107A6E6426C}" tlbid="{4C27A8C9-8DEB-4BAB-B09F-5804497BBC91}" proxyStubClsid32="{00020424-0000-0000-C000-000000000046}">
+  </comInterfaceExternalProxyStub>
+  <comInterfaceExternalProxyStub name="_IOCFRollbackEvents" iid="{0D6B6054-BD0D-424B-94EC-CA801B3BFF32}" tlbid="{4C27A8C9-8DEB-4BAB-B09F-5804497BBC91}" proxyStubClsid32="{00020424-0000-0000-C000-000000000046}">
+  </comInterfaceExternalProxyStub>
+  <comInterfaceExternalProxyStub name="IKilowattLoadEvents" iid="{82373FE4-75AE-4870-829B-1A3213888F19}" tlbid="{4C27A8C9-8DEB-4BAB-B09F-5804497BBC91}" proxyStubClsid32="{00020424-0000-0000-C000-000000000046}">
+  </comInterfaceExternalProxyStub>
+  <comInterfaceExternalProxyStub name="IKilowattLoadControl" iid="{CAB55128-A9B7-4BA1-BEA1-9413FA58C14E}" tlbid="{4C27A8C9-8DEB-4BAB-B09F-5804497BBC91}" proxyStubClsid32="{00020424-0000-0000-C000-000000000046}">
+  </comInterfaceExternalProxyStub>
+  <comInterfaceExternalProxyStub name="IKnockDataEvents" iid="{126D758A-1D19-4E0A-82D6-CE763ECD3430}" tlbid="{4C27A8C9-8DEB-4BAB-B09F-5804497BBC91}" proxyStubClsid32="{00020424-0000-0000-C000-000000000046}">
+  </comInterfaceExternalProxyStub>
+  <comInterfaceExternalProxyStub name="IKnockSetupInfo" iid="{68B44854-15CE-4905-B155-A87C6E68D747}" tlbid="{4C27A8C9-8DEB-4BAB-B09F-5804497BBC91}" proxyStubClsid32="{00020424-0000-0000-C000-000000000046}">
+  </comInterfaceExternalProxyStub>
+  <comInterfaceExternalProxyStub name="IKnockDataLogic" iid="{B596C71D-C1F4-4DC8-A98D-FF929D567402}" tlbid="{4C27A8C9-8DEB-4BAB-B09F-5804497BBC91}" proxyStubClsid32="{00020424-0000-0000-C000-000000000046}">
+  </comInterfaceExternalProxyStub>
+  <comInterfaceExternalProxyStub name="ICISBCTestPage" iid="{B95874EA-E6F6-4C50-A6F2-026DE3C3661B}" tlbid="{4C27A8C9-8DEB-4BAB-B09F-5804497BBC91}" proxyStubClsid32="{B95874EA-E6F6-4C50-A6F2-026DE3C3661B}">
+  </comInterfaceExternalProxyStub>
+  <comInterfaceExternalProxyStub name="ICISBCTestLogic" iid="{6D046727-92DD-4ABE-B2B4-7A655779309B}" tlbid="{4C27A8C9-8DEB-4BAB-B09F-5804497BBC91}" proxyStubClsid32="{00020424-0000-0000-C000-000000000046}">
+  </comInterfaceExternalProxyStub>
+  <comInterfaceExternalProxyStub name="ICISBCTestLogicEvents" iid="{A275D5CD-A814-43DC-AD18-B63839B6AD87}" tlbid="{4C27A8C9-8DEB-4BAB-B09F-5804497BBC91}" proxyStubClsid32="{00020424-0000-0000-C000-000000000046}">
+  </comInterfaceExternalProxyStub>
+  <comInterfaceExternalProxyStub name="ICIQSVTestPage" iid="{079B0169-5CA8-48BC-A880-5F0BBE97D148}" tlbid="{4C27A8C9-8DEB-4BAB-B09F-5804497BBC91}" proxyStubClsid32="{00020424-0000-0000-C000-000000000046}">
+  </comInterfaceExternalProxyStub>
+  <comInterfaceExternalProxyStub name="IQSVGasTestSelectionLogic" iid="{7EDEAAE3-29F5-4246-BF76-4608AA82DFA6}" tlbid="{4C27A8C9-8DEB-4BAB-B09F-5804497BBC91}" proxyStubClsid32="{00020424-0000-0000-C000-000000000046}">
+  </comInterfaceExternalProxyStub>
+  <comInterfaceExternalProxyStub name="IConnectionInfo" iid="{52B1704A-9C37-4805-9FF7-FC7F502D8B4A}" tlbid="{4C27A8C9-8DEB-4BAB-B09F-5804497BBC91}" proxyStubClsid32="{00020424-0000-0000-C000-000000000046}">
+  </comInterfaceExternalProxyStub>
+  <comInterfaceExternalProxyStub name="IQSVGasTestSelectionEvents" iid="{1D5597E7-C7EC-4810-8F3F-7ED19C35487A}" tlbid="{4C27A8C9-8DEB-4BAB-B09F-5804497BBC91}" proxyStubClsid32="{00020424-0000-0000-C000-000000000046}">
+  </comInterfaceExternalProxyStub>
+</assembly>

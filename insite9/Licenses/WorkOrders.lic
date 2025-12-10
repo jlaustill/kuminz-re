@@ -1,0 +1,40 @@
+<LicenseFile>
+	<ToolReqLicense Expiration="permanent" Name="ECMImagesRead" VendorDaemon="cummins" Key="61E16427C651" IsValid="" ID="ECMImagesRead" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="Basic"/>
+	</ToolReqLicense>
+	<ToolReqLicense Expiration="permanent" Name="WO_TOOL_LIC_RSGR" VendorDaemon="cummins" Key="BE7FD65CA1EA" IsValid="" ID="WO_TOOL_LIC_RSGR" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="RSGR"/>
+	</ToolReqLicense>
+	<ToolReqLicense Expiration="permanent" Name="ECMImagesSendToECMLite" VendorDaemon="cummins" Key="E827111DEF22" IsValid="" ID="ECMImagesSendToECMLite" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="Lite"/>
+	</ToolReqLicense>
+	<ToolReqLicense Expiration="permanent" Name="ECMImagesSendToECM" VendorDaemon="cummins" Key="541233C9B5B6" IsValid="" ID="ECMImagesSendToECM" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="Pro"/>
+	</ToolReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="ECMImagesMasterPassword" VendorDaemon="cummins" Key="948F00A811C1" IsValid="" ID="ECMImagesMasterPassword" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="MASTER"/></ECMPasswords>
+	</ECMReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="WO_ECMPW_OEM" VendorDaemon="cummins" Key="573B6FD41DB0" IsValid="" ID="WO_ECMPW_OEM" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="PERMIT_CHANGE_OEM"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="WO_ECMPW_OEM2" VendorDaemon="cummins" Key="4987FB66315C" IsValid="" ID="WO_ECMPW_OEM2" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="PERMIT_CHANGE_OEM2"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="ECMImagesAdjustPassword" VendorDaemon="cummins" Key="D0D857BA486F" IsValid="" ID="ECMImagesAdjustPassword" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="PERMIT_CHANGE_ADJUSTABLES"/></ECMPasswords>
+	</ECMReqLicense>
+	<UserReqLicense Expiration="permanent" Name="ECMImagesImportUser" VendorDaemon="cummins" Key="1D71707EA84D" IsValid="" ID="ECMImagesImportUser" Version="1.0" Count="uncounted">
+		<Users>
+			<User NAME="Import_ECM_Image_Data"/></Users>
+	</UserReqLicense>
+	<UserReqLicense Expiration="permanent" Name="ECMImagesExportUser" VendorDaemon="cummins" Key="ED4A6A68BD29" IsValid="" ID="ECMImagesExportUser" Version="1.0" Count="uncounted">
+		<Users>
+			<User NAME="Export_ECM_Image_Data"/></Users>
+	</UserReqLicense>
+</LicenseFile>

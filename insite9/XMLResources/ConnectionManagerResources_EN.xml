@@ -1,0 +1,477 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE module SYSTEM "../htmlentities.dtd">
+<!-- Changes to INSITE Ver 7.6, 04/13/2012
+    DB_G00174941 : Modified string IDs 16004, 15029 and 5205 -->
+<XML_RESOURCE>
+	<RESOURCE Tag="1001" Type="String Table" Description="Message String Table">
+		<STRING ID="1" Context="">OK</STRING>
+		<STRING ID="2" Context="">Cancel</STRING>
+		<STRING ID="3" Context="">Retry</STRING>
+		<STRING ID="4" Context="">Auto Configure</STRING>
+		<STRING ID="9" Context="">Help</STRING>
+		<STRING ID="99" Context="">ECM Connection Wizard</STRING>
+		<STRING ID="100" Context="">ConManAddIn</STRING>
+		<STRING ID="101" Context="">&amp;Tools</STRING>
+		<STRING ID="102" Context="">&amp;Connect to ECM	Ctrl+E</STRING>
+		<STRING ID="103" Context="">&amp;File</STRING>
+		<STRING ID="104" Context="">&amp;Connections</STRING>
+		<STRING ID="105" Context="">&amp;Add New Connection...</STRING>
+		<STRING ID="106" Context="">&amp;Manage Connections...</STRING>
+		<STRING ID="107" Context="">E&amp;xit</STRING>
+		<STRING ID="108" Context="">&amp;Toggle Change Lock	F7</STRING>
+		<STRING ID="114" Context="">Data&amp;link</STRING>
+		<STRING ID="115" Context="">&amp;J1939 Control Enabled</STRING>
+		<STRING ID="116" Context="">ECM &amp;Passwords...</STRING>
+		<STRING ID="117" Context="">The new password is invalid</STRING>
+		<STRING ID="118" Context="">Changing Password Failed</STRING>
+		<STRING ID="119" Context="">&amp;Disconnect ECM</STRING>
+		<STRING ID="120" Context="">Add New...</STRING>
+		<STRING ID="121" Context="Title of the connection properties dialog. %1 is the name of the connection.">%1</STRING>
+		<STRING ID="122" Context="">Communications Port (COM</STRING>
+		<STRING ID="123" Context="">Po&amp;werSpec...</STRING>
+		<STRING ID="124" Context="">Failed to change %s Password.</STRING>
+		<STRING ID="125" Context="">Disabling Password Failed</STRING>
+		<STRING ID="126" Context="">Failed to disable %s Password.</STRING>
+    <STRING ID="127" Context="">Set Password Failed</STRING>
+		<STRING ID="201" Context="">Welcome to the ECM Connection Wizard</STRING>
+		<STRING ID="202" Context="">The ECM Connection Wizard will guide  you through creating a connection to a Datalink Adapter or ECM Simulator.</STRING>
+		<STRING ID="203" Context="">To continue, click Next.</STRING>
+		<STRING ID="301" Context="">&amp;Cummins Adapter</STRING>
+		<STRING ID="302" Context="">&amp;USB</STRING>
+		<STRING ID="303" Context="">&amp;RP1210A</STRING>
+		<STRING ID="304" Context="">S&amp;imulator</STRING>
+		<STRING ID="305" Context="">Connect using a Datalink Adapter</STRING>
+		<STRING ID="306" Context="">Connect Directly to an ECM using the Universal Serial Bus (USB) on my computer</STRING>
+		<STRING ID="307" Context="">Connect using an RP1210A compliant Datalink adapter  This includes MPSI and other 3rd party adapters</STRING>
+		<STRING ID="308" Context="">Connect to a simulated ECM through a virtual port</STRING>
+		<STRING ID="309" Context="">ECM Connection Type</STRING>
+		<STRING ID="310" Context="">Please select a connection that will configure INSITE to use your Datalink Adapter and computer configuration.</STRING>
+    <STRING ID="403" Context="">Computer port not detected.</STRING>
+		<STRING ID="404" Context="">Computer Port</STRING>
+		<STRING ID="405" Context="">Datalink Adapter</STRING>
+		<STRING ID="406" Context="">Datalink Protocol</STRING>
+		<STRING ID="407" Context="">Connection Settings</STRING>
+		<STRING ID="408" Context="">Please select the specific Connection Settings based on the system configuration.</STRING>
+		<STRING ID="409" Context="">Communications Port (COM%d)</STRING>
+		<STRING ID="410" Context="">%s (%s) Connection</STRING>
+		<STRING ID="415" Context="">Datalink Adapter Vendor</STRING>
+		<STRING ID="502" Context="">RP1210A Adapter Type</STRING>
+		<STRING ID="503" Context="">Please select the configuration from the displayed list to use for your connection.</STRING>
+		<STRING ID="504" Context="">Adapter Name</STRING>
+		<STRING ID="505" Context="">Adapter Description</STRING>
+		<STRING ID="506" Context="">Protocol</STRING>
+		<STRING ID="507" Context="">%s - %s - RP1210A</STRING>
+		<STRING ID="601" Context="">INSITE could not detect any RP1210A Drivers.
+
+The RP1210A Datalink Adapter Drivers must be installed before a RP1210A connection can be created.</STRING>
+		<STRING ID="602" Context="">RP1210A DRIVER INFORMATION</STRING>
+		<STRING ID="701" Context="">INSITE has detected a PC Operating System
+
+that does not support USB connections. </STRING>
+		<STRING ID="702" Context="">USB DRIVER INFORMATION</STRING>
+		<STRING ID="703" Context="">&lt;Select a Port&gt;</STRING>
+		<STRING ID="704" Context="">&lt;Please Select a Vendor&gt;</STRING>
+		<STRING ID="705" Context="">&lt;Select an Adapter&gt;</STRING>
+		<STRING ID="801" Context="">USB connections are available for direct connection to Signature/ISX-CM870 2002 ECM's only</STRING>
+		<STRING ID="802" Context="">Select Next if you are connecting to a new Cummins ECM that supports USB communications. Please select Back or Cancel if you are not sure or know that the ECM you are connecting to does not support USB communications.</STRING>
+		<STRING ID="803" Context="">IMPORTANT USB INFORMATION</STRING>
+		<STRING ID="804" Context="">Please read the following for USB connections.</STRING>
+		<STRING ID="805" Context="">USB Connection</STRING>
+		<STRING ID="902" Context="">Available ECM Simulators</STRING>
+		<STRING ID="903" Context="">Simulator Connection Settings</STRING>
+		<STRING ID="904" Context="">Please select the ECM simulator to connect to.</STRING>
+		<STRING ID="905" Context="">%s Simulator</STRING>
+		<STRING ID="906" Context="">Connect using a RP1210 adapter</STRING>
+		<STRING ID="907" Context="">RP1210 Adapters</STRING>
+		<STRING ID="908" Context="">Legacy Adapters</STRING>
+		<STRING ID="909" Context="">Connect using an INLINE/INLINE I/INLINE II</STRING>
+		<STRING ID="910" Context="">Vendor</STRING>
+		<STRING ID="911" Context="">Adapter</STRING>
+		<STRING ID="912" Context="">Protocol</STRING>		
+		<STRING ID="1002" Context="">The information describing your connection is grouped together as an ECM Connection and labeled with a name you provide.</STRING>
+		<STRING ID="1003" Context="">Please enter a name for the new connection.</STRING>
+		<STRING ID="1004" Context="">&amp;Connection Name:</STRING>
+		<STRING ID="1005" Context="">Connection Name:</STRING>
+		<STRING ID="1006" Context="">Specify connection name</STRING>
+		<STRING ID="1007" Context="">Please enter a name for the new connection.</STRING>
+		<STRING ID="1008" Context="">ECM Connection Wizard</STRING>
+		<STRING ID="1009" Context="">This Connection Name already exists in the Connection Selection box. Please use a different Connection Name.</STRING>
+    <STRING ID="1042" Context="AutoConfigure Messages">No RP1210 device identified</STRING>
+    <STRING ID="1081" Context="AutoConfigure Messages">Attempting to detect ports available on machine...</STRING>
+    <STRING ID="1082" Context="AutoConfigure Messages">Attempting to detect an RP1210A-compliant Cummins adapter...</STRING>
+    <STRING ID="1083" Context="AutoConfigure Messages">Attempting to detect an INLINE II adapter...</STRING>
+    <STRING ID="1084" Context="AutoConfigure Messages">Attempting to detect an INLINE/INLINE I adapter...</STRING>
+    <STRING ID="1085" Context="AutoConfigure Messages">Auto configure process completed.</STRING>
+    <STRING ID="1086" Context="AutoConfigure Messages">Attempting to detect an RP1210A-compliant Non-Cummins adapter...</STRING>
+		<STRING ID="1101" Context="">Completing the ECM Connection Wizard</STRING>
+		<STRING ID="1102" Context="">The ECM Connection Wizard has successfully configured the new connection.</STRING>
+		<STRING ID="1103" Context="">Please select finish to exit the ECM Connection wizard.</STRING>
+		<STRING ID="1104" Context="">&amp;To make this connection active, select this box and then click Finish </STRING>
+		<STRING ID="1105" Context="">To setup &amp;another connection, select this box and then click Finish</STRING>
+		<STRING ID="1106" Context="">After you close this wizard, you can use this connection at any time by selecting it from the Connections List at the bottom of the screen.</STRING>
+		<STRING ID="4000" Context="">Master</STRING>
+		<STRING ID="4001" Context="">Adjustment</STRING>
+		<STRING ID="4002" Context="">Reset</STRING>
+		<STRING ID="4003" Context="">OEM</STRING>
+		<STRING ID="4004" Context="">The new and the confirmatory %s Passwords are mismatched.</STRING>
+		<STRING ID="4005" Context="">Password Mismatch Error</STRING>
+		<STRING ID="4006" Context="">The Current Password is incorrect please reenter the Password</STRING>
+		<STRING ID="4007" Context="">Current Password Invalid</STRING>
+		<STRING ID="4008" Context="">NULL POINTER EXCEPTION</STRING>
+		<STRING ID="4009" Context="">Pointer Error</STRING>
+		<STRING ID="4010" Context="">None</STRING>
+		<STRING ID="4011" Context="">Communications to the ECM could not be established.</STRING>
+		<STRING ID="4012" Context="">ECM Connection failure</STRING>
+		<STRING ID="4013" Context="">INSITE</STRING>
+		<STRING ID="4014" Context="">Trying to connect to the ECM, please wait.</STRING>
+		<STRING ID="4015" Context="">Connected to ECM.</STRING>
+		<STRING ID="4016" Context="">Disconnecting from ECM.</STRING>
+		<STRING ID="4017" Context="">Connecting to ECM failed.</STRING>
+		<STRING ID="4018" Context="">Send to ECM</STRING>
+		<STRING ID="4019" Context="">Passwords:</STRING>
+		<STRING ID="4020" Context="">Password Error</STRING>
+		<STRING ID="4021" Context="">The password has been entered 3 times incorrectly</STRING>
+		<STRING ID="4022" Context="">PowerSpec</STRING>
+		<STRING ID="4023" Context="">New Password &gt;&gt;</STRING>
+		<STRING ID="4024" Context="">New Password &lt;&lt;</STRING>
+		<STRING ID="4025" Context="">The %s Password has been entered 3 times incorrectly</STRING>
+		<STRING ID="4026" Context="">Unlock</STRING>
+		<STRING ID="4027" Context="">Lock</STRING>
+		<STRING ID="4028" Context="">Disabled</STRING>
+		<STRING ID="4029" Context="">Unlocked</STRING>
+		<STRING ID="4030" Context="">Locked</STRING>
+		<STRING ID="4031" Context="">Reading data from the ECM...</STRING>
+		<STRING ID="4032" Context="">Sending data to the ECM...</STRING>
+		<STRING ID="4033" Context="">ECM Connection</STRING>
+		<STRING ID="4034" Context="">Communication to the ECM has been lost.\r\nPlease check the ECM keyswitch state and all cable connections.\r\n\r\nSelect Retry to retry communication to the connected ECM or Cancel to disconnect.</STRING>
+		<STRING ID="4035" Context="">Connecting To ECM...</STRING>
+		<STRING ID="4036" Context="">Cancelling...</STRING>
+		<STRING ID="4037" Context="">No ECM Connected.</STRING>
+		<STRING ID="4038" Context="">Ready.</STRING>
+		<STRING ID="4039" Context="">Connected to ECM.   Calibration download in progress...</STRING>
+		<STRING ID="4040" Context="">Connected to ECM.   Please wait while the calibration download cancels.</STRING>
+		<STRING ID="4041" Context="">Please turn the Key Switch off, and then click OK.</STRING>
+		<STRING ID="4042" Context="">Key Switch</STRING>
+		<STRING ID="4043" Context="">Action: Waiting 30 seconds before allowing for Key On </STRING>
+		<STRING ID="4044" Context="">Please turn the Key Switch on, and then click OK.</STRING>
+		<STRING ID="4045" Context="">Turn Key Switch On</STRING>
+		<STRING ID="4046" Context="">Please turn the Key Switch off for 30 seconds</STRING>
+    <STRING ID="4047" Context="">OEM 2</STRING>
+		<STRING ID="5200" Context="">Error Number : 5200\r\n\r\nCommunication between the computer and datalink adapter has been lost.\r\nPlease check cables between the computer and datalink adapter for proper connection and condition.\r\n\r\nSelect Retry, Cancel or Help for additional troubleshooting steps.</STRING>
+		<STRING ID="5201" Context="">Error Number : 5201\r\n\r\nCommunication between the datalink adapter and the ECM has been lost.\r\nPlease ensure the keyswitch is on, and cables between the datalink adapter and ECM are properly connected and in good condition.\r\n\r\nSelect Retry, Cancel or Help for additional troubleshooting steps.</STRING>
+		<STRING ID="5202" Context="">Error Number : 5202\r\n\r\nCommunication between the computer and datalink adapter could not be established.\r\nPlease check cables between the computer and datalink adapter for proper connection and condition.\r\n\r\nSelect Retry, Auto Configure, Cancel or Help for additional troubleshooting steps.</STRING>
+		<STRING ID="5204" Context="">Error Number : 5204\r\n\r\nCommunication between the datalink adapter and the ECM could not be established.\r\n\r\nPlease check for the following conditions:\r\nThe keyswitch is on.\r\nThe cables between the datalink adapter and ECM are properly connected.\r\nThe cables are in good condition.\r\nThe correct adapter type is selected.\r\nThe correct communication protocol is selected.\r\n\r\nSelect Retry, Cancel or Help for additional troubleshooting steps.</STRING>
+		<STRING ID="5205" Context="">Error Number : 5023\r\n\r\n A connection to the ECM cannot be established or has been lost. \r\nPlease ensure the keyswitch is on and the cables, adapter and ECM are properly connected. \r\n\r\nSelect Retry, Auto Configure, Cancel or Help for additional troubleshooting steps.</STRING>
+		<STRING ID="5000" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5000&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5001" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5001&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5002" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5002&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5003" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5003&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5004" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5004&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5005" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5005&lt;/ErrorNumber&gt;&lt;Description&gt;No ECM connection was detected.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation, verify the connection tot he ECM, or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5006" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5006&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5007" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5007&lt;/ErrorNumber&gt;&lt;Description&gt;No ECM connection was detected.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5008" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5008&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5009" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5009&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5010" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5010&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5011" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5011&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5012" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5012&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5013" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5013&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5014" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5014&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5015" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5015&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5016" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5016&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5017" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5017&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5018" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5018&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5019" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5019&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5020" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5020&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5021" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5021&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5022" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5022&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5023" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5023&lt;/ErrorNumber&gt;&lt;Description&gt;No connection to the ECM was established or detected.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5024" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5024&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5025" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5025&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5026" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5026&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5027" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5027&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5028" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5028&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5029" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5029&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5030" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5030&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5031" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5031&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5032" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5032&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5033" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5033&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5034" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5034&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5035" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5035&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5036" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5036&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5037" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5037&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5038" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5038&lt;/ErrorNumber&gt;&lt;Description&gt;An invalid password has been detected. Please re-enter the correct password.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5039" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5039&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5040" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5040&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5041" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5041&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5042" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5042&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5043" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5043&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5044" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5044&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5045" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5045&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5046" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5046&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5047" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5047&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5048" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5048&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5049" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5049&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5050" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5050&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5051" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5051&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5052" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5052&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5053" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5053&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5054" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5054&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5055" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5055&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5056" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5056&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5057" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5057&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5058" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5058&lt;/ErrorNumber&gt;&lt;Description&gt;RESERVED&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5059" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5059&lt;/ErrorNumber&gt;&lt;Description&gt;RESERVED&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5060" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5060&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5061" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5061&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5062" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5062&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5063" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5063&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program. Please verify the port connections.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5064" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5064&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program. Please verify the port connections.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5065" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5065&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5066" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5066&lt;/ErrorNumber&gt;&lt;Description&gt;No connection to the ECM was established or detected.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5067" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5067&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program. Verify that the keyswitch is in the ON position and the datalink is connected.&lt;/Description&gt;&lt;Suggestion&gt;Check INLINE adapter and cables, verify key switch is in the ON position, verify power to the ECM, verify that no computer conflicts exist, retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5068" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5068&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5069" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5069&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5070" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5070&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation, verify that communications is on or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5071" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5071&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation, update the driver hardware or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5072" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5072&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation, update the driver hardware or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5073" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5073&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5074" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5074&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5075" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5075&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Turn the key switch off for 60 seconds and retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5076" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5076&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5077" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5077&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5078" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5078&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5079" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5079&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5080" Context="">Error Number: 5080\r\n\r\nINSITE has detected some ECM(s) are ROM-booted and must be recalibrated.\r\n\r\n</STRING>
+		<STRING ID="5081" Context="">Error Number: 5081\r\n\r\nINSITE has detected some ECM(s) have an invalid Footprint and must be recalibrated.\r\n\r\n</STRING>
+		<STRING ID="5082" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5082&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5083" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5083&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5084" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5084&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5085" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5085&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5086" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5086&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation, close and restart INSITE or reinstall INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5087" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5087&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5088" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5088&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5089" Context="">Error Number: 5089\r\n\r\nINSITE has detected some ECM(s) are in an invalid state:\r\n\r\n</STRING>
+		<STRING ID="5090" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5090&lt;/ErrorNumber&gt;&lt;Description&gt;Enter a valid Master password and recalibrate the ECM. The ECM is in an invalid state.&lt;/Description&gt;&lt;Suggestion&gt;Enter a valid Master password and recalibrate the ECM.  The ECM is in an invalid state. Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5091" Context="">Error Number: 5091\r\n\r\nINSITE has detected some ECM(s) are Seeded and must be recalibrated.\r\n\r\n</STRING>
+		<STRING ID="5092" Context="">Please recalibrate the Footprinted ECM(s). This was caused by a previous operation which failed or was aborted and left the ECM in an invalid state. If the error persists, please record the error number and contact the local distributor.</STRING>
+		<STRING ID="5093" Context="">Please recalibrate the Seeded ECM(s). If the problem persists, please record the error number and contact the local distributor.</STRING>
+		<STRING ID="5094" Context="">Please recalibrate the ROM-booted ECM(s). If the problem persists, please record the error number and contact the local distributor.</STRING>
+		<STRING ID="5095" Context="">Please Key Off the ECM for 30 seconds and reconnect with INSITE. If the problem persists, please record the error number and contact the local distributor.</STRING>
+		<STRING ID="5096" Context="">A Cummins engine not supported by the current version of INSITE has been detected. To add support, please \r\ncontact your local distributor.</STRING>
+		<STRING ID="5097" Context="">Error Number : 5092\r\nINSITE has detected some ECM(s) cannot operate and must be recalibrated.\r\n</STRING>
+		<STRING ID="5098" Context="">INSITE has detected the following ECM(s) are currently calibrated:\r\n</STRING>
+		<STRING ID="5099" Context="">INSITE has detected the following ECM(s) have Incompatible Calibrations:\r\n\r\n</STRING>
+		<STRING ID="5100" Context="">Please recalibrate the ECM(s) that are not currently calibrated. If the problem persists, please record the error number and contact the local distributor.</STRING>
+		<STRING ID="5101" Context="">INSITE has detected the following ECM(s) has an invalid Footprint:\r\n</STRING>
+		<STRING ID="5102" Context="">INSITE has detected the following ECM(s) are Seeded:\r\n</STRING>
+		<STRING ID="5103" Context="">INSITE has detected the following ECM(s) are in an invalid state:\r\n</STRING>
+		<STRING ID="5104" Context="">INSITE has detected the following ECM(s) are ROM-booted:\r\n</STRING>
+		<STRING ID="6000" Context="">Please turn the Key Switch off for %s seconds</STRING>
+		<STRING ID="6001" Context="">Key Switch</STRING>
+		<STRING ID="6002" Context="">INSITE has pending values that have not been sent to the ECM.
+
+Press Yes to send these values now.
+Press No to clear all pending values (you will lose any changes you have made)
+Press Cancel to cancel the pending operation</STRING>
+		<STRING ID="6003" Context="">Would you like to send pending values now?</STRING>
+		<STRING ID="6004" Context="">Invalid Password Entered</STRING>
+		<STRING ID="6005" Context="">The Password must be 6 or less characters.
+
+The password must also be alpha-numeric.</STRING>
+		<STRING ID="6006" Context="">Successful Password Change</STRING>
+		<STRING ID="6007" Context="">The new %s Password(s) have been changed successfully!</STRING>
+		<STRING ID="6008" Context="">2901</STRING>
+		<STRING ID="6009" Context="">Unknown ECM - Unable to read ECM ID</STRING>
+		<STRING ID="6010" Context="">Password Not Entered</STRING>
+		<STRING ID="6011" Context="">The ECM that you are attempting to connect to is password protected.
+
+The password must be entered before you will be allowed to make any adjustments to the ECM.
+
+If you do not know the password, click Cancel to view the ECM's data in Read-only mode.
+In this mode, you will be unable to adjust any data in the ECM.
+
+Click Retry to enter the password again.</STRING>
+		<STRING ID="6012" Context="">Password Not Valid</STRING>
+		<STRING ID="6013" Context="">The ECM that you are attempting to connect to is password protected.
+
+The password must be entered before you will be allowed to make any adjustments to the ECM.
+
+If you do not know the password, click Cancel to view the ECM's data in Read-only mode.
+In this mode, you will be unable to adjust any data in the ECM.
+
+Click Retry to enter the password again.</STRING>
+		<STRING ID="6014" Context="">The %s Password is not correct. Please enter a valid password.</STRING>
+		<STRING ID="6015" Context="">The %s Password entered is not correct. Try again?</STRING>
+		<STRING ID="6021" Context="">Problem Disconnecting</STRING>
+		<STRING ID="6022" Context="">Would you like to continue disconnecting from the ECM?</STRING>
+		<STRING ID="6023" Context="">INSITE</STRING>
+		<STRING ID="6024" Context="">The ECM has Changed ( The tool has detected a New ECM serial number) since the last write to the ECM.</STRING>
+		<STRING ID="6025" Context="">INSITE</STRING>
+		<STRING ID="6026" Context="">The ECM has Changed (The tool has detected a New ECM type) since the last write to the ECM.</STRING>
+		<STRING ID="6032" Context="">Connect to ECM Image</STRING>
+		<STRING ID="6033" Context="">Please select the ECM Image that you wish to view by right clicking on the ECM Image and selecting Connect to Image.</STRING>
+		<STRING ID="6038" Context="">Disable Master Password</STRING>
+		<STRING ID="6039" Context="">Once the Master password is disabled, both the Adjustable and the Reset passwords will also be disabled.
+Are you sure you want to disable the Master password?</STRING>
+		<STRING ID="6040" Context="">Password Unlocked</STRING>
+		<STRING ID="6041" Context="">Pending New Password</STRING>
+		<STRING ID="6042" Context="">Apply Pending Password</STRING>
+		<STRING ID="6043" Context="">- Firmware Version is</STRING>
+		<STRING ID="6044" Context="">- Firmware Version is unavailable.</STRING>
+		<STRING ID="6045" Context="">INLINE II</STRING>
+		<STRING ID="6046" Context="">INLINE II</STRING>
+		<STRING ID="6047" Context="">Failed to Unlock Password</STRING>
+		<STRING ID="6048" Context="">Reset Adapter</STRING>
+		<STRING ID="6049" Context="">INSITE has performed a software reset for the datalink communications.
+Please check all datalink connections and then try the operation again.
+If the problem persists, please contact the local distributor.</STRING>
+		<STRING ID="6050" Context="">Reset Datalink Adapter</STRING>
+		<STRING ID="6051" Context="">The new %s Password is pending. Apply it before closing this dialog?</STRING>
+		<STRING ID="6052" Context="">The new %s Password is invalid because it has less than 2 characters.</STRING>
+		<STRING ID="6053" Context="">The new %s Password contains invalid character(s). Only characters 'A'-'Z' and '0'-'9' are valid.</STRING>
+		<STRING ID="6054" Context="">The password entered, '000000', is not a valid %s password.  Please enter another password.</STRING>
+		<STRING ID="6055" Context="">The new and the confirmatory %s Passwords are mismatched. Try again?</STRING>
+		<STRING ID="6056" Context="">The new %s Password is invalid because it has less than 2 characters. Try again?</STRING>
+		<STRING ID="6057" Context="">The new %s Password contains invalid character(s). Only characters 'A'-'Z' and '0'-'9' are valid. Try again?</STRING>
+        <STRING ID="6058" Context="">The entered %s Password is invalid. Please enter a valid password.Try again?</STRING>
+		<STRING ID="6059" Context="">The %s Password is now unlocked.</STRING>
+		<STRING ID="6060" Context="">Failed to Unlock Password</STRING>
+		<STRING ID="6061" Context="">Failed to unlock %s Password.</STRING>
+		<STRING ID="6062" Context="">Simulator</STRING>
+		<STRING ID="6063" Context="">Firmware version:</STRING>
+		<STRING ID="6064" Context="">INSITE has detected an invalid state in the ECM. 
+
+Please key off for 30 seconds to proceed</STRING>
+		<STRING ID="6065" Context="">INSITE</STRING>
+		<STRING ID="6066" Context="">The connection to the ECM has been lost.</STRING>
+		<STRING ID="6067" Context="">INSITE has detected that the ECM passwords do not match within the system. The connected system will be read only if the ECM passwords are mismatched.
+
+To make the ECM passwords match, select the Reconnect button and enter the Master Password. Otherwise, select Continue to connect in Read Only mode.</STRING>
+		<STRING ID="6068" Context="">Fix ECM Passwords</STRING>
+		<STRING ID="6069" Context="">Reconnect</STRING>
+		<STRING ID="6070" Context="">Continue</STRING>
+		<STRING ID="6071" Context="">Password Alignment</STRING>
+		<STRING ID="6072" Context="">INSITE has detected that the ECM passwords do not match within the system. The connected system will be read only if the ECM passwords are mismatched.
+		
+Select the Fix ECM Passwords button to make all ECM passwords match with the parent ECM passwords. Otherwise, select Continue to connect in Read Only mode.</STRING>
+		<STRING ID="6073" Context="">Cummins INSITE</STRING>
+		<STRING ID="6074" Context="">Connect to ECM</STRING>
+		<STRING ID="6075" Context="">Not Available</STRING>
+		<STRING ID="6077" Context="">ECM Connection</STRING>
+		<STRING ID="6078" Context="">Error Number : 5201\r\n\r\nCommunication between the datalink adapter and the ECM has been lost.\r\nPlease ensure the keyswitch is on, and cables between the datalink adapter and ECM are properly connected and in good condition.\r\n\r\n</STRING>
+		<STRING ID="6079" Context="">\r\nSelect Retry, Cancel or Help for additional troubleshooting steps.</STRING>
+		<STRING ID="6080" Context="">Error Number : 5200\r\n\r\nCommunication between the computer and datalink adapter has been lost.\r\nPlease check cables between the computer and datalink adapter for proper connection and condition.\r\n\r\n</STRING>
+		<STRING ID="6081" Context="">ECM Passwords are not supported in the current calibration.</STRING>
+		<STRING ID="7027" Context="">Auto Configure</STRING>
+		<STRING ID="7028" Context="">Connect using the detected datalink adapter</STRING>
+		<STRING ID="12323" Context="">&lt;&amp;Back</STRING>
+		<STRING ID="12324" Context="">&amp;Next&gt;</STRING>
+		<STRING ID="12325" Context="">Finish</STRING>
+		<STRING ID="12326" Context="">Failed to Lock Password</STRING>
+		<STRING ID="12327" Context="">PowerSpec Enable/Disable Failure</STRING>
+      <STRING ID="12328" Context="">ECM Passwords cannot be adjusted or disabled while engine speed is greater than zero. Please shutdown the engine and select Retry to change the Password or select Cancel to exit.</STRING>
+      <STRING ID="12329" Context="">The new %s Password has been changed successfully. But failed to unlock the new password.</STRING>
+		<STRING ID="12330" Context="">Failed to enable or disable PowerSpec End-User Authorization bit.</STRING>
+		<STRING ID="12331" Context="">Failed to lock %s Password.</STRING>
+		<STRING ID="12332" Context="">%s Password Status: </STRING>
+		<STRING ID="12333" Context="">Please make all password changes wanted before selecting the Apply button.</STRING>
+		<STRING ID="12334" Context="">INLINE/INLINE I</STRING>
+		<STRING ID="12335" Context="">INLINE II</STRING>
+		<STRING ID="12336" Context="">MPSI</STRING>
+		<STRING ID="12337" Context="">RP1210A</STRING>
+		<STRING ID="12338" Context="">USB</STRING>
+		<STRING ID="12339" Context="">PowerSpec End-User Authorization</STRING>
+		<STRING ID="12340" Context="">Auto Detect</STRING>
+		<STRING ID="12341" Context="">Enter Password:</STRING>
+		<STRING ID="12342" Context="">Change Password:</STRING>
+		<STRING ID="12343" Context="">Disable Password</STRING>
+		<STRING ID="12344" Context="">New Password:</STRING>
+		<STRING ID="12345" Context="">Confirm Password:</STRING>
+		<STRING ID="12346" Context="">Apply</STRING>
+		<STRING ID="12347" Context="">ECM Passwords</STRING>
+		<STRING ID="12348" Context="">Security Type:</STRING>
+		<STRING ID="12349" Context="">ECM Password: </STRING>
+		<STRING ID="12350" Context="">Connec&amp;t</STRING>
+		<STRING ID="12351" Context="">&amp;Cancel</STRING>
+		<STRING ID="12352" Context="">Pr&amp;operties</STRING>
+		<STRING ID="12353" Context="">&amp;Help</STRING>
+		<STRING ID="12354" Context="">Connect</STRING>
+		<STRING ID="12355" Context="">Properties</STRING>
+		<STRING ID="12356" Context="">Connection Name</STRING>
+		<STRING ID="12357" Context="">Computer Port</STRING>
+		<STRING ID="12358" Context="">Datalink Adapter</STRING>
+		<STRING ID="12359" Context="">Datalink Protocol</STRING>
+		<STRING ID="12360" Context="">&amp;OK</STRING>
+		<STRING ID="12361" Context="">Rename Connection</STRING>
+		<STRING ID="12362" Context="">ECM Image</STRING>
+		<STRING ID="12366" Context="">Unavailable</STRING>
+		<STRING ID="12367" Context="">INLINE 4</STRING>
+		<STRING ID="12368" Context="">INLINE 5</STRING>
+		<STRING ID="12369" Context="">INLINE 4/5</STRING>
+		<STRING ID="12370" Context="">&nbsp;-&nbsp;Engine Serial Number&nbsp;-&nbsp;</STRING>
+		<STRING ID="12371" Context="">&nbsp;-&nbsp;Engine Serial Number not supported</STRING>
+		<STRING ID="12372" Context="ECM Passwords Title">Set Password Failed</STRING>
+		<STRING ID="12373" Context="ECM Passwords Message">The ECM could not set or validate the new password(s). Please reconnect to
+module and try again. If this problem persists, contact a local distributor.
+ECM Response Code : %s</STRING>
+		<STRING ID="12374" Context="Disconnection Confirmation caption">Disconnection Confirmation</STRING>
+		<STRING ID="12375" Context="Disconnection Confirmation message">To perform this operation, the tool will need to disconnect from the ECM. Changes have not been sent to the ECM. Send to ECM?</STRING>
+		<STRING ID="12376" Context="Password value of 000000">The entered %s Password is invalid. Please enter a valid password.</STRING>
+		<STRING ID="12377" Context="Password value of 000000 Caption">ECM Password Error</STRING>
+		<STRING ID="13000" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5100&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the MLS Logic.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="14000" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5200&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the MLS page.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="14001" Context="">Disconnect from ECM</STRING>
+		<STRING ID="14002" Context="">&lt;AdapterName&gt;</STRING>
+		<STRING ID="14003" Context="">&lt;FirmwareVersion&gt;</STRING>
+		<STRING ID="15000" Context="">Auto Configure</STRING>
+		<STRING ID="15001" Context="">Please select Start for INSITE to automatically detect and configure a connection.</STRING>
+		<STRING ID="15002" Context="">Instructions</STRING>
+		<STRING ID="15003" Context="">1) Ensure the Datalink Adapter driver is installed.</STRING>
+		<STRING ID="15004" Context="">2) Ensure the adapter is physically connected to a J1939 or J1708 communication network, the key switch is on and the adapter is powered up.</STRING>
+		<STRING ID="15005" Context="">Start</STRING>
+		<STRING ID="15006" Context="">Stop</STRING>
+		<STRING ID="15007" Context="">Details</STRING>
+		<STRING ID="15008" Context="">The detected configuration(s) will be lost. Continue?</STRING>
+		<STRING ID="15009" Context="">Auto Configure Details</STRING>
+		<STRING ID="15010" Context="">Cummins INSITE Version:</STRING>
+		<STRING ID="15011" Context="">Date:</STRING>
+		<STRING ID="15012" Context="">Time:</STRING>
+		<STRING ID="15013" Context="">Attempt Summary:</STRING>
+		<STRING ID="15014" Context="">Successful Configurations:</STRING>
+		<STRING ID="15015" Context="">Unsuccessful Configurations:</STRING>
+		<STRING ID="15016" Context="">Vendor</STRING>
+		<STRING ID="15017" Context="">Device</STRING>
+		<STRING ID="15018" Context="">Device Description</STRING>
+		<STRING ID="15019" Context="">Port</STRING>
+		<STRING ID="15020" Context="">Supported Protocol(s)</STRING>
+		<STRING ID="15021" Context="">Successful</STRING>
+		<STRING ID="15022" Context="">Unsuccessful</STRING>
+		<STRING ID="15023" Context="">Please wait...</STRING>
+		<STRING ID="15024" Context="">Attempting to detect an %s adapter...</STRING>
+		<STRING ID="15025" Context="">Auto Configure process was successful.</STRING>
+		<STRING ID="15026" Context="">Auto Configure process has failed.</STRING>
+		<STRING ID="15027" Context="">Please select Help for further details or select Start to retry the Auto Configure process.</STRING>
+		<STRING ID="15028" Context="">Auto Configure process has been stopped.</STRING>
+		<STRING ID="15029" Context="">INSITE cannot AutoConfigure the adapter when there is an active connection. Please disconnect and try again.</STRING>
+		<STRING ID="15500" Context="">INSITE has detected the following configuration(s). Please select the desired configuration and select Next.</STRING>
+		<STRING ID="16000" Context="">Datalink Adapter Connection Test</STRING>
+		<STRING ID="16001" Context="">INSITE is currently connected to an ECM.
+Please disconnect prior to testing the connection configuration.</STRING>
+		<STRING ID="16002" Context="">Please verify that the Datalink Adapter is connected to an ECM and the key switch is on.</STRING>
+		<STRING ID="16003" Context="">The Datalink Adapter is correctly configured.</STRING>
+		<STRING ID="16004" Context="">A connection to the ECM cannot be established or has been lost.
+
+Please ensure the keyswitch is on and the cables, adapter and ECM are properly connected.</STRING>
+		<STRING ID="16005" Context="">Testing ECM Connection configuration settings...please wait.</STRING>
+		<STRING ID="16006" Context="">Canceling...</STRING>
+		<STRING ID="16007" Context="">Datalink Adapter Connection Test</STRING>
+        <STRING ID="16008" Context="">Undefined</STRING>
+        <STRING ID="16009" Context="">INLINE 6</STRING>
+	    <STRING ID="16010" Context="">COM Port Auto Detect</STRING>
+        <STRING ID="16011" Context="">&nbsp;-&nbsp;ECM Code&nbsp;-&nbsp;</STRING>
+        <STRING ID="16012" Context="">Not Supported</STRING>
+    <STRING ID="16013" Context="">INSITE has detected multiple subsystems.\r\nPlease select a subsystem from the following list to connect to:</STRING>
+    <STRING ID="16014" Context="">Cancelling.</STRING>
+	</RESOURCE>
+</XML_RESOURCE>

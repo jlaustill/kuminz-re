@@ -1,0 +1,74 @@
+address,constant_name,value,comment
+0x1C5B6,VP44_FUEL_TEMP_OFFSET,112,VP44 fuel temperature sensor offset (movew #112)
+0x1C860,CAN_MSG_ALT_HANDLER,17,CAN message type for alternative handler (moveq #17)
+0x1C866,CAN_MSG_VP44_FUEL,16,CAN message type for VP44 fuel (moveq #16) - CORRECTED from original
+0x1C872,CAN_MSG_ERROR_DEFAULT,255,CAN message error/default case (cmpib #-1 = 0xFF)
+0x2A3CE,VP44_FUEL_OFFSET,125,VP44 fuel amount offset (param_table + 125)
+0x2A41E,VP44_MSG_HEADER,0xF00400,VP44 message format identifier for 0x100 commands
+0x00020980,VP44_CMD_BUILDER_CALL,0x2A418,JSR call to VP44 command message builder
+0x0100003A,DATA_PLT_MODULE_ID_ADDR,0x0100003A,Address of Cummins module identifier field
+0x3662E,MODULE_ID_LOOKUP_TABLE,0x454E,Module ID lookup table entry for EN family
+0x0000A53E,DMA_CONTROLLER_SETUP,0x80000000,DMA enable flag value (high bit set)
+0x0000A548,DMA_DESC_ADDR_1,0x8062F4,DMA descriptor 1 address pointer
+0x0000A55C,DMA_DESC_ADDR_2,0x8062F6,DMA descriptor 2 address pointer
+0x0000A57C,DMA_SOURCE_ADDR_1,0x806304,DMA transfer source address 1  
+0x0000A584,DMA_DEST_ADDR_1,0x806318,DMA transfer destination address 1
+0x0000A5A6,DMA_SOURCE_ADDR_2,0x80632C,DMA transfer source address 2
+0x0000A5AE,DMA_DEST_ADDR_2,0x806340,DMA transfer destination address 2
+0x0000804A,RESET_VECTOR,0x00025596,System reset vector pointing to systemResetHandler
+0x00037EAE,FIRMWARE_DATA_START,0x37EAE,Start address of firmware data copied to working memory
+0x008062D2,WORKING_MEM_START,0x8062D2,Start of working memory for firmware data (10KB)
+0x00808AB2,WORKING_MEM_END,0x808AB2,End of working memory for firmware data
+0x0002A51E,CUMMINS_DM_983_PGN,0xF00300,Cummins proprietary diagnostic message DM-983 (PGN F00300)
+0x0002A5DA,SECONDARY_PARAM_PGN,0xFEDF00,Secondary parameter message PGN (FEDF00)
+0x0002A7F8,EXTENDED_DIAG_PGN,0xFEE300,Extended diagnostic data message PGN (FEE300)
+0x80CFC3,J1939_SOURCE_ADDR_PRIMARY,0xC3,J1939 primary ECU source address (195 decimal)
+0x80CFCD,J1939_SOURCE_ADDR_SECONDARY,0xCD,J1939 secondary function source address (205 decimal)
+0x8037B6,CAN_PRIORITY_TABLE_START,0x8037B6,Start of CAN message priority lookup table
+0x803056,DIAGNOSTIC_BUFFER_DM983,0x803056,DM-983 diagnostic message buffer address
+0x0002ABA4,CUMMINS_TSC_PGN_15728640,0xF00000,Cummins proprietary torque/speed control message PGN 15728640
+0x0002ADA8,FUEL_ECONOMY_PGN_65266,0xFEF200,J1939 fuel economy message PGN 65266
+0x0002ACD0,FUEL_ECONOMY_MAX_VALUE,3212,Maximum fuel economy value (0xC8C)
+0x0002ACD2,FUEL_ECONOMY_HOUR_SECONDS,3600,Seconds per hour conversion factor (0xE10)
+0x0002ACD8,FUEL_ECONOMY_CONVERSION_FACTOR,8502,Fuel economy calculation conversion factor (0x2136)
+0x0002B1F6,RETARDER_CONFIG_PGN_65249,0xFEE100,J1939 retarder configuration message PGN 65249
+0x0002B0CC,RETARDER_STEPS_MAX,20,Maximum retarder steps configuration (0x14)
+0x0002B0CE,RETARDER_STEPS_DEFAULT,3,Default retarder steps configuration
+0x0002B0D0,RETARDER_TORQUE_OFFSET,125,Retarder torque offset value (0x7D from 125 formula)
+0x00027DD4,RETARDER_MODE_THRESHOLD_TABLES,3,Number of retarder mode threshold lookup tables
+0x00035560,LOOKUP_TABLE_INTERPOLATION_FUNC,0x35560,Address of lookup table interpolation function
+0x0002956A,AMBIENT_CONDITIONS_PGN_65269,0xFEF500,J1939 ambient conditions message PGN 65269
+0x000295D4,AMBIENT_TEMP_CONVERSION_FACTOR,412,Temperature conversion factor for ambient data (0x19C)
+0x0002A8DA,ENGINE_FLUID_LEVEL_PGN_65263,0xFEEF00,J1939 engine fluid level/pressure message PGN 65263
+0x0002A93A,ENGINE_TEMP_BASE_OFFSET,6400,Engine temperature base offset for fluid calculations (0x1900)
+0x0002A93C,ENGINE_TEMP_SCALE_FACTOR,5,Engine temperature scaling factor for pressure/level calculations
+0x0002AEE2,ENGINE_HOURS_PGN_65252,0xFEE400,J1939 engine hours/revolutions message PGN 65252
+0x0002AFCA,INTAKE_MANIFOLD_PGN_65526,0xFEF600,J1939 intake manifold air temperature and pressure message PGN 65526
+0x0002B060,CRUISE_CONTROL_PGN_65264,0xFEF000,J1939 cruise control and vehicle speed message PGN 65264
+0x0002B338,ELECTRONIC_BRAKE_PGN_65527,0xFEF700,J1939 electronic brake system message PGN 65527
+0x00029A86,ENGINE_COOLANT_PGN_65226,0xFECA00,J1939 engine coolant temperature message PGN 65226
+0x0002A222,DIAGNOSTIC_DM8_PGN_65232,0xFED000,J1939 diagnostic DM8 test results message PGN 65232
+0x00029868,ENGINE_SERIAL_PGN_65259,0xFEEB00,J1939 engine information with serial number message PGN 65259
+0x0002AA74,ENGINE_TEMPERATURE_PGN_65262,0xFEEE00,J1939 engine temperature message PGN 65262 (coolant/fuel/oil/turbo/intercooler temps)
+0x0002AC7A,INTAKE_EXHAUST_CONDITIONS_PGN_65257,0xFEE900,J1939 intake/exhaust conditions message PGN 65257
+0x0002AE60,IO_CONTROL_PGN_65244,0xFEDC00,J1939 input/output control message PGN 65244
+0x0002B29E,VEHICLE_DISTANCE_PGN_65248,0xFEE000,J1939 vehicle distance information message PGN 65248
+0x0002B3FC,VEHICLE_HOURS_PGN_65255,0xFEE700,J1939 vehicle hours information message PGN 65255
+0x00029BF4,DIAGNOSTIC_DM2_PGN_65227,0xFECB00,J1939 diagnostic DM2 previously active fault codes message PGN 65227
+0x0002A090,DIAGNOSTIC_DM4_PGN_65229,0xFECD00,J1939 diagnostic DM4 freeze frame data message PGN 65229
+0x0002A1A0,DIAGNOSTIC_DM5_PGN_65230,0xFECE00,J1939 diagnostic DM5 clear previously active codes message PGN 65230
+0x0002A29C,DIAGNOSTIC_DM11_PGN_65234,0xFED200,J1939 diagnostic DM11 clear active codes message PGN 65234
+0x0001B762,SYSTEM_PARAM_1,0xB56E,System function parameter value 1 (46446 decimal)
+0x0001B762,SYSTEM_PARAM_2,0x45,System function parameter value 2 (69 decimal)
+0x0001B172,SYSTEM_PARAM_ALT_1,0xB07E,Alternative system function parameter value 1 (45182 decimal)
+0x0001B172,SYSTEM_PARAM_ALT_2,0x10,Alternative system function parameter value 2 (16 decimal)
+0x00000020,VP44_PIN_SET_SELECTOR_BIT,32,Bit 5 in CAN_PIN_SWITCHING_CONTROL_FLAGS - when set uses pin set A otherwise pin set B for VP44 emergency
+0x00000800,CAN_ID_PATTERN_PIN_SET_A,2048,CAN identifier pattern when using primary pin set (normal operation)
+0x00000400,CAN_ID_PATTERN_PIN_SET_B,1024,CAN identifier pattern when using VP44 emergency pin set (failover mode)
+0x000000EF,VP44_MESSAGE_TYPE_IDENTIFIER,239,VP44 message type identifier (0xEF) for message validation
+0x00000011,VP44_COMMAND_MESSAGE_TYPE,17,VP44 command message type in CAN frame data
+0x00000013,VP44_STATUS_MESSAGE_TYPE,19,VP44 status/response message type in CAN frame data
+0x0000EF00,VP44_RESPONSE_FORMAT_ID,61184,VP44 response format identifier (0xEF00) for message transmission
+0x000018EC,J1939_VP44_TRANSPORT_PGN,6380,J1939 transport protocol PGN prefix for VP44 communication
+0x000006A4,VP44_MAX_MESSAGE_LENGTH,1700,Maximum VP44 message data length (1700 bytes)
+0x00000005,VP44_MAX_RETRY_COUNT,5,Maximum VP44 message retry attempts

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE module SYSTEM "../htmlentities.dtd">
+<XML_RESOURCE>
+  <RESOURCE Tag="1001" Type="String Table" Description="Message String Table">
+    <STRING ID="1" Context=""> seconds per sample</STRING>
+    <STRING ID="2" Context="">Comments:</STRING>
+    <STRING ID="3" Context="">Customer Name:</STRING>
+    <STRING ID="4" Context="">Model:</STRING>
+    <STRING ID="5" Context="">SamplingRate:</STRING>
+    <STRING ID="6" Context="">Serial Number:</STRING>
+    <STRING ID="7" Context="">Source Log Filename:</STRING>
+    <STRING ID="8" Context="">Start Date and Time:</STRING>
+    <STRING ID="9" Context="">Total Log Time:</STRING>
+    <STRING ID="10" Context="">Vehicle Unit Number:</STRING>
+    <STRING ID="11" Context="">Date,Time,</STRING>
+    <STRING ID="12" Context="">Customer and Vehicle Information</STRING>
+    <STRING ID="13" Context="">Engine Information</STRING>
+    <STRING ID="14" Context="">Data Log Information</STRING>
+    <STRING ID="15" Context="">- Identifier</STRING>
+    <STRING ID="16" Context="">ECM Part Number:</STRING>
+    <STRING ID="17" Context="">Date</STRING>
+    <STRING ID="18" Context="">Time</STRING>
+    <STRING ID="19" Context="">Destination Path</STRING>
+    <STRING ID="20" Context="">RealTime</STRING>
+    <STRING ID="21" Context="">Out of Limits</STRING>
+    <STRING ID="22" Context="">Event</STRING>
+    <STRING ID="23" Context="">Event Marker</STRING>
+  </RESOURCE>
+</XML_RESOURCE>

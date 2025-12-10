@@ -1,0 +1,28 @@
+<LicenseFile>
+	<ToolReqLicense Expiration="permanent" Name="Faults_Tool_ViewFaults" VendorDaemon="cummins" Key="95E1E6CAC725" IsValid="" ID="Faults_Tool_ViewFaults" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="Basic"/>
+	</ToolReqLicense>
+	<ToolReqLicense Expiration="permanent" Name="Faults_Tool_ClearInactive" VendorDaemon="cummins" Key="0C48FBF75C08" IsValid="" ID="Faults_Tool_ClearInactive" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="Lite"/>
+	</ToolReqLicense>
+	<UserReqLicense Expiration="permanent" Name="Faults_User_ClearInactive" VendorDaemon="cummins" Key="709092800C81" IsValid="" ID="Faults_User_ClearInactive" Version="1.0" Count="uncounted">
+		<Users>
+			<User NAME="Reset_Faults"/>
+		</Users>
+	</UserReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="Faults_ECMPWM_ClearInactive" VendorDaemon="cummins" Key="515BE173CB0E" IsValid="" ID="Faults_ECMPWM_ClearInactive" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="MASTER"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="Faults_ECMPWR_ClearInactive" VendorDaemon="cummins" Key="152B5E5BF9A2" IsValid="" ID="Faults_ECMPWR_ClearInactive" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="RESET"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="Faults_ECMPW_PermitResets" VendorDaemon="cummins" Key="2D1CD972E19A" IsValid="" ID="Faults_ECMPW_PermitResets" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="PERMIT_RESETS"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+</LicenseFile>

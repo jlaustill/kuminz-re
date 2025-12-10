@@ -1,0 +1,19 @@
+<LicenseFile>
+	<ECMReqLicense Expiration="permanent" Name="HPCRInjectorSetup_MasterECM" VendorDaemon="cummins" Key="0697C82A5492" IsValid="" ID="HPCRInjectorSetup_MasterECM" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="MASTER"/></ECMPasswords>
+	</ECMReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="HPCRInjectorSetup_AdjustECM" VendorDaemon="cummins" Key="60394664A8AA" IsValid="" ID="HPCRInjectorSetup_AdjustECM" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="PERMIT_CHANGE_ADJUSTABLES"/></ECMPasswords>
+	</ECMReqLicense>
+	<ToolReqLicense Expiration="permanent" Name="HPCRInjectorSetup_ToolRSGR" VendorDaemon="cummins" Key="495774527A43" IsValid="" ID="HPCRInjectorSetup_ToolRSGR" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="RSGR"/>
+	</ToolReqLicense>
+	<ToolReqLicense Expiration="permanent" Name="HPCRInjectorSetup_ToolLite" VendorDaemon="cummins" Key="39333317D873" IsValid="" ID="HPCRInjectorSetup_ToolLite" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="Lite"/>
+	</ToolReqLicense>
+	<ToolReqLicense Expiration="permanent" Name="HPCRInjectorSetup_ToolPro" VendorDaemon="cummins" Key="B0FDE3E65D5D" IsValid="" ID="HPCRInjectorSetup_ToolPro" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="Pro"/>
+	</ToolReqLicense>
+</LicenseFile>

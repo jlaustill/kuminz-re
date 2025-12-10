@@ -1,0 +1,217 @@
+<!-- CHANAGE HISTORY
+7/1/2005 Bharati Chaudhari(fk669) Changed for sorting of faultcodes
+06/11/2009 VV(is310) Replaced getAttribute(Description) to Text
+8/19/2009  hk283   DB_G00144093	  Edited the header to add Customer Name
+11/12/2009  hz225   DB_G00106405  Replaced entries of pID 9 with pID 99
+								  and pID 10 with pID 30 for right bank.
+								  Added pID 99 to parameters definition list
+12/24/2009  hw281   DB_G00149871  Changed Column Width of 10th column, since some 
+                                  fault code numbers consists 6 digits
+03/25/2010 iy594 DB_G00152594 & DB_G00152592 Modified the tag - " <parameter name="fiECM1"". Replaced " source1="OBJ:DOM:selectSingleNode(pImage):getAttribute(ModType)" " by the new change - " source1="OBJ:DOM:selectSingleNode(pID15):getAttribute(V)" "								  
+-->
+<!-- This is a sample  -->
+<FlexGrid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+
+	<Properties Cols="10:VT_I4" FixedCols="0:VT_I4" ExplorerBar="0:VT_I4" GridLines="1:VT_I4" OutlineBar="5:VT_I4"
+	AllowUserResizing="1:VT_UI4"  Editable="0:VT_I4" ColWidthMax="3500:VT_I4" AutoResize="1:VT_I4"/>
+	<!-- Add properties to the "FlexGrid" element as attribute in Name=Value format -->
+	<FixedRows>
+		<FixedRow styleid="s1">
+			<Column name="RES:Res1:101" />
+			<Column name="RES:Res1:104" />
+			<Column name="RES:Res1:107" />
+			<Column name="RES:Res1:105" />
+			<Column name="RES:Res1:117" />
+			<Column name="RES:Res1:111" />
+			<Column name="RES:Res1:113" />
+			<Column name="RES:Res1:165" />
+			<Column name="RES:Res1:166" />
+			<Column name="RES:Res1:114" />
+		</FixedRow>
+		<FixedRow>
+			<Column name="" />
+			<Column name="RES:Res1:118" />
+			<Column name="RES:Res1:119" />
+			<Column name="RES:Res1:120" />
+			<Column name="RES:Res1:121" />
+			
+		</FixedRow>
+	</FixedRows>
+	
+
+	<data loopEnd="1">
+		<Object name="n2" source="OBJ:VSFLEXGRID:ColWidth(0,1100)PROPPUT" />
+		<Object name="n2" source="OBJ:VSFLEXGRID:ColWidth(1,1800)PROPPUT" />
+		<Object name="n2" source="OBJ:VSFLEXGRID:ColWidth(2,700)PROPPUT" />
+		<Object name="n2" source="OBJ:VSFLEXGRID:ColWidth(3,700)PROPPUT" />
+		<Object name="n2" source="OBJ:VSFLEXGRID:ColWidth(4,2000)PROPPUT" />
+		<Object name="n2" source="OBJ:VSFLEXGRID:ColWidth(5,400)PROPPUT" />
+		<Object name="n2" source="OBJ:VSFLEXGRID:ColWidth(6,400)PROPPUT" />
+		<Object name="n2" source="OBJ:VSFLEXGRID:ColWidth(7,600)PROPPUT" />
+		<Object name="n2" source="OBJ:VSFLEXGRID:ColWidth(8,600)PROPPUT" />
+		<Object name="n2" source="OBJ:VSFLEXGRID:ColWidth(9,700)PROPPUT" />
+		<Node level = "0" loopStart="0" loopEnd="1" >
+			<Column order = "0" datasource ="OBJ:DOM:selectSingleNode(pID15):getAttribute(DV)" /> <!--CM552leftCM552right-->
+		</Node>
+
+		<!-- If there are no fault codes in the ECM, " -->
+		<Node level = "1" loopStart="OBJ:DOM:selectNodes(FAvail):length" loopEnd="1" >
+			<!-- Print "No Fault Codes Detected. -->
+			<Column order = "0" datasource ="RES:Res1:202" />
+		</Node>
+		<!-- Else, begin faults display, (loop below will be executed only once) -->
+		<Node level = "1" loopStart="0" loopEnd="OBJ:DOM:selectNodes(FAvail):length" >
+			<!-- Print the first row, showing ModuleName, ECM Time etc. -->
+			<Column order = "0" datasource ="OBJ:DOM:selectSingleNode(a20D1I0):getAttribute(DV)" />
+			<Column order = "1" datasource ="OBJ:DOM:selectSingleNode(pID7):getAttribute(N)" />
+			<Column order = "2" datasource ="OBJ:DOM:selectSingleNode(pID7):getAttribute(DV)" />
+			<Column order = "4" datasource ="OBJ:DOM:selectSingleNode(pID7):getAttribute(U)" />
+            <Node level="2" loopStart="0" loopEnd="1">
+				<Column order="1" datasource="OBJ:DOM:selectSingleNode(pID9):getAttribute(N)"/>
+				<Column order="2" datasource="OBJ:DOM:selectSingleNode(pID9):getAttribute(DV)"/>
+				<Column order="4" datasource="OBJ:DOM:selectSingleNode(pID9):getAttribute(U)"/>
+			</Node>
+			
+			<Node level = "2" loopStart="0" loopEnd="1" >
+				<Column order = "1" datasource ="OBJ:DOM:selectSingleNode(pID10):getAttribute(N)" />
+				<Column order = "2" datasource ="OBJ:DOM:selectSingleNode(pID10):getAttribute(DV)" styleid="s2"/>
+			</Node>
+			<!-- Get all faults in the module. -->
+			<Object name="Faults" source="OBJ:DOM:selectNodes(a1D1I)"/>
+			<!-- Get the Faults Description node for this module from FaultsInfo_XX.xml -->
+			<Object name="FIECM" source="OBJ:FIDOM:selectSingleNode(fiECM1)" />
+			<Node level = "2" loopStart="0" loopEnd="OBJ:Faults:length" styleid="s1" >
+				<Object name="FItem1" source="OBJ:Faults:nextNode"/>
+				<Object name="FINode" source="OBJ:FIECM:selectSingleNode(fiDesc)" />
+				<Column order = "0" datasource ="OBJ:FINode:getAttribute(FaultCode)" />
+				<Column order = "1" datasource ="OBJ:FItem1:getAttribute(Status)" />
+				<Column order = "2" datasource ="OBJ:FItem1:getAttribute(Count)" />
+				<Column order = "3" datasource ="OBJ:FIClrCode:selectSingleNode(ClrCode):Text" />
+				<Column order = "4" datasource ="OBJ:FINode:Text" styleid="s3"/>
+				<Column order = "5" datasource ="OBJ:FINode:getAttribute(PID)" />
+				<Column order = "6" datasource ="OBJ:FINode:getAttribute(SID)" />
+				<Column order = "7" datasource ="OBJ:FINode:getAttribute(FMI)" />
+				<Column order = "8" datasource ="OBJ:FINode:getAttribute(FMI2)" />
+				<Column order = "9" datasource ="OBJ:FINode:getAttribute(SPN)" />
+			</Node>
+		</Node>
+
+		<!-- If there are no fault codes in the ECM, " -->
+		<Node level = "1" loopStart="OBJ:DOM:selectNodes(FAvail1):length" loopEnd="1" >
+			<!-- Print "No Fault Codes Detected. -->
+			<Column order = "0" datasource ="RES:Res1:202" />
+		</Node>
+		<!-- Else, begin faults display, (loop below will be executed only once) -->
+		<Node level = "1" loopStart="0" loopEnd="OBJ:DOM:selectNodes(FAvail1):length" >
+			<!-- Print the first row, showing ModuleName, ECM Time etc. -->
+			<Column order = "0" datasource ="OBJ:DOM:selectSingleNode(a20D1I0R):getAttribute(DV)" />
+			<Column order = "1" datasource ="OBJ:DOM:selectSingleNode(pID41):getAttribute(N)" />
+			<Column order = "2" datasource ="OBJ:DOM:selectSingleNode(pID41):getAttribute(DV)" />
+			<Column order = "4" datasource ="OBJ:DOM:selectSingleNode(pID41):getAttribute(U)" />
+			<Node level="2" loopStart="0" loopEnd="1">
+				<Column order="1" datasource="OBJ:DOM:selectSingleNode(pID99):getAttribute(N)"/>
+				<Column order="2" datasource="OBJ:DOM:selectSingleNode(pID99):getAttribute(DV)"/>
+				<Column order="4" datasource="OBJ:DOM:selectSingleNode(pID99):getAttribute(U)"/>
+			</Node>
+			<Node level = "2" loopStart="0" loopEnd="1" >
+				<Column order = "1" datasource ="OBJ:DOM:selectSingleNode(pID30):getAttribute(N)" />
+				<Column order = "2" datasource ="OBJ:DOM:selectSingleNode(pID30):getAttribute(DV)" styleid="s2"/>
+			</Node>
+			<!-- Get all faults in the module. -->
+			<Object name="FaultsR" source="OBJ:DOM:selectNodes(a1D1IR)"/>
+			<!-- Get the Faults Description node for this module from FaultsInfo_XX.xml -->
+			<Object name="FIECMR" source="OBJ:FIDOM:selectSingleNode(fiECM1)" />
+			<Node level = "2" loopStart="0" loopEnd="OBJ:FaultsR:length" styleid="s1" >
+				<Object name="FItem1R" source="OBJ:FaultsR:nextNode"/>
+				<Object name="FINodeR" source="OBJ:FIECMR:selectSingleNode(fiDescR)" />
+				<Column order = "0" datasource ="OBJ:FINodeR:getAttribute(FaultCode)" />
+				<Column order = "1" datasource ="OBJ:FItem1R:getAttribute(Status)" />
+				<Column order = "2" datasource ="OBJ:FItem1R:getAttribute(Count)" />
+				<Column order = "3" datasource ="OBJ:FIClrCode:selectSingleNode(ClrCodeR):Text" />
+				<Column order = "4" datasource ="OBJ:FINodeR:Text" styleid="s3"/>
+				<Column order = "5" datasource ="OBJ:FINodeR:getAttribute(PID)" />
+				<Column order = "6" datasource ="OBJ:FINodeR:getAttribute(SID)" />
+				<Column order = "7" datasource ="OBJ:FINodeR:getAttribute(FMI)" />
+				<Column order = "8" datasource ="OBJ:FINodeR:getAttribute(FMI2)" />
+				<Column order = "9" datasource ="OBJ:FINodeR:getAttribute(SPN)" />
+				
+			</Node>
+		</Node>
+
+		<Object name="n1" source="OBJ:VSFLEXGRID:AutoSize(4)" />
+	</data>
+
+	<parameters>
+	 <parameter name="pID15" source="/root/Image/Parameters/P[@ID=15]"/>
+	 <parameter name="pID10" source="/root/Image/Parameters/P[@ID=10]"/>
+	 <parameter name="pID30" source="/root/Image/Parameters/P[@ID=30]"/>
+	 <parameter name="pID7" source="/root/Image/Parameters/P[@ID=7]"/>
+     <parameter name="pID9" source="/root/Image/Parameters/P[@ID=9]"/> 
+	 <parameter name="pID41" source="/root/Image/Parameters/P[@ID=41]"/>
+        <parameter name="pID99" source="/root/Image/Parameters/P[@ID=99]"/>
+	 <parameter name="a20D1I0" source="/root/Image/Arrays/A[@ID=20]/Dim/I[@Num=0]/P[@ID=113005]"/>
+	 <parameter name="a20D1I0R" source="/root/Image/Arrays/A[@ID=20]/Dim/I[@Num=1]/P[@ID=113005]"/>
+	 
+	 <parameter name="a1D1I" source="/root/Faults[@ModuleID =0]/Fault"/>
+	 <parameter name="a1D1IR" source="/root/Faults[@ModuleID =1]/Fault"/>
+	 <parameter name="pImage" source="/root/Image"/>
+	 
+	 <parameter name="FAvail" source="/root/Image/Arrays/A[@ID=1]/Dim/I[./P[@ID=199021 and @V = 1] and @Num=0]"/>
+	 <parameter name="FAvail1" source="/root/Image/Arrays/A[@ID=31]/Dim/I[./P[@ID=199021 and @V = 1] and @Num=0]"/>
+	
+	 <parameter name="fiDesc" source="./FAULT_CODE[@FaultCode=" source1="OBJ:FItem1:getAttribute(Code)" source2="]"/>
+	 <parameter name="fiDescR" source="./FAULT_CODE[@FaultCode=" source1="OBJ:FItem1R:getAttribute(Code)" source2="]"/>
+	 <parameter name="fiECM1" source="/ROOT/RESOURCE/FAULT_INFO[@ECMID=/ROOT/ECM_MAP/ECM_GROUP[./ECM[@ID=" source1="OBJ:DOM:selectSingleNode(pID15):getAttribute(V)" source2="]]/@Resource]"/> 
+	 <parameter name="ClrCode" source="/XML_RESOURCE/RESOURCE/STRING[@Context='" source1="OBJ:FINode:getAttribute(Lamp)" source2="']"/>
+	 <parameter name="ClrCodeR" source="/XML_RESOURCE/RESOURCE/STRING[@Context='" source1="OBJ:FINodeR:getAttribute(Lamp)" source2="']"/>
+	</parameters>
+
+	<icons>
+	</icons>
+	
+	<combolists>
+	</combolists>
+	
+	<styles>
+		<style id="s1" CellFontBold="1:VT_I4" CellAlignMent="1:VT_I4" />
+		<style id="s2"  CellAlignMent="0:VT_I4"/>
+		<style id="s3"  AutoSizeMode="1:VT_I4" WordWrap="1" CellFontBold="1:VT_I4" />
+	</styles>
+	
+	<resources>
+		<resource id="Res1" CLSID="{1332CA33-AB73-4B5B-95AE-051831C69A91}" />
+	</resources>
+	
+	<printing HdrFontSize="8" >
+		<header>
+			<line>
+				<center source="RES:Res1:196" />
+			</line>
+			<line>
+				<left source="RES:Res1:220" />
+				<left source="OBJ:DOM:selectSingleNode(/root/Image/Header/ESerial):getAttribute(DisplayValue)" />
+				<right source="INSITE - " />
+				<right source="OBJ:DOM:selectSingleNode(/root/Image):getAttribute(ImageVersion)" />
+			</line>
+			<line>
+				<left source="RES:Res1:219" />
+				<left source="OBJ:DOM:selectSingleNode(/root/Image/Header/UNumber):getAttribute(DisplayValue)" />
+				<right source="RES:Res1:221" />
+				<right source="OBJ:DOM:selectSingleNode(/root/Image/Header/VMake):getAttribute(DisplayValue)" />
+			</line>
+			<line>
+				<left source="RES:Res1:222" />
+				<left source="OBJ:DOM:selectSingleNode(/root/Image/Header/WOName):getAttribute(DisplayValue)" />
+				<right source="RES:Res1:223" />
+				<right source="OBJ:DOM:selectSingleNode(/root/Image/Header/IName):getAttribute(DisplayValue)" />
+			</line>
+			<line>
+				<right source="RES:Res1:224"/>
+				<right source="OBJ:DOM:selectSingleNode(/root/Image/Header/CustomerName):getAttribute(DisplayValue)"/>
+			</line>
+		</header>
+		
+	</printing>
+
+</FlexGrid>

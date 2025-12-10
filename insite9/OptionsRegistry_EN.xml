@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE module SYSTEM "htmlentities.dtd">
+<REGISTRIES>
+  <OPTIONS_REGISTRY ID="AEM Engine Shutdown Log">AEM Engine Shutdown Log</OPTIONS_REGISTRY>
+  <OPTIONS_REGISTRY ID="AEM Enhanced Fault Snapshot Log">AEM Enhanced Fault Snapshot Log</OPTIONS_REGISTRY>
+  <OPTIONS_REGISTRY ID="AEM Start Stop Log">AEM Start Stop Log</OPTIONS_REGISTRY>
+  <OPTIONS_REGISTRY ID="AEM Trend Log">AEM Trend Log</OPTIONS_REGISTRY>
+  <OPTIONS_REGISTRY ID="AEM Start Stop Log">AEM Start Stop Log</OPTIONS_REGISTRY>
+  <OPTIONS_REGISTRY ID="Aftertreatment Maintenance">Aftertreatment Maintenance</OPTIONS_REGISTRY>
+  <OPTIONS_REGISTRY ID="Audit Trail">Audit Trail</OPTIONS_REGISTRY>
+  <OPTIONS_REGISTRY ID="Audit Trail Columns">Audit Trail Columns</OPTIONS_REGISTRY>
+	<OPTIONS_REGISTRY ID="Audit Trail Highlights">Audit Trail Highlights</OPTIONS_REGISTRY>
+	<OPTIONS_REGISTRY ID="Audit Trail Selection">Audit Trail Selection</OPTIONS_REGISTRY>
+	<OPTIONS_REGISTRY ID="Data Monitor/Logger">Data Monitor/Logger</OPTIONS_REGISTRY>
+	<OPTIONS_REGISTRY ID="Engine Abuse History">Engine Abuse History</OPTIONS_REGISTRY>
+  <OPTIONS_REGISTRY ID="Engine Protection">Engine Protection</OPTIONS_REGISTRY>
+	<OPTIONS_REGISTRY ID="Engine Protection Settings">Engine Protection Settings</OPTIONS_REGISTRY>
+  <OPTIONS_REGISTRY ID="Engine Torque">Engine Torque History</OPTIONS_REGISTRY>
+  <OPTIONS_REGISTRY ID="Faults Info">Fault Codes</OPTIONS_REGISTRY>
+	<OPTIONS_REGISTRY ID="Features &amp; Parameters">Features &amp; Parameters</OPTIONS_REGISTRY>
+	<OPTIONS_REGISTRY ID="J1939 Control History">J1939 Control History</OPTIONS_REGISTRY>
+	<OPTIONS_REGISTRY ID="Maintenance Monitor">Maintenance Monitor</OPTIONS_REGISTRY>
+  <OPTIONS_REGISTRY ID="OBD Monitors">OBD Monitors</OPTIONS_REGISTRY>
+  <OPTIONS_REGISTRY ID="SAE J1939 Multiplexed Fault Data">SAE J1939 Multiplexed Fault Data</OPTIONS_REGISTRY>
+  <OPTIONS_REGISTRY ID="SAE J1939 Powertrain Control">SAE J1939 Powertrain Control</OPTIONS_REGISTRY>
+	<OPTIONS_REGISTRY ID="Trip Information">Trip Information</OPTIONS_REGISTRY>
+	<OPTIONS_REGISTRY ID="Work Orders">Work Orders</OPTIONS_REGISTRY>
+</REGISTRIES>

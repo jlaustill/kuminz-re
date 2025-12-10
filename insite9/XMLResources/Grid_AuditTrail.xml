@@ -1,0 +1,93 @@
+<!-- This is a sample  -->
+<FlexGrid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Properties Cols="6:VT_I4" FixedCols="0:VT_I4" ExplorerBar="0:VT_I4" OutlineBar="4:VT_UI4" AllowUserResizing="1:VT_UI4" AutoResize="1:VT_I4" GridLines="1:VT_I4" Editable="0:VT_I4"/>
+	<!-- Add properties to the "FlexGrid" element as attribute in Name=Value format -->
+	<FixedRows>
+		<FixedRow>
+			<Column name="RES:Res1:133"/>
+			<Column name="RES:Res1:134"/>
+			<Column name="RES:Res1:135"/>
+			<Column name="RES:Res1:136"/>
+			<Column name="RES:Res1:137"/>
+			<Column name="RES:Res1:138"/>
+		</FixedRow>
+		<FixedRow>
+			<Column name=""/>
+			<Column name=""/>
+			<Column name="RES:Res1:104"/>
+			<Column name="RES:Res1:105"/>
+			<Column name=""/>
+			<Column name=""/>
+		</FixedRow>
+	</FixedRows>
+	<data loopEnd="1">
+		<Object name="AMs" source="OBJ:AD:AuditModules"/>
+		<Node level="0" loopStart="0" loopEnd="1">
+			<Column order="0" datasource="OBJ:AMs:Item(0)PROP:Name"/>
+			<Node level="1" loopStart="0" loopEnd="OBJ:AMs:Count">
+				<Object name="AMItem" source="OBJ:AMs:Item(LOOPINDEX1)PROP"/>
+				<Column order="0" datasource="OBJ:AMItem:ID"/>
+				<Object name="AR" source="OBJ:AMItem:AuditRecords"/>
+				<Node level="2" loopStart="0" loopEnd="OBJ:AR:Count" offset="1" styleid="s1">
+					<Object name="ARItem" source="OBJ:AR:Item(LOOPINDEX2)PROP"/>
+					<Column order="0" datasource="RT:USERINDEX2"/>
+					<Column order="1" datasource="OBJ:ARItem:ToolDescription"/>
+					<Column order="2" datasource="OBJ:ARItem:ToolSerialNumber" styleid="s2"/>
+					<Column order="3" datasource="OBJ:ARItem:ProgramDescription"/>
+					<Column order="4" datasource="OBJ:ARItem:ProgramSerialNumber"/>
+					<Column order="5" datasource="OBJ:ARItem:KeyOnTime"/>
+					<Object name="AADJs" source="OBJ:ARItem:AuditAdjustments"/>
+					<Node level="3" loopStart="0" loopEnd="OBJ:AADJs:Count">
+						<Object name="AADJItem" source="OBJ:AADJs:Item(LOOPINDEX3)PROP"/>
+						<Column order="2" datasource="OBJ:AADJItem:Identifier" styleid="s1"/>
+						<Column order="3" datasource="OBJ:AADJItem:Description" styleid="s1"/>
+					</Node>
+				</Node>
+			</Node>
+		</Node>
+	</data>
+	<parameters>
+	</parameters>
+	<icons>
+	</icons>
+	<combolists>
+	</combolists>
+	<styles>
+		<style id="s1" CellFontBold="1:VT_I4" CellAlignMent="1:VT_I4"/>
+    <style id="s2" CellFontBold="1:VT_I4" CellAlignMent="1:VT_I4" ColWidthMin="2300" ColWidthMax="3500" AutoSizeMode="1:VT_I4"  WordWrap="1:VT_BOOL"/>
+	</styles>
+	<resources>
+		<resource id="Res1" CLSID="{6C62E21C-145A-4039-8515-4DCB4CBF2404}" LoadDLL="TRUE"/>
+	</resources>
+	<printing HdrFontSize="8">
+		<header>
+			<line>
+			<center source="RES:Res1:102" />
+			</line>	
+			
+			<line>
+				<left source="RES:Res1:128" />
+				<left source="OBJ:DOM:selectSingleNode(/Image/Header/ESerial):getAttribute(DisplayValue)" />
+				<right source="INSITE - " />
+				<right source="OBJ:DOM:selectSingleNode(/Image):getAttribute(ImageVersion)" />
+			</line>
+
+			<line>
+				<left source="RES:Res1:127" />
+				<left source="OBJ:DOM:selectSingleNode(/Image/Header/UNumber):getAttribute(DisplayValue)" />
+				<right source="RES:Res1:129" />
+				<right source="OBJ:DOM:selectSingleNode(/Image/Header/VMake):getAttribute(DisplayValue)" />
+			</line>
+			<line>
+				<left source="RES:Res1:130" />
+				<left source="OBJ:DOM:selectSingleNode(/Image/Header/WOName):getAttribute(DisplayValue)" />
+				<right source="RES:Res1:131" />
+				<right source="OBJ:DOM:selectSingleNode(/Image/Header/IName):getAttribute(DisplayValue)" />
+			</line>
+			<line>
+ 				<right source="RES:Res1:132"/>
+				<right source="OBJ:DOM:selectSingleNode(/Image/Header/CustomerName):getAttribute(DisplayValue)"/>
+			</line>
+		</header>
+	</printing>
+</FlexGrid>

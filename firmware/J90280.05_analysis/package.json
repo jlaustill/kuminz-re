@@ -1,0 +1,30 @@
+{
+  "name": "j90280-analysis-tools",
+  "version": "1.0.0",
+  "description": "TypeScript tools for J90280.05 firmware analysis and CSV processing",
+  "main": "enhance-csv.ts",
+  "scripts": {
+    "enhance-csv": "ts-node enhance-csv.ts",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "papaparse": "^5.4.1",
+    "glob": "^10.3.10"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/papaparse": "^5.3.14",
+    "@types/glob": "^8.1.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.0"
+  },
+  "keywords": [
+    "firmware",
+    "reverse-engineering", 
+    "csv",
+    "ghidra",
+    "analysis"
+  ],
+  "author": "J90280.05 Analysis Team",
+  "license": "MIT"
+}

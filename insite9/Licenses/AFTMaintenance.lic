@@ -1,0 +1,21 @@
+<LicenseFile>
+	<ToolReqLicense Expiration="permanent" Name="AFTM_Tool_Lite" VendorDaemon="cummins" Key="FA311A4C2FB4" IsValid="" ID="AFTM_Tool_Lite" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="Lite"/>
+	</ToolReqLicense>
+	<ToolReqLicense Expiration="permanent" Name="AFTM_Tool_Pro" VendorDaemon="cummins" Key="DCE4089E236E" IsValid="" ID="AFTM_Tool_Pro" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="Pro"/>
+	</ToolReqLicense>
+	<ToolReqLicense Expiration="permanent" Name="AFTM_Tool_RSGR" VendorDaemon="cummins" Key="8E05A9A94AB4" IsValid="" ID="AFTM_Tool_RSGR" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="RSGR"/>
+	</ToolReqLicense>
+	<UserReqLicense Expiration="permanent" Name="AFTM_Reset_AdvanceECMData" VendorDaemon="cummins" Key="217EE3299B47" IsValid="" ID="AFTM_Reset_AdvanceECMData" Version="1.0" Count="uncounted">
+		<Users>
+			<User NAME="Reset_Advance_ECM_Data"/></Users>
+	</UserReqLicense>
+	<!--ECM Passwords-->
+	<ECMReqLicense Expiration="permanent" Name="AFTM_Reset_ECMPwd_PermitResets" VendorDaemon="cummins" Key="2D00AE807F43" IsValid="" ID="AFTM_Reset_ECMPwd_PermitResets" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="PERMIT_RESETS"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+</LicenseFile>

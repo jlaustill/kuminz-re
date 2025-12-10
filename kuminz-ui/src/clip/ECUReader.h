@@ -1,0 +1,164 @@
+#ifndef ECUREADER_H
+#define ECUREADER_H
+
+#include <cstdint>
+#include <vector>
+#include <string>
+#include <functional>
+#include "../types/ICanAdapter.h"
+#include "J1939MessageBuilder.h"
+#include "CLIPInstructionBuilder.h"
+#include "CLIPTransportLayer.h"
+#include "CLIPSessionManager.h"
+
+/**
+ * @brief High-level API for reading data from Cummins ECUs.
+ *
+ * This class provides a simple interface for the display layer to
+ * communicate with ECUs via the CLIP protocol.
+ *
+ * Features:
+ *   - Connect/disconnect to ECUs
+ *   - Read raw memory (firmware extraction)
+ *   - Read parameters by ID
+ *   - Dump memory regions to files
+ *
+ * Usage:
+ *   SocketCanAdapter adapter;
+ *   ECUReader reader(&adapter);
+ *
+ *   if (reader.connect("can0", 0x00)) {
+ *       std::vector<uint8_t> data;
+ *       reader.readMemory(0x00000000, 1024, data);
+ *       reader.disconnect();
+ *   }
+ */
+class ECUReader
+{
+public:
+    /**
+     * @brief Progress callback for long operations.
+     * @param current Current byte/item number
+     * @param total Total bytes/items
+     * @param message Status message
+     */
+    using ProgressCallback = std::function<void(uint32_t current, uint32_t total, const std::string& message)>;
+
+    /**
+     * @brief Log callback for debugging.
+     */
+    using LogCallback = std::function<void(const std::string& message)>;
+
+    /**
+     * @brief Construct ECUReader with a CAN adapter.
+     * @param adapter CAN adapter (must remain valid for lifetime of ECUReader)
+     */
+    explicit ECUReader(ICanAdapter* adapter);
+    ~ECUReader();
+
+    // Prevent copying
+    ECUReader(const ECUReader&) = delete;
+    ECUReader& operator=(const ECUReader&) = delete;
+
+    /**
+     * @brief Set progress callback for long operations.
+     */
+    void setProgressCallback(ProgressCallback callback);
+
+    /**
+     * @brief Set log callback for debugging.
+     */
+    void setLogCallback(LogCallback callback);
+
+    /**
+     * @brief Connect to an ECU.
+     * @param canDevice CAN device name (e.g., "can0", "vcan0")
+     * @param ecuAddress ECU address (typically 0x00)
+     * @return true if connection successful
+     */
+    bool connect(const std::string& canDevice, uint8_t ecuAddress = 0x00);
+
+    /**
+     * @brief Disconnect from ECU.
+     */
+    void disconnect();
+
+    /**
+     * @brief Check if connected to ECU.
+     */
+    bool isConnected() const;
+
+    /**
+     * @brief Read raw memory from ECU.
+     * @param address Memory address
+     * @param length Number of bytes to read
+     * @param data Output: read data
+     * @return true if read successful
+     *
+     * This is the key method for firmware extraction!
+     * Max length per call: 0xD000 bytes (52,224)
+     */
+    bool readMemory(uint32_t address, uint16_t length, std::vector<uint8_t>& data);
+
+    /**
+     * @brief Read a large memory region (handles chunking automatically).
+     * @param address Starting address
+     * @param totalLength Total bytes to read
+     * @param data Output: read data
+     * @return true if all reads successful
+     */
+    bool readMemoryLarge(uint32_t address, uint32_t totalLength, std::vector<uint8_t>& data);
+
+    /**
+     * @brief Read parameter by ID.
+     * @param paramId Parameter ID
+     * @param data Output: parameter value
+     * @return true if read successful
+     */
+    bool readParameter(uint16_t paramId, std::vector<uint8_t>& data);
+
+    /**
+     * @brief Read multiple parameters by ID.
+     * @param paramIds List of parameter IDs
+     * @param data Output: combined parameter data
+     * @return true if read successful
+     */
+    bool readParameters(const std::vector<uint16_t>& paramIds, std::vector<uint8_t>& data);
+
+    /**
+     * @brief Dump memory region to a binary file.
+     * @param address Starting address
+     * @param length Total bytes to dump
+     * @param outputPath Output file path
+     * @return true if dump successful
+     */
+    bool dumpMemoryToFile(uint32_t address, uint32_t length, const std::string& outputPath);
+
+    /**
+     * @brief Get address for a parameter ID.
+     * @param paramId Parameter ID
+     * @param address Output: memory address
+     * @return true if lookup successful
+     */
+    bool getParameterAddress(uint16_t paramId, uint32_t& address);
+
+    /**
+     * @brief Get the last seed received from ECU (for debugging).
+     */
+    const TSeedReply& getLastSeed() const;
+
+private:
+    ICanAdapter* m_adapter;
+    J1939MessageBuilder m_j1939;
+    CLIPInstructionBuilder m_builder;
+    CLIPTransportLayer m_transport;
+    CLIPSessionManager m_session;
+    bool m_connected;
+    ProgressCallback m_progressCallback;
+    LogCallback m_logCallback;
+
+    void log(const std::string& message);
+    void reportProgress(uint32_t current, uint32_t total, const std::string& message);
+};
+
+#endif // ECUREADER_H

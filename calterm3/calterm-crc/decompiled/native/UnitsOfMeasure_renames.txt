@@ -1,0 +1,15 @@
+# UnitsOfMeasure.dll Function Rename Mapping
+# Format: old_name|new_name
+# Total functions: 9
+
+# CCIUnitsOfMeasure class (9 methods)
+FUN_10002c80|CCIUnitsOfMeasure_GetIDsOfNames
+FUN_10002e72|CCIUnitsOfMeasure_Invoke
+FUN_100031a6|CCIUnitsOfMeasure_put_Configuration
+FUN_1000355e|CCIUnitsOfMeasure_get_CurrentFamily
+FUN_10003862|CCIUnitsOfMeasure_put_CurrentFamily
+FUN_10003d81|CCIUnitsOfMeasure_Convert
+FUN_1000448c|CCIUnitsOfMeasure_ConvertToUnit
+FUN_10004c2f|CCIUnitsOfMeasure_get_Group
+FUN_10004f4e|CCIUnitsOfMeasure_put_Group
+

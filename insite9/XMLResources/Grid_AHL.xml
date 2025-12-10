@@ -1,0 +1,410 @@
+<!--
+========================================================================================
+// Grid_AHL.xml   
+// Copyright (c) 2007 Cummins, Inc.
+// ALL RIGHTS RESERVED 						   
+// 
+========================================================================================
+//
+// CHANGE LOG								   					
+// PR/CR#           Date        Author          	Comments                              
+==========================================================================================
+//DB_G00109067		11/15/2007	Abisoye Mudasiru		Initial Creations
+//DB_G00109067		12/06/2007	Abisoye Mudasiru		Edited as per requirements update
+//DB_G00144093		8/19/2009	Sanket Patnaik			Edited the heading to add Customer Name
+-->
+
+<FlexGrid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Properties Cols="9:VT_I4" FixedCols="0:VT_I4" ExplorerBar="0:VT_I4" OutlineBar="5:VT_UI4" AllowUserResizing="1:VT_UI4" AutoResize="1:VT_I4" GridLines="2:VT_I4" Editable="0:VT_I4" />
+
+  
+  <data loopEnd="1">
+    <Object name="colwdth" source="OBJ:VSFLEXGRID:ColWidth(0,1300)PROPPUT" />
+    <Object name="colwdth" source="OBJ:VSFLEXGRID:ColWidth(1,1300)PROPPUT" />
+    <Object name="colwdth" source="OBJ:VSFLEXGRID:ColWidth(2,1300)PROPPUT" />
+    <Object name="colwdth" source="OBJ:VSFLEXGRID:ColWidth(3,1500)PROPPUT" />
+    <Object name="colwdth" source="OBJ:VSFLEXGRID:ColWidth(4,1500)PROPPUT" />
+    <Object name="colwdth" source="OBJ:VSFLEXGRID:ColWidth(5,1300)PROPPUT" />
+    <Object name="colwdth" source="OBJ:VSFLEXGRID:ColWidth(6,1500)PROPPUT" />
+    <Object name="colwdth" source="OBJ:VSFLEXGRID:ColWidth(7,1700)PROPPUT" />
+    <Object name="colwdth" source="OBJ:VSFLEXGRID:ColWidth(8,1800)PROPPUT" />
+
+    <!-- Regen Headers-->
+    <Node loopEnd="1">
+      <Object name="AHL_ARR" source="OBJ:DOM:selectNodes(ARR_Regen)" />
+      <Object name="objFItemHead" source="OBJ:AHL_ARR:nextNode" />
+      <Column order="0" datasource="" styleid="s1" />
+      <Column order="1" datasource="OBJ:objFItemHead:selectSingleNode(ecmtime):getAttribute(N)" styleid="s1" />
+      <Column order="2" datasource="OBJ:objFItemHead:selectSingleNode(ecmRealtime):getAttribute(N)" styleid="s1" />
+      <Column order="3" datasource="OBJ:objFItemHead:selectSingleNode(StartDiesel):getAttribute(N)" styleid="s1" />
+      <Column order="4" datasource="OBJ:objFItemHead:selectSingleNode(EndDiesel):getAttribute(N)" styleid="s1" />
+      <Column order="5" datasource="OBJ:objFItemHead:selectSingleNode(StartDieselOx):getAttribute(N)" styleid="s1" />
+      <Column order="6" datasource="OBJ:objFItemHead:selectSingleNode(MaxDieselInlet):getAttribute(N)" styleid="s1" />
+      <Column order="7" datasource="OBJ:objFItemHead:selectSingleNode(MaxDieselOutlet):getAttribute(N)" styleid="s1" />
+      <Column order="8" datasource="OBJ:objFItemHead:selectSingleNode(MaxDieselPressure):getAttribute(N)" styleid="s1" />
+    </Node>
+
+    <Object name="IsAHLEnable" source="OBJ:DOM:selectSingleNode(AHL_Enable)" />
+    <Object name="IsRTCEnable" source="OBJ:DOM:selectSingleNode(paramRTCExists)" />
+    
+      <!--UNITS-->
+      <Node loopEnd="1"> 
+       <Object name="AHL_ARR" source="OBJ:DOM:selectNodes(ARR_Regen)" />
+        <Object name="objFItem2" source="OBJ:AHL_ARR:nextNode" />
+        <Column order="0" datasource="RES:Res1:315" styleid="s3" />      
+        <Column order="5" datasource="OBJ:objFItem2:selectSingleNode(StartDieselOx):getAttribute(U)" styleid="s3" />
+        <Column order="6" datasource="OBJ:objFItem2:selectSingleNode(MaxDieselInlet):getAttribute(U)" styleid="s3" />
+        <Column order="7" datasource="OBJ:objFItem2:selectSingleNode(MaxDieselOutlet):getAttribute(U)" styleid="s3" />
+        <Column order="8" datasource="OBJ:objFItem2:selectSingleNode(MaxDieselPressure):getAttribute(U)" styleid="s3" />
+      </Node>
+
+    <!-- data -->
+    <Object name="AHLEnable1" source="OBJ:DOM:selectNodes(AHL_Enable)"/>
+    <Node level="0" loopStart="OBJ:AHLEnable1:length" loopEnd="1" >
+      <Column order="0" datasource="Feature is Not Supported" styleid="s1"/>
+      <!-- Feature Not Supported-->
+    </Node>
+
+	<ValueStore name="Check_ECM_Time_Regen" datasource="OBJ:DOM:selectSingleNode(CHECK_ECM_TIME_REGEN):getAttribute(V)" type="BOOL"/>
+
+	<Node level="0" loopStart="0" loopEnd="VALUE_STORE:Check_ECM_Time_Regen">
+    <Node level="0" loopStart="0" loopEnd="OBJ:AHLEnable1:length" >
+      <Object name="AHL_ARR" source="OBJ:DOM:selectNodes(ARR_Regen)" />
+      <!--Node level="0" loopStart="0" loopEnd="1"-->
+        <Object name="objFItem1" source="OBJ:AHL_ARR:nextNode" />
+        <Column order="0" datasource="1(Newest)" styleid="s3" />
+        <Column order="1" datasource="OBJ:objFItem1:selectSingleNode(ecmtime):getAttribute(DV)" styleid="s3" />
+        <Column order="2" datasource="OBJ:objFItem1:selectSingleNode(ecmRealtime):getAttribute(DV)" styleid="s3" />
+        <Column order="3" datasource="OBJ:objFItem1:selectSingleNode(StartDiesel):getAttribute(DV)" styleid="s3" />
+        <Column order="4" datasource="OBJ:objFItem1:selectSingleNode(EndDiesel):getAttribute(DV)" styleid="s3" />
+        <Column order="5" datasource="OBJ:objFItem1:selectSingleNode(StartDieselOx):getAttribute(DV)" styleid="s3" />
+        <Column order="6" datasource="OBJ:objFItem1:selectSingleNode(MaxDieselInlet):getAttribute(DV)" styleid="s3" />
+        <Column order="7" datasource="OBJ:objFItem1:selectSingleNode(MaxDieselOutlet):getAttribute(DV)" styleid="s3" />
+        <Column order="8" datasource="OBJ:objFItem1:selectSingleNode(MaxDieselPressure):getAttribute(DV)" styleid="s3" />
+      </Node>
+
+      <Node level="0" loopStart="0" loopEnd="1">
+        <!-- Display Aftertreatment Maintenance information -->
+        <Object name="objFItem1" source="OBJ:AHL_ARR:nextNode" />
+        <Column order="0" datasource="2" styleid="s3" />
+        <Column order="1" datasource="OBJ:objFItem1:selectSingleNode(ecmtime):getAttribute(DV)" styleid="s3" />
+          <Column order="2" datasource="OBJ:objFItem1:selectSingleNode(ecmRealtime):getAttribute(DV)" styleid="s3" />
+        <Column order="3" datasource="OBJ:objFItem1:selectSingleNode(StartDiesel):getAttribute(DV)" styleid="s3" />
+        <Column order="4" datasource="OBJ:objFItem1:selectSingleNode(EndDiesel):getAttribute(DV)" styleid="s3" />
+        <Column order="5" datasource="OBJ:objFItem1:selectSingleNode(StartDieselOx):getAttribute(DV)" styleid="s3" />
+        <Column order="6" datasource="OBJ:objFItem1:selectSingleNode(MaxDieselInlet):getAttribute(DV)" styleid="s3" />
+        <Column order="7" datasource="OBJ:objFItem1:selectSingleNode(MaxDieselOutlet):getAttribute(DV)" styleid="s3" />
+        <Column order="8" datasource="OBJ:objFItem1:selectSingleNode(MaxDieselPressure):getAttribute(DV)" styleid="s3" />
+      </Node>
+
+      <Node level="0" loopStart="0" loopEnd="1">
+        <!-- Display Aftertreatment Maintenance information -->
+        <Object name="objFItem1" source="OBJ:AHL_ARR:nextNode" />
+        <Column order="0" datasource="3" styleid="s3" />
+        <Column order="1" datasource="OBJ:objFItem1:selectSingleNode(ecmtime):getAttribute(DV)" styleid="s3" />
+          <Column order="2" datasource="OBJ:objFItem1:selectSingleNode(ecmRealtime):getAttribute(DV)" styleid="s3" />
+        <Column order="3" datasource="OBJ:objFItem1:selectSingleNode(StartDiesel):getAttribute(DV)" styleid="s3" />
+        <Column order="4" datasource="OBJ:objFItem1:selectSingleNode(EndDiesel):getAttribute(DV)" styleid="s3" />
+        <Column order="5" datasource="OBJ:objFItem1:selectSingleNode(StartDieselOx):getAttribute(DV)" styleid="s3" />
+        <Column order="6" datasource="OBJ:objFItem1:selectSingleNode(MaxDieselInlet):getAttribute(DV)" styleid="s3" />
+        <Column order="7" datasource="OBJ:objFItem1:selectSingleNode(MaxDieselOutlet):getAttribute(DV)" styleid="s3" />
+        <Column order="8" datasource="OBJ:objFItem1:selectSingleNode(MaxDieselPressure):getAttribute(DV)" styleid="s3" />
+      </Node>
+
+      <Node level="0" loopStart="0" loopEnd="1">
+        <!-- Display Aftertreatment Maintenance information -->
+        <Object name="objFItem1" source="OBJ:AHL_ARR:nextNode" />
+        <Column order="0" datasource="4" styleid="s3" />
+        <Column order="1" datasource="OBJ:objFItem1:selectSingleNode(ecmtime):getAttribute(DV)" styleid="s3" />
+          <Column order="2" datasource="OBJ:objFItem1:selectSingleNode(ecmRealtime):getAttribute(DV)" styleid="s3" />
+        <Column order="3" datasource="OBJ:objFItem1:selectSingleNode(StartDiesel):getAttribute(DV)" styleid="s3" />
+        <Column order="4" datasource="OBJ:objFItem1:selectSingleNode(EndDiesel):getAttribute(DV)" styleid="s3" />
+        <Column order="5" datasource="OBJ:objFItem1:selectSingleNode(StartDieselOx):getAttribute(DV)" styleid="s3" />
+        <Column order="6" datasource="OBJ:objFItem1:selectSingleNode(MaxDieselInlet):getAttribute(DV)" styleid="s3" />
+        <Column order="7" datasource="OBJ:objFItem1:selectSingleNode(MaxDieselOutlet):getAttribute(DV)" styleid="s3" />
+        <Column order="8" datasource="OBJ:objFItem1:selectSingleNode(MaxDieselPressure):getAttribute(DV)" styleid="s3" />
+      </Node>
+
+      <Node level="0" loopStart="0" loopEnd="1">
+        <!-- Display Aftertreatment Maintenance information -->
+        <Object name="objFItem1" source="OBJ:AHL_ARR:nextNode" />
+        <Column order="0" datasource="5" styleid="s3" />
+        <Column order="1" datasource="OBJ:objFItem1:selectSingleNode(ecmtime):getAttribute(DV)" styleid="s3" />
+          <Column order="2" datasource="OBJ:objFItem1:selectSingleNode(ecmRealtime):getAttribute(DV)" styleid="s3" />
+        <Column order="3" datasource="OBJ:objFItem1:selectSingleNode(StartDiesel):getAttribute(DV)" styleid="s3" />
+        <Column order="4" datasource="OBJ:objFItem1:selectSingleNode(EndDiesel):getAttribute(DV)" styleid="s3" />
+        <Column order="5" datasource="OBJ:objFItem1:selectSingleNode(StartDieselOx):getAttribute(DV)" styleid="s3" />
+        <Column order="6" datasource="OBJ:objFItem1:selectSingleNode(MaxDieselInlet):getAttribute(DV)" styleid="s3" />
+        <Column order="7" datasource="OBJ:objFItem1:selectSingleNode(MaxDieselOutlet):getAttribute(DV)" styleid="s3" />
+        <Column order="8" datasource="OBJ:objFItem1:selectSingleNode(MaxDieselPressure):getAttribute(DV)" styleid="s3" />
+      </Node>
+
+      <Node level="0" loopStart="0" loopEnd="1">
+        <!-- Display Aftertreatment Maintenance information -->
+        <Object name="objFItem1" source="OBJ:AHL_ARR:nextNode" />
+        <Column order="0" datasource="6" styleid="s3" />
+        <Column order="1" datasource="OBJ:objFItem1:selectSingleNode(ecmtime):getAttribute(DV)" styleid="s3" />
+          <Column order="2" datasource="OBJ:objFItem1:selectSingleNode(ecmRealtime):getAttribute(DV)" styleid="s3" />
+        <Column order="3" datasource="OBJ:objFItem1:selectSingleNode(StartDiesel):getAttribute(DV)" styleid="s3" />
+        <Column order="4" datasource="OBJ:objFItem1:selectSingleNode(EndDiesel):getAttribute(DV)" styleid="s3" />
+        <Column order="5" datasource="OBJ:objFItem1:selectSingleNode(StartDieselOx):getAttribute(DV)" styleid="s3" />
+        <Column order="6" datasource="OBJ:objFItem1:selectSingleNode(MaxDieselInlet):getAttribute(DV)" styleid="s3" />
+        <Column order="7" datasource="OBJ:objFItem1:selectSingleNode(MaxDieselOutlet):getAttribute(DV)" styleid="s3" />
+        <Column order="8" datasource="OBJ:objFItem1:selectSingleNode(MaxDieselPressure):getAttribute(DV)" styleid="s3" />
+      </Node>
+
+      <Node level="0" loopStart="0" loopEnd="1">
+        <!-- Display Aftertreatment Maintenance information -->
+        <Object name="objFItem1" source="OBJ:AHL_ARR:nextNode" />
+        <Column order="0" datasource="7" styleid="s3" />
+        <Column order="1" datasource="OBJ:objFItem1:selectSingleNode(ecmtime):getAttribute(DV)" styleid="s3" />
+          <Column order="2" datasource="OBJ:objFItem1:selectSingleNode(ecmRealtime):getAttribute(DV)" styleid="s3" />
+        <Column order="3" datasource="OBJ:objFItem1:selectSingleNode(StartDiesel):getAttribute(DV)" styleid="s3" />
+        <Column order="4" datasource="OBJ:objFItem1:selectSingleNode(EndDiesel):getAttribute(DV)" styleid="s3" />
+        <Column order="5" datasource="OBJ:objFItem1:selectSingleNode(StartDieselOx):getAttribute(DV)" styleid="s3" />
+        <Column order="6" datasource="OBJ:objFItem1:selectSingleNode(MaxDieselInlet):getAttribute(DV)" styleid="s3" />
+        <Column order="7" datasource="OBJ:objFItem1:selectSingleNode(MaxDieselOutlet):getAttribute(DV)" styleid="s3" />
+        <Column order="8" datasource="OBJ:objFItem1:selectSingleNode(MaxDieselPressure):getAttribute(DV)" styleid="s3" />
+      </Node>
+
+      <Node level="0" loopStart="0" loopEnd="1">
+        <!-- Display Aftertreatment Maintenance information -->
+        <Object name="objFItem1" source="OBJ:AHL_ARR:nextNode" />
+        <Column order="0" datasource="8" styleid="s3" />
+        <Column order="1" datasource="OBJ:objFItem1:selectSingleNode(ecmtime):getAttribute(DV)" styleid="s3" />
+          <Column order="2" datasource="OBJ:objFItem1:selectSingleNode(ecmRealtime):getAttribute(DV)" styleid="s3" />
+        <Column order="3" datasource="OBJ:objFItem1:selectSingleNode(StartDiesel):getAttribute(DV)" styleid="s3" />
+        <Column order="4" datasource="OBJ:objFItem1:selectSingleNode(EndDiesel):getAttribute(DV)" styleid="s3" />
+        <Column order="5" datasource="OBJ:objFItem1:selectSingleNode(StartDieselOx):getAttribute(DV)" styleid="s3" />
+        <Column order="6" datasource="OBJ:objFItem1:selectSingleNode(MaxDieselInlet):getAttribute(DV)" styleid="s3" />
+        <Column order="7" datasource="OBJ:objFItem1:selectSingleNode(MaxDieselOutlet):getAttribute(DV)" styleid="s3" />
+        <Column order="8" datasource="OBJ:objFItem1:selectSingleNode(MaxDieselPressure):getAttribute(DV)" styleid="s3" />
+      </Node>
+
+      <Node level="0" loopStart="0" loopEnd="1">
+        <!-- Display Aftertreatment Maintenance information -->
+        <Object name="objFItem1" source="OBJ:AHL_ARR:nextNode" />
+        <Column order="0" datasource="9" styleid="s3" />
+        <Column order="1" datasource="OBJ:objFItem1:selectSingleNode(ecmtime):getAttribute(DV)" styleid="s3" />
+          <Column order="2" datasource="OBJ:objFItem1:selectSingleNode(ecmRealtime):getAttribute(DV)" styleid="s3" />
+        <Column order="3" datasource="OBJ:objFItem1:selectSingleNode(StartDiesel):getAttribute(DV)" styleid="s3" />
+        <Column order="4" datasource="OBJ:objFItem1:selectSingleNode(EndDiesel):getAttribute(DV)" styleid="s3" />
+        <Column order="5" datasource="OBJ:objFItem1:selectSingleNode(StartDieselOx):getAttribute(DV)" styleid="s3" />
+        <Column order="6" datasource="OBJ:objFItem1:selectSingleNode(MaxDieselInlet):getAttribute(DV)" styleid="s3" />
+        <Column order="7" datasource="OBJ:objFItem1:selectSingleNode(MaxDieselOutlet):getAttribute(DV)" styleid="s3" />
+        <Column order="8" datasource="OBJ:objFItem1:selectSingleNode(MaxDieselPressure):getAttribute(DV)" styleid="s3" />
+      </Node>
+
+      <Node level="0" loopStart="0" loopEnd="1">
+        <!-- Display Aftertreatment Maintenance information -->
+        <Object name="objFItem1" source="OBJ:AHL_ARR:nextNode" />
+        <Column order="0" datasource="10(Oldest)" styleid="s3" />
+        <Column order="1" datasource="OBJ:objFItem1:selectSingleNode(ecmtime):getAttribute(DV)" styleid="s3" />
+          <Column order="2" datasource="OBJ:objFItem1:selectSingleNode(ecmRealtime):getAttribute(DV)" styleid="s3" />
+        <Column order="3" datasource="OBJ:objFItem1:selectSingleNode(StartDiesel):getAttribute(DV)" styleid="s3" />
+        <Column order="4" datasource="OBJ:objFItem1:selectSingleNode(EndDiesel):getAttribute(DV)" styleid="s3" />
+        <Column order="5" datasource="OBJ:objFItem1:selectSingleNode(StartDieselOx):getAttribute(DV)" styleid="s3" />
+        <Column order="6" datasource="OBJ:objFItem1:selectSingleNode(MaxDieselInlet):getAttribute(DV)" styleid="s3" />
+        <Column order="7" datasource="OBJ:objFItem1:selectSingleNode(MaxDieselOutlet):getAttribute(DV)" styleid="s3" />
+        <Column order="8" datasource="OBJ:objFItem1:selectSingleNode(MaxDieselPressure):getAttribute(DV)" styleid="s3" />
+      </Node>
+    </Node>
+  </data>
+
+  <parameters>
+    <parameter name="ARR_Regen" source="/Image/Arrays/A[@ID=7007]/Dim/I[./P[@ID=16777220]]" />
+    <parameter name="ARR_MaxSoot" source="/Image/Arrays/A[@ID=7008]/Dim/I[./P[@ID=16777220]]" />
+    <parameter name="ARR_MaxDiesel" source="/Image/Arrays/A[@ID=7009]/Dim/I[./P[@ID=16777220]]" />
+
+    <parameter name="RTCDisable" source="OBJ:AHL_RTCDisable:length" />
+    <parameter name="RTCEnable" source="OBJ:AHL_RTCEnable:length" />
+
+    <parameter name="paramRTCExists" source="/Image/Parameters/P[@ID=22371]"/>
+    <parameter name="paramRTCEnable" source="/Image/Parameters/P[@ID=22371 and @V = 1]" />
+    <parameter name="paramRTCDisable" source="/Image/Parameters/P[@ID=22371 and @V = 0]" />
+    <parameter name="AHL_Enable" source="/Image/Parameters/P[@ID=16803262]" />
+
+    <!-- Parameters in the Regen array -->
+	<parameter name="CHECK_ECM_TIME_REGEN" source="/Image/Arrays/A[@ID=7007]/Dim[@Num=1]/I[@Num=0]/P[@ID=16777220]"/>
+    <parameter name="count" source="I[@Num=0]" />
+    <parameter name="ecmtime" source="P[@ID=16777220]" />
+    <parameter name="ecmRealtime" source="P[@ID=16786075]" />
+    <parameter name="StartDiesel" source="P[@ID=16805163]" />
+    <parameter name="EndDiesel" source="P[@ID=16805164]" />
+    <parameter name="StartDieselOx" source="P[@ID=16804571]" />
+    <parameter name="MaxDieselInlet" source="P[@ID=16804567]" />
+    <parameter name="MaxDieselOutlet" source="P[@ID=16804569]" />
+    <parameter name="MaxDieselPressure" source="P[@ID=16804568]" />
+
+    <!-- Parameters in the array MAX SOOT-->
+	<parameter name="CHECK_ECM_TIME_MAX_SOOT" source="/Image/Arrays/A[@ID=7008]/Dim[@Num=1]/I[@Num=0]/P[@ID=16777220]"/>
+    <parameter name="ecmtimeSoot" source="P[@ID=16777220]" />
+    <parameter name="ecmRealtimeSoot" source="P[@ID=16786075]" />
+    <parameter name="DieselPFSL" source="P[@ID=16804562]" />
+    <parameter name="DieselOCIT" source="P[@ID=16804563]" />
+    <parameter name="DieselPFIT" source="P[@ID=16804565]" />
+    <parameter name="DieselPFOT" source="P[@ID=16804564]" />
+    <parameter name="DieselPFDP" source="P[@ID=16805124]" />
+
+    <!-- Parameters in the array MAX Diesel-->
+	<parameter name="CHECK_ECM_TIME_MAX_DIESEL" source="/Image/Arrays/A[@ID=7009]/Dim[@Num=1]/I[@Num=0]/P[@ID=16777220]"/>
+    <parameter name="ecmtimeDiesel" source="P[@ID=16777220]" />
+    <parameter name="ecmRealtimeDiesel" source="P[@ID=16786075]" />
+    <parameter name="DieselPFSL1" source="P[@ID=16804562]" />
+    <parameter name="DieselOCIT1" source="P[@ID=16804563]" />
+    <parameter name="DieselPFIT1" source="P[@ID=16804565]" />
+    <parameter name="DieselPFOT1" source="P[@ID=16804564]" />
+    <parameter name="DieselPFDP1" source="P[@ID=16805124]" />
+  </parameters>
+
+  <resources>
+    <resource id="Res1" CLSID="{1C628621-473B-4EA4-9DC6-7ED92C57DD9E}\Pages\{E5DC82A8-53E2-4387-BFBE-4C702D6A7B15}" LoadDLL="TRUE"/>
+    <resource id="Res2" CLSID="{1ECBBE0B-836B-11D4-8A76-00062999E309}" LoadDLL="TRUE"/>
+  </resources>
+
+
+  <!-- MAX Diesel-->
+  <data loopEnd="1">
+
+    <Node loopEnd="1">
+      <Column order="0" datasource=" " styleid="s2" />
+    </Node>
+
+    <Node loopEnd="1">
+      <Column order="0" datasource=" " styleid="s3" />
+    </Node>
+    
+    <!-- Headers-->
+    <Node loopEnd="1">
+      <Object name="AHL_MAX_Diesel_ARR" source="OBJ:DOM:selectNodes(ARR_MaxDiesel)" />
+      <Object name="objFItemHead3" source="OBJ:AHL_MAX_Diesel_ARR:nextNode" />
+      <Column order="0" datasource="OBJ:objFItemHead3:selectSingleNode(ecmtimeDiesel):getAttribute(N)" styleid="s3" />
+      <Column order="1" datasource="OBJ:objFItemHead3:selectSingleNode(ecmRealtimeDiesel):getAttribute(N)" styleid="s3" />
+      <Column order="2" datasource="OBJ:objFItemHead3:selectSingleNode(DieselPFDP1):getAttribute(N)" styleid="s3" />
+      <Column order="3" datasource="OBJ:objFItemHead3:selectSingleNode(DieselPFSL1):getAttribute(N)" styleid="s3" />
+      <Column order="4" datasource="OBJ:objFItemHead3:selectSingleNode(DieselOCIT1):getAttribute(N)" styleid="s3" />
+      <Column order="5" datasource="OBJ:objFItemHead3:selectSingleNode(DieselPFIT1):getAttribute(N)" styleid="s3" />
+      <Column order="6" datasource="OBJ:objFItemHead3:selectSingleNode(DieselPFOT1):getAttribute(N)" styleid="s3" />
+      <Column order="7" datasource="     "/>
+      <Column order="8" datasource="     "/>
+    </Node>
+    
+    <!--UNITS-->
+      <Node loopEnd="1"> 
+      <Object name="AHL_MAX_Diesel_ARR" source="OBJ:DOM:selectNodes(ARR_MaxDiesel)" />
+        <Object name="objFItem10" source="OBJ:AHL_MAX_Diesel_ARR:nextNode" />
+        <Column order="0" datasource="RES:Res1:315" styleid="s3" />      
+        <Column order="3" datasource="OBJ:objFItem10:selectSingleNode(DieselPFSL1):getAttribute(U)" styleid="s3" />
+        <Column order="4" datasource="OBJ:objFItem10:selectSingleNode(DieselOCIT1):getAttribute(U)" styleid="s3" />
+        <Column order="5" datasource="OBJ:objFItem10:selectSingleNode(DieselPFIT1):getAttribute(U)" styleid="s3" />
+        <Column order="6" datasource="OBJ:objFItem10:selectSingleNode(DieselPFOT1):getAttribute(U)" styleid="s3" />
+      </Node>
+    <Node loopEnd="1">
+      <Column order="0" datasource="RES:Res2:9064" styleid="s4" />
+    </Node>
+
+    <Object name="IsRTCEnable" source="OBJ:DOM:selectSingleNode(paramRTCExists)" />
+
+    <Node level="0" loopStart="OBJ:IsAHLEnable:getAttribute(V)" loopEnd="1" >
+      <Column order="0" datasource="Feature is Not Supported" styleid="s4"/>
+      <!-- Feature Not Supported-->
+    </Node>
+    <ValueStore name="Check_ECM_Time_Max_Diesel" datasource="OBJ:DOM:selectSingleNode(CHECK_ECM_TIME_MAX_DIESEL):getAttribute(V)" 
+      type="BOOL"/>
+
+    <data loopStart="0" loopEnd="OBJ:IsAHLEnable:getAttribute(V)" styleid="s1">
+      <Object name="AHL_MAX_Diesel_ARR" source="OBJ:DOM:selectNodes(ARR_MaxDiesel)" />
+      <Object name="AHL_RTCExists" source="OBJ:DOM:selectNodes(paramRTCExists)" />
+      <Object name="AHL_RTCEnable" source="OBJ:DOM:selectNodes(paramRTCEnable)" />
+      <Object name="AHL_RTCDisable" source="OBJ:DOM:selectNodes(paramRTCDisable)" />
+
+	  <Node level="0" loopStart="0" loopEnd="VALUE_STORE:Check_ECM_Time_Max_Diesel">
+      <Node loopStart= "0" loopEnd="OBJ:AHL_MAX_Diesel_ARR:length" styleid="s1">
+        <Object name="objFItem9" source="OBJ:AHL_MAX_Diesel_ARR:nextNode" />
+        <Column order="0" datasource="OBJ:objFItem9:selectSingleNode(ecmtimeDiesel):getAttribute(DV)" styleid="s3"/>
+          <Column order="1" datasource="OBJ:objFItem9:selectSingleNode(ecmRealtimeDiesel):getAttribute(DV)" styleid="s3" />
+        <Column order="2" datasource="OBJ:objFItem9:selectSingleNode(DieselPFDP1):getAttribute(DV)" styleid="s3" />
+        <Column order="3" datasource="OBJ:objFItem9:selectSingleNode(DieselPFSL1):getAttribute(DV)" styleid="s3" />
+        <Column order="4" datasource="OBJ:objFItem9:selectSingleNode(DieselOCIT1):getAttribute(DV)" styleid="s3" />
+        <Column order="5" datasource="OBJ:objFItem9:selectSingleNode(DieselPFIT1):getAttribute(DV)" styleid="s3" />
+        <Column order="6" datasource="OBJ:objFItem9:selectSingleNode(DieselPFOT1):getAttribute(DV)" styleid="s3" />
+      </Node>
+	  </Node>
+    </data>
+  </data>
+
+
+  <!-- MAX SOOT-->
+  <data loopEnd="1">
+
+    <Node loopEnd="1">
+      <Column order="0" datasource="RES:Res1:310" styleid="s4" />
+    </Node>
+
+    <Node level="0" loopStart="OBJ:IsAHLEnable:getAttribute(V)" loopEnd="1" >
+      <Column order="0" datasource="Feature is Not Supported" styleid="s4"/>
+      <!-- Feature Not Supported-->
+    </Node>
+
+    <Object name="IsRTCEnable" source="OBJ:DOM:selectSingleNode(paramRTCExists)" />
+
+    <data level="0" loopStart="0" loopEnd="OBJ:IsAHLEnable:getAttribute(V)" >
+      
+      <Object name="AHL_MAX_SOOT_ARR" source="OBJ:DOM:selectNodes(ARR_MaxSoot)" />
+      <Object name="AHL_RTCExists" source="OBJ:DOM:selectNodes(paramRTCExists)" />
+      <Object name="AHL_RTCEnable" source="OBJ:DOM:selectNodes(paramRTCEnable)" />
+      <Object name="AHL_RTCDisable" source="OBJ:DOM:selectNodes(paramRTCDisable)" />
+
+	<ValueStore name="Check_ECM_Time_Max_Soot" datasource="OBJ:DOM:selectSingleNode(CHECK_ECM_TIME_MAX_SOOT):getAttribute(V)"    type="BOOL"/>
+      <Node level="0" loopStart="0" loopEnd="VALUE_STORE:Check_ECM_Time_Max_Soot">
+      <Node level="0" loopStart="0" loopEnd="OBJ:AHL_MAX_SOOT_ARR:length">
+        <Object name="objFItem7" source="OBJ:AHL_MAX_SOOT_ARR:nextNode" />
+        <Column order="0" datasource="OBJ:objFItem7:selectSingleNode(ecmtimeSoot):getAttribute(DV)" styleid="s3" />
+          <Column order="1" datasource="OBJ:objFItem7:selectSingleNode(ecmRealtimeSoot):getAttribute(DV)" styleid="s3" />
+        <Column order="2" datasource="OBJ:objFItem7:selectSingleNode(DieselPFDP):getAttribute(DV)" styleid="s3" />
+        <Column order="3" datasource="OBJ:objFItem7:selectSingleNode(DieselPFSL):getAttribute(DV)" styleid="s3" />
+        <Column order="4" datasource="OBJ:objFItem7:selectSingleNode(DieselOCIT):getAttribute(DV)" styleid="s3" />
+        <Column order="5" datasource="OBJ:objFItem7:selectSingleNode(DieselPFIT):getAttribute(DV)" styleid="s3" />
+        <Column order="6" datasource="OBJ:objFItem7:selectSingleNode(DieselPFOT):getAttribute(DV)" styleid="s3" />
+      </Node>
+	 </Node>
+    </data>
+  </data>
+
+  <styles>
+    <style id="s1" AutoSizeMode="1:VT_I4" CellFontBold="1:VT_I4" CellAlignMent="1:VT_I4" CellBackColor="14607854" />
+	<style id="s2" fillcolor="0" BackColor = "vbgray" CellAlignMent="4:VT_I4" />
+    <style id="s3" CellAlignMent="1:VT_I4" WordWrap="1" />
+    <style id="s4" AutoSizeMode="1:VT_I4" Mergecells="6" CellFontUnderline="true" />
+  </styles>
+
+  <printing HdrFontSize="8">
+    <header>
+      <line>
+        <center source="RES:Res2:9062" />
+      </line>
+      <line>
+      <left source="RES:Res2:2030"/>
+      <left source="OBJ:DOM:selectSingleNode(/Image/Header/ESerial):getAttribute(DisplayValue)"/>
+      <right source="INSITE - "/>
+      <right source="OBJ:DOM:selectSingleNode(/Image):getAttribute(ImageVersion)"/>
+      </line>
+      <line>
+        <left source="RES:Res2:2029"/>
+        <left source="OBJ:DOM:selectSingleNode(/Image/Header/UNumber):getAttribute(DisplayValue)"/>
+        <right source="RES:Res2:2031"/>
+        <right source="OBJ:DOM:selectSingleNode(/Image/Header/VMake):getAttribute(DisplayValue)"/>
+      </line>
+      <line>
+        <left source="RES:Res2:2032"/>
+        <left source="OBJ:DOM:selectSingleNode(/Image/Header/WOName):getAttribute(DisplayValue)"/>
+        <right source="RES:Res2:2033"/>
+        <right source="OBJ:DOM:selectSingleNode(/Image/Header/IName):getAttribute(DisplayValue)"/>
+      </line>
+	   <line>
+ 		<right source="RES:Res2:2036"/>
+		<right source="OBJ:DOM:selectSingleNode(/Image/Header/CustomerName):getAttribute(DisplayValue)"/>
+	</line>
+    </header>
+  </printing>
+</FlexGrid>

@@ -1,0 +1,4 @@
+function_address,function_name,reason
+# Add function addresses here to clear their local variable overrides
+# Example:
+# 0x0000a6fa,sensorFaultDebounceMonitor,Reset corrupted variable types

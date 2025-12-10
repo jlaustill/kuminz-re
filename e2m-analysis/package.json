@@ -1,0 +1,59 @@
+{
+  "name": "e2m-analysis",
+  "version": "1.0.0",
+  "description": "TypeScript tools for analyzing Cummins Calterm e2m files",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/index.ts",
+    "lint": "eslint src/**/*.ts",
+    "typecheck": "tsc --noEmit",
+    "analyze:common": "tsx src/tools/find-common-parameters.ts",
+    "analyze:unique": "tsx src/tools/find-unique-lines.ts",
+    "analyze:differences": "tsx src/tools/find-differences.ts",
+    "analyze:stats": "tsx src/tools/column-stats.ts",
+    "analyze:all": "npm run analyze:common && npm run analyze:unique && npm run analyze:differences && npm run analyze:stats",
+    "correlate:memory": "tsx src/tools/correlate-memory-addresses.ts",
+    "predict:memory": "tsx src/tools/predict-memory-addresses.ts",
+    "reverse:formula": "tsx src/tools/reverse-engineer-formula.ts",
+    "analyze:bases": "tsx src/tools/analyze-base-address-patterns.ts",
+    "map:bases": "tsx src/tools/map-all-base-addresses.ts",
+    "calc:bases": "tsx src/tools/calculate-new-bases.ts",
+    "docs:bases": "tsx src/tools/generate-base-address-docs.ts",
+    "generate:testlist": "tsx src/tools/generate-testing-list.ts",
+    "calc:chunk1": "tsx src/tools/calculate-chunk1-bases.ts",
+    "verify:bases": "tsx src/tools/generate-verification-tests.ts",
+    "replace:test": "tsx src/tools/generate-replacement-test.ts",
+    "update:bases": "tsx src/tools/update-base-addresses-doc.ts",
+    "analyze:groups": "tsx src/tools/analyze-groups.ts",
+    "test:group": "tsx src/tools/generate-test-group.ts",
+    "test:group2": "tsx src/tools/generate-second-test-group.ts",
+    "analyze:col16": "tsx src/tools/analyze-column16-enums.ts",
+    "analyze:col7": "tsx src/tools/analyze-column7.ts",
+    "analyze:access": "tsx src/tools/analyze-column7-access-control.ts",
+    "analyze:headers": "tsx src/tools/analyze-headers.ts",
+    "analyze:crc": "tsx src/tools/analyze-crc-patterns.ts",
+    "test:crc": "tsx src/tools/test-crc-generation.ts",
+    "export:json": "tsx src/tools/export-common-parameters-json.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
+  },
+  "keywords": [
+    "reverse-engineering",
+    "calterm",
+    "e2m",
+    "cummins"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/pg": "^8.15.5",
+    "pg": "^8.16.3"
+  }
+}

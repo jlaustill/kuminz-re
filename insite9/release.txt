@@ -1,0 +1,665 @@
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+       RELEASE NOTES for INSITE™ 7.6
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Note: If it is difficult to read this document with Microsoft notepad, click
+      on "Word Wrap" under the "Format" menu item or 'maximize' the Notepad 
+      window. To print this and have the tables in a valid format set the
+      page margins to 0.25.
+
+CAUTION: Please verify that the Calibration you select to download to an ECM
+      is appropriate for that specific ECM. Permanent damage could occur if
+      incorrect calibrations are downloaded.
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Contents
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A. Issues with INSITE™ 7.6
+B. Issues with ECM Applications
+C. Datalink Adapters INLINE 4, 5 and 6
+D. Datalink Adapter Compatibility Matrix
+E. Version Compatibility
+F. Special Issues
+G. Suggestions and Tips
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+A. Issues with INSITE™ 7.6
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Opening INSITE
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- INSITE 7.6 takes longer to open if the computer has been restarted. Issue is 
+  currently under investigation.  (DB_G00197314)
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+PCID's
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- It is becoming common for INSITE™ to be installed and registered with an 
+  Administrator account, and then used with a Limited User account.  On some 
+  computers, INSITE™ does not have access to the same security settings on 
+  Limited User accounts as it would on Administrator accounts.  This causes
+  a different PCID to be displayed for the Limited User account after INSITE™ 
+  has been registered with the PCID displayed for an Administrator account.
+
+  It is recommended after installation to register the INSITE™ PCID displayed when 
+  logging into the Limited User account.
+
+- For Calibration Authorization passwords contact your Distributor with the 
+  INSITE™ 7.6 PCID.
+
+- New users can enter both the Basic and Functional Password when first opening 
+  INSITE™.  If the Basic is entered on the "New Functionality Password" window,
+  INSITE™ will open in Read Only.  The Functionality Password will have to be 
+  entered under the Tools > Options > Security window.  (DB_G00149670)
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Installation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ - If upgrading using the Cummins Inc. Update Manger, Microsoft .NET Framework
+   must be manually installed.  This can be downloaded from the Microsoft website.
+
+
+- When installing Chinese version of INSITE™ on Windows XP, East Asian Languages
+  Option in the Regional Settings must be selected in order for the Characters 
+  to appear correctly.
+
+- INSITE™ 7.6 does not support Windows® 95, 98, 98SE, ME, NT, 2000, XP SP1 or XP SP2.
+
+- Windows® XP SP3, Windows® Vista or Windows® 7 must have full administrative 
+  privileges to install. After installation, INSITE™ can be run with User 
+  privileges. 
+
+- Refer to the following table for the hard drive space required for the 
+  installation of INSITE™ 7.6. This is based on the assumption of "C" drive
+  being the drive on which the Operating System is installed.
+
+
+                 
+	           +----------------------------+----------------------------+
+	           |Installing on the "C" drive |Installing on the "D" drive |
+                   |                            |                            |
++------------------+----------------------------+----------------------------+
+|                  |                            |                            |
+|                  |                            |                            | 
+|  Space required  |         C:120 MB           |          C: 10 MB          |
+|  at the time of  |                            |                            |
+|  installation    |         D:N/A              |          D: 120 MB         | 
+|                  |                            |                            |
+|                  |                            |                            |
++------------------+----------------------------+----------------------------+
+
+
+- It is recommended that you always reboot your PC after installing software.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Connections 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Error Messages for communication failures:
+	
+	- Error 5200: Indicates communication loss between computer and the datalink
+	  adapter.
+	- Error 5201: Indicates communication loss between the datalink adapter and 
+	  the ECM.
+	- Error 5202: Indicates no communication could be established between the
+	  datalink adapter and the computer.
+	- Error 5204: Indicates no communication could be established between the 
+	  datalink adapter and the ECM.
+
+- Verify that the infrared port is disabled so the serial port is only being used
+  for ECM communications. 
+
+- If you have the Palm Pilot Hot Sync Manager on a PC that only has one serial port,
+  you must disable the Hot Sync Manager before connecting to an ECM.
+
+- An Internet connection is required before selecting the "http://www.cummins.com"
+  or "http://insite.cummins.com" link from the Help > About INSITE™ dialog.
+
+- Auto Configure and "Datalink Adapter Connection Test" does not find the adapter
+  when connected to a multi-module system. 
+  Work Around:  Manually configure the Datalink adapter connection.  (DB_G00151441)
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Advanced ECM Data 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+- To print Advanced ECM Data Views, right-click in the right pane and
+  click on Print. 
+
+- If the display becomes distorted or cannot be completely viewed, close the 
+  Advanced ECM Data View and then reopen it. Resizing can cause the views to 
+  become distorted.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Calibrations
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Automotive applications will have a default setting of "ON" for the Save and
+  Restore option in the Calibration Download dialog. 
+
+- Industrial applications will have a Default Setting of "OFF" for the Save and
+  Restore option in the Calibration Download dialog.
+
+- When performing a Calibration Download, the "Save and Restore" option may be
+  grayed out for some applications.
+
+- To decrease calibration download times please make sure all applications other
+  than INSITE™ are closed.  Always use the J1939 protocol and engine connector
+  when available.
+
+- Computers with less than the minimum recommended hardware requirements will have
+  an extended Calibration Download time. Make sure that screen savers and suspend 
+  modes are disabled.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Display & Graphics 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- The use of Large Toolbar buttons will not display all icons on the toolbar. 
+  Work Around:  Under Tools > Options > General, select Small Buttons in the 
+  Display Options. (DB_G00150835)
+
+- Use of Extended Desktop feature in Windows XP or Vista is not supported by INSITE™ 7.6.
+
+- To Disable the "Display Feature Names" option for the view bar, the checkbox
+  in Tools/Options/General/Viewbar/Display Feature Names must be unchecked. 
+
+- If your PC monitor display is set to "Large Fonts", not all information in INSITE™ 
+  may be displayed.  It is recommended to use small fonts.
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ECM Diagnostic Tests 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- If the display becomes distorted or cannot be completely viewed, close the 
+  ECM Diagnostic Tests View and then reopen it. Resizing may cause the view to 
+  become distorted.
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Fault Codes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- The MIL Lamp Status is not displayed when printing the Image Fault Codes in Tool
+  Display Format.
+  Work Around:  Print the Image Fault Codes in Text Only Format or connect to the
+  image, open Fault Codes and select the Print icon. (DB_G00169914)
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Printing
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- When using print preview use the tool bar magnifying glass to display the 
+  text in a larger view.
+
+- The Print options will be disabled when no printers are available.  This
+  includes the Page Setup, Print and Print Preview options.
+  Work around: Setup/install a printer on the PC and retry the INSITE™ print
+  selection.
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Simulators
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Values shown in simulator do not reflect real values that would be seen by a user
+  when connected to an engine.
+
+- When creating a Work Order on the QSK19G/45G/60G, QSV81/91 simulator, Error 10411
+  is displayed and a work order is not completed.  (DB_G00151367)
+
+- The Aftertreatment High NOx Reset Test on the ISL8.9 CM2150 SN(Euro 4.5) and 
+  ISL8.9 CM2150 SN(Euro 4.5)simulators does not run.  
+  After clicking the Start button, "Error Number 40203 An internal error has
+  occurred in the INSITE™ program" is displayed.  (DB_G00148885)
+
+- The Power Generation Tuning Test on QSK38 CM850/CM2150 and QSK50/60 CM850/CM2150
+  Power Gen Simulators does not run.  After clicking the Start button, 
+  "Error Number 40508 An internal error has occurred in the INSITE™ program" is
+  displayed.  (DB_G00151368)
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Trip Information
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- When resetting Trip Information be sure to key off for 30 seconds before
+  continuing. The ECM may have an invalid foot print if the key is not 
+  switched off for the required amount of time.
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Work Orders/ECM Images/Templates
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Double clicking on the converted image files (.csv format) will not open them
+  with the correct format in Microsoft Excel.
+  
+  Work around:
+  Follow the steps below to open a converted (.csv format) image file in Excel:
+	
+	-  Open Microsoft Excel
+	-  Click on File -> Open
+	-  Change the Files of type field to "All Files(*.*)" or "Text Files (*.csv)
+	-  Select C:\Intelect\INSITE\Export\desiredimage.csv
+	-  The "Text Import Wizard" will open
+	-  In Step 1 of the wizard, make sure the "Delimited" option is selected and
+	   click "Next"
+	-  In step 2 of the wizard, uncheck the "Tab" box and check the "Comma" box
+	   and click "Next"
+	-  In step 3 of the wizard, click on "Finish"
+	-  Format columns as desired
+
+- When upgrading to INSITE™ 7.6 from any version of INSITE™, the following files
+  need to be backed up:
+	
+	- C:\Intelect\INSITE\WorkOrders
+	- C:\Intelect\INSITE\UserSettings\data.wo
+
+- When using templates it is advised to verify the first template sent to the target
+  vehicle. This helps ensure the template configuration is correct for subsequent
+  vehicles.
+
+- When using templates verify that the ECM code is compatible or the same.
+ 
+- When naming images and templates, special characters cannot be used 
+  (i.e. & ^, etc).
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+B. Issues with ECM Applications
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- User Activated Data Logger (UADL) is not supported.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+CELECT
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- When calibrating a CELECT, you will need the ECM serial number and the SC option
+  that is displayed in INSITE™ to receive calibration authorization password(s) 
+  from QuickServe Online. INSITE™ only displays the SC option and to get a valid
+  password the SC Option and ECM Serial Number needs to be entered into the website.
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ISBe4 (4 and 6 cylinder) CM850
+ISLe4 (6 cylinder) CM850
+ISX/ISZ13 CM2150 SN
+ISF2.8 CM2220 AN
+ISF3.8 CM2220 AN
+ISB 
+ISL
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ - High NOx Reset test
+   This test cannot be run more than once on a single key cycle.  
+   Work Around.  If this test needs to be performed more than once, key off before 
+   restarting the test.
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Signature/ISX - CM570
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+- Features and Parameters 
+  	
+	- J1939 Multiplexing
+ 	  If the "J1939 Multiplexing" feature and its sub-features are enabled,
+	  they cannot all be disabled at the same time and sent to the ECM,
+	  INSITE™ displays an error dialog stating that "The write to ECM failed 
+	  for the requested parameters."
+ 	
+	- Engine Brake Control
+	  If a phase 8 calibration is currently in the ECM, the Engine Brake 
+ 	  Delay Time value might be set to zero regardless of the actual value
+	  entered for this parameter in the Features and Parameters.
+	  Work around:
+	  Check the value for the Calibration Software Phase in INSITE™ (can be
+          found in Features & Parameters/System ID & Dataplate/Calibration
+          Information). If it starts with 08, then download the latest version of
+          the ECM Code to resolve this issue.  
+          	  
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ISX - CM870
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+- The "Injector Check Valve Diagnostics Test" might not run for some earlier ECM
+  code phases on the ISX - CM870 ECMs.  Please refer to the table below
+  for more details.
+
++----------------------------+------------------------------+
++----------------------------+------------------------------+
+|        ECM Code Phase      | Test Status in INSITE™ 7.6 |
++----------------------------+------------------------------+
++----------------------------+------------------------------+
+|                            |                              |
+|  Phase 5.4.6.02 and prior  |    Test will not run         |
+|                            |                              |
++----------------------------+------------------------------+
+|                            |                              |  
+|  Phase 5.4.7.11 and post   |      Test will run           |
+|                            |                              |
++----------------------------+------------------------------+
+|                            |                              |
+|  Phase 6.5.1.01 and prior  |    Test will not run         |
+|                            |                              | 
++----------------------------+------------------------------+
+|                            |                              |
+|  Phase 6.5.2.0x and post   |      Test will run           |
+|                            |                              |
++----------------------------+------------------------------+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+CELECT Plus
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		
+- INSITE™ ReCon ECM Procedure:
+  CAUTION:
+  To Calibrate this ECM, use the following steps:
+
+1.	Hook up battery power
+2.	Turn key switch ON for 10 seconds
+3.	Turn key switch OFF
+4.	Launch INSITE™ 
+5.	Connect
+6.	Click “OK” to ROM boot message
+7.	Select “Calibration Selection”
+8.	Choose the appropriate calibration code and transfer to ECM
+9.	Turn key switch ON when INSITE™ prompts
+        (E03016)
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+QSK19/45/60-CM500
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- When calibrating a QSK19/45/60-CM500, avoid using a connection with 
+  "Auto Detect" as the calibration might fail.
+  Work around: Use an INLINE II, 4, 5 or 6 connection that uses J1587/J1708
+  instead of Auto Detect.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+QSM 11
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Calibration Selection
+  When calibrating QSM11 engines utilizing Multiple Unit Synchronization, 
+  J1708 protocol must be used.  The calibration will not download to the ECM
+  successfully if J1939 protocol is used.  If both J1708 and J1939 protocols
+  are available on the Datalink, the J1708 protocol must be used with the
+  INLINE II, 4, 5 or 6 connection that uses J1587/J1708 instead of Auto Detect. 
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C. Datalink Adapters INLINE 4, 5 and 6
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The INLINE™ II adapter is obsolete. It can be used with INSITE™, but technical
+support for this adapter is not available.
+
+- INLINE 6 Autodetect does not communicate when connected to the J1708 protocol.
+  Work Around:  Manually configure the J1708 Datalink adapter connection.
+
+- INSITE™ 7.6 supports the INLINE 4, 5 and 6 Adapters. 
+  The INLINE 4, 5 and 6 Adapters currently supports J1587/J1708 and J1939 protocol
+  for most ECM applications.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+D. Datalink Adapter Compatibility Matrix
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+                +----------------------------------------------+
+	        |              INSITE™ 7.6                   |
+	        +-------+---------+-------------+--------------+
+	        |INLINE |INLINE I |  INLINE II* | INLINE 4/5/6 |
+                |       |         |             |  (RP1210A)   |
++---------------+-------+---------+-------------+--------------+
+| Program       | J1587 | J1587   |J1587 |J1939 | J1587| J1939 |
+|               | J1708 | J1708   |J1708 |      | J1708|       |
++---------------+-------+---------+-------------+--------------+
+|480 C-E        |   X   |   X     |   X  |  X   |   X  |   X   |
++---------------+-------+---------+------+------+------+-------+
+|B5.9 Gas       |   X   |   X     |   X  |      |   X  |       |
++---------------+-------+---------+------+------+------+-------+
+|L10G/C8.3G	|   X   |   X     |   X  |      |   X  |       |
++---------------+-------+---------+------+------+------+-------+
+|C Gas Plus /   |       |         |      |      |      |       |
+|B Gas Plus     |   X   |   X     |   X  |  X   |   X  |   X   |
++---------------+-------+---------+------+------+------+-------+
+|L Gas Plus     |       |         |      |      |      |       |
+|               |   X   |   X     |   X  |  X   |   X  |   X   |
++---------------+-------+---------+------+------+------+-------+
+|ISB5.9 G CM2180|       |         |      |  X   |      |   X   |
++---------------+-------+---------+------+------+------+-------+
+|ISL G CM2180	|       |         |      |  X   |      |   X   |
++---------------+-------+---------+------+------+------+-------+
+|CELECT	        |   X   |   X     |   X  |      |   X  |       |
++---------------+-------+---------+------+------+------+-------+
+|CELECT Plus	|   X   |   X     |   X  |      |   X  |       |
++---------------+-------+---------+------+------+------+-------+
+|CELECT PlusInd	|   X   |   X     |   X  |      |   X  |       |
++---------------+-------+---------+------+------+------+-------+
+|CENTINEL	|   X   |   X     |   X  |      |   X  |       |
++---------------+-------+---------+------+------+------+-------+
+|CENTRY 	|   X   |   X     |   X  |      |   X  |       |
++---------------+-------+---------+------+------+------+-------+
+|Gas Compression|       |         |      |      |      |       | 
+|GTA/KTA	|       |         |      |  X   |      |   X   |
++---------------+-------+---------+------+------+------+-------+
+|Gas CENSE      |       |         |      |      |      |       |
+|QSV81/91	|       |         |      |  X   |      |   X   |
++---------------+-------+---------+------+------+------+-------+
+|B3.9/5.9/C8.3  |       |         |      |      |      |       |
+|CM2150                 |         |      |  X   |      |   X   |
++---------------+-------+---------+------+------+------+-------+
+|ISB		|   X   |   X     |   X  |  X   |   X  |   X   |
++---------------+-------+---------+------+------+------+-------|
+|ISB Chrysler	|       |         |      |  X   |      |   X   |
++---------------+-------+---------+------+------+------+-------+
+|ISBe/ISBe4     |       |         |      |      |      |       |
+|4 & 6 Cylinder |   X   |   X     |   X  |  X   |   X  |   X   |
++---------------+-------+---------+------+------+------+-------+
+|ISBe4.5/ISBe5  |       |         |      |      |      |       |
+|- CM2150       |       |         |      |  X   |      |   X   |
++---------------+-------+---------+------+------+------+-------+
+|ISC/ISL        |   X   |   X     |   X  |  X   |   X  |   X   |
++---------------+-------+---------+------+------+------+-------+
+|ISC/Transit    |       |         |      |      |      |       |
+|Bus ISL8.3-    |       |         |      |      |      |       |
+|CM850          |   X   |   X     |   X  |  X   |   X  |   X   |
++---------------+-------+---------+------+------+------+-------+
+|ISB6.7 CM2250  |       |         |      |  X   |      |   X   |
++---------------+-------+---------+------+------+------+-------+
+|ISC8.3 CM2250  |       |         |      |  X   |      |   X   |
++---------------+-------+---------+------+------+------+-------+
+|ISB/L-CM850    |   X   |   X     |   X  |  X   |   X  |   X   |
++---------------+-------+---------+------+------+------+-------+
+|ISL8.9 CM2150 SN       |         |      |      |      |       | 
+| (Euro 4.5/5)  |       |         |      |  X   |      |   X   |
++---------------+-------+---------+------+------+------+-------+
+|ISL9 CM2250    |       |         |      |  X   |      |   X   |
++---------------+-------+---------+------+------+------+-------+
+|ISF2.8CM2220 AN|       |         |      |  X   |      |   X   |
++---------------+-------+---------+------+------+------+-------+
+|ISF2.8CM2220IAN|       |         |      |  X   |      |   X   |
++---------------+-------+---------+------+------+------+-------+
+|ISF3.8CM2220 AN|       |         |      |  X   |      |   X   |
++---------------+-------+---------+------+------+------+-------+
+|ISF3.8CM2220IAN|       |         |      |  X   |      |   X   |
++---------------+-------+---------+------+------+------+-------+
+|ISLe4.5/ISLe5  |       |         |      |      |      |       |
+|- CM2150       |       |         |      |  X   |      |   X   |
++---------------+-------+---------+------+------+------+-------+
+|ISM		|   X   |   X     |   X  |  X   |   X  |   X   |
++---------------+-------+---------+------+------+------+-------+
+|ISM-CM870/875  |   X   |   X     |   X  |  X   |   X  |   X   |
++---------------+-------+---------+------+------+------+-------+
+|ISM-CM876      |       |         |   X  |      |   X  |       |
++---------------+-------+---------+------+------+------+-------+
+|ISM11-CM876 SN |       |         |      |  X   |      |   X   |
++---------------+-------+---------+------+------+------+-------+
+|ISX-CM871      |       |         |      |  X   |      |   X   |
++---------------+-------+---------+------+------+------+-------+
+|ISX/ISZ13      |       |         |      |      |      |       |
+|- CM2150 SN    |       |         |      |  X   |      |   X   |
++---------------+-------+---------+------+------+------+-------+
+|ISX11.9/15     |       |         |      |      |      |       |
+|- CM2250       |       |         |      |  X   |      |   X   |
++---------------+-------+---------+------+------+------+-------+
+|Signature/ISX	|   X   |   X     |   X  |  X   |   X  |   X   |
++---------------+-------+---------+------+------+------+-------+
+|Signature/ISX  |       |         |      |      |      |       |
+| - CM870       |   X   |   X     |   X  |  X   |   X  |   X   |
++---------------+-------+---------+------+------+------+-------+
+|PIM            |   X   |    X    |   X  |  X   |   X  |   X   |
++---------------+-------+---------+------+------+------+-------+
+|QSB            |   X   |   X     |   X  |  X   |   X  |   X   |
++---------------+-------+---------+------+------+------+-------+
+|QSC8.3/QSL9    |   X   |   X     |   X  |  X   |   X  |   X   |
++---------------+-------+---------+------+------+------+-------+
+|QSK19/45/60/78 |   X   |   X     |   X  |      |   X  |       |
++---------------+-------+---------+------+------+------+-------+
+|QSK19/23-CM500 |   X   |   X     |   X  |      |   X  |       |
++---------------+-------+---------+------+------+------+-------+
+|QSM11	 	|   X   |   X     |   X  |  X   |   X  |   X   |
++---------------+-------+---------+------+------+------+-------+
+|QSX15	 	|   X   |   X     |   X  |  X   |   X  |   X   |
++---------------+-------+---------+------+------+------+-------+
+|QSX15 CM2250ECF|	|         |      |  X   |      |   X   |
++---------------+-------+---------+------+------+------+-------+
+|QST30          |       |         |      |  X   |      |   X   |
++---------------+-------+---------+------+------+------+-------+
+|QSK19G/45G/60G |       |         |      |      |      |       |
+|QSV81/91	|   X   |   X     |   X  |  X   |   X  |   X   |
++---------------+-------+---------+------+------+------+-------+
+|QSK19/23/38/50 |       |         |      |      |      |       |
+|/60/78-CM850   |       |         |      |  X   |      |   X   |
++---------------+-------+---------+------+------+------+-------+
+|QSB/C/L-CM850  |       |         |      |  X   |      |   X   |
++---------------+-------+---------+------+------+------+-------+
+|QSB5/7-CM850 PG|       |         |      |  X   |      |   X   |
++---------------+-------+---------+------+------+------+-------+
+|QSB3.3-CM2150  |       |         |      |  X   |      |   X   |
++---------------+-------+---------+------+------+------+-------+
+|QSB4.5/6.7     |       |         |      |      |      |       |
+|CM2250         |       |         |      |  X   |      |   X   |
++---------------+-------+---------+------+------+------+-------+
+|QSL 9 CM2250   |       |         |      |  X   |      |   X   |
++---------------+-------+---------+------+------+------+-------+
+|QSK23/60/78    |       |         |      |      |      |       |
+|CM850 PG       |       |         |      |  X   |      |   X   |
++---------------+-------+---------+------+------+------+-------+
+|QSL9-CM850  PG |       |         |      |  X   |      |   X   |
++---------------+-------+---------+------+------+------+-------+
+|QSM11-CM876 PG |       |         |      |  X   |      |   X   |
++---------------+-------+---------+------+------+------+-------+
+|QST30-CM850 PG |       |         |      |  X   |      |   X   |
++---------------+-------+---------+------+------+------+-------+
+
+* Note: The INLINE™ II adapter has become obsolete. It can be used with INSITE™,
+but technical support for this adapter is not available.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Datalink Adapter Issues
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Do not substitute cables, except as indicated in the INLINE 4/5/6 Product
+  Announcement Bulletin.
+
+- Do not use an extension cable on the Datalink side of the INLINE II adapter.
+
+- Incompatible cables may damage the INLINE, INLINE I INLINE II and/or INLINE 4/5/6
+  adapter or personal computer and will void warranty.
+
+- Incompatible cables may cause communication issues with INSITE™.
+
+- INLINE II or INLINE 4/5/6 adapter may intermittently lose communication.  If your
+  Datalink adapter has communication problems, disconnect power from the adapter
+  for 5 seconds and then reconnect. The INSITE™ program does not need to be
+  shutdown.
+
+- There is feature under Tools - Reset Datalink Adapter that will correct some 
+  software communication errors with the INLINE II and INLINE 4/5/6.
+
+- The main harness (backbone) has a maximum overall length of 40 meters.
+ 
+- A J1939 stub, which can be a connection point for ECM's and/or the
+  INLINE II or INLINE 4/5/6 Datalink adapter, cannot exceed a maximum length of 1 
+  meter.
+ 
+- At each end of the backbone harness is a terminating resistor with a 
+  nominal resistance of 120 Ohms, it will measure 60 Ohms when you measure 
+  across the Datalink.
+
+- The INLINE II and INLINE 4/5/6 Adapters should be connected to a continuous 
+  battery power supply.  When making adjustments with INSITE™, including calibration
+  download, the operator will be asked to switch the key off for 30 seconds.
+  If the adapter is getting its power from a power source dependent on the key
+  switch status, such as the lighter adapter inside the cab, the Adapter will lose 
+  power, which will result in INSITE™ losing connection to the ECM.  This will 
+  require the operator to reconnect to the ECM and the adjustments might not 
+  have been saved.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+E. Version Compatibility
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+INSITE™ Software and Operating System Compatibility:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- INSITE™ 7.6 is compatible with the following operating systems:
+  Windows XP SP3, Windows Vista, and Windows 7.  Both 32-bit and 64-bit
+  versions are supported.
+
+- Contact the local Cummins® Distributor to register your new INSITE™
+  Service Tool and receive a password.
+ 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+F. Special Issues
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Power Savers
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Turn off any power saver features when communicating with an ECM,
+  especially when downloading a calibration to an ECM.  These commands
+  require the computer to communicate with the ECM, but do not require
+  you to interact with the computer. As a result, the power saver does
+  not recognize that a command is in progress and automatically turns
+  off the computer. This may disable the COM port, hard drive and other
+  hardware required for the calibration download process.
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+G. Suggestions and Tips
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Do not turn off the PC while INSITE™ is running.  Exit INSITE™ before
+  turning off the computer.  Disk and database corruption can occur
+  if you do not exit INSITE™ before turning off the computer. 
+
+- If the PC CMOS battery is not working, please make sure you reset
+  the PC date and time and restart the computer before you attempt to open
+  INSITE™.
+
+- To back up all Work Orders and Images with INSITE™ 7.6, select the 
+  "Export All" from the right-click menu while highlighting any Image.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+JRE  Created: INSITE™ 7.6 -  August 2012
+Document 6733-RLNO-07 Version 1.0.1
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

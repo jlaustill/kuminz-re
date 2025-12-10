@@ -1,0 +1,23 @@
+<LicenseFile>
+	<ToolReqLicense Expiration="permanent" Name="FuelInjectorReset_Tool_Lite" VendorDaemon="cummins" Key="0CE361AF529D" IsValid="" ID="FuelInjectorReset_Tool_Lite" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="Lite"/>
+	</ToolReqLicense>
+	<ToolReqLicense Expiration="permanent" Name="FuelInjectorReset_Tool_Pro" VendorDaemon="cummins" Key="AE9AE9167CAD" IsValid="" ID="FuelInjectorReset_Tool_Pro" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="Pro"/>
+	</ToolReqLicense>
+	<ToolReqLicense Expiration="permanent" Name="FuelInjectorReset_Tool_RSGR" VendorDaemon="cummins" Key="ED7EB636BA41" IsValid="" ID="FuelInjectorReset_Tool_RSGR" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="RSGR"/>
+	</ToolReqLicense>
+	<UserReqLicense Expiration="permanent" Name="FIR_AdvanceECMData" VendorDaemon="cummins" Key="12512A9F667D" IsValid="" ID="FIR_AdvanceECMData" Version="1.0" Count="uncounted">
+		<Users>
+			<User NAME="Reset_Advance_ECM_Data"/></Users>
+	</UserReqLicense>
+	<!--
+   ECM Passwords
+     -->
+	<ECMReqLicense Expiration="permanent" Name="FIR_ECMPwd_PermitResets" VendorDaemon="cummins" Key="E8EDCD46BED6" IsValid="" ID="FIR_ECMPwd_PermitResets" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="PERMIT_RESETS"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+</LicenseFile>

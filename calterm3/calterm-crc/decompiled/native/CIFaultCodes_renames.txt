@@ -1,0 +1,35 @@
+# CIFaultCodes.dll Function Rename Mapping
+# Format: old_name|new_name
+# Total functions: 23
+
+# CIFault class (6 methods)
+FUN_10002980|CIFault_get_Code
+FUN_10002b10|CIFault_put_Code
+FUN_10002ca0|CIFault_get_Counts
+FUN_10002e30|CIFault_put_Counts
+FUN_10002fc0|CIFault_get_Status
+FUN_10003150|CIFault_put_Status
+
+# CIFaultCodes class (11 methods)
+FUN_100053c0|CIFaultCodes_FinalConstruct
+FUN_10005602|CIFaultCodes_put_BlockedList
+FUN_1000598b|CIFaultCodes_put_DataSource
+FUN_10005a59|CIFaultCodes_RetrieveFaults
+FUN_10005d33|CIFaultCodes_RetrieveSnapshots
+FUN_1000601b|CIFaultCodes_ResetFaults
+FUN_10006670|CIFaultCodes_get_Group
+FUN_100067d7|CIFaultCodes_put_Group
+FUN_10006927|CIFaultCodes_RetrieveFaultCodes
+FUN_10006bdd|CIFaultCodes_put_Configuration
+FUN_1000700b|CIFaultCodes_get_Configuration
+
+# CIFaultCodesGTIS45Impl class (3 methods)
+FUN_1001d0f0|CIFaultCodesGTIS45Impl_RetrieveFaultCodes
+FUN_1001d1f0|CIFaultCodesGTIS45Impl_getSnapshotArray
+FUN_1001dc10|CIFaultCodesGTIS45Impl_getECMFaults
+
+# CISnapshotField class (3 methods)
+FUN_10024f30|CISnapshotField_get_Entity
+FUN_10025260|CISnapshotField_get_Value
+FUN_10025480|CISnapshotField_get_Name
+

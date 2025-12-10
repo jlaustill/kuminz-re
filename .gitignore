@@ -1,0 +1,114 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Environment
+.env
+.env.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+.directory
+
+# Logs
+*.log
+npm-debug.log*
+
+# TypeScript cache
+*.tsbuildinfo
+
+# ===== Ghidra (all projects) =====
+# Ghidra binary database files (large, auto-generated, not useful in git)
+**/*.rep/idata/
+**/*.rep/user/
+**/*.rep/versioned/
+*.lock~
+*.lock
+
+# Code navigation tool files
+**/*.rep/working/cscope.*
+**/*.rep/working/tags
+**/*.rep/working/*.db
+
+# Misplaced/duplicate files
+firmware/J90280.05_analysis/ghidra/local_variables.csv
+
+# ===== Qt/C++ (kuminz-ui) =====
+# Generated files
+*~
+*.autosave
+*.a
+*.core
+*.moc
+*.o
+*.obj
+*.orig
+*.rej
+*.so
+*.so.*
+*_pch.h.cpp
+*_resource.rc
+*.qm
+.#*
+*.*#
+core
+!core/
+tags
+*.debug
+Makefile*
+*.prl
+*.app
+moc_*.cpp
+ui_*.h
+qrc_*.cpp
+*.res
+*.rc
+/.qmake.cache
+/.qmake.stash
+
+# qtcreator generated files
+*.pro.user*
+CMakeLists.txt.user*
+
+# xemacs temporary files
+*.flc
+
+# Visual Studio generated files
+*.ib_pdb_index
+*.idb
+*.ilk
+*.pdb
+*.sln
+*.suo
+*.vcproj
+*vcproj.*.*.user
+*.ncb
+*.sdf
+*.opensdf
+*.vcxproj
+*vcxproj.*
+
+# MinGW generated files
+*.Debug
+*.Release
+
+# Python byte code
+*.pyc
+
+# Binaries
+*.dll
+*.exe
+
+# CMake build directories
+cmake-build-*/

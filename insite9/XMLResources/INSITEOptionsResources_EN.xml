@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE module SYSTEM "../htmlentities.dtd">
+<XML_RESOURCE>
+	<RESOURCE Tag="1001" Type="String Table" Description="Message String Table">
+		<STRING ID="100" Context="">NGSSSystemPreferences</STRING>
+		<STRING ID="106" Context="">Small Buttons</STRING>
+		<STRING ID="107" Context="">Large Buttons</STRING>
+		<STRING ID="110" Context="">Display</STRING>
+		<STRING ID="111" Context="">Hide</STRING>
+		<STRING ID="120" Context="">&amp;Background Colors</STRING>
+		<STRING ID="121" Context="">&amp;Grid Colors</STRING>
+		<STRING ID="122" Context="">Current Selection</STRING>
+		<STRING ID="123" Context="">Purge -</STRING>
+		<STRING ID="124" Context="">Start Purging Files After:</STRING>
+		<STRING ID="125" Context="">Retain Files newer than:</STRING>
+		<STRING ID="126" Context="">Start Up</STRING>
+		<STRING ID="127" Context="">Remember User Settings</STRING>
+		<STRING ID="128" Context="">Display Fault Information</STRING>
+		<STRING ID="129" Context="">Display Splash Screen</STRING>
+		<STRING ID="130" Context="">Toolbar</STRING>
+		<STRING ID="131" Context="">Display Options</STRING>
+		<STRING ID="133" Context="">Tool Tips</STRING>
+		<STRING ID="134" Context="">Units of Measure</STRING>
+		<STRING ID="135" Context="">Country</STRING>
+		<STRING ID="136" Context="">System Language</STRING>
+		<STRING ID="137" Context="">Unit Sets</STRING>
+		<STRING ID="139" Context="">Current Units of Measure Group</STRING>
+		<STRING ID="140" Context="">Enable</STRING>
+		<STRING ID="142" Context="">&amp;Reset to Cummins Default Settings</STRING>
+		<STRING ID="143" Context="">Modify Path</STRING>
+		<STRING ID="144" Context="">Directory</STRING>
+		<STRING ID="145" Context="">Item</STRING>
+		<STRING ID="146" Context="">&amp;Modify</STRING>
+		<STRING ID="147" Context="">General</STRING>
+		<STRING ID="148" Context="">options.chm</STRING>
+		<STRING ID="150" Context="">Appearance</STRING>
+		<STRING ID="151" Context="">options.chm</STRING>
+		<STRING ID="153" Context="">File</STRING>
+		<STRING ID="154" Context="">options.chm</STRING>
+		<STRING ID="155" Context="">Units of Measure</STRING>
+		<STRING ID="156" Context="">options.chm</STRING>
+		<STRING ID="157" Context="">Advanced</STRING>
+		<STRING ID="158" Context="">options.chm</STRING>
+		<STRING ID="159" Context="">User Manager</STRING>
+		<STRING ID="160" Context="">options.chm</STRING>
+		<STRING ID="161" Context="">Users</STRING>
+		<STRING ID="162" Context="">options.chm</STRING>
+		<STRING ID="163" Context="">Groups</STRING>
+		<STRING ID="164" Context="">options.chm</STRING>
+		<STRING ID="165" Context="Predefined Unit Group">USA</STRING>
+		<STRING ID="166" Context="Predefined Unit Group">Latin America</STRING>
+		<STRING ID="167" Context="Predefined Unit Group">Metric</STRING>
+		<STRING ID="168" Context="Predefined Unit Group">UK</STRING>
+		<STRING ID="277" Context="">&amp;Text Options</STRING>
+		<STRING ID="281" Context="">Type</STRING>
+		<STRING ID="283" Context="">Unit</STRING>
+		<STRING ID="284" Context="">Connections</STRING>
+		<STRING ID="285" Context="">Options.chm</STRING>
+		<STRING ID="286" Context="">Connections</STRING>
+		<STRING ID="287" Context="">Choose New Path</STRING>
+		<STRING ID="288" Context="">Select the associated path for this option.</STRING>
+		<STRING ID="297" Context="">Refresh Fault Info Every</STRING>
+		<STRING ID="298" Context="">sec.</STRING>
+		<STRING ID="299" Context="">Enable Auto Refresh</STRING>
+		<STRING ID="300" Context="">Fault Codes</STRING>
+		<STRING ID="301" Context="">Add</STRING>
+		<STRING ID="302" Context="">Remove</STRING>
+		<STRING ID="303" Context="">All</STRING>
+		<STRING ID="304" Context="">Serial</STRING>
+		<STRING ID="305" Context="">Simulator</STRING>
+		<STRING ID="306" Context="">Name</STRING>
+		<STRING ID="307" Context="">Status</STRING>
+		<STRING ID="308" Context="">Active connections cannot be deleted.</STRING>
+		<STRING ID="309" Context="">Options</STRING>
+		<STRING ID="310" Context="">Enable Auto Snapshot</STRING>
+		<STRING ID="311" Context="">Pr&amp;operties</STRING>
+		<STRING ID="312" Context="">Change in General Preferences</STRING>
+		<STRING ID="313" Context="">You must restart INSITE for some changes in general preferences to take effect.</STRING>
+		<STRING ID="314" Context="">Enable Auto Detect</STRING>
+		<STRING ID="315" Context="">View Network Calibration Drives</STRING>
+		<STRING ID="316" Context="">Current</STRING>
+		<STRING ID="317" Context="">Connected</STRING>
+		<STRING ID="318" Context="">Disconnected</STRING>
+		<STRING ID="319" Context="">Units of Measure Editor</STRING>
+		<STRING ID="320" Context="">Add</STRING>
+		<STRING ID="321" Context="">Units of Measure Warning</STRING>
+		<STRING ID="322" Context="">Remove</STRING>
+		<STRING ID="323" Context="">Units of Measure cannot be changed while INSITE is connected to ECM. Please disconnect from the ECM and change the Units of Measure.</STRING>
+		<STRING ID="324" Context="">Predefined</STRING>
+		<STRING ID="325" Context="">Custom</STRING>
+		<STRING ID="326" Context="">Based On:</STRING>
+		<STRING ID="327" Context="">Group Name:</STRING>
+		<STRING ID="328" Context="">Add Custom Group</STRING>
+		<STRING ID="329" Context="">"%s" is the current Units of Measure Group. To remove this group, change the current Units of Measure Group selection.</STRING>
+		<STRING ID="330" Context="">OK</STRING>
+		<STRING ID="331" Context="">Cancel</STRING>
+		<STRING ID="332" Context="">The group name must be between 1 to 25 characters.</STRING>
+		<STRING ID="333" Context="">Confirm Group Removal</STRING>
+		<STRING ID="334" Context="">INSITE is ready to remove the "%s" Units of Measure Group. Select OK to continue.</STRING>
+		<STRING ID="335" Context="">Custom Unit Group Saved</STRING>
+		<STRING ID="336" Context="">The custom unit group "%s" has been saved.</STRING>
+		<STRING ID="337" Context="">Attempted Group Removal</STRING>
+		<STRING ID="338" Context="">Group Already Exists</STRING>
+		<STRING ID="339" Context="">The group "%s" already exists. Replace the existing group?</STRING>
+		<STRING ID="340" Context="">The group "%s" is a predefined Units of Measure Group. Please enter a new group name.</STRING>
+		<STRING ID="341" Context="">The group "%s" is the current Units of Measure Group. Please enter a new group name.</STRING>
+		<STRING ID="342" Context="">Enable User Manager</STRING>
+		<STRING ID="343" Context="">User Name</STRING>
+		<STRING ID="344" Context="">Group</STRING>
+		<STRING ID="345" Context="">Export</STRING>
+		<STRING ID="346" Context="">Import</STRING>
+		<STRING ID="347" Context="">Current Users Configuration</STRING>
+		<STRING ID="348" Context="">Add</STRING>
+		<STRING ID="349" Context="">Modify</STRING>
+		<STRING ID="350" Context="">Remove</STRING>
+		<STRING ID="352" Context="">Group Name:</STRING>
+		<STRING ID="353" Context="">Group Rights</STRING>
+		<STRING ID="354" Context="">&amp;OK</STRING>
+		<STRING ID="355" Context="">Cancel</STRING>
+		<STRING ID="356" Context="">Help</STRING>
+		<STRING ID="357" Context="">Users and Groups</STRING>
+		<STRING ID="358" Context="">Current Groups Configuration</STRING>
+		<STRING ID="359" Context="">User Name:</STRING>
+		<STRING ID="360" Context="">Password:</STRING>
+		<STRING ID="361" Context="">Confirm Password:</STRING>
+		<STRING ID="362" Context="">Groups:</STRING>
+		<STRING ID="363" Context="">Modify User</STRING>
+		<STRING ID="364" Context="">New User</STRING>
+		<STRING ID="365" Context="">Password</STRING>
+		<STRING ID="366" Context="">The password must be between 5 to 10 characters. Please re-enter.</STRING>
+		<STRING ID="367" Context="">Password Mismatch</STRING>
+		<STRING ID="368" Context="">The passwords do not match. Please re-enter.</STRING>
+		<STRING ID="369" Context="">User Name</STRING>
+		<STRING ID="370" Context="">The user name must be between 1 to 30 characters. Please re-enter.</STRING>
+		<STRING ID="371" Context="">The user already exists. Please enter a new user name.</STRING>
+		<STRING ID="372" Context="">Remove User</STRING>
+		<STRING ID="373" Context="">Press OK to remove the selected user. Otherwise, press Cancel.</STRING>
+		<STRING ID="374" Context="">Group Name</STRING>
+		<STRING ID="375" Context="">The group name already exists. Please enter a new group name.</STRING>
+		<STRING ID="376" Context="">Modify Group</STRING>
+		<STRING ID="377" Context="">New Group</STRING>
+		<STRING ID="378" Context="">Remove Group</STRING>
+		<STRING ID="379" Context="">If the group is deleted, all users in the group will also be deleted. Press OK to delete the group and users. Otherwise, press Cancel.</STRING>
+		<STRING ID="380" Context="">Import Location</STRING>
+		<STRING ID="381" Context="">Export Location</STRING>
+		<STRING ID="382" Context="">Import User (*.euf)|*.euf||</STRING>
+		<STRING ID="383" Context="">Export User (*.euf)|*.euf||</STRING>
+		<STRING ID="384" Context="">User Manager Import</STRING>
+		<STRING ID="385" Context="">Importing new users and groups will replace all existing ones. Select OK to continue. Otherwise, select Cancel.</STRING>
+		<STRING ID="386" Context="">Viewbar</STRING>
+		<STRING ID="387" Context="">Display Feature Names</STRING>
+		<STRING ID="388" Context="">System Administrator</STRING>
+		<STRING ID="389" Context="">The group name must be between 1 to 30 characters.</STRING>
+		<STRING ID="390" Context="">Calibration Selection</STRING>
+		<STRING ID="391" Context="">System Administrators</STRING>
+		<STRING ID="396" Context="">Enable Key Switch Timer</STRING>
+		<STRING ID="397" Context="">Key Switch Timer</STRING>
+		<STRING ID="398" Context="">This option has been locked by the system administrator</STRING>
+		<STRING ID="399" Context="">Enable Data Retrieval</STRING>
+		<STRING ID="1009" Context="File page grid entry">Data Monitor/Logger</STRING>
+		<STRING ID="1010" Context="File page grid entry">Export</STRING>
+		<STRING ID="1011" Context="File page grid entry">Import</STRING>
+		<STRING ID="1012" Context="File page grid entry">User Activated Datalogger</STRING>
+		<STRING ID="1013" Context="File page grid entry">Work Orders/ECM Images</STRING>
+		<STRING ID="1014" Context="Text on Purge button of Files Page.">Purge</STRING>
+		<STRING ID="1015" Context="File page grid entry">Inquire Data Extraction Files</STRING>
+		<STRING ID="1016" Context="File page grid entry">Templates</STRING>
+		<STRING ID="1017" Context="File page grid entry">Calibration Log</STRING>
+		<STRING ID="500" Context="">System Administration</STRING>
+		<STRING ID="501" Context="">Calibration Download</STRING>
+		<STRING ID="502" Context="">Adjust ECM Features and Parameters</STRING>
+		<STRING ID="503" Context="">Change ECM Password</STRING>
+		<STRING ID="504" Context="">Import ECM Image Data</STRING>
+		<STRING ID="505" Context="">Export ECM Image Data</STRING>
+		<STRING ID="506" Context="">Allow All Resets</STRING>
+		<STRING ID="507" Context="">Reset Trip Information Data</STRING>
+		<STRING ID="508" Context="">Reset Duty Cycle/Maintenance Monitor Data/AEM Data</STRING>
+		<STRING ID="509" Context="">Reset Faults</STRING>
+		<STRING ID="510" Context="">Reset J1922/J1939 Control Data</STRING>
+		<STRING ID="511" Context="">Reset FCM Data</STRING>
+		<STRING ID="512" Context="">Adjust User Options</STRING>
+		<STRING ID="600" Context="">Reset Advance ECM Data</STRING>
+	</RESOURCE>
+</XML_RESOURCE>

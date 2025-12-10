@@ -1,0 +1,31 @@
+<LicenseFile>
+	<UserReqLicense Expiration="permanent" Name="TripInfo_Reset_User" VendorDaemon="cummins" Key="31CC2FA9E39D" IsValid="" ID="TripInfo_Reset_User" Version="1.0" Count="uncounted">
+		<Users>
+			<User NAME="Reset_Trip_Information_Data"/></Users>
+	</UserReqLicense>
+	<ToolReqLicense Expiration="permanent" Name="TripInfo_Reset_ToolLite" VendorDaemon="cummins" Key="0E74BA275445" IsValid="" ID="TripInfo_Reset_ToolLite" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="Lite"/>
+	</ToolReqLicense>
+	<ToolReqLicense Expiration="permanent" Name="TripInfo_Reset_ToolPro" VendorDaemon="cummins" Key="C2B65ACB23B4" IsValid="" ID="TripInfo_Reset_ToolPro" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="Pro"/>
+	</ToolReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="TripInfo_Reset_ECMPWMaster" VendorDaemon="cummins" Key="9A6CA2C163E0" IsValid="" ID="TripInfo_Reset_ECMPWMaster" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="MASTER"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="TripInfo_Reset_ECMPWAdjust" VendorDaemon="cummins" Key="C42C180A3325" IsValid="" ID="TripInfo_Reset_ECMPWAdjust" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="ADJUSTABLES"/></ECMPasswords>
+	</ECMReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="TripInfo_Reset_ECMPWReset" VendorDaemon="cummins" Key="7F57046E0B3D" IsValid="" ID="TripInfo_Reset_ECMPWReset" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="RESET"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="TripInfo_PermitReset" VendorDaemon="cummins" Key="07C5B03C3821" IsValid="" ID="TripInfo_PermitReset" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="PERMIT_RESETS"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+</LicenseFile>

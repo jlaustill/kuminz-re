@@ -1,0 +1,230 @@
+<!-- CHANAGE HISTORY
+07/23/2012  kr282  DB_G00196588 Modified FixedRows Tag
+05/18/2011  jr624  DB_G00171320 Added "]" in the query string under "source" attribute of object nodes whose atribute name="PList6", name="PList70" and name="PList80".
+11/30/2010  iu822  DB_G00163260 Changed the FnPAddin CLSID.
+10/06/2010  iu822  DB_G00141631 Changed the old FnPAddinUI CLSID with new FnPAddin CLSID and set LoadDLL to FALSE into node "resources".
+5/19/2009   ip642  DB_G00133833 To read value of subfeature and parameters at depth 8
+01/06/2006  gh102  DB_G00079260 To read value of subfeature at depth "SUBFEATURES/SUBFEATURE/SUBFEATURES" instead of feature support. 
+12/5/2005   gb115  DB_G00078203 to read upto the depth of "SUBFEATURES/SUBFEATURE/SUBFEATURES/SUBFEATURE/PARAMETERS/PARAMETER"   
+03/11/2011  js995  DB_G00167649 Modified condition subfeatureID>0 to >99 
+-->
+<!-- FGH Grid Schema for Features and Parameters of Template  -->
+<FlexGrid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+
+	<Properties Cols="3:VT_I4" FixedCols="0:VT_I4" ExplorerBar="0:VT_I4" GridLines="1:VT_I4" OutlineBar="5:VT_I4"
+	AllowUserResizing="1:VT_UI4" AutoResize="1:VT_I4" Editable="0:VT_I4"/>
+	<!-- Add properties to the "FlexGrid" element as attribute in Name=Value format -->
+	<FixedRows>
+		<FixedRow styleid="s1">
+			<Column name="RES:Res1:101" />
+			<Column name="RES:Res1:171" />
+			<Column name="RES:Res1:170" />
+		</FixedRow>
+	</FixedRows>
+	
+	<data loopEnd="1">
+		<Node level = "1" loopStart="0" loopEnd="1" styleid="s1">
+			<Column order = "0" datasource ="OBJ:DOM:selectSingleNode(pID15):getAttribute(DisplayValue)" />
+			<Object name="FList" source="OBJ:DOM:selectNodes(aF)"/>
+			<Node level = "2" loopStart="0" loopEnd="OBJ:FList:length" styleid="s1" expanded="OBJ:DOM:selectSingleNode(pFEnableToken):getAttribute(V)">
+				<Object name="Feature" source="OBJ:FList:nextNode"/>
+				<Column order = "0" datasource ="OBJ:Feature:getAttribute(N)" />
+				<Column order = "1" datasource ="OBJ:DOM:selectSingleNode(pFEnableToken):getAttribute(DV)" />
+				
+				<Object name="PList" source="OBJ:Feature:selectNodes(aSFP)" />
+				<Node level = "3" loopStart="0" loopEnd="OBJ:PList:length" iconid="I204" >
+					<Object name="PItem" source="OBJ:PList:nextNode"/>
+					<Column order = "0" datasource ="OBJ:PItem:getAttribute(N)" />
+					<Column order = "1" datasource ="OBJ:DOM:selectSingleNode(pToken):getAttribute(DV)" styleid="s2"/>
+					<Column order = "2" datasource ="OBJ:DOM:selectSingleNode(pToken):getAttribute(U)" />
+				</Node>
+				
+				<Object name="SFList" source="OBJ:Feature:selectNodes(./SUBFEATURES/SUBFEATURE[@subFeatureID>99]" />
+				<Node level = "3" loopStart="0" loopEnd="OBJ:SFList:length" styleid="s1" iconid="I206">
+					    <Object name="SFItem" source="OBJ:SFList:nextNode"/>
+						<Column order = "0" datasource ="OBJ:SFItem:getAttribute(N)" />
+					 	<Column order = "1" datasource ="OBJ:DOM:selectSingleNode(pSFEnableToken):getAttribute(DV)" />	
+					 	<!-- for parameters with subfeatures with id =0 -->
+					 	<Object name="PList" source="OBJ:SFItem:selectNodes(aSFP)"/>
+						<Node level = "4" loopStart="0" loopEnd="OBJ:PList:length" iconid="I204">
+							<Object name="PItem" source="OBJ:PList:nextNode"/>
+							<Column order = "0" datasource ="OBJ:PItem:getAttribute(N)" />
+							<Column order = "1" datasource ="OBJ:DOM:selectSingleNode(pToken):getAttribute(DV)" styleid="s2"/>
+							<Column order = "2" datasource ="OBJ:DOM:selectSingleNode(pToken):getAttribute(U)" />
+						</Node>						
+						<Object name="PList" source="OBJ:SFItem:selectNodes(./PARAMETERS/PARAMETER[@R=1])"/>
+						<Node level = "4" loopStart="0" loopEnd="OBJ:PList:length" iconid="I204">
+							<Object name="PItem" source="OBJ:PList:nextNode"/>
+							<Column order = "0" datasource ="OBJ:PItem:getAttribute(N)" />
+							<Column order = "1" datasource ="OBJ:DOM:selectSingleNode(pToken):getAttribute(DV)" styleid="s2"/>
+							<Column order = "2" datasource ="OBJ:DOM:selectSingleNode(pToken):getAttribute(U)" />
+						</Node>	
+						<!-- for subfeatures with id >99 -->
+						<Object name="SFList1" source="OBJ:SFItem:selectNodes(./SUBFEATURES/SUBFEATURE[@subFeatureID>99])" />
+						<Node level = "4" loopStart="0" loopEnd="OBJ:SFList1:length" styleid="s1" iconid="I206">
+							<Object name="SFItem1" source="OBJ:SFList1:nextNode"/>
+							<Column order = "0" datasource ="OBJ:SFItem1:getAttribute(N)" />
+							<Column order = "1" datasource ="OBJ:DOM:selectSingleNode(pSSFEnableToken):getAttribute(DV)" />
+						
+						        <Object name="PList1" source="OBJ:SFItem1:selectNodes(./PARAMETERS/PARAMETER[@R=1])" />
+							    <Node level = "5" loopStart="0" loopEnd="OBJ:PList1:length" iconid="I204">
+									<Object name="PItem1" source="OBJ:PList1:nextNode"/>
+									<Column order = "0" datasource ="OBJ:PItem1:getAttribute(N)" />
+						 			<Column order = "1" datasource ="OBJ:DOM:selectSingleNode(pToken1):getAttribute(DV)" styleid="s2"/>
+									<Column order = "2" datasource ="OBJ:DOM:selectSingleNode(pToken1):getAttribute(U)" />
+								</Node>
+                             
+                                <!-- Level 5 , Subfeature List-->
+                            <Object name="SFList5" source="OBJ:SFItem1:selectNodes(./SUBFEATURES/SUBFEATURE[@subFeatureID>99])" />
+                            <Node level = "5" loopStart="0" loopEnd="OBJ:SFList5:length" styleid="s1" iconid="I206">
+                                 <Object name="SFListItem5" source="OBJ:SFList5:nextNode"/>
+                                 <Column order = "0" datasource ="OBJ:SFListItem5:getAttribute(N)" />
+                                 <Column order = "1" datasource ="OBJ:DOM:selectSingleNode(pSSFEnableToken5):getAttribute(DV)" />
+                                
+                                 <!-- Level 6 , Parameter List for subfeatures with ID >99 -->                               
+                                 <Object name="PList6" source="OBJ:SFListItem5:selectNodes(./PARAMETERS/PARAMETER[@R=1])" />
+							     <Node level = "6" loopStart="0" loopEnd="OBJ:PList6:length" iconid="I204">
+									<Object name="PItem6" source="OBJ:PList6:nextNode"/>
+									<Column order = "0" datasource ="OBJ:PItem6:getAttribute(N)" />
+						 			<Column order = "1" datasource ="OBJ:DOM:selectSingleNode(pToken6):getAttribute(DV)" styleid="s2"/>
+									<Column order = "2" datasource ="OBJ:DOM:selectSingleNode(pToken6):getAttribute(U)" />
+								 </Node>
+                                
+                                 <!-- Level 6 , Parameter List for subfeatures with ID =0 -->
+                                 <Object name="PList60" source="OBJ:SFListItem5:selectNodes(aSFP)" />
+                                 <Node level = "6" loopStart="0" loopEnd="OBJ:PList60:length" iconid="I204">
+                                     <Object name="PItem60" source="OBJ:PList60:nextNode"/>
+                                     <Column order = "0" datasource ="OBJ:PItem60:getAttribute(N)" />
+                                     <Column order = "1" datasource ="OBJ:DOM:selectSingleNode(pToken60):getAttribute(DV)" styleid="s2"/>
+                                       <Column order = "2" datasource ="OBJ:DOM:selectSingleNode(pToken60):getAttribute(U)" />
+                                 </Node>
+                                
+                                 <!-- Level 6 , Subfeature List-->
+                                 <Object name="SFList6" source="OBJ:SFListItem5:selectNodes(./SUBFEATURES/SUBFEATURE[@subFeatureID>99])" />
+                                 <Node level = "6" loopStart="0" loopEnd="OBJ:SFList6:length" styleid="s1" iconid="I206">
+                                     <Object name="SFListItem6" source="OBJ:SFList6:nextNode"/>
+                                     <Column order = "0" datasource ="OBJ:SFListItem6:getAttribute(N)" />
+                                     <Column order = "1" datasource ="OBJ:DOM:selectSingleNode(pSSFEnableToken6):getAttribute(DV)" />
+                                     
+                                     <!-- Level 7 , Parameter List for subfeatures with ID !=0 -->                                 
+                                     <Object name="PList7" source="OBJ:SFListItem6:selectNodes(aSFP)" />
+                                     <Node level = "7" loopStart="0" loopEnd="OBJ:PList7:length" iconid="I204">
+                                         <Object name="PItem7" source="OBJ:PList7:nextNode"/>
+                                         <Column order = "0" datasource ="OBJ:PItem7:getAttribute(N)" />
+                                         <Column order = "1" datasource ="OBJ:DOM:selectSingleNode(pToken7):getAttribute(DV)" styleid="s2"/>
+                                         <Column order = "2" datasource ="OBJ:DOM:selectSingleNode(pToken7):getAttribute(U)" />
+                                     </Node>
+                                     
+                                     <!-- Level 7 , Parameter List for subfeatures with ID =0 -->  
+                                     <Object name="PList70" source="OBJ:SFListItem6:selectNodes(./PARAMETERS/PARAMETER[@R=1])" />
+                                     <Node level = "7" loopStart="0" loopEnd="OBJ:PList70:length" iconid="I204">
+                                         <Object name="PItem70" source="OBJ:PList70:nextNode"/>
+                                         <Column order = "0" datasource ="OBJ:PItem70:getAttribute(N)" />
+                                         <Column order = "1" datasource ="OBJ:DOM:selectSingleNode(pToken70):getAttribute(DV)" styleid="s2"/>
+                                         <Column order = "2" datasource ="OBJ:DOM:selectSingleNode(pToken70):getAttribute(U)" />
+                                     </Node>
+                                         
+                                     <!-- Level 7 , Subfeature List--> 
+                                     <Object name="SFList7" source="OBJ:SFListItem6:selectNodes(./SUBFEATURES/SUBFEATURE[@subFeatureID>99])" />
+                                     <Node level = "7" loopStart="0" loopEnd="OBJ:SFList7:length" styleid="s1" iconid="I206">
+                                         <Object name="SFListItem7" source="OBJ:SFList7:nextNode"/>
+                                         <Column order = "0" datasource ="OBJ:SFListItem7:getAttribute(N)" />
+                                         <Column order = "1" datasource ="OBJ:DOM:selectSingleNode(pSSFEnableToken7):getAttribute(DV)" />
+                                             
+                                         <!-- Level 8 , Parameter List for subfeatures with ID !=0 -->                                    
+                                         <Object name="PList8" source="OBJ:SFListItem7:selectNodes(aSFP)" />
+                                         <Node level = "8" loopStart="0" loopEnd="OBJ:PList8:length" iconid="I204">
+                                             <Object name="PItem8" source="OBJ:PList8:nextNode"/>
+                                             <Column order = "0" datasource ="OBJ:PItem8:getAttribute(N)" />
+                                             <Column order = "1" datasource ="OBJ:DOM:selectSingleNode(pToken8):getAttribute(DV)" styleid="s2"/>
+                                             <Column order = "2" datasource ="OBJ:DOM:selectSingleNode(pToken8):getAttribute(U)" />
+                                         </Node>
+                                         
+                                         <!-- Level 8 , Parameter List for subfeatures with ID =0 --> 
+                                         <Object name="PList80" source="OBJ:SFListItem7:selectNodes(./PARAMETERS/PARAMETER[@R=1])" />
+                                         <Node level = "8" loopStart="0" loopEnd="OBJ:PList80:length" iconid="I204">
+                                             <Object name="PItem80" source="OBJ:PList80:nextNode"/>
+                                             <Column order = "0" datasource ="OBJ:PItem80:getAttribute(N)" />
+                                             <Column order = "1" datasource ="OBJ:DOM:selectSingleNode(pToken80):getAttribute(DV)" styleid="s2"/>
+                                             <Column order = "2" datasource ="OBJ:DOM:selectSingleNode(pToken80):getAttribute(U)" />
+                                         </Node>
+                                         
+                                         <!-- Level 8 , Subfeature List-->
+                                         <Object name="SFList8" source="OBJ:SFListItem7:selectNodes(./SUBFEATURES/SUBFEATURE[@subFeatureID>99])" />
+                                         <Node level = "8" loopStart="0" loopEnd="OBJ:SFList8:length" styleid="s1" iconid="I206">
+                                             <Object name="SFListItem8" source="OBJ:SFList8:nextNode"/>
+                                             <Column order = "0" datasource ="OBJ:SFListItem8:getAttribute(N)" />
+                                             <Column order = "1" datasource ="OBJ:DOM:selectSingleNode(pSSFEnableToken8):getAttribute(DV)" />
+                                         </Node>
+                                     </Node>
+                                 </Node>
+                            </Node>        
+						</Node>
+				</Node>
+			</Node>	
+		</Node>
+	</data>
+
+	<parameters>
+	 <parameter name="pID199999" source="/Template/Parameters/P[@ID=199999]"/>
+	 <parameter name="pID15" source="/Template/Header/EPName"/>
+	 <parameter name="pMID" source="/Template/Parameters/P[@ID=15]"/>
+	 <parameter name="aF" source="/Template/MAPS/MAP[@mapID=1]/FEATURES/FEATURE[@featureID != 56]" />
+	 <parameter name="aSFP" source="./SUBFEATURES/SUBFEATURE[@subFeatureID&lt;=99]/PARAMETERS/PARAMETER[@R=1]" />
+	 <parameter name="pToken" source="/Template/Parameters/P[@ID=" source1="OBJ:PItem:getAttribute(parameterID)" source2="]" />
+	 <parameter name="pToken1" source="/Template/Parameters/P[@ID=" source1="OBJ:PItem1:getAttribute(parameterID)" source2="]" />
+        <parameter name="pToken6" source="/Template/Parameters/P[@ID=" source1="OBJ:PItem6:getAttribute(parameterID)" source2="]" />
+        <parameter name="pToken60" source="/Template/Parameters/P[@ID=" source1="OBJ:PItem60:getAttribute(parameterID)" source2="]" />
+        <parameter name="pToken7" source="/Template/Parameters/P[@ID=" source1="OBJ:PItem7:getAttribute(parameterID)" source2="]" />
+        <parameter name="pToken8" source="/Template/Parameters/P[@ID=" source1="OBJ:PItem8:getAttribute(parameterID)" source2="]" />
+        <parameter name="pToken70" source="/Template/Parameters/P[@ID=" source1="OBJ:PItem70:getAttribute(parameterID)" source2="]" />
+        <parameter name="pToken80" source="/Template/Parameters/P[@ID=" source1="OBJ:PItem80:getAttribute(parameterID)" source2="]" />
+	 <parameter name="pSSFEnableToken" source="/Template/Parameters/P[@ID=" source1="OBJ:SFItem1:getAttribute(subFeatureID)" source2="]" />
+        <parameter name="pSSFEnableToken5" source="/Template/Parameters/P[@ID=" source1="OBJ:SFListItem5:getAttribute(subFeatureEnable)" source2="]" />
+        <parameter name="pSSFEnableToken6" source="/Template/Parameters/P[@ID=" source1="OBJ:SFListItem6:getAttribute(subFeatureEnable)" source2="]" />
+        <parameter name="pSSFEnableToken7" source="/Template/Parameters/P[@ID=" source1="OBJ:SFListItem7:getAttribute(subFeatureEnable)" source2="]" />
+        <parameter name="pSSFEnableToken8" source="/Template/Parameters/P[@ID=" source1="OBJ:SFListItem8:getAttribute(subFeatureEnable)" source2="]" />
+	 <parameter name="pSFToken" source="/Template/Parameters/P[@ID=" source1="OBJ:SFItem:getAttribute(subFeatureID)" source2="]" />
+	 <parameter name="pFToken" source="/Template/Features/F[@ID=" source1="OBJ:Feature:getAttribute(featureID)" source2="]" />
+	 <parameter name="pFEnableToken" source="/Template/Parameters/P[@ID=" source1="OBJ:FList:item(LOOPINDEX2):getAttribute(featureEnable)" source2="]" />
+	 <parameter name="pSFEnableToken" source="/Template/Parameters/P[@ID=" source1="OBJ:SFItem:getAttribute(subFeatureEnable)" source2="]" />
+	</parameters>
+
+	<icons>
+		<icon id="I127" source="RES:Res1:ICO:125"/>
+	</icons>
+	
+	<combolists>
+	</combolists>
+	
+	<styles>
+		<style id="s1" CellFontBold="1:VT_I4" CellAlignMent="0:VT_I4" />
+		<style id="s2"  CellAlignMent="0:VT_I4"/>
+		<style id="sort"  Row="5" RowSel="5" Col="1" ColSel="1" Sort="1:VT_I4"/>
+	</styles>
+	
+	<resources>
+		<resource id="Res1" CLSID="{2E473ECD-9359-4B78-BC47-AF5E692D9DE0}" LoadDLL="FALSE"/>
+	</resources>
+	
+	<printing HdrFontSize="8" MarginHeader="10mm">
+		<header>
+			<line>
+				<left source="Features and Parameters" />
+				<right source="Template Version" />
+				<right source=" -> " />
+				<right source="OBJ:DOM:selectSingleNode(/Template):getAttribute(TemplateVersion)" />
+			</line>
+			<line>
+				<left source="OBJ:DOM:selectSingleNode(/Template/Header/EPName):getAttribute(DisplayName)" />
+				<left source=" -> " />
+				<left source="OBJ:DOM:selectSingleNode(/Template/Header/EPName):getAttribute(DisplayValue)" />
+				<right source="OBJ:DOM:selectSingleNode(/Template/Header/TName):getAttribute(DisplayName)" />
+				<right source=" -> " />
+				<right source="OBJ:DOM:selectSingleNode(/Template/Header/TName):getAttribute(DisplayValue)" />
+			</line>
+		</header>
+	</printing>
+	
+</FlexGrid>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE module SYSTEM "../htmlentities.dtd"> 
+<XML_RESOURCE>
+	<RESOURCE Tag="1001" Type="String Table" Description="Message String Table">
+		<STRING ID="100" Context="">InfoService</STRING>
+		<STRING ID="101" Context="">Error Message %d of %d:</STRING>
+		<STRING ID="102" Context="">
+
+It may help to:
+</STRING>
+		<STRING ID="105" Context="">.hlp</STRING>
+		<STRING ID="107" Context="">Error Number:  </STRING>
+		<STRING ID="108" Context="">Copy to clipboard:</STRING>
+		<STRING ID="109" Context="">Progress Dialog</STRING>
+		<STRING ID="110" Context="">Are you sure you want to close the progress dialog?
+Closing the dialog in the middle of an operation may cause problems elsewhere.</STRING>
+		<STRING ID="111" Context="">Close Dialog?</STRING>
+		<STRING ID="112" Context="">Less Detail  &lt;&lt;</STRING>
+		<STRING ID="113" Context="">More Detail  &gt;&gt;</STRING>
+		<STRING ID="114" Context="">Cummins INSITE</STRING>
+		<STRING ID="115" Context="">Error List:</STRING>
+		<STRING ID="116" Context="">Error Description:</STRING>
+		<STRING ID="117" Context="">&amp;OK</STRING>
+		<STRING ID="118" Context="">&amp;Help</STRING>
+		<STRING ID="119" Context="">&amp;Cancel</STRING>
+		<STRING ID="120" Context="">second remaining</STRING>
+		<STRING ID="121" Context="">seconds remaining</STRING>
+		<STRING ID="122" Context="">minute</STRING>
+		<STRING ID="123" Context="">minutes</STRING>
+		<STRING ID="125" Context="">Skip</STRING>
+		<STRING ID="126" Context="">Cancel</STRING>		
+		<STRING ID="4000" Context="">Help for this topic is not available. </STRING>
+		<STRING ID="4001" Context="">Help</STRING>
+		<STRING ID="4002" Context="">Cannot open the file: </STRING>
+		<STRING ID="4003" Context="">Canceling...</STRING>
+	</RESOURCE>
+</XML_RESOURCE>

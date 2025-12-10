@@ -1,0 +1,211 @@
+<UnitOfMeasure>
+  <CurrentUnitGroup resourceID="165" label="USA" UnitGroupID="1" editflag="N" />
+  <PreGTIS4Mapping>
+    <UnitFamilies>
+      <UnitFamily GTIS4Id="12" PreGTIS4Id="14" />
+    </UnitFamilies>
+    <UnitFamilies>
+      <UnitFamily GTIS4Id="48" PreGTIS4Id="34" />
+    </UnitFamilies>
+    <UnitFamilies>
+      <UnitFamily GTIS4Id="42" PreGTIS4Id="168" />
+    </UnitFamilies>
+    <UnitFamilies>
+      <UnitFamily GTIS4Id="181" PreGTIS4Id="163" />
+    </UnitFamilies>
+    <UnitFamilies>
+      <UnitFamily GTIS4Id="65" PreGTIS4Id="17" />
+    </UnitFamilies>
+    <UnitFamilies>
+      <UnitFamily GTIS4Id="203" PreGTIS4Id="174" />
+    </UnitFamilies>
+    <UnitFamilies>
+      <UnitFamily GTIS4Id="202" PreGTIS4Id="173" />
+    </UnitFamilies>
+    <UnitFamilies>
+      <UnitFamily GTIS4Id="101" PreGTIS4Id="124" />
+    </UnitFamilies>
+    <UnitFamilies>
+      <UnitFamily GTIS4Id="40" PreGTIS4Id="22" />
+    </UnitFamilies>
+    <UnitFamilies>
+      <UnitFamily GTIS4Id="10" PreGTIS4Id="12" />
+    </UnitFamilies>
+    <UnitFamilies>
+      <UnitFamily GTIS4Id="201" PreGTIS4Id="169" />
+    </UnitFamilies>
+    <UnitFamilies>
+      <UnitFamily GTIS4Id="61" PreGTIS4Id="28" />
+    </UnitFamilies>
+    <UnitFamilies>
+      <UnitFamily GTIS4Id="206" PreGTIS4Id="177" />
+    </UnitFamilies>
+    <UnitFamilies>
+      <UnitFamily GTIS4Id="6" PreGTIS4Id="8" />
+    </UnitFamilies>
+    <UnitFamilies>
+      <UnitFamily GTIS4Id="207" PreGTIS4Id="178" />
+    </UnitFamilies>
+    <UnitFamilies>
+      <UnitFamily GTIS4Id="5" PreGTIS4Id="7" />
+    </UnitFamilies>
+    <UnitFamilies>
+      <UnitFamily GTIS4Id="35" PreGTIS4Id="176" />
+    </UnitFamilies>
+    <UnitFamilies>
+      <UnitFamily GTIS4Id="16" PreGTIS4Id="165" />
+    </UnitFamilies>
+    <UnitFamilies>
+      <UnitFamily GTIS4Id="17" PreGTIS4Id="166" />
+    </UnitFamilies>
+    <UnitFamilies>
+      <UnitFamily GTIS4Id="14" PreGTIS4Id="162" />
+    </UnitFamilies>
+    <UnitFamilies>
+      <UnitFamily GTIS4Id="32" PreGTIS4Id="164" />
+    </UnitFamilies>
+    <UnitFamilies>
+      <UnitFamily GTIS4Id="1" PreGTIS4Id="2" />
+    </UnitFamilies>
+    <UnitFamilies>
+      <UnitFamily GTIS4Id="11" PreGTIS4Id="13" />
+    </UnitFamilies>
+    <UnitFamilies>
+      <UnitFamily GTIS4Id="204" PreGTIS4Id="172" />
+    </UnitFamilies>
+    <UnitFamilies>
+      <UnitFamily GTIS4Id="13" PreGTIS4Id="19" />
+    </UnitFamilies>
+    <UnitFamilies>
+      <UnitFamily GTIS4Id="64" PreGTIS4Id="16" />
+    </UnitFamilies>
+    <UnitFamilies>
+      <UnitFamily GTIS4Id="81" PreGTIS4Id="31" />
+    </UnitFamilies>
+    <UnitFamilies>
+      <UnitFamily GTIS4Id="7" PreGTIS4Id="9" />
+    </UnitFamilies>
+    <UnitFamilies>
+      <UnitFamily GTIS4Id="63" PreGTIS4Id="25" />
+    </UnitFamilies>
+    <UnitFamilies>
+      <UnitFamily GTIS4Id="8" PreGTIS4Id="10" />
+    </UnitFamilies>
+    <UnitFamilies>
+      <UnitFamily GTIS4Id="2" PreGTIS4Id="3" />
+    </UnitFamilies>
+    <UnitFamilies>
+      <UnitFamily GTIS4Id="122" PreGTIS4Id="26" />
+    </UnitFamilies>
+    <UnitFamilies>
+      <UnitFamily GTIS4Id="43" PreGTIS4Id="1" />
+    </UnitFamilies>
+    <UnitFamilies>
+      <UnitFamily GTIS4Id="3" PreGTIS4Id="5" />
+    </UnitFamilies>
+    <UnitFamilies>
+      <UnitFamily GTIS4Id="4" PreGTIS4Id="6" />
+    </UnitFamilies>
+    <UnitFamilies>
+      <UnitFamily GTIS4Id="141" PreGTIS4Id="35" />
+    </UnitFamilies>
+    <UnitFamilies>
+      <UnitFamily GTIS4Id="9" PreGTIS4Id="11" />
+    </UnitFamilies>
+    <UnitFamilies>
+      <UnitFamily GTIS4Id="59" PreGTIS4Id="21" />
+    </UnitFamilies>
+    <UnitFamilies>
+      <UnitFamily GTIS4Id="39" PreGTIS4Id="15" />
+    </UnitFamilies>
+    <UnitFamilies>
+      <UnitFamily GTIS4Id="15" PreGTIS4Id="171" />
+    </UnitFamilies>
+    <UnitFamilies>
+      <UnitFamily GTIS4Id="25" PreGTIS4Id="27" />
+    </UnitFamilies>
+    <Units>
+      <Unit GTIS4Id="11" PreGTIS4Id="67" />
+      <Unit GTIS4Id="3" PreGTIS4Id="7" />
+      <Unit GTIS4Id="4" PreGTIS4Id="25" />
+      <Unit GTIS4Id="5" PreGTIS4Id="62" />
+      <Unit GTIS4Id="6" PreGTIS4Id="3" />
+      <Unit GTIS4Id="7" PreGTIS4Id="85" />
+      <Unit GTIS4Id="8" PreGTIS4Id="5" />
+      <Unit GTIS4Id="9" PreGTIS4Id="15" />
+      <Unit GTIS4Id="10" PreGTIS4Id="30" />
+      <Unit GTIS4Id="11" PreGTIS4Id="67" />
+      <Unit GTIS4Id="12" PreGTIS4Id="81" />
+      <Unit GTIS4Id="13" PreGTIS4Id="47" />
+      <Unit GTIS4Id="14" PreGTIS4Id="45" />
+      <Unit GTIS4Id="15" PreGTIS4Id="124" />
+      <Unit GTIS4Id="18" PreGTIS4Id="36" />
+      <Unit GTIS4Id="19" PreGTIS4Id="111" />
+      <Unit GTIS4Id="20" PreGTIS4Id="100" />
+      <Unit GTIS4Id="22" PreGTIS4Id="84" />
+      <Unit GTIS4Id="23" PreGTIS4Id="57" />
+      <Unit GTIS4Id="26" PreGTIS4Id="128" />
+      <Unit GTIS4Id="28" PreGTIS4Id="6" />
+      <Unit GTIS4Id="29" PreGTIS4Id="39" />
+      <Unit GTIS4Id="31" PreGTIS4Id="87" />
+      <Unit GTIS4Id="32" PreGTIS4Id="41" />
+      <Unit GTIS4Id="33" PreGTIS4Id="38" />
+      <Unit GTIS4Id="34" PreGTIS4Id="76" />
+      <Unit GTIS4Id="35" PreGTIS4Id="66" />
+      <Unit GTIS4Id="49" PreGTIS4Id="29" />
+      <Unit GTIS4Id="50" PreGTIS4Id="123" />
+      <Unit GTIS4Id="52" PreGTIS4Id="89" />
+      <Unit GTIS4Id="54" PreGTIS4Id="9" />
+      <Unit GTIS4Id="55" PreGTIS4Id="32" />
+      <Unit GTIS4Id="56" PreGTIS4Id="58" />
+      <Unit GTIS4Id="57" PreGTIS4Id="11" />
+      <Unit GTIS4Id="58" PreGTIS4Id="13" />
+      <Unit GTIS4Id="59" PreGTIS4Id="33" />
+      <Unit GTIS4Id="60" PreGTIS4Id="23" />
+      <Unit GTIS4Id="61" PreGTIS4Id="79" />
+      <Unit GTIS4Id="63" PreGTIS4Id="8" />
+      <Unit GTIS4Id="64" PreGTIS4Id="14" />
+      <Unit GTIS4Id="65" PreGTIS4Id="26" />
+      <Unit GTIS4Id="66" PreGTIS4Id="99" />
+      <Unit GTIS4Id="67" PreGTIS4Id="31" />
+      <Unit GTIS4Id="70" PreGTIS4Id="46" />
+      <Unit GTIS4Id="71" PreGTIS4Id="10" />
+      <Unit GTIS4Id="72" PreGTIS4Id="73" />
+      <Unit GTIS4Id="75" PreGTIS4Id="16" />
+      <Unit GTIS4Id="85" PreGTIS4Id="122" />
+      <Unit GTIS4Id="87" PreGTIS4Id="118" />
+      <Unit GTIS4Id="88" PreGTIS4Id="24" />
+      <Unit GTIS4Id="91" PreGTIS4Id="126" />
+      <Unit GTIS4Id="92" PreGTIS4Id="125" />
+      <Unit GTIS4Id="111" PreGTIS4Id="65" />
+      <Unit GTIS4Id="132" PreGTIS4Id="108" />
+      <Unit GTIS4Id="171" PreGTIS4Id="114" />
+      <Unit GTIS4Id="191" PreGTIS4Id="80" />
+      <Unit GTIS4Id="211" PreGTIS4Id="90" />
+      <Unit GTIS4Id="212" PreGTIS4Id="119" />
+      <Unit GTIS4Id="231" PreGTIS4Id="127" />
+      <Unit GTIS4Id="251" PreGTIS4Id="77" />
+      <Unit GTIS4Id="253" PreGTIS4Id="132" />
+      <Unit GTIS4Id="255" PreGTIS4Id="133" />
+      <Unit GTIS4Id="256" PreGTIS4Id="135" />
+      <Unit GTIS4Id="262" PreGTIS4Id="21" />
+      <Unit GTIS4Id="263" PreGTIS4Id="113" />
+      <Unit GTIS4Id="264" PreGTIS4Id="138" />
+      <Unit GTIS4Id="265" PreGTIS4Id="116" />
+      <Unit GTIS4Id="266" PreGTIS4Id="139" />
+      <Unit GTIS4Id="267" PreGTIS4Id="71" />
+      <Unit GTIS4Id="501" PreGTIS4Id="25" />
+      <Unit GTIS4Id="502" PreGTIS4Id="134" />
+      <Unit GTIS4Id="504" PreGTIS4Id="44" />
+      <Unit GTIS4Id="505" PreGTIS4Id="17" />
+      <Unit GTIS4Id="506" PreGTIS4Id="51" />
+      <Unit GTIS4Id="507" PreGTIS4Id="52" />
+      <Unit GTIS4Id="508" PreGTIS4Id="104" />
+      <Unit GTIS4Id="509" PreGTIS4Id="50" />
+      <Unit GTIS4Id="510" PreGTIS4Id="20" />
+      <Unit GTIS4Id="512" PreGTIS4Id="49" />
+      <Unit GTIS4Id="516" PreGTIS4Id="25" />
+      <Unit GTIS4Id="517" PreGTIS4Id="136" />
+    </Units>
+  </PreGTIS4Mapping>
+</UnitOfMeasure>

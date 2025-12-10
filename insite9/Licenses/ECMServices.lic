@@ -1,0 +1,85 @@
+<LicenseFile>
+	<!--
+      This is needed to support Multi-Level ECM Security
+    -->
+	<ECMReqLicense Expiration="permanent" Name="ECMServices_ECMPW_ADJUSTABLES" VendorDaemon="cummins" Key="A3124E08013A" IsValid="" ID="ECMServices_ECMPW_ADJUSTABLES" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="ADJUSTABLES"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="ECMServices_ECMPW_MASTER" VendorDaemon="cummins" Key="DD6DE92AEEB7" IsValid="" ID="ECMServices_ECMPW_MASTER" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="MASTER"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="ECMServices_ECMPW_OEM" VendorDaemon="cummins" Key="2CCDDEFDE61E" IsValid="" ID="ECMServices_ECMPW_OEM" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="OEM"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="ECMServices_ECMPW_OEM2" VendorDaemon="cummins" Key="1BBF5430A83F" IsValid="" ID="ECMServices_ECMPW_OEM2" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="OEM2"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="ECMServices_ECMPW_RESET" VendorDaemon="cummins" Key="63BA80820F38" IsValid="" ID="ECMServices_ECMPW_RESET" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="RESET"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+	<!--
+      ECM Permissions Licences
+      The states of these licences are set on password transitions in
+      passwordMultiLevel.cpp
+   -->
+	<ECMReqLicense Expiration="permanent" Name="PERMIT_CHANGE_OEM" VendorDaemon="cummins" Key="F0F1B258E4FD" IsValid="" ID="PERMIT_CHANGE_OEM" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="PERMIT_CHANGE_OEM"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="PERMIT_CHANGE_OEM2" VendorDaemon="cummins" Key="FDDD2CF46CAD" IsValid="" ID="PERMIT_CHANGE_OEM2" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="PERMIT_CHANGE_OEM2"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="PERMIT_CHANGE_ADJUSTABLES" VendorDaemon="cummins" Key="E23A0E68889A" IsValid="" ID="PERMIT_CHANGE_ADJUSTABLES" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="PERMIT_CHANGE_ADJUSTABLES"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="PERMIT_RESETS" VendorDaemon="cummins" Key="003D8AB3A6E7" IsValid="" ID="PERMIT_RESETS" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="PERMIT_RESETS"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="PERMIT_CALS" VendorDaemon="cummins" Key="C95F021476F0" IsValid="" ID="PERMIT_CALS" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="PERMIT_CALS"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="PERMIT_CHANGE_PSWD_MASTER" VendorDaemon="cummins" Key="3838F5A07ACE" IsValid="" ID="PERMIT_CHANGE_PSWD_MASTER" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="PERMIT_CHANGE_PSWD_MASTER"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="PERMIT_CHANGE_PSWD_OEM" VendorDaemon="cummins" Key="D3B89B8DBE85" IsValid="" ID="PERMIT_CHANGE_PSWD_OEM" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="PERMIT_CHANGE_PSWD_OEM"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="PERMIT_CHANGE_PSWD_OEM2" VendorDaemon="cummins" Key="08D2AB00AA51" IsValid="" ID="PERMIT_CHANGE_PSWD_OEM2" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="PERMIT_CHANGE_PSWD_OEM2"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="PERMIT_CHANGE_PSWD_ADJUSTABLES" VendorDaemon="cummins" Key="FC74DF556BE2" IsValid="" ID="PERMIT_CHANGE_PSWD_ADJUSTABLES" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="PERMIT_CHANGE_PSWD_ADJUSTABLES"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="PERMIT_CHANGE_PSWD_RESET" VendorDaemon="cummins" Key="1E9A47F21393" IsValid="" ID="PERMIT_CHANGE_PSWD_RESET" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="PERMIT_CHANGE_PSWD_RESET"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+</LicenseFile>

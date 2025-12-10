@@ -1,0 +1,12 @@
+<LicenseFile>
+	<!--ECM Passwords-->
+	<ECMReqLicense Expiration="permanent" Name="EtherInjtReset_Reset_ECMPwd" VendorDaemon="cummins" Key="909A2EA85BAA" IsValid="" ID="EtherInjtReset_Reset_ECMPwd" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="PERMIT_RESETS"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+	<UserReqLicense Expiration="permanent" Name="EIReset_AdvanceECMData" VendorDaemon="cummins" Key="3E2DD6EC3789" IsValid="" ID="EIReset_AdvanceECMData" Version="1.0" Count="uncounted">
+		<Users>
+			<User NAME="Reset_Advance_ECM_Data"/></Users>
+	</UserReqLicense>
+</LicenseFile>

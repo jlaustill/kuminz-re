@@ -1,0 +1,32 @@
+<LicenseFile>
+	<ToolReqLicense Expiration="permanent" Name="J1922_Reset_ToolLevel_Lite" VendorDaemon="cummins" Key="C04A88281670" IsValid="" ID="J1922_Reset_ToolLevel_Lite" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="Lite"/>
+	</ToolReqLicense>
+	<ToolReqLicense Expiration="permanent" Name="J1922_Reset_ToolLevel_Pro" VendorDaemon="cummins" Key="64DE3A6505D6" IsValid="" ID="J1922_Reset_ToolLevel_Pro" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="Pro"/>
+	</ToolReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="J1922_Reset_ECM_Master" VendorDaemon="cummins" Key="C78496EACA99" IsValid="" ID="J1922_Reset_ECM_Master" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="MASTER"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="J1922_Reset_ECM_Adjustable" VendorDaemon="cummins" Key="1D04D2D4427C" IsValid="" ID="J1922_Reset_ECM_Adjustable" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="ADJUSTABLES"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="J1922_Reset_ECM_Reset" VendorDaemon="cummins" Key="EF06CEE280DE" IsValid="" ID="J1922_Reset_ECM_Reset" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="RESET"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="J1922_Reset_Permit_Reset" VendorDaemon="cummins" Key="A2F2306F6B8F" IsValid="" ID="J1922_Reset_Permit_Reset" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="PERMIT_RESETS"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+	<UserReqLicense Expiration="permanent" Name="J1922_Reset_AdvanceECMData" VendorDaemon="cummins" Key="BCA48A71BFF4" IsValid="" ID="J1922_Reset_AdvanceECMData" Version="1.0" Count="uncounted">
+		<Users>
+			<User NAME="Reset_Advance_ECM_Data"/></Users>
+	</UserReqLicense>
+</LicenseFile>

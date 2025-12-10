@@ -1,0 +1,210 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ROOT>
+	<Tokens ECMType="1">
+		<map Token="199998" Value="12000" />
+		<map Token="199999" Value="1200" />
+	</Tokens>
+	<Tokens ECMType="2">
+		<map Token="199998" Value="12100" />
+		<map Token="199999" Value="1210" />
+	</Tokens>
+	<Tokens ECMType="3">
+		<map Token="199998" Value="12200" />
+		<map Token="199999" Value="1220" />
+	</Tokens>
+	<Tokens ECMType="4">
+		<map Token="199998" Value="12200" />
+		<map Token="199999" Value="1220" />
+	</Tokens>
+	<Tokens ECMType="5">
+		<map Token="199998" Value="51500" />
+		<map Token="199999" Value="5150" />
+	</Tokens>
+	<Tokens ECMType="6">
+		<map Token="199998" Value="10000" />
+		<map Token="199999" Value="1000" />
+	</Tokens>
+	<Tokens ECMType="12">
+		<map Token="199998" Value="12500" />
+		<map Token="199999" Value="1250" />
+	</Tokens>
+	<Tokens ECMType="14">
+		<map Token="199998" Value="54000" />
+		<map Token="199999" Value="5400" />
+	</Tokens>
+	<Tokens ECMType="15">
+		<map Token="199998" Value="50500" />
+		<map Token="199999" Value="5050" />
+	</Tokens>
+	<Tokens ECMType="18">
+		<map Token="199998" Value="13000" />
+		<map Token="199999" Value="1300" />
+	</Tokens>
+	<Tokens ECMType="19">
+		<map Token="199998" Value="14000" />
+		<map Token="199999" Value="1400" />
+	</Tokens>
+	<Tokens ECMType="20">
+		<map Token="199998" Value="11000" />
+		<map Token="199999" Value="1100" />
+	</Tokens>
+	<Tokens ECMType="21">
+		<map Token="199998" Value="10500" />
+		<map Token="199999" Value="1050" />
+	</Tokens>
+	<Tokens ECMType="22">
+		<map Token="199998" Value="11000" />
+		<map Token="199999" Value="1100" />
+	</Tokens>
+	<Tokens ECMType="33">
+		<map Token="199998" Value="50000" />
+		<map Token="199999" Value="5000" />
+	</Tokens>
+	<Tokens ECMType="39">
+		<map Token="199998" Value="18500" />
+		<map Token="199999" Value="1850" />
+	</Tokens>
+	<Tokens ECMType="41">
+		<map Token="199998" Value="54000" />
+		<map Token="199999" Value="5400" />
+	</Tokens>
+	<Tokens ECMType="42">
+		<map Token="199998" Value="54250" />
+		<map Token="199999" Value="5425" />
+	</Tokens>
+	<Tokens ECMType="44">
+		<map Token="199998" Value="54500" />
+		<map Token="199999" Value="5450" />
+	</Tokens>
+	<Tokens ECMType="47">
+		<map Token="199998" Value="15500" />
+		<map Token="199999" Value="1550" />
+	</Tokens>
+	<Tokens ECMType="50">
+		<map Token="199998" Value="13250" />
+		<map Token="199999" Value="1325" />
+	</Tokens>
+	<Tokens ECMType="51">
+		<map Token="199998" Value="13250" />
+		<map Token="199999" Value="1325" />
+	</Tokens>
+	<Tokens ECMType="52">
+		<map Token="199998" Value="15500" />
+		<map Token="199999" Value="1550" />
+	</Tokens>
+	<Tokens ECMType="59">
+		<map Token="199998" Value="16500" />
+		<map Token="199999" Value="1650" />
+	</Tokens>
+	<Tokens ECMType="61">
+		<map Token="199998" Value="51000" />
+		<map Token="199999" Value="5100" />
+	</Tokens>
+	<Tokens ECMType="62">
+		<map Token="199998" Value="17250" />
+		<map Token="199999" Value="5600" />
+	</Tokens>
+	<Tokens ECMType="63">
+		<map Token="199998" Value="13750" />
+		<map Token="199999" Value="5610" />
+	</Tokens>
+	<Tokens ECMType="64">
+		<map Token="199998" Value="15000" />
+		<map Token="199999" Value="5620" />
+	</Tokens>
+	<Tokens ECMType="69">
+		<map Token="199998" Value="52000" />
+		<map Token="199999" Value="5200" />
+	</Tokens>
+	<Tokens ECMType="71">
+		<map Token="199998" Value="59500" />
+		<map Token="199999" Value="5950" />
+	</Tokens>
+	<Tokens ECMType="75">
+		<map Token="199998" Value="58000" />
+		<map Token="199999" Value="5800" />
+	</Tokens>
+	<Tokens ECMType="76">
+		<map Token="199998" Value="58250" />
+		<map Token="199999" Value="5825" />
+	</Tokens>
+	<Tokens ECMType="80">
+		<map Token="199998" Value="53000" />
+		<map Token="199999" Value="5300" />
+	</Tokens>
+	<Tokens ECMType="81">
+		<map Token="199998" Value="53500" />
+		<map Token="199999" Value="5350" />
+	</Tokens>
+	<Tokens ECMType="90">
+		<map Token="199998" Value="18500" />
+		<map Token="199999" Value="1850" />
+	</Tokens>
+	<Tokens ECMType="93">
+		<map Token="199998" Value="19000" />
+		<map Token="199999" Value="1900" />
+	</Tokens>
+	<Tokens ECMType="94">
+		<map Token="199998" Value="19250" />
+		<map Token="199999" Value="1925" />
+	</Tokens>
+	<Tokens ECMType="95">
+		<map Token="199998" Value="16500" />
+		<map Token="199999" Value="1650" />
+	</Tokens>
+	<Tokens ECMType="98">
+		<map Token="199998" Value="17000" />
+		<map Token="199999" Value="1700" />
+	</Tokens>
+	<Tokens ECMType="99">
+		<map Token="199998" Value="17250" />
+		<map Token="199999" Value="1725" />
+	</Tokens>
+	<Tokens ECMType="100">
+		<map Token="199998" Value="14500" />
+		<map Token="199999" Value="1450" />
+	</Tokens>
+	<Tokens ECMType="103">
+		<map Token="199998" Value="13500" />
+		<map Token="199999" Value="1350" />
+	</Tokens>
+	<Tokens ECMType="104">
+		<map Token="199998" Value="13750" />
+		<map Token="199999" Value="1375" />
+	</Tokens>
+	<Tokens ECMType="107">
+		<map Token="199998" Value="13500" />
+		<map Token="199999" Value="1800" />
+	</Tokens>
+	<Tokens ECMType="110">
+		<map Token="199998" Value="17500" />
+		<map Token="199999" Value="1750" />
+	</Tokens>
+	<Tokens ECMType="114">
+		<map Token="199998" Value="15000" />
+		<map Token="199999" Value="1500" />
+	</Tokens>
+	<Tokens ECMType="124">
+		<map Token="199998" Value="16000" />
+		<map Token="199999" Value="1600" />
+	</Tokens>
+	<Tokens ECMType="130">
+		<map Token="199998" Value="58500" />
+		<map Token="199999" Value="5850" />
+	</Tokens>
+	<Tokens ECMType="131">
+		<map Token="199998" Value="59000" />
+		<map Token="199999" Value="5900" />
+	</Tokens>
+	
+	<!-- This table provides mapping of legacy token with new token to maintain
+	     backward compatibility of current tool version with 6.2 & 6.2.1 Images. 
+	     This is added for the PRCR DB_G00062051 by et407.
+	-->
+	<Arrays>
+		<A ID="5">
+			<P LegacyToken="103015" NewToken="103014" />
+			<P LegacyToken="107026" NewToken="107024" />
+		</A>
+	</Arrays>
+</ROOT>

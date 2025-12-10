@@ -1,0 +1,11 @@
+<LicenseFile>
+	<ECMReqLicense Expiration="permanent" Name="FuelSysTblResetGTIS45_ECMPwd" VendorDaemon="cummins" Key="16DA50401AFE" IsValid="" ID="FuelSysTblResetGTIS45_ECMPwd" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="PERMIT_RESETS"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+	<UserReqLicense Expiration="permanent" Name="FSTResetGTIS45_AdvanceECMData" VendorDaemon="cummins" Key="917F17EDFAD7" IsValid="" ID="FSTResetGTIS45_AdvanceECMData" Version="1.0" Count="uncounted">
+		<Users>
+			<User NAME="Reset_Advance_ECM_Data"/></Users>
+	</UserReqLicense>
+</LicenseFile>

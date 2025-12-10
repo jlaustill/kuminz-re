@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- edited with XMLSPY v5 rel. 3 U (http://www.xmlspy.com) by Binish Peter (Cummins Inc) -->
+<!-- kn383 : DB_G00132567 : Modified STRING ID="1060"-->
+<!-- AP : DB_G00086070 :Added entry for STRING ID="1148".-->
+<!-- AP : DB_G00097143 & DB_G00097144 :Added entry for STRING ID="1149" , STRING ID="1150" and STRING ID="1151". -->
+<!-- gs551 : DB_G00096714 :Added entry for STRING ID="1152"-->
+<!-- ho403 : DB_G00090894 : Added entry for STRING ID="1153"-->
+<!-- hg660 : DB_G00120843 : Modified entry STRING ID="3053"-->
+<!-- hw280 : DB_G00121546 : Modified STRING ID="1103"-->
+<!-- hg495 : DB_G00131711 : Modified STRING ID="3053" and "3054"-->
+<!-- hg495 : DB_G00131711 : Modified STRING ID="3054" -->
+<!-- ip641 : DB_G00149997 : Modified string 1106 to add a line and added new string id 1154 without new line. -->
+<!-- hu590 : DB_G00150895 : Modified STRING ID="106" -->
+<!-- hz221 : DB_G00130814 : Added STRING ID="1155" and "1156" -->
+<!-- jj599 : DB_G00116328 : Modified STRING ID="100", added spaces between the string -->
+<!-- jj600 : DB_G00153598 : Removed STRING ID="1054"-->
+<!-- jm719 : DB_G00132568 : Modified STRING ID="1102" -->
+<!-- is308 : DB_G00184622 : Added STRING ID="3061" -->
+<!-- jr624 : DB_G00179943 : Modified STRING ID="1145".Added STRING ID="1157" and STRING ID="1158" -->
+<!-- jr617 : DB_G00191891 : Modified STRING ID=1037, 1077. 1078 and 1079 -->
+<!-- jr621 :  DB_G00193501: Added STRING ID=3062, 3063, 3064, 3065 and 3066 -->
+<!DOCTYPE module SYSTEM "../htmlentities.dtd"[]>
+<XML_RESOURCE>
+	<RESOURCE Tag="1001" Type="String Table" Description="Message String Table">
+		<STRING ID="100" Context="">Inquire Data Extraction</STRING>
+		<STRING ID="101" Context="">Record Number</STRING>
+		<STRING ID="102" Context="">The connection that is selected for Inquire Data Extraction is a simulator.
+
+All data that is stored will be simulated values.</STRING>
+		<STRING ID="103" Context="">Inquire Data Extraction</STRING>
+		<STRING ID="104" Context="">Could not connect to Vehicle</STRING>
+		<STRING ID="105" Context="">Engine Information</STRING>
+		<STRING ID="106" Context="">\r\nContinue</STRING>
+		<STRING ID="107" Context="">Cancel</STRING>
+		<STRING ID="108" Context="">INSITE - Enter Password</STRING>
+		<STRING ID="109" Context="">OK</STRING>
+		<STRING ID="110" Context="">Enter Master/Reset/Adjustable Password</STRING>
+		<STRING ID="111" Context="">Inquire Data Extraction Status</STRING>
+		<STRING ID="112" Context="">Group History</STRING>
+		<STRING ID="113" Context="">&amp;Connect</STRING>
+		<STRING ID="114" Context="">Close</STRING>
+		<STRING ID="115" Context="">Help</STRING>
+		<STRING ID="116" Context="">Options</STRING> 
+		<STRING ID="117" Context="">INSITE - Inquire Data Extraction</STRING>
+		<STRING ID="118" Context="">Connection Settings</STRING>
+		<STRING ID="119" Context="">Adapter Type      :&nbsp;</STRING>
+    <STRING ID="120" Context="">Continue</STRING>
+		<STRING ID="300" Context="">Computer Port     :&nbsp;</STRING>
+		<STRING ID="301" Context="">Datalink Adapter  :&nbsp;</STRING>
+		<STRING ID="1037" Context="">Datalink Protocol &nbsp;</STRING>
+		<STRING ID="1038" Context="">Inquire Data Extraction Resets</STRING>
+		<STRING ID="1039" Context="">Available Operations :</STRING>
+		<STRING ID="1040" Context="">Selected Operations :</STRING>
+		<STRING ID="1041" Context="">Connecting to Vehicle</STRING>
+		<STRING ID="1042" Context="">Connecting to Vehicle Failed</STRING>
+		<STRING ID="1043" Context="">Connecting to Vehicle Completed</STRING>
+		<STRING ID="1044" Context="">Inquire Data Extraction\r\nVehicle Serial Number,%s\r\nUnit Number,%s\r\nCustomer Name,%s\r\nGroup,%s\r\n</STRING>
+		<STRING ID="1045" Context="IDS_IDE">Inquire Data Extraction</STRING>
+		<STRING ID="1046" Context="">Tools</STRING>
+		<STRING ID="1048" Context="">Inquire Data Extraction is Complete for Engine :&nbsp;</STRING>
+		<STRING ID="1049" Context="">Creating Image - Failed</STRING>
+		<STRING ID="1050" Context="">Creating Image - Completed</STRING>
+		<STRING ID="1052" Context="">ConnectionID</STRING>
+		<STRING ID="1055" Context="">Please connect to a vehicle</STRING>
+		<STRING ID="1056" Context="">Reading Engine Serial Number</STRING>
+		<STRING ID="1057" Context="">Reading Engine Serial Number - Failed</STRING>
+		<STRING ID="1058" Context="">Reading Engine Serial Number - Completed</STRING>
+		<STRING ID="1059" Context="">Creating Image cancelled by user</STRING>
+		<STRING ID="1060" Context="">Creating Image </STRING>
+		<STRING ID="1062" Context="">Performing&nbsp;</STRING>
+		<STRING ID="1063" Context="">Reset Trip Information</STRING>
+		<STRING ID="1064" Context="">Reset Maintenance Monitor Data</STRING>
+		<STRING ID="1065" Context="">Reset Inactive Fault Codes</STRING>
+		<STRING ID="1066" Context="">Reset Duty Cycle Monitor Group 1</STRING>
+		<STRING ID="1067" Context="">Reset Duty Cycle Monitor Group 2</STRING>
+		<STRING ID="468" Context="">Reset All Fault Codes</STRING>
+		<STRING ID="1068" Context="">Current Connection Configuration :</STRING>
+		<STRING ID="1069" Context="">Connection Name    :&nbsp;</STRING>
+		<STRING ID="1070" Context="">Computer Port      :&nbsp;</STRING>
+		<STRING ID="1071" Context="">Datalink Adapter   :&nbsp;</STRING>
+		<STRING ID="1072" Context="">Datalink Protocol  :&nbsp;</STRING>
+		<STRING ID="1073" Context="">(To change the settings click on &apos;Options&apos; button)</STRING>
+		<STRING ID="1074" Context="Log Filename Prefix">Log_Inquire</STRING>
+		<STRING ID="1075" Context="Options Dialog">Select the connection settings for Inquire Data Extraction</STRING>
+		<STRING ID="1076" Context="">Connection Settings</STRING>
+		<STRING ID="1077" Context="">Adapter Type        &nbsp;</STRING>
+		<STRING ID="1078" Context="">Computer Port       &nbsp;</STRING>
+		<STRING ID="1079" Context="">Datalink Adapter    &nbsp;</STRING>
+		<STRING ID="1080" Context="">Datalink Protocol   :&nbsp;</STRING>
+		<STRING ID="1084" Context="">Updating History</STRING>
+		<STRING ID="1085" Context="">Updating History - Completed</STRING>
+		<STRING ID="1086" Context="">Exception occurred when connecting to ECM</STRING>
+		<STRING ID="1087" Context="">&nbsp;- Completed</STRING>
+		<STRING ID="1088" Context="">&nbsp;- Not Available</STRING>
+		<STRING ID="1089" Context="">Disconnecting</STRING>
+		<STRING ID="1090" Context="">Connection Closed</STRING>
+		<STRING ID="1091" Context="">Some Error occurred</STRING>
+		<STRING ID="1092" Context="">Exception occurred when creating Image</STRING>
+		<STRING ID="1093" Context="">Name	Value</STRING>
+		<STRING ID="1094" Context="">Engine Serial Number	</STRING>
+		<STRING ID="1095" Context="">Unit Number	</STRING>
+		<STRING ID="1096" Context="">Customer Name	</STRING>
+		<STRING ID="1097" Context="">Group Name</STRING>
+		<STRING ID="1098" Context="">Group Name</STRING>
+		<STRING ID="1099" Context="">Vehicle</STRING>
+		<STRING ID="1100" Context="">Cancel the Inquire Data Extraction? </STRING>
+		<STRING ID="1101" Context="">Canceling , Please wait...</STRING>
+		<STRING ID="1102" Context="">The selected resets cannot be performed because the ECM is in invalid state. Please select OK to continue the data extraction</STRING>
+		<STRING ID="1103" Context="">Please select a connection setting for Inquire Data Extraction.</STRING>
+		<STRING ID="1104" Context="">Connection to the ECM has been lost</STRING>
+		<STRING ID="1105" Context="">N/A</STRING>
+		<STRING ID="1106" Context="">The entered password is invalid.\r\n\r\nPlease enter a valid password.</STRING>
+		<STRING ID="1107" Context="">Insufficient security permission to perform resets</STRING>
+		<STRING ID="1108" Context="">Inquire Data Extraction will close all opened views and disconnect from engine.
+
+Select OK to enter Inquire Data Extraction or Cancel to continue using rest of INSITE.</STRING>
+		<STRING ID="1109" Context="">Connected ECM is in Development Mode</STRING>
+		<STRING ID="1110" Context="ConnectDialog String">Security Type:</STRING>
+		<STRING ID="1111" Context="ConnectDialog String">ECM Password:</STRING>
+		<STRING ID="1112" Context="ConnectDialog String">Connec&amp;t</STRING>
+		<STRING ID="1113" Context="ConnectDialog String">&amp;Cancel</STRING>
+		<STRING ID="1114" Context="ConnectDialog String">Pr&amp;operties</STRING>
+		<STRING ID="1115" Context="ConnectDialog String">&amp;Help</STRING>
+		<STRING ID="1116" Context="DevMode warning">Connected ECM is in Development Mode</STRING>
+		<STRING ID="1117" Context="ConnectDialog Caption">Connect</STRING>
+		<STRING ID="1118" Context="ConnectDialog Caption">Reset</STRING>
+		<STRING ID="1119" Context="ConnectDialog Caption">Adjustment</STRING>
+		<STRING ID="1120" Context="ConnectDialog Caption">Master</STRING>
+		<STRING ID="1121" Context="Basic Level Warning">Inquire Data Extraction cannot perform the resets while INSITE Basic is active.</STRING>
+		<STRING ID="1122" Context="User Rights Warning">The current user does not have sufficient rights for Inquire Data Extraction to perform Trip Information Reset.</STRING>
+		<STRING ID="1123" Context="User Rights Warning">The current user does not have sufficient rights for Inquire Data Extraction to perform Maintenance Monitor Data Reset.</STRING>
+		<STRING ID="1124" Context="User Rights Warning">The current user does not have sufficient rights for Inquire Data Extraction to perform Inactive Faults Reset.</STRING>
+		<STRING ID="1125" Context="DevMode">The Connected ECM is in an invalid state. The Inquire Data Extraction can not be performed at this time. Please Key off for 30 seconds and retry.</STRING>
+		<STRING ID="1126" Context="EngineSpeed">Engine Speed detected.</STRING>
+		<STRING ID="1127" Context="EngineSpeed">Engine Speed has been detected.&#13;&#10;Please stop the engine, turn the key switch ON, click OK, and then click Connect.</STRING>
+		<STRING ID="1128" Context="Reset All Faults">Reset All Fault Codes</STRING>
+		<STRING ID="1129" Context="User Rights Warning">The current user does not have sufficient rights for Inquire Data Extraction to perform All Faults Reset.</STRING>
+		<STRING ID="1130" Context="">Shutting down the threads...</STRING>
+		<STRING ID="1131" Context="">Inquire Data Extraction Status</STRING>
+		<STRING ID="1132" Context="">Vehicle Properties:</STRING>
+		<STRING ID="1133" Context="">New Engine Information</STRING>
+		<STRING ID="1134" Context="">Edit the New Engine Information</STRING>
+		<STRING ID="1135" Context="">New Group</STRING>
+		<STRING ID="1136" Context="">Comma Separated Files (*.csv)</STRING>
+		<STRING ID="1137" Context="">Tab Delimited Files (*.txt)</STRING>
+		<STRING ID="1138" Context="">Output Files</STRING>
+		<STRING ID="1139" Context="">Save as type</STRING>
+		<STRING ID="1140" Context="">Key Switch</STRING>
+		<STRING ID="1141" Context="">Turn the key switch off for 30 seconds and then turn it back on.</STRING>
+		<STRING ID="1142" Context="">ECM Write Succeeded</STRING>
+		<STRING ID="1143" Context="">All parameters were written successfully to the ECM.</STRING>
+		<STRING ID="1144" Context="">ECM Write Unsuccessful</STRING>
+		<STRING ID="1145" Context="">INSITE did not successfully perform all the Inquire Data Extraction functions on the ECM. See the status window for details.</STRING>
+		<STRING ID="1146" Context="">Validate Password Failed</STRING>
+		<STRING ID="1147" Context="">The ECM could not validate the new password(s). Please reconnect to module and try again. If this problem persists, contact a local distributor.
+
+ECM Response Code : </STRING>
+		<STRING ID="1148" Context="">The data extraction cannot be performed because the ECM Passwords are not aligned within the module(s).
+Please select OK to cancel the data extraction.
+		
+To align the passwords, please close Inquire Data Extraction, and connect with INSITE.</STRING>
+		<STRING ID="1149" Context="">Auto-Detect</STRING>
+		<STRING ID="1150" Context="">Simulator</STRING>	
+		<STRING ID="1151" Context="">Serial</STRING>
+		<STRING ID="1152" Context="">Operation Cancelled</STRING>
+    <STRING ID="1153" Context="">
+ The data extraction cannot be performed because the ECM is not calibrated.
+ Select OK to cancel the data extraction.
+
+ To calibrate the module, close Inquire Data Extraction, and connect with INSITE.
+    </STRING>
+		<STRING ID="1154" Context="">The entered password is invalid. Please enter a valid password.</STRING>
+        <STRING ID="1155" Context="User Rights Warning">The current user does not have sufficient rights for Inquire Data Extraction to perform Duty Cycle Monitor Group 1 Reset.</STRING>
+        <STRING ID="1156" Context="User Rights Warning">The current user does not have sufficient rights for Inquire Data Extraction to perform Duty Cycle Monitor Group 2 Reset.</STRING>
+    <STRING ID="1157">&nbsp;- Not Supported</STRING>
+    <STRING ID="1158">&nbsp;- Could Not Complete Reset</STRING>
+    <!--Exceptions/Errors ID 2001-3000-->
+		<STRING ID="2001" Context="">Operation has been cancelled</STRING>
+		<STRING ID="2002" Context="">Error displaying Preferences Dialog</STRING>
+		<STRING ID="2003" Context="">Error Connecting to ECM</STRING>
+			
+		
+		<!-- Error IDs for Display -->
+		<STRING ID="3000" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29001&lt;/ErrorNumber&gt;&lt;Description&gt;An unknown error occurred in Inquire Data Extraction.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3001" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29002&lt;/ErrorNumber&gt;&lt;Description&gt;Worker - Error connecting to ECM.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3002" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29003&lt;/ErrorNumber&gt;&lt;Description&gt;Worker -  Error reading engine serial.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3003" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29004&lt;/ErrorNumber&gt;&lt;Description&gt;Worker -  Error creating image.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3004" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29005&lt;/ErrorNumber&gt;&lt;Description&gt;Worker - Error looking up ECM Info.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3005" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29006&lt;/ErrorNumber&gt;&lt;Description&gt;Worker - Error updating history.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3006" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29007&lt;/ErrorNumber&gt;&lt;Description&gt;Worker - Error reading history data.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3007" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29008&lt;/ErrorNumber&gt;&lt;Description&gt;Worker - Error in Do Operations.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3008" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29009&lt;/ErrorNumber&gt;&lt;Description&gt;Worker - Error canceling operations.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3009" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29010&lt;/ErrorNumber&gt;&lt;Description&gt;Worker - Error renaming group.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3010" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29011&lt;/ErrorNumber&gt;&lt;Description&gt;Worker - Error in thread ExecuteConnect.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3011" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29012&lt;/ErrorNumber&gt;&lt;Description&gt;Worker - Error in thread ExecuteCreateImage.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3012" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29013&lt;/ErrorNumber&gt;&lt;Description&gt;Worker - Error in thread ExecuteDoOperations.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3013" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29014&lt;/ErrorNumber&gt;&lt;Description&gt;Worker - Error in helper connecting ECM.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3014" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29015&lt;/ErrorNumber&gt;&lt;Description&gt;Worker - Error creating image header.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3015" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29016&lt;/ErrorNumber&gt;&lt;Description&gt;Worker - Error creating image filename.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3016" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29017&lt;/ErrorNumber&gt;&lt;Description&gt;Worker - Error resetting token.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3017" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29018&lt;/ErrorNumber&gt;&lt;Description&gt;Worker - Error storing history.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3018" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29019&lt;/ErrorNumber&gt;&lt;Description&gt;Worker - Error getting registry value.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3019" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29020&lt;/ErrorNumber&gt;&lt;Description&gt;Worker - Error getting parameter value.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3020" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29021&lt;/ErrorNumber&gt;&lt;Description&gt;Worker - Error in helper updating history.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3021" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29022&lt;/ErrorNumber&gt;&lt;Description&gt;Worker - Error in firing progress update.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3022" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29023&lt;/ErrorNumber&gt;&lt;Description&gt;UI - Error in load.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3023" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29024&lt;/ErrorNumber&gt;&lt;Description&gt;UI - Error adding property page.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3024" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29025&lt;/ErrorNumber&gt;&lt;Description&gt;UI - Error in UpdateProgress.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3025" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29026&lt;/ErrorNumber&gt;&lt;Description&gt;UI - Error  displaying Options.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3026" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29027&lt;/ErrorNumber&gt;&lt;Description&gt;UI - Error connecting ECM.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3027" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29028&lt;/ErrorNumber&gt;&lt;Description&gt;UI - Error  creating image.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3028" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29029&lt;/ErrorNumber&gt;&lt;Description&gt;UI - Error displaying history.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3029" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29030&lt;/ErrorNumber&gt;&lt;Description&gt;UI - Error in AfterEdit.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3030" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29031&lt;/ErrorNumber&gt;&lt;Description&gt;UI - Error executing double click on grid.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3031" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29032&lt;/ErrorNumber&gt;&lt;Description&gt;UI - Error saving log messages.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3032" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29033&lt;/ErrorNumber&gt;&lt;Description&gt;UI - Error canceling operation.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3033" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29034&lt;/ErrorNumber&gt;&lt;Description&gt;UI - Error during close.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3034" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29035&lt;/ErrorNumber&gt;&lt;Description&gt;UI - Error reading ECM properties.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3035" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29036&lt;/ErrorNumber&gt;&lt;Description&gt;UI - Error displaying engine info.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3036" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29037&lt;/ErrorNumber&gt;&lt;Description&gt;UI - Error initializing dialog.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3037" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29038&lt;/ErrorNumber&gt;&lt;Description&gt;UI - Error getting cell text.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3038" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29039&lt;/ErrorNumber&gt;&lt;Description&gt;Old name not found to rename.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3039" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29040&lt;/ErrorNumber&gt;&lt;Description&gt;Incorrect password entered for 3 times in a row.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3040" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29041&lt;/ErrorNumber&gt;&lt;Description&gt;Error reading XML data for vehicle.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3041" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29042&lt;/ErrorNumber&gt;&lt;Description&gt;Error loading vehicle data.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3042" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29043&lt;/ErrorNumber&gt;&lt;Description&gt;Error writing vehicle history to file.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3043" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29044&lt;/ErrorNumber&gt;&lt;Description&gt;Error creating vehicle history file.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3044" Context="">There was some error initializing the dialog. This dialog cannot be shown.</STRING>
+		<STRING ID="3045" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29046&lt;/ErrorNumber&gt;&lt;Description&gt;Error opening registry key for Connections.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3046" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29047&lt;/ErrorNumber&gt;&lt;Description&gt;Error getting connection key value.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3047" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29048&lt;/ErrorNumber&gt;&lt;Description&gt;Error getting connection string.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3048" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29049&lt;/ErrorNumber&gt;&lt;Description&gt;Error populating connection information.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3049" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29050&lt;/ErrorNumber&gt;&lt;Description&gt;Registry entry for connection name not found.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3050" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29051&lt;/ErrorNumber&gt;&lt;Description&gt;Unknown connection type.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3051" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29052&lt;/ErrorNumber&gt;&lt;Description&gt;Connection name not found.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3052" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29053&lt;/ErrorNumber&gt;&lt;Description&gt;Error returned from Image Services.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3053" Context="">INSITE will purge all Inquire Data Extraction files from &nbsp;</STRING>
+		<STRING ID="3054" Context="">Confirm Purging Inquire Data Extraction files</STRING>
+		<STRING ID="3055" Context="">The following files could not be deleted from &nbsp;</STRING>
+		<STRING ID="3056" Context="">Files Not Deleted</STRING>
+		<STRING ID="3057" Context="">Some error occurred while purging files</STRING>
+		<STRING ID="3058" Context="">Purging Complete</STRING>
+		<STRING ID="3059" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29054&lt;/ErrorNumber&gt;&lt;Description&gt;Error opening registry key for Templates.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="3060" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;29055&lt;/ErrorNumber&gt;&lt;Description&gt;Connection Type not found in registry.&lt;/Description&gt;&lt;Suggestion&gt;Retry the operation or close and restart INSITE.  If the problem persists, please record  the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+    <STRING ID="3061" Context="">INSITE has detected multiple subsystems.\r\nPlease select a subsystem from the following list to connect to:</STRING>
+		<STRING ID="3062" Context="">Engine Serial Number</STRING>
+		<STRING ID="3063" Context="">Customer Name</STRING>
+		<STRING ID="3064" Context="">Customer Unit Number</STRING>
+		<STRING ID="3065" Context="">File Name</STRING>
+		<STRING ID="3066" Context="">Inquire Data Extraction Properties</STRING>
+	</RESOURCE>
+</XML_RESOURCE>

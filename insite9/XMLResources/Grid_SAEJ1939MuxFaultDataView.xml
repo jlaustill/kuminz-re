@@ -1,0 +1,85 @@
+﻿<!--
+========================================================================================
+// Grid_SAEJ1939MuxFaultDataView.xml   
+// Copyright (c) 2007 Cummins, Inc.
+// ALL RIGHTS RESERVED 						   
+// 
+========================================================================================
+//
+// CHANGE LOG								   					
+// PR/CR#           Date        Author          	Comments                              
+==========================================================================================
+//                                              Added this comment blocks
+//DB_G00100474    05/21/2007   Nagraj Patil     Replaced Parameter id 199021 with 199209 under parameters  
+===========================================================================================
+//DB_G00122902    07/02/2008   Sudheer Venkat   Changed the Display value of ECM Real time   
+//												to display Not Applicable if RTC is disbled.
+===========================================================================================
+//DB_G00132069    01/02/2009   Megha Agrawal    Removed the dependency on RTC_enable for printing
+//												                      if this token does not exist. Instead added dependency on
+//												                      TIS_ID token Real Time Clock.
+==========================================================================================
+//DB_G00132360     01/31/2009   Chandan Varma    Moved tool printing logic from xml schema to feature code. 
+==========================================================================================
+//DB_G00144093		8/19/2009	Sanket Patnaik			Edited the heading to add Customer Name
+==========================================================================================
+-->
+<FlexGrid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+
+	<Properties Cols="2:VT_I4"/>
+
+	<FixedRows>
+		<FixedRow>
+			
+		</FixedRow>
+	</FixedRows>
+	
+	<data/>
+
+	<parameters/>
+
+	<icons/>
+	
+	<combolists/>
+	
+	<styles/>
+	
+	<resources>
+<!--		<resource id="Res1" CLSID="{1C628621-473B-4EA4-9DC6-7ED92C57DD9E}\Pages\{FBDB2B75-0C2B-4ECB-B5AC-84F42E0E34DD}" /> -->
+		<resource id="Res1" CLSID="{1ECBBE0B-836B-11D4-8A76-00062999E309}" LoadDLL="TRUE"/>
+	</resources>
+
+	<printing HdrFontSize="8" >
+	
+		<header>
+			<line>
+				<center source="RES:Res1:2048" />
+			</line>
+		<line>
+				<left source="RES:Res1:2030" />
+				<left source="OBJ:DOM:selectSingleNode(/Image/Header/ESerial):getAttribute(DisplayValue)" />
+				<right source="INSITE - " />
+				<right source="OBJ:DOM:selectSingleNode(/Image):getAttribute(ImageVersion)" />
+			</line>
+			<line>
+				<left source="RES:Res1:2029" />
+				<left source="OBJ:DOM:selectSingleNode(/Image/Header/UNumber):getAttribute(DisplayValue)" />
+				<right source="RES:Res1:2031" />
+				<right source="OBJ:DOM:selectSingleNode(/Image/Header/VMake):getAttribute(DisplayValue)" />
+			</line>
+			<line>
+				<left source="RES:Res1:2032" />
+				<left source="OBJ:DOM:selectSingleNode(/Image/Header/WOName):getAttribute(DisplayValue)" />
+				<right source="RES:Res1:2033" />
+				<right source="OBJ:DOM:selectSingleNode(/Image/Header/IName):getAttribute(DisplayValue)" />				
+			</line>
+				<line>
+				<right source="RES:Res1:2036"/>
+				<right source="OBJ:DOM:selectSingleNode(/Image/Header/CustomerName):getAttribute(DisplayValue)"/>
+				</line>
+		</header>
+		
+	</printing>
+	
+</FlexGrid>

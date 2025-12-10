@@ -1,0 +1,137 @@
+<!-- jd067(NM) DB_G00193905: Modified Queries to check if Core 1 or Core 2 modules. Used DetectYpe instead of ModType. -->
+
+<!-- This is a sample  -->
+<FlexGrid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Properties Cols="3:VT_I4" FixedCols="0:VT_I4" AllowUserResizing="1:VT_UI4" AutoResize="1:VT_I4" GridLines="1:VT_I4" Editable="0:VT_I4" ExtendLastCol="1:VT_I4" SelectionMode="1:VT_I4" />
+	<!-- Add properties to the &quot;FlexGrid&quot; element as attribute in Name=Value format -->
+	<FixedRows>
+		<FixedRow>
+			<Column name="RES:Res1:2" />
+			<Column name="RES:Res1:3" />
+			<Column name="RES:Res1:4" />
+		</FixedRow>
+	</FixedRows>
+	<data loopEnd="1">
+	
+	<Object name="objCore1" source="OBJ:DOM:selectNodes(Core1)" />
+	<Object name="objCore2" source="OBJ:DOM:selectNodes(Core2)" />
+
+		<Node level="0" loopStart="OBJ:DOM:selectSingleNode(pID22731):getAttribute(V)" loopEnd="1" styleid="s1">
+			<!-- If there is no Data for FCM in the ECM, &quot; -->
+			<Column order="0" datasource="RES:Res1:13" />
+		</Node>
+		
+		<Node level="0" loopStart="0" loopEnd="OBJ:DOM:selectSingleNode(pID22731):getAttribute(V)" styleid="s1">
+		
+			<!-- loop for Core 1 modules -->
+			<Node level="0" loopStart="0" loopEnd="OBJ:objCore1:length">
+				<Node level="0" loopStart="0" loopEnd="1">
+					<Column order="0" datasource="OBJ:DOM:selectSingleNode(pID107003):getAttribute(N)" styleid="s2"/>
+					<Column order="1" datasource="OBJ:DOM:selectSingleNode(pID107003):getAttribute(DV)" styleid="s3"/>
+					<Column order="2" datasource="OBJ:DOM:selectSingleNode(pID107003):getAttribute(U)" />
+				</Node>
+				<Node level="0" loopStart="0" loopEnd="1">
+					<Column order="0" datasource="OBJ:DOM:selectSingleNode(pID199066):getAttribute(N)" styleid="s2"/>
+					<Column order="1" datasource="OBJ:DOM:selectSingleNode(pID199066):getAttribute(DV)" styleid="s3" />
+					<Column order="2" datasource="OBJ:DOM:selectSingleNode(pID199066):getAttribute(U)" />
+				</Node>
+				<Node level="0" loopStart="0" loopEnd="1">
+					<Column order="0" datasource="OBJ:DOM:selectSingleNode(pID112043):getAttribute(N)" styleid="s2"/>
+					<Column order="1" datasource="OBJ:DOM:selectSingleNode(pID112043):getAttribute(DV)" styleid="s3"/>
+					<Column order="2" datasource="OBJ:DOM:selectSingleNode(pID112043):getAttribute(U)" />
+				</Node>
+				<Node level="0" loopStart="0" loopEnd="1">
+					<Column order="0" datasource="OBJ:DOM:selectSingleNode(pID107033):getAttribute(N)" styleid="s2"/>
+					<Column order="1" datasource="OBJ:DOM:selectSingleNode(pID107033):getAttribute(DV)" styleid="s3"/>
+					<Column order="2" datasource="OBJ:DOM:selectSingleNode(pID107033):getAttribute(U)" />
+				</Node>
+				<Node level="0" loopStart="0" loopEnd="1">
+					<Column order="0" datasource="OBJ:DOM:selectSingleNode(pID112042):getAttribute(N)" styleid="s2"/>
+					<Column order="1" datasource="OBJ:DOM:selectSingleNode(pID112042):getAttribute(DV)" styleid="s3"/>
+					<Column order="2" datasource="OBJ:DOM:selectSingleNode(pID112042):getAttribute(U)" />
+				</Node>
+				<Node level="0" loopStart="0" loopEnd="1"></Node>
+			<!--End of loop for Core 1 modules -->
+			</Node>
+
+			<!-- loop for Core 2 modules -->
+			<Node level="0" loopStart="0" loopEnd="OBJ:objCore2:length">
+				<Node level="0" loopStart="0" loopEnd="1">
+					<Column order="0" datasource="OBJ:DOM:selectSingleNode(pID16789506):getAttribute(N)" styleid="s2"/>
+					<Column order="1" datasource="OBJ:DOM:selectSingleNode(pID16789506):getAttribute(DV)" styleid="s3"/>
+					<Column order="2" datasource="OBJ:DOM:selectSingleNode(pID16789506):getAttribute(U)" />
+				</Node>
+				<Node level="0" loopStart="0" loopEnd="1">
+					<Column order="0" datasource="OBJ:DOM:selectSingleNode(pID16789503):getAttribute(N)" styleid="s2"/>
+					<Column order="1" datasource="OBJ:DOM:selectSingleNode(pID16789503):getAttribute(DV)" styleid="s3"/>
+					<Column order="2" datasource="OBJ:DOM:selectSingleNode(pID16789503):getAttribute(U)" />
+				</Node>
+				<Node level="0" loopStart="0" loopEnd="1">
+					<Column order="0" datasource="OBJ:DOM:selectSingleNode(pID16789505):getAttribute(N)" styleid="s2"/>
+					<Column order="1" datasource="OBJ:DOM:selectSingleNode(pID16789505):getAttribute(DV)" styleid="s3"/>
+					<Column order="2" datasource="OBJ:DOM:selectSingleNode(pID16789505):getAttribute(U)" />
+				</Node>
+				<!-- <Node level="0" loopStart="0" loopEnd="1"></Node> -->
+				<!--End of loop for Core 2 modules -->
+			</Node>
+		</Node>
+	<Object name="removerow" source="OBJ:VSFLEXGRID:RemoveItem(2)" />
+	<Object name="removerow" source="OBJ:VSFLEXGRID:RemoveItem(1)" />
+	</data>
+	<parameters>
+		<parameter name="pID107003" source="/Image/Parameters/P[@ID=107003]" />
+		<parameter name="pID199066" source="/Image/Parameters/P[@ID=199066]" />
+		<parameter name="pID112043" source="/Image/Parameters/P[@ID=112043]" />
+		<parameter name="pID107033" source="/Image/Parameters/P[@ID=107033]" />
+		<parameter name="pID112042" source="/Image/Parameters/P[@ID=112042]" />
+		<parameter name="pID22731" source="/Image/Parameters/P[@ID=22731]" />
+
+		<!--Parameters for Core 2 modules -->
+		<parameter name="pID16789506" source="/Image/Parameters/P[@ID=16789506]" />
+		<parameter name="pID16789503" source="/Image/Parameters/P[@ID=16789503]" />
+		<parameter name="pID16789505" source="/Image/Parameters/P[@ID=16789505]" />
+		
+		<!-- Queries to check if Core 1 or Core 2 modules -->
+		<parameter name="Core2" source="/Image[@DetectType=135]" />
+		<parameter name="Core1" source="/Image[@DetectType!=135]" />
+	</parameters>
+	<icons></icons>
+	<combolists></combolists>
+	<styles>
+		<style id="s1" CellFontBold="1:VT_I4" />
+		<style id="s2" CellFontBold="0:VT_I4" CellAlignMent="1:VT_I4" ColWidthMin="2500" ColWidthMax="4000" WordWrap="1:VT_BOOL" AutoSizeMode="1:VT_I4" />
+		<style id="s3" CellAlignMent="1:VT_I4" />
+	</styles>
+	<resources>
+		<resource id="Res1" CLSID="{1C628621-473B-4EA4-9DC6-7ED92C57DD9E}\Pages\{1ABC0442-EB40-4635-B962-D1CC99E6D92C}" LoadDLL="TRUE" />
+	</resources>
+	<printing HdrFontSize="8">
+		<header>
+			<line>
+      <center source="RES:Res1:14" />
+      </line>
+      <line>
+      <left source="RES:Res1:30" />
+      <left source="OBJ:DOM:selectSingleNode(/Image/Header/ESerial):getAttribute(DisplayValue)" />
+      <right source="INSITE - " />
+      <right source="OBJ:DOM:selectSingleNode(/Image):getAttribute(ImageVersion)" />
+      </line>
+      <line>
+      <left source="RES:Res1:29" />
+      <left source="OBJ:DOM:selectSingleNode(/Image/Header/UNumber):getAttribute(DisplayValue)" />
+      <right source="RES:Res1:31" />
+      <right source="OBJ:DOM:selectSingleNode(/Image/Header/VMake):getAttribute(DisplayValue)" />
+      </line>	
+		  <line>
+		  <left source="RES:Res1:32" />
+		  <left source="OBJ:DOM:selectSingleNode(/Image/Header/WOName):getAttribute(DisplayValue)" />
+			<right source="RES:Res1:33" />
+			<right source="OBJ:DOM:selectSingleNode(/Image/Header/IName):getAttribute(DisplayValue)" />
+			</line>
+      <line>
+      <right source="RES:Res1:34" />
+      <right source="OBJ:DOM:selectSingleNode(/Image/Header/CustomerName):getAttribute(DisplayValue)" />
+      </line>
+		</header>
+	</printing>
+</FlexGrid>

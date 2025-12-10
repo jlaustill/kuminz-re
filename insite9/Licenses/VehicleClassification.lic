@@ -1,0 +1,20 @@
+<LicenseFile>
+	<ToolReqLicense Expiration="permanent" Name="VCF_Tool_Lite" VendorDaemon="cummins" Key="AF92D800D1A3" IsValid="" ID="VCF_Tool_Lite" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="Lite"/>
+	</ToolReqLicense>
+	<ToolReqLicense Expiration="permanent" Name="VCF_Tool_Pro" VendorDaemon="cummins" Key="38A945BE201D" IsValid="" ID="VCF_Tool_Pro" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="Pro"/>
+	</ToolReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="VCF_ECM_Master" VendorDaemon="cummins" Key="483107D7BB43" IsValid="" ID="VCF_ECM_Master" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="MASTER"/></ECMPasswords>
+	</ECMReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="VCF_ECM_Adjust" VendorDaemon="cummins" Key="06A25CB7BA04" IsValid="" ID="VCF_ECM_Adjust" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="ADJUSTABLES"/></ECMPasswords>
+	</ECMReqLicense>
+	<UserReqLicense Expiration="permanent" Name="VCF_User_Adjust_FnP" VendorDaemon="cummins" Key="73A5F2021F6E" IsValid="" ID="VCF_User_Adjust_FnP" Version="1.0" Count="uncounted">
+		<Users>
+			<User NAME="Adjust_ECM_Features_and_Parameters"/></Users>
+	</UserReqLicense>
+</LicenseFile>

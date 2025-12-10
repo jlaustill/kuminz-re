@@ -1,0 +1,57 @@
+<!-- CHANAGE HISTORY
+jd067   06/06/2012   DB_G00193905		Modified <resource> node (LoadDLL="TRUE").   
+kf176   04/11/2012   DB_G00190132		Replace the OBJ:DS with ECM:DS to read from ECM.   
+-->
+<!-- This is a sample  -->
+<FlexGrid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Properties AllowUserResizing="1:VT_UI4" AutoResize="1:VT_I4" GridLines="1:VT_I4" />
+	<!-- Add properties to the &quot;FlexGrid&quot; element as attribute in Name=Value format -->
+	<FixedRows></FixedRows>
+	<styles></styles>
+	<parameters></parameters>
+	<icons></icons>
+	<combolists></combolists>
+	<resources>
+		<resource id="Res1" CLSID="{1C628621-473B-4EA4-9DC6-7ED92C57DD9E}\Pages\{1ABC0442-EB40-4635-B962-D1CC99E6D92C}" LoadDLL="TRUE"/>
+	</resources>
+	<printing HdrFontSize="8">
+		<header>
+				<line>
+					<center source="RES:Res1:14" />
+				</line>
+				<line>
+					<left source="RES:Res1:44" />
+					<left source="ECM:DS:Read(3003,1):DisplayValue" />
+					<right source="OBJ:SYSTEMDATA:Value(TOOLNAME)PROP" />
+					<right source=" " />
+					<right source="OBJ:SYSTEMDATA:Value(TOOLVERSION)PROP" />
+				</line>
+				<line>
+					<left source="RES:Res1:43" />
+					<left source="ECM:DS:Read(1011,1):DisplayValue" />
+					<right source="RES:Res1:42" />
+					<right source="OBJ:SYSTEMDATA:Value(COMPANYNAME)PROP" />
+				</line>
+				<line>
+					<left source="RES:Res1:45" />
+					<left source="NA" />
+					<right source="RES:Res1:46" />
+					<right source="NA" />
+				</line>
+				<line>
+					<right source="RES:Res1:41" />
+					<right source="ECM:DS:Read(1009,1):DisplayValue" />
+				</line>
+		</header>
+			<footer>
+				<line>
+					<left source="OBJ:SYSTEMDATA:Value(TIME)PROP" />
+					<center source="Page %d"/>
+					<center source=" of "/>
+					<center source="OBJ:VSPRINTER:PageCount"/>
+					<right source="OBJ:SYSTEMDATA:Value(DATE)PROP" />
+				</line>
+			</footer>	
+	</printing>
+
+</FlexGrid>

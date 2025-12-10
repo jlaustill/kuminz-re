@@ -1,0 +1,173 @@
+<!--Set the correct Level for 38 token (SD) -->
+<!-- This is a sample  -->
+<FlexGrid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Properties Cols="3:VT_I4" FixedCols="0:VT_I4" ExplorerBar="0:VT_I4" GridLines="1:VT_I4" OutlineBar="5:VT_I4"
+		AllowUserResizing="1:VT_UI4" AutoResize="1:VT_I4" Editable="0:VT_I4" />
+	<ColoumnRowDetail CustomRowHeight="1:VT_I4" ColoumnNumber="0:VT_I4"/>
+	<!-- Add properties to the "FlexGrid" element as attribute in Name=Value format -->
+	<FixedRows>
+		<FixedRow styleid="s1">
+			<Column name="RES:Res1:101" />
+			<Column name="RES:Res1:209" />
+			<Column name="RES:Res1:210" />
+		</FixedRow>
+	</FixedRows>
+	<data loopEnd="1">
+		<Node level="0" loopStart="0" loopEnd="1">
+			<Column order="0" datasource="OBJ:DOM:selectSingleNode(pID199999):getAttribute(DV)" />
+			
+			<!-- Try reading GTIS Enable for 4.5-->
+			<Object name="TripEnable1" source="OBJ:DOM:selectNodes(pTripEnable45Read)" />
+			<Node level="1" loopStart="0" loopEnd="OBJ:TripEnable1:length">
+				<!-- GTIS token found , Try read it only when value is 1 or 3 -->
+				<Object name="TripEnable" source="OBJ:DOM:selectNodes(pTripEnable45)" />
+			</Node>
+
+			<Node level="1" loopStart="OBJ:TripEnable1:length" loopEnd="1">
+				<!-- GTIS token not found , Try Reading 38 token -->
+				<Object name="TripEnable" source="OBJ:DOM:selectNodes(pTripEnable38)" />
+			</Node>
+			
+			
+			<Node level="1" loopStart="OBJ:TripEnable:length" loopEnd="1">
+				<Column order="0" datasource="OBJ:DOM:selectSingleNode(pID15):getAttribute(DV)" />
+				
+				<!-- Print "Print Trip Info Not Available. -->
+			</Node>
+			<Node level="2" loopStart="OBJ:TripEnable:length" loopEnd="1">
+				<Column order="0" datasource="RES:Res1:182" />
+			</Node>
+			
+			<Object name="PlaceHolder" source="OBJ:VSFLEXGRID:RemoveItem(3)" />
+			<Node level="1" loopStart="0" loopEnd="OBJ:TripEnable:length" styleid="s1">
+				<Column order="0" datasource="OBJ:DOM:selectSingleNode(pID15):getAttribute(DV)" />
+				<Object name="FList" source="OBJ:DOM:selectNodes(aF)" />
+				<Node level="2" loopStart="0" loopEnd="OBJ:FList:length" styleid="s1" iconid="I206">
+					<Object name="Feature" source="OBJ:FList:nextNode" />
+					<Column order="0" datasource="OBJ:Feature:getAttribute(N)" />
+					<Object name="PList" source="OBJ:Feature:selectNodes(aSFP)" />
+					<Node level="3" loopStart="0" loopEnd="OBJ:PList:length" iconid="I204">
+						<Object name="PItem" source="OBJ:PList:nextNode" />
+						<Column order="0" datasource="OBJ:PItem:getAttribute(N)" />
+						<Column order="1" datasource="OBJ:DOM:selectSingleNode(pToken):getAttribute(DV)" styleid="s2"
+							usemap="m1" />
+						<Column order="2" datasource="OBJ:DOM:selectSingleNode(pToken):getAttribute(U)" />
+					</Node>
+					<Node level="3" loopStart="0" loopEnd="OBJ:PARAMS:getAttribute(forcsv)" />
+					<!--Sub Level Start-->
+					<Object name="SFList" source="OBJ:Feature:selectNodes(./SUBFEATURES/SUBFEATURE[@subFeatureID = 0]/SUBFEATURES/SUBFEATURE[@subFeatureID != 0])" />
+					<Node level="3" loopStart="0" loopEnd="OBJ:SFList:length" styleid="s1" iconid="I206">
+						<Object name="SFItem" source="OBJ:SFList:nextNode" />
+						<Column order="0" datasource="OBJ:SFItem:getAttribute(N)" />
+						<Object name="PList" source="OBJ:SFItem:selectNodes(./PARAMETERS/PARAMETER)" />
+						<Node level="4" loopStart="0" loopEnd="OBJ:PList:length" iconid="I204">
+							<Object name="PItem" source="OBJ:PList:nextNode" />
+							<Column order="0" datasource="OBJ:PItem:getAttribute(N)" />
+							<Column order="1" datasource="OBJ:DOM:selectSingleNode(pToken):getAttribute(DV)" styleid="s2"
+								usemap="m1" />
+							<Column order="2" datasource="OBJ:DOM:selectSingleNode(pToken):getAttribute(U)" />
+						</Node>
+						<Node level="4" loopStart="0" loopEnd="OBJ:PARAMS:getAttribute(forcsv)" />
+					</Node>
+					<!-- End Sublevel-->
+					<Object name="SFList" source="OBJ:Feature:selectNodes(./SUBFEATURES/SUBFEATURE[@subFeatureID != 0])" />
+					<Node level="3" loopStart="0" loopEnd="OBJ:SFList:length" styleid="s1" iconid="I206">
+						<Object name="SFItem" source="OBJ:SFList:nextNode" />
+						<Column order="0" datasource="OBJ:SFItem:getAttribute(N)" />
+						<Object name="PList" source="OBJ:SFItem:selectNodes(./PARAMETERS/PARAMETER)" />
+						<Node level="4" loopStart="0" loopEnd="OBJ:PList:length" iconid="I204">
+							<Object name="PItem" source="OBJ:PList:nextNode" />
+							<Column order="0" datasource="OBJ:PItem:getAttribute(N)" />
+							<Column order="1" datasource="OBJ:DOM:selectSingleNode(pToken):getAttribute(DV)" styleid="s2"
+								usemap="m1" />
+							<Column order="2" datasource="OBJ:DOM:selectSingleNode(pToken):getAttribute(U)" />
+						</Node>
+						<Node level="4" loopStart="0" loopEnd="OBJ:PARAMS:getAttribute(forcsv)" />
+						<!-- ANother Level -->
+						<Object name="S2FList" source="OBJ:SFItem:selectNodes(./SUBFEATURES/SUBFEATURE[@subFeatureID != 0])" />
+						<Node level="4" loopStart="0" loopEnd="OBJ:S2FList:length" styleid="s1" iconid="I206">
+							<Object name="S2FItem" source="OBJ:S2FList:nextNode" />
+							<Column order="0" datasource="OBJ:S2FItem:getAttribute(N)" />
+							<Object name="P2List" source="OBJ:S2FItem:selectNodes(./PARAMETERS/PARAMETER)" />
+							<Node level="5" loopStart="0" loopEnd="OBJ:P2List:length" iconid="I204">
+								<Object name="PItem" source="OBJ:P2List:nextNode" />
+								<Column order="0" datasource="OBJ:PItem:getAttribute(N)" />
+								<Column order="1" datasource="OBJ:DOM:selectSingleNode(pToken):getAttribute(DV)" styleid="s2"
+									usemap="m1" />
+								<Column order="2" datasource="OBJ:DOM:selectSingleNode(pToken):getAttribute(U)" />
+							</Node>
+							<Node level="5" loopStart="0" loopEnd="OBJ:PARAMS:getAttribute(forcsv)" />
+						</Node>
+						<Node level="4" loopStart="0" loopEnd="OBJ:PARAMS:getAttribute(forcsv)" />
+						<!-- Level End -->
+					</Node>
+					<Node level="3" loopStart="0" loopEnd="OBJ:PARAMS:getAttribute(forcsv)" />
+				</Node>
+				<Node level="2" loopStart="0" loopEnd="OBJ:PARAMS:getAttribute(forcsv)" />
+			</Node>
+		</Node>
+	</data>
+	<parameters>
+		<parameter name="pID199999" source="/Image/Parameters/P[@ID=199999]" />
+		<parameter name="pID15" source="/Image/Parameters/P[@ID=15]" />
+		<parameter name="pMID" source="/Image/Parameters/P[@ID=15]" />
+		<parameter name="pTripEnable38" source="/Image/Parameters/P[@ID=20191 and @V=1]" />
+		<parameter name="pTripEnable45" source="/Image/Parameters/P[@ID=20195 and ( @V=1 or @V=3 )]" />
+		<parameter name="pTripEnable45Read" source="/Image/Parameters/P[@ID=20195]"/>
+		<parameter name="aF" source="/Image/MAPS/MAP[@mapID=2]/FEATURES/FEATURE" />
+		<parameter name="aSF" source="./FEATURES/FEATURE/SUBFEATURES/SUBFEATURE" />
+		<parameter name="aSFP" source="./SUBFEATURES/SUBFEATURE[@subFeatureID=0]/PARAMETERS/PARAMETER" />
+		<parameter name="pToken" source="/Image/Parameters/P[@R=1 and @V!=&apos;ERROR&apos; and @ID="
+			source1="OBJ:PItem:getAttribute(parameterID)" source2="]" />
+		<parameter name="pSFToken" source="/Image/Parameters/P[@ID=" source1="OBJ:SFItem:getAttribute(subFeatureID)"
+			source2="]" />
+	</parameters>
+	<icons>
+		<icon id="I204" source="RES:Res1:BMP:204" />
+		<icon id="I206" source="RES:Res1:BMP:206" />
+	</icons>
+	<combolists></combolists>
+	<styles>
+		<style id="s1" CellFontBold="1:VT_I4" CellAlignMent="0:VT_I4" />
+		<style id="s2" CellAlignMent="0:VT_I4" />
+		<style id="sort" Row="5" RowSel="5" Col="1" ColSel="1" Sort="1:VT_I4" />
+	</styles>
+	<resources>
+		<resource id="Res1" CLSID="{006AF3B7-6A31-11D4-87F5-0010A4D1AEB5}" LoadDLL="TRUE" />
+		<resource id="Res2" CLSID="{1ECBBE0B-836B-11D4-8A76-00062999E309}" LoadDLL="TRUE"/>
+	</resources>
+	<maps>
+		<map id="m1">
+			<value original="" new="Not Available" />
+		</map>
+	</maps>
+	<printing HdrFontSize="8">
+		<header>
+			<line>
+				<center source="RES:Res2:1038" />
+			</line>
+			<line>
+				<left source="RES:Res2:2030" />
+				<left source="OBJ:DOM:selectSingleNode(/Image/Header/ESerial):getAttribute(DisplayValue)" />
+				<right source="INSITE - " />
+				<right source="OBJ:DOM:selectSingleNode(/Image):getAttribute(ImageVersion)" />
+			</line>
+			<line>
+				<left source="RES:Res2:2029" />
+				<left source="OBJ:DOM:selectSingleNode(/Image/Header/UNumber):getAttribute(DisplayValue)" />
+				<right source="RES:Res2:2031" />
+				<right source="OBJ:DOM:selectSingleNode(/Image/Header/VMake):getAttribute(DisplayValue)" />
+			</line>
+			<line>
+				<left source="RES:Res2:2032" />
+				<left source="OBJ:DOM:selectSingleNode(/Image/Header/WOName):getAttribute(DisplayValue)" />
+				<right source="RES:Res2:2033" />
+				<right source="OBJ:DOM:selectSingleNode(/Image/Header/IName):getAttribute(DisplayValue)" />
+			</line>
+			<line>
+				<right source="RES:Res2:2036"/>
+				<right source="OBJ:DOM:selectSingleNode(/Image/Header/CustomerName):getAttribute(DisplayValue)"/>
+			</line>
+		</header>
+	</printing>
+</FlexGrid>

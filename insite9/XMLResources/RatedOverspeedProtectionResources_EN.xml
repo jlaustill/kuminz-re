@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE module SYSTEM "../htmlentities.dtd">
+<XML_RESOURCE>
+	<RESOURCE Tag="1001" Type="String Table" Description="Message String Table">
+		<STRING ID="101" Context="Button Caption">Help</STRING>
+		<STRING ID="102" Context="Button Caption">Refresh</STRING>
+		<STRING ID="103" Context="Button Caption">Save</STRING>
+		<STRING ID="104" Context="Button Caption">Print</STRING>
+		<STRING ID="105" Context="Instruction text" Description="Text to be displayed in Instruction box">The Rated Overspeed Protection feature displays a log that contains information about the last five times that the engine was shutdown. It also includes the Engine levels that will cause a shutdown.</STRING>
+		<STRING ID="106" Context="Title">Rated Overspeed Protection</STRING>
+		<STRING ID="107" Context="Data grid label">Percent Over Rated Speed Protection</STRING>
+		<STRING ID="108" Context="Log grid label">Overspeed Shutdown History Log</STRING>
+		<STRING ID="109" Context="Data grid column header">Parameters</STRING>
+		<STRING ID="110" Context="Data grid column header">Value</STRING>
+		<STRING ID="111" Context="Data grid column header">Units</STRING>
+		<STRING ID="112" Context="Data grid column header">Occurrence</STRING>
+		<STRING ID="113" Context="Data grid column header">1(Newest)</STRING>
+		<STRING ID="114" Context="Data grid column header">2</STRING>
+		<STRING ID="115" Context="Data grid column header">3</STRING>
+		<STRING ID="116" Context="Data grid column header">4</STRING>
+		<STRING ID="117" Context="Data grid column header">5(Oldest)</STRING>
+		<STRING ID="118" Context="Not supported message">This feature is not supported by the current calibration.</STRING>
+		<STRING ID="119" Context="Data not available message">No data is present in the ECM.</STRING>
+		<STRING ID="120" Context="">Refreshing</STRING>
+		<STRING ID="121" Context="">Refreshing Data please wait. ...</STRING>
+		
+		<STRING ID="122" Context="Print Header Item">Customer Unit Number :</STRING>
+		<STRING ID="123" Context="Print Header Item">Engine Serial Number :</STRING>
+	    <STRING ID="124" Context="Print Header Item">Company Name :</STRING>
+	    <STRING ID="125" Context="Print Header Item">Work Order Name :</STRING>
+	    <STRING ID="126" Context="Print Header Item">ECM Image Name :</STRING>
+	    <STRING ID="127" Context="Print Header Item">Rated OverSpeed Protection</STRING>
+	   		
+		<!-- Error strings for Page follow from here -->
+		<STRING ID="18800" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;18800&lt;/ErrorNumber&gt;&lt;Description&gt;An unidentified error occurred in "Rated Overspeed Protection".&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="18801" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;18801&lt;/ErrorNumber&gt;&lt;Description&gt;Error in Initialization.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="18802" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;18802&lt;/ErrorNumber&gt;&lt;Description&gt;Error in Initialization.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="18803" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;18803&lt;/ErrorNumber&gt;&lt;Description&gt;Internal Error&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="18804" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;18804&lt;/ErrorNumber&gt;&lt;Description&gt;Error in reading data&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="18805" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;18805&lt;/ErrorNumber&gt;&lt;Description&gt;Error in initializing grid&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="18806" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;18806&lt;/ErrorNumber&gt;&lt;Description&gt;Error in grid&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="18807" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;18807&lt;/ErrorNumber&gt;&lt;Description&gt;Internal Error&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="18808" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;18808&lt;/ErrorNumber&gt;&lt;Description&gt;Internal Error&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="18809" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;18809&lt;/ErrorNumber&gt;&lt;Description&gt;Error in displaying help&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="18810" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;18810&lt;/ErrorNumber&gt;&lt;Description&gt;Data could not be inserted in data grid&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="18811" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;18811&lt;/ErrorNumber&gt;&lt;Description&gt;Data could not be inserted in log grid&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="18812" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;18812&lt;/ErrorNumber&gt;&lt;Description&gt;Data could not be Destroyed&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		
+		<!-- Error strings for Logic follow from here -->
+		<STRING ID="18850" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;18850&lt;/ErrorNumber&gt;&lt;Description&gt;An unidentified error occurred in "Rated Overspeed Protection".&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="18851" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;18851&lt;/ErrorNumber&gt;&lt;Description&gt;Internal Error in reading&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="18852" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;18852&lt;/ErrorNumber&gt;&lt;Description&gt;Internal Error&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="18853" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;18853&lt;/ErrorNumber&gt;&lt;Description&gt;Internal Error&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="18854" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;18854&lt;/ErrorNumber&gt;&lt;Description&gt;Internal Error&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+	</RESOURCE>
+</XML_RESOURCE>

@@ -1,0 +1,888 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE module SYSTEM "../htmlentities.dtd">
+<!-- CHANGE LOG -->
+<!-- RK: Changes to Insite Ver 7.1, 10/23/2007 
+     DB_G00096896 : Modified the description of the strings 40089 and 40092.-->
+<!-- RK: Changes to Insite Ver 7.1, 10/31/2007 
+     DB_G00101060 : Modified the description of the string 40028 from 'Calibration Superceded' to 'Calibration Superseded'.-->
+<!-- NP: Changes to Insite Ver 7.1, 12/10/2007 
+     DB_G00110376 : Modified the description of the string 40362. -->
+<!-- SY: Changes to Insite Ver 7.1, 02/11/2008 
+     DB_G00106853 : Modified the description of the STRING ID 40297 and added new STRING ID 40302 -->
+<!-- Changes to Insite Ver 7.2, 03/19/2008 
+     DB_G00102438 : Modified the description of the strings 40292 from 'Superceding Calibration' to 'Superseding Calibration'.-->
+<!-- Changes to Insite Ver 7.2, 06/24/2008 
+     DB_G00121526 : Added strings for vehicle classification integration with cal selection.-->
+<!-- Changes to Insite Ver 7.2, 07/21/2008 
+     DB_G00123271 : Added strings for display of strings after calibration download is completed with support of vehicle classification.-->
+<!-- Changes to Insite Ver 7.2, 8/4/2008 
+     DB_G00124716 : Added strings 40380 and 40381 for IDD_DWUNRESTOREDPAGE buttons.-->
+<!-- SDD: Changes to Insite Ver 7.3FP2, 8/7/2009 
+     DB_G00143341 : Added strings 87 - 114.-->
+<!-- Changes to Insite Ver 7.4, 7/13/2009 
+     (is311)DB_G00129628 : Added strings 40382 -->
+<!-- ACP: Changes to Insite Ver 7.4, 07/08/2009 
+     DB_G00139122 : Modified the description of the string 40378 from 'Launch Vehicle Classification Setup' to 'Launch Vehicle Classification'.-->
+<!-- PS: Changes to Insite Ver 7.4, 09/29/2009 
+     DB_G00143300 : INSITE 7.4 Single Key-SwitchOff multi-module download Feature.-->
+<!-- PS: Changes to Insite Ver 7.4, 09/30/2009 
+     DB_G00143293 : INSITE 7.4 ECM Trims Recovery Feature.-->
+<!-- GD: Changes to Insite Ver 7.4, 10/29/2009 
+     DB_G00145849 : Modified the description of the String ID 40230 and 40110.-->
+<!-- RT: Changes to Insite Ver 7.4, 11/02/2009
+     DB_G00146857 : Modified the description of the String ID 40101-->
+<!-- READING THE DATA BELOW <STRING ID="STRING ID" Context="">MESSAGE STRING</STRING> -->
+<!-- PS: Added Insite Ver 7.4, 10/30/2009 
+     DB_G00147459: Trims Recovery Message Update-->
+<!-- AA: Added Insite Ver 7.4, 11/05/2009 
+     DB_G00145480: Modified String ID 113-->
+<!-- AP: Added Insite Ver 7.4, 11/27/2009 
+     DB_G00148845: Added String ID 40391 and 40392-->
+<!-- SK: Changes to Insite Ver 7.4, 12/14/2009 
+     DB_G00149517: Modified the value of string Id 40386-->
+<!-- SS: Changes to Insite Ver 7.4.1, 5/17/2010 
+     DB_G00132920: Modified the value of string Id 40022,40028 and 40292-->
+<!-- AA: Changes to Insite Ver 7.4FP2, 6/2/2010
+     DB_G00145105: Modified the value of string Id 56 and 40120-->
+<!-- DW: Changes to Insite Ver 7.4FP2, 6/8/2010
+     DB_G00156212: Added string ids from 115 to 118 and removed 92-->
+<!-- RT: Changes to Insite Ver 7.4.2, 7/12/2010
+     DB_G00157622: Modified the string Id 40024 and 40292-->
+<!--IY594(ST) Added to Insite Ver 7.4.2, 8/27/2010 DB_G00159436: Resource ID-40393 FORQST30 CM552-->
+<!-- NM: Changes to Insite Ver 7.5, 09/09/2010
+     DB_G00157169: Added string Ids 40394, 40395, 40396, 40397  & 40398-->
+<!-- MMS: Changes to Insite Ver 7.5.1, 04/15/2011
+     DB_G00164508: Added string Ids 40399 and 40400-->
+<!-- MA: Changes to Insite Ver 7.5, 19/04/2011  
+     DB_G00168012: Added String IDs 121 and 122-->
+<!-- Changes to Insite Ver 7.5.2, 16/08/2011
+	 DB_G00132642; Modified String Id 40318(Remove Additional Space)-->
+	 
+<XML_RESOURCE>
+	<RESOURCE Tag="1001" Type="String Table" Description="Message String Table">
+		<STRING ID="1" Context="">Tools</STRING>
+		<!-- IDS_MENUBAR_TOOLS -->
+		<STRING ID="2" Context="">INSITE Main Menu</STRING>
+		<!-- IDS_MENUBAR_MAINMENU -->
+		<STRING ID="3" Context="">Calibration &amp;Selection</STRING>
+		<!-- IDS_MENUBAR_TOOLS_CALSEL -->
+		<STRING ID="4" Context="">Show &amp;Installed Calibrations</STRING>
+		<!-- IDS_MENUBAR_TOOLS_CALSEL_SHOWINSTALLED -->
+		<STRING ID="5" Context="">Show &amp;Active Calibrations</STRING>
+		<!-- IDS_MENUBAR_TOOLS_CALSEL_SHOWACTIVE -->
+		<STRING ID="6" Context="">Custom &amp;Filter</STRING>
+		<!-- IDS_MENUBAR_TOOLS_CALSEL_CUSTOMFILTER -->
+		<STRING ID="7" Context="">&amp;Certification Codes...</STRING>
+		<!-- IDS_MENUBAR_TOOLS_CALSEL_CERTCODES -->
+		<STRING ID="8" Context="">View &amp;Network Drives</STRING>
+		<!-- IDS_MENUBAR_TOOLS_CALSEL_VIEWNETWORKDRIVES -->
+		<STRING ID="9" Context="">No Calibration Authorization Password entries found.</STRING>
+		<!-- IDS_APL_NOPWD -->
+		<STRING ID="10" Context="">Authorization Password List</STRING>
+		<!-- IDS_APLDISPLAY_TITLE -->
+		<STRING ID="11" Context="">Calibration Workspace</STRING>
+		<!-- IDS_CALIBRATION_WORKSPACE -->
+		<STRING ID="12" Context="">Calibration Selection</STRING>
+		<!-- IDS_MVS_MSGTITLE -->
+		<STRING ID="13" Context="">This operation will require multiple diskettes.
+
+INSITE estimates that &lt;numberOfDisks&gt; diskettes will be required.
+
+Select OK to continue.</STRING>
+		<!-- IDS_MVS_DISKESTIMATE -->
+		<STRING ID="14" Context="">Send To Calibration Workspace</STRING>
+		<!-- IDS_MENUBAR_TOOLS_CALSEL_SENDTOWORKSPACE -->
+		<STRING ID="15" Context="">Send To Floppy Drive</STRING>
+		<!-- IDS_MENUBAR_TOOLS_CALSEL_SENDTOFLOPPYDRIVE -->
+		<STRING ID="16" Context="">Empty Calibration Workspace</STRING>
+		<!-- IDS_MENUBAR_TOOLS_CALSEL_EMPTYWORKSPACE -->
+		<STRING ID="17" Context="">Existing data in Calibration Workspace will be deleted.
+
+Select OK to continue.</STRING>
+		<!-- IDS_MVS_EMPTYWORKSPACE -->
+		<STRING ID="18" Context="">INSITE will erase any existing files on the diskette before continuing.
+
+Select OK to continue.</STRING>
+		<!-- IDS_MVS_ERASEDISK -->
+		<STRING ID="19" Context="">BAD FIRST DISK</STRING>
+		<!-- IDS_MVS_BADFIRSTDISK -->
+		<STRING ID="20" Context="">Viewing of the A: drive contents was canceled.</STRING>
+		<!-- IDS_MVS_READCANCEL -->
+		<STRING ID="21" Context="">An error has occurred.  The error number is:  &lt;ErrorNumber&gt;&lt;/ErrorNumber&gt;.</STRING>
+		<!-- IDS_MVS_ERROR -->
+		<STRING ID="22" Context="">Please insert diskette number &lt;requestedDisk&gt; in drive A:.
+
+INSITE will erase any existing files on the diskette before continuing.
+
+Select OK to continue.</STRING>
+		<!-- IDS_MVS_ZIPINSERTDISK -->
+		<STRING ID="23" Context="">Please insert diskette number &lt;requestedDisk&gt; of &lt;numberOfDisks&gt; in drive A:.
+
+Select OK to continue.</STRING>
+		<!-- IDS_MVS_INSERTDISKOFDISK -->
+		<STRING ID="24" Context="">INSITE will erase any existing files on the diskette before continuing.
+
+Select OK to continue.</STRING>
+		<!-- IDS_MVS_INSERTFIRSTDISK -->
+		<STRING ID="25" Context="">The diskette in drive A: is part of a spanned calibration set.
+
+Please insert the last diskette of the set into the drive and select OK to continue.</STRING>
+		<!-- IDS_MVS_INSERTLASTDISK -->
+		<STRING ID="26" Context="">There is no diskette in drive A:.  Please insert a diskette and click Retry.  Or, click Cancel to exit.</STRING>
+		<!-- IDS_MVS_NODISK -->
+		<STRING ID="27" Context="">OVERWRITE</STRING>
+		<!-- IDS_MVS_OVERWRITE -->
+		<STRING ID="28" Context="">READ-ONLY</STRING>
+		<!-- IDS_MVS_READONLY -->
+		<STRING ID="29" Context="">Please insert diskette number &lt;requestedDisk&gt; in drive A:.
+
+Select OK to continue.</STRING>
+		<!-- IDS_MVS_UNZIPINSERTDISK -->
+		<STRING ID="30" Context="">INSITE has completed creating the calibration diskettes.</STRING>
+		<!-- IDS_MVS_COMPLETE -->
+		<STRING ID="31" Context="">Creation of the calibration diskettes has been canceled.  Any diskettes that were created will not be usable.</STRING>
+		<!-- IDS_MVS_WRITECANCEL -->
+		<STRING ID="32" Context="">Diskette Error</STRING>
+		<!-- IDS_MVS_DISKERROR_CAPTION -->
+		<STRING ID="33" Context="">WRITE PROTECTED</STRING>
+		<!-- IDS_MVS_DISKERROR_TITLE -->
+		<STRING ID="34" Context="">An error has occurred while trying to create the files on the diskette.\r\n\r\nOne of the following may have caused the error:\r\n\r\n1.  The floppy diskette was write-protected.  Please remove the diskette, slide the write-protect to cover the hole in the diskette (as illustrated), and reinsert the diskette into the drive.\r\n2.  The floppy diskette cannot be erased.  Please remove the diskette and replace it with a new one.\r\n\r\nOnce the problem has been corrected, please click OK to continue or Cancel to exit.</STRING>
+		<!-- IDS_MVS_DISKERROR_MESSAGE -->
+		<STRING ID="35" Context="">Diskette Not Ready</STRING>
+		<!-- IDS_MVS_NODISK_TITLE -->
+		<STRING ID="36" Context="">Calibration Selection</STRING>
+		<!-- IDS_CALSEL_VIEWBAR_NAME -->
+		<STRING ID="37" Context="">Calibration Properties</STRING>
+		<!-- IDS_CALPROPS_CAPTION -->
+		<STRING ID="38" Context="">Engine Program</STRING>
+		<!-- IDS_CALPROPS_ENGINEPROGRAM -->
+		<STRING ID="39" Context="">ECM Part Number</STRING>
+		<!-- IDS_CALPROPS_ECMPARTNUMBER -->
+		<STRING ID="40" Context="">ECM Code</STRING>
+		<!-- IDS_CALPROPS_ECMCODE -->
+		<STRING ID="41" Context="">Date</STRING>
+		<!-- IDS_CALPROPS_DATE -->
+		<STRING ID="42" Context="">&amp;Print All</STRING>
+		<!-- IDS_CALPROPS_BTN_PRINTALL -->
+		<STRING ID="43" Context="">&amp;Close</STRING>
+		<!-- IDS_BTN_CLOSE -->
+		<STRING ID="45" Context="">Print</STRING>
+		<!-- IDS_DWAUTHPAGE_BTN_PRINT -->
+		<STRING ID="46" Context="">New</STRING>
+		<!-- IDS_BTN_NEW -->
+		<STRING ID="47" Context="">Certification Code Selection</STRING>
+		<!-- IDS_CERTCODESEL_CAPTION -->
+		<STRING ID="48" Context="">Available Certification Codes</STRING>
+		<!-- IDS_CERTCODESEL_AVAILABLECODES -->
+		<STRING ID="49" Context="">Selected Certification Codes</STRING>
+		<!-- IDS_CERTCODESEL_SELECTEDCODES -->
+		<STRING ID="50" Context="">--&gt;</STRING>
+		<!-- IDS_CERTCODESEL_BTN_ADD -->
+		<STRING ID="51" Context="">--&gt;&gt;</STRING>
+		<!-- IDS_CERTCODESEL_BTN_ADDALL -->
+		<STRING ID="52" Context="">&lt;--</STRING>
+		<!-- IDS_CERTCODESEL_BTN_REMOVE -->
+		<STRING ID="53" Context="">&lt;&lt;--</STRING>
+		<!-- IDS_CERTCODESEL_BTN_REMOVEALL -->
+		<STRING ID="54" Context="">OK</STRING>
+		<!-- IDS_BTN_OK -->
+		<STRING ID="55" Context="">View Compatible ECM/FCM Calibrations</STRING>
+		<!-- IDS_MENUBAR_CONTEXT_VIEW_COMPATIBLECALS -->
+		<STRING ID="56" Context="">Autodetect Calibration</STRING>
+		<!-- IDS_MENUBAR_CONTEXT_AUTODETECT_CAL -->
+		<STRING ID="57" Context="">Set as Default Calibration Drive</STRING>
+		<!-- IDS_MENUBAR_CONTEXT_SETAS_DEFAULTCALDRIVE -->
+		<STRING ID="58" Context="">Copy</STRING>
+		<!-- IDS_MENUBAR_CONTEXT_COPY -->
+		<STRING ID="59" Context="">Paste</STRING>
+		<!-- IDS_MENUBAR_CONTEXT_PASTE -->
+		<STRING ID="60" Context="">Refresh</STRING>
+		<!-- IDS_MENUBAR_CONTEXT_REFRESH -->
+		<STRING ID="61" Context="">View Calibration Change History File</STRING>
+		<!-- IDS_MENUBAR_CONTEXT_VIEW_CALCHANGEHISTORYFILE -->
+		<STRING ID="62" Context="">View Active Calibrations File</STRING>
+		<!-- IDS_MENUBAR_CONTEXT_VIEW_ACTIVECALSFILE -->
+		<STRING ID="63" Context="">Certification Codes</STRING>
+		<!-- IDS_MENUBAR_CONTEXT_CERTIFICATIONCODES -->
+		<STRING ID="64" Context="">Transfer To ECM</STRING>
+		<!-- IDS_MENUBAR_CONTEXT_TRANSFERTOECM -->
+		<STRING ID="65" Context="">Select All Calibrations</STRING>
+		<!-- IDS_MENUBAR_CONTEXT_SELECTALLCALS -->
+		<STRING ID="66" Context="">Show Compatible Calibrations</STRING>
+		<!-- IDS_MENUBAR_CONTEXT_SHOWCOMPATIBLECALS -->
+		<STRING ID="67" Context="">Print</STRING>
+		<!-- IDS_MENUBAR_CONTEXT_PRINT -->
+		<STRING ID="68" Context="">Properties</STRING>
+		<!-- IDS_MENUBAR_CONTEXT_PROPERTIES -->
+		<STRING ID="69" Context="">View Compatible ECM/FCM Calibrations</STRING>
+		<!-- IDS_MENUBAR_CONTEXT_VIEWCOMPATIBLECALS_SUBMENU -->
+		<STRING ID="70" Context="">Add</STRING>
+		<!-- IDS_BTN_ADD_TOOLTIP -->
+		<STRING ID="71" Context="">Add All</STRING>
+		<!-- IDS_BTN_ADDALL_TOOLTIP -->
+		<STRING ID="72" Context="">Remove</STRING>
+		<!-- IDS_BTN_REMOVE_TOOLTIP -->
+		<STRING ID="73" Context="">Remove All</STRING>
+		<!-- IDS_BTN_REMOVEALL_TOOLTIP -->
+		<STRING ID="74" Context="Selected Power Curve Blocked Message">A Power Curve has been selected that is blocked by
+the ECM. Please either select a different
+Power Curve to be downloaded or unblock the
+Power Curve using the OEM Engine Performance
+Rating feature under Advanced ECM Data</STRING>
+		<!-- IDS_SELECTED_POWER_CURVE_BLOCKED_MSG -->
+		<STRING ID="75" Context="Selected Power Curve Blocked Caption">Power Curve Blocked</STRING>
+		<!-- IDS_SELECTED_POWER_CURVE_BLOCKED_CAPTION -->
+		<STRING ID="76" Context="Blank Power Curve Message">The lowest Power Curve has been written to the ECM.
+Please use the Engine Performance Rating Table to verify
+the desired Power Curve is selected</STRING>
+		<!-- IDS_BLANK_POWER_CURVE_MSG -->
+		<STRING ID="77" Context="Blank Power Curve Caption">Blank Power Curve Selected</STRING>
+		<!-- IDS_BLANK_POWER_CURVE_CAPTION -->
+		<STRING ID="78" Context="Blocked Power Curve After Download Message">The Power Curve selected is blocked. The lowest
+Power Curve has been written to the ECM. Please use the
+Engine Performance Rating Table to verify the desired
+Power Curve is selected</STRING>
+		<!-- IDS_POWER_CURVE_BLOCKED_MSG -->
+		<STRING ID="79" Context="Blocked Power Curve After Download Caption">Power Curve Blocked After Download</STRING>
+		<!-- IDS_POWER_CURVE_BLOCKED_CAPTION -->
+		<!-- PRINT HEADER ITEM -->
+		<STRING ID="80" Context="Print Header Item">Customer Unit Number :</STRING>
+		<STRING ID="81" Context="Print Header Item">Engine Serial Number :</STRING>
+		<STRING ID="82" Context="Print Header Item">Company Name :</STRING>
+		<STRING ID="83" Context="Print Header Item">Work Order Name :</STRING>
+		<STRING ID="84" Context="Print Header Item">ECM Image Name :</STRING>
+		<STRING ID="85" Context="Print Header Item">Calibration Data</STRING>
+		<STRING ID="86" Context="">Find</STRING>
+		<STRING ID="87" Context="CURE return code 0x00">Reflash Utility successful</STRING>
+		<STRING ID="88" Context="CURE return code 0x10">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27231&lt;/ErrorNumber&gt;&lt;Description&gt;The  Programmable Datalink Device could not communicate with the datalink driver.&lt;/Description&gt;&lt;Suggestion&gt; Please check cables for proper connection and condition. Verify the latest driver/firmware is installed.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="89" Context="CURE return code 0x11">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27232&lt;/ErrorNumber&gt;&lt;Description&gt;The ECM could not communicate with the Aftertreatment Diesel Exhaust Fluid Controller.&lt;/Description&gt;&lt;Suggestion&gt;Verify the latest RP1210 Driver and Firmware is installed.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="90" Context="CURE return code 0x12">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27233&lt;/ErrorNumber&gt;&lt;Description&gt;The ECM could not communicate with the Aftertreatment Diesel Exhaust Fluid Controller.&lt;/Description&gt;&lt;Suggestion&gt;Verify the latest RP1210 Driver and Firmware is installed.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="91" Context="CURE return code 0x13">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27234&lt;/ErrorNumber&gt;&lt;Description&gt;The calibration was not found on the selected drive.&lt;/Description&gt;&lt;Suggestion&gt;Select an installed calibration and try again.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="93" Context="CURE return code 0x15">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27236&lt;/ErrorNumber&gt;&lt;Description&gt;The Reflash Utility cannot download the calibration at this time because a valid calibration transfer license was not found.  Ensure there is a valid license for the Reflash Utility.&lt;/Description&gt;&lt;Suggestion&gt;Ensure there is a valid license for the Reflash Utility.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="94" Context="CURE return code 0x16">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27237&lt;/ErrorNumber&gt;&lt;Description&gt;Reflash Utility failed.  Unknown error has happened.&lt;/Description&gt;&lt;Suggestion&gt;Please restart INSITE. If the problem persists, contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="95" Context="CURE return code 0x20">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27238&lt;/ErrorNumber&gt;&lt;Description&gt;The Programmable Datalink Device could not communicate with the Reflash Utility.&lt;/Description&gt;&lt;Suggestion&gt;Please check cables for proper connection and condition.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="96" Context="CURE return code 0x21">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27239&lt;/ErrorNumber&gt;&lt;Description&gt;The calibration download failed. No response from the  Programmable Datalink Device. &lt;/Description&gt;&lt;Suggestion&gt;Please check cables for proper connection and condition.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="97" Context="CURE return code 0x22">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27240&lt;/ErrorNumber&gt;&lt;Description&gt;The calibration download failed. The  Programmable Datalink Device Nacked the reflash request.&lt;/Description&gt;&lt;Suggestion&gt;Please check the device and the calibration file.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="98" Context="CURE return code 0x30">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27241&lt;/ErrorNumber&gt;&lt;Description&gt;The ECM could not communicate with the Aftertreatment Diesel Exhaust Fluid Controller&lt;/Description&gt;&lt;Suggestion&gt;Please check cables for proper connection and condition.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="99" Context="CURE return code 0x31">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27242&lt;/ErrorNumber&gt;&lt;Description&gt;The ECM could not communicate with the Aftertreatment Diesel Exhaust Fluid Controller&lt;/Description&gt;&lt;Suggestion&gt;Please check cables for proper connection and condition.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="100" Context="CURE return code 0x32">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27243&lt;/ErrorNumber&gt;&lt;Description&gt;The ECM could not communicate with the Aftertreatment Diesel Exhaust Fluid Controller&lt;/Description&gt;&lt;Suggestion&gt;Please check cables for proper connection and condition.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="101" Context="CURE return code 0x34">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27244&lt;/ErrorNumber&gt;&lt;Description&gt;The selected calibration is not compatible with the connected Programmable Datalink Device.&lt;/Description&gt;&lt;Suggestion&gt;Please select a compatible calibration and try again.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="102" Context="CURE return code 0x40">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27245&lt;/ErrorNumber&gt;&lt;Description&gt;The ECM lost communication with the Aftertreatment Diesel Exhaust Fluid Controller.&lt;/Description&gt;&lt;Suggestion&gt;Please check cables for proper connection and condition.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="103" Context="CURE return code 0x41">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27246&lt;/ErrorNumber&gt;&lt;Description&gt;The ECM lost communication with the Aftertreatment Diesel Exhaust Fluid Controller.&lt;/Description&gt;&lt;Suggestion&gt;Please check cables for proper connection and condition.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="104" Context="CURE return code 0x42">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27247&lt;/ErrorNumber&gt;&lt;Description&gt;The ECM lost communication with the Aftertreatment Diesel Exhaust Fluid Controller.&lt;/Description&gt;&lt;Suggestion&gt;Please check cables for proper connection and condition.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="105" Context="CURE return code 0x50">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27248&lt;/ErrorNumber&gt;&lt;Description&gt;The ECM lost communication with the Aftertreatment Diesel Exhaust Fluid Controller.&lt;/Description&gt;&lt;Suggestion&gt;Please check cables for proper connection and condition.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="106" Context="CURE return code 0x51">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27249&lt;/ErrorNumber&gt;&lt;Description&gt;The ECM lost communication with the Aftertreatment Diesel Exhaust Fluid Controller.&lt;/Description&gt;&lt;Suggestion&gt;Please check cables for proper connection and condition.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="107" Context="CURE return code 0x52">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27250&lt;/ErrorNumber&gt;&lt;Description&gt;The ECM lost communication with the Aftertreatment Diesel Exhaust Fluid Controller.&lt;/Description&gt;&lt;Suggestion&gt;Please check cables for proper connection and condition.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="108" Context="Non-RP1210 adapter">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27251&lt;/ErrorNumber&gt;&lt;Description&gt;The datalink adapter connected does not support RP1210. &lt;/Description&gt;&lt;Suggestion&gt;Please connect a RP1210 compliant adapter.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="109" Context="Generic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27252&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE could not start the Reflash Utility.&lt;/Description&gt;&lt;Suggestion&gt;INSITE could not start the Reflash Utility.  Please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="110" Context="Doser warning dialog title">Calibration Download Wizard</STRING>
+		<STRING ID="111" Context="Doser warning dialog subtitle">Welcome to the Programmable Device Calibration Download Wizard</STRING>
+		<STRING ID="112" Context="Doser warning dialog warning">Warning!\r\n\r\nFailures or damage resulting from unauthorized engine modifications or horse power uprates, including, but not limited to, recalibrations of ECMs, or other devices, through the Calibration  Download Wizard, are not covered by Cummins warranty or CAP programs.</STRING>
+		<STRING ID="113" Context="Doser adjustment messagebox">Adjusting Aftertreatment Diesel Exhaust Fluid Controller -- Changes are about to be made to the Controller.\r\n\r\nWhile adjusting the Aftertreatment Diesel Exhaust Fluid Controller, do not change the key state unless instructed to do so.\r\n\r\nClick OK to continue to download, or click Cancel to leave the Controller unchanged.</STRING>
+		<STRING ID="114" Context="Successful doser download title">Calibration Transfer Results</STRING>
+        <STRING ID="115" Context="CURE return code 0x14">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27253&lt;/ErrorNumber&gt;&lt;Description&gt;The Reflash Utility cannot read the calibration file at this time.&lt;/Description&gt;&lt;Suggestion&gt;Please select a valid calibration file and try again.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+        <STRING ID="116" Context="CURE return code 0x17">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27254&lt;/ErrorNumber&gt;&lt;Description&gt;The Reflash Utility cannot download the calibration at this time because no compatible ECU was identified.&lt;/Description&gt;&lt;Suggestion&gt;Verify this ECU supports the selected calibration.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>		
+        <STRING ID="117" Context="CURE return code 0x23">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27255&lt;/ErrorNumber&gt;&lt;Description&gt;The ECM lost communication with the Aftertreatment Diesel Exhaust Fluid Controller.&lt;/Description&gt;&lt;Suggestion&gt;Please check cables for proper connection and condition.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+        <STRING ID="118" Context="CURE return code 0x24">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27256&lt;/ErrorNumber&gt;&lt;Description&gt;The Reflash Utility cannot download the calibration at this time because a valid INSITE calibration transfer license was not found.&lt;/Description&gt;&lt;Suggestion&gt;Ensure that a PRO or PRO PLUS tool license is active.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>    
+    <STRING ID="119" Context="Printer Not available title">Cummins INSITE</STRING>
+    <STRING ID="120" Context="Printer Not available text">Printer not found.</STRING>
+    <STRING ID="121" Context="Column Header 1">Certification</STRING>
+    <STRING ID="122" Context="Column Header 2">Agency</STRING>
+    <STRING ID="40011" Context="">ECM Calibration Download Wizard</STRING>
+		<!-- IDS_DW_TITLE -->
+		<STRING ID="40012" Context="">Welcome</STRING>
+		<!-- IDS_DW_WELCOME_TITLE -->
+		<STRING ID="40013" Context="">This wizard will guide you through the calibration download process.</STRING>
+		<!-- IDS_DW_WELCOME_SUBTITLE -->
+		<STRING ID="40014" Context="">Calibration Authorization</STRING>
+		<!-- IDS_DW_AUTH_TITLE -->
+		<STRING ID="40015" Context="">Please provide the Calibration Authorization method</STRING>
+		<!-- IDS_DW_AUTH_SUBTITLE -->
+		<STRING ID="40016" Context="">System ID and Dataplate</STRING>
+		<!-- IDS_DW_DATAPLATE_TITLE -->
+		<STRING ID="40017" Context="">Verify and/or modify the System ID and Dataplate information</STRING>
+		<!-- IDS_DW_DATAPLATE_SUBTITLE -->
+		<STRING ID="40018" Context="">Summary</STRING>
+		<!-- IDS_DW_SUMMARY_TITLE -->
+		<STRING ID="40019" Context="">Please verify that the displayed information is correct.</STRING>
+		<!-- IDS_DW_SUMMARY_SUBTITLE -->
+		<STRING ID="40020" Context="">Final Confirmation!</STRING>
+		<!-- IDS_DW_CONFIRMATION_TITLE -->
+		<STRING ID="40021" Context="">Please confirm the decision to modify the ECM</STRING>
+		<!-- IDS_DW_CONFIRMATION_SUBTITLE -->
+		<STRING ID="40022" Context="">The selected ECM Calibration has been superseded.\r\n\r\nSuperseded calibrations below are grayed out and not available to be transferred to an ECM.\r\n\r\nThe first replacement calibration in the list has been highlighted.  Another replacement calibration may be selected from the list.  Click the Send to ECM button to transfer the calibration to the ECM.</STRING>
+		<!-- IDS_SUPERCEDED_TEXT -->
+		<STRING ID="40023" Context="">No Replacement Calibrations Available</STRING>
+		<!-- IDS_NOCAL_TITLE -->
+		<STRING ID="40024" Context="">There are no replacement calibrations available for the superseded calibration that was selected.  Please select another drive or contact the local distributor for assistance.</STRING>
+		<!-- IDS_NOCAL_TEXT -->
+		<STRING ID="40025" Context="">Cancel</STRING>
+		<!-- IDS_BTN_CANCEL -->
+		<STRING ID="40026" Context="">Send To ECM</STRING>
+		<!-- IDS_BTN_SENDTOECM -->
+		<STRING ID="40027" Context="">Help</STRING>
+		<!-- IDS_BTN_HELP -->
+		<STRING ID="40028" Context="">Calibration Superseded</STRING>
+		<!-- IDS_SUPERCEDED_TITLE -->
+		<STRING ID="40029" Context="">Welcome to the Engine Control Module(ECM) Calibration Download Wizard</STRING>
+		<!-- IDS_WZWPAGE_INSTRUCTIONS -->
+		<STRING ID="40031" Context="">Warning!\r\n\r\nFailures or damage resulting from unauthorized engine modifications or horse power uprates, including, but not limited to, recalibrations of ECMs through the ECM Calibration Wizard, are not covered by Cummins warranty or CAP programs.\r\n\r\nEngine modifications must be registered with Cummins World-Wide Claims Management and uprate fees may be required. Certain calibrations may require changes to injectors or the hardware. Before recalibrating engines, check CPL requirements.</STRING>
+		<!-- IDS_WZWPAGE_WARNING -->
+		<STRING ID="40032" Context="">ECM Calibration Download Wizard</STRING>
+		<!-- IDS_WZTITLE_MAJOR -->
+		<STRING ID="40033" Context="">The selected calibration has a different ECM code from the one that is currently detected in the ECM. In order to continue the recalibration of the ECM, please enter a calibration password or select to use a Fleet Calibration Count if available. Calibration passwords may be obtained by contacting the local distributor. The distributor will need the calibration ECM Code and ECM's serial number.</STRING>
+		<!-- IDS_WZAUTH_INSTRUCTIONS -->
+		<STRING ID="40034" Context="">Current ECM Code:</STRING>
+		<!-- IDS_WZAUTH_CONNECTEDECM -->
+		<STRING ID="40035" Context="">Requested ECM Code:</STRING>
+		<!-- IDS_WZAUTH_REQUESTEDECM -->
+		<STRING ID="40036" Context="">ECM Serial Number:</STRING>
+		<!-- IDS_WZAUTH_ECMSN -->
+		<STRING ID="40037" Context="">Enter Calibration Authorization Password:</STRING>
+		<!-- IDS_WZAUTH_CALPW -->
+		<STRING ID="40038" Context="">Information for Distributor</STRING>
+		<!-- IDS_WZAUTH_DISTRIBUTOR -->
+		<STRING ID="40039" Context="">Use a Fleet Calibration Count</STRING>
+		<!-- IDS_WZAUTH_FLEETCOUNT -->
+		<STRING ID="40040" Context="">Save / Restore Adjustable Parameters</STRING>
+		<!-- IDS_DW_DATAPLATE_SAVERESTORE -->
+		<STRING ID="40041" Context="">Restore Original Values</STRING>
+		<!-- IDS_DW_DATAPLATE_RESTOREBTN -->
+		<STRING ID="40042" Context="">Please verify that the displayed information below is correct, then select next. The information below will be used to recalibrate the connected ECM.</STRING>
+		<!-- IDS_DW_SUMMARY_TEXT -->
+		<STRING ID="40043" Context="">INSITE is ready to transfer the calibration to the connected ECM.\r\nPlease click "Finish" to continue.</STRING>
+		<!-- IDS_DW_CONFIRMATION_TEXT -->
+		<STRING ID="40044" Context="">Add</STRING>
+		<!-- IDS_FLEET_BTN_NEW -->
+		<STRING ID="40045" Context="">Fleet Calibration Counts Available: %d</STRING>
+		<!-- IDS_FLEET_COUNTS -->
+		<STRING ID="40046" Context="">Fleet Calibration Counts</STRING>
+		<!-- IDS_FLEET_GROUP -->
+		<STRING ID="40047" Context="">Fleet Calibration Counts</STRING>
+		<!-- IDS_FLEET_TITLE -->
+		<STRING ID="40048" Context="">New Fleet Count Password</STRING>
+		<!-- IDS_FLEET_PW_DLG_TITLE -->
+		<STRING ID="40049" Context="">Fleet Count Passwords give a set number of Fleet Calibration Counts to the INSITE tool that may be used in place of a Calibration Authorization Password. Each Fleet Count Password is keyed to a specific PC ID and must be activated within 30 days of its issue.</STRING>
+		<!-- IDS_FLEET_PW_DLG_TEXT -->
+		<STRING ID="40050" Context="">Password Incorrect</STRING>
+		<!-- IDS_DW_BAD_PW_TITLE -->
+		<STRING ID="40051" Context="">INSITE has detected an invalid password.  Please carefully re-enter the password or contact the local distributor.</STRING>
+		<!-- IDS_DW_BAD_PW_TEXT -->
+		<STRING ID="40052" Context="">Requested ECM Code</STRING>
+		<!-- IDS_DW_SUMMARY_REQECM -->
+		<STRING ID="40053" Context="">Current ECM Code</STRING>
+		<!-- IDS_DW_SUMMARY_EXISTECM -->
+		<STRING ID="40054" Context="">Fleet Calibration Used</STRING>
+		<!-- IDS_DW_SUMMARY_USEDFC -->
+		<STRING ID="40055" Context="">Yes</STRING>
+		<!-- IDS_DW_SUMMARY_YES -->
+		<STRING ID="40056" Context="">No</STRING>
+		<!-- IDS_DW_SUMMARY_NO -->
+		<STRING ID="40057" Context="">Last Fleet Calibration Count</STRING>
+		<!-- IDS_DW_ONECOUNTLEFT_TITLE -->
+		<STRING ID="40058" Context="">The last fleet calibration count is about to be used. To obtain additional fleet calibration counts please contact the local distributor.</STRING>
+		<!-- IDS_DW_ONECOUNTLEFT_TEXT -->
+		<STRING ID="40059" Context="">You have selected to transfer the selected items to the following device: %s
+To continue click the OK button.</STRING>
+		<!-- IDS_UPGRADE_CONFIRMATION -->
+		<STRING ID="40060" Context="">Transfer Aborted! 
+The device: %s is an invalid target.</STRING>
+		<!-- IDS_INVALID_MEDIA_TARGET -->
+		<STRING ID="40061" Context="">The Engine Program  %s already exists on the destination device.
+Clicking OK will purge the existing Engine Program from your drive and replace it with the selected Engine Program.
+Click Cancel to abort this action.</STRING>
+		<!-- IDS_UPGRADE_EP_EXISTS -->
+		<STRING ID="40062" Context="">One or more of the engine programs to be written exist on the destination device.
+To Write over them click the 'Yes' button.
+To continue the transfer without writing over the existing engine programs click 'No'</STRING>
+		<!-- IDS_DISK_DUPLICATES_EXIST -->
+		<STRING ID="40063" Context="">ECM Calibration Download Progress</STRING>
+		<!-- IDS_DOWNLOAD_PROGRESS_TITLE -->
+		<STRING ID="40064" Context="">The entered password is not a valid Fleet Calibration Password. Please verify and re-enter your password.</STRING>
+		<!-- IDS_FLEET_PW_INVALIDPWD -->
+		<STRING ID="40065" Context="">Connected SC Option:</STRING>
+		<!-- IDS_WZAUTH_CONNECTEDSCOPTION -->
+		<STRING ID="40066" Context="">Selected SC Option:</STRING>
+		<!-- IDS_WZAUTH_REQUESTEDSCOPTION -->
+		<STRING ID="40067" Context="">Selected SC Option</STRING>
+		<!-- IDS_DW_SUMMARY_REQSCOPTION -->
+		<STRING ID="40068" Context="">Connected SC Option</STRING>
+		<!-- IDS_DW_SUMMARY_EXISTSCOPTION -->
+		<STRING ID="40069" Context="">The selected calibration has a different SC Option from the one that is currently detected in the ECM. In order to continue the recalibration of the ECM, please enter a calibration password or select to use a Fleet Calibration Count if available. Calibration passwords may be obtained by contacting your local distributor. The distributor will need the calibration SC Option and ECM's serial number.</STRING>
+		<!-- IDS_WZAUTH_INSTRUCTIONSSCOPTION -->
+		<STRING ID="40070" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27001&lt;/ErrorNumber&gt;&lt;Description&gt;Insufficient free space exists on the destination drive. Upgrade will be aborted.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<!-- IDS_ERR_INSUFFICIENT_SPACE -->
+		<STRING ID="40071" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27002&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while attempting to locate the destination drive.&lt;/Description&gt;&lt;Suggestion&gt;Please shut down and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<!-- IDS_ERR_TARGET_UNAVAILABLE -->
+		<STRING ID="40072" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27003&lt;/ErrorNumber&gt;&lt;Description&gt;The destination drive is the same as the source drive. Upgrade will be aborted. &lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<!-- IDS_ERR_SAME_DISK -->
+		<STRING ID="40073" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27004&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while attempting upgrade the engine programs on the destination drive.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<!-- IDS_ERR_UPGRADE -->
+		<STRING ID="40074" Context="">The Calibration Databases on this drive have expired and will be purged.</STRING>
+		<!-- IDS_DISK_EXPIRED -->
+		<STRING ID="40075" Context="">The engine program has expired and will now be purged.</STRING>
+		<!-- IDS_EP_EXPIRED -->
+		<STRING ID="40076" Context="">Expired Database Purge</STRING>
+		<!-- IDS_EXPIRED_MSG_HEADER -->
+		<STRING ID="40077" Context="">The password that was entered is invalid. Please check the password and re-enter it.</STRING>
+		<!-- IDS_FLEETCAL_INVALID_LICENSE -->
+		<STRING ID="40078" Context="">That password  has already been used and is no longer valid.</STRING>
+		<!-- IDS_FLEETCAL_LICENSE_ALREADY_USED -->
+		<STRING ID="40079" Context="">The Fleet Calibration count was corrupt. Counts may have been lost.</STRING>
+		<!-- IDS_FLEETCAL_COUNT_REGENERATED -->
+		<STRING ID="40080" Context="">An internal error occurred while getting the Fleet Calibration count. Please contact technical support.</STRING>
+		<!-- IDS_FLEETCAL_COUNTS_CORRUPT -->
+		<STRING ID="40081" Context="">Fleet Calibration Counts</STRING>
+		<!-- IDS_FLEETCAL_COUNTS_TITLE -->
+		<STRING ID="40082" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27005&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while attempting purge the engine programs on the selected drive.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<!-- IDS_ERR_PURGE -->
+		<STRING ID="40083" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27500&lt;/ErrorNumber&gt;&lt;Description&gt;Unexpected error in Calibration Selection.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<!-- IDS_CSWERR_DEFAULT -->
+		<STRING ID="40084" Context="">The device selected: %s will expire in %d days.</STRING>
+		<!-- IDS_EXPIRATION_WARNING -->
+		<STRING ID="40085" Context="">Database Expiration Warning</STRING>
+		<!-- IDS_EXPIRATION_WARNING_HDR -->
+		<STRING ID="40086" Context="">The replacement calibration is not installed on the selected drive.  Please select another drive.</STRING>
+		<!-- IDS_CAL_NOT_INSTALLED -->
+		<STRING ID="40087" Context="">Warning</STRING>
+		<!-- IDS_CAL_NOT_INSTALLED_CAPTION -->
+		<STRING ID="40089" Context="">The Paste operation cannot be completed as the destination was not a drive.</STRING>
+		<!-- IDS_PASTE_UNACCEPTABLE_TARGET -->
+		<STRING ID="40091" Context="">Paste Error</STRING>
+		<!-- IDS_PASTE_ERROR -->
+		<STRING ID="40092" Context="">The Copy operation cannot be completed as the source was not a drive, engine program, or calibration.</STRING>
+		<!-- IDS_COPY_UNACCEPTABLE_TARGET -->
+		<STRING ID="40093" Context="">Copy Error</STRING>
+		<!-- IDS_COPY_ERROR -->
+		<STRING ID="40094" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27501&lt;/ErrorNumber&gt;&lt;Description&gt;Writing the data plate back to the ECM failed.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<!-- IDS_CSWERR_WRITEDATAPLATE -->
+		<STRING ID="40095" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27502&lt;/ErrorNumber&gt;&lt;Description&gt;Creation of the Calibration Download component failed.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<!-- IDS_CSWERR_CALDOWNLOADCOCREATE -->
+		<STRING ID="40096" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27503&lt;/ErrorNumber&gt;&lt;Description&gt;Initializing the Calibration Download component failed.  (Failed to Advise events.)&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<!-- IDS_CSWERR_CALDOWNLOADADVISE -->
+		<STRING ID="40097" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27504&lt;/ErrorNumber&gt;&lt;Description&gt;Calibration Selection failed to glean the connection parameters from Connection Manager.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<!-- IDS_CSWERR_GETCONNECTIONINFO -->
+		<STRING ID="40098" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27505&lt;/ErrorNumber&gt;&lt;Description&gt;Calibration Selection failed to set a Calibration Download parameter.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<!-- IDS_CSWERR_CALDOWNLOADSETPARAMETER -->
+		<STRING ID="40099" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27506&lt;/ErrorNumber&gt;&lt;Description&gt;Calibration Download does not support the connected ECM.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<!-- IDS_CSWERR_CALDOWNLOADECMSUPPORTED -->
+		<STRING ID="40100" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27507&lt;/ErrorNumber&gt;&lt;Description&gt;Calibration Selection was unable to attain an exclusive lock from ECMServices.&lt;/Description&gt;&lt;Suggestion&gt;Another operation may be writing to the ECM.  Stop all other operations and retry the download.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<!-- IDS_CSWERR_ECMServicesLock -->
+    <STRING ID="40101" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27508&lt;/ErrorNumber&gt;&lt;Description&gt;No response from ECM&lt;/Description&gt;&lt;Suggestion&gt;Check the connection to the ECM and Cycle the Key switch&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<!-- IDS_CSWERR_CalDownloadCalibrateECM -->
+		<STRING ID="40102" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27509&lt;/ErrorNumber&gt;&lt;Description&gt;Calibration Selection was unable to release its exclusive lock.&lt;/Description&gt;&lt;Suggestion&gt;Close INSITE and re-open it.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<!-- IDS_CSWERR_ECMServicesUnlock -->
+		<STRING ID="40103" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27510&lt;/ErrorNumber&gt;&lt;Description&gt;Calibration Selection was unable to request an ECM disconnect from Connection Manager.&lt;/Description&gt;&lt;Suggestion&gt;Manually disconnect from the ECM and reconnect to it.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<!-- IDS_CSWERR_ConManRequestDisconnect -->
+		<STRING ID="40104" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27511&lt;/ErrorNumber&gt;&lt;Description&gt;Calibration Selection was unable to write the selected Power Curve value.&lt;/Description&gt;&lt;Suggestion&gt;Manually set the Power Curve using the Advanced ECM Data component.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<!-- IDS_CSWERR_WritePowerCurve -->
+		<STRING ID="40105" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27512&lt;/ErrorNumber&gt;&lt;Description&gt;Calibration Selection was unable to unadvise calibration download events.&lt;/Description&gt;&lt;Suggestion&gt;Close INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<!-- IDS_CSWERR_AtlUnadvise -->
+		<STRING ID="40106" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27513&lt;/ErrorNumber&gt;&lt;Description&gt;Calibration Selection was unable to uncompress the calibration file.&lt;/Description&gt;&lt;Suggestion&gt;Free up some disk space and try again.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<!-- IDS_CSWERR_UnzipCalibration -->
+		<STRING ID="40107" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27514&lt;/ErrorNumber&gt;&lt;Description&gt;The Master Password has not been validated for the ECM.  A Calibration cannot be downloaded without the password.&lt;/Description&gt;&lt;Suggestion&gt;Re-connect to the ECM using the master password.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<!-- IDS_CSWERR_MasterPassword -->
+		<STRING ID="40108" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27515&lt;/ErrorNumber&gt;&lt;Description&gt;Calibration Selection was unable to complete reading the data plate.  Some information may be missing.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<!-- IDS_CSWERR_DataPlateInit -->
+		<STRING ID="40109" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27516&lt;/ErrorNumber&gt;&lt;Description&gt;Calibration Selection was unable to determine the module connection parameters.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<!-- IDS_CSWERR_ConnectionInfo -->
+		<STRING ID="40110" Context="">Adjusting ECM - You are about to make changes to ECM.
+
+While adjusting the ECM, do not change the key state unless instructed to do so.
+
+Click Ok to continue the download, or click Cancel to leave the ECM unchanged</STRING>
+		<!-- IDS_TRANSFER_WARNING -->
+		<STRING ID="40111" Context="">Adjustment Confirmation</STRING>
+		<!-- IDS_TRANSFER_CAPTION -->
+		<STRING ID="40112" Context="">INSITE could not detect calibration(s) for the selected ECM part number.</STRING>
+		<!-- IDS_NO_CALS_MATCH -->
+		<STRING ID="40113" Context="">Infinite</STRING>
+		<!-- IDS_FLEETCAL_INFINITE_COUNTS -->
+		<STRING ID="40114" Context="">No certification codes have been selected.  In order to view calibrations, one or more certifications must be selected.  Please select the certification codes of interest.</STRING>
+		<!-- IDS_CERTS_NONE_SELECTED -->
+		<STRING ID="40115" Context="">The currently available certification codes differ from the certification codes previously selected from.  Please select the certification codes of interest.</STRING>
+		<!-- IDS_CERTS_NEW_AVAIL -->
+		<STRING ID="40116" Context="">Please select the certification codes of interest.</STRING>
+		<!-- IDS_CERTS_USER_SELECTED -->
+		<STRING ID="40117" Context="">Please set the Power Curve to the desired value using the Advanced ECM Data Special Feature Programmable Power.</STRING>
+		<!-- IDS_POWERCURVE -->
+		<STRING ID="40118" Context="">Power Curve</STRING>
+		<!-- IDS_POWERCURVE_CAPTION -->
+		<STRING ID="40119" Context="">A Calibration Download is in progress.  Please do not change the key switch state during download process unless instructed.</STRING>
+		<!-- IDS_DOWNLOAD_TEXT -->
+		<STRING ID="40120" Context="">Autodetect</STRING>
+		<!-- IDS_MENUBAR_TOOLS_CALIBRATIONSELECTION_AUTODETECT -->
+		<STRING ID="40121" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27517&lt;/ErrorNumber&gt;&lt;Description&gt;Calibration Selection was unable to reconnect to the module.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<!-- IDS_CSWERR_ConManReconnect -->
+		<STRING ID="40153" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27006&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE cannot download the calibration at this time because INSITE was unable to locate a valid calibration transfer license.&lt;/Description&gt;&lt;Suggestion&gt;Ensure that a PRO/PRO Plus tool license is active.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<!-- IDS_ERR_TRANSFER_LICENSE -->
+		<STRING ID="40154" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27007&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE cannot download the calibration at this time because INSITE is not currently connected to an ECM.&lt;/Description&gt;&lt;Suggestion&gt;Please connect to the ECM to perform this action.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<!-- IDS_ERR_NOT_CONNECTED -->
+		<STRING ID="40155" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27008&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE cannot download the calibration at this time because the selected calibration is not valid for the connected ECM.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<!-- IDS_ERR_CALIBRATION_NOT_CORRECT -->
+		<STRING ID="40156" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27009&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE cannot download the calibration at this time because INSITE cannot currently write to the ECM.&lt;/Description&gt;&lt;Suggestion&gt;Ensure the vehicle is not running prior to transferring the calibration to the connected ECM.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<!-- IDS_ERR_NOT_SAFE_TO_WRITE -->
+		<STRING ID="40157" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27010&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE cannot download the calibration at this time because the Master Password has not been validated.&lt;/Description&gt;&lt;Suggestion&gt;Connect to the ECM using the Master Password.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<!-- IDS_ERR_MASTER_PASSWORD -->
+		<STRING ID="40158" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27012&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE cannot download the calibration at this time because INSITE is unable to calibrate a virtual ECM.&lt;/Description&gt;&lt;Suggestion&gt;Connect to a physical ECM.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<!-- IDS_ERR_CONNECTION_TYPE -->
+		<STRING ID="40159" Context="">Calibration Authorization Data</STRING>
+		<!-- IDS_GRIDPRINT_TITLE_AUTHORIZATION -->
+		<STRING ID="40160" Context="">Calibration Database Upgrade Confirmation</STRING>
+		<!-- IDS_DB_UPGRADE_CONFIRM -->
+		<STRING ID="40161" Context="">Calibration Database Upgrade - Confirm Engine Program Replacement</STRING>
+		<!-- IDS_DB_UPGRADE_EP_REPLACE -->
+		<STRING ID="40162" Context="">Calibration Database Upgrade Aborted.</STRING>
+		<!-- IDS_DB_UPGRADE_ABORT -->
+		<STRING ID="40163" Context="">My Computer</STRING>
+		<!-- IDS_LABEL_ROOT -->
+		<STRING ID="40164" Context="">Calibration Properties</STRING>
+		<!-- IDS_GRIDPRINT_TITLE_PROPERTIES -->
+		<STRING ID="40165" Context="">Name|Type|Total Size|Free Space| </STRING>
+		<!-- IDS_DISK_COL_HEADINGS -->
+		<STRING ID="40166" Context="">Production Date|</STRING>
+		<!-- IDS_DATE_COL_HEADIN -->
+		<STRING ID="40167" Context="">Engine Program|</STRING>
+		<!-- IDS_EP_COL_HEADING -->
+		<STRING ID="40168" Context="">Unknown</STRING>
+		<!-- IDS_DISKTYPE_UNKNOWN -->
+		<STRING ID="40169" Context="">Removable Disk</STRING>
+		<!-- IDS_DISKTYPE_REMOVABLE -->
+		<STRING ID="40170" Context="">Local Disk</STRING>
+		<!-- IDS_DISKTYPE_LOCAL -->
+		<STRING ID="40171" Context="">Remote Drive</STRING>
+		<!-- IDS_DISKTYPE_REMOTE -->
+		<STRING ID="40172" Context="">Compact Disk</STRING>
+		<!-- IDS_DISKTYPE_CD -->
+		<STRING ID="40173" Context="">RAM Disk</STRING>
+		<!-- IDS_DISKTYPE_RAM -->
+		<STRING ID="40174" Context="">Unknown Type</STRING>
+		<!-- IDS_DISKTYPE_UNKNOWN_TYPE -->
+		<STRING ID="40175" Context="">%m/%d/%Y</STRING>
+		<!-- IDS_DISK_DATE_FORMAT -->
+		<STRING ID="40176" Context="">Error Purging Calibration Data</STRING>
+		<!-- IDS_DISK_PURGE_ERROR_MSG -->
+		<STRING ID="40177" Context="">Error</STRING>
+		<!-- IDS_DISK_ERROR -->
+		<STRING ID="40178" Context="">The drive that you have attempted to connect to has expired.
+No further actions may be taken on this media.</STRING>
+		<!-- IDS_EXPIRED_REMOTE_DRIVE -->
+		<STRING ID="40179" Context="">Remote Drive Expired</STRING>
+		<!-- IDS_EXPIRED_REMOTE_HEADER -->
+		<STRING ID="40180" Context="">0</STRING>
+		<!-- IDS_UNSUPPORTEDSN -->
+		<STRING ID="40181" Context="">Transfer Error</STRING>
+		<!-- IDS_PWENTRYUNAVAIL_TITLE -->
+		<STRING ID="40182" Context="">Unable to continue the transfer of the selected calibration to the connected ECM.
+No Fleet Calibration Counts are available for use.
+Continuation of transfer will be unavailable at this time.
+Please obtain a Fleet Calibration Count to restart the transfer.</STRING>
+		<!-- IDS_PWENTRYUNAVAIL_MSG -->
+		<STRING ID="40183" Context="">INSITE cannot detect the ECM Serial Number for the connected ECM. A Fleet Calibration Count is required to calibrate this ECM. Please verify that a Fleet Calibration Count is available before continuing. Please go to the Tools menu. Select Options, then Security. Verify that a valid Fleet Calibration Count is available or enter a Fleet Calibration Count Password to calibrate this ECM.\r\n\r\n</STRING>
+		<!-- IDS_WZAUTH_UNSUPSN_INSTRUCTIONS -->
+		<STRING ID="40184" Context="">Calibration Transfer</STRING>
+		<!-- IDS_DW_DOWNLOAD_TITLE -->
+		<STRING ID="40185" Context="">Please continue when the transfer is complete</STRING>
+		<!-- IDS_DW_DOWNLOAD_SUBTITLE -->
+		<STRING ID="40186" Context="">Progress</STRING>
+		<!-- IDS_DW_DOWNLOAD_PROGRESS -->
+    <STRING ID="40384" Context="">Calibration Transfer Summary</STRING>
+    <!-- IDS_DW_DOWNLOAD_SUMMARY -->
+		<STRING ID="40188" Context="">Select Next to continue.</STRING>
+		<!-- IDS_DW_DOWNLOAD_TRANSFERCOMPLETE -->
+		<STRING ID="40189" Context="">Transfer in Progress</STRING>
+		<!-- IDS_DW_DOWNLOAD_XFERINPROGRESS_CAPTION -->
+		<STRING ID="40190" Context="">Please wait until the calibration transfer is complete.</STRING>
+		<!-- IDS_DW_DOWNLOAD_XFERINPROGRESS_TEXT -->
+		<STRING ID="40191" Context="">Connection Change</STRING>
+		<!-- IDS_DW_CONNECTION_TITLE -->
+		<STRING ID="40192" Context="">Please connect the Fuel Control Module</STRING>
+		<!-- IDS_DW_CONNECTION_SUBTITLE -->
+		<STRING ID="40193" Context="">Select Calibration</STRING>
+		<!-- IDS_DW_COMPATIBLECAL_TITLE -->
+		<STRING ID="40194" Context="">Please select a Fuel Control Module compatible calibration from the list below and select Next to continue.</STRING>
+		<!-- IDS_DW_COMPATIBLECAL_SUBTITLE -->
+		<STRING ID="40195" Context="">Calibration Complete</STRING>
+		<!-- IDS_DW_FINISH_TITLE -->
+		<STRING ID="40196" Context="">Please select Finish to close the ECM Calibration Download Wizard.</STRING>
+		<!-- IDS_DW_FINISH_SUBTITLE -->
+		<STRING ID="40197" Context="">Please select Finish to close the ECM Calibration Download Wizard.</STRING>
+		<!-- IDS_DW_FINISH_TEXT -->
+		<STRING ID="40198" Context="">Calibration is complete.</STRING>
+		<!-- IDS_DW_CALIBRATION_SUCCESSFUL -->
+		<STRING ID="40199" Context="">Calibration failed.</STRING>
+		<!-- IDS_DW_CALIBRATION_FAILED -->
+		<STRING ID="40200" Context="">INSITE is ready to calibrate the Fuel Control Module.\r\nPlease disconnect the SAEJ1939 engine datalink at the service connector.\r\nConnect to the Fuel Control Module side of the service connector.\r\n\r\nSelect Next when the Fuel Control Module is connected or Cancel to terminate the process.</STRING>
+		<!-- IDS_DW_CONNECTION_TEXT -->
+		<STRING ID="40201" Context="">The Engine Control Module and Fuel Control Module can not establish communication.</STRING>
+		<!-- IDS_CS_NOCOMMUNICATION -->
+		<STRING ID="40202" Context="">Engine Control Module and Fuel Control Module performance parameters are not compatible</STRING>
+		<!-- IDS_CS_INCOMPATIBLE -->
+		<STRING ID="40203" Context="">Fuel Control Module calibration is out of date. Recalibrate the Fuel Control Module with a newer calibration.</STRING>
+		<!-- IDS_CS_FUELCMOUTOFDATE -->
+		<STRING ID="40204" Context="">Engine Control Module calibration is out of date. Recalibrate the Engine Control Module with a newer calibration.</STRING>
+		<!-- IDS_CS_ENGINECMOUTOFDATE -->
+		<STRING ID="40205" Context="">Fuel Control Module calibration is out of date. Engine Control Module and Fuel Control Module performance parameters are not compatible.</STRING>
+		<!-- IDS_CS_FUELCMOUTOFDATEINCOMPATIBLE -->
+		<STRING ID="40206" Context="">Engine Control Module calibration is out of date. Engine Control Module and Fuel Control Module performance parameters are not compatible.</STRING>
+		<!-- IDS_CS_ENGINECMOUTOFDATEINCOMPATIBLE -->
+		<STRING ID="40207" Context="">Engine Control Module and Fuel Control Module are compatible.</STRING>
+		<!-- IDS_CS_COMPATIBLE -->
+		<STRING ID="40208" Context="">Incorrect Module Connected</STRING>
+		<!-- IDS_DW_CONN_ECMNOTFCM_TITLE -->
+		<STRING ID="40209" Context="">INSITE has detected an Engine Control Module. Please connect to the Fuel Control Module.</STRING>
+		<!-- IDS_DW_CONN_ECMNOTFCM_TEXT -->
+		<STRING ID="40210" Context="">Invalid Module Connected</STRING>
+		<!-- IDS_DW_CONN_INVALIDMODULE_TITLE -->
+		<STRING ID="40211" Context="">INSITE was unable to detect a valid Fuel Control Module. Please connect to the Fuel Control Module.</STRING>
+		<!-- IDS_DW_CONN_INVALIDMODULE_TEXT -->
+		<STRING ID="40212" Context="">Connection Failed</STRING>
+		<!-- IDS_DW_CONNECTIONFAILED_TITLE -->
+		<STRING ID="40213" Context="">No valid module was detected. Please check the cables and try again.</STRING>
+		<!-- IDS_DW_CONNECTIONFAILED_TEXT -->
+		<STRING ID="40214" Context="">PC ID:</STRING>
+		<!-- IDS_DW_AUTH_PCID -->
+		<STRING ID="40217" Context="">No Calibration Selected</STRING>
+		<!-- IDS_DW_NOCALSELECTED_TITLE -->
+		<STRING ID="40218" Context="">Please choose a calibration before proceeding.</STRING>
+		<!-- IDS_DW_NOCALSELECTED_TEXT -->
+		<STRING ID="40219" Context="">An unexpected error was encountered that prevented the download from continuing.</STRING>
+		<!-- IDS_DW_INTERNALERROR -->
+		<STRING ID="40220" Context="">The compatible calibration is not installed on the designated drive. The Fuel Control Module calibration must reside on the same drive as the Engine Control Module.</STRING>
+		<!-- IDS_DW_NOFCMCALIBRATIONS -->
+		<STRING ID="40222" Context="">Calibration Download has completed. Please wait for the module to automatically reconnect.</STRING>
+		<!-- IDS_DW_WAITINGFORRECONNECT_TEXT -->
+		<STRING ID="40223" Context="">INSITE was unable to reconnect to the module after the calibration was complete.</STRING>
+		<!-- IDS_DW_DOWNLOADRECONNECTFAILED -->
+		<STRING ID="40224" Context="">Connection In Progress</STRING>
+		<!-- IDS_DW_ALREADYCONNECTING_TITLE -->
+		<STRING ID="40225" Context="">Please wait while INSITE attempts to connect to the module.</STRING>
+		<!-- IDS_DW_ALREADYCONNECTING_TEXT -->
+		<STRING ID="40226" Context="">%B %Y</STRING>
+		<!-- IDS_ESDN_DISTRIBUTION_DATE_DISPLAY_FORMAT -->
+    <STRING ID="40383" Context="">Calibrate Engine Control System (Single Key-Off)</STRING>
+    <!-- IDS_DW_CALIBRATEENTIRESYSTEM_SINGLE_KEY_OFF -->
+		<STRING ID="40227" Context="">Calibrate Engine Control System (Multiple Key-Off)</STRING>
+		<!-- IDS_DW_CALIBRATEENTIRESYSTEM_MULTIPLE_KEY_OFF -->
+		<STRING ID="40228" Context="">Calibrate Single ECM</STRING>
+		<!-- IDS_DW_CALIBRATESINGLEMODULE -->
+		<STRING ID="40229" Context="">INSITE can aid in calibrating the entire engine control system.  To calibrate the entire system or more than a single ECM, please select Calibrate Engine Control System and then Next.  Otherwise please select Calibrate Single ECM and then Next.</STRING>
+		<!-- IDS_DW_CALIBRATESYSTEMORMODULE_INSTRUCTIONS -->
+		<STRING ID="40230" Context="">If calibration Engine control System (Single Key-Off) is selected then INSITE provides the guidance to select calibrations and perform entire system download with only a single Key-Off required at the end of the download.\r\n\r\nIf calibration Engine control System (Multiple Key-Off) is selected then INSITE provides the guidance to calibrate each ECM in Engine Control System with a Key-Off required after download to each module.</STRING>
+		<!-- IDS_DW_CALIBRATESYSTEMORMODULE_ADDITIONALTEXT -->
+		<STRING ID="40231" Context="">Multiple ECM Download</STRING>
+		<!-- IDS_DW_CALIBRATESYSTEMORMODULE_HEADERTITLE -->
+		<STRING ID="40232" Context="">Choose Multiple Module or Single Module Download</STRING>
+		<!-- IDS_DW_CALIBRATESYSTEMORMODULE_HEADERSUBTITLE -->
+		<STRING ID="40233" Context="">Select Destination ECM</STRING>
+		<!-- IDS_DW_CHOOSEDESTINATIONECM_HEADERTITLE -->
+		<STRING ID="40234" Context="">Choose the ECM to be downloaded</STRING>
+		<!-- IDS_DW_CHOOSEDESTINATIONECM_HEADERSUBTITLE -->
+		<STRING ID="40235" Context="">INSITE cannot determine which ECM to download the selected calibration.  Please select the ECM that is to be calibrated and select Next.</STRING>
+		<!-- IDS_DW_CHOOSEDESTINATIONECM_INSTRUCTIONS -->
+		<STRING ID="40236" Context="">Parent ECM Code:</STRING>
+		<!-- IDS_DW_CHOOSEDESTINATIONECM_PARENTECMCODE -->
+		<STRING ID="40237" Context="">Requested ECM Code:</STRING>
+		<!-- IDS_DW_CHOOSEDESTINATIONECM_REQUESTEDECMCODE -->
+		<STRING ID="40238" Context="">Part Number</STRING>
+		<!-- IDS_DW_CHOOSEDESTINATIONECM_PARTNUMBER -->
+		<STRING ID="40239" Context="">Module</STRING>
+		<!-- IDS_DW_CHOOSEDESTINATIONECM_MODULENAME -->
+		<STRING ID="40240" Context="">Address</STRING>
+		<!-- IDS_DW_CHOOSEDESTINATIONECM_SOURCEADDRESS -->
+		<STRING ID="40241" Context="">Select Calibration</STRING>
+		<!-- IDS_DW_CHOOSECAL_HEADERTITLE -->
+		<STRING ID="40242" Context="">Please Select an ECM Code to be downloaded</STRING>
+		<!-- IDS_DW_CHOOSECAL_HEADERSUBTITLE -->
+		<STRING ID="40243" Context="">Show only compatible calibrations</STRING>
+		<!-- IDS_DW_CHOOSECAL_SHOWCOMPATIBLE -->
+		<STRING ID="40244" Context="">Skip calibration download for this ECM</STRING>
+		<!-- IDS_DW_CHOOSECAL_SKIPCALIBRATION -->
+		<STRING ID="40245" Context="">Folder</STRING>
+		<!-- IDS_DISKTYPE_FOLDER -->
+		<STRING ID="40249" Context="">INSITE cannot detect all of the required calibration databases for the selected multi-module system. Please verify that all calibration databases are on the same PC drive before attempting to calibrate an ECM and/or FCM of a multi-module system.</STRING>
+		<!-- IDS_MULTI_MODULE_DATABASE_MISSING -->
+		<STRING ID="40250" Context="">Warning</STRING>
+		<!-- IDS_MULTI_MODULE_DATABASE_MISSING_CAPTION -->
+		<STRING ID="40251" Context="">Apply C&amp;ustom Filter</STRING>
+		<!-- IDS_MENUBAR_TOOLS_CALSEL_APPLYCUSTOMFILTER -->
+		<STRING ID="40256" Context="">View Replacement Calibrations...</STRING>
+		<!-- IDS_MENUBAR_CONTEXT_VIEWREPLACEMENTCALS -->
+		<STRING ID="40257" Context="">(All)</STRING>
+		<!-- IDS_FILTER_ALL -->
+		<STRING ID="40258" Context="">The selected ECM Code is the first row in the list below and is grayed out.\r\n\r\nThe replacement calibrations are listed in the subsequent rows.</STRING>
+		<!-- IDS_REPLACEMENT_TEXT -->
+		<STRING ID="40259" Context="">Replacement Calibrations</STRING>
+		<!-- IDS_REPLACEMENT_TITLE -->
+		<STRING ID="40260" Context="">Communicating with INSITE CENSE</STRING>
+		<!-- IDS_CENSE_SUBTITLE -->
+		<STRING ID="40261" Context="">Please wait while INSITE CENSE completes the calibration download.\r\n\r\nOnce the calibration download is complete, click Finish.</STRING>
+		<!-- IDS_CENSE_WAIT_TEXT -->
+		<STRING ID="40262" Context="">INSITE CENSE has completed the calibration download.\r\n\r\nPress Finish to close this wizard.</STRING>
+		<!-- IDS_CENSE_FINISH_TEXT -->
+		<STRING ID="40263" Context="">An error has occurred while attempting the calibration download. Please verify that INSITE CENSE is correctly installed, and successfully downloads calibrations when run outside INSITE.\r\n\r\nPress Finish to close this wizard.</STRING>
+		<!-- IDS_CENSE_EXECUTE_ERR -->
+		<STRING ID="40264" Context="Message Box caption">INSITE CENSE Not Installed</STRING>
+		<!-- IDS_CENSE_UNAVAILABLE_CAPTION -->
+		<STRING ID="40265" Context="Message Box text">INSITE CENSE is not properly installed. Please re-install INSITE CENSE and retry.</STRING>
+		<!-- IDS_CENSE_UNAVAILABLE_MESSAGE -->
+		<STRING ID="40266" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27013&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE cannot download the calibration at this time because a non-CENSE connection is already active.&lt;/Description&gt;&lt;Suggestion&gt;Disconnect from non-CENSE connection and retry.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<!-- IDS_CENSE_ERR_CONNECTED -->
+		<STRING ID="40278" Context="">Parameters Not Restored</STRING>
+		<!-- IDS_DW_UNRESTORED_TITLE -->
+		<STRING ID="40279" Context="">Review the list of parameters that were not restored</STRING>
+		<!-- IDS_DW_UNRESTORED_SUBTITLE -->
+		<STRING ID="40280" Context="">UnrestoredParameters</STRING>
+		<!-- IDS_DEFAULT_UNRESTORED_FILE_NAME -->
+		<STRING ID="40281" Context="">txt</STRING>
+		<!-- IDS_UNRESTORED_EXTENSION -->
+		<STRING ID="40282" Context="">Save Unrestored Parameters</STRING>
+		<!-- IDS_SAVE_UNRESTORED_DLG_TITLE -->
+		<STRING ID="40283" Context="">Unrestored Parameters Files (*.txt)|*.txt|</STRING>
+		<!-- IDS_UNRESTORED_FILE_FILTER -->
+		<STRING ID="40284" Context="">All Files (*.*)|*.*||</STRING>
+		<!-- IDS_IDS_UNRESTORED_ALL_FILE_FILTER -->
+		<STRING ID="40285" Context="">Parameters that did not restore after the calibration download are listed below. Select Save to save the list in a file. Select Print to send the list to a printer. Select Next to continue.</STRING>
+		<STRING ID="40286" Context="">Parameters Not Restored</STRING>
+		<!-- IDS_UNRESTORED_PRINT_TITLE -->
+		<STRING ID="40287" Context="QSV compatibility message">The engine control system does not support calibration compatibility checking.  Please verify the Control Module is calibrated correctly.</STRING>
+		<!-- IDS_QSV_COMPATIBILITY_NOT_SUPPORTED -->
+		<STRING ID="40288" Context="QSV compatibility message">The Engine Control Module and at least on Secondary Control Module(s) can not establish communication.  Select Help for more information.</STRING>
+		<!-- IDS_QSV_COMPATIBILITY_NO_COMMUNICATION -->
+		<STRING ID="40289" Context="QSV compatibility message">Engine Control Module and Secondary Control Module(s) performance parameters are not compatible.  Select Help for more information.</STRING>
+		<!-- IDS_QSV_COMPATIBILITY_BAD_PERFORMANCE_PARAMETERS -->
+		<STRING ID="40290" Context="QSV compatibility message">The engine control system indicates the ECM is not compatible.  Due to this incompatibility the engine may not start.  To select another calibration and recalibrate choose Select.  To continue without recalibrating choose Continue.</STRING>
+		<!-- IDS_QSV_COMPATIBILITY_MODULE -->
+		<STRING ID="40291" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27011&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE cannot download the calibration at this time because the user does not have sufficient rights.&lt;/Description&gt;&lt;Suggestion&gt;Ensure that a user with sufficient rights is logged in.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<!-- IDS_INADEQUATE_USER_RIGHTS -->
+		<STRING ID="40292" Context="Superseded Cal Notefield message">The selected calibration was not found on the selected drive. Proceeding will copy the active superseding calibration if applicable and associated note field information.</STRING>
+		<!-- IDS_SUPERCEDED_CAL_NOTEFIELD -->
+		<STRING ID="40293" Context="Download Wizard no dataplate message">Dataplate parameters are not available for the selected module.</STRING>
+		<!-- IDS_NO_DATAPLATE -->
+		<STRING ID="40294" Context="Authorization Password List Find Button text">&amp;Find...</STRING>
+		<!-- IDS_APL_BTN_FIND -->
+		<STRING ID="40295" Context="Message Box caption">Calibration Copy Warning</STRING>
+		<!-- IDS_COPY_MISSING_CALS_CAPTION -->
+		<STRING ID="40296" Context="Message Box text">One or more of the selected calibrations were not found on the selected drive.
+
+Proceeding will only copy the calibration information.</STRING>
+		<!-- IDS_COPY_MISSING_CALS_MESSAGE -->
+		<STRING ID="40298" Context="Message Box text">Continue</STRING>
+		<STRING ID="40299" Context="Message Box text">Cancel</STRING>
+		<STRING ID="40301" Context="Message Box caption">Cummins INSITE</STRING>
+		<STRING ID="40302" Context="Message Box text">Select</STRING>
+		<STRING ID="40310" Context="Message Box text">Help</STRING>
+		<STRING ID="40311" Context="Message Box text">Next</STRING>
+		<STRING ID="40312" Context="Message Box text">Back</STRING>
+		<STRING ID="40313" Context="Message Box text">Finish</STRING>
+		<STRING ID="40297" Context="Message Box text">The engine control system indicates the ECM is not compatible.  Due to this incompatibility, the engine may not start.  To select another calibration and recalibrate, choose Select.  To continue with the download, choose Continue.
+      </STRING>
+		<!-- IDS_MSG_DRIVELOADFAIL_CAPTION-->
+		<STRING ID="40314" Context="Message Box caption">Database Load Failure</STRING>
+		<!-- IDS_MSG_DRIVELOADFAIL_TEXT1 -->
+		<STRING ID="40315" Context="Message Box text">INSITE cannot load the database on drive</STRING>
+		<!-- IDS_MSG_DRIVELOADFAIL_TEXT2 -->
+		<STRING ID="40316" Context="Message Box text">Please verify the database is valid and click Retry. Or, click Cancel to skip this database.</STRING>
+		<!-- IDS_MSG_DRIVEREADFAIL_CAPTION -->
+		<STRING ID="40317" Context="Message Box caption">Database Read Failure</STRING>
+		<!-- IDS_MSG_DRIVEREADFAIL_TEXT -->
+		<STRING ID="40318" Context="Message Box text">INSITE cannot read from the selected database.
+      
+Please verify the database is present on the selected drive and click Retry.Or, click Cancel to return to Calibration Selection.</STRING>
+		<!-- IDS_WARNING_MSG_CAPTION -->
+		<STRING ID="40319" Context="Warning Message Box caption">Warning</STRING>
+		<!-- IDS_WARN_SAVERESTORE_INDMOD_TEXT -->
+		<STRING ID="40320" Context="Message Box text">Vehicles or equipment could possibly operate incorrectly if Save and Restore is used on Industrial Engines when calibrating with the INSITE™ electronic service tool. Industrial calibrations are tailored to the OEM's specifications. Replacing the ECM calibration with Save and Restore ON in the INSITE™ electronic service tool does not restore the vehicle or equipment to the original settings.\r\n\r\nService recommends not using Save and Restore when calibrating with the INSITE™ electronic service tool on Industrial Engines.\r\n</STRING>
+		<STRING ID="40321" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27014&lt;/ErrorNumber&gt;&lt;Description&gt;A parameter not present in the calibration failed to restore.&lt;/Description&gt;&lt;Suggestion&gt;Verify Feature and Parameter settings.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40322" Context="Message Box text">second remaining</STRING>
+		<STRING ID="40323" Context="Message Box text">seconds remaining</STRING>
+		<STRING ID="40324" Context="Message Box text">minute</STRING>
+		<STRING ID="40325" Context="Message Box text">minutes</STRING>
+		<!-- IDS_POWERMATCH_NOT_SUPPORTED_MSG -->
+		<STRING ID="40326" Context="PowerMatch not supported">The PowerMatch calibration was not generated for the connected ECM. Please ensure the ECM serial number matches the connected ECM.INSITE will not perform the calibration download.</STRING>
+		<!-- IDS_POWERMATCH_NOT_SUPPORTED_MSG_CAPTION -->
+		<STRING ID="40327" Context="Message Box Caption">INSITE - Calibration Selection</STRING>
+		<STRING ID="40328" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27015&lt;/ErrorNumber&gt;&lt;Description&gt;A call to QueryInterface failed.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40329" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27016&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while reading the MenuBar.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40330" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27017&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while showing CalsMenu.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40331" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27018&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while checking the ModuleCalibrationSupercessionStatus.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40332" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27019&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while reading checking MultiModuleCompatibilityForTransfer.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40333" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27020&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while  finding  default calibration Drive.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40334" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27021&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while reading the Disk Count.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40335" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27022&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while reading the Module Properties.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40336" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27023&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while selecting the calibration.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40337" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27024&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while reading the Disk Name.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40338" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27025&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while selecting the Engine Program.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40339" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27026&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while selecting the part number.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40340" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27027&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while selecting the Power Curve.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40350" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27518&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while reading the Module Properties.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40351" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27519&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while reading selected Engine program Properties.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40352" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27520&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while detecting the Module Information.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40353" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27521&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error occurred while reading correct calibration for Module.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40354" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27522&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while reading data link Information.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40355" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27523&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while Connection  Information.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40356" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27524&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while RP1210 Connection .&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40357" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27525&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while reading the Module Properties.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40358" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27526&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while checking Industrial Pro tool level.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40359" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27527&lt;/ErrorNumber&gt;&lt;Description&gt;Error creating FileSystemObject while Initializing folder disk.&lt;/Description&gt;&lt;Suggestion&gt;Make sure that the Windows Scripting Host is installed properly&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40360" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27528&lt;/ErrorNumber&gt;&lt;Description&gt;Error reading the physical drives while Initializing folder disk.&lt;/Description&gt;&lt;Suggestion&gt;Make sure that the Windows Scripting Host is installed properly&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40361" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27529&lt;/ErrorNumber&gt;&lt;Description&gt;Error creating a Certification COM object while Initializing folder disk.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40362" Context="Message Box text">The connected ECM Part Number is not compatible with the selected calibration. Please choose another calibration with the correct ECM Part Number and try again.</STRING>
+		<STRING ID="40363" Context="Message Box Caption">ECM Not Compatible</STRING>
+		<!-- Database realted error messages -->
+		<STRING ID="40364" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27200&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE could not retrieve saved calibration authorization passwords.&lt;/Description&gt;&lt;Suggestion&gt;Please enter a calibration authorization password to continue. If the problem persists, contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40365" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27204&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE is unable to retrieve information from the calibration database.&lt;/Description&gt;&lt;Suggestion&gt;Choose another drive for calibration selection, or insert another INCAL disk. If the problem persists, contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40366" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27206&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE is unable to retrieve Certification Code information.&lt;/Description&gt;&lt;Suggestion&gt;Choose another drive for calibration selection, or insert another INCAL disk. If the problem persists, contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40367" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27208&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE is unable to retrieve ECM part number information from the database.&lt;/Description&gt;&lt;Suggestion&gt;Choose another drive for calibration selection, or insert another INCAL disk. If the problem persists, contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40368" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27209&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE is unable to retrieve Calibration Selection information from the database.&lt;/Description&gt;&lt;Suggestion&gt;Choose another drive for calibration selection, or insert another INCAL disk. If the problem persists, contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40369" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27210&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE is unable to retrieve Calibration Property information from the database.&lt;/Description&gt;&lt;Suggestion&gt;Choose another drive for calibration selection, or insert another INCAL disk. If the problem persists, contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40370" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27212&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE is unable to retrieve Supercession information from the database.&lt;/Description&gt;&lt;Suggestion&gt;Choose another drive for calibration selection, or insert another INCAL disk. If the problem persists, contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40371" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27215&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE is unable to retrieve Calibration Date information from the database.&lt;/Description&gt;&lt;Suggestion&gt;Choose another drive for calibration selection, or insert another INCAL disk. If the problem persists, contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40372" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27218&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE is unable to retrieve Compatible Engine information from the database.&lt;/Description&gt;&lt;Suggestion&gt;Choose another drive for calibration selection, or insert another INCAL disk. If the problem persists, contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40373" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27220&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE is unable to retrieve Compatible FR Option information from the database.&lt;/Description&gt;&lt;Suggestion&gt;Choose another drive for calibration selection, or insert another INCAL disk. If the problem persists, contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40374" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27221&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE is unable to retrieve Compatible Calibration information from the database.&lt;/Description&gt;&lt;Suggestion&gt;Choose another drive for calibration selection, or insert another INCAL disk. If the problem persists, contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40375" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27224&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE is unable to retrieve Compatible GCM Calibration information from the database.&lt;/Description&gt;&lt;Suggestion&gt;Choose another drive for calibration selection, or insert another INCAL disk. If the problem persists, contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40376" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27228&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE is unable to retrieve information from the (name) calibration database.&lt;/Description&gt;&lt;Suggestion&gt;Choose another drive for calibration selection, or insert another INCAL disk. If the problem persists, contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40377" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27229&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE is unable to retrieve Query Version information from the database.&lt;/Description&gt;&lt;Suggestion&gt;Choose another drive for calibration selection, or insert another INCAL disk. If the problem persists, contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="40378" Context="">Launch Vehicle Classification</STRING>
+      <STRING ID="40379" Context="">The Vehicle Classification must be defined to meet OBD regulations. Please define the Vehicle Classification in Advanced ECM Data immediately.</STRING>
+		<STRING ID="40380" Context="">Save</STRING>
+		<STRING ID="40381" Context="">Print</STRING>
+    <STRING ID="40382" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;27020&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while attempting to copy the calibration.&lt;/Description&gt;&lt;Suggestion&gt;Choose another drive for calibration selection, or insert another INCAL disk. If the problem persists, contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+    <STRING ID="40385" Context="">Adjustable Parameter Recovery File</STRING>
+    <STRING ID="40386" Context="">Restore Adjustable Parameters using the Recovery File</STRING>    
+    <STRING ID="40387" Context="">\r\n INSITE has detected an Adjustable Parameter Recovery File for</STRING>
+    <STRING ID="40388" Context="">that was created when the calibration transfer with Save and Restore failed on</STRING>
+    <STRING ID="40389" Context="">at</STRING>
+    <STRING ID="40390" Context="">. \r\n \r\n IMPORTANT:The adjustable parameter values will be restored using the Adjustable Parameter Recovery File.\r\n\r\n Uncheck this option to use the calibration default values.</STRING>
+      <STRING ID="40391" Context="">INSITE has detected an invalid PC date. Verify the PC date and time is correct. No further action will be taken on this media.</STRING>
+      <STRING ID="40392" Context="">Invalid PC Date</STRING>
+	  <STRING ID="40393" Context="Calibration download Group box title for QST30">CM552 Left CM552 Right</STRING>
+	
+	<!-- Calibration Group Names-->
+	<!-- IDS_CS_APP_TYPE_AUTOMOTIVE -->
+	<STRING ID="40394" Context="">Automotive</STRING>
+	<!-- IDS_CS_APP_TYPE_INDUSTRIAL -->
+	<STRING ID="40395" Context="">Industrial</STRING>
+	<!-- IDS_CS_APP_TYPE_HHPPOWERGEN -->
+	<STRING ID="40396" Context="">HHP/PowerGen</STRING>
+    <!-- IDS_CS_APP_TYPE_OTHER -->
+    <STRING ID="40397" Context="">Other</STRING>
+	
+	<!-- IDS_ENGINEGROUP_COL_HEADING -->
+	<STRING ID="40398" Context="">Engine Group|</STRING>
+
+    <!--IDS MSG OVERWRITING EXISTING CAL-->
+    <STRING ID="40399" Context="">One or more of the engine programs already exists on the destination drive. \r\n \r\nDo you want to overwrite?</STRING>
+    <STRING ID="40400" Context="">Calibration Database Upgrade Confirmation</STRING>
+
+    <!--IDS REFLASH FUNCTIONALITY -->
+    <STRING ID="40401" Context="">ECM</STRING>
+    <STRING ID="40402" Context="">PDD</STRING>
+    <STRING ID="40403" Context="">To download calibrations to an ECM, please select ECM.</STRING>
+    <STRING ID="40404" Context="">To download calibrations to a programmable datalink device, please select PDD.</STRING>
+    <STRING ID="40409" Context="">Calibration Transfer Successful..</STRING>
+    <STRING ID="40410" Context="">Please wait until the calibration transfer is complete.</STRING>
+    <STRING ID="40411" Context="">Transfer in Progress</STRING>
+  </RESOURCE>
+</XML_RESOURCE>

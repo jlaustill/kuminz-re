@@ -1,0 +1,180 @@
+#!/bin/bash
+
+# Pre-commit hook to automatically sort CSV files according to J90280.05 analysis standards
+# This prevents merge conflicts by ensuring consistent ordering
+# Also enforces that exported files are in sync with CSVs for code review
+
+set -e
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+echo -e "${YELLOW}🔄 Auto-sorting CSV files for merge conflict prevention...${NC}"
+
+# Function to sort CSV file by address (hex)
+sort_by_address() {
+    local file="$1"
+    local temp_file="${file}.tmp"
+    
+    # Keep header line, sort the rest by hex address using custom hex sort
+    head -n1 "$file" > "$temp_file"
+    
+    # Use a simpler approach with GNU sort's version sort which handles hex better
+    tail -n+2 "$file" | sort -t',' -k1,1V >> "$temp_file"
+    
+    mv "$temp_file" "$file"
+}
+
+# Function to sort CSV file by struct_name then field_name
+sort_by_struct_field() {
+    local file="$1"
+    local temp_file="${file}.tmp"
+    
+    # Keep header line, sort by struct_name (column 1) then field_name (column 3)
+    head -n1 "$file" > "$temp_file"
+    tail -n+2 "$file" | sort -t',' -k1,1 -k3,3 >> "$temp_file"
+    mv "$temp_file" "$file"
+}
+
+# Function to sort CSV file by enum_name then value
+sort_by_enum_value() {
+    local file="$1"
+    local temp_file="${file}.tmp"
+    
+    # Keep header line, sort by enum_name (column 1) then value (column 2 as number)
+    head -n1 "$file" > "$temp_file"
+    tail -n+2 "$file" | sort -t',' -k1,1 -k2,2n >> "$temp_file"
+    mv "$temp_file" "$file"
+}
+
+# Track if any files were modified
+FILES_MODIFIED=0
+
+# Process each CSV file type according to our standards
+CSV_BASE_DIR="ghidra/CM550.rep"
+
+if [ -d "$CSV_BASE_DIR" ]; then
+    # Address-sorted files
+    for file in "$CSV_BASE_DIR/constants.csv" "$CSV_BASE_DIR/labels.csv" "$CSV_BASE_DIR/global_variables.csv" "$CSV_BASE_DIR/function_renames.csv"; do
+        if [ -f "$file" ] && git diff --cached --name-only | grep -q "$file"; then
+            echo "  📊 Sorting $file by address..."
+            BEFORE_HASH=$(md5sum "$file" 2>/dev/null || echo "")
+            sort_by_address "$file"
+            AFTER_HASH=$(md5sum "$file" 2>/dev/null || echo "")
+            
+            if [ "$BEFORE_HASH" != "$AFTER_HASH" ]; then
+                git add "$file"
+                FILES_MODIFIED=1
+                echo -e "    ${GREEN}✅ Sorted and re-staged${NC}"
+            else
+                echo -e "    ${GREEN}✅ Already sorted${NC}"
+            fi
+        fi
+    done
+    
+    # Struct field sorted files
+    if [ -f "$CSV_BASE_DIR/structure_definitions.csv" ] && git diff --cached --name-only | grep -q "$CSV_BASE_DIR/structure_definitions.csv"; then
+        echo "  📊 Sorting structure_definitions.csv by struct_name + field_name..."
+        BEFORE_HASH=$(md5sum "$CSV_BASE_DIR/structure_definitions.csv" 2>/dev/null || echo "")
+        sort_by_struct_field "$CSV_BASE_DIR/structure_definitions.csv"
+        AFTER_HASH=$(md5sum "$CSV_BASE_DIR/structure_definitions.csv" 2>/dev/null || echo "")
+        
+        if [ "$BEFORE_HASH" != "$AFTER_HASH" ]; then
+            git add "$CSV_BASE_DIR/structure_definitions.csv"
+            FILES_MODIFIED=1
+            echo -e "    ${GREEN}✅ Sorted and re-staged${NC}"
+        else
+            echo -e "    ${GREEN}✅ Already sorted${NC}"
+        fi
+    fi
+    
+    # Enum value sorted files
+    if [ -f "$CSV_BASE_DIR/enums.csv" ] && git diff --cached --name-only | grep -q "$CSV_BASE_DIR/enums.csv"; then
+        echo "  📊 Sorting enums.csv by enum_name + value..."
+        BEFORE_HASH=$(md5sum "$CSV_BASE_DIR/enums.csv" 2>/dev/null || echo "")
+        sort_by_enum_value "$CSV_BASE_DIR/enums.csv"
+        AFTER_HASH=$(md5sum "$CSV_BASE_DIR/enums.csv" 2>/dev/null || echo "")
+        
+        if [ "$BEFORE_HASH" != "$AFTER_HASH" ]; then
+            git add "$CSV_BASE_DIR/enums.csv"
+            FILES_MODIFIED=1
+            echo -e "    ${GREEN}✅ Sorted and re-staged${NC}"
+        else
+            echo -e "    ${GREEN}✅ Already sorted${NC}"
+        fi
+    fi
+fi
+
+if [ $FILES_MODIFIED -eq 1 ]; then
+    echo -e "${YELLOW}📝 CSV files were automatically sorted and re-staged for commit${NC}"
+    echo -e "${GREEN}🚀 This ensures merge-conflict-free collaboration!${NC}"
+else
+    echo -e "${GREEN}✅ All CSV files are properly sorted${NC}"
+fi
+
+echo -e "${GREEN}🎉 Pre-commit CSV sorting complete!${NC}"
+
+# ============================================================================
+# STALE EXPORT CHECK
+# Ensure exported .cpp/.asm files are in sync with CSV source files
+# ============================================================================
+
+echo ""
+echo -e "${YELLOW}🔍 Checking if exported files are in sync with CSVs...${NC}"
+
+EXPORT_CPP="$CSV_BASE_DIR/working/J90280.05.ghidra.cpp"
+EXPORT_ASM="$CSV_BASE_DIR/working/J90280.05.ghidra.asm"
+
+# Check if export files exist
+if [ ! -f "$EXPORT_CPP" ] || [ ! -f "$EXPORT_ASM" ]; then
+    echo -e "${RED}❌ ERROR: Exported files not found!${NC}"
+    echo ""
+    echo "Expected files:"
+    echo "  - $EXPORT_CPP"
+    echo "  - $EXPORT_ASM"
+    echo ""
+    echo "Please run ApplyAndExport (Ctrl+Shift+E) in Ghidra to generate exports."
+    exit 1
+fi
+
+# Get the oldest export file timestamp
+EXPORT_TIME=$(stat -c %Y "$EXPORT_CPP" 2>/dev/null || stat -f %m "$EXPORT_CPP" 2>/dev/null)
+
+# Check if any CSV is newer than the exports
+STALE_FILES=""
+for csv_file in "$CSV_BASE_DIR"/*.csv; do
+    if [ -f "$csv_file" ]; then
+        CSV_TIME=$(stat -c %Y "$csv_file" 2>/dev/null || stat -f %m "$csv_file" 2>/dev/null)
+        if [ "$CSV_TIME" -gt "$EXPORT_TIME" ]; then
+            STALE_FILES="$STALE_FILES\n  - $(basename "$csv_file")"
+        fi
+    fi
+done
+
+# Also check local_variables.csv in parent directory if it exists
+if [ -f "ghidra/local_variables.csv" ]; then
+    CSV_TIME=$(stat -c %Y "ghidra/local_variables.csv" 2>/dev/null || stat -f %m "ghidra/local_variables.csv" 2>/dev/null)
+    if [ "$CSV_TIME" -gt "$EXPORT_TIME" ]; then
+        STALE_FILES="$STALE_FILES\n  - ghidra/local_variables.csv"
+    fi
+fi
+
+if [ -n "$STALE_FILES" ]; then
+    echo -e "${RED}❌ ERROR: Exported files are stale!${NC}"
+    echo ""
+    echo "The following CSV files are newer than the exports:"
+    echo -e "$STALE_FILES"
+    echo ""
+    echo "Please run ApplyAndExport (Ctrl+Shift+E) in Ghidra before committing."
+    echo "This ensures the .cpp/.asm files match your CSV changes for code review."
+    echo ""
+    echo -e "${YELLOW}Tip: The exported files are used for code review in CLion and GitHub.${NC}"
+    exit 1
+fi
+
+echo -e "${GREEN}✅ Exported files are in sync with CSVs${NC}"
+echo -e "${GREEN}🎉 All checks passed! Proceeding with commit...${NC}"
+exit 0

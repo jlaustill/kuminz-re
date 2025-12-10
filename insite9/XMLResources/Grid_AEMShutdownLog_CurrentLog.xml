@@ -1,0 +1,58 @@
+<FlexGrid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+
+	<Properties Cols="2:VT_I4"/>
+
+	<FixedRows>
+		<FixedRow>
+			
+		</FixedRow>
+	</FixedRows>
+	
+	<data/>
+
+	<parameters/>
+
+	<icons/>
+	
+	<combolists/>
+	
+	<styles/>
+	
+	<resources>
+		<resource id="Res1" CLSID="{1ECBBE0B-836B-11D4-8A76-00062999E309}" />
+	</resources>
+
+	<printing HdrFontSize="8" >
+	
+		<header>
+			<line>
+				<center source="RES:Res1:6001" />
+			</line>
+			<line>
+				<left source="RES:Res1:2030" />
+				<left source="OBJ:DOM:selectSingleNode(/Image/Header/ESerial):getAttribute(DisplayValue)" />
+				<right source="INSITE - " />
+				<right source="OBJ:DOM:selectSingleNode(/Image):getAttribute(ImageVersion)" />
+			</line>
+			<line>
+				<left source="RES:Res1:2029" />
+				<left source="OBJ:DOM:selectSingleNode(/Image/Header/UNumber):getAttribute(DisplayValue)" />
+				<right source="RES:Res1:2031" />
+				<right source="OBJ:DOM:selectSingleNode(/Image/Header/VMake):getAttribute(DisplayValue)" />
+			</line>
+			<line>
+				<left source="RES:Res1:2032" />
+				<left source="OBJ:DOM:selectSingleNode(/Image/Header/WOName):getAttribute(DisplayValue)" />
+				<right source="RES:Res1:2033" />
+				<right source="OBJ:DOM:selectSingleNode(/Image/Header/IName):getAttribute(DisplayValue)" />
+			</line>
+			<line>
+				<right source="RES:Res1:2036"/>
+				<right source="OBJ:DOM:selectSingleNode(/Image/Header/CustomerName):getAttribute(DisplayValue)"/>
+			</line>
+		</header>
+		
+	</printing>
+	
+</FlexGrid>

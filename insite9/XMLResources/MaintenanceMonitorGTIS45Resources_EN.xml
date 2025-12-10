@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE module SYSTEM "../htmlentities.dtd">
+<XML_RESOURCE>
+	<RESOURCE Tag="1001" Type="String Table" Description="Message String Table">
+		<STRING ID="100" Context="Title">Maintenance Monitor</STRING>
+		<STRING ID="101" Context="Subtitle">The Maintenance Monitor notifies the user to perform an oil change.</STRING>
+		<STRING ID="102" Context="Button">&amp;Help</STRING>
+		<STRING ID="103" Context="Button">&amp;Print</STRING>
+		<STRING ID="104" Context="Button">&amp;Save</STRING>
+		<STRING ID="105" Context="Button">Reset All Logs</STRING>
+		<STRING ID="106" Context="Button">&amp;Refresh</STRING>
+		<STRING ID="107" Context="Grid Title">Current Maintenance Interval Data</STRING>
+		<STRING ID="108" Context="Filter Text">Select a log:</STRING>
+		<STRING ID="109" Context="Filter Text">Distance Log</STRING>
+		<STRING ID="110" Context="Filter Text">Fuel Log</STRING>
+		<STRING ID="111" Context="Filter Text">Time Log</STRING>
+		<STRING ID="206" Context="Parameter Grid Header">Parameters|Value|Units</STRING>
+		<STRING ID="207" Context="Parameter Grid Header">Occurrence</STRING>
+		<STRING ID="208" Context="Parameter Grid Header">Parameters</STRING>
+		<STRING ID="209" Context="Parameter Grid Header">Units</STRING>
+		<STRING ID="210" Context="Parameter Grid Header">1(Newest)</STRING>
+		<STRING ID="211" Context="Parameter Grid Header">Value</STRING>
+		<STRING ID="212" Context="Parameter Grid Header">2</STRING>
+		<STRING ID="213" Context="Parameter Grid Header">Value</STRING>
+		<STRING ID="214" Context="Parameter Grid Header">3(Oldest)</STRING>
+		<STRING ID="215" Context="Parameter Grid Header">Value</STRING>
+		<STRING ID="225" Context="Parameter Grid Header">(Oldest)</STRING>
+		<STRING ID="216" Context="Feature Not supported">This feature is not supported by the current calibration.</STRING>
+		<STRING ID="217" Context="Feature Not centralized">INSITE detects an error in the ECM's. Please Recalibrate the ECM's.</STRING>
+		<STRING ID="219" Context="Reset Message">The Logs will be Reset.Continue?</STRING>
+		<STRING ID="220" Context="Reset Operation Failed">Logs could not be reset.</STRING>
+		<STRING ID="221" Context="Reset Operation Success">Logs have successfully been reset.</STRING>
+		<STRING ID="222" Context="No Log Data Is Present">No data is present in the ECM.</STRING>
+		<STRING ID="223" Context="">Refreshing</STRING>
+		<STRING ID="224" Context="">Refreshing Data please wait. ...</STRING>
+		<STRING ID="226" Context="">Basic</STRING>		
+		<STRING ID="35060" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;35060&lt;/ErrorNumber&gt;&lt;Description&gt;An Internal Error has occurred in INSITE Program during feature page initialization.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="35061" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;35061&lt;/ErrorNumber&gt;&lt;Description&gt;An Internal Error has occurred in INSITE Program during feature page initialization.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="35062" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;35062&lt;/ErrorNumber&gt;&lt;Description&gt;An Internal Error has occurred in INSITE Program during feature page initialization.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="35063" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;35063&lt;/ErrorNumber&gt;&lt;Description&gt;An Internal Error has occurred in INSITE Program while unloading feature page.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="35064" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;35064&lt;/ErrorNumber&gt;&lt;Description&gt;An Internal Error has occurred in INSITE Program during feature page initialization.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="35065" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;35065&lt;/ErrorNumber&gt;&lt;Description&gt;An Internal Error has occurred in INSITE Program during Resetting The Logs.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="35066" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;35066&lt;/ErrorNumber&gt;&lt;Description&gt;An Internal Error has occurred in INSITE Program while displaying help.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="35076" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;35076&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to read the feature enable token.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="35077" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;35077&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to read the fault status token.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="35078" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;35078&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to reset the logs.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="35079" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;35079&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to write token to ECM.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="35080" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;35080&lt;/ErrorNumber&gt;&lt;Description&gt;Error while checking operation response.&lt;/Description&gt;&lt;Suggestion&gt;Close INSITE and close one or more programs to free up system resources. Restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="35081" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;35081&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to read token from ECM.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="35082" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;35082&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to get static data.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="35083" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;35083&lt;/ErrorNumber&gt;&lt;Description&gt;Error while accessing safearray.&lt;/Description&gt;&lt;Suggestion&gt;Close INSITE and close one or more programs to free up system resources. Restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="35084" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;35084&lt;/ErrorNumber&gt;&lt;Description&gt;An Internal Error has occurred in INSITE Program while reading logs.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="35085" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;35085&lt;/ErrorNumber&gt;&lt;Description&gt;An Internal Error has occurred in INSITE Program while getting grid information.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="35086" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;35086&lt;/ErrorNumber&gt;&lt;Description&gt;An Internal Error has occurred in INSITE Program while getting logs information.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="35087" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;35087&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to read the log array.&lt;/Description&gt;&lt;Suggestion&gt;Close INSITE and close one or more programs to free up system resources. Restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="35088" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;35088&lt;/ErrorNumber&gt;&lt;Description&gt;An Internal Error has occurred in INSITE Program while displaying logs information into the grid.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="35089" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;35089&lt;/ErrorNumber&gt;&lt;Description&gt;An Internal Error has occurred in INSITE Program while clearing the information from the grid.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="35090" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;35090&lt;/ErrorNumber&gt;&lt;Description&gt;An Internal Error has occurred in INSITE Program while unloading the page.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="35091" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;35091&lt;/ErrorNumber&gt;&lt;Description&gt;An Internal Error has occurred in INSITE Program while displaying static information into the grid.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="35092" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;35092&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to get the log information.&lt;/Description&gt;&lt;Suggestion&gt;Close INSITE and close one or more programs to free up system resources. Restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="35093" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;35093&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to fill the log data into the vector.&lt;/Description&gt;&lt;Suggestion&gt;Close INSITE and close one or more programs to free up system resources. Restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="35094" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;35094&lt;/ErrorNumber&gt;&lt;Description&gt;An Internal Error has occurred in INSITE Program.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="35095" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;35095&lt;/ErrorNumber&gt;&lt;Description&gt;An Internal Error has occurred in INSITE Program.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="35096" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;35096&lt;/ErrorNumber&gt;&lt;Description&gt;An Internal Error has occurred in INSITE Program while initializing the dialog.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="35097" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;35097&lt;/ErrorNumber&gt;&lt;Description&gt;An Internal Error has occurred in INSITE Program while showing the popup menu.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="35098" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;35098&lt;/ErrorNumber&gt;&lt;Description&gt;An Internal Error has occurred in INSITE Program while refreshing the data.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="35099" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;35099&lt;/ErrorNumber&gt;&lt;Description&gt;An Internal Error has occurred in INSITE Program while filter change.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+	</RESOURCE>
+</XML_RESOURCE>

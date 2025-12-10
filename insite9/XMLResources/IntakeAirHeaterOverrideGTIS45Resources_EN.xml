@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE module SYSTEM "../htmlentities.dtd">
+<!--Changes to INSITE Ver 7.6, 04/13/2012
+    DB_G00174941 : Modified string IDs 123 -->
+<XML_RESOURCE>
+	<RESOURCE Tag="1001" Type="String Table" Description="Message String Table">
+		<STRING ID="100" Context="">IntakeAirHeaterOverride</STRING>
+		<STRING ID="101" Context="">Intake Air Heater Override</STRING>
+		<STRING ID="102" Context="">ecmtests.chm</STRING>
+		<STRING ID="103" Context="">IntakeAirHeaterOverride</STRING>
+		<STRING ID="104" Context="">Instructions:</STRING>
+		<STRING ID="105" Context="">Initial Conditions \r\n1.   Engine stopped \r\nSteps \r\n1.   Select Start \r\n2.   Select the desired Intake Air Heater to override \r\n3.   Monitor the selected Intake Air Heater for operation \r\nAdditional Information \r\n1.   The Intake Air Heater will stay on for a maximum of %1!s! seconds \r\n2.   A click should be heard if the Intake Air Heater is operative \r\n3.   If required, select Stop to end the test early \r\n4.   If ECM Communication Lost. All parameters will return to their original value when keyswitch is turned off.</STRING>
+		<STRING ID="106" Context="">Select the override parameters:</STRING>
+		<STRING ID="107" Context="">Parameter</STRING>
+		<STRING ID="108" Context="">Value</STRING>
+		<STRING ID="109" Context="">Intake Air Heater #1</STRING>
+		<STRING ID="110" Context="">Intake Air Heater #2</STRING>
+		<STRING ID="111" Context="">Intake Air Heater Override</STRING>
+        <STRING ID="112" Context="">This test is used to manually turn the Intake Air Heaters on and off to check the operation of the heaters.</STRING>
+		<STRING ID="113" Context="">OFF</STRING>
+		<STRING ID="114" Context="">ON</STRING>
+		<STRING ID="115" Context="">ECM Calibration does not support this test.</STRING>
+		<STRING ID="116" Context="">&lt;ErrorInfo&gt; &lt;ErrorNumber&gt;16100&lt;/ErrorNumber&gt; &lt;Description&gt; An unknown exception occurred during the Intake Air Heater ECM test. &lt;/Description&gt; &lt;Suggestion&gt;Please restart INSITE.  If the problem persists, contact the INSITE Help Desk &lt;/Suggestion&gt; &lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="117" Context="">&lt;ErrorInfo&gt; &lt;ErrorNumber&gt;16101&lt;/ErrorNumber&gt; &lt;Description&gt; A pointer to the Intake Air Heater Override Helper could not be gotten. &lt;/Description&gt; &lt;Suggestion&gt; Reinstall INSITE &lt;/Suggestion&gt; &lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="118" Context="">&lt;ErrorInfo&gt; &lt;ErrorNumber&gt;16102&lt;/ErrorNumber&gt; &lt;Description&gt; Failure to start the test. &lt;/Description&gt; &lt;Suggestion&gt; Restart INSITE   If the problem occurs persistently, please contact the INSITE Help Desk&lt;/Suggestion&gt; &lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="119" Context="">&lt;ErrorInfo&gt; &lt;ErrorNumber&gt;16103&lt;/ErrorNumber&gt; &lt;Description&gt;An error occurred while writing a parameter to the ECM. &lt;/Description&gt; &lt;Suggestion&gt; &lt;/Suggestion&gt; &lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="120" Context="">&lt;ErrorInfo&gt; &lt;ErrorNumber&gt;16104&lt;/ErrorNumber&gt; &lt;Description&gt; An error occurred while reading a parameter. &lt;/Description&gt; &lt;Suggestion&gt; &lt;/Suggestion&gt; &lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="121" Context="">&lt;ErrorInfo&gt; &lt;ErrorNumber&gt;16105&lt;/ErrorNumber&gt; &lt;Description&gt; Invalid value for the 24 Volt Enable parameter. &lt;/Description&gt; &lt;Suggestion&gt; Recalibrate the ECM with a valid calibration &lt;/Suggestion&gt; &lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="122" Context="">&lt;ErrorInfo&gt; &lt;ErrorNumber&gt;16106&lt;/ErrorNumber&gt; &lt;Description&gt;The parameter being read had an invalid value. &lt;/Description&gt; &lt;Suggestion&gt; Recalibrate the ECM with a valid calibration&lt;/Suggestion&gt; &lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="123" Context="">&lt;ErrorInfo&gt; &lt;ErrorNumber&gt;16107&lt;/ErrorNumber&gt; &lt;Description&gt;This action cannot be completed at this time.  The ECM is currently locked by another activity in progress and is not available.&lt;/Description&gt; &lt;Suggestion&gt; This may be caused by an ECM test running or a calibration download in progress.Please try again after the activity has completed.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="200" Context="">Intake Air Heater Maximum Override Time</STRING>
+		<STRING ID="201" Context="">Intake Air Heater Time Remaining</STRING>
+		<STRING ID="202" Context="">Test Stopped.</STRING>
+		<STRING ID="203" Context="">ECM Communication Lost.  All parameters will return to their original value when keyswitch is turned off.</STRING>
+		<STRING ID="204" Context="">The ECM detects a condition in which the Intake Air Heater Override Test cannot be ran.  Please select Help for further detail.</STRING>
+		<STRING ID="205" Context="">Name</STRING>
+		<STRING ID="206" Context="">Value</STRING>
+		<STRING ID="207" Context="">Units</STRING>
+		<STRING ID="208" Context="">Not Available</STRING>
+        <STRING ID="209" Context="">The Intake Air Heater Test is running.</STRING>
+		<STRING ID="211" Context="">Test Status</STRING>
+    <STRING ID="212" Context="">Show</STRING>
+    <STRING ID="213" Context="">Monitors</STRING>
+	</RESOURCE>
+</XML_RESOURCE>

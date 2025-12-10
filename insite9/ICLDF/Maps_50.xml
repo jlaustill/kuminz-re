@@ -1,0 +1,863 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Vera Foe (Cummins, Inc.) -->
+<!--
+========================================================================================
+// Maps.xml	   
+// Copyright (c) 2004 Cummins, Inc.
+// ALL RIGHTS RESERVED 						   
+// 										   					
+========================================================================================
+//
+// CHANGE LOG								   					
+// PR/CR#           Date        Author          	Comments                              
+========================================================================================
+//                                              Added this comment block
+//              06/07/2004  Vera Foe            Updated module type 250 based on review comments      
+//              06/16/2004  Vera Foe            Added module type 260, 270, 45, 23
+//              06/21/2004  Vera Foe            Added token 20071 to feature 32 of module type 21 and 23
+//              07/06/2004  Dipti Bapat         Replaced token 10020 with 15320 for module type 100
+//              07/06/2004  Dipti Bapat         Replaced token 14040 with 15310 and added token 10760 for module type 100
+//              07/13/2004  Vera Foe            Merged 6.3.1 to main line
+// DB_G00052947 07/15/2004  Vera Foe            Replaced token 14800 with 13041 for module type 21 and 23
+//                                              This is due to the change in the FFS for the enumeration
+//              07/14/2004  Vera Foe            Updated module type 250,260,270 with the latest QSB_C_L SRS
+//                                              Added module type 280 (MCRS19), copied from 250 minus WaterInFuel feature
+//              07/19/2004  Vera Foe            Added back Trip Since Last Reset - Drive for module type 250,260,270
+//                                              Removed map 2 from module type 280 
+//              07/14/2004  Shilpa Goyal        Added token 15344 to feature 23 under subfeature 
+//                                              Fan Type for module type 94
+// DB_G00055251 08/16/2004  Vera Foe            Modified Engine Protection feature for module 250,260,270,280 
+// DB_G00055295 08/20/2004  Anjali Chati        Added feature 83 for module type 90
+// DB_G00054882 08/25/2004  Meenal Talware      Removed token 22951 for module type 103
+//                                              Modified featureEnable and featureGTIS for module type 103
+// DB_G00055665 08/27/04    Shilpa Goyal 	      Modified Feature Id from 502 to 501 for "Trip Info" for module type 250, 250, 270
+// DB_G00056154 08/28/2004  Meenal Talware      Replaced token 1040003 with 16789236 for module type 250,260 and 270
+// DB_G00055194 09/04/2004  Smita Mane          Replaced token 10080 with 10082 for module type 12
+// DB_G00055661 09/06/2004  Manoj Kandlikar     Removed tokens 16789063 and 16786570 for module type 250,260 and 270
+// DB_G00055987 09/07/2004  Manjiri             Added "Other Options" in the calibration
+//                          Shingnapurkar       information for module type 250,260,270,280
+// DB_G00056413 09/07/2004  Shilpa Goyal        Made "PTO/Remote PTO" as subfeature for all '02 modules and  
+//								took out tokens 11570 and 22981 out of the PTO/Remote PTO subfeature
+// DB_G00056802 09/14/2004  Binish Peter        Removed Token 4002 from Module 6
+// DB_G00056764 09/15/2004  Meenal Talware      Made "Low Idle Speed Adjustment Switch" as subfeature for module id 280
+//              09/14/2004  Medha Wagh          Added Module types 108 and 118 for ISBe/Le Euro IV
+// DB_G00057092 09/20/2004  Meenal Talware      Made "Low Idle Speed Adjustment Switch" as subfeature for module id 250,260,270 
+//                                              Removed token 16786569 for module id 250 and 270
+// DB_G00057342 09/23/2004  Dipti Bapat         Made "Two Speed Rear Axle" as subfeature for module id 21 and 23 and  
+//                                              Added parameter "Two Speed Rear Axle Ratio" under subfeature "Two Speed Rear Axle" for module id 21 and 23
+// DB_G00057172 09/24/2004  Meenal Talware      Added token 16786569 for module id 250,260 and 270
+// DB_G00057679 09/30/2004  Amit Munagekar      Removed duplicate feature ID = 23 from module id 93.
+// DB_G00057707 10/04/2004  Manjiri             Modified subfeatures(shutdown,Limited restart,Manual Override)of feature
+//                          Shingnapurkar       "Engine Protection" for module type 250,260,270,280
+// DB_G00057710 10/04/2004  Meenal Talware      Added feature ID = 128 for module id 52.
+//              10/05/2004  Shilpa Goyal        Added Module Base Features and Trip Information parameters for Eagle
+//                                              Black ModuleType 125
+// DB_G00055919 10/05/2004  Vera Foe            Reversing the changed made by Manjiri for PR57707. This is not necessary since I fixed the code in FnPUI
+//               10/06/2004  Manjiri Shingnapurkar Added Module Base Features and Trip Information parameters for Module Type 103,104(6.3 LR1)
+//               10/07/2004  Shilpa Goyal Added Support for Module Type 135 (Eagle Red) Insite 6.3 LR1
+// DB_G00056121  10/07/2004  Manoj Kandlikar Added Subfeature "Dual Accelerator Pedal" under 
+                                             "Accelerator Options" for moduletype=100.Insite 6.3 LR1 
+// DB_G00057348   10/8/2004  Manoj Kandlikar Added ModuleTypes 290,291,292,300,301,302 for 
+                             QSK50/60 MCRS Base Features.Insite 6.3 LR1
+// DB_G00058483   11/08/2004  Dipti Bapat Removed token 16788256 from Sub Feature Fan Type (subFeatureID 								 16781840)for Module Type 125,135
+// DB_G00059114    11/16/2004  Shilpa Joglekar Added parameter "PTO Accelerator Override					Maximum Engine Speed" under SubFeature Remote PTO for module id 108.
+// DB_G00060689    12/11/2004  Shilpa Goyal Changing value of parameter featureEnable to 0 for featureID 57 for CELECT Plus
+// DB_G00060712		12/13/2004 Ankush Ajari Set FeatureEnable to zero for feature Transmission Setup for module type 108 and 118
+// DB_G00060754 12/14/2004 Amit Munagekar Removing feature "Trip Information" (featureId=55) for ModuleId 280 (QSK19 MCRS).
+// DB_G00061576 01/10/2005 Meenal Talware Added Feature "Adaptive Cruise Control" for module type 103.
+// DB_G00061882 01/12/2005 Shilpa GoOyal Removed feature "Trip Information" (featureId=55) for ModuleId 290, 291, 292, 300, 301, 302 QSK19/23/38/50/60/78 - CM850 - MCRS (MultiModule).
+// DB_G00061573 01/18/2005 Gaurav Shukla  Added feature "Maximum Engine Speed Droop Option" for module type 99,103 and 104.Removed token 15480 from module ID 94.
+// DB_G00062340 01/20/2005 Medha Wagh Added token 15480 for moulde type 114 and 124 under feature ID 71
+// DB_G00061870 1/22/2005 Vidya Kokre Added Feature "Oil Level Electronic Dipstick" for module 108 and 118 (ISBe/ISLe Euro IV).
+// DB_G00061871 1/22/2005 Vidya Kokre Added Feature "OBD" for module 108 and 118 (ISBe/ISLe Euro IV).
+//				01/26/2005	Smita Mane		Added Moduletype 115 for ISB - CM2100D
+//              02/02/2005  Dayanand Palamkar Added Support for Module Type 93 and 94.
+//DB_G00061266 2/02/2005  Dayanand Palamkar Set FeatureEnable to zero(0) for feature "Trip Information" for module type 93 and 94 Insite 6.4.
+//DB_G00061266 2/02/2005  Dayanand Palamkar Added Subfeature "Trip Information Feature Enable" under feature "Trip Information" for moduletype 93 and 94 Insite 6.4.
+//DB_G00061260 2/02/2005  Dayanand Palamkar Added  subfeature "Idle Shutdown Coolant Temperature" under feature "Idle Shutdown" for module type 93 and 94 Insite 6.4.
+//DB_G00061260 2/02/2005  Dayanand Palamkar Added  parameter "Idle Shutdown Coolant Temperature Value" under subfeature "Idle Shutdown Coolant Temperature" under feature "Idle Shutdown" for module type 93 and 94 Insite 6.4.
+//DB_G00061260 2/02/2005  Dayanand Palamkar Added  parameter "Idle Shutdown Parking Brake" under feature "Idle Shutdown" for module type 93 and 94 Insite 6.4.
+//DB_G00061260 2/02/2005  Dayanand Palamkar Added  "Prevent Shutdown While Service Brake Applied" under feature "Idle Shutdown" for module type 93 and 94 Insite 6.4.
+//DB_G00061264 2/02/2005  Dayanand Palamkar Added parameter "Fan on with Remote Throttle"  under the  Feature "Fan Control" for module type 93 and 94 Insite 6.4.
+//DB_G00061262 2/02/2005  Dayanand Palamkar Set FeatureEnable to zero(0) for feature "Road Speed Governor" for module type 93 and 94 Insite 6.4.
+//DB_G00061262 2/02/2005  Dayanand Palamkar Added Subfeature "Road Speed Governor Enable" under "Road Speed Governor" for module type 93 and 94 Insite 6.4.
+//DB_G00061265 2/02/2005  Dayanand Palamkar Added parameter "Discrete Engine Brake Light Output" under feature "Engine Brake Control" for module type 93 and 94 Insite 6.4.
+//DB_G00061265 2/02/2005  Dayanand Palamkar Changed parameterID for  "Cruise Control Speed Delta for Minimum Engine Brake" for module type 93 and 94 Insite 6.4.
+//DB_G00061268 2/02/2005  Dayanand Palamkar Changed feature id for feature "J1939 Controls" for module type 93 and 94 Insite 6.4.
+// DB_G00061627 02/07/2005 Sandhya Godavarthi Added support for SAE J1939 Multiplexing to moduleID 21.
+// DB_G00061631 02/07/2005 Sandhya Godavarthi Added Support for Trip Information to ModuleId 21 
+//DB_G00061977  02/07/2005 Sandhya Godavarthi Added Support for J1939 Controls to ModuleId 21 
+//DB_G00062984 02/09/2005 Sandhya Godavarthi Replaced token 13050 with 13030 for Module Type 52
+//DB_G00061516 Insite 6.4 11/2/2005 Ketki Pimputkar Added support for Engine Brake Control for ModuleTypes 114 and 124
+//DB_G00061517 Insite 6.4 11/2/2005 Ketki Pimputkar Added support for Idle Shutdown for ModuleTypes 114 and 124  
+//DB_G00061518 Insite 6.4 11/2/2005 Ketki Pimputkar Added support for Monitor Group Update for ModuleTypes 114 and 124 
+//DB_G00061290 Insite 6.4  02/15/2005 Subodh Motikhaye Added support for Engine Brake Control for ModuleTypes 99 and 107  
+//DB_G00061287 Insite 6.4  02/15/2005 Subodh Motikhaye Added support for Fan Control for ModuleTypes 99 and 107
+//DB_G00061284 Insite 6.4  02/15/2005 Subodh Motikhaye Added support for Idle Shutdown for ModuleTypes 99 and 107
+//DB_G00061291 Insite 6.4  02/15/2005 Subodh Motikhaye Added support for Trip  Information for ModuleTypes 99 and 107
+//DB_G00061286 Insite 6.4  02/15/2005 Subodh Motikhaye Added support for Road Speed Governor for ModuleTypes 99 and 107
+
+//DB_G00061490 Insite 6.4  02/16/2005 Shailesh K Rai Added support for Idle shut down(Module ID 103,104)
+//DB_G00061498 Insite 6.4  02/16/2005 Shailesh K Rai Added support for Fan control(Module ID 103,104)
+//DB_G00061497 Insite 6.4  02/16/2005 Shailesh K Rai Added support for Road Speed Governer(Module ID 103,104)
+//DB_G00061499 Insite 6.4  02/16/2005 Shailesh K Rai Added support for Engine Brake Control(Module ID 103,104)
+//DB_G00061511 Insite 6.4  02/16/2005 Shailesh K Rai Added support for Trip Information(Module ID 103,104)
+//			   Insite 6.4  02/17/2005 Smita Mane Removed Fan Control Feature and parameter 20611(Module ID 115)
+//DB_G00061540 Insite 6.4  02/21/2005 Niranjan Rao Changed Feature ID of Coolant Lever Sensor from 67 to 77(Module ID 100)
+//DB_G00061510, Insite 6.4  02/22/2005 Dipti Bapat  Added Support for Open/Closed-loop Fueling Control Tuning Test (Module ID 63,64)
+// DB_G00059487 02/23/2005 Shilpa Joglekar Added tokens for J1939 Multiplexing, PTO for module 
+type 125 and 135
+//DB_G00061517 Insite 6.4 03/03/2005 Ketki Pimputkar Modified display name for token 199106 for ModuleTypes 114 and 124  
+// DB_G00064430 03/03/2005 Nitesh removed featureenable and FEatureGTIS token from feature ID 71 for moduletype 3
+//DB_G00064420 03/04/2005 Medha Wagh Added token 10020 under under feature ID 57 for module type 107
+// DB_G00064592 03/11/2005 Sandhya Godavarthi Replaced Token 13030 with 13050 for module type 52.
+// DB_G00059487 03/11/2005 Shilpa Joglekar Added tokens for J1939 Multiplexing, PTO for module 
+type 125 and 135
+// DB_G00059487 03/16/2005 Shilpa Joglekar Added GTIS tokens for J1939 Multiplexing parameters for module type 125 and 135
+//DB_G00065066 03/18/2005 Monali Phegade Added token 111019 under feature ID 16 for module type 95
+//DB_G00061219 03/22/2005 Added support for Common GTIS 4.5 Base Features 
+//DB_G00062346 03/30/2005 Meenal T Removed duplicate entry of token 21641 for module type 114 and 124 
+								   Added token 21641 as a sub feature for for module type 124 
+// Insite 6.4 03/30/2005 Smita Mane ISB07: Unit testing fix: Removed token 10880 for moduletype 115
+//DB_G00061391 03/30/2005 Sandhya Moved token 107004 from SubFeatureID 25261 to FeatureID 500 for moduletype 12
+//DB_G00062798 03/31/2005 Chinmayee Dalal Modified featureEnable and featureGTIS for featureID="73"  for 								          moduleID 125 and 135.
+//DB_G00061219 04/01/2005 Added support for Common GTIS 4.5 Base Features 
+//DB_G00062456 Insite 6.4  04/06/2005 Anugrah Atreya Replaced Token 103007 with New Token 103029 for Module                     CELECT Plus .
+//DB_G00063428 04/08/2005 Medha Wagh tokens 14250 and 11450 removed from Maps.xml from feature ID 26 //Module Type 100
+//DB_G00065641 04/15/2005 Salini V Added the Token 20071 under feature ID 32 in module 21
+//DB_G00066468 04/18/2004 Smita Mane Modified Feature ID 46 for moduletype 135
+//DB_G00064920 04/19/2005 Monali Phegade Removed token 199046 from subfeature 25261 under feature 501 for module type 95.
+//DB_G00066468 04/19/2004 Smita Mane Modified Feature ID 46 for moduletype 125
+//DB_G00065113 04/25/2005 Amit Gupta changed token to 12320 for "Maximum Speed" under feature id 23 for module type="59".
+//DB_G00065172 04/29/2004 AA Replaced tokens 21421 and 21425 with tokens 20131 and 20135 for maintaince monitor for module type=131
+//DB_G00065873 05/06/2005 Smita Mane For moduletype 93,Removed duplicate entry of Trip Info feature, featureID 100 and parameter ids 14300,22051,13550,13560,13570
+// For Moduletype 93 and 94, Removed featureEnable and featureGTIS for Feature Ids 62,73 and 78, Replaced featureID 72 by 35 and removed featureEnable and featureGTIS
+//DB_G00064690 05/10/2005 (KP) Removed tokens 15430, 15431 from feature id 32 for module types 114 & 124.
+//DB_G00067217  05/11/05 KP Removed tokens 6001,6002,6004, 6007, 6008, 6009, 6010, 6011 from feature 56 for module id 131 from SubFeature Calibration Information.Added tokens 5007 and 5008 to feature 56 for module id 
+131 from SubFeature Calibration Information.
+//DB_G00059185 05/12/2005 Monali Phegade Added token 199520 under featureID=500 for subfeature ID 25121 for module type="100"
+//DB_G00067501 05/13/05 (SR) Changes made for parameter "Vehicle Speed Sensor Enable" (token =20111) from subfeature to parameter for feature ID 57 for module Type=12     
+//DB_G00065698 05/13/2005 Dipti Bapat Removed token 10040 from feature Transmission for module type 3
+//DB_G00067681 05/16/2005 Subodh Motikhaye Added support for "Electric Fan Clutch" for ModuleType 71
+//DB_G00061787 05/16/2005 salini v changed the feature id of feature Governor Type for module type 114 and 124
+//DB_G00063700 05/17/2005 (MP) Modified feature id to 520 for feature "Vehicle Anti-Theft Protection" for module type 12.
+//DB_G00050939 05/18/2005 (AAT)Modified featureEnable to featureEnable="0" of follwoing features 
+Alternate Droop, Governor Setup, Hot Shutdown Monitor, Idle Management, OEM Sensors, Throttle Setup & Trip information for module type 44 
+////DB_G00067125 05/19/2005 (SR) Added tokens 15460 and 15461 from feature id 43 for module types 94 and modified display of token 22961 and 11830.
+//DB_G00065846 05/20/2005 (MP) Added parameter id 11730, 11680, 11690, 11700, 11710, 11720 under SubFeature ID 0 under SubFeature ID 20011 for Feature ID 43 for module type 94. Removed SubFeature ID 20101 under Feature ID 43 for module type 94.
+//DB_G00064561 05/23/2005 Salini V Added the token 20221 to the enable token section of the Engine Protection feature for module type 52 and 47.
+//DB_G00067114 05/27/2005(SV)Removed subfeature id 21631 and parameter id 12000 under feature id 17 for module type 93
+//DB_G00063429 05/30/2005 (MP) Added subfeatureGTIS for subfeature id 16790222 and 16790226 under feature id 32 for module type 135.
+//DB_G00068393 6/01/2005 (SJ) Removed enable parameter 16789353 under feature id 73 for module 
+ type 135
+//DB_G00068557 6/02/2005 (VK) Added fetures 16781662 and 16788144  for module type 135
+//DB_G00068471 06/02/2005 (MP)Modified featureEnable for feature id 131 under module type 135.
+//DB_G00068551 06/03/2005 (AG) Added support for Centinel Oil Systems featureID="10" and Automatic Boost Power featureID="510" for module type 135.
+//DB_G00069032 06/08/2005 (SM) Added parameter 15101 under Feature ID 119 for moduletype 62
+//DB_G00068519 06/09/2005 (MP) Removed feature id 503 from module type 135. 
+//                             Added subfeature id 16789000 under feature id 1 for module type 135. 
+// DB_G00069258 06/17/05 (KP) Added tokens 15460,15461 under feature Id 70 for module types 114 and 124.
+// DB_G00051225 06/20/05 (KP) Removed feature enable token:20221 from feature Id 20 for module type 21.
+// DB_G00067685 06/21/05 (SR) Added token 4004 for module ID 135 and Removed token 2012 and 2014 for Mod ID 115 
+// DB_G00070694 7/15/2005 (SNG) Added Parameter 25181 for module ID 108 and 118.
+//                              Replaced feature id 25181 with 0 for module ID 108 and 118.
+// DB_G00070521 07/14/05 (fm388) Changed token 5008 to 5015 for Calibration Software Phase for moduleType "131" (QST30 Phase 5 )
+// DB_G00070707 07/22/05 (MW) Added feature ID 74 under Module type 135
+// DB_G00067872 7/26/2005 (SNG) Modified feature id 43 to 70 for module type 99 and 107
+// DB_G00071864 7/28/2005 (GS) Modified feature Enable token to 0 from 25021(Vehicle Speed Source) for module id 108 & 118.
+// DB_G00071865 7/28/2005 (GS) Modified feature Enable token to 0 from 20591(Vehicle Electrical System Voltage) for module id 108 & 118.
+// DB_G00071867 7/28/2005 (GS) Removed subfeature "Discrete Engine Light Output" under Engine Brake 
+Control from module id 108 & 118.
+// DB_G00071862 7/28/2005 (AK) Modified feature Enable token to 0 from 26081(OBD) for module id 108 & 118.
+// DB_G00071510 07/28/05 (MW) Modified bucketting for sub feature ID20211 for module type 108 and 118
+3// DB_G00071863 07/28/05 (SV) Changed parameter ID of Transmission Type from 13923 to 13929 under module type 108 and 118
+// DB_G00071699 7/28/2005 (MP) Modified FeatureEnable and FeatureGTIS for feature id 142 for module type 108,118
+// DB_G00071708 7/29/2005 (MP) Modified the entry for token 15510 under feature id 142 for module id 108 & 118.
+// DB_G00071706 7/29/2005 (SR) Modified feature Enable of token  25821 and 25831 under feature id 142 for module id 108 & 118.
+// DB_G00071860 07/29/05 (SV) Modified featureEnable featureGTIS of feature oil Level Electronic Dipstick with id 509 under for module type 108,118.
+// DB_G00071871 07/31/2005 (SM) Added parameter id 15536 under Feature id 32 for Moduletypes 108 and 118
+// DB_G00063066 08/08/05 (AK) Modified bucketing for token 14590 and made token 14340 as a parameter under it for                               module ID 114 and 124.
+
+// DB_G00064903 08/09/05 (YZ) Removed tokens 112060,112061,112062 from Trip since last reset for module type 95.
+// DB_G00064914 08/09/05 (YZ)  Removed token 112063 from Trip since last reset-drive for module type 95.
+// DB_G00072534 8/9/2005 (DB) Replaced parameter id 14310 with 15564 under Feature id 71 for Moduletypes 108 and 118
+// Changes to insite ver 6.5,08/10/2005 (CD) Insite 6.5 Development - 
+							  Modified bucketting for sub feature ID20211 for module type 114 and 124
+							  Replaced token 12410 with 12414 for moduleType 114 and 124
+//DB_G00067141 08/22/2005 (BR) Removed parameter ids 2010, 4001, 4006, 4005, 5006 and 5005 under Feature id 56 for Moduletypes 99 and 107
+// Insite 6.5 Development (AG) 08/23/2005 Base features - DF updates
+// Added token 15536 under featureID="32" for module type 108 and 118.
+// Implemented token 25891 and 15501 as parameters under Smart Road Speed Governor for  module type 108 and 
+// 118. 
+// Insite 6.5 work 08/25/05 (MP) Added feature id 2 nad 32 under module type=115
+// Changes to insite ver 6.5,08/26/2005 (MW) Insite 6.5 Development - 
+							 Added Feature ID 528 under module type 135
+// Changes to insite ver 6.5,08/30/2005 (KP) Insite 6.5 Development, 
+							  Added Support for module Id 135 for new FnP & trip parameters.
+// DB_G00073614 09/01/2005 (SM) Replaced parameter id 16795808 by 111021 for moduletype 135
+// Changes to insite ver 6.5,08/26/2005 (MW) Insite 6.5 Development - 
+							 Added Feature ID 528 under map ID 1 for module type 135
+// Insite 6.5.0.0.48 09/29/2005 (MK) Added moduletypes 290,291,292,320,321,300,301,302,370,371
+// Changes to insite ver 6.50.0.50 (AK)
+//DB_G00074985 10/04/2005 Replaced token 14040 by 14090 for module type 90 and module type 95.
+// Changes to insite ver 6.50.0.50 (BR)
+// DB_G00050723 10/06/2005 (BR) Modified featureEnable and featureGTIS of the featureID 33
+							for the module type 1,2,3,4 and 12.
+// Changes to insite ver 6.50.0.56 10/20/2005 (KP)
+// DB_G00075301 Added token 15461 under feature Id 70 for module type 104. 
+// Changes to insite ver 6.50.0.61 10/24/2005 (KP)
+// DB_G00075221 Added token 15461 under feature Id 70 for module types 93, 94, 99, 107.
+//              Added token 15460 under feature Id 70 for module type 93,94.
+// Changes to insite ver 6.50.0.66 10/27/2005 (KP)
+// DB_G00075221 Added token 15460 under feature Id 70 for module types 99, 107.
+// Changes to insite ver 6.50.0.103 12/8/2005 (DB)
+// DB_G00078718 Added token 15480 to featureID 57 for module types 93 and 94.
+// Changes to insite ver 6.50.0.103 12/08/2005 
+// DB_G00078673 (MP) Added token 112190 under subfeature 25091,feature 501 for module type 93 
+//                   and module type 94.
+// DB_G00078911,DB_G00078912 (SNG) Added Support for 6.5 FP1 ISM CM870 Base Features DF Updates.
+// Changes to insite ver 6.50.0.113 12/14/2005 
+// DB_G00079035 (MP) Removed the duplicate entry of token 15460 under feature id 43,subfeature 20011 
+//                   for module type 94.
+// Changes to insite ver 6.50.0.113 12/14/2005 
+// DB_G00078653 (MP) Removed the duplicate entry of token 15461 under feature id 43,subfeature 20011 
+//                   for module type 94.
+// Changes to insite ver 6.50.0.116 12/14/2005
+// DB_G00078715 (DB) Added token 15330 under feature 57 for module type 94.
+// Changes to insite ver 6.50.0.119 12/21/2005
+// DB_G00073015 (MP) Added entery of feture ID 528 under module types 290,291 and 292 for QSK50/60 MCRS.
+//Changes to insite ver 6.50.0.122 12/23/2005
+// DB_G00079395  (YZ) Removed tokens 112060,112061,112062 from Trip since last reset for module type 90.
+// Changes to insite ver insite6.50.1.0012(AG) 01/10/2006  Insite 6.5 FP1 developement
+// Added Support for module Id 135,290,291,292,300,301,302,370,371 for FnP & trip parameters.
+// DB_G00078914,DB_G00078913 (BR)Changes to insite ver insite6_50_1_0021(BR) 01/19/2006 ISX CM870 Base // // Features DF Updates.Added Support for module ID 93 and 94.
+// Changes to insite ver 6.50.0.154 01/19/2006
+// DB_G00079881 (SM) Moved Feature Enable 20191 to parameters list for modultypes 94,99,104,107,108
+// Changes to insite ver 6.50.0.167 02/02/2006
+// DB_G00080047(MP) Modified subFeatureGTIS to 1015085 for subFeatureID 16791989 under modoule type 135.
+// Changes to Insite ver 6.50.0.168 02/06/2006
+// DB_G00080885 (PS) Modified the bucketing of feature "Trip Totals Since Last Reset" and subfeature                          "Trip Since Last Reset - Drive (Vehicle Speed >0)" under module type 90,39,59,95.
+// Changes to insite ver insite6.5 FP1(AG) 02/08/2006  Insite 6.5 FP1 developement
+// Completed Rework after review for Maps Updates task for Core - II
+// Changes to Insite ver 6.50.0.175 02/10/2006
+// DB_G00081269 (PS) Added parameters 12920 and 12925 for module type 52.
+// Changes to Insite ver 6.50.1.084 03/14/2006
+// DB_G00082234  (PS) Modified token 10080 to 10081 for module type 2.
+// Changes to Insite ver 6.50.1.096 03/20/2006
+// DB_G00079055  (MW) Modified bucketing of feature ID 526 for module types 135,300,301,302
+// Removed feature ID 516 for for module types 135,300,301,302
+// Changes to Insite ver 6.50.1.098 03/21/2006
+// Bug Fixing (SJ) Modified display name of subfeature of Road Speed Governor feature for module type 94, 99.
+//      Added token 30013 as a parameter under Smart Road Speed Governor sub feature for module type 94, 99.
+//      Modified feature id of Trip information Parameters to 502 for module type 135.
+// DB_G00078914,DB_G00078913 (BR) Changes to insite 6.5FP1 03/22/2006 ISX CM870 Base Features DF Updates.
+// Removed Support for module ID 93.  
+// Changes to Insite ver 6.50.0.224 03/28/2006
+// DB_G00082315 (LK) Added Feature ID 32 to give support to TIS ID 119(Feature Name:Idle shutdown) 
+                     under module type 135.
+// Changes to Insite Ver 6.50.1.109, 3/31/2006
+// DB_G00080313 (PS) Added parameter 14629 for module type 108 and 118.
+// DB_G00083454 (SNG) Moved Subfeature 25132 from feature ID 502 to Feature ID 501 for Module type 135.
+// Moved Parameter 16803277 from feature ID 502 to Feature ID 501 for Module type 135.
+// Changes to Insite Ver 6.51.0.206, 4/6/2006
+// DB_G00082569 (MP) Removed module type 103 (ISB -CM850 Phase 4).
+// Changes to Insite Ver 6.51.0.211, 4/12/2006
+// DB_G00083603 (AG) Added parameter 14344 and 25201 for module types 114 and 124 .
+// Changes to Insite ver insite6.51.0.0219 04/21/2006
+// DB_G00082518 (SV) Removed token 108010 from feature ID 501 for module type 100.
+// Changes to Insite ver insite6.51.0.0234 05/04/2006
+// DB_G00084708 (SV) Modified feature enable from 0 to 20131 for feature id 39 for module type 44.
+// Changes to Insite ver insite6.51.0.0234 05/05/2006
+// DB_G00083580 (MW) Removed feature ID 39 from MapID 1 for module types 300,301and 302.
+// Changes to Insite Ver 6.51.0.0241 05/11/2006
+// DB_G00085136 (LK) Modified featureGTIS for featureID="62" for moduleID 135.
+// Changes to Insite Ver 6.51.0.0257 05/23/2006
+// DB_G00085638 (BR) Added featureID="529" for moduleID 135.
+// Changes to Insite Ver 6.5.2, 5/29/2006
+// SNG: Added support to ModuleType 128
+// Changes to Insite Ver 6.51.0.0267 06/01/2006
+// DB_G00085166,DB_G00085167 (SV) Removed parameters 16797477,16797394 from feature id 522 for module type 135.
+// Changes to INSITE Ver 6.5.2 6/13/2006
+// (SNG) Merging done to support new CORE-II Base Features.
+// Changes to Insite Ver 6.52.0.73, 7/26/2006
+// (PS) Bug Fixing ISBe2/3 - Removed parameter 199013 for featureID 501 for module type 128.
+//Changes to Insite Ver insite 6.52.0.0073, 7/26/2006
+// (BR) Euro 4.5 DF Updates Bugfixing 6.5.2 added token 23327 is  added under moduletype 118 and 108. 
+// Changes to Insite Ver 6.51.0.339, 07/31/2006
+// DB_G00088430 (LK) Repalced the Feature ID 54 with 68 for Module Type 100. 
+// Changes to Insite Ver 6.51.0.344, 08/07/2006
+// DB_G00088535 (SV) Replaced  token 12810 with 14360 under feature id 17 for module type 93 
+// Changes to Insite Ver 6.51.0.0346, 08/08/2006
+// DB_G00088623 (LK) Added parameter ids 199223 and 199224 under feature ids 500 and 501 respectively for module type 100.
+// Changes to Insite Ver 6.51.0.363, 08/24/2006
+// DB_G00089274 (CD) Added entry of parameter Fan Time With Vehicle Speed (Token 112190) 
+// for Module Type 104, 114 and 124 under Trip Since Last Reset: Time.
+// Changes to Insite Ver 6.51.0.364, 08/25/2006
+// DB_G00089274 (CD) Removed entry of parameter Fan Time With Vehicle Speed (Token 112190)
+// from Module Type 104, 114 and 124 under Trip Since Last Reset: Time. Reverted changes because of Management decision.
+// Changes to INSITE ver 6.52.0.139, 8/30/2006
+// DB_G00089274 (SNG) Added entry of parameter Fan Time With Vehicle Speed (Token 112190) 
+// for Module Type 104, 114 and 124 under Trip Since Last Reset: Time.
+//Changes to Insite Ver 6.52.0.144, 09/07/2006
+// DB_G00089283(BR) Implemented Parameters under tis 4719.
+Changes to Insite Ver 6.52.0.187, 10/05/2006
+//DB_G00089277 (BR) Added  tokens 14460 and 14470 under feature id 95  for module type 104,114 and 124.
+Changes to Insite Ver 6.52.0.223, 11/15/2006
+//DB_G00090787 (DB) Moved parameters "Switched Maximum Vehicle Speed Enable" and "Switched Maximum Vehicle Speed" out of the subfeature "Smart Road Speed Governor"for module types 108, 118 and 128.
+//	Added Parameters "Switched Maximum Vehicle Speed Enable" and Switched Maximum Vehicle Speed Enable" under feature "Road Speed Governor" for module types 108, 118 and 128.
+//Changes to Insite Ver 7.00.0.0017, 11/02/2006
+//(SV) Maps Updates task of  Core - II for insite7.0
+//Development of INSITE ver 7.0, 12/04/2006
+//DB_G00091735 (MM) Added Tokens 199503 and 199504 under feature id's 500,501 repectively for Module Type 108 and 118.
+// Changes to Insite 7.0 12/5/2006
+DB_G00093076 (PG) Added Feature "Cruise Control" for module type 71.
+//Changes of INSITE ver 7.0, 12/7/2006
+//DB_G00076533 (MM) Modified comment of token 4004 for Module Types 12,15.
+//Changes of INSITE ver 7.0, 12/18/2006
+//DB_G00094230 (PS) Added tokens 15083 and 15084 to feature 122 of module type 62.
+//Added feature 144 for module type 63 and 64.
+//Changes to Insite Ver 7.00.0.000, 1/3/2006
+// DB_G00093083(VM)Added support for QSK23 - CM500
+// Changes of INSITE ver 7.0, 1/08/2007
+DB_G00093088 (SJ) Added support for KTA/GTA engine program for module type 132 
+// Changes to Insite Ver 7.0, 01/23/2007
+// (SV) Insite 7.0 Group1 bugfixing task done. 
+// Changes to Insite Ver 7.0, 02/07/2007
+// (SV) Insite 7.0 Group2 Implemented Trip info parameters.
+// Changes to Insite Ver 7.0, 2/12/2007
+// DB_G00093075 (PG) Added "Cruise Control" feature for module type 76.
+// Chnages to Insite Ver 7.0, 2/14/2007
+// DB_G00091956 (SJ) Modified feature "PTO" for Euro 3 China F.
+// Changes to Insite Ver 7.0, 02/15/2007
+//DB_G00094606 , DB_G00094610 (PGS) Removed Token No 16803267 & 16803268 Under feature ID's 501 & 500 respectively for Module type 135 , 390 & 391
+// Changes to Insite Ver 7.0, 03/13/2007
+//DB_G00096021, Removed featureID="523" from ModuleType="390", ModuleType="391", ModuleType="300", ModuleType="301", ModuleType="302".
+=======================================================================================
+-->
+<!--DB_G00102127 Insite 7.1 base task: Splitted Maps.xml into multiple Maps_<detect type>.xml for performance
+improvement-->
+<!--moduleType="50" moduleName="ISB"-->
+	<MODULE xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="Maps.xsd">
+		<MAPS>
+			<!-- Features and Parameters not in place -->
+			<MAP mapID="1">
+				<FEATURES>
+					<!--Accelerator Options-->
+					<FEATURE featureID="1" featureEnable="0" featureGTIS="25275">
+						<SUBFEATURES>
+							<!-- SubFeature 0 -->
+							<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+								<PARAMETERS>
+									<!--Remote Accelerator-->
+									<PARAMETER parameterID="21181"/>
+									<!--Engine Governor Type-->
+									<PARAMETER parameterID="13310"/>
+								</PARAMETERS>
+							</SUBFEATURE>
+						</SUBFEATURES>
+					</FEATURE>
+					<!--Cruise Control-->
+					<FEATURE featureID="11" featureEnable="20021" featureGTIS="20025">
+						<SUBFEATURES>
+							<!-- SubFeature 0 -->
+							<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+								<PARAMETERS>
+									<!--Maximum Speed-->
+									<PARAMETER parameterID="10090"/>
+									<!--Switch Usage-->
+									<PARAMETER parameterID="10100"/>
+									<!--Upper Droop-->
+									<PARAMETER parameterID="10870"/>
+									<!--Lower Droop-->
+									<PARAMETER parameterID="10880"/>
+									<!--Auto-Resume-->
+									<PARAMETER parameterID="20611"/>
+								</PARAMETERS>
+							</SUBFEATURE>
+						</SUBFEATURES>
+					</FEATURE>
+					<!--Engine Brake Controls-->
+					<FEATURE featureID="17" featureEnable="0" featureGTIS="23035">
+						<SUBFEATURES>
+							<!-- SubFeature 0 -->
+							<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+								<PARAMETERS>
+									<!--Cruise Control Activation-->
+									<PARAMETER parameterID="20601"/>
+									<!--Cruise Control Speed Delta for Minimum Engine Brake-->
+									<PARAMETER parameterID="12420"/>
+									<!--Vehicle Braking-->
+									<PARAMETER parameterID="12790"/>
+								</PARAMETERS>
+							</SUBFEATURE>
+						</SUBFEATURES>
+					</FEATURE>
+					<!--Engine Protection-->
+					<FEATURE featureID="20" featureEnable="20221" featureGTIS="20225">
+						<SUBFEATURES>
+							<!-- SubFeature 0 -->
+							<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+								<PARAMETERS>
+									<!--Engine Protection Shutdown-->
+									<PARAMETER parameterID="20091"/>
+								</PARAMETERS>
+							</SUBFEATURE>
+						</SUBFEATURES>
+					</FEATURE>
+					<!--Engine Speed-->
+					<FEATURE featureID="21" featureEnable="0" featureGTIS="23005">
+						<SUBFEATURES>
+							<!-- SubFeature 0 -->
+							<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+								<PARAMETERS>
+									<!--Maximum Engine Speed without Vehicle Speed Sensor-->
+									<PARAMETER parameterID="10020"/>
+									<!--High Speed Governor Switched Speed-->
+									<PARAMETER parameterID="11470"/>
+								</PARAMETERS>
+							</SUBFEATURE>
+						</SUBFEATURES>
+					</FEATURE>
+					<!--Fan Control-->
+					<FEATURE featureID="23" featureEnable="0" featureGTIS="23045">
+						<SUBFEATURES>
+							<!-- SubFeature 0 -->
+							<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+								<PARAMETERS>
+									<!--Minimum Fan On Time for Air Conditioner Pressure Switch-->
+									<PARAMETER parameterID="11350"/>
+									<!--Fan Clutch Logic-->
+									<PARAMETER parameterID="14210"/>
+									<!--Fan Type-->
+									<PARAMETER parameterID="12570"/>
+									<!--Air Conditioner Pressure Switch Controls Fan-->
+									<PARAMETER parameterID="20651"/>
+									<!--Fan On During Engine Braking-->
+									<PARAMETER parameterID="20661"/>
+									<!--Manual Fan Switch-->
+									<PARAMETER parameterID="21301"/>
+								</PARAMETERS>
+							</SUBFEATURE>
+						</SUBFEATURES>
+					</FEATURE>
+					<!--Gear-Down Protection-->
+					<FEATURE featureID="26" featureEnable="20061" featureGTIS="20065">
+						<SUBFEATURES>
+							<!-- SubFeature 0 -->
+							<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+								<PARAMETERS>
+									<!--Gear-Down Maximum Vehicle Speed (Light Engine Load)-->
+									<PARAMETER parameterID="11430"/>
+									<!--Gear-Down Maximum Vehicle Speed (Heavy Engine Load)-->
+									<PARAMETER parameterID="11440"/>
+								</PARAMETERS>
+							</SUBFEATURE>
+						</SUBFEATURES>
+					</FEATURE>
+					<!-- Idle Shutdown -->
+					<FEATURE featureID="32" featureEnable="20051" featureGTIS="20055">
+						<SUBFEATURES>
+							<!-- SubFeature 0 -->
+							<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+								<PARAMETERS>
+									<!-- Manual Override -->
+									<PARAMETER parameterID="20081"/>
+									<!-- Time Before Shutdown -->
+									<PARAMETER parameterID="10170"/>
+									<!-- In PTO -->
+									<PARAMETER parameterID="20071"/>
+								</PARAMETERS>
+							</SUBFEATURE>
+						</SUBFEATURES>
+					</FEATURE>
+					<!-- Idle Speed Adjustment -->
+					<FEATURE featureID="33" featureEnable="0" featureGTIS="23105">
+						<SUBFEATURES>
+							<!-- SubFeature 0 -->
+							<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+								<PARAMETERS>
+									<!-- Low Idle Adjustment -->
+									<PARAMETER parameterID="20001"/>
+									<!-- Low Idle Speed -->
+									<PARAMETER parameterID="10030"/>
+								</PARAMETERS>
+							</SUBFEATURE>
+						</SUBFEATURES>
+					</FEATURE>
+					<!--Maintenance Monitor-->
+					<FEATURE featureID="39" featureEnable="20131" featureGTIS="20135">
+						<SUBFEATURES>
+							<!-- SubFeature 0 -->
+							<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+								<PARAMETERS>
+									<!--Mode-->
+									<PARAMETER parameterID="10230"/>
+									<!--Distance-->
+									<PARAMETER parameterID="10280"/>
+									<!--Time-->
+									<PARAMETER parameterID="10290"/>
+									<!--Alert Percentage-->
+									<PARAMETER parameterID="10860"/>
+								</PARAMETERS>
+							</SUBFEATURE>
+						</SUBFEATURES>
+					</FEATURE>
+					<!-- PTO/Remote PTO -->
+					<FEATURE featureID="43" featureEnable="20011" featureGTIS="20015">
+						<SUBFEATURES>
+							<!-- SubFeature 0 -->
+							<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+								<PARAMETERS>
+									<!-- Additional Switch Engine Speed -->
+									<PARAMETER parameterID="11820"/>
+									<!-- Clutch Override -->
+									<PARAMETER parameterID="21401"/>
+									<!-- Maximum Engine Load -->
+									<PARAMETER parameterID="11790"/>
+									<!-- Maximum Engine Speed -->
+									<PARAMETER parameterID="10130"/>
+									<!-- Maximum Vehicle Speed -->
+									<PARAMETER parameterID="11570"/>
+									<!-- Minimum Engine Speed -->
+									<PARAMETER parameterID="11390"/>
+									<!-- Resume Switch Engine Speed -->
+									<PARAMETER parameterID="10120"/>
+									<!-- Service Brake Override -->
+									<PARAMETER parameterID="21391"/>
+									<!-- Set Switch Engine Speed -->
+									<PARAMETER parameterID="10110"/>
+									<!-- Switch Ramp Rate -->
+									<PARAMETER parameterID="11810"/>
+								</PARAMETERS>
+							</SUBFEATURE>
+							<!-- SubFeature Accelerator Override -->
+							<SUBFEATURE subFeatureID="21381" subFeatureEnable="21381" subFeatureGTIS="0" subFeatureParent="43">
+								<PARAMETERS>
+									<!-- Accelerator Override Maximum Engine Speed -->
+									<PARAMETER parameterID="11830"/>
+								</PARAMETERS>
+							</SUBFEATURE>
+							<!-- SubFeature Remote PTO -->
+							<SUBFEATURE subFeatureID="20101" subFeatureEnable="20101" subFeatureGTIS="0" subFeatureParent="43">
+								<PARAMETERS>
+									<!-- Number of Speeds -->
+									<PARAMETER parameterID="11730"/>
+									<!-- Set Speed 1 -->
+									<PARAMETER parameterID="11680"/>
+									<!-- Set Speed 2 -->
+									<PARAMETER parameterID="11690"/>
+									<!-- Set Speed 3 -->
+									<PARAMETER parameterID="11700"/>
+									<!-- Set Speed 4 -->
+									<PARAMETER parameterID="11710"/>
+									<!-- Set Speed 5 -->
+									<PARAMETER parameterID="11720"/>
+								</PARAMETERS>
+							</SUBFEATURE>
+						</SUBFEATURES>
+					</FEATURE>
+					<!-- Powertrain Protection -->
+					<FEATURE featureID="44" featureEnable="21781" featureGTIS="21785">
+						<SUBFEATURES>
+							<!-- SubFeature 0 -->
+							<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+								<PARAMETERS>
+									<!-- Driveshaft/Axle Torque Limit -->
+									<PARAMETER parameterID="12280"/>
+									<!-- Limit 1 Gear Ratio 1 -->
+									<PARAMETER parameterID="12290"/>
+									<!-- Limit 1 Gear Ratio 2 -->
+									<PARAMETER parameterID="12830"/>
+									<!-- Limit 1 Torque Limit 1 -->
+									<PARAMETER parameterID="12310"/>
+									<!-- Limit 2 Gear Ratio 1 -->
+									<PARAMETER parameterID="12920"/>
+									<!-- Limit 2 Gear Ratio 2 -->
+									<PARAMETER parameterID="12840"/>
+									<!-- Limit 2 Torque Limit 2 -->
+									<PARAMETER parameterID="12860"/>
+									<!-- Limit 3 Gear Ratio 1 -->
+									<PARAMETER parameterID="12925"/>
+									<!-- Limit 3 Gear Ratio 2 -->
+									<PARAMETER parameterID="12850"/>
+									<!-- Limit 3 Torque Limit 3 -->
+									<PARAMETER parameterID="12870"/>
+									<!-- Maximum Torque Allowed Switched -->
+									<PARAMETER parameterID="12300"/>
+									<!-- Maximum Torque at Zero Road Speed -->
+									<PARAMETER parameterID="12880"/>
+									<!-- Powertrain Protection Lugback -->
+									<PARAMETER parameterID="21791"/>
+								</PARAMETERS>
+							</SUBFEATURE>
+						</SUBFEATURES>
+					</FEATURE>
+					<!--Transmission-->
+					<FEATURE featureID="54" featureEnable="0" featureGTIS="23025">
+						<SUBFEATURES>
+							<!-- SubFeature 0 -->
+							<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+								<PARAMETERS>
+									<!--Top Gear Ratio-->
+									<PARAMETER parameterID="11450"/>
+									<!--Gear Down Ratio-->
+									<PARAMETER parameterID="14250"/>
+									<!--Automatic Transmission-->
+									<PARAMETER parameterID="11410"/>
+								</PARAMETERS>
+							</SUBFEATURE>
+						</SUBFEATURES>
+					</FEATURE>
+					<!--Trip Information Offset-->
+					<FEATURE featureID="55" featureEnable="20191" featureGTIS="20195">
+						<SUBFEATURES>
+							<!-- SubFeature 0 -->
+							<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+								<PARAMETERS>
+									<!--Engine Hours Offset-->
+									<PARAMETER parameterID="10210"/>
+									<!--Engine Distance Offset-->
+									<PARAMETER parameterID="10220"/>
+								</PARAMETERS>
+							</SUBFEATURE>
+						</SUBFEATURES>
+					</FEATURE>
+					<!--System ID and Dataplate-->
+					<FEATURE featureID="56" featureEnable="0" featureGTIS="23255">
+						<SUBFEATURES>
+							<!-- SubFeature Vehicle/OEM Information -->
+							<SUBFEATURE subFeatureID="23061" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="56">
+								<PARAMETERS>
+									<!--OEM Name-->
+									<PARAMETER parameterID="1001"/>
+									<!--OEM Vehicle or Equipment Model-->
+									<PARAMETER parameterID="1003"/>
+									<!--Vehicle Identification Number (VIN) or Equipment Serial Number-->
+									<PARAMETER parameterID="1005"/>
+									<!--Vehicle or Equipment Year-->
+									<PARAMETER parameterID="1006"/>
+								</PARAMETERS>
+							</SUBFEATURE>
+							<!-- SubFeature Customer Information -->
+							<SUBFEATURE subFeatureID="23071" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="56">
+								<PARAMETERS>
+									<!--Name-->
+									<PARAMETER parameterID="1009"/>
+									<!--Location-->
+									<PARAMETER parameterID="1010"/>
+									<!--Unit Number-->
+									<PARAMETER parameterID="1011"/>
+								</PARAMETERS>
+							</SUBFEATURE>
+							<!-- SubFeature System Information -->
+							<SUBFEATURE subFeatureID="23081" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="56">
+								<PARAMETERS>
+									<!--Advertised Power at RPM-->
+									<PARAMETER parameterID="2001"/>
+									<!--Advertised Power RPM-->
+									<PARAMETER parameterID="2002"/>
+									<!--Governed Speed-->
+									<PARAMETER parameterID="2003"/>
+									<!--Peak Torque at RPM-->
+									<PARAMETER parameterID="2004"/>
+									<!--Peak Torque RPM-->
+									<PARAMETER parameterID="2005"/>
+									<!--Fuel Code (FC)-->
+									<PARAMETER parameterID="2006"/>
+									<!--Torque Rise-->
+									<PARAMETER parameterID="2010"/>
+									<!--Critical Parts List-->
+									<PARAMETER parameterID="3005"/>
+								</PARAMETERS>
+							</SUBFEATURE>
+							<!-- SubFeature Engine Information -->
+							<SUBFEATURE subFeatureID="23051" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="56">
+								<PARAMETERS>
+									<!--Make-->
+									<PARAMETER parameterID="3001"/>
+									<!--Model-->
+									<PARAMETER parameterID="3002"/>
+									<!--Serial Number-->
+									<PARAMETER parameterID="3003"/>
+									<!--Build Date-->
+									<PARAMETER parameterID="3004"/>
+								</PARAMETERS>
+							</SUBFEATURE>
+							<!-- SubFeature ECM Information -->
+							<SUBFEATURE subFeatureID="25051" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="56">
+								<PARAMETERS>
+									<!--ECM Make-->
+									<PARAMETER parameterID="4001"/>
+									<!--ECM Part Number-->
+									<PARAMETER parameterID="4003"/>
+									<!--ECM Product ID-->
+									<PARAMETER parameterID="4004"/>
+									<!--ECM Voltage Range Low-->
+									<PARAMETER parameterID="4005"/>
+									<!--ECM Voltage Range High-->
+									<PARAMETER parameterID="4006"/>
+									<!--ECM Serial Number-->
+									<PARAMETER parameterID="4010"/>
+								</PARAMETERS>
+							</SUBFEATURE>
+							<!-- SubFeature Calibration Information -->
+							<SUBFEATURE subFeatureID="23091" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="56">
+								<PARAMETERS>
+									<!--Calibration Time Date Stamp-->
+									<PARAMETER parameterID="2007"/>
+									<!--SC Option-->
+									<PARAMETER parameterID="5001"/>
+									<!--ECM Code-->
+									<PARAMETER parameterID="5002"/>
+									<!--DO Option-->
+									<PARAMETER parameterID="5003"/>
+									<!--Calibration Voltage Range Low-->
+									<PARAMETER parameterID="5005"/>
+									<!--Calibration Voltage Range High-->
+									<PARAMETER parameterID="5006"/>
+									<!--Other Options-->
+									<PARAMETER parameterID="5007"/>
+									<!--Calibration Software Phase-->
+									<PARAMETER parameterID="5015"/>
+								</PARAMETERS>
+							</SUBFEATURE>
+						</SUBFEATURES>
+					</FEATURE>
+					<!--Vehicle Speed-->
+					<FEATURE featureID="9" featureEnable="0" featureGTIS="23015">
+						<SUBFEATURES>
+							<!-- SubFeature 0 -->
+							<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+								<PARAMETERS>
+									<!--Accelerator Maximum-->
+									<PARAMETER parameterID="10000"/>
+									<!--Rear Axle Ratio-->
+									<PARAMETER parameterID="10050"/>
+									<!--Tire Revolutions per Distance-->
+									<PARAMETER parameterID="10060"/>
+									<!--Tailshaft Gear Teeth-->
+									<PARAMETER parameterID="10070"/>
+									<!--Pulses Per Distance-->
+									<PARAMETER parameterID="10200"/>
+									<!--Road Speed Governor Upper Droop-->
+									<PARAMETER parameterID="10890"/>
+									<!--Road Speed Governor Lower Droop-->
+									<PARAMETER parameterID="10900"/>
+									<!--Application Type-->
+									<PARAMETER parameterID="11420"/>
+									<!--Two Speed Rear Axle Ratio-->
+									<PARAMETER parameterID="12800"/>
+									<!--Vehicle Speed Sensor Type-->
+									<PARAMETER parameterID="13030"/>
+									<!--Two Speed Rear Axle-->
+									<PARAMETER parameterID="22051"/>
+								</PARAMETERS>
+							</SUBFEATURE>
+						</SUBFEATURES>
+					</FEATURE>
+					<!--Vehicle Speed Sensor Anti-Tampering-->
+					<FEATURE featureID="65" featureEnable="20761" featureGTIS="20765">
+						<SUBFEATURES>
+							<!-- SubFeature 0 -->
+							<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0"/>
+						</SUBFEATURES>
+					</FEATURE>
+				</FEATURES>
+			</MAP>
+			<!--Trip Information-->
+			<MAP mapID="2">
+				<FEATURES>
+					<!--Autogenerated from requirements-->
+					<!--Start of Trip Features-->
+					<!-- Cumulative Totals-->
+					<FEATURE featureID="500" featureEnable="0" featureGTIS="0">
+						<SUBFEATURES>
+							<!-- SubFeature 0 -->
+							<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+								<PARAMETERS>
+									<!--Fuel Used-->
+									<PARAMETER parameterID="107004"/>
+									<!--ECM Time-->
+									<PARAMETER parameterID="112016"/>
+									<!--Engine Hours (Engine Run Time)-->
+									<PARAMETER parameterID="112017"/>
+									<!--ECM Distance-->
+									<PARAMETER parameterID="103000"/>
+									<!--Engine Distance-->
+									<PARAMETER parameterID="103006"/>
+									<!--Idle Time-->
+									<PARAMETER parameterID="112024"/>
+									<!--Idle Fuel-->
+									<PARAMETER parameterID="107037"/>
+									<!--Engine Average Load-->
+									<PARAMETER parameterID="199102"/>
+								</PARAMETERS>
+							</SUBFEATURE>
+						</SUBFEATURES>
+					</FEATURE>
+					<!-- Trip Totals Since Last Reset -->
+					<FEATURE featureID="501" featureEnable="0" featureGTIS="0">
+						<SUBFEATURES>
+							<!-- SubFeature 0 -->
+							<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+								<PARAMETERS>
+									<!--Fuel Used-->
+									<PARAMETER parameterID="107005"/>
+									<!--Average Fuel Rate-->
+									<PARAMETER parameterID="107006"/>
+									<!--Average Fuel Economy-->
+									<PARAMETER parameterID="108001"/>
+									<!--Trip Time-->
+									<PARAMETER parameterID="112013"/>
+									<!--Trip Distance-->
+									<PARAMETER parameterID="103007"/>
+									<!--Average Load Factor-->
+									<PARAMETER parameterID="199103"/>
+									<!--Maximum Engine Speed-->
+									<PARAMETER parameterID="101009"/>
+									<!--Maximum Vehicle Speed-->
+									<PARAMETER parameterID="102003"/>
+								</PARAMETERS>
+								<!-- Trip Since Last Reset - Drive-->
+								<SUBFEATURES>
+									<!-- SubFeature 25261 -->
+									<SUBFEATURE subFeatureID="25261" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="501">
+										<PARAMETERS>
+											<!--Drive Fuel Used-->
+											<PARAMETER parameterID="107007"/>
+											<!--Drive Fuel Economy-->
+											<PARAMETER parameterID="108002"/>
+											<!--Idle Fuel Used-->
+											<PARAMETER parameterID="107008"/>
+											<!--Idle Time-->
+											<PARAMETER parameterID="112014"/>
+											<!--Idle Percent Time-->
+											<PARAMETER parameterID="199011"/>
+											<!--PTO Fuel Used-->
+											<PARAMETER parameterID="107009"/>
+											<!--PTO Time-->
+											<PARAMETER parameterID="112015"/>
+											<!--PTO Percent Time-->
+											<PARAMETER parameterID="199012"/>
+											<!--Number of Sudden Decelerations-->
+											<PARAMETER parameterID="199013"/>
+											<!--Service Brake Actuations per 1000 miles-->
+											<PARAMETER parameterID="103008"/>
+											<!--Cruise Control Percent Time-->
+											<PARAMETER parameterID="103009"/>
+											<!--Maximum Vehicle Speed Percent Time-->
+											<PARAMETER parameterID="103010"/>
+											<!--In Top Gear Percent Time-->
+											<PARAMETER parameterID="103011"/>
+											<!--Trip % Distance-Direct Drive-->
+											<PARAMETER parameterID="103012"/>
+										</PARAMETERS>
+									</SUBFEATURE>
+								</SUBFEATURES>
+							</SUBFEATURE>
+						</SUBFEATURES>
+					</FEATURE>
+				</FEATURES>
+			</MAP>
+		</MAPS>
+	</MODULE>

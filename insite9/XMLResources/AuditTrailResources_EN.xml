@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE module SYSTEM "../htmlentities.dtd">
+<XML_RESOURCE>
+	<RESOURCE Tag="1001" Type="String Table" Description="Message String Table">
+		<STRING ID="100" Context="Project Name.  Not displayed">AuditTrail</STRING>
+		<STRING ID="101" Context="Viewbar button text">Audit Trail</STRING>
+		<STRING ID="102" Context="Viewbar button tool tip">Audit Trail</STRING>
+		<STRING ID="103" Context="Column headings from the grid separated by the | character">Record Number|Tool Name|Tool ID|User Type|User ID|ECM Time (Key on Time)</STRING>
+		<STRING ID="104" Context="Second row of column headings">Code</STRING>
+		<STRING ID="105" Context="Second row of column headings">Description</STRING>
+		<STRING ID="106" Context="Displayed when no ECM is connected">No ECM Connected</STRING>
+		<STRING ID="107" Context="*New Displayed when audit trail is reading data from the ECM">Reading Audit Trail Information...</STRING>
+		<STRING ID="108" Context="Tool name">VEPS</STRING>
+		<STRING ID="109" Context="Tool type">Cartridge</STRING>
+		<STRING ID="110" Context="Tool name">Compulink</STRING>
+		<STRING ID="111" Context="Tool name">Echek</STRING>
+		<STRING ID="112" Context="Tool name">INSITE</STRING>
+		<STRING ID="113" Context="Tool type">Software</STRING>
+		<STRING ID="114" Context="Tool name">Field Test Tool</STRING>
+		<STRING ID="115" Context="Tool name">ESDN</STRING>
+		<STRING ID="116" Context="Unknown tool">Unknown software</STRING>
+		<STRING ID="117" Context="Displayed when the connected ECM does not support Audit Trail">Audit Trail Not Supported</STRING>
+		<STRING ID="118" Context="Displayed when no Audit Trail records are found in the ECM">No Audit Trail Records Detected in the ECM</STRING>
+		<STRING ID="119" Context="Context menu string">Refresh</STRING>
+		<STRING ID="120" Context="*New Context menu string">Expand</STRING>
+		<STRING ID="121" Context="*New Context menu string">Collapse</STRING>
+		<STRING ID="122" Context="Context menu string">Print...</STRING>
+		<STRING ID="123" Context="Context menu string">Expand All</STRING>
+		<STRING ID="124" Context="Context menu string">Collapse All</STRING>
+		<STRING ID="125" Context="Tool name">Generic Cummins Handheld</STRING>
+		<STRING ID="126" Context="Tool name">QuickSpec</STRING>
+		<STRING ID="127" Context="Print Header Item">Customer Unit Number : </STRING>
+		<STRING ID="128" Context="Print Header Item">Engine Serial Number : </STRING>
+		<STRING ID="129" Context="Print Header Item">Company Name : </STRING>
+		<STRING ID="130" Context="Print Header Item">Work Order Name : </STRING>
+		<STRING ID="131" Context="Print Header Item">ECM Image Name : </STRING>
+		<STRING ID="132" Context="Print Header Item">Customer Name : </STRING>
+		<STRING ID="133" Context="Column heading">Record Number</STRING>
+		<STRING ID="134" Context="Column heading">Tool Name</STRING>
+		<STRING ID="135" Context="Column heading">Tool ID</STRING>
+		<STRING ID="136" Context="Column heading">User Type</STRING>
+		<STRING ID="137" Context="Column heading">User ID</STRING>
+    <STRING ID="138" Context="Column heading">ECM Time (key on time)</STRING>
+    <STRING ID="139" Context="Printer Not available title">Cummins INSITE</STRING>
+     		<STRING ID="140" Context="Printer Not available text">Printer not found.</STRING>
+		<STRING ID="181" Context="Context menu (Refresh) string">All</STRING>
+		<STRING ID="183" Context="Context menu (Refresh) string">Selected ECM </STRING>
+	</RESOURCE>
+</XML_RESOURCE>

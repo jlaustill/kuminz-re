@@ -1,0 +1,589 @@
+enum_name,value,member_name,comment,size
+# CAN Controller Init Mode - switch value in canControllerConfigInit
+CAN_TIMER_INIT_MODE,0,BASIC_DELAY,Basic timer + delay with watchdog (can1TimerBufferInit),1
+CAN_TIMER_INIT_MODE,1,ALT_TRANSMIT,Alt timer + message transmit init (can1TimerBufferInitAlt),1
+CAN_TIMER_INIT_MODE,2,DIVIDED_TRANSMIT,Divided timer + message transmit init 2 (can1TimerBufferInitDivided),1
+CAN_TIMER_INIT_MODE,3,CONDITIONAL_DELAY,Conditional timer + watchdog delay 2 (can1TimerBufferInitConditional),1
+CAN_BUFFER_OFFSETS,0x36,CAN_STATUS_BYTE,CAN message status byte offset
+CAN_BUFFER_OFFSETS,0x37,PARAM_BYTE_1,First parameter byte offset
+CAN_BUFFER_OFFSETS,0x38,PARAM_BYTE_2,Second parameter byte offset
+CAN_BUFFER_OFFSETS,0x39,PARAM_BYTE_3,Third parameter byte offset
+CAN_MSG_TYPE,16,VP44_FUEL_TEMP,VP44 fuel temperature message
+CAN_MSG_TYPE,17,ALTERNATIVE_MSG,Alternative message handler
+CAN_MSG_TYPE,19,THIRD_MSG,Third message handler
+CAN_MSG_TYPE,255,ERROR_DEFAULT,Error/default case message
+CAN_PARAM_BUILDERS,1,VP44_CMD_BUILDER,vp44Command0x100Builder function (0x2a418)
+VP44_STATUS_BITS,0x01,FSO_CIRCUIT_STATUS_BIT0,VP44 FSO circuit status bit 0 - when set indicates normal operation
+VP44_STATUS_BITS,0x02,FSO_CIRCUIT_STATUS_BIT1,VP44 FSO circuit status bit 1 - redundant FSO monitoring
+VP44_STATUS_BITS,0x04,STATUS_BIT2,VP44 status bit 2
+VP44_STATUS_BITS,0x08,STATUS_BIT3,VP44 status bit 3
+VP44_STATUS_BITS,0x10,STATUS_BIT4,VP44 status bit 4 - affects fuel timing control
+VP44_STATUS_BITS,0x20,STATUS_BIT5,VP44 status bit 5
+VP44_STATUS_BITS,0x40,STATUS_BIT6,VP44 status bit 6
+VP44_STATUS_BITS,0x80,STATUS_BIT7,VP44 status bit 7
+ENGINE_OPERATING_MODE,1,ENGINE_IDLE,Engine idle/startup mode,2
+ENGINE_OPERATING_MODE,2,LOW_RPM_RUNNING,Low RPM running mode,2
+ENGINE_OPERATING_MODE,3,HIGH_RPM_RUNNING,High RPM running mode,2
+ENGINE_OPERATING_MODE,4,VP44_INJECTION_ACTIVE,VP44 injection system active mode,2
+ENGINE_OPERATING_MODE,5,HIGH_PERFORMANCE,High performance/load mode,2
+ENGINE_OPERATING_MODE,6,TRANSITIONAL_MODE_6,Transitional operating mode 6,2
+ENGINE_OPERATING_MODE,7,TRANSITIONAL_MODE_7,Transitional operating mode 7,2
+ENGINE_OPERATING_MODE,8,FAULT_EMERGENCY,Fault/emergency mode,2
+CAN_PARAM_BUILDERS,2,CONFIG_BUILDER,configParamCanBuilder function (0x2a57e)
+DIAGNOSTIC_MESSAGE_TYPES,16,VP44Handler,VP44 pump communication handler
+DIAGNOSTIC_MESSAGE_TYPES,17,DiagParamRequestHandler,Alternative handler for parameter requests
+DIAGNOSTIC_MESSAGE_TYPES,19,StatusRequestHandler,Third handler for status/diagnostic requests
+DIAGNOSTIC_MESSAGE_TYPES,255,ErrorDefaultHandler,Error/default case handler
+VP44_DATA_FIELDS,1,FUEL_HIGH_BYTE,Fuel amount high byte (param_table_aux>>8 + 125)
+VP44_DATA_FIELDS,2,FUEL_LOW_BYTE,Fuel amount low byte (param_table_main>>8 + 125)  
+VP44_DATA_FIELDS,3,RESERVED_ZERO_1,Reserved/zero byte 3
+VP44_DATA_FIELDS,4,RESERVED_ZERO_2,Reserved/zero byte 4
+VP44_DATA_FIELDS,5,TIMING_BYTE1,Injection timing advance (byte 5)
+VP44_DATA_FIELDS,6,TIMING_BYTE2,Injection timing advance (byte 6)
+VP44_DATA_FIELDS,7,RPM_LOW_BYTE,Engine RPM×4 low byte (current_engine_rpm & 0xFF)
+VP44_DATA_FIELDS,8,RPM_HIGH_BYTE,Engine RPM×4 high byte (current_engine_rpm >> 8)
+DUAL_CAN_CONTROLLERS,0,CAN_CONTROLLER_MAIN,Primary CAN controller (SSCNLTOB)
+DUAL_CAN_CONTROLLERS,1,CAN_CONTROLLER_1,Secondary CAN controller 1 (SSC1LTOB)
+DUAL_CAN_J1939_SOURCE_ADDR,1,J1939_SOURCE_ADDR_1,J1939 source address 1 (JCSA1)
+DUAL_CAN_J1939_SOURCE_ADDR,2,J1939_SOURCE_ADDR_2,J1939 source address 2 (JCSA2)
+DUAL_CAN_J1939_SOURCE_ADDR,3,J1939_SOURCE_ADDR_3,J1939 source address 3 (JCSA3)
+DUAL_CAN_J1939_SOURCE_ADDR,4,J1939_SOURCE_ADDR_4,J1939 source address 4 (JCSA4)
+DUAL_CAN_J1939_SOURCE_ADDR,5,J1939_SOURCE_ADDR_5,J1939 source address 5 (JCSA5)
+EEPROM_MEMORY_BLOCKS,0,DATA_PLATE_BLOCK,Data plate identifier block
+EEPROM_MEMORY_BLOCKS,9,PRIMARY_BLOCK,Main parameter memory block (PTESLOLM etc.)
+EFILIVE_COMPATIBILITY,1,MultiDimensionalTableSupport,5-stage table interpolation system confirmed
+EFILIVE_COMPATIBILITY,2,StructuredParameterSystem,EEPROM → Tables → CAN flow
+EFILIVE_COMPATIBILITY,3,TimingTableSupport_4DTBTA,4D timing base table advance parameter
+EFILIVE_COMPATIBILITY,4,FuelMappingIntegration,Integration with throttle/parameter systems
+INTERPOLATION_FACTORS,3,SCALE_FACTOR,Base interpolation scaling
+INTERPOLATION_FACTORS,8,SHIFT_BITS,Bit shift amount for scaling
+INTERPOLATION_FACTORS,256,WORD_MULTIPLIER,Word-size multiplication factor
+J1939_CRUISE_CONTROL_ENABLE,1,CruiseControlReceiveEnable_JCCNRXFT,CCVS message reception filter (0x07F0FEF1)
+J1939_CRUISE_CONTROL_ENABLE,2,CruiseControlMessageEnable_JCCCBCEA,Enable cruise control/vehicle speed message processing
+J1939_CRUISE_CONTROL_ENABLE,3,SpeedControlStatus_JCRPGVSS,Speed control status (1=SPEED_CONTROL_MODE 0=NORMAL)
+J1939_CRUISE_CONTROL_ENABLE,4,SpeedControlBrakingInteraction_JCRDTXEA,Enable speed control/engine braking interaction
+J1939_DIAGNOSTIC_PROTOCOL,1,CalTermCommunication,CalTerm parameter read/write via J1939
+J1939_DIAGNOSTIC_PROTOCOL,2,InsiteCommunication,Insite live data monitoring via J1939
+J1939_DIAGNOSTIC_PROTOCOL,3,DiagnosticMessageDispatcher,Routes diagnostic requests by message type
+J1939_DIAGNOSTIC_PROTOCOL,4,J1939ParamRequestHandler,Processes EEPROM parameter read requests
+J1939_DIAGNOSTIC_PROTOCOL,5,ParameterResponseBuilder,Formats parameter values for J1939 response
+J1939_THROTTLE_ENABLE,1,TorqueSpeedControlReceiveEnable_JCCNRXFT,TSC1 message reception enable (0x07F00400)
+J1939_THROTTLE_ENABLE,2,JC39ENFG,J1939 message enable flags table
+J1939_THROTTLE_ENABLE,3,AS01CF,ASG throttle mode compensation filter coef. 1
+J1939_THROTTLE_ENABLE,4,AS02CF,ASG throttle mode compensation filter coef. 2
+J1939_THROTTLE_ENABLE,5,AS03CF,ASG throttle mode compensation filter coef. 3
+# Main Loop Phase Index - main_loop_phase_index in scheduler switch (40 phases 0x00-0x27)
+# Even phases (0,2,4...): ioControl + evenPhase + [vp44_engine or engineDiagnostic] + specific tasks
+# Odd phases (1,3,5...): ioControl + oddPhase + [engine_control or slowCycle4] + specific tasks
+MAIN_LOOP_PHASE,0,PHASE_0_VP44_RPM,Even: VP44 engine management + RPM control,2
+MAIN_LOOP_PHASE,1,PHASE_1_ENGINE_FUEL,Odd: Engine control + RPM fuel limiter,2
+MAIN_LOOP_PHASE,2,PHASE_2_DIAG_AUX,Even: Diagnostic + Auxiliary + Advanced protection,2
+MAIN_LOOP_PHASE,3,PHASE_3_SLOW_CYCLES,Odd: SlowCycle 4/8/10/20 coordinators,2
+MAIN_LOOP_PHASE,4,PHASE_4_BOOST_DIAG,Even: VP44 + Boost + Diagnostic monitoring,2
+MAIN_LOOP_PHASE,5,PHASE_5_EPS_SLOW20,Odd: Engine + EPS monitoring + SlowCycle20 ext,2
+MAIN_LOOP_PHASE,6,PHASE_6_FUEL_CALC,Even: Diagnostic + IO + Fuel calc + Kickdown,2
+MAIN_LOOP_PHASE,7,PHASE_7_SHUTDOWN,Odd: SlowCycle4 + Shutdown protection + Trending,2
+MAIN_LOOP_PHASE,8,PHASE_8_DIAG_COMM,Even: VP44 + Diagnostic comm + Fuel smoke,2
+MAIN_LOOP_PHASE,9,PHASE_9_CAM_TIMING,Odd: Engine + Diagnostic data + Cam sync + Timing arb,2
+MAIN_LOOP_PHASE,10,PHASE_10_DERATE,Even: Diagnostic + RPM + Derate protection,2
+MAIN_LOOP_PHASE,11,PHASE_11_VP44_PROT,Odd: SlowCycle4/8 + RPM limiter + VP44 protection,2
+MAIN_LOOP_PHASE,12,PHASE_12_FSO_FRIC,Even: VP44 + Boost + FSO detection + Frictional load,2
+MAIN_LOOP_PHASE,13,PHASE_13_DIAG_FAULT,Odd: Engine + SlowCycle10 + VP44 diagnostic fault,2
+MAIN_LOOP_PHASE,14,PHASE_14_FSO_MON,Even: Diagnostic + Diagnostic monitoring + FSO fault,2
+MAIN_LOOP_PHASE,15,PHASE_15_EPS_TIMING,Odd: SlowCycle4 + EPS + Timing calc + VP44 timing + Protection,2
+MAIN_LOOP_PHASE,16,PHASE_16_DZG_TIMING,Even: VP44 + IO control + DZG timing,2
+MAIN_LOOP_PHASE,17,PHASE_17_OUTPUT_CTRL,Odd: Engine + Shutdown + Mode-based output,2
+MAIN_LOOP_PHASE,18,PHASE_18_DIAG_TEMP,Even: Diagnostic + Auxiliary + VP44 diag + Fuel temp,2
+MAIN_LOOP_PHASE,19,PHASE_19_DIAG_STATS,Odd: SlowCycle4/8 + Diagnostic data + Stats,2
+MAIN_LOOP_PHASE,20,PHASE_20_RPM_VP44,Even: VP44 + Boost + RPM + VP44 control,2
+MAIN_LOOP_PHASE,21,PHASE_21_EXT_FAULT,Odd: Engine + Boost + RPM limiter + VP44 ext fault,2
+MAIN_LOOP_PHASE,22,PHASE_22_ADV_PROT,Even: Diagnostic + Secondary + Advanced protection,2
+MAIN_LOOP_PHASE,23,PHASE_23_SLOW_ALL,Odd: SlowCycle 4/8/10/20 all,2
+MAIN_LOOP_PHASE,24,PHASE_24_FUEL_TIME,Even: VP44 + Diagnostic monitoring + Fuel timing,2
+MAIN_LOOP_PHASE,25,PHASE_25_EPS_EXT,Odd: Engine + EPS monitoring + SlowCycle20 ext,2
+MAIN_LOOP_PHASE,26,PHASE_26_IO_FUEL,Even: Diagnostic + IO control + Fuel calc,2
+MAIN_LOOP_PHASE,27,PHASE_27_SENSOR_HIST,Odd: SlowCycle4/8 + Shutdown + Sensor history,2
+MAIN_LOOP_PHASE,28,PHASE_28_SMOKE_LIM,Even: VP44 + Boost + Diagnostic comm + Smoke limiter,2
+MAIN_LOOP_PHASE,29,PHASE_29_CAM_SYNC,Odd: Engine + Diagnostic data + Cam sync,2
+MAIN_LOOP_PHASE,30,PHASE_30_DERATE2,Even: Diagnostic + RPM + Derate protection,2
+MAIN_LOOP_PHASE,31,PHASE_31_VP44_PROT2,Odd: SlowCycle4 + RPM limiter + VP44 protection,2
+MAIN_LOOP_PHASE,32,PHASE_32_FSO_DET,Even: VP44 + Secondary + FSO detection,2
+MAIN_LOOP_PHASE,33,PHASE_33_DIAG_MON,Odd: Engine + SlowCycle10 + VP44 diag fault,2
+MAIN_LOOP_PHASE,34,PHASE_34_FSO_MON2,Even: Diagnostic + Auxiliary + FSO fault monitoring,2
+MAIN_LOOP_PHASE,35,PHASE_35_EPS_EMPTY,Odd: SlowCycle4/8 + EPS + Empty placeholder,2
+MAIN_LOOP_PHASE,36,PHASE_36_DZG_IO,Even: VP44 + Boost + IO control + DZG timing,2
+MAIN_LOOP_PHASE,37,PHASE_37_OUTPUT2,Odd: Engine + Shutdown + Mode-based output,2
+MAIN_LOOP_PHASE,38,PHASE_38_VP44_DIAG,Even: Diagnostic + Diagnostic comm + VP44 control,2
+MAIN_LOOP_PHASE,39,PHASE_39_FINAL,Odd: SlowCycle4 + Diagnostic data + Stats (returns to 0),2
+MC68336_CAN_BUFFERS,1,CAN_BUFFER_1,CAN parameter message buffer 1 (0x803066)
+MC68336_CAN_BUFFERS,2,CAN_BUFFER_2,CAN parameter message buffer 2 (0x803056)
+MC68336_CAN_BUFFERS,3,CAN_BUFFER_3,CAN parameter message buffer 3 (0x80306e)
+MC68336_CAN_BUFFERS,4,CAN_BUFFER_4,CAN parameter message buffer 4 (0x80303e)
+NETWORK_TYPE_SELECTION,0,J1922_PROTOCOL,J1922 network protocol selection
+NETWORK_TYPE_SELECTION,1,J1939_PROTOCOL,J1939 network protocol selection
+PARAM_ACCESS_FUNCTIONS,1,LOOKUP_1,param_lookup_1 function (0xd632)
+PARAM_ACCESS_FUNCTIONS,2,LOOKUP_2,param_lookup_2 function (0xd69c)
+PARAM_ACCESS_FUNCTIONS,3,LOOKUP_3,param_lookup_3 function (0xd756)
+DMA_CONTROL_FLAGS,0x80000000,DMA_ENABLE,DMA channel enable flag
+DMA_CONTROL_FLAGS,0x40000000,DMA_CHAIN_MODE,DMA descriptor chaining enabled
+DMA_CONTROL_FLAGS,0x20000000,DMA_INTERRUPT_ENABLE,DMA completion interrupt enable
+DMA_CONTROL_FLAGS,0x10000000,DMA_AUTO_RELOAD,DMA auto-reload descriptor
+DMA_TRANSFER_MODES,0,DMA_SINGLE_TRANSFER,Single data transfer mode
+DMA_TRANSFER_MODES,1,DMA_BLOCK_TRANSFER,Block transfer mode
+DMA_TRANSFER_MODES,2,DMA_BURST_TRANSFER,Burst transfer mode
+DMA_TRANSFER_MODES,3,DMA_CONTINUOUS,Continuous transfer mode
+CUMMINS_MODULE_IDS,0x454E,MODULE_EN,Cummins EN module family (CM550 VP44 ECUs)
+CUMMINS_MODULE_IDS,0x4E41,MODULE_AN,Hypothetical AN module family
+CUMMINS_MODULE_IDS,0x4445,MODULE_DE,Hypothetical DE module family  
+INCAL_VARIANTS,0x41,VARIANT_A,InCal calibration variant A
+INCAL_VARIANTS,0x42,VARIANT_B,InCal calibration variant B
+INCAL_VARIANTS,0x43,VARIANT_C,InCal calibration variant C (ENC)
+PARAM_BLOCK_SIZE,256,BLOCK_MULTIPLIER,Parameter block size multiplier
+PARAM_CAN_FLOW,1,EEPROM_TO_TABLE,EEPROM parameter → memory table
+PARAM_CAN_FLOW,2,TABLE_TO_BUFFER,Memory table → CAN buffer
+PARAM_CAN_FLOW,3,BUFFER_TO_NETWORK,CAN buffer → J1939 transmission
+PARAMETER_SYSTEM_MODES,1,ActiveParameterRead,Active EEPROM parameter reading mode
+PARAMETER_SYSTEM_MODES,11,CachedParameterRead,Cached parameter value retrieval
+PARAMETER_SYSTEM_MODES,12,SpecialParameterHandling,Special parameter processing mode
+PARAM_SHIFT_OPERATIONS,2,DWORD_SHIFT,32-bit addressing (lsll #2)
+PARAM_SHIFT_OPERATIONS,8,BLOCK_SHIFT,Block×256 calculation (lsll #8)
+PARAM_VALIDATION,32000,SAFETY_LIMIT,Maximum allowed parameter value
+PARAM_VALIDATION,65535,BLOCK_LIMIT,Block validation limit (Block × 65535)
+RPM_SCALING,1,RPM_DIRECT,Direct RPM value (no scaling)
+RPM_SCALING,2,RPM_HALF,RPM divided by 2
+RPM_SCALING,4,RPM_QUARTER,RPM divided by 4 (lsll #2)
+ENGINE_RPM_LIMITS,125,CRANKING_RPM_LIMIT,Cold crank sync determination limit (CSCDESTR)
+ENGINE_RPM_LIMITS,300,RUNNING_RPM_THRESHOLD,Engine considered running threshold (CSCKES)
+ENGINE_RPM_LIMITS,700,PTO_MIN_RPM,PTO minimum RPM setpoint (PTESLOLM)
+ENGINE_RPM_LIMITS,3000,PTO_MAX_RPM,PTO maximum RPM setpoint (PTESHILM)
+ENGINE_RPM_LIMITS,3000,ASG_MAX_RPM,ASG maximum allowed speed (ASTLMNMX)
+THROTTLE_PARAMS,1,FSMXTHFL,Fueling value at 100% throttle (param_lookup_3)
+THROTTLE_PARAMS,2,ASTHRFES,ASG reference speed based on throttle position (param_lookup_2)
+THROTTLE_PARAMS,3,JCTHKCTD,JCOMM throttle kickdown threshold (param_lookup_3)
+VP44_SENSOR_OFFSETS,6,BYTE_OFFSET,Data byte position in VP44 message
+VP44_SENSOR_OFFSETS,112,FUEL_TEMP_OFFSET,Fuel temperature sensor offset
+# DERATE_STATUS_BYTE bit flags - used in insiteCommandByteDispatcher case 0x03 and 0x55
+DERATE_STATUS_BITS,0x80,DERATE_ACTIVE,Derate condition is active,1
+DERATE_STATUS_BITS,0x40,DERATE_BIT6,Derate status bit 6 - maps to INSITE bit 0x40,1
+DERATE_STATUS_BITS,0x20,DERATE_BIT5,Derate status bit 5 - maps to INSITE bit 0x20,1
+DERATE_STATUS_BITS,0x08,DERATE_STATUS_BIT3,Derate status bit 3 - maps to INSITE status 0x20,1
+DERATE_STATUS_BITS,0x04,DERATE_STATUS_BIT2,Derate status bit 2 - maps to INSITE status 0x40,1
+# Diagnostic Protocol Service IDs (CalTerm/Insite)
+DIAG_SERVICE_ID,3,SECURED_WRITE,Secured write operations (requires security check)
+DIAG_SERVICE_ID,4,SYSTEM_CONTROL,System control operations
+DIAG_SERVICE_ID,5,MEMORY_ACCESS,Memory read/write operations
+DIAG_SERVICE_ID,6,SPECIAL_CONTROL,Special timing/control functions
+# Service 3 Sub-functions (Secured Operations) - requires systemSecurityCheck() pass
+DIAG_SECURED_SUBFUNC,0x40,WATER_IN_FUEL_CLEAR,Clear water-in-fuel fault (waterInFuelFaultClear)
+DIAG_SECURED_SUBFUNC,0x41,WATER_IN_FUEL_VALIDATE,Validate water-in-fuel condition (waterInFuelFaultValidation)
+DIAG_SECURED_SUBFUNC,0x42,HIGH_RPM_SHUTDOWN_ACTIVATE,Activate high RPM shutdown flag (activateHighRpmShutdownFlag)
+DIAG_SECURED_SUBFUNC,0x43,SYSTEM_RESET_TRIGGER,Trigger diagnostic system reset (triggerDiagnosticSystemReset)
+DIAG_SECURED_SUBFUNC,0x50,NOP_ACK,No operation - returns success (0)
+DIAG_SECURED_SUBFUNC,0x51,MEMORY_PATCH,RAM patching system (memoryPatchingSystem)
+DIAG_SECURED_SUBFUNC,0x52,SECURED_SHUTDOWN_REQUEST,Request secured shutdown (requestSecuredShutdown)
+DIAG_SECURED_SUBFUNC,0x53,UNSUPPORTED_ERROR,Unsupported operation - returns error code 4
+DIAG_SECURED_SUBFUNC,0x54,CAN_BUFFER_LOGGER,CAN message buffer logger (canMessageBufferLogger)
+# Service 4 Sub-functions (System Control) - case 4 in diagnosticCommandDispatcher
+DIAG_CONTROL_SUBFUNC,0x64,SYSTEM_CONTROL_100,System control function 100 (systemControl64)
+DIAG_CONTROL_SUBFUNC,0x65,FAULT_SCANNER_ENABLE,Enable fault flag scanner (enableFaultFlagScanner)
+DIAG_CONTROL_SUBFUNC,0x66,CLEAR_COMMAND_STATE,Clear diagnostic_command_state to 0
+DIAG_CONTROL_SUBFUNC,0x69,WATER_IN_FUEL_INIT,Water in fuel detection init (waterInFuelDetectionStateInit)
+DIAG_CONTROL_SUBFUNC,0x70,RESERVED_112,Reserved - returns error code 4
+DIAG_CONTROL_SUBFUNC,0x71,SET_COMMAND_STATE_BIT0,Set bit 0 of diagnostic_command_state
+DIAG_CONTROL_SUBFUNC,0x72,RESERVED_114,Reserved - returns error code 4
+DIAG_CONTROL_SUBFUNC,0x73,SET_COMMAND_STATE_BIT1,Set bit 1 of diagnostic_command_state
+DIAG_CONTROL_SUBFUNC,0x74,SYSTEM_CONTROL_116,System control function 116 (systemControl74)
+DIAG_CONTROL_SUBFUNC,0x75,SYSTEM_CONTROL_117,System control function 117 (systemControl75)
+DIAG_CONTROL_SUBFUNC,0x76,RESERVED_118,Reserved - returns error code 4
+# Service 5 Memory Operation Types (Upper Nibble)
+DIAG_MEMORY_OP,0x60,READ_3BYTE_ADDR,Memory read with 3-byte addressing
+DIAG_MEMORY_OP,0x80,WRITE_4BYTE_ADDR,Memory write with 4-byte addressing
+DIAG_MEMORY_OP,0xA0,WRITE_2BYTE_ADDR,Memory write with 2-byte addressing
+DIAG_MEMORY_OP,0xB0,MULTI_PKT_RECEIVE,Multi-packet data receive
+DIAG_MEMORY_OP,0xC0,READ_2BYTE_ADDR,Memory read with 2-byte addressing
+DIAG_MEMORY_OP,0xE0,READ_1BYTE_ADDR,Memory read with 1-byte addressing
+DIAG_MEMORY_OP,0xF0,MULTI_PKT_TRANSMIT,Multi-packet data transmit
+# Extended Diagnostic Services (0x43-0x56) - Memory Read Services
+DIAG_EXTENDED_SVC,0x43,MEM_READ_2BYTE_4BYTE,Memory read: 2-byte param + 4-byte offset (diagMemoryReadService43Handler)
+DIAG_EXTENDED_SVC,0x46,MEM_READ_2BYTE_ONLY,Memory read: 2-byte param only (diagMemoryReadService46Handler)
+DIAG_EXTENDED_SVC,0x48,MEM_READ_2BYTE_4BYTE_4BYTE,Memory read: 2-byte + 4-byte + 4-byte params (diagMemoryReadService48Handler)
+DIAG_EXTENDED_SVC,0x4A,MEM_READ_4BYTE_1BYTE,Memory read: 4-byte address + 1-byte length (diagMemoryReadService4aHandler)
+DIAG_EXTENDED_SVC,0x4C,MEM_READ_4BYTE_4BYTE,Memory read: 4-byte address + 4-byte length (diagMemoryReadService4cHandler)
+DIAG_EXTENDED_SVC,0x4F,EXTENDED_4F,Extended diagnostic service 0x4F
+DIAG_EXTENDED_SVC,0x51,EXTENDED_51,Extended diagnostic service 0x51
+# Fuel Arbitrator Modes (diagnosticSessionValidator param 0x4A - different from memory read service)
+FUEL_ARB_MODE,0,RESET_MODE,Reset/clear arbitrator state
+FUEL_ARB_MODE,1,RPM_TARGET_MODE,Set RPM target mode
+FUEL_ARB_MODE,2,THROTTLE_PCT_MODE,Throttle percentage control mode
+FUEL_ARB_MODE,3,FUEL_LIMIT_MODE,Fuel limit control mode
+# INSITE Parameter Command Codes - insite_command_byte values in insiteCommandByteDispatcher
+# DTC/Diagnostic codes (0x02-0x03)
+INSITE_PARAM_CODE,0x02,DTC_STATUS_FLAGS,DTC search result status flags,1
+INSITE_PARAM_CODE,0x03,DERATE_STATUS,Derate status byte bit flags,1
+# Engine protection status (0x47-0x53)
+INSITE_PARAM_CODE,0x47,HIGH_RPM_PROTECTION_STATUS,High RPM protection status flags,1
+INSITE_PARAM_CODE,0x4A,BOOST_PRESSURE_TARGET,Boost pressure target pointer (scaled >>7),1
+INSITE_PARAM_CODE,0x53,DIAGNOSTIC_FUEL_MODE_FLAG,Diagnostic fuel control mode flag (0x80 if mode==10),1
+# Single-byte scaled values (0x54-0x58)
+INSITE_PARAM_CODE,0x54,THROTTLE_POSITION,Throttle position value (scaled >>7),1
+INSITE_PARAM_CODE,0x55,INSITE_STATUS_BYTE,Combined status byte with sensor/derate flags,1
+INSITE_PARAM_CODE,0x56,BOOST_PRESSURE_BASE,Target boost pressure base (scaled >>7),1
+INSITE_PARAM_CODE,0x57,FUEL_TIMING_LIMIT,Fuel timing transition limit (scaled >>7),1
+INSITE_PARAM_CODE,0x58,FUEL_TIMING_DISPLAY,INSITE fuel timing display (scaled >>7),1
+# Additional single-byte values (0x59-0x79)
+INSITE_PARAM_CODE,0x59,OIL_PRESSURE_STATUS,Oil pressure protection status byte,1
+INSITE_PARAM_CODE,0x5B,ACTIVE_DERATE_VALUE,Active derate value (scaled *250/400),1
+INSITE_PARAM_CODE,0x5C,ASTHRFES_CALC,ASTHRFES calculation input (scaled >>7),1
+INSITE_PARAM_CODE,0x64,PARAM_DISPLAY_VALUE,INSITE parameter display value (scaled >>6),1
+INSITE_PARAM_CODE,0x66,DIAGNOSTIC_SENSOR,Diagnostic sensor reading (scaled >>4 max 0xFF),1
+INSITE_PARAM_CODE,0x69,INTAKE_MANIFOLD_TEMP,Intake manifold temp (offset 0x1900 scaled >>7),1
+INSITE_PARAM_CODE,0x6C,DIAGNOSTIC_READING,INSITE diagnostic reading (scaled >>3),1
+INSITE_PARAM_CODE,0x6E,THROTTLE_RAW,Throttle position raw (offset 0x1900 scaled >>7),1
+INSITE_PARAM_CODE,0x79,RETARDER_MODE_STATUS,Retarder mode threshold status,1
+# Two-byte word values (0x9C-0xB8)
+INSITE_PARAM_CODE,0x9C,RESERVED_9C,Reserved two-byte response,2
+INSITE_PARAM_CODE,0x9D,RESERVED_9D,Reserved two-byte response,2
+INSITE_PARAM_CODE,0xA6,ECU_COMMAND_SELECTOR,ECU command selector high/low bytes,2
+INSITE_PARAM_CODE,0xA8,RETARDER_INPUT,Retarder input value (>>1 + *2),2
+INSITE_PARAM_CODE,0xAF,RESERVED_AF,Reserved two-byte response,2
+INSITE_PARAM_CODE,0xB6,CLUTCH_OPERATING_STATS,Clutch operating statistics output,2
+INSITE_PARAM_CODE,0xB7,FUEL_STATISTICS_CMD,Fuel statistics command value,2
+INSITE_PARAM_CODE,0xB8,FUEL_ECONOMY_STATS,Fuel economy statistics output,2
+# Two-byte RPM/sensor values (0xB9-0xBE)
+INSITE_PARAM_CODE,0xB9,CLUTCH_TRANSITIONS,Clutch transitions per distance,2
+INSITE_PARAM_CODE,0xBB,OIL_PRESSURE_THRESHOLD,Oil pressure RPM limit threshold (scaled >>1),2
+INSITE_PARAM_CODE,0xBC,GOVERNOR_RPM_ERROR,Governor RPM error value (scaled >>1),2
+INSITE_PARAM_CODE,0xBD,AC_HIGH_PRESSURE,AC high pressure switch (scaled >>1),2
+INSITE_PARAM_CODE,0xBE,CURRENT_RPM_RAW,Current engine RPM raw (scaled >>1),2
+# Special response builders (0xC1-0xF3)
+INSITE_PARAM_CODE,0xC1,ACTIVE_FAULT_LIST,Active fault list builder (insiteActiveFaultListBuilder),1
+INSITE_PARAM_CODE,0xC2,FAULT_DETAIL,Fault detail builder (insiteFaultDetailBuilder),1
+INSITE_PARAM_CODE,0xC4,LIVE_DATA_PARAM,Live data parameter with lookup state,1
+INSITE_PARAM_CODE,0xEA,ECU_ID_RESPONSE,ECU ID response builder (insiteEcuIdResponseBuilder),1
+INSITE_PARAM_CODE,0xEB,RUNTIME_HOURS,Runtime hours accumulator (/0x708),4
+INSITE_PARAM_CODE,0xEC,COMMAND_BASE_VALUE,INSITE command base value (4 bytes),4
+INSITE_PARAM_CODE,0xED,CAPACITY_RESPONSE,Capacity response builder (insiteCapacityResponseBuilder),1
+INSITE_PARAM_CODE,0xF3,VERSION_INFO,Version info builder (insiteVersionInfoBuilder),1
+# Four-byte statistics values (0xF4-0xFA)
+INSITE_PARAM_CODE,0xF4,VEHICLE_DISTANCE_CLUTCH,Vehicle distance clutch value (proportional calc),4
+INSITE_PARAM_CODE,0xF5,VEHICLE_DISTANCE_STATS,Vehicle distance statistics value (proportional calc),4
+INSITE_PARAM_CODE,0xF7,VEHICLE_HOURS_STATS,Vehicle hours statistics value (/0x708),4
+INSITE_PARAM_CODE,0xF8,IDLE_HOURS,INSITE idle hours accumulator (/0x708),4
+INSITE_PARAM_CODE,0xFA,FUEL_STATS_OUTPUT,INSITE fuel statistics output,4
+# INSITE Status Byte Output Flags - response byte for command 0x55 in insiteCommandByteDispatcher
+INSITE_STATUS_OUTPUT,0x80,PROTECTION_ENABLED,Protection system enable flag is set,1
+INSITE_STATUS_OUTPUT,0x40,DERATE_BIT2_SET,Derate status byte bit 2 (0x04) is set,1
+INSITE_STATUS_OUTPUT,0x20,DERATE_BIT3_SET,Derate status byte bit 3 (0x08) is set,1
+INSITE_STATUS_OUTPUT,0x10,SENSOR_BIT1_SET,Sensor status register bit 1 (0x02) is set,1
+INSITE_STATUS_OUTPUT,0x08,SENSOR_BIT0_SET,Sensor status register bit 0 (0x01) is set,1
+INSITE_STATUS_OUTPUT,0x04,SENSOR_BIT3_SET,Sensor status register bit 3 (0x08) is set,1
+INSITE_STATUS_OUTPUT,0x02,SENSOR_BIT2_SET,Sensor status register bit 2 (0x04) is set,1
+INSITE_STATUS_OUTPUT,0x01,SENSOR_BIT4_SET,Sensor status register bit 4 (0x10) is set,1
+# Insite Live Data Commands
+INSITE_COMMAND,0x00,SINGLE_PARAM,Single parameter request
+INSITE_COMMAND,0x80,EXTENDED_PARAM,Extended parameter request
+INSITE_COMMAND,0xC3,PID_DTC_REQUEST,PID/DTC diagnostic request
+INSITE_COMMAND,0xC4,PID_DTC_ACK,PID/DTC acknowledgment
+# Diagnostic Response Codes
+DIAG_RESPONSE_CODE,0,SUCCESS,Operation successful
+DIAG_RESPONSE_CODE,2,DIAG_INVALID_LENGTH,Invalid message length
+DIAG_RESPONSE_CODE,3,SECURITY_FAILED,Security check failed
+DIAG_RESPONSE_CODE,4,BUFFER_OVERFLOW,Buffer overflow or unsupported
+DIAG_RESPONSE_CODE,8,ADDR_VALIDATION_FAIL,Address validation failed
+DIAG_RESPONSE_CODE,9,INVALID_ADDR_RANGE,Invalid address range
+DIAG_RESPONSE_CODE,10,INVALID_ADDR_ALT,Invalid address range (alternate)
+DIAG_RESPONSE_CODE,0x14,CHECKSUM_MISMATCH,Checksum mismatch
+DIAG_RESPONSE_CODE,0x18,UNKNOWN_SUBFUNC,Unknown sub-function
+# Protocol Enable Flags (0x8035ea)
+DIAG_ENABLE_FLAGS,0x01,CORE_SERVICE_ENABLE,Core diagnostic service enable
+DIAG_ENABLE_FLAGS,0x02,INSITE_ENABLE,Insite live data enable
+DIAG_ENABLE_FLAGS,0x04,EXTENDED_ENABLE,Extended diagnostics enable (0x45-0x56)
+# Sensor Status Register bit flags - used in insiteCommandByteDispatcher case 0x55/0x59
+SENSOR_STATUS_BITS,0x10,SENSOR_STATUS_BIT4,Sensor status bit 4 - maps to INSITE output 0x01,1
+SENSOR_STATUS_BITS,0x08,SENSOR_STATUS_BIT3,Sensor status bit 3 - maps to INSITE output 0x04,1
+SENSOR_STATUS_BITS,0x04,SENSOR_STATUS_BIT2,Sensor status bit 2 - maps to INSITE output 0x02,1
+SENSOR_STATUS_BITS,0x02,SENSOR_STATUS_BIT1,Sensor status bit 1 - maps to INSITE output 0x10,1
+SENSOR_STATUS_BITS,0x01,SENSOR_STATUS_BIT0,Sensor status bit 0 - maps to INSITE output 0x08,1
+# Security System Constants
+SECURITY_BYPASS_FLAG,0xFF,BYPASS_ENABLED,Security checks completely bypassed
+SECURITY_BYPASS_FLAG,0xB522,BYPASS_MAGIC,Alternative bypass magic value (-0x4ADE signed)
+SECURITY_BYPASS_FLAG,0x00,SECURITY_ACTIVE,Normal security - checks enforced
+# Security Check Return Values
+SECURITY_RESULT,0x00,AUTH_SUCCESS,Security check passed - operation authorized
+SECURITY_RESULT,0x02,SECURITY_INVALID_LENGTH,Invalid message length for service
+SECURITY_RESULT,0x03,AUTH_FAILED,Security check failed - access denied
+SECURITY_RESULT,0x07,CONDITION_NOT_MET,Pre-condition not satisfied
+SECURITY_RESULT,0x0A,INVALID_ADDR,Invalid memory address range
+SECURITY_RESULT,0x0B,BUFFER_WRITE_FAIL,Circular buffer write failed
+SECURITY_RESULT,0xFF,PROCEED_TO_HANDLER,Proceed to handler (auth passed or not required)
+# Security-Protected Service IDs
+SECURED_SERVICE_ID,3,SERVICE_SECURED_WRITE,Secured write operations (length=3)
+SECURED_SERVICE_ID,4,SERVICE_SYSTEM_CONTROL,System control operations (length=3)
+# VP44 Communication State Machine - _vp44_state_machine_index in vp44_communication_state_machine
+VP44_COMM_STATE,0,INIT,Initialize transmission - setup buffers and addresses,1
+VP44_COMM_STATE,1,WRITE_BUFFER,Write buffer data with circular buffer,1
+VP44_COMM_STATE,2,TRANSMIT,Execute circular buffer write transmission,1
+VP44_COMM_STATE,3,VP44_COMM_IDLE,Idle/complete - transmission inactive,1
+# VP44 Communication Mode - _vp44_comm_state sub-state within state machine
+VP44_COMM_MODE,0,MODE_IDLE,Idle mode - transition to state 3,1
+VP44_COMM_MODE,1,MODE_ACTIVE,Active mode - perform mid-buffer transmission,1
+VP44_COMM_MODE,2,MODE_RESET,Reset mode - transmit to end address and reset pointers,1
+# VP44 Status Flags 1 bit definitions - vp44_status_flags_1 register
+VP44_STATUS_FLAGS_1,0x8000,STATUS_BIT15,VP44 status flag bit 15 - checked in fuel control,2
+VP44_STATUS_FLAGS_1,0x4000,STATUS_BIT14,VP44 status flag bit 14 - protection mode check,2
+VP44_STATUS_FLAGS_1,0x2000,STATUS_BIT13,VP44 status flag bit 13,2
+VP44_STATUS_FLAGS_1,0x1000,STATUS_BIT12,VP44 status flag bit 12,2
+VP44_STATUS_FLAGS_1,0x0800,STATUS_BIT11,VP44 status flag bit 11,2
+VP44_STATUS_FLAGS_1,0x0400,STATUS_BIT10,VP44 status flag bit 10,2
+# VP44 Status Flags 2 bit definitions - vp44_status_flags_2 register
+VP44_STATUS_FLAGS_2,0x08,OVERRIDE_FUEL_MODE,VP44 override fuel mode active,1
+# VP44 Flag Register 1 bit definitions - vp44_flag_register_1
+VP44_FLAG_REGISTER_1,0x4000,FLAG_BIT14,VP44 flag register bit 14 - fuel control decision,2
+# Diagnostic System Flags 1 bit definitions - diagnostic_system_flags_1
+DIAGNOSTIC_SYSTEM_FLAGS_1,0x4000,DIAG_FLAG_BIT14,Diagnostic flag bit 14,2
+DIAGNOSTIC_SYSTEM_FLAGS_1,0x2000,DIAG_FLAG_BIT13,Diagnostic flag bit 13,2
+DIAGNOSTIC_SYSTEM_FLAGS_1,0x1000,DIAG_FLAG_BIT12,Diagnostic flag bit 12,2
+DIAGNOSTIC_SYSTEM_FLAGS_1,0x04,DIAG_FLAG_BIT2,Diagnostic flag bit 2 - used with high RPM protection,1
+DIAGNOSTIC_SYSTEM_FLAGS_1,0x02,DIAG_SYS_FLAG_BIT1,Diagnostic flag bit 1 - high RPM protection check,1
+# VP44 Command Message (0x100) Status Byte Values - buildPgn61444_ProprietarySpeed
+VP44_CMD_STATUS,0xF0,STATUS_F0,Engine state 11 (0x0B case)
+VP44_CMD_STATUS,0xF1,VP44_STATUS_F1,Engine state 3/7/8
+VP44_CMD_STATUS,0xF2,STATUS_F2,Engine state 9
+VP44_CMD_STATUS,0xF3,STATUS_F3,Engine state 4
+VP44_CMD_STATUS,0xF4,STATUS_F4,Engine state 10 (0x0A case)
+VP44_CMD_STATUS,0xF5,STATUS_F5,Fuel mode 3 - limited fueling
+VP44_CMD_STATUS,0xF6,STATUS_F6,Fuel mode 1 - normal operation
+VP44_CMD_STATUS,0xF7,STATUS_F7,Fuel mode 2 - transition mode
+VP44_CMD_STATUS,0xF8,STATUS_F8,Engine state 13-21 (0x0D-0x15 cases)
+VP44_CMD_STATUS,0xF9,STATUS_F9,Engine state 12 (0x0C case)
+VP44_CMD_STATUS,0xFA,STATUS_FA,Engine state 24 (0x18 case)
+VP44_CMD_STATUS,0xFE,STATUS_FE,Default/error state
+# VP44 Command Message Structure (0x100 to pump)
+VP44_CMD_BYTE,0,VP44_STATUS_BYTE,Engine status/mode byte (0xF0-0xFE values)
+VP44_CMD_BYTE,1,FUEL_HIGH,Fuel amount high byte (param_table_aux>>8 + 125)
+VP44_CMD_BYTE,2,FUEL_LOW,Fuel amount low byte (param_table_main>>8 + 125)
+VP44_CMD_BYTE,3,TIMING_3,Timing advance data byte 3
+VP44_CMD_BYTE,4,TIMING_4,Timing advance data byte 4
+VP44_CMD_BYTE,5,TIMING_5,Timing advance data byte 5
+VP44_CMD_BYTE,6,RPM_LOW,Engine RPM low byte (current_engine_rpm & 0xFF)
+VP44_CMD_BYTE,7,RPM_HIGH,Engine RPM high byte (current_engine_rpm >> 8)
+# VP44 Response Message (0x112 from pump) - vp44FuelTempHandler
+VP44_RESP_BYTE,1,FUEL_TEMP_LOW,Fuel temperature low byte
+VP44_RESP_BYTE,2,FUEL_TEMP_HIGH,Fuel temperature high byte
+VP44_RESP_BYTE,3,SEQUENCE_NUM,Message sequence number
+VP44_RESP_BYTE,6,MSG_ID_HIGH,Message ID high byte (must be 0xEF)
+# VP44 CAN Message Dispatcher Types - vp44CanMessageDispatcher
+VP44_CAN_DISPATCH,0x10,FUEL_TEMP_MSG,VP44 fuel temperature response (calls vp44FuelTempHandler)
+VP44_CAN_DISPATCH,0x11,PARAM_REQUEST_MSG,Diagnostic parameter request (calls diagnosticParamRequestHandler)
+VP44_CAN_DISPATCH,0x13,STATUS_REQUEST_MSG,Diagnostic status request (calls diagnosticStatusRequestHandler)
+VP44_CAN_DISPATCH,0xFF,ERROR_MSG,Error message (calls diagnosticErrorHandler)
+# Sync State Values - CMSYSS/CMSYBKSS/CRSYBKSS/CSSYSSCM
+SYNC_STATE,0,NO_SYNC,No synchronization established
+SYNC_STATE,1,HAVE_SYNC,Synchronization established and maintained
+SYNC_STATE,2,LOST_SYNC,Synchronization was established but lost
+# VP44 FSO Fault Detection
+VP44_FSO_FAULT,0x10,FSO_BIT1_FAULT,FSO bit 1 fault detected (vp44_status_register & 0x02)
+VP44_FSO_FAULT,0x20,FSO_CIRCUIT_FAULT,FSO circuit fault detected (vp44_status_register & 0x01)
+# VP44 Communication Protocol Constants
+VP44_PROTOCOL,0xF00400,MSG_HEADER,VP44 command message header constant
+VP44_PROTOCOL,0x18EC,TRANSPORT_HEADER,J1939 transport protocol header
+VP44_PROTOCOL,0xEF00,EXPECTED_RESPONSE,Expected VP44 response ID (0xEF byte)
+# Protection State Machine - _protection_state_machine_index in engineProtectionMultiStateSlowCycle40Coordinator
+PROTECTION_STATE,0,FAULT_DURATION_COUNT,Count fault duration (protectionState0FaultDurationCounter),2
+PROTECTION_STATE,1,DIAGNOSTIC_VALIDATE,Validate diagnostic conditions (protectionState1DiagnosticValidator),2
+PROTECTION_STATE,2,THRESHOLD_CALC,Calculate protection thresholds (protectionState2ThresholdCalculator),2
+PROTECTION_STATE,3,PRIMARY_RPM_MONITOR,Primary coordinator + RPM monitor (protectionState3a/3b),2
+PROTECTION_STATE,4,EMERGENCY_HANDLER,Emergency shutdown handler (protectionState4EmergencyHandler),2
+# Proprietary Diagnostic Status Byte Values - buildProprietaryLoadStatusMessage
+PROP_DIAG_STATUS,0xF0,STATUS_NORMAL,Normal operation - load below threshold
+PROP_DIAG_STATUS,0xF1,PROP_DIAG_STATUS_F1,Status F1 - specific condition
+PROP_DIAG_STATUS,0xF4,STATUS_LOAD_HIGH,Load above threshold
+PROP_DIAG_STATUS,0xF8,STATUS_FAULT_ACTIVE,Critical fault active (fault 67 or 69)
+PROP_DIAG_STATUS,0x01,STATUS_BIT0_LOAD_INACTIVE,Bit 0 set when load calculation inactive
+# High RPM Protection Status Flags - response byte for INSITE command 0x47
+HIGH_RPM_PROTECTION_FLAGS,0x80,TIMER_ACTIVE,High RPM protection timer is running,1
+HIGH_RPM_PROTECTION_FLAGS,0x08,HIGH_RPM_DIAG_FLAG_BIT1,Diagnostic system flags bit 1 (0x02) is set,1
+HIGH_RPM_PROTECTION_FLAGS,0x04,FAULT_WITH_DIAG,High RPM fault + diagnostic flag bit 2,1
+HIGH_RPM_PROTECTION_FLAGS,0x02,SHUTDOWN_TIMER_ZERO,Shutdown active and timer expired,1
+HIGH_RPM_PROTECTION_FLAGS,0x01,HIGH_RPM_WARNING_ACTIVE,High RPM protection warning flag set,1
+# Fault Flag Array Indices (fault word 4 at offset 0x08 from base)
+FAULT_WORD_4_BITS,0x08,FAULT_67_BIT,Fault ID 67 - critical fault affecting load status
+FAULT_WORD_4_BITS,0x10,FAULT_68_BIT,Fault ID 68 - affects FSO detection
+FAULT_WORD_4_BITS,0x20,FAULT_69_BIT,Fault ID 69 - critical fault affecting load status
+# Fuel Pressure Sync State Machine - _fuel_pressure_sync_state_machine in fuelPressureSyncStateMachine
+FUEL_SYNC_STATE,0,FUEL_SYNC_IDLE,Idle - waiting for VP44 diagnostic fault,4
+FUEL_SYNC_STATE,1,FAULT_COUNTING,Fault counting - increment until threshold reached,4
+FUEL_SYNC_STATE,2,STATUS_MONITORING,Status monitoring - check RPM and injection flags,4
+FUEL_SYNC_STATE,3,FAULT_CONFIRMED,Fault confirmed - wait for VP44 fault clear,4
+FUEL_SYNC_STATE,4,DELAY_RECOVERY,Delay recovery - count down before returning to idle,4
+# Fuel Source Identifier - stored in _DAT_0080c9a6 by fuelDemandModeSelector
+FUEL_SOURCE_ID,0x09,FUEL_SRC_GOVERNOR_LOW,Governor control - low fuel demand,1
+FUEL_SOURCE_ID,0x0A,FUEL_SRC_GOVERNOR_HIGH,Governor control - high fuel demand,1
+FUEL_SOURCE_ID,0x0B,FUEL_SRC_DIAGNOSTIC,Diagnostic mode override (mode 0xB),1
+FUEL_SOURCE_ID,0x12,FUEL_SRC_RAMP_LIMIT,Ramp rate limited fuel demand,1
+FUEL_SOURCE_ID,0x14,FUEL_SRC_CALCULATED,Calculated fuel demand from tables,1
+FUEL_SOURCE_ID,0x16,FUEL_SRC_LOW_RPM,Low RPM running / transitional mode fuel,1
+FUEL_SOURCE_ID,0x17,FUEL_SRC_OVERRIDE,Manual override fuel command,1
+FUEL_SOURCE_ID,0x18,FUEL_SRC_VP44_ACTIVE,VP44 injection system active fuel,1
+FUEL_SOURCE_ID,0x19,FUEL_SRC_HIGH_PERF,High performance mode fuel,1
+FUEL_SOURCE_ID,0x1A,FUEL_SRC_IDLE,Idle mode - zero fuel command,1
+FUEL_SOURCE_ID,0x1B,FUEL_SRC_FAULT,Fault/emergency mode fuel,1
+# Diagnostic Source Codes - identifies which subsystem triggered a diagnostic condition
+DIAGNOSTIC_SOURCE_CODE,0,NONE,No active diagnostic source,2
+DIAGNOSTIC_SOURCE_CODE,1,FUEL_ARBITRATOR,Fuel arbitrator triggered (rpm_target == 2),2
+DIAGNOSTIC_SOURCE_CODE,2,DIAG_STATUS_2,Diagnostic status 2 condition,2
+DIAGNOSTIC_SOURCE_CODE,5,ENGINE_FLAGS,Engine control flags triggered,2
+DIAGNOSTIC_SOURCE_CODE,6,EPS_FAULT,Electronic Position Sensor fault,2
+DIAGNOSTIC_SOURCE_CODE,7,DIAG_STATUS_7,Diagnostic status 7 condition,2
+DIAGNOSTIC_SOURCE_CODE,30,DIAG_STATUS_30,Diagnostic status 30 condition,2
+# VP44 Engine State - assigned to vp44_engine_state, maps engine operating modes to VP44 command status
+VP44_ENGINE_STATE,0x16,LOW_RPM_OR_TRANSITIONAL,Low RPM running or transitional fuel mode,2
+VP44_ENGINE_STATE,0x17,MANUAL_OVERRIDE,Manual override fuel command mode,2
+VP44_ENGINE_STATE,0x18,VP44_ACTIVE_MODE,VP44 injection system active,2
+VP44_ENGINE_STATE,0x19,HIGH_PERFORMANCE_MODE,High performance mode,2
+VP44_ENGINE_STATE,0x1A,IDLE_STATE,Idle/no-fuel state,2
+VP44_ENGINE_STATE,0x1B,FAULT_EMERGENCY_STATE,Fault/emergency shutdown state,2
+# Diagnostic Fuel Control Mode - values for diagnostic_fuel_control_mode (55+ refs)
+DIAGNOSTIC_FUEL_CONTROL_MODE,0x0A,FUEL_MODE_INSITE_DISPLAY,INSITE live data display mode,1
+DIAGNOSTIC_FUEL_CONTROL_MODE,0x0B,FUEL_MODE_RPM_THRESHOLD,RPM threshold protection mode,1
+DIAGNOSTIC_FUEL_CONTROL_MODE,0x0C,FUEL_MODE_FUEL_DELIVERY,Fuel delivery control mode,1
+# Output Control Timing State - PWM output timing mode toggle
+OUTPUT_CONTROL_TIMING_STATE,0x01,TIMING_MODE_A,PWM output timing mode A,1
+OUTPUT_CONTROL_TIMING_STATE,0x02,TIMING_MODE_B,PWM output timing mode B,1
+# Retarder Mode State - values for retarder_mode_priority_level
+RETARDER_MODE_STATE,0,RETARDER_DISABLED,Retarder control disabled,1
+RETARDER_MODE_STATE,1,RETARDER_SPEED_SYNC,Speed synchronization mode,1
+RETARDER_MODE_STATE,2,RETARDER_LOAD_BASED,Load-based retard mode,1
+RETARDER_MODE_STATE,3,RETARDER_PROPORTIONAL,Proportional control mode,1
+# Output Control Timer State - values for output timing state machine
+OUTPUT_CONTROL_TIMER_STATE,0,OUTPUT_TIMER_IDLE,Output timer idle state,1
+OUTPUT_CONTROL_TIMER_STATE,1,OUTPUT_TIMER_STATE_1,Output timer state 1,1
+OUTPUT_CONTROL_TIMER_STATE,2,OUTPUT_TIMER_STATE_2,Output timer state 2,1
+OUTPUT_CONTROL_TIMER_STATE,3,OUTPUT_TIMER_STATE_3,Output timer state 3,1
+OUTPUT_CONTROL_TIMER_STATE,4,OUTPUT_TIMER_STATE_4,Output timer state 4,1
+OUTPUT_CONTROL_TIMER_STATE,5,OUTPUT_TIMER_STATE_5,Output timer state 5,1
+# DZG Timing State - crankshaft sensor timing control state machine
+DZG_TIMING_STATE,0,INITIAL,Initial state check angle threshold,2
+DZG_TIMING_STATE,1,DZG_ACTIVE,Active state monitor for transitions,2
+DZG_TIMING_STATE,2,ALTERNATE,Alternative mode state,2
+# Sensor History State - sensor/oil pressure monitoring state machine
+SENSOR_HISTORY_STATE,0,SENSOR_IDLE,Initial monitoring state,2
+SENSOR_HISTORY_STATE,1,SENSOR_ACTIVE,Sensor actively being monitored,2
+SENSOR_HISTORY_STATE,2,SENSOR_FAULT_DETECTED,Fault condition detected,2
+SENSOR_HISTORY_STATE,3,RECOVERY,Recovery countdown state,2
+# Shutdown Minimum Selector Source - identifies which limiter won the minimum selection
+# Values set by shutdownMinimumSelector* functions, tracked in shutdown_minimum_selector_value
+SHUTDOWN_SELECTOR_SOURCE,13,FUEL_DEMAND_MODE_OVERRIDE,Fuel demand mode selector override (fuelDemandModeSelector),2
+SHUTDOWN_SELECTOR_SOURCE,15,SHUTDOWN_PROTECTION_LIMIT,Shutdown protection fuel limit (shutdownMinimumSelector15),2
+SHUTDOWN_SELECTOR_SOURCE,16,DIAGNOSTIC_MODE_BUFFER,Diagnostic mode buffer limit (shutdownMinimumSelector16),2
+SHUTDOWN_SELECTOR_SOURCE,17,FUEL_LIMIT_SHUTDOWN,Fuel limit from shutdown calc (shutdownMinimumSelector17),2
+SHUTDOWN_SELECTOR_SOURCE,19,CALCULATED_FUEL_TIMING,Calculated fuel timing value (shutdownMinimumSelector19),2
+SHUTDOWN_SELECTOR_SOURCE,20,FUEL_ARBITRATOR_DIAG,Fuel arbitrator diagnostic mode (shutdownMinimumSelector20),2
+SHUTDOWN_SELECTOR_SOURCE,21,SHUTDOWN_LIMIT_SELECTOR,Shutdown limit selector value (shutdownMinimumSelector21),2
+SHUTDOWN_SELECTOR_SOURCE,28,SHUTDOWN_MINIMUM_INIT,Shutdown minimum init value (shutdownMinimumSelector28),2
+SHUTDOWN_SELECTOR_SOURCE,29,PROTECTION_SHUTDOWN_LIMIT,Protection shutdown fuel limit (shutdownMinimumSelector29),2
+SHUTDOWN_SELECTOR_SOURCE,34,OIL_PRESSURE_PROTECTION,Oil pressure protection limit (oilPressureProtection),2
+# Fuel Demand Source ID - identifies which calculation/limiter is providing fuel demand
+# Tracked in fuel_demand_source_id, set by various fuelDemandLimit* and selector functions
+FUEL_DEMAND_SOURCE,0,TABLE_BLEND_CALC,Table interpolation blend calculation result,2
+FUEL_DEMAND_SOURCE,1,RPM_BASED_LIMIT,RPM-based fuel demand limit (fuelDemandLimitMinimumUpdater),2
+FUEL_DEMAND_SOURCE,2,BLEND_PARAM_FALLBACK,Blend parameter 2 fallback value,2
+FUEL_DEMAND_SOURCE,3,HIGH_RPM_FUEL_LIMIT,High RPM fuel limit (fuelLimitMinimumSelector),2
+FUEL_DEMAND_SOURCE,4,FUEL_LIMIT_FLOOR,Fuel limit floor value (fuelDemandLimitSelector4),2
+FUEL_DEMAND_SOURCE,5,ENGINE_MODE_TRANSITION,Engine mode transition timing (engineModeTransitionStateUpdater),2
+FUEL_DEMAND_SOURCE,6,STATE_24_OVERRIDE,VP44 active mode state 24 override (fuelDemandState24Override),2
+FUEL_DEMAND_SOURCE,11,VP44_FLAG_REGISTER,VP44 flag register RPM load lookup (fuelDemandLimitSelector11),2
+# Fuel Demand Limit Source - state machine for fuel limiting in fuelDemandFaultStateBuilder
+# Tracked in fuel_demand_limit_source, switch statement at torqueControlStatusBuilder
+FUEL_DEMAND_LIMIT,0,NO_LIMIT_ACTIVE,No fuel limit active / cleared state,2
+FUEL_DEMAND_LIMIT,1,OVERRIDE_STATE_ACTIVE,Override state active from fuel_demand_override_state,2
+FUEL_DEMAND_LIMIT,2,VP44_DIAGNOSTIC_FAULT,VP44 diagnostic fault limit (fuelDemandLimitSource2Selector),2
+FUEL_DEMAND_LIMIT,3,RETARDER_INPUT_LIMIT,Retarder input flags based limit (fuelDemandLimitSource3Selector),2
+FUEL_DEMAND_LIMIT,4,RETARDER_MODE_TABLE,Retarder mode table count limit (fuelDemandLimitSource4Selector),2
+FUEL_DEMAND_LIMIT,5,PROTECTION_OVERRIDE,Protection/override state - init and fault recovery,2
+# Diagnostic Status Register - diagnostic operation mode state machine
+# Tracked in diagnostic_status_register, controls governor PID and parameter behavior
+DIAGNOSTIC_STATUS,0,NORMAL_OPERATION,No diagnostic mode active - normal operation,2
+DIAGNOSTIC_STATUS,1,FUEL_ARBITRATOR_SOURCE,Fuel arbitrator rpm_target==2 (setDiagnosticSourceFromFuelArbitrator),2
+DIAGNOSTIC_STATUS,2,DERATE_CONDITION_2,Derate condition 2 active (diagnosticStatus2Initializer),2
+DIAGNOSTIC_STATUS,3,DERATE_CONDITION_3,Derate condition 3 - governor PID active mode,2
+DIAGNOSTIC_STATUS,5,ENGINE_FLAGS_SOURCE,Engine flags diagnostic source (setDiagnosticSourceFromEngineFlags),2
+DIAGNOSTIC_STATUS,6,EPS_FAULT_MODE,EPS diagnostic mode from fault registers (epsDiagnosticModeChecker),2
+DIAGNOSTIC_STATUS,7,DIAGNOSTIC_MODE_7,Diagnostic mode 7 - target RPM rate limiting active,2
+DIAGNOSTIC_STATUS,8,DEFAULT_DIAGNOSTIC,Default diagnostic mode (diagnosticStatusDefaultSetter),2
+DIAGNOSTIC_STATUS,30,DERATE_CONDITION_30,Derate condition 0x1e active (diagnosticStatus30Setter),2
+# VP44 Diagnostic Mode State - state machine in vp44DiagnosticModeStateMachine and switch handler
+# Tracked in vp44_diagnostic_mode_state, controls protection system behavior
+VP44_DIAG_MODE,0,INACTIVE,Diagnostic mode inactive / cleared,2
+VP44_DIAG_MODE,1,BOOST_PRESSURE_INIT,Boost pressure threshold check init (set protection_system_enable_flag=1),2
+VP44_DIAG_MODE,2,BOOST_PRESSURE_MONITOR,Boost pressure monitoring active,2
+VP44_DIAG_MODE,3,SENSOR_BIT8_TRIGGERED,Sensor status bit 8 triggered protection,2
+VP44_DIAG_MODE,4,SENSOR_BIT2_PROTECTION,Sensor status bit 2 protection active,2
+VP44_DIAG_MODE,5,SENSOR_TYPE_0_MODE,Sensor type 0 mode (vp44_sensor_type_selector==0),2
+VP44_DIAG_MODE,6,SENSOR_TYPE_1_MODE,Sensor type 1 mode (vp44_sensor_type_selector!=0),2
+VP44_DIAG_MODE,7,PROTECTION_CONTINUE,Protection system continue state,2
+VP44_DIAG_MODE,8,EXIT_DISABLED,Exit/disabled state - protection clearing,2
+VP44_DIAG_MODE,256,UNINITIALIZED,Transitional/uninitialized state (0x100),2
+# High RPM Protection State - engine protection state machine in highRpmEngineProtectionStateMachine
+# Tracked in high_rpm_protection_state, manages high RPM warning and shutdown sequence
+HIGH_RPM_PROTECTION_STATE,0,MONITORING,Initial state - monitoring conditions for entry,2
+HIGH_RPM_PROTECTION_STATE,1,TIMER_COUNTING,Timer countdown active - conditions met,2
+HIGH_RPM_PROTECTION_STATE,2,RPM_PROTECTION_WARNING_ACTIVE,Warning threshold reached - protection active,2
+HIGH_RPM_PROTECTION_STATE,3,FAULT_TRIGGERED,Fault triggered - derate change detected during protection,2
+HIGH_RPM_PROTECTION_STATE,4,SHUTDOWN_PENDING,Shutdown pending - timer expired waiting for idle,2
+# TPU Transmission State Machine - CAN/serial transmission state machine
+# Tracked in tpu_transmission_state_machine, controls byte transmission sequence
+TPU_TRANSMISSION_STATE,0,INIT_SEND,Initial send state - start transmission,1
+TPU_TRANSMISSION_STATE,1,SENDING_DATA,Actively sending data bytes,1
+TPU_TRANSMISSION_STATE,2,CHECKSUM_CALC,Checksum calculation state,1
+TPU_TRANSMISSION_STATE,3,TRANSMISSION_COMPLETE,Transmission complete - cleanup,1
+# PWM Timer Cycle Advance State - timing cycle phase state (0-5 modulo 6)
+# Tracked in pwm_timer_cycle_advance_state, cycles through timing phases
+PWM_TIMER_CYCLE_STATE,0,CYCLE_PHASE_0,Timing cycle phase 0,1
+PWM_TIMER_CYCLE_STATE,1,CYCLE_PHASE_1,Timing cycle phase 1,1
+PWM_TIMER_CYCLE_STATE,2,CYCLE_PHASE_2,Timing cycle phase 2,1
+PWM_TIMER_CYCLE_STATE,3,CYCLE_PHASE_3,Timing cycle phase 3,1
+PWM_TIMER_CYCLE_STATE,4,CYCLE_PHASE_4,Timing cycle phase 4,1
+PWM_TIMER_CYCLE_STATE,5,CYCLE_PHASE_5,Timing cycle phase 5,1
+# Derate Event State Machine - tracks derate event duration for statistics
+# Tracked in derate_event_state_machine, monitors derate condition timing
+DERATE_EVENT_STATE,0,NO_DERATE,No derate condition active,2
+DERATE_EVENT_STATE,1,TIMING_ACTIVE,Derate timing accumulator active,2
+DERATE_EVENT_STATE,2,EVENT_COUNTED,Event counted - counter incremented,2
+# I/O Control State - per-bit state machine for io_control_source_register bits
+# Tracked in io_control_bitX_state, controls output pin state transitions
+IO_CONTROL_STATE,0,OFF_INACTIVE,Output off/inactive - waiting for condition,1
+IO_CONTROL_STATE,1,TRANSITIONING,Transition state - checking conditions,1
+IO_CONTROL_STATE,2,ON_ACTIVE,Output on/active - condition met,1
+# RPM Timer Capture State - RPM measurement state machine
+# Tracked in rpm_timer_capture_state, controls crank/cam pulse processing
+RPM_CAPTURE_STATE,0,INITIALIZING,Initial state - buffers being configured,1
+RPM_CAPTURE_STATE,1,CAPTURING,Actively capturing timer pulses,1
+RPM_CAPTURE_STATE,2,RPM_FAULT_DETECTED,Fault detected in capture sequence,1
+# Timing Mode Source Selector - identifies fuel timing blend source
+# Tracked in timing_mode_source_selector, set in fuel timing arbitration
+TIMING_MODE_SOURCE,0,BLEND_RAMP_DEFAULT,Default timing protection blend ramp,2
+TIMING_MODE_SOURCE,1,ARBITRATION_VALUE,Fuel timing mode arbitration value,2
+TIMING_MODE_SOURCE,2,ARBITRATION_1,Fuel timing mode arbitration 1 (VP44 timing),2
+TIMING_MODE_SOURCE,3,ARBITRATION_2,Fuel timing mode arbitration 2 (protection mode active),2
+TIMING_MODE_SOURCE,4,PARAM_OVERRIDE,Parameter override mode (fuel_timing_mode_arbitration_param_2),2
+# VP44 Operating Condition - pump condition state tracked in vp44_operating_condition_value
+# Values 1 & 2 treated as fuel control active; 3 & 4 trigger mode transitions
+VP44_OPERATING_CONDITION,0,RESET_INACTIVE,Reset/inactive state - initialized in vp44ControlVariablesReset,2
+VP44_OPERATING_CONDITION,1,FUEL_CONTROL_A,Fuel control condition A - checked with value 2,2
+VP44_OPERATING_CONDITION,2,FUEL_CONTROL_B,Fuel control condition B - checked with value 1,2
+VP44_OPERATING_CONDITION,3,TRANSITION_STATE_3,Transition state 3 - triggers mode change on entry,2
+VP44_OPERATING_CONDITION,4,TRANSITION_STATE_4,Transition state 4 - triggers mode change on entry,2
+# VP44 State - pump state machine values for communication/debounce
+# Used by vp44_state_current_debounced, vp44_state_previous, vp44_state_input_current, etc.
+VP44_STATE,0,STATE_0_IDLE,State 0 - idle/cleared state (returns 0 from mapper),2
+VP44_STATE,1,STATE_1_ACTIVE,State 1 - active state with timer/transition handling,2
+VP44_STATE,2,STATE_2_MONITOR,State 2 - monitoring state with transition handling,2
+VP44_STATE,3,STATE_3_TRANSITION,State 3 - transition state,2
+VP44_STATE,4,STATE_4_DEFAULT,State 4 - default init state (set in vp44StateVariablesInit),2
+VP44_STATE,5,STATE_5_FAULT,State 5 - fault/error state (returns 1 from mapper),2
+# Engine Runtime Histogram Mode - hour meter and runtime tracking mode
+# Used by engine_runtime_histogram_mode in hourMeterConversionProcessor
+ENGINE_HISTOGRAM_MODE,0,HISTOGRAM_IDLE,No histogram update needed,1
+ENGINE_HISTOGRAM_MODE,1,INCREMENT,Increment histogram index (data < conversion state),1
+ENGINE_HISTOGRAM_MODE,2,DECREMENT,Decrement histogram index (counter < conversion state),1

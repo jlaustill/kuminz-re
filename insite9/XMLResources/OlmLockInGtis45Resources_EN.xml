@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE module SYSTEM "../htmlentities.dtd">
+<XML_RESOURCE>
+   <RESOURCE Tag="1001" Type="String Table" Description="Message String Table">
+      <STRING ID="100" Context="Title">Open Loop Mode Lock-In Test</STRING>
+      <STRING ID="101" Context="Subtitle">This test will  temporarily lock the engine control system into an open loop mode of operation and eliminate any feedback from the heated oxygen sensor.</STRING>
+      <STRING ID="102" Context="Instructions">Initial Conditions
+1.     Engine running
+2.     No active air to fuel ratio related faults
+Steps
+1.     Select Start
+Additional Information
+1.     This test will run until Stop is selected
+2.     When the test is stopped the engine will return to normal operation
+      </STRING>
+      <STRING ID="103" Context="Status Header">Status</STRING>
+      <STRING ID="104" Context="Not supported message">The Open Loop Mode Lock-In test is not supported by the current calibration.</STRING>
+      <STRING ID="105" Context="No engine speed">No Engine Speed detected.  Start the engine and restart the test.</STRING>
+      <STRING ID="106" Context="Faults detected message">Faults related to air to fuel ratio calculations detected. Troubleshoot active faults before proceeding with this test.</STRING>
+      <STRING ID="107" Context="StatusModeActive">The Engine Control System is locked in an Open Loop Mode of operation. To change the operation mode back to Open/Closed Loop (Normal) Mode select Stop.</STRING>
+      <STRING ID="108" Context="StatusModeNormal">The Open/Close Loop (Normal) mode is the default setting. Select Start to set the Engine Control System to the Open Loop Mode.</STRING>
+      <STRING ID="109" Context="Test cannot run message">The ECM detects a condition in which the Open Loop Lock-In Test cannot be run.</STRING>
+      <STRING ID="110" Context="Operating mode label">Engine Operating Mode</STRING>
+      <STRING ID="111" Context="Normal Operating Mode">Open/Closed Loop (Normal) Mode</STRING>
+      <STRING ID="112" Context="Open operating mode">Open Loop</STRING>
+      <STRING ID="113" Context="Instructions header">Instructions:</STRING>
+      <STRING ID="114" Context="Show button">Show</STRING>
+      <STRING ID="16408" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16408&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Close and restart the operation.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="16409" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16409&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;1) Verify the ECM connection. And 2) Close and restart the operation.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="16410" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16410&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Verify the ECM connection and try again.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="16411" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16411&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;Close and restart the operation.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="16412" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16412&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart INSITE. Or 2) Re-install the INSITE application.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="16413" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16413&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart INSITE. Or 2) Re-install the INSITE application.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="16414" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16414&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart INSITE. Or 2) Re-install the INSITE application.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="16415" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16415&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart INSITE. Or 2) Re-install the INSITE application.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="16416" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16416&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart INSITE. Or 2) Re-install the INSITE application.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="16420" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16420&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation. Or 2) Close and restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="16421" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16421&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation. Or 2) Close and restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="16422" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16422&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation. Or 2) Close and restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+   </RESOURCE>
+</XML_RESOURCE>

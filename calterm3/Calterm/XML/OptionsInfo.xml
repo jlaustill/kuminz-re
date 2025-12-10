@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<!-- /////////////////////////////////////////////////////////////////////////////// 
+// Copyright (c) 2017 Cummins Inc. All rights reserved. 
+//=============================================================================
+// Cummins Confidential
+//=============================================================================
+// ORGANIZATION  : ETIPS 
+// FILENAME      : OptionsInfo.xml
+//=============================================================================
+// DESCRIPTION   : Includes options for the supported Products.  
+//=============================================================================
+// REMARKS: 
+//=============================================================================
+// CHANGE HISTORY 
+//  PR/CR                        Author                   Date                        Description 
+//=============================================================================
+//  Task_509                Rohan Waghe     10/22/12      Added the options for the new products BEJ,BEK and BFY
+//  Task_509                Rohan Waghe     12/07/12      Added the options for the new products BGA and BGB.
+//  DB_G00182294            Kiran Vaidya    01/22/13      Removed all entries of product having options SC with no. 
+//                                                        of subfiles 6 and DO with number of subfiles 2.
+//  DB_G00209394            Kiran Vaidya    02/07/13      Added support for BFI Products. Also, added support for D2 layout
+//                                                         for CTT product. Document referred for changes is
+//                                                         SPEED-IRS-03 versioned 5.6.
+//  DB_G00220797            Jasdeep kaur    07/24/2013    Added support for BGM and BGN. 
+//                          Harshad C       10/11/2013    Added support for BFN, BFQ, BFZ and BGD products.	
+//  DB_G00220939            Harshad C       02/13/2014    Added support for BGO product. 
+//  DB_G00234562            Suhas Patil     04/09/2014    Added support for BEM product. 
+//  Task                    Ashish Shah     08/28/2014    Added Support for BGX. 
+//  DB_G00244816            Sricha Bagchi   10/13/2014    Added Support for BHF
+//  DB_G00250510            Nikita Sharma   02/09/2015    Added support for BHB. 
+//  DB_G00250512            Nikita Sharma   02/09/2015    Added support for BHD.
+//                          Suhas Patil     03/31/2015    Added support for BHM/BHN.
+//                          Nikita Sharma   04/28/2015    Added support for BHA
+//  DB_G00267447            Shital Birhade  10/15/2015    Added Support for BIB
+//  DB_G00268836            Shital Birhade  11/04/2015    Added support for product BIF, BIH
+//DB_G00272377,DB_G00272379   Sricha Bagchi 03/03/2016    Added support for product BHT, BHW
+//  DB_G00272987            Suhas Patil     04/04/2016    Added Support for Product BIW
+//  DB_G00276112            Sricha Bagchi   2016/07/22    Added Support for Product BJE
+//  DB_G00280503            Suhas Patil     2017/01/05    Added support for product BJG
+//  CR 1227683              Suhas Patil     2017/03/06    Remove Support for Product BFI
+//  CR 1227685              Suhas Patil     2017/03/06    Remove Support for Product BFN
+//  CR 1227671              Rohini Shinde   2017/03/30    Add Support for Product BJP
+//  CR 1227686              Rohini Shinde   2017/03/30    Add Support for Product BJQ
+//  CR 1227712              Rohini Shinde   2017/03/30    Add Support for Product BJR
+//=============================================================================
+  --> 
+<Products xmlns="http://tempuri.org/OptionsInfo.xsd">
+	<OptionData>
+		<ProductId>AAG</ProductId>
+		<OptionName>PI</OptionName>
+		<CountOfFiles>1</CountOfFiles>
+	</OptionData>
+	<OptionData>
+		<ProductId>AAH</ProductId>
+		<OptionName>PJ</OptionName>
+		<CountOfFiles>8</CountOfFiles>
+	</OptionData>
+	<OptionData>
+		<ProductId>AAM</ProductId>
+		<OptionName>PJ</OptionName>
+		<CountOfFiles>8</CountOfFiles>
+	</OptionData>
+	<OptionData>
+		<ProductId>AAO</ProductId>
+		<OptionName>PJ</OptionName>
+		<CountOfFiles>8</CountOfFiles>
+	</OptionData>
+	<OptionData>
+		<ProductId>AAQ</ProductId>
+		<OptionName>PJ</OptionName>
+		<CountOfFiles>8</CountOfFiles>
+	</OptionData>
+	<OptionData>
+		<ProductId>ABC</ProductId>
+		<OptionName>UNKNOWN</OptionName>
+		<CountOfFiles>0</CountOfFiles>
+	</OptionData>
+	<OptionData>
+		<ProductId>COR</ProductId>
+		<OptionName>With_No</OptionName>
+		<CountOfFiles>1</CountOfFiles>
+	</OptionData>
+	<OptionData>
+		<ProductId>IND</ProductId>
+		<OptionName>FQ</OptionName>
+		<CountOfFiles>4</CountOfFiles>
+	</OptionData>
+	<OptionData>
+		<ProductId>AAB</ProductId>
+		<OptionName>PJ</OptionName>
+		<CountOfFiles>8</CountOfFiles>
+	</OptionData>
+	<OptionData>
+		<ProductId>AAA</ProductId>
+		<OptionName>PI</OptionName>
+		<CountOfFiles>1</CountOfFiles>
+	</OptionData>
+	<OptionData>
+		<ProductId>PIM</ProductId>
+		<OptionName>With_No</OptionName>
+		<CountOfFiles>1</CountOfFiles>
+	</OptionData>
+	<OptionData>
+		<ProductId>AEM</ProductId>
+		<OptionName>EI</OptionName>
+		<CountOfFiles>2</CountOfFiles>
+	</OptionData>
+	<OptionData>
+		<ProductId>BAL</ProductId>
+		<OptionName>PJ</OptionName>
+		<CountOfFiles>8</CountOfFiles>
+	</OptionData>
+	<OptionData>
+		<ProductId>K31</ProductId>
+		<OptionName>PJ</OptionName>
+		<CountOfFiles>8</CountOfFiles>
+	</OptionData>
+	<OptionData>
+		<ProductId>BCL</ProductId>
+		<OptionName>PJ</OptionName>
+		<CountOfFiles>8</CountOfFiles>
+	</OptionData>
+	<OptionData>
+		<ProductId>K16</ProductId>
+		<OptionName>PJ</OptionName>
+		<CountOfFiles>8</CountOfFiles>
+	</OptionData>
+	<OptionData>
+		<ProductId>KV6</ProductId>
+		<OptionName>PJ</OptionName>
+		<CountOfFiles>8</CountOfFiles>
+	</OptionData>
+	<OptionData>
+		<ProductId>BBB</ProductId>
+		<OptionName>PJ</OptionName>
+		<CountOfFiles>8</CountOfFiles>
+	</OptionData>
+	<OptionData>
+		<ProductId>BAZ</ProductId>
+		<OptionName>PJ</OptionName>
+		<CountOfFiles>8</CountOfFiles>
+	</OptionData>
+	<OptionData>
+		<ProductId>BBC</ProductId>
+		<OptionName>EI</OptionName>
+		<CountOfFiles>1</CountOfFiles>
+	</OptionData>
+	<OptionData>
+		<ProductId>BDJ</ProductId>
+		<OptionName>PJ</OptionName>
+		<CountOfFiles>8</CountOfFiles>
+	</OptionData>
+	<OptionData>
+		<ProductId>BEB</ProductId>
+		<OptionName>EI</OptionName>
+		<CountOfFiles>1</CountOfFiles>
+	</OptionData>	
+	<OptionData>
+		<ProductId>BEP</ProductId>
+		<OptionName>PJ</OptionName>
+		<CountOfFiles>8</CountOfFiles>
+	</OptionData>
+	<OptionData>
+		<ProductId>K26</ProductId>
+		<OptionName>PJ</OptionName>
+		<CountOfFiles>8</CountOfFiles>
+	</OptionData>
+	<OptionData>
+		<ProductId>KV8</ProductId>
+		<OptionName>PJ</OptionName>
+		<CountOfFiles>8</CountOfFiles>
+	</OptionData>
+	<OptionData>
+		<ProductId>BDZ</ProductId>
+		<OptionName>YC</OptionName>
+		<CountOfFiles>8</CountOfFiles>
+	</OptionData>
+	<OptionData>
+		<ProductId>CTT</ProductId>
+		<OptionName>TurboTech</OptionName>
+		<CountOfFiles>0</CountOfFiles>
+	</OptionData>
+	<OptionData>
+		<ProductId>BEV</ProductId>
+		<OptionName>YB</OptionName>
+		<CountOfFiles>1</CountOfFiles>
+	</OptionData>
+	<OptionData>
+		<ProductId>BEW</ProductId>
+		<OptionName>YI</OptionName>
+		<CountOfFiles>1</CountOfFiles>
+	</OptionData>
+	<OptionData>
+		<ProductId>BFX</ProductId>
+		<OptionName>PJ</OptionName>
+		<CountOfFiles>8</CountOfFiles>
+	</OptionData>
+	<OptionData>
+		<ProductId>BEK</ProductId>
+		<OptionName>PJ</OptionName>
+		<CountOfFiles>8</CountOfFiles>
+	</OptionData>
+	<OptionData>
+		<ProductId>BEM</ProductId>
+		<OptionName>PJ</OptionName>
+		<CountOfFiles>8</CountOfFiles>
+	</OptionData>
+	<OptionData>
+		<ProductId>BGM</ProductId>
+		<OptionName>PJ</OptionName>
+		<CountOfFiles>8</CountOfFiles>
+	</OptionData>
+	<OptionData>
+		<ProductId>BGN</ProductId>
+		<OptionName>PJ</OptionName>
+		<CountOfFiles>8</CountOfFiles>
+	</OptionData>
+	<!-- ECI has different number of subfiles under SC and DO option than the default. So, the entry is present here.-->
+	<OptionData>
+		<ProductId>ECI</ProductId>
+		<OptionName>SC</OptionName>
+		<CountOfFiles>5</CountOfFiles>
+	</OptionData>
+	<OptionData>
+		<ProductId>ECI</ProductId>
+		<OptionName>DO</OptionName>
+		<CountOfFiles>1</CountOfFiles>
+	</OptionData>
+	<OptionData>
+		<ProductId>BFQ</ProductId>
+		<OptionName>With_No</OptionName>
+		<CountOfFiles>8</CountOfFiles>
+	</OptionData>
+	<OptionData>
+		<ProductId>BFZ</ProductId>
+		<OptionName>With_No</OptionName>
+		<CountOfFiles>8</CountOfFiles>
+	</OptionData>
+	<OptionData>
+		<ProductId>BGD</ProductId>
+		<OptionName>With_No</OptionName>
+		<CountOfFiles>8</CountOfFiles>
+	</OptionData>
+	<OptionData>
+		<ProductId>BGO</ProductId>
+		<OptionName>With_No</OptionName>
+		<CountOfFiles>0</CountOfFiles>
+	</OptionData>
+	<OptionData>
+		<ProductId>BGX</ProductId>
+		<OptionName>SC</OptionName>
+		<CountOfFiles>1</CountOfFiles>
+	</OptionData>
+	<OptionData>
+		<ProductId>BHF</ProductId>
+		<OptionName>PJ</OptionName>
+		<CountOfFiles>8</CountOfFiles>
+	</OptionData>
+	<OptionData>
+		<ProductId>BHB</ProductId>
+		<OptionName>ER</OptionName>
+		<CountOfFiles>1</CountOfFiles>
+	</OptionData>
+	<OptionData>
+		<ProductId>BHB</ProductId>
+		<OptionName>PP</OptionName>
+		<CountOfFiles>1</CountOfFiles>
+	</OptionData>
+	<OptionData>
+		<ProductId>BHD</ProductId>
+		<OptionName>With_No</OptionName>
+		<CountOfFiles>1</CountOfFiles>
+	</OptionData>
+   <OptionData>
+      <ProductId>BHN</ProductId>
+      <OptionName>PJ</OptionName>
+      <CountOfFiles>8</CountOfFiles>
+   </OptionData>
+	<OptionData>
+		<ProductId>BHA</ProductId>
+		<OptionName>PJ</OptionName>
+		<CountOfFiles>8</CountOfFiles>
+	</OptionData>
+	<OptionData>
+		<ProductId>BIB</ProductId>
+		<OptionName>PJ</OptionName>
+		<CountOfFiles>8</CountOfFiles>
+	</OptionData>
+	<OptionData>
+		<ProductId>BIF</ProductId>
+		<OptionName>SC</OptionName>
+		<CountOfFiles>1</CountOfFiles>
+	</OptionData>
+	<OptionData>
+		<ProductId>BIH</ProductId>
+		<OptionName>PI</OptionName>
+		<CountOfFiles>1</CountOfFiles>
+	</OptionData>
+   <OptionData>
+      <ProductId>BHT</ProductId>
+      <OptionName>With_No</OptionName>
+      <CountOfFiles>0</CountOfFiles>
+   </OptionData>
+   <OptionData>
+      <ProductId>BHW</ProductId>
+      <OptionName>With_No</OptionName>
+      <CountOfFiles>0</CountOfFiles>
+   </OptionData>
+   <OptionData>
+	<ProductId>AFS</ProductId>
+	<OptionName>UNKNOWN</OptionName>
+	<CountOfFiles>0</CountOfFiles>
+   </OptionData>
+	<OptionData>
+		<ProductId>BIW</ProductId>
+		<OptionName>With_No</OptionName>
+		<CountOfFiles>8</CountOfFiles>
+	</OptionData>
+	<OptionData>
+		<ProductId>BJE</ProductId>
+		<OptionName>PJ</OptionName>
+		<CountOfFiles>8</CountOfFiles>
+	</OptionData>
+   <OptionData>
+      <ProductId>BJG</ProductId>
+      <OptionName>With_No</OptionName>
+      <CountOfFiles>0</CountOfFiles>
+   </OptionData>
+   <OptionData>
+      <ProductId>BJP</ProductId>
+      <OptionName>With_No</OptionName>
+      <CountOfFiles>0</CountOfFiles>
+   </OptionData>
+   <OptionData>
+      <ProductId>BJQ</ProductId>
+      <OptionName>With_No</OptionName>
+      <CountOfFiles>0</CountOfFiles>
+   </OptionData>
+   <OptionData>
+      <ProductId>BJR</ProductId>
+      <OptionName>With_No</OptionName>
+      <CountOfFiles>0</CountOfFiles>
+   </OptionData>
+<Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315" /><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1" /><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" /><DigestValue>NXqipDvqHibN7HJtflv++VAxygo=</DigestValue></Reference></SignedInfo><SignatureValue>kKHXM11Xxx2Cm3bvCHnQoV5We7kFj78Q+0LegcndQOsw7z/7prb43bJz5XyDsurQubaQvWGSsKayQRaYr31tXCVe/bKc0EIYsgAYDw2lSnCHu9qfwXAqZUcZE9KjnOo2In8Dom6aYgKVcz3C9FzjFNPdC1dHjJy3WU6uX5BCQ6AAJTZtDNI25eyPmETR7Ao0oKYK0ZtRnAzLRe6vLFV9SxMZ1DNt4wmuiWygjHpZbmZzmzZ4PlJVTgeVwDJGFwhfssDeOu6CRQwmuVgFLlHKxq8zGUjit5uXPTloRgw+L9/s/VAYmlpqCFJTLCRNwYs1O8JJK+KnO3l+ibdJC76y8g==</SignatureValue></Signature></Products>

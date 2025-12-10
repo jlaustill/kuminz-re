@@ -1,0 +1,41 @@
+<LicenseFile>
+	<ToolReqLicense Expiration="permanent" Name="FnP_TOOL_LIC_BASIC" VendorDaemon="cummins" Key="2FB093529666" IsValid="" ID="FnP_TOOL_LIC_BASIC" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="Basic"/>
+	</ToolReqLicense>
+	<ToolReqLicense Expiration="permanent" Name="FnP_TOOL_LIC_RSGR" VendorDaemon="cummins" Key="6337F260369F" IsValid="" ID="FnP_TOOL_LIC_RSGR" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="RSGR"/>
+	</ToolReqLicense>
+	<ToolReqLicense Expiration="permanent" Name="FnP_TOOL_LIC_LITE" VendorDaemon="cummins" Key="45817C9C52BE" IsValid="" ID="FnP_TOOL_LIC_LITE" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="Lite"/>
+	</ToolReqLicense>
+	<UserReqLicense Expiration="permanent" Name="FnP_Adjust_User" VendorDaemon="cummins" Key="16E41AE7119E" IsValid="" ID="FnP_Adjust_User" Version="1.0" Count="uncounted">
+		<Users>
+			<User NAME="Adjust_ECM_Features_and_Parameters"/>
+		</Users>
+	</UserReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="FnP_ECMPW_MASTER" VendorDaemon="cummins" Key="E85FB4B6D83B" IsValid="" ID="FnP_ECMPW_MASTER" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="MASTER"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="FnP_ECMPW_OEM" VendorDaemon="cummins" Key="3C0AC618ADE1" IsValid="" ID="FnP_ECMPW_OEM" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="PERMIT_CHANGE_OEM"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="FnP_ECMPW_OEM2" VendorDaemon="cummins" Key="E6A4E598435E" IsValid="" ID="FnP_ECMPW_OEM2" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="PERMIT_CHANGE_OEM2"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="FnP_ECMPW_ADJUSTABLES" VendorDaemon="cummins" Key="578F16328DBB" IsValid="" ID="FnP_ECMPW_ADJUSTABLES" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="PERMIT_CHANGE_ADJUSTABLES"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="FnP_ECMPW_RESET" VendorDaemon="cummins" Key="8FD245493758" IsValid="" ID="FnP_ECMPW_RESET" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="PERMIT_RESETS"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+</LicenseFile>

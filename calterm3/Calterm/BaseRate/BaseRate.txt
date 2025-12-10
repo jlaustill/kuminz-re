@@ -1,0 +1,26 @@
+!v1.0
+# Line begin with # or empty line will be ignored.
+
+# This file is used to determine the base rate for BAM/IDL
+# when using ForeGroundActivated trigger type. The base rate
+# will be used by Calterm III to calculate multiplier for 
+# the module hence the requested rate can be set correctly.
+
+# Format: <Product ID>,<Base Rate in ms>
+# e.g. EC2,20 means product EC2 has a base rate of 20 ms 
+# for time based trigger.
+
+# If the Product ID is not listed or if there is an error occurred
+# in parsing this file then base rate of 20 ms will be used.
+
+# WARNING !!!!
+# This file may not exist in the later release of Calterm III.
+# Please submit a PRCR againsts Calterm III with your modification 
+# to this file so that we can include the correct base rate in the 
+# later release.
+
+# Put your modification below
+
+EC2,20
+PE2,20
+HPI,20

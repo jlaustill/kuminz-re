@@ -1,0 +1,103 @@
+<!--
+========================================================================================
+// FILENAME       : J1922ControlHistoryGrid.xml
+// LEGAL          : Copyright (c) 2004 Cummins, Inc.
+// DESCRIPTION    :
+//
+// HISTORY        :
+========================================================================================
+//  RACFID/Name    Date        PRCR Number   Description
+========================================================================================
+//	ko634		05/18/2012	DB_G00192804	Update loop of J1922 so that ECM real time should be display at last.
+											Update node LoadDLL=TRUE.
+//  kf176		04/11/2012  DB_G00190132	Replace the OBJ:DS with ECM:DS to read from ECM.   
+//  gb113		04/03/2006	DB_G00083523	Removed FIRSTPAGEONLY="TRUE" from Header lines.
+
+-->
+<!-- This is a sample  -->
+<FlexGrid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" >
+	<Properties Cols="3:VT_I4" FixedCols="0:VT_I4"  
+	AllowUserResizing="1:VT_UI4" AutoResize="1:VT_I4" GridLines="1:VT_I4" Editable="0:VT_I4" ExtendLastCol="1:VT_I4" SelectionMode="1:VT_I4"/>
+	<!-- Add properties to the "FlexGrid" element as attribute in Name=Value format -->
+	<FixedRows>
+		<FixedRow>
+			<Column name="RES:Res1:2" />
+			<Column name="RES:Res1:3" />
+		</FixedRow>
+	</FixedRows>
+
+	<data loopEnd="1">
+		<Object name="DSS" source="OBJ:ES:DataServices"/>
+		<Object name="DS" source="OBJ:DSS:Add(ActiveConID)"/>
+	    	<Object name="Params" source="OBJ:WORKER:GetJ1922Array():Items:Item(1)PROP"/>
+		<Node level = "0" loopStart="2" indexStart="1" loopEnd="OBJ:Params:Count">
+			<Object name="Param" source="OBJ:Params:Item(LOOPINDEX0)PROP"/>	
+			<Column order="0" datasource="OBJ:Param:Name"/>
+			<Column order="1" datasource="OBJ:Param:DisplayValue"/>
+		</Node>
+		<Node level = "0" loopStart="1" indexStart="1" loopEnd="1">
+			<Object name="Param" source="OBJ:Params:Item(LOOPINDEX0)PROP"/>	
+			<Column order="0" datasource="OBJ:Param:Name"/>
+			<Column order="1" datasource="OBJ:Param:DisplayValue"/>
+		</Node>
+	</data> 
+
+	<parameters>
+	<parameter name="ActiveConID" source="OBJ:ES:ActiveConnectionID" />
+	</parameters>
+
+	<icons>
+	</icons>
+	
+	<combolists>
+	</combolists>
+	
+	<styles>
+		<style id="s1" CellFontBold="1:VT_I4" />
+	</styles>
+	
+	<resources>
+		<resource id="Res1" CLSID="{1C628621-473B-4EA4-9DC6-7ED92C57DD9E}\Pages\{B48B71E1-8559-4B68-A7FD-B5088E767335}" LoadDLL="TRUE"/>
+	</resources>
+
+	<printing HdrFontSize="8" MarginHeader="10mm" >
+		<header>
+			<line>
+				<center source="RES:Res1:122" />
+			</line>
+			<line>
+				<left source="Engine Serial Number-" />
+				<left source="ECM:DS:Read(3003,1):DisplayValue" />
+				<right source="OBJ:SYSTEMDATA:Value(TOOLNAME)PROP " />
+				<right source=" " />
+				<right source="OBJ:SYSTEMDATA:Value(TOOLVERSION)PROP" />
+			</line>
+			<line>
+				<left source="Customer Unit Number-" />
+				<left source="ECM:DS:Read(1011,1):DisplayValue" />
+				<right source="Company Name-" />
+				<right source="OBJ:SYSTEMDATA:Value(COMPANYNAME)PROP" />
+			</line>
+			<line>
+				<left source="Work Order Name" />
+				<right source="ECM Image Name" />
+			</line>
+			<line>
+				<right source="Customer Name-" />
+				<right source="ECM:DS:Read(1009,1):DisplayValue" />
+			</line>
+			<line></line>
+			
+		</header>
+		<footer>
+			<line>
+				<left source="OBJ:SYSTEMDATA:Value(TIME)PROP" />
+				<center source="Page %d of " />
+				<center source="OBJ:VSPRINTER:PageCount" />
+				<right source="OBJ:SYSTEMDATA:Value(DATE)PROP" />
+			</line>
+		
+		</footer>
+	</printing>
+
+</FlexGrid>

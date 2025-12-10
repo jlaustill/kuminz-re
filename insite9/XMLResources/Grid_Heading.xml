@@ -1,0 +1,79 @@
+﻿<!-- This config file is used to print the each feature's heading in a flexgrid. -->
+<FlexGrid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+<Properties  Cols="1:VT_I4" GridLines="0:VT_I4" GridLinesFixed="0:VT_I4"  FixedCols="0:VT_I4" />
+
+	
+	<FixedRows >
+		<FixedRow  >
+			 <Column  order="0" name=" " />
+		</FixedRow>
+	</FixedRows>
+
+      <data loopEnd="1">
+            <Object name="s" source="OBJ:VSFLEXGRID:FixedRows(0)PROPPUT"/>
+            <Node  loopEnd="1" >
+		   <Column  datasource="OBJ:DOM:selectSingleNode(/Text/Heading):getAttribute(DisplayValue)" /> 
+	    </Node>  
+      </data>
+      <data loopEnd="1">
+            <Object name="s" source="OBJ:VSFLEXGRID:FixedRows(0)PROPPUT"/>
+            <Node  loopEnd="1" >
+		   <Column  datasource="OBJ:DOM1:selectSingleNode(/Text/Heading):getAttribute(DisplayValue)" /> 
+	    </Node>  
+      </data>
+
+
+        <parameters>
+	</parameters>
+
+	<icons>
+	</icons>
+	
+	<combolists>
+	</combolists>
+
+        <styles>
+        </styles>
+
+        <resources>
+        	<resource id="Res1" CLSID="{1ECBBE0B-836B-11D4-8A76-00062999E309}" LoadDLL="TRUE"/>    
+        </resources>
+
+      <printing HdrFontSize="8" >
+		<header>
+			<line>
+			</line>
+			<line>
+				<left source="RES:Res1:2030" />
+				<left source="OBJ:DOM:selectSingleNode(/Image/Header/ESerial):getAttribute(DisplayValue)" />
+				<right source="INSITE - " />
+				<right source="OBJ:DOM:selectSingleNode(/Image):getAttribute(ImageVersion)" />
+			</line>
+			<line>
+				<left source="RES:Res1:2029" />
+				<left source="OBJ:DOM:selectSingleNode(/Image/Header/UNumber):getAttribute(DisplayValue)" />
+				<right source="RES:Res1:2031" />
+				<right source="OBJ:DOM:selectSingleNode(/Image/Header/VMake):getAttribute(DisplayValue)" />
+			</line>
+			<line>
+				<left source="RES:Res1:2032" />
+				<left source="OBJ:DOM:selectSingleNode(/Image/Header/WOName):getAttribute(DisplayValue)" />
+				<right source="RES:Res1:2033" />
+				<right source="OBJ:DOM:selectSingleNode(/Image/Header/IName):getAttribute(DisplayValue)" />
+			</line>
+			<line>
+				<right source="RES:Res1:2036"/>
+				<right source="OBJ:DOM:selectSingleNode(/Image/Header/CustomerName):getAttribute(DisplayValue)"/>
+			</line>
+		</header>
+		<footer>
+			<line>
+				<left source="OBJ:SYSTEMDATA:Value(TIME)PROP" />
+				<center source="Page %d" />
+				<right source="OBJ:SYSTEMDATA:Value(DATE)PROP" />
+			</line>
+		</footer>
+	</printing>
+	 
+</FlexGrid>

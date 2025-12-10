@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE module SYSTEM "../htmlentities.dtd">
+<XML_RESOURCE>
+	<RESOURCE Tag="1001" Type="String Table" Description="Message String Table">
+		<STRING ID="100" Context="">Aftertreatment Diagnostic Tests Setup</STRING>
+		<STRING ID="101" Context="">DynamometerSetupHelper Class</STRING>
+		<STRING ID="102" Context="">Setup for Aftertreatment Diagnostic Tests</STRING>
+		<STRING ID="103" Context="">Help File Name</STRING>
+		<STRING ID="104" Context="">Your Help String</STRING>
+		<STRING ID="105" Context="">Aftertreatment Diagnostic Tests</STRING>
+		<STRING ID="106" Context="">These tests can be used to help troubleshoot the aftertreatment system.</STRING>
+		<STRING ID="108" Context="">Instructions</STRING>
+		<STRING ID="109" Context="">Parameter</STRING>
+		<STRING ID="110" Context="">Value</STRING>
+		<STRING ID="111" Context="">Units</STRING>
+		<STRING ID="112" Context="">Doser Pump Incomplete Purge Count has been Reset</STRING>
+		<STRING ID="113" Context="">Choose the component to test and select Start to begin. Please troubleshoot any active fault codes prior to starting a test</STRING>
+    <STRING ID="114" Context="">The Diesel Exhaust Fluid Heater Relay Override Test is selected, press Start to continue.</STRING>
+		<STRING ID="115" Context="">This test will prime the Doser Pump and then dose for </STRING>
+		<STRING ID="117" Context=""> seconds. When complete, or if the test is stopped for any reason, the pump will purge itself before stopping.</STRING>
+    <STRING ID="116" Context="">The Diesel Exhaust Fluid Doser Air Solenoid Click Test is selected, press Start to continue.</STRING>
+		<STRING ID="199" Context="">No Test Selected.</STRING>
+    <STRING ID="201" Context="Status Box">Diesel Exhaust Fluid Heater Relay Override Test running.</STRING>
+    <STRING ID="202" Context="Status Box">The Diesel Exhaust Fluid Heater Relay Override Test cannot continue because Engine Speed has been detected. Please restart the test without the engine running.</STRING>
+    <STRING ID="203" Context="Status Box">The Diesel Exhaust Fluid Heater Relay Override Test cannot continue because the Diesel Exhaust Fluid Tank Temperature has exceeded the maximum temperature threshold. Please cycle the Keyswitch restart the test. If necessary, allow the Diesel Exhaust Fluid Tank Temperature to cool before restarting the test.</STRING>
+    <STRING ID="204" Context="Status Box">The Diesel Exhaust Fluid Heater Relay Override Test cannot continue because Diesel Exhaust Fluid Concentration or Diesel Exhaust Fluid Temperature sensor faults are active. Please troubleshoot any active fault codes prior to restarting the test.</STRING>
+    <STRING ID="205" Context="Status Box">The Diesel Exhaust Fluid Heater Relay Override Test cannot continue because the test has exceeded the maximum number of allowable overrides. Please cycle the Keyswitch and restart the test. If necessary, allow the Diesel Exhaust Fluid Tank Temperature to cool before restarting the test.</STRING>
+    <STRING ID="206" Context="Status Box">The Diesel Exhaust Fluid Heater Relay Override Test cannot continue because the test has exceeded the maximum number of allowable overrides. Please cycle the Keyswitch and restart the test. If necessary, allow the Diesel Exhaust Fluid Tank Temperature to cool before restarting the test.</STRING>
+    <STRING ID="207" Context="Status Box">The Diesel Exhaust Fluid Heater Relay Override Test cannot continue because the Diesel Exhaust Fluid Heater is disabled.</STRING>
+    <STRING ID="209" Context="Status Box">Diesel Exhaust Fluid Doser Pump Override Test running.</STRING>
+    <STRING ID="210" Context="Status Box">The Diesel Exhaust Fluid Doser Pump Override Test cannot continue because the engine is not running. Please restart the test with the engine running.</STRING>
+    <STRING ID="211" Context="Status Box">The Diesel Exhaust Fluid Doser Pump Override Test cannot continue because faults for Diesel Exhaust Fluid Quality, Diesel Exhaust Fluid Temperature, or Diesel Exhaust Fluid Level are active. Please troubleshoot any active fault codes prior to restarting the test. In addition, make sure the Diesel Exhaust Fluid Doser has proper air pressure and Diesel Exhaust Fluid supply.</STRING>
+    <STRING ID="212" Context="Status Box">The Diesel Exhaust Fluid Doser Pump Override Test has completed.</STRING>
+    <STRING ID="213" Context="Status Box">The Diesel Exhaust Fluid Doser Pump Override Test cannot continue because the Diesel Exhaust Fluid in the Diesel Exhaust Fluid Tank is too cold to dose. Please allow enough time for the Diesel Exhaust Fluid temperature to increase.</STRING>
+    <STRING ID="214" Context="Status Box">The Diesel Exhaust Fluid Doser Pump Override Test cannot continue because the Diesel Exhaust Fluid in the Doser Tank is too cold to dose. Please allow enough time for the Diesel Exhaust Fluid temperature to increase.</STRING>
+    <STRING ID="215" Context="Status Box">The Diesel Exhaust Fluid Doser Pump Override Test cannot continue because the Diesel Exhaust Fluid Level is too low. Please add Diesel Exhaust Fluid prior to restarting the test.</STRING>
+    <STRING ID="216" Context="Status Box">The Diesel Exhaust Fluid Doser Pump failed to prime. Please troubleshoot any active fault codes prior to restarting the test. In addition, make sure the Diesel Exhaust Fluid Doser has proper air pressure and Diesel Exhaust Fluid supply.</STRING>
+    <STRING ID="217" Context="Status Box">Diesel Exhaust Fluid Doser Air Solenoid Click Test running.</STRING>
+    <STRING ID="218" Context="Status Box">The Diesel Exhaust Fluid Doser Air Solenoid Click Test cannot continue because Engine Speed has been detected. Please restart the test without the engine running.</STRING>
+    <STRING ID="219" Context="Status Box">The Diesel Exhaust Fluid Doser Air Solenoid Click Test could not be started because Diesel Exhaust Fluid Doser Air Solenoid faults are active. Please troubleshoot the fault codes prior to restarting the test.</STRING>
+    <STRING ID="220" Context="Status Box">The Diesel Exhaust Fluid Doser Air Solenoid Click Test could not be started because communication between the ECM and Air Solenoid could not be established. Please troubleshoot the fault codes prior to restarting the test.</STRING>
+    <STRING ID="221" Context="Status Box">The Diesel Exhaust Fluid Doser Air Solenoid Click Test could not be started because the ECM and Air Solenoid Pump have incompatible software. Please troubleshoot the fault codes prior to restarting the test.</STRING>
+    <STRING ID="222" Context="Status Box">Diesel Exhaust Fluid Heater Relay Override Test has stopped.</STRING>
+    <STRING ID="223" Context="Status Box">Diesel Exhaust Fluid Doser Pump Override Test has stopped.</STRING>
+    <STRING ID="224" Context="Status Box">Diesel Exhaust Fluid Doser Air Solenoid Click Test has stopped.</STRING>
+    <STRING ID="225" Context="Message Box">Diesel Exhaust Fluid Doser Pump Override Test</STRING>
+    <STRING ID="226" Context="Message Box">The Diesel Exhaust Fluid injection nozzle MUST be removed from the exhaust system and placed in a measuring container before starting this test. Failure to do so could result in excessive ammonia emissions on subsequent startup or damage to the catalyst.Note: This test requires air pressure in order to run.</STRING>
+    <STRING ID="227" Context="Status Box">The Diesel Exhaust Fluid Doser Pump Override Test has previously been completed. To repeat this test, please close the test window and cycle the keyswitch</STRING>
+    <STRING ID="228" Context="Show Caption">Show</STRING>
+    <STRING ID="1000" Context="Button">Reset</STRING>
+    <STRING ID="1002" Context="Radio Button">Diesel Exhaust Fluid Heater Relay Override Test</STRING>
+    <STRING ID="1003" Context="Radio Button">Diesel Exhaust Fluid Doser Pump Override Test</STRING>
+    <STRING ID="1004" Context="Radio Button">Diesel Exhaust Fluid Doser Air Solenoid Click Test</STRING>
+		<STRING ID="1007" Context="Label">Instructions:</STRING>	
+		<STRING ID="1008" Context="Label">Test Choices:</STRING>	
+		<STRING ID="1009" Context="Label">Results:</STRING>	
+		<STRING ID="1010" Context="Label">Status:</STRING>	
+		<STRING ID="1011" Context="Button">Doser Pump Incomplete Purge Count</STRING>
+	</RESOURCE>
+</XML_RESOURCE>

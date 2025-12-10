@@ -1,0 +1,2711 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- edited with XML Spy v4.0.1 U (http://www.xmlspy.com) by Vera Foe (Cummins, Inc.) -->
+<!--
+========================================================================================
+// Maps.xml	   
+// Copyright (c) 2004 Cummins, Inc.
+// ALL RIGHTS RESERVED 						   
+// 										   					
+========================================================================================
+//
+// CHANGE LOG								   					
+// PR/CR#           Date        Author          	Comments              
+//;-Changes to INSITE Ver 7.6, 03/09/2012
+//; RM(kd286) : 7.6 Bug Fixing - Added tokens under subFeatureID "25132" and featureID "501".
+========================================================================================
+-->
+<!-- Changes to INSITE Ver 7.5.3, 09/23/2011:-
+		Created maps_987 for QSK 50/60 CM2350-MCRS -->
+<!--moduleType="987" moduleName="QSK 50/60 CM2350-MCRS"-->
+	<MODULE xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="Maps.xsd">
+	<MAPS>
+		<MAP mapID="1">
+			<FEATURES>
+				<!--Centinel Oil System-->
+				<FEATURE featureID="10" featureEnable="16795806" featureGTIS="1015170">
+					<SUBFEATURES>
+						<!-- SubFeature 0 -->
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<!--Oil Grade Type-->
+								<PARAMETER parameterID="16795478"/>
+								<!--Centinel Missed Pulse Counts-->
+								<PARAMETER parameterID="111021"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<!-- SubFeature Centinel Reservoir Oil Level Sensor-->
+						<SUBFEATURE subFeatureID="16795819" subFeatureEnable="16795819" subFeatureGTIS="1050000" subFeatureParent="10">
+							<PARAMETERS/>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<FEATURE featureID="8" featureEnable="16788144" featureGTIS="1015128">
+					<SUBFEATURES>
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0"/>
+					</SUBFEATURES>
+				</FEATURE>
+				<FEATURE featureID="557" featureEnable="16824319" featureGTIS="1015587">
+					<SUBFEATURES>
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0"/>
+					</SUBFEATURES>
+				</FEATURE>
+				<FEATURE featureID="538" featureEnable="16792953" featureGTIS="1015223">
+					<SUBFEATURES>
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0"/>
+					</SUBFEATURES>
+				</FEATURE>
+				<FEATURE featureID="514" featureEnable="16781662" featureGTIS="1015143">
+					<SUBFEATURES>
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0"/>
+					</SUBFEATURES>
+				</FEATURE>
+        <FEATURE featureID="62" featureEnable="16787859" featureGTIS="1015000">
+          <SUBFEATURES>
+            <SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+              <PARAMETERS>
+                <PARAMETER parameterID="16781739"/>
+              </PARAMETERS>
+            </SUBFEATURE>				
+			<SUBFEATURE subFeatureID="1" subFeatureEnable="16787860" subFeatureGTIS="1015305" subFeatureParent="0">
+			<PARAMETERS>
+			<PARAMETER parameterID="16781698"/>
+             </PARAMETERS>
+            </SUBFEATURE>
+            <SUBFEATURE subFeatureID="16781737" subFeatureEnable="16781737" subFeatureGTIS="1015548" subFeatureParent="62">
+            </SUBFEATURE>
+			<!-- Low Idle Speed Additional Settings -->
+			<SUBFEATURE subFeatureID="16824339" subFeatureEnable="16824339" subFeatureGTIS="1015546" subFeatureParent="62">
+              <PARAMETERS>
+				<!-- Step Size -->
+                <PARAMETER parameterID="16824127"/>
+              </PARAMETERS>
+				<SUBFEATURES>
+					<!-- Save Idle Speed on Power Down -->
+					<SUBFEATURE subFeatureID="16824344" subFeatureEnable="16824344" subFeatureGTIS="1015546" subFeatureParent="16824339"/>
+				</SUBFEATURES>
+            </SUBFEATURE>
+          </SUBFEATURES>
+        </FEATURE>
+				<FEATURE featureID="1" featureEnable="0" featureGTIS="1015008">
+					<SUBFEATURES>
+						<SUBFEATURE subFeatureID="16794310" subFeatureEnable="16794310" subFeatureGTIS="1015138" subFeatureParent="1">
+            </SUBFEATURE>
+						<SUBFEATURE subFeatureID="16786256" subFeatureEnable="16786256" subFeatureGTIS="1015009" subFeatureParent="1">
+							<PARAMETERS>
+								<PARAMETER parameterID="16786324"/>
+                <PARAMETER parameterID="16786335"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16789000" subFeatureEnable="16789000" subFeatureGTIS="1015007" subFeatureParent="1">
+							<PARAMETERS>
+								<PARAMETER parameterID="16786457"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<FEATURE featureID="519" featureEnable="16789352" featureGTIS="1015139">
+					<SUBFEATURES>
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<PARAMETER parameterID="16785150"/>
+								<PARAMETER parameterID="16785149"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<FEATURE featureID="554" featureEnable="16788139" featureGTIS="1015003">
+					<SUBFEATURES>
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS/>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<FEATURE featureID="511" featureEnable="16790871" featureGTIS="1015144">
+					<SUBFEATURES>
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<PARAMETER parameterID="16790872"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16824132" subFeatureEnable="16824132" subFeatureGTIS="1015144" subFeatureParent="511">
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<FEATURE featureID="2" featureEnable="16789389" featureGTIS="1015119">
+					<SUBFEATURES>
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<PARAMETER parameterID="16789387"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<FEATURE featureID="137" featureEnable="16789762" featureGTIS="1015055">
+					<SUBFEATURES>						
+						<SUBFEATURE subFeatureID="16824125" subFeatureEnable="16824125" subFeatureGTIS="1015525" subFeatureParent="137">
+						</SUBFEATURE>
+            		</SUBFEATURES>
+				</FEATURE>
+        <!--Nox Test-->
+        <FEATURE featureID="190" featureEnable="16818086" featureGTIS="1015445">
+          <SUBFEATURES>
+            <SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0"/>
+          </SUBFEATURES>
+        </FEATURE>
+				<FEATURE featureID="506" featureEnable="16787256" featureGTIS="1015010">
+					<SUBFEATURES>
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<PARAMETER parameterID="16787270"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16824122" subFeatureEnable="16824122" subFeatureGTIS="1015524" subFeatureParent="506">
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<FEATURE featureID="85" featureEnable="16788756" featureGTIS="1015122">
+					<SUBFEATURES>
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0"/>
+					</SUBFEATURES>
+				</FEATURE>
+				<FEATURE featureID="96" featureEnable="16788767" featureGTIS="1015130">
+					<SUBFEATURES>
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0"/>
+					</SUBFEATURES>
+				</FEATURE>
+				<FEATURE featureID="73" featureEnable="0" featureGTIS="1015056">
+					<SUBFEATURES>
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<PARAMETER parameterID="16785226"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<FEATURE featureID="74" featureEnable="16786582" featureGTIS="1015001">
+					<SUBFEATURES>
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<FEATURE featureID="34" featureEnable="16781506" featureGTIS="1015006">
+					<SUBFEATURES>
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="1015006" subFeatureParent="0">
+							<PARAMETERS>
+								<PARAMETER parameterID="16781507"/>
+								<PARAMETER parameterID="16781522"/>
+								<PARAMETER parameterID="16781509"/>
+								<PARAMETER parameterID="16787940"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16781650" subFeatureEnable="16781650" subFeatureGTIS="0" subFeatureParent="34">
+							<PARAMETERS>
+								<PARAMETER parameterID="16781496"/>
+								<PARAMETER parameterID="16781511"/>
+								<PARAMETER parameterID="16781512"/>
+								<PARAMETER parameterID="16781513"/>
+								<PARAMETER parameterID="16781514"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<FEATURE featureID="512" featureEnable="0" featureGTIS="1015131">
+					<SUBFEATURES>
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<PARAMETER parameterID="16786923"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<FEATURE featureID="11" featureEnable="16785223" featureGTIS="1015040">
+					<SUBFEATURES>
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<PARAMETER parameterID="16785224"/>
+								<PARAMETER parameterID="16785151"/>
+								<PARAMETER parameterID="16785147"/>
+								</PARAMETERS>
+						</SUBFEATURE>
+            <SUBFEATURE subFeatureID="1" subFeatureEnable="16824345" subFeatureGTIS="1015547" subFeatureParent="11">
+              <PARAMETERS>
+                <PARAMETER parameterID="16824347"/>
+                <PARAMETER parameterID="16824348"/>
+              </PARAMETERS>
+            </SUBFEATURE>
+						<SUBFEATURE subFeatureID="16816328" subFeatureEnable="16816328" subFeatureGTIS="1015483" subFeatureParent="11">
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16785222" subFeatureEnable="16785222" subFeatureGTIS="1015040" subFeatureParent="11">
+</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16785225" subFeatureEnable="16785225" subFeatureGTIS="1015040" subFeatureParent="11">
+</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16788135" subFeatureEnable="16788135" subFeatureGTIS="1015177" subFeatureParent="11">
+							<PARAMETERS>
+								<PARAMETER parameterID="16788136"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16823815" subFeatureEnable="16823815" subFeatureGTIS="1015398" subFeatureParent="11">
+						</SUBFEATURE>
+            <SUBFEATURE subFeatureID="16808738" subFeatureEnable="16808738" subFeatureGTIS="1015528" subFeatureParent="11">
+              <PARAMETERS>
+                <PARAMETER parameterID="16824135"/>
+                <PARAMETER parameterID="16824138"/>
+              </PARAMETERS>
+            </SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<FEATURE featureID="47" featureEnable="16786635" featureGTIS="1015120">
+					<SUBFEATURES>
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<PARAMETER parameterID="16786637"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<FEATURE featureID="101" featureEnable="16791353" featureGTIS="1015134">
+					<SUBFEATURES>
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<PARAMETER parameterID="16791359"/>
+								<PARAMETER parameterID="16791351"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<FEATURE featureID="17" featureEnable="16790877" featureGTIS="1015043">
+					<SUBFEATURES>
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<PARAMETER parameterID="16790876"/>
+								<PARAMETER parameterID="16789360"/>
+								<PARAMETER parameterID="16790878"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16790879" subFeatureEnable="16790879" subFeatureGTIS="1050002" subFeatureParent="17"/>
+						<SUBFEATURE subFeatureID="16790875" subFeatureEnable="16790875" subFeatureGTIS="1050003" subFeatureParent="17"/>
+						<SUBFEATURE subFeatureID="16804680" subFeatureEnable="16804680" subFeatureGTIS="1015265" subFeatureParent="17"/>
+					</SUBFEATURES>
+				</FEATURE>
+				<FEATURE featureID="77" featureEnable="16787874" featureGTIS="1015002">
+					<SUBFEATURES>
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0"/>
+					</SUBFEATURES>
+				</FEATURE>
+                <FEATURE featureID="20" featureEnable="16781725" featureGTIS="1015004">
+					<SUBFEATURES>
+					<SUBFEATURE subFeatureID="16781724" subFeatureEnable="16781724" subFeatureGTIS="1050020" subFeatureParent="20"/>
+					<SUBFEATURE subFeatureID="16781452" subFeatureEnable="16781452" subFeatureGTIS="1050021" subFeatureParent="20"/>
+            <SUBFEATURE subFeatureID="16781792" subFeatureEnable="16781792" subFeatureGTIS="1050022" subFeatureParent="20"/>
+            <SUBFEATURE subFeatureID="1" subFeatureEnable="16824143" subFeatureGTIS="1015533" subFeatureParent="20">
+              <PARAMETERS>
+                <PARAMETER parameterID="16824145"/>
+              </PARAMETERS>
+            </SUBFEATURE>
+          <SUBFEATURE subFeatureID="16809577" subFeatureEnable="0" subFeatureGTIS="1015438" subFeatureParent="20">
+            <PARAMETERS>
+              <PARAMETER parameterID="16809571"/>
+            </PARAMETERS>
+          </SUBFEATURE>
+          <SUBFEATURE subFeatureID="16809578" subFeatureEnable="0" subFeatureGTIS="1015439" subFeatureParent="20">
+            <PARAMETERS>
+              <PARAMETER parameterID="16809572"/>
+            </PARAMETERS>
+          </SUBFEATURE>
+            <!-- Engine Coolant Level Shutdown -->
+            <SUBFEATURE subFeatureID="16816701" subFeatureEnable="16816701" subFeatureGTIS="1015506" subFeatureParent="20">
+              <PARAMETERS>
+                <PARAMETER parameterID="16817208"/>
+              </PARAMETERS>
+			 <SUBFEATURES>
+			         <!-- Engine Coolant Level Shutdown Type -->
+                <SUBFEATURE subFeatureID="16817209" subFeatureEnable="16817209" subFeatureGTIS="1015505" subFeatureParent="20">
+                  <PARAMETERS>
+                    <PARAMETER parameterID="16817211"/>
+                  </PARAMETERS>
+                </SUBFEATURE>
+              </SUBFEATURES>
+            </SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<FEATURE featureID="517" featureEnable="16791504" featureGTIS="1015152">
+					<SUBFEATURES>
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0"/>
+					</SUBFEATURES>
+				</FEATURE>
+				<FEATURE featureID="513" featureEnable="16789393" featureGTIS="1015129">
+					<SUBFEATURES>
+						<SUBFEATURE subFeatureID="16824293" subFeatureEnable="16824293" subFeatureGTIS="1015530" subFeatureParent="513">
+							<PARAMETERS>
+								<PARAMETER parameterID="16824205"/>
+								<PARAMETER parameterID="16824208"/>
+								<PARAMETER parameterID="16824211"/>
+								<PARAMETER parameterID="16824212"/>						  
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<FEATURE featureID="23" featureEnable="16781727" featureGTIS="1015042">
+					<SUBFEATURES>
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<PARAMETER parameterID="16781836"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16781840" subFeatureEnable="16781840" subFeatureGTIS="0" subFeatureParent="23">
+							<PARAMETERS>
+								<PARAMETER parameterID="16781823"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16781833" subFeatureEnable="16781833" subFeatureGTIS="1050004" subFeatureParent="23">
+							<SUBFEATURES>
+								<SUBFEATURE subFeatureID="16781726" subFeatureEnable="16781726" subFeatureGTIS="1050005" subFeatureParent="16781833">
+								</SUBFEATURE>
+							</SUBFEATURES>
+							<PARAMETERS>
+								<PARAMETER parameterID="16781831"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16781834" subFeatureEnable="16781834" subFeatureGTIS="1050006" subFeatureParent="23">
+</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16781844" subFeatureEnable="16781844" subFeatureGTIS="1050007" subFeatureParent="23">
+</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16781843" subFeatureEnable="16781843" subFeatureGTIS="1050008" subFeatureParent="23">
+</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16788268" subFeatureEnable="16788268" subFeatureGTIS="1050009" subFeatureParent="23">
+</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16804683" subFeatureEnable="16804683" subFeatureGTIS="1015266" subFeatureParent="23"/>
+            <SUBFEATURE subFeatureID="16824463" subFeatureEnable="16824463" subFeatureGTIS="1015579" subFeatureParent="23">
+              <PARAMETERS>
+                <PARAMETER parameterID="16824465"/>
+              </PARAMETERS>
+            </SUBFEATURE>     
+					</SUBFEATURES>
+				</FEATURE>
+				<FEATURE featureID="131" featureEnable="0" featureGTIS="1015124">
+					<SUBFEATURES>
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<PARAMETER parameterID="16781449"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16788058" subFeatureEnable="16788058" subFeatureGTIS="1015135" subFeatureParent="131"/>
+            <!-- Engine Speed Acceleration Management -->
+            <SUBFEATURE subFeatureID="16824016" subFeatureEnable="16824016" subFeatureGTIS="1015504" subFeatureParent="131">
+              <PARAMETERS>
+                <PARAMETER parameterID="16824007"/>
+                <PARAMETER parameterID="16824008"/>
+              </PARAMETERS>
+            </SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+                <FEATURE featureID="32" featureEnable="16801893" featureGTIS="1015211">
+                    <SUBFEATURES>
+                        <SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+                            <PARAMETERS>
+                                <PARAMETER parameterID="16801895"/>
+                                <PARAMETER parameterID="16790231"/>
+                            </PARAMETERS>
+                        </SUBFEATURE>
+                        <SUBFEATURE subFeatureID="16790222" subFeatureEnable="16790222" subFeatureGTIS="1015038" subFeatureParent="32">
+                            <PARAMETERS>
+                                <PARAMETER parameterID="16790230"/>
+                                <PARAMETER parameterID="16790228"/>
+                                <PARAMETER parameterID="16790229"/>
+                            </PARAMETERS>
+                        </SUBFEATURE>
+                       <SUBFEATURE subFeatureID="16806667" subFeatureEnable="16806667" subFeatureGTIS="1015336" subFeatureParent="32"/>
+                       <SUBFEATURE subFeatureID="16790226" subFeatureEnable="16790226" subFeatureGTIS="1015039" subFeatureParent="32"/>
+                        <SUBFEATURE subFeatureID="16790223" subFeatureEnable="16790223" subFeatureGTIS="1050001" subFeatureParent="32"/>
+                        <SUBFEATURE subFeatureID="16790227" subFeatureEnable="16790227" subFeatureGTIS="0" subFeatureParent="32"/>
+                        <SUBFEATURE subFeatureID="16821868" subFeatureEnable="16821868" subFeatureGTIS="1015396" subFeatureParent="32"/>
+					</SUBFEATURES>
+				</FEATURE>
+				<!--High Soot Load Shutdown-->
+                <FEATURE featureID="183" featureEnable="16811071" featureGTIS="1015433">
+                    <SUBFEATURES>
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+						</SUBFEATURE>
+                    </SUBFEATURES>
+                </FEATURE>
+                <FEATURE featureID="544" featureEnable="16790232" featureGTIS="1015037">
+                    <SUBFEATURES>
+                        <SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+                            <PARAMETERS>
+                                <PARAMETER parameterID="16790225"/>
+                                <PARAMETER parameterID="16790231"/>
+                            </PARAMETERS>
+                        </SUBFEATURE>
+                        <SUBFEATURE subFeatureID="16790223" subFeatureEnable="16790223" subFeatureGTIS="1050001" subFeatureParent="32"/>
+                        <SUBFEATURE subFeatureID="16790227" subFeatureEnable="16790227" subFeatureGTIS="0" subFeatureParent="32"/>
+                    </SUBFEATURES>
+                </FEATURE>
+                <FEATURE featureID="539" featureEnable="16820126" featureGTIS="1015491">
+                    <SUBFEATURES>
+                        <SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+                            <PARAMETERS>
+                                <PARAMETER parameterID="16790231"/>
+                                <PARAMETER parameterID="16801895"/>
+                                <PARAMETER parameterID="16824003"/>
+                            </PARAMETERS>
+                        </SUBFEATURE>
+                        <!--Idle Shutdown PTO-->
+                        <SUBFEATURE subFeatureID="16824042" subFeatureEnable="16824042" subFeatureGTIS="1015492" subFeatureParent="539"/>
+                        <!--Ambient Temperature Override-->
+                        <SUBFEATURE subFeatureID="16824036" subFeatureEnable="16824036" subFeatureGTIS="1015495" subFeatureParent="539">
+                          <!--Manual Override Inhibit-->
+                          <SUBFEATURES>
+                              <SUBFEATURE subFeatureID="16824425" subFeatureEnable="16824425" subFeatureGTIS="1015578" subFeatureParent="16824036">
+                              </SUBFEATURE>
+                          </SUBFEATURES>
+                            <PARAMETERS>
+                                <PARAMETER parameterID="16790228"/>
+                                <PARAMETER parameterID="16790229"/>
+                                <PARAMETER parameterID="16790230"/>
+                            </PARAMETERS>
+                        </SUBFEATURE>
+                        <!--Idle Shutdown Service Brake Switch-->
+                        <SUBFEATURE subFeatureID="16824038" subFeatureEnable="16824038" subFeatureGTIS="1015494" subFeatureParent="539"/>
+                        <PARAMETERS/>
+                        <!--Idle Shutdown With Parking Brake Set-->
+                        <SUBFEATURE subFeatureID="16824040" subFeatureEnable="16824040" subFeatureGTIS="1015493" subFeatureParent="539"/>
+                        <!--ShutDown Accessory Relay-->
+                        <SUBFEATURE subFeatureID="16790223" subFeatureEnable="16790223" subFeatureGTIS="1050001" subFeatureParent="539"/>
+                        <!--Manual Override-->
+                        <SUBFEATURE subFeatureID="16790227" subFeatureEnable="16790227" subFeatureGTIS="0" subFeatureParent="539"/>
+                    </SUBFEATURES>
+                </FEATURE>
+                <FEATURE featureID="540" featureEnable="16824011" featureGTIS="1015497">
+                  <SUBFEATURES>
+                     <SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0"/>
+                  </SUBFEATURES>
+               </FEATURE>
+                <FEATURE featureID="518" featureEnable="16789991" featureGTIS="1015140">
+					<SUBFEATURES>
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0"/>
+					</SUBFEATURES>
+				</FEATURE>
+				<FEATURE featureID="510" featureEnable="16788146" featureGTIS="1015127">
+					<SUBFEATURES>
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0"/>
+					</SUBFEATURES>
+				</FEATURE>
+				<FEATURE featureID="529" featureEnable="16791190" featureGTIS="1015036">
+					<SUBFEATURES>
+						<SUBFEATURE subFeatureID="16824123" subFeatureEnable="16824123"  subFeatureGTIS="1015526" subFeatureParent="529"/>
+                    </SUBFEATURES>
+				</FEATURE>
+        <FEATURE featureID="138" featureEnable="16781602" featureGTIS="1015044">
+          <SUBFEATURES>
+            <SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="1015044" subFeatureParent="0">
+              <PARAMETERS>
+					<PARAMETER parameterID="16781665"/>
+					<PARAMETER parameterID="16781681"/>
+					<PARAMETER parameterID="16781661"/>
+					<PARAMETER parameterID="16781660"/>
+					<PARAMETER parameterID="16781659"/>
+					<PARAMETER parameterID="16789424"/>
+					<PARAMETER parameterID="16781498"/>
+					<PARAMETER parameterID="16781334"/>
+				</PARAMETERS>
+			</SUBFEATURE>	
+			<SUBFEATURE subFeatureID="1" subFeatureEnable="16809880" subFeatureGTIS="1015363" subFeatureParent="0">
+				<PARAMETERS>
+					<!--PTO Speed 1 Device-->
+					<PARAMETER parameterID="16790327"/>
+					<!--PTO Speed 2 Device-->
+					<PARAMETER parameterID="16790322"/>
+					<!--PTO Speed 3 Device-->
+					<PARAMETER parameterID="16790317"/>
+					<!--PTO Speed 4 Device-->
+					<PARAMETER parameterID="16790312"/>
+					<!--PTO Speed 5 Device-->
+					<PARAMETER parameterID="16790307"/>
+					<!--PTO Speed 6 Device-->
+					<PARAMETER parameterID="16790302"/>
+					<!--PTO Speed 7 Device-->
+					<PARAMETER parameterID="16790297"/>
+					<!--PTO Speed 8 Device-->
+					<PARAMETER parameterID="16790292"/>
+              </PARAMETERS>
+            </SUBFEATURE>
+			<SUBFEATURE subFeatureID="2" subFeatureEnable="16790328" subFeatureGTIS="1015210" subFeatureParent="0">
+				<PARAMETERS>
+					<!--PTO Speed 1 Device-->
+					<PARAMETER parameterID="16790327"/>
+					<!--PTO Speed 2 Device-->
+					<PARAMETER parameterID="16790322"/>
+					<!--PTO Speed 3 Device-->
+					<PARAMETER parameterID="16790317"/>
+					<!--PTO Speed 4 Device-->
+					<PARAMETER parameterID="16790312"/>
+					<!--PTO Speed 5 Device-->
+					<PARAMETER parameterID="16790307"/>
+					<!--PTO Speed 6 Device-->
+					<PARAMETER parameterID="16790302"/>
+					<!--PTO Speed 7 Device-->
+					<PARAMETER parameterID="16790297"/>
+					<!--PTO Speed 8 Device-->
+					<PARAMETER parameterID="16790292"/>
+              </PARAMETERS>
+            </SUBFEATURE>			
+            <SUBFEATURE subFeatureID="16824176" subFeatureEnable="16824176" subFeatureGTIS="1015532" subFeatureParent="138">
+			<PARAMETERS>
+				<PARAMETER parameterID="16824178"/>
+                <PARAMETER parameterID="16824181"/>
+			</PARAMETERS>
+            </SUBFEATURE>
+            <SUBFEATURE subFeatureID="16789413" subFeatureEnable="16789413" subFeatureGTIS="1050023" subFeatureParent="138">
+               </SUBFEATURE>
+            <SUBFEATURE subFeatureID="16781438" subFeatureEnable="16781438" subFeatureGTIS="1050024" subFeatureParent="138">
+               </SUBFEATURE>
+            <SUBFEATURE subFeatureID="16781437" subFeatureEnable="16781437" subFeatureGTIS="1050025" subFeatureParent="138">
+               </SUBFEATURE>
+            <SUBFEATURE subFeatureID="16781440" subFeatureEnable="16781440" subFeatureGTIS="1050026" subFeatureParent="138">
+               </SUBFEATURE>
+            <!-- Ignore Vehicle Speed Source in PTO -->
+            <SUBFEATURE subFeatureID="16820339" subFeatureEnable="16820339" subFeatureGTIS="1015435" subFeatureParent="138">
+               </SUBFEATURE>
+						<SUBFEATURE subFeatureID="16781708" subFeatureEnable="16781708" subFeatureGTIS="1050010" subFeatureParent="138">
+							<PARAMETERS>
+								<PARAMETER parameterID="16781612"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16823830" subFeatureEnable="16823830" subFeatureGTIS="1015397" subFeatureParent="138">
+							</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16781439" subFeatureEnable="16781439" subFeatureGTIS="1050011" subFeatureParent="138">
+							<SUBFEATURES>
+								<SUBFEATURE subFeatureID="16781638" subFeatureEnable="16781638" subFeatureGTIS="0" subFeatureParent="16781439">
+									<PARAMETERS>
+										<PARAMETER parameterID="16781417"/>
+										<PARAMETER parameterID="16781431"/>
+										<PARAMETER parameterID="16781432"/>
+										<PARAMETER parameterID="16781433"/>
+										<PARAMETER parameterID="16781434"/>
+									</PARAMETERS>
+								</SUBFEATURE>                             
+							</SUBFEATURES>
+						</SUBFEATURE>
+            <!-- Transmission Coupled PTO -->
+            <SUBFEATURE subFeatureID="16824022" subFeatureEnable="16824022" subFeatureGTIS="1015507" subFeatureParent="16781439">
+              <PARAMETERS>
+                <PARAMETER parameterID="16824024"/>
+              </PARAMETERS>
+            </SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<FEATURE featureID="46" featureEnable="16784915" featureGTIS="1015041">
+					<SUBFEATURES>
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<PARAMETER parameterID="16785209"/>
+								<PARAMETER parameterID="16781382"/>
+								<PARAMETER parameterID="16785191"/>
+								<PARAMETER parameterID="16785182"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+
+			<!--Switched Maximum Vehicle Speed-->
+			<SUBFEATURE subFeatureID="16815930" subFeatureEnable="16815930" subFeatureGTIS="1015373" subFeatureParent="46">
+        <PARAMETERS>
+          <!--Switched Maximum Road Speed Setting-->
+          <PARAMETER parameterID="16815933"/>
+        </PARAMETERS>
+			</SUBFEATURE>
+            <SUBFEATURE subFeatureID="16815970" subFeatureEnable="16815970" subFeatureGTIS="1015375" subFeatureParent="46">
+			<SUBFEATURES>
+				<!-- Kickdown Pedal Smart Road Speed Governor -->
+				<SUBFEATURE subFeatureID="16815920" subFeatureEnable="16815920" subFeatureGTIS="1015376" subFeatureParent="46"/>
+			</SUBFEATURES>
+			</SUBFEATURE>
+           	<SUBFEATURE subFeatureID="16788760" subFeatureEnable="16788760" subFeatureGTIS="1015184" subFeatureParent="46">
+            </SUBFEATURE>            
+						<SUBFEATURE subFeatureID="16806831" subFeatureEnable="16806831" subFeatureGTIS="1015337" subFeatureParent="46">
+							<PARAMETERS>
+								<PARAMETER parameterID="16806832"/>
+								<PARAMETER parameterID="16806833"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<!-- Switch Droop -->
+				<FEATURE featureID="124" featureEnable="16787932" featureGTIS="1015132">
+					<SUBFEATURES>
+							<!-- Alternate Droop Switch Type -->
+                        <SUBFEATURE subFeatureID="16781731" subFeatureEnable="16781731" subFeatureGTIS="0" subFeatureParent="124">
+                            <SUBFEATURES>
+                                <!-- Additional Switched Droop Inputs -->
+                                <SUBFEATURE subFeatureID="16793806" subFeatureEnable="16793806" subFeatureGTIS="1015473" subFeatureParent="16781731">
+                                    <SUBFEATURES>
+                                         <!-- Breakpoint 4 -->
+                                        <SUBFEATURE subFeatureID="1020123" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="16793806">
+
+                                            <PARAMETERS>
+                                                <PARAMETER parameterID="16813141"/>
+                                                <PARAMETER parameterID="16808984"/>
+                                                <PARAMETER parameterID="16814510"/>
+                                                <PARAMETER parameterID="16814223"/>
+                                                <PARAMETER parameterID="16814487"/>
+                                            </PARAMETERS>
+                                        </SUBFEATURE>
+                                        <!-- Breakpoint 5 -->
+                                        <SUBFEATURE subFeatureID="1020124" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="16793806">
+                                            <PARAMETERS>
+                                                <PARAMETER parameterID="16813143"/>
+                                                <PARAMETER parameterID="16810390"/>
+                                                <PARAMETER parameterID="16814513"/>
+                                                <PARAMETER parameterID="16814424"/>
+                                                <PARAMETER parameterID="16814488"/>
+                                            </PARAMETERS>
+                                        </SUBFEATURE>
+                                        <!-- Breakpoint 6 -->
+                                        <SUBFEATURE subFeatureID="1020125" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="16793806">
+                                            <PARAMETERS>
+                                                <PARAMETER parameterID="16813144"/>
+                                                <PARAMETER parameterID="16810398"/>
+                                                <PARAMETER parameterID="16814514"/>
+                                                <PARAMETER parameterID="16814437"/>
+                                                <PARAMETER parameterID="16814489"/>
+                                            </PARAMETERS>
+                                        </SUBFEATURE>
+                                        <!-- Breakpoint 7 -->
+                                        <SUBFEATURE subFeatureID="1020126" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="16793806">
+                                            <PARAMETERS>
+                                                <PARAMETER parameterID="16813183"/>
+                                                <PARAMETER parameterID="16813069"/>
+                                                <PARAMETER parameterID="16814517"/>
+                                                <PARAMETER parameterID="16814441"/>
+                                                <PARAMETER parameterID="16814490"/>
+                                            </PARAMETERS>
+                                        </SUBFEATURE>
+                                        <!-- Breakpoint 8 -->
+                                        <SUBFEATURE subFeatureID="1020127" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="16793806">
+                                            <PARAMETERS>
+                                                <PARAMETER parameterID="16813333"/>
+                                                <PARAMETER parameterID="16813070"/>
+                                                <PARAMETER parameterID="16814518"/>
+                                                <PARAMETER parameterID="16814443"/>
+                                                <PARAMETER parameterID="16814498"/>
+                                            </PARAMETERS>
+                                        </SUBFEATURE>
+                                        <!-- Breakpoint 9 -->
+                                        <SUBFEATURE subFeatureID="1020128" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="16793806">
+                                            <PARAMETERS>
+                                                <PARAMETER parameterID="16813859"/>
+                                                <PARAMETER parameterID="16813071"/>
+                                                <PARAMETER parameterID="16814519"/>
+                                                <PARAMETER parameterID="16814482"/>
+                                                <PARAMETER parameterID="16814507"/>
+                                            </PARAMETERS>
+                                        </SUBFEATURE>
+                                        <!-- Breakpoint 10 -->
+                                        <SUBFEATURE subFeatureID="1020129" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="16793806">
+                                            <PARAMETERS>
+                                                <PARAMETER parameterID="16813860"/>
+                                                <PARAMETER parameterID="16813140"/>
+                                                <PARAMETER parameterID="16814521"/>
+                                                <PARAMETER parameterID="16814483"/>
+                                                <PARAMETER parameterID="16814509"/>
+                                            </PARAMETERS>
+                                        </SUBFEATURE>
+
+                                    </SUBFEATURES>
+                                </SUBFEATURE>
+                                <!-- Breakpoint 1 -->
+                                <SUBFEATURE subFeatureID="1020058" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="16781731">
+                                    <PARAMETERS>
+                                        <PARAMETER parameterID="16781712"/>
+                                        <PARAMETER parameterID="16781728"/>
+                                        <PARAMETER parameterID="16787937"/>
+                                        <PARAMETER parameterID="16787934"/>
+                                        <PARAMETER parameterID="16781732"/>
+                                    </PARAMETERS>
+                                </SUBFEATURE>
+                                <!-- Breakpoint 2 -->
+                                <SUBFEATURE subFeatureID="1020059" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="16781731">
+                                    <PARAMETERS>
+                                        <PARAMETER parameterID="16781743"/>
+                                        <PARAMETER parameterID="16781729"/>
+                                        <PARAMETER parameterID="16787938"/>
+                                        <PARAMETER parameterID="16787935"/>
+                                        <PARAMETER parameterID="16781733"/>
+                                    </PARAMETERS>
+                                </SUBFEATURE>
+                                <!-- Breakpoint 3 -->
+                                <SUBFEATURE subFeatureID="1020060" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="16781731">
+                                    <PARAMETERS>
+                                        <PARAMETER parameterID="16781742"/>
+                                        <PARAMETER parameterID="16781730"/>
+                                        <PARAMETER parameterID="16787939"/>
+                                        <PARAMETER parameterID="16787936"/>
+                                        <PARAMETER parameterID="16781734"/>
+                                    </PARAMETERS>
+                                </SUBFEATURE>
+                            </SUBFEATURES>
+                        </SUBFEATURE>
+                    </SUBFEATURES>
+                </FEATURE>
+				<!-- Switch Droop Version 2 -->
+				<FEATURE featureID="551" featureEnable="16824310" featureGTIS="1015539">
+					<SUBFEATURES>
+                        <SUBFEATURE subFeatureID="16781731" subFeatureEnable="16781731" subFeatureGTIS="0" subFeatureParent="551">
+							<SUBFEATURES>
+                              <!-- Breakpoint 1 -->
+                                <SUBFEATURE subFeatureID="1020058" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="16781731">
+                                    <PARAMETERS>
+										<PARAMETER parameterID="16787934"/>
+										<PARAMETER parameterID="16787937"/>
+										<PARAMETER parameterID="16824283"/>
+										<PARAMETER parameterID="16781728"/>
+                                        <PARAMETER parameterID="16781712"/>
+									</PARAMETERS>
+                                </SUBFEATURE>
+                                <!-- Breakpoint 2 -->
+                                <SUBFEATURE subFeatureID="1020059" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="16781731">
+                                    <PARAMETERS>
+										<PARAMETER parameterID="16787935"/>
+										<PARAMETER parameterID="16787938"/>
+										<PARAMETER parameterID="16824286"/>
+										<PARAMETER parameterID="16781729"/>
+                                        <PARAMETER parameterID="16781743"/>
+									</PARAMETERS>
+                                </SUBFEATURE>
+                                <!-- Breakpoint 3 -->
+                                <SUBFEATURE subFeatureID="1020060" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="16781731">
+                                    <PARAMETERS>
+										<PARAMETER parameterID="16787936"/>
+										<PARAMETER parameterID="16787939"/>
+										<PARAMETER parameterID="16824298"/>
+                                        <PARAMETER parameterID="16781730"/>
+										<PARAMETER parameterID="16781742"/>
+                                    </PARAMETERS>
+                                </SUBFEATURE>
+								<!-- Expanded Droop Input -->
+								<SUBFEATURE  subFeatureID="16824309" subFeatureEnable="16824309" subFeatureGTIS="1015541" subFeatureParent="16781731">
+									<SUBFEATURES>
+										<!-- Breakpoint 4 -->
+                                        <SUBFEATURE subFeatureID="1020123" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="16824309">
+                                            <PARAMETERS>
+                                                <PARAMETER parameterID="16813141"/>
+                                                <PARAMETER parameterID="16808984"/>
+                                                <PARAMETER parameterID="16814223"/>
+                                                <PARAMETER parameterID="16814487"/>
+												<PARAMETER parameterID="16824299"/>
+                                            </PARAMETERS>
+                                        </SUBFEATURE>
+                                        <!-- Breakpoint 5 -->
+                                        <SUBFEATURE subFeatureID="1020124" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="16824309">
+                                            <PARAMETERS>
+                                                <PARAMETER parameterID="16813143"/>
+                                                <PARAMETER parameterID="16810390"/>
+                                                <PARAMETER parameterID="16814424"/>
+                                                <PARAMETER parameterID="16814488"/>
+												<PARAMETER parameterID="16824301"/>
+                                            </PARAMETERS>
+                                        </SUBFEATURE>
+                                        <!-- Breakpoint 6 -->
+                                        <SUBFEATURE subFeatureID="1020125" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="16824309">
+                                            <PARAMETERS>
+                                                <PARAMETER parameterID="16813144"/>
+                                                <PARAMETER parameterID="16810398"/>                                                
+                                                <PARAMETER parameterID="16814437"/>
+                                                <PARAMETER parameterID="16814489"/>
+												<PARAMETER parameterID="16824303"/>
+                                            </PARAMETERS>
+                                        </SUBFEATURE>
+                                        <!-- Breakpoint 7 -->
+                                        <SUBFEATURE subFeatureID="1020126" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="16824309">
+                                            <PARAMETERS>
+                                                <PARAMETER parameterID="16813183"/>
+                                                <PARAMETER parameterID="16813069"/>
+                                                <PARAMETER parameterID="16814441"/>
+												<PARAMETER parameterID="16814490"/>
+                                                <PARAMETER parameterID="16824304"/>												
+                                            </PARAMETERS>
+                                        </SUBFEATURE>
+                                        <!-- Breakpoint 8 -->
+                                        <SUBFEATURE subFeatureID="1020127" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="16824309">
+                                            <PARAMETERS>
+                                                <PARAMETER parameterID="16813333"/>
+                                                <PARAMETER parameterID="16813070"/>
+                                                <PARAMETER parameterID="16814443"/>
+                                                <PARAMETER parameterID="16814498"/>
+												<PARAMETER parameterID="16824305"/>
+                                            </PARAMETERS>
+                                        </SUBFEATURE>
+                                        <!-- Breakpoint 9 -->
+                                        <SUBFEATURE subFeatureID="1020128" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="16824309">
+                                            <PARAMETERS>
+                                                <PARAMETER parameterID="16813859"/>
+                                                <PARAMETER parameterID="16813071"/>
+                                                <PARAMETER parameterID="16814482"/>
+                                                <PARAMETER parameterID="16814507"/>
+												<PARAMETER parameterID="16824306"/>
+                                            </PARAMETERS>
+                                        </SUBFEATURE>
+                                        <!-- Breakpoint 10 -->
+                                        <SUBFEATURE subFeatureID="1020129" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="16824309">
+                                            <PARAMETERS>
+                                                <PARAMETER parameterID="16813860"/>
+                                                <PARAMETER parameterID="16813140"/>
+                                                <PARAMETER parameterID="16814483"/>
+                                                <PARAMETER parameterID="16814509"/>
+												<PARAMETER parameterID="16824287"/>												
+                                            </PARAMETERS>
+                                        </SUBFEATURE>
+									</SUBFEATURES>
+								</SUBFEATURE>
+                            </SUBFEATURES>
+                        </SUBFEATURE>
+                    </SUBFEATURES>
+                </FEATURE>
+				<FEATURE featureID="139" featureEnable="16789763" featureGTIS="1015054">
+					<SUBFEATURES>
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<PARAMETER parameterID="16785417"/>
+								<PARAMETER parameterID="16785418"/>
+								<PARAMETER parameterID="16783822"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+        <FEATURE featureID="61" featureEnable="16786584" featureGTIS="1015005">
+          <SUBFEATURES>
+			  <SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0" />
+           </SUBFEATURES>
+        </FEATURE>
+        <FEATURE featureID="55" featureEnable="16789245" featureGTIS="1015011">
+					<SUBFEATURES>
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<PARAMETER parameterID="16789237"/>
+								<PARAMETER parameterID="16789238"/>
+								</PARAMETERS>
+						</SUBFEATURE>
+            <SUBFEATURE subFeatureID="1" subFeatureEnable="16789295" subFeatureGTIS="1015051" subFeatureParent="55">
+              <PARAMETERS>
+                <PARAMETER parameterID="16789293"/>
+                <PARAMETER parameterID="16789292"/>
+                <PARAMETER parameterID="16789286"/>
+                <PARAMETER parameterID="16789288"/>
+              </PARAMETERS>
+            </SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<FEATURE featureID="95" featureEnable="0" featureGTIS="0">
+					<SUBFEATURES>
+						<!--Maintenance Indication Lamp-->
+						<SUBFEATURE subFeatureID="16787746" subFeatureEnable="16787746" subFeatureGTIS="1015470" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16789645"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<!--Fan Control Switch 2 -->
+						<SUBFEATURE subFeatureID="16787775" subFeatureEnable="16787775" subFeatureGTIS="1015471" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16788291"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16791400" subFeatureEnable="16791400" subFeatureGTIS="1015076" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16791402"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16791323" subFeatureEnable="16791323" subFeatureGTIS="1015077" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16791308"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16791312" subFeatureEnable="16791312" subFeatureGTIS="1015078" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16791311"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16791322" subFeatureEnable="16791322" subFeatureGTIS="1015079" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16791313"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16791321" subFeatureEnable="16791321" subFeatureGTIS="1015080" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16791317"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16791676" subFeatureEnable="16791676" subFeatureGTIS="1015081" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16791677"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16791979" subFeatureEnable="16791979" subFeatureGTIS="1015082" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16791980"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16791682" subFeatureEnable="16791682" subFeatureGTIS="1015083" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16791683"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16791984" subFeatureEnable="16791984" subFeatureGTIS="1015084" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16791985"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16791989" subFeatureEnable="16791989" subFeatureGTIS="1015085" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16791990"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16792085" subFeatureEnable="16792085" subFeatureGTIS="1015086" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16792086"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16791997" subFeatureEnable="16791997" subFeatureGTIS="1015087" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16791998"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16792002" subFeatureEnable="16792002" subFeatureGTIS="1015088" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16792003"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16792056" subFeatureEnable="16792056" subFeatureGTIS="1015089" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16792057"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16791320" subFeatureEnable="16791320" subFeatureGTIS="1015090" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16791316"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16791579" subFeatureEnable="16791579" subFeatureGTIS="1015091" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16791582"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="1020039" subFeatureEnable="1020039" subFeatureGTIS="1015091" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="1020010"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16791590" subFeatureEnable="16791590" subFeatureGTIS="1015092" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16791591"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16792095" subFeatureEnable="16792095" subFeatureGTIS="1015093" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16792096"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16791684" subFeatureEnable="16791684" subFeatureGTIS="1015094" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16791687"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16791688" subFeatureEnable="16791688" subFeatureGTIS="1015095" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16791689"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16792016" subFeatureEnable="16792016" subFeatureGTIS="1015096" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16792023"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16792017" subFeatureEnable="16792017" subFeatureGTIS="1015096" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16792024"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16792018" subFeatureEnable="16792018" subFeatureGTIS="1015096" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16792025"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16792021" subFeatureEnable="16792021" subFeatureGTIS="1015096" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16792029"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="1020011" subFeatureEnable="1020011" subFeatureGTIS="1015096" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="1020012"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="1020013" subFeatureEnable="1020013" subFeatureGTIS="1015097" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="1020014"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16791588" subFeatureEnable="16791588" subFeatureGTIS="1015098" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16791589"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16792009" subFeatureEnable="16792009" subFeatureGTIS="1015099" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16792011"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16792060" subFeatureEnable="16792060" subFeatureGTIS="1015100" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16792061"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16791595" subFeatureEnable="16791595" subFeatureGTIS="1015101" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16791599"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="1020015" subFeatureEnable="1020015" subFeatureGTIS="1015101" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="1020016"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16791598" subFeatureEnable="16791598" subFeatureGTIS="1015101" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16791602"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16792065" subFeatureEnable="16792065" subFeatureGTIS="1015102" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16792066"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16792091" subFeatureEnable="16792091" subFeatureGTIS="1015103" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16792092"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16791697" subFeatureEnable="16791697" subFeatureGTIS="1015104" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16791693"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<!--Cruise Control Pause Switch-->
+						<SUBFEATURE subFeatureID="16815739" subFeatureEnable="16815739" subFeatureGTIS="1015484" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16814550"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16791692" subFeatureEnable="16791692" subFeatureGTIS="1015104" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16791694"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16791405" subFeatureEnable="16791405" subFeatureGTIS="1015105" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16791403"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16792080" subFeatureEnable="16792080" subFeatureGTIS="1015106" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16792081"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16791593" subFeatureEnable="16791593" subFeatureGTIS="1015107" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16791594"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16794419" subFeatureEnable="16794419" subFeatureGTIS="1015108" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16794420"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="1020017" subFeatureEnable="1020017" subFeatureGTIS="1015108" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="1020018"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16806711" subFeatureEnable="16806711" subFeatureGTIS="1015326" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16806713"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16806710" subFeatureEnable="16806710" subFeatureGTIS="1015327" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16806707"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16806357" subFeatureEnable="16806357" subFeatureGTIS="1015344" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16806358"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16807808" subFeatureEnable="16807808" subFeatureGTIS="1015345" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16807813"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16807809" subFeatureEnable="16807809" subFeatureGTIS="1015346" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16807814"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16807810" subFeatureEnable="16807810" subFeatureGTIS="1015347" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16807815"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16807812" subFeatureEnable="16807812" subFeatureGTIS="1015348" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16807818"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16807811" subFeatureEnable="16807811" subFeatureGTIS="1015349" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16807817"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16807822" subFeatureEnable="16807822" subFeatureGTIS="1015350" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16807816"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+                       <SUBFEATURE subFeatureID="16821813" subFeatureEnable="16821813" subFeatureGTIS="1015420" subFeatureParent="95">
+				           <PARAMETERS>
+					       <!--Source Address-->
+				               <PARAMETER parameterID="16821814"/>
+				          </PARAMETERS>
+		               </SUBFEATURE>
+						<!--Ambient Air Temperature Sensor Multiplexing-->
+						<SUBFEATURE subFeatureID="16789996" subFeatureEnable="16789996" subFeatureGTIS="1015487" subFeatureParent="95">
+							<PARAMETERS>
+								<PARAMETER parameterID="16792417"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+                  <SUBFEATURE subFeatureID="16824101" subFeatureEnable="16824101" subFeatureGTIS="1015520" subFeatureParent="95">
+                     <PARAMETERS>
+                        <PARAMETER parameterID="16824100"/>
+                     </PARAMETERS>
+                  </SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<FEATURE featureID="57" featureEnable="16788902" featureGTIS="1015141">
+					<SUBFEATURES>
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<PARAMETER parameterID="16783812"/>
+								<PARAMETER parameterID="16783633"/>
+								<PARAMETER parameterID="16783810"/>
+								<PARAMETER parameterID="16783467"/>
+								<PARAMETER parameterID="16789298"/>
+                			</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16816596" subFeatureEnable="16816596" subFeatureGTIS="1015499" subFeatureParent="57">
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16789297" subFeatureEnable="16789297" subFeatureGTIS="1015183" subFeatureParent="57">
+							<PARAMETERS>
+								<PARAMETER parameterID="16783466"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+                        <SUBFEATURE subFeatureID="16820187" subFeatureEnable="16820187" subFeatureGTIS="1015516" subFeatureParent="57">
+                            <PARAMETERS>
+                                <PARAMETER parameterID="16810121"/>
+                            </PARAMETERS>
+                        </SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<FEATURE featureID="65" featureEnable="16789056" featureGTIS="1015053">
+					<SUBFEATURES>
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="1015053" subFeatureParent="0">
+							<PARAMETERS>
+								<PARAMETER parameterID="16789055"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<FEATURE featureID="545" featureEnable="16824029" featureGTIS="1015511">
+					<SUBFEATURES>
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<PARAMETER parameterID="16789055"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<FEATURE featureID="56" featureEnable="0" featureGTIS="23255">
+					<SUBFEATURES>
+						<SUBFEATURE subFeatureID="23061" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="56">
+							<PARAMETERS>
+								<PARAMETER parameterID="1001"/>
+								<PARAMETER parameterID="1003"/>
+								<PARAMETER parameterID="1005"/>
+								<PARAMETER parameterID="1006"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="23071" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="56">
+							<PARAMETERS>
+								<PARAMETER parameterID="1009"/>
+								<PARAMETER parameterID="1010"/>
+								<PARAMETER parameterID="1011"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="23081" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="56">
+							<PARAMETERS>
+								<PARAMETER parameterID="2001"/>
+								<PARAMETER parameterID="2002"/>
+								<PARAMETER parameterID="2003"/>
+								<PARAMETER parameterID="2022"/>
+								<PARAMETER parameterID="2005"/>
+								<PARAMETER parameterID="2006"/>
+								<PARAMETER parameterID="3005"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="23051" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="56">
+							<PARAMETERS>
+								<PARAMETER parameterID="3001"/>
+								<PARAMETER parameterID="3002"/>
+								<PARAMETER parameterID="3003"/>
+								<PARAMETER parameterID="3004"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="25051" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="56">
+							<PARAMETERS>
+								<PARAMETER parameterID="4003"/>
+								<PARAMETER parameterID="4004"/>
+								<PARAMETER parameterID="4010"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="23091" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="56">
+							<PARAMETERS>
+								<PARAMETER parameterID="2007"/>
+								<PARAMETER parameterID="5001"/>
+								<PARAMETER parameterID="5002"/>
+								<PARAMETER parameterID="5003"/>
+								<PARAMETER parameterID="5007"/>
+								<PARAMETER parameterID="5015"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<FEATURE featureID="181" featureEnable="16785187" featureGTIS="1015182">
+					<SUBFEATURES>
+            <SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+              <PARAMETERS>
+                <PARAMETER parameterID="16785189"/>
+                <PARAMETER parameterID="16785188"/>
+              </PARAMETERS>
+            </SUBFEATURE>
+            <SUBFEATURE subFeatureID="1" subFeatureEnable="16820904" subFeatureGTIS="1015566" subFeatureParent="181">
+              <PARAMETERS>
+                <PARAMETER parameterID="16820906"/>
+                <PARAMETER parameterID="16820907"/>
+              </PARAMETERS>
+            </SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+        <!-- Air Shut Off Valve -->
+        <FEATURE featureID="184" featureEnable="16818074" featureGTIS="1015434">
+          <SUBFEATURES>
+             <SUBFEATURE subFeatureID="16816338" subFeatureEnable="16816338" subFeatureGTIS="1015490" subFeatureParent="184">
+              </SUBFEATURE> 
+          </SUBFEATURES>
+        </FEATURE>
+        <!-- Driver Reward -->
+        <FEATURE featureID="186" featureEnable="16818113" featureGTIS="1015436">
+          <SUBFEATURES>
+            <SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+              <PARAMETERS>
+                <PARAMETER parameterID="16786596"/>
+              </PARAMETERS>
+            </SUBFEATURE>
+            <SUBFEATURE subFeatureID="1040287" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="186">
+              <PARAMETERS>
+                <PARAMETER parameterID="16818123"/>
+                <PARAMETER parameterID="16818131"/>
+                <PARAMETER parameterID="16818125"/>
+              </PARAMETERS>
+            </SUBFEATURE>
+            <SUBFEATURE subFeatureID="1040288" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="186">
+              <PARAMETERS>
+                <PARAMETER parameterID="16786605"/>
+                <PARAMETER parameterID="16786606"/>
+                <PARAMETER parameterID="16786607"/>
+              </PARAMETERS>
+            </SUBFEATURE>
+            <SUBFEATURE subFeatureID="1040289" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="186">
+              <PARAMETERS>
+                <PARAMETER parameterID="16786601"/>
+                <PARAMETER parameterID="16786602"/>
+                <PARAMETER parameterID="16786603"/>
+                <PARAMETER parameterID="16786604"/>
+              </PARAMETERS>
+            </SUBFEATURE>
+          </SUBFEATURES>
+        </FEATURE>
+        <FEATURE featureID="35" featureEnable="16791263" featureGTIS="1015181">
+					<SUBFEATURES>
+            <SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+              <PARAMETERS>
+                <PARAMETER parameterID="16791267"/>
+                <PARAMETER parameterID="16791268"/>
+                <PARAMETER parameterID="16791265"/>
+              </PARAMETERS>
+            </SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+        <FEATURE featureID="44" featureEnable="16789682" featureGTIS="1015180">
+          <SUBFEATURES>
+            <SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+              <PARAMETERS>
+                <PARAMETER parameterID="16789683"/>
+                <PARAMETER parameterID="16789681"/>
+                <PARAMETER parameterID="16789680"/>
+                <PARAMETER parameterID="16789679"/>
+                <PARAMETER parameterID="1020068"/>
+                <PARAMETER parameterID="16789678"/>
+                <PARAMETER parameterID="1020069"/>
+                <PARAMETER parameterID="16789669"/>
+                <PARAMETER parameterID="16789677"/>
+                <PARAMETER parameterID="16789676"/>
+                <PARAMETER parameterID="16789670"/>
+              </PARAMETERS>
+            </SUBFEATURE>
+            <SUBFEATURE subFeatureID="16789674" subFeatureEnable="16789674" subFeatureGTIS="1050019" subFeatureParent="44">
+              <PARAMETERS>
+                <PARAMETER parameterID="16789673"/>
+                <PARAMETER parameterID="16789667"/>
+              </PARAMETERS>
+            </SUBFEATURE>
+          </SUBFEATURES>
+        </FEATURE>
+		<FEATURE featureID="546" featureEnable="16824031" featureGTIS="1015512">
+          <SUBFEATURES>
+            <SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+              <PARAMETERS>
+                <PARAMETER parameterID="16789683"/>
+                <PARAMETER parameterID="16789681"/>
+                <PARAMETER parameterID="16789680"/>
+                <PARAMETER parameterID="16789679"/>
+                <PARAMETER parameterID="1020068"/>
+                <PARAMETER parameterID="16789678"/>
+                <PARAMETER parameterID="1020069"/>
+                <PARAMETER parameterID="16789669"/>
+                <PARAMETER parameterID="16789677"/>
+                <PARAMETER parameterID="16789676"/>
+                <PARAMETER parameterID="16789670"/>
+              </PARAMETERS>
+            </SUBFEATURE>
+            <SUBFEATURE subFeatureID="16789674" subFeatureEnable="16789674" subFeatureGTIS="1050019" subFeatureParent="44">
+              <PARAMETERS>
+                <PARAMETER parameterID="16789673"/>
+                <PARAMETER parameterID="16789667"/>
+              </PARAMETERS>
+            </SUBFEATURE>
+          </SUBFEATURES>
+        </FEATURE>
+				<FEATURE featureID="525" featureEnable="16792428" featureGTIS="1015179">
+					<SUBFEATURES>
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<PARAMETER parameterID="16792434"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<FEATURE featureID="90" featureEnable="16791926" featureGTIS="1015178">
+					<SUBFEATURES>
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<PARAMETER parameterID="16791928"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+                <!-- Driver Reward -->
+                <FEATURE featureID="14" featureEnable="16786608" featureGTIS="1015185">
+                    <SUBFEATURES>
+                        <SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+                            <PARAMETERS>
+                                <PARAMETER parameterID="16786596"/>
+                            </PARAMETERS>
+                        </SUBFEATURE>
+                        <SUBFEATURE subFeatureID="1020070" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="14">
+                            <PARAMETERS>
+                                <PARAMETER parameterID="16786597"/>
+                                <PARAMETER parameterID="16786599"/>
+                                <PARAMETER parameterID="16786598"/>
+                            </PARAMETERS>
+                        </SUBFEATURE>
+                        <SUBFEATURE subFeatureID="1020071" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="14">
+                            <PARAMETERS>
+                                <PARAMETER parameterID="16786605"/>
+                                <PARAMETER parameterID="16786606"/>
+                                <PARAMETER parameterID="16786607"/>
+                            </PARAMETERS>
+                        </SUBFEATURE>
+                        <SUBFEATURE subFeatureID="1020072" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="14">
+                            <PARAMETERS>
+                                <PARAMETER parameterID="16786601"/>
+                                <PARAMETER parameterID="16786602"/>
+                                <PARAMETER parameterID="16786603"/>
+                                <PARAMETER parameterID="16786604"/>
+                            </PARAMETERS>
+                        </SUBFEATURE>
+                    </SUBFEATURES>
+                </FEATURE>
+				<FEATURE featureID="52" featureEnable="16787649" featureGTIS="1015176">
+					<SUBFEATURES>
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<PARAMETER parameterID="16798899"/>
+								<PARAMETER parameterID="16799022"/>
+								<PARAMETER parameterID="1020073"/>
+								<PARAMETER parameterID="1020067"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<FEATURE featureID="76" featureEnable="16791272" featureGTIS="1015133">
+					<SUBFEATURES>
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<PARAMETER parameterID="16791277"/>
+								<PARAMETER parameterID="16791274"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<FEATURE featureID="100" featureEnable="0" featureGTIS="1015186">
+					<SUBFEATURES>
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<PARAMETER parameterID="16790237"/>
+								<PARAMETER parameterID="16790240"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<FEATURE featureID="522" featureEnable="16797504" featureGTIS="1015187">
+					<SUBFEATURES>
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<PARAMETER parameterID="16797395"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16800419" subFeatureEnable="16800419" subFeatureGTIS="1015188" subFeatureParent="522">
+							<PARAMETERS>
+								<PARAMETER parameterID="16797470"/>
+								<PARAMETER parameterID="16797471"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16800416" subFeatureEnable="16800416" subFeatureGTIS="1015189" subFeatureParent="522">
+							<PARAMETERS>
+								<PARAMETER parameterID="16797512"/>
+								<PARAMETER parameterID="16797469"/>
+								<PARAMETER parameterID="16797474"/>
+								<PARAMETER parameterID="16797475"/>
+								<PARAMETER parameterID="16797468"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<FEATURE featureID="526" featureEnable="16797364" featureGTIS="1015205">
+					<SUBFEATURES>
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<PARAMETER parameterID="16797369"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16797454" subFeatureEnable="16797454" subFeatureGTIS="1015204" subFeatureParent="526">
+							<PARAMETERS>
+								<PARAMETER parameterID="16797285"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16797429" subFeatureEnable="16797429" subFeatureGTIS="1015206" subFeatureParent="526">
+							<PARAMETERS>
+								<PARAMETER parameterID="16797434"/>
+								<PARAMETER parameterID="16797435"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16797438" subFeatureEnable="16797438" subFeatureGTIS="1015207" subFeatureParent="526"/>
+						<SUBFEATURE subFeatureID="16797442" subFeatureEnable="16797442" subFeatureGTIS="1015208" subFeatureParent="526"/>
+						<SUBFEATURE subFeatureID="16797321" subFeatureEnable="16797321" subFeatureGTIS="1015272" subFeatureParent="526">
+							<PARAMETERS>
+								<PARAMETER parameterID="16797344"/>
+								<PARAMETER parameterID="16797328"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="16797330" subFeatureEnable="16797330" subFeatureGTIS="1015151" subFeatureParent="526">
+							<PARAMETERS>
+								<PARAMETER parameterID="16797339"/>
+								<PARAMETER parameterID="16797340"/>
+								<PARAMETER parameterID="16797341"/>
+								<PARAMETER parameterID="16797346"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<FEATURE featureID="527" featureEnable="16798437" featureGTIS="1015216">
+					<SUBFEATURES>
+						<SUBFEATURE subFeatureID="16798453" subFeatureEnable="16798453" subFeatureGTIS="1050014" subFeatureParent="527"/>
+						<SUBFEATURE subFeatureID="16798455" subFeatureEnable="16798455" subFeatureGTIS="1050015" subFeatureParent="527"/>
+						<SUBFEATURE subFeatureID="16798454" subFeatureEnable="16798454" subFeatureGTIS="1050016" subFeatureParent="527"/>
+						<SUBFEATURE subFeatureID="16798457" subFeatureEnable="16798457" subFeatureGTIS="1050017" subFeatureParent="527"/>
+						<SUBFEATURE subFeatureID="16798456" subFeatureEnable="16798456" subFeatureGTIS="1050018" subFeatureParent="527"/>
+					</SUBFEATURES>
+				</FEATURE>
+				<FEATURE featureID="528" featureEnable="0" featureGTIS="1015261">
+					<SUBFEATURES>
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<PARAMETER parameterID="16792640"/>
+								<PARAMETER parameterID="16792641"/>
+								<PARAMETER parameterID="16792643"/>
+								<PARAMETER parameterID="16792644"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<!--Oil Level Electronic Dipstick-->
+				<FEATURE featureID="509" featureEnable="16805485" featureGTIS="1015277">
+					<SUBFEATURES>
+						<!-- SubFeature 0 -->
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<!-- Oil Level Electronic Dipstick Low Threshold -->
+								<PARAMETER parameterID="16807346"/>							
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<!--Customer Power Limiter-->
+				<FEATURE featureID="555" featureEnable="16803884" featureGTIS="1015270">
+					<SUBFEATURES>
+						<!-- SubFeature 0 -->
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<!-- Customer Power Limit Application -->
+								<PARAMETER parameterID="16803883"/>
+								<!-- Customer Power Limit Percentage -->
+								<PARAMETER parameterID="16803886"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<!--Rated Overspeed Protection-->
+				<FEATURE featureID="524" featureEnable="16801600" featureGTIS="1015271">
+					<SUBFEATURES>
+						<!-- SubFeature 0 -->
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<!-- Percent Overspeed -->
+								<PARAMETER parameterID="16801602"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<!--Maintenance Monitor-->
+				<FEATURE featureID="39" featureEnable="16798569" featureGTIS="1015262">
+					<SUBFEATURES>
+						<!-- SubFeature 0 -->
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<!--Distance Interval-->
+								<PARAMETER parameterID="16798593"/>
+								<!--Time Interval-->
+								<PARAMETER parameterID="16798589"/>
+								<!--Alert Percentage-->
+								<PARAMETER parameterID="16798598"/>
+								<!--Interval Factor-->
+								<PARAMETER parameterID="16798586"/>
+								<!--Maintenance Monitor Operating Mode-->
+								<PARAMETER parameterID="16798583"/>
+								<!--Fuel Interval-->
+								<PARAMETER parameterID="16798592"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<!--Aftertreatment-->
+				<FEATURE featureID="142" featureEnable="0" featureGTIS="0">
+					<SUBFEATURES>
+						<!-- SCR Aftertreatment -->
+						<SUBFEATURE subFeatureID="1020296" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="142">
+							<SUBFEATURES>
+								<!-- Aftertreatment Diesel Exhaust Fluid Level System Configuration  -->
+								<SUBFEATURE subFeatureID="16789040" subFeatureEnable="16789040" subFeatureGTIS="1015457" subFeatureParent="1020296">
+									<PARAMETERS SortBy="0">
+										<PARAMETER parameterID="16798803"/>
+										<PARAMETER parameterID="16798805"/>
+										<PARAMETER parameterID="16798807"/>
+									</PARAMETERS>
+								</SUBFEATURE>
+								<!-- SubFeature Diesel Exhaust Fluid Heater -->
+								<SUBFEATURE subFeatureID="1020295" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="1020296">
+											<SUBFEATURES>
+											    <!-- Diesel Exhaust fluid heater configuration -->
+							                    <SUBFEATURE subFeatureID="16823980" subFeatureEnable="16823980" subFeatureGTIS="1015454" subFeatureParent="1020295">
+													<PARAMETERS>
+														 <PARAMETER parameterID="16823981"/>
+													</PARAMETERS>
+								               </SUBFEATURE>
+                        <!-- Diesel Exhaust Fluid Line Heater 4 Relay -->
+                        <SUBFEATURE subFeatureID="16816991" subFeatureEnable="16816991" subFeatureGTIS="1015540" subFeatureParent="1020295"/>
+												<!-- Diesel Exhaust Fluid Line Heater 3 Relay -->
+												<SUBFEATURE subFeatureID="16823943" subFeatureEnable="16823943" subFeatureGTIS="1015424" subFeatureParent="1020295"/>
+												<!-- Diesel Exhaust Fluid Line Heater 1 Relay -->
+												<SUBFEATURE subFeatureID="16817158" subFeatureEnable="16817158" subFeatureGTIS="1015404" subFeatureParent="1020295"/>
+												<!-- Diesel Exhaust Fluid Line Heater 2 Relay -->
+												<SUBFEATURE subFeatureID="16817803" subFeatureEnable="16817803" subFeatureGTIS="1015405" subFeatureParent="1020295"/>
+												<!-- Diesel Exhaust Fluid Tank Heater 2 Relay -->
+												<SUBFEATURE subFeatureID="16817786" subFeatureEnable="16817786" subFeatureGTIS="1015406" subFeatureParent="1020295"/>
+												<!-- Diesel Exhaust Fluid Tank Heater 1 Relay -->
+												<SUBFEATURE subFeatureID="16817762" subFeatureEnable="16817762" subFeatureGTIS="1015381" subFeatureParent="1020295"/>
+											</SUBFEATURES>
+								</SUBFEATURE>
+								
+								<!-- Diesel Exhaust Fluid Tank Configuration-->
+								<SUBFEATURE subFeatureID="16817891" subFeatureEnable="16817891" subFeatureGTIS="1015382" subFeatureParent="142">
+									<SUBFEATURES>
+										<SUBFEATURE subFeatureID="16817894" subFeatureEnable="16817894" subFeatureGTIS="0" subFeatureParent="142">
+                      <PARAMETERS>
+                        <!--Breakpoints -->
+                        <PARAMETER parameterID="1020232"/>
+                        <!--Linear Diesel Exhaust Fluid Tank Volume -->
+                        <PARAMETER parameterID="16817893"/>
+                      </PARAMETERS>
+											<SUBFEATURES>
+													<SUBFEATURE subFeatureID="16817896" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="16817894">
+													<PARAMETERS>
+														<!--Non-linear Urea tank level 1 -->
+														<PARAMETER parameterID="1020210"/>
+														<!--Non-linear Urea tank level 2 -->
+														<PARAMETER parameterID="1020211"/>
+														<!--Non-linear Urea tank level 3 -->
+														<PARAMETER parameterID="1020212"/>
+														<!--Non-linear Urea tank level 4 -->
+														<PARAMETER parameterID="1020213"/>
+														<!--Non-linear Urea tank level 5 -->
+														<PARAMETER parameterID="1020214"/>
+														<!--Non-linear Urea tank level 6 -->
+														<PARAMETER parameterID="1020215"/>
+														<!--Non-linear Urea tank level 7 -->
+														<PARAMETER parameterID="1020216"/>
+														<!--Non-linear Urea tank level 8 -->
+														<PARAMETER parameterID="1020217"/>
+														<!--Non-linear Urea tank level 9 -->
+														<PARAMETER parameterID="1020218"/>
+														<!--Non-linear Urea tank level 10 -->
+														<PARAMETER parameterID="1020219"/>
+														<!--Non-linear Urea tank level 11 -->
+														<PARAMETER parameterID="1020220"/>
+													</PARAMETERS>
+												</SUBFEATURE>
+												<SUBFEATURE subFeatureID="16818106" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="16817894">
+													<PARAMETERS>
+														<!--Non-linear Urea tank volume 1 -->
+														<PARAMETER parameterID="1020221"/>
+														<!--Non-linear Urea tank volume 2 -->
+														<PARAMETER parameterID="1020222"/>
+														<!--Non-linear Urea tank volume 3 -->
+														<PARAMETER parameterID="1020223"/>
+														<!--Non-linear Urea tank volume 4 -->
+														<PARAMETER parameterID="1020224"/>
+														<!--Non-linear Urea tank volume 5 -->
+														<PARAMETER parameterID="1020225"/>
+														<!--Non-linear Urea tank volume 6 -->
+														<PARAMETER parameterID="1020226"/>
+														<!--Non-linear Urea tank volume 7 -->
+														<PARAMETER parameterID="1020227"/>
+														<!--Non-linear Urea tank volume 8 -->
+														<PARAMETER parameterID="1020228"/>
+														<!--Non-linear Urea tank volume 9 -->
+														<PARAMETER parameterID="1020229"/>
+														<!--Non-linear Urea tank volume 10 -->
+														<PARAMETER parameterID="1020230"/>
+														<!--Non-linear Urea tank volume 11 -->
+														<PARAMETER parameterID="1020231"/>
+													</PARAMETERS>
+												</SUBFEATURE>
+											</SUBFEATURES>
+										</SUBFEATURE>
+									</SUBFEATURES>
+								</SUBFEATURE>
+							</SUBFEATURES>
+						</SUBFEATURE>
+						<!-- Aftertreatment Diesel Particulate Filter -->
+						<SUBFEATURE subFeatureID="1020385" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="142">
+							<SUBFEATURES>
+								<!-- Regeneration with Parking Brake -->
+								<SUBFEATURE subFeatureID="16796218" subFeatureEnable="16796218" subFeatureGTIS="1015432" subFeatureParent="1020385"/>
+								<!-- Aftertreatment Diesel Particulate Filter Temperature Stabilization -->
+								<SUBFEATURE subFeatureID="16823949" subFeatureEnable="16823949" subFeatureGTIS="1015449" subFeatureParent="1020385"/>
+								<!-- Diesel Particulate Filter Lamp -->
+								<SUBFEATURE subFeatureID="16806862" subFeatureEnable="16806862" subFeatureGTIS="1015333" subFeatureParent="1020385"/>
+								<!-- Diesel Particulate Filter in PTO -->
+								<SUBFEATURE subFeatureID="16806549" subFeatureEnable="16806549" subFeatureGTIS="1015332" subFeatureParent="1020385"/>
+								<!-- Diesel Particulate Filter Regeneration Start Switch -->
+								<SUBFEATURE subFeatureID="16806806" subFeatureEnable="16806806" subFeatureGTIS="1015335" subFeatureParent="1020385"/>
+								<!-- Diesel Particulate Filter Regeneration Permit Switch -->
+								<SUBFEATURE subFeatureID="16806808" subFeatureEnable="16806808" subFeatureGTIS="1015334" subFeatureParent="1020385"/>
+								<!-- Automotive Mobile Regeneration Field Threshold -->
+								<SUBFEATURE subFeatureID="16809181" subFeatureEnable="16809181" subFeatureGTIS="1015338" subFeatureParent="1020385">
+									<PARAMETERS>
+										<PARAMETER parameterID="16809395"/>
+									</PARAMETERS>
+								</SUBFEATURE>
+								<!-- Aftertreatment High Exhaust System Temperature Lamp -->
+								<SUBFEATURE subFeatureID="16806725" subFeatureEnable="16806725" subFeatureGTIS="1015331" subFeatureParent="1020385">
+									<PARAMETERS>
+										<PARAMETER parameterID="16806615"/>
+										<PARAMETER parameterID="16806621"/>
+										<PARAMETER parameterID="16806622"/>
+										<PARAMETER parameterID="16806623"/>
+									</PARAMETERS>
+								</SUBFEATURE>
+								<!-- Diesel Particulate Filter Automatic Stationary Regeneration-->
+								<SUBFEATURE subFeatureID="16806084" subFeatureEnable="16806084" subFeatureGTIS="1015330" subFeatureParent="1020385"/>
+							</SUBFEATURES>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<FEATURE featureID="143" featureEnable="16801739" featureGTIS="1015339">
+					<SUBFEATURES>
+						<SUBFEATURE subFeatureID="200146" subFeatureEnable="0" subFeatureGTIS="1020168" subFeatureParent="143">
+							<PARAMETERS>
+								<PARAMETER parameterID="16801741"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="200147" subFeatureEnable="0" subFeatureGTIS="1020169" subFeatureParent="143">
+							<PARAMETERS>
+								<PARAMETER parameterID="16801742"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="200148" subFeatureEnable="0" subFeatureGTIS="1020170" subFeatureParent="143">
+							<PARAMETERS>
+								<PARAMETER parameterID="16801743"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="200149" subFeatureEnable="0" subFeatureGTIS="1020171" subFeatureParent="143">
+							<PARAMETERS>
+								<PARAMETER parameterID="16801744"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="200150" subFeatureEnable="0" subFeatureGTIS="1020172" subFeatureParent="143">
+							<PARAMETERS>
+								<PARAMETER parameterID="16801745"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="200151" subFeatureEnable="0" subFeatureGTIS="1020173" subFeatureParent="143">
+							<PARAMETERS>
+								<PARAMETER parameterID="16801746"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="200152" subFeatureEnable="0" subFeatureGTIS="1020174" subFeatureParent="143">
+							<PARAMETERS>
+								<PARAMETER parameterID="16807289"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<SUBFEATURE subFeatureID="200153" subFeatureEnable="0" subFeatureGTIS="1020175" subFeatureParent="143">
+							<PARAMETERS>
+								<PARAMETER parameterID="16807476"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<!--Dual Fan Clutch Control-->
+				<FEATURE featureID="523" featureEnable="16806340" featureGTIS="1015342">
+					<SUBFEATURES>
+						<!-- SubFeature 0 -->
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<!--Dual Fan Control Logic-->
+								<PARAMETER parameterID="16806385"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<!-- SubFeature Dual Fan Clutch Type -->
+						<SUBFEATURE subFeatureID="16806342" subFeatureEnable="16806342" subFeatureGTIS="1015342" subFeatureParent="523">
+							<PARAMETERS>
+								<!--Dual Fan Variable Speed Frequency-->
+								<PARAMETER parameterID="16806351"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<!-- SubFeature Dual Fan OEM Temperature Input -->
+						<SUBFEATURE subFeatureID="16806396" subFeatureEnable="16806396" subFeatureGTIS="1050012" subFeatureParent="523">
+							<PARAMETERS>
+								<!--Minimum Dual Fan On Time for Air Conditioning Pressure Switch-->
+								<PARAMETER parameterID="16804631"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<!-- Dual Fan Manual Input -->
+						<SUBFEATURE subFeatureID="16806398" subFeatureEnable="16806398" subFeatureGTIS="1050013" subFeatureParent="523">
+                                              </SUBFEATURE>
+						<!-- Dual Fan Clutch Fan Speed -->
+						<SUBFEATURE subFeatureID="16807469" subFeatureEnable="16807469" subFeatureGTIS="1015352" subFeatureParent="523">
+                                          </SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<!--Broadcasted Percent Power-->
+				<FEATURE featureID="530" featureEnable="16807228" featureGTIS="1015353">
+					<SUBFEATURES>
+						<!-- SubFeature 0 -->
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0"/>
+					</SUBFEATURES>
+				</FEATURE>
+				<!--OEM Auxiliary Pressure Sensor Fault Threshold-->
+				<FEATURE featureID="532" featureEnable="16810159" featureGTIS="1015343">
+					<SUBFEATURES>
+						<!-- SubFeature 0 -->
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<!--OEM Auxiliary Pressure Threshold-->
+								<PARAMETER parameterID="16809545"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+<!--Trip Information Gas-->
+					<FEATURE featureID="533" featureEnable="16809874" featureGTIS="1015357">
+						<SUBFEATURES>
+							<!-- SubFeature 0 -->
+							<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="1015357" subFeatureParent="0">
+								<PARAMETERS>
+									<!--Engine Time Offset-->
+									<PARAMETER parameterID="16789237"/>
+									<!--ECM Time Offset-->
+									<PARAMETER parameterID="16789238"/>
+								</PARAMETERS>
+							</SUBFEATURE>									
+							<SUBFEATURE subFeatureID="1" subFeatureEnable="16809886" subFeatureGTIS="1015362" subFeatureParent="0">									
+								<PARAMETERS>
+								<!--Trip Information Gas Vehicle  -->
+									<!--Vehicle Overspeed 1-->
+									<PARAMETER parameterID="16789293"/>
+									<!--Vehicle Overspeed 2-->
+									<PARAMETER parameterID="16789292"/>
+									<!--Engine Distance Offset-->
+									<PARAMETER parameterID="16789286"/>
+									<!--ECM Distance Offset-->
+									<PARAMETER parameterID="16789288"/>
+								</PARAMETERS>
+							</SUBFEATURE>
+						</SUBFEATURES>
+					</FEATURE>
+        <!--Cold Idle Warmup-->
+        <FEATURE featureID="547" featureEnable="16824221" featureGTIS="1015529">
+          <SUBFEATURES>
+            <SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+              <PARAMETERS>
+                <PARAMETER parameterID="16824226"/>
+                <PARAMETER parameterID="16824228"/>
+                <PARAMETER parameterID="16824223"/>
+                <PARAMETER parameterID="16824232"/>
+              </PARAMETERS>
+            </SUBFEATURE>
+          <!--Cold Idle Warmup Extended-->
+			<SUBFEATURE subFeatureID="16824254" subFeatureEnable="16824254" subFeatureGTIS="1015523" subFeatureParent="547">
+					<PARAMETERS>
+						<PARAMETER parameterID="16824255"/>
+						<PARAMETER parameterID="16824258"/>
+						<PARAMETER parameterID="16824261"/>						
+					</PARAMETERS>
+				</SUBFEATURE>
+			</SUBFEATURES>
+		</FEATURE>
+		<!--Intermediate Speed Control-->
+		<FEATURE featureID="548" featureEnable="16824220" featureGTIS="1015527">
+          <SUBFEATURES>
+            <SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="1015527" subFeatureParent="0">
+              <PARAMETERS>
+                <PARAMETER parameterID="16787940"/>
+                <PARAMETER parameterID="16824213"/>
+                <PARAMETER parameterID="16824216"/>
+                <PARAMETER parameterID="16824240"/>
+                <PARAMETER parameterID="16824241"/>
+                <PARAMETER parameterID="16824242"/>
+                <PARAMETER parameterID="16781507"/>
+                <PARAMETER parameterID="16781522"/>
+                <PARAMETER parameterID="1020402"/>
+              </PARAMETERS>
+            </SUBFEATURE>
+            <SUBFEATURE subFeatureID="16824252" subFeatureEnable="16824252" subFeatureGTIS="1015527" subFeatureParent="548">
+              <PARAMETERS>
+                <PARAMETER parameterID="16824243"/>
+                <PARAMETER parameterID="16824246"/>
+                <PARAMETER parameterID="16824249"/>
+              </PARAMETERS>
+            </SUBFEATURE>
+            <SUBFEATURE subFeatureID="16824253" subFeatureEnable="16824253" subFeatureGTIS="1015527" subFeatureParent="548">
+            </SUBFEATURE>
+            <SUBFEATURE subFeatureID="16824237" subFeatureEnable="16824237" subFeatureGTIS="1015527" subFeatureParent="548">
+            </SUBFEATURE>
+            <SUBFEATURE subFeatureID="16781650" subFeatureEnable="16781650" subFeatureGTIS="0" subFeatureParent="548">
+              <PARAMETERS>
+                <PARAMETER parameterID="16781496"/>
+                <PARAMETER parameterID="16781511"/>
+                <PARAMETER parameterID="16781512"/>
+                <PARAMETER parameterID="16781513"/>
+                <PARAMETER parameterID="16781514"/>
+              </PARAMETERS>
+            </SUBFEATURE>
+          </SUBFEATURES>
+        </FEATURE>        
+<!--Idle Rampdown-->
+               <FEATURE featureID="146" featureEnable="16809956" featureGTIS="1015368">
+		       <SUBFEATURES>
+		        <!-- SubFeature 0 -->
+		       <SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+			   <PARAMETERS>
+						         <!--Idle Rampdown Override Enable-->
+								<PARAMETER parameterID="16809959"/>
+								<!--Idle Rampdown Load Threshold-->
+								<PARAMETER parameterID="16809960"/>
+								<!--Idle Rampdown Period-->
+								<PARAMETER parameterID="16809963"/>
+                <!--Idle Rampdown Warning Period-->
+                <PARAMETER parameterID="16809964"/>
+				</PARAMETERS>
+		      </SUBFEATURE>
+			  <SUBFEATURE subFeatureID="16824295" subFeatureEnable="16824295" subFeatureGTIS="1015536" subFeatureParent="146">
+			  <PARAMETERS>
+								<PARAMETER parameterID="16824189"/>
+								<PARAMETER parameterID="16824192"/>
+								<PARAMETER parameterID="16824195"/>
+								<PARAMETER parameterID="16824198"/>								
+								<PARAMETER parameterID="16824201"/>
+								<PARAMETER parameterID="16824204"/>															
+			  </PARAMETERS>
+			  </SUBFEATURE>
+			</SUBFEATURES>
+               </FEATURE>
+<!--Cyclical Load Acceptance Gain Adjust -->
+<FEATURE featureID="147" featureEnable="16810381" featureGTIS="1015370">
+			<SUBFEATURES>
+			<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="1015370" subFeatureParent="0">
+			<PARAMETERS>
+							    <!--Cyclical Load Acceptance No Cyclic Load Gain-->
+								<PARAMETER parameterID="16809335"/>
+								<!--Cyclical Load Acceptance Cyclic Load Gain-->
+								<PARAMETER parameterID="16809414"/>
+								<!--Cyclical Load Acceptance Last Adjustment Device-->
+								<PARAMETER parameterID="16811133"/>										
+				</PARAMETERS>
+                        </SUBFEATURE>
+				<SUBFEATURE subFeatureID="16811140" subFeatureEnable="16811140" subFeatureGTIS="1015371" subFeatureParent="147">
+				</SUBFEATURE>
+			</SUBFEATURES>
+</FEATURE>
+<!-- Immobilizer -->
+    <FEATURE featureID="149" featureEnable="16815911" featureGTIS="1015372">
+			<SUBFEATURES>
+				<SUBFEATURE subFeatureID="16810151" subFeatureEnable="16810151" subFeatureGTIS="1015402" subFeatureParent="149">
+				</SUBFEATURE>
+			</SUBFEATURES>
+</FEATURE>
+<!--Variable Rate Vehicle Acceleration Management-->
+<FEATURE featureID="152" featureEnable="16815922" featureGTIS="1015374">
+		<SUBFEATURES>
+		<!-- SubFeature 0 -->
+		<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+				<PARAMETERS>
+							    <!--Variable Acceleration 1-->
+								<PARAMETER parameterID="16815924"/>
+								<!--Variable Acceleration 2-->
+								<PARAMETER parameterID="16815925"/>
+								<!--Variable Acceleration Speed 1-->
+								<PARAMETER parameterID="16815926"/>
+								<!--Variable Acceleration Speed 2-->
+								<PARAMETER parameterID="16815928"/>							
+				</PARAMETERS>
+		</SUBFEATURE>
+		</SUBFEATURES>
+</FEATURE>
+<FEATURE featureID="159" featureEnable="16820915" featureGTIS="1015395">
+		<SUBFEATURES>
+		<!-- SubFeature 0 -->
+		<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+				<PARAMETERS>
+							<!--Enhanced Auxiliary Shutdown Switch Logic-->
+								<PARAMETER parameterID="16821848"/>			
+				</PARAMETERS>
+		</SUBFEATURE>
+		</SUBFEATURES>
+</FEATURE>
+<FEATURE featureID="161" featureEnable="16823814" featureGTIS="1015403">
+  <SUBFEATURES>
+    <!-- SubFeature 0 -->
+    <SUBFEATURE subFeatureID="1" subFeatureEnable="16824186" subFeatureGTIS="1015573" subFeatureParent="161">
+      <PARAMETERS>
+        <!--Switch Logic-->
+        <PARAMETER parameterID="16824188"/>
+      </PARAMETERS>
+    </SUBFEATURE>
+  </SUBFEATURES>
+</FEATURE>
+<FEATURE featureID="163" featureEnable="16823834" featureGTIS="1015399">
+		<SUBFEATURES>
+		<!-- SubFeature 0 -->
+		<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+				<PARAMETERS>
+							        <!--Oil Level Electronic Dipstick Engine Power Angle-->
+								<PARAMETER parameterID="1020275"/>
+							        <!--Oil Level Electronic Dipstick Oil Pan Type-->
+								<PARAMETER parameterID="1020276"/>
+								<!--Oil Level Electronic Dipstick Oil Pan Port Location-->
+								<PARAMETER parameterID="1020277"/>
+							        <!--Oil Level Electronic Dipstick Horizontal Engine Tilt Angle-->
+								<PARAMETER parameterID="1020278"/>
+				</PARAMETERS>
+		</SUBFEATURE>
+		</SUBFEATURES>
+</FEATURE>
+<FEATURE featureID="164" featureEnable="16822846" featureGTIS="1015400">
+		<SUBFEATURES>
+		<!-- SubFeature 0 -->
+		<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+				<PARAMETERS>
+								<!--Adjustment Factor-->
+								<PARAMETER parameterID="16823813"/>
+				</PARAMETERS>
+		</SUBFEATURE>
+		</SUBFEATURES>
+</FEATURE>
+<FEATURE featureID="165" featureEnable="16823836" featureGTIS="1015401">
+		<SUBFEATURES>
+		<!-- SubFeature 0 -->
+		<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+				<PARAMETERS>
+            <!--Low Engine Speed Breakpoint-->
+            <PARAMETER parameterID="1020550"/>
+            <!--High Engine Speed Breakpoint-->
+            <PARAMETER parameterID="1020448"/>
+        </PARAMETERS>
+		</SUBFEATURE>
+		</SUBFEATURES>
+</FEATURE>
+<!--Fault Acknowledge Switch -->
+				<FEATURE featureID="193" featureEnable="16814532" featureGTIS="1015489">
+					<SUBFEATURES>
+						<!-- SubFeature 0 -->
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0"/>
+					</SUBFEATURES>
+				</FEATURE>
+<!--Air Conditioner Control-->
+        <FEATURE featureID="194" featureEnable="16816344" featureGTIS="1015498">
+          <SUBFEATURES>
+            <!-- Air Conditioner on Idle Speed Adjust -->
+            <SUBFEATURE subFeatureID="16816593" subFeatureEnable="16816593" subFeatureGTIS="1015498" subFeatureParent="194">
+              <PARAMETERS>
+                <!--- Low Speed Idle Setpoint with Air Conditioning -->
+                <PARAMETER parameterID="16816594"/>
+              </PARAMETERS>
+            </SUBFEATURE>
+          </SUBFEATURES>
+        </FEATURE>
+<!--Remote Start-->
+                <FEATURE featureID="195" featureEnable="16824080" featureGTIS="1015517">
+                    <SUBFEATURES>
+                        <!-- SubFeature 0 -->
+                      <SUBFEATURE subFeatureID="0" subFeatureEnable="16824349" subFeatureGTIS="1015557" subFeatureParent="195">
+                        <PARAMETERS>
+                          <!-- Relay Logic -->
+                          <PARAMETER parameterID="16824351"/>
+                        </PARAMETERS>
+                      </SUBFEATURE>
+                    </SUBFEATURES>
+                </FEATURE>
+                <!--Transmission Accelerator Interlock-->
+                <FEATURE featureID="197" featureEnable="16824102" featureGTIS="1015521">
+                    <SUBFEATURES>
+                        <!-- SubFeature 0 -->
+                        <SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0"/>
+                    </SUBFEATURES>
+                </FEATURE>
+        <!--OEM Auxiliary Switch Input--> 
+        <FEATURE featureID="198" featureEnable="16790914" featureGTIS="1015159">
+          <SUBFEATURES>
+            <!-- Auxiliary Discrete Input -->
+            <SUBFEATURE subFeatureID="16824289" subFeatureEnable="16824289" subFeatureGTIS="1015537" subFeatureParent="198">
+              <PARAMETERS>
+                <!-- Switch Logic -->
+                <PARAMETER parameterID="16824139"/>                
+              </PARAMETERS>            
+            </SUBFEATURE>
+          </SUBFEATURES>
+        </FEATURE>   
+		<!--Engine Overload Protection--> 
+        <FEATURE featureID="199" featureEnable="16824320" featureGTIS="1015542">
+          <SUBFEATURES>
+            <!-- SubFeature 0 -->
+            <SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+			  <PARAMETERS>
+                <!--- Accelerator Clear Threshold -->
+                <PARAMETER parameterID="16824335"/>
+				<!--- Clear Time -->
+				<PARAMETER parameterID="16824322"/>
+				<!--- Engine Speed Clear Threshold -->
+				<PARAMETER parameterID="16824330"/>
+				<!--- Set Time -->
+				<PARAMETER parameterID="16824332"/>
+              </PARAMETERS>
+			</SUBFEATURE> 
+          </SUBFEATURES>
+        </FEATURE>
+        <!--Accelerator Options-->
+        <FEATURE featureID="200" featureEnable="16824371" featureGTIS="1015563">
+          <SUBFEATURES>
+            <!-- SubFeature 0 -->
+            <SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+              <PARAMETERS>
+                <!--- Accelerator Type -->
+                <PARAMETER parameterID="16824373"/>
+              </PARAMETERS>
+            </SUBFEATURE>
+          </SUBFEATURES>
+        </FEATURE>
+        <!--Load Based Speed Control-->
+        <FEATURE featureID="201" featureEnable="16824385" featureGTIS="1015554">
+          <SUBFEATURES>
+            <!-- SubFeature 0 -->
+            <SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+              <PARAMETERS>
+                <!--- High Engine Speed Breakpoint -->
+                <PARAMETER parameterID="1020447"/>
+                <!--- Low Engine Speed Breakpoint -->
+                <PARAMETER parameterID="1020449"/>
+                <!--- RPM Breakpoint -->
+                <PARAMETER parameterID="16824402"/>
+              </PARAMETERS>
+            </SUBFEATURE>
+            <SUBFEATURE subFeatureID="1" subFeatureEnable="16824406" subFeatureGTIS="1015567" subFeatureParent="201">
+              <PARAMETERS>
+                <!--- Vehicle Mass Threshold -->
+                <PARAMETER parameterID="16824407"/>
+              </PARAMETERS>
+            </SUBFEATURE>
+          </SUBFEATURES>
+        </FEATURE>
+        <!--Powertrain Protection-->
+        <FEATURE featureID="202" featureEnable="16824376" featureGTIS="1015558">
+          <SUBFEATURES>
+            <SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+              <PARAMETERS>
+                <PARAMETER parameterID="16789683"/>
+                <PARAMETER parameterID="16789681"/>
+                <PARAMETER parameterID="16789680"/>
+                <PARAMETER parameterID="16789679"/>
+                <PARAMETER parameterID="16789670"/>
+                <PARAMETER parameterID="16789678"/>
+                <PARAMETER parameterID="16789669"/>
+                <PARAMETER parameterID="16789677"/>
+                <PARAMETER parameterID="16789676"/>
+                <PARAMETER parameterID="1020418"/>
+                <PARAMETER parameterID="1020419"/>
+              </PARAMETERS>
+            </SUBFEATURE>
+            <SUBFEATURE subFeatureID="16789674" subFeatureEnable="16789674" subFeatureGTIS="1015558" subFeatureParent="202">
+              <PARAMETERS>
+                <PARAMETER parameterID="16789667"/>
+                <PARAMETER parameterID="16789673"/>
+              </PARAMETERS>
+            </SUBFEATURE>
+          </SUBFEATURES>
+        </FEATURE>
+        <!--Vehicle Speed Sensor Anti-Tampering-->
+        <FEATURE featureID="203" featureEnable="16824375" featureGTIS="1015559">
+          <SUBFEATURES>
+            <!--Vehicle Speed Sensor Anti-Tampering Sensitivity-->
+            <SUBFEATURE subFeatureID="16824370" subFeatureEnable="16824370" subFeatureGTIS="1015560" subFeatureParent="203">
+              <PARAMETERS>
+                <!--- Tampering Sensitivity Level -->
+                <PARAMETER parameterID="16789055"/>
+              </PARAMETERS>
+            </SUBFEATURE>
+          </SUBFEATURES>
+        </FEATURE>
+    		<FEATURE featureID="205" featureEnable="16787871" featureGTIS="1015019">
+			<SUBFEATURES>
+				<!-- Oil Pressure Sensor -->
+				<SUBFEATURE subFeatureID="16824361" subFeatureEnable="16824361" subFeatureGTIS="1015562" subFeatureParent="205">
+					<SUBFEATURES>
+						<!-- Auto Detect -->
+						<SUBFEATURE subFeatureID="16824363" subFeatureEnable="16824363" subFeatureGTIS="1015582" subFeatureParent="16824361">
+						</SUBFEATURE>
+					</SUBFEATURES>
+					<PARAMETERS>
+						<!--- Sensor Type -->
+						<PARAMETER parameterID="16824365"/>
+					</PARAMETERS>					
+				</SUBFEATURE>
+			</SUBFEATURES>
+		</FEATURE>
+		<!--Aftertreatment Diesel Particulate Filter Regeneration Inhibit Lamp -->
+		<FEATURE featureID="206" featureEnable="16824411" featureGTIS="1015565">
+			<SUBFEATURES>
+				<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0"/>					
+			</SUBFEATURES>
+		</FEATURE>
+        <!--OEM Switch 1-->
+        <FEATURE featureID="207" featureEnable="16816936" featureGTIS="1015568">
+          <SUBFEATURES>
+            <SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+            <PARAMETERS>
+              <!--- OEM Switch 1 Logic -->
+              <PARAMETER parameterID="16816822"/>
+            </PARAMETERS>
+            </SUBFEATURE>
+          </SUBFEATURES>
+        </FEATURE>
+        <!--OEM Switch 2-->
+        <FEATURE featureID="208" featureEnable="16817126" featureGTIS="1015569">
+          <SUBFEATURES>
+            <SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+            <PARAMETERS>
+              <!--- OEM Switch 2 Logic -->
+              <PARAMETER parameterID="16817127"/>
+            </PARAMETERS>
+            </SUBFEATURE>
+          </SUBFEATURES>
+        </FEATURE>
+        <!--OEM Switch 3-->
+        <FEATURE featureID="209" featureEnable="16817138" featureGTIS="1015570">
+          <SUBFEATURES>
+            <SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+              <PARAMETERS>
+                <!--- OEM Switch 3 Logic -->
+                <PARAMETER parameterID="16817141"/>
+              </PARAMETERS>
+            </SUBFEATURE>
+          </SUBFEATURES>
+        </FEATURE>
+        <!--OEM Switch 4-->
+        <FEATURE featureID="210" featureEnable="16824118" featureGTIS="1015571">
+          <SUBFEATURES>
+            <SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+            <PARAMETERS>
+              <!--- OEM Switch 4 Logic -->
+              <PARAMETER parameterID="16820874"/>
+            </PARAMETERS>
+            </SUBFEATURE>
+          </SUBFEATURES>
+        </FEATURE>
+        <!--OEM Switch 5-->
+        <FEATURE featureID="211" featureEnable="16824182" featureGTIS="1015572">
+          <SUBFEATURES>
+            <SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+            <PARAMETERS>
+              <!--- OEM Switch 5 Logic -->
+              <PARAMETER parameterID="16824183"/>
+            </PARAMETERS>
+            </SUBFEATURE>
+          </SUBFEATURES>
+        </FEATURE>
+        <!--Vehicle Speed Based Device Driver A-->
+        <FEATURE featureID="212" featureEnable="16816809" featureGTIS="1015574">
+          <SUBFEATURES>
+            <SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+            <PARAMETERS>
+              <!--- Device Driver A Active Vehicle Speed Threshold -->
+              <PARAMETER parameterID="16824239"/>
+               <!--- Device Driver A Inactive Vehicle Speed Threshold -->
+                <PARAMETER parameterID="16824274"/>
+                 <!--- Device Driver A Logic -->
+                  <PARAMETER parameterID="16824238"/>
+                </PARAMETERS>
+            </SUBFEATURE>
+              </SUBFEATURES>
+        </FEATURE>
+        <!--Vehicle Speed Based Device Driver B-->
+        <FEATURE featureID="213" featureEnable="16824272" featureGTIS="1015575">
+          <SUBFEATURES>
+            <SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+            <PARAMETERS>
+              <!--- Device Driver B Active Vehicle Speed Threshold -->
+              <PARAMETER parameterID="16824280"/>
+               <!---Device Driver B Inactive Vehicle Speed Threshold -->
+                <PARAMETER parameterID="16824264"/>
+                 <!---Device Driver B Logic -->
+                  <PARAMETER parameterID="16824276"/>
+                </PARAMETERS>
+            </SUBFEATURE>
+              </SUBFEATURES>
+        </FEATURE>
+        <!--Clutch Protection-->
+        <FEATURE featureID="214" featureEnable="16824416" featureGTIS="1015576">
+          <SUBFEATURES>
+            <SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+              <PARAMETERS>
+                <PARAMETER parameterID="16824417"/>
+              </PARAMETERS>
+            </SUBFEATURE>
+            <!--- Clutch Abuse -->
+            <SUBFEATURE subFeatureID="16824414" subFeatureEnable="16824414" subFeatureGTIS="1015580" subFeatureParent="214">
+            </SUBFEATURE>
+            <!--- Clutch Alert -->
+            <SUBFEATURE subFeatureID="16824418" subFeatureEnable="16824418" subFeatureGTIS="1015581" subFeatureParent="214">
+            </SUBFEATURE>
+          </SUBFEATURES>
+        </FEATURE>		 
+		<FEATURE featureID="558" featureEnable="16824427" featureGTIS="1015586">
+          <SUBFEATURES>
+            <SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+			</SUBFEATURE>
+		  </SUBFEATURES>
+        </FEATURE>
+		 
+		
+</FEATURES>
+		</MAP>
+		<MAP mapID="2">
+			<FEATURES>
+				<FEATURE featureID="500" featureEnable="0" featureGTIS="0">
+                <!--All Trips (Cumulative)-->
+					<SUBFEATURES>
+						<SUBFEATURE subFeatureID="25132" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="500">
+							<PARAMETERS> <!--- Aftertreatment -->
+								<PARAMETER parameterID="16803270"/>
+								<PARAMETER parameterID="16803272"/>
+								<PARAMETER parameterID="16805185"/>
+								<PARAMETER parameterID="16803276"/>
+                <PARAMETER parameterID="16824810"/>
+                <PARAMETER parameterID="16824811"/>
+                <PARAMETER parameterID="16824812"/>
+                <PARAMETER parameterID="16824815"/>
+                <PARAMETER parameterID="16824816"/>
+                <PARAMETER parameterID="16824817"/>
+                <PARAMETER parameterID="16824818"/>
+                <PARAMETER parameterID="16824825"/>
+                <PARAMETER parameterID="16824826"/>
+                <PARAMETER parameterID="16823672"/>
+                <PARAMETER parameterID="16823673"/>
+                <PARAMETER parameterID="16823683"/>
+                <PARAMETER parameterID="16823684"/>
+                <PARAMETER parameterID="16824034"/>
+                <PARAMETER parameterID="16824853"/>
+							</PARAMETERS>
+						</SUBFEATURE><!-- Fuel Used -->
+						<SUBFEATURE subFeatureID="25101" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="500">
+							<PARAMETERS>
+								<PARAMETER parameterID="16789236"/>
+								<PARAMETER parameterID="16789235"/>
+								<PARAMETER parameterID="16789240"/>
+								<PARAMETER parameterID="16786713"/>
+								<PARAMETER parameterID="16788365"/>
+								<PARAMETER parameterID="16788384"/>
+								<PARAMETER parameterID="16788369"/>
+								<PARAMETER parameterID="16788371"/>
+								<PARAMETER parameterID="16786716"/>
+								<PARAMETER parameterID="16789291"/>
+								<PARAMETER parameterID="16789285"/>
+								<PARAMETER parameterID="16789281"/>
+								<PARAMETER parameterID="16790326"/>
+								<PARAMETER parameterID="16790321"/>
+								<PARAMETER parameterID="16790316"/>
+								<PARAMETER parameterID="16790311"/>
+								<PARAMETER parameterID="16790306"/>
+								<PARAMETER parameterID="16790301"/>
+								<PARAMETER parameterID="16790296"/>
+								<PARAMETER parameterID="16790291"/>
+								<PARAMETER parameterID="16803278"/>						
+							</PARAMETERS>
+						</SUBFEATURE>  <!--- Time -->
+						<SUBFEATURE subFeatureID="25131" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="500">
+							<PARAMETERS>
+								<PARAMETER parameterID="16789234"/>
+								<PARAMETER parameterID="16789239"/>
+								<PARAMETER parameterID="1020003"/>								
+								<PARAMETER parameterID="16786714"/>
+								<PARAMETER parameterID="16788445"/>
+								<PARAMETER parameterID="16788381"/>
+								<PARAMETER parameterID="16788368"/>
+								<PARAMETER parameterID="16788370"/>
+								<PARAMETER parameterID="16788372"/>
+								<PARAMETER parameterID="16786717"/>
+								<PARAMETER parameterID="16789282"/>
+								<PARAMETER parameterID="16789290"/>
+								<PARAMETER parameterID="16789284"/>
+								<PARAMETER parameterID="16789280"/>
+								<PARAMETER parameterID="16790325"/>
+								<PARAMETER parameterID="16790320"/>
+								<PARAMETER parameterID="16790315"/>
+								<PARAMETER parameterID="16790310"/>
+								<PARAMETER parameterID="16790305"/>
+								<PARAMETER parameterID="16790300"/>
+								<PARAMETER parameterID="16790295"/>
+								<PARAMETER parameterID="16790290"/>
+								<PARAMETER parameterID="16803364"/>
+                <PARAMETER parameterID="1020004"/>
+						 </PARAMETERS>
+						</SUBFEATURE><!-- Other  -->
+						<SUBFEATURE subFeatureID="25121" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="500">
+							<PARAMETERS>
+								<PARAMETER parameterID="16789242"/>
+								<PARAMETER parameterID="16789243"/>
+								<PARAMETER parameterID="16789233"/>
+								<PARAMETER parameterID="16789241"/>
+								<PARAMETER parameterID="16788444"/>
+								<PARAMETER parameterID="16786569"/>
+								<PARAMETER parameterID="16803362"/>
+							</PARAMETERS>
+						</SUBFEATURE><!-- Distance  -->
+						<SUBFEATURE subFeatureID="25111" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="500">
+							<PARAMETERS>
+								<PARAMETER parameterID="16786712"/>
+								<PARAMETER parameterID="16788443"/>
+								<PARAMETER parameterID="16786715"/>
+								<PARAMETER parameterID="16789283"/>
+								<PARAMETER parameterID="1020408"/>
+								<PARAMETER parameterID="1020409"/>
+								<PARAMETER parameterID="16790557"/>
+								<PARAMETER parameterID="16790558"/>
+							</PARAMETERS>
+						</SUBFEATURE><!--Multiple PTO -->
+						<SUBFEATURE subFeatureID="23211" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="500">
+							<PARAMETERS>
+                <PARAMETER parameterID="16790327"/>
+                <PARAMETER parameterID="16790322"/>
+                <PARAMETER parameterID="16790317"/>
+                <PARAMETER parameterID="16790312"/>
+                <PARAMETER parameterID="16790307"/>
+                <PARAMETER parameterID="16790302"/>
+                <PARAMETER parameterID="16790297"/>
+                <PARAMETER parameterID="16790292"/>
+							</PARAMETERS>
+						</SUBFEATURE><!-- Gas Used -->
+						<SUBFEATURE subFeatureID="23217" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="500">
+							<PARAMETERS>
+								<PARAMETER parameterID="16809926"/>
+								<PARAMETER parameterID="16809895"/>
+								<PARAMETER parameterID="16809901"/>
+								<PARAMETER parameterID="16809904"/>
+								<PARAMETER parameterID="16809906"/>
+								<PARAMETER parameterID="16809908"/>
+								<PARAMETER parameterID="16809910"/>
+								<PARAMETER parameterID="16809912"/>
+								<PARAMETER parameterID="16809914"/>
+								<PARAMETER parameterID="16809916"/>
+								<PARAMETER parameterID="16809920"/>
+								<PARAMETER parameterID="16809921"/>
+								<PARAMETER parameterID="16809918"/>
+								<PARAMETER parameterID="16809930"/>
+								<PARAMETER parameterID="16809931"/>
+								<PARAMETER parameterID="16809932"/>
+                <PARAMETER parameterID="16809756"/>
+                <PARAMETER parameterID="16809888"/>
+                <PARAMETER parameterID="16809889"/>
+                <PARAMETER parameterID="16809919"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<FEATURE featureID="501" featureEnable="0" featureGTIS="0"> <!--Trip Since Last Reset-->
+                <SUBFEATURES>
+						<SUBFEATURE subFeatureID="25132" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="501">
+							<PARAMETERS><!--- Aftertreatment -->
+								<PARAMETER parameterID="16803269"/>
+								<PARAMETER parameterID="16803271"/>
+								<PARAMETER parameterID="16805186"/>
+								<PARAMETER parameterID="16803275"/>
+								<PARAMETER parameterID="16793680"/>
+                <PARAMETER parameterID="16824821"/>
+                <PARAMETER parameterID="16824824"/>
+							</PARAMETERS>
+						</SUBFEATURE><!-- Fuel Used -->
+						<SUBFEATURE subFeatureID="25101" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="501">
+							<PARAMETERS>
+								<PARAMETER parameterID="16789224"/>
+								<PARAMETER parameterID="16789223"/>
+								<PARAMETER parameterID="1020005"/>
+								<PARAMETER parameterID="16788376"/>
+								<PARAMETER parameterID="16788382"/>
+								<PARAMETER parameterID="16789279"/>
+								<PARAMETER parameterID="16790324"/>
+								<PARAMETER parameterID="16790319"/>
+								<PARAMETER parameterID="16790314"/>
+								<PARAMETER parameterID="16790309"/>
+								<PARAMETER parameterID="16790304"/>
+								<PARAMETER parameterID="16790299"/>
+								<PARAMETER parameterID="16790294"/>
+								<PARAMETER parameterID="16790289"/>
+								<PARAMETER parameterID="16803277"/>						
+							</PARAMETERS>
+						</SUBFEATURE>                  <!--- Time -->
+						<SUBFEATURE subFeatureID="25131" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="501">
+							<PARAMETERS>
+								<PARAMETER parameterID="16789244"/>
+								<PARAMETER parameterID="16789246"/>
+								<PARAMETER parameterID="16789220"/>
+								<PARAMETER parameterID="1020006"/>
+								<PARAMETER parameterID="16789063"/>
+								<PARAMETER parameterID="16788052"/>
+								<PARAMETER parameterID="16788053"/>
+								<PARAMETER parameterID="16788054"/>
+								<PARAMETER parameterID="16788051"/>
+								<PARAMETER parameterID="16788050"/>
+								<PARAMETER parameterID="16788377"/>
+								<PARAMETER parameterID="16788383"/>
+								<PARAMETER parameterID="16790323"/>
+								<PARAMETER parameterID="16790318"/>
+								<PARAMETER parameterID="16790313"/>
+								<PARAMETER parameterID="16790308"/>
+								<PARAMETER parameterID="16790303"/>
+								<PARAMETER parameterID="16790298"/>
+								<PARAMETER parameterID="16790293"/>
+								<PARAMETER parameterID="16790288"/>
+								<PARAMETER parameterID="16803363"/>
+							</PARAMETERS>
+						</SUBFEATURE><!-- Other  -->
+						<SUBFEATURE subFeatureID="25121" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="501">
+							<PARAMETERS>
+								<PARAMETER parameterID="16789231"/>
+								<PARAMETER parameterID="16789232"/>
+								<PARAMETER parameterID="16789219"/>
+								<PARAMETER parameterID="16789218"/>
+								<PARAMETER parameterID="16789222"/>
+								<PARAMETER parameterID="16789221"/>
+								<PARAMETER parameterID="16786570"/>
+							</PARAMETERS>
+						</SUBFEATURE><!--Multiple PTO -->
+						<SUBFEATURE subFeatureID="23211" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="501">
+							<PARAMETERS>
+                <PARAMETER parameterID="16790327"/>
+                <PARAMETER parameterID="16790322"/>
+                <PARAMETER parameterID="16790317"/>
+                <PARAMETER parameterID="16790312"/>
+                <PARAMETER parameterID="16790307"/>
+                <PARAMETER parameterID="16790302"/>
+                <PARAMETER parameterID="16790297"/>
+                <PARAMETER parameterID="16790292"/>
+							</PARAMETERS>
+						</SUBFEATURE> <!-- Gas Used -->
+						<SUBFEATURE subFeatureID="23217" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="501">
+							<PARAMETERS>
+								<PARAMETER parameterID="16809903"/>
+								<PARAMETER parameterID="16809905"/>
+								<PARAMETER parameterID="16809907"/>
+								<PARAMETER parameterID="16809909"/>
+								<PARAMETER parameterID="16809911"/>
+								<PARAMETER parameterID="16809913"/>
+								<PARAMETER parameterID="16809915"/>
+								<PARAMETER parameterID="16809917"/>
+								<PARAMETER parameterID="16809925"/>
+                <PARAMETER parameterID="16810001"/>
+                <PARAMETER parameterID="1020202"/>
+                <PARAMETER parameterID="16809891"/>
+                <PARAMETER parameterID="16809892"/>
+                <PARAMETER parameterID="16809923"/>
+              </PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<FEATURE featureID="502" featureEnable="0" featureGTIS="0">
+                    <!-- Trip Since Last Reset Drive (Vehicle Speed > 0) -->
+					<SUBFEATURES>  <!-- Fuel Used -->
+						<SUBFEATURE subFeatureID="25101" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="501">
+							<PARAMETERS>
+								<PARAMETER parameterID="16789226"/>
+								<PARAMETER parameterID="16786719"/>
+								<PARAMETER parameterID="16786722"/>
+								<PARAMETER parameterID="16786725"/>
+								<PARAMETER parameterID="16786728"/>
+								<PARAMETER parameterID="16786731"/>
+								<PARAMETER parameterID="16788379"/>
+								<PARAMETER parameterID="16788375"/>
+								<PARAMETER parameterID="16786734"/>
+								<PARAMETER parameterID="16789273"/>
+								<PARAMETER parameterID="16789261"/>
+								<PARAMETER parameterID="16789258"/>
+								<PARAMETER parameterID="16789276"/>
+								<PARAMETER parameterID="16789268"/>
+								<PARAMETER parameterID="16789252"/>
+							</PARAMETERS>
+						</SUBFEATURE><!-- Distance  -->
+						<SUBFEATURE subFeatureID="25111" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="501">
+							<PARAMETERS>
+								<PARAMETER parameterID="16786718"/>
+								<PARAMETER parameterID="16786721"/>
+								<PARAMETER parameterID="16786724"/>
+								<PARAMETER parameterID="16786727"/>
+								<PARAMETER parameterID="16786730"/>
+								<PARAMETER parameterID="16788448"/>
+								<PARAMETER parameterID="16788374"/>
+								<PARAMETER parameterID="16788378"/>
+								<PARAMETER parameterID="16786733"/>
+								<PARAMETER parameterID="16789272"/>
+								<PARAMETER parameterID="16789262"/>
+								<PARAMETER parameterID="16789259"/>
+								<PARAMETER parameterID="16789255"/>
+								<PARAMETER parameterID="16789277"/>
+								<PARAMETER parameterID="16789270"/>
+								<PARAMETER parameterID="16789271"/>
+								<PARAMETER parameterID="16789269"/>
+								<PARAMETER parameterID="16789253"/>
+							</PARAMETERS>
+						</SUBFEATURE><!--- Time -->
+						<SUBFEATURE subFeatureID="25131" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="501">
+							<PARAMETERS>
+								<PARAMETER parameterID="16789225"/>
+								<PARAMETER parameterID="16786720"/>
+								<PARAMETER parameterID="16786723"/>
+								<PARAMETER parameterID="16786726"/>
+								<PARAMETER parameterID="16786729"/>
+								<PARAMETER parameterID="16786732"/>
+								<PARAMETER parameterID="16788447"/>
+								<PARAMETER parameterID="16788055"/>
+								<PARAMETER parameterID="16788380"/>
+								<PARAMETER parameterID="16788373"/>
+								<PARAMETER parameterID="16786735"/>
+								<PARAMETER parameterID="16789260"/>
+								<PARAMETER parameterID="16789257"/>
+								<PARAMETER parameterID="16789254"/>
+								<PARAMETER parameterID="16789275"/>
+								<PARAMETER parameterID="16789264"/>
+								<PARAMETER parameterID="16789267"/>
+								<PARAMETER parameterID="16789251"/>
+							</PARAMETERS>
+						</SUBFEATURE><!-- Other  -->
+						<SUBFEATURE subFeatureID="25121" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="501">
+							<PARAMETERS>
+								<PARAMETER parameterID="16789227"/>
+								<PARAMETER parameterID="16789228"/>
+								<PARAMETER parameterID="16789229"/>
+								<PARAMETER parameterID="16788446"/>
+								<PARAMETER parameterID="1020037"/>
+								<PARAMETER parameterID="16785209"/>
+								<PARAMETER parameterID="16789266"/>
+								<PARAMETER parameterID="16789265"/>
+								<PARAMETER parameterID="16789256"/>
+								<PARAMETER parameterID="16789263"/>
+								<PARAMETER parameterID="16789278"/>
+							</PARAMETERS>
+						</SUBFEATURE><!-- Gas Used -->
+						<SUBFEATURE subFeatureID="23217" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="501">
+							<PARAMETERS>
+								<PARAMETER parameterID="16809927"/>
+								<PARAMETER parameterID="16809896"/>
+								<PARAMETER parameterID="16809897"/>
+								<PARAMETER parameterID="16809898"/>
+								<PARAMETER parameterID="16809899"/>
+								<PARAMETER parameterID="16809900"/>
+								<PARAMETER parameterID="16809924"/>
+								<PARAMETER parameterID="16809922"/>
+								<PARAMETER parameterID="16810002"/>
+								<PARAMETER parameterID="16809937"/>
+                <PARAMETER parameterID="16809934"/>
+                <PARAMETER parameterID="16809935"/>
+                <PARAMETER parameterID="16809890"/>
+                <PARAMETER parameterID="16809936"/>
+                <PARAMETER parameterID="16809938"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<!--Fuel Consumption Rate-->
+				<FEATURE featureID="515" featureEnable="16789507" featureGTIS="1015470">
+					<SUBFEATURES>
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0"/>
+					</SUBFEATURES>
+				</FEATURE>
+			</FEATURES>
+		</MAP>
+	</MAPS>
+	<MAPS/>
+</MODULE>		

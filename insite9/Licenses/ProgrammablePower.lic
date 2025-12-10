@@ -1,0 +1,43 @@
+<LicenseFile>
+	<!--
+      ECM Passwords
+   -->
+	<ECMReqLicense Expiration="permanent" Name="PRGPWR_ECMPW_ADJUSTABLES" VendorDaemon="cummins" Key="CDEF2FCD013C" IsValid="" ID="PRGPWR_ECMPW_ADJUSTABLES" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="ADJUSTABLES"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="PRGPWR_ECMPW_MASTER" VendorDaemon="cummins" Key="4389F3FCEB32" IsValid="" ID="PRGPWR_ECMPW_MASTER" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="MASTER"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="PRGPWR_ECMPW_OEM" VendorDaemon="cummins" Key="E6D79038C697" IsValid="" ID="PRGPWR_ECMPW_OEM" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="OEM"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="PRGPWR_ECMPW_RESET" VendorDaemon="cummins" Key="E7FFDCB4EBF6" IsValid="" ID="PRGPWR_ECMPW_RESET" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="RESET"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+	<ToolReqLicense Expiration="permanent" Name="PRGPWR_TOOL_LITE" VendorDaemon="cummins" Key="EC4715FE11C8" IsValid="" ID="PRGPWR_TOOL_LITE" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="Lite"/>
+	</ToolReqLicense>
+	<!--
+      ECM Permissions Licences
+      The states of these licences are set on password transitions in
+      ConMan in the file passwordMultiLevel.cpp
+   -->
+	<ECMReqLicense Expiration="permanent" Name="PERMIT_CHANGE_OEM" VendorDaemon="cummins" Key="F0F1B258E4FD" IsValid="" ID="PERMIT_CHANGE_OEM" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="PERMIT_CHANGE_OEM"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="PERMIT_CHANGE_ADJUSTABLES" VendorDaemon="cummins" Key="E23A0E68889A" IsValid="" ID="PERMIT_CHANGE_ADJUSTABLES" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="PERMIT_CHANGE_ADJUSTABLES"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+</LicenseFile>

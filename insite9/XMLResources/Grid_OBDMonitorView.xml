@@ -1,0 +1,121 @@
+<FlexGrid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<Properties Cols="4:VT_I4" FixedCols="0:VT_I4" ExplorerBar="0:VT_I4" OutlineBar="5:VT_UI4" AllowUserResizing="1:VT_UI4" AutoResize="1:VT_I4" GridLines="1:VT_I4" Editable="0:VT_I4" />
+
+   <!-- There is no header for OBD Monitor View -->
+
+	<FixedRows>
+			<FixedRow>
+				<Column name= "" />
+				<Column name= "" />				
+			</FixedRow>	  		
+	</FixedRows>
+	
+	<data loopEnd="1">
+			<Object name="objZeroFixedRows" source="OBJ:VSFLEXGRID:FixedRows(0)PROPPUT"/>
+			<Object name="objRemoveFixedRow" source="OBJ:VSFLEXGRID:RemoveItem(0)"/>
+			<!--Get the Enable token value -->
+			<Object name="OBDEnable" source="OBJ:DOM:selectSingleNode(OBDMon_Enable)"/> 
+			<!--Display "MIL ON Distance" information -->
+ 			<Node level = "0" loopEnd="OBJ:OBDEnable:getAttribute(V)" >
+				<Object name="objMilOnDistance" source ="OBJ:DOM:selectSingleNode(paramMilOnDistance)" />
+				<Column order ="0" datasource= "RES:Res1:104" styleid="s3" />
+				<Column order ="1" datasource = "OBJ:objMilOnDistance:getAttribute(DV)"/>
+				<Column order ="2" datasource = "OBJ:objMilOnDistance:getAttribute(U)"/>
+			</Node>
+			<!--Display "MIL ON time" information -->
+			<Node level = "0" loopEnd="OBJ:OBDEnable:getAttribute(V)" >
+				<Object name="objMilOnTime" source ="OBJ:DOM:selectSingleNode(paramMilOnTime)" />
+				<Column order ="0" datasource= "RES:Res1:151" styleid="s3" />
+				<Column order ="1" datasource = "OBJ:objMilOnTime:getAttribute(DV)"/>
+				<Column order ="2" datasource = "OBJ:objMilOnTime:getAttribute(U)"/>
+			</Node>
+			<!--Display Header Description information -->
+			<Node level = "0" loopEnd="1" styleid="s1"  >
+				<Column order ="0" datasource = "RES:Res1:105"/>
+				<Column order ="1" datasource = "RES:Res1:106"/>
+				<Column order ="2" datasource = "RES:Res1:107"/>
+				<Column order ="3" datasource = "RES:Res1:108"/>
+			</Node>
+			<!--Display not supported information -->
+			<Node level="0" loopStart="OBJ:OBDEnable:getAttribute(V)" loopEnd="1" styleid="s1" >
+				<Column order="0" datasource="RES:Res1:111" styleid="s1"/>
+	        </Node> 
+			<Object name="colwdth" source="OBJ:VSFLEXGRID:ColWidth(0,1155)PROPPUT" />
+		    <Object name="colwdth" source="OBJ:VSFLEXGRID:ColWidth(1,6225)PROPPUT" />
+		    <Object name="colwdth" source="OBJ:VSFLEXGRID:ColWidth(2,4005)PROPPUT" />
+		    <Object name="colwdth" source="OBJ:VSFLEXGRID:ColWidth(3,1005)PROPPUT" />
+			<Node level = "0" loopEnd="OBJ:OBDEnable:getAttribute(V)" >
+				<!-- Get all OBD faults in the module. -->
+				<Object name="OBDFaults" source="OBJ:DOM:selectNodes(pArr30)"/>
+			<!-- Get the Faults Description node for this module from FaultsInfo_XX.xml -->
+				<Object name="objFIECM" source="OBJ:FIDOM:selectSingleNode(pFiECM1)"/>
+				<Node level="0" loopStart="0" loopEnd="OBJ:OBDFaults:length">
+				<!-- Print the fault code alongwith the description -->
+					<Object name="objFItem1" source="OBJ:OBDFaults:nextNode"/>
+					<Object name="objFCode" source="OBJ:objFItem1:selectSingleNode(pFCode)"/>
+					<Object name="objFINode" source="OBJ:objFIECM:selectSingleNode(pFiDesc)"/>
+					<Column order="0" datasource="OBJ:objFItem1:selectSingleNode(pFCode):getAttribute(DV)" styleid="s1" />
+					<Column order="1" datasource="OBJ:objFINode:Text" styleid="s2" /> 
+					<Column order="2" datasource="OBJ:objFItem1:selectSingleNode(pMonitorType):getAttribute(DV)" styleid="s2" />
+					<Column order="3" datasource="OBJ:objFItem1:selectSingleNode(pReadinessCode):getAttribute(DV)" styleid="s2" />
+				</Node>
+			</Node>
+	</data>
+	<parameters>
+	    <parameter name="pID15" source="/Image/Parameters/P[@ID=15]"/>
+		<parameter name="pArr30" source="/Image/Arrays/A[@ID=30]/Dim/I[./P[@ID=199209 and @V = 1]]"/>
+  	    <parameter name="pFiECM1" source="/ROOT/RESOURCE/FAULT_INFO[@ECMID=/ROOT/ECM_MAP/ECM_GROUP[./ECM[@ID=" source1="OBJ:DOM:selectSingleNode(pID15):getAttribute(V)" source2="]]/@Resource]" />	
+        <parameter name="pFCode" source="P[@ID=199008]"/>
+		<parameter name="pFiDesc" source="./FAULT_CODE[@FaultCode=" source1="OBJ:objFCode:getAttribute(V)" source2="]" /> 
+		<parameter name="pMonitorType" source="P[@ID=199386]"/>
+		<parameter name="pReadinessCode" source="P[@ID=199387]"/>
+		<parameter name="paramMilOnDistance" source="/Image/Parameters/P[@ID=23323]"/>
+		<parameter name="paramMilOnTime" source="/Image/Parameters/P[@ID=23324]"/>
+		<parameter name="OBDMon_Enable" source="/Image/Parameters/P[@ID=23321]"/>
+	</parameters>
+
+   <styles>
+		<style id="s1" CellFontBold="1:VT_I4" CellAlignMent="4:VT_I4"/>
+		<style id="s2" AutoSizeMode="1:VT_I4" WordWrap="1" CellFontBold="1:VT_I4"/>
+		<style id="s3" CellAlignMent="4:VT_I4" CellFontBold="1:VT_I4"/>
+	</styles>
+
+	<resources>
+		<resource id="Res1" CLSID="{E9D330F3-C1CD-4678-BE6B-6D20B0FF9815}" LoadDLL ="TRUE"/>
+	</resources>
+
+<printing HdrFontSize="8">
+		<header>
+			<line>
+				<center source="RES:Res1:103"/>
+			</line>				
+			<line>
+				<left source="RES:Res1:116"/>
+				<left source="OBJ:DOM:selectSingleNode(/Image/Header/ESerial):getAttribute(DisplayValue)"/>
+				<right source="INSITE - "/>
+				<right source="OBJ:DOM:selectSingleNode(/Image):getAttribute(ImageVersion)"/>
+			</line>
+			<line>
+				<left source="RES:Res1:115"/>
+				<left source="OBJ:DOM:selectSingleNode(/Image/Header/UNumber):getAttribute(DisplayValue)"/>
+				<right source="RES:Res1:117"/>
+				<right source="OBJ:DOM:selectSingleNode(/Image/Header/VMake):getAttribute(DisplayValue)"/>				
+			</line>
+			<line>
+				<left source="RES:Res1:118"/>
+				<left source="OBJ:DOM:selectSingleNode(/Image/Header/WOName):getAttribute(DisplayValue)"/>
+				<right source="RES:Res1:119"/>
+				<right source="OBJ:DOM:selectSingleNode(/Image/Header/IName):getAttribute(DisplayValue)"/>
+			</line>
+			<line>
+				<left source="RES:Res1:120"/>
+				<left source="OBJ:DOM:selectSingleNode(/Image/Header/CustomerName):getAttribute(DisplayValue)"/>
+			</line>
+		</header>
+	</printing>
+
+
+</FlexGrid>
+
+
+

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE module SYSTEM "../htmlentities.dtd">
+<XML_RESOURCE>
+	<RESOURCE Tag="1001" Type="String Table" Description="Message String Table">
+		<STRING ID="104" Context="">Aftertreatment High NOx Reset</STRING>
+		<STRING ID="105" Context="">The Aftertreatment High NOx Reset test is used to determine if the engine is operating within the correct limits to allow the reset to complete. It is necessary to drive or operate the vehicle on a chassis dynamometer in order to validate the repair and for the fault codes 1694, 2772 and 2773 to go inactive. INSITE is used to monitor the engine to determine when the conditions are met for the fault code(s) to go inactive and turn off the MIL lamp.</STRING>
+		<STRING ID="106" Context="">"Initial Conditions:\r\n1. Fault code(s) identified and corrected\r\n2. Key switch is on\r\n3. Engine running at normal operating temperatures\r\n\r\nSteps:\r\n1. Press the Start button\r\n2. Start the drive cycle\r\n3. Raise and maintain Engine Speed at 1000 to 2500 RPM\r\n4. Increase Engine Speed to raise Catalyst Solution Injection Rate to at least 100%\r\n5. Drive until Catalyst Inlet Temperature and Catalyst Outlet Temperature are high enough to enable dosing to occur\r\n6. When these required conditions are met, the progress bar will change colors indicating that the test has started\r\n\r\n\r\nAdditional Information:\r\n1. If any of the monitored parameter values fall outside the required values during test operation, the operation will pause. The values must be reestablished before the Timer will restart.\r\n2. Maintain engine speed, engine load and throttle position for a minimum of 35 seconds. When the reset runs and passes, the MIL lamp will turn off. If the MIL lamp does not turn off, continue operating at the steady state conditions for an additional three minutes.\r\n3. If the operation is successful, the MIL lamp will turn off. "\r\n\r\nNOTE: The NOx reset can potentially run in the ECM without the assistance of INSITE. The feature could start in INSITE partially completed. This is not a fault or problem with INSITE. The feature could also fail to run in INSITE due to already being run in the ECM during the current keycycle. The feature is capable of being run either with or without INSITE only one time during a keycycle.</STRING>
+		<STRING ID="107" Context="">All conditions have been met for the ECM to run the test. Please do not change any conditions until the test completes.</STRING>
+		<STRING ID="110" Context="">The Catalyst Solution Injection Rate is less than 100 percent. Please increase engine speed to raise the Catalyst Solution Injection Rate to the required value.</STRING>
+		<STRING ID="111" Context="">The engine is stopped. Please start the engine and restart the test.</STRING>
+		<STRING ID="112" Context="">The Aftertreatment High NOx Reset test was stopped because the engine has stopped. Please start the engine and restart the test.</STRING>
+		<STRING ID="113" Context="">Engine speed is below the low speed limit. Please increase engine speed above 1000 rpm.</STRING>
+		<STRING ID="114" Context="">Engine speed has exceeded the test limit. Please reduce engine speed to less than 2500 rpm.</STRING>
+		<STRING ID="115" Context="">Test stopped.</STRING>
+		<STRING ID="116" Context="">Test stopped.</STRING>
+		<STRING ID="117" Context="">Failed.</STRING>
+		<STRING ID="118" Context="">Passed.</STRING>
+		<STRING ID="119" Context="">Test Incomplete.</STRING>
+		<STRING ID="120" Context="">The NOx Monitor and this test are not supported in the current calibration.</STRING>
+		<STRING ID="122" Context="">Test Paused</STRING>
+		<STRING ID="123" Context="">Paused</STRING>
+		<STRING ID="124" Context="">Paused</STRING>
+		<STRING ID="125" Context="">Test Resumed</STRING>
+		<STRING ID="126" Context="">Resumed</STRING>
+		<STRING ID="127" Context="">The test will run when all initial conditions are set</STRING>
+		<STRING ID="130" Context="">Engine Speed is within the speed limit</STRING>
+		<STRING ID="131" Context="">Passed</STRING>
+		<STRING ID="132" Context="">Passed</STRING>
+		<STRING ID="133" Context="">Failed.</STRING>
+		<STRING ID="134" Context="">Failed</STRING>
+		<STRING ID="135" Context="">Engine Speed</STRING>
+		<STRING ID="136" Context="">Catalyst Solution Injection Rate</STRING>
+		<STRING ID="137" Context="">Catalyst Inlet Temperature</STRING>
+		<STRING ID="138" Context="">Catalyst Outlet Temperature</STRING>
+		<STRING ID="139" Context="">High NOx Reset Complete</STRING>
+		<STRING ID="140" Context="">Status</STRING>
+		<STRING ID="141" Context="">Instructions</STRING>
+		<STRING ID="142" Context="">Monitors</STRING>
+		<STRING ID="143" Context="">Show</STRING>
+		<STRING ID="144" Context="">Name</STRING>
+		<STRING ID="145" Context="">Value</STRING>
+		<STRING ID="146" Context="">Units</STRING>
+		<STRING ID="147" Context="">C</STRING>
+		<STRING ID="148" Context="">The Catalyst Solution Injection Rate is equal to 100 percent</STRING>
+		<STRING ID="149" Context="">This feature has run during this key cycle. Please key off for 30 seconds to reset this feature.</STRING>
+		<STRING ID="150" Context="">Catalyst temperatures are below minimum required for dosing. Please increase speed or load on the engine.</STRING>
+		<STRING ID="151" Context="">Catalyst temperatures are high enough to support dosing</STRING>
+		<STRING ID="152" Context="">Please increase speed or load on the engine to start the High NOx Reset monitor.</STRING>
+		<STRING ID="5000" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5000&lt;/ErrorNumber&gt;&lt;Description&gt;Failed in initialization of base logic class.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5001" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5001&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to publish events in logic.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5002" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5002&lt;/ErrorNumber&gt;&lt;Description&gt;Unable to obtain the monitor service pointer.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5003" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5003&lt;/ErrorNumber&gt;&lt;Description&gt;Unable to obtain the connection point server pointer in logic.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5004" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5004&lt;/ErrorNumber&gt;&lt;Description&gt;Failed advise to monitor services in logic.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5005" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5005&lt;/ErrorNumber&gt;&lt;Description&gt;Unable to add module to monitors in logic.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5006" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5006&lt;/ErrorNumber&gt;&lt;Description&gt;Unable to add the parameter to monitoring service in logic.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5007" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5007&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to unadvise from monitor services in logic.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5008" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5008&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to unpublish events in logic.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5009" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5009&lt;/ErrorNumber&gt;&lt;Description&gt;Failed in unload of base in logic.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5010" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5010&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to find logic events in logic.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5011" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5011&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to get Monitors pointer in logic.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5012" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5012&lt;/ErrorNumber&gt;&lt;Description&gt;Error while stopping monitor in logic.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5013" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5013&lt;/ErrorNumber&gt;&lt;Description&gt;Error while starting monitor in logic.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5014" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5014&lt;/ErrorNumber&gt;&lt;Description&gt;Failed in write of start token in logic.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5015" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5015&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to handle change in a parameter.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5016" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5016&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to start monitor thread.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5017" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5017&lt;/ErrorNumber&gt;&lt;Description&gt;Unexpected error in logic in logic.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5018" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5018&lt;/ErrorNumber&gt;&lt;Description&gt;Error occurred in logic. Failed to initialize monitor parameters&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5030" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5030&lt;/ErrorNumber&gt;&lt;Description&gt;Failed in init of base.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5031" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5031&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to subscribe to events in page.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5032" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5032&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to publish events in page.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5033" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5033&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to stop test.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5034" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5034&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to unsubscribe events in page.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5035" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5035&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to unpublish events in page.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5036" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5036&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to unsubscribe events in page.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5037" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5037&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to find page button events in page.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5038" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5038&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to display async error in page.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5039" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5039&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to start test in page.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5040" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5040&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to unLoad base in page.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5041" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5044&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to setup FlexGrid in page.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5042" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5045&lt;/ErrorNumber&gt;&lt;Description&gt;Unexpected error in page.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+	</RESOURCE>
+</XML_RESOURCE>

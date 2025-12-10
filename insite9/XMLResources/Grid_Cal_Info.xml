@@ -1,0 +1,55 @@
+<!-- This config file is used to print the each feature's heading in a flexgrid. -->
+<FlexGrid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+<Properties  Cols="2:VT_I4"  GridLines="0:VT_I4"  GridLinesFixed="0:VT_I4" FixedCols="0:VT_I4" />
+
+	
+	<FixedRows >
+		<FixedRow  >
+			 <Column order="0" name="" />
+                          <Column order="1" name="" />
+		</FixedRow>
+	</FixedRows>
+
+      <data loopEnd="1">
+<Object name="s" source="OBJ:VSFLEXGRID:FixedRows(0)PROPPUT"/>
+            <Node level="0" loopEnd="1" >
+		
+		   <Column order="0" datasource="OBJ:DOM:selectSingleNode(/Text/Heading1):getAttribute(DisplayName)" /> 
+                   <Column order="1" datasource="OBJ:DOM:selectSingleNode(/Text/Heading1):getAttribute(DisplayValue)" /> 
+	       </Node>
+                <Node  loopEnd="1" >			
+		  <Column order="0" datasource="OBJ:DOM:selectSingleNode(/Text/Heading2):getAttribute(DisplayName)" /> 
+                   <Column order="1" datasource="OBJ:DOM:selectSingleNode(/Text/Heading2):getAttribute(DisplayValue)" />
+	       </Node>
+               <Node  loopEnd="1" >			
+		  <Column order="0" datasource="OBJ:DOM:selectSingleNode(/Text/Heading3):getAttribute(DisplayName)" /> 
+                   <Column order="1" datasource="OBJ:DOM:selectSingleNode(/Text/Heading3):getAttribute(DisplayValue)" />
+	       </Node>
+               <Node  loopEnd="1" >			
+		  <Column order="0" datasource="OBJ:DOM:selectSingleNode(/Text/Heading4):getAttribute(DisplayName)" /> 
+                   <Column order="1" datasource="OBJ:DOM:selectSingleNode(/Text/Heading4):getAttribute(DisplayValue)" />
+	       </Node>
+        </data>
+
+
+        <parameters>
+	</parameters>
+
+	<icons>
+	</icons>
+	
+	<combolists>
+	</combolists>
+
+        <styles>
+        </styles>
+
+        <resources>
+              
+        </resources>
+
+        <printing>
+        </printing>
+	
+</FlexGrid>

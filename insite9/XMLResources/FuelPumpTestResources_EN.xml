@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE module SYSTEM "../htmlentities.dtd">
+<XML_RESOURCE>
+<RESOURCE Tag="1001" Type="String Table" Description="Message String Table">
+	<STRING ID="101" Context="Test Title">Fuel Pump Test</STRING>
+	<STRING ID="102" Context="Test SubTitle">The Fuel Pump Test helps troubleshoot the fuel system by running a series of system health and consistency checks.</STRING>
+	<STRING ID="103" Context="Instruction area caption">Instructions</STRING>
+	<STRING ID="104" Context="Inputs area caption">Inputs</STRING>
+	<STRING ID="105" Context="Monitors area caption">Monitors</STRING>
+	<STRING ID="106" Context="User Comments area caption">User Comments</STRING>
+	<STRING ID="107" Context="Status area caption">Status</STRING>
+	<STRING ID="108" Context="Parameter Name">Name</STRING>
+	<STRING ID="109" Context="Parameter Value">Value</STRING>
+	<STRING ID="110" Context="Parameter Unit">Units</STRING>
+	<STRING ID="111" Context="Engine Shutdown button">Engine Shutdown</STRING>
+	<STRING ID="112" Context="Print button">Print</STRING>
+	<STRING ID="113" Context="Instructions area text">1.) Please troubleshoot any active fault codes prior to starting the test.</STRING>
+	<STRING ID="114" Context="Instructions area text">2.) Select whether the test will Automatically or Manually Shutdown the engine at the designated time.</STRING>
+	<STRING ID="115" Context="Instructions area text">3.) Ensure engine is at an Idle State.</STRING>
+	<STRING ID="116" Context="Instructions area text">4.) Select Start to run the test.</STRING>
+	<STRING ID="117" Context="Instructions area text">5.) The results will be displayed when the test is completed.</STRING>
+	<STRING ID="118" Context="Input value">Automatic</STRING>
+	<STRING ID="119" Context="Input value">Manual</STRING>
+	<STRING ID="200" Context="Test Not supported">This test is not supported by the current calibration.</STRING>
+	<STRING ID="201" Context="PreCondition failed">The Fuel Pump Test could not be started because Engine Speed was not detected. Please restart the test with the engine running.</STRING>
+	<STRING ID="202" Context="Status token value 7">The Fuel Pump Test has not started because the engine needs to be brought to an idle state to run.</STRING>
+	<STRING ID="203" Context="Status token value 6">The Fuel Pump Test has been stopped due to a communication error with the child module. Please troubleshoot the datalink lines before restarting the test.</STRING>
+	<STRING ID="204" Context="Status token value 5">The Fuel Pump Test has stopped because a task has failed to complete in the time required.</STRING>
+	<STRING ID="205" Context="Status token value 4">The Fuel Pump Test has been stopped due to an unexpected high load detected on the engine.</STRING>
+	<STRING ID="206" Context="Status token value 3">The Fuel Pump Test needs the Engine to be shutdown. Please select the Engine Shutdown Control.</STRING>
+	<STRING ID="207" Context="Status token value 2">The Fuel Pump Test needs the Engine to be shutdown. Please wait while the engine cools down before shutting down engine.</STRING>
+	<STRING ID="208" Context="Status token value 1">The Fuel Pump Test is running. Please wait.</STRING>
+	<STRING ID="209" Context="Status token value 0">The Fuel Pump Test has not been requested to be started. Please restart the test.</STRING>
+	<STRING ID="210" Context="Test stopped">Test Stopped.</STRING>
+	<STRING ID="211" Context="Failure Mode">Test aborted due to an invalid condition. Please restart test.</STRING>
+  <STRING ID="219" Context="">Show</STRING>
+	<!--- ///Modified range of the error codes from 20,730-20,7199 and 20,830-20,899  to 40,010-40,060 and Changed the Parameters 40049 ,40050 and 40051 description as per CRS Insite Error codes   -->
+		
+		<STRING ID="40010" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40010&lt;/ErrorNumber&gt;&lt;Description&gt;An unidentified error occurred in the ECM Test "Fuel Pump Test".&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40011" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40011&lt;/ErrorNumber&gt;&lt;Description&gt;An unidentified error occurred in the ECM Test "Fuel Pump Test".&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40012" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40012&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to publish events.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40013" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40013&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to unpublish events.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40014" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40014&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to initialize the ECM.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40015" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40015&lt;/ErrorNumber&gt;&lt;Description&gt;An unidentified error occurred in starting the test.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40016" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40016&lt;/ErrorNumber&gt;&lt;Description&gt;An unidentified error occurred in stopping the test.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		
+		
+		<STRING ID="40017" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40017&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE was unable to determine if the test is available on this ECM.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40018" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40018&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE failed to perform to perform ECM operation.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+        <STRING ID="40019" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40019&lt;/ErrorNumber&gt;&lt;Description&gt;The test is not supported by the current calibration.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+	    <STRING ID="40020" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40020&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to read Test token.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+        <STRING ID="40021" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40021&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to write Test token.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+        
+        <STRING ID="40022" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40022&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to find logic events.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40023" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40023&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to get monitors pointer.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40024" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40024&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to get monitor ID.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40025" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40025&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to get monitor service.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40026" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40026&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to get connection point server.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40027" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40027&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to add modules to monitor.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		
+		<STRING ID="40028" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40028&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to subscribe the event.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40029" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40029&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to unsubscribe the event.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40030" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40030&lt;/ErrorNumber&gt;&lt;Description&gt;An unidentified error occurred in invoking Advise.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40031" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40031&lt;/ErrorNumber&gt;&lt;Description&gt;An unidentified error occurred in invoking Unadvise.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+        <STRING ID="40032" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40032&lt;/ErrorNumber&gt;&lt;Description&gt;An unidentified error occurred in stopping the monitor.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+	    <STRING ID="40033" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40033&lt;/ErrorNumber&gt;&lt;Description&gt;Out of memory.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+        
+   		<STRING ID="40034" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40034&lt;/ErrorNumber&gt;&lt;Description&gt;Error in firing a message.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+        <STRING ID="40035" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40035&lt;/ErrorNumber&gt;&lt;Description&gt;Error in starting the monitor.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+        <STRING ID="40036" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40036&lt;/ErrorNumber&gt;&lt;Description&gt;Error in stopping the monitor.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+        <STRING ID="40037" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40037&lt;/ErrorNumber&gt;&lt;Description&gt;Error in reading a token.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+        <STRING ID="40038" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40038&lt;/ErrorNumber&gt;&lt;Description&gt;Error in writing a token.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40039" Context="Logic Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40039&lt;/ErrorNumber&gt;&lt;Description&gt;Failed in unload of base in Logic.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>              
+      <!-- End -->
+    
+    <!-- Page Error Entries -->
+		<STRING ID="40040" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40040&lt;/ErrorNumber&gt;&lt;Description&gt;An unidentified error occurred in the ECM Test "Fuel Pump Test".&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40041" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40041&lt;/ErrorNumber&gt;&lt;Description&gt;An unidentified error occurred in the ECM Test "Fuel Pump Test".&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40042" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40042&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to subscribe to necessary events.  Fuel Pump Test may behave improperly.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40043" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40043&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to unsubscribe events in page.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40044" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40044&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to publish necessary events.  Fuel Pump Test may behave improperly.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40045" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40045&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to unpublish published events.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40046" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40046&lt;/ErrorNumber&gt;&lt;Description&gt;Failed in unload of base in Page.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		
+<!--		/////////check once <STRING ID="20836" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20836&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to acquire necessary Fuel Pump Test.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>  -->
+        
+        <STRING ID="40047" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40047&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE failed to Start the Test.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+        <STRING ID="40048" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40048&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE failed to Stop the Test.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40049" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40049&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to initialize User Interface Objects.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="40050" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40050&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to stop possible test in progress while closing ECM Diagnostic Tests.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+																					
+		<STRING ID="40051" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40051&lt;/ErrorNumber&gt;&lt;Description&gt;The test is not supported by the current calibration.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+        <STRING ID="40052" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40052&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE has detected the PC is running low on system resources.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;Suggestion&gt;1) Close and restart the operation.  Or 2) Close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+        <STRING ID="40053" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40053&lt;/ErrorNumber&gt;&lt;Description&gt;An unidentified error occurred in the ECM Test "Fuel Pump Test".&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;Suggestion&gt;1) Close and restart the operation.  Or 2) Close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20844" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20844&lt;/ErrorNumber&gt;&lt;Description&gt;An Internal Error has occurred in INSITE Program.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20845" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20845&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE failed to launch the help.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20846" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20845&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to setup FlexGrid in page.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+	<!-- End -->
+	
+	
+</RESOURCE>
+</XML_RESOURCE>

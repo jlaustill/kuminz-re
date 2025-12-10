@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE module SYSTEM "../htmlentities.dtd">
+<!-- CHANGE LOG
+1.)  C. Colaco : Initial creation from names_en.icl ver. 6.31.01.44
+2)   DB : Insite 6.4 DB_G00061995, (DB)  Added Support for Speed Bias Calibration Test  , 02/22/2005
+3)  GS: Changes to insite ver 6.5, 8/30/2005 Added units num 108, 8/30/2005
+4.)  DB_G00073602 :-ADDED UNIT NUM 110
+5.)  MP : Insite 6.5FP1 Development, 01/17/2006
+		   Added unitsnum 111.
+6.)  KP : Insite 6.5.2 Development, 06/09/2006
+		   Added unitsnum 112, 113 & 114.
+7)   SNG: Insite 6.5.2, 06/13/2006
+                     Merging Done.
+8) Changes to Insite Ver 6.52.0.0045, 06/29/2006
+   Insite 6.5FP2 Developemnt(MT) Added Unit 115 
+9) Changes to Insite Ver 7.00.0.0020, 11/14/2006
+   Insite 7.0 Developemnt(SV) Added Unit 116    
+10) Changes to Insite Ver 7.00.0.0063, 12/21/2006
+   DB_G00093088 :(SJ) Added Unit 117
+11)  Changes to Insite Ver  7.00.0.0105,02/06/2007
+     Insite 7.0 Developemnt(SV) Added Unit 118 and 119.  
+ 12) Changes to Insite Ver  7.00.0.0143,03/15/2007
+     DB_G00097075(SV) Modified Unit 82. 
+ 12) Changes to Insite Ver  7.00.0.0143,03/15/2007
+     DB_G00097075(SV) Modified Unit 82.           
+ 13) Changes to Insite Ver 7.0, 04/30/2007
+    DB_G00100652 (PG) Added unit 120.  
+ 14) Changes to Insite Ver 7.2, 02/06/2008
+   Insite 7.2 Developemnt(LK) Added Unit 121    
+   15) Changes to INSITE Ver 7.3, 10/21/2008
+ DB_G00124813 (PG) Added Units 122 and 123.
+ 16) Changes to Insite Ver 7.3FP2, 13/04/2009
+   DB_G00133423(MA): Insite 7.3FP2 Added Unit 124.
+   17) Changes to INSITE Ver 7.3FP1, 5/07/2009
+   DB_G00136162(PP): INSITE 7.3FP1 Added Unit 125 and 126.
+ 18) Changes to Insite Ver 7.4, 9/30/2009
+     DB_G00140119 : modified String of ID 65 from "Revolutions per Minute per Second" to 
+     "revolutions per minute per second"
+ 19)NB(jr617): INSITE 7.5.1: New TIS Implementation , 02/08/2011
+     Added Unit 127 and 128
+ 20) kr282 : 23/07/2012  Made string id 0 as blank-->
+<!--: MN(js994)INSITE 7.5.3: 10/03/2011 Added Unit 129-->
+<!--: DP(jq870): INSITE 7.6: 05/10/2012 Added a unit 132-->
+<!-- READING THE DATA BELOW
+<STRING ID="UNITS ID">UNITS - LONG</STRING>
+-->
+
+<XML_RESOURCE>
+    <RESOURCE Description="Units - Long">
+        <STRING ID="0"></STRING>
+        <STRING ID="1">Miles</STRING>
+        <STRING ID="2">Degrees Fahrenheit</STRING>
+        <STRING ID="3">Inches of Mercury</STRING>
+        <STRING ID="4">pound force per square inch gauge</STRING>
+        <STRING ID="5">Gallon</STRING>
+        <STRING ID="6">Horsepower</STRING>
+        <STRING ID="7">foot pound-force</STRING>
+        <STRING ID="8">Kilometers</STRING>
+        <STRING ID="9">Degrees Celsius</STRING>
+        <STRING ID="10">Millimeters of Mercury</STRING>
+        <STRING ID="11">Kilopascal</STRING>
+        <STRING ID="13">imperial gallons</STRING>
+        <STRING ID="14">newton meters</STRING>
+        <STRING ID="15">miles per gallon</STRING>
+        <STRING ID="16">metric horsepower</STRING>
+        <STRING ID="17">kilogram-force meter</STRING>
+        <STRING ID="20">minutes</STRING>
+        <STRING ID="21">Hours</STRING>
+        <STRING ID="22">pound force per square inch absolute</STRING>
+        <STRING ID="23">pascal's</STRING>
+        <STRING ID="24">kilometers per liter</STRING>
+        <STRING ID="25">gallons per hour</STRING>
+        <STRING ID="26">liters per hour</STRING>
+        <STRING ID="29">liter</STRING>
+        <STRING ID="30">miles per hour</STRING>
+        <STRING ID="31">kilometers per hour</STRING>
+        <STRING ID="32">imperial gallons per hour</STRING>
+        <STRING ID="33">miles per imperial gallon</STRING>
+        <STRING ID="34">Number per 1000 Miles</STRING>
+        <STRING ID="35">Number per 1000 Kilometers</STRING>
+        <STRING ID="36">seconds</STRING>
+        <STRING ID="37">revolutions per minute</STRING>
+        <STRING ID="38">Percent</STRING>
+        <STRING ID="39">kilowatt</STRING>
+        <STRING ID="41">volts</STRING>
+        <STRING ID="44">inch pound-force</STRING>
+        <STRING ID="45">bar</STRING>
+        <STRING ID="46">millimeters of water</STRING>
+        <STRING ID="47">inches of water</STRING>
+        <STRING ID="49">quart</STRING>
+        <STRING ID="50">miles per liter</STRING>
+        <STRING ID="51">kilometers per gallon</STRING>
+        <STRING ID="52">kilometers per imperial gallon</STRING>
+        <STRING ID="57">amps</STRING>
+        <STRING ID="58">kilograms per hour</STRING>
+        <STRING ID="62">pounds per hour</STRING>
+        <STRING ID="63">kilograms per hour</STRING>
+        <STRING ID="65">revolutions per minute per second</STRING>
+        <STRING ID="66">Degrees</STRING>
+        <STRING ID="67">miles per hour per second</STRING>
+        <STRING ID="68">kilometers per hour per second</STRING>
+        <STRING ID="69">atdc</STRING>
+        <STRING ID="71">kilovolts</STRING>
+        <STRING ID="72">Pounds per Square inch Minutes</STRING>
+        <STRING ID="73">Millimeters</STRING>
+        <STRING ID="76">Hertz</STRING>
+        <STRING ID="77">milliseconds</STRING>
+        <STRING ID="79">megapascal</STRING>
+        <STRING ID="80">Pounds per Minute</STRING>
+        <STRING ID="81">revolutions per mile</STRING>
+        <STRING ID="82">Counts</STRING>
+        <STRING ID="83">revolutions per kilometer</STRING>
+        <STRING ID="84">milliamps</STRING>
+        <STRING ID="85">pound force per square inch</STRING>
+        <STRING ID="87">Milli Volts</STRING>
+        <STRING ID="88">Kilowatts per Second</STRING>
+        <STRING ID="89">Pounds</STRING>
+        <STRING ID="90">miles per pound</STRING>
+        <STRING ID="92">Megawatt hours</STRING>
+        <STRING ID="93">milligrams per stroke</STRING>
+        <STRING ID="94">Percent/R</STRING>
+        <STRING ID="95">Microseconds</STRING>
+        <STRING ID="96">Grams per Second</STRING>
+        <STRING ID="97">millimeter cube per Stroke</STRING>
+        <STRING ID="99">liters per 100 kilometers</STRING>
+        <STRING ID="100">RELTIME</STRING>
+        <STRING ID="101">Grains/Pound Mass of Dry Air</STRING>
+        <STRING ID="102">Milli Second</STRING>
+        <STRING ID="103">N_M</STRING>
+        <STRING ID="104">KRPM</STRING>
+        <STRING ID="105">Kpa_G</STRING>
+        <STRING ID="107">Percent Duty Cycle</STRING>
+        <STRING ID="108">Hours:Minutes</STRING>
+        <STRING ID="110">Degrees F</STRING>
+        <STRING ID="111">Minutes:Seconds</STRING>
+        <STRING ID="112">Kilopascals(absolute)</STRING>
+        <STRING ID="113">Grams per kilogram</STRING>
+        <STRING ID="114">Kilograms per minute</STRING>
+        <STRING ID="115">Hour</STRING>
+        <STRING ID="116">Grams</STRING>
+        <STRING ID="117">Gas Volume per hour</STRING>
+        <STRING ID="118">kilograms</STRING>
+        <STRING ID="119">kilometers per kilograms</STRING>
+        <STRING ID="120">kilowatts per milliAmpere</STRING>
+        <STRING ID="121">Lambda</STRING>
+        <STRING ID="122">cubic meters per second</STRING>
+        <STRING ID="123">cubic feet per second</STRING>
+        <STRING ID="124">Inches</STRING>
+        <STRING ID="125">pulses per kilometer</STRING>
+        <STRING ID="126">pulses per mile</STRING>
+        <STRING ID="127">ppm</STRING>
+        <STRING ID="128">ohm</STRING>
+        <STRING ID="129">HHHHHH:MM (hours:minutes:seconds)</STRING>
+		<STRING ID="132">Milligrams/stroke</STRING>
+    </RESOURCE>
+</XML_RESOURCE>

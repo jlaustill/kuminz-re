@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE module SYSTEM "../htmlentities.dtd">
+<XML_RESOURCE>
+  <RESOURCE Tag="1001" Type="String Table" Description="Message String Table">
+    <STRING ID="1" Context="">Power Generation Tuning Test</STRING>
+    <STRING ID="2" Context="">This test is used to trim certain parameters while the engine is running. After all the desired values are set and the test is stopped the values can be permanently set in the ECM and will only require a single engine shutdown.</STRING>
+    <STRING ID="3" Context="">Initial Conditions\r\n1.     None\r\nSteps\r\n1.     Select Start\r\n2.     Make desired changes\r\n3.     Select Apply\r\n4.     Select Stop\r\n5.     Select Yes to permanently save changes\r\nAdditional Information\r\n1.     All changes made during the test will be temporary until the test is stopped and the option to permanently save changes is selected\r\n2.     Changes made during the test will be reflected by the monitor parameters.</STRING>
+    <STRING ID="4" Context="">Instructions</STRING>
+    <STRING ID="5" Context="">Show</STRING>
+    <STRING ID="6" Context="">Parameter</STRING>
+    <STRING ID="7" Context="">Units</STRING>
+    <STRING ID="8" Context="">Value</STRING>
+    <STRING ID="9" Context="">New Value</STRING>
+    <STRING ID="10" Context="">Current Value</STRING>
+    <STRING ID="11" Context="">Engine Parameters</STRING>
+    <STRING ID="12" Context="">Monitors</STRING>
+    <STRING ID="13" Context="">Status</STRING>
+    <STRING ID="14" Context="">Apply</STRING>
+    <STRING ID="15" Context="">There are no parameters that can be changed. Please ensure that the settings in Features and Parameters are correct.</STRING>
+    <STRING ID="16" Context="">The following parameters are locked because: Rated Speed Adjust = Disable
+- Frequency Adjust Offset
+- User Droop Adjust
+- Tool Gain Adjustment</STRING>
+    <STRING ID="17" Context="">User Droop Adjust is locked because: </STRING>
+    <STRING ID="18" Context="">Tool Gain Adjustment is locked because: </STRING>
+    <STRING ID="19" Context="">Idle Speed is locked because: </STRING>
+    <STRING ID="22" Context="">Restore Original Value</STRING>
+    <STRING ID="23" Context="">Restore All Original Values</STRING>
+    <STRING ID="24" Context="">Limits</STRING>
+    <STRING ID="25" Context="">This parameter has a maximum value limited by:</STRING>
+	<STRING ID="26" Context="">This parameter has a minimum value limited by:</STRING>
+    <STRING ID="27" Context="">Selected Parameter</STRING>
+    <STRING ID="28" Context="">Minimum Limit</STRING>
+    <STRING ID="29" Context="">Maximum Limit</STRING>
+    <STRING ID="30" Context="">OK</STRING>
+    <STRING ID="31" Context="">Help</STRING>
+    <STRING ID="32" Context="">There are New Values that have not been sent to the ECM. Select OK to exit without sending the new values. Select Cancel to return to the test.</STRING>
+    <STRING ID="33" Context="">Values have not been permanently saved to the ECM. Save the values to the ECM now? Select Yes to permanently save the changes. Select No to restore the original values.</STRING>
+    <STRING ID="34" Context="">In order to permanently save the changes to the ECM, the engine must be stopped.  Please stop the engine, ensure the Key Switch is ON, and Select OK.  Select Cancel to return to the test.</STRING>
+    <STRING ID="35" Context="">The parameter(s) have been successfully restored to their original values.</STRING>
+    <STRING ID="36" Context="">The engine was not shut down.  INSITE will now return to the test.</STRING>
+    <STRING ID="37" Context="">The parameter(s) have been successfully written to the ECM.</STRING>
+    <STRING ID="38" Context="">The following parameter(s) did not successfully write to the ECM:</STRING>
+    <STRING ID="39" Context="">This parameter is locked because: </STRING>
+    <STRING ID="40" Context="">Rated Speed Adjust = Disable</STRING>
+    <STRING ID="41" Context="">Rated Speed Adjust / Droop Adjust = Disable</STRING>
+    <STRING ID="42" Context="">Rated Speed Adjust / Droop Adjust / Droop Adjust Select is not equal to 'Tool' </STRING>
+    <STRING ID="43" Context="">Rated Speed Adjust / Gain Adjustment = Disable</STRING>
+    <STRING ID="44" Context="">Rated Speed Adjust / Gain Adjustment / Gain Adjustment Type is not equal to 'Trim' </STRING>
+    <STRING ID="45" Context="">Adjustable Low Idle Speed = Disable</STRING>
+	  <STRING ID="46" Context="">The parameter(s) did not successfully write to the ECM.</STRING>
+    <STRING ID="47" Context="">It is read-only and cannot be modified.</STRING>
+    <STRING ID="40500" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40500&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart INSITE. Or 2) Re-install the INSITE application.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;Suggestion&gt; please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+    <STRING ID="40501" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40501&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart INSITE. Or 2) Re-install the INSITE application.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;Suggestion&gt; please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+    <STRING ID="40502" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40502&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation. Or 2) Close and restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+    <STRING ID="40503" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40503&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation. Or 2) Close and restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+    <STRING ID="40504" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40504&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation. Or 2) Close and restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+    <STRING ID="40505" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40505&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation. Or 2) Close and restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+    <STRING ID="40506" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40506&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation. Or 2) Close and restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+    <STRING ID="40507" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40507&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation. Or 2) Close and restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+    <STRING ID="40508" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40508&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;1) Verify the ECM connection. And 2) Close and restart the operation.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+    <STRING ID="40509" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40509&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation. Or 2) Close and restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+    <STRING ID="40510" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40510&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation. Or 2) Close and restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+    <STRING ID="40511" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40511&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation. Or 2) Close and restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+    <STRING ID="40512" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40512&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation. Or 2) Close and restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+    <STRING ID="40513" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40513&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation. Or 2) Close and restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+    <STRING ID="40550" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40550&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart INSITE. Or 2) Re-install the INSITE application.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;Suggestion&gt; please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+    <STRING ID="40551" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40551&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation. Or 2) Close and restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+    <STRING ID="40552" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40552&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation. Or 2) Close and restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+    <STRING ID="40553" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40553&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation. Or 2) Close and restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+    <STRING ID="40554" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;40554&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;1) Verify the ECM connection. And 2) Close and restart the operation.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+  </RESOURCE>
+</XML_RESOURCE>

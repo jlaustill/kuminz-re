@@ -1,0 +1,1 @@
+cp *.java ~/ghidra_scripts/

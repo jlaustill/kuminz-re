@@ -1,0 +1,27 @@
+# AuditTrail.dll Function Rename Mapping
+# Format: old_name|new_name
+# Source: Debug strings embedded in code (class::method references)
+
+# CCIAuditTrail class methods
+FUN_1000cf50|CCIAuditTrail_Initialize
+FUN_1000dfd8|CCIAuditTrail_SetChangeCodeBits
+FUN_1000e131|CCIAuditTrail_get_CurrentRecordIndex
+FUN_1000e317|CCIAuditTrail_get_AuditTrailRecords
+FUN_1000eca8|CCIAuditTrail_put_Group
+FUN_1000ee03|CCIAuditTrail_get_Group
+FUN_1000efb4|CCIAuditTrail_GetIDsOfNames
+FUN_10010660|CCIAuditTrail_UpdateChangeCodeBits
+
+# CCIAuditTrailRecord class methods
+FUN_10015e60|CCIAuditTrailRecord_get_ToolInstance
+FUN_100161c0|CCIAuditTrailRecord_get_ToolVersion
+FUN_10016520|CCIAuditTrailRecord_get_ToolId
+FUN_100167a0|CCIAuditTrailRecord_get_ECM_RunTime
+FUN_10016a00|CCIAuditTrailRecord_get_TimeStamp
+FUN_10016f43|CCIAuditTrailRecord_get_ActiveChangeCodes
+FUN_10017410|CCIAuditTrailRecord_Initialize
+FUN_100184e0|CCIAuditTrailRecord_GetLogicalName
+
+# Utility functions
+FUN_1001e8c0|throwExceptionWithFileInfo
+

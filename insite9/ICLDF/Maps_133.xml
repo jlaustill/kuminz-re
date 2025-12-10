@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Insite 7.3FP1 GTA3.9/5.9/8.3, KTA19/38 G Drive -->
+<!--
+========================================================================================
+// Maps.xml
+// Copyright (c) 2004 Cummins, Inc.
+// ALL RIGHTS RESERVED
+//
+========================================================================================
+//
+// CHANGE LOG
+// PR/CR#               Date        Author          	Comments
+==========================================================================================
+//INSITE 7.3FP1         1/15/08     Preeti Patil     Created
+//G Drive Bug Fixing    1/29/09     Preeti Patil     Added parameter Post Catalyst Window Adjustment to air to fuel ratio
+//                                                   Added feture Speed Bias Setup 2
+//
+//G Drive Bug Fixing	6/3/09		Prasad Phatak	 Removed tokens 15574 and 15575 from Air to Fuel Ratio
+//G Drive Bug Fixing	12/01/10	Rishabh Nigam	 Removed tokens 15570 and 15608 from Air to Fuel Ratio(DB_G00160827)
+//G Drive Bug Fixing	04/26/11	Kishori Jha	     Added tokens 15574 and 15575 to Air to Fuel Ratio and set featureEnable attribute to 0 (DB_G00146693)
+-->
+<!--moduleType="133" moduleName="GTA3.9/5.9/8.3, KTA19/38 G Drive %t16785831"-->
+<MODULE xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="Maps.xsd">
+  <MAPS>
+    <MAP mapID="1">
+      <FEATURES>
+        <!--System ID and Dataplate Feature-->
+        <FEATURE featureID="56" featureEnable="0" featureGTIS="23255">
+          <SUBFEATURES>
+            <!--Vehicle/OEM Information-->
+            <SUBFEATURE subFeatureID="23061" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="56">
+              <PARAMETERS>
+                <!--OEM Name-->
+                <PARAMETER parameterID="1001"/>
+                <!--OEM Vehicle or Equipment Model-->
+                <PARAMETER parameterID="1003"/>
+                <!--Vehicle Identification Number (VIN) or Equipment Serial Number-->
+                <PARAMETER parameterID="1005"/>
+                <!--Vehicle or Equipment Year-->
+                <PARAMETER parameterID="1006"/>
+              </PARAMETERS>
+            </SUBFEATURE>
+            <!--Customer Information-->
+            <SUBFEATURE subFeatureID="23071" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="56">
+              <PARAMETERS>
+                <!--Customer Name-->
+                <PARAMETER parameterID="1009"/>
+                <!--Customer Location-->
+                <PARAMETER parameterID="1010"/>
+                <!--Customer Unit Number-->
+                <PARAMETER parameterID="1011"/>
+              </PARAMETERS>
+            </SUBFEATURE>
+            <!--System Information-->
+            <SUBFEATURE subFeatureID="23081" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="56">
+              <PARAMETERS>
+                <!--Torque Rise-->
+                <PARAMETER parameterID="2010"/>
+                <!--Advertised Power at RPM-->
+                <PARAMETER parameterID="2001"/>
+                <!--Advertised Power RPM-->
+                <PARAMETER parameterID="2002"/>
+                <!--Governed Speed-->
+                <PARAMETER parameterID="2003"/>
+                <!--Peak Torque at RPM-->
+                <PARAMETER parameterID="2004"/>
+                <!--Peak Torque RPM-->
+                <PARAMETER parameterID="2005"/>
+                <!--CPL-->
+                <PARAMETER parameterID="3005"/>
+                <!--Fuel Code (FC)-->
+                <PARAMETER parameterID="2006"/>
+              </PARAMETERS>
+            </SUBFEATURE>
+            <!--Calibration Information-->
+            <SUBFEATURE subFeatureID="23091" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="56">
+              <PARAMETERS>
+                <!--ECM Code-->
+                <PARAMETER parameterID="5002"/>
+                <!--Calibration Voltage Range Low-->
+                <PARAMETER parameterID="5005"/>
+                <!--Calibration Voltage Range High-->
+                <PARAMETER parameterID="5006"/>
+                <!--Other Options-->
+                <PARAMETER parameterID="5007"/>
+                <!--Calibration Time Date Stamp-->
+                <PARAMETER parameterID="2007"/>
+                <!--Calibration Software Phase-->
+                <PARAMETER parameterID="5015"/>
+                <!--SC Option-->
+                <PARAMETER parameterID="5017"/>
+                <!--DO Option-->
+                <PARAMETER parameterID="5018"/>
+              </PARAMETERS>
+            </SUBFEATURE>
+            <!--ECM Information-->
+            <SUBFEATURE subFeatureID="25051" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="56">
+              <PARAMETERS>
+                <!--ECM Make-->
+                <PARAMETER parameterID="4001"/>
+                <!--ECM Part Number-->
+                <PARAMETER parameterID="4003"/>
+                <!--ECM Product ID-->
+                <PARAMETER parameterID="4004"/>
+                <!--ECM Voltage Range Low-->
+                <PARAMETER parameterID="4005"/>
+                <!--ECM Voltage Range High-->
+                <PARAMETER parameterID="4006"/>
+                <!--ECM Serial Number (ROM)-->
+                <PARAMETER parameterID="4010"/>
+              </PARAMETERS>
+            </SUBFEATURE>
+            <!--Engine Information-->
+            <SUBFEATURE subFeatureID="23051" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="56">
+              <PARAMETERS>
+                <!--Make-->
+                <PARAMETER parameterID="3001"/>
+                <!--Model-->
+                <PARAMETER parameterID="3002"/>
+                <!--Serial Number-->
+                <PARAMETER parameterID="3003"/>
+                <!--Build Date-->
+                <PARAMETER parameterID="3004"/>
+              </PARAMETERS>
+            </SUBFEATURE>
+          </SUBFEATURES>
+        </FEATURE>
+        <!--Air to Fuel Ratio -->
+        <FEATURE featureID="127" featureEnable="0" featureGTIS="25675">
+          <SUBFEATURES>
+            <!-- SubFeature 0 -->
+            <SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+              <PARAMETERS>
+                <!--NGK/NTK Oxygen Sensor Offset-->
+                <PARAMETER parameterID="15010"/>
+                <!--Base Lambda Offset-->
+                <PARAMETER parameterID="15020"/>
+                <!--Fuel Control Valve Initial Position-->
+                <PARAMETER parameterID="15571"/>
+                <!--Manually Commanded Fuel Control Valve Position-->
+                <PARAMETER parameterID="15574"/>
+                <!--Manual Fuel Control Valve Enable-->
+                <PARAMETER parameterID="15575"/>
+                <!--Post Catalyst Lambda Offset-->
+                <PARAMETER parameterID="15609"/>
+                <!--Switching Lambda Step Bias-->
+                <PARAMETER parameterID="15610"/>
+                <!--Post Catalyst Window Adjustment-->
+                <PARAMETER parameterID="10083"/>
+                <!--Post Catalyst Window Adjustment Deactivation Flag-->
+                <PARAMETER parameterID="10084"/>
+              </PARAMETERS>
+            </SUBFEATURE>
+          </SUBFEATURES>
+        </FEATURE>
+		
+		
+		
+		
+		
+		
+        <FEATURE featureID="189" featureEnable="26121" featureGTIS="26125">
+          <SUBFEATURES>
+            <!-- SubFeature 0 -->
+            <SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+              <PARAMETERS>
+                <!-- Speed Bias Input Setting -->
+                <PARAMETER parameterID="15102"/>
+                <!--Speed Bias Current Gain-->
+                <PARAMETER parameterID="15103"/>
+                <!--Speed Bias Current Offset-->
+                <PARAMETER parameterID="15104"/>
+                <!--Speed Bias Voltage Gain-->
+                <PARAMETER parameterID="15105"/>
+                <!--Speed Bias Voltage Offset-->
+                <PARAMETER parameterID="15106"/>
+              </PARAMETERS>
+            </SUBFEATURE>
+          </SUBFEATURES>
+        </FEATURE>
+      </FEATURES>
+    </MAP>
+    <!--Trip Information is not supported for this module-->
+  </MAPS>
+</MODULE>
+

@@ -1,0 +1,71 @@
+<FlexGrid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+
+	<Properties Cols="2:VT_I4" FixedCols="0:VT_I4" ExplorerBar="0:VT_I4" GridLines="0:VT_I4" OutlineBar="5:VT_I4"
+	AllowUserResizing="1:VT_UI4"   AutoResize="1:VT_I4" Editable="0:VT_I4" ColWidthMax="4000"/>
+
+	<FixedRows>
+		<FixedRow>
+			<Column name=""/>
+			<Column name=""/>
+		</FixedRow>
+	</FixedRows>
+
+	<data loopEnd="1">
+		<Object name="s" source="OBJ:VSFLEXGRID:FixedRows(0)PROPPUT"/>
+		<Node level="0" loopEnd="1" >
+			<Column order="0" datasource="OBJ:DOM:selectSingleNode(/Image/Header/TechnicianNotes):getAttribute(DisplayName)" styleid="s3"/>
+			<Column order="1" datasource="OBJ:DOM:selectSingleNode(/Image/Header/TechnicianNotes):getAttribute(DisplayValue)" styleid="s2" />
+		</Node>
+	</data>
+
+	<parameters>
+	</parameters>
+
+	<icons>
+	</icons>
+	
+	<combolists>
+	</combolists>
+	
+	<styles>
+	<style id="s1" CellFontBold="1:VT_I4" CellAlignMent="0:VT_I4" />
+	<style id="s2" CellFontBold="1:VT_I4" CellAlignMent="0:VT_I4" ColWidthMin="3000" ColWidthMax="8000" WordWrap="1:VT_BOOL" AutoSizeMode="1:VT_I4" />
+	<style id="s3" CellAlignMent="0:VT_I4" />
+	</styles>
+	
+	<resources>
+		<resource id="Res1" CLSID="{1ECBBE0B-836B-11D4-8A76-00062999E309}" LoadDLL="TRUE"/>
+	</resources>
+	
+	<printing HdrFontSize="8" >
+		<header>
+			<line>
+				<center source="RES:Res1:163" />
+			</line>
+			<line>
+				<left source="RES:Res1:2030" />
+				<left source="OBJ:DOM:selectSingleNode(/Image/Header/ESerial):getAttribute(DisplayValue)" />
+				<right source="INSITE - " />
+				<right source="OBJ:DOM:selectSingleNode(/Image):getAttribute(ImageVersion)" />
+			</line>
+			<line>
+				<left source="RES:Res1:2029" />
+				<left source="OBJ:DOM:selectSingleNode(/Image/Header/UNumber):getAttribute(DisplayValue)" />
+				<right source="RES:Res1:2031" />
+				<right source="OBJ:DOM:selectSingleNode(/Image/Header/VMake):getAttribute(DisplayValue)" />
+			</line>
+			<line>
+				<left source="RES:Res1:2032" />
+				<left source="OBJ:DOM:selectSingleNode(/Image/Header/WOName):getAttribute(DisplayValue)" />
+				<right source="RES:Res1:2033" />
+				<right source="OBJ:DOM:selectSingleNode(/Image/Header/IName):getAttribute(DisplayValue)" />
+			</line>
+			<line>
+				<right source="RES:Res1:2036"/>
+				<right source="OBJ:DOM:selectSingleNode(/Image/Header/CustomerName):getAttribute(DisplayValue)"/>
+			</line>
+		</header>
+		
+	</printing>
+</FlexGrid>

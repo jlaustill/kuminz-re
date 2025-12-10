@@ -1,0 +1,5 @@
+SV1,0,256,Fuel_Percent_Requested
+SV1,0,256,Timing_Advance_Request
+SV1,0,256,RPM_ECU
+SV1,2,274,RPM
+SV1,2,274,Fuel_Temp

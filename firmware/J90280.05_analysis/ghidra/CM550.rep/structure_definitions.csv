@@ -1,0 +1,482 @@
+struct_name,address,field_name,type,size,comment,dependency,Status
+eeprom_param_t,,pteshilm,word,2,PTO setpoint high limit (3000.0 RPM),,guess
+eeprom_param_t,,pteslolm,word,2,PTO setpoint low limit (700.0 RPM),,guess
+eeprom_param_t,,ptmnrfes,word,2,PTO minimum RPM for engagement (700.0 RPM),,guess
+eeprom_param_t,,pttlslmx,word,2,PTO throttle limit maximum (0.101),,guess
+j1939_header_t,,id,uint32_t,4,CAN identifier containing PGN and addressing info,,guess
+j1939_header_t,,length,uint16_t,2,Message data length for single/multi-frame decision,,guess
+diagnostic_state_buffer_t,0x809654,diagnostic_mode,word,2,Parameter system operation mode (state machine 1-12),,in_qa
+diagnostic_state_buffer_t,0x809654,reserved,word,2,Padding/reserved space,,in_qa
+diagnostic_state_buffer_t,0x809654,computed_value,word,2,Calculated parameter value from table lookups,,in_qa
+# CalTerm EPFLTB - Max fueling derate as function of RPM
+derate_table_EPFLTB,0x8071A8,derate_values,word,34,Max fueling derate lookup table - RPM vs %FU (17 entries),,Verified
+# CalTerm DCMNESTB - Duty cycle monitor x-axis rpm values for mapping
+duty_cycle_monitor_DCMNESTB,0x807d1e,rpm_thresholds,word,18,Duty cycle monitor RPM threshold points (9 entries),,guess
+# CalTerm CPDSZA - Data axis for desired cylinder pressure table (PSIA vs RPM)
+desired_cylinder_pressure_CPDSZA,0x606a4,pressure_table,word,182,Desired cylinder pressure lookup table - PSIA vs RPM (7x13 entries),,Verified
+parameter_response_t,,error_code,byte,1,Error code (0=success non-zero=error),,guess
+parameter_response_t,,param_value,word,2,Retrieved parameter value,,guess
+parameter_response_t,,scaling_applied,byte,1,Flag indicating if scaling was applied,,guess
+parameter_response_t,,timestamp,dword,4,Response generation timestamp,,guess
+# J1939/VP44 Dual Protocol Message Structure @ 0x803036-0x803046
+j1939_vp44_msg_t,0x803036,j1939_status_byte,byte,1,J1939 transmission message status/header byte,,verified
+j1939_vp44_msg_t,0x803037,fuel_amount_high,byte,1,Fuel amount high byte (param_table_aux>>8 + 125),,verified
+j1939_vp44_msg_t,0x803038,fuel_amount_low,byte,1,Fuel amount low byte (param_table_main>>8 + 125),,verified
+j1939_vp44_msg_t,0x803039,rpm_low,byte,1,Engine RPM low byte (current_engine_rpm & 0xFF),,verified
+j1939_vp44_msg_t,0x80303A,rpm_high,byte,1,Engine RPM high byte (current_engine_rpm >> 8),,verified
+j1939_vp44_msg_t,0x80303E,vp44_header,dword,4,VP44 0x100 command message header (0xF00400 base),,verified
+j1939_vp44_msg_t,0x80303F,vp44_fuel_high,byte,1,VP44 fuel amount high byte (same as fuel_amount_high),,verified
+j1939_vp44_msg_t,0x803040,vp44_fuel_low,byte,1,VP44 fuel amount low byte (same as fuel_amount_low),,verified
+j1939_vp44_msg_t,0x803041,timing_byte3,byte,1,VP44 timing advance data byte 3,,verified
+j1939_vp44_msg_t,0x803042,timing_byte4,byte,1,VP44 timing advance data byte 4,,verified
+j1939_vp44_msg_t,0x803043,timing_byte5,byte,1,VP44 timing advance data byte 5,,verified
+j1939_vp44_msg_t,0x803044,timing_byte6,byte,1,VP44 timing advance data byte 6,,verified
+j1939_vp44_msg_t,0x803045,vp44_rpm_low,byte,1,VP44 RPM×4 low byte (current_engine_rpm & 0xFF),,verified
+j1939_vp44_msg_t,0x803046,vp44_rpm_high,byte,1,VP44 RPM×4 high byte (current_engine_rpm >> 8),,verified
+calterm_protocol_t,,checksum,byte,1,Message integrity checksum,,guess
+calterm_protocol_t,,command_id,byte,1,CalTerm command identifier,,guess
+calterm_protocol_t,,data_payload,byte,8,Parameter data payload (up to 8 bytes),,guess
+calterm_protocol_t,,parameter_count,byte,1,Number of parameters in request/response,,guess
+j1939_source_addresses_t,,jcsa1_source_addr_1,word,2,J1939 source address 1 (JCSA1),,guess
+j1939_source_addresses_t,,jcsa2_source_addr_2,word,2,J1939 source address 2 (JCSA2),,guess
+j1939_source_addresses_t,,jcsa3_source_addr_3,word,2,J1939 source address 3 (JCSA3),,guess
+j1939_source_addresses_t,,jcsa4_source_addr_4,word,2,J1939 source address 4 (JCSA4),,guess
+j1939_source_addresses_t,,jcsa5_source_addr_5,word,2,J1939 source address 5 (JCSA5),,guess
+param_lookup_args_t,,calculated_block,dword,4,Block × 256 × 4 calculation result,,guess
+param_lookup_args_t,,offset,word,2,Parameter offset within block,,guess
+param_lookup_args_t,,result_value,word,2,Retrieved parameter value (capped at 32000),,guess
+can_param_msg_t,,checksum,byte,1,Message checksum,,guess
+can_param_msg_t,,msg_id,byte,1,Message identifier,,guess
+can_param_msg_t,,param_1,byte,1,First parameter byte,,guess
+can_param_msg_t,,param_2,byte,1,Second parameter byte,,guess
+can_param_msg_t,,param_3,byte,1,Third parameter byte,,guess
+can_param_msg_t,,param_4,byte,1,Fourth parameter byte,,guess
+can_param_msg_t,,timestamp,word,2,Message timestamp,,guess
+insite_protocol_t,,function_code,byte,1,Insite function code,,guess
+insite_protocol_t,,live_data_request,byte,1,Live data monitoring request flag,,guess
+insite_protocol_t,,response_data,byte,6,Live parameter response data,,guess
+insite_protocol_t,,status_flags,byte,1,Monitoring status flags,,guess
+reference_table_t,0x8086F6,base_reference,word,2,Base reference value,,needs_review
+reference_table_t,0x8086F6,config_byte,byte,1,Configuration flags,,needs_review
+reference_table_t,0x8086F6,limit_value,word,2,Parameter limits,,needs_review
+reference_table_t,0x8086F6,scale_factor,word,2,Scaling factor,,needs_review
+mc68336_dual_can_t,,ssc1ltob_controller_1,word,2,CAN controller 1 last message object (SSC1LTOB),,guess
+mc68336_dual_can_t,,sscnltob_main_controller,word,2,Main CAN controller last message object (SSCNLTOB),,guess
+j1939_tx_msg_buffer_t,0x803036,data,uint8_t,8,J1939 message payload data array,,needs_review
+j1939_tx_msg_buffer_t,0x803036,header,j1939_header_t,6,CAN message header (ID + length),j1939_header_t,needs_review
+network_type_switches_t,,jcnes1sw_type_1,byte,1,Network type switch 1 (0=J1922 1=J1939),,guess
+network_type_switches_t,,jcnes2sw_type_2,byte,1,Network type switch 2 (0=J1922 1=J1939),,guess
+network_type_switches_t,,jcnes3sw_type_3,byte,1,Network type switch 3 (0=J1922 1=J1939),,guess
+network_type_switches_t,,jcnes4sw_type_4,byte,1,Network type switch 4 (0=J1922 1=J1939),,guess
+network_type_switches_t,,jcnes5sw_type_5,byte,1,Network type switch 5 (0=J1922 1=J1939),,guess
+parameter_request_t,,eeprom_block,word,2,Target EEPROM memory block,,guess
+parameter_request_t,,lookup_function,byte,1,Function ID (1=lookup1 2=lookup2 3=lookup3),,guess
+parameter_request_t,,param_offset,word,2,Parameter offset within block,,guess
+parameter_request_t,,validation_result,byte,1,Parameter validation status,,guess
+cummins_data_plate_header_t,0x0100003A,data_plt_module_id,word,2,Module identifier (EN=0x454E for CM550/VP44 ECUs),,needs_review
+module_variant_offsets_t,,cm550_data_plate_offset,word,2,CM550 data plate offset (0x2C0),,guess
+module_variant_offsets_t,,vp44_data_plate_offset,word,2,VP44 data plate offset (0x2C0-0x22=0x29E),,guess
+module_variant_offsets_t,,incal_variant_code,byte,1,InCal calibration variant (A/B/C),,guess
+cummins_data_plate_t,0x010002C0,data_plate_length,word,2,Data plate length field,,guess
+cummins_data_plate_t,0x010002C0,engine_make,byte,5,Engine manufacturer identifier,,guess
+cummins_data_plate_t,0x010002C0,engine_model,byte,17,Engine model designation,,guess
+cummins_data_plate_t,0x010002C0,engine_serial_number,dword,4,Engine serial number,,guess
+cummins_data_plate_t,0x010002C0,engine_build_month,byte,1,Engine manufacturing month,,guess
+cummins_data_plate_t,0x010002C0,engine_build_day,byte,1,Engine manufacturing day,,guess
+cummins_data_plate_t,0x010002C0,engine_build_year,byte,1,Engine manufacturing year,,guess
+cummins_data_plate_t,0x010002C0,engine_cpl,word,2,Engine CPL (Component Parts List),,guess
+cummins_data_plate_t,0x010002C0,peak_torque_low_range,word,2,Peak torque low range value,,guess
+cummins_data_plate_t,0x010002C0,peak_torque_high_range,word,2,Peak torque high range value,,guess
+cummins_data_plate_t,0x010002C0,peak_torque_rpm_low,word,2,Peak torque RPM low range,,guess
+cummins_data_plate_t,0x010002C0,peak_torque_rpm_high,word,2,Peak torque RPM high range,,guess
+cummins_data_plate_t,0x010002C0,governed_speed_low,word,2,Governed speed low range,,guess
+cummins_data_plate_t,0x010002C0,governed_speed_high,word,2,Governed speed high range,,guess
+cummins_data_plate_t,0x010002C0,horsepower_low_range,word,2,Horsepower low range value,,guess
+cummins_data_plate_t,0x010002C0,horsepower_high_range,word,2,Horsepower high range value,,guess
+cummins_data_plate_t,0x010002C0,horsepower_rpm_low,word,2,Horsepower RPM low range,,guess
+cummins_data_plate_t,0x010002C0,horsepower_rpm_high,word,2,Horsepower RPM high range,,guess
+cummins_data_plate_t,0x010002C0,fuel_code_part_number,byte,7,Fuel code part number,,guess
+cummins_data_plate_t,0x010002C0,percent_torque_rise,byte,1,Percent torque rise specification,,guess
+cummins_data_plate_t,0x010002C0,peak_torque,word,2,Peak torque specification,,guess
+cummins_data_plate_t,0x010002C0,peak_torque_rpm,word,2,Peak torque RPM specification,,guess
+cummins_data_plate_t,0x010002C0,governed_speed,word,2,Governed speed specification,,guess
+cummins_data_plate_t,0x010002C0,ecm_id,word,2,ECM identification number,,guess
+cummins_data_plate_t,0x010002C0,ecm_part_number,dword,4,ECM part number,,guess
+cummins_data_plate_t,0x010002C0,ecm_serial_number,dword,4,ECM serial number,,guess
+cummins_data_plate_t,0x010002C0,ecm_voltage_low_range,byte,1,ECM voltage low range,,guess
+cummins_data_plate_t,0x010002C0,ecm_voltage_high_range,byte,1,ECM voltage high range,,guess
+cummins_data_plate_t,0x010002C0,ecm_code,byte,10,ECM identification code,,guess
+cummins_data_plate_t,0x010002C0,engine_calibration_time,byte,12,Engine calibration timestamp,,guess
+cummins_data_plate_t,0x010002C0,sc_option_number,word,2,SC option number,,guess
+cummins_data_plate_t,0x010002C0,do_option_number,word,2,DO option number,,guess
+cummins_data_plate_t,0x010002C0,other_options,byte,40,Other options field,,guess
+cummins_data_plate_t,0x010002C0,oem_name,byte,15,Original equipment manufacturer name,,guess
+cummins_data_plate_t,0x010002C0,oem_vehicle,byte,15,OEM vehicle designation,,guess
+cummins_data_plate_t,0x010002C0,vin,byte,20,Vehicle identification number,,guess
+cummins_data_plate_t,0x010002C0,vehicle_year,byte,10,Vehicle manufacturing year,,guess
+cummins_data_plate_t,0x010002C0,customer_name,byte,15,Customer name,,guess
+cummins_data_plate_t,0x010002C0,location,byte,15,Installation location,,guess
+cummins_data_plate_t,0x010002C0,unit_number,byte,10,Unit identification number,,guess
+cummins_data_plate_t,0x010002C0,sc_file_b_part_1,byte,10,SC file B part number 1,,guess
+cummins_data_plate_t,0x010002C0,sc_file_b_part_2,byte,10,SC file B part number 2,,guess
+cummins_data_plate_t,0x010002C0,sc_file_b_part_3,byte,10,SC file B part number 3,,guess
+cummins_data_plate_t,0x010002C0,sc_file_b_part_4,byte,10,SC file B part number 4,,guess
+cummins_data_plate_t,0x010002C0,sc_file_b_part_5,byte,10,SC file B part number 5,,guess
+cummins_data_plate_t,0x010002C0,sc_file_b_part_6,byte,10,SC file B part number 6,,guess
+cummins_data_plate_t,0x010002C0,do_file_b_part_1,byte,10,DO file B part number 1,,guess
+cummins_data_plate_t,0x010002C0,do_file_b_part_2,byte,10,DO file B part number 2,,guess
+cummins_data_plate_t,0x010002C0,pad,byte,1,Unused padding byte,,guess
+circular_buffer_t,0x80c3fc,write_index,word,2,Current write position (0-511),,needs_review
+circular_buffer_t,0x80c3fc,entry_count,word,2,Number of entries in buffer,,needs_review
+circular_buffer_t,0x80c3fc,data_buffer_0,word,2,Sensor data offset 0,,needs_review
+circular_buffer_t,0x80c3fc,data_buffer_2,word,2,Sensor data offset 2,,needs_review
+circular_buffer_t,0x80c3fc,data_buffer_4,word,2,Sensor data offset 4,,needs_review
+circular_buffer_t,0x80c3fc,current_engine_rpm,word,2,Current engine RPM sample (offset 6),,verified
+circular_buffer_t,0x80c3fc,data_buffer_8,word,2,Sensor data offset 8 (throttle or RPM comparison),,needs_review
+circular_buffer_t,0x80c3fc,data_buffer_rest,byte,500,Remaining circular buffer data,,needs_review
+circular_buffer_t,0x80c3fc,metadata_buffer,word,512,Metadata/timestamp array,,needs_review
+can_message_log_buffer_t,0x8034f8,j1939_msg_buffers,byte,906,Complete CAN message buffer array for diagnostic logging,,needs_review
+memory_patch_entry_t,,target_address,dword,4,Memory address to patch (supports high memory mapping),,guess
+memory_patch_entry_t,,patch_size,byte,1,Number of bytes to copy to target address,,guess
+memory_patch_entry_t,,reserved,byte,1,Unused padding byte for 6-byte alignment,,guess
+system_protected_area_t,0x8062cb,protected_flags,byte,4,Critical system state area (write-protected during patches),,needs_review
+memory_operation_request_t,,source_data_ptr,dword,4,Pointer to source data for memory operation,,guess
+memory_operation_request_t,,target_data_ptr,dword,4,Pointer to destination memory location,,guess
+memory_operation_request_t,,operation_size,word,2,Number of bytes to copy (max 1764 bytes),,guess
+memory_operation_request_t,,metadata_value,word,2,Logging metadata/timestamp for circular buffer,,guess
+dma_descriptor_t,,source_address,dword,4,DMA transfer source memory address,,guess
+dma_descriptor_t,,dest_address,dword,4,DMA transfer destination memory address,,guess
+dma_descriptor_t,,transfer_count,word,2,Number of bytes/words to transfer,,guess
+dma_descriptor_t,,control_flags,word,2,DMA control flags (mode type enable etc),,guess
+dma_descriptor_t,,next_descriptor,dword,4,Pointer to next descriptor in chain,,guess
+dma_control_block_t,0x800026,descriptor_ptr1,dword,4,Pointer to first DMA descriptor chain,,needs_review
+dma_control_block_t,0x80002a,control_flags1,dword,4,Control/enable flags for DMA channel 1,,needs_review
+dma_control_block_t,0x80002e,descriptor_ptr2,dword,4,Pointer to second DMA descriptor chain,,needs_review
+dma_control_block_t,0x800032,control_flags2,dword,4,Control/enable flags for DMA channel 2,,needs_review
+j1939_diagnostic_buffer_t,0x803056,can_id,dword,4,J1939 CAN identifier with PGN priority and source address,,needs_review
+j1939_diagnostic_buffer_t,0x803056,message_length,word,2,Message data length (typically 3 bytes for diagnostic),,needs_review
+j1939_diagnostic_buffer_t,0x803056,data_ptr,dword,4,Pointer to diagnostic status data buffer,,needs_review
+j1939_diagnostic_buffer_t,0x803056,unused_ptr,dword,4,Pointer to unused buffer space,,needs_review
+can_priority_lookup_table_t,0x8037b6,dm983_priority,byte,1,Priority for Cummins DM-983 diagnostic message,,needs_review
+can_priority_lookup_table_t,0x8037b6,fedf_priority,byte,1,Priority for PGN FEDF00 secondary parameter message,,needs_review
+can_priority_lookup_table_t,0x8037b6,fee3_priority,byte,1,Priority for PGN FEE300 extended diagnostic message,,needs_review
+can_priority_lookup_table_t,0x8037b6,fef1_priority,byte,1,Priority for PGN FEF100 message,,needs_review
+can_priority_lookup_table_t,0x8037b6,feeb_priority,byte,1,Priority for PGN FEEB00 message,,needs_review
+can_priority_lookup_table_t,0x8037b6,feca_priority,byte,1,Priority for PGN FECA00 (DM1) message,,needs_review
+scheduler_phase_slot_t,0x809782,last_execution_time,dword,4,Timer value of last task execution,,needs_review
+scheduler_phase_slot_t,0x809782,runtime_ticks,word,2,Task runtime duration in timer ticks,,needs_review
+scheduler_phase_slot_t,0x809782,deadline_ticks,word,2,Task execution deadline (0xFFFF = disabled),,needs_review
+scheduler_phase_slot_t,0x809782,execution_count,word,2,Number of times task has been executed,,needs_review
+scheduler_phase_slot_t,0x809782,overrun_count,word,2,Number of deadline overruns detected,,needs_review
+scheduler_phase_slot_t,0x809782,reserved,dword,4,Reserved/padding bytes for alignment,,needs_review
+scheduler_phase_table_t,0x809782,phase_slots,scheduler_phase_slot_t,640,Array of 40 scheduler phase slots (16 bytes each),scheduler_phase_slot_t,needs_review
+vp44_message_t,0x800F5F,sequence_number,byte,1,VP44 message sequence number for retry logic,,needs_review
+vp44_message_t,0x800F60,message_id,word,2,VP44 message identifier,,needs_review
+vp44_message_t,0x800F62,retry_flag,byte,1,VP44 retry flag (1 when response pending),,needs_review
+vp44_message_t,0x800F63,retry_count,byte,1,VP44 actual retry count (max 5),,needs_review
+vp44_message_t,0x800F64,timeout_counter,byte,1,VP44 timeout countdown (112 ticks),,needs_review
+vp44_message_t,0x800F66,message_data,dword,4,VP44 stored command/data,,needs_review
+vp44_message_t,0x800F69,expected_sequence,byte,1,Expected sequence for validation,,needs_review
+vp44_message_t,0x800F6A,additional_data,word,2,Additional message data,,needs_review
+can_std_rx_desc_t,,id,uint32_t,4,11-bit CAN ID stored in 32-bit (ABI),,Verified
+can_std_rx_desc_t,,length,uint16_t,2,DLC,,Verified
+can_std_rx_desc_t,,data_ptr,ptr:uint8_t,4,Pointer to payload bytes,,Verified
+# at 0x800F34,Status
+diag_tp_state_t,0x800F34,diag_state,byte,1,State flag: 0=idle 1=active,,Verified
+diag_tp_state_t,0x800F34,expected_id_low,byte,1,Expected low byte of std CAN ID,,Verified
+diag_tp_state_t,0x800F34,expected_guard,word,2,Guard word; must match (payload[6]<<8),,Verified
+diag_tp_state_t,0x800F34,total_packets,byte,1,((total_bytes-1)/7)+1,,Verified
+diag_tp_state_t,0x800F34,req_start,byte,1,Current sequence index (1-based),,Verified
+diag_tp_state_t,0x800F34,req_count,byte,1,Remaining packets to send,,Verified
+diag_tp_state_t,0x800F34,pre_status,byte,1,Abort/status flag (non-zero aborts with 7),,Verified
+diag_tp_state_t,0x800F34,total_bytes,word,2,Total payload length,,Verified
+diag_tp_state_t,0x800F34,src_data_ptr,ptr:uint8_t,4,Pointer to source payload,,Verified
+diag_tp_state_t,0x800F34,resp_byte_ptr,ptr:uint8_t,4,Pointer to 1-byte response/status,,Verified
+diag_tp_state_t,0x800F34,status_code,byte,1,Countdown/NACK (0x37 init or 0x70 delay),,Verified
+diag_tp_state_t,0x800F34,reserved_0x47,byte,1,Padding,,Verified
+diag_tp_state_t,0x800F34,tx_header_id,uint32_t,4,Composed CAN ID for TP.CM/TP.DT,,Verified
+diag_tp_state_t,0x800F34,tx_length,uint16_t,2,DLC for frame (8 or tail),,Verified
+diag_tp_state_t,0x800F34,tx_cm_buf,ptr:uint8_t,4,Scratch 8-byte CM/DT buffer,,Verified
+# Code path analysis in FUN_0001e462 - fuel/governor control cluster (awaiting verification)
+fuel_governor_state_t,0x80D05C,out_cmd,short,2,Final clamped output (governor/fueling command),,in_qa
+fuel_governor_state_t,0x80D05E,cmd_raw,short,2,Current raw command (signed),,in_qa
+fuel_governor_state_t,0x80D060,term_ff,short,2,Feed-forward/scaling term (signed),,in_qa
+fuel_governor_state_t,0x80D062,term_rate,short,2,Rate/derivative term (signed saturating),,in_qa
+fuel_governor_state_t,0x80D064,accum_lo,ushort,2,Q16.16 accumulator low 16 bits (fractional part),,in_qa
+fuel_governor_state_t,0x80D066,accum_hi,ushort,2,Q16.16 accumulator high 16 bits (integer part / temp limit),,in_qa
+fuel_governor_state_t,0x80D068,limit_hi,short,2,Accumulator integer ceiling (upper clamp),,in_qa
+fuel_governor_state_t,0x80D06A,limit_cap,short,2,Accumulator/output cap,,in_qa
+fuel_governor_state_t,0x80D06C,rpm_window,short,2,RPM window/threshold term used for gating,,in_qa
+
+
+
+# A/D sensor configuration block - ambient air pressure sensor
+ad_sensor_config_t,0x00806C00,channel_addr,word,2,A/D channel address for sensor input,CalTerm ADAAPRCA,CalTerm
+ad_sensor_config_t,0x00806C02,filter_const,word,2,Digital filter constant (0-1),CalTerm ADAAPRCS,CalTerm
+ad_sensor_config_t,0x00806C06,fault_clear_count,word,2,Fault clear counter threshold,CalTerm ADAAPRCC,CalTerm
+ad_sensor_config_t,0x00806C08,fault_decrement,word,2,Fault counter decrement value,CalTerm ADAAPRDT,CalTerm
+ad_sensor_config_t,0x00806C0A,fault_increment,word,2,Fault counter increment value,CalTerm ADAAPRIC,CalTerm
+ad_sensor_config_t,0x00806C0C,fault_set_threshold,word,2,Fault set threshold,CalTerm ADAAPRSE,CalTerm
+ad_sensor_config_t,0x00806C0E,high_error_limit,word,2,A/D high error limit (0-1023),CalTerm ADAAPRHL,CalTerm
+ad_sensor_config_t,0x00806C10,low_error_limit,word,2,A/D low error limit (0-1023),CalTerm ADAAPRLL,CalTerm
+# Timing advance lookup table structure (4DTA family)
+timing_table_4dta_t,0x00060D1E,rpm_axis,word,19,Engine speed axis for timing table (0-3000 RPM),CalTerm 4DTA00XA,CalTerm
+timing_table_4dta_t,0x00060D1E,fuel_axis,word,16,Fueling axis for timing table (0-100 MM3S),CalTerm 4DTA00YA,CalTerm
+timing_table_4dta_t,0x00060D1E,timing_values,word,304,Timing advance lookup values (19x16 table),CalTerm 4DTA00ZA,CalTerm
+# 4D fueling lookup table structure (5DFL family)
+fueling_table_5dfl_t,0x00060982,rpm_axis,word,21,Engine speed axis for 4D fueling (0-3000 RPM),CalTerm 5DFL00XA,CalTerm
+fueling_table_5dfl_t,0x00060982,throttle_axis,word,4,Throttle position axis (0-100%),CalTerm 5DFL00YA,CalTerm
+fueling_table_5dfl_t,0x00060982,fuel_values,word,84,Fueling lookup values (21x4 table),CalTerm 5DFL00ZA,CalTerm
+# Diagnostic Protocol Structures (CalTerm/Insite Communication)
+diag_service_request_t,0x80d2c0,message_length,byte,1,Total message length including header,,Verified
+diag_service_request_t,0x80d2c0,service_id,byte,1,Service identifier (3=secured 4=control 5=memory),,Verified
+diag_service_request_t,0x80d2c0,sub_function,byte,1,Sub-function code for service routing,,Verified
+diag_service_request_t,0x80d2c0,data_payload,byte,16,Variable-length request data payload,,Verified
+# Multi-packet transfer state structure
+diag_transfer_state_t,0x80d3f8,target_address,word,2,Target memory address for transfer,,Verified
+diag_transfer_state_t,0x80d3fa,data_pointer,dword,4,Pointer to source/dest data buffer,,Verified
+diag_transfer_state_t,0x80d400,remaining_length,word,2,Remaining bytes to transfer,,Verified
+diag_transfer_state_t,0x80d402,byte_count,word,2,Total byte count for operation,,Verified
+diag_transfer_state_t,0x80d404,tx_active_flag,byte,1,Transmit operation active (0/1),,Verified
+diag_transfer_state_t,0x80d405,rx_active_flag,byte,1,Receive operation active (0/1),,Verified
+# Insite live data session state
+insite_session_t,0x80d407,command_byte,byte,1,Current Insite command code,,Verified
+insite_session_t,0x80d409,session_active,byte,1,Session active flag (1=active),,Verified
+insite_session_t,0x80d40c,response_ptr,dword,4,Response buffer pointer,,Verified
+insite_session_t,0x80d410,tx_buffer_ptr,dword,4,Transmit buffer pointer,,Verified
+insite_session_t,0x80d414,rx_buffer_ptr,dword,4,Receive buffer pointer,,Verified
+insite_session_t,0x80d417,buffer_offset,byte,1,Current buffer offset,,Verified
+insite_session_t,0x80d418,param_count,byte,1,Number of parameters in response,,Verified
+insite_session_t,0x80d419,buffer_space,byte,1,Available buffer space,,Verified
+insite_session_t,0x80d41a,param_result,byte,1,Last parameter lookup result,,Verified
+# Fuel arbitrator control state (Service 0x4A)
+fuel_arbitrator_diag_t,0x80cff8,control_flags,word,2,Control mode flags from request,,Verified
+fuel_arbitrator_diag_t,0x80cffa,fuel_mode,word,2,Current fuel control mode (0-3),,Verified
+fuel_arbitrator_diag_t,0x80d00a,rpm_target,word,2,Target RPM for mode 1,,Verified
+fuel_arbitrator_diag_t,0x80d00c,throttle_mode,word,2,Throttle control mode flag,,Verified
+fuel_arbitrator_diag_t,0x80d00e,speed_limit,word,2,Speed limit for mode 3,,Verified
+fuel_arbitrator_diag_t,0x80d010,fuel_limit,word,2,Fuel limit for mode 2,,Verified
+fuel_arbitrator_diag_t,0x80d012,session_counter,word,2,Diagnostic session counter,,Verified
+fuel_arbitrator_diag_t,0x80d014,command_counter,word,2,Command received counter,,Verified
+fuel_arbitrator_diag_t,0x80d018,last_command,byte,1,Last command ID (0x4A etc),,Verified
+fuel_arbitrator_diag_t,0x80d01a,state_pointer,dword,4,Current state table pointer,,Verified
+fuel_arbitrator_diag_t,0x80d01e,prev_state_pointer,dword,4,Previous state table pointer,,Verified
+fuel_arbitrator_diag_t,0x80d028,countdown_timer,word,2,Mode operation countdown,,Verified
+fuel_arbitrator_diag_t,0x80d02e,secondary_timer,word,2,Secondary countdown timer,,Verified
+fuel_arbitrator_diag_t,0x80d032,target_value,word,2,Calculated target value,,Verified
+fuel_arbitrator_diag_t,0x80d036,limited_value,word,2,Limited/clamped target value,,Verified
+# Fault Persistence Counters - 8 consecutive byte counters for fault debouncing
+fault_persistence_counters_t,0x008000C8,periodic_monitor_phase,byte,1,5-phase counter for periodic fault monitoring,,needs_review
+fault_persistence_counters_t,0x008000C8,can_pin_fault,byte,1,CAN pin switching fault persistence counter,,needs_review
+fault_persistence_counters_t,0x008000C8,io_fault_1,byte,1,I/O control fault 1 persistence counter,,needs_review
+fault_persistence_counters_t,0x008000C8,io_fault_2,byte,1,I/O control fault 2 persistence counter,,needs_review
+fault_persistence_counters_t,0x008000C8,io_fault_3,byte,1,I/O control fault 3 persistence counter,,needs_review
+fault_persistence_counters_t,0x008000C8,io_fault_4,byte,1,I/O control fault 4 persistence counter,,needs_review
+fault_persistence_counters_t,0x008000C8,io_fault_5,byte,1,I/O control fault 5 persistence counter,,needs_review
+fault_persistence_counters_t,0x008000C8,io_fault_6,byte,1,I/O control fault 6 persistence counter,,needs_review
+# Fault Status Registers - Active fault flags (16 bytes)
+fault_status_registers_t,0x00805DF2,sensor_fault_status,word,2,Sensor fault status register,,needs_review
+fault_status_registers_t,0x00805DF2,fault_status_2,word,2,Fault status flags register 2,,needs_review
+fault_status_registers_t,0x00805DF2,engine_fault_status,word,2,Engine fault status register,,needs_review
+fault_status_registers_t,0x00805DF2,reserved_06,word,2,Reserved/gap,,needs_review
+fault_status_registers_t,0x00805DF2,io_fault_status_1,word,2,IO fault status register 1,,needs_review
+fault_status_registers_t,0x00805DF2,io_fault_status_2,word,2,IO fault status register 2,,needs_review
+fault_status_registers_t,0x00805DF2,io_fault_status_3,word,2,IO fault status register 3,,needs_review
+fault_status_registers_t,0x00805DF2,io_fault_status_4,word,2,IO fault status register 4,,needs_review
+# Fault Latch Registers - Historical/latched faults (16 bytes)
+fault_latch_registers_t,0x00805E32,sensor_fault_latch,word,2,Sensor fault latch register,,needs_review
+fault_latch_registers_t,0x00805E32,fault_status_8_previous,word,2,Previous state for edge detection,,needs_review
+fault_latch_registers_t,0x00805E32,engine_fault_latch,word,2,Engine fault latch register,,needs_review
+fault_latch_registers_t,0x00805E32,reserved_06,word,2,Reserved/gap,,needs_review
+fault_latch_registers_t,0x00805E32,io_fault_latch_1,word,2,IO fault latch register 1,,needs_review
+fault_latch_registers_t,0x00805E32,io_fault_latch_2,word,2,IO fault latch register 2,,needs_review
+fault_latch_registers_t,0x00805E32,io_fault_latch_3,word,2,IO fault latch register 3,,needs_review
+fault_latch_registers_t,0x00805E32,io_fault_latch_4,word,2,IO fault latch register 4,,needs_review
+# Engine Operating Mode State (4 bytes)
+engine_operating_mode_t,0x0080C810,state,word,2,Engine operating mode state 1-8,,needs_review
+engine_operating_mode_t,0x0080C810,shutdown_complete_flag,word,2,Engine shutdown complete flag,,needs_review
+# High RPM Protection State (10 bytes)
+high_rpm_protection_t,0x0080CC6A,fault_flag,word,2,High RPM protection fault active flag,,needs_review
+high_rpm_protection_t,0x0080CC6A,state,word,2,State machine state,,needs_review
+high_rpm_protection_t,0x0080CC6A,timer,word,2,Countdown timer,,needs_review
+high_rpm_protection_t,0x0080CC6A,reserved_06,word,2,Reserved/gap,,needs_review
+high_rpm_protection_t,0x0080CC6A,warning_flag,word,2,Warning active flag,,needs_review
+# Boost Pressure Control State (6 bytes)
+boost_pressure_control_t,0x00809746,state_machine,word,2,Boost pressure state machine,,needs_review
+boost_pressure_control_t,0x00809746,active_flag,word,2,Calculation active flag,,needs_review
+boost_pressure_control_t,0x00809746,interpolation_result,word,2,Interpolation result,,needs_review
+# Fuel Limit Arbitration State (18 bytes) - 0x0080CC4A to 0x0080CC5A
+fuel_limit_arbitration_t,0x0080CC4A,source_id,word,2,ID of current fuel limit source (arbitrator output),,needs_review
+fuel_limit_arbitration_t,0x0080CC4A,demand_limited,word,2,Rate-limited fuel demand,,needs_review
+fuel_limit_arbitration_t,0x0080CC4A,arbitration_threshold,word,2,Fuel limit arbitration threshold,,needs_review
+fuel_limit_arbitration_t,0x0080CC4A,demand_delta,word,2,Fuel demand delta for rate limiting,,needs_review
+fuel_limit_arbitration_t,0x0080CC4A,maximum_limit,word,2,Maximum fuel demand limit,,needs_review
+fuel_limit_arbitration_t,0x0080CC4A,offset_value,word,2,Fuel limit offset value,,needs_review
+fuel_limit_arbitration_t,0x0080CC4A,comparison_low,word,2,Fuel limit comparison low value,,needs_review
+fuel_limit_arbitration_t,0x0080CC4A,comparison_high,word,2,Fuel limit comparison high value,,needs_review
+fuel_limit_arbitration_t,0x0080CC4A,rate_limit,word,2,Fuel demand rate limiting value,,needs_review
+# Fuel Demand State (16 bytes) - 0x0080C9A4 to 0x0080C9B2
+fuel_demand_state_t,0x0080C9A4,command,word,2,Current fuel demand value,,needs_review
+fuel_demand_state_t,0x0080C9A4,source_identifier,byte,1,Source of fuel command (FUEL_SOURCE_ID enum),,needs_review
+fuel_demand_state_t,0x0080C9A4,reserved_03,byte,1,Padding byte,,needs_review
+fuel_demand_state_t,0x0080C9A4,diagnostic_buffer,word,2,Diagnostic parameter buffer,,needs_review
+fuel_demand_state_t,0x0080C9A4,timing_blend_factor,word,2,Fuel timing blend factor 0-16384,,needs_review
+fuel_demand_state_t,0x0080C9A4,table_output,word,2,Fuel demand table output,,needs_review
+fuel_demand_state_t,0x0080C9A4,limit_minimum,word,2,Fuel limit minimum value,,needs_review
+fuel_demand_state_t,0x0080C9A4,demand_source_id,word,2,Fuel demand source identifier,,needs_review
+fuel_demand_state_t,0x0080C9A4,adjustment_active,word,2,Fuel adjustment active flag,,needs_review
+# VP44 Fault State (4 bytes) - 0x00805E14 to 0x00805E16
+vp44_fault_state_t,0x00805E14,fault_status,word,2,VP44 fault status register,,needs_review
+vp44_fault_state_t,0x00805E14,fso_fault_status,word,2,VP44 FSO fault status register 2,,needs_review
+# Timing Mode Control State (36 bytes) - 0x0080965A to 0x0080967C
+timing_mode_control_t,0x0080965A,blend_factor,word,2,Fuel timing mode blend factor Q14,,needs_review
+timing_mode_control_t,0x0080965A,protection_blend_ramp,word,2,Timing protection blend ramp 0-16384,,needs_review
+timing_mode_control_t,0x0080965A,source_selector,word,2,Timing mode source selector 0-4,,needs_review
+timing_mode_control_t,0x0080965A,transition_result,word,2,Timing mode transition result,,needs_review
+timing_mode_control_t,0x0080965A,fuel_blend_result,word,2,Timing fuel blend result,,needs_review
+timing_mode_control_t,0x0080965A,oil_pressure_result,word,2,Timing oil pressure condition result,,needs_review
+timing_mode_control_t,0x0080965A,mode_11_result,word,2,Timing mode 11 countdown result,,needs_review
+timing_mode_control_t,0x0080965A,protection_counter_1,word,2,Timing protection counter 1,,needs_review
+timing_mode_control_t,0x0080965A,protection_counter_2,word,2,Timing protection counter 2,,needs_review
+timing_mode_control_t,0x0080965A,blend_state,word,2,Timing blend state,,needs_review
+timing_mode_control_t,0x0080965A,reserved_14,word,2,Gap/reserved,,needs_review
+timing_mode_control_t,0x0080965A,reserved_16,word,2,Gap/reserved,,needs_review
+timing_mode_control_t,0x0080965A,blend_accumulator,word,2,Timing blend accumulator,,needs_review
+timing_mode_control_t,0x0080965A,reserved_1A,word,2,Gap/reserved,,needs_review
+timing_mode_control_t,0x0080965A,fuel_source_mode_11_state,word,2,Fuel source mode 11 state,,needs_review
+timing_mode_control_t,0x0080965A,fuel_source_mode_11_timer,word,2,Fuel source mode 11 timer,,needs_review
+timing_mode_control_t,0x0080965A,fuel_mode_transition_state,word,2,Fuel mode transition state,,needs_review
+timing_mode_control_t,0x0080965A,fuel_mode_transition_timer,word,2,Fuel mode transition timer,,needs_review
+# RPM Fuel Protection State (30 bytes) - 0x008091C4 to 0x008091E0
+rpm_fuel_protection_t,0x008091C4,fuel_limit_shutdown,word,2,Fuel limit during shutdown,,needs_review
+rpm_fuel_protection_t,0x008091C4,high_rpm_fuel_limit,word,2,High RPM fuel control limit,,needs_review
+rpm_fuel_protection_t,0x008091C4,low_rpm_fuel_protection_limit,word,2,Low RPM fuel protection limit,,needs_review
+rpm_fuel_protection_t,0x008091C4,rpm_rate_limiter_output,word,2,RPM rate limiter output,,needs_review
+rpm_fuel_protection_t,0x008091C4,rpm_rate_limited_value,word,2,RPM rate limited value,,needs_review
+rpm_fuel_protection_t,0x008091C4,rpm_rate_secondary_calc,word,2,Secondary RPM rate calculation,,needs_review
+rpm_fuel_protection_t,0x008091C4,rpm_state_accumulator,word,2,RPM state accumulator,,needs_review
+rpm_fuel_protection_t,0x008091C4,high_rpm_fuel_accumulator,word,2,High RPM fuel accumulator,,needs_review
+rpm_fuel_protection_t,0x008091C4,low_rpm_fuel_accumulator,word,2,Low RPM fuel accumulator,,needs_review
+rpm_fuel_protection_t,0x008091C4,fuel_demand_before_limiting,word,2,Fuel demand saved before limiting,,needs_review
+rpm_fuel_protection_t,0x008091C4,low_rpm_threshold_exceeded_flag,word,2,Low RPM threshold exceeded flag (reserved_14),,needs_review
+rpm_fuel_protection_t,0x008091C4,rpm_threshold_exceeded_flag,word,2,RPM threshold exceeded flag,,needs_review
+rpm_fuel_protection_t,0x008091C4,high_rpm_threshold_exceeded_flag,word,2,High RPM threshold exceeded flag,,needs_review
+rpm_fuel_protection_t,0x008091C4,fuel_protection_timer_enable,word,2,Timer enable for protection state machines,,needs_review
+rpm_fuel_protection_t,0x008091C4,fuel_system_protection_enabled,word,2,Master fuel protection system enable (1=active),,needs_review
+# Engine Control Flags (12 bytes) - 0x008035D6 to 0x008035E0
+engine_control_flags_t,0x008035D6,fuel_demand_control,word,2,Fuel demand mode control flags,,needs_review
+engine_control_flags_t,0x008035D6,protection_system,word,2,Protection system status flags,,needs_review
+engine_control_flags_t,0x008035D6,engine_operating_state,word,2,Engine operating state flags,,needs_review
+engine_control_flags_t,0x008035D6,reserved_06,word,2,Gap/reserved,,needs_review
+engine_control_flags_t,0x008035D6,reserved_08,word,2,Gap/reserved,,needs_review
+engine_control_flags_t,0x008035D6,fuel_temp_control,word,2,Fuel temp control bit flags,,needs_review
+# Oil Pressure Protection State (18 bytes) - 0x00803430 to 0x00803440
+oil_pressure_protection_t,0x00803430,sensor_status_history_bits,dword,4,Sensor status history bits - shifting record,,needs_review
+oil_pressure_protection_t,0x00803430,rpm_ramp_complete,word,2,Flag indicating RPM ramp complete,,needs_review
+oil_pressure_protection_t,0x00803430,rpm_limit_current,word,2,Current RPM limit from oil pressure,,needs_review
+oil_pressure_protection_t,0x00803430,rpm_limit_target,word,2,Target RPM limit for oil pressure,,needs_review
+oil_pressure_protection_t,0x00803430,rpm_limit_previous,word,2,Previous RPM limit for tracking,,needs_review
+oil_pressure_protection_t,0x00803430,state_index,word,2,State index for oil pressure protection,,needs_review
+oil_pressure_protection_t,0x00803430,validation_timer,word,2,Timer for oil pressure validation,,needs_review
+oil_pressure_protection_t,0x00803430,sensor_validation_counter,word,2,Sensor status validation counter,,needs_review
+# RPM Control Timers (14 bytes) - 0x00800000 to 0x0080000c
+rpm_control_timers_t,0x00800000,low_rpm_threshold_timer,word,2,Low RPM threshold exceeded timer,,needs_review
+rpm_control_timers_t,0x00800000,timer_1,word,2,Timer 1 for shutdown RPM-based control logic,,needs_review
+rpm_control_timers_t,0x00800000,high_rpm_timer,word,2,High RPM protection timer,,needs_review
+rpm_control_timers_t,0x00800000,timer_2,word,2,Timer 2 for shutdown RPM-based control logic,,needs_review
+rpm_control_timers_t,0x00800000,high_rpm_accumulator_timer,word,2,High RPM accumulator holdoff timer,,needs_review
+rpm_control_timers_t,0x00800000,low_rpm_accumulator_timer,word,2,Low RPM accumulator holdoff timer,,needs_review
+rpm_control_timers_t,0x00800000,previous_engine_rpm,word,2,Previous engine RPM for delta calc,,needs_review
+# Shutdown Fuel Lookup Args (12 bytes) - 0x0080000E to 0x00800018
+shutdown_fuel_lookup_args_t,0x0080000E,table_index,word,2,Current interpolation index,,needs_review
+shutdown_fuel_lookup_args_t,0x0080000E,x_axis_ptr,dword,4,Pointer to RPM axis table,,needs_review
+shutdown_fuel_lookup_args_t,0x0080000E,input_rpm,word,2,Input RPM for lookup (copied from current_engine_rpm),,needs_review
+shutdown_fuel_lookup_args_t,0x0080000E,y_axis_ptr,dword,4,Pointer to fuel limit table,,needs_review
+# High RPM Fuel Lookup Args (12 bytes) - 0x0080001A to 0x00800024
+high_rpm_fuel_lookup_args_t,0x0080001A,table_index,word,2,Current interpolation index,,needs_review
+high_rpm_fuel_lookup_args_t,0x0080001A,x_axis_ptr,dword,4,Pointer to RPM axis table,,needs_review
+high_rpm_fuel_lookup_args_t,0x0080001A,input_rpm,word,2,Input RPM for lookup (copied from current_engine_rpm),,needs_review
+high_rpm_fuel_lookup_args_t,0x0080001A,y_axis_ptr,dword,4,Pointer to fuel limit table,,needs_review
+# RPM Calibration Parameters - Shutdown Protection (12 bytes) - 0x008062D4 to 0x008062DE
+rpm_calibration_params_t,0x008062D4,shutdown_timer_reload,word,2,Timer reload for shutdown protection,,needs_review
+rpm_calibration_params_t,0x008062D4,shutdown_fuel_ramp_increment,word,2,Fuel ramp increment during shutdown recovery,,needs_review
+rpm_calibration_params_t,0x008062D4,shutdown_rate_threshold,word,2,RPM rate threshold for shutdown protection,,needs_review
+rpm_calibration_params_t,0x008062D4,shutdown_secondary_threshold,word,2,Secondary RPM rate threshold for shutdown,,needs_review
+rpm_calibration_params_t,0x008062D4,shutdown_rpm_upper_threshold,word,2,Upper RPM threshold for shutdown protection,,needs_review
+# Low RPM Fuel Protection Calibration (12 bytes) - 0x008062DE to 0x008062EA
+low_rpm_calibration_t,0x008062DE,low_rpm_fuel_limit,word,2,Low RPM fuel limit value,,needs_review
+low_rpm_calibration_t,0x008062DE,low_rpm_timer_reload,word,2,Timer reload for low RPM protection,,needs_review
+low_rpm_calibration_t,0x008062DE,low_rpm_fuel_ramp_increment,word,2,Fuel ramp increment for low RPM recovery,,needs_review
+low_rpm_calibration_t,0x008062DE,low_rpm_secondary_threshold,word,2,Secondary RPM rate threshold for low RPM,,needs_review
+low_rpm_calibration_t,0x008062DE,low_rpm_upper_threshold,word,2,Upper RPM threshold for low RPM protection,,needs_review
+low_rpm_calibration_t,0x008062DE,low_rpm_rate_threshold,word,2,RPM rate threshold for low RPM protection,,needs_review
+# High RPM Fuel Protection Calibration (12 bytes) - 0x008062EA to 0x008062F6
+high_rpm_calibration_t,0x008062EA,high_rpm_upper_threshold,word,2,Upper RPM threshold for high RPM protection,,needs_review
+high_rpm_calibration_t,0x008062EA,high_rpm_timer_reload,word,2,Timer reload for high RPM accumulator,,needs_review
+high_rpm_calibration_t,0x008062EA,high_rpm_fuel_ramp_increment,word,2,Fuel ramp increment for high RPM recovery,,needs_review
+high_rpm_calibration_t,0x008062EA,high_rpm_secondary_threshold,word,2,Secondary RPM rate threshold for high RPM,,needs_review
+high_rpm_calibration_t,0x008062EA,reserved_08,word,2,Reserved/gap,,needs_review
+high_rpm_calibration_t,0x008062EA,reserved_0a,word,2,Reserved/gap,,needs_review
+# RPM Rate Limits (6 bytes) - 0x008062F8 to 0x008062FE
+rpm_rate_limits_t,0x008062F8,maximum,word,2,Maximum RPM rate of change limit,,needs_review
+rpm_rate_limits_t,0x008062F8,minimum,word,2,Minimum RPM rate of change limit,,needs_review
+rpm_rate_limits_t,0x008062F8,threshold_timer_reload,word,2,Timer reload when RPM threshold exceeded,,needs_review
+# System Callback Table (12 bytes) - 0x00808f02 to 0x00808f0e
+# Function pointers for core system handlers
+system_callback_table_t,0x00808f02,engine_position_sensor_isr,dword,4,EPS position sensor ISR handler (epsPositionSensorIsrHandler),,verified
+system_callback_table_t,0x00808f02,tpu_adc_isr,dword,4,TPU/QADC interrupt handler (tpuQadcInterruptHandler),,verified
+system_callback_table_t,0x00808f02,main_loop_callback,dword,4,Main scheduler loop callback (main_loop),,verified
+# High RPM Threshold Calibration (4 bytes) - 0x00806300 to 0x00806304
+high_rpm_threshold_calibration_t,0x00806300,threshold_timer_reload,word,2,Timer reload when high RPM threshold exceeded,,needs_review
+high_rpm_threshold_calibration_t,0x00806300,rate_threshold,word,2,RPM rate threshold for high RPM detection,,needs_review
+# Shutdown Minimum Selector State @ 0x0080d494-0x0080d49a
+shutdown_minimum_selector_t,0x0080d494,fuel_value,word,2,Current minimum fuel limit value selected by arbitration,verified
+shutdown_minimum_selector_t,0x0080d494,source_id,word,2,Source ID that set minimum (17=selector17 16=selector16 15=selector15 19=selector19 29=selector29 13=diag_mode),verified
+shutdown_minimum_selector_t,0x0080d494,previous_value,word,2,Previous minimum value for change tracking,verified
+# Diagnostic Source Tracking @ 0x0080d49a-0x0080d49e
+diagnostic_source_t,0x0080d49a,value,word,2,Data/threshold value associated with the diagnostic source,verified
+diagnostic_source_t,0x0080d49a,code,word,2,Subsystem code that triggered diagnostic (see DIAGNOSTIC_SOURCE_CODE enum),verified
+# Q16.16 Fixed Point Structure - 32-bit value with 16-bit integer and 16-bit fractional parts
+# Used for PID controllers and accumulators that need fractional precision
+q16_fixed_point_t,,integer_part,word,2,High 16 bits - integer/whole number portion (._0_2_),,new
+q16_fixed_point_t,,fractional_part,word,2,Low 16 bits - fractional portion (._2_2_),,new
+# Governor PID Integral @ 0x008016e2 - Q16.16 fixed point accumulator
+governor_pid_integral_t,0x008016e2,integer_part,word,2,Integer portion of PID integral (governor_fuel_pid_integral._0_2_),,new
+governor_pid_integral_t,0x008016e2,fractional_part,word,2,Fractional portion of PID integral (governor_fuel_pid_integral._2_2_),,new
+# Table Interpolation Arguments Structure - used by lookupTableInterpolation function
+# 12 bytes total - passed as pointer to lookup functions
+table_interp_args_t,,current_index,word,2,Current interpolation index into table,,verified
+table_interp_args_t,,x_axis_ptr,dword,4,Pointer to X-axis table (input values),,verified
+table_interp_args_t,,input_value,word,2,Input value for table lookup,,verified
+table_interp_args_t,,y_axis_ptr,dword,4,Pointer to Y-axis table (output values),,verified
+# Sensor Fault Configuration Table Entry - used by sensorFaultDebounceMonitor
+# 24 bytes per entry, base address 0x8068ea, 16 entries (iterates with sVar5 0-15)
+# NOTE: Structure defined for documentation only - do NOT apply to global variable
+# iVar7 iterates through this table with stride 0x18 (24 bytes)
+sensor_fault_config_t,,reserved_00,word,2,Reserved/padding at offset 0x00,,verified
+sensor_fault_config_t,,default_value,word,2,Default sensor value on fault (offset 0x02),,verified
+sensor_fault_config_t,,clear_threshold,word,2,Threshold for fault clear (offset 0x04),,verified
+sensor_fault_config_t,,decrement_value,word,2,Debounce counter decrement (offset 0x06),,verified
+sensor_fault_config_t,,increment_value,word,2,Debounce counter increment (offset 0x08),,verified
+sensor_fault_config_t,,set_threshold,word,2,Threshold for fault set (offset 0x0a),,verified
+sensor_fault_config_t,,high_limit,word,2,High error limit (offset 0x0c),,verified
+sensor_fault_config_t,,low_limit,word,2,Low error limit (offset 0x0e),,verified
+sensor_fault_config_t,,adc_lookup_index,word,2,A/D channel lookup table index (offset 0x10),,verified
+sensor_fault_config_t,,reserved_12,byte,1,Reserved byte at offset 0x12,,verified
+sensor_fault_config_t,,alt_fault_enable,byte,1,Alternative fault enable flag (offset 0x13),,verified
+sensor_fault_config_t,,primary_fault_id,byte,1,Primary fault code packed bit/word (offset 0x14),,verified
+sensor_fault_config_t,,secondary_fault_id,byte,1,Secondary fault code (offset 0x15),,verified
+sensor_fault_config_t,,tertiary_fault_id,byte,1,Tertiary fault code (offset 0x16),,verified
+sensor_fault_config_t,,debounce_max,byte,1,Maximum debounce count (offset 0x17),,verified
+# Sensor Debounce State Table Entry - paired with sensor_fault_config_t
+# 22 bytes per entry (0x16 stride), base at request_to_strobe_set_0_then_set_1_cold_start_aid_1_driver_0_1
+# NOTE: Structure defined for documentation only - do NOT apply to global variable
+# pbVar8 iterates through this table with stride 0x16 (22 bytes)
+sensor_debounce_state_t,,reserved_00,byte,8,Reserved bytes at offset 0x00-0x07,,verified
+sensor_debounce_state_t,,interpolated_value,word,2,Interpolated sensor value (offset 0x08),,verified
+sensor_debounce_state_t,,lookup_result,word,2,Table lookup result (offset 0x0a),,verified
+sensor_debounce_state_t,,debounce_counter,word,2,Current debounce count (offset 0x0c),,verified
+sensor_debounce_state_t,,fault_active_flag,byte,1,Fault currently active flag (offset 0x0e),,verified
+sensor_debounce_state_t,,sample_counter,byte,1,Sample phase counter (offset 0x0f),,verified
+sensor_debounce_state_t,,adc_raw_value,word,2,Raw A/D conversion value (offset 0x10),,verified
+sensor_debounce_state_t,,reserved_12,byte,4,Reserved bytes at offset 0x12-0x15,,verified

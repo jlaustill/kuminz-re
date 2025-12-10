@@ -1,0 +1,16 @@
+# TextFileStream.dll Function Rename Mapping
+# Format: old_name|new_name
+# Total functions: 12
+
+FUN_10010160|CTextFileStreamObj_Read
+FUN_1001045e|CTextFileStreamObj_Write
+FUN_10010708|CTextFileStreamObj_Seek
+FUN_10010b80|CTextFileStreamObj_CopyTo
+FUN_10010f80|CTextFileStreamObj_Commit
+FUN_10011206|CTextFileStreamObj_Revert
+FUN_10011520|CTextFileStreamObj_GetClassID
+FUN_1001165d|CTextFileStreamObj_IsDirty
+FUN_100117fc|CTextFileStreamObj_Load
+FUN_10011b9d|CTextFileStreamObj_Save
+FUN_100121b0|CTextFileStreamObj_GetCurFile
+FUN_10012900|CTextFileStreamObj_get_CurrentFileName

@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE module SYSTEM "../htmlentities.dtd">
+<XML_RESOURCE>
+	<RESOURCE Tag="1001" Type="String Table" Description="Message String Table">
+		<STRING ID="100" Context="Project Name.  Not displayed">FnPAddIn</STRING>
+		<STRING ID="101" Context="Viewbar button text">Features and Parameters</STRING>
+		<STRING ID="102" Context="Viewbar button tool tip">Features and Parameters</STRING>
+		<STRING ID="103" Context="Column headings from the grid separated by the | character">Features and Parameters|ECM Value|Units|Original Value</STRING>
+		<STRING ID="106" Context="Displayed when no ECM is connected">No ECM Connected</STRING>
+		<STRING ID="107" Context="Displayed when FnP is reading data from the ECM">Reading Feature Information...</STRING>
+		<STRING ID="117" Context="Displayed when the connected ECM does not support Features">Features Not Supported</STRING>
+		<STRING ID="118" Context="Displayed when no Features are found in the ECM">No Features Detected in the ECM</STRING>
+		<STRING ID="119" Context="Context menu string">Refresh</STRING>
+		<STRING ID="120" Context="*New Context menu string">Expand</STRING>
+		<STRING ID="121" Context="*New Context menu string">Collapse</STRING>
+		<STRING ID="122" Context="Context menu string">Print...</STRING>
+		<STRING ID="123" Context="Context menu string">Expand All</STRING>
+		<STRING ID="124" Context="Context menu string">Collapse All</STRING>
+		<STRING ID="125" Context="Find dialog caption for search from the beginning">Find</STRING>
+		<STRING ID="126" Context="Find dialog caption for search from the end">Find</STRING>
+		<STRING ID="127" Context="Find dialog caption for find failure">Find</STRING>
+		<STRING ID="128" Context="Display message if find could find the string">INSITE has reached the end of the data.  Would you like to continue the search from beginning?</STRING>
+		<STRING ID="129" Context="Display string if Find dialog reached beginning">INSITE has reached the beginning of the data.  Would you like to continue the search from end?</STRING>
+		<STRING ID="130" Context="Display if Find dialog fails">No match found.</STRING>
+		<STRING ID="131" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;8500&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation.  Or 2) Close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="132" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;8501&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program while reading Trip Information.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation.  Or 2) Close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="133" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;8502&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program while attempting to reset Trip Information.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation.  Or 2) Close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="134" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;8503&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program with Page Setup.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation.  Or 2) Close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="135" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;8504&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program with Print Preview.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation.  Or 2) Close and restart INSITE. If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="136" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;8505&lt;/ErrorNumber&gt;&lt;Description&gt;An Internal error has occurred in the INSITE program while Printing.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation.  Or 2) Close and restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="137" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;8506&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program while Printing.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation.  Or 2) Close and restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="138" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;8507&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program while attempting to display trip information.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation.  Or 2) Close and restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="139" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;8508&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation.  Or 2) Close and restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="140" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;8509&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE has detected the PC is running low on system resources and can not display Trip Information.&lt;/Description&gt;&lt;Suggestion&gt;Close INSITE and close one or more programs to free up system resources.  Restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="141" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;8510&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation.  Or 2) Close and restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="142" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;8511&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation.  Or 2) Close and restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="143" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;8512&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation.  Or 2) Close and restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="144" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;8513&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation.  Or 2) Close and restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="145" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;8514&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program. &lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation.  Or 2) Close and restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="146" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;8515&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation.  Or 2) Close and restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="147" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;8516&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation.  Or 2) Close and restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="148" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;8517&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation.  Or 2) Close and restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="149" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;8518&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation.  Or 2) Close and restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="150" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;8519&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation.  Or 2) Close and restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="151" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;8520&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation.  Or 2) Close and restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="152" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;8521&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while attempting to perform a Trip Information search.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation.  Or 2) Close and restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="153" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;8522&lt;/ErrorNumber&gt;&lt;Description&gt;Trip Information Search function has encountered an internal error.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation.  Or 2) Close and restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="154" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;8530&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program while attempting to display Trip Information.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation.  Or 2) Close and restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="155" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;8531&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE has detected the PC is running low on system resources and can not display Trip Information.&lt;/Description&gt;&lt;Suggestion&gt;Close INSITE and close one or more programs to free up system resources.  Restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="156" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;8527&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE has detected the PC is running low on system resources and can not display Trip Information.&lt;/Description&gt;&lt;Suggestion&gt;Close INSITE and close one or more programs to free up system resources  Restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="157" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;8532&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program while attempting to enable or disable the Trip Information user interface.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation.  Or 2) Close and restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="158" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;8525&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation.  Or 2) Close and restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="159" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;8528&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE has detected the PC is running low on system resources and can not display Trip Information.&lt;/Description&gt;&lt;Suggestion&gt;Close INSITE and close one or more programs to free up system resources.  Restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="160" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;8523&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program while searching for the specified item in Trip Information.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation.  Or 2) Close and restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="161" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;8529&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation.  Or 2) Close and restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="162" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;8526&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE has detected the PC is running low on system resources and can not display Trip Information.&lt;/Description&gt;&lt;Suggestion&gt;Close INSITE and close one or more programs to free up system resources.  Restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="163" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;8524&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program while selecting and displaying the specified item in Trip Information.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation.  Or 2) Close and restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="164" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;8524&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program while selecting and displaying the specified item in Trip Information.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation.  Or 2) Close and restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="165" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;8524&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program while selecting and displaying the specified item in Trip Information.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation.  Or 2) Close and restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="166" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;8524&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program while selecting and displaying the specified item in Trip Information.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation.  Or 2) Close and restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="167" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;8524&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program while selecting and displaying the specified item in Trip Information.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation.  Or 2) Close and restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="168" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;8524&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program while selecting and displaying the specified item in Trip Information.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation.  Or 2) Close and restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="169" Context="Features and Parameter Column Name for Find">Features and Parameters</STRING>
+		<STRING ID="170" Context="Units column name for Find">Unit</STRING>
+		<STRING ID="171" Context="ECM Value Column name for Find">ECM Value</STRING>
+		<STRING ID="172" Context="Original Column Name for Find">Original Value</STRING>
+		<STRING ID="173" Context="Context menu string">Find...</STRING>
+		<STRING ID="174" Context="Context menu string">Auto Size Column</STRING>
+		<STRING ID="175" Context="Context menu string">Auto Size All Columns</STRING>
+		<STRING ID="176" Context="Context menu string">ECM</STRING>
+		<STRING ID="177" Context="Context menu string">Printer</STRING>
+		<STRING ID="178" Context="Context menu string">Limits</STRING>
+		<STRING ID="179" Context="Context menu string">Restore Original Value</STRING>
+		<STRING ID="180" Context="Context menu string">Restore All Original Values</STRING>
+		<STRING ID="181" Context="Context menu (refresh) string">All</STRING>
+		<STRING ID="182" Context="Context menu (refresh) string">Selected Item</STRING>
+		<STRING ID="183" Context="Context menu (refresh)string">Selected ECM</STRING>
+		<STRING ID="184" Context="Context menu (send to)string">Send To</STRING>
+		<STRING ID="185" Context="Adjustment message ">Confirm ECM Adjustment</STRING>		
+		<STRING ID="186" Context="Yes button caption ">Yes</STRING>
+		<STRING ID="187" Context="No Button Caption">No</STRING>
+		<STRING ID="188" Context="Main menu Find Next">Find &amp;Next	F3</STRING>
+		<STRING ID="189" Context="Main menu Restore All">Restore All Original &amp;Values</STRING>		
+        <STRING ID="190" Context="Module not found in MAP XML">FnP Information unavailable</STRING>		
+		<STRING ID="191" Context="">The minimum value for this parameter is %s, which is limited by the parameter "%s".</STRING>        
+	    <STRING ID="192" Context="">The minimum value for this parameter is %s.</STRING>
+		<STRING ID="193" Context="">The maximum value for this parameter is %s, which is limited by the parameter "%s".</STRING>
+		<STRING ID="194" Context="">The maximum value for this parameter is %s.</STRING>
+    		<STRING ID="195" Context="ToolTip">INSITE has detected an invalid value. Please enter a valid value.</STRING>       
+    		<STRING ID="196" Context="ToolTip">It is read-only and cannot be modified.</STRING>
+    		<STRING ID="197" Context="ToolTip">It is write blocked.</STRING>
+		<STRING ID="198" Context="ToolTip">It is blocked by another parameter.</STRING>
+		<STRING ID="199" Context="ToolTip">INSITE is connected to an ECM image. ECM images are read-only.</STRING>
+		<STRING ID="200" Context="Message box title when the print stylesheet has been corrupted">Error Number:  3051
+An internal error has occurred in the INSITE program.
+
+It may help to:
+1) Close and restart the operation.  Or 
+2) Close and restart INSITE. 
+
+If the problem persists, please record the error number and contact the local distributor.</STRING>		
+	    <STRING ID="201" Context="Message box title, either when the print stylesheet cannot be found or was corrupted or while writing to the ECM fails when Engine speed is greater than zero.">Cummins INSITE</STRING>
+		<STRING ID="202" Context="">INSITE cannot setup the print page for the Features and Parameters view without connecting to an ECM.</STRING>
+		<STRING ID="203" Context="">INSITE cannot print the Features and Parameters view without connecting to an ECM.</STRING>
+		<STRING ID="204" Context="">INSITE cannot use the print preview for Features and Parameters view without connecting to an ECM.</STRING>
+		<STRING ID="205" Context="Message box error message when the print stylesheet cannot be found">Error Number:  3052
+An internal error has occurred in the INSITE program.
+
+It may help to:
+1) Close and restart the operation.  Or 
+2) Close and restart INSITE. 
+
+If the problem persists, please record the error number and contact the local distributor.</STRING>
+		<STRING ID="206" Context="ToolTip">INSITE Basic can not modify parameters. Please contact the local distributor to upgrade.</STRING>
+		<STRING ID="207" Context="ToolTip">Current user rights are insufficient.</STRING>
+		<STRING ID="208" Context="ToolTip">The ECM Master or Adjustment passwords are not valid.</STRING>
+		<STRING ID="209" Context="">The changes have not been sent to ECM.
+		
+Send to ECM?</STRING>
+		<STRING ID="210" Context="">Features and Parameters</STRING>	
+        <STRING ID="211" Context="">The value entered exceeds the maximum string length</STRING>
+		<STRING ID="212" Context="Parameters Limits dialog title">Parameter Limits</STRING>	
+		<STRING ID="213" Context="Parameters Limits dialog">Selected Parameter</STRING>	
+		<STRING ID="214" Context="Parameters Limits dialog">Maximum Limit</STRING>	
+		<STRING ID="215" Context="Parameters Limits dialog">Minimum Limit</STRING>	
+		<STRING ID="216" Context="Parameters Limits dialog">This parameter has a maximum value limited by:</STRING>	
+		<STRING ID="217" Context="Parameters Limits dialog">This parameter has a minimum value limited by:</STRING>	
+		<STRING ID="218" Context="Parameters Limits dialog">OK</STRING>	
+		<STRING ID="219" Context="Parameters Limits dialog">Help</STRING>	
+		<STRING ID="220" Context="ToolTip">INSITE RSGR can not modify this parameter.</STRING>	
+		<STRING ID="221" Context="ToolTip">This feature is locked because:</STRING>	
+		<STRING ID="222" Context="ToolTip">This parameter is locked because:</STRING>	
+		<STRING ID="223" Context="ToolTip">The entered value is invalid because:</STRING>	
+		<STRING ID="224" Context="Message Box title">ECM Write Unsuccessful</STRING>	
+		<STRING ID="225" Context="Message Box message">The following parameters did not successfully write to the ECM:</STRING>	
+		<STRING ID="226" Context="Message Box title">ECM Write Succeeded</STRING>	
+		<STRING ID="227" Context="Message Box message">All parameters were written successfully to the ECM.</STRING>
+		<STRING ID="228" Context="Message Box title">Confirm ECM Adjustment</STRING>	
+		<STRING ID="229" Context="Message Box message">INSITE is ready to save changes to the ECM.
+
+While the operation is in progress, do not turn the keyswitch ON or OFF unless instructed to do so.
+
+Select OK to continue.</STRING>
+		<STRING ID="230" Context="Message Box title">Key Switch</STRING>	
+		<STRING ID="231" Context="Message Box message">Please turn the Key Switch off for 30 seconds.</STRING>
+		<STRING ID="232" Context="Message Box message - Engine Speed greater than zero">Features and Parameters can not be adjusted while engine speed is greater than zero.</STRING>
+		<STRING ID="238" Context="Print Header Item">System ID and Dataplate</STRING>
+	  	<STRING ID="239" Context="Print Header Item">Customer Unit Number : </STRING>
+	       	<STRING ID="240" Context="Print Header Item">Engine Serial Number : </STRING>
+	       	<STRING ID="241" Context="Print Header Item">Company Name : </STRING>
+	      	<STRING ID="242" Context="Print Header Item">Work Order Name : </STRING>
+	       	<STRING ID="243" Context="Print Header Item">ECM Image Name : </STRING>
+	       	<STRING ID="244" Context="Print Header Item">Customer Name : </STRING>
+		<STRING ID="245" Context="Read Blocked ToolTip">This feature cannot be read because:</STRING>	
+		<STRING ID="246" Context="Read Blocked ToolTip">This parameter cannot be read because:</STRING>
+		<STRING ID="247" Context="ToolTip">The ECM OEM password is not valid.</STRING>
+		<STRING ID="248" Context="ToolTip">The ECM Master or Reset passwords are not valid.</STRING>
+		<STRING ID="249" Context="Message Box title">Alternate Fueling Table</STRING>
+		<STRING ID="250" COntext="Message Box message">The tool is about to set Alternate Fueling Table to enable. This can NOT be disabled once enabled.</STRING>
+		<STRING ID="251" Context="ToolTip">The INSITE Industrial/Pro cannot modify features of Automotive ECM.</STRING>
+		<STRING ID="252" Context="ToolTip">The current INSITE functionality level does not allow changes. Please contact the local distributor to obtain the required functionality level.</STRING>
+    <STRING ID="253" Context="ToolTip">This Parameter is locked and cannot be modified.</STRING>
+    <STRING ID="254" Context="ToolTip">This Feature/Subfeature is locked and cannot be modified.</STRING>
+    <STRING ID="255" Context="Message Box title">ECM Restore Original Values Confirmation</STRING>
+    <STRING ID="256" Context="Message Box message">Press the OK button to undo all changes made to all parameters since the last "Send to ECM"</STRING>
+    <STRING ID="257" Context="ToolTip">It can only be adjusted in Advanced ECM Data / High Pressure Common Rail Injector Setup</STRING>
+        <STRING ID="258" Context="ToolTip">the Parking Brake Switch is not installed.</STRING>
+    <STRING ID="259" Context="ToolTip">The Air Conditioning Pressure Switch is Disabled</STRING>
+    <STRING ID="260" Context="ToolTip">Vehicle Speed Sensor Type does not equal Pulses per Distance Traveled</STRING>
+		<STRING ID="261" Context="ToolTip">Switched Droop / Alternate Droop Switch Type does not equal Additional Inputs</STRING>
+        <STRING ID="262" Context="ToolTip">PTO is Disabled</STRING>
+        <STRING ID="263" Context="ToolTip">The Parking Brake Switch is Disabled</STRING>
+        <STRING ID="264" Context="ToolTip">The Service Brake Switch is Disabled</STRING>
+        <STRING ID="265" Context="ToolTip">Manual Override is Disabled</STRING>
+        <STRING ID="266" Context="ToolTip">The ECM Value can not be changed because of one of the following conditions:</STRING>
+        <STRING ID="267" Context="ToolTip">= ENABLE</STRING>
+        <STRING ID="268" Context="ToolTip">The Governor Type is not set to Variable Speed 1</STRING>
+        <STRING ID="269" Context="ToolTip">EGR Valve Position Sensor Type is a Virtual Sensor</STRING>
+        <STRING ID="270" Context="ToolTip">The ECM OEM 2 password is not valid.</STRING>
+        <STRING ID="271" Context="Parameters Limits dialog">This feature has a maximum value limited by:</STRING>
+        <STRING ID="272" Context="Parameters Limits dialog">This feature has a minimum value limited by:</STRING>
+        <STRING ID="273" Context="Parameters Limits title">Feature \ Subfeature Limits</STRING>
+        <STRING ID="274" Context="Parameters Limits dialog">Selected Feature \ Subfeature</STRING>
+        <STRING ID="275" Context="ToolTip"> = read-only</STRING>
+    <STRING ID="276" Context="ToolTip">PTO \ Remote PTO \ Number of Speeds</STRING>
+    <STRING ID="277" Context="ToolTip">&nbsp;&lt;&nbsp;</STRING>
+    <STRING ID="278" Context="ToolTip">= DISABLE</STRING>
+    <STRING ID="279" Context="ToolTip">The Transmission Type is not equal to Manual</STRING>
+    <STRING ID="280" Context="ToolTip">Parking Brake Switch and Parking Brake Switch Multiplexing = Disable</STRING>
+    <STRING ID="281" Context="ToolTip">Clutch Pedal Position Switch and Multiplexing\Clutch Pedal Position Switch = Disable</STRING>
+    <STRING ID="282" Context="ToolTip">Switched Droop / Alternate Droop Switch Type does not equal Additional Inputs</STRING>
+    <STRING ID="283" Context="Printer Not available title">Cummins INSITE</STRING>
+    <STRING ID="284" Context="Printer Not available text">Printer not found.</STRING>
+    <STRING ID="285" Context="Other Devices">Other Devices</STRING>
+        <STRING ID="286" Context="Other Devices">No Smart Devices Detected</STRING>
+    <STRING ID="287" Context="Tooltip">Engine Protection \ Shutdown = Disable     OR    Engine Coolant Level Sensor = Not Installed</STRING>
+    <STRING ID="288" Context="ToolTip">Please enter valid 6 digit numeric date in MMDDYY format.</STRING>
+    <STRING ID="289" Context="Tooltip">Reset Missed Oil Valve Pulses is set to Reset</STRING>
+    <STRING ID="290" Context="Other Devices">No Other Devices were detected.</STRING>
+  </RESOURCE>
+</XML_RESOURCE>

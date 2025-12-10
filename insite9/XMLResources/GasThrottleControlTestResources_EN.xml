@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE XML_RESOURCE SYSTEM "../htmlentities.dtd">
+<XML_RESOURCE>
+	<RESOURCE Tag="1001" Type="String Table" Description="Message String Table">
+		<STRING ID="1" Context="">Gas Throttle Control Test</STRING>
+		<STRING ID="2" Context="Subtitle">The Gas Throttle Control Test is used to help isolate and troubleshoot throttle actuator problems by controlling the throttle actuator and monitoring it's response.</STRING>
+		<STRING ID="3" Context="Instructions">Select Start to start the test.</STRING>
+		<STRING ID="4" Context="">Name</STRING>
+		<STRING ID="5" Context="">Value</STRING>
+		<STRING ID="6" Context="">Units</STRING>
+		<STRING ID="8" Context="Test Running Message">Starting test. Please Wait.</STRING>
+		<STRING ID="9" Context="">To stop the test select Stop.</STRING>
+		<STRING ID="10" Context="">Test Passed.</STRING>
+		<STRING ID="11" Context="">Test Failed. The throttle plate did not move to one or more of the commanded positions. Refer to the Troubleshooting and Repair Manual for further instructions.</STRING>
+		<STRING ID="12" Context="">Test timed out, restart test if desired.</STRING>
+		<STRING ID="13" Context="">Test stopped, throttle actuator circuit fault detected.</STRING>
+		<STRING ID="14" Context="">Test stopped, engine speed detected.</STRING>
+		<STRING ID="15" Context="">Test stopped by operator.</STRING>
+		<STRING ID="16" Context="">Engine speed detected. Shutdown engine and restart test</STRING>
+		<STRING ID="17" Context="">Throttle actuator circuit fault detected. Troubleshoot the throttle actuator circuit fault code before proceeding with this test.</STRING>
+		<STRING ID="18" Context="">ECM Calibration does not support this test</STRING>
+		<STRING ID="19" Context="">The test could not be started for unknown reasons.</STRING>
+		<STRING ID="20" Context="">Cummins INSITE</STRING>
+		<STRING ID="21" Context="">Instructions</STRING>
+		<STRING ID="22" Context="">Current Values</STRING>
+		<STRING ID="23" Context="">Test Status</STRING>
+		<STRING ID="24" Context="">The test was not started because the Engine Speed is greater than 0.</STRING>
+		
+		<STRING ID="26" Context="">Test Passed.</STRING>
+		<STRING ID="27" Context="">Test Failed. The throttle plate did not move to one or more of the commanded positions. Refer to the Troubleshooting and Repair Manual for further instructions.</STRING>
+		<STRING ID="28" Context="">Test timed out, restart test if desired.</STRING>
+    <STRING ID="29" Context="">Show</STRING>
+    <STRING ID="20100" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20100&lt;/ErrorNumber&gt;&lt;Description&gt;An unknown error occurred within the Gas Throttle Control Test Page.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20101" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20101&lt;/ErrorNumber&gt;&lt;Description&gt;The test was aborted because the Engine Speed is greater than 0.&lt;/Description&gt;&lt;Suggestion&gt;Engine speed detected Shutdown engine and restart test.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20102" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20102&lt;/ErrorNumber&gt;&lt;Description&gt;The test was a failure because The throttle plate did not move to one or more of the commanded positions.&lt;/Description&gt;&lt;Suggestion&gt; Refer to the Troubleshooting and Repair Manual for further instructions.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20104" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20104&lt;/ErrorNumber&gt;&lt;Description&gt;Base class initialization failed.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20105" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20105&lt;/ErrorNumber&gt;&lt;Description&gt;Could not Query logic.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20106" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;21016&lt;/ErrorNumber&gt;&lt;Description&gt;Unable to start the Gas Throttle Control Test.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20107" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20107&lt;/ErrorNumber&gt;&lt;Description&gt;Could not register as publisher.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20108" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20108&lt;/ErrorNumber&gt;&lt;Description&gt;Could not register as subscriber.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20109" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20109&lt;/ErrorNumber&gt;&lt;Description&gt;Could not unpublish test events.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart INSITE before attempting to restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20110" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20110&lt;/ErrorNumber&gt;&lt;Description&gt;Could not unsubscribe from receiving system messages.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart INSITE before attempting to restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20111" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20111&lt;/ErrorNumber&gt;&lt;Description&gt;Unable to start the Gas Throttle Control Test.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20112" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20112&lt;/ErrorNumber&gt;&lt;Description&gt;Unable to properly stop the Gas Throttle Control Test.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20113" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20113&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while loading a string for the page.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20114" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20114&lt;/ErrorNumber&gt;&lt;Description&gt;The test has been aborted for an unknown reason.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20115" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20115&lt;/ErrorNumber&gt;&lt;Description&gt;The test was not started because the Engine Speed is greater than 0.&lt;/Description&gt;&lt;Suggestion&gt;Please reduce road speed to 0 and try running the test again.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20116" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20116&lt;/ErrorNumber&gt;&lt;Description&gt;The test was not started because ECM Calibration does not support this test.&lt;/Description&gt;&lt;Suggestion&gt;Refer to the Troubleshooting and Repair Manual for further instructions.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20117" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20117&lt;/ErrorNumber&gt;&lt;Description&gt;The test was aborted because throttle actuator circuit fault was detected.&lt;/Description&gt;&lt;Suggestion&gt;Refer to the Troubleshooting and Repair Manual for further instructions.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20118" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20118&lt;/ErrorNumber&gt;&lt;Description&gt;Engine speed detected. Shutdown engine and restart test.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart the test.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20119" Context="Displayed when Feature Enable precondition fails">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20119&lt;/ErrorNumber&gt;&lt;Description&gt;ECM calibration does not support this test.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		</RESOURCE>
+</XML_RESOURCE>

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE module SYSTEM "../htmlentities.dtd">
+<XML_RESOURCE>
+   <RESOURCE Tag="1001" Type="String Table" Description="Message String Table">
+      <STRING ID="100" Context="">Turbocharger Actuator Test</STRING>
+      <STRING ID="101" Context="">The Turbocharger Actuator test is used to help isolate and troubleshoot variable geometry turbocharger problems by allowing the user to command the turbocharger actuator to its retracted and extended positions.  The vehicle air system must be fully charged to perform this test properly.</STRING>
+      <STRING ID="104" Context="">Select Start to start the test.</STRING>
+      <STRING ID="105" Context="">Starting test, please wait</STRING>
+      <STRING ID="110" Context="">To operate the turbocharger actuator specify a delay time, then select the desired actuator command to Extend or Retract the actuator.  To stop the test select Stop.</STRING>
+      <STRING ID="115" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16800&lt;/ErrorNumber&gt;&lt;Description&gt;An unexpected error occurred in the VGT Turbocharger Test.&lt;/Description&gt;&lt;Suggestion&gt;Please shut down and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="116" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16801&lt;/ErrorNumber&gt;&lt;Description&gt;An invalid delay was specified.&lt;/Description&gt;&lt;Suggestion&gt;Please choose a delay of between zero and thirty seconds.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="117" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16802&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred and the Turbocharger actuator could not be opened&lt;/Description&gt;&lt;Suggestion&gt;Please shut down and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="118" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16803&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while the page was unloading&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="119" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16804&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while attempting to unsubscribe to mapped events&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="120" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16805&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while attempting to subscribe to mapped events&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="121" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16806&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while attempting to locate the Logic interface&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="122" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16807&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while attempting to Initialize the page component&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="123" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16808&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while attempting to Start the test&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="124" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16809&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while attempting to Stop the test&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="125" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16810&lt;/ErrorNumber&gt;&lt;Description&gt;One or more of the PreConditions have failed.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="126" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16811&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while attempting to open the Turbocharger actuator.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="127" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16812&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while attempting to close the Turbocharger actuator.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="128" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16813&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while attempting to open the Turbocharger actuator.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="129" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16814&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while attempting to close the Turbocharger actuator.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="130" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16815&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while attempting to create the thread.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="131" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16816&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while attempting to start the ECMPoller.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="132" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16817&lt;/ErrorNumber&gt;&lt;Description&gt;The engine speed was greater than zero.&lt;/Description&gt;&lt;Suggestion&gt;Please ensure that the engine is not running while attempting to run this test.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="133" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16818&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while attempting to unPublish mapped events.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="134" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16819&lt;/ErrorNumber&gt;&lt;Description&gt;Engine speed detected.  Shutdown engine and restart test.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="135" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16820&lt;/ErrorNumber&gt;&lt;Description&gt;Precondition failed:  T_VGA_Swingvane_Enable is disabled.   Cannot start test.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="136" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16821&lt;/ErrorNumber&gt;&lt;Description&gt;Precondition failed:  T_VGT_Pneumatic_Control_Enable is enabled.  Cannot start test.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="137" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16822&lt;/ErrorNumber&gt;&lt;Description&gt;Precondition failed:  Turbocharger Speed Faults are active.  Cannot start test.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="138" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16823&lt;/ErrorNumber&gt;&lt;Description&gt;Precondition failed:  Turbocharger Speed Faults are active.  Cannot start test.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="139" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16824&lt;/ErrorNumber&gt;&lt;Description&gt;Precondition failed:  Turbocharger Speed Faults are active.  Cannot start test.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="140" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16825&lt;/ErrorNumber&gt;&lt;Description&gt;Precondition failed:  VGT Actuator Position Circuit - Shorted high Fault is active.  Cannot start test.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="141" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16826&lt;/ErrorNumber&gt;&lt;Description&gt;Precondition failed:  VGT Actuator Position Circuit - Shorted low Fault is active.  Cannot start test.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="142" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16827&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to properly communicate with the ECM. &lt;/Description&gt;&lt;Suggestion&gt;Ensure that your ECM is still connected to the test tool.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="143" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16828&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while attempting to stop the test.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="144" Context="">ECM communications error.</STRING>
+      <STRING ID="145" Context="">Test Started.</STRING>
+      <STRING ID="146" Context="">Test Stopped.</STRING>
+      <STRING ID="147" Context="">The Turbocharger Actuator test is used to help isolate and troubleshoot variable geometry turbocharger problems by allowing the user to command the turbocharger to its retracted and extended positions.  The vehicle air system must be fully charged to perform this test properly.</STRING>
+      <STRING ID="148" Context="">ECM Calibration does not support this test.</STRING>
+      <STRING ID="149" Context="">ECM Calibration does not support this test.</STRING>
+      <STRING ID="150" Context="">Preconditions Error: 
+Turbocharger Speed Fault are active (Turbo_Speed_High_Error).</STRING>
+      <STRING ID="151" Context="">Preconditions Error: 
+Turbocharger Speed Fault are active (Turbo_Speed_Low_Error).</STRING>
+      <STRING ID="152" Context="">Preconditions Error: 
+Turbocharger Speed Fault are active (Turbo_Speed_In_Range_Error).</STRING>
+      <STRING ID="153" Context="">Turbocharger position sensor circuit fault detected.  Troubleshoot the turbocharger position sensor circuit fault code before proceeding with this test.</STRING>
+      <STRING ID="154" Context="">Turbocharger position sensor circuit fault detected.  Troubleshoot the turbocharger position sensor circuit fault code before proceeding with this test.</STRING>
+      <STRING ID="155" Context="">Test stopped, engine speed detected.</STRING>
+      <STRING ID="156" Context="">Error occurred in the ECM Data Poller.</STRING>
+      <STRING ID="161" Context="">Turbocharger control shutoff valve circuit fault detected.  Troubleshoot the turbocharger control shutoff valve circuit fault code before proceeding with this test.</STRING>
+      <STRING ID="162" Context="">Turbocharger control shutoff valve circuit fault detected.  Troubleshoot the turbocharger control shutoff valve circuit fault code before proceeding with this test.</STRING>
+      <STRING ID="163" Context="">Turbocharger control valve circuit fault detected.  Troubleshoot the turbocharger control valve circuit fault code before proceeding with this test.</STRING>
+      <STRING ID="164" Context="">Turbocharger control valve circuit fault detected.  Troubleshoot the turbocharger control valve circuit fault code before proceeding with this test.</STRING>
+      <STRING ID="165" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16829&lt;/ErrorNumber&gt;&lt;Description&gt;Precondition failed:  Turbocharger Air Shutoff Valve Faults are active.  Cannot start test.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="166" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16830&lt;/ErrorNumber&gt;&lt;Description&gt;Precondition failed:  Turbocharger Air Shutoff Valve Faults are active.  Cannot start test.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="167" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16831&lt;/ErrorNumber&gt;&lt;Description&gt;Turbocharger control valve circuit fault detected.  Troubleshoot the turbocharger control valve circuit fault code before proceeding with this test.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="168" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16832&lt;/ErrorNumber&gt;&lt;Description&gt;Precondition failed:  Turbocharger Control Valve Faults are active.  Cannot start test.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="173" Context="">The Turbocharger Actuator is not retracted. Select help for instructions.</STRING>
+      <STRING ID="174" Context="">The Turbocharger Actuator is not open. Select help for instructions.</STRING>
+      <STRING ID="175" Context="">The actuator is not fully retracted.</STRING>
+      <STRING ID="176" Context="">The Turbocharger Actuator is not open, run the position sensor test.  Select the Help control for instructions.</STRING>
+      <STRING ID="177" Context="">Turbocharger actuator could not be retracted.</STRING>
+      <STRING ID="178" Context="">Turbocharger actuator could not be opened.</STRING>
+      <STRING ID="179" Context="">Retract Actuator</STRING>
+      <STRING ID="180" Context="">Open Actuator</STRING>
+      <STRING ID="181" Context="">The turbocharger actuator is currently retracted.  To extend the actuator, specify a delay in the Delay section, then click Extend Actuator.  To stop the test, click Stop.</STRING>
+      <STRING ID="182" Context="">The turbocharger actuator is currently opened.  To close the actuator, specify a delay in the Delay section, then click Close Actuator.  To stop the test, click Stop.</STRING>
+      <STRING ID="183" Context="">Retracting Actuator</STRING>
+      <STRING ID="184" Context="">Opening Turbocharger Actuator, please wait.</STRING>
+      <STRING ID="185" Context="">Retracted Actuator</STRING>
+      <STRING ID="186" Context="">Turbocharger Actuator opened</STRING>
+      <STRING ID="187" Context="">Retracting Actuator in %1!d! seconds</STRING>
+      <STRING ID="188" Context="">Opening Turbocharger Actuator in %1!d! seconds</STRING>
+      <STRING ID="189" Context="">The Turbocharger Actuator is not extended. Select help for instructions.</STRING>
+      <STRING ID="190" Context="">The Turbocharger Actuator is not closed. Select help for instructions.</STRING>
+      <STRING ID="191" Context="">The actuator is not fully extended.</STRING>
+      <STRING ID="192" Context="">The Turbocharger Actuator is not closed, run the position sensor test.  Select the Help control for instructions.</STRING>
+      <STRING ID="193" Context="">Turbocharger actuator could not be extended.</STRING>
+      <STRING ID="194" Context="">Turbocharger actuator could not be closed.</STRING>
+      <STRING ID="195" Context="">Extend Actuator</STRING>
+      <STRING ID="196" Context="">Close Actuator</STRING>
+      <STRING ID="197" Context="">The turbocharger actuator is currently extended.  To retract the actuator, specify a delay in the Delay section, then click Retract Actuator.  To stop the test, click Stop.</STRING>
+      <STRING ID="198" Context="">The turbocharger actuator is currently closed.  To open the actuator, specify a delay in the Delay section, then click Open Actuator.  To stop the test, click Stop.</STRING>
+      <STRING ID="199" Context="">Extending Actuator</STRING>
+      <STRING ID="200" Context="">Closing Turbocharger Actuator, please wait.</STRING>
+      <STRING ID="201" Context="">Extended Actuator</STRING>
+      <STRING ID="202" Context="">Turbocharger Actuator closed</STRING>
+      <STRING ID="203" Context="">Extending Actuator in %1!d! seconds</STRING>
+      <STRING ID="204" Context="">Closing Turbocharger Actuator in %1!d! seconds</STRING>
+      <STRING ID="205" Context="">Instructions:</STRING>
+      <STRING ID="206" Context="">Command</STRING>
+      <STRING ID="207" Context="">Close Actuator</STRING>
+      <STRING ID="208" Context="">Open Actuator</STRING>
+      <STRING ID="209" Context="">Delay</STRING>
+      <STRING ID="210" Context="">second(s) before actuation.</STRING>
+      <STRING ID="211" Context="">Actuator Position</STRING>
+      <STRING ID="212" Context="">Closed</STRING>
+      <STRING ID="213" Context="">Open</STRING>
+      <STRING ID="214" Context="">Status</STRING>
+      <STRING ID="215" Context="">Engine speed detected.  Shutdown engine and restart test.</STRING>
+      <STRING ID="216" Context="">Select actuator command</STRING>
+      <STRING ID="217" Context="">Test stopped, turbocharger control shutoff valve circuit fault detected.</STRING>
+      <STRING ID="218" Context="">Test stopped, turbocharger control shutoff valve circuit fault detected.</STRING>
+      <STRING ID="219" Context="">Test stopped, turbocharger control valve circuit fault detected.</STRING>
+      <STRING ID="220" Context="">Test stopped, turbocharger control valve circuit fault detected.</STRING>
+      <STRING ID="221" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16833&lt;/ErrorNumber&gt;&lt;Description&gt;Turbocharger control shutoff valve circuit fault detected.&lt;/Description&gt;&lt;Suggestion&gt;Troubleshoot the turbocharger control shutoff valve circuit fault code before proceeding with this test.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="222" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16834&lt;/ErrorNumber&gt;&lt;Description&gt;Turbocharger control shutoff valve circuit fault detected.&lt;/Description&gt;&lt;Suggestion&gt;Troubleshoot the turbocharger control shutoff valve circuit fault code before proceeding with this test.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="223" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16835&lt;/ErrorNumber&gt;&lt;Description&gt;Turbocharger control valve circuit fault detected.&lt;/Description&gt;&lt;Suggestion&gt;Troubleshoot the turbocharger control valve circuit fault code before proceeding with this test.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="224" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16836&lt;/ErrorNumber&gt;&lt;Description&gt;Turbocharger control valve circuit fault detected.&lt;/Description&gt;&lt;Suggestion&gt;Troubleshoot the turbocharger control valve circuit fault code before proceeding with this test.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="225" Context="">Test stopped, turbocharger position sensor circuit fault detected.</STRING>
+      <STRING ID="226" Context="">Test stopped, turbocharger position sensor circuit fault detected.</STRING>
+      <STRING ID="227" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16837&lt;/ErrorNumber&gt;&lt;Description&gt;Turbocharger position sensor circuit fault detected.&lt;/Description&gt;&lt;Suggestion&gt;Troubleshoot the turbocharger position sensor circuit fault code before proceeding with this test.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="228" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;16837&lt;/ErrorNumber&gt;&lt;Description&gt;Turbocharger position sensor circuit fault detected.&lt;/Description&gt;&lt;Suggestion&gt;Troubleshoot the turbocharger position sensor circuit fault code before proceeding with this test.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="229" Context="">Select desired position</STRING>
+      <STRING ID="230" Context="">To operate the turbocharger actuator specify a delay time, then select the desired actuator command to Close or Open the actuator.  To stop the test, select Stop.</STRING>
+      <STRING ID="231" Context="">The EGR Valve Test allows the operator to move the EGR Valve when the engine is not running and the vehicle is not moving.  The actuator contains a lightweight return spring. This may or may not cause the EGR valve to return to the open position when the EGR motor is turned off.  A high pitched frequency noise can normally be heard when the EGR Valve motor is on.</STRING>
+      <STRING ID="232" Context="">Help</STRING>
+     <STRING ID="233" Context="">Show</STRING>
+   </RESOURCE>
+</XML_RESOURCE>

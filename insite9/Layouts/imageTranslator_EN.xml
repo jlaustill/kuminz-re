@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE module SYSTEM "../htmlentities.dtd">
+<!-- String Localization for Workorder Images -->
+<HEADERS>
+    <string id="1">Workorder: </string>
+    <string id="2">Customer: </string>
+    <string id="3">Description: </string>
+    <string id="4">Engine Serial Number: </string>
+    <string id="5">Vehicle ID: </string>
+    <string id="6">Vehicle Make: </string>
+    <string id="7">Vehicle Model: </string>
+    <string id="8">Vehicle Unit Number: </string>
+    <string id="9">Vehicle Odometer: </string>
+    <string id="10">Status: </string>
+    <string id="11">Workorder Information</string>
+    <string id="12">ECM Image</string>
+    <string id="13">Image Information</string>
+    <string id="14">Date: </string>
+    <string id="15">File Location: </string>
+    <string id="16">ECM: </string>
+    <string id="17">Features &amp; Parameters</string>
+    <string id="18">Trip Information</string>
+    <string id="19">Monitor Data</string>
+    <string id="20">User Activated Data Logger</string>
+    <string id="21">Fault Information</string>
+    <string id="22">Fault Snapshot</string>
+    <string id="23">J1939 Control History</string>
+    <string id="24">J1939 Maintenance Monitor</string>
+    <string id="25">Engine Performance Rating</string>
+    <string id="26">Engine Protection</string>
+    <string id="27">Description</string>
+    <string id="28">Low Coolant Level</string>
+    <string id="29">High Coolant Temperature (Torque Derate)</string>
+    <string id="30">High Intake Manifold Temperature (Fueling Derate)</string>
+    <string id="31">Low Oil Pressure</string>
+    <string id="32">High Oil Temperature (Warning)</string>
+    <string id="33">Very Low Oil Pressure</string>
+    <string id="34">Engine Overspeed</string>
+    <string id="35">Crank Blowby Pressure High</string>
+    <string id="36">Coolant Pressure Low</string>
+    <string id="37">Fuel Temperature High</string>
+    <string id="38">OEM Temperature Fault</string>
+    <string id="39">OEM Pressure Fault</string>
+    <string id="40">Very Low Coolant Level</string>
+    <string id="41">High Coolant Temperature (RPM Derate)</string>
+    <string id="42">High Intake Manifold Temperature (RPM Derate)</string>
+    <string id="43">High Oil Temperature (Critical)</string>
+    <string id="44">High Recirculated Exhaust Gas Temperature (Torque Derate)</string>
+    <string id="45">High Recirculated Exhaust Gas Temperature (RPM Derate)</string>
+    <string id="46">High Turbocharger Compressor Outlet Temperature (Fueling Derate)</string>
+    <string id="47">High Turbocharger Turbine Inlet Temperature (Torque Derate)</string>
+    <string id="48">Engine Torque History</string>
+    <string id="49">Map Hours Remaining</string>
+    <string id="50">Unknown</string>
+    <string id="51">Adjustments</string>
+    <string id="52">Value</string>
+    <string id="53">Available Logged Parameters</string>
+    <string id="54">Selected Logged Parameters</string>
+    <string id="55">Detonation Sensor Offset Calibration</string>
+    <string id="56">Kilowatt Load Sensor Offset Calibration</string>
+    <string id="57">Open/Closed-loop Fueling Control Tuning</string>
+    <string id="58">Duty Cycle Monitor</string>
+    <string id="59">Short Term Map 1</string>
+    <string id="60">Short Term Map 2</string>
+    <string id="61">Long Term Map</string>
+    <string id="62">Torque (%)</string>
+    <string id="63">Engine Speed (RPM)</string>
+    <string id="64">Anti-Theft Protection</string>
+    <string id="65">Multi-Level ECM Security</string>
+    <string id="66">ECM Passwords</string>
+    <string id="67">PowerSpec Enable and Password</string>
+    <string id="68">Disabled</string>
+    <string id="69">Locked</string>
+    <string id="70">Valid</string>
+    <string id="71">Fault Code: </string>
+    <string id="72">First Occurrence</string>
+    <string id="73">Last Occurrence</string>
+    <string id="74">0.0</string>
+    <string id="75">Engine Abuse History</string>
+    <string id="76">ECM Template</string>
+    <string id="77">Template Information</string>
+    <string id="78">Invalid</string>
+</HEADERS>
+
+

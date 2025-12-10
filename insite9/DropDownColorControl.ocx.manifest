@@ -1,0 +1,9 @@
+<?xml version="1.0" standalone="yes"?>
+<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
+  <file name="DropDownColorControl.ocx" hashalg="SHA1">
+    <comClass clsid="{3F42D2DC-E950-427F-B6C9-58D7173369B2}" tlbid="{735477F1-2106-49EF-8B22-C0195C82F924}" description="DropDownColorControl Control">
+    </comClass>
+    <typelib tlbid="{735477F1-2106-49EF-8B22-C0195C82F924}" resourceid="1" version="1.0" helpdir="">
+    </typelib>
+  </file>
+</assembly>

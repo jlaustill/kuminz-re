@@ -1,0 +1,36 @@
+<!--	This file is used for Image UOM Conversion between INSITE 6.2 or 6.2.1 and INSITE 6.3+ 
+	The short units are to be compared with the list in this file.  
+	If it is found in the list, then the image value must be converted.
+	NAME = INSITE 6.2 or INSITE 6.2.1 short unit name
+	UNITID = INSITE 6.3 unit ID
+	UNITFAMILY = INSITE 6.3 unit ID -->
+<IMAGE_UOM_CONV>
+	<UNIT NAME="mi" UNITID="1" UNITFAMILY="2"/>
+	<UNIT NAME="km" UNITID="8" UNITFAMILY="2"/>
+	<UNIT NAME="°F" UNITID="2" UNITFAMILY="3"/>
+	<UNIT NAME="°C" UNITID="9" UNITFAMILY="3"/>
+	<UNIT NAME="hp" UNITID="6" UNITFAMILY="4"/>
+	<UNIT NAME="ft*lb" UNITID="7" UNITFAMILY="5"/>
+	<UNIT NAME="N*M" UNITID="14" UNITFAMILY="5"/>
+	<UNIT NAME="gph" UNITID="25" UNITFAMILY="6"/>
+	<UNIT NAME="L/hr" UNITID="26" UNITFAMILY="6"/>
+	<UNIT NAME="igal/hr" UNITID="32" UNITFAMILY="6"/>
+	<UNIT NAME="kg/hr" UNITID="58" UNITFAMILY="7"/>
+	<UNIT NAME="lbs/hr" UNITID="62" UNITFAMILY="7"/>
+	<UNIT NAME="inHg" UNITID="3" UNITFAMILY="8"/>
+	<UNIT NAME="kPa" UNITID="11" UNITFAMILY="8"/>
+	<UNIT NAME="psia" UNITID="22" UNITFAMILY="8"/>
+	<UNIT NAME="psi" UNITID="85" UNITFAMILY="8"/>
+	<UNIT NAME="igal" UNITID="13" UNITFAMILY="11"/>
+	<UNIT NAME="L" UNITID="29" UNITFAMILY="11"/>
+	<UNIT NAME="mpg" UNITID="15" UNITFAMILY="12"/>
+	<UNIT NAME="km/L" UNITID="24" UNITFAMILY="12"/>
+	<UNIT NAME="m/igal" UNITID="33" UNITFAMILY="12"/>
+	<UNIT NAME="mph" UNITID="30" UNITFAMILY="13"/>
+	<UNIT NAME="km/hr" UNITID="31" UNITFAMILY="13"/>
+	<UNIT NAME="mph/s" UNITID="67" UNITFAMILY="14"/>
+	<UNIT NAME="kph/s" UNITID="68" UNITFAMILY="14"/>
+	<UNIT NAME="rev/mi" UNITID="81" UNITFAMILY="19"/>
+	<UNIT NAME="rev/km" UNITID="83" UNITFAMILY="19"/>
+	<UNIT NAME="kph" UNITID="31" UNITFAMILY="13"/>
+</IMAGE_UOM_CONV>

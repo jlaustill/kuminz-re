@@ -1,0 +1,47 @@
+<!DOCTYPE module SYSTEM "../htmlentities.dtd">
+<XML_RESOURCE>
+   <RESOURCE Tag="1001" Type="String Table" Description="Message String Table">
+      <STRING ID="100" Context="">Engine Protection Settings</STRING>
+      <STRING ID="1005" Context="">Print</STRING>
+      <STRING ID="1006" Context="">Engine Protection Setting data is not supported by the current Calibration.</STRING>
+      <STRING ID="1007" Context="">Select Torque Derate, RPM Derate or Shutdown.</STRING>
+      <STRING ID="1008" Context="">Channel</STRING>
+      <STRING ID="1009" Context="">Severity Based Shutdown</STRING>
+      <STRING ID="1010" Context="">Threshold</STRING>
+      <STRING ID="1011" Context="">Time for Flashing Lamp</STRING>
+      <STRING ID="1012" Context="">RPM Derate</STRING>
+      <STRING ID="1013" Context="">Torque Derate</STRING>
+      <STRING ID="1014" Context="">Fault Code</STRING>
+      <STRING ID="1015" Context="">Derate Type</STRING>
+      <STRING ID="1016" Context="">Delay Before Derate</STRING>
+      <STRING ID="1017" Context="">Time Based Torque Shutdown</STRING>
+      <STRING ID="1018" Context="">Time Before Lamp Flashes Because Of Torque Shutdown</STRING>
+      <STRING ID="1019" Context="">Time Based RPM Shutdown</STRING>
+      <STRING ID="1020" Context="">Time Before Lamp Flashes Because Of RPM Shutdown</STRING>
+      <STRING ID="1021" Context="">Torque Derate is not supported by the current Calibration.</STRING>
+      <STRING ID="1022" Context="">RPM Derate is not supported by the current Calibration.</STRING>
+      <STRING ID="1023" Context="">Shutdown is not supported by the current Calibration.</STRING>
+      <STRING ID="1024" Context="">Engine Protection Derate Suppress</STRING>
+      <STRING ID="1025" Context="">Enable</STRING>
+      <STRING ID="1026" Context="">Disable</STRING>
+      <STRING ID="1027" Context="">rpm</STRING>
+      <STRING ID="1028" Context="">Oil Pressure</STRING>
+      <STRING ID="1029" Context="">Undefined</STRING>
+      <STRING ID="1030" Context="">Low</STRING>
+      <STRING ID="1031" Context="">OK</STRING>
+      <STRING ID="1032" Context="">Coolant Pressure</STRING>
+      <STRING ID="1033" Context="Printer Not available title">Cummins INSITE</STRING>
+      <STRING ID="1034" Context="Printer Not available text">Printer not found.</STRING>
+	  <STRING ID="1035" Context="">Help</STRING>
+      <STRING ID="16500" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;18100&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE has detected an error in the Engine Protection Setting feature, PreCondition Failed.&lt;/Description&gt;&lt;Suggestion&gt;Close and restart the operation.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="16501" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;18102&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE has detected an error in the Engine Protection Setting feature, Data Type Not Supported.&lt;/Description&gt;&lt;Suggestion&gt;Close and restart the operation.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+      <STRING ID="16502" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;18102&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE has detected an error in the Engine Protection Setting feature, Read Failed.&lt;/Description&gt;&lt;Suggestion&gt;Close and restart the operation.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+	  <STRING ID="111" Context="">Customer Name : </STRING>
+      <STRING ID="112" Context="">Company Name : </STRING>
+      <STRING ID="113" Context="">Customer Unit Number : </STRING>
+      <STRING ID="114" Context="">Engine Serial Number : </STRING>
+      <STRING ID="115" Context="">Work Order Name : </STRING>
+      <STRING ID="116" Context="">ECM Image Name : </STRING>
+      <STRING ID="117" Context="">ERROR</STRING>
+   </RESOURCE>
+</XML_RESOURCE>

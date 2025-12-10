@@ -1,0 +1,451 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE module SYSTEM "../htmlentities.dtd">
+<!-- CHANGE LOG
+1.)  C. Colaco : Initial creation from names_en.icl ver. 6.31.01.44
+-->
+<!--Changes to Insite 6.4 For ISBe/ISLe Euro IV
+		Added Fetures 140,141,509-->
+<!--MS: Changes to Insite 6.4 For Common GTIS 4.5 Base Features-->
+<!--MP: Changes to Insite 6.40.0.80 
+        Added new feature id 520 for the feature "Vehicle Anti-Theft Protection"-->
+<!--MW: Changes to Insite ver 6.5 08/26/2005
+        Added Feature ID 528-->
+<!--GS: Changes to insite ver 6.5, 8/30/2005
+        Added new feature id 522,525,526,527 -->
+<!-- DB : Changes to Insite Ver 6.50.0.96, 11/30/2005
+	DB_G00078241 : Modified display name of feature 142 -->
+<!-- MP : Changes to Insite 6.5FP1, 01/17/2006
+	      Added new feature ids 521,523,524 -->
+<!--BR:Changes to Insite Ver 6.50.1.0043, 02/16/2006
+    Insite 6.5 FP1 Development(BR), Removed Feature Id 523 .-->
+<!--BR:Changes to Insite Ver 6.51.0.257, 05/23/2006
+    DB_G00085638(BR), Added Feature Id 529 .-->
+<!--SV:Changes to Insite Ver 7.00.0.0017, 11/07/2006
+     Added Feature Ids 523,530,531,532  .-->    
+<!-- Changes to Insite Ver 6.5.2 11/2/2006
+      DB_G00090996,Added Feature Id 143 for HPCR injector setup -->   
+<!--PS : Changes to Insite Ver 7.0, 12/18/2006
+    DB_G00094230 : Added Feature Id 144  .-->    
+<!--PG : Changes to Insite Ver 7.0, 5/2/2007 
+    DB_G00100652 : Added Feature Id 145  .-->         
+<!--NA : Changes to Insite Ver 7.0, 7/10/2007 
+    DB_G00104701 : Added Feature Id 533, 534, 535  .-->
+<!--PG : Changes to INSITE Ver 7.1, 7/23/2007
+	  INSITE 7.1 Base Feature Development, Added feature ID's 146, 147, 148, 149, 150,151, 152, 153, 154, 155, 156 and 157. -->
+<!--AK : Changes to INSITE Ver 7.2, 11/20/2007
+	  INSITE 7.2 UDSH Test Development, Added feature ID's 178, 179 and 180. --> 
+<!--AP : Changes to INSITE Ver 7.2, 12/10/2007
+	  INSITE 7.2 Base Feature Development, Added feature ID's 158,159,160,161,162,163,164,165,166
+     167,168,169,170,171,172,173,174,175,176,177 -->
+<!--ShJ : Changes to INSITE Ver 7.02.0.094, 02/15/2008
+    Corrected the Feature display name of feature 165 to Load Based Speed Control - Enhanced -->
+<!--NT:BugFixing INSITE 7.2,02/19/2008
+   Corrected the Feature Display name of feature 62 to Low Speed Idle -->
+<!--NT:BugFixing INSITE 7.2,02/21/2008
+    Corrected the Feature display name of feature 65 and 143  -->
+<!--MM:BugFixing INSITE 7.2,2/21/2008
+   Corrected the Feature Display name of feature 163 to Oil Level Sensor Enhanced -->
+<!--LK:  Changes to INSITE 7.2, 5/29/2008
+    DB_G00117050:  Added the Feature Id 181-->
+<!-- GK:Changes to INSITE 7.2,06/02/2008
+   DB_G00120208: Corrected the Feature Display name of feature 164 to Fuel Usage Adjustment-->
+<!-- AL:Changes to INSITE 7.2,07/30/2008
+   DB_G00125173: Corrected the Feature Display name of feature 62 and 65-->
+<!-- NT: Changes to INSITE Ver 7.3,7.3 XML updates , 7/28/2008 
+     Added strings 182,183,184,185,186,187 -->
+<!-- NT: Changes to INSITE Ver 7.3, 09/15/2008
+     Base Features-Bug Fixing: Added string 188 -->
+<!--NT: Changes to INSITE Ver 7.3, 09/19/2008
+    DF Updates Speed Bias Setup2-Added feature 189  -->
+<!--MA: Changes to INSITE Ver 7.3, 10/15/2008
+    Modified name of feature number 143 to "High Pressure Common Rail Injector Setup"-->
+<!--SPD: Changes to INSITE Ver 7.3, 10/17/2008
+    Added feature 536 (Regeneration Stay Warm Enable) -->
+<!--GK: Changes to INSITE Ver 7.3, 10/17/2008
+    Modified feature names  Trip Information Gas - Base, Trip Information Gas - Vehicle,
+	Trip Information Gas - Multiple PTO -->
+<!-- PG:Changes to INSITE Ver 7.3 , 11/13/2008
+    DB_G00127070: Replaced all instances of 'Urea' with 'Diesel Exhaust Fluid'.-->
+<!--AV:Changes to INSITE Ver 7.3 , 11/25/2008
+    DB_G00126422:Added String ID 190 for High NOx Reset-->
+<!--SPD:Changes to INSITE Ver 7.3 , 01/08/2009
+    DB_G00126422:Modified display name for String ID 186-->
+<!--SK:Changes to INSITE Ver 7.3 FP1, 03/20/2009
+    DB_G00132005 : Modified STRING ID="190" for High NOx Reset-->
+<!--NT: Changes to INSITE Ver 7.3FP1, 03/18/2009
+    DB_G00131781: Added String ID 537 for Instrument Cluster Key-->
+<!--PP:Changes to INSITE Ver 7.3FP2 , 4/01/2009
+    DB_G00131802:Added new sting ID 191 for Ambient Air Temperature Sensor -->
+<!--PP:Changes to INSITE Ver 7.3FP2 , 4/16/09
+    DB_G00132654:Added String ID 192 for Cruise Control Pause Switch-->
+<!--SP:Changes to INSITE Ver 7.3FP2 , 4/29/09
+    DB_G00126336:Modified String ID 172,154 -->
+<!--RN:Changes to INSITE Ver 7.3FP2 , 5/27/2009
+    DB_G00136427: Added String ID 193-->
+<!--MA:Changes to INSITE Ver 7.3FP2 , 6/18/2009
+    DB_G00139620: Added String ID 539-->
+<!-- NT: Changes to INSITE Ver 7.3 FP2, 6/22/2009
+    DB_G00139135: Added String ID 540 -->
+<!--NK:Changes to INSITE Ver 7.3FP2 , 6/24/2009
+    DB_G00136121: Added String ID 194-->
+<!--VV:Changes to INSITE Ver 7.3FP2 , 7/09/2009
+    DB_G00142277: Modified String ID 1-->
+<!--TP:Changes to INSITE Ver 7.4 , 7/09/2009
+    DB_G00142943: Added string id 541 for Feature Exclusivity feature-->
+<!--MA:Changes to INSITE Ver 7.4, 10/22/2009
+    DB_G00141441: Modified string ID 533-->
+<!--SS:Changes to INSITE Ver 7.4, 10/30/2009
+    DB_G00147739: Removed string ID 541-->
+<!--SK:Changes to INSITE Ver 7.4, 11/17/2009
+    DB_G00148596: Replaced string id=1 from Accelerator Pedal Or Lever Position to Accelerator Options-->
+<!--GA:Changes to INSITE Ver 7.4, 12/17/2009
+    DB_G00149474: Given a diffrent ID(541,542,543) for the following feature 32,44,65-->
+<!-- PPP : Changes to INSITE Ver 7.4FP1 12/21/2009 	
+	DB_G00149046: Added STRING ID "195"(Remote Start) and STRING ID "196" (Intake Air Throttle) -->
+<!--PPP : Changes to INSITE Ver 7.4FP1 
+    DB_G00147284: Added new feature Transmission Accelerator Interlock (String ID :197)-->
+<!--NT: Changes to INSITE Ver 7.4.2, 06/30/2010
+   DB_G00157131: Added new strings 544, 545 and 546 -->
+<!--SK(jj628): For Ver 7.4.2, 09/20/2010
+    CR DB_G00157753: Added string 547 and 548  -->
+<!--ACP : Changes to INSITE Ver 7.5 
+    DB_G00158868: Added new feature OEM Auxiliary Switch Input (String ID :198)-->
+<!--SA : Changes to INSITE Ver 7.5, 10/06/2010
+    DB_G00158921: Added new feature Switched Droop (String ID : 551)-->
+<!--SA : Changes to INSITE Ver 7.5, 10/08/2010
+    DB_G00158921: Added new feature Engine Protection - Auxiliary Discrete (String ID : 550)-->
+<!--AS : Changes to INSITE Ver 7.5, 10/14/2010
+    DB_G00158291: Added new feature Engine Overload Protection (String ID : 199)-->
+<!-- RAK:Changes to INSITE 7.5,11/23/2010    DB_G00155040: Corrected the Feature Display name of feature 6 and 521-->
+<!-- NS :Changes to INSITE 7.5,01/27/2011    DB_G00152032: Added new feature System Dataplate (String ID : 552) -->
+<!-- SA:Changes to INSITE 7.5,02/03/2011    DB_G00162094: Added new feature Engine Oil Pressure Sensor (String ID : 205)-->
+<!-- SA:Changes to INSITE 7.5,02/09/2011    DB_G00163026: Added new feature 
+		Aftertreatment Diesel Particulate Filter Regeneration Inhibit Lamp (String ID : 206)-->
+<!-- ND:Changes to INSITE 7.5,02/17/2011    DB_G00166639: Added new feature 
+		Alternate Torque (String ID : 553)-->
+<!--NB(jr617): INSITE 7.5.1: New TIS Implementation , 02/08/2011
+ Added new feature Accelerator Options (String ID :200),
+ Added new feature Load Based Speed Control (String ID :201),
+ Added new feature Powertrain Protection (String ID :202),
+ Added new feature Vehicle Speed Sensor Anti-Tampering (String ID :203)-->
+<!--SG(ju912) : Changes to INSITE Ver 7.5, 03/17/2011
+	DB_G00155040: 
+	Added new feature Constrained Operation (String ID : 554)
+	Added new feature Customer Constrained Operation (String ID : 555)-->
+<!--MM(js996) : Changes to INSITE Ver 7.5.1 , 03/22/2011
+    DB_G00168444: Added string ID 556. -->
+<!--MM(js996): INSITE 7.5.1: New TIS Implementation , 02/22/2011
+ Modified string id = 200 from "Accelerator Base" to "Accelerator Options".
+ Modified string id = 201 from "Load Based Speed Control v3" to "Load Based Speed Control".
+ Modified string id = 202 from "Powertrain Protection v3" to "Powertrain Protection".
+ Modified string id = 203 from "Vehicle Speed Sensor Anti-Tampering v3" to "Vehicle Speed Sensor Anti-Tampering".
+ -->
+<!--Changes to INSITE Ver 7.5.1, 04/01/2011
+ DB_G00165062 NB(jr617): Added String ID = 207 to 214 --> 
+ <!--Changes to INSITE Ver 7.5.1, 04/11/2011
+ DB_G00168165 RN(jj165): Added String ID = 557 -->
+<!--Changes to INSITE Ver 7.5.1,New TIS Implementation(5075) 04/13/2011
+ DB_G00166777 DP(jq870): Added String ID = 558 -->
+<!--Changes to INSITE Ver 7.5.1, 06/28/2011
+ DB_G00173144 KJ(jr624): Added String ID = 215 -->
+<!--Changes to INSITE Ver 7.5.2,New FFS Implementation(5073) 07/07/2011
+ DB_G00170817 MN(js994): Added String ID = 559 -->
+<!--Changes to INSITE Ver 7.5.2,New TIS Implementation(4637) 07/28/2011
+ DB_G00171720 SG(ju912): Added String ID = 560 -->
+ <!--Changes to INSITE Ver 7.5.2,New TIS Implementation(5196) 09/02/2011
+ DB_G00174913 SG(ju912): Added String ID = 561 -->
+  <!--MS(Kd284)DB_G00174570: INSITE 7.5.3: New TIS Implementation, 07/26/2011
+Added new feature Sudden Deceleration Event Settings(feature ID = 216)
+Added new feature Fuel Level Sensor(feature ID=217)
+Added new feature Wait To Start Lamp(feature ID=218)
+Added new feature Maximum Road Speed(feature ID=219)
+Added new feature Transmission Setup(feature ID=220)
+Added new feature RS422 Communication(feature ID=221)
+Added new feature Sudden Deceleration Rate Threshold(feature ID=222)
+-->
+<!--MMS(js995)DB_G00175024: INSITE 7.5.3 09/23/2011
+ Added String ID = 562 -->
+<!--Changes to INSITE Ver 7.6 , 01/03/2012
+ DB_G00182195 NB(jr617): Added String ID = 563 -->
+<!--Changes to INSITE Ver 7.6 , 02/10/2012
+ DB_G00182307 NB(jr617): Added String ID = 564 -->
+<!--Changes to INSITE Ver 7.6 , 04/09/2012
+ DB_G00188069 NB(jr617): Modified String ID = 521 -->
+<!--Changes to INSITE Ver 7.6 , 05/03/2012
+ DB_G00187956 NB(jr617): Added new String ID = 565 for TIS ID 5267 -->
+<!--Changes to INSITE Ver 7.6 , 05/22/2012
+ DB_G00191430 VK(kg929): Added new String ID = 566 & 567 Features Fault Information and Fault Snapshot -->
+<!--Changes to INSITE Ver 7.6 , 06/01/2012
+ DB_G00193638 NB(jr617): Added new String ID = 568 and 569 -->
+<!-- READING THE DATA BELOW
+<STRING ID="FEATURE NUMBER">FEATURE NAME</STRING>  
+-->
+
+<XML_RESOURCE>
+	<RESOURCE Description="Feature Description">
+		<STRING ID="1">Accelerator Options</STRING>
+		<STRING ID="2">Accelerator Interlock</STRING>
+		<STRING ID="3">Adaptive Cruise</STRING>
+		<STRING ID="4">All Speed Governor</STRING>
+		<STRING ID="5">Alternate Droop</STRING>
+		<STRING ID="6">Alternate Torque</STRING>
+		<STRING ID="7">Battery Voltage Monitor</STRING>
+		<STRING ID="8">Boost Power</STRING>
+		<STRING ID="9">Vehicle Speed</STRING>
+		<STRING ID="10">Centinel Oil System</STRING>
+		<STRING ID="11">Cruise Control</STRING>
+		<STRING ID="12">Throttle Settings</STRING>
+		<STRING ID="13">Acceleration Management</STRING>
+		<STRING ID="14">Driver Reward</STRING>
+		<STRING ID="15">Duty Cycle Monitor</STRING>
+		<STRING ID="16">Electronic Air Compressor Governor</STRING>
+		<STRING ID="17">Engine Brake Control</STRING>
+		<STRING ID="18">Engine Brake</STRING>
+		<STRING ID="19">Accelerator Type</STRING>
+		<STRING ID="20">Engine Protection</STRING>
+		<STRING ID="21">Engine Speed</STRING>
+		<STRING ID="22">Engine Warm Up Protection</STRING>
+		<STRING ID="23">Fan Control</STRING>
+		<STRING ID="24">Fuel Consumption Rate Logger</STRING>
+		<STRING ID="25">Fuel Inlet Restriction Monitor</STRING>
+		<STRING ID="26">Gear-Down Protection</STRING>
+		<STRING ID="27">Governor Setup</STRING>
+		<STRING ID="28">Hot Shutdown Monitor</STRING>
+		<STRING ID="29">Hybrid Power</STRING>
+		<STRING ID="30">ICON - Idle Control System</STRING>
+		<STRING ID="31">Idle Management</STRING>
+		<STRING ID="32">Idle Shutdown</STRING>
+		<STRING ID="33">Idle Speed Adjustment</STRING>
+		<STRING ID="34">Intermediate Speed Control</STRING>
+		<STRING ID="35">J1939 Controls</STRING>
+		<STRING ID="36">SAE J1939 Multiplexing</STRING>
+		<STRING ID="37">Low Idle</STRING>
+		<STRING ID="38">Machine Electrical Voltage</STRING>
+		<STRING ID="39">Maintenance Monitor</STRING>
+		<STRING ID="40">Maximum Progressive Shift</STRING>
+		<STRING ID="41">Multiple Unit Synchronization</STRING>
+		<STRING ID="42">OEM Sensors</STRING>
+		<STRING ID="43">PTO/Remote PTO</STRING>
+		<STRING ID="44">Powertrain Protection</STRING>
+		<STRING ID="45">Remote PTO Options</STRING>
+		<STRING ID="46">Road Speed Governor</STRING>
+		<STRING ID="47">Starter Lockout</STRING>
+		<STRING ID="48">Switched Outputs</STRING>
+		<STRING ID="49">Switch Position Priority</STRING>
+		<STRING ID="51">Throttle Setup</STRING>
+		<STRING ID="52">Tire Wear Adjustment</STRING>
+		<STRING ID="53">Transmission Synchronization</STRING>
+		<STRING ID="54">Transmission</STRING>
+		<STRING ID="55">Trip Information</STRING>
+		<STRING ID="56">System ID and Dataplate</STRING>
+		<STRING ID="57">Vehicle Speed Source</STRING>
+		<STRING ID="58">Vehicle Speed Droop</STRING>
+		<STRING ID="59">Vehicle Speed Input Processing</STRING>
+		<STRING ID="60">Vehicle Speed Sensor Diagnostics</STRING>
+		<STRING ID="61">Water In Fuel Sensor</STRING>
+		<STRING ID="62">Adjustable Low Idle Speed</STRING>
+		<STRING ID="63">Multi-Function Switch Setup</STRING>
+		<STRING ID="64">Remote Throttle</STRING>
+		<STRING ID="65">Vehicle Speed Sensor Anti-Tampering</STRING>
+		<STRING ID="66">Accelerator Maximum Manual Vehicle Switch</STRING>
+		<STRING ID="67">Coolant Level Sensor</STRING>
+		<STRING ID="68">Transmission Setup</STRING>
+		<STRING ID="69">Vehicle Anti-Theft</STRING>
+		<STRING ID="70">PTO / Remote PTO</STRING>
+		<STRING ID="71">Vehicle Speed Source</STRING>
+		<STRING ID="72">Generic Tool Permissions</STRING>
+		<STRING ID="73">Cruise Control Switch Setup</STRING>
+		<STRING ID="74">Intake Air Heater</STRING>
+		<STRING ID="75">User Activated Datalogger</STRING>
+		<STRING ID="76">Switched Maximum Engine Operating Speed</STRING>
+		<STRING ID="77">Engine Coolant Level Sensor</STRING>
+		<STRING ID="78">Vehicle Electrical System Voltage</STRING>
+		<STRING ID="79">Immobilizer</STRING>
+		<STRING ID="80">Transient Smoke Control</STRING>
+		<STRING ID="81">Step Timing Control</STRING>
+		<STRING ID="82">Oil Capacity</STRING>
+		<STRING ID="83">Oil Level Monitor</STRING>
+		<STRING ID="84">Ambient Temperature Derate</STRING>
+		<STRING ID="85">Ether Injection</STRING>
+		<STRING ID="86">Grid Heater</STRING>
+		<STRING ID="87">OEM Sensor Faults</STRING>
+		<STRING ID="88">Advantage Torque</STRING>
+		<STRING ID="89">Oxygen Sensor Offset</STRING>
+		<STRING ID="90">Vehicle Acceleration Management</STRING>
+		<STRING ID="91">Fast Idle Warmup</STRING>
+		<STRING ID="92">Switched Maximum Operating Speed</STRING>
+		<STRING ID="93">Cylinder Testing</STRING>
+		<STRING ID="94">Remote Accelerator</STRING>
+		<STRING ID="95">SAE J1939 Multiplexing</STRING>
+		<STRING ID="96">Dual Outputs Based On Sensed Parameters</STRING>
+		<STRING ID="97">Light Fuel</STRING>
+		<STRING ID="98">Alternate Idle Speed</STRING>
+		<STRING ID="99">Marine Cruise Control</STRING>
+		<STRING ID="100">Load Based Speed Control</STRING>
+		<STRING ID="101">Fast Idle Warmup</STRING>
+		<STRING ID="119">Commissioning setup</STRING>
+		<STRING ID="120">Air Handling Tests</STRING>
+		<STRING ID="121">Speed Bias Setup</STRING>
+		<STRING ID="122">Cranking and Vent Cycle Duration</STRING>
+		<STRING ID="123">Trip Information Offset</STRING>
+		<STRING ID="124">Switched Droop</STRING>
+		<STRING ID="125">Adjustable High Idle Governor Speed</STRING>
+		<STRING ID="126">ICON / Engine Brake Harness Installed</STRING>
+		<STRING ID="127">Air-Fuel Ratio Fueling Control</STRING>
+		<STRING ID="128">Alternate Fueling Table</STRING>
+		<STRING ID="129">Idle Speed</STRING>
+		<STRING ID="130">Accelerator Default Mode</STRING>
+		<STRING ID="131">Governor Type</STRING>
+		<STRING ID="132">VT605</STRING>
+		<STRING ID="133">VT612</STRING>
+		<STRING ID="134">PWM Dedicated Pin Output</STRING>
+		<STRING ID="135">Electric Fan Clutch</STRING>
+		<STRING ID="136">Diesel Exhaust Fluid Heater</STRING>
+		<STRING ID="137">Clutch Pedal Position Switch</STRING>
+		<STRING ID="138">PTO</STRING>
+		<STRING ID="139">Transmission Setup</STRING>
+		<STRING ID="140">OBD</STRING>
+		<STRING ID="141">OBD Misfire Alternate Gains</STRING>
+		<STRING ID="142">Aftertreatment</STRING>
+		<STRING ID="143">High Pressure Common Rail Injector Setup</STRING>
+		<STRING ID="144">Detonation Sensor Offset Calibration</STRING>
+		<STRING ID="145">Kilowatt Load Sensor Calibration</STRING>
+		<STRING ID="146">Idle Rampdown</STRING>
+		<STRING ID="147">Cyclical Load Acceptance Gain Adjust</STRING>
+		<STRING ID="148">Cyclical Load Acceptance Datalink Message</STRING>
+		<STRING ID="149">Immobilizer</STRING>
+		<STRING ID="150">Switched Maximum Vehicle Speed</STRING>
+		<STRING ID="151">Kickdown Pedal Smart Road Speed Governor</STRING>
+		<STRING ID="152">Variable Rate Vehicle Acceleration Management</STRING>
+		<STRING ID="153">Smart Road Speed Governor</STRING>
+        <STRING ID="154">SCR Catalyst Intake Temperature Sensor Enable</STRING>
+		<STRING ID="155">SCR Catalyst Outlet Temperature Sensor Enable</STRING>
+		<STRING ID="156">Diesel Exhaust Fluid Tank Heater 1 Relay</STRING>
+		<STRING ID="157">Diesel Exhaust Fluid Tank Configuration</STRING>
+        <STRING ID="158">Aftertreatment Maintenance Extension</STRING>
+		<STRING ID="159">Enhanced Auxiliary Shutdown Switch</STRING>
+		<STRING ID="160">Idle Shutdown Service Brake Switch Interaction</STRING>
+		<STRING ID="161">Parking Brake Switch</STRING>
+		<STRING ID="162">Cruise Control without Parking Brake Set</STRING>
+		<STRING ID="163">Oil Level Sensor Enhanced</STRING>
+    	<STRING ID="164">Fuel Usage Adjustment</STRING>
+    	<STRING ID="165">Load Based Speed Control - Enhanced</STRING>
+		<STRING ID="166">Immobilizer Installation</STRING>
+		<STRING ID="167">Parking Brake Switch State</STRING>
+		<STRING ID="168">Auxiliary Pressure 2 Sensor</STRING>
+		<STRING ID="169">Auxiliary Temperature Sensor 2</STRING>
+		<STRING ID="170">EGR Orifice Pressure Sensor</STRING>
+		<STRING ID="171">Diesel Particulate Filter Outlet Pressure Sensor</STRING>
+        <STRING ID="172">Close Coupled Catalyst Intake Temperature Sensor</STRING>
+		<STRING ID="173">Close Coupled Catalyst Outlet Temperature Sensor</STRING>
+		<STRING ID="174">EGR Orifice Temperature Sensor 2</STRING>
+		<STRING ID="175">Aftertreatment Purge Air Solenoid</STRING>
+		<STRING ID="176">Catalyst Injection Tank Temperature Sensor</STRING>
+		<STRING ID="177">Enhanced Auxiliary Shutdown Switch Multiplexing</STRING>
+    <STRING ID="178">Diesel Exhaust Fluid Line Heater 1 Relay</STRING>
+    <STRING ID="179">Diesel Exhaust Fluid Line Heater 2 Relay</STRING>
+    <STRING ID="180">Diesel Exhaust Fluid Tank Heater 2 Relay</STRING>
+    <STRING ID="181">Gear Down Protection</STRING>
+    <STRING ID="182">Regeneration with Parking Brake Set</STRING>
+    <STRING ID="183">High Soot Load Shutdown</STRING>
+    <STRING ID="184">Air Shut Off Valve</STRING>
+    <STRING ID="185">Ignore Vehicle Speed Source in PTO</STRING>
+    <STRING ID="186">Driver Reward</STRING>
+    <STRING ID="187">Diesel Exhaust Fluid Line Heater 3 Relay</STRING>
+    <STRING ID="188">Exhaust Volumetric Flowrate</STRING>
+    <STRING ID="189">Speed Bias Setup 2</STRING>
+    <STRING ID="190">High NOx Reset</STRING>
+        <STRING ID="191">Ambient Air Temperature Sensor</STRING>
+        <STRING ID="192">Cruise Control Pause Switch</STRING>
+		<STRING ID="193">Fault Acknowledge Switch</STRING>
+    <STRING ID="194">Air Conditioner Control</STRING>
+      <STRING ID="195">Remote Start</STRING>
+      <STRING ID="196">Intake Air Throttle</STRING>
+      <STRING ID="197">Transmission Accelerator Interlock</STRING>
+    <STRING ID="198">OEM Auxiliary Switch Input</STRING>
+	<STRING ID="199">Engine Overload Protection</STRING>
+    <STRING ID="200">Accelerator Options</STRING>
+    <STRING ID="201">Load Based Speed Control</STRING>
+    <STRING ID="202">Powertrain Protection</STRING>
+    <STRING ID="203">Vehicle Speed Sensor Anti-Tampering</STRING>
+    <STRING ID="205">Engine Oil Pressure Sensor</STRING>
+	<STRING ID="206">Aftertreatment Diesel Particulate Filter Regeneration Inhibit Lamp</STRING>
+    <STRING ID="207">OEM Switch 1</STRING>
+    <STRING ID="208">OEM Switch 2</STRING>
+    <STRING ID="209">OEM Switch 3</STRING>
+    <STRING ID="210">OEM Switch 4</STRING>
+    <STRING ID="211">OEM Switch 5</STRING>
+    <STRING ID="212">Vehicle Speed Based Device Driver A</STRING>
+    <STRING ID="213">Vehicle Speed Based Device Driver B</STRING>
+    <STRING ID="214">Clutch Protection</STRING>
+    <STRING ID="215">Remote Accelerator Pedal or Lever</STRING>
+    <STRING ID="220">Transmission Setup</STRING>
+    <STRING ID="221">RS422 Communication</STRING>
+    <STRING ID="500">All Trips (Cumulative)</STRING>
+		<STRING ID="501">Trip Since Last Reset</STRING>
+		<STRING ID="502">Trip Since Last Reset - Drive (Vehicle Speed >0)</STRING>
+		<STRING ID="503">Accelerator Pedal or Lever Settings</STRING>
+		<STRING ID="504">Accelerator Pedal or Lever Control</STRING>
+		<STRING ID="505">Remote Accelerator Pedal or Lever</STRING>
+		<STRING ID="506">Switched Alternate Low Idle Speed</STRING>
+		<STRING ID="509">Oil Level Electronic Dipstick</STRING>
+		<STRING ID="510">Automatic Boost Power</STRING>
+        <STRING ID="511">Dedicated Pulse Width Modulation Output</STRING>
+        <STRING ID="512">Electrical System Voltage</STRING>
+        <STRING ID="513">Engine Speed Cruise Control</STRING>
+        <STRING ID="514">Frequency Accelerator Pedal or Lever</STRING>
+        <STRING ID="515">Fuel Consumption Rate</STRING>
+		<STRING ID="516">Idle/Rated Control</STRING>
+		<STRING ID="517">Engine Warmup Protection</STRING>
+		<STRING ID="518">OEM Ambient Air Temperature Sensor</STRING>
+		<STRING ID="519">Cruise Control and Engine Brake Interaction</STRING>
+		<STRING ID="520">Vehicle Anti-Theft Protection</STRING>
+		<STRING ID="521">Customer Constrained Operation</STRING>
+		<STRING ID="522">Auxiliary Governor Control</STRING>
+		<STRING ID="523">Dual Fan Clutch Control</STRING>
+		<STRING ID="524">Rated Overspeed Protection</STRING>
+		<STRING ID="525">Alternator Failure Warning</STRING>
+		<STRING ID="526">Rated Speed Adjust</STRING>
+		<STRING ID="527">Dedicated Fault Lamps</STRING>
+		<STRING ID="528">AEM Trend Log</STRING>
+		<STRING ID="529">Service Brake Switch</STRING>
+		<STRING ID="530">Broadcasted Percent Power</STRING>
+		<STRING ID="531">Lamp Latching Fault Acknowledge</STRING>
+		<STRING ID="532">OEM Auxiliary Pressure Sensor Fault Threshold</STRING>
+    <STRING ID="533">Trip Information</STRING>
+    <STRING ID="534">Trip Information Gas - Vehicle</STRING>
+    <STRING ID="535">Trip Information Gas - Multiple PTO</STRING>
+    <STRING ID="536">Regeneration Stay Warm Enable</STRING>
+    <STRING ID="537">Instrument Cluster Key</STRING>
+    <STRING ID="538">ECM Temperature 1</STRING>
+    <STRING ID="539">Idle Shutdown</STRING>
+    <STRING ID="540">Crankcase Ventilation Heater</STRING>
+	<STRING ID="541">Idle Shutdown</STRING>
+	<STRING ID="542">Powertrain Protection</STRING>
+	<STRING ID="543">Vehicle Speed Sensor Anti-Tampering</STRING>
+    <STRING ID="544">Idle Shutdown</STRING>
+    <STRING ID="545">Vehicle Speed Sensor Anti-Tampering</STRING>
+    <STRING ID="546">Powertrain Protection</STRING>
+    <STRING ID="547">Cold Idle Warmup</STRING>
+    <STRING ID="548">Intermediate Speed Control</STRING>
+	<STRING ID="551">Switched Droop</STRING>
+    <STRING ID="552">System Dataplate</STRING>
+    <STRING ID="553">Alternate Torque</STRING>
+	<STRING ID="554">Constrained Operation</STRING>
+	<STRING ID="555">Customer Constrained Operation</STRING>
+    <STRING ID="556">Engine Oil Pressure Sensor</STRING>
+    <STRING ID="557">Air Conditioner Switch</STRING>
+	<STRING ID="558">User Adjustable Fuel Economy</STRING>
+    <STRING ID="559">Engine Rebuild Run Time</STRING>
+	<STRING ID="560">Sudden Deceleration Event Settings</STRING>
+	<STRING ID="561">High Sulphur Protection Inhibit</STRING>
+    <STRING ID="562">Single Bank Cutout</STRING>
+    <STRING ID="563">OEM Auxiliary Temperature 2</STRING>
+    <STRING ID="564">Anti-Lock Brake (ABS) Controller</STRING>
+    <STRING ID="565">Electric Fuel Lift Pump</STRING>
+    <STRING ID="566">Fault Information</STRING>
+    <STRING ID="567">Fault Snapshot</STRING>
+    <STRING ID="568">Coolant Level Sensor</STRING>
+    <STRING ID="569">Fuel Level Sensor 2</STRING>
+  </RESOURCE>
+</XML_RESOURCE>

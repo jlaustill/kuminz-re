@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE module SYSTEM "htmlentities.dtd">
+<ColumnTranslations>
+	<Language ID="EN">
+		<ECMCodeExpr>ECM Code</ECMCodeExpr>
+		<EngineModel>Engine Model</EngineModel>
+		<Market>Market</Market>
+		<CPL>Critical Parts List</CPL>
+		<AdvPowerExpr>Advertised Power at RPM</AdvPowerExpr>
+		<AdvPowerBmpExpr>Advertised Power at BHP</AdvPowerBmpExpr>
+		<GovernedPower>Governed Power at RPM</GovernedPower>
+		<TorquePeakExpr>Torque Peak at RPM</TorquePeakExpr>
+		<OEMName>Customer / OEM Name</OEMName>
+		<OEMModel>Customer / OEM Model</OEMModel>
+		<ApplicationComments>Application Comments</ApplicationComments>
+		<TransmissionType>Transmission Type</TransmissionType>
+		<AxleType>Axle Type</AxleType>
+		<PerformanceOptions>Performance Options</PerformanceOptions>
+		<CentinelCPL>Centinel CPL</CentinelCPL>
+		<Voltage>Voltage</Voltage>
+		<CPLComments>CPL Comments</CPLComments>
+		<SCComments>SC Comments</SCComments>
+		<DOComments>DO Comments</DOComments>
+		<FROption>FR Option</FROption>
+		<SCOption>SC Option</SCOption>
+		<DOOption>DO Option</DOOption>
+		<PJOption>PJ Option</PJOption>
+		<PowerCurve>Power Curve</PowerCurve>
+		<CertificationCodes>Certification Code</CertificationCodes>
+		<CertificationYear>Certification Year</CertificationYear>
+		<Centinel>Centinel</Centinel>
+		<FRComments>FR Comments</FRComments>
+		<HighIdle>High Idle</HighIdle>
+		<Datalink>Data Link</Datalink>
+		<DataLink>Data Link</DataLink>
+		<RevisionDate>Revision Date</RevisionDate>
+		<SoftwareCalibrationPhase>Calibration Software Phase</SoftwareCalibrationPhase>
+		<SCHistory>SC History</SCHistory>
+		<DOHistory>DO History</DOHistory>
+		<CalibrationHistory>Calibration History</CalibrationHistory>
+		<IntakeManifoldPressureAtTorquePeakRPM>Intake Manifold Pressure at Torque Peak RPM</IntakeManifoldPressureAtTorquePeakRPM>
+		<IntakeManifoldPressureFullyLoaded>Intake Manifold Pressure, Fully Loaded</IntakeManifoldPressureFullyLoaded>
+		<FuelRateAtTorquePeakRPM>Fuel Rate at Torque Peak RPM</FuelRateAtTorquePeakRPM>
+		<FuelRateAtAdvertisedRPMFullyLoaded>Fuel Rate at Advertised RPM, Fully Loaded</FuelRateAtAdvertisedRPMFullyLoaded>
+		<RailPressureAtAdvertisedRPMFullyLoaded>Rail Pressure At Advertised RPM, Fully Loaded</RailPressureAtAdvertisedRPMFullyLoaded>
+		<MaximumBlowby>Maximum Blowby</MaximumBlowby>
+		<AmbientAirPressureSensor>Ambient Air Pressure Sensor</AmbientAirPressureSensor>
+		<ECMControlledFanClutch>ECM Controlled Fan Clutch</ECMControlledFanClutch>
+		<ECMPartNumbers>ECM Part Number</ECMPartNumbers>
+		<PropertyQueries>Property Queries</PropertyQueries>
+		<IgnoreMe>No Data Available</IgnoreMe>
+		<FuelType>Fuel Type</FuelType>
+		<OxygenSensorLocation>Oxygen Sensor Location</OxygenSensorLocation>
+		<OxygenSensorPartNumber>Oxygen Sensor Part Number</OxygenSensorPartNumber>
+		<Catalyst>Catalyst</Catalyst>
+		<NumberOfFlywheelTeeth>Number of Flywheel Teeth</NumberOfFlywheelTeeth>
+		<FuelCode>Fuel Code</FuelCode>
+		<GovernedSpeed>Governed Speed</GovernedSpeed>
+		<InjectorPartNumber>Injector Part Number</InjectorPartNumber>
+		<CentryCPL>CPL</CentryCPL>
+		<CentryOEMName>OEM Name</CentryOEMName>
+		<CentryOEMModel>OEM Model</CentryOEMModel>
+		<CentryOEMApplication>OEM Application</CentryOEMApplication>
+		<ISBAdvertisedPower>Advertised Power</ISBAdvertisedPower>
+		<TurboChargerType>Turbo Charger Type</TurboChargerType>
+		<ECMControlledStartAid>ECM Controlled Start Aid</ECMControlledStartAid>
+		<CoolantLevelSensorType>Coolant Level Sensor Type</CoolantLevelSensorType>
+		<RemoteThrottle>Remote Throttle</RemoteThrottle>
+		<TorqueCurveSelect>Torque Curve Select</TorqueCurveSelect>
+		<ISCValidation>ISC Validation</ISCValidation>
+		<MultipleUnitSynchronization>Multiple Unit Synchronization</MultipleUnitSynchronization>
+		<SwitchedSpeedInput>Switched Speed Input</SwitchedSpeedInput>
+		<OutputDriverSetup>Output Driver Setup</OutputDriverSetup>
+		<IdleValidation>Idle Validation</IdleValidation>
+		<ThrottleType>Throttle Type</ThrottleType>
+		<PIOption>PI Option</PIOption>
+		<Comment>Comment</Comment>
+		<ECMVersion>ECM Version</ECMVersion>
+		<SoftwarePhase>Software Phase</SoftwarePhase>
+		<Environment>Environment</Environment>
+		<AmbientAirPressurSensor>Ambient Air Pressure Sensor</AmbientAirPressurSensor>
+		<DataLinkA>Data Link A</DataLinkA>
+		<DataLinkB>Data Link B</DataLinkB>
+		<DataLinkJ1708>Data Link J1708</DataLinkJ1708>
+		<EmissionLevel>Emission Level</EmissionLevel>
+		<CalibrationRestriction>Calibration Restriction</CalibrationRestriction>
+		<History>History</History>
+		<QueryName>Calibration Properties</QueryName>
+		<ApplicationInformation>Application Information</ApplicationInformation>
+		<BaseEngineInformation>Base Engine Information</BaseEngineInformation>
+		<HistoryCalProperty>Calibration History</HistoryCalProperty>
+		<PerformanceParameters>Performance Parameters</PerformanceParameters>
+		<SpecialParameters>Special Parameters</SpecialParameters>
+		<ModelName>Model Name</ModelName>
+		<ISBDCModel>Model</ISBDCModel>
+		<VehicleModelYear>Vehicle Model Year</VehicleModelYear>
+		<CustomerName>Customer Name</CustomerName>
+		<EventTime>Date and Time</EventTime>
+		<EngineSN>Engine Serial Number</EngineSN>
+		<ECMSN>ECM Serial Number</ECMSN>
+		<ConnECMCode>ECM Code Before</ConnECMCode>
+		<ReqECMCode>ECM Code After</ReqECMCode>
+		<CalPassword>Password</CalPassword>
+		<ESOption>ES Option</ESOption>
+		<ESComments>ES Comments</ESComments>
+		<TrainModel>Train Model</TrainModel>
+		<CalibrationVoltage>Calibration Voltage</CalibrationVoltage>
+		<EngineMonitoringSystem>Engine Monitoring System</EngineMonitoringSystem>
+		<NumberOfCylinders>Number of Cylinders</NumberOfCylinders>
+		<ModuleLocation>Module Location</ModuleLocation>
+		<PowerRating>Power Rating</PowerRating>
+		<Application>Application</Application>
+		<DatalinkSupported>Datalink Supported</DatalinkSupported>
+		<DevicePartNumbers>Device Part Number</DevicePartNumbers>
+		<DeviceCodeExpr>Calibration Code</DeviceCodeExpr>
+		<Address>Address</Address>
+		<EIOption>EI Option</EIOption>
+		<EngModel>Engine Model</EngModel>
+		<NumberofCylinders>Number of Cylinders</NumberofCylinders>
+		<ECMCode>ECM Code</ECMCode>
+	</Language>
+</ColumnTranslations>

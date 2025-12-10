@@ -1,0 +1,14 @@
+# TraceDebug.dll Function Rename Mapping
+# Format: old_name|new_name
+# Total functions: 10
+
+FUN_100010c0|CLogger_LogTraceMessage
+FUN_10001242|CLogger_LogMessage
+FUN_1000152b|CLogger_put_Enabled
+FUN_10001699|CLogger_get_Enabled
+FUN_10001822|CLogger_put_Level
+FUN_10001994|CLogger_get_Level
+FUN_10001b14|CLogger_put_Categories
+FUN_10001c69|CLogger_get_Categories
+FUN_10001df2|CLogger_SetStream
+FUN_10001f4e|CLogger_FormXMLMessageBlock

@@ -1,0 +1,14 @@
+<LicenseFile>
+	<UserReqLicense Expiration="permanent" Name="TripInfo_Reset_User" VendorDaemon="cummins" Key="AAD56312EC8F" IsValid="" ID="TripInfo_Reset_User" Version="1.0" Count="uncounted">
+		<Users>
+			<User NAME="Reset_Trip_Information_Data"/></Users>
+	</UserReqLicense>
+	<UserReqLicense Expiration="permanent" Name="AdvanceECMData_Reset_User" VendorDaemon="cummins" Key="552DAC22DD45" IsValid="" ID="AdvanceECMData_Reset_User" Version="1.0" Count="uncounted">
+		<Users>
+			<User NAME="Reset_Advance_ECM_Data"/></Users>
+	</UserReqLicense>
+	<UserReqLicense Expiration="permanent" Name="InactiveFaults_Reset_User" VendorDaemon="cummins" Key="46FF22356477" IsValid="" ID="InactiveFaults_Reset_User" Version="1.0" Count="uncounted">
+		<Users>
+			<User NAME="Reset_Faults"/></Users>
+	</UserReqLicense>
+</LicenseFile>

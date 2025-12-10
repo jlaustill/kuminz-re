@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE module SYSTEM "../htmlentities.dtd">
+<XML_RESOURCE>
+	<RESOURCE Tag="1001" Type="String Table" Description="Message String Table">
+		<STRING ID="1" Context="">Heated Oxygen Sensor Test</STRING>
+		<STRING ID="2" Context="Subtitle">The Heated Oxygen Sensor Test is used to help isolate and troubleshoot heated oxygen sensor problems by measuring the oxygen percentage using the heated oxygen sensor to see if it is in tolerance after the engine has been cranked, but not running.</STRING>
+		<STRING ID="3" Context="Instructions">Perform the following actions:\r\n1. Set the parking brake.\r\n2. Place the transmission in neutral.\r\n3. Verify engine is stopped.\r\n4. Select Start to start the test. After selecting Start, you will be asked to crank the engine for 8 seconds. The engine will not start. This test will take approximately 2 minutes to complete.</STRING>
+		<STRING ID="4" Context="Test Running Message">Select Start to start the test. After selecting Start, you will be asked to crank the engine for 8 seconds. The engine will not start. This test will take approximately 2 minutes to complete.</STRING>
+		<STRING ID="5" Context="">The test has been aborted for an unknown reason.</STRING>
+		<STRING ID="6" Context="">An unknown error has occurred.</STRING>
+		<STRING ID="7" Context="">Test stopped by operator.</STRING>
+		<STRING ID="8" Context="">The engine RPM must be equal to zero to start the test.</STRING>
+		<STRING ID="9" Context="">Heated oxygen sensor circuit fault detected. Troubleshoot the heated oxygen sensor circuit fault code before proceeding with this test.</STRING>
+		<STRING ID="10" Context="">The test could not be started for unknown reasons.</STRING>
+		<STRING ID="11" Context="">Select Start to start the test. After selecting Start, you will be asked to crank the engine for 8 seconds. The engine will not start. This test will take approximately 2 minutes to complete.</STRING>
+		<STRING ID="12" Context="">Test aborted , due to a fault detected in the heated oxygen sensor circuit.</STRING>
+		<STRING ID="13" Context="">Starting test. Please Wait.</STRING>
+		<STRING ID="14" Context="">Crank the engine for approximately 8 seconds.</STRING>
+		<STRING ID="15" Context="">The engine did not crank for at least 8 seconds. Restart the test.</STRING>
+		<STRING ID="16" Context="">The test has timed out. Restart the test.</STRING>
+		<STRING ID="17" Context="">Test Passed.</STRING>
+		<STRING ID="18" Context="">Test Failed. The oxygen sensor did not measure the percent of oxygen correctly. Refer to the Troubleshooting and Repair Manual for further instructions.</STRING>
+		<STRING ID="19" Context="">Select Start to start the test.</STRING>
+		<STRING ID="20" Context="">Cummins INSITE</STRING>
+		<STRING ID="21" Context="">Instructions</STRING>
+		<STRING ID="22" Context="">Current Values</STRING>
+		<STRING ID="23" Context="">Test Status</STRING>
+		<STRING ID="24" Context="">ECM Calibration does not support this test.</STRING>
+		<STRING ID="25" Context="">The test was not started because some fault code is active.</STRING>
+    <STRING ID="26" Context="">Show</STRING>
+    <STRING ID="20100" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20100&lt;/ErrorNumber&gt;&lt;Description&gt;An unknown error occurred within the Heated Oxygen Sensor Test Page.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20102" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20102&lt;/ErrorNumber&gt;&lt;Description&gt;Base class initialization failed.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20103" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20103&lt;/ErrorNumber&gt;&lt;Description&gt;Could not Query logic.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20104" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;21014&lt;/ErrorNumber&gt;&lt;Description&gt;Unable to start the Heated Oxygen Sensor Test.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20105" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20105&lt;/ErrorNumber&gt;&lt;Description&gt;Could not register as publisher.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20106" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20106&lt;/ErrorNumber&gt;&lt;Description&gt;Could not register as subscriber.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20107" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20107&lt;/ErrorNumber&gt;&lt;Description&gt;Could not unpublish test events.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart INSITE before attempting to restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20108" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20108&lt;/ErrorNumber&gt;&lt;Description&gt;Could not unsubscribe from receiving system messages.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart INSITE before attempting to restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20109" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;201091&lt;/ErrorNumber&gt;&lt;Description&gt;Unable to start the Heated Oxygen Sensor Test.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20110" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20110&lt;/ErrorNumber&gt;&lt;Description&gt;Unable to properly stop the Heated Oxygen Sensor Test.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20111" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20111&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while loading a string for the page.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20112" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20112&lt;/ErrorNumber&gt;&lt;Description&gt;The test has been aborted for an unknown reason.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20113" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20113&lt;/ErrorNumber&gt;&lt;Description&gt;The test was not started because the Engine Speed is greater than 0.&lt;/Description&gt;&lt;Suggestion&gt;Please reduce engine speed to 0 and try running the test again.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20114" Context="Displayed when Feature Enable precondition fails">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20114&lt;/ErrorNumber&gt;&lt;Description&gt;ECM calibration does not support this test.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20115" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20115&lt;/ErrorNumber&gt;&lt;Description&gt;The test was not started because some fault code is active.&lt;/Description&gt;&lt;Suggestion&gt;Inactivate the mentioned fault codes and try running the test again.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+	</RESOURCE>
+</XML_RESOURCE>

@@ -1,0 +1,91 @@
+<!--  jr620 DB_G00197834 - Modified schema for displaying header information in tool printing
+<!-- is308 DB_G00173409 Modified schema of Diesel Exhaust Fluid Doser Purge Counter Tool view Printing of ECM Image -->
+<!--  hk283 - Created to Print the values for Diesel Exhaust Fluid Doser Purge Counter Tool view Printing of ECM Image  -->
+
+<!--   Flex Grid Schema  -->
+<FlexGrid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<Properties Cols="2:VT_I4" FixedCols="0:VT_I4" ExplorerBar="0:VT_I4" OutlineBar="4:VT_UI4" AllowUserResizing="1:VT_UI4" AutoResize="1:VT_I4" Editable="0:VT_I4" ColWidthMax="0" WordWrap="1:VT_UI4"/>
+
+		<!-- Add properties to the &quot;FlexGrid&quot; element as attribute in Name=Value format -->
+	<FixedRows>
+		<FixedRow styleid="s1">
+			<Column name="RES:Res1:124"/>
+			<Column name="RES:Res1:125"/>
+		</FixedRow>
+	</FixedRows>
+
+	<data loopEnd="1">
+		<Object name="colwdth" source="OBJ:VSFLEXGRID:ColWidth(0,3300)PROPPUT" />
+		<Object name="colwdth" source="OBJ:VSFLEXGRID:ColWidth(1,3600)PROPPUT" />
+		
+		<Object name="IsDEFDoserAvailable" source="OBJ:DOM:selectSingleNode(DEFDoserAvailable)" />
+
+			<!-- If the Special Feature  is not Enabled " -->
+			 <Node level = "OBJ:IsDEFDoserAvailable:getAttribute(V)" loopStart="0" loopEnd="1" styleid="s1">
+			    	<Column order = "0" datasource ="RES:Res1:128" />
+			 </Node>
+    <Node level = "0" loopStart="0" loopEnd="OBJ:IsDEFDoserAvailable:getAttribute(V)" styleid="s1">
+      <Object name="IsDEFDoserAvailable" source="OBJ:DOM:selectSingleNode(DEFDoserAvailable)" />
+
+      <!-- DEF Doser Purge Counter Special Feature -->
+      <Node loopStart="0" loopEnd ="1" >
+        <Object name="CompleteCounter" source="OBJ:DOM:selectSingleNode(DEF_DOSER_COMPLETE_COUNTER)"/>
+        <Column order="0" datasource="OBJ:CompleteCounter:getAttribute(N)" />
+        <Column order="1" datasource="OBJ:CompleteCounter:getAttribute(DV)" />
+      </Node>
+      <Node loopStart="0" loopEnd ="1" >
+        <Object name="IncompleteCounter" source="OBJ:DOM:selectSingleNode(DEF_DOSER_INCOMPLETE_COUNTER)"/>
+        <Column order="0" datasource="OBJ:IncompleteCounter:getAttribute(N)" />
+        <Column order="1" datasource="OBJ:IncompleteCounter:getAttribute(DV)" />
+      </Node>
+      <!--Remove the root node that we added for sorting -->
+      <Object name="PlaceHolder" source="OBJ:VSFLEXGRID:RemoveItem(1)" />
+      <!-- Hide the outlines to hide the tree structure /-->
+      <Object name="PlaceHolder" source="OBJ:VSFLEXGRID:OutlineBar(0)PROPPUT" />
+    </Node>
+	</data>
+	<parameters>
+		<parameter name="DEF_DOSER_COMPLETE_COUNTER" source="/Image/Parameters/P[@ID=16820873]" />
+		<parameter name="DEF_DOSER_INCOMPLETE_COUNTER" source="/Image/Parameters/P[@ID=16818112]" />
+		<parameter name="DEFDoserAvailable" source="/Image/Parameters/P[@ID=16818108]" />
+		<parameter name="DEFDoserUserSel" source="/Image/Parameters/P[@ID=16818109]" />
+		</parameters>
+
+	<styles>
+		<style id="s1" CellFontBold="1:VT_I4" CellAlignMent="1:VT_I4" /> 
+		<style id="s2" AutoSizeMode="1:VT_I4" WordWrap="1" />		
+	</styles>
+
+	<resources>
+		<resource id="Res1" CLSID="{1C628621-473B-4EA4-9DC6-7ED92C57DD9E}\Pages\{6F127538-04FB-46C4-8498-F50599693DB1}" LoadDLL="TRUE" />
+	</resources>
+
+	<printing HdrFontSize="8">
+		<header>
+			<line>
+				<center source="RES:Res1:121"/>
+				<right source="INSITE - " />
+			    <right source="OBJ:DOM:selectSingleNode(/Image):getAttribute(ImageVersion)" />
+			</line>
+			<line>	
+					<left source="RES:Res1:337"/>
+					<left source="OBJ:DOM:selectSingleNode(/Image/Header/ESerial):getAttribute(DisplayValue)"/>
+					<right source="RES:Res1:338" />
+					<right source="OBJ:DOM:selectSingleNode(/Image/Header/VMake):getAttribute(DisplayValue)" />
+			</line>
+			<line>
+					<left source="RES:Res1:339" />
+					<left source="OBJ:DOM:selectSingleNode(/Image/Header/UNumber):getAttribute(DisplayValue)" />
+					<right source="RES:Res1:340" />
+					<right source="OBJ:DOM:selectSingleNode(/Image/Header/IName):getAttribute(DisplayValue)" />
+			</line>
+			<line>
+					<left source="RES:Res1:341" />
+					<left source="OBJ:DOM:selectSingleNode(/Image/Header/WOName):getAttribute(DisplayValue)" />
+					<right source="RES:Res1:342"/>
+					<right source="OBJ:DOM:selectSingleNode(/Image/Header/CustomerName):getAttribute(DisplayValue)"/>
+			</line>
+		</header>
+	</printing>
+
+</FlexGrid>

@@ -1,0 +1,154 @@
+<!--  hk283 - Created to Print the values for Real Time Clock for the Tool view Printing of ECM Image  -->
+<!--  hz224 - Modified the Schema to printing the feature in case , when feature is not supported by current calibration-->
+<!--  jj392 - Modified the Schema to print the proper message for the feature in case , when feature is not supported by current calibration-->
+
+<!--   Flex Grid Schema  -->
+<FlexGrid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<Properties Cols="3:VT_I4" FixedCols="0:VT_I4" ExplorerBar="0:VT_I4" OutlineBar="4:VT_UI4" AllowUserResizing="1:VT_UI4" AutoResize="1:VT_I4" Editable="0:VT_I4" ColWidthMax="0" WordWrap="1:VT_UI4"/>
+
+		<!-- Add properties to the &quot;FlexGrid&quot; element as attribute in Name=Value format -->
+	<FixedRows>
+		<FixedRow styleid="s1">
+			<Column name="RES:Res1:206"/>
+			<Column name="RES:Res1:207"/>
+			<Column name="RES:Res1:208"/>
+		</FixedRow>
+	</FixedRows>
+
+	<data loopEnd="1">
+		<Object name="colwdth" source="OBJ:VSFLEXGRID:ColWidth(0,1300)PROPPUT" />
+		<Object name="colwdth" source="OBJ:VSFLEXGRID:ColWidth(1,1600)PROPPUT" />
+		<Object name="colwdth" source="OBJ:VSFLEXGRID:ColWidth(2,1500)PROPPUT" />
+		
+		<Object name="IsRTCAvailable" source="OBJ:DOM:selectSingleNode(RTCAvailable)" />
+
+		<Node level = "0" loopStart="OBJ:IsRTCAvailable:getAttribute(V)" loopEnd="2" styleid="s1">
+			<Column order = "0" datasource ="RES:Res1:3215" />
+		</Node>
+
+		<Node level = "0" loopStart="0" loopEnd="OBJ:IsRTCAvailable:getAttribute(V)" styleid="s1">
+			 <Object name="IsRTCEnable" source="OBJ:DOM:selectSingleNode(REAL_TIME_CLOCK)" />
+
+			 <!-- IF RTC is not Enabled " -->
+			 <Node level = "0" loopStart="OBJ:IsRTCEnable:getAttribute(V)" loopEnd="1" styleid="s1">
+			    	<Column order = "0" datasource ="RES:Res1:3214" />
+			 </Node>
+			 <Node level="0" loopStart="0" loopEnd="OBJ:IsRTCEnable:getAttribute(V)" >
+				<!-- Display Real Time Clock information -->
+			 		<Object name="RealTimeCheck_CoreI" source="OBJ:DOM:selectNodes(RealTimeCheck_CoreI)" />
+			    	 <Node level="0" loopStart="0" loopEnd="OBJ:RealTimeCheck_CoreI:length" >
+				    	<Object name="ECMTimeState" source="OBJ:DOM:selectSingleNode(ECMTimeState)"/>
+					    <Column order="0" datasource="OBJ:ECMTimeState:getAttribute(N)" />
+					    <Column order="1" datasource="OBJ:ECMTimeState:getAttribute(DV)" />	    
+				    </Node>
+					
+					<Object name="RealTimeCheck_CoreII" source="OBJ:DOM:selectNodes(RealTimeCheck_CoreII)" />
+			    	<Node level="0" loopStart="0" loopEnd="OBJ:RealTimeCheck_CoreII:length" >
+					 <Object name="ECM_REAL_TIME_Max" source="OBJ:DOM:selectNodes(ECM_REAL_TIME_Max)"/>
+						<Node level="0" loopStart="0" loopEnd ="OBJ:ECM_REAL_TIME_Max:length" >
+							<Column order="0" datasource="RES:Res1:345" />
+							<Column order="1" datasource ="RES:Res1:3234" />
+						</Node>
+						<Node level="0" loopStart="OBJ:ECM_REAL_TIME_Max:length" loopEnd ="1" >
+							<Column order="0" datasource="RES:Res1:345" />
+							<Column order="1" datasource ="RES:Res1:3235" />
+						</Node> -->
+					</Node>
+				<Object name="RealTimeCheck_Legacy" source="OBJ:DOM:selectNodes(RealTimeCheck_Legacy)" />
+				<Node level="0" loopStart="0" loopEnd="OBJ:RealTimeCheck_Legacy:length" >
+					<Object name="ECMTimeState" source="OBJ:DOM:selectSingleNode(ECMTimeState)"/>
+					<Column order="0" datasource="OBJ:ECMTimeState:getAttribute(N)" />
+					<Column order="1" datasource="OBJ:ECMTimeState:getAttribute(DV)" />	
+				</Node> 	
+				<Object name="RTCDataLink" source="OBJ:DOM:selectNodes(REAL_TIME_CLOCK_FROM_DATALINK)"/>
+				<Node level="0" loopStart="0" loopEnd="OBJ:RTCDataLink:length" >
+					<Object name="RTCDataLinkPara" source="OBJ:RTCDataLink:nextNode" />
+					<Column order="0" datasource="OBJ:RTCDataLinkPara:getAttribute(N)" />
+					<Column order="1" datasource="OBJ:RTCDataLinkPara:getAttribute(DV)" />
+				</Node>
+			
+				<Object name="RTCSAddr" source="OBJ:DOM:selectsNodes(REAL_TIME_CLOCK_FROM_DATALINK_SOURCE_ADDRESS)"/>
+				<Node level="0" loopStart="0" loopEnd="OBJ:RTCSAddr:length" >
+					<Object name="RTCSAddrPara" source="OBJ:RTCSAddr:nextNode" />
+					<Column order="0" datasource="OBJ:RTCSAddrPara:getAttribute(N)" />
+					<Column order="1" datasource="OBJ:RTCSAddrPara:getAttribute(DV)" />
+				</Node>
+				
+				<Node loopStart="OBJ:ECM_REAL_TIME_Max:length" loopEnd ="1" >
+					<Object name="ECMRealTime" source="OBJ:DOM:selectSingleNode(ECM_REAL_TIME)"/>
+					<Column order="0" datasource="OBJ:ECMRealTime:getAttribute(N)" />
+					<Column order="1" datasource="OBJ:ECMRealTime:getAttribute(DV)" />
+					<Column order="2" datasource="OBJ:ECMRealTime:getAttribute(U)" />
+				</Node>
+				<Node loopStart="0" loopEnd ="OBJ:ECM_REAL_TIME_Max:length" >
+					<Object name="ECMRunTime" source="OBJ:DOM:selectSingleNode(ECM_RUN_TIME)"/>
+					<Column order="0" datasource="OBJ:ECMRunTime:getAttribute(N)" />
+					<Column order="1" datasource="OBJ:ECMRunTime:getAttribute(DV)" />
+					<Column order="2" datasource="OBJ:ECMRunTime:getAttribute(U)" />
+				</Node>
+        <Object name="removerow" source="OBJ:VSFLEXGRID:RemoveItem(3)" />
+        <Object name="removerow" source="OBJ:VSFLEXGRID:RemoveItem(2)" />
+			</Node>
+	 </Node>
+	<Object name="removerow" source="OBJ:VSFLEXGRID:RemoveItem(1)" />
+	</data>
+	<parameters>
+		<parameter name="REAL_TIME_CLOCK" source="/Image/Parameters/P[@ID=22371]" />
+		<parameter name="REAL_TIME_CLOCK_FROM_DATALINK" source="/Image/Parameters/P[@R=1 and @ID=15470]" />
+		<parameter name="REAL_TIME_CLOCK_FROM_DATALINK_SOURCE_ADDRESS" source="/Image/Parameters/P[@R=1 and @ID=15471]" />	
+		<parameter name="ECM_REAL_TIME" source="/Image/Parameters/P[@ID=112900]" />
+		<parameter name="ECM_REAL_TIME_Max" source="/Image/Parameters/P[@V=4294967295000 and @ID=112900]" />
+		<parameter name="ECMTimeState" source="/Image/Parameters/P[@ID=15210]" />
+		<parameter name="RealTimeCheck_CoreI" source="/Image/Parameters/P[@V=1 and @ID=15216]" />
+		<parameter name="RealTimeCheck_CoreII" source="/Image/Parameters/P[@V=2 and @ID=15216]" />
+		<parameter name="check" source="RealTimeCheck_CoreII and ECM_REAL_TIME_Max" />
+		<parameter name="RealTimeCheck_Legacy" source="/Image/Parameters/P[@V=0 and @ID=15216]" />
+		<parameter name="DatalinkTISTkn" source="/Image/Parameters/P[@ID=1010304]" />
+		<parameter name="RTCAvailable" source="/Image/Parameters/P[@ID=22370]" />
+		<parameter name="ECM_RUN_TIME" source="/Image/Parameters/P[@ID=7]" />
+		</parameters>
+
+
+	<styles>
+		<style id="s1" CellFontBold="1:VT_I4" CellAlignMent="1:VT_I4" /> 
+		<style id="s2" AutoSizeMode="1:VT_I4" WordWrap="1" />		
+	</styles>
+
+	<resources>
+		<resource id="Res1" CLSID="{1C628621-473B-4EA4-9DC6-7ED92C57DD9E}\Pages\{C6F856BD-5F48-4FDF-9251-82DEBC0A8BDA}" />
+	</resources>
+
+	<printing HdrFontSize="8">
+		<header>
+			<line>
+				<center source="RES:Res1:336"/>
+				<right source="INSITE - " />
+			    <right source="OBJ:DOM:selectSingleNode(/Image):getAttribute(ImageVersion)" />
+			</line>
+			<line>	
+					<left source="RES:Res1:337"/>
+					<left source="OBJ:DOM:selectSingleNode(/Image/Header/ESerial):getAttribute(DisplayValue)"/>
+					<right source="RES:Res1:338" />
+					<right source="OBJ:DOM:selectSingleNode(/Image/Header/VMake):getAttribute(DisplayValue)" />
+			</line>
+			<line>
+					<left source="RES:Res1:339" />
+					<left source="OBJ:DOM:selectSingleNode(/Image/Header/UNumber):getAttribute(DisplayValue)" />
+					<right source="RES:Res1:340" />
+					<right source="OBJ:DOM:selectSingleNode(/Image/Header/IName):getAttribute(DisplayValue)" />
+			</line>
+			<line>
+					<left source="RES:Res1:341" />
+					<left source="OBJ:DOM:selectSingleNode(/Image/Header/WOName):getAttribute(DisplayValue)" />
+					<right source="RES:Res1:342"/>
+					<right source="OBJ:DOM:selectSingleNode(/Image/Header/CustomerName):getAttribute(DisplayValue)"/>
+			</line>
+		</header>
+	</printing>
+
+</FlexGrid>
+
+
+
+
+

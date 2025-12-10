@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+/////////////////////////////////////////////////////////////////////////////// 
+// Copyright (c) 2017 Cummins Inc. All rights reserved. 
+//=============================================================================
+// Cummins Confidential
+//=============================================================================
+// ORGANIZATION  : ETIPS 
+// FILENAME      : NoteTypeToOptionMap.xml
+//=============================================================================
+// DESCRIPTION   : It helps to refer OptionType from NoteType.
+//=============================================================================
+// REMARKS: 
+//=============================================================================
+// CHANGE HISTORY 
+//  PR/CR        Author            Date          Description 
+//=============================================================================
+//              Kiran Vaidya	 02/07/2013    Added CTT product's layout information.
+//                                             Referred document - SPEED-IRS-03 versioned 5.6
+//              Harshad C        10/09/2013    Added BFN,BFQ,BFZ and BGD layout information.
+// DB_G00220939 Harshad C        10/09/2013    Added BGO product's layout information.
+// DB_G00250510 Nikita S         02/09/2015    Added Bhd's product layout information 
+// DB_G00272377 Sricha Bagchi    03/03/2016    Added support for product BHT
+// DB_G00272379 Sricha Bagchi    03/03/2016    Added support for product BHW
+// DB_G00272987 Suhas Patil      04/04/2016    Added Support for Product BIW 
+// DB_G00280503 Suhas Patil      2017/01/05    Added support for product BJG
+// CR 1227683   Suhas Patil      2017/03/06    Remove Support for Product BFI
+// CR 1227685   Suhas Patil      2017/03/06    Remove Support for Product BFN
+// CR 1227671   Rohini Shinde    2017/03/30    Add Support for Product BJP
+// CR 1227686   Rohini Shinde    2017/03/30    Add Support for Product BJQ
+// CR 1227712   Rohini Shinde    2017/03/30    Add Support for Product BJR
+//=============================================================================
+ -->
+<NoteTypeToOptionMap xmlns="http://tempuri.org/NoteTypeToOptionMapping.xsd">
+	<Product Product_ID="ECI">
+		<OptionType Option_ID="SC" NoteTypeValue="01" />
+		<OptionType Option_ID="DO" NoteTypeValue="06" />
+		<OptionType Option_ID="PP" NoteTypeValue="00" />
+	</Product>
+	<Product Product_ID="IND">
+		<OptionType Option_ID="FQSubFile" NoteTypeValue="04" />
+	</Product>
+	<Product Product_ID="PIM">
+		<OptionType Option_ID="With_No" NoteTypeValue="00" />
+	</Product>
+	<Product Product_ID="COR">
+		<OptionType Option_ID="With_No" NoteTypeValue="00" />
+	</Product>
+	<Product Product_ID="CTT">
+		<OptionType Option_ID="TurboTech" NoteTypeValue="00" />
+	</Product>
+	<Product Product_ID="BFQ">
+		<OptionType Option_ID="With_No" NoteTypeValue="00" />
+	</Product>
+	<Product Product_ID="BFZ">
+		<OptionType Option_ID="With_No" NoteTypeValue="00" />
+	</Product>
+	<Product Product_ID="BGD">
+		<OptionType Option_ID="With_No" NoteTypeValue="00" />
+	</Product>
+	<Product Product_ID="BGO">
+		<OptionType Option_ID="With_No" NoteTypeValue="00" />
+	</Product>
+	<Product Product_ID="BHD">
+		<OptionType Option_ID="With_No" NoteTypeValue="00" />
+	</Product>
+   <Product Product_ID="BHT">
+      <OptionType Option_ID="With_No" NoteTypeValue="00" />
+   </Product>
+   <Product Product_ID="BHW">
+      <OptionType Option_ID="With_No" NoteTypeValue="00" />
+	</Product>
+	<Product Product_ID="BIW">
+		<OptionType Option_ID="With_No" NoteTypeValue="00" />
+	</Product>
+   <Product Product_ID="BJG">
+      <OptionType Option_ID="With_No" NoteTypeValue="00" />
+	</Product>
+   <Product Product_ID="BJP">
+      <OptionType Option_ID="With_No" NoteTypeValue="00" />
+	</Product>
+   <Product Product_ID="BJQ">
+      <OptionType Option_ID="With_No" NoteTypeValue="00" />
+	</Product>
+   <Product Product_ID="BJR">
+      <OptionType Option_ID="With_No" NoteTypeValue="00" />
+	</Product>
+<Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315" /><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1" /><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" /><DigestValue>+sv3fQQ4sPgqgq9TyCW5W3zaw2Y=</DigestValue></Reference></SignedInfo><SignatureValue>BMaXegU19NQfWw4wcQadeB3Zp3nCObrdl3wK4y8gUDzajCH3FHtMQy/loLsHg1VuSqnPEqNCi1gil03CJw+4D417toUGl6v2bgcWapK44ZCihIH7xmbIINYUrl2RX9PQIwYqgzwDPsH+417adpZ3ZWpXD588ujNSzbca1vukMFRz79ptaBI1AJahK9V58yJ9VMLOnJmvcC+tjqWnPPHd8Jc4lVv1fYs50ib52x5I1FN3v+Aoa2rN9kwo0KNcuL4WcYwpvjN8UwvD0nP/9o/GN5nZjbVG0K+Fzfn9+ox9W3mTAz0JGzxKEre7tMu5TIspOywxkxJshPWfjmLFyBgKCw==</SignatureValue></Signature></NoteTypeToOptionMap>

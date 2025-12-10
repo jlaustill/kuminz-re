@@ -1,0 +1,102 @@
+ %% PLEASE DO NOT MODIFY OR DELETE THIS FILE! %% 
+ %% This file contains information about the installation of an application. %% 
+ %% It will be used to automatically remove all application components from your computer if you choose to do so. %% 
+
+
+NOTE: Beginning of the bootstrapper section
+
+CONFIG: Title: "DPFM Service Tool"
+
+ACTION: TempFile: "C:\Windows\setup1.exe"
+(File was not found or was an older version -- new file copied)
+
+ACTION: RegKey: "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion", "SharedDLLs"
+
+ACTION: SharedFile: "C:\Windows\System32\VB5StKit.dll"
+(File currently on disk was already up to date)
+
+ACTION: SystemFile: "C:\Windows\System32\MSVBVM50.dll"
+(File was not found or was an older version -- new file copied)
+
+ACTION: SystemFile: "C:\Windows\System32\StdOle2.tlb"
+(File currently on disk was already up to date)
+
+ACTION: SystemFile: "C:\Windows\System32\OleAut32.dll"
+(File currently on disk was already up to date)
+
+ACTION: SystemFile: "C:\Windows\System32\OlePro32.dll"
+(File currently on disk was already up to date)
+
+ACTION: SystemFile: "C:\Windows\System32\AsycFilt.dll"
+(File currently on disk was already up to date)
+
+NOTE: The file 'Ctl3d32.dll' was not copied because it is intended for use under Windows NT 3.51 only.  It is not needed under Windows 95 or NT 4.0.
+
+ACTION: SystemFile: "C:\Windows\System32\Ctl3d32.dll"
+(File currently on disk was already up to date)
+
+ACTION: SystemFile: "C:\Windows\System32\ComCat.dll"
+(File currently on disk was already up to date)
+
+ACTION: DllSelfRegister: "C:\Windows\system32\MSVBVM50.dll"
+
+ACTION: TLBRegister: "C:\Windows\system32\StdOle2.tlb"
+
+ACTION: DllSelfRegister: "C:\Windows\system32\OleAut32.dll"
+
+ACTION: DllSelfRegister: "C:\Windows\system32\OlePro32.dll"
+
+ACTION: DllSelfRegister: "C:\Windows\system32\ComCat.dll"
+
+NOTE: End of the bootstrapper section
+
+NOTE: Now spawning the main Setup program 'C:\Windows\setup1.exe'....
+
+ACTION: CreateDir: "C:\Program Files\DPFM Service Tool"
+
+ACTION: SharedFile: "C:\Windows\System32\mscomm32.ocx"
+(File currently on disk was already up to date)
+
+ACTION: SharedFile: "C:\Windows\System32\Msflxgrd.ocx"
+(File was not found or was an older version -- new file copied)
+
+ACTION: SharedFile: "C:\Windows\System32\TABCTL32.OCX"
+(File was not found or was an older version -- new file copied)
+
+ACTION: SharedFile: "C:\Windows\System32\comdlg32.ocx"
+(File currently on disk was already up to date)
+
+ACTION: SharedFile: "C:\Windows\System32\MSCOMCTL.OCX"
+(File was not found or was an older version -- new file copied)
+
+ACTION: PrivateFile: "C:\Program Files\DPFM Service Tool\DPFM_Service_Tool.exe"
+(File was not found or was an older version -- new file copied)
+
+ACTION: PrivateFile: "C:\Program Files\DPFM Service Tool\DPFM_Help.chm"
+(File was not found or was an older version -- new file copied)
+
+ACTION: PrivateFile: "C:\Program Files\DPFM Service Tool\dpfm.cfg"
+(File was not found or was an older version -- new file copied)
+
+ACTION: PrivateFile: "C:\Program Files\DPFM Service Tool\dpfm.ini"
+(File was not found or was an older version -- new file copied)
+
+ACTION: PrivateFile: "C:\Users\adminacct\Desktop\DPFM Service Tool.lnk"
+(File was not found or was an older version -- new file copied)
+
+ACTION: DllSelfRegister: "C:\Windows\System32\mscomm32.ocx"
+
+ACTION: DllSelfRegister: "C:\Windows\System32\Msflxgrd.ocx"
+
+ACTION: DllSelfRegister: "C:\Windows\System32\TABCTL32.OCX"
+
+ACTION: DllSelfRegister: "C:\Windows\System32\comdlg32.ocx"
+
+ACTION: DllSelfRegister: "C:\Windows\System32\MSCOMCTL.OCX"
+
+ACTION: ShellLink: "", "DPFM Service Tool"
+
+ACTION: RegKey: "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion", "App Paths\DPFM_Service_Tool.exe"
+
+ACTION: RegValue: "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\DPFM_Service_Tool.exe", ""
+

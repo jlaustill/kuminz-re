@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE module SYSTEM "../htmlentities.dtd"[]>
+<XML_RESOURCE>
+  <RESOURCE Tag="1001" Type="String Table" Description="Message String Table">
+    <!--Graphical Monitor Dialog-->
+    <STRING ID="100" Context="title">INSITE - Data Monitor Logger - Graphical Display</STRING>
+    <!--Menu Items-->
+    <STRING ID="210" Context="fileToolStripMenuItem.Text">File</STRING>
+    <STRING ID="211" Context="importLogFileToolStripMenuItem.Text">Import Log File</STRING>
+    <STRING ID="212" Context="saveAsPictureToolStripMenuItem.Text">Save As Picture</STRING>
+    <STRING ID="213" Context="saveExportToolStripMenuItem.Text">Save/Export File</STRING>
+    <STRING ID="214" Context="closeLogFileToolStripMenuItem.Text">Close Log File</STRING>
+    <STRING ID="215" Context="printPreviewToolStripMenuItem.Text">Print</STRING>
+    <STRING ID="216" Context="printPreviewToolStripMenuItem.Text">Print Preview</STRING>
+    <STRING ID="217" Context="exitToolStripMenuItem.Text">Exit</STRING>
+    <STRING ID="220" Context="editToolStripMenuItem.Text">Edit</STRING>
+    <STRING ID="221" Context="addRemoveParametersToolStripMenuItem.Text">Add\Remove Parameters</STRING>
+    <STRING ID="222" Context="setSamplingRateToolStripMenuItem.Text">Set Sampling Rate</STRING>
+    <STRING ID="230" Context="viewToolStripMenuItem.Text">View</STRING>
+    <STRING ID="231" Context="unitsGraphToolStripMenuItem.Text">Units Graph</STRING>
+    <STRING ID="232" Context="parameterGraphToolStripMenuItem.Text">Parameter Graph</STRING>
+    <STRING ID="240" Context="graphingToolStripMenuItem.Text">Graphing</STRING>
+    <STRING ID="241" Context="startGraphingToolStripMenuItem.Text">Start Graphing</STRING>
+    <STRING ID="242" Context="stopGraphingToolStripMenuItem.Text">Stop Graphing</STRING>
+    <STRING ID="250" Context="helpToolStripMenuItem.Text">Help</STRING>
+    <STRING ID="251" Context="helpToolStripMenuItem.Text">Contents</STRING>
+    <!--Tool bar Items-->
+    <STRING ID="300" Context="plotToolBarButtonTrackingResume.ToolTipText">Play\Reset View</STRING>
+    <STRING ID="301" Context="plotToolBarButtonTrackingPause.ToolTipText">Pause View</STRING>
+    <STRING ID="302" Context="plotToolBarButtonAxesScroll.ToolTipText">Axes Scroll</STRING>
+    <STRING ID="303" Context="plotToolBarButtonAxesZoom.ToolTipText">Axes Zoom</STRING>
+    <STRING ID="304" Context="plotToolBarButtonZoomOut.ToolTipText">Zoom Out</STRING>
+    <STRING ID="305" Context="plotToolBarButtonZoomIn.ToolTipText">Zoom In</STRING>
+    <STRING ID="306" Context="plotToolBarButtonSelect.ToolTipText">Select</STRING>
+    <STRING ID="307" Context="plotToolBarButtonZoomBox.ToolTipText">Zoom Box</STRING>
+    <STRING ID="308" Context="plotToolBarButtonDataCursor.ToolTipText">Data Cursor</STRING>
+    <STRING ID="309" Context="plotToolBarButtonEdit.ToolTipText">Add\Remove Parameters</STRING>
+    <STRING ID="310" Context="plotToolBarButtonCopy.ToolTipText">Copy</STRING>
+    <STRING ID="311" Context="plotToolBarButtonSave.ToolTipText">Save As Picture</STRING>
+    <STRING ID="312" Context="plotToolBarButtonPrint.ToolTipText">Print</STRING>
+    <STRING ID="313" Context="plotToolBarButtonPreview.ToolTipText">Print Preview</STRING>
+    <STRING ID="314" Context="plotToolBarButtonPageSetup.ToolTipText">Page Setup</STRING>
+    <!--Parameter Selection Dialog-->
+    <STRING ID="400" Context="title">Parameter Selection</STRING>
+    <STRING ID="401" Context="optionsFlexGrid header">Available Groups</STRING>
+    <STRING ID="402" Context="selectionFlexGrid header">Selected Parameters</STRING>
+    <STRING ID="403" Context="set sample rate combo title">Sampling Rate (1 Sample in ...)</STRING>
+    <STRING ID="404" Context="All Parameters">All Parameters</STRING>
+    <STRING ID="405" Context="Predefined">Predefined</STRING>
+    <STRING ID="406" Context="Custom">Custom</STRING>
+    <STRING ID="407" Context="Import">Import</STRING>
+    <STRING ID="408" Context="Add">Add &hyphen;&gt;</STRING>
+    <STRING ID="409" Context="Remove">&lt;&hyphen; Remove</STRING>
+    <!--File Filters-->
+    <STRING ID="500" Context="Picture File filter">JPEG file(*.jpg)|*.jpg|Bitmap file(*.bmp)|*.bmp|EMF file(*.emf)|*.emf|GIF file(*.gif)|*.gif|PNG file(*.png)|*.png|TIFF file(*.tif)|*.tif</STRING>
+    <STRING ID="501" Context="Log File filter">Comma Separated File(*.csv)|*.csv|Tab Delimited File(*.txt)|*.txt</STRING>
+    <STRING ID="502" Context="Exported Log File filter">Electronic Graph File(*.elf)|*.elf</STRING>
+    <!--Messages for User-->
+    <STRING ID="600" Context="When no parameter selected">Please select parameters to graph</STRING>
+    <STRING ID="601" Context="Changing view">Changing the view will stop monitoring. Continue?</STRING>
+    <STRING ID="602" Context="Exiting graph">Do you want to save the log file before exiting?</STRING>
+    <STRING ID="603" Context="Opening log file">Opening log file will stop current monitoring session. Continue?</STRING>
+    <STRING ID="604" Context="Parameter selection instruction">Select parameters for graphing on the left and click "Add". To remove parameters from the “Selected Parameters” list, select parameters on the right and click "Remove". Only 6 parameters can be selected for graphing. Click "Import" to open an existing log file.</STRING>
+    <STRING ID="605" Context="Log file format">Choose log file format</STRING>
+    <STRING ID="606" Context="Connection terminated">Connection to module has been terminated. This graphing session will now close.</STRING>
+    <STRING ID="607" Context="Parameters limit exceeded">The maximum allowed parameters is 6. Please remove parameters from "Selected Parameters" to add different parameters.</STRING>
+    <STRING ID="608" Context="Remove Parameter Prompt">Parameters removed from the graph will not be saved in a log file. It is recommended to save the graph before adding or removing parameters.\n\nSelect OK to save the existing graph, select Cancel to continue without saving the graph.</STRING>
+    <STRING ID="609" Context="Save Events logfile Prompt">The Event marking information can be saved only in .csv and .txt. This information will be lost if saved in .elf format. Do you want to continue?</STRING>
+	<STRING ID="610" Context="When Printer Not Found">Printer Not Found.</STRING>
+    <!--Dialog Headers-->
+    <STRING ID="700" Context="Export Log File">Export Log File</STRING>
+    <STRING ID="701" Context="Save Log File">Save Log File</STRING>
+    <STRING ID="702" Context="Open Log File">Open Log File</STRING>
+    <STRING ID="703" Context="Confirm View Change">Confirm View Change</STRING>
+    <STRING ID="704" Context="Exit Graph">Exit Graph</STRING>
+    <STRING ID="705" Context="Generic message title">Graphical Display</STRING>
+    <STRING ID="706" Context="Log Comments Header">Data Monitor/Logger : Enter Event Description</STRING>
+	<STRING ID="707" Context="Cummins INSITE">Cummins INSITE</STRING>
+    <!--Miscellaneous-->
+    <STRING ID="900" Context="OK">OK</STRING>
+    <STRING ID="901" Context="Cancel">Cancel</STRING>
+    <STRING ID="902" Context="Milli-Seconds">milliseconds</STRING>
+    <STRING ID="903" Context="Seconds">seconds</STRING>
+    <STRING ID="904" Context="Minutes">minutes</STRING>
+    <STRING ID="905" Context="Hour">hour</STRING>
+    <STRING ID="906" Context="Exported file format">Electronic Graph File(*.elf)</STRING>
+    <STRING ID="907" Context="Text file format">Comma Separated File(*.csv) or Tab Delimited File(*.txt)</STRING>
+    <STRING ID="908" Context="File Formats">File Formats</STRING>
+    <STRING ID="909" Context="Save">Save</STRING>
+    <!--Error Messages-->
+    <STRING ID="1000" Context="Internal Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;9500&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred while starting Graphical monitoring.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation. Or 2) Close and restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+    <STRING ID="1001" Context="Print Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;9501&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error occurred while attempting to print or print preview.&lt;/Description&gt;&lt;Suggestion&gt;1) Close and restart the operation. Or 2) Close and restart INSITE.  If the problem persists, please record the error number and contact the local distributor.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+
+     <!--Event Marker-->
+     <STRING ID="1100" Context="EventStatusText">Event</STRING>
+     <STRING ID="1101" Context="EventMarkerSetup">Event Marker Setup</STRING>
+    <STRING ID="1102" Context="Event Marker Comments">Please enter your description below for: </STRING>
+    <STRING ID="1103" Context="EnableEventMarker">Enable Event Marker</STRING>
+    <STRING ID="1104" Context="EnableEventDescription">Enable Event Description</STRING>
+  </RESOURCE>
+</XML_RESOURCE>

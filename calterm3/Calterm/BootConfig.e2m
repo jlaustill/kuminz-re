@@ -1,0 +1,50 @@
+C5C2
+[Header Records]
+CalibrationVersion=99999999
+ModuleID=DH
+ProductID=ABC
+ModulePN=0000000
+MarketID=BOOTLOADER
+InterfaceLevel=38
+CreationDate=010104
+StartBootLoaderVersion=00000001
+EndBootLoaderVersion=99999999
+EngineID=38BOOT
+FuelSystemID=38BOOT
+ByteOrder=BigEndian
+AddressLength=32
+CPPDataLink=J1939
+FileDescriptor=Calterm III GTIS-3.8 bootloader configuration file, Copyright 2004 Cummins Inc. - Cummins Confidential
+[Data Records]
+Block_Size,HEX,0018,0000,0000,N,37,4,0,U,1,0,0,4294967295,0,0000,0024,00000001,99999999;calibration download size
+Boot_Loader_Checksum,HEX,12A9,0000,0000,N,03,2,0,U,1.0,0000,0,65535,0,0000,0024,00000001,99999999;[SSBLSM] Checksum of boot loader code.
+Rom_Boot_Loader_Checksum,HEX,101B,0000,0000,N,03,2,0,U,1.0,0000,0,65535,0,0000,0024,00000001,99999999;[SSBLSM] Checksum of boot loader code.
+Boot_Loader_Module_Designation,HEX,12A3,0000,0000,N,37,4,0,U,1,0,0,65535,0,0000,0076,00000001,99999999;[SSBLMO] Type of ECM designator, embedded in the bootloader code.
+Rom_Boot_Date_Stamp,HEX,0002,0000,000A,B,37,6,0,U,1,0,0,255,3,0000,003E,00000001,99999999;Calibration Release Date.
+Calibration_Date_Stamp,HEX,0003,0000,000A,B,37,6,0,U,1,0,0,255,3,0000,003E,00000001,99999999;Calibration Release Date.
+ECM_Identifier,HEX,0000,0000,0000,N,37,2,0,U,1,0,0,65535,0,0000,0076,00000001,99999999;Identifier of the ECM hardware type.
+ECM_Run_Time,SEC,0004,0000,0000,N,37,4,1,U,0.2,0,0,536870912,0,0000,0028,00000001,99999999;Time key switch is on and ECM is running boot or application code
+ECM_Serial_Number,UNITLESS,0048,0000,0000,B,37,4,0,U,1,0,0,0,0,0,0024,00000001,99999999;Serial number of ECM
+ECM_Status,HEX,000B,0000,0000,N,37,2,0,U,1,0,0,65535,0,0000,0024,00000001,99999999;Indicator as to the calibration status of the ECM
+ECM_STAT,HEX,000B,0000,0000,N,37,2,0,U,1,0,0,65535,0,0000,0024,00000001,99999999;Indicator as to the calibration status of the ECM
+Harness_Key_Input_Status,HEX,1C40,0000,0000,N,37,2,0,U,1,0,0,65535,0,0000,0024,00000001,99999999;Indicator as to the calibration status of the ECM
+Error_Status,UNITLESS,000C,0000,0000,N,37,2,0,U,1,0,0,65535,0,0000,0023,00000001,99999999;COMPLETION STATUS OF DATA LINK COMMAND
+Master_Password,HEX,0005,0000,0000,B,37,6,0,U,1.0,0.0,0,255,0,0000,003B,00000001,99999999;security master password
+Run_Location,HEX,0010,0000,0000,N,37,1,0,U,1,0,0,2,0,0000,0024,00000001,99999999;Indicator that code is executing from ROM(0),FLASH(1), or RAM(2).
+Safe_To_Program,UNITLESS,000D,0000,0000,N,37,1,0,U,1,0,0,1,0,0000,0024,00000001,99999999;Indicator to tools (0 = safe for program, 1 = not safe)
+Scratch_Pad_CRC,HEX,0015,0000,0000,N,37,2,0,U,1,0,0,65535,0,0000,0023,00000001,99999999;CRC written by tool, used by s/w to verify scratchpad info. prior to writing da
+Security_Key,HEX,1000,0000,0021,N,37,2,0,U,1,0000,0,65535,6,0000,0024,00000001,99999999;Key which provides access to calibration dl.
+ECM_Part_Number_17,HEX,1914,0000,0D2B,B,37,4,0,U,1,0000,0,255,7,0000,0036,00000001,99999999;second ECM part number without calibration in the ECM
+Release_Status,HEX,0011,0000,0000,N,37,1,0,U,1,0,0,255,0,0000,0076,00000001,99999999;Indicates the type of ECM hardware; 55=production, BB=development.
+Scratch_Pad_Buffer,HEX,0013,0000,0000,N,37,4,0,U,1,0,0,4294967295,0,0000,0023,00000001,99999999;Buffer used to store secure write data until the copy scratchpad command is sen
+ECM_Run_Time_Backup,SEC,0027,0000,0000,N,37,4,1,U,0.200000003,0,0,536870912,0,0000,0028,00000001,99999999;[CMECBUTR] Non-volatile copy of ECM_Run_Time
+Boot_Loader_Phase_Designation,HEX,0045,0000,0000,N,37,4,0,U,1,0,0,598,0,0000,0024,00000001,99999999;[SSBLPH] BOOT LOADER SOFTWARE VERSION
+Module_Manufacturing_Date_Code,HEX,1291,0000,0000,N,37,4,0,U,1,0,0,4294967296,0,0000,0076,00000001,99999999;[ECM_DC] Date the ECM was manufactured.
+Engine_Run_Time_Backup,SEC,1405,0000,0000,N,37,4,1,U,0.2,0,0,536870912,0,0000,0028,00000001,99999999;[CMEGBUTR] Non-volatile copy of Engine_Run_Time
+Powerdown_EEPROM_Checksum,HEX,15C5,0000,0000,N,37,2,0,U,1,0.0,0,65535,0,0000,0024,00000001,99999999;Checksum for EEPROM powerdown memory block
+ECM_Part_Number,HEX,0001,0000,0000,N,37,4,0,U,1,0,0,255,0,0000,0024,00000001,99999999;Module Part Number
+ECM_Trim,HEX,1915,0000,0D2C,B,37,64,0,U,1,0000,0,255,7,0000,0036,00000001,99999999;reserve for ecm trims per prcr 37052
+ECM_Trim_CRC,HEX,1916,0000,0D2D,B,37,8,0,U,1,0000,0,255,7,0000,0036,00000001,99999999;reserve for ECM_Trim_CRC bytes in EEPROM
+J1939_Default_Engine_Source_Address,UNITLESS,10E3,0000,00C2,N,37,2,0,U,1,0,0,255,6,0000,0023,00000001,99999999;[JCDFEGSA] Default J1939 network address for ECM as engine node
+Max_ECM_Tmptr_Backup,DEG_F,1AE9,0000,0000,N,37,2,2,S,0.015625,0.0,-50,350,0,0000,001D,00000001,99999999;Highest recorded internal ECM temperature
+Manufacturing_Data,None,13EE,0,0,B,37,32,0,U,1,0,0,255,0,0,0,00000001,99999999;Scratpad area for the ECM manufacturer to put ASCII data that the ECM manufacturer would like to store.

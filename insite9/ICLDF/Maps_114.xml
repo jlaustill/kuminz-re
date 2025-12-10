@@ -1,0 +1,1264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--DB_G00102127(hg660) Insite 7.1 base task: Splitted Maps.xml into multiple Maps_<detect type>.xml for performance improvement-->
+<MODULE xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="Maps.xsd">
+	<MAPS>
+		<!-- Features and Parameters-->
+		<MAP mapID="1">
+			<FEATURES>
+				<!--"Accelerator Option"-->
+				<FEATURE featureID="1" featureEnable="0" featureGTIS="0">
+					<SUBFEATURES>
+						<!-- SubFeature 0 -->
+						<SUBFEATURE subFeatureID="25771" subFeatureEnable="25771" subFeatureGTIS="0" subFeatureParent="1">
+							</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<!--"Accelerator Interlock"-->
+				<FEATURE featureID="2" featureEnable="24021" featureGTIS="24025">
+					<SUBFEATURES>
+						<!-- SubFeature 0 -->
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<!--Accelerator Interlock Switch Setup-->
+								<PARAMETER parameterID="15170"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<!--"Adaptive Cruise"-->
+				<FEATURE featureID="3" featureEnable="22941" featureGTIS="22945">
+					<SUBFEATURES>
+						<!-- SubFeature 0 -->
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<!--Recovery-->
+								<PARAMETER parameterID="14180"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<!--"Battery Voltage Monitor"-->
+				<FEATURE featureID="7" featureEnable="22571" featureGTIS="22575">
+					<SUBFEATURES>
+						<!-- SubFeature 0 -->
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<!--Idle Speedup-->
+								<PARAMETER parameterID="22581"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<!--"Centinel"-->
+				<FEATURE featureID="10" featureEnable="22071" featureGTIS="22075">
+					<SUBFEATURES>
+						<!-- SubFeature 0 -->
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<!--Centinel Installation Type-->
+								<PARAMETER parameterID="20581"/>
+								<!--Reset Missed Oil Valve Pulses-->
+								<PARAMETER parameterID="111021"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<!--"Cruise Control"-->
+				<FEATURE featureID="11" featureEnable="20021" featureGTIS="20025">
+					<SUBFEATURES>
+						<!-- SubFeature 0 -->
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<!--Maximum Cruise Control Speed-->
+								<PARAMETER parameterID="10090"/>
+								<!--Cruise Control Upper Droop-->
+								<PARAMETER parameterID="10870"/>
+								<!--Cruise Control Lower Droop-->
+								<PARAMETER parameterID="10880"/>
+								<!--Cruise Control Auto-Resume-->
+								<PARAMETER parameterID="20611"/>
+								<!--Cruise Control Save Set Speed-->
+								<PARAMETER parameterID="21491"/>
+								<!--Cruise Control with Parking Brake OFF -->
+								<PARAMETER parameterID="25201"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<!--"Engine Brake Control"-->
+				<FEATURE featureID="17" featureEnable="23031" featureGTIS="23035">
+					<SUBFEATURES>
+						<!-- SubFeature 0 -->
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<!--Engine Brake Minimum Vehicle Speed-->
+								<PARAMETER parameterID="11540"/>
+								<!--Engine Brake Delay Time-->
+								<PARAMETER parameterID="11580"/>
+								<!--Engine Brake Type-->
+								<PARAMETER parameterID="12930"/>
+								<!--Cruise Control Activation-->
+								<PARAMETER parameterID="20601"/>
+								<!--Service Brake Activation-->
+								<PARAMETER parameterID="21251"/>
+								<!--Start Maximum Engine Braking in Cruise-->
+								<PARAMETER parameterID="12414"/>
+								<!--Start Minimum Engine Braking in Cruise-->
+								<PARAMETER parameterID="12424"/>
+								<!--Discrete Engine Brake Light Output-->
+								<PARAMETER parameterID="15450"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<!--"Engine Protection"-->
+				<FEATURE featureID="20" featureEnable="0" featureGTIS="20225">
+					<SUBFEATURES>
+						<!-- SubFeature 0 -->
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<!--Engine Protection Shutdown-->
+								<PARAMETER parameterID="20091"/>
+								<!--Engine Protection Limited Restart-->
+								<PARAMETER parameterID="21171"/>
+								<!--Engine Protection Shutdown Manual Override-->
+								<PARAMETER parameterID="22911"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<!--"Fan Control"-->
+				<FEATURE featureID="23" featureEnable="22221" featureGTIS="22225">
+					<SUBFEATURES>
+						<!-- SubFeature 0 -->
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<!--Engine Brake/Road Speed Interaction-->
+								<PARAMETER parameterID="21241"/>
+								<!--Fan Control Logic-->
+								<PARAMETER parameterID="14210"/>
+								<!--Minimum Fan On Time for Air Conditioning Pressure Switch-->
+								<PARAMETER parameterID="14600"/>
+								<!--Air Conditioning Pressure Switch Input-->
+								<PARAMETER parameterID="20651"/>
+								<!--Fan on with Engine Braking-->
+								<PARAMETER parameterID="20661"/>
+								<!--Fan Control Switch-->
+								<PARAMETER parameterID="21301"/>
+								<!--OEM Temperature Input-->
+								<PARAMETER parameterID="104031"/>
+								<!--OEM Pressure Input-->
+								<PARAMETER parameterID="105044"/>
+								<!--Fan on with Remote Throttle-->
+								<PARAMETER parameterID="14344"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<!-- SubFeature Fan Type -->
+						<SUBFEATURE subFeatureID="14590" subFeatureEnable="14590" subFeatureGTIS="0" subFeatureParent="23">
+								<PARAMETERS>
+										<!--Variable Speed Fan Frequency-->
+										<PARAMETER parameterID="14340"/>
+									</PARAMETERS>
+								</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<!--"Gear-Down Protection"-->
+				<FEATURE featureID="26" featureEnable="20061" featureGTIS="20065">
+					<SUBFEATURES>
+						<!-- SubFeature 0 -->
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<!--Gear-Down Maximum Vehicle Speed (Light Engine Load)-->
+								<PARAMETER parameterID="11430"/>
+								<!--Gear-Down Maximum Vehicle Speed (Heavy Engine Load)-->
+								<PARAMETER parameterID="11440"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<!--"Idle Shutdown"-->
+				<FEATURE featureID="32" featureEnable="20051" featureGTIS="20055">
+					<SUBFEATURES>
+						<!-- SubFeature 0 -->
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<!--Time Before Shutdown-->
+								<PARAMETER parameterID="10170"/>
+								<!--Shutdown Percent Engine Load-->
+								<PARAMETER parameterID="12910"/>
+								<!--Shutdown in PTO-->
+								<PARAMETER parameterID="20071"/>
+								<!--Manual Override-->
+								<PARAMETER parameterID="22991"/>
+								<!--Idle Shutdown Parking Brake-->
+								<PARAMETER parameterID="15432"/>
+								<!--Prevent Shutdown While Service Brake Applied-->
+								<PARAMETER parameterID="15536"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<!--"Maintenance Monitor"-->
+				<FEATURE featureID="39" featureEnable="20131" featureGTIS="20135">
+					<SUBFEATURES>
+						<!-- SubFeature 0 -->
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<!--Distance Interval-->
+								<PARAMETER parameterID="10280"/>
+								<!--Time Interval-->
+								<PARAMETER parameterID="10290"/>
+								<!--Alert Percentage-->
+								<PARAMETER parameterID="10860"/>
+								<!--Interval Factor-->
+								<PARAMETER parameterID="14230"/>
+								<!--Maintenance Monitor Operating Mode-->
+								<PARAMETER parameterID="15180"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<!--"Powertrain Protection"-->
+				<FEATURE featureID="44" featureEnable="21781" featureGTIS="21785">
+					<SUBFEATURES>
+						<!-- SubFeature 0 -->
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<!--Powertrain Protection Lugback-->
+								<PARAMETER parameterID="21791"/>
+								<!--Driveshaft/Axle Torque Limit-->
+								<PARAMETER parameterID="12280"/>
+								<!--Limit 1 Gear Ratio 1-->
+								<PARAMETER parameterID="12290"/>
+								<!--Maximum Torque Allowed Switched-->
+								<PARAMETER parameterID="12300"/>
+								<!--Limit 1 Torque Limit 1-->
+								<PARAMETER parameterID="12310"/>
+								<!--Limit 1 Gear Ratio 2-->
+								<PARAMETER parameterID="12830"/>
+								<!--Limit 2 Gear Ratio 2-->
+								<PARAMETER parameterID="12840"/>
+								<!--Limit 3 Gear Ratio 2-->
+								<PARAMETER parameterID="12850"/>
+								<!--Limit 2 Torque Limit 2-->
+								<PARAMETER parameterID="12860"/>
+								<!--Limit 3 Torque Limit 3-->
+								<PARAMETER parameterID="12870"/>
+								<!--Maximum Torque at Zero Road Speed-->
+								<PARAMETER parameterID="12880"/>
+								<!--Limit 2 Gear Ratio 1-->
+								<PARAMETER parameterID="12920"/>
+								<!--Limit 3 Gear Ratio 1-->
+								<PARAMETER parameterID="12925"/>
+								<!--Torque Limit Switch Setup-->
+								<PARAMETER parameterID="15200"/>
+								<!--Torque Limit Switch-->
+								<PARAMETER parameterID="20621"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+        <!-- Instrument Cluster Key -->
+        <FEATURE featureID="537" featureEnable="22261" featureGTIS="22265">
+          <SUBFEATURES>
+            <!-- SubFeature 0 -->
+            <SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+              <PARAMETERS>
+              </PARAMETERS>
+            </SUBFEATURE>
+          </SUBFEATURES>
+        </FEATURE>
+				<!--"Road Speed Governor"-->
+				<FEATURE featureID="46" featureEnable="0" featureGTIS="0">
+					<SUBFEATURES>
+						<!-- SubFeature 0 -->
+						<SUBFEATURE subFeatureID="20211" subFeatureEnable="20211" subFeatureGTIS="20215" subFeatureParent="46">
+							<PARAMETERS>
+								<!--Accelerator Maximum-->
+								<PARAMETER parameterID="10000"/>
+								<!--Road Speed Governor Upper Droop-->
+								<PARAMETER parameterID="10890"/>
+								<!--Road Speed Governor Lower Droop-->
+								<PARAMETER parameterID="10900"/>
+								<!--Maximum Vehicle Speed-->
+								<PARAMETER parameterID="13590"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<!-- SubFeature 1 -->
+						<SUBFEATURE subFeatureID="21641" subFeatureEnable="21641" subFeatureGTIS="0" subFeatureParent="0"/>
+					</SUBFEATURES>
+				</FEATURE>
+				<!--"Starter Lockout"-->
+				<FEATURE featureID="47" featureEnable="22151" featureGTIS="22155">
+					<SUBFEATURES>
+						<!-- SubFeature 0 -->
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<!--Starter Lockout Relay Type-->
+								<PARAMETER parameterID="22161"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<!--"Tire Wear Adjustment"-->
+				<FEATURE featureID="52" featureEnable="22951" featureGTIS="22955">
+					<SUBFEATURES>
+						<!-- SubFeature 0 -->
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<!--Expected Percent Change in Tire Size-->
+								<PARAMETER parameterID="14150"/>
+								<!--Expected Tire Service Life-->
+								<PARAMETER parameterID="14170"/>
+								<!--Initial Tire Size-->
+								<PARAMETER parameterID="14330"/>
+								<!--New Tires Installed-->
+								<PARAMETER parameterID="111024"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<!--"Trip Information"-->
+				<FEATURE featureID="55" featureEnable="20191" featureGTIS="20195">
+					<SUBFEATURES>
+						<!-- SubFeature 0 -->
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<!--Engine Time Offset-->
+								<PARAMETER parameterID="10210"/>
+								<!--Engine Distance Offset-->
+								<PARAMETER parameterID="10220"/>
+								<!--Vehicle Overspeed 1-->
+								<PARAMETER parameterID="12940"/>
+								<!--Vehicle Overspeed 2-->
+								<PARAMETER parameterID="12950"/>
+								<!--ECM Hours Offset-->
+								<PARAMETER parameterID="15160"/>
+								<!--ECM Distance Offset-->
+								<PARAMETER parameterID="11160"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<!--"System ID and Dataplate"-->
+				<FEATURE featureID="56" featureEnable="0" featureGTIS="23255">
+					<SUBFEATURES>
+						<!-- SubFeature Vehicle/OEM Information -->
+						<SUBFEATURE subFeatureID="23061" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="56">
+							<PARAMETERS>
+								<!--OEM Name-->
+								<PARAMETER parameterID="1001"/>
+								<!--OEM Vehicle or Equipment Model-->
+								<PARAMETER parameterID="1003"/>
+								<!--Vehicle Identification Number (VIN) or Equipment Serial Number-->
+								<PARAMETER parameterID="1005"/>
+								<!--Vehicle or Equipment Year-->
+								<PARAMETER parameterID="1006"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<!-- SubFeature Customer Information -->
+						<SUBFEATURE subFeatureID="23071" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="56">
+							<PARAMETERS>
+								<!--Customer Name-->
+								<PARAMETER parameterID="1009"/>
+								<!--Customer Location-->
+								<PARAMETER parameterID="1010"/>
+								<!--Customer Unit Number-->
+								<PARAMETER parameterID="1011"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<!-- SubFeature System Information -->
+						<SUBFEATURE subFeatureID="23081" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="56">
+							<PARAMETERS>
+								<!--Advertised Power at RPM-->
+								<PARAMETER parameterID="2001"/>
+								<!--Advertised Power RPM-->
+								<PARAMETER parameterID="2002"/>
+								<!--Governed Speed-->
+								<PARAMETER parameterID="2003"/>
+								<!--Peak Torque at RPM-->
+								<PARAMETER parameterID="2004"/>
+								<!--Peak Torque RPM-->
+								<PARAMETER parameterID="2005"/>
+								<!--Fuel Code (FC)-->
+								<PARAMETER parameterID="2006"/>
+								<!--Torque Rise-->
+								<PARAMETER parameterID="2010"/>
+								<!--Control Parts List-->
+								<PARAMETER parameterID="3005"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<!-- SubFeature Engine Information -->
+						<SUBFEATURE subFeatureID="23051" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="56">
+							<PARAMETERS>
+								<!--Make-->
+								<PARAMETER parameterID="3001"/>
+								<!--Model-->
+								<PARAMETER parameterID="3002"/>
+								<!--Serial Number-->
+								<PARAMETER parameterID="3003"/>
+								<!--Build Date-->
+								<PARAMETER parameterID="3004"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<!-- SubFeature ECM Information -->
+						<SUBFEATURE subFeatureID="25051" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="56">
+							<PARAMETERS>
+								<!--ECM Make-->
+								<PARAMETER parameterID="4001"/>
+								<!--ECM Serial Number (ROM)-->
+								<PARAMETER parameterID="4010"/>
+								<!--ECM Part Number-->
+								<PARAMETER parameterID="4003"/>
+								<!--ECM Product ID-->
+								<PARAMETER parameterID="4004"/>
+								<!--ECM Voltage Range Low-->
+								<PARAMETER parameterID="4005"/>
+								<!--ECM Voltage Range High-->
+								<PARAMETER parameterID="4006"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<!-- SubFeature Calibration Information -->
+						<SUBFEATURE subFeatureID="23091" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="56">
+							<PARAMETERS>
+								<!--Calibration Time Date Stamp-->
+								<PARAMETER parameterID="2007"/>
+								<!--ECM Code-->
+								<PARAMETER parameterID="5002"/>
+								<!--Calibration Software Phase-->
+								<PARAMETER parameterID="5015"/>
+								<!--SC Option-->
+								<PARAMETER parameterID="5017"/>
+								<!--DO Option-->
+								<PARAMETER parameterID="5018"/>
+								<!--Calibration Voltage Range High-->
+								<PARAMETER parameterID="5006"/>
+								<!--Calibration Voltage Range Low-->
+								<PARAMETER parameterID="5005"/>
+								<!--Other Options-->
+								<PARAMETER parameterID="5007"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<!--"Vehicle Speed Source"-->
+				<FEATURE featureID="71" featureEnable="25021" featureGTIS="25025">
+					<SUBFEATURES>
+						<!-- SubFeature 0 -->
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<!--Maximum Engine Speed without Vehicle Speed Sensor-->
+								<PARAMETER parameterID="10020"/>
+								<!--Number of Transmission Tailshaft Gear Teeth-->
+								<PARAMETER parameterID="10070"/>
+								<!--Rear Axle Ratio-->
+								<PARAMETER parameterID="14290"/>
+								<!--Two Speed Rear Axle Ratio-->
+								<PARAMETER parameterID="14300"/>
+								<!--Vehicle Speed Sensor Type-->
+								<PARAMETER parameterID="14310"/>
+								<!--Tire Size-->
+								<PARAMETER parameterID="14320"/>
+								<!--Digital Pulses Per Mile-->
+								<PARAMETER parameterID="15330"/>
+								<!--Maximum Engine Speed Droop Option-->
+								<PARAMETER parameterID="15480"/>
+								<!--Two Speed Rear Axle-->
+								<PARAMETER parameterID="22051"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<!--"Water In Fuel Sensor"-->
+				<FEATURE featureID="61" featureEnable="25731" featureGTIS="25735">
+					<SUBFEATURES>
+						<!-- SubFeature 0 -->
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0"/>
+					</SUBFEATURES>
+				</FEATURE>
+				<!--"Adjustable Low Idle Speed"-->
+				<FEATURE featureID="62" featureEnable="0" featureGTIS="23105">
+					<SUBFEATURES>
+						<!-- SubFeature 0 -->
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<!--Low Idle Speed-->
+								<PARAMETER parameterID="10030"/>
+								<!--Low Idle Speed Adjustment Switch-->
+								<PARAMETER parameterID="20001"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<!--"Vehicle Speed Sensor Anti-Tampering"-->
+				<FEATURE featureID="65" featureEnable="20761" featureGTIS="20765">
+					<SUBFEATURES>
+						<!-- SubFeature 0 -->
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<!--Vehicle Speed Signal Tampering Sensitivity Level-->
+								<PARAMETER parameterID="14640"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<!--"Transmission Setup"-->
+				<FEATURE featureID="68" featureEnable="23021" featureGTIS="23025">
+					<SUBFEATURES>
+						<!-- SubFeature 0 -->
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<!--Transmission Pulse Width Modulation Output Type-->
+								<PARAMETER parameterID="10760"/>
+								<!--Clutch Pedal Position Switch-->
+								<PARAMETER parameterID="10790"/>
+								<!--Top Gear Transmission Ratio-->
+								<PARAMETER parameterID="11450"/>
+								<!--Transmission Type-->
+								<PARAMETER parameterID="13923"/>
+								<!--Gear Down Transmission Ratio-->
+								<PARAMETER parameterID="14250"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<!--"PTO / Remote PTO"-->
+				<FEATURE featureID="70" featureEnable="0" featureGTIS="0">
+					<SUBFEATURES>
+						<!-- SubFeature 0 -->
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<!-- Service Brake Override in PTO -->
+								<PARAMETER parameterID="22981"/>
+								<!-- Maximum Vehicle Speed -->
+								<PARAMETER parameterID="11570"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<!-- SubFeature PTO/Remote PTO -->
+						<SUBFEATURE subFeatureID="20011" subFeatureEnable="20011" subFeatureGTIS="20015" subFeatureParent="70">
+              <PARAMETERS>
+                <!--PTO Set Switch Speed-->
+                <PARAMETER parameterID="10110"/>
+                <!--PTO Resume Switch Speed-->
+                <PARAMETER parameterID="10120"/>
+                <!--Maximum PTO Speed-->
+                <PARAMETER parameterID="10130"/>
+                <!--Minimum PTO Speed-->
+                <PARAMETER parameterID="11390"/>
+                <!--Remote Set Speed 1-->
+                <PARAMETER parameterID="11680"/>
+                <!--Remote Set Speed 2-->
+                <PARAMETER parameterID="11690"/>
+                <!--Remote Set Speed 3-->
+                <PARAMETER parameterID="11700"/>
+                <!--Remote Set Speed 4-->
+                <PARAMETER parameterID="11710"/>
+                <!--Remote Set Speed 5-->
+                <PARAMETER parameterID="11720"/>
+                <!--Number of Remote PTO Set Speeds-->
+                <PARAMETER parameterID="11730"/>
+                <!--Maximum Engine Load in PTO-->
+                <PARAMETER parameterID="11790"/>
+                <!--PTO Ramp Rate-->
+                <PARAMETER parameterID="11810"/>
+                <!--PTO Additional Switch Speed-->
+                <PARAMETER parameterID="11820"/>
+                <!--PTO Accelerator Override Maximum Engine Speed-->
+                <PARAMETER parameterID="11830"/>
+                <!--Alternate PTO-->
+                <PARAMETER parameterID="22551"/>
+                <!--PTO Zero VSS Limit-->
+                <PARAMETER parameterID="22621"/>
+                <!--Accelerator Override in PTO-->
+                <PARAMETER parameterID="22961"/>
+                <!--Clutch Override in PTO-->
+                <PARAMETER parameterID="22971"/>
+                <!--PTO with Parking Brake ON-->
+                <PARAMETER parameterID="15460"/>
+                <!--PTO Active with VSS Ignored-->
+                <PARAMETER parameterID="15461"/>
+              </PARAMETERS>
+							<SUBFEATURES>
+								<!--Multiple PTO Trip Information-->
+								<SUBFEATURE subFeatureID="20017" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="70">
+									<PARAMETERS>
+										<!--PTO Speed 1 Device-->
+										<PARAMETER parameterID="11090"/>
+										<!--PTO Speed 2 Device-->
+										<PARAMETER parameterID="11091"/>
+										<!--PTO Speed 3 Device-->
+										<PARAMETER parameterID="11092"/>
+										<!--PTO Speed 4 Device-->
+										<PARAMETER parameterID="11093"/>
+										<!--PTO Speed 5 Device-->
+										<PARAMETER parameterID="11094"/>
+										<!--PTO Speed 6 Device-->
+										<PARAMETER parameterID="11095"/>
+										<!--PTO Speed 7 Device-->
+										<PARAMETER parameterID="11096"/>
+										<!--PTO Speed 8 Device-->
+										<PARAMETER parameterID="11097"/>
+									</PARAMETERS>
+								</SUBFEATURE>
+							</SUBFEATURES>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<!--"Generic Tool Permissions"-->
+				<FEATURE featureID="72" featureEnable="25031" featureGTIS="25035">
+					<SUBFEATURES>
+						<!-- SubFeature 0 -->
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<!--J1939 Trip Reset-->
+								<PARAMETER parameterID="22801"/>
+								<!--J1939 Service Reset-->
+								<PARAMETER parameterID="22811"/>
+								<!--J1939 Stop Broadcast Allowed-->
+								<PARAMETER parameterID="22821"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<!--"Cruise Control Switch Setup"-->
+				<FEATURE featureID="73" featureEnable="0" featureGTIS="25015">
+					<SUBFEATURES>
+						<!-- SubFeature 0 -->
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<!--Cruise Switch Setup-->
+								<PARAMETER parameterID="14350"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<!--"Switched Maximum Engine Operating Speed"-->
+				<FEATURE featureID="76" featureEnable="23121" featureGTIS="23125">
+					<SUBFEATURES>
+						<!-- SubFeature 0 -->
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<!--Maximum Switched Engine Speed-->
+								<PARAMETER parameterID="12540"/>
+								<!--Maximum Operating Speed Switch Setup-->
+								<PARAMETER parameterID="15260"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<!--"Engine Coolant Level Sensor"-->
+				<FEATURE featureID="77" featureEnable="20571" featureGTIS="20575">
+					<SUBFEATURES>
+						<!-- SubFeature 0 -->
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0"/>
+					</SUBFEATURES>
+				</FEATURE>
+				<!--"Vehicle Electrical System Voltage"-->
+				<FEATURE featureID="78" featureEnable="20591" featureGTIS="20595">
+					<SUBFEATURES>
+						<!-- SubFeature 0 -->
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<!--Vehicle Electrical System Voltage-->
+								<PARAMETER parameterID="12620"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<!--"Grid Heater"-->
+				<FEATURE featureID="86" featureEnable="25181" featureGTIS="25185">
+					<SUBFEATURES>
+						<!-- SubFeature 0 -->
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0"/>
+					</SUBFEATURES>
+				</FEATURE>
+				<!--"Vehicle Acceleration Management"-->
+				<FEATURE featureID="90" featureEnable="24051" featureGTIS="24055">
+					<SUBFEATURES>
+						<!-- SubFeature 0 -->
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<!--Acceleration Rate-->
+								<PARAMETER parameterID="14520"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<!--"Remote Accelerator"-->
+				<FEATURE featureID="94" featureEnable="21181" featureGTIS="21185">
+					<SUBFEATURES>
+						<!-- SubFeature 0 -->
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<!--Remote Accelerator Override-->
+								<PARAMETER parameterID="23301"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<!--"SAE J1939 Multiplexing"-->
+				<FEATURE featureID="95" featureEnable="22351" featureGTIS="22355">
+					<SUBFEATURES>
+						<!-- SubFeature 0 -->
+						<!--SubFeature Accelerator Interlock Switch-->
+						<SUBFEATURE subFeatureID="13320" subFeatureEnable="13320" subFeatureGTIS="0" subFeatureParent="95">
+							<PARAMETERS>
+								<!--Accelerator Interlock Switch Source Address-->
+								<PARAMETER parameterID="13620"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<!--SubFeature Accelerator Pedal Position/Idle Validation Switch-->
+						<SUBFEATURE subFeatureID="13510" subFeatureEnable="13510" subFeatureGTIS="0" subFeatureParent="95">
+							<PARAMETERS>
+								<!--Accelerator Pedal Position/Idle Validation Switch Source Address-->
+								<PARAMETER parameterID="13810"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<!--SubFeature Accessory Fan Control Switch-->
+						<SUBFEATURE subFeatureID="13480" subFeatureEnable="13480" subFeatureGTIS="0" subFeatureParent="95">
+							<PARAMETERS>
+								<!--Accessory Fan Control Switch Source Address-->
+								<PARAMETER parameterID="13780"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<!--SubFeature Air Conditioning Pressure Switch-->
+						<SUBFEATURE subFeatureID="13330" subFeatureEnable="13330" subFeatureGTIS="0" subFeatureParent="95">
+							<PARAMETERS>
+								<!--Air Conditioning Pressure Switch Source Address-->
+								<PARAMETER parameterID="13630"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<!--SubFeature Auxiliary Shutdown Switch-->
+						<SUBFEATURE subFeatureID="13340" subFeatureEnable="13340" subFeatureGTIS="0" subFeatureParent="95">
+							<PARAMETERS>
+								<!--Auxiliary Shutdown Switch Source Address-->
+								<PARAMETER parameterID="13640"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<!--SubFeature Clutch Switch-->
+						<SUBFEATURE subFeatureID="13360" subFeatureEnable="13360" subFeatureGTIS="0" subFeatureParent="95">
+							<PARAMETERS>
+								<!--Clutch Switch Source Address-->
+								<PARAMETER parameterID="13660"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<!--SubFeature Cruise Control ON/OFF Switch-->
+						<SUBFEATURE subFeatureID="13370" subFeatureEnable="13370" subFeatureGTIS="0" subFeatureParent="95">
+							<PARAMETERS>
+								<!--Cruise Control ON/OFF Switch Source Address-->
+								<PARAMETER parameterID="13670"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<!--SubFeature Cruise Control Resume Switch-->
+						<SUBFEATURE subFeatureID="13380" subFeatureEnable="13380" subFeatureGTIS="0" subFeatureParent="95">
+							<PARAMETERS>
+								<!--Cruise Control Resume Switch Source Address-->
+								<PARAMETER parameterID="13680"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<!--SubFeature Cruise Control Set Switch-->
+						<SUBFEATURE subFeatureID="13390" subFeatureEnable="13390" subFeatureGTIS="0" subFeatureParent="95">
+							<PARAMETERS>
+								<!--Cruise Control Set Switch Source Address-->
+								<PARAMETER parameterID="13690"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<!--SubFeature Diagnostic Switch-->
+						<SUBFEATURE subFeatureID="13460" subFeatureEnable="13460" subFeatureGTIS="0" subFeatureParent="95">
+							<PARAMETERS>
+								<!--Diagnostic Switch Source Address-->
+								<PARAMETER parameterID="13760"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<!--SubFeature Engine Brake Switch-->
+						<SUBFEATURE subFeatureID="13490" subFeatureEnable="13490" subFeatureGTIS="0" subFeatureParent="95">
+							<PARAMETERS>
+								<!--Engine Brake Switch Source Address-->
+								<PARAMETER parameterID="13790"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<!--SubFeature Engine Protection Override Switch-->
+						<SUBFEATURE subFeatureID="15240" subFeatureEnable="15240" subFeatureGTIS="0" subFeatureParent="95">
+							<PARAMETERS>
+								<!--Engine Protection Switch Source Address-->
+								<PARAMETER parameterID="15250"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<!--Idle Increment/Idle Decrement Switch-->
+						<SUBFEATURE subFeatureID="13440" subFeatureEnable="13440" subFeatureGTIS="0" subFeatureParent="95">
+							<PARAMETERS>
+								<!--Idle Increment/Idle Decrement Switch Source Address-->
+								<PARAMETER parameterID="13740"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<!--SubFeature PTO On/Off Switch-->
+						<SUBFEATURE subFeatureID="13400" subFeatureEnable="13400" subFeatureGTIS="0" subFeatureParent="95">
+							<PARAMETERS>
+								<!--PTO On/Off Switch Source Address-->
+								<PARAMETER parameterID="13700"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<!--SubFeature -PTO Resume Switch-->
+						<SUBFEATURE subFeatureID="13410" subFeatureEnable="13410" subFeatureGTIS="0" subFeatureParent="95">
+							<PARAMETERS>
+								<!--PTO Resume Switch Source Address-->
+								<PARAMETER parameterID="13710"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<!--SubFeature PTO Set Switch-->
+						<SUBFEATURE subFeatureID="13420" subFeatureEnable="13420" subFeatureGTIS="0" subFeatureParent="95">
+							<PARAMETERS>
+								<!--PTO Set Switch Source Address-->
+								<PARAMETER parameterID="13720"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<!--SubFeature Rear Axle Ratio Switch-->
+						<SUBFEATURE subFeatureID="11100" subFeatureEnable="11100" subFeatureGTIS="0" subFeatureParent="95">
+							<PARAMETERS>
+								<!--Rear Axle Ratio Switch Source Address-->
+								<PARAMETER parameterID="11110"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<!--SubFeature Remote Accelerator Position/Remote Accelerator Switch-->
+						<SUBFEATURE subFeatureID="13540" subFeatureEnable="13540" subFeatureGTIS="0" subFeatureParent="95">
+							<PARAMETERS>
+								<!--Remote Accelerator Position/Remote Accelerator Switch Source Address-->
+								<PARAMETER parameterID="13840"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<!--SubFeature Parking Brake-->
+						<SUBFEATURE subFeatureID="14460" subFeatureEnable="14460" subFeatureGTIS="0" subFeatureParent="95">
+							<PARAMETERS>
+								<!--Parking Brake Source Address-->
+								<PARAMETER parameterID="14470"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<!--SubFeature Remote PTO Switch-->
+						<SUBFEATURE subFeatureID="13430" subFeatureEnable="13430" subFeatureGTIS="0" subFeatureParent="95">
+							<PARAMETERS>
+								<!--Remote PTO Switch Source Address-->
+								<PARAMETER parameterID="13730"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<!--SubFeature Service Brake Switch-->
+						<SUBFEATURE subFeatureID="13350" subFeatureEnable="13350" subFeatureGTIS="0" subFeatureParent="95">
+							<PARAMETERS>
+								<!--Service Brake Switch Source Address-->
+								<PARAMETER parameterID="13650"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<!--SubFeature Torque Derate Switch-->
+						<SUBFEATURE subFeatureID="13470" subFeatureEnable="13470" subFeatureGTIS="0" subFeatureParent="95">
+							<PARAMETERS>
+								<!--Torque Derate Switch Source Address-->
+								<PARAMETER parameterID="13770"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<!--"Load Based Speed Control"-->
+				<FEATURE featureID="100" featureEnable="0" featureGTIS="22745">
+					<SUBFEATURES>
+						<!-- SubFeature 0 -->
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<!--Low Engine Speed Breakpoint-->
+								<PARAMETER parameterID="14490"/>
+								<!--High Engine Speed Breakpoint-->
+								<PARAMETER parameterID="14500"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<!--"Fast Idle Warmup"-->
+				<FEATURE featureID="101" featureEnable="25281" featureGTIS="25285">
+					<SUBFEATURES>
+						<!-- SubFeature 0 -->
+						<SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+							<PARAMETERS>
+								<!--Fast Idle Warmup PTO Load Threshold-->
+								<PARAMETER parameterID="14560"/>
+								<!--Fast Idle Warmup Idle Speed-->
+								<PARAMETER parameterID="14570"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+        <!-- Governor Type -->
+        <FEATURE featureID="131" featureEnable="0" featureGTIS="24005">
+          <SUBFEATURES>
+            <!-- SubFeature 0 -->
+            <SUBFEATURE subFeatureID="0" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="0">
+              <PARAMETERS>
+                <!--Governor Type-->
+                <PARAMETER parameterID="14080"/>
+              </PARAMETERS>
+            </SUBFEATURE>
+            <!-- SubFeature 1 -->
+            <!--Governor Type Switch-->
+            <SUBFEATURE subFeatureID="20671" subFeatureEnable="20671" subFeatureGTIS="0" subFeatureParent="131">
+            </SUBFEATURE>
+          </SUBFEATURES>
+        </FEATURE>
+			</FEATURES>
+		</MAP>
+		<!--Trip Information-->
+		<MAP mapID="2">
+			<FEATURES>
+				<!--Autogenerated from requirements-->
+				<!--Start of Trip Features-->
+				<FEATURE featureID="500" featureEnable="0" featureGTIS="0">
+					<!-- Feature 500-->
+					<SUBFEATURES>
+						<!-- SubFeature Multiple PTO -->
+						<SUBFEATURE subFeatureID="23211" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="500">
+							<SUBFEATURES>
+								<!-- SubFeature Fuel -->
+								<SUBFEATURE subFeatureID="23213" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="23211">
+									<PARAMETERS>
+										<!--PTO Device 1 Total Fuel Used-->
+										<PARAMETER parameterID="107060"/>
+										<!--PTO Device 2 Total Fuel Used-->
+										<PARAMETER parameterID="107061"/>
+										<!--PTO Device 3 Total Fuel Used-->
+										<PARAMETER parameterID="107093"/>
+										<!--PTO Device 4 Total Fuel Used-->
+										<PARAMETER parameterID="107104"/>
+										<!--PTO Device 5 Total Fuel Used-->
+										<PARAMETER parameterID="107105"/>
+										<!--PTO Device 6 Total Fuel Used-->
+										<PARAMETER parameterID="107106"/>
+										<!--PTO Device 7 Total Fuel Used-->
+										<PARAMETER parameterID="107107"/>
+										<!--PTO Device 8 Total Fuel Used-->
+										<PARAMETER parameterID="107108"/>
+									</PARAMETERS>
+								</SUBFEATURE>
+								<!-- SubFeature Time -->
+								<SUBFEATURE subFeatureID="23215" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="23211">
+									<PARAMETERS>
+										<!--PTO Device 1 Total Time-->
+										<PARAMETER parameterID="112003"/>
+										<!--PTO Device 2 Total Time-->
+										<PARAMETER parameterID="112053"/>
+										<!--PTO Device 3 Total Time-->
+										<PARAMETER parameterID="112079"/>
+										<!--PTO Device 4 Total Time-->
+										<PARAMETER parameterID="112080"/>
+										<!--PTO Device 5 Total Time-->
+										<PARAMETER parameterID="112081"/>
+										<!--PTO Device 6 Total Time-->
+										<PARAMETER parameterID="112088"/>
+										<!--PTO Device 7 Total Time-->
+										<PARAMETER parameterID="112089"/>
+										<!--PTO Device 8 Total Time-->
+										<PARAMETER parameterID="112090"/>
+									</PARAMETERS>
+								</SUBFEATURE>
+							</SUBFEATURES>
+						</SUBFEATURE>
+						<!-- SubFeature Fuel Used -->
+						<SUBFEATURE subFeatureID="25101" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="500">
+							<PARAMETERS>
+								<!--Total Idle Fuel Used-->
+								<PARAMETER parameterID="107037"/>
+								<!--Total PTO Fuel Used-->
+								<PARAMETER parameterID="107038"/>
+								<!--Total Fuel Used-->
+								<PARAMETER parameterID="107004"/>
+								<!--Total Gear Down Fuel Used-->
+								<PARAMETER parameterID="107087"/>
+								<!--Total Top Gear Fuel Used-->
+								<PARAMETER parameterID="107088"/>
+								<!--Total Maximum Accelerator Vehicle Speed Fuel Used-->
+								<PARAMETER parameterID="199222"/>
+								<!--Total Cruise Control Fuel Used-->
+								<PARAMETER parameterID="199226"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<!-- SubFeature Distance -->
+						<SUBFEATURE subFeatureID="25111" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="500">
+							<PARAMETERS>
+								<!--Total Engine Brake Distance-->
+								<PARAMETER parameterID="103055"/>
+								<!--Total ECM Distance-->
+								<PARAMETER parameterID="103001"/>
+								<!--Total Engine Distance-->
+								<PARAMETER parameterID="103002"/>
+								<!--Total Service Brake Distance-->
+								<PARAMETER parameterID="103050"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<!-- SubFeature Other -->
+						<SUBFEATURE subFeatureID="25121" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="500">
+							<PARAMETERS>
+								<!--Total Engine Protection Shutdown Manual Overrides-->
+								<PARAMETER parameterID="199223"/>
+								<!--Engine Brake Actuations-->
+								<PARAMETER parameterID="199158"/>
+								<!--Total Average Fuel Economy-->
+								<PARAMETER parameterID="199520"/>
+								<!--Total Average Engine Speed-->
+								<PARAMETER parameterID="199521"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<!-- SubFeature Time -->
+						<SUBFEATURE subFeatureID="25131" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="500">
+							<PARAMETERS>
+								<!--Total ECM Time (Key On Time)-->
+								<PARAMETER parameterID="112114"/>
+								<!--Total Engine Brake Time-->
+								<PARAMETER parameterID="112182"/>
+								<!--Total Engine Run Time-->
+								<PARAMETER parameterID="112166"/>
+								<!--Total PTO Time-->
+								<PARAMETER parameterID="112157"/>
+								<!--Total Idle Time-->
+								<PARAMETER parameterID="112170"/>
+								<!--Total Gear Down Time-->
+								<PARAMETER parameterID="112171"/>
+								<!--Total Service Brake Time-->
+								<PARAMETER parameterID="112172"/>
+								<!--Total Top Gear Time-->
+								<PARAMETER parameterID="112173"/>
+								<!--Total Cruise Control Time-->
+								<PARAMETER parameterID="199225"/>
+								<!--Total Maximum Accelerator Vehicle Speed Time-->
+								<PARAMETER parameterID="199214"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+				<FEATURE featureID="501" featureEnable="0" featureGTIS="0">
+					<!-- Feature 501-->
+					<!-- Trip Totals Since Last Reset -->
+					<SUBFEATURES>
+						<!-- SubFeature Multiple PTO -->
+						<SUBFEATURE subFeatureID="23212" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="25261">
+							<PARAMETERS>
+								<!--PTO Device 1-->
+								<PARAMETER parameterID="199049"/>
+								<!--PTO Device 2-->
+								<PARAMETER parameterID="199057"/>
+								<!--PTO Device 3-->
+								<PARAMETER parameterID="199076"/>
+								<!--PTO Device 4-->
+								<PARAMETER parameterID="199126"/>
+								<!--PTO Device 5-->
+								<PARAMETER parameterID="199143"/>
+								<!--PTO Device 6-->
+								<PARAMETER parameterID="199155"/>
+								<!--PTO Device 7-->
+								<PARAMETER parameterID="199188"/>
+								<!--PTO Device 8-->
+								<PARAMETER parameterID="199199"/>
+							</PARAMETERS>
+							<SUBFEATURES>
+								<!-- SubFeature Fuel -->
+								<SUBFEATURE subFeatureID="23214" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="23212">
+									<PARAMETERS>
+										<!--PTO Device 1 Trip Fuel Used-->
+										<PARAMETER parameterID="107109"/>
+										<!--PTO Device 2 Trip Fuel Used-->
+										<PARAMETER parameterID="107110"/>
+										<!--PTO Device 3 Trip Fuel Used-->
+										<PARAMETER parameterID="107111"/>
+										<!--PTO Device 4 Trip Fuel Used-->
+										<PARAMETER parameterID="107112"/>
+										<!--PTO Device 5 Trip Fuel Used-->
+										<PARAMETER parameterID="107113"/>
+										<!--PTO Device 6 Trip Fuel Used-->
+										<PARAMETER parameterID="107114"/>
+										<!--PTO Device 7 Trip Fuel Used-->
+										<PARAMETER parameterID="107115"/>
+										<!--PTO Device 8 Trip Fuel Used-->
+										<PARAMETER parameterID="107116"/>
+									</PARAMETERS>
+								</SUBFEATURE>
+								<!-- SubFeature Time -->
+								<SUBFEATURE subFeatureID="23216" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="23212">
+									<PARAMETERS>
+										<!--PTO Device 1 Trip Time-->
+										<PARAMETER parameterID="112141"/>
+										<!--PTO Device 2 Trip Time-->
+										<PARAMETER parameterID="112142"/>
+										<!--PTO Device 3 Trip Time-->
+										<PARAMETER parameterID="112143"/>
+										<!--PTO Device 4 Trip Time-->
+										<PARAMETER parameterID="112144"/>
+										<!--PTO Device 5 Trip Time-->
+										<PARAMETER parameterID="112145"/>
+										<!--PTO Device 6 Trip Time-->
+										<PARAMETER parameterID="112146"/>
+										<!--PTO Device 7 Trip Time-->
+										<PARAMETER parameterID="112147"/>
+										<!--PTO Device 8 Trip Time-->
+										<PARAMETER parameterID="112148"/>
+									</PARAMETERS>
+								</SUBFEATURE>
+							</SUBFEATURES>
+						</SUBFEATURE>
+						<!-- SubFeature Fuel Used -->
+						<SUBFEATURE subFeatureID="25061" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="25261">
+							<PARAMETERS>
+								<!--Trip Fuel Used-->
+								<PARAMETER parameterID="107005"/>
+								<!--Trip Idle Fuel Used-->
+								<PARAMETER parameterID="107008"/>
+								<!--PTO Fuel Used-->
+								<PARAMETER parameterID="107009"/>
+								<!--Maximum Vehicle Speed Fuel Used-->
+								<PARAMETER parameterID="107052"/>
+								<!--Cruise Control Fuel Used-->
+								<PARAMETER parameterID="107054"/>
+								<!--Vehicle Overspeed 1 Fuel Used-->
+								<PARAMETER parameterID="107083"/>
+								<!--Vehicle Overspeed 2 Fuel Used-->
+								<PARAMETER parameterID="107084"/>
+								<!--Trip Gear Down Fuel Used-->
+								<PARAMETER parameterID="107085"/>
+								<!--Trip Top Gear Fuel Used-->
+								<PARAMETER parameterID="107086"/>
+								<!--Trip Average Fuel Rate-->
+								<PARAMETER parameterID="107089"/>
+								<!--Trip Drive Fuel Used-->
+								<PARAMETER parameterID="107090"/>
+								<!--Trip Average Fuel Economy-->
+								<PARAMETER parameterID="108010"/>
+								<!--Trip Drive Average Fuel Economy-->
+								<PARAMETER parameterID="108011"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<!-- SubFeature Distance -->
+						<SUBFEATURE subFeatureID="25071" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="25261">
+							<PARAMETERS>
+								<!--Maximum Accelerator Vehicle Speed Distance-->
+								<PARAMETER parameterID="199218"/>
+								<!--Cruise Control Distance-->
+								<PARAMETER parameterID="199228"/>
+								<!--Vehicle Overspeed 1 Distance-->
+								<PARAMETER parameterID="103004"/>
+								<!--Vehicle Overspeed 2 Distance-->
+								<PARAMETER parameterID="103005"/>
+								<!--Trip Distance-->
+								<PARAMETER parameterID="103044"/>
+								<!--Trip Gear Down Distance-->
+								<PARAMETER parameterID="103048"/>
+								<!--Trip Top Gear Distance-->
+								<PARAMETER parameterID="103049"/>
+								<!--Active Service Brake Distance-->
+								<PARAMETER parameterID="103051"/>
+								<!--Engine Brake Distance-->
+								<PARAMETER parameterID="103056"/>
+								<!--Trip Percent Distance Vehicle Overspeed 1-->
+								<PARAMETER parameterID="199533"/>
+								<!--Trip Percent Distance Vehicle Overspeed 2-->
+								<PARAMETER parameterID="199534"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<!-- SubFeature Other -->
+						<SUBFEATURE subFeatureID="25081" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="25261">
+							<PARAMETERS>
+								<!--Trip Average Vehicle Speed-->
+								<PARAMETER parameterID="102005"/>
+								<!--Trip Maximum Vehicle Speed-->
+								<PARAMETER parameterID="102006"/>
+								<!--Trip Maximum Engine Speed-->
+								<PARAMETER parameterID="122522"/>
+								<!--Service Brake Actuations-->
+								<PARAMETER parameterID="199050"/>
+								<!--Maximum Accelerator Vehicle Speed-->
+								<PARAMETER parameterID="199219"/>
+								<!--Idle Shutdowns-->
+								<PARAMETER parameterID="199106"/>
+								<!--Idle Shutdown Overrides-->
+								<PARAMETER parameterID="199107"/>
+								<!--Engine Protection Shutdown Manual Overrides-->
+								<PARAMETER parameterID="199224"/>
+								<!--Engine Brakes Actuations-->
+								<PARAMETER parameterID="199159"/>
+								<!--Trip Average Drive Speed-->
+								<PARAMETER parameterID="199540"/>
+								<!--Trip Average One Gear Down Speed-->
+								<PARAMETER parameterID="199542"/>
+								<!--Trip Average Top Gear Speed-->
+								<PARAMETER parameterID="199543"/>
+								<!--Trip Average Engine Speed-->
+								<PARAMETER parameterID="199550"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+						<!-- SubFeature Time -->
+						<SUBFEATURE subFeatureID="25091" subFeatureEnable="0" subFeatureGTIS="0" subFeatureParent="25261">
+							<PARAMETERS>
+								<!--Trip Time-->
+								<PARAMETER parameterID="112158"/>
+								<!--Percent Time in Top Gear-->
+								<PARAMETER parameterID="103003"/>
+								<!--Trip Top Gear Time-->
+								<PARAMETER parameterID="112169"/>
+								<!--Percent Time in Cruise Control-->
+								<PARAMETER parameterID="112092"/>
+								<!--Percent Time at Idle-->
+								<PARAMETER parameterID="112115"/>
+								<!--Vehicle Overspeed 1 Time-->
+								<PARAMETER parameterID="112116"/>
+								<!--Fan On Time-->
+								<PARAMETER parameterID="112159"/>
+								<!--Trip Idle Time-->
+								<PARAMETER parameterID="112160"/>
+								<!--PTO Time-->
+								<PARAMETER parameterID="112161"/>
+								<!--Fan Time Fan Control Switch-->
+								<PARAMETER parameterID="112163"/>
+								<!--Fan Time Air Conditioning Pressure Switch-->
+								<PARAMETER parameterID="112164"/>
+								<!--Vehicle Overspeed 2 Time-->
+								<PARAMETER parameterID="112167"/>
+								<!--Trip Gear Down Time-->
+								<PARAMETER parameterID="112168"/>
+								<!--Trip Service Brake Time-->
+								<PARAMETER parameterID="112174"/>
+								<!--Percent Time One Gear Down-->
+								<PARAMETER parameterID="112175"/>
+								<!--Engine Brake Time-->
+								<PARAMETER parameterID="112183"/>
+								<!--Fan Time Due to Engine Conditions-->
+								<PARAMETER parameterID="112184"/>
+								<!--Fan Time With Vehicle Speed-->
+								<PARAMETER parameterID="112190"/>
+								<!--Fan Time Without Vehicle Speed-->
+								<PARAMETER parameterID="112191"/>
+								<!--PTO-->
+								<PARAMETER parameterID="199220"/>
+								<!--Cruise Control Time-->
+								<PARAMETER parameterID="199227"/>
+								<!--Maximum Accelerator Vehicle Speed Time-->
+								<PARAMETER parameterID="199217"/>
+								<!--Engine Brakes-->
+								<PARAMETER parameterID="199253"/>
+								<!--Trip Percent Fan ON Time Due to Air Conditioning Pressure Switch-->
+								<PARAMETER parameterID="199510"/>
+								<!--Trip Percent Fan ON Time Due to Engine Conditions-->
+								<PARAMETER parameterID="199511"/>
+								<!--Trip Percent Fan ON Time Due to Fan Control Switch-->
+								<PARAMETER parameterID="199512"/>
+								<!--Trip Percent Fan ON Time Without Vehicle Speed-->
+								<PARAMETER parameterID="199513"/>
+								<!--Trip Percent Fan ON Time-->
+								<PARAMETER parameterID="199514"/>
+								<!--Trip Percent Fan ON Time With Vehicle Speed-->
+								<PARAMETER parameterID="199515"/>
+								<!--Trip Percent Distance in Cruise Control-->
+								<PARAMETER parameterID="199530"/>
+								<!--Trip Percent Distance One Gear Down-->
+								<PARAMETER parameterID="199532"/>
+								<!--Trip Percent Distance in Top Gear-->
+								<PARAMETER parameterID="199535"/>
+							</PARAMETERS>
+						</SUBFEATURE>
+					</SUBFEATURES>
+				</FEATURE>
+			</FEATURES>
+		</MAP>
+	</MAPS>
+</MODULE>

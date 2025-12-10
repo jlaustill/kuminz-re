@@ -1,0 +1,56 @@
+<!-- This is a sample  -->
+<FlexGrid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+
+	<Properties Cols="4:VT_I4" FixedCols="0:VT_I4" ExplorerBar="0:VT_I4" OutlineBar="4:VT_UI4" 
+	AllowUserResizing="1:VT_UI4" AutoResize="1:VT_I4" GridLines="1:VT_I4" Editable="0:VT_I4"/>
+	<!-- Add properties to the "FlexGrid" element as attribute in Name=Value format -->
+	<FixedRows>
+		<FixedRow>
+			<Column name="RES:Res1:1098" />
+			<Column name="RES:Res1:1094" />
+			<Column name="RES:Res1:1095" />
+			<Column name="RES:Res1:1096" />
+		</FixedRow>
+	</FixedRows>
+
+	<data loopEnd="1">
+		<Object name="GRPLIST" source="OBJ:DOM:childNodes" />
+		<Node level = "0" loopStart="0" loopEnd="OBJ:GRPLIST:length" >
+			<Object name="GRPNODE" source="OBJ:GRPLIST:item(LOOPINDEX0)" />
+			<Column order = "0" datasource ="OBJ:GRPNODE:getAttribute(name)" />
+			<Object name="VEHLIST" source="OBJ:GRPNODE:childNodes" />
+			<Node level = "1" loopStart="0" loopEnd="OBJ:VEHLIST:length" styleid="s1">
+				<Object name="VEHNODE" source="OBJ:VEHLIST:item(LOOPINDEX1)" />
+				<Column order = "0" datasource ="RES:Res1:1099" />
+				<Column order = "1" datasource ="OBJ:VEHNODE:getAttribute(serial)" />
+				<Column order = "2" datasource ="OBJ:VEHNODE:getAttribute(unit)" styleid="s2"/>
+				<Column order = "3" datasource ="OBJ:VEHNODE:getAttribute(customer)" />
+				<Object name="FILELIST" source="OBJ:VEHNODE:childNodes" />
+				<Node level = "2" loopStart="0" loopEnd="OBJ:FILELIST:length" >
+					<Object name="FILENODE" source="OBJ:FILELIST:item(LOOPINDEX2)" />
+					<Column order = "0" datasource ="OBJ:FILENODE:getAttribute(name)" />
+				</Node>
+			</Node>
+		</Node>
+	</data>
+
+	<parameters>
+	</parameters>
+
+	<icons>
+	</icons>
+	
+	<combolists>
+	</combolists>
+	
+	<styles>
+		<style id="s1" CellFontBold="1:VT_I4" CellAlignMent="1:VT_I4"/>
+		<style id="s2" CellFontBold="1:VT_I4" CellAlignMent="6:VT_I4"/>
+	</styles>
+	
+	<resources>
+		<resource id="Res1" CLSID="{BE88E05D-AAAD-4C21-8195-F7DB9FFF0F74}" LoadDLL="TRUE" />
+	</resources>
+
+</FlexGrid>

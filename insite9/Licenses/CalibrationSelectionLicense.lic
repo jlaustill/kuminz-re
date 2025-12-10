@@ -1,0 +1,17 @@
+<LicenseFile>
+	<UserReqLicense Expiration="permanent" Name="CalSelect_User" VendorDaemon="cummins" Key="074E9D6494B0" IsValid="" ID="CalSelect_User" Version="1.0" Count="uncounted">
+		<Users>
+			<User NAME="Calibration_Download"/></Users>
+	</UserReqLicense>
+	<ToolReqLicense Expiration="permanent" Name="CalSelect_View" VendorDaemon="cummins" Key="4DF28584FCA1" IsValid="" ID="CalSelect_View" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="Basic"/>
+	</ToolReqLicense>
+	<ToolReqLicense Expiration="permanent" Name="CalSelect_Transfer" VendorDaemon="cummins" Key="06E791609933" IsValid="" ID="CalSelect_Transfer" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="Pro"/>
+	</ToolReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="CalSelect_PW_Master" VendorDaemon="cummins" Key="450130F64F64" IsValid="" ID="CalSelect_PW_Master" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="MASTER"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+</LicenseFile>

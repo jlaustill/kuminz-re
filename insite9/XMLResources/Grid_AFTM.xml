@@ -1,0 +1,186 @@
+<!---
+//Abisoye Mudasiru - Initial Creation. - 11/21/2007
+-->
+
+<FlexGrid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Properties Cols="4:VT_I4" FixedCols="0:VT_I4" ExplorerBar="0:VT_I4" OutlineBar="4:VT_UI4" AllowUserResizing="1:VT_UI4" AutoResize="1:VT_I4" GridLines="1:VT_I4" Editable="0:VT_I4" />
+	<FixedRows>
+		<FixedRow styleid="s1">
+			<Column name="RES:Res1:206"/>
+			<Column name="RES:Res1:207"/>
+			<Column name="RES:Res1:208"/>
+			<Column name="RES:Res1:209"/>
+		</FixedRow>
+	</FixedRows>
+	
+	<data loopEnd="1">
+		<Object name="colwdth" source="OBJ:VSFLEXGRID:ColWidth(0,1300)PROPPUT" />
+		<Object name="colwdth" source="OBJ:VSFLEXGRID:ColWidth(1,1260)PROPPUT" />
+		<Object name="colwdth" source="OBJ:VSFLEXGRID:ColWidth(2,1500)PROPPUT" />
+		<Object name="colwdth" source="OBJ:VSFLEXGRID:ColWidth(3,1700)PROPPUT" />
+		
+		<Object name="IsAFTMEnable" source="OBJ:DOM:selectSingleNode(AFTM_Enable)" />
+		
+		<Node level="0" loopStart="OBJ:IsAFTMEnable:getAttribute(V)" loopEnd="1" >
+			<Column order="1" datasource="Feature Is Not Supported" styleid="s4"/>
+			<!-- Feature Not Supported-->
+		</Node>
+		<Node level="0" loopStart="0" loopEnd="OBJ:IsAFTMEnable:getAttribute(V)" >
+			<Object name="AFTM_ARR" source="OBJ:DOM:selectNodes(ARR_7012)" />
+			<Object name="AFTM_RTCExists" source="OBJ:DOM:selectNodes(paramRTCExists)" />
+			<Object name="AFTM_RTCEnable" source="OBJ:DOM:selectNodes(paramRTCEnable)" />
+			<Object name="AFTM_RTCDisable" source="OBJ:DOM:selectNodes(paramRTCDisable)" />	
+			
+			<Node level = "0" loopStart="0" loopEnd="1">
+				<Object name="objFItem1" source="OBJ:AFTM_ARR:nextNode" />	
+				<!-- Display Aftertreatment Maintenance information -->
+				<Column order="0" datasource="1(Newest)" styleid="s2"/>	
+				<Column order="1" datasource="OBJ:objFItem1:selectSingleNode(ecmtime):getAttribute(DV)" styleid="s3" />
+				<Column order="2" datasource="OBJ:objFItem1:selectSingleNode(ecmRealtime):getAttribute(DV)" styleid="s3" />
+				<Column order="3" datasource="OBJ:objFItem1:selectSingleNode(resetapplied):getAttribute(DV)" styleid="s3" />
+			</Node>
+			
+			<Node level = "0" loopStart="0" loopEnd="1">
+				<Object name="objFItem1" source="OBJ:AFTM_ARR:nextNode" />	
+				<!-- Display Aftertreatment Maintenance information -->
+				<Column order="0" datasource="2" styleid="s2"/>	
+				<Column order="1" datasource="OBJ:objFItem1:selectSingleNode(ecmtime):getAttribute(DV)" styleid="s3" />
+				<Column order="2" datasource="OBJ:objFItem1:selectSingleNode(ecmRealtime):getAttribute(DV)" styleid="s3" />
+				<Column order="3" datasource="OBJ:objFItem1:selectSingleNode(resetapplied):getAttribute(DV)" styleid="s3" />
+			</Node>
+			
+			<Node level = "0" loopStart="0" loopEnd="1">
+				<Object name="objFItem1" source="OBJ:AFTM_ARR:nextNode" />	
+				<!-- Display Aftertreatment Maintenance information -->
+				<Column order="0" datasource="3" styleid="s2"/>	
+				<Column order="1" datasource="OBJ:objFItem1:selectSingleNode(ecmtime):getAttribute(DV)" styleid="s3" />
+				<Column order="2" datasource="OBJ:objFItem1:selectSingleNode(ecmRealtime):getAttribute(DV)" styleid="s3" />
+				<Column order="3" datasource="OBJ:objFItem1:selectSingleNode(resetapplied):getAttribute(DV)" styleid="s3" />
+			</Node>
+			
+			<Node level = "0" loopStart="0" loopEnd="1">
+				<Object name="objFItem1" source="OBJ:AFTM_ARR:nextNode" />	
+				<!-- Display Aftertreatment Maintenance information -->
+				<Column order="0" datasource="4" styleid="s2"/>	
+				<Column order="1" datasource="OBJ:objFItem1:selectSingleNode(ecmtime):getAttribute(DV)" styleid="s3" />
+				<Column order="2" datasource="OBJ:objFItem1:selectSingleNode(ecmRealtime):getAttribute(DV)" styleid="s3" />
+				<Column order="3" datasource="OBJ:objFItem1:selectSingleNode(resetapplied):getAttribute(DV)" styleid="s3" />
+			</Node>
+			
+			<Node level = "0" loopStart="0" loopEnd="1">
+				<Object name="objFItem1" source="OBJ:AFTM_ARR:nextNode" />	
+				<!-- Display Aftertreatment Maintenance information -->
+				<Column order="0" datasource="5" styleid="s2"/>	
+				<Column order="1" datasource="OBJ:objFItem1:selectSingleNode(ecmtime):getAttribute(DV)" styleid="s3" />
+				<Column order="2" datasource="OBJ:objFItem1:selectSingleNode(ecmRealtime):getAttribute(DV)" styleid="s3" />
+				<Column order="3" datasource="OBJ:objFItem1:selectSingleNode(resetapplied):getAttribute(DV)" styleid="s3" />
+			</Node>
+			
+			<Node level = "0" loopStart="0" loopEnd="1">
+				<Object name="objFItem1" source="OBJ:AFTM_ARR:nextNode" />	
+				<!-- Display Aftertreatment Maintenance information -->
+				<Column order="0" datasource="6" styleid="s2"/>	
+				<Column order="1" datasource="OBJ:objFItem1:selectSingleNode(ecmtime):getAttribute(DV)" styleid="s3" />
+				<Column order="2" datasource="OBJ:objFItem1:selectSingleNode(ecmRealtime):getAttribute(DV)" styleid="s3" />
+				<Column order="3" datasource="OBJ:objFItem1:selectSingleNode(resetapplied):getAttribute(DV)" styleid="s3" />
+			</Node>
+			
+			<Node level = "0" loopStart="0" loopEnd="1">
+				<Object name="objFItem1" source="OBJ:AFTM_ARR:nextNode" />	
+				<!-- Display Aftertreatment Maintenance information -->
+				<Column order="0" datasource="7" styleid="s2"/>	
+				<Column order="1" datasource="OBJ:objFItem1:selectSingleNode(ecmtime):getAttribute(DV)" styleid="s3" />
+				<Column order="2" datasource="OBJ:objFItem1:selectSingleNode(ecmRealtime):getAttribute(DV)" styleid="s3" />
+				<Column order="3" datasource="OBJ:objFItem1:selectSingleNode(resetapplied):getAttribute(DV)" styleid="s3" />
+			</Node>
+			
+			<Node level = "0" loopStart="0" loopEnd="1">
+				<Object name="objFItem1" source="OBJ:AFTM_ARR:nextNode" />	
+				<!-- Display Aftertreatment Maintenance information -->
+				<Column order="0" datasource="8" styleid="s2"/>	
+				<Column order="1" datasource="OBJ:objFItem1:selectSingleNode(ecmtime):getAttribute(DV)" styleid="s3" />
+				<Column order="2" datasource="OBJ:objFItem1:selectSingleNode(ecmRealtime):getAttribute(DV)" styleid="s3" />
+				<Column order="3" datasource="OBJ:objFItem1:selectSingleNode(resetapplied):getAttribute(DV)" styleid="s3" />
+			</Node>
+			
+			<Node level = "0" loopStart="0" loopEnd="1">
+				<Object name="objFItem1" source="OBJ:AFTM_ARR:nextNode" />	
+				<!-- Display Aftertreatment Maintenance information -->
+				<Column order="0" datasource="9" styleid="s2"/>	
+				<Column order="1" datasource="OBJ:objFItem1:selectSingleNode(ecmtime):getAttribute(DV)" styleid="s3" />
+				<Column order="2" datasource="OBJ:objFItem1:selectSingleNode(ecmRealtime):getAttribute(DV)" styleid="s3" />
+				<Column order="3" datasource="OBJ:objFItem1:selectSingleNode(resetapplied):getAttribute(DV)" styleid="s3" />
+			</Node>
+			
+			<Node level = "0" loopStart="0" loopEnd="1">
+				<Object name="objFItem1" source="OBJ:AFTM_ARR:nextNode" />	
+				<!-- Display Aftertreatment Maintenance information -->
+				<Column order="0" datasource="10(Oldest)" styleid="s2"/>	
+				<Column order="1" datasource="OBJ:objFItem1:selectSingleNode(ecmtime):getAttribute(DV)" styleid="s3" />
+				<Column order="2" datasource="OBJ:objFItem1:selectSingleNode(ecmRealtime):getAttribute(DV)" styleid="s3" />
+				<Column order="3" datasource="OBJ:objFItem1:selectSingleNode(resetapplied):getAttribute(DV)" styleid="s3" />
+			</Node>
+		
+		</Node>
+	
+	</data>
+	
+	<parameters>
+		<!-- Array 7012 -->
+		<parameter name="ARR_7012" source="/Image/Arrays/A[@ID=7012]/Dim/I[./P[@ID=16777220]]" />				
+		<parameter name="RTCDisable" source="OBJ:AFTM_RTCDisable:length" />
+		<parameter name="RTCEnable" source="OBJ:AFTM_RTCEnable:length" />		
+		<parameter name="paramRTCExists" source="/Image/Parameters/P[@ID=22371]"/>
+		<parameter name="paramRTCEnable" source="/Image/Parameters/P[@ID=22371 and @V = 1]" />
+		<parameter name="paramRTCDisable" source="/Image/Parameters/P[@ID=22371 and @V = 0]" />
+		<parameter name="AFTM_Enable" source="/Image/Parameters/P[@ID=16806174]" />				
+		
+		<!-- Parameters in the array -->
+		<parameter name="ecmRealtime" source="P[@ID=16786075]" />
+		<parameter name="ecmtime" source="P[@ID=16777220]" />
+		<parameter name="resetapplied" source="P[@ID=16806172]" />			
+	</parameters>
+	
+	<styles>
+		<style id="s1" CellFontBold="1:VT_I4" CellAlignMent="1:VT_I4" />
+		<style id="s2" CellAlignMent="1:VT_I4" />
+		<style id="s3" AutoSizeMode="1:VT_I4" WordWrap="1" />
+		<style id="s4" AutoSizeMode="1:VT_I4" Mergecells="6" />
+	</styles>
+	
+	<resources>
+		<resource id="Res1" CLSID="{1C628621-473B-4EA4-9DC6-7ED92C57DD9E}\Pages\{92D8EB23-821C-4b71-9AEE-85C1E51149BD}"  LoadDLL="TRUE"/>
+		<resource id="Res2" CLSID="{1ECBBE0B-836B-11D4-8A76-00062999E309}" LoadDLL="TRUE"/>
+	</resources>
+	
+	<printing HdrFontSize="8">
+    <header>
+      <line>
+        <center source="RES:Res2:9054" />
+      </line>
+      <line>
+      <left source="RES:Res2:2030"/>
+      <left source="OBJ:DOM:selectSingleNode(/Image/Header/ESerial):getAttribute(DisplayValue)"/>
+      <right source="INSITE - "/>
+      <right source="OBJ:DOM:selectSingleNode(/Image):getAttribute(ImageVersion)"/>
+      </line>
+      <line>
+        <left source="RES:Res2:2029"/>
+        <left source="OBJ:DOM:selectSingleNode(/Image/Header/UNumber):getAttribute(DisplayValue)"/>
+        <right source="RES:Res2:2031"/>
+        <right source="OBJ:DOM:selectSingleNode(/Image/Header/VMake):getAttribute(DisplayValue)"/>
+      </line>
+      <line>
+        <left source="RES:Res2:2032"/>
+        <left source="OBJ:DOM:selectSingleNode(/Image/Header/WOName):getAttribute(DisplayValue)"/>
+        <right source="RES:Res2:2033"/>
+        <right source="OBJ:DOM:selectSingleNode(/Image/Header/IName):getAttribute(DisplayValue)"/>
+      </line>
+	  <line>
+ 		<right source="RES:Res2:2036"/>
+		<right source="OBJ:DOM:selectSingleNode(/Image/Header/CustomerName):getAttribute(DisplayValue)"/>
+	</line>
+    </header>
+  </printing>
+	
+</FlexGrid>

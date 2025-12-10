@@ -1,0 +1,104 @@
+<!--This table provides mapping between INSITE 6.2 and 6.2.1 Template ECMType to INSITE 6.3+ Module Type (Token 15).  
+Since INSITE 6.2 and 6.2.1 did not contain template compatibility information, the following Engine Program Types/ Module Types had were assumed:
+	ECMType=&quot;2&quot; ModuleType=&quot;63&quot; (QSK19G/45G/60G, QSV81G/91G - SSM558)
+	ECMType=&quot;13&quot; ModuleType=&quot;99&quot; (ISM - CM870)
+	ECMType=&quot;14&quot; ModuleType=&quot;76&quot; (QSM11)
+	ECMType=&quot;15&quot; ModuleType=&quot;104&quot; (ISB - CM850)
+	ECMType=&quot;17&quot; ModuleType=&quot;4&quot; (CELECT)
+	ECMType=&quot;19&quot; ModuleType=&quot;51&quot; (ISB)
+	ECMType=&quot;21&quot; ModuleType=&quot;94&quot; (Signature/ISX - CM870)
+	ECMType=&quot;25&quot; ModuleType=&quot;44&quot; (QSK19/45/60/78)
+	ECMType=&quot;34&quot; ModuleType=&quot;69&quot; (PIM)
+	ECMType=&quot;35&quot; ModuleType=&quot;62&quot; (QSK19G/45G/60G, QSV81G/91G)
+	ECMType=&quot;37&quot; ModuleType=&quot;131&quot; (QST30)
+	  -->
+<ConversionTable>
+	<CONVERSION ECMType="1" ModuleType="110" DetectType="110"/>
+	<CONVERSION ECMType="2" ModuleType="63" DetectType="63"/>
+	<CONVERSION ECMType="3" ModuleType=" " DetectType=" "/>
+	<CONVERSION ECMType="4" ModuleType="71" DetectType="71"/>
+	<CONVERSION ECMType="5" ModuleType="6" DetectType="6"/>
+	<CONVERSION ECMType="6" ModuleType="20" DetectType="20"/>
+	<CONVERSION ECMType="7" ModuleType="12" DetectType="12"/>
+	<CONVERSION ECMType="8" ModuleType=" " DetectType=" "/>
+	<CONVERSION ECMType="9" ModuleType="19" DetectType="19"/>
+	<CONVERSION ECMType="10" ModuleType="22" DetectType="20"/>
+	<CONVERSION ECMType="11" ModuleType="61" DetectType="61"/>
+	<CONVERSION ECMType="12" ModuleType="15" DetectType="15"/>
+	<CONVERSION ECMType="13" ModuleType="99" DetectType="99"/>
+	<CONVERSION ECMType="14" ModuleType="76" DetectType="76"/>
+	<CONVERSION ECMType="15" ModuleType="104" DetectType="104"/>
+	<CONVERSION ECMType="16" ModuleType="100" DetectType="100"/>
+	<CONVERSION ECMType="17" ModuleType="4" DetectType="4"/>
+	<CONVERSION ECMType="18" ModuleType=" " DetectType=" "/>
+	<CONVERSION ECMType="19" ModuleType="51" DetectType="51"/>
+	<CONVERSION ECMType="20" ModuleType="52" DetectType="52"/>
+	<CONVERSION ECMType="21" ModuleType="94" DetectType="94"/>
+	<CONVERSION ECMType="22" ModuleType=" " DetectType=" "/>
+	<CONVERSION ECMType="23" ModuleType="80" DetectType="80"/>
+	<CONVERSION ECMType="24" ModuleType="81" DetectType="81"/>
+	<CONVERSION ECMType="25" ModuleType="44" DetectType="44"/>
+	<CONVERSION ECMType="26" ModuleType="5" DetectType="5"/>
+	<CONVERSION ECMType="27" ModuleType="95" DetectType="95"/>
+	<CONVERSION ECMType="28" ModuleType="90" DetectType="90"/>
+	<CONVERSION ECMType="29" ModuleType=" " DetectType=" "/>
+	<CONVERSION ECMType="30" ModuleType="21" DetectType="21"/>
+	<CONVERSION ECMType="31" ModuleType="114" DetectType="114"/>
+	<CONVERSION ECMType="32" ModuleType="124" DetectType="114"/>
+	<CONVERSION ECMType="33" ModuleType="33" DetectType="33"/>
+	<CONVERSION ECMType="34" ModuleType="69" DetectType="69"/>
+	<CONVERSION ECMType="35" ModuleType="62" DetectType="62"/>
+	<CONVERSION ECMType="36" ModuleType=" " DetectType=" "/>
+	<CONVERSION ECMType="37" ModuleType="131" DetectType="131"/>
+	<CONVERSION ECMType="ISBe (4 and 6 Cylinder)" ModuleType="100" DetectType="100"/>
+	<CONVERSION ECMType="C Gas Plus/B Gas Plus" ModuleType="21" DetectType="21"/>
+	<CONVERSION ECMType="ISM - CM875" ModuleType="107" DetectType="99"/>
+	<CONVERSION ECMType="ISM - CM870" ModuleType="98" DetectType="98"/>
+	<CONVERSION ECMType="ISM - CM870" ModuleType="99" DetectType="99"/>
+	<CONVERSION ECMType="ISM - Fuel Control Module - CM570" ModuleType="110" DetectType="110"/>
+	<CONVERSION ECMType="ISB - CM850" ModuleType="103" DetectType="103"/>
+	<CONVERSION ECMType="ISB - CM850" ModuleType="104" DetectType="104"/>
+	<CONVERSION ECMType="ISC - CM850" ModuleType="114" DetectType="114"/>
+	<CONVERSION ECMType="ISL - CM850" ModuleType="124" DetectType="114"/>
+	<CONVERSION ECMType="QSK19G/45G/60G, QSV81/91" ModuleType="62" DetectType="62"/>
+	<CONVERSION ECMType="QSK19G/45G/60G, QSV81/91 - SSM558-A" ModuleType="63" DetectType="63"/>
+	<CONVERSION ECMType="QSK19G/45G/60G, QSV81/91 - SSM558" ModuleType="63" DetectType="63"/>
+	<CONVERSION ECMType="QSK19G/45G/60G, QSV81/91 - SSM558-B" ModuleType="64" DetectType="64"/>
+	<CONVERSION ECMType="ISB" ModuleType="18" DetectType="18"/>
+	<CONVERSION ECMType="ISB" ModuleType="50" DetectType="50"/>
+	<CONVERSION ECMType="ISB" ModuleType="51" DetectType="51"/>
+	<CONVERSION ECMType="ISB Daimler Chrysler" ModuleType="19" DetectType="19"/>
+	<CONVERSION ECMType="ISC/ISL" ModuleType="47" DetectType="47"/>
+	<CONVERSION ECMType="ISC/ISL" ModuleType="52" DetectType="52"/>
+	<CONVERSION ECMType="QSB5.9/44, 5.9/30, 4.5/30, 3.9/30" ModuleType="80" DetectType="80"/>
+	<CONVERSION ECMType="QSC8.3/QSL9" ModuleType="81" DetectType="81"/>
+	<CONVERSION ECMType="ISM" ModuleType="59" DetectType="59"/>
+	<CONVERSION ECMType="ISM" ModuleType="95" DetectType="95"/>
+	<CONVERSION ECMType="Signature/ISX" ModuleType="39" DetectType="39"/>
+	<CONVERSION ECMType="Signature/ISX" ModuleType="90" DetectType="90"/>
+	<CONVERSION ECMType="Signature/ISX - CM870" ModuleType="93" DetectType="93"/>
+	<CONVERSION ECMType="Signature/ISX - CM870" ModuleType="94" DetectType="94"/>
+	<CONVERSION ECMType="QSM11" ModuleType="75" DetectType="75"/>
+	<CONVERSION ECMType="QSM11" ModuleType="76" DetectType="76"/>
+	<CONVERSION ECMType="QSX15" ModuleType="71" DetectType="71"/>
+	<CONVERSION ECMType="CELECT" ModuleType="1" DetectType="1"/>
+	<CONVERSION ECMType="CELECT" ModuleType="2" DetectType="2"/>
+	<CONVERSION ECMType="CELECT" ModuleType="3" DetectType="3"/>
+	<CONVERSION ECMType="CELECT" ModuleType="4" DetectType="4"/>
+	<CONVERSION ECMType="CELECT Plus" ModuleType="12" DetectType="12"/>
+	<CONVERSION ECMType="CELECT Plus Ind." ModuleType="15" DetectType="15"/>
+	<CONVERSION ECMType="480C-E" ModuleType="33" DetectType="33"/>
+	<CONVERSION ECMType="QST30" ModuleType="130" DetectType="130"/>
+	<CONVERSION ECMType="QST30" ModuleType="131" DetectType="131"/>
+	<CONVERSION ECMType="QSK19/45/60/78" ModuleType="14" DetectType="14"/>
+	<CONVERSION ECMType="QSK19/45/60/78" ModuleType="41" DetectType="41"/>
+	<CONVERSION ECMType="QSK19/45/60/78" ModuleType="42" DetectType="42"/>
+	<CONVERSION ECMType="QSK19/45/60/78" ModuleType="44" DetectType="44"/>
+	<CONVERSION ECMType="B5.9G" ModuleType="6" DetectType="6"/>
+	<CONVERSION ECMType="C8.3G/L10G" ModuleType="20" DetectType="20"/>
+	<CONVERSION ECMType="C8.3G/L10G" ModuleType="22" DetectType="20"/>
+	<CONVERSION ECMType="L10G" ModuleType="20" DetectType="20"/>
+	<CONVERSION ECMType="L10G" ModuleType="22" DetectType="20"/>
+	<CONVERSION ECMType="CENTRY" ModuleType="5" DetectType="5"/>
+	<CONVERSION ECMType="Centinel" ModuleType="61" DetectType="61"/>
+</ConversionTable>

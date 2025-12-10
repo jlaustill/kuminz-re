@@ -1,0 +1,26 @@
+sensor_index,sensor_name,calterm_prefix,output_ram,x_axis_ram,y_axis_ram,x_axis_flash,y_axis_flash,entries,x_unit,y_unit,notes
+0,intake_manifold_temp,ADIMTP,0x80A2B2,0x806B76,0x806B42,0x038652,0x03861E,26,CNTS,DEGF,IMT sensor - also has tables at ch21 (0x806DC2/0x806DD4)
+1,fuel_temp,ADFLTP,0x80A2C8,0x806BD6,0x806BAA,0x0386B2,0x038686,22,CNTS,DEGF,Fuel temperature sensor
+2,coolant_level,ADCV,0x80A2DE,0x806C14,0x806C02,0x0386F0,0x0386DE,9,CNTS,NONE,Coolant level sensor
+3,fuel_pressure,ADSYFP,0x80A2F4,0x806C2C,0x806C26,0x038708,0x038702,3,CNTS,PSIG,System fuel pressure (SYFP)
+4,oil_pressure,ADOLPR,0x80A30A,0x806C3E,0x806C32,0x03871A,0x03870E,6,CNTS,PSIG,Oil pressure sensor
+5,boost_pressure,ADBSPR,0x80A320,0x806C4A,0x806C54,0x038826,0x038830,5,CNTS,INHG,Boost pressure sensor - DISCOVERED via code tracing initADCChannelConfiguration
+6,coolant_temp,ADCLTP,0x80A336,0x806C5E,0x806C92,0x03883A,0x03886E,26,CNTS,DEGF,Coolant temperature sensor
+7,turbo_turbine_temp,ADTTT,0x80A34C,0x806CCC,0x806CC6,0x0388A8,0x0388A2,3,CNTS,DEGF,Turbo turbine temperature (ADTTFT output)
+8,unknown_8,UNKNOWN,0x80A362,0x806CD8,0x806CD2,0x0388B4,0x0388AE,3,CNTS,UNKNOWN,Unknown sensor 8
+9,unknown_9,UNKNOWN,0x80A378,0x806CE4,0x806CDE,0x0388C0,0x0388BA,3,CNTS,UNKNOWN,Unknown sensor 9
+10,sat_humidity,ADSATH,0x80A38E,0x806CF8,0x806CEA,0x0388D4,0x0388C6,7,CNTS,UNKNOWN,SAT humidity (ADSATHFT output)
+11,remote_throttle,ADRTH,0x80A3A4,0x806D10,0x806D06,0x0388EC,0x0388E2,5,CNTS,PCT,Remote throttle position
+12,ambient_air_pressure,ADAAP,0x80A3BA,0x806D24,0x806D1A,0x038900,0x0388F6,5,CNTS,INHG,Ambient/barometric air pressure
+13,battery_voltage,ADBATV,0x80A3D0,0x806D34,0x806D2E,0x038910,0x03890A,3,CNTS,VOLTS,Battery voltage sensor
+14,unknown_14,UNKNOWN,0x80A3E6,0x806D40,0x806D3A,0x03891C,0x038916,3,CNTS,UNKNOWN,Unknown sensor 14 - ch15 tables
+15,unknown_15,UNKNOWN,0x80A3FC,0x806D4C,0x806D46,0x038928,0x038922,3,CNTS,UNKNOWN,Unknown sensor 15 - ch16 tables
+16,unknown_16,UNKNOWN,0x80A412,0x806D58,0x806D52,0x038934,0x03892E,3,CNTS,UNKNOWN,Unknown sensor 16 - ch17 tables
+17,engine_sensor_supply,ADESSV,0x80A428,0x806D64,0x806D5E,0x038940,0x03893A,3,CNTS,VOLTS,Engine sensor supply voltage
+18,unknown_18,UNKNOWN,0x80A43E,0x806D70,0x806D6A,0x03894C,0x038946,3,CNTS,UNKNOWN,Unknown sensor 18 - ch19 tables
+19,unknown_19,UNKNOWN,0x80A454,0x806D9C,0x806D76,0x038978,0x038952,19,CNTS,UNKNOWN,Unknown sensor 19 - ch20 tables (large table)
+20,water_in_fuel,ADWIF,0x80A46A,0x806DD4,0x806DC2,0x0389B0,0x03899E,9,CNTS,NONE,Water in fuel sensor
+21,unknown_21,UNKNOWN,0x80A480,0x806DEE,0x806DE6,0x0389CA,0x0389C2,4,CNTS,UNKNOWN,Unknown sensor 21 - ch22 tables
+22,unknown_22,UNKNOWN,0x80A496,0x806DFC,0x806DF6,0x0389D8,0x0389D2,3,CNTS,UNKNOWN,Unknown sensor 22 - ch23 tables
+23,hbridge_sv,ADHBSV,0x80A4AC,0x806E08,0x806E02,0x0389E4,0x0389DE,3,CNTS,UNKNOWN,H-bridge sensor voltage (ADHBSVFT output)
+24,unknown_24,UNKNOWN,0x80A4C2,0x806E14,0x806E0E,0x0389F0,0x0389EA,3,CNTS,UNKNOWN,Unknown sensor 24 - ch25 tables

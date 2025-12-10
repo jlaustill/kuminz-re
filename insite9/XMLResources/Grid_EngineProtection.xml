@@ -1,0 +1,65 @@
+<!-- CHANAGE HISTORY
+6/27/2005 Binish Peter(cv271) Changed for Sorting
+12/18/2007 Gaurav Agrawal(hu585)DB_G0011179 Added Node to print the customer name in the header of each page.
+07/22/2009 VV(is310) Replaced getAttribute(Description) to Text
+08/24/2009 Sudhir Adhave(hu586)DB_G00142945 Modified Image Arrays Upper range to less than 1103.
+11/27/2009 Rupesh Tank(hu590)DB_G00142945 Modified file to remove logic for printing as it is done in the code
+
+-->
+
+<FlexGrid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Properties Cols="7:VT_I4" FixedCols="0:VT_I4" ExplorerBar="0:VT_I4" GridLines="1:VT_I4" OutlineBar="6:VT_I4" AllowUserResizing="1:VT_UI4" AutoSizeMode="1:VT_UI2" Editable="0:VT_I4" ColWidthMax="4000" WordWrap="1:VT_UI2"/>
+	<FixedRows>
+	</FixedRows>
+	
+	<icons>
+	</icons>
+	
+	<combolists>
+	</combolists>
+	
+	<styles>
+		<style id="s1" CellFontBold="1:VT_I4" CellAlignMent="0:VT_I4"/>
+		<style id="s2" CellAlignMent="0:VT_I4"/>
+	</styles>
+	
+	<resources>
+		<resource id="Res1" CLSID="{1C628621-473B-4EA4-9DC6-7ED92C57DD9E}\Pages\{1F91B6C3-7C6F-4DD3-86EF-CFB32F43D3AF}" LoadDLL="TRUE"/>
+		<resource id="Res2" CLSID="{1ECBBE0B-836B-11D4-8A76-00062999E309}" LoadDLL="TRUE"/>
+		<resource id="Res3" CLSID="{1C628621-473B-4EA4-9DC6-7ED92C57DD9E}\Pages\{08E427D0-E3DC-436A-9CF1-6D82E0BC14FF}" LoadDLL="TRUE"/>
+
+	</resources>
+	
+	<printing HdrFontSize="8">
+		<header>
+			<line>
+				<center source="RES:Res2:1050"/>
+			</line>
+			<line>
+				<left source="RES:Res2:2030"/>
+				<left source="OBJ:DOM:selectSingleNode(/Image/Header/ESerial):getAttribute(DisplayValue)"/>
+				<right source="INSITE - "/>
+				<right source="OBJ:DOM:selectSingleNode(/Image):getAttribute(ImageVersion)"/>
+			</line>
+			<line>
+				<left source="RES:Res2:2029"/>
+				<left source="OBJ:DOM:selectSingleNode(/Image/Header/UNumber):getAttribute(DisplayValue)"/>
+				<right source="RES:Res2:2031"/>
+				<right source="OBJ:DOM:selectSingleNode(/Image/Header/VMake):getAttribute(DisplayValue)"/>
+			</line>
+			<line>
+				<left source="RES:Res2:2032"/>
+				<left source="OBJ:DOM:selectSingleNode(/Image/Header/WOName):getAttribute(DisplayValue)"/>
+				<right source="RES:Res2:2033"/>
+				<right source="OBJ:DOM:selectSingleNode(/Image/Header/IName):getAttribute(DisplayValue)"/>
+			</line>
+			<!-- Added Node to print the customer name in the header of each page under the PR DB_G00111079 -->
+			<line>
+				<right source="RES:Res2:2036" />
+				<right source="OBJ:DOM:selectSingleNode(/Image/Header/CustomerName):getAttribute(DisplayValue)" />
+			</line>
+		</header>
+		
+	</printing>
+
+</FlexGrid>

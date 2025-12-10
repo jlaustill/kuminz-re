@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE module SYSTEM "../htmlentities.dtd">
+<XML_RESOURCE>
+   <RESOURCE Tag="1001" Type="String Table" Description="Message String Table">
+      <STRING ID="100" Context="Title">Aftertreatment Diesel Exhaust Fluid System Leak Test</STRING>
+      <STRING ID="101" Context="Subtitle">The Aftertreatment Diesel Exhaust Fluid System Leak Test is designed to command the dosing system to prime regardless of system temperatures.  This test can be used to verify that the system is free of leaks after reassembly or to validate the repair of a faulty component in the dosing system. </STRING>
+      <STRING ID="102" Context="Instructions">Initial Conditions
+1.     The Aftertreatment Diesel Exhaust Fluid System is intact and all mechanical joints have been reassembled 
+2.     Engine stopped
+3.     No active Aftertreatment fault codes
+Steps
+1.     Select Start 
+2.     Wait for the system to prime
+3.     Perform system inspections
+Additional Information 
+1.     Test will command the system to pump Diesel Exhaust Fluid to prime the system
+2.     If the system loses pressure during the test for any reason, the test will stop to allow time for the operator to determine the source of the pressure loss.  The test will require acknowledgment of the pressure loss before continuing 
+3.     The system will remain primed and at pressure until the timer reaches zero or select Stop to end the test early
+4.     Key off is required in order to stop the test while it is priming
+5.     If the system fails to prime, or the engine is started during the test, a key off will be required to reset the test.
+6.     The test has a 20 minute countdown timer that will start one the system is primed.  If the inspections are completed prior to the timer expiring, select  Stop to end the test  
+7.     If the test fails to stop when the Stop button is selected, key off will be required to stop the test
+	  </STRING>
+      <STRING ID="103" Context="Status Header">Status</STRING>
+      <STRING ID="104" Context="Not supported message">This test is not supported by the current calibration.</STRING>
+      <STRING ID="105" Context="Engine on pre-test">The engine must be stopped before running this test.  Stop the engine before attempting to restart this test.</STRING>
+      <STRING ID="106" Context="Test stopped">Test stopped.  Select Start to begin the test.</STRING>
+      <STRING ID="107" Context="Invalid app state">The ECM detects a condition in which the test cannot be run.  Please select Help for further details.</STRING>
+      <STRING ID="108" Context="Low tank level during test">A low Aftertreatment Diesel Exhaust Fluid Tank level has been detected.  Stop the test and determine the cause before restarting the test.</STRING>
+      <STRING ID="109" Context="Low tank level before test">The Aftertreatment Diesel Exhaust Fluid Tank level is below the minimum level to run the test.  Exit the test, key off, fill tank to proper level, and restart the test.</STRING>
+      <STRING ID="110" Context="ECM Prohibited">The ECM is preventing the test from starting.  Consult the Service Manual for further directions.</STRING>
+      <STRING ID="111" Context="purging">Wait while the system is purging.</STRING>
+      <STRING ID="112" Context="primed">The system has been primed and is at pressure.  Perform system inspections.  If the inspections are completed prior to the timer expiring, select Stop to end the test.</STRING>
+      <STRING ID="113" Context="Instructions header">Instructions:</STRING>
+      <STRING ID="114" Context="show label">Show</STRING>
+	  <STRING ID="115" Context="engine on during test">The test has been stopped due to engine speed detected.  The system will now purge.  Key off will be required to reset the test.</STRING>
+	  <STRING ID="116" Context="lost pressure">The Aftertreatment Diesel Exhaust Fluid System has lost pressure. Perform system inspections before restarting the test.</STRING>
+	  <STRING ID="117" Context="lost pressure">Test stopped.  There are one or more active faults in the ECM. Troubleshoot the fault code before restarting the test.</STRING>
+	  <STRING ID="118" Context="active fault status">There are one or more faults in the ECM preventing the test from starting.  Troubleshoot the fault(s) and then restart the test.</STRING>
+	  <STRING ID="119" Context="priming">The Aftertreatment Diesel Exhaust Fluid System is priming.</STRING>
+	  <STRING ID="120" Context="failed to prime popup">The system failed to prime.  Troubleshoot and correct any issues causing the failure and then click OK.  Key off will be required to reset the test.</STRING>
+	  <STRING ID="121" Context="lost pressure popup">The system has lost pressure.  Perform any required inspections to determine the cause then select OK.</STRING>
+	  <STRING ID="122" Context="retry limit reached">The number of allowed attempts for this key cycle has been reached.  Consult the Service Manual for further instructions.</STRING>
+	  <STRING ID="123" Context="failed to prime status">The system was unable to successfully prime.  Troubleshoot and correct any issues causing the failure and then click OK.  Key off will be required to reset the test.</STRING>
+	  <STRING ID="124" Context="low temperature during test">A low Diesel Exhaust Fluid Tank Temperature has been detected.  Stop the test and determine the cause before restarting the test.</STRING>
+	  <STRING ID="125" Context="low temperature pre-test">The test will not run because the diesel exhaust fluid in the tank may be frozen or is too cold to dose.  Raise the tank temperature prior to restarting the test.</STRING>
+	  <STRING ID="126" Context="Timer label">Time Remaining:</STRING>
+	  <STRING ID="127" Context="Timer units">MM:SS</STRING>
+	  <STRING ID="128" Context="Monitors header">Monitors</STRING>
+	  <STRING ID="129" Context="name column">Name</STRING>
+	  <STRING ID="130" Context="value column">Value</STRING>
+	  <STRING ID="131" Context="units column">Units</STRING>
+	  <STRING ID="133" Context="tool name">Cummins INSITE</STRING>
+	  <STRING ID="134" Context="can't exit test">You are attempting to close a window containing an active ECM Test.  Use the Stop button if available or wait until the test has stopped.</STRING>
+	  <STRING ID="42000" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;42000&lt;/ErrorNumber&gt;&lt;Description&gt; INSITE was unable to stop the test.  A key off will be required to stop the test.&lt;/Description&gt;&lt;Suggestion&gt;Key off is required to stop the test.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+	  <STRING ID="42001" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;42001&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+	  <STRING ID="42002" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;42002&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+	  <STRING ID="42003" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;42003&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+	</RESOURCE>
+</XML_RESOURCE>

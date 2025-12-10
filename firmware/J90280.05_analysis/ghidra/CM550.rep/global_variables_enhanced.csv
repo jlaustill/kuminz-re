@@ -1,0 +1,1175 @@
+address,name,type,comment,length,calterm_type,unit,data_pattern
+0x0100003A,data_plt_module_id,word,Cummins module identifier (EN=0x454E for CM550/VP44 family),2,0,,data
+0x80C408,current_engine_rpm,word,Current engine RPM value,2,0,,value
+0x80CFD6,param_table_main,word,Primary parameter storage (param_lookup_1 target),2,0,,lookup
+0x80CFD8,param_table_aux,word,Auxiliary parameters,2,0,,data
+0x80CFDA,param_table_ctrl,word,Control parameters (param_lookup_2 target),2,0,,lookup
+0x80CFDC,param_table_ext,word,Extended parameters,2,0,,data
+0x80CFDE,param_table_calc,word,Calculated parameter values (param_lookup_3 target),2,0,,lookup
+0x80CFE0,calculated_2,word,More calculated values,2,0,,value
+0x80CFE2,calculated_3,word,Additional calculated,2,0,,value
+0x80CFE4,calculated_4,word,Final calculated values,2,0,,value
+0x80CFE6,result_buffer,word,Final result storage,2,0,,data
+0x80d0aa,fsmxthfl_calc_input,word,FSMXTHFL calculation input variable (_DAT_0080d0aa),2,0,,data
+0x80d0ae,jcthkctd_calc_input,word,JCTHKCTD throttle kickdown calculation input variable,2,0,,data
+0x80d0c2,param_scaling_factor,word,Parameter scaling factor used in calculations,2,0,,data
+0x80d0c6,asthrfes_calc_input,word,ASTHRFES throttle position speed calculation input variable,2,0,,data
+0x80d49a,cached_parameter_value,word,Cached parameter value for diagnostic responses,2,0,,value
+0x80d49c,diagnostic_status_register,word,Diagnostic operation status and mode flags,2,0,,flag
+0x8037b6,can_priority_table_start,byte,CAN message priority lookup table start (J1939 priority values),1,0,,lookup
+0x8037cc,can_priority_dm983,byte,CAN priority for Cummins DM-983 diagnostic message,1,0,,data
+0x80cfc3,j1939_source_address_primary,byte,J1939 source address for primary ECU (0xC3 = 195 decimal),1,0,,address
+0x80cfcd,j1939_source_address_secondary,byte,J1939 source address for secondary functions (0xCD = 205 decimal),1,0,,address
+0x80304e,diagnostic_status_data,byte,Diagnostic status data buffer (0xF0/F4/F8 based on conditions),1,0,,data
+0x803064,diagnostic_buffer_unused,byte,Diagnostic message unused data buffer pointer target,1,0,,data
+0x800f5e,vp44_response_buffer,byte,VP44 fuel temperature response message processing buffer,1,0,,data
+0x8086C2,param_scale_factor,word,Scaling reference,2,0,,data
+0x8086E0,param_limit_value,word,Parameter limits,2,0,,threshold
+0x8086E3,param_config_byte,byte,Configuration flags,1,0,,flag
+0x8086F6,param_ref_base,word,Parameter reference base (lookup table for param_lookup_1),2,0,,lookup
+0x803036,j1939_tx_msg_buffer,byte,J1939 transmission message buffer with data and header,1,0,,data
+0x80303e,vp44_cmd_msg_buffer,byte,VP44 0x100 command message header,1,0,,command
+0x80303f,vp44_fuel_amount_high,byte,VP44 fuel amount high byte (param_table_aux>>8 + 125),1,0,,lookup
+0x803040,vp44_fuel_amount_low,byte,"VP44 fuel amount low byte (param_table_main>>8 + 125) ",1,0,,lookup
+0x803041,vp44_timing_byte3,byte,VP44 timing advance data byte 3,1,0,,data
+0x803042,vp44_timing_byte4,byte,VP44 timing advance data byte 4,1,0,,data
+0x803043,vp44_timing_byte5,byte,"VP44 timing advance data byte 5  ",1,0,,data
+0x803044,vp44_timing_byte6,byte,VP44 timing advance data byte 6,1,0,,data
+0x803045,vp44_rpm_low,byte,VP44 RPM×4 low byte (current_engine_rpm & 0xFF),1,0,,data
+0x803046,vp44_rpm_high,byte,VP44 RPM×4 high byte (current_engine_rpm >> 8),1,0,,data
+0x80306e,can_param_msg_buf_3,byte,CAN parameter message buffer 3 (config + limits),1,0,,threshold
+0x803056,can_param_msg_buf_2,byte,CAN parameter message buffer 2 (secondary params),1,0,,data
+0x803066,can_param_msg_buf_1,byte,CAN parameter message buffer 1 (config data),1,0,,data
+0x80c3fc,circular_buffer_write_index,word,Circular buffer write index (512 entries max),2,0,,data
+0x80c3fe,circular_buffer_count,word,Number of entries in circular buffer,2,0,,data
+0x80c1fa,circular_buffer_data,byte,Circular buffer data storage (512 bytes),1,0,,data
+0x80bdfa,circular_buffer_metadata,word,Circular buffer metadata/timestamps,2,0,,data
+0x80d1a4,system_logging_state,word,System data logging state flag (1=active 2=error mode),2,0,,flag
+0x801a8a,can_buffer_setup1_size,byte,CAN buffer 1 message size (set to 8 bytes),1,0,,data
+0x801a8c,can_buffer_setup1_data_ptr,dword,CAN buffer 1 data pointer to 0x801a94,2,0,,data
+0x801a90,can_buffer_setup1_unused_ptr,dword,CAN buffer 1 unused/padding pointer to 0x801a9c,2,0,,data
+0x801a94,can_buffer_setup1_data,byte,CAN buffer 1 data array (8 bytes with 0xFF padding),1,0,,data
+0x801ab6,j1939_pgn_65265_header,dword,J1939 PGN 65265 message header (engine data),2,0,,data
+0x801aba,j1939_pgn_65265_size,byte,J1939 PGN 65265 message size (7 bytes),1,0,,data
+0x801abc,j1939_pgn_65265_data_ptr,dword,J1939 PGN 65265 data pointer,2,0,,data
+0x801ac0,j1939_pgn_65265_unused_ptr,dword,J1939 PGN 65265 unused pointer,2,0,,data
+0x801ac4,j1939_pgn_65265_data_byte1,byte,J1939 PGN 65265 first data byte (0xF3),1,0,,data
+0x8034f8,can_message_buffer_start,byte,Start of CAN message buffer array for logging (906 bytes),1,0,,data
+0x803882,can_message_buffer_end,byte,End marker for CAN message buffer logging range,1,0,,data
+0x80d3a6,memory_patch_array,byte,Memory patch descriptor array (6 bytes per entry: addr size data),1,0,,data
+0x80d2de,patch_data_source,byte,Source data buffer for memory patching operations,1,0,,data
+0x80d44e,memory_patch_count,byte,Number of memory patches to apply (max 10),1,0,,data
+0x8062cb,system_protected_range_start,byte,Start of 4-byte protected system area,1,0,,data
+0x8062cf,system_protected_range_end,byte,End of 4-byte protected system area,1,0,,data
+0x803586,security_bypass_flag,byte,Security check bypass flag (0xFF=bypass enabled),1,0,,flag
+0x800026,dma_descriptor_ptr1,dword,DMA descriptor chain pointer 1,2,0,,data
+0x80002a,dma_control_flags1,dword,DMA control/enable flags 1 (0x80000000=enabled),2,0,,flag
+0x80002e,dma_descriptor_ptr2,dword,"DMA descriptor chain pointer 2  ",2,0,,data
+0x800032,dma_control_flags2,dword,DMA control/enable flags 2 (0x80000000=enabled),2,0,,flag
+0x80000e,dma_descriptor_base1,word,DMA descriptor table 1 base address,2,0,,lookup
+0x80001a,dma_descriptor_base2,word,DMA descriptor table 2 base address,2,0,,lookup
+0x8062f4,dma_desc_source_addr1,dword,DMA descriptor 1 source address pointer,2,0,,address
+0x8062f6,dma_desc_dest_addr1,dword,DMA descriptor 1 destination address pointer,2,0,,address
+0x806304,dma_desc_source_addr2,dword,DMA descriptor 2 source address pointer,2,0,,address
+0x806318,dma_desc_dest_addr2,dword,DMA descriptor 2 destination address pointer,2,0,,address
+0x80632c,dma_desc_source_addr3,dword,DMA descriptor 3 source address pointer,2,0,,address
+0x806340,dma_desc_dest_addr3,dword,DMA descriptor 3 destination address pointer,2,0,,address
+0xFFFA00,sim_mcr,word,System Integration Module Master Control Register,2,0,,data
+0xFFFA04,sim_avr,word,"SIM Auto Vector Register  ",2,0,,data
+0xFFFA11,sim_rsr,byte,SIM Reset Status Register,1,0,,data
+0xFFFA15,sim_sypcr,byte,System Protection Control Register,1,0,,data
+0xFFFA17,sim_swiv,byte,Software Interrupt Vector,1,0,,data
+0xFFFA19,sim_swsr,byte,Software Service Register (watchdog),1,0,,data
+0xFFFA44,sim_csbarbt,word,Chip Select Base Address Register - Boot ROM,2,0,,address
+0xFFFA46,sim_csorbt,word,Chip Select Option Register - Boot ROM,2,0,,data
+0xFFFA48,sim_csbar0,word,Chip Select Base Address Register 0,2,0,,address
+0xFFFA4A,sim_csor0,word,Chip Select Option Register 0,2,0,,data
+0x37EAE,firmware_data_source,byte,Source address for firmware data copying to working memory (10KB),1,0,,address
+0xFFFA00,sim_mcr,word,SIM Module Configuration Register,2,0,,data
+0xFFFA02,sim_simtr,word,SIM Module Test Register,2,0,,data
+0xFFFA04,sim_avr,word,SIM Auto Vector Register,2,0,,data
+0xFFFA06,sim_rsr,word,SIM Reset Status Register,2,0,,data
+0xFFFA08,sim_syncr,word,SIM Clock Synthesizer Control Register,2,0,,data
+0xFFFA0A,sim_sypcr,word,SIM System Protection Control Register,2,0,,data
+0xFFFA0C,sim_swiv,word,SIM Software Interrupt Vector Register,2,0,,data
+0xFFFA0E,sim_swsr,word,SIM Software Service Register,2,0,,data
+0xFFFA10,sim_ddir,word,SIM Data Direction Register,2,0,,data
+0xFFFA12,sim_dpar,word,SIM Data Polarity Register,2,0,,data
+0xFFFA14,sim_ddrd,word,SIM Data Direction Register D,2,0,,data
+0xFFFA16,sim_dpard,word,SIM Data Polarity Register D,2,0,,data
+0xFFFA18,sim_picr,word,SIM Periodic Interrupt Control Register,2,0,,data
+0xFFFA1A,sim_pitr,word,SIM Periodic Interrupt Timer Register,2,0,,data
+0xFFFA1C,sim_swsr2,word,SIM Software Service Register 2,2,0,,data
+0xFFFA20,sim_csbar0,word,SIM Chip Select Base Address Register 0,2,0,,address
+0xFFFA22,sim_csor0,word,SIM Chip Select Option Register 0,2,0,,data
+0xFFFA24,sim_csbar1,word,SIM Chip Select Base Address Register 1,2,0,,address
+0xFFFA26,sim_csor1,word,SIM Chip Select Option Register 1,2,0,,data
+0xFFFA28,sim_csbar2,word,SIM Chip Select Base Address Register 2,2,0,,address
+0xFFFA2A,sim_csor2,word,SIM Chip Select Option Register 2,2,0,,data
+0xFFFA2C,sim_csbar3,word,SIM Chip Select Base Address Register 3,2,0,,address
+0xFFFA2E,sim_csor3,word,SIM Chip Select Option Register 3,2,0,,data
+0xFFFA30,sim_csbar4,word,SIM Chip Select Base Address Register 4,2,0,,address
+0xFFFA32,sim_csor4,word,SIM Chip Select Option Register 4,2,0,,data
+0xFFFA34,sim_csbar5,word,SIM Chip Select Base Address Register 5,2,0,,address
+0xFFFA36,sim_csor5,word,SIM Chip Select Option Register 5,2,0,,data
+0xFFFA38,sim_csbar6,word,SIM Chip Select Base Address Register 6,2,0,,address
+0xFFFA3A,sim_csor6,word,SIM Chip Select Option Register 6,2,0,,data
+0xFFFA3C,sim_csbar7,word,SIM Chip Select Base Address Register 7,2,0,,address
+0xFFFA3E,sim_csor7,word,SIM Chip Select Option Register 7,2,0,,data
+0xFFFA40,sim_csbar8,word,SIM Chip Select Base Address Register 8,2,0,,address
+0xFFFA42,sim_csor8,word,SIM Chip Select Option Register 8,2,0,,data
+0xFFFA44,sim_csbar9,word,SIM Chip Select Base Address Register 9,2,0,,address
+0xFFFA46,sim_csor9,word,SIM Chip Select Option Register 9,2,0,,data
+0xFFFA48,sim_csbar10,word,SIM Chip Select Base Address Register 10,2,0,,address
+0xFFFA4A,sim_csor10,word,SIM Chip Select Option Register 10,2,0,,data
+0xFFFB00,qsm_qmcr,word,QSM Master Control Register,2,0,,data
+0xFFFB02,qsm_qtest,word,QSM Test Register,2,0,,data
+0xFFFB04,qsm_qilr,word,QSM Interrupt Level Register,2,0,,data
+0xFFFB06,qsm_qivr,word,QSM Interrupt Vector Register,2,0,,data
+0xFFFB08,sccr0,word,SCI Control Register 0,2,0,,data
+0xFFFB0A,sccr1,word,SCI Control Register 1,2,0,,data
+0xFFFB0C,scsr,word,SCI Status Register,2,0,,data
+0xFFFB0E,scdr,word,SCI Data Register,2,0,,data
+0xFFFB10,qsm_portqs,word,QSM Port QS Data Register,2,0,,data
+0xFFFB12,qsm_pqspar,word,QSM Port QS Pin Assignment Register,2,0,,data
+0xFFFB14,qsm_ddrqs,word,QSM Data Direction Register QS,2,0,,data
+0xFFFB16,spcr0,word,SPI Control Register 0,2,0,,data
+0xFFFB18,spcr1,word,SPI Control Register 1,2,0,,data
+0xFFFB1A,spcr2,word,SPI Control Register 2,2,0,,data
+0xFFFB1C,spcr3,word,SPI Control Register 3,2,0,,data
+0xFFFB1E,spsr,word,SPI Status Register,2,0,,data
+0xFFFC00,tpu_tpumcr,word,TPU Master Control Register,2,0,,data
+0xFFFC02,tpu_tcr,word,TPU Test Configuration Register,2,0,,data
+0xFFFC04,tpu_dscr,word,TPU Development Support Control Register,2,0,,data
+0xFFFC06,tpu_dssr,word,TPU Development Support Status Register,2,0,,data
+0xFFFC08,tpu_ticr,word,TPU Interrupt Configuration Register,2,0,,data
+0xFFFC0A,tpu_cier,word,TPU Channel Interrupt Enable Register,2,0,,flag
+0xFFFC0C,tpu_cfsr0,word,TPU Channel Function Select Register 0,2,0,,data
+0xFFFC0E,tpu_cfsr1,word,TPU Channel Function Select Register 1,2,0,,data
+0xFFFC10,tpu_cfsr2,word,TPU Channel Function Select Register 2,2,0,,data
+0xFFFC12,tpu_cfsr3,word,TPU Channel Function Select Register 3,2,0,,data
+0xFFFC14,tpu_hsqr0,word,TPU Host Sequence Register 0,2,0,,data
+0xFFFC16,tpu_hsqr1,word,TPU Host Sequence Register 1,2,0,,data
+0xFFFC18,tpu_hssr0,word,TPU Host Service Status Register 0,2,0,,data
+0xFFFC1A,tpu_hssr1,word,TPU Host Service Status Register 1,2,0,,data
+0xFFFC1C,tpu_cpr0,word,TPU Channel Priority Register 0,2,0,,data
+0xFFFC1E,tpu_cpr1,word,TPU Channel Priority Register 1,2,0,,data
+0xFFFD00,qadc_qadcmcr,word,QADC Master Control Register,2,0,,data
+0xFFFD02,qadc_qadctest,word,QADC Test Register,2,0,,data
+0xFFFD04,qadc_qadcilr,word,QADC Interrupt Level Register,2,0,,data
+0xFFFD06,qadc_qadcivr,word,QADC Interrupt Vector Register,2,0,,data
+0xFFFD08,qadc_portqa,word,QADC Port QA Data Register,2,0,,data
+0xFFFD0A,qadc_portqb,word,QADC Port QB Data Register,2,0,,data
+0xFFFD0C,qadc_ddrqa,word,QADC Data Direction Register QA,2,0,,data
+0xFFFD0E,qadc_ddrqb,word,QADC Data Direction Register QB,2,0,,data
+0xFFFE00,can1_canmcr,word,CAN 1 Master Control Register,2,0,,data
+0xFFFE02,can1_canbtcr,word,CAN 1 Bit Timing Configuration Register,2,0,,data
+0xFFFE04,can1_cantcr,word,CAN 1 Test Control Register,2,0,,data
+0xFFFE06,can1_canacr,word,CAN 1 Acceptance Control Register,2,0,,data
+0xFFFE08,can1_cantaak,word,CAN 1 Transmit Acknowledge Register,2,0,,data
+0xFFFE0A,can1_cantbsel,word,CAN 1 Transmit Buffer Selection Register,2,0,,data
+0xFFFE0C,can1_canidac,word,CAN 1 Identifier Acceptance Control Register,2,0,,data
+0xFFFE0E,can1_reserved,word,CAN 1 Reserved Register,2,0,,data
+0xFFFE10,can1_canrxerr,word,CAN 1 Receive Error Counter Register,2,0,,counter
+0xFFFE12,can1_cantxerr,word,CAN 1 Transmit Error Counter Register,2,0,,counter
+0xFFFE14,can1_canidar0,word,CAN 1 Identifier Acceptance Register 0,2,0,,data
+0xFFFE16,can1_canidar1,word,CAN 1 Identifier Acceptance Register 1,2,0,,data
+0xFFFE18,can1_canidar2,word,CAN 1 Identifier Acceptance Register 2,2,0,,data
+0xFFFE1A,can1_canidar3,word,CAN 1 Identifier Acceptance Register 3,2,0,,data
+0xFFFE1C,can1_canidmr0,word,CAN 1 Identifier Mask Register 0,2,0,,data
+0xFFFE1E,can1_canidmr1,word,CAN 1 Identifier Mask Register 1,2,0,,data
+0xFFFE20,can1_canidmr2,word,CAN 1 Identifier Mask Register 2,2,0,,data
+0xFFFE22,can1_canidmr3,word,CAN 1 Identifier Mask Register 3,2,0,,data
+0xFFFE80,can2_canmcr,word,CAN 2 Master Control Register,2,0,,data
+0xFFFE82,can2_canbtcr,word,CAN 2 Bit Timing Configuration Register,2,0,,data
+0xFFFE84,can2_cantcr,word,CAN 2 Test Control Register,2,0,,data
+0xFFFE86,can2_canacr,word,CAN 2 Acceptance Control Register,2,0,,data
+0xFFFE88,can2_cantaak,word,CAN 2 Transmit Acknowledge Register,2,0,,data
+0xFFFE8A,can2_cantbsel,word,CAN 2 Transmit Buffer Selection Register,2,0,,data
+0xFFFE8C,can2_canidac,word,CAN 2 Identifier Acceptance Control Register,2,0,,data
+0xFFFE8E,can2_reserved,word,CAN 2 Reserved Register,2,0,,data
+0xFFFE90,can2_canrxerr,word,CAN 2 Receive Error Counter Register,2,0,,counter
+0xFFFE92,can2_cantxerr,word,CAN 2 Transmit Error Counter Register,2,0,,counter
+0xFFFE94,can2_canidar0,word,CAN 2 Identifier Acceptance Register 0,2,0,,data
+0xFFFE96,can2_canidar1,word,CAN 2 Identifier Acceptance Register 1,2,0,,data
+0xFFFE98,can2_canidar2,word,CAN 2 Identifier Acceptance Register 2,2,0,,data
+0xFFFE9A,can2_canidar3,word,CAN 2 Identifier Acceptance Register 3,2,0,,data
+0xFFFE9C,can2_canidmr0,word,CAN 2 Identifier Mask Register 0,2,0,,data
+0xFFFE9E,can2_canidmr1,word,CAN 2 Identifier Mask Register 1,2,0,,data
+0xFFFEA0,can2_canidmr2,word,CAN 2 Identifier Mask Register 2,2,0,,data
+0xFFFEA2,can2_canidmr3,word,CAN 2 Identifier Mask Register 3,2,0,,data
+0x8030da,torque_control_status_byte,byte,Torque control status and mode flags for proprietary TSC message,1,0,,flag
+0x8030db,torque_control_data_byte2,byte,Second byte of torque control data for proprietary TSC message,1,0,,data
+0x8030e2,cummins_tsc_msg_header,dword,Cummins proprietary TSC message header (PGN 15728640),2,0,,data
+0x8030e6,cummins_tsc_msg_length,word,Cummins proprietary TSC message length (2 bytes),2,0,,data
+0x8030e8,cummins_tsc_data_ptr,dword,Pointer to torque control data buffer,2,0,,data
+0x8030ec,cummins_tsc_unused_ptr,dword,Unused pointer for Cummins TSC message structure,2,0,,data
+0x8030f0,torque_control_buffer_end,byte,End marker for torque control data buffer,1,0,,data
+0x80310c,fuel_economy_data_byte1,byte,First byte of fuel economy calculation result,1,0,,data
+0x80310d,fuel_economy_data_byte2,byte,Second byte of fuel economy calculation result,1,0,,data
+0x80310e,fuel_economy_data_byte3,byte,Third byte of fuel economy calculation result,1,0,,data
+0x80310f,fuel_economy_data_byte4,byte,Fourth byte of fuel economy calculation result,1,0,,data
+0x803110,fuel_economy_data_byte5,byte,Fifth byte of fuel economy calculation result,1,0,,data
+0x803111,fuel_economy_data_byte6,byte,Sixth byte of fuel economy calculation result,1,0,,data
+0x803114,fuel_economy_msg_header,dword,J1939 fuel economy message header (PGN 65266),2,0,,data
+0x803118,fuel_economy_msg_length,word,J1939 fuel economy message length (6 bytes),2,0,,data
+0x80311a,fuel_economy_data_ptr,dword,Pointer to fuel economy data buffer,2,0,,data
+0x80311e,fuel_economy_unused_ptr,dword,Unused pointer for fuel economy message structure,2,0,,data
+0x803122,fuel_economy_buffer_end,byte,End marker for fuel economy data buffer,1,0,,data
+0x803188,retarder_steps_at_idle,byte,Retarder steps available at idle (Point 1),1,0,,data
+0x803189,retarder_percent_torque_idle,byte,Retarder percent torque at idle (Point 1),1,0,,data
+0x80318a,retarder_speed_point2_low,byte,Retarder speed at point 2 low byte,1,0,,data
+0x80318b,retarder_speed_point2_high,byte,Retarder speed at point 2 high byte,1,0,,data
+0x80318c,retarder_percent_torque_point2,byte,Retarder percent torque at point 2,1,0,,data
+0x80318d,retarder_speed_point3_low,byte,Retarder speed at point 3 low byte,1,0,,data
+0x80318e,retarder_speed_point3_high,byte,Retarder speed at point 3 high byte,1,0,,data
+0x80318f,retarder_percent_torque_point3,byte,Retarder percent torque at point 3,1,0,,data
+0x803190,retarder_speed_point4_low,byte,Retarder speed at point 4 low byte,1,0,,data
+0x803191,retarder_speed_point4_high,byte,Retarder speed at point 4 high byte,1,0,,data
+0x803192,retarder_percent_torque_point4,byte,Retarder percent torque at point 4,1,0,,data
+0x803193,retarder_speed_point5_low,byte,Retarder speed at peak torque low byte,1,0,,data
+0x803194,retarder_speed_point5_high,byte,Retarder speed at peak torque high byte,1,0,,data
+0x803195,retarder_percent_torque_point5,byte,Retarder percent torque at peak torque,1,0,,data
+0x803196,retarder_reference_torque_low,byte,Reference retarder torque low byte,1,0,,data
+0x803197,retarder_reference_torque_high,byte,Reference retarder torque high byte,1,0,,data
+0x803198,retarder_config_byte17,byte,Retarder configuration byte 17,1,0,,data
+0x803199,retarder_config_byte18,byte,Retarder configuration byte 18,1,0,,data
+0x80319a,retarder_config_msg_header,dword,J1939 retarder configuration message header (PGN 65249),2,0,,data
+0x80319e,retarder_config_msg_length,word,J1939 retarder configuration message length (18 bytes),2,0,,data
+0x8031a0,retarder_config_data_ptr,dword,Pointer to retarder configuration data buffer,2,0,,data
+0x8031a4,retarder_config_unused_ptr,dword,Unused pointer for retarder configuration message structure,2,0,,data
+0x8031a8,retarder_config_buffer_end,byte,End marker for retarder configuration data buffer,1,0,,data
+0x80cfb2,retarder_mode_table_count,byte,Number of active retarder mode threshold tables (3),1,0,,lookup
+0x801a42,retarder_mode1_threshold_table,word,Retarder mode 1 threshold lookup table structure,2,0,,lookup
+0x801a44,retarder_mode1_data_ptr,dword,Pointer to retarder mode 1 threshold data,2,0,,threshold
+0x801a4a,retarder_mode1_output_ptr,dword,Pointer to retarder mode 1 output buffer,2,0,,data
+0x801a4e,retarder_mode2_threshold_table,word,Retarder mode 2 threshold lookup table structure,2,0,,lookup
+0x801a50,retarder_mode2_data_ptr,dword,Pointer to retarder mode 2 threshold data,2,0,,threshold
+0x801a56,retarder_mode2_output_ptr,dword,Pointer to retarder mode 2 output buffer,2,0,,data
+0x801a5a,retarder_mode3_threshold_table,word,Retarder mode 3 threshold lookup table structure,2,0,,lookup
+0x801a5c,retarder_mode3_data_ptr,dword,Pointer to retarder mode 3 threshold data,2,0,,threshold
+0x801a62,retarder_mode3_output_ptr,dword,Pointer to retarder mode 3 output buffer,2,0,,data
+0x801a9e,ambient_conditions_msg_header,dword,J1939 ambient conditions message header (PGN 65269),2,0,,data
+0x801aa2,ambient_conditions_msg_length,word,J1939 ambient conditions message length (8 bytes),2,0,,data
+0x801aa4,ambient_conditions_data_ptr,dword,Pointer to ambient conditions data buffer,2,0,,data
+0x801aa8,ambient_conditions_unused_ptr,dword,Unused pointer for ambient conditions message structure,2,0,,data
+0x801aac,ambient_conditions_data_start,byte,Start of ambient conditions data buffer,1,0,,data
+0x801aad,ambient_barometric_pressure,byte,Barometric pressure data (0xFF = not available),1,0,,data
+0x801aae,ambient_cab_interior_temp,byte,Cab interior temperature (0xFF = not available),1,0,,data
+0x801aaf,ambient_air_temp,byte,"Ambient air temperature (0xFF = not available)  ",1,0,,data
+0x801ab0,engine_air_inlet_temp,byte,Engine air inlet temperature (0xFF = not available),1,0,,data
+0x801ab1,road_surface_temp,byte,Road surface temperature (0xFF = not available),1,0,,data
+0x801ab2,ambient_conditions_reserved,word,Reserved bytes for ambient conditions (0xFFFF),2,0,,data
+0x801ab4,ambient_conditions_buffer_end,byte,End marker for ambient conditions data buffer,1,0,,data
+0x801ac5,ambient_temp_calc_low,byte,Calculated ambient temperature low byte,1,0,,value
+0x801ac6,ambient_temp_calc_high,byte,Calculated ambient temperature high byte,1,0,,value
+0x801ac7,ambient_sensor_status1,byte,Ambient sensor status flags byte 1,1,0,,flag
+0x801ac8,ambient_sensor_status2,byte,Ambient sensor status flags byte 2,1,0,,flag
+0x801ac9,ambient_temp_processed,byte,Processed ambient temperature value,1,0,,value
+0x801aca,ambient_status_final,byte,Final ambient conditions status byte,1,0,,data
+0x8030aa,engine_fluid_level_msg_header,dword,J1939 engine fluid level/pressure message header (PGN 65263),2,0,,data
+0x8030ae,engine_fluid_level_msg_length,word,J1939 engine fluid level/pressure message length (8 bytes),2,0,,data
+0x8030b0,engine_fluid_level_data_ptr,dword,Pointer to engine fluid level/pressure data buffer,2,0,,data
+0x8030b4,engine_fluid_level_unused_ptr,dword,Unused pointer for engine fluid level message structure,2,0,,data
+0x8030b8,fuel_delivery_pressure,byte,Fuel delivery pressure (0xFF = not available),1,0,,data
+0x8030b9,engine_oil_pressure,byte,Engine oil pressure (0xFF = not available),1,0,,data
+0x8030ba,crankcase_pressure,byte,Crankcase pressure (0xFF = not available),1,0,,data
+0x8030bb,engine_oil_level,byte,Engine oil level (0xFF = not available),1,0,,data
+0x8030bc,coolant_pressure,word,Coolant pressure (0xFFFF = not available),2,0,,data
+0x8030be,coolant_level,byte,Coolant level (0xFF = not available),1,0,,data
+0x8030bf,extended_crankcase_pressure,byte,Extended crankcase blow-by pressure (0xFF = not available),1,0,,data
+0x8030c0,engine_fluid_level_buffer_end,byte,End marker for engine fluid level data buffer,1,0,,data
+0x8030d0,engine_temp_processed1,byte,Processed engine temperature value 1,1,0,,value
+0x8030d1,engine_temp_processed2,byte,Processed engine temperature value 2,1,0,,value
+0x8030d2,engine_fluid_calc_result,word,Engine fluid calculation result,2,0,,data
+0x80976e,schedule_armed,word,Scheduler enable flag - when set enables main loop task scheduling system,2,0,,flag
+0x809782,scheduler_phase_table,scheduler_phase_table_t,40-slot task scheduler phase table (16 bytes per slot),2,0,,lookup
+0xFFFA22,REG_SIM_PICR,word,MC68336 Periodic Interrupt Control Register,2,0,,data
+0xFFFA24,REG_SIM_PITR,word,"MC68336 Periodic Interrupt Timer Register  ",2,0,,data
+0xFFFA27,REG_SIM_SWSR,byte,MC68336 Software Watchdog Service Register,1,0,,data
+0xFFF404,hardware_timer_register,dword,Hardware timer register for main loop timing synchronization,2,0,,data
+0x80BDC6,vp44_communication_status,byte,VP44 communication health flags - bit 1 indicates active/healthy VP44 communication,1,0,,flag
+0x80BDF3,can_pin_switching_control_flags,byte,CAN pin switching control - bit 5 (0x20) selects primary vs VP44 emergency pins,1,0,,data
+0x80C9C6,engine_control_system_ready,word,Engine control system ready flag - must be 0 for normal pin operation,2,0,,flag
+0x80969E,vp44_injection_system_active,word,VP44 injection system active flag - forces emergency pins when set,2,0,,flag
+0x80C810,engine_operating_mode,ENGINE_OPERATING_MODE,Engine operating mode state machine (1=IDLE,2,0,,data
+0x8035D4,vp44_status_flags_1,word,VP44 status flags 1 - bit 6 (0x40) affects pin switching,2,0,,flag
+0x8035EC,vp44_status_flags_2,word,VP44 status flags 2 - bit 1 (0x02) affects pin switching in mode 5,2,0,,flag
+0x80BDEE,io_control_source_register,byte,I/O control source data register - copied directly to hardware I/O port 1 (0xFFD004) 40x per major cycle,1,0,,data
+0x80BDEF,io_control_flags,byte,I/O control flags register - processed with bit manipulation and sent to I/O port 2 (0xFFD006),1,0,,flag
+0x80BDF0,sim_data_direction_control,byte,SIM data direction control register - controls input/output direction for SIM pins,1,0,,data
+0xFFD004,SIM_CAN_CONTROL_PORT_1,byte,SIM CAN control port 1 - hardware I/O for CAN pin switching updated 40x per major cycle,1,0,,data
+0xFFD006,SIM_CAN_CONTROL_PORT_2,byte,SIM CAN control port 2 - processed I/O for CAN pin switching updated 40x per major cycle,1,0,,data
+0x800F5F,vp44_sequence_number,byte,VP44 message sequence number for retry logic (max 5 retries),1,0,,data
+0x800F60,vp44_message_id,word,VP44 message identifier stored during response processing,2,0,,data
+0x800F62,vp44_retry_flag,byte,VP44 retry flag (set to 1 when response pending),1,0,,flag
+0x800F63,vp44_retry_count,byte,VP44 actual retry count (limited to max 5),1,0,,counter
+0x800F64,vp44_timeout_counter,byte,VP44 response timeout countdown (starts at 112 ticks = VP44_FUEL_TEMP_OFFSET),1,0,,counter
+0x800F66,vp44_message_data,dword,VP44 stored message command/data during response processing,2,0,,command
+0x800F69,vp44_expected_sequence,byte,Expected VP44 sequence number for response validation,1,0,,data
+0x80741F,cylinder_count_FLMXCYCU,byte,Cylinder count parameter from CalTerm FLMXCYCU,1,0,,counter
+0x807D1A,load_min_rpm_DCMNLOES,word,"Load minimum RPM parameter from CalTerm DCMNLOES  ",2,0,,data
+0x80A221,next_injected_cylinder_FLCYCU,byte,Next injected cylinder parameter from CalTerm FLCYCU,1,0,,data
+0x8074A8,FLRPERTD,word,Max allowed RPM difference between ECM and PCM measurements,2,0,,data
+0x8074B0,FLMXRPCN,word,Max allowed RPM for calibration error sanity check,2,0,,data
+0x8074B6,FLPXRPTD,word,Engine RPM threshold to start counting 112 messages for stuck relay error,2,0,,counter
+0x8074C2,FLPIRP02,word,Speed threshold for high speed intake air temperature error debounce,2,0,,threshold
+0x8074CC,FLIVESTD,word,Idle select error disabled below this RPM,2,0,,data
+0x807090,EPIMSRRP,word,RPM threshold to reach before intake manifold temperature errors,2,0,,threshold
+0x8070FC,EPCBSRRP,word,RPM threshold to cross for logging crank blowby pressure fault,2,0,,threshold
+0x807C0A,DGLSRSOF,word,Offset added to LSG reference speed for RPM limit birth test,2,0,,threshold
+0x807D18,DCMNHIES,word,Duty cycle monitor high RPM limit for load factor calculation,2,0,,threshold
+0x807D1A,DCMNLOES,word,Duty cycle monitor low RPM limit for load factor calculation,2,0,,threshold
+0x807ED8,CSCKES,word,RPM above which engine is considered running (not cranking),2,0,,data
+0x807EFC,CKCDLES,word,Crank low coolant temperature RPM,2,0,,data
+0x807F04,CKCDIMES,word,Crank low intake manifold temperature RPM,2,0,,data
+0x807F16,CKFLRMES,word,Crank exit fuel ramp RPM,2,0,,data
+0x807F38,EPMXDQRP,word,Maximum engine RPM when fully derated (severity index = 1.0),2,0,,data
+0x808162,JC39P3RP,word,J1939 engine speed point 3 RPM in engine config map,2,0,,data
+0x808164,JC39P4RP,word,J1939 engine speed point 4 RPM in engine config map,2,0,,data
+0x80D1D4,EPCBRLSA,dword,Pointer to crank blowby pressure RPM limit threshold,2,0,,threshold
+0x80D288,EPESLM,word,Maximum RPM allowed due to exhaust particulate filter derating,2,0,,data
+0x80D64C,APLMES,word,RPM derate supplied by application group,2,0,,data
+0x1000416,ESCS,dword,Conversion factor from hardware time units to RPM,2,0,,data
+0x1000436,EPNTDQRP,word,Maximum engine speed when no derate in effect (HSG brake RPM),2,0,,data
+0x1000648,ZVCNLMES,word,Maximum allowable engine speed when vehicle below breakpoint,2,0,,data
+0x80D4C4,loopCounter,dword,Main loop execution counter (incremented every cycle),2,0,,counter
+0x809688,engineRunCounter,dword,Engine run-time counter (incremented when not idle),2,0,,counter
+0X2,APLMES,word,0x0080d64c,2,NaN,RPM DERATE SUPPLIED BY APPLICATION GROUP.,data
+0X4,EPCBRLSA,word,0x0080d1d4,2,NaN,pointer to crank blowby pressure rpm limit threshold,data
+0X00060D1E,4DTA00ZA,word,TIMING ADVANCE LOOK-UP TABLE FOR TRANSIENT ENGINE OPERATION (9 X 17 VA,2,6,DEG,lookup
+0X00060A74,4DTA01XA,byte[19],ENGINE SPEED AXIS FOR THE STEADY STATE TIMING ADVANCE TABLE (17 VALUES,19,4,RPM,axis
+0X0080D344,4DTBTA,word,TIMING ADVANCE VALUE CALCULATED FROM THE 4D TIMING TABLE -VALID ONLY W,2,0,DEG,lookup
+0X00060982,5DFL00ZA,word,TRANSIENT FUEL LOOK-UP TABLE USED BY 4D FUELING TO DETERMINE THROTTLE,2,6,MM3S,lookup
+0X000608A4,5DFL01ZA,word,SS FUEL LOOK-UP TABLE USED BY 4D FUELING TO DETERMINE THROTTLE COMMAND,2,6,MM3S,lookup
+0X01000430,5DFLAJ,word,INCREMENTAL FUELING VALUE ADDED TO 4-D FUELING VALUE,2,0,MM3S,value
+0X00807CF8,AAPRSNST,word,ENABLE FLAG THAT INDICATES PRESENCE OF AN AMBIENT AIR PRESSURE SENSOR,2,0,NONE,flag
+0X00807A02,ACACDBCU,word,ALG EXECUTIONS TO SUSPEND AC AFTER SHUTOFF FROM ACCEL,2,0,SEC,data
+0X0080A27E,ACCHEA,word,COMMAND TO A/C COMPRESSOR CLUTCH SOLENOID,2,0,1-ON,command
+0X008079FE,ACCHHY,word,HYSTERESIS DURATION ON AC COMPRESSOR CLUTCH,2,0,SEC,data
+0X00807A06,ACESDB,word,SPEED BELOW WHICH AC CLUTCH IS DISABLED,2,0,RPM,data
+0X0080A280,ACHIAC,word,RAPID VEHICLE ACCEL FLAG,2,0,1-ON,flag
+0X00807A04,ACSWCULM,word,THRESHOLD ON SW ERR COUNTER FOR FAULT,2,0,SEC,counter
+0XHIGH PRESS MISMATCH,ACSWERCU,byte[80],COUNTER FOR CYCLE,80,2,0,counter
+0X00807A00,ACVSACCO,word,ACCEL THRESHOLD TO DISABLE A/C,2,0,MPHS,threshold
+0X00806C12,ADAAPRCA,word,AMBIENT_AIR_PRESSURE_CHANNEL_ADDRESS,2,0,NONE,address
+0X00806C06,ADAAPRCC,word,A/D FAULT CLEAR COUNTS FOR AMBIENT AIR PRESSURE,2,0,,counter
+0X00806C02,ADAAPRCS,word,A/D DIGITAL FILTER CONSTANT FOR AMBIENT AIR PRESSURE,2,0,,data
+0X00806C08,ADAAPRDT,word,A/D FAULT DECREMENT FOR AMBIENT AIR PRESSURE,2,0,CNTS,data
+0X0080A3BA,ADAAPRFT,word,FILTERED AMBIENT AIR PRESSURE AS READ AND SCALED FROM A/D ALGORITHM,2,0,INHG,data
+0X00806C16,ADAAPRHE,byte,ERROR NUMBER STORAGE FOR AMBIENT_AIR_PRESSURE_HIGH_ERROR,1,0,NONE,data
+0X00806C0E,ADAAPRHL,word,A/D HIGH ERROR LIMIT FOR AMBIENT AIR PRESSURE,2,0,,threshold
+0X00806C0A,ADAAPRIC,word,A/D FAULT INCREMENT FOR AMBIENT AIR PRESSURE,2,0,CNTS,data
+0X00806C17,ADAAPRLE,byte,ERROR NUMBER STORAGE FOR AMBIENT_AIR_PRESSURE_LOW_ERROR,1,0,NONE,data
+0X00806C10,ADAAPRLL,word,A/D LOW ERROR LIMIT FOR AMBIENT AIR PRESSURE,2,0,,threshold
+0X00806C14,ADAAPRMU,byte,CHANNEL MUX SETTING,1,0,NONE,data
+0X0080A3C2,ADAAPRRC,word,RAW COUNTS FOR AMBIENT AIR PRESSURE,2,0,,counter
+0X00806C19,ADAAPRSA,byte,A/D SAMPLE PERIOD FOR AMBIENT AIR PRESSURE,1,0,MSEC,data
+0X00806C0C,ADAAPRSE,word,A/D FAULT SET FOR AMBIENT AIR PRESSURE,2,0,CNTS,data
+0X00806C18,ADAAPRTE,byte,ERROR NUMBER STORAGE FOR TRI STATE ERROR - AMBIENT AIR PRESSURE,1,0,NONE,data
+0X00806C15,ADAAPRTS,byte,TRI STATE FLAG - AMBIENT AIR PRESSURE,1,0,,flag
+0X0080A3BC,ADAAPRUF,word,UNFILTERED AND LINEARIZED AMBIENT AIR PRESSURE,2,0,INHG,data
+0XX-AXIS,ADECLZXA,byte[806],ENGINE SENSOR SUPPLY VOLTAGE LINEARIZATION TABLE,806,2,4,linearization
+0X00806F3C,(null),word,,2,0,,data
+0X010000EC,ADBS01,word,BLANK SPOT IN THE ADJUSTABLE_PARAMETERS.H FILE,2,0,NONE,lookup
+0X010000EE,ADBS02,word,BLANK SPOT IN THE ADJUSTABLE_PARAMETERS.H FILE,2,0,NONE,lookup
+0X010000F0,ADBS03,word,BLANK SPOT IN THE ADJUSTABLE_PARAMETERS.H FILE,2,0,NONE,lookup
+0X010000F2,ADBS04,word,BLANK SPOT IN THE ADJUSTABLE_PARAMETERS.H FILE,2,0,NONE,lookup
+0X010000FA,ADBS05,word,BLANK SPOT IN THE ADJUSTABLE_PARAMETERS.H FILE,2,0,NONE,lookup
+0X010000FC,ADBS06,word,BLANK SPOT IN THE ADJUSTABLE_PARAMETERS.H FILE,2,0,NONE,lookup
+0X010000FE,ADBS07,word,BLANK SPOT IN THE ADJUSTABLE_PARAMETERS.H FILE,2,0,NONE,lookup
+0X0100010A,ADBS08,word,BLANK SPOT IN THE ADJUSTABLE_PARAMETERS.H FILE,2,0,NONE,lookup
+0X0100010C,ADBS09,word,BLANK SPOT IN THE ADJUSTABLE_PARAMETERS.H FILE,2,0,NONE,lookup
+0X0100010E,ADBS10,word,BLANK SPOT IN THE ADJUSTABLE_PARAMETERS.H FILE,2,0,NONE,lookup
+0X01000110,ADBS11,word,BLANK SPOT IN THE ADJUSTABLE_PARAMETERS.H FILE,2,0,NONE,lookup
+0X01000112,ADBS12,word,BLANK SPOT IN THE ADJUSTABLE_PARAMETERS.H FILE,2,0,NONE,lookup
+0X01000114,ADBS13,word,BLANK SPOT IN THE ADJUSTABLE_PARAMETERS.H FILE,2,0,NONE,lookup
+0X01000118,ADBS14,dword,BLANK SPOT IN THE ADJUSTABLE_PARAMETERS.H FILE,4,0,NONE,lookup
+0X01000120,ADBS15,word,BLANK SPOT IN THE ADJUSTABLE_PARAMETERS.H FILE,2,0,NONE,lookup
+0X01000122,ADBS16,word,BLANK SPOT IN THE ADJUSTABLE_PARAMETERS.H FILE,2,0,NONE,lookup
+0X01000124,ADBS17,word,BLANK SPOT IN THE ADJUSTABLE_PARAMETERS.H FILE,2,0,NONE,lookup
+0X01000126,ADBS18,word,BLANK SPOT IN THE ADJUSTABLE_PARAMETERS.H FILE,2,0,NONE,lookup
+0X01000128,ADBS19,word,BLANK SPOT IN THE ADJUSTABLE_PARAMETERS.H FILE,2,0,NONE,lookup
+0X0100012A,ADBS20,word,BLANK SPOT IN THE ADJUSTABLE_PARAMETERS.H FILE,2,0,NONE,lookup
+0X0100012C,ADBS21,word,BLANK SPOT IN THE ADJUSTABLE_PARAMETERS.H FILE,2,0,NONE,lookup
+0X01000116,ADBS22,word,BLANK SPOT IN ADJUSTABLE_PARAMETERS.H,2,0,NONE,lookup
+0X0100011C,ADBS23,word,BLANK SPOT IN ADJUSTABLE_PARAMETERS.H,2,0,NONE,lookup
+0X0100011E,ADBS24,word,BLANK SPOT IN ADJUSTABLE_PARAMETERS.H,2,0,NONE,lookup
+0X00806B6A,ADBSPRCA,word,BOOST_PRESSURE_CHANNEL_ADDRESS,2,0,NONE,address
+0X00806B5E,ADBSPRCC,word,A/D FAULT CLEAR COUNTS FOR BOOST PRESSURE,2,0,,counter
+0X00806B5A,ADBSPRCS,word,A/D DIGITAL FILTER CONSTANT FOR BOOST PRESSURE,2,0,,data
+0X00806B60,ADBSPRDT,word,A/D FAULT DECREMENT FOR BOOST PRESSURE,2,0,CNTS,data
+0X00806B6E,ADBSPRHE,byte,ERROR NUMBER STORAGE FOR BOOST_PRESSURE_HIGH_ERROR,1,0,NONE,data
+0X00806B66,ADBSPRHL,word,A/D HIGH ERROR LIMIT FOR BOOST PRESSURE,2,0,,threshold
+0X00806B62,ADBSPRIC,word,A/D FAULT INCREMENT FOR BOOST PRESSURE,2,0,CNTS,data
+0X00806B6F,ADBSPRLE,byte,ERROR NUMBER STORAGE FOR BOOST_PRESSURE_LOW_ERROR,1,0,NONE,data
+0X00806B68,ADBSPRLL,word,A/D LOW ERROR LIMIT FOR BOOST PRESSURE,2,0,,threshold
+0X00806B6C,ADBSPRMU,byte,CHANNEL MUX SETTING,1,0,NONE,data
+0X00806B71,ADBSPRSA,byte,A/D SAMPLE PERIOD FOR BOOST PRESSURE,1,0,MSEC,data
+0X00806B64,ADBSPRSE,word,A/D FAULT SET FOR BOOST PRESSURE,2,0,CNTS,data
+0X00806B70,ADBSPRTE,byte,ERROR NUMBER STORAGE FOR TRI STATE ERROR - BOOST PRESSURE,1,0,NONE,data
+0X00806B6D,ADBSPRTS,byte,TRI STATE FLAG - BOOST PRESSURE,1,0,,flag
+0X00806E4C,(null),word,,2,0,,data
+0X00806C2A,ADBTVTCA,word,BATTERY_VOLTAGE_CHANNEL_ADDRESS,2,0,NONE,address
+0X00806C1E,ADBTVTCC,word,A/D FAULT CLEAR COUNTS FOR BATTERY VOLTAGE,2,0,,counter
+0X00806C1A,ADBTVTCS,word,A/D DIGITAL FILTER CONSTANT FOR BATTERY VOLTAGE,2,0,,data
+0X00806C20,ADBTVTDT,word,A/D FAULT DECREMENT FOR BATTERY VOLTAGE,2,0,CNTS,data
+0X0080A3D0,ADBTVTFT,word,FILTERED AND LINEARIZED BATTERY VOLTAGE,2,0,VOLT,data
+0X00806C2E,ADBTVTHE,byte,ERROR NUMBER STORAGE FOR BATTERY_VOLTAGE_HIGH_ERROR,1,0,NONE,data
+0X00806C26,ADBTVTHL,word,A/D HIGH ERROR LIMIT FOR BATTERY VOLTAGE,2,0,,threshold
+0X00806C22,ADBTVTIC,word,A/D FAULT INCREMENT FOR BATTERY VOLTAGE,2,0,CNTS,data
+0X00806C2F,ADBTVTLE,byte,ERROR NUMBER STORAGE FOR BATTERY_VOLTAGE_LOW_ERROR,1,0,NONE,data
+0X00806C28,ADBTVTLL,word,A/D LOW ERROR LIMIT FOR BATTERY VOLTAGE,2,0,,threshold
+0X00806C2C,ADBTVTMU,byte,CHANNEL MUX SETTING,1,0,NONE,data
+0X00806C31,ADBTVTSA,byte,A/D SAMPLE PERIOD FOR BATTERY VOLTAGE,1,0,MSEC,data
+0X00806C24,ADBTVTSE,word,A/D FAULT SET FOR BATTERY VOLTAGE,2,0,CNTS,data
+0X00806C30,ADBTVTTE,byte,ERROR NUMBER STORAGE FOR IN_RANGE_ERROR - BATTERY VOLTAGE,1,0,NONE,data
+0X00806C2D,ADBTVTTS,byte,TRI STATE FLAG - BATTERY VOLTAGE,1,0,,flag
+0X0080A3D2,ADBTVTUF,word,UNFILTERED AND LINEARIZED BATTERY VOLTAGE,2,0,VOLT,data
+0X00806F4C,(null),word,,2,0,,data
+0X00061236,NLCLFLYA,word,COOLANT TEMPERATURE BASED FUEL ADJUSTMENT TO NO LOAD FUEL,2,5,MM3S,data
+0X00806B82,ADCLTPCA,word,COOLANT_TEMPERATURE_CHANNEL_ADDRESS,2,0,NONE,address
+0X00806B76,ADCLTPCC,word,A/D FAULT CLEAR COUNTS FOR COOLANT TEMPERATURE,2,0,,counter
+0X00806B72,ADCLTPCS,word,A/D DIGITAL FILTER CONSTANT FOR COOLANT TEMPERATURE,2,0,,data
+0X00806B78,ADCLTPDT,word,A/D FAULT DECREMENT FOR COOLANT TEMPERATURE,2,0,CNTS,data
+0X0080A336,ADCLTPFT,word,FILTERED AND LINEARIZED COOLANT TEMPERATURE,2,0,DEGF,data
+0X00806B74,ADCLTPGD,word,GLOBAL DEFAULT VALUE TO COOLANT TEMPERATURE,2,0,DEGF,value
+0X00806B86,ADCLTPHE,byte,ERROR NUMBER STORAGE FOR COOLANT_TEMPERATURE_HIGH_ERROR,1,0,NONE,data
+0X00806B7E,ADCLTPHL,word,A/D HIGH ERROR LIMIT FOR COOLANT TEMPERATURE,2,0,,threshold
+0X00806B7A,ADCLTPIC,word,A/D FAULT INCREMENT FOR COOLANT TEMPERATURE,2,0,CNTS,data
+0X00806B87,ADCLTPLE,byte,ERROR NUMBER STORAGE FOR COOLANT_TEMPERATURE_LOW_ERROR,1,0,NONE,data
+0X00806B80,ADCLTPLL,word,A/D LOW ERROR LIMIT FOR COOLANT TEMPERATURE,2,0,,threshold
+0X00807060,ADCLTPMN,word,MINIMUM TEMPERATURE THRESHOLD FOR COOLANT TEMPERATURE FUEL LIMITING,2,0,DEGF,threshold
+0X00806B84,ADCLTPMU,byte,CHANNEL MUX SETTING,1,0,NONE,data
+0X00807062,ADCLTPMX,word,MAXIMUM TEMPERATURE THRESHOLD FOR COOLANT TEMPERATURE FUEL LIMITING,2,0,DEGF,threshold
+0X00806B89,ADCLTPSA,byte,A/D SAMPLE PERIOD FOR COOLANT TEMPERATURE,1,0,MSEC,data
+0X00807066,ADCLTPSD,word,SHUTDOWN THRESHOLD FOR COOLANT TEMP FUEL,2,0,DEGF,threshold
+0X00806B7C,ADCLTPSE,word,A/D FAULT SET FOR COOLANT TEMPERATURE,2,0,,data
+0X00806B88,ADCLTPTE,byte,ERROR NUMBER STORAGE FOR TRI STATE ERROR - COOLANT TEMPERATURE,1,0,NONE,data
+0X00806B85,ADCLTPTS,byte,TRI STATE FLAG - COOLANT TEMPERATURE,1,0,,flag
+0X0080A338,ADCLTPUF,word,UNFILTERED AND LINEARIZED COOLANT TEMPERATURE,2,0,DEGF,data
+0X00000000,ADUOIMTP,word,USER VALUE FOR INTAKE MANIFOLD TEMPERATURE,2,0,DEGF,value
+0X00806E8A,(null),word,,2,0,,data
+0X00060584,ADCLXA,qword,COOLANT TEMPERATURE AXIS FOR THE COOLANT ADVANCE TIMING INCREMENT TABL,8,4,DEGF,axis
+0X00806CBA,ADCRCA,word,CRUISE_CONTROL_SWITCH_MUX_CHANNEL_ADDRESS,2,0,NONE,address
+0X00806CAE,ADCRFC,word,A/D FAULT CLEAR COUNTS FOR CC SWITCH MUX,2,0,CNTS,counter
+0X00806CB0,ADCRFD,word,A/D FAULT DECREMENT FOR CC SWITCH MUX,2,0,CNTS,data
+0X00806CB2,ADCRFI,word,A/D FAULT INCREMENT FOR CC SWITCH MUX,2,0,CNTS,data
+0X00806CB4,ADCRFS,word,A/D FAULT SET FOR CC SWITCH MUX,2,0,CNTS,data
+0X00806CAA,ADCRFTCS,word,A/D DIGITAL FILTER CONSTANT FOR CC SWITCH MUX,2,0,NONE,data
+0X00806CAC,ADCRGD,word,GLOBAL DEFAULT VALUE FOR CC SWITCH MUX,2,0,NONE,value
+0X00806CBE,ADCRHE,byte,ERROR NUMBER STORAGE FOR CRUISE_CONTROL_SWITCH_MUX_HIGH_ERROR,1,0,NONE,data
+0X00806CB6,ADCRHL,word,A/D HIGH ERROR LIMIT FOR CC SWITCH MUX,2,0,CNTS,threshold
+0X00806CBF,ADCRLE,byte,ERROR NUMBER STORAGE FOR CRUISE_CONTROL_SWITCH_MUX_LOW_ERROR,1,0,NONE,data
+0X00806CB8,ADCRLL,word,A/D LOW ERROR LIMIT FOR CC SWITCH MUX,2,0,,threshold
+0X00806FB4,(null),word,,2,0,,data
+0X00806CBC,ADCRMU,byte,CC SWITCH MUX CHANNEL MUX SETTING,1,0,NONE,data
+0X0080A45C,ADCRRC,word,RAW COUNTS FOR CC SWITCH MUX,2,0,,counter
+0X00806CC1,ADCRSR,byte,A/D SAMPLE PERIOD FOR CC SWITCH MUX,1,0,MSEC,data
+0X00806CBD,ADCRTS,byte,TRI STATE ERROR FOR CC SWITCH MUX,1,0,NONE,data
+0X0080A456,ADCRUF,word,UNFILTERED AND LINEARIZED CC SWITCH MUX,2,0,NONE,data
+0X00806B22,ADCVCA,word,COOLANT LEVEL CHANNEL ADDRESS,2,0,NONE,address
+0X00806B16,ADCVCC,word,COOLANT LEVEL CHANNEL ADDRESS,2,0,,address
+0X00806B12,ADCVCS,word,COOLANT LEVEL A/D DIGITAL FILTER CONSTANT,2,0,,data
+0X00806B18,ADCVDT,word,COOLANT LEVEL A/D FAULT DECREMENT,2,0,CNTS,data
+0X0080A2DE,ADCVFT,word,COOLANT LEVEL FILTERED AND LINEARIZED,2,0,NONE,data
+0X00806B14,ADCVGD,word,COOLANT LEVEL GLOBAL DEFAULT VALUE,2,0,NONE,value
+0X00806B26,ADCVHE,byte,ERROR NUMBER STORAGE FOR COOLANT_LEVEL_HIGH_ERROR,1,0,NONE,data
+0X00806B1E,ADCVHL,word,COOLANT LEVEL A/D HIGH ERROR LIMIT,2,0,,threshold
+0X00806B1A,ADCVIC,word,COOLANT LEVEL A/D FAULT INCREMENT,2,0,CNTS,data
+0X00806B27,ADCVLE,byte,ERROR NUMBER STORAGE FOR COOLANT_LEVEL_LOW_ERROR,1,0,NONE,data
+0X00806B20,ADCVLL,word,COOLANT LEVEL A/D LOW ERROR LIMIT,2,0,,threshold
+0X00806B24,ADCVMU,byte,COOLANT LEVEL CHANNEL MUX SETTING,1,0,NONE,data
+0X0080A2E6,ADCVRC,word,COOLANT LEVEL RAW VALUE FROM A/D CONVERTER CHANNEL 7,2,0,NONE,value
+0X00806B29,ADCVSA,byte,COOLANT LEVEL A/D SAMPLE PERIOD,1,0,MSEC,data
+0X00806B1C,ADCVSE,word,COOLANT LEVEL A/D FAULT SET,2,0,CNTS,data
+0X00806B28,ADCVTE,byte,COOLANT LEVEL ERROR NUMBER STORAGE FOR IN_RANGE_ERROR,1,0,NONE,data
+0X00806B25,ADCVTS,byte,COOLANT LEVEL TRI STATE FLAG,1,0,,flag
+0X0080A2E0,ADCVUF,word,COOLANT LEVEL LINEARIZED AND UNFILTERED,2,0,NONE,data
+0X00806E0C,ADCVXA,qword,COOLANT LEVEL X-AXIS,8,4,CNTS,axis
+0X00806C04,ADDFAAPR,word,GLOBAL DEFAULT VALUE FOR AMBIENT AIR PRESSURE,2,0,INHG,value
+0X00806B5C,ADDFBSPR,word,GLOBAL DEFAULT VALUE FOR BOOST PRESSURE,2,0,INHG,value
+0X00806C1C,ADDFBTVT,word,GLOBAL DEFAULT VALUE FOR BATTERY VOLTAGE,2,0,VOLT,value
+0X00806AFC,ADDFFLTP,word,GLOBAL DEFAULT VALUE FOR FUEL TEMPERATURE,2,0,DEGF,value
+0X00806AE4,ADDFIMTP,word,GLOBAL DEFAULT VALUE FOR INTAKE MANIFOLD TEMPERATURE,2,0,DEGF,value
+0X00806B44,ADDFOLPR,word,GLOBAL DEFAULT VALUE FOR OIL PRESSURE,2,0,PSIG,value
+0X00806BEC,ADDFROTH,word,GLOBAL DEFAULT VALUE FOR REMOTE THROTTLE,2,0,PERC,value
+0X00806BD4,ADDFSATH,word,GLOBAL DEFAULT VALUE FOR THROTTLE,2,0,PERC,value
+0X00806F7C,(null),word,,2,0,,data
+0X00806C8A,ADECSVCA,word,ENGINE_CONN_SENSORS_SV_CHANNEL_ADDRESS,2,0,NONE,address
+0X00806C7A,ADECSVCS,word,ENGINE SENSOR SUPPLY VOLTAGE A/D DIGITAL FILTER CONSTANT,2,0,NONE,data
+0X00806C7E,ADECSVFC,word,ENGINE SENSOR SUPPLY VOLTAGE A/D FAULT CLEAR COUNTS,2,0,CNTS,counter
+0X00806C80,ADECSVFD,word,ENGINE SENSOR SUPPLY VOLTAGE A/D FAULT DECREMENT,2,0,CNTS,data
+0X00806C82,ADECSVFI,word,ENGINE SENSOR SUPPLY VOLTAGE A/D FAULT INCREMENT,2,0,CNTS,data
+0X00806C84,ADECSVFS,word,ENGINE SENSOR SUPPLY VOLTAGE A/D FAULT SET,2,0,CNTS,data
+0X0080A428,ADECSVFT,word,FILTERED ENGINE SENSOR SUPPLY VOLTAGE AS READ AND SCALED FROM A/D ALGO,2,0,NONE,data
+0X00806C7C,ADECSVGD,word,ENGINE SENSOR SUPPLY VOLTAGE GLOBAL DEFAULT VALUE,2,0,NONE,value
+0X00806C8E,ADECSVHE,byte,ERROR NUMBER STORAGE FOR ENGINE_CONN_SENSORS_SV_HIGH_ERROR,1,0,NONE,data
+0X00806C86,ADECSVHL,word,ENGINE SENSOR SUPPLY VOLTAGE A/D HIGH ERROR LIMIT,2,0,CNTS,threshold
+0X00806C8F,ADECSVLE,byte,ERROR NUMBER STORAGE FOR ENGINE_CONN_SENSORS_SV_LOW_ERROR,1,0,NONE,data
+0X00806C88,ADECSVLL,word,ENGINE SENSOR SUPPLY VOLTAGE A/D LOW ERROR LIMIT,2,0,CNTS,threshold
+0X00806C8C,ADECSVMU,byte,ENGINE SENSOR SUPPLY VOLTAGE CHANNEL MUX SETTING,1,0,NONE,data
+0X0080A430,ADECSVRC,word,ENGINE SENSOR SUPPLY VOLTAGE RAW COUNTS,2,0,CNTS,counter
+0X00806C91,ADECSVSR,byte,ENGINE SENSOR SUPPLY VOLTAGE A/D SAMPLE PERIOD,1,0,MSEC,data
+0X00806C90,ADECSVTE,byte,ENGINE SENSOR SUPPLY VOLTAGE TRI STATE ERROR ID,1,0,NONE,data
+0X00806C8D,ADECSVTS,byte,ENGINE SENSOR SUPPLY VOLTAGE TRI STATE ERROR FLAG,1,0,NONE,flag
+0X0080A42A,ADECSVUF,word,ENGINE SENSOR SUPPLY VOLTAGE UNFILTERED AND LINEARIZED,2,0,NONE,data
+0X00806CEA,ADEGCFCA,word,EGR_CURRENT_FEEDBACK_CHANNEL_ADDRESS,2,0,NONE,address
+0X00806CDE,ADEGCFCC,word,A/D FAULT CLEAR COUNTS,2,0,,counter
+0X00806CDA,ADEGCFCS,word,A/D DIGITAL FILTER CONSTANT,2,0,,data
+0X00806CE0,ADEGCFFD,word,A/D FAULT DECREMENT,2,0,CNTS,data
+0X00806CE2,ADEGCFFI,word,A/D FAULT INCREMENT,2,0,CNTS,data
+0X00806CE4,ADEGCFFS,word,A/D FAULT SET,2,0,CNTS,data
+0X0080A480,ADEGCFFT,word,FILTERED VALUE AS READ AND SCALED FROM A/D ALGORITHM,2,0,NONE,value
+0X00806CDC,ADEGCFGD,word,GLOBAL DEFAULT VALUE,2,0,NONE,value
+0X00806CEE,ADEGCFHE,byte,ERROR NUMBER STORAGE FOR EGR_CURRENT_FEEDBACK_HIGH_ERROR,1,0,NONE,data
+0X00806CE6,ADEGCFHL,word,A/D HIGH ERROR LIMIT,2,0,,threshold
+0X00806CEF,ADEGCFLE,byte,ERROR NUMBER STORAGE FOR EGR_CURRENT_FEEDBACK_LOW_ERROR,1,0,NONE,data
+0X00806CE8,ADEGCFLL,word,A/D LOW ERROR LIMIT,2,0,,threshold
+0X00806CEC,ADEGCFMU,byte,CHANNEL MUX SETTING,1,0,NONE,data
+0X0080A488,ADEGCFRC,word,RAW COUNTS,2,0,,counter
+0X00806CF1,ADEGCFSR,byte,A/D SAMPLE PERIOD,1,0,MSEC,data
+0X00806CF0,ADEGCFTE,byte,TRI STATE ERROR,1,0,NONE,data
+0X00806CED,ADEGCFTS,byte,TRI STATE ERROR,1,0,,data
+0X0080A482,ADEGCFUF,word,UNFILTERED AND LINEARIZED,2,0,NONE,data
+0X00807006,(null),word,,2,0,,data
+0X00806EF4,(null),word,,2,0,,data
+0X00806F58,(null),word,,2,0,,data
+0X00806C42,ADESSVCA,word,ENGINE_SPEED_SENSOR_SV_CHANNEL_ADDRESS,2,0,NONE,address
+0X00806C32,ADESSVCS,word,A/D DIGITAL FILTER CONSTANT,2,0,,data
+0X00806C36,ADESSVFC,word,A/D FAULT CLEAR COUNTS,2,0,,counter
+0X00806C38,ADESSVFD,word,A/D FAULT DECREMENT,2,0,CNTS,data
+0X00806C3A,ADESSVFI,word,A/D FAULT INCREMENT,2,0,CNTS,data
+0X00806C3C,ADESSVFS,word,A/D FAULT SET,2,0,CNTS,data
+0X0080A3E6,ADESSVFT,word,FILTERED VALUE AS READ AND SCALED FROM A/D ALGORITHM,2,0,NONE,value
+0X00806C34,ADESSVGD,word,GLOBAL DEFAULT VALUE,2,0,NONE,value
+0X00806C46,ADESSVHE,byte,ERROR NUMBER STORAGE FOR ENGINE_SPEED_SV_HIGH_ERROR,1,0,NONE,data
+0X00806C3E,ADESSVHL,word,A/D HIGH ERROR LIMIT,2,0,,threshold
+0X00806C47,ADESSVLE,byte,ERROR NUMBER STORAGE FOR ENGINE_SPEED_SV_LOW_ERROR,1,0,NONE,data
+0X00806C40,ADESSVLL,word,A/D LOW ERROR LIMIT,2,0,,threshold
+0X00806C44,ADESSVMU,byte,CHANNEL MUX SETTING,1,0,NONE,data
+0X0080A3EE,ADESSVRC,word,RAW COUNTS,2,0,,counter
+0X00806C49,ADESSVSR,byte,A/D SAMPLE PERIOD,1,0,MSEC,data
+0X00806C48,ADESSVTE,byte,TRI STATE ERROR,1,0,NONE,data
+0X00806C45,ADESSVTS,byte,TRI STATE ERROR,1,0,,data
+0X0080A3E8,ADESSVUF,word,UNFILTERED AND LINEARIZED,2,0,NONE,data
+0X00806B0A,ADFLTPCA,word,FUEL_TEMPERATURE_CHANNEL_ADDRESS,2,0,NONE,address
+0X00806AFE,ADFLTPCC,word,A/D FAULT CLEAR COUNTS FOR FUEL TEMPERATURE,2,0,,counter
+0X00806AFA,ADFLTPCS,word,A/D DIGITAL FILTER CONSTANT FOR FUEL TEMPERATURE,2,0,,data
+0X00806B00,ADFLTPDT,word,A/D FAULT DECREMENT FOR FUEL TEMPERATURE,2,0,CNTS,data
+0X0080A2C8,ADFLTPFT,word,FILTERED AND LINEARIZED FUEL TEMPERATURE,2,0,DEGF,data
+0X00806B0E,ADFLTPHE,byte,ERROR NUMBER STORAGE FOR FUEL_TEMPERATURE_HIGH_ERROR,1,0,NONE,data
+0X00806B06,ADFLTPHL,word,A/D HIGH ERROR LIMIT FOR FUEL TEMPERATURE,2,0,,threshold
+0X00806B02,ADFLTPIC,word,A/D FAULT INCREMENT FOR FUEL TEMPERATURE,2,0,CNTS,data
+0X00806B0F,ADFLTPLE,byte,ERROR NUMBER STORAGE FOR FUEL_TEMPERATURE_LOW_ERROR,1,0,NONE,data
+0X00806B08,ADFLTPLL,word,A/D LOW ERROR LIMIT FOR FUEL TEMPERATURE,2,0,,threshold
+0X00806B0C,ADFLTPMU,byte,CHANNEL MUX SETTING,1,0,NONE,data
+0X0080A2D0,ADFLTPRC,word,RAW COUNTS FOR FUEL TEMPERATURE,2,0,,counter
+0X00806B11,ADFLTPSA,byte,A/D SAMPLE PERIOD FOR FUEL TEMPERATURE,1,0,MSEC,data
+0X00806B04,ADFLTPSE,word,A/D FAULT SET FOR FUEL TEMPERATURE,2,0,CNTS,data
+0X00806B10,ADFLTPTE,byte,ERROR NUMBER STORAGE FOR IN_RANGE_ERROR - FUEL TEMPERATURE,1,0,NONE,data
+0X00806B0D,ADFLTPTS,byte,TRI STATE FLAG - FUEL TEMPERATURE,1,0,,flag
+0X0080A2CA,ADFLTPUF,word,UNFILTERED AND LINEARIZED FUEL TEMPERATURE,2,0,DEGF,data
+0XFUEL TEMPERATURE X-AXIS,ADFLTPXA,byte[806],LINEARIZATION TABLE,806,21,4,linearization
+0X00806DCE,(null),word,,2,0,,data
+0X00806E24,(null),word,,2,0,,data
+0X0080A320,ADFTBSPR,word,FILTERED AND LINEARIZED BOOST PRESSURE,2,0,INHG,data
+0X00806F88,(null),word,,2,0,,data
+0X00806CA2,ADFTSVCA,word,FREQUENCY_THROTTLE_INPUT_SENSOR_SV_CHANNEL_ADDRESS,2,0,NONE,address
+0X00806C92,ADFTSVCS,word,A/D DIGITAL FILTER CONSTANT,2,0,,data
+0X00806C96,ADFTSVFC,word,A/D FAULT CLEAR COUNTS,2,0,,counter
+0X00806C98,ADFTSVFD,word,A/D FAULT DECREMENT,2,0,CNTS,data
+0X00806C9A,ADFTSVFI,word,A/D FAULT INCREMENT,2,0,CNTS,data
+0X00806C9C,ADFTSVFS,word,A/D FAULT SET,2,0,CNTS,data
+0X0080A43E,ADFTSVFT,word,FILTERED VALUE AS READ AND SCALED FROM A/D ALGORITHM,2,0,,value
+0X00806C94,ADFTSVGD,word,GLOBAL DEFAULT VALUE,2,0,,value
+0X00806CA6,ADFTSVHE,byte,ERROR NUMBER STORAGE FOR FREQUENCY_THROTTLE_INPUT_SV_HIGH_ERROR,1,0,NONE,data
+0X00806C9E,ADFTSVHL,word,A/D HIGH ERROR LIMIT,2,0,,threshold
+0X00806CA7,ADFTSVLE,byte,ERROR NUMBER STORAGE FOR FREQUENCY_THROTTLE_INPUT_SV_LOW_ERROR,1,0,NONE,data
+0X00806CA0,ADFTSVLL,word,A/D LOW ERROR LIMIT,2,0,,threshold
+0X00806CA4,ADFTSVMU,byte,CHANNEL MUX SETTING,1,0,NONE,data
+0X0080A446,ADFTSVRC,word,RAW COUNTS,2,0,,counter
+0X00806CA9,ADFTSVSR,byte,A/D SAMPLE PERIOD,1,0,MSEC,data
+0X00806CA8,ADFTSVTE,byte,TRI STATE ERROR,1,0,NONE,data
+0X00806CA5,ADFTSVTS,byte,TRI STATE ERROR,1,0,0/1,data
+0X0080A440,ADFTSVUF,word,UNFILTERED AND LINEARIZED,2,0,,data
+0X00807020,(null),word,,2,0,,data
+0X00806D1A,ADHBSVCA,word,HIGH_SIDE_GATE_BIAS_SV_CHANNEL_ADDRESS,2,0,NONE,address
+0X00806D0A,ADHBSVCS,word,A/D DIGITAL FILTER CONSTANT,2,0,,data
+0X00806D0E,ADHBSVFC,word,A/D FAULT CLEAR COUNTS,2,0,,counter
+0X00806D10,ADHBSVFD,word,A/D FAULT DECREMENT,2,0,CNTS,data
+0X00806D12,ADHBSVFI,word,A/D FAULT INCREMENT,2,0,CNTS,data
+0X00806D14,ADHBSVFS,word,A/D FAULT SET,2,0,CNTS,data
+0X0080A4AC,ADHBSVFT,word,FILTERED VALUE AS READ AND SCALED FROM A/D ALGORITHM,2,0,NONE,value
+0X00806D0C,ADHBSVGD,word,GLOBAL DEFAULT VALUE,2,0,NONE,value
+0X00806D1E,ADHBSVHE,byte,ERROR NUMBER STORAGE FOR HIGH_SIDE_GATE_BIAS_SV_HIGH_ERROR,1,0,NONE,data
+0X00806D16,ADHBSVHL,word,A/D HIGH ERROR LIMIT,2,0,,threshold
+0X00806D1F,ADHBSVLE,byte,ERROR NUMBER STORAGE FOR HIGH_SIDE_GATE_BIAS_SV_LOW_ERROR,1,0,NONE,data
+0X00806D18,ADHBSVLL,word,A/D LOW ERROR LIMIT,2,0,,threshold
+0X00806D1C,ADHBSVMU,byte,CHANNEL MUX SETTING,1,0,NONE,data
+0X0080A4B4,ADHBSVRC,word,RAW COUNTS,2,0,,counter
+0X00806D21,ADHBSVSR,byte,A/D SAMPLE PERIOD,1,0,MSEC,data
+0X00806D20,ADHBSVTE,byte,TRI STATE ERROR,1,0,NONE,data
+0X00806D1D,ADHBSVTS,byte,TRI STATE ERROR,1,0,,data
+0X0080A4AE,ADHBSVUF,word,UNFILTERED AND LINEARIZED,2,0,NONE,data
+0X00806AF2,ADIMTPCA,word,INTAKE_MANIFOLD_TEMPERATURE_CHANNEL_ADDRESS,2,0,NONE,address
+0X00806AE6,ADIMTPCC,word,A/D FAULT CLEAR COUNTS FOR INTAKE MANIFOLD TEMPERATURE,2,0,,counter
+0X00806AE2,ADIMTPCS,word,A/D DIGITAL FILTER CONSTANT FOR INTAKE MANIFOLD TEMPERATURE,2,0,,data
+0X00806AE8,ADIMTPDT,word,A/D FAULT DECREMENT FOR INTAKE MANIFOLD TEMPERATURE,2,0,CNTS,data
+0X0080A2B2,ADIMTPFT,word,FILTERED AND LINEARIZED INTAKE MANIFOLD TEMPERATURE,2,0,DEGF,data
+0X00806AF6,ADIMTPHE,byte,ERROR NUMBER STORAGE FOR INTAKE_MANIFOLD_TEMPERATURE_HIGH_ERROR,1,0,NONE,data
+0X00806AEE,ADIMTPHL,word,A/D HIGH ERROR LIMIT FOR INTAKE MANIFOLD TEMPERATURE,2,0,,threshold
+0X00806AEA,ADIMTPIC,word,A/D FAULT INCREMENT FOR INTAKE MANIFOLD TEMPERATURE,2,0,CNTS,data
+0X00806AF7,ADIMTPLE,byte,ERROR NUMBER STORAGE FOR INTAKE_MANIFOLD_TEMPERATURE_LOW_ERROR,1,0,NONE,data
+0X00806AF0,ADIMTPLL,word,A/D LOW ERROR LIMIT FOR INTAKE MANIFOLD TEMPERATURE,2,0,,threshold
+0X00806AF4,ADIMTPMU,byte,CHANNEL MUX SETTING,1,0,NONE,data
+0X0080A2BA,ADIMTPRC,word,RAW COUNTS FOR INTAKE MANIFOLD TEMPERATURE,2,0,,counter
+0X00806AF9,ADIMTPSA,byte,A/D SAMPLE PERIOD FOR INTAKE MANIFOLD TEMPERATURE,1,0,MSEC,data
+0X00806AEC,ADIMTPSE,word,A/D FAULT SET FOR INTAKE MANIFOLD TEMPERATURE,2,0,CNTS,data
+0X00806AF8,ADIMTPTE,byte,ERROR NUMBER STORAGE FOR IN_RANGE_ERROR - INTAKE MANIFOLD TEMPERATURE,1,0,NONE,data
+0X00806AF5,ADIMTPTS,byte,TRI STATE FLAG - INTAKE MANIFOLD TEMPERATURE,1,0,,flag
+0X0080A2B4,ADIMTPUF,word,UNFILTERED AND LINEARIZED INTAKE MANIFOLD TEMPERATURE,2,0,DEGF,data
+0X00806D6E,(null),word,,2,0,,data
+0X0100051C,ADJPSWD1,word,SECURITY SECONDARY PASSWORD 1 -- ADJUST PASSWORD,6,2,HEX,data
+0X01000522,ADJPSWD2,word,SECURITY SECONDARY PASSWORD 2 -- RESET PASSWORD,6,2,HEX,data
+0X01000528,ADJPSWD3,word,SECURITY SECONDARY PASSWORD 3,6,2,HEX,data
+0X0100052E,ADJPSWD4,word,SECURITY SECONDARY PASSWORD 4,6,2,HEX,data
+0X01000534,ADJPSWD5,word,SECURITY SECONDARY PASSWORD 5,6,2,HEX,data
+0X0100053A,ADJPSWD6,word,SECURITY SECONDARY PASSWORD 6,6,2,HEX,data
+0X01000140,ADJ_FEAT,byte[72],FEATURE ACTIVE FLAGS,72,2,HEX,flag
+0X00060000,ADJ_LIM,word,SERVICE TOOL ADJUSTABLE PARAMETER RANGE LIMITS,2,0,NONE,lookup
+0X01000092,ADJ_PARM,word,SERVICE TOOL ADJUSTABLE PARAMETERS,2,0,NONE,lookup
+0X0080702C,(null),word,,2,0,,data
+0X00806D32,ADOCSVCA,word,OP_AMPS_AND_COMPARATORS_SV_CHANNEL_ADDRESS,2,0,NONE,address
+0X00806D22,ADOCSVCS,word,A/D DIGITAL FILTER CONSTANT,2,0,,data
+0X00806D26,ADOCSVFC,word,A/D FAULT CLEAR COUNTS,2,0,,counter
+0X00806D28,ADOCSVFD,word,A/D FAULT DECREMENT,2,0,CNTS,data
+0X00806D2A,ADOCSVFI,word,A/D FAULT INCREMENT,2,0,CNTS,data
+0X00806D2C,ADOCSVFS,word,A/D FAULT SET,2,0,CNTS,data
+0X0080A4C2,ADOCSVFT,word,FILTERED VALUE AS READ AND SCALED FROM A/D ALGORITHM,2,0,NONE,value
+0X00806D24,ADOCSVGD,word,GLOBAL DEFAULT VALUE,2,0,NONE,value
+0X00806D36,ADOCSVHE,byte,ERROR NUMBER STORAGE FOR OP_AMPS_AND_COMPARATORS_SV_HIGH_ERROR,1,0,NONE,data
+0X00806D2E,ADOCSVHL,word,A/D HIGH ERROR LIMIT,2,0,,threshold
+0X00806D37,ADOCSVLE,byte,ERROR NUMBER STORAGE FOR OP_AMPS_AND_COMPARATORS_SV_LOW_ERROR,1,0,NONE,data
+0X00806D30,ADOCSVLL,word,A/D LOW ERROR LIMIT,2,0,,threshold
+0X00806D34,ADOCSVMU,byte,CHANNEL MUX SETTING,1,0,NONE,data
+0X0080A4CA,ADOCSVRC,word,RAW COUNTS,2,0,,counter
+0X00806D39,ADOCSVSR,byte,A/D SAMPLE PERIOD,1,0,MSEC,data
+0X00806D38,ADOCSVTE,byte,TRI STATE ERROR,1,0,NONE,data
+0X00806D35,ADOCSVTS,byte,TRI STATE ERROR,1,0,,data
+0X0080A4C4,ADOCSVUF,word,UNFILTERED AND LINEARIZED,2,0,NONE,data
+0X00806B52,ADOLPRCA,word,OIL_PRESSURE_CHANNEL_ADDRESS,2,0,NONE,address
+0X00806B46,ADOLPRCC,word,A/D FAULT CLEAR COUNTS FOR OIL PRESSURE,2,0,,counter
+0X00806B42,ADOLPRCS,word,A/D DIGITAL FILTER CONSTANT FOR OIL PRESSURE,2,0,,data
+0X00806B48,ADOLPRDT,word,A/D FAULT DECREMENT FOR OIL PRESSURE,2,0,CNTS,data
+0X0080A30A,ADOLPRFT,word,FLITERED AND LINEARIZED OIL PRESSURE,2,0,PSIG,data
+0X00806B56,ADOLPRHE,byte,ERROR NUMBER STORAGE FOR OIL_PRESSURE_HIGH_LIMIT,1,0,NONE,threshold
+0X00806B4E,ADOLPRHL,word,A/D HIGH ERROR LIMIT FOR OIL PRESSURE,2,0,,threshold
+0X00806B4A,ADOLPRIC,word,A/D FAULT INCREMENT FOR OIL PRESSURE,2,0,CNTS,data
+0X00806B57,ADOLPRLE,byte,ERROR NUMBER STORAGE FOR OIL_PRESSURE_LOW_ERROR,1,0,NONE,data
+0X00806B50,ADOLPRLL,word,A/D LOW ERROR LIMIT FOR OIL PRESSURE,2,0,,threshold
+0X00806B54,ADOLPRMU,byte,CHANNEL MUX SETTING,1,0,NONE,data
+0X0080A312,ADOLPRRC,word,RAW COUNTS FOR OIL PRESSURE,2,0,,counter
+0X00806B59,ADOLPRSA,byte,A/D SAMPLE PERIOD FOR OIL PRESSURE,1,0,MSEC,data
+0X00806B4C,ADOLPRSE,word,A/D FAULT SET FOR OIL PRESSURE,2,0,CNTS,data
+0X00806B58,ADOLPRTE,byte,ERROR NUMBER STORAGE FOR IN_RANGE_ERROR - OIL PRESSURE,1,0,NONE,data
+0X00806B55,ADOLPRTS,byte,TRI STATE FLAG - OIL PRESSURE,1,0,,flag
+0X0080A30C,ADOLPRUF,word,UNFILTERED AND LINEARIZED OIL PRESSURE,2,0,PSIG,data
+0X00806E36,(null),word,,2,0,,data
+0X00806BB2,ADPOTPCA,word,POWER_STEERING_TEMPERATURE_CHANNEL_ADDRESS,2,0,NONE,address
+0X00806BA6,ADPOTPCC,word,A/D FAULT CLEAR COUNTS,2,0,,counter
+0X00806BA2,ADPOTPCS,word,A/D DIGITAL FILTER CONSTANT,2,0,,data
+0X00806BA8,ADPOTPDT,word,A/D FAULT DECREMENT,2,0,CNTS,data
+0X0080A362,ADPOTPFT,word,FILTERED AND LINEARIZED,2,0,DEGF,data
+0X00806BA4,ADPOTPGD,word,GLOBAL DEFAULT VALUE,2,0,DEGF,value
+0X00806BB6,ADPOTPHE,byte,ERROR NUMBER STORAGE FOR POWER_STEERING_TEMPERATURE_HIGH_ERROR,1,0,NONE,data
+0X00806BAE,ADPOTPHL,word,A/D HIGH ERROR LIMIT,2,0,,threshold
+0X00806BAA,ADPOTPIC,word,A/D FAULT INCREMENT,2,0,CNTS,data
+0X00806BB7,ADPOTPLE,byte,ERROR NUMBER STORAGE FOR POWER_STEERING_TEMPERATURE_LOW_ERROR,1,0,NONE,data
+0X00806BB0,ADPOTPLL,word,A/D LOW ERROR LIMIT,2,0,,threshold
+0X00806BB4,ADPOTPMU,byte,CHANNEL MUX SETTING,1,0,NONE,data
+0X0080A36A,ADPOTPRC,word,RAW VALUE FROM A/D CONVERTER CHANNEL 7,2,0,NONE,value
+0X00806BB9,ADPOTPSA,byte,A/D SAMPLE PERIOD,1,0,MSEC,data
+0X00806BAC,ADPOTPSE,word,A/D FAULT SET,2,0,CNTS,data
+0X00806BB8,ADPOTPTE,byte,ERROR NUMBER STORAGE FOR IN_RANGE_ERROR,1,0,NONE,data
+0X00806BB5,ADPOTPTS,byte,TRI STATE FLAG,1,0,,flag
+0X0080A364,ADPOTPUF,word,CHANNEL 7   LINEARIZED AND UNFILTERED,2,0,DEGF,data
+0X00806EE8,ADPOTPXA,word,X-AXIS,2,4,CNTS,axis
+0X00807014,(null),word,,2,0,,data
+0X00806D02,ADPSSVCA,word,PROGRAMMING_PULSE_SV_CHANNEL_ADDRESS,2,0,NONE,address
+0X00806CF2,ADPSSVCS,word,A/D DIGITAL FILTER CONSTANT,2,0,,data
+0X00806CF6,ADPSSVFC,word,A/D FAULT CLEAR COUNTS,2,0,,counter
+0X00806CF8,ADPSSVFD,word,A/D FAULT DECREMENT,2,0,CNTS,data
+0X00806CFA,ADPSSVFI,word,A/D FAULT INCREMENT,2,0,CNTS,data
+0X00806CFC,ADPSSVFS,word,A/D FAULT SET,2,0,CNTS,data
+0X0080A496,ADPSSVFT,word,FILTERED VALUE AS READ AND SCALED FROM A/D ALGORITHM,2,0,NONE,value
+0X00806CF4,ADPSSVGD,word,GLOBAL DEFAULT VALUE,2,0,NONE,value
+0X00806D06,ADPSSVHE,byte,ERROR NUMBER STORAGE FOR PROGRAMMING_PULSE_SV_HIGH_ERROR,1,0,NONE,data
+0X00806CFE,ADPSSVHL,word,A/D HIGH ERROR LIMIT,2,0,,threshold
+0X00806D07,ADPSSVLE,byte,ERROR NUMBER STORAGE FOR PROGRAMMING_PULSE_SV_LOW_ERROR,1,0,NONE,data
+0X00806D00,ADPSSVLL,word,A/D LOW ERROR LIMIT,2,0,,threshold
+0X00806D04,ADPSSVMU,byte,CHANNEL MUX SETTING,1,0,NONE,data
+0X0080A49E,ADPSSVRC,word,RAW COUNTS,2,0,,counter
+0X00806D09,ADPSSVSR,byte,A/D SAMPLE PERIOD,1,0,MSEC,data
+0X00806D08,ADPSSVTE,byte,TRI STATE ERROR,1,0,NONE,data
+0X00806D05,ADPSSVTS,byte,TRI STATE ERROR,1,0,,data
+0X0080A498,ADPSSVUF,word,UNFILTERED AND LINEARIZED,2,0,NONE,data
+0X00806BFA,ADROTHCA,word,REMOTE_THROTTLE_CHANNEL_ADDRESS,2,0,NONE,address
+0X00806BEE,ADROTHCC,word,A/D FAULT CLEAR COUNTS FOR REMOTE THROTTLE,2,0,,counter
+0X00806BEA,ADROTHCS,word,A/D DIGITAL FILTER CONSTANT FOR REMOTE THROTTLE,2,0,,data
+0X00806BF0,ADROTHDT,word,A/D FAULT DECREMENT FOR REMOTE THROTTLE,2,0,CNTS,data
+0X0080A3A4,ADROTHFT,word,FILTERED AND LINEARIZED REMOTE THROTTLE,2,0,PERC,data
+0X00806BFE,ADROTHHE,byte,ERROR NUMBER STORAGE FOR REMOTE_THROTTLE_HIGH_ERROR,1,0,NONE,data
+0X00806BF6,ADROTHHL,word,A/D HIGH ERROR LIMIT FOR REMOTE THROTTLE,2,0,,threshold
+0X00806BF2,ADROTHIC,word,A/D FAULT INCREMENT FOR REMOTE THROTTLE,2,0,CNTS,data
+0X00806BFF,ADROTHLE,byte,ERROR NUMBER STORAGE FOR REMOTE_THROTTLE_LOW_ERROR,1,0,NONE,data
+0X00806BF8,ADROTHLL,word,A/D LOW ERROR LIMIT FOR REMOTE THROTTLE,2,0,,threshold
+0X00806BFC,ADROTHMU,byte,CHANNEL MUX SETTING,1,0,NONE,data
+0X0080A3AC,ADROTHRC,word,RAW COUNTS FOR REMOTE THROTTLE,2,0,,counter
+0X00806C01,ADROTHSA,byte,A/D SAMPLE PERIOD FOR REMOTE THROTTLE,1,0,MSEC,data
+0X00806BF4,ADROTHSE,word,A/D FAULT SET FOR REMOTE THROTTLE,2,0,CNTS,data
+0X00806C00,ADROTHTE,byte,ERROR NUMBER STORAGE FOR IN_RANGE_ERROR - REMOTE THROTTLE,1,0,NONE,data
+0X00806BFD,ADROTHTS,byte,TRI STATE FLAG - REMOTE THROTTLE,1,0,,flag
+0X0080A3A6,ADROTHUF,word,UNFILTERED AND LINEARIZED REMOTE THROTTLE,2,0,PERC,data
+0X00806F24,(null),word,,2,0,,data
+0X0080A328,ADRWBSPR,word,RAW COUNTS FOR BOOST PRESSURE,2,0,,counter
+0X0080A3D8,ADRWBTVT,word,RAW COUNTS FOR BATTERY VOLTAGE,2,0,,counter
+0X0080A33E,ADRWCLTP,word,RAW COUNTS FOR COOLANT TEMPERATURE,2,0,,counter
+0X00806BE2,ADSATHCA,word,SAMPLED_THROTTLE_CHANNEL_ADDRESS,2,0,NONE,address
+0X00806BD6,ADSATHCC,word,A/D FAULT CLEAR COUNTS FOR SAMPLED THROTTLE,2,0,,counter
+0X00806BD2,ADSATHCS,word,A/D DIGITAL FILTER CONSTANT FOR THROTTLE,2,0,,data
+0X00806BD8,ADSATHDT,word,A/D FAULT DECREMENT FOR THROTTLE,2,0,CNTS,data
+0XLINEARIZED,ADSATHFT,word,THROTTLE AFTER BEING SAMPLED,2,80,2,data
+0X00806BE6,ADSATHHE,byte,ERROR NUMBER STORAGE FOR SAMPLED_THROTTLE_HIGH_ERROR,1,0,NONE,data
+0X00806BDE,ADSATHHL,word,A/D HIGH ERROR LIMIT FOR THROTTLE,2,0,,threshold
+0X00806BDA,ADSATHIC,word,A/D FAULT INCREMENT FOR THROTTLE,2,0,CNTS,data
+0X00806BE7,ADSATHLE,byte,ERROR NUMBER STORAGE FOR SAMPLED_THROTTLE_LOW_ERROR,1,0,NONE,data
+0X00806BE0,ADSATHLL,word,A/D LOW ERROR LIMIT FOR THROTTLE,2,0,,threshold
+0X00806BE4,ADSATHMU,byte,CHANNEL MUX SETTING,1,0,NONE,data
+0X0080A396,ADSATHRC,word,RAW COUNTS FOR THROTTLE,2,0,,counter
+0X00806BE9,ADSATHSA,byte,A/D SAMPLE PERIOD FOR THROTTLE,1,0,MSEC,data
+0X00806BDC,ADSATHSE,word,A/D FAULT SET FOR THROTTLE,2,0,CNTS,data
+0X00806BE8,ADSATHTE,byte,ERROR NUMBER STORAGE FOR IN_RANGE_ERROR - THROTTLE,1,0,NONE,data
+0X00806BE5,ADSATHTS,byte,TRI STATE FLAG - THROTTLE,1,0,,flag
+0X0080A390,ADSATHUF,word,UNFILTERED AND LINEARIZED THROTTLE,2,0,PERC,data
+0X00806F08,(null),word,,2,0,,data
+0X00806BCA,ADSYEPCA,word,ENGINE_SYNC_EXHAUST_PRESSURE_CHANNEL_ADDRESS,2,0,NONE,address
+0X00806BBA,ADSYEPCS,word,A/D DIGITAL FILTER CONSTANT,2,0,,data
+0X00806BBE,ADSYEPFC,word,A/D FAULT CLEAR COUNTS,2,0,,counter
+0X00806BC0,ADSYEPFD,word,A/D FAULT DECREMENT,2,0,CNTS,data
+0X00806BC2,ADSYEPFI,word,A/D FAULT INCREMENT,2,0,CNTS,data
+0X00806BC4,ADSYEPFS,word,A/D FAULT SET,2,0,CNTS,data
+0X0080A378,ADSYEPFT,word,FILTERED VALUE AS READ AND SCALED FROM A/D ALGORITHM,2,0,NONE,value
+0X00806BBC,ADSYEPGD,word,GLOBAL DEFAULT VALUE,2,0,NONE,value
+0X00806BCE,ADSYEPHE,byte,ERROR NUMBER STORAGE FOR ENGINE_SYNC_EXHAUST_PRESSURE_HIGH_ERROR,1,0,NONE,data
+0X00806BC6,ADSYEPHL,word,A/D HIGH ERROR LIMIT,2,0,,threshold
+0X00806BCF,ADSYEPLE,byte,ERROR NUMBER STORAGE FOR ENGINE_SYNC_EXHAUST_PRESSURE_LOW_ERROR,1,0,NONE,data
+0X00806BC8,ADSYEPLL,word,A/D LOW ERROR LIMIT,2,0,,threshold
+0X00806BCC,ADSYEPMU,byte,CHANNEL MUX SETTING,1,0,NONE,data
+0X0080A380,ADSYEPRC,word,RAW COUNTS,2,0,,counter
+0X00806BD1,ADSYEPSR,byte,A/D SAMPLE PERIOD,1,0,MSEC,data
+0X00806BD0,ADSYEPTE,byte,TRI STATE ERROR,1,0,NONE,data
+0X00806BCD,ADSYEPTS,byte,TRI STATE ERROR,1,0,,data
+0X0080A37A,ADSYEPUF,word,UNFILTERED AND LINEARIZED,2,0,NONE,data
+0X00806B2A,ADSYFPCS,word,A/D DIGITAL FILTER CONSTANT,2,0,,data
+0X00806B2E,ADSYFPFC,word,A/D FAULT CLEAR COUNTS,2,0,,counter
+0X00806B30,ADSYFPFD,word,A/D FAULT DECREMENT,2,0,CNTS,data
+0X00806B32,ADSYFPFI,word,A/D FAULT INCREMENT,2,0,CNTS,data
+0X00806B34,ADSYFPFS,word,A/D FAULT SET,2,0,CNTS,data
+0X0080A2F4,ADSYFPFT,word,FILTERED VALUE AS READ AND SCALED FROM A/D ALGORITHM,2,0,,value
+0X00806B2C,ADSYFPGD,word,GLOBAL DEFAULT VALUE,2,0,,value
+0X00806B3E,ADSYFPHE,byte,ERROR NUMBER STORAGE FOR ENGINE_SYNC_FUEL_PRESSURE_HIGH_LIMIT ERROR,1,0,NONE,threshold
+0X00806B36,ADSYFPHL,word,A/D HIGH ERROR LIMIT,2,0,,threshold
+0X00806B3F,ADSYFPLE,byte,ERROR NUMBER STORAGE FOR ENGINE_SYNC_FUEL_PRESSURE_LOW_ERROR,1,0,NONE,data
+0X00806B38,ADSYFPLL,word,A/D LOW ERROR LIMIT,2,0,,threshold
+0X00806B3C,ADSYFPMU,byte,CHANNEL MUX SETTING,1,0,NONE,data
+0X0080A2FC,ADSYFPRC,word,RAW COUNTS,2,0,,counter
+0X00806B41,ADSYFPSR,byte,A/D SAMPLE PERIOD,1,0,MSEC,data
+0X00806B40,ADSYFPTE,byte,TRI STATE ERROR,1,0,NONE,data
+0X00806B3D,ADSYFPTS,byte,TRI STATE ERROR,1,0,,data
+0X0080A2F6,ADSYFPUF,word,UNFILTERED AND LINEARIZED,2,0,,data
+0X00806F64,(null),word,,2,0,,data
+0X00806C5A,ADTHSVCA,word,THROTTLE_POSITION_SENSOR_SV_CHANNEL_ADDRESS,2,0,NONE,address
+0X00806C4A,ADTHSVCS,word,A/D DIGITAL FILTER CONSTANT,2,0,,data
+0X00806C4E,ADTHSVFC,word,A/D FAULT CLEAR COUNTS,2,0,,counter
+0X00806C50,ADTHSVFD,word,A/D FAULT DECREMENT,2,0,CNTS,data
+0X00806C52,ADTHSVFI,word,A/D FAULT INCREMENT,2,0,CNTS,data
+0X00806C54,ADTHSVFS,word,A/D FAULT SET,2,0,CNTS,data
+0X0080A3FC,ADTHSVFT,word,FILTERED VALUE AS READ AND SCALED FROM A/D ALGORITHM,2,0,NONE,value
+0X00806C4C,ADTHSVGD,word,GLOBAL DEFAULT VALUE,2,0,NONE,value
+0X00806C5E,ADTHSVHE,byte,ERROR NUMBER STORAGE FOR THROTTLE_POSITION_SV_HIGH_ERROR,1,0,NONE,data
+0X00806C56,ADTHSVHL,word,A/D HIGH ERROR LIMIT,2,0,,threshold
+0X00806C5F,ADTHSVLE,byte,ERROR NUMBER STORAGE FOR THROTTLE_POSITION_SV_LOW_ERROR,1,0,NONE,data
+0X00806C58,ADTHSVLL,word,A/D LOW ERROR LIMIT,2,0,,threshold
+0X00806C5C,ADTHSVMU,byte,CHANNEL MUX SETTING,1,0,NONE,data
+0X0080A404,ADTHSVRC,word,RAW COUNTS,2,0,,counter
+0X00806C61,ADTHSVSR,byte,A/D SAMPLE PERIOD,1,0,MSEC,data
+0X00806C60,ADTHSVTE,byte,TRI STATE ERROR,1,0,NONE,data
+0X00806C5D,ADTHSVTS,byte,TRI STATE ERROR,1,0,,data
+0X0080A3FE,ADTHSVUF,word,UNFILTERED AND LINEARIZED,2,0,NONE,data
+0X00806B9A,ADTTCA,word,TRANSMISSION_TEMPERATURE_CHANNEL_ADDRESS,2,0,NONE,address
+0X00806B8E,ADTTCC,word,A/D FAULT CLEAR COUNTS,2,0,,counter
+0X00806B8A,ADTTCS,word,A/D DIGITAL FILTER CONSTANT,2,0,,data
+0X00806B90,ADTTDT,word,A/D FAULT DECREMENT,2,0,CNTS,data
+0X0080A34C,ADTTFT,word,FILTERED AND LINEARIZED,2,0,DEGF,data
+0X00806B8C,ADTTGD,word,GLOBAL DEFAULT VALUE,2,0,DEGF,value
+0X00806B9E,ADTTHE,byte,ERROR NUMBER STORAGE FOR TRANSMISSION_TEMPERATURE_HIGH_ERROR,1,0,NONE,data
+0X00806B96,ADTTHL,word,A/D HIGH ERROR LIMIT,2,0,,threshold
+0X00806B92,ADTTIC,word,A/D FAULT INCREMENT,2,0,CNTS,data
+0X00806B9F,ADTTLE,byte,ERROR NUMBER STORAGE FOR TRANSMISSION_TEMPERATURE_LOW_ERROR,1,0,NONE,data
+0X00806B98,ADTTLL,word,A/D LOW ERROR LIMIT,2,0,,threshold
+0X00806B9C,ADTTMU,byte,CHANNEL MUX SETTING,1,0,NONE,data
+0X0080A354,ADTTRC,word,RAW VALUE FROM A/D CONVERTER CHANNEL 7,2,0,NONE,value
+0X00806BA0,ADTTTE,byte,ERROR NUMBER STORAGE FOR IN_RANGE_ERROR,1,0,NONE,data
+0X0080A34E,ADTTUF,word,CHANNEL 7   LINEARIZED AND UNFILTERED,2,0,DEGF,data
+0X0080A322,ADUFBSPR,word,UNFILTERED AND LINEARIZED BOOST PRESSURE,2,0,INHG,data
+0X00806F70,(null),word,,2,0,,data
+0X00806C72,ADVHSVCA,word,VEHICLE_CONNECTOR_SENSORS_SV_CHANNEL_ADDRESS,2,0,NONE,address
+0X00806C62,ADVHSVCS,word,A/D DIGITAL FILTER CONSTANT,2,0,,data
+0X00806C66,ADVHSVFC,word,A/D FAULT CLEAR COUNTS,2,0,,counter
+0X00806C68,ADVHSVFD,word,A/D FAULT DECREMENT,2,0,CNTS,data
+0X00806C6A,ADVHSVFI,word,A/D FAULT INCREMENT,2,0,CNTS,data
+0X00806C6C,ADVHSVFS,word,A/D FAULT SET,2,0,CNTS,data
+0X0080A412,ADVHSVFT,word,FILTERED VALUE AS READ AND SCALED FROM A/D ALGORITHM,2,0,,value
+0X00806C64,ADVHSVGD,word,GLOBAL DEFAULT VALUE,2,0,,value
+0X00806C76,ADVHSVHE,byte,ERROR NUMBER STORAGE FOR VEHICLE_CONNECTOR_SENSORS_SV_HIGH_ERROR,1,0,NONE,data
+0X00806C6E,ADVHSVHL,word,A/D HIGH ERROR LIMIT,2,0,,threshold
+0X00806C77,ADVHSVLE,byte,ERROR NUMBER STORAGE FOR VEHICLE_CONNECTOR_SENSORS_SV_LOW_ERROR,1,0,NONE,data
+0X00806C70,ADVHSVLL,word,A/D LOW ERROR LIMIT,2,0,,threshold
+0X00806C74,ADVHSVMU,byte,CHANNEL MUX SETTING,1,0,NONE,data
+0X0080A41A,ADVHSVRC,word,RAW COUNTS,2,0,,counter
+0X00806C79,ADVHSVSR,byte,A/D SAMPLE PERIOD,1,0,MSEC,data
+0X00806C78,ADVHSVTE,byte,TRI STATE ERROR,1,0,NONE,data
+0X00806C75,ADVHSVTS,byte,TRI STATE ERROR,1,0,,data
+0X0080A414,ADVHSVUF,word,UNFILTERED AND LINEARIZED,2,0,,data
+0X01000192,ADV_OVER,word,BIT 8 OF WORD 4.  ENABLE INDICATOR FOR THE ENGINEERING COMMAND TIMING,2,0,HEX,flag
+0X00806CD2,ADWFCA,word,WATER_IN_FUEL_CHANNEL_ADDRESS,2,0,NONE,address
+0X00806CC2,ADWFCS,word,WATER IN FUEL A/D DIGITAL FILTER CONSTANT,2,0,NONE,data
+0X00806CC6,ADWFFC,word,WATER IN FUEL A/D FAULT CLEAR COUNTS,2,0,CNTS,counter
+0X00806CC8,ADWFFD,word,WATER IN FUEL A/D FAULT DECREMENT,2,0,CNTS,data
+0X00806CCA,ADWFFI,word,WATER IN FUEL A/D FAULT INCREMENT,2,0,CNTS,data
+0X00806CCC,ADWFFS,word,WATER IN FUEL A/D FAULT SET,2,0,CNTS,data
+0X0080A46A,ADWFFT,word,FILTERED WATER IN FUEL AS READ AND SCALED FROM A/D ALGORITHM (2=NO H2O,2,0,NONE,data
+0X00806CC4,ADWFGD,word,WATER IN FUEL GLOBAL DEFAULT VALUE,2,0,NONE,value
+0X00806CD6,ADWFHE,byte,ERROR NUMBER STORAGE FOR WATER_IN_FUEL_HIGH_ERROR,1,0,NONE,data
+0X00806CCE,ADWFHL,word,WATER IN FUEL A/D HIGH ERROR LIMIT,2,0,CNTS,threshold
+0X00806CD7,ADWFLE,byte,ERROR NUMBER STORAGE FOR WATER_IN_FUEL_LOW_ERROR,1,0,NONE,data
+0X00806CD0,ADWFLL,word,WATER IN FUEL A/D LOW ERROR LIMIT,2,0,CNTS,threshold
+0X00806FEC,(null),word,,2,0,,data
+0X00806CD4,ADWFMU,byte,WATER IN FUEL CHANNEL MUX SETTING,1,0,NONE,data
+0X0080A472,ADWFRC,word,WATER IN FUEL RAW COUNTS,2,0,CNTS,counter
+0X00806CD9,ADWFSR,byte,WATER IN FUEL A/D SAMPLE PERIOD,1,0,MSEC,data
+0X00806CD8,ADWFTE,byte,WATER IN FUEL TRI STATE ERROR,1,0,NONE,data
+0X00806CD5,ADWFTS,byte,WATER IN FUEL TRI STATE ERROR,1,0,NONE,data
+0X1 = H2O),ADWFUF,byte[80],WATER IN FUEL UNFILTERED AND LINEARIZED (2 = NO H2O,80,2,0,data
+0X1 = H2O,ADWFUV,word,WATER IN FUEL USER VALUE (2 = NO H2O,2,0,2,value
+0X01000188,AENBLFLG,byte[72],LENGTH OF ALGORITHM_ENABLE_FLAGS,72,2,HEX,flag
+0X0080DE68,AFCNICTA,word,TIMING ADVANCE ADDED TO BASE TIMING ANYTIME AFC IS LIMITING FUELING,2,0,DEG,threshold
+0X010001A2,AFENMAN,word,BIT 3 OF 0-15 IN WORD C,2,0,HEX,data
+0X00060138,AFFLLMZA,word,AFC LOOK-UP TABLE DEFINING FUELING LIMIT AS A FUNCTION OF BOOST AND EN,2,6,MM3S,lookup
+0X00807A5A,AFFLMAN,word,AFC FUELING DERATE VALUE WHEN AFC OVERRIDE IS ENABLED,2,0,%FU,flag
+0X00808A6E,AFICTA,word,CALIBRATIBLE TIMING INCREMENT THAT IS ADDED TO BASE TIMING ANYTIME AFC,2,0,DEG,data
+0X00807A52,ANPZ,word,PRIORITY OF ACCELERATOR INTERLOCK FEATURE W/R TO OTHER THROTTLE FEATUR,2,0,PRI,data
+0X0100018A,APAFEN,word,BIT B WORD 0. ENABLES ALPHA AFC SUBALGORITHM FOR ALPHA_BASE CALCULATIO,2,0,HEX,flag
+0X0080A8FE,APAFSS,word,RESULT OF AFC ALGORITHM,2,0,0/1,data
+0X00807AA6,APAFTRTM,word,TIME THAT MUST ELAPSE WITHOUT AFC LIMITING BEFORE ALPHA MAY BE SET TO,2,0,SEC,threshold
+0X01000244,APAMHYST,word,ADDITIONAL AIR PRESSURE FROM APAMTRIG WHICH DISABLES ALPHA ALTITUDE,2,0,INHG,data
+0X01000246,APAMTRIG,word,AMBIENT AIR PRESSURE WHICH TRIGGERS ALPHA ALTITUDE,2,0,INHG,data
+0XLSG,APAPBA,word,RESULT OF AFC,2,NaN,0080A8FA,data
+0X0080A8FC,APAPST,word,INDICATOR AS TO WHICH PART OF THE ALPHA ALGORITHM IS FORCING ALPHA TO,2,0,0-3,data
+0XAFTER FILTERING,APFLDLRT,word,FUEL RATE,2,80,2,data
+0X00807AB0,APFLFTTC,word,TIME CONSTANT OF LB/HR FILTER USED IN THE ALPHA FUEL RATE CALCULATIONS,2,0,NONE,data
+0X0080A900,APFLRTAP,word,RESULT OF FUEL RATE ALGORITHM,2,0,0/1,data
+0XFINAL_TIMING,APFLTAEN,byte[80],ENABLE APPLICATION SPECIFIC OVERRIDING FINAL_FUELING,80,2,0,flag
+0X0080A902,APGVAP,word,RESULT OF ON GOVERNOR,2,0,0/1,data
+0X0006003C,APLI00,word,BLANK SPOT IN THE ADJUSTABLE_PARAMETER_LIMITS.H FILE,2,0,NONE,lookup
+0X0006003E,APLI01,word,BLANK SPOT IN THE ADJUSTABLE_PARAMETER_LIMITS.H FILE,2,0,NONE,lookup
+0X00060050,APLI17,word,BLANK SPOT IN THE ADJUSTABLE_PARAMETER_LIMITS.H FILE,2,0,NONE,lookup
+0X00060052,APLI18,word,BLANK SPOT IN THE ADJUSTABLE_PARAMETER_LIMITS.H FILE,2,0,NONE,lookup
+0X00060054,APLI19,word,BLANK SPOT IN THE ADJUSTABLE_PARAMETER_LIMITS.H FILE,2,0,NONE,lookup
+0X00060056,APLI20,word,BLANK SPOT IN THE ADJUSTABLE_PARAMETER_LIMITS.H FILE,2,0,NONE,lookup
+0X00060058,APLI21,word,BLANK SPOT IN THE ADJUSTABLE_PARAMETER_LIMITS.H FILE,2,0,NONE,lookup
+0X0006005A,APLI22,word,BLANK SPOT IN THE ADJUSTABLE_PARAMETER_LIMITS.H FILE,2,0,NONE,lookup
+0X00060060,APLI25,dword,BLANK SPOT IN THE ADJUSTABLE_PARAMETER_LIMITS.H FILE,4,0,NONE,lookup
+0X00060064,APLI26,dword,BLANK SPOT IN THE ADJUSTABLE_PARAMETER_LIMITS.H FILE,4,0,NONE,lookup
+0X00060068,APLI27,word,BLANK SPOT IN THE ADJUSTABLE_PARAMETER_LIMITS.H FILE,2,0,NONE,lookup
+0X0006006A,APLI28,word,BLANK SPOT IN THE ADJUSTABLE_PARAMETER_LIMITS.H FILE,2,0,NONE,lookup
+0X0006006C,APLI29,word,BLANK SPOT IN THE ADJUSTABLE_PARAMETER_LIMITS.H FILE,2,0,NONE,lookup
+0X0006006E,APLI30,word,BLANK SPOT IN THE ADJUSTABLE_PARAMETER_LIMITS.H FILE,2,0,NONE,lookup
+0X0080D64C,APLMES,word,RPM DERATE SUPPLIED BY APPLICATION GROUP.,2,0,RPM,data
+0X0080A904,APLSAP,word,RESULT OF LSG ALGORITHM,2,0,0/1,data
+0X00807AAE,APLSTMTR,word,TIME THAT MUST EXPIRE WITHOUT LSG COMMANDING FUEL BEFORE ALPHA IS ONE,2,0,SEC,command
+0X00807AA0,APRM01RT,word,RATE AT WHICH ALPHA INCREASES WHILE ALPHA IS BELOW THE ALPHA THRESHOLD,2,0,/SEC,threshold
+0X00807AA2,APRM02RT,word,RATE AT WHICH ALPHA INCREASES WHILE ALPHA IS >=  THE ALPHA THRESHOLD,2,0,/SEC,threshold
+0X00807AA4,APRMBKTD,word,VALUE OF ALPHA AT WHICH THE RAMP RATE TRANSITION TAKES PLACE,2,0,/SEC,value
+0X00807AB2,APRSFLRT,word,FUEL RATE LIMIT BELOW WHICH ALPHA IS ZERO -RESET VALUE AFTER LSG & AFC,2,0,LB/H,threshold
+0X00807AB4,APTDFLRT,word,FUEL RATE LIMIT ABOVE WHICH ALPHA MAY GO TO ONE,2,0,LB/H,threshold
+0X0100018C,APUOAPEN,word,BIT 0 WORD 1. EEPROM INDICATOR SET BY ENGR APPLICATIONS TO CONTROL ALP,2,0,HEX,data
+0X00807BEC,AS01CF,word,ASG THROTTLE MODE COMPENSATION FILTER COEF. 1 CALIBRATION,2,0,NONE,data
+0X00807BEE,AS02CF,word,ASG THROTTLE MODE COMPENSATION FILTER COEF. 2 CALIBRATION,2,0,NONE,data
+0X00807BF0,AS03CF,word,ASG THROTTLE MODE COMPENSATION FILTER COEF. 3 CALIBRATION,2,0,NONE,data
+0X00060472,ASALDPXA,word,ASG ALTERNATE DROOP TABLE INPUT AXIS,7,4,RPM,axis
+0X0080A930,ASALPHA,word,ALPHA VALUE USED TO OVERRIDE SLAVE ECM.,2,0,NONE,value
+0X0080A2A8,ASANENF,word,APPLICATION SPECIFIC ANC ENABLE/DISABLE FLAG(SET TO FALSE TO DISABLE),2,0,NONE,flag
+0X0080A2A6,ASANODFG,word,APPLICATION SPECIFIC ANC OVERRIDE FLAG(1 = ENGAGE ANC),2,0,NONE,flag
+0X0080A966,ASAP01CF,word,ASG APPLICATION SPECIFIC COMPENSATION FILTER COEF. 1,2,0,NONE,data
+0X0080A942,ASAP01DP,word,ASG APPLICATION SPECIFIC DROOP GAIN 1,2,0,NONE,data
+0X0080A962,ASAP01DV,word,ASG APPLICATION SPECIFIC DERIVATIVE GAIN 1,2,0,FS/R,data
+0X0080A95E,ASAP01IT,word,ASG APPLICATION SPECIFIC INTEGRAL GAIN 1,2,0,F/RS,data
+0X0080A95A,ASAP01PP,word,ASG APPLICATION SPECIFIC PROPORTIONAL GAIN 1,2,0,%F/R,data
+0X0080A968,ASAP02CF,word,ASG APPLICATION SPECIFIC COMPENSATION FILTER COEF. 2,2,0,NONE,data
+0X0080A944,ASAP02DP,word,ASG APPLICATION SPECIFIC DROOP GAIN 2,2,0,NONE,data
+0X0080A964,ASAP02DV,word,ASG APPLICATION SPECIFIC DERIVATIVE GAIN 2,2,0,FS/R,data
+0X0080A960,ASAP02IT,word,ASG APPLICATION SPECIFIC INTEGRAL GAIN 2,2,0,F/RS,data
+0X0080A95C,ASAP02PP,word,ASG APPLICATION SPECIFIC PROPORTIONAL GAIN 2,2,0,%F/R,data
+0X0080A96A,ASAP03CF,word,ASG APPLICATION SPECIFIC COMPENSATION FILTER COEF. 3,2,0,NONE,data
+0X0080A946,ASAPFTCF,word,ASG APPLICATION SPECIFIC REFERENCE FILTER COEFFICIENT,2,0,NONE,data
+0X0080A948,ASAPHILM,word,ASG APPLICATION SPECIFIC FUELING HIGH LIMIT,2,0,%FU,threshold
+0X0080A94A,ASAPLOLM,word,ASG APPLICATION SPECIFIC FUELING LOWER LIMIT,2,0,%FU,threshold
+0X0080A93E,ASAPODMD,word,ASG APPLICATION SPECIFIC REFERENCE OVERRIDE MODE,2,0,NONE,data
+0X0080A940,ASAPRF,word,ASG APPLICATION SPECIFIC REFERENCE SPEED,2,0,RPM,data
+0X0080A94C,ASAPRS,word,ASG APPLICATION SPECIFIC RESET,2,0,NONE,data
+0X0080A94E,ASAPSTX1,word,ASG APPLICATION SPECIFIC STATE X1 RESET VALUE,2,0,RPM,value
+0X0080A950,ASAPSTX2,word,ASG APPLICATION SPECIFIC STATE X2 RESET VALUE,2,0,%F,value
+0X0080A952,ASAPSTX3,word,ASG APPLICATION SPECIFIC STATE X3 RESET VALUE,2,0,RPM,value
+0X0080A954,ASAPSTX4,word,ASG APPLICATION SPECIFIC STATE X4 RESET VALUE,2,0,%FU,value
+0X0080A956,ASAPSTX5,word,ASG APPLICATION SPECIFIC STATE X5 RESET VALUE,2,0,%F,value
+0X0080A958,ASAPSTX6,word,ASG APPLICATION SPECIFIC STATE X6 RESET VALUE,2,0,%F,value
+0X00807BDC,ASCNHILM,word,ASG FUELING HIGH LIMIT CALIBRATION FOR THOTTLE MODE,2,0,%FU,threshold
+0X00807BDE,ASCNLOLM,word,ASG FUELING LOWER LIMIT CALIBRATION FOR THOTTLE MODE,2,0,%FU,threshold
+0X010000AC,ASDP01GN,word,OFFSET USED TO ADJUST DROOP IN THE GAIN ADJUST CALCULATION OF THE ASG,2,0,RPM,data
+0X010000AE,ASDP02GN,dword,SLOPE MULTIPLIER USED TO ADJUST DROOP IN THE GAIN ADJUST CALCULATION O,4,0,RPM,data
+0X010000BA,ASDP21GN,word,ALTERNATE OFFSET USED TO ADJUST DROOP IN GAIN ADJUST CALC. FOR ASG,2,0,RPM,data
+0X010000BC,ASDP22GN,dword,ALTERNATE SLOPE MULTIPLIER USED TO ADJUST DROOP IN GAIN ADJUST CALC.,4,0,RPM,data
+0X010000C8,ASDP31GN,word,ALTERNATE OFFSET USED TO ADJUST DROOP IN GAIN ADJUST CALC. FOR ASG,2,0,RPM,data
+0X010000CA,ASDP32GN,dword,ALTERNATE SLOPE MULTIPLIER USED TO ADJUST DROOP IN GAIN ADJUST CALC.,4,0,RPM,data
+0X00807AC4,ASDPFGCN,word,CALIBRATION FOR ASG DROOP SELECTION FLAG; SELECT DROOP SOURCE,2,0,NONE,flag
+0X0080A992,ASDPGN01,word,ASG DROOP GAIN 1,2,0,NONE,data
+0X0080A994,ASDPGN02,word,ASG DROOP GAIN 2,2,0,NONE,data
+0X010000B6,ASDPMN02,word,TOOL ASG DROOP MIN THROTTLE % FOR SWITCHED DROOP 2 ADJUSTABLE PARAMETE,2,0,%,lookup
+0X010000C4,ASDPMN03,word,TOOL ASG DROOP MIN THROTTLE % FOR SWITCHED DROOP 3 ADJUSTABLE PARAMETE,2,0,%,lookup
+0X010000B8,ASDPMX02,word,TOOL ASG DROOP MAX THROTTLE % FOR SWITCHED DROOP 2 ADJUSTABLE PARAMETE,2,0,%,lookup
+0X010000C6,ASDPMX03,word,TOOL ASG DROOP MAX THROTTLE % FOR SWITCHED DROOP 3 ADJUSTABLE PARAMETE,2,0,%,lookup
+0X00060492,ASDPTBXA,word,ASG DROOP TABLE INPUT AXIS (F(REFERENCE SPEED)),7,4,RPM,axis
+0X00807BE8,ASDV01GN,word,ASG DERIVATIVE GAIN 1 CALIBRATION,2,0,FS/R,data
+0X00807BEA,ASDV02GN,word,ASG DERIVATIVE GAIN 2 CALIBRATION,2,0,FS/R,data
+0X00807ABE,ASDVDELM,word,ASG DERIVATIVE DEAD BAND LIMIT,2,0,%FU,threshold
+0X00807AC0,ASDVFTCF,word,ASG DERIVATIVE FILTER COEFFICIENT CALIBRATION,2,0,NONE,data
+0X00807AC2,ASDVLM,word,ASG DERIVATIVE LIMIT,2,0,%FU,threshold
+0X0080A96E,ASERDC,word,ASG ERROR DIFFERENCE,2,0,RPM,data
+0X0080A9A0,ASETRS,word,ASG EXTERNAL RESET FLAG,2,0,NONE,flag
+0X0080A970,ASFBDC,word,ASG FEEDBACK DIFFERENCE TERM,2,0,RPM,data
+0X0080A99C,ASFLHILM,word,ASG FUELING HIGH LIMIT,2,0,%FU,threshold
+0X0080A99E,ASFLLOLM,word,ASG FUELING LOWER LIMIT,2,0,%FU,threshold
+0X00807BDA,ASFTCF,word,ASG REFERENCE FILTER COEFFICIENT CALIBRATION,2,0,NONE,data
+0X0080A972,ASFTRF,word,ASG FILTERED REFERENCE SPEED,2,0,RPM,data
+0X00807BE4,ASIT01GN,word,ASG INTEGRAL GAIN 1 CALIBRATION,2,0,F/RS,data
+0X00807BE6,ASIT02GN,word,ASG INTEGRAL GAIN 2 CALIBRATION,2,0,F/RS,data
+0X00807B9E,ASJ100CF,word,ASG COMPENSATION FILTER COEF. 1 - JCOMM MODE 00,2,0,NONE,data
+0X00807B9A,ASJ100DV,word,ASG DERIVATIVE GAIN 1 - JCOMM MODE 00,2,0,FS/R,data
+0X00807B96,ASJ100IT,word,ASG INTEGRAL GAIN 1 - JCOMM MODE 00,2,0,F/RS,data
+0X00807B92,ASJ100PP,word,ASG PROPORTIONAL GAIN 1 - JCOMM MODE 00,2,0,%F/R,data
+0X00807BB0,ASJ101CF,word,ASG COMPENSATION FILTER COEF. 1 - JCOMM MODE 01,2,0,NONE,data
+0X00807BAC,ASJ101DV,word,ASG DERIVATIVE GAIN 1 - JCOMM MODE 01,2,0,FS/R,data
+0X00807BA8,ASJ101IT,word,ASG INTEGRAL GAIN 1 - JCOMM MODE 01,2,0,F/RS,data
+0X00807BA4,ASJ101PP,word,ASG PROPORTIONAL GAIN 1 - JCOMM MODE 01,2,0,%F/R,data
+0X00807BC2,ASJ110CF,word,ASG COMPENSATION FILTER COEF. 1 - JCOMM MODE 10,2,0,NONE,data
+0X00807BBE,ASJ110DV,word,ASG DERIVATIVE GAIN 1 - JCOMM MODE 10,2,0,FS/R,data
+0X00807BBA,ASJ110IT,word,ASG INTEGRAL GAIN 1 - JCOMM MODE 10,2,0,F/RS,data
+0X00807BB6,ASJ110PP,word,ASG PROPORTIONAL GAIN 1 - JCOMM MODE 10,2,0,%F/R,data
+0X00807BD4,ASJ111CF,word,ASG COMPENSATION FILTER COEF. 1 - JCOMM MODE 11,2,0,NONE,data
+0X00807BD0,ASJ111DV,word,ASG DERIVATIVE GAIN 1 - JCOMM MODE 11,2,0,FS/R,data
+0X00807BCC,ASJ111IT,word,ASG INTEGRAL GAIN 1 - JCOMM MODE 11,2,0,F/RS,data
+0X00807BC8,ASJ111PP,word,ASG PROPORTIONAL GAIN 1 - JCOMM MODE 11,2,0,%F/R,data
+0X00807BA0,ASJ200CF,word,ASG COMPENSATION FILTER COEF. 2 - JCOMM MODE 00,2,0,NONE,data
+0X00807B9C,ASJ200DV,word,ASG DERIVATIVE GAIN 2 - JCOMM MODE 00,2,0,FS/R,data
+0X00807B98,ASJ200IT,word,ASG INTEGRAL GAIN 2 - JCOMM MODE 00,2,0,F/RS,data
+0X00807B94,ASJ200PP,word,ASG PROPORTIONAL GAIN 2 - JCOMM MODE 00,2,0,%F/R,data
+0X00807BB2,ASJ201CF,word,ASG COMPENSATION FILTER COEF. 2 - JCOMM MODE 01,2,0,NONE,data
+0X00807BAE,ASJ201DV,word,ASG DERIVATIVE GAIN 2 - JCOMM MODE 01,2,0,FS/R,data
+0X00807BAA,ASJ201IT,word,ASG INTEGRAL GAIN 2 - JCOMM MODE 01,2,0,F/RS,data
+0X00807BA6,ASJ201PP,word,ASG PROPORTIONAL GAIN 2 - JCOMM MODE 01,2,0,%F/R,data
+0X00807BC4,ASJ210CF,word,ASG COMPENSATION FILTER COEF. 2 - JCOMM MODE 10,2,0,NONE,data
+0X00807BC0,ASJ210DV,word,ASG DERIVATIVE GAIN 2 - JCOMM MODE 10,2,0,FS/R,data
+0X00807BBC,ASJ210IT,word,ASG INTEGRAL GAIN 2 - JCOMM MODE 10,2,0,F/RS,data
+0X00807BB8,ASJ210PP,word,ASG PROPORTIONAL GAIN 2 - JCOMM MODE 10,2,0,%F/R,data
+0X00807BD6,ASJ211CF,word,ASG COMPENSATION FILTER COEF. 2 - JCOMM MODE 11,2,0,NONE,data
+0X00807BD2,ASJ211DV,word,ASG DERIVATIVE GAIN 2 - JCOMM MODE 11,2,0,FS/R,data
+0X00807BCE,ASJ211IT,word,ASG INTEGRAL GAIN 2 - JCOMM MODE 11,2,0,F/RS,data
+0X00807BCA,ASJ211PP,word,ASG PROPORTIONAL GAIN 2 - JCOMM MODE 11,2,0,%F/R,data
+0X00807BA2,ASJ300CF,word,ASG COMPENSATION FILTER COEF. 3 - JCOMM MODE 00,2,0,NONE,data
+0X00807BB4,ASJ301CF,word,ASG COMPENSATION FILTER COEF. 3 - JCOMM MODE 01,2,0,NONE,data
+0X00807BC6,ASJ310CF,word,ASG COMPENSATION FILTER COEF. 3 - JCOMM MODE 10,2,0,NONE,data
+0X00807BD8,ASJ311CF,word,ASG COMPENSATION FILTER COEF. 3 - JCOMM MODE 11,2,0,NONE,data
+0X00807B90,ASJCFLMN,word,ASG JCOMM FUELING LOWER LIMIT CALIBRATION,2,0,%FU,threshold
+0X00807B8E,ASJCFLMX,word,ASG JCOMM FUELING HIGH LIMIT CALIBRATION,2,0,%FU,threshold
+0X00807B8C,ASJCFTCS,word,ASG JCOMM REFERENCE FILTER CONSTANT,2,0,NONE,data
+0X010000C0,ASMNRF02,word,ALTERNATE ASG REFERENCE SPEED FOR 0% THROTTLE INPUT,2,0,RPM,data
+0X010000CE,ASMNRF03,word,ALTERNATE ASG REFERENCE SPEED FOR 0% THROTTLE INPUT,2,0,RPM,data
+0X0080A9A4,ASMNRP,word,ASG REFERENCE SPEED FOR 0% THROTTLE INPUT -SHOULD BE LESS THAN LSGMNRE,2,0,RPM,data
+0X100% THROTTLE,ASMXFL,word,FUELING FROM 4D TABLES USING ASG_SELECTED_SPEED,2,80,2,lookup
+0X010000C2,ASMXRF02,word,ALTERNATE ASG REFERENCE SPEED FOR 100% THROTTLE INPUT,2,0,RPM,data
+0X010000D0,ASMXRF03,word,ALTERNATE ASG REFERENCE SPEED FOR 100% THROTTLE INPUT,2,0,RPM,data
+0X0080A9A6,ASMXRP,word,ASG REFERENCE SPEED FOR 100% THROTTLE INPUT -SHOULD BE GREATER THAN HS,2,0,RPM,data
+0X00807BE0,ASPP01GN,word,ASG PROPORTIONAL GAIN 1 CALIBRATION,2,0,%F/R,data
+0X00807BE2,ASPP02GN,word,ASG PROPORTIONAL GAIN 2 CALIBRATION,2,0,%F/R,data
+0X0080A932,ASRSSTX1,word,ASG RESET STATE X1,2,0,RPM,data
+0X0080A934,ASRSSTX2,word,ASG RESET STATE X2,2,0,%FU,data
+0X0080A936,ASRSSTX3,word,ASG RESET STATE X3,2,0,RPM,data
+0X0080A938,ASRSSTX4,word,ASG RESET STATE X4,2,0,%FU,data
+0X0080A93A,ASRSSTX5,word,ASG RESET STATE X5,2,0,%FU,data
+0X0080A93C,ASRSSTX6,word,ASG RESET STATE X6,2,0,%FU,data
+0X0080A99A,ASSLDP,word,ASG SELECTED DROOP SLOPE,2,0,R/%F,data
+0X0080A996,ASTH01DP,word,ASG THROTTLE DROOP GAIN 1,2,0,NONE,data
+0X0080A998,ASTH02DP,word,ASG THROTTLE DROOP GAIN 2,2,0,NONE,data
+0X00807AC6,ASTHPFRL,word,ASG THROTTLE REF RATE LIMIT FOR PREFILTER COEF. CALCULATION,2,0,RPMS,threshold
+0X0080A98C,ASTHRFES,word,ALL SPEED GOVERNOR REFERENCE SPEED BASED UPON THROTTLE POSITION,2,0,RPM,data
+0X00060018,ASTL01MN,word,MINIMUM FOR ASG_DROOP_GAIN1,2,0,RPM,data
+0X0006001A,ASTL01MX,word,MAXIMUM FOR ASG_DROOP_GAIN1,2,0,RPM,data
+0X0006001C,ASTL02MN,word,MINIMUM FOR ASG_DROOP_GAIN2,2,0,RPM,data
+0X0006001E,ASTL02MX,word,MAXIMUM FOR ASG_DROOP_GAIN2,2,0,RPM,data
+0X00060020,ASTLMNMN,word,MINIMUM ALLOWED SPEED FOR ASG_MINIMUM_SPEED,2,0,RPM,data
+0X00060022,ASTLMNMX,word,MAXIMUM ALLOWED SPEED FOR ASG_MINIMUM_SPEED,2,0,RPM,data
+0X00060024,ASTLMXMN,word,MINIMUM ALLOWED SPEED FOR ASG_MAXIMUM_SPEED,2,0,RPM,data
+0X00060026,ASTLMXMX,word,MAXIMUM ALLOWED SPEED FOR ASG_MAXIMUM_SPEED,2,0,RPM,data
+0X00807ABC,ATAAPRDF,word,DEFAULT FUELING TO BE USED BY ALTITUDE DERATE IF AMBIENT AIR PRESSURE,2,0,MM3S,data
+0X000603BA,ATAAPRYA,dword,AMBIENT AIR PRESSURE AXIS VALUES (4 VALUES) FOR ALTITUDE_DERATE_FUELIN,4,4,INHG,axis
+0X00807AAA,ATAPMNTM,word,TIME ALPHA IS LATCHED TO ADALF AFTER ALTITUDE DERATE STOPS FUEL LIMITI,2,0,SEC,threshold
+0X00807ABA,ATENESTR,word,ENGINE SPEED ABOVE WHICH DERATING WILL OCCUR WHEN AMBIENT AIR PRESSURE,2,0,RPM,data
+0X010001D2,AUDIT_TR,word,MULTI BYTE SERVICE TOOL CHANGE TRACKING AREA,2,2,NONE,data
+0X01000230,AUTO_ADJ,word,ADJUSTABLE PARAMETERS OF THE AUTOMOTIVE INTERFACE ITEMS,2,0,,lookup
+0X008089DA,BCASTTBL,word,SPECIAL ENGINE MONITOR BROADCAST TABLE,2,0,NONE,lookup
+0X00807EE2,BKLSMXEL,word,MAX_EPS_BACKUP_LOST_DURATION,2,0,SEC,data
+0X0000800E,BLOKDATA,byte[60],NONE,60,2,HEX,data
+0X008084FC,BOOTDST,dword,THE FLASH ADDRESS TO COPY TO WHEN REPROGRAMMING THE BOOT BLOCK,4,0,HEX,address
+0X00808504,BOOTKEY,word,THIS KEY MUST BE SET TO BAD1 BEFORE BOOT BLOCK IS PROGRAMMED,2,0,HEX,data
+0X00808500,BOOTLEN,dword,THE LENGTH OF THE BLOCK TO COPY WHEN REPROGRAMMING THE BOOT BLOCK,4,0,HEX,data
+0X008084F8,BOOTSRC,dword,THE RAM ADDRESS TO COPY FROM WHEN REPROGRAMMING THE BOOT BLOCK,4,0,HEX,address
+0X00807D12,BSSNPZ,word,INDICATES THAT BOOST PRESS SENSOR IS ABSOLUTE PRESSURE SENSOR,2,0,N/A,data
+0X0080A270,BSTABELM,word,DESIRED SOI BEFORE BEING LIMITED BY MISFIRE ALGORITHM,2,0,DEG,threshold
+0X0080794E,BSTATBZA,word,TABLE FOR DETERMINING MINIMUM ADVANCE FOR MISFIRE,2,6,DEG,lookup
+0X0080A26E,BSTAMNLM,word,OUTPUT OF THE MISFIRE TIMING LIMIT TABLE,2,0,DEG,lookup
+0X01000080,CAL_DATE,word,CALIBRATION RELEASE DATE.,6,2,HEX,data
+0X00060570,CAMXFLTR,word,FUEL VALUE ABOVE WHICH COOLANT ADVANCE  WILL NOT INCREMENT TIMING,2,0,MM3S,value
+0X00807CB8,CCMNFLLM,word,CC/RSG FUELING CLAMP MIN.,2,0,%FU,data
+0X00807CB6,CCMXFLLM,word,CC/RSG FUELING CLAMP MAX.,2,0,%FU,data
+0X00807CA8,CCRFRTNG,word,NEGATIVE SLEW RATE LIMIT ON CRUISE CONTROL REFERENCE,2,0,MPHS,threshold
+0X00807CA6,CCRFRTPS,word,POSITIVE SLEW RATE LIMIT ON CRUISE CONTROL REFERENCE,2,0,MPHS,threshold
+0X008089C8,CGLMRMRT,word,THE RATE AT WHICH THE LIMIT SPEED IS RAMPED DOWN TO THE LOW LIMIT,2,0,M/S,threshold
+0X0080D09C,CK4DTA,word,4D TIMING OUTPUT BY CRANK,2,0,DEG,data
+0X0080D0B0,CKAJIIES,word,CRANK ADJUSTED INITIAL RPM,2,0,RPM,data
+0X0080D0AE,CKAJIIFL,word,CRANK ADJUSTED INITIAL FUEL,2,0,MM3S,data
+0X00807EFC,CKCDCLES,word,CRANK LOW COOLANT TEMPERATURE RPM,2,0,RPM,data
+0X00807EF8,CKCDCLFL,word,CRANK LOW COOLANT TEMPERATURE FUELING,2,0,MM3S,data
+0X00807EEE,CKCDCLTP,word,CRANK LOW COOLANT TEMPERATURE,2,0,DEGF,data
+0X00807F04,CKCDIMES,word,CRANK LOW INTAKE MANIFOLD TEMPERATURE RPM,2,0,RPM,data
+0X00807F00,CKCDIMTA,word,CRANK LOW INTAKE MANIFOLD TEMPERATURE TVC,2,0,DEG,data
+0X00807EF2,CKCDIMTP,word,CRANK LOW INTAKE MANIFOLD TEMPERATURE,2,0,DEGF,data
+0X0080D0A2,CKCLTAIC,word,COOLANT ADVANCE TIMING OUTPUT BY CRANK,2,0,DEG,data
+0X00807EEA,CKCNEXES,word,ENGINE SPEED AT WHICH THE ALGORITHM STOPS COMMANDING FUEL,2,0,RPM,command
+0X00807F10,CKCNEXTM,word,CRANK EXIT TIME,2,0,SEC,data
+0X00807F0A,CKCNJSTM,word,CRANK JUMPSTART TIME,2,0,SEC,data
+0X008057BE,CKEGSRIH,word,ENGINE STARTUP INHIBIT,2,0,T/F,data
+0X00807F14,CKEXESOF,word,CRANK EXITED INITIAL RPM OFFSET,2,0,RPM,data
+0X01000480,CKEXESSW,word,CRANK EXIT SPEED SWITCH  1 = USE CALIBRATION/0=USE LSG RFERENCE,2,0,1/0,data
+0X0080D0B6,CKEXFLAJ,word,CRANK EXIT FUEL ADJUSTMENT,2,0,MM3S,data
+0X00807F12,CKEXFLOF,word,CRANK EXITED INITIAL FUELING OFFSET,2,0,MM3S,data
+0X00807F18,CKEXFLRT,word,CRANK EXIT FUEL RAMP RATE,2,0,MM3S,data
+0X00807F1A,CKFLOFMX,word,CRANK EXIT FUEL RAMP RATE MAXIMUM,2,0,MM3S,data
+0X00807F16,CKFLRMES,word,CRANK EXIT FUEL RAMP RPM,2,0,RPM,data
+0X00807EFA,CKHTCLES,word,CRANK HIGH COOLANT TEMPERATURE RPM,2,0,RPM,data
+0X00807EF6,CKHTCLFL,word,CRANK HIGH COOLANT TEMPERATURE FUELING,2,0,MM3S,data
+0X00807EEC,CKHTCLTP,word,CRANK HIGH COOLANT TEMPERATURE,2,0,DEGF,data
+0X00807F02,CKHTIMES,word,CRANK HIGH INTAKE MANIFOLD TEMPERATURE RPM,2,0,RPM,data
+0X00807EFE,CKHTIMTA,word,CRANK HIGH INTAKE MANIFOLD TEMPERATURE TIMING,2,0,DEG,data
+0X00807EF0,CKHTIMTP,word,CRANK HIGH INTAKE MANIFOLD TEMPERATURE,2,0,DEGF,data
+0X0080D0B2,CKIIFLES,word,CRANK INITIAL FUEL BREAK SPEED,2,0,RPM,data
+0X00807F06,CKIIREES,word,CRANK INITIAL REENTRY SPEED,2,0,RPM,data
+0X0080D0B4,CKIITAES,word,CRANK INITIAL ADVACE BREAK SPEED,2,0,RPM,data
+0X0080D0BC,CKINFRAJ,word,FUELING VAL. TO BE ADDED TO CRANK INITIAL FUEL VAL.,2,0,%FU,data
+0X0080D0BE,CKINRPAJ,word,ENG. SPD. VAL. TO BE ADDED TO CRK INIT FUEL BRK SPD.,2,0,RPM,data
+0X00807F0E,CKJSESRT,word,CRANK JUMPSTART RPM RAMP RATE,2,0,R/S,data
+0X00807F0C,CKJSFLRT,word,CRANK JUMPSTART TVO RAMP RATE,2,0,FU/S,data
+0X0080D0A0,CKJSTM,word,TIMER USED TO DICTATE A JUMPSTART CONDITION,2,0,SEC,data
+0X00807F08,CKREESOF,word,CRANK REENTRY SPEED OFFSET,2,0,RPM,data
+0X00807F22,CKSPRP,word,ENGINE SPEED FOR TRANSITION INTO/OUT OF CRANK(REENTR) STATE,2,0,RPM,data
+0X0080D292,CKSYERTT,byte,TOOTH COUNT AT WHICH ERROR WAS FOUND BY PMM,1,0,,counter
+0X0080D293,CKSYERTY,byte,PMM_ERROR_TYPE:SIGNIFIES THE TYPE OF SYNC ERROR FOUND BY PMMA,1,0,HEX,data
+0X0080D2BF,CKTTCUER,byte,CRANK_TOOTH_COUNT_ERROR:INCREMENTED WHEN EPS TOOTH COUNT WRONG,1,0,CNT,counter
+0X00807F9E,CKTTERMX,byte,IF CRANK_TOOTH_COUNT_ERROR_COUNT >= THIS THEN SET ERROR,1,0,CNT,counter
+0X0080D0A4,CKWSTA,word,WET STACK TIMING OUTPUTED BY CRANK,2,0,DEG,data
+0X00808194,CLNTFL,word,MAXIMUM FUELING VALUE THAT DOES NOT INJECT FUEL.,2,0,MM3S,value
+0X0080BDA4,CMECTR,dword,TIME KEY SWITCH IS ON AND ECM IS RUNNING BOOT OR APPLICATION CODE,4,0,SEC,data
+0X0080CCEE,CMEGTR,dword,TIME THAT THE ENGINE IS NOT IN STOP STATE,4,0,SEC,data
+0X0080D056,CMLSEL,word,CAM_SYNC_LOST_DURATION,2,0,SEC,data
+0X00807EDC,CMLSMXEL,word,MAX_CAM_SYNC_LOST_DURATION,2,0,SEC,data
+0X00807F98,CMSNCU01,word,WIDE_CI_COUNT:EXPECTED EPS TEETH DURING WIDE CI PULSE,2,0,CNT,counter
+0X00807F9A,CMSNCU02,word,NARROW_CI_COUNT:EXPECTED EPS TEETH DURING NARROW CI PULSE,2,0,CNT,counter
+0X0080D2C0,CMSNCUER,byte,CI_TOOTH_COUNT_ERROR:INCREMENTED WHEN CI PULSE WIDTH IS WRONG,1,0,CNT,counter
+0X00807F9F,CMSNERMX,byte,IF CI_TOOTH_COUNT_ERROR_COUNT >= THIS THEN SET ERROR,1,0,CNT,counter
+0X0080D2C1,CMSNFXER,byte,CI_SIGNAL_ERROR:INCREMENTED WHEN CI PULSE IS MISSING,1,0,CNT,data
+0X00807FA0,CMSNFXMX,byte,IF CI_SIGNAL_ERROR_COUNT >= THIS THEN SET ERROR,1,0,CNT,counter
+0X00807F9C,CMSNTMCU,word,CI_LOST_COUNT_MAX:RESET VALUE FOR CI TIMEOUT COUNTER,2,0,CNT,counter
+0X0080D2BE,CMSNTTCU,byte,CI_TOOTH_COUNT:NUMBER OF EPS TEETH DURING CI PULSE,1,0,CNT,counter
+0X1 = HAVE SYNC,CMSYBKSS,word,CAM_SYNC_STATE_BACKUP: 0 = NO SYNC,2,80,1,data
+0X0080D0CF,CMSYFG,byte,FLAG INDICATING CRANK REV 1 OR 2 OF CAM REV,1,0,,flag
+0X0080D0CE,CMSYRSFG,byte,CAM_CYCLE_RESET:FLAG INDICATING OCCURRENCE OF EPS PULSE,1,0,1-T,flag
+0X1=HAVE SYNC,CMSYSS,word,CAM_SYNC_STATE: 0=NO SYNC,2,80,1,data
+0X01000190,CPAGEN,word,BIT 11 OF 0-15.  ENABLES AND DISABLES THE CYLINDER PRESSURE MAINTENANC,2,0,HEX,flag
+0X00807D16,CPBS01,word,CYLINDER PRESSURE BLANK SPOT 1,2,0,NONE,data
+0X00060776,CPBS03,word,BLANK SPOT FOR START_OF_INJECTION_AXIS,2,5,NONE,axis
+0X000605B2,CPCS01XA,byte[13],REF. AXIS FOR RATIO OF CYL. PRESS. TO COMPRESSION PRESS. PER DEGREE TV,13,4,RPM,axis
+0X000605F2,CPCS02YA,word,DATA AXIS FOR COMPRESSION RATIO RAISED TO POWER OF A POLYTROPIC CONSTA,2,6,NONE,axis
+0X0006065C,CPCS03XA,byte[13],REFERENCE AXIS FOR RATIO OF DEG. F TO DEG. TVC TABLE,13,4,RPM,axis
+0X0080AAA0,CPCYPR,word,CALCULATED CYLINDER PRESSURE,2,0,PSIA,value
+0X00807CFA,CPDCMN,word,MIN. DIFF. BETWEEN DESIRED CYLINDER PRESSURE AND CALCULATED CYLINDER P,2,0,PSIA,value
+0X000606A4,CPDSXA,byte[13],ENGINE SPEED REFERENCE AXIS FOR DESIRED CYLINDER PRESSURE TABLE,13,4,RPM,axis
+0X0080AA9C,CPEPIMTP,word,EXPECTED INTAKE TEMPERATURE BASED ON MASS FUEL RATE CALCULATION,2,0,DEGF,data
+0X00807D08,CPMNAP,word,MINIMUM VALUE OF ALPHA REQUIRED TO CALCULATE CYLINDER_MAINTENANCE_INCR,2,0,NONE,value
+0X00807D0E,CPMNES,word,MINIMUM ALLOWABLE ENGINE SPEED FOR THIS ALGORITHM TO OPERATE,2,0,RPM,data
+0X00807D10,CPMNFL,word,MINIMUM ALLOWABLE FUELING FOR THIS ALGORITHM TO OPERATE,2,0,MM3S,data
+0X00807D0C,CPMNRD,word,MINIMUM ALLOWED TIMING RETARD FOR THIS ALGORITHM,2,0,DEG,data
+0X00807D0A,CPMNTAES,word,MINIMUM ALLOWED ENGINE SPEED FOR TIMING ADVANCE IN THIS ALGORITHM,2,0,RPM,data
+0X00807D06,CPMXES,word,MAXIMUM ALLOWABLE ENGINE SPEED FOR THIS ALGORITHM TO OPERATE,2,0,RPM,data
+0X00807D14,CPMXFLMF,word,FUEL RATE AT MAXIMUM FUELING CONDITIONS,2,0,%FUR,data
+0X00807CFC,CPMXFLTP,word,INTAKE MANIFOLD TEMPERATURE AT MAXIMUM FUELING CONDITION,2,0,DEGF,data
+0X00807CFE,CPMXIMTP,word,INTAKE MANIFOLD TEMPERATURE AT MOTORING CONDITIONS,2,0,DEGF,data
+0X00807D04,CPMXTAES,word,MAXIMUM ALLOWED ENGINE SPEED FOR TIMING ADVANCE IN THIS ALGORITHM,2,0,RPM,data
+0X0080AA9E,CPTAIC,word,INCREMENT TIMING VALUE OUTPUT BY CYLINDER PRESSURE MAINTENANCE ALGORIT,2,0,DEG,value
+0X00807D00,CPTPMNDC,word,MINIMUM DIFFERENCE EXPECTED AND MEASURED INTAKE TEMPERATURE,2,0,DEGF,data
+0X0080BCD4,CRACELSW,byte,SOFTWARE CRUISE ACCEL SWITCH USED IN CRUISE AND PTO STATUS CALCULATION,1,0,HEX,data
+0X00807C3E,CRACSWAC,word,RATE OF INCREMENT IN CRUISE CONTROL REFERENCE IF IN ACCEL,2,0,MPHS,data
+0X01000558,CRADSZ,word,SIZE OF CC RSG ROAD SPEED ADJUSTABLE PARAMETERS,2,0,NONE,lookup
+0X0080AA38,CRALDP,word,STATUS OF CRUISE DROOP STATE MACHINE,2,0,T/F,data
+0X0080AA2E,CRARFG,word,CRUISE CONTROL AUTO RESUME FLAG (INACTIVE/ACTIVE/PRE_ACTIVE/RESUME/AFT,2,0,,flag
+0X00060080,CRBDWDMX,word,MAXMIMUM WIDTH OF THE BOTTOM DROOP IN CRUISE.,2,0,MPH,data
+0X0080AA3E,CRBODJCL,word,SLOPE OF THE BOTTOM DROOP LINE CALCULATED IN CC/RSG DROOP,2,0,M/F,value
+0X0080AA3C,CRBODO,word,CRUISE BOTTOM DROOP OFFSET PASSED TO THE DESIRED_CC FUELING PROCEDURE.,2,0,%FU,data
+0X00807C62,CRBODPOF,word,CRUISE/RSG BOTTOM DROOP OFFSET.,2,0,%FU,data
+0X01000544,CRBODPWD,word,BOTTOM DROOP WIDTH FOR CRUISE CONTROL.,2,0,MPH,data
+0X0080AA30,CRCM,word,CRUISE COMMAND MODE (OFF/SET/RESUME/COAST/ACCEL/BUMP DOWN/BUMP UP/HOLD,2,0,,command
+0X00807C40,CRCNDTRF,word,ADJUSTMENT IN CRUISE REFERENCE THAT IS TO BE MADE IF FOR A BUMP DOWN,2,0,MPH,data
+0X00807C42,CRCNICRF,word,ADJUSTMENT IN CRUISE REFERENCE THAT IS TO BE MADE IF FOR A BUMP UP,2,0,MPH,data
+0X00807286,CRCOACTM,word,AMOUNT OF TIME BUMP MUST BE HELD BEFORE TRANSITIONING TO COAST/ACCEL,2,0,SEC,data
+0X00807C44,CRCOSWAC,word,RATE IN DECREMENT IN CRUISE CONTROL REFERENCE IF CRUISE IS IN COAST,2,0,MPHS,data
+0XCOEFFICIENT 1,CRDVFLC1,byte[807],2ND ORDER DERIVATIVE FILTER IN CC/RSG GOV.,807,2,0,data
+0XCOEFFICIENT 3,CRDVFLC3,byte[807],2ND ORDER DERIVATIVE FILTER IN CC/RSG GOV.,807,2,0,data
+0X0=PREDICTED_VEHICLE_SPEED USED IN FEEDBACK LOOP,CRDPAJRF,byte[100055],1=ROAD_SPEED,100055,2,0,data
+0X00807C70,CRDPFLTC,word,TIME CONSTANT OF FUELING FILTER USED IN CC/RSG DROOP CALCULATION,2,0,NONE,data
+0X00807CB0,CRDPMN,word,MIN LIMIT ON THE OUTPUT OF THE DIFFERENTIAL PATH IN THE CC/RSG GOV.,2,0,RPMS,threshold
+0X00807CAE,CRDPMX,word,MAX LIMIT ON THE OUTPUT OFF THE DIFFERENTIAL PATH IN THE CC/RSG GOV.,2,0,RPMS,threshold
+0X00807C80,CRDVGNC2,word,DERIVATIVE GAIN FOR CRUISE/RSG DURING LARGE TRACKING ERROR,2,0,FS/R,data
+0X00807C6C,CRDVGNCN,word,THE DERIVATIVE GAIN OF THE CRUISE / RSG CALIBRATION.,2,0,FS/R,data
+0X01000196,CREBEN,word,TRIM PARAMETER ENABLES/DISABLES CC/EBRAKE BIT 15 OF 0-15,2,0,HEX,flag
+0X1/2/3 = LEVELS OF ENGINE BRAKING),CREBSS,byte[80],CRUISE CONTROL EBRAKE STATUS (0=OFF,80,2,0,data
+0X0080AA44,CRERDC,word,AMOUNT THE CRUISE/RSG MPH ERROR SIGNAL IS MODIFIED TO FORM THE DROOP C,2,0,MPH,data
+0X0080AA6C,CRERDP,word,CRUISE RSG ERROR AFTER DROOP,2,0,MPH,data
+0XTIRE SIZE,CRERESGN,word,GAIN USED BY CC/RSG TO ADJUST DROOP ERROR BASED AXLE RATIO,2,1000556,2,data
+0X00807CC4,CRERGNUL,word,TOOL MAXIMUM ACCEPTABLE CRUISE_RSG_GAIN VALUE,2,0,,lookup
+0X0080AA6E,CRETRS,word,FLAG INDICATING CC/RSG SHALL PERFORM A RESET,2,0,FLG,flag
+0X0080AA40,CREVBU,word,FLAG INDICATING CRUISE GOVERNOR SHALL PERFORM A BUMPLESS GAIN/DROOP TR,2,0,FLG,flag
+0X00807CC6,CRFLOFPZ,word,ADJUSTMENT TO RSG INTEGRATOR PRESET FUEL CALCULATION,2,0,%FU,data
+0X01000542,CRGDADSZ,word,ADJUSTABLE PARAMETER TABLE SIZE FOR CC/RS GAIN DROOPS,2,0,HEX,lookup
+0X00807C98,CRGNADYA,word,Y-AXIS OF TABLE USED BY CC/RSG TO ADJUST ERROR BASED ON FILTERED GEAR,2,5,,axis
+0X00807CBA,CRGNSC,word,CRUISE CONTROL LOOP GAIN MULTIPLIER,2,0,,data
+0X00807C7A,CRGNVSHY,word,HYSTERESIS APPLIED TO CRGNVSTD IN CRUISE/RSG GAIN SET SWITCHING LOGIC,2,0,MPH,data

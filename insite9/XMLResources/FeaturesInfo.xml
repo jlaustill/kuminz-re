@@ -1,0 +1,629 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+==================================================================================================================================================
+// FILENAME       : FeaturesInfo_EN.xml
+// LEGAL          : Copyright (c) 2008 Cummins, Inc.
+// DESCRIPTION    : Contains Selected Features Info Required for printing
+//type
+// HISTORY        :
+==================================================================================================================================================
+//  RACFID/Name    		    Date        PRCR Number   Description
+==================================================================================================================
+    jd067               07/05/2011    DB_G00173740  Added query for STH Ver3 in 16824054.
+    iy600               11/29/2010    DB_G00163217  Replaced id 112215 with 16777244 under FlexGridSchema="Grid_EngineAbuseHistory.xml" section.
+    io838               11/30/2009	  DB_G00148990    Added TORQUE_RPM_GTIS45_TOKEN for Peak Torque at RPM (GTIS45) for Duty Cycle Monitor
+    gh099		  11/25/2009     DB_G00148458    Added Maintenance Monitor tokens to the print list to fix the PR
+    hz225		  11/12/2009     DB_G00106405    Added token 99 to Grid_FaultCodesMulti.xml and Grid_FaultSnapshotMulti.xml for QST 30 right bank
+    hz228		  10/29/2009     DB_G00142431    Added token 16824054 and arrays from 7015 to 7017 to  Grid_EngineTorqueHistoryGTIS45.xml
+    hz226		  10/15/2009     DB_G00146654    Added token 1020381 for tool printing of OEM 2 
+    hz225         10/07/2009     DB_G00136280    Removed FlexGridSchema="Grid_OBDFaultCodes.xml"  
+    io839         06/22/2009     DB_G00137175    Modified the array size for the Grid_EngineProtection.xml 
+    ib013         03/31/2009     DB_G00136810    Replaced parameters under Grid_GTIS45Maintenance_Monitor.xml by
+                                                 parameters under Grid_MaintenanceMonitor.xml and vice versa.
+    hu589         03/25/2009     DB_G00132011     Added feature and token entries for HPCR Injector Setup   
+    ib013	      01/30/2009     DB_G00131431    Added feature and tokens entries for Knock Count Reset
+    ib013	      12/24/2008     DB_G00132563    Added tokens entries for Exhaust Stack Temperature 1 & Exhaust Stack Temperature 2
+                                               in EngineProtectionSettings.
+==================================================================================================================
+    HZ221				11/05/2008     DB_G00125006    Initial Creation
+    HU587				01/06/2009     DB_G00132355    Added token 16799687 for tool printing
+	HU586				08/24/2009     DB_G00142945    Added token and array supported for EPD EGT-Bank Differential. 
+  IY605				08/11/2010     DB_G00158688    Added token 15 and 23324 to Grid_OBDMonitorView.xml
+  GZ383       10/20/2009     DB_G00156929    Added token and array supported for EPD CAC-Water Temperature.
+  jr620       10/18/2011     DB_G00179902    Added token 16786237,16786238,16786236,16786323,16786240,16786239,1020008& 1020009 in GRID_DCM.xml 
+==================================================================================================================
+// This XML should be in sink with FlexGrid XML Schema files.
+//If an entry is not statically mention in schema file then specify that entry in a form of query
+//A range of parameters/arrays can also be represented in a form of query
+-->
+<AvailableFeatures>
+	<Feature FlexGridSchema="Grid_AFTM.xml">
+	   <Parameters>
+	    <P ID="22371" /> 
+		<P ID="16806174" />
+	   </Parameters>
+	   <Arrays>
+	    <A ID="7012" />
+	   </Arrays>
+	</Feature>
+	<Feature FlexGridSchema="Grid_AHL.xml">
+	   <Parameters>
+	    <P ID="22371" /> 
+		<P ID="16803262" />
+	   </Parameters>
+	   <Arrays>
+	    <A Query=".//Arrays/A[@ID &gt; 7006 and @ID &lt; 7010]" />
+	   </Arrays>
+	</Feature>
+	<Feature FlexGridSchema="Grid_AntiTheftGTIS45.xml">
+	   <Parameters>
+	    <P Query=".//Parameters/P[@ID &gt; 1040114 and @ID &lt; 1040118]" /> 
+		<P ID="16791511" />
+		<P ID="16791327" />
+		<P Query=".//Parameters/P[@ID &gt; 16791329 and @ID &lt; 16791337]" />
+    <P ID="16799687" />
+	   </Parameters>
+	</Feature>
+	<Feature FlexGridSchema="Grid_AntiTheft.xml">
+	   <Parameters>
+	    <P ID="44" /> 
+		<P ID="47" />
+		<P ID="50" />
+		<P ID="53" />
+		<P ID="56" />
+		<P ID="59" />
+		<P ID="22041" />
+		<P ID="22121" />
+		<P ID="199257" />
+	   </Parameters>
+	</Feature>
+	<Feature FlexGridSchema="Grid_AuditTrail.xml">
+	   <Parameters>
+		<P ID="1" />
+		<P ID="7" />
+		<P ID="9" />
+		<P Query=".//Parameters/P[@ID &gt; 14 and @ID &lt; 18]" />
+		<P ID="116" />
+		<P ID="199999" />
+	   </Parameters>
+	    <Arrays>
+	    <A ID="3" />
+	   </Arrays>
+	</Feature>
+	<Feature FlexGridSchema="Grid_DCM.xml">
+	   <Parameters>
+		<P ID="2" />
+		<P ID="2001" />
+		<P ID="2002" />
+		<P ID="2004" />
+		<P ID="2005" />
+		<P ID="2022" />
+		<P ID="21210" />
+		<P ID="21211" />
+		<P ID="21215" />
+		<P ID="101027" />
+		<P ID="111008" />
+		<P ID="111009" />
+		<P Query=".//Parameters/P[@ID &gt; 112046 and @ID &lt; 112053]" />
+		<P ID="112154" />
+		<P ID="112155" />
+		<P ID="112181" />
+		<P ID="112180" />
+		<P ID="112199" />
+		<P ID="199069" />
+		<P ID="199073" />
+		<P ID="16786232" />
+		<P ID="16786237" />
+		<P ID="16786238" />
+		<P ID="16786236" />
+		<P ID="16786323" />
+		<P ID="16786240" />
+		<P ID="16786239" />
+		<P ID="1020008" />
+		<P ID="1020009" />
+	   </Parameters>
+	   <Arrays>
+	    <A Query=".//Arrays/A[@ID &gt; 8 and @ID &lt; 14]" />
+	   </Arrays>
+	</Feature>
+	<Feature FlexGridSchema="Grid_DEFDoserPurgeCounter.xml">
+	   <Parameters>
+		<P ID="16818108" />
+		<P ID="16818109" />
+		<P ID="16818112" />
+		<P ID="16820873" />
+	   </Parameters>
+	</Feature>
+	<Feature FlexGridSchema="Grid_DetonationSensor.xml">
+	   <Parameters>
+		<P ID="14820" />
+		<P ID="14830" />
+		<P ID="14840" />
+		<P ID="14850" />
+		<P ID="14860" />
+		<P ID="14870" />
+		<P ID="14880" />
+		<P ID="14890" />
+		<P ID="14900" />
+		<P ID="14910" />
+		<P ID="14920" />
+		<P ID="14930" />
+		<P ID="14940" />
+		<P ID="14950" />
+		<P ID="14960" />
+		<P ID="14970" />
+		<P ID="14980" />
+		<P ID="14990" />
+	   </Parameters>
+	</Feature>
+	<Feature FlexGridSchema="Grid_DML.xml">
+	   <Parameters>
+	    <P ID="15" />
+	    <P ID="199999" /> 
+	   </Parameters>
+	   <Usages>
+	    <U ID="1" />
+	   </Usages>
+	</Feature>
+	<Feature FlexGridSchema="Grid_EngineAbuseHistory.xml">
+	   <Parameters>
+		<P ID="1020132" />
+		<P ID="1020133" />
+		<P ID="1020134" />
+		<P ID="1020135" />
+		<P ID="1020136" />
+		<P ID="1020137" />
+		<P ID="1020139" />
+		<P ID="16787872" />
+		<P ID="1009" />
+		<P ID="1011" />
+		<P ID="3002" />
+		<P ID="3003" />
+		<P ID="4003" />
+		<P ID="15" />
+		<P ID="16777244" />
+		<P ID="21761" />
+	   </Parameters>
+	   <Arrays>
+	    <A ID="100" />
+		<A ID="101" />
+	   </Arrays>
+	</Feature>
+	<Feature FlexGridSchema="Grid_EIR.xml">
+	   <Parameters>
+		<P ID="15563" />
+		<P ID="16788756" />
+	   </Parameters>
+	</Feature>
+	<Feature FlexGridSchema="Grid_EngineProtection.xml">
+	   <Parameters>
+		<P ID="7" />
+		<P ID="16" />
+		<P ID="112026" />
+		<P ID="199008" />
+		<P ID="199021" />
+		<P ID="1010114" />
+		<P ID="1010115" />
+		<P ID="1010117" />
+		<P ID="1010136" />
+		<P ID="1010137" />
+		<P ID="1010163" />
+		<P ID="1010166" />
+		<P ID="1010167" />
+		<P ID="1010173" />
+		<P ID="1010507" />
+    <P ID="1010544" />
+		<P ID="16781315" />
+		<P ID="16782980" />
+		<P ID="16788803" />
+		<P ID="16789076" />
+		<P ID="16789552" />
+		<P ID="16789577" />
+		<P ID="16789596" />
+		<P ID="16790268" />
+		<P ID="16790975" />
+		<P ID="16824043" />
+    <P ID="16824151" />
+	   </Parameters>
+	   <Arrays>
+		<A Query=".//Arrays/A[@ID &gt; 1000 and @ID &lt; 1105]" />
+	   </Arrays>
+	</Feature>
+	<Feature FlexGridSchema="Grid_EngineProtectionSettings.xml">
+	   <Parameters>
+		<P Query=".//Parameters/P[@ID &gt; 104064 and @ID &lt; 104112]" />
+		<P Query=".//Parameters/P[@ID &gt; 1010160 and @ID &lt; 1010169]" />
+		<P Query=".//Parameters/P[@ID &gt; 1010290 and @ID &lt; 1010297]" />
+		<P Query=".//Parameters/P[@ID &gt; 1010406 and @ID &lt; 1010411]" />
+		<P Query=".//Parameters/P[@ID &gt; 112239 and @ID &lt; 112245]" />
+		<P Query=".//Parameters/P[@ID &gt; 113110 and @ID &lt; 113114]" />
+		<P Query=".//Parameters/P[@ID &gt; 29999 and @ID &lt; 30003]" />
+		<P ID="30010" />
+		<P ID="30011" />
+		<P ID="113039" />
+		<P ID="199008" />
+		<P ID="199275" />
+		<P ID="105091" />
+		<P ID="105100" />
+		<P ID="105102" />
+		<P ID="106193" />
+		<P ID="10100" />
+		<P ID="25572" />
+		<P ID="16781725" />
+		<P ID="1010137" />
+		<P ID="1010173" />
+		<P ID="1010117" />
+		<P ID="1010136" />
+		<P ID="1010114" />
+		<P ID="1010115" />
+		<P ID="1010340" />
+		<P ID="1010351" />
+		<P ID="1010369" />
+		<P ID="1010355" />
+		<P ID="1010356" />
+		<P ID="1010507" />
+    <P ID="1010544" />
+	   </Parameters>
+	   <Arrays>
+	    <A Query=".//Arrays/A[@ID &gt; 4999 and @ID &lt; 5047]" />
+		<A Query=".//Arrays/A[@ID &gt; 5249 and @ID &lt; 5299]" />
+		<A Query=".//Arrays/A[@ID &gt; 5499 and @ID &lt; 5547]" />
+		<A Query=".//Arrays/A[@ID &gt; 5549 and @ID &lt; 5554]" />
+	   </Arrays>
+	</Feature>
+	<Feature FlexGridSchema="Grid_EngineTorqueHistoryGTIS45.xml">
+	   <Parameters>
+		<P ID="22371" />
+		<P ID="112900" />
+		<P ID="16786075" />
+		<P ID="16792341" />
+    <P ID="16824054" />
+	   </Parameters>
+	   <Arrays>
+	    <A Query=".//Arrays/A[@ID &gt; 7000 and @ID &lt; 7004]" />
+       <A Query=".//Arrays/A[@ID &gt; 7014 and @ID &lt; 7018]" />
+	   <A Query=".//Arrays/A[@ID &gt; 7024 and @ID &lt; 7028]" />
+	   </Arrays>
+	</Feature>
+	<Feature FlexGridSchema="Grid_EngineTorqueHistory.xml">
+	   <Parameters>
+		<P ID="7" />
+		<P ID="2011" />
+		<P ID="2012" />
+		<P ID="12280" />
+		<P ID="12290" />
+		<P ID="12300" />
+		<P ID="12310" />
+		<P ID="12830" />
+		<P ID="12840" />
+		<P ID="12860" />
+		<P ID="12870" />
+		<P ID="12880" />
+		<P ID="21781" />
+		<P ID="199021" />
+		<P Query=".//Parameters/P[@ID &gt; 199147 and @ID &lt; 199153]" />
+	   </Parameters>
+	   <Arrays>
+	    <A ID="17" />
+		<A ID="26" />
+	   </Arrays>
+	</Feature>
+	<Feature FlexGridSchema="Grid_EPR.xml">
+	   <Parameters>
+	    <P ID="21771" /> 
+	   </Parameters>
+	   <Arrays>
+	    <A ID="18" />
+	   </Arrays>
+	</Feature>
+	<Feature FlexGridSchema="Grid_FaultCodes.xml">
+	   <Parameters>
+	    <P ID="2" />
+		<P ID="7" />
+		<P ID="9" />
+		<P ID="10" /> 
+		<P ID="15" />
+		<P ID="199996" />
+		<P ID="199999" />
+		<P Query=".//Parameters/P[@ID &gt; 199007 and @ID &lt; 199011]" />
+		<P ID="111000" />
+		<P ID="111002" />
+		<P ID="111012" />
+		<P ID="111031" />
+		<P Query=".//Parameters/P[@ID &gt; 113001 and @ID &lt; 113008]" />
+		<P ID="199021" />
+		<P ID="199555" />
+		<P ID="16785853" />
+	   </Parameters>
+	   <Arrays>
+	    <A ID="1" />
+		<A ID="20" />
+		<A ID="31" />
+	   </Arrays>
+	</Feature>
+	<Feature FlexGridSchema="Grid_FaultCodesMulti.xml">
+	   <Parameters>
+		<P ID="7" />
+		<P ID="9" />
+		<P ID="10" />
+		<P ID="15" />
+		<P ID="30" />
+		<P ID="41" />
+		 <P ID="99" />
+	   </Parameters>
+	   <Arrays>
+	    <A ID="1" />
+		<A ID="20" />
+		<A ID="31" />
+	   </Arrays>
+	</Feature>
+	<Feature FlexGridSchema="Grid_FaultSnapshot.xml">
+	   <Parameters>
+		<P ID="7" />
+		<P ID="9" />
+		<P ID="10" /> 
+		<P ID="15" />
+	   </Parameters>
+	    <Arrays>
+	    <A ID="1" />
+		<A ID="2" />
+		<A ID="32" />
+		<A Query=".//Parameters//P[@ID=199555]" /> 
+	   </Arrays>
+	</Feature>
+	<Feature FlexGridSchema="Grid_FaultSnapshotMulti.xml">
+	   <Parameters>
+		<P ID="7" />
+		<P ID="9" />
+		<P ID="10" />
+		<P ID="15" />
+		<P ID="30" />
+		<P ID="41" />
+		 <P ID="99" />
+	   </Parameters>
+	   <Arrays>
+	    <A ID="1" />
+		<A ID="2" />
+		<A ID="20" />
+		<A ID="31" />
+		<A ID="32" />
+	   </Arrays>
+	</Feature>
+	<Feature FlexGridSchema="Grid_FnP.xml">
+	   <Parameters>
+	    <P ID="15" />
+	    <P ID="199999" /> 
+	   </Parameters>
+	</Feature>
+	<Feature FlexGridSchema="Grid_FuelConsumptionMonitor.xml">
+	   <Parameters>
+		<P ID="15" />
+		<P ID="22730" />
+		<P ID="22731" />
+		<P ID="107003" />
+		<P ID="107033" />
+		<P ID="111007" />
+		<P ID="112042" />
+		<P ID="112043" />
+		<P ID="199066" />
+		<P ID="1020204" />
+		<P Query=".//Parameters/P[@ID &gt; 16789502 and @ID &lt; 16789507]" />
+	   </Parameters>
+	   <Arrays>
+	    <A ID="8" />
+	   </Arrays>
+	</Feature>
+	<Feature FlexGridSchema="Grid_GTIS45Maintenance_Monitor.xml">
+	<Parameters>
+      <P Query=".//Parameters/P[@ID &gt; 200142 and @ID &lt; 200146]" />
+      <P ID="1010262" />
+      <P ID="1040112" />
+      <P ID="1040114" />
+      <P ID="16796065" />
+      <P ID="16798569" />
+      <P ID="16798583" />
+      <P Query=".//Parameters/P[@ID &gt; 16798598 and @ID &lt; 16798619]" />
+      <P ID="16798810" />
+      <P ID="16804896" />
+    </Parameters>
+    <Arrays>
+      <A Query=".//Arrays/A[@ID &gt; 110 and @ID &lt; 114]" />
+    </Arrays>
+	</Feature>
+	<Feature FlexGridSchema="Grid_J1922.xml">
+	   <Parameters>
+	    <P ID="20121" /> 
+	   </Parameters>
+	   <Arrays>
+	    <A ID="27" />
+	   </Arrays>
+	</Feature>
+	<Feature FlexGridSchema="Grid_J1939ControlHistory.xml">
+	   <Parameters>
+		<P ID="7" />
+		<P ID="25561" />
+		<P Query=".//Parameters/P[@ID &gt; 109013 and @ID &lt; 109017]" />
+		<P ID="111006" />
+		<P ID="112029" />
+		<P ID="199021" />
+		<P ID="16777220" />
+		<P ID="16786075" />
+		<P ID="16786551" />
+		<P Query=".//Parameters/P[@ID &gt; 16792919 and @ID &lt; 16792931]" />
+	   </Parameters>
+	   <Arrays>
+	    <A ID="6" />
+		<A ID="7" />
+	    <A ID="110" />
+	   </Arrays>
+	</Feature>
+	<Feature FlexGridSchema="Grid_KillowattTest.xml">
+	   <Parameters>
+		<P ID="15140" />
+		<P ID="15150" />
+	   </Parameters>
+	</Feature>
+	<Feature FlexGridSchema="Grid_MaintenanceMonitor.xml">
+        <Parameters>
+            <P ID="15" />
+			<P ID="10230" />   
+            <P ID="10770" />  
+            <P ID="10800" />  
+            <P ID="11760" />  
+            <P ID="14370" />  
+            <P ID="14700" />  
+            <P ID="14810" />  
+            <P ID="15180" />   
+            <P ID="15300" />  
+            <P ID="15340" />
+            <P ID="20131" />
+            <P ID="20135" />
+            <P ID="101000" />
+            <P ID="103014" />
+            <P ID="107024" />
+            <P ID="111004" />
+            <P ID="112165" />
+            <P ID="199004" />
+            <P ID="199021" />
+            <P ID="199051" />
+            <P ID="199231" />
+            <P ID="199249" />
+            <P ID="16777184" />
+            <P ID="16777215" />
+        </Parameters>
+        <Arrays>
+            <A ID="5" />
+        </Arrays>    
+	</Feature>
+	<Feature FlexGridSchema="Grid_MLES.xml">
+	   <Parameters>
+	    <P ID="14" /> 
+		<P ID="23" />
+		<P ID="26" />
+		<P ID="63" />
+	   </Parameters>
+	</Feature>
+	<Feature FlexGridSchema="GTIS45Grid_MLES.xml">
+	   <Parameters>
+	    <P Query=".//Parameters/P[@ID &gt; 1020266 and @ID &lt; 1020271]" />
+        <P ID="1020381" />  
+	   </Parameters>
+	</Feature>
+	<Feature FlexGridSchema="Grid_OBDMonitorView.xml">
+	   <Parameters>
+	    <P ID="15" />
+		<P ID="23323" />
+		<P ID="23324" />
+	   </Parameters>
+	   <Arrays>
+	    <A ID="30" />
+	   </Arrays>
+	</Feature>
+	<Feature FlexGridSchema="Grid_OpenCloseLoopFueling.xml">
+	   <Parameters>
+		<P ID="15020" />
+		<P ID="15030" />
+	   </Parameters>
+	</Feature>
+	<Feature FlexGridSchema="Grid_PowerSpec.xml">
+	   <Parameters>
+	    <P Query=".//Parameters/P[@ID &gt; 69 and @ID &lt; 74]" />
+	   </Parameters>
+	</Feature>
+	<Feature FlexGridSchema="Grid_RealTimeClock.xml">
+	   <Parameters>
+	    <P ID="7" />
+		<P ID="15210" />
+		<P ID="15216" />
+		<P ID="15470" />
+		<P ID="15471" />
+		<P ID="22370" /> 
+		<P ID="22371" />
+		<P ID="112900" />
+		<P ID="1010304" />
+	   </Parameters>
+	</Feature>
+	<Feature FlexGridSchema="Grid_ROP.xml">
+	   <Parameters>
+		<P ID="16801600" />
+		<P ID="16801603" />
+		<P ID="16801607" />
+		<P ID="16801608" />
+		<P ID="16801790" />
+	   </Parameters>
+	   <Arrays>
+	    <A ID="7004" />
+	   </Arrays>
+	</Feature>
+	<Feature FlexGridSchema="Grid_SAEJ1939MuxFaultDataView.xml">
+	   <Parameters>
+		<P ID="15" />
+		<P ID="23341" />
+		<P ID="22371" />
+	   </Parameters>
+	   <Arrays>
+	    <A ID="34" />
+		<A ID="35" />
+	   </Arrays>
+	</Feature>
+	<Feature FlexGridSchema="Grid_SysInfo.xml">
+	   <Features>
+	    <F ID="56"/>
+	   </Features>
+	   <Parameters>
+	    <P ID="15" />
+	    <P ID="199999" />
+	   </Parameters>
+	</Feature>
+	<Feature FlexGridSchema="Grid_TripInfo.xml">
+	   <Parameters>
+	    <P ID="15" />
+		<P ID="20191" />
+		<P ID="20195" />
+	    <P ID="199999" /> 
+	   </Parameters>
+	</Feature>
+  <Feature FlexGridSchema="Grid_KnockCountReset.xml">
+    <Parameters>
+      <P Query=".//Parameters/P[@ID &gt; 14990 and @ID &lt; 15000]" />
+      <P Query=".//Parameters/P[@ID &gt; 15002 and @ID &lt; 15010]" />
+      <P Query=".//Parameters/P[@ID &gt; 15012 and @ID &lt; 15015]" />
+      <P ID="200155" />
+    </Parameters>
+  </Feature>
+
+  <Feature FlexGridSchema="Grid_HPCRInjectorSetupGTIS45.xml">
+  <Parameters>
+  		<P ID="16801739" />		
+		<P Query=".//Parameters/P[@ID &gt; 16801741 and @ID &lt; 16801746]" />
+		<P ID="16807289" />
+		<P ID="16807476" />
+		<P Query=".//Parameters/P[@ID &gt; 1020176 and @ID &lt; 1020191]" />
+		<P ID="16815759" />
+		<P ID="16816171" />
+		<P ID="16816175" />
+		<P ID="16816177" />
+		<P ID="16816257" />
+		<P ID="16816279" />
+		<P ID="16816281" />
+		<P ID="16816807" />
+		<P ID="16816258" />
+		<P ID="16816280" />
+		<P ID="16816777" />
+		<P ID="16817986" />
+		<P ID="16811512" />
+		<P ID="16816173" />
+		<P ID="16816808" />
+		<P ID="16816844" />
+		<P ID="16818072" />
+		<P ID="16818073" />
+		<P Query=".//Parameters/P[@ID &gt; 1020308 and @ID &lt; 1020343]" />
+  </Parameters>
+  <Arrays>
+		<A ID="7010" />
+		<A ID="7011" />
+	    <A ID="7021" />
+		<A ID="7022" />
+  </Arrays>
+</Feature>
+</AvailableFeatures>

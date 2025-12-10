@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE module SYSTEM "../htmlentities.dtd">
+<XML_RESOURCE>
+	<RESOURCE Tag="1001" Type="String Table" Description="Message String Table">
+		<STRING ID="104" Context="">Switch and Sensor Intermittent Connection Test</STRING>
+		<STRING ID="105" Context="">This test is used to isolate loose and intermittent connections, open circuits, and shorts in the engine wiring harness. This test will display switch and sensor values as read from the ECM. The test will also record the maximum voltage change for sensors and any state change for switches that have occurred.</STRING>
+		<STRING ID="106" Context="">Initial Conditions:\r\n1. Vehicle stationary (if applicable)\r\n2. Engine off \r\n\r\nSteps:\r\n1. Select up to five parameters to monitor.\r\n2. Click the Next button.\r\n3. Wait for the Baseline values to be calculated.\r\n4. Click Start to begin the test.\r\n5. Beginning at the switch or sensor and working back through the harness to the ECM, gently twist, bend, and pull the wiring and connections.\r\n6. Any change in the input will be displayed.\r\n\r\nAdditional Information:\r\n1. If monitoring sensors, the Out of Range limits can be changed from the default value before starting the test.\r\n2. The maximum and minimum values are indicated on the screen. The values can be viewed by placing the mouse over the indication.\r\n3. The fewer parameters that are being monitored, the faster the sample rate.\r\n4. This test will be affected by fluctuations from valid sensor data. This will be especially true if the engine is running.\r\n For example a truck that is cooling down will show exhaust temperature voltages changing even if the wiring is good.\r\n5. Wiring issues are normally indicated by rapid Voltage changes.\r\n6. If unable to recreate an intermittent issue while stationary, re-perform this test while operating the machine.</STRING>
+		<STRING ID="107" Context="">Enable Switch Selection (Up to 5)</STRING>
+		<STRING ID="108" Context="">Enable Sensor Selection (Up to 5)</STRING>
+		<STRING ID="109" Context="">Catalyst Outlet Temperature is below 240 C (464 F). Please continue to drive the vehicle to raise Catalyst Temperature above 240 C.</STRING>
+		<STRING ID="110" Context="">Help</STRING>
+		<STRING ID="111" Context="">Next</STRING>
+		<STRING ID="112" Context="">Back</STRING>
+		<STRING ID="113" Context="">Start</STRING>
+		<STRING ID="114" Context="">Stop</STRING>
+		<STRING ID="115" Context="">ECM Communication Lost. All test parameters will return to their original value when keyswitch is turned off.</STRING>
+		<STRING ID="116" Context="">Status</STRING>
+		<STRING ID="117" Context="">Instructions</STRING>
+		<STRING ID="118" Context="">Monitors</STRING>
+		<STRING ID="119" Context="">Display Name</STRING>
+		<STRING ID="120" Context="">Baseline</STRING>
+		<STRING ID="121" Context="">Current</STRING>
+		<STRING ID="122" Context="">Min</STRING>
+		<STRING ID="123" Context="">Max</STRING>
+		<STRING ID="124" Context="">Volts</STRING>
+		<STRING ID="125" Context="">Show</STRING>
+		<STRING ID="126" Context="">Parameter Data Not Available</STRING>
+		<STRING ID="127" Context="">Voltage Range (+/-):</STRING>
+		<STRING ID="128" Context="">Baseline</STRING>
+		<STRING ID="129" Context="">Out Of Range</STRING>
+		<STRING ID="130" Context="">Computing Baseline</STRING>
+		<STRING ID="5000" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5000&lt;/ErrorNumber&gt;&lt;Description&gt;Failed in initialization of base logic class.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5001" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5001&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to publish events in logic.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5002" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5002&lt;/ErrorNumber&gt;&lt;Description&gt;Unable to obtain the monitor service pointer.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5003" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5003&lt;/ErrorNumber&gt;&lt;Description&gt;Unable to obtain the connection point server pointer in logic.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5004" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5004&lt;/ErrorNumber&gt;&lt;Description&gt;Failed advise to monitor services in logic.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5005" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5005&lt;/ErrorNumber&gt;&lt;Description&gt;Unable to add module to monitors in logic.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5006" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5006&lt;/ErrorNumber&gt;&lt;Description&gt;Unable to add the parameter to monitoring service in logic.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5007" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5007&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to unadvise from monitor services in logic.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5008" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5008&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to unpublish events in logic.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5009" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5009&lt;/ErrorNumber&gt;&lt;Description&gt;Failed in unload of base in logic.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5010" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5010&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to find logic events in logic.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5011" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5011&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to get Monitors pointer in logic.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5012" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5012&lt;/ErrorNumber&gt;&lt;Description&gt;Error while stopping monitor in logic.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5013" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5013&lt;/ErrorNumber&gt;&lt;Description&gt;Error while starting monitor in logic.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5014" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5014&lt;/ErrorNumber&gt;&lt;Description&gt;Failed in write of start token in logic.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5015" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5015&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to handle change in a parameter.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5016" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5016&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to start monitor thread.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5017" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5017&lt;/ErrorNumber&gt;&lt;Description&gt;Unexpected error in logic in logic.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5018" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5018&lt;/ErrorNumber&gt;&lt;Description&gt;Error occurred in logic. Failed to initialize monitor parameters&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5030" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5030&lt;/ErrorNumber&gt;&lt;Description&gt;Failed in init of base.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5031" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5031&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to subscribe to events in page.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5032" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5032&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to publish events in page.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5033" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5033&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to stop test.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5034" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5034&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to unsubscribe events in page.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5035" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5035&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to unpublish events in page.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5036" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5036&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to unsubscribe events in page.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5037" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5037&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to find page button events in page.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5038" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5038&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to display async error in page.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5039" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5039&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to start test in page.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5040" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5040&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to unLoad base in page.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5041" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5044&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to setup FlexGrid in page.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5042" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5045&lt;/ErrorNumber&gt;&lt;Description&gt;Unexpected error in page.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5043" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5040&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to initialize Message Firing Service.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5044" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5044&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to remove parameter from monitor service.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="5045" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;5044&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to handle button selection.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+	</RESOURCE>
+</XML_RESOURCE>

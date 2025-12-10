@@ -1,0 +1,23 @@
+<LicenseFile>
+	<ECMReqLicense Expiration="permanent" Name="RealTimeClock_MasterECM" VendorDaemon="cummins" Key="999B08EF9D2E" IsValid="" ID="RealTimeClock_MasterECM" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="MASTER"/></ECMPasswords>
+	</ECMReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="RealTimeClock_AdjustECM" VendorDaemon="cummins" Key="91DB6B7545A9" IsValid="" ID="RealTimeClock_AdjustECM" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="PERMIT_CHANGE_ADJUSTABLES"/></ECMPasswords>
+	</ECMReqLicense>
+	<ToolReqLicense Expiration="permanent" Name="RealTimeClock_ToolRSGR" VendorDaemon="cummins" Key="66DBDE55DFEB" IsValid="" ID="RealTimeClock_ToolRSGR" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="RSGR"/>
+	</ToolReqLicense>
+	<ToolReqLicense Expiration="permanent" Name="RealTimeClock_ToolLite" VendorDaemon="cummins" Key="CF222CC33466" IsValid="" ID="RealTimeClock_ToolLite" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="Lite"/>
+	</ToolReqLicense>
+	<ToolReqLicense Expiration="permanent" Name="RealTimeClock_ToolPro" VendorDaemon="cummins" Key="5E466CED2B52" IsValid="" ID="RealTimeClock_ToolPro" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="Pro"/>
+	</ToolReqLicense>
+	<UserReqLicense Expiration="permanent" Name="RealTimeClock_UserAdjustFnP" VendorDaemon="cummins" Key="BCE26EC18F52" IsValid="" ID="RealTimeClock_UserAdjustFnP" Version="1.0" Count="uncounted">
+		<Users>
+			<User NAME="Adjust_ECM_Features_and_Parameters"/></Users>
+	</UserReqLicense>
+</LicenseFile>

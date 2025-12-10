@@ -1,0 +1,27 @@
+<LicenseFile>
+	<ToolReqLicense Expiration="permanent" Name="ATPGTIS45_Tool_Lite" VendorDaemon="cummins" Key="503D0CC5887F" IsValid="" ID="ATPGTIS45_Tool_Lite" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="Lite"/>
+	</ToolReqLicense>
+	<ToolReqLicense Expiration="permanent" Name="ATPGTIS45_Tool_Pro" VendorDaemon="cummins" Key="BF9325926752" IsValid="" ID="ATPGTIS45_Tool_Pro" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="Pro"/>
+	</ToolReqLicense>
+	<ToolReqLicense Expiration="permanent" Name="ATPGTIS45_Tool_RSGR" VendorDaemon="cummins" Key="27B3E972224E" IsValid="" ID="ATPGTIS45_Tool_RSGR" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="RSGR"/>
+	</ToolReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="ATPGTIS45_ECM_Master" VendorDaemon="cummins" Key="36F9FF8A3EDE" IsValid="" ID="ATPGTIS45_ECM_Master" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="MASTER"/></ECMPasswords>
+	</ECMReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="ATPGTIS45_ECM_Adjust" VendorDaemon="cummins" Key="A0EAF1962B10" IsValid="" ID="ATPGTIS45_ECM_Adjust" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="ADJUSTABLES"/></ECMPasswords>
+	</ECMReqLicense>
+	<UserReqLicense Expiration="permanent" Name="ATPGTIS45_User_SysAdmin" VendorDaemon="cummins" Key="998279DD2EEE" IsValid="" ID="ATPGTIS45_User_SysAdmin" Version="1.0" Count="uncounted">
+		<Users>
+			<User NAME="System_Administration"/></Users>
+	</UserReqLicense>
+	<UserReqLicense Expiration="permanent" Name="ATPGTIS45_User_Adjust_FnP" VendorDaemon="cummins" Key="753CCED14C7A" IsValid="" ID="ATPGTIS45_User_Adjust_FnP" Version="1.0" Count="uncounted">
+		<Users>
+			<User NAME="Adjust_ECM_Features_and_Parameters"/></Users>
+	</UserReqLicense>
+</LicenseFile>

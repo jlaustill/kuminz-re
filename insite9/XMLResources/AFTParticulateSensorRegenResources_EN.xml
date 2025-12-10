@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE XML_RESOURCE SYSTEM "../htmlentities.dtd"[]>
+<XML_RESOURCE>
+  <PARAMETERS>
+    <PARAMETER ID="1" NAME="Title Font">microsoft sans serif,12</PARAMETER>
+    <PARAMETER ID="2" NAME="Standard Font">microsoft sans serif,10</PARAMETER>
+  </PARAMETERS>
+<STRINGS>
+  <STRING ID="1" Context="Title">Aftertreatment Particulate Matter Sensor Regeneration</STRING>
+  <STRING ID="2" Context="Subtitle">This feature allows the user to clean the Aftertreatment Particulate Matter Sensor of soot.</STRING>
+  <STRING ID="3" Context="Instructions">
+  Initial Conditions
+1. Engine running
+Steps
+1. Select Start
+Additional Information
+1. This feature will activate a heater on the particulate matter sensor for approximately 30 seconds to 1 minute to clean the sensor of soot
+2. The regeneration will fail to run if:
+a. The exhaust flow is too low
+b. The exhaust temperature is too low
+c. The operation is prohibited by the ECM
+d. The engine is stopped
+e. An ECM Fault becomes active
+  </STRING>
+  <STRING ID="4" Context="Instructions Box">Instructions</STRING>
+  <STRING ID="5" Context="Show Link">Show</STRING>
+  <STRING ID="6" Context="Monior Header">Monitors</STRING>
+  <STRING ID="7" Context="Paramater in Grid">Parameter</STRING>
+  <STRING ID="8" Context="Value in Grid">Value</STRING>
+  <STRING ID="9" Context="Unit in Grid">Unit</STRING>
+  <STRING ID="10" Context="Status Header">Status</STRING>
+  <STRING ID="11" Context="Start">Start</STRING>
+  <STRING ID="12" Context="Help">Help</STRING>
+  <STRING ID="13" Context="Not Supported">This feature is not supported by the current calibration.</STRING>
+  <STRING ID="14" Context="Engine Stopped">The regeneration could not run because the engine is stopped.</STRING> 
+  <STRING ID="15" Context="Low Exhaust Flow">The regeneration can not run due to low exhaust flow.</STRING>
+  <STRING ID="16" Context="Low Exhaust Temperature">The regeneration can not run due to low exhaust temperature.</STRING>
+  <STRING ID="17" Context="Active Fault">The ECM has detected a fault condition. Check for active faults.</STRING>
+  <STRING ID="18" Context="ECMProhibited">The ECM detects a condition in which the regeneration cannot be run.</STRING>	
+  <STRING ID="19" Context="Invalid Application state">The ECM detects a condition in which the regeneration cannot be run.</STRING>
+  <STRING ID="20" Context="Running">The regeneration is running.</STRING>    
+  <STRING ID="21" Context="Monitor1">Aftertreatment Particulate Matter Sensor.</STRING> 
+  <STRING ID="22" Context="Process Running">The regeneration was successful.</STRING>
+  <STRING ID="23" Context="Show Link">Please wait while INSITE resets the Knock Derate.</STRING>  
+  <STRING ID="24" Context="Start Operation Failed">The ECM detects a condition in which the regeneration cannot be run.</STRING>
+  <STRING ID="25" Context="Printer Not Available Title">Cummins INSITE</STRING>  
+  <STRING ID="26" Context="Printer Not Available Message">Printer not found.</STRING>
+  <STRING ID="27" Context="Feature Text ID">Aftertreatment Particulate Matter Sensor Regeneration</STRING> 
+  <STRING ID="28" Context="Print Header Item">Customer Name : </STRING> 
+  <STRING ID="29" Context="Print Header Item">Work Order Name : </STRING> 
+  <STRING ID="30" Context="Print Header Item">Company Name : </STRING> 
+  <STRING ID="31" Context="Print Header Item">Customer Unit Number : </STRING> 
+  <STRING ID="32" Context="Print Header Item">Engine Serial Number : </STRING> 
+  <STRING ID="33" Context="Print Header Item">ECM Image Name : </STRING>
+  <STRING ID="34" Context="Customer Name">Customer </STRING>
+  <STRING ID="35" Context="Tool Name">INSITE </STRING>
+  <STRING ID="36" Context="Print Page Number Format">Page {0} of {1} </STRING>
+  <STRING ID="37" Context="Print Date Format">{0:dd-MMM-yyyy} </STRING>
+  <STRING ID="38" Context="Company Name">Cummins </STRING>
+  <STRING ID="39" Context="Not Applicable">NA </STRING>
+	<STRING ID="40" Context="Context Menu Print">Print</STRING>
+  <STRING ID="40400" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;404000&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE can not read the ECM parameters when connected to the ECM. Please contact technical support.&lt;/Description&gt;&lt;Suggestion&gt;Check if the parameter(s) is supported in the calibration.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>  
+    
+</STRINGS>
+</XML_RESOURCE>

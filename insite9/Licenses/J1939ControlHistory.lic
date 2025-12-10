@@ -1,0 +1,28 @@
+<LicenseFile>
+	<ToolReqLicense Expiration="permanent" Name="J1939CH_Tool_ViewHistory" VendorDaemon="cummins" Key="0B31794BBC88" IsValid="" ID="J1939CH_Tool_ViewHistory" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="Basic"/>
+	</ToolReqLicense>
+	<ToolReqLicense Expiration="permanent" Name="J1939CH_Tool_ResetHistory" VendorDaemon="cummins" Key="7D63ABA79E57" IsValid="" ID="J1939CH_Tool_ResetHistory" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="Lite"/>
+	</ToolReqLicense>
+	<UserReqLicense Expiration="permanent" Name="J1939CH_User_ResetHistory" VendorDaemon="cummins" Key="BF3AEC88679E" IsValid="" ID="J1939CH_User_ResetHistory" Version="1.0" Count="uncounted">
+		<Users>
+			<User NAME="Reset_J1922/J1939_Control_Data"/>
+		</Users>
+	</UserReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="J1939CH_ECMMaster_ResetHistory" VendorDaemon="cummins" Key="C221AD6BB035" IsValid="" ID="J1939CH_ECMMaster_ResetHistory" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="MASTER"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="J1939CH_ECMReset_ResetHistory" VendorDaemon="cummins" Key="AF52EBC9E5DE" IsValid="" ID="J1939CH_ECMReset_ResetHistory" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="RESET"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="J1939CH_PermitReset" VendorDaemon="cummins" Key="0A9D81720D77" IsValid="" ID="J1939CH_PermitReset" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="PERMIT_RESETS"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+</LicenseFile>

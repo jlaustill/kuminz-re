@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ECMServices>
+    <MetadataName>Metadata.accdb</MetadataName>
+    <XmlResourcesFolder>XMLResources</XmlResourcesFolder>
+    <DatafileFolder>ICLDF</DatafileFolder>
+    <PCFGPath>ICLDF\productioncfgfile.cic</PCFGPath>
+    <FnPDatabase>FnPDatabase.mdb</FnPDatabase>
+    <DynamicEnumerationXml>ecmDynSetsXML.xml</DynamicEnumerationXml>
+    <ImagePassword>bbc@cwh</ImagePassword>
+    <PCFGPassword>@INSITE-Cfg!Production Config File;</PCFGPassword>
+    <PhysicalConnectionHandler>ICL</PhysicalConnectionHandler>
+    <PingEnabled>true</PingEnabled>
+    <ParametersForPing>15,4010,4003</ParametersForPing>
+    <ProtocolForPing>ICL</ProtocolForPing>
+    <PingRate>7500</PingRate>
+    <ExecuteTraceFilePath>ECMServicesExecutionTrace.log</ExecuteTraceFilePath>
+    <ExecutionTraceLevel>1</ExecutionTraceLevel>
+    <MultipleSystemsSupported>false</MultipleSystemsSupported>
+    <PingNonCumminsDevices>true</PingNonCumminsDevices>
+    <DefaultProtocolForParameter>ICL</DefaultProtocolForParameter>
+	<PJ1939CBFPath>ICLDF\INSITEParameters.cbf</PJ1939CBFPath>
+	<UDSCBFPath>bosch_download.cbf</UDSCBFPath>
+</ECMServices>

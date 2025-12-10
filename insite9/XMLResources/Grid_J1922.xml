@@ -1,0 +1,86 @@
+<!-- This is a sample  -->
+<FlexGrid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<Properties Cols="3:VT_I4" FixedCols="0:VT_I4" AllowUserResizing="1:VT_UI4"
+	 AutoResize="1:VT_I4" GridLines="1:VT_I4" Editable="0:VT_I4" ExtendLastCol="1:VT_I4" SelectionMode="1:VT_I4"/>
+	<FixedRows>
+		<FixedRow>
+			<Column name="RES:Res1:2" />
+			<Column name="RES:Res1:3" />
+		</FixedRow>
+	</FixedRows>
+	
+	<data loopEnd="1">
+		<Object name="Params" source="OBJ:DOM:selectNodes(J1922ArrayNodes)" />
+		<Node level = "0" loopStart="OBJ:DOM:selectSingleNode(pEnableTkn):getAttribute(V)" loopEnd="1" styleid="s1">
+		<!-- If there is no Data for J1922 Ctrl History in the ECM, " -->
+			<Column order = "0" datasource ="RES:Res1:123" />
+		</Node>
+		
+		<Node level = "0" loopStart="0" loopEnd="OBJ:DOM:selectSingleNode(pEnableTkn):getAttribute(V)" styleid="s1">
+			<Node level = "0" loopStart="OBJ:DOM:selectSingleNode(pAvailableTkn):getAttribute(V)" loopEnd="1" styleid="s1">
+			<!-- If there is no Data for J1922 Ctrl History in the ECM, " -->
+				<Column order = "0" datasource ="RES:Res1:123" />
+				<Object name="PlaceHolder" source="OBJ:VSFLEXGRID:RemoveItem(1)" />
+			</Node>
+
+			<Node level = "0" loopStart="0" loopEnd="OBJ:DOM:selectSingleNode(pAvailableTkn):getAttribute(V)" styleid="s1">
+				<Node level = "1" loopStart="1" loopEnd="OBJ:Params:length">
+					<Object name="Param" source="OBJ:Params:item(LOOPINDEX1)" />
+					<Column order="0" datasource="OBJ:Param:getAttribute(N)"/>
+					<Column order="1" datasource="OBJ:Param:getAttribute(DV)"/>
+				</Node>
+				<Node level = "1" loopStart="0" loopEnd="1">
+					<Object name="Param" source="OBJ:Params:item(LOOPINDEX1)" />
+					<Column order="0" datasource="OBJ:Param:getAttribute(N)"/>
+					<Column order="1" datasource="OBJ:Param:getAttribute(DV)"/>
+				</Node>
+				<Object name="PlaceHolder" source="OBJ:VSFLEXGRID:RemoveItem(1)" />
+				<Object name="PlaceHolder" source="OBJ:VSFLEXGRID:RemoveItem(2)" />
+			</Node>
+		</Node>
+	</data> 
+
+	<parameters>
+		<parameter name="J1922ArrayNodes" source="/Image/Arrays/A[@ID=27]/Dim[@Num=1]/I[@Num=0]/P" />
+		<parameter name="pEnableTkn" source="/Image/Parameters/P[@ID=20121]"/>
+		<parameter name="pAvailableTkn" source="/Image/Parameters/P[@ID=20120]"/>
+	</parameters>
+
+	
+	<resources>
+		<resource id="Res1" CLSID="{1C628621-473B-4EA4-9DC6-7ED92C57DD9E}\Pages\{B48B71E1-8559-4B68-A7FD-B5088E767335}" LoadDLL="TRUE"/>
+		<resource id="Res2" CLSID="{1ECBBE0B-836B-11D4-8A76-00062999E309}" LoadDLL="TRUE"/>
+	</resources>
+	<printing HdrFontSize="8" >
+		<header>
+			<line>
+				<center source="RES:Res1:122" />
+			</line>
+			<line>
+				<left source="RES:Res2:2030" />
+				<left source="OBJ:DOM:selectSingleNode(/Image/Header/ESerial):getAttribute(DisplayValue)" />
+				<right source="INSITE - " />
+				<right source="OBJ:DOM:selectSingleNode(/Image):getAttribute(ImageVersion)" />
+			</line>
+			<line>
+				<left source="RES:Res2:2029" />
+				<left source="OBJ:DOM:selectSingleNode(/Image/Header/UNumber):getAttribute(DisplayValue)" />
+				<right source="RES:Res2:2031" />
+				<right source="OBJ:DOM:selectSingleNode(/Image/Header/VMake):getAttribute(DisplayValue)" />
+			</line>
+			<line>
+				<left source="RES:Res2:2032" />
+				<left source="OBJ:DOM:selectSingleNode(/Image/Header/WOName):getAttribute(DisplayValue)" />
+				<right source="RES:Res2:2033" />
+				<right source="OBJ:DOM:selectSingleNode(/Image/Header/IName):getAttribute(DisplayValue)" />
+			</line>
+			<line>
+				<right source="RES:Res1:2036"/>
+				<right source="OBJ:DOM:selectSingleNode(/Image/Header/CustomerName):getAttribute(DisplayValue)"/>
+			</line>
+		</header>
+		
+	</printing>
+
+</FlexGrid>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE module SYSTEM "../htmlentities.dtd">
+<XML_RESOURCE>
+	<RESOURCE Tag="1001" Type="String Table" Description="Message String Table">
+		<STRING ID="1" Context="">Fuel System Leakage Test</STRING>
+		<STRING ID="2" Context="Subtitle">This is a manual test used to pressurize the fuel system which allows for operator assisted diagnostics.</STRING>
+		<STRING ID="3" Context="Instructions">Initial Conditions\r\n1. No active fault codes\r\n2. Vehicle stationary\r\n3. Engine running at idle\r\nSteps\r\n1. Select Start\r\n2. Check for fuel leaks from injectors, rail pressure relief valve, fuel pump, and fuel lines\r\n3. Select Stop to end the test\r\nAdditional Information\r\n1. This test will increase fuel rail pressure to the same level used at rated power\r\n2. By increasing fuel rail pressure, certain types of fuel system leaks will be easier to find\r\n3. External leaks and return flows from the injectors, rail pressure relief valve, and fuel pump can be checked with this test\r\n4. Refer to the Troubleshooting and Repair Manual for this engine for specifications</STRING>
+		<STRING ID="4" Context="">Name</STRING>
+		<STRING ID="5" Context="">Value</STRING>
+		<STRING ID="6" Context="">Units</STRING>
+		<STRING ID="7" Context="Warning Dialog Box">Warning: This test operates the fuel system at a high fuel pressure. Wear safety glasses and stay clear from the engine when running this test.</STRING>
+		<STRING ID="8" Context="Test Running Message">Once the measurement is complete, turn off the engine and measure the amount of fluid in the graduated cylinder.  Isolate one cylinder at a time and compare the test results between cylinders.</STRING>
+		<STRING ID="9" Context="">Test has stopped because Vehicle Speed has been detected. Please ensure the vehicle is stationary and restart the test.</STRING>
+		<STRING ID="10" Context="">High Engine Speed detected.</STRING>
+		<STRING ID="11" Context="">High Fuel Pressure detected.</STRING>
+		<STRING ID="12" Context="">The test has been aborted for an unknown reason.</STRING>
+		<STRING ID="13" Context="">An unknown error has occurred.</STRING>
+		<STRING ID="14" Context="">The Fuel System Leakage Test has been stopped. The above parameters reflect the state of the engine at the time the test was stopped.</STRING>
+		<STRING ID="15" Context="">Test has stopped because Vehicle Speed has been detected.Please ensure that the vehicle is stationery and restart the test.</STRING>
+		<STRING ID="16" Context="">High Engine Speed detected.</STRING>
+		<STRING ID="17" Context="">Low Engine Speed detected.</STRING>
+		<STRING ID="18" Context="">Low Fuel Pressure detected.</STRING>
+		<STRING ID="19" Context="">The test could not be started for unknown reasons.</STRING>
+		<STRING ID="20" Context="">Cummins INSITE</STRING>
+		<STRING ID="21" Context="">Instructions</STRING>
+		<STRING ID="22" Context="">Current Values</STRING>
+		<STRING ID="23" Context="">Test Status</STRING>
+		<STRING ID="24" Context="">ECM Calibration does not support this test</STRING>
+		<STRING ID="25" Context="">Test Stopped. Fuel System circuit fault detected. Troubleshoot the fuel system circuit fault code before proceeding with this test.</STRING>
+		<STRING ID="26" Context="">Low Engine Speed detected.</STRING>
+		<STRING ID="29" Context="Instructions">Test running. Select Stop to stop the test.</STRING>
+		<STRING ID="30" Context="Instructions">Initializing test, please wait.</STRING>
+		<STRING ID="31" Context="">Start the engine and select Start to restart the test.</STRING>
+		<STRING ID="32" Context="">Lower the engine speed and select Start to restart the test.</STRING>
+		<STRING ID="33" Context="">Increase the engine speed and select Start to restart the test.</STRING>
+		<STRING ID="34" Context="">Shutdown and restart the engine prior to restarting the Fuel System Leakage Test.</STRING>
+		<STRING ID="35" Context="">Test Running Time:</STRING>
+		<STRING ID="60" Context="">Test in progress.</STRING>
+		<STRING ID="61" Context="">Test stopped.</STRING>
+		<STRING ID="62" Context="">Initializing test, please wait.</STRING>
+		<STRING ID="63" Context="">Start the engine and select Start to restart the test.</STRING>
+		<STRING ID="64" Context="">Test Stopped. The ECM detects a condition in which the Fuel System Leakage Test cannot be run.  Please select Help for further detail.</STRING>
+		<STRING ID="65" Context="">Test Stopped. Fuel System circuit fault detected. Troubleshoot the fuel system circuit fault code before proceeding with this test.</STRING>
+		<STRING ID="66" Context="">No Engine Speed detected.</STRING>
+    <STRING ID="67" Context="">Show</STRING>
+    <STRING ID="71" Context="">Fuel Rail Pressure Measured</STRING>
+		<STRING ID="72" Context="">Engine Speed</STRING>
+		<STRING ID="73" Context="">Test Running Time</STRING>
+		<STRING ID="20100" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20100&lt;/ErrorNumber&gt;&lt;Description&gt;An unknown error occurred within the Fuel System Leakage Test Page.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20101" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20101&lt;/ErrorNumber&gt;&lt;Description&gt;The test was aborted because the Vehicle Speed is greater than 0.&lt;/Description&gt;&lt;Suggestion&gt;Please reduce road speed to 0 and try running the test again.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20102" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20102&lt;/ErrorNumber&gt;&lt;Description&gt;The test was aborted because the Engine Speed exceeded the test limit.&lt;/Description&gt;&lt;Suggestion&gt;Please reduce engine speed and try running the test again.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20103" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20103&lt;/ErrorNumber&gt;&lt;Description&gt;The test was aborted due to a Fuel Rail Pressure exceeding the maximum threshold.&lt;/Description&gt;&lt;Suggestion&gt;Please reduce the fuel rail pressure and try running the test again.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20104" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20104&lt;/ErrorNumber&gt;&lt;Description&gt;Base class initialization failed.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20105" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20105&lt;/ErrorNumber&gt;&lt;Description&gt;Could not Query logic.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20106" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;21016&lt;/ErrorNumber&gt;&lt;Description&gt;Unable to start the Fuel System Leakage Test.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20107" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20107&lt;/ErrorNumber&gt;&lt;Description&gt;Could not register as publisher.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20108" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20108&lt;/ErrorNumber&gt;&lt;Description&gt;Could not register as subscriber.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20109" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20109&lt;/ErrorNumber&gt;&lt;Description&gt;Could not unpublish test events.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart INSITE before attempting to restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20110" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20110&lt;/ErrorNumber&gt;&lt;Description&gt;Could not unsubscribe from receiving system messages.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart INSITE before attempting to restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20111" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20111&lt;/ErrorNumber&gt;&lt;Description&gt;Unable to start the Fuel System Leakage Test.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20112" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20112&lt;/ErrorNumber&gt;&lt;Description&gt;Unable to properly stop the Fuel System Leakage Test.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20113" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20113&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while loading a string for the page.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20114" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20114&lt;/ErrorNumber&gt;&lt;Description&gt;The test has been aborted for an unknown reason.&lt;/Description&gt;&lt;Suggestion&gt;Please close and restart the test.  If the problem persists, please contact technical support.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20115" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20115&lt;/ErrorNumber&gt;&lt;Description&gt;The test was not started because no Engine Speed was detected.&lt;/Description&gt;&lt;Suggestion&gt;Please increase engine speed and try running the test again.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20116" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20116&lt;/ErrorNumber&gt;&lt;Description&gt;The test was not started because the Vehicle Speed was greater than 0.&lt;/Description&gt;&lt;Suggestion&gt;Please reduce road speed to 0 and try running the test again.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20117" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20117&lt;/ErrorNumber&gt;&lt;Description&gt;The test was not started because the Engine Speed exceeded the test limit.&lt;/Description&gt;&lt;Suggestion&gt;Please reduce engine speed and try running the test again.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20118" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20118&lt;/ErrorNumber&gt;&lt;Description&gt;The test was not started due to the Fuel Rail Pressure failing to meet the minimum threshold.&lt;/Description&gt;&lt;Suggestion&gt;Please increase the fuel rail pressure and try running the test again.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20119" Context="Displayed when Feature Enable precondition fails">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20119&lt;/ErrorNumber&gt;&lt;Description&gt;ECM calibration does not support this test.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20120" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20120&lt;/ErrorNumber&gt;&lt;Description&gt;The test was not started because 1139 or 1141 or 1142 or 1143 or 1144 or 1145 or 1146 is active.&lt;/Description&gt;&lt;Suggestion&gt;Inactivate the mentioned fault codes and try running the test again.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="20121" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;20121&lt;/ErrorNumber&gt;&lt;Description&gt;The test was aborted because the Engine Speed was less than 600 RPM.&lt;/Description&gt;&lt;Suggestion&gt;Please increase engine speed and try running the test again.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+
+		
+		
+		
+	</RESOURCE>
+</XML_RESOURCE>

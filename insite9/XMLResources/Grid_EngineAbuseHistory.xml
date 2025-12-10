@@ -1,0 +1,106 @@
+<Exprmnt xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Properties Cols="7:VT_I4" FixedCols="0:VT_I4" ExplorerBar="0:VT_I4" OutlineBar="5:VT_UI4" 
+	AllowUserResizing="1:VT_UI4" AutoResize="1:VT_I4" GridLines="1:VT_I4" Editable="0:VT_I4"/>
+	<!-- Add properties to the "FlexGrid" element as attribute in Name=Value format -->
+	<FixedRows>
+		<FixedRow>
+			<Column name="RES:EAHRes:108" />
+			<Column name="RES:EAHRes:109" />
+			<Column name="RES:EAHRes:110" />
+			<Column name="RES:EAHRes:111" />
+			<Column name="RES:EAHRes:112" />
+			<Column name="RES:EAHRes:113" />
+			
+		</FixedRow>
+	</FixedRows>
+
+	<data level="0" loopEnd="OBJ:DOM:selectNodes(paramCount):length">
+		<Object name ="ParamsLog" source= "OBJ:DOM:selectNodes(paramCount)"/> 		
+		<Object name="MyRow" source="OBJ:ParamsLog:item(LOOPINDEX0)"/>
+		<Object name ="ParamsRow" source= "OBJ:MyRow:selectNodes(paramRow)"/>
+			
+			<Node level = "0" loopStart="0" loopEnd="OBJ:ParamsRow:length" >
+				<Object name="MyParams" source="OBJ:ParamsRow:nextNode"/>
+				<Column order ="0" styleid="s1" datasource = "OBJ:MyParams:getAttribute(Parameter)"/>
+				<Column order ="1" datasource = "OBJ:MyParams:getAttribute(severity0)"/>
+				<Column order ="2" datasource = "OBJ:MyParams:getAttribute(severity1)"/>
+				<Column order ="3" datasource = "OBJ:MyParams:getAttribute(severity2)"/>
+				<Column order ="4" datasource = "OBJ:MyParams:getAttribute(svrtyTotal)"/>
+				<Column order ="5" datasource = "OBJ:MyParams:getAttribute(U)"/>
+			</Node>			
+			<Node level = "0" loopEnd="1" >
+			
+			</Node>
+	</data>
+	<data loopEnd="1">
+		<Node level = "0" loopStart="OBJ:DOM:selectSingleNode(enableRow):getAttribute(Enable)" loopEnd="1" styleid="s1">
+			<!-- If there is no Data for EAH in the ECM, " -->
+				<Column order = "0" datasource ="RES:EAHRes:116" />
+		</Node>
+		<Node level = "0" loopStart="0" loopEnd="OBJ:DOM:selectSingleNode(enableRow):getAttribute(Enable)" styleid="s1">
+			<Node level = "0" loopEnd="1" >
+					<Column order ="0" datasource = "RES:EAHRes:108"/>
+					<Column order ="1" datasource = "RES:EAHRes:114"/>
+					<Column order ="2" datasource = "RES:EAHRes:113"/>
+			</Node>
+			
+			<Node level = "0" loopEnd="1" >
+					<Object name="objEngHrs" source ="OBJ:DOM:selectSingleNode(paramEngHrs)" />
+					<Column order ="0" styleid="paramName" datasource= "OBJ:objEngHrs:getAttribute(parameter)"/>
+					<Column order ="1" datasource = "OBJ:objEngHrs:getAttribute(V)"/>
+					<Column order ="2" datasource = "OBJ:objEngHrs:getAttribute(U)"/>
+			</Node>
+		</Node>
+	</data>
+
+	<parameters>
+			<parameter name="paramCount" source="/EAH/DIM"/>
+			<parameter name="paramRow" source="./ROW"/>
+			<parameter name="paramEngHrs" source="/EAH/ROW"/>
+			<parameter name="enableRow" source="/EAH/EnableTkn"/>
+	</parameters>
+
+	<resources>
+		<resource  id="EAHRes"	CLSID="{1C628621-473B-4EA4-9DC6-7ED92C57DD9E}\Pages\{6FC16616-B8F8-4A5C-B6D0-DA84BC24FE56}" LoadDLL="TRUE"/>
+	</resources>
+
+	<styles>
+		<style id="sepstyle" CellBackColor="OBJ:EAHObj:GetSystemColor(13:VT_UI4)" CellForeColor="OBJ:EAHObj:GetSystemColor(14:VT_UI4)" CellFloodColor="OBJ:EAHObj:GetSystemColor(13:VT_UI4)">
+		<FONT COLOR="#FFFFFF:VT_I4" FACE="Arial" SIZE="1"/>
+		</style>
+		<style id="s1" CellFontBold="1:VT_I4" CellAlignMent="0:VT_I4" />
+	</styles>
+	<icons/>
+
+	<printing HdrFontSize="8" >
+		<header>
+      <line>
+        <center source="RES:EAHRes:117"/>
+      </line>
+			<line>
+        <left source="RES:EAHRes:118"/>
+        <left source="OBJ:DOM:selectSingleNode(/EAH/Image/Header/ESerial):getAttribute(DisplayValue)"/>
+				<right source="INSITE - " />
+			  <right source="OBJ:DOM:selectSingleNode(/EAH/Image):getAttribute(ImageVersion)" />
+			</line>
+			<line>	
+				<left source="RES:EAHRes:119"/>
+        <left source="OBJ:DOM:selectSingleNode(/EAH/Image/Header/UNumber):getAttribute(DisplayValue)" />
+				<right source="RES:EAHRes:120" />
+				<right source="OBJ:DOM:selectSingleNode(/EAH/Image/Header/VMake):getAttribute(DisplayValue)" />
+			</line>
+			<line>
+				<left source="RES:EAHRes:121" />
+				<left source="OBJ:DOM:selectSingleNode(/EAH/Image/Header/WOName):getAttribute(DisplayValue)" />
+				<right source="RES:EAHRes:122" />
+				<right source="OBJ:DOM:selectSingleNode(/EAH/Image/Header/IName):getAttribute(DisplayValue)" />
+			</line>
+			<line>
+				<right source="RES:EAHRes:123"/>
+				<right source="OBJ:DOM:selectSingleNode(/EAH/Image/Header/CustomerName):getAttribute(DisplayValue)"/>
+			</line>
+		</header>
+	</printing>
+	
+</Exprmnt>
+

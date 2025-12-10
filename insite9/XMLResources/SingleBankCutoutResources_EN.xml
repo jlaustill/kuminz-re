@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE module SYSTEM "../htmlentities.dtd">
+<XML_RESOURCE>
+  <STRINGS>
+    <STRING ID="1" Context="Title">Single Bank Cutout Test</STRING>
+    <STRING ID="2" Context="Description">This test provides the capability to cutout either Bank A or Bank B for a calibratable period of time for engine troubleshooting</STRING>
+    <STRING ID="3" Context="Instructions">Initial Conditions     
+	1. Engine Running 
+	Steps     
+	1. Select desired cylinder bank to cutout.     
+	2. Select Start
+	Additional Information     
+	1. This test will run for the 00:30:00 HH:MM:SS.     
+	2. The Single Bank Cutout Feature has to be enabled in Features and Parameters for the Test to run.      
+	3. If required, select Stop to end the test early.      
+	4. If the engine is already in Single Bank Cutout, it will prohibit the test from running.      
+	5. If engine load exceeds the calibrated load limit during the test, the test will stop.      
+	6. Engine will return to normal operating conditions when the test stops </STRING>
+    <STRING ID="4" Context="Not Supported">The Single Bank Cutout Test is not supported by the current calibration.</STRING>
+    <STRING ID="5" Context="Running">Test is running.</STRING>
+    <STRING ID="6" Context="Stopped">Test is stopped.</STRING>
+    <STRING ID="7" Context="EngineLoad">The test has been stopped or will not run due to excessive engine load.</STRING>
+    <STRING ID="8" Context="PreventRunning">The ECM has detected a condition in which it will not allow the test to run.</STRING>
+    <STRING ID="9" Context="SBCDisabled">Single Bank Cutout is disabled. Please enable in Features and Parameters to run the test.</STRING>
+    <STRING ID="10" Context="AlreadyRunning">One engine bank is currently cutout preventing the test from starting.</STRING>
+   <!-- <STRING ID="11" Context="EcmProhibited">The ECM has detected a condition in which it will not allow the test to run.\n</STRING> -->
+    <STRING ID="12" Context="InvalidApplState">The ECM has detected a condition in which it will not allow the test to run.</STRING>
+    <STRING ID="13" Context="Monitor1">Bank Cutout Status</STRING>
+  <!--  <STRING ID="14" Context="Monitor2">Single Bank Cutout Maximum Time\n</STRING> -->
+<STRING ID="15" Context="state">No Cutout</STRING>
+<STRING ID="16" Context="state">Bank A</STRING>
+<STRING ID="17" Context="state">Bank B</STRING>
+<STRING ID="18" Context="state">Cummins-Insite</STRING>
+<STRING ID="19" Context="Instruction Header">Instruction</STRING>
+<STRING ID="20" Context="Monitors Header">Monitors</STRING>
+<STRING ID="21" Context="state">Status</STRING>
+<STRING ID="22" Context="Instruction">Show</STRING>
+<STRING ID="23" Context="Monitors Name Text">Bank Cutout Status</STRING>
+<STRING ID="24" Context="Monitors Value Text">Bank A Cutout</STRING>
+<STRING ID="25" Context="Monitors Value Text">Bank B Cutout</STRING>
+<STRING ID="26" Context="Monitors Value Text">No Cutout</STRING>
+  </STRINGS>
+</XML_RESOURCE>

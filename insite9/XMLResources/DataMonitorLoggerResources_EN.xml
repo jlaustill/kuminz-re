@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE module SYSTEM "../htmlentities.dtd">
+<XML_RESOURCE>
+  <RESOURCE Tag="1001" Type="String Table" Description="Message String Table">
+    <STRING ID="100" Context="">DataMonitorLoggerRes_EN</STRING>
+    <STRING ID="101" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;9000&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error occurred while updating the system on connection.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+    <STRING ID="102" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;9001&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error occurred while loading Data Monitor/Logger.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+    <STRING ID="103" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;9002&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error occurred while updating the system on disconnection.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+    <STRING ID="104" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;9003&lt;/ErrorNumber&gt;&lt;Description&gt;Unknown error&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+    <STRING ID="105" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;9004&lt;/ErrorNumber&gt;&lt;Description&gt;No parameters were specified to add to the monitoring/logging session.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+    <STRING ID="106" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;9005&lt;/ErrorNumber&gt;&lt;Description&gt;No parameters were specified to remove from the monitoring/logging session.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+    <STRING ID="107" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;9006&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while adding parameters to the monitoring/logging session.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+    <STRING ID="108" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;9007&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while removing parameters from the monitoring/logging session.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+    <STRING ID="109" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;9008&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while starting the monitoring/logging session.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+    <STRING ID="110" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;9009&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while stopping the monitoring/logging session.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+    <STRING ID="111" Context="">Snapshot</STRING>
+    <STRING ID="112" Context="">Log Data</STRING>
+    <STRING ID="113" Context="">Start/Resume</STRING>
+    <STRING ID="114" Context="">Stop</STRING>
+    <STRING ID="115" Context="">Pause</STRING>
+    <STRING ID="116" Context="">Convert</STRING>
+    <STRING ID="117" Context="">Log/Snapshot File...</STRING>
+    <STRING ID="118" Context="">Tools</STRING>
+    <STRING ID="119" Context="">Data &amp;Monitor/Logger</STRING>
+    <STRING ID="120" Context="">S&amp;napshot</STRING>
+    <STRING ID="121" Context="">&amp;Log Data</STRING>
+    <STRING ID="122" Context="">S&amp;tart/Resume</STRING>
+    <STRING ID="123" Context="">&amp;Pause</STRING>
+    <STRING ID="124" Context="">&amp;Stop</STRING>
+    <STRING ID="125" Context="">Set Sampling Rate...</STRING>
+    <STRING ID="126" Context="">Set Sampling &amp;Rate...</STRING>
+    <STRING ID="127" Context="">&amp;Create Custom Group...</STRING>
+    <STRING ID="128" Context="">&amp;Edit Custom Group...</STRING>
+    <STRING ID="129" Context="">&amp;Delete Custom Group...</STRING>
+    <STRING ID="131" Context="">Parameters</STRING>
+    <STRING ID="132" Context="">Parameter Groups</STRING>
+    <STRING ID="133" Context="">No ECM Connected</STRING>
+    <STRING ID="134" Context="">ECM Does Not Support Monitor Parameters</STRING>
+    <STRING ID="135" Context="">All Parameters</STRING>
+    <STRING ID="136" Context="">Data Monitor/Logger</STRING>
+    <STRING ID="137" Context="">Start Graphical Monitoring</STRING>
+    <STRING ID="138" Context="">Out Of Range Parameters</STRING>
+    <STRING ID="140" Context="">Parameter</STRING>
+    <STRING ID="141" Context="">Value</STRING>
+    <STRING ID="142" Context="">Units</STRING>
+    <STRING ID="143" Context="">Module</STRING>
+    <STRING ID="144" Context="">Identifier</STRING>
+    <STRING ID="145" Context="Default user login name (when User Manager is disabled) to be used in log file names">DML</STRING>
+    <STRING ID="146" Context="Log file extension">log</STRING>
+    <STRING ID="147" Context="Snapshot file extension">snp</STRING>
+    <STRING ID="148" Context="Comma separated file extension">csv</STRING>
+    <STRING ID="149" Context="Log file filter used in the File Open dialog">Log Files (*.log)|*.log|</STRING>
+    <STRING ID="150" Context="Snapshot file filter">Snapshot File (*.snp)|*.snp|</STRING>
+    <STRING ID="151" Context="Comma separated file filter">Comma Separated Files (*.csv)|*.csv|</STRING>
+    <STRING ID="152" Context="Log and snapshot file filter">Log/Snapshot Files (*.log; *.snp)|*.log; *.snp|</STRING>
+    <STRING ID="153" Context="All file filter">All Files (*.*)|*.*||</STRING>
+    <STRING ID="154" Context="Source File Dialog Title">Source File</STRING>
+    <STRING ID="155" Context="Destination File Dialog Title">Destination File</STRING>
+    <STRING ID="156" Context="Save Log Dialog Title">Save Logged Data</STRING>
+    <STRING ID="158" Context="Save Snapshot Dialog Title">Save Snapshot Data</STRING>
+    <STRING ID="170" Context="">Remove Parameter(s)</STRING>
+    <STRING ID="171" Context="">Remove All Parameters</STRING>
+    <STRING ID="172" Context="">Print</STRING>
+    <STRING ID="173" Context="">Add to Monitor/Logger</STRING>
+    <STRING ID="174" Context="">Expand</STRING>
+    <STRING ID="175" Context="">Collapse</STRING>
+    <STRING ID="176" Context="">Remove from Monitor/Logger</STRING>
+    <STRING ID="177" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;9010&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while starting the logger.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+    <STRING ID="178" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;9011&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while stopping the logger.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+    <STRING ID="179" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;9009&lt;/ErrorNumber&gt;&lt;Description&gt;An error occurred while finalizing the logger.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+    <STRING ID="180" Context="Date format used in the log and snapshot files">%m/%d/%Y %H:%M:%S</STRING>
+    <STRING ID="181" Context="Disk space too low warning">The disk you are trying to save to is too full.  This log cannot be saved here.\r\nPlease save to a different location.</STRING>
+    <STRING ID="182" Context="Disk space warning title">Disk Space Too Low</STRING>
+    <STRING ID="183" Context="">hour</STRING>
+    <STRING ID="184" Context="">minutes</STRING>
+    <STRING ID="185" Context="">seconds</STRING>
+    <STRING ID="186" Context="">milliseconds</STRING>
+    <STRING ID="187" Context="">System</STRING>
+    <STRING ID="188" Context="">Expand All</STRING>
+    <STRING ID="189" Context="">Collapse All</STRING>   
+    <STRING ID="190" Context="Tab separated file filter">Tab Delimited Files (*.txt)|*.txt|</STRING>
+    <STRING ID="250" Context="IDS_SECONDS_PER_SAMPLE"> seconds per sample</STRING>
+    <STRING ID="251" Context="IDS_COMMENTS_CSV">Comments:</STRING>
+    <STRING ID="252" Context="IDS_CUSTOMER_NAME_CSV">Customer Name:</STRING>
+    <STRING ID="253" Context="IDS_MODEL_CSV">Model:</STRING>
+    <STRING ID="254" Context="IDS_SAMPLING_RATE_CSV">SamplingRate:</STRING>
+    <STRING ID="255" Context="IDS_SERIAL_NUMBER_CSV">Serial Number:</STRING>
+    <STRING ID="256" Context="IDS_SOURCE_LOG_FILENAME_CSV">Source Log Filename:</STRING>
+    <STRING ID="257" Context="IDS_START_DATE_AND_TIME_CSV">Start Date and Time:</STRING>
+    <STRING ID="258" Context="IDS_TOTAL_LOG_TIME_CSV">Total Log Time:</STRING>
+    <STRING ID="259" Context="IDS_VEHICLE_UNIT_NUMBER_CSV">Vehicle Unit Number:</STRING>
+    <STRING ID="260" Context="IDS_DATE_AND_TIME_CSV">Date,Time,</STRING>
+    <STRING ID="261" Context="IDS_CUSTOMER_AND_VEHICLE_INFORMATION">Customer and Vehicle Information</STRING>
+    <STRING ID="262" Context="IDS_ENGINE_INFORMATION">Engine Information</STRING>
+    <STRING ID="263" Context="IDS_LOG_DATA_INFORMATION">Data Log Information</STRING>
+    <STRING ID="264" Context="IDS_SAMPLE_OUT_OF_RANGE_TITLE">Invalid Sample Rate</STRING>
+    <STRING ID="265" Context="IDS_SAMPLE_OUT_OF_RANGE_TEXT">Please Enter a Value in the range of</STRING>
+    <STRING ID="269" Context="Print Header Item">Customer Unit Number :</STRING>
+    <STRING ID="270" Context="Print Header Item">Engine Serial Number :</STRING>
+    <STRING ID="271" Context="Print Header Item">Company Name :</STRING>
+    <STRING ID="272" Context="Print Header Item">Work Order Name :</STRING>
+    <STRING ID="273" Context="Print Header Item">ECM Image Name :</STRING>
+    <STRING ID="274" Context="Print Header Item">Monitors</STRING>
+    <STRING ID="275" Context="Print Header Item">Customer Name :</STRING>
+    <STRING ID="276" Context="IDS_IDENTIFIER_CSV">- Identifier</STRING>
+	<STRING ID="277" Context="IDS_IDENTIFIER_CSV">- Identifier</STRING>
+	<STRING ID="278" Context="IDS_CREATECUSTOM">Create New Group...</STRING>
+	<STRING ID="279" Context="IDS_IDENTIFIER_CSV">- Identifier</STRING>
+	<STRING ID="280" Context="IDS_EDITCUSTOM">Edit Group...</STRING>
+	<STRING ID="281" Context="IDS_IDENTIFIER_CSV">- Identifier</STRING>
+	<STRING ID="282" Context="IDS_DELETECUSTOM">Delete Group...</STRING>
+	<STRING ID="283" Context="IDS_IDENTIFIER_CSV">- Identifier</STRING>
+	<STRING ID="284" Context="IDS_EXPORTTOFILE">Export to File...</STRING>
+	<STRING ID="285" Context="IDS_IDENTIFIER_CSV">- Identifier</STRING>
+	<STRING ID="286" Context="IDS_CREATECUSTOM">Import from File...</STRING>
+	<STRING ID="287" Context="IDS_IDENTIFIER_CSV">- Identifier</STRING>
+	<STRING ID="288" Context="IDS_ADDTOGROUP">Add to Group...</STRING>
+	<STRING ID="289" Context="">Export</STRING>
+	<STRING ID="290" Context="">Parameter &amp;Group...</STRING>
+	<STRING ID="291" Context="">Import</STRING>
+	<STRING ID="292" Context="">Parameter &amp;Group...</STRING>
+	<STRING ID="293" Context="IDS_IDENTIFIER_CSV">- Identifier</STRING>
+	<STRING ID="294" Context="IDS_SAVEASGROUP">Save As Group...</STRING>
+	<STRING ID="295" Context="IDS_IDENTIFIER_CSV">- Identifier</STRING>
+	<STRING ID="296" Context="IDS_RENAMEGROUP">Rename Group...</STRING>
+	<STRING ID="297" Context="IDS_IMPORTEXPORT_FILE_FILTER">Exported Files (*.egf)|*.egf|</STRING>
+	<STRING ID="299" Context="Log file extension">egf</STRING>
+	<STRING ID="300" Context="IDS_ECM_PART_NUMBER_CSV">ECM Part Number:</STRING>
+	<STRING ID="301" Context="">Group Name cannot be blank</STRING>
+	<STRING ID="302" Context="">There should be at least one parameter to create a custom group</STRING>
+	<STRING ID="303" Context="">GroupName already exists</STRING>
+	<STRING ID="304" Context="">Do you want to save the changes for this Custom Group?</STRING>
+	<STRING ID="305" Context="">Export Custom Group</STRING>
+	<STRING ID="306" Context="">Import Custom Group</STRING>
+	<STRING ID="307" Context="">Available Parameters</STRING>
+	<STRING ID="308" Context="">Group Parameters</STRING>
+	<STRING ID="309" Context="">The Parameters defined for this custom group are not supported by the current calibration. Please Select a different group of parameter</STRING>
+	<STRING ID="310" Context="">No Available Parameters</STRING>
+	<STRING ID="311" Context="">Predefined</STRING>
+	<STRING ID="312" Context="">Custom</STRING>
+	<STRING ID="313" Context="">Data Monitor Logger</STRING>
+	<STRING ID="314" Context="">Edit Parameter Group</STRING>
+	<STRING ID="315" Context="">Rename Group</STRING>
+	<STRING ID="316" Context="IDS_DATE_CSV">Date</STRING>
+	<STRING ID="317" Context="IDS_TIME_CSV">Time</STRING>
+	<STRING ID="318" Context="">Please enter your log file comments below</STRING>
+	<STRING ID="319" Context="">Data Monitor/Logger: Enter Log File Comments</STRING>
+	<STRING ID="320" Context="">INSITE has encountered an error. The log file cannot be converted. Please contact your local distributor.</STRING>
+	<STRING ID="321" Context="">Export Log File Failed</STRING>
+	<STRING ID="322" Context="">OK</STRING>
+	<STRING ID="323" Context="">Cancel</STRING>
+	<STRING ID="324" Context="">Help</STRING>
+	<STRING ID="325" Context="">Add -&gt;</STRING>
+	<STRING ID="326" Context="">&lt;- Remove</STRING>
+	<STRING ID="327" Context="">Create Parameter Group</STRING>
+	<STRING ID="328" Context="">Please enter the group name below.</STRING>
+	<STRING ID="329" Context="">Group Name:</STRING>
+	<STRING ID="330" Context="">Select parameters or groups on the left, and click "Add" to add to the group.</STRING>
+	<STRING ID="331" Context="">Select parameters on the right, and click "Remove" to remove from the group.</STRING>
+	<STRING ID="332" Context="">Please enter the new name for this group. Group names must be between 1 and 50 characters in length.Press OK to accept or Cancel to return without changes.</STRING>
+	<STRING ID="333" Context="">Add to Group</STRING>
+	<STRING ID="334" Context="">Please select an existing group to which to add the parameters.</STRING>
+	<STRING ID="335" Context="">Real Time</STRING>
+	<STRING ID="336" Context="">User Specified Rate (1 sample in...):</STRING>
+	<STRING ID="337" Context="">Set Sampling Rate</STRING>
+	<STRING ID="338" Context="">Choose a group to edit.</STRING>
+	<STRING ID="339" Context="">Apply</STRING>
+	<STRING ID="340" Context="">Exit</STRING>
+
+  <STRING ID="440" Context="">Minimum Measured</STRING>
+  <STRING ID="442" Context="">Maximum Measured</STRING>
+	<STRING ID="555" Context="">Out of Limits</STRING>
+	<STRING ID="558" Context="">ICLDatafiles</STRING>
+	<STRING ID="559" Context="">DML_LIMITS</STRING>
+    <STRING ID="560" Context="">Hide</STRING>
+    <STRING ID="561" Context="">Show</STRING>
+    <STRING ID="562" Context="IDS_DELETE_CUSTOM_GROUP_TEXT">Delete the custom group?\r\nPress OK to delete the group , or Cancel to return to INSITE.</STRING>                                   
+    <STRING ID="563" Context="IDS_DELETE_CUSTOM_GROUP_TITLE">Delete Custom Group Confirm</STRING>
+	<STRING ID="564" Context="IDS_CUSTOMGROUPNAME_CHARACTER_LIMIT">Group Name must be between 1 and 50\r\ncharacters in length</STRING>
+	<STRING ID="565" Context="IDS_DESTINATION_PATH">Destination Path</STRING>
+  <STRING ID="566" Context="">RealTime</STRING>
+  <STRING ID="567" Context="Printer Not available title">Cummins INSITE</STRING>
+  <STRING ID="568" Context="Printer Not available text">Printer not found.</STRING>  
+
+    <STRING ID="600" Context="">Event &amp;Marker Setup...</STRING>
+    <STRING ID="601" Context="">Enable Event Marker</STRING>
+    <STRING ID="602" Context="">Enable Event Description</STRING>
+    <STRING ID="603" Context="Event Comments Header">Data Monitor/Logger : Enter Event Description</STRING>
+    <STRING ID="604" Context="Event Marker Comments">Please enter your description below for: </STRING>
+    <STRING ID="605" Context="Event">Event</STRING>
+    <STRING ID="606" Context="">Event Marker Setup</STRING>
+	  <STRING ID="607" Context="">Source File Error</STRING>
+	  <STRING ID="608" Context=""> This is not a valid log file. Please select a file with ".log" or ".snp "extension.</STRING>
+  </RESOURCE>
+</XML_RESOURCE>

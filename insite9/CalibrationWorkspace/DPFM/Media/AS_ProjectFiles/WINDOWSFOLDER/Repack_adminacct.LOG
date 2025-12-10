@@ -1,0 +1,594 @@
+11:42:24 : ----------------------------------------------------------------------
+11:42:24 :  LogFile C:\Windows\Repack_adminacct.LOG, started 15.06.2010 11:42
+11:42:24 :  Application : Z:\Repackager\Repack.exe(PID: 948 [042c])
+11:42:24 :  Params:       
+
+11:42:24 :  OS: Windows NT 6.1 (Build 7600) 
+11:42:24 :  Product Type: WinNT, Terminal Server, 
+11:42:24 :  Registered for 
+11:42:24 :  User lang: English, System lang: English
+11:42:24 :  Reportlevel: 1
+11:42:24 :  Username: adminacct (is local admin), Workstation: V3-MJBT545X86P1
+11:42:24 :  NiClnt32.dll: 9.05 (10.2.2010 10:27:54)
+11:42:24 : ----------------------------------------------------------------------
+
+11:42:24 1 xniSpy32: Load Section (INI-Excludes)...
+11:42:24 1 xniSpy32: Load Section (INI-Excludes)...Done
+11:42:24 1 xniSpy32: Load Section (File-Excludes)...
+11:42:24 1 xniSpy32: Load Section (File-Excludes)...Done
+11:42:24 1 xniSpy32: Load Section (Registry-Excludes)...
+11:42:26 1 xniSpy32: Load Section (Registry-Excludes)...Done
+
+11:42:54 1 xniSpy32: -------- Beginning the Spy Post Processing ------------------------------------
+
+11:42:54 2 xniSpy32: Creating IRP file...
+11:42:54 2 xniSpy32: Done with IRP file
+
+11:42:54 2 xniSpy32: Creating Options.ini...
+11:42:54 2 xniSpy32: Done with Options.ini
+
+11:42:54 2 xniSpy32: Beginning the analysis of system status changes
+11:42:54 2 xniSpy32: Checking registry...
+11:42:54 2  xniSpy32: Loading, Building and Comparing Registry Tree HKEY_LOCAL_MACHINE
+11:42:54 2   SpyTree: Loading C:\Config.Repackager\HK_L_MA.nir
+11:42:54 2   SpyTree: Beginning serialisation of HK_L_MA.nir
+11:43:09 1   SpyTree: Adding reference to C:\WINDOWS\SYSTEM32
+11:43:26 1   SpyTree: Adding reference to C:\WINDOWS\SYSTEM32\MSVBVM50.DLL
+11:43:27 1   SpyTree: Adding reference to C:\PROGRAM FILES\DPFM SERVICE TOOL
+11:43:35 1   SpyTree: Adding reference to C:\WINDOWS\ST5UNST.EXE -N "C:\PROGRAM FILES\DPFM SERVICE TOOL
+11:43:38 2  xniSpy32: Tree deleted 
+11:43:38 1  xniSpy32: Finished HKEY_LOCAL_MACHINE
+11:43:38 2  xniSpy32: Loading, Building and Comparing Registry Tree HKEY_CURRENT_USER
+11:43:38 2   SpyTree: Loading C:\Config.Repackager\HK_C_USR.nir
+11:43:38 2   SpyTree: Beginning serialisation of HK_C_USR.nir
+11:43:38 1   SpyTree: Adding reference to D:\MEDIA\PC_TOOL
+11:43:38 2  xniSpy32: Tree deleted 
+11:43:38 1  xniSpy32: Finished HKEY_CURRENT_USER
+11:43:38 1  xniSpy32: Saving C:\Config.Repackager\REGISTRY.CHG..
+11:43:38 2  xniSpy32: Beginning serialisation of REGISTRY.CHG
+11:43:38 2  xniSpy32: Serialisation Finished.
+11:43:38 1  xniSpy32: Saving C:\Config.Repackager\REGISTRY.DEL..
+11:43:38 2  xniSpy32: Beginning serialisation of REGISTRY.DEL
+11:43:38 2  xniSpy32: Serialisation Finished.
+11:43:38 2  xniSpy32: Changes have been made to the system parts of the registry -> Use NINA to clean up.
+11:43:38 1  xniSpy32: Saving C:\Config.Repackager\REGISTRY.NEW..
+11:43:38 2  xniSpy32: Beginning serialisation of REGISTRY.NEW
+11:43:38 2  xniSpy32: Serialisation Finished.
+11:43:38 2  xniSpy32: Done with registry
+
+11:43:38 2 xniSpy32: Checking files...
+11:43:38 2  SpyTree: Loading C:\Config.Repackager\FILES.LST
+11:43:38 2  SpyTree: Beginning serialisation of FILES.LST
+11:43:46 1  xniSpy32: File 'TPPS.ini' is not an .ini-file, copying.
+11:43:46 1  xniSpy32: File 'settings.ini' is not an .ini-file, copying.
+11:43:46 1  SpyTree: Adding reference to C:\USERS\ADMINACCT\APPDATA\LOCAL\MICROSOFT\WINDOWS\WER\REPORTQUEUE
+11:43:46 1  xniSpy32: File 'Settings.ini' is not an .ini-file, copying.
+11:43:46 1  SpyTree: Adding reference to C:\USERS\PUBLIC\DESKTOP\PROGRAMS
+11:43:47 1  xniSpy32: File '_DataPerfCounters.ini' too big for an .ini-file
+11:43:47 1  xniSpy32: File '_Networkingperfcounters.ini' too big for an .ini-file
+11:43:47 1  xniSpy32: File '_DataOracleClientPerfCounters_shared12_neutral.ini' too big for an .ini-file
+11:43:47 1  xniSpy32: File '_dataperfcounters_shared12_neutral.ini' too big for an .ini-file
+11:43:47 1  xniSpy32: File 'corperfmonsymbols.ini' too big for an .ini-file
+11:43:47 1  xniSpy32: File 'bitsctrs.ini' is not an .ini-file, copying.
+11:43:47 1  xniSpy32: File 'bitsctrs.ini' is not an .ini-file, copying.
+11:43:47 1  xniSpy32: File 'esentprf.ini' too big for an .ini-file
+11:43:47 1  xniSpy32: File 'esentprf.ini' too big for an .ini-file
+11:43:47 1  xniSpy32: File 'msdtcprf.ini' is not an .ini-file, copying.
+11:43:47 1  xniSpy32: File 'msdtcprf.ini' is not an .ini-file, copying.
+11:43:47 1  xniSpy32: File '_TransactionBridgePerfCounters.ini' too big for an .ini-file
+11:43:47 1  xniSpy32: File 'ReadyBoostPerfCounters.ini' is not an .ini-file, copying.
+11:43:47 1  xniSpy32: File 'ReadyBoostPerfCounters.ini' is not an .ini-file, copying.
+11:43:47 1  xniSpy32: File 'rasctrs.ini' is not an .ini-file, copying.
+11:43:47 1  xniSpy32: File 'rasctrs.ini' is not an .ini-file, copying.
+11:43:47 1  xniSpy32: File '_ServiceModelEndpointPerfCounters.ini' too big for an .ini-file
+11:43:47 1  xniSpy32: File '_ServiceModelOperationPerfCounters.ini' too big for an .ini-file
+11:43:47 1  xniSpy32: File '_ServiceModelServicePerfCounters.ini' too big for an .ini-file
+11:43:47 1  xniSpy32: File '_SMSvcHostPerfCounters.ini' too big for an .ini-file
+11:43:47 1  xniSpy32: File 'tapiperf.ini' is not an .ini-file, copying.
+11:43:47 1  xniSpy32: File 'tapiperf.ini' is not an .ini-file, copying.
+11:43:47 1  xniSpy32: File 'tslabels.ini' too big for an .ini-file
+11:43:47 1  xniSpy32: File 'tslabels.ini' too big for an .ini-file
+11:43:47 1  xniSpy32: File 'gsrvctr.ini' too big for an .ini-file
+11:43:47 1  xniSpy32: File 'gsrvctr.ini' too big for an .ini-file
+11:43:47 1  xniSpy32: File 'gthrctr.ini' too big for an .ini-file
+11:43:47 1  xniSpy32: File 'gthrctr.ini' too big for an .ini-file
+11:43:47 1  xniSpy32: File 'usbperf.ini' is not an .ini-file, copying.
+11:43:47 1  xniSpy32: File 'usbperf.ini' is not an .ini-file, copying.
+11:43:47 1  xniSpy32: File 'PerfCounters.ini' too big for an .ini-file
+11:43:47 1  xniSpy32: File 'WmiApRpl.ini' too big for an .ini-file
+11:43:47 1  xniSpy32: File 'idxcntrs.ini' too big for an .ini-file
+11:43:47 1  xniSpy32: File 'idxcntrs.ini' too big for an .ini-file
+11:43:47 1  xniSpy32: File 'aspnet_perf.ini' too big for an .ini-file
+11:43:47 1  xniSpy32: File 'aspnet_state_perf.ini' too big for an .ini-file
+11:43:47 1  SpyTree: Adding reference to C:\WINDOWS\SERVICEPROFILES\NETWORKSERVICE\APPDATA\LOCAL\MICROSOFT\WINDOWS MEDIA PLAYER NSS\3.0\ICON FILES
+11:43:47 1  xniSpy32: File 'L2057.ini' is not an .ini-file, copying.
+11:43:47 1  xniSpy32: File 'l1033.ini' is not an .ini-file, copying.
+11:43:47 1  xniSpy32: File 'slmgr.ini' too big for an .ini-file
+11:43:48 1  xniSpy32: File 'winrm.ini' too big for an .ini-file
+11:43:55 1  xniSpy32: File 'CNHF1.INI' is not an .ini-file, copying.
+11:43:56 1  xniSpy32: File 'bitsctrs.ini' is not an .ini-file, copying.
+11:43:56 1  xniSpy32: File 'bitsctrs.ini' is not an .ini-file, copying.
+11:43:56 1  xniSpy32: File 'msdtcprf.ini' is not an .ini-file, copying.
+11:43:56 1  xniSpy32: File 'msdtcprf.ini' is not an .ini-file, copying.
+11:43:57 1  xniSpy32: File 'esentprf.ini' too big for an .ini-file
+11:43:57 1  xniSpy32: File 'esentprf.ini' too big for an .ini-file
+11:43:58 1  xniSpy32: File 'perfci.ini' is not an .ini-file, copying.
+11:43:58 1  xniSpy32: File 'perffilt.ini' is not an .ini-file, copying.
+11:43:58 1  xniSpy32: File 'adsutil.ini' too big for an .ini-file
+11:43:58 1  xniSpy32: File 'iisext.ini' too big for an .ini-file
+11:43:58 1  xniSpy32: File 'IIsScHlp.ini' is not an .ini-file, copying.
+11:43:58 1  xniSpy32: File 'perfwci.ini' is not an .ini-file, copying.
+11:43:58 1  xniSpy32: File 'perfwci.ini' is not an .ini-file, copying.
+11:43:58 1  xniSpy32: File 'axperf.ini' too big for an .ini-file
+11:43:58 1  xniSpy32: File 'perfci.ini' is not an .ini-file, copying.
+11:43:58 1  xniSpy32: File 'perffilt.ini' is not an .ini-file, copying.
+11:43:58 1  xniSpy32: File 'axperf.ini' too big for an .ini-file
+11:43:58 1  xniSpy32: File 'browscap.ini' too big for an .ini-file
+11:43:58 1  xniSpy32: File 'infoctrs.ini' too big for an .ini-file
+11:43:58 1  xniSpy32: File 'infoctrs.ini' too big for an .ini-file
+11:43:58 1  xniSpy32: File 'w3ctrs.ini' too big for an .ini-file
+11:43:58 1  xniSpy32: File 'w3ctrs.ini' too big for an .ini-file
+11:43:59 1  xniSpy32: File 'msdfmap.ini' is not an .ini-file, copying.
+11:44:00 1  xniSpy32: File 'tcpmon.ini' too big for an .ini-file
+11:44:00 1  xniSpy32: File 'rasctrs.ini' is not an .ini-file, copying.
+11:44:00 1  xniSpy32: File 'rasctrs.ini' is not an .ini-file, copying.
+11:44:00 1  xniSpy32: File 'ReadyBoostPerfCounters.ini' is not an .ini-file, copying.
+11:44:00 1  xniSpy32: File 'L2057.ini' is not an .ini-file, copying.
+11:44:00 1  xniSpy32: File 'l1033.ini' is not an .ini-file, copying.
+11:44:01 1  xniSpy32: File 'ReadyBoostPerfCounters.ini' is not an .ini-file, copying.
+11:44:01 1  xniSpy32: File 'slmgr.ini' too big for an .ini-file
+11:44:01 1  xniSpy32: File 'settings.ini' is not an .ini-file, copying.
+11:44:01 1  xniSpy32: File 'tslabels.ini' too big for an .ini-file
+11:44:02 1  xniSpy32: File 'tslabels.ini' too big for an .ini-file
+11:44:02 1  xniSpy32: File 'tapiperf.ini' is not an .ini-file, copying.
+11:44:02 1  xniSpy32: File 'tapiperf.ini' is not an .ini-file, copying.
+11:44:02 1  xniSpy32: File 'usbperf.ini' is not an .ini-file, copying.
+11:44:02 1  xniSpy32: File 'usbperf.ini' is not an .ini-file, copying.
+11:44:02 1  xniSpy32: File 'winrm.ini' too big for an .ini-file
+11:44:03 1  xniSpy32: File 'aspnet_perf.ini' too big for an .ini-file
+11:44:03 1  xniSpy32: File 'aspnet_state_perf.ini' too big for an .ini-file
+11:44:03 1  xniSpy32: File 'corperfmonsymbols.ini' too big for an .ini-file
+11:44:03 1  xniSpy32: File '_DataPerfCounters.ini' too big for an .ini-file
+11:44:03 1  xniSpy32: File '_dataperfcounters_shared12_neutral.ini' too big for an .ini-file
+11:44:03 1  xniSpy32: File '_Networkingperfcounters.ini' too big for an .ini-file
+11:44:03 1  xniSpy32: File '_DataOracleClientPerfCounters_shared12_neutral.ini' too big for an .ini-file
+11:44:04 1  xniSpy32: File 'BRUNI23A.INI' is not an .ini-file, copying.
+11:44:04 1  xniSpy32: File 'BRCL06.INI' is not an .ini-file, copying.
+11:44:04 1  xniSpy32: File 'BRCL05.INI' is not an .ini-file, copying.
+11:44:04 1  xniSpy32: File 'BRMZ13.INI' is not an .ini-file, copying.
+11:44:04 1  xniSpy32: File 'CNN0B007.INI' is not an .ini-file, copying.
+11:44:04 1  xniSpy32: File 'CNBX4.INI' is not an .ini-file, copying.
+11:44:04 1  xniSpy32: File 'CNBJ3.INI' is not an .ini-file, copying.
+11:44:04 1  xniSpy32: File 'CNBJ4.INI' is not an .ini-file, copying.
+11:44:04 1  xniSpy32: File 'KOC353X.INI' is not an .ini-file, copying.
+11:44:04 1  xniSpy32: File 'KOC451X.INI' is not an .ini-file, copying.
+11:44:04 1  xniSpy32: File 'KOC650X.INI' is not an .ini-file, copying.
+11:44:04 1  xniSpy32: File 'KOM4650X.INI' is not an .ini-file, copying.
+11:44:04 1  xniSpy32: File 'KOP4650X.INI' is not an .ini-file, copying.
+11:44:04 1  xniSpy32: File 'KOP5650X.INI' is not an .ini-file, copying.
+11:44:04 1  xniSpy32: File 'KYW7AUTO.INI' is not an .ini-file, copying.
+11:44:04 1  xniSpy32: File 'kyw7aut2.ini' is not an .ini-file, copying.
+11:44:04 1  xniSpy32: File 'KYW7AUT4.INI' is not an .ini-file, copying.
+11:44:04 1  xniSpy32: File 'KYW7AUT3.INI' is not an .ini-file, copying.
+11:44:04 1  xniSpy32: File 'KYW7AUT5.INI' is not an .ini-file, copying.
+11:44:04 1  xniSpy32: File 'KYW7AUT6.INI' is not an .ini-file, copying.
+11:44:04 1  xniSpy32: File 'KYW7AUT7.INI' is not an .ini-file, copying.
+11:44:04 1  xniSpy32: File 'kyw7aut8.ini' is not an .ini-file, copying.
+11:44:05 1  xniSpy32: File 'disablesetuid.ini' is not an .ini-file, copying.
+11:44:05 1  xniSpy32: File 'enablesetuid.ini' is not an .ini-file, copying.
+11:44:05 1  xniSpy32: File '_SMSvcHostPerfCounters.ini' too big for an .ini-file
+11:44:05 1  xniSpy32: File '_ServiceModelEndpointPerfCounters.ini' too big for an .ini-file
+11:44:05 1  xniSpy32: File '_ServiceModelOperationPerfCounters.ini' too big for an .ini-file
+11:44:05 1  xniSpy32: File '_ServiceModelServicePerfCounters.ini' too big for an .ini-file
+11:44:05 1  xniSpy32: File '_TransactionBridgePerfCounters.ini' too big for an .ini-file
+11:44:05 1  xniSpy32: File 'gsrvctr.ini' too big for an .ini-file
+11:44:05 1  xniSpy32: File 'gthrctr.ini' too big for an .ini-file
+11:44:05 1  xniSpy32: File 'idxcntrs.ini' too big for an .ini-file
+11:44:05 1  xniSpy32: File 'gsrvctr.ini' too big for an .ini-file
+11:44:05 1  xniSpy32: File 'gthrctr.ini' too big for an .ini-file
+11:44:05 1  xniSpy32: File 'idxcntrs.ini' too big for an .ini-file
+11:44:05 1  xniSpy32: File 'PerfCounters.ini' too big for an .ini-file
+11:44:05 1  xniSpy32: File 'msdfmap.ini' is not an .ini-file, copying.
+11:44:05 1  SpyTree: Adding reference to C:\WINDOWS
+11:44:05 1  xniSpy32: Saving C:\Config.Repackager\FILES.CHG..
+11:44:05 2  xniSpy32: Beginning serialisation of FILES.CHG
+11:44:05 2  xniSpy32: Serialisation Finished.
+11:44:05 2  xniSpy32: On or more regular files have been modified -> Use NINA to clean up.
+11:44:05 1  xniSpy32: Saving C:\Config.Repackager\FILES.NEW..
+11:44:05 2  xniSpy32: Beginning serialisation of FILES.NEW
+11:44:05 2  xniSpy32: Serialisation Finished.
+11:44:05 2  xniSpy32: Done with files
+
+11:44:05 2 xniSpy32: Checking IP config files...
+11:44:05 2  SpyTree: Loading C:\Config.Repackager\IPFILES.LST
+11:44:05 2  SpyTree: Beginning serialisation of IPFILES.LST
+11:44:05 1  xniSpy32: Saving C:\Config.Repackager\IPFILES.CHG..
+11:44:05 2  xniSpy32: Beginning serialisation of IPFILES.CHG
+11:44:05 2  xniSpy32: Serialisation Finished.
+11:44:05 1  xniSpy32: Saving C:\Config.Repackager\IPFILES.NEW..
+11:44:05 2  xniSpy32: Beginning serialisation of IPFILES.NEW
+11:44:05 2  xniSpy32: Serialisation Finished.
+11:44:05 2  xniSpy32: Done with ip config files
+
+11:44:05 2 xniSpy32: Checking inis...
+11:44:05 2  SpyTree: Loading C:\Config.Repackager\INIS.LST
+11:44:05 2  SpyTree: Beginning serialisation of INIS.LST
+11:44:05 2  xniSpy32: Reading ini file C:\Program Files\Common Files\VMware\Drivers\Virtual Printer\TPOGPS\i386\TPPS.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Program Files\DPFM Service Tool\dpfm.ini
+11:44:05 1  SpyTree: Adding reference to .\
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\assembly\GAC\Microsoft.Ink\1.0.2201.0__31bf3856ad364e35\__AssemblyInfo__.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\assembly\GAC\Microsoft.Ink\1.7.2600.2180__31bf3856ad364e35\__AssemblyInfo__.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\Globalization\MCT\MCT-GB\RSSFeed\GB-rss1.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\Globalization\MCT\MCT-US\RSSFeed\US-rss1.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\inf\.NET CLR Data\0000\_DataPerfCounters_D.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\inf\.NET CLR Data\0409\_DataPerfCounters_D.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\inf\.NET CLR Networking\0000\_Networkingperfcounters_D.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\inf\.NET CLR Networking\0409\_Networkingperfcounters_D.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\inf\.NET Data Provider for Oracle\0000\_DataOracleClientPerfCounters_shared12_neutral_D.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\inf\.NET Data Provider for Oracle\0409\_DataOracleClientPerfCounters_shared12_neutral_D.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\inf\.NET Data Provider for SqlServer\0000\_dataperfcounters_shared12_neutral_D.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\inf\.NET Data Provider for SqlServer\0409\_dataperfcounters_shared12_neutral_D.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\inf\.NETFramework\0000\corperfmonsymbols_D.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\inf\.NETFramework\0409\corperfmonsymbols_D.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\inf\MSDTC Bridge 3.0.0.0\0000\_TransactionBridgePerfCounters_D.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\inf\MSDTC Bridge 3.0.0.0\0409\_TransactionBridgePerfCounters_D.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\inf\ServiceModelEndpoint 3.0.0.0\0000\_ServiceModelEndpointPerfCounters_D.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\inf\ServiceModelEndpoint 3.0.0.0\0409\_ServiceModelEndpointPerfCounters_D.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\inf\ServiceModelOperation 3.0.0.0\0000\_ServiceModelOperationPerfCounters_D.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\inf\ServiceModelOperation 3.0.0.0\0409\_ServiceModelOperationPerfCounters_D.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\inf\ServiceModelService 3.0.0.0\0000\_ServiceModelServicePerfCounters_D.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\inf\ServiceModelService 3.0.0.0\0409\_ServiceModelServicePerfCounters_D.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\inf\SMSvcHost 3.0.0.0\0000\_SMSvcHostPerfCounters_D.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\inf\SMSvcHost 3.0.0.0\0409\_SMSvcHostPerfCounters_D.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\inf\Windows Workflow Foundation 3.0.0.0\0000\PerfCounters_D.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\inf\Windows Workflow Foundation 3.0.0.0\0409\PerfCounters_D.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\Setup\State\State.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\System32\spool\drivers\w32x86\3\mxdwdui.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\System32\spool\drivers\w32x86\3\TPPS.INI
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\System32\spool\tools\Microsoft XPS Document Writer\mxdwdui.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\TAPI\tsec.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_brmfcmf.inf_31bf3856ad364e35_6.1.7600.16385_none_1368a535778d1ccb\BrmfBidi.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_microsoft-windows-coreos_31bf3856ad364e35_6.1.7600.16385_none_25289c6a9fa4dca8\system.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_microsoft-windows-coreos_31bf3856ad364e35_6.1.7600.16385_none_25289c6a9fa4dca8\win.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_microsoft-windows-m..ttheme-gb-component_31bf3856ad364e35_6.1.7600.16385_none_34856afd75952bc6\GB-rss1.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_microsoft-windows-m..ttheme-us-component_31bf3856ad364e35_6.1.7600.16385_none_56d5c461d90038b9\US-rss1.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_microsoft-windows-n..xcorecomp.resources_31bf3856ad364e35_6.1.7600.16385_en-us_03590c72f3a404ed\_DataOracleClientPerfCounters_shared12_neutral_D.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_microsoft-windows-n..xcorecomp.resources_31bf3856ad364e35_6.1.7600.16385_en-us_03590c72f3a404ed\_DataPerfCounters_D.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_microsoft-windows-n..xcorecomp.resources_31bf3856ad364e35_6.1.7600.16385_en-us_03590c72f3a404ed\_dataperfcounters_shared12_neutral_D.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_microsoft-windows-n..xcorecomp.resources_31bf3856ad364e35_6.1.7600.16385_en-us_03590c72f3a404ed\_Networkingperfcounters_D.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_microsoft-windows-n..xcorecomp.resources_31bf3856ad364e35_6.1.7600.16385_en-us_03590c72f3a404ed\corperfmonsymbols_D.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_microsoft-windows-p..g-xpsdocumentwriter_31bf3856ad364e35_6.1.7600.16385_none_22aef50dc459df22\mxdwdui.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_microsoft-windows-tapisetup_31bf3856ad364e35_6.1.7600.16385_none_69c980e6fc7d9b52\tsec.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_microsoft-windows-wcfcorecomp.resources_31bf3856ad364e35_6.1.7600.16385_en-us_a0a0b4109acccb2a\_ServiceModelEndpointPerfCounters_D.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_microsoft-windows-wcfcorecomp.resources_31bf3856ad364e35_6.1.7600.16385_en-us_a0a0b4109acccb2a\_ServiceModelOperationPerfCounters_D.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_microsoft-windows-wcfcorecomp.resources_31bf3856ad364e35_6.1.7600.16385_en-us_a0a0b4109acccb2a\_ServiceModelServicePerfCounters_D.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_microsoft-windows-wcfcorecomp.resources_31bf3856ad364e35_6.1.7600.16385_en-us_a0a0b4109acccb2a\_SMSvcHostPerfCounters_D.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_microsoft-windows-wcfcorecomp.resources_31bf3856ad364e35_6.1.7600.16385_en-us_a0a0b4109acccb2a\_TransactionBridgePerfCounters_D.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_microsoft-windows-wwfcorecomp.resources_31bf3856ad364e35_6.1.7600.16385_en-us_bb39ab2582dc79f6\PerfCounters_D.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_netfx-corperfmonsymbols_b03f5f7f11d50a3a_6.1.7600.16385_none_a2f74dfc8843585d\corperfmonsymbols_D.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_netfx-data_perf_ini_b03f5f7f11d50a3a_6.1.7600.16385_none_9675a254e247e27a\_DataPerfCounters_D.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_netfx-data_perf_ini_b03f5f7f11d50a3a_6.1.7600.16385_none_9675a254e247e27a\_dataperfcounters_shared12_neutral_D.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_netfx-fw_perfcounters_b03f5f7f11d50a3a_6.1.7600.16385_none_6b49d361a30fef61\_Networkingperfcounters_D.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_netfx-sys_data_oraclient_perfcoun_b03f5f7f11d50a3a_6.1.7600.16385_none_5a5f67c12a260e80\_DataOracleClientPerfCounters_shared12_neutral_D.ini
+11:44:05 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnbr002.inf_31bf3856ad364e35_6.1.7600.16385_none_edaa9f1f0bd2dd68\I386\BRCI06A.INI
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnbr003.inf_31bf3856ad364e35_6.1.7600.16385_none_ee33b15424f119d1\I386\BRMW2.INI
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnbr003.inf_31bf3856ad364e35_6.1.7600.16385_none_ee33b15424f119d1\I386\BRPT2.INI
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnbr004.inf_31bf3856ad364e35_6.1.7600.16385_none_eebcc3893e0f563a\I386\brci08a.ini
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnbr005.inf_31bf3856ad364e35_6.1.7600.16385_none_ef45d5be572d92a3\I386\brci08b.ini
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnbr009.inf_31bf3856ad364e35_6.1.7600.16385_none_f16a1e92bba68447\I386\brci14a.ini
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnep003.inf_31bf3856ad364e35_6.1.7600.16385_none_37e4759a73b2c158\I386\EP0LB010.INI
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnep003.inf_31bf3856ad364e35_6.1.7600.16385_none_37e4759a73b2c158\I386\EP0LB020.INI
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnep003.inf_31bf3856ad364e35_6.1.7600.16385_none_37e4759a73b2c158\I386\EP0LB030.INI
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnep003.inf_31bf3856ad364e35_6.1.7600.16385_none_37e4759a73b2c158\I386\EP0LB040.INI
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnep003.inf_31bf3856ad364e35_6.1.7600.16385_none_37e4759a73b2c158\I386\EP0NB010.INI
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnep003.inf_31bf3856ad364e35_6.1.7600.16385_none_37e4759a73b2c158\I386\EP0NB030.INI
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnep003.inf_31bf3856ad364e35_6.1.7600.16385_none_37e4759a73b2c158\I386\EP0NB040.INI
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnep003.inf_31bf3856ad364e35_6.1.7600.16385_none_37e4759a73b2c158\I386\EP0NB050.INI
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnep003.inf_31bf3856ad364e35_6.1.7600.16385_none_37e4759a73b2c158\I386\EP0NB070.INI
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnep004.inf_31bf3856ad364e35_6.1.7600.16385_none_386d87cf8cd0fdc1\I386\EP7PII00.INI
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnep00a.inf_31bf3856ad364e35_6.1.7600.16385_none_5085bb24f7219c36\I386\EP0NDC66.INI
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnep00a.inf_31bf3856ad364e35_6.1.7600.16385_none_5085bb24f7219c36\I386\EP0NDC67.INI
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnep00l.inf_31bf3856ad364e35_6.1.7600.16385_none_5669836d0b6e34b9\I386\EP0LVPZ0.INI
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnep00l.inf_31bf3856ad364e35_6.1.7600.16385_none_5669836d0b6e34b9\I386\EP0LVPZ1.INI
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnep00l.inf_31bf3856ad364e35_6.1.7600.16385_none_5669836d0b6e34b9\I386\EP0LVPZA.INI
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnfx002.inf_31bf3856ad364e35_6.1.7600.16385_none_b3db8f498c9e2abe\I386\FXUCCM01.INI
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnge001.inf_31bf3856ad364e35_6.1.7600.16385_none_daf11370e548513f\I386\TTY.INI
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnhp002.inf_31bf3856ad364e35_6.1.7600.16385_none_d32fd3ee9b221e74\I386\HPZ3Cwn7.INI
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnhp002.inf_31bf3856ad364e35_6.1.7600.16385_none_d32fd3ee9b221e74\I386\HPZ5CWN7.INI
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnhp002.inf_31bf3856ad364e35_6.1.7600.16385_none_d32fd3ee9b221e74\I386\HPZ6CWN7.INI
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnhp002.inf_31bf3856ad364e35_6.1.7600.16385_none_d32fd3ee9b221e74\I386\HPZSCWN7.INI
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnhp003.inf_31bf3856ad364e35_6.1.7600.16385_none_d3b8e623b4405add\I386\hpQ307w7.ini
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnhp004.inf_31bf3856ad364e35_6.1.7600.16385_none_d441f858cd5e9746\I386\hpb8500t.ini
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnhp004.inf_31bf3856ad364e35_6.1.7600.16385_none_d441f858cd5e9746\I386\hpc4500t.ini
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnhp004.inf_31bf3856ad364e35_6.1.7600.16385_none_d441f858cd5e9746\I386\hpc5300t.ini
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnhp004.inf_31bf3856ad364e35_6.1.7600.16385_none_d441f858cd5e9746\I386\hpc5500t.ini
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnhp004.inf_31bf3856ad364e35_6.1.7600.16385_none_d441f858cd5e9746\I386\hpc6300t.ini
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnhp004.inf_31bf3856ad364e35_6.1.7600.16385_none_d441f858cd5e9746\I386\hpD5400t.ini
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnhp004.inf_31bf3856ad364e35_6.1.7600.16385_none_d441f858cd5e9746\I386\hpd7500t.ini
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnhp005.inf_31bf3856ad364e35_6.1.7600.16385_none_d4cb0a8de67cd3af\I386\hp6000aa.ini
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnhp005.inf_31bf3856ad364e35_6.1.7600.16385_none_d4cb0a8de67cd3af\I386\hp6000na.ini
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnhp005.inf_31bf3856ad364e35_6.1.7600.16385_none_d4cb0a8de67cd3af\I386\hp6500aa.ini
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnhp005.inf_31bf3856ad364e35_6.1.7600.16385_none_d4cb0a8de67cd3af\I386\hp6500na.ini
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnhp005.inf_31bf3856ad364e35_6.1.7600.16385_none_d4cb0a8de67cd3af\I386\hp8000aa.ini
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnhp005.inf_31bf3856ad364e35_6.1.7600.16385_none_d4cb0a8de67cd3af\I386\hp8500aa.ini
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnhp005.inf_31bf3856ad364e35_6.1.7600.16385_none_d4cb0a8de67cd3af\I386\hp8500ga.ini
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnhp005.inf_31bf3856ad364e35_6.1.7600.16385_none_d4cb0a8de67cd3af\I386\hp8500na.ini
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnhp005.inf_31bf3856ad364e35_6.1.7600.16385_none_d4cb0a8de67cd3af\I386\hpc309aa.ini
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnhp005.inf_31bf3856ad364e35_6.1.7600.16385_none_d4cb0a8de67cd3af\I386\hpc4600a.ini
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnhp005.inf_31bf3856ad364e35_6.1.7600.16385_none_d4cb0a8de67cd3af\I386\hpd2600a.ini
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnhp005.inf_31bf3856ad364e35_6.1.7600.16385_none_d4cb0a8de67cd3af\I386\hpf4400a.ini
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnlx00v.inf_31bf3856ad364e35_6.1.7600.16385_none_0fed4676b9c169ac\I386\lxkpcl.ini
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnlx00x.inf_31bf3856ad364e35_6.1.7600.16385_none_10ff6ae0ebfde27e\I386\lxkps.INI
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnlx00y.inf_31bf3856ad364e35_6.1.7600.16385_none_11887d16051c1ee7\I386\LXKXL.INI
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnrc00a.inf_31bf3856ad364e35_6.1.7600.16385_none_dde1186f40843b2e\I386\RIARES17.INI
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnrc00a.inf_31bf3856ad364e35_6.1.7600.16385_none_dde1186f40843b2e\I386\RIARES27.INI
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnrc00c.inf_31bf3856ad364e35_6.1.7600.16385_none_def33cd972c0b400\I386\RICOHPS7.INI
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnsa002.inf_31bf3856ad364e35_6.1.7600.16385_none_a6848f451d050fc0\I386\smpicfg2.ini
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnsa002.inf_31bf3856ad364e35_6.1.7600.16385_none_a6848f451d050fc0\I386\smpicfg3.ini
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnso002.inf_31bf3856ad364e35_6.1.7600.16385_none_e57e4519b998adb2\I386\SODPP2.INI
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnts002.inf_31bf3856ad364e35_6.1.7600.16385_none_bdb71878080a6f85\I386\tsmpu002.ini
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_prnts003.inf_31bf3856ad364e35_6.1.7600.16385_none_be402aad2128abee\I386\tsmxu003.ini
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_wcf-m_smsvchost_perf_c_ini_31bf3856ad364e35_6.1.7600.16385_none_340ce7386d830990\_SMSvcHostPerfCounters_D.ini
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_wcf-m_svc_mod_end_perf_ini_31bf3856ad364e35_6.1.7600.16385_none_ca93e046eeb1a109\_ServiceModelEndpointPerfCounters_D.ini
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_wcf-m_svc_mod_op_perf_c_ini_31bf3856ad364e35_6.1.7600.16385_none_c338d04090ac9e87\_ServiceModelOperationPerfCounters_D.ini
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_wcf-m_svc_mod_svc_perf_ini_31bf3856ad364e35_6.1.7600.16385_none_7a7a5603ee075acc\_ServiceModelServicePerfCounters_D.ini
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_wcf-m_tx_bridge_perf_c_ini_31bf3856ad364e35_6.1.7600.16385_none_80559eec8f97c5f8\_TransactionBridgePerfCounters_D.ini
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\winsxs\x86_wwf-perfcnt_ini_31bf3856ad364e35_6.1.7600.16385_none_739abb4d5ca4ee30\PerfCounters_D.ini
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\cmns32.ini
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\RP121032.ini
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\system.ini
+11:44:06 2  xniSpy32: Reading ini file C:\Windows\win.ini
+11:44:06 1  xniSpy32: Saving C:\Config.Repackager\INIS.CHG..
+11:44:06 2  xniSpy32: Beginning serialisation of INIS.CHG
+11:44:06 2  xniSpy32: Serialisation Finished.
+11:44:06 1  xniSpy32: Saving C:\Config.Repackager\INIS.NEW..
+11:44:06 2  xniSpy32: Beginning serialisation of INIS.NEW
+11:44:06 2  xniSpy32: Serialisation Finished.
+11:44:06 2  xniSpy32: Done with inis
+
+11:44:06 2 xniSpy32: Checking links...
+11:44:06 2  SpyTree: Loading C:\Config.Repackager\LINKS.LST
+11:44:06 2  SpyTree: Beginning serialisation of LINKS.LST
+11:44:06 2  xniSpy32: Getting personal folders
+11:44:06 2  xniSpy32: Reading folder AppData and subfolders at C:\Users\adminacct\AppData\Roaming
+11:44:06 2  xniSpy32: Finished
+11:44:06 2  xniSpy32: Reading folder Local AppData and subfolders at C:\Users\adminacct\AppData\Local
+11:44:06 2  xniSpy32: Finished
+11:44:06 2  xniSpy32: Reading folder My Video and subfolders at C:\Users\adminacct\Videos
+11:44:06 2  xniSpy32: Finished
+11:44:06 2  xniSpy32: Reading folder {1B3EA5DC-B587-4786-B4EF-BD1DC332AEAE} and subfolders at C:\Users\adminacct\AppData\Roaming\Microsoft\Windows\Libraries
+11:44:06 2  xniSpy32: Finished
+11:44:06 2  xniSpy32: Reading folder My Pictures and subfolders at C:\Users\adminacct\Pictures
+11:44:06 2  xniSpy32: Finished
+11:44:06 2  xniSpy32: Reading folder Desktop and subfolders at C:\Users\adminacct\Desktop
+11:44:06 2  xniSpy32: Finished
+11:44:06 2  xniSpy32: Reading folder History and subfolders at C:\Users\adminacct\AppData\Local\Microsoft\Windows\History
+11:44:06 2  xniSpy32: Finished
+11:44:06 2  xniSpy32: Reading folder NetHood and subfolders at C:\Users\adminacct\AppData\Roaming\Microsoft\Windows\Network Shortcuts
+11:44:06 2  xniSpy32: Finished
+11:44:06 2  xniSpy32: Reading folder {56784854-C6CB-462B-8169-88E350ACB882} and subfolders at C:\Users\adminacct\Contacts
+11:44:06 2  xniSpy32: Finished
+11:44:06 2  xniSpy32: Reading folder Cookies and subfolders at C:\Users\adminacct\AppData\Roaming\Microsoft\Windows\Cookies
+11:44:06 2  xniSpy32: Finished
+11:44:06 2  xniSpy32: Reading folder Favorites and subfolders at C:\Users\adminacct\Favorites
+11:44:06 2  xniSpy32: Finished
+11:44:06 2  xniSpy32: Reading folder SendTo and subfolders at C:\Users\adminacct\AppData\Roaming\Microsoft\Windows\SendTo
+11:44:06 2  xniSpy32: Finished
+11:44:06 2  xniSpy32: Reading folder Start Menu and subfolders at C:\Users\adminacct\AppData\Roaming\Microsoft\Windows\Start Menu
+11:44:06 2  xniSpy32: Finished
+11:44:06 2  xniSpy32: Reading folder My Music and subfolders at C:\Users\adminacct\Music
+11:44:06 2  xniSpy32: Finished
+11:44:06 2  xniSpy32: Reading folder Programs and subfolders at C:\Users\adminacct\AppData\Roaming\Microsoft\Windows\Start Menu\Programs
+11:44:06 2  xniSpy32: Finished
+11:44:06 2  xniSpy32: Reading folder CD Burning and subfolders at C:\Users\adminacct\AppData\Local\Microsoft\Windows\Burn\Burn
+11:44:06 2  xniSpy32: Finished
+11:44:06 2  xniSpy32: Reading folder PrintHood and subfolders at C:\Users\adminacct\AppData\Roaming\Microsoft\Windows\Printer Shortcuts
+11:44:06 2  xniSpy32: Finished
+11:44:06 2  xniSpy32: Reading folder {7D1D3A04-DEBB-4115-95CF-2F29DA2920DA} and subfolders at C:\Users\adminacct\Searches
+11:44:06 2  xniSpy32: Finished
+11:44:06 2  xniSpy32: Reading folder {374DE290-123F-4565-9164-39C4925E467B} and subfolders at C:\Users\adminacct\Downloads
+11:44:06 2  xniSpy32: Finished
+11:44:06 2  xniSpy32: Reading folder {A520A1A4-1780-4FF6-BD18-167343C5AF16} and subfolders at C:\Users\adminacct\AppData\LocalLow
+11:44:06 2  xniSpy32: Finished
+11:44:06 2  xniSpy32: Reading folder Startup and subfolders at C:\Users\adminacct\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup
+11:44:06 2  xniSpy32: Finished
+11:44:06 2  xniSpy32: Reading folder Administrative Tools and subfolders at C:\Users\adminacct\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Administrative Tools
+11:44:06 2  xniSpy32: Finished
+11:44:06 2  xniSpy32: Reading folder Personal and subfolders at C:\Users\adminacct\Documents
+11:44:06 2  xniSpy32: Finished
+11:44:06 2  xniSpy32: Reading folder {BFB9D5E0-C6A9-404C-B2B2-AE6DB6AF4968} and subfolders at C:\Users\adminacct\Links
+11:44:06 2  xniSpy32: Finished
+11:44:06 2  xniSpy32: Reading folder Cache and subfolders at C:\Users\adminacct\AppData\Local\Microsoft\Windows\Temporary Internet Files
+11:44:06 2  xniSpy32: Finished
+11:44:06 2  xniSpy32: Reading folder Templates and subfolders at C:\Users\adminacct\AppData\Roaming\Microsoft\Windows\Templates
+11:44:06 2  xniSpy32: Finished
+11:44:06 2  xniSpy32: Reading folder {4C5C32FF-BB9D-43B0-B5B4-2D72E54EAAA4} and subfolders at C:\Users\adminacct\Saved Games
+11:44:06 2  xniSpy32: Finished
+11:44:06 2  xniSpy32: Reading folder Fonts and subfolders at C:\Windows\Fonts
+11:44:06 2  xniSpy32: Finished
+11:44:06 2  xniSpy32: Getting common folders
+11:44:06 2  xniSpy32: Reading folder Common Desktop and subfolders at C:\Users\Public\Desktop
+11:44:06 2  xniSpy32: Finished
+11:44:06 2  xniSpy32: Reading folder Common Start Menu and subfolders at C:\ProgramData\Microsoft\Windows\Start Menu
+11:44:06 2  xniSpy32: Finished
+11:44:06 2  xniSpy32: Reading folder CommonVideo and subfolders at C:\Users\Public\Videos
+11:44:06 2  xniSpy32: Finished
+11:44:06 2  xniSpy32: Reading folder CommonPictures and subfolders at C:\Users\Public\Pictures
+11:44:06 2  xniSpy32: Finished
+11:44:06 2  xniSpy32: Reading folder Common Programs and subfolders at C:\ProgramData\Microsoft\Windows\Start Menu\Programs
+11:44:06 2  xniSpy32: Finished
+11:44:06 2  xniSpy32: Reading folder CommonMusic and subfolders at C:\Users\Public\Music
+11:44:06 2  xniSpy32: Finished
+11:44:06 2  xniSpy32: Reading folder Common Administrative Tools and subfolders at C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Administrative Tools
+11:44:06 2  xniSpy32: Finished
+11:44:06 2  xniSpy32: Reading folder Common Startup and subfolders at C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup
+11:44:06 2  xniSpy32: Finished
+11:44:06 2  xniSpy32: Reading folder Common Documents and subfolders at C:\Users\Public\Documents
+11:44:06 2  xniSpy32: Finished
+11:44:06 2  xniSpy32: Reading folder OEM Links and subfolders at C:\ProgramData\OEM Links
+11:44:06 2  xniSpy32: Finished
+11:44:06 2  xniSpy32: Reading folder Common Templates and subfolders at C:\ProgramData\Microsoft\Windows\Templates
+11:44:06 2  xniSpy32: Finished
+11:44:06 2  xniSpy32: Reading folder Common AppData and subfolders at C:\ProgramData
+11:44:06 2  xniSpy32: Finished
+11:44:06 1  xniSpy32: Saving C:\Config.Repackager\LINKS.CHG..
+11:44:06 2  xniSpy32: Beginning serialisation of LINKS.CHG
+11:44:06 2  xniSpy32: Serialisation Finished.
+11:44:06 1  xniSpy32: Saving C:\Config.Repackager\LINKS.NEW..
+11:44:06 2  xniSpy32: Beginning serialisation of LINKS.NEW
+11:44:06 2  xniSpy32: Serialisation Finished.
+11:44:06 2  xniSpy32: Done with links
+
+11:44:06 2 xniSpy32: Analysing references...
+11:44:06 1  xniSpy32: PATH analysis..
+
+11:44:06 2  SpyTree: -->>Variable analysis..
+11:44:06 1  SpyTree: removing var _PROGRAMS=C:\USERS\PUBLIC\DESKTOP\PROGRAMS and USERPROFILE from gpVarList
+11:44:06 1  SpyTree: Checking if files were copied to C:\Windows\system32 (SystemFolder)...
+11:44:06 1  SpyTree: Success
+11:44:06 1  SpyTree: Checking if files were copied to C:\Windows\System (System16Folder)...
+11:44:06 1  SpyTree: Checking if files were copied to C:\Windows\Fonts (FontsFolder)...
+11:44:06 1  SpyTree: Checking if files were copied to C:\Windows (WindowsFolder)...
+11:44:06 1  SpyTree: Success
+11:44:06 1  SpyTree: Checking if files were copied to C:\Users\adminacct\Pictures (MyPicturesFolder)...
+11:44:06 1  SpyTree: Checking if files were copied to C:\Users\adminacct\Favorites (FavoritesFolder)...
+11:44:06 1  SpyTree: Checking if files were copied to C:\Users\adminacct\Documents (PersonalFolder)...
+11:44:06 1  SpyTree: Checking if files were copied to C:\Users\adminacct\Desktop (DesktopFolder)...
+11:44:06 1  SpyTree: Checking if files were copied to C:\Users\adminacct\AppData\Roaming\Microsoft\Windows\Templates (TemplateFolder)...
+11:44:06 1  SpyTree: Checking if files were copied to C:\Users\adminacct\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup (StartupFolder)...
+11:44:06 1  SpyTree: Checking if files were copied to C:\Users\adminacct\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Administrative Tools (AdminToolsFolder)...
+11:44:06 1  SpyTree: Checking if files were copied to C:\Users\adminacct\AppData\Roaming\Microsoft\Windows\Start Menu\Programs (ProgramMenuFolder)...
+11:44:06 1  SpyTree: Checking if files were copied to C:\Users\adminacct\AppData\Roaming\Microsoft\Windows\Start Menu (StartMenuFolder)...
+11:44:06 1  SpyTree: Checking if files were copied to C:\Users\adminacct\AppData\Roaming\Microsoft\Windows\SendTo (SendToFolder)...
+11:44:06 1  SpyTree: Checking if files were copied to C:\Users\adminacct\AppData\Roaming\Microsoft\Windows\Network Shortcuts (NetHoodFolder)...
+11:44:06 1  SpyTree: Checking if files were copied to C:\Users\adminacct\AppData\Roaming (AppDataFolder)...
+11:44:06 1  SpyTree: Checking if files were copied to C:\Users\adminacct\AppData\Local\Temp (TempFolder)...
+11:44:06 1  SpyTree: Checking if files were copied to C:\Users\adminacct\AppData\Local (LocalAppDataFolder)...
+11:44:06 1  SpyTree: Success
+11:44:06 1  SpyTree: Checking if files were copied to C:\Users\adminacct (USERPROFILE)...
+11:44:06 1  SpyTree: Success
+11:44:06 1  SpyTree: Checking if files were copied to C:\ProgramData (CommonAppDataFolder)...
+11:44:06 1  SpyTree: Checking if files were copied to C:\Program Files\Common Files (CommonFilesFolder)...
+11:44:06 1  SpyTree: Checking if files were copied to C:\Program Files (ProgramFilesFolder)...
+11:44:06 1  SpyTree: Success
+11:44:06 1  SpyTree: Checking if files were copied to C:\ (WindowsVolume)...
+11:44:06 1  SpyTree: Success
+11:44:06 2  SpyTree: -->>Variable analysis complete.
+
+11:44:06 1  SpyTree: Setting standard destinations for files to copy
+11:44:06 1  SpyTree: Reference table used for replacements: 
+11:44:06 1  SpyTree:  %_PC_TOOL%	:  D:\MEDIA\PC_TOOL
+11:44:06 1  SpyTree:  %SystemFolder%	:  C:\Windows\system32
+11:44:06 1  SpyTree:  %SystemFolder%	:  C:\Windows\system32
+11:44:06 1  SpyTree:  %System16Folder%	:  C:\Windows\System
+11:44:06 1  SpyTree:  %System16Folder%	:  C:\Windows\System
+11:44:06 1  SpyTree:  %FontsFolder%	:  C:\Windows\Fonts
+11:44:06 1  SpyTree:  %FontsFolder%	:  C:\Windows\Fonts
+11:44:06 1  SpyTree:  %WindowsFolder%	:  C:\Windows
+11:44:06 1  SpyTree:  %WindowsFolder%	:  C:\Windows
+11:44:06 1  SpyTree:  %MyPicturesFolder%	:  C:\Users\adminacct\Pictures
+11:44:06 1  SpyTree:  %MyPicturesFolder%	:  C:\Users\adminacct\Pictures
+11:44:06 1  SpyTree:  %FavoritesFolder%	:  C:\Users\adminacct\Favorites
+11:44:06 1  SpyTree:  %FavoritesFolder%	:  C:\Users\adminacct\Favorites
+11:44:06 1  SpyTree:  %PersonalFolder%	:  C:\Users\adminacct\Documents
+11:44:06 1  SpyTree:  %PersonalFolder%	:  C:\Users\adminacct\Documents
+11:44:06 1  SpyTree:  %DesktopFolder%	:  C:\Users\adminacct\Desktop
+11:44:06 1  SpyTree:  %DesktopFolder%	:  C:\Users\adminacct\Desktop
+11:44:06 1  SpyTree:  %TemplateFolder%	:  C:\Users\adminacct\AppData\Roaming\Microsoft\Windows\Templates
+11:44:06 1  SpyTree:  %TemplateFolder%	:  C:\Users\adminacct\AppData\Roaming\Microsoft\Windows\Templates
+11:44:06 1  SpyTree:  %StartupFolder%	:  C:\Users\adminacct\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup
+11:44:06 1  SpyTree:  %StartupFolder%	:  C:\Users\adminacct\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup
+11:44:06 1  SpyTree:  %AdminToolsFolder%	:  C:\Users\adminacct\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Administrative Tools
+11:44:06 1  SpyTree:  %AdminToolsFolder%	:  C:\Users\adminacct\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Administrative Tools
+11:44:06 1  SpyTree:  %ProgramMenuFolder%	:  C:\Users\adminacct\AppData\Roaming\Microsoft\Windows\Start Menu\Programs
+11:44:06 1  SpyTree:  %ProgramMenuFolder%	:  C:\Users\adminacct\AppData\Roaming\Microsoft\Windows\Start Menu\Programs
+11:44:06 1  SpyTree:  %StartMenuFolder%	:  C:\Users\adminacct\AppData\Roaming\Microsoft\Windows\Start Menu
+11:44:06 1  SpyTree:  %StartMenuFolder%	:  C:\Users\adminacct\AppData\Roaming\Microsoft\Windows\Start Menu
+11:44:06 1  SpyTree:  %SendToFolder%	:  C:\Users\adminacct\AppData\Roaming\Microsoft\Windows\SendTo
+11:44:06 1  SpyTree:  %SendToFolder%	:  C:\Users\adminacct\AppData\Roaming\Microsoft\Windows\SendTo
+11:44:06 1  SpyTree:  %NetHoodFolder%	:  C:\Users\adminacct\AppData\Roaming\Microsoft\Windows\Network Shortcuts
+11:44:06 1  SpyTree:  %NetHoodFolder%	:  C:\Users\adminacct\AppData\Roaming\Microsoft\Windows\Network Shortcuts
+11:44:06 1  SpyTree:  %AppDataFolder%	:  C:\Users\adminacct\AppData\Roaming
+11:44:06 1  SpyTree:  %AppDataFolder%	:  C:\Users\adminacct\AppData\Roaming
+11:44:06 1  SpyTree:  %TempFolder%	:  C:\Users\adminacct\AppData\Local\Temp
+11:44:06 1  SpyTree:  %TempFolder%	:  C:\Users\adminacct\AppData\Local\Temp
+11:44:06 1  SpyTree:  %LocalAppDataFolder%	:  C:\Users\adminacct\AppData\Local
+11:44:06 1  SpyTree:  %LocalAppDataFolder%	:  C:\Users\adminacct\AppData\Local
+11:44:06 1  SpyTree:  %USERPROFILE%	:  C:\Users\adminacct
+11:44:06 1  SpyTree:  %USERPROFILE%	:  C:\Users\adminacct
+11:44:06 1  SpyTree:  %_Users%	:  C:\Users
+11:44:06 1  SpyTree:  %CommonAppDataFolder%	:  C:\ProgramData
+11:44:06 1  SpyTree:  %CommonAppDataFolder%	:  C:\ProgramData
+11:44:06 1  SpyTree:  %CommonFilesFolder%	:  C:\Program Files\Common Files
+11:44:06 1  SpyTree:  %CommonFilesFolder%	:  C:\Program Files\Common Files
+11:44:06 1  SpyTree:  %ProgramFilesFolder%	:  C:\Program Files
+11:44:06 1  SpyTree:  %ProgramFilesFolder%	:  C:\Program Files
+11:44:06 1  SpyTree:  %WindowsVolume%	:  C:\
+11:44:06 1  SpyTree:  %WindowsVolume%	:  C:\
+11:44:06 1  SpyTree:  %USERDRIVE_1%	:  .\
+11:44:06 2  xniSpy32: Replacing short pathnames...
+11:44:06 2  Short path analysis for C:\PROGRA~1\DPFMSE~1\DPFM_S~1.EXE
+11:44:06 2  Replaced short reference with C:\Program Files\DPFM Service Tool\DPFM_Service_Tool.exe
+11:44:06 2  Short path analysis for C:\PROGRA~1\DPFMSE~1\DPFM_S~1.EXE
+11:44:06 2  Replaced short reference with C:\Program Files\DPFM Service Tool\DPFM_Service_Tool.exe
+
+11:44:06 2 xniSpy32: Asking AddOns for modifications of the data...
+
+11:44:06 2 xniSpy32: Creating script...
+11:44:06 1  xniSpy32: Writing copy statements...
+11:44:07 1  xniSpy32: Writing IP config file statements...
+11:44:07 1  xniSpy32: Writing registry statements ...
+11:44:07 1  xniSpy32: Saving C:\Config.Repackager\standard.nir..
+11:44:07 2  xniSpy32: Beginning serialisation of standard.nir
+11:44:07 2  xniSpy32: Serialisation Finished.
+11:44:07 1  xniSpy32: Writing ini statements ...
+11:44:07 1  xniSpy32: Writing link statements ...
+11:44:07 2  xniSpy32: Done creating script.
+
+11:44:07 1 xniSpy32: Saving C:\Config.Repackager\DUMP.nir..
+11:44:07 2 xniSpy32: Beginning serialisation of DUMP.nir
+11:44:07 2 xniSpy32: Serialisation Finished.
+11:44:07 E Warning (Module:Main, Severity:0x02): Couldn't get short pathname of Z:\Repackager\Net_Inst.nid
+The system cannot find the file specified.
+
+11:44:07 E Warning (Module:Main, Severity:0x02): Couldn't get short pathname of C:\Users\ADMINA~1\AppData\Local\Temp\TempDb.nid
+The system cannot find the file specified.
+
+11:44:07 1 xniSpy32: Writing var statements...
+11:44:07 1 xniSpy32: The following vars have been used in the script: _SystemFolder_;_ProgramFilesFolder_;_WindowsFolder_;__PC_TOOL_;_LocalAppDataFolder_
+11:44:07 2 Delete: No Files matching C:\Users\ADMINA~1\AppData\Local\Temp\*.lnk
+11:44:07 2 Delete: No Files matching C:\Users\ADMINA~1\AppData\Local\Temp\{B2DB439C-0C07-46F5-88E9-6809F88A353B}\*.__
+11:44:07 2 Saving includefile: C:\Packages\DPFM.inc
+11:44:07 2 Initializing Runtime - Manager ..
+
+11:44:07 1 --> 'DPFM  (Copy-script for new files)' - Pre execution analysis of install state... [ExecFlags: 0x000011 (asf, install, )]
+
+11:44:07 2  TUS installation analysis - [InstallStatusFlags: 0000]
+11:44:07 2   Wksta part has to be installed
+11:44:07 2   User part has to be installed
+11:44:07 2   Starting split installation of 'DPFM  (Copy-script for new files)'..
+
+11:44:07 E  Warning (Module:Main, Severity:0x02): Couldn't get short pathname of Z:\Repackager\Net_Inst.nid
+The system cannot find the file specified.
+
+
+11:44:07 2  ---->Starting installation of "DPFM  (Copy-script for new files)"
+
+11:44:07 2  -> InstallFileList('C:\PACKAGES\PROGRAMFILESFOLDER\DPFM Service Tool') ... 
+11:44:07 2   Creating dir C:\PACKAGES\PROGRAMFILESFOLDER\DPFM Service Tool
+11:44:07 2   Installing C:\Program Files\DPFM Service Tool\dpfm.cfg to C:\PACKAGES\PROGRAMFILESFOLDER\DPFM Service Tool\dpfm.cfg
+11:44:07 1    Reading corelist...
+11:44:07 1    993 Core Files registered
+11:44:07 2   Installing C:\Program Files\DPFM Service Tool\DPFM_Help.chm to C:\PACKAGES\PROGRAMFILESFOLDER\DPFM Service Tool\DPFM_Help.chm
+11:44:07 2   Installing C:\Program Files\DPFM Service Tool\DPFM_Service_Tool.exe to C:\PACKAGES\PROGRAMFILESFOLDER\DPFM Service Tool\DPFM_Service_Tool.exe
+11:44:07 2   Installing C:\Program Files\DPFM Service Tool\ST5UNST.LOG to C:\PACKAGES\PROGRAMFILESFOLDER\DPFM Service Tool\ST5UNST.LOG
+
+11:44:07 2  -> InstallFileList('C:\PACKAGES\LOCALAPPDATAFOLDER\Microsoft\Windows\WER\ReportQueue\NonCritical_SETUP.EXE_1766fc443f5ffd417c271722866bc9a5dbe03c72_cab_0af9d02e') ... 
+11:44:07 2   Creating dir C:\PACKAGES\LOCALAPPDATAFOLDER\Microsoft\Windows\WER\ReportQueue\NonCritical_SETUP.EXE_1766fc443f5ffd417c271722866bc9a5dbe03c72_cab_0af9d02e
+11:44:07 2   Installing C:\Users\adminacct\AppData\Local\Microsoft\Windows\WER\ReportQueue\NonCritical_SETUP.EXE_1766fc443f5ffd417c271722866bc9a5dbe03c72_cab_0af9d02e\appcompat.txt to C:\PACKAGES\LOCALAPPDATAFOLDER\Microsoft\Windows\WER\ReportQueue\NonCritical_SETUP.EXE_1766fc443f5ffd417c271722866bc9a5dbe03c72_cab_0af9d02e\appcompat.txt
+11:44:07 2   Installing C:\Users\adminacct\AppData\Local\Microsoft\Windows\WER\ReportQueue\NonCritical_SETUP.EXE_1766fc443f5ffd417c271722866bc9a5dbe03c72_cab_0af9d02e\Report.wer to C:\PACKAGES\LOCALAPPDATAFOLDER\Microsoft\Windows\WER\ReportQueue\NonCritical_SETUP.EXE_1766fc443f5ffd417c271722866bc9a5dbe03c72_cab_0af9d02e\Report.wer
+11:44:07 2   Installing C:\Users\adminacct\AppData\Local\Microsoft\Windows\WER\ReportQueue\NonCritical_SETUP.EXE_1766fc443f5ffd417c271722866bc9a5dbe03c72_cab_0af9d02e\TabD010.tmp to C:\PACKAGES\LOCALAPPDATAFOLDER\Microsoft\Windows\WER\ReportQueue\NonCritical_SETUP.EXE_1766fc443f5ffd417c271722866bc9a5dbe03c72_cab_0af9d02e\TabD010.tmp
+
+11:44:07 2  -> InstallFileList('C:\PACKAGES\WINDOWSFOLDER') ... 
+11:44:07 2   Creating dir C:\PACKAGES\WINDOWSFOLDER
+11:44:07 2   Installing C:\Windows\Repack_adminacct.LOG to C:\PACKAGES\WINDOWSFOLDER\Repack_adminacct.LOG

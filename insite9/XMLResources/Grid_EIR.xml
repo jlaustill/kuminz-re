@@ -1,0 +1,81 @@
+<!-- This is a sample  -->
+<FlexGrid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+
+	<Properties Cols="3:VT_I4" FixedCols="0:VT_I4" ExplorerBar="0:VT_I4" GridLines="1:VT_I4" OutlineBar="5:VT_I4"
+	AllowUserResizing="1:VT_UI4" AutoResize="1:VT_I4" Editable="0:VT_I4"/>
+	<!-- Add properties to the "FlexGrid" element as attribute in Name=Value format -->
+	<FixedRows>
+		<FixedRow >
+			<Column name="RES:Res2:2" />
+			<Column name="RES:Res2:3" />
+			<Column name="RES:Res2:4" />
+		</FixedRow>
+	</FixedRows>
+
+	<data loopEnd="1">
+		<!-- If EIR is not enabled, print "Feature Not Supported" -->
+	 <Node level="0" loopStart="OBJ:DOM:selectSingleNode(EIR_Enable):getAttribute(V)" loopEnd="1" styleid="s1" >
+		<Column order="0" datasource="RES:Res2:218" styleid="s1"/>
+	 </Node>
+		<Node level = "0" loopStart="0" loopEnd="OBJ:DOM:selectSingleNode(EIR_Enable):getAttribute(V)" styleid="s1">
+			  <Object name="EIR" source ="OBJ:DOM:selectSingleNode(EIR_PercentUsed)" /> 
+			  <Column order = "0" datasource ="OBJ:EIR:getAttribute(N)" />
+			  <Column order = "1" datasource ="OBJ:EIR:getAttribute(DV)" />
+			  <Column order = "2" datasource ="OBJ:EIR:getAttribute(U)" />
+		</Node>
+	</data>
+
+	<parameters>
+	 <parameter name="EIR_PercentUsed" source="/Image/Parameters/P[@ID=15563]"/>
+	 <parameter name="EIR_Enable" source="/Image/Parameters/P[@ID=16788756]"/>
+	 </parameters>
+
+	<icons>
+	</icons>
+	
+	<combolists>
+	</combolists>
+	
+	<styles>
+		<style id="s1" CellFontBold="1:VT_I4" CellAlignMent="0:VT_I4" />
+		<style id="s2"  CellAlignMent="0:VT_I4"/>
+	</styles>
+	
+	<resources>
+		<resource id="Res1" CLSID="{205E3C89-9846-4bfd-940F-0A9234681407}" />
+		<resource id="Res2"  CLSID="{1C628621-473B-4EA4-9DC6-7ED92C57DD9E}\Pages\{205E3C89-9846-4bfd-940F-0A9234681407}" />
+	</resources>
+	
+	<printing HdrFontSize="8" >
+		<header>
+		<line>
+			<center source="RES:Res2:219" />
+		  </line>
+		  <line>
+		  <left source="RES:Res2:164"/>
+		  <left source="OBJ:DOM:selectSingleNode(/Image/Header/ESerial):getAttribute(DisplayValue)"/>
+		  <right source="INSITE - "/>
+		  <right source="OBJ:DOM:selectSingleNode(/Image):getAttribute(ImageVersion)"/>
+		  </line>
+		  <line>
+			<left source="RES:Res2:163"/>
+			<left source="OBJ:DOM:selectSingleNode(/Image/Header/UNumber):getAttribute(DisplayValue)"/>
+			<right source="RES:Res2:162"/>
+			<right source="OBJ:DOM:selectSingleNode(/Image/Header/VMake):getAttribute(DisplayValue)"/>
+		  </line>
+		  <line>
+			<left source="RES:Res2:165"/>
+			<left source="OBJ:DOM:selectSingleNode(/Image/Header/WOName):getAttribute(DisplayValue)"/>
+			<right source="RES:Res2:166"/>
+			<right source="OBJ:DOM:selectSingleNode(/Image/Header/IName):getAttribute(DisplayValue)"/>
+		  </line>
+		  <line>
+			<right source="RES:Res2:161"/>
+			<right source="OBJ:DOM:selectSingleNode(/Image/Header/CustomerName):getAttribute(DisplayValue)"/>
+    	</line>
+		</header>
+		
+	</printing>
+
+</FlexGrid>

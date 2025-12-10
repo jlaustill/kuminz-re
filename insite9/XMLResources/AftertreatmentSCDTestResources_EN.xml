@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE module SYSTEM "../htmlentities.dtd">
+<!--Changes to INSITE Ver 7.6, 04/13/2012
+    DB_G00174941 : Modified string ID 43000 -->
+<XML_RESOURCE>
+  <RESOURCE Tag="1001" Type="String Table" Description="Message String Table">
+    <STRING ID="1" Context="Title">Aftertreatment SCR Catalyst Desulphurization</STRING>
+    <STRING ID="2" Context="Subtitle">The Aftertreatment SCR Catalyst Desulphurization is designed to remove an excess buildup of sulphur on the catalyst. The process will raise the engine speed for a defined period. The length of a stationary (parked) desulphurization will take approximately 2 hours to complete, and the vehicle must be attended during this period.</STRING>
+    <STRING ID="3" Context="Instructions"> Initial Conditions
+      1.     Engine Running at Idle
+      2.     Vehicle Stopped
+      3.     Transmission in 'Park' or 'Neutral'
+      4.     PTO Not Active
+      5.     Parking brake set
+      Steps
+      1.     Select Start Button
+      Additional Information
+      1.     The engine will remain at idle until the warm-up is completed. The engine speed will gradually increase until it reaches the required elevated engine speed for the desulphurization process. At the end of this elevated engine speed period, the engine speed will decrease to idle for the cooling phase to complete the desulphurization
+      2.     The process will stop and the engine speed will return to normal when the desulphurization has been completed
+      3.     If required, press the Stop button to end the process early
+      4.     The desulphurization process will stop if:
+      a.     A fault becomes active
+      b.     The accelerator is depressed
+      c.     The clutch is depressed
+      d.     The brake is depressed
+      e.     The transmission is put into gear
+      f.     The PTO becomes active
+      g.     A datalink device causes the desulphurization to stop
+      5.     During the elevated engine speed period, the fuel injection sequencing is adjusted and it will be noted that the engine running tone will change. This is normal during the desulphurization process
+      6.     Once the process runs to completion, a key cycle is necessary for the process to be run again.
+      7.     The desulphurization process will stop if any of the following conditions are met:
+      a.     INSITE is disconnected using the 'Disconnect from ECM button'
+      b.     INSITE is closed while connected to the ECM
+      c.     The 'ECM Diagnostic Tests' page is closed while INSITE is  connected to the ECM and the process is running
+      8.     The desulphurization process will continue to run if INSITE is physically disconnected from the ECM without closing INSITE.  To disconnect, complete the following steps:
+      a.     Halt any Data Monitor Logging sessions within INSITE
+      b.     Remove the USB or serial cable from the PC. NOTE: In doing this, an error dialog will appear in the INSITE tool stating a loss of communication.  This is expected behavior
+      c.     If using a Cummins INLINE 5 adapter, the INLINE 5 will need to be reset before reconnecting INSITE to the ECM.
+      To perfom a reset, unplug the adapter from power, wait a short period of time and then reattach the adapter to power.  If this is not completed, there is a possibility INSITE will not reconnect with the ECM until the power cycle is completed.  DO NOT KEY CYCLE THE VEHICLE WHILE THE DESULPHURIZATION PROCESS IS RUNNING</STRING>
+    <STRING ID="4" Context="Not Supported">The process is not supported by the current calibration.</STRING>
+    <STRING ID="5" Context="Status Header">Status</STRING>
+    <STRING ID="6" Context="Stopped">The process is stopped.</STRING>
+    <STRING ID="7" Context="Active faults">The ECM has detected a Fault condition. Check for active faults.</STRING>
+    <STRING ID="8" Context="ECM Prohibited">The ECM has detected a condition in which the process could not run.</STRING>
+    <STRING ID="9" Context="Monitors header">Monitors</STRING>
+    <STRING ID="10" Context="Instructions header">Instructions:</STRING>
+    <STRING ID="11" Context="show label">Show</STRING>
+  	<STRING ID="12" Context="PopUpMessageBoxHeader">Cummins-INSITE</STRING>    
+    <STRING ID="13" Context="Rerun After Test Complete">The catalyst desulphurization is complete. To rerun the process, key cycle the vehicle.</STRING>
+	  <STRING ID="14" Context="PopUpMessage">DURING THE AFTERTREATMENT SCR CATALYST DESULPHURIZATION, EXHAUST GAS TEMPERATURE COULD REACH 800 C (1472 F), AND EXHAUST SYSTEM SURFACE TEMPERATURE COULD EXCEED 700 C (1292 F). 
+     
+Expected engine speed may reach between 2380 to 2450 RPM. Please read carefully and follow these instructions to avoid the risk of fire, property damage,burns or other serious personal injury.
+	
+To perform the Aftertreatment SCR Catalyst Desulphurization the following conditions must be met:
+1. Ensure there is nothing that can burn, melt, or explode within 5 feet of the vehicle.
+2. Ensure there is nothing within 2 feet of the exhaust outlet.
+3. Set up a safe exhaust area (If bystanders might enter the area, set up barriers to keep people at least 5 feet from the exhaust outlet during the desulpurization).
+4. Park the vehicle in a location where the exhaust area can be observed during the process.
+5. Set the parking brake.
+6. Place transmission in 'Park' if provided, otherwise in 'Neutral'.
+7. Set wheel chocks at front and rear of at least one tire.
+8. If the desulphurization is going to be run indoors,ensure an exhaust discharge pipe rated for at least 800 C (1472 F) is attached.
+9. Have a fire extinguisher nearby.
+10. ALL PTO powered devices must be disconnected before starting the desulphurization.
+
+Ensure that the vehicle and surrounding area are monitored during the entire process. IF ANY UNSAFE CONDITION OCCURS, STOP THE DESULPHURIZATION IMMEDIATELY.
+
+The exhaust gas and exhaust surface temperatures will remain elevated for an extended period of time after the process is complete.
+
+Have all conditions noted above been met? (Select `Yes' to continue, select `No' and then 'Back' to exit)	</STRING>
+    <STRING ID="15" Context="WarningMessage">CAUTION:Allow the aftertreatment and exhaust systems to cool down.</STRING>
+    <STRING ID="16" Context="AfterStopWarningMessage">CAUTION:The aftertreatment and exhaust systems will be hot if the process was running. Please allow time for these systems to cool off.</STRING>
+    <STRING ID="20" Context="active faults">Test stopped. There are one or more active faults in the ECM. Troubleshoot the fault code before restarting the test.</STRING>
+    <STRING ID="21" Context="engine speed">The test has been stopped due to engine speed detected.  The system will  now purge. Key off will be required to reset the test.</STRING>
+    <STRING ID="22" Context="messagebox title">Cummins INSITE</STRING>
+    <STRING ID="23" Context="counter">Aftertreatment SCR Intake Temperature</STRING>
+    <STRING ID="24" Context="state">Active</STRING>
+    <STRING ID="25" Context="state">Inactive</STRING>
+    <STRING ID="26" Context="state">Active Fault</STRING>
+    <STRING ID="27" Context="state">System Purging</STRING>
+    <STRING ID="31" Context="state">Engine Running</STRING>
+    <STRING ID="32" Context="state">ECM Prohibited</STRING>
+    <STRING ID="43" Context="invalidState">The ECM detects a condition in which the desulphurization process cannot be run.</STRING>
+    <STRING ID="47" Context="disconnect">You are attempting to close a window containing an active ECM Test.  Use the Stop button if available or wait until the test has stopped.</STRING>
+    <STRING ID="48" Context="Governer">The process could not run due to the current engine operating state value. Determine the engine state,correct any issues, and restart the desulphurization process.</STRING>
+    <STRING ID="50" Context="state">Aftertreatment SCR Outlet Temperature</STRING>
+    <STRING ID="51" Context="state">The process is running.</STRING>
+    <STRING ID="52" Context="Parking Brake Not Set - Msg 1951">The process could not run because the parking brake is not engaged. Set the parking brake and restart the desulphurization process.</STRING>
+    <STRING ID="53" Context="Throttle Position - 1952">The process could not run because the accelerator pedal or lever is depressed. Ensure the accelerator pedal or lever is released and restart the desulphurization process.</STRING>
+    <STRING ID="54" Context="Transmission  in Gear - 1953">The process could not run because the transmission is in gear. Place the transmission in park or neutral and restart the desulphurization process.</STRING>
+    <STRING ID="55" Context="PTO Active - 1954">The process could not run because the Power Take Off (PTO) or Remote PTO is engaged. Disengage the PTO or Remote PTO and restart the desulphurization process.</STRING>
+    <STRING ID="56" Context="Parking Brake Not Set - Msg 2001">The process was stopped because the parking brake was released. Set the parking brake before attempting to restart the desulphurization process.</STRING>
+    <STRING ID="57" Context="Throttle Position - Msg 1981">The process has been stopped because the accelerator pedal or throttle was depressed. Ensure the accelerator pedal or throttle is released before attempting to restart the desulphurization process.</STRING>
+    <STRING ID="58" Context="Transmission  in Gear - Msg 2002">The process was stopped because the transmission was put into gear. Place the transmission into park or neutral before attempting to restart the desulphurization process.</STRING>
+    <STRING ID="59" Context="PTO Active - Msg 2003">The process was stopped because the Power Take Off (PTO) or Remote PTO was engaged. Disengage the PTO or Remote PTO before attempting to restart the desulphurization process.</STRING>
+    <STRING ID="60" Context="Active - Msg 2041">The Aftertreatment SCR Catalyst Desulphurization is already running. If you wish to stop the test, please cycle the key switch (turn off and wait 30 seconds before turning back on).</STRING>
+    <STRING ID="61" Context="OEM Pressure or Temperature Out of RAnge">The process could not run because an OEM pressure or OEM temperature is out of range. Check the OEMsensor values and ensure they are in normal operating range and restart the desulphurization process.</STRING>
+    <STRING ID="62" Context="Vehicle Moving">The process could not run because the vehicle is moving or a vehicle speed sensor fault code is active. Stop thevehicle, verify no vehicle speed sensor fault codes areactive, and restart the desulphurization process.</STRING>
+    <STRING ID="63" Context="Stop Command">The process could not run because a command on thedatalink is preventing it. Troubleshoot any active faultcodes, and restart the desulphurization process.</STRING>
+    <STRING ID="64" Context="Active Engine Protection Derate">The process could not run because an engine protection derate is active. Troubleshoot any active engine protection fault codes and restart the desulphurization process.</STRING>
+    <STRING ID="65" Context="Low Engine Coolant Temp">The process could not run because the engine coolant temperature is too low. Continue to run the engine to raise the coolant temperature and restart the desulphurization process.</STRING>
+    <STRING ID="66" Context="EGR or Turbocharger Issue">The process could not run because of an EGR or turbocharger issue. Troubleshoot any active EGR or turbocharger fault codes and restart the desulphurization process</STRING>
+    <STRING ID="67" Context="Clutch or Service Brake Depressed">The process could not run because the clutch or service brake is depressed. Release the clutch or service brake and restart the desulphurization process.</STRING>
+    <STRING ID="68" Context="Stopped-OEM Pressure or Temp out of range">The process was stopped because an OEM pressure or OEM temperature is out of range. Check the OEM  sensor values and ensure they are in normal operating range before attempting to restart the desulphurization process.</STRING>
+    <STRING ID="69" Context="Stopped-Vehicle Moving">The process was stopped because the vehicle was moving, or a Vehicle Speed Sensor fault code became active. Stop the vehicle and verify no Vehicle Speed Sensor fault codes are active before attempting to restart the desulphurization process.</STRING>
+    <STRING ID="70" Context="Stopped-">The process was stopped by a command on the datalink. Troubleshoot any active fault codes before attempting to restart the desulphurization process.</STRING>
+    <STRING ID="71" Context="Stopped-Incorrect Engine State">The process was stopped due to an incorrect engine state. Determine the engine state and correct any issues before attempting to restart the desulphurization process.</STRING>
+    <STRING ID="72" Context="Stopped-Active Engine Protection Derate">The process was stopped because an engine protection derate became active. Troubleshoot any active engine protection fault codes before attempting to restart the desulphurization process.</STRING>
+    <STRING ID="73" Context="Stopped-EGR or Turbocharger Issue">The process was stopped due to an EGR or turbocharger issue. Troubleshoot any active EGR or turbocharger fault codes before attempting to restart the desulphurization process.</STRING>
+    <STRING ID="74" Context="Stopped-Clutch or Service Brakes depressed">The process was stopped because the clutch or service brake was depressed. Release the clutch or service brake before attempting to restart the desulphurization process.</STRING>
+    <STRING ID="75" Context="Stopped-Low Engine Temp">The process was stopped due to low engine temperature. Check the coolant system, and bring engine up to temperature before attempting to restart the desulphurization process.</STRING>
+   
+    <STRING ID="43000" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;43000&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE cannot read the ECM parameters when connected to the ECM. Please contact technical support.&lt;/Description&gt;&lt;Suggestion&gt;Check if the parameter(s) is supported in the calibration.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+    <STRING ID="43001" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;43000&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program. Please contact technical support.&lt;/Description&gt;&lt;Suggestion&gt;Check if the parameter(s) is supported in the calibration.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+    <STRING ID="43002" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;43000&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program. Please contact technical support.&lt;/Description&gt;&lt;Suggestion&gt;Check if the parameter(s) is supported in the calibration.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+  </RESOURCE>
+</XML_RESOURCE>

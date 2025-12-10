@@ -1,0 +1,15 @@
+[Files]
+INC=DPFM.inc
+ConversionOptions=Options.ini
+MSI=C:\Media\Packages\MSI_Package\DPFM.msi
+[Configuration]
+Type=2
+File=C:\Media\Excludes\Cummins_Template_Excludes_32Bit.ini
+[File-Excludes]
+%LocalAppDataFolder%=*
+%WindowsFolder%=*
+[Registry-Excludes]
+HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Media Player NSS=*
+HKEY_LOCAL_MACHINE\SYSTEM=*
+[Registry-Includes]
+HKEY_LOCAL_MACHINE\SOFTWARE\Classes=*

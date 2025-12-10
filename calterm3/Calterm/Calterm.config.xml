@@ -1,0 +1,350 @@
+<?xml version="1.0" standalone="yes"?>
+<configuration>
+  <AppProducts>
+    <Product>
+      <ProductId>ABC</ProductId>
+      <LastCalFile />
+      <LastSubfile />
+      <LastSubfileConfiguration />
+      <LastConfigurationFile />
+      <LastEditExportFile />
+      <LastEditExportConfigFile />
+      <LastCalibrationDownloadFile />
+      <LastScreenFile />
+      <LastScreenFileModule />
+      <LastScreenFileCalFile />
+      <LastScreenFileSubFile />
+      <LastScreenFileExport />
+      <LastVisitedDirectory />
+      <LastCompareFirstSourceType />
+      <LastCompareSecondSourceType />
+      <LastCompareFirstSourceConfigFile />
+      <LastCompareFirstSourceDataFile />
+      <LastCompareSecondSourceConfigFile />
+      <LastCompareSecondSourceCalFile />
+      <LastDocumentConfigFile />
+      <LastDocumentSourceFile />
+      <LastExportConfigFile />
+      <LastExportSourceFile />
+      <LastDivideConfigFile />
+      <LastDivideSourceFile />
+      <LastDownloadModule />
+      <LastDownloadConfigFile />
+      <LastDownloadSourceFile />
+      <LastUploadModule />
+      <LastUploadSourceFile />
+      <LastOverlayMode />
+      <LastOverlaySourceFileType />
+      <LastOverlaySaveInProductFolder />
+      <LastOverlayDestinationFilePath />
+      <LastOverlayTargetFileType />
+      <LastOverlayDestinationFileOption />
+      <LastFilterFile />
+      <LastCalEditFilterEnabled />
+      <LastEditorQuickSearchText />
+      <DownloadSaveAndRestore>true</DownloadSaveAndRestore>
+      <LastEditTuningFile />
+      <LastEditTuningConfigFile />
+      <LastScreenFileTuning />
+      <LastDivideConfigDirectory />
+      <LastDivideCalDirectory />
+    </Product>
+    <Product>
+      <ProductId>ENC</ProductId>
+      <LastConfigurationFile>C:\Users\jlaus\Documents\Cummins ECFG + E2M Files\Cummins ECFG + E2M Files\E2M\CM550 VP44\74c0 - Copy.e2m</LastConfigurationFile>
+      <LastUsedDatalinkSetting>0</LastUsedDatalinkSetting>
+      <LastScreenFileModule>c:\Software\Calterm\ENC\Screen_000.scr.xml</LastScreenFileModule>
+      <LastDocumentConfigFile />
+      <LastDocumentSourceFile />
+      <LastFilterFile />
+    </Product>
+  </AppProducts>
+  <appSettings>
+    <add key="EnableWindowsFormsHighDpiAutoResizing" value="true" />
+    <add key="SpeedUploadReport" value="" />
+    <add key="SpeedDownloadReport" value="" />
+    <add key="SpeedServerDownloadPath" value="" />
+    <add key="SpeedServerUploadPath" value="" />
+    <add key="SpeedReportFormat" value="" />
+    <add key="ExpireDate" value="" />
+    <add key="RP1210VendorName" value="" />
+    <add key="RP1210Option" value="" />
+    <add key="RP1210DllName" value="" />
+    <add key="RP1210DeviceID" value="" />
+    <add key="adapter.Text" value="RP1210a" />
+    <add key="canSpeed.Text" value="250 kbps" />
+    <add key="port.Text" value="COM1" />
+    <add key="protocol.Text" value="J1939" />
+    <add key="blockTransfer.Checked" value="True" />
+    <add key="j1939DeviceAddr.Value" value="0" />
+    <add key="j1939ToolAddr.Value" value="F9" />
+    <add key="autoStart.Checked" value="True" />
+    <add key="autoProductSelection.Checked" value="False" />
+    <add key="autoUnlockSelection.Checked" value="False" />
+    <add key="autoModuleSelection.Checked" value="True" />
+    <add key="autoCalibrationEditor.Checked" value="False" />
+    <add key="autoSubfileEditor.Checked" value="False" />
+    <add key="autoExportFileEditor.Checked" value="False" />
+    <add key="autoModuleMonitor.Checked" value="True" />
+    <add key="autoModuleEditor.Checked" value="False" />
+    <add key="autoLogging.Checked" value="False" />
+    <add key="autoRestoreProduct.Checked" value="False" />
+    <add key="autoStopBroadcast.Checked" value="False" />
+    <add key="disableAlerts.Checked" value="False" />
+    <add key="displayFaults.Checked" value="True" />
+    <add key="displayFaultCount.Checked" value="True" />
+    <add key="displayFaultStatus.Checked" value="True" />
+    <add key="displayFaultDescription.Checked" value="True" />
+    <add key="displayFaultSourceAddr.Checked" value="True" />
+    <add key="faultsMonitorRate" value="30" />
+    <add key="displayProdInfo.Checked" value="True" />
+    <add key="displayRunLoc.Checked" value="True" />
+    <add key="LastProduct" value="ENC" />
+    <add key="LogDisplay" value="False" />
+    <add key="LogPrefixRR" value="log" />
+    <add key="LogPrefixBAM" value="log" />
+    <add key="LogPrefixIDL" value="log" />
+    <add key="LogFormat" value="CSV" />
+    <add key="LogActiveFaults" value="False" />
+    <add key="LogPCTime" value="False" />
+    <add key="LogDLASecondsTime" value="False" />
+    <add key="MonitorLogAutoNumbering" value="True" />
+    <add key="DisplaySaveFileDialog" value="True" />
+    <add key="LogRate" value="1" />
+    <add key="RecordingMode" value="1" />
+    <add key="LogRateUnit" value="ms" />
+    <add key="TraceDebugFileName" value="TraceDebug.txt" />
+    <add key="TraceDebugLevel" value="LowLevel" />
+    <add key="TraceDebugCategory" value="ECMControl" />
+    <add key="TraceDebugEnable" value="False" />
+    <add key="MRU1" value="" />
+    <add key="MRU1Product" value="ENC" />
+    <add key="MRU2" value="" />
+    <add key="MRU2Product" value="ENC" />
+    <add key="MRU3" value="" />
+    <add key="MRU3Product" value="ENC" />
+    <add key="MRU4" value="" />
+    <add key="MRU4Product" value="ENC" />
+    <add key="MRU5" value="" />
+    <add key="MRU5Product" value="" />
+    <add key="CollectionTime" value="10000" />
+    <add key="AutoReconnect" value="True" />
+    <add key="QueryRunLocation" value="True" />
+    <add key="autoRequestChangeLock.Checked" value="True" />
+    <add key="monitorModeRequestReceive.Checked" value="True" />
+    <add key="monitorModeBam.Checked" value="False" />
+    <add key="monitorModeIdl.Checked" value="False" />
+    <add key="monitorShowComments.Checked" value="False" />
+    <add key="idlTriggerSource" value="ForeGroundActivated" />
+    <add key="idlTriggerPeriod" value="20" />
+    <add key="idlOnKeyOn" value="False" />
+    <add key="idlStopMode" value="Stop" />
+    <add key="idlUseCurrentScreen" value="True" />
+    <add key="idlParameterScreenFile" value="" />
+    <add key="idlRetrievalAtMaxRate" value="True" />
+    <add key="idlRetrievalRate" value="1" />
+    <add key="idlAutoRetrieveBuffer" value="False" />
+    <add key="idlAutoConfigure" value="False" />
+    <add key="idlStopIDLOnMonitorStart" value="False" />
+    <add key="dataRefreshRate" value="20" />
+    <add key="bamRefreshRate" value="25" />
+    <add key="dataRefreshRateUnits" value="ms" />
+    <add key="screenRefreshRate" value="200" />
+    <add key="screenRefreshRateUnits" value="ms" />
+    <add key="bamTriggerMode" value="Clock" />
+    <add key="Overlay.VerboseReportingEnabled" value="false" />
+    <add key="Overlay.RangeLimit" value="Clip" />
+    <add key="Overlay.ReportPrefix" value="overlay" />
+    <add key="Overlay.ReportFormat" value="HTML" />
+    <add key="Overlay.ShowMissingParameters" value="True" />
+    <add key="Overlay.EnableOverwrite" value="false" />
+    <add key="Overlay.ScaledValuesEnabled" value="True" />
+    <add key="Overlay.UseSourceFileNames" value="false" />
+    <add key="GeneralReportFormat" value="HTML" />
+    <add key="VerifyReportFormat" value="HTML" />
+    <add key="VerifyReportPrefix" value="verify" />
+    <add key="VerifyReportDisplay" value="True" />
+    <add key="version.Text" value="5.16.0.417" />
+    <add key="RangeLimit" value="Ignore" />
+    <add key="MultiModuleFaultMonitor" value="False" />
+    <add key="ParameterFilter.Text" value="Show all parameters" />
+    <add key="SearchComments.Checked" value="True" />
+    <add key="Show.SCOption" value="True" />
+    <add key="Show.DOOption" value="True" />
+    <add key="Show.PPOption" value="True" />
+    <add key="Show.APOption" value="True" />
+    <add key="Show.PIOption" value="True" />
+    <add key="Show.PJOption" value="True" />
+    <add key="Show.PWOption" value="True" />
+    <add key="Show.FROption" value="True" />
+    <add key="Show.FCOption" value="True" />
+    <add key="Show.EIOption" value="True" />
+    <add key="Show.ESOption" value="True" />
+    <add key="Show.FQOption" value="True" />
+    <add key="Show.With_NoOption" value="True" />
+    <add key="Show.FQSubFileOption" value="True" />
+    <add key="WorkingMode" value="EditECM" />
+    <add key="AutoLoadScreenFile" value="True" />
+    <add key="CheckArrayAscendingOrder" value="False" />
+    <add key="ConnectionTimeoutEnabled" value="False" />
+    <add key="ConnectionTimeoutMinimum" value="5000" />
+    <add key="ConnectionTimeoutFactor" value="3" />
+    <add key="edmRefreshRate" value="20" />
+    <add key="UnlockSecurityMessageCheck" value="False" />
+    <add key="DetectionTimeOut" value="375" />
+    <add key="AppendCheckBoxState" value="False" />
+    <add key="MaxPendingRequests.Value" value="8" />
+    <add key="ComplexScreenRequestReceiveRefreshRate" value="1000" />
+    <add key="ComplexScreenRequestReceiveRefreshRateUnits" value="ms" />
+    <add key="CreateMiniLogFile" value="False" />
+    <add key="InsertEventNumber" value="False" />
+    <add key="ActivityLogEnable" value="True" />
+    <add key="MaxActivityLogFileSize" value="1000000" />
+    <add key="GreyOutUnchangedData" value="True" />
+    <add key="ExportParamsOnStartup" value="False" />
+    <add key="AppendTimestampToOutputExport" value="False" />
+    <add key="InputFilterFilename" value="" />
+    <add key="OutputExportFilename" value="" />
+    <add key="AutoPluginChecked" value="False" />
+    <add key="AutoPluginFile" value="" />
+    <add key="ProtocolType" value="Cummins Proprietary (CLIP/CPP)" />
+    <add key="IPAddress" value="" />
+    <add key="PortNumber" value="" />
+    <add key="CumminsECMChecked" value="true" />
+    <add key="SmartDeviceType" value="BOSCH" />
+    <add key="OverridePublicCBFFileChecked" value="False" />
+    <add key="OverridePublicCBFFilePath" value="" />
+    <add key="OverrideUdsCBFFileChecked" value="False" />
+    <add key="OverrideUdsCBFFilePath" value="" />
+    <add key="ReflashTraceEnable" value="True" />
+    <add key="ReflashSaveAndRestore" value="True" />
+    <add key="IgnoreBootLoaderVersion" value="True" />
+    <add key="ReflashCalFileMRU" value="" />
+    <add key="ICDServerPath" value="" />
+    <add key="ICDServerDefaultPathChecked" value="true" />
+    <add key="C2STServerDefaultPathChecked" value="true" />
+    <add key="IntegrityServerDefaultPathChecked" value="true" />
+    <add key="PerformSnRChecked" value="true" />
+    <add key="ProjectName" value=" /ICDDocShare/project.pj " />
+    <add key="IntegrityLink" value="https://integrity.cummins.com:7002/si/viewrevision?projectName=" />
+    <add key="AllowTuningSubmitOnEvidenceUploadFailure" value="True" />
+    <add key="C2STServerPath" value="https://c2st-ws-stg.cummins.com/C2ST-WebServices/C2ST-CaltermServices/" />
+    <add key="ReceiveEmailNotificationInterval" value="7" />
+    <add key="SyncUpManualFlag" value="true" />
+    <add key="SyncUpAutoFlag" value="false" />
+    <add key="SyncIntervalWheneverNetworkAvailable" value="false" />
+    <add key="SyncIntervalEveryHour" value="false" />
+    <add key="SyncIntervalEveryDay" value="false" />
+    <add key="SyncIntervalEveryWeek" value="true" />
+    <add key="SyncIntervalTime" value="11:00" />
+    <add key="SyncIntervalDayOfWeek" value="Monday" />
+    <add key="EnableExpirationReminder" value="true" />
+    <add key="ModifyBlankUnits" value="true" />
+    <add key="AssembleVerifyAfterDivide" value="false" />
+    <add key="RemoteCommunicationProtocol" value="ASAM3" />
+    <add key="RemoteXCPConfigFile" value="" />
+    <add key="IncalHistoryFile" value="IncalHistory.csv" />
+    <add key="ErrorForRepeatingValues" value="false" />
+    <add key="PublicCBFFile" value="j1939.cbf" />
+    <add key="DisplayVersion.Text" value="Puffin v5.16.0.417" />
+    <add key="EnableConsoleLogging" value="False" />
+    <add key="LogFileNameIn24hrTimeFormat" value="false" />
+    <add key="LogFilePath" value="" />
+    <add key="LogFlushFrequency" value="60" />
+    <add key="MaxLogFileSize" value="1024" />
+    <add key="LogFileCreationChoice" value="Single" />
+    <add key="PromptForOverwrite" value="True" />
+    <add key="deleteOldestOnMediaFull" value="True" />
+    <add key="LogFileName" value="" />
+    <add key="EnableUCL_Log" value="False" />
+    <add key="UCLPreTriggerTime" value="30" />
+    <add key="UCLPostTriggerTime" value="30" />
+    <add key="AppendCustomHeadersAfterImport" value="False" />
+    <add key="LogNumericValue" value="false" />
+    <add key="PreTrigger" value="5" />
+    <add key="PostTrigger" value="60" />
+    <add key="AutosaveEventLogPath" value="c:\Software\Calterm\EventLog\eventlog_20250814_2103.log" />
+    <add key="DTCStatusBitMask" value="255" />
+    <add key="EnableFaultMonitoring" value="True" />
+    <add key="ReadDTCFaults" value="True" />
+    <add key="FaultSorting" value="Ascending" />
+    <add key="AutosaveConsoleLogPath" value="c:\Software\Calterm\Console\consoleLog_20250814_2103.log" />
+    <add key="viewAllMessages.Checked" value="False" />
+    <add key="1" value="C:\Users\jlaus\Documents\Cummins ECFG + E2M Files\Cummins ECFG + E2M Files\E2M\CM550 VP44\74c0 - Copy.e2m" />
+    <add key="2" value="C:\Users\jlaus\Documents\Cummins ECFG + E2M Files\Cummins ECFG + E2M Files\E2M\CM550 VP44\74c0.e2m" />
+    <add key="3" value="C:\Users\jlaus\Documents\Cummins ECFG + E2M Files\Cummins ECFG + E2M Files\E2M\CM550 VP44\v74t3_t.e2m" />
+    <add key="4" value="C:\Users\jlaus\Documents\Cummins ECFG + E2M Files\Cummins ECFG + E2M Files\E2M\CM550 VP44\v64t6_s.e2m" />
+    <add key="5" value="" />
+    <add key="OpenModuleAutomatic" value="True" />
+    <add key="Channel" value="1" />
+    <add key="AutoDetect" value="False" />
+    <add key="DefaultDetectDLAID" value="" />
+    <add key="LastSelectedDataLinkSettingName" value="DefaultDataLinkSetting" />
+    <add key="ShouldSaveConnectionInfoOnCancel" value="False" />
+    <add key="autoStartASAM3Server.Checked" value="False" />
+    <add key="ReconnectUsingSpecifiedConfig" value="True" />
+    <add key="AutosaveEventLog" value="False" />
+    <add key="UdsCBFFile" value="udsDTCnSnapshot.cbf" />
+    <add key="DTCDEVICEADDRESS" value="00" />
+    <add key="DTCECMCANID" value="100" />
+    <add key="DTCTOOLCANID" value="F1" />
+    <add key="configureRACMNoPad" value="True" />
+    <add key="ignoreRetarders.Checked" value="False" />
+    <add key="ConnectionConfigFileMRU1" value="C:\Users\jlaus\Documents\Cummins ECFG + E2M Files\Cummins ECFG + E2M Files\E2M\CM550 VP44\74c0 - Copy.e2m" />
+    <add key="ConnectionConfigFileMRU2" value="C:\Users\jlaus\Documents\Cummins ECFG + E2M Files\Cummins ECFG + E2M Files\E2M\CM550 VP44\74c0.e2m" />
+    <add key="ConnectionConfigFileMRU3" value="C:\Users\jlaus\Documents\Cummins ECFG + E2M Files\Cummins ECFG + E2M Files\E2M\CM550 VP44\v64t6_s.e2m" />
+    <add key="ConnectionConfigFileMRU4" value="C:\Users\jlaus\Documents\Cummins ECFG + E2M Files\Cummins ECFG + E2M Files\E2M\CM550 VP44\v74t3_t.e2m" />
+    <add key="ConnectionConfigFileMRU5" value="C:\Users\jlaus\Documents\Documents\Cummins ECFG + E2M Files\Cummins ECFG + E2M Files\E2M\CM550 VP44\74be73r1.e2m" />
+    <add key="LogTuningHistory" value="False" />
+    <add key="TuningHistoryLogFileNamePrefix" value="" />
+    <add key="TuningHistoryLogFilePath" value="" />
+    <add key="MaxTuningHistoryLogFileSize" value="1024" />
+    <add key="IsMultipleTuningHistoryLogFile" value="False" />
+    <add key="EnableConsoleOperationLogging" value="False" />
+    <add key="AutoSaveConsoleLog" value="False" />
+    <add key="ConsoleLogFileName" value="" />
+    <add key="ConsoleLogFileNamePrefix" value="" />
+    <add key="IsMultipleConsoleLogFile" value="False" />
+    <add key="ConsoleLogMaxFileSize" value="1024" />
+    <add key="KeepCBFFile" value="False" />
+    <add key="PCLTraceLogFileName" value="" />
+    <add key="SkipInhibitCompatibilityCheck" value="false" />
+    <add key="CloseAssembleWindow" value="false" />
+    <add key="SkipVerificationForUnsavedCal" value="False" />
+    <add key="ShowFileSaveDialogInAssemble" value="True" />
+    <add key="CalculateCVNInAssemble" value="False" />
+    <add key="autoHexfileEditor.Checked" value="False" />
+    <add key="DisableSaveChangesPrompt" value="False" />
+    <add key="ShowTableGraph" value="False" />
+    <add key="KeepCurserOnSameCell" value="False" />
+    <add key="TableParameterTransposed" value="False" />
+    <add key="IDLRefreshRate" value="1" />
+    <add key="EDMRefreshRateUnits" value="ms" />
+    <add key="ShowDialogwithCheckBox" value="True" />
+    <add key="DisplayAllAvailableDTCFaults" value="False" />
+    <add key="SelectedDTCStatusMaskFilter" value="No Filter" />
+    <add key="MonitorFaultStatus" value="False" />
+    <add key="SpeedSpecificProductID" value="" />
+    <add key="SPEEDServerDefaultPathChecked" value="" />
+    <add key="OpenTuningFile" value="true" />
+    <add key="ASAMServerIPAddress" value="" />
+    <add key="ASAMServerPort" value="57005" />
+    <add key="SaveCommunicationLog" value="False" />
+    <add key="ASAMSaveEventLog" value="False" />
+    <add key="ConfirmForASAMDownload" value="True" />
+    <add key="CommunicationLogPath" value="" />
+    <add key="ASAMEventLogPath" value="" />
+    <add key="CodedVariant" value="False" />
+    <add key="enumerationAsNumeric.Checked" value="True" />
+    <add key="MaxPendingRequests" value="8" />
+    <add key="JavaHomePath" value="C:\Program Files (x86)\Java\jre1.8.0_202" />
+    <add key="WorkingMode1" value="EditECM" />
+    <add key="WorkingMode2" value="EditECM" />
+    <add key="WorkingMode3" value="EditECM" />
+    <add key="WorkingMode4" value="EditECM" />
+    <add key="WorkingMode5" value="EditECM" />
+    <add key="J1939ParameterQuerySize" value="900,700" />
+    <add key="ParameterQuerySize" value="900,700" />
+    <add key="SpeedEnableSpecificProductID" value="false" />
+  </appSettings>
+</configuration>

@@ -1,0 +1,149 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<assembly xsi:schemaLocation="urn:schemas-microsoft-com:asm.v1 assembly.adaptive.xsd" manifestVersion="1.0" xmlns:asmv1="urn:schemas-microsoft-com:asm.v1" xmlns:asmv2="urn:schemas-microsoft-com:asm.v2" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns="urn:schemas-microsoft-com:asm.v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <assemblyIdentity name="Calterm.exe" version="3.1.0.25" type="win32"></assemblyIdentity>
+  <file name="Assembler.dll" asmv2:size="569344" hashalg="SHA1" hash="120ab5c255b7d2788755f05edc260adf6c995767">
+    
+    <typelib tlbid="{2d66c7b5-4803-11d7-a532-0008a1326f46}" version="1.0" helpdir="" resourceid="0" flags="HASDISKIMAGE"></typelib>
+    <comClass clsid="{f0bf7718-47ff-11d7-a532-0008a1326f46}" threadingModel="Both" tlbid="{2d66c7b5-4803-11d7-a532-0008a1326f46}" progid="Cummins.SubfileAssembler.1" description="SubfileAssembler Class"></comClass>
+    <comClass clsid="{f66d6568-672b-4cae-92d9-bdf57d9b06da}" threadingModel="Both" tlbid="{2d66c7b5-4803-11d7-a532-0008a1326f46}" progid="Cummins.CalibrationAssembler.1" description="CalibrationAssembler Class"></comClass>
+  <asmv2:hash><dsig:Transforms><dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity"></dsig:Transform></dsig:Transforms><dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"></dsig:DigestMethod><dsig:DigestValue>9GzWZRnzKfEm/yaqzY2BrfaGfKk=</dsig:DigestValue></asmv2:hash></file>
+  <file name="AuditTrail.dll" asmv2:size="241664" hashalg="SHA1" hash="529f32bb47200dabaa8fefbb2fd5165d5d9ad3d6">
+    
+    <typelib tlbid="{5c593190-bc13-11d7-b425-00096b957942}" version="1.0" helpdir="" resourceid="0" flags="HASDISKIMAGE"></typelib>
+    <comClass clsid="{5c59319d-bc13-11d7-b425-00096b957942}" threadingModel="Both" tlbid="{5c593190-bc13-11d7-b425-00096b957942}" progid="Cummins.CIAuditTrail.1" description="Cummins CIAuditTrail Class"></comClass>
+    <comClass clsid="{5c59319f-bc13-11d7-b425-00096b957942}" threadingModel="Both" tlbid="{5c593190-bc13-11d7-b425-00096b957942}" progid="Cummins.CIAuditTrailRecord.1" description="Cummins CIAuditTrailRecord Class"></comClass>
+  <asmv2:hash><dsig:Transforms><dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity"></dsig:Transform></dsig:Transforms><dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"></dsig:DigestMethod><dsig:DigestValue>8O7OPnxxU5bm5L7r54xYO1pmD0E=</dsig:DigestValue></asmv2:hash></file>
+  <file name="CalDataServer.dll" asmv2:size="548864" hashalg="SHA1" hash="6dcf33ded63808c6ca20559fd0ce5e3ea318e7d2">
+    
+    <typelib tlbid="{847752e0-6f88-41c3-b2da-bc6721560a10}" version="1.0" helpdir="" resourceid="0" flags="HASDISKIMAGE"></typelib>
+    <comClass clsid="{73e130a9-6756-462b-b552-274c343ed373}" threadingModel="Both" tlbid="{847752e0-6f88-41c3-b2da-bc6721560a10}" progid="Cummins.CICalDataServer.1" description="Cummins CICalDataServer Class"></comClass>
+    <comClass clsid="{1ed6cd2c-9757-4559-b1d7-d90524aa0ac8}" threadingModel="Free" tlbid="{847752e0-6f88-41c3-b2da-bc6721560a10}" progid="Cummins.CICollection.1" description="Cummins Collection"></comClass>
+    <comClass clsid="{17868303-0e3e-4222-b170-800a47297d24}" threadingModel="Free" tlbid="{847752e0-6f88-41c3-b2da-bc6721560a10}" progid="Cummins.CISetItem.1" description="Cummins Set Item"></comClass>
+    <comClass clsid="{e6e285a6-c3c5-4d66-9217-20bd943a2497}" threadingModel="Free" tlbid="{847752e0-6f88-41c3-b2da-bc6721560a10}" progid="Cummins.CISetRequest.1" description="Cummins Set of Requests"></comClass>
+  <asmv2:hash><dsig:Transforms><dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity"></dsig:Transform></dsig:Transforms><dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"></dsig:DigestMethod><dsig:DigestValue>zKSjS/VqdZ7sKDXt0edY+iC/k5A=</dsig:DigestValue></asmv2:hash></file>
+  <file name="CIFaultCodes.dll" asmv2:size="368640" hashalg="SHA1" hash="e3f3aa37a75bd0039ebe547d4320346701356cb5">
+    
+    <typelib tlbid="{42ba3f7f-6f67-4595-9c37-5f5de4a9f688}" version="1.0" helpdir="" resourceid="0" flags="HASDISKIMAGE"></typelib>
+    <comClass clsid="{fc0dfeff-7dd6-4380-8ca7-a3292e7c27a2}" threadingModel="Both" tlbid="{42ba3f7f-6f67-4595-9c37-5f5de4a9f688}" progid="Cummins.CFaultCodes.1" description="CoClass that implements the ICIFaultCodes interface."></comClass>
+    <comClass clsid="{375b4f25-0fb3-4c3d-b08b-02964dcd725a}" threadingModel="Both" tlbid="{42ba3f7f-6f67-4595-9c37-5f5de4a9f688}" progid="Cummins.CFault.1" description="CoClass that implements the ICIFault interface."></comClass>
+    <comClass clsid="{261da6b0-0cf6-4656-9bf5-dfc8cf0b2484}" threadingModel="Both" tlbid="{42ba3f7f-6f67-4595-9c37-5f5de4a9f688}" progid="Cummins.SnapshotField.1" description="CoClass that implements the ICISnapshotField interface."></comClass>
+  <asmv2:hash><dsig:Transforms><dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity"></dsig:Transform></dsig:Transforms><dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"></dsig:DigestMethod><dsig:DigestValue>omuEoc11Tom+BEIljbrJNe2zWFY=</dsig:DigestValue></asmv2:hash></file>
+  <file name="ConfigurationFiles.dll" asmv2:size="1028096" hashalg="SHA1" hash="2f93122185867ead990cf31d373245f3fb831f6c">
+    
+    <typelib tlbid="{479177e8-c4be-11d5-a0f2-0004ac9631b0}" version="1.0" helpdir="" resourceid="0" flags="HASDISKIMAGE"></typelib>
+    <comClass clsid="{e7390aef-c3e5-11d5-a0f1-0004ac9631b0}" threadingModel="Both" tlbid="{479177e8-c4be-11d5-a0f2-0004ac9631b0}" progid="Cummins.ConfigFile.1" description="Cummins ConfigFileComponent Class"></comClass>
+    <comClass clsid="{44b6869a-c6ef-11d5-a0f2-0004ac9631b0}" threadingModel="Both" tlbid="{479177e8-c4be-11d5-a0f2-0004ac9631b0}" progid="Cummins.ConfigItemGTIS.1" description="Cummins ConfigItemGTIS Class"></comClass>
+    <comClass clsid="{eecb9ce5-ce34-11d6-9fe8-0010a47618e7}" threadingModel="Both" tlbid="{479177e8-c4be-11d5-a0f2-0004ac9631b0}" progid="Cummins.ConfigurationFiles.ConfigFileContentSaxHandler.1" description="Cummins ConfigFileContentSaxHandler Class"></comClass>
+    <comClass clsid="{fb3a3c36-cef7-11d6-8ade-0004ac965c2e}" threadingModel="Both" tlbid="{479177e8-c4be-11d5-a0f2-0004ac9631b0}" progid="Cummins.ConfigurationFiles.SAXErrorHandlerImpl.1" description="Cummins SAXErrorHandlerImpl Class"></comClass>
+  <asmv2:hash><dsig:Transforms><dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity"></dsig:Transform></dsig:Transforms><dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"></dsig:DigestMethod><dsig:DigestValue>PJSysxv/6tQ7BVCYiWliCHfES8Q=</dsig:DigestValue></asmv2:hash></file>
+  <file name="Crypto.dll" asmv2:size="131072" hashalg="SHA1" hash="e034a3942aa3fcdc03df834d5d5da74dd2ad0bfe">
+    
+    <typelib tlbid="{5320fc92-1a57-11d5-9956-0050dad1ba30}" version="1.0" helpdir="" resourceid="0" flags="HASDISKIMAGE"></typelib>
+    <comClass clsid="{135c5fe8-8c05-11d5-a4ef-006094eb621f}" threadingModel="both" tlbid="{5320fc92-1a57-11d5-9956-0050dad1ba30}" progid="Cummins.CICryptoString.1" description="CICryptoString Class"></comClass>
+    <comClass clsid="{135c5fee-8c05-11d5-a4ef-006094eb621f}" threadingModel="both" tlbid="{5320fc92-1a57-11d5-9956-0050dad1ba30}" progid="Cummins.CICryptoFactory.1" description="CICryptoFactory Class"></comClass>
+    <comClass clsid="{135c5ff1-8c05-11d5-a4ef-006094eb621f}" threadingModel="both" tlbid="{5320fc92-1a57-11d5-9956-0050dad1ba30}" progid="Cummins.CICryptoFile.1" description="CICryptoFile Class"></comClass>
+  <asmv2:hash><dsig:Transforms><dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity"></dsig:Transform></dsig:Transforms><dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"></dsig:DigestMethod><dsig:DigestValue>hYLm+YRg5aUMMfR3G82jHyfD3as=</dsig:DigestValue></asmv2:hash></file>
+  <file name="CUDL.dll" asmv2:size="929792" hashalg="SHA1" hash="9016e319a5ec66e7d1604025594f4d9bf970ac6e">
+    
+    <typelib tlbid="{54589de4-b090-11d6-a141-0004ac9631b0}" version="1.0" helpdir="" resourceid="0" flags="HASDISKIMAGE"></typelib>
+    <comClass clsid="{54589df1-b090-11d6-a141-0004ac9631b0}" threadingModel="Both" tlbid="{54589de4-b090-11d6-a141-0004ac9631b0}" progid="Cummins.CICUDL.1" description="Cummins CICUDL Class"></comClass>
+  <asmv2:hash><dsig:Transforms><dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity"></dsig:Transform></dsig:Transforms><dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"></dsig:DigestMethod><dsig:DigestValue>LvIlxReoUjF9zJb1PfmgVB0yuPs=</dsig:DigestValue></asmv2:hash></file>
+  <file name="DataAccess.dll" asmv2:size="335872" hashalg="SHA1" hash="da6f4dd8841d72e83e26f9b1029949445d85bba2">
+    
+    <typelib tlbid="{17c5eb9d-197d-456b-b85d-e93e8e828244}" version="1.0" helpdir="" resourceid="0" flags="HASDISKIMAGE"></typelib>
+    <comClass clsid="{8d6e8038-c878-4696-b3e8-37ddbba692bc}" threadingModel="Both" tlbid="{17c5eb9d-197d-456b-b85d-e93e8e828244}" progid="Cummins.CIDataAccess.1" description="Cummins CIDataAccess Class"></comClass>
+    <comClass clsid="{d1c6e052-ad33-4fd7-b1e5-7306587caf6a}" threadingModel="Both" tlbid="{17c5eb9d-197d-456b-b85d-e93e8e828244}" progid="Cummins.CIBinImageRequest.1" description="Cummins Binary Image Request"></comClass>
+  <asmv2:hash><dsig:Transforms><dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity"></dsig:Transform></dsig:Transforms><dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"></dsig:DigestMethod><dsig:DigestValue>qIhcqhBFZG3zt4O/UWVIXSB6VZ4=</dsig:DigestValue></asmv2:hash></file>
+  <file name="DataMonitoring.dll" asmv2:size="831488" hashalg="SHA1" hash="6737afd9f91e0bee93d877905b4b91efd83a0432">
+    
+    <typelib tlbid="{9d6a7220-f67a-4803-8214-38bde4b1188b}" version="1.0" helpdir="" resourceid="0" flags="HASDISKIMAGE"></typelib>
+    <comClass clsid="{6fa42489-8eb9-48c9-9837-bc52e62fbf9c}" threadingModel="Free" tlbid="{9d6a7220-f67a-4803-8214-38bde4b1188b}" progid="Cummins.CISubscription.1" description="CoClass that implements the ICISubscription interface."></comClass>
+    <comClass clsid="{517bff5b-869d-46a4-a1a6-a7c1d900e3cf}" threadingModel="Free" tlbid="{9d6a7220-f67a-4803-8214-38bde4b1188b}" progid="Cummins.CISubscriptionManager.1" description="CoClass that implements the ICISubscriptionManager interface."></comClass>
+    <comClass clsid="{79471965-f9cd-44e3-a33d-ffc8eafe2088}" threadingModel="Free" tlbid="{9d6a7220-f67a-4803-8214-38bde4b1188b}" progid="Cummins.CICPPMonitor.1" description="CoClass that implements the ICICPPMonitor interface."></comClass>
+    <comClass clsid="{f524750a-7c10-42c1-b96e-0d06feda8462}" threadingModel="Free" tlbid="{9d6a7220-f67a-4803-8214-38bde4b1188b}" progid="Cummins.CIDataElementNotification.1" description="CoClass that implements the ICIDataElementNotification interface."></comClass>
+    <comClass clsid="{f3df23b6-64d9-46e9-9666-157b7333e21a}" threadingModel="Apartment" tlbid="{9d6a7220-f67a-4803-8214-38bde4b1188b}" progid="Cummins.DMCollection.1" description="CIDMCollection Class"></comClass>
+    <comClass clsid="{71db676e-4fb4-4837-8a98-b3ef373e6e6e}" threadingModel="Both" tlbid="{9d6a7220-f67a-4803-8214-38bde4b1188b}" progid="Cummins.CIDataCollectorInfo.1" description="CoClass that implements the ICIDataCollectorInfo interface."></comClass>
+  <asmv2:hash><dsig:Transforms><dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity"></dsig:Transform></dsig:Transforms><dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"></dsig:DigestMethod><dsig:DigestValue>lQ8OUrU3dBV5jsy7Fyk+tBn9Ma0=</dsig:DigestValue></asmv2:hash></file>
+  <file name="DeviceControl.dll" asmv2:size="2711552" hashalg="SHA1" hash="2b0c1b487a4ce732dbe281a1df1240e5985df5fa">
+    
+    <typelib tlbid="{a8d69b68-cd36-11d5-9ffa-ffffff000000}" version="1.0" helpdir="" resourceid="0" flags="HASDISKIMAGE"></typelib>
+    <comClass clsid="{f710e180-cd64-11d5-9ffa-ffffff000000}" threadingModel="Both" tlbid="{a8d69b68-cd36-11d5-9ffa-ffffff000000}" progid="Cummins.Request.1" description="Cummins Request Interface"></comClass>
+    <comClass clsid="{bad58355-c7b8-11d5-9ff6-ffffff000000}" threadingModel="Both" tlbid="{a8d69b68-cd36-11d5-9ffa-ffffff000000}" progid="Cummins.CPPWriteRequest.1" description="Cummins CPPWriteRequest coclass of interface ICICPPWriteRequest"></comClass>
+    <comClass clsid="{3ee4b82a-cd3c-11d5-9ffa-ffffff000000}" threadingModel="Both" tlbid="{a8d69b68-cd36-11d5-9ffa-ffffff000000}" progid="Cummins.CPPReadRequest.1" description="Cummins CPPReadRequest Class"></comClass>
+    <comClass clsid="{690928fc-cd3c-11d5-9ffa-ffffff000000}" threadingModel="Both" tlbid="{a8d69b68-cd36-11d5-9ffa-ffffff000000}" progid="Cummins.CPPCommandRequest.1" description="Cummins CPPCommandRequest coclass of interface ICICPPCommandRequest"></comClass>
+    <comClass clsid="{c9625a01-52b3-4dec-9e4d-d49d553c7529}" threadingModel="Both" tlbid="{a8d69b68-cd36-11d5-9ffa-ffffff000000}" progid="Cummins.CLIPRequest.1" description="Cummins CLIPRequest Class"></comClass>
+    <comClass clsid="{bad58357-c7b8-11d5-9ff6-ffffff000000}" threadingModel="Both" tlbid="{a8d69b68-cd36-11d5-9ffa-ffffff000000}" progid="Cummins.DCLDevice.1" description="Cummins DCLDevice coclass of interface ICIDCLDevice"></comClass>
+    <comClass clsid="{ef49bd7e-ebda-4426-b778-7b18baa8baa7}" threadingModel="Both" tlbid="{a8d69b68-cd36-11d5-9ffa-ffffff000000}" progid="Cummins.CIConfiguration.1" description="CIConfiguration Class"></comClass>
+    <comClass clsid="{1869928b-e0cb-444d-8389-d68b83fbef57}" threadingModel="Both" tlbid="{a8d69b68-cd36-11d5-9ffa-ffffff000000}" progid="Cummins.WoodwardRequest.1" description="WoodwardRequest Class"></comClass>
+  <asmv2:hash><dsig:Transforms><dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity"></dsig:Transform></dsig:Transforms><dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"></dsig:DigestMethod><dsig:DigestValue>K2XCTs4PhNSxez0KShPa8Ju+5Kg=</dsig:DigestValue></asmv2:hash></file>
+  <file name="Dictionary.dll" asmv2:size="90112" hashalg="SHA1" hash="3bbb55aa7b249917f3044ee498f80c4ebac95b27">
+    
+    <typelib tlbid="{8c926a5a-f787-4158-b1af-41c0c20c969a}" version="1.0" helpdir="" resourceid="0" flags="HASDISKIMAGE"></typelib>
+    <comClass clsid="{0b1f67e6-0d36-446a-8477-723b5b5cf74b}" threadingModel="Both" tlbid="{8c926a5a-f787-4158-b1af-41c0c20c969a}" progid="Cummins.Dictionary.1" description="Cummins Dict Class"></comClass>
+  <asmv2:hash><dsig:Transforms><dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity"></dsig:Transform></dsig:Transforms><dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"></dsig:DigestMethod><dsig:DigestValue>rMyOADsh7KmiKKSHw2FJ+G7/xfI=</dsig:DigestValue></asmv2:hash></file>
+  <file name="ErrorHandling.dll" asmv2:size="77824" hashalg="SHA1" hash="5a5420340ff5843f72d69a3d45942752dedb9649">
+    
+    <typelib tlbid="{6cad8d02-834b-4426-96b2-28ca903f04e8}" version="1.0" helpdir="" resourceid="0" flags="HASDISKIMAGE"></typelib>
+    <comClass clsid="{18b7d639-8096-42fa-95b2-d41211f3df70}" threadingModel="Both" tlbid="{6cad8d02-834b-4426-96b2-28ca903f04e8}" progid="Cummins.ErrorMessageSet.1" description="ErrorMessageSet Class"></comClass>
+  <asmv2:hash><dsig:Transforms><dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity"></dsig:Transform></dsig:Transforms><dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"></dsig:DigestMethod><dsig:DigestValue>iKHdjQGfr+FWy7/2k3mOE+K1OyE=</dsig:DigestValue></asmv2:hash></file>
+  <file name="GTISBinImage.dll" asmv2:size="315392" hashalg="SHA1" hash="b57670702b815cbf502bba1a276dfe605a37f861">
+    
+    <typelib tlbid="{e07ec481-f301-11d5-a54d-006094eb621f}" version="1.0" helpdir="" resourceid="0" flags="HASDISKIMAGE"></typelib>
+    <comClass clsid="{e07ec490-f301-11d5-a54d-006094eb621f}" threadingModel="Both" tlbid="{e07ec481-f301-11d5-a54d-006094eb621f}" progid="Cummins.CICalBinImage.1" description="CICalBinImage Class"></comClass>
+  <asmv2:hash><dsig:Transforms><dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity"></dsig:Transform></dsig:Transforms><dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"></dsig:DigestMethod><dsig:DigestValue>c8zLB9dn2WyXKwY/0aRgYRF4z58=</dsig:DigestValue></asmv2:hash></file>
+  <file name="MetadataComponent.dll" asmv2:size="1699840" hashalg="SHA1" hash="9608da3dc0c08e30dee312a529c3253b4f522db1">
+    
+    <typelib tlbid="{36f7af8a-5dde-48e6-9995-ffce2ae6649d}" version="1.0" helpdir="" resourceid="0" flags="HASDISKIMAGE"></typelib>
+    <comClass clsid="{ed36d53b-223a-42ad-8083-62c1aae73411}" threadingModel="Free" tlbid="{36f7af8a-5dde-48e6-9995-ffce2ae6649d}" progid="Cummins.Metadata.1" description="Cummins Metadata Component: Exposes methods to query and set product information."></comClass>
+    <comClass clsid="{739077db-501c-46a0-9162-858101439e33}" threadingModel="Free" tlbid="{36f7af8a-5dde-48e6-9995-ffce2ae6649d}" progid="Cummins.GenericConfigFile.1" description="Cummins GenericConfigFile Class"></comClass>
+  <asmv2:hash><dsig:Transforms><dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity"></dsig:Transform></dsig:Transforms><dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"></dsig:DigestMethod><dsig:DigestValue>Dx++5XLjE3TIJqwwlbiOIN4A7fo=</dsig:DigestValue></asmv2:hash></file>
+  <file name="ModuleDetection.dll" asmv2:size="524288" hashalg="SHA1" hash="7e9c145400c4c719620c9923c80b90d1efa06e62">
+    
+    <typelib tlbid="{1c3354bf-aada-11d7-80a7-00096b83eeb4}" version="1.0" helpdir="" resourceid="0" flags="HASDISKIMAGE"></typelib>
+    <comClass clsid="{1c3354ce-aada-11d7-80a7-00096b83eeb4}" threadingModel="Both" tlbid="{1c3354bf-aada-11d7-80a7-00096b83eeb4}" progid="Cummins.ModuleDetection.1" description="Cummins ModuleDetection Component: Detects and Identifies the modules present on the specified data link."></comClass>
+  <asmv2:hash><dsig:Transforms><dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity"></dsig:Transform></dsig:Transforms><dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"></dsig:DigestMethod><dsig:DigestValue>6Dp1rhbrHJ9hc02Gw6/gfMtJqkw=</dsig:DigestValue></asmv2:hash></file>
+  <file name="MsgHandling.dll" asmv2:size="356352" hashalg="SHA1" hash="06e883e92eb7af6c922ab45cd78194f48e275783">
+    
+    <typelib tlbid="{81a103c3-9627-11d4-92bf-0050dad1bab1}" version="1.0" helpdir="" resourceid="0" flags="HASDISKIMAGE"></typelib>
+    <comClass clsid="{e483e5c4-ba3a-11d4-930b-0050dad1bab1}" threadingModel="Free" tlbid="{81a103c3-9627-11d4-92bf-0050dad1bab1}" progid="Cummins.MsgFilter.1" description="Cummins Message Filter"></comClass>
+    <comClass clsid="{a5230f19-c461-11d4-9318-0050dad1bab1}" threadingModel="Free" tlbid="{81a103c3-9627-11d4-92bf-0050dad1bab1}" progid="Cummins.RequestFilter.1" description="Cummins Request Filter"></comClass>
+    <comClass clsid="{a5230f15-c461-11d4-9318-0050dad1bab1}" threadingModel="Free" tlbid="{81a103c3-9627-11d4-92bf-0050dad1bab1}" progid="Cummins.DiagnosticFilter.1" description="Cummins Diagnostic Filter"></comClass>
+    <comClass clsid="{a5230f17-c461-11d4-9318-0050dad1bab1}" threadingModel="Free" tlbid="{81a103c3-9627-11d4-92bf-0050dad1bab1}" progid="Cummins.ProgressFilter.1" description="Cummins Progress Filter"></comClass>
+    <comClass clsid="{e483e5c8-ba3a-11d4-930b-0050dad1bab1}" threadingModel="Free" tlbid="{81a103c3-9627-11d4-92bf-0050dad1bab1}" progid="Cummins.MsgFilters.1" description="Cummins Message Filters"></comClass>
+    <comClass clsid="{90371e19-ba53-11d4-930b-0050dad1bab1}" threadingModel="Free" tlbid="{81a103c3-9627-11d4-92bf-0050dad1bab1}" progid="Cummins.Msg.1" description="Cummins Message"></comClass>
+    <comClass clsid="{90371e17-ba53-11d4-930b-0050dad1bab1}" threadingModel="Free" tlbid="{81a103c3-9627-11d4-92bf-0050dad1bab1}" progid="Cummins.RequestMsg.1" description="Cummins Request Message"></comClass>
+    <comClass clsid="{90371e14-ba53-11d4-930b-0050dad1bab1}" threadingModel="Free" tlbid="{81a103c3-9627-11d4-92bf-0050dad1bab1}" progid="Cummins.DiagnosticMsg.1" description="Cummins Diagnostic Message"></comClass>
+    <comClass clsid="{e71d7654-bc90-11d4-9310-000000000000}" threadingModel="Free" tlbid="{81a103c3-9627-11d4-92bf-0050dad1bab1}" progid="Cummins.PerformanceMsg.1" description="Cummins Performance Message"></comClass>
+    <comClass clsid="{e71d7657-bc90-11d4-9310-000000000000}" threadingModel="Free" tlbid="{81a103c3-9627-11d4-92bf-0050dad1bab1}" progid="Cummins.ProgressMsg.1" description="Cummins Progress Message"></comClass>
+    <comClass clsid="{9e2f8875-bc99-11d4-9311-0050dad1bab1}" threadingModel="Free" tlbid="{81a103c3-9627-11d4-92bf-0050dad1bab1}" progid="Cummins.MsgParam.1" description="Cummins Message Parameter"></comClass>
+    <comClass clsid="{a0c9c646-bc99-11d4-9311-0050dad1bab1}" threadingModel="Free" tlbid="{81a103c3-9627-11d4-92bf-0050dad1bab1}" progid="Cummins.MsgParams.1" description="Cummins Message Parameters Collection"></comClass>
+    <comClass clsid="{a5231009-c461-11d4-9318-0050dad1bab1}" threadingModel="Free" tlbid="{81a103c3-9627-11d4-92bf-0050dad1bab1}" progid="Cummins.MsgManager.1" description="Cummins Message Manager"></comClass>
+  <asmv2:hash><dsig:Transforms><dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity"></dsig:Transform></dsig:Transforms><dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"></dsig:DigestMethod><dsig:DigestValue>wAzqijn1WF+3sJIbr5oEoPn+2kw=</dsig:DigestValue></asmv2:hash></file>
+  <file name="SubFiles.dll" asmv2:size="225280" hashalg="SHA1" hash="ca4951dd3a0217cf2c05328dba7f0df0d3bec61e">
+    
+    <typelib tlbid="{cf352cce-f20c-11d6-a501-0008a1326f46}" version="1.0" helpdir="" resourceid="0" flags="HASDISKIMAGE"></typelib>
+    <comClass clsid="{cf352cde-f20c-11d6-a501-0008a1326f46}" threadingModel="Both" tlbid="{cf352cce-f20c-11d6-a501-0008a1326f46}" progid="Cummins.SubFileComponent.1" description="Cummins SubFileComponent Class"></comClass>
+    <comClass clsid="{cf352ce0-f20c-11d6-a501-0008a1326f46}" threadingModel="Both" tlbid="{cf352cce-f20c-11d6-a501-0008a1326f46}" progid="Cummins.BinaryData.1" description="Cummins BinaryData Class"></comClass>
+  <asmv2:hash><dsig:Transforms><dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity"></dsig:Transform></dsig:Transforms><dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"></dsig:DigestMethod><dsig:DigestValue>EPpPzQj7HF3ZuhWn5BImTt/AfJQ=</dsig:DigestValue></asmv2:hash></file>
+  <file name="SymbolicTreeObj.dll" asmv2:size="196608" hashalg="SHA1" hash="edac0d2379ab100b0603b6a2d4a10ce96f4c0a23">
+    
+    <typelib tlbid="{2a4039ea-cd63-11d5-a0f6-0004ac9631b0}" version="1.0" helpdir="" resourceid="0" flags="HASDISKIMAGE"></typelib>
+    <comClass clsid="{191b0efb-ca5a-11d5-a0f6-0004ac9631b0}" threadingModel="Both" tlbid="{2a4039ea-cd63-11d5-a0f6-0004ac9631b0}" progid="Cummins.SymbolicTree.1" description="Cummins SymbolicTree Class"></comClass>
+    <comClass clsid="{191b0efe-ca5a-11d5-a0f6-0004ac9631b0}" threadingModel="Both" tlbid="{2a4039ea-cd63-11d5-a0f6-0004ac9631b0}" progid="Cummins.TreeNode.1" description="Cummins TreeNode Class"></comClass>
+  <asmv2:hash><dsig:Transforms><dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity"></dsig:Transform></dsig:Transforms><dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"></dsig:DigestMethod><dsig:DigestValue>KB+terLmrBwckprtPcvbYZNq+ow=</dsig:DigestValue></asmv2:hash></file>
+  <file name="TextFileStream.dll" asmv2:size="208896" hashalg="SHA1" hash="0adfb012cee05d4eeab563fa9288e25aacc601eb">
+    
+    <typelib tlbid="{cd2fc450-bd97-11d5-a0e9-0004ac9631b0}" version="1.0" helpdir="" resourceid="0" flags="HASDISKIMAGE"></typelib>
+    <comClass clsid="{f4da2d74-bc06-11d5-a0e9-0004ac9631b0}" threadingModel="Both" tlbid="{cd2fc450-bd97-11d5-a0e9-0004ac9631b0}" progid="Cummins.TextFileStream.1" description="Cummins TextFileStreamObj Class"></comClass>
+  <asmv2:hash><dsig:Transforms><dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity"></dsig:Transform></dsig:Transforms><dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"></dsig:DigestMethod><dsig:DigestValue>VXV2NciA50NjM1e6ND8gjSm6zwM=</dsig:DigestValue></asmv2:hash></file>
+  <file name="TraceDebug.dll" asmv2:size="106496" hashalg="SHA1" hash="c6ec96d784fe26221df8c21b7bcaff734a759e28">
+    
+    <typelib tlbid="{546c9cd2-e591-11d4-94a7-00062999c513}" version="1.0" helpdir="" resourceid="0" flags="HASDISKIMAGE"></typelib>
+    <comClass clsid="{1b103b23-1243-11d5-94c4-00062999c513}" threadingModel="Both" tlbid="{546c9cd2-e591-11d4-94a7-00062999c513}" progid="Cummins.Logger.1" description="Logger Class"></comClass>
+  <asmv2:hash><dsig:Transforms><dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity"></dsig:Transform></dsig:Transforms><dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"></dsig:DigestMethod><dsig:DigestValue>EGuZ6KXrGd2jFU+0JwcZu0zEgTE=</dsig:DigestValue></asmv2:hash></file>
+  <file name="UnitsOfMeasure.dll" asmv2:size="245760" hashalg="SHA1" hash="0e5fe8bbc323a319bd86a9df408d9e5f99431507">
+    
+    <typelib tlbid="{7698c10b-904f-4287-9c5e-de81aa5c91de}" version="1.0" helpdir="" resourceid="0" flags="HASDISKIMAGE"></typelib>
+    <comClass clsid="{a3c8efcf-eec4-45f7-bdf9-d981767d2caa}" threadingModel="Both" tlbid="{7698c10b-904f-4287-9c5e-de81aa5c91de}" progid="Cummins.CIUnitsOfMeasure.1" description="CIUnitsOfMeasure Class"></comClass>
+  <asmv2:hash><dsig:Transforms><dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity"></dsig:Transform></dsig:Transforms><dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"></dsig:DigestMethod><dsig:DigestValue>w3zjTjRGn4FsBMxpyk7pqBni2LE=</dsig:DigestValue></asmv2:hash></file>
+</assembly>

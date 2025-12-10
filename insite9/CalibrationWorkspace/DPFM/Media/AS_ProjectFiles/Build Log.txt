@@ -1,0 +1,468 @@
+Tuesday, June 15, 2010   11:45:45AM
+
+Starting conversion ...
+Creating InstallShield project: C:\Media\Packages\MSI_Package\DPFM.ism
+Creating InstallShield project: C:\Media\Packages\MSI_Package\DPFM.Context.ism
+Reading repackager output file
+Loading registry entries
+Applying language 'English (code 1033)' to the project
+Creating components for the files captured
+Mapping registry information to the Advertising tables
+          Mapping COM data from registry information
+          Mapping Application IDs from registry information and writing to the AppId table
+          Mapping ProgIDs from registry information
+          Writing to the Class table
+          Mapping file extensions and MIME types from registry information to the Extension and Mime tables
+          Mapping shell extension verbs from registry information to the Verb table
+          Writing to the ProgId table
+Mapping application paths from registry information
+Mapping environment variables from registry information to the Environment table
+Processing .INI file changes and writing to the IniFile table
+Applying merge modules
+Creating directory folders and writing to the CreateFolders table
+          Including merge module 'Windows Common Controls ActiveX Control DLL' (C:\Program Files (x86)\InstallShield\2010\Modules\i386\MSCOMCTL.MSM)
+          Including merge module 'MSFlexGrid' (C:\Program Files (x86)\InstallShield\2010\Modules\i386\MSFLXGRD.MSM)
+          Including merge module 'TABCTL32 OLE Control DLL' (C:\Program Files (x86)\InstallShield\2010\Modules\i386\TABCTL32.MSM)
+Writing unmapped registry information to the Registry table
+Writing information to the RemoveRegistry table
+Writing information to the RemoveIniFile table
+Writing information to the RemoveFile table
+Creating shortcuts and writing to the Shortcut table
+
+Building .context.msi package ...
+The path 'D:\MEDIA\PC_TOOL' appears to be a machine-specific path. The repackaged installation may not function if this path does not exist on client machines.
+
+Building .msi package ...
+Created release folders
+AdminExecuteSequence table successfully built
+AdminUISequence table successfully built
+AdvtExecuteSequence table successfully built
+AdvtUISequence table successfully built
+InstallExecuteSequence table successfully built
+InstallUISequence table successfully built
+Directory table successfully built
+Feature table successfully built
+FeatureComponents table successfully built
+Component table successfully built
+Loading File table
+Building File table
+File table successfully built
+Class table successfully built
+Extension table successfully built
+ODBCDataSource table successfully built
+ODBCDriver table successfully built
+ISSQLScriptFile table successfully built
+ISSQLScriptReplace table successfully built
+ISSQLConnectionScript table successfully built
+ISSQLConnection table successfully built
+ISSQLConnectionDBServer table successfully built
+ISSQLRequirement table successfully built
+ISPalmApp table successfully built
+ISPalmAppFile table successfully built
+ISComPlusProxy table successfully built
+ISComPlusApplication table successfully built
+ISComCatalogCollection table successfully built
+ISComCatalogCollectionObjects table successfully built
+ISComCatalogObject table successfully built
+ISComCatalogAttribute table successfully built
+ISComPlusApplicationDLL table successfully built
+ISComPlusServerFile table successfully built
+ISComPlusProxyFile table successfully built
+ISComPlusServerDepFile table successfully built
+ISComPlusProxyDepFile table successfully built
+ISXmlFile table successfully built
+ISXmlElement table successfully built
+ISXmlElementAttrib table successfully built
+ISSearchReplaceSet table successfully built
+ISSearchReplace table successfully built
+ActionText table successfully built
+AppSearch table successfully built
+BindImage table successfully built
+CCPSearch table successfully built
+Condition table successfully built
+AppId table successfully built
+Started signing BE23.tmp ...
+Property table successfully built
+BBControl table successfully built
+Billboard table successfully built
+Binary table successfully built
+CompLocator table successfully built
+Complus table successfully built
+ControlCondition table successfully built
+ControlEvent table successfully built
+CreateFolder table successfully built
+CustomAction table successfully built
+Error table successfully built
+DrLocator table successfully built
+DuplicateFile table successfully built
+Environment table successfully built
+EventMapping table successfully built
+FileSFPCatalog table successfully built
+Font table successfully built
+IniFile table successfully built
+IniLocator table successfully built
+ISBillBoard table successfully built
+ISCEApp table successfully built
+ISCEDir table successfully built
+ISCEFileExt table successfully built
+ISCEInstall table successfully built
+ISCEOtherAppCABs table successfully built
+ISCERegistry table successfully built
+ISCESetupFile table successfully built
+ISCEShtCut table successfully built
+ISChainPackage table successfully built
+ISChainPackageData table successfully built
+ProgId table successfully built
+ISComponentExtended table successfully built
+ISCustomActionReference table successfully built
+ISDRMFile table successfully built
+ISFileManifests table successfully built
+ISIISItem table successfully built
+ISIISProperty table successfully built
+ISLockPermissions table successfully built
+ISObjectProperty table successfully built
+IsolatedComponent table successfully built
+ISSelfReg table successfully built
+ISSQLDBMetaData table successfully built
+ISSQLScriptError table successfully built
+ISVirtualDirectory table successfully built
+ISVirtualFile table successfully built
+ISVirtualPackage table successfully built
+ISVirtualRegistry table successfully built
+ISVirtualRelease table successfully built
+ISVirtualShortcut table successfully built
+ISXmlLocator table successfully built
+LaunchCondition table successfully built
+LockPermissions table successfully built
+MIME table successfully built
+MoveFile table successfully built
+MsiAssembly table successfully built
+MsiAssemblyName table successfully built
+MsiDigitalCertificate table successfully built
+MsiDigitalSignature table successfully built
+MsiDriverPackages table successfully built
+MsiEmbeddedChainer table successfully built
+MsiEmbeddedUI table successfully built
+MsiLockPermissionsEx table successfully built
+MsiPackageCertificate table successfully built
+MsiPatchCertificate table successfully built
+MsiServiceConfig table successfully built
+MsiServiceConfigFailureActions table successfully built
+MsiShortcutProperty table successfully built
+ODBCAttribute table successfully built
+ODBCSourceAttribute table successfully built
+ODBCTranslator table successfully built
+PatchPackage table successfully built
+PublishComponent table successfully built
+Registry table successfully built
+RegLocator table successfully built
+RemoveFile table successfully built
+RemoveIniFile table successfully built
+RemoveRegistry table successfully built
+ReserveCost table successfully built
+SelfReg table successfully built
+ServiceControl table successfully built
+ServiceInstall table successfully built
+SFPCatalog table successfully built
+Shortcut table successfully built
+Signature table successfully built
+TextStyle table successfully built
+TypeLib table successfully built
+UIText table successfully built
+Upgrade table successfully built
+Verb table successfully built
+_Validation table successfully built
+Searching project for extract-at-build components...
+Validating Custom Action sequencing
+Dialog AdminChangeFolder for language English (United States) built
+Dialog AdminNetworkLocation for language English (United States) built
+Dialog AdminWelcome for language English (United States) built
+Dialog CancelSetup for language English (United States) built
+Dialog CustomSetup for language English (United States) built
+Dialog CustomSetupTips for language English (United States) built
+Dialog CustomerInformation for language English (United States) built
+Dialog DatabaseFolder for language English (United States) built
+Dialog DestinationFolder for language English (United States) built
+Dialog DiskSpaceRequirements for language English (United States) built
+Dialog FilesInUse for language English (United States) built
+Dialog InstallChangeFolder for language English (United States) built
+Dialog InstallWelcome for language English (United States) built
+Dialog LicenseAgreement for language English (United States) built
+Dialog MaintenanceType for language English (United States) built
+Dialog MaintenanceWelcome for language English (United States) built
+Dialog MsiRMFilesInUse for language English (United States) built
+Dialog OutOfSpace for language English (United States) built
+Dialog PatchWelcome for language English (United States) built
+Dialog ReadyToInstall for language English (United States) built
+Dialog ReadyToRemove for language English (United States) built
+Dialog SetupCompleteError for language English (United States) built
+Dialog SetupCompleteSuccess for language English (United States) built
+Dialog SetupError for language English (United States) built
+Dialog SetupInitialization for language English (United States) built
+Dialog SetupInterrupted for language English (United States) built
+Dialog SetupProgress for language English (United States) built
+Dialog SetupResume for language English (United States) built
+Dialog SetupType for language English (United States) built
+Dialog SplashBitmap for language English (United States) built
+Resolving strings...
+Language English (United States) built
+Media table successfully built
+Performing Upgrading and Patching Validation
+You can use the Certified for Windows(R) Vista Validation Suite (plus InstallShield ICEs) to determine whether your product meets Certified for Windows(R) Vista Program installation standards.
+Automatic update notification disabled
+Product1\Release1 - 0 error(s), 0 warning(s)
+Running automated tests ...
+Created release folders
+AdminExecuteSequence table successfully built
+AdminUISequence table successfully built
+AdvtExecuteSequence table successfully built
+AdvtUISequence table successfully built
+InstallExecuteSequence table successfully built
+InstallUISequence table successfully built
+Directory table successfully built
+Feature table successfully built
+FeatureComponents table successfully built
+Component table successfully built
+Loading File table
+Building File table
+Merging modules...
+Merging Microsoft Component Category Manager Library: C:\Program Files (x86)\InstallShield\2010\Modules\i386\COMCAT.MSM
+Merging Windows Common Controls ActiveX Control DLL: C:\Program Files (x86)\InstallShield\2010\Modules\i386\MSCOMCTL.MSM
+Merging MSFlexGrid: C:\Program Files (x86)\InstallShield\2010\Modules\i386\MSFLXGRD.MSM
+Merging Microsoft OLE 2.40  for Windows NT(TM) and Windows 95(TM) Operating Systems: C:\Program Files (x86)\InstallShield\2010\Modules\i386\OLEAUT32.MSM
+Merging TABCTL32 OLE Control DLL: C:\Program Files (x86)\InstallShield\2010\Modules\i386\TABCTL32.MSM
+File table successfully built
+Building MsiFileHash table
+MsiFileHash table successfully built
+Class table successfully built
+Extension table successfully built
+ODBCDataSource table successfully built
+ODBCDriver table successfully built
+ISSQLScriptFile table successfully built
+ISSQLScriptReplace table successfully built
+ISSQLConnectionScript table successfully built
+ISSQLConnection table successfully built
+ISSQLConnectionDBServer table successfully built
+ISSQLRequirement table successfully built
+ISPalmApp table successfully built
+ISPalmAppFile table successfully built
+ISComPlusProxy table successfully built
+ISComPlusApplication table successfully built
+ISComCatalogCollection table successfully built
+ISComCatalogCollectionObjects table successfully built
+ISComCatalogObject table successfully built
+ISComCatalogAttribute table successfully built
+ISComPlusApplicationDLL table successfully built
+ISComPlusServerFile table successfully built
+ISComPlusProxyFile table successfully built
+ISComPlusServerDepFile table successfully built
+ISComPlusProxyDepFile table successfully built
+ISXmlFile table successfully built
+ISXmlElement table successfully built
+ISXmlElementAttrib table successfully built
+ISSearchReplaceSet table successfully built
+ISSearchReplace table successfully built
+ActionText table successfully built
+AppSearch table successfully built
+BindImage table successfully built
+CCPSearch table successfully built
+Condition table successfully built
+AppId table successfully built
+Started signing D11A.tmp ...
+Property table successfully built
+BBControl table successfully built
+Billboard table successfully built
+Binary table successfully built
+CompLocator table successfully built
+Complus table successfully built
+ControlCondition table successfully built
+ControlEvent table successfully built
+CreateFolder table successfully built
+CustomAction table successfully built
+Error table successfully built
+DrLocator table successfully built
+DuplicateFile table successfully built
+Environment table successfully built
+EventMapping table successfully built
+FileSFPCatalog table successfully built
+Font table successfully built
+IniFile table successfully built
+IniLocator table successfully built
+ISBillBoard table successfully built
+ISCEApp table successfully built
+ISCEDir table successfully built
+ISCEFileExt table successfully built
+ISCEInstall table successfully built
+ISCEOtherAppCABs table successfully built
+ISCERegistry table successfully built
+ISCESetupFile table successfully built
+ISCEShtCut table successfully built
+ISChainPackage table successfully built
+ISChainPackageData table successfully built
+ProgId table successfully built
+ISComponentExtended table successfully built
+ISCustomActionReference table successfully built
+ISDRMFile table successfully built
+ISFileManifests table successfully built
+ISIISItem table successfully built
+ISIISProperty table successfully built
+ISLockPermissions table successfully built
+ISObjectProperty table successfully built
+IsolatedComponent table successfully built
+ISSelfReg table successfully built
+ISSQLDBMetaData table successfully built
+ISSQLScriptError table successfully built
+ISVirtualDirectory table successfully built
+ISVirtualFile table successfully built
+ISVirtualPackage table successfully built
+ISVirtualRegistry table successfully built
+ISVirtualRelease table successfully built
+ISVirtualShortcut table successfully built
+ISXmlLocator table successfully built
+LaunchCondition table successfully built
+LockPermissions table successfully built
+MIME table successfully built
+MoveFile table successfully built
+MsiAssembly table successfully built
+MsiAssemblyName table successfully built
+MsiDigitalCertificate table successfully built
+MsiDigitalSignature table successfully built
+MsiDriverPackages table successfully built
+MsiEmbeddedChainer table successfully built
+MsiEmbeddedUI table successfully built
+MsiLockPermissionsEx table successfully built
+MsiPackageCertificate table successfully built
+MsiPatchCertificate table successfully built
+MsiServiceConfig table successfully built
+MsiServiceConfigFailureActions table successfully built
+MsiShortcutProperty table successfully built
+ODBCAttribute table successfully built
+ODBCSourceAttribute table successfully built
+ODBCTranslator table successfully built
+PatchPackage table successfully built
+PublishComponent table successfully built
+Registry table successfully built
+RegLocator table successfully built
+RemoveFile table successfully built
+RemoveIniFile table successfully built
+RemoveRegistry table successfully built
+ReserveCost table successfully built
+SelfReg table successfully built
+ServiceControl table successfully built
+ServiceInstall table successfully built
+SFPCatalog table successfully built
+Shortcut table successfully built
+Signature table successfully built
+TextStyle table successfully built
+TypeLib table successfully built
+UIText table successfully built
+Upgrade table successfully built
+Verb table successfully built
+_Validation table successfully built
+Searching project for extract-at-build components...
+Validating Custom Action sequencing
+Dialog AdminChangeFolder for language English (United States) built
+Dialog AdminNetworkLocation for language English (United States) built
+Dialog AdminWelcome for language English (United States) built
+Dialog CancelSetup for language English (United States) built
+Dialog CustomSetup for language English (United States) built
+Dialog CustomSetupTips for language English (United States) built
+Dialog CustomerInformation for language English (United States) built
+Dialog DatabaseFolder for language English (United States) built
+Dialog DestinationFolder for language English (United States) built
+Dialog DiskSpaceRequirements for language English (United States) built
+Dialog FilesInUse for language English (United States) built
+Dialog InstallChangeFolder for language English (United States) built
+Dialog InstallWelcome for language English (United States) built
+Dialog LicenseAgreement for language English (United States) built
+Dialog MaintenanceType for language English (United States) built
+Dialog MaintenanceWelcome for language English (United States) built
+Dialog MsiRMFilesInUse for language English (United States) built
+Dialog OutOfSpace for language English (United States) built
+Dialog PatchWelcome for language English (United States) built
+Dialog ReadyToInstall for language English (United States) built
+Dialog ReadyToRemove for language English (United States) built
+Dialog SetupCompleteError for language English (United States) built
+Dialog SetupCompleteSuccess for language English (United States) built
+Dialog SetupError for language English (United States) built
+Dialog SetupInitialization for language English (United States) built
+Dialog SetupInterrupted for language English (United States) built
+Dialog SetupProgress for language English (United States) built
+Dialog SetupResume for language English (United States) built
+Dialog SetupType for language English (United States) built
+Dialog SplashBitmap for language English (United States) built
+Resolving strings...
+Language English (United States) built
+Building CAB files...
+Data1.cab built
+Files built
+Media table successfully built
+Performing Upgrading and Patching Validation
+You can use the Certified for Windows(R) Vista Validation Suite (plus InstallShield ICEs) to determine whether your product meets Certified for Windows(R) Vista Program installation standards.
+Automatic update notification disabled
+Product1\Release1 - 0 error(s), 0 warning(s)
+Finished successfully.
+Executing tests on 'C:\Media\Packages\MSI_Package\DPFM.msi' ...
+ICE08 Performing the test...
+ICE08   0 issue(s) identified.
+ICE09 Performing the test...
+ICE09   0 issue(s) identified.
+ICE21 Performing the test...
+ICE21   0 issue(s) identified.
+ICE64 Performing the test...
+ICE64   1 issue(s) identified.
+Custom Action Impersonation Test 1 Performing the test...
+Custom Action Impersonation Test 1   0 issue(s) identified.
+Custom Action Impersonation Test 2 Performing the test...
+Custom Action Impersonation Test 2   0 issue(s) identified.
+Null Component ID Performing the test...
+Null Component ID   0 issue(s) identified.
+Nested Custom Actions Performing the test...
+Nested Custom Actions   0 issue(s) identified.
+Restart Manager Files In Use Dialog Performing the test...
+Restart Manager Files In Use Dialog   0 issue(s) identified.
+Reboot Pending Launch Condition Performing the test...
+Reboot Pending Launch Condition   1 issue(s) identified.
+Per User Setups Performing the test...
+Per User Setups   0 issue(s) identified.
+ForceReboot Performing the test...
+ForceReboot   0 issue(s) identified.
+AdminUser in InstallUISequence Performing the test...
+AdminUser in InstallUISequence   0 issue(s) identified.
+AdminUser or Privileged Launch Condition Performing the test...
+AdminUser or Privileged Launch Condition   0 issue(s) identified.
+Custom Action Impersonation Test 1 Performing the test...
+Custom Action Impersonation Test 1   0 issue(s) identified.
+Custom Action Impersonation Test 2 Performing the test...
+Custom Action Impersonation Test 2   0 issue(s) identified.
+Null Component ID Performing the test...
+Null Component ID   0 issue(s) identified.
+Nested Custom Actions Performing the test...
+Nested Custom Actions   0 issue(s) identified.
+Restart Manager Files In Use Dialog Performing the test...
+Restart Manager Files In Use Dialog   0 issue(s) identified.
+Reboot Pending Launch Condition Performing the test...
+Reboot Pending Launch Condition   1 issue(s) identified.
+Per User Setups Performing the test...
+Per User Setups   0 issue(s) identified.
+ForceReboot Performing the test...
+ForceReboot   0 issue(s) identified.
+AdminUser in InstallUISequence Performing the test...
+AdminUser in InstallUISequence   0 issue(s) identified.
+AdminUser or Privileged Launch Condition Performing the test...
+AdminUser or Privileged Launch Condition   0 issue(s) identified.
+Windows 7 Protected Files Performing the test...
+Windows 7 Protected Files   1 issue(s) identified.
+Windows 7 Protected Registry Performing the test...
+Windows 7 Protected Registry   159 issue(s) identified.
+ Finished testing
+
+Fixing automatically resolvable issues ...
+ICE64 Resolving the test results...
+Reboot Pending Launch Condition Resolving the test results...
+Reboot Pending Launch Condition Resolving the test results...
+ The PackageExpert Resolve process resolved the tests against the original MSI file.
+ Finished resolutions
+
+Conversion complete.
+Output file: C:\Media\Packages\MSI_Package\DPFM.msi

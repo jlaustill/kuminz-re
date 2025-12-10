@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE module SYSTEM "../htmlentities.dtd">
+<XML_RESOURCE>
+  <RESOURCE Tag="1001" Type="String Table" Description="Message String Table">
+    <STRING ID="1" Context="Title">VGT Hysteresis Test</STRING>
+    <STRING ID="2" Context="Subtitle">This test exercises the VGT to assist in troubleshooting.</STRING>
+    <STRING ID="3" Context="Instructions"> Initial Conditions
+1. Engine Off
+Steps
+1. Select Start
+Additional Information
+1. If required, select Stop to end the test early
+2. The test will not start if the ECM detects a condition that would prevent the test from running
+3. If an error is encountered during the test, this can be due to an internal turbocharger error preventing the test from completing
+4. If the test fails, this means the test has completed and determined that the VGT does not meet the required specifications</STRING>
+    <STRING ID="4" Context="Not Supported">The test is not supported by the current calibration.</STRING>
+    <STRING ID="5" Context="Status Header">Status</STRING>
+    <STRING ID="6" Context="Stopped">The test is stopped.</STRING>    
+    <STRING ID="7" Context="ECM Prohibited">The ECM detects a condition in which the test can not be run.</STRING>
+    <STRING ID="8" Context="Instructions header">Instructions:</STRING>
+    <STRING ID="9" Context="show label">Show</STRING>  	
+    <STRING ID="10" Context="Test Complete">The test has completed and passed.</STRING>	
+    <STRING ID="11" Context="TestFail">The test has completed and failed.</STRING>
+	<STRING ID="12" Context="Error">A VGT error has occurred which is preventing the test from completing.</STRING>
+	<STRING ID="13" Context="Running">The test is running.</STRING>
+	<STRING ID="14" Context="TestFail"></STRING>
+	
+	<STRING ID="43000" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;43000&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE can not read the ECM parameters when connected to the ECM. Please contact technical support.&lt;/Description&gt;&lt;Suggestion&gt;Check if the parameter(s) is supported in the calibration.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+    <STRING ID="43001" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;43000&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program. Please contact technical support.&lt;/Description&gt;&lt;Suggestion&gt;Check if the parameter(s) is supported in the calibration.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+    <STRING ID="43002" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;43000&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error has occurred in the INSITE program. Please contact technical support.&lt;/Description&gt;&lt;Suggestion&gt;Check if the parameter(s) is supported in the calibration.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+  </RESOURCE>
+</XML_RESOURCE>

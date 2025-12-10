@@ -1,0 +1,18 @@
+<LicenseFile>
+	<ToolReqLicense Expiration="permanent" Name="AEMLogs_Tool_Lite" VendorDaemon="cummins" Key="0D5E87C67CD4" IsValid="" ID="AEMLogs_Tool_Lite" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="Lite"/>
+	</ToolReqLicense>
+	<ToolReqLicense Expiration="permanent" Name="AEMLogs_Tool_Pro" VendorDaemon="cummins" Key="E78FC206711E" IsValid="" ID="AEMLogs_Tool_Pro" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="Pro"/>
+	</ToolReqLicense>
+	<ToolReqLicense Expiration="permanent" Name="AEMLogs_Tool_RSGR" VendorDaemon="cummins" Key="3718A9FA7071" IsValid="" ID="AEMLogs_Tool_RSGR" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="RSGR"/>
+	</ToolReqLicense>
+	<ToolReqLicense Expiration="permanent" Name="AEMLogs_Tool_OBDRSGR" VendorDaemon="cummins" Key="BA725A61E062" IsValid="" ID="AEMLogs_Tool_OBDRSGR" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="OBD-RSGR"/>
+	</ToolReqLicense>
+	<UserReqLicense Expiration="permanent" Name="AEMLogs_Reset_AdvanceECMData" VendorDaemon="cummins" Key="1E30C02AB088" IsValid="" ID="AEMLogs_Reset_AdvanceECMData" Version="1.0" Count="uncounted">
+		<Users>
+			<User NAME="Reset_Advance_ECM_Data"/></Users>
+	</UserReqLicense>
+</LicenseFile>

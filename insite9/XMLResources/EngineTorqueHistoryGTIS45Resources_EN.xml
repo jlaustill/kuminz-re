@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE module SYSTEM "../htmlentities.dtd">
+<XML_RESOURCE>
+   <RESOURCE Tag="1001" Type="String Table" Description="Message String Table">
+		<STRING ID="101" Context="Title">Engine Torque History</STRING>
+		<STRING ID="102" Context="">Maximum Power Rating</STRING>
+		<STRING ID="103" Context="">Maximum Torque Rating</STRING>
+		<STRING ID="105" Context="">Torque History Data</STRING>
+		<STRING ID="106" Context="">Engine Torque History</STRING>
+		<STRING ID="107" Context="">Engine Torque History records the 4 most recent horsepower ratings applied to an engine and also displays the Maximum Power and Maximum Torque ratings available.</STRING>
+		<STRING ID="108" Context="">Help</STRING>
+		<STRING ID="109" Context="">Print</STRING>
+		<STRING ID="110" Context="">Save</STRING>
+		<STRING ID="111" Context="">Refresh</STRING>
+		<STRING ID="112" Context="">Select a log:</STRING>
+		<STRING ID="113" Context="">Parameter</STRING>
+		<STRING ID="114" Context="">Units</STRING>
+		<STRING ID="115" Context="">Value</STRING>
+		<STRING ID="116" Context="">Occurrence</STRING>
+		<STRING ID="117" Context="">(Oldest)</STRING>
+		<STRING ID="118" Context="">1(Newest)</STRING>
+		<STRING ID="119" Context="">Engine Torque History</STRING>
+		<STRING ID="120" Context="">Company Name :</STRING>
+		<STRING ID="121" Context="">Work Order Name :</STRING>
+		<STRING ID="122" Context="">ECM Image Name :</STRING>
+		<STRING ID="123" Context="">Customer Name :</STRING>
+		<STRING ID="124" Context="">Customer Unit Number :</STRING>
+		<STRING ID="125" Context="">Engine Serial Number :</STRING>
+		<STRING ID="126" Context="">This feature is not supported by the current calibration.</STRING>
+		<STRING ID="127" Context="">The Engine Torque History log data could not be\r\nread from the module.\r\n\r\nPlease select Refresh after clicking OK. </STRING>
+		<STRING ID="128" Context="">INSITE detects an error in the ECM's. Please Recalibrate the ECM's.</STRING>		
+		<STRING ID="129" Context="">Refreshing</STRING>
+		<STRING ID="130" Context="">Refreshing Data please wait. ...</STRING>
+		<STRING ID="131" Context="">4(Oldest)</STRING>
+		<STRING ID="140" Context="INSITE title">Cummins INSITE</STRING>
+		<STRING ID="142" Context="Low memory message">There is not enough space on the disk.</STRING>
+		<STRING ID="144" Context="">ETH</STRING>
+	  <STRING ID="146" Context="save dialog title">Save</STRING>
+    <STRING ID="148" Context="save file default name">CSV Files(*.csv)|*.csv|TXT Files(*.txt)|*.txt|All Files(*.*)|*.*|</STRING>
+    <STRING ID="149" Context="">Powertrain Protection Gear Ratio 1</STRING>
+    <STRING ID="150" Context="">Powertrain Protection Gear Ratio 2</STRING>
+    <STRING ID="151" Context="">Powertrain Protection Gear Ratio 3</STRING>
+    <STRING ID="152" Context="">Powertrain Protection Torque Limit 1</STRING>
+    <STRING ID="153" Context="">Powertrain Protection Torque Limit 2</STRING>
+    <STRING ID="154" Context="">Powertrain Protection Torque Limit 3</STRING>
+     <STRING ID="155" Context="Printer Not available title">Cummins INSITE</STRING>
+     <STRING ID="156" Context="Printer Not available text">Printer not found.</STRING>
+     <STRING ID="1014" Context="">Powertrain Protection is either disabled in Features and Parameters or not supported in the calibration.  Please open Features and Parameters and if available, enable Powertrain Protection to view this information.</STRING>
+     
+     <STRING ID="35052" Context="Page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;35052&lt;/ErrorNumber&gt;&lt;Description&gt;An Internal Error has occurred in INSITE Program.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="10001" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;2001&lt;/ErrorNumber&gt;&lt;Description&gt;Error in reading the feature enable token.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="10002" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;2002&lt;/ErrorNumber&gt;&lt;Description&gt;Error in reading fault status token.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="10003" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;2003&lt;/ErrorNumber&gt;&lt;Description&gt;Error in reading the token.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="10004" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;2004&lt;/ErrorNumber&gt;&lt;Description&gt;Error in reading the safe array.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="10005" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;2005&lt;/ErrorNumber&gt;&lt;Description&gt;Error in publishing the event.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="10006" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;2501&lt;/ErrorNumber&gt;&lt;Description&gt;Error in loading ECM property page helper class.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="10007" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;2502&lt;/ErrorNumber&gt;&lt;Description&gt;Error in unloading ECM property page helper class.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="10008" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;2006&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to find logic events&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="10009" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;2007&lt;/ErrorNumber&gt;&lt;Description&gt;Failed to unregister the publisher.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="10010" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;2008&lt;/ErrorNumber&gt;&lt;Description&gt;Error in getting log.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="10011" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;2503&lt;/ErrorNumber&gt;&lt;Description&gt;Error in some FlexGrid operation.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="10012" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;2009&lt;/ErrorNumber&gt;&lt;Description&gt;Error in getting record info.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="10013" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;2010&lt;/ErrorNumber&gt;&lt;Description&gt;Error in accessing data from safearray.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="10014" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;2011&lt;/ErrorNumber&gt;&lt;Description&gt;Error in unaccessing data from safearray.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="10015" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;2504&lt;/ErrorNumber&gt;&lt;Description&gt;Error in accessing data from safearray.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+		<STRING ID="10016" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;2505&lt;/ErrorNumber&gt;&lt;Description&gt;Error in unaccessing data from safearray.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+  	 <STRING ID="28710" Context="page Error">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;18968&lt;/ErrorNumber&gt;&lt;Description&gt;An Internal Error has occurred in INSITE Program while saving logs.&lt;/Description&gt;&lt;Suggestion&gt;Please retry the operation or close and restart INSITE.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING>
+	</RESOURCE>
+</XML_RESOURCE>

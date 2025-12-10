@@ -1,0 +1,6 @@
+<!-- Template for CustomUnits.xml file -->
+<UOM>
+	<CurrentUnitGroup resourceID="IDR_UOM_USA" label="USA" UnitGroupID="1" editflag="N"/>
+	<UnitGroups>
+	</UnitGroups>
+</UOM>

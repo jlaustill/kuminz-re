@@ -1,0 +1,321 @@
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~             
+	New Features for INSITE™ 7.6 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Note: If it is difficult to read this document with Microsoft Notepad,
+      click on "Word Wrap" under the "Format" menu item or 'maximize'
+      the Notepad window. To print this and have the tables in a valid
+      format set the page margins to 0.25.
+
+See INSITE™ Release Notes for issues with the current and previous
+releases.
+
+It is recommended after installation to register the INSITE™ PCID 
+displayed when logging into the Limited User account.  Contact the 
+local Cummins Distributor to register your new INSITE™ and receive
+a Basic Registration and Functional Level Password.
+
+The latest INSITE™ information can be found on the website 
+http://insite.cummins.com
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+NEW INSITE™ FEATURES
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Installation upgrade capability
+Upgrade from INSITE™ 7.5.3.
+
+ - The INTELECT folder now contains a INSITE Engine Feature file. 
+The individual engine help files have eliminated.  The INSITE Engine 
+Feature file lists the help descriptions for the engines Features 
+and Parameters, Diagnostic Test and Advanced ECM Data help content.
+
+ - Audit Trail
+The Audit Trail has been expanded to support up to 8 Audit Trail 
+entries.  This only applies to products if supported by the calibration.
+
+ - ECM Key Off Time
+The required key off time may be more than 30 seconds for some 
+products.  If supported by the calibration, INSITE will display
+the required key off time when users are prompted to turn the key off.
+This time is also displayed under the Data Monitor / Logger in INSITE.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+New Product Support
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ - ISB5.9 CM2150
+ - ISB5.9/6.7 CM2880 ISN
+ - ISZ13 CM2150 SN
+ - QSZ CM2150
+ - Turbocharger Actuator - The Turbocharger can be calibrated by 
+INSITE by using the Programmable Datalink Device (PDD) option in
+Calibration Selection.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Calibration Selection
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ - Calibration Selection
+The Calibration Selection has been redesigned to include a separate
+section for Programmable Datalink Device (PDD) Calibrations such as
+the Aftertreatment Device or Turbocharger.  This will allow users 
+to bypass connecting to the ECM and download directly to a PDD. 
+
+ - Network Drive Performance Improvement
+A performance improvement has been implemented for reading 
+calibrations on network drives.  This greatly reduces the time
+INSITE spends when the "View Network Calibration Drives" is
+selected in the Tools > Options > General menu.
+ 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+New Features and Parameters
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+***These will only be displayed if they are supported by the 
+calibration.
+
+ - Features and Parameters
+The column widths will remain on the same between INSITE sessions.
+
+ - Anti-Lock Brake (ABS) Controller
+This feature provides the capability to enable the Anti-Lock Brake
+(ABS) Controller.
+
+ - Cab PTO 
+This feature allows the operator to enable or disable the operation
+of PTO from inside the cab.
+
+ - Fan Minimum Run Time
+This allows the user to set the minimum time that the fan will run
+each time it turns on.
+
+ - Idle Shutdown Hot Ambient Air Temperature Automatic Override
+This allows the operator to choose override of the Idle Shutdown 
+Hot Ambient Air Temperature Override threshold.
+
+ - Parking Brake Interlock Type
+This allows the user to program whether or not PTO is allowed when
+the Parking Brake is off.  When the interaction is enabled, PTO is
+allowed only when Parking Brake is ON.  When the interaction is 
+disabled, PTO is allowed regardless of the Parking Brake Switch Status. 
+
+ - Step Size Adjustment
+This feature provides the ability to configure the amount of increase
+and decrease in step size when adjusting the Maximum Vehicle Speed 
+using the Cruise Control Set / Resume switches when the Smart Road
+Speed Governor feature is enabled.
+
+ - Transmission Neutral Interlock
+This feature allows PTO to be turned on only if the transmission
+is in neutral and disengages PTO when the transmission is taken 
+out of the Neutral position.  This feature does not apply when 
+the transmission type is manual.
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Advanced ECM Data
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ - Advanced ECM Data
+INSITE will only display Advanced ECM Data features if they are 
+supported by the calibration.
+ 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ECM Diagnostic Test
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ - ECM Diagnostic Test 
+INSITE will only display ECM Diagnostic Tests if they are 
+supported by the calibration.
+
+ - Fuel Injector Performance Test
+This will test all fuel injectors at multiple predetermined fuel rail
+pressures by monitoring the pressure drops across individual injectors
+at multiple test points.  It will compare this data to the 
+pre-determined limits for each test point. A Passed or Failed result
+will be displayed along with status for each applicable cylinder and
+test points.  This only applies to the ISX 12/11.9/15 CM2250.
+
+ - Diesel Exhaust Fluid Doser Pump Override Test
+This test has been updated to include a 90 second initializing time 
+before dosing starts.  This allows the system to fully energize 
+before the test starts.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Data Monitor / Logger
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ - Data Monitor / Logger
+The column widths will remain on the same between INSITE sessions.
+
+ - Out of Range Window
+The Out of Range window has been removed.
+
+ - Limit Columns
+The Upper and Lower limit columns have been modified to display the 
+Minimum Measured and Maximum Measured values read by INSITE while
+the parameters are being monitored.
+
+New Monitors Supported:
+***These will only be displayed if they are supported by the 
+calibration.
+ - Aftertreatment Diesel Exhaust Fluid 1 Line Pressure Measured
+ - Aftertreatment Diesel Exhaust Fluid 1 Line Pressure Sensor Voltage
+ - Aftertreatment Diesel Exhaust Fluid 2 Line Pressure Measured
+ - Aftertreatment Diesel Exhaust Fluid 2 Line Pressure Sensor Voltage
+ - Aftertreatment Diesel Exhaust Fluid Dosing Unit 1 State
+ - Aftertreatment Diesel Exhaust Fluid Dosing Unit 2 State
+ - Aftertreatment Outlet 1 NOx
+ - Aftertreatment Outlet 1 NOx Corrected
+ - Aftertreatment Outlet 1 NOx Reading Stable
+ - Aftertreatment Outlet 2 NOx 
+ - Aftertreatment Outlet 2 NOx Corrected
+ - Aftertreatment Outlet 2 NOx Reading Stable
+ - Aftertreatment SCR 1 Intake Temperature
+ - Aftertreatment SCR 1 Intake Temperature Signal Voltage
+ - Aftertreatment SCR 1 Outlet Temperature
+ - Aftertreatment SCR 1 Outlet Temperature Signal Voltage
+ - Aftertreatment SCR 2 Intake Temperature
+ - Aftertreatment SCR 2 Intake Temperature Signal Voltage
+ - Aftertreatment SCR 2 Outlet Temperature
+ - Aftertreatment SCR 2 Outlet Temperature Signal Voltage
+ - ECM Key Off Time
+ - Peak Fuel Rail Pressure 
+ - Remote Station PTO Additional Switch 
+ - Remote Station PTO Decrement Switch
+ - Remote Station PTO Increment Switch
+ - Remote Station PTO On/Off Switch
+ - Turbocharger 1 Speed 
+ - Turbocharger 3 Speed 
+ - Turbocharger 4 Speed
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Work Orders
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Templates
+The ability to Print Preview a Template has been added to the right 
+click menu.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Languages Supported:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  - English
+
+  Limited Translation:
+
+  - Chinese (Simplified)
+  - Danish
+  - Dutch
+  - Finnish
+  - French
+  - German
+  - Indonesian
+  - Italian
+  - Hungarian
+  - Japanese
+  - Korean
+  - Norwegian
+  - Polish 
+  - Portuguese
+  - Romanian 
+  - Russian
+  - Spanish
+  - Swedish
+  - Turkish
+
+  
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Operating System Support
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  - Windows® 7 32-bit (Recommended) and 64-bit 
+
+            
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Recommended PC Requirements
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+COMPONENT		REQUIREMENTS (Recommended for new hardware purchases)
+
+Platform:		IBM or 100% Compatible
+
+Operating System:	Recommend: Windows 7 (32-bit)
+            
+Processor:		2.0 GHz or greater dual-core
+
+RAM Memory:		2 GB or greater
+                        
+Hard Drive:		6 GB or greater available disk space
+
+Media Device:		DVD-ROM
+
+Display:		SVGA(1024 x 768 pixels) Color
+
+Keyboard:		101 Key Enhanced
+
+Pointing Device:	WindowsTM Compatible Device
+
+Multimedia:		PCs that will be used for Virtual College training will
+			require multimedia and sound capability                    
+
+Other Software:		Adobe Acrobat Reader v8.0 or higher
+                        Microsoft .NET Framework v4.0
+
+Printer:		WindowsTM Compatible
+                      
+Internet connection:	DSL / Broadband high-speed (optional for updates and QSOL)
+
+Available Ports:	Two USB 2.0 
+
+
+Other:			Refer to http://insite.cummins.com for latest information
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Minimum PC Requirements
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+COMPONENT		REQUIREMENTS (for minimum performance)
+
+Platform:		IBM or 100% Compatible
+
+Operating System:	Supported: Windows® XP SP3 or greater, Windows® Vista, and 
+                        Windows® 7 32- and 64-bit versions for all operating systems
+                        Note:  Windows 7 Virtual PC and XP Mode are not supported
+
+Processor:		Windows 7 - 2 GHz
+
+RAM Memory:		Windows 7 - 2GB
+
+Hard Drive:		2 GB available disk space
+
+Media Device:		DVD-ROM (may be internal or external as needed for installation)
+
+Display:		SVGA(1024 x 768 pixels) CRT
+			LCD: TFT Active Matrix, XGA (1024 x 768)
+
+Keyboard:		101 Key Enhanced
+
+Pointing Device:	Windows® Compatible Device
+
+Multimedia:		Any Windows Compatible Sound Device
+
+Other Software:		Adobe Acrobat Reader v7.0 or higher
+                        Microsoft .NET Framework v4.0
+
+Printer:		Windows Compatible Device
+
+Internet connection:	None
+
+
+Available Ports:	See datalink adapter manufacturer for port specifications.       
+
+
+Other:			Refer to http://insite.cummins.com for latest information
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+JRE  Created: INSITE™ 7.6 August 2012
+Document 6733-NEWF-07 Version 1.0.0
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

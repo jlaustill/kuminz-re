@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE module SYSTEM "../htmlentities.dtd">
+<XML_RESOURCE>
+  <STRINGS>
+    <STRING ID="1" Context="Title">Injector Performance Test</STRING>
+    <STRING ID="2" Context="Description">This will test all fuel injectors at multiple predetermined fuel rail pressures.</STRING>
+    <STRING ID="3" Context="Instructions">Initial Conditions
+1.     Vehicle Stopped
+2.     Engine Running at Idle
+3.     No Aftertreatment Regenerations in progress
+4.     Accelerator, Service Brake released and Clutch disengaged
+5.     Verify no active Engine Protection faults
+6.     Verify no active Fuel System faults
+Steps
+1.     Select Start 
+2.     Allow system to run test on each test point
+3.     Monitor results
+Additional Information 
+1.     The test will abort if the throttle, clutch, or service brake is depressed anytime during the test 
+2.    The test will take up to 30 minutes to complete   
+3.    An external file will be automatically created and saved in the Intellect/IPT folder on the local drive each time the test is run
+4.    The user will be required to exit and reenter the test to restart if the test aborts
+5.    The user will be able to restart the test from the test window if the test was manually stopped or is completed. The test will restart from the beginning </STRING>
+    <STRING ID="4" Context="Not Supported">The test is not supported by the current calibration.</STRING>
+    <STRING ID="5" Context="Running">Running</STRING>
+    <STRING ID="6" Context="Stopped">Test stopped. Select Start to start the test.</STRING>
+    <STRING ID="7" Context="Instruction Header">Instruction</STRING>
+	<STRING ID="8" Context="Monitors Header">Monitors</STRING>    
+	<STRING ID="9" Context="status Header">Status</STRING>	
+	<STRING ID="10" Context="Show Button">Show</STRING>
+	<STRING ID="11" Context="Monitors Header">Results</STRING>		
+	<STRING ID="12" Context="Error 2207">The test could not start because the Engine Coolant Temperature is too low.  Continue to run the engine to raise the Engine Coolant Temperature, exit the test, correct the issue and then reinitiate the test.</STRING>	
+	<STRING ID="13" Context="Error 2209">The test was stopped or could not start because of a Fuel System fault.  Exit the test, troubleshoot any active Fuel System fault codes and then reinitiate the test.</STRING>	
+	<STRING ID="14" Context="Error 2204">The test was stopped or could not start because the clutch is depressed.  Exit the test, correct the issue and then reinitiate the test.</STRING>	
+	<STRING ID="15" Context="Error 2203">The test was stopped or could not start because the vehicle is moving or a Vehicle Speed Sensor fault code is active. Stop the vehicle, verify no Vehicle Speed Sensor fault codes are active, exit the test, correct the issue and then reinitiate the test.</STRING>	
+	<STRING ID="16" Context="Error 2213">The test was stopped or could not start because the Aftertreatment System has existing faults, or is not in a condition to allow the test to run.  Exit the test, troubleshoot any existing Aftertreatment System faults or conditions prohibiting the test then reinitiate the test.</STRING>	
+	<STRING ID="17" Context="Error 2208">The test was stopped or could not start because of an Engine Protection fault.  Exit the test, troubleshoot any active Engine Protection fault codes and then reinitiate the test.</STRING>	
+	<STRING ID="18" Context="Error 2205">The test was stopped or could not start because the service brake is depressed.  Exit the test, correct the issue and then reinitiate the test.</STRING>	
+	<STRING ID="19" Context="Error 2206">The test was stopped or could not start because the Accelerator Pedal or Throttle Position is greater than zero.  Exit the test, correct the issue and then reinitiate the test.</STRING>	
+	<STRING ID="20" Context="Error 2210">The test was stopped because the Fuel System Pressure Decay Rate was excessive.  Exit the test, troubleshoot the fuel system to correct the problem and then reinitiate the test.</STRING>	
+	<STRING ID="21" Context="Error 2211">The test was stopped or could not start because the fuel system pressure is unstable.  Exit the test, troubleshoot and stabilize the fuel system pressure and reinitiate the test.</STRING>	
+	<STRING ID="22" Context="Error 2249">The ECM has determined that there are conditions that can damage the engine or prevent the test from functioning properly. The ECM will not start the Injector Performance Test.</STRING>	
+	<STRING ID="23" Context="Error 2215">The test was stopped or could not start because Engine Speed was low. Exit the test, correct the issue and reinitiate the test.</STRING>	
+	<STRING ID="24" Context="Error 2249">The ECM has determined that there are conditions that can damage the engine or prevent the test from functioning properly. The ECM will not start the Injector Performance Test.</STRING>		
+	<STRING ID="25" Context="Status 2212">The test has completed testing all injectors. Select start to start the test.</STRING>	
+	<STRING ID="26" Context="Cylinder">Cylinder</STRING>
+	<STRING ID="27" Context="Test Point">Test Point</STRING>
+	<STRING ID="28" Context="Service Result">Failed</STRING>
+	<STRING ID="29" Context="Service Result">Passed</STRING>
+	<STRING ID="30" Context="Service Result">Running</STRING>
+	<STRING ID="31" Context="Service Result">Not Started</STRING>	
+	<STRING ID="32" Context="Title string">ECM Information:</STRING>
+	<STRING ID="33" Context="Title string">Injector Barcode:</STRING>
+	<STRING ID="34" Context="CSV File Item">Test Point Information:</STRING>
+	<STRING ID="35" Context="CSV File Item">Test Point Pressure(bar)</STRING>
+	<STRING ID="36" Context="CSV File Item">Test Point quantity(mg/stroke)</STRING>
+	<STRING ID="37" Context="CSV File Item">Test Point Pressure Drop High Limit(bar)</STRING>
+	<STRING ID="38" Context="CSV File Item">Test Point Pressure Drop Low Limit(bar)</STRING>
+	<STRING ID="39" Context="CSV File Item">Test Point Pressure Drop (bar)</STRING>
+	<STRING ID="40" Context="CSV File Item">Fueling Adaption Save and Restore:</STRING>
+	<STRING ID="41" Context="CSV File Item">Bucket 1 Fuel Adjustment(mg/stroke)</STRING>
+	<STRING ID="42" Context="CSV File Item">Bucket 2 Fuel Adjustment(mg/stroke)</STRING>
+	<STRING ID="43" Context="Printer Not Available Title">Cummins INSITE</STRING>  
+	<STRING ID="44" Context="Printer Not Available Message">Printer not found.</STRING>
+	<STRING ID="45" Context="Print Header Item">Customer Name : </STRING>
+	<STRING ID="46" Context="Customer Name">Customer </STRING>
+	<STRING ID="47" Context="Print Header Item">Engine Serial Number : </STRING>
+	<STRING ID="48" Context="Print Page Number Format">Page {1} of {1} </STRING>
+	<STRING ID="49" Context="IPT Folder name">IPT</STRING>
+	<STRING ID="50" Context="Print Herader Item">Test Status:</STRING>
+	<STRING ID="51" Context="Safety Message Herader">INSITE</STRING>
+	<STRING ID="52" Context="Pop up Message">DURING THE INJECTOR PERFORMANCE TEST, EXPECTED ENGINE BEHAVIOR REQUIRES THE CONSIDERATION OF ADDED MEASURES TO ENSURE THE VEHICLE REMAINS STATIONARY. 
+
+To prepare for the injector performance test:
+
+1.  Select an appropriate location to park the vehicle
+- On a reasonably level surface.
+- Perform the test at a reasonable distance from other vehicles
+- Away from vehicular and foot traffic
+
+2.  Park the vehicle securely
+- Verify parking brake operation per the vehicle manufacturer's specifications
+- Set the parking brake
+- Place transmission in "Park" if provided, otherwise in "Neutral"
+- Set wheel chocks at front and rear of at least one tire 
+
+3.  Prepare for engine speed changes during the Injector Performance Test
+- Do not operate any PTO powered devices. These devices must be disconnected/disengaged before starting the test 
+- Stay clear of the engine compartment while the test is running
+
+Ensure that the vehicle and surrounding area are monitored during the test. IF ANY UNSAFE CONDITION OCCURS, STOP THE TEST IMMEDIATELY.
+
+Have all conditions noted above been met?</STRING>
+
+<STRING ID="53" Context="Error 2282">The test could not start  due to another test already in progress. Please wait until the test stops before attempting to restart the Fuel Injector Performance Test.</STRING>	
+<STRING ID="54" Context="Error 2283">The test was stopped or could not start because engine speed was too high. Exit the test, correct the issue and reinitiate the test.</STRING>	
+<STRING ID="55" Context="Error 2284">The test was stopped or could not start because PTO was engaged. Exit the test, correct the issue and reinitiate the test.</STRING>	
+<STRING ID="56" Context="Error 2285">The test stopped or could not start due to the Parking Brake being disengaged. Exit the test, correct the issue and reinitiate the test.</STRING>	
+<STRING ID="57" Context="Error 2286">The test was stopped or could not start due to the transmission being engaged. Exit the test, correct the issue and reinitiate the test.</STRING>	
+
+
+	<STRING ID="48000" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;48000&lt;/ErrorNumber&gt;&lt;Description&gt;INSITE cannot currently read the ECM parameters from the connected ECM. Please contact technical support.&lt;/Description&gt;&lt;Suggestion&gt;Check if the parameter(s) is supported in the calibration.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING> 
+	<STRING ID="48001" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;48001&lt;/ErrorNumber&gt;&lt;Description&gt;An internal error occurred while getting enumeration.&lt;/Description&gt;&lt;Suggestion&gt;Unexpected enumeration value in the test status.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING> 
+<STRING ID="48002" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;48002&lt;/ErrorNumber&gt;&lt;Description&gt;There is not enough disk space available to create the log file. Please contact the local administrator.&lt;/Description&gt;&lt;Suggestion&gt;Free up some disk space and rerun the test.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING> 
+<STRING ID="48003" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;48003&lt;/ErrorNumber&gt;&lt;Description&gt;The user does not have sufficient access permissions to create the log file. Please contact the local administrator.&lt;/Description&gt;&lt;Suggestion&gt;Ensure the current user has the required permissions.&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING> 
+<STRING ID="48004" Context="">&lt;ErrorInfo&gt;&lt;ErrorNumber&gt;48004&lt;/ErrorNumber&gt;&lt;Description&gt;Unknown error occurred while saving test data. Please contact technical support.&lt;/Description&gt;&lt;Suggestion&gt;&lt;/Suggestion&gt;&lt;/ErrorInfo&gt;</STRING> 		
+  </STRINGS>
+</XML_RESOURCE>

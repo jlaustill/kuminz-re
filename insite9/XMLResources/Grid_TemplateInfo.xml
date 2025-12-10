@@ -1,0 +1,92 @@
+<FlexGrid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+
+	<Properties Cols="2:VT_I4" FixedCols="0:VT_I4" ExplorerBar="0:VT_I4" GridLines="0:VT_I4" OutlineBar="5:VT_I4"
+	AllowUserResizing="1:VT_UI4"   AutoResize="1:VT_I4" Editable="0:VT_I4" ColWidthMax="0"/>
+
+	<FixedRows>
+		<FixedRow>
+			<Column name=""/>
+			<Column name=""/>
+		</FixedRow>
+	</FixedRows>
+		
+	<data loopEnd="1">
+		<Object name="s" source="OBJ:VSFLEXGRID:FixedRows(0)PROPPUT"/>
+		<Node level="0" loopEnd="1" >
+			<Column order="0" datasource="OBJ:DOM:selectSingleNode(/Template/Header/TDate):getAttribute(DisplayName)" />
+			<Column order="1" datasource="OBJ:DOM:selectSingleNode(/Template/Header/TDate):getAttribute(DisplayValue)" styleid="s1"/>
+			
+		</Node>
+		<Node level="0" loopEnd="1" >
+			<Column order="0" datasource="OBJ:DOM:selectSingleNode(/Template/Header/TFilePath):getAttribute(DisplayName)" />
+			<Column order="1" datasource="OBJ:DOM:selectSingleNode(/Template/Header/TFilePath):getAttribute(DisplayValue)" styleid="s1"/>
+		</Node>
+		<Node level="0" loopEnd="1" >
+			<Column order="0" datasource="OBJ:DOM:selectSingleNode(/Template/Header/ECMType):getAttribute(DisplayName)" />
+			<Column order="1" datasource="OBJ:DOM:selectSingleNode(/Template/Header/ECMType):getAttribute(DisplayValue)" styleid="s1"/>
+		</Node>
+		<Node level="0" loopEnd="1" >
+			<Column order="0" datasource="OBJ:DOM:selectSingleNode(/Template/Header/TStatus):getAttribute(DisplayName)" />
+			<Column order="1" datasource="OBJ:DOM:selectSingleNode(/Template/Header/TStatus):getAttribute(DisplayValue)" styleid="s1"/>
+		</Node>
+		<Node level="0" loopEnd="1" >
+			<Column order="0" datasource="OBJ:DOM:selectSingleNode(/Template/Header/CustomerName):getAttribute(DisplayName)" />
+			<Column order="1" datasource="OBJ:DOM:selectSingleNode(/Template/Header/CustomerName):getAttribute(DisplayValue)" styleid="s1"/>
+		</Node>
+		<Node level="0" loopEnd="1" >
+			<Column order="0" datasource="OBJ:DOM:selectSingleNode(/Template/Header/TSerial):getAttribute(DisplayName)" />
+			<Column order="1" datasource="OBJ:DOM:selectSingleNode(/Template/Header/TSerial):getAttribute(DisplayValue)" styleid="s1"/>
+		</Node>
+		<Node level="0" loopEnd="1" >
+			<Column order="0" datasource="OBJ:DOM:selectSingleNode(/Template/Header/TOrigin):getAttribute(DisplayName)" />
+			<Column order="1" datasource="OBJ:DOM:selectSingleNode(/Template/Header/TOrigin):getAttribute(DisplayValue)" styleid="s1"/>
+		</Node>
+		<Node level="0" loopEnd="1" >
+			<Column order="0" datasource="OBJ:DOM:selectSingleNode(/Template/Header/TNotes):getAttribute(DisplayName)" styleid="s3"/>
+			<Column order="1" datasource="OBJ:DOM:selectSingleNode(/Template/Header/TNotes):getAttribute(DisplayValue)" styleid="s2"/>
+		</Node>
+	</data>
+
+	<parameters>
+	</parameters>
+
+	<icons>
+	</icons>
+	
+	<combolists>
+	</combolists>
+	
+	<styles>
+	<style id="s1" CellFontBold="1:VT_I4" CellAlignMent="0:VT_I4" />
+	<style id="s2" CellFontBold="1:VT_I4" CellAlignMent="0:VT_I4" ColWidthMin="3000" ColWidthMax="8000" WordWrap="1:VT_BOOL" AutoSizeMode="1:VT_I4" />
+	<style id="s3" CellAlignMent="0:VT_I4" />
+	</styles>
+	
+	<resources>
+	</resources>
+	<printing HdrFontSize="8" MarginHeader="10mm">
+		<header>
+			<line>
+				<left source="ECM Template" />
+				<right source="Template Version" />
+				<right source=" -> " />
+				<right source="OBJ:DOM:selectSingleNode(/Template):getAttribute(TemplateVersion)" />
+			</line>
+			<line>
+				<left source="OBJ:DOM:selectSingleNode(/Template/Header/EPName):getAttribute(DisplayName)" />
+				<left source=" -> " />
+				<left source="OBJ:DOM:selectSingleNode(/Template/Header/EPName):getAttribute(DisplayValue)" />
+				<right source="OBJ:DOM:selectSingleNode(/Template/Header/TName):getAttribute(DisplayName)" />
+				<right source=" -> " />
+				<right source="OBJ:DOM:selectSingleNode(/Template/Header/TName):getAttribute(DisplayValue)" />
+			</line>
+		</header>
+		<footer>
+			<line>
+				<left source="OBJ:SYSTEMDATA:Value(TIME)PROP" />
+				<right source="OBJ:SYSTEMDATA:Value(DATE)PROP" />
+			</line>
+		</footer>
+	</printing>
+</FlexGrid>

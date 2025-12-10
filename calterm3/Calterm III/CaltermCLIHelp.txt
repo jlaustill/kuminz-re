@@ -1,0 +1,300 @@
+CALTERMCLI Usage:
+
+         Switches may be entered in any order.
+         Arguments are not case sensitive.
+         CALTERMCLI must be running from the Calterm III directory
+                in order to operate properly.
+
+Components Supported:
+
+                C {overlay|import|compare|export|assemble|divide|speedUpload|document}
+
+OVERLAY (One:One:One and Many:One:One):
+
+        CaltermCLI -Coverlay -PproductId -SsourceCal -E1sourceConfig
+  -YtargetCal -E2targetConfig [-OdestinationCal]
+  [-GfilterFilename] [-RreportFilename] 
+  [-L{cal|subfile|import}] [-M{Yes|No}] [-N{Yes|No}] 
+  [-FinputParameteFilename] 
+  [-D{OneOneOne|ManyOneOne}] 
+  [-ST*{calibration|subfile|import\export}] 
+  [-YT*{calibration|subfile}] [-SV*{true|false}] 
+  [-V{true|false}] [-SM*{true|false}]  
+  [-VL*{ClipToLimits|EnforceLimits|IgnoreLimits}]
+  [-IreportPrefix]  [-U{true|false}]
+  [-OT*{true|false}] [-RF*{html|txt|xml}]
+  [-RA*{true|false}]
+  [-MA*]
+  
+NOTES: 
+  1) -E1 argument is not required if -S uses an Import/Export file 
+     i.e.One Import/Export file to One Calibration file Overlay.
+  2) -R switch not supported when doing M:1:1 Overlay
+  3) When -F switch is used(for M:1:1) -S and -E1 switches are 
+                   ignored.
+  4) -MA* switch is optional. If absent CaltermCLI will default to creating
+     a calibration file if a Missing Axes error occurs. If present it won't
+     create the file                   
+
+OVERLAY (Many:One:One):
+
+        CaltermCLI -Cimport -PproductId -FinputParameteFilename
+  -TtargetCal -EtargetConfig [-OdestinationCal]
+  [-GfilterFilename] [-L{cal|subfile|import}]
+  [-M{Yes|No}] [-N{Yes|No}] 
+  [-ST*{calibration|subfile|importExport}] 
+  [-YT*{calibration|subfile}] [-SV*{true|false}] 
+  [-V{true|false}] [-SM*{true|false}]  
+  [-VL*{ClipToLimits|EnforceLimits|IgnoreLimits}]
+  [-IreportPrefix]  [-OT*{true|false}] 
+  [-RF*{html|txt|xml}] 
+  [-RA*{true|false}]
+  [-MA*]
+        
+COMPARE:
+
+       CaltermCLI -Ccompare -PproductId -Ssource1Cal -E1source1Config
+  -Fsource2Cal -E2source2Config [-RreportFilename] 
+  [-L{cal|subfile|import}] [-M{Yes|No}] [-N{Yes|No}] 
+  [-T1*{calibration|subfile|import\export}] 
+  [-T2*{calibration|subfile}] [-O{html|txt}]
+  [-SS*{true|false}] [-SG*{true|false}] 
+  [-GfilterFilename] [-IreportPrefix]
+  [-RA*{true|false}]
+  
+NOTES:
+  1) -E1 argument is not required if -S uses an Import/Export file 
+     i.e.One Import/Export file to One Calibration file Compare.
+
+EXPORT:
+
+       CaltermCLI -Cexport -PproductId -SsourceCal -EsourceConfig
+  -GfilterFilename -OoutputExportFilename 
+  [-D{true|false}] [-F{xml|matLabMFile}] 
+  [-L{cal|subfile|import}]
+
+ASSEMBLE:
+
+       CaltermCLI -Cassemble -PproductId -FinputSubfileNames
+                [-OdesstinationCal]  
+                [-D{Unstructured |Structured}] 
+                [-EC*ecmcode]
+                [-HheaderFileName]
+                [-ES*engineSubsystem]
+                [-VF*{true|false}]
+                [-EverifyConfigurationFileName]
+                [-RverifyReportFileName]
+                [-RF*{html|txt}]
+                [-RA*{true|false}]
+NOTES:                
+    1)When -VF* is set to true, -E have to be specified to provide
+      the configuration file for subfile verify.
+    2)-RF* is used for specify the subfile verify report format.
+                
+    
+DIVIDE:
+
+       CaltermCLI -Cdivide -PproductId -SsourceCal -EsourceConfig
+ [-OdestinationSubfilePath] [-RreportFilename] 
+ [-FinputParameterFilename] [-IreportPrefix] [-RF*{html |txt}] [-RA*{true|false}]
+ 
+NOTES:
+ 1)When -R switch is specified along with -I switch,
+   -I switch gets appended to the -R switch with an
+   underscore.
+ 2)When -R switch is specified along with -RF* switch,
+   format of -R switch gets replaced by -RF* switch.
+
+SPEEDUPLOAD:
+       CaltermCLI -CspeedUpload -PproductId -DecmPartNumber -JejrNumber
+        -IuploadFilePathAndName -TuploadFileType
+   [-RreportFilename] 
+   [-RF*{html |txt}]
+   [-SP*speedSeverPath]
+   [-RP*speedReportFilePrefix]
+   [-RA*{true|false}]
+NOTES: 
+    1)The default SPEED sever path is: \\cidcspdapp1\upload.
+    2)The default SPEED upload report file prefix is upload.
+    3)UploadFileType: A: calibration, B: subfile, C: control file, 
+      E: configuration file, F: reconfiguration I/O file, H: header file,
+      I: SPEED file, L: boot loader file, V: NonVolatile data file,
+      P: GTIS 4.5 Production Configuration file.
+    4)If the SPEED server path and SPEED upload report file prefix are set
+      by using -SP* and -RP* switches, the value will be used until they 
+      are reset. The SPEED upload report will indicate where the file is uploaded.
+   
+DOCUMENT
+		CaltermCLI -Cdocument -PproductId -SsourceCal -E1sourceConfig
+	[-RreportFilename]	
+	[-O{html|txt}]
+	[-T{calibration|subfile|import\export}] 
+	[-SS*{true|false}] [-SG*{true|false}]
+	[-GfilterFilename] [-IreportPrefix]
+	[-RA*{true|false}]
+
+	NOTES: 
+	1. Specify optional parameter -T in case -S is 'subfile or import\export file'
+	2. Optional parameter -I will be ignored if -R parameter is specified
+
+COMMAND LEGEND:
+
+      []   Indicates Optional Arguments.
+      |    Indicates mutually exclusive values.
+      {}   Delimits mutually exclusive list of possible values. 
+      Switch letter is denoted in Upper case.
+      All two character switches are followed by an asterix '*'.
+      Value for each switch follows the switch letter without any space.
+
+SWITCH DICTIONARY:
+               
+Switch     Description
+
+-C     Name of the component to be executed.
+-D     (Overlay)Overlay Mode 
+-D     (Export)Display Output File
+-D     (Assemble)Assemble Mode
+-D     (SPEEDUpload) Upload file path and name
+-E     (Cimport Overlay)Target Configuration filename (path\filename)
+-E     (Export)Source Configuration filename (path\filename)
+-E     (Divide)Source Configuration filename (path\filename)
+-E     (Assemble) Subfile verify configuration file path and name
+-E1    Source Configuration filename (path\filename)
+-E2    (Overlay)Target Configuration filename (path\filename)
+-EC*   ECMCode (Applicable only in case of unstructured assembly)
+-ES*c  EngineSubsystem( Applicable for unstrcutured assembly of PJ option 
+       based products.See "c" below for more information).    
+-F     (Compare)Source2 Calibration Filename
+-Fa    (Overlay)Input parameter filename
+-F     (Export)Output File Format
+-Fd    (Divide)Input parameter filename
+-Fb    (Assemble)Input parameter filename (path\filename)
+-G     Filter filename 
+-H     Headerfile Name (path\filename . Applicable only in case of 
+       Pre-GTIS unstructured assemblies)
+-I     Report name prefix to be used
+-I     (SPEEDUpload) Upload file path and name
+-J     (SPEEDUpload) Upload file type
+-L     Calibration location type
+-M     Monitor Output desired
+-MA*   (Overlay)If this option is specified an output calibration will not be created if a Missing Axes error occurs 
+-N     Interaction desired
+-O     (Compare)Report format
+-O     (Overlay)Destination Calibration filename (path\filename)
+-O     (Export)Output Export Filename (path\filename)
+-O     (Assemble)Destination Calibration filename (path\filename)
+-O     (Divide)Destination Subfile path (path)
+-OT*   Overwrite existing target file 
+-P     Product Name
+-R     Component Report filename (path\filename)
+-RA*   Indicates whether report file is to be appended or not.
+-RF*   Report Format
+-RP*   SPEED Report File Prefix
+-S     Source Calibration filename (path\filename)
+-SG*   Sort by Group
+-SM*   Show parameters missing from source
+-SS*   Sort by subfile
+-SP*   SPEED Sever path
+-ST*   Source Calibration file type
+-SV*   Use Scaled Value for Overlay
+-T     (Cimport Overlay)Target Calibration filename (path\filename)
+-T     SPEED Upload file type
+-T     (Document) source file type
+-T1*   First Source Type
+-T2*   Second Source Type
+-U     Use source filename for destination filename
+-V     Generate Verbose Overlay report
+-VL*   Value Limit Preference
+-VF*   (Assemble)Verify Subfile in the subfile assemble process
+-Y     (Overlay)Target Calibration filename (path\filename)
+-YT*   Target Calibration file type for Overlay
+
+NOTES:
+
+a)   Is a text file, having one or more lines with the following format:
+     sourceCalibrationFilename1,sourceConfigurationFilename1,
+     sourceCalibrationFileType<CRLF>
+     sourceCalibrationFilename2,sourceConfigurationFilename2,
+     sourceCalibrationFileType<CRLF>
+     .
+     .
+
+     Note that using duplicate source files in the InputParameterFile is invalid
+  
+b)   Is a text file ,having one or more lines ,for structured and unstructured 
+     assembly.
+     
+     For Unstructured Assembly the format is -
+     
+             SubfileName1<CRLF> 
+             SubfileName2<CRLF>
+             .
+             .
+             .
+             SubfileNameN
+      
+     For Structured Assembly the format is -
+     
+             ECMPartNumber<CRLF>
+             ECMCode<CRLF>*
+             MajorOption1<CRLF>
+             MajorOption2<CRLF>
+             .
+             .
+     
+             MajorOptionN 
+
+     Note: 
+     * Format for ECM Code is expected as XXYYYYY.YY. 
+     Where XX represent ECM Code prefix and YYYYY.YY represent 
+     ECM Code including revision number.If ECM Code prefix contains
+     only one alphabet, it should be preceded with a single space.
+     For example "H20001.13" should be " H20001.13". 
+     
+c)   Possible values for Engine Subsystem are as follows : 
+   
+For GTIS4.5:
+   
+     ECM ANY INSTANCE         = 0 
+     ECM INSTANCE 1 PARITY NO = 1    ECM INSTANCE 2 PARITY NO = 2  
+     ECM INSTANCE 3 PARITY NO = 3    ECM INSTANCE 4 PARITY NO = 4 
+     ECM INSTANCE 5 PARITY NO = 5    ECM INSTANCE 6 PARITY NO = 6  
+     ECM INSTANCE 7 PARITY NO = 7    ECM INSTANCE 8 PARITY NO = 8
+     ECM INSTANCE 1 PARITY YES= 9    ECM INSTANCE 2 PARITY YES= 10 
+     ECM INSTANCE 3 PARITY YES= 11   ECM INSTANCE 4 PARITY YES= 12 
+     ECM INSTANCE 5 PARITY YES= 13   ECM INSTANCE 6 PARITY YES= 14
+     ECM INSTANCE 7 PARITY YES= 15   ECM INSTANCE 8 PARITY YES= 16
+
+For GTIS3.8:
+
+    FUEL CONTROL SYSTEM      = 0     FUEL CONTROL SYSTEM - LEFT = 1  
+                                     FUEL CONTROL SYSTEM - RIGHT= 2
+
+For example , the command for unstructured AAO assembly with  Using Parity :No
+ECM_Instance : 1,would look like : <Command> 
+
+CaltermCLI -Cassemble -PAAO -FD:\Assemble2.txt -OD:\Assemble.xcal 
+                                               -DUnstructured -ES*1
+                                               
+d)  Is a text file,having one or more lines with following format for divide.                                              
+ 
+    subfileNumber1   subfileName1<CRLF>
+    subfileNumber2   subfileName2<CRLF>
+    .
+    .
+    subfileNumberN   subfileNameN
+
+    Note:
+    1. User can change the subfileName in the input argument file by 
+        mentioning the subfileName and subfileNumber separated by 
+        space or tab.
+    2. If user does not mention the subfileName, it will take calibration 
+        prefix name as the default subfileName.
+    3. If user does not mention the subfileNumber ,but the subfileName is 
+        mentioned then an appropriate error message is displayed.
+    4. The subfileName should be a continuous string. 
+
+
+ 
+
+

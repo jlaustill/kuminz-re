@@ -1,0 +1,18 @@
+<LicenseFile>
+	<ToolReqLicense Expiration="permanent" Name="DC_Reset_ToolLevel_Lite" VendorDaemon="cummins" Key="A0BB7002E538" IsValid="" ID="DC_Reset_ToolLevel_Lite" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="Lite"/>
+	</ToolReqLicense>
+	<ToolReqLicense Expiration="permanent" Name="DC_Reset_ToolLevel_Pro" VendorDaemon="cummins" Key="4F5FB064CCBF" IsValid="" ID="DC_Reset_ToolLevel_Pro" Version="1.0" Count="uncounted">
+		<ToolLevel NAME="Pro"/>
+	</ToolReqLicense>
+	<UserReqLicense Expiration="permanent" Name="DC_Reset_AdvanceECMData" VendorDaemon="cummins" Key="9918CAC909F5" IsValid="" ID="DC_Reset_AdvanceECMData" Version="1.0" Count="uncounted">
+		<Users>
+			<User NAME="Reset_Advance_ECM_Data"/>
+		</Users>
+	</UserReqLicense>
+	<ECMReqLicense Expiration="permanent" Name="DC_Reset_ECMPwd_PermitResets" VendorDaemon="cummins" Key="97A1DD50F262" IsValid="" ID="DC_Reset_ECMPwd_PermitResets" Version="1.0" Count="uncounted">
+		<ECMPasswords>
+			<ECMPassword NAME="PERMIT_RESETS"/>
+		</ECMPasswords>
+	</ECMReqLicense>
+</LicenseFile>

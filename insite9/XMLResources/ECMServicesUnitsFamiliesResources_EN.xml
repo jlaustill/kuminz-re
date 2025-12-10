@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE module SYSTEM "../htmlentities.dtd">
+<!-- CHANGE LOG
+1.)  C. Colaco : Initial creation from names_en.icl ver. 6.31.01.44
+-->
+<!-- AA : Changes to Insite Ver insite 6.50.0.66, 10/27/2005
+	DB_G00074820 Added UnitsFamily 26 -->
+<!-- MP : Insite 6.5FP1 Development, 01/17/2006
+	      Added UnitsFamily 27 -->
+<!-- BR: Insite 6.5FP1 Development , Rework of XML updates  02/08/2006,
+		 RemovedUnitsFamily 27 -->
+<!-- SV: DB_G00083877, Added units family 27  06/09/2006
+		  -->
+<!-- SV: Insite 7.0 Development, Added units family 28  02/06/2007
+		  -->
+<!-- SV: DB_G00098619, Added units family 29 as Fuel pressure to dipslay unit psig by default for core II modules,      		03/13/2006
+		-->
+<!-- MW: DB_G00098619, Removed units family 29 as Fuel Pressure as per Systems recommandation as GTR Req 17496 is not marked for
+			any INSITE release, 04/05/2007 -->
+<!-- DB : Changes to Insite Ver insite 7.00.0.167, 4/17/2007
+	 DB_G00092380 Added UnitsFamily 30 -->
+<!-- PG : Changes to INSITE Ver 7.3, 10/21/2008
+     DB_G00124813 (PG) Added UnitsFamily 31. -->
+<!-- MA: Changes to Insite Ver 7.3FP2, 13/04/2009
+DB_G00133423: Added Unit Family 32(Distance)-->
+<!-- PP : Changes to INSITE Ver 7.3FP1, 5/7/2009
+     DB_G00136162 Added UnitsFamily 124. -->
+<!-- PPP : Changes to INSITE Ver 7.4, 8/25/2009
+     DB_G00140119 : Added unit family 34 (Angular Acceleration)-->
+<!--SaurabhA : Changes to INSITE Ver 7.5, 9/06/2010     
+     DB_G00156385 : Added unit family 35 (Mass Flow Rate)-->
+<!-- AV : Changes to INSITE Ver 7.5, 11/10/2010   
+     DB_G00161168 : Added unit family 161 (Fuel Economy Family)-->
+<!-- NS : Changes to INSITE Ver 7.5, 11/09/2010   
+     DB_G00162286 : Added unit family 162 (Pressure(very small))-->
+<!--NB(jr617): INSITE 7.5.1: New TIS Implementation , 02/08/2011
+     Added Unit family 163 (Concentration) and 164 (Resistance(medium))-->
+<!--MM(js996): INSITE 7.5.1: DB_G00164606 , 04/25/2011
+     Added Unit family 165 (Pressure(medium2)) -->
+<!--ND(jj599): INSITE 7.5.2: New TIS Implementation , 06/01/2011
+     Added Unit family 165 Pressure(medium3)-->
+<!--MN(js994): INSITE 7.5.3: 10/03/2011
+     Added Unit family 167 Time-HHHHHH:MM-->
+<!--RM(kd286): INSITE 7.6: 12/20/2011
+	     Added Unit family 168 Angular Velocity-->
+<!--DP(jq870): INSITE 7.6: 05/10/2012
+     Added Unit family 169 for Fuel Injection Volume -->
+<!--MN(jr618): INSITE 7.6 : DB_G00191860, 06/04/2012
+     Added Unit family 171 for Pressure(medium1) -->
+<!-- READING THE DATA BELOW
+<STRING ID="UNIT FAMILY NUMBER">UNIT FAMILY</STRING>
+-->
+<XML_RESOURCE>
+    <RESOURCE Description="Units Family Description">
+        <STRING ID="1">Engine Speed</STRING>
+        <STRING ID="2">Road Distance</STRING>
+        <STRING ID="3">Temperature</STRING>
+        <STRING ID="4">Power</STRING>
+        <STRING ID="5">Torque</STRING>
+        <STRING ID="6">Diesel Fuel Rate</STRING>
+        <STRING ID="7">Natural Gas Fuel Rate</STRING>
+        <STRING ID="8">Intake Manifold Pressure</STRING>
+        <STRING ID="9">Ambient Pressure</STRING>
+        <STRING ID="10">Oil Pressure</STRING>
+        <STRING ID="11">Volume</STRING>
+        <STRING ID="12">Fuel Economy</STRING>
+        <STRING ID="13">Road Speed</STRING>
+        <STRING ID="14">Acceleration</STRING>
+        <STRING ID="15">Percentages</STRING>
+        <STRING ID="16">Voltage</STRING>
+        <STRING ID="17">Current</STRING>
+        <STRING ID="18">Time</STRING>
+        <STRING ID="19">Tire Size</STRING>
+        <STRING ID="20">Watt Hours Produced</STRING>
+        <STRING ID="21">Weight</STRING>
+        <STRING ID="22">Frequency</STRING>
+        <STRING ID="23">Brake Actuations</STRING>
+        <STRING ID="24">Centinel Values</STRING>
+        <STRING ID="25">Fuel Pressure</STRING>
+        <STRING ID="26">Time-HH:MM</STRING>
+        <STRING ID="27">Time-MM:SS</STRING>
+        <STRING ID="28">Gas Volume</STRING>
+        <STRING ID="30">Real Time Adjustable Parameters</STRING>
+        <STRING ID="31">Volumetric Flow Rate</STRING>
+        <STRING ID="32">Distance</STRING>
+        <STRING ID="34">Angular Acceleration</STRING>
+        <STRING ID="35">Mass Flow Rate</STRING>
+        <STRING ID="124">Distance(Pulses)</STRING>
+      <STRING ID="161">Fuel Economy Family</STRING>
+      <STRING ID="162">Pressure(very small)</STRING>
+      <STRING ID="163">Concentration</STRING>
+      <STRING ID="164">Resistance(medium)</STRING>
+      <STRING ID="165">Pressure(medium2)</STRING>
+<STRING ID="166">Pressure(medium3)</STRING>
+      <STRING ID="167">Time-HHHHHH:MM</STRING>
+      <STRING ID="168">Angular Velocity</STRING>
+	<STRING ID="169">Fuel Injection Volume</STRING>
+      <STRING ID="171">Pressure(medium1)</STRING>
+    </RESOURCE>
+</XML_RESOURCE>

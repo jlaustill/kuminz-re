@@ -1,0 +1,340 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE module SYSTEM "../htmlentities.dtd"[]>
+<XML_RESOURCE>
+  <RESOURCE Type="STRING Table" Tag="1001" Description="Master STRING table for all ECM Diagnostic Tests and Special Features">
+    <!-- Container Specific - MISC CONTAINER LEVEL STRINGS WILL BE DEFINED FROM 0001-2000  -->
+    <STRING ID="1" CONTEXT="Main Wizard Strings">Welcome to the ECM Diagnostic Tests Wizard.</STRING>
+    <STRING ID="2" CONTEXT="Main Wizard Strings">This wizard helps you through the steps needed to run an ECM Diagnostic Test. </STRING>
+    <STRING ID="3" CONTEXT="add-in display name">ECM Diagnostic Tests</STRING>
+    <STRING ID="4" CONTEXT="Main Wizard Strings">No ECM Connected</STRING>
+    <STRING ID="5" CONTEXT="Main Wizard Strings">To continue, select a test from the list below and press the Next button.</STRING>
+    <STRING ID="6" CONTEXT="Main Wizard Strings">Tests and Features Message</STRING>
+    <STRING ID="7" CONTEXT="Main Wizard Strings">You are attempting to close a window containing an active ECM Test. Do you want to terminate the active test?</STRING>
+    <STRING ID="8" CONTEXT="Main Wizard Strings">No ECM Diagnostic Test available for the connected ECM(s).</STRING>
+    <STRING ID="9" CONTEXT="Main Wizard Strings">Please establish a connection to view tests.</STRING>
+    <STRING ID="10" CONTEXT="Main Wizard Strings">ECM Diagnostic tests are not supported with only Basic Registration. Please contact the local distributor.</STRING>
+    <STRING ID="11" CONTEXT="Main Wizard Strings">Image Connections do not support ECM Diagnostic Tests.</STRING>
+    <STRING ID="12" CONTEXT="Main Wizard Strings">The ECM Diagnostic test system is in an invalid state, please report this condition.</STRING>
+    <STRING ID="13" CONTEXT="Main Wizard Strings">You are attempting to disconnect while a test is running. Are you sure you wish to proceed?</STRING>
+    <STRING ID="14" CONTEXT="Main Wizard Strings">No ECM Diagnostic Test available for this module.</STRING>
+    
+    <!-- Container Specific - SUBTITLE STRINGS WILL BE DEFINED FROM 4001-6000 -->
+    <STRING ID="4001" CONTEXT="subtitle">This test allows the user to activate the Injection Control Valve, Front Pumping Control Valve, and the Rear Pumping Control Valve for diagnostic purposes.  A clicking sound indicates that the control valve is operating correctly.  If a clicking sound is not heard, the valve may be seized or is not receiving an electrical signal for activation.</STRING>
+    <STRING ID="4002" CONTEXT="subtitle">This test is used to cutout individual cylinders for troubleshooting cylinder misfires.</STRING>
+    <STRING ID="4003" CONTEXT="subtitle">This test is intended for use in diagnosing problems with the Electronic Air Compressor feature (Smart Air Compressor).  The test will allow a Technician to activate and deactivate the air compressor solenoid on command.  An audible 'click' will indicate if the solenoid is activating and deactivating properly.</STRING>
+    <STRING ID="4004" CONTEXT="subtitle">The Boost Override Test commands the engine to run on the 100% torque curve. The override prevents the engine from switching to a lower torque curve.</STRING>
+    <STRING ID="4005" CONTEXT="subtitle">This test intended purpose is to help identify weak cylinders.</STRING>
+    <STRING ID="4006" CONTEXT="subtitle">The EFC Actuator test is an automated test that will manually operate the actuator to ensure that it is functioning properly.</STRING>
+    <STRING ID="4007" CONTEXT="subtitle">Allows the fan to be engaged at full speed for an adjustable amount of time</STRING>
+    <STRING ID="4008" CONTEXT="subtitle">This test will eliminate any feedback from the heated oxygen sensor.</STRING>
+    <STRING ID="4009" CONTEXT="subtitle">This test is used to manually turn ON/OFF the intake air heater solenoid(s)</STRING>
+    <STRING ID="4010" CONTEXT="subtitle">The Fuel Lift Pump Override Test is an automated test that will manually operate the fuel lift pump and prime the fuel system to help eliminate any air in the system</STRING>
+    <STRING ID="4011" CONTEXT="subtitle">This test allows the user to disable the pumping control valves one at a time for diagnostic purposes. The CAPS fuel pump has a front and a rear control valve (PCV) both of which are actuated by solenoids</STRING>
+    <STRING ID="4012" CONTEXT="subtitle">The Electronic Smart Power (ESP) Lock-In Mode will allow the user to temporarily lock the ESP curve into high, low or normal horsepower for troubleshooting purposes.</STRING>
+    <STRING ID="4013" CONTEXT="subtitle">This test will allow the user to override the Eaton Top 2 Autoshift solenoid drivers for troubleshooting purposes.</STRING>
+    <STRING ID="4014" CONTEXT="subtitle">This test sounds the ICON Engine Start alarm, to confirm that the alarm is working properly.</STRING>
+    <STRING ID="4015" CONTEXT="subtitle">This test will allow the user to set the PWM signal in percent Duty Cycle to control the electronic fan clutch</STRING>
+    <STRING ID="4016" CONTEXT="subtitle">The EFC Actuator test is an automated test that will manually operate the actuator to ensure that it is functioning properly</STRING>
+    <STRING ID="4017" CONTEXT="subtitle">This test will allow the user to activate the ICON Ignition Relay and Starter Relay / Interlocks for troubleshooting purposes.</STRING>
+    <STRING ID="4018" CONTEXT="subtitle">This feature removes the electronic control restrictions for engine speed, power, and torque for engine performance testing on a dynamometer.</STRING>
+    <STRING ID="4019" CONTEXT="subtitle">This test can be used to manually engage fast idle warmup to test the feature for the most suitable engine speed.</STRING>
+    <STRING ID="4020" CONTEXT="subtitle">This test can be used to troubleshoot possible issues with the Aftertreatment system.</STRING>
+    <!-- Container Specific - INSTRUCTION BOX STRINGS WILL BE DEFINED FROM 6001-8000 -->
+    <STRING ID="6001" CONTEXT="instructionBox">Please make sure Engine Speed is greater than zero and Vehicle Speed is equal to zero prior to starting the test.</STRING>
+    <STRING ID="6002" CONTEXT="instructionBox">Please make sure Engine Speed and Vehicle Speed are zero prior to starting the test.</STRING>
+    <STRING ID="6003" CONTEXT="I18N WARNING! - Do not translate $p(200080). It is a variable.">The following steps must be performed before starting the Accelerator Based Cutout Test\r\n1.     The engine must be running and the vehicle must be stationary\r\n2.     Clear the areas around the engine and fan, make sure the exhaust is vented correctly\r\n3.     $p(200080)\r\n4.     Lock the Engine Fan in the "ON" position for continuous operation\r\n5.     Turn off the air conditioning, to avoid the air conditioning compressor cycling on and off during test operation\r\n6.     Ensure the vehicle air tanks are fully pressurized, to avoid air compressor cycling during test operation\r\n7.     Disengage any devices that can cause the load on the engine to vary\r\n8.     Vehicle stationary with the engine running\r\nIf the engine stalls, or communication with the ECM is lost during test operation, the keyswitch must be cycled to restore cylinders to their active state</STRING>
+    <STRING ID="6004" CONTEXT="instructionBox">Cylinders will be cut out for 15 seconds and RPM change recorded.  If the RPM change is greater than 21 the cylinder has passed.  If RPM change is less than 21 the cylinder has failed.</STRING>
+    <STRING ID="6005" CONTEXT="instructionBox">Please make sure Engine Speed and Vehicle Speed are zero prior to starting the test.</STRING>
+    <STRING ID="6006" CONTEXT="instructionBox">Engine Speed needs to be greater than zero prior to starting the test.</STRING>
+    <STRING ID="6007" CONTEXT="instructionBox">This test should only be performed while idling below 900 RPM and with the vehicle out of gear.</STRING>
+    <STRING ID="6008" CONTEXT="instructionBox">Select Start to monitor cylinder contributions or select Back to return to the ECM diagnostics tests wizard.</STRING>
+    <STRING ID="6009" CONTEXT="instructionBox">The EFC Actuator test will run for a maximum of 60 seconds after Start is pressed with the EFC Actuator checkbox is selected.</STRING>
+    <STRING ID="6010" CONTEXT="instructionBox">Allows the fan to be engaged at full speed for an adjustable amount of time</STRING>
+    <STRING ID="6011" CONTEXT="instructionBox">When changing the setting, a click should be heard if the grid heater is operative. Press 'Start' to begin the test.</STRING>
+    <STRING ID="6012" CONTEXT="instructionBox">The grid heaters are set to be on for xxx seconds. A click should be heard if the grid heater is operative. Press 'Start' to begin the test</STRING>
+    <STRING ID="6013" CONTEXT="instructionBox">Please make sure Engine Speed is at 0.  Please also insure that Battery Voltage is above 10.5V, if a 12V Electrical System is used, or Battery Voltage is above 22V if a 24V Electrical System is being used.</STRING>
+    <STRING ID="6014" CONTEXT="instructionBox">This test will engage the starter and may cause the engine to turn over briefly. Perform the following steps before continuing :\r\n1. Place transmission in neutral\r\n2. Ensure engine compartment is clear\r\n3. Set parking brake\r\n4. Close hood or lower cab</STRING>
+    <STRING ID="6015" CONTEXT="instructionBox">Press the Start button to configure the control system for the dynamometer.</STRING>
+    <STRING ID="6016" CONTEXT="instructionBox">This test will start and run the engine fan for the specified period of time.  Make sure the fan area is clear before starting the test.</STRING>
+    <STRING ID="6017" CONTEXT="instructionBox">The ESP Lock-In Mode test is not available in this calibration. ESP Lock-In Mode must be available in the calibration in order to run this test.</STRING>
+    <STRING ID="6018" CONTEXT="instructionBox">Please make sure Engine Speed and Vehicle Speed are zero prior to starting the test. Please select the solenoid desired to be overridden and press Start.</STRING>
+    <STRING ID="6019" CONTEXT="instructionBox">The EFC Actuator test will run for a maximum of 60 seconds after Start is pressed with the EFC Actuator checkbox is selected</STRING>
+    <STRING ID="6020" CONTEXT="instructionBox">Select Start to start the test</STRING>
+    <STRING ID="6021" CONTEXT="instructionBox">To manually test Fast Idle Warmup, select Engage to begin the test.  Please cycle the keyswitch if INSITE is closed without first stopping or canceling this test.</STRING>
+    <STRING ID="6022" CONTEXT="instructionBox">Please be patient, there is approximately 5 minutes of delay time before the engine speed begins ramping to the desired fast idle warmup speed.</STRING>
+    <STRING ID="6023" CONTEXT="instructionBox">If necessary, change Fast Idle Warmup Speed and select Adjust to send the change to the ECM temporarily. To make the change permanently, modify Fast Idle Warmup Speed using Features and Parameters.</STRING>
+    <STRING ID="6024" CONTEXT="instructionBox">Please make sure engine is running prior to starting the test.</STRING>
+    <STRING ID="6030" CONTEXT="instructionBox">This test will start and run the engine fan for the set PWM signal. Make sure the fan area is clear before starting the test.</STRING>
+    <STRING ID="6031" CONTEXT="instructionBox">The following steps must be performed before starting the Accelerator Based Cutout Test\r\n1.	The engine must be running and the vehicle must be stationary.\r\n2.	Clear the areas around the engine and fan, make sure the exhaust is vented correctly.\r\n3.	Operate the engine until the engine coolant temperature is a minimum of 170 degrees F (77 degrees C).\r\n4.	Lock the Engine Fan in the "ON" position for continuous operation.\r\n5.	Turn off the air conditioning, to avoid the air conditioning compressor cycling on and off during test operation.\r\n6.	Ensure the vehicle air tanks are fully pressurized, to avoid air compressor cycling during test operation.\r\n7.	Disengage any devices that can cause the load on the engine to vary.\r\n8.	Vehicle stationary with the engine running.\r\n\r\nIf the engine stalls, or communication with the ECM is lost during test operation, the keyswitch must be cycled to restore cylinders to their active state.</STRING>
+    <STRING ID="6032" CONTEXT="instructionBox">Cylinders will be cut out for 15 seconds and RPM change recorded.  If the RPM change is 21 or greater the cylinder has passed.  If RPM change is less than 21 the cylinder has failed.</STRING>
+    <!-- Container Specific - BUTTON STRINGS WILL BE DEFINED FROM 8001-8500 -->
+    <STRING ID="8001" CONTEXT="button">Start</STRING>
+    <STRING ID="8002" CONTEXT="button">Stop</STRING>
+    <STRING ID="8003" CONTEXT="button">Next</STRING>
+    <STRING ID="8004" CONTEXT="button">Back</STRING>
+    <STRING ID="8005" CONTEXT="button">Help</STRING>
+    <STRING ID="8006" CONTEXT="button">Reset</STRING>
+    <STRING ID="8007" CONTEXT="button">Engage</STRING>
+    <STRING ID="8008" CONTEXT="button">Cylinder 1</STRING>
+    <STRING ID="8009" CONTEXT="button">Cylinder 2</STRING>
+    <STRING ID="8010" CONTEXT="button">Cylinder 3</STRING>
+    <STRING ID="8011" CONTEXT="button">Cylinder 4</STRING>
+    <STRING ID="8012" CONTEXT="button">Cylinder 5</STRING>
+    <STRING ID="8013" CONTEXT="button">Cylinder 6</STRING>
+    <STRING ID="8014" CONTEXT="button">Normal Operation</STRING>
+    <STRING ID="8015" CONTEXT="button">Cancel</STRING>
+    <STRING ID="8016" CONTEXT="button">Finish</STRING>
+    <STRING ID="8017" CONTEXT="button">Disengage</STRING>
+    <STRING ID="8018" CONTEXT="button">Adjust</STRING>
+    <!-- Test Specific - MODAL DIALOG BOX WILL BE DEFINED FROM 8501-10000 -->
+    <STRING ID="8501" CONTEXT="unsupported cal">This test is not supported with the current calibration.</STRING>
+    <STRING ID="8502" CONTEXT="active faults">Active Fault Codes are present in the ECM. In order to run the test, there cannot be any active faults in the ECM. Please ensure no Fault Codes are present prior to starting the test. The test has been terminated.</STRING>
+    <STRING ID="8503" CONTEXT="">ECM Diagnostic tests are not supported with only Basic Registration. Please contact the local distributor.</STRING>
+    <STRING ID="8504" CONTEXT="">This test will not run unless the ICON hardware is installed and ICON is enabled.</STRING>
+    <STRING ID="8505" CONTEXT="test running">There is a test running. You must stop the active test before exiting.</STRING>
+    <STRING ID="8506" CONTEXT="">Image Connections do not support ECM Diagnostic Tests</STRING>
+    <STRING ID="8507" CONTEXT="">ECM Diagnostic tests is in an invalid state, please report this error.</STRING>
+    <STRING ID="8508" CONTEXT="">There are no ECM Diagnostic Tests available for the currently connected engine.</STRING>
+    <STRING ID="8509" CONTEXT="">Fast Idle Warmup is currently disabled.  If you want to run the fast idle warmup test, please exit the test window, enable Fast Idle Warmup under the Features and Parameters menu, and return to the test.</STRING>
+    <STRING ID="8510" CONTEXT="">The value you have specified for Fan Percent Request is out of range. It must be in the range 0-100.</STRING>
+    <STRING ID="8511" CONTEXT="">Value entered is out of the proper range. Please enter a different value.</STRING>
+    <!-- Test Specific - STATUS BOX STRINGS WILL BE DEFINED FROM 10001-12000 -->
+    <STRING ID="10001" CONTEXT="statusBox">All Control Valves are restored.</STRING>
+    <!--CVT273 -->
+    <STRING ID="10002" CONTEXT="statusBox">Injection Control Valve is activated.</STRING>
+    <STRING ID="10003" CONTEXT="statusBox">Front Pumping Control Valve is activated.</STRING>
+    <STRING ID="10004" CONTEXT="statusBox">Rear Pumping Control Valve is activated.</STRING>
+    <STRING ID="10005" CONTEXT="statusBox">Test stopped</STRING>
+    <STRING ID="10006" CONTEXT="statusBox">Engine Oil Temperature is too low.</STRING>
+    <STRING ID="10007" CONTEXT="statusBox">Engine Coolant Temperature is too low.</STRING>
+    <STRING ID="10008" CONTEXT="statusBox">Required Engine Speed can not be reached. Check engine for fault codes and performance related problems that limit Engine Speed.</STRING>
+    <STRING ID="10009" CONTEXT="statusBox">All Cylinders have been restored.</STRING>
+    <STRING ID="10010" CONTEXT="I18N WARNING! - Do not translate $d(calcCylinderNum). It is a variable">Cylinder number $d(cylinderNum) has been cut out. Collecting data to calculate RPM change.</STRING>
+    <STRING ID="10011" CONTEXT="I18N WARNING! - Do not translate $d(cutoutCylinder)$d(roundedRPMChange_value)$d(cylStatusValue). These are variables.">Cylinder number $d(cylinderNum) has been cut out and RPM change is $d(roundedRPMChange_value).  Cylinder $d(cylinderNum) has $d(cylStatusValue).</STRING>
+    <STRING ID="10012" CONTEXT="statusBox">Cylinder has been restored.</STRING>
+    <STRING ID="10013" CONTEXT="statusBox">This test is not supported by the calibration or the hardware on the engine.</STRING>
+    <STRING ID="10014" CONTEXT="statusBox">Air Compressor Solenoid is On</STRING>
+    <STRING ID="10015" CONTEXT="statusBox">Air Compressor Solenoid is Off</STRING>
+    <STRING ID="10016" CONTEXT="statusBox">The Fuel Lift Pump will automatically run for approximately xxx seconds after the key switch is turned on.  This test will not override the fuel lift pump during that time.</STRING>
+    <STRING ID="10017" CONTEXT="I18N WARNING! - Do not translate $p(104018)$d(roundedIntakeTempFinalConv). These are variables.">INSITE has detected that the Intake Manifold Temperature is above the calibrated threshold required for this test to continue.  Please wait till the Intake Manifold Temperature has dropped below $p(104018) degrees Fahrenheit ( $d(roundedIntakeTempFinalConv) degrees Celsius).</STRING>
+    <STRING ID="10018" CONTEXT="I18N WARNING! - Do not translate $p(104019)$d(roundedCoolantTempFinalConv). These are variables.">INSITE has detected that the Coolant Temperature is above the calibrated threshold for this test to continue.  Please wait till the Coolant Temperature has dropped below $p(104019) degrees Fahrenheit ($d(roundedCoolantTempFinalConv) degrees Celsius).</STRING>
+    <STRING ID="10019" CONTEXT="statusBox">The engine is set to run on the 100% torque curve.</STRING>
+    <STRING ID="10020" CONTEXT="statusBox">Boost Override timer has expired.</STRING>
+    <STRING ID="10021" CONTEXT="statusBox">The engine is set to run in normal operation.</STRING>
+    <STRING ID="10022" CONTEXT="statusBox">Open Loop Mode</STRING>
+    <STRING ID="10023" CONTEXT="statusBox">Open/Closed Loop (Normal) Mode.</STRING>
+    <STRING ID="10024" CONTEXT="statusBox">Engine speed has exceeded 900 rpm test maximum limit. Test will resume when engine speed  falls below 900 rpm.</STRING>
+    <STRING ID="10025" CONTEXT="statusBox">Cylinder Performance Test has resumed.</STRING>
+    <STRING ID="10026" CONTEXT="statusBox">Test has been paused. Current contribution values are displayed.</STRING>
+    <STRING ID="10027" CONTEXT="statusBox">Printing Cylinder Performance Test Report.</STRING>
+    <STRING ID="10028" CONTEXT="statusBox">see string 10001</STRING>
+    <STRING ID="10029" CONTEXT="statusBox">Fuel Lift Pump On</STRING>
+    <STRING ID="10030" CONTEXT="statusBox">Fuel Lift Pump Off</STRING>
+    <STRING ID="10031" CONTEXT="statusBox">see string 10003</STRING>
+    <STRING ID="10032" CONTEXT="statusBox">see string 10004</STRING>
+    <STRING ID="10033" CONTEXT="statusBox">Lockout Solenoid Actuator is on.</STRING>
+    <STRING ID="10034" CONTEXT="statusBox">Lockout Solenoid Actuator is off.</STRING>
+    <STRING ID="10035" CONTEXT="statusBox">Shift Solenoid Actuator is on.</STRING>
+    <STRING ID="10036" CONTEXT="statusBox">EFC Actuator open</STRING>
+    <STRING ID="10037" CONTEXT="statusBox">EFC Actuator closed.</STRING>
+    <STRING ID="10038" CONTEXT="statusBox">Shift Solenoid Actuator is off.</STRING>
+    <STRING ID="10039" CONTEXT="statusBox">The Fuel Lift Pump Override Test has exceeded maximum allowable time limit. Key off and restart test</STRING>
+    <STRING ID="10040" CONTEXT="statusBox">Ignition Relay activated.</STRING>
+    <STRING ID="10041" CONTEXT="statusBox">Ignition Relay deactivated.</STRING>
+    <STRING ID="10042" CONTEXT="statusBox">Starter Relay / Interlocks activated.</STRING>
+    <STRING ID="10043" CONTEXT="statusBox">Starter Relay / Interlocks deactivated.</STRING>
+    <STRING ID="10044" CONTEXT="statusBox">SAE J1939 Datalink Control is Enabled.</STRING>
+    <STRING ID="10045" CONTEXT="statusBox">SAE J1939 Datalink Control is Disabled.</STRING>
+    <STRING ID="10046" CONTEXT="statusBox">Alarm is activated.</STRING>
+    <STRING ID="10047" CONTEXT="statusBox">Alarm is deactivated.</STRING>
+    <STRING ID="10048" CONTEXT="statusBox">Starting test, Please Wait.</STRING>
+    <STRING ID="10049" CONTEXT="statusBox">Maximum allowable test time has been exceeded. Please select Engage to restart the test.</STRING>
+    <STRING ID="10050" CONTEXT="statusBox">Fast Idle Warmup is now active</STRING>
+    <STRING ID="10051" CONTEXT="statusBox">All Pumping Control Valves are active.</STRING>
+    <STRING ID="10052" CONTEXT="statusBox">No changes made, please wait until Fast Idle Warmup is Active before selecting Adjust.</STRING>
+    <STRING ID="10053" CONTEXT="statusBox">PASS</STRING>
+    <STRING ID="10054" CONTEXT="statusBox">FAIL</STRING>
+    <STRING ID="10055" CONTEXT="statusBox">The test is adjusting engine throttle. This process may take a few minutes.</STRING>
+    <STRING ID="10056" CONTEXT="statusBox">Setting up test.</STRING>
+    <STRING ID="10057" CONTEXT="statusBox">For misfire detection ensure the Engine Coolant Temperature is above 170 degrees F (77 degrees C).</STRING>
+    <!-- Test Specific- TEST ERROR STRINGS WILL BE DEFINED FROM 12001-14000 -->
+    <STRING ID="12001" CONTEXT="precondition failure">INSITE has detected no Engine Speed. Please start the engine, and restart the test.</STRING>
+    <STRING ID="12002" CONTEXT="precondition failure">INSITE has detected Vehicle Speed. Please reduce speed to zero, and restart the test.</STRING>
+    <STRING ID="12003" CONTEXT="precondition failure">INSITE has detected Engine Speed. Please reduce Engine Speed to zero, and restart the test.</STRING>
+    <STRING ID="12004" CONTEXT="precondition failure">INSITE has detected both Engine Speed and Vehicle Speed. Please reduce both speeds to zero, and restart the test.</STRING>
+    <STRING ID="12005" CONTEXT="precondition failure">Test stopped, no engine speed detected.</STRING>
+    <STRING ID="12006" CONTEXT="precondition failure">Test stopped, vehicle speed detected.  Stop vehicle and restart test.</STRING>
+    <STRING ID="12007" CONTEXT="precondition failure">Engine Speed detected. Shutdown engine, key on, and restart test.</STRING>
+    <STRING ID="12008" CONTEXT="precondition failure">This test is not supported with the current calibration and hardware setup.</STRING>
+    <STRING ID="12009" CONTEXT="precondition failure">Allows the fan to be engaged at full speed for an adjustable amount of time</STRING>
+    <STRING ID="12010" CONTEXT="precondition failure">INSITE has detected Engine Speed is less than 600 rpm.</STRING>
+    <STRING ID="12011" CONTEXT="precondition failure">The Fuel Lift Pump Override Test is not available for this engine.  No fuel lift pump is installed.</STRING>
+    <STRING ID="12012" CONTEXT="precondition failure">Low battery voltage detected. Troubleshoot the low battery voltage fault code before proceeding with this test.</STRING>
+    <STRING ID="12013" CONTEXT="precondition failure">Other Device is controlling Engine.  Disconnect appropriate datalink.</STRING>
+    <STRING ID="12014" CONTEXT="precondition failure">The test was not started because Engine Speed was not greater than 600 rpm.</STRING>
+    <STRING ID="12015" CONTEXT="precondition failure">Vehicle is moving.  Stop vehicle and restart test.</STRING>
+    <STRING ID="12016" CONTEXT="precondition failure">PTO is active.  Turn off PTO.</STRING>
+    <STRING ID="12017" CONTEXT="precondition failure">Cummins Service Tool is overriding TVO State.  Disconnect appropriate tool.</STRING>
+    <STRING ID="12018" CONTEXT="precondition failure">Limp home state active.  Check for active Fault Codes.</STRING>
+    <STRING ID="12019" CONTEXT="precondition failure">Governor type is Variable Speed.  Change to Automotive and restart test.</STRING>
+    <STRING ID="12020" CONTEXT="precondition failure">Cruise Control is active.  Turn off Cruise Control.</STRING>
+    <STRING ID="12021" CONTEXT="precondition failure">Vehicle is moving.  Stop vehicle and restart test.</STRING>
+    <STRING ID="12022" CONTEXT="precondition failure">Increase engine RPM by increasing % Accelerator.</STRING>
+    <STRING ID="12023" CONTEXT="precondition failure">Decrease engine RPM by decreasing % Accelerator.</STRING>
+    <STRING ID="12024" CONTEXT="precondition failure">The test was not started because the Vehicle Speed was greater than 0.</STRING>
+    <STRING ID="12025" CONTEXT="precondition failure">The test was aborted because the Vehicle Speed was greater than 0.</STRING>
+    <STRING ID="12026" CONTEXT="precondition failure">Engine Protection activated.  Check for active fault codes.</STRING>
+    <STRING ID="12027" CONTEXT="precondition failure">Decrease engine RPM by decreasing % Accelerator.</STRING>
+    <STRING ID="12028" CONTEXT="precondition failure">Other Device is controlling Engine.  Disconnect appropriate datalink.</STRING>
+    <STRING ID="12029" CONTEXT="precondition failure">Vehicle is moving.  Stop vehicle and restart test.</STRING>
+    <STRING ID="12030" CONTEXT="precondition failure">Please wait.</STRING>
+    <STRING ID="12031" CONTEXT="precondition failure">Cummins Service Tool is overriding TVO State.  Disconnect appropriate tool.</STRING>
+    <STRING ID="12032" CONTEXT="precondition failure">Engine Break is ON.  Turn OFF Engine Break.</STRING>
+    <STRING ID="12033" CONTEXT="precondition failure">Decrease engine RPM by decreasing % Accelerator.</STRING>
+    <STRING ID="12034" CONTEXT="precondition failure">Engine Stopped.  Start engine and restart test.</STRING>
+    <STRING ID="12035" CONTEXT="precondition failure">The test was aborted because the Engine Speed was less than 600 rpm. </STRING>
+    <STRING ID="12036" CONTEXT="precondition failure">Accelerator Interlock is active.  Correct Accelerator Interlock.</STRING>
+    <STRING ID="12037" CONTEXT="precondition failure">Alternate Torque is active.  Turn off Alternate Torque.</STRING>
+    <STRING ID="12038" CONTEXT="precondition failure">The current calibration does not support the Eaton Top 2 Autoshift Feature.</STRING>
+    <STRING ID="12039" CONTEXT="precondition failure">The test was not started because the vehicle speed sensor signal was lost.</STRING>
+    <STRING ID="12040" CONTEXT="precondition failure">The test was not started because the vehicle speed sensor was in an unknown state.</STRING>
+    <STRING ID="12041" CONTEXT="precondition failure">The test was aborted because the vehicle speed sensor signal was lost.</STRING>
+    <STRING ID="12042" CONTEXT="precondition failure">The test was aborted because the vehicle speed sensor was in an unknown state.</STRING>
+    <!-- Test Specific- MISC. STRINGS WILL BE DEFINED FROM 14001-16000 -->
+    <STRING ID="14001" CONTEXT="chart title">Short Term Map 1</STRING>
+    <STRING ID="14002" CONTEXT="chart title">ShortTerm Map 2</STRING>
+    <STRING ID="14003" CONTEXT="chart title">Long Term Map</STRING>
+    <STRING ID="14004" CONTEXT="x-axis of chart">Speed (RPM)</STRING>
+    <STRING ID="14005" CONTEXT="y-axis of chart">Torque (Percent)</STRING>
+    <STRING ID="14006" CONTEXT="">Low Cutoff RPM</STRING>
+    <STRING ID="14007" CONTEXT="">High Cutoff RPM</STRING>
+    <STRING ID="14008" CONTEXT="control name">Open</STRING>
+    <STRING ID="14009" CONTEXT="checkBox String">Lockout Solenoid Actuator</STRING>
+    <STRING ID="14010" CONTEXT="checkBox String">Shift Solenoid Actuator</STRING>
+    <STRING ID="14011" CONTEXT="checkBox String">Injection Control Valve</STRING>
+    <STRING ID="14012" CONTEXT="checkBox String">Front Pumping Control Valve</STRING>
+    <STRING ID="14013" CONTEXT="checkBox String">Normal Operation</STRING>
+    <STRING ID="14014" CONTEXT="checkBox String">Front Valve Cutout</STRING>
+    <STRING ID="14015" CONTEXT="checkBox String">Rear Valve Cutout</STRING>
+    <STRING ID="14016" CONTEXT="checkBox String">Solenoid Off</STRING>
+    <STRING ID="14017" CONTEXT="checkBox String">Solenoid On</STRING>
+    <STRING ID="14018" CONTEXT="checkBox String">Rear Pumping Control Valve</STRING>
+    <STRING ID="14019" CONTEXT="checkBox String">ESP Normal Operation</STRING>
+    <STRING ID="14020" CONTEXT="checkBox String">ESP Low Curve</STRING>
+    <STRING ID="14021" CONTEXT="checkBox String">ESP High Curve</STRING>
+    <STRING ID="14022" CONTEXT="checkBox String">ON</STRING>
+    <STRING ID="14023" CONTEXT="checkBox String">OFF</STRING>
+    <STRING ID="14024" CONTEXT="checkBox String">Ignition Relay</STRING>
+    <STRING ID="14025" CONTEXT="checkBox String">Starter Relay and Interlocks</STRING>
+    <STRING ID="14026" CONTEXT="checkBox String">Enable</STRING>
+    <STRING ID="14027" CONTEXT="checkBox String">Disable</STRING>
+    <STRING ID="14028" CONTEXT="spin label">Fast Idle Warmup Idle Speed</STRING>
+    <STRING ID="14029" CONTEXT="spin label">Fan Percent ON Request</STRING>
+    <STRING ID="14030" CONTEXT="spin label">Timer</STRING>
+    <STRING ID="14031" CONTEXT="Button Flag">0</STRING>
+    <STRING ID="14032" CONTEXT="instruction box label">Instructions</STRING>
+    <STRING ID="14033" CONTEXT="status box label">Status</STRING>
+    <!-- Test Specific- MONITOR RELATED STRINGS WILL BE DEFINED FROM 16001-18000 -->
+    <STRING ID="16001" CONTEXT="monitor data">Map Hours Remaining</STRING>
+    <STRING ID="16002" CONTEXT="monitor">Name</STRING>
+    <STRING ID="16003" CONTEXT="monitor">Value</STRING>
+    <STRING ID="16004" CONTEXT="monitor">Units</STRING>
+    <STRING ID="16005" CONTEXT="monitor">RPM</STRING>
+    <STRING ID="16006" CONTEXT="monitor">Base RPM</STRING>
+    <STRING ID="16007" CONTEXT="monitor initial value">0</STRING>
+    <STRING ID="16008" CONTEXT="monitor">RPM Change</STRING>
+    <STRING ID="16009" CONTEXT="monitor">The test was aborted because engine speed has exceeded the test limit. Please ensure the fuel system is operating correctly before restarting the test.</STRING>
+    <STRING ID="16010" CONTEXT="show Label">Show</STRING>
+	  <!-- Container Specific -Diagnostic Test TITLE STRINGS WILL BE DEFINED FROM 22001-24000 -->
+	  <STRING ID="22001" CONTEXT="title">Accelerator Based Cutout Test</STRING>
+	  <STRING ID="22002" CONTEXT="title">Accelerator Based Cutout Test</STRING>
+	  <STRING ID="22003" CONTEXT="title">Air Compressor Solenoid</STRING>
+	  <STRING ID="22004" CONTEXT="title">Boost Power Override</STRING>
+	  <STRING ID="22005" CONTEXT="title">Control Valve Click Test</STRING>
+	  <STRING ID="22006" CONTEXT="title">ESP Lock-In Mode</STRING>
+	  <STRING ID="22007" CONTEXT="title">Fan Clutch Control Test</STRING>
+	  <STRING ID="22008" CONTEXT="title">Fast Idle Warmup Test</STRING>
+	  <STRING ID="22009" CONTEXT="title">Pumping Control Valve Cutout Test</STRING>
+	  <STRING ID="22010" CONTEXT="title">Transmission Solenoid Test</STRING>
+	  <STRING ID="22011" CONTEXT="title">ICON Relay / Interlock Test</STRING>
+	  <STRING ID="22012" CONTEXT="title">ICON Alarm Test</STRING>
+	  <STRING ID="22013" CONTEXT="title">SAE J1939 Datalink Control Test</STRING>
+	  <STRING ID="22014" CONTEXT="title">Cylinder Cutout Test</STRING>
+	  <STRING ID="22015" CONTEXT="title">Setup for Dynamometer</STRING>
+	  <STRING ID="22016" CONTEXT="title">Fuel System Table Reset</STRING>
+	  <STRING ID="22017" CONTEXT="title">Open Loop Mode Lock-In Test</STRING>
+	  <STRING ID="22018" CONTEXT="title">Intake Air Heater Override</STRING>
+	  <STRING ID="22019" CONTEXT="title">Engine Tuning Tests and Modifications</STRING>
+	  <STRING ID="22020" CONTEXT="title">Cylinder Performance Test</STRING>
+	  <STRING ID="22021" CONTEXT="title">EGR Valve Test</STRING>
+	  <STRING ID="22022" CONTEXT="title">EGR Valve / Turbocharger Operational Test</STRING>
+	  <STRING ID="22023" CONTEXT="title">Turbocharger Operational Test</STRING>
+	  <STRING ID="22024" CONTEXT="title">Fan Override Test</STRING>
+	  <STRING ID="22025" CONTEXT="title">Turbocharger Actuator Test</STRING>
+	  <STRING ID="22026" CONTEXT="title">Fuel System Leakage Test</STRING>
+	  <STRING ID="22027" CONTEXT="title">EFC Actuator Override</STRING>
+	  <STRING ID="22028" CONTEXT="title">EFC Actuator Override</STRING>
+	  <STRING ID="22029" CONTEXT="title">EFC Actuator Override</STRING>
+	  <STRING ID="22030" CONTEXT="title">Fuel Lift Pump Override</STRING>
+	  <STRING ID="22031" CONTEXT="title">Fuel Lift Pump Override</STRING>
+	  <STRING ID="22032" CONTEXT="title">Fuel Lift Pump Override</STRING>
+	  <STRING ID="22033" CONTEXT="title">Cylinder Performance Test</STRING>
+	  <STRING ID="22034" CONTEXT="title">EGR Valve / Turbocharger Operational Test</STRING>
+	  <STRING ID="22035" CONTEXT="title">Turbocharger Actuator Test</STRING>
+	  <STRING ID="22036" CONTEXT="title">Turbocharger Actuator Test</STRING>
+	  <STRING ID="22037" CONTEXT="title">Heated Oxygen Sensor Test</STRING>
+	  <STRING ID="22038" CONTEXT="title">Gas Throttle Control Test</STRING>
+	  <STRING ID="22039" CONTEXT="title">Injector Check Valve Diagnostics Test</STRING>
+	  <STRING ID="22040" CONTEXT="title">Aftertreatment Diagnostic Tests</STRING>
+	  <STRING ID="22041" CONTEXT="title">Centinel Operational Test</STRING>
+	  <STRING ID="22042" CONTEXT="title">SAE J1939 Datalink Control Test</STRING>
+	  <STRING ID="22043" CONTEXT="title">Actuator Diagnostic Tests</STRING>
+	  <STRING ID="22044" CONTEXT="title">Fuel Pump Test</STRING>
+	  <STRING ID="22045" CONTEXT="title">Air to Fuel Ratio Test</STRING>
+	  <STRING ID="22046" CONTEXT="title">Actuator Control Tests</STRING>
+	  <STRING ID="22047" CONTEXT="title">Fuel Control Valve Initial Position Setup</STRING>
+	  <STRING ID="22048" CONTEXT="title">Engine State Monitor</STRING>
+	  <STRING ID="22049" CONTEXT="title">Manual Fuel Control Valve Adjustment Test</STRING>
+	  <STRING ID="22050" CONTEXT="title">Aftertreatment High NOx Reset</STRING>
+	  <STRING ID="22051" CONTEXT="title">Speed Bias Setup 2</STRING>
+	  <STRING ID="22052" CONTEXT="title">Switch and Sensor Intermittent Connection Test</STRING>
+	  <STRING ID="22053" CONTEXT="title">Intake Air Heater Override Test</STRING>
+	  <STRING ID="22054" CONTEXT="title">Cylinder Cutout Test</STRING>
+	  <STRING ID="22055" CONTEXT="title">Setup for Dynamometer</STRING>
+	  <STRING ID="22056" CONTEXT="title">Intake Air Heater Override</STRING>
+	  <STRING ID="22057" CONTEXT="title">Fan Override Test</STRING>
+	  <STRING ID="22058" CONTEXT="title">Fuel System Leakage Test</STRING>
+	  <STRING ID="22059" CONTEXT="title">Injector Check Valve Diagnostics Test</STRING>
+	  <STRING ID="22060" CONTEXT="title">Starter Lockout Relay Driver Override Test</STRING>
+	  <STRING ID="22061" CONTEXT="title">Centinel Operational Test</STRING>
+	  <STRING ID="22062" CONTEXT="title">Fast Idle Warmup Test</STRING>
+	  <STRING ID="22063" CONTEXT="title">SAE J1939 Datalink Control Test</STRING>
+	  <STRING ID="22064" CONTEXT="title">Electric Fuel Lift Pump Override Test</STRING>
+	  <STRING ID="22065" CONTEXT="title">Aftertreatment Shutoff Valve and Injector Override Test</STRING>
+	  <STRING ID="22066" CONTEXT="title">EFC Actuator Override Test</STRING>
+	  <STRING ID="22067" CONTEXT="title">VGT Electronic Actuator Installation and Calibration</STRING>
+	  <STRING ID="22068" CONTEXT="title">Cylinder Performance Test</STRING>
+	  <STRING ID="22069" CONTEXT="title">Aftertreatment Diesel Particulate Filter Regeneration</STRING>
+	  <STRING ID="22070" CONTEXT="title">Engine Protection Witness Test</STRING>
+	  <STRING ID="22071" CONTEXT="title">Dual Fan Clutch Test</STRING>
+	  <STRING ID="22072" CONTEXT="title">Diesel Exhaust Fluid Doser Pump Override Test</STRING>
+	  <STRING ID="22073" CONTEXT="title">Diesel Exhaust Fluid Doser Pump Air Solenoid Click Test</STRING>
+	  <STRING ID="22074" CONTEXT="title">Diesel Exhaust Fluid Doser System Heater Test</STRING>
+	  <STRING ID="22075" CONTEXT="title">Engine State Monitor</STRING>
+	  <STRING ID="22076" CONTEXT="title">Aftertreatment High NOx Reset</STRING>
+	  <STRING ID="22077" CONTEXT="title">Switch and Sensor Intermittent Connection Test</STRING>
+	  <STRING ID="22078" CONTEXT="title">Gas Throttle Control Test</STRING>
+	  <STRING ID="22079" CONTEXT="title">Heated Oxygen Sensor Test</STRING>
+	  <STRING ID="22080" CONTEXT="title">Power Generation Tuning Test</STRING>
+	  <STRING ID="22081" CONTEXT="title">Open Loop Mode Lock-In Test</STRING>
+	  <STRING ID="22082" CONTEXT="title">Aftertreatment Diesel Exhaust Fluid System Leak Test</STRING>
+	  <STRING ID="22083" CONTEXT="title">Aftertreatment SCR Catalyst Desulphurization</STRING>
+	  <STRING ID="22084" CONTEXT="title">VGT Hysteresis Test</STRING>
+	  <STRING ID="22085" CONTEXT="title">Single Bank Cutout Test</STRING>
+	  <STRING ID="22086" CONTEXT="title">OBD Monitors</STRING>
+	  <STRING ID="22087" CONTEXT="title">Kilowatt Load Control Test</STRING>
+	  <STRING ID="22088" CONTEXT="title">Detonation Sensor Offset Calibration</STRING>
+	  <STRING ID="22089" CONTEXT="title">Open/closed-loop Fueling Control Tuning</STRING>
+	  <STRING ID="22090" CONTEXT="title">Fuel Injector Performance Test</STRING>
+  </RESOURCE>
+</XML_RESOURCE>
