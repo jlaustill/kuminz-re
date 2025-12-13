@@ -10,6 +10,7 @@ This is a reverse engineering monorepo for Cummins ECU systems across multiple g
 
 ```
 kuminz-re/
+├── work/             # Task tracking (todo.md + task files)
 ├── kuminz-ui/        # Qt5 C++ desktop app for ECU communication
 ├── e2m-analysis/     # E2M file format reverse engineering (COMPLETE)
 ├── e2m-db/           # PostgreSQL database for e2m parameter storage
@@ -17,7 +18,7 @@ kuminz-re/
 │   └── J90280.05_analysis/  # CM550 ECU firmware (first target)
 ├── calterm3/
 │   └── calterm-crc/  # CRC algorithm reverse engineering for e2m files
-└── insite3/          # Insite diagnostic tool analysis (future)
+└── insite9/          # Insite diagnostic tool analysis (100% decompiled)
 ```
 
 **Planned additions:** Dodge 2002/2004 truck ECU firmware, additional Calterm/Insite versions.
@@ -97,6 +98,43 @@ make                     # Build the CRC tool
 ./calterm-crc compute <file.e2m>  # Show computed CRC
 ```
 
+### insite9 (Decompiled Analysis)
+```bash
+cd insite9
+
+# Decompilation (already complete)
+./scripts/insite-dotnet-batch.sh   # .NET DLLs → C# source
+./scripts/insite-native-batch.sh   # Native DLLs → C pseudocode (slow)
+./scripts/extract-databases.sh     # Access databases → CSV
+
+# Search decompiled code
+grep -r "J1939" decompiled/dotnet/      # Protocol references in .NET
+grep -r "CLIP" decompiled/dotnet/       # CLIP protocol usage
+grep -r "CAN" decompiled/native/        # CAN bus code in native DLLs
+
+# Database analysis
+cat decompiled/databases/FnPDatabase/schema.sql  # View schema
+ls decompiled/databases/FnPDatabase/             # List 358 tables
+```
+
+**Decompiled Output (294MB total):**
+- `decompiled/dotnet/` - 105 .NET DLLs → 16MB C# source
+- `decompiled/native/` - 253 Native DLLs → 269MB C pseudocode
+- `decompiled/databases/` - 362 tables extracted from Access DBs
+
+**Key DLLs for Analysis:**
+| DLL | Type | Purpose |
+|-----|------|---------|
+| CureCore | Native | Core diagnostic engine (5MB) |
+| DeviceControl | Native | ECU communication layer |
+| DataMonitoring | Native | Parameter monitoring |
+| ToolSecurity | Native | Security/licensing (3.2MB, complex) |
+| Cummins.INSITE.Kernel.ECMServices | .NET | ECU service interfaces |
+
+**Notable Databases:**
+- `FnPDatabase/` - 358 tables (FEATURE_*, PARAMETER_*, SUBFEATURE_*)
+- `INSITEHelp/` - 56,834 help topics mapped to fault codes
+
 ## Architecture Notes
 
 ### kuminz-ui Design Patterns
@@ -139,6 +177,63 @@ For firmware analysis, discoveries are stored in CSV files (e.g., `ghidra/CM550.
 4. **Never Modify Originals** - Files in `originals/` directories are read-only source data
 5. **Decimal in Names** - Use decimal (not hex) in variable/function names for readability
 6. **MCP Tools Read-Only** - Ghidra MCP integration is for analysis only, not modification
+
+## Task Tracking System
+
+Project tasks are tracked in `/work/` with a simple markdown-based system.
+
+### Structure
+```
+/work/
+├── todo.md              # Master task list (one line per item)
+└── tasks/
+    ├── 001-crc-paradox.md
+    ├── 002-e2m-format.md
+    └── ...
+```
+
+### Status Markers
+- `[ ]` Todo
+- `[>]` In Progress
+- `[?]` Testing
+- `[X]` Done
+
+### todo.md Format
+```
+001 [>] [calterm-crc] Resolve CRC paradox - why legacy files have impossible values
+002 [X] [e2m-analysis] Decode e2m file format (100% complete)
+```
+
+### Session Workflow
+
+**Session Startup:**
+1. Read `/work/todo.md` for current task status
+2. Review any `[>]` in-progress tasks in `/work/tasks/`
+3. Continue work or pick next `[ ]` todo item
+
+**During Work:**
+- Update task file with findings, decisions, progress
+- Mark subtasks complete as you go
+- Add investigation log entries with dates
+
+**Session End:**
+- Update todo.md status if changed
+- Add session log entry to active task file
+- Note any new tasks discovered
+
+### Task File Templates
+
+**Investigation tasks** (research/reverse-engineering):
+- Problem Statement, Current Understanding
+- Investigation Log (dated entries, what was tried, findings)
+- Theories to Explore (with checkboxes)
+- Key Files
+
+**Implementation tasks** (building features):
+- Goal, Requirements (with checkboxes)
+- Design Decisions (dated entries with rationale)
+- Implementation Progress
+- Testing checklist
 
 ## Cross-ECU Analysis Strategy
 
