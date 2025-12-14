@@ -1,11 +1,35 @@
 # 009: Insite Reverse Engineering Process
 
-**Status:** In Progress (Phase 2 Complete - Protocol Analysis)
+**Status:** In Progress (Phase 3 Complete - Diagnostic Functions)
 **Subproject:** insite9
 **Created:** 2024-12-13
 **Updated:** 2024-12-13
 
 ## Progress Log
+
+### 2024-12-13: Diagnostic Functions Analysis Complete
+- Analyzed fault code (DTC) handling via IFaultInformation interface
+- Documented J1939 SPN+FMI diagnostic message format
+- Mapped freeze frame data via CFaultSnapshot class in FaultsDataOM
+- Reverse engineered parameter monitoring system (MonitorServices)
+- Documented data logging system (DataMonitorLogger API)
+- Created comprehensive documentation: `work/docs/diagnostic-functions.md`
+
+**Key Diagnostic Findings:**
+| Component | Source File | Key Discovery |
+|-----------|-------------|---------------|
+| Fault Info | ECMServicesAPI.cs:533 | IFaultInformation with SPN/FMI fields |
+| Freeze Frames | FaultsDataOM_ghidra.c | CFaultSnapshot class |
+| Monitoring | MonitorServices.cs:203 | Async polling via GetParameterValueAsync |
+| Logging | DataMonitorLoggerAPILib | XML log format with IDMLParameter groups |
+
+**TriggerType Enum:**
+- `None` (0), `ValueChanged` (1), `Periodic` (2), `Custom` (4), `All` (7)
+
+**CustomTriggerOperator Enum:**
+- Equal, LessThan, LessThanOrEqual, GreaterThan, GreaterThanOrEqual, NotEqual
+
+**Documentation Created:** `work/docs/diagnostic-functions.md`
 
 ### 2024-12-13: Communication Protocol Analysis Complete
 - Analyzed CLIP and J1939 protocol implementations from PCLSystem_ghidra.c
@@ -100,10 +124,10 @@ Insite is Cummins' official diagnostic and calibration software. Understanding h
 - [X] Compare with CLIP protocol from kuminz-ui work
 
 ### Phase 3: Diagnostic Functions
-- [ ] Analyze fault code retrieval and display
-- [ ] Understand snapshot/freeze frame data handling
-- [ ] Document parameter monitoring implementation
-- [ ] Trace data logging workflow
+- [X] Analyze fault code retrieval and display (IFaultInformation, J1939 SPN+FMI)
+- [X] Understand snapshot/freeze frame data handling (CFaultSnapshot)
+- [X] Document parameter monitoring implementation (MonitorServices, ParameterPoller)
+- [X] Trace data logging workflow (DataMonitorLogger, XmlLogfile)
 
 ### Phase 4: Calibration Handling
 - [ ] Map calibration file read/write paths
@@ -195,6 +219,7 @@ cat insite9/decompiled/databases/FnPDatabase/schema.sql
 
 **Documentation:**
 - `work/docs/clip-protocol-spec.md` - CLIP/J1939 protocol specification
+- `work/docs/diagnostic-functions.md` - Fault codes, monitoring, logging
 
 ## Related Tasks
 
