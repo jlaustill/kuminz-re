@@ -30,13 +30,32 @@ constexpr uint32_t CLIP_MAX_BLOCK_SIZE = 0xD000;
 
 /**
  * @brief Default timeout for CLIP operations in milliseconds.
+ *
+ * From Insite PCLSystem_ghidra.c:43068: getDefaultAppTimeoutMsec() returns 60000.
+ * All CLIP operations use this 60-second timeout.
  */
-constexpr int CLIP_DEFAULT_TIMEOUT_MS = 5000;
+constexpr int CLIP_DEFAULT_TIMEOUT_MS = 60000;
 
 /**
  * @brief Session open timeout in milliseconds.
+ *
+ * Same as default timeout per Insite analysis - all operations use 60 seconds.
  */
-constexpr int CLIP_SESSION_TIMEOUT_MS = 15000;
+constexpr int CLIP_SESSION_TIMEOUT_MS = 60000;
+
+/**
+ * @brief Close message timeout in milliseconds.
+ *
+ * From Insite PCLSystem_ghidra.c:45421: closeSession() uses 1000ms timeout.
+ */
+constexpr int CLIP_CLOSE_TIMEOUT_MS = 1000;
+
+/**
+ * @brief Maximum parameters per write batch.
+ *
+ * From Insite PCLSystem_ghidra.c:44816: "CLIP only supports writing max 256 parameter at a time"
+ */
+constexpr uint16_t CLIP_MAX_WRITE_PARAMS = 256;
 
 /**
  * @brief J1939 tool source address (standard diagnostic tool address).

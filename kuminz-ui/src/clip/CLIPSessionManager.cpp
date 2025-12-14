@@ -117,7 +117,20 @@ bool CLIPSessionManager::openSession(uint8_t ecuAddress, int timeoutMs)
 
 void CLIPSessionManager::closeSession()
 {
+    if (m_state == ESessionState::Closed) {
+        return;
+    }
+
     log("Closing session");
+
+    // Per Insite PCLSystem_ghidra.c:45421: closeSession() sends CLIPCloseMsgRequest
+    // and waits 1000ms for acknowledgment
+    if (m_transport) {
+        // Send transport close - this sends the close message
+        // Uses CLIP_CLOSE_TIMEOUT_MS (1000ms) per Insite analysis
+        m_transport->sendTransportClose(CLIP_CLOSE_TIMEOUT_MS);
+    }
+
     setState(ESessionState::Closed);
 }
 

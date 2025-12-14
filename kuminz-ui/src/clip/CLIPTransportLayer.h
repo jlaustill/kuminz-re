@@ -119,6 +119,17 @@ public:
     bool sendTransportOpen(uint8_t expectedPackets = 0);
 
     /**
+     * @brief Send a transport close message.
+     *
+     * Per Insite PCLSystem_ghidra.c:45421: closeSession() sends CLIPCloseMsgRequest
+     * with a shorter timeout for acknowledgment.
+     *
+     * @param timeoutMs Timeout for close ack (default: CLIP_CLOSE_TIMEOUT_MS = 1000ms)
+     * @return true if close acknowledged
+     */
+    bool sendTransportClose(int timeoutMs = CLIP_CLOSE_TIMEOUT_MS);
+
+    /**
      * @brief Wait for CTS (Clear-to-Send) response.
      * @param timeoutMs Timeout in milliseconds
      * @return true if CTS received

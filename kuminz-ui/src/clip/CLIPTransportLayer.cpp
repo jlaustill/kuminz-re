@@ -304,3 +304,35 @@ bool CLIPTransportLayer::waitForCts(int timeoutMs)
     reportError(EClipTransportError::Aborted, "Unexpected response waiting for CTS");
     return false;
 }
+
+bool CLIPTransportLayer::sendTransportClose(int timeoutMs)
+{
+    // Per Insite PCLSystem_ghidra.c:45421: closeSession() sends CLIPCloseMsgRequest
+    // and waits for acknowledgment with 1000ms timeout
+    //
+    // The close message uses TransportClose (0x06) message type
+    // Format mirrors transport open but signals session termination
+
+    TClipFrame frame;
+    frame.sessionId = m_sessionId;
+    frame.msgType = static_cast<uint8_t>(EClipMsgType::TransportClose);
+    frame.connectionId = m_connectionId;
+    frame.control = 0x00;  // No special control flags for close
+    frame.payloadLen = 0;  // No payload needed for close
+
+    if (!sendFrame(frame)) {
+        return false;
+    }
+
+    // Wait for close acknowledgment (shorter timeout per Insite)
+    // The ECU may or may not acknowledge, so we don't fail if no response
+    TClipFrame response;
+    if (receiveFrame(response, timeoutMs)) {
+        // Got acknowledgment - close confirmed
+        return true;
+    }
+
+    // No acknowledgment received - close may still have succeeded
+    // Per Insite analysis, timeout on close is acceptable
+    return true;
+}

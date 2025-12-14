@@ -5,6 +5,19 @@
 **Created:** 2024-12-XX
 **Updated:** 2024-12-13
 
+## Progress Log
+
+### 2024-12-13: Integrated Insite Protocol Analysis
+- Updated timeout constants to match Insite specification:
+  - Default timeout: 5000ms → **60000ms** (per PCLSystem_ghidra.c:43068)
+  - Session timeout: 15000ms → **60000ms**
+  - Added close timeout: **1000ms** (per PCLSystem_ghidra.c:45421)
+  - Added max write params: **256** (per PCLSystem_ghidra.c:44816)
+- Added `sendTransportClose()` to CLIPTransportLayer with proper close message
+- Added `TransportClose` (0x06) message type enum
+- Enhanced `closeSession()` to send CLIP close message
+- Linked to Task 009 documentation: clip-protocol-spec.md, calibration-handling.md
+
 ## Goal
 
 Implement the Cummins CLIP (Cummins Link Interface Protocol) for ECU communication over CAN bus in the kuminz-ui Qt5 desktop application.
@@ -159,7 +172,23 @@ candump can0  # Note: network interface, not /dev/can0
 **UI:**
 - `kuminz-ui/src/ui/widgets/ConnectionWidget.cpp` - Main connection UI
 
+## Reference Documentation (from Task 009 Insite RE)
+
+| Document | Content |
+|----------|---------|
+| `work/docs/clip-protocol-spec.md` | CLIP/J1939 protocol details (timeouts, message types, session flow) |
+| `work/docs/diagnostic-functions.md` | Fault codes (DTC), monitoring, data logging |
+| `work/docs/calibration-handling.md` | Security levels, password types, flash process |
+| `work/docs/database-schema.md` | Parameter organization (FnPDatabase) |
+
+**Key Protocol Values from Insite Analysis:**
+- Default timeout: **60,000 ms** (not 5,000 ms)
+- Max parameters per write batch: **256**
+- Close message timeout: **1,000 ms**
+- Session validation: Check offset 0x74 for validity
+
 ## Related Tasks
 
 - 001 (CRC Paradox) - May need CRC for calibration file transfers
 - 002 (E2M Format) - Parameter definitions for read/write operations
+- 009 (Insite RE) - **COMPLETE** - Protocol analysis source

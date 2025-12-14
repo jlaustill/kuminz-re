@@ -27,13 +27,16 @@ enum class EClipCommand : uint8_t
  *
  * These are the control bits in byte 0 of CLIP transport frames
  * (bits 4:0 after extracting session ID from bits 7:5).
+ *
+ * Reference: Insite PCLSystem_ghidra.c - CLIPProtocolManager methods
  */
 enum class EClipMsgType : uint8_t
 {
-    TransportOpen  = 0x02,  // Session open / seed reply
-    DataTransfer   = 0x03,  // Data transfer with sequence number
-    ClearToSend    = 0x04,  // CTS / context reply / acknowledgment
-    ConnectionRefused = 0x05  // Connection refused by ECU
+    TransportOpen     = 0x02,  // Session open / seed reply
+    DataTransfer      = 0x03,  // Data transfer with sequence number
+    ClearToSend       = 0x04,  // CTS / context reply / acknowledgment
+    ConnectionRefused = 0x05,  // Connection refused by ECU
+    TransportClose    = 0x06   // Session close request (per Insite PCLSystem_ghidra.c:45421)
 };
 
 /**
