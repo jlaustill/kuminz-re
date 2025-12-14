@@ -1,5 +1,8 @@
 #include "CLIPTransportLayer.h"
 #include <cstring>
+#include <QDebug>
+#include <sstream>
+#include <iomanip>
 
 CLIPTransportLayer::CLIPTransportLayer(ICanAdapter* adapter, J1939MessageBuilder* j1939)
     : m_adapter(adapter)
@@ -62,6 +65,7 @@ void CLIPTransportLayer::reportError(EClipTransportError error, const std::strin
 bool CLIPTransportLayer::sendFrame(const TClipFrame& frame)
 {
     if (!m_adapter || !m_adapter->isOpen()) {
+        qDebug() << "[CLIP TX] ERROR: CAN adapter not open";
         reportError(EClipTransportError::Aborted, "CAN adapter not open");
         return false;
     }
@@ -70,15 +74,31 @@ bool CLIPTransportLayer::sendFrame(const TClipFrame& frame)
     uint8_t len = frame.encode(data);
 
     uint32_t arbId = m_j1939->buildClipDataArbId(m_destAddress);
-    return m_adapter->send(arbId, data, len);
+
+    // Debug output
+    std::stringstream ss;
+    ss << "[CLIP TX] ArbId=0x" << std::hex << std::setfill('0') << std::setw(8) << arbId << " Data=";
+    for (int i = 0; i < len; i++) {
+        ss << std::hex << std::setw(2) << static_cast<int>(data[i]) << " ";
+    }
+    qDebug().noquote() << QString::fromStdString(ss.str());
+
+    bool result = m_adapter->send(arbId, data, len);
+    if (!result) {
+        qDebug() << "[CLIP TX] ERROR: send() failed";
+    }
+    return result;
 }
 
 bool CLIPTransportLayer::receiveFrame(TClipFrame& frame, int timeoutMs)
 {
     if (!m_adapter || !m_adapter->isOpen()) {
+        qDebug() << "[CLIP RX] ERROR: CAN adapter not open";
         reportError(EClipTransportError::Aborted, "CAN adapter not open");
         return false;
     }
+
+    qDebug() << "[CLIP RX] Waiting for response (timeout:" << timeoutMs << "ms)...";
 
     uint32_t arbId;
     uint8_t data[8];
@@ -86,31 +106,45 @@ bool CLIPTransportLayer::receiveFrame(TClipFrame& frame, int timeoutMs)
 
     // Keep receiving until we get a CLIP response for our connection
     while (m_adapter->recv(arbId, data, len, timeoutMs)) {
+        // Debug: show all received frames
+        std::stringstream ss;
+        ss << "[CLIP RX] ArbId=0x" << std::hex << std::setfill('0') << std::setw(8) << arbId << " Data=";
+        for (int i = 0; i < len; i++) {
+            ss << std::hex << std::setw(2) << static_cast<int>(data[i]) << " ";
+        }
+        qDebug().noquote() << QString::fromStdString(ss.str());
+
         // Check if this is a CLIP response (PGN 0xEF)
         if (!J1939MessageBuilder::isClipResponse(arbId)) {
+            qDebug() << "[CLIP RX] -> Skipping: Not a CLIP response";
             continue;  // Not a CLIP response, keep waiting
         }
 
         // Check if response is from our target ECU
         uint8_t sourceAddr = J1939MessageBuilder::extractSourceAddress(arbId);
         if (sourceAddr != m_destAddress) {
+            qDebug() << "[CLIP RX] -> Skipping: From different ECU (source:" << sourceAddr << ", expected:" << m_destAddress << ")";
             continue;  // From different ECU
         }
 
         // Decode the frame
         if (!frame.decode(data, len)) {
+            qDebug() << "[CLIP RX] ERROR: Failed to decode CLIP frame";
             reportError(EClipTransportError::Aborted, "Failed to decode CLIP frame");
             return false;
         }
 
         // Check connection ID matches
         if (frame.connectionId != m_connectionId) {
+            qDebug() << "[CLIP RX] -> Skipping: Different connection ID (got:" << frame.connectionId << ", expected:" << m_connectionId << ")";
             continue;  // Different connection
         }
 
+        qDebug() << "[CLIP RX] -> MATCH! Valid CLIP response received";
         return true;
     }
 
+    qDebug() << "[CLIP RX] TIMEOUT: No CLIP response received";
     reportError(EClipTransportError::Timeout, "Timeout waiting for CLIP response");
     return false;
 }

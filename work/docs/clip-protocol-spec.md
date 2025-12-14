@@ -46,6 +46,269 @@ From `Cummins.INSITE.Kernel.ECMServicesCommonTypes.Protocol`:
 | 4     | UDS     | Unified Diagnostic Services (ISO 14229) |
 | 5     | PCL     | Protocol Communications Library (CLIP) |
 
+## J1939 Addressing for CLIP
+
+**IMPORTANT: CLIP uses J1939 Proprietary A (PGN 0xEF00), NOT the Request PGN (0xEA00)!**
+
+### CAN Arbitration ID Format (29-bit Extended)
+
+| Bits | Field | Description |
+|------|-------|-------------|
+| 28:26 | Priority | 6 for CLIP messages |
+| 25:24 | Reserved | 0 |
+| 23:16 | PF | **0xEF** (Proprietary A) |
+| 15:8 | PS | Destination address |
+| 7:0 | SA | Source address |
+
+### CLIP Message Addressing
+
+| Direction | Arb ID Example | Description |
+|-----------|----------------|-------------|
+| Tool → ECU | `0x18EF00F9` | PF=0xEF, Dest=0x00 (ECU), Src=0xF9 (Tool) |
+| ECU → Tool | `0x18EFF900` | PF=0xEF, Dest=0xF9 (Tool), Src=0x00 (ECU) |
+
+### Common Mistake
+
+**PF=0xEA (PGN 0xEA00) is the J1939 Request PGN** - used to request data from OTHER PGNs, NOT for CLIP data transport. Sending CLIP frames on PF=0xEA will result in ECU NACK responses.
+
+### Verified with CM550 (2024-12)
+
+```
+TX: 18EF00F9 [8] 02 01 FF 01 00 00 00 00   ← Correct: PF=0xEF
+RX: 18EFF900 [8] 0D 18 02 FF FF FF FF FF   ← ECU responds on PF=0xEF
+```
+
+---
+
+## CLIP Frame Format
+
+### CAN Frame Structure (8 bytes)
+
+| Byte | Field | Description |
+|------|-------|-------------|
+| 0 | SessionId (3 bits) + MsgType (5 bits) | `(session << 5) \| msgType` |
+| 1 | ConnectionId | Session/connection identifier |
+| 2 | Control | Control flags / response type |
+| 3-7 | Payload | Up to 5 bytes of payload data |
+
+### Message Types (Byte 0, lower 5 bits)
+
+| Value | Name | Direction | Description |
+|-------|------|-----------|-------------|
+| 0x02 | TransportOpen | Tool → ECU | Session open request |
+| 0x03 | DataTransfer | Bidirectional | Data transfer (sequence in upper 3 bits) |
+| 0x04 | ClearToSend | ECU → Tool | Flow control acknowledgment |
+| 0x05 | ConnectionRefused | ECU → Tool | Session rejected |
+| 0x06 | TransportClose | Bidirectional | Session close request |
+| **0x0C** | **CTSAcknowledge** | **ECU → Tool** | **CTS acknowledgment (CM550)** |
+| **0x0D** | **SessionOpenResponse** | **ECU → Tool** | **Session accepted (CM550 variant)** |
+
+**Note**: The Insite tool expects ECU to respond with byte[0]==0x02 for transport open response, but CM550 firmware uses 0x0D. This may be a protocol version difference.
+
+### Control Byte Values (Byte 2)
+
+| Value | Name | Description |
+|-------|------|-------------|
+| 0x02 | SeedReply | ECU is providing security seed |
+| 0x03 | DataAck/Error? | ECU acknowledging DataTransfer (echoes msgType) |
+| 0x04 | ContextReply | ECU context/status response |
+| 0x23 | DataAck seq=1 | ECU acknowledging DataTransfer seq=1 |
+
+### Session Open Exchange (CM550)
+
+**Tool Request**:
+```
+Byte 0: 0x02 (TransportOpen)
+Byte 1: 0x01 (Tool's requested connection ID)
+Byte 2: 0xFF (Control: request)
+Byte 3: 0x01 (Flags)
+Byte 4-7: 0x00 (Reserved)
+```
+
+**ECU Response** (CM550-specific):
+```
+Byte 0: 0x0D (SessionOpenResponse - CM550 uses this instead of 0x02)
+Byte 1: 0x18 (ECU-assigned connection ID)
+Byte 2: 0x02 (Control: SeedReply)
+Byte 3-6: Seed (0xFFFFFFFF = no security required?)
+Byte 7: 0xFF (Padding)
+```
+
+### CM550 Communication Test Results (December 2024)
+
+**Successful Operations:**
+
+1. **Session Open** - Works correctly
+   - TX: `02 01 FF 01 00 00 00 00`
+   - RX: `0D 18 02 FF FF FF FF FF` (SeedReply, connId=0x18, seed=0xFFFFFFFF)
+
+2. **CTS Authentication** - Works correctly
+   - TX: `04 18 01 01 00 00 00 00` (CTS with ECU connId)
+   - RX: `0D 04 04 18 01 FF FF FF` (ContextReply = authenticated)
+
+3. **Session Close** - Works correctly
+   - TX: `06 18 00 ...` (TransportClose)
+   - RX: `0C ...` (Close acknowledgment)
+
+**Unresolved: DataTransfer Instruction Format**
+
+Extensive testing of multiple frame formats (Dec 2024):
+
+**Format Variations Tested:**
+
+| Test | byte[1] (connId) | byte[2] (control) | Result |
+|------|------------------|-------------------|--------|
+| A | ECU's (0x18) | 0x00 | Echo 0x0D + msgType |
+| B | Local (0x01) | ECU's (0x18) | Echo 0x0D + msgType |
+| C | Local (0x01) | 0x08 (length) | Echo 0x0D + msgType |
+| D | ECU's (0x18) | 0x13 (cmd) | Echo 0x0D + msgType |
+
+**8-Byte Instruction Format (from Insite decompilation):**
+```
+[cmd(1)] [reqId(1)] [addr(4, big-endian)] [len(2, big-endian)]
+Example: 13 01 00 80 00 00 00 10 = getDataByAddress(0x00800000, 16)
+```
+
+**DataTransfer Frame Format:**
+```
+byte[0]: (sequence << 5) | 0x03  (e.g., 0x03 for seq=0, 0x23 for seq=1)
+byte[1]: connection ID
+byte[2]: control byte
+bytes[3-7]: instruction data (5 bytes per frame)
+```
+
+**Observed ECU Response Pattern:**
+```
+All DataTransfer → 0x0D [connId] [echo_msgType] FF FF FF FF FF
+  - TX: 03 18 00 13 01 00 80 00
+  - RX: 0D 18 03 FF FF FF FF FF  (control=0x03 echoes our msgType)
+
+  - TX: 23 18 00 00 00 10 00 00
+  - RX: 0D 18 23 FF FF FF FF FF  (control=0x23 echoes our seq+msgType)
+```
+
+The ECU consistently acknowledges receipt but never returns actual data.
+
+**Current Hypotheses:**
+
+1. **Incomplete Authentication**: After receiving seed=0xFFFFFFFF, Insite sends a proper context request (0x01 0x03 + encrypted tool context data) rather than CTS. The ECU accepts CTS as valid for session establishment but may require proper tool context for data operations.
+
+2. **Different CLIP Variant**: The CM550 may use an older/different CLIP protocol version that doesn't support getDataByAddress (0x13). The ECU's echo behavior (0x0D + msgType) may indicate "command not supported" rather than "command received".
+
+3. **Missing State Transition**: From Insite analysis, session states are:
+   - State 4: Requesting seed
+   - State 5: Seeded (waiting for context)
+   - State 3: Session established (ready for data)
+
+   We may be stuck in state 5 because we sent CTS instead of context request.
+
+4. **Parameter ID Required**: CM550 might only support parameter-based reads (getAddressByParameterID 0x15) rather than direct memory reads (getDataByAddress 0x13).
+
+**J1939 Standard PGN Support Test Results (December 2024):**
+
+Major breakthrough! The CM550 ECU **DOES respond to standard J1939 PGN requests** with actual data!
+
+**Working PGNs (Return Real Data):**
+
+| PGN | Name | Example Response | Decoded Value |
+|-----|------|-----------------|---------------|
+| 0xF003 | EEC3 - Engine Controller 3 | `F9 FE FE 00 FF FF FF FF` | Friction Torque = 249% |
+| 0xFEE5 | Engine Hours/Revolutions | `C8 D5 03 00 FF FF FF FF` | **12,566.8 engine hours** |
+| 0xFEE9 | Fuel Consumption (Liquid) | `6A 85 03 00 6A 85 03 00` | Fuel data |
+| 0xFEEE | Engine Temperature 1 | `88 17 FF FF FF FF FF FF` | **96°C coolant temp** |
+| 0xFEEF | Engine Fluid Level/Pressure 1 | `FF FF 00 56 FF FF 00 FF` | Pressure data |
+| 0xFEF1 | CCVS - Cruise/Vehicle Speed | `F3 00 00 50 00 68 00 C0` | Speed data |
+| 0xFEF5 | Ambient Conditions | `00 FF FF FF FF FF FF FF` | Ambient data |
+| 0xFECA | Engine Configuration | Multi-frame (J1939 TP) | **50 bytes via TP.CM/TP.DT** |
+| 0xFECE | DM6 - Pending DTCs | `0C 02 00 00 00 00 00 10` | DTC status |
+
+**Not Supported PGNs (NACK 0x01):**
+
+| PGN | Name |
+|-----|------|
+| 0xF002 | Electronic Throttle Controller |
+| 0xF004 | EEC1 (RPM, Torque) - **Surprisingly not supported** |
+| 0xF005 | ETC1 - Electronic Transmission Controller |
+| 0xFD09 | High Resolution Fuel Consumption |
+| 0xFDC5 | ECU Identification Information |
+| 0xFDD1 | Engine Fluid Level/Pressure 2 |
+| 0xFEAE | Air Supply Pressure |
+| 0xFEC1 | EEC2 |
+| 0xFECF | DM12 - Emissions DTCs |
+| 0xFED3 | DM2 - Previously Active DTCs |
+| 0xFEDA | Software Identification |
+| 0xFEDB | Component Identification |
+| 0xFEDF | EEC Composite |
+| 0xFEFC | Dash Display |
+
+**Engine Configuration Multi-Frame Response:**
+
+The Engine Configuration PGN (0xFECA) returns a large response via J1939 Transport Protocol:
+```
+TX: 18EA00F9 [3] CA FE 00  (Request PGN 0xFECA)
+RX: 18ECFF00 [8] 20 32 00 08 FF CA FE 00  (TP.CM - BAM, 50 bytes, 8 frames)
+RX: 18EBFF00 [8] 01 04 FF 00 0B 64 81 00  (TP.DT frame 1)
+RX: 18EBFF00 [8] 02 0D E2 81 00 0D 23 81  (TP.DT frame 2)
+... (6 more frames)
+```
+
+**Decoding Examples:**
+
+1. **Engine Hours (PGN 0xFEE5):**
+   - Bytes 0-3: `C8 D5 03 00` = 0x0003D5C8 = 251,336
+   - Resolution: 0.05 hours/bit
+   - Actual: 251,336 × 0.05 = **12,566.8 hours**
+
+2. **Engine Temperature (PGN 0xFEEE):**
+   - Byte 0: `88` = 136 decimal
+   - Offset: -40°C
+   - Actual: 136 - 40 = **96°C coolant temperature**
+
+**Implications:**
+
+- **Standard J1939 data access WORKS** for many engine parameters
+- **CLIP DataTransfer remains non-functional** - ECU just echoes messages
+- The CM550 may have limited CLIP instruction support
+- **Recommended approach: Hybrid J1939 + CLIP**
+  - Use CLIP for session establishment and authentication
+  - Use standard J1939 PGN requests for data retrieval
+  - Some large responses (Engine Configuration) use J1939 Transport Protocol
+
+**Note on EEC1 (0xF004):**
+
+The CM550 surprisingly does NOT support EEC1 via J1939 Request PGN, which normally contains engine RPM and torque. This might mean:
+1. The CM550 broadcasts EEC1 periodically instead of on-request
+2. EEC1 requires CLIP authentication to access
+3. The CM550 uses a different PGN for RPM data
+
+**J1939 Transport Protocol Notes:**
+
+The Engine Configuration response demonstrates J1939 TP usage:
+- `0x18ECFF00` = TP.CM (Connection Management) broadcast
+- `0x18EBFF00` = TP.DT (Data Transfer) broadcast
+- BAM (Broadcast Announce Message) mode: `20 32 00 08` = 50 bytes, 8 packets
+
+**Additional Format Variations Tested (December 2024):**
+
+| Test | Format Description | Result |
+|------|-------------------|--------|
+| A | Control = total message length (0x08) | Echo 0x0D + msgType |
+| B | msgType = 0x02 (TransportOpen-like) | Echo 0x0D + 0x02 |
+| C | Pure msgType 0x03 without sequence bits | Echo 0x0D + msgType |
+| D | getAddressByParameterID (0x15) | Echo 0x0D + msgType |
+| E | Local connId (0x01) for DataTransfer | Echo 0x0D + msgType |
+| G | Instruction embedded in context format (0x01 0x03 + cmd) | Echo 0x0D + msgType |
+
+**Next Steps:**
+1. ~~Try sending proper context request (0x01 0x03) after seed reply instead of CTS~~ (Done - same echo behavior)
+2. ~~Try getAddressByParameterID (0x15) command~~ (Done - same echo behavior)
+3. Analyze CM550 firmware directly when Ghidra is available
+4. Capture real Insite traffic for comparison
+5. Try common J1939 engine PGNs (EEC1, etc.) via standard J1939 Request
+6. Investigate if CM550 uses completely different data layer on top of CLIP session
+
+---
+
 ## CLIP Protocol (PCL)
 
 **Source**: `insite9/decompiled/native/PCLSystem_ghidra.c`

@@ -14,13 +14,16 @@
  *   Bits [15:8]  = PDU Specific (PS) - destination or group extension
  *   Bits [7:0]   = Source Address (SA)
  *
- * For CLIP data (PGN 0x00EA00):
+ * For CLIP data (Proprietary A, PGN 0x00EF00):
  *   Priority = 6 (0b110)
- *   PF = 0xEA (234)
+ *   PF = 0xEF (239) - Proprietary A
  *   PS = Destination Address
  *   SA = Tool Address (typically 0xF9 = 249)
  *
- * Example: Tool (0xF9) → ECU (0x00) = 0x18EA00F9
+ * Example: Tool (0xF9) → ECU (0x00) = 0x18EF00F9
+ *          ECU (0x00) → Tool (0xF9) = 0x18EFF900
+ *
+ * NOTE: PF=0xEA is the J1939 Request PGN - NOT for CLIP data!
  *
  * Reference: ECU_PROGRAMMING_PROTOCOL.md
  */

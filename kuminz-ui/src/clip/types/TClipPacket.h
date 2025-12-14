@@ -68,14 +68,49 @@ constexpr uint8_t J1939_TOOL_ADDRESS = 0xF9;
 constexpr uint8_t J1939_CLIP_PRIORITY = 6;
 
 /**
- * @brief J1939 PGN PDU Format for CLIP data.
+ * @brief J1939 PGN PDU Format for CLIP data (Proprietary A).
+ *
+ * CLIP uses PF=0xEF (Proprietary A, PGN 0xEF00) for BOTH tx and rx.
+ * NOTE: PF=0xEA is the J1939 Request PGN - NOT for CLIP data!
  */
-constexpr uint8_t J1939_CLIP_PGN_PF = 0xEA;
+constexpr uint8_t J1939_CLIP_PGN_PF = 0xEF;
 
 /**
- * @brief J1939 PGN for CLIP response.
+ * @brief J1939 PGN for CLIP response (same as request - Proprietary A).
  */
 constexpr uint8_t J1939_CLIP_RESPONSE_PGN = 0xEF;
+
+// ============================================================================
+// CLIP Message Types (Byte 0, lower 5 bits)
+// ============================================================================
+// From Insite CLIPTransport::dataReceived() and CM550 testing (Dec 2024)
+
+/**
+ * @brief CLIP message type values.
+ *
+ * Note: CM550 ECU uses 0x0D for session open response instead of 0x02.
+ * This may be a protocol version difference.
+ */
+enum class EClipMsgType : uint8_t
+{
+    TransportOpen       = 0x02,  ///< Session open request (tool -> ECU)
+    DataTransfer        = 0x03,  ///< Data transfer (sequence in upper 3 bits)
+    ClearToSend         = 0x04,  ///< Flow control acknowledgment
+    ConnectionRefused   = 0x05,  ///< Session rejected by ECU
+    TransportClose      = 0x06,  ///< Session close request
+    SessionOpenResponse = 0x0D   ///< Session accepted (CM550 variant, ECU -> tool)
+};
+
+/**
+ * @brief CLIP control byte values (byte 2 of frame).
+ *
+ * From Insite CLIPSession::dataReceived()
+ */
+enum class EClipControlType : uint8_t
+{
+    SeedReply    = 0x02,  ///< ECU is providing security seed
+    ContextReply = 0x04   ///< ECU context/status response
+};
 
 // ============================================================================
 // CM550 Memory Regions
