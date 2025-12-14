@@ -550,15 +550,15 @@ int readMode(SocketCanAdapter& adapter, uint8_t ecuAddress, uint32_t address, ui
     }
 
     // ============================================================
-    // STEP 3: Send CLIP instruction (getDataByAddress = 0x13)
-    // From Insite analysis: instruction is 8 bytes
-    // [cmd(1)] [reqId(1)] [addr(4, big-endian)] [len(2, big-endian)]
+    // STEP 3: Send CLIP instruction (getDataByAddress = 0x14)
+    // From EClipCommand.h: 0x14 is GetDataByAddress (NOT 0x13!)
+    // Format: [cmd(1)] [reqId(1)] [addr(4, big-endian)] [len(2, big-endian)]
     // ============================================================
-    std::cout << "\n[STEP 3] Sending getDataByAddress instruction (0x13)...\n";
+    std::cout << "\n[STEP 3] Sending getDataByAddress instruction (0x14)...\n";
 
     // Build the instruction (8 bytes)
     uint8_t instruction[8];
-    instruction[0] = 0x13;  // Command: getDataByAddress
+    instruction[0] = 0x14;  // Command: getDataByAddress (corrected from 0x13)
     instruction[1] = 0x01;  // Request ID
     // Address in big-endian
     instruction[2] = (address >> 24) & 0xFF;
@@ -569,7 +569,7 @@ int readMode(SocketCanAdapter& adapter, uint8_t ecuAddress, uint32_t address, ui
     instruction[6] = (length >> 8) & 0xFF;
     instruction[7] = length & 0xFF;
 
-    std::cout << "[INFO] Instruction: cmd=0x13 reqId=0x01 addr=0x"
+    std::cout << "[INFO] Instruction: cmd=0x14 reqId=0x01 addr=0x"
               << std::hex << std::setfill('0') << std::setw(8) << address
               << " len=" << std::dec << length << "\n";
 
@@ -584,7 +584,7 @@ int readMode(SocketCanAdapter& adapter, uint8_t ecuAddress, uint32_t address, ui
     testA[0] = (0 << 5) | 0x03;       // sequence 0, DataTransfer
     testA[1] = ecuConnectionId;        // ECU's connection ID
     testA[2] = 0x08;                   // Control = total instruction length
-    testA[3] = 0x13;                   // Command: getDataByAddress
+    testA[3] = 0x14;                   // Command: getDataByAddress (corrected)
     testA[4] = 0x01;                   // Request ID
     testA[5] = (address >> 24) & 0xFF;
     testA[6] = (address >> 16) & 0xFF;
@@ -620,7 +620,7 @@ int readMode(SocketCanAdapter& adapter, uint8_t ecuAddress, uint32_t address, ui
     testB[0] = (0 << 5) | 0x02;       // sequence 0, TransportOpen-like
     testB[1] = ecuConnectionId;
     testB[2] = 0x08;                   // Control = length
-    testB[3] = 0x13;                   // Command
+    testB[3] = 0x14;                   // Command: GetDataByAddress
     testB[4] = 0x01;                   // Request ID
     testB[5] = (address >> 24) & 0xFF;
     testB[6] = (address >> 16) & 0xFF;
@@ -654,7 +654,7 @@ int readMode(SocketCanAdapter& adapter, uint8_t ecuAddress, uint32_t address, ui
     testC[0] = 0x03;                   // Just DataTransfer, no sequence
     testC[1] = ecuConnectionId;
     testC[2] = 0x00;
-    testC[3] = 0x13;
+    testC[3] = 0x14;                   // Command: GetDataByAddress
     testC[4] = 0x01;
     testC[5] = (address >> 24) & 0xFF;
     testC[6] = (address >> 16) & 0xFF;
@@ -723,7 +723,7 @@ int readMode(SocketCanAdapter& adapter, uint8_t ecuAddress, uint32_t address, ui
     testE1[0] = (0 << 5) | 0x03;
     testE1[1] = localConnectionId;     // OUR connection ID
     testE1[2] = 0x00;
-    testE1[3] = 0x13;
+    testE1[3] = 0x14;                  // Command: GetDataByAddress
     testE1[4] = 0x01;
     testE1[5] = (address >> 24) & 0xFF;
     testE1[6] = (address >> 16) & 0xFF;
@@ -917,7 +917,7 @@ int readMode(SocketCanAdapter& adapter, uint8_t ecuAddress, uint32_t address, ui
     testG[2] = 0x00;
     testG[3] = 0x01;                   // Context header byte 0
     testG[4] = 0x03;                   // Context header byte 1
-    testG[5] = 0x13;                   // Command embedded in context
+    testG[5] = 0x14;                   // Command: GetDataByAddress embedded in context
     testG[6] = 0x01;                   // Request ID
     testG[7] = (address >> 24) & 0xFF;
 
@@ -934,6 +934,450 @@ int readMode(SocketCanAdapter& adapter, uint8_t ecuAddress, uint32_t address, ui
         uint8_t rxPf = J1939::extractPF(arbId);
         uint8_t rxSource = J1939::extractSource(arbId);
         if (rxPf == J1939::CLIP_PF_DATA && rxSource == ecuAddress) {
+            std::cout << "[RX] ";
+            for (int i = 0; i < rxLen; i++) {
+                std::cout << std::hex << std::setfill('0') << std::setw(2)
+                          << static_cast<int>(rxData[i]) << " ";
+            }
+            std::cout << "\n";
+        }
+    }
+
+    // TEST H: Try CM550 diagnostic service 0x4A directly (4-byte addr + 1-byte len)
+    // From firmware analysis: diagMemoryReadService4aHandler expects this format
+    std::cout << "\n[TEST H] CM550 diagnostic service 0x4A (4-byte addr + 1-byte len)...\n";
+    uint8_t testH[8];
+    testH[0] = (0 << 5) | 0x03;        // DataTransfer
+    testH[1] = ecuConnectionId;         // ECU's connection ID
+    testH[2] = 0x06;                    // Control = 6 bytes of instruction data
+    testH[3] = 0x4A;                    // Service 0x4A: memory read
+    testH[4] = (address >> 24) & 0xFF;  // Address byte 0 (MSB)
+    testH[5] = (address >> 16) & 0xFF;  // Address byte 1
+    testH[6] = (address >> 8) & 0xFF;   // Address byte 2
+    testH[7] = address & 0xFF;          // Address byte 3 (LSB)
+
+    std::cout << "[TX] Frame 1: ";
+    for (int i = 0; i < 8; i++) {
+        std::cout << std::hex << std::setfill('0') << std::setw(2)
+                  << static_cast<int>(testH[i]) << " ";
+    }
+    std::cout << "\n";
+    adapter.send(txArbId, testH, 8);
+    usleep(100000);
+
+    // Second frame with remaining length byte
+    uint8_t testH2[8];
+    testH2[0] = (1 << 5) | 0x03;       // sequence 1, DataTransfer
+    testH2[1] = ecuConnectionId;
+    testH2[2] = 0x00;
+    testH2[3] = static_cast<uint8_t>(length); // Length (1 byte, max 255)
+    testH2[4] = 0x00;
+    testH2[5] = 0x00;
+    testH2[6] = 0x00;
+    testH2[7] = 0x00;
+
+    std::cout << "[TX] Frame 2: ";
+    for (int i = 0; i < 8; i++) {
+        std::cout << std::hex << std::setfill('0') << std::setw(2)
+                  << static_cast<int>(testH2[i]) << " ";
+    }
+    std::cout << "\n";
+    adapter.send(txArbId, testH2, 8);
+
+    usleep(500000);
+    while (adapter.recv(arbId, rxData, rxLen, 100)) {
+        uint8_t rxPf = J1939::extractPF(arbId);
+        uint8_t rxSource = J1939::extractSource(arbId);
+        if (rxPf == J1939::CLIP_PF_DATA && rxSource == ecuAddress) {
+            std::cout << "[RX] ";
+            for (int i = 0; i < rxLen; i++) {
+                std::cout << std::hex << std::setfill('0') << std::setw(2)
+                          << static_cast<int>(rxData[i]) << " ";
+            }
+            std::cout << "\n";
+        }
+    }
+
+    // TEST I: Try single-frame 0x4A with all 6 bytes in control field style
+    std::cout << "\n[TEST I] Single-frame 0x4A with instruction in payload...\n";
+    uint8_t testI[8];
+    testI[0] = (0 << 5) | 0x03;        // DataTransfer
+    testI[1] = ecuConnectionId;
+    testI[2] = 0x4A;                    // Service code as "control" byte
+    testI[3] = (address >> 24) & 0xFF;
+    testI[4] = (address >> 16) & 0xFF;
+    testI[5] = (address >> 8) & 0xFF;
+    testI[6] = address & 0xFF;
+    testI[7] = static_cast<uint8_t>(length);
+
+    std::cout << "[TX] ";
+    for (int i = 0; i < 8; i++) {
+        std::cout << std::hex << std::setfill('0') << std::setw(2)
+                  << static_cast<int>(testI[i]) << " ";
+    }
+    std::cout << "\n";
+    adapter.send(txArbId, testI, 8);
+
+    usleep(500000);
+    while (adapter.recv(arbId, rxData, rxLen, 100)) {
+        uint8_t rxPf = J1939::extractPF(arbId);
+        uint8_t rxSource = J1939::extractSource(arbId);
+        if (rxPf == J1939::CLIP_PF_DATA && rxSource == ecuAddress) {
+            std::cout << "[RX] ";
+            for (int i = 0; i < rxLen; i++) {
+                std::cout << std::hex << std::setfill('0') << std::setw(2)
+                          << static_cast<int>(rxData[i]) << " ";
+            }
+            std::cout << "\n";
+        }
+    }
+
+    // TEST J: Try full CLIP transport sequence for data transfer
+    // According to protocol doc, we may need:
+    // 1. TransportOpen (0x02) with packet count
+    // 2. Wait for CTS (0x04)
+    // 3. Send Data frames (0x03)
+    // 4. Wait for ACK
+    std::cout << "\n[TEST J] Full CLIP transport sequence for memory read...\n";
+
+    // Step 1: TransportOpen for data transfer (not session)
+    // Format: [0x02][connId][ctrl][flags][pktCount]...
+    uint8_t dataOpenFrame[8];
+    dataOpenFrame[0] = 0x02;            // TransportOpen type
+    dataOpenFrame[1] = ecuConnectionId; // Use ECU's connection ID
+    dataOpenFrame[2] = 0x00;            // Control
+    dataOpenFrame[3] = 0x02;            // Packet count = 2 (8 bytes of instruction)
+    dataOpenFrame[4] = 0x00;
+    dataOpenFrame[5] = 0x00;
+    dataOpenFrame[6] = 0x00;
+    dataOpenFrame[7] = 0x00;
+
+    std::cout << "[TX] DataOpen: ";
+    for (int i = 0; i < 8; i++) {
+        std::cout << std::hex << std::setfill('0') << std::setw(2)
+                  << static_cast<int>(dataOpenFrame[i]) << " ";
+    }
+    std::cout << "\n";
+    adapter.send(txArbId, dataOpenFrame, 8);
+    usleep(200000);
+
+    // Check for CTS response
+    bool gotCts = false;
+    while (adapter.recv(arbId, rxData, rxLen, 200)) {
+        uint8_t rxPf = J1939::extractPF(arbId);
+        uint8_t rxSource = J1939::extractSource(arbId);
+        if (rxPf == J1939::CLIP_PF_DATA && rxSource == ecuAddress) {
+            std::cout << "[RX] ";
+            for (int i = 0; i < rxLen; i++) {
+                std::cout << std::hex << std::setfill('0') << std::setw(2)
+                          << static_cast<int>(rxData[i]) << " ";
+            }
+            // Check for CTS (byte 0 lower bits = 0x04)
+            if ((rxData[0] & 0x1F) == 0x04) {
+                gotCts = true;
+                std::cout << " <- CTS!";
+            }
+            std::cout << "\n";
+        }
+    }
+
+    if (gotCts) {
+        std::cout << "[INFO] Got CTS, sending data frames...\n";
+    } else {
+        std::cout << "[WARN] No CTS received, trying data frames anyway...\n";
+    }
+
+    // Step 2: Send instruction as Data frames
+    // Frame 1: [0x03][connId][ctrl][0x14][seqId][addr0][addr1][addr2]
+    uint8_t dataFrame1[8];
+    dataFrame1[0] = (0 << 5) | 0x03;   // seq=0, DataTransfer
+    dataFrame1[1] = ecuConnectionId;
+    dataFrame1[2] = 0x00;               // Control
+    dataFrame1[3] = 0x14;               // GetDataByAddress command
+    dataFrame1[4] = 0x01;               // Request sequence ID
+    dataFrame1[5] = (address >> 24) & 0xFF;
+    dataFrame1[6] = (address >> 16) & 0xFF;
+    dataFrame1[7] = (address >> 8) & 0xFF;
+
+    std::cout << "[TX] Data seq=0: ";
+    for (int i = 0; i < 8; i++) {
+        std::cout << std::hex << std::setfill('0') << std::setw(2)
+                  << static_cast<int>(dataFrame1[i]) << " ";
+    }
+    std::cout << "\n";
+    adapter.send(txArbId, dataFrame1, 8);
+    usleep(50000);
+
+    // Frame 2: [0x23][connId][ctrl][addr3][len0][len1][pad][pad]
+    uint8_t dataFrame2[8];
+    dataFrame2[0] = (1 << 5) | 0x03;   // seq=1, DataTransfer
+    dataFrame2[1] = ecuConnectionId;
+    dataFrame2[2] = 0x00;               // Control
+    dataFrame2[3] = address & 0xFF;     // Address LSB
+    dataFrame2[4] = (length >> 8) & 0xFF;
+    dataFrame2[5] = length & 0xFF;
+    dataFrame2[6] = 0x00;
+    dataFrame2[7] = 0x00;
+
+    std::cout << "[TX] Data seq=1: ";
+    for (int i = 0; i < 8; i++) {
+        std::cout << std::hex << std::setfill('0') << std::setw(2)
+                  << static_cast<int>(dataFrame2[i]) << " ";
+    }
+    std::cout << "\n";
+    adapter.send(txArbId, dataFrame2, 8);
+
+    usleep(500000);
+    std::cout << "[RX] Waiting for response...\n";
+    while (adapter.recv(arbId, rxData, rxLen, 200)) {
+        uint8_t rxPf = J1939::extractPF(arbId);
+        uint8_t rxSource = J1939::extractSource(arbId);
+        if (rxPf == J1939::CLIP_PF_DATA && rxSource == ecuAddress) {
+            std::cout << "[RX] ";
+            for (int i = 0; i < rxLen; i++) {
+                std::cout << std::hex << std::setfill('0') << std::setw(2)
+                          << static_cast<int>(rxData[i]) << " ";
+            }
+            std::cout << "\n";
+        }
+    }
+
+    // TEST K: CM550 Native Diagnostic Format (from firmware RE)
+    // Based on diagnosticCommandDispatcher at 0x00012484:
+    // - Service type 5 = memory read/write
+    // - Command byte patterns: 0x60=3-byte addr with CRC, 0x61=3-byte addr no CRC
+    //   0xC0/0xC1=2-byte addr, 0xE0/0xE1=1-byte addr
+    // Low nibble 0 = CRC required, low nibble 1 = no CRC
+    std::cout << "\n[TEST K] CM550 Native Diagnostic: Service 5 + cmd 0x61 (3-byte addr, no CRC)...\n";
+
+    // Use 3-byte address from 24-bit address space
+    uint32_t addr3byte = address & 0xFFFFFF;  // Truncate to 3 bytes
+    uint8_t readCount = (length > 255) ? 255 : static_cast<uint8_t>(length);
+
+    std::cout << "[INFO] 3-byte address: 0x" << std::hex << std::setfill('0') << std::setw(6) << addr3byte
+              << " count: " << std::dec << static_cast<int>(readCount) << "\n";
+
+    // Format: [svc=5][cmd=0x61][addr_hi][addr_mid][addr_lo][count]
+    // Wrapped in CLIP DataTransfer frame
+    uint8_t testK[8];
+    testK[0] = (0 << 5) | 0x03;           // seq=0, DataTransfer
+    testK[1] = ecuConnectionId;            // ECU's connection ID
+    testK[2] = 0x06;                       // Control = 6 bytes of payload
+    testK[3] = 0x05;                       // Service type 5 = memory access
+    testK[4] = 0x61;                       // Command: 3-byte addr read, no CRC
+    testK[5] = (addr3byte >> 16) & 0xFF;   // Address high byte
+    testK[6] = (addr3byte >> 8) & 0xFF;    // Address mid byte
+    testK[7] = addr3byte & 0xFF;           // Address low byte
+
+    std::cout << "[TX] Frame 1: ";
+    for (int i = 0; i < 8; i++) {
+        std::cout << std::hex << std::setfill('0') << std::setw(2)
+                  << static_cast<int>(testK[i]) << " ";
+    }
+    std::cout << "\n";
+    adapter.send(txArbId, testK, 8);
+    usleep(100000);
+
+    // Frame 2: count byte
+    uint8_t testK2[8];
+    testK2[0] = (1 << 5) | 0x03;          // seq=1, DataTransfer
+    testK2[1] = ecuConnectionId;
+    testK2[2] = 0x00;                      // Control
+    testK2[3] = readCount;                 // Count of bytes to read
+    testK2[4] = 0x00;
+    testK2[5] = 0x00;
+    testK2[6] = 0x00;
+    testK2[7] = 0x00;
+
+    std::cout << "[TX] Frame 2: ";
+    for (int i = 0; i < 8; i++) {
+        std::cout << std::hex << std::setfill('0') << std::setw(2)
+                  << static_cast<int>(testK2[i]) << " ";
+    }
+    std::cout << "\n";
+    adapter.send(txArbId, testK2, 8);
+
+    usleep(500000);
+    while (adapter.recv(arbId, rxData, rxLen, 200)) {
+        uint8_t rxPf = J1939::extractPF(arbId);
+        uint8_t rxSource = J1939::extractSource(arbId);
+        if (rxPf == J1939::CLIP_PF_DATA && rxSource == ecuAddress) {
+            std::cout << "[RX] ";
+            for (int i = 0; i < rxLen; i++) {
+                std::cout << std::hex << std::setfill('0') << std::setw(2)
+                          << static_cast<int>(rxData[i]) << " ";
+            }
+            std::cout << "\n";
+        }
+    }
+
+    // TEST L: CM550 format without CLIP wrapper (raw diagnostic message)
+    // Maybe the CM550 doesn't use CLIP DataTransfer framing at all
+    std::cout << "\n[TEST L] Raw CM550 Diagnostic (no CLIP framing, service 5)...\n";
+    uint8_t testL[8];
+    testL[0] = 0x05;                       // Service type 5 = memory access
+    testL[1] = 0x61;                       // Command: 3-byte addr read, no CRC
+    testL[2] = (addr3byte >> 16) & 0xFF;   // Address high byte
+    testL[3] = (addr3byte >> 8) & 0xFF;    // Address mid byte
+    testL[4] = addr3byte & 0xFF;           // Address low byte
+    testL[5] = readCount;                  // Count
+    testL[6] = 0x00;
+    testL[7] = 0x00;
+
+    std::cout << "[TX] Raw: ";
+    for (int i = 0; i < 8; i++) {
+        std::cout << std::hex << std::setfill('0') << std::setw(2)
+                  << static_cast<int>(testL[i]) << " ";
+    }
+    std::cout << "\n";
+    adapter.send(txArbId, testL, 8);
+
+    usleep(500000);
+    while (adapter.recv(arbId, rxData, rxLen, 200)) {
+        uint8_t rxPf = J1939::extractPF(arbId);
+        uint8_t rxSource = J1939::extractSource(arbId);
+        if (rxSource == ecuAddress) {
+            std::cout << "[RX] PF=0x" << std::hex << std::setfill('0') << std::setw(2)
+                      << static_cast<int>(rxPf) << ": ";
+            for (int i = 0; i < rxLen; i++) {
+                std::cout << std::hex << std::setfill('0') << std::setw(2)
+                          << static_cast<int>(rxData[i]) << " ";
+            }
+            std::cout << "\n";
+        }
+    }
+
+    // TEST M: Try with message length byte prefix (as seen in firmware)
+    // The firmware reads messageLength from byte 0 of the buffer
+    std::cout << "\n[TEST M] CM550 with length prefix (7 bytes total)...\n";
+    uint8_t testM[8];
+    testM[0] = 0x07;                       // Message length = 7 bytes
+    testM[1] = 0x05;                       // Service type 5 = memory access
+    testM[2] = 0x61;                       // Command: 3-byte addr read, no CRC
+    testM[3] = (addr3byte >> 16) & 0xFF;   // Address high byte
+    testM[4] = (addr3byte >> 8) & 0xFF;    // Address mid byte
+    testM[5] = addr3byte & 0xFF;           // Address low byte
+    testM[6] = readCount;                  // Count
+    testM[7] = 0x00;
+
+    std::cout << "[TX] ";
+    for (int i = 0; i < 8; i++) {
+        std::cout << std::hex << std::setfill('0') << std::setw(2)
+                  << static_cast<int>(testM[i]) << " ";
+    }
+    std::cout << "\n";
+    adapter.send(txArbId, testM, 8);
+
+    usleep(500000);
+    while (adapter.recv(arbId, rxData, rxLen, 200)) {
+        uint8_t rxPf = J1939::extractPF(arbId);
+        uint8_t rxSource = J1939::extractSource(arbId);
+        if (rxSource == ecuAddress) {
+            std::cout << "[RX] PF=0x" << std::hex << std::setfill('0') << std::setw(2)
+                      << static_cast<int>(rxPf) << ": ";
+            for (int i = 0; i < rxLen; i++) {
+                std::cout << std::hex << std::setfill('0') << std::setw(2)
+                          << static_cast<int>(rxData[i]) << " ";
+            }
+            std::cout << "\n";
+        }
+    }
+
+    // TEST N: Service 4 system control commands to enable diagnostic mode
+    // From firmware: Service 4 commands control diagnostic state
+    // 0x66 = Clear diagnostic_command_state
+    // 0x71 = Set bit 0 (enable secured services)
+    // 0x73 = Set bit 1 (enable extended services)
+    std::cout << "\n[TEST N] Service 4 initialization sequence...\n";
+
+    // Send service 4, sub-code 0x71 to enable secured services
+    uint8_t testN1[8];
+    testN1[0] = (0 << 5) | 0x03;          // DataTransfer
+    testN1[1] = ecuConnectionId;           // ECU's connection ID
+    testN1[2] = 0x03;                      // Control = message length
+    testN1[3] = 0x04;                      // Service type 4 = system control
+    testN1[4] = 0x71;                      // Sub-code: Set bit 0 of command state
+    testN1[5] = 0x00;
+    testN1[6] = 0x00;
+    testN1[7] = 0x00;
+
+    std::cout << "[TX] Service 4, cmd 0x71 (enable secured): ";
+    for (int i = 0; i < 8; i++) {
+        std::cout << std::hex << std::setfill('0') << std::setw(2)
+                  << static_cast<int>(testN1[i]) << " ";
+    }
+    std::cout << "\n";
+    adapter.send(txArbId, testN1, 8);
+    usleep(300000);
+
+    while (adapter.recv(arbId, rxData, rxLen, 200)) {
+        uint8_t rxSource = J1939::extractSource(arbId);
+        if (rxSource == ecuAddress) {
+            std::cout << "[RX] ";
+            for (int i = 0; i < rxLen; i++) {
+                std::cout << std::hex << std::setfill('0') << std::setw(2)
+                          << static_cast<int>(rxData[i]) << " ";
+            }
+            std::cout << "\n";
+        }
+    }
+
+    // Also try raw format: [len][service][subcode]
+    uint8_t testN2[8];
+    testN2[0] = 0x03;                      // Length = 3
+    testN2[1] = 0x04;                      // Service 4
+    testN2[2] = 0x71;                      // Sub-code 0x71
+    testN2[3] = 0x00;
+    testN2[4] = 0x00;
+    testN2[5] = 0x00;
+    testN2[6] = 0x00;
+    testN2[7] = 0x00;
+
+    std::cout << "[TX] Raw service 4: ";
+    for (int i = 0; i < 8; i++) {
+        std::cout << std::hex << std::setfill('0') << std::setw(2)
+                  << static_cast<int>(testN2[i]) << " ";
+    }
+    std::cout << "\n";
+    adapter.send(txArbId, testN2, 8);
+    usleep(300000);
+
+    while (adapter.recv(arbId, rxData, rxLen, 200)) {
+        uint8_t rxSource = J1939::extractSource(arbId);
+        if (rxSource == ecuAddress) {
+            std::cout << "[RX] ";
+            for (int i = 0; i < rxLen; i++) {
+                std::cout << std::hex << std::setfill('0') << std::setw(2)
+                          << static_cast<int>(rxData[i]) << " ";
+            }
+            std::cout << "\n";
+        }
+    }
+
+    // TEST O: After init, retry memory read with raw format
+    std::cout << "\n[TEST O] Retry memory read after service 4 init...\n";
+    uint8_t testO[8];
+    testO[0] = 0x07;                       // Length
+    testO[1] = 0x05;                       // Service 5
+    testO[2] = 0x61;                       // 3-byte addr read
+    testO[3] = (addr3byte >> 16) & 0xFF;
+    testO[4] = (addr3byte >> 8) & 0xFF;
+    testO[5] = addr3byte & 0xFF;
+    testO[6] = readCount;
+    testO[7] = 0x00;
+
+    std::cout << "[TX] ";
+    for (int i = 0; i < 8; i++) {
+        std::cout << std::hex << std::setfill('0') << std::setw(2)
+                  << static_cast<int>(testO[i]) << " ";
+    }
+    std::cout << "\n";
+    adapter.send(txArbId, testO, 8);
+
+    usleep(500000);
+    while (adapter.recv(arbId, rxData, rxLen, 200)) {
+        uint8_t rxSource = J1939::extractSource(arbId);
+        if (rxSource == ecuAddress) {
             std::cout << "[RX] ";
             for (int i = 0; i < rxLen; i++) {
                 std::cout << std::hex << std::setfill('0') << std::setw(2)

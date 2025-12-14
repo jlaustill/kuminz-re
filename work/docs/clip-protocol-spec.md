@@ -298,14 +298,187 @@ The Engine Configuration response demonstrates J1939 TP usage:
 | D | getAddressByParameterID (0x15) | Echo 0x0D + msgType |
 | E | Local connId (0x01) for DataTransfer | Echo 0x0D + msgType |
 | G | Instruction embedded in context format (0x01 0x03 + cmd) | Echo 0x0D + msgType |
+| H | Service 0x4A (fuel arbitrator) format | Echo 0x0D + msgType |
+| I | Single-frame 0x4A in payload | Echo 0x0D + msgType |
+| J | Full transport sequence (TransportOpen → CTS → Data) | Echo 0x0D + msgType |
+| K | CM550 Service 5 + 0x61 (3-byte addr read) in CLIP frame | Echo 0x0D + msgType |
+| L | Raw CM550 format (no CLIP framing): `05 61 addr len` | **0x0D 0x04 + echo (Error 4!)** |
+| M | Raw with length prefix: `07 05 61 addr len` | **0x0D 0x04 + echo (Error 4!)** |
+| N | Service 4 init commands (0x71, 0x73) | Echo 0x0D + msgType |
+| O | Memory read after Service 4 init | **0x0D 0x04 + echo (Error 4!)** |
 
-**Next Steps:**
+**Key Finding (December 2024): CLIP vs Raw Format Responses**
+
+The ECU's response differs based on whether the message uses CLIP framing:
+
+| Format | Response Pattern | Interpretation |
+|--------|-----------------|----------------|
+| CLIP-framed (`03 18 ...`) | `0D 18 [msgType] FF...` | Session-based echo with connId 0x18 |
+| Raw (non-CLIP byte 0) | `0D 04 [byte0] [byte1]...` | Error code 4 + data echo |
+
+**Error Code 4 = "Buffer overflow / unsupported"** (from firmware analysis)
+
+This confirms:
+1. The ECU expects CLIP framing on PGN 0xEF00
+2. Raw CM550 diagnostic format (Service 5 + 0x6x commands) is rejected
+3. CLIP DataTransfer is acknowledged but not passed to diagnostic layer
+
+**CM550 Firmware Analysis (December 2024):**
+
+From reverse engineering `diagnosticCommandDispatcher` at 0x00012484:
+
+1. **Diagnostic Service Enable Flags** (`0x8035ea`):
+   - Bit 0: Core services (Service 3,4,5,6)
+   - Bit 1: Insite live data
+   - Bit 2: Extended diagnostics (0x45-0x56)
+   - **These flags must be set for diagnostic commands to work**
+
+2. **Service 5 Memory Operations** (when enabled):
+   - Upper nibble determines operation:
+     - `0x60` = 3-byte address read
+     - `0xC0` = 2-byte address read
+     - `0xE0` = 1-byte address read
+     - `0x80` = 4-byte address write
+   - Lower nibble: 0 = CRC required, 1 = no CRC
+
+3. **Transport Layer Gap**:
+   - The CLIP transport layer responds to DataTransfer with echo
+   - But messages don't reach `diagnosticCommandDispatcher`
+   - The diagnostic buffer (`0x808c00`) may require serial transport, not CAN
+
+**Hypothesis**: The CM550 may use CLIP only for session management, with actual diagnostic commands going through a different mechanism (possibly serial port via J1939 TP or a separate protocol layer).
+
+---
+
+## KEY DISCOVERY: Serial Port Transport Layer (December 2024)
+
+**Critical Finding**: The CM550 diagnostic layer uses a **serial port** as its primary input, NOT direct CAN!
+
+### Evidence from Firmware Analysis
+
+1. **CAN Message Interrupt Handler** (`canMessageInterruptHandlerSetup` @ 0x0001920a):
+   ```c
+   can_message_isr_register_address = (dword)serialPort1IsrHandler;
+   ```
+   The CAN message interrupt is routed through `serialPort1IsrHandler`.
+
+2. **Serial Port ISR** processes data from `serial_port_1_rx_data_register` and routes to:
+   - `serialNodeAddressForwarder()` - Normal diagnostic traffic
+   - `serialNodeAddressChecker()` - Address validation
+
+3. **Diagnostic Buffer** (`diagnostic_rx_buffer_base`):
+   - Initialized at boot but only written to via serial port path
+   - `diagnosticCommandDispatcher` polls this buffer periodically (10ms slow cycle)
+   - CAN messages via CLIP DataTransfer never reach this buffer
+
+### Implications
+
+| Layer | Transport | Purpose |
+|-------|-----------|---------|
+| CLIP Session | CAN (PGN 0xEF00) | Session management (TransportOpen, CTS, etc.) |
+| Diagnostic Commands | **Serial Port** | Service 3/4/5/6, memory read/write |
+| J1939 Standard | CAN (PGN Request) | Engine parameters (EEC1, temps, hours) |
+| VP44 Communication | CAN (J1939 TP) | Fuel pump diagnostics |
+
+### Why CLIP DataTransfer Fails
+
+The CLIP transport layer acknowledges DataTransfer messages but:
+1. CLIP processes the frame (validates session, connection ID, etc.)
+2. CLIP sends acknowledgment response (0x0D + msgType)
+3. **No code path exists** to copy the payload to `diagnostic_rx_buffer_base`
+4. The `diagnosticCommandDispatcher` never sees the data
+
+### J1708 Serial Protocol CONFIRMED
+
+**The CM550 uses SAE J1708/J1587 for diagnostic commands!**
+
+From Calterm parameter analysis, the CM550 has dedicated J1708 buffers:
+
+| Parameter | Address | Description |
+|-----------|---------|-------------|
+| JC17RXBF | 0x80DDCA | J1708 Receive Buffer |
+| JC17TXBF | 0x80DDC6 | J1708 Transmit Buffer |
+| JC17RXIP | 0x80DCA2 | J1708 Receive Input Pointer |
+| JC17RXMP | 0x80DCA6 | J1708 Receive Middle Pointer |
+| JC17RXOP | 0x80DCAA | J1708 Receive Output Pointer |
+| JC17TXIP | 0x80DC94 | J1708 Transmit Input Pointer |
+| JC17TXMP | 0x80DC98 | J1708 Transmit Middle Pointer |
+| JC17TXOP | 0x80DC9C | J1708 Transmit Output Pointer |
+| JC17RXFF | 0x80DCAE | J1708 RX Buffer Full Flag |
+| JC17TXFF | 0x80DCA0 | J1708 TX Buffer Full Flag |
+| JC17TMCU | 0x100075C | J1708 Timeout Counter |
+
+### SAE J1708 Protocol Overview
+
+- **Physical Layer**: RS485 at 9600 baud
+- **Data Format**: Half-duplex, variable length messages
+- **Message Format**: MID + PID + Data + Checksum
+- **Arbitration**: Character-based priority (lower MID = higher priority)
+- **Common in**: Heavy equipment, school buses, trucks (pre-CAN era)
+
+### CM550 Dual-Protocol Architecture
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      CM550 ECU                               │
+├─────────────────────────────────────────────────────────────┤
+│                                                              │
+│  ┌────────────────┐          ┌────────────────┐             │
+│  │   CAN Bus      │          │   J1708 Bus    │             │
+│  │  (J1939)       │          │  (RS485)       │             │
+│  └───────┬────────┘          └───────┬────────┘             │
+│          │                           │                       │
+│          ▼                           ▼                       │
+│  ┌────────────────┐          ┌────────────────┐             │
+│  │ CLIP Protocol  │          │ J1587 Protocol │             │
+│  │ (Session Mgmt) │          │ (Diagnostics)  │             │
+│  └───────┬────────┘          └───────┬────────┘             │
+│          │                           │                       │
+│          │                           ▼                       │
+│          │                   ┌────────────────┐             │
+│          │                   │ Diagnostic     │             │
+│          └──────────────────>│ Command        │             │
+│            (Session info     │ Dispatcher     │             │
+│             but NOT data)    └────────────────┘             │
+│                                      │                       │
+│                                      ▼                       │
+│                              ┌────────────────┐             │
+│                              │ Service 3/4/5/6│             │
+│                              │ Handlers       │             │
+│                              └────────────────┘             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Implications for kuminz-ui
+
+To read diagnostic data from the CM550:
+
+1. **J1939 PGN Requests** (via CAN) - Works! For standard engine parameters
+2. **J1708/J1587** (via RS485 adapter) - Needed for memory reads, calibration, DTCs
+
+**Required Hardware for Full Diagnostics:**
+- CAN adapter (OBDLink, CANable, etc.) - Already have
+- **J1708/RS485 adapter** - Need to obtain/build
+
+### Next Steps
+
+1. ~~Try J1939 TP for diagnostic commands~~ (Analyzed - TP is for VP44 communication only)
+2. ~~Investigate serial port path for diagnostic commands~~ (Done - J1708 confirmed!)
+3. **Build/obtain J1708 adapter** - RS485 to USB adapter at 9600 baud
+4. **Implement J1587 protocol** - Add J1708 support to clip-lib
+5. **Test diagnostic commands via J1708** - Try Service 5 memory reads
+
+---
+
+**Completed Steps:**
 1. ~~Try sending proper context request (0x01 0x03) after seed reply instead of CTS~~ (Done - same echo behavior)
 2. ~~Try getAddressByParameterID (0x15) command~~ (Done - same echo behavior)
-3. Analyze CM550 firmware directly when Ghidra is available
+3. ~~Analyze CM550 firmware directly when Ghidra is available~~ (Done - see findings above)
 4. Capture real Insite traffic for comparison
-5. Try common J1939 engine PGNs (EEC1, etc.) via standard J1939 Request
-6. Investigate if CM550 uses completely different data layer on top of CLIP session
+5. ~~Try common J1939 engine PGNs (EEC1, etc.) via standard J1939 Request~~ (Done - WORKS!)
+6. ~~Investigate if CM550 uses completely different data layer on top of CLIP session~~ (Confirmed - diagnostic layer not connected)
+7. ~~Try J1939 TP (0xEC/0xEB) for diagnostic commands~~ (Analyzed - TP is for VP44 RX only)
+8. **Investigate serial port path for diagnostic commands** (In progress - serial transport discovered)
 
 ---
 
