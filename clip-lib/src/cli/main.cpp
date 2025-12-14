@@ -1105,8 +1105,89 @@ int j1939Mode(SocketCanAdapter& adapter, uint8_t ecuAddress, uint32_t pgn)
                     if (tpSession.isComplete()) {
                         std::cout << "\n[SUCCESS] Received " << std::dec
                                   << tpSession.data.size() << " bytes for PGN 0x"
-                                  << std::hex << std::setfill('0') << std::setw(6) << pgn << "\n\n";
+                                  << std::hex << std::setfill('0') << std::setw(6) << tpSession.pgn << "\n\n";
                         std::cout << tpSession.hexDump() << "\n";
+
+                        // Decode multi-frame PGNs
+                        const std::vector<uint8_t>& tpData = tpSession.data;
+                        switch (tpSession.pgn) {
+                            case 0xFECA:  // DM1 Active Diagnostic Trouble Codes (65226)
+                                if (tpData.size() >= 2) {
+                                    std::cout << "\n     DM1 Active Faults:\n";
+                                    std::cout << "     Lamp Status: MIL=" << ((tpData[0] >> 6) & 0x03)
+                                              << " RSL=" << ((tpData[0] >> 4) & 0x03)
+                                              << " AWL=" << ((tpData[0] >> 2) & 0x03)
+                                              << " PL=" << (tpData[0] & 0x03) << "\n";
+                                    // Parse DTCs (each is 4 bytes: SPN + FMI + OC)
+                                    size_t numDtcs = (tpData.size() - 2) / 4;
+                                    std::cout << "     Fault Count: " << numDtcs << "\n";
+                                    for (size_t i = 0; i < numDtcs && (2 + i*4 + 3) < tpData.size(); i++) {
+                                        size_t offset = 2 + i * 4;
+                                        uint32_t spn = tpData[offset] |
+                                                      (static_cast<uint32_t>(tpData[offset+1]) << 8) |
+                                                      ((static_cast<uint32_t>(tpData[offset+2] & 0xE0) >> 5) << 16);
+                                        uint8_t fmi = tpData[offset+2] & 0x1F;
+                                        uint8_t oc = tpData[offset+3] & 0x7F;
+                                        std::cout << "     DTC " << (i+1) << ": SPN=" << std::dec << spn
+                                                  << " FMI=" << static_cast<int>(fmi)
+                                                  << " OC=" << static_cast<int>(oc) << "\n";
+                                    }
+                                }
+                                break;
+
+                            case 0xFECB:  // DM2 Previously Active Faults (65227)
+                                if (tpData.size() >= 2) {
+                                    std::cout << "\n     DM2 Previously Active Faults:\n";
+                                    size_t numDtcs = (tpData.size() - 2) / 4;
+                                    std::cout << "     Fault Count: " << numDtcs << "\n";
+                                    for (size_t i = 0; i < numDtcs && (2 + i*4 + 3) < tpData.size(); i++) {
+                                        size_t offset = 2 + i * 4;
+                                        uint32_t spn = tpData[offset] |
+                                                      (static_cast<uint32_t>(tpData[offset+1]) << 8) |
+                                                      ((static_cast<uint32_t>(tpData[offset+2] & 0xE0) >> 5) << 16);
+                                        uint8_t fmi = tpData[offset+2] & 0x1F;
+                                        uint8_t oc = tpData[offset+3] & 0x7F;
+                                        std::cout << "     DTC " << (i+1) << ": SPN=" << std::dec << spn
+                                                  << " FMI=" << static_cast<int>(fmi)
+                                                  << " OC=" << static_cast<int>(oc) << "\n";
+                                    }
+                                }
+                                break;
+
+                            case 0xFEEB:  // Component Identification (65259)
+                                {
+                                    std::cout << "\n     Component Identification:\n";
+                                    // Format: Make*Model*SerialNumber*UnitNumber*
+                                    std::string compId(tpData.begin(), tpData.end());
+                                    // Remove trailing 0xFF bytes
+                                    size_t end = compId.find('\xFF');
+                                    if (end != std::string::npos) {
+                                        compId = compId.substr(0, end);
+                                    }
+                                    // Split by '*'
+                                    size_t pos = 0, fieldNum = 0;
+                                    const char* fieldNames[] = {"Make", "Model", "Serial Number", "Unit Number"};
+                                    while ((pos = compId.find('*')) != std::string::npos && fieldNum < 4) {
+                                        std::string field = compId.substr(0, pos);
+                                        if (!field.empty()) {
+                                            // Trim spaces
+                                            size_t start = field.find_first_not_of(' ');
+                                            size_t endPos = field.find_last_not_of(' ');
+                                            if (start != std::string::npos) {
+                                                field = field.substr(start, endPos - start + 1);
+                                            }
+                                            std::cout << "     " << fieldNames[fieldNum] << ": " << field << "\n";
+                                        }
+                                        compId.erase(0, pos + 1);
+                                        fieldNum++;
+                                    }
+                                }
+                                break;
+
+                            default:
+                                break;
+                        }
+
                         gotResponse = true;
                     }
                 } else {
@@ -1136,20 +1217,149 @@ int j1939Mode(SocketCanAdapter& adapter, uint8_t ecuAddress, uint32_t pgn)
                 }
                 std::cout << "\n";
 
-                // Decode common PGNs
-                if (pgn == 0xFEE5 && rxLen >= 4) {  // Engine Hours
-                    uint32_t totalHours = rxData[0] | (static_cast<uint32_t>(rxData[1]) << 8) |
-                                          (static_cast<uint32_t>(rxData[2]) << 16) |
-                                          (static_cast<uint32_t>(rxData[3]) << 24);
-                    double hours = totalHours * 0.05;
-                    std::cout << "     Decoded: Engine Hours = " << std::dec << hours << " hours\n";
-                } else if (pgn == 0xFEEE && rxLen >= 1) {  // Engine Temp
-                    int coolantTemp = static_cast<int>(rxData[0]) - 40;
-                    std::cout << "     Decoded: Engine Coolant Temp = " << std::dec << coolantTemp << "°C\n";
-                } else if (pgn == 0xF004 && rxLen >= 5) {  // EEC1
-                    uint16_t rpm = rxData[3] | (static_cast<uint16_t>(rxData[4]) << 8);
-                    double actualRpm = rpm * 0.125;
-                    std::cout << "     Decoded: Engine RPM = " << std::dec << actualRpm << "\n";
+                // Decode common J1939 PGNs
+                switch (pgn) {
+                    case 0xFEE5:  // Engine Hours (65253)
+                        if (rxLen >= 4) {
+                            uint32_t totalHours = rxData[0] | (static_cast<uint32_t>(rxData[1]) << 8) |
+                                                  (static_cast<uint32_t>(rxData[2]) << 16) |
+                                                  (static_cast<uint32_t>(rxData[3]) << 24);
+                            double hours = totalHours * 0.05;
+                            std::cout << "     Decoded: Engine Hours = " << std::dec << std::fixed
+                                      << std::setprecision(1) << hours << " hours\n";
+                        }
+                        break;
+
+                    case 0xFEE7:  // Vehicle Hours (65255)
+                        if (rxLen >= 8) {
+                            // Bytes 0-3: Total PTO Hours, Bytes 4-7: Total Engine Hours
+                            uint32_t engineHours = rxData[4] | (static_cast<uint32_t>(rxData[5]) << 8) |
+                                                   (static_cast<uint32_t>(rxData[6]) << 16) |
+                                                   (static_cast<uint32_t>(rxData[7]) << 24);
+                            if (engineHours != 0xFFFFFFFF) {
+                                double hours = engineHours * 0.05;
+                                std::cout << "     Decoded: Vehicle Engine Hours = " << std::dec << std::fixed
+                                          << std::setprecision(1) << hours << " hours\n";
+                            }
+                        }
+                        break;
+
+                    case 0xFEEE:  // Engine Temperature 1 (65262)
+                        if (rxLen >= 2) {
+                            if (rxData[0] != 0xFF) {
+                                int coolantTemp = static_cast<int>(rxData[0]) - 40;
+                                std::cout << "     Decoded: Engine Coolant Temp = " << std::dec << coolantTemp << "°C\n";
+                            }
+                            if (rxData[1] != 0xFF) {
+                                int fuelTemp = static_cast<int>(rxData[1]) - 40;
+                                std::cout << "     Decoded: Fuel Temp = " << std::dec << fuelTemp << "°C\n";
+                            }
+                        }
+                        break;
+
+                    case 0xFEEF:  // Engine Fluid Level/Pressure (65263)
+                        if (rxLen >= 4) {
+                            if (rxData[0] != 0xFF) {
+                                int fuelLevel = static_cast<int>(rxData[0]) * 0.4;  // 0.4%/bit
+                                std::cout << "     Decoded: Fuel Level = " << std::dec << fuelLevel << "%\n";
+                            }
+                            if (rxData[3] != 0xFF) {
+                                int oilPressure = rxData[3] * 4;  // 4 kPa/bit
+                                std::cout << "     Decoded: Oil Pressure = " << std::dec << oilPressure << " kPa ("
+                                          << std::fixed << std::setprecision(1) << (oilPressure * 0.145) << " psi)\n";
+                            }
+                        }
+                        break;
+
+                    case 0xFEE0:  // Vehicle Distance (65248)
+                        if (rxLen >= 8) {
+                            uint32_t tripDist = rxData[0] | (static_cast<uint32_t>(rxData[1]) << 8) |
+                                                (static_cast<uint32_t>(rxData[2]) << 16) |
+                                                (static_cast<uint32_t>(rxData[3]) << 24);
+                            uint32_t totalDist = rxData[4] | (static_cast<uint32_t>(rxData[5]) << 8) |
+                                                 (static_cast<uint32_t>(rxData[6]) << 16) |
+                                                 (static_cast<uint32_t>(rxData[7]) << 24);
+                            double tripKm = tripDist * 0.125;  // 1/8 km resolution
+                            double totalKm = totalDist * 0.125;
+                            std::cout << "     Decoded: Trip Distance = " << std::dec << std::fixed
+                                      << std::setprecision(1) << tripKm << " km ("
+                                      << (tripKm * 0.621371) << " miles)\n";
+                            std::cout << "     Decoded: Total Distance = " << totalKm << " km ("
+                                      << (totalKm * 0.621371) << " miles)\n";
+                        }
+                        break;
+
+                    case 0xFEE9:  // Intake/Exhaust Conditions 1 (65257)
+                        if (rxLen >= 8) {
+                            // Bytes 0-3: Fuel used (gaseous), Bytes 4-7: Fuel used (diesel)
+                            uint32_t dieselUsed = rxData[4] | (static_cast<uint32_t>(rxData[5]) << 8) |
+                                                  (static_cast<uint32_t>(rxData[6]) << 16) |
+                                                  (static_cast<uint32_t>(rxData[7]) << 24);
+                            if (dieselUsed != 0xFFFFFFFF) {
+                                double liters = dieselUsed * 0.5;  // 0.5 L/bit
+                                std::cout << "     Decoded: Total Fuel Used = " << std::dec << std::fixed
+                                          << std::setprecision(1) << liters << " L ("
+                                          << (liters * 0.264172) << " gal)\n";
+                            }
+                        }
+                        break;
+
+                    case 0xFEF5:  // Ambient Conditions (65269)
+                        if (rxLen >= 1) {
+                            if (rxData[0] != 0xFF) {
+                                int pressure = rxData[0] * 0.5;  // 0.5 kPa/bit
+                                std::cout << "     Decoded: Barometric Pressure = " << std::dec << pressure << " kPa\n";
+                            }
+                        }
+                        break;
+
+                    case 0xFEF0:  // Cruise Control/Vehicle Speed (65264)
+                        if (rxLen >= 8) {
+                            if (rxData[1] != 0xFF) {
+                                double speed = rxData[1] / 256.0;  // 1/256 km/h per bit
+                                // Combine with high byte if needed
+                                if (rxData[2] != 0xFF) {
+                                    speed = (rxData[1] | (static_cast<uint16_t>(rxData[2]) << 8)) / 256.0;
+                                }
+                                std::cout << "     Decoded: Vehicle Speed = " << std::dec << std::fixed
+                                          << std::setprecision(1) << speed << " km/h ("
+                                          << (speed * 0.621371) << " mph)\n";
+                            }
+                        }
+                        break;
+
+                    case 0xFEDC:  // I/O Control (65244)
+                        if (rxLen >= 4) {
+                            uint16_t batteryVolt = rxData[0] | (static_cast<uint16_t>(rxData[1]) << 8);
+                            if (batteryVolt != 0xFFFF) {
+                                double volts = batteryVolt * 0.05;  // 0.05 V/bit
+                                std::cout << "     Decoded: Battery Voltage = " << std::dec << std::fixed
+                                          << std::setprecision(1) << volts << " V\n";
+                            }
+                        }
+                        break;
+
+                    case 0xFECE:  // DM5 Readiness (65230)
+                        if (rxLen >= 1) {
+                            std::cout << "     Decoded: DM5 Readiness Status = 0x" << std::hex
+                                      << static_cast<int>(rxData[0]) << std::dec << "\n";
+                            std::cout << "     Active Fault Count = " << static_cast<int>(rxData[0] >> 4)
+                                      << ", Previously Active = " << (rxData[0] & 0x0F) << "\n";
+                        }
+                        break;
+
+                    case 0xF004:  // EEC1 - Electronic Engine Controller 1 (61444)
+                        if (rxLen >= 5) {
+                            uint16_t rpm = rxData[3] | (static_cast<uint16_t>(rxData[4]) << 8);
+                            double actualRpm = rpm * 0.125;
+                            std::cout << "     Decoded: Engine RPM = " << std::dec << std::fixed
+                                      << std::setprecision(1) << actualRpm << " RPM\n";
+                        }
+                        break;
+
+                    default:
+                        // No decoder for this PGN
+                        break;
                 }
 
                 gotResponse = true;
