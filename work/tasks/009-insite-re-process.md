@@ -1,11 +1,33 @@
 # 009: Insite Reverse Engineering Process
 
-**Status:** In Progress (Phase 3 Complete - Diagnostic Functions)
+**Status:** In Progress (Phase 4 Complete - Calibration Handling)
 **Subproject:** insite9
 **Created:** 2024-12-13
 **Updated:** 2024-12-13
 
 ## Progress Log
+
+### 2024-12-13: Calibration Handling Analysis Complete
+- Analyzed security model: SecurityLevel enum (9 levels) and password types (5 types)
+- Documented ECU password operations: GetPasswordState, ValidatePassword, SetPassword, etc.
+- Mapped calibration file read/write paths via ImageServices and DownloadLibrary
+- Reverse engineered flash update process: DownloadLibrary, DownloadAlgorithm, ReflashStatus
+- Created comprehensive documentation: `work/docs/calibration-handling.md`
+
+**Key Calibration Findings:**
+| Component | Source File | Key Discovery |
+|-----------|-------------|---------------|
+| Security Levels | FeaturesAndParameters.cs:651 | Basic→ProPlus (9 levels) |
+| Password Types | CONMANAPILib.cs:23 | Master, OEM, Adjustable, Reset, OEM2 |
+| Access Levels | SymbolicTreeObj.cs:733 | ReadOnly→FullAccess (7 levels) |
+| Download Library | CureCore.cs:6432 | Bosch_DCU and GTIS4_ECU algorithms |
+| Reflash Status | ReflashControl.cs:300 | 10 status states for flash process |
+
+**Password Type Enum:**
+- `PTE_MASTER_PASSWORD` (1), `PTE_OEM_PASSWORD` (2), `PTE_ADJUSTABLE_PASSWORD` (3)
+- `PTE_RESET_PASSWORD` (4), `PTE_OEM_PASSWORD2` (6)
+
+**Documentation Created:** `work/docs/calibration-handling.md`
 
 ### 2024-12-13: Diagnostic Functions Analysis Complete
 - Analyzed fault code (DTC) handling via IFaultInformation interface
@@ -130,10 +152,10 @@ Insite is Cummins' official diagnostic and calibration software. Understanding h
 - [X] Trace data logging workflow (DataMonitorLogger, XmlLogfile)
 
 ### Phase 4: Calibration Handling
-- [ ] Map calibration file read/write paths
-- [ ] Understand ECU flash update process
-- [ ] Document security/authentication mechanisms
-- [ ] Cross-reference with e2m-analysis findings
+- [X] Map calibration file read/write paths (ImageServices, DownloadLibrary)
+- [X] Understand ECU flash update process (DownloadAlgorithm, ReflashStatus)
+- [X] Document security/authentication mechanisms (9 SecurityLevels, 5 PasswordTypes)
+- [X] Cross-reference with e2m-analysis findings (parameter addressing)
 
 ### Phase 5: Database Analysis
 - [ ] Analyze Metadata.accdb schema
@@ -220,6 +242,7 @@ cat insite9/decompiled/databases/FnPDatabase/schema.sql
 **Documentation:**
 - `work/docs/clip-protocol-spec.md` - CLIP/J1939 protocol specification
 - `work/docs/diagnostic-functions.md` - Fault codes, monitoring, logging
+- `work/docs/calibration-handling.md` - Security model, calibration, flash process
 
 ## Related Tasks
 
