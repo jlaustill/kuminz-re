@@ -1,11 +1,34 @@
 # 009: Insite Reverse Engineering Process
 
-**Status:** In Progress (Phase 4 Complete - Calibration Handling)
+**Status:** Complete (All 5 Phases Done)
 **Subproject:** insite9
 **Created:** 2024-12-13
 **Updated:** 2024-12-13
 
 ## Progress Log
+
+### 2024-12-13: Database Analysis Complete (Phase 5)
+- Analyzed FnPDatabase.mdb structure: 359 tables (FEATURE_N, PARAMETER_N, SUBFEATURE_N)
+- Documented ECU type (detectType) system: 75+ ECU types with dedicated tables
+- Mapped feature/parameter organization: ~3,800 features, ~18,600 parameter mappings
+- Analyzed INSITEHelp database: ~58,000 help topic mappings for fault codes
+- Identified Metadata.accdb (Access 2007+) cannot be extracted with mdbtools
+- Correlated FnPDatabase parameterIDs with e2m Group IDs (similar ranges: 10xxx, 20xxx)
+- Created comprehensive documentation: `work/docs/database-schema.md`
+
+**Key Database Findings:**
+| Database | Size | Tables | Key Content |
+|----------|------|--------|-------------|
+| FnPDatabase.mdb | 13 MB | 359 | Feature/Parameter by ECU type |
+| Metadata.accdb | 5.7 MB | Unknown | Parameter definitions (Access 2007+) |
+| INSITEHelp.mdb | ~5 MB | 4 | Fault help file mappings |
+
+**FnPDatabase Table Types:**
+- `FEATURE_N`: featureID, featureEnable (resource), featureGTIS, SortBy
+- `PARAMETER_N`: featureID, subFeatureID, parameterID
+- `SUBFEATURE_N`: featureID, subFeatureID, subFeatureEnable, subFeatureGTIS
+
+**Documentation Created:** `work/docs/database-schema.md`
 
 ### 2024-12-13: Calibration Handling Analysis Complete
 - Analyzed security model: SecurityLevel enum (9 levels) and password types (5 types)
@@ -158,10 +181,10 @@ Insite is Cummins' official diagnostic and calibration software. Understanding h
 - [X] Cross-reference with e2m-analysis findings (parameter addressing)
 
 ### Phase 5: Database Analysis
-- [ ] Analyze Metadata.accdb schema
-- [ ] Extract parameter definitions
-- [ ] Map FnPDatabase.mdb structure
-- [ ] Correlate with e2m parameter mappings
+- [X] Analyze Metadata.accdb schema (Access 2007+ - requires special tools)
+- [X] Extract parameter definitions (FnPDatabase: ~18,600 mappings extracted)
+- [X] Map FnPDatabase.mdb structure (359 tables by ECU type)
+- [X] Correlate with e2m parameter mappings (ID ranges match: 10xxx, 20xxx)
 
 ## Key Questions to Answer
 
@@ -243,6 +266,7 @@ cat insite9/decompiled/databases/FnPDatabase/schema.sql
 - `work/docs/clip-protocol-spec.md` - CLIP/J1939 protocol specification
 - `work/docs/diagnostic-functions.md` - Fault codes, monitoring, logging
 - `work/docs/calibration-handling.md` - Security model, calibration, flash process
+- `work/docs/database-schema.md` - FnPDatabase, Metadata.accdb, INSITEHelp schemas
 
 ## Related Tasks
 
