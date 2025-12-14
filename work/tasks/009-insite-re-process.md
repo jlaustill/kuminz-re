@@ -1,11 +1,36 @@
 # 009: Insite Reverse Engineering Process
 
-**Status:** In Progress (Decompilation Complete)
+**Status:** In Progress (Phase 2 Complete - Protocol Analysis)
 **Subproject:** insite9
 **Created:** 2024-12-13
 **Updated:** 2024-12-13
 
 ## Progress Log
+
+### 2024-12-13: Communication Protocol Analysis Complete
+- Analyzed CLIP and J1939 protocol implementations from PCLSystem_ghidra.c
+- Documented DPA (Device Protocol Adapter) layer from datalink_ghidra.c
+- Created comprehensive protocol specification: `work/docs/clip-protocol-spec.md`
+
+**Key Protocol Findings:**
+| Protocol | Default Timeout | Max Write Batch | Auth Method |
+|----------|-----------------|-----------------|-------------|
+| CLIP (PCL) | 60,000 ms | 256 params | Session-based |
+| J1939 (PJ1939) | 60,000 ms | Variable | 6-byte password |
+
+**Protocol Enum (from ECMServicesCommonTypes):**
+- `Image` (0) - Calibration file protocol
+- `ICL` (1) - Insite Communications Library
+- `CC` (2) - Cummins Communications (legacy)
+- `PJ1939` (3) - J1939 CAN protocol
+- `UDS` (4) - Unified Diagnostic Services
+- `PCL` (5) - Protocol Communications Library (CLIP)
+
+**DPA Device Types:**
+- 0x0000 = CommLink (Serial) via DPAS32.DLL
+- 0x8000 = PCCard via DPAI32.DLL
+
+**Documentation Created:** `work/docs/clip-protocol-spec.md`
 
 ### 2024-12-13: Decompilation 100% Complete
 - Created `insite9/scripts/` with batch decompilation tools
@@ -69,10 +94,10 @@ Insite is Cummins' official diagnostic and calibration software. Understanding h
 - [ ] Prioritize DLLs by relevance to ECU communication
 
 ### Phase 2: Communication Protocol Analysis
-- [ ] Identify all ECU communication DLLs
-- [ ] Trace message flow from UI to CAN bus
-- [ ] Document protocol layers (application, transport, network)
-- [ ] Compare with CLIP protocol from kuminz-ui work
+- [X] Identify all ECU communication DLLs (PCLSystem.dll, datalink.dll)
+- [X] Trace message flow from UI to CAN bus (documented in clip-protocol-spec.md)
+- [X] Document protocol layers (application, transport, network)
+- [X] Compare with CLIP protocol from kuminz-ui work
 
 ### Phase 3: Diagnostic Functions
 - [ ] Analyze fault code retrieval and display
@@ -167,6 +192,9 @@ cat insite9/decompiled/databases/FnPDatabase/schema.sql
 **Key Databases (extracted):**
 - `insite9/decompiled/databases/FnPDatabase/` - 358 tables (FEATURE_*, PARAMETER_*, etc.)
 - `insite9/decompiled/databases/INSITEHelp/` - 4 tables (fault codes, help topics)
+
+**Documentation:**
+- `work/docs/clip-protocol-spec.md` - CLIP/J1939 protocol specification
 
 ## Related Tasks
 
