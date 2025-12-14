@@ -1,5 +1,6 @@
 #include "../can/SocketCanAdapter.h"
 #include "../j1939/J1939.h"
+#include "../j1939/J1939TP.h"
 #include "../clip/Frame.h"
 
 #include <iostream>
@@ -24,13 +25,16 @@ void printUsage(const char* progname)
     std::cerr << "  " << progname << " <interface> [ecu-address]\n";
     std::cerr << "  " << progname << " <interface> --monitor\n";
     std::cerr << "  " << progname << " <interface> --raw <hex-bytes>\n";
-    std::cerr << "  " << progname << " <interface> --read <address> [length]\n\n";
+    std::cerr << "  " << progname << " <interface> --read <address> [length]\n";
+    std::cerr << "  " << progname << " <interface> --j1939 <pgn> [ecu-address]\n\n";
     std::cerr << "Examples:\n";
     std::cerr << "  " << progname << " can0           # Connect to ECU at address 0x00\n";
     std::cerr << "  " << progname << " can0 0         # Same as above\n";
     std::cerr << "  " << progname << " can0 --monitor # Just monitor CAN traffic\n";
     std::cerr << "  " << progname << " can0 --raw 020100010000 # Send raw bytes\n";
     std::cerr << "  " << progname << " can0 --read 0x800000 16 # Read 16 bytes from RAM\n";
+    std::cerr << "  " << progname << " can0 --j1939 0xFECA     # Request J1939 PGN with TP support\n";
+    std::cerr << "  " << progname << " can0 --j1939 0xFEE5     # Request Engine Hours\n";
 }
 
 void printFrame(uint32_t arbId, const uint8_t* data, uint8_t len)
@@ -997,6 +1001,172 @@ int readMode(SocketCanAdapter& adapter, uint8_t ecuAddress, uint32_t address, ui
     return 0;
 }
 
+/**
+ * J1939 PGN Request Mode with Transport Protocol Support
+ *
+ * Requests a specific PGN from the ECU and handles both single-frame
+ * and multi-frame (via J1939 TP) responses.
+ */
+int j1939Mode(SocketCanAdapter& adapter, uint8_t ecuAddress, uint32_t pgn)
+{
+    std::cout << "\n[INFO] J1939 PGN Request Mode\n";
+    std::cout << "[INFO] ECU address: 0x" << std::hex << std::setfill('0')
+              << std::setw(2) << static_cast<int>(ecuAddress) << "\n";
+    std::cout << "[INFO] Requesting PGN: 0x" << std::hex << std::setfill('0')
+              << std::setw(6) << pgn << std::dec << "\n\n";
+
+    // Build J1939 Request arbitration ID (PF=0xEA)
+    uint32_t requestArbId = J1939::buildRequestId(ecuAddress);
+
+    // Build PGN request data (3 bytes, little-endian)
+    uint8_t requestData[3];
+    requestData[0] = pgn & 0xFF;
+    requestData[1] = (pgn >> 8) & 0xFF;
+    requestData[2] = (pgn >> 16) & 0xFF;
+
+    // Send the request
+    std::cout << "[TX] " << std::hex << std::uppercase << std::setfill('0')
+              << std::setw(8) << requestArbId << " [3] ";
+    for (int i = 0; i < 3; i++) {
+        std::cout << std::setw(2) << static_cast<int>(requestData[i]) << " ";
+    }
+    std::cout << std::dec << "\n";
+
+    if (!adapter.send(requestArbId, requestData, 3)) {
+        std::cerr << "[ERROR] Failed to send J1939 request\n";
+        return 1;
+    }
+
+    // Wait for response with TP support
+    J1939::TPSession tpSession;
+    uint32_t arbId;
+    uint8_t rxData[8];
+    uint8_t rxLen;
+
+    int timeoutMs = 5000;  // 5 second timeout
+    int elapsed = 0;
+    bool gotResponse = false;
+    bool gotNack = false;
+
+    std::cout << "\n[INFO] Waiting for response...\n";
+
+    while (elapsed < timeoutMs && g_running && !gotResponse && !gotNack) {
+        if (adapter.recv(arbId, rxData, rxLen, 100)) {
+            uint8_t rxPf = J1939::extractPF(arbId);
+            uint8_t rxSource = J1939::extractSource(arbId);
+
+            // Only process frames from our target ECU
+            if (rxSource != ecuAddress) {
+                continue;
+            }
+
+            // Check for J1939 ACK/NACK
+            if (rxPf == J1939::J1939_PF_ACK) {
+                std::cout << "[RX] J1939 ACK/NACK: ";
+                for (int i = 0; i < rxLen; i++) {
+                    std::cout << std::hex << std::setfill('0') << std::setw(2)
+                              << static_cast<int>(rxData[i]) << " ";
+                }
+                std::cout << "\n";
+
+                if (rxData[0] == 0x01) {
+                    std::cout << "[INFO] PGN 0x" << std::hex << pgn
+                              << " is NOT SUPPORTED by this ECU\n";
+                    gotNack = true;
+                } else if (rxData[0] == 0x00) {
+                    std::cout << "[INFO] Positive ACK received\n";
+                }
+                continue;
+            }
+
+            // Check for TP.CM (Connection Management)
+            if (rxPf == J1939::J1939_PF_TP_CM) {
+                J1939::TPConnectionMessage cm;
+                if (cm.decode(rxData, rxLen)) {
+                    std::cout << "[RX] " << cm.toString() << "\n";
+
+                    if (cm.isBAM() && cm.pgn == pgn) {
+                        // Start TP session
+                        tpSession.startFromBAM(cm, rxSource);
+                        std::cout << "[INFO] Starting multi-frame reassembly...\n";
+                    }
+                }
+                continue;
+            }
+
+            // Check for TP.DT (Data Transfer)
+            if (rxPf == J1939::J1939_PF_TP_DT && tpSession.active) {
+                uint8_t seqNum = rxData[0];
+                std::cout << "[RX] " << J1939::formatTPData(seqNum, tpSession.expectedPackets,
+                                                            &rxData[1], rxLen - 1) << "\n";
+
+                // Add frame to session
+                if (tpSession.addFrame(seqNum, &rxData[1], rxLen - 1)) {
+                    if (tpSession.isComplete()) {
+                        std::cout << "\n[SUCCESS] Received " << std::dec
+                                  << tpSession.data.size() << " bytes for PGN 0x"
+                                  << std::hex << std::setfill('0') << std::setw(6) << pgn << "\n\n";
+                        std::cout << tpSession.hexDump() << "\n";
+                        gotResponse = true;
+                    }
+                } else {
+                    std::cerr << "[ERROR] Failed to add TP.DT frame (sequence error?)\n";
+                }
+                continue;
+            }
+
+            // Check for single-frame data response
+            // PDU2 format (PF >= 0xF0): PGN = PF * 256 + PS
+            // PDU1 format (PF < 0xF0): PGN = PF * 256
+            uint32_t responsePgn;
+            if (rxPf >= 0xF0) {
+                responsePgn = (static_cast<uint32_t>(rxPf) << 8) | J1939::extractDest(arbId);
+            } else {
+                responsePgn = static_cast<uint32_t>(rxPf) << 8;
+            }
+
+            // Check if this is the response to our requested PGN
+            if (responsePgn == (pgn & 0xFFFF00) || responsePgn == pgn) {
+                std::cout << "[RX] Single-frame response, PGN 0x" << std::hex
+                          << std::setfill('0') << std::setw(6) << responsePgn << "\n";
+                std::cout << "     Data[" << std::dec << static_cast<int>(rxLen) << "]: ";
+                for (int i = 0; i < rxLen; i++) {
+                    std::cout << std::hex << std::setfill('0') << std::setw(2)
+                              << static_cast<int>(rxData[i]) << " ";
+                }
+                std::cout << "\n";
+
+                // Decode common PGNs
+                if (pgn == 0xFEE5 && rxLen >= 4) {  // Engine Hours
+                    uint32_t totalHours = rxData[0] | (static_cast<uint32_t>(rxData[1]) << 8) |
+                                          (static_cast<uint32_t>(rxData[2]) << 16) |
+                                          (static_cast<uint32_t>(rxData[3]) << 24);
+                    double hours = totalHours * 0.05;
+                    std::cout << "     Decoded: Engine Hours = " << std::dec << hours << " hours\n";
+                } else if (pgn == 0xFEEE && rxLen >= 1) {  // Engine Temp
+                    int coolantTemp = static_cast<int>(rxData[0]) - 40;
+                    std::cout << "     Decoded: Engine Coolant Temp = " << std::dec << coolantTemp << "°C\n";
+                } else if (pgn == 0xF004 && rxLen >= 5) {  // EEC1
+                    uint16_t rpm = rxData[3] | (static_cast<uint16_t>(rxData[4]) << 8);
+                    double actualRpm = rpm * 0.125;
+                    std::cout << "     Decoded: Engine RPM = " << std::dec << actualRpm << "\n";
+                }
+
+                gotResponse = true;
+            }
+        }
+        elapsed += 100;
+    }
+
+    if (!gotResponse && !gotNack) {
+        std::cout << "\n[TIMEOUT] No response received after "
+                  << std::dec << (timeoutMs / 1000) << " seconds\n";
+        return 1;
+    }
+
+    return 0;
+}
+
 int main(int argc, char* argv[])
 {
     if (argc < 2) {
@@ -1008,9 +1178,11 @@ int main(int argc, char* argv[])
     bool monitorOnly = false;
     bool rawMode_flag = false;
     bool readMode_flag = false;
+    bool j1939Mode_flag = false;
     std::string rawBytes;
     uint32_t readAddress = 0;
     uint16_t readLength = 16;
+    uint32_t j1939Pgn = 0;
     uint8_t ecuAddress = 0x00;
 
     if (argc >= 3) {
@@ -1043,6 +1215,29 @@ int main(int argc, char* argv[])
                 }
             } else {
                 std::cerr << "[ERROR] --read requires address argument\n";
+                return 1;
+            }
+        } else if (arg2 == "--j1939") {
+            j1939Mode_flag = true;
+            if (argc >= 4) {
+                char* endptr;
+                j1939Pgn = std::strtoul(argv[3], &endptr, 0);
+                if (*endptr != '\0') {
+                    std::cerr << "[ERROR] Invalid PGN: " << argv[3] << "\n";
+                    return 1;
+                }
+                // Optional ECU address as 4th argument
+                if (argc >= 5) {
+                    long val = std::strtol(argv[4], &endptr, 0);
+                    if (*endptr == '\0' && val >= 0 && val <= 255) {
+                        ecuAddress = static_cast<uint8_t>(val);
+                    } else {
+                        std::cerr << "[ERROR] Invalid ECU address: " << argv[4] << "\n";
+                        return 1;
+                    }
+                }
+            } else {
+                std::cerr << "[ERROR] --j1939 requires PGN argument\n";
                 return 1;
             }
         } else {
@@ -1081,6 +1276,8 @@ int main(int argc, char* argv[])
         result = rawMode(adapter, ecuAddress, rawBytes);
     } else if (readMode_flag) {
         result = readMode(adapter, ecuAddress, readAddress, readLength);
+    } else if (j1939Mode_flag) {
+        result = j1939Mode(adapter, ecuAddress, j1939Pgn);
     } else {
         result = connectMode(adapter, ecuAddress);
     }

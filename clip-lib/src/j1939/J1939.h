@@ -39,6 +39,10 @@ namespace J1939
     constexpr uint8_t J1939_PF_ACK = 0xE8;      // J1939 Acknowledgment (59392)
     constexpr uint8_t J1939_PF_REQUEST = 0xEA;  // J1939 Request (59904) - NOT for CLIP!
 
+    // J1939 Transport Protocol PGNs (for multi-frame messages)
+    constexpr uint8_t J1939_PF_TP_DT = 0xEB;    // TP Data Transfer (60160)
+    constexpr uint8_t J1939_PF_TP_CM = 0xEC;    // TP Connection Management (60416)
+
     // Default priority
     constexpr uint8_t DEFAULT_PRIORITY = 6;
 
