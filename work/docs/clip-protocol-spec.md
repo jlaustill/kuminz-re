@@ -91,19 +91,46 @@ RX: 18EFF900 [8] 0D 18 02 FF FF FF FF FF   ← ECU responds on PF=0xEF
 | 2 | Control | Control flags / response type |
 | 3-7 | Payload | Up to 5 bytes of payload data |
 
-### Message Types (Byte 0, lower 5 bits)
+### Transport Layer Message Types (Byte 0)
+
+**From Insite PCLSystem.dll decompilation (CLIPTransport.cpp):**
 
 | Value | Name | Direction | Description |
 |-------|------|-----------|-------------|
-| 0x02 | TransportOpen | Tool → ECU | Session open request |
-| 0x03 | DataTransfer | Bidirectional | Data transfer (sequence in upper 3 bits) |
-| 0x04 | ClearToSend | ECU → Tool | Flow control acknowledgment |
-| 0x05 | ConnectionRefused | ECU → Tool | Session rejected |
+| **0x01** | **TransportOpenRequest** | Tool → ECU | Initiator opens transport session |
+| **0x02** | **TransportOpenResponse** | ECU → Tool | Responder confirms transport open |
+| 0x03+ | DataTransfer | Bidirectional | `(byte[0] & 0x03) == 0x03`, upper bits = sequence |
+| 0x04 | ClearToSend | Bidirectional | Flow control acknowledgment |
 | 0x06 | TransportClose | Bidirectional | Session close request |
-| **0x0C** | **CTSAcknowledge** | **ECU → Tool** | **CTS acknowledgment (CM550)** |
-| **0x0D** | **SessionOpenResponse** | **ECU → Tool** | **Session accepted (CM550 variant)** |
 
-**Note**: The Insite tool expects ECU to respond with byte[0]==0x02 for transport open response, but CM550 firmware uses 0x0D. This may be a protocol version difference.
+**CM550-Specific Response Codes:**
+| Value | Name | Direction | Description |
+|-------|------|-----------|-------------|
+| 0x0C | CTSAcknowledge | ECU → Tool | CTS acknowledgment |
+| **0x0D** | **SessionOpenResponse** | ECU → Tool | CM550 variant of session open |
+
+**CRITICAL CORRECTION**: We previously sent 0x02 for TransportOpen, but the correct value is **0x01**! The 0x02 is the RESPONSE message type. CM550 responds with 0x0D instead of standard 0x02.
+
+**Data Transfer Sequence Encoding:**
+- Byte 0 lower 2 bits: `0x03` indicates data transfer
+- Byte 0 upper bits: sequence number
+- Examples: `0x03` (seq=0), `0x23` (seq=1), `0x43` (seq=2)
+
+### Session Layer Message Types (in DataTransfer payload)
+
+After transport is open, session-level messages use these types in the payload:
+
+| Payload Byte 1 | Name | Direction | Description |
+|----------------|------|-----------|-------------|
+| 0x01 | SeedRequest | Tool → ECU | Request security seed |
+| 0x02 | SeedReply | ECU → Tool | Seed response with challenge |
+| 0x04 | ContextReply | ECU → Tool | Session context exchange complete |
+| 0x05 | ConnectionRefused | ECU → Tool | Session rejected |
+
+**Session State Machine (from CLIPSession.cpp):**
+- State 4: Seed Requested
+- State 5: Seeded (waiting for context)
+- State 3: Session Established (ready for data)
 
 ### Control Byte Values (Byte 2)
 
@@ -114,33 +141,41 @@ RX: 18EFF900 [8] 0D 18 02 FF FF FF FF FF   ← ECU responds on PF=0xEF
 | 0x04 | ContextReply | ECU context/status response |
 | 0x23 | DataAck seq=1 | ECU acknowledging DataTransfer seq=1 |
 
-### Session Open Exchange (CM550)
+### Session Open Exchange
 
-**Tool Request**:
+**Correct Transport Open Format (from CLIPTransport::createTransportMsg):**
 ```
-Byte 0: 0x02 (TransportOpen)
-Byte 1: 0x01 (Tool's requested connection ID)
-Byte 2: 0xFF (Control: request)
-Byte 3: 0x01 (Flags)
-Byte 4-7: 0x00 (Reserved)
+Byte 0: 0x01 (TransportOpenRequest - NOT 0x02!)
+Byte 1: Connection ID (tool's requested ID)
+Byte 2: 0xFF
+Byte 3: 0x01
+Byte 4: 0xFF
+(Pad to 8 bytes with 0x00)
 ```
 
-**ECU Response** (CM550-specific):
+**Standard ECU Response (per Insite code):**
 ```
-Byte 0: 0x0D (SessionOpenResponse - CM550 uses this instead of 0x02)
+Byte 0: 0x02 (TransportOpenResponse)
+Byte 1: ECU-assigned connection ID
+Byte 2-5: Session parameters
+```
+
+**CM550-Specific Response:**
+```
+Byte 0: 0x0D (CM550 variant - not standard 0x02!)
 Byte 1: 0x18 (ECU-assigned connection ID)
-Byte 2: 0x02 (Control: SeedReply)
-Byte 3-6: Seed (0xFFFFFFFF = no security required?)
+Byte 2: 0x02 (Embedded SeedReply)
+Byte 3-6: Seed (0xFFFFFFFF = no security?)
 Byte 7: 0xFF (Padding)
 ```
 
 ### CM550 Communication Test Results (December 2024)
 
-**Successful Operations:**
+**Previous Tests (with incorrect 0x02):**
 
-1. **Session Open** - Works correctly
-   - TX: `02 01 FF 01 00 00 00 00`
-   - RX: `0D 18 02 FF FF FF FF FF` (SeedReply, connId=0x18, seed=0xFFFFFFFF)
+1. **Session Open** - Partially works (wrong request format)
+   - TX: `02 01 FF 01 00 00 00 00` (INCORRECT - should be 0x01!)
+   - RX: `0D 18 02 FF FF FF FF FF` (CM550 responds anyway)
 
 2. **CTS Authentication** - Works correctly
    - TX: `04 18 01 01 00 00 00 00` (CTS with ECU connId)
@@ -189,20 +224,98 @@ All DataTransfer → 0x0D [connId] [echo_msgType] FF FF FF FF FF
 
 The ECU consistently acknowledges receipt but never returns actual data.
 
-**Current Hypotheses:**
+---
 
-1. **Incomplete Authentication**: After receiving seed=0xFFFFFFFF, Insite sends a proper context request (0x01 0x03 + encrypted tool context data) rather than CTS. The ECU accepts CTS as valid for session establishment but may require proper tool context for data operations.
+## Complete Insite Connection Sequence (from Decompilation)
 
-2. **Different CLIP Variant**: The CM550 may use an older/different CLIP protocol version that doesn't support getDataByAddress (0x13). The ECU's echo behavior (0x0D + msgType) may indicate "command not supported" rather than "command received".
+**Source: PCLSystem.dll - CLIPTransport.cpp and CLIPSession.cpp (December 2024 analysis)**
 
-3. **Missing State Transition**: From Insite analysis, session states are:
-   - State 4: Requesting seed
-   - State 5: Seeded (waiting for context)
-   - State 3: Session established (ready for data)
+### 1. Transport Layer Open
 
-   We may be stuck in state 5 because we sent CTS instead of context request.
+**Initiator sends TransportOpenRequest:**
+```
+Byte 0: 0x01 (TransportOpenRequest)
+Byte 1: <local_connection_id>
+Byte 2: 0xFF
+Byte 3: 0x01
+Byte 4: 0xFF
+Byte 5-7: 0x00 (padding)
+```
 
-4. **Parameter ID Required**: CM550 might only support parameter-based reads (getAddressByParameterID 0x15) rather than direct memory reads (getDataByAddress 0x13).
+**Responder sends TransportOpenResponse:**
+```
+Byte 0: 0x02 (TransportOpenResponse) - or 0x0D for CM550
+Byte 1: <ecu_connection_id>
+Byte 2: <session_params>
+Byte 3-4: <size_values>
+Byte 5: <cts_block_size>
+...
+```
+
+### 2. Session Layer - Seed Request
+
+After transport is open, session layer sends seed request via DataTransfer:
+
+**Tool sends SeedRequest (DataTransfer payload):**
+```
+DataTransfer wrapper:
+  Byte 0: 0x03 (DataTransfer, seq=0)
+  Byte 1: <connection_id>
+  Byte 2-7: Payload
+
+Payload content:
+  Byte 0: 0x01
+  Byte 1: 0x01
+  (This is the "requesting seed" message from CLIPSession::seedRequest)
+```
+
+### 3. Session Layer - Seed Reply
+
+**ECU sends SeedReply (DataTransfer payload):**
+```
+Payload byte[1] == 0x02 indicates SeedReply
+Payload bytes contain:
+  - Byte 2-3: Encryption parameters
+  - Byte 4-7: Seed value (4 bytes)
+```
+
+### 4. Session Layer - Context Exchange
+
+After receiving seed, tool encrypts and sends tool context:
+
+**Tool sends ContextRequest (DataTransfer payload):**
+```
+Encrypted tool context data
+(Uses seed for encryption)
+```
+
+**ECU sends ContextReply:**
+```
+Payload byte[1] == 0x04 indicates ContextReply
+Session state changes to 3 (established)
+"CLIP Session opened/established successfully"
+```
+
+### 5. Session Established - Data Operations
+
+Only after state == 3 can data be transferred.
+
+---
+
+**Analysis: Why Our DataTransfer Failed**
+
+1. **Wrong TransportOpen byte**: We sent 0x02 (response) instead of 0x01 (request)
+2. **Skipped SeedRequest**: We jumped directly to CTS without sending seed request
+3. **No Context Exchange**: Even with seed, we didn't do the encrypted context exchange
+4. **CM550 Protocol Variant**: CM550 responds with 0x0D instead of standard 0x02, suggesting it may handle sessions differently
+
+**Next Steps to Test:**
+1. Send correct TransportOpenRequest (0x01)
+2. After ECU response, send SeedRequest via DataTransfer
+3. Process seed reply and attempt context exchange
+4. If context exchange works, try data operations
+
+---
 
 **J1939 Standard PGN Support Test Results (December 2024):**
 
