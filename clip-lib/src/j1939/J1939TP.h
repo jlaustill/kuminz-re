@@ -268,6 +268,78 @@ namespace J1939
         return ss.str();
     }
 
+    /**
+     * Build a TP.CM CTS (Clear to Send) response
+     *
+     * CTS format (8 bytes):
+     *   Byte 0: 0x11 (CTS control byte)
+     *   Byte 1: Number of packets to send
+     *   Byte 2: Next packet number to send (1-based)
+     *   Bytes 3-4: 0xFFFF (reserved)
+     *   Bytes 5-7: PGN being acknowledged (little-endian)
+     *
+     * @param numPackets Number of packets we're willing to receive
+     * @param nextPacket Next packet number to send (usually 1)
+     * @param pgn PGN being acknowledged
+     * @param data Output buffer (must be at least 8 bytes)
+     */
+    inline void buildCTS(uint8_t numPackets, uint8_t nextPacket, uint32_t pgn, uint8_t* data)
+    {
+        data[0] = TP_CM_CTS;                    // 0x11
+        data[1] = numPackets;                   // Packets to send
+        data[2] = nextPacket;                   // Next packet (1-based)
+        data[3] = 0xFF;                         // Reserved
+        data[4] = 0xFF;                         // Reserved
+        data[5] = static_cast<uint8_t>(pgn & 0xFF);        // PGN low byte
+        data[6] = static_cast<uint8_t>((pgn >> 8) & 0xFF); // PGN mid byte
+        data[7] = static_cast<uint8_t>((pgn >> 16) & 0xFF);// PGN high byte
+    }
+
+    /**
+     * Build a TP.CM EOM (End of Message Acknowledgment)
+     *
+     * EOM format (8 bytes):
+     *   Byte 0: 0x13 (EOM control byte)
+     *   Byte 1: Total message size (LSB)
+     *   Byte 2: Total message size (MSB)
+     *   Byte 3: Total number of packets
+     *   Byte 4: 0xFF (reserved)
+     *   Bytes 5-7: PGN being acknowledged (little-endian)
+     *
+     * @param totalBytes Total bytes received
+     * @param numPackets Total packets received
+     * @param pgn PGN being acknowledged
+     * @param data Output buffer (must be at least 8 bytes)
+     */
+    inline void buildEOM(uint16_t totalBytes, uint8_t numPackets, uint32_t pgn, uint8_t* data)
+    {
+        data[0] = TP_CM_EOM;                    // 0x13
+        data[1] = static_cast<uint8_t>(totalBytes & 0xFF);  // Size LSB
+        data[2] = static_cast<uint8_t>((totalBytes >> 8) & 0xFF); // Size MSB
+        data[3] = numPackets;                   // Packet count
+        data[4] = 0xFF;                         // Reserved
+        data[5] = static_cast<uint8_t>(pgn & 0xFF);        // PGN low byte
+        data[6] = static_cast<uint8_t>((pgn >> 8) & 0xFF); // PGN mid byte
+        data[7] = static_cast<uint8_t>((pgn >> 16) & 0xFF);// PGN high byte
+    }
+
+    /**
+     * Build TP.CM arbitration ID for CTS/EOM response
+     *
+     * Format: 18ECDDSS where DD=destination, SS=source
+     * Priority 6, PF=0xEC, destination-specific
+     *
+     * @param destAddress Destination address (ECU)
+     * @param sourceAddress Source address (tool = 0xF9)
+     * @return Arbitration ID
+     */
+    inline uint32_t buildTPCMArbId(uint8_t destAddress, uint8_t sourceAddress = 0xF9)
+    {
+        // Priority 6 (bits 28-26), R=0, DP=0, PF=0xEC, PS=destination
+        return (6UL << 26) | (static_cast<uint32_t>(TP_PF_CM) << 16) |
+               (static_cast<uint32_t>(destAddress) << 8) | sourceAddress;
+    }
+
 } // namespace J1939
 
 #endif // J1939_TP_H

@@ -293,7 +293,10 @@ DIAG_RESPONSE_CODE,8,ADDR_VALIDATION_FAIL,Address validation failed
 DIAG_RESPONSE_CODE,9,INVALID_ADDR_RANGE,Invalid address range
 DIAG_RESPONSE_CODE,10,INVALID_ADDR_ALT,Invalid address range (alternate)
 DIAG_RESPONSE_CODE,0x14,CHECKSUM_MISMATCH,Checksum mismatch
-DIAG_RESPONSE_CODE,0x18,UNKNOWN_SUBFUNC,Unknown sub-function
+DIAG_RESPONSE_CODE,0x18,UNKNOWN_SUBFUNC,Unknown sub-function - default error in diagnosticServiceDispatcher
+# CAN Multi-Packet Response Types (diagnosticMultiPacketResponseBuilder byte 0)
+CAN_MULTIPACKET_RESPONSE,0x0C,SUCCESS_RESPONSE,Operation successful - no error code follows
+CAN_MULTIPACKET_RESPONSE,0x0D,STATUS_RESPONSE,Error/status response - error code follows in byte 1
 # Protocol Enable Flags (0x8035ea)
 DIAG_ENABLE_FLAGS,0x01,CORE_SERVICE_ENABLE,Core diagnostic service enable
 DIAG_ENABLE_FLAGS,0x02,INSITE_ENABLE,Insite live data enable
@@ -587,3 +590,83 @@ VP44_STATE,5,STATE_5_FAULT,State 5 - fault/error state (returns 1 from mapper),2
 ENGINE_HISTOGRAM_MODE,0,HISTOGRAM_IDLE,No histogram update needed,1
 ENGINE_HISTOGRAM_MODE,1,INCREMENT,Increment histogram index (data < conversion state),1
 ENGINE_HISTOGRAM_MODE,2,DECREMENT,Decrement histogram index (counter < conversion state),1
+# Insite Live Data Message Types - msgType values handled by insiteLiveDataHandler @ 0x19a0a
+# CRITICAL: This function does NOT handle 0x03 (DataTransfer) - explains why CLIP diagnostic commands fail
+# DataTransfer falls through to else clause which just calls responseBufferFinalize() with no data
+INSITE_LIVE_DATA_MSG_TYPE,0x00,GET_STATUS_REQ,CLIP Get Status Request - sets response buffer flags,1
+INSITE_LIVE_DATA_MSG_TYPE,0x03,DATA_TRANSFER_UNHANDLED,DataTransfer - NO HANDLER falls through to else clause,1
+INSITE_LIVE_DATA_MSG_TYPE,0x80,LIVE_DATA_STREAM,Multi-frame live data stream with sequence handling,1
+INSITE_LIVE_DATA_MSG_TYPE,0xC3,SEQUENCE_HANDLER,Sequence handling (0x30/0x31 patterns),1
+# Diagnostic Service Dispatcher Error Codes - default cVar2 value in diagnosticServiceDispatcher @ 0x2729a
+# The default error 0x18 is returned when no service handler matches the input
+DIAG_SERVICE_ERROR,0x18,UNKNOWN_SERVICE_DEFAULT,Default error code when service ID not found in dispatch table,1
+# CLIP Instruction Set - from decompiled Insite Interop.DeviceControl.cs:3924-3932
+# tagCICLIPInstructionEnum - operations carried in DPA frame byte[4]
+CLIP_INSTRUCTION,0x00,QUERY_INITIALIZE,Initialize query session,1
+CLIP_INSTRUCTION,0x01,QUERY_TERMINATE,Terminate query session,1
+CLIP_INSTRUCTION,0x10,GET_PARAMETERS_BY_ID,Read parameters by ID,1
+CLIP_INSTRUCTION,0x11,SET_PARAMETERS_BY_ID,Write parameters by ID,1
+CLIP_INSTRUCTION,0x12,EXECUTE_OPERATION,Execute ECU operation,1
+CLIP_INSTRUCTION,0x13,GET_DATA_BY_ADDRESS,Read memory by address,1
+CLIP_INSTRUCTION,0x14,SET_DATA_BY_ADDRESS,Write memory by address,1
+CLIP_INSTRUCTION,0x15,GET_ADDRESS_BY_PARAMETER_ID,Get parameter address from ID,1
+# DPA Frame Types - from decompiled Insite dpas32_ghidra.c
+# Byte 0 of DPA-wrapped CAN frames (canbus_async_transmit @ 2366)
+DPA_FRAME_TYPE,0xC0,ASYNC,Asynchronous frame - no immediate response expected,1
+DPA_FRAME_TYPE,0x80,SYNC,Synchronous frame - wait for response,1
+# DPA Instruction Codes - from decompiled Insite dpas32_ghidra.c:2366-2370
+# Byte 3 of DPA-wrapped CAN frames
+DPA_INSTRUCTION,0x49,TRANSMIT,Send data to ECU (TX instruction),1
+DPA_INSTRUCTION,0x48,RECEIVE,Receive data from ECU (RX instruction),1
+# EF00 Service IDs - from firmware diagnosticServiceDispatcher @ 0x272a0
+# Table at 0x8018d8 counter at 0x801998 - max 32 entries
+# Service ID goes directly in byte[0] of CAN message - NO DPA wrapper needed!
+# Dispatcher compares byte[0] against table; returns 0x18 error if not found
+EF00_SERVICE_ID,0x01,QUERY_TERMINATE,QueryTerminate - CLIP compatible - handler @ 0xf86a,1
+EF00_SERVICE_ID,0x04,SYSTEM_SERVICE_04,System service 04 - handler @ 0x1b150,1
+EF00_SERVICE_ID,0x05,SYSTEM_SERVICE_05,System service 05 - handler @ 0x1b160,1
+EF00_SERVICE_ID,0x06,SYSTEM_SERVICE_06,System service 06 - handler @ 0xf8d8,1
+EF00_SERVICE_ID,0x07,SYSTEM_SERVICE_07,System service 07 - handler @ 0xf876,1
+EF00_SERVICE_ID,0x0A,SYSTEM_SERVICE_0A,System service 0A - handler @ 0xf89c,1
+EF00_SERVICE_ID,0x0B,SYSTEM_SERVICE_0B,System service 0B - handler @ 0xf8e4,1
+EF00_SERVICE_ID,0x0F,SYSTEM_SERVICE_0F,System service 0F - same handler as 0x10 @ 0x1b07e,1
+EF00_SERVICE_ID,0x10,GET_PARAMETERS_BY_ID,GetParametersByID - CLIP compatible - handler @ 0x1b07e,1
+EF00_SERVICE_ID,0x15,GET_ADDRESS_BY_PARAM_ID,GetAddressByParameterID - CLIP compatible - handler @ 0xf9f0,1
+EF00_SERVICE_ID,0x16,SYSTEM_SERVICE_16,System service 16 - handler @ 0xf8b6,1
+EF00_SERVICE_ID,0x18,SYSTEM_SERVICE_18,System service 18 - handler @ 0xf9e4,1
+EF00_SERVICE_ID,0x41,SERVICE_41,Service 41 - handler @ 0x1bc9c,1
+EF00_SERVICE_ID,0x43,SERVICE_43,Service 43 - handler @ 0x1bf18,1
+EF00_SERVICE_ID,0x44,SERVICE_44,Service 44 - handler @ 0x1b56e (same as 0x45),1
+EF00_SERVICE_ID,0x45,SERVICE_45,Service 45 - handler @ 0x1b56e (same as 0x44),1
+EF00_SERVICE_ID,0x46,SERVICE_46,Service 46 - handler @ 0x1bf64,1
+EF00_SERVICE_ID,0x47,SERVICE_47,Service 47 - handler @ 0x1b604,1
+EF00_SERVICE_ID,0x48,SERVICE_48,Service 48 - handler @ 0x1bfc8,1
+EF00_SERVICE_ID,0x49,J1939_DATA_COPY,j1939DataCopyWrapperExtended @ 0x1b668 - memory read/copy via J1939 TP - req: [svc][2B][4B addr][4B len],1
+EF00_SERVICE_ID,0x4A,MEM_READ_4B_ADDR_1B_LEN,diagMemoryReadService4aHandler @ 0x1c02e - WORKING! 4-byte addr + 1-byte len - response: [4B][addr][len][data],1
+EF00_SERVICE_ID,0x4B,SERVICE_4B,Service 4B - handler @ 0x1b6ce,1
+EF00_SERVICE_ID,0x4C,SERVICE_4C,Service 4C - handler @ 0x1c076,1
+EF00_SERVICE_ID,0x4D,SERVICE_4D,Service 4D - handler @ 0x1b716,1
+# Address Range Validation Table - addressRangeValidator @ 0x2b544 uses table @ 0x2b512
+# 5 entries x 10 bytes each (start_addr[4] + end_addr[4] + flag1[1] + flag2[1])
+# Error 0x09 returned if address outside these ranges
+VALID_MEMORY_RANGE,0x00000000,FIRMWARE_START,Valid firmware region start (256KB code space),4
+VALID_MEMORY_RANGE,0x0003FFFF,FIRMWARE_END,Valid firmware region end,4
+VALID_MEMORY_RANGE,0x00800000,RAM_START,Valid RAM region start (~37KB data),4
+VALID_MEMORY_RANGE,0x008091C2,RAM_END,Valid RAM region end,4
+# Detailed Error Code Sources - traceable through firmware analysis
+# Error code flows: handler → diagnosticMultiPacketResponseBuilder → [0x0D][error_code][service_id]...
+DIAG_ERROR_SOURCE,0x02,INVALID_LENGTH,diagnosticServiceSecurityValidator - message length mismatch,1
+DIAG_ERROR_SOURCE,0x03,SECURITY_FAILED,diagnosticServiceSecurityValidator - systemSecurityCheck returned non-zero,1
+DIAG_ERROR_SOURCE,0x07,CONDITION_NOT_MET,memoryOperationDispatcher - system_logging_state check failed,1
+DIAG_ERROR_SOURCE,0x08,ADDR_LOOKUP_FAIL,j1939MemoryDataCopyResolver - initial address lookup at 0xeaf0 failed,1
+DIAG_ERROR_SOURCE,0x09,ADDR_RANGE_INVALID,addressRangeValidator @ 0x2b544 - address not in valid_memory_range table,1
+DIAG_ERROR_SOURCE,0x0A,ADDR_CASE_4,memoryOperationDispatcher switch case 4 - specific address type rejected,1
+DIAG_ERROR_SOURCE,0x0B,BUFFER_WRITE_FAIL,memoryOperationDispatcher - circularBufferWrite returned error,1
+DIAG_ERROR_SOURCE,0x0E,PATCH_LIMIT,diagnosticResponseBuilder - memory patch count exceeded limit,1
+DIAG_ERROR_SOURCE,0x18,UNKNOWN_SERVICE,diagnosticServiceDispatcher - service ID not in dispatch table,1
+# Service 0x4A Response Format (VERIFIED WORKING 2024-12-16)
+# Request:  [4A][addr3][addr2][addr1][addr0][len][00][00]
+# Response: [4B][addr3][addr2][addr1][addr0][len][data...]
+# - Response code 0x4B indicates success (echoes service ID + 1)
+# - Only RAM region accessible (0x800000-0x8091C2), firmware returns error 0x09
+SERVICE_4A_RESPONSE,0x4B,SUCCESS,Service 0x4A success response code (service ID + 1),1

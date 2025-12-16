@@ -591,7 +591,376 @@ To read diagnostic data from the CM550:
 5. ~~Try common J1939 engine PGNs (EEC1, etc.) via standard J1939 Request~~ (Done - WORKS!)
 6. ~~Investigate if CM550 uses completely different data layer on top of CLIP session~~ (Confirmed - diagnostic layer not connected)
 7. ~~Try J1939 TP (0xEC/0xEB) for diagnostic commands~~ (Analyzed - TP is for VP44 RX only)
-8. **Investigate serial port path for diagnostic commands** (In progress - serial transport discovered)
+8. ~~Investigate serial port path for diagnostic commands~~ (Done - J1708 confirmed!)
+9. ~~Trace CAN→Session dispatch path in firmware~~ (Done - see new section below)
+
+---
+
+## CM550 Firmware Response Builder Analysis (December 2024)
+
+**Critical Discovery: Why DataTransfer is Acknowledged but Doesn't Execute**
+
+### Firmware Dispatch Tables
+
+The CM550 firmware has TWO separate dispatch tables for handling incoming diagnostic messages:
+
+| Address | Variable | Purpose | Counter |
+|---------|----------|---------|---------|
+| 0x008019B8 | `diag_service_pgn_dispatch_ptr` | PGN-based service routing | `can_transmission_active_count` |
+| 0x008018D8 | `diagnostic_service_dispatch_ptr` | Service byte routing | `diagnostic_service_state_counter` |
+
+Each entry in these tables is 6 bytes:
+- Bytes 0-1: Service ID / match bytes
+- Bytes 2-5: Function pointer (4 bytes)
+
+### Diagnostic Service Dispatcher (0x2729a)
+
+The `diagnosticServiceDispatcher` function:
+
+1. Iterates through `diagnostic_service_dispatch_ptr` table
+2. Matches service byte from incoming message
+3. **Default error code is 0x18** (this is the connection ID we see!)
+4. Calls `diagnosticServiceSecurityValidator` to check access
+5. If security passes (returns -1), calls the service handler
+6. If no match or security fails, calls `diagnosticMultiPacketResponseBuilder` with error
+
+```c
+// Pseudo-code from decompilation
+void diagnosticServiceDispatcher(byte *param_1) {
+    cVar2 = '\x18';  // Default error code = 0x18!
+    for (bVar1 = 0; bVar1 < diagnostic_service_state_counter; bVar1++) {
+        if (service_byte_matches) {
+            result = diagnosticServiceSecurityValidator(param_1);
+            if (result == -1) {  // Security passed
+                result = (*handler)(param_1);  // Call handler
+            }
+            cVar2 = result;
+            break;
+        }
+    }
+    if (cVar2 != -1) {
+        diagnosticMultiPacketResponseBuilder(param_1, error_code);
+    }
+}
+```
+
+### Response Builder (0x298d8)
+
+The `diagnosticMultiPacketResponseBuilder` generates responses on PGN 0xEF00:
+
+```c
+// Response byte logic at lines 25214-25221
+if (param_2_high_byte == 0) {
+    *response_byte = 0x0C;  // Success!
+} else {
+    *response_byte = 0x0D;  // Status/Error response
+    response_byte[1] = diag_multi_packet_status_code_table[param_2 & 0xff];
+}
+```
+
+| Response | Meaning |
+|----------|---------|
+| **0x0C** | Success - operation completed |
+| **0x0D** | Status/Error - includes error code from lookup table |
+
+### Status Code Table (0x298BE)
+
+The `diag_multi_packet_status_code_table` at ROM address 0x298BE is indexed by the error code to produce the second byte of 0x0D responses.
+
+### Multi-Packet Receive Handler (0x12d76)
+
+The `multiPacketReceiveHandler` recognizes these connection IDs:
+
+| Connection ID | Description |
+|---------------|-------------|
+| **0x15** | Alternate session ID |
+| **0x17** | Alternate session ID |
+| **0x18** | **Primary - what CM550 assigns** |
+| **0x19** | Alternate session ID |
+
+This handler uses `diag_transfer_state_t` structure at 0x80d3f8 and `multi_packet_receive_state` for state tracking.
+
+### Key Insight: Two Diagnostic Paths
+
+The firmware has two completely separate paths for diagnostic communication:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                     CAN Path (PGN 0xEF00)                       │
+│                                                                  │
+│  CAN RX → diagnosticServiceDispatcherByPgn (0x278be)            │
+│         → diagnosticServiceDispatcher (0x2729a)                  │
+│         → diagnosticServiceSecurityValidator (0x1b7e8)          │
+│         → [service handler OR error]                             │
+│         → diagnosticMultiPacketResponseBuilder (0x298d8)        │
+│         → sendCanMessage (PGN 0xEF00)                           │
+│                                                                  │
+│  Result: 0x0C (success) or 0x0D (status) response               │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│                J1708/Serial Path (RS-485)                        │
+│                                                                  │
+│  Serial RX → serialPort1IsrHandler                               │
+│            → serialNodeAddressForwarder                          │
+│            → diagnostic_rx_buffer_base                           │
+│            → diagnosticCommandDispatcher (0x12484)               │
+│            → Service 3/4/5/6 handlers                            │
+│            → Memory read/write, calibration, DTCs                │
+│                                                                  │
+│  Result: Actual diagnostic data returned                         │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Why CLI's DataTransfer Fails
+
+When the CLI sends CLIP DataTransfer (0x03) messages:
+
+1. **CAN Message Received**: Goes to `diagnosticServiceDispatcherByPgn`
+2. **Service Lookup**: Iterates through `diag_service_pgn_dispatch_ptr` table
+3. **No Match Found**: DataTransfer message type doesn't match any registered service
+4. **Response Generated**: `diagnosticMultiPacketResponseBuilder` called with error code 0x18
+5. **0x0D Response Sent**: ECU acknowledges with `0x0D 18 [msgType] FF FF FF FF FF`
+
+The **instruction payload** (e.g., `13 01 00 80 00 00 00 10` for memory read) **never reaches** the `diagnosticCommandDispatcher` because:
+
+- The CAN path only handles session-level messages (TransportOpen, CTS, etc.)
+- Actual diagnostic commands (Service 3/4/5/6) go through J1708 serial path
+- There is **NO code path** to bridge CAN DataTransfer payloads to the serial diagnostic buffer
+
+### Verification
+
+The 0x18 in the ECU response (`0x0D 18 03 FF FF FF FF FF`) is:
+- NOT the connection ID being echoed back
+- It's the **default error code** from `diagnosticServiceDispatcher`!
+
+This confirms the dispatch failed before any service handler was called
+
+---
+
+## SERVICE 5 DIAGNOSTIC COMMAND FORMAT (BREAKTHROUGH - December 2024)
+
+**CRITICAL DISCOVERY**: The CM550's diagnostic commands use a **Service 5 command format**, NOT the CLIP application-layer commands (0x13, 0x14, 0x15, etc.) from the Insite .NET layer!
+
+### Root Cause of DataTransfer Failures
+
+Previous tests tried sending CLIP application commands like `getDataByAddress` (0x14) in the DataTransfer payload. These commands are **NOT recognized by the CM550 firmware**.
+
+The `diagnosticCommandDispatcher` @ 0x12484 expects messages with:
+- **Control byte (byte 2) = Service number** (3, 4, 5, or 6)
+- **Payload[0] = Command code** with high nibble indicating operation type
+
+### Service Numbers
+
+| Service | Purpose | Commands |
+|---------|---------|----------|
+| 3 | System commands | 0x40-0x54 |
+| 4 | System control | 0x64-0x75 |
+| **5** | **Memory read/write, multi-packet** | 0x60-0xF0 |
+| 6 | Cancel/abort | 0x74 |
+
+### Service 5 Command Codes (High Nibble)
+
+From CM550 firmware `diagnosticCommandDispatcher` @ 0x12484 (lines 6939-6960):
+
+| Code | Operation | Handler Function |
+|------|-----------|------------------|
+| **0x60** | Memory read type 3 | `diagnosticMemoryReadHandler(3)` |
+| **0x80** | Memory write type 4 | `diagnosticMemoryWriteHandler(4)` |
+| **0xA0** | Memory write type 2 | `diagnosticMemoryWriteHandler(2)` |
+| **0xB0** | **Multi-packet receive (read FROM ECU)** | `multiPacketReceiveHandler` @ 0x12d76 |
+| **0xC0** | Memory read type 2 | `diagnosticMemoryReadHandler(2)` |
+| **0xE0** | Memory read type 1 | `diagnosticMemoryReadHandler(1)` |
+| **0xF0** | Multi-packet transmit (write TO ECU) | `multiPacketTransmitHandler` @ 0x12b74 |
+
+### Correct DataTransfer Frame Format for Memory Read
+
+```
+CLIP DataTransfer Frame (8 bytes):
+┌─────────────────────────────────────────────────────────────────┐
+│ Byte 0: (SessionID << 5) | MsgType                              │
+│         = (0 << 5) | 0x03 = 0x03 for DataTransfer               │
+├─────────────────────────────────────────────────────────────────┤
+│ Byte 1: Connection ID                                           │
+│         = 0x18 (assigned by ECU during session open)            │
+├─────────────────────────────────────────────────────────────────┤
+│ Byte 2: Control = Service Number                                │
+│         = 0x05 for Service 5                                    │
+├─────────────────────────────────────────────────────────────────┤
+│ Byte 3: Command Code (Service 5 operation)                      │
+│         = 0xC0 for MemoryRead2, 0xE0 for MemoryRead1, etc.      │
+├─────────────────────────────────────────────────────────────────┤
+│ Bytes 4-6: Memory Address (24-bit, big-endian)                  │
+│         = [addr_high] [addr_mid] [addr_low]                     │
+├─────────────────────────────────────────────────────────────────┤
+│ Byte 7: Length (bytes to read, 1-255)                           │
+└─────────────────────────────────────────────────────────────────┘
+
+Example - Read 4 bytes from address 0x0034F8 (calibration ID area):
+TX: 03 18 05 C0 00 34 F8 04
+     │  │  │  │  └──────┴─┴── Address 0x0034F8, length 4
+     │  │  │  └────────────── MemoryRead2 command (0xC0)
+     │  │  └───────────────── Service 5
+     │  └──────────────────── Connection ID 0x18
+     └─────────────────────── DataTransfer (msgType=0x03)
+```
+
+### Multi-Packet Receive Handler Recognition
+
+The `multiPacketReceiveHandler` @ 0x12d76 (lines 7303-7306 in decompilation) explicitly handles connection IDs:
+
+| Connection ID | Status |
+|---------------|--------|
+| 0x15 | Recognized |
+| 0x17 | Recognized |
+| **0x18** | **Primary - assigned by CM550** |
+| 0x19 | Recognized |
+
+This confirms that connection ID 0x18 (received during session open) is valid for diagnostic operations!
+
+### Security Check Always Passes
+
+The `systemSecurityCheck()` @ 0x27e98 (line 24111-24115) unconditionally returns 0:
+```c
+int systemSecurityCheck(void) {
+    return 0;  // Always passes - no security blocking!
+}
+```
+
+This means diagnostic commands are **NOT blocked by security** - the issue was purely the message format.
+
+### Updated Understanding
+
+**Previous (Incorrect) Conclusion**: The CM550 requires J1708 serial for diagnostic commands, and CAN-based CLIP is only for session management.
+
+**New (Correct) Understanding**: The CM550 **CAN process diagnostic commands over CAN**, but they must use the **Service 5 format** (control=5, command code in payload[0]), NOT the CLIP application-layer format (0x13/0x14/0x15 commands).
+
+### Implementation in clip-lib
+
+New frame builders added to `clip-lib/src/clip/Frame.h`:
+
+```cpp
+// Service 5 command types
+enum class Service5Cmd : uint8_t
+{
+    MemoryRead3  = 0x60,  // diagnosticMemoryReadHandler(3)
+    MemoryWrite4 = 0x80,  // diagnosticMemoryWriteHandler(4)
+    MemoryWrite2 = 0xA0,  // diagnosticMemoryWriteHandler(2)
+    MultiPktRecv = 0xB0,  // multiPacketReceiveHandler
+    MemoryRead2  = 0xC0,  // diagnosticMemoryReadHandler(2)
+    MemoryRead1  = 0xE0,  // diagnosticMemoryReadHandler(1)
+    MultiPktXmit = 0xF0   // multiPacketTransmitHandler
+};
+
+// Build a Service 5 memory read frame
+Frame buildMemoryReadRequest(uint8_t connectionId, uint32_t address,
+                              uint8_t length, uint8_t sessionId = 0,
+                              Service5Cmd cmdType = Service5Cmd::MemoryRead2);
+
+// Build a multi-packet receive request (0xB0 command)
+Frame buildMultiPacketReceiveRequest(uint8_t connectionId, uint8_t sessionId = 0);
+```
+
+### Expected Response Format
+
+Based on firmware analysis, successful memory reads should return:
+
+```
+Success Response (0x0C):
+RX: 0C [connId] [service] [data...]
+
+Error Response (0x0D):
+RX: 0D [error_code] [status]...
+```
+
+The status code table at 0x298BE maps error codes to status bytes.
+
+### Hardware Testing Results (December 2024)
+
+**COMPREHENSIVE TEST RESULTS WITH REAL CM550 ECU:**
+
+#### Session Layer - WORKING
+
+| Test | TX Frame | RX Response | Result |
+|------|----------|-------------|--------|
+| TransportOpenRequest | `01 01 FF 01 FF 00 00 00` | `0C 01 FF FF FF FF FF FF` | **SUCCESS** |
+| ClearToSend | `04 01 01 01 00 00 00 00` | `0C 04 01 01 FF FF FF FF` | **SUCCESS** |
+
+**Session establishment works correctly!** The ECU accepts our session with connection ID 0x01.
+
+#### DataTransfer Commands - ALL RETURN 0x0D STATUS
+
+| Test | Format | TX Frame | RX Response |
+|------|--------|----------|-------------|
+| Context Request | `03 [connId] 00 01 03 00 00 00` | `03 01 00 01 03 00 00 00` | `0D 18 03 FF FF FF FF FF` |
+| Service 5 MemoryRead2 (0xC0) | `03 [connId] 05 C0 [addr] [len]` | `03 01 05 C0 00 34 F8 04` | `0D 18 03 FF FF FF FF FF` |
+| Service 5 MemoryRead1 (0xE0) | `03 [connId] 05 E0 [addr] [len]` | `03 01 05 E0 00 34 F8 04` | `0D 18 03 FF FF FF FF FF` |
+| Service 5 MemoryRead3 (0x60) | `03 [connId] 05 60 [addr] [len]` | `03 01 05 60 00 34 F8 04` | `0D 18 03 FF FF FF FF FF` |
+| Service 5 MultiPktRecv (0xB0) | `03 [connId] 05 B0 00 01 01 01` | `03 01 05 B0 00 01 01 01` | `0D 18 03 FF FF FF FF FF` |
+| Service 4 Init (0x71) | `03 [connId] 04 71 00 00 00 00` | `03 01 04 71 00 00 00 00` | `0D 18 03 FF FF FF FF FF` |
+| Service 4 Init (0x73) | `03 [connId] 04 73 00 00 00 00` | `03 01 04 73 00 00 00 00` | `0D 18 03 FF FF FF FF FF` |
+| With connId=0x18 | `03 18 05 C0 [addr] [len]` | `03 18 05 C0 00 34 F8 04` | `0D 18 03 FF FF FF FF FF` |
+
+#### Alternative Formats Tested
+
+| Test | Description | TX Frame | RX Response |
+|------|-------------|----------|-------------|
+| Raw J1708-style | No CLIP header, len+svc+cmd format | `07 05 C0 00 34 F8 04 00` | `0D 04 07 FF FF FF FF FF` |
+| Broadcast dest | ArbId with dest=0xFF | `03 01 05 C0 00 34 F8 04` | No response |
+
+#### Response Analysis
+
+**Standard DataTransfer Response Pattern:**
+```
+0D 18 03 FF FF FF FF FF
+│  │  │
+│  │  └── Control: Echo of our msgType (0x03 = DataTransfer)
+│  └───── ConnectionId: 0x18 (ECU's internal diagnostic session ID OR error code)
+└──────── MsgType: 0x0D (SessionOpenResponse/Status)
+```
+
+**Raw Format Response Pattern:**
+```
+0D 04 07 FF FF FF FF FF
+│  │  │
+│  │  └── Echo of our first byte (0x07 = length)
+│  └───── 0x04 = Error type 4 (buffer overflow/unsupported format)
+└──────── MsgType: 0x0D (Status)
+```
+
+#### Key Findings
+
+1. **Session layer works** - TransportOpenRequest (0x01) and CTS (0x04) both return SUCCESS (0x0C)
+
+2. **DataTransfer acknowledged but not processed** - All DataTransfer (0x03) commands return `0D 18 03` regardless of:
+   - Service number (4 or 5)
+   - Command code (0x60, 0x71, 0x73, 0xB0, 0xC0, 0xE0)
+   - Connection ID (0x01 or 0x18)
+
+3. **0x18 is consistent** - Every DataTransfer response contains 0x18 in byte 1, which could be:
+   - The ECU's diagnostic session ID that we should be using
+   - The default error code (0x18) from `diagnosticServiceDispatcher`
+   - Some other status indicator
+
+4. **Raw format rejected differently** - The J1708-style raw format (`07 05 C0...`) returns `0D 04 07` instead of `0D 18 03`, indicating it's processed by a different code path (error 0x04 = buffer overflow)
+
+5. **Broadcast gets no response** - Sending to destination 0xFF produces no response
+
+#### Implications for Firmware Analysis
+
+The consistent `0D 18 03` response suggests:
+
+1. The CLIP transport layer IS processing the messages (we get responses)
+2. But the diagnostic payload is NOT reaching the `diagnosticCommandDispatcher`
+3. There may be a missing step in the session establishment sequence
+4. Or the CAN→Diagnostic buffer bridging code doesn't exist/isn't active
+
+**Next steps for firmware RE:**
+1. Find where `0D 18 03` response is generated in firmware
+2. Trace the CAN RX path from interrupt to response generation
+3. Look for any session state machine that gates DataTransfer processing
+4. Check if there's an "enable diagnostic" flag that needs to be set
+5. Capture real Insite traffic to compare exact byte sequences
 
 ---
 

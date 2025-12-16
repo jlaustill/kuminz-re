@@ -68,6 +68,16 @@ namespace J1939
     }
 
     /**
+     * Build J1939 TP.CM arbitration ID (tool -> ECU)
+     * Used for Transport Protocol Connection Management (PGN 0xEC00)
+     * CM550 firmware routes 0x11/0x13 messages through this PGN!
+     */
+    inline uint32_t buildTPCMId(uint8_t ecuAddress, uint8_t toolAddress = TOOL_ADDRESS)
+    {
+        return buildArbId(DEFAULT_PRIORITY, J1939_PF_TP_CM, ecuAddress, toolAddress);
+    }
+
+    /**
      * Build CLIP response filter ID (ECU -> tool)
      */
     inline uint32_t buildClipResponseId(uint8_t ecuAddress, uint8_t toolAddress = TOOL_ADDRESS)
