@@ -90,38 +90,38 @@ int main(int argc, char* argv[])
     reader.setProgressCallback(progressCallback);
     reader.setLogCallback(logCallback);
 
-    // Connect using ECUReader (ALL logic is in clip-core)
-    std::cerr << "[INFO] Connecting to ECU on " << canDevice << "...\n";
-    if (!reader.connect(canDevice)) {
-        std::cerr << "[ERROR] Failed to connect to ECU on " << canDevice << "\n";
+    // Connect using Service 0x4A mode (no CLIP session - this WORKS for CM550)
+    std::cerr << "[INFO] Connecting to ECU on " << canDevice << " (Service 0x4A mode)...\n";
+    if (!reader.connectSimple(canDevice)) {
+        std::cerr << "[ERROR] Failed to open CAN device " << canDevice << "\n";
         return 1;
     }
     std::cerr << "[INFO] Connected successfully\n";
 
     int result = 0;
 
-    // Execute command - NO dump logic here, just call ECUReader methods
+    // Execute command using Service 0x4A (the WORKING approach for CM550)
     if (command == "--dump-ram") {
         std::string filename = outputArg.empty() ? "cm550_ram.bin" : outputArg;
-        std::cerr << "[INFO] Dumping RAM to " << filename << "\n";
-        result = reader.dumpMemoryToFile(CM550_RAM_START, CM550_RAM_SIZE, filename) ? 0 : 1;
+        std::cerr << "[INFO] Dumping RAM to " << filename << " (Service 0x4A)\n";
+        result = reader.dumpMemoryService4AToFile(CM550_RAM_START, CM550_RAM_SIZE, filename) ? 0 : 1;
     }
     else if (command == "--dump-extended-ram") {
         std::string filename = outputArg.empty() ? "cm550_extended_ram.bin" : outputArg;
         uint32_t extendedSize = CM550_PROTECTED_RAM_END - CM550_PROTECTED_RAM_START + 1;
-        std::cerr << "[INFO] Dumping extended RAM to " << filename << "\n";
+        std::cerr << "[INFO] Dumping extended RAM to " << filename << " (Service 0x4A)\n";
         std::cerr << "[WARNING] Extended RAM may be protected - read may fail\n";
-        result = reader.dumpMemoryToFile(CM550_PROTECTED_RAM_START, extendedSize, filename) ? 0 : 1;
+        result = reader.dumpMemoryService4AToFile(CM550_PROTECTED_RAM_START, extendedSize, filename) ? 0 : 1;
     }
     else if (command == "--dump-eeprom") {
         std::string filename = outputArg.empty() ? "cm550_eeprom.bin" : outputArg;
-        std::cerr << "[INFO] Dumping EEPROM to " << filename << "\n";
-        result = reader.dumpMemoryToFile(CM550_EEPROM_START, CM550_EEPROM_SIZE, filename) ? 0 : 1;
+        std::cerr << "[INFO] Dumping EEPROM to " << filename << " (Service 0x4A)\n";
+        result = reader.dumpMemoryService4AToFile(CM550_EEPROM_START, CM550_EEPROM_SIZE, filename) ? 0 : 1;
     }
     else if (command == "--dump-rom") {
         std::string filename = outputArg.empty() ? "cm550_rom.bin" : outputArg;
-        std::cerr << "[INFO] Dumping ROM to " << filename << " (this may take a while...)\n";
-        result = reader.dumpMemoryToFile(CM550_ROM_START, CM550_ROM_SIZE, filename) ? 0 : 1;
+        std::cerr << "[INFO] Dumping ROM to " << filename << " (Service 0x4A - this may take a while...)\n";
+        result = reader.dumpMemoryService4AToFile(CM550_ROM_START, CM550_ROM_SIZE, filename) ? 0 : 1;
     }
     else if (command == "--dump-all") {
         std::string dir = outputArg.empty() ? "." : outputArg;
@@ -130,11 +130,11 @@ int main(int argc, char* argv[])
             dir += '/';
         }
 
-        std::cerr << "[INFO] Dumping all memory regions to " << dir << "\n";
+        std::cerr << "[INFO] Dumping all memory regions to " << dir << " (Service 0x4A)\n";
 
         // RAM
         std::cerr << "\n=== RAM ===\n";
-        if (!reader.dumpMemoryToFile(CM550_RAM_START, CM550_RAM_SIZE, dir + "cm550_ram.bin")) {
+        if (!reader.dumpMemoryService4AToFile(CM550_RAM_START, CM550_RAM_SIZE, dir + "cm550_ram.bin")) {
             std::cerr << "[ERROR] RAM dump failed\n";
             result = 1;
         }
@@ -142,7 +142,7 @@ int main(int argc, char* argv[])
 
         // EEPROM
         std::cerr << "\n=== EEPROM ===\n";
-        if (!reader.dumpMemoryToFile(CM550_EEPROM_START, CM550_EEPROM_SIZE, dir + "cm550_eeprom.bin")) {
+        if (!reader.dumpMemoryService4AToFile(CM550_EEPROM_START, CM550_EEPROM_SIZE, dir + "cm550_eeprom.bin")) {
             std::cerr << "[ERROR] EEPROM dump failed\n";
             result = 1;
         }
@@ -150,7 +150,7 @@ int main(int argc, char* argv[])
 
         // ROM
         std::cerr << "\n=== ROM ===\n";
-        if (!reader.dumpMemoryToFile(CM550_ROM_START, CM550_ROM_SIZE, dir + "cm550_rom.bin")) {
+        if (!reader.dumpMemoryService4AToFile(CM550_ROM_START, CM550_ROM_SIZE, dir + "cm550_rom.bin")) {
             std::cerr << "[ERROR] ROM dump failed\n";
             result = 1;
         }
@@ -159,7 +159,7 @@ int main(int argc, char* argv[])
         // Extended RAM (may fail)
         std::cerr << "\n=== Extended RAM (may be protected) ===\n";
         uint32_t extendedSize = CM550_PROTECTED_RAM_END - CM550_PROTECTED_RAM_START + 1;
-        if (!reader.dumpMemoryToFile(CM550_PROTECTED_RAM_START, extendedSize, dir + "cm550_extended_ram.bin")) {
+        if (!reader.dumpMemoryService4AToFile(CM550_PROTECTED_RAM_START, extendedSize, dir + "cm550_extended_ram.bin")) {
             std::cerr << "[WARNING] Extended RAM dump failed (this region may be protected)\n";
             // Don't fail the whole operation for extended RAM
         }
