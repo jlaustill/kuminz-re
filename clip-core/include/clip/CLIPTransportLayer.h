@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <vector>
 #include <functional>
-#include "../types/ICanAdapter.h"
+#include "ICanAdapter.h"
 #include "types/EClipCommand.h"
 #include "types/TClipPacket.h"
 #include "J1939MessageBuilder.h"

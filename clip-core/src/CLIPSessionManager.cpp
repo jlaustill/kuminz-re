@@ -1,4 +1,4 @@
-#include "CLIPSessionManager.h"
+#include "clip/CLIPSessionManager.h"
 #include <sstream>
 #include <iomanip>
 

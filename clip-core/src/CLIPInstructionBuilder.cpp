@@ -1,4 +1,4 @@
-#include "CLIPInstructionBuilder.h"
+#include "clip/CLIPInstructionBuilder.h"
 
 CLIPInstructionBuilder::CLIPInstructionBuilder()
     : m_sequenceId(0)

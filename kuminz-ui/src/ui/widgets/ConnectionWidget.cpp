@@ -1,7 +1,7 @@
 #include "ConnectionWidget.h"
-#include "../../can/SocketCanAdapter.h"
 #include "../../can/CanDeviceManager.h"
-#include "../../clip/ECUReader.h"
+#include <clip/SocketCanAdapter.h>
+#include <clip/ECUReader.h>
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>

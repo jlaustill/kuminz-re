@@ -1,7 +1,7 @@
 #ifndef SOCKETCANADAPTER_H
 #define SOCKETCANADAPTER_H
 
-#include "../types/ICanAdapter.h"
+#include "ICanAdapter.h"
 
 /**
  * @brief Linux SocketCAN implementation of ICanAdapter.

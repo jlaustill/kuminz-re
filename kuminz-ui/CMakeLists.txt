@@ -12,37 +12,21 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools)
 
+# Add clip-core library (CLIP protocol business logic)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../clip-core ${CMAKE_CURRENT_BINARY_DIR}/clip-core)
+
 set(TS_FILES kuminz-ui_en_US.ts)
 
-# CLIP protocol business logic sources
-set(CLIP_SOURCES
-        src/clip/J1939MessageBuilder.cpp
-        src/clip/CLIPInstructionBuilder.cpp
-        src/clip/CLIPTransportLayer.cpp
-        src/clip/CLIPSessionManager.cpp
-        src/clip/ECUReader.cpp
-)
+# NOTE: CLIP protocol sources are now in clip-core library
+# kuminz-ui only contains UI-specific code
 
-set(CLIP_HEADERS
-        src/types/ICanAdapter.h
-        src/clip/types/EClipCommand.h
-        src/clip/types/ESessionState.h
-        src/clip/types/TClipPacket.h
-        src/clip/J1939MessageBuilder.h
-        src/clip/CLIPInstructionBuilder.h
-        src/clip/CLIPTransportLayer.h
-        src/clip/CLIPSessionManager.h
-        src/clip/ECUReader.h
-)
-
-# CAN adapter sources (Linux SocketCAN)
+# CAN adapter sources - only CanDeviceManager (Qt-dependent device discovery)
+# SocketCanAdapter is now in clip-core
 set(CAN_SOURCES
-        src/can/SocketCanAdapter.cpp
         src/can/CanDeviceManager.cpp
 )
 
 set(CAN_HEADERS
-        src/can/SocketCanAdapter.h
         src/can/CanDeviceManager.h
 )
 
@@ -67,8 +51,6 @@ set(PROJECT_SOURCES
         mainwindow.cpp
         mainwindow.h
         mainwindow.ui
-        ${CLIP_SOURCES}
-        ${CLIP_HEADERS}
         ${CAN_SOURCES}
         ${CAN_HEADERS}
         ${UI_SOURCES}
@@ -103,16 +85,19 @@ else()
     qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 endif()
 
-# Include directories for CLIP business logic and UI
+# Include directories for UI code
+# Note: clip-core headers are available via PUBLIC include from clip-core library
 target_include_directories(kuminz-ui PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/types
     ${CMAKE_CURRENT_SOURCE_DIR}/src/can
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/clip
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ui
 )
 
-target_link_libraries(kuminz-ui PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+# Link clip-core library (contains all CLIP protocol logic) and Qt
+target_link_libraries(kuminz-ui PRIVATE
+    clip-core
+    Qt${QT_VERSION_MAJOR}::Widgets
+)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an

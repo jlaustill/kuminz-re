@@ -5,7 +5,7 @@
 #include <vector>
 #include <string>
 #include <functional>
-#include "../types/ICanAdapter.h"
+#include "ICanAdapter.h"
 #include "J1939MessageBuilder.h"
 #include "CLIPInstructionBuilder.h"
 #include "CLIPTransportLayer.h"

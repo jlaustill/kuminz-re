@@ -1,4 +1,4 @@
-#include "J1939MessageBuilder.h"
+#include "clip/J1939MessageBuilder.h"
 
 J1939MessageBuilder::J1939MessageBuilder()
     : m_sourceAddress(J1939_TOOL_ADDRESS)

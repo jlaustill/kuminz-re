@@ -1,6 +1,6 @@
-#include "CLIPTransportLayer.h"
+#include "clip/CLIPTransportLayer.h"
 #include <cstring>
-#include <QDebug>
+#include <iostream>
 #include <sstream>
 #include <iomanip>
 
@@ -65,7 +65,7 @@ void CLIPTransportLayer::reportError(EClipTransportError error, const std::strin
 bool CLIPTransportLayer::sendFrame(const TClipFrame& frame)
 {
     if (!m_adapter || !m_adapter->isOpen()) {
-        qDebug() << "[CLIP TX] ERROR: CAN adapter not open";
+        std::cerr << "[CLIP TX] ERROR: CAN adapter not open\n";
         reportError(EClipTransportError::Aborted, "CAN adapter not open");
         return false;
     }
@@ -81,11 +81,11 @@ bool CLIPTransportLayer::sendFrame(const TClipFrame& frame)
     for (int i = 0; i < len; i++) {
         ss << std::hex << std::setw(2) << static_cast<int>(data[i]) << " ";
     }
-    qDebug().noquote() << QString::fromStdString(ss.str());
+    std::cerr << ss.str() << "\n";
 
     bool result = m_adapter->send(arbId, data, len);
     if (!result) {
-        qDebug() << "[CLIP TX] ERROR: send() failed";
+        std::cerr << "[CLIP TX] ERROR: send() failed\n";
     }
     return result;
 }
@@ -93,12 +93,12 @@ bool CLIPTransportLayer::sendFrame(const TClipFrame& frame)
 bool CLIPTransportLayer::receiveFrame(TClipFrame& frame, int timeoutMs)
 {
     if (!m_adapter || !m_adapter->isOpen()) {
-        qDebug() << "[CLIP RX] ERROR: CAN adapter not open";
+        std::cerr << "[CLIP RX] ERROR: CAN adapter not open\n";
         reportError(EClipTransportError::Aborted, "CAN adapter not open");
         return false;
     }
 
-    qDebug() << "[CLIP RX] Waiting for response (timeout:" << timeoutMs << "ms)...";
+    std::cerr << "[CLIP RX] Waiting for response (timeout:" << timeoutMs << "ms)...\n";
 
     uint32_t arbId;
     uint8_t data[8];
@@ -112,39 +112,39 @@ bool CLIPTransportLayer::receiveFrame(TClipFrame& frame, int timeoutMs)
         for (int i = 0; i < len; i++) {
             ss << std::hex << std::setw(2) << static_cast<int>(data[i]) << " ";
         }
-        qDebug().noquote() << QString::fromStdString(ss.str());
+        std::cerr << ss.str() << "\n";
 
         // Check if this is a CLIP response (PGN 0xEF)
         if (!J1939MessageBuilder::isClipResponse(arbId)) {
-            qDebug() << "[CLIP RX] -> Skipping: Not a CLIP response";
+            std::cerr << "[CLIP RX] -> Skipping: Not a CLIP response\n";
             continue;  // Not a CLIP response, keep waiting
         }
 
         // Check if response is from our target ECU
         uint8_t sourceAddr = J1939MessageBuilder::extractSourceAddress(arbId);
         if (sourceAddr != m_destAddress) {
-            qDebug() << "[CLIP RX] -> Skipping: From different ECU (source:" << sourceAddr << ", expected:" << m_destAddress << ")";
+            std::cerr << "[CLIP RX] -> Skipping: From different ECU (source:" << static_cast<int>(sourceAddr) << ", expected:" << static_cast<int>(m_destAddress) << ")\n";
             continue;  // From different ECU
         }
 
         // Decode the frame
         if (!frame.decode(data, len)) {
-            qDebug() << "[CLIP RX] ERROR: Failed to decode CLIP frame";
+            std::cerr << "[CLIP RX] ERROR: Failed to decode CLIP frame\n";
             reportError(EClipTransportError::Aborted, "Failed to decode CLIP frame");
             return false;
         }
 
         // Check connection ID matches
         if (frame.connectionId != m_connectionId) {
-            qDebug() << "[CLIP RX] -> Skipping: Different connection ID (got:" << frame.connectionId << ", expected:" << m_connectionId << ")";
+            std::cerr << "[CLIP RX] -> Skipping: Different connection ID (got:" << static_cast<int>(frame.connectionId) << ", expected:" << static_cast<int>(m_connectionId) << ")\n";
             continue;  // Different connection
         }
 
-        qDebug() << "[CLIP RX] -> MATCH! Valid CLIP response received";
+        std::cerr << "[CLIP RX] -> MATCH! Valid CLIP response received\n";
         return true;
     }
 
-    qDebug() << "[CLIP RX] TIMEOUT: No CLIP response received";
+    std::cerr << "[CLIP RX] TIMEOUT: No CLIP response received\n";
     reportError(EClipTransportError::Timeout, "Timeout waiting for CLIP response");
     return false;
 }
