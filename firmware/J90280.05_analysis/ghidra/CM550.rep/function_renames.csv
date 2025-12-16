@@ -263,7 +263,7 @@ address,newName
 0x00026ff4,canMessageMemorySyncController
 0x27dd4,retarderModeThresholdsSetup
 0x27e86,systemControlFunction4
-0x00027e98,systemSecurityCheck
+0x00027e98,systemSecurityCheckStub_AlwaysPasses
 0x00028bda,initDiagnosticSystemState
 0x29C52,buildCanMessage
 0x29a86,engineCoolantPGN_65226_Builder

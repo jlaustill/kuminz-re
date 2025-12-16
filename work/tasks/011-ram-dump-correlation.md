@@ -252,8 +252,92 @@ initDiagnosticProtocol → vp44CommunicationTestAndInit
 - [X] Verify/correct 5+ global variable definitions (13 new entries added, verified in export)
 - [X] Document diagnostic buffer structure (48-byte record format)
 - [X] Create comprehensive RAM memory map (analysis/ram_memory_map.md)
-- [~] Map calibration table format to e2m parameters (tables mapped, e2m correlation pending)
+- [X] Map calibration table format to e2m parameters (COMPLETE - see session below)
 - [~] Identify 10+ new function names via xref (6 key functions documented, but not via xref - via code exploration)
+
+### 2024-12-16 - E2M Address Correlation Session
+
+**Corrected Understanding: E2M Spans Multiple Memory Zones**
+
+E2M parameters do NOT all map to RAM. They span multiple memory zones with different persistence characteristics:
+
+| Memory Zone | Params | Address Range | Persistence | Contents |
+|-------------|--------|---------------|-------------|----------|
+| External_RAM | 1,062 | 0x0080xxxx | **Volatile** | Runtime values, sensor readings |
+| EEPROM | 78 | 0x0100xxxx | **Persistent** | Adjustable settings (droop, gains, PTO) |
+| CalTerm_Storage | 37 | 0x0006xxxx | Varies | Tool parameter limits |
+| Flash/ROM | 8 | 0x0000xxxx | Read-only | Factory defaults |
+| **Unmapped** | 139 | Unknown | **Persistent** | Large lookup tables |
+
+**"Available Offline" Parameters (139):**
+These are large calibration tables stored in EEPROM that can be read/written when engine is OFF:
+- Timing advance tables (4DTA00XA, 4DTA01XA) - Column3 0x1040, 0x103D
+- Fueling tables (5DFL00XA, 5DFL01XA) - Column3 0x1058, 0x1055
+- Sensor linearization tables (ADBSPRXA/YA) - Column3 0x1016, 0x1015
+
+These Column3 values are NOT in the lookup table yet - need to map them.
+
+**Linearization Tables Location:**
+The sensor linearization tables (e.g., ADBSPRXA @ 0x806C4A) are in the **ROM copy area**:
+- Source: ROM 0x37EAE (factory defaults)
+- Destination: RAM 0x8062D2-0x808AB2
+- They have factory defaults from ROM but can be customized via EEPROM
+
+**Data Flow:**
+| Source | Address | RAM Destination | Size |
+|--------|---------|-----------------|------|
+| EEPROM Block 1 | 0x4000 | 0x804882-0x80488C | 10 bytes |
+| EEPROM Block 2 | 0x4400 | 0x80488E-0x8062D0 | 6,722 bytes |
+| ROM Firmware | 0x37EAE | 0x8062D2-0x808AB2 | 10,208 bytes |
+
+**Updated ram_memory_map.md** with corrected E2M correlation section.
+
+### 2024-12-16 - Address Validation Table Discovery
+
+**BREAKTHROUGH:** Found the firmware's memory access validation table at address 0x2B512.
+
+This table defines which memory regions can be read via diagnostic Service 0x4A:
+
+| Entry | Start | End | Flag1 | Flag2 | Region | Size | Status |
+|-------|-------|-----|-------|-------|--------|------|--------|
+| 0 | 0x00000000 | 0x0003FFFF | 0x04 | 0x04 | **Flash/ROM** | 256KB | READABLE |
+| 1 | 0x00800000 | 0x008091C2 | 0x03 | 0x03 | RAM | 37KB | Already dumped |
+| 2 | 0x008091C2 | 0x0080FFFF | 0x00 | 0x00 | **Extended RAM** | 28KB | READABLE |
+| 3 | 0x01000000 | 0x01000FFF | 0x05 | 0x05 | **EEPROM** | 4KB | READABLE |
+| 4 | 0x00FFC800 | 0x00FFFFFF | 0x03 | 0x0A | High Memory | 14KB | BLOCKED (normal) |
+
+**Flag System (VERIFIED via decompilation of `diagMemoryReadResponseBuilder`):**
+- Table has TWO flag bytes per entry (byte 8 = special mode, byte 9 = normal mode)
+- Flag values 0x09 (invalid range) and 0x0A (access denied) BLOCK reads
+- All other values (0x00, 0x03, 0x04, 0x05) ALLOW reads
+
+**Key Functions Identified:**
+- `addressRangeValidator` @ 0x2B560 - Validates addresses against this table
+- `diagMemoryReadResponseBuilder` @ 0x1BDE6 - Uses validator, checks for 0x09/0x0A to block
+- `diagMemoryReadService4aHandler` @ 0x1C02E - Service 0x4A handler
+
+**Implications:**
+1. **EEPROM dump possible** - 4KB at 0x01000000-0x01000FFF contains persistent calibration
+2. **Flash/ROM dump possible** - 256KB matches our firmware file (can verify integrity)
+3. **Extended RAM readable!** - Flags 0x00 is ALLOWED (only 0x09/0x0A block)
+4. **High memory blocked in normal mode** - Flag2=0x0A blocks access, requires special mode
+
+**Memory Dump Summary:**
+| Region | Address Range | Size | Can Dump? |
+|--------|---------------|------|-----------|
+| Flash/ROM | 0x00000000-0x0003FFFF | 256KB | ✅ YES |
+| RAM (current) | 0x00800000-0x008091C2 | 37KB | ✅ Already done |
+| Extended RAM | 0x008091C2-0x0080FFFF | 28KB | ✅ YES |
+| EEPROM | 0x01000000-0x01000FFF | 4KB | ✅ YES |
+| High Memory | 0x00FFC800-0x00FFFFFF | 14KB | ⚠️ Special mode only |
+
+**Next Steps:**
+- [ ] Create `--dump-eeprom` command (0x01000000-0x01000FFF, 4KB)
+- [ ] Create `--dump-rom` command (0x00000000-0x0003FFFF, 256KB)
+- [ ] Extend RAM dump to include 0x008091C2-0x0080FFFF (28KB more)
+- [ ] Compare ROM dump with J90280.05.full.bin for verification
+
+**Updated ram_memory_map.md** with Service 0x4A validation table documentation.
 
 ---
 

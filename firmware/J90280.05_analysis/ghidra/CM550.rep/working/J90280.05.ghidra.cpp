@@ -1,6 +1,6 @@
 // Ghidra C++ Decompilation Export - J90280.05 Firmware
 // Generated with renamed functions, variables, and meaningful types
-// Tue Dec 16 09:06:45 MST 2025
+// Tue Dec 16 10:04:37 MST 2025
 
 
 //
@@ -6832,7 +6832,7 @@ void diagnosticCommandDispatcher(void)
             bVar7 = bVar7 + 1;
             pbVar8 = pbVar8 + 1;
           } while (bVar7 < 10);
-          securityCheckResult = systemSecurityCheck();
+          securityCheckResult = systemSecurityCheckStub_AlwaysPasses();
           if (securityCheckResult == '\0') {
             switch(*messageDataPtr) {
             case 0x40:
@@ -15424,8 +15424,6 @@ ushort phase3_retarder_condition_monitor(void)
 // Function: memoryOperationDispatcher @ 0x0001b37a
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 uint memoryOperationDispatcher(int param_1,undefined1 *param_2,uint param_3)
 
 {
@@ -15475,11 +15473,11 @@ uint memoryOperationDispatcher(int param_1,undefined1 *param_2,uint param_3)
       uVar3 = memcpy(param_2,puVar1,CONCAT22(sVar6,uVar8));
       return uVar3 & 0xffffff00;
     case 3:
-      if (_security_bypass_flag != 0xff) {
+      if (security_bypass_flag != 0xff) {
         if (!bVar2) {
           return 3;
         }
-        securityCheckResult3 = systemSecurityCheck();
+        securityCheckResult3 = systemSecurityCheckStub_AlwaysPasses();
         if (securityCheckResult3 != '\0') {
           return 3;
         }
@@ -15493,11 +15491,11 @@ uint memoryOperationDispatcher(int param_1,undefined1 *param_2,uint param_3)
          (amount_of_time_since_water_in_fuel_low_failure_was_detected_0_65535 != 0)) {
         return 7;
       }
-      if (_security_bypass_flag != 0xff) {
+      if (security_bypass_flag != 0xff) {
         if (!bVar2) {
           return 3;
         }
-        securityCheckResult = systemSecurityCheck();
+        securityCheckResult = systemSecurityCheckStub_AlwaysPasses();
         if (securityCheckResult != '\0') {
           return 3;
         }
@@ -15695,8 +15693,6 @@ uint addressLookupFunction(undefined4 param_1)
 // Function: diagnosticServiceSecurityValidator @ 0x0001b7e8
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 undefined4 diagnosticServiceSecurityValidator(int param_1)
 
 {
@@ -15720,7 +15716,7 @@ undefined4 diagnosticServiceSecurityValidator(int param_1)
   }
   if ((('\x01' << (serviceId & 7) &
        *(byte *)((int)&can_number_of_retarder_destination_non_specific_rx_objects_0_14 +
-                ((int)(uint)serviceId >> 3))) == 0) || (_security_bypass_flag != -0x4ade)) {
+                ((int)(uint)serviceId >> 3))) == 0) || (security_bypass_flag != 0xb522)) {
     if ((cVar1 != '\b') && (cVar1 != (char)(cVar2 + '\n'))) {
       return 2;
     }
@@ -15729,7 +15725,7 @@ undefined4 diagnosticServiceSecurityValidator(int param_1)
   if ((char)(cVar2 + '\n') != cVar1) {
     return 2;
   }
-  cVar1 = systemSecurityCheck();
+  cVar1 = systemSecurityCheckStub_AlwaysPasses();
   if (cVar1 == '\0') {
     return CONCAT31(extraout_var,0xff);
   }
@@ -24107,10 +24103,10 @@ void systemControlFunction4(void)
 
 
 //
-// Function: systemSecurityCheck @ 0x00027e98
+// Function: systemSecurityCheckStub_AlwaysPasses @ 0x00027e98
 //
 
-undefined1 systemSecurityCheck(void)
+undefined1 systemSecurityCheckStub_AlwaysPasses(void)
 
 {
   return 0;
@@ -26741,18 +26737,18 @@ undefined4 addressRangeValidator(uint param_1,uint param_2)
   uint uVar2;
   byte bVar3;
   uint uVar4;
-  dword *pdVar5;
+  word *pwVar5;
   
   uVar2 = param_2 >> 0x10;
   uVar4 = (param_1 + uVar2) - 1;
   if (uVar4 < param_1) {
     return 9;
   }
-  pdVar5 = &address_range_validation_table;
+  pwVar5 = &address_range_validation_table;
   bVar3 = 0;
-  while ((param_1 < *pdVar5 || (pdVar5[1] < uVar4))) {
+  while ((param_1 < *(uint *)pwVar5 || (*(uint *)((int)pwVar5 + 4) < uVar4))) {
     uVar2 = 0;
-    pdVar5 = (dword *)((int)pdVar5 + 10);
+    pwVar5 = (word *)((int)pwVar5 + 10);
     bVar3 = bVar3 + 1;
     if (4 < bVar3) {
       return 9;
@@ -26760,9 +26756,9 @@ undefined4 addressRangeValidator(uint param_1,uint param_2)
   }
   uVar1 = (undefined3)(uVar2 >> 8);
   if (water_in_fuel_detection_flag == 1) {
-    return CONCAT31(uVar1,*(undefined1 *)(pdVar5 + 2));
+    return CONCAT31(uVar1,*(undefined1 *)((int)pwVar5 + 8));
   }
-  return CONCAT31(uVar1,*(undefined1 *)((int)pdVar5 + 9));
+  return CONCAT31(uVar1,*(undefined1 *)((int)pwVar5 + 9));
 }
 
 

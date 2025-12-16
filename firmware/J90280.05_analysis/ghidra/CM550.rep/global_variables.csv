@@ -833,7 +833,7 @@ address,name,type,comment,length,calterm_type,unit,data_pattern
 0x008034e6,vp44_fso_zero_timing_fault_counter,byte,VP44 FSO zero timing fault counter (4 refs),1,0,,counter
 0x008034e7,vp44_fso_demand_delta_fault_counter,byte,VP44 FSO demand delta fault counter (4 refs),1,0,,counter
 0x008034f8,can_message_buffer_start,byte,Start of CAN message buffer array for logging (906 bytes),1,0,,data
-0x00803586,security_bypass_flag,byte,Security check bypass flag (0xFF=bypass enabled),1,0,,flag
+0x00803586,security_bypass_flag,word,Security bypass magic value - 0xB522 enables bypass (diagnosticServiceSecurityValidator memoryOperationDispatcher) - VERIFIED via decompilation,2,0,,flag
 0x008035d4,vp44_status_flags_1,word,VP44 status flags 1 - bit 6 (0x40) affects pin switching,2,0,,flag
 0x008035d6,fuel_demand_control_flags,word,Fuel demand mode control flags,2,0,,flag
 0x008035d8,protection_system_flags,word,Protection system status flags,2,0,,flag
@@ -4787,7 +4787,7 @@ address,name,type,comment,length,calterm_type,unit,data_pattern
 0x00809ab6,vp44_can_msg_100_tx_byte_2,byte,VP44 CAN msg 100 transmit byte 2,1,0,,byte
 0x00809ab7,vp44_can_msg_100_tx_byte_1,byte,VP44 CAN msg 100 transmit byte 1,1,0,,byte
 0x00809ab8,vp44_can_msg_100_tx_byte_0,byte,VP44 CAN msg 100 transmit byte 0,1,0,,byte
-0x008035ea,diagnostic_service_enable_flags,byte,Diagnostic service enable flags: bit0=secured bit1=INSITE bit2=extended (7 refs),1,0,,flags
+0x008035ea,diagnostic_service_enable_flags,byte,Diagnostic service enable flags (DIAG_ENABLE_FLAGS enum): 0x01=core 0x02=insite 0x04=extended 0x08=special - VERIFIED via decompilation,1,0,,flags
 0x0080c99a,diagnostic_queue_message_type,word,Diagnostic message queue type/ID written by diagnosticMessageQueueWrite (3 refs),2,0,,type
 0x00806fb2,timing_blend_threshold,word,Timing blend state threshold for fuelTableBlendResultHandler (4 refs),2,0,,threshold
 0x008000de,param_lookup_rpm_input,word,Engine RPM input for param_lookup_2 table interpolation (1 ref),2,0,RPM,value
@@ -4815,7 +4815,7 @@ address,name,type,comment,length,calterm_type,unit,data_pattern
 0x00809a12,sensor_fault_rpm_threshold,word,Sensor fault RPM threshold calculated value (4 refs),2,0,,threshold
 0x00809a34,fuel_demand_limit_previous,word,Fuel demand limit previous value before selector 11 (2 refs),2,0,,value
 0x00809a38,rpm_derate_scaling_factor,word,RPM derate percent scaling factor (1 ref),2,0,,factor
-0x0080d3f4,water_in_fuel_detection_flag,word,Water-in-fuel detection state flag (used by waterInFuelFaultClear/Validation) (6 refs),2,0,,flag
+0x0080d3f4,water_in_fuel_detection_flag,word,SPECIAL DIAGNOSTIC MODE FLAG (misleading name) - when=1 uses special_mode_flag in addressRangeValidator enabling high memory access - set via Service 3 cmd 0x40 - VERIFIED via decompilation,2,0,,flag
 0x0080d4c0,fuel_demand_rpm_based_limit,word,Fuel demand limit calculated from RPM in fuelDemandBasedParameterCalculator (6 refs),2,0,,limit
 0x0080d4c2,fuel_demand_limit_snapshot,word,Fuel demand limit snapshot before minimum update (2 refs),2,0,,snapshot
 0x0080d458,memory_patch_pending_flag,word,Memory patching system pending flag (3 refs),2,0,,flag
@@ -6092,7 +6092,7 @@ address,name,type,comment,length,calterm_type,unit,data_pattern
 0x00028c10,internal_ram_init_data_block_1,dword,Internal RAM initialization data block 1 for EBI registers (initInternalRamAndCAN1),4,0,,init_data
 0x0002929c,internal_ram_init_data_block_2,dword,Internal RAM initialization data block 2 for CAN1 mailboxes (initInternalRamAndCAN1),4,0,,init_data
 0x000298be,diag_multi_packet_status_code_table,byte,Status code table for diagnostic multi-packet responses (diagnosticMultiPacketResponseBuilder),1,0,,table
-0x0002b512,address_range_validation_table,dword,Address range validation table - 5 entries with start/end/permissions (addressRangeValidator),4,0,,table
+0x0002b512,address_range_validation_table,address_range_entry_t[5],Service 0x4A memory read validation - 5x10-byte entries: ROM/RAM/ExtRAM/EEPROM/HighMem (addressRangeValidator) - VERIFIED 2024-12-16,50,0,,table
 0x0002de86,crank_protection_sequence_table,byte,Expected crank protection state sequence table - 12 entries (crankAndProtectionStateMonitor),1,0,,table
 0x00800B00,diagnostic_request_buffer,byte[256],Diagnostic request/response buffer - 4 x 48-byte slots - VERIFIED via RAM dump 2024-12-16,256,0,,buffer
 0x00803B00,ecu_identity_header,byte[10],ECU identity block header - VERIFIED via RAM dump,10,0,,header

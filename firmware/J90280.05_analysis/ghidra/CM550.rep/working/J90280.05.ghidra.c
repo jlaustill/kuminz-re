@@ -2,11 +2,11 @@
  * Ghidra Decompilation Export - J90280.05 Firmware
  * Cummins CM550 ECU - MC68000 Architecture (Big-Endian)
  *
- * Generated: Tue Dec 16 09:06:50 MST 2025
+ * Generated: Tue Dec 16 10:04:43 MST 2025
  *
  * Data Sources:
- *   - enums.csv (560 entries)
- *   - structure_definitions.csv (72 types)
+ *   - enums.csv (623 entries)
+ *   - structure_definitions.csv (73 types)
  *   - global_variables.csv (6108 variables)
  *   - Ghidra decompiler (789 functions)
  *
@@ -323,9 +323,17 @@ typedef enum {
 
 typedef enum {
     SECURED_WRITE = 3, /* Secured write operations (requires security check) */
+    SECURED_COMMANDS = 3, /* Secured commands - requires systemSecurityCheck... */
     SYSTEM_CONTROL = 4, /* System control operations */
+    SYSTEM_CONTROL = 4, /* System control commands - no security check */
     MEMORY_ACCESS = 5, /* Memory read/write operations */
-    SPECIAL_CONTROL = 6 /* Special timing/control functions */
+    MEMORY_OPERATIONS = 5, /* Memory read/write with CRC validation */
+    SPECIAL_CONTROL = 6, /* Special timing/control functions */
+    RETRY_CONTROL = 6, /* Transmission retry control (subfunction 0x74) */
+    FUEL_ARBITRATOR = 0x4A, /* fuelArbitratorControlService - fuel system control */
+    EXTENDED_4C = 0x4C, /* extendedDiagnosticService4C */
+    EXTENDED_4F = 0x4F, /* extendedDiagnosticService4F */
+    EXTENDED_51 = 0x51 /* extendedDiagnosticService51 */
 } DIAG_SERVICE_ID;
 
 typedef enum {
@@ -376,9 +384,13 @@ typedef enum {
 
 typedef enum {
     RESET_MODE = 0, /* Reset/clear arbitrator state */
+    MODE_RESET = 0, /* Reset fuel arbitrator - clear all targets and m... */
     RPM_TARGET_MODE = 1, /* Set RPM target mode */
+    MODE_RPM_TARGET = 1, /* RPM target mode - set target RPM from diagnosti... */
     THROTTLE_PCT_MODE = 2, /* Throttle percentage control mode */
-    FUEL_LIMIT_MODE = 3 /* Fuel limit control mode */
+    MODE_FUEL_PERCENT = 2, /* Fuel percentage mode - control fuel delivery pe... */
+    FUEL_LIMIT_MODE = 3, /* Fuel limit control mode */
+    MODE_TORQUE_CMD = 3 /* Torque command mode - direct torque control */
 } FUEL_ARB_MODE;
 
 typedef enum {
@@ -466,8 +478,12 @@ typedef enum {
 
 typedef enum {
     CORE_SERVICE_ENABLE = 1, /* Core diagnostic service enable */
+    CORE_SERVICES = 1, /* Enable services 0x03-0x06 (secured memory ops d... */
     INSITE_ENABLE = 2, /* Insite live data enable */
-    EXTENDED_ENABLE = 4 /* Extended diagnostics enable (0x45-0x56) */
+    INSITE_LIVE = 2, /* Enable services 0x80+ (Insite live data monitor... */
+    EXTENDED_ENABLE = 4, /* Extended diagnostics enable (0x45-0x56) */
+    EXTENDED_SERVICES = 4, /* Enable services 0x45-0x56 (fuel arbitrator exte... */
+    SPECIAL_MODE = 8 /* Special diagnostic mode (checked in multiple fu... */
 } DIAG_ENABLE_FLAGS;
 
 typedef enum {
@@ -908,7 +924,7 @@ typedef enum {
     CONDITION_NOT_MET = 7, /* memoryOperationDispatcher - system_logging_stat... */
     ADDR_LOOKUP_FAIL = 8, /* j1939MemoryDataCopyResolver - initial address l... */
     ADDR_RANGE_INVALID = 9, /* addressRangeValidator @ 0x2b544 - address not i... */
-    ADDR_CASE_4 = 10, /* memoryOperationDispatcher switch case 4 - speci... */
+    ADDR_ACCESS_DENIED = 10, /* addressRangeValidator @ 0x2b544 - normal_mode_f... */
     BUFFER_WRITE_FAIL = 11, /* memoryOperationDispatcher - circularBufferWrite... */
     PATCH_LIMIT = 14, /* diagnosticResponseBuilder - memory patch count ... */
     UNKNOWN_SERVICE = 0x18 /* diagnosticServiceDispatcher - service ID not in... */
@@ -918,11 +934,80 @@ typedef enum {
     SUCCESS = 0x4B /* Service 0x4A success response code (service ID ... */
 } __attribute__((packed)) SERVICE_4A_RESPONSE;
 
+typedef enum {
+    DIRECT_ACCESS = 0, /* READ: Allowed | WRITE: Direct access no securit... */
+    SECURITY_REQUIRED = 3, /* READ: Allowed | WRITE: Requires security check ... */
+    WRITE_DENIED = 4, /* READ: Allowed | WRITE: Denied - returns error 0... */
+    LOGGING_MODE = 5, /* READ: Allowed | WRITE: Requires system_logging_... */
+    RANGE_INVALID = 9, /* READ: Denied | WRITE: Error - address not in va... */
+    ACCESS_DENIED = 10 /* READ: Denied | WRITE: Error - explicitly blocke... */
+} __attribute__((packed)) MEMORY_ACCESS_FLAG;
+
+typedef enum {
+    LEGACY_BYPASS = 0xFF, /* Legacy security bypass value check in memoryOpe... */
+    BYPASS_ENABLED = 0xB522 /* Magic value to bypass security checks (stored a... */
+} SECURITY_BYPASS;
+
+typedef enum {
+    ENABLE_SPECIAL_MODE = 0x40, /* waterInFuelFaultClear - ENABLES special diagnos... */
+    VALIDATE_SPECIAL_MODE = 0x41, /* waterInFuelFaultValidation - validates special ... */
+    HIGH_RPM_SHUTDOWN = 0x42, /* activateHighRpmShutdownFlag - trigger high RPM ... */
+    SYSTEM_RESET = 0x43, /* triggerDiagnosticSystemReset - diagnostic syste... */
+    NOP = 0x50, /* No operation - returns success (0x00) */
+    MEMORY_PATCH = 0x51, /* memoryPatchingSystem - apply queued memory patches */
+    SECURED_SHUTDOWN = 0x52, /* requestSecuredShutdown - request secured engine... */
+    RESERVED_ERROR = 0x53, /* Reserved - always returns error 0x04 */
+    CAN_BUFFER_LOG = 0x54 /* canMessageBufferLogger - log CAN message buffer */
+} __attribute__((packed)) DIAG_SERVICE_3_CMD;
+
+typedef enum {
+    CONTROL_64 = 0x64, /* systemControl64 - system control function */
+    FAULT_SCANNER = 0x65, /* enableFaultFlagScanner - enable fault flag scan... */
+    STATE_RESET = 0x66, /* Reset diagnostic_command_state to 0 */
+    DISABLE_SPECIAL_MODE = 0x69, /* waterInFuelDetectionStateInit - DISABLES specia... */
+    RESERVED_70 = 0x70, /* Reserved - returns error 0x04 */
+    STATE_BIT0 = 0x71, /* Set diagnostic_command_state bit 0 */
+    RESERVED_72 = 0x72, /* Reserved - returns error 0x04 */
+    STATE_BIT1 = 0x73, /* Set diagnostic_command_state bit 1 */
+    CONTROL_74 = 0x74, /* systemControl74 - system control function */
+    CONTROL_75 = 0x75, /* systemControl75 - system control function */
+    RESERVED_76 = 0x76 /* Reserved - returns error 0x04 */
+} __attribute__((packed)) DIAG_SERVICE_4_CMD;
+
+typedef enum {
+    MEM_READ_MODE3 = 0x60, /* diagnosticMemoryReadHandler mode 3 - standard read */
+    MEM_WRITE_MODE4 = 0x80, /* diagnosticMemoryWriteHandler mode 4 - 4-byte ad... */
+    MEM_WRITE_MODE2 = 0xA0, /* diagnosticMemoryWriteHandler mode 2 - 2-byte ad... */
+    MULTI_PKT_RX = 0xB0, /* multiPacketReceiveHandler - multi-packet receive */
+    MEM_READ_MODE2 = 0xC0, /* diagnosticMemoryReadHandler mode 2 - compact read */
+    MEM_READ_MODE1 = 0xE0, /* diagnosticMemoryReadHandler mode 1 - extended read */
+    MULTI_PKT_TX = 0xF0 /* multiPacketTransmitHandler - multi-packet transmit */
+} __attribute__((packed)) DIAG_SERVICE_5_MODE;
+
+typedef enum {
+    THROTTLE_OVERRIDE = 4, /* Override throttle control when set */
+    SPEED_LIMIT_ACTIVE = 8, /* Activate speed limiter when set */
+    FUEL_LIMIT_ACTIVE = 0x10 /* Activate fuel limiter when set */
+} __attribute__((packed)) FUEL_ARB_FLAGS;
+
+typedef enum {
+    PARAM_STANDARD = 0, /* Standard parameter read (0x00-0x7F) - response ... */
+    PARAM_EXTENDED = 0x80, /* Extended parameter read (0x80-0xBF) - response ... */
+    ACTIVE_FAULT_LIST = 0xC1, /* insiteActiveFaultListBuilder - list of active DTCs */
+    FAULT_DETAIL = 0xC2, /* insiteFaultDetailBuilder - detailed fault infor... */
+    PID_DTC_REQUEST = 0xC3, /* PID/DTC handler request - triggers insitePidDtc... */
+    PID_DTC_RESPONSE = 0xC4, /* PID/DTC response - response length 4 or 7 */
+    CAPACITY_INFO = 0xEA, /* insiteCapacityResponseBuilder - response length... */
+    ECU_ID = 0xED, /* insiteEcuIdResponseBuilder - ECU identification... */
+    VERSION_INFO = 0xF3 /* insiteVersionInfoBuilder - response length 0x1F... */
+} __attribute__((packed)) INSITE_CMD;
+
 /* ============================================================ */
 /* Forward Struct Declarations                                  */
 /* ============================================================ */
 
 typedef struct ad_sensor_config_t ad_sensor_config_t;
+typedef struct address_range_entry_t address_range_entry_t;
 typedef struct boost_pressure_control_t boost_pressure_control_t;
 typedef struct calterm_protocol_t calterm_protocol_t;
 typedef struct can_message_log_buffer_t can_message_log_buffer_t;
@@ -1694,6 +1779,14 @@ struct sensor_debounce_state_t {
     uint8_t reserved_12[4]; /* Reserved bytes at offset 0x12-0x15 */
 } __attribute__((packed));
 
+/* Instance at 0x0002b512 */
+struct address_range_entry_t {
+    uint32_t start_address; /* Start of valid address range (big-endian) */
+    uint32_t end_address; /* End of valid address range (big-endian) */
+    uint8_t special_mode_flag; /* Access flag when water_in_fuel_detection_flag==... */
+    uint8_t normal_mode_flag; /* Access flag in normal operation (0x09=invalid 0... */
+} __attribute__((packed));
+
 /* ============================================================ */
 /* Struct Instance Macros (for Ghidra structtype_t_ADDRESS refs) */
 /* ============================================================ */
@@ -1750,6 +1843,7 @@ struct sensor_debounce_state_t {
 #define shutdown_minimum_selector_t_0080d494 (*(volatile shutdown_minimum_selector_t*)0X0080D494UL)
 #define diagnostic_source_t_0080d49a (*(volatile diagnostic_source_t*)0X0080D49AUL)
 #define governor_pid_integral_t_008016e2 (*(volatile governor_pid_integral_t*)0X008016E2UL)
+#define address_range_entry_t_0002b512 (*(volatile address_range_entry_t*)0X0002B512UL)
 
 /* ============================================================ */
 /* Global Variables (Memory-Mapped via Pointer Macros)         */
@@ -1795,7 +1889,7 @@ struct sensor_debounce_state_t {
 #define internal_ram_init_data_block_1 (*(volatile uint32_t*)0x00028C10UL) /* Internal RAM initialization data block 1 for EB... */
 #define internal_ram_init_data_block_2 (*(volatile uint32_t*)0x0002929CUL) /* Internal RAM initialization data block 2 for CA... */
 #define diag_multi_packet_status_code_table (*(volatile uint8_t*)0x000298BEUL) /* Status code table for diagnostic multi-packet r... */
-#define address_range_validation_table (*(volatile uint32_t*)0x0002B512UL) /* Address range validation table - 5 entries with... */
+#define address_range_validation_table ((volatile uint8_t*)0x0002B512UL) /* Service 0x4A memory read validation - 5x10-byte... */
 #define crank_protection_sequence_table (*(volatile uint8_t*)0x0002DE86UL) /* Expected crank protection state sequence table ... */
 #define firmware_data_source (*(volatile uint8_t*)0x00037EAEUL) /* Source address for firmware data copying to wor... */
 #define service_tool_adjustable_parameter_range_limits_n_a (*(volatile uint16_t*)0x00060000UL) /* SERVICE TOOL ADJUSTABLE PARAMETER RANGE LIMITS ... */
@@ -3210,7 +3304,7 @@ struct sensor_debounce_state_t {
 #define calibration_checksum_expected_1 (*(volatile uint16_t*)0x00803500UL) /* Calibration checksum expected value 1 (2 refs) */
 #define calibration_checksum_expected_2 (*(volatile uint16_t*)0x00803502UL) /* Calibration checksum expected value 2 (2 refs) */
 #define loop_counter_reference (*(volatile uint16_t*)0x0080352CUL) /* Loop counter comparison reference value (3 refs) */
-#define security_bypass_flag (*(volatile uint8_t*)0x00803586UL) /* Security check bypass flag (0xFF=bypass enabled) */
+#define security_bypass_flag (*(volatile uint16_t*)0x00803586UL) /* Security bypass magic value - 0xB522 enables by... */
 #define vp44_status_flags_1 (*(volatile uint16_t*)0x008035D4UL) /* VP44 status flags 1 - bit 6 (0x40) affects pin ... */
 #define fuel_demand_control_flags (*(volatile uint16_t*)0x008035D6UL) /* Fuel demand mode control flags */
 #define protection_system_flags (*(volatile uint16_t*)0x008035D8UL) /* Protection system status flags */
@@ -3218,7 +3312,7 @@ struct sensor_debounce_state_t {
 #define diagnostic_status_flags (*(volatile uint16_t*)0x008035DCUL) /* Diagnostic status bit flags (2 refs) */
 #define fuel_temp_control_flags (*(volatile uint16_t*)0x008035E0UL) /* Fuel temperature control bit flags */
 #define protection_state_enable_flags (*(volatile uint16_t*)0x008035E2UL) /* Protection state enable/disable flags register ... */
-#define diagnostic_service_enable_flags (*(volatile uint8_t*)0x008035EAUL) /* Diagnostic service enable flags: bit0=secured b... */
+#define diagnostic_service_enable_flags (*(volatile uint8_t*)0x008035EAUL) /* Diagnostic service enable flags (DIAG_ENABLE_FL... */
 #define vp44_status_flags_2 (*(volatile uint16_t*)0x008035ECUL) /* VP44 status flags 2 - bit 1 (0x02) affects pin ... */
 #define derate_percentage_active (*(volatile uint16_t*)0x00803614UL) /* Active derate percentage */
 #define engine_operating_mode_flags (*(volatile uint16_t*)0x00803618UL) /* Engine operating mode flags (2 refs) */
@@ -6975,7 +7069,7 @@ struct sensor_debounce_state_t {
 #define diagnostic_rx_buffer_start_ptr (*(volatile uint32_t*)0x0080D3EAUL) /* Diagnostic RX buffer start pointer (points to 0... */
 #define diagnostic_buffer_end_address (*(volatile uint32_t*)0x0080D3EEUL) /* Diagnostic buffer end boundary address (0x808cff) */
 #define can_buffer_logger_state (*(volatile uint8_t*)0x0080D3F3UL) /* CAN message buffer logger state flag (1 ref) */
-#define water_in_fuel_detection_flag (*(volatile uint16_t*)0x0080D3F4UL) /* Water-in-fuel detection state flag (used by wat... */
+#define water_in_fuel_detection_flag (*(volatile uint16_t*)0x0080D3F4UL) /* SPECIAL DIAGNOSTIC MODE FLAG (misleading name) ... */
 #define diag_multipacket_transmit_pending (*(volatile uint8_t*)0x0080D404UL) /* Multi-packet diagnostic transmit continuation f... */
 #define multi_packet_receive_state (*(volatile uint8_t*)0x0080D405UL) /* Multi-packet receive state machine */
 #define can_buffer_write_pending (*(volatile uint8_t*)0x0080D406UL) /* CAN message buffer write pending flag (3 refs) */
@@ -8401,7 +8495,7 @@ void retarderControlModeHandler(int param_1);
 void retarderModeThresholdsSetup(void);
 void torqueControlAddressDispatcher(int param_1);
 void systemControlFunction4(void);
-undefined1 systemSecurityCheck(void);
+undefined1 systemSecurityCheckStub_AlwaysPasses(void);
 void diagnosticTableEntryRemover(undefined4 param_1);
 void diagnosticTableEntryClear(undefined4 param_1);
 void diagnosticTableSnapshotCapture(undefined4 param_1);
@@ -15499,7 +15593,7 @@ void diagnosticCommandDispatcher(void)
             bVar7 = bVar7 + 1;
             pbVar8 = pbVar8 + 1;
           } while (bVar7 < 10);
-          securityCheckResult = systemSecurityCheck();
+          securityCheckResult = systemSecurityCheckStub_AlwaysPasses();
           if (securityCheckResult == '\0') {
             switch(*messageDataPtr) {
             case 0x40:
@@ -24111,8 +24205,6 @@ ushort phase3_retarder_condition_monitor(void)
  * Function: memoryOperationDispatcher @ 0x0001b37a
  */
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 uint memoryOperationDispatcher(int param_1,undefined1 *param_2,uint param_3)
 
 {
@@ -24162,11 +24254,11 @@ uint memoryOperationDispatcher(int param_1,undefined1 *param_2,uint param_3)
       uVar3 = memcpy(param_2,puVar1,CONCAT22(sVar6,uVar8));
       return uVar3 & 0xffffff00;
     case 3:
-      if (_security_bypass_flag != 0xff) {
+      if (security_bypass_flag != 0xff) {
         if (!bVar2) {
           return 3;
         }
-        securityCheckResult3 = systemSecurityCheck();
+        securityCheckResult3 = systemSecurityCheckStub_AlwaysPasses();
         if (securityCheckResult3 != '\0') {
           return 3;
         }
@@ -24180,11 +24272,11 @@ uint memoryOperationDispatcher(int param_1,undefined1 *param_2,uint param_3)
          (amount_of_time_since_water_in_fuel_low_failure_was_detected_0_65535 != 0)) {
         return 7;
       }
-      if (_security_bypass_flag != 0xff) {
+      if (security_bypass_flag != 0xff) {
         if (!bVar2) {
           return 3;
         }
-        securityCheckResult = systemSecurityCheck();
+        securityCheckResult = systemSecurityCheckStub_AlwaysPasses();
         if (securityCheckResult != '\0') {
           return 3;
         }
@@ -24386,8 +24478,6 @@ uint addressLookupFunction(undefined4 param_1)
  * Function: diagnosticServiceSecurityValidator @ 0x0001b7e8
  */
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 undefined4 diagnosticServiceSecurityValidator(int param_1)
 
 {
@@ -24411,7 +24501,7 @@ undefined4 diagnosticServiceSecurityValidator(int param_1)
   }
   if ((('\x01' << (serviceId & 7) &
        *(byte *)((int)&can_number_of_retarder_destination_non_specific_rx_objects_0_14 +
-                ((int)(uint)serviceId >> 3))) == 0) || (_security_bypass_flag != -0x4ade)) {
+                ((int)(uint)serviceId >> 3))) == 0) || (security_bypass_flag != 0xb522)) {
     if ((cVar1 != '\b') && (cVar1 != (char)(cVar2 + '\n'))) {
       return 2;
     }
@@ -24420,7 +24510,7 @@ undefined4 diagnosticServiceSecurityValidator(int param_1)
   if ((char)(cVar2 + '\n') != cVar1) {
     return 2;
   }
-  cVar1 = systemSecurityCheck();
+  cVar1 = systemSecurityCheckStub_AlwaysPasses();
   if (cVar1 == '\0') {
     return CONCAT31(extraout_var,0xff);
   }
@@ -32810,10 +32900,10 @@ void systemControlFunction4(void)
 
 
 /*
- * Function: systemSecurityCheck @ 0x00027e98
+ * Function: systemSecurityCheckStub_AlwaysPasses @ 0x00027e98
  */
 
-undefined1 systemSecurityCheck(void)
+undefined1 systemSecurityCheckStub_AlwaysPasses(void)
 
 {
   return 0;
@@ -35444,18 +35534,18 @@ undefined4 addressRangeValidator(uint param_1,uint param_2)
   uint uVar2;
   byte bVar3;
   uint uVar4;
-  dword *pdVar5;
+  word *pwVar5;
   
   uVar2 = param_2 >> 0x10;
   uVar4 = (param_1 + uVar2) - 1;
   if (uVar4 < param_1) {
     return 9;
   }
-  pdVar5 = &address_range_validation_table;
+  pwVar5 = &address_range_validation_table;
   bVar3 = 0;
-  while ((param_1 < *pdVar5 || (pdVar5[1] < uVar4))) {
+  while ((param_1 < *(uint *)pwVar5 || (*(uint *)((int)pwVar5 + 4) < uVar4))) {
     uVar2 = 0;
-    pdVar5 = (dword *)((int)pdVar5 + 10);
+    pwVar5 = (word *)((int)pwVar5 + 10);
     bVar3 = bVar3 + 1;
     if (4 < bVar3) {
       return 9;
@@ -35463,9 +35553,9 @@ undefined4 addressRangeValidator(uint param_1,uint param_2)
   }
   uVar1 = (undefined3)(uVar2 >> 8);
   if (water_in_fuel_detection_flag == 1) {
-    return CONCAT31(uVar1,*(undefined1 *)(pdVar5 + 2));
+    return CONCAT31(uVar1,*(undefined1 *)((int)pwVar5 + 8));
   }
-  return CONCAT31(uVar1,*(undefined1 *)((int)pdVar5 + 9));
+  return CONCAT31(uVar1,*(undefined1 *)((int)pwVar5 + 9));
 }
 
 

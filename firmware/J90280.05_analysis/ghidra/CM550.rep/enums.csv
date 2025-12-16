@@ -659,8 +659,8 @@ DIAG_ERROR_SOURCE,0x02,INVALID_LENGTH,diagnosticServiceSecurityValidator - messa
 DIAG_ERROR_SOURCE,0x03,SECURITY_FAILED,diagnosticServiceSecurityValidator - systemSecurityCheck returned non-zero,1
 DIAG_ERROR_SOURCE,0x07,CONDITION_NOT_MET,memoryOperationDispatcher - system_logging_state check failed,1
 DIAG_ERROR_SOURCE,0x08,ADDR_LOOKUP_FAIL,j1939MemoryDataCopyResolver - initial address lookup at 0xeaf0 failed,1
-DIAG_ERROR_SOURCE,0x09,ADDR_RANGE_INVALID,addressRangeValidator @ 0x2b544 - address not in valid_memory_range table,1
-DIAG_ERROR_SOURCE,0x0A,ADDR_CASE_4,memoryOperationDispatcher switch case 4 - specific address type rejected,1
+DIAG_ERROR_SOURCE,0x09,ADDR_RANGE_INVALID,addressRangeValidator @ 0x2b544 - address not in address_range_validation_table @ 0x2b512,1
+DIAG_ERROR_SOURCE,0x0A,ADDR_ACCESS_DENIED,addressRangeValidator @ 0x2b544 - normal_mode_flag=0x0A blocks access (high memory 0xFFC800-0xFFFFFF in normal mode),1
 DIAG_ERROR_SOURCE,0x0B,BUFFER_WRITE_FAIL,memoryOperationDispatcher - circularBufferWrite returned error,1
 DIAG_ERROR_SOURCE,0x0E,PATCH_LIMIT,diagnosticResponseBuilder - memory patch count exceeded limit,1
 DIAG_ERROR_SOURCE,0x18,UNKNOWN_SERVICE,diagnosticServiceDispatcher - service ID not in dispatch table,1
@@ -668,5 +668,109 @@ DIAG_ERROR_SOURCE,0x18,UNKNOWN_SERVICE,diagnosticServiceDispatcher - service ID 
 # Request:  [4A][addr3][addr2][addr1][addr0][len][00][00]
 # Response: [4B][addr3][addr2][addr1][addr0][len][data...]
 # - Response code 0x4B indicates success (echoes service ID + 1)
-# - Only RAM region accessible (0x800000-0x8091C2), firmware returns error 0x09
+# - Accessible regions defined in address_range_validation_table @ 0x2b512:
+#   * Flash/ROM: 0x00000000-0x0003FFFF (256KB) - flags 0x04/0x04
+#   * RAM: 0x00800000-0x008091C2 (37KB) - flags 0x03/0x03
+#   * Extended RAM: 0x008091C2-0x0080FFFF (28KB) - flags 0x00/0x00
+#   * EEPROM: 0x01000000-0x01000FFF (4KB) - flags 0x05/0x05
+#   * High Memory: 0x00FFC800-0x00FFFFFF (14KB) - flags 0x03/0x0A (blocked in normal mode)
 SERVICE_4A_RESPONSE,0x4B,SUCCESS,Service 0x4A success response code (service ID + 1),1
+# Memory Access Flags - from address_range_validation_table entries (byte 8=special_mode byte 9=normal_mode)
+# READ operations (diagMemoryReadResponseBuilder @ 0x1c0b8):
+#   - 0x09 or 0x0A = DENIED (returns error code)
+#   - Any other value = ALLOWED
+# WRITE operations (memoryOperationDispatcher @ 0x1b3c8):
+#   - 0x00 = Direct write (no security check)
+#   - 0x03 = Security check required (unless security_bypass_flag == 0xB522)
+#   - 0x04 = Write denied
+#   - 0x05 = Special logging mode (requires system_logging_state check)
+#   - 0x09/0x0A = Error passed through
+MEMORY_ACCESS_FLAG,0x00,DIRECT_ACCESS,READ: Allowed | WRITE: Direct access no security check (Extended RAM),1
+MEMORY_ACCESS_FLAG,0x03,SECURITY_REQUIRED,READ: Allowed | WRITE: Requires security check or bypass (RAM),1
+MEMORY_ACCESS_FLAG,0x04,WRITE_DENIED,READ: Allowed | WRITE: Denied - returns error 0x0A (Flash/ROM),1
+MEMORY_ACCESS_FLAG,0x05,LOGGING_MODE,READ: Allowed | WRITE: Requires system_logging_state check (EEPROM),1
+MEMORY_ACCESS_FLAG,0x09,RANGE_INVALID,READ: Denied | WRITE: Error - address not in validation table,1
+MEMORY_ACCESS_FLAG,0x0A,ACCESS_DENIED,READ: Denied | WRITE: Error - explicitly blocked region,1
+# Security Bypass Mechanism (diagnosticServiceSecurityValidator @ 0x1b7e8)
+# When security_bypass_flag @ 0x803586 == 0xB522 (signed -0x4ADE):
+#   - Services 3 and 4 skip security check requirement
+#   - memoryOperationDispatcher allows writes without security check
+# Note: systemSecurityCheckStub_AlwaysPasses @ 0x27e98 is a STUB that always returns 0 (pass)
+SECURITY_BYPASS,0xB522,BYPASS_ENABLED,Magic value to bypass security checks (stored at 0x803586),2
+SECURITY_BYPASS,0x00FF,LEGACY_BYPASS,Legacy security bypass value check in memoryOperationDispatcher,1
+# Diagnostic Service Command Structure (diagnosticCommandDispatcher @ 0x12484)
+# Service routing based on first byte after length:
+#   0x03-0x06: Core diagnostic services (requires _diagnostic_service_enable_flags & 1)
+#   0x45-0x56: Extended services (requires _diagnostic_service_enable_flags & 4)
+#   0x80+: Insite live data (requires _diagnostic_service_enable_flags & 2)
+DIAG_SERVICE_ID,0x03,SECURED_COMMANDS,Secured commands - requires systemSecurityCheck (always passes),1
+DIAG_SERVICE_ID,0x04,SYSTEM_CONTROL,System control commands - no security check,1
+DIAG_SERVICE_ID,0x05,MEMORY_OPERATIONS,Memory read/write with CRC validation,1
+DIAG_SERVICE_ID,0x06,RETRY_CONTROL,Transmission retry control (subfunction 0x74),1
+DIAG_SERVICE_ID,0x4A,FUEL_ARBITRATOR,fuelArbitratorControlService - fuel system control,1
+DIAG_SERVICE_ID,0x4C,EXTENDED_4C,extendedDiagnosticService4C,1
+DIAG_SERVICE_ID,0x4F,EXTENDED_4F,extendedDiagnosticService4F,1
+DIAG_SERVICE_ID,0x51,EXTENDED_51,extendedDiagnosticService51,1
+# Service 0x03 Subfunction Codes (Secured Commands - diagnosticCommandDispatcher switch @ 0x125a6)
+# IMPORTANT: Commands 0x40-0x41 control SPECIAL DIAGNOSTIC MODE (not actually water-in-fuel related!)
+# When water_in_fuel_detection_flag=1: addressRangeValidator uses special_mode_flag (enables high memory 0xFFC800+)
+DIAG_SERVICE_3_CMD,0x40,ENABLE_SPECIAL_MODE,waterInFuelFaultClear - ENABLES special diagnostic mode (sets flag=1 for high memory access),1
+DIAG_SERVICE_3_CMD,0x41,VALIDATE_SPECIAL_MODE,waterInFuelFaultValidation - validates special mode state transition,1
+DIAG_SERVICE_3_CMD,0x42,HIGH_RPM_SHUTDOWN,activateHighRpmShutdownFlag - trigger high RPM shutdown,1
+DIAG_SERVICE_3_CMD,0x43,SYSTEM_RESET,triggerDiagnosticSystemReset - diagnostic system reset,1
+DIAG_SERVICE_3_CMD,0x50,NOP,No operation - returns success (0x00),1
+DIAG_SERVICE_3_CMD,0x51,MEMORY_PATCH,memoryPatchingSystem - apply queued memory patches,1
+DIAG_SERVICE_3_CMD,0x52,SECURED_SHUTDOWN,requestSecuredShutdown - request secured engine shutdown,1
+DIAG_SERVICE_3_CMD,0x53,RESERVED_ERROR,Reserved - always returns error 0x04,1
+DIAG_SERVICE_3_CMD,0x54,CAN_BUFFER_LOG,canMessageBufferLogger - log CAN message buffer,1
+# Service 0x04 Subfunction Codes (System Control - diagnosticCommandDispatcher switch @ 0x12690)
+DIAG_SERVICE_4_CMD,0x64,CONTROL_64,systemControl64 - system control function,1
+DIAG_SERVICE_4_CMD,0x65,FAULT_SCANNER,enableFaultFlagScanner - enable fault flag scanning,1
+DIAG_SERVICE_4_CMD,0x66,STATE_RESET,Reset diagnostic_command_state to 0,1
+DIAG_SERVICE_4_CMD,0x69,DISABLE_SPECIAL_MODE,waterInFuelDetectionStateInit - DISABLES special diagnostic mode (clears flag if=1),1
+DIAG_SERVICE_4_CMD,0x70,RESERVED_70,Reserved - returns error 0x04,1
+DIAG_SERVICE_4_CMD,0x71,STATE_BIT0,Set diagnostic_command_state bit 0,1
+DIAG_SERVICE_4_CMD,0x72,RESERVED_72,Reserved - returns error 0x04,1
+DIAG_SERVICE_4_CMD,0x73,STATE_BIT1,Set diagnostic_command_state bit 1,1
+DIAG_SERVICE_4_CMD,0x74,CONTROL_74,systemControl74 - system control function,1
+DIAG_SERVICE_4_CMD,0x75,CONTROL_75,systemControl75 - system control function,1
+DIAG_SERVICE_4_CMD,0x76,RESERVED_76,Reserved - returns error 0x04,1
+# Service 0x05 Mode Codes (Memory Operations - high nibble determines operation)
+# Format: [05][MODE|count][address...][length][data...][CRC16 if MODE & 0x0F == 0]
+DIAG_SERVICE_5_MODE,0x60,MEM_READ_MODE3,diagnosticMemoryReadHandler mode 3 - standard read,1
+DIAG_SERVICE_5_MODE,0x80,MEM_WRITE_MODE4,diagnosticMemoryWriteHandler mode 4 - 4-byte address write,1
+DIAG_SERVICE_5_MODE,0xA0,MEM_WRITE_MODE2,diagnosticMemoryWriteHandler mode 2 - 2-byte address write,1
+DIAG_SERVICE_5_MODE,0xB0,MULTI_PKT_RX,multiPacketReceiveHandler - multi-packet receive,1
+DIAG_SERVICE_5_MODE,0xC0,MEM_READ_MODE2,diagnosticMemoryReadHandler mode 2 - compact read,1
+DIAG_SERVICE_5_MODE,0xE0,MEM_READ_MODE1,diagnosticMemoryReadHandler mode 1 - extended read,1
+DIAG_SERVICE_5_MODE,0xF0,MULTI_PKT_TX,multiPacketTransmitHandler - multi-packet transmit,1
+# Diagnostic Service Enable Flags (diagnostic_service_enable_flags @ 0x8035EA)
+# Controls which diagnostic services are active
+DIAG_ENABLE_FLAGS,0x01,CORE_SERVICES,Enable services 0x03-0x06 (secured memory ops diagnostic control),1
+DIAG_ENABLE_FLAGS,0x02,INSITE_LIVE,Enable services 0x80+ (Insite live data monitoring insiteLiveDataHandler),1
+DIAG_ENABLE_FLAGS,0x04,EXTENDED_SERVICES,Enable services 0x45-0x56 (fuel arbitrator extended diagnostics),1
+DIAG_ENABLE_FLAGS,0x08,SPECIAL_MODE,Special diagnostic mode (checked in multiple functions),1
+# Fuel Arbitrator Control Modes (fuelArbitratorControlService @ 0x1a5cc)
+FUEL_ARB_MODE,0x00,MODE_RESET,Reset fuel arbitrator - clear all targets and modes,1
+FUEL_ARB_MODE,0x01,MODE_RPM_TARGET,RPM target mode - set target RPM from diagnostic command,1
+FUEL_ARB_MODE,0x02,MODE_FUEL_PERCENT,Fuel percentage mode - control fuel delivery percentage,1
+FUEL_ARB_MODE,0x03,MODE_TORQUE_CMD,Torque command mode - direct torque control,1
+# Fuel Arbitrator Control Flags (control_flags field in fuel_arbitrator_diag_t)
+FUEL_ARB_FLAGS,0x04,THROTTLE_OVERRIDE,Override throttle control when set,1
+FUEL_ARB_FLAGS,0x08,SPEED_LIMIT_ACTIVE,Activate speed limiter when set,1
+FUEL_ARB_FLAGS,0x10,FUEL_LIMIT_ACTIVE,Activate fuel limiter when set,1
+# Insite Protocol Command Structure (insiteLiveDataHandler @ 0x19a0a parameterLookupForInsite @ 0x271b0)
+# Command byte determines response type and length
+# Ranges: 0x00-0x7F = standard param (len 2), 0x80-0xBF = extended param (len 3), 0xC0+ = special
+INSITE_CMD,0x00,PARAM_STANDARD,Standard parameter read (0x00-0x7F) - response length 2,1
+INSITE_CMD,0x80,PARAM_EXTENDED,Extended parameter read (0x80-0xBF) - response length 3,1
+INSITE_CMD,0xC1,ACTIVE_FAULT_LIST,insiteActiveFaultListBuilder - list of active DTCs,1
+INSITE_CMD,0xC2,FAULT_DETAIL,insiteFaultDetailBuilder - detailed fault information,1
+INSITE_CMD,0xC3,PID_DTC_REQUEST,PID/DTC handler request - triggers insitePidDtcHandler,1
+INSITE_CMD,0xC4,PID_DTC_RESPONSE,PID/DTC response - response length 4 or 7,1
+INSITE_CMD,0xEA,CAPACITY_INFO,insiteCapacityResponseBuilder - response length 0x18 (24 bytes),1
+INSITE_CMD,0xED,ECU_ID,insiteEcuIdResponseBuilder - ECU identification (3 parts with 0x2A separator),1
+INSITE_CMD,0xF3,VERSION_INFO,insiteVersionInfoBuilder - response length 0x1F (31 bytes),1
+# Insite Response Format (insiteParameterResponseBuilder @ 0xcb1e)
+# Standard: [CMD][LEN][DATA...]
+# Multi-frame: Uses insiteMultiFrameResponseBuilder for responses > 0x14 bytes

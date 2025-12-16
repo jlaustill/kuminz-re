@@ -161,6 +161,138 @@ Contains pointers to various RAM structures:
 0x00807176,load_breakpoint_table,word[16],Load breakpoint table 0-14800 - VERIFIED via RAM dump,32,0,LOAD,lookup
 ```
 
+## E2M Parameter Address Correlation
+
+### E2M Address Formula
+
+```
+E2M Address = BaseLookup[Column3] + Column4 (hex offset)
+```
+
+**Statistics:**
+| Metric | Value |
+|--------|-------|
+| Total Column3 Mappings | 521 |
+| Mapped Parameters | ~2,050 (58.2%) |
+| Unmapped (offline tables) | 139 |
+
+### Memory Zone Distribution
+
+**IMPORTANT:** E2M parameters span multiple memory zones, NOT just RAM:
+
+| Memory Zone | Params | Address Range | Persistence | Contents |
+|-------------|--------|---------------|-------------|----------|
+| External_RAM | 1,062 | 0x0080xxxx | **Volatile** | Runtime values, sensor readings |
+| EEPROM | 78 | 0x0100xxxx | **Persistent** | Adjustable settings (droop, gains, PTO speeds) |
+| CalTerm_Storage | 37 | 0x0006xxxx | Varies | Tool parameter limits |
+| Flash/ROM | 8 | 0x0000xxxx | Read-only | Factory defaults |
+| **Unmapped** | 139 | Unknown | **Persistent** | Large lookup tables (timing, fueling, linearization) |
+
+### "Available Offline" Parameters
+
+Parameters marked `availableOffline=true` in Calterm can be read/written when engine is OFF.
+These 139 parameters are large calibration tables stored in EEPROM:
+- Timing advance tables (4DTA00XA, 4DTA01XA)
+- Fueling tables (5DFL00XA, 5DFL01XA)
+- Sensor linearization tables (ADBSPRXA/YA for boost pressure)
+
+Their Column3 values (0x1040, 0x1058, 0x1016, etc.) aren't mapped yet.
+
+### Linearization Tables Location
+
+The sensor linearization tables (e.g., ADBSPRXA @ 0x806C4A) are in the **ROM copy area**:
+- Source: ROM 0x37EAE (factory defaults)
+- Destination: RAM 0x8062D2-0x808AB2
+
+These have factory defaults from ROM but can be overwritten via EEPROM for persistent customization.
+
+### EEPROM to RAM Copy Flow
+
+| Source | Source Address | RAM Destination | Size |
+|--------|---------------|-----------------|------|
+| EEPROM Block 1 | 0x4000 | 0x804882-0x80488C | 10 bytes |
+| EEPROM Block 2 | 0x4400 | 0x80488E-0x8062D0 | 6,722 bytes |
+| ROM Firmware | 0x37EAE | 0x8062D2-0x808AB2 | 10,208 bytes |
+
+**Key Functions:**
+- `calibrationDataCopyWithChecksum` @ 0xEBF2 - Copies EEPROM (0x4000, 0x4400) to RAM
+- `firmwareDataCopyToWorkingMemory` @ 0xF4EA - Copies ROM to RAM
+
+### Ghidra Memory Segments
+
+| Segment | Address Range | Purpose |
+|---------|---------------|---------|
+| CalTerm_Table_Storage | 0x6000-0x7FFF | e2m parameters (0x0006xxxx) |
+| CalTerm_Parameters_A | 0x40000-0xFFFFF | More calibration |
+| CalTerm_Parameters_B | 0x100000-0xFFFFFF | Extended calibration |
+| External_RAM (our dump) | 0x800000+ | Working memory |
+
+---
+
+## Service 0x4A Address Validation Table
+
+**Discovery:** The firmware validates memory read requests against a table at address 0x2B512.
+This table defines which memory regions can be read via diagnostic Service 0x4A.
+
+### Validation Table Structure (at firmware 0x2B512)
+
+Each entry is 10 bytes: `[StartAddr:4][EndAddr:4][Flags:2]`
+
+| Entry | Start | End | Flags | Region | Size | Status |
+|-------|-------|-----|-------|--------|------|--------|
+| 0 | 0x00000000 | 0x0003FFFF | 0x0404 | **Flash/ROM** | 256KB | READABLE |
+| 1 | 0x00800000 | 0x008091C2 | 0x0303 | RAM (dumped) | 37KB | READABLE |
+| 2 | 0x008091C2 | 0x0080FFFF | 0x0000 | **Extended RAM** | 28KB | READABLE |
+| 3 | 0x01000000 | 0x01000FFF | 0x0505 | **EEPROM** | 4KB | READABLE |
+| 4 | 0x00FFC800 | 0x00FFFFFF | 0x030A | High Memory | 14KB | BLOCKED (normal)
+
+### Flag Interpretation (VERIFIED via decompilation)
+
+The table has TWO flag bytes per entry:
+- Byte 8: Used when `water_in_fuel_detection_flag == 1` (special mode)
+- Byte 9: Used in normal operation
+
+Return values that BLOCK access (from `diagMemoryReadResponseBuilder`):
+- 0x09 = Invalid range (not in table)
+- 0x0A = Access denied
+
+| Entry | Start | End | Flag1 (special) | Flag2 (normal) | Result |
+|-------|-------|-----|-----------------|----------------|--------|
+| 0 | 0x00000000 | 0x0003FFFF | 0x04 | 0x04 | READABLE (both modes) |
+| 1 | 0x00800000 | 0x008091C2 | 0x03 | 0x03 | READABLE (both modes) |
+| 2 | 0x008091C2 | 0x0080FFFF | 0x00 | 0x00 | READABLE (both modes) |
+| 3 | 0x01000000 | 0x01000FFF | 0x05 | 0x05 | READABLE (both modes) |
+| 4 | 0x00FFC800 | 0x00FFFFFF | 0x03 | **0x0A** | BLOCKED in normal mode |
+
+### Memory Regions Available for Dump
+
+1. **EEPROM (0x01000000-0x01000FFF, 4KB)** ✅
+   - Contains persistent calibration settings
+   - "Available offline" parameters stored here
+   - Can be read without engine running
+
+2. **Flash/ROM (0x00000000-0x0003FFFF, 256KB)** ✅
+   - Contains firmware code and factory defaults
+   - Factory linearization tables at 0x37EAE
+   - Should match our J90280.05.full.bin file
+
+3. **Extended RAM (0x008091C2-0x0080FFFF, 28KB)** ✅
+   - Flags 0x00 means ALLOWED (not 0x09 or 0x0A)
+   - Additional working memory beyond our current dump
+
+4. **High Memory (0x00FFC800-0x00FFFFFF, 14KB)** ⚠️
+   - BLOCKED in normal mode (flag 0x0A)
+   - Only accessible when `water_in_fuel_detection_flag == 1`
+   - May require special diagnostic mode to access
+
+### Key Functions
+
+- `addressRangeValidator` @ 0x2B4E0 - Validates addresses against this table
+- `diagMemoryReadService4aHandler` @ 0x1C02E - Service 0x4A handler
+- `diagMemoryReadResponseBuilder` @ 0x1C0B8 - Builds memory read response
+
+---
+
 ## Related Tasks
 
 - Task 003: CLIP Protocol - Source of RAM dump capability

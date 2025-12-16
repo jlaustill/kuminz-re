@@ -480,3 +480,9 @@ sensor_debounce_state_t,,fault_active_flag,byte,1,Fault currently active flag (o
 sensor_debounce_state_t,,sample_counter,byte,1,Sample phase counter (offset 0x0f),,verified
 sensor_debounce_state_t,,adc_raw_value,word,2,Raw A/D conversion value (offset 0x10),,verified
 sensor_debounce_state_t,,reserved_12,byte,4,Reserved bytes at offset 0x12-0x15,,verified
+# Address Range Validation Table - used by Service 0x4A memory reads (addressRangeValidator @ 0x2b544)
+# Table at 0x2b512 has 5 entries of 10 bytes each defining readable memory regions
+address_range_entry_t,0x0002b512,start_address,dword,4,Start of valid address range (big-endian),,verified
+address_range_entry_t,0x0002b512,end_address,dword,4,End of valid address range (big-endian),,verified
+address_range_entry_t,0x0002b512,special_mode_flag,byte,1,Access flag when water_in_fuel_detection_flag==1 (non-0x09/0x0A = allow),,verified
+address_range_entry_t,0x0002b512,normal_mode_flag,byte,1,Access flag in normal operation (0x09=invalid 0x0A=denied other=allow),,verified
