@@ -16,6 +16,6 @@
 006 [ ] [e2m-db] Add parameter name extraction to importer
 007 [ ] [firmware] Verify enum definitions via ApplyAndExport
 008 [ ] [calterm-crc] Complete remaining 2 native DLL annotations (ToolLicensing, ErrorHandling)
-009 [>] [insite9] Establish Insite reverse engineering process (decompilation 100% - 358 DLLs, 294MB)
+009 [X] [insite9] Establish Insite reverse engineering process (decompilation 100% - 358 DLLs, 294MB)
 010 [ ] [firmware] Document ECU versions table (hardware, firmware, protocols)
-011 [ ] [firmware] RAM dump correlation - use 37KB RAM dump to enhance firmware RE
+011 [>] [firmware] RAM dump correlation - use 37KB RAM dump to enhance firmware RE

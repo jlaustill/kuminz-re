@@ -2,12 +2,12 @@
  * Ghidra Decompilation Export - J90280.05 Firmware
  * Cummins CM550 ECU - MC68000 Architecture (Big-Endian)
  *
- * Generated: Tue Dec 16 05:34:58 MST 2025
+ * Generated: Tue Dec 16 09:06:50 MST 2025
  *
  * Data Sources:
  *   - enums.csv (560 entries)
  *   - structure_definitions.csv (72 types)
- *   - global_variables.csv (6095 variables)
+ *   - global_variables.csv (6108 variables)
  *   - Ghidra decompiler (789 functions)
  *
  * Target: m68k-elf-gcc
@@ -2276,6 +2276,7 @@ struct sensor_debounce_state_t {
 #define protection_state_machine_index (*(volatile PROTECTION_STATE*)0x008002DAUL) /* Protection state machine cycle index (0-4) (7 r... */
 #define protection_reserved_5 (*(volatile uint16_t*)0x008002DCUL) /* Reserved padding word */
 #define protection_threshold_table_ptr (*(volatile uint32_t*)0x008002DEUL) /* Protection threshold table pointer 0x807e6e (pr... */
+#define system_timer_array ((volatile uint16_t*)0x008002E0UL) /* System scheduler timer array - all initialized ... */
 #define protection_threshold_status_shifted (*(volatile uint32_t*)0x008002E2UL) /* Protection threshold status shifted value (prot... */
 #define engine_rpm_previous_nonzero (*(volatile uint16_t*)0x008002E6UL) /* Engine RPM previous nonzero check (2 refs) */
 #define high_rpm_shutdown_previous (*(volatile uint8_t*)0x008002E8UL) /* High RPM shutdown flag previous (2 refs) */
@@ -2384,6 +2385,7 @@ struct sensor_debounce_state_t {
 #define multi_packet_data_ptr (*(volatile uint32_t*)0x008007BAUL) /* Multi-packet data pointer 0x8007c4 (multiPacket... */
 #define multi_packet_status_ptr (*(volatile uint32_t*)0x008007BEUL) /* Multi-packet status pointer 0x8007c2 (multiPack... */
 #define multi_packet_status_byte (*(volatile uint8_t*)0x008007C2UL) /* Multi-packet transmission status byte (multiPac... */
+#define diagnostic_request_buffer ((volatile uint8_t*)0x00800B00UL) /* Diagnostic request/response buffer - 4 x 48-byt... */
 #define multi_packet_small_size (*(volatile uint16_t*)0x00800ED0UL) /* Multi-packet small buffer size (multiPacketBuff... */
 #define multi_packet_small_data_ptr (*(volatile uint32_t*)0x00800ED2UL) /* Multi-packet small data pointer 0x800edc (multi... */
 #define multi_packet_small_status_ptr (*(volatile uint32_t*)0x00800ED6UL) /* Multi-packet small status pointer 0x800eda (mul... */
@@ -3341,6 +3343,15 @@ struct sensor_debounce_state_t {
 #define vp44_fault_protection_threshold (*(volatile uint16_t*)0x0080387EUL) /* VP44 fault protection controller threshold (10 ... */
 #define rpm_derate_calculation_table_ptr (*(volatile uint16_t*)0x00803880UL) /* RPM derate calculation table pointer (13 refs) */
 #define can_message_buffer_end (*(volatile uint8_t*)0x00803882UL) /* End marker for CAN message buffer logging range */
+#define ecu_identity_header ((volatile uint8_t*)0x00803B00UL) /* ECU identity block header - VERIFIED via RAM dump */
+#define ecu_identity_marker_1 (*(volatile uint16_t*)0x00803B0AUL) /* ECU identity marker 0x600D - VERIFIED via RAM dump */
+#define ecu_identity_test_pattern ((volatile uint8_t*)0x00803B0CUL) /* ECU identity test pattern ABCDEF - VERIFIED via... */
+#define ecu_serial_number ((volatile uint8_t*)0x00803B15UL) /* ECU serial number (e.g. T03942860) - VERIFIED v... */
+#define ecu_unit_marker ((volatile uint8_t*)0x00803B44UL) /* ECU unit marker ENUU - VERIFIED via RAM dump */
+#define ecu_build_date ((volatile uint8_t*)0x00803B88UL) /* ECU build date string MMDDYY format (e.g. 06049... */
+#define calibration_id_string ((volatile uint8_t*)0x00803E1DUL) /* Calibration ID (e.g. J90350.00 100898231658) - ... */
+#define oem_name_string ((volatile uint8_t*)0x00803E60UL) /* OEM name string (e.g. GENERIC) - VERIFIED via R... */
+#define part_number_list ((volatile uint8_t*)0x00803EC2UL) /* Concatenated part number strings - VERIFIED via... */
 #define flash_program_block_1_buffer (*(volatile uint32_t*)0x00804882UL) /* Flash program block 1 RAM buffer start (4 refs) */
 #define flash_program_block_2_buffer (*(volatile uint16_t*)0x0080488EUL) /* Flash program block 2 RAM buffer start (4 refs) */
 #define calibration_validator_ptr (*(volatile uint32_t*)0x008049ECUL) /* Calibration validator data pointer (calibration... */
@@ -4360,6 +4371,7 @@ struct sensor_debounce_state_t {
 #define time_duration_to_warn_driver_before_shutdown_due_to_ambient_ai_0_65535 (*(volatile uint16_t*)0x00807170UL) /* TIME DURATION TO WARN DRIVER BEFORE SHUTDOWN DU... */
 #define shutdown_severity_threshold_for_ambient_air_pressure_fueling_0_15 (*(volatile uint16_t*)0x00807172UL) /* SHUTDOWN SEVERITY THRESHOLD FOR AMBIENT AIR PRE... */
 #define shutdown_severity_threshold_for_ambient_air_pressure_rpm_0_15 (*(volatile uint16_t*)0x00807174UL) /* SHUTDOWN SEVERITY THRESHOLD FOR AMBIENT AIR PRE... */
+#define load_breakpoint_table ((volatile uint16_t*)0x00807176UL) /* Load breakpoint table 0-14800 - VERIFIED via RA... */
 #define shutdown_limit_selector_param (*(volatile uint16_t*)0x008071A6UL) /* Shutdown limit selector parameter (shutdownLimi... */
 #define timer_capture_init_value (*(volatile uint16_t*)0x008071AAUL) /* Timer capture init value for countdown (1 ref) */
 #define clutch_rpm_low_value (*(volatile uint16_t*)0x008071ACUL) /* Clutch RPM low output value (1 ref) */
@@ -4415,6 +4427,7 @@ struct sensor_debounce_state_t {
 #define engine_state_tranistion_delay_used_in_battery_low_at_crankin_0_32767 (*(volatile uint16_t*)0x00807282UL) /* ENGINE STATE TRANISTION DELAY USED IN BATTERY L... */
 #define CRCOACTM (*(volatile uint16_t*)0x00807286UL) /* AMOUNT OF TIME BUMP MUST BE HELD BEFORE TRANSIT... */
 #define delay_time_to_ensure_that_coolant_level_switches_error_has_cha_0_65535 (*(volatile uint16_t*)0x0080728AUL) /* DELAY TIME TO ENSURE THAT COOLANT LEVEL SWITCHE... */
+#define rpm_breakpoint_table ((volatile uint16_t*)0x008072F4UL) /* RPM breakpoint table 32-14400 RPM - VERIFIED vi... */
 #define sensor_fault_rpm_selector_param (*(volatile uint16_t*)0x0080734AUL) /* Sensor fault RPM source selector param (sensorF... */
 #define vp44_state_debounce_threshold (*(volatile uint16_t*)0x0080734CUL) /* VP44 state debounce threshold value (4 refs) */
 #define vp44_state_processing_timeout_reload (*(volatile uint16_t*)0x0080734EUL) /* VP44 state processing timeout reload value (4 r... */
@@ -17586,11 +17599,13 @@ void protectionState3aPrimaryCoordinator(void)
  * Function: protectionThresholdPointerInit @ 0x00014cfc
  */
 
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
 void protectionThresholdPointerInit(void)
 
 {
   protection_threshold_status_shifted = (uint)oil_pressure_precrank_status << 0x10;
-  protection_threshold_table_ptr = 0x807e6e;
+  _protection_threshold_table_ptr = 0x807e6e;
   fuel_arbitrator_threshold_1 = oil_pressure_precrank_status;
   return;
 }

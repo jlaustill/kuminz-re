@@ -1,6 +1,6 @@
 // Ghidra C++ Decompilation Export - J90280.05 Firmware
 // Generated with renamed functions, variables, and meaningful types
-// Tue Dec 16 05:34:53 MST 2025
+// Tue Dec 16 09:06:45 MST 2025
 
 
 //
@@ -8924,11 +8924,13 @@ void protectionState3aPrimaryCoordinator(void)
 // Function: protectionThresholdPointerInit @ 0x00014cfc
 //
 
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
 void protectionThresholdPointerInit(void)
 
 {
   protection_threshold_status_shifted = (uint)oil_pressure_precrank_status << 0x10;
-  protection_threshold_table_ptr = 0x807e6e;
+  _protection_threshold_table_ptr = 0x807e6e;
   fuel_arbitrator_threshold_1 = oil_pressure_precrank_status;
   return;
 }

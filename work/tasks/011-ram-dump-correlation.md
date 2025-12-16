@@ -1,6 +1,6 @@
 # Task 011: RAM Dump Correlation for Firmware Analysis
 
-## Status: Todo
+## Status: In Progress
 ## Component: firmware
 
 ## Problem Statement
@@ -21,11 +21,11 @@ Successfully captured 37KB RAM dump from CM550 ECU via Service 0x4A memory read.
 
 ## Goals
 
-1. [ ] Identify 10+ new function names via xref analysis
-2. [ ] Verify/correct 5+ global variable definitions
-3. [ ] Document diagnostic buffer structure completely
-4. [ ] Map calibration table format to e2m parameters
-5. [ ] Create comprehensive RAM memory map
+1. [ ] Identify 10+ new function names via xref analysis (blocked - Ghidra MCP not running)
+2. [X] Verify/correct 5+ global variable definitions (13 new entries added)
+3. [X] Document diagnostic buffer structure completely (48-byte record format documented)
+4. [~] Map calibration table format to e2m parameters (RPM/Load tables mapped, e2m correlation pending)
+5. [X] Create comprehensive RAM memory map (analysis/ram_memory_map.md created)
 
 ---
 
@@ -167,6 +167,93 @@ Already identified from prior analysis:
 - Identified key data structures via pattern analysis
 - Created this task for future correlation work
 - Commit 9b082a2 added --dump-ram CLI command
+
+### 2024-12-16 - RAM Dump Correlation Session
+**Accomplishments:**
+
+1. **Created RAM Memory Map** (`analysis/ram_memory_map.md`)
+   - Documented full memory region overview (0x800000-0x8091C2)
+   - Identified previously undocumented areas
+
+2. **Documented Diagnostic Buffer Structure** (0x800B00)
+   - 48-byte repeating record structure
+   - 4 slots at 0x800B00, 0x800B30, 0x800B60, 0x800B90
+   - Contains: STATUS_RESPONSE (0x0D), error code (0x18), buffer pointers
+
+3. **Documented ECU Identity Block** (0x803B00-0x803FFF)
+   - Serial number at 0x803B15: "T03942860"
+   - Build date at 0x803B88: "060498" (June 4, 1998?)
+   - Calibration ID at 0x803E1D: "J90350.00 100898231658"
+   - OEM name at 0x803E60: "GENERIC"
+   - Part numbers at 0x803EC2
+
+4. **Verified Timer Array** (0x8002E0)
+   - 32 x 16-bit timers all set to 10000 (0x2710)
+   - Confirms task file observation
+
+5. **Mapped Calibration Tables**
+   - RPM breakpoints at 0x8072F4: 32 to 14400 RPM (16 entries)
+   - Load breakpoints at 0x807176: 0 to 14800 (16 entries)
+
+6. **Added 13 New CSV Entries** (global_variables.csv)
+   - diagnostic_request_buffer (0x800B00)
+   - ecu_identity_header (0x803B00)
+   - ecu_identity_marker_1 (0x803B0A)
+   - ecu_identity_test_pattern (0x803B0C)
+   - ecu_serial_number (0x803B15)
+   - ecu_unit_marker (0x803B44)
+   - ecu_build_date (0x803B88)
+   - calibration_id_string (0x803E1D)
+   - oem_name_string (0x803E60)
+   - part_number_list (0x803EC2)
+   - system_timer_array (0x8002E0)
+   - rpm_breakpoint_table (0x8072F4)
+   - load_breakpoint_table (0x807176)
+
+**Blocked:**
+- Ghidra MCP server not running - xref analysis deferred
+- Goal 1 (10+ function names via xref) cannot proceed until Ghidra is available
+
+**Next Steps:**
+- Correlate RPM/Load tables with e2m common_parameters.json
+
+### 2024-12-16 - Ghidra Xref Analysis Session
+**CSV Export Verified:**
+- All 13 new global variables appear correctly in `J90280.05.ghidra.c`
+- New entries include: diagnostic_request_buffer, ecu_serial_number, calibration_id_string, rpm_breakpoint_table, load_breakpoint_table, system_timer_array, etc.
+
+**Xref Analysis Results:**
+- Direct xrefs to RAM addresses (0x800B00, 0x8072F4, etc.) returned empty
+- **Root cause:** RAM addresses are accessed dynamically through `param_address_calc` function, not hardcoded
+- This confirms the parameter lookup system design documented in Task 005
+
+**Key Functions Discovered:**
+1. `mainSystemInitialization` @ 0x20462 - Complete boot sequence with 70+ init functions
+2. `initRpmLookupTables` @ 0x1f23e - Sets up RPM table pointers (0x80883a, 0x80884e, etc.)
+3. `initLookupTablePointers1` @ 0x1e3a8 - Sets up EPS timing table pointers
+4. `tableInterpolationLookup` @ 0x35560 - Core 2D table interpolation routine
+5. `rpmLoadParameterLookup` @ 0x30c78 - RPM/Load parameter calculation
+6. `diagMemoryReadService4aHandler` @ 0x1c02e - Handles Service 0x4A memory reads (what we used!)
+
+**ECU Identity Data Flow:**
+- `insiteEcuIdResponseBuilder` @ 0x1fec4 reads from `insite_ecu_id_part_1/2/3` (EEPROM)
+- `engineSerialNumberDataBuilder` @ 0x297fc reads from `insite_version_string_part_1/2/3` (EEPROM)
+- `calibrationDataCopyWithChecksum` @ 0xebf2 copies from EEPROM (0x4000) to RAM (0x804882+)
+- The ECU identity block at 0x803B00 is populated during boot from EEPROM data
+
+**System Initialization Sequence (Key Functions):**
+```
+initInternalRamAndCAN1 → clearWorkingMemory → firmwareDataCopyToWorkingMemory →
+calibrationDataCopyWithChecksum → initVectorTable → scheduler_init →
+initDiagnosticProtocol → vp44CommunicationTestAndInit
+```
+
+**Task 011 Goals Status:**
+- [X] Verify/correct 5+ global variable definitions (13 new entries added, verified in export)
+- [X] Document diagnostic buffer structure (48-byte record format)
+- [X] Create comprehensive RAM memory map (analysis/ram_memory_map.md)
+- [~] Map calibration table format to e2m parameters (tables mapped, e2m correlation pending)
+- [~] Identify 10+ new function names via xref (6 key functions documented, but not via xref - via code exploration)
 
 ---
 

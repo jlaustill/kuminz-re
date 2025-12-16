@@ -6094,3 +6094,16 @@ address,name,type,comment,length,calterm_type,unit,data_pattern
 0x000298be,diag_multi_packet_status_code_table,byte,Status code table for diagnostic multi-packet responses (diagnosticMultiPacketResponseBuilder),1,0,,table
 0x0002b512,address_range_validation_table,dword,Address range validation table - 5 entries with start/end/permissions (addressRangeValidator),4,0,,table
 0x0002de86,crank_protection_sequence_table,byte,Expected crank protection state sequence table - 12 entries (crankAndProtectionStateMonitor),1,0,,table
+0x00800B00,diagnostic_request_buffer,byte[256],Diagnostic request/response buffer - 4 x 48-byte slots - VERIFIED via RAM dump 2024-12-16,256,0,,buffer
+0x00803B00,ecu_identity_header,byte[10],ECU identity block header - VERIFIED via RAM dump,10,0,,header
+0x00803B0A,ecu_identity_marker_1,word,ECU identity marker 0x600D - VERIFIED via RAM dump,2,0,,marker
+0x00803B0C,ecu_identity_test_pattern,byte[6],ECU identity test pattern ABCDEF - VERIFIED via RAM dump,6,2,,string
+0x00803B15,ecu_serial_number,byte[10],ECU serial number (e.g. T03942860) - VERIFIED via RAM dump,10,2,,string
+0x00803B44,ecu_unit_marker,byte[4],ECU unit marker ENUU - VERIFIED via RAM dump,4,2,,string
+0x00803B88,ecu_build_date,byte[6],ECU build date string MMDDYY format (e.g. 060498) - VERIFIED via RAM dump,6,2,,string
+0x00803E1D,calibration_id_string,byte[26],Calibration ID (e.g. J90350.00 100898231658) - VERIFIED via RAM dump,26,2,,string
+0x00803E60,oem_name_string,byte[80],OEM name string (e.g. GENERIC) - VERIFIED via RAM dump,80,2,,string
+0x00803EC2,part_number_list,byte[60],Concatenated part number strings - VERIFIED via RAM dump,60,2,,string
+0x008002E0,system_timer_array,word[32],System scheduler timer array - all initialized to 10000 - VERIFIED via RAM dump,64,0,CNT,array
+0x008072F4,rpm_breakpoint_table,word[16],RPM breakpoint table 32-14400 RPM - VERIFIED via RAM dump,32,0,RPM,lookup
+0x00807176,load_breakpoint_table,word[16],Load breakpoint table 0-14800 - VERIFIED via RAM dump,32,0,LOAD,lookup
