@@ -177,6 +177,7 @@ For firmware analysis, discoveries are stored in CSV files (e.g., `ghidra/CM550.
 4. **Never Modify Originals** - Files in `originals/` directories are read-only source data
 5. **Decimal in Names** - Use decimal (not hex) in variable/function names for readability
 6. **MCP Tools Read-Only** - Ghidra MCP integration is for analysis only, not modification
+7. **No Insite Traffic Capture** - Capturing real Insite diagnostic traffic is NOT an option; protocol must be reverse-engineered from firmware analysis and decompiled code only
 
 ## Task Tracking System
 

@@ -2,10 +2,10 @@
  * Ghidra Decompilation Export - J90280.05 Firmware
  * Cummins CM550 ECU - MC68000 Architecture (Big-Endian)
  *
- * Generated: Sat Nov 29 12:53:12 MST 2025
+ * Generated: Tue Dec 16 05:34:58 MST 2025
  *
  * Data Sources:
- *   - enums.csv (503 entries)
+ *   - enums.csv (560 entries)
  *   - structure_definitions.csv (72 types)
  *   - global_variables.csv (6095 variables)
  *   - Ghidra decompiler (789 functions)
@@ -456,8 +456,13 @@ typedef enum {
     INVALID_ADDR_RANGE = 9, /* Invalid address range */
     INVALID_ADDR_ALT = 10, /* Invalid address range (alternate) */
     CHECKSUM_MISMATCH = 0x14, /* Checksum mismatch */
-    UNKNOWN_SUBFUNC = 0x18 /* Unknown sub-function */
+    UNKNOWN_SUBFUNC = 0x18 /* Unknown sub-function - default error in diagnos... */
 } DIAG_RESPONSE_CODE;
+
+typedef enum {
+    SUCCESS_RESPONSE = 12, /* Operation successful - no error code follows */
+    STATUS_RESPONSE = 13 /* Error/status response - error code follows in b... */
+} CAN_MULTIPACKET_RESPONSE;
 
 typedef enum {
     CORE_SERVICE_ENABLE = 1, /* Core diagnostic service enable */
@@ -830,6 +835,88 @@ typedef enum {
     INCREMENT = 1, /* Increment histogram index (data < conversion st... */
     DECREMENT = 2 /* Decrement histogram index (counter < conversion... */
 } __attribute__((packed)) ENGINE_HISTOGRAM_MODE;
+
+typedef enum {
+    GET_STATUS_REQ = 0, /* CLIP Get Status Request - sets response buffer ... */
+    DATA_TRANSFER_UNHANDLED = 3, /* DataTransfer - NO HANDLER falls through to else... */
+    LIVE_DATA_STREAM = 0x80, /* Multi-frame live data stream with sequence hand... */
+    SEQUENCE_HANDLER = 0xC3 /* Sequence handling (0x30/0x31 patterns) */
+} __attribute__((packed)) INSITE_LIVE_DATA_MSG_TYPE;
+
+typedef enum {
+    UNKNOWN_SERVICE_DEFAULT = 0x18 /* Default error code when service ID not found in... */
+} __attribute__((packed)) DIAG_SERVICE_ERROR;
+
+typedef enum {
+    QUERY_INITIALIZE = 0, /* Initialize query session */
+    QUERY_TERMINATE = 1, /* Terminate query session */
+    GET_PARAMETERS_BY_ID = 0x10, /* Read parameters by ID */
+    SET_PARAMETERS_BY_ID = 0x11, /* Write parameters by ID */
+    EXECUTE_OPERATION = 0x12, /* Execute ECU operation */
+    GET_DATA_BY_ADDRESS = 0x13, /* Read memory by address */
+    SET_DATA_BY_ADDRESS = 0x14, /* Write memory by address */
+    GET_ADDRESS_BY_PARAMETER_ID = 0x15 /* Get parameter address from ID */
+} __attribute__((packed)) CLIP_INSTRUCTION;
+
+typedef enum {
+    SYNC = 0x80, /* Synchronous frame - wait for response */
+    ASYNC = 0xC0 /* Asynchronous frame - no immediate response expe... */
+} __attribute__((packed)) DPA_FRAME_TYPE;
+
+typedef enum {
+    RECEIVE = 0x48, /* Receive data from ECU (RX instruction) */
+    TRANSMIT = 0x49 /* Send data to ECU (TX instruction) */
+} __attribute__((packed)) DPA_INSTRUCTION;
+
+typedef enum {
+    QUERY_TERMINATE = 1, /* QueryTerminate - CLIP compatible - handler @ 0x... */
+    SYSTEM_SERVICE_04 = 4, /* System service 04 - handler @ 0x1b150 */
+    SYSTEM_SERVICE_05 = 5, /* System service 05 - handler @ 0x1b160 */
+    SYSTEM_SERVICE_06 = 6, /* System service 06 - handler @ 0xf8d8 */
+    SYSTEM_SERVICE_07 = 7, /* System service 07 - handler @ 0xf876 */
+    SYSTEM_SERVICE_0A = 10, /* System service 0A - handler @ 0xf89c */
+    SYSTEM_SERVICE_0B = 11, /* System service 0B - handler @ 0xf8e4 */
+    SYSTEM_SERVICE_0F = 15, /* System service 0F - same handler as 0x10 @ 0x1b07e */
+    GET_PARAMETERS_BY_ID = 0x10, /* GetParametersByID - CLIP compatible - handler @... */
+    GET_ADDRESS_BY_PARAM_ID = 0x15, /* GetAddressByParameterID - CLIP compatible - han... */
+    SYSTEM_SERVICE_16 = 0x16, /* System service 16 - handler @ 0xf8b6 */
+    SYSTEM_SERVICE_18 = 0x18, /* System service 18 - handler @ 0xf9e4 */
+    SERVICE_41 = 0x41, /* Service 41 - handler @ 0x1bc9c */
+    SERVICE_43 = 0x43, /* Service 43 - handler @ 0x1bf18 */
+    SERVICE_44 = 0x44, /* Service 44 - handler @ 0x1b56e (same as 0x45) */
+    SERVICE_45 = 0x45, /* Service 45 - handler @ 0x1b56e (same as 0x44) */
+    SERVICE_46 = 0x46, /* Service 46 - handler @ 0x1bf64 */
+    SERVICE_47 = 0x47, /* Service 47 - handler @ 0x1b604 */
+    SERVICE_48 = 0x48, /* Service 48 - handler @ 0x1bfc8 */
+    J1939_DATA_COPY = 0x49, /* j1939DataCopyWrapperExtended @ 0x1b668 - memory... */
+    MEM_READ_4B_ADDR_1B_LEN = 0x4A, /* diagMemoryReadService4aHandler @ 0x1c02e - WORK... */
+    SERVICE_4B = 0x4B, /* Service 4B - handler @ 0x1b6ce */
+    SERVICE_4C = 0x4C, /* Service 4C - handler @ 0x1c076 */
+    SERVICE_4D = 0x4D /* Service 4D - handler @ 0x1b716 */
+} __attribute__((packed)) EF00_SERVICE_ID;
+
+typedef enum {
+    FIRMWARE_START = 0, /* Valid firmware region start (256KB code space) */
+    FIRMWARE_END = 0x0003FFFFUL, /* Valid firmware region end */
+    RAM_START = 0x00800000UL, /* Valid RAM region start (~37KB data) */
+    RAM_END = 0x008091C2UL /* Valid RAM region end */
+} VALID_MEMORY_RANGE;
+
+typedef enum {
+    INVALID_LENGTH = 2, /* diagnosticServiceSecurityValidator - message le... */
+    SECURITY_FAILED = 3, /* diagnosticServiceSecurityValidator - systemSecu... */
+    CONDITION_NOT_MET = 7, /* memoryOperationDispatcher - system_logging_stat... */
+    ADDR_LOOKUP_FAIL = 8, /* j1939MemoryDataCopyResolver - initial address l... */
+    ADDR_RANGE_INVALID = 9, /* addressRangeValidator @ 0x2b544 - address not i... */
+    ADDR_CASE_4 = 10, /* memoryOperationDispatcher switch case 4 - speci... */
+    BUFFER_WRITE_FAIL = 11, /* memoryOperationDispatcher - circularBufferWrite... */
+    PATCH_LIMIT = 14, /* diagnosticResponseBuilder - memory patch count ... */
+    UNKNOWN_SERVICE = 0x18 /* diagnosticServiceDispatcher - service ID not in... */
+} __attribute__((packed)) DIAG_ERROR_SOURCE;
+
+typedef enum {
+    SUCCESS = 0x4B /* Service 0x4A success response code (service ID ... */
+} __attribute__((packed)) SERVICE_4A_RESPONSE;
 
 /* ============================================================ */
 /* Forward Struct Declarations                                  */

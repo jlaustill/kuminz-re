@@ -146,6 +146,41 @@ diagnosticCommandDispatcher → insiteLiveDataHandler
 2. Understand `diagnosticCommandDispatcher` serial buffer input path
 3. May need to use different service IDs on PGN 0xEF00
 
+### 2024-12-16: Service 0x4A Memory Read SUCCESS - RAM Dump Captured
+**🎉 MAJOR SUCCESS: Discovered working memory read path via J1708-style Service 0x4A!**
+
+**Discovery Process:**
+- Analyzed Insite decompiled code for diagnostic services
+- Found 0x4A/0x4B (memory read) and 0x49 (read response) service IDs
+- Realized CM550 uses J1708 diagnostic protocol encapsulated in CLIP, not native CLIP diagnostics
+
+**Working Protocol (Service 0x4A Memory Read):**
+```
+Request:  [4A][addr4][len][00][00]  (7 bytes)
+Response: [4B][addr4][len][data...] (6+len bytes)
+```
+
+**Valid Memory Ranges Discovered:**
+| Range | Size | Content |
+|-------|------|---------|
+| 0x0034F8-0x0079FF | 17KB | ROM/Flash data |
+| 0x800000-0x8091C2 | 37KB | Working RAM |
+
+**clip-lib CLI Commands Added:**
+- `--svc-4a <addr> <len>` - Single memory read
+- `--dump-ram [filename]` - Full 37KB RAM dump
+
+**RAM Dump Analysis Findings:**
+- ECU Serial: T03942860
+- Calibration: J90350.00 (GENERIC)
+- 228 internal RAM pointers identified
+- Diagnostic buffer at 0x800B00 (captures our requests!)
+- Calibration tables: RPM (32-14400), Load (0-14800)
+
+**Commit:** 9b082a2
+
+**Next Task:** 011 - RAM Dump Correlation (use RAM dump to enhance firmware RE)
+
 ### 2024-12-15: Decompiled Insite Analysis - DPA Frame Format
 **🔑 BREAKTHROUGH: Found CLIP message format from decompiled Insite code!**
 
@@ -368,3 +403,4 @@ candump can0  # Note: network interface, not /dev/can0
 - 001 (CRC Paradox) - May need CRC for calibration file transfers
 - 002 (E2M Format) - Parameter definitions for read/write operations
 - 009 (Insite RE) - **COMPLETE** - Protocol analysis source
+- 011 (RAM Dump Correlation) - Use 37KB RAM dump to enhance firmware RE
