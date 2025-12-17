@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Wed Dec 17 07:01:13 MST 2025
+// Generated: Wed Dec 17 07:19:10 MST 2025
 
 
 //
@@ -809,7 +809,7 @@ ushort rpm_system_state_controller(void)
     }
     if (_sstatus_indicating_conditions_proper_for_a_fuel_lim_active_or_inactive == 1) {
       _diagnostic_fuel_table_base = _DAT_0080ccf4;
-      _DAT_0080a28c = lookupTableInterpolation(&DAT_0080004a);
+      _DAT_0080a28c = lookupTableInterpolation((table_interp_args_t *)&DAT_0080004a);
       return _DAT_0080a28c;
     }
     uVar1 = _DAT_0080a28c;
@@ -901,7 +901,7 @@ ushort FUN_0000b3d0(void)
     }
     if (_status_indicating_conditions_proper_for_a_timing_li_active_or_inactive == 1) {
       _diagnostic_secondary_input = _DAT_0080ccf4;
-      _DAT_0080a28e = lookupTableInterpolation(&DAT_00800058);
+      _DAT_0080a28e = lookupTableInterpolation((table_interp_args_t *)&DAT_00800058);
       return _DAT_0080a28e;
     }
     if (_DAT_0080a28e < 0x400) {
@@ -1183,7 +1183,9 @@ void FUN_0000b7bc(void)
 {
   bool bVar1;
   undefined2 uVar2;
+  undefined4 unaff_D2;
   ushort uVar3;
+  undefined4 unaff_D3;
   short sVar4;
   ushort uVar5;
   ushort uVar6;
@@ -1191,7 +1193,9 @@ void FUN_0000b7bc(void)
   undefined *puVar8;
   char *pcVar9;
   char *pcVar10;
-  undefined *local_8;
+  word input_value;
+  word scaling_factor;
+  table_interp_args_t *local_8;
   
   sVar4 = 0;
   puVar8 = &DAT_0080a2aa;
@@ -1199,7 +1203,7 @@ void FUN_0000b7bc(void)
   uVar3 = 1;
   pcVar10 = &DAT_00800090;
   pcVar9 = &DAT_00800076;
-  local_8 = &DAT_0080a792;
+  local_8 = (table_interp_args_t *)&DAT_0080a792;
   uVar6 = _DAT_00803c9e;
   uVar5 = _DAT_00803cc0;
   do {
@@ -1324,11 +1328,16 @@ LAB_0000ba4c:
           }
         }
         if (puVar8[0xe] == '\0') {
-          *(undefined2 *)(local_8 + 6) = *(undefined2 *)(puVar8 + 0x10);
+          local_8->input_value = *(word *)(puVar8 + 0x10);
           uVar2 = lookupTableInterpolation(local_8);
           *(undefined2 *)(puVar8 + 10) = uVar2;
+          input_value = (word)((uint)unaff_D2 >> 0x10);
+          scaling_factor = (word)((uint)unaff_D3 >> 0x10);
+          uVar2 = (undefined2)((uint)puVar8 >> 0x10);
           if (puVar7[0x13] == '\0') {
-            uVar2 = coreTableInterpolation();
+            uVar2 = coreTableInterpolation
+                              ((void *)CONCAT22(*(undefined2 *)(puVar8 + 10),uVar2),input_value,
+                               scaling_factor);
             *(undefined2 *)(puVar8 + 8) = uVar2;
           }
           else if (*(short *)(puVar8 + 10) == 4) {
@@ -1353,7 +1362,9 @@ LAB_0000ba4c:
             }
           }
           else {
-            uVar2 = coreTableInterpolation();
+            uVar2 = coreTableInterpolation
+                              ((void *)CONCAT22(*(undefined2 *)(puVar8 + 10),uVar2),input_value,
+                               scaling_factor);
             *(undefined2 *)(puVar8 + 8) = uVar2;
             *pcVar9 = '\0';
             if (*pcVar10 == '\x04') {
@@ -1382,7 +1393,7 @@ LAB_0000ba4c:
     }
     puVar8 = puVar8 + 0x16;
     puVar7 = puVar7 + 0x18;
-    local_8 = local_8 + 0xe;
+    local_8 = (table_interp_args_t *)&local_8[1].x_axis_ptr;
     pcVar9 = pcVar9 + 1;
     pcVar10 = pcVar10 + 1;
     sVar4 = sVar4 + 1;
@@ -1802,6 +1813,8 @@ undefined2 FUN_0000c404(void)
 
 {
   ushort uVar1;
+  undefined4 unaff_D2;
+  undefined4 unaff_D3;
   
   uVar1 = _DAT_0080a9e0 + 1;
   if ((_semaphore_used_to_latch_lsg_events_that_occur_betwe_0_false_1_true == 1) &&
@@ -1809,7 +1822,10 @@ undefined2 FUN_0000c404(void)
     _DAT_0080a90c = *(ushort *)((uint)uVar1 * 2 + 0x807a5c);
     _DAT_0080a91e = (uint)_DAT_0080a90c << 0x10;
   }
-  _DAT_0080a90c = coreTableInterpolation();
+  _DAT_0080a90c =
+       coreTableInterpolation
+                 ((void *)CONCAT22(_DAT_0080d35a,0x80),(word)((uint)unaff_D2 >> 0x10),
+                  (word)((uint)unaff_D3 >> 0x10));
   if (_DAT_0080a90c <= *(ushort *)((uint)uVar1 * 2 + 0x807a5c)) {
     return 0;
   }
@@ -2224,7 +2240,7 @@ void dzgTimingAndPressureControlStateMachine(void)
   else {
     _DAT_00800108 = _DAT_00800116 - _asg_filtered_reference_speed_0_4500;
   }
-  _DAT_00800110 = lookupTableInterpolation(&DAT_00800102);
+  _DAT_00800110 = lookupTableInterpolation((table_interp_args_t *)&DAT_00800102);
   _asg_filtered_reference_speed_0_4500 =
        (short)((int)((uint)_asg_filtered_reference_speed_0_4500 * (uint)_DAT_00800110 +
                     (uint)_DAT_0080a990 * (0x4000 - (uint)_DAT_00800110)) >> 0xe);
@@ -2245,12 +2261,18 @@ void engine_speed_governor(void)
   int iVar1;
   int iVar2;
   undefined *puVar3;
+  word input_value;
+  undefined4 unaff_D2;
   short sVar4;
+  word scaling_factor;
+  undefined4 unaff_D3;
   short sVar5;
   short sVar6;
   short sStack_6;
   
+  scaling_factor = (word)((uint)unaff_D3 >> 0x10);
                     /* From J90280.05 @ 0x00b656 (confidence: 86%) */
+  input_value = (word)((uint)unaff_D2 >> 0x10);
   dualTableLookupSum();
   if ((((j1708_transmit_buffer_2_32_ddc6.rx_buffer._14_2_ == 7) ||
        (j1708_transmit_buffer_2_32_ddc6.rx_buffer._14_2_ == 3)) ||
@@ -2309,7 +2331,8 @@ void engine_speed_governor(void)
       dzgTimingAndPressureControlStateMachine();
     }
     else {
-      _asg_filtered_reference_speed_0_4500 = coreTableInterpolation();
+      _asg_filtered_reference_speed_0_4500 =
+           coreTableInterpolation((void *)CONCAT22(_DAT_0080a990,0x80),input_value,scaling_factor);
       _DAT_00800110 = (ushort)((int)(uint)*_asg_droop_compensated_error_2000_2000 >> 2);
     }
     iVar2 = (uint)_asg_filtered_reference_speed_0_4500 - (uint)_fuel_arbitrator_threshold_5;
@@ -2350,7 +2373,7 @@ void engine_speed_governor(void)
       else if (_rpm_control_override_flag < _DAT_0080d32e) {
         puVar3 = (undefined *)
                  FUN_00035076(_DAT_0080d32e - _rpm_control_override_flag,0x100 - _DAT_0080a9a8[8],
-                              (int)_DAT_0080a9a8[6] - (int)_DAT_0080a9a8[7]);
+                              _DAT_0080a9a8[6] - _DAT_0080a9a8[7]);
         if (0x1700 < (int)puVar3) {
           puVar3 = &DAT_00001700;
         }
@@ -2360,7 +2383,7 @@ void engine_speed_governor(void)
       else {
         puVar3 = (undefined *)
                  FUN_00035076(_rpm_control_override_flag - _DAT_0080d32e,0x100 - _DAT_0080a9a8[8],
-                              (int)_DAT_0080a9a8[6] - (int)_DAT_0080a9a8[7]);
+                              _DAT_0080a9a8[6] - _DAT_0080a9a8[7]);
         if (0x1700 < (int)puVar3) {
           puVar3 = &DAT_00001700;
         }
@@ -2652,8 +2675,8 @@ void dualTableLookupSum(void)
                     /* From J90280.05 @ 0x02f8dc (confidence: 75%) */
   _DAT_0080011e = _DAT_0080a990;
   _DAT_0080012c = _filtered_and_linearized_coolant_temperature_50_to_293;
-  sVar1 = lookupTableInterpolation(&DAT_00800126);
-  sVar2 = lookupTableInterpolation(&DAT_00800118);
+  sVar1 = lookupTableInterpolation((table_interp_args_t *)&DAT_00800126);
+  sVar2 = lookupTableInterpolation((table_interp_args_t *)&DAT_00800118);
   _rpm_control_override_flag = sVar1 + sVar2;
   return;
 }
@@ -2820,11 +2843,11 @@ void diagnosticMode10FuelController(void)
                     /* From J90280.05 @ 0x02d210 (confidence: 63%) */
   if (_DAT_0080a9a2 == 1) {
     _DAT_0080014a = _DAT_0080a990;
-    _asg_selected_droop_slope_0_30 = lookupTableInterpolation(&DAT_00800144);
+    _asg_selected_droop_slope_0_30 = lookupTableInterpolation((table_interp_args_t *)&DAT_00800144);
   }
   else if (_DAT_0080a9a2 == 0) {
     _DAT_0080013c = _DAT_0080a990;
-    _asg_selected_droop_slope_0_30 = lookupTableInterpolation(&DAT_00800136);
+    _asg_selected_droop_slope_0_30 = lookupTableInterpolation((table_interp_args_t *)&DAT_00800136);
   }
   uVar1 = (uint)(ushort)(_asg_integral_gain_2_calibration_0_6_75 +
                         _asg_integral_gain_1_calibration_0_6_75) *
@@ -5253,10 +5276,10 @@ void ioControlBasedFuelCalculator(void)
       _DAT_0080018c = 0x60566;
     }
     _DAT_0080018a = _fuel_arbitrator_threshold_5;
-    sVar1 = lookupTableInterpolation(&DAT_00800184);
+    sVar1 = lookupTableInterpolation((table_interp_args_t *)&DAT_00800184);
     if (0 < sVar1) {
       _DAT_00800198 = *(undefined2 *)(_DAT_00800194 + 8);
-      sVar2 = lookupTableInterpolation(&DAT_00800192);
+      sVar2 = lookupTableInterpolation((table_interp_args_t *)&DAT_00800192);
       if (0 < sVar2) {
         _jcomm_ind_retarder_torque_amount_of_torque_provided_by_retarde_0_125 =
              (ushort)((uint)(sVar1 * 0x6400) / (uint)(int)sVar2);
@@ -5491,15 +5514,17 @@ void canBusTimingInit(void)
 // Function: sendCanMessage @ 0x000104e8
 //
 
-void sendCanMessage(undefined4 *param_1)
+/* WARNING: Unknown calling convention -- yet parameter storage is locked */
+
+void sendCanMessage(j1939_header_t *msg_header)
 
 {
                     /* From J90280.05 @ 0x00e180 (confidence: 98%) */
-  if (*(ushort *)(param_1 + 1) < 9) {
-    sendCanSingleFrame(*param_1);
+  if (msg_header->length < 9) {
+    sendCanSingleFrame(msg_header->id);
     return;
   }
-  sendJ1939MultiFrame(param_1);
+  sendJ1939MultiFrame(msg_header);
   return;
 }
 
@@ -6916,7 +6941,7 @@ LAB_00011f78:
           _DAT_0080021e = _boost_pressure_0_100;
         }
         _DAT_00800206 = _DAT_0080021e;
-        uVar5 = lookupTableInterpolation(&DAT_008001ea);
+        uVar5 = lookupTableInterpolation((table_interp_args_t *)&DAT_008001ea);
         uVar6 = FUN_00035088(&DAT_008001f8);
         uVar7 = FUN_00035088(&DAT_008001d4);
         uVar4 = FUN_00035064(_DAT_0080021e,uVar6,0x400);
@@ -7061,7 +7086,7 @@ LAB_00012112:
           (uint)_filtered_and_linearized_intake_manifold_temperature_50_to_293 < (uVar4 & 0xffff)) {
         sVar1 = _filtered_and_linearized_intake_manifold_temperature_50_to_293 -
                 _expected_intake_temperature_based_on_mass_fuel_rate_calcula_50_to_293;
-        uVar6 = lookupTableInterpolation(&DAT_0080020e);
+        uVar6 = lookupTableInterpolation((table_interp_args_t *)&DAT_0080020e);
         iVar9 = FUN_00035076(uVar6,(int)sVar1,0x7800);
         if (iVar9 < 0xab) {
           if (iVar9 < -0xaa) {
@@ -7428,9 +7453,9 @@ void FUN_000127c2(void)
     }
     _DAT_0080033e = 0;
     _DAT_00800262 = _DAT_0080ccf4;
-    uVar4 = lookupTableInterpolation(&vp44_extended_array_2);
+    uVar4 = lookupTableInterpolation((table_interp_args_t *)&vp44_extended_array_2);
     _DAT_00800270 = _DAT_0080ccf4;
-    uVar5 = lookupTableInterpolation(&DAT_0080026a);
+    uVar5 = lookupTableInterpolation((table_interp_args_t *)&DAT_0080026a);
     puVar8 = &DAT_00002710 + (_DAT_0080920e - (uVar4 & 0xffff));
     if ((int)puVar8 < 0x2711) {
       if ((int)puVar8 < -10000) {
@@ -7615,7 +7640,7 @@ void FUN_000127c2(void)
     }
     _DAT_00809236 = (ushort)iVar6;
     _vp44_extended_array_0 = _DAT_0080ccf4;
-    _DAT_00809230 = lookupTableInterpolation(&DAT_0080024e);
+    _DAT_00809230 = lookupTableInterpolation((table_interp_args_t *)&DAT_0080024e);
     if (_DAT_00809230 < _DAT_00809232) {
       _throttle_position_raw = _DAT_008072a6;
     }
@@ -8767,19 +8792,19 @@ void FUN_00014348(void)
 {
   _DAT_0080db26 = _DAT_0080db02;
   _frictional_load_interpolated_from_the_no_load_curve_at_lsg_ref_s_0_100 =
-       lookupTableInterpolation(&DAT_0080db20);
+       lookupTableInterpolation((table_interp_args_t *)&DAT_0080db20);
   _DAT_0080db26 = _DAT_00807d50;
   _frictional_load_torque_in_fueling_at_breakpoint_3_engine_rpm_0_100_bc86 =
-       lookupTableInterpolation(&DAT_0080db20);
+       lookupTableInterpolation((table_interp_args_t *)&DAT_0080db20);
   _DAT_0080db26 = _DAT_00807d52;
   _frictional_load_torque_in_fueling_at_breakpoint_4_engine_rpm_0_100_bc88 =
-       lookupTableInterpolation(&DAT_0080db20);
+       lookupTableInterpolation((table_interp_args_t *)&DAT_0080db20);
   _DAT_0080db26 = _DAT_00807d54;
   _frictional_load_torque_in_fueling_at_breakpoint_5_engine_rpm_0_100_bc8a =
-       lookupTableInterpolation(&DAT_0080db20);
+       lookupTableInterpolation((table_interp_args_t *)&DAT_0080db20);
   _DAT_0080db26 = _DAT_00807d4e;
   _frictional_load_torque_in_fueling_at_rated_engine_rpm_0_100_bc84 =
-       lookupTableInterpolation(&DAT_0080db20);
+       lookupTableInterpolation((table_interp_args_t *)&DAT_0080db20);
   return;
 }
 
@@ -8796,7 +8821,7 @@ void multiSpeedParameterInterpolation(void)
 {
                     /* From J90280.05 @ 0x010e70 (confidence: 75%) */
   _DAT_0080db34 = _filtered_and_linearized_coolant_temperature_50_to_293;
-  _DAT_0080052c = lookupTableInterpolation(&DAT_0080db2e);
+  _DAT_0080052c = lookupTableInterpolation((table_interp_args_t *)&DAT_0080db2e);
   FUN_00014348();
   _jcomm_percent_peak_torque_at_idle_speed_percent_peak_torque_128_127 =
        FUN_000142d4(CONCAT22(_DAT_0080db02,
@@ -8835,7 +8860,7 @@ void fuelDemandPercentageCalculator(void)
   _jcomm_no_load_torque_estimated_frictional_no_load_fueling_val_0_100 = _DAT_0080db1c;
   _DAT_0080db26 = _DAT_00807d52;
   _frictional_load_torque_in_fueling_at_breakpoint_4_engine_rpm_0_100_bc88 =
-       lookupTableInterpolation(&DAT_0080db20);
+       lookupTableInterpolation((table_interp_args_t *)&DAT_0080db20);
   _jcomm_percent_peak_torque_based_on_current_engine_speed_and_128_127 =
        safeDivideWithClamp((_DAT_0080d32e -
                            _jcomm_no_load_torque_estimated_frictional_no_load_fueling_val_0_100) *
@@ -11141,7 +11166,7 @@ uint highRpmEngineProtectionStateMachine(void)
             _timer_counting_against_oil_pressure_threshold_time_0_60) {
           _DAT_0080ccc2 = 1;
           _DAT_00800594 = _filtered_and_linearized_coolant_temperature_50_to_293;
-          uVar2 = lookupTableInterpolation(&DAT_0080058e);
+          uVar2 = lookupTableInterpolation((table_interp_args_t *)&DAT_0080058e);
           _DAT_0080ccb8 = (ushort)uVar2;
         }
       }
@@ -11162,7 +11187,7 @@ uint highRpmEngineProtectionStateMachine(void)
         return uVar2;
       }
       _DAT_008005a2 = _fuel_arbitrator_threshold_5;
-      uVar2 = lookupTableInterpolation(&DAT_0080059c);
+      uVar2 = lookupTableInterpolation((table_interp_args_t *)&DAT_0080059c);
       _DAT_0080ccc6 = (undefined2)uVar2;
     }
   }
@@ -11298,8 +11323,14 @@ uint fuel_limit_arbitrator(void)
 
 {
   uint uVar1;
+  undefined4 unaff_D2;
+  undefined4 unaff_A2;
+  word input_value;
+  word scaling_factor;
   
+  scaling_factor = (word)((uint)unaff_A2 >> 0x10);
                     /* From J90280.05 @ 0x01892a (confidence: 72%) */
+  input_value = (word)((uint)unaff_D2 >> 0x10);
   if (_main_lost_counter_timeout_counter_for_primary_speed_sensor_0_10000 == 0) {
     if (_DAT_0080cd06 != 0) {
       _DAT_0080cd06 = 0;
@@ -11436,7 +11467,9 @@ uint fuel_limit_arbitrator(void)
       }
       else {
         _fuel_demand_blend_mode_select = _DAT_0080cd06;
-        _fuel_arbitrator_threshold_5 = coreTableInterpolation();
+        _fuel_arbitrator_threshold_5 =
+             coreTableInterpolation((void *)CONCAT22(_DAT_0080cd06,0x80),input_value,scaling_factor)
+        ;
         uVar1 = _engine_speed_constant_2_conversion_factor_from_tcnts_to_rpm_0_2_29 / _DAT_0080d070;
         _DAT_0080ccf4 = (ushort)uVar1;
       }
@@ -11450,7 +11483,9 @@ uint fuel_limit_arbitrator(void)
       }
       else {
         _fuel_demand_blend_mode_select = _DAT_0080cd04;
-        _fuel_arbitrator_threshold_5 = coreTableInterpolation();
+        _fuel_arbitrator_threshold_5 =
+             coreTableInterpolation((void *)CONCAT22(_DAT_0080cd04,0x80),input_value,scaling_factor)
+        ;
         uVar1 = _engine_speed_constant_2_conversion_factor_from_tcnts_to_rpm_0_2_29 / _DAT_0080d074;
         _DAT_0080ccf4 = (ushort)uVar1;
       }
@@ -11464,7 +11499,8 @@ uint fuel_limit_arbitrator(void)
       }
       else {
         _fuel_demand_blend_mode_select = _DAT_0080cd16;
-        uVar1 = coreTableInterpolation();
+        uVar1 = coreTableInterpolation
+                          ((void *)CONCAT22(_DAT_0080cd16,0x80),input_value,scaling_factor);
         _DAT_0080ccf4 = (ushort)uVar1;
         _fuel_arbitrator_threshold_5 = _DAT_0080ccf4;
       }
@@ -12268,15 +12304,15 @@ ushort FUN_000183cc(void)
   ushort uVar6;
   
   _DAT_00800604 = _torque_curve_speed_at_breakpoint_1_lsg_reference_0_5000;
-  uVar1 = lookupTableInterpolation(&DAT_008005fe);
+  uVar1 = lookupTableInterpolation((table_interp_args_t *)&DAT_008005fe);
   _DAT_00800604 = _torque_curve_speed_at_breakpoint_2_hsg_breakpoint_0_5000;
-  uVar2 = lookupTableInterpolation(&DAT_008005fe);
+  uVar2 = lookupTableInterpolation((table_interp_args_t *)&DAT_008005fe);
   _DAT_00800604 = _torque_curve_speed_at_breakpoint_3_0_5000;
-  uVar3 = lookupTableInterpolation(&DAT_008005fe);
+  uVar3 = lookupTableInterpolation((table_interp_args_t *)&DAT_008005fe);
   _DAT_00800604 = _torque_curve_speed_at_breakpoint_4_0_5000;
-  uVar4 = lookupTableInterpolation(&DAT_008005fe);
+  uVar4 = lookupTableInterpolation((table_interp_args_t *)&DAT_008005fe);
   _DAT_00800604 = _torque_curve_speed_at_breakpoint_5_0_5000;
-  uVar5 = lookupTableInterpolation(&DAT_008005fe);
+  uVar5 = lookupTableInterpolation((table_interp_args_t *)&DAT_008005fe);
   uVar6 = _state_flag_to_use_epf_s_rpm_breakpoints_for_j1939_0_ffff & _DAT_00807f4c;
   if (uVar6 == 0) {
     uVar6 = _state_flag_to_use_epf_s_rpm_breakpoints_for_j1939_0_ffff & _DAT_00807f4c;
@@ -12860,7 +12896,9 @@ void FUN_00018e0c(void)
 {
   short sVar1;
   ushort uVar2;
+  undefined4 unaff_D2;
   uint uVar3;
+  undefined4 unaff_D3;
   uint uVar4;
   ushort uVar5;
   undefined *puVar6;
@@ -12897,7 +12935,10 @@ void FUN_00018e0c(void)
     uVar4 = (uint)(ushort)((short)uVar4 + 4);
     uVar3 = (uint)(ushort)((short)uVar3 + 1);
   }
-  _EPESLM = coreTableInterpolation(0x80);
+  _EPESLM = coreTableInterpolation
+                      ((void *)CONCAT22(_DAT_00803f40 -
+                                        (short)((uint)uVar5 * (uint)_DAT_0080d290 >> 8),0x80),
+                       (word)((uint)unaff_D2 >> 0x10),(word)((uint)unaff_D3 >> 0x10));
   return;
 }
 
@@ -13490,7 +13531,7 @@ void FUN_00019702(void)
   }
   else {
     _DAT_00800638 = _fuel_arbitrator_threshold_5;
-    _DAT_0080d284 = lookupTableInterpolation(0x632);
+    _DAT_0080d284 = lookupTableInterpolation((table_interp_args_t *)&DAT_00800632);
     iVar1 = (int)(short)(0x100 - _DAT_00800630) *
             (int)(short)(_fueling_value_at_100_throttle_0_100 - _DAT_0080d284);
     if (iVar1 < 0) {
@@ -17431,7 +17472,7 @@ uint fuelDemandTableBlendCalculator(void)
     uVar2 = _DAT_0080d32e;
     if (_DAT_0080d706 == 1) {
       _DAT_008006b0 = _DAT_0080d32e;
-      uVar2 = lookupTableInterpolation(&DAT_008006aa);
+      uVar2 = lookupTableInterpolation((table_interp_args_t *)&DAT_008006aa);
     }
     if (_DAT_0080a8f8 == 0x4000) {
       _DAT_008006be = _fuel_arbitrator_threshold_5;
@@ -17977,7 +18018,7 @@ void initDiagnosticProtocol(void)
     if (_DAT_0080d626 < 0) {
       _DAT_00800724 = -_DAT_0080d626;
     }
-    sVar3 = lookupTableInterpolation(&DAT_0080071e);
+    sVar3 = lookupTableInterpolation((table_interp_args_t *)&DAT_0080071e);
     uVar1 = FUN_00035064(_DAT_0080d632,(int)sVar3,0x100);
     if (uVar1 < 0x10000) {
       _hsg_adjusted_derivative_gain_0_5_120 = (undefined2)uVar1;
@@ -17995,7 +18036,7 @@ void initDiagnosticProtocol(void)
     if (_DAT_0080d626 < 0) {
       _DAT_00800732 = -_DAT_0080d626;
     }
-    sVar3 = lookupTableInterpolation(&DAT_0080072c);
+    sVar3 = lookupTableInterpolation((table_interp_args_t *)&DAT_0080072c);
     uVar1 = FUN_00035064(_DAT_0080d62e,(int)sVar3,0x100);
     if (uVar1 < 0x1e01) {
       _hsg_adjusted_proportional_gain_0_7_5000 = (ushort)uVar1;
@@ -18012,7 +18053,7 @@ void initDiagnosticProtocol(void)
     if (_DAT_0080d626 < 0) {
       _DAT_00800740 = -_DAT_0080d626;
     }
-    sVar3 = lookupTableInterpolation(&DAT_0080073a);
+    sVar3 = lookupTableInterpolation((table_interp_args_t *)&DAT_0080073a);
     uVar1 = FUN_00035064(_DAT_0080d630,(int)sVar3,0x100);
     if (uVar1 < 0x7af) {
       _hsg_adjusted_integral_gain_0_6_0000 = (undefined2)uVar1;
@@ -18350,9 +18391,9 @@ void FUN_0001d5a0(void)
         }
         _DAT_0080db26 = _point_at_which_the_hsg_droop_slope_line_intersects_the_no_1500_4500;
         _DAT_0080db34 = _filtered_and_linearized_coolant_temperature_50_to_293;
-        sVar2 = lookupTableInterpolation(0xdb2e);
+        sVar2 = lookupTableInterpolation((table_interp_args_t *)&DAT_0080db2e);
         _no_load_fueling_curve_value_at_hsg_active_no_load_rpm_0_100 =
-             lookupTableInterpolation(0xdb20);
+             lookupTableInterpolation((table_interp_args_t *)&DAT_0080db20);
         _no_load_fueling_curve_value_at_hsg_active_no_load_rpm_0_100 =
              sVar2 + _no_load_fueling_curve_value_at_hsg_active_no_load_rpm_0_100;
         _slope_of_line_defining_droop_for_the_hsg_ref_currently_activ_0_55_13 =
@@ -22840,25 +22881,25 @@ undefined4 diagMemoryReadResponseBuilder(byte *param_1,uint param_2,uint param_3
 
 {
   undefined3 uVar1;
-  byte bVar6;
+  byte bVar5;
   undefined4 uVar2;
-  undefined2 uVar4;
-  char cVar7;
-  byte *pbVar3;
-  ushort uVar5;
-  undefined1 uVar8;
-  int iVar9;
+  undefined2 uVar3;
+  char cVar6;
+  j1939_header_t *msg_header;
+  ushort uVar4;
+  undefined1 uVar7;
+  int iVar8;
+  undefined1 *puVar9;
   undefined1 *puVar10;
-  undefined1 *puVar11;
   
                     /* From J90280.05 @ 0x01bd76 (confidence: 100%) */
-  cVar7 = **(char **)(param_1 + 6);
+  cVar6 = **(char **)(param_1 + 6);
   if (0x6e4 < param_3) {
     return 2;
   }
-  bVar6 = addressLookupFunction();
-  if (((*(short *)(param_1 + 4) != 8) && (*(ushort *)(param_1 + 4) != (ushort)bVar6)) &&
-     (*(short *)(param_1 + 4) != (ushort)(bVar6 + 10))) {
+  bVar5 = addressLookupFunction();
+  if (((*(short *)(param_1 + 4) != 8) && (*(ushort *)(param_1 + 4) != (ushort)bVar5)) &&
+     (*(short *)(param_1 + 4) != (ushort)(bVar5 + 10))) {
     return 2;
   }
   uVar2 = addressRangeValidator((short)param_2);
@@ -22866,41 +22907,39 @@ undefined4 diagMemoryReadResponseBuilder(byte *param_1,uint param_2,uint param_3
   if (((char)uVar2 == '\n') || ((char)uVar2 == '\t')) {
     return uVar2;
   }
-  if ((cVar7 == 'C') && ((ushort)param_3 < 0x100)) {
-    uVar8 = 0x44;
+  if ((cVar6 == 'C') && ((ushort)param_3 < 0x100)) {
+    uVar7 = 0x44;
     *(undefined1 *)(*(int *)(param_1 + 6) + 3) = *(undefined1 *)(*(int *)(param_1 + 6) + 6);
   }
   else {
     uVar1 = 0;
-    uVar8 = (&DAT_00022384)[(short)(ushort)(byte)(cVar7 + 0xbd)];
+    uVar7 = (&DAT_00022384)[(short)(ushort)(byte)(cVar6 + 0xbd)];
   }
-  uVar4 = (undefined2)CONCAT31(uVar1,uVar8);
-  cVar7 = addressLookupFunction();
-  pbVar3 = (byte *)multiPacketBufferAllocator(uVar4);
-  if (pbVar3 == (byte *)0x0) {
+  uVar3 = (undefined2)CONCAT31(uVar1,uVar7);
+  cVar6 = addressLookupFunction();
+  msg_header = (j1939_header_t *)multiPacketBufferAllocator(uVar3);
+  if (msg_header == (j1939_header_t *)0x0) {
     return 4;
   }
-  pbVar3[0] = 0;
-  pbVar3[1] = 0xef;
-  pbVar3[2] = 0;
-  pbVar3[3] = 0;
-  bVar6 = *param_1;
-  *pbVar3 = *pbVar3 & 0xe3;
-  *pbVar3 = bVar6 & 0x1c | *pbVar3;
-  pbVar3[2] = param_1[3];
-  pbVar3[3] = param_1[2];
-  iVar9 = *(int *)(param_1 + 6) + 1;
-  puVar10 = *(undefined1 **)(pbVar3 + 6) + 1;
-  **(undefined1 **)(pbVar3 + 6) = uVar8;
-  uVar5 = (ushort)(byte)(cVar7 - 1U);
-  puVar11 = puVar10;
-  memcpy((short)puVar10,(short)iVar9);
+  puVar10 = (undefined1 *)msg_header[1].id;
+  msg_header->id = 0xef0000;
+  bVar5 = *param_1;
+  *(byte *)&msg_header->id = *(byte *)&msg_header->id & 0xe3;
+  *(byte *)&msg_header->id = bVar5 & 0x1c | *(byte *)&msg_header->id;
+  *(byte *)((int)&msg_header->id + 2) = param_1[3];
+  *(byte *)((int)&msg_header->id + 3) = param_1[2];
+  iVar8 = *(int *)(param_1 + 6) + 1;
+  puVar9 = puVar10 + 1;
+  *puVar10 = uVar7;
+  uVar4 = (ushort)(byte)(cVar6 - 1U);
+  puVar10 = puVar9;
+  memcpy((short)puVar9,(short)iVar8);
   if (0xffffff < param_2) {
     param_2 = param_2 - 0x7fc4f6;
   }
-  memcpy(puVar10 + (byte)(cVar7 - 1U),(short)param_2,(short)((uint)puVar11 >> 0x10),
-         (short)((uint)iVar9 >> 0x10),uVar5);
-  sendCanMessage(pbVar3);
+  memcpy(puVar9 + (byte)(cVar6 - 1U),(short)param_2,(short)((uint)puVar10 >> 0x10),
+         (short)((uint)iVar8 >> 0x10),uVar4);
+  sendCanMessage(msg_header);
   return 0xff;
 }
 
@@ -23135,8 +23174,9 @@ void sendJ1939MultiFrame(uint *param_1)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
-void diagnosticParamRequestHandler(int param_1)
+void diagnosticParamRequestHandler(can_std_rx_desc_t *rx_msg)
 
 {
   byte bVar1;
@@ -23144,11 +23184,11 @@ void diagnosticParamRequestHandler(int param_1)
   short local_6;
   
                     /* From J90280.05 @ 0x01c33e (confidence: 94%) */
-  bVar1 = *(byte *)(*(int *)(param_1 + 6) + 2);
-  local_6 = (ushort)*(byte *)(*(int *)(param_1 + 6) + 6) << 8;
-  if ((((DAT_0080129a == '\x01') && (*(char *)(param_1 + 3) == DAT_0080129b)) &&
-      (bVar1 <= DAT_0080129e)) && (local_6 == _DAT_0080129c)) {
-    bVar2 = *(byte *)(*(int *)(param_1 + 6) + 1);
+  bVar1 = rx_msg->data_ptr[2];
+  local_6 = (ushort)(byte)rx_msg->data_ptr[6] << 8;
+  if ((((DAT_0080129a == '\x01') && ((char)rx_msg->id == DAT_0080129b)) && (bVar1 <= DAT_0080129e))
+     && (local_6 == _DAT_0080129c)) {
+    bVar2 = rx_msg->data_ptr[1];
     if (bVar2 == 0) {
       _DAT_008012ac = 0x37;
     }
@@ -23293,11 +23333,12 @@ undefined1 vp44MessageTransmitter(undefined4 param_1,undefined2 param_2)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
-void vp44FuelTempHandler(undefined4 *param_1)
+void vp44FuelTempHandler(can_std_rx_desc_t *rx_msg)
 
 {
-  int iVar1;
+  undefined *puVar1;
   undefined1 uVar2;
   undefined2 in_D0w;
   char cVar3;
@@ -23305,19 +23346,20 @@ void vp44FuelTempHandler(undefined4 *param_1)
   short local_6;
   
                     /* From J90280.05 @ 0x01c538 (confidence: 94%) */
-  iVar1 = *(int *)((int)param_1 + 6);
-  local_6 = (ushort)*(byte *)(iVar1 + 6) << 8;
-  local_8 = CONCAT11(*(undefined1 *)(iVar1 + 2),*(undefined1 *)(iVar1 + 1));
+  puVar1 = rx_msg->data_ptr;
+  local_6 = (ushort)(byte)puVar1[6] << 8;
+  cVar3 = (char)rx_msg->id;
+  local_8 = CONCAT11(puVar1[2],puVar1[1]);
   uVar2 = (undefined1)((ushort)in_D0w >> 8);
-  if ((((DAT_008012c4 == '\x01') && (*(char *)((int)param_1 + 3) != DAT_008012cf)) ||
-      (*(byte *)(iVar1 + 6) != 0xef)) || (0x6a4 < local_8)) {
+  if ((((DAT_008012c4 == '\x01') && (cVar3 != DAT_008012cf)) || (puVar1[6] != 0xef)) ||
+     (0x6a4 < local_8)) {
     messageErrorHandler(local_6);
   }
   else {
     DAT_008012c4 = '\x01';
-    _DAT_008012cc = *param_1;
+    _DAT_008012cc = rx_msg->id;
     _DAT_008012c6 = local_6;
-    DAT_008012c5 = *(byte *)(iVar1 + 3);
+    DAT_008012c5 = puVar1[3];
     _DAT_008012d0 = local_8;
     _DAT_008012ca = 0x70;
     DAT_008012c8 = 1;
@@ -23325,9 +23367,7 @@ void vp44FuelTempHandler(undefined4 *param_1)
     if (5 < DAT_008012c5) {
       DAT_008012c9 = 5;
     }
-    cVar3 = vp44MessageTransmitter
-                      (CONCAT22(CONCAT11(uVar2,*(char *)((int)param_1 + 3)),CONCAT11(uVar2,1)),
-                       0xef00);
+    cVar3 = vp44MessageTransmitter(CONCAT22(CONCAT11(uVar2,cVar3),CONCAT11(uVar2,1)),0xef00);
     if (cVar3 != '\0') {
       messageErrorHandler(_DAT_008012c6);
       DAT_008012c4 = '\0';
@@ -23428,15 +23468,16 @@ void vp44MultiFrameResponseHandler(int param_1)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
-void diagnosticStatusRequestHandler(int param_1)
+void diagnosticStatusRequestHandler(can_std_rx_desc_t *rx_msg)
 
 {
-  undefined2 local_6;
+  short local_6;
   
                     /* From J90280.05 @ 0x01c776 (confidence: 88%) */
-  if ((DAT_0080129a == '\x01') && (DAT_0080129b == *(char *)(param_1 + 3))) {
-    local_6 = (ushort)*(byte *)(*(int *)(param_1 + 6) + 6) << 8;
+  if ((DAT_0080129a == '\x01') && (DAT_0080129b == (char)rx_msg->id)) {
+    local_6 = (ushort)(byte)rx_msg->data_ptr[6] << 8;
     if (local_6 == _DAT_0080129c) {
       *_DAT_008012a8 = 9;
       DAT_0080129a = '\0';
@@ -23452,21 +23493,22 @@ void diagnosticStatusRequestHandler(int param_1)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
-void diagnosticErrorHandler(int param_1)
+void diagnosticErrorHandler(can_std_rx_desc_t *rx_msg)
 
 {
-  undefined2 local_6;
+  char cVar1;
+  short local_6;
   
                     /* From J90280.05 @ 0x01c7ca (confidence: 81%) */
-  local_6 = (ushort)*(byte *)(*(int *)(param_1 + 6) + 6) << 8;
-  if (((DAT_0080129a == '\x01') && (*(char *)(param_1 + 3) == DAT_0080129b)) &&
-     (local_6 == _DAT_0080129c)) {
+  local_6 = (ushort)(byte)rx_msg->data_ptr[6] << 8;
+  cVar1 = (char)rx_msg->id;
+  if (((DAT_0080129a == '\x01') && (cVar1 == DAT_0080129b)) && (local_6 == _DAT_0080129c)) {
     *_DAT_008012a8 = 10;
     DAT_0080129a = '\0';
   }
-  else if (((DAT_008012c4 == '\x01') && (*(char *)(param_1 + 3) == DAT_008012cf)) &&
-          (local_6 == _DAT_008012c6)) {
+  else if (((DAT_008012c4 == '\x01') && (cVar1 == DAT_008012cf)) && (local_6 == _DAT_008012c6)) {
     DAT_008012c4 = '\0';
   }
   return;
@@ -23508,30 +23550,32 @@ void diagnosticServiceByteHandler(void)
 // Function: vp44CanMessageDispatcher @ 0x00022e5e
 //
 
-void vp44CanMessageDispatcher(int param_1)
+/* WARNING: Unknown calling convention -- yet parameter storage is locked */
+
+void vp44CanMessageDispatcher(can_std_rx_desc_t *rx_msg)
 
 {
   char cVar1;
   
                     /* From J90280.05 @ 0x01c846 (confidence: 100%) */
-  if (*(short *)(param_1 + 4) == 8) {
-    cVar1 = **(char **)(param_1 + 6);
+  if (rx_msg->length == 8) {
+    cVar1 = *rx_msg->data_ptr;
     if (cVar1 == '\x11') {
-      diagnosticParamRequestHandler(param_1);
+      diagnosticParamRequestHandler(rx_msg);
       return;
     }
     if (cVar1 == '\x10') {
-      vp44FuelTempHandler(param_1);
+      vp44FuelTempHandler(rx_msg);
       return;
     }
     if (cVar1 == '\x13') {
-      diagnosticStatusRequestHandler(param_1);
+      diagnosticStatusRequestHandler(rx_msg);
       return;
     }
     if (cVar1 != -1) {
       return;
     }
-    diagnosticErrorHandler(param_1);
+    diagnosticErrorHandler(rx_msg);
   }
   return;
 }
@@ -23545,8 +23589,10 @@ void vp44CanMessageDispatcher(int param_1)
 void diagnosticParamRequestHandlerWrapper(void)
 
 {
+  can_std_rx_desc_t *unaff_A2;
+  
                     /* From J90280.05 @ 0x01c87e (confidence: 100%) */
-  diagnosticParamRequestHandler();
+  diagnosticParamRequestHandler(unaff_A2);
   return;
 }
 
@@ -23559,8 +23605,10 @@ void diagnosticParamRequestHandlerWrapper(void)
 void vp44FuelTempHandlerWrapper(void)
 
 {
+  can_std_rx_desc_t *unaff_A2;
+  
                     /* From J90280.05 @ 0x01c88c (confidence: 100%) */
-  vp44FuelTempHandler();
+  vp44FuelTempHandler(unaff_A2);
   return;
 }
 
@@ -23573,8 +23621,10 @@ void vp44FuelTempHandlerWrapper(void)
 void diagnosticStatusRequestHandlerWrapper(void)
 
 {
+  can_std_rx_desc_t *unaff_A2;
+  
                     /* From J90280.05 @ 0x01c89a (confidence: 100%) */
-  diagnosticStatusRequestHandler();
+  diagnosticStatusRequestHandler(unaff_A2);
   return;
 }
 
@@ -23587,8 +23637,10 @@ void diagnosticStatusRequestHandlerWrapper(void)
 void diagnosticErrorHandlerWrapper(void)
 
 {
+  can_std_rx_desc_t *unaff_A2;
+  
                     /* From J90280.05 @ 0x01c8a8 (confidence: 100%) */
-  diagnosticErrorHandler();
+  diagnosticErrorHandler(unaff_A2);
   return;
 }
 
@@ -25831,9 +25883,14 @@ void FUN_0002571e(void)
 
 {
   uint uVar1;
+  undefined4 unaff_D2;
+  undefined4 unaff_A2;
   
   if (j1708_transmit_buffer_2_32_ddc6.rx_buffer._14_2_ == 6) {
-    _DAT_0080dabc = coreTableInterpolation();
+    _DAT_0080dabc =
+         coreTableInterpolation
+                   ((void *)CONCAT22(_DAT_0080ccf4,0x80),(word)((uint)unaff_D2 >> 0x10),
+                    (word)((uint)unaff_A2 >> 0x10));
     uVar1 = ((uint)_DAT_00808210 * (uint)_DAT_0080dabc) / 0x8b21;
     if ((uint)_DAT_00808212 < (uint)_DAT_00808216 + (uVar1 & 0xffff)) {
       _DAT_0080daba = _DAT_00808216;
@@ -25951,10 +26008,10 @@ void epsTimingCalculationSlowCycle40Coordinator(void)
                     /* From J90280.05 @ 0x01e36a (confidence: 81%) */
   _retarder_mode1_data_ptr = _fuel_arbitrator_threshold_5;
   _low_oil_pressure_limit_as_calculated_for_present_engine_speed_0_100 =
-       lookupTableInterpolation(&DAT_00801a3e);
+       lookupTableInterpolation((table_interp_args_t *)&DAT_00801a3e);
   _DAT_00801a52 = _fuel_arbitrator_threshold_5;
   _very_low_oil_pressure_is_calculated_for_present_engine_speed_0_100 =
-       lookupTableInterpolation(&DAT_00801a4c);
+       lookupTableInterpolation((table_interp_args_t *)&DAT_00801a4c);
   return;
 }
 
@@ -26102,11 +26159,16 @@ void fuel_timing_calculation_with_fault_checking(void)
   short sVar3;
   int iVar1;
   int iVar2;
+  undefined4 unaff_D2;
   ushort uVar4;
+  undefined4 unaff_D3;
   short sVar5;
   
                     /* From J90280.05 @ 0x01848e (confidence: 70%) */
-  sVar3 = coreTableInterpolation();
+  sVar3 = coreTableInterpolation
+                    ((void *)CONCAT22(_DAT_0080825a *
+                                      _validated_percent_throttle_commanded_by_driver_0_100,0x80),
+                     (word)((uint)unaff_D2 >> 0x10),(word)((uint)unaff_D3 >> 0x10));
   sVar5 = _DAT_0080dae0;
   if (_DAT_0080da50 == 0) {
     _DAT_0080db02 = _operator_adjusted_lsg_breakpoint_speed_300_1000;
@@ -26146,7 +26208,7 @@ void fuel_timing_calculation_with_fault_checking(void)
       _DAT_0080dae0 = sVar3;
     }
     else {
-      _DAT_0080dae0 = exponentialMovingAverage();
+      _DAT_0080dae0 = exponentialMovingAverage(0x80);
     }
     if (_DAT_00808242 < _DAT_0080dae0) {
       _DAT_0080dae0 = _DAT_00808242;
@@ -27254,8 +27316,8 @@ void FUN_00026b3a(void)
   
   _DAT_0080db26 = _fuel_arbitrator_threshold_5;
   _DAT_0080db34 = _filtered_and_linearized_coolant_temperature_50_to_293;
-  sVar1 = lookupTableInterpolation(&DAT_0080db2e);
-  sVar2 = lookupTableInterpolation(&DAT_0080db20);
+  sVar1 = lookupTableInterpolation((table_interp_args_t *)&DAT_0080db2e);
+  sVar2 = lookupTableInterpolation((table_interp_args_t *)&DAT_0080db20);
   _DAT_0080db1c = sVar1 + sVar2;
   return;
 }
@@ -31190,7 +31252,7 @@ void FUN_0002d3c6(void)
       }
       else {
         _DAT_00801c14 = _DAT_0080dc18;
-        uVar2 = lookupTableInterpolation(&DAT_00801c0e);
+        uVar2 = lookupTableInterpolation((table_interp_args_t *)&DAT_00801c0e);
         local_8 = (uVar2 & 0xffff) << 9;
       }
       if (local_8 < 0xf99999) {
@@ -31219,15 +31281,15 @@ void FUN_0002d3c6(void)
          (short)((int)((uint)_DAT_00803bac * ((uint)_DAT_0080d32e - (uint)_DAT_0080db1c)) / 0x444);
     if (_DAT_00804012 != 0) {
       _DAT_00801c22 = _DAT_0080dc1c + 16000;
-      _DAT_0080dc1e = lookupTableInterpolation(&DAT_00801c1c);
+      _DAT_0080dc1e = lookupTableInterpolation((table_interp_args_t *)&DAT_00801c1c);
     }
     if (_DAT_00804014 != 0) {
       _DAT_00801c30 = _DAT_0080dc1c + 16000;
-      _DAT_0080dc20 = lookupTableInterpolation(&DAT_00801c2a);
+      _DAT_0080dc20 = lookupTableInterpolation((table_interp_args_t *)&DAT_00801c2a);
     }
     if (_DAT_00804016 != 0) {
       _DAT_00801c3e = _DAT_0080dc1c + 16000;
-      _DAT_0080dc22 = lookupTableInterpolation(&DAT_00801c38);
+      _DAT_0080dc22 = lookupTableInterpolation((table_interp_args_t *)&DAT_00801c38);
     }
     uVar2 = FUN_00035064(_DAT_0080dc22,
                          _DAT_008088a6 * (short)((uint)_DAT_00801bfe * (uint)_DAT_00803bac >> 10),
@@ -31360,7 +31422,7 @@ void fuelDemandProportionalCalculator(void)
   }
   else {
     _DAT_00801c14 = _DAT_0080dc18;
-    uVar1 = lookupTableInterpolation(&DAT_00801c0e);
+    uVar1 = lookupTableInterpolation((table_interp_args_t *)&DAT_00801c0e);
     local_8 = (uVar1 & 0xffff) << 9;
   }
   if (local_8 < 0xf99999) {
@@ -31429,7 +31491,13 @@ void FUN_0002dbde(void)
 
 {
   ushort uVar1;
+  word input_value;
+  undefined4 unaff_D2;
+  word scaling_factor;
+  undefined4 unaff_A2;
   
+  scaling_factor = (word)((uint)unaff_A2 >> 0x10);
+  input_value = (word)((uint)unaff_D2 >> 0x10);
   func_0x0004d988();
   if (_DAT_0080dc26 == 1) {
     if (_DAT_0080dc18 < _DAT_0080dc24) {
@@ -31443,7 +31511,7 @@ void FUN_0002dbde(void)
       return;
     }
     _DAT_00801c4a = (uint)_DAT_0080dc18 << 0x10;
-    uVar1 = coreTableInterpolation();
+    uVar1 = coreTableInterpolation((void *)CONCAT22(_DAT_0080dc24,0x80),input_value,scaling_factor);
     if (_DAT_0080dc18 < uVar1) {
       if ((int)(uint)_DAT_008088aa <= (int)((uint)uVar1 - (uint)_DAT_0080dc18)) {
         _DAT_0080dc18 = uVar1;
@@ -32885,7 +32953,7 @@ void FUN_0002f632(void)
        (ushort)(((uint)_jcomm_req_torque_braking_override_or_limit_value_0_125 * (uint)_DAT_00801e2c
                 ) / 100);
   _DAT_00801e36 = _fuel_arbitrator_threshold_5;
-  _DAT_00801e2e = lookupTableInterpolation(&DAT_00801e30);
+  _DAT_00801e2e = lookupTableInterpolation((table_interp_args_t *)&DAT_00801e30);
   if (_DAT_00801e26 <= _DAT_00801e2e) {
     if (_DAT_0080d9e4 == 2) {
       _DAT_00801e2a = 0x11;
@@ -32895,7 +32963,7 @@ void FUN_0002f632(void)
     return;
   }
   _DAT_00801e44 = _fuel_arbitrator_threshold_5;
-  _DAT_00801e2e = lookupTableInterpolation(&DAT_00801e3e);
+  _DAT_00801e2e = lookupTableInterpolation((table_interp_args_t *)&DAT_00801e3e);
   if (_DAT_00801e26 <= _DAT_00801e2e) {
     if (_DAT_0080d9e4 == 2) {
       _DAT_00801e2a = 0x21;
@@ -32905,7 +32973,7 @@ void FUN_0002f632(void)
     return;
   }
   _DAT_00801e52 = _fuel_arbitrator_threshold_5;
-  _DAT_00801e2e = lookupTableInterpolation(&DAT_00801e4c);
+  _DAT_00801e2e = lookupTableInterpolation((table_interp_args_t *)&DAT_00801e4c);
   if (_DAT_00801e26 <= _DAT_00801e2e) {
     if (_DAT_0080d9e4 == 2) {
       _DAT_00801e2a = 0x32;
@@ -32915,7 +32983,7 @@ void FUN_0002f632(void)
     return;
   }
   _DAT_00801e60 = _fuel_arbitrator_threshold_5;
-  _DAT_00801e2e = lookupTableInterpolation(&DAT_00801e5a);
+  _DAT_00801e2e = lookupTableInterpolation((table_interp_args_t *)&DAT_00801e5a);
   if (_DAT_00801e26 <= _DAT_00801e2e) {
     if (_DAT_0080d9e4 == 2) {
       _DAT_00801e2a = 0x43;
@@ -32925,7 +32993,7 @@ void FUN_0002f632(void)
     return;
   }
   _DAT_00801e6e = _fuel_arbitrator_threshold_5;
-  _DAT_00801e2e = lookupTableInterpolation(&DAT_00801e68);
+  _DAT_00801e2e = lookupTableInterpolation((table_interp_args_t *)&DAT_00801e68);
   if (_DAT_00801e2e < _DAT_00801e26) {
     if (_DAT_0080d9e4 == 2) {
       _DAT_00801e2a = 100;
@@ -34799,7 +34867,7 @@ void diagnosticCanResponseSender(int param_1,undefined4 param_2)
   DAT_00801eb7 = **(undefined1 **)(param_1 + 6);
   DAT_00801eb8 = *(undefined1 *)(*(int *)(param_1 + 6) + 1);
   DAT_00801eb9 = *(undefined1 *)(*(int *)(param_1 + 6) + 2);
-  sendCanMessage(&DAT_00801ea4);
+  sendCanMessage((j1939_header_t *)&DAT_00801ea4);
   return;
 }
 
@@ -34840,7 +34908,7 @@ void FUN_00031bce(void)
                  ((int)(((uint)(ushort)(
                                        _filtered_ambient_air_pressure_as_read_and_scaled_from_a_d_algor_0_15
                                        * 2) * 0x1afa) / 1000 & 0xffff) >> 7);
-  sendCanMessage(&DAT_00801ebc);
+  sendCanMessage((j1939_header_t *)&DAT_00801ebc);
   return;
 }
 
@@ -34959,7 +35027,7 @@ void FUN_00031c84(void)
   if ((debounced_switch_value_for_switch_16_on_off & 0x20) != 0) {
     DAT_00801ee9 = DAT_00801ee9 | 0xc1;
   }
-  sendCanMessage(&DAT_00801ed4);
+  sendCanMessage((j1939_header_t *)&DAT_00801ed4);
   return;
 }
 
@@ -35013,7 +35081,7 @@ void FUN_00031f30(void)
   else {
     DAT_00801efc = 0xff;
   }
-  sendCanMessage(&DAT_00801eec);
+  sendCanMessage((j1939_header_t *)&DAT_00801eec);
   return;
 }
 
@@ -35085,7 +35153,7 @@ void FUN_00032052(void)
     puVar2 = puVar2 + 1;
   } while (bVar1 < 10);
   DAT_00801f39 = 0x2a;
-  sendCanMessage(&DAT_00801f04);
+  sendCanMessage((j1939_header_t *)&DAT_00801f04);
   return;
 }
 
@@ -35116,56 +35184,53 @@ void engineSerialNumberPGN_65259_Builder(void)
 // Function: diagnosticMultiPacketResponseBuilder @ 0x0003216a
 //
 
-byte * diagnosticMultiPacketResponseBuilder(byte *param_1,undefined4 param_2)
+j1939_header_t * diagnosticMultiPacketResponseBuilder(byte *param_1,undefined4 param_2)
 
 {
   undefined4 in_D0;
-  undefined2 uVar2;
+  undefined2 uVar1;
+  byte bVar2;
+  j1939_header_t *msg_header;
   byte bVar3;
-  byte *pbVar1;
-  byte bVar4;
+  undefined1 *puVar4;
   undefined1 *puVar5;
-  undefined1 *puVar6;
   
                     /* From J90280.05 @ 0x0298d8 (confidence: 94%) */
-  uVar2 = (undefined2)CONCAT31((int3)((uint)in_D0 >> 8),**(undefined1 **)(param_1 + 6));
-  bVar3 = FUN_0000b688();
-  pbVar1 = (byte *)multiPacketBufferAllocator(uVar2);
-  if (pbVar1 != (byte *)0x0) {
-    pbVar1[0] = 0;
-    pbVar1[1] = 0xef;
-    pbVar1[2] = 0;
-    pbVar1[3] = 0;
-    bVar4 = *param_1;
-    *pbVar1 = *pbVar1 & 0xe3;
-    *pbVar1 = bVar4 & 0x1c | *pbVar1;
-    pbVar1[2] = param_1[3];
-    pbVar1[3] = param_1[2];
-    puVar6 = *(undefined1 **)(pbVar1 + 6);
+  uVar1 = (undefined2)CONCAT31((int3)((uint)in_D0 >> 8),**(undefined1 **)(param_1 + 6));
+  bVar2 = FUN_0000b688();
+  msg_header = (j1939_header_t *)multiPacketBufferAllocator(uVar1);
+  if (msg_header != (j1939_header_t *)0x0) {
+    msg_header->id = 0xef0000;
+    bVar3 = *param_1;
+    *(byte *)&msg_header->id = *(byte *)&msg_header->id & 0xe3;
+    *(byte *)&msg_header->id = bVar3 & 0x1c | *(byte *)&msg_header->id;
+    *(byte *)((int)&msg_header->id + 2) = param_1[3];
+    *(byte *)((int)&msg_header->id + 3) = param_1[2];
+    puVar5 = (undefined1 *)msg_header[1].id;
     if (param_2._1_1_ == '\0') {
-      puVar5 = puVar6 + 1;
-      *puVar6 = 0xc;
+      puVar4 = puVar5 + 1;
+      *puVar5 = 0xc;
     }
     else if (param_2._1_1_ == -2) {
-      *puVar6 = 0xe;
-      puVar6[1] = DAT_00801f3c;
-      puVar5 = puVar6 + 3;
-      puVar6[2] = DAT_00801f3d;
+      *puVar5 = 0xe;
+      puVar5[1] = DAT_00801f3c;
+      puVar4 = puVar5 + 3;
+      puVar5[2] = DAT_00801f3d;
     }
     else {
-      *puVar6 = 0xd;
-      puVar5 = puVar6 + 2;
-      puVar6[1] = param_2._1_1_;
+      *puVar5 = 0xd;
+      puVar4 = puVar5 + 2;
+      puVar5[1] = param_2._1_1_;
     }
-    puVar6 = *(undefined1 **)(param_1 + 6);
-    for (bVar4 = 0; bVar4 < bVar3; bVar4 = bVar4 + 1) {
-      *puVar5 = *puVar6;
+    puVar5 = *(undefined1 **)(param_1 + 6);
+    for (bVar3 = 0; bVar3 < bVar2; bVar3 = bVar3 + 1) {
+      *puVar4 = *puVar5;
+      puVar4 = puVar4 + 1;
       puVar5 = puVar5 + 1;
-      puVar6 = puVar6 + 1;
     }
-    pbVar1 = (byte *)sendCanMessage((short)pbVar1);
+    msg_header = (j1939_header_t *)sendCanMessage(msg_header);
   }
-  return pbVar1;
+  return msg_header;
 }
 
 
@@ -35238,7 +35303,7 @@ byte activeDtcListBuilder(void)
         puVar5 = puVar5 + 1;
       }
     }
-    bVar3 = sendCanMessage(&DAT_00801f56);
+    bVar3 = sendCanMessage((j1939_header_t *)&DAT_00801f56);
   }
   return bVar3;
 }
@@ -35314,7 +35379,7 @@ byte previousDtcListBuilder(void)
         puVar5 = puVar5 + 1;
       }
     }
-    bVar3 = sendCanMessage(&DAT_0080265c);
+    bVar3 = sendCanMessage((j1939_header_t *)&DAT_0080265c);
   }
   return bVar3;
 }
@@ -35474,7 +35539,7 @@ byte buildCanMessage(void)
         bVar5 = bVar5 + 1;
       } while (bVar5 < 0x14);
     }
-    bVar5 = sendCanMessage(&DAT_00802d62);
+    bVar5 = sendCanMessage((j1939_header_t *)&DAT_00802d62);
   }
   return bVar5;
 }
@@ -35540,7 +35605,7 @@ void diagnosticDM5DataBuilder(void)
     local_6 = local_6 & 0xfeff;
   }
   _DAT_0080345e = byteSwap16(&local_6);
-  sendCanMessage(&DAT_0080344a);
+  sendCanMessage((j1939_header_t *)&DAT_0080344a);
   return;
 }
 
@@ -35579,7 +35644,7 @@ void diagnosticByteResponseSender(undefined4 param_1)
                     /* From J90280.05 @ 0x02a1f6 (confidence: 80%) */
   DAT_00803470 = param_1._1_1_;
   _DAT_00803472 = byteSwap16((int)&param_1 + 2);
-  sendCanMessage(&DAT_00803462);
+  sendCanMessage((j1939_header_t *)&DAT_00803462);
   return;
 }
 
@@ -35730,7 +35795,7 @@ void FUN_00032c76(void)
   DAT_00803495 = uStack_5;
   local_6 = (undefined1)((ushort)_fuel_arbitrator_threshold_5 >> 8);
   DAT_00803496 = local_6;
-  sendCanMessage(&DAT_0080349a);
+  sendCanMessage((j1939_header_t *)&DAT_0080349a);
   return;
 }
 
@@ -35836,7 +35901,7 @@ void vp44Message300FaultFlagProcessor(void)
   *(undefined2 *)(unaff_A6 + -2) = _fuel_arbitrator_threshold_5;
   DAT_00803495 = *(undefined1 *)(unaff_A6 + -1);
   DAT_00803496 = *(undefined1 *)(unaff_A6 + -2);
-  sendCanMessage(&DAT_0080349a);
+  sendCanMessage((j1939_header_t *)&DAT_0080349a);
   return;
 }
 
@@ -35947,7 +36012,7 @@ void FUN_00032e4c(void)
   DAT_008034af = 0xff;
   DAT_008034b0 = 0xff;
   DAT_008034b1 = 0xff;
-  sendCanMessage(&DAT_008034b2);
+  sendCanMessage((j1939_header_t *)&DAT_008034b2);
   return;
 }
 
@@ -35997,7 +36062,7 @@ void configParamCanBuilder(void)
   local_6 = (undefined1)((ushort)_DAT_0080817e >> 8);
   DAT_008034c4 = local_6;
   DAT_008034c5 = DAT_00808181;
-  sendCanMessage(&DAT_008034ca);
+  sendCanMessage((j1939_header_t *)&DAT_008034ca);
   return;
 }
 
@@ -36035,7 +36100,7 @@ void FUN_00033164(void)
   DAT_008034eb = (undefined1)
                  ((int)((uint)(((int)(uint)_flitered_and_linearized_oil_pressure_0_100 >> 7) *
                               0x1afa) / 1000) >> 2);
-  sendCanMessage(&DAT_008034da);
+  sendCanMessage((j1939_header_t *)&DAT_008034da);
   return;
 }
 
@@ -36335,7 +36400,7 @@ byte FUN_0003366a(void)
   bVar1 = DAT_00803538 & 0xf0;
   if (bVar1 == 0) {
     FUN_0003320e(&DAT_008034f2);
-    bVar1 = sendCanMessage(&DAT_0080352a);
+    bVar1 = sendCanMessage((j1939_header_t *)&DAT_0080352a);
   }
   return bVar1;
 }
@@ -36382,7 +36447,7 @@ void FUN_00033716(void)
   
   local_8 = FUN_00035064(_DAT_00804fc0,0x14,&DAT_00008ca0);
   _DAT_00803548 = byteSwap32(&local_8);
-  sendCanMessage(&DAT_0080353a);
+  sendCanMessage((j1939_header_t *)&DAT_0080353a);
   return;
 }
 
@@ -36452,7 +36517,7 @@ void FUN_000337c4(void)
     DAT_00803561 = -6;
   }
   _DAT_00803562 = 0xffff;
-  sendCanMessage(&DAT_00803552);
+  sendCanMessage((j1939_header_t *)&DAT_00803552);
   return;
 }
 
@@ -36532,7 +36597,7 @@ void dutyCycleMonitorAltIsrHandler(void)
                                 _jcomm_ind_retarder_torque_amount_of_torque_provided_by_retarde_0_125
                                >> 8);
   }
-  sendCanMessage(&DAT_00803572);
+  sendCanMessage((j1939_header_t *)&DAT_00803572);
   return;
 }
 
@@ -36595,7 +36660,7 @@ void FUN_00033a62(void)
   local_8 = _DAT_00804fa0 >> 2;
   local_8 = FUN_00035064(local_8,0x39c2c3,1000000);
   _DAT_008035ac = byteSwap32(&local_8);
-  sendCanMessage(&DAT_0080359a);
+  sendCanMessage((j1939_header_t *)&DAT_0080359a);
   return;
 }
 
@@ -36658,7 +36723,7 @@ void fuelEconomyDataBuilder(void)
   DAT_008035b8 = uStack_5;
   local_6 = (undefined1)(uVar2 >> 8);
   DAT_008035b9 = local_6;
-  sendCanMessage(&DAT_008035bc);
+  sendCanMessage((j1939_header_t *)&DAT_008035bc);
   return;
 }
 
@@ -36701,7 +36766,7 @@ void ioControlDataBuilder(void)
   _engine_control_flags_register = byteSwap32(&local_8);
   local_8 = FUN_00035064(_DAT_00804fb4,0x14,&DAT_00008ca0);
   _DAT_008035e2 = byteSwap32(&local_8);
-  sendCanMessage(&DAT_008035d0);
+  sendCanMessage((j1939_header_t *)&DAT_008035d0);
   return;
 }
 
@@ -36779,7 +36844,7 @@ void FUN_00033e58(void)
   else {
     DAT_00803610 = -6;
   }
-  sendCanMessage(&DAT_00803600);
+  sendCanMessage((j1939_header_t *)&DAT_00803600);
   return;
 }
 
@@ -36841,7 +36906,7 @@ void FUN_00033f5a(void)
   if ((DSPTSESW & 4) != 0) {
     DAT_0080362c = DAT_0080362c | 1;
   }
-  sendCanMessage(&DAT_00803618);
+  sendCanMessage((j1939_header_t *)&DAT_00803618);
   return;
 }
 
@@ -36947,7 +37012,7 @@ byte vp44CanMessage100ResponseBuilder(void)
     local_6 = (undefined1)
               ((ushort)_jcomm_reference_retarder_torque_reference_ret_torque_that_co_0_64255 >> 8);
     DAT_00803641 = local_6;
-    bVar1 = sendCanMessage(&DAT_00803644);
+    bVar1 = sendCanMessage((j1939_header_t *)&DAT_00803644);
   }
   return bVar1;
 }
@@ -36989,7 +37054,7 @@ void FUN_00034232(void)
   _DAT_00803662 = byteSwap32(&local_8);
   local_8 = FUN_00035064(_DAT_00804fa8,&DAT_00003268,64000);
   _DAT_00803666 = byteSwap32(&local_8);
-  sendCanMessage(&DAT_00803654);
+  sendCanMessage((j1939_header_t *)&DAT_00803654);
   return;
 }
 
@@ -37030,7 +37095,7 @@ void retarderDataBuilder(void)
                     /* From J90280.05 @ 0x02b2f4 (confidence: 94%) */
   local_6 = (undefined2)((uint)_filtered_and_linearized_battery_voltage_0_40 * 0x14 >> 3);
   _DAT_0080367e = byteSwap16(&local_6);
-  sendCanMessage(&DAT_0080366c);
+  sendCanMessage((j1939_header_t *)&DAT_0080366c);
   return;
 }
 
@@ -37073,7 +37138,7 @@ void FUN_00034394(void)
   
   local_8 = FUN_00035064(_DAT_00804fbc,0x14,&DAT_00008ca0);
   _DAT_00803696 = byteSwap32(&local_8);
-  sendCanMessage(&DAT_00803684);
+  sendCanMessage((j1939_header_t *)&DAT_00803684);
   return;
 }
 
@@ -37820,8 +37885,8 @@ void liftPumpFuelDeliveryController(void)
   _DAT_008036d6 = 0x80720c;
   _DAT_008036da = _filtered_and_linearized_coolant_temperature_50_to_293;
   _DAT_008036dc = 0x80721e;
-  uVar1 = lookupTableInterpolation(&DAT_008036c6);
-  uVar2 = lookupTableInterpolation(&DAT_008036d4);
+  uVar1 = lookupTableInterpolation((table_interp_args_t *)&DAT_008036c6);
+  uVar2 = lookupTableInterpolation((table_interp_args_t *)&DAT_008036d4);
   if (uVar2 <= uVar1) {
     j1708_transmit_buffer_2_32_ddc6.rx_buffer[0x22] = (char)(uVar1 >> 8);
     j1708_transmit_buffer_2_32_ddc6.rx_buffer[0x23] = (char)uVar1;
@@ -37888,7 +37953,9 @@ void FUN_00034dba(void)
 // Function: lookupTableInterpolation @ 0x00034de0
 //
 
-short lookupTableInterpolation(short *param_1)
+/* WARNING: Unknown calling convention -- yet parameter storage is locked */
+
+short lookupTableInterpolation(table_interp_args_t *args)
 
 {
   short *psVar1;
@@ -37898,9 +37965,9 @@ short lookupTableInterpolation(short *param_1)
   ushort *puVar5;
   
                     /* From J90280.05 @ 0x035560 (confidence: 94%) */
-  psVar1 = *(short **)(param_1 + 1);
-  puVar5 = (ushort *)((int)psVar1 + (int)*param_1);
-  uVar2 = param_1[3];
+  psVar1 = (short *)args->x_axis_ptr;
+  puVar5 = (ushort *)((int)psVar1 + (int)(short)args->current_index);
+  uVar2 = args->input_value;
   if (uVar2 < *puVar5) {
     if (uVar2 < (ushort)psVar1[1]) {
       puVar5 = (ushort *)(psVar1 + 1);
@@ -37914,7 +37981,7 @@ short lookupTableInterpolation(short *param_1)
   else {
     if (*(ushort *)((int)psVar1 + (int)*psVar1) <= uVar2) {
       iVar3 = ((int)psVar1 + (int)*psVar1) - (int)psVar1;
-      *param_1 = (short)iVar3;
+      args->current_index = (word)iVar3;
       goto LAB_00034e40;
     }
 LAB_00034e26:
@@ -37922,12 +37989,12 @@ LAB_00034e26:
     }
   }
   iVar3 = (int)puVar5 - (int)psVar1;
-  *param_1 = (short)iVar3;
+  args->current_index = (word)iVar3;
   if (uVar2 != *puVar5) {
-    if (param_1[6] != 0) {
-      return *(short *)(*(int *)(param_1 + 4) + iVar3);
+    if (args[1].current_index != 0) {
+      return *(short *)(args->y_axis_ptr + iVar3);
     }
-    puVar4 = (ushort *)(*(int *)(param_1 + 4) + iVar3);
+    puVar4 = (ushort *)(args->y_axis_ptr + iVar3);
     if (*puVar4 <= puVar4[1]) {
       return *puVar4 + (short)(((uint)(ushort)(puVar4[1] - *puVar4) *
                                (uint)(ushort)(uVar2 - *puVar5)) /
@@ -37937,7 +38004,39 @@ LAB_00034e26:
                             / (uint)(ushort)(puVar5[1] - *puVar5));
   }
 LAB_00034e40:
-  return *(short *)(*(int *)(param_1 + 4) + iVar3);
+  return *(short *)(args->y_axis_ptr + iVar3);
+}
+
+
+
+//
+// Function: coreTableInterpolation @ 0x00034f8a
+//
+
+/* WARNING: Unknown calling convention -- yet parameter storage is locked */
+
+undefined8 coreTableInterpolation(void *table_descriptor,word input_value,word scaling_factor)
+
+{
+  ushort uVar1;
+  undefined4 *puVar2;
+  int iVar3;
+  undefined4 in_D1;
+  undefined2 in_stack_00000008;
+  
+                    /* From J90280.05 @ 0x0356f8 (confidence: 100%) */
+  puVar2 = (undefined4 *)CONCAT22(table_descriptor._2_2_,in_stack_00000008);
+  uVar1 = *(ushort *)*puVar2;
+  if (uVar1 == 0) {
+    iVar3 = (uint)table_descriptor._0_2_ << 0x10;
+  }
+  else {
+    iVar3 = (uint)uVar1 * (uint)*(ushort *)(puVar2 + 1) +
+            ((uint)uVar1 * (uint)*(ushort *)((int)puVar2 + 6) >> 0x10) +
+            (uint)table_descriptor._0_2_ * (uint)(ushort)-uVar1;
+  }
+  puVar2[1] = iVar3;
+  return CONCAT44((iVar3 + 0x8000U) * 0x10000 | iVar3 + 0x8000U >> 0x10,in_D1);
 }
 
 
@@ -38106,4 +38205,4 @@ LAB_00035162:
 
 
 
-// Export complete - 773 functions processed
+// Export complete - 774 functions processed

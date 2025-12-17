@@ -1,0 +1,11 @@
+function_address,function_name,param_index,new_name,new_type,comment
+0x000104e8,sendCanMessage,0,msg_header,j1939_header_t*,Pointer to J1939 message header structure
+0x00022e5e,vp44CanMessageDispatcher,0,rx_msg,can_std_rx_desc_t*,Function that appears to handle messages received from the vp44
+0x00022b50,vp44FuelTempHandler,0,rx_msg,can_std_rx_desc_t*,Function that appears to handle fuel temp from the vp44
+0x00022956,diagnosticParamRequestHandler,0,rx_msg,can_std_rx_desc_t*,Function that appears to handle diagnostic messages received from the vp44
+0x00022d8e,diagnosticStatusRequestHandler,0,rx_msg,can_std_rx_desc_t*,Function that appears to handle diagnostic status requests from the vp44
+0x00022de2,diagnosticErrorHandler,0,rx_msg,can_std_rx_desc_t*,Function that appears to handle diagnostic errors from the vp44
+0x00034f8a,coreTableInterpolation,0,table_descriptor,void*,Pointer to table descriptor structure containing table metadata
+0x00034f8a,coreTableInterpolation,1,input_value,ushort,Input value for table interpolation lookup
+0x00034f8a,coreTableInterpolation,2,scaling_factor,ushort,Optional scaling factor for interpolation calculation
+0x00034de0,lookupTableInterpolation,0,args,table_interp_args_t*,Pointer to table interpolation arguments structure

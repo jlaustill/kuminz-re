@@ -20,6 +20,7 @@
     "ghidra:structures": "./ghidra/analyze.sh structures",
     "ghidra:enums": "./ghidra/analyze.sh enums",
     "ghidra:labels": "./ghidra/analyze.sh labels",
+    "ghidra:funcparams": "./ghidra/analyze.sh funcparams",
     "ghidra:decompile": "./ghidra/analyze.sh decompile",
     "ghidra:full": "./ghidra/analyze.sh full",
     "ghidra:status": "./ghidra/analyze.sh status"

@@ -397,6 +397,43 @@ cmd_labels() {
     echo "Run '$0 export' to regenerate decompilation with labels."
 }
 
+cmd_funcparams() {
+    print_header "APPLYING FUNCTION PARAMETER TYPES"
+
+    check_ghidra
+
+    if [ ! -d "$PROJECT_LOCATION/$PROJECT_NAME.rep" ]; then
+        print_error "Project not found. Run '$0 init' first."
+        exit 1
+    fi
+
+    PARAMS_CSV="$OUTPUT_DIR/function_parameters.csv"
+
+    if [ ! -f "$PARAMS_CSV" ]; then
+        print_error "function_parameters.csv not found"
+        print_error "Expected at: $PARAMS_CSV"
+        exit 1
+    fi
+
+    echo "Applying function parameter types for improved decompilation readability..."
+    echo "Source: $PARAMS_CSV"
+    echo ""
+
+    "$GHIDRA_HEADLESS" \
+        "$PROJECT_LOCATION" \
+        "$PROJECT_NAME" \
+        -process "J90350.00.rom.bin" \
+        -noanalysis \
+        -scriptPath "$SCRIPTS_DIR" \
+        -postScript ApplyFunctionParameters.java "$PARAMS_CSV"
+
+    print_success "Function parameter types applied"
+    echo ""
+    echo "Run '$0 export' to see changes like:"
+    echo "  void vp44CanMessageDispatcher(undefined4 param_1)"
+    echo "  -> void vp44CanMessageDispatcher(can_std_rx_desc_t *rx_msg)"
+}
+
 cmd_decompile() {
     if [ -z "$2" ]; then
         print_error "Usage: $0 decompile <address|function_name>"
@@ -493,6 +530,7 @@ cmd_help() {
     echo "  enums      Apply enum definitions from J90280.05 (776 enums for magic number replacement)"
     echo "  hwregs     Apply MC68336 hardware register names (DAT_00fffa27 -> REG_SIM_SWSR)"
     echo "  labels     Apply code labels from J90280.05 (3,496 labels with address translation)"
+    echo "  funcparams Apply function parameter types (param_1 -> rx_msg with type)"
     echo "  decompile  Decompile a single function by address or name"
     echo "  full       Run complete pipeline: init -> analyze -> memmap -> ramvars -> bootstrap -> export"
     echo "  status     Show project status"
@@ -544,6 +582,9 @@ case "${1:-help}" in
         ;;
     labels)
         cmd_labels
+        ;;
+    funcparams)
+        cmd_funcparams
         ;;
     decompile)
         cmd_decompile "$@"
