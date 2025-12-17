@@ -272,6 +272,131 @@ cmd_structures() {
     print_success "Structure definitions applied"
 }
 
+cmd_enums() {
+    print_header "APPLYING ENUM DEFINITIONS"
+
+    check_ghidra
+
+    if [ ! -d "$PROJECT_LOCATION/$PROJECT_NAME.rep" ]; then
+        print_error "Project not found. Run '$0 init' first."
+        exit 1
+    fi
+
+    # Default to J90280.05's enums.csv
+    ENUMS_CSV="$PROJECT_DIR/../J90280.05_analysis/ghidra/CM550.rep/enums.csv"
+
+    # Check for local copy first
+    if [ -f "$OUTPUT_DIR/enums.csv" ]; then
+        ENUMS_CSV="$OUTPUT_DIR/enums.csv"
+    fi
+
+    if [ ! -f "$ENUMS_CSV" ]; then
+        print_error "enums.csv not found"
+        print_error "Expected at: $ENUMS_CSV"
+        exit 1
+    fi
+
+    echo "Applying enum definitions for improved decompilation readability..."
+    echo "Source: $ENUMS_CSV"
+    echo ""
+
+    "$GHIDRA_HEADLESS" \
+        "$PROJECT_LOCATION" \
+        "$PROJECT_NAME" \
+        -process "J90350.00.rom.bin" \
+        -noanalysis \
+        -scriptPath "$SCRIPTS_DIR" \
+        -postScript ApplyEnums.java "$ENUMS_CSV"
+
+    print_success "Enum definitions applied"
+    echo ""
+    echo "Run '$0 export' to regenerate decompilation with enum values."
+}
+
+cmd_hwregs() {
+    print_header "APPLYING HARDWARE REGISTER NAMES"
+
+    check_ghidra
+
+    if [ ! -d "$PROJECT_LOCATION/$PROJECT_NAME.rep" ]; then
+        print_error "Project not found. Run '$0 init' first."
+        exit 1
+    fi
+
+    # Use J90280.05's global_variables.csv (hardware registers are identical)
+    VARS_CSV="$PROJECT_DIR/../J90280.05_analysis/ghidra/CM550.rep/global_variables.csv"
+
+    if [ ! -f "$VARS_CSV" ]; then
+        print_error "J90280.05 global_variables.csv not found"
+        exit 1
+    fi
+
+    echo "Applying MC68336 hardware register names..."
+    echo "Source: $VARS_CSV"
+    echo "Filter: 0x00FFxxxx peripheral register space"
+    echo ""
+
+    "$GHIDRA_HEADLESS" \
+        "$PROJECT_LOCATION" \
+        "$PROJECT_NAME" \
+        -process "J90350.00.rom.bin" \
+        -noanalysis \
+        -scriptPath "$SCRIPTS_DIR" \
+        -postScript ApplyHardwareRegisters.java "$VARS_CSV"
+
+    print_success "Hardware register names applied"
+    echo ""
+    echo "Run '$0 export' to see changes like:"
+    echo "  DAT_00fffa27 -> REG_SIM_SWSR (Software Watchdog Service Register)"
+}
+
+cmd_labels() {
+    print_header "APPLYING CODE LABELS"
+
+    check_ghidra
+
+    if [ ! -d "$PROJECT_LOCATION/$PROJECT_NAME.rep" ]; then
+        print_error "Project not found. Run '$0 init' first."
+        exit 1
+    fi
+
+    # Check for local labels.csv first, then fall back to J90280.05
+    if [ -f "$OUTPUT_DIR/labels.csv" ]; then
+        LABELS_CSV="$OUTPUT_DIR/labels.csv"
+    else
+        LABELS_CSV="$PROJECT_DIR/../J90280.05_analysis/ghidra/CM550.rep/labels.csv"
+    fi
+
+    RELOCATION_MAP="$OUTPUT_DIR/relocation_map.csv"
+
+    if [ ! -f "$LABELS_CSV" ]; then
+        print_error "labels.csv not found"
+        print_error "Expected at: $LABELS_CSV"
+        exit 1
+    fi
+
+    echo "Applying code labels for improved decompilation readability..."
+    echo "Labels source: $LABELS_CSV"
+    if [ -f "$RELOCATION_MAP" ]; then
+        echo "Relocation map: $RELOCATION_MAP"
+    else
+        echo "No relocation map - RAM labels only"
+    fi
+    echo ""
+
+    "$GHIDRA_HEADLESS" \
+        "$PROJECT_LOCATION" \
+        "$PROJECT_NAME" \
+        -process "J90350.00.rom.bin" \
+        -noanalysis \
+        -scriptPath "$SCRIPTS_DIR" \
+        -postScript ApplyLabels.java "$LABELS_CSV" "$RELOCATION_MAP"
+
+    print_success "Code labels applied"
+    echo ""
+    echo "Run '$0 export' to regenerate decompilation with labels."
+}
+
 cmd_decompile() {
     if [ -z "$2" ]; then
         print_error "Usage: $0 decompile <address|function_name>"
@@ -365,6 +490,9 @@ cmd_help() {
     echo "  export     Export function names and decompilation to CSV/CPP"
     echo "  import     Import CSV changes back into Ghidra"
     echo "  structures Apply structure definitions from structure_definitions.csv"
+    echo "  enums      Apply enum definitions from J90280.05 (776 enums for magic number replacement)"
+    echo "  hwregs     Apply MC68336 hardware register names (DAT_00fffa27 -> REG_SIM_SWSR)"
+    echo "  labels     Apply code labels from J90280.05 (3,496 labels with address translation)"
     echo "  decompile  Decompile a single function by address or name"
     echo "  full       Run complete pipeline: init -> analyze -> memmap -> ramvars -> bootstrap -> export"
     echo "  status     Show project status"
@@ -407,6 +535,15 @@ case "${1:-help}" in
         ;;
     structures)
         cmd_structures
+        ;;
+    enums)
+        cmd_enums
+        ;;
+    hwregs)
+        cmd_hwregs
+        ;;
+    labels)
+        cmd_labels
         ;;
     decompile)
         cmd_decompile "$@"

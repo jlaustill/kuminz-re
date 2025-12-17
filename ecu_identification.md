@@ -24,10 +24,12 @@ This document tracks known Cummins ECU hardware/software combinations encountere
 
 ## Known ECUs
 
-| ECU Type | Module ID | Firmware | Calibration | Engine | ESN | CPL | ECM Code | Part Number | Serial | Date Code | Source | Notes |
-|----------|-----------|----------|-------------|--------|-----|-----|----------|-------------|--------|-----------|--------|-------|
-| CM550 | EN | J90350.00 | 100898231658 | ISB 195hp | - | - | - | 98502 | T03942860 | 060498 | Live ECU dump | First extraction 2024-12-16 |
-| CM550 | EN | J90280.05 | - | ISB (unknown) | - | - | - | - | - | - | Unknown | Reference firmware for analysis |
+| ECU Type  | Module ID | Firmware  | Calibration   | Engine        | ESN       | CPL | ECM Code  | Part Number | Serial    | Date Code | Source              | Notes                           |
+|-----------|-----------|-----------|---------------|---------------|-----------|-----|-----------|-------------|-----------|-----------|---------------------|---------------------------------|
+|           |           |           |               |               |           |     |           | 3947412     |           |           | Physical Chip Dump  |                                 |
+| CM550     | EN        | J90350.00 | 100898231658  | ISB 195hp     | -         | -   | -         | 98502       | T03942860 | 060498    | Live ECU dump       | First extraction 2024-12-16     |
+| CM550     | EN        | J90280.05 | -             | ISB (unknown) | -         | -   |           | -           | -         | -         | Unknown             | Reference firmware for analysis |
+| CM848D    |           |           |               |               | 57185646  |     |           | 3971404     | 40333     |           |                     |                                 |
 
 ---
 
