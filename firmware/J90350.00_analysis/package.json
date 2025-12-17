@@ -17,6 +17,7 @@
     "ghidra:bootstrap": "./ghidra/analyze.sh bootstrap",
     "ghidra:export": "./ghidra/analyze.sh export",
     "ghidra:import": "./ghidra/analyze.sh import",
+    "ghidra:structures": "./ghidra/analyze.sh structures",
     "ghidra:decompile": "./ghidra/analyze.sh decompile",
     "ghidra:full": "./ghidra/analyze.sh full",
     "ghidra:status": "./ghidra/analyze.sh status"

@@ -1,0 +1,519 @@
+struct_name,address,field_name,type,size,comment,dependency,Status
+# =============================================================================
+# J90350.00 Structure Definitions
+# Created: 2024-12-17
+# Based on J90280.05 analysis with address adjustments for J90350.00 memory layout
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Generic Structures (No Fixed Address - Portable)
+# -----------------------------------------------------------------------------
+
+# J1939 Message Header
+j1939_header_t,,id,uint32_t,4,CAN identifier containing PGN and addressing info,,verified
+j1939_header_t,,length,uint16_t,2,Message data length for single/multi-frame decision,,verified
+
+# Standard CAN RX Descriptor
+can_std_rx_desc_t,,id,uint32_t,4,11-bit CAN ID stored in 32-bit (ABI),,verified
+can_std_rx_desc_t,,length,uint16_t,2,DLC,,verified
+can_std_rx_desc_t,,data_ptr,ptr:uint8_t,4,Pointer to payload bytes,,verified
+
+# Parameter Lookup Arguments - used by param_address_calc
+param_lookup_args_t,,calculated_block,dword,4,Block x 256 x 4 calculation result,,verified
+param_lookup_args_t,,offset,word,2,Parameter offset within block,,verified
+param_lookup_args_t,,result_value,word,2,Retrieved parameter value (capped at 32000),,verified
+
+# Table Interpolation Arguments - used by FUN_00035088 (2D lookup)
+table_interp_args_t,,current_index,word,2,Current interpolation index into table,,verified
+table_interp_args_t,,x_axis_ptr,dword,4,Pointer to X-axis table (input values),,verified
+table_interp_args_t,,input_value,word,2,Input value for table lookup,,verified
+table_interp_args_t,,y_axis_ptr,dword,4,Pointer to Y-axis table (output values),,verified
+
+# DMA Descriptor
+dma_descriptor_t,,source_address,dword,4,DMA transfer source memory address,,verified
+dma_descriptor_t,,dest_address,dword,4,DMA transfer destination memory address,,verified
+dma_descriptor_t,,transfer_count,word,2,Number of bytes/words to transfer,,verified
+dma_descriptor_t,,control_flags,word,2,DMA control flags (mode type enable etc),,verified
+dma_descriptor_t,,next_descriptor,dword,4,Pointer to next descriptor in chain,,verified
+
+# Memory Operation Request
+memory_operation_request_t,,source_data_ptr,dword,4,Pointer to source data for memory operation,,verified
+memory_operation_request_t,,target_data_ptr,dword,4,Pointer to destination memory location,,verified
+memory_operation_request_t,,operation_size,word,2,Number of bytes to copy (max 1764 bytes),,verified
+memory_operation_request_t,,metadata_value,word,2,Logging metadata/timestamp for circular buffer,,verified
+
+# Q16.16 Fixed Point - 32-bit with 16-bit integer and 16-bit fractional
+q16_fixed_point_t,,integer_part,word,2,High 16 bits - integer/whole number portion,,verified
+q16_fixed_point_t,,fractional_part,word,2,Low 16 bits - fractional portion,,verified
+
+# Sensor Fault Configuration Entry (24 bytes per sensor)
+sensor_fault_config_t,,reserved_00,word,2,Reserved/padding at offset 0x00,,verified
+sensor_fault_config_t,,default_value,word,2,Default sensor value on fault,,verified
+sensor_fault_config_t,,clear_threshold,word,2,Threshold for fault clear,,verified
+sensor_fault_config_t,,decrement_value,word,2,Debounce counter decrement,,verified
+sensor_fault_config_t,,increment_value,word,2,Debounce counter increment,,verified
+sensor_fault_config_t,,set_threshold,word,2,Threshold for fault set,,verified
+sensor_fault_config_t,,high_limit,word,2,High error limit,,verified
+sensor_fault_config_t,,low_limit,word,2,Low error limit,,verified
+sensor_fault_config_t,,adc_lookup_index,word,2,A/D channel lookup table index,,verified
+sensor_fault_config_t,,reserved_12,byte,1,Reserved byte,,verified
+sensor_fault_config_t,,alt_fault_enable,byte,1,Alternative fault enable flag,,verified
+sensor_fault_config_t,,primary_fault_id,byte,1,Primary fault code,,verified
+sensor_fault_config_t,,secondary_fault_id,byte,1,Secondary fault code,,verified
+sensor_fault_config_t,,tertiary_fault_id,byte,1,Tertiary fault code,,verified
+sensor_fault_config_t,,debounce_max,byte,1,Maximum debounce count,,verified
+
+# Sensor Debounce State Entry (22 bytes per sensor)
+sensor_debounce_state_t,,reserved_00,byte,8,Reserved bytes at offset 0x00-0x07,,verified
+sensor_debounce_state_t,,interpolated_value,word,2,Interpolated sensor value,,verified
+sensor_debounce_state_t,,lookup_result,word,2,Table lookup result,,verified
+sensor_debounce_state_t,,debounce_counter,word,2,Current debounce count,,verified
+sensor_debounce_state_t,,fault_active_flag,byte,1,Fault currently active flag,,verified
+sensor_debounce_state_t,,sample_counter,byte,1,Sample phase counter,,verified
+sensor_debounce_state_t,,adc_raw_value,word,2,Raw A/D conversion value,,verified
+sensor_debounce_state_t,,reserved_12,byte,4,Reserved bytes at offset 0x12-0x15,,verified
+
+# -----------------------------------------------------------------------------
+# EEPROM Structures (Fixed Addresses - Same Across Firmware Versions)
+# -----------------------------------------------------------------------------
+
+# Module ID Header @ EEPROM 0x0100003A
+cummins_data_plate_header_t,0x0100003A,data_plt_module_id,word,2,Module identifier (EN=0x454E for CM550/VP44 ECUs),,verified
+
+# Module Variant Offsets
+module_variant_offsets_t,,cm550_data_plate_offset,word,2,CM550 data plate offset (0x2C0),,verified
+module_variant_offsets_t,,vp44_data_plate_offset,word,2,VP44 data plate offset (0x2C0-0x22=0x29E),,verified
+module_variant_offsets_t,,incal_variant_code,byte,1,InCal calibration variant (A/B/C),,verified
+
+# Data Plate @ EEPROM 0x010002C0
+cummins_data_plate_t,0x010002C0,data_plate_length,word,2,Data plate length field,,verified
+cummins_data_plate_t,0x010002C0,engine_make,byte,5,Engine manufacturer identifier (JCMMNS),,verified
+cummins_data_plate_t,0x010002C0,engine_model,byte,17,Engine model designation (ISB 195),,verified
+cummins_data_plate_t,0x010002C0,engine_serial_number,dword,4,Engine serial number,,verified
+cummins_data_plate_t,0x010002C0,engine_build_month,byte,1,Engine manufacturing month,,verified
+cummins_data_plate_t,0x010002C0,engine_build_day,byte,1,Engine manufacturing day,,verified
+cummins_data_plate_t,0x010002C0,engine_build_year,byte,1,Engine manufacturing year,,verified
+cummins_data_plate_t,0x010002C0,engine_cpl,word,2,Engine CPL (Component Parts List),,verified
+cummins_data_plate_t,0x010002C0,peak_torque_low_range,word,2,Peak torque low range value,,verified
+cummins_data_plate_t,0x010002C0,peak_torque_high_range,word,2,Peak torque high range value,,verified
+cummins_data_plate_t,0x010002C0,peak_torque_rpm_low,word,2,Peak torque RPM low range,,verified
+cummins_data_plate_t,0x010002C0,peak_torque_rpm_high,word,2,Peak torque RPM high range,,verified
+cummins_data_plate_t,0x010002C0,governed_speed_low,word,2,Governed speed low range,,verified
+cummins_data_plate_t,0x010002C0,governed_speed_high,word,2,Governed speed high range,,verified
+cummins_data_plate_t,0x010002C0,horsepower_low_range,word,2,Horsepower low range value,,verified
+cummins_data_plate_t,0x010002C0,horsepower_high_range,word,2,Horsepower high range value,,verified
+cummins_data_plate_t,0x010002C0,ecm_part_number,dword,4,ECM part number (98502),,verified
+cummins_data_plate_t,0x010002C0,ecm_serial_number,dword,4,ECM serial number (T03942860),,verified
+
+# -----------------------------------------------------------------------------
+# VP44 Communication Structures (RAM - Need J90350.00 Address Mapping)
+# -----------------------------------------------------------------------------
+
+# VP44 Message State @ RAM 0x800F5E (J90350.00 verified)
+vp44_message_t,0x00800F5E,response_buffer,byte,1,VP44 response buffer byte,,verified
+vp44_message_t,0x00800F5F,sequence_number,byte,1,VP44 message sequence number for retry logic,,verified
+vp44_message_t,0x00800F60,message_id,word,2,VP44 message identifier,,verified
+vp44_message_t,0x00800F62,retry_flag,byte,1,VP44 retry flag (1 when response pending),,verified
+vp44_message_t,0x00800F63,retry_count,byte,1,VP44 actual retry count (max 5),,verified
+vp44_message_t,0x00800F64,timeout_counter,byte,1,VP44 timeout countdown (112 ticks),,verified
+vp44_message_t,0x00800F66,message_data,dword,4,VP44 stored command/data,,verified
+
+# J1939 TX Message Buffer @ RAM 0x803036 (J90350.00 verified)
+j1939_tx_msg_buffer_t,0x00803036,data,byte,8,J1939 message payload data array,,verified
+j1939_tx_msg_buffer_t,0x00803036,header,j1939_header_t,6,CAN message header (ID + length),j1939_header_t,verified
+
+# J1939/VP44 Dual Protocol Message (generic - addresses vary by usage)
+j1939_vp44_msg_t,,j1939_status_byte,byte,1,J1939 transmission message status/header byte,,verified
+j1939_vp44_msg_t,,fuel_amount_high,byte,1,Fuel amount high byte,,verified
+j1939_vp44_msg_t,,fuel_amount_low,byte,1,Fuel amount low byte,,verified
+j1939_vp44_msg_t,,rpm_low,byte,1,Engine RPM low byte,,verified
+j1939_vp44_msg_t,,rpm_high,byte,1,Engine RPM high byte,,verified
+j1939_vp44_msg_t,,vp44_header,dword,4,VP44 0x100 command message header,,verified
+j1939_vp44_msg_t,,timing_byte3,byte,1,VP44 timing advance data byte 3,,verified
+j1939_vp44_msg_t,,timing_byte4,byte,1,VP44 timing advance data byte 4,,verified
+j1939_vp44_msg_t,,timing_byte5,byte,1,VP44 timing advance data byte 5,,verified
+j1939_vp44_msg_t,,timing_byte6,byte,1,VP44 timing advance data byte 6,,verified
+
+# -----------------------------------------------------------------------------
+# Diagnostic/CLIP Structures (RAM - J90350.00 Addresses Verified)
+# -----------------------------------------------------------------------------
+
+# Diagnostic Mode Buffer @ RAM 0x809658 (J90350.00 verified)
+# Main diagnostic mode state buffer for CLIP service requests
+diagnostic_mode_buffer_t,0x00809658,service_id,byte,1,Current diagnostic service ID,,verified
+diagnostic_mode_buffer_t,0x00809659,sub_function,byte,1,Sub-function code,,verified
+diagnostic_mode_buffer_t,0x0080965A,session_state,word,2,Diagnostic session state machine,,verified
+diagnostic_mode_buffer_t,0x0080965C,timeout_counter,word,2,Session timeout countdown,,verified
+diagnostic_mode_buffer_t,0x0080965E,data_buffer,byte,32,Multi-purpose diagnostic data buffer,,verified
+
+# VP44 Diagnostic Mode State @ RAM 0x8096B6 (J90350.00 verified)
+vp44_diagnostic_mode_t,0x008096B6,mode_state,word,2,VP44 diagnostic mode state machine,,verified
+vp44_diagnostic_mode_t,0x008096B8,command_data,dword,4,VP44 diagnostic command data,,verified
+vp44_diagnostic_mode_t,0x008096BC,response_status,word,2,VP44 diagnostic response status,,verified
+
+# Diagnostic Mode Fuel/Boost @ RAM 0x8096C4 (J90350.00 verified)
+diagnostic_mode_fuel_t,0x008096C4,fuel_adjustment,word,2,Diagnostic mode fuel adjustment value,,verified
+diagnostic_mode_fuel_t,0x008096F6,boost_state,word,2,Diagnostic mode boost state,,verified
+diagnostic_mode_fuel_t,0x008096F8,fuel_state,word,2,Diagnostic mode fuel state,,verified
+diagnostic_mode_fuel_t,0x008096FC,vp44_state_2,word,2,VP44 diagnostic state secondary,,verified
+
+# Diagnostic Service Request
+diag_service_request_t,,message_length,byte,1,Total message length including header,,verified
+diag_service_request_t,,service_id,byte,1,Service identifier (3=secured 4=control 5=memory),,verified
+diag_service_request_t,,sub_function,byte,1,Sub-function code for service routing,,verified
+diag_service_request_t,,data_payload,byte,16,Variable-length request data payload,,verified
+
+# Diagnostic Transport Protocol State
+diag_tp_state_t,,diag_state,byte,1,State flag: 0=idle 1=active,,verified
+diag_tp_state_t,,expected_id_low,byte,1,Expected low byte of std CAN ID,,verified
+diag_tp_state_t,,expected_guard,word,2,Guard word; must match (payload[6]<<8),,verified
+diag_tp_state_t,,total_packets,byte,1,((total_bytes-1)/7)+1,,verified
+diag_tp_state_t,,req_start,byte,1,Current sequence index (1-based),,verified
+diag_tp_state_t,,req_count,byte,1,Remaining packets to send,,verified
+diag_tp_state_t,,pre_status,byte,1,Abort/status flag (non-zero aborts with 7),,verified
+diag_tp_state_t,,total_bytes,word,2,Total payload length,,verified
+diag_tp_state_t,,src_data_ptr,ptr:uint8_t,4,Pointer to source payload,,verified
+diag_tp_state_t,,resp_byte_ptr,ptr:uint8_t,4,Pointer to 1-byte response/status,,verified
+diag_tp_state_t,,status_code,byte,1,Countdown/NACK (0x37 init or 0x70 delay),,verified
+diag_tp_state_t,,reserved_0x47,byte,1,Padding,,verified
+diag_tp_state_t,,tx_header_id,uint32_t,4,Composed CAN ID for TP.CM/TP.DT,,verified
+diag_tp_state_t,,tx_length,uint16_t,2,DLC for frame (8 or tail),,verified
+diag_tp_state_t,,tx_cm_buf,ptr:uint8_t,4,Scratch 8-byte CM/DT buffer,,verified
+
+# Multi-packet Transfer State
+diag_transfer_state_t,,target_address,word,2,Target memory address for transfer,,verified
+diag_transfer_state_t,,data_pointer,dword,4,Pointer to source/dest data buffer,,verified
+diag_transfer_state_t,,remaining_length,word,2,Remaining bytes to transfer,,verified
+diag_transfer_state_t,,byte_count,word,2,Total byte count for operation,,verified
+diag_transfer_state_t,,tx_active_flag,byte,1,Transmit operation active (0/1),,verified
+diag_transfer_state_t,,rx_active_flag,byte,1,Receive operation active (0/1),,verified
+
+# -----------------------------------------------------------------------------
+# Fuel Control Structures
+# -----------------------------------------------------------------------------
+
+# Fuel Governor State (PID controller)
+fuel_governor_state_t,,out_cmd,short,2,Final clamped output (governor/fueling command),,verified
+fuel_governor_state_t,,cmd_raw,short,2,Current raw command (signed),,verified
+fuel_governor_state_t,,term_ff,short,2,Feed-forward/scaling term (signed),,verified
+fuel_governor_state_t,,term_rate,short,2,Rate/derivative term (signed saturating),,verified
+fuel_governor_state_t,,accum_lo,ushort,2,Q16.16 accumulator low 16 bits (fractional part),,verified
+fuel_governor_state_t,,accum_hi,ushort,2,Q16.16 accumulator high 16 bits (integer part),,verified
+fuel_governor_state_t,,limit_hi,short,2,Accumulator integer ceiling (upper clamp),,verified
+fuel_governor_state_t,,limit_cap,short,2,Accumulator/output cap,,verified
+fuel_governor_state_t,,rpm_window,short,2,RPM window/threshold term used for gating,,verified
+
+# Fuel Demand State
+fuel_demand_state_t,,command,word,2,Current fuel demand value,,verified
+fuel_demand_state_t,,source_identifier,byte,1,Source of fuel command (FUEL_SOURCE_ID enum),,verified
+fuel_demand_state_t,,reserved_03,byte,1,Padding byte,,verified
+fuel_demand_state_t,,diagnostic_buffer,word,2,Diagnostic parameter buffer,,verified
+fuel_demand_state_t,,timing_blend_factor,word,2,Fuel timing blend factor 0-16384,,verified
+fuel_demand_state_t,,table_output,word,2,Fuel demand table output,,verified
+fuel_demand_state_t,,limit_minimum,word,2,Fuel limit minimum value,,verified
+fuel_demand_state_t,,demand_source_id,word,2,Fuel demand source identifier,,verified
+fuel_demand_state_t,,adjustment_active,word,2,Fuel adjustment active flag,,verified
+
+# Fuel Limit Arbitration State @ RAM 0x80CC4E (J90350.00 verified)
+fuel_limit_arbitration_t,0x0080CC4E,source_id,word,2,ID of current fuel limit source,,verified
+fuel_limit_arbitration_t,0x0080CC4E,demand_limited,word,2,Rate-limited fuel demand,,verified
+fuel_limit_arbitration_t,0x0080CC4E,arbitration_threshold,word,2,Fuel limit arbitration threshold,,verified
+fuel_limit_arbitration_t,,demand_delta,word,2,Fuel demand delta for rate limiting,,verified
+fuel_limit_arbitration_t,,maximum_limit,word,2,Maximum fuel demand limit,,verified
+fuel_limit_arbitration_t,,offset_value,word,2,Fuel limit offset value,,verified
+fuel_limit_arbitration_t,,comparison_low,word,2,Fuel limit comparison low value,,verified
+fuel_limit_arbitration_t,,comparison_high,word,2,Fuel limit comparison high value,,verified
+fuel_limit_arbitration_t,,rate_limit,word,2,Fuel demand rate limiting value,,verified
+
+# Shutdown Minimum Selector State @ RAM 0x80D496 (J90350.00 verified)
+shutdown_minimum_selector_t,0x0080D496,fuel_value,word,2,Current minimum fuel limit value selected by arbitration,,verified
+shutdown_minimum_selector_t,0x0080D498,init_value,word,2,Shutdown minimum init value,,verified
+shutdown_minimum_selector_t,0x0080D496,source_id,word,2,Source ID that set minimum (17=selector17 etc),,verified
+shutdown_minimum_selector_t,0x0080D496,previous_value,word,2,Previous minimum value for change tracking,,verified
+
+# Fuel Arbitrator Diagnostic State @ RAM 0x80D01A (J90350.00 verified)
+fuel_arbitrator_diag_t,0x0080D01A,control_mode,word,2,Fuel arbitrator control mode,,verified
+fuel_arbitrator_diag_t,0x0080D026,response_timer,word,2,Response timeout timer,,verified
+fuel_arbitrator_diag_t,0x0080D02A,status_counter,word,2,Status update counter,,verified
+fuel_arbitrator_diag_t,0x0080D02E,speed_timer,word,2,Speed control timer,,verified
+fuel_arbitrator_diag_t,0x0080D030,status_timer,word,2,Status timer,,verified
+fuel_arbitrator_diag_t,0x0080D032,session_timer,word,2,Diagnostic session timer,,verified
+fuel_arbitrator_diag_t,0x0080D034,session_counter,word,2,Session counter,,verified
+fuel_arbitrator_diag_t,0x0080D036,throttle_override,word,2,Throttle override value,,verified
+
+# -----------------------------------------------------------------------------
+# Engine Speed/RPM Structures (RAM - J90350.00 Addresses Verified)
+# -----------------------------------------------------------------------------
+
+# Engine RPM Circular Buffer @ RAM 0x80C404 (J90350.00 verified)
+# Core engine speed tracking structure
+engine_rpm_buffer_t,0x0080C404,rpm_period_value,word,2,Engine RPM period measurement from EPS,,verified
+engine_rpm_buffer_t,0x0080C408,current_engine_rpm,word,2,Current calculated engine RPM (primary),,verified
+engine_rpm_buffer_t,0x0080C7F0,cranking_threshold,word,2,Engine RPM cranking detection threshold,,verified
+
+# Engine RPM History @ RAM 0x80000C (J90350.00 verified)
+# Historical RPM tracking for rate calculations
+engine_rpm_history_t,0x0080000C,previous_engine_rpm,word,2,Previous RPM sample for delta calculations,,verified
+engine_rpm_history_t,0x008002E6,previous_nonzero,word,2,Previous non-zero RPM value,,verified
+engine_rpm_history_t,0x00800344,previous_sample,word,2,Previous RPM sample for rate of change,,verified
+engine_rpm_history_t,0x00800346,rpm_delta,word,2,RPM change between samples,,verified
+
+# Target Engine RPM @ RAM 0x809CFE (J90350.00 verified)
+engine_rpm_target_t,0x00809CFE,target_engine_rpm,word,2,Commanded/target engine RPM,,verified
+
+# EPS Engine RPM Snapshot @ RAM 0x801712 (J90350.00 verified)
+# Engine Position Sensor derived RPM values
+eps_rpm_snapshot_t,0x00801712,eps_previous_engine_rpm,word,2,EPS-calculated previous engine RPM,,verified
+eps_rpm_snapshot_t,0x00801718,eps_diagnostic_mode_counter,word,2,EPS diagnostic mode counter,,verified
+eps_rpm_snapshot_t,0x0080173C,snapshot_engine_rpm,word,2,Snapshot of engine RPM at event,,verified
+
+# -----------------------------------------------------------------------------
+# Engine Protection Structures
+# -----------------------------------------------------------------------------
+
+# Engine Operating Mode State
+engine_operating_mode_t,,state,word,2,Engine operating mode state 1-8,,verified
+engine_operating_mode_t,,shutdown_complete_flag,word,2,Engine shutdown complete flag,,verified
+
+# High RPM Protection State
+high_rpm_protection_t,,fault_flag,word,2,High RPM protection fault active flag,,verified
+high_rpm_protection_t,,state,word,2,State machine state,,verified
+high_rpm_protection_t,,timer,word,2,Countdown timer,,verified
+high_rpm_protection_t,,reserved_06,word,2,Reserved/gap,,verified
+high_rpm_protection_t,,warning_flag,word,2,Warning active flag,,verified
+
+# RPM Fuel Protection State (30 bytes)
+rpm_fuel_protection_t,,fuel_limit_shutdown,word,2,Fuel limit during shutdown,,verified
+rpm_fuel_protection_t,,high_rpm_fuel_limit,word,2,High RPM fuel control limit,,verified
+rpm_fuel_protection_t,,low_rpm_fuel_protection_limit,word,2,Low RPM fuel protection limit,,verified
+rpm_fuel_protection_t,,rpm_rate_limiter_output,word,2,RPM rate limiter output,,verified
+rpm_fuel_protection_t,,rpm_rate_limited_value,word,2,RPM rate limited value,,verified
+rpm_fuel_protection_t,,rpm_rate_secondary_calc,word,2,Secondary RPM rate calculation,,verified
+rpm_fuel_protection_t,,rpm_state_accumulator,word,2,RPM state accumulator,,verified
+rpm_fuel_protection_t,,high_rpm_fuel_accumulator,word,2,High RPM fuel accumulator,,verified
+rpm_fuel_protection_t,,low_rpm_fuel_accumulator,word,2,Low RPM fuel accumulator,,verified
+rpm_fuel_protection_t,,fuel_demand_before_limiting,word,2,Fuel demand saved before limiting,,verified
+rpm_fuel_protection_t,,low_rpm_threshold_exceeded_flag,word,2,Low RPM threshold exceeded flag,,verified
+rpm_fuel_protection_t,,rpm_threshold_exceeded_flag,word,2,RPM threshold exceeded flag,,verified
+rpm_fuel_protection_t,,high_rpm_threshold_exceeded_flag,word,2,High RPM threshold exceeded flag,,verified
+rpm_fuel_protection_t,,fuel_protection_timer_enable,word,2,Timer enable for protection state machines,,verified
+rpm_fuel_protection_t,,fuel_system_protection_enabled,word,2,Master fuel protection system enable (1=active),,verified
+
+# -----------------------------------------------------------------------------
+# Fault System Structures
+# -----------------------------------------------------------------------------
+
+# Fault Persistence Counters (8 bytes)
+fault_persistence_counters_t,,periodic_monitor_phase,byte,1,5-phase counter for periodic fault monitoring,,verified
+fault_persistence_counters_t,,can_pin_fault,byte,1,CAN pin switching fault persistence counter,,verified
+fault_persistence_counters_t,,io_fault_1,byte,1,I/O control fault 1 persistence counter,,verified
+fault_persistence_counters_t,,io_fault_2,byte,1,I/O control fault 2 persistence counter,,verified
+fault_persistence_counters_t,,io_fault_3,byte,1,I/O control fault 3 persistence counter,,verified
+fault_persistence_counters_t,,io_fault_4,byte,1,I/O control fault 4 persistence counter,,verified
+fault_persistence_counters_t,,io_fault_5,byte,1,I/O control fault 5 persistence counter,,verified
+fault_persistence_counters_t,,io_fault_6,byte,1,I/O control fault 6 persistence counter,,verified
+
+# Fault Status Registers (16 bytes)
+fault_status_registers_t,,sensor_fault_status,word,2,Sensor fault status register,,verified
+fault_status_registers_t,,fault_status_2,word,2,Fault status flags register 2,,verified
+fault_status_registers_t,,engine_fault_status,word,2,Engine fault status register,,verified
+fault_status_registers_t,,reserved_06,word,2,Reserved/gap,,verified
+fault_status_registers_t,,io_fault_status_1,word,2,IO fault status register 1,,verified
+fault_status_registers_t,,io_fault_status_2,word,2,IO fault status register 2,,verified
+fault_status_registers_t,,io_fault_status_3,word,2,IO fault status register 3,,verified
+fault_status_registers_t,,io_fault_status_4,word,2,IO fault status register 4,,verified
+
+# VP44 Fault State
+vp44_fault_state_t,,fault_status,word,2,VP44 fault status register,,verified
+vp44_fault_state_t,,fso_fault_status,word,2,VP44 FSO fault status register 2,,verified
+
+# -----------------------------------------------------------------------------
+# Timing Control Structures
+# -----------------------------------------------------------------------------
+
+# Timing Mode Control State (36 bytes)
+timing_mode_control_t,,blend_factor,word,2,Fuel timing mode blend factor Q14,,verified
+timing_mode_control_t,,protection_blend_ramp,word,2,Timing protection blend ramp 0-16384,,verified
+timing_mode_control_t,,source_selector,word,2,Timing mode source selector 0-4,,verified
+timing_mode_control_t,,transition_result,word,2,Timing mode transition result,,verified
+timing_mode_control_t,,fuel_blend_result,word,2,Timing fuel blend result,,verified
+timing_mode_control_t,,oil_pressure_result,word,2,Timing oil pressure condition result,,verified
+timing_mode_control_t,,mode_11_result,word,2,Timing mode 11 countdown result,,verified
+timing_mode_control_t,,protection_counter_1,word,2,Timing protection counter 1,,verified
+timing_mode_control_t,,protection_counter_2,word,2,Timing protection counter 2,,verified
+timing_mode_control_t,,blend_state,word,2,Timing blend state,,verified
+timing_mode_control_t,,reserved_14,word,2,Gap/reserved,,verified
+timing_mode_control_t,,reserved_16,word,2,Gap/reserved,,verified
+timing_mode_control_t,,blend_accumulator,word,2,Timing blend accumulator,,verified
+timing_mode_control_t,,reserved_1A,word,2,Gap/reserved,,verified
+timing_mode_control_t,,fuel_source_mode_11_state,word,2,Fuel source mode 11 state,,verified
+timing_mode_control_t,,fuel_source_mode_11_timer,word,2,Fuel source mode 11 timer,,verified
+timing_mode_control_t,,fuel_mode_transition_state,word,2,Fuel mode transition state,,verified
+timing_mode_control_t,,fuel_mode_transition_timer,word,2,Fuel mode transition timer,,verified
+
+# -----------------------------------------------------------------------------
+# Scheduler Structures (RAM - J90350.00 Addresses Verified)
+# -----------------------------------------------------------------------------
+
+# Scheduler Phase Slot (16 bytes per slot)
+scheduler_phase_slot_t,,last_execution_time,dword,4,Timer value of last task execution,,verified
+scheduler_phase_slot_t,,runtime_ticks,word,2,Task runtime duration in timer ticks,,verified
+scheduler_phase_slot_t,,deadline_ticks,word,2,Task execution deadline (0xFFFF = disabled),,verified
+scheduler_phase_slot_t,,execution_count,word,2,Number of times task has been executed,,verified
+scheduler_phase_slot_t,,overrun_count,word,2,Number of deadline overruns detected,,verified
+scheduler_phase_slot_t,,reserved,dword,4,Reserved/padding bytes for alignment,,verified
+
+# Scheduler Phase Table @ RAM 0x809782 (J90350.00 verified)
+# Array of scheduler_phase_slot_t entries, one per task phase
+scheduler_phase_table_t,0x00809782,slots,scheduler_phase_slot_t[],variable,Array of phase slots - size depends on scheduler_phase_slot_count,scheduler_phase_slot_t,verified
+
+# Scheduler Control Variables @ RAM 0x809770-0x809780 (J90350.00 verified)
+scheduler_control_t,0x00809770,overrun_counter,word,2,Count of scheduler overruns detected,,verified
+scheduler_control_t,0x00809772,wait_loop_counter,word,2,Wait loop iteration counter,,verified
+scheduler_control_t,0x00809776,wait_loop_limit,word,2,Maximum wait loop iterations,,verified
+scheduler_control_t,0x00809778,wait_loop_index,word,2,Current wait loop index,,verified
+scheduler_control_t,0x0080977A,phase_slot_count,word,2,Number of scheduler phase slots,,verified
+scheduler_control_t,0x0080977C,phase_timeout,word,2,Phase execution timeout value,,verified
+scheduler_control_t,0x0080977E,overrun_threshold,word,2,Overrun detection threshold,,verified
+scheduler_control_t,0x00809780,tick_interval,word,2,Scheduler tick interval,,verified
+
+# System Callback Table (12 bytes)
+system_callback_table_t,,engine_position_sensor_isr,dword,4,EPS position sensor ISR handler,,verified
+system_callback_table_t,,tpu_adc_isr,dword,4,TPU/QADC interrupt handler,,verified
+system_callback_table_t,,main_loop_callback,dword,4,Main scheduler loop callback,,verified
+
+# -----------------------------------------------------------------------------
+# A/D Sensor Configuration
+# -----------------------------------------------------------------------------
+
+# A/D Sensor Config Block (ambient air pressure sensor pattern)
+ad_sensor_config_t,,channel_addr,word,2,A/D channel address for sensor input,,verified
+ad_sensor_config_t,,filter_const,word,2,Digital filter constant (0-1),,verified
+ad_sensor_config_t,,fault_clear_count,word,2,Fault clear counter threshold,,verified
+ad_sensor_config_t,,fault_decrement,word,2,Fault counter decrement value,,verified
+ad_sensor_config_t,,fault_increment,word,2,Fault counter increment value,,verified
+ad_sensor_config_t,,fault_set_threshold,word,2,Fault set threshold,,verified
+ad_sensor_config_t,,high_error_limit,word,2,A/D high error limit (0-1023),,verified
+ad_sensor_config_t,,low_error_limit,word,2,A/D low error limit (0-1023),,verified
+
+# -----------------------------------------------------------------------------
+# Address Range Validation (ROM-based)
+# Used by Service 0x4A memory reads to validate addresses
+# -----------------------------------------------------------------------------
+
+address_range_entry_t,,start_address,dword,4,Start of valid address range (big-endian),,verified
+address_range_entry_t,,end_address,dword,4,End of valid address range (big-endian),,verified
+address_range_entry_t,,special_mode_flag,byte,1,Access flag when water_in_fuel_detection_flag==1,,verified
+address_range_entry_t,,normal_mode_flag,byte,1,Access flag in normal operation,,verified
+
+# -----------------------------------------------------------------------------
+# Circular Buffer Structures (Generic + RAM Instances)
+# Used by circularBufferInit/Push/Pop functions
+# -----------------------------------------------------------------------------
+
+# Generic Circular Buffer Control (20 bytes)
+# Used by multiple subsystems - addresses vary by instance
+circular_buffer_control_t,,read_ptr,dword,4,Current read position pointer,,verified
+circular_buffer_control_t,,write_ptr,dword,4,Current write position pointer,,verified
+circular_buffer_control_t,,base_ptr,dword,4,Start address of buffer data,,verified
+circular_buffer_control_t,,end_ptr,dword,4,End address of buffer data,,verified
+circular_buffer_control_t,,full_flag,byte,1,Buffer full indicator (1=full 0=space available),,verified
+
+# Parameter Circular Buffer @ RAM 0x80BDFA (J90350.00 verified)
+# Main parameter logging circular buffer
+param_circular_buffer_t,0x0080BDFA,metadata,byte,1024,Buffer metadata storage area,,verified
+param_circular_buffer_t,0x0080C1FA,data,byte,512,Actual circular buffer data storage,,verified
+param_circular_buffer_t,0x0080C3FA,read_index,word,2,Current read index into buffer,,verified
+param_circular_buffer_t,0x0080C3FC,write_index,word,2,Current write index into buffer,,verified
+param_circular_buffer_t,0x0080C3FE,count,word,2,Number of entries in buffer,,verified
+param_circular_buffer_t,0x0080C402,current_value,word,2,Most recent parameter value,,verified
+
+# QADC Circular Buffer @ RAM 0x801720 (J90350.00 verified)
+qadc_circular_buffer_t,0x00801720,offset,word,2,Current offset into QADC buffer,,verified
+qadc_circular_buffer_t,0x00801730,dest_ptr,dword,4,Destination pointer for QADC data,,verified
+
+# -----------------------------------------------------------------------------
+# Huffman Compression Structures (ROM-based)
+# Used by huffmanTreeBuilder/huffmanDecompress for boot decompression
+# -----------------------------------------------------------------------------
+
+# Huffman Tree Node (6 bytes per node, up to 513 nodes)
+huffman_tree_node_t,,frequency,word,2,Symbol frequency or combined weight,,verified
+huffman_tree_node_t,,left_child,word,2,Index of left child node (0-512),,verified
+huffman_tree_node_t,,right_child,word,2,Index of right child node (0-512),,verified
+
+# Huffman Tree Control Structure
+# Tree array is 513 nodes * 6 bytes = 3078 bytes (0xC06)
+huffman_tree_t,,nodes,huffman_tree_node_t,3078,Array of 513 tree nodes (256 leaves + 257 internal),huffman_tree_node_t,verified
+huffman_tree_t,,root_marker,word,2,Root node marker at offset 0x600,,verified
+huffman_tree_t,,terminator,word,2,Tree terminator at offset 0xC06 (set to 0xFFFF),,verified
+
+# -----------------------------------------------------------------------------
+# J1708 Protocol Structures @ RAM 0x80DC94 (J90350.00 verified)
+# SAE J1708 serial communication protocol state
+# -----------------------------------------------------------------------------
+
+# J1708 Transmit State
+j1708_tx_state_t,0x0080DC94,buffer_ptr,dword,4,Current transmit buffer pointer,,verified
+j1708_tx_state_t,0x0080DC98,buffer_2,dword,4,Secondary transmit buffer pointer,,verified
+j1708_tx_state_t,0x0080DC9C,buffer_end,dword,4,End of transmit buffer,,verified
+j1708_tx_state_t,0x0080DCA0,buffer_full_flag,word,2,Transmit buffer full flag (1=full 0=empty),,verified
+
+# J1708 Receive State
+j1708_rx_state_t,0x0080DCA2,buffer_ptr_1,dword,4,Receive buffer pointer 1,,verified
+j1708_rx_state_t,0x0080DCA6,buffer_ptr_2,dword,4,Receive buffer pointer 2,,verified
+j1708_rx_state_t,0x0080DCAA,buffer_ptr_3,dword,4,Receive buffer pointer 3 (current position),,verified
+j1708_rx_state_t,0x0080DCAE,buffer_full_flag,word,2,Receive buffer full flag (1=full 0=empty),,verified
+
+# J1708 Data Buffers
+j1708_buffers_t,0x0080DDC6,tx_buffer,byte,256,J1708 transmit data buffer,,verified
+j1708_buffers_t,0x0080DDCA,rx_buffer,byte,256,J1708 receive data buffer,,verified
+
+# -----------------------------------------------------------------------------
+# Diagnostic Buffer Structures @ RAM 0x808B00 (J90350.00 verified)
+# CLIP diagnostic service buffers
+# -----------------------------------------------------------------------------
+
+diagnostic_buffers_t,0x00808B00,tx_buffer_base,byte,256,Diagnostic transmit buffer (256 bytes),,verified
+diagnostic_buffers_t,0x00808C00,rx_buffer_base,byte,256,Diagnostic receive buffer (256 bytes),,verified
+
+# Diagnostic Buffer Pointers @ RAM 0x80D3E6 (J90350.00 verified)
+diagnostic_buffer_ptrs_t,0x0080D3E6,tx_start_ptr,dword,4,Pointer to start of TX buffer,,verified
+diagnostic_buffer_ptrs_t,0x0080D3EA,rx_start_ptr,dword,4,Pointer to start of RX buffer,,verified
+diagnostic_buffer_ptrs_t,0x0080D3EE,end_address,dword,4,End address of diagnostic buffers,,verified
+diagnostic_buffer_ptrs_t,0x0080D3F3,logger_state,byte,1,CAN buffer logger state,,verified
+
+# -----------------------------------------------------------------------------
+# CAN Buffer Setup Structures @ RAM 0x801A8A (J90350.00 verified)
+# CAN message buffer configuration
+# -----------------------------------------------------------------------------
+
+can_buffer_setup_t,0x00801A8A,size,byte,1,Buffer size configuration,,verified
+can_buffer_setup_t,0x00801A8C,data_ptr,dword,4,Pointer to buffer data area,,verified
+can_buffer_setup_t,0x00801A90,unused_ptr,dword,4,Unused/reserved pointer,,verified
+can_buffer_setup_t,0x00801A94,data,byte,8,Inline buffer data (8 bytes),,verified
+
+# CAN Message Buffer Range @ RAM 0x8034F8 (J90350.00 verified)
+can_message_buffer_t,0x008034F8,buffer_start,byte,1,Start of CAN message buffer area,,verified
+can_message_buffer_t,0x00803882,buffer_end,byte,1,End of CAN message buffer area,,verified
+
+# -----------------------------------------------------------------------------
+# Data Collector Buffer @ RAM 0x80AAAA (J90350.00 verified)
+# Snapshot/logging data collection
+# -----------------------------------------------------------------------------
+
+data_collector_t,0x0080AAAA,ram_start_addr,dword,4,Actual starting RAM address of data collector buffer,,verified
+data_collector_t,0x0080AAAE,ram_end_addr,dword,4,Physical RAM address of end of buffer,,verified
+data_collector_t,0x0080AAB2,logical_start,dword,4,Logical beginning address of buffer,,verified
+data_collector_t,0x0080AAB6,logical_center,dword,4,Logical center address for trigger point,,verified
+
+# -----------------------------------------------------------------------------
+# Insite Response Buffer @ RAM 0x80D40C (J90350.00 verified)
+# Buffer for Insite diagnostic tool responses
+# -----------------------------------------------------------------------------
+
+insite_response_buffer_t,0x0080D40C,buffer_ptr,dword,4,Pointer to response buffer,,verified
+insite_response_buffer_t,0x0080D417,data_offset,byte,1,Current data offset in buffer,,verified
+insite_response_buffer_t,0x0080D418,buffer_index,byte,1,Buffer index for multi-response,,verified
+insite_response_buffer_t,0x0080D41A,buffer_length,byte,1,Current response length,,verified
+insite_response_buffer_t,0x0080D41B,reserved,byte,1,Reserved/padding byte,,verified

@@ -29,8 +29,9 @@
 | Named functions | 489 |
 | RAM variables | 5,372 |
 | Total global variables | 5,866 |
-| Decompiled C code | 1.1MB |
-| Memory regions | 3 (ROM + RAM + EEPROM) |
+| Structure definitions | 274 fields |
+| Decompiled C code | 1.0MB |
+| Memory regions | 4 (ROM + RAM + EXT_RAM + EEPROM) |
 
 ## Files
 
@@ -40,6 +41,7 @@
 |------|------|-------------|
 | `firmware/J90350.00.rom.bin` | 256KB | ROM/Flash memory dump |
 | `firmware/J90350.00.ram.bin` | 37KB | RAM snapshot at extraction time |
+| `firmware/J90350.00.extended_ram.bin` | 28KB | Extended RAM (scheduler data, J1708 buffers) |
 | `firmware/J90350.00.eeprom.bin` | 4KB | EEPROM calibration data |
 
 ### Analysis Output
@@ -49,6 +51,7 @@
 | `output/function_renames.csv` | 489 named functions |
 | `output/global_variables.csv` | 5,866 named variables |
 | `output/relocation_map.csv` | Function mapping from J90280.05 |
+| `output/structure_definitions.csv` | 219 structure field definitions |
 | `output/J90350.00.ghidra.cpp` | Full decompilation (1.1MB) |
 
 ### Ghidra Scripts
@@ -127,12 +130,17 @@ npm run match        # Function matching
 
 ## Memory Map (MC68336)
 
+See [docs/memory_map.md](docs/memory_map.md) for full details including peripheral registers.
+
 | Region | Address Range | Size | Permissions | Status |
 |--------|---------------|------|-------------|--------|
-| ROM | 0x000000-0x03FFFF | 256KB | rx | Analyzed |
-| RAM | 0x800000-0x8091C1 | 37KB | rwx | Analyzed |
-| EEPROM | 0x1000000-0x1000FFF | 4KB | rw- | Analyzed |
-| Extended RAM | 0x8091C2-0x80FFFF | ~28KB | - | Protected |
+| ROM | 0x000000-0x03FFFF | 256KB | rx | Extracted |
+| RAM | 0x800000-0x8091C1 | 37KB | rwx | Extracted |
+| EXT_RAM | 0x8091C2-0x80FF7F | 28KB | rwx | Extracted |
+| EEPROM | 0x1000000-0x1000FFF | 4KB | rw- | Extracted |
+| MC68336 Peripherals | 0xFFD000-0xFFFFFF | 12KB | - | Hardware registers (not extractable) |
+
+**Total extracted: 325KB** - 100% of data memory regions.
 
 ## Comparison with J90280.05
 
@@ -148,7 +156,7 @@ npm run match        # Function matching
 ## Why J90350.00 is Source of Truth
 
 1. **Live ECU available** - Can test and validate findings
-2. **Complete memory dumps** - ROM + RAM + EEPROM extracted
+2. **100% memory coverage** - All 4 data regions extracted (ROM + RAM + EXT_RAM + EEPROM)
 3. **RAM state snapshot** - See actual runtime values
 4. **J90280.05 as reference** - 793 functions and 6,108 variables to bootstrap from
 

@@ -246,6 +246,32 @@ cmd_import() {
     print_success "Import complete"
 }
 
+cmd_structures() {
+    print_header "APPLYING STRUCTURE DEFINITIONS"
+
+    check_ghidra
+
+    STRUCT_CSV="$OUTPUT_DIR/structure_definitions.csv"
+
+    if [ ! -f "$STRUCT_CSV" ]; then
+        print_error "structure_definitions.csv not found: $STRUCT_CSV"
+        exit 1
+    fi
+
+    echo "Applying structures from: $STRUCT_CSV"
+    echo ""
+
+    "$GHIDRA_HEADLESS" \
+        "$PROJECT_LOCATION" \
+        "$PROJECT_NAME" \
+        -process "J90350.00.rom.bin" \
+        -noanalysis \
+        -scriptPath "$SCRIPTS_DIR" \
+        -postScript ApplyStructures.java "$STRUCT_CSV"
+
+    print_success "Structure definitions applied"
+}
+
 cmd_decompile() {
     if [ -z "$2" ]; then
         print_error "Usage: $0 decompile <address|function_name>"
@@ -338,6 +364,7 @@ cmd_help() {
     echo "  bootstrap  Apply J90280.05 function names via relocation map"
     echo "  export     Export function names and decompilation to CSV/CPP"
     echo "  import     Import CSV changes back into Ghidra"
+    echo "  structures Apply structure definitions from structure_definitions.csv"
     echo "  decompile  Decompile a single function by address or name"
     echo "  full       Run complete pipeline: init -> analyze -> memmap -> ramvars -> bootstrap -> export"
     echo "  status     Show project status"
@@ -377,6 +404,9 @@ case "${1:-help}" in
         ;;
     import)
         cmd_import
+        ;;
+    structures)
+        cmd_structures
         ;;
     decompile)
         cmd_decompile "$@"

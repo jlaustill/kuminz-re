@@ -19,6 +19,7 @@ public class SetupMemoryMap extends GhidraScript {
 
     // MC68336 CM550 Memory Map
     private static final long RAM_BASE = 0x800000L;
+    private static final long EXTENDED_RAM_BASE = 0x8091C2L;
     private static final long EEPROM_BASE = 0x1000000L;
 
     @Override
@@ -44,19 +45,28 @@ public class SetupMemoryMap extends GhidraScript {
         // Add RAM region
         String ramFile = firmwareDir + "/J90350.00.ram.bin";
         if (new File(ramFile).exists()) {
-            println("[1/2] Adding RAM region...");
+            println("[1/3] Adding RAM region...");
             addMemoryRegion(memory, "RAM", RAM_BASE, ramFile, true, true, true);
         } else {
-            println("[1/2] SKIPPED: RAM file not found: " + ramFile);
+            println("[1/3] SKIPPED: RAM file not found: " + ramFile);
+        }
+
+        // Add Extended RAM region (0x8091C2 - 0x80FFFF)
+        String extRamFile = firmwareDir + "/J90350.00.extended_ram.bin";
+        if (new File(extRamFile).exists()) {
+            println("[2/3] Adding Extended RAM region...");
+            addMemoryRegion(memory, "EXT_RAM", EXTENDED_RAM_BASE, extRamFile, true, true, true);
+        } else {
+            println("[2/3] SKIPPED: Extended RAM file not found: " + extRamFile);
         }
 
         // Add EEPROM region
         String eepromFile = firmwareDir + "/J90350.00.eeprom.bin";
         if (new File(eepromFile).exists()) {
-            println("[2/2] Adding EEPROM region...");
+            println("[3/3] Adding EEPROM region...");
             addMemoryRegion(memory, "EEPROM", EEPROM_BASE, eepromFile, true, true, false);
         } else {
-            println("[2/2] SKIPPED: EEPROM file not found: " + eepromFile);
+            println("[3/3] SKIPPED: EEPROM file not found: " + eepromFile);
         }
 
         println("");
