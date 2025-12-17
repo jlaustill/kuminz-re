@@ -1,0 +1,41 @@
+{
+  "name": "j90350-analysis",
+  "version": "1.0.0",
+  "description": "TypeScript tools for comparing CM550 ECU firmware binaries",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint src/**/*.ts",
+    "typecheck": "tsc --noEmit",
+    "stats": "tsx src/tools/binary-stats.ts",
+    "regions": "tsx src/tools/identify-regions.ts",
+    "match": "tsx src/tools/function-matcher.ts",
+    "compare": "tsx src/tools/block-compare.ts",
+    "report": "tsx src/tools/generate-report.ts",
+    "ghidra:init": "./ghidra/analyze.sh init",
+    "ghidra:analyze": "./ghidra/analyze.sh analyze",
+    "ghidra:bootstrap": "./ghidra/analyze.sh bootstrap",
+    "ghidra:export": "./ghidra/analyze.sh export",
+    "ghidra:import": "./ghidra/analyze.sh import",
+    "ghidra:decompile": "./ghidra/analyze.sh decompile",
+    "ghidra:full": "./ghidra/analyze.sh full",
+    "ghidra:status": "./ghidra/analyze.sh status"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
+  },
+  "keywords": [
+    "reverse-engineering",
+    "firmware",
+    "cummins",
+    "cm550",
+    "mc68336"
+  ],
+  "author": "",
+  "license": "ISC"
+}
