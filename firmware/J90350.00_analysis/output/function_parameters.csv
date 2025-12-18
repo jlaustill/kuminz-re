@@ -14,9 +14,6 @@ function_address,function_name,param_index,new_name,new_type,comment
 0x00022956,diagnosticParamRequestHandler,0,rx_msg,can_std_rx_desc_t*,Pointer to diagnostic parameter request message
 0x00022d8e,diagnosticStatusRequestHandler,0,rx_msg,can_std_rx_desc_t*,Pointer to diagnostic status request message
 0x00022de2,diagnosticErrorHandler,0,rx_msg,can_std_rx_desc_t*,Pointer to diagnostic error message
-0x0002328c,j1939DestinationHandler,0,rx_msg,can_std_rx_desc_t*,Pointer to J1939 destination-specific message
-0x00023390,j1939BroadcastHandler,0,rx_msg,can_std_rx_desc_t*,Pointer to J1939 broadcast message
-0x00023754,j1939MultiPacketHandler,0,rx_msg,can_std_rx_desc_t*,Pointer to multi-packet transport message
 0x00032b38,diagnosticByteResponseSender,0,response_code,ushort,Diagnostic response code to send
 0x0002ef4a,diagnosticByteResponseDispatcher,0,msg_ptr,int,Pointer to diagnostic message structure
 0x00032244,diagnosticDM11PGN_65234_Builder,0,dtc_count,ushort,Number of DTCs to include in message
@@ -24,9 +21,9 @@ function_address,function_name,param_index,new_name,new_type,comment
 # -----------------------------------------------------------------------------
 # Huffman Compression Functions
 # -----------------------------------------------------------------------------
-0x00000384,huffmanTreeBuilder,0,tree_buffer,int,Pointer to huffman tree node buffer (3KB)
-0x000003b0,huffmanDecompress,0,tree_buffer,int,Pointer to huffman tree node buffer
-0x000003b0,huffmanDecompress,1,start_node,ushort,Starting node index for decompression
+0x0002c834,huffmanTreeBuilder,0,tree_buffer,int,Pointer to huffman tree node buffer (3KB)
+0x00003792,huffmanDecompress,0,tree_buffer,int,Pointer to huffman tree node buffer
+0x00003792,huffmanDecompress,1,start_node,ushort,Starting node index for decompression
 
 # -----------------------------------------------------------------------------
 # Table Interpolation Functions
@@ -57,71 +54,71 @@ function_address,function_name,param_index,new_name,new_type,comment
 0x0001c016,circularBufferInit,0,buffer_ctrl,uint*,Pointer to circular buffer control structure
 0x0001c016,circularBufferInit,1,base_address,uint,Base memory address for buffer data
 0x0001c016,circularBufferInit,2,buffer_size,uint,Size of buffer in bytes (high word)
-0x0001bfc8,circularBufferPush,0,buffer_ctrl,uint*,Pointer to circular buffer control structure
-0x0001bfc8,circularBufferPush,1,data_byte,byte,Byte value to push onto buffer
+0x0001bfa2,circularBufferPush,0,buffer_ctrl,uint*,Pointer to circular buffer control structure
+0x0001bfa2,circularBufferPush,1,data_byte,byte,Byte value to push onto buffer
 0x0001bfde,circularBufferPop,0,buffer_ctrl,uint*,Pointer to circular buffer control structure
 0x0001bfde,circularBufferPop,1,data_out,byte*,Pointer to store popped byte value
-0x00016d08,parameterCircularBufferWrite,0,dest_address,int,Destination EEPROM/RAM address
-0x00016d08,parameterCircularBufferWrite,1,source_ptr,byte*,Pointer to source data
-0x00016d08,parameterCircularBufferWrite,2,byte_count,ushort,Number of bytes to write
+0x00016c3c,parameterCircularBufferWrite,0,dest_address,int,Destination EEPROM/RAM address
+0x00016c3c,parameterCircularBufferWrite,1,source_ptr,byte*,Pointer to source data
+0x00016c3c,parameterCircularBufferWrite,2,byte_count,ushort,Number of bytes to write
 
 # -----------------------------------------------------------------------------
 # Flash Programming Functions
 # -----------------------------------------------------------------------------
-0x0001c450,flashEraseRamExecutor,0,start_address,uint,Flash start address to erase
-0x0001c450,flashEraseRamExecutor,1,end_address,uint,Flash end address to erase
-0x0001c5f4,flashProgramFromRam,0,dest_address,int,Flash destination address
-0x0001c5f4,flashProgramFromRam,1,source_ptr,uint,Source data pointer
-0x0001c5f4,flashProgramFromRam,2,byte_count,uint,Number of bytes to program
+0x0001c484,flashEraseRamExecutor,0,start_address,uint,Flash start address to erase
+0x0001c484,flashEraseRamExecutor,1,end_address,uint,Flash end address to erase
+0x0001c5e8,flashProgramFromRam,0,dest_address,int,Flash destination address
+0x0001c5e8,flashProgramFromRam,1,source_ptr,uint,Source data pointer
+0x0001c5e8,flashProgramFromRam,2,byte_count,uint,Number of bytes to program
 
 # -----------------------------------------------------------------------------
 # Diagnostic Code Functions
 # -----------------------------------------------------------------------------
-0x0001452e,diagnosticCodeDebounceHandler,0,code_index,byte,Diagnostic trouble code table index
-0x00014642,diagnosticCodeRegistrar,0,code_index,byte,Diagnostic code to register in active list
+0x000144bc,diagnosticCodeDebounceHandler,0,code_index,byte,Diagnostic trouble code table index
+0x00014720,diagnosticCodeRegistrar,0,code_index,byte,Diagnostic code to register in active list
 0x00010e16,diagnosticMemoryAddressResolver,0,param_id,ushort,Parameter ID to resolve address for
-0x0001f892,diagnosticMessageQueueWrite,0,response_type,byte,Type of diagnostic response (0/1)
-0x00022074,diagnosticMemoryWriteHandler,0,service_id,byte,Diagnostic service identifier
-0x000221f0,diagnosticMemoryReadHandler,0,service_id,byte,Diagnostic service identifier
-0x00023088,diagMemoryReadResponseBuilder,0,request_ptr,byte*,Pointer to read request structure
-0x00023088,diagMemoryReadResponseBuilder,1,start_address,uint,Memory start address to read
-0x00023088,diagMemoryReadResponseBuilder,2,read_length,uint,Number of bytes to read
+0x0000b6e8,diagnosticMessageQueueWrite,0,response_type,byte,Type of diagnostic response (0/1)
+0x0001ec3c,diagnosticMemoryWriteHandler,0,service_id,byte,Diagnostic service identifier
+0x0001edae,diagnosticMemoryReadHandler,0,service_id,byte,Diagnostic service identifier
+0x0002238e,diagMemoryReadResponseBuilder,0,request_ptr,byte*,Pointer to read request structure
+0x0002238e,diagMemoryReadResponseBuilder,1,start_address,uint,Memory start address to read
+0x0002238e,diagMemoryReadResponseBuilder,2,read_length,uint,Number of bytes to read
 0x0002f4be,diagnosticCommandTableDispatcher,0,cmd_index,byte,Diagnostic command table index
 
 # -----------------------------------------------------------------------------
 # Protection System Functions
 # -----------------------------------------------------------------------------
-0x00018eb4,protectionStateUpdater,0,source_ptr,int,Pointer to source protection state data
-0x00018eb4,protectionStateUpdater,1,dest_ptr,int,Pointer to destination statistics structure
-0x00018eb4,protectionStateUpdater,2,condition_flag,ushort,Protection condition flag (0=normal 1=fault)
-0x00018e84,protectionConditionEvaluator,0,threshold_ptr,ushort*,Pointer to threshold configuration
-0x00018e84,protectionConditionEvaluator,1,state_ptr,uint*,Pointer to protection state data
-0x00018e84,protectionConditionEvaluator,2,sensor_value,ushort,Current sensor value to evaluate
-0x00018c90,diagnosticProtectionProcessor,0,config_ptr,ushort*,Pointer to protection configuration
-0x00018c90,diagnosticProtectionProcessor,1,state_offset,int,Offset into protection state table
-0x00018c90,diagnosticProtectionProcessor,2,threshold_value,int,Threshold value for comparison
+0x00018f86,protectionStateUpdater,0,source_ptr,int,Pointer to source protection state data
+0x00018f86,protectionStateUpdater,1,dest_ptr,int,Pointer to destination statistics structure
+0x00018f86,protectionStateUpdater,2,condition_flag,ushort,Protection condition flag (0=normal 1=fault)
+0x00018968,protectionConditionEvaluator,0,threshold_ptr,ushort*,Pointer to threshold configuration
+0x00018968,protectionConditionEvaluator,1,state_ptr,uint*,Pointer to protection state data
+0x00018968,protectionConditionEvaluator,2,sensor_value,ushort,Current sensor value to evaluate
+0x00018c1c,diagnosticProtectionProcessor,0,config_ptr,ushort*,Pointer to protection configuration
+0x00018c1c,diagnosticProtectionProcessor,1,state_offset,int,Offset into protection state table
+0x00018c1c,diagnosticProtectionProcessor,2,threshold_value,int,Threshold value for comparison
 
 # -----------------------------------------------------------------------------
 # Fueling Control Functions
 # -----------------------------------------------------------------------------
 0x0001e02a,fuelingValueClamp,0,fuel_value_ptr,short*,Pointer to fueling value to clamp (0-5888)
-0x0000f3a8,rpmBasedFuelingLookup,0,rpm_index,ushort,RPM index for fueling lookup table
+0x0001cb76,rpmBasedFuelingLookup,0,rpm_index,ushort,RPM index for fueling lookup table
 0x0000faa6,torqueCurveBreakpointCalculator,0,torque_index,byte,Torque curve breakpoint index
 
 # -----------------------------------------------------------------------------
 # Memory Operations
 # -----------------------------------------------------------------------------
-0x00020d14,memoryOperationDispatcher,0,request_ptr,int,Pointer to memory operation request
-0x00020d14,memoryOperationDispatcher,1,operation_size,short,Size of memory operation
-0x00020d14,memoryOperationDispatcher,2,operation_flags,uint,Operation control flags
-0x00020ea8,memoryOperationFromMessageExtended,0,msg_ptr,int,Pointer to memory operation message
-0x00010a7c,arrayRangeSum,0,start_ptr,short*,Pointer to start of array
-0x00010a7c,arrayRangeSum,1,end_ptr,short*,Pointer to end of array
+0x0002148a,memoryOperationDispatcher,0,request_ptr,int,Pointer to memory operation request
+0x0002148a,memoryOperationDispatcher,1,operation_size,short,Size of memory operation
+0x0002148a,memoryOperationDispatcher,2,operation_flags,uint,Operation control flags
+0x000217de,memoryOperationFromMessageExtended,0,msg_ptr,int,Pointer to memory operation message
+0x00010520,arrayRangeSum,0,start_ptr,short*,Pointer to start of array
+0x00010520,arrayRangeSum,1,end_ptr,short*,Pointer to end of array
 
 # -----------------------------------------------------------------------------
 # Timing and Delay Functions
 # -----------------------------------------------------------------------------
-0x00003884,busyWaitDelayLoop,0,loop_count,ushort,Number of delay loop iterations
+0x0002ca64,busyWaitDelayLoop,0,loop_count,ushort,Number of delay loop iterations
 0x00034bf8,hardwareTimerDelayLoop,0,timer_ticks,ushort,Number of hardware timer ticks to wait
 
 # -----------------------------------------------------------------------------
@@ -134,26 +131,26 @@ function_address,function_name,param_index,new_name,new_type,comment
 # TPU (Timer Processing Unit) Functions
 # -----------------------------------------------------------------------------
 0x0001e266,tpuTimerChannelEnable,0,channel_mask,ushort,TPU channel enable bitmask
-0x0001e2e0,tpuChannelConfigurator,0,channel_config,uint,TPU channel configuration value
+0x0001e5f0,tpuChannelConfigurator,0,channel_config,uint,TPU channel configuration value
 
 # -----------------------------------------------------------------------------
 # Math Utility Functions
 # -----------------------------------------------------------------------------
-0x000188dc,safeDivideWithClamp,0,dividend,uint,Value to be divided
-0x000188dc,safeDivideWithClamp,1,divisor,int,Value to divide by (with zero protection)
-0x0001890c,clampedDivisionCalculator,0,dividend,uint,Value to be divided
-0x0001890c,clampedDivisionCalculator,1,divisor,uint,Value to divide by
-0x0001890c,clampedDivisionCalculator,2,max_result,int,Maximum result value (clamp ceiling)
-0x000189b8,limitedDivisionCalculator,0,dividend,uint,Value to be divided
-0x000189b8,limitedDivisionCalculator,1,divisor,uint,Value to divide by
-0x000189b8,limitedDivisionCalculator,2,limit_value,uint,Division result limit
+0x0001645e,safeDivideWithClamp,0,dividend,uint,Value to be divided
+0x0001645e,safeDivideWithClamp,1,divisor,int,Value to divide by (with zero protection)
+0x0001651e,clampedDivisionCalculator,0,dividend,uint,Value to be divided
+0x0001651e,clampedDivisionCalculator,1,divisor,uint,Value to divide by
+0x0001651e,clampedDivisionCalculator,2,max_result,int,Maximum result value (clamp ceiling)
+0x00016628,limitedDivisionCalculator,0,dividend,uint,Value to be divided
+0x00016628,limitedDivisionCalculator,1,divisor,uint,Value to divide by
+0x00016628,limitedDivisionCalculator,2,limit_value,uint,Division result limit
 
 # -----------------------------------------------------------------------------
 # Switch/Input Processing
 # -----------------------------------------------------------------------------
-0x00020ae0,ptpSwitchedInputDebouncer,0,input_state,uint,Current raw input state
-0x00020ae0,ptpSwitchedInputDebouncer,1,debounce_mask,uint,Debounce configuration mask
-0x00020b60,indexedSwitchedInputHandler,0,input_index,byte,Switched input channel index
+0x000206a8,ptpSwitchedInputDebouncer,0,input_state,uint,Current raw input state
+0x000206a8,ptpSwitchedInputDebouncer,1,debounce_mask,uint,Debounce configuration mask
+0x00020890,indexedSwitchedInputHandler,0,input_index,byte,Switched input channel index
 
 # -----------------------------------------------------------------------------
 # CAN Bus Configuration
