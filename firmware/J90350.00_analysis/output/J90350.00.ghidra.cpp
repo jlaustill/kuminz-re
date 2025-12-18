@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Wed Dec 17 17:30:14 MST 2025
+// Generated: Wed Dec 17 17:33:10 MST 2025
 
 
 //
@@ -15622,7 +15622,7 @@ void engineProtectionMonitorCoordinator(void)
   FUN_0001d392();
   initDiagnosticProtocol();
   func_0x00042496();
-  FUN_0001cc72();
+  fullFuelingValueCalculator();
   return;
 }
 
@@ -15648,7 +15648,7 @@ void engine_control_cycle(void)
   FUN_0001d392();
   initDiagnosticProtocol();
   func_0x00042496();
-  FUN_0001cc72();
+  fullFuelingValueCalculator();
   return;
 }
 
@@ -15665,7 +15665,7 @@ void slowCycle20ExtendedCoordinator(void)
   FUN_0001d392();
   initDiagnosticProtocol();
   func_0x00042496();
-  FUN_0001cc72();
+  fullFuelingValueCalculator();
   return;
 }
 
@@ -15681,7 +15681,7 @@ void vp44ExtendedFaultDetectionCoordinator(void)
                     /* From J90280.05 @ 0x0174c8 (confidence: 64%) */
   initDiagnosticProtocol();
   func_0x00042496();
-  FUN_0001cc72();
+  fullFuelingValueCalculator();
   return;
 }
 
@@ -16164,10 +16164,10 @@ void camSyncDiagnosticProcessingSlowCycle20Coordinator(void)
 
 
 //
-// Function: FUN_0001b732 @ 0x0001b732
+// Function: diagnosticMessageWrapper @ 0x0001b732
 //
 
-void FUN_0001b732(void)
+void diagnosticMessageWrapper(void)
 
 {
   diagnosticMessageTransmissionManager();
@@ -16177,10 +16177,10 @@ void FUN_0001b732(void)
 
 
 //
-// Function: FUN_0001b73a @ 0x0001b73a
+// Function: throttleDecelerationCoordinator @ 0x0001b73a
 //
 
-void FUN_0001b73a(void)
+void throttleDecelerationCoordinator(void)
 
 {
   throttleDecelerationTracker();
@@ -16193,10 +16193,10 @@ void FUN_0001b73a(void)
 
 
 //
-// Function: FUN_0001b754 @ 0x0001b754
+// Function: boostErrorCoordinator @ 0x0001b754
 //
 
-void FUN_0001b754(void)
+void boostErrorCoordinator(void)
 
 {
   boostPressureHighErrorChecker();
@@ -16208,10 +16208,10 @@ void FUN_0001b754(void)
 
 
 //
-// Function: FUN_0001b768 @ 0x0001b768
+// Function: slowCycle40TaskDispatcher1 @ 0x0001b768
 //
 
-void FUN_0001b768(void)
+void slowCycle40TaskDispatcher1(void)
 
 {
   func_0x0004cc5a();
@@ -16225,10 +16225,10 @@ void FUN_0001b768(void)
 
 
 //
-// Function: FUN_0001b788 @ 0x0001b788
+// Function: fuelSmokeDutyCycleCoordinator @ 0x0001b788
 //
 
-void FUN_0001b788(void)
+void fuelSmokeDutyCycleCoordinator(void)
 
 {
   func_0x000491b4();
@@ -16287,10 +16287,10 @@ void auxiliarySystemControlWrapper(void)
 
 
 //
-// Function: FUN_0001b7b0 @ 0x0001b7b0
+// Function: slowCycle20TaskDispatcher1 @ 0x0001b7b0
 //
 
-void FUN_0001b7b0(void)
+void slowCycle20TaskDispatcher1(void)
 
 {
   FUN_00031496();
@@ -16317,10 +16317,10 @@ void vp44DiagnosticFaultMonitoringSlowCycle20Coordinator(void)
 
 
 //
-// Function: FUN_0001b7d2 @ 0x0001b7d2
+// Function: slowCycle20TaskDispatcher2 @ 0x0001b7d2
 //
 
-void FUN_0001b7d2(void)
+void slowCycle20TaskDispatcher2(void)
 
 {
   func_0x0004d238();
@@ -16345,10 +16345,10 @@ void vp44FsoFaultMonitoringSlowCycle20Coordinator(void)
 
 
 //
-// Function: FUN_0001b7e0 @ 0x0001b7e0
+// Function: slowCycle20TaskDispatcher3 @ 0x0001b7e0
 //
 
-void FUN_0001b7e0(void)
+void slowCycle20TaskDispatcher3(void)
 
 {
   return;
@@ -16357,10 +16357,10 @@ void FUN_0001b7e0(void)
 
 
 //
-// Function: FUN_0001b7e2 @ 0x0001b7e2
+// Function: slowCycle20TaskDispatcher4 @ 0x0001b7e2
 //
 
-void FUN_0001b7e2(void)
+void slowCycle20TaskDispatcher4(void)
 
 {
   FUN_0002571e();
@@ -16370,10 +16370,10 @@ void FUN_0001b7e2(void)
 
 
 //
-// Function: FUN_0001b7ea @ 0x0001b7ea
+// Function: slowCycle40TaskDispatcher2 @ 0x0001b7ea
 //
 
-void FUN_0001b7ea(void)
+void slowCycle40TaskDispatcher2(void)
 
 {
   derateThresholdMonitorAndFaultController();
@@ -16383,10 +16383,10 @@ void FUN_0001b7ea(void)
 
 
 //
-// Function: FUN_0001b7f2 @ 0x0001b7f2
+// Function: slowCycle40TaskDispatcher3 @ 0x0001b7f2
 //
 
-void FUN_0001b7f2(void)
+void slowCycle40TaskDispatcher3(void)
 
 {
   func_0x00046aac();
@@ -16399,10 +16399,10 @@ void FUN_0001b7f2(void)
 
 
 //
-// Function: FUN_0001b80c @ 0x0001b80c
+// Function: slowCycle40TaskDispatcher4 @ 0x0001b80c
 //
 
-void FUN_0001b80c(void)
+void slowCycle40TaskDispatcher4(void)
 
 {
   func_0x00041528();
@@ -16413,10 +16413,10 @@ void FUN_0001b80c(void)
 
 
 //
-// Function: FUN_0001b81a @ 0x0001b81a
+// Function: slowCycle40TaskDispatcher5 @ 0x0001b81a
 //
 
-void FUN_0001b81a(void)
+void slowCycle40TaskDispatcher5(void)
 
 {
   func_0x0004579e();
@@ -16427,13 +16427,13 @@ void FUN_0001b81a(void)
 
 
 //
-// Function: FUN_0001b828 @ 0x0001b828
+// Function: slowCycle40TaskDispatcher6 @ 0x0001b828
 //
 
-void FUN_0001b828(void)
+void slowCycle40TaskDispatcher6(void)
 
 {
-  FUN_0001c8a0();
+  torqueCurveFuelingCalculator();
   func_0x00045a6c();
   return;
 }
@@ -16441,10 +16441,10 @@ void FUN_0001b828(void)
 
 
 //
-// Function: FUN_0001b836 @ 0x0001b836
+// Function: slowCycle40TaskDispatcher7 @ 0x0001b836
 //
 
-void FUN_0001b836(void)
+void slowCycle40TaskDispatcher7(void)
 
 {
   func_0x000491b4();
@@ -16454,10 +16454,10 @@ void FUN_0001b836(void)
 
 
 //
-// Function: FUN_0001b83e @ 0x0001b83e
+// Function: slowCycle40TaskDispatcher8 @ 0x0001b83e
 //
 
-void FUN_0001b83e(void)
+void slowCycle40TaskDispatcher8(void)
 
 {
   func_0x0004dedc();
@@ -16467,10 +16467,10 @@ void FUN_0001b83e(void)
 
 
 //
-// Function: FUN_0001b846 @ 0x0001b846
+// Function: slowCycle40TaskDispatcher9 @ 0x0001b846
 //
 
-void FUN_0001b846(void)
+void slowCycle40TaskDispatcher9(void)
 
 {
   func_0x0004c192();
@@ -16496,10 +16496,10 @@ void vp44DiagnosticControlSlowCycle20Coordinator(void)
 
 
 //
-// Function: FUN_0001b862 @ 0x0001b862
+// Function: slowCycle40TaskDispatcher10 @ 0x0001b862
 //
 
-void FUN_0001b862(void)
+void slowCycle40TaskDispatcher10(void)
 
 {
   func_0x0004e672();
@@ -16511,12 +16511,12 @@ void FUN_0001b862(void)
 
 
 //
-// Function: FUN_0001b876 @ 0x0001b876
+// Function: slowCycle40TaskDispatcher11 @ 0x0001b876
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-undefined8 FUN_0001b876(void)
+undefined8 slowCycle40TaskDispatcher11(void)
 
 {
   short sVar1;
@@ -16551,7 +16551,7 @@ undefined8 FUN_0001b876(void)
     vp44_engine_management_system();
     emptyStub8();
     schedulerTaskDispatcher7();
-    FUN_0001b73a();
+    throttleDecelerationCoordinator();
     FUN_00034512();
     _DAT_00800690 = (int *)&SSECTMDX;
     _DAT_0080068c = 1;
@@ -16562,7 +16562,7 @@ undefined8 FUN_0001b876(void)
     engineProtectionMonitorCoordinator();
     schedulerTaskDispatcher1();
     schedulerTaskDispatcher8();
-    FUN_0001b754();
+    boostErrorCoordinator();
     outputDriverFaultMonitor();
     _DAT_0080068c = 2;
     break;
@@ -16572,7 +16572,7 @@ undefined8 FUN_0001b876(void)
     fuelTimingModeCoordinator();
     schedulerTaskDispatcher2();
     schedulerTaskDispatcher9();
-    FUN_0001b768();
+    slowCycle40TaskDispatcher1();
     engineRpmHardwareTimerSetup();
     _DAT_0080068c = 3;
     break;
@@ -16582,7 +16582,7 @@ undefined8 FUN_0001b876(void)
     fuelTimingSensorPhaseProcessor();
     schedulerTaskDispatcher3();
     schedulerTaskDispatcher10();
-    FUN_0001b788();
+    fuelSmokeDutyCycleCoordinator();
     FUN_000315be();
     _DAT_0080068c = 4;
     break;
@@ -16601,7 +16601,7 @@ undefined8 FUN_0001b876(void)
     engineProtectionMonitorCoordinator();
     schedulerTaskDispatcher5();
     dzgTimingAndPressureSlowCycle10Coordinator();
-    FUN_0001b7b0();
+    slowCycle20TaskDispatcher1();
     emptyStub4();
     _DAT_0080068c = 6;
     break;
@@ -16620,7 +16620,7 @@ undefined8 FUN_0001b876(void)
     fuelTimingSensorPhaseProcessor();
     emptyStub9();
     shutdownProtectionSlowCycle10Coordinator();
-    FUN_0001b7d2();
+    slowCycle20TaskDispatcher2();
     liftPumpFuelDeliveryController();
     _DAT_0080068c = 8;
     break;
@@ -16630,7 +16630,7 @@ undefined8 FUN_0001b876(void)
     vp44_engine_management_system();
     emptyStub8();
     camSyncDiagnosticProcessingSlowCycle20Coordinator();
-    FUN_0001b7e0();
+    slowCycle20TaskDispatcher3();
     coldStartFuelControlSlowCycle40Coordinator();
     vp44FaultRegisterBit2Monitor();
     _DAT_0080068c = 9;
@@ -16640,8 +16640,8 @@ undefined8 FUN_0001b876(void)
     oddPhaseSchedulerTaskSet();
     engineProtectionMonitorCoordinator();
     schedulerTaskDispatcher1();
-    FUN_0001b732();
-    FUN_0001b7e2();
+    diagnosticMessageWrapper();
+    slowCycle20TaskDispatcher4();
     _DAT_0080068c = 10;
     break;
   case 10:
@@ -16650,7 +16650,7 @@ undefined8 FUN_0001b876(void)
     fuelTimingModeCoordinator();
     schedulerTaskDispatcher2();
     schedulerTaskDispatcher7();
-    FUN_0001b7ea();
+    slowCycle40TaskDispatcher2();
     FUN_00026b88();
     _DAT_0080068c = 0xb;
     break;
@@ -16660,7 +16660,7 @@ undefined8 FUN_0001b876(void)
     fuelTimingSensorPhaseProcessor();
     schedulerTaskDispatcher3();
     schedulerTaskDispatcher8();
-    FUN_0001b7f2();
+    slowCycle40TaskDispatcher3();
     ioOutputFlagMappingSlowCycle40Coordinator();
     _DAT_0080068c = 0xc;
     break;
@@ -16670,7 +16670,7 @@ undefined8 FUN_0001b876(void)
     vp44_engine_management_system();
     schedulerTaskDispatcher4();
     schedulerTaskDispatcher9();
-    FUN_0001b80c();
+    slowCycle40TaskDispatcher4();
     frictionalLoadTorqueManagementSlowCycle40Coordinator();
     _DAT_0080068c = 0xd;
     break;
@@ -16680,7 +16680,7 @@ undefined8 FUN_0001b876(void)
     engineProtectionMonitorCoordinator();
     schedulerTaskDispatcher5();
     schedulerTaskDispatcher10();
-    FUN_0001b81a();
+    slowCycle40TaskDispatcher5();
     engineOperatingModeStateTrackingSlowCycle40Coordinator();
     _DAT_0080068c = 0xe;
     break;
@@ -16690,7 +16690,7 @@ undefined8 FUN_0001b876(void)
     fuelTimingModeCoordinator();
     schedulerTaskDispatcher6();
     schedulerTaskDispatcher11();
-    FUN_0001b828();
+    slowCycle40TaskDispatcher6();
     fuelDemandProportionalCalculationSlowCycle40Coordinator();
     _DAT_0080068c = 0xf;
     break;
@@ -16700,9 +16700,9 @@ undefined8 FUN_0001b876(void)
     fuelTimingSensorPhaseProcessor();
     emptyStub9();
     dzgTimingAndPressureSlowCycle10Coordinator();
-    FUN_0001b836();
+    slowCycle40TaskDispatcher7();
     epsTimingCalculationSlowCycle40Coordinator();
-    FUN_0001cad6();
+    vp44FuelTemperatureHandler();
     engineProtectionMultiStateSlowCycle40Coordinator();
     _DAT_0080068c = 0x10;
     break;
@@ -16712,7 +16712,7 @@ undefined8 FUN_0001b876(void)
     vp44_engine_management_system();
     emptyStub8();
     rpmBasedFuelLimiterCoordinator();
-    FUN_0001b83e();
+    slowCycle40TaskDispatcher8();
     func_0x000487fe();
     _DAT_0080068c = 0x11;
     break;
@@ -16722,7 +16722,7 @@ undefined8 FUN_0001b876(void)
     engineProtectionMonitorCoordinator();
     schedulerTaskDispatcher1();
     shutdownProtectionSlowCycle10Coordinator();
-    FUN_0001b846();
+    slowCycle40TaskDispatcher9();
     _DAT_0080068c = 0x12;
     break;
   case 0x12:
@@ -16740,8 +16740,8 @@ undefined8 FUN_0001b876(void)
     oddPhaseSchedulerTaskSet();
     fuelTimingSensorPhaseProcessor();
     schedulerTaskDispatcher3();
-    FUN_0001b732();
-    FUN_0001b862();
+    diagnosticMessageWrapper();
+    slowCycle40TaskDispatcher10();
     _DAT_0080068c = 0x14;
     break;
   case 0x14:
@@ -16750,7 +16750,7 @@ undefined8 FUN_0001b876(void)
     vp44_engine_management_system();
     schedulerTaskDispatcher4();
     schedulerTaskDispatcher7();
-    FUN_0001b73a();
+    throttleDecelerationCoordinator();
     _DAT_0080068c = 0x15;
     break;
   case 0x15:
@@ -16759,7 +16759,7 @@ undefined8 FUN_0001b876(void)
     engineProtectionMonitorCoordinator();
     schedulerTaskDispatcher5();
     schedulerTaskDispatcher8();
-    FUN_0001b754();
+    boostErrorCoordinator();
     _DAT_0080068c = 0x16;
     break;
   case 0x16:
@@ -16768,7 +16768,7 @@ undefined8 FUN_0001b876(void)
     fuelTimingModeCoordinator();
     schedulerTaskDispatcher6();
     schedulerTaskDispatcher9();
-    FUN_0001b768();
+    slowCycle40TaskDispatcher1();
     _DAT_0080068c = 0x17;
     break;
   case 0x17:
@@ -16777,7 +16777,7 @@ undefined8 FUN_0001b876(void)
     fuelTimingSensorPhaseProcessor();
     emptyStub9();
     schedulerTaskDispatcher10();
-    FUN_0001b788();
+    fuelSmokeDutyCycleCoordinator();
     _DAT_0080068c = 0x18;
     break;
   case 0x18:
@@ -16795,7 +16795,7 @@ undefined8 FUN_0001b876(void)
     engineProtectionMonitorCoordinator();
     schedulerTaskDispatcher1();
     dzgTimingAndPressureSlowCycle10Coordinator();
-    FUN_0001b7b0();
+    slowCycle20TaskDispatcher1();
     _DAT_0080068c = 0x1a;
     break;
   case 0x1a:
@@ -16813,7 +16813,7 @@ undefined8 FUN_0001b876(void)
     fuelTimingSensorPhaseProcessor();
     schedulerTaskDispatcher3();
     shutdownProtectionSlowCycle10Coordinator();
-    FUN_0001b7d2();
+    slowCycle20TaskDispatcher2();
     _DAT_0080068c = 0x1c;
     break;
   case 0x1c:
@@ -16822,7 +16822,7 @@ undefined8 FUN_0001b876(void)
     vp44_engine_management_system();
     schedulerTaskDispatcher4();
     camSyncDiagnosticProcessingSlowCycle20Coordinator();
-    FUN_0001b7e0();
+    slowCycle20TaskDispatcher3();
     _DAT_0080068c = 0x1d;
     break;
   case 0x1d:
@@ -16830,8 +16830,8 @@ undefined8 FUN_0001b876(void)
     oddPhaseSchedulerTaskSet();
     engineProtectionMonitorCoordinator();
     schedulerTaskDispatcher5();
-    FUN_0001b732();
-    FUN_0001b7e2();
+    diagnosticMessageWrapper();
+    slowCycle20TaskDispatcher4();
     _DAT_0080068c = 0x1e;
     break;
   case 0x1e:
@@ -16840,7 +16840,7 @@ undefined8 FUN_0001b876(void)
     fuelTimingModeCoordinator();
     schedulerTaskDispatcher6();
     schedulerTaskDispatcher7();
-    FUN_0001b7ea();
+    slowCycle40TaskDispatcher2();
     _DAT_0080068c = 0x1f;
     break;
   case 0x1f:
@@ -16849,7 +16849,7 @@ undefined8 FUN_0001b876(void)
     fuelTimingSensorPhaseProcessor();
     emptyStub9();
     schedulerTaskDispatcher8();
-    FUN_0001b7f2();
+    slowCycle40TaskDispatcher3();
     canMessageMemorySyncController();
     _DAT_0080068c = 0x20;
     break;
@@ -16859,7 +16859,7 @@ undefined8 FUN_0001b876(void)
     vp44_engine_management_system();
     emptyStub8();
     schedulerTaskDispatcher9();
-    FUN_0001b80c();
+    slowCycle40TaskDispatcher4();
     _DAT_0080068c = 0x21;
     break;
   case 0x21:
@@ -16868,7 +16868,7 @@ undefined8 FUN_0001b876(void)
     engineProtectionMonitorCoordinator();
     schedulerTaskDispatcher1();
     schedulerTaskDispatcher10();
-    FUN_0001b81a();
+    slowCycle40TaskDispatcher5();
     _DAT_0080068c = 0x22;
     break;
   case 0x22:
@@ -16877,7 +16877,7 @@ undefined8 FUN_0001b876(void)
     fuelTimingModeCoordinator();
     schedulerTaskDispatcher2();
     schedulerTaskDispatcher11();
-    FUN_0001b828();
+    slowCycle40TaskDispatcher6();
     _DAT_0080068c = 0x23;
     break;
   case 0x23:
@@ -16886,7 +16886,7 @@ undefined8 FUN_0001b876(void)
     fuelTimingSensorPhaseProcessor();
     schedulerTaskDispatcher3();
     dzgTimingAndPressureSlowCycle10Coordinator();
-    FUN_0001b836();
+    slowCycle40TaskDispatcher7();
     _DAT_0080068c = 0x24;
     break;
   case 0x24:
@@ -16895,7 +16895,7 @@ undefined8 FUN_0001b876(void)
     vp44_engine_management_system();
     schedulerTaskDispatcher4();
     rpmBasedFuelLimiterCoordinator();
-    FUN_0001b83e();
+    slowCycle40TaskDispatcher8();
     _DAT_0080068c = 0x25;
     break;
   case 0x25:
@@ -16904,7 +16904,7 @@ undefined8 FUN_0001b876(void)
     engineProtectionMonitorCoordinator();
     schedulerTaskDispatcher5();
     shutdownProtectionSlowCycle10Coordinator();
-    FUN_0001b846();
+    slowCycle40TaskDispatcher9();
     _DAT_0080068c = 0x26;
     break;
   case 0x26:
@@ -16922,8 +16922,8 @@ undefined8 FUN_0001b876(void)
     oddPhaseSchedulerTaskSet();
     fuelTimingSensorPhaseProcessor();
     emptyStub9();
-    FUN_0001b732();
-    FUN_0001b862();
+    diagnosticMessageWrapper();
+    slowCycle40TaskDispatcher10();
     _DAT_0080068c = 0;
     break;
   default:
@@ -16975,7 +16975,7 @@ void scheduler_init(void)
   _number_of_loop_delays_cal_0_65535 = 0;
   _DAT_0080068a = 0;
   REG_SIM_PICR = 0x152;
-  _DAT_00808f24 = FUN_0001b876;
+  _DAT_00808f24 = slowCycle40TaskDispatcher11;
   REG_SIM_PITR = 0x27;
   return;
 }
@@ -17524,12 +17524,12 @@ uint fuelDemandTableBlendCalculator(void)
 
 
 //
-// Function: FUN_0001c7a8 @ 0x0001c7a8
+// Function: parameterTablePointersInit @ 0x0001c7a8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001c7a8(void)
+void parameterTablePointersInit(void)
 
 {
   _DAT_008006ac = 0x607d6;
@@ -17551,12 +17551,12 @@ void FUN_0001c7a8(void)
 
 
 //
-// Function: FUN_0001c824 @ 0x0001c824
+// Function: torqueCurveBreakpointsUpdater @ 0x0001c824
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001c824(void)
+void torqueCurveBreakpointsUpdater(void)
 
 {
   int iVar1;
@@ -17585,12 +17585,12 @@ void FUN_0001c824(void)
 
 
 //
-// Function: FUN_0001c8a0 @ 0x0001c8a0
+// Function: torqueCurveFuelingCalculator @ 0x0001c8a0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-ushort FUN_0001c8a0(void)
+ushort torqueCurveFuelingCalculator(void)
 
 {
   ushort uVar1;
@@ -17607,12 +17607,14 @@ ushort FUN_0001c8a0(void)
   if ((_DAT_00803cb8 & 0x200) == 0) {
     _state_flag_to_use_epf_s_rpm_breakpoints_for_j1939_0_ffff =
          _DAT_008006e6 | _state_flag_to_use_epf_s_rpm_breakpoints_for_j1939_0_ffff;
-    FUN_0001c824();
-    uVar1 = FUN_0001cb76(CONCAT22(_torque_curve_speed_at_breakpoint_1_lsg_reference_0_5000,400));
-    uVar2 = FUN_0001cb76(CONCAT22(_torque_curve_speed_at_breakpoint_2_hsg_breakpoint_0_5000,400));
-    uVar3 = FUN_0001cb76(CONCAT22(_torque_curve_speed_at_breakpoint_3_0_5000,400));
-    uVar4 = FUN_0001cb76(CONCAT22(_torque_curve_speed_at_breakpoint_4_0_5000,400));
-    uVar5 = FUN_0001cb76(CONCAT22(_torque_curve_speed_at_breakpoint_5_0_5000,400));
+    torqueCurveBreakpointsUpdater();
+    uVar1 = rpmBasedFuelingLookup
+                      (CONCAT22(_torque_curve_speed_at_breakpoint_1_lsg_reference_0_5000,400));
+    uVar2 = rpmBasedFuelingLookup
+                      (CONCAT22(_torque_curve_speed_at_breakpoint_2_hsg_breakpoint_0_5000,400));
+    uVar3 = rpmBasedFuelingLookup(CONCAT22(_torque_curve_speed_at_breakpoint_3_0_5000,400));
+    uVar4 = rpmBasedFuelingLookup(CONCAT22(_torque_curve_speed_at_breakpoint_4_0_5000,400));
+    uVar5 = rpmBasedFuelingLookup(CONCAT22(_torque_curve_speed_at_breakpoint_5_0_5000,400));
     uVar6 = _state_flag_to_use_epf_s_rpm_breakpoints_for_j1939_0_ffff &
             _bitmap_indicating_when_a_feature_should_clamp_a_fueling_point_0_ffff;
     if (uVar6 == 0) {
@@ -17758,12 +17760,12 @@ ushort canPinVp44StatusController(void)
 
 
 //
-// Function: FUN_0001cad6 @ 0x0001cad6
+// Function: vp44FuelTemperatureHandler @ 0x0001cad6
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-uint FUN_0001cad6(void)
+uint vp44FuelTemperatureHandler(void)
 
 {
   uint uVar1;
@@ -17777,7 +17779,7 @@ uint FUN_0001cad6(void)
         _DAT_0080a254 = _default_value_for_vp44_fuel_temperature_when_sensor_is_fail_40_to_300;
         return _32_word_bit_mapped_system_error_status_word_18_0_1 & 0xffff0080;
       }
-      uVar1 = FUN_0001cb48();
+      uVar1 = fuelTemperatureSensorConvert();
       _DAT_0080a254 = (short)uVar1;
       return uVar1;
     }
@@ -17789,12 +17791,12 @@ uint FUN_0001cad6(void)
 
 
 //
-// Function: FUN_0001cb3c @ 0x0001cb3c
+// Function: fuelTemperatureDefaultInit @ 0x0001cb3c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001cb3c(void)
+void fuelTemperatureDefaultInit(void)
 
 {
   _DAT_0080a254 = _global_default_value_for_fuel_temperature_50_to_293;
@@ -17804,12 +17806,12 @@ void FUN_0001cb3c(void)
 
 
 //
-// Function: FUN_0001cb48 @ 0x0001cb48
+// Function: fuelTemperatureSensorConvert @ 0x0001cb48
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001cb48(void)
+void fuelTemperatureSensorConvert(void)
 
 {
   return;
@@ -17818,12 +17820,12 @@ void FUN_0001cb48(void)
 
 
 //
-// Function: FUN_0001cb76 @ 0x0001cb76
+// Function: rpmBasedFuelingLookup @ 0x0001cb76
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-short FUN_0001cb76(undefined4 param_1)
+short rpmBasedFuelingLookup(undefined4 param_1)
 
 {
   int iVar1;
@@ -17872,12 +17874,12 @@ short FUN_0001cb76(undefined4 param_1)
 
 
 //
-// Function: FUN_0001cc72 @ 0x0001cc72
+// Function: fullFuelingValueCalculator @ 0x0001cc72
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001cc72(void)
+void fullFuelingValueCalculator(void)
 
 {
   short sVar1;
@@ -17898,9 +17900,11 @@ void FUN_0001cc72(void)
       _DAT_0080070e = _fuel_arbitrator_threshold_5;
       sVar1 = FUN_00035088(&DAT_00800700);
     }
-    _fueling_value_at_100_throttle_0_100 = FUN_0001cb76(CONCAT22(_fuel_arbitrator_threshold_5,400));
-    sVar2 = FUN_0001cb76(CONCAT22(_the_actual_hsg_derate_speed_used_in_hsg_droop_calculation_1400_5000
-                                  ,400));
+    _fueling_value_at_100_throttle_0_100 =
+         rpmBasedFuelingLookup(CONCAT22(_fuel_arbitrator_threshold_5,400));
+    sVar2 = rpmBasedFuelingLookup
+                      (CONCAT22(_the_actual_hsg_derate_speed_used_in_hsg_droop_calculation_1400_5000
+                                ,400));
     _full_fueling_value_at_hsg_bef_droop_speed_0_100 = sVar1 + sVar2;
     if (_full_fueling_value_at_hsg_bef_droop_speed_0_100 < _DAT_0080800a) {
       _full_fueling_value_at_hsg_bef_droop_speed_0_100 = _DAT_0080800a;
@@ -17920,7 +17924,7 @@ void FUN_0001cc72(void)
   }
   if ((_DAT_00803cac & 0x10) == 0) {
     _max_fueling_without_programmable_power_for_esp_tau_0_0_100 =
-         FUN_0001cb76(CONCAT22(_fuel_arbitrator_threshold_5,400));
+         rpmBasedFuelingLookup(CONCAT22(_fuel_arbitrator_threshold_5,400));
   }
   else {
     _DAT_008006f0 = _fuel_arbitrator_threshold_5;
@@ -18393,8 +18397,9 @@ void FUN_0001d5a0(void)
       if (((_DAT_0080074c != 0) || (_DAT_0080a9e0 != _DAT_0080074e)) ||
          (_DAT_0080d340 != _DAT_00800750)) {
         _DAT_0080d36e =
-             FUN_0001cb76(CONCAT22(_hsg_base_reference_speed_currently_in_use_esp_may_select_1500_5000
-                                   ,400));
+             rpmBasedFuelingLookup
+                       (CONCAT22(_hsg_base_reference_speed_currently_in_use_esp_may_select_1500_5000
+                                 ,400));
         if (_DAT_0080d36e < _DAT_0080800a) {
           _DAT_0080d36e = _DAT_0080800a;
         }
@@ -29093,7 +29098,7 @@ void FUN_000284e8(void)
   throttleTrackingStateReset();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x87b6;
-  FUN_0001c7a8();
+  parameterTablePointersInit();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x87bc;
   FUN_0001dbd8();
@@ -29261,7 +29266,7 @@ void FUN_000284e8(void)
   func_0x00048886();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x8906;
-  FUN_0001cb3c();
+  fuelTemperatureDefaultInit();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x890c;
   func_0x00048684();
@@ -29462,7 +29467,7 @@ void mainSystemInitialization(void)
   initHourMeterSystem();
   fuelLimitParameterPointerSetup();
   throttleTrackingStateReset();
-  FUN_0001c7a8();
+  parameterTablePointersInit();
   FUN_0001dbd8();
   FUN_0001db8a();
   FUN_0002482e();
@@ -29518,7 +29523,7 @@ void mainSystemInitialization(void)
   func_0x000473a0();
   func_0x000474ae();
   func_0x00048886();
-  FUN_0001cb3c();
+  fuelTemperatureDefaultInit();
   func_0x00048684();
   func_0x000478c6();
   fuelDemandTablePointersInit();
@@ -29584,7 +29589,7 @@ void slowCycle4Coordinator(void)
   initHourMeterSystem();
   fuelLimitParameterPointerSetup();
   throttleTrackingStateReset();
-  FUN_0001c7a8();
+  parameterTablePointersInit();
   FUN_0001dbd8();
   FUN_0001db8a();
   FUN_0002482e();
@@ -29640,7 +29645,7 @@ void slowCycle4Coordinator(void)
   func_0x000473a0();
   func_0x000474ae();
   func_0x00048886();
-  FUN_0001cb3c();
+  fuelTemperatureDefaultInit();
   func_0x00048684();
   func_0x000478c6();
   fuelDemandTablePointersInit();
@@ -29694,7 +29699,7 @@ void engineDiagnosticSystemCoordinator(void)
   initHourMeterSystem();
   fuelLimitParameterPointerSetup();
   throttleTrackingStateReset();
-  FUN_0001c7a8();
+  parameterTablePointersInit();
   FUN_0001dbd8();
   FUN_0001db8a();
   FUN_0002482e();
@@ -29750,7 +29755,7 @@ void engineDiagnosticSystemCoordinator(void)
   func_0x000473a0();
   func_0x000474ae();
   func_0x00048886();
-  FUN_0001cb3c();
+  fuelTemperatureDefaultInit();
   func_0x00048684();
   func_0x000478c6();
   fuelDemandTablePointersInit();
@@ -29838,7 +29843,7 @@ void fuelDemandUpdateOrchestrator(void)
   func_0x000473a0();
   func_0x000474ae();
   func_0x00048886();
-  FUN_0001cb3c();
+  fuelTemperatureDefaultInit();
   func_0x00048684();
   func_0x000478c6();
   fuelDemandTablePointersInit();
@@ -29923,7 +29928,7 @@ void advancedEngineProtectionCoordinator(void)
   func_0x000473a0();
   func_0x000474ae();
   func_0x00048886();
-  FUN_0001cb3c();
+  fuelTemperatureDefaultInit();
   func_0x00048684();
   func_0x000478c6();
   fuelDemandTablePointersInit();
