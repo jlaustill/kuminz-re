@@ -1,0 +1,391 @@
+function_address,function_name,variable_name,variable_type,is_parameter
+0x000127c2,cylinderBalanceCalculator,piVar15,int *,false
+0x000127c2,cylinderBalanceCalculator,puVar14,undefined2 *,false
+0x000127c2,cylinderBalanceCalculator,psVar13,short *,false
+0x000127c2,cylinderBalanceCalculator,pcVar12,char *,false
+0x000127c2,cylinderBalanceCalculator,puVar19,undefined2 *,false
+0x000127c2,cylinderBalanceCalculator,piVar18,int *,false
+0x000127c2,cylinderBalanceCalculator,psVar17,short *,false
+0x000127c2,cylinderBalanceCalculator,puVar16,undefined2 *,false
+0x000127c2,cylinderBalanceCalculator,psVar22,short *,false
+0x000127c2,cylinderBalanceCalculator,puVar21,undefined2 *,false
+0x000127c2,cylinderBalanceCalculator,psVar20,short *,false
+0x000127c2,cylinderBalanceCalculator,sVar3,short,false
+0x000127c2,cylinderBalanceCalculator,iVar2,int,false
+0x000127c2,cylinderBalanceCalculator,sVar1,short,false
+0x000127c2,cylinderBalanceCalculator,uVar7,ushort,false
+0x000127c2,cylinderBalanceCalculator,iVar6,int,false
+0x000127c2,cylinderBalanceCalculator,uVar5,uint,false
+0x000127c2,cylinderBalanceCalculator,uVar4,uint,false
+0x000127c2,cylinderBalanceCalculator,piVar11,int *,false
+0x000127c2,cylinderBalanceCalculator,puVar10,ushort *,false
+0x000127c2,cylinderBalanceCalculator,sVar9,short,false
+0x000127c2,cylinderBalanceCalculator,puVar8,undefined *,false
+0x0002d3c6,fuelDemandControlLoop,smoothing_factor,word,false
+0x0002d3c6,fuelDemandControlLoop,new_sample,word,false
+0x0002d3c6,fuelDemandControlLoop,uVar7,ushort,false
+0x0002d3c6,fuelDemandControlLoop,unaff_D3,undefined4,false
+0x0002d3c6,fuelDemandControlLoop,local_8,undefined4,false
+0x0002d3c6,fuelDemandControlLoop,demand_limited,dword,false
+0x0002d3c6,fuelDemandControlLoop,dVar3,dword,false
+0x0002d3c6,fuelDemandControlLoop,uVar2,uint,false
+0x0002d3c6,fuelDemandControlLoop,demand_filtered,word,false
+0x0002d3c6,fuelDemandControlLoop,sVar1,short,false
+0x0002d3c6,fuelDemandControlLoop,unaff_D2,undefined4,false
+0x0002d3c6,fuelDemandControlLoop,iVar6,int,false
+0x0002d3c6,fuelDemandControlLoop,dVar5,dword,false
+0x0002d3c6,fuelDemandControlLoop,iVar4,int,false
+0x00023244,fuelDemandLimitOrchestrator,bVar8,bool,false
+0x00023244,fuelDemandLimitOrchestrator,bVar7,bool,false
+0x00023244,fuelDemandLimitOrchestrator,bVar6,bool,false
+0x00023244,fuelDemandLimitOrchestrator,uVar5,uint,false
+0x00023244,fuelDemandLimitOrchestrator,bVar9,bool,false
+0x00023244,fuelDemandLimitOrchestrator,temp_79f23b72e9e,word,false
+0x00023244,fuelDemandLimitOrchestrator,uVar4,undefined1,false
+0x00023244,fuelDemandLimitOrchestrator,bVar3,bool,false
+0x00023244,fuelDemandLimitOrchestrator,base_demand,word,false
+0x00023244,fuelDemandLimitOrchestrator,bVar2,bool,false
+0x00023244,fuelDemandLimitOrchestrator,bVar1,bool,false
+0x0002148a,memoryOperationDispatcher,iVar1,int,false
+0x0002148a,memoryOperationDispatcher,bVar2,bool,false
+0x0002148a,memoryOperationDispatcher,uVar3,uint,false
+0x0002148a,memoryOperationDispatcher,uVar4,uint,false
+0x0002148a,memoryOperationDispatcher,bVar5,byte,false
+0x0002148a,memoryOperationDispatcher,bVar6,byte,false
+0x0002148a,memoryOperationDispatcher,cVar7,char,false
+0x0002148a,memoryOperationDispatcher,request_ptr,dword,true
+0x0002148a,memoryOperationDispatcher,sVar8,short,false
+0x0002148a,memoryOperationDispatcher,operation_size,word,true
+0x0002148a,memoryOperationDispatcher,uVar9,undefined2,false
+0x0002148a,memoryOperationDispatcher,operation_flags,dword,true
+0x00034f8a,coreTableInterpolation,result,dword,false
+0x00034f8a,coreTableInterpolation,table_descriptor,void *,true
+0x00034f8a,coreTableInterpolation,input_value,word,true
+0x00034f8a,coreTableInterpolation,scaling_factor,word,true
+0x00034f8a,coreTableInterpolation,in_stack_00000008,undefined2,false
+0x00034f8a,coreTableInterpolation,in_D1,undefined4,false
+0x00034f8a,coreTableInterpolation,weight_factor,ushort,false
+0x00034f8a,coreTableInterpolation,table_ptr,dword *,false
+0x0003258a,buildCanMessage,uVar1,undefined4,false
+0x0003258a,buildCanMessage,iVar2,int,false
+0x0003258a,buildCanMessage,sVar3,short,false
+0x0003258a,buildCanMessage,uVar4,undefined2,false
+0x0003258a,buildCanMessage,iVar9,int,false
+0x0003258a,buildCanMessage,sVar10,short,false
+0x0003258a,buildCanMessage,puVar11,undefined *,false
+0x0003258a,buildCanMessage,bVar5,byte,false
+0x0003258a,buildCanMessage,local_6,undefined2,false
+0x0003258a,buildCanMessage,uVar6,ushort,false
+0x0003258a,buildCanMessage,cVar7,char,false
+0x0003258a,buildCanMessage,bVar8,byte,false
+0x00035088,twoDimensionalTableInterpolation,in_D0,undefined4,false
+0x00035088,twoDimensionalTableInterpolation,uVar1,ushort,false
+0x00035088,twoDimensionalTableInterpolation,in_D1,undefined4,false
+0x00035088,twoDimensionalTableInterpolation,row_ptr,word *,false
+0x00035088,twoDimensionalTableInterpolation,uVar2,uint,false
+0x00035088,twoDimensionalTableInterpolation,col_ptr,word *,false
+0x00035088,twoDimensionalTableInterpolation,wVar3,word,false
+0x00035088,twoDimensionalTableInterpolation,unaff_D2,uint,false
+0x00035088,twoDimensionalTableInterpolation,x_weight,word,false
+0x00035088,twoDimensionalTableInterpolation,puVar5,ushort *,false
+0x00035088,twoDimensionalTableInterpolation,y_weight,word,false
+0x00035088,twoDimensionalTableInterpolation,pwVar4,word *,false
+0x00035088,twoDimensionalTableInterpolation,row_index,dword,false
+0x00035088,twoDimensionalTableInterpolation,pwVar7,word *,false
+0x00035088,twoDimensionalTableInterpolation,puVar6,ushort *,false
+0x00035088,twoDimensionalTableInterpolation,bVar9,bool,false
+0x00035088,twoDimensionalTableInterpolation,pwVar8,word *,false
+0x00035088,twoDimensionalTableInterpolation,table_args,word *,true
+0x00035088,twoDimensionalTableInterpolation,bVar10,bool,false
+0x00035088,twoDimensionalTableInterpolation,local_D6w_304,word,false
+0x00035088,twoDimensionalTableInterpolation,local_D3_358,dword,false
+0x0002238e,diagMemoryReadResponseBuilder,request_ptr,byte *,true
+0x0002238e,diagMemoryReadResponseBuilder,start_address,dword,true
+0x0002238e,diagMemoryReadResponseBuilder,read_length,dword,true
+0x0002238e,diagMemoryReadResponseBuilder,puVar1,undefined1 *,false
+0x0002238e,diagMemoryReadResponseBuilder,cVar2,char,false
+0x0002238e,diagMemoryReadResponseBuilder,first_byte,byte,false
+0x0002238e,diagMemoryReadResponseBuilder,bVar3,byte,false
+0x0002238e,diagMemoryReadResponseBuilder,node_address,byte,false
+0x0002238e,diagMemoryReadResponseBuilder,uVar4,undefined3,false
+0x0002238e,diagMemoryReadResponseBuilder,validation_result,dword,false
+0x0002238e,diagMemoryReadResponseBuilder,response_header,j1939_header_t *,false
+0x0002238e,diagMemoryReadResponseBuilder,uVar5,undefined2,false
+0x0002238e,diagMemoryReadResponseBuilder,loop_counter,dword,false
+0x0002238e,diagMemoryReadResponseBuilder,uVar6,ushort,false
+0x0002238e,diagMemoryReadResponseBuilder,source_ptr,byte *,false
+0x0002238e,diagMemoryReadResponseBuilder,uVar7,undefined1,false
+0x0002238e,diagMemoryReadResponseBuilder,dest_ptr,byte *,false
+0x0002238e,diagMemoryReadResponseBuilder,pbVar8,byte *,false
+0x0003320e,engineConfigurationPGNBuilder,local_1a,undefined4,false
+0x0003320e,engineConfigurationPGNBuilder,puVar3,ushort *,false
+0x0003320e,engineConfigurationPGNBuilder,local_16,undefined4,false
+0x0003320e,engineConfigurationPGNBuilder,pgn_data,undefined4,false
+0x0003320e,engineConfigurationPGNBuilder,msg_length,undefined4,false
+0x0003320e,engineConfigurationPGNBuilder,local_a,undefined4,false
+0x0003320e,engineConfigurationPGNBuilder,local_6,undefined2,false
+0x0003320e,engineConfigurationPGNBuilder,local_22,undefined4,false
+0x0003320e,engineConfigurationPGNBuilder,param_1,undefined4 *,true
+0x0003320e,engineConfigurationPGNBuilder,local_1e,undefined4,false
+0x0003320e,engineConfigurationPGNBuilder,turbo_type,undefined1,false
+0x0003320e,engineConfigurationPGNBuilder,fuel_type,undefined1,false
+0x0003320e,engineConfigurationPGNBuilder,local_D2b_390,byte,false
+0x0003320e,engineConfigurationPGNBuilder,uVar2,ushort,false
+0x0003320e,engineConfigurationPGNBuilder,uVar1,undefined2,false
+0x00015f8e,diagnosticCommandDispatcher,auStack_16,undefined1[10],false
+0x00015f8e,diagnosticCommandDispatcher,uVar2,ushort,false
+0x00015f8e,diagnosticCommandDispatcher,cVar1,char,false
+0x00015f8e,diagnosticCommandDispatcher,cVar6,char,false
+0x00015f8e,diagnosticCommandDispatcher,local_18,undefined2,false
+0x00015f8e,diagnosticCommandDispatcher,sVar5,short,false
+0x00015f8e,diagnosticCommandDispatcher,local_c,undefined4,false
+0x00015f8e,diagnosticCommandDispatcher,wVar4,word,false
+0x00015f8e,diagnosticCommandDispatcher,local_8,undefined4,false
+0x00015f8e,diagnosticCommandDispatcher,uVar3,ushort,false
+0x00015f8e,diagnosticCommandDispatcher,puVar9,undefined1 *,false
+0x00015f8e,diagnosticCommandDispatcher,bVar8,byte,false
+0x00015f8e,diagnosticCommandDispatcher,unaff_D2,undefined4,false
+0x00015f8e,diagnosticCommandDispatcher,cVar7,char,false
+0x00015f8e,diagnosticCommandDispatcher,cmd_byte,byte,false
+0x00015f8e,diagnosticCommandDispatcher,service_id,byte,false
+0x000114d4,validateRedundantSensors,sensor2_value,word,false
+0x000114d4,validateRedundantSensors,fault_flag,byte,false
+0x000114d4,validateRedundantSensors,sVar1,short,false
+0x000114d4,validateRedundantSensors,bVar2,bool,false
+0x000114d4,validateRedundantSensors,bVar3,bool,false
+0x000114d4,validateRedundantSensors,bVar4,bool,false
+0x000114d4,validateRedundantSensors,uVar5,ushort,false
+0x000114d4,validateRedundantSensors,byte_count,ushort,false
+0x000114d4,validateRedundantSensors,local_VF_500,byte,false
+0x0001de58,throttleBasedFuelDemandInterpolator,throttle_pos,ushort,false
+0x0001de58,throttleBasedFuelDemandInterpolator,fuel_demand,dword,false
+0x0001de58,throttleBasedFuelDemandInterpolator,local_10,ushort,false
+0x0001de58,throttleBasedFuelDemandInterpolator,local_e,ushort,false
+0x0001de58,throttleBasedFuelDemandInterpolator,local_c,ushort,false
+0x0001de58,throttleBasedFuelDemandInterpolator,local_a,ushort,false
+0x0001de58,throttleBasedFuelDemandInterpolator,local_8,ushort,false
+0x0001de58,throttleBasedFuelDemandInterpolator,uVar3,ushort,false
+0x0001de58,throttleBasedFuelDemandInterpolator,local_6,ushort,false
+0x0001de58,throttleBasedFuelDemandInterpolator,sVar2,short,false
+0x0001de58,throttleBasedFuelDemandInterpolator,sVar1,short,false
+0x00027998,hourMeterEventLogger,cVar5,char,false
+0x00027998,hourMeterEventLogger,iVar4,int,false
+0x00027998,hourMeterEventLogger,sVar3,short,false
+0x00027998,hourMeterEventLogger,bVar2,bool,false
+0x00027998,hourMeterEventLogger,pbVar8,byte *,false
+0x00027998,hourMeterEventLogger,bVar7,byte,false
+0x00027998,hourMeterEventLogger,uVar6,ushort,false
+0x00027998,hourMeterEventLogger,local_5,byte,false
+0x00027998,hourMeterEventLogger,bVar1,byte,false
+0x00022e5e,vp44CanMessageDispatcher,msg_type,byte,false
+0x00022e5e,vp44CanMessageDispatcher,rx_msg,can_std_rx_desc_t *,true
+0x00027f9c,powerOnProgrammingCoordinator,puVar6,undefined2 *,false
+0x00027f9c,powerOnProgrammingCoordinator,uVar5,ushort,false
+0x00027f9c,powerOnProgrammingCoordinator,in_XF,char,false
+0x00027f9c,powerOnProgrammingCoordinator,puVar7,undefined2 *,false
+0x00027f9c,powerOnProgrammingCoordinator,cVar9,char,false
+0x00027f9c,powerOnProgrammingCoordinator,cVar8,char,false
+0x00027f9c,powerOnProgrammingCoordinator,bVar11,byte,false
+0x00027f9c,powerOnProgrammingCoordinator,cVar10,char,false
+0x00027f9c,powerOnProgrammingCoordinator,puVar13,undefined *,false
+0x00027f9c,powerOnProgrammingCoordinator,uVar12,ushort,false
+0x00027f9c,powerOnProgrammingCoordinator,local_a,int,false
+0x00027f9c,powerOnProgrammingCoordinator,local_6,ushort,false
+0x00027f9c,powerOnProgrammingCoordinator,cVar2,char,false
+0x00027f9c,powerOnProgrammingCoordinator,sVar1,short,false
+0x00027f9c,powerOnProgrammingCoordinator,sVar4,short,false
+0x00027f9c,powerOnProgrammingCoordinator,uVar3,ushort,false
+0x00011e5e,coldStartFuelControlSlowCycle40Coordinator,uVar3,uint,false
+0x00011e5e,coldStartFuelControlSlowCycle40Coordinator,bVar2,bool,false
+0x00011e5e,coldStartFuelControlSlowCycle40Coordinator,sVar1,short,false
+0x00011e5e,coldStartFuelControlSlowCycle40Coordinator,unaff_D2w,ushort,false
+0x00011e5e,coldStartFuelControlSlowCycle40Coordinator,uVar6,ushort,false
+0x00011e5e,coldStartFuelControlSlowCycle40Coordinator,uVar5,ushort,false
+0x00011e5e,coldStartFuelControlSlowCycle40Coordinator,uVar4,ushort,false
+0x00011e5e,coldStartFuelControlSlowCycle40Coordinator,divisor,dword,false
+0x00011e5e,coldStartFuelControlSlowCycle40Coordinator,iVar8,int,false
+0x00011e5e,coldStartFuelControlSlowCycle40Coordinator,uVar7,ushort,false
+0x00010520,arrayRangeSum,sum,word,false
+0x00010520,arrayRangeSum,start_ptr,word *,true
+0x00010520,arrayRangeSum,end_ptr,word *,true
+0x00010822,derateThresholdMonitorAndFaultController,local_D2w_84,word,false
+0x00010822,derateThresholdMonitorAndFaultController,sVar1,short,false
+0x00010822,derateThresholdMonitorAndFaultController,current_value,word,false
+0x00010822,derateThresholdMonitorAndFaultController,threshold,word,false
+0x00010822,derateThresholdMonitorAndFaultController,derate_active,byte,false
+0x00010822,derateThresholdMonitorAndFaultController,uVar4,uint,false
+0x00010822,derateThresholdMonitorAndFaultController,uVar3,ushort,false
+0x00010822,derateThresholdMonitorAndFaultController,uVar2,uint,false
+0x00010822,derateThresholdMonitorAndFaultController,in_D1,uint,false
+0x0000ed64,insiteCommandByteDispatcher,local_D0_216,dword,false
+0x0000ed64,insiteCommandByteDispatcher,local_D0b_282,byte,false
+0x0000ed64,insiteCommandByteDispatcher,cmd_result,dword,false
+0x0000ed64,insiteCommandByteDispatcher,uVar1,undefined4,false
+0x0000ed64,insiteCommandByteDispatcher,search_result,byte,false
+0x0000ed64,insiteCommandByteDispatcher,uVar2,uint,false
+0x0000ed64,insiteCommandByteDispatcher,response_byte,byte,false
+0x0000ed64,insiteCommandByteDispatcher,uVar3,undefined2,false
+0x0000ed64,insiteCommandByteDispatcher,uVar4,undefined2,false
+0x0000ed64,insiteCommandByteDispatcher,cVar5,char,false
+0x0000ed64,insiteCommandByteDispatcher,uVar6,undefined1,false
+0x0000ed64,insiteCommandByteDispatcher,bVar7,byte,false
+0x0000ed64,insiteCommandByteDispatcher,response_data,undefined4,false
+0x0000ed64,insiteCommandByteDispatcher,status_flags,undefined2,false
+0x0001f4e8,j1708DiagnosticMessageHandler,cVar4,char,false
+0x0001f4e8,j1708DiagnosticMessageHandler,uVar3,ushort,false
+0x0001f4e8,j1708DiagnosticMessageHandler,bVar2,byte,false
+0x0001f4e8,j1708DiagnosticMessageHandler,cVar1,char,false
+0x0001f4e8,j1708DiagnosticMessageHandler,local_c,undefined2,false
+0x0001f4e8,j1708DiagnosticMessageHandler,bVar7,bool,false
+0x0001f4e8,j1708DiagnosticMessageHandler,local_a,undefined2,false
+0x0001f4e8,j1708DiagnosticMessageHandler,local_8,undefined4,false
+0x0001f4e8,j1708DiagnosticMessageHandler,unaff_D3w,short,false
+0x0001f4e8,j1708DiagnosticMessageHandler,uVar6,uint,false
+0x0001f4e8,j1708DiagnosticMessageHandler,sVar5,short,false
+0x0001f4e8,j1708DiagnosticMessageHandler,pid,byte,false
+0x0001666c,multiPacketTransmitHandler,bVar6,byte,false
+0x0001666c,multiPacketTransmitHandler,data_ptr,undefined4,false
+0x0001666c,multiPacketTransmitHandler,bVar5,byte,false
+0x0001666c,multiPacketTransmitHandler,local_8,undefined4,false
+0x0001666c,multiPacketTransmitHandler,bVar4,byte,false
+0x0001666c,multiPacketTransmitHandler,bytes_sent,dword,false
+0x0001666c,multiPacketTransmitHandler,unaff_D2,undefined4,false
+0x0001666c,multiPacketTransmitHandler,cVar3,char,false
+0x0001666c,multiPacketTransmitHandler,packet_num,byte,false
+0x0001666c,multiPacketTransmitHandler,cVar2,char,false
+0x0001666c,multiPacketTransmitHandler,dVar1,dword,false
+0x0001edae,diagnosticMemoryReadHandler,uVar5,uint,false
+0x0001edae,diagnosticMemoryReadHandler,unaff_D2,undefined4,false
+0x0001edae,diagnosticMemoryReadHandler,local_4a,undefined2,false
+0x0001edae,diagnosticMemoryReadHandler,uVar4,undefined2,false
+0x0001edae,diagnosticMemoryReadHandler,dVar3,dword,false
+0x0001edae,diagnosticMemoryReadHandler,puVar9,undefined2 *,false
+0x0001edae,diagnosticMemoryReadHandler,bVar8,byte,false
+0x0001edae,diagnosticMemoryReadHandler,bVar7,byte,false
+0x0001edae,diagnosticMemoryReadHandler,cVar6,char,false
+0x0001edae,diagnosticMemoryReadHandler,local_16,undefined1,false
+0x0001edae,diagnosticMemoryReadHandler,buffer_ptr,undefined4,false
+0x0001edae,diagnosticMemoryReadHandler,response_type,byte,false
+0x0001edae,diagnosticMemoryReadHandler,service_id,byte,true
+0x0001edae,diagnosticMemoryReadHandler,in_stack_00000005,char,false
+0x0001edae,diagnosticMemoryReadHandler,local_8,undefined4,false
+0x0001edae,diagnosticMemoryReadHandler,read_length,dword,false
+0x0001edae,diagnosticMemoryReadHandler,uStack_15,undefined1,false
+0x0001edae,diagnosticMemoryReadHandler,bVar2,bool,false
+0x0001edae,diagnosticMemoryReadHandler,bVar1,byte,false
+0x000159ee,outputDriverStrobeController,bStack_f,byte,false
+0x000159ee,outputDriverStrobeController,temp_13f07b566e6,byte,false
+0x000159ee,outputDriverStrobeController,uVar1,uint,false
+0x000159ee,outputDriverStrobeController,uVar2,uint,false
+0x000159ee,outputDriverStrobeController,local_e,undefined4,false
+0x000159ee,outputDriverStrobeController,uVar3,uint,false
+0x000159ee,outputDriverStrobeController,bVar4,byte,false
+0x000159ee,outputDriverStrobeController,local_a,undefined4,false
+0x000159ee,outputDriverStrobeController,bVar5,byte,false
+0x000159ee,outputDriverStrobeController,bVar6,byte,false
+0x000159ee,outputDriverStrobeController,wVar7,word,false
+0x000159ee,outputDriverStrobeController,output_state,byte,false
+0x0001686e,multiPacketReceiveHandler,response_type,byte,false
+0x0001686e,multiPacketReceiveHandler,local_a,undefined2,false
+0x0001686e,multiPacketReceiveHandler,local_8,undefined4,false
+0x0001686e,multiPacketReceiveHandler,puVar4,undefined1 *,false
+0x0001686e,multiPacketReceiveHandler,sVar3,short,false
+0x0001686e,multiPacketReceiveHandler,bVar2,byte,false
+0x0001686e,multiPacketReceiveHandler,psVar1,short *,false
+0x0001686e,multiPacketReceiveHandler,bVar7,byte,false
+0x0001686e,multiPacketReceiveHandler,unaff_D2,undefined4,false
+0x0001686e,multiPacketReceiveHandler,cVar6,char,false
+0x0001686e,multiPacketReceiveHandler,expected_num,byte,false
+0x0001686e,multiPacketReceiveHandler,iVar5,int,false
+0x00024f30,activeFaultLampStateMachine,bVar5,byte,false
+0x00024f30,activeFaultLampStateMachine,bVar4,bool,false
+0x00024f30,activeFaultLampStateMachine,fault_active,bool,false
+0x00024f30,activeFaultLampStateMachine,temp_79ffbf84e81,bool,false
+0x00024f30,activeFaultLampStateMachine,bVar1,bool,false
+0x00024f30,activeFaultLampStateMachine,bVar3,bool,false
+0x00024f30,activeFaultLampStateMachine,bVar2,bool,false
+0x00014872,diagnosticFaultProcessor,iVar1,int,false
+0x00014872,diagnosticFaultProcessor,iVar2,int,false
+0x00014872,diagnosticFaultProcessor,uVar3,ushort,false
+0x00014872,diagnosticFaultProcessor,local_6,ushort,false
+0x00014872,diagnosticFaultProcessor,uVar4,ushort,false
+0x00014872,diagnosticFaultProcessor,uVar5,ushort,false
+0x00014872,diagnosticFaultProcessor,bVar6,bool,false
+0x00014872,diagnosticFaultProcessor,unaff_D2,undefined4,false
+0x00014872,diagnosticFaultProcessor,bVar7,byte,false
+0x00014872,diagnosticFaultProcessor,uVar8,ushort,false
+0x000222b4,canDiagnosticResponseSender,can_msg_id,uint,false
+0x000222b4,canDiagnosticResponseSender,msg_length,undefined2,false
+0x000222b4,canDiagnosticResponseSender,data_ptr,undefined1 *,false
+0x000222b4,canDiagnosticResponseSender,param_byte1,undefined1,false
+0x000222b4,canDiagnosticResponseSender,param_byte2,undefined1,false
+0x000222b4,canDiagnosticResponseSender,lookup_result,byte,false
+0x000222b4,canDiagnosticResponseSender,local_1e,undefined1,false
+0x000222b4,canDiagnosticResponseSender,return_code,dword,false
+0x000222b4,canDiagnosticResponseSender,local_1d,undefined1,false
+0x000222b4,canDiagnosticResponseSender,local_1c,undefined1,false
+0x000222b4,canDiagnosticResponseSender,local_1b,undefined1,false
+0x000222b4,canDiagnosticResponseSender,param_1,undefined1 *,true
+0x000222b4,canDiagnosticResponseSender,service_id,undefined1,false
+0x000222b4,canDiagnosticResponseSender,local_19,undefined1,false
+0x000222b4,canDiagnosticResponseSender,local_18,undefined1,false
+0x000222b4,canDiagnosticResponseSender,local_17,undefined1,false
+0x000222b4,canDiagnosticResponseSender,local_16,undefined1,false
+0x000222b4,canDiagnosticResponseSender,local_15,undefined1,false
+0x000222b4,canDiagnosticResponseSender,local_14,undefined1,false
+0x0002cf7e,diagnosticParameterTransferHandler,puVar8,undefined4 *,false
+0x0002cf7e,diagnosticParameterTransferHandler,puVar7,undefined *,false
+0x0002cf7e,diagnosticParameterTransferHandler,puVar9,undefined1 *,false
+0x0002cf7e,diagnosticParameterTransferHandler,param_value,word,false
+0x0002cf7e,diagnosticParameterTransferHandler,local_8,undefined4,false
+0x0002cf7e,diagnosticParameterTransferHandler,sVar1,short,false
+0x0002cf7e,diagnosticParameterTransferHandler,param_1,undefined4,true
+0x0002cf7e,diagnosticParameterTransferHandler,uVar2,uint,false
+0x0002cf7e,diagnosticParameterTransferHandler,in_D0,uint,false
+0x0002cf7e,diagnosticParameterTransferHandler,uVar4,ushort,false
+0x0002cf7e,diagnosticParameterTransferHandler,bVar3,byte,false
+0x0002cf7e,diagnosticParameterTransferHandler,bVar6,byte,false
+0x0002cf7e,diagnosticParameterTransferHandler,bVar5,byte,false
+0x0000b7bc,sensorInputFilterProcessor,local_8,table_interp_args_t *,false
+0x0000b7bc,sensorInputFilterProcessor,local_D0w_1174,word,false
+0x0000b7bc,sensorInputFilterProcessor,bVar1,bool,false
+0x0000b7bc,sensorInputFilterProcessor,uVar2,undefined2,false
+0x0000b7bc,sensorInputFilterProcessor,unaff_D2,undefined4,false
+0x0000b7bc,sensorInputFilterProcessor,uVar3,ushort,false
+0x0000b7bc,sensorInputFilterProcessor,filtered_value,word,false
+0x0000b7bc,sensorInputFilterProcessor,unaff_D3,undefined4,false
+0x0000b7bc,sensorInputFilterProcessor,delta,word,false
+0x0000b7bc,sensorInputFilterProcessor,uVar4,ushort,false
+0x0000b7bc,sensorInputFilterProcessor,uVar5,ushort,false
+0x0000b7bc,sensorInputFilterProcessor,puVar6,undefined *,false
+0x0000b7bc,sensorInputFilterProcessor,puVar7,undefined *,false
+0x0000b7bc,sensorInputFilterProcessor,pcVar8,char *,false
+0x0000b7bc,sensorInputFilterProcessor,pcVar9,char *,false
+0x0000b7bc,sensorInputFilterProcessor,input_value,word,false
+0x0000b7bc,sensorInputFilterProcessor,scaling_factor,word,false
+0x0001ec3c,diagnosticMemoryWriteHandler,bStack_f,byte,false
+0x0001ec3c,diagnosticMemoryWriteHandler,local_e,undefined4,false
+0x0001ec3c,diagnosticMemoryWriteHandler,local_9,byte,false
+0x0001ec3c,diagnosticMemoryWriteHandler,cVar1,char,false
+0x0001ec3c,diagnosticMemoryWriteHandler,local_8,undefined4,false
+0x0001ec3c,diagnosticMemoryWriteHandler,service_id,byte,true
+0x0001ec3c,diagnosticMemoryWriteHandler,bVar4,byte,false
+0x0001ec3c,diagnosticMemoryWriteHandler,bVar3,byte,false
+0x0001ec3c,diagnosticMemoryWriteHandler,bVar2,byte,false
+0x0001ec3c,diagnosticMemoryWriteHandler,unaff_D2,undefined4,false
+0x0001ec3c,diagnosticMemoryWriteHandler,in_stack_00000005,byte,false
+0x0001ec3c,diagnosticMemoryWriteHandler,bVar7,bool,false
+0x0001ec3c,diagnosticMemoryWriteHandler,pbVar6,byte *,false
+0x0001ec3c,diagnosticMemoryWriteHandler,puVar5,undefined4 *,false
+0x0001f8bc,engineFluidLevelDataBuilder,cVar3,char,false
+0x0001f8bc,engineFluidLevelDataBuilder,bVar2,byte,false
+0x0001f8bc,engineFluidLevelDataBuilder,cVar1,char,false
+0x0001f8bc,engineFluidLevelDataBuilder,iVar6,int,false
+0x0001f8bc,engineFluidLevelDataBuilder,uVar5,uint,false
+0x0001f8bc,engineFluidLevelDataBuilder,extraout_D0u,undefined2,false
+0x0001f8bc,engineFluidLevelDataBuilder,sVar4,short,false
+0x0001f8bc,engineFluidLevelDataBuilder,msg_buffer,undefined2,false
+0x0001f8bc,engineFluidLevelDataBuilder,fuel_level,word,false
+0x0001f8bc,engineFluidLevelDataBuilder,local_a,ushort,false
+0x0001f8bc,engineFluidLevelDataBuilder,local_8,undefined4,false
+0x0001f8bc,engineFluidLevelDataBuilder,unaff_D3w,short,false

@@ -1,254 +1,258 @@
-function_address,function_name,old_name,new_name,new_type,comment
+function_address,function_name,first_use_address,new_variable_name,type,comment
 # =============================================================================
 # J90350.00 Local Variable Definitions
 # Created: 2024-12-18
-# Defines local variable names and types for improved decompilation readability
-# Format: function_address,function_name,old_name,new_name,new_type,comment
+# Updated: 2024-12-19 - Converted to index-based format for stable matching
+# Format: function_address,function_name,first_use_address,new_variable_name,type,comment
+#
+# first_use_address can be:
+#   - An index (0-99) which auto-discovers the variable at that position
+#   - An actual address (0x...) for stable matching after discovery
 # =============================================================================
 
 # -----------------------------------------------------------------------------
 # CAN Message Response Functions
 # -----------------------------------------------------------------------------
-0x000222b4,canDiagnosticResponseSender,local_12,can_msg_id,uint,CAN message identifier
-0x000222b4,canDiagnosticResponseSender,local_e,msg_length,ushort,Message length in bytes
-0x000222b4,canDiagnosticResponseSender,local_c,data_ptr,byte*,Pointer to message data buffer
-0x000222b4,canDiagnosticResponseSender,local_1a,service_id,byte,Diagnostic service identifier (0x42)
-0x000222b4,canDiagnosticResponseSender,uVar1,param_byte1,byte,First parameter byte from request
-0x000222b4,canDiagnosticResponseSender,uVar2,param_byte2,byte,Second parameter byte from request
-0x000222b4,canDiagnosticResponseSender,cVar4,lookup_result,char,Memory address lookup result
-0x000222b4,canDiagnosticResponseSender,uVar3,return_code,uint,Function return code (0xFF=success 8=error)
+0x000222b4,canDiagnosticResponseSender,0x222d0,can_msg_id,uint,CAN message identifier
+0x000222b4,canDiagnosticResponseSender,0x222da,msg_length,ushort,Message length in bytes
+0x000222b4,canDiagnosticResponseSender,0x222e6,data_ptr,byte*,Pointer to message data buffer
+0x000222b4,canDiagnosticResponseSender,0x222e6,service_id,byte,Diagnostic service identifier
+0x000222b4,canDiagnosticResponseSender,0x222e6,param_byte1,byte,First parameter byte from request
+0x000222b4,canDiagnosticResponseSender,0x222e6,param_byte2,byte,Second parameter byte from request
+0x000222b4,canDiagnosticResponseSender,0x222e6,lookup_result,char,Memory address lookup result
+0x000222b4,canDiagnosticResponseSender,0x222f2,return_code,uint,Function return code
 
 # -----------------------------------------------------------------------------
 # Diagnostic Memory Read Functions
 # -----------------------------------------------------------------------------
-0x0002238e,diagMemoryReadResponseBuilder,cVar6,first_byte,char,First byte of data pointer
-0x0002238e,diagMemoryReadResponseBuilder,bVar5,node_address,byte,Node address from lookup
-0x0002238e,diagMemoryReadResponseBuilder,uVar2,validation_result,uint,Address validation result
-0x0002238e,diagMemoryReadResponseBuilder,msg_header,response_header,j1939_header_t*,Response message header
-0x0002238e,diagMemoryReadResponseBuilder,iVar8,loop_counter,int,Loop iteration counter
-0x0002238e,diagMemoryReadResponseBuilder,puVar9,source_ptr,byte*,Source memory pointer
-0x0002238e,diagMemoryReadResponseBuilder,puVar10,dest_ptr,byte*,Destination buffer pointer
+0x0002238e,diagMemoryReadResponseBuilder,0x223a2,first_byte,char,First byte of data pointer
+0x0002238e,diagMemoryReadResponseBuilder,0x223be,node_address,byte,Node address from lookup
+0x0002238e,diagMemoryReadResponseBuilder,0x223fe,validation_result,uint,Address validation result
+0x0002238e,diagMemoryReadResponseBuilder,0x2240c,response_header,j1939_header_t*,Response message header
+0x0002238e,diagMemoryReadResponseBuilder,0x2244a,loop_counter,int,Loop iteration counter
+0x0002238e,diagMemoryReadResponseBuilder,0x2244c,source_ptr,byte*,Source memory pointer
+0x0002238e,diagMemoryReadResponseBuilder,0x2244e,dest_ptr,byte*,Destination buffer pointer
 
 # -----------------------------------------------------------------------------
 # Array and Math Functions
 # -----------------------------------------------------------------------------
-0x00010520,arrayRangeSum,sVar1,sum,short,Accumulated sum of array elements
+0x00010520,arrayRangeSum,0x10528,sum,short,Accumulated sum of array elements
 
 # -----------------------------------------------------------------------------
 # Table Interpolation Functions
 # -----------------------------------------------------------------------------
-0x00034f8a,coreTableInterpolation,uVar1,weight_factor,ushort,Interpolation weight factor
-0x00034f8a,coreTableInterpolation,puVar2,table_ptr,uint*,Pointer to table data
-0x00034f8a,coreTableInterpolation,iVar3,result,int,Interpolation result value
+0x00034f8a,coreTableInterpolation,0x34f89,weight_factor,ushort,Interpolation weight factor
+0x00034f8a,coreTableInterpolation,0x34f96,table_ptr,uint*,Pointer to table data
+0x00034f8a,coreTableInterpolation,0x34f98,result,int,Interpolation result value
 
-0x00035088,twoDimensionalTableInterpolation,psVar1,row_ptr,short*,Pointer to current row
-0x00035088,twoDimensionalTableInterpolation,psVar2,col_ptr,short*,Pointer to current column
-0x00035088,twoDimensionalTableInterpolation,uVar4,x_weight,ushort,X-axis interpolation weight
-0x00035088,twoDimensionalTableInterpolation,uVar5,y_weight,ushort,Y-axis interpolation weight
-0x00035088,twoDimensionalTableInterpolation,uVar3,row_index,uint,Current row index
+0x00035088,twoDimensionalTableInterpolation,0x35087,row_ptr,short*,Pointer to current row
+0x00035088,twoDimensionalTableInterpolation,0x35087,col_ptr,short*,Pointer to current column
+0x00035088,twoDimensionalTableInterpolation,0x35087,x_weight,ushort,X-axis interpolation weight
+0x00035088,twoDimensionalTableInterpolation,0x35094,y_weight,ushort,Y-axis interpolation weight
+0x00035088,twoDimensionalTableInterpolation,0x3509a,row_index,uint,Current row index
 
 # -----------------------------------------------------------------------------
 # Engine Configuration PGN Builder
 # -----------------------------------------------------------------------------
-0x0003320e,engineConfigurationPGNBuilder,local_12,pgn_data,uint,PGN data buffer
-0x0003320e,engineConfigurationPGNBuilder,local_e,msg_length,ushort,Message length
-0x0003320e,engineConfigurationPGNBuilder,uVar1,engine_type,byte,Engine type code
-0x0003320e,engineConfigurationPGNBuilder,uVar2,turbo_type,byte,Turbo configuration code
-0x0003320e,engineConfigurationPGNBuilder,uVar3,fuel_type,byte,Fuel type code
+0x0003320e,engineConfigurationPGNBuilder,0x3323a,pgn_data,uint,PGN data buffer
+0x0003320e,engineConfigurationPGNBuilder,0x33256,msg_length,ushort,Message length
+0x0003320e,engineConfigurationPGNBuilder,0x3327e,engine_type,byte,Engine type code
+0x0003320e,engineConfigurationPGNBuilder,0x332b2,turbo_type,byte,Turbo configuration code
+0x0003320e,engineConfigurationPGNBuilder,0x332e0,fuel_type,byte,Fuel type code
 
 # -----------------------------------------------------------------------------
 # Throttle Based Fuel Demand Interpolator
 # -----------------------------------------------------------------------------
-0x0001de58,throttleBasedFuelDemandInterpolator,uVar1,throttle_pos,ushort,Throttle position value
-0x0001de58,throttleBasedFuelDemandInterpolator,uVar2,rpm_index,ushort,RPM table index
-0x0001de58,throttleBasedFuelDemandInterpolator,iVar3,fuel_demand,int,Calculated fuel demand
-0x0001de58,throttleBasedFuelDemandInterpolator,uVar4,load_factor,ushort,Engine load factor
-0x0001de58,throttleBasedFuelDemandInterpolator,sVar5,temp_comp,short,Temperature compensation
+0x0001de58,throttleBasedFuelDemandInterpolator,0x1de58,throttle_pos,ushort,Throttle position value
+0x0001de58,throttleBasedFuelDemandInterpolator,0x1dea6,rpm_index,ushort,RPM table index
+0x0001de58,throttleBasedFuelDemandInterpolator,0x1ded6,fuel_demand,int,Calculated fuel demand
+0x0001de58,throttleBasedFuelDemandInterpolator,0x1deea,load_factor,ushort,Engine load factor
+0x0001de58,throttleBasedFuelDemandInterpolator,0x1df00,temp_comp,short,Temperature compensation
 
 # -----------------------------------------------------------------------------
 # Diagnostic Memory Handlers
 # -----------------------------------------------------------------------------
-0x0001edae,diagnosticMemoryReadHandler,uVar1,service_type,byte,Diagnostic service type
-0x0001edae,diagnosticMemoryReadHandler,uVar2,address_high,ushort,High word of memory address
-0x0001edae,diagnosticMemoryReadHandler,uVar3,address_low,ushort,Low word of memory address
-0x0001edae,diagnosticMemoryReadHandler,iVar4,read_length,int,Number of bytes to read
-0x0001edae,diagnosticMemoryReadHandler,local_c,buffer_ptr,byte*,Read buffer pointer
+0x0001edae,diagnosticMemoryReadHandler,0x1edad,service_type,byte,Diagnostic service type
+0x0001edae,diagnosticMemoryReadHandler,0x1edae,address_high,ushort,High word of memory address
+0x0001edae,diagnosticMemoryReadHandler,0x1edc0,address_low,ushort,Low word of memory address
+0x0001edae,diagnosticMemoryReadHandler,0x1ede2,read_length,int,Number of bytes to read
+0x0001edae,diagnosticMemoryReadHandler,0x1edec,buffer_ptr,byte*,Read buffer pointer
 
-0x0001ec3c,diagnosticMemoryWriteHandler,uVar1,service_type,byte,Diagnostic service type
-0x0001ec3c,diagnosticMemoryWriteHandler,uVar2,address_high,ushort,High word of memory address
-0x0001ec3c,diagnosticMemoryWriteHandler,uVar3,address_low,ushort,Low word of memory address
-0x0001ec3c,diagnosticMemoryWriteHandler,iVar4,write_length,int,Number of bytes to write
+0x0001ec3c,diagnosticMemoryWriteHandler,0x1ec3b,service_type,byte,Diagnostic service type
+0x0001ec3c,diagnosticMemoryWriteHandler,0x1ec54,address_high,ushort,High word of memory address
+0x0001ec3c,diagnosticMemoryWriteHandler,0x1ec58,address_low,ushort,Low word of memory address
+0x0001ec3c,diagnosticMemoryWriteHandler,0x1ec58,write_length,int,Number of bytes to write
 
 # -----------------------------------------------------------------------------
 # Output Driver Strobe Controller
 # -----------------------------------------------------------------------------
-0x000159ee,outputDriverStrobeController,uVar1,channel_mask,ushort,Output channel enable mask
-0x000159ee,outputDriverStrobeController,uVar2,strobe_timing,ushort,Strobe pulse timing value
-0x000159ee,outputDriverStrobeController,iVar3,channel_index,int,Current channel index
-0x000159ee,outputDriverStrobeController,bVar4,output_state,byte,Current output driver state
+0x000159ee,outputDriverStrobeController,0x15b98,channel_mask,ushort,Output channel enable mask
+0x000159ee,outputDriverStrobeController,0x15bba,strobe_timing,ushort,Strobe pulse timing value
+0x000159ee,outputDriverStrobeController,0x15bc2,channel_index,int,Current channel index
+0x000159ee,outputDriverStrobeController,0x15bca,output_state,byte,Current output driver state
 
 # -----------------------------------------------------------------------------
 # Fuel Demand Limit Orchestrator
 # -----------------------------------------------------------------------------
-0x00023244,fuelDemandLimitOrchestrator,uVar1,base_demand,ushort,Base fuel demand value
-0x00023244,fuelDemandLimitOrchestrator,uVar2,max_limit,ushort,Maximum fuel demand limit
-0x00023244,fuelDemandLimitOrchestrator,iVar3,limited_demand,int,Limited fuel demand output
-0x00023244,fuelDemandLimitOrchestrator,sVar4,temp_factor,short,Temperature limiting factor
+0x00023244,fuelDemandLimitOrchestrator,0x232a0,base_demand,ushort,Base fuel demand value
+0x00023244,fuelDemandLimitOrchestrator,0x23320,max_limit,ushort,Maximum fuel demand limit
+0x00023244,fuelDemandLimitOrchestrator,0x23360,limited_demand,int,Limited fuel demand output
+0x00023244,fuelDemandLimitOrchestrator,0x23396,temp_factor,short,Temperature limiting factor
 
 # -----------------------------------------------------------------------------
 # Build CAN Message
 # -----------------------------------------------------------------------------
-0x0003258a,buildCanMessage,local_12,msg_id,uint,CAN message identifier
-0x0003258a,buildCanMessage,local_e,data_length,ushort,Data payload length
-0x0003258a,buildCanMessage,local_c,data_buffer,byte*,Pointer to data buffer
-0x0003258a,buildCanMessage,uVar1,priority,byte,Message priority (0-7)
-0x0003258a,buildCanMessage,uVar2,source_addr,byte,Source address
-0x0003258a,buildCanMessage,uVar3,dest_addr,byte,Destination address
+0x0003258a,buildCanMessage,0x325f2,msg_id,uint,CAN message identifier
+0x0003258a,buildCanMessage,0x325f8,data_length,ushort,Data payload length
+0x0003258a,buildCanMessage,0x325fa,data_buffer,byte*,Pointer to data buffer
+0x0003258a,buildCanMessage,0x32600,priority,byte,Message priority (0-7)
+0x0003258a,buildCanMessage,0x32628,source_addr,byte,Source address
+0x0003258a,buildCanMessage,0x3262c,dest_addr,byte,Destination address
 
 # -----------------------------------------------------------------------------
 # Diagnostic Fault Processor
 # -----------------------------------------------------------------------------
-0x00014872,diagnosticFaultProcessor,uVar1,fault_code,ushort,Diagnostic fault code
-0x00014872,diagnosticFaultProcessor,uVar2,fault_status,byte,Current fault status
-0x00014872,diagnosticFaultProcessor,iVar3,debounce_count,int,Debounce counter value
-0x00014872,diagnosticFaultProcessor,bVar4,lamp_state,byte,Warning lamp state
+0x00014872,diagnosticFaultProcessor,0x14871,fault_code,ushort,Diagnostic fault code
+0x00014872,diagnosticFaultProcessor,0x14894,fault_status,byte,Current fault status
+0x00014872,diagnosticFaultProcessor,0x148a0,debounce_count,int,Debounce counter value
+0x00014872,diagnosticFaultProcessor,0x148b8,lamp_state,byte,Warning lamp state
 
 # -----------------------------------------------------------------------------
 # J1708 Diagnostic Message Handler
 # -----------------------------------------------------------------------------
-0x0001f4e8,j1708DiagnosticMessageHandler,uVar1,mid,byte,Message identifier
-0x0001f4e8,j1708DiagnosticMessageHandler,uVar2,pid,byte,Parameter identifier
-0x0001f4e8,j1708DiagnosticMessageHandler,iVar3,data_value,int,Parameter data value
-0x0001f4e8,j1708DiagnosticMessageHandler,bVar4,checksum,byte,Message checksum
+0x0001f4e8,j1708DiagnosticMessageHandler,0x1f4e7,mid,byte,Message identifier
+0x0001f4e8,j1708DiagnosticMessageHandler,0x1f50c,pid,byte,Parameter identifier
+0x0001f4e8,j1708DiagnosticMessageHandler,0x1f50e,data_value,int,Parameter data value
+0x0001f4e8,j1708DiagnosticMessageHandler,0x1f50e,checksum,byte,Message checksum
 
 # -----------------------------------------------------------------------------
 # Insite Command Byte Dispatcher
 # -----------------------------------------------------------------------------
-0x0000ed64,insiteCommandByteDispatcher,uVar1,cmd_result,uint,Command result value
-0x0000ed64,insiteCommandByteDispatcher,cVar5,search_result,char,Diagnostic code search result
-0x0000ed64,insiteCommandByteDispatcher,bVar6,response_byte,byte,Response byte value
-0x0000ed64,insiteCommandByteDispatcher,local_6,status_flags,ushort,Status flag accumulator
-0x0000ed64,insiteCommandByteDispatcher,local_a,response_data,uint,Response data buffer
+0x0000ed64,insiteCommandByteDispatcher,0xedf0,cmd_result,uint,Command result value
+0x0000ed64,insiteCommandByteDispatcher,0xee3a,search_result,char,Diagnostic code search result
+0x0000ed64,insiteCommandByteDispatcher,0xee3c,response_byte,byte,Response byte value
+0x0000ed64,insiteCommandByteDispatcher,0xee50,status_flags,ushort,Status flag accumulator
+0x0000ed64,insiteCommandByteDispatcher,0xee68,response_data,uint,Response data buffer
 
 # -----------------------------------------------------------------------------
 # Validate Redundant Sensors
 # -----------------------------------------------------------------------------
-0x000114d4,validateRedundantSensors,uVar1,sensor1_value,ushort,Primary sensor reading
-0x000114d4,validateRedundantSensors,uVar2,sensor2_value,ushort,Redundant sensor reading
-0x000114d4,validateRedundantSensors,iVar3,deviation,int,Sensor deviation value
-0x000114d4,validateRedundantSensors,bVar4,fault_flag,byte,Sensor fault flag
+0x000114d4,validateRedundantSensors,0x11562,sensor1_value,ushort,Primary sensor reading
+0x000114d4,validateRedundantSensors,0x11574,sensor2_value,ushort,Redundant sensor reading
+0x000114d4,validateRedundantSensors,0x1162c,deviation,int,Sensor deviation value
+0x000114d4,validateRedundantSensors,0x1162c,fault_flag,byte,Sensor fault flag
 
 # -----------------------------------------------------------------------------
 # Cold Start Fuel Control Slow Cycle
 # -----------------------------------------------------------------------------
-0x00011e5e,coldStartFuelControlSlowCycle40Coordinator,uVar1,coolant_temp,ushort,Coolant temperature
-0x00011e5e,coldStartFuelControlSlowCycle40Coordinator,uVar2,fuel_enrichment,ushort,Cold start fuel enrichment
-0x00011e5e,coldStartFuelControlSlowCycle40Coordinator,iVar3,time_elapsed,int,Time since cold start
-0x00011e5e,coldStartFuelControlSlowCycle40Coordinator,sVar4,temp_correction,short,Temperature correction factor
+0x00011e5e,coldStartFuelControlSlowCycle40Coordinator,0x11e5d,coolant_temp,ushort,Coolant temperature
+0x00011e5e,coldStartFuelControlSlowCycle40Coordinator,0x11f16,fuel_enrichment,ushort,Cold start fuel enrichment
+0x00011e5e,coldStartFuelControlSlowCycle40Coordinator,0x11fe0,time_elapsed,int,Time since cold start
+0x00011e5e,coldStartFuelControlSlowCycle40Coordinator,0x11fee,temp_correction,short,Temperature correction factor
 
 # -----------------------------------------------------------------------------
 # Cylinder Balance Calculator
 # -----------------------------------------------------------------------------
-0x000127c2,cylinderBalanceCalculator,uVar1,cyl_fuel,ushort,Individual cylinder fuel quantity
-0x000127c2,cylinderBalanceCalculator,uVar2,avg_fuel,ushort,Average fuel quantity
-0x000127c2,cylinderBalanceCalculator,iVar3,imbalance,int,Cylinder imbalance value
-0x000127c2,cylinderBalanceCalculator,sVar4,trim_value,short,Cylinder trim adjustment
+0x000127c2,cylinderBalanceCalculator,0x12800,cyl_fuel,ushort,Individual cylinder fuel quantity
+0x000127c2,cylinderBalanceCalculator,0x12800,avg_fuel,ushort,Average fuel quantity
+0x000127c2,cylinderBalanceCalculator,0x12800,imbalance,int,Cylinder imbalance value
+0x000127c2,cylinderBalanceCalculator,0x1281c,trim_value,short,Cylinder trim adjustment
 
 # -----------------------------------------------------------------------------
 # Diagnostic Command Dispatcher
 # -----------------------------------------------------------------------------
-0x00015f8e,diagnosticCommandDispatcher,uVar1,cmd_byte,byte,Command byte from message
-0x00015f8e,diagnosticCommandDispatcher,uVar2,sub_cmd,byte,Sub-command identifier
-0x00015f8e,diagnosticCommandDispatcher,iVar3,handler_index,int,Handler table index
-0x00015f8e,diagnosticCommandDispatcher,bVar4,result_code,byte,Command result code
+0x00015f8e,diagnosticCommandDispatcher,0x15f8d,cmd_byte,byte,Command byte from message
+0x00015f8e,diagnosticCommandDispatcher,0x15f96,sub_cmd,byte,Sub-command identifier
+0x00015f8e,diagnosticCommandDispatcher,0x15fa4,handler_index,int,Handler table index
+0x00015f8e,diagnosticCommandDispatcher,0x15fa4,result_code,byte,Command result code
 
 # -----------------------------------------------------------------------------
 # Engine Fluid Level Data Builder
 # -----------------------------------------------------------------------------
-0x0001f8bc,engineFluidLevelDataBuilder,uVar1,oil_level,ushort,Engine oil level
-0x0001f8bc,engineFluidLevelDataBuilder,uVar2,coolant_level,ushort,Coolant level
-0x0001f8bc,engineFluidLevelDataBuilder,uVar3,fuel_level,ushort,Fuel level
-0x0001f8bc,engineFluidLevelDataBuilder,local_c,msg_buffer,byte*,Message buffer pointer
+0x0001f8bc,engineFluidLevelDataBuilder,0x1f8bb,oil_level,ushort,Engine oil level
+0x0001f8bc,engineFluidLevelDataBuilder,0x1f8e0,coolant_level,ushort,Coolant level
+0x0001f8bc,engineFluidLevelDataBuilder,0x1f8e2,fuel_level,ushort,Fuel level
+0x0001f8bc,engineFluidLevelDataBuilder,0x1f8e2,msg_buffer,byte*,Message buffer pointer
 
 # -----------------------------------------------------------------------------
 # Memory Operation Dispatcher
 # -----------------------------------------------------------------------------
-0x0002148a,memoryOperationDispatcher,uVar1,op_code,byte,Memory operation code
-0x0002148a,memoryOperationDispatcher,uVar2,addr_offset,ushort,Address offset
-0x0002148a,memoryOperationDispatcher,iVar3,byte_count,int,Number of bytes
-0x0002148a,memoryOperationDispatcher,local_c,src_ptr,byte*,Source pointer
-0x0002148a,memoryOperationDispatcher,local_10,dst_ptr,byte*,Destination pointer
+0x0002148a,memoryOperationDispatcher,0x214b6,op_code,byte,Memory operation code
+0x0002148a,memoryOperationDispatcher,0x214bc,addr_offset,ushort,Address offset
+0x0002148a,memoryOperationDispatcher,0x214fe,byte_count,int,Number of bytes
+0x0002148a,memoryOperationDispatcher,0x21502,src_ptr,byte*,Source pointer
+0x0002148a,memoryOperationDispatcher,0x2150c,dst_ptr,byte*,Destination pointer
 
 # -----------------------------------------------------------------------------
 # Power On Programming Coordinator
 # -----------------------------------------------------------------------------
-0x00027f9c,powerOnProgrammingCoordinator,uVar1,prog_state,byte,Programming state machine state
-0x00027f9c,powerOnProgrammingCoordinator,uVar2,retry_count,byte,Retry counter
-0x00027f9c,powerOnProgrammingCoordinator,iVar3,timeout,int,Timeout counter
-0x00027f9c,powerOnProgrammingCoordinator,bVar4,result,byte,Programming result code
+0x00027f9c,powerOnProgrammingCoordinator,0x27f9b,prog_state,byte,Programming state machine state
+0x00027f9c,powerOnProgrammingCoordinator,0x27fec,retry_count,byte,Retry counter
+0x00027f9c,powerOnProgrammingCoordinator,0x2800e,timeout,int,Timeout counter
+0x00027f9c,powerOnProgrammingCoordinator,0x28014,result,byte,Programming result code
 
 # -----------------------------------------------------------------------------
 # Fuel Demand Control Loop
 # -----------------------------------------------------------------------------
-0x0002d3c6,fuelDemandControlLoop,uVar1,demand_raw,ushort,Raw fuel demand value
-0x0002d3c6,fuelDemandControlLoop,uVar2,demand_filtered,ushort,Filtered fuel demand
-0x0002d3c6,fuelDemandControlLoop,iVar3,demand_limited,int,Rate-limited fuel demand
-0x0002d3c6,fuelDemandControlLoop,sVar4,rate_delta,short,Demand rate of change
+0x0002d3c6,fuelDemandControlLoop,0x2d3c5,demand_raw,ushort,Raw fuel demand value
+0x0002d3c6,fuelDemandControlLoop,0x2d3c5,demand_filtered,ushort,Filtered fuel demand
+0x0002d3c6,fuelDemandControlLoop,0x2d3fc,demand_limited,int,Rate-limited fuel demand
+0x0002d3c6,fuelDemandControlLoop,0x2d476,rate_delta,short,Demand rate of change
 
 # -----------------------------------------------------------------------------
 # Multi-Packet Handlers
 # -----------------------------------------------------------------------------
-0x0001666c,multiPacketTransmitHandler,uVar1,packet_num,byte,Current packet number
-0x0001666c,multiPacketTransmitHandler,uVar2,total_packets,byte,Total packets to send
-0x0001666c,multiPacketTransmitHandler,iVar3,bytes_sent,int,Bytes transmitted
-0x0001666c,multiPacketTransmitHandler,local_c,data_ptr,byte*,Data buffer pointer
+0x0001666c,multiPacketTransmitHandler,0x1666b,packet_num,byte,Current packet number
+0x0001666c,multiPacketTransmitHandler,0x1666c,total_packets,byte,Total packets to send
+0x0001666c,multiPacketTransmitHandler,0x166b0,bytes_sent,int,Bytes transmitted
+0x0001666c,multiPacketTransmitHandler,0x166d8,data_ptr,byte*,Data buffer pointer
 
-0x0001686e,multiPacketReceiveHandler,uVar1,packet_num,byte,Received packet number
-0x0001686e,multiPacketReceiveHandler,uVar2,expected_num,byte,Expected packet number
-0x0001686e,multiPacketReceiveHandler,iVar3,bytes_received,int,Bytes received so far
-0x0001686e,multiPacketReceiveHandler,local_c,rx_buffer,byte*,Receive buffer pointer
+0x0001686e,multiPacketReceiveHandler,0x1686d,packet_num,byte,Received packet number
+0x0001686e,multiPacketReceiveHandler,0x1688e,expected_num,byte,Expected packet number
+0x0001686e,multiPacketReceiveHandler,0x1688e,bytes_received,int,Bytes received so far
+0x0001686e,multiPacketReceiveHandler,0x168c8,rx_buffer,byte*,Receive buffer pointer
 
 # -----------------------------------------------------------------------------
 # Active Fault Lamp State Machine
 # -----------------------------------------------------------------------------
-0x00024f30,activeFaultLampStateMachine,uVar1,lamp_state,byte,Current lamp state
-0x00024f30,activeFaultLampStateMachine,uVar2,flash_count,byte,Flash counter
-0x00024f30,activeFaultLampStateMachine,iVar3,timer,int,State timer
-0x00024f30,activeFaultLampStateMachine,bVar4,fault_active,byte,Active fault flag
+0x00024f30,activeFaultLampStateMachine,0x251ec,lamp_state,byte,Current lamp state
+0x00024f30,activeFaultLampStateMachine,0x251ec,flash_count,byte,Flash counter
+0x00024f30,activeFaultLampStateMachine,0x251ec,timer,int,State timer
+0x00024f30,activeFaultLampStateMachine,0x251ec,fault_active,byte,Active fault flag
 
 # -----------------------------------------------------------------------------
 # Hour Meter Event Logger
 # -----------------------------------------------------------------------------
-0x00027998,hourMeterEventLogger,uVar1,event_type,byte,Event type code
-0x00027998,hourMeterEventLogger,uVar2,hour_count,ushort,Current hour count
-0x00027998,hourMeterEventLogger,iVar3,eeprom_addr,int,EEPROM write address
+0x00027998,hourMeterEventLogger,0x279b8,event_type,byte,Event type code
+0x00027998,hourMeterEventLogger,0x279fe,hour_count,ushort,Current hour count
+0x00027998,hourMeterEventLogger,0x27a10,eeprom_addr,int,EEPROM write address
 
 # -----------------------------------------------------------------------------
 # Diagnostic Parameter Transfer Handler
 # -----------------------------------------------------------------------------
-0x0002cf7e,diagnosticParameterTransferHandler,uVar1,param_id,ushort,Parameter identifier
-0x0002cf7e,diagnosticParameterTransferHandler,uVar2,param_value,ushort,Parameter value
-0x0002cf7e,diagnosticParameterTransferHandler,iVar3,transfer_size,int,Transfer size in bytes
-0x0002cf7e,diagnosticParameterTransferHandler,local_c,param_ptr,byte*,Parameter data pointer
+0x0002cf7e,diagnosticParameterTransferHandler,0x2cf7d,param_id,ushort,Parameter identifier
+0x0002cf7e,diagnosticParameterTransferHandler,0x2cf90,param_value,ushort,Parameter value
+0x0002cf7e,diagnosticParameterTransferHandler,0x2cfb4,transfer_size,int,Transfer size in bytes
+0x0002cf7e,diagnosticParameterTransferHandler,0x2cfb4,param_ptr,byte*,Parameter data pointer
 
 # -----------------------------------------------------------------------------
 # Sensor Input Filter Processor
 # -----------------------------------------------------------------------------
-0x0000b7bc,sensorInputFilterProcessor,uVar1,raw_value,ushort,Raw ADC value
-0x0000b7bc,sensorInputFilterProcessor,uVar2,filtered_value,ushort,Filtered sensor value
-0x0000b7bc,sensorInputFilterProcessor,iVar3,filter_coeff,int,Filter coefficient
-0x0000b7bc,sensorInputFilterProcessor,sVar4,delta,short,Value change since last sample
+0x0000b7bc,sensorInputFilterProcessor,0xb7bb,raw_value,ushort,Raw ADC value
+0x0000b7bc,sensorInputFilterProcessor,0xb7bb,filtered_value,ushort,Filtered sensor value
+0x0000b7bc,sensorInputFilterProcessor,0xb7c6,filter_coeff,int,Filter coefficient
+0x0000b7bc,sensorInputFilterProcessor,0xb7cc,delta,short,Value change since last sample
 
 # -----------------------------------------------------------------------------
 # Derate Threshold Monitor
 # -----------------------------------------------------------------------------
-0x00010822,derateThresholdMonitorAndFaultController,uVar1,current_value,ushort,Current monitored value
-0x00010822,derateThresholdMonitorAndFaultController,uVar2,threshold,ushort,Derate threshold
-0x00010822,derateThresholdMonitorAndFaultController,iVar3,derate_percent,int,Derate percentage
-0x00010822,derateThresholdMonitorAndFaultController,bVar4,derate_active,byte,Derate active flag
+0x00010822,derateThresholdMonitorAndFaultController,0x10821,current_value,ushort,Current monitored value
+0x00010822,derateThresholdMonitorAndFaultController,0x10876,threshold,ushort,Derate threshold
+0x00010822,derateThresholdMonitorAndFaultController,0x10878,derate_percent,int,Derate percentage
+0x00010822,derateThresholdMonitorAndFaultController,0x109d0,derate_active,byte,Derate active flag
 
 # -----------------------------------------------------------------------------
 # VP44 CAN Message Dispatcher
 # -----------------------------------------------------------------------------
-0x00022e5e,vp44CanMessageDispatcher,cVar1,msg_type,char,Message type byte (command code)
+0x00022e5e,vp44CanMessageDispatcher,0x22e72,msg_type,char,Message type byte (command code)
 

@@ -454,6 +454,7 @@ cmd_localvars() {
 
     echo "Applying local variable types for improved decompilation readability..."
     echo "Source: $LOCALVARS_CSV"
+    echo "Using first-use address matching for stability across renames..."
     echo ""
 
     "$GHIDRA_HEADLESS" \
@@ -462,13 +463,12 @@ cmd_localvars() {
         -process "J90350.00.rom.bin" \
         -noanalysis \
         -scriptPath "$SCRIPTS_DIR" \
-        -postScript ApplyLocalVariables.java "$LOCALVARS_CSV"
+        -postScript BulkLocalVariableRenamer.java
 
     print_success "Local variable types applied"
     echo ""
-    echo "Run '$0 export' to see changes like:"
-    echo "  uVar1 -> param_byte1"
-    echo "  local_12 -> can_msg_id"
+    echo "Note: CSV updated with discovered first-use addresses for stability."
+    echo "Run '$0 export' to see changes."
 }
 
 cmd_decompile() {
