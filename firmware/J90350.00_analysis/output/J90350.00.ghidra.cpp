@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Thu Dec 18 09:53:11 MST 2025
+// Generated: Thu Dec 18 20:52:40 MST 2025
 
 
 //
@@ -3996,8 +3996,8 @@ void insiteCommandByteDispatcher(void)
   uint uVar2;
   byte bVar6;
   undefined1 uVar7;
-  undefined4 local_a;
-  undefined2 local_6;
+  undefined4 response_data;
+  undefined2 status_flags;
   
                     /* From J90280.05 @ 0x00cc64 (confidence: 81%) */
   uVar1 = _accumulated_amount_of_fuel_used_during_vehicle_operatio_0_0_10000000;
@@ -4005,133 +4005,133 @@ void insiteCommandByteDispatcher(void)
     if (j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x1f] < 0x59) {
       if (j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x1f] < 0x54) {
         if (j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x1f] == 2) {
-          local_6._1_1_ = 0;
+          status_flags._1_1_ = 0;
           uVar1 = diagnosticCodeTableSearch();
           if ((char)uVar1 == '\0') {
             uVar1 = diagnosticCodeTableSearch();
             if ((char)uVar1 == '\0') {
               uVar1 = diagnosticCodeTableSearch();
               if ((char)uVar1 != '\0') {
-                local_6._1_1_ = 0x20;
+                status_flags._1_1_ = 0x20;
               }
             }
             else {
-              local_6._1_1_ = 0x20;
+              status_flags._1_1_ = 0x20;
             }
           }
           else {
-            local_6._1_1_ = 0x20;
+            status_flags._1_1_ = 0x20;
           }
           uVar3 = (undefined2)CONCAT31((int3)((uint)uVar1 >> 8),DAT_0080656d);
           uVar1 = diagnosticCodeTableSearch();
           if ((char)uVar1 != '\0') {
-            local_6._1_1_ = (byte)local_6 | 0x10;
+            status_flags._1_1_ = (byte)status_flags | 0x10;
           }
           uVar4 = (undefined2)CONCAT31((int3)((uint)uVar1 >> 8),DAT_008065b1);
           uVar1 = diagnosticCodeTableSearch(uVar3);
           if ((char)uVar1 != '\0') {
-            local_6._1_1_ = (byte)local_6 | 8;
+            status_flags._1_1_ = (byte)status_flags | 8;
           }
           uVar3 = (undefined2)CONCAT31((int3)((uint)uVar1 >> 8),DAT_008065cb);
           cVar5 = diagnosticCodeTableSearch(uVar4);
           if (cVar5 != '\0') {
-            local_6._1_1_ = (byte)local_6 | 4;
+            status_flags._1_1_ = (byte)status_flags | 4;
           }
           cVar5 = diagnosticCodeTableSearch(uVar3);
           if (cVar5 == '\0') {
             cVar5 = diagnosticCodeTableSearch();
             if (cVar5 != '\0') {
-              local_6._1_1_ = (byte)local_6 | 2;
+              status_flags._1_1_ = (byte)status_flags | 2;
             }
           }
           else {
-            local_6._1_1_ = (byte)local_6 | 2;
+            status_flags._1_1_ = (byte)status_flags | 2;
           }
           cVar5 = diagnosticCodeTableSearch();
           if (cVar5 != '\0') {
-            local_6._1_1_ = (byte)local_6 | 1;
+            status_flags._1_1_ = (byte)status_flags | 1;
           }
         }
         else if (j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x1f] == 3) {
-          local_6._1_1_ = (debounced_switch_value_for_switch_16_on_off & 0x80) != 0;
+          status_flags._1_1_ = (debounced_switch_value_for_switch_16_on_off & 0x80) != 0;
           if ((debounced_switch_value_for_switch_16_on_off & 0x40) != 0) {
-            local_6._1_1_ = (byte)local_6 | 2;
+            status_flags._1_1_ = (byte)status_flags | 2;
           }
           if ((debounced_switch_value_for_switch_16_on_off & 0x20) != 0) {
-            local_6._1_1_ = (byte)local_6 | 4;
+            status_flags._1_1_ = (byte)status_flags | 4;
           }
         }
         else if (j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x1f] == 0x1d) {
-          local_6._1_1_ = (byte)(((uint)_DAT_0080aa8e * 0xfa) / 400);
+          status_flags._1_1_ = (byte)(((uint)_DAT_0080aa8e * 0xfa) / 400);
         }
         else if (j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x1f] == 0x1e) {
           if ((ushort)((int)(uint)*(ushort *)
                                    (&filtered_and_linearized_intake_manifold_temperature_50_to_293 +
                                    (short)((ushort)DAT_0080d283 * 0xb) * 2) >> 4) < 0x7f) {
-            local_6._1_1_ =
+            status_flags._1_1_ =
                  (byte)((int)(uint)*(ushort *)
                                     (&filtered_and_linearized_intake_manifold_temperature_50_to_293
                                     + (short)((ushort)DAT_0080d283 * 0xb) * 2) >> 4);
           }
           else {
-            local_6._1_1_ = 0x7f;
+            status_flags._1_1_ = 0x7f;
           }
         }
         else if (j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x1f] == 0x2c) {
-          local_6._1_1_ = 0xc0;
+          status_flags._1_1_ = 0xc0;
           if ((bit_6_which_enables_the_warning_lamp_driver_enable_disable & 4) != 0) {
-            local_6._1_1_ = 0xd0;
+            status_flags._1_1_ = 0xd0;
           }
           if ((bit_6_which_enables_the_warning_lamp_driver_enable_disable & 0x40) != 0) {
-            local_6._1_1_ = (byte)local_6 | 4;
+            status_flags._1_1_ = (byte)status_flags | 4;
           }
           if ((bit_6_which_enables_the_warning_lamp_driver_enable_disable & 2) != 0) {
-            local_6._1_1_ = (byte)local_6 | 1;
+            status_flags._1_1_ = (byte)status_flags | 1;
           }
         }
         else if (j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x1f] == 0x2d) {
-          local_6._1_1_ = 0xcf;
+          status_flags._1_1_ = 0xcf;
           if ((bit_6_which_enables_the_warning_lamp_driver_enable_disable & 1) != 0) {
-            local_6._1_1_ = 0xcf;
+            status_flags._1_1_ = 0xcf;
           }
         }
         else if (j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x1f] == 0x47) {
-          local_6._1_1_ = 0;
+          status_flags._1_1_ = 0;
           if ((_DAT_0080d676 != 0) && (_DAT_0080d676 < _DAT_00803c02)) {
-            local_6._1_1_ = 0x80;
+            status_flags._1_1_ = 0x80;
           }
           if ((_DAT_00803c9a & 2) != 0) {
-            local_6._1_1_ = (byte)local_6 | 8;
+            status_flags._1_1_ = (byte)status_flags | 8;
           }
           if ((_DAT_0080d672 != 0) && ((_DAT_00803c9a & 4) != 0)) {
-            local_6._1_1_ = (byte)local_6 | 4;
+            status_flags._1_1_ = (byte)status_flags | 4;
           }
           if ((_DAT_0080d28c != 0) && (_DAT_0080d676 == 0)) {
-            local_6._1_1_ = (byte)local_6 | 2;
+            status_flags._1_1_ = (byte)status_flags | 2;
           }
           if (_DAT_0080d67a != 0) {
-            local_6._1_1_ = (byte)local_6 | 1;
+            status_flags._1_1_ = (byte)status_flags | 1;
           }
         }
         else if (j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x1f] == 0x4a) {
-          local_6._1_1_ = (byte)((int)(uint)_DAT_0080a9dc >> 7);
+          status_flags._1_1_ = (byte)((int)(uint)_DAT_0080a9dc >> 7);
         }
         else {
           if (j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x1f] != 0x53) {
             return;
           }
           if (_indicator_as_to_which_algorithm_is_in_control_of_fueling_after_it_1_12 == 10) {
-            local_6._1_1_ = 0x80;
+            status_flags._1_1_ = 0x80;
           }
           else {
-            local_6._1_1_ = 0;
+            status_flags._1_1_ = 0;
           }
         }
         *(byte *)j1708_transmit_buffer_2_32_ddc6.tx_buffer._36_4_ =
              j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x1f];
         j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x27] =
              j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x27] + 1;
-        *(byte *)j1708_transmit_buffer_2_32_ddc6.tx_buffer._36_4_ = (byte)local_6;
+        *(byte *)j1708_transmit_buffer_2_32_ddc6.tx_buffer._36_4_ = (byte)status_flags;
         j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x27] =
              j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x27] + 1;
       }
@@ -4191,63 +4191,63 @@ void insiteCommandByteDispatcher(void)
     else if (j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x1f] < 0x69) {
       switch(j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x1f]) {
       case 0x59:
-        local_6._1_1_ = 0;
+        status_flags._1_1_ = 0;
         if (_DAT_0080dc26 != 0) {
-          local_6._1_1_ = 0x80;
+          status_flags._1_1_ = 0x80;
         }
         if ((debounced_switch_value_for_switch_16_on_off & 4) != 0) {
-          local_6._1_1_ = (byte)local_6 | 0x40;
+          status_flags._1_1_ = (byte)status_flags | 0x40;
         }
         if ((debounced_switch_value_for_switch_16_on_off & 8) != 0) {
-          local_6._1_1_ = (byte)local_6 | 0x20;
+          status_flags._1_1_ = (byte)status_flags | 0x20;
         }
         if ((DSPTSESW & 2) != 0) {
-          local_6._1_1_ = (byte)local_6 | 0x10;
+          status_flags._1_1_ = (byte)status_flags | 0x10;
         }
         if ((DSPTSESW & 1) != 0) {
-          local_6._1_1_ = (byte)local_6 | 8;
+          status_flags._1_1_ = (byte)status_flags | 8;
         }
         if ((DSPTSESW & 8) != 0) {
-          local_6._1_1_ = (byte)local_6 | 4;
+          status_flags._1_1_ = (byte)status_flags | 4;
         }
         if ((DSPTSESW & 4) != 0) {
-          local_6._1_1_ = (byte)local_6 | 2;
+          status_flags._1_1_ = (byte)status_flags | 2;
         }
         if ((DSPTSESW & 0x10) != 0) {
-          local_6._1_1_ = (byte)local_6 | 1;
+          status_flags._1_1_ = (byte)status_flags | 1;
         }
         break;
       default:
         goto switchD_0000f050_caseD_f9;
       case 0x5b:
-        local_6._1_1_ =
+        status_flags._1_1_ =
              (byte)(((uint)_validated_percent_throttle_commanded_by_driver_0_100 * 0xfa) / 400);
         break;
       case 0x5c:
-        local_6._1_1_ = (byte)((int)(uint)_DAT_0080db5e >> 7);
+        status_flags._1_1_ = (byte)((int)(uint)_DAT_0080db5e >> 7);
         break;
       case 0x61:
-        local_6._1_1_ = 0;
+        status_flags._1_1_ = 0;
         if ((bit_6_which_enables_the_warning_lamp_driver_enable_disable & 0x10) != 0) {
-          local_6._1_1_ = 0x80;
+          status_flags._1_1_ = 0x80;
         }
         break;
       case 100:
-        local_6._1_1_ = (byte)((int)(uint)_flitered_and_linearized_oil_pressure_0_100 >> 6);
+        status_flags._1_1_ = (byte)((int)(uint)_flitered_and_linearized_oil_pressure_0_100 >> 6);
         break;
       case 0x66:
         if ((ushort)((int)(uint)_boost_pressure_0_100 >> 4) < 0xff) {
-          local_6._1_1_ = (byte)((int)(uint)_boost_pressure_0_100 >> 4);
+          status_flags._1_1_ = (byte)((int)(uint)_boost_pressure_0_100 >> 4);
         }
         else {
-          local_6._1_1_ = 0xff;
+          status_flags._1_1_ = 0xff;
         }
       }
       *(byte *)j1708_transmit_buffer_2_32_ddc6.tx_buffer._36_4_ =
            j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x1f];
       j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x27] =
            j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x27] + 1;
-      *(byte *)j1708_transmit_buffer_2_32_ddc6.tx_buffer._36_4_ = (byte)local_6;
+      *(byte *)j1708_transmit_buffer_2_32_ddc6.tx_buffer._36_4_ = (byte)status_flags;
       j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x27] =
            j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x27] + 1;
     }
@@ -4310,29 +4310,29 @@ void insiteCommandByteDispatcher(void)
   else if (j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x1f] < 0xc1) {
     if (j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x1f] < 0xb9) {
       if (j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x1f] == 0x85) {
-        local_6 = 0;
+        status_flags = 0;
       }
       else if ((j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x1f] != 0x9c) &&
               (j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x1f] != 0x9d)) {
         if (j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x1f] == 0xa6) {
-          local_6 = CONCAT11(DAT_01000304,DAT_01000303);
+          status_flags = CONCAT11(DAT_01000304,DAT_01000303);
         }
         else if (j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x1f] == 0xa8) {
-          local_6 = (short)((int)(uint)_filtered_and_linearized_battery_voltage_0_40 >> 1) +
-                    _filtered_and_linearized_battery_voltage_0_40 * 2;
+          status_flags = (short)((int)(uint)_filtered_and_linearized_battery_voltage_0_40 >> 1) +
+                         _filtered_and_linearized_battery_voltage_0_40 * 2;
         }
         else if (j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x1f] != 0xaf) {
           if (j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x1f] == 0xb6) {
-            local_6 = (short)_DAT_00804fa4;
+            status_flags = (short)_DAT_00804fa4;
           }
           else if (j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x1f] == 0xb7) {
-            local_6 = j1708_transmit_buffer_2_32_ddc6.tx_buffer._154_2_;
+            status_flags = j1708_transmit_buffer_2_32_ddc6.tx_buffer._154_2_;
           }
           else {
             if (j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x1f] != 0xb8) {
               return;
             }
-            local_6 = _DAT_00804fb0;
+            status_flags = _DAT_00804fb0;
           }
         }
       }
@@ -4340,40 +4340,40 @@ void insiteCommandByteDispatcher(void)
            j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x1f];
       j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x27] =
            j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x27] + 1;
-      *(byte *)j1708_transmit_buffer_2_32_ddc6.tx_buffer._36_4_ = (byte)local_6;
+      *(byte *)j1708_transmit_buffer_2_32_ddc6.tx_buffer._36_4_ = (byte)status_flags;
       j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x27] =
            j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x27] + 1;
-      *(undefined1 *)j1708_transmit_buffer_2_32_ddc6.tx_buffer._36_4_ = local_6._0_1_;
+      *(undefined1 *)j1708_transmit_buffer_2_32_ddc6.tx_buffer._36_4_ = status_flags._0_1_;
       j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x27] =
            j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x27] + 1;
     }
     else {
       switch(j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x1f]) {
       case 0xb9:
-        local_6 = _DAT_00804fb2;
+        status_flags = _DAT_00804fb2;
         break;
       default:
         goto switchD_0000f050_caseD_f9;
       case 0xbb:
-        local_6 = (short)((int)(uint)_DAT_0080dc24 >> 1);
+        status_flags = (short)((int)(uint)_DAT_0080dc24 >> 1);
         break;
       case 0xbc:
-        local_6 = (short)((int)(uint)_DAT_0080db02 >> 1);
+        status_flags = (short)((int)(uint)_DAT_0080db02 >> 1);
         break;
       case 0xbd:
-        local_6 = (short)((int)(uint)_DAT_00807f1c >> 1);
+        status_flags = (short)((int)(uint)_DAT_00807f1c >> 1);
         break;
       case 0xbe:
-        local_6 = (short)((int)(uint)_DAT_0080ccf4 >> 1);
+        status_flags = (short)((int)(uint)_DAT_0080ccf4 >> 1);
       }
       *(byte *)j1708_transmit_buffer_2_32_ddc6.tx_buffer._36_4_ =
            j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x1f];
       j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x27] =
            j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x27] + 1;
-      *(byte *)j1708_transmit_buffer_2_32_ddc6.tx_buffer._36_4_ = (byte)local_6;
+      *(byte *)j1708_transmit_buffer_2_32_ddc6.tx_buffer._36_4_ = (byte)status_flags;
       j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x27] =
            j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x27] + 1;
-      *(undefined1 *)j1708_transmit_buffer_2_32_ddc6.tx_buffer._36_4_ = local_6._0_1_;
+      *(undefined1 *)j1708_transmit_buffer_2_32_ddc6.tx_buffer._36_4_ = status_flags._0_1_;
       j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x27] =
            j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x27] + 1;
     }
@@ -4443,16 +4443,16 @@ void insiteCommandByteDispatcher(void)
         *(undefined1 *)j1708_transmit_buffer_2_32_ddc6.tx_buffer._36_4_ = 4;
         j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x27] =
              j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x27] + 1;
-        local_a._3_1_ = (undefined1)uVar2;
-        *(undefined1 *)j1708_transmit_buffer_2_32_ddc6.tx_buffer._36_4_ = (undefined1)local_a;
+        response_data._3_1_ = (undefined1)uVar2;
+        *(undefined1 *)j1708_transmit_buffer_2_32_ddc6.tx_buffer._36_4_ = (undefined1)response_data;
         j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x27] =
              j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x27] + 1;
-        local_a._2_1_ = (undefined1)(uVar2 >> 8);
-        *(undefined1 *)j1708_transmit_buffer_2_32_ddc6.tx_buffer._36_4_ = local_a._2_1_;
+        response_data._2_1_ = (undefined1)(uVar2 >> 8);
+        *(undefined1 *)j1708_transmit_buffer_2_32_ddc6.tx_buffer._36_4_ = response_data._2_1_;
         j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x27] =
              j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x27] + 1;
-        local_a._1_1_ = (undefined1)(uVar2 >> 0x10);
-        *(undefined1 *)j1708_transmit_buffer_2_32_ddc6.tx_buffer._36_4_ = local_a._1_1_;
+        response_data._1_1_ = (undefined1)(uVar2 >> 0x10);
+        *(undefined1 *)j1708_transmit_buffer_2_32_ddc6.tx_buffer._36_4_ = response_data._1_1_;
         j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x27] =
              j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x27] + 1;
         *(undefined1 *)j1708_transmit_buffer_2_32_ddc6.tx_buffer._36_4_ = 0;
@@ -4477,20 +4477,20 @@ void insiteCommandByteDispatcher(void)
         *(undefined1 *)j1708_transmit_buffer_2_32_ddc6.tx_buffer._36_4_ = 4;
         j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x27] =
              j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x27] + 1;
-        local_a._3_1_ = (undefined1)uVar1;
-        *(undefined1 *)j1708_transmit_buffer_2_32_ddc6.tx_buffer._36_4_ = (undefined1)local_a;
+        response_data._3_1_ = (undefined1)uVar1;
+        *(undefined1 *)j1708_transmit_buffer_2_32_ddc6.tx_buffer._36_4_ = (undefined1)response_data;
         j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x27] =
              j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x27] + 1;
-        local_a._2_1_ = (undefined1)((uint)uVar1 >> 8);
-        *(undefined1 *)j1708_transmit_buffer_2_32_ddc6.tx_buffer._36_4_ = local_a._2_1_;
+        response_data._2_1_ = (undefined1)((uint)uVar1 >> 8);
+        *(undefined1 *)j1708_transmit_buffer_2_32_ddc6.tx_buffer._36_4_ = response_data._2_1_;
         j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x27] =
              j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x27] + 1;
-        local_a._1_1_ = (undefined1)((uint)uVar1 >> 0x10);
-        *(undefined1 *)j1708_transmit_buffer_2_32_ddc6.tx_buffer._36_4_ = local_a._1_1_;
+        response_data._1_1_ = (undefined1)((uint)uVar1 >> 0x10);
+        *(undefined1 *)j1708_transmit_buffer_2_32_ddc6.tx_buffer._36_4_ = response_data._1_1_;
         j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x27] =
              j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x27] + 1;
-        local_a._0_1_ = (undefined1)((uint)uVar1 >> 0x18);
-        *(undefined1 *)j1708_transmit_buffer_2_32_ddc6.tx_buffer._36_4_ = local_a._0_1_;
+        response_data._0_1_ = (undefined1)((uint)uVar1 >> 0x18);
+        *(undefined1 *)j1708_transmit_buffer_2_32_ddc6.tx_buffer._36_4_ = response_data._0_1_;
         j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x27] =
              j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x27] + 1;
       }
@@ -4499,21 +4499,21 @@ void insiteCommandByteDispatcher(void)
   else {
     switch(j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x1f]) {
     case 0xf4:
-      local_a = unsignedMultiplyDivide(_DAT_00804fac,10,0x40);
+      response_data = unsignedMultiplyDivide(_DAT_00804fac,10,0x40);
       break;
     case 0xf5:
-      local_a = unsignedMultiplyDivide(_DAT_00804fa8,10,0x40);
+      response_data = unsignedMultiplyDivide(_DAT_00804fa8,10,0x40);
       break;
     default:
       goto switchD_0000f050_caseD_f9;
     case 0xf7:
-      local_a = _DAT_00804fc0 / 0x708;
+      response_data = _DAT_00804fc0 / 0x708;
       break;
     case 0xf8:
-      local_a = _DAT_00804fbc / 0x708;
+      response_data = _DAT_00804fbc / 0x708;
       break;
     case 0xfa:
-      local_a = _DAT_00804fa0;
+      response_data = _DAT_00804fa0;
     }
     *(byte *)j1708_transmit_buffer_2_32_ddc6.tx_buffer._36_4_ =
          j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x1f];
@@ -4522,16 +4522,16 @@ void insiteCommandByteDispatcher(void)
     *(undefined1 *)j1708_transmit_buffer_2_32_ddc6.tx_buffer._36_4_ = 4;
     j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x27] =
          j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x27] + 1;
-    *(undefined1 *)j1708_transmit_buffer_2_32_ddc6.tx_buffer._36_4_ = (undefined1)local_a;
+    *(undefined1 *)j1708_transmit_buffer_2_32_ddc6.tx_buffer._36_4_ = (undefined1)response_data;
     j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x27] =
          j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x27] + 1;
-    *(undefined1 *)j1708_transmit_buffer_2_32_ddc6.tx_buffer._36_4_ = local_a._2_1_;
+    *(undefined1 *)j1708_transmit_buffer_2_32_ddc6.tx_buffer._36_4_ = response_data._2_1_;
     j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x27] =
          j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x27] + 1;
-    *(undefined1 *)j1708_transmit_buffer_2_32_ddc6.tx_buffer._36_4_ = local_a._1_1_;
+    *(undefined1 *)j1708_transmit_buffer_2_32_ddc6.tx_buffer._36_4_ = response_data._1_1_;
     j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x27] =
          j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x27] + 1;
-    *(undefined1 *)j1708_transmit_buffer_2_32_ddc6.tx_buffer._36_4_ = local_a._0_1_;
+    *(undefined1 *)j1708_transmit_buffer_2_32_ddc6.tx_buffer._36_4_ = response_data._0_1_;
     j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x27] =
          j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x27] + 1;
   }
@@ -10821,7 +10821,7 @@ void multiPacketTransmitHandler(void)
   byte bVar6;
   byte bVar7;
   byte bVar8;
-  undefined4 local_c;
+  undefined4 data_ptr;
   undefined4 local_8;
   
   dVar2 = j1708_transmit_buffer_0_2_32.buffer_ptr;
@@ -10858,40 +10858,40 @@ void multiPacketTransmitHandler(void)
         iVar4 = (j1708_transmit_buffer_0_2_32.buffer_end - dVar2) + 0xfe;
       }
       if ((int)(uint)bVar8 < iVar4) {
-        local_c._3_1_ = (char)dVar2;
-        cVar3 = (char)local_c;
-        local_c._0_3_ = (undefined3)(dVar2 >> 8);
-        local_c = (byte *)CONCAT31(local_c._0_3_,(char)local_c + '\x01');
-        *local_c = 7;
-        local_c = (byte *)CONCAT31(local_c._0_3_,cVar3 + '\x02');
-        *local_c = bVar7 | 0xb0;
-        local_c = (byte *)CONCAT31(local_c._0_3_,cVar3 + '\x03');
+        data_ptr._3_1_ = (char)dVar2;
+        cVar3 = (char)data_ptr;
+        data_ptr._0_3_ = (undefined3)(dVar2 >> 8);
+        data_ptr = (byte *)CONCAT31(data_ptr._0_3_,(char)data_ptr + '\x01');
+        *data_ptr = 7;
+        data_ptr = (byte *)CONCAT31(data_ptr._0_3_,cVar3 + '\x02');
+        *data_ptr = bVar7 | 0xb0;
+        data_ptr = (byte *)CONCAT31(data_ptr._0_3_,cVar3 + '\x03');
         cVar5 = addressRangeValidator(j1708_transmit_buffer_2_32_ddc6.tx_buffer._20_2_);
         if ((cVar5 == '\t') || (cVar5 == '\n')) {
           diagnosticMessageQueueWrite(bVar6);
           j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x1c] = 0;
         }
         else {
-          *local_c = j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x11];
-          local_c = (byte *)CONCAT31(local_c._0_3_,cVar3 + '\x04');
-          *local_c = j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x10];
-          local_c = (byte *)CONCAT31(local_c._0_3_,cVar3 + '\x05');
-          *local_c = j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x19];
-          local_c = (byte *)CONCAT31(local_c._0_3_,cVar3 + '\x06');
-          *local_c = j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x18];
-          local_c = (byte *)CONCAT31(local_c._0_3_,cVar3 + '\a');
+          *data_ptr = j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x11];
+          data_ptr = (byte *)CONCAT31(data_ptr._0_3_,cVar3 + '\x04');
+          *data_ptr = j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x10];
+          data_ptr = (byte *)CONCAT31(data_ptr._0_3_,cVar3 + '\x05');
+          *data_ptr = j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x19];
+          data_ptr = (byte *)CONCAT31(data_ptr._0_3_,cVar3 + '\x06');
+          *data_ptr = j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x18];
+          data_ptr = (byte *)CONCAT31(data_ptr._0_3_,cVar3 + '\a');
           for (bVar6 = 0; bVar6 < bVar7; bVar6 = bVar6 + 1) {
             uVar1 = *(undefined1 *)j1708_transmit_buffer_2_32_ddc6.tx_buffer._18_4_;
             j1708_transmit_buffer_2_32_ddc6.tx_buffer._18_4_ =
                  j1708_transmit_buffer_2_32_ddc6.tx_buffer._18_4_ + 1;
-            *local_c = uVar1;
-            local_c = (byte *)CONCAT31(local_c._0_3_,(char)local_c + '\x01');
+            *data_ptr = uVar1;
+            data_ptr = (byte *)CONCAT31(data_ptr._0_3_,(char)data_ptr + '\x01');
           }
           j1708_transmit_buffer_2_32_ddc6.tx_buffer._24_2_ =
                j1708_transmit_buffer_2_32_ddc6.tx_buffer._24_2_ - (ushort)bVar7;
           *(byte *)dVar2 = bVar8;
-          *local_c = 0;
-          j1708_transmit_buffer_0_2_32.buffer_ptr = (dword)local_c;
+          *data_ptr = 0;
+          j1708_transmit_buffer_0_2_32.buffer_ptr = (dword)data_ptr;
           tpuTransmissionTrigger();
           j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x1c] = 1;
         }
@@ -20149,7 +20149,7 @@ void diagnosticMemoryReadHandler(byte service_id)
   byte response_type;
   undefined1 local_16;
   undefined1 uStack_15;
-  undefined4 local_c;
+  undefined4 buffer_ptr;
   undefined4 local_8;
   
                     /* From J90280.05 @ 0x019e62 (confidence: 94%) */
@@ -20199,36 +20199,36 @@ void diagnosticMemoryReadHandler(byte service_id)
             0xfe;
   }
   if ((int)(uint)bVar9 < iVar4) {
-    local_c._3_1_ = (char)j1708_transmit_buffer_0_2_32.buffer_ptr;
-    cVar7 = (char)local_c;
-    local_c._0_3_ = (undefined3)(j1708_transmit_buffer_0_2_32.buffer_ptr >> 8);
-    local_c = (byte *)CONCAT31(local_c._0_3_,(char)local_c + '\x01');
-    *local_c = 7;
-    local_c = (byte *)CONCAT31(local_c._0_3_,cVar7 + '\x02');
+    buffer_ptr._3_1_ = (char)j1708_transmit_buffer_0_2_32.buffer_ptr;
+    cVar7 = (char)buffer_ptr;
+    buffer_ptr._0_3_ = (undefined3)(j1708_transmit_buffer_0_2_32.buffer_ptr >> 8);
+    buffer_ptr = (byte *)CONCAT31(buffer_ptr._0_3_,(char)buffer_ptr + '\x01');
+    *buffer_ptr = 7;
+    buffer_ptr = (byte *)CONCAT31(buffer_ptr._0_3_,cVar7 + '\x02');
     if (in_stack_00000005 == '\x02') {
-      *local_c = bVar1 | 0x80;
+      *buffer_ptr = bVar1 | 0x80;
     }
     else if (in_stack_00000005 == '\x01') {
-      *local_c = bVar1 | 0xa0;
+      *buffer_ptr = bVar1 | 0xa0;
     }
     else {
-      *local_c = bVar1 | 0x20;
+      *buffer_ptr = bVar1 | 0x20;
     }
-    local_c = (byte *)CONCAT31(local_c._0_3_,cVar7 + '\x03');
+    buffer_ptr = (byte *)CONCAT31(buffer_ptr._0_3_,cVar7 + '\x03');
     if (bVar2) {
       puVar10 = &local_4a;
       local_4a = (undefined2)(dVar3 >> 0x10);
       uVar5 = crc16Calculate();
       uStack_15 = (undefined1)uVar5;
-      *local_c = uStack_15;
-      local_c = (byte *)CONCAT31(local_c._0_3_,cVar7 + '\x04');
+      *buffer_ptr = uStack_15;
+      buffer_ptr = (byte *)CONCAT31(buffer_ptr._0_3_,cVar7 + '\x04');
       local_16 = (undefined1)((ushort)uVar5 >> 8);
-      *local_c = local_16;
-      local_c = (byte *)CONCAT31(local_c._0_3_,cVar7 + '\x05');
+      *buffer_ptr = local_16;
+      buffer_ptr = (byte *)CONCAT31(buffer_ptr._0_3_,cVar7 + '\x05');
     }
     *(byte *)dVar3 = bVar9;
-    *local_c = 0;
-    j1708_transmit_buffer_0_2_32.buffer_ptr = (dword)local_c;
+    *buffer_ptr = 0;
+    j1708_transmit_buffer_0_2_32.buffer_ptr = (dword)buffer_ptr;
     *(undefined4 *)((int)puVar10 + -4) = 0x1f0ac;
     tpuTransmissionTrigger();
   }
@@ -20710,7 +20710,7 @@ uint engineFluidLevelDataBuilder(void)
   uint uVar6;
   int iVar7;
   short unaff_D3w;
-  undefined2 local_c;
+  undefined2 msg_buffer;
   ushort local_a;
   undefined4 local_8;
   
@@ -20789,8 +20789,8 @@ uint engineFluidLevelDataBuilder(void)
         _source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_da4e = 2;
         _jcomm_speed_control_status_1_speed_control_mode_0_n_true_false = 0;
         local_8 = (byte *)CONCAT31(local_8._0_3_,cVar4 + '\x03');
-        local_c = (ushort)*local_8;
-        _DAT_0080da5c = local_c << 8;
+        msg_buffer = (ushort)*local_8;
+        _DAT_0080da5c = msg_buffer << 8;
         iVar7 = ((int)(short)(_jcomm_peak_fueling_tau_0_max_fueling_on_100_throttle_curve_fo_0_100 -
                              _frictional_load_torque_in_fueling_at_breakpoint_4_engine_rpm_0_100_bc88
                              ) * (int)_DAT_0080da5c) / 0x6400;
@@ -20813,14 +20813,14 @@ uint engineFluidLevelDataBuilder(void)
         local_8 = (byte *)CONCAT31(local_8._0_3_,cVar4 + '\x03');
         bVar2 = *local_8;
         if (bVar2 < 0x80) {
-          local_c = (ushort)bVar2;
+          msg_buffer = (ushort)bVar2;
         }
         else {
-          local_c = CONCAT11(0xff,bVar2);
+          msg_buffer = CONCAT11(0xff,bVar2);
         }
         iVar7 = ((int)(short)(_jcomm_peak_fueling_tau_0_max_fueling_on_100_throttle_curve_fo_0_100 -
                              _frictional_load_torque_in_fueling_at_breakpoint_4_engine_rpm_0_100_bc88
-                             ) * (short)local_c * 0x100) / 0x6400;
+                             ) * (short)msg_buffer * 0x100) / 0x6400;
         _jcomm_torque_derate_fueling_maximum_allowed_fuel_as_per_link_u_0_100 =
              _jcomm_no_load_torque_estimated_frictional_no_load_fueling_val_0_100 + (short)iVar7;
         iVar7 = CONCAT22((short)((uint)iVar7 >> 0x10),
@@ -23055,34 +23055,34 @@ undefined4 canDiagnosticResponseSender(undefined1 *param_1)
   undefined1 local_1d;
   undefined1 local_1c;
   undefined1 local_1b;
-  undefined1 local_1a;
+  undefined1 service_id;
   undefined1 local_19;
   undefined1 local_18;
   undefined1 local_17;
   undefined1 local_16;
   undefined1 local_15;
   undefined1 local_14;
-  uint local_12;
-  undefined2 local_e;
-  undefined1 *local_c;
+  uint can_msg_id;
+  undefined2 msg_length;
+  undefined1 *data_ptr;
   
                     /* From J90280.05 @ 0x01bc9c (confidence: 100%) */
   uVar1 = *(undefined1 *)(*(int *)(param_1 + 6) + 1);
   uVar2 = *(undefined1 *)(*(int *)(param_1 + 6) + 2);
   cVar4 = diagnosticMemoryAddressResolver((word)((uint)&local_1e >> 0x10));
   if (cVar4 == '\0') {
-    local_12 = CONCAT31(CONCAT21((short)(CONCAT13(*param_1,0xef0000) >> 0x10),param_1[3]),param_1[2]
-                       ) & 0x1cffffff;
-    local_e = 7;
-    local_1a = 0x42;
+    can_msg_id = CONCAT31(CONCAT21((short)(CONCAT13(*param_1,0xef0000) >> 0x10),param_1[3]),
+                          param_1[2]) & 0x1cffffff;
+    msg_length = 7;
+    service_id = 0x42;
     local_17 = local_1e;
     local_16 = local_1d;
     local_15 = local_1c;
     local_14 = local_1b;
     local_19 = uVar1;
     local_18 = uVar2;
-    local_c = &local_1a;
-    sendCanSingleFrame(local_12,(short)((uint)&local_1a >> 0x10));
+    data_ptr = &service_id;
+    sendCanSingleFrame(can_msg_id,(short)((uint)&service_id >> 0x10));
     uVar3 = 0xff;
   }
   else {
@@ -36448,8 +36448,8 @@ void engineConfigurationPGNBuilder(undefined4 *param_1)
   undefined4 local_1e;
   undefined4 local_1a;
   undefined4 local_16;
-  undefined4 local_12;
-  undefined4 local_e;
+  undefined4 pgn_data;
+  undefined4 msg_length;
   undefined4 local_a;
   undefined2 local_6;
   
@@ -36509,9 +36509,9 @@ void engineConfigurationPGNBuilder(undefined4 *param_1)
   local_6._1_1_ = (undefined1)_DAT_008081fa;
   uVar1 = CONCAT11(local_6._0_1_,(undefined1)local_6);
   local_6._0_1_ = (undefined1)((ushort)_DAT_008081fa >> 8);
-  local_e = CONCAT31(CONCAT21(uVar1,local_6._0_1_),
-                     (char)(_jcomm_engine_overspeed_tl_time_limit_for_jcomm_high_idle_ove_0_25000 /
-                           10));
+  msg_length = CONCAT31(CONCAT21(uVar1,local_6._0_1_),
+                        (char)(_jcomm_engine_overspeed_tl_time_limit_for_jcomm_high_idle_ove_0_25000
+                              / 10));
   local_a._0_1_ = (undefined1)(_DAT_00808342 / 0x50);
   if (_DAT_00808144 < 0x4e21) {
     local_a._0_2_ = CONCAT11(local_a._0_1_,(char)(_DAT_00808144 / 0x50));
@@ -36528,14 +36528,14 @@ void engineConfigurationPGNBuilder(undefined4 *param_1)
     }
   }
   local_a = CONCAT31(local_a._0_3_,(char)(uVar4 >> 8) + '}');
-  local_12 = CONCAT13(uVar2,0xff0000);
-  local_12._2_2_ = CONCAT11(0xff,uVar3);
+  pgn_data = CONCAT13(uVar2,0xff0000);
+  pgn_data._2_2_ = CONCAT11(0xff,uVar3);
   *param_1 = local_22;
   param_1[1] = local_1e;
   param_1[2] = local_1a;
   param_1[3] = local_16;
-  param_1[4] = local_12;
-  param_1[5] = local_e;
+  param_1[4] = pgn_data;
+  param_1[5] = msg_length;
   param_1[6] = local_a;
   return;
 }

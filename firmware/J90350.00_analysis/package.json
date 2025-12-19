@@ -21,6 +21,7 @@
     "ghidra:enums": "./ghidra/analyze.sh enums",
     "ghidra:labels": "./ghidra/analyze.sh labels",
     "ghidra:funcparams": "./ghidra/analyze.sh funcparams",
+    "ghidra:localvars": "./ghidra/analyze.sh localvars",
     "ghidra:decompile": "./ghidra/analyze.sh decompile",
     "ghidra:full": "./ghidra/analyze.sh full",
     "ghidra:status": "./ghidra/analyze.sh status"

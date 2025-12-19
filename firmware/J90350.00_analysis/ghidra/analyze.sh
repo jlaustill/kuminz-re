@@ -434,6 +434,43 @@ cmd_funcparams() {
     echo "  -> void vp44CanMessageDispatcher(can_std_rx_desc_t *rx_msg)"
 }
 
+cmd_localvars() {
+    print_header "APPLYING LOCAL VARIABLE TYPES"
+
+    check_ghidra
+
+    if [ ! -d "$PROJECT_LOCATION/$PROJECT_NAME.rep" ]; then
+        print_error "Project not found. Run '$0 init' first."
+        exit 1
+    fi
+
+    LOCALVARS_CSV="$OUTPUT_DIR/local_variables.csv"
+
+    if [ ! -f "$LOCALVARS_CSV" ]; then
+        print_error "local_variables.csv not found"
+        print_error "Expected at: $LOCALVARS_CSV"
+        exit 1
+    fi
+
+    echo "Applying local variable types for improved decompilation readability..."
+    echo "Source: $LOCALVARS_CSV"
+    echo ""
+
+    "$GHIDRA_HEADLESS" \
+        "$PROJECT_LOCATION" \
+        "$PROJECT_NAME" \
+        -process "J90350.00.rom.bin" \
+        -noanalysis \
+        -scriptPath "$SCRIPTS_DIR" \
+        -postScript ApplyLocalVariables.java "$LOCALVARS_CSV"
+
+    print_success "Local variable types applied"
+    echo ""
+    echo "Run '$0 export' to see changes like:"
+    echo "  uVar1 -> param_byte1"
+    echo "  local_12 -> can_msg_id"
+}
+
 cmd_decompile() {
     if [ -z "$2" ]; then
         print_error "Usage: $0 decompile <address|function_name>"
@@ -531,6 +568,7 @@ cmd_help() {
     echo "  hwregs     Apply MC68336 hardware register names (DAT_00fffa27 -> REG_SIM_SWSR)"
     echo "  labels     Apply code labels from J90280.05 (3,496 labels with address translation)"
     echo "  funcparams Apply function parameter types (param_1 -> rx_msg with type)"
+    echo "  localvars  Apply local variable types (uVar1 -> param_byte1, local_12 -> can_msg_id)"
     echo "  decompile  Decompile a single function by address or name"
     echo "  full       Run complete pipeline: init -> analyze -> memmap -> ramvars -> bootstrap -> export"
     echo "  status     Show project status"
@@ -585,6 +623,9 @@ case "${1:-help}" in
         ;;
     funcparams)
         cmd_funcparams
+        ;;
+    localvars)
+        cmd_localvars
         ;;
     decompile)
         cmd_decompile "$@"
