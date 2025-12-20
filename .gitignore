@@ -116,3 +116,6 @@ cmake-build-*/
 # ===== Insite9 Decompilation =====
 # Log files (not needed in repo)
 insite9/*.log
+
+# Ghidra generated output
+**/ghidra/project/output/
