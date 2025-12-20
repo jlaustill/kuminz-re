@@ -11,16 +11,21 @@ This is a reverse engineering monorepo for Cummins ECU systems across multiple g
 ```
 kuminz-re/
 ├── work/             # Task tracking (todo.md + task files)
+├── docs/             # Cross-project documentation
+│   └── cross-firmware-analysis.md  # Firmware comparison methodology
 ├── clip-core/        # Shared CLIP protocol library (Qt-free, used by CLI and UI)
 ├── kuminz-cli/       # CLI tool for ECU memory dumps
 ├── kuminz-ui/        # Qt5 C++ desktop app for ECU communication
 ├── e2m-analysis/     # E2M file format reverse engineering (COMPLETE)
 ├── e2m-db/           # PostgreSQL database for e2m parameter storage
 ├── firmware/
-│   └── J90280.05_analysis/  # CM550 ECU firmware (first target)
+│   ├── J90280.05_analysis/  # CM550 ECU firmware (reference)
+│   ├── J90350.00_analysis/  # CM550 ISB 195hp (live extraction)
+│   └── feature_comparison.csv  # Cross-firmware feature matrix
 ├── calterm3/
 │   └── calterm-crc/  # CRC algorithm reverse engineering for e2m files
-└── insite9/          # Insite diagnostic tool analysis (100% decompiled)
+├── insite9/          # Insite diagnostic tool analysis (100% decompiled)
+└── ecu_identification.md  # ECU hardware/software database
 ```
 
 **Planned additions:** Dodge 2002/2004 truck ECU firmware, additional Calterm/Insite versions.
@@ -293,3 +298,32 @@ Each ECU firmware analyzed should:
 2. Identify shared code patterns with other ECU versions
 3. Track evolutionary changes between firmware versions
 4. Build a unified parameter database across ECU generations
+
+### Documentation Files
+
+| File | Purpose |
+|------|---------|
+| `ecu_identification.md` | ECU hardware/software identification database |
+| `docs/cross-firmware-analysis.md` | Methodology for comparing firmware versions |
+| `firmware/feature_comparison.csv` | Cross-firmware feature presence matrix |
+
+### Feature Tracking Categories
+
+When comparing firmware versions, track four types of differences:
+
+1. **Excluded Features** - Code that doesn't exist due to `#ifdef` preprocessor directives
+2. **Method Versioning** - Same function with code changes between versions
+3. **Added Features** - New functionality in newer firmware
+4. **Removed Features** - Features dropped (often detected via engine parameters)
+
+### Relocation Map
+
+Each firmware analysis directory contains `output/relocation_map.csv` mapping function addresses between firmware versions:
+
+| Status | Meaning |
+|--------|---------|
+| `matched` | Identical function at different address |
+| `similar` | Function exists but code differs |
+| `not_found` | Function doesn't exist in target |
+
+**Current J90280.05 → J90350.00:** 293 matched, 350 similar, 150 not_found

@@ -1,0 +1,22 @@
+feature_name,category,j90280.05,j90350.00,j90270.06,j90831.05,notes
+vp44_can_communication,fuel_system,present,present,unknown,unknown,Core VP44 injection pump CAN control
+vp44_diagnostic_state_machine,fuel_system,present,not_found,unknown,unknown,VP44 diagnostic mode handling - may be inlined in J90350
+vp44_timing_validation,fuel_system,present,not_found,unknown,unknown,VP44 timing range validation functions
+auth_security,security,stub,present,unknown,unknown,J90280 returns 0 (disabled) - J90350 has full implementation
+kickdown_signal,transmission,present,not_found,unknown,unknown,Automatic transmission kickdown interface
+retarder_control,drivetrain,present,not_found,unknown,unknown,Engine brake/retarder percentage control
+derate_system,protection,present,present,unknown,unknown,Engine power derate for protection
+boost_pressure_control,protection,present,not_found,unknown,unknown,Boost pressure feedback controller - may be reorganized
+engine_protection,protection,present,present,unknown,unknown,Core engine protection systems
+diagnostic_state_machine,diagnostics,present,present,unknown,unknown,Fault code processing state machine
+insite_communication,diagnostics,present,present,unknown,unknown,Insite diagnostic tool protocol
+fuel_temp_limiting,fuel_system,present,not_found,unknown,unknown,Fuel temperature protection functions
+intake_temp_tables,protection,present,not_found,unknown,unknown,Intake manifold temperature limit tables
+sensor_fault_debounce,diagnostics,present,not_found,unknown,unknown,Sensor fault debounce monitor - may be inlined
+timer_scheduler,io_control,present,not_found,unknown,unknown,Timer-based task scheduler - architecture may differ
+io_control_system,io_control,present,not_found,unknown,unknown,IO control register management - may be reorganized
+flash_bootloader,security,present,not_found,unknown,unknown,Flash memory programming support
+wait_to_start_lamp,io_control,present,not_found,unknown,unknown,Glow plug indicator blink pattern
+lift_pump_status,fuel_system,present,not_found,unknown,unknown,Lift pump communication status monitor
+engine_serial_builder,diagnostics,present,not_found,unknown,unknown,Engine serial number data builder
+ambient_conditions,diagnostics,present,not_found,unknown,unknown,Ambient conditions data builder for diagnostics

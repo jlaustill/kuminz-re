@@ -16,20 +16,23 @@ This document tracks known Cummins ECU hardware/software combinations encountere
 | **ECM Code** | ECM module identifier (from Insite) |
 | **Part Number** | Cummins part number |
 | **Serial** | ECU serial number |
-| **Date Code** | Manufacturing date code |
+| **Date Code** | Manufacturing date code (DDMMYY format on ECU label) |
+| **Build Date** | Firmware build date (for version chronology) |
 | **Source** | How data was obtained |
 | **Notes** | Additional information |
+
+**Related:** See `firmware/feature_comparison.csv` for cross-firmware feature tracking.
 
 ---
 
 ## Known ECUs
 
-| ECU Type  | Module ID | Firmware  | Calibration   | Engine        | ESN       | CPL | ECM Code  | Part Number | Serial    | Date Code | Source              | Notes                           |
-|-----------|-----------|-----------|---------------|---------------|-----------|-----|-----------|-------------|-----------|-----------|---------------------|---------------------------------|
-|           |           |           |               |               |           |     |           | 3947412     |           |           | Physical Chip Dump  |                                 |
-| CM550     | EN        | J90350.00 | 100898231658  | ISB 195hp     | -         | -   | -         | 98502       | T03942860 | 060498    | Live ECU dump       | First extraction 2024-12-16     |
-| CM550     | EN        | J90280.05 | -             | ISB (unknown) | -         | -   |           | -           | -         | -         | Unknown             | Reference firmware for analysis |
-| CM848D    |           |           |               |               | 57185646  |     |           | 3971404     | 40333     |           |                     |                                 |
+| ECU Type  | Module ID | Firmware  | Calibration   | Engine        | ESN       | CPL | ECM Code  | Part Number | Serial    | Date Code | Build Date | Source              | Notes                           |
+|-----------|-----------|-----------|---------------|---------------|-----------|-----|-----------|-------------|-----------|-----------|------------|---------------------|---------------------------------|
+|           |           |           |               |               |           |     |           | 3947412     |           |           |            | Physical Chip Dump  |                                 |
+| CM550     | EN        | J90350.00 | 100898231658  | ISB 195hp     | -         | -   | -         | 98502       | T03942860 | 060498    | 1998-04-06 | Live ECU dump       | First extraction 2024-12-16     |
+| CM550     | EN        | J90280.05 | -             | ISB (unknown) | -         | -   |           | -           | -         | -         | Unknown    | Unknown             | Reference firmware for analysis |
+| CM848D    |           |           |               |               | 57185646  |     |           | 3971404     | 40333     |           |            |                     |                                 |
 
 ---
 
@@ -51,6 +54,30 @@ Based on observed patterns:
 - `J90xxx.xx` - CM550 ISB/ISC calibrations
 - `J90280.05` - Reference firmware (unknown application)
 - `J90350.00` - ISB 195hp (extracted 2024-12-16)
+
+---
+
+## Firmware Chronology
+
+Build dates are critical for understanding firmware evolution. When comparing two firmware versions:
+- **Newer firmware** may have features added
+- **Older firmware** may have features that were later removed
+- **Same date range** suggests preprocessor-excluded features (different compile flags)
+
+### Confirmed Timeline
+
+| Firmware | Build Date | Features | Notes |
+|----------|------------|----------|-------|
+| J90350.00 | 1998-04-06 | Full auth, more RAM vars | Extracted from ISB 195hp |
+| J90280.05 | Unknown | Auth stub, fewer RAM vars | Reference firmware |
+
+### Cross-Firmware Analysis
+
+See `docs/cross-firmware-analysis.md` for methodology on:
+- Tracking excluded features (preprocessor `#ifdef`)
+- Identifying method version changes
+- Detecting added/removed features
+- Using relocation maps for comparison
 
 ---
 
