@@ -32,6 +32,9 @@ This document tracks known Cummins ECU hardware/software combinations encountere
 |           |           |           |               |               |           |     |           | 3947412     |           |           |            | Physical Chip Dump  |                                 |
 | CM550     | EN        | J90350.00 | 100898231658  | ISB 195hp     | -         | -   | -         | 98502       | T03942860 | 060498    | 1998-04-06 | Live ECU dump       | First extraction 2024-12-16     |
 | CM550     | EN        | J90280.05 | -             | ISB (unknown) | -         | -   |           | -           | -         | -         | Unknown    | Unknown             | Reference firmware for analysis |
+| CM550     | ?         | &I091197  | -             | 5.9L ISB      | -         | -   | -         | -           | -         | -         | 1997-09-11 | Physical Chip Dump  | Pre-production prototype, VIN embedded |
+| CM550     | E1        | J90270.06 | -             | 6BTA 5.9L     | -         | -   | -         | FP98456     | 4J,J039479121A0505648 | 062800 | 2000-06-28 | Physical Chip Dump | Chrysler T-300 commercial truck (EEPROM only) |
+| CM550     | E1        | J90831.05 | -             | 6BTA 5.9L     | -         | -   | -         | FP98849     | 039474121C0302023 | 012401 | 2001-01-24 | Physical Chip Dump | Dodge Ram Br/BE (EEPROM only) |
 | CM848D    |           |           |               |               | 57185646  |     |           | 3971404     | 40333     |           |            |                     |                                 |
 
 ---
@@ -51,9 +54,34 @@ This document tracks known Cummins ECU hardware/software combinations encountere
 ## Firmware Version Patterns
 
 Based on observed patterns:
-- `J90xxx.xx` - CM550 ISB/ISC calibrations
+- `J90xxx.xx` - CM550 ISB/ISC production calibrations
+- `&Ixxxxxx` - Pre-production/prototype firmware (date-based identifier)
 - `J90280.05` - Reference firmware (unknown application)
+- `J90270.06` - T-300 commercial truck calibration
 - `J90350.00` - ISB 195hp (extracted 2024-12-16)
+- `J90831.05` - Dodge Ram Br/BE calibration
+
+### ROM Build Type Identifier
+
+The ROM header contains a 2-character build type identifier at offset 0x0E:
+
+| Identifier | Hex | Type | Example |
+|------------|-----|------|---------|
+| `wl` | 0x776C | Production release | J90350.00 |
+| `&I` | 0x2649 | Development/prototype | 1999 Dodge ROM |
+
+**Header Structure (offset 0x00-0x17):**
+```
+00-03: Initial Stack Pointer (0x00810000)
+04-07: Initial Program Counter (0x0000001e)
+08-0B: Checksum/identifier (varies)
+0C-0D: Unknown (varies)
+0E-0F: Build type ('wl' = production, '&I' = prototype)
+10-15: Build date (MMDDYY ASCII)
+16-17: Version bytes
+```
+
+**Hypothesis:** The `&I` prefix likely indicates an internal/engineering build not intended for production release. The `&` character would be unusual in a production identifier. The `wl` code may stand for "work level" or similar production designation.
 
 ---
 
@@ -66,10 +94,13 @@ Build dates are critical for understanding firmware evolution. When comparing tw
 
 ### Confirmed Timeline
 
-| Firmware | Build Date | Features | Notes |
-|----------|------------|----------|-------|
-| J90350.00 | 1998-04-06 | Full auth, more RAM vars | Extracted from ISB 195hp |
-| J90280.05 | Unknown | Auth stub, fewer RAM vars | Reference firmware |
+| Firmware | Build Date | Module ID | Application | Notes |
+|----------|------------|-----------|-------------|-------|
+| &I091197 | 1997-09-11 | ? | Dodge Ram prototype | Pre-production, VIN embedded in ROM |
+| J90350.00 | 1998-04-06 | EN | ISB 195hp | Full auth, more RAM vars |
+| J90280.05 | Unknown | EN | ISB (unknown) | Auth stub, fewer RAM vars |
+| J90270.06 | 2000-06-28 | E1 | Chrysler T-300 | Commercial truck (EEPROM only) |
+| J90831.05 | 2001-01-24 | E1 | Dodge Ram Br/BE | 2nd gen Ram (EEPROM only) |
 
 ### Cross-Firmware Analysis
 
@@ -90,8 +121,25 @@ See `docs/cross-firmware-analysis.md` for methodology on:
 | Component | Value | Meaning |
 |-----------|-------|---------|
 | **EN** | 0x454E | Module family identifier (ASCII "EN") for CM550 VP44 ECUs |
+| **E1** | 0x4531 | Module family identifier (ASCII "E1") - possibly hardware revision |
 | **A/B/C** | 0x41/0x42/0x43 | InCal calibration variant (ASCII 'A', 'B', 'C') |
 | **ENC** | Combined | EN module + variant C |
+
+### E1 vs EN Module ID Discovery
+
+Physical chip dumps revealed a second Module ID `E1` distinct from `EN`:
+
+| Module ID | EEPROM Value | Known Firmware | Notes |
+|-----------|--------------|----------------|-------|
+| EN | `454E` (ENUU at 0x3A) | J90350.00, J90280.05 | Live extraction, reference |
+| E1 | `4531` (E1UU at 0x3A) | J90270.06, J90831.05 | Physical chip dumps |
+
+**Possible meanings:**
+- Different hardware revision of CM550
+- Different ECU model within same family
+- Regional or OEM-specific variant
+
+**Same EEPROM structure:** Both E1 and EN modules use identical EEPROM layout (header `600d ABCDEF`).
 
 ### Firmware Enum Definitions
 
