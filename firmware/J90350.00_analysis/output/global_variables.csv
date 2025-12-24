@@ -1025,6 +1025,8 @@ address,name,type,comment
 0x008037cc,can_priority_dm983,undefined,
 0x0080380a,oil_pressure_error_status,undefined,
 0x00803882,can_message_buffer_end,can_message_buffer_t,
+0x00803b0c,security_key,undefined[6],6-byte security key - factory default "ABCDEF" on bench ECU
+0x00803b98,security_enabled,byte,SECURITY_ENABLED enum - TRUE=enforced FALSE=skipped
 0x008049ec,calibration_validator_ptr,undefined,
 0x00804a0a,output_control_countdown_timer,undefined,
 0x00804a0c,engine_run_counter_snapshot_1,undefined,

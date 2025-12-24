@@ -618,34 +618,42 @@ DPA_FRAME_TYPE,0x80,SYNC,Synchronous frame - wait for response,1
 # Byte 3 of DPA-wrapped CAN frames
 DPA_INSTRUCTION,0x49,TRANSMIT,Send data to ECU (TX instruction),1
 DPA_INSTRUCTION,0x48,RECEIVE,Receive data from ECU (RX instruction),1
-# EF00 Service IDs - from firmware diagnosticServiceDispatcher @ 0x272a0
-# Table at 0x8018d8 counter at 0x801998 - max 32 entries
-# Service ID goes directly in byte[0] of CAN message - NO DPA wrapper needed!
-# Dispatcher compares byte[0] against table; returns 0x18 error if not found
-EF00_SERVICE_ID,0x01,QUERY_TERMINATE,QueryTerminate - CLIP compatible - handler @ 0xf86a,1
-EF00_SERVICE_ID,0x04,SYSTEM_SERVICE_04,System service 04 - handler @ 0x1b150,1
-EF00_SERVICE_ID,0x05,SYSTEM_SERVICE_05,System service 05 - handler @ 0x1b160,1
-EF00_SERVICE_ID,0x06,SYSTEM_SERVICE_06,System service 06 - handler @ 0xf8d8,1
-EF00_SERVICE_ID,0x07,SYSTEM_SERVICE_07,System service 07 - handler @ 0xf876,1
-EF00_SERVICE_ID,0x0A,SYSTEM_SERVICE_0A,System service 0A - handler @ 0xf89c,1
-EF00_SERVICE_ID,0x0B,SYSTEM_SERVICE_0B,System service 0B - handler @ 0xf8e4,1
-EF00_SERVICE_ID,0x0F,SYSTEM_SERVICE_0F,System service 0F - same handler as 0x10 @ 0x1b07e,1
-EF00_SERVICE_ID,0x10,GET_PARAMETERS_BY_ID,GetParametersByID - CLIP compatible - handler @ 0x1b07e,1
-EF00_SERVICE_ID,0x15,GET_ADDRESS_BY_PARAM_ID,GetAddressByParameterID - CLIP compatible - handler @ 0xf9f0,1
-EF00_SERVICE_ID,0x16,SYSTEM_SERVICE_16,System service 16 - handler @ 0xf8b6,1
-EF00_SERVICE_ID,0x18,SYSTEM_SERVICE_18,System service 18 - handler @ 0xf9e4,1
-EF00_SERVICE_ID,0x41,SERVICE_41,Service 41 - handler @ 0x1bc9c,1
-EF00_SERVICE_ID,0x43,SERVICE_43,Service 43 - handler @ 0x1bf18,1
-EF00_SERVICE_ID,0x44,SERVICE_44,Service 44 - handler @ 0x1b56e (same as 0x45),1
-EF00_SERVICE_ID,0x45,SERVICE_45,Service 45 - handler @ 0x1b56e (same as 0x44),1
-EF00_SERVICE_ID,0x46,SERVICE_46,Service 46 - handler @ 0x1bf64,1
-EF00_SERVICE_ID,0x47,SERVICE_47,Service 47 - handler @ 0x1b604,1
-EF00_SERVICE_ID,0x48,SERVICE_48,Service 48 - handler @ 0x1bfc8,1
-EF00_SERVICE_ID,0x49,J1939_DATA_COPY,j1939DataCopyWrapperExtended @ 0x1b668 - memory read/copy via J1939 TP - req: [svc][2B][4B addr][4B len],1
-EF00_SERVICE_ID,0x4A,MEM_READ_4B_ADDR_1B_LEN,diagMemoryReadService4aHandler @ 0x1c02e - WORKING! 4-byte addr + 1-byte len - response: [4B][addr][len][data],1
-EF00_SERVICE_ID,0x4B,SERVICE_4B,Service 4B - handler @ 0x1b6ce,1
-EF00_SERVICE_ID,0x4C,SERVICE_4C,Service 4C - handler @ 0x1c076,1
-EF00_SERVICE_ID,0x4D,SERVICE_4D,Service 4D - handler @ 0x1b716,1
+# Security Enable Flag - RAM address 0x803b98
+# Controls whether services <= 0x19 require authentication
+# When security_enabled == SECURITY_ENABLED.FALSE, all services accessible without auth
+SECURITY_ENABLED,0x00,TRUE,Security checks are enforced - services <= 0x19 require authentication,1
+SECURITY_ENABLED,0xFF,FALSE,Security checks are SKIPPED - all services accessible without auth,1
+# EF00 Service IDs - VERIFIED from live ECU dispatch table dump @ 0x00801c7a
+# Dispatch table: 20 entries x 6 bytes [ServiceID:1][pad:1][Handler:4]
+# Security: Services <= 0x19 require auth when security_enabled == TRUE
+# security_enabled @ 0x803b98 (use SECURITY_ENABLED enum)
+# Security key @ 0x803b0c = "ABCDEF" (factory default on bench ECU)
+# --- SECURED SERVICES (ID <= 0x19) - require authentication ---
+EF00_SERVICE_ID,0x01,QUERY_TERMINATE,QueryTerminate - CLIP - dispatch @ 0x0001183E - SECURED - in dispatch table,1
+EF00_SERVICE_ID,0x04,SYSTEM_SERVICE_04,System service 04 - NOT in dispatch table (handled elsewhere?),1
+EF00_SERVICE_ID,0x05,SYSTEM_SERVICE_05,System service 05 - NOT in dispatch table (handled elsewhere?),1
+EF00_SERVICE_ID,0x06,HIGH_RPM_SHUTDOWN_ACTIVATE,activateHighRpmShutdownFlag - dispatch @ 0x000118FC - SECURED - RESPONDS! in dispatch table,1
+EF00_SERVICE_ID,0x07,SYSTEM_SERVICE_07,System service 07 - dispatch @ 0x0001188C - SECURED - in dispatch table,1
+EF00_SERVICE_ID,0x0A,SYSTEM_SERVICE_0A,System service 0A - dispatch @ 0x000118B2 - SECURED - in dispatch table,1
+EF00_SERVICE_ID,0x0B,SYSTEM_SERVICE_0B,System service 0B - dispatch @ 0x00011908 - SECURED - in dispatch table,1
+EF00_SERVICE_ID,0x0F,GET_PARAMETERS_BY_ID_ALT,getParametersByIdHandler - NOT in dispatch table - RESPONDS! (alternate path?),1
+EF00_SERVICE_ID,0x10,GET_PARAMETERS_BY_ID,GetParametersByID - CLIP - NOT in dispatch table - RESPONDS! (alternate path?),1
+EF00_SERVICE_ID,0x15,GET_ADDRESS_BY_PARAM_ID,GetAddressByParameterID - dispatch @ 0x00011A74 - SECURED - in dispatch table,1
+EF00_SERVICE_ID,0x16,SYSTEM_SERVICE_16,System service 16 - dispatch @ 0x000118CC - SECURED - in dispatch table,1
+EF00_SERVICE_ID,0x18,SYSTEM_SERVICE_18,System service 18 - dispatch @ 0x00011A68 - SECURED - in dispatch table,1
+# --- UNSECURED SERVICES (ID > 0x19) - bypass authentication ---
+EF00_SERVICE_ID,0x41,DIAG_ADDR_RESOLVER,canDiagnosticResponseSender - dispatch @ 0x000222B4 - UNSECURED - RESPONDS! in dispatch table,1
+EF00_SERVICE_ID,0x43,MEM_READ_2B_PARAM_4B_OFFSET,Memory read - dispatch @ 0x00022530 - UNSECURED - RESPONDS! Format: [43][Param:2][Offset:4],1
+EF00_SERVICE_ID,0x44,SERVICE_44,Service 44 - dispatch @ 0x0002167E - UNSECURED - in dispatch table,1
+EF00_SERVICE_ID,0x45,SERVICE_45,Service 45 - dispatch @ 0x000216C6 - UNSECURED - in dispatch table,1
+EF00_SERVICE_ID,0x46,MEM_READ_2B_PARAM_ONLY,Memory read - dispatch @ 0x0002257C - UNSECURED - RESPONDS! Format: [46][Param:2],1
+EF00_SERVICE_ID,0x47,SERVICE_47,Service 47 - dispatch @ 0x00021714 - UNSECURED - in dispatch table,1
+EF00_SERVICE_ID,0x48,SERVICE_48,Service 48 - dispatch @ 0x000225E0 - UNSECURED - in dispatch table,1
+EF00_SERVICE_ID,0x49,SERVICE_49,Service 49 - dispatch @ 0x00021778 - UNSECURED - in dispatch table,1
+EF00_SERVICE_ID,0x4A,MEM_READ_4B_ADDR_1B_LEN,Memory read - dispatch @ 0x00022646 - UNSECURED - WORKING! Format: [4A][Addr:4][Len:1],1
+EF00_SERVICE_ID,0x4B,SERVICE_4B,Service 4B - dispatch @ 0x000217DE - UNSECURED - in dispatch table,1
+EF00_SERVICE_ID,0x4C,MEM_READ_4B_ADDR_4B_LEN,Memory read - dispatch @ 0x0002268E - UNSECURED - Format: [4C][Addr:4][Len:4] multi-frame,1
+EF00_SERVICE_ID,0x4D,SERVICE_4D,Service 4D - dispatch @ 0x00021826 - UNSECURED - in dispatch table,1
 # Address Range Validation Table - addressRangeValidator @ 0x2b544 uses table @ 0x2b512
 # 5 entries x 10 bytes each (start_addr[4] + end_addr[4] + flag1[1] + flag2[1])
 # Error 0x09 returned if address outside these ranges
