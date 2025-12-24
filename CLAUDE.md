@@ -133,33 +133,28 @@ npm run import           # Import e2m CSV data to PostgreSQL
 
 ### Firmware Analysis (Ghidra + CLI)
 
-Two firmware versions are actively analyzed with **different workflows**:
+Two firmware versions are actively analyzed with the **same CLI workflow**:
 
 | Firmware | Source | CSV Location | Apply Command |
 |----------|--------|--------------|---------------|
-| J90280.05 | Static binary | `ghidra/CM550.rep/` | `Ctrl+Shift+E` in Ghidra GUI |
+| J90280.05 | Static binary (reference) | `output/` | `./analyze.sh import && export` |
 | J90350.00 | Live ECU dump | `output/` | `./analyze.sh import && export` |
 
-**J90280.05 (GUI Workflow):**
+**Unified CLI Workflow (Both Firmwares):**
 ```bash
-# 1. Edit CSV files in firmware/J90280.05_analysis/ghidra/CM550.rep/
-# 2. Open Ghidra with CM550.rep project
-# 3. Press Ctrl+Shift+E (ApplyAndExport)
-# 4. Verify: ghidra/CM550.rep/working/J90280.05.ghidra.cpp
-```
-
-**J90350.00 (CLI Workflow):**
-```bash
-cd firmware/J90350.00_analysis/ghidra
+cd firmware/[J90280.05|J90350.00]_analysis/ghidra
 # 1. Edit CSV files in ../output/
 ./analyze.sh import      # Apply CSV changes to Ghidra
 ./analyze.sh export      # Regenerate decompilation
-# Verify: ../output/J90350.00.ghidra.cpp
+# Verify: ../output/[firmware].ghidra.cpp
 ```
 
-**Common Rules (Both Firmwares):**
+**Shared Scripts:** All Ghidra Java scripts are in `firmware/scripts/` (shared by all firmwares).
+
+**Common Rules:**
 - All changes go through CSV files (function_renames.csv, global_variables.csv, enums.csv, etc.)
-- See `firmware/CLAUDE.md` for detailed workflow comparison
+- Never modify Ghidra directly - CSV is the source of truth
+- See `firmware/CLAUDE.md` for detailed workflow and command reference
 
 ### calterm3/calterm-crc (C++)
 ```bash

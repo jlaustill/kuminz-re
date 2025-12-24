@@ -6,38 +6,97 @@ This directory contains reverse-engineered Cummins CM550 ECU firmware from diffe
 
 | Directory | Source | Status | Purpose |
 |-----------|--------|--------|---------|
-| `J90280.05_analysis/` | Static binary | Complete (793 functions) | Reference firmware |
-| `J90350.00_analysis/` | Live ECU dump | Active (489 functions) | Live bench ECU |
+| `J90280.05_analysis/` | Static binary | Reference (789 functions) | Reference firmware |
+| `J90350.00_analysis/` | Live ECU dump | Active (787 functions) | Live bench ECU |
 
 ---
 
-## Workflow Comparison
+## Shared Scripts Infrastructure
 
-| Aspect | J90280.05 | J90350.00 |
-|--------|-----------|-----------|
-| **CSV Location** | `ghidra/CM550.rep/` | `output/` |
-| **Apply Command** | `Ctrl+Shift+E` in Ghidra GUI | `./analyze.sh import` |
-| **Export Command** | (same as apply) | `./analyze.sh export` |
-| **Output File** | `working/J90280.05.ghidra.cpp` | `output/J90350.00.ghidra.cpp` |
-| **Ghidra Mode** | GUI with MasterAnalysisSetup | Headless CLI |
+All Ghidra analysis scripts are shared in `firmware/scripts/`:
+
+```
+firmware/
+├── scripts/                      # SHARED: All Ghidra Java scripts
+│   ├── common.sh                 # Shared bash functions
+│   ├── ImportAnalysis.java
+│   ├── ExportAnalysis.java
+│   ├── ApplyEnums.java
+│   ├── ApplyStructures.java
+│   ├── ApplyLabels.java
+│   ├── ApplyConstants.java
+│   ├── ApplyArrays.java
+│   └── ... (16 total scripts)
+├── J90280.05_analysis/
+│   ├── ghidra/
+│   │   ├── analyze.sh            # Thin wrapper (firmware-specific config)
+│   │   └── project/              # Ghidra project files
+│   └── output/*.csv              # CSVs + decompilation
+└── J90350.00_analysis/
+    ├── ghidra/
+    │   ├── analyze.sh            # Thin wrapper (firmware-specific config)
+    │   └── project/              # Ghidra project files
+    └── output/*.csv              # CSVs + decompilation
+```
+
+### Adding a New Firmware
+
+To add a new firmware, just create:
+1. A thin `ghidra/analyze.sh` wrapper with firmware-specific config
+2. An `output/` directory with your CSVs
+
+The thin wrapper sets variables like `FIRMWARE_NAME`, `PROJECT_NAME`, and `FIRMWARE_FILE`, then sources the shared `common.sh`.
 
 ---
 
-## Quick Reference
+## Workflow (Both Firmwares)
 
-### J90280.05 (GUI Workflow)
+Both firmwares now use the same CLI workflow:
+
 ```bash
-# Edit: ghidra/CM550.rep/*.csv
-# Apply: Ctrl+Shift+E in Ghidra
-# Verify: ghidra/CM550.rep/working/J90280.05.ghidra.cpp
+cd [firmware]_analysis/ghidra
+
+# Edit CSV files in ../output/
+./analyze.sh import     # Apply CSV changes to Ghidra
+./analyze.sh export     # Regenerate decompilation
+
+# Verify: ../output/[firmware].ghidra.cpp
 ```
 
-### J90350.00 (CLI Workflow)
+### Available Commands
+
 ```bash
-# Edit: output/*.csv
-cd ghidra && ./analyze.sh import && ./analyze.sh export
-# Verify: output/J90350.00.ghidra.cpp
+./analyze.sh init       # Import firmware (no analysis)
+./analyze.sh analyze    # Run Ghidra auto-analysis
+./analyze.sh memmap     # Add RAM/EEPROM regions
+./analyze.sh import     # Apply CSV changes
+./analyze.sh export     # Export CSVs + decompilation
+./analyze.sh structures # Apply structure definitions
+./analyze.sh enums      # Apply enum definitions
+./analyze.sh labels     # Apply code labels
+./analyze.sh constants  # Apply constant definitions
+./analyze.sh arrays     # Apply array definitions
+./analyze.sh hwregs     # Apply MC68336 hardware register names
+./analyze.sh funcparams # Apply function parameter types
+./analyze.sh localvars  # Apply local variable types
+./analyze.sh decompile <addr|name>  # Decompile single function
+./analyze.sh full       # Run complete pipeline
+./analyze.sh status     # Show project status
 ```
+
+### J90280.05-Specific Commands
+
+J90280.05 is the **reference firmware** - other firmwares bootstrap from it:
+
+- `./analyze.sh full` runs: init -> analyze -> memmap -> import -> export
+
+### J90350.00-Specific Commands
+
+J90350.00 was **bootstrapped from J90280.05**:
+
+- `./analyze.sh ramvars` - Apply RAM variables from J90280.05
+- `./analyze.sh bootstrap` - Apply function names via relocation map
+- `./analyze.sh full` runs: init -> analyze -> memmap -> ramvars -> bootstrap -> export
 
 ---
 
@@ -62,7 +121,7 @@ J90350.00 was bootstrapped from J90280.05 using function matching:
 
 ## Common CSV Files
 
-Both firmwares use the same CSV structure:
+Both firmwares use the same CSV structure in `output/`:
 
 | File | Purpose |
 |------|---------|
@@ -71,6 +130,10 @@ Both firmwares use the same CSV structure:
 | `enums.csv` | Enum definitions for magic numbers |
 | `labels.csv` | Code labels for control flow |
 | `structure_definitions.csv` | C structure definitions |
+| `constants.csv` | Magic number documentation |
+| `arrays.csv` | Array/buffer definitions |
+| `function_parameters.csv` | Function parameter types |
+| `local_variables.csv` | Local variable names/types |
 
 ---
 

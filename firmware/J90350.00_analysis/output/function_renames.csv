@@ -637,7 +637,7 @@ address,name
 0x0002ed62,remoteThrottleFlagInit
 0x0002ed6a,insiteParameterParser
 0x0002edb2,parameterLookupForInsite
-0x0002ee62,coreSystemFunction
+0x0002ee62,registerDiagnosticServiceHandler
 0x0002eea2,diagnosticServiceDispatcher
 0x0002ef08,systemControlFunction1
 0x0002ef1c,diagnosticResponseHandler2

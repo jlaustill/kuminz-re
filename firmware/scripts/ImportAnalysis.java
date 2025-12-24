@@ -23,8 +23,12 @@ public class ImportAnalysis extends GhidraScript {
 
     @Override
     public void run() throws Exception {
+        // Get firmware name from program (e.g., "J90280.05.full.bin" -> "J90280.05")
+        String programName = currentProgram.getName();
+        String firmwareName = programName.replaceAll("\\.full\\.bin$", "").replaceAll("\\.rom\\.bin$", "").replaceAll("\\.bin$", "");
+
         println("=".repeat(70));
-        println("IMPORT ANALYSIS - J90350.00");
+        println("IMPORT ANALYSIS - " + firmwareName);
         println("=".repeat(70));
         println("");
 

@@ -29,10 +29,16 @@ import ghidra.util.task.TaskMonitor;
 
 public class ExportAnalysis extends GhidraScript {
 
+    private String firmwareName;
+
     @Override
     public void run() throws Exception {
+        // Get firmware name from program (e.g., "J90280.05.full.bin" -> "J90280.05")
+        String programName = currentProgram.getName();
+        firmwareName = programName.replaceAll("\\.full\\.bin$", "").replaceAll("\\.rom\\.bin$", "").replaceAll("\\.bin$", "");
+
         println("=".repeat(70));
-        println("EXPORT ANALYSIS - J90350.00");
+        println("EXPORT ANALYSIS - " + firmwareName);
         println("=".repeat(70));
         println("");
 
@@ -70,7 +76,7 @@ public class ExportAnalysis extends GhidraScript {
             // Export 3: Decompilation
             println("[3/3] Exporting decompilation...");
             int decompCount = exportDecompilation(outputDir);
-            println("  Exported " + decompCount + " functions to J90350.00.ghidra.cpp");
+            println("  Exported " + decompCount + " functions to " + firmwareName + ".ghidra.cpp");
 
             println("");
             println("=".repeat(70));
@@ -79,7 +85,7 @@ public class ExportAnalysis extends GhidraScript {
             println("Files created:");
             println("  - " + outputDir + "/function_renames.csv");
             println("  - " + outputDir + "/global_variables.csv");
-            println("  - " + outputDir + "/J90350.00.ghidra.cpp");
+            println("  - " + outputDir + "/" + firmwareName + ".ghidra.cpp");
 
         } catch (Exception e) {
             println("ERROR during export: " + e.getMessage());
@@ -187,7 +193,7 @@ public class ExportAnalysis extends GhidraScript {
     }
 
     private int exportDecompilation(String outputDir) throws Exception {
-        String outputFile = outputDir + "/J90350.00.ghidra.cpp";
+        String outputFile = outputDir + "/" + firmwareName + ".ghidra.cpp";
 
         // Initialize decompiler
         DecompInterface decompiler = new DecompInterface();
@@ -213,7 +219,7 @@ public class ExportAnalysis extends GhidraScript {
         int functionCount = 0;
 
         try (FileWriter writer = new FileWriter(outputFile)) {
-            writer.write("// Ghidra C++ Decompilation Export - J90350.00 Firmware\n");
+            writer.write("// Ghidra C++ Decompilation Export - " + firmwareName + " Firmware\n");
             writer.write("// Generated: " + new java.util.Date().toString() + "\n");
             writer.write("\n\n");
 

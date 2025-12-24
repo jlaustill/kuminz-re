@@ -1,0 +1,67 @@
+address,array_name,element_type,element_count,comment
+0x80CFD0,parameter_buffer,word,16,Parameter storage array (32 bytes)
+0x80CFD6,param_table_array,word,8,Parameter table entries (16 bytes)
+0x8086F0,reference_table_array,word,8,Reference values for parameter calculations
+0x8086C0,scale_factor_table,word,16,Scaling factors for parameter interpolation
+0x800000,sensor_data_buffer,byte,256,Raw sensor data collection buffer
+0x800100,can_message_buffer,byte,64,CAN message assembly/parsing buffer
+0x80303e,vp44_0x100_message,byte,9,VP44 0x100 command message: [header][fuel_high][fuel_low][timing3-6][rpm_low][rpm_high]
+0x800f5e,vp44_response_data,byte,16,VP44 response message processing array
+0x800200,engine_rpm_lookup_table,word,32,Engine RPM-based lookup table for fuel/timing calculations (64 bytes)
+0x800300,lookup_table_fuel,word,32,Fuel-based lookup table (64 bytes)
+0x800400,calibration_data,word,64,Calibration constants array (128 bytes)
+0x801000,eeprom_mirror,byte,1024,EEPROM data mirror in RAM (1KB)
+0x802000,diagnostic_buffer,byte,128,Diagnostic message buffer
+0x803000,can_tx_queue,byte,80,CAN transmit message queue (10 messages × 8 bytes)
+0x804000,can_rx_queue,byte,80,CAN receive message queue (10 messages × 8 bytes)
+0xFFFE00,stack_area,byte,256,Internal RAM stack area
+0xFFFF00,register_map,byte,256,Memory-mapped I/O registers0x00060D1E,engine_speed_axis,word,19,"CalTerm: ENGINE SPEED AXIS FOR THE TRANSIENT TIMING ADVANCE TABLE ..."
+0x00060D1E,fueling_axis,word,16,"CalTerm: FUELING  AXIS FOR THE TRANSIENT TIMING TABLE (16 VALUES)"
+0x00060D1E,timing_advance_look_up_table,word,2,"CalTerm: TIMING ADVANCE LOOK-UP TABLE FOR TRANSIENT ENGINE OPERATI..."
+0x00060A74,engine_speed_axis,word,19,"CalTerm: ENGINE SPEED AXIS FOR THE STEADY STATE TIMING ADVANCE TAB..."
+0x00060A74,fueling_axis,word,16,"CalTerm: FUELING AXIS FOR THE STEADY STATE TIMING TABLE (16 VALUES)"
+0x00060A74,timing_advance_look_up_table,word,2,"CalTerm: TIMING ADVANCE LOOK-UP TABLE FOR STEADY STATE ENGINE OPER..."
+0x00060982,engine_speed_axis,word,21,"CalTerm: ENGINE SPEED AXIS FOR THE TRANSIENT 4D FUELING TABLE (21 ..."
+0x00060982,throttle_axis,word,4,"CalTerm: THROTTLE AXIS FOR THE TRANSIENT 4D FUELING TABLE (4 VALUES)"
+0x000608A4,engine_speed_axis,word,21,"CalTerm: ENGINE SPEED AXIS FOR THE STEADY STATE 4D FUELING TABLE (..."
+0x000608A4,throttle_axis,word,4,"CalTerm: THROTTLE AXIS FOR THE STEADY STATE 4D FUELING TABLE (4 VA..."
+0x00806ED0,x_axis,word,8,"CalTerm: X-AXIS"
+0x00806E0C,coolant_level_x_axis,word,8,"CalTerm: COOLANT LEVEL X-AXIS"
+0x00806EE8,x_axis,word,2,"CalTerm: X-AXIS"
+0x00060138,engine_speed_axis,word,21,"CalTerm: ENGINE SPEED AXIS USED BY AFC TO DETERMINE FUELING LIMIT ..."
+0x00060138,boost_pressure_axis,word,14,"CalTerm: BOOST PRESSURE AXIS USED BY AFC TO DETERMINE FUEL LIMIT (..."
+0x00060138,afc_look_up_table,word,2,"CalTerm: AFC LOOK-UP TABLE DEFINING FUELING LIMIT AS A FUNCTION OF..."
+0x00060472,asg_alternate_droop_table,word,7,"CalTerm: ASG ALTERNATE DROOP TABLE INPUT AXIS"
+0x00060492,asg_droop_table,word,7,"CalTerm: ASG DROOP TABLE INPUT AXIS (F(REFERENCE SPEED))"
+0x00807B70,x_axis,word,13,"CalTerm: X AXIS OF COEF. TABLE FOR ASG DROOP COMPENSATED ERROR ADJ..."
+0x00807B38,x_axis,word,13,"CalTerm: X AXIS OF COEF. TABLE FOR ASG DROOP COMPENSATED ERROR ADJ..."
+0x00807B00,x_axis,word,13,"CalTerm: X AXIS OF COEF. TABLE FOR ASG DROOP COMPENSATED ERROR ADJ..."
+0x000603BA,ambient_air_pressure_axis,word,4,"CalTerm: AMBIENT AIR PRESSURE AXIS VALUES (4 VALUES) FOR ALTITUDE_..."
+0x000603BA,engine_rpm_axis,word,21,"CalTerm: ENGINE RPM AXIS VALUES (21 VALUES) FOR ALTITUDE_DERATE_FU..."
+0x000603BA,table_of_fuel_limit_values_used_by_altitude_derate_21x4_value_0_100,word,2,"CalTerm: TABLE OF FUEL LIMIT VALUES USED BY ALTITUDE DERATE (21X4 ..."
+0x0080794E,boost_press_axis,word,4,"CalTerm: BOOST PRESS AXIS FOR MISFIRE LIMIT TABLE"
+0x0080794E,speed_axis,word,4,"CalTerm: SPEED AXIS FOR MISFIRE LIMIT TABLE"
+0x0080794E,table_for_determining_minimum_advance_for_misfire_60_to_60,word,2,"CalTerm: TABLE FOR DETERMINING MINIMUM ADVANCE FOR MISFIRE"
+0x000605B2,ref_axis,word,13,"CalTerm: REF. AXIS FOR RATIO OF CYL. PRESS. TO COMPRESSION PRESS. ..."
+0x000605F2,abs_boost_reference_axis,word,3,"CalTerm: ABS. BOOST REFERENCE AXIS FOR COMP. RATIO RAISE"
+0x000605F2,reference_axis,word,13,"CalTerm: REFERENCE AXIS FOR COMPRESSION RATIO RAISED TO POWER OF A..."
+0x000605F2,data_axis,word,2,"CalTerm: DATA AXIS FOR COMPRESSION RATIO RAISED TO POWER OF A POLY..."
+0x0006065C,reference_axis,word,13,"CalTerm: REFERENCE AXIS FOR RATIO OF DEG. F TO DEG. TVC TABLE"
+0x000606A4,engine_speed_reference_axis,word,13,"CalTerm: ENGINE SPEED REFERENCE AXIS FOR DESIRED CYLINDER PRESSURE..."
+0x000606A4,fueling_reference_axis,word,7,"CalTerm: FUELING REFERENCE AXIS FOR DESIRED CYLINDER PRESSURE TABLE"
+0x000606A4,data_axis,word,2,"CalTerm: DATA AXIS FOR DESIRED CYLINDER PRESSURE TABLE"
+0x00807C98,x_axis,word,6,"CalTerm: X-AXIS OF TABLE USED BY CC/RSG TO ADJUST ERROR BASED ON F..."
+0x0006126A,speed_axis,word,5,"CalTerm: SPEED AXIS FOR COLD TEMP FUEL INCREMENT"
+0x0006126A,cold_temp_incremental_fuel_table,word,2,"CalTerm: COLD TEMP INCREMENTAL FUEL TABLE"
+0x0006126A,coolant_temp_axis,word,9,"CalTerm: COOLANT TEMP AXIS FOR COLD TEMP FUEL INCREMENT"
+0x0080770C,speed_axis,word,12,"CalTerm: SPEED AXIS FOR LINE DELAY TIMING OFFSET TABLE"
+0x0080770C,fuel_axis,word,12,"CalTerm: FUEL AXIS FOR LINE DELAY TIMING OFFSET TABLE"
+0x0080770C,line_delay_timing_offset_table,word,2,"CalTerm: LINE DELAY TIMING OFFSET TABLE"
+0x00808084,speed_error_axis,word,13,"CalTerm: SPEED ERROR AXIS OF COEFFICIENT TABLE FOR HSG DERIVATIVE ..."
+0x008080F4,speed_error_axis,word,13,"CalTerm: SPEED ERROR AXIS OF COEFFICIENT TABLE FOR HSG INTEGRAL GA..."
+0x008080BC,speed_error_axis,word,13,"CalTerm: SPEED ERROR AXIS OF COEFFICIENT TABLE FOR HSG DERIVATIVE ..."
+0x00807880,iah_postheat_schedule_postheat_stages_sequence_x_vector_50_to_293,word,12,"CalTerm: IAH POSTHEAT SCHEDULE (POSTHEAT STAGES SEQUENCE) - X VECTOR"
+0x00060534,jcomm_brake_control_rpm_indep_axis,word,4,"CalTerm: JCOMM BRAKE CONTROL RPM INDEP. AXIS USED FOR J1939 RETARD..."
+0x00808288,speed_error_axis,word,13,"CalTerm: SPEED ERROR AXIS OF COEFFICIENT TABLE FOR LSG DERIVATIVE ..."
+0x008082F8,speed_error_axis,word,13,"CalTerm: SPEED ERROR AXIS OF COEFFICIENT TABLE FOR LSG INTEGRAL GA..."
+0x008082C0,speed_error_axis,word,13,"CalTerm: SPEED ERROR AXIS OF COEFFICIENT TABLE FOR LSG DERIVATIVE ..."

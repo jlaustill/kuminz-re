@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Sat Dec 20 09:11:05 MST 2025
+// Generated: Wed Dec 24 05:38:36 MST 2025
 
 
 //
@@ -6916,14 +6916,14 @@ void systemFunction8xMaximum(void)
 
 {
                     /* From J90280.05 @ 0x00fa40 (confidence: 78%) */
-  coreSystemFunction();
-  coreSystemFunction();
-  coreSystemFunction();
-  coreSystemFunction();
-  coreSystemFunction();
-  coreSystemFunction();
-  coreSystemFunction();
-  coreSystemFunction();
+  registerDiagnosticServiceHandler();
+  registerDiagnosticServiceHandler();
+  registerDiagnosticServiceHandler();
+  registerDiagnosticServiceHandler();
+  registerDiagnosticServiceHandler();
+  registerDiagnosticServiceHandler();
+  registerDiagnosticServiceHandler();
+  registerDiagnosticServiceHandler();
   return;
 }
 
@@ -21370,12 +21370,12 @@ void systemFunction6xParameterized(void)
   
                     /* From J90280.05 @ 0x01b762 (confidence: 84%) */
   uVar3 = 0xffd2;
-  coreSystemFunction(1);
+  registerDiagnosticServiceHandler(1);
   uVar2 = 0xffd2;
   uVar1 = 0x10;
-  coreSystemFunction(1,uVar3);
-  coreSystemFunction(2,uVar1,uVar2);
-  coreSystemFunction();
+  registerDiagnosticServiceHandler(1,uVar3);
+  registerDiagnosticServiceHandler(2,uVar1,uVar2);
+  registerDiagnosticServiceHandler();
   return;
 }
 
@@ -22440,7 +22440,7 @@ uint memoryOperationDispatcher(dword request_ptr,word operation_size,dword opera
       uVar3 = memcpy(operation_size,uVar6);
       return uVar3 & 0xffffff00;
     case 3:
-      if (_DAT_00803b98 != 0xff) {
+      if (_security_enabled != 0xff) {
         if (!bVar1) {
           return 3;
         }
@@ -22459,7 +22459,7 @@ uint memoryOperationDispatcher(dword request_ptr,word operation_size,dword opera
       if ((_DAT_0080dc92 == 1) && (_DAT_0080dc6c != 0)) {
         return 7;
       }
-      if (_DAT_00803b98 != 0xff) {
+      if (_security_enabled != 0xff) {
         if (!bVar1) {
           return 0x1a;
         }
@@ -22605,12 +22605,12 @@ void memoryOperationFromMessage8Byte(dword param_1)
 void multiSystemCoreInitializer(void)
 
 {
-  coreSystemFunction();
-  coreSystemFunction();
-  coreSystemFunction();
-  coreSystemFunction();
-  coreSystemFunction();
-  coreSystemFunction();
+  registerDiagnosticServiceHandler();
+  registerDiagnosticServiceHandler();
+  registerDiagnosticServiceHandler();
+  registerDiagnosticServiceHandler();
+  registerDiagnosticServiceHandler();
+  registerDiagnosticServiceHandler();
   return;
 }
 
@@ -22733,7 +22733,7 @@ undefined4 diagnosticServiceSecurityValidator(int param_1)
     uVar4 = 1;
   }
   if ((('\x01' << (bVar2 & 7) & *(byte *)(((int)(uint)bVar2 >> 3) + 0x60f98)) == 0) ||
-     (_DAT_00803b98 == 0xff)) {
+     (_security_enabled == 0xff)) {
     if ((sVar1 != 8) && (sVar1 != (ushort)(uVar4 + 10))) {
       return 2;
     }
@@ -23191,7 +23191,7 @@ void systemFunction1xCaller(void)
 
 {
                     /* From J90280.05 @ 0x01bd58 (confidence: 86%) */
-  coreSystemFunction();
+  registerDiagnosticServiceHandler();
   return;
 }
 
@@ -23372,11 +23372,11 @@ void diagMemoryReadWrapper8Byte(byte *param_1)
 void multiSystemCoreFunction5Channel(void)
 
 {
-  coreSystemFunction();
-  coreSystemFunction();
-  coreSystemFunction();
-  coreSystemFunction();
-  coreSystemFunction();
+  registerDiagnosticServiceHandler();
+  registerDiagnosticServiceHandler();
+  registerDiagnosticServiceHandler();
+  registerDiagnosticServiceHandler();
+  registerDiagnosticServiceHandler();
   return;
 }
 
@@ -33793,7 +33793,7 @@ undefined1 hourMeterSecurityValidator(undefined4 param_1)
   char acStack_e [6];
   undefined1 auStack_8 [4];
   
-  if (_DAT_00803b98 == 0xff) {
+  if (_security_enabled == 0xff) {
     uVar2 = 0;
   }
   else if (DAT_00801e76 == '\x11') {
@@ -33814,7 +33814,7 @@ undefined1 hourMeterSecurityValidator(undefined4 param_1)
       bVar1 = true;
       pcVar6 = acStack_e;
       for (cVar4 = '\0'; (bVar1 && (cVar4 < '\x06')); cVar4 = cVar4 + '\x01') {
-        if ((&DAT_00803b0c)[(short)cVar4] != *pcVar6) {
+        if ((&security_key)[(short)cVar4] != *pcVar6) {
           bVar1 = false;
         }
         pcVar6 = pcVar6 + 1;
