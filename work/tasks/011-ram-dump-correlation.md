@@ -21,7 +21,7 @@ Successfully captured 37KB RAM dump from CM550 ECU via Service 0x4A memory read.
 
 ## Goals
 
-1. [ ] Identify 10+ new function names via xref analysis (blocked - Ghidra MCP not running)
+1. [ ] Identify 10+ new function names via xref analysis
 2. [X] Verify/correct 5+ global variable definitions (13 new entries added)
 3. [X] Document diagnostic buffer structure completely (48-byte record format documented)
 4. [~] Map calibration table format to e2m parameters (RPM/Load tables mapped, e2m correlation pending)
@@ -31,15 +31,15 @@ Successfully captured 37KB RAM dump from CM550 ECU via Service 0x4A memory read.
 
 ## Strategy 1: Xref Analysis of Known RAM Addresses
 
-Use Ghidra MCP tools (READ-ONLY) to find firmware code that accesses RAM regions:
+Use Ghidra's built-in xref tools to find firmware code that accesses these RAM regions:
 
-| RAM Address | Content Found | MCP Query |
-|-------------|---------------|-----------|
-| 0x800B00 | Diagnostic buffer (our requests) | `get_xrefs_to 0x800B00` |
-| 0x8072F4 | RPM breakpoint table | `get_xrefs_to 0x8072F4` |
-| 0x807176 | Load breakpoint table | `get_xrefs_to 0x807176` |
-| 0x803B00 | ECU identity block | `get_xrefs_to 0x803B00` |
-| 0x8002E0 | Timer array (all=10000) | `get_xrefs_to 0x8002E0` |
+| RAM Address | Content Found |
+|-------------|---------------|
+| 0x800B00 | Diagnostic buffer (our requests) |
+| 0x8072F4 | RPM breakpoint table |
+| 0x807176 | Load breakpoint table |
+| 0x803B00 | ECU identity block |
+| 0x8002E0 | Timer array (all=10000) |
 
 **Expected Output:** Functions that initialize, read, or write these addresses.
 
@@ -91,8 +91,8 @@ Write Python/TypeScript script to:
 - [ ] Dump calibration breakpoint tables
 - [ ] Extract diagnostic buffer structure
 
-### Phase 2: Ghidra Xref Queries (MCP Tools - READ ONLY)
-- [ ] Query xrefs to frequently-referenced addresses
+### Phase 2: Ghidra Xref Queries
+- [ ] Query xrefs to frequently-referenced addresses in Ghidra GUI
 - [ ] Identify initialization functions
 - [ ] Map data flow: init -> storage -> access -> response
 
@@ -210,9 +210,8 @@ Already identified from prior analysis:
    - rpm_breakpoint_table (0x8072F4)
    - load_breakpoint_table (0x807176)
 
-**Blocked:**
-- Ghidra MCP server not running - xref analysis deferred
-- Goal 1 (10+ function names via xref) cannot proceed until Ghidra is available
+**Note:**
+- Goal 1 (10+ function names via xref) requires manual Ghidra GUI analysis
 
 **Next Steps:**
 - Correlate RPM/Load tables with e2m common_parameters.json

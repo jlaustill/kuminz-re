@@ -1,3 +1,28 @@
+# J90280.05 Firmware Analysis (Reference Firmware)
+
+## Quick Workflow Reference
+
+```bash
+# 1. Edit CSV files in ghidra/CM550.rep/
+#    - function_renames.csv, global_variables.csv, enums.csv, etc.
+
+# 2. Apply changes in Ghidra GUI
+#    Press Ctrl+Shift+E (runs ApplyAndExport script)
+
+# 3. Verify output
+#    Check: ghidra/CM550.rep/working/J90280.05.ghidra.cpp
+
+# 4. Commit (pre-commit hook auto-sorts CSVs)
+```
+
+**CSV Location:** `ghidra/CM550.rep/`
+**Ghidra Project:** Open `ghidra/CM550.rep/` in Ghidra GUI
+**Apply Command:** `Ctrl+Shift+E` in Ghidra
+
+---
+
+## General Guidelines
+
 - Please never tell me to go try something again, this project is about reverse engineering the firmware, NOT manual testing.
 - docs/common_parameters.json contains a reverse engineered set of calterm parameters from e2m files, reference it for parameter names and descriptions
   * **WARNING**: Memory addresses in common_parameters.json may be INCORRECT - they were extracted from e2m files and have not been verified against the actual firmware
@@ -28,15 +53,3 @@
 - [ ] ApplyAndExport (`Ctrl+Shift+E`) was run in Ghidra
 - [ ] Verified `ghidra/CM550.rep/working/J90280.05.ghidra.cpp` shows expected changes
 - [ ] No unexpected type changes (e.g., `byte *` becoming `undefined *`)
-
-### MCP Tools - READ ONLY:
-The Ghidra MCP tools should be used for **reading/analysis only**:
-- ✅ `decompile_function` - Read decompiled code
-- ✅ `search_functions_by_name` - Find functions
-- ✅ `get_function_xrefs` - Analyze call hierarchy
-- ✅ `list_strings` - Find string references
-- ❌ `rename_function_by_address` - DO NOT USE (use CSV instead)
-- ❌ `rename_variable` - DO NOT USE (use CSV instead)
-- ❌ `rename_data` - DO NOT USE (use CSV instead)
-- ❌ `set_function_prototype` - DO NOT USE (use CSV instead)
-- ❌ `set_local_variable_type` - DO NOT USE (use CSV instead)

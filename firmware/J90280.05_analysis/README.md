@@ -343,74 +343,12 @@ function_address,function_name,first_use_address,new_variable_name,type,comment
 - **`ghidra_scripts/`** - Project scripts (version controlled)
 - **`~/ghidra_scripts/`** - User Ghidra directory (runtime execution)
 
-## **🔌 Ghidra MCP Integration (Read-Only Analysis)**
-
-Claude Code can interact directly with Ghidra via the MCP (Model Context Protocol) server for **reading and analysis only**.
-
-### **⚠️ IMPORTANT: MCP is Read-Only**
-
-**DO NOT use MCP tools to modify Ghidra** (rename, set types, etc.). Direct modifications:
-- Are NOT persisted to CSV files (source of truth)
-- Can cause unexpected side effects (variable types becoming `undefined`)
-- Create inconsistency between CSVs and Ghidra state
-
-**All changes must go through CSV files → ApplyAndExport workflow.**
-
-### **MCP Tools - READ ONLY**
-
-| Tool | Purpose | Safe to Use |
-|------|---------|-------------|
-| `decompile_function` | Get C code by function name | ✅ Yes |
-| `decompile_function_by_address` | Get C code by hex address | ✅ Yes |
-| `search_functions_by_name` | Find functions by pattern | ✅ Yes |
-| `get_function_xrefs` | Get cross-references | ✅ Yes |
-| `list_strings` | List strings in binary | ✅ Yes |
-| `get_xrefs_to` / `get_xrefs_from` | Trace references | ✅ Yes |
-| `disassemble_function` | Get assembly code | ✅ Yes |
-| `list_functions` | List all functions | ✅ Yes |
-| `rename_function_by_address` | Rename function | ❌ NO - Use CSV |
-| `rename_variable` | Rename local variable | ❌ NO - Use CSV |
-| `rename_data` | Rename global data label | ❌ NO - Use CSV |
-| `set_function_prototype` | Set function signature | ❌ NO - Use CSV |
-| `set_local_variable_type` | Set variable type | ❌ NO - Use CSV |
-
-### **Correct Workflow Pattern**
-
-**Pattern: Rename a Function**
-```
-1. mcp__ghidra__decompile_function_by_address("0x0000a30c")  ← READ (OK)
-2. Analyze decompiled code, determine name
-3. Edit function_renames.csv (add: 0x0000a30c,myFunctionName)  ← CSV ONLY
-4. Run ApplyAndExport in Ghidra (Ctrl+Shift+E)
-5. Verify output in working/J90280.05.ghidra.cpp
-```
-
-**Pattern: Add Structure/Variable**
-```
-1. mcp__ghidra__decompile_function("myFunction")  ← READ (OK)
-2. Analyze code, identify structure patterns
-3. Edit structure_definitions.csv or global_variables.csv  ← CSV ONLY
-4. Run ApplyAndExport in Ghidra (Ctrl+Shift+E)
-5. Verify output shows expected field names
-```
-
-### **Pre-Commit Requirements**
-1. All changes are in CSV files (NOT made via MCP write tools)
-2. Run `Ctrl+Shift+E` in Ghidra (ApplyAndExport)
-3. Verify `working/*.cpp` shows expected changes
-4. Check for unexpected type regressions (e.g., `byte *` → `undefined *`)
-5. Commit includes synchronized CSVs + exports
-
----
-
 ## **💡 Pro Tips for Claude Code Sessions**
 
 1. **CSV files are the source of truth** - ALL changes go through CSVs
-2. **MCP for reading only** - use `decompile_function`, `get_xrefs`, etc. for analysis
-3. **Never use MCP write tools** - `rename_*`, `set_*` tools cause sync issues
-4. **Always verify before commit** - run ApplyAndExport and check the output
-5. **Address references help**: `function_name @ 0x12345` for precise location
-6. **Exported files have latest analysis** - `working/*.asm` and `working/*.cpp`
+2. **Always verify before commit** - run ApplyAndExport and check the output
+3. **Address references help**: `function_name @ 0x12345` for precise location
+4. **Exported files have latest analysis** - `working/*.asm` and `working/*.cpp`
 
 **The CSV→ApplyAndExport→Verify workflow ensures reproducible, consistent analysis.**
 

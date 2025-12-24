@@ -131,18 +131,35 @@ npm install
 npm run import           # Import e2m CSV data to PostgreSQL
 ```
 
-### firmware/J90280.05_analysis (Ghidra + TypeScript)
+### Firmware Analysis (Ghidra + CLI)
+
+Two firmware versions are actively analyzed with **different workflows**:
+
+| Firmware | Source | CSV Location | Apply Command |
+|----------|--------|--------------|---------------|
+| J90280.05 | Static binary | `ghidra/CM550.rep/` | `Ctrl+Shift+E` in Ghidra GUI |
+| J90350.00 | Live ECU dump | `output/` | `./analyze.sh import && export` |
+
+**J90280.05 (GUI Workflow):**
 ```bash
-cd firmware/J90280.05_analysis
-npm install
-npm run enhance-csv      # Process CSV files for Ghidra
-./setup-hooks.sh         # Setup git hooks for CSV sorting
+# 1. Edit CSV files in firmware/J90280.05_analysis/ghidra/CM550.rep/
+# 2. Open Ghidra with CM550.rep project
+# 3. Press Ctrl+Shift+E (ApplyAndExport)
+# 4. Verify: ghidra/CM550.rep/working/J90280.05.ghidra.cpp
 ```
 
-**Ghidra Workflow:**
-- All changes go through CSV files in `ghidra/CM550.rep/`
-- Press `Ctrl+Shift+E` in Ghidra to run ApplyAndExport
-- NEVER use Ghidra MCP tools to modify data (read-only analysis only)
+**J90350.00 (CLI Workflow):**
+```bash
+cd firmware/J90350.00_analysis/ghidra
+# 1. Edit CSV files in ../output/
+./analyze.sh import      # Apply CSV changes to Ghidra
+./analyze.sh export      # Regenerate decompilation
+# Verify: ../output/J90350.00.ghidra.cpp
+```
+
+**Common Rules (Both Firmwares):**
+- All changes go through CSV files (function_renames.csv, global_variables.csv, enums.csv, etc.)
+- See `firmware/CLAUDE.md` for detailed workflow comparison
 
 ### calterm3/calterm-crc (C++)
 ```bash
@@ -231,8 +248,7 @@ For firmware analysis, discoveries are stored in CSV files (e.g., `ghidra/CM550.
 3. **CSV-Only Workflow** - All Ghidra changes must go through CSV files, never direct modification
 4. **Never Modify Originals** - Files in `originals/` directories are read-only source data
 5. **Decimal in Names** - Use decimal (not hex) in variable/function names for readability
-6. **MCP Tools Read-Only** - Ghidra MCP integration is for analysis only, not modification
-7. **No Insite Traffic Capture** - Capturing real Insite diagnostic traffic is NOT an option; protocol must be reverse-engineered from firmware analysis and decompiled code only
+6. **No Insite Traffic Capture** - Capturing real Insite diagnostic traffic is NOT an option; protocol must be reverse-engineered from firmware analysis and decompiled code only
 
 ## Task Tracking System
 
