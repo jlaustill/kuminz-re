@@ -12,6 +12,7 @@ add_library(clip-core STATIC
     src/CLIPTransportLayer.cpp
     src/CLIPInstructionBuilder.cpp
     src/J1939MessageBuilder.cpp
+    src/ServiceScanner.cpp
 )
 
 # Public include directory for consumers

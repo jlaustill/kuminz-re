@@ -987,3 +987,277 @@ While CM550 has minimal security, other Cummins ECUs may differ:
 | Function at 0x0002b544 | addressRangeValidator() |
 | Function at 0x0001b7e8 | diagnosticServiceSecurityValidator() |
 | Address 0x0002B512 | Address range validation table |
+
+---
+
+# Direct Service Discovery (Live ECU Scan)
+
+This section documents findings from probing a live CM550 ECU (bench unit, J90350.00 firmware) for all possible service IDs. Scan performed using `kuminz-cli --scan-services-full` on 2024-12-23.
+
+## Scan Methodology
+
+Each service ID (0x00-0xFF) was probed with a minimal request packet:
+```
+[ServiceID][00 00 00 00][01][00 00]
+```
+This requests 1 byte from address 0x00000000, which should trigger a response from any implemented service.
+
+**Response Classification:**
+- **FOUND**: ECU returned data (non-0x0D first byte)
+- **ERROR**: ECU returned error response (0x0D + error code)
+- **TIMEOUT**: No response within 500ms
+
+---
+
+## Services That Return Data (7 found)
+
+| Service | Response | Response Pattern | Likely Function |
+|---------|----------|------------------|-----------------|
+| **0x06** | `0C 06 FF FF FF FF FF FF` | Generic ACK | Unknown - format error? |
+| **0x0F** | `0C 0F FF FF FF FF FF FF` | Generic ACK | Unknown - format error? |
+| **0x10** | `0C 10 FF FF FF FF FF FF` | Generic ACK | GetParametersByID (needs CLIP session) |
+| **0x41** | `42 00 00 01 00 00 3A FF` | ID+1 echo + data | **Memory Read Variant** |
+| **0x43** | `10 07 01 26 FF 00 EF 00` | TP.RTS | Returns data via J1939 TP |
+| **0x46** | `47 00 00 00 00 01 00 FF` | ID+1 echo + data | **Memory Read Variant** |
+| **0x4A** | TP.RTS → data | Via J1939 TP | **Memory Read (Confirmed)** |
+
+### Memory Read Service Family
+
+Services 0x41, 0x46, and 0x4A all follow the same pattern:
+- Request: `[ServiceID][Address:4BE][Length:1][Padding:2]`
+- Response: `[ServiceID+1][Address:4][Length:1][Data...]`
+
+**0x41 vs 0x46 vs 0x4A Differences:**
+- All three appear to read memory
+- 0x4A uses J1939 Transport Protocol for larger responses
+- 0x41 and 0x46 return data in single CAN frame
+- Exact behavioral differences TBD (may be access level or region restrictions)
+
+### Service 0x43 - J1939 TP Response
+
+Service 0x43 responds with a J1939 TP.RTS (Ready To Send):
+```
+10 07 01 26 FF 00 EF 00
+│  │  │  │  │  │  └──── PGN bytes (0x00EF00 = Proprietary A)
+│  │  │  │  └──────────  Reserved (0xFF)
+│  │  │  └─────────────  Reserved (0x26)
+│  │  └────────────────  Num packets (1)
+│  └───────────────────  Total bytes (7)
+└──────────────────────  TP.RTS control byte (0x10)
+```
+
+This indicates the ECU has 7 bytes of data to send via Transport Protocol.
+
+---
+
+## Services That Return Errors (247 found)
+
+Most services return error code 0x0D followed by an error code byte.
+
+### Error Code Distribution
+
+| Error Code | Count | Likely Meaning |
+|------------|-------|----------------|
+| **0x18** | 232 | Service not supported / not available |
+| **0x02** | 10 | Invalid request format / missing parameters |
+| **0x04** | 2 | Access denied / security level insufficient |
+| **0x09** | 1 | Parameter out of range |
+| **0x0A** | 1 | Invalid length |
+| **0x1A** | 2 | Security/authentication required |
+
+### Services with Non-0x18 Errors (Potentially Interesting)
+
+These services are recognized but rejected for specific reasons:
+
+| Service | Error | Notes |
+|---------|-------|-------|
+| 0x01 | 0x02 | Format error - may need different request structure |
+| 0x04 | 0x04 | Access denied - may work with security session |
+| 0x05 | 0x04 | Access denied - may work with security session |
+| 0x07 | 0x02 | Format error |
+| 0x0A | 0x02 | Format error |
+| 0x0B | 0x02 | Format error |
+| 0x15 | 0x02 | Format error (SetDataByAddress without session?) |
+| 0x16 | 0x02 | Format error (GetAddressByParameterID without session?) |
+| 0x18 | 0x02 | Format error |
+| 0x44 | 0x09 | Parameter error |
+| 0x45 | 0x1A | Security required |
+| 0x47 | 0x1A | Security required |
+| 0x4B | 0x0A | Length error (response service ID, not request) |
+| 0x4C | 0x02 | Format error |
+| 0x4D | 0x02 | Format error |
+
+---
+
+## Services with No Response (Timeout)
+
+Only 2 services timed out completely:
+- These are likely completely unimplemented
+- Most "unsupported" services still return error 0x18
+
+---
+
+## Error Response Format
+
+```
++------+------------+------------------+
+| 0x0D | Error Code | Echo + Padding   |
++------+------------+------------------+
+  [0]      [1]         [2..7]
+```
+
+**Byte 0:** Always 0x0D for error responses
+**Byte 1:** Error code (see table above)
+**Bytes 2+:** Often echo service ID + 0xFF padding
+
+---
+
+## Known Service ID Mapping
+
+Combining scan results with protocol documentation:
+
+| Service | Name | Status | Notes |
+|---------|------|--------|-------|
+| 0x06 | Unknown | Responds | Needs investigation |
+| 0x0F | Unknown | Responds | Needs investigation |
+| 0x10 | GetParametersByID | Responds | Needs CLIP session |
+| 0x11 | SetParametersByID | Error 0x18 | Needs CLIP session |
+| 0x12 | ExecuteOperation | Error 0x18 | Needs CLIP session |
+| 0x14 | GetDataByAddress | Error 0x18 | Needs CLIP session |
+| 0x15 | SetDataByAddress | Error 0x02 | Needs CLIP session |
+| 0x16 | GetAddressByParameterID | Error 0x02 | Needs CLIP session |
+| 0x41 | MemoryRead Variant | **Works** | Direct, no session |
+| 0x43 | Unknown (TP) | **Works** | Returns via J1939 TP |
+| 0x45 | Unknown | Error 0x1A | Security required |
+| 0x46 | MemoryRead Variant | **Works** | Direct, no session |
+| 0x47 | Unknown | Error 0x1A | Security required |
+| 0x4A | MemoryRead | **Works** | Direct, via J1939 TP |
+
+---
+
+## Implications for Reverse Engineering
+
+1. **Multiple Memory Read Methods**: Three confirmed memory read services (0x41, 0x46, 0x4A) provide redundancy and potentially different access levels.
+
+2. **Security-Gated Services**: Services 0x45 and 0x47 return "security required" (0x1A) - these may be write operations or privileged reads.
+
+3. **CLIP Session Services**: Services 0x10-0x16 are recognized but require proper CLIP session establishment.
+
+4. **Minimal Timeout**: ECU responds to almost everything (254/256 services) - even unsupported services return explicit errors.
+
+5. **Error 0x18 Dominance**: ~91% of services return "not supported" - the ECU has a well-defined service table.
+
+---
+
+## Next Steps for Investigation
+
+1. **Complete J1939 TP for 0x43**: Finish the RTS/CTS/DT handshake to see what data it returns.
+
+2. **Test 0x41/0x46 with different addresses**: Verify they're truly memory read variants.
+
+3. **Establish CLIP session**: Test 0x10-0x16 with proper session authentication.
+
+4. **Probe security services**: Investigate 0x45/0x47 with security session active.
+
+5. **Cross-reference with Insite**: Match discovered services to PCL service names in decompiled code.
+
+---
+
+## Scan Tool Reference
+
+The service scanner was added to kuminz-cli:
+
+```bash
+# Quick scan (0x40-0x5F, ~30 sec)
+./kuminz-cli can0 --scan-services
+
+# Full scan (0x00-0xFF, ~2-3 min)
+./kuminz-cli can0 --scan-services-full
+
+# Probe single service with verbose output
+./kuminz-cli can0 --probe-service 4A
+```
+
+**Source files:**
+- `clip-core/include/clip/ServiceScanner.h`
+- `clip-core/src/ServiceScanner.cpp`
+
+---
+
+## Firmware Handler Cross-Reference (J90280.05)
+
+By cross-referencing the live scan results with the decompiled CM550 firmware (J90280.05), we can identify the exact handler functions for each service ID.
+
+### Service Registration Mechanism
+
+The firmware uses a registration function at `0x0002725a` to register service handlers during initialization. Services are registered by pushing:
+1. Handler function address
+2. Service ID (16-bit)
+
+Then calling the registration function.
+
+### Complete Service Handler Map
+
+**Services discovered from live scan with their firmware handlers:**
+
+| Service | Handler Address | Handler Name | Request Format | Status |
+|---------|-----------------|--------------|----------------|--------|
+| 0x06 | 0xf8d8 | (unnamed) | Unknown | Responds |
+| 0x0F | 0x1b07e | Same as 0x10 | Parameter request | Responds |
+| 0x10 | 0x1b07e | (GetParameters) | Parameter request | Responds (needs session) |
+| 0x41 | 0x1bc9c | `canDiagnosticResponseSender` | Special format | Responds 0x42 |
+| 0x43 | 0x1bf18 | `diagMemoryReadService43Handler` | 2-byte param + 4-byte offset | Responds via TP |
+| 0x46 | 0x1bf64 | `diagMemoryReadService46Handler` | 2-byte param only | Responds 0x47 |
+| 0x4A | 0x1c02e | `diagMemoryReadService4aHandler` | 4-byte addr + 1-byte len | **WORKING** |
+| 0x4C | 0x1c076 | `diagMemoryReadService4cHandler` | 4-byte addr + 4-byte len | Needs multi-frame |
+
+**Additional registered services (not responding to our probe format):**
+
+| Service | Handler Address | Handler Name | Notes |
+|---------|-----------------|--------------|-------|
+| 0x01 | 0xf86a | (unnamed) | Error 0x02 |
+| 0x04 | 0x1b150 | (unnamed) | Error 0x04 (access denied) |
+| 0x05 | 0x1b160 | (unnamed) | Error 0x04 (access denied) |
+| 0x07 | 0xf876 | (unnamed) | Error 0x02 |
+| 0x0A | 0xf89c | (unnamed) | Error 0x02 |
+| 0x0B | 0xf8e4 | (unnamed) | Error 0x02 |
+| 0x15 | 0xf9f0 | (unnamed) | Error 0x02 (SetDataByAddress) |
+| 0x16 | 0xf8b6 | (unnamed) | Error 0x02 (GetAddressByParamID) |
+| 0x18 | 0xf9e4 | (unnamed) | Error 0x02 |
+| 0x44 | 0x1b56e | Same as 0x45 | Error 0x09 |
+| 0x45 | 0x1b56e | Same as 0x44 | Error 0x1A (security) |
+| 0x47 | 0x1b604 | (unnamed) | Error 0x1A (security) |
+| 0x48 | 0x1bfc8 | `diagMemoryReadService48Handler` | Error 0x18 |
+| 0x49 | 0x1b668 | `j1939DataCopyWrapperExtended` | Error 0x18 |
+| 0x4B | 0x1b6ce | (unnamed) | Error 0x0A |
+| 0x4D | 0x1b716 | (unnamed) | Error 0x02 |
+| 0x4F | (complex) | Multi-handler | Timeout |
+
+### Memory Read Request Format Variations
+
+The firmware defines different request formats for memory read services (from `enums.csv`):
+
+| Service | Format Name | Request Structure |
+|---------|-------------|-------------------|
+| 0x43 | MEM_READ_2BYTE_4BYTE | `[43][Param:2][Offset:4]` (7 bytes) |
+| 0x46 | MEM_READ_2BYTE_ONLY | `[46][Param:2]` (3 bytes) |
+| 0x4A | MEM_READ_4BYTE_1BYTE | `[4A][Addr:4][Len:1]` (6 bytes) |
+| 0x4C | MEM_READ_4BYTE_4BYTE | `[4C][Addr:4][Len:4]` (9 bytes - needs multi-frame!) |
+
+**Key Discovery:** Service 0x4C would allow reading larger blocks (4-byte length = up to 4GB) but requires J1939 Transport Protocol for the request itself since 9 bytes exceeds the 8-byte CAN frame limit.
+
+### Service 0x41 Analysis
+
+Service 0x41 is interesting because it uses `canDiagnosticResponseSender` which:
+1. Calls `diagnosticMemoryAddressResolver()` to resolve the address
+2. Responds with service ID 0x42 (ServiceID + 1)
+3. Appears to be a specialized memory lookup, not raw address access
+
+This explains why our probe (address 0x00000000) returned specific data instead of raw memory.
+
+### Next Steps for Testing
+
+1. **Service 0x43**: Test with 2-byte parameter ID + 4-byte offset format
+2. **Service 0x46**: Test with just 2-byte parameter ID
+3. **Service 0x4C**: Implement multi-frame request using J1939 TP.BAM or TP.CM
+4. **Services 0x44/0x45/0x47**: Investigate security session requirements

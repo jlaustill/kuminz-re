@@ -117,5 +117,5 @@ cmake-build-*/
 # Log files (not needed in repo)
 insite9/*.log
 
-# Ghidra generated output
-**/ghidra/project/output/
+# Ghidra generated project directories (rebuildable via ./analyze.sh full)
+**/ghidra/project/
