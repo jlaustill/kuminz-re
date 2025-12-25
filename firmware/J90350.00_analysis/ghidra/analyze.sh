@@ -207,6 +207,7 @@ cmd_help() {
     echo "  labels     Apply code labels"
     echo "  funcparams Apply function parameter types"
     echo "  localvars  Apply local variable types"
+    echo "  vartypes   Apply global variable types (clears stale types first)"
     echo "  decompile  Decompile a single function by address or name"
     echo "  full       Run complete pipeline: init -> analyze -> memmap -> ramvars -> bootstrap -> export"
     echo "  status     Show project status"

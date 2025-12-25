@@ -154,6 +154,7 @@ cmd_help() {
     echo "  labels     Apply code labels"
     echo "  funcparams Apply function parameter types"
     echo "  localvars  Apply local variable types"
+    echo "  vartypes   Apply global variable types (clears stale types first)"
     echo "  constants  Apply constant definitions (magic numbers with names)"
     echo "  arrays     Apply array definitions"
     echo "  decompile  Decompile a single function by address or name"
