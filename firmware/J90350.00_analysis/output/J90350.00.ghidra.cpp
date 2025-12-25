@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Thu Dec 25 10:31:04 MST 2025
+// Generated: Thu Dec 25 10:40:14 MST 2025
 
 
 //
@@ -7531,12 +7531,11 @@ void cylinderBalanceCalculator(void)
   int cyl_fuel;
   undefined2 *puVar15;
   short *psVar16;
-  int *piVar17;
-  ushort avg_fuel;
-  undefined2 *puVar18;
-  short *psVar19;
-  undefined2 *puVar20;
-  short *psVar21;
+  int avg_fuel;
+  undefined2 *puVar17;
+  short *psVar18;
+  undefined2 *puVar19;
+  short *psVar20;
   
   if (_DAT_008072c0 == 1) {
     if (_DAT_008092e4 == 1) {
@@ -7544,15 +7543,15 @@ void cylinderBalanceCalculator(void)
       imbalance = 0;
       piVar11 = (int *)&DAT_008091ee;
       cyl_fuel = (int)&intake_manifold_temp_raw;
-      piVar17 = (int *)&DAT_00809284;
+      avg_fuel = (int)&DAT_00809284;
       do {
         cyl_fuel = cyl_fuel + 4;
-        *piVar17 = *(int *)cyl_fuel - *piVar11;
+        *(int *)avg_fuel = *(int *)cyl_fuel - *piVar11;
         uVar7 = (short)imbalance + 1;
         imbalance = (int)uVar7;
         piVar11 = piVar11 + 1;
         cyl_fuel = cyl_fuel;
-        piVar17 = piVar17 + 1;
+        avg_fuel = avg_fuel + 4;
       } while (uVar7 < 6);
       iVar2 = (_DAT_00809294 + _DAT_00809284) - _DAT_00809288;
       iVar6 = iVar2 - _DAT_00809290;
@@ -7655,18 +7654,18 @@ void cylinderBalanceCalculator(void)
       uVar7 = 0;
       puVar14 = (undefined2 *)&protection_state2_table_ptr_1;
       puVar15 = (undefined2 *)&DAT_008002e0;
-      puVar18 = (undefined2 *)&DAT_00809ebe;
-      puVar20 = (undefined2 *)&DAT_00809e9e;
+      puVar17 = (undefined2 *)&DAT_00809ebe;
+      puVar19 = (undefined2 *)&DAT_00809e9e;
       do {
-        *puVar20 = 10000;
-        *puVar18 = 10000;
+        *puVar19 = 10000;
+        *puVar17 = 10000;
         *puVar15 = 10000;
         *puVar14 = 10000;
         uVar7 = uVar7 + 1;
         puVar14 = puVar14 + 1;
         puVar15 = puVar15 + 1;
-        puVar18 = puVar18 + 1;
-        puVar20 = puVar20 + 1;
+        puVar17 = puVar17 + 1;
+        puVar19 = puVar19 + 1;
       } while (uVar7 < 0x10);
     }
     _vp44_mask_array = _DAT_0080ccf4;
@@ -7824,15 +7823,15 @@ void cylinderBalanceCalculator(void)
       uVar7 = 0;
       psVar13 = (short *)(&DAT_00012626 + (short)(_DAT_00809264 * 0xc));
       psVar16 = (short *)((short)(_DAT_00809262 * 0xc) + 0x125de);
-      psVar19 = (short *)((short)(_DAT_00809260 * 0xc) + 0x12596);
-      psVar21 = (short *)&DAT_00809252;
+      psVar18 = (short *)((short)(_DAT_00809260 * 0xc) + 0x12596);
+      psVar20 = (short *)&DAT_00809252;
       do {
-        *psVar21 = *psVar13 * sVar3 + *psVar16 * sVar1 + *psVar19 * sVar9;
+        *psVar20 = *psVar13 * sVar3 + *psVar16 * sVar1 + *psVar18 * sVar9;
         uVar7 = uVar7 + 1;
         psVar13 = psVar13 + 1;
         psVar16 = psVar16 + 1;
-        psVar19 = psVar19 + 1;
-        psVar21 = psVar21 + 1;
+        psVar18 = psVar18 + 1;
+        psVar20 = psVar20 + 1;
       } while (uVar7 < 6);
     }
     else {
@@ -20520,7 +20519,6 @@ void diagnosticMessage46Builder(void)
 // Function: j1708DiagnosticMessageHandler @ 0x0001f4e8
 //
 
-/* WARNING: Unable to use type for symbol checksum */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 uint j1708DiagnosticMessageHandler(void)
@@ -20535,17 +20533,18 @@ uint j1708DiagnosticMessageHandler(void)
   bool bVar5;
   undefined2 local_c;
   undefined2 local_a;
-  int data_value;
+  undefined3 uStack_8;
+  byte data_value;
   byte temp_5f236c3d0c;
-  char checksum;
+  byte checksum;
   byte pid;
   
   temp_5f236c3d0c = *(byte *)j1708_receive_buffer_pointer_2_32_dca2.buffer_ptr_3;
-  data_value._3_1_ = (char)j1708_receive_buffer_pointer_2_32_dca2.buffer_ptr_3;
-  checksum = (char)data_value;
-  data_value._0_3_ = (undefined3)(j1708_receive_buffer_pointer_2_32_dca2.buffer_ptr_3 >> 8);
-  data_value = CONCAT31(data_value._0_3_,(char)data_value + '\x02');
-  uVar2 = *(byte *)data_value & 3;
+  data_value = (byte)j1708_receive_buffer_pointer_2_32_dca2.buffer_ptr_3;
+  checksum = data_value;
+  uStack_8 = (undefined3)(j1708_receive_buffer_pointer_2_32_dca2.buffer_ptr_3 >> 8);
+  _uStack_8 = (byte *)CONCAT31(uStack_8,data_value + 2);
+  uVar2 = *_uStack_8 & 3;
   uVar4 = diagnosticMessageValidator(0x4a);
   if ((short)uVar4 != 0) {
     return uVar4;
@@ -20588,7 +20587,7 @@ LAB_0001f570:
     }
     _DAT_0080da76 = _DAT_0080da72;
   }
-  _byte_indicating_engine_commands_as_received_over_datalink_0_255 = (ushort)*(byte *)data_value;
+  _byte_indicating_engine_commands_as_received_over_datalink_0_255 = (ushort)*_uStack_8;
   _jcomm_speed_governor_mode_indicator_of_which_speed_mode_characte_0_3 = 0;
   _JCEGNETY = 0;
   DAT_0080da70 = 0x4a;
@@ -20607,10 +20606,10 @@ LAB_0001f570:
     _DAT_0080da50 = 1;
     _source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_da4e = 1;
     _jcomm_speed_control_status_1_speed_control_mode_0_n_true_false = 1;
-    data_value = CONCAT31(data_value._0_3_,checksum + '\x03');
-    pid = *(byte *)data_value;
-    data_value = CONCAT31(data_value._0_3_,checksum + '\x04');
-    local_a = CONCAT11(*(undefined1 *)data_value,pid);
+    _uStack_8 = (byte *)CONCAT31(uStack_8,checksum + 3);
+    pid = *_uStack_8;
+    _uStack_8 = (byte *)CONCAT31(uStack_8,checksum + 4);
+    local_a = CONCAT11(*_uStack_8,pid);
     _DAT_0080da5e = (undefined2)((int)(uint)local_a >> 1);
     sVar3 = _DAT_0080da80;
     break;
@@ -20620,8 +20619,8 @@ LAB_0001f570:
     _DAT_0080da50 = 2;
     _source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_da4e = 1;
     _jcomm_speed_control_status_1_speed_control_mode_0_n_true_false = 0;
-    data_value = CONCAT31(data_value._0_3_,checksum + '\x03');
-    local_c = (ushort)*(byte *)data_value;
+    _uStack_8 = (byte *)CONCAT31(uStack_8,checksum + 3);
+    local_c = (ushort)*_uStack_8;
     _DAT_0080da5c = local_c << 8;
     _DAT_0080da64 =
          _jcomm_no_load_torque_estimated_frictional_no_load_fueling_val_0_100 +
@@ -20641,11 +20640,11 @@ LAB_0001f570:
     _DAT_0080da50 = 3;
     _source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_da4e = 1;
     _jcomm_speed_control_status_1_speed_control_mode_0_n_true_false = 0;
-    data_value = CONCAT31(data_value._0_3_,checksum + '\x03');
-    local_a = (ushort)*(byte *)data_value;
+    _uStack_8 = (byte *)CONCAT31(uStack_8,checksum + 3);
+    local_a = (ushort)*_uStack_8;
     _DAT_0080da5a = local_a << 7;
-    data_value = CONCAT31(data_value._0_3_,checksum + '\x04');
-    bVar1 = *(byte *)data_value;
+    _uStack_8 = (byte *)CONCAT31(uStack_8,checksum + 4);
+    bVar1 = *_uStack_8;
     if (bVar1 < 0x80) {
       local_c = (ushort)bVar1;
     }
