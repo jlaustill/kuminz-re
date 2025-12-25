@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Thu Dec 25 11:42:26 MST 2025
+// Generated: Thu Dec 25 12:39:50 MST 2025
 
 
 //
@@ -16338,10 +16338,10 @@ void shutdownProtectionSlowCycle10Coordinator(void)
 
 
 //
-// Function: camSyncDiagnosticProcessingSlowCycle20Coordinator @ 0x0001b72a
+// Function: j1708ProcessingTaskWrapper @ 0x0001b72a
 //
 
-void camSyncDiagnosticProcessingSlowCycle20Coordinator(void)
+void j1708ProcessingTaskWrapper(void)
 
 {
                     /* From J90280.05 @ 0x017544 (confidence: 70%) */
@@ -16824,7 +16824,7 @@ undefined8 slowCycle40TaskDispatcher11(void)
     fuelAndMemoryCoordinator();
     vp44_engine_management_system();
     emptyStub8();
-    camSyncDiagnosticProcessingSlowCycle20Coordinator();
+    j1708ProcessingTaskWrapper();
     slowCycle20TaskDispatcher3();
     coldStartFuelControlSlowCycle40Coordinator();
     vp44FaultRegisterBit2Monitor();
@@ -16925,7 +16925,7 @@ undefined8 slowCycle40TaskDispatcher11(void)
     fuelAndMemoryCoordinator();
     fuelTimingModeCoordinator();
     schedulerTaskDispatcher2();
-    camSyncDiagnosticProcessingSlowCycle20Coordinator();
+    j1708ProcessingTaskWrapper();
     vp44DiagnosticControlSlowCycle20Coordinator();
     func_0x0004a322();
     _DAT_0080068c = 0x13;
@@ -17016,7 +17016,7 @@ undefined8 slowCycle40TaskDispatcher11(void)
     fuelAndMemoryCoordinator();
     vp44_engine_management_system();
     schedulerTaskDispatcher4();
-    camSyncDiagnosticProcessingSlowCycle20Coordinator();
+    j1708ProcessingTaskWrapper();
     slowCycle20TaskDispatcher3();
     _DAT_0080068c = 0x1d;
     break;
@@ -17107,7 +17107,7 @@ undefined8 slowCycle40TaskDispatcher11(void)
     fuelAndMemoryCoordinator();
     fuelTimingModeCoordinator();
     schedulerTaskDispatcher6();
-    camSyncDiagnosticProcessingSlowCycle20Coordinator();
+    j1708ProcessingTaskWrapper();
     vp44DiagnosticControlSlowCycle20Coordinator();
     cylinderBalanceCalculator();
     _DAT_0080068c = 0x27;
