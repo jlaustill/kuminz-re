@@ -302,6 +302,28 @@ cmd_localvars() {
     print_success "Local variable types applied"
 }
 
+cmd_vartypes() {
+    print_header "APPLYING GLOBAL VARIABLE TYPES: $FIRMWARE_NAME"
+
+    check_ghidra
+    check_project
+
+    VARS_CSV="$OUTPUT_DIR/global_variables.csv"
+
+    if [ ! -f "$VARS_CSV" ]; then
+        print_error "global_variables.csv not found: $VARS_CSV"
+        exit 1
+    fi
+
+    echo "Applying variable types from: $VARS_CSV"
+    echo "This clears stale types before applying new ones."
+    echo ""
+
+    run_script ApplyGlobalVariableTypes.java "$VARS_CSV"
+
+    print_success "Global variable types applied"
+}
+
 cmd_constants() {
     print_header "APPLYING CONSTANT DEFINITIONS: $FIRMWARE_NAME"
 
@@ -418,6 +440,7 @@ cmd_help() {
     echo "  labels     Apply code labels for improved readability"
     echo "  funcparams Apply function parameter types"
     echo "  localvars  Apply local variable types"
+    echo "  vartypes   Apply global variable types (clears stale types first)"
     echo "  constants  Apply constant definitions (magic numbers with names)"
     echo "  arrays     Apply array definitions"
     echo "  decompile  Decompile a single function by address or name"
@@ -448,6 +471,7 @@ dispatch_command() {
         labels)     cmd_labels ;;
         funcparams) cmd_funcparams ;;
         localvars)  cmd_localvars ;;
+        vartypes)   cmd_vartypes ;;
         constants)  cmd_constants ;;
         arrays)     cmd_arrays ;;
         decompile)  cmd_decompile "$@" ;;
