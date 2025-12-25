@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Thu Dec 25 12:48:16 MST 2025
+// Generated: Thu Dec 25 13:38:38 MST 2025
 
 
 //
@@ -23723,7 +23723,7 @@ void vp44MultiFrameResponseHandler(int param_1)
           vp44CanFrameBuilder(_DAT_008012c6);
           DAT_008012c4 = 0;
           _DAT_008012d2 = 0x8012de;
-          diagnosticServiceDispatcher(0x8012cc);
+          j1939DiagnosticServiceDispatcher(0x8012cc);
           return;
         }
         iVar3 = ((uint)DAT_008012c5 - (uint)DAT_008012c8) + 1;
@@ -32846,12 +32846,12 @@ undefined2 parameterLookupForInsite(void)
 
 
 //
-// Function: diagnosticServiceDispatcher @ 0x0002eea2
+// Function: j1939DiagnosticServiceDispatcher @ 0x0002eea2
 //
 
 /* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
-void diagnosticServiceDispatcher(dword msg_ptr)
+void j1939DiagnosticServiceDispatcher(dword msg_ptr)
 
 {
   char cVar1;
@@ -32967,12 +32967,12 @@ void systemControlFunction2(void)
 
 
 //
-// Function: diagnosticServiceDispatcherByPgn @ 0x0002efd0
+// Function: j1939DiagnosticServiceDispatcherByPgn @ 0x0002efd0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-ushort diagnosticServiceDispatcherByPgn(int param_1)
+ushort j1939DiagnosticServiceDispatcherByPgn(int param_1)
 
 {
   ushort uVar1;
