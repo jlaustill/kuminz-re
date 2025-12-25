@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Thu Dec 25 13:51:33 MST 2025
+// Generated: Thu Dec 25 13:55:22 MST 2025
 
 
 //
@@ -23681,12 +23681,12 @@ void vp44FuelTempHandler(undefined4 *param_1)
 
 
 //
-// Function: vp44MultiFrameResponseHandler @ 0x00022c26
+// Function: j1939TransportProtocolHandler @ 0x00022c26
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void vp44MultiFrameResponseHandler(int param_1)
+void j1939TransportProtocolHandler(int param_1)
 
 {
   byte bVar1;

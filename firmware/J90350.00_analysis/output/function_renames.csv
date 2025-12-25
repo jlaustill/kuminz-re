@@ -483,7 +483,7 @@ address,name
 0x00022a58,vp44CanFrameBuilder
 0x00022ad8,vp44MessageTransmitter
 0x00022b50,vp44FuelTempHandler
-0x00022c26,vp44MultiFrameResponseHandler
+0x00022c26,j1939TransportProtocolHandler
 0x00022d8e,diagnosticStatusRequestHandler
 0x00022de2,diagnosticErrorHandler
 0x00022de6,diagnosticServiceByteHandler
