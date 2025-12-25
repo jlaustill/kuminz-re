@@ -478,6 +478,7 @@ address,name,type,comment
 0x000343b2,vp44_fso_bit1_recovery_counter_reset,,
 0x000343be,vp44_fso_bit1_recovery_mode,,
 0x000343f2,vp44_fso_bit1_function_exit,,
+0x000345dc,address_range_validator_table,undefined4,
 0x00034b48,switchD,,
 0x00034b4c,switchdataD_00034b4c,word,
 0x00034b58,caseD_1,,
@@ -487,7 +488,6 @@ address,name,type,comment
 0x00034b6c,caseD_4,,
 0x00034b6c,caseD_5,,
 0x00034b7e,default,,
-0x000345dc,address_range_validator_table,byte[50],Memory region permission table - 5 regions x 10 bytes (start/end/flags)
 0x0003662e,module_lookup_table_en,byte,
 0x00037eae,firmware_data_source,byte,
 0x00040000,SUB_00040000,,

@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Thu Dec 25 14:03:57 MST 2025
+// Generated: Thu Dec 25 14:08:58 MST 2025
 
 
 //
@@ -33758,11 +33758,13 @@ byte hourMeterSecurityValidator(byte *auth_payload_ptr)
       hour_meter_dest_ptr = hour_meter_dest_ptr;
       hour_meter_src_ptr = hour_meter_src_ptr;
     } while (copy_counter < 4);
+                    /* Constant: HOUR_METER_TOLERANCE = 0x19 */
     if ((_hour_meter_ecm_run_time_none & 0xffffff00) - (extracted_hour_meter & 0xffffff00) < 0x1a) {
       all_keys_match = true;
       key_compare_ptr = extracted_key;
       for (key_byte_index = 0; (all_keys_match && ((char)key_byte_index < '\x06'));
           key_byte_index = key_byte_index + 1) {
+                    /* Constant: SECURITY_KEY_LENGTH = 0x06 */
         if ((&security_key)[(short)(char)key_byte_index] != *key_compare_ptr) {
           all_keys_match = false;
         }
@@ -37724,7 +37726,7 @@ undefined4 addressRangeValidator(uint param_1,uint param_2)
   if (uVar3 < param_1) {
     return 9;
   }
-  puVar4 = &DAT_000345dc;
+  puVar4 = &address_range_validator_table;
   bVar2 = 0;
   while ((param_1 < *puVar4 || (puVar4[1] < uVar3))) {
     param_2 = 0;
