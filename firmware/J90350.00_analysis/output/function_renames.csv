@@ -330,7 +330,7 @@ address,name
 0x0001b846,slowCycle40TaskDispatcher9
 0x0001b85a,vp44DiagnosticControlSlowCycle20Coordinator
 0x0001b862,slowCycle40TaskDispatcher10
-0x0001b876,slowCycle40TaskDispatcher11
+0x0001b876,main_loop
 0x0001bf54,scheduler_init
 0x0001bfa2,circularBufferPush
 0x0001bfde,circularBufferPop

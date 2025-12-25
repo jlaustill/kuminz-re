@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Thu Dec 25 12:39:50 MST 2025
+// Generated: Thu Dec 25 12:43:02 MST 2025
 
 
 //
@@ -16699,12 +16699,12 @@ void slowCycle40TaskDispatcher10(void)
 
 
 //
-// Function: slowCycle40TaskDispatcher11 @ 0x0001b876
+// Function: main_loop @ 0x0001b876
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-undefined8 slowCycle40TaskDispatcher11(void)
+undefined8 main_loop(void)
 
 {
   word wVar1;
@@ -17170,7 +17170,7 @@ void scheduler_init(void)
   _number_of_loop_delays_cal_0_65535 = 0;
   _DAT_0080068a = 0;
   Ram00fffa22 = 0x152;
-  _DAT_00808f24 = slowCycle40TaskDispatcher11;
+  _DAT_00808f24 = main_loop;
   Ram00fffa24 = 0x27;
   return;
 }
