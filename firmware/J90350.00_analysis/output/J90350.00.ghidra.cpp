@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Thu Dec 25 13:38:38 MST 2025
+// Generated: Thu Dec 25 13:48:24 MST 2025
 
 
 //
@@ -33189,12 +33189,12 @@ void torqueControlModeHandler(int param_1)
 
 
 //
-// Function: diagnosticCommandTableDispatcher @ 0x0002f4be
+// Function: j1939DiagnosticCommandTableDispatcher @ 0x0002f4be
 //
 
 /* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
-void diagnosticCommandTableDispatcher(byte cmd_index)
+void j1939DiagnosticCommandTableDispatcher(byte cmd_index)
 
 {
   byte bVar1;

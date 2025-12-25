@@ -648,7 +648,7 @@ address,name
 0x0002f114,systemControlFunction3
 0x0002f128,torqueControlModeHandler
 0x0002f47e,canMessageQueueRegister
-0x0002f4be,diagnosticCommandTableDispatcher
+0x0002f4be,j1939DiagnosticCommandTableDispatcher
 0x0002f538,diagnosticDataDump
 0x0002f606,temperatureRangeScaler
 0x0002f632,torqueBrakingOverrideHandler
