@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Thu Dec 25 11:24:12 MST 2025
+// Generated: Thu Dec 25 11:36:17 MST 2025
 
 
 //
@@ -10466,32 +10466,33 @@ void diagnosticCommandDispatcher(void)
   char cVar1;
   char cVar2;
   word wVar3;
-  word wVar4;
   byte handler_index;
-  char cVar6;
-  short sVar5;
+  char cVar5;
+  short sVar4;
   undefined4 unaff_D2;
   byte local_D2b__1;
-  byte bVar7;
-  byte *pbVar8;
+  byte bVar6;
+  byte *pbVar7;
   byte service_id;
   undefined2 local_18;
   byte abStack_16 [10];
   byte *pbStack_c;
   byte result_code;
   undefined4 local_8;
+  word currentTimerCount;
+  word elapsedTimerCount;
   byte cmd_byte;
   
                     /* From J90280.05 @ 0x012484 (confidence: 88%) */
-  wVar3 = hardware_timer_register.timer_count;
+  currentTimerCount = hardware_timer_register.timer_count;
   if ((j1708_transmit_buffer_2_32_ddc6.reserved_28[2] != 0) &&
      (handler_index = circularBufferEmptyCheck(), handler_index != 0)) {
     j1708_transmit_buffer_2_32_ddc6.reserved_28[2] = 0;
     diagnosticMessageQueueWrite((byte)((uint)unaff_D2 >> 0x10));
   }
   do {
-    wVar4 = hardware_timer_register.timer_count;
-    if ((499 < (int)((uint)wVar4 - (uint)wVar3)) ||
+    elapsedTimerCount = hardware_timer_register.timer_count;
+    if ((499 < (int)((uint)elapsedTimerCount - (uint)currentTimerCount)) ||
        ((j1708_receive_buffer_pointer_2_32_dca2.buffer_ptr_1 ==
          j1708_receive_buffer_pointer_2_32_dca2.buffer_ptr_3 &&
         (j1708_receive_buffer_pointer_2_32_dca2.buffer_full_flag != 1)))) {
@@ -10499,57 +10500,57 @@ void diagnosticCommandDispatcher(void)
     }
     cVar1 = *(char *)j1708_receive_buffer_pointer_2_32_dca2.buffer_ptr_3;
     local_8._3_1_ = (char)j1708_receive_buffer_pointer_2_32_dca2.buffer_ptr_3;
-    cVar6 = (char)local_8;
+    cVar5 = (char)local_8;
     local_8._0_3_ = (undefined3)(j1708_receive_buffer_pointer_2_32_dca2.buffer_ptr_3 >> 8);
     local_8 = (byte *)CONCAT31(local_8._0_3_,(char)local_8 + '\x01');
     if (*local_8 < 8) {
       if ((_DAT_00803caa & 1) != 0) {
-        bVar7 = (byte)((uint)unaff_D2 >> 0x10);
+        bVar6 = (byte)((uint)unaff_D2 >> 0x10);
         switch(*local_8) {
         case 3:
-          local_8 = (byte *)CONCAT31(local_8._0_3_,cVar6 + '\x02');
-          bVar7 = 0;
-          pbVar8 = abStack_16;
+          local_8 = (byte *)CONCAT31(local_8._0_3_,cVar5 + '\x02');
+          bVar6 = 0;
+          pbVar7 = abStack_16;
           do {
-            *pbVar8 = *local_8;
+            *pbVar7 = *local_8;
             local_8 = (byte *)CONCAT31(local_8._0_3_,(char)local_8 + '\x01');
-            bVar7 = bVar7 + 1;
-            pbVar8 = pbVar8 + 1;
-          } while (bVar7 < 10);
-          cVar6 = hourMeterSecurityValidator(abStack_16);
-          if (cVar6 == '\0') {
+            bVar6 = bVar6 + 1;
+            pbVar7 = pbVar7 + 1;
+          } while (bVar6 < 10);
+          cVar5 = hourMeterSecurityValidator(abStack_16);
+          if (cVar5 == '\0') {
             switch(*local_8) {
             case 0x40:
-              cVar6 = waterInFuelFaultClear();
+              cVar5 = waterInFuelFaultClear();
               break;
             case 0x41:
-              cVar6 = j1708BufferStateHandler();
+              cVar5 = j1708BufferStateHandler();
               break;
             case 0x42:
-              cVar6 = activateHighRpmShutdownFlag();
+              cVar5 = activateHighRpmShutdownFlag();
               break;
             case 0x43:
-              cVar6 = triggerDiagnosticSystemReset();
+              cVar5 = triggerDiagnosticSystemReset();
               break;
             default:
-              cVar6 = '\x18';
+              cVar5 = '\x18';
               break;
             case 0x50:
-              cVar6 = '\0';
+              cVar5 = '\0';
               break;
             case 0x51:
-              cVar6 = memoryPatchingSystem();
+              cVar5 = memoryPatchingSystem();
               break;
             case 0x52:
-              cVar6 = j1708BufferEnableSetter();
+              cVar5 = j1708BufferEnableSetter();
               break;
             case 0x53:
-              cVar6 = '\x04';
+              cVar5 = '\x04';
               break;
             case 0x54:
-              cVar6 = circularBufferToEepromTransfer();
+              cVar5 = circularBufferToEepromTransfer();
             }
-            if (cVar6 != -1) {
+            if (cVar5 != -1) {
               diagnosticMessageQueueWrite((byte)((uint)unaff_D2 >> 0x10));
             }
           }
@@ -10558,7 +10559,7 @@ void diagnosticCommandDispatcher(void)
           }
           break;
         case 4:
-          local_8 = (byte *)CONCAT31(local_8._0_3_,cVar6 + '\x02');
+          local_8 = (byte *)CONCAT31(local_8._0_3_,cVar5 + '\x02');
           switch(*local_8) {
           case 100:
             systemControl64();
@@ -10569,10 +10570,10 @@ void diagnosticCommandDispatcher(void)
             break;
           case 0x66:
             _bit_2_0_15_enables_j1939_71_engine_broadcast_1_on_0_off = 0;
-            diagnosticMessageQueueWrite(bVar7);
+            diagnosticMessageQueueWrite(bVar6);
             break;
           default:
-            diagnosticMessageQueueWrite(bVar7);
+            diagnosticMessageQueueWrite(bVar6);
             break;
           case 0x69:
             waterInFuelDetectionStateInit();
@@ -10581,17 +10582,17 @@ void diagnosticCommandDispatcher(void)
           case 0x70:
           case 0x72:
           case 0x76:
-            diagnosticMessageQueueWrite(bVar7);
+            diagnosticMessageQueueWrite(bVar6);
             break;
           case 0x71:
             _bit_2_0_15_enables_j1939_71_engine_broadcast_1_on_0_off =
                  _bit_2_0_15_enables_j1939_71_engine_broadcast_1_on_0_off | 1;
-            diagnosticMessageQueueWrite(bVar7);
+            diagnosticMessageQueueWrite(bVar6);
             break;
           case 0x73:
             _bit_2_0_15_enables_j1939_71_engine_broadcast_1_on_0_off =
                  _bit_2_0_15_enables_j1939_71_engine_broadcast_1_on_0_off | 2;
-            diagnosticMessageQueueWrite(bVar7);
+            diagnosticMessageQueueWrite(bVar6);
             break;
           case 0x74:
             systemControl74();
@@ -10601,41 +10602,41 @@ void diagnosticCommandDispatcher(void)
           }
           break;
         case 5:
-          local_8 = (byte *)CONCAT31(local_8._0_3_,cVar6 + '\x02');
+          local_8 = (byte *)CONCAT31(local_8._0_3_,cVar5 + '\x02');
           if (((*local_8 & 0xf) == 0) && ((*local_8 & 0xf0) != 0xf0)) {
-            cVar2 = cVar1 + -1 + cVar6;
+            cVar2 = cVar1 + -1 + cVar5;
             pbStack_c = (byte *)CONCAT31(local_8._0_3_,cVar2);
             cmd_byte = *pbStack_c;
             pbStack_c = (byte *)CONCAT31(local_8._0_3_,cVar2 + '\x01');
             local_18 = CONCAT11(*pbStack_c,cmd_byte);
-            pbStack_c = (byte *)CONCAT31(local_8._0_3_,cVar6 + '\x03');
-            sVar5 = crc16Calculate((short)pbStack_c);
-            if (sVar5 != local_18) {
+            pbStack_c = (byte *)CONCAT31(local_8._0_3_,cVar5 + '\x03');
+            sVar4 = crc16Calculate((short)pbStack_c);
+            if (sVar4 != local_18) {
               diagnosticMessageQueueWrite((byte)((uint)unaff_D2 >> 0x10));
               break;
             }
           }
-          bVar7 = *local_8 & 0xf0;
+          bVar6 = *local_8 & 0xf0;
           service_id = (byte)((uint)unaff_D2 >> 0x10);
-          if (bVar7 == 0x60) {
+          if (bVar6 == 0x60) {
             diagnosticMemoryReadHandler(service_id);
           }
-          else if (bVar7 == 0xc0) {
+          else if (bVar6 == 0xc0) {
             diagnosticMemoryReadHandler(service_id);
           }
-          else if (bVar7 == 0x80) {
+          else if (bVar6 == 0x80) {
             diagnosticMemoryWriteHandler(service_id);
           }
-          else if (bVar7 == 0xe0) {
+          else if (bVar6 == 0xe0) {
             diagnosticMemoryReadHandler(service_id);
           }
-          else if (bVar7 == 0xa0) {
+          else if (bVar6 == 0xa0) {
             diagnosticMemoryWriteHandler(service_id);
           }
-          else if (bVar7 == 0xf0) {
+          else if (bVar6 == 0xf0) {
             multiPacketTransmitHandler();
           }
-          else if (bVar7 == 0xb0) {
+          else if (bVar6 == 0xb0) {
             multiPacketReceiveHandler();
           }
           else {
@@ -10643,9 +10644,9 @@ void diagnosticCommandDispatcher(void)
           }
           break;
         case 6:
-          local_8 = (byte *)CONCAT31(local_8._0_3_,cVar6 + '\x02');
+          local_8 = (byte *)CONCAT31(local_8._0_3_,cVar5 + '\x02');
           if ((*local_8 == 't') && (DAT_0080dcbb != '\0')) {
-            diagnosticMessageQueueWrite(bVar7);
+            diagnosticMessageQueueWrite(bVar6);
             DAT_0080dcbb = DAT_0080dcbb + -1;
             j1708_transmit_buffer_2_32_ddc6.reserved_28[0] = 0;
             if (j1708_transmit_buffer_2_32_ddc6.reserved_28[1] != 0) {
@@ -10680,8 +10681,8 @@ void diagnosticCommandDispatcher(void)
          CONCAT31(j1708_receive_buffer_pointer_2_32_dca2.buffer_ptr_3._0_3_,
                   cVar1 + '\x01' + (char)j1708_receive_buffer_pointer_2_32_dca2.buffer_ptr_3);
     j1708_receive_buffer_pointer_2_32_dca2.buffer_full_flag = 0;
-    wVar4 = tpu_dscr.dscr_status;
-    tpu_dscr.dscr_status = wVar4 | 0x20;
+    wVar3 = tpu_dscr.dscr_status;
+    tpu_dscr.dscr_status = wVar3 | 0x20;
   } while( true );
 }
 
@@ -33627,9 +33628,10 @@ void bitPackingAlgorithm(byte *input_buffer,byte *output_buffer)
   dword cached_input_offset;
   byte loop_counter;
   byte current_mask;
+  char cVar2;
   byte input_bit_value;
   byte backward_bit_counter;
-  char cVar2;
+  byte local_D5b_164;
   byte bit_position;
   byte backward_byte_index;
   byte *mask_table_ptr;
@@ -33650,7 +33652,7 @@ void bitPackingAlgorithm(byte *input_buffer,byte *output_buffer)
   } while ((char)loop_counter < '\n');
   bit_position = 0;
   backward_byte_index = 0;
-  cVar2 = '\0';
+  local_D5b_164 = 0;
   current_mask = 9;
   input_byte_index = 0;
   mask_table_ptr = &SECURITY_MASK_TABLE;
@@ -33664,12 +33666,12 @@ void bitPackingAlgorithm(byte *input_buffer,byte *output_buffer)
       input_bit_value = input_buffer[cached_input_offset] << (backward_bit_counter & 0x3f) & 0x80;
       if (((uint)bVar1 << ((int)(char)backward_bit_counter & 0x3fU) & 0x80) == 0) {
         if (input_bit_value != 0) {
-          input_bit_value = '\x01' << (7U - cVar2 & 0x3f);
+          input_bit_value = '\x01' << (7 - local_D5b_164 & 0x3f);
         }
         *pbVar3 = input_bit_value | *pbVar3;
-        cVar2 = cVar2 + '\x01';
-        if (cVar2 == '\b') {
-          cVar2 = '\0';
+        local_D5b_164 = local_D5b_164 + 1;
+        if (local_D5b_164 == 8) {
+          local_D5b_164 = 0;
           pbVar3 = pbVar3 + 1;
           backward_byte_index = backward_byte_index + 1;
         }
