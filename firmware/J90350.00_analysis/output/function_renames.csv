@@ -166,7 +166,7 @@ address,name
 0x00015df0,canControllerInit
 0x00015e06,initCANBus
 0x00015f8c,emptyStubFunction4
-0x00015f8e,diagnosticCommandDispatcher
+0x00015f8e,j1708DiagnosticCommandDispatcher
 0x0001645e,safeDivideWithClamp
 0x0001651e,clampedDivisionCalculator
 0x000165f2,param_address_calc

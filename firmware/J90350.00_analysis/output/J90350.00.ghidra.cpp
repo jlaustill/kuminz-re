@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Thu Dec 25 11:36:17 MST 2025
+// Generated: Thu Dec 25 11:42:26 MST 2025
 
 
 //
@@ -10455,24 +10455,23 @@ void emptyStubFunction4(void)
 
 
 //
-// Function: diagnosticCommandDispatcher @ 0x00015f8e
+// Function: j1708DiagnosticCommandDispatcher @ 0x00015f8e
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void diagnosticCommandDispatcher(void)
+void j1708DiagnosticCommandDispatcher(void)
 
 {
   char cVar1;
   char cVar2;
-  word wVar3;
   byte handler_index;
-  char cVar5;
-  short sVar4;
+  char cVar4;
+  short sVar3;
   undefined4 unaff_D2;
   byte local_D2b__1;
-  byte bVar6;
-  byte *pbVar7;
+  byte bVar5;
+  byte *pbVar6;
   byte service_id;
   undefined2 local_18;
   byte abStack_16 [10];
@@ -10481,6 +10480,7 @@ void diagnosticCommandDispatcher(void)
   undefined4 local_8;
   word currentTimerCount;
   word elapsedTimerCount;
+  word temp_13f3e5c97ab;
   byte cmd_byte;
   
                     /* From J90280.05 @ 0x012484 (confidence: 88%) */
@@ -10500,57 +10500,57 @@ void diagnosticCommandDispatcher(void)
     }
     cVar1 = *(char *)j1708_receive_buffer_pointer_2_32_dca2.buffer_ptr_3;
     local_8._3_1_ = (char)j1708_receive_buffer_pointer_2_32_dca2.buffer_ptr_3;
-    cVar5 = (char)local_8;
+    cVar4 = (char)local_8;
     local_8._0_3_ = (undefined3)(j1708_receive_buffer_pointer_2_32_dca2.buffer_ptr_3 >> 8);
     local_8 = (byte *)CONCAT31(local_8._0_3_,(char)local_8 + '\x01');
     if (*local_8 < 8) {
       if ((_DAT_00803caa & 1) != 0) {
-        bVar6 = (byte)((uint)unaff_D2 >> 0x10);
+        bVar5 = (byte)((uint)unaff_D2 >> 0x10);
         switch(*local_8) {
         case 3:
-          local_8 = (byte *)CONCAT31(local_8._0_3_,cVar5 + '\x02');
-          bVar6 = 0;
-          pbVar7 = abStack_16;
+          local_8 = (byte *)CONCAT31(local_8._0_3_,cVar4 + '\x02');
+          bVar5 = 0;
+          pbVar6 = abStack_16;
           do {
-            *pbVar7 = *local_8;
+            *pbVar6 = *local_8;
             local_8 = (byte *)CONCAT31(local_8._0_3_,(char)local_8 + '\x01');
-            bVar6 = bVar6 + 1;
-            pbVar7 = pbVar7 + 1;
-          } while (bVar6 < 10);
-          cVar5 = hourMeterSecurityValidator(abStack_16);
-          if (cVar5 == '\0') {
+            bVar5 = bVar5 + 1;
+            pbVar6 = pbVar6 + 1;
+          } while (bVar5 < 10);
+          cVar4 = hourMeterSecurityValidator(abStack_16);
+          if (cVar4 == '\0') {
             switch(*local_8) {
             case 0x40:
-              cVar5 = waterInFuelFaultClear();
+              cVar4 = waterInFuelFaultClear();
               break;
             case 0x41:
-              cVar5 = j1708BufferStateHandler();
+              cVar4 = j1708BufferStateHandler();
               break;
             case 0x42:
-              cVar5 = activateHighRpmShutdownFlag();
+              cVar4 = activateHighRpmShutdownFlag();
               break;
             case 0x43:
-              cVar5 = triggerDiagnosticSystemReset();
+              cVar4 = triggerDiagnosticSystemReset();
               break;
             default:
-              cVar5 = '\x18';
+              cVar4 = '\x18';
               break;
             case 0x50:
-              cVar5 = '\0';
+              cVar4 = '\0';
               break;
             case 0x51:
-              cVar5 = memoryPatchingSystem();
+              cVar4 = memoryPatchingSystem();
               break;
             case 0x52:
-              cVar5 = j1708BufferEnableSetter();
+              cVar4 = j1708BufferEnableSetter();
               break;
             case 0x53:
-              cVar5 = '\x04';
+              cVar4 = '\x04';
               break;
             case 0x54:
-              cVar5 = circularBufferToEepromTransfer();
+              cVar4 = circularBufferToEepromTransfer();
             }
-            if (cVar5 != -1) {
+            if (cVar4 != -1) {
               diagnosticMessageQueueWrite((byte)((uint)unaff_D2 >> 0x10));
             }
           }
@@ -10559,7 +10559,7 @@ void diagnosticCommandDispatcher(void)
           }
           break;
         case 4:
-          local_8 = (byte *)CONCAT31(local_8._0_3_,cVar5 + '\x02');
+          local_8 = (byte *)CONCAT31(local_8._0_3_,cVar4 + '\x02');
           switch(*local_8) {
           case 100:
             systemControl64();
@@ -10570,10 +10570,10 @@ void diagnosticCommandDispatcher(void)
             break;
           case 0x66:
             _bit_2_0_15_enables_j1939_71_engine_broadcast_1_on_0_off = 0;
-            diagnosticMessageQueueWrite(bVar6);
+            diagnosticMessageQueueWrite(bVar5);
             break;
           default:
-            diagnosticMessageQueueWrite(bVar6);
+            diagnosticMessageQueueWrite(bVar5);
             break;
           case 0x69:
             waterInFuelDetectionStateInit();
@@ -10582,17 +10582,17 @@ void diagnosticCommandDispatcher(void)
           case 0x70:
           case 0x72:
           case 0x76:
-            diagnosticMessageQueueWrite(bVar6);
+            diagnosticMessageQueueWrite(bVar5);
             break;
           case 0x71:
             _bit_2_0_15_enables_j1939_71_engine_broadcast_1_on_0_off =
                  _bit_2_0_15_enables_j1939_71_engine_broadcast_1_on_0_off | 1;
-            diagnosticMessageQueueWrite(bVar6);
+            diagnosticMessageQueueWrite(bVar5);
             break;
           case 0x73:
             _bit_2_0_15_enables_j1939_71_engine_broadcast_1_on_0_off =
                  _bit_2_0_15_enables_j1939_71_engine_broadcast_1_on_0_off | 2;
-            diagnosticMessageQueueWrite(bVar6);
+            diagnosticMessageQueueWrite(bVar5);
             break;
           case 0x74:
             systemControl74();
@@ -10602,41 +10602,41 @@ void diagnosticCommandDispatcher(void)
           }
           break;
         case 5:
-          local_8 = (byte *)CONCAT31(local_8._0_3_,cVar5 + '\x02');
+          local_8 = (byte *)CONCAT31(local_8._0_3_,cVar4 + '\x02');
           if (((*local_8 & 0xf) == 0) && ((*local_8 & 0xf0) != 0xf0)) {
-            cVar2 = cVar1 + -1 + cVar5;
+            cVar2 = cVar1 + -1 + cVar4;
             pbStack_c = (byte *)CONCAT31(local_8._0_3_,cVar2);
             cmd_byte = *pbStack_c;
             pbStack_c = (byte *)CONCAT31(local_8._0_3_,cVar2 + '\x01');
             local_18 = CONCAT11(*pbStack_c,cmd_byte);
-            pbStack_c = (byte *)CONCAT31(local_8._0_3_,cVar5 + '\x03');
-            sVar4 = crc16Calculate((short)pbStack_c);
-            if (sVar4 != local_18) {
+            pbStack_c = (byte *)CONCAT31(local_8._0_3_,cVar4 + '\x03');
+            sVar3 = crc16Calculate((short)pbStack_c);
+            if (sVar3 != local_18) {
               diagnosticMessageQueueWrite((byte)((uint)unaff_D2 >> 0x10));
               break;
             }
           }
-          bVar6 = *local_8 & 0xf0;
+          bVar5 = *local_8 & 0xf0;
           service_id = (byte)((uint)unaff_D2 >> 0x10);
-          if (bVar6 == 0x60) {
+          if (bVar5 == 0x60) {
             diagnosticMemoryReadHandler(service_id);
           }
-          else if (bVar6 == 0xc0) {
+          else if (bVar5 == 0xc0) {
             diagnosticMemoryReadHandler(service_id);
           }
-          else if (bVar6 == 0x80) {
+          else if (bVar5 == 0x80) {
             diagnosticMemoryWriteHandler(service_id);
           }
-          else if (bVar6 == 0xe0) {
+          else if (bVar5 == 0xe0) {
             diagnosticMemoryReadHandler(service_id);
           }
-          else if (bVar6 == 0xa0) {
+          else if (bVar5 == 0xa0) {
             diagnosticMemoryWriteHandler(service_id);
           }
-          else if (bVar6 == 0xf0) {
+          else if (bVar5 == 0xf0) {
             multiPacketTransmitHandler();
           }
-          else if (bVar6 == 0xb0) {
+          else if (bVar5 == 0xb0) {
             multiPacketReceiveHandler();
           }
           else {
@@ -10644,9 +10644,9 @@ void diagnosticCommandDispatcher(void)
           }
           break;
         case 6:
-          local_8 = (byte *)CONCAT31(local_8._0_3_,cVar5 + '\x02');
+          local_8 = (byte *)CONCAT31(local_8._0_3_,cVar4 + '\x02');
           if ((*local_8 == 't') && (DAT_0080dcbb != '\0')) {
-            diagnosticMessageQueueWrite(bVar6);
+            diagnosticMessageQueueWrite(bVar5);
             DAT_0080dcbb = DAT_0080dcbb + -1;
             j1708_transmit_buffer_2_32_ddc6.reserved_28[0] = 0;
             if (j1708_transmit_buffer_2_32_ddc6.reserved_28[1] != 0) {
@@ -10681,8 +10681,8 @@ void diagnosticCommandDispatcher(void)
          CONCAT31(j1708_receive_buffer_pointer_2_32_dca2.buffer_ptr_3._0_3_,
                   cVar1 + '\x01' + (char)j1708_receive_buffer_pointer_2_32_dca2.buffer_ptr_3);
     j1708_receive_buffer_pointer_2_32_dca2.buffer_full_flag = 0;
-    wVar3 = tpu_dscr.dscr_status;
-    tpu_dscr.dscr_status = wVar3 | 0x20;
+    temp_13f3e5c97ab = tpu_dscr.dscr_status;
+    tpu_dscr.dscr_status = temp_13f3e5c97ab | 0x20;
   } while( true );
 }
 
@@ -16345,7 +16345,7 @@ void camSyncDiagnosticProcessingSlowCycle20Coordinator(void)
 
 {
                     /* From J90280.05 @ 0x017544 (confidence: 70%) */
-  diagnosticCommandDispatcher();
+  j1708DiagnosticCommandDispatcher();
   return;
 }
 
@@ -33628,6 +33628,7 @@ void bitPackingAlgorithm(byte *input_buffer,byte *output_buffer)
   dword cached_input_offset;
   byte loop_counter;
   byte current_mask;
+  byte local_D2b_198;
   char cVar2;
   byte input_bit_value;
   byte backward_bit_counter;
@@ -33693,15 +33694,15 @@ void bitPackingAlgorithm(byte *input_buffer,byte *output_buffer)
     input_byte_index = input_byte_index + 1;
     mask_table_ptr = mask_table_ptr + 1;
   } while ((char)input_byte_index < '\n');
-  cVar2 = '\0';
+  local_D2b_198 = 0;
   pbVar3 = working_buffer;
   pbVar4 = &SECURITY_XOR_TABLE;
   do {
     *pbVar3 = working_buffer[(short)(ushort)*pbVar4] ^ *pbVar3;
-    cVar2 = cVar2 + '\x01';
+    local_D2b_198 = local_D2b_198 + 1;
     pbVar3 = pbVar3 + 1;
     pbVar4 = pbVar4 + 1;
-  } while (cVar2 < '\n');
+  } while ((char)local_D2b_198 < '\n');
   cVar2 = '\0';
   backward_write_ptr = &SECURITY_REORDER_TABLE;
   pbVar3 = working_buffer;

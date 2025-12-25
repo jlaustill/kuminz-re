@@ -49,9 +49,9 @@ function_address,function_name,old_ghidra_name,new_variable_name,type,comment
 0x00021982,diagnosticServiceSecurityValidator,uVar4,required_param_len,ushort,Required param length 1/3/5 by service
 0x00021982,diagnosticServiceSecurityValidator,cVar3,auth_result,char,Result from hourMeterSecurityValidator
 
-# diagnosticCommandDispatcher @ 0x15f8e - Main diagnostic command processor
-0x00015f8e,diagnosticCommandDispatcher,wVar3,currentTimerCount,word,Timer count at function entry for timeout calculation
-0x00015f8e,diagnosticCommandDispatcher,wVar4,elapsedTimerCount,word,Timer count for elapsed time comparison
+# j1708DiagnosticCommandDispatcher @ 0x15f8e - J1708 diagnostic command processor
+0x00015f8e,j1708DiagnosticCommandDispatcher,wVar3,currentTimerCount,word,Timer count at function entry for timeout calculation
+0x00015f8e,j1708DiagnosticCommandDispatcher,wVar4,elapsedTimerCount,word,Timer count for elapsed time comparison
 
 # memoryOperationDispatcher @ 0x2148a - Routes memory read/write operations
 # Already has named parameters: request_ptr, operation_size, operation_flags
