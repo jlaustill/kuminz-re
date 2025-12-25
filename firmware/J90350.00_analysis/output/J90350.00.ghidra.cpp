@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Thu Dec 25 12:43:02 MST 2025
+// Generated: Thu Dec 25 12:48:16 MST 2025
 
 
 //
@@ -16713,11 +16713,11 @@ undefined8 main_loop(void)
   byte *pbVar2;
   
   if (_enable_for_the_executive_timing_data_gatherer_enabled_disabled == 0) {
-    _DAT_0080068a = 0;
+    _timing_data_initialized = 0;
   }
   else {
-    if (_DAT_0080068a == 0) {
-      _DAT_00800690 = &SSECTMDX + _DAT_0080068c * 0x10;
+    if (_timing_data_initialized == 0) {
+      _current_phase_timing_ptr = &SSECTMDX + _main_loop_phase_index * 0x10;
       for (pbVar2 = &SSECTMDX; pbVar2 < &fuel_limit_from_pump_analog_error_algorithm_0_to_300;
           pbVar2 = pbVar2 + 0x10) {
         pbVar2[0] = 0;
@@ -16735,11 +16735,11 @@ undefined8 main_loop(void)
       }
       _number_of_times_which_frame_overflow_has_occured_in_executive_0_65535 = 0;
       _DAT_00809ee2 = 0;
-      _DAT_0080068a = 1;
+      _timing_data_initialized = 1;
     }
-    _DAT_0080068e = hardware_timer_register.timer_count;
+    _phase_start_timer_count = hardware_timer_register.timer_count;
   }
-  switch(_DAT_0080068c) {
+  switch(_main_loop_phase_index) {
   case 0:
     outputDriverStrobeWrapper();
     fuelAndMemoryCoordinator();
@@ -16748,8 +16748,8 @@ undefined8 main_loop(void)
     schedulerTaskDispatcher7();
     throttleDecelerationCoordinator();
     hourMeterIncrement();
-    _DAT_00800690 = &SSECTMDX;
-    _DAT_0080068c = 1;
+    _current_phase_timing_ptr = &SSECTMDX;
+    _main_loop_phase_index = 1;
     break;
   case 1:
     outputDriverStrobeWrapper();
@@ -16759,7 +16759,7 @@ undefined8 main_loop(void)
     schedulerTaskDispatcher8();
     boostErrorCoordinator();
     outputDriverFaultMonitor();
-    _DAT_0080068c = 2;
+    _main_loop_phase_index = 2;
     break;
   case 2:
     outputDriverStrobeWrapper();
@@ -16769,7 +16769,7 @@ undefined8 main_loop(void)
     schedulerTaskDispatcher9();
     slowCycle40TaskDispatcher1();
     engineRpmHardwareTimerSetup();
-    _DAT_0080068c = 3;
+    _main_loop_phase_index = 3;
     break;
   case 3:
     outputDriverStrobeWrapper();
@@ -16779,7 +16779,7 @@ undefined8 main_loop(void)
     schedulerTaskDispatcher10();
     fuelSmokeDutyCycleCoordinator();
     trendingDataTimerAccumulator();
-    _DAT_0080068c = 4;
+    _main_loop_phase_index = 4;
     break;
   case 4:
     outputDriverStrobeWrapper();
@@ -16788,7 +16788,7 @@ undefined8 main_loop(void)
     schedulerTaskDispatcher4();
     schedulerTaskDispatcher11();
     auxiliarySystemControlWrapper();
-    _DAT_0080068c = 5;
+    _main_loop_phase_index = 5;
     break;
   case 5:
     outputDriverStrobeWrapper();
@@ -16798,7 +16798,7 @@ undefined8 main_loop(void)
     dzgTimingAndPressureSlowCycle10Coordinator();
     slowCycle20TaskDispatcher1();
     emptyStub4();
-    _DAT_0080068c = 6;
+    _main_loop_phase_index = 6;
     break;
   case 6:
     outputDriverStrobeWrapper();
@@ -16807,7 +16807,7 @@ undefined8 main_loop(void)
     schedulerTaskDispatcher6();
     rpmBasedFuelLimiterCoordinator();
     vp44DiagnosticFaultMonitoringSlowCycle20Coordinator();
-    _DAT_0080068c = 7;
+    _main_loop_phase_index = 7;
     break;
   case 7:
     outputDriverStrobeWrapper();
@@ -16817,7 +16817,7 @@ undefined8 main_loop(void)
     shutdownProtectionSlowCycle10Coordinator();
     slowCycle20TaskDispatcher2();
     liftPumpFuelDeliveryController();
-    _DAT_0080068c = 8;
+    _main_loop_phase_index = 8;
     break;
   case 8:
     outputDriverStrobeWrapper();
@@ -16828,7 +16828,7 @@ undefined8 main_loop(void)
     slowCycle20TaskDispatcher3();
     coldStartFuelControlSlowCycle40Coordinator();
     vp44FaultRegisterBit2Monitor();
-    _DAT_0080068c = 9;
+    _main_loop_phase_index = 9;
     break;
   case 9:
     outputDriverStrobeWrapper();
@@ -16837,7 +16837,7 @@ undefined8 main_loop(void)
     schedulerTaskDispatcher1();
     diagnosticMessageWrapper();
     slowCycle20TaskDispatcher4();
-    _DAT_0080068c = 10;
+    _main_loop_phase_index = 10;
     break;
   case 10:
     outputDriverStrobeWrapper();
@@ -16847,7 +16847,7 @@ undefined8 main_loop(void)
     schedulerTaskDispatcher7();
     slowCycle40TaskDispatcher2();
     driverStatusByteBuilder();
-    _DAT_0080068c = 0xb;
+    _main_loop_phase_index = 0xb;
     break;
   case 0xb:
     outputDriverStrobeWrapper();
@@ -16857,7 +16857,7 @@ undefined8 main_loop(void)
     schedulerTaskDispatcher8();
     slowCycle40TaskDispatcher3();
     ioOutputFlagMappingSlowCycle40Coordinator();
-    _DAT_0080068c = 0xc;
+    _main_loop_phase_index = 0xc;
     break;
   case 0xc:
     outputDriverStrobeWrapper();
@@ -16867,7 +16867,7 @@ undefined8 main_loop(void)
     schedulerTaskDispatcher9();
     slowCycle40TaskDispatcher4();
     frictionalLoadTorqueManagementSlowCycle40Coordinator();
-    _DAT_0080068c = 0xd;
+    _main_loop_phase_index = 0xd;
     break;
   case 0xd:
     outputDriverStrobeWrapper();
@@ -16877,7 +16877,7 @@ undefined8 main_loop(void)
     schedulerTaskDispatcher10();
     slowCycle40TaskDispatcher5();
     engineOperatingModeStateTrackingSlowCycle40Coordinator();
-    _DAT_0080068c = 0xe;
+    _main_loop_phase_index = 0xe;
     break;
   case 0xe:
     outputDriverStrobeWrapper();
@@ -16887,7 +16887,7 @@ undefined8 main_loop(void)
     schedulerTaskDispatcher11();
     slowCycle40TaskDispatcher6();
     fuelDemandProportionalCalculationSlowCycle40Coordinator();
-    _DAT_0080068c = 0xf;
+    _main_loop_phase_index = 0xf;
     break;
   case 0xf:
     outputDriverStrobeWrapper();
@@ -16899,7 +16899,7 @@ undefined8 main_loop(void)
     epsTimingCalculationSlowCycle40Coordinator();
     vp44FuelTemperatureHandler();
     engineProtectionMultiStateSlowCycle40Coordinator();
-    _DAT_0080068c = 0x10;
+    _main_loop_phase_index = 0x10;
     break;
   case 0x10:
     outputDriverStrobeWrapper();
@@ -16909,7 +16909,7 @@ undefined8 main_loop(void)
     rpmBasedFuelLimiterCoordinator();
     slowCycle40TaskDispatcher8();
     func_0x000487fe();
-    _DAT_0080068c = 0x11;
+    _main_loop_phase_index = 0x11;
     break;
   case 0x11:
     outputDriverStrobeWrapper();
@@ -16918,7 +16918,7 @@ undefined8 main_loop(void)
     schedulerTaskDispatcher1();
     shutdownProtectionSlowCycle10Coordinator();
     slowCycle40TaskDispatcher9();
-    _DAT_0080068c = 0x12;
+    _main_loop_phase_index = 0x12;
     break;
   case 0x12:
     outputDriverStrobeWrapper();
@@ -16928,7 +16928,7 @@ undefined8 main_loop(void)
     j1708ProcessingTaskWrapper();
     vp44DiagnosticControlSlowCycle20Coordinator();
     func_0x0004a322();
-    _DAT_0080068c = 0x13;
+    _main_loop_phase_index = 0x13;
     break;
   case 0x13:
     outputDriverStrobeWrapper();
@@ -16937,7 +16937,7 @@ undefined8 main_loop(void)
     schedulerTaskDispatcher3();
     diagnosticMessageWrapper();
     slowCycle40TaskDispatcher10();
-    _DAT_0080068c = 0x14;
+    _main_loop_phase_index = 0x14;
     break;
   case 0x14:
     outputDriverStrobeWrapper();
@@ -16946,7 +16946,7 @@ undefined8 main_loop(void)
     schedulerTaskDispatcher4();
     schedulerTaskDispatcher7();
     throttleDecelerationCoordinator();
-    _DAT_0080068c = 0x15;
+    _main_loop_phase_index = 0x15;
     break;
   case 0x15:
     outputDriverStrobeWrapper();
@@ -16955,7 +16955,7 @@ undefined8 main_loop(void)
     schedulerTaskDispatcher5();
     schedulerTaskDispatcher8();
     boostErrorCoordinator();
-    _DAT_0080068c = 0x16;
+    _main_loop_phase_index = 0x16;
     break;
   case 0x16:
     outputDriverStrobeWrapper();
@@ -16964,7 +16964,7 @@ undefined8 main_loop(void)
     schedulerTaskDispatcher6();
     schedulerTaskDispatcher9();
     slowCycle40TaskDispatcher1();
-    _DAT_0080068c = 0x17;
+    _main_loop_phase_index = 0x17;
     break;
   case 0x17:
     outputDriverStrobeWrapper();
@@ -16973,7 +16973,7 @@ undefined8 main_loop(void)
     emptyStub9();
     schedulerTaskDispatcher10();
     fuelSmokeDutyCycleCoordinator();
-    _DAT_0080068c = 0x18;
+    _main_loop_phase_index = 0x18;
     break;
   case 0x18:
     outputDriverStrobeWrapper();
@@ -16982,7 +16982,7 @@ undefined8 main_loop(void)
     emptyStub8();
     schedulerTaskDispatcher11();
     auxiliarySystemControlWrapper();
-    _DAT_0080068c = 0x19;
+    _main_loop_phase_index = 0x19;
     break;
   case 0x19:
     outputDriverStrobeWrapper();
@@ -16991,7 +16991,7 @@ undefined8 main_loop(void)
     schedulerTaskDispatcher1();
     dzgTimingAndPressureSlowCycle10Coordinator();
     slowCycle20TaskDispatcher1();
-    _DAT_0080068c = 0x1a;
+    _main_loop_phase_index = 0x1a;
     break;
   case 0x1a:
     outputDriverStrobeWrapper();
@@ -17000,7 +17000,7 @@ undefined8 main_loop(void)
     schedulerTaskDispatcher2();
     rpmBasedFuelLimiterCoordinator();
     vp44DiagnosticFaultMonitoringSlowCycle20Coordinator();
-    _DAT_0080068c = 0x1b;
+    _main_loop_phase_index = 0x1b;
     break;
   case 0x1b:
     outputDriverStrobeWrapper();
@@ -17009,7 +17009,7 @@ undefined8 main_loop(void)
     schedulerTaskDispatcher3();
     shutdownProtectionSlowCycle10Coordinator();
     slowCycle20TaskDispatcher2();
-    _DAT_0080068c = 0x1c;
+    _main_loop_phase_index = 0x1c;
     break;
   case 0x1c:
     outputDriverStrobeWrapper();
@@ -17018,7 +17018,7 @@ undefined8 main_loop(void)
     schedulerTaskDispatcher4();
     j1708ProcessingTaskWrapper();
     slowCycle20TaskDispatcher3();
-    _DAT_0080068c = 0x1d;
+    _main_loop_phase_index = 0x1d;
     break;
   case 0x1d:
     outputDriverStrobeWrapper();
@@ -17027,7 +17027,7 @@ undefined8 main_loop(void)
     schedulerTaskDispatcher5();
     diagnosticMessageWrapper();
     slowCycle20TaskDispatcher4();
-    _DAT_0080068c = 0x1e;
+    _main_loop_phase_index = 0x1e;
     break;
   case 0x1e:
     outputDriverStrobeWrapper();
@@ -17036,7 +17036,7 @@ undefined8 main_loop(void)
     schedulerTaskDispatcher6();
     schedulerTaskDispatcher7();
     slowCycle40TaskDispatcher2();
-    _DAT_0080068c = 0x1f;
+    _main_loop_phase_index = 0x1f;
     break;
   case 0x1f:
     outputDriverStrobeWrapper();
@@ -17046,7 +17046,7 @@ undefined8 main_loop(void)
     schedulerTaskDispatcher8();
     slowCycle40TaskDispatcher3();
     canMessageMemorySyncController();
-    _DAT_0080068c = 0x20;
+    _main_loop_phase_index = 0x20;
     break;
   case 0x20:
     outputDriverStrobeWrapper();
@@ -17055,7 +17055,7 @@ undefined8 main_loop(void)
     emptyStub8();
     schedulerTaskDispatcher9();
     slowCycle40TaskDispatcher4();
-    _DAT_0080068c = 0x21;
+    _main_loop_phase_index = 0x21;
     break;
   case 0x21:
     outputDriverStrobeWrapper();
@@ -17064,7 +17064,7 @@ undefined8 main_loop(void)
     schedulerTaskDispatcher1();
     schedulerTaskDispatcher10();
     slowCycle40TaskDispatcher5();
-    _DAT_0080068c = 0x22;
+    _main_loop_phase_index = 0x22;
     break;
   case 0x22:
     outputDriverStrobeWrapper();
@@ -17073,7 +17073,7 @@ undefined8 main_loop(void)
     schedulerTaskDispatcher2();
     schedulerTaskDispatcher11();
     slowCycle40TaskDispatcher6();
-    _DAT_0080068c = 0x23;
+    _main_loop_phase_index = 0x23;
     break;
   case 0x23:
     outputDriverStrobeWrapper();
@@ -17082,7 +17082,7 @@ undefined8 main_loop(void)
     schedulerTaskDispatcher3();
     dzgTimingAndPressureSlowCycle10Coordinator();
     slowCycle40TaskDispatcher7();
-    _DAT_0080068c = 0x24;
+    _main_loop_phase_index = 0x24;
     break;
   case 0x24:
     outputDriverStrobeWrapper();
@@ -17091,7 +17091,7 @@ undefined8 main_loop(void)
     schedulerTaskDispatcher4();
     rpmBasedFuelLimiterCoordinator();
     slowCycle40TaskDispatcher8();
-    _DAT_0080068c = 0x25;
+    _main_loop_phase_index = 0x25;
     break;
   case 0x25:
     outputDriverStrobeWrapper();
@@ -17100,7 +17100,7 @@ undefined8 main_loop(void)
     schedulerTaskDispatcher5();
     shutdownProtectionSlowCycle10Coordinator();
     slowCycle40TaskDispatcher9();
-    _DAT_0080068c = 0x26;
+    _main_loop_phase_index = 0x26;
     break;
   case 0x26:
     outputDriverStrobeWrapper();
@@ -17110,7 +17110,7 @@ undefined8 main_loop(void)
     j1708ProcessingTaskWrapper();
     vp44DiagnosticControlSlowCycle20Coordinator();
     cylinderBalanceCalculator();
-    _DAT_0080068c = 0x27;
+    _main_loop_phase_index = 0x27;
     break;
   case 0x27:
     outputDriverStrobeWrapper();
@@ -17119,29 +17119,30 @@ undefined8 main_loop(void)
     emptyStub9();
     diagnosticMessageWrapper();
     slowCycle40TaskDispatcher10();
-    _DAT_0080068c = 0;
+    _main_loop_phase_index = 0;
     break;
   default:
-    _DAT_0080068c = 0;
+    _main_loop_phase_index = 0;
   }
   if (_enable_for_the_executive_timing_data_gatherer_enabled_disabled != 0) {
     wVar1 = hardware_timer_register.timer_count;
-    _DAT_00800688 = wVar1 - _DAT_0080068e;
-    if (*(ushort *)(_DAT_00800690 + 8) < _DAT_00800688) {
-      *(ushort *)(_DAT_00800690 + 8) = _DAT_00800688;
+    _phase_elapsed_time = wVar1 - _phase_start_timer_count;
+    if (*(ushort *)(_current_phase_timing_ptr + 8) < _phase_elapsed_time) {
+      *(ushort *)(_current_phase_timing_ptr + 8) = _phase_elapsed_time;
     }
-    if (_DAT_00800688 < *(ushort *)(_DAT_00800690 + 6)) {
-      *(ushort *)(_DAT_00800690 + 6) = _DAT_00800688;
+    if (_phase_elapsed_time < *(ushort *)(_current_phase_timing_ptr + 6)) {
+      *(ushort *)(_current_phase_timing_ptr + 6) = _phase_elapsed_time;
     }
-    *(uint *)_DAT_00800690 = (uint)_DAT_00800688 + *(int *)_DAT_00800690;
-    *(short *)(_DAT_00800690 + 4) = *(short *)(_DAT_00800690 + 4) + 1;
-    if ((_DAT_00809eee < _DAT_00800688) &&
-       (*(short *)(_DAT_00800690 + 10) = *(short *)(_DAT_00800690 + 10) + 1,
+    *(uint *)_current_phase_timing_ptr =
+         (uint)_phase_elapsed_time + *(int *)_current_phase_timing_ptr;
+    *(short *)(_current_phase_timing_ptr + 4) = *(short *)(_current_phase_timing_ptr + 4) + 1;
+    if ((_DAT_00809eee < _phase_elapsed_time) &&
+       (*(short *)(_current_phase_timing_ptr + 10) = *(short *)(_current_phase_timing_ptr + 10) + 1,
        _number_of_times_which_frame_overflow_has_occured_in_executive_0_65535 != -1)) {
       _number_of_times_which_frame_overflow_has_occured_in_executive_0_65535 =
            _number_of_times_which_frame_overflow_has_occured_in_executive_0_65535 + 1;
     }
-    _DAT_00800690 = _DAT_00800690 + 0x10;
+    _current_phase_timing_ptr = _current_phase_timing_ptr + 0x10;
   }
   sim_csor1.hi = 0x55;
   sim_csor1.hi = 0xaa;
@@ -17168,7 +17169,7 @@ void scheduler_init(void)
   _DAT_00809eee = 0x9b7;
   _DAT_00809ef0 = 500;
   _number_of_loop_delays_cal_0_65535 = 0;
-  _DAT_0080068a = 0;
+  _timing_data_initialized = 0;
   Ram00fffa22 = 0x152;
   _DAT_00808f24 = main_loop;
   Ram00fffa24 = 0x27;
