@@ -107,9 +107,10 @@ public:
      * @brief Receive a CLIP response, reassembling fragments.
      * @param data Output: reassembled response data
      * @param timeoutMs Timeout in milliseconds
+     * @param acceptAnyConnectionId If true, accept any connection ID and sync to it (for session open)
      * @return true if response received successfully
      */
-    bool receiveResponse(std::vector<uint8_t>& data, int timeoutMs = CLIP_DEFAULT_TIMEOUT_MS);
+    bool receiveResponse(std::vector<uint8_t>& data, int timeoutMs = CLIP_DEFAULT_TIMEOUT_MS, bool acceptAnyConnectionId = false);
 
     /**
      * @brief Send a transport open message.
@@ -147,9 +148,10 @@ public:
      * @brief Receive a single CLIP frame.
      * @param frame Output: received frame
      * @param timeoutMs Timeout in milliseconds
+     * @param acceptAnyConnectionId If true, accept any connection ID and sync to it (for session open)
      * @return true if frame received
      */
-    bool receiveFrame(TClipFrame& frame, int timeoutMs = CLIP_DEFAULT_TIMEOUT_MS);
+    bool receiveFrame(TClipFrame& frame, int timeoutMs = CLIP_DEFAULT_TIMEOUT_MS, bool acceptAnyConnectionId = false);
 
 private:
     ICanAdapter* m_adapter;

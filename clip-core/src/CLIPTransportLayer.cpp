@@ -90,7 +90,7 @@ bool CLIPTransportLayer::sendFrame(const TClipFrame& frame)
     return result;
 }
 
-bool CLIPTransportLayer::receiveFrame(TClipFrame& frame, int timeoutMs)
+bool CLIPTransportLayer::receiveFrame(TClipFrame& frame, int timeoutMs, bool acceptAnyConnectionId)
 {
     if (!m_adapter || !m_adapter->isOpen()) {
         std::cerr << "[CLIP RX] ERROR: CAN adapter not open\n";
@@ -134,10 +134,16 @@ bool CLIPTransportLayer::receiveFrame(TClipFrame& frame, int timeoutMs)
             return false;
         }
 
-        // Check connection ID matches
-        if (frame.connectionId != m_connectionId) {
+        // Check connection ID matches (unless accepting any during session open)
+        if (!acceptAnyConnectionId && frame.connectionId != m_connectionId) {
             std::cerr << "[CLIP RX] -> Skipping: Different connection ID (got:" << static_cast<int>(frame.connectionId) << ", expected:" << static_cast<int>(m_connectionId) << ")\n";
             continue;  // Different connection
+        }
+
+        // If accepting any connection ID, sync to the ECU's connection ID
+        if (acceptAnyConnectionId && frame.connectionId != m_connectionId) {
+            std::cerr << "[CLIP RX] -> Syncing to ECU connection ID: " << static_cast<int>(frame.connectionId) << "\n";
+            m_connectionId = frame.connectionId;
         }
 
         std::cerr << "[CLIP RX] -> MATCH! Valid CLIP response received\n";
@@ -176,21 +182,15 @@ bool CLIPTransportLayer::sendData(const std::vector<uint8_t>& data, int timeoutM
     }
 
     // Multi-frame transfer
-    // First, send transport open
+    // For established sessions, just send DataTransfer frames directly without handshake
     uint8_t numPackets = static_cast<uint8_t>((data.size() + CLIP_MAX_FRAME_PAYLOAD - 1) / CLIP_MAX_FRAME_PAYLOAD);
     if (numPackets > CLIP_MAX_FRAGMENTS) {
         reportError(EClipTransportError::Aborted, "Data too large for CLIP transport");
         return false;
     }
 
-    if (!sendTransportOpen(numPackets)) {
-        return false;
-    }
-
-    // Wait for CTS
-    if (!waitForCts(timeoutMs)) {
-        return false;
-    }
+    // Skip TransportOpen/CTS handshake - just send data frames directly
+    // (The handshake is only for session establishment, not for commands)
 
     // Send data frames with sequence numbers
     size_t offset = 0;
@@ -220,7 +220,7 @@ bool CLIPTransportLayer::sendData(const std::vector<uint8_t>& data, int timeoutM
     return true;
 }
 
-bool CLIPTransportLayer::receiveResponse(std::vector<uint8_t>& data, int timeoutMs)
+bool CLIPTransportLayer::receiveResponse(std::vector<uint8_t>& data, int timeoutMs, bool acceptAnyConnectionId)
 {
     data.clear();
     m_expectedSequence = 0;
@@ -229,7 +229,7 @@ bool CLIPTransportLayer::receiveResponse(std::vector<uint8_t>& data, int timeout
     bool firstFrame = true;
 
     while (true) {
-        if (!receiveFrame(frame, timeoutMs)) {
+        if (!receiveFrame(frame, timeoutMs, acceptAnyConnectionId)) {
             return false;
         }
 
@@ -238,6 +238,18 @@ bool CLIPTransportLayer::receiveResponse(std::vector<uint8_t>& data, int timeout
         // Check for connection refused
         if (msgType == static_cast<uint8_t>(EClipMsgType::ConnectionRefused)) {
             reportError(EClipTransportError::Aborted, "Connection refused by ECU");
+            return false;
+        }
+
+        // Check for error response (0x0D) - ECU is rejecting our request
+        if (msgType == 0x0D) {
+            std::stringstream errss;
+            errss << "ECU error response: connId=" << static_cast<int>(frame.connectionId)
+                  << " code=0x" << std::hex << std::setfill('0') << std::setw(2)
+                  << static_cast<int>(frame.control);
+            reportError(EClipTransportError::Aborted, errss.str());
+            // Return the error data so caller can see the error code
+            data.insert(data.end(), frame.payload, frame.payload + frame.payloadLen);
             return false;
         }
 

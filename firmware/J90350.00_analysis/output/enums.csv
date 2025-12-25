@@ -610,6 +610,26 @@ CLIP_INSTRUCTION,0x12,EXECUTE_OPERATION,Execute ECU operation,1
 CLIP_INSTRUCTION,0x13,GET_DATA_BY_ADDRESS,Read memory by address,1
 CLIP_INSTRUCTION,0x14,SET_DATA_BY_ADDRESS,Write memory by address,1
 CLIP_INSTRUCTION,0x15,GET_ADDRESS_BY_PARAMETER_ID,Get parameter address from ID,1
+# CLIP Transport Layer Message Types - byte 0 bits [4:0]
+# Verified on live CM550 ECU (J90350.00) 2024-12-24
+# Format: byte[0] = (SessionID << 5) | MsgType
+CLIP_TRANSPORT_MSG_TYPE,0x02,TRANSPORT_OPEN,Session open request (Tool -> ECU),1
+CLIP_TRANSPORT_MSG_TYPE,0x03,DATA_TRANSFER,Data transfer with sequence in bits[7:5],1
+CLIP_TRANSPORT_MSG_TYPE,0x04,CLEAR_TO_SEND,Flow control acknowledgment / CTS,1
+CLIP_TRANSPORT_MSG_TYPE,0x05,CONNECTION_REFUSED,Session rejected by ECU,1
+CLIP_TRANSPORT_MSG_TYPE,0x06,TRANSPORT_CLOSE,Session close request,1
+CLIP_TRANSPORT_MSG_TYPE,0x0D,SESSION_OPEN_RESPONSE,Session accepted (CM550 variant ECU -> Tool),1
+# CLIP Transport Control Byte Values - byte 2 of CLIP frame
+# Used in session handshake responses
+CLIP_CONTROL_TYPE,0x02,SEED_REPLY,ECU is providing security seed,1
+CLIP_CONTROL_TYPE,0x04,CONTEXT_REPLY,ECU context/status response,1
+# CLIP Session States - from DeviceControl_ghidra.c and live testing
+CLIP_SESSION_STATE,0x01,CLOSED,No active session,1
+CLIP_SESSION_STATE,0x02,OPENING,Waiting for seed reply,1
+CLIP_SESSION_STATE,0x04,REQUESTING_SEED,Sent open waiting for seed,1
+CLIP_SESSION_STATE,0x05,SEEDED,Seed received ready to encrypt,1
+CLIP_SESSION_STATE,0x07,AUTHENTICATED,Session ready for data transfer,1
+CLIP_SESSION_STATE,0x08,SECURED_LOCKED,Encryption required but not licensed,1
 # DPA Frame Types - from decompiled Insite dpas32_ghidra.c
 # Byte 0 of DPA-wrapped CAN frames (canbus_async_transmit @ 2366)
 DPA_FRAME_TYPE,0xC0,ASYNC,Asynchronous frame - no immediate response expected,1

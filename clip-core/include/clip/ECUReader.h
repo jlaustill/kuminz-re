@@ -148,6 +148,17 @@ public:
      */
     const TSeedReply& getLastSeed() const;
 
+    /**
+     * @brief Write memory to ECU using CLIP SetDataByAddress (0x15).
+     * @param address Memory address
+     * @param data Data to write
+     * @return true if write succeeded
+     *
+     * NOTE: Requires connect() first (establishes CLIP session).
+     * Uses CLIP command 0x15 - the proper way to write memory.
+     */
+    bool writeMemory(uint32_t address, const std::vector<uint8_t>& data);
+
     // =========================================================================
     // Service 0x4A Memory Read Methods (Direct, No CLIP Session)
     // =========================================================================
@@ -199,6 +210,53 @@ public:
      */
     bool dumpMemoryService4AToFile(uint32_t address, uint32_t length,
                                    const std::string& outputPath);
+
+    // =========================================================================
+    // Service 0x4A Memory Write Methods (Experimental)
+    // =========================================================================
+    // These methods attempt to write to ECU memory using Service 0x4A format.
+    // WARNING: Use at your own risk! Writing to wrong addresses can brick ECU.
+
+    /**
+     * @brief Write memory using Service 0x4A format (experimental).
+     * @param address 32-bit memory address
+     * @param data Data to write (max 2 bytes for single frame)
+     * @param timeoutMs Timeout in milliseconds
+     * @return true if write acknowledged
+     *
+     * Format: [0x4A][addr:4][len:1][data:2]
+     *
+     * This is experimental - the ECU may or may not accept writes this way.
+     * For testing security_bypass_flag at 0x803586 with value 0xB522.
+     */
+    bool writeMemoryService4A(uint32_t address, const std::vector<uint8_t>& data,
+                              int timeoutMs = 5000);
+
+    /**
+     * @brief Write memory with authentication using Service 0x4A format.
+     * @param address 32-bit memory address
+     * @param data Data to write
+     * @param hourMeter Current ECU hour meter value (for auth payload generation)
+     * @param timeoutMs Timeout in milliseconds
+     * @return true if write acknowledged
+     *
+     * Format: [0x4A][addr:4][len:1][data:N][auth:10]
+     *
+     * This sends via J1939 Transport Protocol (RTS/CTS) since message > 8 bytes.
+     * The auth payload is generated from the security key "ABCDEF" + hour_meter.
+     */
+    bool writeMemoryService4AAuth(uint32_t address, const std::vector<uint8_t>& data,
+                                  uint32_t hourMeter, int timeoutMs = 5000);
+
+    /**
+     * @brief Get current hour meter from ECU for authentication.
+     * @param hourMeter Output: hour meter value
+     * @param timeoutMs Timeout in milliseconds
+     * @return true if read successful
+     *
+     * Reads 4 bytes from 0x80BDA4 (hour_meter_ecm_run_time_none).
+     */
+    bool readHourMeter(uint32_t& hourMeter, int timeoutMs = 5000);
 
 private:
     ICanAdapter* m_adapter;

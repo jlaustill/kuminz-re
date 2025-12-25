@@ -1,6 +1,7 @@
 #include "clip/CLIPSessionManager.h"
 #include <sstream>
 #include <iomanip>
+#include <unistd.h>  // for usleep()
 
 CLIPSessionManager::CLIPSessionManager(CLIPTransportLayer* transport,
                                        CLIPInstructionBuilder* builder)
@@ -58,7 +59,10 @@ bool CLIPSessionManager::openSession(uint8_t ecuAddress, int timeoutMs)
     }
 
     m_transport->setDestAddress(ecuAddress);
-    m_transport->nextConnectionId();
+
+    // Reset connection ID to start fresh
+    m_transport->setConnectionId(0);
+    m_transport->nextConnectionId();  // Now connection ID = 1
 
     log("Opening session to ECU 0x" + std::to_string(ecuAddress));
     setState(ESessionState::Opening);
@@ -72,9 +76,20 @@ bool CLIPSessionManager::openSession(uint8_t ecuAddress, int timeoutMs)
 
     setState(ESessionState::RequestingSeed);
 
-    // Wait for seed reply
+    // Wait for seed reply - accept any connection ID since ECU may have existing session
     std::vector<uint8_t> response;
-    if (!m_transport->receiveResponse(response, timeoutMs)) {
+    if (!m_transport->receiveResponse(response, timeoutMs, true /* acceptAnyConnectionId */)) {
+        // ECU may have responded with an error (already connected)
+        // Try to use the synced connection ID anyway (CM550 doesn't enforce auth)
+        uint8_t syncedConnId = m_transport->getConnectionId();
+        if (syncedConnId != 0 && syncedConnId != 1) {
+            std::stringstream ss;
+            ss << "Using existing session at connection ID " << static_cast<int>(syncedConnId);
+            log(ss.str());
+            // Proceed as if authenticated since CM550 systemSecurityCheck() returns 0
+            setState(ESessionState::Authenticated);
+            return true;
+        }
         log("Failed to receive seed reply");
         setState(ESessionState::Closed);
         return false;
@@ -143,8 +158,8 @@ bool CLIPSessionManager::sendCommand(const TClipPacket& packet,
         return false;
     }
 
-    // Get new connection ID for this request
-    m_transport->nextConnectionId();
+    // Keep using the same connection ID for all commands in the session
+    // (Don't increment - ECU expects all commands on the established session)
 
     // Send the command packet
     if (!m_transport->sendPacket(packet, timeoutMs)) {
@@ -216,6 +231,46 @@ bool CLIPSessionManager::readParameter(uint16_t paramId,
         data.assign(response.begin() + 2, response.end());
     } else {
         data = response;
+    }
+
+    return true;
+}
+
+bool CLIPSessionManager::writeMemory(uint32_t address,
+                                     const std::vector<uint8_t>& data,
+                                     int timeoutMs)
+{
+    std::stringstream ss;
+    ss << "Writing " << data.size() << " bytes to 0x"
+       << std::hex << std::setw(8) << std::setfill('0') << address;
+    log(ss.str());
+
+    // Build SetDataByAddress command (0x15)
+    TClipPacket packet = m_builder->buildSetDataByAddress(address, data);
+
+    // Send and receive
+    std::vector<uint8_t> response;
+    if (!sendCommand(packet, response, timeoutMs)) {
+        return false;
+    }
+
+    // Check response for success
+    // Response format: [CMD_ECHO][SEQ][STATUS...]
+    // CMD_ECHO should be 0x15 for success, 0x0D for error
+    if (response.size() >= 1) {
+        if (response[0] == 0x0D) {
+            // Error response
+            ss.str("");
+            ss << "Write error: 0x";
+            for (size_t i = 0; i < response.size(); i++) {
+                ss << std::hex << std::setw(2) << std::setfill('0')
+                   << static_cast<int>(response[i]);
+                if (i < response.size() - 1) ss << " ";
+            }
+            log(ss.str());
+            return false;
+        }
+        log("Write acknowledged");
     }
 
     return true;

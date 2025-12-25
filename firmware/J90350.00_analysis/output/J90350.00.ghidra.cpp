@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Wed Dec 24 05:38:36 MST 2025
+// Generated: Wed Dec 24 17:15:58 MST 2025
 
 
 //
@@ -7545,31 +7545,31 @@ void cylinderBalanceCalculator(void)
   char *pcVar12;
   short *psVar13;
   undefined2 *puVar14;
-  int *piVar15;
-  ushort cyl_fuel;
-  undefined2 *puVar16;
-  short *psVar17;
-  int *piVar18;
+  int cyl_fuel;
+  undefined2 *puVar15;
+  short *psVar16;
+  int *piVar17;
   ushort avg_fuel;
-  undefined2 *puVar19;
-  short *psVar20;
-  undefined2 *puVar21;
-  short *psVar22;
+  undefined2 *puVar18;
+  short *psVar19;
+  undefined2 *puVar20;
+  short *psVar21;
   
   if (_DAT_008072c0 == 1) {
     if (_DAT_008092e4 == 1) {
       _oil_pressure_mode_init_flag = 1;
       imbalance = 0;
       piVar11 = (int *)&DAT_008091ee;
-      piVar15 = (int *)&intake_manifold_temp_raw;
-      piVar18 = (int *)&DAT_00809284;
+      cyl_fuel = (int)&intake_manifold_temp_raw;
+      piVar17 = (int *)&DAT_00809284;
       do {
-        *piVar18 = *piVar15 - *piVar11;
+        cyl_fuel = cyl_fuel + 4;
+        *piVar17 = *(int *)cyl_fuel - *piVar11;
         uVar7 = (short)imbalance + 1;
         imbalance = (int)uVar7;
         piVar11 = piVar11 + 1;
-        piVar15 = piVar15 + 1;
-        piVar18 = piVar18 + 1;
+        cyl_fuel = cyl_fuel;
+        piVar17 = piVar17 + 1;
       } while (uVar7 < 6);
       iVar2 = (_DAT_00809294 + _DAT_00809284) - _DAT_00809288;
       iVar6 = iVar2 - _DAT_00809290;
@@ -7671,19 +7671,19 @@ void cylinderBalanceCalculator(void)
     if (_DAT_008072e0 == 1) {
       uVar7 = 0;
       puVar14 = (undefined2 *)&protection_state2_table_ptr_1;
-      puVar16 = (undefined2 *)&DAT_008002e0;
-      puVar19 = (undefined2 *)&DAT_00809ebe;
-      puVar21 = (undefined2 *)&DAT_00809e9e;
+      puVar15 = (undefined2 *)&DAT_008002e0;
+      puVar18 = (undefined2 *)&DAT_00809ebe;
+      puVar20 = (undefined2 *)&DAT_00809e9e;
       do {
-        *puVar21 = 10000;
-        *puVar19 = 10000;
-        *puVar16 = 10000;
+        *puVar20 = 10000;
+        *puVar18 = 10000;
+        *puVar15 = 10000;
         *puVar14 = 10000;
         uVar7 = uVar7 + 1;
         puVar14 = puVar14 + 1;
-        puVar16 = puVar16 + 1;
-        puVar19 = puVar19 + 1;
-        puVar21 = puVar21 + 1;
+        puVar15 = puVar15 + 1;
+        puVar18 = puVar18 + 1;
+        puVar20 = puVar20 + 1;
       } while (uVar7 < 0x10);
     }
     _vp44_mask_array = _DAT_0080ccf4;
@@ -7840,16 +7840,16 @@ void cylinderBalanceCalculator(void)
          (_DAT_008072ec < _filtered_and_linearized_intake_manifold_temperature_50_to_293)))))) {
       uVar7 = 0;
       psVar13 = (short *)(&DAT_00012626 + (short)(_DAT_00809264 * 0xc));
-      psVar17 = (short *)((short)(_DAT_00809262 * 0xc) + 0x125de);
-      psVar20 = (short *)((short)(_DAT_00809260 * 0xc) + 0x12596);
-      psVar22 = (short *)&DAT_00809252;
+      psVar16 = (short *)((short)(_DAT_00809262 * 0xc) + 0x125de);
+      psVar19 = (short *)((short)(_DAT_00809260 * 0xc) + 0x12596);
+      psVar21 = (short *)&DAT_00809252;
       do {
-        *psVar22 = *psVar13 * sVar3 + *psVar17 * sVar1 + *psVar20 * sVar9;
+        *psVar21 = *psVar13 * sVar3 + *psVar16 * sVar1 + *psVar19 * sVar9;
         uVar7 = uVar7 + 1;
         psVar13 = psVar13 + 1;
-        psVar17 = psVar17 + 1;
-        psVar20 = psVar20 + 1;
-        psVar22 = psVar22 + 1;
+        psVar16 = psVar16 + 1;
+        psVar19 = psVar19 + 1;
+        psVar21 = psVar21 + 1;
       } while (uVar7 < 6);
     }
     else {
@@ -7863,12 +7863,12 @@ void cylinderBalanceCalculator(void)
     }
     uVar7 = 0;
     psVar13 = (short *)&DAT_00809252;
-    psVar17 = (short *)&DAT_00809246;
+    psVar16 = (short *)&DAT_00809246;
     do {
-      *psVar17 = *psVar13 + *(short *)(&DAT_00804158 + (short)uVar7 * 2);
+      *psVar16 = *psVar13 + *(short *)(&DAT_00804158 + (short)uVar7 * 2);
       uVar7 = uVar7 + 1;
       psVar13 = psVar13 + 1;
-      psVar17 = psVar17 + 1;
+      psVar16 = psVar16 + 1;
     } while (uVar7 < 6);
     uVar7 = 0;
     do {
@@ -10506,7 +10506,7 @@ void diagnosticCommandDispatcher(void)
   ushort uVar3;
   ushort uVar4;
   word wVar5;
-  int handler_index;
+  byte handler_index;
   char cVar7;
   short sVar6;
   undefined4 unaff_D2;
@@ -10524,7 +10524,7 @@ void diagnosticCommandDispatcher(void)
                     /* From J90280.05 @ 0x012484 (confidence: 88%) */
   uVar3 = hardware_timer_register._0_2_;
   if ((j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x1e] != 0) &&
-     (handler_index._3_1_ = circularBufferEmptyCheck(), (char)handler_index != '\0')) {
+     (handler_index = circularBufferEmptyCheck(), handler_index != 0)) {
     j1708_transmit_buffer_2_32_ddc6.tx_buffer[0x1e] = 0;
     diagnosticMessageQueueWrite((byte)((uint)unaff_D2 >> 0x10));
   }
@@ -20565,6 +20565,7 @@ void diagnosticMessage46Builder(void)
 // Function: j1708DiagnosticMessageHandler @ 0x0001f4e8
 //
 
+/* WARNING: Unable to use type for symbol checksum */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 uint j1708DiagnosticMessageHandler(void)
@@ -20579,17 +20580,17 @@ uint j1708DiagnosticMessageHandler(void)
   bool bVar5;
   undefined2 local_c;
   undefined2 local_a;
-  undefined3 uStack_8;
-  byte checksum;
+  int data_value;
   byte temp_5f236c3d0c;
+  char checksum;
   byte pid;
   
   temp_5f236c3d0c = *(byte *)j1708_receive_buffer_pointer_2_32_dca2.buffer_ptr_3;
-  checksum = (byte)j1708_receive_buffer_pointer_2_32_dca2.buffer_ptr_3;
-  bVar1 = checksum;
-  uStack_8 = (undefined3)(j1708_receive_buffer_pointer_2_32_dca2.buffer_ptr_3 >> 8);
-  _uStack_8 = (byte *)CONCAT31(uStack_8,checksum + 2);
-  uVar2 = *_uStack_8 & 3;
+  data_value._3_1_ = (char)j1708_receive_buffer_pointer_2_32_dca2.buffer_ptr_3;
+  checksum = (char)data_value;
+  data_value._0_3_ = (undefined3)(j1708_receive_buffer_pointer_2_32_dca2.buffer_ptr_3 >> 8);
+  data_value = CONCAT31(data_value._0_3_,(char)data_value + '\x02');
+  uVar2 = *(byte *)data_value & 3;
   uVar4 = diagnosticMessageValidator(0x4a);
   if ((short)uVar4 != 0) {
     return uVar4;
@@ -20632,7 +20633,7 @@ LAB_0001f570:
     }
     _DAT_0080da76 = _DAT_0080da72;
   }
-  _byte_indicating_engine_commands_as_received_over_datalink_0_255 = (ushort)*_uStack_8;
+  _byte_indicating_engine_commands_as_received_over_datalink_0_255 = (ushort)*(byte *)data_value;
   _jcomm_speed_governor_mode_indicator_of_which_speed_mode_characte_0_3 = 0;
   _JCEGNETY = 0;
   DAT_0080da70 = 0x4a;
@@ -20651,10 +20652,10 @@ LAB_0001f570:
     _DAT_0080da50 = 1;
     _source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_da4e = 1;
     _jcomm_speed_control_status_1_speed_control_mode_0_n_true_false = 1;
-    _uStack_8 = (byte *)CONCAT31(uStack_8,bVar1 + 3);
-    pid = *_uStack_8;
-    _uStack_8 = (byte *)CONCAT31(uStack_8,bVar1 + 4);
-    local_a = CONCAT11(*_uStack_8,pid);
+    data_value = CONCAT31(data_value._0_3_,checksum + '\x03');
+    pid = *(byte *)data_value;
+    data_value = CONCAT31(data_value._0_3_,checksum + '\x04');
+    local_a = CONCAT11(*(undefined1 *)data_value,pid);
     _DAT_0080da5e = (undefined2)((int)(uint)local_a >> 1);
     sVar3 = _DAT_0080da80;
     break;
@@ -20664,8 +20665,8 @@ LAB_0001f570:
     _DAT_0080da50 = 2;
     _source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_da4e = 1;
     _jcomm_speed_control_status_1_speed_control_mode_0_n_true_false = 0;
-    _uStack_8 = (byte *)CONCAT31(uStack_8,bVar1 + 3);
-    local_c = (ushort)*_uStack_8;
+    data_value = CONCAT31(data_value._0_3_,checksum + '\x03');
+    local_c = (ushort)*(byte *)data_value;
     _DAT_0080da5c = local_c << 8;
     _DAT_0080da64 =
          _jcomm_no_load_torque_estimated_frictional_no_load_fueling_val_0_100 +
@@ -20685,11 +20686,11 @@ LAB_0001f570:
     _DAT_0080da50 = 3;
     _source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_da4e = 1;
     _jcomm_speed_control_status_1_speed_control_mode_0_n_true_false = 0;
-    _uStack_8 = (byte *)CONCAT31(uStack_8,bVar1 + 3);
-    local_a = (ushort)*_uStack_8;
+    data_value = CONCAT31(data_value._0_3_,checksum + '\x03');
+    local_a = (ushort)*(byte *)data_value;
     _DAT_0080da5a = local_a << 7;
-    _uStack_8 = (byte *)CONCAT31(uStack_8,bVar1 + 4);
-    bVar1 = *_uStack_8;
+    data_value = CONCAT31(data_value._0_3_,checksum + '\x04');
+    bVar1 = *(byte *)data_value;
     if (bVar1 < 0x80) {
       local_c = (ushort)bVar1;
     }
@@ -20794,18 +20795,19 @@ uint engineFluidLevelDataBuilder(void)
   ushort oil_level;
   undefined2 msg_buffer;
   ushort local_a;
-  byte *local_8;
+  undefined3 uStack_8;
+  ushort local_6;
   word fuel_level;
   
                     /* From J90280.05 @ 0x02a93a (confidence: 61%) */
   cVar1 = *(char *)j1708_receive_buffer_pointer_2_32_dca2.buffer_ptr_3;
-  local_8._3_1_ = (char)j1708_receive_buffer_pointer_2_32_dca2.buffer_ptr_3;
-  cVar3 = (char)local_8;
-  local_8._0_3_ = (undefined3)(j1708_receive_buffer_pointer_2_32_dca2.buffer_ptr_3 >> 8);
-  local_8 = (byte *)CONCAT31(local_8._0_3_,(char)local_8 + '\x02');
-  uVar5 = *local_8 & 4;
-  if ((*local_8 & 4) == 0) {
-    fuel_level = *local_8 & 3;
+  local_6._1_1_ = (char)j1708_receive_buffer_pointer_2_32_dca2.buffer_ptr_3;
+  cVar3 = (char)local_6;
+  uStack_8 = (undefined3)(j1708_receive_buffer_pointer_2_32_dca2.buffer_ptr_3 >> 8);
+  _uStack_8 = (byte *)CONCAT31(uStack_8,(char)local_6 + '\x02');
+  uVar5 = *_uStack_8 & 4;
+  if ((*_uStack_8 & 4) == 0) {
+    fuel_level = *_uStack_8 & 3;
     uVar5 = diagnosticMessageValidator(0x4f);
     if ((short)uVar5 == 0) {
       if ((uint)(int)(short)fuel_level < 4) {
@@ -20838,7 +20840,7 @@ uint engineFluidLevelDataBuilder(void)
         }
         _DAT_0080da76 = _DAT_0080da72;
       }
-      _byte_indicating_engine_commands_as_received_over_datalink_0_255 = (ushort)*local_8;
+      _byte_indicating_engine_commands_as_received_over_datalink_0_255 = (ushort)*_uStack_8;
       _jcomm_speed_governor_mode_indicator_of_which_speed_mode_characte_0_3 = 0;
       _JCEGNETY = 0;
       DAT_0080da70 = 'O';
@@ -20859,8 +20861,8 @@ uint engineFluidLevelDataBuilder(void)
         _DAT_0080da50 = 1;
         _source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_da4e = 2;
         _jcomm_speed_control_status_1_speed_control_mode_0_n_true_false = 1;
-        local_8 = (byte *)CONCAT31(local_8._0_3_,cVar3 + '\x03');
-        local_a = (ushort)*local_8;
+        _uStack_8 = (byte *)CONCAT31(uStack_8,cVar3 + '\x03');
+        local_a = (ushort)*_uStack_8;
         _DAT_0080da5e = local_a << 7;
         iVar6 = CONCAT22(extraout_D0u,_DAT_0080da5e);
         uVar4 = _DAT_0080da80;
@@ -20871,8 +20873,8 @@ uint engineFluidLevelDataBuilder(void)
         _DAT_0080da50 = 2;
         _source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_da4e = 2;
         _jcomm_speed_control_status_1_speed_control_mode_0_n_true_false = 0;
-        local_8 = (byte *)CONCAT31(local_8._0_3_,cVar3 + '\x03');
-        msg_buffer = (ushort)*local_8;
+        _uStack_8 = (byte *)CONCAT31(uStack_8,cVar3 + '\x03');
+        msg_buffer = (ushort)*_uStack_8;
         _DAT_0080da5c = msg_buffer << 8;
         iVar6 = ((int)(short)(_jcomm_peak_fueling_tau_0_max_fueling_on_100_throttle_curve_fo_0_100 -
                              _frictional_load_torque_in_fueling_at_breakpoint_4_engine_rpm_0_100_bc88
@@ -20893,8 +20895,8 @@ uint engineFluidLevelDataBuilder(void)
         _source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_da4e = 2;
         _jcomm_speed_control_status_1_speed_control_mode_0_n_true_false = 0;
         _DAT_0080da5a = _DAT_00803f40;
-        local_8 = (byte *)CONCAT31(local_8._0_3_,cVar3 + '\x03');
-        bVar2 = *local_8;
+        _uStack_8 = (byte *)CONCAT31(uStack_8,cVar3 + '\x03');
+        bVar2 = *_uStack_8;
         if (bVar2 < 0x80) {
           msg_buffer = (ushort)bVar2;
         }
@@ -23137,7 +23139,7 @@ uint memoryRegisterController(void)
 uint canDiagnosticResponseSender(undefined1 *param_1)
 
 {
-  byte *lookup_result;
+  char lookup_result;
   uint return_code;
   byte local_1e;
   byte local_1d;
@@ -23159,8 +23161,8 @@ uint canDiagnosticResponseSender(undefined1 *param_1)
                     /* From J90280.05 @ 0x01bc9c (confidence: 100%) */
   param_byte1 = *(undefined1 *)(*(int *)(param_1 + 6) + 1);
   param_byte2 = *(undefined1 *)(*(int *)(param_1 + 6) + 2);
-  lookup_result._3_1_ = diagnosticMemoryAddressResolver((word)((uint)&local_1e >> 0x10));
-  if ((char)lookup_result == '\0') {
+  lookup_result = diagnosticMemoryAddressResolver((word)((uint)&local_1e >> 0x10));
+  if (lookup_result == '\0') {
     can_msg_id = CONCAT31(CONCAT21((short)(CONCAT13(*param_1,0xef0000) >> 0x10),param_1[3]),
                           param_1[2]) & 0x1cffffff;
     msg_length = 7;
@@ -31303,7 +31305,7 @@ uint diagnosticParameterTransferHandler(undefined4 param_1)
   ushort param_id;
   uint uVar2;
   word param_value;
-  int transfer_size;
+  byte *transfer_size;
   byte bVar3;
   byte *param_ptr;
   ushort uVar4;
@@ -31315,14 +31317,14 @@ uint diagnosticParameterTransferHandler(undefined4 param_1)
   undefined4 local_8;
   
   puVar6 = &DAT_0080db68;
-  transfer_size = 0;
+  transfer_size = (byte *)0x0;
   param_ptr = (byte *)0x0;
   bVar5 = 0;
   while( true ) {
     if (param_1._1_1_ <= bVar5) break;
     if ((puVar6[9] == '\x05') || (puVar6[9] == '\x03')) {
       param_ptr = (byte *)(uint)(byte)((char)param_ptr + 1);
-      transfer_size = (int)(byte)(puVar6[8] + (char)transfer_size);
+      transfer_size = (byte *)(uint)(byte)(puVar6[8] + (char)transfer_size);
     }
     in_D0 = 0;
     puVar6 = puVar6 + 10;
@@ -31331,7 +31333,7 @@ uint diagnosticParameterTransferHandler(undefined4 param_1)
   if (((char)param_ptr == '\0') ||
      ((param_ptr + (ushort)j1708_transmit_buffer_2_32_ddc6.tx_buffer._102_2_ <
        (byte *)((int)&DAT_00000008 + 3U) &&
-      (in_D0 = (int)&DAT_0080dd86 - (int)_DAT_0080ddc2, transfer_size <= (int)in_D0)))) {
+      (in_D0 = (int)&DAT_0080dd86 - (int)_DAT_0080ddc2, (int)transfer_size <= (int)in_D0)))) {
     puVar7 = (undefined4 *)&DAT_0080db68;
     for (bVar5 = 0; bVar5 < param_1._1_1_; bVar5 = bVar5 + 1) {
       local_8 = (undefined1 *)puVar7[1];
@@ -33688,17 +33690,17 @@ void bitPackingAlgorithm(int param_1,int param_2)
 {
   int iVar1;
   char cVar2;
-  char cVar3;
+  byte current_mask;
+  byte bVar3;
   byte bVar4;
   byte bVar5;
-  byte bVar6;
-  char cVar7;
+  char cVar6;
+  char *pcVar7;
   byte *pbVar8;
   byte *pbVar9;
-  byte *pbVar10;
   byte local_10 [10];
   char local_6;
-  byte local_5;
+  char forward_byte_index;
   
   cVar2 = '\0';
   pbVar8 = local_10;
@@ -33707,48 +33709,48 @@ void bitPackingAlgorithm(int param_1,int param_2)
     cVar2 = cVar2 + '\x01';
     pbVar8 = pbVar8 + 1;
   } while (cVar2 < '\n');
-  bVar6 = 0;
-  cVar7 = '\0';
+  bVar5 = 0;
+  cVar6 = '\0';
   cVar2 = '\0';
-  cVar3 = '\t';
+  current_mask = 9;
   local_6 = '\0';
-  pbVar8 = &DAT_0002fbc4;
+  pcVar7 = &DAT_0002fbc4;
   do {
-    bVar5 = 0;
-    local_5 = *pbVar8;
-    pbVar9 = local_10 + (short)cVar3;
-    pbVar10 = local_10 + (short)cVar7;
+    bVar4 = 0;
+    forward_byte_index = *pcVar7;
+    pbVar8 = local_10 + (short)(char)current_mask;
+    pbVar9 = local_10 + (short)cVar6;
     iVar1 = (int)local_6;
     do {
-      bVar4 = *(char *)(param_1 + iVar1) << (bVar5 & 0x3f) & 0x80;
-      if (((uint)local_5 << ((int)(char)bVar5 & 0x3fU) & 0x80) == 0) {
-        if (bVar4 != 0) {
-          bVar4 = '\x01' << (7U - cVar2 & 0x3f);
+      bVar3 = *(char *)(param_1 + iVar1) << (bVar4 & 0x3f) & 0x80;
+      if (((uint)(byte)forward_byte_index << ((int)(char)bVar4 & 0x3fU) & 0x80) == 0) {
+        if (bVar3 != 0) {
+          bVar3 = '\x01' << (7U - cVar2 & 0x3f);
         }
-        *pbVar10 = bVar4 | *pbVar10;
+        *pbVar9 = bVar3 | *pbVar9;
         cVar2 = cVar2 + '\x01';
         if (cVar2 == '\b') {
           cVar2 = '\0';
-          pbVar10 = pbVar10 + 1;
-          cVar7 = cVar7 + '\x01';
+          pbVar9 = pbVar9 + 1;
+          cVar6 = cVar6 + '\x01';
         }
       }
       else {
-        if (bVar4 != 0) {
-          bVar4 = '\x01' << (bVar6 & 0x3f);
+        if (bVar3 != 0) {
+          bVar3 = '\x01' << (bVar5 & 0x3f);
         }
-        *pbVar9 = bVar4 | *pbVar9;
-        bVar6 = bVar6 + 1;
-        if (bVar6 == 8) {
-          bVar6 = 0;
-          pbVar9 = pbVar9 + -1;
-          cVar3 = cVar3 + -1;
+        *pbVar8 = bVar3 | *pbVar8;
+        bVar5 = bVar5 + 1;
+        if (bVar5 == 8) {
+          bVar5 = 0;
+          pbVar8 = pbVar8 + -1;
+          current_mask = current_mask - 1;
         }
       }
-      bVar5 = bVar5 + 1;
-    } while ((char)bVar5 < '\b');
+      bVar4 = bVar4 + 1;
+    } while ((char)bVar4 < '\b');
     local_6 = local_6 + '\x01';
-    pbVar8 = pbVar8 + 1;
+    pcVar7 = pcVar7 + 1;
   } while (local_6 < '\n');
   cVar2 = '\0';
   pbVar8 = local_10;
@@ -33784,53 +33786,53 @@ undefined1 hourMeterSecurityValidator(undefined4 param_1)
 {
   bool bVar1;
   undefined1 uVar2;
-  byte bVar3;
-  char cVar4;
-  uint *puVar5;
-  char *pcVar6;
-  undefined1 *puVar7;
-  uint local_12;
+  bool key_matches;
+  char cVar3;
+  uint *puVar4;
+  char *pcVar5;
+  undefined1 *puVar6;
+  uint extracted_hour_meter;
   char acStack_e [6];
   undefined1 auStack_8 [4];
   
   if (_security_enabled == 0xff) {
     uVar2 = 0;
   }
-  else if (DAT_00801e76 == '\x11') {
+  else if (security_retry_counter == '\x11') {
     uVar2 = 1;
   }
   else {
     bitPackingAlgorithm(param_1,acStack_e);
-    bVar3 = 1;
-    puVar5 = &local_12;
-    puVar7 = auStack_8;
+    key_matches = true;
+    puVar4 = &extracted_hour_meter;
+    puVar6 = auStack_8;
     do {
-      *(undefined1 *)puVar5 = *puVar7;
-      bVar3 = bVar3 + 1;
-      puVar5 = (uint *)((int)puVar5 + 1);
-      puVar7 = puVar7 + 1;
-    } while (bVar3 < 4);
-    if ((_hour_meter_ecm_run_time_none & 0xffffff00) - (local_12 & 0xffffff00) < 0x1a) {
+      *(undefined1 *)puVar4 = *puVar6;
+      key_matches = (bool)(key_matches + 1);
+      puVar4 = (uint *)((int)puVar4 + 1);
+      puVar6 = puVar6 + 1;
+    } while (key_matches < 4);
+    if ((_hour_meter_ecm_run_time_none & 0xffffff00) - (extracted_hour_meter & 0xffffff00) < 0x1a) {
       bVar1 = true;
-      pcVar6 = acStack_e;
-      for (cVar4 = '\0'; (bVar1 && (cVar4 < '\x06')); cVar4 = cVar4 + '\x01') {
-        if ((&security_key)[(short)cVar4] != *pcVar6) {
+      pcVar5 = acStack_e;
+      for (cVar3 = '\0'; (bVar1 && (cVar3 < '\x06')); cVar3 = cVar3 + '\x01') {
+        if ((&security_key)[(short)cVar3] != *pcVar5) {
           bVar1 = false;
         }
-        pcVar6 = pcVar6 + 1;
+        pcVar5 = pcVar5 + 1;
       }
       if (bVar1) {
         uVar2 = 0;
-        DAT_00801e76 = '\0';
+        security_retry_counter = '\0';
       }
       else {
         uVar2 = 1;
-        DAT_00801e76 = DAT_00801e76 + '\x01';
+        security_retry_counter = security_retry_counter + '\x01';
       }
     }
     else {
       uVar2 = 1;
-      DAT_00801e76 = DAT_00801e76 + '\x01';
+      security_retry_counter = security_retry_counter + '\x01';
     }
   }
   return uVar2;
@@ -36572,7 +36574,6 @@ void engineFluidLevelPGN_65263_Builder(void)
 // Function: engineConfigurationPGNBuilder @ 0x0003320e
 //
 
-/* WARNING: Unable to use type for symbol turbo_type */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void engineConfigurationPGNBuilder(undefined4 *param_1)
@@ -36585,71 +36586,70 @@ void engineConfigurationPGNBuilder(undefined4 *param_1)
   ushort local_22;
   byte bStack_1f;
   byte engine_type;
-  undefined1 uStack_1b;
+  byte bStack_1b;
   byte local_1a;
   char cStack_17;
   undefined4 local_16;
   undefined4 pgn_data;
   undefined4 msg_length;
   undefined4 local_a;
-  undefined1 uStack_6;
+  byte local_6;
   byte local_5;
-  undefined1 turbo_type;
+  byte turbo_type;
   byte fuel_type;
   
   epfBreakpointCalculator();
   fuelLimitExceedanceStatisticsAccumulator();
   local_5 = (byte)_jcomm_determined_rpm_at_engine_configuration_idle_speed_0_8031_875;
-  uStack_6 = (undefined1)
-             ((ushort)_jcomm_determined_rpm_at_engine_configuration_idle_speed_0_8031_875 >> 8);
-  uVar1 = CONCAT11(local_5,uStack_6);
+  local_6 = (byte)((ushort)_jcomm_determined_rpm_at_engine_configuration_idle_speed_0_8031_875 >> 8)
+  ;
+  uVar1 = CONCAT11(local_5,local_6);
   local_5 = (byte)_JCEVRPP2;
   _local_22 = CONCAT31(CONCAT21(uVar1,(char)(
                                             _jcomm_ind_torque_at_idle_available_torque_that_engine_can_prov_0_125
                                             >> 8) + '}'),local_5);
-  uStack_6 = (undefined1)((ushort)_JCEVRPP2 >> 8);
-  uVar1 = CONCAT11(uStack_6,(char)((ushort)
-                                   _jcomm_ind_torque_at_point_2_available_torque_that_engine_can_0_125
-                                  >> 8) + '}');
+  local_6 = (byte)((ushort)_JCEVRPP2 >> 8);
+  uVar1 = CONCAT11(local_6,(char)((ushort)
+                                  _jcomm_ind_torque_at_point_2_available_torque_that_engine_can_0_125
+                                 >> 8) + '}');
   local_5 = (byte)_jcomm_determine_rpm_at_engine_configuration_point_3_0_8031_875_da2e;
-  uStack_6 = (undefined1)
-             ((ushort)_jcomm_determine_rpm_at_engine_configuration_point_3_0_8031_875_da2e >> 8);
-  _engine_type = CONCAT31(CONCAT21(uVar1,local_5),uStack_6);
+  local_6 = (byte)((ushort)_jcomm_determine_rpm_at_engine_configuration_point_3_0_8031_875_da2e >> 8
+                  );
+  _engine_type = CONCAT31(CONCAT21(uVar1,local_5),local_6);
   local_5 = (byte)_jcomm_determine_rpm_at_engine_configuration_point_3_0_8031_875_da30;
-  uStack_6 = (undefined1)
-             ((ushort)_jcomm_determine_rpm_at_engine_configuration_point_3_0_8031_875_da30 >> 8);
+  local_6 = (byte)((ushort)_jcomm_determine_rpm_at_engine_configuration_point_3_0_8031_875_da30 >> 8
+                  );
   _local_1a = CONCAT31(CONCAT21(CONCAT11((char)((ushort)
                                                 _jcomm_ind_torque_at_point_3_available_torque_that_engine_can_0_125
-                                               >> 8) + '}',local_5),uStack_6),
+                                               >> 8) + '}',local_5),local_6),
                        (char)((ushort)
                               _jcomm_ind_torque_at_point_4_available_torque_that_engine_can_p_0_125
                              >> 8) + '}');
   local_5 = (byte)_jcomm_determined_rpm_at_pt_5_for_engine_config_map_0_8031_875;
-  uStack_6 = (undefined1)
-             ((ushort)_jcomm_determined_rpm_at_pt_5_for_engine_config_map_0_8031_875 >> 8);
-  uVar1 = CONCAT11(local_5,uStack_6);
+  local_6 = (byte)((ushort)_jcomm_determined_rpm_at_pt_5_for_engine_config_map_0_8031_875 >> 8);
+  uVar1 = CONCAT11(local_5,local_6);
   if (_slope_of_line_defining_droop_for_the_hsg_ref_currently_activ_0_55_13 == 0) {
-    _uStack_6 = _reference_speed_before_droop_calculation_1400_4500;
+    _local_6 = _reference_speed_before_droop_calculation_1400_4500;
   }
   else {
-    _uStack_6 = (_point_at_which_the_hsg_droop_slope_line_intersects_the_no_1500_4500 +
-                _reference_speed_before_droop_calculation_1400_4500) -
-                _hsg_base_reference_speed_currently_in_use_esp_may_select_1500_5000;
-    if (0xfaff < _uStack_6) {
-      _uStack_6 = 0xfaff;
+    _local_6 = (_point_at_which_the_hsg_droop_slope_line_intersects_the_no_1500_4500 +
+               _reference_speed_before_droop_calculation_1400_4500) -
+               _hsg_base_reference_speed_currently_in_use_esp_may_select_1500_5000;
+    if (0xfaff < _local_6) {
+      _local_6 = 0xfaff;
     }
   }
   local_16 = CONCAT31(CONCAT21(uVar1,(char)((ushort)
                                             _jcomm_ind_torque_at_point_5_available_torque_that_engine_can_0_125
                                            >> 8) + '}'),local_5);
-  turbo_type = uStack_6;
+  turbo_type = local_6;
   local_5 = (byte)_DAT_0080da34;
   fuel_type = local_5;
-  uStack_6 = (undefined1)((ushort)_DAT_0080da34 >> 8);
+  local_6 = (byte)((ushort)_DAT_0080da34 >> 8);
   local_5 = (byte)_JCHSODES;
-  uVar1 = CONCAT11(uStack_6,local_5);
-  uStack_6 = (undefined1)((ushort)_JCHSODES >> 8);
-  msg_length = CONCAT31(CONCAT21(uVar1,uStack_6),
+  uVar1 = CONCAT11(local_6,local_5);
+  local_6 = (byte)((ushort)_JCHSODES >> 8);
+  msg_length = CONCAT31(CONCAT21(uVar1,local_6),
                         (char)(_jcomm_engine_overspeed_tl_time_limit_for_jcomm_high_idle_ove_0_25000
                               / 10));
   local_a._0_1_ = (undefined1)(_DAT_00808342 / 0x50);
@@ -38623,6 +38623,7 @@ undefined8 twoDimensionalTableInterpolation(word *table_args)
   ushort local_D1w__1;
   word y_weight;
   uint unaff_D2;
+  ushort local_D2w__1;
   dword local_D3_358;
   word wVar3;
   word local_D6w_304;

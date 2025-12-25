@@ -523,6 +523,14 @@ public class UnlockModel : IDisposable
 
 	private IAddressValue currentDevice;
 
+	/*
+	 * SECURITY CROSS-REFERENCE ANNOTATION
+	 * Variable: securityState
+	 * Firmware Reference: security_enabled @ 0x00803b98 in J90350.00
+	 * Purpose: Tracks ECU security state (Secured/NotApplicable/Unknown)
+	 * Firmware Values: 0x00 = enforced (Secured), 0xFF = disabled (NotApplicable)
+	 * Confidence: HIGH
+	 */
 	private SecurityStatus securityState;
 
 	private bool disposed;
@@ -537,6 +545,15 @@ public class UnlockModel : IDisposable
 
 	private bool autoStopBroadcast;
 
+	/*
+	 * SECURITY CROSS-REFERENCE ANNOTATION
+	 * Variable: SecurityNotSupportedModules
+	 * Purpose: ECU modules that don't support security toggle operations
+	 * Note: CM4xx series ECUs lack security_enabled variable in firmware
+	 *       CM550 (J90280.05, J90350.00) DOES support security toggle
+	 * Firmware Context: CM550 has security_enabled @ 0x00803b98
+	 * Confidence: HIGH
+	 */
 	private string[] SecurityNotSupportedModules = new string[1] { "CM4" };
 
 	public ECMState ECMStatus
@@ -814,6 +831,28 @@ public class UnlockModel : IDisposable
 		Dispose();
 	}
 
+	/*
+	 * SECURITY CROSS-REFERENCE ANNOTATION
+	 * Function: ToggleSecurity()
+	 * Firmware Reference: Writes to security_enabled @ 0x00803b98 in J90350.00
+	 * Purpose: Toggle ECU calibration security state via CLIP protocol
+	 *
+	 * Protocol Flow:
+	 *   1. Calterm sends CommandType.ToggleSecurityKey
+	 *   2. ECU receives command and toggles security_enabled (0x00 <-> 0xFF)
+	 *   3. When security_enabled = 0xFF, diagnosticServiceSecurityValidator bypasses all checks
+	 *
+	 * Firmware Functions Called:
+	 *   - diagnosticServiceSecurityValidator @ 0x00021982 (checks security_enabled)
+	 *   - hourMeterSecurityValidator @ 0x0002fcdc (HMAC + 26-hour window check)
+	 *
+	 * Security Model:
+	 *   - Services <= 0x19 require authentication when security_enabled = 0x00
+	 *   - Services > 0x19 bypass security regardless of setting
+	 *   - Factory default security_key @ 0x00803b0c = "ABCDEF" (6 bytes)
+	 *
+	 * Confidence: HIGH
+	 */
 	private void ToggleSecurity()
 	{
 		if (ActiveDevice == null)
@@ -822,6 +861,7 @@ public class UnlockModel : IDisposable
 		}
 		try
 		{
+			// [SECURITY] CommandType.ToggleSecurityKey writes to security_enabled @ 0x00803b98
 			ExecutionResult executionResult = ActiveDevice.Execute(CommandType.ToggleSecurityKey);
 			if (executionResult.returnCode == CommandReturnType.Succeed)
 			{
@@ -1162,10 +1202,26 @@ public class UnlockModel : IDisposable
 		return result;
 	}
 
+	/*
+	 * SECURITY CROSS-REFERENCE ANNOTATION
+	 * Function: IsSecuritySupported()
+	 * Purpose: Check if connected ECU supports security toggle operations
+	 *
+	 * Module Compatibility:
+	 *   - CM4xx series: Security NOT supported (lacks security_enabled variable)
+	 *   - CM550 (J90280.05, J90350.00): Security IS supported
+	 *     - security_enabled @ 0x00803b98
+	 *     - security_key @ 0x00803b0c (6 bytes)
+	 *     - security_bypass_flag @ 0x00803586
+	 *
+	 * Returns: true if module supports security operations, false otherwise
+	 * Confidence: HIGH
+	 */
 	private bool IsSecuritySupported()
 	{
 		bool result = true;
 		string moduleType = GetModuleType();
+		// [SECURITY] CM4xx modules don't have security_enabled in firmware
 		string[] securityNotSupportedModules = SecurityNotSupportedModules;
 		foreach (string value in securityNotSupportedModules)
 		{

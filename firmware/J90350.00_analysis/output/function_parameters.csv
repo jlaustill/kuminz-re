@@ -157,3 +157,24 @@ function_address,function_name,param_index,new_name,new_type,comment
 # -----------------------------------------------------------------------------
 0x000142a8,canBusConfigTypeSelector,0,config_type,byte,CAN bus configuration type selector
 0x000142d4,parameterCalculationWithDivide,0,calc_mode,byte,Calculation mode selector
+
+# -----------------------------------------------------------------------------
+# Security Authentication Functions
+# -----------------------------------------------------------------------------
+# bitPackingAlgorithm @ 0x2fbd8 - Core security key derivation
+# Takes 10-byte input and produces 10-byte output via bit manipulation
+# Uses mask table, XOR table, and reorder table from ROM
+0x0002fbd8,bitPackingAlgorithm,0,input_buffer,byte*,Pointer to 10-byte authentication input payload
+0x0002fbd8,bitPackingAlgorithm,1,output_buffer,byte*,Pointer to 10-byte output (security_key[6] + hour_meter[4])
+
+# hourMeterSecurityValidator @ 0x2fcdc - Validates auth payload against security key and hour meter
+# Returns 0 on success, 1 on failure
+# Increments retry counter on failure, locks out at 17 (0x11) attempts
+0x0002fcdc,hourMeterSecurityValidator,0,auth_payload_ptr,byte*,Pointer to 10-byte authentication payload from request
+
+# diagnosticServiceSecurityValidator @ 0x21982 - Checks if service requires auth and validates
+# Returns 0xFF on success (auth passed or not needed), error code on failure
+0x00021982,diagnosticServiceSecurityValidator,0,msg_ptr,int,Pointer to diagnostic message structure with service request
+
+# diagnosticServiceDispatcher @ 0x2eea2 - Routes diagnostic services via dispatch table @ 0x801c7a
+0x0002eea2,diagnosticServiceDispatcher,0,msg_ptr,int,Pointer to diagnostic message structure

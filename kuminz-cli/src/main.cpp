@@ -12,6 +12,7 @@
 #include <clip/ECUReader.h>
 #include <clip/SocketCanAdapter.h>
 #include <clip/ServiceScanner.h>
+#include <clip/SecurityAuth.h>
 #include <clip/types/TClipPacket.h>
 
 #include <iostream>
@@ -48,6 +49,18 @@ void printUsage(const char* progname)
     std::cerr << "  --probe-service <hex-id>    Probe single service (e.g., 4A)\n\n";
     std::cerr << "Address Read Commands:\n";
     std::cerr << "  --read-addr <hex-addr> <len>  Read bytes at address (e.g., 801c7a 100)\n\n";
+    std::cerr << "Memory Write Commands (EXPERIMENTAL - USE AT OWN RISK):\n";
+    std::cerr << "  --write-addr <hex-addr> <hex-value>  Write 1-2 bytes at address\n";
+    std::cerr << "                                       e.g., 803586 B522 (write 0xB522 to 0x803586)\n";
+    std::cerr << "  --write-addr-auth <hex-addr> <hex-value>  Authenticated write (includes security key)\n";
+    std::cerr << "                                            Reads hour meter, generates auth, sends via TP\n";
+    std::cerr << "  --write-clip <hex-addr> <hex-value>  Write via CLIP session (command 0x15)\n";
+    std::cerr << "                                       Proper CLIP protocol: open session, SetDataByAddress\n\n";
+    std::cerr << "Security Authentication Commands:\n";
+    std::cerr << "  --auth-test                 Test security algorithm (offline - no ECU needed)\n";
+    std::cerr << "  --auth-gen <hex-hour-meter> Generate auth payload for hour meter value\n";
+    std::cerr << "  --auth-live                 Read hour meter from ECU and generate auth payload\n";
+    std::cerr << "  --auth-tables               Print algorithm lookup tables\n\n";
     std::cerr << "Other:\n";
     std::cerr << "  --help, -h                  Show this help\n\n";
     std::cerr << "Examples:\n";
@@ -55,7 +68,8 @@ void printUsage(const char* progname)
     std::cerr << "  " << progname << " can0 --dump-eeprom cm550_eeprom.bin\n";
     std::cerr << "  " << progname << " can0 --scan-services\n";
     std::cerr << "  " << progname << " can0 --probe-service 4A\n";
-    std::cerr << "  " << progname << " can0 --read-addr 801c7a 100\n\n";
+    std::cerr << "  " << progname << " can0 --read-addr 801c7a 100\n";
+    std::cerr << "  " << progname << " can0 --write-addr 803586 B522\n\n";
     std::cerr << "Note: CAN interface must be configured before running:\n";
     std::cerr << "  sudo ip link set can0 type can bitrate 250000\n";
     std::cerr << "  sudo ip link set can0 up\n";
@@ -96,6 +110,127 @@ int main(int argc, char* argv[])
 
     // Get optional output file/directory
     std::string outputArg = (argc >= 4) ? argv[3] : "";
+
+    // =========================================================================
+    // Offline Security Auth Commands (no ECU connection needed)
+    // =========================================================================
+    if (command == "--auth-test") {
+        std::cerr << "\n=== CM550 Security Algorithm Test ===\n\n";
+
+        // Test with known values
+        uint32_t testHourMeter = 0x12345678;
+        std::cerr << "Test hour meter: 0x" << std::hex << std::uppercase
+                  << std::setw(8) << std::setfill('0') << testHourMeter << std::dec << "\n\n";
+
+        // Generate auth payload
+        std::vector<uint8_t> payload;
+        if (SecurityAuth::generateAuthPayload(testHourMeter, payload)) {
+            std::cerr << "Generated auth payload (10 bytes):\n  ";
+            for (size_t i = 0; i < payload.size(); i++) {
+                std::cerr << std::hex << std::uppercase << std::setw(2)
+                          << std::setfill('0') << static_cast<int>(payload[i]) << " ";
+            }
+            std::cerr << std::dec << "\n\n";
+
+            // Verify by running forward algorithm
+            std::vector<uint8_t> result;
+            SecurityAuth::bitPackingForward(payload, result);
+
+            std::cerr << "Forward algorithm result:\n  ";
+            for (size_t i = 0; i < result.size(); i++) {
+                std::cerr << std::hex << std::uppercase << std::setw(2)
+                          << std::setfill('0') << static_cast<int>(result[i]) << " ";
+            }
+            std::cerr << "\n\n";
+
+            // Check components
+            std::string secKey(result.begin(), result.begin() + 6);
+            uint32_t resultHM = (result[6] << 24) | (result[7] << 16) |
+                                (result[8] << 8) | result[9];
+
+            std::cerr << "Decoded result:\n";
+            std::cerr << "  Security key: \"" << secKey << "\" ";
+            if (secKey == "ABCDEF") {
+                std::cerr << "[PASS]\n";
+            } else {
+                std::cerr << "[FAIL - expected \"ABCDEF\"]\n";
+            }
+
+            std::cerr << "  Hour meter:   0x" << std::hex << std::uppercase
+                      << std::setw(8) << std::setfill('0') << resultHM << " ";
+            if (resultHM == testHourMeter) {
+                std::cerr << "[PASS]\n";
+            } else {
+                std::cerr << "[FAIL - expected 0x" << testHourMeter << "]\n";
+            }
+
+            std::cerr << std::dec << "\n";
+
+            if (SecurityAuth::verifyPayload(payload, testHourMeter)) {
+                std::cerr << "=== ALGORITHM VERIFICATION: PASS ===\n";
+                return 0;
+            } else {
+                std::cerr << "=== ALGORITHM VERIFICATION: FAIL ===\n";
+                return 1;
+            }
+        } else {
+            std::cerr << "[ERROR] Failed to generate auth payload\n";
+            return 1;
+        }
+    }
+    else if (command == "--auth-gen") {
+        if (outputArg.empty()) {
+            std::cerr << "[ERROR] --auth-gen requires <hex-hour-meter>\n";
+            std::cerr << "Example: --auth-gen 12345678\n";
+            return 1;
+        }
+
+        // Parse hex hour meter
+        uint32_t hourMeter;
+        std::stringstream ss;
+        ss << std::hex << outputArg;
+        ss >> hourMeter;
+
+        std::cerr << "\n=== Generate Auth Payload ===\n\n";
+        std::cerr << "Hour meter: 0x" << std::hex << std::uppercase
+                  << std::setw(8) << std::setfill('0') << hourMeter << std::dec << "\n\n";
+
+        std::vector<uint8_t> payload;
+        if (SecurityAuth::generateAuthPayload(hourMeter, payload)) {
+            std::cerr << "Auth payload (10 bytes):\n";
+            std::cerr << "  Hex: ";
+            for (size_t i = 0; i < payload.size(); i++) {
+                std::cerr << std::hex << std::uppercase << std::setw(2)
+                          << std::setfill('0') << static_cast<int>(payload[i]) << " ";
+            }
+            std::cerr << "\n";
+
+            // Also print as C array
+            std::cerr << "  C:   {";
+            for (size_t i = 0; i < payload.size(); i++) {
+                std::cerr << "0x" << std::hex << std::uppercase << std::setw(2)
+                          << std::setfill('0') << static_cast<int>(payload[i]);
+                if (i < payload.size() - 1) std::cerr << ", ";
+            }
+            std::cerr << "}\n\n" << std::dec;
+
+            // Verify
+            if (SecurityAuth::verifyPayload(payload, hourMeter)) {
+                std::cerr << "[VERIFIED] Payload generates correct output\n";
+                return 0;
+            } else {
+                std::cerr << "[ERROR] Verification failed!\n";
+                return 1;
+            }
+        } else {
+            std::cerr << "[ERROR] Failed to generate auth payload\n";
+            return 1;
+        }
+    }
+    else if (command == "--auth-tables") {
+        SecurityAuth::printTables();
+        return 0;
+    }
 
     // Create adapter and reader from clip-core
     SocketCanAdapter adapter;
@@ -354,6 +489,387 @@ int main(int argc, char* argv[])
                     std::cerr << "[ERROR] Failed to read memory\n";
                     result = 1;
                 }
+            }
+        }
+    }
+    // =========================================================================
+    // Memory Write Command (EXPERIMENTAL)
+    // =========================================================================
+    else if (command == "--write-addr") {
+        if (argc < 5) {
+            std::cerr << "[ERROR] --write-addr requires <hex-addr> <hex-value>\n";
+            std::cerr << "Example: --write-addr 803586 B522\n";
+            result = 1;
+        } else {
+            // Parse hex address
+            uint32_t address;
+            std::stringstream ssAddr;
+            ssAddr << std::hex << argv[3];
+            ssAddr >> address;
+
+            // Parse hex value (1-4 hex chars = 1-2 bytes)
+            std::string valueStr = argv[4];
+            if (valueStr.length() > 4) {
+                std::cerr << "[ERROR] Value must be 1-4 hex chars (1-2 bytes)\n";
+                result = 1;
+            } else {
+                uint32_t value;
+                std::stringstream ssVal;
+                ssVal << std::hex << valueStr;
+                ssVal >> value;
+
+                // Convert value to bytes (big-endian for ECU)
+                std::vector<uint8_t> data;
+                if (value > 0xFF) {
+                    // 2-byte value (big-endian)
+                    data.push_back(static_cast<uint8_t>((value >> 8) & 0xFF));
+                    data.push_back(static_cast<uint8_t>(value & 0xFF));
+                } else {
+                    // 1-byte value
+                    data.push_back(static_cast<uint8_t>(value & 0xFF));
+                }
+
+                std::cerr << "\n";
+                std::cerr << "╔════════════════════════════════════════════════════════╗\n";
+                std::cerr << "║  ⚠️  EXPERIMENTAL MEMORY WRITE - USE AT OWN RISK  ⚠️    ║\n";
+                std::cerr << "╠════════════════════════════════════════════════════════╣\n";
+                std::cerr << "║  Address: 0x" << std::hex << std::uppercase
+                          << std::setw(8) << std::setfill('0') << address
+                          << "                             ║\n";
+                std::cerr << "║  Value:   0x" << std::setw(4) << value
+                          << " (" << std::dec << data.size() << " byte"
+                          << (data.size() > 1 ? "s" : "") << ")"
+                          << "                                 ║\n";
+                std::cerr << "╚════════════════════════════════════════════════════════╝\n";
+                std::cerr << std::dec;
+
+                // First, read current value
+                std::vector<uint8_t> currentData;
+                if (reader.readMemoryService4A(address, static_cast<uint8_t>(data.size()), currentData)) {
+                    std::cerr << "[INFO] Current value at 0x" << std::hex << std::uppercase
+                              << std::setw(8) << std::setfill('0') << address << ": ";
+                    for (size_t i = 0; i < currentData.size(); i++) {
+                        std::cerr << std::setw(2) << static_cast<int>(currentData[i]);
+                    }
+                    std::cerr << std::dec << "\n";
+                }
+
+                // Attempt write
+                std::cerr << "[INFO] Attempting write...\n";
+                if (reader.writeMemoryService4A(address, data)) {
+                    std::cerr << "[SUCCESS] Write command acknowledged!\n";
+
+                    // Verify by reading back
+                    std::vector<uint8_t> verifyData;
+                    if (reader.readMemoryService4A(address, static_cast<uint8_t>(data.size()), verifyData)) {
+                        std::cerr << "[INFO] Verification read: ";
+                        bool match = (verifyData.size() == data.size());
+                        for (size_t i = 0; i < verifyData.size(); i++) {
+                            std::cerr << std::hex << std::uppercase << std::setw(2)
+                                      << std::setfill('0') << static_cast<int>(verifyData[i]);
+                            if (i < data.size() && verifyData[i] != data[i]) {
+                                match = false;
+                            }
+                        }
+                        std::cerr << std::dec << "\n";
+
+                        if (match) {
+                            std::cerr << "[✓] Write verified successfully!\n";
+                        } else {
+                            std::cerr << "[✗] Verification FAILED - value did not change\n";
+                            std::cerr << "    (ECU may have rejected write, or address is read-only)\n";
+                            result = 1;
+                        }
+                    }
+                } else {
+                    std::cerr << "[ERROR] Write failed - no acknowledgment from ECU\n";
+                    result = 1;
+                }
+            }
+        }
+    }
+    // =========================================================================
+    // Authenticated Memory Write Command
+    // =========================================================================
+    else if (command == "--write-addr-auth") {
+        if (argc < 5) {
+            std::cerr << "[ERROR] --write-addr-auth requires <hex-addr> <hex-value>\n";
+            std::cerr << "Example: --write-addr-auth 803064 AA55\n";
+            result = 1;
+        } else {
+            // Parse hex address
+            uint32_t address;
+            std::stringstream ss;
+            ss << std::hex << argv[3];
+            ss >> address;
+
+            // Parse hex value
+            std::vector<uint8_t> data;
+            std::string valueStr = argv[4];
+            for (size_t i = 0; i < valueStr.length(); i += 2) {
+                if (i + 1 < valueStr.length()) {
+                    uint8_t byte = static_cast<uint8_t>(
+                        std::stoi(valueStr.substr(i, 2), nullptr, 16)
+                    );
+                    data.push_back(byte);
+                }
+            }
+
+            if (data.empty()) {
+                std::cerr << "[ERROR] Invalid hex value\n";
+                result = 1;
+            } else {
+                std::cerr << "\n";
+                std::cerr << "╔════════════════════════════════════════════════════════╗\n";
+                std::cerr << "║  ⚠️  AUTHENTICATED MEMORY WRITE - USE AT OWN RISK  ⚠️   ║\n";
+                std::cerr << "╠════════════════════════════════════════════════════════╣\n";
+                std::cerr << "║  Address: 0x" << std::hex << std::uppercase
+                          << std::setw(8) << std::setfill('0') << address << "                       ║\n";
+                std::cerr << "║  Value:   0x";
+                for (auto b : data) {
+                    std::cerr << std::hex << std::uppercase << std::setw(2) << std::setfill('0')
+                              << static_cast<int>(b);
+                }
+                std::cerr << " (" << std::dec << data.size() << " bytes)                              ║\n";
+                std::cerr << "╚════════════════════════════════════════════════════════╝\n";
+                std::cerr << std::dec;
+
+                // Step 1: Read hour meter
+                std::cerr << "\n[1/3] Reading hour meter from ECU...\n";
+                uint32_t hourMeter;
+                if (!reader.readHourMeter(hourMeter)) {
+                    std::cerr << "[ERROR] Failed to read hour meter\n";
+                    result = 1;
+                } else {
+                    std::cerr << "[LOG] Hour meter: 0x" << std::hex << std::uppercase
+                              << std::setw(8) << std::setfill('0') << hourMeter << std::dec << "\n";
+
+                    // Step 2: Show auth payload that will be used
+                    std::cerr << "\n[2/3] Generating auth payload...\n";
+                    std::vector<uint8_t> authPayload;
+                    if (SecurityAuth::generateAuthPayload(hourMeter, authPayload)) {
+                        std::cerr << "[LOG] Auth payload: ";
+                        for (auto b : authPayload) {
+                            std::cerr << std::hex << std::uppercase << std::setw(2)
+                                      << std::setfill('0') << static_cast<int>(b) << " ";
+                        }
+                        std::cerr << std::dec << "\n";
+                    }
+
+                    // Step 3: Send authenticated write
+                    std::cerr << "\n[3/3] Sending authenticated write via J1939 TP...\n";
+                    if (reader.writeMemoryService4AAuth(address, data, hourMeter)) {
+                        std::cerr << "\n[✓] Authenticated write completed!\n";
+                    } else {
+                        std::cerr << "\n[✗] Authenticated write failed\n";
+                        result = 1;
+                    }
+                }
+            }
+        }
+    }
+    // =========================================================================
+    // CLIP Session Write Command (Proper protocol - command 0x15)
+    // =========================================================================
+    else if (command == "--write-clip") {
+        if (argc < 5) {
+            std::cerr << "[ERROR] --write-clip requires <hex-addr> <hex-value>\n";
+            std::cerr << "Example: --write-clip 803064 AA55\n";
+            result = 1;
+        } else {
+            // Parse hex address
+            uint32_t address;
+            std::stringstream ss;
+            ss << std::hex << argv[3];
+            ss >> address;
+
+            // Parse hex value
+            std::vector<uint8_t> data;
+            std::string valueStr = argv[4];
+            for (size_t i = 0; i < valueStr.length(); i += 2) {
+                if (i + 1 < valueStr.length()) {
+                    uint8_t byte = static_cast<uint8_t>(
+                        std::stoi(valueStr.substr(i, 2), nullptr, 16)
+                    );
+                    data.push_back(byte);
+                }
+            }
+
+            if (data.empty()) {
+                std::cerr << "[ERROR] Invalid hex value\n";
+                result = 1;
+            } else {
+                std::cerr << "\n";
+                std::cerr << "╔════════════════════════════════════════════════════════╗\n";
+                std::cerr << "║  CLIP SESSION WRITE (Command 0x15 - SetDataByAddress)  ║\n";
+                std::cerr << "╠════════════════════════════════════════════════════════╣\n";
+                std::cerr << "║  Address: 0x" << std::hex << std::uppercase
+                          << std::setw(8) << std::setfill('0') << address << "                       ║\n";
+                std::cerr << "║  Value:   0x";
+                for (auto b : data) {
+                    std::cerr << std::hex << std::uppercase << std::setw(2) << std::setfill('0')
+                              << static_cast<int>(b);
+                }
+                std::cerr << " (" << std::dec << data.size() << " bytes)                              ║\n";
+                std::cerr << "╚════════════════════════════════════════════════════════╝\n";
+                std::cerr << std::dec;
+
+                // Need to reconnect using CLIP session (not simple mode)
+                reader.disconnect();
+
+                std::cerr << "\n[1/4] Opening CLIP session with ECU...\n";
+                if (!reader.connect(canDevice)) {
+                    std::cerr << "[ERROR] Failed to establish CLIP session\n";
+                    result = 1;
+                } else {
+                    // Read current value first
+                    std::cerr << "\n[2/4] Reading current value at address...\n";
+                    std::vector<uint8_t> currentData;
+                    if (reader.readMemory(address, static_cast<uint16_t>(data.size()), currentData)) {
+                        std::cerr << "[LOG] Current value: 0x";
+                        for (auto b : currentData) {
+                            std::cerr << std::hex << std::uppercase << std::setw(2)
+                                      << std::setfill('0') << static_cast<int>(b);
+                        }
+                        std::cerr << std::dec << "\n";
+                    }
+
+                    // Attempt write using CLIP command 0x15
+                    std::cerr << "\n[3/4] Sending SetDataByAddress (0x15)...\n";
+                    if (reader.writeMemory(address, data)) {
+                        std::cerr << "[LOG] Write command sent successfully\n";
+
+                        // Verify by reading back
+                        std::cerr << "\n[4/4] Verifying write...\n";
+                        std::vector<uint8_t> verifyData;
+                        if (reader.readMemory(address, static_cast<uint16_t>(data.size()), verifyData)) {
+                            std::cerr << "[LOG] Read back: 0x";
+                            bool match = (verifyData.size() == data.size());
+                            for (size_t i = 0; i < verifyData.size(); i++) {
+                                std::cerr << std::hex << std::uppercase << std::setw(2)
+                                          << std::setfill('0') << static_cast<int>(verifyData[i]);
+                                if (i < data.size() && verifyData[i] != data[i]) {
+                                    match = false;
+                                }
+                            }
+                            std::cerr << std::dec << "\n";
+
+                            if (match) {
+                                std::cerr << "\n[✓] CLIP write verified successfully!\n";
+                            } else {
+                                std::cerr << "\n[✗] Verification FAILED - value did not change\n";
+                                result = 1;
+                            }
+                        }
+                    } else {
+                        std::cerr << "[ERROR] CLIP write failed\n";
+                        result = 1;
+                    }
+                }
+            }
+        }
+    }
+    // =========================================================================
+    // Live Security Authentication Command
+    // =========================================================================
+    else if (command == "--auth-live") {
+        std::cerr << "\n=== Live ECU Authentication ===\n\n";
+
+        // Addresses from firmware analysis (global_variables.csv)
+        const uint32_t HOUR_METER_ADDR = 0x80BDA4;      // hour_meter_ecm_run_time_none
+        const uint32_t SECURITY_ENABLED_ADDR = 0x803B98; // security_enabled
+        const uint32_t SECURITY_RETRY_ADDR = 0x801E76;   // security_retry_counter
+
+        // Read security_enabled flag first
+        std::vector<uint8_t> secEnabled;
+        if (reader.readMemoryService4A(SECURITY_ENABLED_ADDR, 1, secEnabled)) {
+            std::cerr << "security_enabled @ 0x803B98: 0x"
+                      << std::hex << std::uppercase << std::setw(2) << std::setfill('0')
+                      << static_cast<int>(secEnabled[0]) << std::dec;
+            if (secEnabled[0] == 0xFF) {
+                std::cerr << " [SECURITY DISABLED - no auth needed!]\n";
+            } else if (secEnabled[0] == 0x00) {
+                std::cerr << " [SECURITY ENABLED]\n";
+            } else {
+                std::cerr << " [UNKNOWN STATE]\n";
+            }
+        }
+
+        // Read retry counter
+        std::vector<uint8_t> retryCounter;
+        if (reader.readMemoryService4A(SECURITY_RETRY_ADDR, 1, retryCounter)) {
+            std::cerr << "retry_counter @ 0x801E76:   0x"
+                      << std::hex << std::uppercase << std::setw(2) << std::setfill('0')
+                      << static_cast<int>(retryCounter[0]) << std::dec;
+            if (retryCounter[0] >= 0x11) {
+                std::cerr << " [LOCKED OUT! 17+ failed attempts]\n";
+            } else {
+                std::cerr << " [" << static_cast<int>(retryCounter[0]) << " failed attempts]\n";
+            }
+        }
+
+        // Read hour meter (4 bytes, big-endian)
+        std::vector<uint8_t> hourMeterBytes;
+        if (!reader.readMemoryService4A(HOUR_METER_ADDR, 4, hourMeterBytes)) {
+            std::cerr << "[ERROR] Failed to read hour meter from ECU\n";
+            result = 1;
+        } else {
+            uint32_t hourMeter = (hourMeterBytes[0] << 24) | (hourMeterBytes[1] << 16) |
+                                 (hourMeterBytes[2] << 8) | hourMeterBytes[3];
+
+            std::cerr << "\nhour_meter @ 0x80BDA4:      0x"
+                      << std::hex << std::uppercase << std::setw(8) << std::setfill('0')
+                      << hourMeter << std::dec << "\n";
+            std::cerr << "  Raw bytes: ";
+            for (size_t i = 0; i < hourMeterBytes.size(); i++) {
+                std::cerr << std::hex << std::uppercase << std::setw(2) << std::setfill('0')
+                          << static_cast<int>(hourMeterBytes[i]) << " ";
+            }
+            std::cerr << std::dec << "\n\n";
+
+            // Generate auth payload
+            std::vector<uint8_t> payload;
+            if (SecurityAuth::generateAuthPayload(hourMeter, payload)) {
+                std::cerr << "=== Generated Auth Payload ===\n";
+                std::cerr << "Hex: ";
+                for (size_t i = 0; i < payload.size(); i++) {
+                    std::cerr << std::hex << std::uppercase << std::setw(2) << std::setfill('0')
+                              << static_cast<int>(payload[i]) << " ";
+                }
+                std::cerr << "\n";
+
+                // Print as C array
+                std::cerr << "C:   {";
+                for (size_t i = 0; i < payload.size(); i++) {
+                    std::cerr << "0x" << std::hex << std::uppercase << std::setw(2)
+                              << std::setfill('0') << static_cast<int>(payload[i]);
+                    if (i < payload.size() - 1) std::cerr << ", ";
+                }
+                std::cerr << "}\n\n" << std::dec;
+
+                // Verify
+                if (SecurityAuth::verifyPayload(payload, hourMeter)) {
+                    std::cerr << "[VERIFIED] Payload generates correct output\n\n";
+
+                    // Show what the ECU will see
+                    std::vector<uint8_t> result;
+                    SecurityAuth::bitPackingForward(payload, result);
+                    std::cerr << "ECU will decode to:\n";
+                    std::cerr << "  Security key: \"";
+                    for (int i = 0; i < 6; i++) std::cerr << static_cast<char>(result[i]);
+                    std::cerr << "\"\n";
+                    std::cerr << "  Hour meter:   0x" << std::hex << std::uppercase;
+                    for (int i = 6; i < 10; i++) {
+                        std::cerr << std::setw(2) << std::setfill('0') << static_cast<int>(result[i]);
+                    }
+                    std::cerr << std::dec << "\n";
+                } else {
+                    std::cerr << "[ERROR] Verification failed!\n";
+                    result = 1;
+                }
+            } else {
+                std::cerr << "[ERROR] Failed to generate auth payload\n";
+                result = 1;
             }
         }
     }

@@ -1261,3 +1261,143 @@ This explains why our probe (address 0x00000000) returned specific data instead 
 2. **Service 0x46**: Test with just 2-byte parameter ID
 3. **Service 0x4C**: Implement multi-frame request using J1939 TP.BAM or TP.CM
 4. **Services 0x44/0x45/0x47**: Investigate security session requirements
+
+---
+
+# CLIP Session Management (Live ECU Verified)
+
+This section documents the CLIP session layer implementation, verified on a live CM550 ECU (J90350.00 firmware) on 2024-12-24.
+
+## Session Management Status
+
+| Component | Status | Notes |
+|-----------|--------|-------|
+| Session Open | ✅ Working | ECU accepts connection |
+| Session Close | ✅ Working | ECU acknowledges close |
+| Authentication | ✅ Working | CM550 returns 0 (no real auth) |
+| Connection ID Mgmt | ✅ Working | Sync to ECU's existing session |
+| CLIP Commands (0x14/0x15) | ❌ Failing | See Task 016 |
+
+## Key Discovery: Connection ID Syncing
+
+The CM550 ECU maintains **persistent sessions**. When connecting:
+
+1. Tool sends TransportOpen (0x02) with connection ID 1
+2. ECU may already have an active session (e.g., connection ID 24)
+3. ECU responds with SessionOpenResponse (0x0D) using its existing connection ID
+4. Tool MUST sync to the ECU's connection ID to communicate
+
+**Working Session Open Flow:**
+```
+Tool → ECU: [02][01][ff][01][00][00][00][00]  TransportOpen, connId=1
+ECU → Tool: [0d][18][02][ff][ff][ff][ff][ff]  SessionOpenResponse, connId=24, control=0x02 (SeedReply)
+Tool: Syncs internal connection ID to 24, marks session as Authenticated
+```
+
+**Critical Implementation Detail:**
+```cpp
+// In receiveFrame(), when opening session:
+if (acceptAnyConnectionId && frame.connectionId != m_connectionId) {
+    m_connectionId = frame.connectionId;  // Sync to ECU's connection ID
+}
+```
+
+## CM550 Message Type 0x0D
+
+CM550 uses message type **0x0D** for session responses, not 0x02:
+
+| Standard CLIP | CM550 Variant | Purpose |
+|---------------|---------------|---------|
+| TransportOpen (0x02) | Request only | Tool → ECU session open |
+| SessionOpenResponse (0x0D) | Response | ECU → Tool session accept |
+
+**Enum Update:**
+```cpp
+enum class EClipMsgType : uint8_t
+{
+    TransportOpen       = 0x02,  // Tool → ECU
+    DataTransfer        = 0x03,  // Bidirectional
+    ClearToSend         = 0x04,  // Acknowledgment
+    ConnectionRefused   = 0x05,  // ECU rejection
+    TransportClose      = 0x06,  // Close request
+    SessionOpenResponse = 0x0D   // ECU → Tool (CM550)
+};
+```
+
+## Session Adoption Logic
+
+When ECU has an existing session and rejects a new one, the tool can adopt the existing session:
+
+```cpp
+bool CLIPSessionManager::openSession(uint8_t ecuAddress, int timeoutMs)
+{
+    // Send TransportOpen...
+
+    if (!m_transport->receiveResponse(response, timeoutMs, true /* acceptAnyConnectionId */)) {
+        // ECU may have rejected with "already connected" error
+        uint8_t syncedConnId = m_transport->getConnectionId();
+        if (syncedConnId != 0 && syncedConnId != 1) {
+            // Adopt the existing session
+            log("Using existing session at connection ID " + std::to_string(syncedConnId));
+            setState(ESessionState::Authenticated);
+            return true;
+        }
+    }
+    // ...
+}
+```
+
+## Connection ID Persistence
+
+**Critical:** Once a session is established, the connection ID MUST remain constant for all commands in that session.
+
+```cpp
+// WRONG - do not increment for each command:
+// m_transport->nextConnectionId();
+
+// CORRECT - reuse the established connection ID:
+// Keep using m_connectionId for all commands in session
+```
+
+## Seed Reply Format
+
+When ECU accepts session, it sends a seed reply:
+
+```
+Byte 0: (SessionID << 5) | 0x0D  = 0x0D (sessionId=0, type=SessionOpenResponse)
+Byte 1: Connection ID (e.g., 0x18 = 24)
+Byte 2: Control (0x02 = SeedReply)
+Bytes 3-7: Padding (0xFF)
+```
+
+**Full Seed Reply Packet (from CTS):**
+```
+[EncryptionLevel1][EncryptionLevel2][Seed:4bytes]
+```
+
+## Implementation Files
+
+| File | Purpose |
+|------|---------|
+| `clip-core/src/CLIPSessionManager.cpp` | Session state machine |
+| `clip-core/src/CLIPTransportLayer.cpp` | Connection ID syncing |
+| `clip-core/include/clip/types/TClipPacket.h` | Message type enums |
+| `kuminz-cli/src/main.cpp` | --write-clip command |
+
+## Open Issue: CLIP Commands Failing
+
+Session management is working, but CLIP commands (0x14 GetDataByAddress, 0x15 SetDataByAddress) are rejected:
+
+```
+Session open: SUCCESS (connection ID 24 adopted)
+Read (0x14): ECU returns [0d][18][03] - error code 0x03
+Write (0x15): ECU returns [0d][18][23] - error code 0x23
+```
+
+**Possible causes (see Task 016):**
+1. Multi-frame transport encoding differs from Insite
+2. Command packet format incorrect
+3. DPA wrapper (0xC0/0x80) needed around CLIP commands
+4. Security level not sufficient for memory access
+
+---

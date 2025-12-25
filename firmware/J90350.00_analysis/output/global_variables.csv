@@ -855,6 +855,7 @@ address,name,type,comment
 0x00801ac8,ambient_sensor_status2,undefined,
 0x00801ac9,ambient_temp_processed,undefined,
 0x00801aca,ambient_status_final,undefined,
+0x00801e76,security_retry_counter,undefined,
 0x00803036,j1939_tx_msg_buffer,j1939_tx_msg_buffer_t,
 0x00803037,j1939_vp44_fuel_high,,
 0x00803038,j1939_vp44_fuel_low,,

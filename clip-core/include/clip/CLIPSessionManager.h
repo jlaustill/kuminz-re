@@ -116,6 +116,20 @@ public:
                        int timeoutMs = CLIP_DEFAULT_TIMEOUT_MS);
 
     /**
+     * @brief Write memory to ECU using SetDataByAddress (0x15).
+     * @param address Memory address
+     * @param data Data to write
+     * @param timeoutMs Timeout in milliseconds
+     * @return true if write succeeded
+     *
+     * NOTE: This requires an open authenticated session (openSession first).
+     * CM550 ECUs don't enforce security, so session can proceed without encryption.
+     */
+    bool writeMemory(uint32_t address,
+                     const std::vector<uint8_t>& data,
+                     int timeoutMs = CLIP_DEFAULT_TIMEOUT_MS);
+
+    /**
      * @brief Get the last received seed (for debugging/reverse engineering).
      */
     const TSeedReply& getLastSeed() const;

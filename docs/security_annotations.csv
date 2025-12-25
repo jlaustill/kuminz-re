@@ -1,0 +1,34 @@
+file,original_function,annotated_name,firmware_reference,purpose,confidence,date
+# Security Cross-Reference Annotations - J90350.00 CM550 Firmware <-> Insite/Calterm
+# Generated from discovery session 2024-12-24
+#
+# Firmware Security Variables:
+#   security_enabled @ 0x00803b98 (0x00=enforced, 0xFF=disabled)
+#   security_key @ 0x00803b0c (6 bytes, factory "ABCDEF")
+#   security_bypass_flag @ 0x00803586 (0xB522=bypass, 0x00=active)
+#
+# Firmware Security Functions:
+#   diagnosticServiceSecurityValidator @ 0x00021982 (service ID gating)
+#   hourMeterSecurityValidator @ 0x0002fcdc (HMAC + 26-hour window)
+#   bitPackingAlgorithm @ 0x0002fbd8 (extract HMAC from message)
+#   memoryOperationDispatcher @ 0x0002148a (memory R/W gating)
+
+# PCLSystem_ghidra.c annotations
+PCLSystem_ghidra.c,FUN_100407d0,XCP_ComputeKeyFromSeed_Wrapper,bitPackingAlgorithm @ 0x0002fbd8,Dynamically loads XCP seed/key library and computes key from ECU seed,HIGH,2024-12-24
+PCLSystem_ghidra.c,FUN_1008f300,CLIPSeedRequest::CLIPSeedRequest,hourMeterSecurityValidator @ 0x0002fcdc,CLIP seed request constructor - initiates security handshake,HIGH,2024-12-24
+
+# ToolSecurity_ghidra.c annotations
+ToolSecurity_ghidra.c,FUN_10031a96,HexStringToSecurityKey,security_key @ 0x00803b0c,Converts 12-char hex string to 6-byte binary security key,HIGH,2024-12-24
+
+# Unlock.cs annotations (Calterm III)
+Unlock.cs,securityState,securityState,security_enabled @ 0x00803b98,Tracks ECU security state (Secured/NotApplicable/Unknown),HIGH,2024-12-24
+Unlock.cs,SecurityNotSupportedModules,SecurityNotSupportedModules,N/A,CM4xx blacklist - these ECUs lack security_enabled variable,HIGH,2024-12-24
+Unlock.cs,ToggleSecurity,ToggleSecurity,security_enabled @ 0x00803b98,Toggle ECU calibration security via CLIP protocol,HIGH,2024-12-24
+Unlock.cs,IsSecuritySupported,IsSecuritySupported,N/A,Check if ECU supports security toggle operations,HIGH,2024-12-24
+
+# Key Protocol Relationships
+# - Calterm ToggleSecurity() -> CommandType.ToggleSecurityKey -> ECU toggles security_enabled
+# - PCLSystem CLIPSeedRequest -> ECU hourMeterSecurityValidator -> validates seed/key
+# - ToolSecurity HexStringToSecurityKey -> handles 6-byte key format matching firmware
+# - Services <= 0x19 require authentication when security_enabled = 0x00
+# - Services > 0x19 bypass security regardless of setting

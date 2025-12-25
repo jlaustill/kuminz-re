@@ -13,6 +13,7 @@ add_library(clip-core STATIC
     src/CLIPInstructionBuilder.cpp
     src/J1939MessageBuilder.cpp
     src/ServiceScanner.cpp
+    src/SecurityAuth.cpp
 )
 
 # Public include directory for consumers
