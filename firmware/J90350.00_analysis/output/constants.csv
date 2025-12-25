@@ -1,0 +1,10 @@
+address,constant_name,value,comment
+0x0002FBC4,SECURITY_MASK_TABLE,0x46589A32708723998564,10-byte mask table for bitPackingAlgorithm - bit 0=forward 1=backward
+0x0002FBCE,SECURITY_XOR_TABLE,0x06080102000703090504,10-byte XOR permutation indices for scrambling phase
+0x0002FBD7,SECURITY_REORDER_PTR,0x04,Pointer to end of XOR table (read backwards for reorder phase)
+0x00803B0C,SECURITY_KEY_DEFAULT,0x414243444546,Factory default security key "ABCDEF" (6 bytes)
+0x00803B98,SECURITY_DISABLED_FLAG,0xFF,Value indicating security is disabled (0x00 = enforced)
+0x00803586,SECURITY_BYPASS_MAGIC,0xB522,Magic value to bypass security checks when written
+0x0080BDA4,HOUR_METER_ADDR,0x0D941F08,Current hour meter reading address (32-bit)
+0x00801E76,SECURITY_LOCKOUT_COUNT,0x11,Maximum failed auth attempts before lockout (17 decimal)
+0x0000001A,HOUR_METER_TOLERANCE,26,Hour meter tolerance window in hours for auth validation

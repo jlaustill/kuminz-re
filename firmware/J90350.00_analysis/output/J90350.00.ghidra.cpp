@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Thu Dec 25 13:57:27 MST 2025
+// Generated: Thu Dec 25 14:03:57 MST 2025
 
 
 //
@@ -23593,10 +23593,10 @@ void j1939TpControlFrameBuilder(undefined4 param_1)
 
 
 //
-// Function: vp44MessageTransmitter @ 0x00022ad8
+// Function: j1939TpMessageTransmitter @ 0x00022ad8
 //
 
-undefined1 vp44MessageTransmitter(undefined4 param_1,undefined2 param_2)
+undefined1 j1939TpMessageTransmitter(undefined4 param_1,undefined2 param_2)
 
 {
   undefined1 local_1e;
@@ -23631,12 +23631,12 @@ undefined1 vp44MessageTransmitter(undefined4 param_1,undefined2 param_2)
 
 
 //
-// Function: vp44FuelTempHandler @ 0x00022b50
+// Function: j1939TpRtsHandler @ 0x00022b50
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void vp44FuelTempHandler(undefined4 *param_1)
+void j1939TpRtsHandler(undefined4 *param_1)
 
 {
   int iVar1;
@@ -23667,7 +23667,7 @@ void vp44FuelTempHandler(undefined4 *param_1)
     if (5 < DAT_008012c5) {
       DAT_008012c9 = 5;
     }
-    cVar3 = vp44MessageTransmitter
+    cVar3 = j1939TpMessageTransmitter
                       (CONCAT22(CONCAT11(uVar2,*(char *)((int)param_1 + 3)),CONCAT11(uVar2,1)),
                        0xef00);
     if (cVar3 != '\0') {
@@ -23735,7 +23735,7 @@ void j1939TransportProtocolHandler(int param_1)
           DAT_008012c9 = '\x05';
         }
         uVar2 = (undefined3)((uint)iVar3 >> 8);
-        cVar4 = vp44MessageTransmitter
+        cVar4 = j1939TpMessageTransmitter
                           (CONCAT22((short)CONCAT31(uVar2,cVar4),(short)CONCAT31(uVar2,DAT_008012c8)
                                    ),_DAT_008012c6);
         if (cVar4 != '\0') {
@@ -23750,7 +23750,7 @@ void j1939TransportProtocolHandler(int param_1)
     }
     else {
       uVar2 = (undefined3)((uint)in_D0 >> 8);
-      cVar4 = vp44MessageTransmitter
+      cVar4 = j1939TpMessageTransmitter
                         (CONCAT22((short)CONCAT31(uVar2,cVar4),(short)CONCAT31(uVar2,DAT_008012c8)),
                          _DAT_008012c6);
       if (cVar4 != '\0') {
@@ -23863,7 +23863,7 @@ void canDiagnosticMessageDispatcher(int param_1)
       return;
     }
     if (msg_type == '\x10') {
-      vp44FuelTempHandler(param_1);
+      j1939TpRtsHandler(param_1);
       return;
     }
     if (msg_type == '\x13') {
@@ -23895,14 +23895,14 @@ void diagnosticParamRequestHandlerWrapper(void)
 
 
 //
-// Function: vp44FuelTempHandlerWrapper @ 0x00022ea4
+// Function: j1939TpRtsHandlerWrapper @ 0x00022ea4
 //
 
-void vp44FuelTempHandlerWrapper(void)
+void j1939TpRtsHandlerWrapper(void)
 
 {
                     /* From J90280.05 @ 0x01c88c (confidence: 100%) */
-  vp44FuelTempHandler();
+  j1939TpRtsHandler();
   return;
 }
 
@@ -24068,12 +24068,12 @@ void diagnosticMessageProcessor(void)
 
 
 //
-// Function: vp44ResponseTimeoutHandler @ 0x000230d6
+// Function: j1939TpSessionTimeoutHandler @ 0x000230d6
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void vp44ResponseTimeoutHandler(void)
+void j1939TpSessionTimeoutHandler(void)
 
 {
                     /* From J90280.05 @ 0x01cabe (confidence: 81%) */
@@ -24105,7 +24105,7 @@ void messageQueueDispatcher(void)
     diagnosticMessageProcessor();
   }
   if (DAT_008012c4 == '\x01') {
-    vp44ResponseTimeoutHandler();
+    j1939TpSessionTimeoutHandler();
   }
   return;
 }
@@ -24140,12 +24140,12 @@ undefined4 multiPacketBufferAllocator(undefined4 param_1)
 
 
 //
-// Function: vp44DiagnosticBufferPointersInit @ 0x00023186
+// Function: canDiagnosticBuffersInit @ 0x00023186
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void vp44DiagnosticBufferPointersInit(void)
+void canDiagnosticBuffersInit(void)
 
 {
                     /* From J90280.05 @ 0x01cb6e (confidence: 75%) */
@@ -30452,7 +30452,7 @@ void canTransmissionScheduler(void)
   _DAT_0080d9ae = 0x80d896;
   _DAT_0080d9ba = 0x80d72e;
   _DAT_0080d9b6 = 0x80d72e;
-  vp44DiagnosticBufferPointersInit();
+  canDiagnosticBuffersInit();
   _DAT_0080d9de = 4;
   bVar4 = 0;
   puVar7 = &DAT_0080d9e0;
