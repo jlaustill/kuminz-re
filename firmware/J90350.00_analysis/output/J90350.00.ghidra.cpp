@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Thu Dec 25 13:48:24 MST 2025
+// Generated: Thu Dec 25 13:51:33 MST 2025
 
 
 //
@@ -23847,10 +23847,10 @@ void diagnosticServiceByteHandler(void)
 
 
 //
-// Function: vp44CanMessageDispatcher @ 0x00022e5e
+// Function: canDiagnosticMessageDispatcher @ 0x00022e5e
 //
 
-void vp44CanMessageDispatcher(int param_1)
+void canDiagnosticMessageDispatcher(int param_1)
 
 {
   char msg_type;

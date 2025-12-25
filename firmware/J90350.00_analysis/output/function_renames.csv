@@ -487,7 +487,7 @@ address,name
 0x00022d8e,diagnosticStatusRequestHandler
 0x00022de2,diagnosticErrorHandler
 0x00022de6,diagnosticServiceByteHandler
-0x00022e5e,vp44CanMessageDispatcher
+0x00022e5e,canDiagnosticMessageDispatcher
 0x00022e96,diagnosticParamRequestHandlerWrapper
 0x00022ea4,vp44FuelTempHandlerWrapper
 0x00022eb2,diagnosticStatusRequestHandlerWrapper
