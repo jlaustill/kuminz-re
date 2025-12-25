@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Thu Dec 25 10:48:34 MST 2025
+// Generated: Thu Dec 25 11:24:12 MST 2025
 
 
 //
@@ -22371,12 +22371,13 @@ uint memoryOperationDispatcher(dword request_ptr,word operation_size,dword opera
   bool bVar2;
   ushort addr_offset;
   byte *dst_ptr;
-  uint uVar3;
+  dword result_code;
+  dword dVar3;
   char cVar5;
   uint uVar4;
   byte op_code;
-  undefined2 uVar6;
   int src_ptr;
+  word source_ptr_low;
   
                     /* From J90280.05 @ 0x01b37a (confidence: 86%) */
   if (0x6e4 < operation_flags) {
@@ -22395,14 +22396,14 @@ uint memoryOperationDispatcher(dword request_ptr,word operation_size,dword opera
   }
   src_ptr = *(int *)(request_ptr + 6) + (uint)(byte)addr_offset;
   dst_ptr._3_1_ = addressRangeValidator(operation_size);
-  uVar3 = (uint)(byte)dst_ptr;
-  uVar4 = uVar3;
-  if (uVar3 < 6) {
-    uVar4 = (uint)(&switchD_00021526::switchdataD_0002152a)[uVar3];
-    uVar6 = (undefined2)src_ptr;
-    switch(uVar3) {
+  result_code = (dword)(byte)dst_ptr;
+  dVar3 = result_code;
+  if (result_code < 6) {
+    dVar3 = (dword)(&switchD_00021526::switchdataD_0002152a)[result_code];
+    source_ptr_low = (word)src_ptr;
+    switch(result_code) {
     case 0:
-      uVar4 = memcpy(operation_size,uVar6);
+      uVar4 = memcpy(operation_size,source_ptr_low);
       return uVar4 & 0xffffff00;
     case 3:
       if (_security_enabled != 0xff) {
@@ -22416,7 +22417,7 @@ uint memoryOperationDispatcher(dword request_ptr,word operation_size,dword opera
           return 3;
         }
       }
-      uVar4 = memcpy(operation_size,uVar6);
+      uVar4 = memcpy(operation_size,source_ptr_low);
       return uVar4 & 0xffffff00;
     case 4:
       return 10;
@@ -22441,11 +22442,11 @@ uint memoryOperationDispatcher(dword request_ptr,word operation_size,dword opera
           return 0xb;
         }
       }
-      uVar4 = memcpy(operation_size + 0x3b0a,uVar6);
+      uVar4 = memcpy(operation_size + 0x3b0a,source_ptr_low);
       return uVar4 & 0xffffff00;
     }
   }
-  return CONCAT31((int3)(uVar4 >> 8),(byte)dst_ptr);
+  return CONCAT31((int3)(dVar3 >> 8),(byte)dst_ptr);
 }
 
 
@@ -22678,38 +22679,39 @@ uint addressLookupFunction(undefined4 param_1)
 undefined4 diagnosticServiceSecurityValidator(dword msg_ptr)
 
 {
-  short sVar1;
-  byte bVar2;
-  char cVar3;
-  ushort uVar4;
+  byte auth_result;
+  word required_param_len;
+  word msg_length;
+  byte service_id;
   
                     /* From J90280.05 @ 0x01b7e8 (confidence: 84%) */
-  bVar2 = **(byte **)(msg_ptr + 6);
-  sVar1 = *(short *)(msg_ptr + 4);
-  if (0x19 < bVar2) {
+  service_id = **(byte **)(msg_ptr + 6);
+  msg_length = *(word *)(msg_ptr + 4);
+  if (0x19 < service_id) {
     return 0xff;
   }
-  if ((bVar2 == 4) || (bVar2 == 5)) {
-    uVar4 = 3;
+  if ((service_id == 4) || (service_id == 5)) {
+    required_param_len = 3;
   }
-  else if (bVar2 == 0x19) {
-    uVar4 = 5;
+  else if (service_id == 0x19) {
+    required_param_len = 5;
   }
   else {
-    uVar4 = 1;
+    required_param_len = 1;
   }
-  if ((('\x01' << (bVar2 & 7) & *(byte *)(((int)(uint)bVar2 >> 3) + 0x60f98)) == 0) ||
+  if ((('\x01' << (service_id & 7) & *(byte *)(((int)(uint)service_id >> 3) + 0x60f98)) == 0) ||
      (_security_enabled == 0xff)) {
-    if ((sVar1 != 8) && (sVar1 != (ushort)(uVar4 + 10))) {
+    if ((msg_length != 8) && (msg_length != (word)(required_param_len + 10))) {
       return 2;
     }
     return 0xff;
   }
-  if ((ushort)(uVar4 + 10) != sVar1) {
+  if ((word)(required_param_len + 10) != msg_length) {
     return 2;
   }
-  cVar3 = hourMeterSecurityValidator((byte *)(*(int *)(msg_ptr + 6) + (uint)uVar4));
-  if (cVar3 == '\0') {
+  auth_result = hourMeterSecurityValidator
+                          ((byte *)(*(int *)(msg_ptr + 6) + (uint)required_param_len));
+  if (auth_result == 0) {
     return 0xff;
   }
   return 3;
@@ -33621,87 +33623,91 @@ void canTransmissionWrapper(void)
 void bitPackingAlgorithm(byte *input_buffer,byte *output_buffer)
 
 {
-  int iVar1;
-  char cVar2;
+  byte bVar1;
+  dword cached_input_offset;
+  byte loop_counter;
   byte current_mask;
-  byte bVar3;
-  byte bVar4;
-  byte bVar5;
-  char cVar6;
-  char *pcVar7;
-  byte *pbVar8;
-  byte *pbVar9;
-  byte local_10 [10];
-  char local_6;
-  char forward_byte_index;
+  byte input_bit_value;
+  byte backward_bit_counter;
+  char cVar2;
+  byte bit_position;
+  byte backward_byte_index;
+  byte *mask_table_ptr;
+  byte *forward_write_ptr;
+  byte *backward_write_ptr;
+  byte *pbVar3;
+  byte *pbVar4;
+  byte working_buffer [10];
+  byte input_byte_index;
+  byte forward_byte_index;
   
-  cVar2 = '\0';
-  pbVar8 = local_10;
+  loop_counter = 0;
+  pbVar3 = working_buffer;
   do {
-    *pbVar8 = 0;
-    cVar2 = cVar2 + '\x01';
-    pbVar8 = pbVar8 + 1;
-  } while (cVar2 < '\n');
-  bVar5 = 0;
-  cVar6 = '\0';
+    *pbVar3 = 0;
+    loop_counter = loop_counter + 1;
+    pbVar3 = pbVar3 + 1;
+  } while ((char)loop_counter < '\n');
+  bit_position = 0;
+  backward_byte_index = 0;
   cVar2 = '\0';
   current_mask = 9;
-  local_6 = '\0';
-  pcVar7 = &DAT_0002fbc4;
+  input_byte_index = 0;
+  mask_table_ptr = &SECURITY_MASK_TABLE;
   do {
-    bVar4 = 0;
-    forward_byte_index = *pcVar7;
-    pbVar8 = local_10 + (short)(char)current_mask;
-    pbVar9 = local_10 + (short)cVar6;
-    iVar1 = (int)local_6;
+    backward_bit_counter = 0;
+    bVar1 = *mask_table_ptr;
+    forward_write_ptr = working_buffer + (short)(char)current_mask;
+    pbVar3 = working_buffer + (short)(char)backward_byte_index;
+    cached_input_offset = (dword)(char)input_byte_index;
     do {
-      bVar3 = input_buffer[iVar1] << (bVar4 & 0x3f) & 0x80;
-      if (((uint)(byte)forward_byte_index << ((int)(char)bVar4 & 0x3fU) & 0x80) == 0) {
-        if (bVar3 != 0) {
-          bVar3 = '\x01' << (7U - cVar2 & 0x3f);
+      input_bit_value = input_buffer[cached_input_offset] << (backward_bit_counter & 0x3f) & 0x80;
+      if (((uint)bVar1 << ((int)(char)backward_bit_counter & 0x3fU) & 0x80) == 0) {
+        if (input_bit_value != 0) {
+          input_bit_value = '\x01' << (7U - cVar2 & 0x3f);
         }
-        *pbVar9 = bVar3 | *pbVar9;
+        *pbVar3 = input_bit_value | *pbVar3;
         cVar2 = cVar2 + '\x01';
         if (cVar2 == '\b') {
           cVar2 = '\0';
-          pbVar9 = pbVar9 + 1;
-          cVar6 = cVar6 + '\x01';
+          pbVar3 = pbVar3 + 1;
+          backward_byte_index = backward_byte_index + 1;
         }
       }
       else {
-        if (bVar3 != 0) {
-          bVar3 = '\x01' << (bVar5 & 0x3f);
+        if (input_bit_value != 0) {
+          input_bit_value = '\x01' << (bit_position & 0x3f);
         }
-        *pbVar8 = bVar3 | *pbVar8;
-        bVar5 = bVar5 + 1;
-        if (bVar5 == 8) {
-          bVar5 = 0;
-          pbVar8 = pbVar8 + -1;
+        *forward_write_ptr = input_bit_value | *forward_write_ptr;
+        bit_position = bit_position + 1;
+        if (bit_position == 8) {
+          bit_position = 0;
+          forward_write_ptr = forward_write_ptr + -1;
           current_mask = current_mask - 1;
         }
       }
-      bVar4 = bVar4 + 1;
-    } while ((char)bVar4 < '\b');
-    local_6 = local_6 + '\x01';
-    pcVar7 = pcVar7 + 1;
-  } while (local_6 < '\n');
+      backward_bit_counter = backward_bit_counter + 1;
+    } while ((char)backward_bit_counter < '\b');
+    input_byte_index = input_byte_index + 1;
+    mask_table_ptr = mask_table_ptr + 1;
+  } while ((char)input_byte_index < '\n');
   cVar2 = '\0';
-  pbVar8 = local_10;
-  pbVar9 = &DAT_0002fbce;
+  pbVar3 = working_buffer;
+  pbVar4 = &SECURITY_XOR_TABLE;
   do {
-    *pbVar8 = local_10[(short)(ushort)*pbVar9] ^ *pbVar8;
+    *pbVar3 = working_buffer[(short)(ushort)*pbVar4] ^ *pbVar3;
     cVar2 = cVar2 + '\x01';
-    pbVar8 = pbVar8 + 1;
-    pbVar9 = pbVar9 + 1;
+    pbVar3 = pbVar3 + 1;
+    pbVar4 = pbVar4 + 1;
   } while (cVar2 < '\n');
   cVar2 = '\0';
-  pbVar9 = &DAT_0002fbd7;
-  pbVar8 = local_10;
+  backward_write_ptr = &SECURITY_REORDER_TABLE;
+  pbVar3 = working_buffer;
   do {
-    output_buffer[*pbVar9] = *pbVar8;
-    pbVar9 = pbVar9 + -1;
+    output_buffer[*backward_write_ptr] = *pbVar3;
+    backward_write_ptr = backward_write_ptr + -1;
     cVar2 = cVar2 + '\x01';
-    pbVar8 = pbVar8 + 1;
+    pbVar3 = pbVar3 + 1;
   } while (cVar2 < '\n');
   return;
 }
@@ -33715,61 +33721,64 @@ void bitPackingAlgorithm(byte *input_buffer,byte *output_buffer)
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
-undefined1 hourMeterSecurityValidator(byte *auth_payload_ptr)
+byte hourMeterSecurityValidator(byte *auth_payload_ptr)
 
 {
-  bool bVar1;
-  undefined1 uVar2;
-  bool key_matches;
-  char cVar3;
-  uint *puVar4;
-  byte *pbVar5;
-  undefined1 *puVar6;
-  uint extracted_hour_meter;
-  byte abStack_e [6];
-  undefined1 auStack_8 [4];
+  byte validation_result;
+  bool copy_counter;
+  byte key_byte_index;
+  dword *hour_meter_dest_ptr;
+  byte *key_compare_ptr;
+  byte *hour_meter_src_ptr;
+  dword extracted_hour_meter;
+  byte extracted_key [6];
+  byte hour_meter_bytes [4];
+  bool all_keys_match;
   
   if (_security_enabled == 0xff) {
-    uVar2 = 0;
+    validation_result = 0;
   }
   else if (security_retry_counter == 0x11) {
-    uVar2 = 1;
+    validation_result = 1;
   }
   else {
-    bitPackingAlgorithm(auth_payload_ptr,abStack_e);
-    key_matches = true;
-    puVar4 = &extracted_hour_meter;
-    puVar6 = auStack_8;
+    bitPackingAlgorithm(auth_payload_ptr,extracted_key);
+    copy_counter = true;
+    hour_meter_dest_ptr = &extracted_hour_meter;
+    hour_meter_src_ptr = hour_meter_bytes;
     do {
-      *(undefined1 *)puVar4 = *puVar6;
-      key_matches = (bool)(key_matches + 1);
-      puVar4 = (uint *)((int)puVar4 + 1);
-      puVar6 = puVar6 + 1;
-    } while (key_matches < 4);
+      hour_meter_src_ptr = hour_meter_src_ptr + 1;
+      hour_meter_dest_ptr = (dword *)((int)hour_meter_dest_ptr + 1);
+      *(byte *)hour_meter_dest_ptr = *hour_meter_src_ptr;
+      copy_counter = (bool)(copy_counter + 1);
+      hour_meter_dest_ptr = hour_meter_dest_ptr;
+      hour_meter_src_ptr = hour_meter_src_ptr;
+    } while (copy_counter < 4);
     if ((_hour_meter_ecm_run_time_none & 0xffffff00) - (extracted_hour_meter & 0xffffff00) < 0x1a) {
-      bVar1 = true;
-      pbVar5 = abStack_e;
-      for (cVar3 = '\0'; (bVar1 && (cVar3 < '\x06')); cVar3 = cVar3 + '\x01') {
-        if ((&security_key)[(short)cVar3] != *pbVar5) {
-          bVar1 = false;
+      all_keys_match = true;
+      key_compare_ptr = extracted_key;
+      for (key_byte_index = 0; (all_keys_match && ((char)key_byte_index < '\x06'));
+          key_byte_index = key_byte_index + 1) {
+        if ((&security_key)[(short)(char)key_byte_index] != *key_compare_ptr) {
+          all_keys_match = false;
         }
-        pbVar5 = pbVar5 + 1;
+        key_compare_ptr = key_compare_ptr + 1;
       }
-      if (bVar1) {
-        uVar2 = 0;
+      if (all_keys_match) {
+        validation_result = 0;
         security_retry_counter = 0;
       }
       else {
-        uVar2 = 1;
+        validation_result = 1;
         security_retry_counter = security_retry_counter + 1;
       }
     }
     else {
-      uVar2 = 1;
+      validation_result = 1;
       security_retry_counter = security_retry_counter + 1;
     }
   }
-  return uVar2;
+  return validation_result;
 }
 
 

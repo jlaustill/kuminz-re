@@ -297,7 +297,9 @@ cmd_localvars() {
     echo "Source: $LOCALVARS_CSV"
     echo ""
 
-    run_script BulkLocalVariableRenamer.java
+    # ApplyLocalVariables.java uses name-based matching (column 2 = old_ghidra_name)
+    # BulkLocalVariableRenamer.java used address-based matching (deprecated)
+    run_script ApplyLocalVariables.java "$LOCALVARS_CSV"
 
     print_success "Local variable types applied"
 }
