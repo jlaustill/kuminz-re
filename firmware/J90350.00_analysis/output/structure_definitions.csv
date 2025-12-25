@@ -46,6 +46,36 @@ memory_operation_request_t,,metadata_value,word,2,Logging metadata/timestamp for
 q16_fixed_point_t,,integer_part,word,2,High 16 bits - integer/whole number portion,,verified
 q16_fixed_point_t,,fractional_part,word,2,Low 16 bits - fractional portion,,verified
 
+# Division Operand - 32-bit value with embedded value and limit fields
+division_operand_t,,value,word,2,Primary 16-bit value (used for division),,verified
+division_operand_t,,limit,word,2,Secondary 16-bit limit/clamp value,,verified
+
+# MC68336 16-bit Hardware Register - for registers accessed at byte level
+mc68336_reg16_t,,lo,byte,1,Low byte at offset 0,,verified
+mc68336_reg16_t,,hi,byte,1,High byte at offset 1,,verified
+
+# MC68336 Hardware Register Instances (peripheral space 0xFFxxxx)
+mc68336_reg16_t,0x00ffd00e,lo,byte,1,qsm_sci_data_reg - QSM SCI data register,,verified
+mc68336_reg16_t,0x00ffd00e,hi,byte,1,qsm_sci_data_reg - QSM SCI data register,,verified
+mc68336_reg16_t,0x00fff404,lo,byte,1,hardware_timer_register - Timer counter,,verified
+mc68336_reg16_t,0x00fff404,hi,byte,1,hardware_timer_register - Timer counter,,verified
+mc68336_reg16_t,0x00fffa10,lo,byte,1,sim_ddir - SIM port I data direction,,verified
+mc68336_reg16_t,0x00fffa10,hi,byte,1,sim_ddir - SIM port I data direction,,verified
+mc68336_reg16_t,0x00fffa14,lo,byte,1,sim_ddrd - SIM port D data direction,,verified
+mc68336_reg16_t,0x00fffa14,hi,byte,1,sim_ddrd - SIM port D data direction,,verified
+mc68336_reg16_t,0x00fffa26,lo,byte,1,sim_csor1 - SIM chip select option register 1,,verified
+mc68336_reg16_t,0x00fffa26,hi,byte,1,sim_csor1 - SIM chip select option register 1,,verified
+mc68336_reg16_t,0x00fffc04,lo,byte,1,tpu_dscr - TPU development support control,,verified
+mc68336_reg16_t,0x00fffc04,hi,byte,1,tpu_dscr - TPU development support control,,verified
+mc68336_reg16_t,0x00fffc14,lo,byte,1,tpu_hsqr0 - TPU host sequence register 0,,verified
+mc68336_reg16_t,0x00fffc14,hi,byte,1,tpu_hsqr0 - TPU host sequence register 0,,verified
+mc68336_reg16_t,0x00fffc16,lo,byte,1,tpu_hsqr1 - TPU host sequence register 1,,verified
+mc68336_reg16_t,0x00fffc16,hi,byte,1,tpu_hsqr1 - TPU host sequence register 1,,verified
+mc68336_reg16_t,0x00fffc1e,lo,byte,1,tpu_cpr1 - TPU channel priority register 1,,verified
+mc68336_reg16_t,0x00fffc1e,hi,byte,1,tpu_cpr1 - TPU channel priority register 1,,verified
+mc68336_reg16_t,0x00fffd40,lo,byte,1,TPU_PRAM_CH0_0 - TPU parameter RAM channel 0,,verified
+mc68336_reg16_t,0x00fffd40,hi,byte,1,TPU_PRAM_CH0_0 - TPU parameter RAM channel 0,,verified
+
 # Sensor Fault Configuration Entry (24 bytes per sensor)
 sensor_fault_config_t,,reserved_00,word,2,Reserved/padding at offset 0x00,,verified
 sensor_fault_config_t,,default_value,word,2,Default sensor value on fault,,verified
@@ -457,17 +487,63 @@ huffman_tree_t,,terminator,word,2,Tree terminator at offset 0xC06 (set to 0xFFFF
 j1708_tx_state_t,0x0080DC94,buffer_ptr,dword,4,Current transmit buffer pointer,,verified
 j1708_tx_state_t,0x0080DC98,buffer_2,dword,4,Secondary transmit buffer pointer,,verified
 j1708_tx_state_t,0x0080DC9C,buffer_end,dword,4,End of transmit buffer,,verified
-j1708_tx_state_t,0x0080DCA0,buffer_full_flag,word,2,Transmit buffer full flag (1=full 0=empty),,verified
+j1708_tx_state_t,0x0080DCA0,buffer_full_flag,byte,1,Transmit buffer full flag (1=full 0=empty),,verified
+j1708_tx_state_t,0x0080DCA1,buffer_reserved,byte,1,Reserved/unused byte,,verified
 
 # J1708 Receive State
 j1708_rx_state_t,0x0080DCA2,buffer_ptr_1,dword,4,Receive buffer pointer 1,,verified
 j1708_rx_state_t,0x0080DCA6,buffer_ptr_2,dword,4,Receive buffer pointer 2,,verified
 j1708_rx_state_t,0x0080DCAA,buffer_ptr_3,dword,4,Receive buffer pointer 3 (current position),,verified
-j1708_rx_state_t,0x0080DCAE,buffer_full_flag,word,2,Receive buffer full flag (1=full 0=empty),,verified
+j1708_rx_state_t,0x0080DCAE,buffer_full_flag,byte,1,Receive buffer full flag (1=full 0=empty),,verified
+j1708_rx_state_t,0x0080DCAF,buffer_reserved,byte,1,Reserved/unused byte,,verified
 
-# J1708 Data Buffers
-j1708_buffers_t,0x0080DDC6,tx_buffer,byte,256,J1708 transmit data buffer,,verified
-j1708_buffers_t,0x0080DDCA,rx_buffer,byte,256,J1708 receive data buffer,,verified
+# J1708 Multi-Packet Message Structure (256 bytes)
+# This is the structured layout of the J1708 transmit/receive buffers
+# Offsets based on access pattern analysis
+j1708_multipacket_msg_t,,base_ptr,dword,4,Base pointer (offset 0),,verified
+j1708_multipacket_msg_t,,reserved_04,byte,12,Reserved bytes 4-15,,verified
+j1708_multipacket_msg_t,,length_16,word,2,Length field at offset 16,,verified
+j1708_multipacket_msg_t,,data_ptr_18,dword,4,Data pointer at offset 18,,verified
+j1708_multipacket_msg_t,,count_22,word,2,Count field at offset 22,,verified
+j1708_multipacket_msg_t,,field_24,word,2,Field at offset 24,,verified
+j1708_multipacket_msg_t,,field_26,word,2,Field at offset 26,,verified
+j1708_multipacket_msg_t,,reserved_28,byte,8,Reserved bytes 28-35,,verified
+j1708_multipacket_msg_t,,write_ptr,dword,4,Write pointer at offset 36 (100 uses),,verified
+j1708_multipacket_msg_t,,next_ptr,dword,4,Next pointer at offset 40,,verified
+j1708_multipacket_msg_t,,segment_ptr,dword,4,Segment pointer at offset 44,,verified
+j1708_multipacket_msg_t,,reserved_48,byte,4,Reserved bytes 48-51,,verified
+j1708_multipacket_msg_t,,buffer_ptr,dword,4,Buffer pointer at offset 52,,verified
+j1708_multipacket_msg_t,,reserved_56,byte,32,Reserved bytes 56-87,,verified
+j1708_multipacket_msg_t,,end_ptr,dword,4,End pointer at offset 88,,verified
+j1708_multipacket_msg_t,,reserved_92,byte,10,Reserved bytes 92-101,,verified
+j1708_multipacket_msg_t,,status_102,word,2,Status field at offset 102,,verified
+j1708_multipacket_msg_t,,index_104,word,2,Index field at offset 104,,verified
+j1708_multipacket_msg_t,,count_106,word,2,Count field at offset 106,,verified
+j1708_multipacket_msg_t,,ctrl_ptr,dword,4,Control pointer at offset 108,,verified
+j1708_multipacket_msg_t,,reserved_112,byte,10,Reserved bytes 112-121,,verified
+j1708_multipacket_msg_t,,state_ptr,dword,4,State pointer at offset 122,,verified
+j1708_multipacket_msg_t,,reserved_126,byte,16,Reserved bytes 126-141,,verified
+j1708_multipacket_msg_t,,msg_ptr,dword,4,Message pointer at offset 142,,verified
+j1708_multipacket_msg_t,,reserved_146,byte,8,Reserved bytes 146-153,,verified
+j1708_multipacket_msg_t,,param_154,word,2,Parameter at offset 154,,verified
+j1708_multipacket_msg_t,,param_156,word,2,Parameter at offset 156,,verified
+j1708_multipacket_msg_t,,param_158,word,2,Parameter at offset 158,,verified
+j1708_multipacket_msg_t,,param_160,word,2,Parameter at offset 160,,verified
+j1708_multipacket_msg_t,,param_162,word,2,Parameter at offset 162,,verified
+j1708_multipacket_msg_t,,param_164,word,2,Parameter at offset 164,,verified
+j1708_multipacket_msg_t,,reserved_166,byte,8,Reserved bytes 166-173,,verified
+j1708_multipacket_msg_t,,param_174,word,2,Parameter at offset 174,,verified
+j1708_multipacket_msg_t,,param_176,word,2,Parameter at offset 176,,verified
+j1708_multipacket_msg_t,,param_178,word,2,Parameter at offset 178,,verified
+j1708_multipacket_msg_t,,param_180,word,2,Parameter at offset 180,,verified
+j1708_multipacket_msg_t,,tail_data,byte,74,Remaining data bytes 182-255,,verified
+
+# J1708 Multipacket Message Buffer @ 0x0080DDC6 (single instance)
+# The struct definition with all fields is above - this just places one instance
+j1708_multipacket_msg_t,0x0080DDC6,base_ptr,dword,4,J1708 transmit message buffer,,verified
+
+# J1708 Receive Buffer @ 0x0080DEC6
+j1708_rx_buffer_t,0x0080DEC6,rx_data,byte,256,J1708 receive data buffer,,verified
 
 # -----------------------------------------------------------------------------
 # Diagnostic Buffer Structures @ RAM 0x808B00 (J90350.00 verified)

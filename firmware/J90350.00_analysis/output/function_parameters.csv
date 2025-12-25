@@ -49,6 +49,15 @@ function_address,function_name,param_index,new_name,new_type,comment
 0x00034f00,unsignedLinearInterpolation,4,x_input,ushort,Input X value to interpolate
 
 # -----------------------------------------------------------------------------
+# Division/Clamping Functions
+# -----------------------------------------------------------------------------
+0x0001645e,safeDivideWithClamp,0,dividend,dword,Dividend value for division
+0x0001645e,safeDivideWithClamp,1,divisor,division_operand_t,Divisor with value and limit fields
+0x0001651e,clampedDivisionCalculator,0,dividend,dword,Dividend value for division
+0x0001651e,clampedDivisionCalculator,1,divisor,division_operand_t,Divisor with value and limit fields
+0x0001651e,clampedDivisionCalculator,2,max_result,division_operand_t,Maximum result clamp value
+
+# -----------------------------------------------------------------------------
 # Circular Buffer Functions
 # -----------------------------------------------------------------------------
 0x0001c016,circularBufferInit,0,buffer_ctrl,uint*,Pointer to circular buffer control structure
@@ -134,13 +143,8 @@ function_address,function_name,param_index,new_name,new_type,comment
 0x0001e5f0,tpuChannelConfigurator,0,channel_config,uint,TPU channel configuration value
 
 # -----------------------------------------------------------------------------
-# Math Utility Functions
+# Math Utility Functions (limitedDivisionCalculator only - others in Division/Clamping section)
 # -----------------------------------------------------------------------------
-0x0001645e,safeDivideWithClamp,0,dividend,uint,Value to be divided
-0x0001645e,safeDivideWithClamp,1,divisor,int,Value to divide by (with zero protection)
-0x0001651e,clampedDivisionCalculator,0,dividend,uint,Value to be divided
-0x0001651e,clampedDivisionCalculator,1,divisor,uint,Value to divide by
-0x0001651e,clampedDivisionCalculator,2,max_result,int,Maximum result value (clamp ceiling)
 0x00016628,limitedDivisionCalculator,0,dividend,uint,Value to be divided
 0x00016628,limitedDivisionCalculator,1,divisor,uint,Value to divide by
 0x00016628,limitedDivisionCalculator,2,limit_value,uint,Division result limit
