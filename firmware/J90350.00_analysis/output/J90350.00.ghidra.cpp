@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Thu Dec 25 13:55:22 MST 2025
+// Generated: Thu Dec 25 13:57:27 MST 2025
 
 
 //
@@ -23548,12 +23548,12 @@ void messageErrorHandler(undefined4 param_1)
 
 
 //
-// Function: vp44CanFrameBuilder @ 0x00022a58
+// Function: j1939TpControlFrameBuilder @ 0x00022a58
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void vp44CanFrameBuilder(undefined4 param_1)
+void j1939TpControlFrameBuilder(undefined4 param_1)
 
 {
   undefined1 local_20;
@@ -23720,7 +23720,7 @@ void j1939TransportProtocolHandler(int param_1)
       DAT_008012c9 = DAT_008012c9 + -1;
       if (DAT_008012c9 == '\0') {
         if (bVar1 == DAT_008012c5) {
-          vp44CanFrameBuilder(_DAT_008012c6);
+          j1939TpControlFrameBuilder(_DAT_008012c6);
           DAT_008012c4 = 0;
           _DAT_008012d2 = 0x8012de;
           j1939DiagnosticServiceDispatcher(0x8012cc);

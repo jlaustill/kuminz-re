@@ -480,7 +480,7 @@ address,name
 0x00022726,sendJ1939MultiFrame
 0x00022956,diagnosticParamRequestHandler
 0x000229ea,messageErrorHandler
-0x00022a58,vp44CanFrameBuilder
+0x00022a58,j1939TpControlFrameBuilder
 0x00022ad8,vp44MessageTransmitter
 0x00022b50,vp44FuelTempHandler
 0x00022c26,j1939TransportProtocolHandler
