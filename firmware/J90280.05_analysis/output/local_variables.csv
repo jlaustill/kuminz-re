@@ -11,6 +11,12 @@ function_address,function_name,first_use_address,new_variable_name,type,comment
 #
 # diagnosticCommandDispatcher local variables
 #
+# -----------------------------------------------------------------------------
+# memoryOperationDispatcher @ 0x1b37a - Core memory write handler (Service 0x4B)
+# Note: Uses systemSecurityCheckStub_AlwaysPasses (security DISABLED in this version)
+# J90350.00 evolved to use hourMeterSecurityValidator (real security)
+# Key difference: In J90280.05, any write with auth payload passes security check
+# -----------------------------------------------------------------------------
 # memoryOperationDispatcher local variables (has 2 systemSecurityCheck calls in cases 3 and 5)
 #
 # diagnosticServiceSecurityValidator local variables
@@ -36,6 +42,15 @@ function_address,function_name,first_use_address,new_variable_name,type,comment
 0x0001b37a,memoryOperationDispatcher,0x1b45a,securityCheckResult3,char,Result from systemSecurityCheck() - third call in case 3
 0x0001b37a,memoryOperationDispatcher,0x1b4c4,securityCheckResult,char,Result from systemSecurityCheck() in case 5 - 0=authorized nonzero=denied
 0x0001b37a,memoryOperationDispatcher,0x1b4f0,securityCheckResult2,char,Result from systemSecurityCheck() in case 3 - 0=authorized nonzero=denied
+
+# -----------------------------------------------------------------------------
+# addressRangeValidator @ 0x2b544 - Validates memory address against 5-entry range table
+# Returns: MEMORY_ACCESS_FLAG (0=direct, 3=secured, 4=denied, 5=logging, 9=invalid)
+# 100% matched with J90350.00 (same algorithm, different address)
+# Uses address_range_validation_table at 0x801be8 (5 entries x 10 bytes each)
+# Variables: bVar2=table_index, uVar3=end_address, puVar4=table_entry_ptr
+# -----------------------------------------------------------------------------
+
 0x0001b7e8,diagnosticServiceSecurityValidator,0x1b7f4,serviceId,byte,Diagnostic service ID from message (0-23 valid range)
 0x0001b7e8,diagnosticServiceSecurityValidator,0x1b7f8,messageLengthByte,char,Message length/type byte from param_1+5
 0x0001b7e8,diagnosticServiceSecurityValidator,0x1b80a,requiredLength,char,Required message length (3 for services 3/4 else 1)

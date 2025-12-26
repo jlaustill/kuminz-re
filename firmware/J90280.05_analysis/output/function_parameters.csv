@@ -9,3 +9,27 @@ function_address,function_name,param_index,new_name,new_type,comment
 0x000356f8,coreTableInterpolation,1,input_value,ushort,Input value for table interpolation lookup
 0x000356f8,coreTableInterpolation,2,scaling_factor,ushort,Optional scaling factor for interpolation calculation
 0x00035560,lookupTableInterpolation,0,args,table_interp_args_t*,Pointer to table interpolation arguments structure
+
+# -----------------------------------------------------------------------------
+# Memory Operations (Service 0x4B Write Path)
+# Note: J90280.05 uses systemSecurityCheckStub_AlwaysPasses (security disabled)
+# J90350.00 evolved to use hourMeterSecurityValidator (real security)
+# -----------------------------------------------------------------------------
+# memoryOperationDispatcher @ 0x1b37a - Core memory write handler
+# Returns: MEMORY_OP_RESULT enum (0=success, 2=invalid_length, 3=auth_failed, etc.)
+0x0001b37a,memoryOperationDispatcher,0,request_ptr,int,Pointer to memory operation request (message data)
+0x0001b37a,memoryOperationDispatcher,1,operation_size,short,Size of memory operation (data bytes to write)
+0x0001b37a,memoryOperationDispatcher,2,operation_flags,uint,Operation control flags from message byte 5
+
+# memoryOperationFromMessage @ 0x1b6ce - 2-byte message variant (J90280.05 only)
+# This function was CONSOLIDATED into memoryOperationFromMessageExtended in J90350.00
+0x0001b6ce,memoryOperationFromMessage,0,msg_ptr,int,Pointer to 2-byte J1939 diagnostic message
+
+# memoryOperationFromMessageExtended @ 0x1b716 - Service 0x4B entry point
+# Extracts address/flags from J1939 message and calls memoryOperationDispatcher
+0x0001b716,memoryOperationFromMessageExtended,0,msg_ptr,int,Pointer to J1939 diagnostic message structure
+
+# addressRangeValidator @ 0x2b544 - Validates memory address against 5-entry range table
+# Returns: MEMORY_ACCESS_FLAG (0=direct, 3=secured, 4=denied, 5=logging, 9=invalid)
+0x0002b544,addressRangeValidator,0,target_address,uint,Memory address to validate (start of operation)
+0x0002b544,addressRangeValidator,1,operation_length,uint,Length of memory operation in bytes

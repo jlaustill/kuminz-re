@@ -690,8 +690,22 @@ DIAG_ERROR_SOURCE,0x08,ADDR_LOOKUP_FAIL,j1939MemoryDataCopyResolver - initial ad
 DIAG_ERROR_SOURCE,0x09,ADDR_RANGE_INVALID,addressRangeValidator @ 0x2b544 - address not in address_range_validation_table @ 0x2b512,1
 DIAG_ERROR_SOURCE,0x0A,ADDR_ACCESS_DENIED,addressRangeValidator @ 0x2b544 - normal_mode_flag=0x0A blocks access (high memory 0xFFC800-0xFFFFFF in normal mode),1
 DIAG_ERROR_SOURCE,0x0B,BUFFER_WRITE_FAIL,memoryOperationDispatcher - circularBufferWrite returned error,1
+DIAG_ERROR_SOURCE,0x0A,WRITE_DENIED,memoryOperationDispatcher - write to read-only region (ROM/Flash case 4),1
 DIAG_ERROR_SOURCE,0x0E,PATCH_LIMIT,diagnosticResponseBuilder - memory patch count exceeded limit,1
 DIAG_ERROR_SOURCE,0x18,UNKNOWN_SERVICE,diagnosticServiceDispatcher - service ID not in dispatch table,1
+DIAG_ERROR_SOURCE,0x1A,AUTH_REQUIRED_MISSING,memoryOperationDispatcher - EEPROM write requires auth but none provided,1
+# -----------------------------------------------------------------------------
+# memoryOperationDispatcher Return Codes (Service 0x4B) @ 0x0002148a
+# Complete list of return values from the memory write dispatcher
+# Used by: memoryOperationFromMessageExtended (0x217de) memoryOperationFromMessage8Byte (0x21826)
+# -----------------------------------------------------------------------------
+MEMORY_OP_RESULT,0x00,SUCCESS,Memory operation completed successfully (masked from memcpy return),1
+MEMORY_OP_RESULT,0x02,INVALID_LENGTH,Message length mismatch - expected calculated_msg_length or +10 for auth,1
+MEMORY_OP_RESULT,0x03,AUTH_FAILED,hourMeterSecurityValidator returned non-zero (auth payload invalid),1
+MEMORY_OP_RESULT,0x07,LOGGING_STATE_ERROR,EEPROM write blocked - _DAT_0080dc92==1 and _DAT_0080dc6c!=0,1
+MEMORY_OP_RESULT,0x0A,WRITE_DENIED,Region type 4 (ROM/Flash) - write operations not permitted,1
+MEMORY_OP_RESULT,0x0B,BUFFER_WRITE_FAIL,circularBufferWrite returned error during EEPROM logging,1
+MEMORY_OP_RESULT,0x1A,AUTH_REQUIRED_MISSING,EEPROM write (region type 5) requires auth but has_auth_payload=false,1
 # Service 0x4A Response Format (VERIFIED WORKING 2024-12-16)
 # Request:  [4A][addr3][addr2][addr1][addr0][len][00][00]
 # Response: [4B][addr3][addr2][addr1][addr0][len][data...]

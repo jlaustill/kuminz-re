@@ -115,12 +115,26 @@ function_address,function_name,param_index,new_name,new_type,comment
 0x0000faa6,torqueCurveBreakpointCalculator,0,torque_index,byte,Torque curve breakpoint index
 
 # -----------------------------------------------------------------------------
-# Memory Operations
+# Memory Operations (Service 0x4B Write Path)
 # -----------------------------------------------------------------------------
-0x0002148a,memoryOperationDispatcher,0,request_ptr,int,Pointer to memory operation request
-0x0002148a,memoryOperationDispatcher,1,operation_size,short,Size of memory operation
-0x0002148a,memoryOperationDispatcher,2,operation_flags,uint,Operation control flags
-0x000217de,memoryOperationFromMessageExtended,0,msg_ptr,int,Pointer to memory operation message
+# memoryOperationDispatcher @ 0x2148a - Core memory write handler
+# Returns: MEMORY_OP_RESULT enum (0=success, 2=invalid_length, 3=auth_failed, etc.)
+0x0002148a,memoryOperationDispatcher,0,request_ptr,int,Pointer to memory operation request (message data)
+0x0002148a,memoryOperationDispatcher,1,operation_size,short,Size of memory operation (data bytes to write)
+0x0002148a,memoryOperationDispatcher,2,operation_flags,uint,Operation control flags from message byte 5
+
+# memoryOperationFromMessageExtended @ 0x217de - Service 0x4B entry point
+# Extracts address/flags from J1939 message and calls memoryOperationDispatcher
+0x000217de,memoryOperationFromMessageExtended,0,msg_ptr,int,Pointer to J1939 diagnostic message structure
+
+# memoryOperationFromMessage8Byte @ 0x21826 - 8-byte message variant
+# Similar to Extended but for shorter messages
+0x00021826,memoryOperationFromMessage8Byte,0,msg_ptr,int,Pointer to 8-byte J1939 diagnostic message
+
+# addressRangeValidator @ 0x3460e - Validates memory address against 5-entry range table
+# Returns: MEMORY_ACCESS_FLAG (0=direct, 3=secured, 4=denied, 5=logging, 9=invalid)
+0x0003460e,addressRangeValidator,0,target_address,uint,Memory address to validate (start of operation)
+0x0003460e,addressRangeValidator,1,operation_length,uint,Length of memory operation in bytes
 0x00010520,arrayRangeSum,0,start_ptr,short*,Pointer to start of array
 0x00010520,arrayRangeSum,1,end_ptr,short*,Pointer to end of array
 

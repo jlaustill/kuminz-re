@@ -54,13 +54,31 @@ function_address,function_name,old_ghidra_name,new_variable_name,type,comment
 0x00015f8e,j1708DiagnosticCommandDispatcher,wVar4,elapsedTimerCount,word,Timer count for elapsed time comparison
 
 # memoryOperationDispatcher @ 0x2148a - Routes memory read/write operations
-# Already has named parameters: request_ptr, operation_size, operation_flags
-0x0002148a,memoryOperationDispatcher,bVar1,auth_required,bool,True if auth payload included
-0x0002148a,memoryOperationDispatcher,uVar2,address_type,uint,Memory region type from validator
-0x0002148a,memoryOperationDispatcher,cVar4,auth_result,char,Result from hourMeterSecurityValidator
-0x0002148a,memoryOperationDispatcher,uVar3,result_code,uint,Operation result code for return
-0x0002148a,memoryOperationDispatcher,sVar5,operation_size_short,short,operation_size cast to short
-0x0002148a,memoryOperationDispatcher,uVar6,source_ptr_low,ushort,Low 16-bits of source pointer
+# Service 0x4B handler - processes memory write requests with authentication
+# Returns: 0=success, 2=invalid_length, 3=auth_failed, 7=logging_error, 10=write_denied, 0x1a=auth_missing
+0x0002148a,memoryOperationDispatcher,uVar1,calculated_msg_length,ushort,Calculated message length = operation_flags + addr_offset
+0x0002148a,memoryOperationDispatcher,bVar2,has_auth_payload,bool,True if 10-byte auth payload is included in message
+0x0002148a,memoryOperationDispatcher,dVar3,region_type_copy,dword,Copy of region type for switch statement
+0x0002148a,memoryOperationDispatcher,cVar5,auth_validation_result,char,Result from hourMeterSecurityValidator (0=pass)
+0x0002148a,memoryOperationDispatcher,uVar4,memcpy_return,uint,Return value from memcpy operation
+
+# addressRangeValidator @ 0x3460e - Validates memory address against range table
+# Returns region type: 0=direct, 3=secured, 4=denied, 5=logging, 9=invalid
+0x0003460e,addressRangeValidator,uVar1,high_bytes_result,undefined3,High 3 bytes of return value (unused)
+0x0003460e,addressRangeValidator,bVar2,table_index,byte,Current entry index in address_range_validator_table (0-4)
+0x0003460e,addressRangeValidator,uVar3,end_address,uint,Calculated end address = start + length - 1
+0x0003460e,addressRangeValidator,puVar4,table_entry_ptr,uint*,Pointer to current 10-byte table entry
+
+# memoryOperationFromMessageExtended @ 0x217de - Wrapper that extracts params from J1939 message
+# Extracts address (4 bytes) and flags from message then calls memoryOperationDispatcher
+0x000217de,memoryOperationFromMessageExtended,local_c,operation_flags,uint,Extracted operation flags from message byte 5
+0x000217de,memoryOperationFromMessageExtended,local_8,address_buffer,byte[2],Buffer for address extraction
+0x000217de,memoryOperationFromMessageExtended,wStack_6,operation_size,word,Operation size extracted from message
+
+# memoryOperationFromMessage8Byte @ 0x21826 - 8-byte variant of message handler
+0x00021826,memoryOperationFromMessage8Byte,local_c,operation_flags,dword,Extracted 4-byte operation flags
+0x00021826,memoryOperationFromMessage8Byte,local_8,address_buffer,byte[2],Buffer for address extraction
+0x00021826,memoryOperationFromMessage8Byte,wStack_6,operation_size,word,Operation size for dispatcher
 
 # -----------------------------------------------------------------------------
 # OTHER FUNCTIONS (need old Ghidra names discovered via decompilation)
