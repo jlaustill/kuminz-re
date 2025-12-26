@@ -214,5 +214,72 @@ J1939 Dispatch Table @ 0x801c7a
 
 ---
 
+---
+
+## Insite/Calterm Correlation
+
+### Password System Discovery
+
+From decompiled Insite code (`ECMServicesAdapter.cs`):
+
+```csharp
+// Default password - matches firmware security key length!
+physicalConnectionConfiguration.Password = "ABCDEF";
+```
+
+**Key Finding**: The default password `"ABCDEF"` is exactly 6 bytes - matching the security key length in `hourMeterSecurityValidator`.
+
+### Password Hierarchy
+
+From `Interop.CONMANAPILib.cs`:
+
+| Type | Value | Access Level |
+|------|-------|--------------|
+| `PTE_MASTER_PASSWORD` | 1 | Full access |
+| `PTE_OEM_PASSWORD` | 2 | OEM level |
+| `PTE_ADJUSTABLE_PASSWORD` | 3 | Adjustment only |
+| `PTE_RESET_PASSWORD` | 4 | Reset only |
+
+### ECMPasswordType Enum
+
+From `Cummins.INSITE.Kernel.ECMServicesAPI.cs`:
+
+```csharp
+public enum PasswordType {
+    Master = 1,      // Full access to all parameters
+    OEM = 2,         // OEM-specific access
+    Adjustable = 3,  // Can modify adjustable parameters
+    Reset = 4,       // Can reset parameters only
+}
+```
+
+### Firmware Correlation
+
+| Insite Concept | Firmware Implementation |
+|----------------|------------------------|
+| Password = "ABCDEF" | `_security_key[6]` in RAM |
+| Master Password | `_security_bypass_flag = 0xB522` |
+| Hour Meter validation | `hourMeterSecurityValidator()` uses ECM run time |
+| Write protection | `addressRangeValidator()` returns region flags |
+
+### Authentication Flow
+
+1. **Insite** sends password + hour meter in auth payload
+2. **Firmware** (`hourMeterSecurityValidator`) extracts via `bitPackingAlgorithm`
+3. Compares 6-byte key against stored `_security_key`
+4. Validates hour meter matches ECM run time
+5. Returns 0 (success) or 1 (failure)
+
+### Key Files for Further Analysis
+
+| File | Purpose |
+|------|---------|
+| `ECMServicesAdapter.cs` | Connection and password handling |
+| `Cummins.INSITE.AddIns.FeaturesAndParameters.cs` | Parameter access control |
+| `Interop.ECMSERVICESAPILib.cs` | Low-level ECU communication interface |
+
+---
+
 *Generated: 2024-12-26*
 *Firmware versions analyzed: J90280.05 (reference), J90350.00 (live ECU)*
+*Insite version analyzed: 7.6.0.272*
