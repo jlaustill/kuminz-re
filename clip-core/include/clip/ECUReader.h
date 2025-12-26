@@ -258,6 +258,50 @@ public:
      */
     bool readHourMeter(uint32_t& hourMeter, int timeoutMs = 5000);
 
+    // =========================================================================
+    // Service 0x05 Memory Operations (Proper write path per firmware analysis)
+    // =========================================================================
+    // Service 0x05 is the actual memory access service in the ECU firmware.
+    // Subfunction 0x80/0xA0 = Write, 0x60/0xC0/0xE0 = Read
+
+    /**
+     * @brief Write memory using Service 0x05 with authentication.
+     * @param address 32-bit memory address
+     * @param data Data to write
+     * @param hourMeter Current ECU hour meter value (for auth payload)
+     * @param timeoutMs Timeout in milliseconds
+     * @return true if write successful
+     *
+     * Format: [0x05][0x80][Addr3][Addr2][Addr1][Addr0][Len][Data...][Auth:10]
+     * Uses J1939 Transport Protocol for multi-frame transmission.
+     *
+     * Based on firmware analysis:
+     * - Subfunction 0x80 = Write with 4-byte address
+     * - Address must be in valid RAM range (0x800000-0x8091C1)
+     * - Auth payload required for Main RAM writes
+     */
+    bool writeMemoryService5(uint32_t address, const std::vector<uint8_t>& data,
+                             uint32_t hourMeter, int timeoutMs = 5000);
+
+    /**
+     * @brief Write memory using Service 0x4B (J1939 write path).
+     * @param address 32-bit memory address
+     * @param data Data to write
+     * @param hourMeter Current ECU hour meter value (for auth payload)
+     * @param timeoutMs Timeout in milliseconds
+     * @return true if write successful
+     *
+     * Format: [0x4B][Addr:4BE][Len:1][Data:N][Auth:10]
+     * Uses J1939 Transport Protocol for multi-frame transmission.
+     *
+     * Based on firmware analysis:
+     * - Service 0x4B at dispatch 0x0217de -> memoryOperationFromMessageExtended
+     * - Calls memoryOperationDispatcher which performs memory writes
+     * - Auth required for Main RAM (flag 0x03)
+     */
+    bool writeMemoryService4B(uint32_t address, const std::vector<uint8_t>& data,
+                              uint32_t hourMeter, int timeoutMs = 5000);
+
 private:
     ICanAdapter* m_adapter;
     J1939MessageBuilder m_j1939;

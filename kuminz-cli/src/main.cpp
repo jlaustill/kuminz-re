@@ -50,12 +50,13 @@ void printUsage(const char* progname)
     std::cerr << "Address Read Commands:\n";
     std::cerr << "  --read-addr <hex-addr> <len>  Read bytes at address (e.g., 801c7a 100)\n\n";
     std::cerr << "Memory Write Commands (EXPERIMENTAL - USE AT OWN RISK):\n";
-    std::cerr << "  --write-addr <hex-addr> <hex-value>  Write 1-2 bytes at address\n";
-    std::cerr << "                                       e.g., 803586 B522 (write 0xB522 to 0x803586)\n";
-    std::cerr << "  --write-addr-auth <hex-addr> <hex-value>  Authenticated write (includes security key)\n";
-    std::cerr << "                                            Reads hour meter, generates auth, sends via TP\n";
-    std::cerr << "  --write-clip <hex-addr> <hex-value>  Write via CLIP session (command 0x15)\n";
-    std::cerr << "                                       Proper CLIP protocol: open session, SetDataByAddress\n\n";
+    std::cerr << "  --write-service4b <hex-addr> <hex-value>  Write via Service 0x4B (RECOMMENDED)\n";
+    std::cerr << "                                            J1939 write path with auth, no CRC needed\n";
+    std::cerr << "                                            e.g., 800100 AA55 (write 0xAA55 to 0x800100)\n";
+    std::cerr << "  --write-service5 <hex-addr> <hex-value>   Write via Service 0x05 (J1708 ONLY - won't work on CAN)\n";
+    std::cerr << "  --write-addr <hex-addr> <hex-value>       Write via 0x4A (DEPRECATED - read service)\n";
+    std::cerr << "  --write-addr-auth <hex-addr> <hex-value>  Auth write via 0x4A (DEPRECATED)\n";
+    std::cerr << "  --write-clip <hex-addr> <hex-value>       Write via CLIP session (command 0x15)\n\n";
     std::cerr << "Security Authentication Commands:\n";
     std::cerr << "  --auth-test                 Test security algorithm (offline - no ECU needed)\n";
     std::cerr << "  --auth-gen <hex-hour-meter> Generate auth payload for hour meter value\n";
@@ -69,7 +70,7 @@ void printUsage(const char* progname)
     std::cerr << "  " << progname << " can0 --scan-services\n";
     std::cerr << "  " << progname << " can0 --probe-service 4A\n";
     std::cerr << "  " << progname << " can0 --read-addr 801c7a 100\n";
-    std::cerr << "  " << progname << " can0 --write-addr 803586 B522\n\n";
+    std::cerr << "  " << progname << " can0 --write-service4b 800100 AA55\n\n";
     std::cerr << "Note: CAN interface must be configured before running:\n";
     std::cerr << "  sudo ip link set can0 type can bitrate 250000\n";
     std::cerr << "  sudo ip link set can0 up\n";
@@ -589,7 +590,185 @@ int main(int argc, char* argv[])
         }
     }
     // =========================================================================
-    // Authenticated Memory Write Command
+    // Service 0x4B Memory Write (RECOMMENDED - J1939 write path)
+    // =========================================================================
+    else if (command == "--write-service4b") {
+        if (argc < 5) {
+            std::cerr << "[ERROR] --write-service4b requires <hex-addr> <hex-value>\n";
+            std::cerr << "Example: --write-service4b 800100 AA55\n";
+            result = 1;
+        } else {
+            // Parse hex address
+            uint32_t address;
+            std::stringstream ss;
+            ss << std::hex << argv[3];
+            ss >> address;
+
+            // Parse hex value
+            std::vector<uint8_t> data;
+            std::string valueStr = argv[4];
+            for (size_t i = 0; i < valueStr.length(); i += 2) {
+                if (i + 1 < valueStr.length()) {
+                    uint8_t byte = static_cast<uint8_t>(
+                        std::stoi(valueStr.substr(i, 2), nullptr, 16)
+                    );
+                    data.push_back(byte);
+                }
+            }
+
+            if (data.empty()) {
+                std::cerr << "[ERROR] Invalid hex value\n";
+                result = 1;
+            } else {
+                std::cerr << "\n";
+                std::cerr << "╔════════════════════════════════════════════════════════╗\n";
+                std::cerr << "║  SERVICE 0x4B MEMORY WRITE (J1939 - Authenticated)     ║\n";
+                std::cerr << "╠════════════════════════════════════════════════════════╣\n";
+                std::cerr << "║  Address: 0x" << std::hex << std::uppercase
+                          << std::setw(8) << std::setfill('0') << address << "                       ║\n";
+                std::cerr << "║  Value:   0x";
+                for (auto b : data) {
+                    std::cerr << std::hex << std::uppercase << std::setw(2) << std::setfill('0')
+                              << static_cast<int>(b);
+                }
+                std::cerr << " (" << std::dec << data.size() << " bytes)                              ║\n";
+                std::cerr << "║  Valid RAM range: 0x800000 - 0x8091C1                   ║\n";
+                std::cerr << "╚════════════════════════════════════════════════════════╝\n";
+                std::cerr << std::dec;
+
+                // Validate address range
+                if (address < 0x800000 || address > 0x8091C1) {
+                    std::cerr << "\n[WARNING] Address 0x" << std::hex << address << std::dec
+                              << " is outside Main RAM range!\n";
+                    std::cerr << "Main RAM: 0x800000 - 0x8091C1 (requires auth)\n";
+                    std::cerr << "Extended RAM (0x8091DC+) may work without auth.\n\n";
+                }
+
+                // Step 1: Read hour meter
+                std::cerr << "\n[1/3] Reading hour meter from ECU...\n";
+                uint32_t hourMeter;
+                if (!reader.readHourMeter(hourMeter)) {
+                    std::cerr << "[ERROR] Failed to read hour meter\n";
+                    result = 1;
+                } else {
+                    std::cerr << "[OK] Hour meter: 0x" << std::hex << std::uppercase
+                              << std::setw(8) << std::setfill('0') << hourMeter << std::dec << "\n";
+
+                    // Step 2: Show what will be sent
+                    std::cerr << "\n[2/3] Generating auth payload...\n";
+                    std::vector<uint8_t> authPayload;
+                    if (SecurityAuth::generateAuthPayload(hourMeter, authPayload)) {
+                        std::cerr << "[OK] Auth payload: ";
+                        for (auto b : authPayload) {
+                            std::cerr << std::hex << std::uppercase << std::setw(2)
+                                      << std::setfill('0') << static_cast<int>(b) << " ";
+                        }
+                        std::cerr << std::dec << "\n";
+                    }
+
+                    // Step 3: Send authenticated write via Service 0x4B
+                    std::cerr << "\n[3/3] Sending Service 0x4B write via J1939 TP...\n";
+                    if (reader.writeMemoryService4B(address, data, hourMeter)) {
+                        std::cerr << "\n[✓] Service 0x4B write completed and verified!\n";
+                    } else {
+                        std::cerr << "\n[✗] Service 0x4B write failed\n";
+                        result = 1;
+                    }
+                }
+            }
+        }
+    }
+    // =========================================================================
+    // Service 0x05 Memory Write (J1708 ONLY - won't work on CAN)
+    // =========================================================================
+    else if (command == "--write-service5") {
+        if (argc < 5) {
+            std::cerr << "[ERROR] --write-service5 requires <hex-addr> <hex-value>\n";
+            std::cerr << "Example: --write-service5 800100 AA55\n";
+            result = 1;
+        } else {
+            // Parse hex address
+            uint32_t address;
+            std::stringstream ss;
+            ss << std::hex << argv[3];
+            ss >> address;
+
+            // Parse hex value
+            std::vector<uint8_t> data;
+            std::string valueStr = argv[4];
+            for (size_t i = 0; i < valueStr.length(); i += 2) {
+                if (i + 1 < valueStr.length()) {
+                    uint8_t byte = static_cast<uint8_t>(
+                        std::stoi(valueStr.substr(i, 2), nullptr, 16)
+                    );
+                    data.push_back(byte);
+                }
+            }
+
+            if (data.empty()) {
+                std::cerr << "[ERROR] Invalid hex value\n";
+                result = 1;
+            } else {
+                std::cerr << "\n";
+                std::cerr << "╔════════════════════════════════════════════════════════╗\n";
+                std::cerr << "║  SERVICE 0x05 MEMORY WRITE (Authenticated + CRC)       ║\n";
+                std::cerr << "╠════════════════════════════════════════════════════════╣\n";
+                std::cerr << "║  Address: 0x" << std::hex << std::uppercase
+                          << std::setw(8) << std::setfill('0') << address << "                       ║\n";
+                std::cerr << "║  Value:   0x";
+                for (auto b : data) {
+                    std::cerr << std::hex << std::uppercase << std::setw(2) << std::setfill('0')
+                              << static_cast<int>(b);
+                }
+                std::cerr << " (" << std::dec << data.size() << " bytes)                              ║\n";
+                std::cerr << "║  Valid RAM range: 0x800000 - 0x8091C1                   ║\n";
+                std::cerr << "╚════════════════════════════════════════════════════════╝\n";
+                std::cerr << std::dec;
+
+                // Validate address range
+                if (address < 0x800000 || address > 0x8091C1) {
+                    std::cerr << "\n[WARNING] Address 0x" << std::hex << address << std::dec
+                              << " is outside Main RAM range!\n";
+                    std::cerr << "Main RAM: 0x800000 - 0x8091C1 (requires auth)\n";
+                    std::cerr << "Extended RAM (0x8091DC+) is NOT in validation table.\n\n";
+                }
+
+                // Step 1: Read hour meter
+                std::cerr << "\n[1/3] Reading hour meter from ECU...\n";
+                uint32_t hourMeter;
+                if (!reader.readHourMeter(hourMeter)) {
+                    std::cerr << "[ERROR] Failed to read hour meter\n";
+                    result = 1;
+                } else {
+                    std::cerr << "[OK] Hour meter: 0x" << std::hex << std::uppercase
+                              << std::setw(8) << std::setfill('0') << hourMeter << std::dec << "\n";
+
+                    // Step 2: Show what will be sent
+                    std::cerr << "\n[2/3] Generating auth payload and CRC...\n";
+                    std::vector<uint8_t> authPayload;
+                    if (SecurityAuth::generateAuthPayload(hourMeter, authPayload)) {
+                        std::cerr << "[OK] Auth payload: ";
+                        for (auto b : authPayload) {
+                            std::cerr << std::hex << std::uppercase << std::setw(2)
+                                      << std::setfill('0') << static_cast<int>(b) << " ";
+                        }
+                        std::cerr << std::dec << "\n";
+                    }
+
+                    // Step 3: Send authenticated write via Service 0x05
+                    std::cerr << "\n[3/3] Sending Service 0x05 write via J1939 TP...\n";
+                    if (reader.writeMemoryService5(address, data, hourMeter)) {
+                        std::cerr << "\n[✓] Service 0x05 write completed and verified!\n";
+                    } else {
+                        std::cerr << "\n[✗] Service 0x05 write failed\n";
+                        result = 1;
+                    }
+                }
+            }
+        }
+    }
+    // =========================================================================
+    // Authenticated Memory Write Command (DEPRECATED - uses Service 0x4A)
     // =========================================================================
     else if (command == "--write-addr-auth") {
         if (argc < 5) {
