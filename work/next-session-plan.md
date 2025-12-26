@@ -51,11 +51,11 @@ Service 0x05 goes through `j1708DiagnosticCommandDispatcher` at 0x15f8e - this i
 
 ### Memory Region Validation Reminder
 
-| Range | Flag | Access |
-|-------|------|--------|
-| 0x800000-0x8091C1 | 0x03 | Main RAM - requires auth |
-| 0x8091DC-0x80FFFF | 0x00 | Extended RAM - no auth needed |
-| 0x010000-0x010FFF | 0x05 | EEPROM - special logging mode |
+| Range | Flag | Read | Write |
+|-------|------|------|-------|
+| 0x800000-0x8091C1 | 0x03 | ✓ | ✓ (with auth) |
+| 0x8091DC-0x80FFFF | 0x00 | ✓ | ✗ (read-only) |
+| 0x010000-0x010FFF | 0x05 | ✓ | ? (needs logging mode) |
 
 ---
 
@@ -79,11 +79,42 @@ Service 0x05 goes through `j1708DiagnosticCommandDispatcher` at 0x15f8e - this i
 ## Next Steps
 
 ### Immediate Tasks
-1. Test EEPROM writes (0x010000 range) - may need special flag
-2. Test Extended RAM writes without auth (0x8091DC+)
-3. Test larger data blocks (>2 bytes)
+1. ~~Test EEPROM writes (0x010000 range)~~ - **DONE** ✓ Works with Service 0x4B!
+2. ~~Test Extended RAM writes without auth (0x8091DC+)~~ - **NOT POSSIBLE** (flag 0x00 = read-only)
+3. ~~Test larger data blocks (>2 bytes)~~ - **DONE** ✓
 
-### EEPROM Write Investigation
+### Larger Data Block Test Results (Dec 25)
+
+| Size | Result | Notes |
+|------|--------|-------|
+| 4 bytes | ✓ | Works, verified |
+| 8 bytes | ✓ | Works, verified |
+| 16 bytes | ✓ | Works, verified |
+| 32 bytes | ✓ | Works, some RAM locations have live counters that reset |
+
+**Note:** Some RAM addresses (e.g., 0x800100) are actively used by ECU scheduler and get overwritten.
+Choose less-active memory locations for persistent writes.
+
+### EEPROM Write Test Results (Dec 25)
+
+**EEPROM writes work with Service 0x4B!**
+
+| Test | Result |
+|------|--------|
+| Write 0xDEADBEEF to 0x01000050 | ✓ SUCCESS |
+| Checksums changed? | **NO** - Checksums only cover specific parameter blocks |
+| Restore to 0x00000000 | ✓ SUCCESS |
+| **Power cycle persistence** | ✓ **CONFIRMED** - Value survived ECU restart |
+
+**Safe EEPROM test addresses (verified unused):**
+- 0x01000050-0x0100007F (48-byte unused region)
+- 0x010000D6 (blank_spot)
+- 0x0100010A-0x0100012C (blank_spots)
+
+**Note:** The firmware's `memoryOperationDispatcher` logging mode check may only apply to
+certain EEPROM regions (like checksum-protected parameter blocks), not the entire EEPROM.
+
+### EEPROM Write Investigation (Obsolete)
 The `memoryOperationDispatcher` case 5 (EEPROM flag 0x05) requires:
 - `_DAT_0080dc92 == 1` AND `_DAT_0080dc6c != 0` → returns error 0x07
 - Need to find what sets `_DAT_0080dc6c = 1`
