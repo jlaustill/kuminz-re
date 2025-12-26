@@ -12,7 +12,7 @@ Cross-firmware comparison of the J1939 memory write implementation between J9028
 | Core Dispatcher | 86% match | 86% match |
 | Address Validator | 100% match | 100% match |
 
-**Key Finding**: J90280.05 appears to be a development/test firmware where security validation was stubbed out. J90350.00 implements real security using hour meter-based authentication.
+**Key Finding**: The security subsystem in J90280.05 is compiled out (likely via `#ifdef`), not just bypassed. J90350.00 includes the full security implementation using hour meter-based authentication.
 
 ---
 
@@ -26,6 +26,9 @@ Cross-firmware comparison of the J1939 memory write implementation between J9028
 | `memoryOperationFromMessageExtended` | 0x0001b716 | 0x000217de | 92% |
 | `systemSecurityCheckStub_AlwaysPasses` | 0x0002ab30 | - | - |
 | `hourMeterSecurityValidator` | - | 0x0002fcdc | - |
+| `bitPackingAlgorithm` | - | 0x0002fbd8 | - |
+| `SECURITY_MASK_TABLE` | - | 0x0002fbc4 | - |
+| `SECURITY_XOR_TABLE` | - | 0x0002fbce | - |
 
 ---
 
@@ -46,7 +49,7 @@ In J90280.05, the `memoryOperationDispatcher` calls `systemSecurityCheckStub_Alw
 - Writes to secured RAM regions (flag 0x03) succeed with any 10-byte payload
 - EEPROM writes (flag 0x05) also bypass security
 
-**Implication**: J90280.05 is likely a development/engineering firmware where security was disabled for testing purposes.
+**Implication**: The security code path is excluded from J90280.05's build, likely via preprocessor directive (`#ifdef` or similar).
 
 ### J90350.00: Real Security Implementation
 
@@ -67,6 +70,42 @@ J90350.00's security requires:
 1. Correct 6-byte security key (derived from "ABCDEF" via bit packing)
 2. Valid hour meter value (read from ECU before write)
 3. Retry counter below lockout threshold (17 attempts)
+
+### bitPackingAlgorithm @ 0x2fbd8 (J90350.00 Only)
+
+This function transforms the 10-byte authentication payload before validation. It does **not exist** in J90280.05 (compiled out with the rest of the security subsystem).
+
+```c
+void bitPackingAlgorithm(byte *input_buffer, byte *output_buffer) {
+    // Phase 1: BIT SCATTERING
+    // - For each input byte (0-9), for each bit (0-7):
+    //   - Read mask bit from SECURITY_MASK_TABLE
+    //   - If mask bit = 0: Pack into "backward" buffer (bytes 0→9)
+    //   - If mask bit = 1: Pack into "forward" buffer (bytes 9→0)
+
+    // Phase 2: XOR SHUFFLE
+    // - For each byte i (0-9):
+    //   - buffer[i] ^= buffer[XOR_TABLE[i]]
+
+    // Phase 3: REORDER OUTPUT
+    // - For each byte i (0-9):
+    //   - output[REORDER_TABLE[9-i]] = buffer[i]
+}
+```
+
+#### Lookup Tables (ROM @ 0x2fbc4)
+
+| Table | Address | Values (hex) | Purpose |
+|-------|---------|--------------|---------|
+| `SECURITY_MASK_TABLE` | 0x2fbc4 | `46 58 9a 32 70 87 23 99 85 64` | Bit routing mask |
+| `SECURITY_XOR_TABLE` | 0x2fbce | `06 08 01 02 00 07 03 09 05 04` | XOR shuffle indices |
+| `SECURITY_REORDER_TABLE` | 0x2fbd7 | (same data, read backwards) | Output reordering |
+
+#### Security Characteristics
+
+- **Reversible**: Deterministic transform, not encryption
+- **Obfuscation only**: Prevents casual sniffing of password from CAN bus
+- **Shared implementation**: Insite must use identical tables to produce matching auth payload
 
 ---
 
@@ -190,11 +229,11 @@ J1939 Dispatch Table @ 0x801c7a
 
 ## Implications for Tool Development
 
-1. **Authentication Required**: Tools targeting J90350.00 (production ECUs) must implement proper authentication using the hour meter-based system.
+1. **Authentication Required**: Tools targeting J90350.00 must implement proper authentication using the hour meter-based system.
 
-2. **Test Firmware Available**: J90280.05 can be used for testing write operations without authentication concerns.
+2. **J90280.05 Security Compiled Out**: J90280.05 accepts any auth payload due to security subsystem being excluded from the build.
 
-3. **Security Bypass**: The `_security_bypass_flag` at 0x803586 can temporarily disable security in both versions, but resets on power cycle.
+3. **Security Bypass**: The `_security_bypass_flag` at 0x803586 can temporarily disable security in J90350.00, but resets on power cycle.
 
 4. **Shared Core Logic**: The `addressRangeValidator` and return codes are identical, so tools work with both versions once authenticated.
 
@@ -280,6 +319,6 @@ public enum PasswordType {
 
 ---
 
-*Generated: 2024-12-26*
+*Generated: 2025-12-26*
 *Firmware versions analyzed: J90280.05 (reference), J90350.00 (live ECU)*
 *Insite version analyzed: 7.6.0.272*
