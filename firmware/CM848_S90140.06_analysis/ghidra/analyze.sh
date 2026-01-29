@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# CM848_100902 Ghidra Analysis CLI
+# CM848 S90140.06 Ghidra Analysis CLI
 # Thin wrapper that sources shared infrastructure
 # CM848 uses PowerPC processor (unlike CM550 which uses MC68336)
 #
@@ -15,7 +15,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$SCRIPT_DIR/.."
 
 # Firmware identity
-FIRMWARE_NAME="CM848_100902"
+FIRMWARE_NAME="CM848_S90140.06"
 PROJECT_NAME="CM848"
 
 # Paths

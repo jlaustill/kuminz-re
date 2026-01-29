@@ -1,18 +1,47 @@
-# CM848 Firmware Analysis (100902)
+# CM848 Firmware Analysis (S90140.06)
 
 ## Source ECU
 
+### ECU Sticker Information
+
 | Field | Value |
 |-------|-------|
-| **ECU Type** | CM848 (Cummins) |
+| **ECU Type** | CM848D |
+| **Part Number** | 3971104 |
+| **Serial Number** | 40333 |
+| **Date Code** | 04/16/2004 |
+| **ESN** | 57185646 |
+| **E/O (Firmware)** | S90140.06 |
+
+### Extracted Data
+
+| Field | Value |
+|-------|-------|
 | **Vehicle** | 2004 Dodge Ram |
 | **VIN** | 3D3MU48C94G228471 |
 | **Engine** | 5.9L HPCR (High Pressure Common Rail) |
-| **Date Code** | 060410 |
-| **Calibration ID** | 1504 2RSAO (from EEPROM) |
-| **ROM Version** | 100902 (from ROM offset 0x10C) |
+| **EEPROM Date** | 060410 (calibration date, differs from mfg date) |
+| **Calibration ID** | 1504 2RSAO (from EEPROM offset 0x46) |
+| **Module ID** | CC (from EEPROM offset 0x217, → CHR_CC e2m family) |
+| **ROM Build** | 100902 (from ROM offset 0x10C) |
+| **Calibration Version** | 11.46.06.xx (from EEPROM offset 0x130, no exact e2m match) |
 | **Extraction Date** | 2026-01-28 |
 | **Extraction Method** | Live dump via J1939 Service 0x4A |
+
+### Calibration Data Sources
+
+The firmware identifier **S90140.06** follows the same pattern as CM550's J90350.00.
+
+**Primary Source (Intelect/Calterm):**
+- **Location:** `/home/linux/Downloads/S90140.12/intelect/esdn/data/CHR/`
+- **Calibration file:** `cal/S90140.chr` (password-protected ZIP, contains S90140.12)
+- **Database:** `CHR.cmp` contains CHR.mdb, actcals.txt, chghist.txt
+- **Note:** S90140.12 is a later version than our S90140.06 firmware
+
+**E2M Parameter Files:**
+- **Family:** CHR_CC (Chrysler, Module CC)
+- **Closest match:** `CHR_CC_11.45.01.07.e2m` (version proximity to 11.46.06.xx)
+- **E2M location:** `E2M/CM848_2100 CHR/CHR/`
 
 ## Memory Map
 
@@ -70,7 +99,7 @@ Offset 0x10C: 31 30 30 39 30 32       - "100902" version/date
 ## Directory Structure
 
 ```
-CM848_100902_analysis/
+CM848_S90140.06_analysis/
 ├── originals/          # Raw dump files (read-only)
 │   ├── cm848_rom.bin
 │   ├── cm848_ram.bin

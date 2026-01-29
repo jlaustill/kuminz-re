@@ -1,0 +1,33 @@
+address,suggested_name,type,comment,source_function,reasoning
+# Variables from boostBasedFuelModifier - ADBSPR (Boost Pressure) category
+0x0040a408,boost_rpm_modifier,u16,Boost modifier computed from RPM lookup table,boostBasedFuelModifier,Lookup result using _current_engine_rpm
+0x00400938,boost_rpm_scale_factor,u16,RPM scaling factor for boost calculation,boostBasedFuelModifier,Multiplied with engine_rpm before lookup
+0x0040a406,boost_input_value,u16,Input to boost lookup table,boostBasedFuelModifier,Used as input to second interpolation
+0x0040093c,boost_pressure_squared_term,u16,Pressure value used in squared calculation,boostBasedFuelModifier,Squared in division computation
+0x0040093e,boost_divisor_min819,u16,Divisor with min value 819,boostBasedFuelModifier,Min 0x333 then squared for division
+0x0040a40a,boost_lookup_result,u16,Result of boost lookup interpolation,boostBasedFuelModifier,Stores interpolation result
+0x0040a40c,boost_computed_value,u16,Intermediate boost calculation (max 20480),boostBasedFuelModifier,Clamped to 0x5000 max
+0x0040a42e,boost_denominator_min128,u16,Boost denominator with min 128,boostBasedFuelModifier,Min 0x80 used as denominator
+0x0040a7d0,boost_shifted_numerator,u16,Boost numerator shifted left 10,boostBasedFuelModifier,Shifted before division
+0x00400946,boost_ratio_addend,u16,Added to boost_pressure_ratio,boostBasedFuelModifier,Addition term in fuel calculation
+0x00400944,boost_ratio_multiplier,u16,Multiplier for boost calculation (negated),boostBasedFuelModifier,Negated then multiplied
+0x00400948,fuel_efficiency_max,u16,Maximum fuel efficiency factor,boostBasedFuelModifier,Upper limit for fuel efficiency
+0x00400940,fuel_efficiency_high_limit,u16,High limit for fuel efficiency factor,boostBasedFuelModifier,Second upper limit
+0x00400942,fuel_efficiency_low_limit,u16,Low limit for fuel efficiency factor,boostBasedFuelModifier,Lower bound for fuel efficiency
+# Variables from oilPressureDeltaCalculation - ADOLPR (Oil Pressure) category
+0x000592a4,oil_pressure_reference,u16,Reference value for oil pressure delta,oilPressureDeltaCalculation,Compared with _oil_pressure_sensor
+# Variables from temperatureBasedFuelTrim - ADCLTP (Coolant Temperature) category
+0x0040a186,temp_fuel_trim_result,u16,Fuel trim based on coolant temperature,temperatureBasedFuelTrim,Result of coolant temp lookup
+# Variables from protection functions - EP (Engine Protection) category
+0x0040c050,protection_mode_flags,u16,Engine protection mode flags,various protection functions,Bitfield checked in protection logic
+# Additional sensor-related variables discovered
+0x003fee18,eeprom_calibration_block1,u8[6],EEPROM calibration data block 1,FUN_0000037c,Read from EEPROM 0x100004a
+0x003fee1e,eeprom_calibration_word1,u16,EEPROM calibration word,FUN_0000037c,Read from EEPROM 0x1000050
+0x003fee20,eeprom_calibration_word2,u16,EEPROM calibration word,FUN_0000037c,Read from EEPROM 0x1000052
+0x003fee22,eeprom_calibration_word3,u16,EEPROM calibration word,FUN_0000037c,Read from EEPROM 0x1000054
+0x003fee24,eeprom_calibration_word4,u16,EEPROM calibration word,FUN_0000037c,Read from EEPROM 0x1000056
+0x003fee26,eeprom_serial_number,u8[4],EEPROM serial number or ID,FUN_0000037c,Read from EEPROM 0x100000c
+0x003fee08,eeprom_version_marker,u16,EEPROM version/validation marker,FUN_0000037c,Read from EEPROM 0x1000034
+0x003fee0c,eeprom_header_block,u8[6],EEPROM header data block,FUN_0000037c,Read from EEPROM 0x1000002
+0x003fee12,eeprom_config_dword,u32,EEPROM configuration doubleword,FUN_0000037c,Read from EEPROM 0x1000030
+0x003fee16,eeprom_config_word,u16,EEPROM configuration word,FUN_0000037c,Read from EEPROM 0x100008e

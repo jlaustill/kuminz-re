@@ -35,8 +35,7 @@ This document tracks known Cummins ECU hardware/software combinations encountere
 | CM550     | ?         | &I091197  | -             | 5.9L ISB      | -         | -   | -         | -           | -         | -         | 1997-09-11 | Physical Chip Dump  | Pre-production prototype, VIN embedded |
 | CM550     | E1        | J90270.06 | -             | 6BTA 5.9L     | -         | -   | -         | FP98456     | 4J,J039479121A0505648 | 062800 | 2000-06-28 | Physical Chip Dump | Chrysler T-300 commercial truck (EEPROM only) |
 | CM550     | E1        | J90831.05 | -             | 6BTA 5.9L     | -         | -   | -         | FP98849     | 039474121C0302023 | 012401 | 2001-01-24 | Physical Chip Dump | Dodge Ram Br/BE (EEPROM only) |
-| CM848D    |           |           |               |               | 57185646  |     |           | 3971404     | 40333     |           |            |                     |                                 |
-| CM848     | -         | (cleared) | -             | 5.9L HPCR     | -         | -   | -         | -           | -         | 060410    | -          | Live ECU dump       | 2004 Dodge Ram, VIN 3D3MU48C94G228471, first CM848 extraction 2026-01-28 |
+| CM848D    | CC        | S90140.06 | 1504 2RSAO    | 5.9L HPCR     | 57185646  | -   | -         | 3971104     | 40333     | 041604    | 2004-04-16 | Live ECU dump       | 2004 Dodge Ram, VIN 3D3MU48C94G228471, first CM848 extraction 2026-01-28, EEPROM cal version 11.46.06.xx |
 
 ---
 
@@ -57,11 +56,13 @@ This document tracks known Cummins ECU hardware/software combinations encountere
 
 Based on observed patterns:
 - `J90xxx.xx` - CM550 ISB/ISC production calibrations
+- `S90xxx.xx` - CM848 production calibrations (PowerPC architecture)
 - `&Ixxxxxx` - Pre-production/prototype firmware (date-based identifier)
 - `J90280.05` - Reference firmware (unknown application)
 - `J90270.06` - T-300 commercial truck calibration
 - `J90350.00` - ISB 195hp (extracted 2024-12-16)
 - `J90831.05` - Dodge Ram Br/BE calibration
+- `S90140.06` - CM848D Dodge Ram HPCR (extracted 2026-01-28)
 
 ### ROM Build Type Identifier
 

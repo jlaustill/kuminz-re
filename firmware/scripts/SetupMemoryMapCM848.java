@@ -1,7 +1,7 @@
 // Setup Memory Map Script for CM848 (PowerPC)
 // Adds RAM and EEPROM memory regions with data from live ECU dumps
 // PowerPC memory layout for CM848 ECU
-// @author CM848_100902_analysis
+// @author CM848_S90140.06_analysis
 // @category Analysis
 // @keybinding
 // @menupath
