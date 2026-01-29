@@ -36,18 +36,20 @@ This document tracks known Cummins ECU hardware/software combinations encountere
 | CM550     | E1        | J90270.06 | -             | 6BTA 5.9L     | -         | -   | -         | FP98456     | 4J,J039479121A0505648 | 062800 | 2000-06-28 | Physical Chip Dump | Chrysler T-300 commercial truck (EEPROM only) |
 | CM550     | E1        | J90831.05 | -             | 6BTA 5.9L     | -         | -   | -         | FP98849     | 039474121C0302023 | 012401 | 2001-01-24 | Physical Chip Dump | Dodge Ram Br/BE (EEPROM only) |
 | CM848D    |           |           |               |               | 57185646  |     |           | 3971404     | 40333     |           |            |                     |                                 |
+| CM848     | -         | (cleared) | -             | 5.9L HPCR     | -         | -   | -         | -           | -         | 060410    | -          | Live ECU dump       | 2004 Dodge Ram, VIN 3D3MU48C94G228471, first CM848 extraction 2026-01-28 |
 
 ---
 
 ## ECU Type Reference
 
-| ECU Type | Years | Engine Family | Notes |
-|----------|-------|---------------|-------|
-| CM550 | 1998-2002 | ISB, ISC | First Cummins electronic ECU for ISB |
-| CM570 | 2002-2006 | ISB, ISC | Updated CM550 |
-| CM850 | 2003-2007 | ISM, ISX | Heavy duty |
-| CM870 | 2007-2010 | ISB, ISC, ISL | EPA07 compliant |
-| CM2250 | 2010+ | ISX15 | Modern architecture |
+| ECU Type | Years | Engine Family | MCU | Notes |
+|----------|-------|---------------|-----|-------|
+| CM550 | 1998-2002 | ISB, ISC | MC68336 (68K) | First Cummins electronic ECU for ISB, VP44 pump |
+| CM570 | 2002-2006 | ISB, ISC | ? | Updated CM550 |
+| CM848 | 2003-2006 | ISB 5.9L | PowerPC | Dodge Ram, HPCR (High Pressure Common Rail) |
+| CM850 | 2003-2007 | ISM, ISX | ? | Heavy duty |
+| CM870 | 2007-2010 | ISB, ISC, ISL | ? | EPA07 compliant |
+| CM2250 | 2010+ | ISX15 | ? | Modern architecture |
 
 ---
 
@@ -109,6 +111,54 @@ See `docs/cross-firmware-analysis.md` for methodology on:
 - Identifying method version changes
 - Detecting added/removed features
 - Using relocation maps for comparison
+
+---
+
+## CM848 Architecture (2003-2006 Dodge Ram 5.9L)
+
+The CM848 is a significant departure from CM550 architecture, using PowerPC instead of 68K.
+
+### Memory Map Comparison
+
+| Region | CM550 | CM848 | Notes |
+|--------|-------|-------|-------|
+| **ROM** | 0x00000000 - 0x0003FFFF (256KB) | 0x00000000 - 0x0006FFFF (448KB) | 1.75x larger |
+| **RAM** | 0x00800000 - 0x008091C2 (37KB) | 0x003FA000 - 0x0043FFFF (280KB) | 7.5x larger, different base |
+| **EEPROM** | 0x01000000 - 0x01000FFF (4KB) | 0x01000000 - 0x01001FFF (8KB) | 2x larger, same base |
+
+### Key Differences
+
+| Aspect | CM550 | CM848 |
+|--------|-------|-------|
+| MCU | Motorola MC68336 (68020 core) | PowerPC |
+| ROM vectors | 68K exception table | PPC branch table (`48 00 xx xx`) |
+| Fuel system | VP44 injection pump | HPCR (High Pressure Common Rail) |
+| Build marker location | ROM offset 0x0E | Embedded in code |
+
+### Protocol Compatibility
+
+Despite the architecture change, CM848 uses the **same diagnostic protocol** as CM550:
+- J1939 CAN bus at 250kbps
+- Service 0x4A memory read works identically
+- EEPROM header format unchanged (`60 0D ABCDEF`)
+
+### CM848 Variants
+
+| Variant | HP | Notes |
+|---------|-----|-------|
+| CM848B | 305 | Standard |
+| CM848C | 325 | High output |
+| CM848D | ? | Unknown variant |
+
+### Dump Commands
+
+```bash
+# Added to kuminz-cli (2026-01-28)
+./kuminz-cli can0 --cm848-dump-rom [file]     # 448KB firmware
+./kuminz-cli can0 --cm848-dump-ram [file]     # 280KB runtime data
+./kuminz-cli can0 --cm848-dump-eeprom [file]  # 8KB calibration
+./kuminz-cli can0 --cm848-dump-all [dir]      # All regions
+```
 
 ---
 

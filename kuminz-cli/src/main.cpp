@@ -34,15 +34,20 @@ void signalHandler(int)
 
 void printUsage(const char* progname)
 {
-    std::cerr << "kuminz-cli - CM550 ECU Memory Dump & Service Scanner Tool\n\n";
+    std::cerr << "kuminz-cli - Cummins ECU Memory Dump & Service Scanner Tool\n\n";
     std::cerr << "Usage:\n";
     std::cerr << "  " << progname << " <can-interface> <command> [options]\n\n";
-    std::cerr << "Memory Dump Commands:\n";
+    std::cerr << "Memory Dump Commands (CM550 - default):\n";
     std::cerr << "  --dump-ram [file]           Dump main RAM (37KB) to file\n";
     std::cerr << "  --dump-extended-ram [file]  Dump extended RAM (28KB) to file\n";
     std::cerr << "  --dump-eeprom [file]        Dump EEPROM (4KB) to file\n";
     std::cerr << "  --dump-rom [file]           Dump ROM/Flash (256KB) to file\n";
     std::cerr << "  --dump-all [dir]            Dump all regions to directory\n\n";
+    std::cerr << "Memory Dump Commands (CM848 - 2003-2006 Dodge Ram 5.9L):\n";
+    std::cerr << "  --cm848-dump-ram [file]     Dump CM848 RAM (280KB) to file\n";
+    std::cerr << "  --cm848-dump-eeprom [file]  Dump CM848 EEPROM (8KB) to file\n";
+    std::cerr << "  --cm848-dump-rom [file]     Dump CM848 ROM (448KB) to file\n";
+    std::cerr << "  --cm848-dump-all [dir]      Dump all CM848 regions to directory\n\n";
     std::cerr << "Service Scanner Commands:\n";
     std::cerr << "  --scan-services             Quick scan (0x40-0x5F, ~30 sec)\n";
     std::cerr << "  --scan-services-full        Full scan (0x00-0xFF, ~2-3 min)\n";
@@ -311,6 +316,56 @@ int main(int argc, char* argv[])
         if (!reader.dumpMemoryService4AToFile(CM550_PROTECTED_RAM_START, extendedSize, dir + "cm550_extended_ram.bin")) {
             std::cerr << "[WARNING] Extended RAM dump failed (this region may be protected)\n";
             // Don't fail the whole operation for extended RAM
+        }
+        std::cout << "\n";
+    }
+    // =========================================================================
+    // CM848 Memory Dump Commands (2003-2006 Dodge Ram 5.9L)
+    // =========================================================================
+    else if (command == "--cm848-dump-ram") {
+        std::string filename = outputArg.empty() ? "cm848_ram.bin" : outputArg;
+        std::cerr << "[INFO] Dumping CM848 RAM (280KB) to " << filename << " (Service 0x4A)\n";
+        result = reader.dumpMemoryService4AToFile(CM848_RAM_START, CM848_RAM_SIZE, filename) ? 0 : 1;
+    }
+    else if (command == "--cm848-dump-eeprom") {
+        std::string filename = outputArg.empty() ? "cm848_eeprom.bin" : outputArg;
+        std::cerr << "[INFO] Dumping CM848 EEPROM (8KB) to " << filename << " (Service 0x4A)\n";
+        result = reader.dumpMemoryService4AToFile(CM848_EEPROM_START, CM848_EEPROM_SIZE, filename) ? 0 : 1;
+    }
+    else if (command == "--cm848-dump-rom") {
+        std::string filename = outputArg.empty() ? "cm848_rom.bin" : outputArg;
+        std::cerr << "[INFO] Dumping CM848 ROM (448KB) to " << filename << " (Service 0x4A - this may take a while...)\n";
+        result = reader.dumpMemoryService4AToFile(CM848_ROM_START, CM848_ROM_SIZE, filename) ? 0 : 1;
+    }
+    else if (command == "--cm848-dump-all") {
+        std::string dir = outputArg.empty() ? "." : outputArg;
+        if (!dir.empty() && dir.back() != '/') {
+            dir += '/';
+        }
+
+        std::cerr << "[INFO] Dumping all CM848 memory regions to " << dir << " (Service 0x4A)\n";
+
+        // EEPROM (smallest first)
+        std::cerr << "\n=== CM848 EEPROM (8KB) ===\n";
+        if (!reader.dumpMemoryService4AToFile(CM848_EEPROM_START, CM848_EEPROM_SIZE, dir + "cm848_eeprom.bin")) {
+            std::cerr << "[ERROR] EEPROM dump failed\n";
+            result = 1;
+        }
+        std::cout << "\n";
+
+        // RAM
+        std::cerr << "\n=== CM848 RAM (280KB) ===\n";
+        if (!reader.dumpMemoryService4AToFile(CM848_RAM_START, CM848_RAM_SIZE, dir + "cm848_ram.bin")) {
+            std::cerr << "[ERROR] RAM dump failed\n";
+            result = 1;
+        }
+        std::cout << "\n";
+
+        // ROM (largest last)
+        std::cerr << "\n=== CM848 ROM (448KB) ===\n";
+        if (!reader.dumpMemoryService4AToFile(CM848_ROM_START, CM848_ROM_SIZE, dir + "cm848_rom.bin")) {
+            std::cerr << "[ERROR] ROM dump failed\n";
+            result = 1;
         }
         std::cout << "\n";
     }

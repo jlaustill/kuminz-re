@@ -163,6 +163,36 @@ constexpr uint32_t CM550_HWREG_SIZE = 0x00003800;  // ~14KB
 constexpr uint32_t CM550_PROTECTED_RAM_START = 0x008091C2;
 constexpr uint32_t CM550_PROTECTED_RAM_END = 0x0080FFFF;
 
+// ============================================================================
+// CM848 Memory Regions (2003-2006 Dodge Ram 5.9L Cummins)
+// ============================================================================
+// Discovered via Service 0x4A probing on 2026-01-28.
+// CM848 has larger memory than CM550.
+
+/**
+ * @brief CM848 ROM region.
+ * Contains firmware/code. 448KB total.
+ */
+constexpr uint32_t CM848_ROM_START = 0x00000000;
+constexpr uint32_t CM848_ROM_END = 0x0006FFFF;
+constexpr uint32_t CM848_ROM_SIZE = 0x00070000;  // 448KB
+
+/**
+ * @brief CM848 RAM region.
+ * Contains runtime data. ~280KB accessible.
+ */
+constexpr uint32_t CM848_RAM_START = 0x003FA000;
+constexpr uint32_t CM848_RAM_END = 0x0043FFFF;
+constexpr uint32_t CM848_RAM_SIZE = 0x00046000;  // ~280KB
+
+/**
+ * @brief CM848 EEPROM region (calibration data).
+ * Contains calibration parameters. 8KB total.
+ */
+constexpr uint32_t CM848_EEPROM_START = 0x01000000;
+constexpr uint32_t CM848_EEPROM_END = 0x01001FFF;
+constexpr uint32_t CM848_EEPROM_SIZE = 0x00002000;  // 8KB
+
 /**
  * @brief CLIP transport frame structure.
  *
