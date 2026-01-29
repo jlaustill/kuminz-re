@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Jan 29 06:07:16 MST 2026
+// Generated: Thu Jan 29 06:09:47 MST 2026
 
 
 //
@@ -1125,10 +1125,10 @@ void FUN_00001afc(void)
 
 
 //
-// Function: FUN_00001b48 @ 0x00001b48
+// Function: diagMemoryReadHandler @ 0x00001b48
 //
 
-char FUN_00001b48(byte *param_1,uint param_2,uint param_3)
+char diagMemoryReadHandler(byte *param_1,uint param_2,uint param_3)
 
 {
   ushort uVar1;
@@ -1200,10 +1200,11 @@ char FUN_00001b48(byte *param_1,uint param_2,uint param_3)
 
 
 //
-// Function: FUN_00001cf8 @ 0x00001cf8
+// Function: diagMemoryReadWithBaseOffset @ 0x00001cf8
 //
 
-undefined1 FUN_00001cf8(undefined4 param_1,undefined4 param_2,int param_3,undefined4 param_4)
+undefined1
+diagMemoryReadWithBaseOffset(undefined4 param_1,undefined4 param_2,int param_3,undefined4 param_4)
 
 {
   int iVar1;
@@ -1214,7 +1215,7 @@ undefined1 FUN_00001cf8(undefined4 param_1,undefined4 param_2,int param_3,undefi
     uVar2 = 8;
   }
   else {
-    uVar2 = FUN_00001b48(param_1,iVar1 + param_3,param_4);
+    uVar2 = diagMemoryReadHandler(param_1,iVar1 + param_3,param_4);
   }
   return uVar2;
 }
@@ -1234,7 +1235,7 @@ undefined1 diagService67_memoryReadOffset(int param_1)
   
   func_0x003fc77c(local_10,*(int *)(param_1 + 6) + 1,2);
   func_0x003fc77c(local_c,*(int *)(param_1 + 6) + 3,4);
-  uVar1 = FUN_00001cf8(param_1,local_10[0],0,local_c[0]);
+  uVar1 = diagMemoryReadWithBaseOffset(param_1,local_10[0],0,local_c[0]);
   return uVar1;
 }
 
@@ -1253,7 +1254,7 @@ undefined1 diagService74_memoryRead(int param_1)
   
   func_0x003fc77c(&local_10,*(int *)(param_1 + 6) + 1,4);
   local_c = (uint)*(byte *)(*(int *)(param_1 + 6) + 5);
-  uVar1 = FUN_00001b48(param_1,local_10,local_c);
+  uVar1 = diagMemoryReadHandler(param_1,local_10,local_c);
   return uVar1;
 }
 
@@ -1272,7 +1273,7 @@ undefined1 diagService76_memoryReadExt(int param_1)
   
   func_0x003fc77c(&local_10,*(int *)(param_1 + 6) + 1,4);
   func_0x003fc77c(local_c,*(int *)(param_1 + 6) + 5,4);
-  uVar1 = FUN_00001b48(param_1,local_10,local_c[0]);
+  uVar1 = diagMemoryReadHandler(param_1,local_10,local_c[0]);
   return uVar1;
 }
 

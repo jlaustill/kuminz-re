@@ -9,6 +9,8 @@ address,name
 0x00001948,registerPgnResponseHandler
 0x0000198c,initDataBasedDiagServices
 0x000019e8,diagService65_handler
+0x00001b48,diagMemoryReadHandler
+0x00001cf8,diagMemoryReadWithBaseOffset
 0x00001d5c,diagService67_memoryReadOffset
 0x00001dc4,diagService74_memoryRead
 0x00001e30,diagService76_memoryReadExt
