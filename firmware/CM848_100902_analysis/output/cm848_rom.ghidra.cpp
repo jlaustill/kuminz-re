@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Jan 29 05:41:36 MST 2026
+// Generated: Thu Jan 29 05:48:31 MST 2026
 
 
 //
@@ -16142,12 +16142,12 @@ void FUN_0001c978(void)
 
 
 //
-// Function: FUN_0001c9a0 @ 0x0001c9a0
+// Function: faultTimeoutHandler @ 0x0001c9a0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001c9a0(byte param_1)
+void faultTimeoutHandler(byte param_1)
 
 {
   int iVar1;
@@ -16169,18 +16169,18 @@ void FUN_0001c9a0(byte param_1)
           *(char *)(iVar3 + 0x3fe1d4) = *(char *)(iVar3 + 0x3fe1d4) + -1;
         }
         if (*(char *)(iVar3 + 0x3fe1d4) == '\0') {
-          FUN_0001dee0(param_1);
+          resetFaultStatus(param_1);
           if ((*(ushort *)(&DAT_00059e9c + (uint)param_1 * 6) & 0x2000) == 0) {
-            _DAT_003fe120 = _DAT_003fe120 + -1;
+            _emission_fault_count = _emission_fault_count + -1;
           }
-          DAT_003fe07a = DAT_003fe07a + -1;
+          active_fault_count = active_fault_count + -1;
           _DAT_003fe0da = _DAT_003fe0da + -1;
-          (&DAT_003fe07a)[_DAT_003fa868] = (&DAT_003fe07a)[_DAT_003fe11c];
-          uVar2 = (uint)_DAT_003fe11c;
-          _DAT_003fe11c = _DAT_003fe11c - 1;
-          *(undefined2 *)(&DAT_003fe0da + (uint)_DAT_003fa868 * 2) =
+          (&active_fault_count)[_fault_scan_index] = (&active_fault_count)[_fault_list_index];
+          uVar2 = (uint)_fault_list_index;
+          _fault_list_index = _fault_list_index - 1;
+          *(undefined2 *)(&DAT_003fe0da + (uint)_fault_scan_index * 2) =
                *(undefined2 *)(&DAT_003fe0da + uVar2 * 2);
-          _DAT_003fa868 = _DAT_003fa868 - 1;
+          _fault_scan_index = _fault_scan_index - 1;
         }
       }
     }
@@ -16191,12 +16191,12 @@ void FUN_0001c9a0(byte param_1)
 
 
 //
-// Function: FUN_0001cb94 @ 0x0001cb94
+// Function: clearFaultFromActiveList @ 0x0001cb94
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001cb94(byte param_1)
+void clearFaultFromActiveList(byte param_1)
 
 {
   bool bVar1;
@@ -16220,24 +16220,24 @@ void FUN_0001cb94(byte param_1)
     uVar2 = (uint)param_1;
     func_0x00533aec(uVar2);
     func_0x00533bc4(uVar2);
-    FUN_0001dee0(param_1);
+    resetFaultStatus(param_1);
     if ((*(ushort *)(&DAT_00059e9c + uVar2 * 6) & 0x2000) == 0) {
-      _DAT_003fe120 = _DAT_003fe120 + -1;
+      _emission_fault_count = _emission_fault_count + -1;
     }
     uVar2 = 1;
-    if (DAT_003fe07a != 0) {
+    if (active_fault_count != 0) {
       do {
-        if ((&DAT_003fe07a)[uVar2] == param_1) {
-          (&DAT_003fe07a)[uVar2] = (&DAT_003fe07a)[_DAT_003fe11c];
-          uVar4 = (uint)_DAT_003fe11c;
-          _DAT_003fe11c = _DAT_003fe11c - 1;
+        if ((&active_fault_count)[uVar2] == param_1) {
+          (&active_fault_count)[uVar2] = (&active_fault_count)[_fault_list_index];
+          uVar4 = (uint)_fault_list_index;
+          _fault_list_index = _fault_list_index - 1;
           *(undefined2 *)(&DAT_003fe0da + uVar2 * 2) = *(undefined2 *)(&DAT_003fe0da + uVar4 * 2);
-          DAT_003fe07a = DAT_003fe07a - 1;
+          active_fault_count = active_fault_count - 1;
           _DAT_003fe0da = _DAT_003fe0da + -1;
           return;
         }
         uVar2 = uVar2 + 1 & 0xff;
-      } while (uVar2 <= DAT_003fe07a);
+      } while (uVar2 <= active_fault_count);
     }
   }
   return;
@@ -16246,25 +16246,25 @@ void FUN_0001cb94(byte param_1)
 
 
 //
-// Function: FUN_0001cd1c @ 0x0001cd1c
+// Function: scanAndProcessActiveFaults @ 0x0001cd1c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001cd1c(void)
+void scanAndProcessActiveFaults(void)
 
 {
   int iVar1;
   
-  _DAT_003fa868 = 1;
-  if (DAT_003fe07a != 0) {
+  _fault_scan_index = 1;
+  if (active_fault_count != 0) {
     do {
-      iVar1 = (uint)(&DAT_003fe07a)[_DAT_003fa868] * 6;
+      iVar1 = (uint)(&active_fault_count)[_fault_scan_index] * 6;
       if ((((&DAT_00059e9e)[iVar1] & 1) == 0) || (((&DAT_00059e9f)[iVar1] & 0x80) != 0)) {
-        FUN_0001c9a0((uint)(&DAT_003fe07a)[_DAT_003fa868]);
+        faultTimeoutHandler((uint)(&active_fault_count)[_fault_scan_index]);
       }
-      _DAT_003fa868 = _DAT_003fa868 + 1;
-    } while (_DAT_003fa868 <= DAT_003fe07a);
+      _fault_scan_index = _fault_scan_index + 1;
+    } while (_fault_scan_index <= active_fault_count);
   }
   return;
 }
@@ -16272,10 +16272,10 @@ void FUN_0001cd1c(void)
 
 
 //
-// Function: FUN_0001cdc0 @ 0x0001cdc0
+// Function: faultCodeLookup @ 0x0001cdc0
 //
 
-uint FUN_0001cdc0(uint param_1)
+uint faultCodeLookup(uint param_1)
 
 {
   uint uVar1;
@@ -16366,10 +16366,10 @@ LAB_0001cefc:
   } while ((int)uVar4 < 8);
   if ((_diagnostic_enable_flags & 0x400) == 0) {
 LAB_0001cf90:
-    uVar4 = FUN_0001cdc0(2);
+    uVar4 = faultCodeLookup(2);
     uVar4 = uVar4 & 0xffff;
     if (7 < uVar4) {
-      uVar4 = FUN_0001cdc0(3);
+      uVar4 = faultCodeLookup(3);
       uVar4 = uVar4 & 0xffff;
       if (7 < uVar4) {
         return;
@@ -16442,7 +16442,7 @@ void FUN_0001d01c(void)
         uVar2 = 1;
         if (DAT_003fe05a != 0) {
           do {
-            FUN_0001dee0((&DAT_003fe05a)[uVar2]);
+            resetFaultStatus((&DAT_003fe05a)[uVar2]);
             *(undefined1 *)((&DAT_003fe05a)[uVar2] + 0x3fe124) = 0;
             uVar2 = uVar2 + 1 & 0xff;
           } while (uVar2 <= DAT_003fe05a);
@@ -16456,16 +16456,16 @@ void FUN_0001d01c(void)
       }
     }
     uVar2 = 1;
-    if (DAT_003fe07a != 0) {
+    if (active_fault_count != 0) {
       do {
-        FUN_0001dee0((&DAT_003fe07a)[uVar2]);
+        resetFaultStatus((&active_fault_count)[uVar2]);
         uVar2 = uVar2 + 1 & 0xff;
-      } while (uVar2 <= DAT_003fe07a);
+      } while (uVar2 <= active_fault_count);
     }
-    DAT_003fe07a = 0;
+    active_fault_count = 0;
     _DAT_003fe0da = 0;
-    _DAT_003fe11c = 0;
-    _DAT_003fe120 = 0;
+    _fault_list_index = 0;
+    _emission_fault_count = 0;
     _DAT_0040ae56 = 0;
     if (_DAT_003fdd6c <= (uint)DAT_003fd944 * 8000) {
       _DAT_003fedfc = 0;
@@ -16547,16 +16547,16 @@ void FUN_0001d224(void)
                        *(undefined2 *)(&DAT_003fe09a + uVar3 * 2);
                 }
               } while (!bVar2);
-              if (DAT_003fe07a != 0x1f) {
+              if (active_fault_count != 0x1f) {
                 _DAT_0040aa84 = 1;
-                DAT_003fe07a = DAT_003fe07a + 1;
+                active_fault_count = active_fault_count + 1;
                 _DAT_003fe0da = _DAT_003fe0da + 1;
-                _DAT_003fe11c = _DAT_003fe11c + 1;
-                (&DAT_003fe07a)[_DAT_003fe11c] = (char)uVar1;
-                *(undefined2 *)(&DAT_003fe0da + (uint)_DAT_003fe11c * 2) =
+                _fault_list_index = _fault_list_index + 1;
+                (&active_fault_count)[_fault_list_index] = (char)uVar1;
+                *(undefined2 *)(&DAT_003fe0da + (uint)_fault_list_index * 2) =
                      *(undefined2 *)(&DAT_00059e9a + uVar9 * 6);
                 if ((*(ushort *)(&DAT_00059e9c + uVar9 * 6) & 0x2000) == 0) {
-                  _DAT_003fe120 = _DAT_003fe120 + 1;
+                  _emission_fault_count = _emission_fault_count + 1;
                 }
               }
               _DAT_003fe122 = _DAT_003fe122 + -1;
@@ -16602,19 +16602,19 @@ void FUN_0001d224(void)
             uVar11 = 0;
             do {
               uVar11 = uVar11 + 1 & 0xff;
-              if ((uint)DAT_003fe07a == uVar11 - 1) {
+              if ((uint)active_fault_count == uVar11 - 1) {
                 bVar2 = true;
               }
-              else if ((&DAT_003fe07a)[uVar11] == uVar9) {
+              else if ((&active_fault_count)[uVar11] == uVar9) {
                 bVar2 = true;
                 if ((*(ushort *)(&DAT_00059e9c + uVar9 * 6) & 0x40) == 0) {
-                  _DAT_003fe120 = _DAT_003fe120 + -1;
+                  _emission_fault_count = _emission_fault_count + -1;
                 }
-                DAT_003fe07a = DAT_003fe07a - 1;
+                active_fault_count = active_fault_count - 1;
                 _DAT_003fe0da = _DAT_003fe0da + -1;
-                (&DAT_003fe07a)[uVar11] = (&DAT_003fe07a)[_DAT_003fe11c];
-                uVar3 = (uint)_DAT_003fe11c;
-                _DAT_003fe11c = _DAT_003fe11c - 1;
+                (&active_fault_count)[uVar11] = (&active_fault_count)[_fault_list_index];
+                uVar3 = (uint)_fault_list_index;
+                _fault_list_index = _fault_list_index - 1;
                 *(undefined2 *)(&DAT_003fe0da + uVar11 * 2) =
                      *(undefined2 *)(&DAT_003fe0da + uVar3 * 2);
               }
@@ -16808,7 +16808,7 @@ void FUN_0001d9b8(void)
     _DAT_0040a815 = _DAT_0040a815 | 0x1000;
   }
   if (0x18 < (uint)(_DAT_0040a64c - _DAT_003fa864)) {
-    FUN_0001cd1c();
+    scanAndProcessActiveFaults();
     _DAT_003fa864 = _DAT_0040a64c;
   }
   return;
@@ -16911,12 +16911,12 @@ void FUN_0001de4c(uint param_1)
 
 
 //
-// Function: FUN_0001dee0 @ 0x0001dee0
+// Function: resetFaultStatus @ 0x0001dee0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001dee0(int param_1)
+void resetFaultStatus(int param_1)
 
 {
   param_1 = param_1 * 7;
@@ -20991,23 +20991,23 @@ void j1939_handle_pgn_65227_dm2_previous_dtc(void)
   if ((DAT_003fac2c & 0xf0) == 0) {
     _DAT_003fabd0 = 2;
     DAT_003fabda = func_0x0050b5b4();
-    if (DAT_003fe07a == 0) {
+    if (active_fault_count == 0) {
       _DAT_003fabdc = 0xffffffff;
       _DAT_003fabd0 = _DAT_003fabd0 + 4;
     }
     else {
       uVar4 = 1;
-      if (DAT_003fe07a != 0) {
+      if (active_fault_count != 0) {
         do {
-          if ((*(ushort *)(&DAT_00059e9c + (uint)(&DAT_003fe07a)[uVar4] * 6) & 0x4000) == 0) {
-            iVar2 = (uint)(&DAT_003fe07a)[uVar4] * 7;
+          if ((*(ushort *)(&DAT_00059e9c + (uint)(&active_fault_count)[uVar4] * 6) & 0x4000) == 0) {
+            iVar2 = (uint)(&active_fault_count)[uVar4] * 7;
             if (*(byte *)(iVar2 + 0x3fe1d4) < 0x80) {
               uVar3 = (uint)*(byte *)(iVar2 + 0x3fe1d4);
             }
             else {
               uVar3 = 0x7f;
             }
-            iVar2 = (uint)(&DAT_003fe07a)[uVar4] * 4;
+            iVar2 = (uint)(&active_fault_count)[uVar4] * 4;
             uVar1 = *(uint *)(&DAT_0005a4aa + iVar2) & 0xffffe000;
             local_c = (undefined1)(uVar1 >> 0x18);
             uStack_a = (undefined1)(uVar1 >> 8);
@@ -21017,7 +21017,7 @@ void j1939_handle_pgn_65227_dm2_previous_dtc(void)
             _DAT_003fabd0 = _DAT_003fabd0 + 4;
           }
           uVar4 = uVar4 + 1 & 0xff;
-        } while ((uVar4 <= DAT_003fe07a) && (uVar4 < 0x15));
+        } while ((uVar4 <= active_fault_count) && (uVar4 < 0x15));
       }
     }
     sendJ1939MultiFrame(&DAT_003fabcc);
@@ -21171,7 +21171,7 @@ void j1939_handle_pgn_65229_dm4_freeze_frame(void)
   
   if ((DAT_003fad46 & 0xf0) == 0) {
     _DAT_003fac32 = 0;
-    if ((DAT_003fe05a == '\0') && (DAT_003fe07a == '\0')) {
+    if ((DAT_003fe05a == '\0') && (active_fault_count == '\0')) {
       DAT_003fac3c = 0;
       _DAT_003fac3d = 0;
       DAT_003fac41 = 0xff;
@@ -21206,7 +21206,7 @@ void j1939_handle_pgn_65230_dm5_readiness(void)
   
   local_10[0] = 0;
   DAT_003fad56 = DAT_003fe05a;
-  DAT_003fad57 = DAT_003fe07a;
+  DAT_003fad57 = active_fault_count;
   DAT_003fad58 = (undefined1)DAT_0005a490;
   DAT_003fad59 = (undefined1)DAT_0005a492;
   _DAT_003fad5a = func_0x0050b58c(&DAT_0005a494);
@@ -33265,7 +33265,7 @@ void FUN_0003be90(void)
       if ((DAT_0040b410 == '\0') && (DAT_0040b411 == '\0')) {
         _DAT_003fe9a6 = _DAT_003fe9a6 & 0xffcf;
         _DAT_003fea0a = _DAT_003fea0a & 0xffcf;
-        FUN_0001cb94(DAT_0005c7b4 & 0xff);
+        clearFaultFromActiveList(DAT_0005c7b4 & 0xff);
         uVar1 = _DAT_003fe9a6;
         uVar2 = _DAT_003fea0a;
       }

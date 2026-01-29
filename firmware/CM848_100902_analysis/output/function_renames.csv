@@ -35,6 +35,11 @@ address,name
 0x00017560,fuelDemandSmoothingController
 0x0001782c,fuelDemandFinalCalculation
 0x00017980,fuelDemandCoordinator
+0x0001c9a0,faultTimeoutHandler
+0x0001cb94,clearFaultFromActiveList
+0x0001cd1c,scanAndProcessActiveFaults
+0x0001cdc0,faultCodeLookup
+0x0001dee0,resetFaultStatus
 0x00022674,j1939_handle_pgn_65228_dm3_clear_diag
 0x00022770,initPgn65228Dm3Handler
 0x00022d60,j1939MessageDispatcher
