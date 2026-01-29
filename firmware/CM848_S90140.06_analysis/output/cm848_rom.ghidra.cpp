@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Jan 29 10:56:48 MST 2026
+// Generated: Thu Jan 29 11:01:51 MST 2026
 
 
 //
@@ -1909,10 +1909,10 @@ void registerPgnEf00Handler(void)
 
 
 //
-// Function: FUN_00002d08 @ 0x00002d08
+// Function: lookupEepromParameterAddress @ 0x00002d08
 //
 
-int FUN_00002d08(byte param_1)
+int lookupEepromParameterAddress(byte param_1)
 
 {
   int iVar1;
@@ -2195,7 +2195,7 @@ void processDiagnosticResponseCallback(void)
 {
   undefined1 *puVar1;
   
-  puVar1 = (undefined1 *)FUN_00002d08(*_eeprom_status_byte);
+  puVar1 = (undefined1 *)lookupEepromParameterAddress(*_eeprom_status_byte);
   if (puVar1 != (undefined1 *)0x0) {
     (&qspi_config_value)[diag_enable_flags_2] = *puVar1;
     diag_enable_flags_2 = diag_enable_flags_2 + 1;
@@ -2451,12 +2451,12 @@ void beginEepromCalibrationWrite(void)
 
 
 //
-// Function: FUN_000037e0 @ 0x000037e0
+// Function: updateEepromMagicAndReload @ 0x000037e0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000037e0(void)
+void updateEepromMagicAndReload(void)
 
 {
   short sVar1;
@@ -2504,7 +2504,7 @@ void diagRequestTypeDispatcher(void)
     beginEepromCalibrationWrite();
   }
   else if (diag_request_param == '\x02') {
-    FUN_000037e0();
+    updateEepromMagicAndReload();
   }
   else {
     diagSendResponseCode(0x12,0x7f);
@@ -2778,7 +2778,7 @@ void transmitCanMessage(undefined4 *param_1)
                *(undefined4 *)((int)param_1 + 10));
   }
   else {
-    FUN_00005adc(param_1);
+    multiFrameCanTransmit(param_1);
   }
   return;
 }
@@ -2786,12 +2786,12 @@ void transmitCanMessage(undefined4 *param_1)
 
 
 //
-// Function: FUN_00003f70 @ 0x00003f70
+// Function: lookupTableEntryByKey @ 0x00003f70
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-undefined4 FUN_00003f70(uint param_1)
+undefined4 lookupTableEntryByKey(uint param_1)
 
 {
   ushort *puVar1;
@@ -2882,12 +2882,12 @@ undefined4 dataTransferBufferWrite(int param_1,int param_2,uint param_3,int para
 
 
 //
-// Function: FUN_00004194 @ 0x00004194
+// Function: prepareDataTransferBuffer @ 0x00004194
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00004194(void)
+void prepareDataTransferBuffer(void)
 
 {
   uint uVar1;
@@ -2947,12 +2947,12 @@ void initAdcChannelConfig(void)
 
 
 //
-// Function: FUN_00004320 @ 0x00004320
+// Function: configureAdcConversionRegs @ 0x00004320
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00004320(void)
+void configureAdcConversionRegs(void)
 
 {
   if (hardware_config_mode == '\0') {
@@ -3012,12 +3012,12 @@ void FUN_000043a4(uint param_1)
 
 
 //
-// Function: FUN_00004500 @ 0x00004500
+// Function: initDataTransferCopyBuffer @ 0x00004500
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00004500(int param_1)
+void initDataTransferCopyBuffer(int param_1)
 
 {
   undefined2 *puVar1;
@@ -3079,12 +3079,12 @@ undefined4 advanceAdcChannelQueue(void)
 
 
 //
-// Function: FUN_00004654 @ 0x00004654
+// Function: checkDataTransferBufferStatus @ 0x00004654
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-int FUN_00004654(void)
+int checkDataTransferBufferStatus(void)
 
 {
   int iVar1;
@@ -3151,7 +3151,7 @@ void initCanMailboxFilters(void)
         if ((0x40 < _data_transfer_byte_count) ||
            ((_data_transfer_byte_count != 0 &&
             ((data_transfer_status == '\x03' || (data_transfer_status == '\x04')))))) {
-          FUN_00004194();
+          prepareDataTransferBuffer();
           data_transfer_state = '\x04';
           goto LAB_000049a0;
         }
@@ -3164,7 +3164,7 @@ void initCanMailboxFilters(void)
         return;
       }
       *_qadc_control_reg_ptr = *_qadc_control_reg_ptr & 0xfffffffe;
-      sVar2 = FUN_00004654();
+      sVar2 = checkDataTransferBufferStatus();
       if (sVar2 != 2) {
         startAdcConversion();
         if ((_DAT_003fec9a != 0) && (_data_transfer_byte_count == 0)) {
@@ -3187,7 +3187,7 @@ void initCanMailboxFilters(void)
     }
     else if (data_transfer_state == '\x02') {
       if ((data_transfer_status == '\0') || (data_transfer_status == '\x05')) goto LAB_000049a0;
-      FUN_00004320();
+      configureAdcConversionRegs();
 LAB_00004854:
       data_transfer_state = '\x03';
       goto LAB_000049a0;
@@ -3196,7 +3196,7 @@ LAB_00004854:
   else {
     if (data_transfer_state == '\x04') {
       FUN_000043a4(_DAT_003feca6 >> 0xf & 0xffff);
-      FUN_00004500(uVar1);
+      initDataTransferCopyBuffer(uVar1);
       advanceAdcChannelQueue();
       data_transfer_state = '\x01';
       if (((DAT_003fec8a == '\0') || (data_transfer_status != '\x02')) ||
@@ -3229,12 +3229,12 @@ LAB_000049a0:
 
 
 //
-// Function: FUN_000049d0 @ 0x000049d0
+// Function: initFlashMemoryConfig @ 0x000049d0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-bool FUN_000049d0(uint param_1)
+bool initFlashMemoryConfig(uint param_1)
 
 {
   bool bVar1;
@@ -3391,7 +3391,7 @@ bool FUN_000049d0(uint param_1)
 void can2MailboxTransmitCompleteWrapper(void)
 
 {
-  FUN_00005064();
+  manageCan1TransmitBuffer();
   return;
 }
 
@@ -3404,7 +3404,7 @@ void can2MailboxTransmitCompleteWrapper(void)
 void can2MailboxTransmitRangeWrapper(void)
 
 {
-  FUN_00005134();
+  processCanReceiveBuffer();
   return;
 }
 
@@ -3488,12 +3488,12 @@ void can2TransmitInterruptHandler(void)
 
 
 //
-// Function: FUN_00005064 @ 0x00005064
+// Function: manageCan1TransmitBuffer @ 0x00005064
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00005064(void)
+void manageCan1TransmitBuffer(void)
 
 {
   _can2_transmit_status =
@@ -3515,12 +3515,12 @@ void FUN_00005064(void)
 
 
 //
-// Function: FUN_00005134 @ 0x00005134
+// Function: processCanReceiveBuffer @ 0x00005134
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00005134(int param_1)
+void processCanReceiveBuffer(int param_1)
 
 {
   uint *puVar1;
@@ -3570,12 +3570,12 @@ void FUN_00005134(int param_1)
 
 
 //
-// Function: FUN_0000526c @ 0x0000526c
+// Function: dispatchCanMessageHandlers @ 0x0000526c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0000526c(void)
+void dispatchCanMessageHandlers(void)
 
 {
   int iVar1;
@@ -3652,7 +3652,7 @@ byte processAdcConversionResult(int param_1,uint param_2,uint param_3)
     return 2;
   }
   local_20[0] = (ushort)param_3;
-  uVar3 = FUN_00005958(**(undefined1 **)(param_1 + 6));
+  uVar3 = getServiceDataOffset(**(undefined1 **)(param_1 + 6));
   uVar2 = (uVar3 & 0xff) + (uint)local_20[0] & 0xffff;
   uVar7 = (uint)*(ushort *)(param_1 + 4);
   if ((uVar7 == 8) || (uVar7 == uVar2)) {
@@ -3753,7 +3753,7 @@ processAdcWithOffset(undefined4 param_1,undefined4 param_2,int param_3,undefined
   int iVar1;
   undefined1 uVar2;
   
-  iVar1 = FUN_00003f70(param_2);
+  iVar1 = lookupTableEntryByKey(param_2);
   if (iVar1 == 0) {
     uVar2 = 8;
   }
@@ -3767,10 +3767,10 @@ processAdcWithOffset(undefined4 param_1,undefined4 param_2,int param_3,undefined
 
 
 //
-// Function: FUN_00005798 @ 0x00005798
+// Function: processAdcSensorByte @ 0x00005798
 //
 
-undefined1 FUN_00005798(int param_1)
+undefined1 processAdcSensorByte(int param_1)
 
 {
   undefined1 uVar1;
@@ -3786,10 +3786,10 @@ undefined1 FUN_00005798(int param_1)
 
 
 //
-// Function: FUN_00005808 @ 0x00005808
+// Function: processAdcSensorDword @ 0x00005808
 //
 
-undefined1 FUN_00005808(int param_1)
+undefined1 processAdcSensorDword(int param_1)
 
 {
   undefined1 uVar1;
@@ -3805,12 +3805,12 @@ undefined1 FUN_00005808(int param_1)
 
 
 //
-// Function: FUN_00005870 @ 0x00005870
+// Function: processAdcSensorDwordExt @ 0x00005870
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-undefined1 FUN_00005870(int param_1)
+undefined1 processAdcSensorDwordExt(int param_1)
 
 {
   undefined1 uVar1;
@@ -3827,12 +3827,12 @@ undefined1 FUN_00005870(int param_1)
 
 
 //
-// Function: FUN_000058e8 @ 0x000058e8
+// Function: processAdcSensorDualDword @ 0x000058e8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-undefined1 FUN_000058e8(int param_1)
+undefined1 processAdcSensorDualDword(int param_1)
 
 {
   undefined1 uVar1;
@@ -3849,10 +3849,10 @@ undefined1 FUN_000058e8(int param_1)
 
 
 //
-// Function: FUN_00005958 @ 0x00005958
+// Function: getServiceDataOffset @ 0x00005958
 //
 
-undefined1 FUN_00005958(int param_1)
+undefined1 getServiceDataOffset(int param_1)
 
 {
   undefined1 uVar1;
@@ -3869,12 +3869,12 @@ undefined1 FUN_00005958(int param_1)
 
 
 //
-// Function: FUN_0000597c @ 0x0000597c
+// Function: validateServiceDataLength @ 0x0000597c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-undefined4 FUN_0000597c(int param_1)
+undefined4 validateServiceDataLength(int param_1)
 
 {
   uint uVar1;
@@ -3969,12 +3969,12 @@ LAB_00005a58:
 
 
 //
-// Function: FUN_00005adc @ 0x00005adc
+// Function: multiFrameCanTransmit @ 0x00005adc
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00005adc(uint *param_1)
+void multiFrameCanTransmit(uint *param_1)
 
 {
   byte bVar1;
@@ -4101,12 +4101,12 @@ void processAdcChannelGroup(undefined1 param_1,undefined2 param_2)
 
 
 //
-// Function: FUN_00005d8c @ 0x00005d8c
+// Function: sendJ1939DiagnosticMessage @ 0x00005d8c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00005d8c(undefined1 param_1,undefined2 param_2)
+void sendJ1939DiagnosticMessage(undefined1 param_1,undefined2 param_2)
 
 {
   undefined2 uVar1;
@@ -4186,12 +4186,12 @@ sendDiagAcknowledgeFrame
 
 
 //
-// Function: FUN_00005ecc @ 0x00005ecc
+// Function: handleJ1939DataRequest @ 0x00005ecc
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00005ecc(undefined4 *param_1)
+void handleJ1939DataRequest(undefined4 *param_1)
 
 {
   char cVar1;
@@ -4232,12 +4232,12 @@ void FUN_00005ecc(undefined4 *param_1)
 
 
 //
-// Function: FUN_00005fe4 @ 0x00005fe4
+// Function: handleJ1939DataTransfer @ 0x00005fe4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00005fe4(int param_1)
+void handleJ1939DataTransfer(int param_1)
 
 {
   char cVar1;
@@ -4282,7 +4282,7 @@ void FUN_00005fe4(int param_1)
         return;
       }
       if (uVar2 == qadc_a_pause_ctrl) {
-        FUN_00005d8c(cVar1,_qadc_a_queue_flags);
+        sendJ1939DiagnosticMessage(cVar1,_qadc_a_queue_flags);
         qadc_a_pause_status = 0;
         _DAT_00302933 = 0x303075;
         FUN_00006d24(&DAT_0030292d);
@@ -4308,12 +4308,12 @@ void FUN_00005fe4(int param_1)
 
 
 //
-// Function: FUN_00006180 @ 0x00006180
+// Function: handleJ1939AbortRequest @ 0x00006180
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00006180(int param_1)
+void handleJ1939AbortRequest(int param_1)
 
 {
   undefined2 local_10;
@@ -4331,12 +4331,12 @@ void FUN_00006180(int param_1)
 
 
 //
-// Function: FUN_000061e8 @ 0x000061e8
+// Function: handleJ1939AbortAcknowledge @ 0x000061e8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000061e8(int param_1)
+void handleJ1939AbortAcknowledge(int param_1)
 
 {
   undefined2 local_10;
@@ -4357,10 +4357,10 @@ void FUN_000061e8(int param_1)
 
 
 //
-// Function: FUN_0000628c @ 0x0000628c
+// Function: j1939DiagMessageDispatcher @ 0x0000628c
 //
 
-void FUN_0000628c(int param_1)
+void j1939DiagMessageDispatcher(int param_1)
 
 {
   char cVar1;
@@ -4368,16 +4368,16 @@ void FUN_0000628c(int param_1)
   if (*(short *)(param_1 + 4) == 8) {
     cVar1 = **(char **)(param_1 + 6);
     if (cVar1 == '\x10') {
-      FUN_00005ecc();
+      handleJ1939DataRequest();
     }
     else if (cVar1 == '\x11') {
       FUN_00005c50();
     }
     else if (cVar1 == '\x13') {
-      FUN_00006180();
+      handleJ1939AbortRequest();
     }
     else if (cVar1 == -1) {
-      FUN_000061e8();
+      handleJ1939AbortAcknowledge();
     }
   }
   return;
@@ -4882,7 +4882,7 @@ void FUN_00006bdc(void)
   if (_toucan_rx_buffer_status == 0) {
 LAB_00006c44:
     if (qadc_a_result_high_1 == -0x7f) {
-      FUN_0000526c();
+      dispatchCanMessageHandlers();
       FUN_000064c4();
     }
   }
@@ -4959,7 +4959,7 @@ void FUN_00006d24(int param_1)
     if (DAT_003fdb94 != 0) {
       do {
         if (*pcVar4 == cVar1) {
-          cVar2 = FUN_0000597c(param_1);
+          cVar2 = validateServiceDataLength(param_1);
           if (cVar2 == -1) {
             if (((qadc_a_result_high_1 & 0xf) == 0) || (0x6fffe < *(uint *)(pcVar4 + 1))) {
               cVar2 = (**(code **)(pcVar4 + 1))(param_1);
