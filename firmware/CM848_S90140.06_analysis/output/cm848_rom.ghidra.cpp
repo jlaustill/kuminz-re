@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Jan 29 10:22:08 MST 2026
+// Generated: Thu Jan 29 10:27:01 MST 2026
 
 
 //
@@ -5692,7 +5692,7 @@ void keyOnStatusMonitor(void)
 void phase_common_processing(void)
 
 {
-  FUN_00036cec();
+  processJ1939PeriodicMessages();
   protectionAlarmHandler();
   injectorTimingCalculation();
   FUN_0000d064();
@@ -5734,7 +5734,7 @@ void phase_group_a_processing(void)
   FUN_00035be8();
   FUN_0000d17c();
   func_0x00511ed4();
-  FUN_00035d80();
+  processSensorFilterCalibration();
   processEngineConditionFlags();
   func_0x0051c3d8();
   func_0x0051cad4();
@@ -5773,11 +5773,11 @@ void phase_group_b_processing(void)
   processCoolantCalEntries();
   func_0x00532fac();
   FUN_0000caec();
-  FUN_00037658();
-  FUN_000376dc();
-  FUN_00037744();
-  FUN_00037a40();
-  FUN_00037c74();
+  processProtectionVoltageOffset();
+  dispatchProtectionOutputMode();
+  filterProtectionOutput();
+  calculateProtectionOutputDemand();
+  applyProtectionOutputDemand();
   processProtectionMode2();
   func_0x00505f98(0);
   func_0x0051d840();
@@ -5905,7 +5905,7 @@ void periodicTaskGroup2_controlLoop(void)
   FUN_0001e5a4();
   processLoadThrottle();
   calculateFuel2DTableLookup();
-  FUN_000373b0();
+  calculateFuelDemandOffsetTrim();
   func_0x0050e610();
   FUN_000130dc();
   FUN_000164ac();
@@ -6007,7 +6007,7 @@ void periodicTaskGroup7_timing(void)
 
 {
   calculateTorqueCurveValue();
-  FUN_00035d00();
+  processSensorTemperatureData();
   processTimingTableLookup();
   return;
 }
@@ -6304,7 +6304,7 @@ void periodicTaskGroup32_calibration14(void)
 void periodicTaskGroup33_protection2(void)
 
 {
-  FUN_000375c8();
+  processProtectionCoolantLookup();
   checkProtectionOutputConditions();
   protectionInputValidator();
   protectionSensorFaultHandler();
@@ -29961,12 +29961,12 @@ void FUN_00035c74(void)
 
 
 //
-// Function: FUN_00035d00 @ 0x00035d00
+// Function: processSensorTemperatureData @ 0x00035d00
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00035d00(void)
+void processSensorTemperatureData(void)
 
 {
   _DAT_003fb226 = _oil_pressure_sensor;
@@ -29986,12 +29986,12 @@ void FUN_00035d00(void)
 
 
 //
-// Function: FUN_00035d70 @ 0x00035d70
+// Function: enableSensorFilterUpdate @ 0x00035d70
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00035d70(void)
+void enableSensorFilterUpdate(void)
 
 {
   _DAT_003fb224 = 1;
@@ -30001,12 +30001,12 @@ void FUN_00035d70(void)
 
 
 //
-// Function: FUN_00035d80 @ 0x00035d80
+// Function: processSensorFilterCalibration @ 0x00035d80
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00035d80(void)
+void processSensorFilterCalibration(void)
 
 {
   byte bVar1;
@@ -30050,12 +30050,12 @@ void FUN_00035d80(void)
 
 
 //
-// Function: FUN_00035f14 @ 0x00035f14
+// Function: initSensorCalibrationTables @ 0x00035f14
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00035f14(void)
+void initSensorCalibrationTables(void)
 
 {
   undefined2 *puVar1;
@@ -30337,12 +30337,12 @@ LAB_0003670c:
 
 
 //
-// Function: FUN_000367a4 @ 0x000367a4
+// Function: j1939QueueEngineStatus @ 0x000367a4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000367a4(void)
+void j1939QueueEngineStatus(void)
 
 {
   _DAT_003fb319 = 0x4e00;
@@ -30371,10 +30371,10 @@ void j1939SetupTransportSession(void)
 
 
 //
-// Function: FUN_0003686c @ 0x0003686c
+// Function: j1939QueuePeriodicMessage2 @ 0x0003686c
 //
 
-void FUN_0003686c(void)
+void j1939QueuePeriodicMessage2(void)
 
 {
   j1939QueueTransmitMessage(0x3fb2d3,1);
@@ -30473,12 +30473,12 @@ void FUN_00036b10(void)
 
 
 //
-// Function: FUN_00036b68 @ 0x00036b68
+// Function: j1939QueueStatusMessage @ 0x00036b68
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00036b68(void)
+void j1939QueueStatusMessage(void)
 
 {
   if (_output_enable_bitmap == 0) {
@@ -30494,10 +30494,10 @@ void FUN_00036b68(void)
 
 
 //
-// Function: FUN_00036bd8 @ 0x00036bd8
+// Function: j1939QueuePeriodicMessage1 @ 0x00036bd8
 //
 
-void FUN_00036bd8(void)
+void j1939QueuePeriodicMessage1(void)
 
 {
   j1939QueueTransmitMessage(0x3fb26f,1);
@@ -30528,16 +30528,16 @@ void j1939FormatProprietaryStatus(void)
 
 
 //
-// Function: FUN_00036cec @ 0x00036cec
+// Function: processJ1939PeriodicMessages @ 0x00036cec
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00036cec(void)
+void processJ1939PeriodicMessages(void)
 
 {
-  FUN_000367a4();
-  FUN_0003686c();
+  j1939QueueEngineStatus();
+  j1939QueuePeriodicMessage2();
   DAT_003fb269 = DAT_003fb269 + 1;
   if (_DAT_00408742 <= DAT_003fb269) {
     j1939UpdateTxTimers();
@@ -30545,12 +30545,12 @@ void FUN_00036cec(void)
   }
   DAT_003fb26a = DAT_003fb26a + 1;
   if (99 < DAT_003fb26a) {
-    FUN_00036b68();
+    j1939QueueStatusMessage();
     DAT_003fb26a = 0;
   }
   DAT_003fb26d = DAT_003fb26d + 1;
   if (0x13 < DAT_003fb26d) {
-    FUN_00036bd8();
+    j1939QueuePeriodicMessage1();
     DAT_003fb26d = 0;
   }
   DAT_003fb26e = DAT_003fb26e + 1;
@@ -30566,12 +30566,12 @@ void FUN_00036cec(void)
 
 
 //
-// Function: FUN_00036de0 @ 0x00036de0
+// Function: initJ1939TimerBuffers @ 0x00036de0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00036de0(void)
+void initJ1939TimerBuffers(void)
 
 {
   uint uVar1;
@@ -30617,12 +30617,12 @@ void FUN_00036de0(void)
 
 
 //
-// Function: FUN_00036f48 @ 0x00036f48
+// Function: initJ1939StatusMessages @ 0x00036f48
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00036f48(void)
+void initJ1939StatusMessages(void)
 
 {
   int iVar1;
@@ -30695,12 +30695,12 @@ void FUN_00036f48(void)
 
 
 //
-// Function: FUN_00037130 @ 0x00037130
+// Function: initPeriodicTimerChannel6 @ 0x00037130
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00037130(void)
+void initPeriodicTimerChannel6(void)
 
 {
   DAT_003fb2d7 = DAT_003fb268;
@@ -30715,12 +30715,12 @@ void FUN_00037130(void)
 
 
 //
-// Function: FUN_00037180 @ 0x00037180
+// Function: initPeriodicTimerChannel5 @ 0x00037180
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00037180(void)
+void initPeriodicTimerChannel5(void)
 
 {
   DAT_003fb305 = DAT_003fb268;
@@ -30735,12 +30735,12 @@ void FUN_00037180(void)
 
 
 //
-// Function: FUN_000371d0 @ 0x000371d0
+// Function: initPeriodicTimerChannel4 @ 0x000371d0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000371d0(void)
+void initPeriodicTimerChannel4(void)
 
 {
   DAT_003fb2ef = DAT_003fb268;
@@ -30755,12 +30755,12 @@ void FUN_000371d0(void)
 
 
 //
-// Function: FUN_00037214 @ 0x00037214
+// Function: initPeriodicTimerChannel1 @ 0x00037214
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00037214(void)
+void initPeriodicTimerChannel1(void)
 
 {
   DAT_003fb329 = DAT_003fb268;
@@ -30776,12 +30776,12 @@ void FUN_00037214(void)
 
 
 //
-// Function: FUN_00037270 @ 0x00037270
+// Function: initPeriodicTimerChannel2 @ 0x00037270
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00037270(void)
+void initPeriodicTimerChannel2(void)
 
 {
   DAT_003fb273 = DAT_003fb268;
@@ -30796,12 +30796,12 @@ void FUN_00037270(void)
 
 
 //
-// Function: FUN_000372c0 @ 0x000372c0
+// Function: initPeriodicTimerChannel3 @ 0x000372c0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000372c0(void)
+void initPeriodicTimerChannel3(void)
 
 {
   DAT_003fb28b = DAT_003fb268;
@@ -30819,22 +30819,22 @@ void FUN_000372c0(void)
 
 
 //
-// Function: FUN_00037334 @ 0x00037334
+// Function: initPeriodicTimerSystem @ 0x00037334
 //
 
-void FUN_00037334(void)
+void initPeriodicTimerSystem(void)
 
 {
   DAT_003fb268 = configurePeriodicTimer(0,2000,0x352,0x28);
-  FUN_00036de0();
-  FUN_00036f48();
-  FUN_00037130();
-  FUN_00037180();
-  FUN_000371d0();
-  FUN_00037214();
+  initJ1939TimerBuffers();
+  initJ1939StatusMessages();
+  initPeriodicTimerChannel6();
+  initPeriodicTimerChannel5();
+  initPeriodicTimerChannel4();
+  initPeriodicTimerChannel1();
   DAT_003fb26a = 1;
-  FUN_00037270();
-  FUN_000372c0();
+  initPeriodicTimerChannel2();
+  initPeriodicTimerChannel3();
   DAT_003fb26e = 2;
   DAT_003fb26d = 3;
   return;
@@ -30843,12 +30843,12 @@ void FUN_00037334(void)
 
 
 //
-// Function: FUN_000373b0 @ 0x000373b0
+// Function: calculateFuelDemandOffsetTrim @ 0x000373b0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000373b0(void)
+void calculateFuelDemandOffsetTrim(void)
 
 {
   if ((((_condition_monitor_flags & 1) == 0) && ((_condition_monitor_flags & 2) == 0)) &&
@@ -30867,12 +30867,12 @@ void FUN_000373b0(void)
 
 
 //
-// Function: FUN_0003744c @ 0x0003744c
+// Function: initFuelDemandOffsetFilter @ 0x0003744c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0003744c(void)
+void initFuelDemandOffsetFilter(void)
 
 {
   _DAT_003fb35c = 2;
@@ -30883,12 +30883,12 @@ void FUN_0003744c(void)
 
 
 //
-// Function: FUN_00037464 @ 0x00037464
+// Function: j1939PeriodicTimerCallback @ 0x00037464
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00037464(void)
+void j1939PeriodicTimerCallback(void)
 
 {
   int iVar1;
@@ -30904,12 +30904,12 @@ void FUN_00037464(void)
 
 
 //
-// Function: FUN_000374b8 @ 0x000374b8
+// Function: initJ1939PeriodicConfig @ 0x000374b8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000374b8(void)
+void initJ1939PeriodicConfig(void)
 
 {
   DAT_003fb364 = configurePeriodicTimer(3,2000,0x352,0x28);
@@ -30917,7 +30917,7 @@ void FUN_000374b8(void)
   _DAT_003fb366 = 0x40b258;
   _DAT_003fb36a = &DAT_0005772e;
   _DAT_003fb36e = &DAT_003fb376;
-  _DAT_003fb372 = FUN_00037464;
+  _DAT_003fb372 = j1939PeriodicTimerCallback;
   DAT_0040c11f = 0xff;
   return;
 }
@@ -30932,7 +30932,7 @@ void j1939SendPeriodicMessage(void)
 
 {
   if (DAT_003fb365 == '\0') {
-    FUN_000374b8();
+    initJ1939PeriodicConfig();
   }
   j1939QueueTransmitMessage(0x3fb360,1);
   return;
@@ -30941,12 +30941,12 @@ void j1939SendPeriodicMessage(void)
 
 
 //
-// Function: FUN_000375c8 @ 0x000375c8
+// Function: processProtectionCoolantLookup @ 0x000375c8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000375c8(void)
+void processProtectionCoolantLookup(void)
 
 {
   short sVar1;
@@ -30964,12 +30964,12 @@ void FUN_000375c8(void)
 
 
 //
-// Function: FUN_00037658 @ 0x00037658
+// Function: processProtectionVoltageOffset @ 0x00037658
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00037658(void)
+void processProtectionVoltageOffset(void)
 
 {
   if ((_engine_config_flags & 1) != 0) {
@@ -30986,12 +30986,12 @@ void FUN_00037658(void)
 
 
 //
-// Function: FUN_000376dc @ 0x000376dc
+// Function: dispatchProtectionOutputMode @ 0x000376dc
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000376dc(void)
+void dispatchProtectionOutputMode(void)
 
 {
   if ((_engine_config_flags & 1) != 0) {
@@ -31004,12 +31004,12 @@ void FUN_000376dc(void)
 
 
 //
-// Function: FUN_00037744 @ 0x00037744
+// Function: filterProtectionOutput @ 0x00037744
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00037744(void)
+void filterProtectionOutput(void)
 
 {
   uint uVar1;
@@ -31081,12 +31081,12 @@ void FUN_00037744(void)
 
 
 //
-// Function: FUN_00037a40 @ 0x00037a40
+// Function: calculateProtectionOutputDemand @ 0x00037a40
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00037a40(void)
+void calculateProtectionOutputDemand(void)
 
 {
   uint extraout_r4;
@@ -31150,12 +31150,12 @@ void FUN_00037a40(void)
 
 
 //
-// Function: FUN_00037c74 @ 0x00037c74
+// Function: applyProtectionOutputDemand @ 0x00037c74
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00037c74(void)
+void applyProtectionOutputDemand(void)
 
 {
   ushort uVar2;
@@ -47095,7 +47095,7 @@ void exceptionHandler(void)
   DAT_00305007 = 3;
   initQsmcmQspiModule();
   initSensorValidationSystem();
-  FUN_00037334();
+  initPeriodicTimerSystem();
   clearProtectionFault(0x1b);
   if (_DAT_003fdc88 == _DAT_003fdc8a) {
     _sensor_diagnostic_flags = _sensor_diagnostic_flags & 0xfffb;
@@ -47254,7 +47254,7 @@ void exceptionHandler(void)
   initJ1939CommunicationSystem();
   enableSchedulerMiosOutput();
   resetEngineTimingAccumulators();
-  FUN_00035d70();
+  enableSensorFilterUpdate();
   FUN_00029e24();
   func_0x00518324();
   func_0x00516e5c();
@@ -47291,7 +47291,7 @@ void exceptionHandler(void)
   func_0x00539868();
   func_0x0053227c();
   func_0x0052dcd0();
-  FUN_0003744c();
+  initFuelDemandOffsetFilter();
   func_0x0053729c();
   initFuelDemandFilterState();
   func_0x0052ef90();
@@ -47300,7 +47300,7 @@ void exceptionHandler(void)
   func_0x0051dad4();
   FUN_00035b5c();
   func_0x005229c0();
-  FUN_00035f14();
+  initSensorCalibrationTables();
   FUN_00035518();
   func_0x00523b5c();
   func_0x005161c0();
