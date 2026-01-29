@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Jan 29 11:05:38 MST 2026
+// Generated: Thu Jan 29 11:07:54 MST 2026
 
 
 //
@@ -5695,7 +5695,7 @@ void phase_common_processing(void)
   processJ1939PeriodicMessages();
   protectionAlarmHandler();
   injectorTimingCalculation();
-  FUN_0000d064();
+  sensorChannel7_init();
   func_0x005011c4();
   FUN_0001b37c();
   func_0x0051d70c();
@@ -5724,15 +5724,15 @@ void phase_group_a_processing(void)
   func_0x0050aec0();
   func_0x00538d3c();
   func_0x005266fc();
-  FUN_0000cd1c();
+  sensorChannel4_init();
   FUN_00013a80();
-  FUN_0000d3ac();
+  sensorChannel10_throttleInit();
   fuelControlMainCalculation();
   FUN_00018cfc();
-  FUN_0000cf4c();
-  FUN_0000ce34();
+  sensorChannel6_init();
+  sensorChannel5_init();
   processSensorLookupTable1();
-  FUN_0000d17c();
+  sensorChannel8_init();
   func_0x00511ed4();
   processSensorFilterCalibration();
   processEngineConditionFlags();
@@ -5772,7 +5772,7 @@ void phase_group_b_processing(void)
   processJ1939ReceivedMessages();
   processCoolantCalEntries();
   func_0x00532fac();
-  FUN_0000caec();
+  sensorChannel2_init();
   processProtectionVoltageOffset();
   dispatchProtectionOutputMode();
   filterProtectionOutput();
@@ -5806,22 +5806,22 @@ void phase_group_b_processing(void)
 void periodicTaskGroup0_fuelFinal(void)
 
 {
-  FUN_0000d80c();
-  FUN_0000d924();
+  sensorChannel14_init();
+  sensorChannel15_init();
   func_0x00510ad4();
-  FUN_0000d6f4();
+  sensorChannel13_init();
   injectorPulseWidthCalc();
   FUN_00017d54();
   updateSensorDiagnosticFlags();
   setEngineRpmFromCalibration();
   FUN_0001ef88();
   func_0x00503964();
-  FUN_0000d4c4();
-  FUN_0000d294();
-  FUN_0000c8bc();
+  sensorChannel11_init();
+  sensorChannel9_init();
+  sensorChannel0_init();
   func_0x005022cc();
   func_0x00502b6c();
-  FUN_0000cc04();
+  sensorChannel3_init();
   FUN_0002c764();
   processSensorLookupTable3();
   processSensorLookupTable2();
@@ -5976,7 +5976,7 @@ void periodicTaskGroup4_canTx(void)
 void periodicTaskGroup5_diagnostics(void)
 
 {
-  FUN_0000c9d4();
+  sensorChannel1_init();
   processSensorLookupTable4();
   calculateSensorLookupValue();
   return;
@@ -6037,7 +6037,7 @@ void periodicTaskGroup9_sensors(void)
 
 {
   func_0x00500004();
-  FUN_0000d5dc();
+  sensorChannel12_init();
   processSensorInputFiltering();
   return;
 }
@@ -6051,7 +6051,7 @@ void periodicTaskGroup9_sensors(void)
 void periodicTaskGroup10_monitoring(void)
 
 {
-  FUN_0000da3c();
+  sensorChannel16_init();
   func_0x005267f4();
   processEngineRpmMonitoring();
   initProtectionParameter2();
@@ -6936,12 +6936,12 @@ void main_loop(void)
 
 
 //
-// Function: FUN_0000c874 @ 0x0000c874
+// Function: initSensorDefaults @ 0x0000c874
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0000c874(void)
+void initSensorDefaults(void)
 
 {
   _DAT_0040be5e = 10;
@@ -6956,10 +6956,10 @@ void FUN_0000c874(void)
 
 
 //
-// Function: FUN_0000c8bc @ 0x0000c8bc
+// Function: sensorChannel0_init @ 0x0000c8bc
 //
 
-void FUN_0000c8bc(void)
+void sensorChannel0_init(void)
 
 {
   func_0x005012dc(&DAT_000592a2,0x40a062,&DAT_003fa014,&DAT_000592b2,&DAT_000592c4,0,0x3fa016,3,0x19
@@ -6970,10 +6970,10 @@ void FUN_0000c8bc(void)
 
 
 //
-// Function: FUN_0000c948 @ 0x0000c948
+// Function: sensorChannel0_process @ 0x0000c948
 //
 
-void FUN_0000c948(void)
+void sensorChannel0_process(void)
 
 {
   func_0x00501b4c(&DAT_000592a2,0x40a062,&DAT_003fa014,&DAT_000592b2,&DAT_000592c4,0,0x3fa016,3,0x19
@@ -6984,10 +6984,10 @@ void FUN_0000c948(void)
 
 
 //
-// Function: FUN_0000c9d4 @ 0x0000c9d4
+// Function: sensorChannel1_init @ 0x0000c9d4
 //
 
-void FUN_0000c9d4(void)
+void sensorChannel1_init(void)
 
 {
   func_0x00500234(&DAT_000592d6,0x40a06e,0x3fa01e,&DAT_000592e6,&DAT_0005930e,2,0x3fa020,0x14,0x96,
@@ -6998,10 +6998,10 @@ void FUN_0000c9d4(void)
 
 
 //
-// Function: FUN_0000ca60 @ 0x0000ca60
+// Function: sensorChannel1_process @ 0x0000ca60
 //
 
-void FUN_0000ca60(void)
+void sensorChannel1_process(void)
 
 {
   func_0x00500a4c(&DAT_000592d6,0x40a06e,0x3fa01e,&DAT_000592e6,&DAT_0005930e,2,0x3fa020,0x14,0x96,
@@ -7012,10 +7012,10 @@ void FUN_0000ca60(void)
 
 
 //
-// Function: FUN_0000caec @ 0x0000caec
+// Function: sensorChannel2_init @ 0x0000caec
 //
 
-void FUN_0000caec(void)
+void sensorChannel2_init(void)
 
 {
   func_0x005012dc(&DAT_00059336,0x40a07a,0x3fa028,&DAT_00059346,&DAT_00059358,0,0x3fa02a,4,0x43,0x42
@@ -7026,10 +7026,10 @@ void FUN_0000caec(void)
 
 
 //
-// Function: FUN_0000cb78 @ 0x0000cb78
+// Function: sensorChannel2_process @ 0x0000cb78
 //
 
-void FUN_0000cb78(void)
+void sensorChannel2_process(void)
 
 {
   func_0x00501b4c(&DAT_00059336,0x40a07a,0x3fa028,&DAT_00059346,&DAT_00059358,0,0x3fa02a,4,0x43,0x42
@@ -7040,10 +7040,10 @@ void FUN_0000cb78(void)
 
 
 //
-// Function: FUN_0000cc04 @ 0x0000cc04
+// Function: sensorChannel3_init @ 0x0000cc04
 //
 
-void FUN_0000cc04(void)
+void sensorChannel3_init(void)
 
 {
   func_0x005012dc(&DAT_0005936a,0x40a086,0x3fa032,&DAT_0005937a,&DAT_0005938c,0,0x3fa034,1,8,9,
@@ -7054,10 +7054,10 @@ void FUN_0000cc04(void)
 
 
 //
-// Function: FUN_0000cc90 @ 0x0000cc90
+// Function: sensorChannel3_process @ 0x0000cc90
 //
 
-void FUN_0000cc90(void)
+void sensorChannel3_process(void)
 
 {
   func_0x00501b4c(&DAT_0005936a,0x40a086,0x3fa032,&DAT_0005937a,&DAT_0005938c,0,0x3fa034,1,8,9,
@@ -7068,10 +7068,10 @@ void FUN_0000cc90(void)
 
 
 //
-// Function: FUN_0000cd1c @ 0x0000cd1c
+// Function: sensorChannel4_init @ 0x0000cd1c
 //
 
-void FUN_0000cd1c(void)
+void sensorChannel4_init(void)
 
 {
   func_0x005012dc(&DAT_0005939e,0x40a092,0x3fa03c,&DAT_000593ae,&DAT_000593c6,0,0x3fa03e,0x4d,0x288,
@@ -7082,10 +7082,10 @@ void FUN_0000cd1c(void)
 
 
 //
-// Function: FUN_0000cda8 @ 0x0000cda8
+// Function: sensorChannel4_process @ 0x0000cda8
 //
 
-void FUN_0000cda8(void)
+void sensorChannel4_process(void)
 
 {
   func_0x00501b4c(&DAT_0005939e,0x40a092,0x3fa03c,&DAT_000593ae,&DAT_000593c6,0,0x3fa03e,0x4d,0x288,
@@ -7096,10 +7096,10 @@ void FUN_0000cda8(void)
 
 
 //
-// Function: FUN_0000ce34 @ 0x0000ce34
+// Function: sensorChannel5_init @ 0x0000ce34
 //
 
-void FUN_0000ce34(void)
+void sensorChannel5_init(void)
 
 {
   func_0x00500234(0x3feed2,0x40a0aa,0x3fa04c,0x3feee2,0x3feefa,2,0x3fa04e,0x69,0x2b2,0x2b3,
@@ -7110,10 +7110,10 @@ void FUN_0000ce34(void)
 
 
 //
-// Function: FUN_0000cec0 @ 0x0000cec0
+// Function: sensorChannel5_process @ 0x0000cec0
 //
 
-void FUN_0000cec0(void)
+void sensorChannel5_process(void)
 
 {
   func_0x00500a4c(0x3feed2,0x40a0aa,0x3fa04c,0x3feee2,0x3feefa,2,0x3fa04e,0x69,0x2b2,0x2b3,
@@ -7124,10 +7124,10 @@ void FUN_0000cec0(void)
 
 
 //
-// Function: FUN_0000cf4c @ 0x0000cf4c
+// Function: sensorChannel6_init @ 0x0000cf4c
 //
 
-void FUN_0000cf4c(void)
+void sensorChannel6_init(void)
 
 {
   func_0x005012dc(0x3fef12,0x40a0b6,0x3fa056,0x3fef22,0x3fef4e,0,0x3fa058,0x6c,0x31c,0x31d,0x40bd94,
@@ -7138,10 +7138,10 @@ void FUN_0000cf4c(void)
 
 
 //
-// Function: FUN_0000cfd8 @ 0x0000cfd8
+// Function: sensorChannel6_process @ 0x0000cfd8
 //
 
-void FUN_0000cfd8(void)
+void sensorChannel6_process(void)
 
 {
   func_0x00501b4c(0x3fef12,0x40a0b6,0x3fa056,0x3fef22,0x3fef4e,0,0x3fa058,0x6c,0x31c,0x31d,0x40bd94,
@@ -7152,10 +7152,10 @@ void FUN_0000cfd8(void)
 
 
 //
-// Function: FUN_0000d064 @ 0x0000d064
+// Function: sensorChannel7_init @ 0x0000d064
 //
 
-void FUN_0000d064(void)
+void sensorChannel7_init(void)
 
 {
   func_0x00500234(&DAT_00059446,0x40a0c2,0x3fa060,&DAT_00059456,&DAT_0005946c,2,0x3fa062,0x4b,0x282,
@@ -7166,10 +7166,10 @@ void FUN_0000d064(void)
 
 
 //
-// Function: FUN_0000d0f0 @ 0x0000d0f0
+// Function: sensorChannel7_process @ 0x0000d0f0
 //
 
-void FUN_0000d0f0(void)
+void sensorChannel7_process(void)
 
 {
   func_0x00500a4c(&DAT_00059446,0x40a0c2,0x3fa060,&DAT_00059456,&DAT_0005946c,2,0x3fa062,0x4b,0x282,
@@ -7180,10 +7180,10 @@ void FUN_0000d0f0(void)
 
 
 //
-// Function: FUN_0000d17c @ 0x0000d17c
+// Function: sensorChannel8_init @ 0x0000d17c
 //
 
-void FUN_0000d17c(void)
+void sensorChannel8_init(void)
 
 {
   func_0x005012dc(0x3fef7a,0x40a0ce,0x3fa06a,0x3fef8a,0x3fefa2,0,0x3fa06c,0x6d,0x2a0,0x2a1,0x40bd8a,
@@ -7194,10 +7194,10 @@ void FUN_0000d17c(void)
 
 
 //
-// Function: FUN_0000d208 @ 0x0000d208
+// Function: sensorChannel8_process @ 0x0000d208
 //
 
-void FUN_0000d208(void)
+void sensorChannel8_process(void)
 
 {
   func_0x00501b4c(0x3fef7a,0x40a0ce,0x3fa06a,0x3fef8a,0x3fefa2,0,0x3fa06c,0x6d,0x2a0,0x2a1,0x40bd8a,
@@ -7208,10 +7208,10 @@ void FUN_0000d208(void)
 
 
 //
-// Function: FUN_0000d294 @ 0x0000d294
+// Function: sensorChannel9_init @ 0x0000d294
 //
 
-void FUN_0000d294(void)
+void sensorChannel9_init(void)
 
 {
   func_0x00500234(&DAT_000594be,0x40a0e6,0x3fa074,&DAT_000594ce,&DAT_000594fa,2,0x3fa076,7,0x2f,0x30
@@ -7222,10 +7222,10 @@ void FUN_0000d294(void)
 
 
 //
-// Function: FUN_0000d320 @ 0x0000d320
+// Function: sensorChannel9_process @ 0x0000d320
 //
 
-void FUN_0000d320(void)
+void sensorChannel9_process(void)
 
 {
   func_0x00500a4c(&DAT_000594be,0x40a0e6,0x3fa074,&DAT_000594ce,&DAT_000594fa,2,0x3fa076,7,0x2f,0x30
@@ -7236,10 +7236,10 @@ void FUN_0000d320(void)
 
 
 //
-// Function: FUN_0000d3ac @ 0x0000d3ac
+// Function: sensorChannel10_throttleInit @ 0x0000d3ac
 //
 
-void FUN_0000d3ac(void)
+void sensorChannel10_throttleInit(void)
 
 {
   func_0x00500234(&DAT_00059526,0x40a0f2,0x3fa07e,&DAT_00059536,&DAT_00059566,2,0x3fa080,9,0x13,0x14
@@ -7250,10 +7250,10 @@ void FUN_0000d3ac(void)
 
 
 //
-// Function: FUN_0000d438 @ 0x0000d438
+// Function: sensorChannel10_throttleProcess @ 0x0000d438
 //
 
-void FUN_0000d438(void)
+void sensorChannel10_throttleProcess(void)
 
 {
   func_0x00500a4c(&DAT_00059526,0x40a0f2,0x3fa07e,&DAT_00059536,&DAT_00059566,2,0x3fa080,9,0x13,0x14
@@ -7264,10 +7264,10 @@ void FUN_0000d438(void)
 
 
 //
-// Function: FUN_0000d4c4 @ 0x0000d4c4
+// Function: sensorChannel11_init @ 0x0000d4c4
 //
 
-void FUN_0000d4c4(void)
+void sensorChannel11_init(void)
 
 {
   func_0x005012dc(&DAT_00059596,0x40a0fe,0x3fa088,&DAT_000595a6,&DAT_000595b8,0,0x3fa08a,10,0xc,0xd,
@@ -7278,10 +7278,10 @@ void FUN_0000d4c4(void)
 
 
 //
-// Function: FUN_0000d550 @ 0x0000d550
+// Function: sensorChannel11_process @ 0x0000d550
 //
 
-void FUN_0000d550(void)
+void sensorChannel11_process(void)
 
 {
   func_0x00501b4c(&DAT_00059596,0x40a0fe,0x3fa088,&DAT_000595a6,&DAT_000595b8,0,0x3fa08a,10,0xc,0xd,
@@ -7292,10 +7292,10 @@ void FUN_0000d550(void)
 
 
 //
-// Function: FUN_0000d5dc @ 0x0000d5dc
+// Function: sensorChannel12_init @ 0x0000d5dc
 //
 
-void FUN_0000d5dc(void)
+void sensorChannel12_init(void)
 
 {
   func_0x005012dc(&DAT_000595ca,0x40a10a,0x3fa092,&DAT_000595da,&DAT_000595ec,0,0x3fa094,8,0x4d,0x4e
@@ -7306,10 +7306,10 @@ void FUN_0000d5dc(void)
 
 
 //
-// Function: FUN_0000d668 @ 0x0000d668
+// Function: sensorChannel12_process @ 0x0000d668
 //
 
-void FUN_0000d668(void)
+void sensorChannel12_process(void)
 
 {
   func_0x00501b4c(&DAT_000595ca,0x40a10a,0x3fa092,&DAT_000595da,&DAT_000595ec,0,0x3fa094,8,0x4d,0x4e
@@ -7320,10 +7320,10 @@ void FUN_0000d668(void)
 
 
 //
-// Function: FUN_0000d6f4 @ 0x0000d6f4
+// Function: sensorChannel13_init @ 0x0000d6f4
 //
 
-void FUN_0000d6f4(void)
+void sensorChannel13_init(void)
 
 {
   func_0x005012dc(0x3fefba,0x40a116,0x3fa09c,&DAT_000595fe,&DAT_00059610,0,0x3fa09e,0xd,10,0xb,
@@ -7334,10 +7334,10 @@ void FUN_0000d6f4(void)
 
 
 //
-// Function: FUN_0000d780 @ 0x0000d780
+// Function: sensorChannel13_process @ 0x0000d780
 //
 
-void FUN_0000d780(void)
+void sensorChannel13_process(void)
 
 {
   func_0x00501b4c(0x3fefba,0x40a116,0x3fa09c,&DAT_000595fe,&DAT_00059610,0,0x3fa09e,0xd,10,0xb,
@@ -7348,10 +7348,10 @@ void FUN_0000d780(void)
 
 
 //
-// Function: FUN_0000d80c @ 0x0000d80c
+// Function: sensorChannel14_init @ 0x0000d80c
 //
 
-void FUN_0000d80c(void)
+void sensorChannel14_init(void)
 
 {
   func_0x005012dc(&DAT_00059622,0x40a122,0x3fa0a6,&DAT_00059632,&DAT_00059644,0,0x3fa0a8,0x2a,0x152,
@@ -7362,10 +7362,10 @@ void FUN_0000d80c(void)
 
 
 //
-// Function: FUN_0000d898 @ 0x0000d898
+// Function: sensorChannel14_process @ 0x0000d898
 //
 
-void FUN_0000d898(void)
+void sensorChannel14_process(void)
 
 {
   func_0x00501b4c(&DAT_00059622,0x40a122,0x3fa0a6,&DAT_00059632,&DAT_00059644,0,0x3fa0a8,0x2a,0x152,
@@ -7376,10 +7376,10 @@ void FUN_0000d898(void)
 
 
 //
-// Function: FUN_0000d924 @ 0x0000d924
+// Function: sensorChannel15_init @ 0x0000d924
 //
 
-void FUN_0000d924(void)
+void sensorChannel15_init(void)
 
 {
   func_0x005012dc(&DAT_00059692,0x40a13a,0x3fa0b0,&DAT_000596a2,&DAT_000596ba,0,0x3fa0b2,0x15,0xc4,
@@ -7390,10 +7390,10 @@ void FUN_0000d924(void)
 
 
 //
-// Function: FUN_0000d9b0 @ 0x0000d9b0
+// Function: sensorChannel15_process @ 0x0000d9b0
 //
 
-void FUN_0000d9b0(void)
+void sensorChannel15_process(void)
 
 {
   func_0x00501b4c(&DAT_00059692,0x40a13a,0x3fa0b0,&DAT_000596a2,&DAT_000596ba,0,0x3fa0b2,0x15,0xc4,
@@ -7404,10 +7404,10 @@ void FUN_0000d9b0(void)
 
 
 //
-// Function: FUN_0000da3c @ 0x0000da3c
+// Function: sensorChannel16_init @ 0x0000da3c
 //
 
-void FUN_0000da3c(void)
+void sensorChannel16_init(void)
 
 {
   if ((DAT_003fd902 & 0x10) == 0) {
@@ -7424,10 +7424,10 @@ void FUN_0000da3c(void)
 
 
 //
-// Function: FUN_0000db50 @ 0x0000db50
+// Function: sensorChannel16_process @ 0x0000db50
 //
 
-void FUN_0000db50(void)
+void sensorChannel16_process(void)
 
 {
   if ((DAT_003fd902 & 0x10) == 0) {
@@ -47181,26 +47181,26 @@ void exceptionHandler(void)
   }
   initProtectionAndOutputCycle();
   processProtectionFaultsAndTiming();
-  FUN_0000d9b0();
+  sensorChannel15_process();
   func_0x00510b60();
   func_0x00510c78();
-  FUN_0000d898();
-  FUN_0000cc90();
+  sensorChannel14_process();
+  sensorChannel3_process();
   func_0x00500090();
-  FUN_0000c948();
-  FUN_0000cb78();
-  FUN_0000d320();
-  FUN_0000d668();
-  FUN_0000d438();
-  FUN_0000d550();
-  FUN_0000d780();
-  FUN_0000db50();
-  FUN_0000ca60();
+  sensorChannel0_process();
+  sensorChannel2_process();
+  sensorChannel9_process();
+  sensorChannel12_process();
+  sensorChannel10_throttleProcess();
+  sensorChannel11_process();
+  sensorChannel13_process();
+  sensorChannel16_process();
+  sensorChannel1_process();
   func_0x005067bc();
   dispatchModeHandlers();
   initEngineSpeedTracking();
   FUN_0001c978();
-  FUN_0000c874();
+  initSensorDefaults();
   initFuelFilterCoefficients();
   FUN_00017af4();
   FUN_0001c23c();
@@ -47311,9 +47311,9 @@ void exceptionHandler(void)
   func_0x00530288();
   func_0x0050dd10();
   func_0x0050e768();
-  FUN_0000cda8();
+  sensorChannel4_process();
   func_0x005001a8();
-  FUN_0000d0f0();
+  sensorChannel7_process();
   initFuelControlFilterSystem();
   initFuelFilterDefaults();
   FUN_00016ffc();
@@ -47353,8 +47353,8 @@ void exceptionHandler(void)
   FUN_000130ac();
   FUN_0002c9bc();
   initSensorRetryCounters();
-  FUN_0000cfd8();
-  FUN_0000cec0();
+  sensorChannel6_process();
+  sensorChannel5_process();
   func_0x00523750();
   func_0x00522788();
   initTorqueCurveState();
@@ -47369,7 +47369,7 @@ void exceptionHandler(void)
   initTorqueLimitState();
   func_0x0052eac8();
   func_0x0052e24c();
-  FUN_0000d208();
+  sensorChannel8_process();
   clearEngineConditionCounter();
   func_0x0051c2d0();
   func_0x0051cd88();
