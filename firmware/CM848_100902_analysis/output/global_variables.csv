@@ -676,3 +676,10 @@ address,name,type,comment
 0x00539868,SUB_00539868,,
 0x00539d18,SUB_00539d18,,
 0x0053a110,SUB_0053a110,,
+0x003fa002,tbl_register_snapshot,uint,Time Base Lower register snapshot
+0x003fa006,key_on_flag,ushort,Set when ignition key is on (0x80 bit check)
+0x003fa008,main_loop_phase_index,ushort,Current phase in main loop (0x00-0x27)
+0x003fa00c,scheduler_task_pointer,pointer,Pointer to current scheduler task
+0x003fa010,initialization_pointer,pointer,Used during RAM initialization
+0x003fee0a,eeprom_magic,ushort,EEPROM valid marker (should be 0x600D)
+0x003fd5c0,system_status_flags,uint,System status flags (bit 7 = key on)
