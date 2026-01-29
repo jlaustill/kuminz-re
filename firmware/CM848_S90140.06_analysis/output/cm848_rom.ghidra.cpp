@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Jan 29 11:55:18 MST 2026
+// Generated: Thu Jan 29 12:03:34 MST 2026
 
 
 //
@@ -25407,12 +25407,12 @@ void processProtectionEntry(void)
 
 
 //
-// Function: FUN_0002c9bc @ 0x0002c9bc
+// Function: initFuelControlModeVariables @ 0x0002c9bc
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002c9bc(void)
+void initFuelControlModeVariables(void)
 
 {
   _DAT_003fb018 = 0;
@@ -25428,12 +25428,12 @@ void FUN_0002c9bc(void)
 
 
 //
-// Function: FUN_0002ca14 @ 0x0002ca14
+// Function: calculateSpeedControlLimit @ 0x0002ca14
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002ca14(void)
+void calculateSpeedControlLimit(void)
 
 {
   ushort uVar1;
@@ -25456,12 +25456,12 @@ void FUN_0002ca14(void)
 
 
 //
-// Function: FUN_0002caa0 @ 0x0002caa0
+// Function: checkSpeedZeroCondition @ 0x0002caa0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002caa0(void)
+void checkSpeedZeroCondition(void)
 
 {
   uint uVar1;
@@ -25491,12 +25491,12 @@ void FUN_0002caa0(void)
 
 
 //
-// Function: FUN_0002cb54 @ 0x0002cb54
+// Function: selectFuelControlMode @ 0x0002cb54
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002cb54(void)
+void selectFuelControlMode(void)
 
 {
   if ((DAT_0040c089 & 1) == 0) {
@@ -25529,12 +25529,12 @@ void FUN_0002cb54(void)
 
 
 //
-// Function: FUN_0002cbe8 @ 0x0002cbe8
+// Function: calculateSpeedControlRampUp @ 0x0002cbe8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002cbe8(void)
+void calculateSpeedControlRampUp(void)
 
 {
   short sVar1;
@@ -25567,12 +25567,12 @@ void FUN_0002cbe8(void)
 
 
 //
-// Function: FUN_0002cc90 @ 0x0002cc90
+// Function: calculateSpeedControlRampDown @ 0x0002cc90
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002cc90(void)
+void calculateSpeedControlRampDown(void)
 
 {
   short sVar1;
@@ -25605,18 +25605,18 @@ void FUN_0002cc90(void)
 
 
 //
-// Function: FUN_0002cd38 @ 0x0002cd38
+// Function: updateSpeedControlOutputs @ 0x0002cd38
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002cd38(void)
+void updateSpeedControlOutputs(void)
 
 {
   undefined2 *puVar1;
   
-  FUN_0002cbe8();
-  FUN_0002cc90();
+  calculateSpeedControlRampUp();
+  calculateSpeedControlRampDown();
   if ((_fuel_control_mode_select == 0) || (_fuel_control_mode_select == 1)) {
     puVar1 = (undefined2 *)&DAT_003fb034;
   }
@@ -25634,12 +25634,12 @@ void FUN_0002cd38(void)
 
 
 //
-// Function: FUN_0002cdb4 @ 0x0002cdb4
+// Function: selectSpeedControlGains @ 0x0002cdb4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002cdb4(void)
+void selectSpeedControlGains(void)
 
 {
   if ((int)_DAT_00407762 < (int)(uint)_DAT_0040b020) {
@@ -25664,29 +25664,29 @@ void FUN_0002cdb4(void)
 
 
 //
-// Function: FUN_0002ce8c @ 0x0002ce8c
+// Function: processSpeedControlModeLogic @ 0x0002ce8c
 //
 
-void FUN_0002ce8c(void)
+void processSpeedControlModeLogic(void)
 
 {
-  FUN_0002ca14();
-  FUN_0002caa0();
-  FUN_0002cb54();
-  FUN_0002cd38();
-  FUN_0002cdb4();
+  calculateSpeedControlLimit();
+  checkSpeedZeroCondition();
+  selectFuelControlMode();
+  updateSpeedControlOutputs();
+  selectSpeedControlGains();
   return;
 }
 
 
 
 //
-// Function: FUN_0002cebc @ 0x0002cebc
+// Function: calculateSpeedControlFiltered @ 0x0002cebc
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002cebc(void)
+void calculateSpeedControlFiltered(void)
 
 {
   bool bVar1;
@@ -25797,12 +25797,12 @@ LAB_0002d0fc:
 
 
 //
-// Function: FUN_0002d208 @ 0x0002d208
+// Function: selectFuelControlModeOutput @ 0x0002d208
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002d208(void)
+void selectFuelControlModeOutput(void)
 
 {
   short sVar1;
@@ -25837,12 +25837,12 @@ void FUN_0002d208(void)
 
 
 //
-// Function: FUN_0002d2f8 @ 0x0002d2f8
+// Function: calculateFuelControlLimits @ 0x0002d2f8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002d2f8(void)
+void calculateFuelControlLimits(void)
 
 {
   uint uVar1;
@@ -25895,12 +25895,12 @@ void FUN_0002d2f8(void)
 
 
 //
-// Function: FUN_0002d428 @ 0x0002d428
+// Function: processFuelControlProtectionFlags @ 0x0002d428
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002d428(void)
+void processFuelControlProtectionFlags(void)
 
 {
   bool bVar1;
@@ -25951,15 +25951,15 @@ void FUN_0002d428(void)
 
 
 //
-// Function: FUN_0002d5d8 @ 0x0002d5d8
+// Function: processFuelControlOutput @ 0x0002d5d8
 //
 
-void FUN_0002d5d8(void)
+void processFuelControlOutput(void)
 
 {
-  FUN_0002d208();
-  FUN_0002d2f8();
-  FUN_0002d428();
+  selectFuelControlModeOutput();
+  calculateFuelControlLimits();
+  processFuelControlProtectionFlags();
   return;
 }
 
@@ -25975,9 +25975,9 @@ void initProtectionModeDefaults(void)
 
 {
   if (_DAT_0040776e != 0) {
-    FUN_0002ce8c();
-    FUN_0002cebc();
-    FUN_0002d5d8();
+    processSpeedControlModeLogic();
+    calculateSpeedControlFiltered();
+    processFuelControlOutput();
   }
   return;
 }
@@ -25985,12 +25985,12 @@ void initProtectionModeDefaults(void)
 
 
 //
-// Function: FUN_0002d638 @ 0x0002d638
+// Function: initFuelControlStateVariables @ 0x0002d638
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002d638(void)
+void initFuelControlStateVariables(void)
 
 {
   _DAT_003fb048 = 3;
@@ -26021,12 +26021,12 @@ void FUN_0002d638(void)
 
 
 //
-// Function: FUN_0002d7a4 @ 0x0002d7a4
+// Function: updateSpeedControlCounter1 @ 0x0002d7a4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002d7a4(int param_1)
+void updateSpeedControlCounter1(int param_1)
 
 {
   ushort uVar1;
@@ -26065,12 +26065,12 @@ void FUN_0002d7a4(int param_1)
 
 
 //
-// Function: FUN_0002d88c @ 0x0002d88c
+// Function: processSpeedControlFilter1 @ 0x0002d88c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002d88c(int param_1)
+void processSpeedControlFilter1(int param_1)
 
 {
   short sVar1;
@@ -26118,12 +26118,12 @@ void FUN_0002d88c(int param_1)
 
 
 //
-// Function: FUN_0002d9f4 @ 0x0002d9f4
+// Function: updateSpeedControlCounter2 @ 0x0002d9f4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002d9f4(int param_1)
+void updateSpeedControlCounter2(int param_1)
 
 {
   ushort uVar1;
@@ -26162,12 +26162,12 @@ void FUN_0002d9f4(int param_1)
 
 
 //
-// Function: FUN_0002dadc @ 0x0002dadc
+// Function: processSpeedControlFilter2 @ 0x0002dadc
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-bool FUN_0002dadc(int param_1)
+bool processSpeedControlFilter2(int param_1)
 
 {
   short sVar1;
@@ -26238,8 +26238,8 @@ void initProtectionControlState(void)
       uVar5 = (uint)((DAT_0040c052 & 2) != 0);
     }
     _fuel_demand_filtered_2 = _fuel_demand_filtered_2 & 0xfe5f;
-    FUN_0002d9f4(uVar4);
-    sVar3 = FUN_0002dadc(uVar4);
+    updateSpeedControlCounter2(uVar4);
+    sVar3 = processSpeedControlFilter2(uVar4);
     if (_DAT_0040b056 == 0) {
       if (sVar3 != 0) {
         _diagnostic_condition_flags = _diagnostic_condition_flags | 0x40;
@@ -26255,8 +26255,8 @@ void initProtectionControlState(void)
     else {
       uVar6 = 0;
     }
-    FUN_0002d7a4(uVar6);
-    FUN_0002d88c(uVar6);
+    updateSpeedControlCounter1(uVar6);
+    processSpeedControlFilter1(uVar6);
     if (_DAT_0040b050 == 0) {
       if ((bVar1) && (_DAT_0040b05a != 0)) {
         _diagnostic_condition_flags = _diagnostic_condition_flags | 4;
@@ -29908,10 +29908,10 @@ void initSensorLookupTable2(void)
 
 
 //
-// Function: FUN_00035ad0 @ 0x00035ad0
+// Function: processSensorLookupTable0 @ 0x00035ad0
 //
 
-void FUN_00035ad0(void)
+void processSensorLookupTable0(void)
 
 {
   func_0x005012dc(&DAT_0005ad40,0x40b1c2,0x3fb210,&DAT_0005ad50,&DAT_0005ad86,0,0x3fb212,0x4c,0x19c,
@@ -30097,12 +30097,12 @@ void initSensorCalibrationTables(void)
 
 
 //
-// Function: FUN_00035fa8 @ 0x00035fa8
+// Function: processFaultScanLookup @ 0x00035fa8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00035fa8(void)
+void processFaultScanLookup(void)
 
 {
   bool bVar1;
@@ -30457,12 +30457,12 @@ void j1939UpdateTxTimers(void)
 
 
 //
-// Function: FUN_00036b10 @ 0x00036b10
+// Function: updateJ1939TxTimerCounter @ 0x00036b10
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00036b10(void)
+void updateJ1939TxTimerCounter(void)
 
 {
   DAT_003fb269 = DAT_003fb269 + 1;
@@ -47353,7 +47353,7 @@ void exceptionHandler(void)
   func_0x00507684();
   func_0x0050ebf0();
   initManifoldPressureFilter();
-  FUN_0002c9bc();
+  initFuelControlModeVariables();
   initSensorRetryCounters();
   sensorChannel6_process();
   sensorChannel5_process();
@@ -47401,7 +47401,7 @@ void exceptionHandler(void)
   func_0x00509b5c();
   func_0x0050ea88();
   func_0x0050ee68();
-  FUN_0002d638();
+  initFuelControlStateVariables();
   func_0x0050fc8c();
   clearDiagnosticConditionFlags();
   clearFaultStatusCounters();
