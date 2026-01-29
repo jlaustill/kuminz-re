@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Jan 29 10:27:01 MST 2026
+// Generated: Thu Jan 29 10:28:20 MST 2026
 
 
 //
@@ -5731,7 +5731,7 @@ void phase_group_a_processing(void)
   FUN_00018cfc();
   FUN_0000cf4c();
   FUN_0000ce34();
-  FUN_00035be8();
+  processSensorLookupTable1();
   FUN_0000d17c();
   func_0x00511ed4();
   processSensorFilterCalibration();
@@ -5782,8 +5782,8 @@ void phase_group_b_processing(void)
   func_0x00505f98(0);
   func_0x0051d840();
   processEngineLoadData();
-  FUN_00034abc();
-  FUN_00035328();
+  processCalibrationTablesMain();
+  processProtectionStateMachine();
   processEngineLoadCalculation();
   FUN_00013dc8();
   func_0x005071b8();
@@ -5823,8 +5823,8 @@ void periodicTaskGroup0_fuelFinal(void)
   func_0x00502b6c();
   FUN_0000cc04();
   FUN_0002c764();
-  FUN_000358a0();
-  FUN_000359b8();
+  processSensorLookupTable3();
+  processSensorLookupTable2();
   updateEngineCycleOutputs();
   FUN_0002c4fc();
   processEngineRpmDerivative();
@@ -5867,7 +5867,7 @@ void periodicTaskGroup1_sensorProcessing(void)
   FUN_00028ba4();
   processEngineRpmDiagnostic();
   setFuelDemandActiveFlag();
-  FUN_00035370();
+  updateSensorBufferValues();
   FUN_0001d9b8();
   func_0x00526560();
   func_0x00516c18();
@@ -5962,7 +5962,7 @@ void periodicTaskGroup4_canTx(void)
 
 {
   calculateFuelRateFromRpm();
-  FUN_00035558();
+  processSensorLookupTable5();
   calculateFuelDemandValue();
   return;
 }
@@ -5977,8 +5977,8 @@ void periodicTaskGroup5_diagnostics(void)
 
 {
   FUN_0000c9d4();
-  FUN_00035788();
-  FUN_00035670();
+  processSensorLookupTable4();
+  calculateSensorLookupValue();
   return;
 }
 
@@ -6179,7 +6179,7 @@ void periodicTaskGroup25_calibration7(void)
   func_0x005118f8();
   func_0x005316ac();
   func_0x0053005c();
-  FUN_00034dd4();
+  processProtectionFaultSeverity();
   return;
 }
 
@@ -29395,12 +29395,12 @@ void FUN_00034a30(void)
 
 
 //
-// Function: FUN_00034abc @ 0x00034abc
+// Function: processCalibrationTablesMain @ 0x00034abc
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00034abc(void)
+void processCalibrationTablesMain(void)
 
 {
   if (((_eeprom_calibration_table_ptr & 4) != 0) && (FUN_00033488(), _DAT_003fb178 != 0)) {
@@ -29416,12 +29416,12 @@ void FUN_00034abc(void)
 
 
 //
-// Function: FUN_00034b14 @ 0x00034b14
+// Function: initProtectionSystemState @ 0x00034b14
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00034b14(void)
+void initProtectionSystemState(void)
 
 {
   int iVar1;
@@ -29501,12 +29501,12 @@ void FUN_00034b14(void)
 
 
 //
-// Function: FUN_00034dd4 @ 0x00034dd4
+// Function: processProtectionFaultSeverity @ 0x00034dd4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00034dd4(void)
+void processProtectionFaultSeverity(void)
 
 {
   byte bVar1;
@@ -29558,12 +29558,12 @@ void FUN_00034dd4(void)
 
 
 //
-// Function: FUN_00034f4c @ 0x00034f4c
+// Function: processProtectionRateLimitFlags @ 0x00034f4c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00034f4c(void)
+void processProtectionRateLimitFlags(void)
 
 {
   if (((protection_mode_flags & 4) == 0) || (_DAT_003fb1ca != 0)) {
@@ -29611,12 +29611,12 @@ LAB_00035108:
 
 
 //
-// Function: FUN_00035154 @ 0x00035154
+// Function: calculateProtectionThresholdLimit @ 0x00035154
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00035154(void)
+void calculateProtectionThresholdLimit(void)
 
 {
   ushort uVar1;
@@ -29645,24 +29645,24 @@ void FUN_00035154(void)
     _protection_threshold_limit = _DAT_00408376;
     _protection_status_code = 0x17;
   }
-  FUN_00034f4c();
+  processProtectionRateLimitFlags();
   return;
 }
 
 
 
 //
-// Function: FUN_00035328 @ 0x00035328
+// Function: processProtectionStateMachine @ 0x00035328
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00035328(void)
+void processProtectionStateMachine(void)
 
 {
   if (((_eeprom_calibration_table_ptr & 4) != 0) && (_DAT_003fb178 != 0)) {
     protectionStateMachine();
-    FUN_00035154();
+    calculateProtectionThresholdLimit();
   }
   return;
 }
@@ -29670,12 +29670,12 @@ void FUN_00035328(void)
 
 
 //
-// Function: FUN_00035370 @ 0x00035370
+// Function: updateSensorBufferValues @ 0x00035370
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00035370(void)
+void updateSensorBufferValues(void)
 
 {
   undefined2 *puVar1;
@@ -29747,12 +29747,12 @@ LAB_00035468:
 
 
 //
-// Function: FUN_00035518 @ 0x00035518
+// Function: copySensorValuesToBuffer @ 0x00035518
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00035518(void)
+void copySensorValuesToBuffer(void)
 
 {
   _DAT_0040b14e = _oil_pressure_sensor;
@@ -29765,10 +29765,10 @@ void FUN_00035518(void)
 
 
 //
-// Function: FUN_00035558 @ 0x00035558
+// Function: processSensorLookupTable5 @ 0x00035558
 //
 
-void FUN_00035558(void)
+void processSensorLookupTable5(void)
 
 {
   func_0x005012dc(&DAT_0005aaf0,0x40b156,0x3fb1de,&DAT_0005ab00,&DAT_0005ab12,0,0x3fb1e0,0x47,0x180,
@@ -29779,10 +29779,10 @@ void FUN_00035558(void)
 
 
 //
-// Function: FUN_000355e4 @ 0x000355e4
+// Function: initSensorLookupTable5 @ 0x000355e4
 //
 
-void FUN_000355e4(void)
+void initSensorLookupTable5(void)
 
 {
   func_0x00501b4c(&DAT_0005aaf0,0x40b156,0x3fb1de,&DAT_0005ab00,&DAT_0005ab12,0,0x3fb1e0,0x47,0x180,
@@ -29793,10 +29793,10 @@ void FUN_000355e4(void)
 
 
 //
-// Function: FUN_00035670 @ 0x00035670
+// Function: calculateSensorLookupValue @ 0x00035670
 //
 
-void FUN_00035670(void)
+void calculateSensorLookupValue(void)
 
 {
   func_0x00500234(&DAT_0005ab24,0x40b162,0x3fb1e8,&DAT_0005ab34,&DAT_0005ab5c,2,0x3fb1ea,0x45,0x17b,
@@ -29807,10 +29807,10 @@ void FUN_00035670(void)
 
 
 //
-// Function: FUN_000356fc @ 0x000356fc
+// Function: updateSensorLookupTable @ 0x000356fc
 //
 
-void FUN_000356fc(void)
+void updateSensorLookupTable(void)
 
 {
   func_0x00500a4c(&DAT_0005ab24,0x40b162,0x3fb1e8,&DAT_0005ab34,&DAT_0005ab5c,2,0x3fb1ea,0x45,0x17b,
@@ -29821,10 +29821,10 @@ void FUN_000356fc(void)
 
 
 //
-// Function: FUN_00035788 @ 0x00035788
+// Function: processSensorLookupTable4 @ 0x00035788
 //
 
-void FUN_00035788(void)
+void processSensorLookupTable4(void)
 
 {
   func_0x005012dc(&DAT_0005ab84,0x40b16e,0x3fb1f2,&DAT_0005ab94,&DAT_0005abbe,0,0x3fb1f4,0x2f,0x175,
@@ -29835,10 +29835,10 @@ void FUN_00035788(void)
 
 
 //
-// Function: FUN_00035814 @ 0x00035814
+// Function: initSensorLookupTable4 @ 0x00035814
 //
 
-void FUN_00035814(void)
+void initSensorLookupTable4(void)
 
 {
   func_0x00501b4c(&DAT_0005ab84,0x40b16e,0x3fb1f2,&DAT_0005ab94,&DAT_0005abbe,0,0x3fb1f4,0x2f,0x175,
@@ -29849,10 +29849,10 @@ void FUN_00035814(void)
 
 
 //
-// Function: FUN_000358a0 @ 0x000358a0
+// Function: processSensorLookupTable3 @ 0x000358a0
 //
 
-void FUN_000358a0(void)
+void processSensorLookupTable3(void)
 
 {
   func_0x005012dc(&DAT_0005acd8,0x40b1aa,0x3fb1fc,&DAT_0005ace8,&DAT_0005acfa,0,0x3fb1fe,0x61,0x15c,
@@ -29863,10 +29863,10 @@ void FUN_000358a0(void)
 
 
 //
-// Function: FUN_0003592c @ 0x0003592c
+// Function: initSensorLookupTable3 @ 0x0003592c
 //
 
-void FUN_0003592c(void)
+void initSensorLookupTable3(void)
 
 {
   func_0x00501b4c(&DAT_0005acd8,0x40b1aa,0x3fb1fc,&DAT_0005ace8,&DAT_0005acfa,0,0x3fb1fe,0x61,0x15c,
@@ -29877,10 +29877,10 @@ void FUN_0003592c(void)
 
 
 //
-// Function: FUN_000359b8 @ 0x000359b8
+// Function: processSensorLookupTable2 @ 0x000359b8
 //
 
-void FUN_000359b8(void)
+void processSensorLookupTable2(void)
 
 {
   func_0x005012dc(&DAT_0005ad0c,0x40b1b6,0x3fb206,&DAT_0005ad1c,&DAT_0005ad2e,0,0x3fb208,0x62,0x15e,
@@ -29891,10 +29891,10 @@ void FUN_000359b8(void)
 
 
 //
-// Function: FUN_00035a44 @ 0x00035a44
+// Function: initSensorLookupTable2 @ 0x00035a44
 //
 
-void FUN_00035a44(void)
+void initSensorLookupTable2(void)
 
 {
   func_0x00501b4c(&DAT_0005ad0c,0x40b1b6,0x3fb206,&DAT_0005ad1c,&DAT_0005ad2e,0,0x3fb208,0x62,0x15e,
@@ -29919,10 +29919,10 @@ void FUN_00035ad0(void)
 
 
 //
-// Function: FUN_00035b5c @ 0x00035b5c
+// Function: initSensorLookupTable1 @ 0x00035b5c
 //
 
-void FUN_00035b5c(void)
+void initSensorLookupTable1(void)
 
 {
   func_0x00501b4c(&DAT_0005ad40,0x40b1c2,0x3fb210,&DAT_0005ad50,&DAT_0005ad86,0,0x3fb212,0x4c,0x19c,
@@ -29933,10 +29933,10 @@ void FUN_00035b5c(void)
 
 
 //
-// Function: FUN_00035be8 @ 0x00035be8
+// Function: processSensorLookupTable1 @ 0x00035be8
 //
 
-void FUN_00035be8(void)
+void processSensorLookupTable1(void)
 
 {
   func_0x005012dc(&DAT_0005adbc,0x40b1ce,0x3fb21a,&DAT_0005adcc,&DAT_0005ade2,0,0x3fb21c,0x66,299,
@@ -29947,10 +29947,10 @@ void FUN_00035be8(void)
 
 
 //
-// Function: FUN_00035c74 @ 0x00035c74
+// Function: initSensorLookupTableInit1 @ 0x00035c74
 //
 
-void FUN_00035c74(void)
+void initSensorLookupTableInit1(void)
 
 {
   func_0x00501b4c(&DAT_0005adbc,0x40b1ce,0x3fb21a,&DAT_0005adcc,&DAT_0005ade2,0,0x3fb21c,0x66,299,
@@ -47243,13 +47243,13 @@ void exceptionHandler(void)
   FUN_00010270();
   FUN_0001f98c();
   FUN_00020410();
-  FUN_000356fc();
+  updateSensorLookupTable();
   func_0x00510d90();
   func_0x00512554();
   initTimingFilterState();
   func_0x00507e20();
   func_0x00510f34();
-  FUN_00035814();
+  initSensorLookupTable4();
   func_0x00516a20();
   initJ1939CommunicationSystem();
   enableSchedulerMiosOutput();
@@ -47262,7 +47262,7 @@ void exceptionHandler(void)
   initEngineRpmFilterPointers();
   func_0x00525de4();
   FUN_0000e8cc();
-  FUN_000355e4();
+  initSensorLookupTable5();
   FUN_00029bf8();
   FUN_00029c80();
   initThermalProtectionState();
@@ -47298,10 +47298,10 @@ void exceptionHandler(void)
   func_0x00532ba8();
   func_0x0051d810();
   func_0x0051dad4();
-  FUN_00035b5c();
+  initSensorLookupTable1();
   func_0x005229c0();
   initSensorCalibrationTables();
-  FUN_00035518();
+  copySensorValuesToBuffer();
   func_0x00523b5c();
   func_0x005161c0();
   func_0x005162ec();
@@ -47357,9 +47357,9 @@ void exceptionHandler(void)
   func_0x00523750();
   func_0x00522788();
   initTorqueCurveState();
-  FUN_0003592c();
-  FUN_00035a44();
-  FUN_00035c74();
+  initSensorLookupTable3();
+  initSensorLookupTable2();
+  initSensorLookupTableInit1();
   func_0x00510ea8();
   initFuelDemandLimits();
   func_0x0051db0c();
@@ -47374,7 +47374,7 @@ void exceptionHandler(void)
   func_0x0051cd88();
   resetEngineLoadTracker();
   initProtectionFilterVariables();
-  FUN_00034b14();
+  initProtectionSystemState();
   func_0x00510978();
   func_0x00522a04();
   initEngineLoadFilterState();
