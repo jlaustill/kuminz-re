@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Jan 29 05:36:41 MST 2026
+// Generated: Thu Jan 29 05:41:36 MST 2026
 
 
 //
@@ -37,12 +37,12 @@ void reset_vector(void)
 
 
 //
-// Function: FUN_00000184 @ 0x00000184
+// Function: keyOnStateMachine @ 0x00000184
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00000184(void)
+void keyOnStateMachine(void)
 
 {
   if (_DAT_00302006 == 0) {
@@ -88,10 +88,10 @@ void FUN_00000184(void)
 
 
 //
-// Function: FUN_00000340 @ 0x00000340
+// Function: copyCalibrationToRam @ 0x00000340
 //
 
-void FUN_00000340(void)
+void copyCalibrationToRam(void)
 
 {
   undefined4 *puVar1;
@@ -602,7 +602,7 @@ void FUN_00000ec0(void)
 
 {
   FUN_00002310();
-  FUN_00000184();
+  keyOnStateMachine();
   eepromReadWords(0x100004a,0x3fee18,6);
   eepromReadWords(0x1000050,&DAT_003fee1e,2);
   eepromReadWords(0x1000052,&DAT_003fee20,2);
@@ -1629,7 +1629,7 @@ void FUN_00002504(void)
   uint in_BAR;
   
   _DAT_002fc000 = _DAT_002fc000 | 0x10000;
-  FUN_00000340(in_BAR | 7);
+  copyCalibrationToRam(in_BAR | 7);
   func_0x003fd6d8();
   FUN_00000be8();
   _DAT_00306102 = _DAT_00306102 | 0x2000;
@@ -7430,12 +7430,12 @@ void FUN_0000db50(void)
 
 
 //
-// Function: FUN_0000dc64 @ 0x0000dc64
+// Function: oilPressureDeltaCalculation @ 0x0000dc64
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-ushort FUN_0000dc64(void)
+ushort oilPressureDeltaCalculation(void)
 
 {
   ushort uVar1;
@@ -7472,12 +7472,12 @@ void FUN_0000dcdc(void)
   int iVar4;
   
   if ((_diagnostic_enable_flags & 8) == 0) {
-    uVar3 = FUN_0000dc64();
+    uVar3 = oilPressureDeltaCalculation();
     uVar1 = dualAxisTableInterpolation
                       (&DAT_003fa0c4,_current_engine_rpm,&DAT_0005b94c,uVar3,&DAT_0005b92e,
                        &DAT_0005b978,0);
     if ((_DAT_003fd59c & 2) != 0) {
-      uVar3 = FUN_0000dc64();
+      uVar3 = oilPressureDeltaCalculation();
       uVar2 = dualAxisTableInterpolation
                         (&DAT_003fa0c8,_current_engine_rpm,&DAT_0005bbc4,uVar3,&DAT_0005bbf0,
                          &DAT_0005bc0e,0);
@@ -19745,12 +19745,12 @@ void FUN_00022d18(void)
 
 
 //
-// Function: FUN_00022d60 @ 0x00022d60
+// Function: j1939MessageDispatcher @ 0x00022d60
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00022d60(int param_1)
+void j1939MessageDispatcher(int param_1)
 
 {
   char cVar1;
@@ -20251,7 +20251,7 @@ void FUN_00023b38(int param_1)
   
   uVar1 = (ushort)*(byte *)(param_1 + 2);
   if (((_j1939_source_address & 0xff) == uVar1) || (uVar1 == 0xff)) {
-    FUN_00022d60(param_1);
+    j1939MessageDispatcher(param_1);
   }
   if (((_DAT_0040ad7e & 0xff) == uVar1) || (uVar1 == 0xff)) {
     FUN_000236f0(param_1);
@@ -23759,7 +23759,7 @@ void FUN_00029e50(void)
   undefined2 uVar1;
   
   if ((_DAT_003fd5ec & 0x100) != 0) {
-    uVar1 = FUN_0000dc64();
+    uVar1 = oilPressureDeltaCalculation();
     _DAT_0040aee8 =
          dualAxisTableInterpolation
                    (&DAT_003fafa4,uVar1,&DAT_0005c4f2,_current_engine_rpm,&DAT_0005c500,
@@ -36217,7 +36217,7 @@ void FUN_00041368(void)
   }
   if (((((_DAT_0040bb06 < _DAT_00408eb4) && (_DAT_00408eb0 < _current_engine_rpm)) ||
        ((_DAT_00408eb4 <= _DAT_0040bb06 && (_DAT_00408e9a < _current_engine_rpm)))) &&
-      (uVar1 = FUN_0000dc64(), uVar1 < _DAT_00408ea0)) &&
+      (uVar1 = oilPressureDeltaCalculation(), uVar1 < _DAT_00408ea0)) &&
      ((((((_DAT_0040a154 != 0xb && (_DAT_0040a154 != 4)) && (_DAT_0040a2ce <= _DAT_00408ea8)) ||
         ((_DAT_0040a154 == 0xb &&
          (((uint)_DAT_0040a2ce <= (uint)_DAT_00408ea8 ||
@@ -38856,7 +38856,7 @@ void FUN_000466a8(void)
     _DAT_0040b820 = 7;
     return;
   }
-  uVar4 = FUN_0000dc64();
+  uVar4 = oilPressureDeltaCalculation();
   _DAT_0040b818 =
        dualAxisTableInterpolation
                  (&DAT_003fb606,uVar1,&DAT_0005cd72,uVar3,&DAT_0005cd84,&DAT_0005cd96,7);
@@ -40820,7 +40820,7 @@ void FUN_0004ae20(void)
        lookupTableInterpolation(&DAT_003fb710,_DAT_003fb72a,&DAT_00060da4,&DAT_00060dbe,3);
   _DAT_0040b910 =
        lookupTableInterpolation(&DAT_003fb712,_DAT_003fb72c,&DAT_00060dd8,&DAT_00060de4,2);
-  uVar1 = FUN_0000dc64();
+  uVar1 = oilPressureDeltaCalculation();
   _DAT_0040b92a =
        dualAxisTableInterpolation
                  (&DAT_003fb724,_current_engine_rpm,&DAT_00061402,uVar1,&DAT_00061412,&DAT_0006142a,

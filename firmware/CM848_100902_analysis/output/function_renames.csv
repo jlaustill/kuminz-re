@@ -1,5 +1,7 @@
 address,name
 0x00000100,reset_vector
+0x00000184,keyOnStateMachine
+0x00000340,copyCalibrationToRam
 0x00000bec,eepromWriteWords
 0x00000d88,eepromReadWords
 0x0000b44c,keyOnStatusMonitor
@@ -12,6 +14,7 @@ address,name
 0x0000ba90,periodicTaskGroup3_auxiliaryControl
 0x0000bec8,schedulerPhaseDispatcher
 0x0000c0a0,main_loop
+0x0000dc64,oilPressureDeltaCalculation
 0x0000e78c,temperatureBasedFuelTrim
 0x0000e8f0,fuelTimingCompensation
 0x000128a0,throttleBasedFuelCalculation
@@ -34,6 +37,7 @@ address,name
 0x00017980,fuelDemandCoordinator
 0x00022674,j1939_handle_pgn_65228_dm3_clear_diag
 0x00022770,initPgn65228Dm3Handler
+0x00022d60,j1939MessageDispatcher
 0x00023188,j1939_register_pgn_handler
 0x000232b4,initJ1939ProtocolHandlers
 0x00023e8c,j1939_handle_pgn_65269_ambient_conditions
