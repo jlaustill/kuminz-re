@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Jan 29 09:50:12 MST 2026
+// Generated: Thu Jan 29 09:52:27 MST 2026
 
 
 //
@@ -5766,7 +5766,7 @@ void phase_group_b_processing(void)
   updateEnginePosition();
   FUN_00047bd0();
   FUN_00049264();
-  FUN_0004a2f8();
+  calculateTpuTimingPeriod();
   FUN_000191a0();
   FUN_00038ac8();
   FUN_0003adcc();
@@ -5904,7 +5904,7 @@ void periodicTaskGroup2_controlLoop(void)
   FUN_0003ccb4();
   FUN_0001e5a4();
   FUN_00042cfc();
-  FUN_0004b6cc();
+  calculateFuel2DTableLookup();
   FUN_000373b0();
   func_0x0050e610();
   FUN_000130dc();
@@ -5931,7 +5931,7 @@ void periodicTaskGroup3_auxiliaryControl(void)
   FUN_00014498();
   FUN_0001e22c();
   func_0x00529f58();
-  FUN_0004b5b8();
+  updateEngineStatusFlags();
   func_0x005279d8();
   FUN_00042784();
   FUN_000466a8();
@@ -5940,7 +5940,7 @@ void periodicTaskGroup3_auxiliaryControl(void)
   func_0x0052d140();
   func_0x005278ac();
   func_0x00534530();
-  FUN_00054224();
+  checkRpmOverspeedProtection();
   FUN_0004272c();
   FUN_00045ecc();
   FUN_0002bf44();
@@ -20269,7 +20269,7 @@ void FUN_000236f0(int param_1)
     return;
   }
   if (bVar2 == 0) {
-    FUN_00054064(bVar1);
+    removeCoolantCalEntry(bVar1);
     _speed_control_target = _speed_control_target & 5;
   }
   else {
@@ -37200,7 +37200,7 @@ void FUN_0004280c(void)
   FUN_0004279c();
   func_0x00513ddc();
   FUN_0003f35c();
-  FUN_0004b9ac();
+  applyProtectionLimit();
   FUN_0003cefc();
   func_0x00519e2c();
   FUN_0003889c();
@@ -40685,12 +40685,12 @@ void FUN_0004a114(void)
 
 
 //
-// Function: FUN_0004a258 @ 0x0004a258
+// Function: initEngineDiagnosticData @ 0x0004a258
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0004a258(void)
+void initEngineDiagnosticData(void)
 
 {
   diagnostic_data_byte_4 = 0;
@@ -40717,12 +40717,12 @@ void FUN_0004a258(void)
 
 
 //
-// Function: FUN_0004a2f8 @ 0x0004a2f8
+// Function: calculateTpuTimingPeriod @ 0x0004a2f8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0004a2f8(void)
+void calculateTpuTimingPeriod(void)
 
 {
   uint uVar1;
@@ -40736,12 +40736,12 @@ void FUN_0004a2f8(void)
 
 
 //
-// Function: FUN_0004a37c @ 0x0004a37c
+// Function: initTpuTimingInterrupts @ 0x0004a37c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0004a37c(void)
+void initTpuTimingInterrupts(void)
 
 {
   uint uVar1;
@@ -40762,12 +40762,12 @@ void FUN_0004a37c(void)
 
 
 //
-// Function: FUN_0004a490 @ 0x0004a490
+// Function: processEnginePositionData @ 0x0004a490
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0004a490(void)
+void processEnginePositionData(void)
 
 {
   short sVar1;
@@ -40942,7 +40942,7 @@ void updateEnginePosition(void)
       }
       _engine_position_counter = *(undefined2 *)(&DAT_00057dd2)[uVar1 * 2];
     }
-    FUN_0004a490();
+    processEnginePositionData();
   }
   return;
 }
@@ -41314,12 +41314,12 @@ LAB_0004b524:
 
 
 //
-// Function: FUN_0004b5b8 @ 0x0004b5b8
+// Function: updateEngineStatusFlags @ 0x0004b5b8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0004b5b8(void)
+void updateEngineStatusFlags(void)
 
 {
   _DAT_0040b932 =
@@ -41348,12 +41348,12 @@ void FUN_0004b5b8(void)
 
 
 //
-// Function: FUN_0004b6cc @ 0x0004b6cc
+// Function: calculateFuel2DTableLookup @ 0x0004b6cc
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0004b6cc(void)
+void calculateFuel2DTableLookup(void)
 
 {
   if (((_DAT_003fd5da & 1) != 0) && (_engine_operating_mode == 7)) {
@@ -41422,12 +41422,12 @@ void FUN_0004b6cc(void)
 
 
 //
-// Function: FUN_0004b9ac @ 0x0004b9ac
+// Function: applyProtectionLimit @ 0x0004b9ac
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0004b9ac(void)
+void applyProtectionLimit(void)
 
 {
   if ((((_DAT_003fd5da & 1) != 0) && (_engine_operating_mode == 7)) &&
@@ -41572,10 +41572,10 @@ LAB_0004bcd0:
 
 
 //
-// Function: FUN_0004bd00 @ 0x0004bd00
+// Function: copyRomToRamBuffer @ 0x0004bd00
 //
 
-void FUN_0004bd00(void)
+void copyRomToRamBuffer(void)
 
 {
   undefined4 *puVar1;
@@ -46875,10 +46875,10 @@ void FUN_00053fa8(int param_1,uint param_2)
 
 
 //
-// Function: FUN_00054064 @ 0x00054064
+// Function: removeCoolantCalEntry @ 0x00054064
 //
 
-void FUN_00054064(uint param_1)
+void removeCoolantCalEntry(uint param_1)
 
 {
   byte *pbVar1;
@@ -46958,12 +46958,12 @@ void FUN_0005419c(void)
 
 
 //
-// Function: FUN_000541f4 @ 0x000541f4
+// Function: enableSchedulerMiosOutput @ 0x000541f4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000541f4(void)
+void enableSchedulerMiosOutput(void)
 
 {
   _DAT_00306c30 = _DAT_00306c30 | 0x600;
@@ -46974,10 +46974,10 @@ void FUN_000541f4(void)
 
 
 //
-// Function: FUN_00054220 @ 0x00054220
+// Function: emptyStubFunction @ 0x00054220
 //
 
-void FUN_00054220(void)
+void emptyStubFunction(void)
 
 {
   return;
@@ -46986,12 +46986,12 @@ void FUN_00054220(void)
 
 
 //
-// Function: FUN_00054224 @ 0x00054224
+// Function: checkRpmOverspeedProtection @ 0x00054224
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00054224(void)
+void checkRpmOverspeedProtection(void)
 
 {
   if (_DAT_0040a03c < _current_engine_rpm) {
@@ -47088,7 +47088,7 @@ void FUN_000544c4(void)
   _DAT_0040c128 = in_SPRG2;
   _DAT_0040c12c = in_DAR;
   _DAT_0040c130 = in_DSISR;
-  FUN_0004bd00();
+  copyRomToRamBuffer();
   DAT_0040a346 = 0xee;
   FUN_00055500();
   qsmcm_sccr0 = 5;
@@ -47216,7 +47216,7 @@ void FUN_000544c4(void)
   FUN_00029de0();
   FUN_00028d30();
   func_0x00505d94();
-  FUN_00054220();
+  emptyStubFunction();
   func_0x005246e0();
   func_0x00524df4();
   FUN_00040d74();
@@ -47231,10 +47231,10 @@ void FUN_000544c4(void)
   FUN_00046f64();
   func_0x00529ea4();
   FUN_00049004();
-  FUN_0004a258();
+  initEngineDiagnosticData();
   initEnginePositionState();
   func_0x0052a910();
-  FUN_0004a37c();
+  initTpuTimingInterrupts();
   func_0x00527958();
   FUN_0004665c();
   FUN_0002c100();
@@ -47252,7 +47252,7 @@ void FUN_000544c4(void)
   FUN_00035814();
   func_0x00516a20();
   FUN_0003ad04();
-  FUN_000541f4();
+  enableSchedulerMiosOutput();
   resetEngineTimingAccumulators();
   FUN_00035d70();
   FUN_00029e24();
@@ -48371,7 +48371,7 @@ void extendedDivisionWithRemainder
     *param_5 = iVar3 + 1;
     uVar4 = -(param_3 - uVar4);
   }
-  FUN_00057498(uVar1,iVar2,0,param_3);
+  conditionalMultiplyDivide(uVar1,iVar2,0,param_3);
   if (param_3 - (uVar5 + uVar4) < extraout_r4_00) {
     *param_5 = *param_5 + 1;
   }
@@ -49196,7 +49196,7 @@ void mathMultiplyDivide32(undefined4 param_1,undefined4 param_2,uint param_3,uin
   ulonglong uVar8;
   undefined8 uVar9;
   
-  uVar7 = FUN_0005759c();
+  uVar7 = saveRegistersToStack();
   uVar2 = (uint)(uVar7 >> 0x20);
   uVar4 = (uint)uVar7;
   if ((param_3 & (param_3 - 1) + (uint)(param_4 != 0)) == 0 && (param_4 & param_4 - 1) == 0) {
@@ -49267,7 +49267,7 @@ void mathMultiplyDivide32(undefined4 param_1,undefined4 param_2,uint param_3,uin
       }
     }
   }
-  FUN_00057520((int)(uVar7 >> 0x20),(int)uVar7);
+  emptyStubFunction2((int)(uVar7 >> 0x20),(int)uVar7);
   uVar8 = calibrationTableLookup2D();
   uVar7 = uVar8;
   if (0x7fffffffffffffff < uVar8) {
@@ -49303,10 +49303,10 @@ LAB_00057488:
 
 
 //
-// Function: FUN_00057498 @ 0x00057498
+// Function: conditionalMultiplyDivide @ 0x00057498
 //
 
-void FUN_00057498(undefined4 param_1,undefined4 param_2,int param_3,int param_4)
+void conditionalMultiplyDivide(undefined4 param_1,undefined4 param_2,int param_3,int param_4)
 
 {
   if (param_3 != 0 || param_4 != 0) {
@@ -49318,10 +49318,10 @@ void FUN_00057498(undefined4 param_1,undefined4 param_2,int param_3,int param_4)
 
 
 //
-// Function: FUN_00057520 @ 0x00057520
+// Function: emptyStubFunction2 @ 0x00057520
 //
 
-void FUN_00057520(void)
+void emptyStubFunction2(void)
 
 {
   return;
@@ -49342,10 +49342,10 @@ void calibrationTableLookup1D(void)
 
 
 //
-// Function: FUN_0005759c @ 0x0005759c
+// Function: saveRegistersToStack @ 0x0005759c
 //
 
-void FUN_0005759c(void)
+void saveRegistersToStack(void)
 
 {
   undefined4 in_r0;
