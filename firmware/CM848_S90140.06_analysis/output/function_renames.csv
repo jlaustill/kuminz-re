@@ -246,6 +246,10 @@ address,name
 0x00044ae0,evaluateProtectionThresholds
 0x00044b54,initEngineCrankSequence
 0x00044bf4,processProtectionConditions
+0x00044d70,engineRunState4Handler
+0x00044dd0,engineRunState3Handler
+0x00044e3c,engineRunState4Conditional
+0x00044eac,engineRunState4Handler2
 0x00044f0c,protectionOverrideEvaluator
 0x000466a8,calculateGovernorOutput
 0x00046cf8,initFuelFilterStates
@@ -254,6 +258,10 @@ address,name
 0x00047838,protectionRecoveryHandler
 0x00047978,protectionModeSelector
 0x00047a88,protectionStateHandler
+0x00049004,resetEngineSyncState
+0x0004922c,filterEngineSensorValue
+0x00049264,processEnginePositionDiagnostics
+0x00049a54,updateEngineDiagnosticCounters
 0x00049df0,protectionInputValidator
 0x00049edc,protectionSensorFaultHandler
 0x0004a258,initEngineDiagnosticData
@@ -305,10 +313,13 @@ address,name
 0x00053ae0,handleCanMailboxTransmitRange
 0x00053b28,writeCanControllerTxMailbox
 0x00053b68,canTransmitInterruptHandler
+0x00053c60,emptyStub3
+0x00053c64,emptyStub4
 0x00053c68,findJ1939MessageEntry
 0x00053d3c,addCoolantCalEntry
 0x00053d84,addCoolantCalEntryAlt
 0x00053dc8,processCoolantCalEntries
+0x00053fa8,removeCoolantCalEntryByParams
 0x00054064,removeCoolantCalEntry
 0x000541f4,enableSchedulerMiosOutput
 0x00054220,emptyStubFunction
