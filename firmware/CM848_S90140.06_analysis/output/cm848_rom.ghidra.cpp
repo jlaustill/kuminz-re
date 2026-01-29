@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Jan 29 10:31:15 MST 2026
+// Generated: Thu Jan 29 10:50:34 MST 2026
 
 
 //
@@ -110,10 +110,10 @@ void copyCalibrationToRam(void)
 
 
 //
-// Function: FUN_0000037c @ 0x0000037c
+// Function: registerStandardDiagServices @ 0x0000037c
 //
 
-void FUN_0000037c(void)
+void registerStandardDiagServices(void)
 
 {
   registerDiagnosticService(2,0x9e4);
@@ -339,10 +339,10 @@ void loadEepromCalibration(undefined4 param_1,int param_2)
 
 
 //
-// Function: FUN_000008d4 @ 0x000008d4
+// Function: diagServiceDownloadCalibration @ 0x000008d4
 //
 
-undefined4 FUN_000008d4(undefined4 param_1)
+undefined4 diagServiceDownloadCalibration(undefined4 param_1)
 
 {
   loadEepromCalibration(param_1,2);
@@ -373,7 +373,7 @@ short initEepromTransfer(int param_1)
   }
   sVar1 = func_0x003fa5a0(0x7ffc);
   if (sVar1 != 0) {
-    sVar1 = FUN_000011b4();
+    sVar1 = flashEraseChip();
   }
   if (param_1 != 1) {
     if (sVar1 == 0) {
@@ -393,12 +393,12 @@ short initEepromTransfer(int param_1)
 
 
 //
-// Function: FUN_000009e4 @ 0x000009e4
+// Function: diagServiceInitEepromTransfer @ 0x000009e4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-undefined4 FUN_000009e4(undefined4 param_1)
+undefined4 diagServiceInitEepromTransfer(undefined4 param_1)
 
 {
   short sVar2;
@@ -419,10 +419,10 @@ undefined4 FUN_000009e4(undefined4 param_1)
 
 
 //
-// Function: FUN_00000a40 @ 0x00000a40
+// Function: computeCrcCcitt @ 0x00000a40
 //
 
-uint FUN_00000a40(undefined4 *param_1,uint param_2)
+uint computeCrcCcitt(undefined4 *param_1,uint param_2)
 
 {
   uint uVar1;
@@ -441,12 +441,12 @@ uint FUN_00000a40(undefined4 *param_1,uint param_2)
 
 
 //
-// Function: FUN_00000b44 @ 0x00000b44
+// Function: updateCapabilityFlags @ 0x00000b44
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00000b44(void)
+void updateCapabilityFlags(void)
 
 {
   if ((_mios_dasm_status & 0x8000) == 0) {
@@ -473,10 +473,10 @@ void FUN_00000b44(void)
 
 
 //
-// Function: FUN_00000be8 @ 0x00000be8
+// Function: stubFunction1 @ 0x00000be8
 //
 
-void FUN_00000be8(void)
+void stubFunction1(void)
 
 {
   return;
@@ -578,16 +578,16 @@ void eepromReadWords(short param_1,undefined2 *param_2,uint param_3)
 
 
 //
-// Function: FUN_00000e90 @ 0x00000e90
+// Function: mainLoopIteration @ 0x00000e90
 //
 
-void FUN_00000e90(void)
+void mainLoopIteration(void)
 
 {
   func_0x003fae3c();
   func_0x003fc094();
   processPeriodicTasks();
-  FUN_00002de4();
+  processChecksumValidation();
   processDiagnosticCommands();
   return;
 }
@@ -595,13 +595,13 @@ void FUN_00000e90(void)
 
 
 //
-// Function: FUN_00000ec0 @ 0x00000ec0
+// Function: loadCalibrationFromEeprom @ 0x00000ec0
 //
 
-void FUN_00000ec0(void)
+void loadCalibrationFromEeprom(void)
 
 {
-  FUN_00002310();
+  eepromValidationCycle();
   keyOnStateMachine();
   eepromReadWords(0x100004a,&eeprom_calibration_block1,6);
   eepromReadWords(0x1000050,&eeprom_calibration_word1,2);
@@ -615,10 +615,10 @@ void FUN_00000ec0(void)
 
 
 //
-// Function: FUN_00000f74 @ 0x00000f74
+// Function: loadVersionConfigFromEeprom @ 0x00000f74
 //
 
-void FUN_00000f74(void)
+void loadVersionConfigFromEeprom(void)
 
 {
   eepromReadWords(0x1000034,&eeprom_version_marker,2);
@@ -632,12 +632,12 @@ void FUN_00000f74(void)
 
 
 //
-// Function: FUN_00001008 @ 0x00001008
+// Function: bootStateMachine @ 0x00001008
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00001008(void)
+void bootStateMachine(void)
 
 {
   if ((_DAT_002fc240 & 0x80) == 0) {
@@ -645,16 +645,16 @@ void FUN_00001008(void)
   }
   _DAT_002fc240 = _DAT_002fc240 | 0x80;
   func_0x003fd1d8();
-  FUN_00000b44();
+  updateCapabilityFlags();
   if (_toucan_rx_buffer_status == 0) {
-    FUN_00000ec0();
+    loadCalibrationFromEeprom();
   }
   else {
     if (_toucan_rx_buffer_status != 1) {
       if (_toucan_rx_buffer_status != 3) goto LAB_0000107c;
-      FUN_00000f74();
+      loadVersionConfigFromEeprom();
     }
-    FUN_00000e90();
+    mainLoopIteration();
   }
 LAB_0000107c:
   if (_toucan_rx_buffer_status < 3) {
@@ -669,10 +669,10 @@ LAB_0000107c:
 
 
 //
-// Function: FUN_000010ac @ 0x000010ac
+// Function: generateCrcTable @ 0x000010ac
 //
 
-void FUN_000010ac(void)
+void generateCrcTable(void)
 
 {
   uint uVar1;
@@ -737,12 +737,12 @@ bool flashPollUntilReady(uint param_1,ushort *param_2,uint param_3)
 
 
 //
-// Function: FUN_000011b4 @ 0x000011b4
+// Function: flashEraseChip @ 0x000011b4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-short FUN_000011b4(void)
+short flashEraseChip(void)
 
 {
   bool bVar1;
@@ -772,12 +772,12 @@ short FUN_000011b4(void)
 
 
 //
-// Function: FUN_000012a8 @ 0x000012a8
+// Function: flashWriteWord @ 0x000012a8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-undefined2 FUN_000012a8(undefined2 *param_1,undefined2 *param_2)
+undefined2 flashWriteWord(undefined2 *param_1,undefined2 *param_2)
 
 {
   undefined2 uVar1;
@@ -796,12 +796,12 @@ undefined2 FUN_000012a8(undefined2 *param_1,undefined2 *param_2)
 
 
 //
-// Function: FUN_00001338 @ 0x00001338
+// Function: flashWriteBlock @ 0x00001338
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-undefined4 FUN_00001338(int param_1,int param_2,uint param_3)
+undefined4 flashWriteBlock(int param_1,int param_2,uint param_3)
 
 {
   short sVar1;
@@ -817,7 +817,7 @@ undefined4 FUN_00001338(int param_1,int param_2,uint param_3)
     uVar2 = 0;
     if (((uVar3 & 0xffff) != 0) && (_DAT_003fdc38 != 0)) {
       do {
-        sVar1 = FUN_000012a8(param_2,param_1);
+        sVar1 = flashWriteWord(param_2,param_1);
         if (sVar1 == 0) {
           uVar2 = uVar2 + 1;
         }
@@ -915,7 +915,7 @@ void initHardwareConfig(void)
   }
   DAT_003fec8a = 0;
   DAT_003fec8b = 0;
-  _DAT_00302886 = FUN_00001338;
+  _DAT_00302886 = flashWriteBlock;
   _mios_mpwm_mcr = _mios_mpwm_mcr & 0xfdff;
   _mios_mpwm_scr = _mios_mpwm_scr | 0x200;
   return;
@@ -924,13 +924,13 @@ void initHardwareConfig(void)
 
 
 //
-// Function: FUN_000016d0 @ 0x000016d0
+// Function: initSystemRegisters @ 0x000016d0
 //
 
 /* WARNING: This function may have set the stack pointer */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000016d0(void)
+void initSystemRegisters(void)
 
 {
   _DAT_002fc284 = 0x1304001;
@@ -958,10 +958,10 @@ void FUN_000016d0(void)
 
 
 //
-// Function: FUN_0000183c @ 0x0000183c
+// Function: stubFunction2 @ 0x0000183c
 //
 
-void FUN_0000183c(void)
+void stubFunction2(void)
 
 {
   return;
@@ -1097,10 +1097,10 @@ undefined4 diagService65_handler(byte *param_1)
 
 
 //
-// Function: FUN_00001ad0 @ 0x00001ad0
+// Function: registerService65Handler @ 0x00001ad0
 //
 
-void FUN_00001ad0(void)
+void registerService65Handler(void)
 
 {
   registerDiagnosticService(0x41,diagService65_handler);
@@ -1110,10 +1110,10 @@ void FUN_00001ad0(void)
 
 
 //
-// Function: FUN_00001afc @ 0x00001afc
+// Function: registerMemoryReadServices @ 0x00001afc
 //
 
-void FUN_00001afc(void)
+void registerMemoryReadServices(void)
 
 {
   registerDiagnosticService(0x43,diagService67_memoryReadOffset);
@@ -1342,7 +1342,7 @@ void processDiagnosticCommands(void)
   undefined4 uVar2;
   
   func_0x003fc580();
-  FUN_00002170();
+  processDiagnosticTimeout();
   if ((eeprom_checksum_status != '\x01') || ((diag_session_flags & 1) == 0)) goto LAB_000020ac;
   if (DAT_003fecf0 == '4') {
     if ((qadc_a_result_high_1 & 0x80) != 0) {
@@ -1362,7 +1362,7 @@ void processDiagnosticCommands(void)
       }
     }
     else if (diag_subcommand_code == 0x12) {
-      FUN_00003948();
+      diagServiceTransferBlock();
     }
     else {
       if (diag_subcommand_code != 0x20) {
@@ -1403,12 +1403,12 @@ LAB_000020ac:
 
 
 //
-// Function: FUN_00002148 @ 0x00002148
+// Function: initDiagnosticCallback @ 0x00002148
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00002148(void)
+void initDiagnosticCallback(void)
 
 {
   _diagnostic_handler_callback = processDiagnosticCommands;
@@ -1420,10 +1420,10 @@ void FUN_00002148(void)
 
 
 //
-// Function: FUN_00002170 @ 0x00002170
+// Function: processDiagnosticTimeout @ 0x00002170
 //
 
-void FUN_00002170(void)
+void processDiagnosticTimeout(void)
 
 {
   if ((DAT_003fee32 != '\0') && (DAT_003fee32 = DAT_003fee32 + -1, DAT_003fee32 == '\0')) {
@@ -1462,7 +1462,7 @@ void initDiagnosticSession(void)
   DAT_003feccd = 0;
   _DAT_003fecce = 0;
   if (_eeprom_calibration_word4 == 0) {
-    FUN_00002ee8();
+    initSchedulerCallback();
     diag_session_flags = diag_session_flags & 0xfc;
     DAT_003feccc = 0;
     DAT_003fecc4 = 0;
@@ -1478,7 +1478,7 @@ void initDiagnosticSession(void)
     diag_session_flags = diag_session_flags | 1;
     DAT_003fecc4 = 1;
     _fault_clear_counter = 2;
-    FUN_00002148();
+    initDiagnosticCallback();
     diag_enable_flags_2 = 0;
     _eeprom_status_byte = &qspi_config_value;
     _qsmcm_sccr1 = 0x14;
@@ -1491,12 +1491,12 @@ void initDiagnosticSession(void)
 
 
 //
-// Function: FUN_00002310 @ 0x00002310
+// Function: eepromValidationCycle @ 0x00002310
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00002310(void)
+void eepromValidationCycle(void)
 
 {
   int iVar1;
@@ -1553,12 +1553,12 @@ void busWaitCycles(int param_1)
 
 
 //
-// Function: FUN_000023b8 @ 0x000023b8
+// Function: checkBusHardwareStatus @ 0x000023b8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-bool FUN_000023b8(void)
+bool checkBusHardwareStatus(void)
 
 {
   ushort uVar1;
@@ -1632,13 +1632,13 @@ void systemInitialization(void)
   _DAT_002fc000 = _DAT_002fc000 | 0x10000;
   copyCalibrationToRam(in_BAR | 7);
   func_0x003fd6d8();
-  FUN_00000be8();
+  stubFunction1();
   _mios_mpwm_scr = _mios_mpwm_scr | 0x2000;
   _qadc_a_mcr = _qadc_a_mcr | 0x12;
   _mios_mcr = 0x4000;
   _mios_bigsm_mcr = 0x4000;
-  FUN_000010ac();
-  FUN_0000183c();
+  generateCrcTable();
+  stubFunction2();
   initCanController();
   _qadc_a_test = 0;
   _DAT_00302736 = 0xbbbb;
@@ -1661,7 +1661,7 @@ void systemInitialization(void)
     func_0x003fd544();
     func_0x003fab3c();
     processPeriodicTasks();
-    FUN_00001008();
+    bootStateMachine();
   } while( true );
 }
 
@@ -1735,7 +1735,7 @@ void hardwareInitialization(void)
   _DAT_002fc100 = 0;
   _DAT_002fc104 = 0;
 LAB_0000291c:
-  _DAT_003fdb9c = FUN_000023b8();
+  _DAT_003fdb9c = checkBusHardwareStatus();
   _DAT_003fdb9c = _DAT_003fdb9c & 0xff;
   if ((_DAT_003fdb9c != 0) || (_eeprom_magic != 0x600d)) {
     systemInitialization();
@@ -1802,10 +1802,10 @@ void FUN_00002a40(void)
   _qadc_a_ccw_4 = 0x302016;
   initDiagResponseHandlers();
   FUN_00002cd8();
-  FUN_00001afc();
-  FUN_00001ad0();
+  registerMemoryReadServices();
+  registerService65Handler();
   initDataBasedDiagServices();
-  FUN_0000037c();
+  registerStandardDiagServices();
   initService25Handler();
   uVar5 = (uint)_DAT_0030200e;
   iVar2 = uVar5 + 1;
@@ -1946,12 +1946,12 @@ int FUN_00002d08(byte param_1)
 
 
 //
-// Function: FUN_00002de4 @ 0x00002de4
+// Function: processChecksumValidation @ 0x00002de4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00002de4(void)
+void processChecksumValidation(void)
 
 {
   FUN_000033e0();
@@ -1961,7 +1961,7 @@ void FUN_00002de4(void)
     eeprom_checksum_status = '\0';
   }
   else {
-    FUN_00003ad8();
+    restoreDiagnosticHandler();
   }
   return;
 }
@@ -1999,12 +1999,12 @@ void registerSchedulerTask(void)
 
 
 //
-// Function: FUN_00002ee8 @ 0x00002ee8
+// Function: initSchedulerCallback @ 0x00002ee8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00002ee8(void)
+void initSchedulerCallback(void)
 
 {
   _diagnostic_handler_callback = registerSchedulerTask;
@@ -2303,7 +2303,7 @@ void FUN_00003408(void)
       else if ((DAT_003feccd < 3) && (DAT_003fecc4 != '\x02')) {
         if (_DAT_003fecce == 0) {
           _DAT_003fecc6 = CONCAT11(DAT_003fee3b,DAT_003fee3c);
-          FUN_00003a5c();
+          computeSerialChecksum();
           if (DAT_003feccc == '\0') {
             DAT_003feccd = DAT_003feccd + 1;
             _DAT_003fecce = 1000;
@@ -2515,12 +2515,12 @@ void diagRequestTypeDispatcher(void)
 
 
 //
-// Function: FUN_00003948 @ 0x00003948
+// Function: diagServiceTransferBlock @ 0x00003948
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00003948(void)
+void diagServiceTransferBlock(void)
 
 {
   int iVar1;
@@ -2557,12 +2557,12 @@ void FUN_00003948(void)
 
 
 //
-// Function: FUN_00003a5c @ 0x00003a5c
+// Function: computeSerialChecksum @ 0x00003a5c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00003a5c(void)
+void computeSerialChecksum(void)
 
 {
   DAT_003feccc = ((_serial_checksum_input ^
@@ -2577,12 +2577,12 @@ void FUN_00003a5c(void)
 
 
 //
-// Function: FUN_00003ad8 @ 0x00003ad8
+// Function: restoreDiagnosticHandler @ 0x00003ad8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00003ad8(void)
+void restoreDiagnosticHandler(void)
 
 {
   bool bVar1;
