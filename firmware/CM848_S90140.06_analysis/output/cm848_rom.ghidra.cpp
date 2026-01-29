@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Jan 29 09:41:54 MST 2026
+// Generated: Thu Jan 29 09:48:03 MST 2026
 
 
 //
@@ -142,12 +142,12 @@ void eepromProgressNotify(undefined4 param_1,int param_2,undefined4 param_3)
 
 
 //
-// Function: FUN_00000428 @ 0x00000428
+// Function: loadEepromCalibration @ 0x00000428
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00000428(undefined4 param_1,int param_2)
+void loadEepromCalibration(undefined4 param_1,int param_2)
 
 {
   bool bVar1;
@@ -345,19 +345,19 @@ void FUN_00000428(undefined4 param_1,int param_2)
 undefined4 FUN_000008d4(undefined4 param_1)
 
 {
-  FUN_00000428(param_1,2);
+  loadEepromCalibration(param_1,2);
   return 0xff;
 }
 
 
 
 //
-// Function: FUN_000008fc @ 0x000008fc
+// Function: initEepromTransfer @ 0x000008fc
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-short FUN_000008fc(int param_1)
+short initEepromTransfer(int param_1)
 
 {
   short sVar1;
@@ -406,7 +406,7 @@ undefined4 FUN_000009e4(undefined4 param_1)
   
   func_0x003fd1ac(param_1,0x96);
   _can_tx_status = param_1;
-  sVar2 = FUN_000008fc(2);
+  sVar2 = initEepromTransfer(2);
   if (sVar2 == 0) {
     uVar1 = 0x17;
   }
@@ -701,10 +701,10 @@ void FUN_000010ac(void)
 
 
 //
-// Function: FUN_00001110 @ 0x00001110
+// Function: flashPollUntilReady @ 0x00001110
 //
 
-bool FUN_00001110(uint param_1,ushort *param_2,uint param_3)
+bool flashPollUntilReady(uint param_1,ushort *param_2,uint param_3)
 
 {
   bool bVar1;
@@ -757,7 +757,7 @@ short FUN_000011b4(void)
     do {
       _DAT_00500554 = 0x55;
       _DAT_00500aaa = 0x10;
-      sVar2 = FUN_00001110(0xffff,&DAT_00500000,_DAT_003fdc2e);
+      sVar2 = flashPollUntilReady(0xffff,&DAT_00500000,_DAT_003fdc2e);
       if (sVar2 != 0) break;
       bVar1 = unaff_r21 < _DAT_003fdc36;
       unaff_r21 = unaff_r21 + 1;
@@ -789,7 +789,7 @@ undefined2 FUN_000012a8(undefined2 *param_1,undefined2 *param_2)
   }
   _DAT_00500000 = 0xa0;
   *param_1 = *param_2;
-  uVar1 = FUN_00001110(*param_2,param_1,_DAT_003fdc32);
+  uVar1 = flashPollUntilReady(*param_2,param_1,_DAT_003fdc32);
   return uVar1;
 }
 
@@ -843,18 +843,18 @@ undefined4 FUN_00001338(int param_1,int param_2,uint param_3)
 
 
 //
-// Function: FUN_00001454 @ 0x00001454
+// Function: initHardwareConfig @ 0x00001454
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00001454(void)
+void initHardwareConfig(void)
 
 {
   uint in_IMMR;
   
   if (0x302f < in_IMMR >> 0x10) {
-    DAT_003fdba4 = 1;
+    hardware_config_mode = 1;
     _DAT_003fdbaa = 0x28000000;
     _idle_speed_target = 0x1e0000;
     _DAT_003fdbb2 = 0xc20;
@@ -1370,7 +1370,7 @@ LAB_0000208c:
         uVar2 = 0x12;
         goto LAB_00002098;
       }
-      FUN_000038f4();
+      diagRequestTypeDispatcher();
     }
   }
   else {
@@ -1381,7 +1381,7 @@ LAB_00002098:
   eeprom_checksum_status = '\0';
 LAB_000020ac:
   if (_DAT_003fedf4 == 1) {
-    sVar1 = FUN_000008fc(3);
+    sVar1 = initEepromTransfer(3);
     if (sVar1 == 0) {
       eeprom_operation_state = 0x22;
     }
@@ -1394,7 +1394,7 @@ LAB_000020ac:
   if (_DAT_003fedf6 != 0) {
     diag_subcommand_code = 0x20;
     diag_request_param = (undefined1)_DAT_003fedf6;
-    FUN_000038f4();
+    diagRequestTypeDispatcher();
     _DAT_003fedf6 = 0;
   }
   return;
@@ -1650,13 +1650,13 @@ void systemInitialization(void)
   _DAT_00302882 = 0xbec;
   eepromReadWords(0x1000056,&eeprom_calibration_word4,2);
   initDiagnosticSession();
-  FUN_00001454();
+  initHardwareConfig();
   do {
     processPeriodicTasks();
     func_0x003fa2f0();
     if (((qadc_a_result_high_1 & 0xf) != 0) && (_eeprom_magic == 0x1d0a)) {
       func_0x003fc874();
-      FUN_00001454();
+      initHardwareConfig();
     }
     func_0x003fd544();
     func_0x003fab3c();
@@ -2222,16 +2222,16 @@ void FUN_000032dc(void)
   uint uVar3;
   
   if (DAT_003fecc4 == '\x01') {
-    _DAT_003fecc8 = 0;
+    _serial_checksum_input = 0;
   }
   else {
-    _DAT_003fecc8 = _qadc_a_portqb;
+    _serial_checksum_input = _qadc_a_portqb;
     if ((_qadc_a_portqb & 0xffff) == 0) {
-      _DAT_003fecc8 = _qadc_a_portqb + 1;
+      _serial_checksum_input = _qadc_a_portqb + 1;
     }
   }
-  uVar1 = _DAT_003fecc8;
-  cVar2 = (char)(_DAT_003fecc8 >> 8);
+  uVar1 = _serial_checksum_input;
+  cVar2 = (char)(_serial_checksum_input >> 8);
   (&qspi_config_value)[diag_enable_flags_2] = cVar2;
   uVar3 = diag_enable_flags_2 + 1 & 0xff;
   (&qspi_config_value)[uVar3] = (char)uVar1;
@@ -2482,7 +2482,7 @@ void FUN_000037e0(void)
       eepromReadWords(0x1000000,&eeprom_magic,2);
       uVar2 = uVar2 + 1;
     }
-    FUN_00000428(0,3);
+    loadEepromCalibration(0,3);
   }
   else {
     diagSendResponseCode(0x40,0x7f);
@@ -2493,10 +2493,10 @@ void FUN_000037e0(void)
 
 
 //
-// Function: FUN_000038f4 @ 0x000038f4
+// Function: diagRequestTypeDispatcher @ 0x000038f4
 //
 
-void FUN_000038f4(void)
+void diagRequestTypeDispatcher(void)
 
 {
   FUN_000036f8();
@@ -2565,11 +2565,12 @@ void FUN_00003948(void)
 void FUN_00003a5c(void)
 
 {
-  DAT_003feccc = ((_DAT_003fecc8 ^ *(ushort *)(&DAT_00007f9a + (_DAT_003fecc8 >> 0xc & 0xf) * 2) ^
-                   (uint)*(ushort *)(&DAT_00007f9a + (_DAT_003fecc8 >> 8 & 0xf) * 2) ^
-                   (uint)*(ushort *)(&DAT_00007f9a + (_DAT_003fecc8 >> 4 & 0xf) * 2) ^
-                   (uint)*(ushort *)(&DAT_00007f9a + (_DAT_003fecc8 & 0xf) * 2) ^ 0x1911) & 0xffff)
-                 == (uint)_DAT_003fecc6;
+  DAT_003feccc = ((_serial_checksum_input ^
+                   *(ushort *)(&DAT_00007f9a + (_serial_checksum_input >> 0xc & 0xf) * 2) ^
+                   (uint)*(ushort *)(&DAT_00007f9a + (_serial_checksum_input >> 8 & 0xf) * 2) ^
+                   (uint)*(ushort *)(&DAT_00007f9a + (_serial_checksum_input >> 4 & 0xf) * 2) ^
+                   (uint)*(ushort *)(&DAT_00007f9a + (_serial_checksum_input & 0xf) * 2) ^ 0x1911) &
+                 0xffff) == (uint)_DAT_003fecc6;
   return;
 }
 
@@ -2814,12 +2815,12 @@ undefined4 FUN_00003f70(uint param_1)
 
 
 //
-// Function: FUN_00003fcc @ 0x00003fcc
+// Function: dataTransferBufferWrite @ 0x00003fcc
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-undefined4 FUN_00003fcc(int param_1,int param_2,uint param_3,int param_4,byte param_5)
+undefined4 dataTransferBufferWrite(int param_1,int param_2,uint param_3,int param_4,byte param_5)
 
 {
   undefined4 uVar1;
@@ -2954,7 +2955,7 @@ void initAdcChannelConfig(void)
 void FUN_00004320(void)
 
 {
-  if (DAT_003fdba4 == '\0') {
+  if (hardware_config_mode == '\0') {
     _DAT_002fc808 = _DAT_003fdbd6 | _qadc_conversion_config;
     _DAT_002fc848 = _DAT_003fdbd6 | _qadc_conversion_config;
   }
@@ -2980,7 +2981,7 @@ void FUN_000043a4(uint param_1)
 {
   uint *puVar1;
   
-  if (DAT_003fdba4 == '\0') {
+  if (hardware_config_mode == '\0') {
     _DAT_002fc808 = _DAT_003fdbd6 | _qadc_conversion_config;
     _DAT_002fc848 = _DAT_003fdbd6 | _qadc_conversion_config;
   }
@@ -3057,7 +3058,7 @@ undefined4 FUN_00004570(void)
   
   bVar2 = DAT_003fec8f;
   uVar3 = (uint)DAT_003fec8f;
-  if (DAT_003fdba4 != '\0') {
+  if (hardware_config_mode != '\0') {
     *_DAT_003fecb2 = *(undefined4 *)(&DAT_003fdbfe + uVar3 * 4);
   }
   *_qadc_control_reg_ptr = _DAT_003fdbda;
@@ -3123,7 +3124,7 @@ void startAdcConversion(void)
 
 {
   *_qadc_control_reg_ptr = _DAT_003fec90 | _qadc_conversion_config;
-  if (DAT_003fdba4 != '\0') {
+  if (hardware_config_mode != '\0') {
     *_DAT_003fecb2 = 0;
   }
   return;
@@ -3258,7 +3259,7 @@ bool FUN_000049d0(uint param_1)
   if ((param_1 & 0xff00) != 0) {
     bVar1 = true;
     _DAT_002fc800 = 0x85000000;
-    if (DAT_003fdba4 != '\0') {
+    if (hardware_config_mode != '\0') {
       _DAT_002fc804 = _DAT_003fdbb2;
     }
     _DAT_002fc808 = uVar7 | _idle_speed_target | 6;
@@ -3280,7 +3281,7 @@ bool FUN_000049d0(uint param_1)
   if ((param_1 & 0xff) != 0) {
     bVar2 = true;
     _DAT_002fc840 = 0x85000000;
-    if (DAT_003fdba4 != '\0') {
+    if (hardware_config_mode != '\0') {
       _DAT_002fc844 = _DAT_003fdbb2;
     }
     _DAT_002fc848 = uVar8 | _idle_speed_target | 6;
@@ -3305,7 +3306,7 @@ bool FUN_000049d0(uint param_1)
     }
     if ((iVar6 != 0) && (uVar5 < DAT_003fdba5)) {
       while (_DAT_003fdba6 < _DAT_003fdba8) {
-        if ((DAT_003fdba4 != '\0') && (uVar5 != 0)) {
+        if ((hardware_config_mode != '\0') && (uVar5 != 0)) {
           if (bVar1) {
             _DAT_002fc804 = *(undefined4 *)(&DAT_003fdbb2 + uVar5 * 4);
           }
@@ -3364,7 +3365,7 @@ bool FUN_000049d0(uint param_1)
       updateSensorDiagnostics();
     }
   } while (iVar6 != 0);
-  if (DAT_003fdba4 != '\0') {
+  if (hardware_config_mode != '\0') {
     if (bVar1) {
       _DAT_002fc804 = 0;
     }
@@ -3683,7 +3684,7 @@ byte processAdcConversionResult(int param_1,uint param_2,uint param_3)
          (bVar5 = sensorAcquisitionCycle(iVar8,param_2,local_20,2), bVar5 != 0xff)) {
         return bVar5;
       }
-      FUN_000075dc(param_1,10);
+      processSensorWithOverride(param_1,10);
       (*_DAT_00302882)(iVar8,param_2,local_20[0]);
       return 0;
     }
@@ -3694,14 +3695,14 @@ byte processAdcConversionResult(int param_1,uint param_2,uint param_3)
     if ((param_2 & 1) != 0) {
       return 0x11;
     }
-    cVar6 = FUN_00003fcc(iVar8,param_2,local_20[0],_qadc_a_result_high_2 == 0,1);
+    cVar6 = dataTransferBufferWrite(iVar8,param_2,local_20[0],_qadc_a_result_high_2 == 0,1);
     if (cVar6 == '\x01') {
       return 0x11;
     }
     if (cVar6 == '\0') {
       return 0;
     }
-    FUN_000075dc(param_1,10);
+    processSensorWithOverride(param_1,10);
     _DAT_003024f4 = param_1;
     return 0xff;
   }
@@ -3740,12 +3741,13 @@ byte processAdcConversionResult(int param_1,uint param_2,uint param_3)
 
 
 //
-// Function: FUN_00005728 @ 0x00005728
+// Function: processAdcWithOffset @ 0x00005728
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-undefined1 FUN_00005728(undefined4 param_1,undefined4 param_2,int param_3,undefined4 param_4)
+undefined1
+processAdcWithOffset(undefined4 param_1,undefined4 param_2,int param_3,undefined4 param_4)
 
 {
   int iVar1;
@@ -3777,7 +3779,7 @@ undefined1 FUN_00005798(int param_1)
   
   sensorInputProcessing(local_10,*(int *)(param_1 + 6) + 1,2);
   local_c = (uint)*(byte *)(*(int *)(param_1 + 6) + 3);
-  uVar1 = FUN_00005728(param_1,local_10[0],0,local_c);
+  uVar1 = processAdcWithOffset(param_1,local_10[0],0,local_c);
   return uVar1;
 }
 
@@ -3796,7 +3798,7 @@ undefined1 FUN_00005808(int param_1)
   
   sensorInputProcessing(local_10,*(int *)(param_1 + 6) + 1,2);
   sensorInputProcessing(local_c,*(int *)(param_1 + 6) + 3,4);
-  uVar1 = FUN_00005728(param_1,local_10[0],0,local_c[0]);
+  uVar1 = processAdcWithOffset(param_1,local_10[0],0,local_c[0]);
   return uVar1;
 }
 
@@ -4144,12 +4146,14 @@ void FUN_00005d8c(undefined1 param_1,undefined2 param_2)
 
 
 //
-// Function: FUN_00005e38 @ 0x00005e38
+// Function: sendDiagAcknowledgeFrame @ 0x00005e38
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-undefined1 FUN_00005e38(undefined1 param_1,undefined1 param_2,undefined1 param_3,undefined2 param_4)
+undefined1
+sendDiagAcknowledgeFrame
+          (undefined1 param_1,undefined1 param_2,undefined1 param_3,undefined2 param_4)
 
 {
   undefined4 local_30;
@@ -4216,7 +4220,7 @@ void FUN_00005ecc(undefined4 *param_1)
     if (0x19 < qadc_a_pause_ctrl) {
       qadc_a_ccw_idx = 0x19;
     }
-    cVar2 = FUN_00005e38(cVar1,1);
+    cVar2 = sendDiagAcknowledgeFrame(cVar1,1);
     if (cVar2 != '\0') {
       processAdcChannelGroup(cVar1,_qadc_a_queue_flags);
       qadc_a_pause_status = '\0';
@@ -4291,7 +4295,7 @@ void FUN_00005fe4(int param_1)
         qadc_a_ccw_idx = '\x19';
       }
     }
-    cVar3 = FUN_00005e38(cVar1,qadc_a_queue_intr,qadc_a_ccw_idx,_qadc_a_queue_flags);
+    cVar3 = sendDiagAcknowledgeFrame(cVar1,qadc_a_queue_intr,qadc_a_ccw_idx,_qadc_a_queue_flags);
     if (cVar3 != '\0') {
       processAdcChannelGroup(cVar1,_qadc_a_queue_flags);
       qadc_a_pause_status = '\0';
@@ -4569,12 +4573,12 @@ void updateSystemTimers(undefined1 param_1,int param_2)
 
 
 //
-// Function: FUN_0000662c @ 0x0000662c
+// Function: diagnosticSubcommandDispatcher @ 0x0000662c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0000662c(void)
+void diagnosticSubcommandDispatcher(void)
 
 {
   undefined4 uVar1;
@@ -4635,12 +4639,12 @@ void FUN_0000662c(void)
 
 
 //
-// Function: FUN_00006770 @ 0x00006770
+// Function: resetSerialReceiveBuffer @ 0x00006770
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00006770(void)
+void resetSerialReceiveBuffer(void)
 
 {
   diag_enable_flags_2 = 0;
@@ -4670,7 +4674,7 @@ void FUN_000067b0(void)
       DAT_003fedfc = DAT_003fedfc + cVar1;
       return;
     }
-    FUN_00006770();
+    resetSerialReceiveBuffer();
     DAT_003fedfc = '\0';
     DAT_003fedfa = 0;
   }
@@ -4680,15 +4684,15 @@ void FUN_000067b0(void)
 
 
 //
-// Function: FUN_0000685c @ 0x0000685c
+// Function: resetSerialCommunication @ 0x0000685c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0000685c(void)
+void resetSerialCommunication(void)
 
 {
-  FUN_00006770();
+  resetSerialReceiveBuffer();
   _fault_clear_counter = 2;
   DAT_003fedfc = 0;
   _qsmcm_scsr = _qsmcm_scsr & 0xffbf | 0x20;
@@ -4712,7 +4716,7 @@ void FUN_000068b4(void)
       _qsmcm_scsr = _qsmcm_scsr & 0xffbf;
       _qsmcm_qspi_portqs = ~(ushort)DAT_003fedfb & 0x1ff;
       DAT_003fedfb = 0;
-      FUN_0000685c();
+      resetSerialCommunication();
     }
     else {
       diag_enable_flags_2 = diag_enable_flags_2 + -1;
@@ -4759,7 +4763,7 @@ void FUN_000069b0(void)
       DAT_003fedfc = '\0';
     }
     else {
-      FUN_0000685c();
+      resetSerialCommunication();
     }
   }
   return;
@@ -4825,7 +4829,7 @@ undefined4 updateSensorDiagnostics(void)
   uVar1 = (uint)_DAT_003fedf8;
   if ((0x66 < (int)(uVar3 - uVar1)) || ((uVar3 < uVar1 && (0x66 < (int)((0xffff - uVar1) + uVar3))))
      ) {
-    FUN_0000662c();
+    diagnosticSubcommandDispatcher();
     _DAT_003fedf8 = _mios_mmcsm_cnt;
     uVar2 = 1;
   }
@@ -4888,7 +4892,7 @@ LAB_00006c44:
       if (_toucan_rx_buffer_status != 3) goto LAB_00006c74;
     }
     if (qadc_a_result_high_1 == -0x7e) {
-      FUN_0000662c();
+      diagnosticSubcommandDispatcher();
     }
   }
 LAB_00006c74:
@@ -5085,8 +5089,9 @@ LAB_00007110:
           eeprom_operation_state = 0x73;
           return;
         }
-        cVar2 = FUN_00003fcc(0x3fecf3,_DAT_003fedfd,local_30[0],
-                             _qadc_a_result_high_2 == _qadc_a_result_ch4,2);
+        cVar2 = dataTransferBufferWrite
+                          (0x3fecf3,_DAT_003fedfd,local_30[0],
+                           _qadc_a_result_high_2 == _qadc_a_result_ch4,2);
         if (cVar2 != '\x01') {
           eeprom_calibration_version = cVar2 == '\x02';
           goto LAB_00007110;
@@ -5338,12 +5343,12 @@ LAB_000074f8:
 
 
 //
-// Function: FUN_000075dc @ 0x000075dc
+// Function: processSensorWithOverride @ 0x000075dc
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000075dc(undefined4 param_1,undefined2 param_2)
+void processSensorWithOverride(undefined4 param_1,undefined2 param_2)
 
 {
   _DAT_003034a0 = param_2;
@@ -6165,10 +6170,10 @@ void periodicTaskGroup18_calibration6(void)
 
 
 //
-// Function: FUN_0000bd54 @ 0x0000bd54
+// Function: periodicTaskGroup25_calibration7 @ 0x0000bd54
 //
 
-void FUN_0000bd54(void)
+void periodicTaskGroup25_calibration7(void)
 
 {
   func_0x005118f8();
@@ -6181,10 +6186,10 @@ void FUN_0000bd54(void)
 
 
 //
-// Function: FUN_0000bd80 @ 0x0000bd80
+// Function: periodicTaskGroup26_calibration8 @ 0x0000bd80
 //
 
-void FUN_0000bd80(void)
+void periodicTaskGroup26_calibration8(void)
 
 {
   func_0x005372c4();
@@ -6197,10 +6202,10 @@ void FUN_0000bd80(void)
 
 
 //
-// Function: FUN_0000bdac @ 0x0000bdac
+// Function: periodicTaskGroup27_calibration9 @ 0x0000bdac
 //
 
-void FUN_0000bdac(void)
+void periodicTaskGroup27_calibration9(void)
 
 {
   FUN_00041938();
@@ -6213,10 +6218,10 @@ void FUN_0000bdac(void)
 
 
 //
-// Function: FUN_0000bdd8 @ 0x0000bdd8
+// Function: periodicTaskGroup28_calibration10 @ 0x0000bdd8
 //
 
-void FUN_0000bdd8(void)
+void periodicTaskGroup28_calibration10(void)
 
 {
   func_0x0050de54();
@@ -6229,10 +6234,10 @@ void FUN_0000bdd8(void)
 
 
 //
-// Function: FUN_0000be04 @ 0x0000be04
+// Function: periodicTaskGroup29_calibration11 @ 0x0000be04
 //
 
-void FUN_0000be04(void)
+void periodicTaskGroup29_calibration11(void)
 
 {
   func_0x00519cc4();
@@ -6245,10 +6250,10 @@ void FUN_0000be04(void)
 
 
 //
-// Function: FUN_0000be30 @ 0x0000be30
+// Function: periodicTaskGroup30_calibration12 @ 0x0000be30
 //
 
-void FUN_0000be30(void)
+void periodicTaskGroup30_calibration12(void)
 
 {
   func_0x00510bec();
@@ -6261,10 +6266,10 @@ void FUN_0000be30(void)
 
 
 //
-// Function: FUN_0000be5c @ 0x0000be5c
+// Function: periodicTaskGroup31_calibration13 @ 0x0000be5c
 //
 
-void FUN_0000be5c(void)
+void periodicTaskGroup31_calibration13(void)
 
 {
   func_0x0050dba8();
@@ -6277,10 +6282,10 @@ void FUN_0000be5c(void)
 
 
 //
-// Function: FUN_0000be88 @ 0x0000be88
+// Function: periodicTaskGroup32_calibration14 @ 0x0000be88
 //
 
-void FUN_0000be88(void)
+void periodicTaskGroup32_calibration14(void)
 
 {
   FUN_0002afd0();
@@ -6293,10 +6298,10 @@ void FUN_0000be88(void)
 
 
 //
-// Function: FUN_0000beb4 @ 0x0000beb4
+// Function: periodicTaskGroup33_protection2 @ 0x0000beb4
 //
 
-void FUN_0000beb4(void)
+void periodicTaskGroup33_protection2(void)
 
 {
   FUN_000375c8();
@@ -6323,10 +6328,10 @@ void schedulerPhaseDispatcher(void)
 
 
 //
-// Function: FUN_0000bee0 @ 0x0000bee0
+// Function: periodicTaskGroup34_auxiliary @ 0x0000bee0
 //
 
-void FUN_0000bee0(void)
+void periodicTaskGroup34_auxiliary(void)
 
 {
   func_0x0050d864();
@@ -6338,10 +6343,10 @@ void FUN_0000bee0(void)
 
 
 //
-// Function: FUN_0000bf08 @ 0x0000bf08
+// Function: periodicTaskGroup35_fuelDemand @ 0x0000bf08
 //
 
-void FUN_0000bf08(void)
+void periodicTaskGroup35_fuelDemand(void)
 
 {
   fuelDemandCoordinator();
@@ -6354,10 +6359,10 @@ void FUN_0000bf08(void)
 
 
 //
-// Function: FUN_0000bf34 @ 0x0000bf34
+// Function: periodicTaskGroup36_calibration15 @ 0x0000bf34
 //
 
-void FUN_0000bf34(void)
+void periodicTaskGroup36_calibration15(void)
 
 {
   func_0x00531d34();
@@ -6370,10 +6375,10 @@ void FUN_0000bf34(void)
 
 
 //
-// Function: FUN_0000bf60 @ 0x0000bf60
+// Function: periodicTaskGroup37_calibration16 @ 0x0000bf60
 //
 
-void FUN_0000bf60(void)
+void periodicTaskGroup37_calibration16(void)
 
 {
   func_0x00530428();
@@ -6385,10 +6390,10 @@ void FUN_0000bf60(void)
 
 
 //
-// Function: FUN_0000bf88 @ 0x0000bf88
+// Function: periodicTaskGroup38_calibration17 @ 0x0000bf88
 //
 
-void FUN_0000bf88(void)
+void periodicTaskGroup38_calibration17(void)
 
 {
   func_0x00511b64();
@@ -6523,7 +6528,7 @@ void main_loop(void)
     periodicTaskGroup0_fuelFinal();
     periodicTaskGroup4_canTx();
     periodicTaskGroup12_calibration1();
-    FUN_0000bd54();
+    periodicTaskGroup25_calibration7();
     func_0x00506780();
     _scheduler_task_pointer = (int *)&DAT_0040be6a;
     _main_loop_phase_index = 1;
@@ -6534,7 +6539,7 @@ void main_loop(void)
     periodicTaskGroup1_sensorProcessing();
     periodicTaskGroup5_diagnostics();
     periodicTaskGroup13_calibration2();
-    FUN_0000bd80();
+    periodicTaskGroup26_calibration8();
     func_0x00538278();
     _main_loop_phase_index = 2;
     break;
@@ -6544,7 +6549,7 @@ void main_loop(void)
     periodicTaskGroup2_controlLoop();
     periodicTaskGroup6_protection();
     periodicTaskGroup14_calibration3();
-    FUN_0000bdac();
+    periodicTaskGroup27_calibration9();
     func_0x0051a878();
     _main_loop_phase_index = 3;
     break;
@@ -6554,7 +6559,7 @@ void main_loop(void)
     periodicTaskGroup3_auxiliaryControl();
     periodicTaskGroup7_timing();
     periodicTaskGroup15_calibration4();
-    FUN_0000bdd8();
+    periodicTaskGroup28_calibration10();
     FUN_00042d78();
     FUN_00043ac0();
     _main_loop_phase_index = 4;
@@ -6565,7 +6570,7 @@ void main_loop(void)
     periodicTaskGroup0_fuelFinal();
     periodicTaskGroup8_outputs();
     periodicTaskGroup16_protection();
-    FUN_0000be04();
+    periodicTaskGroup29_calibration11();
     FUN_0000e518();
     _main_loop_phase_index = 5;
     break;
@@ -6575,7 +6580,7 @@ void main_loop(void)
     periodicTaskGroup1_sensorProcessing();
     periodicTaskGroup9_sensors();
     periodicTaskGroup17_calibration5();
-    FUN_0000be30();
+    periodicTaskGroup30_calibration12();
     func_0x00513200();
     _main_loop_phase_index = 6;
     break;
@@ -6585,7 +6590,7 @@ void main_loop(void)
     periodicTaskGroup2_controlLoop();
     periodicTaskGroup10_monitoring();
     periodicTaskGroup18_calibration6();
-    FUN_0000be5c();
+    periodicTaskGroup31_calibration13();
     func_0x0053064c();
     _main_loop_phase_index = 7;
     break;
@@ -6594,7 +6599,7 @@ void main_loop(void)
     phase_group_b_processing();
     periodicTaskGroup3_auxiliaryControl();
     periodicTaskGroup11_communication();
-    FUN_0000be88();
+    periodicTaskGroup32_calibration14();
     func_0x00507644();
     _main_loop_phase_index = 8;
     break;
@@ -6603,7 +6608,7 @@ void main_loop(void)
     phase_group_a_processing();
     periodicTaskGroup0_fuelFinal();
     periodicTaskGroup4_canTx();
-    FUN_0000beb4();
+    periodicTaskGroup33_protection2();
     func_0x005103ac();
     _main_loop_phase_index = 9;
     break;
@@ -6612,7 +6617,7 @@ void main_loop(void)
     phase_group_b_processing();
     periodicTaskGroup1_sensorProcessing();
     periodicTaskGroup5_diagnostics();
-    FUN_0000bee0();
+    periodicTaskGroup34_auxiliary();
     func_0x00521474();
     _main_loop_phase_index = 10;
     break;
@@ -6622,7 +6627,7 @@ void main_loop(void)
     periodicTaskGroup2_controlLoop();
     periodicTaskGroup6_protection();
     periodicTaskGroup12_calibration1();
-    FUN_0000bf08();
+    periodicTaskGroup35_fuelDemand();
     func_0x0050e0a0();
     _main_loop_phase_index = 0xb;
     break;
@@ -6632,7 +6637,7 @@ void main_loop(void)
     periodicTaskGroup3_auxiliaryControl();
     periodicTaskGroup7_timing();
     periodicTaskGroup13_calibration2();
-    FUN_0000bf34();
+    periodicTaskGroup36_calibration15();
     FUN_0001bfc8();
     _main_loop_phase_index = 0xc;
     break;
@@ -6642,7 +6647,7 @@ void main_loop(void)
     periodicTaskGroup0_fuelFinal();
     periodicTaskGroup8_outputs();
     periodicTaskGroup14_calibration3();
-    FUN_0000bf60();
+    periodicTaskGroup37_calibration16();
     FUN_0001c080();
     _main_loop_phase_index = 0xd;
     break;
@@ -6652,7 +6657,7 @@ void main_loop(void)
     periodicTaskGroup1_sensorProcessing();
     periodicTaskGroup9_sensors();
     periodicTaskGroup15_calibration4();
-    FUN_0000bf88();
+    periodicTaskGroup38_calibration17();
     func_0x00523068();
     _main_loop_phase_index = 0xe;
     break;
@@ -6721,7 +6726,7 @@ void main_loop(void)
     periodicTaskGroup0_fuelFinal();
     periodicTaskGroup8_outputs();
     periodicTaskGroup12_calibration1();
-    FUN_0000bd54();
+    periodicTaskGroup25_calibration7();
     func_0x00523798();
     _main_loop_phase_index = 0x15;
     break;
@@ -6731,7 +6736,7 @@ void main_loop(void)
     periodicTaskGroup1_sensorProcessing();
     periodicTaskGroup9_sensors();
     periodicTaskGroup13_calibration2();
-    FUN_0000bd80();
+    periodicTaskGroup26_calibration8();
     func_0x00504948();
     _main_loop_phase_index = 0x16;
     break;
@@ -6741,7 +6746,7 @@ void main_loop(void)
     periodicTaskGroup2_controlLoop();
     periodicTaskGroup10_monitoring();
     periodicTaskGroup14_calibration3();
-    FUN_0000bdac();
+    periodicTaskGroup27_calibration9();
     func_0x00505b84();
     _main_loop_phase_index = 0x17;
     break;
@@ -6751,7 +6756,7 @@ void main_loop(void)
     periodicTaskGroup3_auxiliaryControl();
     periodicTaskGroup11_communication();
     periodicTaskGroup15_calibration4();
-    FUN_0000bdd8();
+    periodicTaskGroup28_calibration10();
     func_0x005077fc();
     _main_loop_phase_index = 0x18;
     break;
@@ -6761,7 +6766,7 @@ void main_loop(void)
     periodicTaskGroup0_fuelFinal();
     periodicTaskGroup4_canTx();
     periodicTaskGroup16_protection();
-    FUN_0000be04();
+    periodicTaskGroup29_calibration11();
     func_0x00509a7c();
     _main_loop_phase_index = 0x19;
     break;
@@ -6771,7 +6776,7 @@ void main_loop(void)
     periodicTaskGroup1_sensorProcessing();
     periodicTaskGroup5_diagnostics();
     periodicTaskGroup17_calibration5();
-    FUN_0000be30();
+    periodicTaskGroup30_calibration12();
     func_0x0050011c();
     _main_loop_phase_index = 0x1a;
     break;
@@ -6781,7 +6786,7 @@ void main_loop(void)
     periodicTaskGroup2_controlLoop();
     periodicTaskGroup6_protection();
     periodicTaskGroup18_calibration6();
-    FUN_0000be5c();
+    periodicTaskGroup31_calibration13();
     func_0x0050e7f4();
     _main_loop_phase_index = 0x1b;
     break;
@@ -6790,7 +6795,7 @@ void main_loop(void)
     phase_group_b_processing();
     periodicTaskGroup3_auxiliaryControl();
     periodicTaskGroup7_timing();
-    FUN_0000be88();
+    periodicTaskGroup32_calibration14();
     func_0x0050fe54();
     _main_loop_phase_index = 0x1c;
     break;
@@ -6799,7 +6804,7 @@ void main_loop(void)
     phase_group_a_processing();
     periodicTaskGroup0_fuelFinal();
     periodicTaskGroup8_outputs();
-    FUN_0000beb4();
+    periodicTaskGroup33_protection2();
     func_0x005109bc();
     _main_loop_phase_index = 0x1d;
     break;
@@ -6808,7 +6813,7 @@ void main_loop(void)
     phase_group_b_processing();
     periodicTaskGroup1_sensorProcessing();
     periodicTaskGroup9_sensors();
-    FUN_0000bee0();
+    periodicTaskGroup34_auxiliary();
     _main_loop_phase_index = 0x1e;
     break;
   case 0x1e:
@@ -6817,7 +6822,7 @@ void main_loop(void)
     periodicTaskGroup2_controlLoop();
     periodicTaskGroup10_monitoring();
     periodicTaskGroup12_calibration1();
-    FUN_0000bf08();
+    periodicTaskGroup35_fuelDemand();
     func_0x005058a8();
     _main_loop_phase_index = 0x1f;
     break;
@@ -6827,7 +6832,7 @@ void main_loop(void)
     periodicTaskGroup3_auxiliaryControl();
     periodicTaskGroup11_communication();
     periodicTaskGroup13_calibration2();
-    FUN_0000bf34();
+    periodicTaskGroup36_calibration15();
     FUN_00019390();
     _main_loop_phase_index = 0x20;
     break;
@@ -6837,7 +6842,7 @@ void main_loop(void)
     periodicTaskGroup0_fuelFinal();
     periodicTaskGroup4_canTx();
     periodicTaskGroup14_calibration3();
-    FUN_0000bf60();
+    periodicTaskGroup37_calibration16();
     _main_loop_phase_index = 0x21;
     break;
   case 0x21:
@@ -6846,7 +6851,7 @@ void main_loop(void)
     periodicTaskGroup1_sensorProcessing();
     periodicTaskGroup5_diagnostics();
     periodicTaskGroup15_calibration4();
-    FUN_0000bf88();
+    periodicTaskGroup38_calibration17();
     _main_loop_phase_index = 0x22;
     break;
   case 0x22:
@@ -9733,8 +9738,8 @@ undefined4 FUN_0001198c(uint param_1,uint param_2,uint param_3,uint param_4,uint
 void FUN_00011a4c(void)
 
 {
-  if ((_DAT_0040a3ca < _DAT_0040a3da) || (_DAT_003fa1a4 < 0)) {
-    if ((_DAT_0040a3d2 < _DAT_0040a3ca) || (0 < _DAT_003fa1a4)) {
+  if ((_speed_current_value < _speed_target_setpoint) || (_DAT_003fa1a4 < 0)) {
+    if ((_speed_lower_limit < _speed_current_value) || (0 < _DAT_003fa1a4)) {
       _DAT_003fa1aa = 1;
     }
     else {
@@ -9872,8 +9877,10 @@ void FUN_00011ab4(void)
   _DAT_0040a3d8 =
        dualAxisTableInterpolation
                  (&DAT_003fa194,_current_engine_rpm,0x3fffac,_DAT_0040b30a,0x3fffd4,0x3ffff6,4);
-  _DAT_0040a3dc = lookupTableInterpolation(&DAT_003fa18c,_DAT_0040a194,0x3fff88,0x3fff9a,3);
-  _DAT_0040a3d4 = lookupTableInterpolation(&DAT_003fa188,_DAT_0040a194,0x400256,0x400268,3);
+  _speed_adjustment_delta =
+       lookupTableInterpolation(&DAT_003fa18c,_DAT_0040a194,0x3fff88,0x3fff9a,3);
+  _speed_limit_adjustment =
+       lookupTableInterpolation(&DAT_003fa188,_DAT_0040a194,0x400256,0x400268,3);
   uVar4 = exponentialMovingAverage(_battery_voltage_raw,&DAT_003fa19c);
   if (_DAT_003fd7e0 == 0) {
     _DAT_0040a3e8 = lookupTableInterpolation(&DAT_003fa17e,uVar4,0x4002ca,0x4002d6,0);
@@ -9889,23 +9896,24 @@ void FUN_00011ab4(void)
   else {
     uVar8 = (uint)_DAT_0040a3d8;
   }
-  _DAT_0040a3de = lookupTableInterpolation(&DAT_003fa186,_current_engine_rpm,0x3ffcde,0x40027a,2);
+  _speed_lookup_result =
+       lookupTableInterpolation(&DAT_003fa186,_current_engine_rpm,0x3ffcde,0x40027a,2);
   if (_temperature_trim_value == 0) {
     if (_DAT_003fd7e4 == 0) {
-      _DAT_0040a3da = (short)iVar7;
+      _speed_target_setpoint = (short)iVar7;
     }
     else {
-      iVar7 = iVar7 + _DAT_0040a3dc;
+      iVar7 = iVar7 + _speed_adjustment_delta;
       if (iVar7 < 0) {
-        _DAT_0040a3da = 0;
+        _speed_target_setpoint = 0;
       }
       else if (iVar7 < 0x3201) {
-        _DAT_0040a3da = (short)iVar7;
+        _speed_target_setpoint = (short)iVar7;
       }
       else {
-        _DAT_0040a3da = 0x3200;
+        _speed_target_setpoint = 0x3200;
       }
-      uVar8 = uVar8 + (int)_DAT_0040a3d4;
+      uVar8 = uVar8 + (int)_speed_limit_adjustment;
       if ((int)uVar8 < 0) {
         uVar8 = 0;
       }
@@ -9916,15 +9924,15 @@ void FUN_00011ab4(void)
   }
   else {
     uVar8 = (uint)_DAT_003ffcac;
-    _DAT_0040a3da = _DAT_0040a3de;
+    _speed_target_setpoint = _speed_lookup_result;
   }
-  _DAT_0040a3d2 = (short)uVar8;
+  _speed_lower_limit = (short)uVar8;
   _DAT_0040a3be = _DAT_003ffca6;
-  if ((short)(_DAT_0040a3da - _DAT_0040a3d2) < 0) {
+  if ((short)(_speed_target_setpoint - _speed_lower_limit) < 0) {
     _DAT_003fa1a6 = 0;
   }
   else {
-    uVar8 = ((int)_DAT_0040a3da - uVar8 & 0xffff) * (uint)_DAT_003ffca2;
+    uVar8 = ((int)_speed_target_setpoint - uVar8 & 0xffff) * (uint)_DAT_003ffca2;
     _DAT_003fa1a6 = ((int)uVar8 >> 3) + (uint)((int)uVar8 < 0 && (uVar8 & 7) != 0);
   }
   uVar1 = FUN_0001198c(_DAT_003ffca0,_DAT_003fa190,_DAT_003fa1a6,(int)_DAT_0040a3cc,100);
@@ -9990,9 +9998,10 @@ void FUN_00011ab4(void)
       iVar7 = 0x7fff;
     }
   }
-  _DAT_0040a3ca = _DAT_0040a3da;
-  if ((iVar7 < _DAT_0040a3da) && (_DAT_0040a3ca = _DAT_0040a3d2, _DAT_0040a3d2 < iVar7)) {
-    _DAT_0040a3ca = (short)iVar7;
+  _speed_current_value = _speed_target_setpoint;
+  if ((iVar7 < _speed_target_setpoint) &&
+     (_speed_current_value = _speed_lower_limit, _speed_lower_limit < iVar7)) {
+    _speed_current_value = (short)iVar7;
   }
   return;
 }
@@ -10023,7 +10032,7 @@ void FUN_0001233c(void)
 {
   _DAT_003fa17a = 0;
   _DAT_003fa190 = 0;
-  _DAT_0040a3ca = 0;
+  _speed_current_value = 0;
   _DAT_003fa1a0 = 0;
   _DAT_003fa19c = 0x3ffcb4;
   _DAT_003fa17e = 2;
@@ -10751,19 +10760,19 @@ void FUN_00013294(void)
   if ((((((_calibration_feature_flags & 0x8000) == 0) || (_DAT_0040afd6 == 2)) ||
        (_DAT_0040afe6 < _DAT_0040510e)) ||
       (((_DAT_0040510c < _DAT_0040afe6 || (_boost_override_active == 2)) ||
-       ((_DAT_0040a60a == 2 || ((_DAT_0040a164 == 2 || ((_DAT_0040b9d0 & 0x8000) == 0)))))))) ||
-     ((_DAT_0040b9d4 & 0x8000) != 0)) {
-    _DAT_0040a42c = 0x80;
+       ((_boost_protection_mode == 2 || ((_DAT_0040a164 == 2 || ((_DAT_0040b9d0 & 0x8000) == 0))))))
+      )) || ((_DAT_0040b9d4 & 0x8000) != 0)) {
+    _feature_status_flags = 0x80;
   }
-  else if ((((_boost_override_active == 1) || (_DAT_0040a60a == 1)) || (_DAT_0040a164 == 1)) ||
-          (_DAT_0040afd6 == 1)) {
-    _DAT_0040a42c = 0x40;
+  else if ((((_boost_override_active == 1) || (_boost_protection_mode == 1)) || (_DAT_0040a164 == 1)
+           ) || (_DAT_0040afd6 == 1)) {
+    _feature_status_flags = 0x40;
   }
   else {
-    _DAT_0040a42c = 0;
+    _feature_status_flags = 0;
   }
   _DAT_0040a420 = _DAT_0040a42a;
-  _DAT_0040a41e = _DAT_0040a42c;
+  _DAT_0040a41e = _feature_status_flags;
   return;
 }
 
@@ -11009,10 +11018,10 @@ void FUN_00013aec(undefined4 param_1,int param_2)
   int unaff_r31;
   int iVar1;
   
-  if ((_DAT_0040a60a == 2) || ((_calibration_feature_flags & 0x4000) == 0)) {
+  if ((_boost_protection_mode == 2) || ((_calibration_feature_flags & 0x4000) == 0)) {
     _DAT_0040a456 = 0x80;
   }
-  else if (_DAT_0040a60a == 1) {
+  else if (_boost_protection_mode == 1) {
     _DAT_0040a456 = 0x40;
   }
   else {
@@ -11070,10 +11079,10 @@ void FUN_00013ca4(void)
 {
   _DAT_003fa612 = (int)_throttle_position_demand << 0x10;
   _DAT_003fa60e = 0x405200;
-  if ((_DAT_0040a60a == 2) || ((_calibration_feature_flags & 0x4000) == 0)) {
+  if ((_boost_protection_mode == 2) || ((_calibration_feature_flags & 0x4000) == 0)) {
     _DAT_0040a456 = 0x80;
   }
-  else if (_DAT_0040a60a == 1) {
+  else if (_boost_protection_mode == 1) {
     _DAT_0040a456 = 0x40;
   }
   else {
@@ -13299,7 +13308,7 @@ undefined2 FUN_00017b84(void)
 void FUN_00017d54(void)
 
 {
-  if (((_DAT_0040a1a0 == 2) && (_DAT_0040a60a == 2)) || ((_DAT_003fd5c2 & 0x80) == 0)) {
+  if (((_DAT_0040a1a0 == 2) && (_boost_protection_mode == 2)) || ((_DAT_003fd5c2 & 0x80) == 0)) {
     _DAT_0040a61a = 0;
   }
   else {
@@ -13311,7 +13320,7 @@ void FUN_00017d54(void)
   }
   else {
     _DAT_0040a616 = FUN_00017b84();
-    if (((_DAT_0040a1a0 == 0) && (_DAT_0040a60a == 0)) &&
+    if (((_DAT_0040a1a0 == 0) && (_boost_protection_mode == 0)) &&
        ((_DAT_0040a414 == 0 && (_DAT_0040afd6 != 2)))) {
       _DAT_0040a618 = 0;
     }
@@ -20519,7 +20528,7 @@ LAB_00024080:
     }
     bVar2 = 0x43;
   }
-  if (_DAT_003fdba4 == 0) {
+  if (_hardware_config_mode == 0) {
     bVar1 = 0x30;
   }
   else {
@@ -25380,11 +25389,11 @@ void FUN_0002c764(void)
   _DAT_0040afd2 = _DAT_0040bdc4 - _DAT_0040afc4;
   _DAT_0040afd4 = _DAT_0040bdc4;
   if (((((_eeprom_calibration_table_ptr & 1) == 0) || (_DAT_0040a430 == 2)) || (_DAT_0040a1a0 == 2))
-     || ((_DAT_0040a60a == 2 || (_boost_override_active == 2)))) {
+     || ((_boost_protection_mode == 2 || (_boost_override_active == 2)))) {
     _DAT_0040afc6 = 0x80;
   }
   else if (((_DAT_0040a430 == 1) || (_DAT_0040a1a0 == 1)) ||
-          ((_DAT_0040a60a == 1 || (_boost_override_active == 1)))) {
+          ((_boost_protection_mode == 1 || (_boost_override_active == 1)))) {
     _DAT_0040afc6 = 0x40;
   }
   else {
@@ -25427,7 +25436,7 @@ void FUN_0002ca14(void)
 {
   ushort uVar1;
   
-  uVar1 = _DAT_0040a3ca;
+  uVar1 = _speed_current_value;
   if ((_DAT_003fd8cc & 1) != 0) {
     uVar1 = _DAT_0040771a;
   }
@@ -35787,7 +35796,7 @@ void FUN_000400b8(void)
   if ((_fuel_rate_config_flags & 0x1000) != 0) {
     uVar1 = _DAT_00408dce;
     if (DAT_00408dca == '\0') {
-      uVar1 = _DAT_0040a3ca * 2;
+      uVar1 = _speed_current_value * 2;
     }
     uVar2 = _DAT_00408dd0;
     if ((uVar1 <= _DAT_00408dd0) && (uVar2 = uVar1, uVar1 < _DAT_00408dd2)) {
