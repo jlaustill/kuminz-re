@@ -27,6 +27,7 @@ address,name
 0x00004f0c,can2MailboxTransmitRangeWrapper
 0x00004f2c,writeCan2ControllerTxMailbox
 0x00004f6c,can2TransmitInterruptHandler
+0x00006580,updateSystemTimers
 0x0000b44c,keyOnStatusMonitor
 0x0000b76c,phase_common_processing
 0x0000b7b4,phase_group_a_processing
@@ -52,6 +53,7 @@ address,name
 0x00012e88,initFuelControlFilterSystem
 0x00012eb4,fuelDemandErrorCalculation
 0x00012f60,fuelDemandBlendCalculation
+0x00014528,filterInputValue
 0x0001702c,fuelDemandBaseCalculation
 0x00017150,fuelDemandModeSelector
 0x000172b0,fuelDemandEnableChecker
@@ -65,6 +67,7 @@ address,name
 0x0001cd1c,scanAndProcessActiveFaults
 0x0001cdc0,faultCodeLookup
 0x0001dee0,resetFaultStatus
+0x0001ec48,processFaultIncrement
 0x00022674,j1939_handle_pgn_65228_dm3_clear_diag
 0x00022770,initPgn65228Dm3Handler
 0x00022d60,j1939MessageDispatcher
@@ -117,6 +120,9 @@ address,name
 0x00032b00,protectionThresholdMonitor
 0x00032efc,protectionStateMachine
 0x000331cc,initProtectionFilterVariables
+0x0003da60,j1939QueueTransmitMessage
+0x0003dbc0,j1939ProcessTransmitQueue
+0x0004ef24,setEngineProtectionFault
 0x0004f000,triggerProtectionEvent
 0x000535e8,processJ1939TxBufferSend
 0x00053720,queueCanReceiveMessage
@@ -128,6 +134,12 @@ address,name
 0x00053b28,writeCanControllerTxMailbox
 0x00053b68,canTransmitInterruptHandler
 0x00053c68,findJ1939MessageEntry
+0x00055020,tpuResetChannel
+0x00055178,tpuSetChannelDuty
+0x000551e4,tpuConfigureChannel
+0x00055294,tpuEnableChannelOutput
+0x000553ec,tpuDisableChannelOutput
+0x00055458,tpuSetChannelPeriod
 0x00055ef4,lookupTableInterpolation
 0x00056184,extendedDivisionWithRemainder
 0x00056260,signedDivisionWithSaturation
