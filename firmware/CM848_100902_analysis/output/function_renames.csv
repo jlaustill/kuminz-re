@@ -38,6 +38,8 @@ address,name
 0x0000dc64,oilPressureDeltaCalculation
 0x0000e78c,temperatureBasedFuelTrim
 0x0000e8f0,fuelTimingCompensation
+0x00010274,timerInterruptHandler
+0x00010694,fatalErrorHalt
 0x000128a0,throttleBasedFuelCalculation
 0x00012a58,initFilterCoefficients
 0x00012ad4,boostBasedFuelModifier

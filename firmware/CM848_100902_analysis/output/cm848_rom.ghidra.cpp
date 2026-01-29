@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Jan 29 06:04:59 MST 2026
+// Generated: Thu Jan 29 06:07:16 MST 2026
 
 
 //
@@ -8869,12 +8869,12 @@ void FUN_00010270(void)
 
 
 //
-// Function: FUN_00010274 @ 0x00010274
+// Function: timerInterruptHandler @ 0x00010274
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-undefined8 FUN_00010274(undefined4 param_1,undefined4 param_2)
+undefined8 timerInterruptHandler(undefined4 param_1,undefined4 param_2)
 
 {
   uint uVar1;
@@ -8914,10 +8914,10 @@ undefined8 FUN_00010274(undefined4 param_1,undefined4 param_2)
 
 
 //
-// Function: FUN_00010694 @ 0x00010694
+// Function: fatalErrorHalt @ 0x00010694
 //
 
-void FUN_00010694(void)
+void fatalErrorHalt(void)
 
 {
   do {
