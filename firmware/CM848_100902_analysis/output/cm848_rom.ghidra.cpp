@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Jan 29 06:01:13 MST 2026
+// Generated: Thu Jan 29 06:02:11 MST 2026
 
 
 //
@@ -9017,7 +9017,7 @@ void FUN_000108a4(void)
   if (sVar2 < _DAT_003ff744) {
     sVar1 = sVar2;
   }
-  _DAT_0040a37e = FUN_0005644c((int)sVar1,&DAT_003fa140);
+  _DAT_0040a37e = signedFirstOrderFilter((int)sVar1,&DAT_003fa140);
   if (uVar4 < _DAT_003ff722) {
     _DAT_0040a37e = 0xe700;
   }
@@ -9060,7 +9060,7 @@ void FUN_000109c8(void)
   if (sVar2 < _DAT_003ff742) {
     sVar1 = sVar2;
   }
-  _DAT_0040a384 = FUN_0005644c((int)sVar1,&DAT_003fa148);
+  _DAT_0040a384 = signedFirstOrderFilter((int)sVar1,&DAT_003fa148);
   if (uVar4 < _DAT_003ff72a) {
     _DAT_0040a384 = 0xe700;
   }
@@ -9201,7 +9201,7 @@ void FUN_00010d3c(void)
   if (sVar4 < _DAT_003ff740) {
     sVar3 = sVar4;
   }
-  _DAT_0040a38a = FUN_0005644c((int)sVar3,&DAT_003fa138);
+  _DAT_0040a38a = signedFirstOrderFilter((int)sVar3,&DAT_003fa138);
   if (uVar2 < _DAT_003ff732) {
     _DAT_0040a38a = 0xe700;
   }
@@ -10092,7 +10092,7 @@ void FUN_0001242c(void)
   }
   _DAT_0040a3f8 = 0x8148;
 LAB_000124ac:
-  uVar1 = FUN_0005644c((int)_throttle_position_filtered,&DAT_003fa5ca);
+  uVar1 = signedFirstOrderFilter((int)_throttle_position_filtered,&DAT_003fa5ca);
   _DAT_0040a3f6 =
        dualAxisTableInterpolation(&DAT_003fa1b2,uVar1,0x400612,_DAT_0040a3f8,0x400638,0x40065e,7);
   _DAT_0040a400 = lookupTableInterpolation(&DAT_003fa5d4,_DAT_0040a68c,0x4008e6,0x40090c,0);
@@ -10297,7 +10297,7 @@ void throttleBasedFuelCalculation(void)
   uVar4 = ((uint)_DAT_0040a3fe * (uint)_DAT_004002ee) / 0x7fff;
   _DAT_0040a3f0 = (undefined2)uVar4;
   sVar3 = FUN_00012404(0x3fa3b8,(int)_final_fuel_trim,(uVar4 & 0xffff) / 10);
-  _DAT_0040baba = FUN_0005644c((int)sVar3,&DAT_003fa5c2);
+  _DAT_0040baba = signedFirstOrderFilter((int)sVar3,&DAT_003fa5c2);
   if (_DAT_0040bab8 < 0x41) {
     uVar4 = 0;
   }
@@ -10595,7 +10595,7 @@ void fuelDemandBlendCalculation(void)
     sVar7 = (short)((int)uVar4 >> 0xd) + (ushort)((int)uVar4 < 0 && (uVar4 & 0x1fff) != 0) +
             (short)iVar6;
   }
-  _DAT_0040a416 = FUN_0005644c((int)sVar7,&DAT_003fa5ea);
+  _DAT_0040a416 = signedFirstOrderFilter((int)sVar7,&DAT_003fa5ea);
   return;
 }
 
@@ -11022,7 +11022,7 @@ void FUN_00013aec(undefined4 param_1,int param_2)
   else if (0x5780 < iVar1) {
     iVar1 = 0x5780;
   }
-  _DAT_0040a452 = FUN_0005644c((int)(short)iVar1,&DAT_003fa60e);
+  _DAT_0040a452 = signedFirstOrderFilter((int)(short)iVar1,&DAT_003fa60e);
   return;
 }
 
@@ -11111,8 +11111,8 @@ void FUN_00013dc8(void)
   FUN_00013d14();
   sVar1 = _DAT_0040a458;
   if (((iVar2 == 0) && (_DAT_003fd7f0 == 0)) && ((_DAT_003fd5c4 & 0x4000) != 0)) {
-    _DAT_003fa620 = FUN_0005644c((int)_DAT_0040a458,&DAT_003fa624);
-    sVar1 = FUN_0005644c((int)_DAT_003fa620,&DAT_003fa62c);
+    _DAT_003fa620 = signedFirstOrderFilter((int)_DAT_0040a458,&DAT_003fa624);
+    sVar1 = signedFirstOrderFilter((int)_DAT_003fa620,&DAT_003fa62c);
   }
   _DAT_003fa622 = sVar1;
   if ((((_DAT_003fe976 & 8) != 0) && ((DAT_003ff073 & 1) != 0)) ||
@@ -13082,7 +13082,7 @@ LAB_000178d0:
     _fuel_demand_override_active = 0;
   }
   _fuel_demand_delta = _fuel_demand_calculated - _fuel_demand_previous;
-  _fuel_demand_delta_filtered = FUN_0005644c((int)_fuel_demand_delta,&DAT_003fa6f4);
+  _fuel_demand_delta_filtered = signedFirstOrderFilter((int)_fuel_demand_delta,&DAT_003fa6f4);
   _fuel_demand_previous = _fuel_demand_calculated;
   return;
 }
@@ -13567,7 +13567,7 @@ int FUN_000185cc(undefined4 param_1,int param_2,int param_3)
     sVar1 = (short)((uint)*(undefined4 *)(param_3 + 4) >> 0x10);
   }
   else {
-    sVar1 = FUN_0005644c(param_1,param_3);
+    sVar1 = signedFirstOrderFilter(param_1,param_3);
   }
   return (int)sVar1;
 }
@@ -14086,7 +14086,7 @@ void FUN_000191e8(void)
   uint uVar3;
   
   _DAT_003fa774 = (ushort)(_DAT_004067d2 <= _DAT_0040a61c);
-  sVar1 = FUN_0005644c((int)_DAT_0040a628,&DAT_003fa750);
+  sVar1 = signedFirstOrderFilter((int)_DAT_0040a628,&DAT_003fa750);
   _DAT_003fa776 = (ushort)(_DAT_004067d4 <= sVar1);
   if ((_DAT_0040a61e == 0) && (_DAT_0040a62a == 0)) {
     _DAT_003fa778 = 0;
@@ -14437,7 +14437,7 @@ void FUN_00019b20(void)
   _DAT_003fa786 = &DAT_0040a6e8;
   _DAT_0040a6e4 = exponentialMovingAverage(_DAT_0040a6e6,&DAT_003fa786);
   _DAT_0040a6c4 = _DAT_0040a6e4 - _throttle_position_filtered;
-  sVar2 = FUN_0005644c((int)_DAT_0040a6c4,&DAT_003fa790);
+  sVar2 = signedFirstOrderFilter((int)_DAT_0040a6c4,&DAT_003fa790);
   _DAT_0040a6d0 = sVar2 - _DAT_003fa784;
   iVar4 = (int)_DAT_0040a6d0;
   iVar3 = iVar4;
@@ -17781,7 +17781,7 @@ void FUN_0001f40c(void)
   else {
     iVar4 = 0x7fff;
   }
-  _DAT_0040a8c3 = FUN_0005644c((int)(short)iVar4,&DAT_0040a8d3);
+  _DAT_0040a8c3 = signedFirstOrderFilter((int)(short)iVar4,&DAT_0040a8d3);
   sVar2 = _DAT_00406fbe;
   if ((_DAT_00406fbe < _DAT_0040a8c3) || (sVar2 = _DAT_00406fc0, _DAT_0040a8c3 < _DAT_00406fc0)) {
     _DAT_0040a8d7 = (int)sVar2 << 0x10;
@@ -22867,9 +22867,10 @@ LAB_000284d0:
     }
 LAB_000284d4:
     _DAT_0040aeb0 =
-         FUN_0005644c((int)(short)((int)((uint)_DAT_004070e0 *
-                                        ((uint)_DAT_0040b266 - (uint)_DAT_004070e2)) >> 0xe),
-                      &DAT_003faf56);
+         signedFirstOrderFilter
+                   ((int)(short)((int)((uint)_DAT_004070e0 *
+                                      ((uint)_DAT_0040b266 - (uint)_DAT_004070e2)) >> 0xe),
+                    &DAT_003faf56);
     iVar7 = (int)_DAT_0040ae96 + (int)_DAT_0040ae98 + (int)(short)_DAT_0040ae9a + (int)_DAT_0040ae9c
             + iVar7 + (int)_DAT_0040aeb0;
     uStack_4e = _DAT_0040ae9e;
@@ -23204,7 +23205,7 @@ void FUN_00028ba4(void)
     sStack_e = (short)iVar6;
     iVar6 = (int)sStack_e;
   }
-  _DAT_0040aede = FUN_0005644c(iVar6,&DAT_003faf66);
+  _DAT_0040aede = signedFirstOrderFilter(iVar6,&DAT_003faf66);
   sVar2 = _DAT_0040aee2;
   sVar3 = DAT_0005c4b2;
   if ((DAT_0005c4b2 < _DAT_0040aede) || (sVar3 = DAT_0005c4b4, _DAT_0040aede < DAT_0005c4b4)) {
@@ -23930,7 +23931,7 @@ void FUN_0002a2d0(void)
   }
   _DAT_003fafac = _DAT_0040af40;
   sStack_1e = (short)((int)sVar1 * (int)_DAT_003fafae >> 0xe);
-  _DAT_0040af2a = FUN_0005644c((int)sStack_1e,&DAT_003fafb2);
+  _DAT_0040af2a = signedFirstOrderFilter((int)sStack_1e,&DAT_003fafb2);
   sVar1 = _DAT_00407192;
   if ((_DAT_00407192 < _DAT_0040af2a) || (sVar1 = _DAT_00407194, _DAT_0040af2a < _DAT_00407194)) {
     _DAT_003fafb6 = (int)sVar1 << 0x10;
@@ -25176,7 +25177,7 @@ void FUN_0002c764(void)
     }
   }
   _DAT_0040afcc = (short)iVar2;
-  _DAT_0040afce = FUN_0005644c((int)_DAT_0040afcc,&DAT_003fb01e);
+  _DAT_0040afce = signedFirstOrderFilter((int)_DAT_0040afcc,&DAT_003fb01e);
   if ((_DAT_0040a19e == 0) ||
      (unsignedDivision32(0,(uint)_DAT_0040a42e << 0xc,0,_DAT_0040a19e), uVar3 = extraout_r4_00,
      0xfffe < extraout_r4_00)) {
@@ -25518,7 +25519,7 @@ void FUN_0002cebc(void)
     }
   }
   _DAT_0040b01e = (undefined2)iVar3;
-  sVar2 = FUN_0005644c((int)_DAT_0040b030,&DAT_003fb03e);
+  sVar2 = signedFirstOrderFilter((int)_DAT_0040b030,&DAT_003fb03e);
   _DAT_0040b00e = sVar2 - _DAT_003fb046;
   _DAT_003fb046 = sVar2;
   iVar4 = (int)_DAT_0040b00e;
@@ -26727,7 +26728,7 @@ void FUN_0002ef34(void)
   if (_DAT_003fb0d0 == 0) {
     sVar1 = _DAT_0040b0a4;
   }
-  _DAT_0040b0a2 = FUN_0005644c((int)sVar1,&DAT_003fb0d2);
+  _DAT_0040b0a2 = signedFirstOrderFilter((int)sVar1,&DAT_003fb0d2);
   _DAT_0040b0a4 = _DAT_0040b0a2;
   if ((_DAT_003fe9c6 & 0x4000) != 0) {
     _DAT_0040b0a2 = 0x3200;
@@ -29074,7 +29075,7 @@ void FUN_000343ac(void)
     _DAT_0040b112 = 0;
     _DAT_0040b114 = 0;
   }
-  _DAT_0040b13e = FUN_0005644c((int)(_DAT_0040b290 >> 1),&DAT_003fb1d6);
+  _DAT_0040b13e = signedFirstOrderFilter((int)(_DAT_0040b290 >> 1),&DAT_003fb1d6);
   if (((short)_DAT_0040b13e < 0) || (_DAT_0040b13e < _DAT_00408300)) {
     _DAT_0040b110 = 0;
   }
@@ -29149,7 +29150,7 @@ void FUN_0003491c(void)
     uVar3 = (_DAT_003fb1c8 + 1) % 0x1b;
     _DAT_0040b14a = uVar1 - *(short *)(&DAT_003fb192 + uVar3 * 2);
     _DAT_003fb1c8 = (ushort)uVar3;
-    _DAT_0040b12a = FUN_0005644c((int)_DAT_0040b14a,&DAT_003fb1ce);
+    _DAT_0040b12a = signedFirstOrderFilter((int)_DAT_0040b14a,&DAT_003fb1ce);
   }
   return;
 }
@@ -31164,7 +31165,7 @@ void FUN_00038760(void)
   
   _DAT_0040b290 = _DAT_0040b7ac - _DAT_003fb3ae;
   _DAT_003fb3ae = _DAT_0040b7ac;
-  _DAT_0040b28c = FUN_0005644c((int)_DAT_0040b290,&DAT_003fb3b0);
+  _DAT_0040b28c = signedFirstOrderFilter((int)_DAT_0040b290,&DAT_003fb3b0);
   iVar1 = (int)_DAT_0040880e;
   if (_DAT_0040b28c < iVar1) {
     _DAT_0040b28c = _DAT_0040880e;
@@ -31176,7 +31177,7 @@ void FUN_00038760(void)
   }
   _DAT_003fb3b4 = iVar1 << 0x10;
 LAB_000387f4:
-  _DAT_0040b28e = FUN_0005644c((int)_DAT_0040b28c,&DAT_003fb3b8);
+  _DAT_0040b28e = signedFirstOrderFilter((int)_DAT_0040b28c,&DAT_003fb3b8);
   return;
 }
 
@@ -33463,7 +33464,7 @@ void FUN_0003c8ec(void)
     uVar3 = 0xff;
   }
   local_8[1] = (undefined1)uVar3;
-  _DAT_0040b52a = FUN_0005644c((int)_DAT_0040b152,&DAT_003fb414);
+  _DAT_0040b52a = signedFirstOrderFilter((int)_DAT_0040b152,&DAT_003fb414);
   uVar3 = (uint)(short)((short)(((short)(_DAT_0040b52a + -0x800) * 5) / 9) + 0xa00);
   iVar2 = ((int)uVar3 >> 6) + (uint)((int)uVar3 < 0 && (uVar3 & 0x3f) != 0);
   if ((short)iVar2 < 0xff) {
@@ -39643,13 +39644,13 @@ LAB_0004800c:
       if ((iVar10 <= iVar11) && (iVar10 = iVar11, _DAT_00409134 < iVar11)) {
         iVar10 = (int)_DAT_00409134;
       }
-      _DAT_0040b88c = FUN_0005644c(iVar10,&DAT_003fb6a7);
+      _DAT_0040b88c = signedFirstOrderFilter(iVar10,&DAT_003fb6a7);
       sVar3 = _DAT_0040b8b6;
       _DAT_003fb683 = _fuel_demand_calculated;
       sVar6 = _DAT_0040b8b6 - _DAT_0040b8b2;
       _DAT_0040b891 = _DAT_0040b8b2;
       _DAT_003fb69f = local_68;
-      sVar5 = FUN_0005644c((int)_DAT_0040b8b0,&DAT_003fb69f);
+      sVar5 = signedFirstOrderFilter((int)_DAT_0040b8b0,&DAT_003fb69f);
       _DAT_0040b886 = FUN_00047838(&local_64,(int)sVar6);
       _DAT_0040b888 = FUN_00047978(&local_54,&DAT_003fb66a,(int)sVar6,10000);
       if ((DAT_003fb6c5 == '\x01') && (_DAT_0040913e == 5)) {
@@ -39790,8 +39791,8 @@ LAB_000489d0:
   sVar4 = FUN_00047838(0x4094f4,(int)sVar3);
   _DAT_003fb6bf = FUN_00047a88(0x409504,0x3fb676,(int)sVar4);
   sVar4 = sVar4 + _DAT_003fb6bf;
-  sVar3 = FUN_0005644c((int)sVar3,&DAT_003fb68f);
-  sVar5 = FUN_0005644c((int)_DAT_0040b89c,&DAT_003fb687);
+  sVar3 = signedFirstOrderFilter((int)sVar3,&DAT_003fb68f);
+  sVar5 = signedFirstOrderFilter((int)_DAT_0040b89c,&DAT_003fb687);
   _DAT_0040b88e = sVar3 - sVar5;
   if (DAT_0040b89e == '\0') {
     sVar6 = FUN_00047838(0x4094d4,(int)_DAT_0040b88e);
@@ -39866,7 +39867,7 @@ LAB_000489d0:
     }
   }
   if (DAT_0040b89e == '\0') {
-    _DAT_0040b893 = FUN_0005644c((int)_DAT_0040b882,&DAT_003fb6af);
+    _DAT_0040b893 = signedFirstOrderFilter((int)_DAT_0040b882,&DAT_003fb6af);
     if (((int)(uint)_DAT_0040915a < (int)sVar5) && ((int)(uint)_DAT_0040915c < (int)_DAT_0040b893))
     {
       _DAT_003fb6c3 = _DAT_003fb6c3 + 1;
@@ -40531,18 +40532,18 @@ void FUN_0004a7ac(void)
 {
   if ((_DAT_0040b810 == 4) || (_DAT_0040b80c == 4)) {
     if (DAT_004095a7 == '\0') {
-      _DAT_0040b8b2 = FUN_0005644c((int)_DAT_0040b87b,&DAT_003fb6f3);
+      _DAT_0040b8b2 = signedFirstOrderFilter((int)_DAT_0040b87b,&DAT_003fb6f3);
       return;
     }
     if (DAT_004095a7 == '\x01') {
-      _DAT_0040b8b2 = FUN_0005644c((int)_DAT_0040b879,&DAT_003fb6f3);
+      _DAT_0040b8b2 = signedFirstOrderFilter((int)_DAT_0040b879,&DAT_003fb6f3);
       return;
     }
     if (DAT_004095a7 != '\x02') {
       return;
     }
   }
-  _DAT_0040b8b2 = FUN_0005644c((int)_DAT_0040b8b0,&DAT_003fb6f3);
+  _DAT_0040b8b2 = signedFirstOrderFilter((int)_DAT_0040b8b0,&DAT_003fb6f3);
   return;
 }
 
@@ -48145,10 +48146,10 @@ uint saturatingDivision16(uint param_1,uint param_2)
 
 
 //
-// Function: FUN_0005644c @ 0x0005644c
+// Function: signedFirstOrderFilter @ 0x0005644c
 //
 
-int FUN_0005644c(int param_1,undefined4 *param_2)
+int signedFirstOrderFilter(int param_1,undefined4 *param_2)
 
 {
   uint uVar1;
@@ -48183,10 +48184,10 @@ int FUN_0005644c(int param_1,undefined4 *param_2)
 
 
 //
-// Function: FUN_000564c0 @ 0x000564c0
+// Function: secondOrderFilter @ 0x000564c0
 //
 
-int FUN_000564c0(short param_1,undefined4 *param_2)
+int secondOrderFilter(short param_1,undefined4 *param_2)
 
 {
   uint uVar1;
@@ -48641,10 +48642,10 @@ void delayMicroseconds2(int param_1)
 
 
 //
-// Function: FUN_00056e90 @ 0x00056e90
+// Function: unsignedDivision64by32 @ 0x00056e90
 //
 
-void FUN_00056e90(undefined4 param_1,undefined4 param_2,uint param_3,uint param_4)
+void unsignedDivision64by32(undefined4 param_1,undefined4 param_2,uint param_3,uint param_4)
 
 {
   bool bVar1;
@@ -48796,7 +48797,7 @@ void signedDivision32(undefined4 param_1,undefined4 param_2,int param_3,int para
     param_3 = -((uint)bVar2 + param_3);
     bVar2 = uVar4 < 0x80000000;
   }
-  uVar6 = FUN_00056e90((int)(uVar3 >> 0x20),(int)uVar3,param_3,param_4);
+  uVar6 = unsignedDivision64by32((int)(uVar3 >> 0x20),(int)uVar3,param_3,param_4);
   if (bVar2) {
     uVar6 = CONCAT44(-((uint)((int)uVar6 != 0) + (int)((ulonglong)uVar6 >> 0x20)),-(int)uVar6);
   }
@@ -48815,7 +48816,7 @@ void unsignedDivision32(undefined4 param_1,undefined4 param_2,int param_3,int pa
 
 {
   if (param_3 != 0 || param_4 != 0) {
-    FUN_00056e90();
+    unsignedDivision64by32();
   }
   return;
 }

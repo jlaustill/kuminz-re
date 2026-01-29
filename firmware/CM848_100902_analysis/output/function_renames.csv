@@ -121,6 +121,8 @@ address,name
 0x00056260,signedDivisionWithSaturation
 0x000562fc,clampedDivisionWithBounds
 0x000563e8,saturatingDivision16
+0x0005644c,signedFirstOrderFilter
+0x000564c0,secondOrderFilter
 0x00056594,exponentialMovingAverage
 0x000566cc,dualAxisTableInterpolation
 0x00056c80,ringBufferWriteByte
@@ -128,5 +130,6 @@ address,name
 0x00056d58,memcpyBytes
 0x00056d88,delayMicroseconds
 0x00056e0c,delayMicroseconds2
+0x00056e90,unsignedDivision64by32
 0x000570f0,signedDivision32
 0x000571b0,unsignedDivision32
