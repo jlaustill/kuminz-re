@@ -1,1 +1,33 @@
 enum_name,value,member_name,comment,size
+# J1939 PGN Numbers (lower 16 bits) - transferred from CM550 analysis
+J1939_PGN_LOWER,0xfef1,PGN_65265_CRUISE_VEHICLE_SPEED,Cruise Control/Vehicle Speed (CCVS),2
+J1939_PGN_LOWER,0xfecc,PGN_65228_DM3_CLEAR_DIAG,Diagnostic Message 3 - Clear Diagnostics,2
+J1939_PGN_LOWER,0xfeca,PGN_65226_DM1_ACTIVE_DTC,Diagnostic Message 1 - Active DTCs,2
+J1939_PGN_LOWER,0xfecb,PGN_65227_DM2_PREVIOUS_DTC,Diagnostic Message 2 - Previous DTCs,2
+J1939_PGN_LOWER,0xfecd,PGN_65229_DM4_FREEZE_FRAME,Diagnostic Message 4 - Freeze Frame,2
+J1939_PGN_LOWER,0xfece,PGN_65230_DM5_READINESS,Diagnostic Message 5 - Readiness,2
+J1939_PGN_LOWER,0xfed2,PGN_65234_DM11_CLEAR_ACTIVE,Diagnostic Message 11 - Clear Active,2
+J1939_PGN_LOWER,0xfeed,PGN_65261_ENGINE_HOURS,Engine Hours/Revolutions,2
+J1939_PGN_LOWER,0xfeef,PGN_65263_FLUID_LEVEL_PRESSURE,Engine Fluid Level/Pressure,2
+J1939_PGN_LOWER,0xfef0,PGN_65264_PTO,Power Takeoff Information,2
+J1939_PGN_LOWER,0xfef5,PGN_65269_AMBIENT_CONDITIONS,Ambient Conditions,2
+J1939_PGN_LOWER,0xfef6,PGN_65270_FUEL_ECONOMY,Fuel Economy,2
+J1939_PGN_LOWER,0xfef7,PGN_65271_VEHICLE_ELECTRICAL,Vehicle Electrical Power,2
+J1939_PGN_LOWER,0xffe0,PGN_65504_PROPRIETARY_A,Proprietary A Message,2
+J1939_PGN_LOWER,0xfeeb,PGN_65259_COMPONENT_ID,Component Identification,2
+J1939_PGN_LOWER,0xfeee,PGN_65262_ENGINE_TEMP,Engine Temperature,2
+J1939_PGN_LOWER,0xfeda,PGN_65242_SOFTWARE_ID,Software Identification,2
+J1939_PGN_LOWER,0xfee0,PGN_65248_VEHICLE_DISTANCE,Vehicle Distance,2
+J1939_PGN_LOWER,0xfeec,PGN_65260_VEHICLE_ID,Vehicle Identification,2
+J1939_PGN_LOWER,0xf003,PGN_61443_EEC2,Electronic Engine Controller 2,2
+# EEPROM Magic Values
+EEPROM_MAGIC,0x600d,VALID_MARKER,EEPROM contains valid calibration data,2
+EEPROM_MAGIC,0x2b16,NEEDS_PROGRAMMING,EEPROM needs calibration programming,2
+EEPROM_MAGIC,0x1d0a,FLASH_MODE_MARKER,Flash programming mode marker,2
+# Diagnostic Protocol Service IDs (CalTerm/Insite) - same as CM550
+DIAG_SERVICE_ID,3,SECURED_WRITE,Secured write operations (requires security check),1
+DIAG_SERVICE_ID,4,SYSTEM_CONTROL,System control operations,1
+DIAG_SERVICE_ID,5,MEMORY_ACCESS,Memory read/write operations,1
+DIAG_SERVICE_ID,6,SPECIAL_CONTROL,Special timing/control functions,1
+# Filter Coefficient Init Value
+FILTER_INIT,2,COEFFICIENT_INIT,Standard filter coefficient initialization value,2
