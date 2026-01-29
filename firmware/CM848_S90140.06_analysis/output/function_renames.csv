@@ -18,6 +18,7 @@ address,name
 0x00001ef8,diagSendResponseCode
 0x00001fa4,processDiagnosticCommands
 0x000021d0,initDiagnosticSession
+0x00002384,busWaitCycles
 0x000024a0,waitForBusStable
 0x00002504,systemInitialization
 0x00002694,hardwareInitialization
@@ -27,6 +28,7 @@ address,name
 0x00002f18,initSchedulerTaskTable
 0x00003b48,processTimerInterrupt
 0x00003dac,canTransmitQueuePush
+0x00004720,initCanMailboxFilters
 0x00004eec,can2MailboxTransmitCompleteWrapper
 0x00004f0c,can2MailboxTransmitRangeWrapper
 0x00004f2c,writeCan2ControllerTxMailbox
@@ -34,6 +36,7 @@ address,name
 0x00006580,updateSystemTimers
 0x00006ab8,sensorFaultDetection
 0x00006bac,sensorInputProcessing
+0x00007740,sensorAcquisitionCycle
 0x00007974,systemWatchdogReset
 0x0000b44c,keyOnStatusMonitor
 0x0000b76c,phase_common_processing
@@ -51,6 +54,13 @@ address,name
 0x0000bbe0,periodicTaskGroup9_sensors
 0x0000bc08,periodicTaskGroup10_monitoring
 0x0000bc34,periodicTaskGroup11_communication
+0x0000bc5c,periodicTaskGroup12_calibration1
+0x0000bc80,periodicTaskGroup13_calibration2
+0x0000bca4,periodicTaskGroup14_calibration3
+0x0000bcc8,periodicTaskGroup15_calibration4
+0x0000bce8,periodicTaskGroup16_protection
+0x0000bd08,periodicTaskGroup17_calibration5
+0x0000bd28,periodicTaskGroup18_calibration6
 0x0000bec8,schedulerPhaseDispatcher
 0x0000c0a0,main_loop
 0x0000dc64,oilPressureDeltaCalculation
@@ -69,6 +79,7 @@ address,name
 0x00012eb4,fuelDemandErrorCalculation
 0x00012f60,fuelDemandBlendCalculation
 0x00014528,filterInputValue
+0x00015d2c,fuelDemandFilterUpdate
 0x000164e4,fuelDemandTableLookup
 0x00016724,fuelDemandRpmCorrection
 0x0001702c,fuelDemandBaseCalculation
@@ -80,6 +91,7 @@ address,name
 0x0001782c,fuelDemandFinalCalculation
 0x00017980,fuelDemandCoordinator
 0x00018070,throttlePositionProcessing
+0x0001a980,bothConditionsTrue
 0x0001b624,faultCounterDecrement
 0x0001b69c,faultCounterIncrement
 0x0001c9a0,faultTimeoutHandler
@@ -88,6 +100,7 @@ address,name
 0x0001cdc0,faultCodeLookup
 0x0001dee0,resetFaultStatus
 0x0001ec48,processFaultIncrement
+0x00020c64,processJ1939RxMessage
 0x00021ac0,initUdsServiceHandlers
 0x000220e4,processJ1939DiagnosticRequest
 0x00022674,j1939_handle_pgn_65228_dm3_clear_diag
@@ -125,7 +138,9 @@ address,name
 0x00026cf0,j1939_handle_pgn_65271_vehicle_electrical
 0x00026db4,j1939_handle_pgn_65260_vehicle_id
 0x00026ddc,initPgn65260VehicleIdHandler
+0x00027bc4,governorDroopCalculation
 0x00027cc4,governorSpeedControl
+0x00029f3c,absoluteValue16
 0x0002bd58,j1939_handle_pgn_65264_pto
 0x0002f860,protectionNormalHandler
 0x0002f920,protectionOverloadHandler
@@ -143,15 +158,23 @@ address,name
 0x00032b00,protectionThresholdMonitor
 0x00032efc,protectionStateMachine
 0x000331cc,initProtectionFilterVariables
+0x0003d68c,configurePeriodicTimer
 0x0003da60,j1939QueueTransmitMessage
 0x0003dbc0,j1939ProcessTransmitQueue
 0x00044ae0,evaluateProtectionThresholds
 0x00044bf4,processProtectionConditions
+0x0004aaac,protectionFaultEvaluator
+0x0004bd3c,protectionEnableCheck
+0x0004bd5c,protectionConditionMonitor
+0x0004be4c,sensorCalibrationCheck
 0x0004c070,updateProtectionTimers
+0x0004c188,protectionConfigSelector
 0x0004c2d4,protectionLimitCalculator
 0x0004ef24,setEngineProtectionFault
 0x0004ef74,clearProtectionFault
 0x0004f000,triggerProtectionEvent
+0x0004f050,protectionFlagManager
+0x0004f6f0,clearModuleSyncFlag
 0x00051038,updateEngineSyncStatus
 0x000535e8,processJ1939TxBufferSend
 0x00053720,queueCanReceiveMessage
@@ -163,6 +186,7 @@ address,name
 0x00053b28,writeCanControllerTxMailbox
 0x00053b68,canTransmitInterruptHandler
 0x00053c68,findJ1939MessageEntry
+0x00054e10,miosSetChannelDutyCycle
 0x00054eac,miosChannelDisable
 0x00054eb8,miosChannelEnable
 0x00054ec4,miosReadChannelStatus
