@@ -21,6 +21,10 @@ address,name
 0x00002694,hardwareInitialization
 0x00002970,initCanController
 0x00002c94,registerDiagnosticService
+0x00004eec,can2MailboxTransmitCompleteWrapper
+0x00004f0c,can2MailboxTransmitRangeWrapper
+0x00004f2c,writeCan2ControllerTxMailbox
+0x00004f6c,can2TransmitInterruptHandler
 0x0000b44c,keyOnStatusMonitor
 0x0000b76c,phase_common_processing
 0x0000b7b4,phase_group_a_processing

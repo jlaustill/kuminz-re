@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Jan 29 06:02:11 MST 2026
+// Generated: Thu Jan 29 06:04:01 MST 2026
 
 
 //
@@ -2753,7 +2753,7 @@ void FUN_00003dac(uint param_1,uint param_2,int param_3,undefined1 *param_4)
       }
     }
     else {
-      FUN_00004f2c(&DAT_00307080,_DAT_00302510 & 0xff,&local_28);
+      writeCan2ControllerTxMailbox(&DAT_00307080,_DAT_00302510 & 0xff,&local_28);
     }
     uVar8 = 0;
   }
@@ -3381,10 +3381,10 @@ bool FUN_000049d0(uint param_1)
 
 
 //
-// Function: FUN_00004eec @ 0x00004eec
+// Function: can2MailboxTransmitCompleteWrapper @ 0x00004eec
 //
 
-void FUN_00004eec(void)
+void can2MailboxTransmitCompleteWrapper(void)
 
 {
   FUN_00005064();
@@ -3394,10 +3394,10 @@ void FUN_00004eec(void)
 
 
 //
-// Function: FUN_00004f0c @ 0x00004f0c
+// Function: can2MailboxTransmitRangeWrapper @ 0x00004f0c
 //
 
-void FUN_00004f0c(void)
+void can2MailboxTransmitRangeWrapper(void)
 
 {
   FUN_00005134();
@@ -3407,10 +3407,10 @@ void FUN_00004f0c(void)
 
 
 //
-// Function: FUN_00004f2c @ 0x00004f2c
+// Function: writeCan2ControllerTxMailbox @ 0x00004f2c
 //
 
-void FUN_00004f2c(int param_1,int param_2,int param_3)
+void writeCan2ControllerTxMailbox(int param_1,int param_2,int param_3)
 
 {
   undefined2 *puVar1;
@@ -3434,12 +3434,12 @@ void FUN_00004f2c(int param_1,int param_2,int param_3)
 
 
 //
-// Function: FUN_00004f6c @ 0x00004f6c
+// Function: can2TransmitInterruptHandler @ 0x00004f6c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00004f6c(void)
+void can2TransmitInterruptHandler(void)
 
 {
   uint uVar1;
@@ -3458,10 +3458,10 @@ void FUN_00004f6c(void)
     do {
       _DAT_003070a4 = ~(ushort)(1 << (uVar1 + 0xffff & 0x3f));
       if ((uVar1 & 0xffff) == (uint)_DAT_00302510) {
-        FUN_00004eec(uVar1);
+        can2MailboxTransmitCompleteWrapper(uVar1);
       }
       else {
-        FUN_00004f0c(uVar1 & 0xff);
+        can2MailboxTransmitRangeWrapper(uVar1 & 0xff);
       }
       if (_DAT_003070a4 == 0) {
         uVar1 = 0x11;
@@ -3497,7 +3497,7 @@ void FUN_00005064(void)
     *(undefined1 *)(_DAT_003024da + 1) = 0;
   }
   else {
-    FUN_00004f2c(&DAT_00307080,_DAT_00302510 & 0xff);
+    writeCan2ControllerTxMailbox(&DAT_00307080,_DAT_00302510 & 0xff);
     DAT_003024d6 = '\0';
     _DAT_003024ca = _DAT_003024ca + 0xc;
     if (0x3024ba < _DAT_003024ca) {
@@ -4914,7 +4914,7 @@ void FUN_00006ca4(void)
     FUN_00007974();
     if (DAT_00302877 == 0x81) {
       FUN_00004720();
-      FUN_00004f6c();
+      can2TransmitInterruptHandler();
     }
     FUN_00004720();
     FUN_00006bdc();
