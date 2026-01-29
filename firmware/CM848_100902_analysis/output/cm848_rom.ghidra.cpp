@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Jan 29 05:48:31 MST 2026
+// Generated: Thu Jan 29 05:57:33 MST 2026
 
 
 //
@@ -19772,7 +19772,7 @@ void j1939MessageDispatcher(int param_1)
     _DAT_0040ae18 = _DAT_0040ae18 & 6;
   }
   else {
-    sVar2 = FUN_00053c68(1,cVar1,bVar3);
+    sVar2 = findJ1939MessageEntry(1,cVar1,bVar3);
     if (sVar2 != 0) {
       return;
     }
@@ -19833,7 +19833,7 @@ LAB_00022f1c:
   else if (bVar3 == 1) {
     _DAT_0040ae22 = *(short *)(_DAT_0040ae42 + 4) + 1;
     _DAT_0040adf8 = 1;
-    _DAT_0040adf6 = FUN_00053a4c(*(undefined1 *)(param_1 + 3));
+    _DAT_0040adf6 = lookupJ1939SourceAddressIndex(*(undefined1 *)(param_1 + 3));
     _DAT_0040ae06 = 1;
     _DAT_003fa99f = _DAT_003fa997;
     _DAT_0040ae04 = _DAT_003fa997;
@@ -19845,7 +19845,7 @@ LAB_00022f1c:
   else if (bVar3 == 2) {
     _DAT_0040ae22 = *(short *)(_DAT_0040ae42 + 8) + 1;
     _DAT_0040adf8 = 2;
-    _DAT_0040adf6 = FUN_00053a4c(*(undefined1 *)(param_1 + 3));
+    _DAT_0040adf6 = lookupJ1939SourceAddressIndex(*(undefined1 *)(param_1 + 3));
     _DAT_0040ae06 = 0;
     DAT_003fa9a1 = DAT_003fa999;
     _DAT_0040ae02 = (ushort)DAT_003fa999 * 0x100 + -32000;
@@ -19859,7 +19859,7 @@ LAB_00022f1c:
   else if (bVar3 == 3) {
     _DAT_0040ae22 = *(short *)(_DAT_0040ae42 + 0xc) + 1;
     _DAT_0040adf8 = 3;
-    _DAT_0040adf6 = FUN_00053a4c(*(undefined1 *)(param_1 + 3));
+    _DAT_0040adf6 = lookupJ1939SourceAddressIndex(*(undefined1 *)(param_1 + 3));
     _DAT_0040ae06 = 0;
     _DAT_003fa99f = _DAT_003fa997;
     _DAT_0040ae00 = _DAT_003fa997;
@@ -20206,7 +20206,7 @@ LAB_00023878:
     else {
       _DAT_0040ae26 = *(short *)(_DAT_0040ae46 + 0xe) + 1;
       _DAT_0040ad5a = 2;
-      _DAT_0040ad5c = FUN_00053a4c(*(undefined1 *)(param_1 + 3));
+      _DAT_0040ad5c = lookupJ1939SourceAddressIndex(*(undefined1 *)(param_1 + 3));
       if (_DAT_0040ad64 == 0) {
         _DAT_0040ad62 = 0x7d;
         _DAT_0040ae30 = *(short *)(_DAT_0040ae46 + 0xe) + 1;
@@ -20221,7 +20221,7 @@ LAB_00023878:
   }
   if (bVar2 == 3) {
     _DAT_0040ad5a = 3;
-    _DAT_0040ad5c = FUN_00053a4c(*(undefined1 *)(param_1 + 3));
+    _DAT_0040ad5c = lookupJ1939SourceAddressIndex(*(undefined1 *)(param_1 + 3));
     _DAT_0040ad66 = FUN_0002346c(DAT_003faa6b);
     _DAT_0040ae26 = *(short *)(_DAT_0040ae46 + 0x12) + 1;
     _DAT_0040ae30 = _DAT_0040ae26;
@@ -45953,12 +45953,12 @@ void FUN_000533e0(void)
 
 
 //
-// Function: FUN_000535e8 @ 0x000535e8
+// Function: processJ1939TxBufferSend @ 0x000535e8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000535e8(void)
+void processJ1939TxBufferSend(void)
 
 {
   _DAT_0040ad80 = 1;
@@ -45967,7 +45967,7 @@ void FUN_000535e8(void)
     *(undefined1 *)(_DAT_0040ad38 + 1) = 0;
   }
   else {
-    FUN_00053b28(&DAT_00307080,_DAT_0040ad68 & 0xff);
+    writeCanControllerTxMailbox(&DAT_00307080,_DAT_0040ad68 & 0xff);
     DAT_0040ad34 = '\0';
     _DAT_0040ad28 = _DAT_0040ad28 + 0xc;
     if (0x40ad18 < _DAT_0040ad28) {
@@ -45984,12 +45984,12 @@ void FUN_000535e8(void)
 
 
 //
-// Function: FUN_00053720 @ 0x00053720
+// Function: queueCanReceiveMessage @ 0x00053720
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00053720(int param_1)
+void queueCanReceiveMessage(int param_1)
 
 {
   uint *puVar1;
@@ -46039,12 +46039,12 @@ void FUN_00053720(int param_1)
 
 
 //
-// Function: FUN_00053858 @ 0x00053858
+// Function: sendJ1939SingleFrame @ 0x00053858
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00053858(uint param_1,uint param_2,int param_3,undefined1 *param_4)
+void sendJ1939SingleFrame(uint param_1,uint param_2,int param_3,undefined1 *param_4)
 
 {
   undefined1 *puVar1;
@@ -46105,7 +46105,7 @@ void FUN_00053858(uint param_1,uint param_2,int param_3,undefined1 *param_4)
       }
     }
     else {
-      FUN_00053b28(&DAT_00307080,_DAT_0040ad68 & 0xff,&local_18);
+      writeCanControllerTxMailbox(&DAT_00307080,_DAT_0040ad68 & 0xff,&local_18);
     }
     uVar8 = 0;
   }
@@ -46123,8 +46123,9 @@ void sendJ1939MultiFrame(undefined4 *param_1)
 
 {
   if (*(ushort *)(param_1 + 1) < 9) {
-    FUN_00053858(*param_1,*(ushort *)(param_1 + 1),*(undefined4 *)((int)param_1 + 6),
-                 *(undefined4 *)((int)param_1 + 10));
+    sendJ1939SingleFrame
+              (*param_1,*(ushort *)(param_1 + 1),*(undefined4 *)((int)param_1 + 6),
+               *(undefined4 *)((int)param_1 + 10));
   }
   else {
     func_0x0050c8ec(param_1);
@@ -46135,10 +46136,10 @@ void sendJ1939MultiFrame(undefined4 *param_1)
 
 
 //
-// Function: FUN_00053a4c @ 0x00053a4c
+// Function: lookupJ1939SourceAddressIndex @ 0x00053a4c
 //
 
-undefined4 FUN_00053a4c(uint param_1)
+undefined4 lookupJ1939SourceAddressIndex(uint param_1)
 
 {
   undefined4 uVar1;
@@ -46161,16 +46162,16 @@ undefined4 FUN_00053a4c(uint param_1)
 
 
 //
-// Function: FUN_00053aa8 @ 0x00053aa8
+// Function: handleCanMailboxTransmitComplete @ 0x00053aa8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00053aa8(uint param_1)
+void handleCanMailboxTransmitComplete(uint param_1)
 
 {
   if (_DAT_0040ad68 == param_1) {
-    FUN_000535e8();
+    processJ1939TxBufferSend();
   }
   else {
     FUN_00026f78();
@@ -46181,16 +46182,16 @@ void FUN_00053aa8(uint param_1)
 
 
 //
-// Function: FUN_00053ae0 @ 0x00053ae0
+// Function: handleCanMailboxTransmitRange @ 0x00053ae0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00053ae0(int param_1)
+void handleCanMailboxTransmitRange(int param_1)
 
 {
   if (((int)(uint)_DAT_0040ad68 < param_1) && (param_1 <= (int)(uint)_DAT_0040ad6a)) {
-    FUN_00053720();
+    queueCanReceiveMessage();
   }
   else {
     FUN_00026f7c();
@@ -46201,10 +46202,10 @@ void FUN_00053ae0(int param_1)
 
 
 //
-// Function: FUN_00053b28 @ 0x00053b28
+// Function: writeCanControllerTxMailbox @ 0x00053b28
 //
 
-void FUN_00053b28(int param_1,int param_2,int param_3)
+void writeCanControllerTxMailbox(int param_1,int param_2,int param_3)
 
 {
   undefined2 *puVar1;
@@ -46228,12 +46229,12 @@ void FUN_00053b28(int param_1,int param_2,int param_3)
 
 
 //
-// Function: FUN_00053b68 @ 0x00053b68
+// Function: canTransmitInterruptHandler @ 0x00053b68
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00053b68(void)
+void canTransmitInterruptHandler(void)
 
 {
   uint uVar1;
@@ -46252,10 +46253,10 @@ void FUN_00053b68(void)
     do {
       _DAT_003070a4 = ~(ushort)(1 << (uVar1 + 0xffff & 0x3f));
       if ((uVar1 & 0xffff) == (uint)_DAT_0040ad68) {
-        FUN_00053aa8(uVar1 & 0xff);
+        handleCanMailboxTransmitComplete(uVar1 & 0xff);
       }
       else {
-        FUN_00053ae0(uVar1 & 0xff);
+        handleCanMailboxTransmitRange(uVar1 & 0xff);
       }
       if (_DAT_003070a4 == 0) {
         uVar1 = 0x11;
@@ -46302,10 +46303,10 @@ void FUN_00053c64(void)
 
 
 //
-// Function: FUN_00053c68 @ 0x00053c68
+// Function: findJ1939MessageEntry @ 0x00053c68
 //
 
-undefined4 FUN_00053c68(int param_1,uint param_2,int param_3)
+undefined4 findJ1939MessageEntry(int param_1,uint param_2,int param_3)
 
 {
   byte bVar1;
