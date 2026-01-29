@@ -1,0 +1,135 @@
+// Setup Memory Map Script for CM848 (PowerPC)
+// Adds RAM and EEPROM memory regions with data from live ECU dumps
+// PowerPC memory layout for CM848 ECU
+// @author CM848_100902_analysis
+// @category Analysis
+// @keybinding
+// @menupath
+// @toolbar
+
+import java.io.File;
+import java.io.FileInputStream;
+
+import ghidra.app.script.GhidraScript;
+import ghidra.program.model.address.Address;
+import ghidra.program.model.mem.Memory;
+import ghidra.program.model.mem.MemoryBlock;
+
+public class SetupMemoryMapCM848 extends GhidraScript {
+
+    // CM848 PowerPC Memory Map
+    // Note: CM848 has continuous RAM (no extended region like CM550)
+    private static final long RAM_BASE = 0x3FA000L;      // 280 KB RAM
+    private static final long EEPROM_BASE = 0x1000000L;  // 8 KB EEPROM (same base as CM550)
+
+    @Override
+    public void run() throws Exception {
+        println("======================================================================");
+        println("SETUP MEMORY MAP - CM848 PowerPC");
+        println("======================================================================");
+        println("");
+
+        // Get firmware directory from arguments or use default
+        String[] args = getScriptArgs();
+        String firmwareDir;
+
+        if (args.length > 0) {
+            firmwareDir = args[0];
+        } else {
+            firmwareDir = getProjectRootFolder().getProjectLocator().getProjectDir() +
+                    "/../originals";
+        }
+
+        Memory memory = currentProgram.getMemory();
+
+        // Add RAM region (CM848 has 280KB continuous RAM)
+        String ramFile = firmwareDir + "/cm848_ram.bin";
+        if (new File(ramFile).exists()) {
+            println("[1/2] Adding RAM region...");
+            addMemoryRegion(memory, "RAM", RAM_BASE, ramFile, true, true, true);
+        } else {
+            println("[1/2] SKIPPED: RAM file not found: " + ramFile);
+        }
+
+        // Add EEPROM region (CM848 has 8KB EEPROM)
+        String eepromFile = firmwareDir + "/cm848_eeprom.bin";
+        if (new File(eepromFile).exists()) {
+            println("[2/2] Adding EEPROM region...");
+            addMemoryRegion(memory, "EEPROM", EEPROM_BASE, eepromFile, true, true, false);
+        } else {
+            println("[2/2] SKIPPED: EEPROM file not found: " + eepromFile);
+        }
+
+        println("");
+        println("======================================================================");
+        println("MEMORY MAP COMPLETE");
+        println("======================================================================");
+        printMemoryMap(memory);
+    }
+
+    private void addMemoryRegion(Memory memory, String name, long baseAddress,
+                                  String filePath, boolean read, boolean write, boolean execute)
+            throws Exception {
+
+        Address addr = toAddr(baseAddress);
+
+        // Check if block already exists
+        MemoryBlock existingBlock = memory.getBlock(addr);
+        if (existingBlock != null) {
+            println("  Block already exists at " + String.format("0x%08x", baseAddress) +
+                    " (" + existingBlock.getName() + ")");
+            println("  Removing existing block...");
+            memory.removeBlock(existingBlock, monitor);
+        }
+
+        // Read file data
+        File file = new File(filePath);
+        byte[] data = new byte[(int) file.length()];
+
+        try (FileInputStream fis = new FileInputStream(file)) {
+            fis.read(data);
+        }
+
+        // Create memory block
+        MemoryBlock block = memory.createInitializedBlock(
+                name,
+                addr,
+                data.length,
+                (byte) 0,
+                monitor,
+                false
+        );
+
+        // Set permissions
+        block.setRead(read);
+        block.setWrite(write);
+        block.setExecute(execute);
+
+        // Copy data into block
+        memory.setBytes(addr, data);
+
+        println("  Created " + name + " block:");
+        println("    Address: " + String.format("0x%08x - 0x%08x", baseAddress, baseAddress + data.length - 1));
+        println("    Size:    " + data.length + " bytes (" + (data.length / 1024) + " KB)");
+        println("    Perms:   " + (read ? "r" : "-") + (write ? "w" : "-") + (execute ? "x" : "-"));
+    }
+
+    private void printMemoryMap(Memory memory) {
+        println("");
+        println("Current Memory Map:");
+        println("-------------------");
+
+        for (MemoryBlock block : memory.getBlocks()) {
+            String perms = (block.isRead() ? "r" : "-") +
+                          (block.isWrite() ? "w" : "-") +
+                          (block.isExecute() ? "x" : "-");
+
+            println(String.format("  %-10s %s  0x%08x - 0x%08x  (%d KB)",
+                    block.getName(),
+                    perms,
+                    block.getStart().getOffset(),
+                    block.getEnd().getOffset(),
+                    block.getSize() / 1024));
+        }
+    }
+}

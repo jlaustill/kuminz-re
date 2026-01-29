@@ -31,8 +31,9 @@ find_ghidra_headless() {
 
 GHIDRA_HEADLESS="$(find_ghidra_headless)"
 
-# MC68336 processor configuration
-PROCESSOR="68000:BE:32:default"
+# Processor configuration (can be overridden by firmware-specific wrapper)
+# Default: MC68336 for CM550 ECUs; CM848 uses PowerPC
+PROCESSOR="${PROCESSOR:-68000:BE:32:default}"
 
 # Colors for output
 RED='\033[0;31m'
