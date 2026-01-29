@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Jan 29 11:13:05 MST 2026
+// Generated: Thu Jan 29 11:44:44 MST 2026
 
 
 //
@@ -5697,7 +5697,7 @@ void phase_common_processing(void)
   injectorTimingCalculation();
   sensorChannel7_init();
   func_0x005011c4();
-  FUN_0001b37c();
+  processFaultAndFuelDemand();
   func_0x0051d70c();
   FUN_0002d600();
   processFaultConditionFlags();
@@ -5725,10 +5725,10 @@ void phase_group_a_processing(void)
   func_0x00538d3c();
   func_0x005266fc();
   sensorChannel4_init();
-  FUN_00013a80();
+  processLoadNormalizerSelection();
   sensorChannel10_throttleInit();
   fuelControlMainCalculation();
-  FUN_00018cfc();
+  processSensorFaultDetection();
   sensorChannel6_init();
   sensorChannel5_init();
   processSensorLookupTable1();
@@ -5740,14 +5740,14 @@ void phase_group_a_processing(void)
   func_0x0051cad4();
   func_0x00510520();
   processEngineLoadFilters();
-  FUN_000107ec();
-  FUN_00017f50();
+  selectTurboModeParameters();
+  calculateFuelFlowWithMode();
   func_0x00509848();
   processFaultStatusCalculation();
   func_0x00506b34();
-  FUN_00010d3c();
-  FUN_00011290();
-  FUN_0001231c();
+  calculateTurboRatioWithMode();
+  processLoadAdjustment();
+  turboCompensationWrapper();
   return;
 }
 
@@ -5767,7 +5767,7 @@ void phase_group_b_processing(void)
   calculateEngineTimingOffset();
   processEnginePositionDiagnostics();
   calculateTpuTimingPeriod();
-  FUN_000191a0();
+  updateSensorDiagnosticFlags();
   processJ1939DiagnosticMessages();
   processJ1939ReceivedMessages();
   processCoolantCalEntries();
@@ -5785,14 +5785,14 @@ void phase_group_b_processing(void)
   processCalibrationTablesMain();
   processProtectionStateMachine();
   processEngineLoadCalculation();
-  FUN_00013dc8();
+  calculateThrottleFiltered();
   func_0x005071b8();
   func_0x0050f4c0();
   func_0x0050ee44();
   func_0x0051027c();
-  FUN_00018ac0();
-  FUN_000118f8();
-  FUN_00010874();
+  processFaultProtection();
+  processLoadGainCalculations();
+  selectTemperatureTrimValue();
   checkProtectionFaultConditions();
   return;
 }
@@ -5811,10 +5811,10 @@ void periodicTaskGroup0_fuelFinal(void)
   func_0x00510ad4();
   sensorChannel13_init();
   injectorPulseWidthCalc();
-  FUN_00017d54();
+  selectFuelFlowMode();
   updateSensorDiagnosticFlags();
   setEngineRpmFromCalibration();
-  FUN_0001ef88();
+  calculateFuelDemandLimitOutput();
   func_0x00503964();
   sensorChannel11_init();
   sensorChannel9_init();
@@ -5828,13 +5828,13 @@ void periodicTaskGroup0_fuelFinal(void)
   updateEngineCycleOutputs();
   FUN_0002c4fc();
   processEngineRpmDerivative();
-  FUN_0001eae8();
+  calculateFuelDemandChangeRate();
   processFaultPendingFlags();
   processOperatingModeFlags();
   processFuelDemandEnableFlag();
   fuelDemandFinalCalculation();
   FUN_0002c6c4();
-  FUN_0001c28c();
+  processColdStartMainLoop();
   return;
 }
 
@@ -5848,13 +5848,13 @@ void periodicTaskGroup1_sensorProcessing(void)
 
 {
   FUN_00029c98();
-  FUN_00020500();
+  calculateProtectionActivationDelay();
   func_0x00504130();
   func_0x0050eaa8();
   resetEngineOperatingMode();
   temperatureSensorProcessing();
   temperatureBasedFuelTrim();
-  FUN_0001e830();
+  updateEngineTimingCompensation();
   FUN_0002ac44();
   FUN_0002ab2c();
   FUN_0002bbe8();
@@ -5868,7 +5868,7 @@ void periodicTaskGroup1_sensorProcessing(void)
   processEngineRpmDiagnostic();
   setFuelDemandActiveFlag();
   updateSensorBufferValues();
-  FUN_0001d9b8();
+  diagnosticMainProcessor();
   func_0x00526560();
   func_0x00516c18();
   return;
@@ -5885,31 +5885,31 @@ void periodicTaskGroup2_controlLoop(void)
 {
   checkDiagnosticFuelOverride();
   FUN_0002dc40();
-  FUN_00013294();
-  FUN_00017eb8();
+  calculateBoostTorqueOffset();
+  calculateOilPressureProtection();
   processSpeedControlLimits();
   func_0x0051193c();
   processTorqueLimitConfig();
-  FUN_0001fd94();
-  FUN_0001fa20();
+  selectTorqueLimit();
+  selectSensorRawChannels();
   FUN_0001f40c();
   processSystemStatusLimits();
   processProtectionRampControl();
-  FUN_0001f17c();
+  calculateFuelDemandWithTrim();
   fuelDemandBlendCalculation();
-  FUN_0001c114();
-  FUN_0001bf44();
-  FUN_0001c1a4();
-  FUN_0001b99c();
+  coldStartRpmTableLookup();
+  processColdStartAdjustment();
+  coldStartFuelFactorLookup();
+  calculateColdStartFuelAdjust();
   calculateFuelDemandLimit();
-  FUN_0001e5a4();
+  processProtectionSelection();
   processLoadThrottle();
   calculateFuel2DTableLookup();
   calculateFuelDemandOffsetTrim();
   func_0x0050e610();
-  FUN_000130dc();
-  FUN_000164ac();
-  FUN_00016f9c();
+  calculateBoostPressureOffset();
+  processFuelDemandCalculations();
+  storeFuelLimitValues();
   return;
 }
 
@@ -5925,11 +5925,11 @@ void periodicTaskGroup3_auxiliaryControl(void)
   FUN_0002c114();
   func_0x005039b4();
   func_0x00506e28();
-  FUN_0001e870();
-  FUN_0001bb48();
+  processTorqueLimitState();
+  calculateColdStartRpmAdjust();
   FUN_00029e50();
-  FUN_00014498();
-  FUN_0001e22c();
+  processFuelLimitCalculations();
+  selectFuelDemandSource();
   func_0x00529f58();
   updateEngineStatusFlags();
   func_0x005279d8();
@@ -5946,8 +5946,8 @@ void periodicTaskGroup3_auxiliaryControl(void)
   FUN_0002bf44();
   func_0x00508e78();
   func_0x00503b54();
-  FUN_00013aec();
-  FUN_00017b54();
+  processBoostProtectionMode();
+  storeFuelDemandPreviousValues();
   processFuelRateConfig();
   return;
 }
@@ -6275,7 +6275,7 @@ void periodicTaskGroup31_calibration13(void)
   func_0x0050dba8();
   func_0x00518538();
   func_0x00536e4c();
-  FUN_00010b04();
+  calculateTurboRatios();
   return;
 }
 
@@ -6411,9 +6411,9 @@ void periodicTaskGroup38_calibration17(void)
 void periodicTaskGroup19_diagnostics(void)
 
 {
-  FUN_00021cd4();
-  FUN_00022220();
-  FUN_0001a9a8();
+  updateProtectionDiagnostics();
+  updateGovernorTimers();
+  processFuelDemandFaultConditions();
   return;
 }
 
@@ -6571,7 +6571,7 @@ void main_loop(void)
     periodicTaskGroup8_outputs();
     periodicTaskGroup16_protection();
     periodicTaskGroup29_calibration11();
-    FUN_0000e518();
+    calculateFuelTrimOutput();
     _main_loop_phase_index = 5;
     break;
   case 5:
@@ -6638,7 +6638,7 @@ void main_loop(void)
     periodicTaskGroup7_timing();
     periodicTaskGroup13_calibration2();
     periodicTaskGroup36_calibration15();
-    FUN_0001bfc8();
+    initColdStartTablePointers();
     _main_loop_phase_index = 0xc;
     break;
   case 0xc:
@@ -6648,7 +6648,7 @@ void main_loop(void)
     periodicTaskGroup8_outputs();
     periodicTaskGroup14_calibration3();
     periodicTaskGroup37_calibration16();
-    FUN_0001c080();
+    processColdStartStateMachine();
     _main_loop_phase_index = 0xd;
     break;
   case 0xd:
@@ -6717,7 +6717,7 @@ void main_loop(void)
     periodicTaskGroup3_auxiliaryControl();
     periodicTaskGroup7_timing();
     periodicTaskGroup24_outputs();
-    FUN_00016774();
+    lookupProtectionFuelDemand();
     _main_loop_phase_index = 0x14;
     break;
   case 0x14:
@@ -6833,7 +6833,7 @@ void main_loop(void)
     periodicTaskGroup11_communication();
     periodicTaskGroup13_calibration2();
     periodicTaskGroup36_calibration15();
-    FUN_00019390();
+    updateEngineModeFromSensor();
     _main_loop_phase_index = 0x20;
     break;
   case 0x20:
@@ -7688,12 +7688,12 @@ undefined4 checkFuelRateCondition(void)
 
 
 //
-// Function: FUN_0000e248 @ 0x0000e248
+// Function: checkPressureFuelDelayA @ 0x0000e248
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-undefined4 FUN_0000e248(void)
+undefined4 checkPressureFuelDelayA(void)
 
 {
   undefined4 uVar1;
@@ -7717,12 +7717,12 @@ undefined4 FUN_0000e248(void)
 
 
 //
-// Function: FUN_0000e2cc @ 0x0000e2cc
+// Function: checkPressureFuelDelayB @ 0x0000e2cc
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-undefined4 FUN_0000e2cc(void)
+undefined4 checkPressureFuelDelayB(void)
 
 {
   undefined4 uVar1;
@@ -7746,12 +7746,12 @@ undefined4 FUN_0000e2cc(void)
 
 
 //
-// Function: FUN_0000e360 @ 0x0000e360
+// Function: checkPressureHysteresis @ 0x0000e360
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-int FUN_0000e360(void)
+int checkPressureHysteresis(void)
 
 {
   int iVar1;
@@ -7771,12 +7771,12 @@ int FUN_0000e360(void)
 
 
 //
-// Function: FUN_0000e3a4 @ 0x0000e3a4
+// Function: processFuelPressureConditions @ 0x0000e3a4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0000e3a4(void)
+void processFuelPressureConditions(void)
 
 {
   short sVar1;
@@ -7784,11 +7784,11 @@ void FUN_0000e3a4(void)
   
   uVar2 = 0;
   if ((_DAT_003fd59c & 0x400) != 0) {
-    _DAT_0040a174 = FUN_0000e248();
+    _DAT_0040a174 = checkPressureFuelDelayA();
     uVar2 = _DAT_0040a174;
   }
   if ((_DAT_003fd59c & 0x800) != 0) {
-    _DAT_0040a16e = FUN_0000e2cc();
+    _DAT_0040a16e = checkPressureFuelDelayB();
     uVar2 = uVar2 | _DAT_0040a16e;
   }
   if ((_DAT_003fd59c & 0x1000) != 0) {
@@ -7800,7 +7800,7 @@ void FUN_0000e3a4(void)
     uVar2 = uVar2 | _DAT_0040a172;
   }
   if ((_DAT_003fd59c & 0x8000) != 0) {
-    _DAT_0040a17a = FUN_0000e360();
+    _DAT_0040a17a = checkPressureHysteresis();
     uVar2 = uVar2 | _DAT_0040a17a;
   }
   if (uVar2 == 0) {
@@ -7825,12 +7825,12 @@ void FUN_0000e3a4(void)
 
 
 //
-// Function: FUN_0000e518 @ 0x0000e518
+// Function: calculateFuelTrimOutput @ 0x0000e518
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0000e518(void)
+void calculateFuelTrimOutput(void)
 
 {
   ushort *puVar1;
@@ -7849,7 +7849,7 @@ void FUN_0000e518(void)
     _DAT_003fa0d0 = 0;
   }
   else {
-    FUN_0000e3a4();
+    processFuelPressureConditions();
   }
   puVar1 = (ushort *)&DAT_003fd59c;
   if (_DAT_0040a87d == 0) {
@@ -7900,12 +7900,12 @@ void FUN_0000e518(void)
 
 
 //
-// Function: FUN_0000e748 @ 0x0000e748
+// Function: initFuelPressureVariables @ 0x0000e748
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0000e748(void)
+void initFuelPressureVariables(void)
 
 {
   _DAT_003fa0d6 = 0;
@@ -7954,12 +7954,12 @@ void temperatureBasedFuelTrim(void)
 
 
 //
-// Function: FUN_0000e8ac @ 0x0000e8ac
+// Function: initTemperatureTrimTableSizes @ 0x0000e8ac
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0000e8ac(void)
+void initTemperatureTrimTableSizes(void)
 
 {
   _intake_temp_lookup_coeff = 2;
@@ -7970,12 +7970,12 @@ void FUN_0000e8ac(void)
 
 
 //
-// Function: FUN_0000e8cc @ 0x0000e8cc
+// Function: initTemperatureTrimCoeff @ 0x0000e8cc
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0000e8cc(void)
+void initTemperatureTrimCoeff(void)
 
 {
   _DAT_003fa0f0 = 2;
@@ -7985,12 +7985,12 @@ void FUN_0000e8cc(void)
 
 
 //
-// Function: FUN_0000e8dc @ 0x0000e8dc
+// Function: fuelTimingRateLimitedBlend @ 0x0000e8dc
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0000e8dc(void)
+void fuelTimingRateLimitedBlend(void)
 
 {
   uint uVar1;
@@ -8158,7 +8158,7 @@ void temperatureSensorProcessing(void)
     }
   }
   if (_engine_operating_mode == 7) {
-    FUN_0000e8dc();
+    fuelTimingRateLimitedBlend();
     if ((((((protection_system_enable_bits & 8) == 0) && ((protection_mode_bits & 4) == 0)) ||
          (_DAT_003ff69a == 0)) &&
         ((_DAT_003ff698 <= _DAT_0040a2ca && ((_DAT_0040a276 == 0 || (_protection_config_word != 0)))
@@ -8956,12 +8956,12 @@ void fatalErrorHalt(void)
 
 
 //
-// Function: FUN_000107ec @ 0x000107ec
+// Function: selectTurboModeParameters @ 0x000107ec
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000107ec(void)
+void selectTurboModeParameters(void)
 
 {
   _DAT_0040a350 = _DAT_0040be1c;
@@ -8979,12 +8979,12 @@ void FUN_000107ec(void)
 
 
 //
-// Function: FUN_0001083c @ 0x0001083c
+// Function: updateTurboModeState @ 0x0001083c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001083c(void)
+void updateTurboModeState(void)
 
 {
   if ((_DAT_0040be1c == 0) || (_DAT_0040be1c == 1)) {
@@ -8999,12 +8999,12 @@ void FUN_0001083c(void)
 
 
 //
-// Function: FUN_00010874 @ 0x00010874
+// Function: selectTemperatureTrimValue @ 0x00010874
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00010874(void)
+void selectTemperatureTrimValue(void)
 
 {
   _DAT_0040a376 = _DAT_0040a370;
@@ -9017,12 +9017,12 @@ void FUN_00010874(void)
 
 
 //
-// Function: FUN_000108a4 @ 0x000108a4
+// Function: calculateTurboRatioA @ 0x000108a4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000108a4(void)
+void calculateTurboRatioA(void)
 
 {
   short sVar1;
@@ -9056,12 +9056,12 @@ void FUN_000108a4(void)
 
 
 //
-// Function: FUN_000109c8 @ 0x000109c8
+// Function: calculateTurboRatioB @ 0x000109c8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000109c8(void)
+void calculateTurboRatioB(void)
 
 {
   short sVar1;
@@ -9099,26 +9099,26 @@ void FUN_000109c8(void)
 
 
 //
-// Function: FUN_00010b04 @ 0x00010b04
+// Function: calculateTurboRatios @ 0x00010b04
 //
 
-void FUN_00010b04(void)
+void calculateTurboRatios(void)
 
 {
-  FUN_000108a4();
-  FUN_000109c8();
+  calculateTurboRatioA();
+  calculateTurboRatioB();
   return;
 }
 
 
 
 //
-// Function: FUN_00010b28 @ 0x00010b28
+// Function: calculateTurboBlendOutput @ 0x00010b28
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00010b28(void)
+void calculateTurboBlendOutput(void)
 
 {
   int iVar1;
@@ -9194,12 +9194,12 @@ void FUN_00010b28(void)
 
 
 //
-// Function: FUN_00010d3c @ 0x00010d3c
+// Function: calculateTurboRatioWithMode @ 0x00010d3c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00010d3c(void)
+void calculateTurboRatioWithMode(void)
 
 {
   ushort uVar1;
@@ -9237,19 +9237,19 @@ void FUN_00010d3c(void)
   if (_DAT_0040afc2 != 0) {
     _DAT_0040a38a = 0;
   }
-  FUN_00010b28();
+  calculateTurboBlendOutput();
   return;
 }
 
 
 
 //
-// Function: FUN_00010ed0 @ 0x00010ed0
+// Function: initTurboRatioVariables @ 0x00010ed0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00010ed0(void)
+void initTurboRatioVariables(void)
 
 {
   _DAT_0040a37e = 0;
@@ -9272,12 +9272,12 @@ void FUN_00010ed0(void)
 
 
 //
-// Function: FUN_00010f68 @ 0x00010f68
+// Function: calculateLoadBasedAdjustment @ 0x00010f68
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00010f68(void)
+void calculateLoadBasedAdjustment(void)
 
 {
   uint uVar1;
@@ -9326,12 +9326,12 @@ LAB_0001101c:
 
 
 //
-// Function: FUN_000110bc @ 0x000110bc
+// Function: lookupRpmLoadTable @ 0x000110bc
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-ushort FUN_000110bc(void)
+ushort lookupRpmLoadTable(void)
 
 {
   ushort uVar1;
@@ -9353,12 +9353,12 @@ ushort FUN_000110bc(void)
 
 
 //
-// Function: FUN_00011170 @ 0x00011170
+// Function: calculateLoadAdjustmentFactors @ 0x00011170
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00011170(void)
+void calculateLoadAdjustmentFactors(void)
 
 {
   uint uVar1;
@@ -9380,12 +9380,12 @@ void FUN_00011170(void)
 
 
 //
-// Function: FUN_00011290 @ 0x00011290
+// Function: processLoadAdjustment @ 0x00011290
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00011290(void)
+void processLoadAdjustment(void)
 
 {
   uint uVar1;
@@ -9397,21 +9397,21 @@ void FUN_00011290(void)
   if (_DAT_0040a37a <= _DAT_003ff738) {
     _DAT_0040a39c = 0;
   }
-  FUN_00010f68();
-  _DAT_0040a398 = FUN_000110bc();
-  FUN_00011170();
+  calculateLoadBasedAdjustment();
+  _DAT_0040a398 = lookupRpmLoadTable();
+  calculateLoadAdjustmentFactors();
   return;
 }
 
 
 
 //
-// Function: FUN_00011324 @ 0x00011324
+// Function: initLoadAdjustmentTableSizes @ 0x00011324
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00011324(void)
+void initLoadAdjustmentTableSizes(void)
 
 {
   _DAT_003fa150 = 2;
@@ -9424,12 +9424,12 @@ void FUN_00011324(void)
 
 
 //
-// Function: FUN_0001134c @ 0x0001134c
+// Function: calculateLoadGainValues @ 0x0001134c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001134c(void)
+void calculateLoadGainValues(void)
 
 {
   uint uVar1;
@@ -9452,12 +9452,12 @@ void FUN_0001134c(void)
 
 
 //
-// Function: FUN_00011410 @ 0x00011410
+// Function: selectLoadAdjustmentLimits @ 0x00011410
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00011410(void)
+void selectLoadAdjustmentLimits(void)
 
 {
   if (_DAT_0040a37a < _DAT_003ff736) {
@@ -9490,12 +9490,12 @@ void FUN_00011410(void)
 
 
 //
-// Function: FUN_000114dc @ 0x000114dc
+// Function: calculateLoadCompensation @ 0x000114dc
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000114dc(void)
+void calculateLoadCompensation(void)
 
 {
   uint uVar1;
@@ -9525,12 +9525,12 @@ void FUN_000114dc(void)
 
 
 //
-// Function: FUN_000115cc @ 0x000115cc
+// Function: calculateLoadIntegral @ 0x000115cc
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000115cc(void)
+void calculateLoadIntegral(void)
 
 {
   bool bVar1;
@@ -9646,28 +9646,28 @@ LAB_00011838:
 
 
 //
-// Function: FUN_000118f8 @ 0x000118f8
+// Function: processLoadGainCalculations @ 0x000118f8
 //
 
-void FUN_000118f8(void)
+void processLoadGainCalculations(void)
 
 {
-  FUN_0001134c();
-  FUN_00011410();
-  FUN_000114dc();
-  FUN_000115cc();
+  calculateLoadGainValues();
+  selectLoadAdjustmentLimits();
+  calculateLoadCompensation();
+  calculateLoadIntegral();
   return;
 }
 
 
 
 //
-// Function: FUN_00011924 @ 0x00011924
+// Function: initLoadGainVariables @ 0x00011924
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00011924(void)
+void initLoadGainVariables(void)
 
 {
   _DAT_0040a3a2 = 0;
@@ -9687,10 +9687,11 @@ void FUN_00011924(void)
 
 
 //
-// Function: FUN_0001198c @ 0x0001198c
+// Function: calculateRateLimitedValue @ 0x0001198c
 //
 
-undefined4 FUN_0001198c(uint param_1,uint param_2,uint param_3,uint param_4,uint param_5)
+undefined4
+calculateRateLimitedValue(uint param_1,uint param_2,uint param_3,uint param_4,uint param_5)
 
 {
   short sVar1;
@@ -9730,12 +9731,12 @@ undefined4 FUN_0001198c(uint param_1,uint param_2,uint param_3,uint param_4,uint
 
 
 //
-// Function: FUN_00011a4c @ 0x00011a4c
+// Function: checkSpeedBandCondition @ 0x00011a4c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00011a4c(void)
+void checkSpeedBandCondition(void)
 
 {
   if ((_speed_current_value < _speed_target_setpoint) || (_DAT_003fa1a4 < 0)) {
@@ -9755,12 +9756,12 @@ void FUN_00011a4c(void)
 
 
 //
-// Function: FUN_00011ab4 @ 0x00011ab4
+// Function: calculateTurboCompensation @ 0x00011ab4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00011ab4(void)
+void calculateTurboCompensation(void)
 
 {
   short sVar2;
@@ -9935,7 +9936,8 @@ void FUN_00011ab4(void)
     uVar8 = ((int)_speed_target_setpoint - uVar8 & 0xffff) * (uint)_DAT_003ffca2;
     _DAT_003fa1a6 = ((int)uVar8 >> 3) + (uint)((int)uVar8 < 0 && (uVar8 & 7) != 0);
   }
-  uVar1 = FUN_0001198c(_DAT_003ffca0,_DAT_003fa190,_DAT_003fa1a6,(int)_DAT_0040a3cc,100);
+  uVar1 = calculateRateLimitedValue
+                    (_DAT_003ffca0,_DAT_003fa190,_DAT_003fa1a6,(int)_DAT_0040a3cc,100);
   local_28 = (undefined2)((uint)uVar1 >> 0x10);
   _DAT_003fa190 = local_28;
   sStack_26 = (short)uVar1;
@@ -9962,7 +9964,7 @@ void FUN_00011ab4(void)
     sVar2 = 0x7fff;
   }
   _DAT_003fa1a4 = sVar2;
-  FUN_00011a4c();
+  checkSpeedBandCondition();
   if (_DAT_003fd7dc != 0) {
     _DAT_003fa17a = _DAT_0040a3c2 * -0x10000;
   }
@@ -10009,25 +10011,25 @@ void FUN_00011ab4(void)
 
 
 //
-// Function: FUN_0001231c @ 0x0001231c
+// Function: turboCompensationWrapper @ 0x0001231c
 //
 
-void FUN_0001231c(void)
+void turboCompensationWrapper(void)
 
 {
-  FUN_00011ab4();
+  calculateTurboCompensation();
   return;
 }
 
 
 
 //
-// Function: FUN_0001233c @ 0x0001233c
+// Function: initTurboCompensationVariables @ 0x0001233c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001233c(void)
+void initTurboCompensationVariables(void)
 
 {
   _DAT_003fa17a = 0;
@@ -10053,10 +10055,10 @@ void FUN_0001233c(void)
 
 
 //
-// Function: FUN_000123dc @ 0x000123dc
+// Function: circularBufferWriteUnsigned @ 0x000123dc
 //
 
-undefined2 FUN_000123dc(int param_1,undefined2 param_2,int param_3)
+undefined2 circularBufferWriteUnsigned(int param_1,undefined2 param_2,int param_3)
 
 {
   byte bVar1;
@@ -10070,10 +10072,10 @@ undefined2 FUN_000123dc(int param_1,undefined2 param_2,int param_3)
 
 
 //
-// Function: FUN_00012404 @ 0x00012404
+// Function: circularBufferWriteSigned @ 0x00012404
 //
 
-int FUN_00012404(int param_1,undefined2 param_2,int param_3)
+int circularBufferWriteSigned(int param_1,undefined2 param_2,int param_3)
 
 {
   byte bVar1;
@@ -10087,12 +10089,12 @@ int FUN_00012404(int param_1,undefined2 param_2,int param_3)
 
 
 //
-// Function: FUN_0001242c @ 0x0001242c
+// Function: calculateLoadBasedFuelTrim @ 0x0001242c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001242c(void)
+void calculateLoadBasedFuelTrim(void)
 
 {
   undefined2 uVar1;
@@ -10163,12 +10165,12 @@ LAB_000124ac:
 
 
 //
-// Function: FUN_000125f4 @ 0x000125f4
+// Function: calculateRpmBasedFuelTrim @ 0x000125f4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000125f4(void)
+void calculateRpmBasedFuelTrim(void)
 
 {
   uint uVar1;
@@ -10215,12 +10217,12 @@ void FUN_000125f4(void)
 
 
 //
-// Function: FUN_00012724 @ 0x00012724
+// Function: checkFuelSystemFaultFlags @ 0x00012724
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-undefined4 FUN_00012724(void)
+undefined4 checkFuelSystemFaultFlags(void)
 
 {
   undefined4 uVar1;
@@ -10238,12 +10240,12 @@ undefined4 FUN_00012724(void)
 
 
 //
-// Function: FUN_00012778 @ 0x00012778
+// Function: checkEngineFaultConditions @ 0x00012778
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-undefined4 FUN_00012778(void)
+undefined4 checkEngineFaultConditions(void)
 
 {
   undefined4 uVar1;
@@ -10260,31 +10262,31 @@ undefined4 FUN_00012778(void)
 
 
 //
-// Function: FUN_000127bc @ 0x000127bc
+// Function: selectFuelTrimMode @ 0x000127bc
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000127bc(void)
+void selectFuelTrimMode(void)
 
 {
   if (_DAT_004002ec == 0) {
-    FUN_000125f4();
+    calculateRpmBasedFuelTrim();
     _final_fuel_trim = _DAT_004002e6;
     if ((_DAT_004002e6 <= _rpm_based_fuel_trim) &&
        (_final_fuel_trim = _rpm_based_fuel_trim, _DAT_004002e4 < _rpm_based_fuel_trim)) {
       _final_fuel_trim = _DAT_004002e4;
     }
-    _DAT_0040a402 = FUN_00012778();
+    _DAT_0040a402 = checkEngineFaultConditions();
   }
   else {
-    FUN_0001242c();
+    calculateLoadBasedFuelTrim();
     _final_fuel_trim = _DAT_004002e6;
     if ((_DAT_004002e6 <= _load_based_fuel_trim) &&
        (_final_fuel_trim = _load_based_fuel_trim, _DAT_004002e4 < _load_based_fuel_trim)) {
       _final_fuel_trim = _DAT_004002e4;
     }
-    _DAT_0040a402 = FUN_00012724();
+    _DAT_0040a402 = checkFuelSystemFaultFlags();
   }
   if (_DAT_0040a668 != 0) {
     _final_fuel_trim = 0;
@@ -10309,7 +10311,7 @@ void throttleBasedFuelCalculation(void)
   uint extraout_r4;
   uint uVar4;
   
-  FUN_000127bc();
+  selectFuelTrimMode();
   uVar4 = (uint)_fuel_efficiency_factor * (uint)_current_engine_rpm >> 0xd;
   if (uVar4 < 0x640) {
     uVar4 = 0x640;
@@ -10325,11 +10327,11 @@ void throttleBasedFuelCalculation(void)
   }
   uVar4 = (uVar1 * 1000) / (uVar4 & 0xffff);
   _throttle_fuel_conversion = (ushort)uVar4;
-  uVar2 = FUN_000123dc(0x3fa1b6,_throttle_previous_value,(uVar4 & 0xffff) / 10);
+  uVar2 = circularBufferWriteUnsigned(0x3fa1b6,_throttle_previous_value,(uVar4 & 0xffff) / 10);
   _throttle_efficiency_filtered = exponentialMovingAverage(uVar2,&efficiency_filter_state);
   uVar4 = ((uint)_throttle_fuel_conversion * (uint)_throttle_sensitivity_factor) / 0x7fff;
   _load_adjusted_fuel = (undefined2)uVar4;
-  sVar3 = FUN_00012404(0x3fa3b8,(int)_final_fuel_trim,(uVar4 & 0xffff) / 10);
+  sVar3 = circularBufferWriteSigned(0x3fa3b8,(int)_final_fuel_trim,(uVar4 & 0xffff) / 10);
   _load_ema_filtered = signedFirstOrderFilter((int)sVar3,&fuel_trim_filter_state);
   if (_load_ema_denominator < 0x41) {
     uVar4 = 0;
@@ -10531,7 +10533,7 @@ void initFuelControlFilterSystem(void)
 {
   initFilterTablePointers();
   initFilterCoefficients();
-  FUN_00012f40();
+  initFuelDemandBlendPointers();
   initFuelFilterDefaults();
   return;
 }
@@ -10568,12 +10570,12 @@ void fuelDemandErrorCalculation(void)
 
 
 //
-// Function: FUN_00012f40 @ 0x00012f40
+// Function: initFuelDemandBlendPointers @ 0x00012f40
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00012f40(void)
+void initFuelDemandBlendPointers(void)
 
 {
   _DAT_003fa5e6 = 0;
@@ -10637,12 +10639,12 @@ void fuelDemandBlendCalculation(void)
 
 
 //
-// Function: FUN_000130ac @ 0x000130ac
+// Function: initManifoldPressureFilter @ 0x000130ac
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000130ac(void)
+void initManifoldPressureFilter(void)
 
 {
   _DAT_0040a416 = _manifold_pressure_input;
@@ -10654,12 +10656,12 @@ void FUN_000130ac(void)
 
 
 //
-// Function: FUN_000130dc @ 0x000130dc
+// Function: calculateBoostPressureOffset @ 0x000130dc
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000130dc(void)
+void calculateBoostPressureOffset(void)
 
 {
   int extraout_r4;
@@ -10727,12 +10729,12 @@ void initFuelFilterDefaults(void)
 
 
 //
-// Function: FUN_00013294 @ 0x00013294
+// Function: calculateBoostTorqueOffset @ 0x00013294
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00013294(void)
+void calculateBoostTorqueOffset(void)
 
 {
   int extraout_r4;
@@ -10779,12 +10781,12 @@ void FUN_00013294(void)
 
 
 //
-// Function: FUN_0001350c @ 0x0001350c
+// Function: initFuelDemandFilterState @ 0x0001350c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001350c(void)
+void initFuelDemandFilterState(void)
 
 {
   _DAT_003fa5f6 = 2;
@@ -10800,12 +10802,12 @@ void FUN_0001350c(void)
 
 
 //
-// Function: FUN_00013564 @ 0x00013564
+// Function: checkBoostControlCondition @ 0x00013564
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00013564(void)
+void checkBoostControlCondition(void)
 
 {
   if ((_DAT_0040be20 == 0) && (_DAT_0040a41e == 0)) {
@@ -10820,12 +10822,12 @@ void FUN_00013564(void)
 
 
 //
-// Function: FUN_0001359c @ 0x0001359c
+// Function: processBoostControlState @ 0x0001359c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001359c(void)
+void processBoostControlState(void)
 
 {
   bool bVar1;
@@ -10899,12 +10901,12 @@ LAB_00013704:
 
 
 //
-// Function: FUN_00013774 @ 0x00013774
+// Function: processBoostProtectionConditions @ 0x00013774
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00013774(void)
+void processBoostProtectionConditions(void)
 
 {
   bool bVar1;
@@ -10926,13 +10928,13 @@ void FUN_00013774(void)
   else {
     bVar1 = true;
   }
-  FUN_00013564();
+  checkBoostControlCondition();
   uVar3 = (_DAT_0040a420 - _DAT_0040bd8e) - _DAT_0040a422;
   if ((short)uVar3 < 0) {
     uVar3 = -uVar3;
   }
   _DAT_0040a434 = (ushort)(_DAT_0040a424 < uVar3);
-  FUN_0001359c();
+  processBoostControlState();
   if ((bVar1) || ((_DAT_003fe9b4 & 0x8000) != 0)) {
     uVar3 = 0x20;
   }
@@ -10946,12 +10948,12 @@ void FUN_00013774(void)
 
 
 //
-// Function: FUN_0001392c @ 0x0001392c
+// Function: selectLoadNormalizer @ 0x0001392c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001392c(void)
+void selectLoadNormalizer(void)
 
 {
   ushort uVar1;
@@ -10993,26 +10995,26 @@ void FUN_0001392c(void)
 
 
 //
-// Function: FUN_00013a80 @ 0x00013a80
+// Function: processLoadNormalizerSelection @ 0x00013a80
 //
 
-void FUN_00013a80(void)
+void processLoadNormalizerSelection(void)
 
 {
-  FUN_00013774();
-  FUN_0001392c();
+  processBoostProtectionConditions();
+  selectLoadNormalizer();
   return;
 }
 
 
 
 //
-// Function: FUN_00013aec @ 0x00013aec
+// Function: processBoostProtectionMode @ 0x00013aec
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00013aec(undefined4 param_1,int param_2)
+void processBoostProtectionMode(undefined4 param_1,int param_2)
 
 {
   int unaff_r31;
@@ -11069,12 +11071,12 @@ void FUN_00013aec(undefined4 param_1,int param_2)
 
 
 //
-// Function: FUN_00013ca4 @ 0x00013ca4
+// Function: initBoostProtectionState @ 0x00013ca4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00013ca4(void)
+void initBoostProtectionState(void)
 
 {
   _DAT_003fa612 = (int)_throttle_position_demand << 0x10;
@@ -11094,12 +11096,12 @@ void FUN_00013ca4(void)
 
 
 //
-// Function: FUN_00013d14 @ 0x00013d14
+// Function: calculateThrottleDerivative @ 0x00013d14
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00013d14(void)
+void calculateThrottleDerivative(void)
 
 {
   int iVar1;
@@ -11129,12 +11131,12 @@ LAB_00013db8:
 
 
 //
-// Function: FUN_00013dc8 @ 0x00013dc8
+// Function: calculateThrottleFiltered @ 0x00013dc8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00013dc8(void)
+void calculateThrottleFiltered(void)
 
 {
   short sVar1;
@@ -11148,7 +11150,7 @@ void FUN_00013dc8(void)
      (_DAT_0040a45c = _DAT_003fa616, (_DAT_003fd5c4 & 0x4000) == 0)) {
     _DAT_0040a45c = 0;
   }
-  FUN_00013d14();
+  calculateThrottleDerivative();
   sVar1 = _DAT_0040a458;
   if (((iVar2 == 0) && (_DAT_003fd7f0 == 0)) && ((_DAT_003fd5c4 & 0x4000) != 0)) {
     _DAT_003fa620 = signedFirstOrderFilter((int)_DAT_0040a458,&DAT_003fa624);
@@ -11190,12 +11192,12 @@ void FUN_00013dc8(void)
 
 
 //
-// Function: FUN_00014080 @ 0x00014080
+// Function: initThrottleFilterState @ 0x00014080
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00014080(void)
+void initThrottleFilterState(void)
 
 {
   _DAT_003fa61a = _throttle_position_demand;
@@ -11217,12 +11219,12 @@ void FUN_00014080(void)
 
 
 //
-// Function: FUN_0001410c @ 0x0001410c
+// Function: calculateRpmLoadTables @ 0x0001410c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001410c(void)
+void calculateRpmLoadTables(void)
 
 {
   _DAT_0040a472 =
@@ -11261,12 +11263,12 @@ void FUN_0001410c(void)
 
 
 //
-// Function: FUN_0001429c @ 0x0001429c
+// Function: selectFuelDemandOverride @ 0x0001429c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001429c(void)
+void selectFuelDemandOverride(void)
 
 {
   _DAT_0040a46a = _DAT_0040a51c;
@@ -11279,12 +11281,12 @@ void FUN_0001429c(void)
 
 
 //
-// Function: FUN_000142d0 @ 0x000142d0
+// Function: selectFuelLimitOverride @ 0x000142d0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000142d0(void)
+void selectFuelLimitOverride(void)
 
 {
   _DAT_0040a46e = _DAT_0040a474;
@@ -11297,12 +11299,12 @@ void FUN_000142d0(void)
 
 
 //
-// Function: FUN_00014304 @ 0x00014304
+// Function: setFuelStatusFlags @ 0x00014304
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00014304(void)
+void setFuelStatusFlags(void)
 
 {
   if (_DAT_0040a4fe != 0) {
@@ -11320,12 +11322,12 @@ void FUN_00014304(void)
 
 
 //
-// Function: FUN_00014374 @ 0x00014374
+// Function: calculateRpmLoadLimit @ 0x00014374
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00014374(void)
+void calculateRpmLoadLimit(void)
 
 {
   _DAT_0040a47a =
@@ -11347,12 +11349,12 @@ void FUN_00014374(void)
 
 
 //
-// Function: FUN_00014430 @ 0x00014430
+// Function: selectFinalLoadLimit @ 0x00014430
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00014430(void)
+void selectFinalLoadLimit(void)
 
 {
   _DAT_0040a46c = _DAT_0040a47a;
@@ -11365,12 +11367,12 @@ void FUN_00014430(void)
 
 
 //
-// Function: FUN_00014464 @ 0x00014464
+// Function: selectFuelLoadOverride @ 0x00014464
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00014464(void)
+void selectFuelLoadOverride(void)
 
 {
   _DAT_0040a466 = _DAT_0040a51a;
@@ -11383,31 +11385,31 @@ void FUN_00014464(void)
 
 
 //
-// Function: FUN_00014498 @ 0x00014498
+// Function: processFuelLimitCalculations @ 0x00014498
 //
 
-void FUN_00014498(void)
+void processFuelLimitCalculations(void)
 
 {
-  FUN_0001429c();
-  FUN_0001410c();
-  FUN_00014304();
-  FUN_000142d0();
-  FUN_00014374();
-  FUN_00014430();
-  FUN_00014464();
+  selectFuelDemandOverride();
+  calculateRpmLoadTables();
+  setFuelStatusFlags();
+  selectFuelLimitOverride();
+  calculateRpmLoadLimit();
+  selectFinalLoadLimit();
+  selectFuelLoadOverride();
   return;
 }
 
 
 
 //
-// Function: FUN_000144d0 @ 0x000144d0
+// Function: initFuelLimitTableSizes @ 0x000144d0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000144d0(void)
+void initFuelLimitTableSizes(void)
 
 {
   _DAT_003fa634 = 2;
@@ -11422,10 +11424,10 @@ void FUN_000144d0(void)
 
 
 //
-// Function: FUN_00014508 @ 0x00014508
+// Function: compareForFuelMapSelection @ 0x00014508
 //
 
-undefined4 FUN_00014508(int param_1,int param_2)
+undefined4 compareForFuelMapSelection(int param_1,int param_2)
 
 {
   undefined4 uVar1;
@@ -11475,12 +11477,12 @@ int filterInputValue(int param_1,int param_2,int param_3,int param_4,int param_5
 
 
 //
-// Function: FUN_00014610 @ 0x00014610
+// Function: calculateFuelDemandMode1 @ 0x00014610
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00014610(void)
+void calculateFuelDemandMode1(void)
 
 {
   uint unaff_r30;
@@ -11555,12 +11557,12 @@ void FUN_00014610(void)
 
 
 //
-// Function: FUN_000149a4 @ 0x000149a4
+// Function: calculateFuelDemandMode2 @ 0x000149a4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000149a4(void)
+void calculateFuelDemandMode2(void)
 
 {
   int unaff_r30;
@@ -11635,12 +11637,12 @@ void FUN_000149a4(void)
 
 
 //
-// Function: FUN_00014d38 @ 0x00014d38
+// Function: calculateFuelDemandTimingOffset @ 0x00014d38
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00014d38(void)
+void calculateFuelDemandTimingOffset(void)
 
 {
   short sVar1;
@@ -11757,12 +11759,12 @@ void FUN_00014d38(void)
 
 
 //
-// Function: FUN_000150b0 @ 0x000150b0
+// Function: calculateFuelDemandMode3 @ 0x000150b0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000150b0(void)
+void calculateFuelDemandMode3(void)
 
 {
   uint unaff_r30;
@@ -11837,12 +11839,12 @@ void FUN_000150b0(void)
 
 
 //
-// Function: FUN_00015444 @ 0x00015444
+// Function: calculateFuelDemandBlendTables @ 0x00015444
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00015444(void)
+void calculateFuelDemandBlendTables(void)
 
 {
   undefined2 uVar1;
@@ -11950,12 +11952,12 @@ void FUN_00015444(void)
 
 
 //
-// Function: FUN_00015760 @ 0x00015760
+// Function: lookupFuelDemandRpmTables @ 0x00015760
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00015760(void)
+void lookupFuelDemandRpmTables(void)
 
 {
   uint unaff_r30;
@@ -12019,12 +12021,12 @@ void FUN_00015760(void)
 
 
 //
-// Function: FUN_00015a24 @ 0x00015a24
+// Function: calculateFuelLimitSource @ 0x00015a24
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00015a24(void)
+void calculateFuelLimitSource(void)
 
 {
   bool bVar1;
@@ -12039,7 +12041,7 @@ void FUN_00015a24(void)
   if ((_fuel_rate_config_flags & 0x80) != 0) {
     uVar3 = _DAT_0040a4ee + _fuel_demand_offset_trim;
   }
-  FUN_00015760();
+  lookupFuelDemandRpmTables();
   _DAT_0040a4fc = _DAT_0040a4ea;
   if ((_fuel_rate_config_flags & 0x40) != 0) {
     _DAT_0040a4fc = _DAT_0040a4ea + _fuel_demand_offset_trim;
@@ -12082,18 +12084,18 @@ void FUN_00015a24(void)
 
 
 //
-// Function: FUN_00015bd8 @ 0x00015bd8
+// Function: selectFuelLimitWithFiltering @ 0x00015bd8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00015bd8(void)
+void selectFuelLimitWithFiltering(void)
 
 {
   uint uVar1;
   uint uVar2;
   
-  FUN_00015a24();
+  calculateFuelLimitSource();
   uVar1 = (uint)_DAT_0040a492;
   if ((_calibration_feature_flags & 0x200) == 0) {
     _fuel_limit_filtered = _fuel_limit_source_value;
@@ -12226,12 +12228,12 @@ void interpolateFuelMapTable
 
 
 //
-// Function: FUN_00015f34 @ 0x00015f34
+// Function: processFuelMapInterpolation @ 0x00015f34
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00015f34(void)
+void processFuelMapInterpolation(void)
 
 {
   short sVar1;
@@ -12257,7 +12259,7 @@ void FUN_00015f34(void)
   interpolateFuelMapTable
             (&local_18,_accelerator_position_raw,0x400d50,0x400d94,0x400d72,0x400db6,0x400dd8,
              0x400dfa,1);
-  sVar1 = FUN_00014508(local_a,local_16);
+  sVar1 = compareForFuelMapSelection(local_a,local_16);
   if (sVar1 == 1) {
     local_24 = local_c;
     local_20 = local_8;
@@ -12286,12 +12288,12 @@ void FUN_00015f34(void)
 
 
 //
-// Function: FUN_000160ac @ 0x000160ac
+// Function: calculateFuelBlendModeSelection @ 0x000160ac
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000160ac(void)
+void calculateFuelBlendModeSelection(void)
 
 {
   bool bVar1;
@@ -12340,7 +12342,7 @@ void FUN_000160ac(void)
   if ((_calibration_feature_flags & 0x100) != 0) {
     _DAT_0040a496 = _DAT_004059e8;
   }
-  FUN_00015f34();
+  processFuelMapInterpolation();
   if (_DAT_0040a500 == 0) {
     local_16 = _DAT_0040a4dc;
     local_18 = _DAT_0040a4e6;
@@ -12425,19 +12427,19 @@ void FUN_000160ac(void)
 
 
 //
-// Function: FUN_000164ac @ 0x000164ac
+// Function: processFuelDemandCalculations @ 0x000164ac
 //
 
-void FUN_000164ac(void)
+void processFuelDemandCalculations(void)
 
 {
-  FUN_000160ac();
-  FUN_00015bd8();
-  FUN_00015444();
-  FUN_000150b0();
-  FUN_00014d38();
-  FUN_000149a4();
-  FUN_00014610();
+  calculateFuelBlendModeSelection();
+  selectFuelLimitWithFiltering();
+  calculateFuelDemandBlendTables();
+  calculateFuelDemandMode3();
+  calculateFuelDemandTimingOffset();
+  calculateFuelDemandMode2();
+  calculateFuelDemandMode1();
   return;
 }
 
@@ -12504,12 +12506,12 @@ int fuelDemandRpmCorrection(undefined4 param_1,undefined4 param_2)
 
 
 //
-// Function: FUN_00016774 @ 0x00016774
+// Function: lookupProtectionFuelDemand @ 0x00016774
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00016774(void)
+void lookupProtectionFuelDemand(void)
 
 {
   _DAT_0040a502 = fuelDemandTableLookup(_protection_threshold_scaled);
@@ -12528,12 +12530,12 @@ void FUN_00016774(void)
 
 
 //
-// Function: FUN_00016888 @ 0x00016888
+// Function: initFuelDemandTablePointers @ 0x00016888
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00016888(void)
+void initFuelDemandTablePointers(void)
 
 {
   _DAT_003fa646 = 0x402f5c;
@@ -12591,13 +12593,13 @@ void FUN_00016888(void)
 
 
 //
-// Function: FUN_00016a90 @ 0x00016a90
+// Function: calculateFuelInjectionTiming @ 0x00016a90
 //
 
 /* WARNING: Removing unreachable block (ram,0x00016c08) */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00016a90(void)
+void calculateFuelInjectionTiming(void)
 
 {
   uint extraout_r4;
@@ -12648,12 +12650,12 @@ void FUN_00016a90(void)
 
 
 //
-// Function: FUN_00016c40 @ 0x00016c40
+// Function: calculateManifoldPressureOffset @ 0x00016c40
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00016c40(void)
+void calculateManifoldPressureOffset(void)
 
 {
   uint uVar1;
@@ -12672,12 +12674,12 @@ void FUN_00016c40(void)
 
 
 //
-// Function: FUN_00016cd4 @ 0x00016cd4
+// Function: calculateFuelDemandDelta @ 0x00016cd4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00016cd4(void)
+void calculateFuelDemandDelta(void)
 
 {
   uint uVar1;
@@ -12696,12 +12698,12 @@ void FUN_00016cd4(void)
 
 
 //
-// Function: FUN_00016d6c @ 0x00016d6c
+// Function: applyFuelDemandOffset @ 0x00016d6c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00016d6c(void)
+void applyFuelDemandOffset(void)
 
 {
   int iVar1;
@@ -12735,12 +12737,12 @@ void FUN_00016d6c(void)
 
 
 //
-// Function: FUN_00016e90 @ 0x00016e90
+// Function: processFuelTimingCalculations @ 0x00016e90
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00016e90(void)
+void processFuelTimingCalculations(void)
 
 {
   uint uVar1;
@@ -12748,16 +12750,16 @@ void FUN_00016e90(void)
   uint uVar2;
   int iVar3;
   
-  FUN_00016a90();
-  FUN_00016c40();
+  calculateFuelInjectionTiming();
+  calculateManifoldPressureOffset();
   uVar1 = (uint)_DAT_0040a524 * (uint)_DAT_0040a53c >> 0xd;
   uVar2 = (uint)_DAT_00405a0a;
   if ((uVar1 < uVar2) && (uVar2 = uVar1, uVar1 <= _DAT_00405a08)) {
     uVar2 = (uint)_DAT_00405a08;
   }
   _DAT_0040a530 = (ushort)uVar2;
-  FUN_00016d6c();
-  FUN_00016cd4();
+  applyFuelDemandOffset();
+  calculateFuelDemandDelta();
   signedDivision32((int)((ulonglong)
                          ((longlong)(int)((uint)_DAT_0040a530 * (uint)_DAT_0040a490) *
                          (longlong)(int)_DAT_0040a52e) >> 0x20),
@@ -12778,16 +12780,16 @@ void FUN_00016e90(void)
 
 
 //
-// Function: FUN_00016f9c @ 0x00016f9c
+// Function: storeFuelLimitValues @ 0x00016f9c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00016f9c(void)
+void storeFuelLimitValues(void)
 
 {
   _DAT_0040a51c = _fuel_limit_filtered;
-  FUN_00016e90();
+  processFuelTimingCalculations();
   _DAT_0040a51e = _DAT_0040a48a;
   _DAT_0040a51a = _DAT_0040a48c;
   _DAT_0040a518 = _DAT_0040a482;
@@ -12797,12 +12799,12 @@ void FUN_00016f9c(void)
 
 
 //
-// Function: FUN_00016ffc @ 0x00016ffc
+// Function: initFuelTimingTablePointers @ 0x00016ffc
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00016ffc(void)
+void initFuelTimingTablePointers(void)
 
 {
   _DAT_003fa6d2 = 2;
@@ -13210,12 +13212,12 @@ void fuelDemandCoordinator(void)
 
 
 //
-// Function: FUN_00017af4 @ 0x00017af4
+// Function: initFuelDemandRateVariables @ 0x00017af4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00017af4(void)
+void initFuelDemandRateVariables(void)
 
 {
   _fuel_demand_rate_delta = 0;
@@ -13232,12 +13234,12 @@ void FUN_00017af4(void)
 
 
 //
-// Function: FUN_00017b54 @ 0x00017b54
+// Function: storeFuelDemandPreviousValues @ 0x00017b54
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00017b54(void)
+void storeFuelDemandPreviousValues(void)
 
 {
   _DAT_003fa700 = _DAT_0040a520;
@@ -13250,12 +13252,12 @@ void FUN_00017b54(void)
 
 
 //
-// Function: FUN_00017b84 @ 0x00017b84
+// Function: calculateFuelFlowRate @ 0x00017b84
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-undefined2 FUN_00017b84(void)
+undefined2 calculateFuelFlowRate(void)
 
 {
   undefined2 uVar1;
@@ -13300,12 +13302,12 @@ undefined2 FUN_00017b84(void)
 
 
 //
-// Function: FUN_00017d54 @ 0x00017d54
+// Function: selectFuelFlowMode @ 0x00017d54
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00017d54(void)
+void selectFuelFlowMode(void)
 
 {
   if (((_DAT_0040a1a0 == 2) && (_boost_protection_mode == 2)) || ((_DAT_003fd5c2 & 0x80) == 0)) {
@@ -13319,7 +13321,7 @@ void FUN_00017d54(void)
     _DAT_0040a618 = 2;
   }
   else {
-    _DAT_0040a616 = FUN_00017b84();
+    _DAT_0040a616 = calculateFuelFlowRate();
     if (((_DAT_0040a1a0 == 0) && (_boost_protection_mode == 0)) &&
        ((_DAT_0040a414 == 0 && (_DAT_0040afd6 != 2)))) {
       _DAT_0040a618 = 0;
@@ -13335,12 +13337,12 @@ void FUN_00017d54(void)
 
 
 //
-// Function: FUN_00017e54 @ 0x00017e54
+// Function: initFuelFlowRateVariables @ 0x00017e54
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00017e54(void)
+void initFuelFlowRateVariables(void)
 
 {
   _DAT_003fa704 = 2;
@@ -13360,12 +13362,12 @@ void FUN_00017e54(void)
 
 
 //
-// Function: FUN_00017eb8 @ 0x00017eb8
+// Function: calculateOilPressureProtection @ 0x00017eb8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00017eb8(void)
+void calculateOilPressureProtection(void)
 
 {
   uint extraout_r4;
@@ -13397,12 +13399,12 @@ LAB_00017f34:
 
 
 //
-// Function: FUN_00017f50 @ 0x00017f50
+// Function: calculateFuelFlowWithMode @ 0x00017f50
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00017f50(void)
+void calculateFuelFlowWithMode(void)
 
 {
   if (_DAT_004002ea == 0) {
@@ -13434,10 +13436,10 @@ void FUN_00017f50(void)
 
 
 //
-// Function: FUN_0001806c @ 0x0001806c
+// Function: emptyStubFunction3 @ 0x0001806c
 //
 
-void FUN_0001806c(void)
+void emptyStubFunction3(void)
 
 {
   return;
@@ -13498,12 +13500,12 @@ void faultSeverityEvaluation(void)
 
 
 //
-// Function: FUN_0001820c @ 0x0001820c
+// Function: processThrottlePositionLookups @ 0x0001820c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001820c(void)
+void processThrottlePositionLookups(void)
 
 {
   _DAT_003fa712 =
@@ -13521,12 +13523,12 @@ void FUN_0001820c(void)
 
 
 //
-// Function: FUN_000182e8 @ 0x000182e8
+// Function: calculateThrottleProtectionLimit @ 0x000182e8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000182e8(void)
+void calculateThrottleProtectionLimit(void)
 
 {
   _DAT_0040a630 = _oil_pressure_protection_limit;
@@ -13543,12 +13545,12 @@ void FUN_000182e8(void)
 
 
 //
-// Function: FUN_00018384 @ 0x00018384
+// Function: checkProtectionEnableConditions @ 0x00018384
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00018384(void)
+void checkProtectionEnableConditions(void)
 
 {
   bool bVar1;
@@ -13600,12 +13602,12 @@ void FUN_00018384(void)
 
 
 //
-// Function: FUN_000184f0 @ 0x000184f0
+// Function: checkFaultConditionThreshold @ 0x000184f0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000184f0(void)
+void checkFaultConditionThreshold(void)
 
 {
   bool bVar2;
@@ -13639,10 +13641,10 @@ void FUN_000184f0(void)
 
 
 //
-// Function: FUN_000185cc @ 0x000185cc
+// Function: conditionalFirstOrderFilter @ 0x000185cc
 //
 
-int FUN_000185cc(undefined4 param_1,int param_2,int param_3)
+int conditionalFirstOrderFilter(undefined4 param_1,int param_2,int param_3)
 
 {
   short sVar1;
@@ -13659,10 +13661,10 @@ int FUN_000185cc(undefined4 param_1,int param_2,int param_3)
 
 
 //
-// Function: FUN_0001860c @ 0x0001860c
+// Function: processFaultIncrement @ 0x0001860c
 //
 
-void FUN_0001860c(short *param_1)
+void processFaultIncrement(short *param_1)
 
 {
   ushort uVar1;
@@ -13744,10 +13746,10 @@ void FUN_0001860c(short *param_1)
 
 
 //
-// Function: FUN_00018780 @ 0x00018780
+// Function: processFaultStateWithFilter @ 0x00018780
 //
 
-void FUN_00018780(undefined2 *param_1)
+void processFaultStateWithFilter(undefined2 *param_1)
 
 {
   ushort uVar1;
@@ -13796,7 +13798,7 @@ void FUN_00018780(undefined2 *param_1)
   local_10 = 0;
   local_e = param_1[9];
   local_c = param_1[10];
-  FUN_0001860c(&local_20);
+  processFaultIncrement(&local_20);
   param_1[8] = local_1c;
   param_1[7] = local_18;
   param_1[10] = local_c;
@@ -13806,7 +13808,7 @@ void FUN_00018780(undefined2 *param_1)
   else {
     uVar6 = 1;
   }
-  uVar2 = FUN_000185cc((int)(short)param_1[1],uVar6,*(undefined4 *)(param_1 + 0xc));
+  uVar2 = conditionalFirstOrderFilter((int)(short)param_1[1],uVar6,*(undefined4 *)(param_1 + 0xc));
   *param_1 = uVar2;
   return;
 }
@@ -13814,12 +13816,12 @@ void FUN_00018780(undefined2 *param_1)
 
 
 //
-// Function: FUN_00018904 @ 0x00018904
+// Function: updateFaultStatusRegisters @ 0x00018904
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00018904(void)
+void updateFaultStatusRegisters(void)
 
 {
   _DAT_003fa722 = _DAT_0040bd84;
@@ -13830,7 +13832,7 @@ void FUN_00018904(void)
   _DAT_003fa732 = _DAT_003fd7f0;
   _DAT_003fa736 = 10;
   _DAT_003fa738 = &DAT_003fa716;
-  FUN_00018780(&DAT_003fa720);
+  processFaultStateWithFilter(&DAT_003fa720);
   _DAT_003fdfb0 = _DAT_003fa720;
   if ((_DAT_003fdfb2 & 1) != 0) {
     _DAT_003fdfb0 = _DAT_00406746;
@@ -13850,12 +13852,12 @@ void FUN_00018904(void)
 
 
 //
-// Function: FUN_00018a50 @ 0x00018a50
+// Function: selectFaultProtectionValue @ 0x00018a50
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00018a50(void)
+void selectFaultProtectionValue(void)
 
 {
   _DAT_0040a662 = _DAT_003fa71e;
@@ -13874,18 +13876,18 @@ void FUN_00018a50(void)
 
 
 //
-// Function: FUN_00018ac0 @ 0x00018ac0
+// Function: processFaultProtection @ 0x00018ac0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00018ac0(void)
+void processFaultProtection(void)
 
 {
-  FUN_00018384();
-  FUN_000184f0();
-  FUN_00018904();
-  FUN_00018a50();
+  checkProtectionEnableConditions();
+  checkFaultConditionThreshold();
+  updateFaultStatusRegisters();
+  selectFaultProtectionValue();
   _DAT_0040a656 = _DAT_0040a65c;
   return;
 }
@@ -13893,12 +13895,12 @@ void FUN_00018ac0(void)
 
 
 //
-// Function: FUN_00018afc @ 0x00018afc
+// Function: initFaultProtectionVariables @ 0x00018afc
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00018afc(void)
+void initFaultProtectionVariables(void)
 
 {
   _DAT_003fa714 = 0;
@@ -13925,12 +13927,12 @@ void FUN_00018afc(void)
 
 
 //
-// Function: FUN_00018bc0 @ 0x00018bc0
+// Function: processSensorProtectionRamp @ 0x00018bc0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00018bc0(void)
+void processSensorProtectionRamp(void)
 
 {
   ushort uVar1;
@@ -13976,12 +13978,12 @@ LAB_00018c70:
 
 
 //
-// Function: FUN_00018cfc @ 0x00018cfc
+// Function: processSensorFaultDetection @ 0x00018cfc
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00018cfc(void)
+void processSensorFaultDetection(void)
 
 {
   bool bVar1;
@@ -14033,7 +14035,7 @@ void FUN_00018cfc(void)
   }
   _DAT_003fa73e = uVar2;
   _DAT_0040a698 = (ushort)(uVar5 <= _DAT_003fa73e);
-  FUN_00018bc0();
+  processSensorProtectionRamp();
   if (*psVar4 == 0) {
     if (uVar3 != 0) {
       _sensor_fault_detect_flags = _sensor_fault_detect_flags | 0x80;
@@ -14049,12 +14051,12 @@ void FUN_00018cfc(void)
 
 
 //
-// Function: FUN_00018f1c @ 0x00018f1c
+// Function: initSensorFaultVariables @ 0x00018f1c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00018f1c(void)
+void initSensorFaultVariables(void)
 
 {
   _DAT_003fa73c = 0;
@@ -14070,12 +14072,12 @@ void FUN_00018f1c(void)
 
 
 //
-// Function: FUN_00018f8c @ 0x00018f8c
+// Function: calculateSensorDiagnosticValue @ 0x00018f8c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00018f8c(void)
+void calculateSensorDiagnosticValue(void)
 
 {
   short sVar1;
@@ -14139,15 +14141,15 @@ LAB_000190cc:
 
 
 //
-// Function: FUN_000191a0 @ 0x000191a0
+// Function: updateSensorDiagnosticFlags @ 0x000191a0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000191a0(void)
+void updateSensorDiagnosticFlags(void)
 
 {
-  FUN_00018f8c();
+  calculateSensorDiagnosticValue();
   _DAT_0040a6a2 =
        exponentialMovingAverage
                  ((uint)_DAT_0040a6a0 * (uint)_DAT_0040a6a0 >> 0xd & 0xffff,&DAT_003fa758);
@@ -14157,12 +14159,12 @@ void FUN_000191a0(void)
 
 
 //
-// Function: FUN_000191e8 @ 0x000191e8
+// Function: processSensorMonitoringLogic @ 0x000191e8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000191e8(void)
+void processSensorMonitoringLogic(void)
 
 {
   short sVar1;
@@ -14202,12 +14204,12 @@ void FUN_000191e8(void)
 
 
 //
-// Function: FUN_00019390 @ 0x00019390
+// Function: updateEngineModeFromSensor @ 0x00019390
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00019390(void)
+void updateEngineModeFromSensor(void)
 
 {
   int iVar1;
@@ -14249,19 +14251,19 @@ void FUN_00019390(void)
   else {
     _sensor_fault_detect_flags = _sensor_fault_detect_flags | 0x100;
   }
-  FUN_000191e8();
+  processSensorMonitoringLogic();
   return;
 }
 
 
 
 //
-// Function: FUN_0001956c @ 0x0001956c
+// Function: processSensorValidation @ 0x0001956c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001956c(void)
+void processSensorValidation(void)
 
 {
   _sensor_fault_detect_flags = _sensor_fault_detect_flags & 0xfeff;
@@ -14293,12 +14295,12 @@ void FUN_0001956c(void)
 
 
 //
-// Function: FUN_000196a4 @ 0x000196a4
+// Function: checkSensorRangeConditions @ 0x000196a4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000196a4(void)
+void checkSensorRangeConditions(void)
 
 {
   bool bVar1;
@@ -14338,12 +14340,12 @@ void FUN_000196a4(void)
 
 
 //
-// Function: FUN_000197b4 @ 0x000197b4
+// Function: calculateSensorBlendFactor @ 0x000197b4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000197b4(void)
+void calculateSensorBlendFactor(void)
 
 {
   if ((DAT_0040c088 & 8) == 0) {
@@ -14369,12 +14371,12 @@ void FUN_000197b4(void)
 
 
 //
-// Function: FUN_00019830 @ 0x00019830
+// Function: processSensorBlendState @ 0x00019830
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00019830(void)
+void processSensorBlendState(void)
 
 {
   if (_fuel_demand_intermediate_3 == 0) {
@@ -14399,12 +14401,12 @@ void FUN_00019830(void)
 
 
 //
-// Function: FUN_00019900 @ 0x00019900
+// Function: selectSensorBlendOutput @ 0x00019900
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00019900(void)
+void selectSensorBlendOutput(void)
 
 {
   short sVar1;
@@ -14444,13 +14446,13 @@ LAB_0001999c:
 
 
 //
-// Function: FUN_000199f4 @ 0x000199f4
+// Function: initSensorBlendVariables @ 0x000199f4
 //
 
 /* WARNING: Removing unreachable block (ram,0x00019a78) */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000199f4(void)
+void initSensorBlendVariables(void)
 
 {
   _fuel_demand_intermediate_3 = _DAT_004067ec;
@@ -14473,22 +14475,22 @@ void FUN_000199f4(void)
   if (_DAT_003ffc8c < _fuel_demand_intermediate_3) {
     _fuel_demand_intermediate_3 = _DAT_003ffc8c;
   }
-  FUN_000196a4();
-  FUN_000197b4();
-  FUN_00019900();
-  FUN_00019830();
+  checkSensorRangeConditions();
+  calculateSensorBlendFactor();
+  selectSensorBlendOutput();
+  processSensorBlendState();
   return;
 }
 
 
 
 //
-// Function: FUN_00019ac0 @ 0x00019ac0
+// Function: processSensorBlendCalculation @ 0x00019ac0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00019ac0(void)
+void processSensorBlendCalculation(void)
 
 {
   if (((_DAT_0040a6c4 < 0) || ((int)_DAT_0040a6ea < (int)(uint)_DAT_0040a6f2)) &&
@@ -14504,12 +14506,12 @@ void FUN_00019ac0(void)
 
 
 //
-// Function: FUN_00019b20 @ 0x00019b20
+// Function: sensorMonitoringMainLoop @ 0x00019b20
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00019b20(void)
+void sensorMonitoringMainLoop(void)
 
 {
   bool bVar1;
@@ -14554,7 +14556,7 @@ void FUN_00019b20(void)
   }
   _DAT_0040a6e0 = (undefined2)iVar5;
   _DAT_003fa784 = sVar2;
-  FUN_00019ac0();
+  processSensorBlendCalculation();
   _DAT_0040a6d2 = (short)iVar4;
   if (iVar4 < 0) {
     iVar4 = (int)-_DAT_0040a6d2;
@@ -14609,12 +14611,12 @@ LAB_00019d08:
 
 
 //
-// Function: FUN_00019e08 @ 0x00019e08
+// Function: selectFuelDemandUpperLimit @ 0x00019e08
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00019e08(int param_1)
+void selectFuelDemandUpperLimit(int param_1)
 
 {
   int iVar1;
@@ -14647,12 +14649,12 @@ void FUN_00019e08(int param_1)
 
 
 //
-// Function: FUN_00019ea4 @ 0x00019ea4
+// Function: calculateFuelDemandLimits @ 0x00019ea4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00019ea4(void)
+void calculateFuelDemandLimits(void)
 
 {
   short *psVar1;
@@ -14707,12 +14709,12 @@ void FUN_00019ea4(void)
 
 
 //
-// Function: FUN_00019fe0 @ 0x00019fe0
+// Function: applyFuelDemandProtection @ 0x00019fe0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00019fe0(void)
+void applyFuelDemandProtection(void)
 
 {
   int iVar1;
@@ -14771,42 +14773,42 @@ LAB_0001a0a0:
 
 
 //
-// Function: FUN_0001a1b4 @ 0x0001a1b4
+// Function: processFuelDemandLimits @ 0x0001a1b4
 //
 
-void FUN_0001a1b4(void)
+void processFuelDemandLimits(void)
 
 {
-  FUN_00019e08();
-  FUN_00019ea4();
-  FUN_00019fe0();
+  selectFuelDemandUpperLimit();
+  calculateFuelDemandLimits();
+  applyFuelDemandProtection();
   return;
 }
 
 
 
 //
-// Function: FUN_0001a1dc @ 0x0001a1dc
+// Function: processSensorAndFuelDemand @ 0x0001a1dc
 //
 
-void FUN_0001a1dc(void)
+void processSensorAndFuelDemand(void)
 
 {
-  FUN_000199f4();
-  FUN_00019b20();
-  FUN_0001a1b4();
+  initSensorBlendVariables();
+  sensorMonitoringMainLoop();
+  processFuelDemandLimits();
   return;
 }
 
 
 
 //
-// Function: FUN_0001a204 @ 0x0001a204
+// Function: initFuelDemandLimitVariables @ 0x0001a204
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001a204(void)
+void initFuelDemandLimitVariables(void)
 
 {
   _DAT_003fa784 = 0;
@@ -14833,12 +14835,12 @@ void FUN_0001a204(void)
 
 
 //
-// Function: FUN_0001a340 @ 0x0001a340
+// Function: processConditionTimerA @ 0x0001a340
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001a340(int param_1)
+void processConditionTimerA(int param_1)
 
 {
   uint uVar1;
@@ -14887,12 +14889,12 @@ void FUN_0001a340(int param_1)
 
 
 //
-// Function: FUN_0001a47c @ 0x0001a47c
+// Function: processConditionTimerB @ 0x0001a47c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001a47c(int param_1)
+void processConditionTimerB(int param_1)
 
 {
   ushort uVar1;
@@ -14943,12 +14945,12 @@ LAB_0001a578:
 
 
 //
-// Function: FUN_0001a608 @ 0x0001a608
+// Function: processConditionTimerC @ 0x0001a608
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001a608(void)
+void processConditionTimerC(void)
 
 {
   uint uVar1;
@@ -14997,12 +14999,12 @@ void FUN_0001a608(void)
 
 
 //
-// Function: FUN_0001a754 @ 0x0001a754
+// Function: processConditionTimerD @ 0x0001a754
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001a754(void)
+void processConditionTimerD(void)
 
 {
   ushort uVar1;
@@ -15087,12 +15089,12 @@ undefined4 bothConditionsTrue(int param_1,int param_2)
 
 
 //
-// Function: FUN_0001a9a8 @ 0x0001a9a8
+// Function: processFuelDemandFaultConditions @ 0x0001a9a8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001a9a8(void)
+void processFuelDemandFaultConditions(void)
 
 {
   bool bVar1;
@@ -15120,8 +15122,8 @@ void FUN_0001a9a8(void)
   else {
     uVar5 = 0;
   }
-  FUN_0001a340(uVar5);
-  FUN_0001a47c(uVar5);
+  processConditionTimerA(uVar5);
+  processConditionTimerB(uVar5);
   sVar4 = bothConditionsTrue(bVar1,_DAT_0040a708);
   if (_DAT_0040a6fc == 0) {
     if (sVar4 != 0) {
@@ -15186,8 +15188,8 @@ void FUN_0001a9a8(void)
   else {
     _sensor_fault_detect_flags = _sensor_fault_detect_flags | 8;
   }
-  FUN_0001a608();
-  FUN_0001a754();
+  processConditionTimerC();
+  processConditionTimerD();
   if (_DAT_0040a6fc == 0) {
     if (_DAT_0040a708 != 0) {
       _DAT_003fa7c4 = 1;
@@ -15215,12 +15217,12 @@ void FUN_0001a9a8(void)
 
 
 //
-// Function: FUN_0001ae2c @ 0x0001ae2c
+// Function: initFuelDemandFaultVariables @ 0x0001ae2c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001ae2c(void)
+void initFuelDemandFaultVariables(void)
 
 {
   _sensor_fault_detect_flags = _sensor_fault_detect_flags & 0xffa0;
@@ -15246,12 +15248,12 @@ void FUN_0001ae2c(void)
 
 
 //
-// Function: FUN_0001af94 @ 0x0001af94
+// Function: processFaultTimingConditions @ 0x0001af94
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001af94(void)
+void processFaultTimingConditions(void)
 
 {
   ushort uVar2;
@@ -15303,12 +15305,12 @@ void FUN_0001af94(void)
 
 
 //
-// Function: FUN_0001b120 @ 0x0001b120
+// Function: updateFaultConditionState @ 0x0001b120
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001b120(void)
+void updateFaultConditionState(void)
 
 {
   short sVar1;
@@ -15346,7 +15348,7 @@ void FUN_0001b120(void)
   }
   _DAT_003fa7ec = sVar4;
   _DAT_003fa7f4 = _DAT_003fa7f2;
-  FUN_0001af94();
+  processFaultTimingConditions();
   if ((iVar3 == 0) && (_DAT_0040a712 == 0)) {
     _DAT_0040a710 = 0;
   }
@@ -15388,12 +15390,12 @@ void FUN_0001b120(void)
 
 
 //
-// Function: FUN_0001b35c @ 0x0001b35c
+// Function: initFaultTimingVariables @ 0x0001b35c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001b35c(void)
+void initFaultTimingVariables(void)
 
 {
   _DAT_0040a716 = 0;
@@ -15405,14 +15407,14 @@ void FUN_0001b35c(void)
 
 
 //
-// Function: FUN_0001b37c @ 0x0001b37c
+// Function: processFaultAndFuelDemand @ 0x0001b37c
 //
 
-void FUN_0001b37c(void)
+void processFaultAndFuelDemand(void)
 
 {
-  FUN_0001b120();
-  FUN_0001a1dc();
+  updateFaultConditionState();
+  processSensorAndFuelDemand();
   return;
 }
 
@@ -15443,7 +15445,7 @@ void faultTimerHandler(undefined4 *param_1)
   undefined4 local_c;
   
   func_0x00507a20();
-  FUN_00020d10();
+  updateProtectionStateMachine();
   local_28._1_1_ = (undefined1)_DAT_0040ada0;
   local_28._0_1_ = (undefined1)((ushort)_DAT_0040ada0 >> 8);
   uVar1 = CONCAT11((undefined1)local_28,local_28._0_1_);
@@ -15571,10 +15573,10 @@ undefined4 faultCounterIncrement(byte param_1,byte param_2)
 
 
 //
-// Function: FUN_0001b730 @ 0x0001b730
+// Function: sendFaultTimerMessage @ 0x0001b730
 //
 
-void FUN_0001b730(void)
+void sendFaultTimerMessage(void)
 
 {
   if ((DAT_003fa83e & 0xf0) == 0) {
@@ -15587,12 +15589,12 @@ void FUN_0001b730(void)
 
 
 //
-// Function: FUN_0001b778 @ 0x0001b778
+// Function: processFaultMessageTiming @ 0x0001b778
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001b778(void)
+void processFaultMessageTiming(void)
 
 {
   char cVar1;
@@ -15636,19 +15638,19 @@ void FUN_0001b778(void)
       }
     }
   }
-  FUN_0001b730();
+  sendFaultTimerMessage();
   return;
 }
 
 
 
 //
-// Function: FUN_0001b900 @ 0x0001b900
+// Function: initFaultTimerMessage @ 0x0001b900
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001b900(void)
+void initFaultTimerMessage(void)
 
 {
   _DAT_003fa830 = CONCAT13(((byte)_DAT_003fd854 & 7) << 2,0xfee300);
@@ -15661,19 +15663,19 @@ void FUN_0001b900(void)
   DAT_003fa812 = 0x7d;
   DAT_003fa82e = 0x7d;
   func_0x00507c1c();
-  FUN_000212dc();
+  initProtectionDelayDefaults();
   return;
 }
 
 
 
 //
-// Function: FUN_0001b99c @ 0x0001b99c
+// Function: calculateColdStartFuelAdjust @ 0x0001b99c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001b99c(void)
+void calculateColdStartFuelAdjust(void)
 
 {
   uint uVar1;
@@ -15719,12 +15721,12 @@ void FUN_0001b99c(void)
 
 
 //
-// Function: FUN_0001bb30 @ 0x0001bb30
+// Function: initColdStartLimits @ 0x0001bb30
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001bb30(void)
+void initColdStartLimits(void)
 
 {
   _DAT_0040a79c = 0xfc00;
@@ -15735,12 +15737,12 @@ void FUN_0001bb30(void)
 
 
 //
-// Function: FUN_0001bb48 @ 0x0001bb48
+// Function: calculateColdStartRpmAdjust @ 0x0001bb48
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001bb48(void)
+void calculateColdStartRpmAdjust(void)
 
 {
   uint uVar1;
@@ -15752,7 +15754,7 @@ void FUN_0001bb48(void)
   
   if (((_fuel_demand_accumulator == 2) || (_fuel_demand_accumulator == 6)) ||
      (_fuel_demand_accumulator == 7)) {
-    FUN_0001bb30();
+    initColdStartLimits();
     uVar1 = (uint)_current_engine_rpm;
     uVar4 = (uint)_DAT_0040a7b2;
     if (uVar1 < uVar4) {
@@ -15786,12 +15788,12 @@ void FUN_0001bb48(void)
 
 
 //
-// Function: FUN_0001bc30 @ 0x0001bc30
+// Function: calculateColdStartTempTable @ 0x0001bc30
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001bc30(void)
+void calculateColdStartTempTable(void)
 
 {
   undefined2 uVar1;
@@ -15823,12 +15825,12 @@ void FUN_0001bc30(void)
 
 
 //
-// Function: FUN_0001bd44 @ 0x0001bd44
+// Function: selectColdStartRpmLimit @ 0x0001bd44
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001bd44(void)
+void selectColdStartRpmLimit(void)
 
 {
   _DAT_0040a7aa = _speed_control_integrator;
@@ -15841,12 +15843,12 @@ void FUN_0001bd44(void)
 
 
 //
-// Function: FUN_0001bd74 @ 0x0001bd74
+// Function: calculateIntakeAirAdjustment @ 0x0001bd74
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001bd74(void)
+void calculateIntakeAirAdjustment(void)
 
 {
   int iVar1;
@@ -15877,12 +15879,12 @@ void FUN_0001bd74(void)
 
 
 //
-// Function: FUN_0001be64 @ 0x0001be64
+// Function: checkColdStartConditions @ 0x0001be64
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001be64(void)
+void checkColdStartConditions(void)
 
 {
   if ((_DAT_00406862 < _DAT_0040a798) && (_DAT_003fa840 == 0)) {
@@ -15899,21 +15901,21 @@ void FUN_0001be64(void)
 
 
 //
-// Function: FUN_0001bf44 @ 0x0001bf44
+// Function: processColdStartAdjustment @ 0x0001bf44
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001bf44(void)
+void processColdStartAdjustment(void)
 
 {
   if (((_DAT_003fa858 == 1) && (_fuel_demand_accumulator == 2)) ||
      ((_DAT_003fa858 == 3 && (_fuel_demand_accumulator == 7)))) {
-    FUN_0001bc30();
-    FUN_0001bd74();
-    FUN_0001bd44();
+    calculateColdStartTempTable();
+    calculateIntakeAirAdjustment();
+    selectColdStartRpmLimit();
   }
-  FUN_0001be64();
+  checkColdStartConditions();
   _DAT_003fa858 = _fuel_demand_accumulator;
   return;
 }
@@ -15921,12 +15923,12 @@ void FUN_0001bf44(void)
 
 
 //
-// Function: FUN_0001bfc8 @ 0x0001bfc8
+// Function: initColdStartTablePointers @ 0x0001bfc8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001bfc8(void)
+void initColdStartTablePointers(void)
 
 {
   ushort uVar1;
@@ -15951,12 +15953,12 @@ void FUN_0001bfc8(void)
 
 
 //
-// Function: FUN_0001c080 @ 0x0001c080
+// Function: processColdStartStateMachine @ 0x0001c080
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001c080(void)
+void processColdStartStateMachine(void)
 
 {
   if (((_fuel_demand_accumulator == 2) || (_fuel_demand_accumulator == 6)) &&
@@ -15976,12 +15978,12 @@ void FUN_0001c080(void)
 
 
 //
-// Function: FUN_0001c114 @ 0x0001c114
+// Function: coldStartRpmTableLookup @ 0x0001c114
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001c114(void)
+void coldStartRpmTableLookup(void)
 
 {
   if (_fuel_demand_accumulator == 3) {
@@ -16005,12 +16007,12 @@ void FUN_0001c114(void)
 
 
 //
-// Function: FUN_0001c1a4 @ 0x0001c1a4
+// Function: coldStartFuelFactorLookup @ 0x0001c1a4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001c1a4(void)
+void coldStartFuelFactorLookup(void)
 
 {
   if (((_DAT_003fa85e == 3) && (_fuel_demand_accumulator == 7)) && (_DAT_00406862 < _DAT_0040a798))
@@ -16030,12 +16032,12 @@ void FUN_0001c1a4(void)
 
 
 //
-// Function: FUN_0001c23c @ 0x0001c23c
+// Function: selectColdStartFactor @ 0x0001c23c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001c23c(void)
+void selectColdStartFactor(void)
 
 {
   _DAT_003fa842 = 2;
@@ -16053,12 +16055,12 @@ void FUN_0001c23c(void)
 
 
 //
-// Function: FUN_0001c28c @ 0x0001c28c
+// Function: processColdStartMainLoop @ 0x0001c28c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001c28c(void)
+void processColdStartMainLoop(void)
 
 {
   uint uVar1;
@@ -16219,12 +16221,12 @@ LAB_0001c8b8:
 
 
 //
-// Function: FUN_0001c978 @ 0x0001c978
+// Function: initCrankingLimits @ 0x0001c978
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001c978(void)
+void initCrankingLimits(void)
 
 {
   _DAT_0040a334 = 0;
@@ -16431,12 +16433,12 @@ uint findFaultByTypeAndSeverity(uint param_1,ushort param_2)
 
 
 //
-// Function: FUN_0001cea4 @ 0x0001cea4
+// Function: addFaultToActiveList @ 0x0001cea4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001cea4(uint param_1)
+void addFaultToActiveList(uint param_1)
 
 {
   byte bVar1;
@@ -16490,7 +16492,7 @@ LAB_0001cfd8:
           uVar4 = findFaultByTypeAndSeverity(3,2);
           uVar4 = uVar4 & 0xffff;
           if (7 < uVar4) {
-            FUN_0001dd10();
+            markFaultForReplacement();
             goto LAB_0001cf90;
           }
         }
@@ -16509,12 +16511,12 @@ LAB_0001cff4:
 
 
 //
-// Function: FUN_0001d01c @ 0x0001d01c
+// Function: clearDiagnosticState @ 0x0001d01c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001d01c(void)
+void clearDiagnosticState(void)
 
 {
   int iVar1;
@@ -16578,12 +16580,12 @@ void FUN_0001d01c(void)
 
 
 //
-// Function: FUN_0001d224 @ 0x0001d224
+// Function: processFaultTableEntry @ 0x0001d224
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001d224(void)
+void processFaultTableEntry(void)
 
 {
   ushort uVar1;
@@ -16693,7 +16695,7 @@ void FUN_0001d224(void)
             *(char *)(iVar8 + 0x3fe1d4) = *(char *)(iVar8 + 0x3fe1d4) + '\x01';
           }
           if (*(char *)(uVar9 + 0x3fe124) == '\0') {
-            FUN_0001cea4(uVar9);
+            addFaultToActiveList(uVar9);
             *(undefined1 *)(iVar8 + 0x3fe1d3) = 3;
             *(undefined4 *)(iVar8 + 0x3fe1ce) = _fuel_timing_advance;
             *(undefined1 *)(iVar8 + 0x3fe1d2) = 0;
@@ -16756,12 +16758,12 @@ void FUN_0001d224(void)
 
 
 //
-// Function: FUN_0001d8f8 @ 0x0001d8f8
+// Function: buildFaultConditionMask @ 0x0001d8f8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001d8f8(void)
+void buildFaultConditionMask(void)
 
 {
   byte bVar1;
@@ -16796,12 +16798,12 @@ void FUN_0001d8f8(void)
 
 
 //
-// Function: FUN_0001d9b8 @ 0x0001d9b8
+// Function: diagnosticMainProcessor @ 0x0001d9b8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001d9b8(void)
+void diagnosticMainProcessor(void)
 
 {
   uint uVar1;
@@ -16821,15 +16823,15 @@ void FUN_0001d9b8(void)
     _fault_clear_debounce = (ushort)uVar1;
   }
   if (iVar2 < 0x32) {
-    FUN_0001d8f8();
-    FUN_0001d224();
+    buildFaultConditionMask();
+    processFaultTableEntry();
     _fault_clear_debounce = _fault_clear_debounce + 1;
     if (0x31 < _fault_clear_debounce) {
       _fault_clear_debounce = 0;
     }
   }
   if ((_diagnostic_action_state & 1) != 0) {
-    FUN_0001d01c();
+    clearDiagnosticState();
   }
   if (((_diagnostic_enable_flags & 0x400) != 0) && (_DAT_0040aefe != _DAT_0040af02)) {
     func_0x0053515c();
@@ -16917,10 +16919,10 @@ void FUN_0001d9b8(void)
 
 
 //
-// Function: FUN_0001dcdc @ 0x0001dcdc
+// Function: initDiagnosticRingBuffer @ 0x0001dcdc
 //
 
-void FUN_0001dcdc(void)
+void initDiagnosticRingBuffer(void)
 
 {
   ringBufferInit(0x40a7d8,0x40a7e9,10);
@@ -16930,10 +16932,10 @@ void FUN_0001dcdc(void)
 
 
 //
-// Function: FUN_0001dd10 @ 0x0001dd10
+// Function: markFaultForReplacement @ 0x0001dd10
 //
 
-void FUN_0001dd10(void)
+void markFaultForReplacement(void)
 
 {
   bool bVar1;
@@ -16982,12 +16984,12 @@ void FUN_0001dd10(void)
 
 
 //
-// Function: FUN_0001de4c @ 0x0001de4c
+// Function: updateFaultEntryCounters @ 0x0001de4c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001de4c(uint param_1)
+void updateFaultEntryCounters(uint param_1)
 
 {
   bool bVar1;
@@ -17027,7 +17029,7 @@ void resetFaultStatus(int param_1)
   *(undefined4 *)(param_1 + 0x3fe1ce) = 0;
   *(undefined1 *)(param_1 + 0x3fe1d2) = 0;
   if (((_diagnostic_enable_flags & 0x400) != 0) || (*(char *)(param_1 + 0x3fe1d3) == '\x02')) {
-    FUN_0001de4c();
+    updateFaultEntryCounters();
   }
   *(undefined1 *)(param_1 + 0x3fe1d3) = 0;
   return;
@@ -17116,12 +17118,12 @@ void setFaultActiveStatus(int param_1,uint param_2)
 
 
 //
-// Function: FUN_0001e22c @ 0x0001e22c
+// Function: selectFuelDemandSource @ 0x0001e22c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001e22c(void)
+void selectFuelDemandSource(void)
 
 {
   ushort uVar1;
@@ -17207,12 +17209,12 @@ LAB_0001e3e4:
 
 
 //
-// Function: FUN_0001e4d8 @ 0x0001e4d8
+// Function: clearFuelDemandFlag @ 0x0001e4d8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001e4d8(void)
+void clearFuelDemandFlag(void)
 
 {
   _DAT_003fa86e = 0;
@@ -17222,12 +17224,12 @@ void FUN_0001e4d8(void)
 
 
 //
-// Function: FUN_0001e4e8 @ 0x0001e4e8
+// Function: calculateProtectionRateLimited @ 0x0001e4e8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001e4e8(void)
+void calculateProtectionRateLimited(void)
 
 {
   int extraout_r4;
@@ -17255,12 +17257,12 @@ void FUN_0001e4e8(void)
 
 
 //
-// Function: FUN_0001e5a4 @ 0x0001e5a4
+// Function: processProtectionSelection @ 0x0001e5a4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001e5a4(void)
+void processProtectionSelection(void)
 
 {
   short sVar1;
@@ -17269,7 +17271,7 @@ void FUN_0001e5a4(void)
     _DAT_0040a2d8 = 0xffff;
     _DAT_0040a2da = 0x28;
     processProtectionLimits();
-    FUN_0001e4e8();
+    calculateProtectionRateLimited();
   }
   else {
     _protection_limit_value = _DAT_003fd802;
@@ -17339,12 +17341,12 @@ LAB_0001e768:
 
 
 //
-// Function: FUN_0001e810 @ 0x0001e810
+// Function: initEngineOperatingState @ 0x0001e810
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001e810(void)
+void initEngineOperatingState(void)
 
 {
   if (_engine_operating_mode == 0) {
@@ -17356,16 +17358,16 @@ void FUN_0001e810(void)
 
 
 //
-// Function: FUN_0001e830 @ 0x0001e830
+// Function: updateEngineTimingCompensation @ 0x0001e830
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001e830(void)
+void updateEngineTimingCompensation(void)
 
 {
   if (_engine_operating_mode == 8) {
-    _DAT_0040a887 = FUN_0001ec70();
+    _DAT_0040a887 = calculateDualAxisFuelLimit();
     _timing_compensation_final = _DAT_0040a887;
   }
   return;
@@ -17374,12 +17376,12 @@ void FUN_0001e830(void)
 
 
 //
-// Function: FUN_0001e870 @ 0x0001e870
+// Function: processTorqueLimitState @ 0x0001e870
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001e870(void)
+void processTorqueLimitState(void)
 
 {
   short sVar1;
@@ -17430,12 +17432,12 @@ void FUN_0001e870(void)
 
 
 //
-// Function: FUN_0001ea6c @ 0x0001ea6c
+// Function: initProtectionTableSizes @ 0x0001ea6c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001ea6c(void)
+void initProtectionTableSizes(void)
 
 {
   _DAT_003fa878 = 2;
@@ -17448,12 +17450,12 @@ void FUN_0001ea6c(void)
 
 
 //
-// Function: FUN_0001ea94 @ 0x0001ea94
+// Function: initFaultSeverityTables @ 0x0001ea94
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001ea94(void)
+void initFaultSeverityTables(void)
 
 {
   _DAT_0040a8a1 = 2;
@@ -17469,12 +17471,12 @@ void FUN_0001ea94(void)
 
 
 //
-// Function: FUN_0001eae8 @ 0x0001eae8
+// Function: calculateFuelDemandChangeRate @ 0x0001eae8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001eae8(void)
+void calculateFuelDemandChangeRate(void)
 
 {
   uint uVar1;
@@ -17543,12 +17545,12 @@ void processFaultIncrement(short *param_1)
 
 
 //
-// Function: FUN_0001ec70 @ 0x0001ec70
+// Function: calculateDualAxisFuelLimit @ 0x0001ec70
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-uint FUN_0001ec70(void)
+uint calculateDualAxisFuelLimit(void)
 
 {
   ushort uVar1;
@@ -17629,12 +17631,12 @@ LAB_0001eef4:
 
 
 //
-// Function: FUN_0001ef30 @ 0x0001ef30
+// Function: initFuelDemandTracking @ 0x0001ef30
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001ef30(void)
+void initFuelDemandTracking(void)
 
 {
   _sensor_offset_value = 0x4000;
@@ -17650,12 +17652,12 @@ void FUN_0001ef30(void)
 
 
 //
-// Function: FUN_0001ef88 @ 0x0001ef88
+// Function: calculateFuelDemandLimitOutput @ 0x0001ef88
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001ef88(void)
+void calculateFuelDemandLimitOutput(void)
 
 {
   uint extraout_r4;
@@ -17731,12 +17733,12 @@ uint processActiveFaultList(undefined4 param_1,undefined4 param_2)
 
 
 //
-// Function: FUN_0001f17c @ 0x0001f17c
+// Function: calculateFuelDemandWithTrim @ 0x0001f17c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001f17c(void)
+void calculateFuelDemandWithTrim(void)
 
 {
   undefined2 uVar1;
@@ -17780,12 +17782,12 @@ void FUN_0001f17c(void)
 
 
 //
-// Function: FUN_0001f300 @ 0x0001f300
+// Function: initFuelDemandTableDimensions @ 0x0001f300
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001f300(void)
+void initFuelDemandTableDimensions(void)
 
 {
   _DAT_003fa88c = 2;
@@ -17796,12 +17798,12 @@ void FUN_0001f300(void)
 
 
 //
-// Function: FUN_0001f318 @ 0x0001f318
+// Function: initProtectionStateWithFuelDemand @ 0x0001f318
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001f318(void)
+void initProtectionStateWithFuelDemand(void)
 
 {
   _protection_limit_value = _DAT_0040a897;
@@ -17814,12 +17816,12 @@ void FUN_0001f318(void)
 
 
 //
-// Function: FUN_0001f34c @ 0x0001f34c
+// Function: calculateTimingCompensation @ 0x0001f34c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001f34c(void)
+void calculateTimingCompensation(void)
 
 {
   int iVar1;
@@ -17875,7 +17877,7 @@ void FUN_0001f40c(void)
   uint uVar6;
   ushort uVar7;
   
-  FUN_0001f34c();
+  calculateTimingCompensation();
   _DAT_003fa894 = _sensor_raw_ch3;
   signedDivision32((int)((ulonglong)
                          ((longlong)(int)((uint)_torque_limit_source - (uint)_DAT_0040b706) *
@@ -18005,12 +18007,12 @@ void FUN_0001f40c(void)
 
 
 //
-// Function: FUN_0001f98c @ 0x0001f98c
+// Function: initSensorRawChannels @ 0x0001f98c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001f98c(void)
+void initSensorRawChannels(void)
 
 {
   _sensor_raw_ch4 = _DAT_00406fb4;
@@ -18030,12 +18032,12 @@ void FUN_0001f98c(void)
 
 
 //
-// Function: FUN_0001fa20 @ 0x0001fa20
+// Function: selectSensorRawChannels @ 0x0001fa20
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001fa20(void)
+void selectSensorRawChannels(void)
 
 {
   if ((_system_status_flags & 1) == 0) {
@@ -18118,12 +18120,12 @@ void FUN_0001fa20(void)
 
 
 //
-// Function: FUN_0001fd94 @ 0x0001fd94
+// Function: selectTorqueLimit @ 0x0001fd94
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001fd94(void)
+void selectTorqueLimit(void)
 
 {
   short sVar1;
@@ -18309,12 +18311,12 @@ LAB_0002012c:
 
 
 //
-// Function: FUN_00020410 @ 0x00020410
+// Function: initTorqueLimitDefaults @ 0x00020410
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00020410(void)
+void initTorqueLimitDefaults(void)
 
 {
   _torque_limit_request = _DAT_003fdcf8;
@@ -18334,10 +18336,10 @@ void FUN_00020410(void)
 
 
 //
-// Function: FUN_000204a8 @ 0x000204a8
+// Function: getLimitCategoryCode @ 0x000204a8
 //
 
-undefined1 FUN_000204a8(int param_1)
+undefined1 getLimitCategoryCode(int param_1)
 
 {
   if (param_1 < 0x41) {
@@ -18357,12 +18359,12 @@ undefined1 FUN_000204a8(int param_1)
 
 
 //
-// Function: FUN_00020500 @ 0x00020500
+// Function: calculateProtectionActivationDelay @ 0x00020500
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00020500(void)
+void calculateProtectionActivationDelay(void)
 
 {
   if ((_DAT_003fd5ee & 0x800) != 0) {
@@ -18377,12 +18379,12 @@ void FUN_00020500(void)
 
 
 //
-// Function: FUN_00020554 @ 0x00020554
+// Function: calculateEffectiveFuelLimit @ 0x00020554
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-uint FUN_00020554(void)
+uint calculateEffectiveFuelLimit(void)
 
 {
   int extraout_r4;
@@ -18487,12 +18489,12 @@ uint FUN_00020554(void)
 
 
 //
-// Function: FUN_00020860 @ 0x00020860
+// Function: selectTorqueLimitStateMachine @ 0x00020860
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00020860(void)
+void selectTorqueLimitStateMachine(void)
 
 {
   ushort uVar1;
@@ -18500,7 +18502,7 @@ void FUN_00020860(void)
   
   uVar2 = _DAT_0040a887;
   if (_DAT_003fdd42 == 1) {
-    uVar2 = FUN_00020554();
+    uVar2 = calculateEffectiveFuelLimit();
   }
   uVar1 = _torque_limit_calculated;
   if (((((((_filter_accumulator != 5) &&
@@ -18541,12 +18543,12 @@ void FUN_00020860(void)
 
 
 //
-// Function: FUN_000209e8 @ 0x000209e8
+// Function: calculateLoadRateOfChange @ 0x000209e8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000209e8(void)
+void calculateLoadRateOfChange(void)
 
 {
   if (_load_throttle_processed == fault_severity_table_ptr) {
@@ -18565,12 +18567,12 @@ void FUN_000209e8(void)
 
 
 //
-// Function: FUN_00020a58 @ 0x00020a58
+// Function: calculateLoadToFuelRatio @ 0x00020a58
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00020a58(void)
+void calculateLoadToFuelRatio(void)
 
 {
   if ((int)((uint)_load_throttle_processed - (uint)fault_severity_table_ptr) < -31999) {
@@ -18594,10 +18596,10 @@ void FUN_00020a58(void)
 
 
 //
-// Function: FUN_00020aec @ 0x00020aec
+// Function: emptyStubFunction3 @ 0x00020aec
 //
 
-void FUN_00020aec(void)
+void emptyStubFunction3(void)
 
 {
   return;
@@ -18606,12 +18608,12 @@ void FUN_00020aec(void)
 
 
 //
-// Function: FUN_00020af0 @ 0x00020af0
+// Function: calculateOilPressureRateOfChange @ 0x00020af0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00020af0(void)
+void calculateOilPressureRateOfChange(void)
 
 {
   if ((int)((uint)_oil_pressure_protection_limit - (uint)fault_severity_table_ptr) < -31999) {
@@ -18714,12 +18716,12 @@ void processJ1939RxMessage(int param_1,int param_2)
 
 
 //
-// Function: FUN_00020d10 @ 0x00020d10
+// Function: updateProtectionStateMachine @ 0x00020d10
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00020d10(void)
+void updateProtectionStateMachine(void)
 
 {
   uint uVar1;
@@ -18866,12 +18868,12 @@ LAB_000210c8:
 
 
 //
-// Function: FUN_000212dc @ 0x000212dc
+// Function: initProtectionDelayDefaults @ 0x000212dc
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000212dc(void)
+void initProtectionDelayDefaults(void)
 
 {
   if ((_system_status_flags & 0x200) == 0) {
@@ -18884,12 +18886,12 @@ void FUN_000212dc(void)
 
 
 //
-// Function: FUN_00021314 @ 0x00021314
+// Function: calculateSpeedControlError @ 0x00021314
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00021314(void)
+void calculateSpeedControlError(void)
 
 {
   short sVar1;
@@ -18965,12 +18967,12 @@ void FUN_00021314(void)
 
 
 //
-// Function: FUN_0002156c @ 0x0002156c
+// Function: initSpeedControlTableDimensions @ 0x0002156c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002156c(void)
+void initSpeedControlTableDimensions(void)
 
 {
   _DAT_003fa8a6 = 2;
@@ -19055,10 +19057,10 @@ undefined4 processJ1939RxQueue(undefined4 param_1,int param_2)
 
 
 //
-// Function: FUN_000218b0 @ 0x000218b0
+// Function: j1939ProcessRxQueueDefault @ 0x000218b0
 //
 
-undefined1 FUN_000218b0(void)
+undefined1 j1939ProcessRxQueueDefault(void)
 
 {
   undefined1 uVar1;
@@ -19070,10 +19072,10 @@ undefined1 FUN_000218b0(void)
 
 
 //
-// Function: FUN_000218dc @ 0x000218dc
+// Function: j1939ProcessRxQueueParam @ 0x000218dc
 //
 
-undefined1 FUN_000218dc(undefined4 param_1)
+undefined1 j1939ProcessRxQueueParam(undefined4 param_1)
 
 {
   undefined1 uVar1;
@@ -19085,12 +19087,12 @@ undefined1 FUN_000218dc(undefined4 param_1)
 
 
 //
-// Function: FUN_00021918 @ 0x00021918
+// Function: validateCalibrationMemory @ 0x00021918
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-undefined4 FUN_00021918(void)
+undefined4 validateCalibrationMemory(void)
 
 {
   char cVar1;
@@ -19146,10 +19148,10 @@ undefined4 FUN_00021918(void)
 
 
 //
-// Function: FUN_00021a24 @ 0x00021a24
+// Function: registerJ1939DiagnosticHandlers @ 0x00021a24
 //
 
-void FUN_00021a24(void)
+void registerJ1939DiagnosticHandlers(void)
 
 {
   processJ1939DiagnosticRequest(1,&LAB_00021584);
@@ -19157,9 +19159,9 @@ void FUN_00021a24(void)
   processJ1939DiagnosticRequest(10,initJ1939MessageBuffers);
   processJ1939DiagnosticRequest(0x16,&LAB_00021694);
   processJ1939DiagnosticRequest(6,&LAB_000216e8);
-  processJ1939DiagnosticRequest(0xb,FUN_000218dc);
+  processJ1939DiagnosticRequest(0xb,j1939ProcessRxQueueParam);
   processJ1939DiagnosticRequest(0x18,&LAB_00021904);
-  processJ1939DiagnosticRequest(0x15,FUN_00021918);
+  processJ1939DiagnosticRequest(0x15,validateCalibrationMemory);
   return;
 }
 
@@ -19213,12 +19215,12 @@ undefined2 initUdsServiceHandlers(undefined4 param_1)
 
 
 //
-// Function: FUN_00021bf8 @ 0x00021bf8
+// Function: getHighestPriorityBit @ 0x00021bf8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-uint FUN_00021bf8(void)
+uint getHighestPriorityBit(void)
 
 {
   uint uVar1;
@@ -19241,12 +19243,12 @@ uint FUN_00021bf8(void)
 
 
 //
-// Function: FUN_00021c3c @ 0x00021c3c
+// Function: updateProtectionThresholdsIfLow @ 0x00021c3c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00021c3c(void)
+void updateProtectionThresholdsIfLow(void)
 
 {
   uint uVar1;
@@ -19270,12 +19272,12 @@ void FUN_00021c3c(void)
 
 
 //
-// Function: FUN_00021cd4 @ 0x00021cd4
+// Function: updateProtectionDiagnostics @ 0x00021cd4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00021cd4(void)
+void updateProtectionDiagnostics(void)
 
 {
   ushort uVar2;
@@ -19297,7 +19299,7 @@ void FUN_00021cd4(void)
   uVar6 = _DAT_0040adbe;
   if ((_system_status_flags & 0x200) == 0) {
     _DAT_0040a732 = _DAT_0040a732 | _DAT_003fa8ae;
-    FUN_00021c3c();
+    updateProtectionThresholdsIfLow();
     uVar2 = fuelDemandTableLookup(_protection_threshold_scaled);
     uVar3 = fuelDemandTableLookup(_protection_recovery_threshold);
     uVar4 = fuelDemandTableLookup(_protection_hysteresis);
@@ -19326,7 +19328,7 @@ void FUN_00021cd4(void)
       uVar1 = initUdsServiceHandlers(_protection_threshold_base);
       _DAT_0040add2 = (short)((uint)uVar6 / (((uVar1 & 0xffff) * 0x34f6) / (uint)_DAT_0040ada8));
     }
-    uVar7 = FUN_00021bf8();
+    uVar7 = getHighestPriorityBit();
     if ((DAT_0005c33c & uVar7) == 0) {
       if (_DAT_003fa8ae < (_DAT_0040a732 & ~_DAT_003fa8ae)) {
         return;
@@ -19453,12 +19455,12 @@ void FUN_000221f0(void)
 
 
 //
-// Function: FUN_00022220 @ 0x00022220
+// Function: updateGovernorTimers @ 0x00022220
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00022220(void)
+void updateGovernorTimers(void)
 
 {
   uint uVar1;
@@ -19490,19 +19492,19 @@ void FUN_00022220(void)
 
 
 //
-// Function: FUN_00022318 @ 0x00022318
+// Function: initGovernorDerivativeTerms @ 0x00022318
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00022318(void)
+void initGovernorDerivativeTerms(void)
 
 {
   _governor_derivative_term = 0xffff;
   _DAT_0040ade2 = 0xffff;
   _DAT_0040ade8 = 0xffff;
   _DAT_0040add6 = 0xffff;
-  func_0x00538eb0(0xdf00,FUN_000223f4);
+  func_0x00538eb0(0xdf00,processGovernorControlMessage);
   return;
 }
 
@@ -19533,12 +19535,12 @@ void processSecurityAccessRequest(int param_1)
 
 
 //
-// Function: FUN_000223f4 @ 0x000223f4
+// Function: processGovernorControlMessage @ 0x000223f4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000223f4(int param_1)
+void processGovernorControlMessage(int param_1)
 
 {
   byte bVar1;
@@ -20895,7 +20897,7 @@ void sendJ1939ResponseFrame(byte *param_1,uint param_2)
   byte bVar5;
   undefined1 *puVar6;
   
-  bVar2 = FUN_000204a8(**(undefined1 **)(param_1 + 6));
+  bVar2 = getLimitCategoryCode(**(undefined1 **)(param_1 + 6));
   if (param_2 == 0) {
     iVar3 = 1;
   }
@@ -21584,9 +21586,9 @@ LAB_000259f4:
   }
   j1939_tx_retry_count = 0xfe;
 LAB_00025a28:
-  FUN_00020860();
+  selectTorqueLimitStateMachine();
   DAT_003fad91 = (char)((ushort)_DAT_0040ad8c >> 8) + '}';
-  FUN_000209e8();
+  calculateLoadRateOfChange();
   DAT_003fad92 = (char)((ushort)_DAT_0040ad8a >> 8) + '}';
   if (_DAT_0040a336 == 1) {
     DAT_003fad92 = -2;
@@ -21649,7 +21651,7 @@ LAB_00025c0c:
   else {
     DAT_003fada9 = -2;
   }
-  FUN_00020a58();
+  calculateLoadToFuelRatio();
   DAT_003fadaa = (undefined1)((ushort)_DAT_0040ad8e >> 8);
   if (_DAT_0040a336 == 1) {
     DAT_003fadaa = 0xfe;
@@ -21688,7 +21690,7 @@ void initPgn61443Eec2Handler(void)
   _DAT_003fadb4 = 5;
   _DAT_003fadb6 = &DAT_003fada8;
   _DAT_003fadba = 0x3fadbe;
-  FUN_00020aec();
+  emptyStubFunction3();
   j1939_register_pgn_handler(0xf003,j1939_handle_pgn_61443_eec2);
   return;
 }
@@ -21707,7 +21709,7 @@ void FUN_00025de8(void)
   undefined1 local_8;
   undefined1 uStack_7;
   
-  FUN_00020af0();
+  calculateOilPressureRateOfChange();
   DAT_003fadc0 = (char)((ushort)_DAT_0040ad90 >> 8) + '}';
   uStack_7 = (undefined1)DAT_0005c382;
   DAT_003fadc1 = uStack_7;
@@ -21882,7 +21884,7 @@ LAB_00026340:
     DAT_003fae09 = -1;
   }
   else {
-    FUN_00021314();
+    calculateSpeedControlError();
     DAT_003fae09 = '}' - (char)((ushort)_DAT_0040aaa2 >> 8);
   }
   sendJ1939MultiFrame(&DAT_003fae10);
@@ -21902,7 +21904,7 @@ void FUN_000263a4(void)
 {
   _DAT_003fae10 = CONCAT13(((byte)_DAT_003fd858 & 7) << 2,0xf00000);
   _DAT_003fae10 = CONCAT31(_DAT_003fae10,(char)_DAT_0040ad7e);
-  FUN_0002156c();
+  initSpeedControlTableDimensions();
   _DAT_003fae14 = 2;
   _DAT_003fae16 = &DAT_003fae08;
   _DAT_003fae1a = 0x3fae1e;
@@ -37192,7 +37194,7 @@ void applySpeedControlProtectionLimit(void)
 void processProtectionLimits(void)
 
 {
-  FUN_0001f318();
+  initProtectionStateWithFuelDemand();
   FUN_0002a918();
   trackMinimumFuelDemand();
   func_0x00502af4();
@@ -37221,7 +37223,7 @@ void initProtectionTorqueLimit(void)
 {
   func_0x00502b34();
   initFuelTableSizes();
-  FUN_0001f300();
+  initFuelDemandTableDimensions();
   _protection_torque_limit = DAT_0005c306;
   return;
 }
@@ -37283,7 +37285,7 @@ void resetEngineOperatingMode(void)
   setEngineOperatingMode5();
   func_0x0050daac(iVar1);
   initEngineOperatingMode(iVar1);
-  FUN_0001e810();
+  initEngineOperatingState();
   return;
 }
 
@@ -47199,19 +47201,19 @@ void exceptionHandler(void)
   func_0x005067bc();
   dispatchModeHandlers();
   initEngineSpeedTracking();
-  FUN_0001c978();
+  initCrankingLimits();
   initSensorDefaults();
   initFuelFilterCoefficients();
-  FUN_00017af4();
-  FUN_0001c23c();
-  FUN_0001ea6c();
+  initFuelDemandRateVariables();
+  selectColdStartFactor();
+  initProtectionTableSizes();
   FUN_0002bb24();
   FUN_0002bd38();
   FUN_00028618();
-  FUN_0001ef30();
+  initFuelDemandTracking();
   dispatchCalibrationFunctions();
   func_0x00538eac();
-  FUN_0001ea94();
+  initFaultSeverityTables();
   initFuelTimingTableSizes();
   initFuelDemandVariables();
   FUN_00029de0();
@@ -47242,8 +47244,8 @@ void exceptionHandler(void)
   initTimingFilterStates();
   func_0x00508f0c();
   stubFunction3();
-  FUN_0001f98c();
-  FUN_00020410();
+  initSensorRawChannels();
+  initTorqueLimitDefaults();
   updateSensorLookupTable();
   func_0x00510d90();
   func_0x00512554();
@@ -47262,7 +47264,7 @@ void exceptionHandler(void)
   initProtectionTorqueLimit();
   initEngineRpmFilterPointers();
   func_0x00525de4();
-  FUN_0000e8cc();
+  initTemperatureTrimCoeff();
   initSensorLookupTable5();
   FUN_00029bf8();
   FUN_00029c80();
@@ -47316,19 +47318,19 @@ void exceptionHandler(void)
   sensorChannel7_process();
   initFuelControlFilterSystem();
   initFuelFilterDefaults();
-  FUN_00016ffc();
-  FUN_000144d0();
-  FUN_00016888();
+  initFuelTimingTablePointers();
+  initFuelLimitTableSizes();
+  initFuelDemandTablePointers();
   func_0x0050398c();
-  FUN_00017e54();
-  FUN_0001a204();
+  initFuelFlowRateVariables();
+  initFuelDemandLimitVariables();
   func_0x005075b8();
-  FUN_0001956c();
-  FUN_0001b35c();
+  processSensorValidation();
+  initFaultTimingVariables();
   FUN_0002a2b4();
   func_0x0050f6c4();
   clearFuelDemandState();
-  FUN_0000e8ac();
+  initTemperatureTrimTableSizes();
   initThermalProtectionFilters();
   func_0x00527050();
   func_0x00526cb8();
@@ -47342,15 +47344,15 @@ void exceptionHandler(void)
   FUN_00028b8c();
   func_0x005379b4();
   func_0x0051ab50();
-  FUN_00018f1c();
+  initSensorFaultVariables();
   func_0x00514394();
   func_0x0052d514();
-  FUN_0001e4d8();
-  FUN_0001dcdc();
-  FUN_0001ae2c();
+  clearFuelDemandFlag();
+  initDiagnosticRingBuffer();
+  initFuelDemandFaultVariables();
   func_0x00507684();
   func_0x0050ebf0();
-  FUN_000130ac();
+  initManifoldPressureFilter();
   FUN_0002c9bc();
   initSensorRetryCounters();
   sensorChannel6_process();
@@ -47382,9 +47384,9 @@ void exceptionHandler(void)
   initTpuBConfiguration();
   initEngineLoadProtection();
   func_0x0050241c();
-  FUN_0001083c();
-  FUN_00013ca4();
-  FUN_00014080();
+  updateTurboModeState();
+  initBoostProtectionState();
+  initThrottleFilterState();
   func_0x00504938();
   func_0x00504754();
   func_0x00505574();
@@ -47392,7 +47394,7 @@ void exceptionHandler(void)
   func_0x005053d0();
   func_0x00505b3c();
   func_0x00505bd8();
-  FUN_0001806c();
+  emptyStubFunction3();
   func_0x005071dc();
   func_0x00507820();
   func_0x00509a2c();
@@ -47411,25 +47413,25 @@ void exceptionHandler(void)
   func_0x00502eb8();
   func_0x00506c94();
   func_0x00506f68();
-  FUN_00018afc();
+  initFaultProtectionVariables();
   func_0x00506a64();
   func_0x005318e8();
   clearTimingDataAndFilters();
   dispatchCalibrationBlockHandlers();
   func_0x00510a48();
   func_0x0051a5f8();
-  FUN_00010ed0();
-  FUN_00011324();
-  FUN_00011924();
-  FUN_0001233c();
+  initTurboRatioVariables();
+  initLoadAdjustmentTableSizes();
+  initLoadGainVariables();
+  initTurboCompensationVariables();
   initFuelDemandTrackingState();
   initFuelDemandFilterPointers();
   func_0x00537944();
   func_0x0053168c();
   clearTimingCalibrationData();
   func_0x0050e4c4();
-  FUN_0001350c();
-  FUN_0000e748();
+  initFuelDemandFilterState();
+  initFuelPressureVariables();
   func_0x00519ffc();
   func_0x00523858();
   func_0x00530968();
