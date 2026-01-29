@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Jan 29 06:04:01 MST 2026
+// Generated: Thu Jan 29 06:04:59 MST 2026
 
 
 //
@@ -27655,12 +27655,12 @@ LAB_00030fdc:
 
 
 //
-// Function: FUN_00031320 @ 0x00031320
+// Function: protectionFuelDemandCheck @ 0x00031320
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00031320(void)
+void protectionFuelDemandCheck(void)
 
 {
   ushort uVar1;
@@ -27723,7 +27723,7 @@ void protectionTimeoutHandler(void)
          lookupTableInterpolation(&DAT_003fb0de,_engine_load_percent,0x407eca,0x407ee0,0);
     _protection_status_code = 6;
   }
-  FUN_00031320();
+  protectionFuelDemandCheck();
   return;
 }
 
@@ -27760,7 +27760,7 @@ void protectionWarmupHandler(void)
          lookupTableInterpolation(&DAT_003fb0ee,_engine_load_percent,0x407c96,0x407cb2,0);
     _protection_status_code = 1;
   }
-  FUN_00031320();
+  protectionFuelDemandCheck();
   return;
 }
 
@@ -27885,7 +27885,7 @@ void protectionStatusFlagHandler(void)
           }
         }
         protection_status_flags = bVar3;
-        FUN_00031320();
+        protectionFuelDemandCheck();
         return;
       }
       return;
@@ -27988,12 +27988,12 @@ LAB_00031b70:
 
 
 //
-// Function: FUN_00031d98 @ 0x00031d98
+// Function: protectionStateTransitionCheck @ 0x00031d98
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00031d98(void)
+void protectionStateTransitionCheck(void)
 
 {
   ushort uVar1;
@@ -28064,12 +28064,12 @@ LAB_00031f94:
 
 
 //
-// Function: FUN_000320e0 @ 0x000320e0
+// Function: protectionScaledLimitCalculation @ 0x000320e0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-uint FUN_000320e0(int param_1)
+uint protectionScaledLimitCalculation(int param_1)
 
 {
   uint uVar1;
@@ -28102,12 +28102,12 @@ uint FUN_000320e0(int param_1)
 
 
 //
-// Function: FUN_00032250 @ 0x00032250
+// Function: protectionRateOfChangeCalculation @ 0x00032250
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00032250(void)
+void protectionRateOfChangeCalculation(void)
 
 {
   short sVar1;
@@ -28120,11 +28120,11 @@ void FUN_00032250(void)
   
   if (-1 < _DAT_0040b12a) {
     _DAT_0040b0ca = _protection_system_state + 1;
-    _DAT_0040b0ae = FUN_000320e0(_DAT_0040b0ca);
+    _DAT_0040b0ae = protectionScaledLimitCalculation(_DAT_0040b0ca);
     if (_protection_system_state < 4) {
       _DAT_0040b0ca = _DAT_0040b0ca + 1;
     }
-    sVar1 = FUN_000320e0(_DAT_0040b0ca);
+    sVar1 = protectionScaledLimitCalculation(_DAT_0040b0ca);
     uVar3 = (uint)_DAT_0040b0b0;
     _DAT_0040b0b4 = sVar1;
     signedDivision32((int)((ulonglong)((longlong)(int)_DAT_0040b12a * (longlong)(int)uVar3) >> 0x20)
@@ -28191,7 +28191,7 @@ void FUN_0003241c(void)
   if (_DAT_0040781a < _fuel_demand_calculated) {
     _DAT_0040b0c6 = _DAT_0040b0b6 - _DAT_0040b12a;
     _DAT_0040b0ca = _protection_system_state;
-    _DAT_0040b0ae = FUN_000320e0(_protection_system_state + 1);
+    _DAT_0040b0ae = protectionScaledLimitCalculation(_protection_system_state + 1);
     _DAT_0040b0c8 = _DAT_0040b0b2 - _DAT_0040b0ae;
     iVar2 = (int)_DAT_0040b0c6;
     if (0 < iVar2) {
@@ -28254,7 +28254,7 @@ void FUN_0003257c(void)
       return;
     }
     protection_flags = bVar1;
-    FUN_00032250();
+    protectionRateOfChangeCalculation();
     _DAT_0040b0c0 =
          lookupTableInterpolation(&DAT_003fb126,_fuel_demand_calculated,0x407cce,0x407cdc,2);
     if ((_DAT_0040b104 == 0) && (_DAT_0040b0c0 < _DAT_0040b0b8)) {
@@ -28265,7 +28265,7 @@ void FUN_0003257c(void)
       _protection_status_code = 0x12;
       _DAT_0040b0b6 = _DAT_0040b12a;
       _DAT_0040b0ca = _protection_system_state;
-      _DAT_0040b0b2 = FUN_000320e0(_protection_system_state + 1);
+      _DAT_0040b0b2 = protectionScaledLimitCalculation(_protection_system_state + 1);
       return;
     }
     _protection_threshold_limit =
@@ -28303,7 +28303,7 @@ void FUN_0003257c(void)
       return;
     }
     protection_flags = bVar1;
-    FUN_00032250();
+    protectionRateOfChangeCalculation();
     _DAT_0040b0c0 =
          lookupTableInterpolation(&DAT_003fb128,_fuel_demand_calculated,0x407cea,0x407cf8,2);
     if ((_DAT_0040b104 != 0) || (_DAT_0040b0b8 <= _DAT_0040b0c0)) {
@@ -28333,7 +28333,7 @@ void FUN_0003257c(void)
       _protection_threshold_limit =
            lookupTableInterpolation(&DAT_003fb0ee,_engine_load_percent,0x407c96,0x407cb2,0);
       _protection_status_code = 1;
-      FUN_00032250();
+      protectionRateOfChangeCalculation();
       _DAT_0040b0c0 =
            lookupTableInterpolation(&DAT_003fb12a,_fuel_demand_calculated,0x407d06,0x407d14,2);
       if (_DAT_0040b104 != 0) {
@@ -28422,11 +28422,11 @@ LAB_00032e40:
       _protection_threshold_limit =
            lookupTableInterpolation(&DAT_003fb0dc,_engine_load_percent,0x407ef6,0x407f0c,0);
       _protection_status_code = 5;
-      FUN_00031320();
+      protectionFuelDemandCheck();
       return;
     }
     if ((protection_condition_flags_1 & 0x10) != 0) {
-      FUN_00031d98();
+      protectionStateTransitionCheck();
       return;
     }
     protection_condition_flags_1 = protection_condition_flags_1 & 0xfe;
