@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Jan 29 09:54:48 MST 2026
+// Generated: Thu Jan 29 10:13:34 MST 2026
 
 
 //
@@ -5812,7 +5812,7 @@ void periodicTaskGroup0_fuelFinal(void)
   FUN_0000d6f4();
   injectorPulseWidthCalc();
   FUN_00017d54();
-  FUN_00044374();
+  updateSensorDiagnosticFlags();
   FUN_00038868();
   FUN_0001ef88();
   func_0x00503964();
@@ -5851,7 +5851,7 @@ void periodicTaskGroup1_sensorProcessing(void)
   FUN_00020500();
   func_0x00504130();
   func_0x0050eaa8();
-  FUN_00042918();
+  resetEngineOperatingMode();
   temperatureSensorProcessing();
   temperatureBasedFuelTrim();
   FUN_0001e830();
@@ -5942,7 +5942,7 @@ void periodicTaskGroup3_auxiliaryControl(void)
   func_0x00534530();
   checkRpmOverspeedProtection();
   FUN_0004272c();
-  FUN_00045ecc();
+  calculateFuelDemandWithConditions();
   FUN_0002bf44();
   func_0x00508e78();
   func_0x00503b54();
@@ -6023,7 +6023,7 @@ void periodicTaskGroup8_outputs(void)
 {
   func_0x00525e54();
   func_0x00525504();
-  FUN_000429a0();
+  initProtectionParameter1();
   return;
 }
 
@@ -6054,7 +6054,7 @@ void periodicTaskGroup10_monitoring(void)
   FUN_0000da3c();
   func_0x005267f4();
   FUN_0003c26c();
-  FUN_00042ab8();
+  initProtectionParameter2();
   return;
 }
 
@@ -6561,7 +6561,7 @@ void main_loop(void)
     periodicTaskGroup15_calibration4();
     periodicTaskGroup28_calibration10();
     FUN_00042d78();
-    FUN_00043ac0();
+    processTimingCalibration();
     _main_loop_phase_index = 4;
     break;
   case 4:
@@ -37246,12 +37246,12 @@ void FUN_00042894(void)
 
 
 //
-// Function: FUN_000428d4 @ 0x000428d4
+// Function: setEngineOperatingMode5 @ 0x000428d4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000428d4(void)
+void setEngineOperatingMode5(void)
 
 {
   if ((_engine_operating_mode == 0) && ((_DAT_003fd5a4 & 1) != 0)) {
@@ -37264,12 +37264,12 @@ void FUN_000428d4(void)
 
 
 //
-// Function: FUN_00042918 @ 0x00042918
+// Function: resetEngineOperatingMode @ 0x00042918
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00042918(void)
+void resetEngineOperatingMode(void)
 
 {
   int iVar1;
@@ -37279,7 +37279,7 @@ void FUN_00042918(void)
   FUN_0000fb28();
   FUN_00042894();
   func_0x00503074(iVar1);
-  FUN_000428d4();
+  setEngineOperatingMode5();
   func_0x0050daac(iVar1);
   FUN_00010110(iVar1);
   FUN_0001e810();
@@ -37289,10 +37289,10 @@ void FUN_00042918(void)
 
 
 //
-// Function: FUN_00042978 @ 0x00042978
+// Function: dispatchModeHandlers @ 0x00042978
 //
 
-void FUN_00042978(void)
+void dispatchModeHandlers(void)
 
 {
   FUN_00010248();
@@ -37304,10 +37304,10 @@ void FUN_00042978(void)
 
 
 //
-// Function: FUN_000429a0 @ 0x000429a0
+// Function: initProtectionParameter1 @ 0x000429a0
 //
 
-void FUN_000429a0(void)
+void initProtectionParameter1(void)
 
 {
   func_0x005012dc(&DAT_0005b55c,0x40b722,0x3fb564,&DAT_0006429c,&DAT_000642a2,0,0x3fb566,0x36,0x148,
@@ -37318,10 +37318,10 @@ void FUN_000429a0(void)
 
 
 //
-// Function: FUN_00042a2c @ 0x00042a2c
+// Function: processProtectionParameter1 @ 0x00042a2c
 //
 
-void FUN_00042a2c(void)
+void processProtectionParameter1(void)
 
 {
   func_0x00501b4c(&DAT_0005b55c,0x40b722,0x3fb564,&DAT_0006429c,&DAT_000642a2,0,0x3fb566,0x36,0x148,
@@ -37332,10 +37332,10 @@ void FUN_00042a2c(void)
 
 
 //
-// Function: FUN_00042ab8 @ 0x00042ab8
+// Function: initProtectionParameter2 @ 0x00042ab8
 //
 
-void FUN_00042ab8(void)
+void initProtectionParameter2(void)
 
 {
   func_0x005012dc(&DAT_0005b56c,0x40b72e,0x3fb56e,&DAT_000642a8,&DAT_000642ae,0,0x3fb570,0x37,0x14a,
@@ -37346,10 +37346,10 @@ void FUN_00042ab8(void)
 
 
 //
-// Function: FUN_00042b44 @ 0x00042b44
+// Function: processProtectionParameter2 @ 0x00042b44
 //
 
-void FUN_00042b44(void)
+void processProtectionParameter2(void)
 
 {
   func_0x00501b4c(&DAT_0005b56c,0x40b72e,0x3fb56e,&DAT_000642a8,&DAT_000642ae,0,0x3fb570,0x37,0x14a,
@@ -37360,12 +37360,12 @@ void FUN_00042b44(void)
 
 
 //
-// Function: FUN_00042bd0 @ 0x00042bd0
+// Function: processTimingFilter @ 0x00042bd0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00042bd0(void)
+void processTimingFilter(void)
 
 {
   byte bVar1;
@@ -37827,12 +37827,12 @@ LAB_00043994:
 
 
 //
-// Function: FUN_00043a5c @ 0x00043a5c
+// Function: initTimingFilterState @ 0x00043a5c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00043a5c(void)
+void initTimingFilterState(void)
 
 {
   uint uVar1;
@@ -37855,12 +37855,12 @@ void FUN_00043a5c(void)
 
 
 //
-// Function: FUN_00043ac0 @ 0x00043ac0
+// Function: processTimingCalibration @ 0x00043ac0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00043ac0(void)
+void processTimingCalibration(void)
 
 {
   char cVar1;
@@ -37930,12 +37930,12 @@ void FUN_00043ac0(void)
 
 
 //
-// Function: FUN_00043d68 @ 0x00043d68
+// Function: clearTimingCalibrationData @ 0x00043d68
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00043d68(void)
+void clearTimingCalibrationData(void)
 
 {
   uint uVar1;
@@ -38063,12 +38063,12 @@ void resetEngineTimingAccumulators(void)
 
 
 //
-// Function: FUN_00044374 @ 0x00044374
+// Function: updateSensorDiagnosticFlags @ 0x00044374
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00044374(void)
+void updateSensorDiagnosticFlags(void)
 
 {
   uint uVar1;
@@ -38529,7 +38529,7 @@ LAB_00045154:
   _DAT_0040b7c0 = _DAT_003fb5b4;
   _DAT_0040b7ae = _DAT_0040b7ae + _DAT_0040b7a4;
   _DAT_0040b7b6 = _DAT_0040b7b6 + 1;
-  FUN_00042bd0();
+  processTimingFilter();
   sVar1 = _DAT_0040b7a8;
   if ((_engine_run_state == 2) && (sVar2 = _DAT_0040b7a8 + 1, sVar1 = sVar2, sVar2 == _DAT_00408f60)
      ) {
@@ -38891,12 +38891,12 @@ LAB_00045ea0:
 
 
 //
-// Function: FUN_00045ecc @ 0x00045ecc
+// Function: calculateFuelDemandWithConditions @ 0x00045ecc
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00045ecc(void)
+void calculateFuelDemandWithConditions(void)
 
 {
   bool bVar1;
@@ -39120,12 +39120,12 @@ LAB_0004662c:
 
 
 //
-// Function: FUN_0004665c @ 0x0004665c
+// Function: initRpmSetpointFilters @ 0x0004665c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0004665c(void)
+void initRpmSetpointFilters(void)
 
 {
   _rpm_setpoint_limited = _DAT_003fdd14;
@@ -39588,12 +39588,12 @@ LAB_00047628:
 
 
 //
-// Function: FUN_00047784 @ 0x00047784
+// Function: clearTimingDataAndFilters @ 0x00047784
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00047784(void)
+void clearTimingDataAndFilters(void)
 
 {
   _DAT_0040b85c = 0;
@@ -47196,7 +47196,7 @@ void FUN_000544c4(void)
   FUN_0000db50();
   FUN_0000ca60();
   func_0x005067bc();
-  FUN_00042978();
+  dispatchModeHandlers();
   FUN_00042438();
   FUN_0001c978();
   FUN_0000c874();
@@ -47236,7 +47236,7 @@ void FUN_000544c4(void)
   func_0x0052a910();
   initTpuTimingInterrupts();
   func_0x00527958();
-  FUN_0004665c();
+  initRpmSetpointFilters();
   FUN_0002c100();
   initTimingFilterStates();
   func_0x00508f0c();
@@ -47246,7 +47246,7 @@ void FUN_000544c4(void)
   FUN_000356fc();
   func_0x00510d90();
   func_0x00512554();
-  FUN_00043a5c();
+  initTimingFilterState();
   func_0x00507e20();
   func_0x00510f34();
   FUN_00035814();
@@ -47276,8 +47276,8 @@ void FUN_000544c4(void)
   func_0x00516df8();
   func_0x00511ea8();
   func_0x00513e0c();
-  FUN_00042a2c();
-  FUN_00042b44();
+  processProtectionParameter1();
+  processProtectionParameter2();
   func_0x0051a018();
   func_0x00531cf8();
   func_0x005305dc();
@@ -47413,7 +47413,7 @@ void FUN_000544c4(void)
   FUN_00018afc();
   func_0x00506a64();
   func_0x005318e8();
-  FUN_00047784();
+  clearTimingDataAndFilters();
   FUN_000402d4();
   func_0x00510a48();
   func_0x0051a5f8();
@@ -47425,7 +47425,7 @@ void FUN_000544c4(void)
   FUN_0003ca90();
   func_0x00537944();
   func_0x0053168c();
-  FUN_00043d68();
+  clearTimingCalibrationData();
   func_0x0050e4c4();
   FUN_0001350c();
   FUN_0000e748();
