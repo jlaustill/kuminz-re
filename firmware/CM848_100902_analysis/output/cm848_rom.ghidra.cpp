@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Jan 29 06:00:05 MST 2026
+// Generated: Thu Jan 29 06:01:13 MST 2026
 
 
 //
@@ -29,8 +29,8 @@ void reset_vector(void)
   _DAT_00306032 = 0;
   _DAT_00300004 = 0xffa0;
   _DAT_003060f6 = 3;
-  FUN_000024a0(0x1000);
-  FUN_00002694();
+  waitForBusStable(0x1000);
+  hardwareInitialization();
   return;
 }
 
@@ -950,8 +950,8 @@ void FUN_000016d0(void)
   _DAT_00306032 = 0;
   _DAT_00300004 = 0xffa0;
   _DAT_003060f6 = 3;
-  FUN_000024a0(0x1000);
-  FUN_00002694();
+  waitForBusStable(0x1000);
+  hardwareInitialization();
   return;
 }
 
@@ -1592,10 +1592,10 @@ bool FUN_000023b8(void)
 
 
 //
-// Function: FUN_000024a0 @ 0x000024a0
+// Function: waitForBusStable @ 0x000024a0
 //
 
-void FUN_000024a0(void)
+void waitForBusStable(void)
 
 {
   ushort *puVar1;
@@ -1618,12 +1618,12 @@ void FUN_000024a0(void)
 
 
 //
-// Function: FUN_00002504 @ 0x00002504
+// Function: systemInitialization @ 0x00002504
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00002504(void)
+void systemInitialization(void)
 
 {
   uint in_BAR;
@@ -1638,7 +1638,7 @@ void FUN_00002504(void)
   _DAT_0030600e = 0x4000;
   FUN_000010ac();
   FUN_0000183c();
-  FUN_00002970();
+  initCanController();
   _DAT_00302006 = 0;
   _DAT_00302736 = 0xbbbb;
   _DAT_00302738 = 0;
@@ -1667,13 +1667,13 @@ void FUN_00002504(void)
 
 
 //
-// Function: FUN_00002694 @ 0x00002694
+// Function: hardwareInitialization @ 0x00002694
 //
 
 /* WARNING: This function may have set the stack pointer */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00002694(void)
+void hardwareInitialization(void)
 
 {
   _DAT_002fc100 = 0x50080b;
@@ -1737,7 +1737,7 @@ LAB_0000291c:
   _DAT_003fdb9c = FUN_000023b8();
   _DAT_003fdb9c = _DAT_003fdb9c & 0xff;
   if ((_DAT_003fdb9c != 0) || (_eeprom_magic != 0x600d)) {
-    FUN_00002504();
+    systemInitialization();
   }
   (*(code *)PTR_FUN_0000810e)(0);
   return;
@@ -1746,12 +1746,12 @@ LAB_0000291c:
 
 
 //
-// Function: FUN_00002970 @ 0x00002970
+// Function: initCanController @ 0x00002970
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00002970(void)
+void initCanController(void)
 
 {
   undefined1 *puVar1;
