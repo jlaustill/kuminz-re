@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Jan 29 09:48:03 MST 2026
+// Generated: Thu Jan 29 09:50:12 MST 2026
 
 
 //
@@ -1435,10 +1435,10 @@ void FUN_00002170(void)
 
 
 //
-// Function: FUN_000021c0 @ 0x000021c0
+// Function: setDataTransferMode @ 0x000021c0
 //
 
-void FUN_000021c0(void)
+void setDataTransferMode(void)
 
 {
   DAT_003fee32 = 2;
@@ -1483,7 +1483,7 @@ void initDiagnosticSession(void)
     _eeprom_status_byte = &qspi_config_value;
     _qsmcm_sccr1 = 0x14;
     _qsmcm_scsr = 0x102c;
-    FUN_000021c0();
+    setDataTransferMode();
   }
   return;
 }
@@ -2071,7 +2071,7 @@ void FUN_00003008(void)
         _qsmcm_sccr1 = 0x14;
       }
       if ((diag_session_flags & 1) != 0) {
-        FUN_000021c0();
+        setDataTransferMode();
       }
       enableSystemInterrupts();
     }
@@ -3043,12 +3043,12 @@ void FUN_00004500(int param_1)
 
 
 //
-// Function: FUN_00004570 @ 0x00004570
+// Function: advanceAdcChannelQueue @ 0x00004570
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-undefined4 FUN_00004570(void)
+undefined4 advanceAdcChannelQueue(void)
 
 {
   bool bVar1;
@@ -3179,7 +3179,7 @@ void initCanMailboxFilters(void)
         }
         goto LAB_00004854;
       }
-      sVar2 = FUN_00004570();
+      sVar2 = advanceAdcChannelQueue();
       if (sVar2 != 0) {
         data_transfer_state = '\x01';
         goto LAB_000049a0;
@@ -3197,7 +3197,7 @@ LAB_00004854:
     if (data_transfer_state == '\x04') {
       FUN_000043a4(_DAT_003feca6 >> 0xf & 0xffff);
       FUN_00004500(uVar1);
-      FUN_00004570();
+      advanceAdcChannelQueue();
       data_transfer_state = '\x01';
       if (((DAT_003fec8a == '\0') || (data_transfer_status != '\x02')) ||
          (_DAT_003fec86 < _data_transfer_byte_count)) goto LAB_000049a0;
@@ -5763,14 +5763,14 @@ void phase_group_b_processing(void)
   FUN_0004a7ac();
   FUN_00049a54();
   FUN_0004a748();
-  FUN_0004a8cc();
+  updateEnginePosition();
   FUN_00047bd0();
   FUN_00049264();
   FUN_0004a2f8();
   FUN_000191a0();
   FUN_00038ac8();
   FUN_0003adcc();
-  FUN_00053dc8();
+  processCoolantCalEntries();
   func_0x00532fac();
   FUN_0000caec();
   FUN_00037658();
@@ -22526,7 +22526,7 @@ void FUN_0002715c(void)
           uVar9 = 1;
 LAB_00027800:
           if (_DAT_0040ae20 == 1) {
-            FUN_00053d3c((int)_DAT_0040ae0e,DAT_0040ae3d,uVar9);
+            addCoolantCalEntry((int)_DAT_0040ae0e,DAT_0040ae3d,uVar9);
             _speed_control_target = _speed_control_target | 1;
             j1939FormatDm1Message();
           }
@@ -22604,7 +22604,7 @@ LAB_000279e8:
         bVar7 = true;
       }
       else if (_DAT_0040ae24 == 1) {
-        FUN_00053d84(_DAT_0040ad5e & 0xff,2);
+        addCoolantCalEntryAlt(_DAT_0040ad5e & 0xff,2);
         _speed_control_target = _speed_control_target | 2;
         resetGovernorState();
       }
@@ -40896,12 +40896,12 @@ void FUN_0004a7ac(void)
 
 
 //
-// Function: FUN_0004a858 @ 0x0004a858
+// Function: initEnginePositionState @ 0x0004a858
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0004a858(void)
+void initEnginePositionState(void)
 
 {
   _diagnostic_data_word_2 = 0;
@@ -40921,12 +40921,12 @@ void FUN_0004a858(void)
 
 
 //
-// Function: FUN_0004a8cc @ 0x0004a8cc
+// Function: updateEnginePosition @ 0x0004a8cc
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0004a8cc(void)
+void updateEnginePosition(void)
 
 {
   uint uVar1;
@@ -40950,10 +40950,10 @@ void FUN_0004a8cc(void)
 
 
 //
-// Function: FUN_0004a968 @ 0x0004a968
+// Function: updateProtectionBitFlags @ 0x0004a968
 //
 
-void FUN_0004a968(uint param_1,int param_2)
+void updateProtectionBitFlags(uint param_1,int param_2)
 
 {
   byte bVar1;
@@ -41075,7 +41075,7 @@ void FUN_0004ac3c(void)
     _DAT_003fb704 = uVar1;
     if (uVar3 != 0) {
       do {
-        FUN_0004a968(uVar1,uVar2);
+        updateProtectionBitFlags(uVar1,uVar2);
         uVar2 = uVar2 + 1;
       } while (uVar2 <= uVar3);
     }
@@ -41927,7 +41927,7 @@ void protectionLimitCalculator(void)
         uVar11 = uVar11 + 1 & 0xff;
       } while (uVar11 <= uVar9);
       _sensor_validation_timer = 2;
-      _DAT_003fb8e8 = FUN_0004c8d8;
+      _DAT_003fb8e8 = validateSensorData;
       sVar5 = j1939QueueTransmitMessage(0x3fb8d6,1);
       if (sVar5 != 0) {
         uVar8 = 1;
@@ -42062,12 +42062,12 @@ void FUN_0004c7ec(void)
 
 
 //
-// Function: FUN_0004c8d8 @ 0x0004c8d8
+// Function: validateSensorData @ 0x0004c8d8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0004c8d8(void)
+void validateSensorData(void)
 
 {
   short *psVar1;
@@ -42142,12 +42142,12 @@ void FUN_0004c8d8(void)
 
 
 //
-// Function: FUN_0004cb64 @ 0x0004cb64
+// Function: initSensorValidationSystem @ 0x0004cb64
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0004cb64(void)
+void initSensorValidationSystem(void)
 
 {
   short *psVar1;
@@ -42242,10 +42242,10 @@ int FUN_0004cd50(void)
 
 
 //
-// Function: FUN_0004ce78 @ 0x0004ce78
+// Function: initSensorRetryCounters @ 0x0004ce78
 //
 
-void FUN_0004ce78(void)
+void initSensorRetryCounters(void)
 
 {
   DAT_003fb8f3 = 10;
@@ -46715,10 +46715,10 @@ undefined4 FUN_00053cd8(uint param_1,int param_2)
 
 
 //
-// Function: FUN_00053d3c @ 0x00053d3c
+// Function: addCoolantCalEntry @ 0x00053d3c
 //
 
-void FUN_00053d3c(undefined2 param_1,undefined1 param_2,undefined2 param_3)
+void addCoolantCalEntry(undefined2 param_1,undefined1 param_2,undefined2 param_3)
 
 {
   int iVar1;
@@ -46737,10 +46737,10 @@ void FUN_00053d3c(undefined2 param_1,undefined1 param_2,undefined2 param_3)
 
 
 //
-// Function: FUN_00053d84 @ 0x00053d84
+// Function: addCoolantCalEntryAlt @ 0x00053d84
 //
 
-void FUN_00053d84(undefined1 param_1,undefined2 param_2)
+void addCoolantCalEntryAlt(undefined1 param_1,undefined2 param_2)
 
 {
   int iVar1;
@@ -46758,12 +46758,12 @@ void FUN_00053d84(undefined1 param_1,undefined2 param_2)
 
 
 //
-// Function: FUN_00053dc8 @ 0x00053dc8
+// Function: processCoolantCalEntries @ 0x00053dc8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00053dc8(void)
+void processCoolantCalEntries(void)
 
 {
   short sVar1;
@@ -47079,7 +47079,7 @@ void FUN_000544c4(void)
   qsmcm_sccr0 = 0;
   DAT_00305007 = 0;
   _qsmcm_scsr = 0;
-  FUN_00055c1c();
+  initTpuConfiguration();
   func_0x00538974();
   _DAT_0040c120 = _DAT_002fc288;
   _DAT_002fc288 = 0xffff;
@@ -47094,7 +47094,7 @@ void FUN_000544c4(void)
   qsmcm_sccr0 = 5;
   DAT_00305007 = 3;
   FUN_0003dd28();
-  FUN_0004cb64();
+  initSensorValidationSystem();
   FUN_00037334();
   clearProtectionFault(0x1b);
   if (_DAT_003fdc88 == _DAT_003fdc8a) {
@@ -47208,7 +47208,7 @@ void FUN_000544c4(void)
   FUN_0002bd38();
   FUN_00028618();
   FUN_0001ef30();
-  FUN_00055a40();
+  dispatchCalibrationFunctions();
   func_0x00538eac();
   FUN_0001ea94();
   FUN_0000fe3c();
@@ -47232,7 +47232,7 @@ void FUN_000544c4(void)
   func_0x00529ea4();
   FUN_00049004();
   FUN_0004a258();
-  FUN_0004a858();
+  initEnginePositionState();
   func_0x0052a910();
   FUN_0004a37c();
   func_0x00527958();
@@ -47351,7 +47351,7 @@ void FUN_000544c4(void)
   func_0x0050ebf0();
   FUN_000130ac();
   FUN_0002c9bc();
-  FUN_0004ce78();
+  initSensorRetryCounters();
   FUN_0000cfd8();
   FUN_0000cec0();
   func_0x00523750();
@@ -48079,12 +48079,12 @@ void FUN_0005586c(void)
 
 
 //
-// Function: FUN_00055a40 @ 0x00055a40
+// Function: dispatchCalibrationFunctions @ 0x00055a40
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00055a40(void)
+void dispatchCalibrationFunctions(void)
 
 {
   uint uVar1;
@@ -48122,12 +48122,12 @@ void FUN_00055a40(void)
 
 
 //
-// Function: FUN_00055c1c @ 0x00055c1c
+// Function: initTpuConfiguration @ 0x00055c1c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00055c1c(void)
+void initTpuConfiguration(void)
 
 {
   ushort *puVar1;
