@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Jan 29 11:44:44 MST 2026
+// Generated: Thu Jan 29 11:48:23 MST 2026
 
 
 //
@@ -19367,10 +19367,10 @@ void updateProtectionDiagnostics(void)
 
 
 //
-// Function: FUN_000220b4 @ 0x000220b4
+// Function: initJ1939DiagnosticCallback @ 0x000220b4
 //
 
-void FUN_000220b4(void)
+void initJ1939DiagnosticCallback(void)
 
 {
   func_0x00538eb0(0xdd00,&LAB_00021fc4);
@@ -19400,10 +19400,10 @@ bool processJ1939DiagnosticRequest(undefined1 param_1,undefined4 param_2)
 
 
 //
-// Function: FUN_00022128 @ 0x00022128
+// Function: j1939DiagnosticServiceHandler @ 0x00022128
 //
 
-void FUN_00022128(int param_1)
+void j1939DiagnosticServiceHandler(int param_1)
 
 {
   char cVar1;
@@ -19442,13 +19442,13 @@ void FUN_00022128(int param_1)
 
 
 //
-// Function: FUN_000221f0 @ 0x000221f0
+// Function: initJ1939DiagnosticServiceHandler @ 0x000221f0
 //
 
-void FUN_000221f0(void)
+void initJ1939DiagnosticServiceHandler(void)
 
 {
-  func_0x00538eb0(0xef00,FUN_00022128);
+  func_0x00538eb0(0xef00,j1939DiagnosticServiceHandler);
   return;
 }
 
@@ -19706,12 +19706,12 @@ void initPgn65228Dm3Handler(void)
 
 
 //
-// Function: FUN_000227a0 @ 0x000227a0
+// Function: j1939HandleDm1RequestMessage @ 0x000227a0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000227a0(int param_1)
+void j1939HandleDm1RequestMessage(int param_1)
 
 {
   DAT_003fa97a = **(byte **)(param_1 + 6);
@@ -19730,25 +19730,25 @@ void FUN_000227a0(int param_1)
 
 
 //
-// Function: FUN_00022840 @ 0x00022840
+// Function: initJ1939Dm1RequestHandler @ 0x00022840
 //
 
-void FUN_00022840(void)
+void initJ1939Dm1RequestHandler(void)
 
 {
-  func_0x00538eb0(0xe300,FUN_000227a0);
+  func_0x00538eb0(0xe300,j1939HandleDm1RequestMessage);
   return;
 }
 
 
 
 //
-// Function: FUN_00022870 @ 0x00022870
+// Function: j1939ProcessTorqueSpeedControl @ 0x00022870
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00022870(int param_1)
+void j1939ProcessTorqueSpeedControl(int param_1)
 
 {
   if ((*(byte *)(param_1 + 3) != DAT_0005a470) && (DAT_0005a470 != 0xff)) {
@@ -19834,12 +19834,12 @@ LAB_00022a00:
 
 
 //
-// Function: FUN_00022bc4 @ 0x00022bc4
+// Function: initJ1939TorqueSpeedHandler @ 0x00022bc4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00022bc4(void)
+void initJ1939TorqueSpeedHandler(void)
 
 {
   _DAT_0040ae4c = 0;
@@ -19849,19 +19849,19 @@ void FUN_00022bc4(void)
     _condition_monitor_flags = _condition_monitor_flags & 0xdfff;
     _DAT_003fe9da = _DAT_003fe9da & 0xdfff;
   }
-  func_0x00538eb0(0xf002,FUN_00022870);
+  func_0x00538eb0(0xf002,j1939ProcessTorqueSpeedControl);
   return;
 }
 
 
 
 //
-// Function: FUN_00022d18 @ 0x00022d18
+// Function: initJ1939VehicleSpeedHandler @ 0x00022d18
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00022d18(void)
+void initJ1939VehicleSpeedHandler(void)
 
 {
   _DAT_003fa98c = 0;
@@ -20029,12 +20029,12 @@ bool j1939_register_pgn_handler(undefined2 param_1,undefined4 param_2)
 
 
 //
-// Function: FUN_000231cc @ 0x000231cc
+// Function: j1939DispatchPgnHandler @ 0x000231cc
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000231cc(int param_1)
+void j1939DispatchPgnHandler(int param_1)
 
 {
   byte bVar1;
@@ -20071,8 +20071,8 @@ void FUN_000231cc(int param_1)
 void initJ1939ProtocolHandlers(void)
 
 {
-  func_0x00538eb0(temperatureSensorProcessing,FUN_000231cc);
-  FUN_00024800();
+  func_0x00538eb0(temperatureSensorProcessing,j1939DispatchPgnHandler);
+  initPgn65261EngineHoursStruct();
   initPgn65259ComponentIdHandler();
   initPgn65262EngineTempHandler();
   initPgn65242SoftwareIdHandler();
@@ -20097,12 +20097,12 @@ void initJ1939ProtocolHandlers(void)
 
 
 //
-// Function: FUN_000233a0 @ 0x000233a0
+// Function: j1939HandleProprietaryCommand @ 0x000233a0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000233a0(int param_1)
+void j1939HandleProprietaryCommand(int param_1)
 
 {
   if ((_DAT_003fd5d6 & 0x20) != 0) {
@@ -20124,13 +20124,13 @@ void FUN_000233a0(int param_1)
 
 
 //
-// Function: FUN_0002343c @ 0x0002343c
+// Function: initJ1939ProprietaryHandler @ 0x0002343c
 //
 
-void FUN_0002343c(void)
+void initJ1939ProprietaryHandler(void)
 
 {
-  func_0x00538eb0(0xde00,FUN_000233a0);
+  func_0x00538eb0(0xde00,j1939HandleProprietaryCommand);
   return;
 }
 
@@ -20240,12 +20240,12 @@ LAB_000235d0:
 
 
 //
-// Function: FUN_000236f0 @ 0x000236f0
+// Function: j1939ProcessGovernorRequest @ 0x000236f0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000236f0(int param_1)
+void j1939ProcessGovernorRequest(int param_1)
 
 {
   byte bVar1;
@@ -20368,12 +20368,12 @@ LAB_00023878:
 
 
 //
-// Function: FUN_00023b38 @ 0x00023b38
+// Function: j1939DispatchAddressHandler @ 0x00023b38
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00023b38(int param_1)
+void j1939DispatchAddressHandler(int param_1)
 
 {
   ushort uVar1;
@@ -20383,7 +20383,7 @@ void FUN_00023b38(int param_1)
     j1939MessageDispatcher(param_1);
   }
   if (((_DAT_0040ad7e & 0xff) == uVar1) || (uVar1 == 0xff)) {
-    FUN_000236f0(param_1);
+    j1939ProcessGovernorRequest(param_1);
   }
   return;
 }
@@ -20391,25 +20391,25 @@ void FUN_00023b38(int param_1)
 
 
 //
-// Function: FUN_00023bb4 @ 0x00023bb4
+// Function: initJ1939AddressDispatcher @ 0x00023bb4
 //
 
-void FUN_00023bb4(void)
+void initJ1939AddressDispatcher(void)
 
 {
-  func_0x00538eb0(0,FUN_00023b38);
+  func_0x00538eb0(0,j1939DispatchAddressHandler);
   return;
 }
 
 
 
 //
-// Function: FUN_00023be0 @ 0x00023be0
+// Function: sendJ1939ProprietaryStatus @ 0x00023be0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00023be0(void)
+void sendJ1939ProprietaryStatus(void)
 
 {
   if ((((_DAT_003fd5d2 & 0x800) != 0) && (_DAT_003fdd8e != 0)) && (_DAT_0040a2c2 == 2)) {
@@ -20507,12 +20507,12 @@ void j1939_handle_pgn_65269_ambient_conditions(void)
 
 
 //
-// Function: FUN_00024028 @ 0x00024028
+// Function: j1939BuildEngineStatusByte @ 0x00024028
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00024028(void)
+void j1939BuildEngineStatusByte(void)
 
 {
   byte bVar1;
@@ -20805,12 +20805,12 @@ LAB_000247e0:
 
 
 //
-// Function: FUN_00024800 @ 0x00024800
+// Function: initPgn65261EngineHoursStruct @ 0x00024800
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00024800(void)
+void initPgn65261EngineHoursStruct(void)
 
 {
   _DAT_003faafc = CONCAT13(((byte)_DAT_003fd83e & 7) << 2,0xfeed00);
@@ -20952,12 +20952,12 @@ LAB_00024a1c:
 
 
 //
-// Function: FUN_00024afc @ 0x00024afc
+// Function: sendJ1939ExtendedResponse @ 0x00024afc
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00024afc(undefined4 param_1,undefined2 param_2)
+void sendJ1939ExtendedResponse(undefined4 param_1,undefined2 param_2)
 
 {
   _DAT_003fab50 = param_2;
@@ -21060,10 +21060,10 @@ void j1939_handle_pgn_65226_dm1_active_dtc(void)
 
 
 //
-// Function: FUN_00024d78 @ 0x00024d78
+// Function: processDm1FaultBroadcast @ 0x00024d78
 //
 
-void FUN_00024d78(void)
+void processDm1FaultBroadcast(void)
 
 {
   if (fault_list_count == '\0') {
@@ -21200,12 +21200,12 @@ void initPgn65229Dm4Handler(void)
 
 
 //
-// Function: FUN_00025110 @ 0x00025110
+// Function: j1939BuildDm4FreezeFrame @ 0x00025110
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00025110(int param_1)
+void j1939BuildDm4FreezeFrame(int param_1)
 
 {
   uint uVar1;
@@ -21314,7 +21314,7 @@ void j1939_handle_pgn_65229_dm4_freeze_frame(void)
     else {
       bVar1 = 0;
       do {
-        FUN_00025110(bVar1);
+        j1939BuildDm4FreezeFrame(bVar1);
         bVar1 = bVar1 + 1;
       } while (bVar1 < 8);
     }
@@ -21399,12 +21399,12 @@ void j1939SendDm1ResponseMessage(undefined1 param_1,undefined2 param_2)
 
 
 //
-// Function: FUN_0002567c @ 0x0002567c
+// Function: j1939BuildEngineControlByte @ 0x0002567c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002567c(void)
+void j1939BuildEngineControlByte(void)
 
 {
   byte bVar1;
@@ -21464,12 +21464,12 @@ LAB_000257c4:
 
 
 //
-// Function: FUN_0002588c @ 0x0002588c
+// Function: j1939GetEngineStateCode @ 0x0002588c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002588c(void)
+void j1939GetEngineStateCode(void)
 
 {
   undefined1 local_8;
@@ -21698,12 +21698,12 @@ void initPgn61443Eec2Handler(void)
 
 
 //
-// Function: FUN_00025de8 @ 0x00025de8
+// Function: j1939SendOilPressureStatus @ 0x00025de8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00025de8(void)
+void j1939SendOilPressureStatus(void)
 
 {
   undefined1 local_8;
@@ -21824,12 +21824,12 @@ void initPgn65262EngineTempHandler(void)
 
 
 //
-// Function: FUN_00026238 @ 0x00026238
+// Function: j1939BuildVehicleOperatingStatus @ 0x00026238
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00026238(void)
+void j1939BuildVehicleOperatingStatus(void)
 
 {
   byte bVar1;
