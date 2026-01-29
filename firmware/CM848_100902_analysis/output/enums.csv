@@ -50,3 +50,9 @@ PROTECTION_FLAGS,0x08,FLAG_CONDITION_CHECK,Condition check flag,1
 # Protection Override Mode (DAT_0040b4ff values)
 PROTECTION_OVERRIDE,0x7e,OVERRIDE_ACTIVE_126,Protection override mode active (~),1
 PROTECTION_OVERRIDE,0x7f,OVERRIDE_ACTIVE_127,Protection override mode active (DEL),1
+# Engine Operating Mode State Machine (engine_operating_mode values)
+ENGINE_OPERATING_MODE,0x00,MODE_STOP,Engine stopped / key on state,2
+ENGINE_OPERATING_MODE,0x02,MODE_TRANSITION,Engine state transition,2
+ENGINE_OPERATING_MODE,0x07,MODE_RUN,Engine running / normal operation,2
+ENGINE_OPERATING_MODE,0x1e,MODE_CRANK,Engine cranking / starting (30 decimal),2
+ENGINE_OPERATING_MODE,0x25,MODE_SHUTDOWN,Engine shutdown sequence (37 decimal),2

@@ -6,6 +6,10 @@ address,name
 0x0000b76c,phase_common_processing
 0x0000b7b4,phase_group_a_processing
 0x0000b854,phase_group_b_processing
+0x0000b8fc,periodicTaskGroup0_fuelFinal
+0x0000b98c,periodicTaskGroup1_sensorProcessing
+0x0000ba08,periodicTaskGroup2_controlLoop
+0x0000ba90,periodicTaskGroup3_auxiliaryControl
 0x0000bec8,schedulerPhaseDispatcher
 0x0000c0a0,main_loop
 0x0000e78c,temperatureBasedFuelTrim

@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Jan 29 05:32:32 MST 2026
+// Generated: Thu Jan 29 05:36:41 MST 2026
 
 
 //
@@ -5786,10 +5786,10 @@ void phase_group_b_processing(void)
 
 
 //
-// Function: FUN_0000b8fc @ 0x0000b8fc
+// Function: periodicTaskGroup0_fuelFinal @ 0x0000b8fc
 //
 
-void FUN_0000b8fc(void)
+void periodicTaskGroup0_fuelFinal(void)
 
 {
   FUN_0000d80c();
@@ -5827,10 +5827,10 @@ void FUN_0000b8fc(void)
 
 
 //
-// Function: FUN_0000b98c @ 0x0000b98c
+// Function: periodicTaskGroup1_sensorProcessing @ 0x0000b98c
 //
 
-void FUN_0000b98c(void)
+void periodicTaskGroup1_sensorProcessing(void)
 
 {
   FUN_00029c98();
@@ -5863,10 +5863,10 @@ void FUN_0000b98c(void)
 
 
 //
-// Function: FUN_0000ba08 @ 0x0000ba08
+// Function: periodicTaskGroup2_controlLoop @ 0x0000ba08
 //
 
-void FUN_0000ba08(void)
+void periodicTaskGroup2_controlLoop(void)
 
 {
   FUN_000403e4();
@@ -5902,10 +5902,10 @@ void FUN_0000ba08(void)
 
 
 //
-// Function: FUN_0000ba90 @ 0x0000ba90
+// Function: periodicTaskGroup3_auxiliaryControl @ 0x0000ba90
 //
 
-void FUN_0000ba90(void)
+void periodicTaskGroup3_auxiliaryControl(void)
 
 {
   FUN_0002c114();
@@ -6511,7 +6511,7 @@ void main_loop(void)
   case 0:
     phase_common_processing();
     phase_group_a_processing();
-    FUN_0000b8fc();
+    periodicTaskGroup0_fuelFinal();
     FUN_0000bb18();
     FUN_0000bc5c();
     FUN_0000bd54();
@@ -6522,7 +6522,7 @@ void main_loop(void)
   case 1:
     phase_common_processing();
     phase_group_b_processing();
-    FUN_0000b98c();
+    periodicTaskGroup1_sensorProcessing();
     FUN_0000bb40();
     FUN_0000bc80();
     FUN_0000bd80();
@@ -6532,7 +6532,7 @@ void main_loop(void)
   case 2:
     phase_common_processing();
     phase_group_a_processing();
-    FUN_0000ba08();
+    periodicTaskGroup2_controlLoop();
     FUN_0000bb68();
     FUN_0000bca4();
     FUN_0000bdac();
@@ -6542,7 +6542,7 @@ void main_loop(void)
   case 3:
     phase_common_processing();
     phase_group_b_processing();
-    FUN_0000ba90();
+    periodicTaskGroup3_auxiliaryControl();
     FUN_0000bb90();
     FUN_0000bcc8();
     FUN_0000bdd8();
@@ -6553,7 +6553,7 @@ void main_loop(void)
   case 4:
     phase_common_processing();
     phase_group_a_processing();
-    FUN_0000b8fc();
+    periodicTaskGroup0_fuelFinal();
     FUN_0000bbb8();
     FUN_0000bce8();
     FUN_0000be04();
@@ -6563,7 +6563,7 @@ void main_loop(void)
   case 5:
     phase_common_processing();
     phase_group_b_processing();
-    FUN_0000b98c();
+    periodicTaskGroup1_sensorProcessing();
     FUN_0000bbe0();
     FUN_0000bd08();
     FUN_0000be30();
@@ -6573,7 +6573,7 @@ void main_loop(void)
   case 6:
     phase_common_processing();
     phase_group_a_processing();
-    FUN_0000ba08();
+    periodicTaskGroup2_controlLoop();
     FUN_0000bc08();
     FUN_0000bd28();
     FUN_0000be5c();
@@ -6583,7 +6583,7 @@ void main_loop(void)
   case 7:
     phase_common_processing();
     phase_group_b_processing();
-    FUN_0000ba90();
+    periodicTaskGroup3_auxiliaryControl();
     FUN_0000bc34();
     FUN_0000be88();
     func_0x00507644();
@@ -6592,7 +6592,7 @@ void main_loop(void)
   case 8:
     phase_common_processing();
     phase_group_a_processing();
-    FUN_0000b8fc();
+    periodicTaskGroup0_fuelFinal();
     FUN_0000bb18();
     FUN_0000beb4();
     func_0x005103ac();
@@ -6601,7 +6601,7 @@ void main_loop(void)
   case 9:
     phase_common_processing();
     phase_group_b_processing();
-    FUN_0000b98c();
+    periodicTaskGroup1_sensorProcessing();
     FUN_0000bb40();
     FUN_0000bee0();
     func_0x00521474();
@@ -6610,7 +6610,7 @@ void main_loop(void)
   case 10:
     phase_common_processing();
     phase_group_a_processing();
-    FUN_0000ba08();
+    periodicTaskGroup2_controlLoop();
     FUN_0000bb68();
     FUN_0000bc5c();
     FUN_0000bf08();
@@ -6620,7 +6620,7 @@ void main_loop(void)
   case 0xb:
     phase_common_processing();
     phase_group_b_processing();
-    FUN_0000ba90();
+    periodicTaskGroup3_auxiliaryControl();
     FUN_0000bb90();
     FUN_0000bc80();
     FUN_0000bf34();
@@ -6630,7 +6630,7 @@ void main_loop(void)
   case 0xc:
     phase_common_processing();
     phase_group_a_processing();
-    FUN_0000b8fc();
+    periodicTaskGroup0_fuelFinal();
     FUN_0000bbb8();
     FUN_0000bca4();
     FUN_0000bf60();
@@ -6640,7 +6640,7 @@ void main_loop(void)
   case 0xd:
     phase_common_processing();
     phase_group_b_processing();
-    FUN_0000b98c();
+    periodicTaskGroup1_sensorProcessing();
     FUN_0000bbe0();
     FUN_0000bcc8();
     FUN_0000bf88();
@@ -6650,7 +6650,7 @@ void main_loop(void)
   case 0xe:
     phase_common_processing();
     phase_group_a_processing();
-    FUN_0000ba08();
+    periodicTaskGroup2_controlLoop();
     FUN_0000bc08();
     FUN_0000bce8();
     FUN_0000bfb0();
@@ -6660,7 +6660,7 @@ void main_loop(void)
   case 0xf:
     phase_common_processing();
     phase_group_b_processing();
-    FUN_0000ba90();
+    periodicTaskGroup3_auxiliaryControl();
     FUN_0000bc34();
     FUN_0000bd08();
     FUN_0000bfd8();
@@ -6670,7 +6670,7 @@ void main_loop(void)
   case 0x10:
     phase_common_processing();
     phase_group_a_processing();
-    FUN_0000b8fc();
+    periodicTaskGroup0_fuelFinal();
     FUN_0000bb18();
     FUN_0000bd28();
     FUN_0000c000();
@@ -6680,7 +6680,7 @@ void main_loop(void)
   case 0x11:
     phase_common_processing();
     phase_group_b_processing();
-    FUN_0000b98c();
+    periodicTaskGroup1_sensorProcessing();
     FUN_0000bb40();
     FUN_0000c028();
     func_0x00510d04();
@@ -6691,7 +6691,7 @@ void main_loop(void)
   case 0x12:
     phase_common_processing();
     phase_group_a_processing();
-    FUN_0000ba08();
+    periodicTaskGroup2_controlLoop();
     FUN_0000bb68();
     FUN_0000c050();
     func_0x0050dd40();
@@ -6700,7 +6700,7 @@ void main_loop(void)
   case 0x13:
     phase_common_processing();
     phase_group_b_processing();
-    FUN_0000ba90();
+    periodicTaskGroup3_auxiliaryControl();
     FUN_0000bb90();
     FUN_0000c078();
     FUN_00016774();
@@ -6709,7 +6709,7 @@ void main_loop(void)
   case 0x14:
     phase_common_processing();
     phase_group_a_processing();
-    FUN_0000b8fc();
+    periodicTaskGroup0_fuelFinal();
     FUN_0000bbb8();
     FUN_0000bc5c();
     FUN_0000bd54();
@@ -6719,7 +6719,7 @@ void main_loop(void)
   case 0x15:
     phase_common_processing();
     phase_group_b_processing();
-    FUN_0000b98c();
+    periodicTaskGroup1_sensorProcessing();
     FUN_0000bbe0();
     FUN_0000bc80();
     FUN_0000bd80();
@@ -6729,7 +6729,7 @@ void main_loop(void)
   case 0x16:
     phase_common_processing();
     phase_group_a_processing();
-    FUN_0000ba08();
+    periodicTaskGroup2_controlLoop();
     FUN_0000bc08();
     FUN_0000bca4();
     FUN_0000bdac();
@@ -6739,7 +6739,7 @@ void main_loop(void)
   case 0x17:
     phase_common_processing();
     phase_group_b_processing();
-    FUN_0000ba90();
+    periodicTaskGroup3_auxiliaryControl();
     FUN_0000bc34();
     FUN_0000bcc8();
     FUN_0000bdd8();
@@ -6749,7 +6749,7 @@ void main_loop(void)
   case 0x18:
     phase_common_processing();
     phase_group_a_processing();
-    FUN_0000b8fc();
+    periodicTaskGroup0_fuelFinal();
     FUN_0000bb18();
     FUN_0000bce8();
     FUN_0000be04();
@@ -6759,7 +6759,7 @@ void main_loop(void)
   case 0x19:
     phase_common_processing();
     phase_group_b_processing();
-    FUN_0000b98c();
+    periodicTaskGroup1_sensorProcessing();
     FUN_0000bb40();
     FUN_0000bd08();
     FUN_0000be30();
@@ -6769,7 +6769,7 @@ void main_loop(void)
   case 0x1a:
     phase_common_processing();
     phase_group_a_processing();
-    FUN_0000ba08();
+    periodicTaskGroup2_controlLoop();
     FUN_0000bb68();
     FUN_0000bd28();
     FUN_0000be5c();
@@ -6779,7 +6779,7 @@ void main_loop(void)
   case 0x1b:
     phase_common_processing();
     phase_group_b_processing();
-    FUN_0000ba90();
+    periodicTaskGroup3_auxiliaryControl();
     FUN_0000bb90();
     FUN_0000be88();
     func_0x0050fe54();
@@ -6788,7 +6788,7 @@ void main_loop(void)
   case 0x1c:
     phase_common_processing();
     phase_group_a_processing();
-    FUN_0000b8fc();
+    periodicTaskGroup0_fuelFinal();
     FUN_0000bbb8();
     FUN_0000beb4();
     func_0x005109bc();
@@ -6797,7 +6797,7 @@ void main_loop(void)
   case 0x1d:
     phase_common_processing();
     phase_group_b_processing();
-    FUN_0000b98c();
+    periodicTaskGroup1_sensorProcessing();
     FUN_0000bbe0();
     FUN_0000bee0();
     _main_loop_phase_index = 0x1e;
@@ -6805,7 +6805,7 @@ void main_loop(void)
   case 0x1e:
     phase_common_processing();
     phase_group_a_processing();
-    FUN_0000ba08();
+    periodicTaskGroup2_controlLoop();
     FUN_0000bc08();
     FUN_0000bc5c();
     FUN_0000bf08();
@@ -6815,7 +6815,7 @@ void main_loop(void)
   case 0x1f:
     phase_common_processing();
     phase_group_b_processing();
-    FUN_0000ba90();
+    periodicTaskGroup3_auxiliaryControl();
     FUN_0000bc34();
     FUN_0000bc80();
     FUN_0000bf34();
@@ -6825,7 +6825,7 @@ void main_loop(void)
   case 0x20:
     phase_common_processing();
     phase_group_a_processing();
-    FUN_0000b8fc();
+    periodicTaskGroup0_fuelFinal();
     FUN_0000bb18();
     FUN_0000bca4();
     FUN_0000bf60();
@@ -6834,7 +6834,7 @@ void main_loop(void)
   case 0x21:
     phase_common_processing();
     phase_group_b_processing();
-    FUN_0000b98c();
+    periodicTaskGroup1_sensorProcessing();
     FUN_0000bb40();
     FUN_0000bcc8();
     FUN_0000bf88();
@@ -6843,7 +6843,7 @@ void main_loop(void)
   case 0x22:
     phase_common_processing();
     phase_group_a_processing();
-    FUN_0000ba08();
+    periodicTaskGroup2_controlLoop();
     FUN_0000bb68();
     FUN_0000bce8();
     FUN_0000bfb0();
@@ -6852,7 +6852,7 @@ void main_loop(void)
   case 0x23:
     phase_common_processing();
     phase_group_b_processing();
-    FUN_0000ba90();
+    periodicTaskGroup3_auxiliaryControl();
     FUN_0000bb90();
     FUN_0000bd08();
     FUN_0000bfd8();
@@ -6861,7 +6861,7 @@ void main_loop(void)
   case 0x24:
     phase_common_processing();
     phase_group_a_processing();
-    FUN_0000b8fc();
+    periodicTaskGroup0_fuelFinal();
     FUN_0000bbb8();
     FUN_0000bd28();
     FUN_0000c000();
@@ -6871,7 +6871,7 @@ void main_loop(void)
   case 0x25:
     phase_common_processing();
     phase_group_b_processing();
-    FUN_0000b98c();
+    periodicTaskGroup1_sensorProcessing();
     FUN_0000bbe0();
     FUN_0000c028();
     _main_loop_phase_index = 0x26;
@@ -6879,7 +6879,7 @@ void main_loop(void)
   case 0x26:
     phase_common_processing();
     phase_group_a_processing();
-    FUN_0000ba08();
+    periodicTaskGroup2_controlLoop();
     FUN_0000bc08();
     FUN_0000c050();
     func_0x00534328();
@@ -6888,7 +6888,7 @@ void main_loop(void)
   case 0x27:
     phase_common_processing();
     phase_group_b_processing();
-    FUN_0000ba90();
+    periodicTaskGroup3_auxiliaryControl();
     FUN_0000bc34();
     FUN_0000c078();
     _main_loop_phase_index = 0;
@@ -7980,7 +7980,7 @@ void FUN_0000e8dc(void)
   
   uVar1 = (uint)_DAT_0040a1b0;
   _DAT_003fa102 = _DAT_003fa106;
-  if (_DAT_003fa0ec != 7) {
+  if (_engine_mode_previous_state != 7) {
     _DAT_003fa102 = uVar1;
   }
   uVar2 = (uint)_DAT_003ff68c;
@@ -8023,7 +8023,7 @@ void fuelTimingCompensation(void)
   
   uVar1 = (uint)*(ushort *)(unaff_r30 + -0x5e50);
   _DAT_003fa102 = _DAT_003fa106;
-  if (_DAT_003fa0ec != 7) {
+  if (_engine_mode_previous_state != 7) {
     _DAT_003fa102 = uVar1;
   }
   uVar2 = (uint)_DAT_003ff68c;
@@ -8085,13 +8085,13 @@ void FUN_0000ea00(void)
   uint uVar17;
   ushort uStack_2e;
   
-  if ((((_DAT_0040b000 != 7) && (_DAT_0040b000 != 2)) && (_DAT_0040b000 != 0x1e)) &&
-     (_DAT_0040b000 != 0x25)) {
-    _DAT_003fa0ec = _DAT_0040b000;
+  if ((((_engine_operating_mode != 7) && (_engine_operating_mode != 2)) &&
+      (_engine_operating_mode != 0x1e)) && (_engine_operating_mode != 0x25)) {
+    _engine_mode_previous_state = _engine_operating_mode;
     return;
   }
   FUN_0000fcd0();
-  if (_DAT_003fa0ec == _DAT_0040b000) {
+  if (_engine_mode_previous_state == _engine_operating_mode) {
     iVar15 = (int)_DAT_0040a1b6;
   }
   else {
@@ -8137,7 +8137,7 @@ void FUN_0000ea00(void)
       iVar15 = 32000;
     }
   }
-  if (_DAT_0040b000 == 7) {
+  if (_engine_operating_mode == 7) {
     FUN_0000e8dc();
     if ((((((protection_system_enable_bits & 8) == 0) && ((DAT_0040c050 & 4) == 0)) ||
          (_DAT_003ff69a == 0)) &&
@@ -8212,10 +8212,10 @@ LAB_0000efb0:
     _DAT_003fa0fa = _DAT_0040a24a;
   }
   else {
-    if (((_DAT_003fa0ee != _DAT_0040a2ce) || (_DAT_0040b000 != _DAT_003fa0ec)) &&
-       ((_DAT_003ff69c != 1 ||
-        (((((_DAT_0040a2d0 != 0xb && (_DAT_0040a2d0 != 0xc)) && (_DAT_0040a2d0 != 0x10)) &&
-          ((_DAT_0040a2d0 != 0x13 && (_DAT_0040a2d0 != 2)))) && (_DAT_0040a2d0 != 0x31)))))) {
+    if (((_DAT_003fa0ee != _DAT_0040a2ce) || (_engine_operating_mode != _engine_mode_previous_state)
+        ) && ((_DAT_003ff69c != 1 ||
+              (((((_DAT_0040a2d0 != 0xb && (_DAT_0040a2d0 != 0xc)) && (_DAT_0040a2d0 != 0x10)) &&
+                ((_DAT_0040a2d0 != 0x13 && (_DAT_0040a2d0 != 2)))) && (_DAT_0040a2d0 != 0x31)))))) {
       _DAT_0040a1b2 = 1;
       iVar7 = (int)_DAT_0040a1fc[6];
       iVar13 = (int)_DAT_0040a1fc[7];
@@ -8567,7 +8567,7 @@ LAB_0000fa44:
 LAB_0000fa58:
   if ((int)_DAT_0040a208 <= (int)(short)_DAT_003fa0fc) {
     if ((int)(short)_DAT_003fa0fc <= (int)(uint)_DAT_003fa100) {
-      _DAT_003fa0ec = _DAT_0040b000;
+      _engine_mode_previous_state = _engine_operating_mode;
       _DAT_003fa0fe = _current_engine_rpm;
       _DAT_0040affe = _DAT_003fa0fc;
       return;
@@ -8576,7 +8576,7 @@ LAB_0000fa58:
   }
   _DAT_0040affe = *puVar10;
   _DAT_003fa0fe = _current_engine_rpm;
-  _DAT_003fa0ec = _DAT_0040b000;
+  _engine_mode_previous_state = _engine_operating_mode;
   return;
 }
 
@@ -8615,8 +8615,8 @@ void FUN_0000fabc(void)
 void FUN_0000fb28(void)
 
 {
-  if ((_DAT_0040b000 == 0) && (_DAT_0040a216 != 0)) {
-    _DAT_0040b000 = 0x1e;
+  if ((_engine_operating_mode == 0) && (_DAT_0040a216 != 0)) {
+    _engine_operating_mode = 0x1e;
     _DAT_0040a24e = _DAT_0040a218;
     _DAT_0040a250 = _DAT_0040a21a;
     _DAT_0040a252 = _DAT_0040a21c;
@@ -8665,7 +8665,7 @@ void FUN_0000fcd0(void)
   uint uVar3;
   
   uVar1 = _DAT_0040a24e;
-  if (_DAT_0040b000 == 0x1e) {
+  if (_engine_operating_mode == 0x1e) {
     uVar1 = _DAT_0040a248;
   }
   sVar4 = lookupTableInterpolation(&DAT_003fa10a,_coolant_temp_sensor,&DAT_0005c242,&DAT_0005c25a,1)
@@ -8809,9 +8809,9 @@ LAB_000100d0:
 void FUN_00010110(int param_1)
 
 {
-  if ((_DAT_0040b000 == 0) && (_DAT_0040a1c0 == 1)) {
+  if ((_engine_operating_mode == 0) && (_DAT_0040a1c0 == 1)) {
     FUN_0002bf6c();
-    _DAT_0040b000 = 7;
+    _engine_operating_mode = 7;
     FUN_0000fe5c();
     FUN_0002c0fc();
     FUN_0000ff04();
@@ -17240,8 +17240,8 @@ LAB_0001e768:
 void FUN_0001e810(void)
 
 {
-  if (_DAT_0040b000 == 0) {
-    _DAT_0040b000 = 8;
+  if (_engine_operating_mode == 0) {
+    _engine_operating_mode = 8;
   }
   return;
 }
@@ -17257,7 +17257,7 @@ void FUN_0001e810(void)
 void FUN_0001e830(void)
 
 {
-  if (_DAT_0040b000 == 8) {
+  if (_engine_operating_mode == 8) {
     _DAT_0040a887 = FUN_0001ec70();
     _DAT_0040affe = _DAT_0040a887;
   }
@@ -18334,7 +18334,7 @@ uint FUN_00020554(void)
   }
   if (((_DAT_003fd5ec & 0x800) == 0) || (_DAT_0040afae == 0x14)) {
     uVar3 = _DAT_0040a1b0 - uVar3;
-    if (_DAT_0040b000 == 7) {
+    if (_engine_operating_mode == 7) {
       _DAT_003fa8a2 = _DAT_0040a258;
     }
     uVar2 = (uint)DAT_0005c368;
@@ -24680,25 +24680,26 @@ void FUN_0002bb24(void)
 void FUN_0002bbe8(void)
 
 {
-  if ((((_DAT_0040b000 == 1) || (_DAT_0040b000 == 2)) || (_DAT_0040b000 == 0x25)) ||
-     (_DAT_0040b000 == 0x26)) {
-    _DAT_0040af5c = _DAT_0040b000;
+  if ((((_engine_operating_mode == 1) || (_engine_operating_mode == 2)) ||
+      (_engine_operating_mode == 0x25)) || (_engine_operating_mode == 0x26)) {
+    _DAT_0040af5c = _engine_operating_mode;
     _DAT_0040af5a = _DAT_0040affe;
   }
   else if ((_DAT_0040af4e == 1) && ((_system_capability_flags & 0x10) != 0)) {
-    if (((_DAT_0040b000 == 7) || (_DAT_0040b000 == 0x1e)) || (_DAT_0040b000 == 8)) {
+    if (((_engine_operating_mode == 7) || (_engine_operating_mode == 0x1e)) ||
+       (_engine_operating_mode == 8)) {
       if ((_DAT_0040af28 <= _DAT_0040affe) && ((_DAT_003fd5a0 & 0x2000) != 0)) {
         _DAT_0040af56 = _DAT_003fd89c;
         _DAT_0040af58 = 1;
         _DAT_0040af5a = _DAT_0040affe;
-        _DAT_0040af5c = _DAT_0040b000;
+        _DAT_0040af5c = _engine_operating_mode;
         return;
       }
       _DAT_0040af5a = _DAT_0040af28;
       _DAT_0040af5c = 4;
     }
     else {
-      if ((_DAT_0040b000 != 6) && (_DAT_0040b000 != 5)) {
+      if ((_engine_operating_mode != 6) && (_engine_operating_mode != 5)) {
         return;
       }
       _DAT_0040af5a = _DAT_0040af28;
@@ -24707,7 +24708,7 @@ void FUN_0002bbe8(void)
   }
   else {
     _DAT_0040af5a = _DAT_0040affe;
-    _DAT_0040af5c = _DAT_0040b000;
+    _DAT_0040af5c = _engine_operating_mode;
   }
   _DAT_0040af58 = 0;
   _DAT_0040af56 = _DAT_003fd814;
@@ -36929,8 +36930,8 @@ void FUN_0004285c(void)
 void FUN_00042894(void)
 
 {
-  if ((_DAT_0040b000 == 0) && (_DAT_0040adf8 == 2)) {
-    _DAT_0040b000 = 1;
+  if ((_engine_operating_mode == 0) && (_DAT_0040adf8 == 2)) {
+    _engine_operating_mode = 1;
     _DAT_0040affe = _DAT_0040ae0a;
   }
   return;
@@ -36947,8 +36948,8 @@ void FUN_00042894(void)
 void FUN_000428d4(void)
 
 {
-  if ((_DAT_0040b000 == 0) && ((_DAT_003fd5a4 & 1) != 0)) {
-    _DAT_0040b000 = 5;
+  if ((_engine_operating_mode == 0) && ((_DAT_003fd5a4 & 1) != 0)) {
+    _engine_operating_mode = 5;
     _DAT_0040affe = _DAT_003fd8b4;
   }
   return;
@@ -36967,8 +36968,8 @@ void FUN_00042918(void)
 {
   int iVar1;
   
-  iVar1 = (int)_DAT_0040b000;
-  _DAT_0040b000 = 0;
+  iVar1 = (int)_engine_operating_mode;
+  _engine_operating_mode = 0;
   FUN_0000fb28();
   FUN_00042894();
   func_0x00503074(iVar1);
@@ -40997,7 +40998,7 @@ void FUN_0004b5b8(void)
 void FUN_0004b6cc(void)
 
 {
-  if (((_DAT_003fd5da & 1) != 0) && (_DAT_0040b000 == 7)) {
+  if (((_DAT_003fd5da & 1) != 0) && (_engine_operating_mode == 7)) {
     _DAT_003fb740 =
          dualAxisTableInterpolation
                    (0x3fb738,_current_engine_rpm,&DAT_000645c4,_fuel_demand_calculated,&DAT_000645f0
@@ -41071,7 +41072,8 @@ void FUN_0004b6cc(void)
 void FUN_0004b9ac(void)
 
 {
-  if ((((_DAT_003fd5da & 1) != 0) && (_DAT_0040b000 == 7)) && (_DAT_0040b99c < _DAT_0040afac)) {
+  if ((((_DAT_003fd5da & 1) != 0) && (_engine_operating_mode == 7)) &&
+     (_DAT_0040b99c < _DAT_0040afac)) {
     _DAT_0040afac = _DAT_0040b99c;
     _DAT_0040afae = 0x2a;
   }
