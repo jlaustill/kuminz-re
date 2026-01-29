@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Jan 29 10:50:34 MST 2026
+// Generated: Thu Jan 29 10:56:48 MST 2026
 
 
 //
@@ -1717,8 +1717,8 @@ void hardwareInitialization(void)
   _tpu_b_cpr1 = 0;
   _tpu_a_dssr = 0;
   _tpu_b_dssr = 0;
-  FUN_00002b7c();
-  FUN_00003b6c();
+  clearRamRegions();
+  initQspiRegisters();
   eepromReadWords(0x1000000,&eeprom_magic,2);
   _DAT_00500554 = 0x55;
   _DAT_00500aaa = 0x90;
@@ -1775,19 +1775,19 @@ void initCanController(void)
     bVar2 = bVar2 + 1;
   } while (bVar2 < 0x10);
   _toucan_a_mcr = 0;
-  FUN_00002a40();
+  initDiagnosticSubsystem();
   return;
 }
 
 
 
 //
-// Function: FUN_00002a40 @ 0x00002a40
+// Function: initDiagnosticSubsystem @ 0x00002a40
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00002a40(void)
+void initDiagnosticSubsystem(void)
 
 {
   uint uVar1;
@@ -1801,7 +1801,7 @@ void FUN_00002a40(void)
   _qadc_a_ccw_6 = 0x302016;
   _qadc_a_ccw_4 = 0x302016;
   initDiagResponseHandlers();
-  FUN_00002cd8();
+  registerPgnEf00Handler();
   registerMemoryReadServices();
   registerService65Handler();
   initDataBasedDiagServices();
@@ -1838,10 +1838,10 @@ void FUN_00002a40(void)
 
 
 //
-// Function: FUN_00002b7c @ 0x00002b7c
+// Function: clearRamRegions @ 0x00002b7c
 //
 
-void FUN_00002b7c(void)
+void clearRamRegions(void)
 
 {
   undefined4 *puVar1;
@@ -1862,10 +1862,10 @@ void FUN_00002b7c(void)
 
 
 //
-// Function: FUN_00002bc8 @ 0x00002bc8
+// Function: softReset @ 0x00002bc8
 //
 
-void FUN_00002bc8(void)
+void softReset(void)
 
 {
   func_0x003fd994();
@@ -1896,10 +1896,10 @@ bool registerDiagnosticService(undefined1 param_1,undefined4 param_2)
 
 
 //
-// Function: FUN_00002cd8 @ 0x00002cd8
+// Function: registerPgnEf00Handler @ 0x00002cd8
 //
 
-void FUN_00002cd8(void)
+void registerPgnEf00Handler(void)
 
 {
   registerPgnResponseHandler(0xef00,0x3fc8f4);
@@ -1954,9 +1954,9 @@ int FUN_00002d08(byte param_1)
 void processChecksumValidation(void)
 
 {
-  FUN_000033e0();
+  decrementDiagnosticTimeout();
   if ((eeprom_checksum_status == '\x01') && ((diag_session_flags & 1) == 0)) {
-    FUN_00003b38();
+    enableDiagnosticTimer();
     (*_diagnostic_handler_callback)();
     eeprom_checksum_status = '\0';
   }
@@ -2008,7 +2008,7 @@ void initSchedulerCallback(void)
 
 {
   _diagnostic_handler_callback = registerSchedulerTask;
-  FUN_00003b58();
+  saveSchedulerCallbackPointer();
   return;
 }
 
@@ -2026,19 +2026,19 @@ void initSchedulerTaskTable(void)
   diag_enable_flags_2 = diag_enable_flags_2 + -1;
   _eeprom_status_byte = &qspi_config_value;
   _qsmcm_qspi_portqs = (ushort)qspi_config_value;
-  FUN_00003218();
+  enableSpiTransmitInterrupt();
   return;
 }
 
 
 
 //
-// Function: FUN_00002f74 @ 0x00002f74
+// Function: spiReceiveHandler @ 0x00002f74
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00002f74(void)
+void spiReceiveHandler(void)
 
 {
   if (((((_qsmcm_scdr & 0x40) != 0) && ((_qsmcm_scdr & 4) == 0)) && ((_qsmcm_scdr & 8) == 0)) &&
@@ -2054,12 +2054,12 @@ void FUN_00002f74(void)
 
 
 //
-// Function: FUN_00003008 @ 0x00003008
+// Function: spiTransmitCompleteHandler @ 0x00003008
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00003008(void)
+void spiTransmitCompleteHandler(void)
 
 {
   if ((_qsmcm_scdr & 0x80) != 0) {
@@ -2097,12 +2097,12 @@ void processPeriodicTasks(void)
 {
   if (_fault_clear_counter == 0) {
     if ((_qsmcm_scsr & 0x20) != 0) {
-      FUN_00002f74();
+      spiReceiveHandler();
     }
   }
   else if (_fault_clear_counter == 1) {
     if ((_qsmcm_scsr & 0x40) != 0) {
-      FUN_00003008();
+      spiTransmitCompleteHandler();
     }
   }
   else if (_fault_clear_counter == 2) {
@@ -2119,12 +2119,12 @@ void processPeriodicTasks(void)
 
 
 //
-// Function: FUN_000031a0 @ 0x000031a0
+// Function: resetEepromStatusPointer @ 0x000031a0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000031a0(void)
+void resetEepromStatusPointer(void)
 
 {
   diag_enable_flags_2 = 0;
@@ -2144,7 +2144,7 @@ void enableSystemInterrupts(void)
 
 {
   _fault_clear_counter = 0;
-  FUN_000031a0();
+  resetEepromStatusPointer();
   eeprom_checksum_status = 0;
   _qsmcm_scsr = _qsmcm_scsr & 0xffbf | 0x20;
   return;
@@ -2153,12 +2153,12 @@ void enableSystemInterrupts(void)
 
 
 //
-// Function: FUN_00003218 @ 0x00003218
+// Function: enableSpiTransmitInterrupt @ 0x00003218
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00003218(void)
+void enableSpiTransmitInterrupt(void)
 
 {
   _fault_clear_counter = 1;
@@ -2169,15 +2169,15 @@ void FUN_00003218(void)
 
 
 //
-// Function: FUN_0000323c @ 0x0000323c
+// Function: initDiagnosticResponseCallback @ 0x0000323c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0000323c(void)
+void initDiagnosticResponseCallback(void)
 
 {
-  _diagnostic_handler_callback = FUN_0000326c;
+  _diagnostic_handler_callback = processDiagnosticResponseCallback;
   initSchedulerTaskTable();
   return;
 }
@@ -2185,12 +2185,12 @@ void FUN_0000323c(void)
 
 
 //
-// Function: FUN_0000326c @ 0x0000326c
+// Function: processDiagnosticResponseCallback @ 0x0000326c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0000326c(void)
+void processDiagnosticResponseCallback(void)
 
 {
   undefined1 *puVar1;
@@ -2209,12 +2209,12 @@ void FUN_0000326c(void)
 
 
 //
-// Function: FUN_000032dc @ 0x000032dc
+// Function: generateSerialChecksumResponse @ 0x000032dc
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000032dc(void)
+void generateSerialChecksumResponse(void)
 
 {
   uint uVar1;
@@ -2247,16 +2247,16 @@ void FUN_000032dc(void)
 
 
 //
-// Function: FUN_000033a4 @ 0x000033a4
+// Function: initDiagnosticRequestHandler @ 0x000033a4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000033a4(void)
+void initDiagnosticRequestHandler(void)
 
 {
   DAT_003fee3a = 0;
-  _diagnostic_handler_callback = FUN_00003408;
+  _diagnostic_handler_callback = processDiagnosticRequest;
   initSchedulerTaskTable();
   return;
 }
@@ -2264,12 +2264,12 @@ void FUN_000033a4(void)
 
 
 //
-// Function: FUN_000033e0 @ 0x000033e0
+// Function: decrementDiagnosticTimeout @ 0x000033e0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000033e0(void)
+void decrementDiagnosticTimeout(void)
 
 {
   if (_DAT_003fecce != 0) {
@@ -2281,12 +2281,12 @@ void FUN_000033e0(void)
 
 
 //
-// Function: FUN_00003408 @ 0x00003408
+// Function: processDiagnosticRequest @ 0x00003408
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00003408(void)
+void processDiagnosticRequest(void)
 
 {
   uint uVar1;
@@ -2343,15 +2343,15 @@ void FUN_00003408(void)
 
 
 //
-// Function: FUN_000035e4 @ 0x000035e4
+// Function: initDiagnosticSessionHandler @ 0x000035e4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000035e4(void)
+void initDiagnosticSessionHandler(void)
 
 {
-  _diagnostic_handler_callback = FUN_00003614;
+  _diagnostic_handler_callback = processDiagnosticSessionFlags;
   initSchedulerTaskTable();
   return;
 }
@@ -2359,12 +2359,12 @@ void FUN_000035e4(void)
 
 
 //
-// Function: FUN_00003614 @ 0x00003614
+// Function: processDiagnosticSessionFlags @ 0x00003614
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00003614(void)
+void processDiagnosticSessionFlags(void)
 
 {
   if ((*_eeprom_status_byte == '\x01') && (DAT_003fecc4 == '\x01')) {
@@ -2383,12 +2383,12 @@ void FUN_00003614(void)
 
 
 //
-// Function: FUN_0000368c @ 0x0000368c
+// Function: sendDiagnosticResponse @ 0x0000368c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0000368c(void)
+void sendDiagnosticResponse(void)
 
 {
   uint uVar1;
@@ -2408,10 +2408,10 @@ void FUN_0000368c(void)
 
 
 //
-// Function: FUN_000036f8 @ 0x000036f8
+// Function: resetEepromCalibrationState @ 0x000036f8
 //
 
-void FUN_000036f8(void)
+void resetEepromCalibrationState(void)
 
 {
   eeprom_calibration_version = 0;
@@ -2422,12 +2422,12 @@ void FUN_000036f8(void)
 
 
 //
-// Function: FUN_00003710 @ 0x00003710
+// Function: beginEepromCalibrationWrite @ 0x00003710
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00003710(void)
+void beginEepromCalibrationWrite(void)
 
 {
   ushort local_8 [2];
@@ -2499,9 +2499,9 @@ void FUN_000037e0(void)
 void diagRequestTypeDispatcher(void)
 
 {
-  FUN_000036f8();
+  resetEepromCalibrationState();
   if (diag_request_param == '\x01') {
-    FUN_00003710();
+    beginEepromCalibrationWrite();
   }
   else if (diag_request_param == '\x02') {
     FUN_000037e0();
@@ -2599,10 +2599,10 @@ void restoreDiagnosticHandler(void)
 
 
 //
-// Function: FUN_00003b38 @ 0x00003b38
+// Function: enableDiagnosticTimer @ 0x00003b38
 //
 
-void FUN_00003b38(void)
+void enableDiagnosticTimer(void)
 
 {
   DAT_003fee3e = 0x11;
@@ -2625,12 +2625,12 @@ void processTimerInterrupt(void)
 
 
 //
-// Function: FUN_00003b58 @ 0x00003b58
+// Function: saveSchedulerCallbackPointer @ 0x00003b58
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00003b58(void)
+void saveSchedulerCallbackPointer(void)
 
 {
   _DAT_003fedf0 = registerSchedulerTask;
@@ -2640,12 +2640,12 @@ void FUN_00003b58(void)
 
 
 //
-// Function: FUN_00003b6c @ 0x00003b6c
+// Function: initQspiRegisters @ 0x00003b6c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00003b6c(void)
+void initQspiRegisters(void)
 
 {
   DAT_00305016 = 0x7b;
@@ -2662,10 +2662,10 @@ void FUN_00003b6c(void)
 
 
 //
-// Function: FUN_00003d54 @ 0x00003d54
+// Function: getDiagnosticServicePriority @ 0x00003d54
 //
 
-undefined1 FUN_00003d54(int param_1)
+undefined1 getDiagnosticServicePriority(int param_1)
 
 {
   if (param_1 < 0x41) {
@@ -2766,10 +2766,10 @@ void canTransmitQueuePush(uint param_1,uint param_2,int param_3,undefined1 *para
 
 
 //
-// Function: FUN_00003f20 @ 0x00003f20
+// Function: transmitCanMessage @ 0x00003f20
 //
 
-void FUN_00003f20(undefined4 *param_1)
+void transmitCanMessage(undefined4 *param_1)
 
 {
   if (*(ushort *)(param_1 + 1) < 9) {
@@ -5288,7 +5288,7 @@ void processSensorFilterChain(byte *param_1,uint param_2)
   byte bVar5;
   undefined1 *puVar6;
   
-  bVar2 = FUN_00003d54(**(undefined1 **)(param_1 + 6));
+  bVar2 = getDiagnosticServicePriority(**(undefined1 **)(param_1 + 6));
   if (param_2 == 0) {
     iVar3 = 1;
   }
@@ -5335,7 +5335,7 @@ LAB_000074f8:
         bVar5 = bVar5 + 1;
       } while (bVar5 < bVar2);
     }
-    FUN_00003f20();
+    transmitCanMessage();
   }
   return;
 }
