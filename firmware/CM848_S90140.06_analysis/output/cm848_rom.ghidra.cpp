@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Jan 29 10:20:29 MST 2026
+// Generated: Thu Jan 29 10:22:08 MST 2026
 
 
 //
@@ -5768,8 +5768,8 @@ void phase_group_b_processing(void)
   processEnginePositionDiagnostics();
   calculateTpuTimingPeriod();
   FUN_000191a0();
-  FUN_00038ac8();
-  FUN_0003adcc();
+  processJ1939DiagnosticMessages();
+  processJ1939ReceivedMessages();
   processCoolantCalEntries();
   func_0x00532fac();
   FUN_0000caec();
@@ -5778,7 +5778,7 @@ void phase_group_b_processing(void)
   FUN_00037744();
   FUN_00037a40();
   FUN_00037c74();
-  FUN_00038120();
+  processProtectionMode2();
   func_0x00505f98(0);
   func_0x0051d840();
   processEngineLoadData();
@@ -5813,7 +5813,7 @@ void periodicTaskGroup0_fuelFinal(void)
   injectorPulseWidthCalc();
   FUN_00017d54();
   updateSensorDiagnosticFlags();
-  FUN_00038868();
+  setEngineRpmFromCalibration();
   FUN_0001ef88();
   func_0x00503964();
   FUN_0000d4c4();
@@ -5827,7 +5827,7 @@ void periodicTaskGroup0_fuelFinal(void)
   FUN_000359b8();
   updateEngineCycleOutputs();
   FUN_0002c4fc();
-  FUN_00038760();
+  processEngineRpmDerivative();
   FUN_0001eae8();
   processFaultPendingFlags();
   processOperatingModeFlags();
@@ -5935,7 +5935,7 @@ void periodicTaskGroup3_auxiliaryControl(void)
   func_0x005279d8();
   copyProtectionAccumulator();
   calculateGovernorOutput();
-  FUN_0003866c();
+  processEngineRpmTarget();
   func_0x0052ba30();
   func_0x0052d140();
   func_0x005278ac();
@@ -6305,7 +6305,7 @@ void periodicTaskGroup33_protection2(void)
 
 {
   FUN_000375c8();
-  FUN_00037f28();
+  checkProtectionOutputConditions();
   protectionInputValidator();
   protectionSensorFaultHandler();
   return;
@@ -31232,12 +31232,12 @@ void FUN_00037c74(void)
 
 
 //
-// Function: FUN_00037f28 @ 0x00037f28
+// Function: checkProtectionOutputConditions @ 0x00037f28
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00037f28(void)
+void checkProtectionOutputConditions(void)
 
 {
   if (((_protection_output_mode == 0) || (_DAT_004087c4 <= _DAT_0040b25e)) || (_DAT_0040b284 != 0))
@@ -31283,12 +31283,12 @@ void FUN_00037f28(void)
 
 
 //
-// Function: FUN_00038120 @ 0x00038120
+// Function: processProtectionMode2 @ 0x00038120
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00038120(void)
+void processProtectionMode2(void)
 
 {
   if (((((_protection_output_mode == 2) && (_DAT_0040b33c == 5)) &&
@@ -31341,12 +31341,12 @@ void FUN_00038120(void)
 
 
 //
-// Function: FUN_000384d0 @ 0x000384d0
+// Function: initProtectionFilterValues @ 0x000384d0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000384d0(void)
+void initProtectionFilterValues(void)
 
 {
   _DAT_003fb38e = 2;
@@ -31384,12 +31384,12 @@ void FUN_000384d0(void)
 
 
 //
-// Function: FUN_0003866c @ 0x0003866c
+// Function: processEngineRpmTarget @ 0x0003866c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0003866c(void)
+void processEngineRpmTarget(void)
 
 {
   uint extraout_r4;
@@ -31415,12 +31415,12 @@ void FUN_0003866c(void)
 
 
 //
-// Function: FUN_00038760 @ 0x00038760
+// Function: processEngineRpmDerivative @ 0x00038760
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00038760(void)
+void processEngineRpmDerivative(void)
 
 {
   int iVar1;
@@ -31446,12 +31446,12 @@ LAB_000387f4:
 
 
 //
-// Function: FUN_00038824 @ 0x00038824
+// Function: initEngineRpmFilterPointers @ 0x00038824
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00038824(void)
+void initEngineRpmFilterPointers(void)
 
 {
   _DAT_003fb3b4 = 0;
@@ -31465,12 +31465,12 @@ void FUN_00038824(void)
 
 
 //
-// Function: FUN_00038868 @ 0x00038868
+// Function: setEngineRpmFromCalibration @ 0x00038868
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00038868(void)
+void setEngineRpmFromCalibration(void)
 
 {
   if (_DAT_00408810 == 1) {
@@ -31484,13 +31484,13 @@ void FUN_00038868(void)
 
 
 //
-// Function: FUN_0003889c @ 0x0003889c
+// Function: processSafetyConditionProtection @ 0x0003889c
 //
 
 /* WARNING: Removing unreachable block (ram,0x00038a04) */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0003889c(void)
+void processSafetyConditionProtection(void)
 
 {
   uint uVar1;
@@ -31534,12 +31534,12 @@ LAB_00038a4c:
 
 
 //
-// Function: FUN_00038a98 @ 0x00038a98
+// Function: initProtectionFilterLimits @ 0x00038a98
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00038a98(void)
+void initProtectionFilterLimits(void)
 
 {
   _DAT_003fb3c2 = 2;
@@ -31552,12 +31552,12 @@ void FUN_00038a98(void)
 
 
 //
-// Function: FUN_00038ac8 @ 0x00038ac8
+// Function: processJ1939DiagnosticMessages @ 0x00038ac8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00038ac8(void)
+void processJ1939DiagnosticMessages(void)
 
 {
   ushort uVar1;
@@ -31739,12 +31739,12 @@ LAB_00038ef0:
 
 
 //
-// Function: FUN_00039004 @ 0x00039004
+// Function: processCalibrationChecksumResponse @ 0x00039004
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00039004(void)
+void processCalibrationChecksumResponse(void)
 
 {
   byte bVar1;
@@ -32056,10 +32056,10 @@ LAB_000395dc:
 
 
 //
-// Function: FUN_00039bc0 @ 0x00039bc0
+// Function: handleJ1939MessageTimeout @ 0x00039bc0
 //
 
-void FUN_00039bc0(void)
+void handleJ1939MessageTimeout(void)
 
 {
   *(byte *)(&fault_code_table_ptr)[(uint)can_message_buffer * 7] =
@@ -32078,12 +32078,12 @@ void FUN_00039bc0(void)
 
 
 //
-// Function: FUN_00039c44 @ 0x00039c44
+// Function: processUdsTransmitBuffer @ 0x00039c44
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00039c44(void)
+void processUdsTransmitBuffer(void)
 
 {
   uint uVar1;
@@ -32121,10 +32121,10 @@ void FUN_00039c44(void)
 
 
 //
-// Function: FUN_00039d18 @ 0x00039d18
+// Function: processCanMessageIndex @ 0x00039d18
 //
 
-void FUN_00039d18(void)
+void processCanMessageIndex(void)
 
 {
   uint uVar1;
@@ -32182,7 +32182,7 @@ void j1939TransmitDiagnosticResponse(void)
   cVar2 = '\0';
   if ((_engine_config_flags & 0x40) != 0) {
     if (_j1939_dm1_pending != 0) {
-      cVar2 = FUN_0003a290();
+      cVar2 = processJ1939DM1Pending();
       _j1939_dm1_pending = 0;
     }
     if (cVar2 == '\0') {
@@ -32193,11 +32193,11 @@ void j1939TransmitDiagnosticResponse(void)
         if (uds_tx_buffer_index == '\0') {
           return;
         }
-        FUN_00039c44();
+        processUdsTransmitBuffer();
         uVar1 = DAT_0040b383;
       }
       else {
-        FUN_00039d18();
+        processCanMessageIndex();
         uVar1 = DAT_0040b384;
       }
     }
@@ -32215,12 +32215,12 @@ void j1939TransmitDiagnosticResponse(void)
 
 
 //
-// Function: FUN_00039f54 @ 0x00039f54
+// Function: j1939MessageResponseCallback @ 0x00039f54
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00039f54(void)
+void j1939MessageResponseCallback(void)
 
 {
   ushort uVar1;
@@ -32243,7 +32243,7 @@ void FUN_00039f54(void)
       bVar2 = false;
     }
     if (bVar2) {
-      FUN_00039004();
+      processCalibrationChecksumResponse();
     }
     else {
       j1939ProcessPeriodicTx();
@@ -32260,10 +32260,10 @@ void FUN_00039f54(void)
 
 
 //
-// Function: FUN_0003a058 @ 0x0003a058
+// Function: clearCanMessageState @ 0x0003a058
 //
 
-void FUN_0003a058(void)
+void clearCanMessageState(void)
 
 {
   can_message_counter = 0;
@@ -32298,10 +32298,10 @@ void resetUdsSessionState(void)
 
 
 //
-// Function: FUN_0003a0cc @ 0x0003a0cc
+// Function: clearJ1939SyncFlags @ 0x0003a0cc
 //
 
-void FUN_0003a0cc(void)
+void clearJ1939SyncFlags(void)
 
 {
   updateEngineSyncStatus(0x7c);
@@ -32367,12 +32367,12 @@ void initUdsResponseBuffer(void)
 
 
 //
-// Function: FUN_0003a290 @ 0x0003a290
+// Function: processJ1939DM1Pending @ 0x0003a290
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-undefined4 FUN_0003a290(void)
+undefined4 processJ1939DM1Pending(void)
 
 {
   byte bVar1;
@@ -32418,13 +32418,13 @@ undefined4 FUN_0003a290(void)
       j1939_message_match_flags = 0x10;
     }
     if ((bVar1 & 2) != 0) {
-      FUN_0003a058();
+      clearCanMessageState();
     }
     if ((bVar1 & 4) != 0) {
       resetUdsSessionState();
     }
     if ((bVar1 & 8) != 0) {
-      FUN_0003a0cc();
+      clearJ1939SyncFlags();
       bVar1 = bVar1 | 0x20;
     }
     if ((bVar1 & 0x10) != 0) {
@@ -32440,10 +32440,10 @@ undefined4 FUN_0003a290(void)
 
 
 //
-// Function: FUN_0003a450 @ 0x0003a450
+// Function: initJ1939MessageTables @ 0x0003a450
 //
 
-void FUN_0003a450(void)
+void initJ1939MessageTables(void)
 
 {
   undefined *puVar1;
@@ -32727,10 +32727,10 @@ void FUN_0003a450(void)
 
 
 //
-// Function: FUN_0003a9a4 @ 0x0003a9a4
+// Function: initJ1939BufferValues @ 0x0003a9a4
 //
 
-void FUN_0003a9a4(void)
+void initJ1939BufferValues(void)
 
 {
   DAT_0040b488 = 0x80;
@@ -32777,10 +32777,10 @@ void FUN_0003a9a4(void)
 
 
 //
-// Function: FUN_0003aaf0 @ 0x0003aaf0
+// Function: initJ1939BufferParams @ 0x0003aaf0
 //
 
-void FUN_0003aaf0(void)
+void initJ1939BufferParams(void)
 
 {
   DAT_0040b4fd = 0x60;
@@ -32793,10 +32793,10 @@ void FUN_0003aaf0(void)
 
 
 //
-// Function: FUN_0003ab20 @ 0x0003ab20
+// Function: clearCanMessageBuffers @ 0x0003ab20
 //
 
-void FUN_0003ab20(void)
+void clearCanMessageBuffers(void)
 
 {
   undefined1 *puVar1;
@@ -32830,12 +32830,12 @@ void FUN_0003ab20(void)
 
 
 //
-// Function: FUN_0003abc4 @ 0x0003abc4
+// Function: initJ1939TransmitSchedule @ 0x0003abc4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0003abc4(void)
+void initJ1939TransmitSchedule(void)
 
 {
   updateEngineSyncStatus(0x7c);
@@ -32852,10 +32852,10 @@ void FUN_0003abc4(void)
   _DAT_0040b377 = &DAT_0040b385;
   _DAT_0040b37b = &DAT_0040b38c;
   _DAT_0040b38a = 2;
-  _DAT_0040b37f = FUN_00039f54;
+  _DAT_0040b37f = j1939MessageResponseCallback;
   DAT_0040b383 = 1;
   DAT_0040b384 = 0;
-  _DAT_0040b369 = FUN_0003ad80;
+  _DAT_0040b369 = j1939TransmitScheduleCallback;
   _DAT_0040b386 = 0xe0;
   DAT_0040b35b = DAT_0040b356;
   DAT_0040b371 = DAT_0040b356;
@@ -32868,25 +32868,25 @@ void FUN_0003abc4(void)
 
 
 //
-// Function: FUN_0003ad04 @ 0x0003ad04
+// Function: initJ1939CommunicationSystem @ 0x0003ad04
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0003ad04(void)
+void initJ1939CommunicationSystem(void)
 
 {
-  FUN_0003a450();
+  initJ1939MessageTables();
   initUdsResponseBuffer();
-  FUN_0003a9a4();
-  FUN_0003aaf0();
-  FUN_0003ab20();
+  initJ1939BufferValues();
+  initJ1939BufferParams();
+  clearCanMessageBuffers();
   func_0x00519c64();
   func_0x005196f0();
   resetUdsSessionState();
   _protection_active_flags = _protection_active_flags & 0x7fff;
   _DAT_003fea06 = _DAT_003fea06 & 0x7fff;
-  FUN_0003abc4();
+  initJ1939TransmitSchedule();
   DAT_0040b351 = 1;
   return;
 }
@@ -32894,12 +32894,12 @@ void FUN_0003ad04(void)
 
 
 //
-// Function: FUN_0003ad80 @ 0x0003ad80
+// Function: j1939TransmitScheduleCallback @ 0x0003ad80
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0003ad80(void)
+void j1939TransmitScheduleCallback(void)
 
 {
   _DAT_0040b369 = 0;
@@ -32911,12 +32911,12 @@ void FUN_0003ad80(void)
 
 
 //
-// Function: FUN_0003adcc @ 0x0003adcc
+// Function: processJ1939ReceivedMessages @ 0x0003adcc
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0003adcc(void)
+void processJ1939ReceivedMessages(void)
 
 {
   byte *pbVar1;
@@ -32959,7 +32959,7 @@ void FUN_0003adcc(void)
   else {
     _DAT_003fb3d2 = _DAT_003fb3d2 + 1;
     if ((int)(uint)DAT_0005c7ce < _DAT_003fb3d2) {
-      FUN_00039bc0();
+      handleJ1939MessageTimeout();
     }
   }
   if ((uds_session_active == '\x02') || ((_j1939_dm1_pending != 0 && (_DAT_0040b357 == 0)))) {
@@ -37203,7 +37203,7 @@ void processProtectionLimits(void)
   applyProtectionLimit();
   trackFuelDemandMinimum();
   func_0x00519e2c();
-  FUN_0003889c();
+  processSafetyConditionProtection();
   return;
 }
 
@@ -47251,7 +47251,7 @@ void exceptionHandler(void)
   func_0x00510f34();
   FUN_00035814();
   func_0x00516a20();
-  FUN_0003ad04();
+  initJ1939CommunicationSystem();
   enableSchedulerMiosOutput();
   resetEngineTimingAccumulators();
   FUN_00035d70();
@@ -47259,7 +47259,7 @@ void exceptionHandler(void)
   func_0x00518324();
   func_0x00516e5c();
   initProtectionTorqueLimit();
-  FUN_00038824();
+  initEngineRpmFilterPointers();
   func_0x00525de4();
   FUN_0000e8cc();
   FUN_000355e4();
@@ -47267,7 +47267,7 @@ void exceptionHandler(void)
   FUN_00029c80();
   initThermalProtectionState();
   func_0x00519c84();
-  FUN_000384d0();
+  initProtectionFilterValues();
   func_0x00527860();
   func_0x0052c688();
   func_0x0052d358();
@@ -47432,7 +47432,7 @@ void exceptionHandler(void)
   func_0x00519ffc();
   func_0x00523858();
   func_0x00530968();
-  FUN_00038a98();
+  initProtectionFilterLimits();
   func_0x0052b9c0();
   func_0x00538748();
   func_0x00502b24();
