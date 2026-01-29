@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Jan 29 10:28:20 MST 2026
+// Generated: Thu Jan 29 10:31:15 MST 2026
 
 
 //
@@ -5700,8 +5700,8 @@ void phase_common_processing(void)
   FUN_0001b37c();
   func_0x0051d70c();
   FUN_0002d600();
-  FUN_0002e74c();
-  FUN_0002f6a0();
+  processFaultConditionFlags();
+  processFaultStatusFlags();
   func_0x00506a3c();
   return;
 }
@@ -5743,7 +5743,7 @@ void phase_group_a_processing(void)
   FUN_000107ec();
   FUN_00017f50();
   func_0x00509848();
-  FUN_0002ea58();
+  processFaultStatusCalculation();
   func_0x00506b34();
   FUN_00010d3c();
   FUN_00011290();
@@ -26301,12 +26301,12 @@ void FUN_0002dc40(void)
 
 
 //
-// Function: FUN_0002e02c @ 0x0002e02c
+// Function: clearDiagnosticConditionFlags @ 0x0002e02c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002e02c(void)
+void clearDiagnosticConditionFlags(void)
 
 {
   _diagnostic_condition_flags = _diagnostic_condition_flags & 0xfe83;
@@ -26329,12 +26329,12 @@ void FUN_0002e02c(void)
 
 
 //
-// Function: FUN_0002e17c @ 0x0002e17c
+// Function: processFaultCounterTimeout @ 0x0002e17c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002e17c(void)
+void processFaultCounterTimeout(void)
 
 {
   if (_DAT_003fb07c == 0) {
@@ -26360,12 +26360,12 @@ void FUN_0002e17c(void)
 
 
 //
-// Function: FUN_0002e1f0 @ 0x0002e1f0
+// Function: incrementFaultTimeoutCounter @ 0x0002e1f0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002e1f0(void)
+void incrementFaultTimeoutCounter(void)
 
 {
   if (_DAT_003fb08c < 0x3c) {
@@ -26386,12 +26386,12 @@ void FUN_0002e1f0(void)
 
 
 //
-// Function: FUN_0002e250 @ 0x0002e250
+// Function: processFaultConditionLogic @ 0x0002e250
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002e250(void)
+void processFaultConditionLogic(void)
 
 {
   bool bVar1;
@@ -26399,7 +26399,7 @@ void FUN_0002e250(void)
   uint uVar3;
   uint uVar4;
   
-  FUN_0002e1f0();
+  incrementFaultTimeoutCounter();
   if ((_DAT_003fb082 == 0) || (_DAT_003fb072 != 0)) {
     _DAT_0040b074 = 0;
   }
@@ -26474,12 +26474,12 @@ void FUN_0002e250(void)
 
 
 //
-// Function: FUN_0002e488 @ 0x0002e488
+// Function: calculateFaultThresholdDelta @ 0x0002e488
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002e488(void)
+void calculateFaultThresholdDelta(void)
 
 {
   int iVar1;
@@ -26495,12 +26495,12 @@ void FUN_0002e488(void)
 
 
 //
-// Function: FUN_0002e4cc @ 0x0002e4cc
+// Function: processFaultThresholdCondition @ 0x0002e4cc
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002e4cc(void)
+void processFaultThresholdCondition(void)
 
 {
   bool bVar1;
@@ -26561,7 +26561,7 @@ void FUN_0002e4cc(void)
     }
   }
   _DAT_003fb08e = uVar3;
-  FUN_0002e488(&DAT_003fb08e,uVar8);
+  calculateFaultThresholdDelta(&DAT_003fb08e,uVar8);
   if (((int)(uint)*puVar4 < extraout_r4) && (_DAT_003fb096 == 0)) {
     bVar2 = false;
   }
@@ -26607,12 +26607,12 @@ void FUN_0002e4cc(void)
 
 
 //
-// Function: FUN_0002e74c @ 0x0002e74c
+// Function: processFaultConditionFlags @ 0x0002e74c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002e74c(void)
+void processFaultConditionFlags(void)
 
 {
   byte bVar1;
@@ -26655,7 +26655,7 @@ void FUN_0002e74c(void)
     else {
       _DAT_003fb07c = 1;
     }
-    FUN_0002e17c();
+    processFaultCounterTimeout();
     if ((sVar3 == 0) && (_DAT_003fb07e != 0)) {
       setEngineProtectionFault(0x48,0);
     }
@@ -26663,7 +26663,7 @@ void FUN_0002e74c(void)
       triggerProtectionEvent(0x48,0);
     }
     _DAT_003fb072 = (ushort)(-(uint)_current_engine_rpm >> 0x1f);
-    FUN_0002e250();
+    processFaultConditionLogic();
     bVar1 = DAT_0040c089 & 1;
     if ((((DAT_0040c089 & 1) == 0) || (_DAT_003fb07a != 0)) || (_DAT_0040b06e == 0)) {
       _DAT_0040b060 = 0;
@@ -26674,7 +26674,7 @@ void FUN_0002e74c(void)
     _DAT_003fb076 = _fault_status_word_2 & 0x8000;
     uVar2 = _fault_status_word_2 & 0x4000;
     _DAT_003fb078 = _fault_status_word_2 & 0x4000;
-    FUN_0002e4cc();
+    processFaultThresholdCondition();
     if (((bVar1 == 0) || (uVar2 != 0)) || ((_DAT_0040b070 == 0 || (_DAT_0040b064 == 0)))) {
       _DAT_0040b072 = 0;
     }
@@ -26688,12 +26688,12 @@ void FUN_0002e74c(void)
 
 
 //
-// Function: FUN_0002e9c8 @ 0x0002e9c8
+// Function: clearFaultStatusCounters @ 0x0002e9c8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002e9c8(void)
+void clearFaultStatusCounters(void)
 
 {
   _DAT_003fb070 = 0;
@@ -26719,12 +26719,12 @@ void FUN_0002e9c8(void)
 
 
 //
-// Function: FUN_0002ea58 @ 0x0002ea58
+// Function: processFaultStatusCalculation @ 0x0002ea58
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002ea58(void)
+void processFaultStatusCalculation(void)
 
 {
   short sVar1;
@@ -26813,12 +26813,12 @@ void FUN_0002ea58(void)
 
 
 //
-// Function: FUN_0002ed30 @ 0x0002ed30
+// Function: clearFaultStatusValues @ 0x0002ed30
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002ed30(void)
+void clearFaultStatusValues(void)
 
 {
   _DAT_003fb09e = 0;
@@ -26838,13 +26838,13 @@ void FUN_0002ed30(void)
 
 
 //
-// Function: FUN_0002edc0 @ 0x0002edc0
+// Function: processFaultCondition1 @ 0x0002edc0
 //
 
 /* WARNING: Removing unreachable block (ram,0x0002eed0) */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002edc0(void)
+void processFaultCondition1(void)
 
 {
   bool bVar1;
@@ -26904,12 +26904,12 @@ void FUN_0002edc0(void)
 
 
 //
-// Function: FUN_0002ef34 @ 0x0002ef34
+// Function: calculateFaultStatusValue @ 0x0002ef34
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002ef34(void)
+void calculateFaultStatusValue(void)
 
 {
   short sVar1;
@@ -26933,12 +26933,12 @@ void FUN_0002ef34(void)
 
 
 //
-// Function: FUN_0002efe4 @ 0x0002efe4
+// Function: processFaultConditionMain @ 0x0002efe4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002efe4(void)
+void processFaultConditionMain(void)
 
 {
   uint uVar1;
@@ -26950,7 +26950,7 @@ void FUN_0002efe4(void)
   }
   uVar1 = (uint)_DAT_00407766;
   _DAT_003fb0c8 = (ushort)((int)uVar1 <= (int)sVar2);
-  FUN_0002edc0();
+  processFaultCondition1();
   if (((int)uVar1 <= (int)sVar2) || (_DAT_003fb0cc == 0)) {
     _DAT_003fb0d0 = 0;
   }
@@ -26978,20 +26978,20 @@ void FUN_0002efe4(void)
   else {
     _fault_status_word_2 = _fault_status_word_2 | 0x4000;
   }
-  FUN_0002ef34();
+  calculateFaultStatusValue();
   return;
 }
 
 
 
 //
-// Function: FUN_0002f154 @ 0x0002f154
+// Function: processFaultCondition2 @ 0x0002f154
 //
 
 /* WARNING: Removing unreachable block (ram,0x0002f264) */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002f154(void)
+void processFaultCondition2(void)
 
 {
   bool bVar1;
@@ -27051,12 +27051,12 @@ void FUN_0002f154(void)
 
 
 //
-// Function: FUN_0002f2c8 @ 0x0002f2c8
+// Function: calculateFaultStatusOffset @ 0x0002f2c8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002f2c8(void)
+void calculateFaultStatusOffset(void)
 
 {
   short sVar1;
@@ -27087,12 +27087,12 @@ void FUN_0002f2c8(void)
 
 
 //
-// Function: FUN_0002f3a0 @ 0x0002f3a0
+// Function: processFaultStatusWord2 @ 0x0002f3a0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002f3a0(void)
+void processFaultStatusWord2(void)
 
 {
   uint uVar1;
@@ -27111,7 +27111,7 @@ void FUN_0002f3a0(void)
   else {
     _DAT_0040b09e = 1;
   }
-  FUN_0002f154();
+  processFaultCondition2();
   if (_DAT_003fb0ac == 0) {
     _fault_status_word_2 = _fault_status_word_2 & 0x7fff;
     _DAT_003fea2a = _DAT_003fea2a & 0x7fff;
@@ -27125,7 +27125,7 @@ void FUN_0002f3a0(void)
   else {
     _DAT_003fb0b4 = 1;
   }
-  FUN_0002f2c8();
+  calculateFaultStatusOffset();
   _DAT_0040b09a = _DAT_003fedde;
   if (_DAT_003fd8d8 != 0) {
     _DAT_0040b09a = _DAT_004077e4;
@@ -27136,12 +27136,12 @@ void FUN_0002f3a0(void)
 
 
 //
-// Function: FUN_0002f524 @ 0x0002f524
+// Function: calculateFaultRateValue @ 0x0002f524
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002f524(void)
+void calculateFaultRateValue(void)
 
 {
   uint uVar1;
@@ -27171,16 +27171,16 @@ void FUN_0002f524(void)
 
 
 //
-// Function: FUN_0002f5a4 @ 0x0002f5a4
+// Function: processFaultStatusMain @ 0x0002f5a4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002f5a4(void)
+void processFaultStatusMain(void)
 
 {
-  FUN_0002efe4();
-  FUN_0002f3a0();
+  processFaultConditionMain();
+  processFaultStatusWord2();
   if ((_fault_status_word_2 & 0x8000) == 0) {
     _DAT_003fb0a4 = 0;
   }
@@ -27188,19 +27188,19 @@ void FUN_0002f5a4(void)
     _DAT_003fb0a4 = 8;
   }
   _DAT_003fb0a4 = _DAT_0040be2e | _DAT_003fb0a4;
-  FUN_0002f524();
+  calculateFaultRateValue();
   return;
 }
 
 
 
 //
-// Function: FUN_0002f604 @ 0x0002f604
+// Function: calculateDiagnosticStatusBits @ 0x0002f604
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002f604(void)
+void calculateDiagnosticStatusBits(void)
 
 {
   ushort uVar1;
@@ -27233,12 +27233,12 @@ void FUN_0002f604(void)
 
 
 //
-// Function: FUN_0002f6a0 @ 0x0002f6a0
+// Function: processFaultStatusFlags @ 0x0002f6a0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002f6a0(void)
+void processFaultStatusFlags(void)
 
 {
   if (_DAT_0040776e != 0) {
@@ -27256,8 +27256,8 @@ void FUN_0002f6a0(void)
     else {
       _fault_status_word_1 = _fault_status_word_1 | 0x40;
     }
-    FUN_0002f5a4();
-    FUN_0002f604();
+    processFaultStatusMain();
+    calculateDiagnosticStatusBits();
   }
   return;
 }
@@ -27265,12 +27265,12 @@ void FUN_0002f6a0(void)
 
 
 //
-// Function: FUN_0002f784 @ 0x0002f784
+// Function: initFaultStatusFilterState @ 0x0002f784
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002f784(void)
+void initFaultStatusFilterState(void)
 
 {
   _DAT_003fb0be = 1;
@@ -28387,12 +28387,12 @@ void protectionRateOfChangeCalculation(void)
 
 
 //
-// Function: FUN_0003241c @ 0x0003241c
+// Function: calculateProtectionFuelDemandThreshold @ 0x0003241c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0003241c(void)
+void calculateProtectionFuelDemandThreshold(void)
 
 {
   int extraout_r4;
@@ -28436,12 +28436,12 @@ void FUN_0003241c(void)
 
 
 //
-// Function: FUN_0003257c @ 0x0003257c
+// Function: processProtectionStateFlags @ 0x0003257c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0003257c(void)
+void processProtectionStateFlags(void)
 
 {
   byte bVar1;
@@ -28510,7 +28510,7 @@ void FUN_0003257c(void)
       _protection_threshold_limit =
            lookupTableInterpolation(&DAT_003fb0ee,_engine_load_percent,0x407c96,0x407cb2,0);
       _protection_status_code = 1;
-      FUN_0003241c();
+      calculateProtectionFuelDemandThreshold();
       _protection_timeout_counter = _DAT_00407810;
       return;
     }
@@ -28646,7 +28646,7 @@ LAB_00032e40:
     return;
   }
 LAB_00032ee0:
-  FUN_0003257c();
+  processProtectionStateFlags();
   return;
 }
 
@@ -28832,12 +28832,12 @@ void initProtectionFilterVariables(void)
 
 
 //
-// Function: FUN_00033488 @ 0x00033488
+// Function: evaluateProtectionModeFlags @ 0x00033488
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00033488(void)
+void evaluateProtectionModeFlags(void)
 
 {
   if ((protection_mode_flags & 4) == 0) {
@@ -28889,12 +28889,12 @@ void FUN_00033488(void)
 
 
 //
-// Function: FUN_000335e4 @ 0x000335e4
+// Function: decrementProtectionTimers @ 0x000335e4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000335e4(void)
+void decrementProtectionTimers(void)
 
 {
   if (_DAT_0040b102 != 0) {
@@ -28975,13 +28975,13 @@ void FUN_000335e4(void)
 
 
 //
-// Function: FUN_00033948 @ 0x00033948
+// Function: calculateProtectionConditions @ 0x00033948
 //
 
 /* WARNING: Type propagation algorithm not settling */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00033948(void)
+void calculateProtectionConditions(void)
 
 {
   bool bVar1;
@@ -29190,12 +29190,12 @@ LAB_00034278:
 
 
 //
-// Function: FUN_000343ac @ 0x000343ac
+// Function: processProtectionFlagConditions @ 0x000343ac
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000343ac(void)
+void processProtectionFlagConditions(void)
 
 {
   byte bVar1;
@@ -29326,12 +29326,12 @@ void FUN_000343ac(void)
 
 
 //
-// Function: FUN_0003491c @ 0x0003491c
+// Function: filterProtectionLoadValue @ 0x0003491c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0003491c(void)
+void filterProtectionLoadValue(void)
 
 {
   ushort uVar1;
@@ -29373,12 +29373,12 @@ void FUN_0003491c(void)
 
 
 //
-// Function: FUN_00034a30 @ 0x00034a30
+// Function: evaluateProtectionFaultCondition @ 0x00034a30
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00034a30(void)
+void evaluateProtectionFaultCondition(void)
 
 {
   if (((((protection_condition_flags_2 & 1) == 0) && ((protection_condition_flags_2 & 2) == 0)) &&
@@ -29403,12 +29403,13 @@ void FUN_00034a30(void)
 void processCalibrationTablesMain(void)
 
 {
-  if (((_eeprom_calibration_table_ptr & 4) != 0) && (FUN_00033488(), _DAT_003fb178 != 0)) {
-    FUN_000335e4();
-    FUN_00033948();
-    FUN_000343ac();
-    FUN_0003491c();
-    FUN_00034a30();
+  if (((_eeprom_calibration_table_ptr & 4) != 0) &&
+     (evaluateProtectionModeFlags(), _DAT_003fb178 != 0)) {
+    decrementProtectionTimers();
+    calculateProtectionConditions();
+    processProtectionFlagConditions();
+    filterProtectionLoadValue();
+    evaluateProtectionFaultCondition();
   }
   return;
 }
@@ -47400,11 +47401,11 @@ void exceptionHandler(void)
   func_0x0050ee68();
   FUN_0002d638();
   func_0x0050fc8c();
-  FUN_0002e02c();
-  FUN_0002e9c8();
-  FUN_0002ed30();
+  clearDiagnosticConditionFlags();
+  clearFaultStatusCounters();
+  clearFaultStatusValues();
   func_0x005102d4();
-  FUN_0002f784();
+  initFaultStatusFilterState();
   func_0x0051aecc();
   func_0x0051b978();
   func_0x00502eb8();
