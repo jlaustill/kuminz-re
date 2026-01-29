@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Jan 29 12:03:34 MST 2026
+// Generated: Thu Jan 29 12:12:03 MST 2026
 
 
 //
@@ -5892,7 +5892,7 @@ void periodicTaskGroup2_controlLoop(void)
   processTorqueLimitConfig();
   selectTorqueLimit();
   selectSensorRawChannels();
-  FUN_0001f40c();
+  processTorqueLimitTiming();
   processSystemStatusLimits();
   processProtectionRampControl();
   calculateFuelDemandWithTrim();
@@ -17856,12 +17856,12 @@ void calculateTimingCompensation(void)
 
 
 //
-// Function: FUN_0001f40c @ 0x0001f40c
+// Function: processTorqueLimitTiming @ 0x0001f40c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001f40c(void)
+void processTorqueLimitTiming(void)
 
 {
   bool bVar1;
@@ -31616,12 +31616,12 @@ void processJ1939DiagnosticMessages(void)
 
 
 //
-// Function: FUN_00038c90 @ 0x00038c90
+// Function: triggerJ1939TransmitMessage @ 0x00038c90
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00038c90(void)
+void triggerJ1939TransmitMessage(void)
 
 {
   _DAT_002fc010 = _DAT_002fc010 | 0x200;
@@ -33350,12 +33350,12 @@ LAB_0003b680:
 
 
 //
-// Function: FUN_0003b910 @ 0x0003b910
+// Function: processProtectionCounters @ 0x0003b910
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0003b910(void)
+void processProtectionCounters(void)
 
 {
   short sVar1;
@@ -33409,12 +33409,12 @@ LAB_0003b9e8:
 
 
 //
-// Function: FUN_0003bb28 @ 0x0003bb28
+// Function: selectProtectionOverrideMode @ 0x0003bb28
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0003bb28(void)
+void selectProtectionOverrideMode(void)
 
 {
   if ((DAT_0040b3f6 & 0x3f) != 0) {
@@ -33482,12 +33482,12 @@ LAB_0003bcac:
 
 
 //
-// Function: FUN_0003bd14 @ 0x0003bd14
+// Function: validateCalibrationAgainstEeprom @ 0x0003bd14
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0003bd14(void)
+void validateCalibrationAgainstEeprom(void)
 
 {
   int iVar1;
@@ -33524,12 +33524,12 @@ void FUN_0003bd14(void)
 
 
 //
-// Function: FUN_0003be90 @ 0x0003be90
+// Function: processProtectionFaultFlags @ 0x0003be90
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0003be90(void)
+void processProtectionFaultFlags(void)
 
 {
   ushort uVar1;
@@ -33601,12 +33601,12 @@ void processEngineRpmMonitoring(void)
 
 
 //
-// Function: FUN_0003c5f0 @ 0x0003c5f0
+// Function: processProtectionStateChange @ 0x0003c5f0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0003c5f0(void)
+void processProtectionStateChange(void)
 
 {
   short sVar1;
@@ -33641,12 +33641,12 @@ void FUN_0003c5f0(void)
 
 
 //
-// Function: FUN_0003c6b0 @ 0x0003c6b0
+// Function: processProtectionTimingCounter @ 0x0003c6b0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0003c6b0(void)
+void processProtectionTimingCounter(void)
 
 {
   ushort uVar1;
@@ -33709,12 +33709,12 @@ void FUN_0003c6b0(void)
 
 
 //
-// Function: FUN_0003c8ec @ 0x0003c8ec
+// Function: validateBatteryVoltageInput @ 0x0003c8ec
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0003c8ec(void)
+void validateBatteryVoltageInput(void)
 
 {
   ushort *puVar1;
@@ -33790,12 +33790,12 @@ void initFuelDemandFilterPointers(void)
 
 
 //
-// Function: FUN_0003cbd4 @ 0x0003cbd4
+// Function: calculateProtectionUnitConversion @ 0x0003cbd4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0003cbd4(void)
+void calculateProtectionUnitConversion(void)
 
 {
   undefined1 extraout_r4;
@@ -34434,10 +34434,10 @@ void j1939ProcessTransmitQueue(void)
 
 
 //
-// Function: FUN_0003dcf4 @ 0x0003dcf4
+// Function: triggerJ1939TransmitQueueProcess @ 0x0003dcf4
 //
 
-void FUN_0003dcf4(void)
+void triggerJ1939TransmitQueueProcess(void)
 
 {
   qadc_queue_status = qadc_queue_status & 0x7f;
@@ -34782,12 +34782,12 @@ void clearFuelDemandState(void)
 
 
 //
-// Function: FUN_0003e5ac @ 0x0003e5ac
+// Function: dispatchFuelDemandCallback @ 0x0003e5ac
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0003e5ac(void)
+void dispatchFuelDemandCallback(void)
 
 {
   if (_DAT_0040b5ca == 0) {
@@ -34802,12 +34802,12 @@ void FUN_0003e5ac(void)
 
 
 //
-// Function: FUN_0003e5f0 @ 0x0003e5f0
+// Function: registerFuelDemandCallback @ 0x0003e5f0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0003e5f0(void)
+void registerFuelDemandCallback(void)
 
 {
   _DAT_0040b5c6 = processFuelDemandCallback;
@@ -34875,12 +34875,12 @@ void processFuelDemandCallback(void)
 
 
 //
-// Function: FUN_0003e7c0 @ 0x0003e7c0
+// Function: registerFuelDemandCallback2 @ 0x0003e7c0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0003e7c0(void)
+void registerFuelDemandCallback2(void)
 
 {
   _DAT_0040b5c6 = processFuelDemandCallback2;
@@ -34933,12 +34933,12 @@ void processFuelDemandCallback2(void)
 
 
 //
-// Function: FUN_0003e8d8 @ 0x0003e8d8
+// Function: processFuelDemandTimeout @ 0x0003e8d8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0003e8d8(void)
+void processFuelDemandTimeout(void)
 
 {
   bool bVar1;
@@ -35570,12 +35570,12 @@ void initEngineLoadFilterState(void)
 
 
 //
-// Function: FUN_0003fa5c @ 0x0003fa5c
+// Function: calculateTimerFrequencyConversion @ 0x0003fa5c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0003fa5c(void)
+void calculateTimerFrequencyConversion(void)
 
 {
   uint uVar1;
@@ -38467,12 +38467,12 @@ void protectionOverrideEvaluator(void)
 
 
 //
-// Function: FUN_00044fa8 @ 0x00044fa8
+// Function: processEngineSyncPulses @ 0x00044fa8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00044fa8(void)
+void processEngineSyncPulses(void)
 
 {
   short sVar1;
@@ -38599,12 +38599,12 @@ LAB_00045154:
 
 
 //
-// Function: FUN_00045478 @ 0x00045478
+// Function: updateEngineRunState @ 0x00045478
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00045478(void)
+void updateEngineRunState(void)
 
 {
   ushort uVar1;
@@ -38692,13 +38692,13 @@ void FUN_00045478(void)
 
 
 //
-// Function: FUN_000457d0 @ 0x000457d0
+// Function: updateEngineCrankState @ 0x000457d0
 //
 
 /* WARNING: Removing unreachable block (ram,0x00045c78) */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000457d0(void)
+void updateEngineCrankState(void)
 
 {
   ushort uVar1;
@@ -39419,12 +39419,12 @@ void calculateTimingWithTables(void)
 
 
 //
-// Function: FUN_00047140 @ 0x00047140
+// Function: calculateEngineTimingInterpolation @ 0x00047140
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00047140(void)
+void calculateEngineTimingInterpolation(void)
 
 {
   ushort uVar1;
@@ -39498,12 +39498,12 @@ LAB_0004733c:
 
 
 //
-// Function: FUN_00047394 @ 0x00047394
+// Function: calculateEngineFaultTiming @ 0x00047394
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00047394(int param_1)
+void calculateEngineFaultTiming(int param_1)
 
 {
   ushort uVar1;
@@ -41058,12 +41058,12 @@ LAB_0004ab0c:
 
 
 //
-// Function: FUN_0004ac3c @ 0x0004ac3c
+// Function: evaluateProtectionSyncFaults @ 0x0004ac3c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0004ac3c(void)
+void evaluateProtectionSyncFaults(void)
 
 {
   undefined4 uVar1;
@@ -41444,12 +41444,12 @@ void applyProtectionLimit(void)
 
 
 //
-// Function: FUN_0004ba48 @ 0x0004ba48
+// Function: processMemoryScanValidation @ 0x0004ba48
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0004ba48(void)
+void processMemoryScanValidation(void)
 
 {
   bool bVar1;
@@ -41962,12 +41962,12 @@ void protectionLimitCalculator(void)
 
 
 //
-// Function: FUN_0004c69c @ 0x0004c69c
+// Function: initProtectionLimitVariables @ 0x0004c69c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0004c69c(void)
+void initProtectionLimitVariables(void)
 
 {
   _sensor_validation_timer = 1;
@@ -42260,10 +42260,10 @@ void initSensorRetryCounters(void)
 
 
 //
-// Function: FUN_0004ce9c @ 0x0004ce9c
+// Function: miosChannel11Enable @ 0x0004ce9c
 //
 
-void FUN_0004ce9c(void)
+void miosChannel11Enable(void)
 
 {
   miosChannelEnable(0x306058);
@@ -42273,10 +42273,10 @@ void FUN_0004ce9c(void)
 
 
 //
-// Function: FUN_0004cec4 @ 0x0004cec4
+// Function: miosChannel11ReadStatus @ 0x0004cec4
 //
 
-void FUN_0004cec4(undefined4 param_1)
+void miosChannel11ReadStatus(undefined4 param_1)
 
 {
   miosReadChannelStatus(0x306058,param_1);
@@ -42286,10 +42286,10 @@ void FUN_0004cec4(undefined4 param_1)
 
 
 //
-// Function: FUN_0004cef0 @ 0x0004cef0
+// Function: miosChannel11SetPwm @ 0x0004cef0
 //
 
-void FUN_0004cef0(undefined4 param_1)
+void miosChannel11SetPwm(undefined4 param_1)
 
 {
   miosSetPwmOutput(0x306058,param_1);
@@ -42299,10 +42299,10 @@ void FUN_0004cef0(undefined4 param_1)
 
 
 //
-// Function: FUN_0004cf1c @ 0x0004cf1c
+// Function: miosChannel12Enable @ 0x0004cf1c
 //
 
-void FUN_0004cf1c(void)
+void miosChannel12Enable(void)
 
 {
   miosChannelEnable(0x306060);
@@ -42312,10 +42312,10 @@ void FUN_0004cf1c(void)
 
 
 //
-// Function: FUN_0004cf44 @ 0x0004cf44
+// Function: miosChannel12ReadStatus @ 0x0004cf44
 //
 
-void FUN_0004cf44(undefined4 param_1)
+void miosChannel12ReadStatus(undefined4 param_1)
 
 {
   miosReadChannelStatus(0x306060,param_1);
@@ -42325,10 +42325,10 @@ void FUN_0004cf44(undefined4 param_1)
 
 
 //
-// Function: FUN_0004cf70 @ 0x0004cf70
+// Function: miosChannel12SetPwm @ 0x0004cf70
 //
 
-void FUN_0004cf70(undefined4 param_1)
+void miosChannel12SetPwm(undefined4 param_1)
 
 {
   miosSetPwmOutput(0x306060,param_1);
@@ -42338,10 +42338,10 @@ void FUN_0004cf70(undefined4 param_1)
 
 
 //
-// Function: FUN_0004cf9c @ 0x0004cf9c
+// Function: miosChannel13Enable @ 0x0004cf9c
 //
 
-void FUN_0004cf9c(void)
+void miosChannel13Enable(void)
 
 {
   miosChannelEnable(0x306068);
@@ -42351,10 +42351,10 @@ void FUN_0004cf9c(void)
 
 
 //
-// Function: FUN_0004cfc4 @ 0x0004cfc4
+// Function: miosChannel13ReadStatus @ 0x0004cfc4
 //
 
-void FUN_0004cfc4(undefined4 param_1)
+void miosChannel13ReadStatus(undefined4 param_1)
 
 {
   miosReadChannelStatus(0x306068,param_1);
@@ -42364,10 +42364,10 @@ void FUN_0004cfc4(undefined4 param_1)
 
 
 //
-// Function: FUN_0004cff0 @ 0x0004cff0
+// Function: miosChannel13SetPwm @ 0x0004cff0
 //
 
-void FUN_0004cff0(undefined4 param_1)
+void miosChannel13SetPwm(undefined4 param_1)
 
 {
   miosSetPwmOutput(0x306068,param_1);
@@ -42377,10 +42377,10 @@ void FUN_0004cff0(undefined4 param_1)
 
 
 //
-// Function: FUN_0004d01c @ 0x0004d01c
+// Function: miosChannel14Enable @ 0x0004d01c
 //
 
-void FUN_0004d01c(void)
+void miosChannel14Enable(void)
 
 {
   miosChannelEnable(0x306070);
@@ -42390,10 +42390,10 @@ void FUN_0004d01c(void)
 
 
 //
-// Function: FUN_0004d044 @ 0x0004d044
+// Function: miosChannel14ReadStatus @ 0x0004d044
 //
 
-void FUN_0004d044(undefined4 param_1)
+void miosChannel14ReadStatus(undefined4 param_1)
 
 {
   miosReadChannelStatus(0x306070,param_1);
@@ -42403,10 +42403,10 @@ void FUN_0004d044(undefined4 param_1)
 
 
 //
-// Function: FUN_0004d070 @ 0x0004d070
+// Function: miosChannel14SetPwm @ 0x0004d070
 //
 
-void FUN_0004d070(undefined4 param_1)
+void miosChannel14SetPwm(undefined4 param_1)
 
 {
   miosSetPwmOutput(0x306070,param_1);
@@ -42416,10 +42416,10 @@ void FUN_0004d070(undefined4 param_1)
 
 
 //
-// Function: FUN_0004d09c @ 0x0004d09c
+// Function: miosChannel15Enable @ 0x0004d09c
 //
 
-void FUN_0004d09c(void)
+void miosChannel15Enable(void)
 
 {
   miosChannelEnable(0x306078);
@@ -42429,10 +42429,10 @@ void FUN_0004d09c(void)
 
 
 //
-// Function: FUN_0004d0c4 @ 0x0004d0c4
+// Function: miosChannel15ReadStatus @ 0x0004d0c4
 //
 
-void FUN_0004d0c4(undefined4 param_1)
+void miosChannel15ReadStatus(undefined4 param_1)
 
 {
   miosReadChannelStatus(0x306078,param_1);
@@ -42442,10 +42442,10 @@ void FUN_0004d0c4(undefined4 param_1)
 
 
 //
-// Function: FUN_0004d0f0 @ 0x0004d0f0
+// Function: miosChannel15SetPwm @ 0x0004d0f0
 //
 
-void FUN_0004d0f0(undefined4 param_1)
+void miosChannel15SetPwm(undefined4 param_1)
 
 {
   miosSetPwmOutput(0x306078,param_1);
@@ -42455,10 +42455,10 @@ void FUN_0004d0f0(undefined4 param_1)
 
 
 //
-// Function: FUN_0004d11c @ 0x0004d11c
+// Function: miosChannel27Enable @ 0x0004d11c
 //
 
-void FUN_0004d11c(void)
+void miosChannel27Enable(void)
 
 {
   miosChannelEnable(0x3060d8);
@@ -42468,10 +42468,10 @@ void FUN_0004d11c(void)
 
 
 //
-// Function: FUN_0004d144 @ 0x0004d144
+// Function: miosChannel27ReadStatus @ 0x0004d144
 //
 
-void FUN_0004d144(undefined4 param_1)
+void miosChannel27ReadStatus(undefined4 param_1)
 
 {
   miosReadChannelStatus(0x3060d8,param_1);
@@ -42481,10 +42481,10 @@ void FUN_0004d144(undefined4 param_1)
 
 
 //
-// Function: FUN_0004d170 @ 0x0004d170
+// Function: miosChannel27SetPwm @ 0x0004d170
 //
 
-void FUN_0004d170(undefined4 param_1)
+void miosChannel27SetPwm(undefined4 param_1)
 
 {
   miosSetPwmOutput(0x3060d8,param_1);
@@ -42494,10 +42494,10 @@ void FUN_0004d170(undefined4 param_1)
 
 
 //
-// Function: FUN_0004d19c @ 0x0004d19c
+// Function: miosChannel28Enable @ 0x0004d19c
 //
 
-void FUN_0004d19c(void)
+void miosChannel28Enable(void)
 
 {
   miosChannelEnable(0x3060e0);
@@ -42507,10 +42507,10 @@ void FUN_0004d19c(void)
 
 
 //
-// Function: FUN_0004d1c4 @ 0x0004d1c4
+// Function: miosChannel28ReadStatus @ 0x0004d1c4
 //
 
-void FUN_0004d1c4(undefined4 param_1)
+void miosChannel28ReadStatus(undefined4 param_1)
 
 {
   miosReadChannelStatus(0x3060e0,param_1);
@@ -42520,10 +42520,10 @@ void FUN_0004d1c4(undefined4 param_1)
 
 
 //
-// Function: FUN_0004d1f0 @ 0x0004d1f0
+// Function: miosChannel28SetPwm @ 0x0004d1f0
 //
 
-void FUN_0004d1f0(undefined4 param_1)
+void miosChannel28SetPwm(undefined4 param_1)
 
 {
   miosSetPwmOutput(0x3060e0,param_1);
@@ -42533,10 +42533,10 @@ void FUN_0004d1f0(undefined4 param_1)
 
 
 //
-// Function: FUN_0004d21c @ 0x0004d21c
+// Function: miosChannel29Enable @ 0x0004d21c
 //
 
-void FUN_0004d21c(void)
+void miosChannel29Enable(void)
 
 {
   miosChannelEnable(&DAT_003060e8);
@@ -42546,10 +42546,10 @@ void FUN_0004d21c(void)
 
 
 //
-// Function: FUN_0004d244 @ 0x0004d244
+// Function: miosChannel29ReadStatus @ 0x0004d244
 //
 
-void FUN_0004d244(undefined4 param_1)
+void miosChannel29ReadStatus(undefined4 param_1)
 
 {
   miosReadChannelStatus(&DAT_003060e8,param_1);
@@ -42559,10 +42559,10 @@ void FUN_0004d244(undefined4 param_1)
 
 
 //
-// Function: FUN_0004d270 @ 0x0004d270
+// Function: miosChannel29SetPwm @ 0x0004d270
 //
 
-void FUN_0004d270(undefined4 param_1)
+void miosChannel29SetPwm(undefined4 param_1)
 
 {
   miosSetPwmOutput(&DAT_003060e8,param_1);
@@ -42572,10 +42572,10 @@ void FUN_0004d270(undefined4 param_1)
 
 
 //
-// Function: FUN_0004d29c @ 0x0004d29c
+// Function: miosChannel30Enable @ 0x0004d29c
 //
 
-void FUN_0004d29c(void)
+void miosChannel30Enable(void)
 
 {
   miosChannelEnable(0x3060f0);
@@ -42585,10 +42585,10 @@ void FUN_0004d29c(void)
 
 
 //
-// Function: FUN_0004d2c4 @ 0x0004d2c4
+// Function: miosChannel30ReadStatus @ 0x0004d2c4
 //
 
-void FUN_0004d2c4(undefined4 param_1)
+void miosChannel30ReadStatus(undefined4 param_1)
 
 {
   miosReadChannelStatus(0x3060f0,param_1);
@@ -42598,10 +42598,10 @@ void FUN_0004d2c4(undefined4 param_1)
 
 
 //
-// Function: FUN_0004d2f0 @ 0x0004d2f0
+// Function: miosChannel30SetPwm @ 0x0004d2f0
 //
 
-void FUN_0004d2f0(undefined4 param_1)
+void miosChannel30SetPwm(undefined4 param_1)
 
 {
   miosSetPwmOutput(0x3060f0,param_1);
@@ -42611,10 +42611,10 @@ void FUN_0004d2f0(undefined4 param_1)
 
 
 //
-// Function: FUN_0004d31c @ 0x0004d31c
+// Function: miosChannel31Enable @ 0x0004d31c
 //
 
-void FUN_0004d31c(void)
+void miosChannel31Enable(void)
 
 {
   miosChannelEnable(0x3060f8);
@@ -42624,10 +42624,10 @@ void FUN_0004d31c(void)
 
 
 //
-// Function: FUN_0004d344 @ 0x0004d344
+// Function: miosChannel31ReadStatus @ 0x0004d344
 //
 
-void FUN_0004d344(undefined4 param_1)
+void miosChannel31ReadStatus(undefined4 param_1)
 
 {
   miosReadChannelStatus(0x3060f8,param_1);
@@ -42637,10 +42637,10 @@ void FUN_0004d344(undefined4 param_1)
 
 
 //
-// Function: FUN_0004d370 @ 0x0004d370
+// Function: miosChannel31SetPwm @ 0x0004d370
 //
 
-void FUN_0004d370(undefined4 param_1)
+void miosChannel31SetPwm(undefined4 param_1)
 
 {
   miosSetPwmOutput(0x3060f8,param_1);
@@ -42650,10 +42650,10 @@ void FUN_0004d370(undefined4 param_1)
 
 
 //
-// Function: FUN_0004d39c @ 0x0004d39c
+// Function: miosTimer0InitPeriod @ 0x0004d39c
 //
 
-void FUN_0004d39c(void)
+void miosTimer0InitPeriod(void)
 
 {
   miosInitChannelPeriod(0x306000);
@@ -42663,10 +42663,10 @@ void FUN_0004d39c(void)
 
 
 //
-// Function: FUN_0004d3c4 @ 0x0004d3c4
+// Function: miosTimer0ScaleByPercent @ 0x0004d3c4
 //
 
-void FUN_0004d3c4(undefined4 param_1)
+void miosTimer0ScaleByPercent(undefined4 param_1)
 
 {
   scalePwmByPercent(0x306000,param_1);
@@ -42676,10 +42676,10 @@ void FUN_0004d3c4(undefined4 param_1)
 
 
 //
-// Function: FUN_0004d3f0 @ 0x0004d3f0
+// Function: miosTimer0SetValue @ 0x0004d3f0
 //
 
-void FUN_0004d3f0(undefined4 param_1)
+void miosTimer0SetValue(undefined4 param_1)
 
 {
   miosSetChannelValue(0x306000,param_1);
@@ -42689,10 +42689,10 @@ void FUN_0004d3f0(undefined4 param_1)
 
 
 //
-// Function: FUN_0004d41c @ 0x0004d41c
+// Function: miosTimer1InitPeriod @ 0x0004d41c
 //
 
-void FUN_0004d41c(void)
+void miosTimer1InitPeriod(void)
 
 {
   miosInitChannelPeriod(0x306008);
@@ -42702,10 +42702,10 @@ void FUN_0004d41c(void)
 
 
 //
-// Function: FUN_0004d444 @ 0x0004d444
+// Function: miosTimer1ScaleByPercent @ 0x0004d444
 //
 
-void FUN_0004d444(undefined4 param_1)
+void miosTimer1ScaleByPercent(undefined4 param_1)
 
 {
   scalePwmByPercent(0x306008,param_1);
@@ -42715,10 +42715,10 @@ void FUN_0004d444(undefined4 param_1)
 
 
 //
-// Function: FUN_0004d470 @ 0x0004d470
+// Function: miosTimer1SetValue @ 0x0004d470
 //
 
-void FUN_0004d470(undefined4 param_1)
+void miosTimer1SetValue(undefined4 param_1)
 
 {
   miosSetChannelValue(0x306008,param_1);
@@ -42728,10 +42728,10 @@ void FUN_0004d470(undefined4 param_1)
 
 
 //
-// Function: FUN_0004d49c @ 0x0004d49c
+// Function: miosTimer2InitPeriod @ 0x0004d49c
 //
 
-void FUN_0004d49c(void)
+void miosTimer2InitPeriod(void)
 
 {
   miosInitChannelPeriod(0x306010);
@@ -42741,10 +42741,10 @@ void FUN_0004d49c(void)
 
 
 //
-// Function: FUN_0004d4c4 @ 0x0004d4c4
+// Function: miosTimer2ScaleByPercent @ 0x0004d4c4
 //
 
-void FUN_0004d4c4(undefined4 param_1)
+void miosTimer2ScaleByPercent(undefined4 param_1)
 
 {
   scalePwmByPercent(0x306010,param_1);
@@ -42754,10 +42754,10 @@ void FUN_0004d4c4(undefined4 param_1)
 
 
 //
-// Function: FUN_0004d4f0 @ 0x0004d4f0
+// Function: miosTimer2SetValue @ 0x0004d4f0
 //
 
-void FUN_0004d4f0(undefined4 param_1)
+void miosTimer2SetValue(undefined4 param_1)
 
 {
   miosSetChannelValue(0x306010,param_1);
@@ -42767,10 +42767,10 @@ void FUN_0004d4f0(undefined4 param_1)
 
 
 //
-// Function: FUN_0004d51c @ 0x0004d51c
+// Function: miosTimer3InitPeriod @ 0x0004d51c
 //
 
-void FUN_0004d51c(void)
+void miosTimer3InitPeriod(void)
 
 {
   miosInitChannelPeriod(0x306018);
@@ -42780,10 +42780,10 @@ void FUN_0004d51c(void)
 
 
 //
-// Function: FUN_0004d544 @ 0x0004d544
+// Function: miosTimer3ScaleByPercent @ 0x0004d544
 //
 
-void FUN_0004d544(undefined4 param_1)
+void miosTimer3ScaleByPercent(undefined4 param_1)
 
 {
   scalePwmByPercent(0x306018,param_1);
@@ -42793,10 +42793,10 @@ void FUN_0004d544(undefined4 param_1)
 
 
 //
-// Function: FUN_0004d570 @ 0x0004d570
+// Function: miosTimer3SetValue @ 0x0004d570
 //
 
-void FUN_0004d570(undefined4 param_1)
+void miosTimer3SetValue(undefined4 param_1)
 
 {
   miosSetChannelValue(0x306018,param_1);
@@ -42806,10 +42806,10 @@ void FUN_0004d570(undefined4 param_1)
 
 
 //
-// Function: FUN_0004d59c @ 0x0004d59c
+// Function: miosTimer16InitPeriod @ 0x0004d59c
 //
 
-void FUN_0004d59c(void)
+void miosTimer16InitPeriod(void)
 
 {
   miosInitChannelPeriod(0x306080);
@@ -42819,10 +42819,10 @@ void FUN_0004d59c(void)
 
 
 //
-// Function: FUN_0004d5c4 @ 0x0004d5c4
+// Function: miosTimer16ScaleByPercent @ 0x0004d5c4
 //
 
-void FUN_0004d5c4(undefined4 param_1)
+void miosTimer16ScaleByPercent(undefined4 param_1)
 
 {
   scalePwmByPercent(0x306080,param_1);
@@ -42832,10 +42832,10 @@ void FUN_0004d5c4(undefined4 param_1)
 
 
 //
-// Function: FUN_0004d5f0 @ 0x0004d5f0
+// Function: miosTimer16SetValue @ 0x0004d5f0
 //
 
-void FUN_0004d5f0(undefined4 param_1)
+void miosTimer16SetValue(undefined4 param_1)
 
 {
   miosSetChannelValue(0x306080,param_1);
@@ -42845,10 +42845,10 @@ void FUN_0004d5f0(undefined4 param_1)
 
 
 //
-// Function: FUN_0004d61c @ 0x0004d61c
+// Function: miosTimer17InitPeriod @ 0x0004d61c
 //
 
-void FUN_0004d61c(void)
+void miosTimer17InitPeriod(void)
 
 {
   miosInitChannelPeriod(0x306088);
@@ -42858,10 +42858,10 @@ void FUN_0004d61c(void)
 
 
 //
-// Function: FUN_0004d644 @ 0x0004d644
+// Function: miosTimer17ScaleByPercent @ 0x0004d644
 //
 
-void FUN_0004d644(undefined4 param_1)
+void miosTimer17ScaleByPercent(undefined4 param_1)
 
 {
   scalePwmByPercent(0x306088,param_1);
@@ -42871,10 +42871,10 @@ void FUN_0004d644(undefined4 param_1)
 
 
 //
-// Function: FUN_0004d670 @ 0x0004d670
+// Function: miosTimer17SetValue @ 0x0004d670
 //
 
-void FUN_0004d670(undefined4 param_1)
+void miosTimer17SetValue(undefined4 param_1)
 
 {
   miosSetChannelValue(0x306088,param_1);
@@ -42884,10 +42884,10 @@ void FUN_0004d670(undefined4 param_1)
 
 
 //
-// Function: FUN_0004d69c @ 0x0004d69c
+// Function: miosTimer18InitPeriod @ 0x0004d69c
 //
 
-void FUN_0004d69c(void)
+void miosTimer18InitPeriod(void)
 
 {
   miosInitChannelPeriod(0x306090);
@@ -42897,10 +42897,10 @@ void FUN_0004d69c(void)
 
 
 //
-// Function: FUN_0004d6c4 @ 0x0004d6c4
+// Function: miosTimer18ScaleByPercent @ 0x0004d6c4
 //
 
-void FUN_0004d6c4(undefined4 param_1)
+void miosTimer18ScaleByPercent(undefined4 param_1)
 
 {
   scalePwmByPercent(0x306090,param_1);
@@ -42910,10 +42910,10 @@ void FUN_0004d6c4(undefined4 param_1)
 
 
 //
-// Function: FUN_0004d6f0 @ 0x0004d6f0
+// Function: miosTimer18SetValue @ 0x0004d6f0
 //
 
-void FUN_0004d6f0(undefined4 param_1)
+void miosTimer18SetValue(undefined4 param_1)
 
 {
   miosSetChannelValue(0x306090,param_1);
@@ -42923,10 +42923,10 @@ void FUN_0004d6f0(undefined4 param_1)
 
 
 //
-// Function: FUN_0004d71c @ 0x0004d71c
+// Function: miosTimer19InitPeriod @ 0x0004d71c
 //
 
-void FUN_0004d71c(void)
+void miosTimer19InitPeriod(void)
 
 {
   miosInitChannelPeriod(0x306098);
@@ -42936,10 +42936,10 @@ void FUN_0004d71c(void)
 
 
 //
-// Function: FUN_0004d744 @ 0x0004d744
+// Function: miosTimer19ScaleByPercent @ 0x0004d744
 //
 
-void FUN_0004d744(undefined4 param_1)
+void miosTimer19ScaleByPercent(undefined4 param_1)
 
 {
   scalePwmByPercent(0x306098,param_1);
@@ -42949,10 +42949,10 @@ void FUN_0004d744(undefined4 param_1)
 
 
 //
-// Function: FUN_0004d770 @ 0x0004d770
+// Function: miosTimer19SetValue @ 0x0004d770
 //
 
-void FUN_0004d770(undefined4 param_1)
+void miosTimer19SetValue(undefined4 param_1)
 
 {
   miosSetChannelValue(0x306098,param_1);
@@ -42962,10 +42962,10 @@ void FUN_0004d770(undefined4 param_1)
 
 
 //
-// Function: FUN_0004d79c @ 0x0004d79c
+// Function: tpuChannel0Reset @ 0x0004d79c
 //
 
-void FUN_0004d79c(void)
+void tpuChannel0Reset(void)
 
 {
   tpuResetChannel(0);
@@ -42975,10 +42975,10 @@ void FUN_0004d79c(void)
 
 
 //
-// Function: FUN_0004d7c0 @ 0x0004d7c0
+// Function: tpuChannel0SetDuty @ 0x0004d7c0
 //
 
-void FUN_0004d7c0(undefined4 param_1)
+void tpuChannel0SetDuty(undefined4 param_1)
 
 {
   tpuSetChannelDuty(0,param_1);
@@ -42988,10 +42988,10 @@ void FUN_0004d7c0(undefined4 param_1)
 
 
 //
-// Function: FUN_0004d7e8 @ 0x0004d7e8
+// Function: tpuChannel0Configure @ 0x0004d7e8
 //
 
-void FUN_0004d7e8(undefined4 param_1)
+void tpuChannel0Configure(undefined4 param_1)
 
 {
   tpuConfigureChannel(0,param_1);
@@ -43001,10 +43001,10 @@ void FUN_0004d7e8(undefined4 param_1)
 
 
 //
-// Function: FUN_0004d810 @ 0x0004d810
+// Function: tpuChannel1Reset @ 0x0004d810
 //
 
-void FUN_0004d810(void)
+void tpuChannel1Reset(void)
 
 {
   tpuResetChannel(1);
@@ -43014,10 +43014,10 @@ void FUN_0004d810(void)
 
 
 //
-// Function: FUN_0004d834 @ 0x0004d834
+// Function: tpuChannel1SetDuty @ 0x0004d834
 //
 
-void FUN_0004d834(undefined4 param_1)
+void tpuChannel1SetDuty(undefined4 param_1)
 
 {
   tpuSetChannelDuty(1,param_1);
@@ -43027,10 +43027,10 @@ void FUN_0004d834(undefined4 param_1)
 
 
 //
-// Function: FUN_0004d85c @ 0x0004d85c
+// Function: tpuChannel1Configure @ 0x0004d85c
 //
 
-void FUN_0004d85c(undefined4 param_1)
+void tpuChannel1Configure(undefined4 param_1)
 
 {
   tpuConfigureChannel(1,param_1);
@@ -43040,10 +43040,10 @@ void FUN_0004d85c(undefined4 param_1)
 
 
 //
-// Function: FUN_0004d884 @ 0x0004d884
+// Function: tpuChannel2Reset @ 0x0004d884
 //
 
-void FUN_0004d884(void)
+void tpuChannel2Reset(void)
 
 {
   tpuResetChannel(2);
@@ -43053,10 +43053,10 @@ void FUN_0004d884(void)
 
 
 //
-// Function: FUN_0004d8a8 @ 0x0004d8a8
+// Function: tpuChannel2SetDuty @ 0x0004d8a8
 //
 
-void FUN_0004d8a8(undefined4 param_1)
+void tpuChannel2SetDuty(undefined4 param_1)
 
 {
   tpuSetChannelDuty(2,param_1);
@@ -43066,10 +43066,10 @@ void FUN_0004d8a8(undefined4 param_1)
 
 
 //
-// Function: FUN_0004d8d0 @ 0x0004d8d0
+// Function: tpuChannel2Configure @ 0x0004d8d0
 //
 
-void FUN_0004d8d0(undefined4 param_1)
+void tpuChannel2Configure(undefined4 param_1)
 
 {
   tpuConfigureChannel(2,param_1);
@@ -43079,10 +43079,10 @@ void FUN_0004d8d0(undefined4 param_1)
 
 
 //
-// Function: FUN_0004d8f8 @ 0x0004d8f8
+// Function: tpuChannel3Reset @ 0x0004d8f8
 //
 
-void FUN_0004d8f8(void)
+void tpuChannel3Reset(void)
 
 {
   tpuResetChannel(3);
@@ -43092,10 +43092,10 @@ void FUN_0004d8f8(void)
 
 
 //
-// Function: FUN_0004d91c @ 0x0004d91c
+// Function: tpuChannel3SetDuty @ 0x0004d91c
 //
 
-void FUN_0004d91c(undefined4 param_1)
+void tpuChannel3SetDuty(undefined4 param_1)
 
 {
   tpuSetChannelDuty(3,param_1);
@@ -43105,10 +43105,10 @@ void FUN_0004d91c(undefined4 param_1)
 
 
 //
-// Function: FUN_0004d944 @ 0x0004d944
+// Function: tpuChannel3Configure @ 0x0004d944
 //
 
-void FUN_0004d944(undefined4 param_1)
+void tpuChannel3Configure(undefined4 param_1)
 
 {
   tpuConfigureChannel(3,param_1);
@@ -43118,10 +43118,10 @@ void FUN_0004d944(undefined4 param_1)
 
 
 //
-// Function: FUN_0004d96c @ 0x0004d96c
+// Function: tpuChannel4Reset @ 0x0004d96c
 //
 
-void FUN_0004d96c(void)
+void tpuChannel4Reset(void)
 
 {
   tpuResetChannel(4);
@@ -43131,10 +43131,10 @@ void FUN_0004d96c(void)
 
 
 //
-// Function: FUN_0004d990 @ 0x0004d990
+// Function: tpuChannel4SetDuty @ 0x0004d990
 //
 
-void FUN_0004d990(undefined4 param_1)
+void tpuChannel4SetDuty(undefined4 param_1)
 
 {
   tpuSetChannelDuty(4,param_1);
@@ -43144,10 +43144,10 @@ void FUN_0004d990(undefined4 param_1)
 
 
 //
-// Function: FUN_0004d9b8 @ 0x0004d9b8
+// Function: tpuChannel4Configure @ 0x0004d9b8
 //
 
-void FUN_0004d9b8(undefined4 param_1)
+void tpuChannel4Configure(undefined4 param_1)
 
 {
   tpuConfigureChannel(4,param_1);
@@ -43157,10 +43157,10 @@ void FUN_0004d9b8(undefined4 param_1)
 
 
 //
-// Function: FUN_0004d9e0 @ 0x0004d9e0
+// Function: tpuChannel5Reset @ 0x0004d9e0
 //
 
-void FUN_0004d9e0(void)
+void tpuChannel5Reset(void)
 
 {
   tpuResetChannel(5);
@@ -43170,10 +43170,10 @@ void FUN_0004d9e0(void)
 
 
 //
-// Function: FUN_0004da04 @ 0x0004da04
+// Function: tpuChannel5SetDuty @ 0x0004da04
 //
 
-void FUN_0004da04(undefined4 param_1)
+void tpuChannel5SetDuty(undefined4 param_1)
 
 {
   tpuSetChannelDuty(5,param_1);
@@ -43183,10 +43183,10 @@ void FUN_0004da04(undefined4 param_1)
 
 
 //
-// Function: FUN_0004da2c @ 0x0004da2c
+// Function: tpuChannel5Configure @ 0x0004da2c
 //
 
-void FUN_0004da2c(undefined4 param_1)
+void tpuChannel5Configure(undefined4 param_1)
 
 {
   tpuConfigureChannel(5,param_1);
@@ -43196,10 +43196,10 @@ void FUN_0004da2c(undefined4 param_1)
 
 
 //
-// Function: FUN_0004da54 @ 0x0004da54
+// Function: tpuChannel6Reset @ 0x0004da54
 //
 
-void FUN_0004da54(void)
+void tpuChannel6Reset(void)
 
 {
   tpuResetChannel(6);
@@ -43209,10 +43209,10 @@ void FUN_0004da54(void)
 
 
 //
-// Function: FUN_0004da78 @ 0x0004da78
+// Function: tpuChannel6SetDuty @ 0x0004da78
 //
 
-void FUN_0004da78(undefined4 param_1)
+void tpuChannel6SetDuty(undefined4 param_1)
 
 {
   tpuSetChannelDuty(6,param_1);
@@ -43222,10 +43222,10 @@ void FUN_0004da78(undefined4 param_1)
 
 
 //
-// Function: FUN_0004daa0 @ 0x0004daa0
+// Function: tpuChannel6Configure @ 0x0004daa0
 //
 
-void FUN_0004daa0(undefined4 param_1)
+void tpuChannel6Configure(undefined4 param_1)
 
 {
   tpuConfigureChannel(6,param_1);
@@ -43235,10 +43235,10 @@ void FUN_0004daa0(undefined4 param_1)
 
 
 //
-// Function: FUN_0004dac8 @ 0x0004dac8
+// Function: tpuChannel7Reset @ 0x0004dac8
 //
 
-void FUN_0004dac8(void)
+void tpuChannel7Reset(void)
 
 {
   tpuResetChannel(7);
@@ -43248,10 +43248,10 @@ void FUN_0004dac8(void)
 
 
 //
-// Function: FUN_0004daec @ 0x0004daec
+// Function: tpuChannel7SetDuty @ 0x0004daec
 //
 
-void FUN_0004daec(undefined4 param_1)
+void tpuChannel7SetDuty(undefined4 param_1)
 
 {
   tpuSetChannelDuty(7,param_1);
@@ -43261,10 +43261,10 @@ void FUN_0004daec(undefined4 param_1)
 
 
 //
-// Function: FUN_0004db14 @ 0x0004db14
+// Function: tpuChannel7Configure @ 0x0004db14
 //
 
-void FUN_0004db14(undefined4 param_1)
+void tpuChannel7Configure(undefined4 param_1)
 
 {
   tpuConfigureChannel(7,param_1);
@@ -43274,10 +43274,10 @@ void FUN_0004db14(undefined4 param_1)
 
 
 //
-// Function: FUN_0004db3c @ 0x0004db3c
+// Function: tpuChannel8Reset @ 0x0004db3c
 //
 
-void FUN_0004db3c(void)
+void tpuChannel8Reset(void)
 
 {
   tpuResetChannel(8);
@@ -43287,10 +43287,10 @@ void FUN_0004db3c(void)
 
 
 //
-// Function: FUN_0004db60 @ 0x0004db60
+// Function: tpuChannel8SetDuty @ 0x0004db60
 //
 
-void FUN_0004db60(undefined4 param_1)
+void tpuChannel8SetDuty(undefined4 param_1)
 
 {
   tpuSetChannelDuty(8,param_1);
@@ -43300,10 +43300,10 @@ void FUN_0004db60(undefined4 param_1)
 
 
 //
-// Function: FUN_0004db88 @ 0x0004db88
+// Function: tpuChannel8Configure @ 0x0004db88
 //
 
-void FUN_0004db88(undefined4 param_1)
+void tpuChannel8Configure(undefined4 param_1)
 
 {
   tpuConfigureChannel(8,param_1);
@@ -43313,10 +43313,10 @@ void FUN_0004db88(undefined4 param_1)
 
 
 //
-// Function: FUN_0004dbb0 @ 0x0004dbb0
+// Function: tpuChannel9Reset @ 0x0004dbb0
 //
 
-void FUN_0004dbb0(void)
+void tpuChannel9Reset(void)
 
 {
   tpuResetChannel(9);
@@ -43326,10 +43326,10 @@ void FUN_0004dbb0(void)
 
 
 //
-// Function: FUN_0004dbd4 @ 0x0004dbd4
+// Function: tpuChannel9SetDuty @ 0x0004dbd4
 //
 
-void FUN_0004dbd4(undefined4 param_1)
+void tpuChannel9SetDuty(undefined4 param_1)
 
 {
   tpuSetChannelDuty(9,param_1);
@@ -43339,10 +43339,10 @@ void FUN_0004dbd4(undefined4 param_1)
 
 
 //
-// Function: FUN_0004dbfc @ 0x0004dbfc
+// Function: tpuChannel9Configure @ 0x0004dbfc
 //
 
-void FUN_0004dbfc(undefined4 param_1)
+void tpuChannel9Configure(undefined4 param_1)
 
 {
   tpuConfigureChannel(9,param_1);
@@ -43352,10 +43352,10 @@ void FUN_0004dbfc(undefined4 param_1)
 
 
 //
-// Function: FUN_0004dc24 @ 0x0004dc24
+// Function: tpuChannel10Reset @ 0x0004dc24
 //
 
-void FUN_0004dc24(void)
+void tpuChannel10Reset(void)
 
 {
   tpuResetChannel(10);
@@ -43365,10 +43365,10 @@ void FUN_0004dc24(void)
 
 
 //
-// Function: FUN_0004dc48 @ 0x0004dc48
+// Function: tpuChannel10SetDuty @ 0x0004dc48
 //
 
-void FUN_0004dc48(undefined4 param_1)
+void tpuChannel10SetDuty(undefined4 param_1)
 
 {
   tpuSetChannelDuty(10,param_1);
@@ -43378,10 +43378,10 @@ void FUN_0004dc48(undefined4 param_1)
 
 
 //
-// Function: FUN_0004dc70 @ 0x0004dc70
+// Function: tpuChannel10Configure @ 0x0004dc70
 //
 
-void FUN_0004dc70(undefined4 param_1)
+void tpuChannel10Configure(undefined4 param_1)
 
 {
   tpuConfigureChannel(10,param_1);
@@ -43391,10 +43391,10 @@ void FUN_0004dc70(undefined4 param_1)
 
 
 //
-// Function: FUN_0004dc98 @ 0x0004dc98
+// Function: tpuChannel11Reset @ 0x0004dc98
 //
 
-void FUN_0004dc98(void)
+void tpuChannel11Reset(void)
 
 {
   tpuResetChannel(0xb);
@@ -43404,10 +43404,10 @@ void FUN_0004dc98(void)
 
 
 //
-// Function: FUN_0004dcbc @ 0x0004dcbc
+// Function: tpuChannel11SetDuty @ 0x0004dcbc
 //
 
-void FUN_0004dcbc(undefined4 param_1)
+void tpuChannel11SetDuty(undefined4 param_1)
 
 {
   tpuSetChannelDuty(0xb,param_1);
@@ -43417,10 +43417,10 @@ void FUN_0004dcbc(undefined4 param_1)
 
 
 //
-// Function: FUN_0004dce4 @ 0x0004dce4
+// Function: tpuChannel11Configure @ 0x0004dce4
 //
 
-void FUN_0004dce4(undefined4 param_1)
+void tpuChannel11Configure(undefined4 param_1)
 
 {
   tpuConfigureChannel(0xb,param_1);
@@ -43430,10 +43430,10 @@ void FUN_0004dce4(undefined4 param_1)
 
 
 //
-// Function: FUN_0004dd0c @ 0x0004dd0c
+// Function: tpuChannel12Reset @ 0x0004dd0c
 //
 
-void FUN_0004dd0c(void)
+void tpuChannel12Reset(void)
 
 {
   tpuResetChannel(0xc);
@@ -43443,10 +43443,10 @@ void FUN_0004dd0c(void)
 
 
 //
-// Function: FUN_0004dd30 @ 0x0004dd30
+// Function: tpuChannel12SetDuty @ 0x0004dd30
 //
 
-void FUN_0004dd30(undefined4 param_1)
+void tpuChannel12SetDuty(undefined4 param_1)
 
 {
   tpuSetChannelDuty(0xc,param_1);
@@ -43456,10 +43456,10 @@ void FUN_0004dd30(undefined4 param_1)
 
 
 //
-// Function: FUN_0004dd58 @ 0x0004dd58
+// Function: tpuChannel12Configure @ 0x0004dd58
 //
 
-void FUN_0004dd58(undefined4 param_1)
+void tpuChannel12Configure(undefined4 param_1)
 
 {
   tpuConfigureChannel(0xc,param_1);
@@ -43469,10 +43469,10 @@ void FUN_0004dd58(undefined4 param_1)
 
 
 //
-// Function: FUN_0004dd80 @ 0x0004dd80
+// Function: tpuChannel13Reset @ 0x0004dd80
 //
 
-void FUN_0004dd80(void)
+void tpuChannel13Reset(void)
 
 {
   tpuResetChannel(0xd);
@@ -43482,10 +43482,10 @@ void FUN_0004dd80(void)
 
 
 //
-// Function: FUN_0004dda4 @ 0x0004dda4
+// Function: tpuChannel13SetDuty @ 0x0004dda4
 //
 
-void FUN_0004dda4(undefined4 param_1)
+void tpuChannel13SetDuty(undefined4 param_1)
 
 {
   tpuSetChannelDuty(0xd,param_1);
@@ -43495,10 +43495,10 @@ void FUN_0004dda4(undefined4 param_1)
 
 
 //
-// Function: FUN_0004ddcc @ 0x0004ddcc
+// Function: tpuChannel13Configure @ 0x0004ddcc
 //
 
-void FUN_0004ddcc(undefined4 param_1)
+void tpuChannel13Configure(undefined4 param_1)
 
 {
   tpuConfigureChannel(0xd,param_1);
@@ -43508,10 +43508,10 @@ void FUN_0004ddcc(undefined4 param_1)
 
 
 //
-// Function: FUN_0004ddf4 @ 0x0004ddf4
+// Function: tpuChannel14Reset @ 0x0004ddf4
 //
 
-void FUN_0004ddf4(void)
+void tpuChannel14Reset(void)
 
 {
   tpuResetChannel(0xe);
@@ -43521,10 +43521,10 @@ void FUN_0004ddf4(void)
 
 
 //
-// Function: FUN_0004de18 @ 0x0004de18
+// Function: tpuChannel14SetDuty @ 0x0004de18
 //
 
-void FUN_0004de18(undefined4 param_1)
+void tpuChannel14SetDuty(undefined4 param_1)
 
 {
   tpuSetChannelDuty(0xe,param_1);
@@ -43534,10 +43534,10 @@ void FUN_0004de18(undefined4 param_1)
 
 
 //
-// Function: FUN_0004de40 @ 0x0004de40
+// Function: tpuChannel14Configure @ 0x0004de40
 //
 
-void FUN_0004de40(undefined4 param_1)
+void tpuChannel14Configure(undefined4 param_1)
 
 {
   tpuConfigureChannel(0xe,param_1);
@@ -43547,10 +43547,10 @@ void FUN_0004de40(undefined4 param_1)
 
 
 //
-// Function: FUN_0004de68 @ 0x0004de68
+// Function: tpuChannel15Reset @ 0x0004de68
 //
 
-void FUN_0004de68(void)
+void tpuChannel15Reset(void)
 
 {
   tpuResetChannel(0xf);
@@ -43560,10 +43560,10 @@ void FUN_0004de68(void)
 
 
 //
-// Function: FUN_0004de8c @ 0x0004de8c
+// Function: tpuChannel15SetDuty @ 0x0004de8c
 //
 
-void FUN_0004de8c(undefined4 param_1)
+void tpuChannel15SetDuty(undefined4 param_1)
 
 {
   tpuSetChannelDuty(0xf,param_1);
@@ -43573,10 +43573,10 @@ void FUN_0004de8c(undefined4 param_1)
 
 
 //
-// Function: FUN_0004deb4 @ 0x0004deb4
+// Function: tpuChannel15Configure @ 0x0004deb4
 //
 
-void FUN_0004deb4(undefined4 param_1)
+void tpuChannel15Configure(undefined4 param_1)
 
 {
   tpuConfigureChannel(0xf,param_1);
@@ -43586,10 +43586,10 @@ void FUN_0004deb4(undefined4 param_1)
 
 
 //
-// Function: FUN_0004dedc @ 0x0004dedc
+// Function: disableMiosResetTpu14_10 @ 0x0004dedc
 //
 
-void FUN_0004dedc(void)
+void disableMiosResetTpu14_10(void)
 
 {
   miosChannelDisable(0x306070);
@@ -43600,12 +43600,12 @@ void FUN_0004dedc(void)
 
 
 //
-// Function: FUN_0004df0c @ 0x0004df0c
+// Function: setMiosDutyCycle14 @ 0x0004df0c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-undefined2 FUN_0004df0c(void)
+undefined2 setMiosDutyCycle14(void)
 
 {
   undefined2 uVar1;
@@ -43617,10 +43617,10 @@ undefined2 FUN_0004df0c(void)
 
 
 //
-// Function: FUN_0004df40 @ 0x0004df40
+// Function: configureTpuChannel10Alt @ 0x0004df40
 //
 
-void FUN_0004df40(undefined4 param_1)
+void configureTpuChannel10Alt(undefined4 param_1)
 
 {
   tpuConfigureChannel(10,param_1);
@@ -43630,12 +43630,12 @@ void FUN_0004df40(undefined4 param_1)
 
 
 //
-// Function: FUN_0004df68 @ 0x0004df68
+// Function: setTpuDutyWithTrack10 @ 0x0004df68
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0004df68(undefined4 param_1)
+void setTpuDutyWithTrack10(undefined4 param_1)
 
 {
   _DAT_003fb8f6 = (undefined2)param_1;
@@ -43646,12 +43646,12 @@ void FUN_0004df68(undefined4 param_1)
 
 
 //
-// Function: FUN_0004df98 @ 0x0004df98
+// Function: resetMiosTpuChannel29_11 @ 0x0004df98
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0004df98(void)
+void resetMiosTpuChannel29_11(void)
 
 {
   _DAT_003060e8 = 0;
@@ -43663,10 +43663,10 @@ void FUN_0004df98(void)
 
 
 //
-// Function: FUN_0004e0c0 @ 0x0004e0c0
+// Function: disableMiosResetTpu11_4 @ 0x0004e0c0
 //
 
-void FUN_0004e0c0(void)
+void disableMiosResetTpu11_4(void)
 
 {
   miosChannelDisable(0x306058);
@@ -43677,12 +43677,12 @@ void FUN_0004e0c0(void)
 
 
 //
-// Function: FUN_0004e0f0 @ 0x0004e0f0
+// Function: setMiosDutyCycle11 @ 0x0004e0f0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-undefined2 FUN_0004e0f0(void)
+undefined2 setMiosDutyCycle11(void)
 
 {
   undefined2 uVar1;
@@ -43694,10 +43694,10 @@ undefined2 FUN_0004e0f0(void)
 
 
 //
-// Function: FUN_0004e124 @ 0x0004e124
+// Function: configureTpuChannel4Alt @ 0x0004e124
 //
 
-void FUN_0004e124(undefined4 param_1)
+void configureTpuChannel4Alt(undefined4 param_1)
 
 {
   tpuConfigureChannel(4,param_1);
@@ -43707,12 +43707,12 @@ void FUN_0004e124(undefined4 param_1)
 
 
 //
-// Function: FUN_0004e14c @ 0x0004e14c
+// Function: setTpuDutyWithTrack4 @ 0x0004e14c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0004e14c(undefined4 param_1)
+void setTpuDutyWithTrack4(undefined4 param_1)
 
 {
   _DAT_003fb8fa = 0x6400 - (short)param_1;
@@ -43723,10 +43723,10 @@ void FUN_0004e14c(undefined4 param_1)
 
 
 //
-// Function: FUN_0004e180 @ 0x0004e180
+// Function: disableMiosResetTpu13_6 @ 0x0004e180
 //
 
-void FUN_0004e180(void)
+void disableMiosResetTpu13_6(void)
 
 {
   miosChannelDisable(0x306068);
@@ -43737,12 +43737,12 @@ void FUN_0004e180(void)
 
 
 //
-// Function: FUN_0004e1b0 @ 0x0004e1b0
+// Function: setMiosDutyCycle13 @ 0x0004e1b0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-undefined2 FUN_0004e1b0(void)
+undefined2 setMiosDutyCycle13(void)
 
 {
   undefined2 uVar1;
@@ -43754,10 +43754,10 @@ undefined2 FUN_0004e1b0(void)
 
 
 //
-// Function: FUN_0004e1e4 @ 0x0004e1e4
+// Function: configureTpuChannel6Alt @ 0x0004e1e4
 //
 
-void FUN_0004e1e4(undefined4 param_1)
+void configureTpuChannel6Alt(undefined4 param_1)
 
 {
   tpuConfigureChannel(6,param_1);
@@ -43767,12 +43767,12 @@ void FUN_0004e1e4(undefined4 param_1)
 
 
 //
-// Function: FUN_0004e20c @ 0x0004e20c
+// Function: setTpuDutyWithTrack6 @ 0x0004e20c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0004e20c(undefined4 param_1)
+void setTpuDutyWithTrack6(undefined4 param_1)
 
 {
   _DAT_003fb8fc = 0x6400 - (short)param_1;
@@ -43783,10 +43783,10 @@ void FUN_0004e20c(undefined4 param_1)
 
 
 //
-// Function: FUN_0004e240 @ 0x0004e240
+// Function: disableMiosResetTpu12_7 @ 0x0004e240
 //
 
-void FUN_0004e240(void)
+void disableMiosResetTpu12_7(void)
 
 {
   miosChannelDisable(0x306060);
@@ -43797,12 +43797,12 @@ void FUN_0004e240(void)
 
 
 //
-// Function: FUN_0004e270 @ 0x0004e270
+// Function: setMiosDutyCycle12 @ 0x0004e270
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-undefined2 FUN_0004e270(void)
+undefined2 setMiosDutyCycle12(void)
 
 {
   undefined2 uVar1;
@@ -43814,10 +43814,10 @@ undefined2 FUN_0004e270(void)
 
 
 //
-// Function: FUN_0004e2a4 @ 0x0004e2a4
+// Function: configureTpuChannel7Alt @ 0x0004e2a4
 //
 
-void FUN_0004e2a4(undefined4 param_1)
+void configureTpuChannel7Alt(undefined4 param_1)
 
 {
   tpuConfigureChannel(7,param_1);
@@ -43827,12 +43827,12 @@ void FUN_0004e2a4(undefined4 param_1)
 
 
 //
-// Function: FUN_0004e2cc @ 0x0004e2cc
+// Function: setTpuDutyWithTrack7 @ 0x0004e2cc
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0004e2cc(undefined4 param_1)
+void setTpuDutyWithTrack7(undefined4 param_1)
 
 {
   _DAT_003fb8fe = 0x6400 - (short)param_1;
@@ -43843,10 +43843,10 @@ void FUN_0004e2cc(undefined4 param_1)
 
 
 //
-// Function: FUN_0004e300 @ 0x0004e300
+// Function: tpuOutput0Enable @ 0x0004e300
 //
 
-void FUN_0004e300(void)
+void tpuOutput0Enable(void)
 
 {
   tpuEnableChannelOutput(0);
@@ -43856,10 +43856,10 @@ void FUN_0004e300(void)
 
 
 //
-// Function: FUN_0004e324 @ 0x0004e324
+// Function: tpuOutput0Disable @ 0x0004e324
 //
 
-void FUN_0004e324(undefined4 param_1)
+void tpuOutput0Disable(undefined4 param_1)
 
 {
   tpuDisableChannelOutput(0,param_1);
@@ -43869,10 +43869,10 @@ void FUN_0004e324(undefined4 param_1)
 
 
 //
-// Function: FUN_0004e34c @ 0x0004e34c
+// Function: tpuOutput0SetPeriod @ 0x0004e34c
 //
 
-void FUN_0004e34c(undefined4 param_1)
+void tpuOutput0SetPeriod(undefined4 param_1)
 
 {
   tpuSetChannelPeriod(0,param_1);
@@ -43882,10 +43882,10 @@ void FUN_0004e34c(undefined4 param_1)
 
 
 //
-// Function: FUN_0004e374 @ 0x0004e374
+// Function: tpuOutput1Enable @ 0x0004e374
 //
 
-void FUN_0004e374(void)
+void tpuOutput1Enable(void)
 
 {
   tpuEnableChannelOutput(1);
@@ -43895,10 +43895,10 @@ void FUN_0004e374(void)
 
 
 //
-// Function: FUN_0004e398 @ 0x0004e398
+// Function: tpuOutput1Disable @ 0x0004e398
 //
 
-void FUN_0004e398(undefined4 param_1)
+void tpuOutput1Disable(undefined4 param_1)
 
 {
   tpuDisableChannelOutput(1,param_1);
@@ -43908,10 +43908,10 @@ void FUN_0004e398(undefined4 param_1)
 
 
 //
-// Function: FUN_0004e3c0 @ 0x0004e3c0
+// Function: tpuOutput1SetPeriod @ 0x0004e3c0
 //
 
-void FUN_0004e3c0(undefined4 param_1)
+void tpuOutput1SetPeriod(undefined4 param_1)
 
 {
   tpuSetChannelPeriod(1,param_1);
@@ -43921,10 +43921,10 @@ void FUN_0004e3c0(undefined4 param_1)
 
 
 //
-// Function: FUN_0004e3e8 @ 0x0004e3e8
+// Function: tpuOutput2Enable @ 0x0004e3e8
 //
 
-void FUN_0004e3e8(void)
+void tpuOutput2Enable(void)
 
 {
   tpuEnableChannelOutput(2);
@@ -43934,10 +43934,10 @@ void FUN_0004e3e8(void)
 
 
 //
-// Function: FUN_0004e40c @ 0x0004e40c
+// Function: tpuOutput2Disable @ 0x0004e40c
 //
 
-void FUN_0004e40c(undefined4 param_1)
+void tpuOutput2Disable(undefined4 param_1)
 
 {
   tpuDisableChannelOutput(2,param_1);
@@ -43947,10 +43947,10 @@ void FUN_0004e40c(undefined4 param_1)
 
 
 //
-// Function: FUN_0004e434 @ 0x0004e434
+// Function: tpuOutput2SetPeriod @ 0x0004e434
 //
 
-void FUN_0004e434(undefined4 param_1)
+void tpuOutput2SetPeriod(undefined4 param_1)
 
 {
   tpuSetChannelPeriod(2,param_1);
@@ -43960,10 +43960,10 @@ void FUN_0004e434(undefined4 param_1)
 
 
 //
-// Function: FUN_0004e45c @ 0x0004e45c
+// Function: tpuOutput3Enable @ 0x0004e45c
 //
 
-void FUN_0004e45c(void)
+void tpuOutput3Enable(void)
 
 {
   tpuEnableChannelOutput(3);
@@ -43973,10 +43973,10 @@ void FUN_0004e45c(void)
 
 
 //
-// Function: FUN_0004e480 @ 0x0004e480
+// Function: tpuOutput3Disable @ 0x0004e480
 //
 
-void FUN_0004e480(undefined4 param_1)
+void tpuOutput3Disable(undefined4 param_1)
 
 {
   tpuDisableChannelOutput(3,param_1);
@@ -43986,10 +43986,10 @@ void FUN_0004e480(undefined4 param_1)
 
 
 //
-// Function: FUN_0004e4a8 @ 0x0004e4a8
+// Function: tpuOutput3SetPeriod @ 0x0004e4a8
 //
 
-void FUN_0004e4a8(undefined4 param_1)
+void tpuOutput3SetPeriod(undefined4 param_1)
 
 {
   tpuSetChannelPeriod(3,param_1);
@@ -43999,10 +43999,10 @@ void FUN_0004e4a8(undefined4 param_1)
 
 
 //
-// Function: FUN_0004e4d0 @ 0x0004e4d0
+// Function: tpuOutput4Enable @ 0x0004e4d0
 //
 
-void FUN_0004e4d0(void)
+void tpuOutput4Enable(void)
 
 {
   tpuEnableChannelOutput(4);
@@ -44012,10 +44012,10 @@ void FUN_0004e4d0(void)
 
 
 //
-// Function: FUN_0004e4f4 @ 0x0004e4f4
+// Function: tpuOutput4Disable @ 0x0004e4f4
 //
 
-void FUN_0004e4f4(undefined4 param_1)
+void tpuOutput4Disable(undefined4 param_1)
 
 {
   tpuDisableChannelOutput(4,param_1);
@@ -44025,10 +44025,10 @@ void FUN_0004e4f4(undefined4 param_1)
 
 
 //
-// Function: FUN_0004e51c @ 0x0004e51c
+// Function: tpuOutput4SetPeriod @ 0x0004e51c
 //
 
-void FUN_0004e51c(undefined4 param_1)
+void tpuOutput4SetPeriod(undefined4 param_1)
 
 {
   tpuSetChannelPeriod(4,param_1);
@@ -44038,10 +44038,10 @@ void FUN_0004e51c(undefined4 param_1)
 
 
 //
-// Function: FUN_0004e544 @ 0x0004e544
+// Function: tpuOutput5Enable @ 0x0004e544
 //
 
-void FUN_0004e544(void)
+void tpuOutput5Enable(void)
 
 {
   tpuEnableChannelOutput(5);
@@ -44051,10 +44051,10 @@ void FUN_0004e544(void)
 
 
 //
-// Function: FUN_0004e568 @ 0x0004e568
+// Function: tpuOutput5Disable @ 0x0004e568
 //
 
-void FUN_0004e568(undefined4 param_1)
+void tpuOutput5Disable(undefined4 param_1)
 
 {
   tpuDisableChannelOutput(5,param_1);
@@ -44064,10 +44064,10 @@ void FUN_0004e568(undefined4 param_1)
 
 
 //
-// Function: FUN_0004e590 @ 0x0004e590
+// Function: tpuOutput5SetPeriod @ 0x0004e590
 //
 
-void FUN_0004e590(undefined4 param_1)
+void tpuOutput5SetPeriod(undefined4 param_1)
 
 {
   tpuSetChannelPeriod(5,param_1);
@@ -44077,10 +44077,10 @@ void FUN_0004e590(undefined4 param_1)
 
 
 //
-// Function: FUN_0004e5b8 @ 0x0004e5b8
+// Function: tpuOutput6Enable @ 0x0004e5b8
 //
 
-void FUN_0004e5b8(void)
+void tpuOutput6Enable(void)
 
 {
   tpuEnableChannelOutput(6);
@@ -44090,10 +44090,10 @@ void FUN_0004e5b8(void)
 
 
 //
-// Function: FUN_0004e5dc @ 0x0004e5dc
+// Function: tpuOutput6Disable @ 0x0004e5dc
 //
 
-void FUN_0004e5dc(undefined4 param_1)
+void tpuOutput6Disable(undefined4 param_1)
 
 {
   tpuDisableChannelOutput(6,param_1);
@@ -44103,10 +44103,10 @@ void FUN_0004e5dc(undefined4 param_1)
 
 
 //
-// Function: FUN_0004e604 @ 0x0004e604
+// Function: tpuOutput6SetPeriod @ 0x0004e604
 //
 
-void FUN_0004e604(undefined4 param_1)
+void tpuOutput6SetPeriod(undefined4 param_1)
 
 {
   tpuSetChannelPeriod(6,param_1);
@@ -44116,10 +44116,10 @@ void FUN_0004e604(undefined4 param_1)
 
 
 //
-// Function: FUN_0004e62c @ 0x0004e62c
+// Function: tpuOutput7Enable @ 0x0004e62c
 //
 
-void FUN_0004e62c(void)
+void tpuOutput7Enable(void)
 
 {
   tpuEnableChannelOutput(7);
@@ -44129,10 +44129,10 @@ void FUN_0004e62c(void)
 
 
 //
-// Function: FUN_0004e650 @ 0x0004e650
+// Function: tpuOutput7Disable @ 0x0004e650
 //
 
-void FUN_0004e650(undefined4 param_1)
+void tpuOutput7Disable(undefined4 param_1)
 
 {
   tpuDisableChannelOutput(7,param_1);
@@ -44142,10 +44142,10 @@ void FUN_0004e650(undefined4 param_1)
 
 
 //
-// Function: FUN_0004e678 @ 0x0004e678
+// Function: tpuOutput7SetPeriod @ 0x0004e678
 //
 
-void FUN_0004e678(undefined4 param_1)
+void tpuOutput7SetPeriod(undefined4 param_1)
 
 {
   tpuSetChannelPeriod(7,param_1);
@@ -44155,10 +44155,10 @@ void FUN_0004e678(undefined4 param_1)
 
 
 //
-// Function: FUN_0004e6a0 @ 0x0004e6a0
+// Function: tpuOutput8Enable @ 0x0004e6a0
 //
 
-void FUN_0004e6a0(void)
+void tpuOutput8Enable(void)
 
 {
   tpuEnableChannelOutput(8);
@@ -44168,10 +44168,10 @@ void FUN_0004e6a0(void)
 
 
 //
-// Function: FUN_0004e6c4 @ 0x0004e6c4
+// Function: tpuOutput8Disable @ 0x0004e6c4
 //
 
-void FUN_0004e6c4(undefined4 param_1)
+void tpuOutput8Disable(undefined4 param_1)
 
 {
   tpuDisableChannelOutput(8,param_1);
@@ -44181,10 +44181,10 @@ void FUN_0004e6c4(undefined4 param_1)
 
 
 //
-// Function: FUN_0004e6ec @ 0x0004e6ec
+// Function: tpuOutput8SetPeriod @ 0x0004e6ec
 //
 
-void FUN_0004e6ec(undefined4 param_1)
+void tpuOutput8SetPeriod(undefined4 param_1)
 
 {
   tpuSetChannelPeriod(8,param_1);
@@ -44194,10 +44194,10 @@ void FUN_0004e6ec(undefined4 param_1)
 
 
 //
-// Function: FUN_0004e714 @ 0x0004e714
+// Function: tpuOutput9Enable @ 0x0004e714
 //
 
-void FUN_0004e714(void)
+void tpuOutput9Enable(void)
 
 {
   tpuEnableChannelOutput(9);
@@ -44207,10 +44207,10 @@ void FUN_0004e714(void)
 
 
 //
-// Function: FUN_0004e738 @ 0x0004e738
+// Function: tpuOutput9Disable @ 0x0004e738
 //
 
-void FUN_0004e738(undefined4 param_1)
+void tpuOutput9Disable(undefined4 param_1)
 
 {
   tpuDisableChannelOutput(9,param_1);
@@ -44220,10 +44220,10 @@ void FUN_0004e738(undefined4 param_1)
 
 
 //
-// Function: FUN_0004e760 @ 0x0004e760
+// Function: tpuOutput9SetPeriod @ 0x0004e760
 //
 
-void FUN_0004e760(undefined4 param_1)
+void tpuOutput9SetPeriod(undefined4 param_1)
 
 {
   tpuSetChannelPeriod(9,param_1);
@@ -44233,10 +44233,10 @@ void FUN_0004e760(undefined4 param_1)
 
 
 //
-// Function: FUN_0004e788 @ 0x0004e788
+// Function: tpuOutput10Enable @ 0x0004e788
 //
 
-void FUN_0004e788(void)
+void tpuOutput10Enable(void)
 
 {
   tpuEnableChannelOutput(10);
@@ -44246,10 +44246,10 @@ void FUN_0004e788(void)
 
 
 //
-// Function: FUN_0004e7ac @ 0x0004e7ac
+// Function: tpuOutput10Disable @ 0x0004e7ac
 //
 
-void FUN_0004e7ac(undefined4 param_1)
+void tpuOutput10Disable(undefined4 param_1)
 
 {
   tpuDisableChannelOutput(10,param_1);
@@ -44259,10 +44259,10 @@ void FUN_0004e7ac(undefined4 param_1)
 
 
 //
-// Function: FUN_0004e7d4 @ 0x0004e7d4
+// Function: tpuOutput10SetPeriod @ 0x0004e7d4
 //
 
-void FUN_0004e7d4(undefined4 param_1)
+void tpuOutput10SetPeriod(undefined4 param_1)
 
 {
   tpuSetChannelPeriod(10,param_1);
@@ -44272,10 +44272,10 @@ void FUN_0004e7d4(undefined4 param_1)
 
 
 //
-// Function: FUN_0004e7fc @ 0x0004e7fc
+// Function: tpuOutput11Enable @ 0x0004e7fc
 //
 
-void FUN_0004e7fc(void)
+void tpuOutput11Enable(void)
 
 {
   tpuEnableChannelOutput(0xb);
@@ -44285,10 +44285,10 @@ void FUN_0004e7fc(void)
 
 
 //
-// Function: FUN_0004e820 @ 0x0004e820
+// Function: tpuOutput11Disable @ 0x0004e820
 //
 
-void FUN_0004e820(undefined4 param_1)
+void tpuOutput11Disable(undefined4 param_1)
 
 {
   tpuDisableChannelOutput(0xb,param_1);
@@ -44298,10 +44298,10 @@ void FUN_0004e820(undefined4 param_1)
 
 
 //
-// Function: FUN_0004e848 @ 0x0004e848
+// Function: tpuOutput11SetPeriod @ 0x0004e848
 //
 
-void FUN_0004e848(undefined4 param_1)
+void tpuOutput11SetPeriod(undefined4 param_1)
 
 {
   tpuSetChannelPeriod(0xb,param_1);
@@ -44311,10 +44311,10 @@ void FUN_0004e848(undefined4 param_1)
 
 
 //
-// Function: FUN_0004e870 @ 0x0004e870
+// Function: tpuOutput12Enable @ 0x0004e870
 //
 
-void FUN_0004e870(void)
+void tpuOutput12Enable(void)
 
 {
   tpuEnableChannelOutput(0xc);
@@ -44324,10 +44324,10 @@ void FUN_0004e870(void)
 
 
 //
-// Function: FUN_0004e894 @ 0x0004e894
+// Function: tpuOutput12Disable @ 0x0004e894
 //
 
-void FUN_0004e894(undefined4 param_1)
+void tpuOutput12Disable(undefined4 param_1)
 
 {
   tpuDisableChannelOutput(0xc,param_1);
@@ -44337,10 +44337,10 @@ void FUN_0004e894(undefined4 param_1)
 
 
 //
-// Function: FUN_0004e8bc @ 0x0004e8bc
+// Function: tpuOutput12SetPeriod @ 0x0004e8bc
 //
 
-void FUN_0004e8bc(undefined4 param_1)
+void tpuOutput12SetPeriod(undefined4 param_1)
 
 {
   tpuSetChannelPeriod(0xc,param_1);
@@ -44350,10 +44350,10 @@ void FUN_0004e8bc(undefined4 param_1)
 
 
 //
-// Function: FUN_0004e8e4 @ 0x0004e8e4
+// Function: tpuOutput13Enable @ 0x0004e8e4
 //
 
-void FUN_0004e8e4(void)
+void tpuOutput13Enable(void)
 
 {
   tpuEnableChannelOutput(0xd);
@@ -44363,10 +44363,10 @@ void FUN_0004e8e4(void)
 
 
 //
-// Function: FUN_0004e908 @ 0x0004e908
+// Function: tpuOutput13Disable @ 0x0004e908
 //
 
-void FUN_0004e908(undefined4 param_1)
+void tpuOutput13Disable(undefined4 param_1)
 
 {
   tpuDisableChannelOutput(0xd,param_1);
@@ -44376,10 +44376,10 @@ void FUN_0004e908(undefined4 param_1)
 
 
 //
-// Function: FUN_0004e930 @ 0x0004e930
+// Function: tpuOutput13SetPeriod @ 0x0004e930
 //
 
-void FUN_0004e930(undefined4 param_1)
+void tpuOutput13SetPeriod(undefined4 param_1)
 
 {
   tpuSetChannelPeriod(0xd,param_1);
@@ -44389,10 +44389,10 @@ void FUN_0004e930(undefined4 param_1)
 
 
 //
-// Function: FUN_0004e958 @ 0x0004e958
+// Function: tpuOutput14Enable @ 0x0004e958
 //
 
-void FUN_0004e958(void)
+void tpuOutput14Enable(void)
 
 {
   tpuEnableChannelOutput(0xe);
@@ -44402,10 +44402,10 @@ void FUN_0004e958(void)
 
 
 //
-// Function: FUN_0004e97c @ 0x0004e97c
+// Function: tpuOutput14Disable @ 0x0004e97c
 //
 
-void FUN_0004e97c(undefined4 param_1)
+void tpuOutput14Disable(undefined4 param_1)
 
 {
   tpuDisableChannelOutput(0xe,param_1);
@@ -44415,10 +44415,10 @@ void FUN_0004e97c(undefined4 param_1)
 
 
 //
-// Function: FUN_0004e9a4 @ 0x0004e9a4
+// Function: tpuOutput14SetPeriod @ 0x0004e9a4
 //
 
-void FUN_0004e9a4(undefined4 param_1)
+void tpuOutput14SetPeriod(undefined4 param_1)
 
 {
   tpuSetChannelPeriod(0xe,param_1);
@@ -44428,10 +44428,10 @@ void FUN_0004e9a4(undefined4 param_1)
 
 
 //
-// Function: FUN_0004e9cc @ 0x0004e9cc
+// Function: tpuOutput15Enable @ 0x0004e9cc
 //
 
-void FUN_0004e9cc(void)
+void tpuOutput15Enable(void)
 
 {
   tpuEnableChannelOutput(0xf);
@@ -44441,10 +44441,10 @@ void FUN_0004e9cc(void)
 
 
 //
-// Function: FUN_0004e9f0 @ 0x0004e9f0
+// Function: tpuOutput15Disable @ 0x0004e9f0
 //
 
-void FUN_0004e9f0(undefined4 param_1)
+void tpuOutput15Disable(undefined4 param_1)
 
 {
   tpuDisableChannelOutput(0xf,param_1);
@@ -44454,10 +44454,10 @@ void FUN_0004e9f0(undefined4 param_1)
 
 
 //
-// Function: FUN_0004ea18 @ 0x0004ea18
+// Function: tpuOutput15SetPeriod @ 0x0004ea18
 //
 
-void FUN_0004ea18(undefined4 param_1)
+void tpuOutput15SetPeriod(undefined4 param_1)
 
 {
   tpuSetChannelPeriod(0xf,param_1);
@@ -44467,10 +44467,10 @@ void FUN_0004ea18(undefined4 param_1)
 
 
 //
-// Function: FUN_0004eac8 @ 0x0004eac8
+// Function: checkProtectionWarningBitState @ 0x0004eac8
 //
 
-byte FUN_0004eac8(uint param_1)
+byte checkProtectionWarningBitState(uint param_1)
 
 {
   byte bVar1;
@@ -46917,12 +46917,12 @@ void removeCoolantCalEntry(uint param_1)
 
 
 //
-// Function: FUN_00054100 @ 0x00054100
+// Function: miosInterruptDispatcher @ 0x00054100
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00054100(void)
+void miosInterruptDispatcher(void)
 
 {
   ushort uVar1;
@@ -46947,10 +46947,10 @@ void FUN_00054100(void)
 
 
 //
-// Function: FUN_0005419c @ 0x0005419c
+// Function: infiniteLoopHalt @ 0x0005419c
 //
 
-void FUN_0005419c(void)
+void infiniteLoopHalt(void)
 
 {
   do {
@@ -47023,13 +47023,13 @@ void checkRpmOverspeedProtection(void)
 
 
 //
-// Function: FUN_00054380 @ 0x00054380
+// Function: systemStartupInitialization @ 0x00054380
 //
 
 /* WARNING: This function may have set the stack pointer */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00054380(undefined2 param_1)
+void systemStartupInitialization(undefined2 param_1)
 
 {
   uint in_BAR;
@@ -47972,12 +47972,12 @@ void copyDataBuffer(int param_1,int param_2)
 
 
 //
-// Function: FUN_0005573c @ 0x0005573c
+// Function: processSecurityCodeConversion @ 0x0005573c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-undefined4 FUN_0005573c(undefined4 param_1)
+undefined4 processSecurityCodeConversion(undefined4 param_1)
 
 {
   bool bVar1;
@@ -48173,12 +48173,12 @@ void initTpuConfiguration(void)
 
 
 //
-// Function: FUN_00055d2c @ 0x00055d2c
+// Function: tpuBInterruptDispatcher @ 0x00055d2c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00055d2c(void)
+void tpuBInterruptDispatcher(void)
 
 {
   uint uVar1;
@@ -48200,12 +48200,12 @@ void FUN_00055d2c(void)
 
 
 //
-// Function: FUN_00055de4 @ 0x00055de4
+// Function: tpuAInterruptDispatcher @ 0x00055de4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00055de4(void)
+void tpuAInterruptDispatcher(void)
 
 {
   uint uVar1;
@@ -48227,10 +48227,10 @@ void FUN_00055de4(void)
 
 
 //
-// Function: FUN_00055e9c @ 0x00055e9c
+// Function: emptyStubFunction @ 0x00055e9c
 //
 
-void FUN_00055e9c(void)
+void emptyStubFunction(void)
 
 {
   return;
