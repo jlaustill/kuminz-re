@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Jan 29 11:53:23 MST 2026
+// Generated: Thu Jan 29 11:55:18 MST 2026
 
 
 //
@@ -5699,7 +5699,7 @@ void phase_common_processing(void)
   func_0x005011c4();
   processFaultAndFuelDemand();
   func_0x0051d70c();
-  FUN_0002d600();
+  initProtectionModeDefaults();
   processFaultConditionFlags();
   processFaultStatusFlags();
   func_0x00506a3c();
@@ -5822,18 +5822,18 @@ void periodicTaskGroup0_fuelFinal(void)
   func_0x005022cc();
   func_0x00502b6c();
   sensorChannel3_init();
-  FUN_0002c764();
+  processProtectionEntry();
   processSensorLookupTable3();
   processSensorLookupTable2();
   updateEngineCycleOutputs();
-  FUN_0002c4fc();
+  updateRpmProtectionLimits();
   processEngineRpmDerivative();
   calculateFuelDemandChangeRate();
   processFaultPendingFlags();
   processOperatingModeFlags();
   processFuelDemandEnableFlag();
   fuelDemandFinalCalculation();
-  FUN_0002c6c4();
+  updateProtectionEntryConditions();
   processColdStartMainLoop();
   return;
 }
@@ -5855,9 +5855,9 @@ void periodicTaskGroup1_sensorProcessing(void)
   temperatureSensorProcessing();
   temperatureBasedFuelTrim();
   updateEngineTimingCompensation();
-  FUN_0002ac44();
-  FUN_0002ab2c();
-  FUN_0002bbe8();
+  smoothProtectionParamTransition();
+  processProtectionParamDelta();
+  updateGovernorFromProtection();
   updateGovernorSpeedLimits();
   calculateGovernorCompensation();
   processGovernorLoadCondition();
@@ -5884,7 +5884,7 @@ void periodicTaskGroup2_controlLoop(void)
 
 {
   checkDiagnosticFuelOverride();
-  FUN_0002dc40();
+  initProtectionControlState();
   calculateBoostTorqueOffset();
   calculateOilPressureProtection();
   processSpeedControlLimits();
@@ -5922,7 +5922,7 @@ void periodicTaskGroup2_controlLoop(void)
 void periodicTaskGroup3_auxiliaryControl(void)
 
 {
-  FUN_0002c114();
+  updateTorqueLimitFromProtection();
   func_0x005039b4();
   func_0x00506e28();
   processTorqueLimitState();
@@ -5943,7 +5943,7 @@ void periodicTaskGroup3_auxiliaryControl(void)
   checkRpmOverspeedProtection();
   applyProtectionControlLimit();
   calculateFuelDemandWithConditions();
-  FUN_0002bf44();
+  updateFaultOnKeyoff();
   func_0x00508e78();
   func_0x00503b54();
   processBoostProtectionMode();
@@ -6067,7 +6067,7 @@ void periodicTaskGroup10_monitoring(void)
 void periodicTaskGroup11_communication(void)
 
 {
-  FUN_0002a214();
+  processSensorDeviationOnKeyoff();
   processUdsSecurityService();
   func_0x005059ec();
   return;
@@ -6288,7 +6288,7 @@ void periodicTaskGroup31_calibration13(void)
 void periodicTaskGroup32_calibration14(void)
 
 {
-  FUN_0002afd0();
+  processProtectionControlStateMachine();
   func_0x00526414();
   func_0x005264d4();
   func_0x0051a648();
@@ -6471,7 +6471,7 @@ void periodicTaskGroup22_calibration(void)
 void periodicTaskGroup23_protection(void)
 
 {
-  FUN_0002c3c8();
+  processProtectionControlLogic();
   func_0x00524594();
   func_0x00529068();
   return;
@@ -8837,10 +8837,10 @@ void initEngineOperatingMode(int param_1)
 
 {
   if ((_engine_operating_mode == 0) && (_DAT_0040a1c0 == 1)) {
-    FUN_0002bf6c();
+    calculateRpmLimitsFromProtection();
     _engine_operating_mode = 7;
     calculateFuelTimingTarget();
-    FUN_0002c0fc();
+    emptyStubFunction6();
     calculateFuelTrimValues();
     if (param_1 != 7) {
       _fuel_trim_accumulator = &DAT_003ff6da;
@@ -23945,12 +23945,12 @@ uint absoluteValue16(uint param_1)
 
 
 //
-// Function: FUN_00029f54 @ 0x00029f54
+// Function: checkSensorDeviationFlags @ 0x00029f54
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00029f54(void)
+void checkSensorDeviationFlags(void)
 
 {
   uint uVar1;
@@ -24004,19 +24004,19 @@ void FUN_00029f54(void)
 
 
 //
-// Function: FUN_0002a214 @ 0x0002a214
+// Function: processSensorDeviationOnKeyoff @ 0x0002a214
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002a214(void)
+void processSensorDeviationOnKeyoff(void)
 
 {
   if (((_eeprom_calibration_table_ptr & 0x20) != 0) && (_DAT_003fafaa == 1)) {
     if (_fuel_demand_accumulator == 1) {
       _DAT_003fafa8 = _DAT_003fafa8 + 1;
       if (_DAT_0040718c < _DAT_003fafa8) {
-        FUN_00029f54();
+        checkSensorDeviationFlags();
         _DAT_003fafaa = 0;
       }
     }
@@ -24030,12 +24030,12 @@ void FUN_0002a214(void)
 
 
 //
-// Function: FUN_0002a2b4 @ 0x0002a2b4
+// Function: resetSensorDeviationTracking @ 0x0002a2b4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002a2b4(void)
+void resetSensorDeviationTracking(void)
 
 {
   _DAT_003fafa8 = 0;
@@ -24046,12 +24046,12 @@ void FUN_0002a2b4(void)
 
 
 //
-// Function: FUN_0002a2d0 @ 0x0002a2d0
+// Function: calculateProtectionRpmFilter @ 0x0002a2d0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002a2d0(void)
+void calculateProtectionRpmFilter(void)
 
 {
   short sVar1;
@@ -24105,12 +24105,12 @@ void FUN_0002a2d0(void)
 
 
 //
-// Function: FUN_0002a4b0 @ 0x0002a4b0
+// Function: calculateProtectionLoadCompensation @ 0x0002a4b0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002a4b0(void)
+void calculateProtectionLoadCompensation(void)
 
 {
   undefined4 uVar1;
@@ -24242,12 +24242,12 @@ void FUN_0002a4b0(void)
 
 
 //
-// Function: FUN_0002a918 @ 0x0002a918
+// Function: checkProtectionParamLimit @ 0x0002a918
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002a918(void)
+void checkProtectionParamLimit(void)
 
 {
   if ((_protection_param_delta == 1) && (_DAT_003fd89e < _DAT_0040a2d8)) {
@@ -24260,12 +24260,12 @@ void FUN_0002a918(void)
 
 
 //
-// Function: FUN_0002a960 @ 0x0002a960
+// Function: initProtectionParamCalculation @ 0x0002a960
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002a960(void)
+void initProtectionParamCalculation(void)
 
 {
   ushort uVar1;
@@ -24275,7 +24275,7 @@ void FUN_0002a960(void)
   uint uVar4;
   
   _protection_param_input = 0;
-  FUN_0002ad28();
+  setProtectionParamFromRpm();
   _DAT_003fafb6 = 0;
   _DAT_0040af2a = 0;
   if (_DAT_004071a2 == 0) {
@@ -24322,25 +24322,25 @@ void FUN_0002a960(void)
 
 
 //
-// Function: FUN_0002ab2c @ 0x0002ab2c
+// Function: processProtectionParamDelta @ 0x0002ab2c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002ab2c(void)
+void processProtectionParamDelta(void)
 
 {
   if (_protection_param_delta == 0) {
     _DAT_0040af28 = 0;
   }
   else if (_DAT_003fafc2 == 0) {
-    FUN_0002a960();
+    initProtectionParamCalculation();
   }
   else {
     _DAT_003fafba = _protection_param_input;
     _DAT_003fafb0 = _DAT_0040af2a;
-    FUN_0002a2d0();
-    FUN_0002a4b0();
+    calculateProtectionRpmFilter();
+    calculateProtectionLoadCompensation();
   }
   _DAT_003fafc2 = _protection_param_delta;
   return;
@@ -24349,17 +24349,17 @@ void FUN_0002ab2c(void)
 
 
 //
-// Function: FUN_0002abc8 @ 0x0002abc8
+// Function: initProtectionFilterState @ 0x0002abc8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002abc8(void)
+void initProtectionFilterState(void)
 
 {
   _DAT_003fafb6 = 0;
   _DAT_003fafb2 = 0x407190;
-  FUN_0002ad48();
+  initProtectionSmoothingPointer();
   _DAT_0040af44 = 0x80;
   _DAT_0040af46 = 0x80;
   _DAT_0040af48 = 0x80;
@@ -24373,12 +24373,12 @@ void FUN_0002abc8(void)
 
 
 //
-// Function: FUN_0002ac44 @ 0x0002ac44
+// Function: smoothProtectionParamTransition @ 0x0002ac44
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002ac44(void)
+void smoothProtectionParamTransition(void)
 
 {
   uint uVar1;
@@ -24386,7 +24386,7 @@ void FUN_0002ac44(void)
   uint uVar2;
   ushort uVar4;
   
-  FUN_0002ba7c();
+  updateProtectionPreviousParam();
   uVar3 = _protection_param_current;
   if (_protection_param_delta == 1) {
     if (_protection_param_current < _protection_param_previous) {
@@ -24418,12 +24418,12 @@ void FUN_0002ac44(void)
 
 
 //
-// Function: FUN_0002ad28 @ 0x0002ad28
+// Function: setProtectionParamFromRpm @ 0x0002ad28
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002ad28(void)
+void setProtectionParamFromRpm(void)
 
 {
   _protection_param_current = _current_engine_rpm;
@@ -24434,12 +24434,12 @@ void FUN_0002ad28(void)
 
 
 //
-// Function: FUN_0002ad48 @ 0x0002ad48
+// Function: initProtectionSmoothingPointer @ 0x0002ad48
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002ad48(void)
+void initProtectionSmoothingPointer(void)
 
 {
   _DAT_003fafd0 = 0;
@@ -24450,12 +24450,12 @@ void FUN_0002ad48(void)
 
 
 //
-// Function: FUN_0002ad68 @ 0x0002ad68
+// Function: evaluateProtectionCondition @ 0x0002ad68
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002ad68(void)
+void evaluateProtectionCondition(void)
 
 {
   undefined2 uVar1;
@@ -24555,12 +24555,12 @@ void FUN_0002ad68(void)
 
 
 //
-// Function: FUN_0002afd0 @ 0x0002afd0
+// Function: processProtectionControlStateMachine @ 0x0002afd0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002afd0(void)
+void processProtectionControlStateMachine(void)
 
 {
   short sVar1;
@@ -24790,19 +24790,19 @@ LAB_0002b990:
     _protection_source_param = uVar3;
   }
 LAB_0002ba64:
-  FUN_0002ad68();
+  evaluateProtectionCondition();
   return;
 }
 
 
 
 //
-// Function: FUN_0002ba7c @ 0x0002ba7c
+// Function: updateProtectionPreviousParam @ 0x0002ba7c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002ba7c(void)
+void updateProtectionPreviousParam(void)
 
 {
   if (_protection_param_delta == 1) {
@@ -24827,12 +24827,12 @@ void FUN_0002ba7c(void)
 
 
 //
-// Function: FUN_0002bb24 @ 0x0002bb24
+// Function: initProtectionEvalState @ 0x0002bb24
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002bb24(void)
+void initProtectionEvalState(void)
 
 {
   _protection_eval_state = 2;
@@ -24858,12 +24858,12 @@ void FUN_0002bb24(void)
 
 
 //
-// Function: FUN_0002bbe8 @ 0x0002bbe8
+// Function: updateGovernorFromProtection @ 0x0002bbe8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002bbe8(void)
+void updateGovernorFromProtection(void)
 
 {
   if ((((_engine_operating_mode == 1) || (_engine_operating_mode == 2)) ||
@@ -24904,12 +24904,12 @@ void FUN_0002bbe8(void)
 
 
 //
-// Function: FUN_0002bd38 @ 0x0002bd38
+// Function: resetProtectionBypass @ 0x0002bd38
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002bd38(void)
+void resetProtectionBypass(void)
 
 {
   _protection_bypass_active = 0;
@@ -24986,12 +24986,12 @@ LAB_0002beb4:
 
 
 //
-// Function: FUN_0002bf44 @ 0x0002bf44
+// Function: updateFaultOnKeyoff @ 0x0002bf44
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002bf44(void)
+void updateFaultOnKeyoff(void)
 
 {
   DAT_0040af66 = _fuel_demand_accumulator != 1;
@@ -25001,12 +25001,12 @@ void FUN_0002bf44(void)
 
 
 //
-// Function: FUN_0002bf6c @ 0x0002bf6c
+// Function: calculateRpmLimitsFromProtection @ 0x0002bf6c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002bf6c(void)
+void calculateRpmLimitsFromProtection(void)
 
 {
   ushort uVar1;
@@ -25051,10 +25051,10 @@ void FUN_0002bf6c(void)
 
 
 //
-// Function: FUN_0002c0fc @ 0x0002c0fc
+// Function: emptyStubFunction6 @ 0x0002c0fc
 //
 
-void FUN_0002c0fc(void)
+void emptyStubFunction6(void)
 
 {
   return;
@@ -25063,12 +25063,12 @@ void FUN_0002c0fc(void)
 
 
 //
-// Function: FUN_0002c100 @ 0x0002c100
+// Function: initProtectionLimitVariables @ 0x0002c100
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002c100(void)
+void initProtectionLimitVariables(void)
 
 {
   _protection_entry_condition = _DAT_003fd526;
@@ -25078,12 +25078,12 @@ void FUN_0002c100(void)
 
 
 //
-// Function: FUN_0002c114 @ 0x0002c114
+// Function: updateTorqueLimitFromProtection @ 0x0002c114
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002c114(void)
+void updateTorqueLimitFromProtection(void)
 
 {
   ushort uVar1;
@@ -25102,12 +25102,12 @@ void FUN_0002c114(void)
 
 
 //
-// Function: FUN_0002c180 @ 0x0002c180
+// Function: trackFuelDemandThreshold @ 0x0002c180
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002c180(void)
+void trackFuelDemandThreshold(void)
 
 {
   if (DAT_003fb00c == '\0') {
@@ -25129,12 +25129,12 @@ void FUN_0002c180(void)
 
 
 //
-// Function: FUN_0002c23c @ 0x0002c23c
+// Function: processProtectionLimitActivation @ 0x0002c23c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002c23c(void)
+void processProtectionLimitActivation(void)
 
 {
   if (((protection_control_word & 0x80) == 0) && ((protection_control_word & 0x80) == 0)) {
@@ -25171,12 +25171,12 @@ void FUN_0002c23c(void)
 
 
 //
-// Function: FUN_0002c318 @ 0x0002c318
+// Function: checkSafetyConditionsForProtection @ 0x0002c318
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002c318(void)
+void checkSafetyConditionsForProtection(void)
 
 {
   if ((_DAT_003fd5d6 & 0x800) == 0) {
@@ -25198,12 +25198,12 @@ void FUN_0002c318(void)
 
 
 //
-// Function: FUN_0002c3c8 @ 0x0002c3c8
+// Function: processProtectionControlLogic @ 0x0002c3c8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002c3c8(void)
+void processProtectionControlLogic(void)
 
 {
   char cVar1;
@@ -25225,7 +25225,7 @@ void FUN_0002c3c8(void)
     return;
   }
   protection_control_word = protection_control_word & 0x7f;
-  FUN_0002c318();
+  checkSafetyConditionsForProtection();
   cVar1 = DAT_003fb010;
   pcVar3 = &DAT_003fb00d;
   if (DAT_003fb010 == '\0') {
@@ -25241,8 +25241,8 @@ LAB_0002c458:
   if (((puVar4[3] & 0x80) != 0) || ((puVar4[3] & 0x80) != 0)) {
     _protection_limit_active = 0;
   }
-  FUN_0002c180();
-  FUN_0002c23c();
+  trackFuelDemandThreshold();
+  processProtectionLimitActivation();
   _DAT_003fb00e = *puVar5;
   *pcVar3 = cVar1;
   return;
@@ -25251,12 +25251,12 @@ LAB_0002c458:
 
 
 //
-// Function: FUN_0002c4fc @ 0x0002c4fc
+// Function: updateRpmProtectionLimits @ 0x0002c4fc
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002c4fc(void)
+void updateRpmProtectionLimits(void)
 
 {
   if (((_DAT_003fd532 == 0) || (DAT_0005c28c != 0)) && ((fuel_system_config & 0x80) == 0)) {
@@ -25304,12 +25304,12 @@ void FUN_0002c4fc(void)
 
 
 //
-// Function: FUN_0002c6c4 @ 0x0002c6c4
+// Function: updateProtectionEntryConditions @ 0x0002c6c4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002c6c4(void)
+void updateProtectionEntryConditions(void)
 
 {
   short sVar1;
@@ -25336,12 +25336,12 @@ void FUN_0002c6c4(void)
 
 
 //
-// Function: FUN_0002c764 @ 0x0002c764
+// Function: processProtectionEntry @ 0x0002c764
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002c764(void)
+void processProtectionEntry(void)
 
 {
   ushort uVar1;
@@ -25966,12 +25966,12 @@ void FUN_0002d5d8(void)
 
 
 //
-// Function: FUN_0002d600 @ 0x0002d600
+// Function: initProtectionModeDefaults @ 0x0002d600
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002d600(void)
+void initProtectionModeDefaults(void)
 
 {
   if (_DAT_0040776e != 0) {
@@ -26214,12 +26214,12 @@ bool FUN_0002dadc(int param_1)
 
 
 //
-// Function: FUN_0002dc40 @ 0x0002dc40
+// Function: initProtectionControlState @ 0x0002dc40
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002dc40(void)
+void initProtectionControlState(void)
 
 {
   bool bVar1;
@@ -37195,7 +37195,7 @@ void processProtectionLimits(void)
 
 {
   initProtectionStateWithFuelDemand();
-  FUN_0002a918();
+  checkProtectionParamLimit();
   trackMinimumFuelDemand();
   func_0x00502af4();
   func_0x00509510();
@@ -37300,7 +37300,7 @@ void dispatchModeHandlers(void)
 {
   initLookupTableParams();
   func_0x0050db88();
-  FUN_0002abc8();
+  initProtectionFilterState();
   return;
 }
 
@@ -47207,8 +47207,8 @@ void exceptionHandler(void)
   initFuelDemandRateVariables();
   selectColdStartFactor();
   initProtectionTableSizes();
-  FUN_0002bb24();
-  FUN_0002bd38();
+  initProtectionEvalState();
+  resetProtectionBypass();
   initSpeedProtectionParameters();
   initFuelDemandTracking();
   dispatchCalibrationFunctions();
@@ -47240,7 +47240,7 @@ void exceptionHandler(void)
   initTpuTimingInterrupts();
   func_0x00527958();
   initRpmSetpointFilters();
-  FUN_0002c100();
+  initProtectionLimitVariables();
   initTimingFilterStates();
   func_0x00508f0c();
   stubFunction3();
@@ -47327,7 +47327,7 @@ void exceptionHandler(void)
   func_0x005075b8();
   processSensorValidation();
   initFaultTimingVariables();
-  FUN_0002a2b4();
+  resetSensorDeviationTracking();
   func_0x0050f6c4();
   clearFuelDemandState();
   initTemperatureTrimTableSizes();
