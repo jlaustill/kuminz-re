@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Jan 29 11:03:45 MST 2026
+// Generated: Thu Jan 29 11:05:38 MST 2026
 
 
 //
@@ -4595,17 +4595,17 @@ void diagnosticSubcommandDispatcher(void)
       _qadc_a_result_ch11 = 0x28;
     }
     if (diag_subcommand_code == '\x03') {
-      FUN_00006eac();
+      handleEepromDiagnosticResponse();
       eeprom_checksum_status = 0;
       return;
     }
     if (diag_subcommand_code == '\x10') {
-      FUN_00006f54();
+      processEepromDataTransfer();
       eeprom_checksum_status = 0;
       return;
     }
     if (diag_subcommand_code == '\x11') {
-      FUN_00006e1c();
+      sendEepromVersionResponse();
       _diagnostic_handler_callback = 0x3fc1fc;
       eeprom_checksum_status = 0;
       return;
@@ -4878,7 +4878,7 @@ void processScheduledTasks(void)
     return;
   }
   _DAT_002fc240 = _DAT_002fc240 | 0x80;
-  FUN_00007608();
+  watchdogTimerTick();
   if (_toucan_rx_buffer_status == 0) {
 LAB_00006c44:
     if (qadc_a_result_high_1 == -0x7f) {
@@ -4984,10 +4984,10 @@ void dispatchDiagnosticService(int param_1)
 
 
 //
-// Function: FUN_00006e1c @ 0x00006e1c
+// Function: sendEepromVersionResponse @ 0x00006e1c
 //
 
-void FUN_00006e1c(void)
+void sendEepromVersionResponse(void)
 
 {
   if (eeprom_calibration_version == '\x01') {
@@ -5007,12 +5007,12 @@ void FUN_00006e1c(void)
 
 
 //
-// Function: FUN_00006eac @ 0x00006eac
+// Function: handleEepromDiagnosticResponse @ 0x00006eac
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00006eac(void)
+void handleEepromDiagnosticResponse(void)
 
 {
   undefined4 uVar1;
@@ -5046,12 +5046,12 @@ LAB_00006f3c:
 
 
 //
-// Function: FUN_00006f54 @ 0x00006f54
+// Function: processEepromDataTransfer @ 0x00006f54
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00006f54(void)
+void processEepromDataTransfer(void)
 
 {
   char cVar2;
@@ -5126,10 +5126,10 @@ LAB_000071c8:
 
 
 //
-// Function: FUN_000071f8 @ 0x000071f8
+// Function: scrambleBitPattern @ 0x000071f8
 //
 
-void FUN_000071f8(int param_1,int param_2)
+void scrambleBitPattern(int param_1,int param_2)
 
 {
   byte bVar1;
@@ -5241,7 +5241,7 @@ undefined4 sensorRangeValidation(undefined4 param_1)
     uVar5 = 1;
   }
   else {
-    FUN_000071f8(param_1,local_30);
+    scrambleBitPattern(param_1,local_30);
     bVar6 = 1;
     pcVar3 = local_30 + 5;
     pcVar4 = &cStack_25;
@@ -5359,12 +5359,12 @@ void processSensorWithOverride(undefined4 param_1,undefined2 param_2)
 
 
 //
-// Function: FUN_00007608 @ 0x00007608
+// Function: watchdogTimerTick @ 0x00007608
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00007608(void)
+void watchdogTimerTick(void)
 
 {
   if (DAT_003028a5 < 0x28) {
@@ -5374,7 +5374,7 @@ void FUN_00007608(void)
     if (_qadc_a_result_ch11 != 0) {
       _qadc_a_result_ch11 = _qadc_a_result_ch11 + -1;
       if (_qadc_a_result_ch11 == 0) {
-        FUN_00007dc4();
+        systemHaltLoop();
         reset_vector();
         return;
       }
@@ -5462,7 +5462,7 @@ undefined1 sensorAcquisitionCycle(undefined4 param_1,int param_2,ushort *param_3
         return 9;
       }
     }
-    uVar1 = FUN_000078d0(param_1,*param_3,param_4);
+    uVar1 = processTransferCrc(param_1,*param_3,param_4);
   }
   return uVar1;
 }
@@ -5470,12 +5470,12 @@ undefined1 sensorAcquisitionCycle(undefined4 param_1,int param_2,ushort *param_3
 
 
 //
-// Function: FUN_00007840 @ 0x00007840
+// Function: validateTransferBlockParams @ 0x00007840
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-undefined4 FUN_00007840(short *param_1)
+undefined4 validateTransferBlockParams(short *param_1)
 
 {
   int iVar1;
@@ -5504,12 +5504,12 @@ undefined4 FUN_00007840(short *param_1)
 
 
 //
-// Function: FUN_000078d0 @ 0x000078d0
+// Function: processTransferCrc @ 0x000078d0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-undefined1 FUN_000078d0(byte *param_1,uint param_2,int param_3)
+undefined1 processTransferCrc(byte *param_1,uint param_2,int param_3)
 
 {
   byte *pbVar1;
@@ -5528,7 +5528,7 @@ undefined1 FUN_000078d0(byte *param_1,uint param_2,int param_3)
     param_1 = param_1 + 2;
   }
   if ((_qadc_a_result_high_2 == 0) && (param_3 != 3)) {
-    uVar2 = FUN_00007840(param_1);
+    uVar2 = validateTransferBlockParams(param_1);
   }
   else {
     uVar2 = 0xff;
@@ -5579,12 +5579,12 @@ void systemWatchdogReset(void)
 
 
 //
-// Function: FUN_00007b08 @ 0x00007b08
+// Function: initQspiHardware @ 0x00007b08
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00007b08(void)
+void initQspiHardware(void)
 
 {
   ushort uVar1;
@@ -5653,13 +5653,13 @@ void FUN_00007b08(void)
 
 
 //
-// Function: FUN_00007dc4 @ 0x00007dc4
+// Function: systemHaltLoop @ 0x00007dc4
 //
 
 /* WARNING: Removing unreachable block (ram,0x00007f18) */
 /* WARNING: Removing unreachable block (ram,0x00007f48) */
 
-void FUN_00007dc4(void)
+void systemHaltLoop(void)
 
 {
   do {
