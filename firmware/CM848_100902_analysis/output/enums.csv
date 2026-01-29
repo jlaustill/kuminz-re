@@ -31,3 +31,22 @@ DIAG_SERVICE_ID,5,MEMORY_ACCESS,Memory read/write operations,1
 DIAG_SERVICE_ID,6,SPECIAL_CONTROL,Special timing/control functions,1
 # Filter Coefficient Init Value
 FILTER_INIT,2,COEFFICIENT_INIT,Standard filter coefficient initialization value,2
+# Protection System State Machine (_protection_system_state values)
+PROTECTION_STATE,1,PROTECTION_LEVEL_1,First protection threshold level (warning),2
+PROTECTION_STATE,2,PROTECTION_LEVEL_2,Second protection threshold level (derate),2
+PROTECTION_STATE,3,PROTECTION_SHUTDOWN,Shutdown protection level,2
+# Protection Status Codes (_protection_status_code values)
+PROTECTION_STATUS_CODE,0x05,STATUS_SENSOR_FAULT,Sensor fault condition detected,1
+PROTECTION_STATUS_CODE,0x0B,STATUS_TEMP_DERATE,Temperature derate active,1
+PROTECTION_STATUS_CODE,0x10,STATUS_SHUTDOWN,Shutdown level reached,1
+PROTECTION_STATUS_CODE,0x11,STATUS_LEVEL_2_ACTIVE,Level 2 protection active,1
+PROTECTION_STATUS_CODE,0x12,STATUS_LEVEL_1_ACTIVE,Level 1 protection active,1
+# Protection Flag Bits (protection_flags bitmap)
+PROTECTION_FLAGS,0x80,FLAG_STATE1_EXCEEDED,State 1 threshold exceeded,1
+PROTECTION_FLAGS,0x40,FLAG_STATE2_EXCEEDED,State 2 threshold exceeded,1
+PROTECTION_FLAGS,0x20,FLAG_WARNING_THRESHOLD,Warning threshold crossed,1
+PROTECTION_FLAGS,0x10,FLAG_DERATE_ACTIVE,Derate condition active,1
+PROTECTION_FLAGS,0x08,FLAG_CONDITION_CHECK,Condition check flag,1
+# Protection Override Mode (DAT_0040b4ff values)
+PROTECTION_OVERRIDE,0x7e,OVERRIDE_ACTIVE_126,Protection override mode active (~),1
+PROTECTION_OVERRIDE,0x7f,OVERRIDE_ACTIVE_127,Protection override mode active (DEL),1
