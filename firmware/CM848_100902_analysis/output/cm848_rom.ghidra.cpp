@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Jan 29 05:57:33 MST 2026
+// Generated: Thu Jan 29 06:00:05 MST 2026
 
 
 //
@@ -79,7 +79,7 @@ void keyOnStateMachine(void)
         reset_vector();
         return;
       }
-      FUN_000021d0();
+      initDiagnosticSession();
     }
   }
   return;
@@ -116,11 +116,11 @@ void copyCalibrationToRam(void)
 void FUN_0000037c(void)
 
 {
-  FUN_00002c94(2,0x9e4);
-  FUN_00002c94(7,0x8d4);
-  FUN_00002c94(0xb,0x420);
-  FUN_00002c94(0x10,0x420);
-  FUN_00002c94(0x18,0x420);
+  registerDiagnosticService(2,0x9e4);
+  registerDiagnosticService(7,0x8d4);
+  registerDiagnosticService(0xb,0x420);
+  registerDiagnosticService(0x10,0x420);
+  registerDiagnosticService(0x18,0x420);
   return;
 }
 
@@ -588,7 +588,7 @@ void FUN_00000e90(void)
   func_0x003fc094();
   FUN_000030ec();
   FUN_00002de4();
-  FUN_00001fa4();
+  processDiagnosticCommands();
   return;
 }
 
@@ -970,12 +970,12 @@ void FUN_0000183c(void)
 
 
 //
-// Function: FUN_00001840 @ 0x00001840
+// Function: diagService25_executeFunction @ 0x00001840
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-char FUN_00001840(int param_1)
+char diagService25_executeFunction(int param_1)
 
 {
   char cVar1;
@@ -999,23 +999,23 @@ char FUN_00001840(int param_1)
 
 
 //
-// Function: FUN_0000191c @ 0x0000191c
+// Function: initService25Handler @ 0x0000191c
 //
 
-void FUN_0000191c(void)
+void initService25Handler(void)
 
 {
-  FUN_00002c94(0x19,FUN_00001840);
+  registerDiagnosticService(0x19,diagService25_executeFunction);
   return;
 }
 
 
 
 //
-// Function: FUN_00001948 @ 0x00001948
+// Function: registerPgnResponseHandler @ 0x00001948
 //
 
-bool FUN_00001948(undefined2 param_1,undefined4 param_2)
+bool registerPgnResponseHandler(undefined2 param_1,undefined4 param_2)
 
 {
   uint uVar1;
@@ -1032,26 +1032,26 @@ bool FUN_00001948(undefined2 param_1,undefined4 param_2)
 
 
 //
-// Function: FUN_0000198c @ 0x0000198c
+// Function: initDataBasedDiagServices @ 0x0000198c
 //
 
-void FUN_0000198c(void)
+void initDataBasedDiagServices(void)
 
 {
-  FUN_00002c94(0x44,0x3fb368);
-  FUN_00002c94(0x45,0x3fb3d8);
-  FUN_00002c94(0x4b,0x3fb440);
-  FUN_00002c94(0x4d,0x3fb4b8);
+  registerDiagnosticService(0x44,0x3fb368);
+  registerDiagnosticService(0x45,0x3fb3d8);
+  registerDiagnosticService(0x4b,0x3fb440);
+  registerDiagnosticService(0x4d,0x3fb4b8);
   return;
 }
 
 
 
 //
-// Function: FUN_000019e8 @ 0x000019e8
+// Function: diagService65_handler @ 0x000019e8
 //
 
-undefined4 FUN_000019e8(byte *param_1)
+undefined4 diagService65_handler(byte *param_1)
 
 {
   int iVar1;
@@ -1103,7 +1103,7 @@ undefined4 FUN_000019e8(byte *param_1)
 void FUN_00001ad0(void)
 
 {
-  FUN_00002c94(0x41,FUN_000019e8);
+  registerDiagnosticService(0x41,diagService65_handler);
   return;
 }
 
@@ -1116,9 +1116,9 @@ void FUN_00001ad0(void)
 void FUN_00001afc(void)
 
 {
-  FUN_00002c94(0x43,FUN_00001d5c);
-  FUN_00002c94(0x4a,FUN_00001dc4);
-  FUN_00002c94(0x4c,FUN_00001e30);
+  registerDiagnosticService(0x43,diagService67_memoryReadOffset);
+  registerDiagnosticService(0x4a,diagService74_memoryRead);
+  registerDiagnosticService(0x4c,diagService76_memoryReadExt);
   return;
 }
 
@@ -1222,10 +1222,10 @@ undefined1 FUN_00001cf8(undefined4 param_1,undefined4 param_2,int param_3,undefi
 
 
 //
-// Function: FUN_00001d5c @ 0x00001d5c
+// Function: diagService67_memoryReadOffset @ 0x00001d5c
 //
 
-undefined1 FUN_00001d5c(int param_1)
+undefined1 diagService67_memoryReadOffset(int param_1)
 
 {
   undefined1 uVar1;
@@ -1241,10 +1241,10 @@ undefined1 FUN_00001d5c(int param_1)
 
 
 //
-// Function: FUN_00001dc4 @ 0x00001dc4
+// Function: diagService74_memoryRead @ 0x00001dc4
 //
 
-undefined1 FUN_00001dc4(int param_1)
+undefined1 diagService74_memoryRead(int param_1)
 
 {
   undefined1 uVar1;
@@ -1260,10 +1260,10 @@ undefined1 FUN_00001dc4(int param_1)
 
 
 //
-// Function: FUN_00001e30 @ 0x00001e30
+// Function: diagService76_memoryReadExt @ 0x00001e30
 //
 
-undefined1 FUN_00001e30(int param_1)
+undefined1 diagService76_memoryReadExt(int param_1)
 
 {
   undefined1 uVar1;
@@ -1279,30 +1279,30 @@ undefined1 FUN_00001e30(int param_1)
 
 
 //
-// Function: FUN_00001e94 @ 0x00001e94
+// Function: initDiagResponseHandlers @ 0x00001e94
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00001e94(void)
+void initDiagResponseHandlers(void)
 
 {
   _DAT_0030291d = 0x30306d;
   _DAT_00302933 = 0x303075;
-  FUN_00001948(0xec00,0x3fbe5c);
-  FUN_00001948(0xeb00,0x3fbbb4);
+  registerPgnResponseHandler(0xec00,0x3fbe5c);
+  registerPgnResponseHandler(0xeb00,0x3fbbb4);
   return;
 }
 
 
 
 //
-// Function: FUN_00001ef8 @ 0x00001ef8
+// Function: diagSendResponseCode @ 0x00001ef8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00001ef8(undefined1 param_1,int param_2)
+void diagSendResponseCode(undefined1 param_1,int param_2)
 
 {
   if (param_2 == 0x51) {
@@ -1320,7 +1320,7 @@ void FUN_00001ef8(undefined1 param_1,int param_2)
   }
   DAT_003fecd3 = 0;
   DAT_003fecbf = 4;
-  _DAT_003fecb6 = FUN_00001fa4;
+  _DAT_003fecb6 = processDiagnosticCommands;
   DAT_003fecd2 = param_1;
   func_0x003fc62c();
   return;
@@ -1329,12 +1329,12 @@ void FUN_00001ef8(undefined1 param_1,int param_2)
 
 
 //
-// Function: FUN_00001fa4 @ 0x00001fa4
+// Function: processDiagnosticCommands @ 0x00001fa4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00001fa4(void)
+void processDiagnosticCommands(void)
 
 {
   short sVar1;
@@ -1350,7 +1350,7 @@ void FUN_00001fa4(void)
     if (DAT_003fecf1 < 0x12) {
       if (DAT_003fecf1 == 0x11) {
         func_0x003fc9ec();
-        _DAT_003fecb6 = FUN_00001fa4;
+        _DAT_003fecb6 = processDiagnosticCommands;
       }
       else if (DAT_003fecf1 == 3) {
         func_0x003fca7c();
@@ -1375,7 +1375,7 @@ LAB_0000208c:
   else {
     uVar2 = 0x11;
 LAB_00002098:
-    FUN_00001ef8(uVar2,0x7f);
+    diagSendResponseCode(uVar2,0x7f);
   }
   DAT_003fecc5 = '\0';
 LAB_000020ac:
@@ -1410,7 +1410,7 @@ LAB_000020ac:
 void FUN_00002148(void)
 
 {
-  _DAT_003fecb6 = FUN_00001fa4;
+  _DAT_003fecb6 = processDiagnosticCommands;
   _DAT_003fedf4 = 0;
   _DAT_003fedf6 = 0;
   return;
@@ -1426,7 +1426,7 @@ void FUN_00002170(void)
 
 {
   if ((DAT_003fee32 != '\0') && (DAT_003fee32 = DAT_003fee32 + -1, DAT_003fee32 == '\0')) {
-    FUN_00001ef8(2,0x51);
+    diagSendResponseCode(2,0x51);
   }
   return;
 }
@@ -1447,12 +1447,12 @@ void FUN_000021c0(void)
 
 
 //
-// Function: FUN_000021d0 @ 0x000021d0
+// Function: initDiagnosticSession @ 0x000021d0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_000021d0(void)
+void initDiagnosticSession(void)
 
 {
   undefined2 local_8 [4];
@@ -1648,7 +1648,7 @@ void FUN_00002504(void)
   eepromWriteWords(0x3fee16,0x1000034,2);
   _DAT_00302882 = 0xbec;
   eepromReadWords(0x1000056,&DAT_003fee24,2);
-  FUN_000021d0();
+  initDiagnosticSession();
   FUN_00001454();
   do {
     FUN_000030ec();
@@ -1799,13 +1799,13 @@ void FUN_00002a40(void)
   _DAT_003024c6 = 0x3022e6;
   _DAT_003024d2 = 0x302016;
   _DAT_003024ce = 0x302016;
-  FUN_00001e94();
+  initDiagResponseHandlers();
   FUN_00002cd8();
   FUN_00001afc();
   FUN_00001ad0();
-  FUN_0000198c();
+  initDataBasedDiagServices();
   FUN_0000037c();
-  FUN_0000191c();
+  initService25Handler();
   uVar5 = (uint)_DAT_0030200e;
   iVar2 = uVar5 + 1;
   _DAT_00302510 = (undefined2)iVar2;
@@ -1875,10 +1875,10 @@ void FUN_00002bc8(void)
 
 
 //
-// Function: FUN_00002c94 @ 0x00002c94
+// Function: registerDiagnosticService @ 0x00002c94
 //
 
-bool FUN_00002c94(undefined1 param_1,undefined4 param_2)
+bool registerDiagnosticService(undefined1 param_1,undefined4 param_2)
 
 {
   uint uVar1;
@@ -1901,7 +1901,7 @@ bool FUN_00002c94(undefined1 param_1,undefined4 param_2)
 void FUN_00002cd8(void)
 
 {
-  FUN_00001948(0xef00,0x3fc8f4);
+  registerPgnResponseHandler(0xef00,0x3fc8f4);
   return;
 }
 
@@ -2432,7 +2432,7 @@ void FUN_00003710(void)
   ushort local_8 [2];
   
   DAT_003fedee = 1;
-  FUN_00001ef8(0x78,0x74);
+  diagSendResponseCode(0x78,0x74);
   while (_DAT_003fecba == 3) {
     func_0x003fc688();
     func_0x003fd544();
@@ -2465,7 +2465,7 @@ void FUN_000037e0(void)
   uVar2 = 0;
   DAT_003fedee = 1;
   if (_eeprom_magic == 0x1d0a) {
-    FUN_00001ef8(0x78,0x74);
+    diagSendResponseCode(0x78,0x74);
     while (_DAT_003fecba == 3) {
       func_0x003fc688();
       func_0x003fd544();
@@ -2484,7 +2484,7 @@ void FUN_000037e0(void)
     FUN_00000428(0,3);
   }
   else {
-    FUN_00001ef8(0x40,0x7f);
+    diagSendResponseCode(0x40,0x7f);
   }
   return;
 }
@@ -2506,7 +2506,7 @@ void FUN_000038f4(void)
     FUN_000037e0();
   }
   else {
-    FUN_00001ef8(0x12,0x7f);
+    diagSendResponseCode(0x12,0x7f);
   }
   return;
 }
@@ -2526,16 +2526,16 @@ void FUN_00003948(void)
   undefined4 uVar2;
   
   if (DAT_003fedee != '\0') {
-    FUN_00001ef8(0x78,0x74);
+    diagSendResponseCode(0x78,0x74);
     return;
   }
   if (_DAT_00302878 == _DAT_0030287c) {
     if (_DAT_0030200a != _DAT_003fecf2) {
-      FUN_00001ef8(0x77,0x7f);
+      diagSendResponseCode(0x77,0x7f);
       return;
     }
     if (_DAT_003028b1 < 10) {
-      FUN_00001ef8(0x61,0x74);
+      diagSendResponseCode(0x61,0x74);
       iVar1 = _DAT_003028ad;
       *(int *)((uint)_DAT_003028b1 * 8 + 0x3028b3) = _DAT_003028ad;
       *(int *)((uint)_DAT_003028b1 * 8 + 0x3028b7) = iVar1 + _DAT_0030287c + -1;
@@ -2549,7 +2549,7 @@ void FUN_00003948(void)
   else {
     uVar2 = 0x40;
   }
-  FUN_00001ef8(uVar2,0x7f);
+  diagSendResponseCode(uVar2,0x7f);
   return;
 }
 
