@@ -302,3 +302,86 @@ INSITE_PARAM_CODE,0xC2,FAULT_DETAIL,Fault detail builder,1
 INSITE_PARAM_CODE,0xEA,ECU_ID_RESPONSE,ECU ID response builder,1
 INSITE_PARAM_CODE,0xED,CAPACITY_RESPONSE,Capacity response builder,1
 INSITE_PARAM_CODE,0xF3,VERSION_INFO,Version info builder,1
+
+# ============================================================================
+# CLIP/Diagnostic Protocol Enums - Ported from CM550 (common across Cummins ECUs)
+# ============================================================================
+
+# CLIP Protocol Instructions - Cummins diagnostic protocol commands
+CLIP_INSTRUCTION,0x00,QUERY_INITIALIZE,Initialize query session,1
+CLIP_INSTRUCTION,0x01,QUERY_TERMINATE,Terminate query session,1
+CLIP_INSTRUCTION,0x10,GET_PARAMETERS_BY_ID,Read parameters by ID,1
+CLIP_INSTRUCTION,0x11,SET_PARAMETERS_BY_ID,Write parameters by ID,1
+CLIP_INSTRUCTION,0x12,EXECUTE_OPERATION,Execute ECU operation,1
+CLIP_INSTRUCTION,0x13,GET_DATA_BY_ADDRESS,Read memory by address,1
+CLIP_INSTRUCTION,0x14,SET_DATA_BY_ADDRESS,Write memory by address,1
+CLIP_INSTRUCTION,0x15,GET_ADDRESS_BY_PARAMETER_ID,Get parameter address from ID,1
+
+# Cummins Module Family IDs - ECU identification
+CUMMINS_MODULE_IDS,0x454E,MODULE_EN,Cummins EN module family (CM550 VP44 ECUs),2
+CUMMINS_MODULE_IDS,0x4841,MODULE_HA,Cummins HA module family (CM848 HPCR ECUs),2
+CUMMINS_MODULE_IDS,0x4E41,MODULE_AN,Cummins AN module family,2
+
+# Diagnostic Service 3 Secured Subfunctions
+DIAG_SECURED_SUBFUNC,0x40,WATER_IN_FUEL_CLEAR,Clear water-in-fuel fault,1
+DIAG_SECURED_SUBFUNC,0x41,WATER_IN_FUEL_VALIDATE,Validate water-in-fuel condition,1
+DIAG_SECURED_SUBFUNC,0x42,HIGH_RPM_SHUTDOWN_ACTIVATE,Activate high RPM shutdown flag,1
+DIAG_SECURED_SUBFUNC,0x43,SYSTEM_RESET_TRIGGER,Trigger diagnostic system reset,1
+DIAG_SECURED_SUBFUNC,0x50,NOP_ACK,No operation - returns success (0),1
+DIAG_SECURED_SUBFUNC,0x51,MEMORY_PATCH,RAM patching system,1
+DIAG_SECURED_SUBFUNC,0x52,SECURED_SHUTDOWN_REQUEST,Request secured shutdown,1
+DIAG_SECURED_SUBFUNC,0x53,UNSUPPORTED_ERROR,Unsupported operation - returns error 4,1
+DIAG_SECURED_SUBFUNC,0x54,CAN_BUFFER_LOGGER,CAN message buffer logger,1
+
+# Diagnostic Service 4 Control Subfunctions
+DIAG_CONTROL_SUBFUNC,0x64,SYSTEM_CONTROL_100,System control function 100,1
+DIAG_CONTROL_SUBFUNC,0x65,FAULT_SCANNER_ENABLE,Enable fault flag scanner,1
+DIAG_CONTROL_SUBFUNC,0x66,CLEAR_COMMAND_STATE,Clear diagnostic_command_state to 0,1
+DIAG_CONTROL_SUBFUNC,0x69,WATER_IN_FUEL_INIT,Water in fuel detection init,1
+DIAG_CONTROL_SUBFUNC,0x70,RESERVED_112,Reserved - returns error code 4,1
+DIAG_CONTROL_SUBFUNC,0x71,SET_COMMAND_STATE_BIT0,Set bit 0 of diagnostic_command_state,1
+DIAG_CONTROL_SUBFUNC,0x72,RESERVED_114,Reserved - returns error code 4,1
+DIAG_CONTROL_SUBFUNC,0x73,SET_COMMAND_STATE_BIT1,Set bit 1 of diagnostic_command_state,1
+DIAG_CONTROL_SUBFUNC,0x74,SYSTEM_CONTROL_116,System control function 116,1
+DIAG_CONTROL_SUBFUNC,0x75,SYSTEM_CONTROL_117,System control function 117,1
+DIAG_CONTROL_SUBFUNC,0x76,RESERVED_118,Reserved - returns error code 4,1
+
+# Diagnostic Service 5 Memory Operations
+DIAG_MEMORY_OP,0x60,READ_3BYTE_ADDR,Memory read with 3-byte addressing,1
+DIAG_MEMORY_OP,0x80,WRITE_4BYTE_ADDR,Memory write with 4-byte addressing,1
+DIAG_MEMORY_OP,0xA0,WRITE_2BYTE_ADDR,Memory write with 2-byte addressing,1
+DIAG_MEMORY_OP,0xB0,MULTI_PKT_RECEIVE,Multi-packet data receive,1
+DIAG_MEMORY_OP,0xC0,READ_2BYTE_ADDR,Memory read with 2-byte addressing,1
+DIAG_MEMORY_OP,0xE0,READ_1BYTE_ADDR,Memory read with 1-byte addressing,1
+DIAG_MEMORY_OP,0xF0,MULTI_PKT_TRANSMIT,Multi-packet data transmit,1
+
+# Diagnostic Extended Service Handlers (Service 5 sub-modes)
+DIAG_EXTENDED_SVC,0x43,MEM_READ_2BYTE_4BYTE,Memory read: 2-byte param + 4-byte offset,1
+DIAG_EXTENDED_SVC,0x46,MEM_READ_2BYTE_ONLY,Memory read: 2-byte param only,1
+DIAG_EXTENDED_SVC,0x48,MEM_READ_2BYTE_4BYTE_4BYTE,Memory read: 2-byte + 4-byte + 4-byte params,1
+DIAG_EXTENDED_SVC,0x4A,MEM_READ_4BYTE_1BYTE,Memory read: 4-byte address + 1-byte length,1
+DIAG_EXTENDED_SVC,0x4C,MEM_READ_4BYTE_4BYTE,Memory read: 4-byte address + 4-byte length,1
+DIAG_EXTENDED_SVC,0x4F,EXTENDED_4F,Extended diagnostic service 0x4F,1
+DIAG_EXTENDED_SVC,0x51,EXTENDED_51,Extended diagnostic service 0x51,1
+
+# CAN Multi-packet Response Codes
+CAN_MULTIPACKET_RESPONSE,0x0C,SUCCESS_RESPONSE,Operation successful - no error code follows,1
+CAN_MULTIPACKET_RESPONSE,0x0D,STATUS_RESPONSE,Error/status response - error code follows in byte 1,1
+
+# Diagnostic Source Codes - identifies trigger source for diagnostic mode
+DIAGNOSTIC_SOURCE_CODE,0,NONE,No active diagnostic source,2
+DIAGNOSTIC_SOURCE_CODE,1,FUEL_ARBITRATOR,Fuel arbitrator triggered (rpm_target == 2),2
+DIAGNOSTIC_SOURCE_CODE,2,DIAG_STATUS_2,Diagnostic status 2 condition,2
+DIAGNOSTIC_SOURCE_CODE,5,ENGINE_FLAGS,Engine control flags triggered,2
+DIAGNOSTIC_SOURCE_CODE,6,EPS_FAULT,Electronic Position Sensor fault,2
+DIAGNOSTIC_SOURCE_CODE,7,DIAG_STATUS_7,Diagnostic status 7 condition,2
+DIAGNOSTIC_SOURCE_CODE,30,DIAG_STATUS_30,Diagnostic status 30 condition,2
+
+# Diagnostic Fuel Control Mode - active fuel control diagnostic mode
+DIAGNOSTIC_FUEL_CONTROL_MODE,0x0A,FUEL_MODE_INSITE_DISPLAY,INSITE live data display mode,1
+DIAGNOSTIC_FUEL_CONTROL_MODE,0x0B,FUEL_MODE_RPM_THRESHOLD,RPM threshold protection mode,1
+DIAGNOSTIC_FUEL_CONTROL_MODE,0x0C,FUEL_MODE_FUEL_DELIVERY,Fuel delivery control mode,1
+
+# Diagnostic Status - overall diagnostic system state
+DIAGNOSTIC_STATUS,0,NORMAL_OPERATION,No diagnostic mode active - normal operation,2
+DIAGNOSTIC_STATUS,1,FUEL_ARBITRATOR_SOURCE,Fuel arbitrator rpm_target==2 active,2
