@@ -1,0 +1,117 @@
+function_address,function_name,param_index,new_name,new_type,comment
+# -----------------------------------------------------------------------------
+# Table Interpolation Functions - Ported from CM550 (same pattern across ECU families)
+# -----------------------------------------------------------------------------
+0x00055ef4,lookupTableInterpolation,0,args,table_interp_args_t*,Pointer to table interpolation arguments structure
+
+0x000566cc,dualAxisTableInterpolation,0,table_descriptor,void*,Pointer to 2D table descriptor
+0x000566cc,dualAxisTableInterpolation,1,x_input,ushort,X-axis input value
+0x000566cc,dualAxisTableInterpolation,2,y_input,ushort,Y-axis input value
+
+0x00015e08,interpolateFuelMapTable,0,table_ptr,void*,Pointer to fuel map table
+0x00015e08,interpolateFuelMapTable,1,rpm_input,ushort,Engine RPM value for lookup
+0x00015e08,interpolateFuelMapTable,2,load_input,ushort,Engine load value for lookup
+
+# -----------------------------------------------------------------------------
+# CAN Message Transmission - Adapted from CM550 patterns
+# -----------------------------------------------------------------------------
+0x00003f20,transmitCanMessage,0,msg_header,j1939_header_t*,Pointer to J1939 message header structure
+0x00003f20,transmitCanMessage,1,data_ptr,byte*,Pointer to message data bytes
+
+0x00005adc,multiFrameCanTransmit,0,msg_header,j1939_header_t*,Pointer to J1939 message header (multi-frame)
+0x00005adc,multiFrameCanTransmit,1,data_ptr,byte*,Pointer to message payload data
+0x00005adc,multiFrameCanTransmit,2,data_length,ushort,Total length of payload to transmit
+
+# -----------------------------------------------------------------------------
+# EEPROM Operations
+# -----------------------------------------------------------------------------
+0x00000bec,eepromWriteWords,0,dest_address,uint,EEPROM destination address
+0x00000bec,eepromWriteWords,1,src_ptr,word*,Pointer to source data words
+0x00000bec,eepromWriteWords,2,word_count,ushort,Number of words to write
+
+# -----------------------------------------------------------------------------
+# J1939 PGN Handlers - Common pattern for diagnostic message handlers
+# Pattern: First param is always a pointer to the received CAN message descriptor
+# -----------------------------------------------------------------------------
+0x00020c64,processJ1939RxMessage,0,rx_msg,can_std_rx_desc_t*,Pointer to received CAN message descriptor
+
+0x0000628c,j1939DiagMessageDispatcher,0,rx_msg,can_std_rx_desc_t*,Pointer to received diagnostic message
+0x0000628c,j1939DiagMessageDispatcher,1,service_code,byte,Diagnostic service code from message
+
+0x00005c50,handleJ1939QueueRequest,0,request_type,byte,Type of queue request (0x10=start 0x11=continue)
+0x00005c50,handleJ1939QueueRequest,1,connection_id,byte,Transport protocol connection ID
+
+0x00005ecc,handleJ1939DataRequest,0,rx_msg,can_std_rx_desc_t*,Pointer to data request message
+0x00005fe4,handleJ1939DataTransfer,0,rx_msg,can_std_rx_desc_t*,Pointer to data transfer message
+0x00006180,handleJ1939AbortRequest,0,rx_msg,can_std_rx_desc_t*,Pointer to abort request message
+
+# -----------------------------------------------------------------------------
+# Diagnostic Service Dispatchers
+# -----------------------------------------------------------------------------
+0x000038f4,diagRequestTypeDispatcher,0,service_code,byte,UDS/J1939 diagnostic service code
+0x000038f4,diagRequestTypeDispatcher,1,request_ptr,byte*,Pointer to request data buffer
+
+0x00006d24,dispatchDiagnosticService,0,service_code,byte,Service code (e.g. 0x22=ReadDataByID 0x2E=WriteDataByID)
+0x00006d24,dispatchDiagnosticService,1,data_ptr,byte*,Pointer to service data
+0x00006d24,dispatchDiagnosticService,2,data_length,ushort,Length of service data
+
+0x0000662c,diagnosticSubcommandDispatcher,0,subcommand,byte,Diagnostic subcommand code
+0x0000662c,diagnosticSubcommandDispatcher,1,data_ptr,byte*,Pointer to subcommand data
+
+# -----------------------------------------------------------------------------
+# Memory Read Handlers (Diagnostic Services 0x43-0x4A)
+# Pattern: Returns response data via pointer, returns length
+# -----------------------------------------------------------------------------
+0x00001b48,diagMemoryReadHandler,0,address,uint,Memory address to read from
+0x00001b48,diagMemoryReadHandler,1,length,ushort,Number of bytes to read
+0x00001b48,diagMemoryReadHandler,2,response_ptr,byte*,Pointer to response buffer
+
+# -----------------------------------------------------------------------------
+# Handler Registration Functions
+# -----------------------------------------------------------------------------
+0x00001948,registerPgnResponseHandler,0,pgn,uint,PGN to register handler for (24-bit)
+0x00001948,registerPgnResponseHandler,1,handler_func,void*,Function pointer for handler callback
+
+0x00002cd8,registerPgnEf00Handler,0,sub_id,byte,Sub-identifier for PGN 0xEF00 filtering
+0x00002cd8,registerPgnEf00Handler,1,handler_func,void*,Function pointer for handler callback
+
+# -----------------------------------------------------------------------------
+# J1939 PGN Dispatch System
+# Core message routing for all J1939 PGN requests
+# -----------------------------------------------------------------------------
+0x000231cc,j1939DispatchPgnHandler,0,request_msg,j1939_request_msg_t*,Pointer to incoming J1939 request message
+
+0x00023188,j1939_register_pgn_handler,0,pgn_byte_0,byte,First PGN byte to register
+0x00023188,j1939_register_pgn_handler,1,pgn_byte_1,byte,Second PGN byte to register
+0x00023188,j1939_register_pgn_handler,2,handler_func,void*,Function pointer to PGN handler
+
+0x00022d60,j1939MessageDispatcher,0,rx_msg,can_std_rx_desc_t*,Pointer to received J1939 message
+
+0x00023d3c,sendJ1939AcknowledgeMessage,0,request_msg,j1939_request_msg_t*,Original request to acknowledge
+0x00023d3c,sendJ1939AcknowledgeMessage,1,ack_type,byte,ACK type (0=ACK 1=NACK 2=AccessDenied 3=CannotRespond)
+
+0x00005d8c,sendJ1939DiagnosticMessage,0,dest_address,byte,Destination address for response
+0x00005d8c,sendJ1939DiagnosticMessage,1,data_ptr,byte*,Pointer to diagnostic response data
+0x00005d8c,sendJ1939DiagnosticMessage,2,data_length,ushort,Length of response data
+
+# -----------------------------------------------------------------------------
+# J1939 DM (Diagnostic Message) Handlers
+# Standard SAE J1939-73 diagnostic message processing
+# -----------------------------------------------------------------------------
+0x000227a0,j1939HandleDm1RequestMessage,0,request_msg,j1939_request_msg_t*,Pointer to DM1 (Active DTC) request
+
+0x000255c0,j1939SendDm1ResponseMessage,0,dest_address,byte,Destination address for DM1 response
+0x000255c0,j1939SendDm1ResponseMessage,1,fault_count,byte,Number of active DTCs to report
+
+0x0002641c,j1939SendDiagnosticStatusMessage,0,dest_address,byte,Destination address for status response
+0x0002641c,j1939SendDiagnosticStatusMessage,1,status_type,byte,Type of diagnostic status to send
+
+# -----------------------------------------------------------------------------
+# J1939 Queue/Transport Protocol
+# Multi-frame message handling (TP.CM/TP.DT)
+# -----------------------------------------------------------------------------
+0x00005fe4,handleJ1939DataTransfer,0,rx_msg,can_std_rx_desc_t*,TP.DT data transfer message
+
+0x000062fc,processJ1939QueueTransmit,0,queue_entry,void*,Pointer to TX queue entry
+0x000064c4,processJ1939QueueStatus,0,connection_id,byte,Transport protocol connection identifier
+

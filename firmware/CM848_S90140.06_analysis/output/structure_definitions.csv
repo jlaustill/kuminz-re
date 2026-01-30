@@ -307,3 +307,30 @@ dma_descriptor_t,,next_descriptor,dword,4,Pointer to next descriptor in chain,,v
 memory_patch_entry_t,,target_address,dword,4,Memory address to patch,,verified
 memory_patch_entry_t,,patch_size,byte,1,Number of bytes to copy to target address,,verified
 memory_patch_entry_t,,reserved,byte,1,Unused padding byte for 6-byte alignment,,verified
+
+# J1939 PGN Handler Table Entry - registered handler for specific PGN
+# Table located at 0x003fa9a2, indexed by j1939_pgn_handler_count at 0x003faa62
+# Size: 6 bytes per entry (observed in j1939DispatchPgnHandler loop increment)
+j1939_pgn_handler_entry_t,0x003fa9a2,pgn_byte_1,byte,1,First PGN byte for matching (compared against msg+6+1),,verified
+j1939_pgn_handler_entry_t,0x003fa9a2,pgn_byte_0,byte,1,Second PGN byte for matching (compared against msg+6+0),,verified
+j1939_pgn_handler_entry_t,0x003fa9a2,handler_func,dword,4,Function pointer to PGN handler callback,,verified
+
+# J1939 Request Message - incoming J1939 diagnostic request structure
+# Passed to j1939DispatchPgnHandler and other request processors
+# Derived from dispatcher code: offset+2=dest_addr, offset+6=pgn_data_ptr
+j1939_request_msg_t,,priority,byte,1,J1939 message priority (0-7),,needs_review
+j1939_request_msg_t,,reserved_01,byte,1,Reserved/padding byte,,needs_review
+j1939_request_msg_t,,dest_address,byte,1,Destination address (0xFF=broadcast),,verified
+j1939_request_msg_t,,source_address,byte,1,Source address of requester,,needs_review
+j1939_request_msg_t,,reserved_04,word,2,Reserved/message flags,,needs_review
+j1939_request_msg_t,,pgn_data_ptr,dword,4,Pointer to PGN data bytes,,verified
+
+# J1939 Acknowledge Message - ACK/NACK response structure
+# Used by sendJ1939AcknowledgeMessage for responding to requests
+j1939_ack_msg_t,,control_byte,byte,1,ACK control byte (0=ACK 1=NACK 2=AccessDenied 3=CannotRespond),,verified
+j1939_ack_msg_t,,group_function,byte,1,Group function value from original request,,needs_review
+j1939_ack_msg_t,,reserved_02,word,2,Reserved bytes 2-3,,needs_review
+j1939_ack_msg_t,,address_acknowledged,byte,1,Address being acknowledged,,needs_review
+j1939_ack_msg_t,,pgn_low,byte,1,Acknowledged PGN low byte,,verified
+j1939_ack_msg_t,,pgn_mid,byte,1,Acknowledged PGN mid byte,,verified
+j1939_ack_msg_t,,pgn_high,byte,1,Acknowledged PGN high byte,,verified
