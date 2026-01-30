@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Jan 29 18:07:51 MST 2026
+// Generated: Thu Jan 29 18:42:40 MST 2026
 
 
 //
@@ -5848,7 +5848,7 @@ void periodicTaskGroup1_sensorProcessing(void)
   func_0x00504130();
   func_0x0050eaa8();
   resetEngineOperatingMode();
-  temperatureSensorProcessing();
+  fuelTimingOilPressureModeController();
   temperatureBasedFuelTrim();
   updateEngineTimingCompensation();
   smoothProtectionParamTransition();
@@ -8069,12 +8069,12 @@ void fuelTimingCompensation(void)
 
 
 //
-// Function: temperatureSensorProcessing @ 0x0000ea00
+// Function: fuelTimingOilPressureModeController @ 0x0000ea00
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void temperatureSensorProcessing(void)
+void fuelTimingOilPressureModeController(void)
 
 {
   uint uVar1;
@@ -20145,7 +20145,7 @@ void j1939DispatchPgnHandler(int param_1)
 void initJ1939ProtocolHandlers(void)
 
 {
-  func_0x00538eb0(temperatureSensorProcessing,j1939DispatchPgnHandler);
+  func_0x00538eb0(fuelTimingOilPressureModeController,j1939DispatchPgnHandler);
   initPgn65261CruiseControlSetupStruct();
   initPgn65259ComponentIdHandler();
   initPgn65262EngineTempHandler();

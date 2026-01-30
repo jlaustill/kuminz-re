@@ -259,7 +259,7 @@ address,name
 0x0000e8cc,initTemperatureTrimCoeff
 0x0000e8dc,fuelTimingRateLimitedBlend
 0x0000e8f0,fuelTimingCompensation
-0x0000ea00,temperatureSensorProcessing
+0x0000ea00,fuelTimingOilPressureModeController
 0x0000fabc,initFuelDemandVariables
 0x0000fb28,restoreEngineOperatingMode
 0x0000fcd0,calculateFuelTimingBlend

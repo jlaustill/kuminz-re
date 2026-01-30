@@ -206,3 +206,25 @@ PROTECTION_EVENT,0x15,EVENT_UNKNOWN_15,Protection event 0x15,1
 PROTECTION_EVENT,0x3f,EVENT_UNKNOWN_3F,Protection event 0x3f,1
 PROTECTION_EVENT,0x43,EVENT_UNKNOWN_43,Protection event 0x43,1
 PROTECTION_EVENT,0x48,EVENT_UNKNOWN_48,Protection event 0x48,1
+
+# Fuel Timing Mode State Machine (_pressure_fuel_adjustment values)
+# Controls fuel timing and oil pressure-based adjustments in temperatureSensorProcessing @ 0x0000ea00
+# Cross-referenced from CM550 fuelTimingOilPressureModeController
+FUEL_TIMING_MODE,0x01,MODE_IDLE,Idle/inactive mode,1
+FUEL_TIMING_MODE,0x02,MODE_PROTECTION_ACTIVE,Protection system active,1
+FUEL_TIMING_MODE,0x0b,MODE_FUEL_RATE_1,Fuel rate calculation mode 1,1
+FUEL_TIMING_MODE,0x0c,MODE_PROTECTION_WITH_LIMIT,Protection with limit source active,1
+FUEL_TIMING_MODE,0x10,MODE_OIL_PRESSURE_TIMING,Oil pressure timing adjustment active,1
+FUEL_TIMING_MODE,0x13,MODE_EXTENDED_PROTECTION,Extended protection mode,1
+FUEL_TIMING_MODE,0x14,MODE_CRANK_INITIAL,Initial cranking mode,1
+FUEL_TIMING_MODE,0x16,MODE_CRANK_START,Crank/start fuel mode,1
+FUEL_TIMING_MODE,0x17,MODE_FUEL_CONTROL_ENABLED,Fuel control system enabled,1
+FUEL_TIMING_MODE,0x18,MODE_FUEL_DEMAND_STATE_4,Fuel demand accumulator state 4,1
+FUEL_TIMING_MODE,0x19,MODE_FUEL_DEMAND_STATE_5,Fuel demand accumulator state 5,1
+FUEL_TIMING_MODE,0x1a,MODE_FUEL_DEMAND_STATE_1,Fuel demand accumulator state 1,1
+FUEL_TIMING_MODE,0x1b,MODE_FUEL_DEMAND_STATE_8,Fuel demand accumulator state 8,1
+FUEL_TIMING_MODE,0x20,MODE_OVERRIDE,Diagnostic override mode,1
+FUEL_TIMING_MODE,0x29,MODE_FUEL_CONTROL_BITS,Fuel control bits active,1
+FUEL_TIMING_MODE,0x2d,MODE_PROTECTION_2,Protection mode variant 2,1
+FUEL_TIMING_MODE,0x31,MODE_EXTENDED_TIMING,Extended timing adjustment mode,1
+FUEL_TIMING_MODE,0x3a,MODE_PROTECTION_3,Protection mode variant 3,1
