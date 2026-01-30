@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Jan 29 12:12:03 MST 2026
+// Generated: Thu Jan 29 17:24:52 MST 2026
 
 
 //
@@ -172,9 +172,9 @@ void loadEepromCalibration(undefined4 param_1,int param_2)
     if (param_2 == 3) {
       uVar4 = 0;
       do {
-        while (sVar2 = func_0x003fc6f4(), sVar2 == 0) {
-          func_0x003fc688();
-          func_0x003fd544();
+        while (sVar2 = eepromCheckStatus(), sVar2 == 0) {
+          eepromWaitCycle();
+          eepromServiceCycle();
         }
         uVar4 = uVar4 + 1;
       } while (uVar4 < 5);
@@ -193,7 +193,7 @@ void loadEepromCalibration(undefined4 param_1,int param_2)
           } while (uVar5 < 400);
           sVar2 = sVar2 + 1;
         } while (sVar2 == 0);
-        func_0x003fd544();
+        eepromServiceCycle();
         uVar4 = uVar4 + 1;
       } while (uVar4 < 0x32);
     }
@@ -220,13 +220,13 @@ void loadEepromCalibration(undefined4 param_1,int param_2)
             do {
               local_38[0] = local_38[0] + *psVar10;
               psVar10 = psVar10 + 1;
-              func_0x003fc688();
+              eepromWaitCycle();
               uVar3 = uVar3 + 1;
               if (psVar9 < psVar10) break;
             } while (uVar3 < 0x200);
           }
-          func_0x003fd544();
-          func_0x003fc6f4();
+          eepromServiceCycle();
+          eepromCheckStatus();
         }
         if (local_38[0] != *puVar7) {
           bVar1 = true;
@@ -264,9 +264,9 @@ void loadEepromCalibration(undefined4 param_1,int param_2)
         eeprom_operation_state = 0x40;
         uVar4 = 0;
         do {
-          while (sVar2 = func_0x003fc6f4(), sVar2 == 0) {
-            func_0x003fc688();
-            func_0x003fd544();
+          while (sVar2 = eepromCheckStatus(), sVar2 == 0) {
+            eepromWaitCycle();
+            eepromServiceCycle();
           }
           uVar4 = uVar4 + 1;
         } while (uVar4 < 100);
@@ -285,16 +285,16 @@ void loadEepromCalibration(undefined4 param_1,int param_2)
         eepromWriteWords(local_38,0x1000052,2);
         eeprom_calibration_version = 0;
         eeprom_operation_state = 0x61;
-        func_0x003fc6f4();
+        eepromCheckStatus();
       }
       local_34[0] = _qadc_a_portqb;
       eepromWriteWords(local_34,0x1000030,4);
       if (param_2 == 3) {
         uVar4 = 0;
         do {
-          while (sVar2 = func_0x003fc6f4(), sVar2 == 0) {
-            func_0x003fc688();
-            func_0x003fd544();
+          while (sVar2 = eepromCheckStatus(), sVar2 == 0) {
+            eepromWaitCycle();
+            eepromServiceCycle();
           }
           uVar4 = uVar4 + 1;
         } while (uVar4 < 100);
@@ -316,7 +316,7 @@ void loadEepromCalibration(undefined4 param_1,int param_2)
               } while (uVar3 < 400);
               sVar2 = sVar2 + 1;
             } while (sVar2 == 0);
-            func_0x003fd544();
+            eepromServiceCycle();
             uVar5 = uVar5 + 1;
           } while (uVar5 < 10);
           uVar4 = uVar4 + 1;
@@ -526,9 +526,9 @@ void eepromWriteWords(undefined2 *param_1,short param_2,uint param_3)
       } while ((qadc_queue_status & 0x80) == 0);
       qadc_queue_status = qadc_queue_status & 0x7f;
       uVar1 = _DAT_00305142 & 1;
-      func_0x003fc688();
-      func_0x003fc6f4();
-      func_0x003fd544();
+      eepromWaitCycle();
+      eepromCheckStatus();
+      eepromServiceCycle();
     } while (uVar1 != 0);
   } while ((uVar3 & 0xffff) != 0);
   return;
@@ -715,9 +715,9 @@ bool flashPollUntilReady(uint param_1,ushort *param_2,uint param_3)
   uVar2 = 0;
   bVar1 = false;
   do {
-    func_0x003fc688();
-    func_0x003fc6f4();
-    func_0x003fd544();
+    eepromWaitCycle();
+    eepromCheckStatus();
+    eepromServiceCycle();
     if (*param_2 == param_1) {
       iVar3 = 1;
     }
@@ -983,7 +983,7 @@ char diagService25_executeFunction(int param_1)
   
   cVar1 = func_0x003fb54c(param_1);
   if (cVar1 == -1) {
-    func_0x003fc77c(local_20,*(int *)(param_1 + 6) + 1,4);
+    eepromReadStatusRegister(local_20,*(int *)(param_1 + 6) + 1,4);
     cVar1 = func_0x003fd298(local_20[0],1);
     if (cVar1 != '\t') {
       func_0x003fd070(param_1,0);
@@ -1175,9 +1175,9 @@ char diagMemoryReadHandler(byte *param_1,uint param_2,uint param_3)
           iVar7 = *(int *)(param_1 + 6);
           *puVar10 = uVar8;
           puVar10 = puVar10 + 1;
-          func_0x003fc77c(puVar10,iVar7 + 1,bVar9);
+          eepromReadStatusRegister(puVar10,iVar7 + 1,bVar9);
           if (param_2 < 0x1000000) {
-            func_0x003fc77c(puVar10 + bVar9,param_2,uVar2);
+            eepromReadStatusRegister(puVar10 + bVar9,param_2,uVar2);
           }
           else {
             eepromReadWords(param_2,puVar10 + bVar9,uVar2);
@@ -1233,8 +1233,8 @@ undefined1 diagService67_memoryReadOffset(int param_1)
   undefined2 local_10 [2];
   undefined4 local_c [2];
   
-  func_0x003fc77c(local_10,*(int *)(param_1 + 6) + 1,2);
-  func_0x003fc77c(local_c,*(int *)(param_1 + 6) + 3,4);
+  eepromReadStatusRegister(local_10,*(int *)(param_1 + 6) + 1,2);
+  eepromReadStatusRegister(local_c,*(int *)(param_1 + 6) + 3,4);
   uVar1 = diagMemoryReadWithBaseOffset(param_1,local_10[0],0,local_c[0]);
   return uVar1;
 }
@@ -1252,7 +1252,7 @@ undefined1 diagService74_memoryRead(int param_1)
   undefined4 local_10;
   uint local_c;
   
-  func_0x003fc77c(&local_10,*(int *)(param_1 + 6) + 1,4);
+  eepromReadStatusRegister(&local_10,*(int *)(param_1 + 6) + 1,4);
   local_c = (uint)*(byte *)(*(int *)(param_1 + 6) + 5);
   uVar1 = diagMemoryReadHandler(param_1,local_10,local_c);
   return uVar1;
@@ -1271,8 +1271,8 @@ undefined1 diagService76_memoryReadExt(int param_1)
   undefined4 local_10;
   undefined4 local_c [2];
   
-  func_0x003fc77c(&local_10,*(int *)(param_1 + 6) + 1,4);
-  func_0x003fc77c(local_c,*(int *)(param_1 + 6) + 5,4);
+  eepromReadStatusRegister(&local_10,*(int *)(param_1 + 6) + 1,4);
+  eepromReadStatusRegister(local_c,*(int *)(param_1 + 6) + 5,4);
   uVar1 = diagMemoryReadHandler(param_1,local_10,local_c[0]);
   return uVar1;
 }
@@ -1658,7 +1658,7 @@ void systemInitialization(void)
       func_0x003fc874();
       initHardwareConfig();
     }
-    func_0x003fd544();
+    eepromServiceCycle();
     func_0x003fab3c();
     processPeriodicTasks();
     bootStateMachine();
@@ -2435,8 +2435,8 @@ void beginEepromCalibrationWrite(void)
   eeprom_calibration_version = 1;
   diagSendResponseCode(0x78,0x74);
   while (_fault_clear_counter == 3) {
-    func_0x003fc688();
-    func_0x003fd544();
+    eepromWaitCycle();
+    eepromServiceCycle();
   }
   eeprom_operation_state = 0x78;
   eeprom_checksum_status = 0;
@@ -2468,16 +2468,16 @@ void updateEepromMagicAndReload(void)
   if (_eeprom_magic == 0x1d0a) {
     diagSendResponseCode(0x78,0x74);
     while (_fault_clear_counter == 3) {
-      func_0x003fc688();
-      func_0x003fd544();
+      eepromWaitCycle();
+      eepromServiceCycle();
     }
     eeprom_checksum_status = 0;
     local_10[0] = 0x2b16;
     eepromWriteWords(local_10,0x1000000,2);
     while ((uVar2 < 400 || (_eeprom_magic != local_10[0]))) {
-      while (sVar1 = func_0x003fc6f4(), sVar1 == 0) {
-        func_0x003fc688();
-        func_0x003fd544();
+      while (sVar1 = eepromCheckStatus(), sVar1 == 0) {
+        eepromWaitCycle();
+        eepromServiceCycle();
       }
       eepromReadWords(0x1000000,&eeprom_magic,2);
       uVar2 = uVar2 + 1;
@@ -20072,17 +20072,17 @@ void initJ1939ProtocolHandlers(void)
 
 {
   func_0x00538eb0(temperatureSensorProcessing,j1939DispatchPgnHandler);
-  initPgn65261EngineHoursStruct();
+  initPgn65261CruiseControlSetupStruct();
   initPgn65259ComponentIdHandler();
   initPgn65262EngineTempHandler();
   initPgn65242SoftwareIdHandler();
   initPgn65248VehicleDistanceHandler();
   initPgn65260VehicleIdHandler();
-  j1939_register_pgn_handler(0xfeed,j1939_handle_pgn_65261_engine_hours);
+  j1939_register_pgn_handler(0xfeed,j1939_handle_pgn_65261_cruise_control_setup);
   j1939_register_pgn_handler(0xfeef,j1939_handle_pgn_65263_fluid_level_pressure);
   j1939_register_pgn_handler(0xfef0,j1939_handle_pgn_65264_pto);
   j1939_register_pgn_handler(0xfef5,j1939_handle_pgn_65269_ambient_conditions);
-  j1939_register_pgn_handler(0xfef6,j1939_handle_pgn_65270_fuel_economy);
+  j1939_register_pgn_handler(0xfef6,j1939_handle_pgn_65270_inlet_exhaust_conditions);
   j1939_register_pgn_handler(0xfef7,j1939_handle_pgn_65271_vehicle_electrical);
   j1939_register_pgn_handler(0xffe0,j1939_handle_pgn_65504_proprietary_a);
   initPgn65226Dm1Handler();
@@ -20766,12 +20766,12 @@ void initPgn65265CruiseSpeedHandler(void)
 
 
 //
-// Function: j1939_handle_pgn_65261_engine_hours @ 0x000246fc
+// Function: j1939_handle_pgn_65261_cruise_control_setup @ 0x000246fc
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void j1939_handle_pgn_65261_engine_hours(void)
+void j1939_handle_pgn_65261_cruise_control_setup(void)
 
 {
   if (((_system_capability_flags & 0x80) == 0) || (&DAT_00009e00 < (undefined *)(uint)_DAT_0040a27e)
@@ -20805,12 +20805,12 @@ LAB_000247e0:
 
 
 //
-// Function: initPgn65261EngineHoursStruct @ 0x00024800
+// Function: initPgn65261CruiseControlSetupStruct @ 0x00024800
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void initPgn65261EngineHoursStruct(void)
+void initPgn65261CruiseControlSetupStruct(void)
 
 {
   _DAT_003faafc = CONCAT13(((byte)_DAT_003fd83e & 7) << 2,0xfeed00);
@@ -21936,12 +21936,12 @@ void j1939SendDiagnosticStatusMessage(void)
 
 
 //
-// Function: j1939_handle_pgn_65270_fuel_economy @ 0x000264d8
+// Function: j1939_handle_pgn_65270_inlet_exhaust_conditions @ 0x000264d8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void j1939_handle_pgn_65270_fuel_economy(void)
+void j1939_handle_pgn_65270_inlet_exhaust_conditions(void)
 
 {
   uint extraout_r4;
@@ -49398,4 +49398,64 @@ void calibrationTableLookup2D(void)
 
 
 
-// Export complete - 1241 functions processed
+//
+// Function: eepromWaitCycle @ 0x003fc688
+//
+
+/* WARNING: Control flow encountered bad instruction data */
+
+void eepromWaitCycle(void)
+
+{
+                    /* WARNING: Bad instruction - Truncating control flow here */
+  halt_baddata();
+}
+
+
+
+//
+// Function: eepromCheckStatus @ 0x003fc6f4
+//
+
+/* WARNING: Control flow encountered bad instruction data */
+
+void eepromCheckStatus(void)
+
+{
+                    /* WARNING: Bad instruction - Truncating control flow here */
+  halt_baddata();
+}
+
+
+
+//
+// Function: eepromReadStatusRegister @ 0x003fc77c
+//
+
+/* WARNING: Control flow encountered bad instruction data */
+
+void eepromReadStatusRegister(void)
+
+{
+                    /* WARNING: Bad instruction - Truncating control flow here */
+  halt_baddata();
+}
+
+
+
+//
+// Function: eepromServiceCycle @ 0x003fd544
+//
+
+/* WARNING: Control flow encountered bad instruction data */
+
+void eepromServiceCycle(void)
+
+{
+                    /* WARNING: Bad instruction - Truncating control flow here */
+  halt_baddata();
+}
+
+
+
+// Export complete - 1245 functions processed

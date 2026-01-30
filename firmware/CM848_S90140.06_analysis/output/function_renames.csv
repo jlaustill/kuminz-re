@@ -543,8 +543,8 @@ address,name
 0x00024028,j1939BuildEngineStatusByte
 0x00024178,j1939_handle_pgn_65265_cruise_vehicle_speed
 0x00024664,initPgn65265CruiseSpeedHandler
-0x000246fc,j1939_handle_pgn_65261_engine_hours
-0x00024800,initPgn65261EngineHoursStruct
+0x000246fc,j1939_handle_pgn_65261_cruise_control_setup
+0x00024800,initPgn65261CruiseControlSetupStruct
 0x00024870,j1939_handle_pgn_65259_component_id
 0x00024940,initPgn65259ComponentIdHandler
 0x000249c4,sendJ1939ResponseFrame
@@ -573,7 +573,7 @@ address,name
 0x00026238,j1939BuildVehicleOperatingStatus
 0x000263a4,initJ1939SpeedControlMessage
 0x0002641c,j1939SendDiagnosticStatusMessage
-0x000264d8,j1939_handle_pgn_65270_fuel_economy
+0x000264d8,j1939_handle_pgn_65270_inlet_exhaust_conditions
 0x00026650,j1939BuildProtocolModeStatus
 0x00026884,j1939_handle_pgn_65242_software_id
 0x000268ac,initPgn65242SoftwareIdHandler
@@ -1240,3 +1240,7 @@ address,name
 0x00057524,calibrationTableLookup1D
 0x0005759c,saveRegistersToStack
 0x000575a0,calibrationTableLookup2D
+0x003fc688,eepromWaitCycle
+0x003fc6f4,eepromCheckStatus
+0x003fc77c,eepromReadStatusRegister
+0x003fd544,eepromServiceCycle

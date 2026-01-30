@@ -1,0 +1,38 @@
+# Known Responding PGNs - 2004.5 Dodge Cummins CM848
+# ECM Source Address: 0x00
+# Updated: 2026-01-29 from full PGN scan
+# Corrected: 2026-01-29 against J1939-71 standard byte layouts
+
+# Format: PGN (hex) | PGN (dec) | Standard Name | Request | Example Response | Decoded
+
+# Multi-packet (via Transport Protocol)
+FEEC | 65260 | VI - Vehicle Identification     | 18EAFF00#ECFE00 | TP response: 3D3MU48C94G228471
+
+# Single-frame responses
+F003 | 61443 | EEC2 - Accelerator Pedal        | 18EAFF00#03F000 | 0CF00300#F1 00 00 FF FF FF FF FF | Throttle=0%, Switches=0xF1
+FECB | 65227 | DM2 - Previously Active DTCs    | 18EAFF00#CBFE00 | 18FECB00#00 FF FF FF FF FF FF FF | No previous DTCs
+FECE | 65230 | DM5 - Diagnostic Readiness      | 18EAFF00#CEFE00 | 18FECE00#02 00 00 00 00 00 00 10 | Readiness status
+FED2 | 65234 | DM11 - Clear Active DTCs        | 18EAFF00#D2FE00 | 18FED200#00 00 FF FF FF FF FF FF | Clear acknowledge
+FEE0 | 65248 | VD - Vehicle Distance           | 18EAFF00#E0FE00 | 18FEE000#00 00 00 00 12 B1 00 00 | Trip=0, Total=226.65km
+FEED | 65261 | CCSS - Cruise Control Setup     | 18EAFF00#EDFE00 | 18FEED00#AA 88 30 FF FF FF FF FF | Max=170, HiLim=136, LoLim=48 km/h
+FEEE | 65262 | ET1 - Engine Temperature 1      | 18EAFF00#EEFE00 | 18FEEE00#28 FE E8 1F FF FF FF FF | Coolant=0C, OilTemp from bytes3-4
+FEEF | 65263 | EFL/P - Fluid Level/Pressure    | 18EAFF00#EFFE00 | 18FEEF00#FF FF 00 0A FF FF 00 FF | OilPressure=40kPa (byte4)
+FEF0 | 65264 | PTO - Power Takeoff             | 18EAFF00#F0FE00 | 18FEF000#FF FF FF 00 00 CC CC FF | PTO status
+FEF1 | 65265 | CCVS - Cruise/Vehicle Speed     | 18EAFF00#F1FE00 | 18FEF100#FF 00 00 00 00 00 00 C0 | Speed bytes 2-3
+FEF5 | 65269 | AMB - Ambient Conditions        | 18EAFF00#F5FE00 | 18FEF500#B1 FF FF FF FF FF FF FF | BaroPressure=88.5kPa
+FEF6 | 65270 | IC1 - Inlet/Exhaust Cond 1      | 18EAFF00#F6FE00 | 18FEF600#FF 2E 2D FF FF FF FF FF | IntakePress=92kPa, IntakeTemp=5C
+FEF7 | 65271 | VEP - Vehicle Electrical Power  | 18EAFF00#F7FE00 | 18FEF700#FF FF FF FF DB 01 FF FF | Battery=23.75V (bytes5-6)
+FFE0 | 65504 | Proprietary A                   | 18EAFF00#E0FF00 | 18FFE000#00 00 00 00 00 00 00 00 | Cummins proprietary
+
+# Not responding (tested):
+# FEE3 | 65251 | Engine Config (different from DM5)
+# FEE5 | 65253 | Engine Hours (hours tracked via different mechanism)
+# FEFC | 65276 | Fuel Economy (not supported on this ECU)
+# FEF2 | 65266 | Fuel Consumption (not supported)
+# F004 | 61444 | EEC1 - Engine Speed/Torque (responds on F003 EEC2 instead)
+
+# Notes:
+# - Engine RPM is NOT available via J1939 request on this ECU
+# - EEC1 (61444) which normally contains RPM does not respond
+# - Vehicle Hours may be in EEPROM rather than broadcast via J1939
+# - Fuel economy PGNs (65266, 65276) not implemented on CM848
