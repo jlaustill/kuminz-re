@@ -228,3 +228,77 @@ FUEL_TIMING_MODE,0x29,MODE_FUEL_CONTROL_BITS,Fuel control bits active,1
 FUEL_TIMING_MODE,0x2d,MODE_PROTECTION_2,Protection mode variant 2,1
 FUEL_TIMING_MODE,0x31,MODE_EXTENDED_TIMING,Extended timing adjustment mode,1
 FUEL_TIMING_MODE,0x3a,MODE_PROTECTION_3,Protection mode variant 3,1
+
+# Engine RPM Limits - Ported from CM550 (generic across ECU families)
+ENGINE_RPM_LIMITS,125,CRANKING_RPM_LIMIT,Cold crank sync determination limit,2
+ENGINE_RPM_LIMITS,300,RUNNING_RPM_THRESHOLD,Engine considered running threshold,2
+ENGINE_RPM_LIMITS,700,PTO_MIN_RPM,PTO minimum RPM setpoint,2
+ENGINE_RPM_LIMITS,3000,PTO_MAX_RPM,PTO maximum RPM setpoint,2
+ENGINE_RPM_LIMITS,3000,ASG_MAX_RPM,ASG maximum allowed speed,2
+
+# Derate Status Bits - Ported from CM550 (Insite status reporting)
+DERATE_STATUS_BITS,0x80,DERATE_ACTIVE,Derate condition is active,1
+DERATE_STATUS_BITS,0x40,DERATE_BIT6,Derate status bit 6 - maps to INSITE bit 0x40,1
+DERATE_STATUS_BITS,0x20,DERATE_BIT5,Derate status bit 5 - maps to INSITE bit 0x20,1
+DERATE_STATUS_BITS,0x08,DERATE_STATUS_BIT3,Derate status bit 3 - maps to INSITE status 0x20,1
+DERATE_STATUS_BITS,0x04,DERATE_STATUS_BIT2,Derate status bit 2 - maps to INSITE status 0x40,1
+
+# Diagnostic Response Codes - Ported from CM550 (common diagnostic protocol)
+DIAG_RESPONSE_CODE,0,SUCCESS,Operation successful,1
+DIAG_RESPONSE_CODE,2,DIAG_INVALID_LENGTH,Invalid message length,1
+DIAG_RESPONSE_CODE,3,SECURITY_FAILED,Security check failed,1
+DIAG_RESPONSE_CODE,4,BUFFER_OVERFLOW,Buffer overflow or unsupported,1
+DIAG_RESPONSE_CODE,8,ADDR_VALIDATION_FAIL,Address validation failed,1
+DIAG_RESPONSE_CODE,9,INVALID_ADDR_RANGE,Invalid address range,1
+DIAG_RESPONSE_CODE,10,INVALID_ADDR_ALT,Invalid address range (alternate),1
+DIAG_RESPONSE_CODE,0x14,CHECKSUM_MISMATCH,Checksum mismatch,1
+DIAG_RESPONSE_CODE,0x18,UNKNOWN_SUBFUNC,Unknown sub-function - default error,1
+
+# Fuel Arbitrator Modes - Ported from CM550 (diagnostic fuel control)
+FUEL_ARB_MODE,0,RESET_MODE,Reset/clear arbitrator state,1
+FUEL_ARB_MODE,1,RPM_TARGET_MODE,Set RPM target mode,1
+FUEL_ARB_MODE,2,THROTTLE_PCT_MODE,Throttle percentage control mode,1
+FUEL_ARB_MODE,3,FUEL_LIMIT_MODE,Fuel limit control mode,1
+
+# Memory Access Flags - Ported from CM550 (memory region protection)
+MEMORY_ACCESS_FLAG,0x00,DIRECT_ACCESS,READ: Allowed | WRITE: Direct access no security check,1
+MEMORY_ACCESS_FLAG,0x03,SECURITY_REQUIRED,READ: Allowed | WRITE: Requires security check or bypass,1
+MEMORY_ACCESS_FLAG,0x04,WRITE_DENIED,READ: Allowed | WRITE: Denied - returns error 0x0A,1
+MEMORY_ACCESS_FLAG,0x05,LOGGING_MODE,READ: Allowed | WRITE: Requires system_logging_state check,1
+MEMORY_ACCESS_FLAG,0x09,RANGE_INVALID,READ: Denied | WRITE: Error - address not in validation table,1
+MEMORY_ACCESS_FLAG,0x0A,ACCESS_DENIED,READ: Denied | WRITE: Error - explicitly blocked region,1
+
+# Diagnostic Enable Flags - Ported from CM550 (service activation)
+DIAG_ENABLE_FLAGS,0x01,CORE_SERVICES,Enable core diagnostic services (secured memory ops),1
+DIAG_ENABLE_FLAGS,0x02,INSITE_LIVE,Enable Insite live data monitoring,1
+DIAG_ENABLE_FLAGS,0x04,EXTENDED_SERVICES,Enable extended diagnostic services,1
+DIAG_ENABLE_FLAGS,0x08,SPECIAL_MODE,Special diagnostic mode enabled,1
+
+# INSITE Parameter Command Codes - Ported from CM550 (common subset)
+# DTC/Diagnostic codes (0x02-0x03)
+INSITE_PARAM_CODE,0x02,DTC_STATUS_FLAGS,DTC search result status flags,1
+INSITE_PARAM_CODE,0x03,DERATE_STATUS,Derate status byte bit flags,1
+# Engine protection status (0x47-0x53)
+INSITE_PARAM_CODE,0x47,HIGH_RPM_PROTECTION_STATUS,High RPM protection status flags,1
+INSITE_PARAM_CODE,0x4A,BOOST_PRESSURE_TARGET,Boost pressure target pointer (scaled >>7),1
+INSITE_PARAM_CODE,0x53,DIAGNOSTIC_FUEL_MODE_FLAG,Diagnostic fuel control mode flag (0x80 if mode==10),1
+# Single-byte scaled values (0x54-0x58)
+INSITE_PARAM_CODE,0x54,THROTTLE_POSITION,Throttle position value (scaled >>7),1
+INSITE_PARAM_CODE,0x55,INSITE_STATUS_BYTE,Combined status byte with sensor/derate flags,1
+INSITE_PARAM_CODE,0x56,BOOST_PRESSURE_BASE,Target boost pressure base (scaled >>7),1
+INSITE_PARAM_CODE,0x57,FUEL_TIMING_LIMIT,Fuel timing transition limit (scaled >>7),1
+INSITE_PARAM_CODE,0x58,FUEL_TIMING_DISPLAY,INSITE fuel timing display (scaled >>7),1
+# Additional values (0x59-0x79)
+INSITE_PARAM_CODE,0x59,OIL_PRESSURE_STATUS,Oil pressure protection status byte,1
+INSITE_PARAM_CODE,0x5B,ACTIVE_DERATE_VALUE,Active derate value (scaled *250/400),1
+INSITE_PARAM_CODE,0x64,PARAM_DISPLAY_VALUE,INSITE parameter display value (scaled >>6),1
+INSITE_PARAM_CODE,0x66,DIAGNOSTIC_SENSOR,Diagnostic sensor reading (scaled >>4 max 0xFF),1
+INSITE_PARAM_CODE,0x69,INTAKE_MANIFOLD_TEMP,Intake manifold temp (offset 0x1900 scaled >>7),1
+INSITE_PARAM_CODE,0x6C,DIAGNOSTIC_READING,INSITE diagnostic reading (scaled >>3),1
+INSITE_PARAM_CODE,0x79,RETARDER_MODE_STATUS,Retarder mode threshold status,1
+# Special response builders (0xC1-0xF3)
+INSITE_PARAM_CODE,0xC1,ACTIVE_FAULT_LIST,Active fault list builder,1
+INSITE_PARAM_CODE,0xC2,FAULT_DETAIL,Fault detail builder,1
+INSITE_PARAM_CODE,0xEA,ECU_ID_RESPONSE,ECU ID response builder,1
+INSITE_PARAM_CODE,0xED,CAPACITY_RESPONSE,Capacity response builder,1
+INSITE_PARAM_CODE,0xF3,VERSION_INFO,Version info builder,1
