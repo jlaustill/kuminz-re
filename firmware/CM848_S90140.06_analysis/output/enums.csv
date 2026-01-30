@@ -489,3 +489,168 @@ CAN_BUFFER_OFFSETS,0x39,PARAM_BYTE_3,Third parameter byte offset,1
 INTERPOLATION_FACTORS,3,SCALE_FACTOR,Base interpolation scaling,1
 INTERPOLATION_FACTORS,8,SHIFT_BITS,Bit shift amount for scaling,1
 INTERPOLATION_FACTORS,256,WORD_MULTIPLIER,Word-size multiplication factor,2
+
+# ============================================================================
+# Fuel/Protection/Sensor Enums - Ported from CM550
+# ============================================================================
+
+# J1939 Cruise Control Enable Flags
+J1939_CRUISE_CONTROL_ENABLE,1,CRUISE_RECEIVE_ENABLE,CCVS message reception filter,1
+J1939_CRUISE_CONTROL_ENABLE,2,CRUISE_MESSAGE_ENABLE,Enable cruise control/vehicle speed message processing,1
+J1939_CRUISE_CONTROL_ENABLE,3,SPEED_CONTROL_STATUS,Speed control status (1=SPEED_CONTROL 0=NORMAL),1
+J1939_CRUISE_CONTROL_ENABLE,4,SPEED_BRAKE_INTERACTION,Enable speed control/engine braking interaction,1
+
+# J1939 Throttle Enable Flags
+J1939_THROTTLE_ENABLE,1,TSC1_RECEIVE_ENABLE,TSC1 message reception enable,1
+J1939_THROTTLE_ENABLE,2,J1939_MESSAGE_FLAGS,J1939 message enable flags table,1
+J1939_THROTTLE_ENABLE,3,ASG_THROTTLE_COEFF_1,ASG throttle mode compensation filter coef 1,1
+J1939_THROTTLE_ENABLE,4,ASG_THROTTLE_COEFF_2,ASG throttle mode compensation filter coef 2,1
+J1939_THROTTLE_ENABLE,5,ASG_THROTTLE_COEFF_3,ASG throttle mode compensation filter coef 3,1
+
+# J1939 Diagnostic Protocol Modes
+J1939_DIAGNOSTIC_PROTOCOL,1,CALTERM_COMMUNICATION,CalTerm parameter read/write via J1939,1
+J1939_DIAGNOSTIC_PROTOCOL,2,INSITE_COMMUNICATION,Insite live data monitoring via J1939,1
+J1939_DIAGNOSTIC_PROTOCOL,3,DIAG_MESSAGE_DISPATCHER,Routes diagnostic requests by message type,1
+J1939_DIAGNOSTIC_PROTOCOL,4,PARAM_REQUEST_HANDLER,Processes EEPROM parameter read requests,1
+J1939_DIAGNOSTIC_PROTOCOL,5,PARAM_RESPONSE_BUILDER,Formats parameter values for J1939 response,1
+
+# Insite Command Codes
+INSITE_CMD,0x00,PARAM_STANDARD,Standard parameter read (0x00-0x7F) - response length 2,1
+INSITE_CMD,0x80,PARAM_EXTENDED,Extended parameter read (0x80-0xBF) - response length 3,1
+INSITE_CMD,0xC1,ACTIVE_FAULT_LIST,Active DTC list builder,1
+INSITE_CMD,0xC2,FAULT_DETAIL,Detailed fault information builder,1
+INSITE_CMD,0xC3,PID_DTC_REQUEST,PID/DTC handler request,1
+INSITE_CMD,0xC4,PID_DTC_RESPONSE,PID/DTC response - response length 4 or 7,1
+INSITE_CMD,0xEA,CAPACITY_INFO,Capacity response builder - 24 bytes,1
+INSITE_CMD,0xED,ECU_ID,ECU identification builder,1
+INSITE_CMD,0xF3,VERSION_INFO,Version info builder - 31 bytes,1
+
+# Insite Status Output Bits - maps internal status to Insite display
+INSITE_STATUS_OUTPUT,0x80,PROTECTION_ENABLED,Protection system enable flag is set,1
+INSITE_STATUS_OUTPUT,0x40,DERATE_BIT2_SET,Derate status byte bit 2 is set,1
+INSITE_STATUS_OUTPUT,0x20,DERATE_BIT3_SET,Derate status byte bit 3 is set,1
+INSITE_STATUS_OUTPUT,0x10,SENSOR_BIT1_SET,Sensor status register bit 1 is set,1
+INSITE_STATUS_OUTPUT,0x08,SENSOR_BIT0_SET,Sensor status register bit 0 is set,1
+INSITE_STATUS_OUTPUT,0x04,SENSOR_BIT3_SET,Sensor status register bit 3 is set,1
+INSITE_STATUS_OUTPUT,0x02,SENSOR_BIT2_SET,Sensor status register bit 2 is set,1
+INSITE_STATUS_OUTPUT,0x01,SENSOR_BIT4_SET,Sensor status register bit 4 is set,1
+
+# Memory Operation Result Codes
+MEMORY_OP_RESULT,0x00,SUCCESS,Memory operation completed successfully,1
+MEMORY_OP_RESULT,0x02,INVALID_LENGTH,Message length mismatch,1
+MEMORY_OP_RESULT,0x03,AUTH_FAILED,Security check returned non-zero,1
+MEMORY_OP_RESULT,0x07,LOGGING_STATE_ERROR,EEPROM write blocked - logging state check failed,1
+MEMORY_OP_RESULT,0x0A,WRITE_DENIED,ROM/Flash region - write not permitted,1
+MEMORY_OP_RESULT,0x0B,BUFFER_WRITE_FAIL,Circular buffer write error during EEPROM logging,1
+MEMORY_OP_RESULT,0x1A,AUTH_REQUIRED_MISSING,EEPROM write requires auth but not provided,1
+
+# Security Result Codes
+SECURITY_RESULT,0x00,AUTH_SUCCESS,Security check passed - operation authorized,1
+SECURITY_RESULT,0x02,SECURITY_INVALID_LENGTH,Invalid message length for service,1
+SECURITY_RESULT,0x03,AUTH_FAILED,Security check failed - access denied,1
+SECURITY_RESULT,0x07,CONDITION_NOT_MET,Pre-condition not satisfied,1
+SECURITY_RESULT,0x0A,INVALID_ADDR,Invalid memory address range,1
+SECURITY_RESULT,0x0B,BUFFER_WRITE_FAIL,Circular buffer write failed,1
+SECURITY_RESULT,0xFF,PROCEED_TO_HANDLER,Proceed to handler (auth passed or not required),1
+
+# Security Bypass Values
+SECURITY_BYPASS,0xB522,BYPASS_ENABLED,Magic value to bypass security checks,2
+SECURITY_BYPASS,0x00FF,LEGACY_BYPASS,Legacy security bypass value,1
+SECURITY_BYPASS_FLAG,0xFF,BYPASS_ENABLED,Security checks completely bypassed,1
+SECURITY_BYPASS_FLAG,0x00,SECURITY_ACTIVE,Normal security - checks enforced,1
+
+# Sensor Status Bits
+SENSOR_STATUS_BITS,0x10,SENSOR_STATUS_BIT4,Sensor status bit 4 - maps to INSITE output 0x01,1
+SENSOR_STATUS_BITS,0x08,SENSOR_STATUS_BIT3,Sensor status bit 3 - maps to INSITE output 0x04,1
+SENSOR_STATUS_BITS,0x04,SENSOR_STATUS_BIT2,Sensor status bit 2 - maps to INSITE output 0x02,1
+SENSOR_STATUS_BITS,0x02,SENSOR_STATUS_BIT1,Sensor status bit 1 - maps to INSITE output 0x10,1
+SENSOR_STATUS_BITS,0x01,SENSOR_STATUS_BIT0,Sensor status bit 0 - maps to INSITE output 0x08,1
+
+# Sensor History State Machine
+SENSOR_HISTORY_STATE,0,SENSOR_IDLE,Initial monitoring state,2
+SENSOR_HISTORY_STATE,1,SENSOR_ACTIVE,Sensor actively being monitored,2
+SENSOR_HISTORY_STATE,2,SENSOR_FAULT_DETECTED,Fault condition detected,2
+SENSOR_HISTORY_STATE,3,RECOVERY,Recovery countdown state,2
+
+# Engine Sync State
+SYNC_STATE,0,NO_SYNC,No synchronization established,1
+SYNC_STATE,1,HAVE_SYNC,Synchronization established and maintained,1
+SYNC_STATE,2,LOST_SYNC,Synchronization was established but lost,1
+
+# High RPM Protection State Machine
+HIGH_RPM_PROTECTION_STATE,0,MONITORING,Initial state - monitoring conditions for entry,2
+HIGH_RPM_PROTECTION_STATE,1,TIMER_COUNTING,Timer countdown active - conditions met,2
+HIGH_RPM_PROTECTION_STATE,2,RPM_PROTECTION_WARNING_ACTIVE,Warning threshold reached - protection active,2
+HIGH_RPM_PROTECTION_STATE,3,FAULT_TRIGGERED,Fault triggered - derate change detected,2
+HIGH_RPM_PROTECTION_STATE,4,SHUTDOWN_PENDING,Shutdown pending - timer expired waiting for idle,2
+
+# High RPM Protection Flags
+HIGH_RPM_PROTECTION_FLAGS,0x80,TIMER_ACTIVE,High RPM protection timer is running,1
+HIGH_RPM_PROTECTION_FLAGS,0x08,HIGH_RPM_DIAG_FLAG,Diagnostic system flags bit 1 is set,1
+HIGH_RPM_PROTECTION_FLAGS,0x04,FAULT_WITH_DIAG,High RPM fault + diagnostic flag bit 2,1
+HIGH_RPM_PROTECTION_FLAGS,0x02,SHUTDOWN_TIMER_ZERO,Shutdown active and timer expired,1
+HIGH_RPM_PROTECTION_FLAGS,0x01,HIGH_RPM_WARNING_ACTIVE,High RPM protection warning flag set,1
+
+# Fuel Demand Source IDs
+FUEL_DEMAND_SOURCE,0,TABLE_BLEND_CALC,Table interpolation blend calculation result,2
+FUEL_DEMAND_SOURCE,1,RPM_BASED_LIMIT,RPM-based fuel demand limit,2
+FUEL_DEMAND_SOURCE,2,BLEND_PARAM_FALLBACK,Blend parameter 2 fallback value,2
+FUEL_DEMAND_SOURCE,3,HIGH_RPM_FUEL_LIMIT,High RPM fuel limit,2
+FUEL_DEMAND_SOURCE,4,FUEL_LIMIT_FLOOR,Fuel limit floor value,2
+FUEL_DEMAND_SOURCE,5,ENGINE_MODE_TRANSITION,Engine mode transition timing,2
+
+# Fuel Demand Limit Sources
+FUEL_DEMAND_LIMIT,0,NO_LIMIT_ACTIVE,No fuel limit active / cleared state,2
+FUEL_DEMAND_LIMIT,1,OVERRIDE_STATE_ACTIVE,Override state active from fuel_demand_override_state,2
+FUEL_DEMAND_LIMIT,5,PROTECTION_OVERRIDE,Protection/override state - init and fault recovery,2
+
+# Fuel Arbitrator Flags
+FUEL_ARB_FLAGS,0x04,THROTTLE_OVERRIDE,Override throttle control when set,1
+FUEL_ARB_FLAGS,0x08,SPEED_LIMIT_ACTIVE,Activate speed limiter when set,1
+FUEL_ARB_FLAGS,0x10,FUEL_LIMIT_ACTIVE,Activate fuel limiter when set,1
+
+# Shutdown Selector Sources
+SHUTDOWN_SELECTOR_SOURCE,13,FUEL_DEMAND_MODE_OVERRIDE,Fuel demand mode selector override,2
+SHUTDOWN_SELECTOR_SOURCE,15,SHUTDOWN_PROTECTION_LIMIT,Shutdown protection fuel limit,2
+SHUTDOWN_SELECTOR_SOURCE,16,DIAGNOSTIC_MODE_BUFFER,Diagnostic mode buffer limit,2
+SHUTDOWN_SELECTOR_SOURCE,17,FUEL_LIMIT_SHUTDOWN,Fuel limit from shutdown calc,2
+SHUTDOWN_SELECTOR_SOURCE,19,CALCULATED_FUEL_TIMING,Calculated fuel timing value,2
+SHUTDOWN_SELECTOR_SOURCE,20,FUEL_ARBITRATOR_DIAG,Fuel arbitrator diagnostic mode,2
+SHUTDOWN_SELECTOR_SOURCE,21,SHUTDOWN_LIMIT_SELECTOR,Shutdown limit selector value,2
+SHUTDOWN_SELECTOR_SOURCE,28,SHUTDOWN_MINIMUM_INIT,Shutdown minimum init value,2
+SHUTDOWN_SELECTOR_SOURCE,29,PROTECTION_SHUTDOWN_LIMIT,Protection shutdown fuel limit,2
+SHUTDOWN_SELECTOR_SOURCE,34,OIL_PRESSURE_PROTECTION,Oil pressure protection limit,2
+
+# Retarder Mode State Machine
+RETARDER_MODE_STATE,0,RETARDER_DISABLED,Retarder control disabled,1
+RETARDER_MODE_STATE,1,RETARDER_SPEED_SYNC,Speed synchronization mode,1
+RETARDER_MODE_STATE,2,RETARDER_LOAD_BASED,Load-based retard mode,1
+RETARDER_MODE_STATE,3,RETARDER_PROPORTIONAL,Proportional control mode,1
+
+# I/O Control State
+IO_CONTROL_STATE,0,OFF_INACTIVE,Output off/inactive - waiting for condition,1
+IO_CONTROL_STATE,1,TRANSITIONING,Transition state - checking conditions,1
+IO_CONTROL_STATE,2,ON_ACTIVE,Output on/active - condition met,1
+
+# Output Control Timer State
+OUTPUT_CONTROL_TIMER_STATE,0,OUTPUT_TIMER_IDLE,Output timer idle state,1
+OUTPUT_CONTROL_TIMER_STATE,1,OUTPUT_TIMER_STATE_1,Output timer state 1,1
+OUTPUT_CONTROL_TIMER_STATE,2,OUTPUT_TIMER_STATE_2,Output timer state 2,1
+OUTPUT_CONTROL_TIMER_STATE,3,OUTPUT_TIMER_STATE_3,Output timer state 3,1
+OUTPUT_CONTROL_TIMER_STATE,4,OUTPUT_TIMER_STATE_4,Output timer state 4,1
+OUTPUT_CONTROL_TIMER_STATE,5,OUTPUT_TIMER_STATE_5,Output timer state 5,1
+
+# Output Control Timing State
+OUTPUT_CONTROL_TIMING_STATE,0x01,TIMING_MODE_A,PWM output timing mode A,1
+OUTPUT_CONTROL_TIMING_STATE,0x02,TIMING_MODE_B,PWM output timing mode B,1
+
+# Proprietary Diagnostic Status
+PROP_DIAG_STATUS,0xF0,STATUS_NORMAL,Normal operation - load below threshold,1
+PROP_DIAG_STATUS,0xF1,PROP_DIAG_STATUS_F1,Status F1 - specific condition,1
+PROP_DIAG_STATUS,0xF4,STATUS_LOAD_HIGH,Load above threshold,1
+PROP_DIAG_STATUS,0xF8,STATUS_FAULT_ACTIVE,Critical fault active,1
+PROP_DIAG_STATUS,0x01,STATUS_BIT0_LOAD_INACTIVE,Bit 0 set when load calculation inactive,1
+
+# Parameter Validation Limits
+PARAM_VALIDATION,32000,SAFETY_LIMIT,Maximum allowed parameter value,2
+PARAM_VALIDATION,65535,BLOCK_LIMIT,Block validation limit,2
