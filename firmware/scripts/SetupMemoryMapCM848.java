@@ -18,9 +18,11 @@ import ghidra.program.model.mem.MemoryBlock;
 public class SetupMemoryMapCM848 extends GhidraScript {
 
     // CM848 PowerPC Memory Map
-    // Note: CM848 has continuous RAM (no extended region like CM550)
+    // Bank 1 (main ROM) is loaded during initial import at 0x00000000
+    // Bank 2 (extended flash) contains utility functions called from main ROM
+    private static final long FLASH2_BASE = 0x500000L;   // 245 KB extended flash (utility functions)
     private static final long RAM_BASE = 0x3FA000L;      // 280 KB RAM
-    private static final long EEPROM_BASE = 0x1000000L;  // 8 KB EEPROM (same base as CM550)
+    private static final long EEPROM_BASE = 0x1000000L;  // 8 KB EEPROM
 
     @Override
     public void run() throws Exception {
@@ -42,22 +44,33 @@ public class SetupMemoryMapCM848 extends GhidraScript {
 
         Memory memory = currentProgram.getMemory();
 
+        // Add extended flash region (Bank 2 - utility functions)
+        // Extracted from e2m file using scripts/extract_flash2.py
+        String flash2File = firmwareDir + "/cm848_flash2.bin";
+        if (new File(flash2File).exists()) {
+            println("[1/3] Adding extended flash region (Bank 2)...");
+            addMemoryRegion(memory, "FLASH2", FLASH2_BASE, flash2File, true, false, true);
+        } else {
+            println("[1/3] SKIPPED: Flash2 file not found: " + flash2File);
+            println("       Run: python3 scripts/extract_flash2.py docs/S90140.12.e2m originals/cm848_flash2.bin");
+        }
+
         // Add RAM region (CM848 has 280KB continuous RAM)
         String ramFile = firmwareDir + "/cm848_ram.bin";
         if (new File(ramFile).exists()) {
-            println("[1/2] Adding RAM region...");
+            println("[2/3] Adding RAM region...");
             addMemoryRegion(memory, "RAM", RAM_BASE, ramFile, true, true, true);
         } else {
-            println("[1/2] SKIPPED: RAM file not found: " + ramFile);
+            println("[2/3] SKIPPED: RAM file not found: " + ramFile);
         }
 
         // Add EEPROM region (CM848 has 8KB EEPROM)
         String eepromFile = firmwareDir + "/cm848_eeprom.bin";
         if (new File(eepromFile).exists()) {
-            println("[2/2] Adding EEPROM region...");
+            println("[3/3] Adding EEPROM region...");
             addMemoryRegion(memory, "EEPROM", EEPROM_BASE, eepromFile, true, true, false);
         } else {
-            println("[2/2] SKIPPED: EEPROM file not found: " + eepromFile);
+            println("[3/3] SKIPPED: EEPROM file not found: " + eepromFile);
         }
 
         println("");
