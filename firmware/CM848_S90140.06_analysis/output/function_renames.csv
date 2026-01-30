@@ -213,8 +213,8 @@ address,name
 0x0000ca60,sensorChannel1_process
 0x0000caec,sensorChannel2_init
 0x0000cb78,sensorChannel2_process
-0x0000cc04,sensorChannel3_init
-0x0000cc90,sensorChannel3_process
+0x0000cc04,sensorChannel3_boostPressureInit
+0x0000cc90,sensorChannel3_boostPressureProcess
 0x0000cd1c,sensorChannel4_init
 0x0000cda8,sensorChannel4_process
 0x0000ce34,sensorChannel5_init

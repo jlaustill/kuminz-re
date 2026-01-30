@@ -943,6 +943,28 @@ address,name,type,comment
 0x0040bb0a,fuel_demand_base_value,u16,
 0x0040bb7a,protection_coolant_condition,u16,
 0x0040bd86,throttle_position_demand,u16,
+# Sensor Channel Outputs - identified from sensor init/process function analysis
+# Channel 0: 0x40bd82/0x40bd9a/0x40be14 (ADC 25/26 index 3)
+0x0040bd82,sensor_ch0_output_1,u16,Sensor channel 0 primary output
+0x0040bd84,sensor_ch5_filtered,u16,Sensor channel 5 filtered output (ADC 690/691 index 105)
+# Channel 3 = Boost/MAP Pressure Sensor (ADC 8/9 index 1)
+0x0040bd8e,boost_pressure_sensor_raw,u16,Boost pressure sensor raw/linearized output - feeds boost_denominator_min128
+0x0040bd8a,sensor_ch8_output_1,u16,Sensor channel 8 primary output (ADC 672/673 index 109)
+0x0040bd8c,sensor_ch11_output_1,u16,Sensor channel 11 primary output (ADC 12/13 index 10)
+0x0040bd90,sensor_ch1_output_1,u16,Sensor channel 1 primary output (ADC 150/151 index 20)
+0x0040bd94,sensor_ch6_output_1,u16,Sensor channel 6 primary output (ADC 796/797 index 108)
+0x0040bd96,sensor_ch7_filtered,u16,Sensor channel 7 filtered output (ADC 642/643 index 75)
+0x0040bd9a,sensor_ch0_output_2,u16,Sensor channel 0 secondary output
+0x0040bd9c,sensor_ch1_output_2,u16,Sensor channel 1 secondary output
+0x0040bd9e,throttle_position_secondary,u16,Sensor channel 10 secondary output - used as manifold_pressure_input override
+0x0040bda0,sensor_ch7_output_2,u16,Sensor channel 7 secondary output
+0x0040bda2,sensor_ch2_output_1,u16,Sensor channel 2 primary output (ADC 67/66 index 4)
+0x0040bda4,sensor_ch2_output_2,u16,Sensor channel 2 secondary output
+0x0040bda6,boost_pressure_sensor_filtered,u16,Boost pressure sensor filtered output - alternate source for boost_denominator_min128
+0x0040bda8,sensor_ch5_output_2,u16,Sensor channel 5 secondary output
+0x0040bdaa,sensor_ch11_output_2,u16,Sensor channel 11 secondary output
+0x0040bdac,sensor_ch6_output_2,u16,Sensor channel 6 secondary output
+0x0040bdb0,sensor_ch8_output_2,u16,Sensor channel 8 secondary output
 0x0040c04a,output_enable_bitmap,u16,
 0x0040c050,protection_mode_bits,protection_enable_t,
 0x0040c051,protection_system_enable_bits,u16,
