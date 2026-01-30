@@ -123,6 +123,21 @@ cmd_status() {
     done
 }
 
+cmd_hwregs() {
+    print_header "APPLYING MPC555 HARDWARE REGISTERS: $FIRMWARE_NAME"
+
+    check_ghidra
+    check_project
+
+    echo "Applying MPC555 peripheral register names..."
+    echo "Input: $OUTPUT_DIR/mpc555_registers.csv"
+    echo ""
+
+    run_script ApplyMPC555Registers.java "$OUTPUT_DIR/mpc555_registers.csv"
+
+    print_success "Hardware register naming complete"
+}
+
 cmd_help() {
     echo "$FIRMWARE_NAME Ghidra Analysis CLI (PowerPC)"
     echo ""
@@ -142,6 +157,7 @@ cmd_help() {
     echo "  vartypes   Apply global variable types (clears stale types first)"
     echo "  constants  Apply constant definitions (magic numbers with names)"
     echo "  arrays     Apply array definitions"
+    echo "  hwregs     Apply MPC555 hardware register names"
     echo "  decompile  Decompile a single function by address or name"
     echo "  full       Run complete pipeline: init -> analyze -> memmap -> import -> export"
     echo "  status     Show project status"

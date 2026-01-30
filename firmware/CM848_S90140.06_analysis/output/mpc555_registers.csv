@@ -1,0 +1,297 @@
+address,name,type,comment
+# =============================================================================
+# MPC555 Hardware Register Definitions
+# Reference: MPC555 Users Manual (MPCUM/D Rev 1)
+# =============================================================================
+
+# =============================================================================
+# USIU - System Integration Unit (0x2FC000 - 0x2FFFFF)
+# =============================================================================
+0x002fc000,USIU_SIUMCR,u32,SIU Module Configuration Register
+0x002fc004,USIU_SYPCR,u32,System Protection Control Register
+0x002fc00e,USIU_SWSR,u16,Software Service Register (watchdog)
+0x002fc010,USIU_SIPEND,u32,SIU Interrupt Pending Register
+0x002fc014,USIU_SIMASK,u32,SIU Interrupt Mask Register
+0x002fc018,USIU_SIEL,u32,SIU Interrupt Edge/Level Register
+0x002fc01c,USIU_SIVEC,u32,SIU Interrupt Vector Register
+0x002fc020,USIU_TESR,u32,Transfer Error Status Register
+0x002fc030,USIU_SGPIODT1,u32,SIU GPIO Data Register 1
+0x002fc034,USIU_SGPIODT2,u32,SIU GPIO Data Register 2
+0x002fc038,USIU_SGPIOCR,u32,SIU GPIO Control Register
+0x002fc03c,USIU_EMCR,u32,External Master Control Register
+0x002fc044,USIU_PDMCR,u32,Pad Module Configuration Register
+
+# Memory Controller Registers
+0x002fc100,USIU_BR0,u32,Base Register 0
+0x002fc104,USIU_OR0,u32,Option Register 0
+0x002fc108,USIU_BR1,u32,Base Register 1
+0x002fc10c,USIU_OR1,u32,Option Register 1
+0x002fc110,USIU_BR2,u32,Base Register 2
+0x002fc114,USIU_OR2,u32,Option Register 2
+0x002fc118,USIU_BR3,u32,Base Register 3
+0x002fc11c,USIU_OR3,u32,Option Register 3
+
+# System Clock and Reset
+0x002fc284,USIU_PLPRCR,u32,PLL, Low Power, and Reset Control Register
+0x002fc288,USIU_COLIR,u16,Change of Lock Interrupt Register
+0x002fc28c,USIU_SCCR,u32,System Clock Control Register
+
+# Timebase and Decrementer
+0x002fc300,USIU_TBSCRK,u32,Timebase Status and Control Register Key
+0x002fc304,USIU_TBSCR,u16,Timebase Status and Control Register
+0x002fc308,USIU_TBREF0K,u32,Timebase Reference Register 0 Key
+0x002fc30c,USIU_TBREF0,u16,Timebase Reference Register 0
+0x002fc310,USIU_TBREF1K,u32,Timebase Reference Register 1 Key
+0x002fc314,USIU_TBREF1,u16,Timebase Reference Register 1
+
+# PIT (Periodic Interrupt Timer)
+0x002fc340,USIU_PISCR,u16,PIT Status and Control Register
+0x002fc344,USIU_PITC,u32,PIT Count Register
+0x002fc348,USIU_PITR,u32,PIT Register
+
+# Real Time Clock
+0x002fc380,USIU_RTCSC,u16,RTC Status and Control Register
+0x002fc384,USIU_RTC,u32,Real Time Clock Register
+0x002fc388,USIU_RTSEC,u32,RTC Seconds Register
+0x002fc38c,USIU_RTCAL,u32,RTC Alarm Register
+
+# =============================================================================
+# TPU3 - Time Processing Unit 3 (0x302000 - 0x303FFF)
+# =============================================================================
+0x00302000,TPU3_TPUMCR,u16,TPU Module Configuration Register
+0x00302002,TPU3_TCR,u16,TPU Test Configuration Register
+0x00302004,TPU3_DSCR,u16,TPU Development Support Control Register
+0x00302006,TPU3_DSSR,u16,TPU Development Support Status Register
+0x00302008,TPU3_TICR,u16,TPU Interrupt Configuration Register
+0x0030200a,TPU3_CIER,u16,Channel Interrupt Enable Register
+0x0030200c,TPU3_CFSR0,u16,Channel Function Select Register 0 (ch 0-3)
+0x0030200e,TPU3_CFSR1,u16,Channel Function Select Register 1 (ch 4-7)
+0x00302010,TPU3_CFSR2,u16,Channel Function Select Register 2 (ch 8-11)
+0x00302012,TPU3_CFSR3,u16,Channel Function Select Register 3 (ch 12-15)
+0x00302014,TPU3_HSQR0,u16,Host Sequence Register 0 (ch 0-7)
+0x00302016,TPU3_HSQR1,u16,Host Sequence Register 1 (ch 8-15)
+0x00302018,TPU3_HSRR0,u16,Host Service Request Register 0 (ch 0-7)
+0x0030201a,TPU3_HSRR1,u16,Host Service Request Register 1 (ch 8-15)
+0x0030201c,TPU3_CPR0,u16,Channel Priority Register 0 (ch 0-7)
+0x0030201e,TPU3_CPR1,u16,Channel Priority Register 1 (ch 8-15)
+0x00302020,TPU3_CISR,u16,Channel Interrupt Status Register
+
+# TPU3 Channel Parameter RAM (0x302100 - 0x3021FF)
+# Each channel has 8 parameters (16-bit each) = 16 bytes per channel
+# Channel 0-15 at offsets 0x00-0xFF
+0x00302100,TPU3_CH0_PARAM0,u16,TPU3 Channel 0 Parameter 0
+0x00302110,TPU3_CH1_PARAM0,u16,TPU3 Channel 1 Parameter 0
+0x00302120,TPU3_CH2_PARAM0,u16,TPU3 Channel 2 Parameter 0
+0x00302130,TPU3_CH3_PARAM0,u16,TPU3 Channel 3 Parameter 0
+0x00302140,TPU3_CH4_PARAM0,u16,TPU3 Channel 4 Parameter 0
+0x00302150,TPU3_CH5_PARAM0,u16,TPU3 Channel 5 Parameter 0
+0x00302160,TPU3_CH6_PARAM0,u16,TPU3 Channel 6 Parameter 0
+0x00302170,TPU3_CH7_PARAM0,u16,TPU3 Channel 7 Parameter 0
+0x00302180,TPU3_CH8_PARAM0,u16,TPU3 Channel 8 Parameter 0
+0x00302190,TPU3_CH9_PARAM0,u16,TPU3 Channel 9 Parameter 0
+0x003021a0,TPU3_CH10_PARAM0,u16,TPU3 Channel 10 Parameter 0
+0x003021b0,TPU3_CH11_PARAM0,u16,TPU3 Channel 11 Parameter 0
+0x003021c0,TPU3_CH12_PARAM0,u16,TPU3 Channel 12 Parameter 0
+0x003021d0,TPU3_CH13_PARAM0,u16,TPU3 Channel 13 Parameter 0
+0x003021e0,TPU3_CH14_PARAM0,u16,TPU3 Channel 14 Parameter 0
+0x003021f0,TPU3_CH15_PARAM0,u16,TPU3 Channel 15 Parameter 0
+
+# =============================================================================
+# QADC64A - Queued ADC Module A (0x304800 - 0x304BFF)
+# =============================================================================
+0x00304800,QADC64A_MCR,u16,QADC64A Module Configuration Register
+0x00304802,QADC64A_TEST,u16,QADC64A Test Register
+0x00304804,QADC64A_INTC,u16,QADC64A Interrupt Register
+0x00304806,QADC64A_PORTQA,u8,QADC64A Port QA Data Register
+0x00304807,QADC64A_PORTQB,u8,QADC64A Port QB Data Register
+0x00304808,QADC64A_DDRQA,u8,QADC64A Port QA Data Direction
+0x00304809,QADC64A_DDRQB,u8,QADC64A Port QB Data Direction
+0x0030480a,QADC64A_CCW,u16,QADC64A Control Word Table
+0x0030480c,QADC64A_RJURR,u16,QADC64A Right Justified Unsigned Result
+0x0030480e,QADC64A_LJSRR,u16,QADC64A Left Justified Signed Result
+0x00304810,QADC64A_LJURR,u16,QADC64A Left Justified Unsigned Result
+0x00304812,QADC64A_SR,u16,QADC64A Status Register
+0x00304814,QADC64A_CCW_TBL,u16,QADC64A CCW Table Base (64 entries)
+
+# QADC64A Result Registers (right-justified unsigned, 64 results)
+0x00304a00,QADC64A_RESULT0,u16,QADC64A Result 0
+0x00304a02,QADC64A_RESULT1,u16,QADC64A Result 1
+0x00304a04,QADC64A_RESULT2,u16,QADC64A Result 2
+0x00304a06,QADC64A_RESULT3,u16,QADC64A Result 3
+0x00304a08,QADC64A_RESULT4,u16,QADC64A Result 4
+0x00304a0a,QADC64A_RESULT5,u16,QADC64A Result 5
+0x00304a0c,QADC64A_RESULT6,u16,QADC64A Result 6
+0x00304a0e,QADC64A_RESULT7,u16,QADC64A Result 7
+0x00304a10,QADC64A_RESULT8,u16,QADC64A Result 8
+0x00304a12,QADC64A_RESULT9,u16,QADC64A Result 9
+0x00304a14,QADC64A_RESULT10,u16,QADC64A Result 10
+0x00304a16,QADC64A_RESULT11,u16,QADC64A Result 11
+
+# =============================================================================
+# QADC64B - Queued ADC Module B (0x304C00 - 0x304FFF)
+# =============================================================================
+0x00304c00,QADC64B_MCR,u16,QADC64B Module Configuration Register
+0x00304c02,QADC64B_TEST,u16,QADC64B Test Register
+0x00304c04,QADC64B_INTC,u16,QADC64B Interrupt Register
+0x00304c06,QADC64B_PORTQA,u8,QADC64B Port QA Data Register
+0x00304c07,QADC64B_PORTQB,u8,QADC64B Port QB Data Register
+0x00304c08,QADC64B_DDRQA,u8,QADC64B Port QA Data Direction
+0x00304c09,QADC64B_DDRQB,u8,QADC64B Port QB Data Direction
+0x00304c12,QADC64B_SR,u16,QADC64B Status Register
+
+# QADC64B Result Registers
+0x00304e00,QADC64B_RESULT0,u16,QADC64B Result 0
+0x00304e02,QADC64B_RESULT1,u16,QADC64B Result 1
+0x00304e04,QADC64B_RESULT2,u16,QADC64B Result 2
+0x00304e06,QADC64B_RESULT3,u16,QADC64B Result 3
+
+# =============================================================================
+# QSMCM - Queued Serial Module (0x305000 - 0x305FFF)
+# =============================================================================
+0x00305000,QSMCM_MCR,u16,QSMCM Module Configuration Register
+0x00305002,QSMCM_TEST,u16,QSMCM Test Register
+0x00305004,QSMCM_IDSCI,u16,QSMCM Interrupt Definition SCI
+0x00305006,QSMCM_IDSPI,u16,QSMCM Interrupt Definition SPI
+
+# SCI (Serial Communication Interface)
+0x00305008,QSMCM_SCC1R0,u16,SCI Control Register 0
+0x0030500a,QSMCM_SCC1R1,u16,SCI Control Register 1
+0x0030500c,QSMCM_SC1SR,u16,SCI Status Register
+0x0030500e,QSMCM_SC1DR,u16,SCI Data Register
+
+# SCI2 (Second Serial Port)
+0x00305020,QSMCM_SCC2R0,u16,SCI2 Control Register 0
+0x00305022,QSMCM_SCC2R1,u16,SCI2 Control Register 1
+0x00305024,QSMCM_SC2SR,u16,SCI2 Status Register
+0x00305026,QSMCM_SC2DR,u16,SCI2 Data Register
+
+# QSPI (Queued SPI)
+0x00305010,QSMCM_SPCR0,u16,QSPI Control Register 0
+0x00305012,QSMCM_SPCR1,u16,QSPI Control Register 1
+0x00305014,QSMCM_SPCR2,u16,QSPI Control Register 2
+0x00305016,QSMCM_SPCR3,u8,QSPI Control Register 3
+0x00305017,QSMCM_SPSR,u8,QSPI Status Register
+
+# QSPI Command and Receive RAM
+0x00305030,QSMCM_COMD0,u8,QSPI Command RAM 0
+0x00305040,QSMCM_RECRAM0,u16,QSPI Receive RAM 0
+0x00305060,QSMCM_TRANRAM0,u16,QSPI Transmit RAM 0
+
+# Port QS
+0x00305014,QSMCM_PQSPAR,u8,Port QS Pin Assignment Register
+0x00305016,QSMCM_DDRQS,u8,Port QS Data Direction Register
+0x00305018,QSMCM_PORTQS,u8,Port QS Data Register
+
+# =============================================================================
+# MIOS14 - Modular I/O Subsystem (0x306000 - 0x306FFF)
+# =============================================================================
+0x00306000,MIOS_MPWMSM0_PERR,u16,MPWMSM0 Period Register
+0x00306002,MIOS_MPWMSM0_PULR,u16,MPWMSM0 Pulse Width Register
+0x00306004,MIOS_MPWMSM0_CNTR,u16,MPWMSM0 Counter Register
+0x00306006,MIOS_MPWMSM0_SCR,u16,MPWMSM0 Status/Control Register
+0x00306008,MIOS_MPWMSM1_PERR,u16,MPWMSM1 Period Register
+0x0030600a,MIOS_MPWMSM1_PULR,u16,MPWMSM1 Pulse Width Register
+0x0030600c,MIOS_MPWMSM1_CNTR,u16,MPWMSM1 Counter Register
+0x0030600e,MIOS_MPWMSM1_SCR,u16,MPWMSM1 Status/Control Register
+0x00306010,MIOS_MPWMSM2_PERR,u16,MPWMSM2 Period Register
+0x00306012,MIOS_MPWMSM2_PULR,u16,MPWMSM2 Pulse Width Register
+0x00306014,MIOS_MPWMSM2_CNTR,u16,MPWMSM2 Counter Register
+0x00306016,MIOS_MPWMSM2_SCR,u16,MPWMSM2 Status/Control Register
+0x00306018,MIOS_MPWMSM3_PERR,u16,MPWMSM3 Period Register
+0x0030601a,MIOS_MPWMSM3_PULR,u16,MPWMSM3 Pulse Width Register
+0x0030601c,MIOS_MPWMSM3_CNTR,u16,MPWMSM3 Counter Register
+0x0030601e,MIOS_MPWMSM3_SCR,u16,MPWMSM3 Status/Control Register
+
+# MIOS MMCSM (Modulus Counter Submodules)
+0x00306020,MIOS_MMCSM6_CNT,u16,MMCSM6 Up-Counter Register
+0x00306022,MIOS_MMCSM6_ML,u16,MMCSM6 Modulus Latch Register
+0x00306026,MIOS_MMCSM6_SCRD,u16,MMCSM6 Status/Control Register
+
+# MIOS MDASM (Double Action Submodules) - Input Capture/PWM
+0x00306058,MIOS_MDASM11_AR,u16,MDASM11 A Register
+0x0030605a,MIOS_MDASM11_BR,u16,MDASM11 B Register
+0x0030605e,MIOS_MDASM11_SCRD,u16,MDASM11 Status/Control Register
+0x00306060,MIOS_MDASM12_AR,u16,MDASM12 A Register
+0x00306062,MIOS_MDASM12_BR,u16,MDASM12 B Register
+0x00306066,MIOS_MDASM12_SCRD,u16,MDASM12 Status/Control Register
+0x00306068,MIOS_MDASM13_AR,u16,MDASM13 A Register
+0x0030606a,MIOS_MDASM13_BR,u16,MDASM13 B Register
+0x0030606e,MIOS_MDASM13_SCRD,u16,MDASM13 Status/Control Register
+0x00306070,MIOS_MDASM14_AR,u16,MDASM14 A Register
+0x00306072,MIOS_MDASM14_BR,u16,MDASM14 B Register
+0x00306076,MIOS_MDASM14_SCRD,u16,MDASM14 Status/Control Register
+0x00306078,MIOS_MDASM15_AR,u16,MDASM15 A Register
+0x0030607a,MIOS_MDASM15_BR,u16,MDASM15 B Register
+0x0030607e,MIOS_MDASM15_SCRD,u16,MDASM15 Status/Control Register
+
+# Additional MDASM channels
+0x00306080,MIOS_MDASM0_AR,u16,MDASM0 A Register
+0x00306082,MIOS_MDASM0_BR,u16,MDASM0 B Register
+0x00306086,MIOS_MDASM0_SCRD,u16,MDASM0 Status/Control Register
+0x00306088,MIOS_MDASM1_AR,u16,MDASM1 A Register
+0x0030608a,MIOS_MDASM1_BR,u16,MDASM1 B Register
+0x0030608e,MIOS_MDASM1_SCRD,u16,MDASM1 Status/Control Register
+0x00306090,MIOS_MDASM2_AR,u16,MDASM2 A Register
+0x00306092,MIOS_MDASM2_BR,u16,MDASM2 B Register
+0x00306096,MIOS_MDASM2_SCRD,u16,MDASM2 Status/Control Register
+0x00306098,MIOS_MDASM3_AR,u16,MDASM3 A Register
+0x0030609a,MIOS_MDASM3_BR,u16,MDASM3 B Register
+0x0030609e,MIOS_MDASM3_SCRD,u16,MDASM3 Status/Control Register
+
+# MIOS MPIOSM (Parallel I/O)
+0x003060d0,MIOS_MPIOSM_DR,u16,MPIOSM Data Register
+0x003060d2,MIOS_MPIOSM_DDR,u16,MPIOSM Data Direction Register
+
+# MIOS Bus Interface
+0x003060e0,MIOS_MIOS1TPCR,u16,MIOS1 Test and Pin Control Register
+0x003060f0,MIOS_MCPSMSCR,u16,MIOS Counter Prescaler Status/Control
+0x003060f2,MIOS_MIOS1SR0,u16,MIOS1 Status Register 0
+0x003060f4,MIOS_MIOS1SR1,u16,MIOS1 Status Register 1
+0x003060f6,MIOS_MIOS1ER,u16,MIOS1 Enable Register
+0x003060f8,MIOS_MIOS1RPR,u16,MIOS1 Request Pending Register
+0x003060fc,MIOS_MIOS1LVL,u16,MIOS1 Interrupt Level Register
+
+# =============================================================================
+# TouCAN A - CAN Controller A (0x307000 - 0x30707F)
+# =============================================================================
+0x00307000,TOUCAN_A_MCR,u16,TouCAN A Module Configuration Register
+0x00307002,TOUCAN_A_TCR,u16,TouCAN A Test Register
+0x00307004,TOUCAN_A_CANICR,u16,TouCAN A Interrupt Configuration Register
+0x00307006,TOUCAN_A_CANCTRL0,u8,TouCAN A Control Register 0
+0x00307007,TOUCAN_A_CANCTRL1,u8,TouCAN A Control Register 1
+0x00307008,TOUCAN_A_PRESDIV,u8,TouCAN A Prescaler Divide Register
+0x00307009,TOUCAN_A_CANCTRL2,u8,TouCAN A Control Register 2
+0x0030700c,TOUCAN_A_TIMER,u16,TouCAN A Free Running Timer
+0x00307010,TOUCAN_A_RXGMSK_HI,u16,TouCAN A Rx Global Mask High
+0x00307012,TOUCAN_A_RXGMSK_LO,u16,TouCAN A Rx Global Mask Low
+0x00307014,TOUCAN_A_RX14MSK_HI,u16,TouCAN A Rx Buffer 14 Mask High
+0x00307016,TOUCAN_A_RX14MSK_LO,u16,TouCAN A Rx Buffer 14 Mask Low
+0x00307018,TOUCAN_A_RX15MSK_HI,u16,TouCAN A Rx Buffer 15 Mask High
+0x0030701a,TOUCAN_A_RX15MSK_LO,u16,TouCAN A Rx Buffer 15 Mask Low
+0x00307020,TOUCAN_A_ESR,u16,TouCAN A Error and Status Register
+0x00307022,TOUCAN_A_IMASK,u16,TouCAN A Interrupt Mask Register
+0x00307024,TOUCAN_A_IFLAG,u16,TouCAN A Interrupt Flag Register
+0x00307026,TOUCAN_A_RXECTR,u8,TouCAN A Rx Error Counter
+0x00307027,TOUCAN_A_TXECTR,u8,TouCAN A Tx Error Counter
+
+# TouCAN A Message Buffers (16 buffers, 16 bytes each at 0x307080-0x30717F)
+0x00307080,TOUCAN_A_MB0_CTRL,u16,TouCAN A Message Buffer 0 Control/Status
+0x00307082,TOUCAN_A_MB0_ID_HI,u16,TouCAN A Message Buffer 0 ID High
+0x00307084,TOUCAN_A_MB0_ID_LO,u16,TouCAN A Message Buffer 0 ID Low
+0x00307086,TOUCAN_A_MB0_DATA0,u16,TouCAN A Message Buffer 0 Data 0-1
+0x00307088,TOUCAN_A_MB0_DATA2,u16,TouCAN A Message Buffer 0 Data 2-3
+0x0030708a,TOUCAN_A_MB0_DATA4,u16,TouCAN A Message Buffer 0 Data 4-5
+0x0030708c,TOUCAN_A_MB0_DATA6,u16,TouCAN A Message Buffer 0 Data 6-7
+
+# =============================================================================
+# TouCAN B - CAN Controller B (0x307080 + offset, using alternate address)
+# Note: TouCAN B base varies by MPC555 variant
+# =============================================================================
+0x00307400,TOUCAN_B_MCR,u16,TouCAN B Module Configuration Register
+0x00307402,TOUCAN_B_TCR,u16,TouCAN B Test Register
+0x00307404,TOUCAN_B_CANICR,u16,TouCAN B Interrupt Configuration Register
+0x00307406,TOUCAN_B_CANCTRL0,u8,TouCAN B Control Register 0
+0x00307407,TOUCAN_B_CANCTRL1,u8,TouCAN B Control Register 1
+0x00307420,TOUCAN_B_ESR,u16,TouCAN B Error and Status Register
+0x00307422,TOUCAN_B_IMASK,u16,TouCAN B Interrupt Mask Register
+0x00307424,TOUCAN_B_IFLAG,u16,TouCAN B Interrupt Flag Register
