@@ -715,12 +715,22 @@ address,name,type,comment
 0x0040a40a,boost_lookup_result,u16,
 0x0040a40c,boost_computed_value,u16,
 0x0040a40e,boost_pressure_ratio,u16,
-0x0040a410,boost_load_input.reserved_0a,,
+0x0040a410,boost_override_flag,u16,Boost override active flag (set in fuelDemandWithLoadCompensation)
 0x0040a412,boost_load_input.reserved_0c,,
 0x0040a414,boost_load_input.reserved_0e,,
+# Boost Pressure Calculation Intermediate Variables
+0x0040a416,manifold_pressure_filtered,u16,First-order filtered manifold pressure input
+0x0040a418,boost_rpm_table_result,u16,2D table interpolation result (RPM vs boost)
+0x0040a41a,boost_pressure_offset_result,u16,Final boost pressure offset after clamping
+0x0040a41c,boost_pressure_offset_clamped,u16,Intermediate clamped boost offset (-8000 to +8000)
+0x0040a420,boost_torque_offset_ema,u16,EMA-filtered boost torque offset value
+0x0040a422,boost_table_lookup_1,u16,Boost calculation table lookup 1
+0x0040a424,boost_deviation_threshold,u16,Threshold for boost deviation comparison
 0x0040a42c,feature_status_flags,u16,
-0x0040a42e,boost_denominator_min128,u16,
-0x0040a432,boost_compensation_factor,u16,
+0x0040a42e,boost_denominator_min128,u16,Minimum 128 boost denominator for fuel calc (from MAP sensor)
+0x0040a430,load_normalizer_selector,u16,Load normalizer source selector (0=raw 1=computed 2=filtered)
+0x0040a432,boost_compensation_factor,u16,Boost compensation flags (bit 0x80=override 0x40=protection etc)
+0x0040a434,boost_deviation_exceeded,u16,Flag: boost deviation exceeds threshold
 0x0040a460,manifold_pressure_input,u16,
 0x0040a462,boost_override_active,u16,
 0x0040a480,fuel_limit_source_value,u16,
