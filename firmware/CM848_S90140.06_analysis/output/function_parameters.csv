@@ -115,3 +115,59 @@ function_address,function_name,param_index,new_name,new_type,comment
 0x000062fc,processJ1939QueueTransmit,0,queue_entry,void*,Pointer to TX queue entry
 0x000064c4,processJ1939QueueStatus,0,connection_id,byte,Transport protocol connection identifier
 
+# -----------------------------------------------------------------------------
+# Sensor Channel Processing Functions
+# 17-channel sensor system with paired init/process functions
+# Mode 2: sensorChannelConfigInit + updateSensorChannelWithConfig (13 params)
+# Mode 0: sensorChannelSimpleProcess (simpler processing)
+# -----------------------------------------------------------------------------
+0x00500234,sensorChannelConfigInit,0,cal_ptr_1,void*,Calibration pointer 1
+0x00500234,sensorChannelConfigInit,1,cal_ptr_2,void*,Calibration pointer 2
+0x00500234,sensorChannelConfigInit,2,cal_ptr_3,void*,Calibration pointer 3
+0x00500234,sensorChannelConfigInit,3,cal_ptr_4,void*,Calibration pointer 4
+0x00500234,sensorChannelConfigInit,4,ram_buffer_1,void*,RAM buffer pointer 1
+0x00500234,sensorChannelConfigInit,5,ram_buffer_2,void*,RAM buffer pointer 2
+0x00500234,sensorChannelConfigInit,6,adc_index_primary,ushort,Primary ADC channel index
+0x00500234,sensorChannelConfigInit,7,adc_index_secondary,ushort,Secondary ADC channel index
+0x00500234,sensorChannelConfigInit,8,output_raw,ushort*,Pointer to raw output variable
+0x00500234,sensorChannelConfigInit,9,output_filtered,ushort*,Pointer to filtered output variable
+0x00500234,sensorChannelConfigInit,10,param_10,ushort,Configuration parameter
+0x00500234,sensorChannelConfigInit,11,param_11,ushort,Configuration parameter
+0x00500234,sensorChannelConfigInit,12,param_12,ushort,Configuration parameter
+
+0x00500a4c,updateSensorChannelWithConfig,0,cal_ptr_1,void*,Calibration pointer 1
+0x00500a4c,updateSensorChannelWithConfig,1,cal_ptr_2,void*,Calibration pointer 2
+0x00500a4c,updateSensorChannelWithConfig,2,cal_ptr_3,void*,Calibration pointer 3
+0x00500a4c,updateSensorChannelWithConfig,3,cal_ptr_4,void*,Calibration pointer 4
+0x00500a4c,updateSensorChannelWithConfig,4,ram_buffer_1,void*,RAM buffer pointer 1
+0x00500a4c,updateSensorChannelWithConfig,5,ram_buffer_2,void*,RAM buffer pointer 2
+0x00500a4c,updateSensorChannelWithConfig,6,adc_index_primary,ushort,Primary ADC channel index
+0x00500a4c,updateSensorChannelWithConfig,7,adc_index_secondary,ushort,Secondary ADC channel index
+0x00500a4c,updateSensorChannelWithConfig,8,output_raw,ushort*,Pointer to raw/linearized output
+0x00500a4c,updateSensorChannelWithConfig,9,output_filtered,ushort*,Pointer to filtered output
+0x00500a4c,updateSensorChannelWithConfig,10,param_10,ushort,Configuration parameter
+0x00500a4c,updateSensorChannelWithConfig,11,param_11,ushort,Configuration parameter
+0x00500a4c,updateSensorChannelWithConfig,12,param_12,ushort,Configuration parameter
+
+# Sensor Channel 3 (Boost/MAP Pressure) - calls the above with specific calibration
+0x0000cc04,sensorChannel3_boostPressureInit,0,unused,void,Initializes boost sensor with hardcoded config pointers
+0x0000cc90,sensorChannel3_boostPressureProcess,0,unused,void,Processes boost sensor with ADC channels 8/9
+
+# -----------------------------------------------------------------------------
+# Boost Calculation Functions
+# Core algorithms for computing boost-based fuel compensation
+# -----------------------------------------------------------------------------
+0x0001392c,selectLoadNormalizer,0,selector,ushort,Source selector (0=raw 1=computed 2=filtered)
+0x0001392c,selectLoadNormalizer,1,raw_boost,ushort,Raw boost pressure from sensor
+0x0001392c,selectLoadNormalizer,2,computed_boost,ushort,Computed boost value
+0x0001392c,selectLoadNormalizer,3,filtered_boost,ushort,Filtered boost pressure
+
+0x000130dc,calculateBoostPressureOffset,0,manifold_pressure,ushort,Filtered manifold pressure input
+0x000130dc,calculateBoostPressureOffset,1,rpm,ushort,Engine RPM for table lookup
+
+0x00013294,calculateBoostTorqueOffset,0,boost_input,ushort,Boost pressure input
+0x00013294,calculateBoostTorqueOffset,1,rpm,ushort,Engine RPM for calculation
+
+0x00012ad4,boostBasedFuelModifier,0,boost_denominator,ushort,Boost denominator (min 128) for fuel calc
+0x00012ad4,boostBasedFuelModifier,1,base_fueling,ushort,Base fueling command to modify
+
