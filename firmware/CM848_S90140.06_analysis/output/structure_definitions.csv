@@ -334,3 +334,281 @@ j1939_ack_msg_t,,address_acknowledged,byte,1,Address being acknowledged,,needs_r
 j1939_ack_msg_t,,pgn_low,byte,1,Acknowledged PGN low byte,,verified
 j1939_ack_msg_t,,pgn_mid,byte,1,Acknowledged PGN mid byte,,verified
 j1939_ack_msg_t,,pgn_high,byte,1,Acknowledged PGN high byte,,verified
+
+# ============================================================================
+# Additional Generic Structures - Ported from CM550 for analysis reference
+# These define common data patterns across Cummins ECUs
+# ============================================================================
+
+# EEPROM Parameter Structure - customer-configurable parameter format
+# Used for PTO setpoints, limits, and other EEPROM-stored calibrations
+eeprom_param_t,,value,word,2,Parameter value (resolution varies per parameter),,verified
+eeprom_param_t,,min_limit,word,2,Minimum allowed value for parameter,,verified
+eeprom_param_t,,max_limit,word,2,Maximum allowed value for parameter,,verified
+eeprom_param_t,,default_value,word,2,Factory default value,,verified
+
+# Parameter Lookup Arguments - passed to table lookup functions
+# Used for ROM table interpolation throughout control algorithms
+param_lookup_args_t,,calculated_block,dword,4,Block × 256 × 4 calculation result,,verified
+param_lookup_args_t,,offset,word,2,Parameter offset within block,,verified
+param_lookup_args_t,,result_value,word,2,Retrieved parameter value (capped at 32000),,verified
+
+# CAN Parameter Message - diagnostic parameter response format
+# Used for sending parameter values over CAN bus
+can_param_msg_t,,msg_id,byte,1,Message identifier,,verified
+can_param_msg_t,,param_1,byte,1,First parameter byte,,verified
+can_param_msg_t,,param_2,byte,1,Second parameter byte,,verified
+can_param_msg_t,,param_3,byte,1,Third parameter byte,,verified
+can_param_msg_t,,param_4,byte,1,Fourth parameter byte,,verified
+can_param_msg_t,,timestamp,word,2,Message timestamp,,verified
+can_param_msg_t,,checksum,byte,1,Message checksum,,verified
+
+# Scheduler Phase Slot - task scheduler timing structure
+# Each phase slot tracks execution timing and deadline monitoring
+scheduler_phase_slot_t,,last_execution_time,dword,4,Timer value of last task execution,,verified
+scheduler_phase_slot_t,,runtime_ticks,word,2,Task runtime duration in timer ticks,,verified
+scheduler_phase_slot_t,,deadline_ticks,word,2,Task execution deadline (0xFFFF = disabled),,verified
+scheduler_phase_slot_t,,execution_count,word,2,Number of times task has been executed,,verified
+scheduler_phase_slot_t,,overrun_count,word,2,Number of deadline overruns detected,,verified
+scheduler_phase_slot_t,,reserved,dword,4,Reserved/padding bytes for alignment,,verified
+
+# A/D Sensor Configuration - analog sensor input configuration block
+# Defines filtering, fault thresholds, and error limits for sensor channels
+# NOTE: Address varies per firmware - used for pattern recognition only
+ad_sensor_config_t,,channel_addr,word,2,A/D channel address for sensor input,,verified
+ad_sensor_config_t,,filter_const,word,2,Digital filter constant (0-1),,verified
+ad_sensor_config_t,,fault_clear_count,word,2,Fault clear counter threshold,,verified
+ad_sensor_config_t,,fault_decrement,word,2,Fault counter decrement value,,verified
+ad_sensor_config_t,,fault_increment,word,2,Fault counter increment value,,verified
+ad_sensor_config_t,,fault_set_threshold,word,2,Fault set threshold,,verified
+ad_sensor_config_t,,high_error_limit,word,2,A/D high error limit (0-1023),,verified
+ad_sensor_config_t,,low_error_limit,word,2,A/D low error limit (0-1023),,verified
+
+# Sensor Fault Configuration Entry - fault detection configuration
+# 24 bytes per entry, defines debounce and fault thresholds
+# NOTE: Documentation only - do NOT apply to specific address
+sensor_fault_config_t,,reserved_00,word,2,Reserved/padding at offset 0x00,,verified
+sensor_fault_config_t,,default_value,word,2,Default sensor value on fault (offset 0x02),,verified
+sensor_fault_config_t,,clear_threshold,word,2,Threshold for fault clear (offset 0x04),,verified
+sensor_fault_config_t,,decrement_value,word,2,Debounce counter decrement (offset 0x06),,verified
+sensor_fault_config_t,,increment_value,word,2,Debounce counter increment (offset 0x08),,verified
+sensor_fault_config_t,,set_threshold,word,2,Threshold for fault set (offset 0x0a),,verified
+sensor_fault_config_t,,high_limit,word,2,High error limit (offset 0x0c),,verified
+sensor_fault_config_t,,low_limit,word,2,Low error limit (offset 0x0e),,verified
+sensor_fault_config_t,,adc_lookup_index,word,2,A/D channel lookup table index (offset 0x10),,verified
+sensor_fault_config_t,,reserved_12,byte,1,Reserved byte at offset 0x12,,verified
+sensor_fault_config_t,,alt_fault_enable,byte,1,Alternative fault enable flag (offset 0x13),,verified
+sensor_fault_config_t,,primary_fault_id,byte,1,Primary fault code packed bit/word (offset 0x14),,verified
+sensor_fault_config_t,,secondary_fault_id,byte,1,Secondary fault code (offset 0x15),,verified
+sensor_fault_config_t,,tertiary_fault_id,byte,1,Tertiary fault code (offset 0x16),,verified
+sensor_fault_config_t,,debounce_max,byte,1,Maximum debounce count (offset 0x17),,verified
+
+# Sensor Debounce State Entry - runtime sensor debounce state
+# 22 bytes per entry, paired with sensor_fault_config_t
+# NOTE: Documentation only - do NOT apply to specific address
+sensor_debounce_state_t,,reserved_00,byte,8,Reserved bytes at offset 0x00-0x07,,verified
+sensor_debounce_state_t,,interpolated_value,word,2,Interpolated sensor value (offset 0x08),,verified
+sensor_debounce_state_t,,lookup_result,word,2,Table lookup result (offset 0x0a),,verified
+sensor_debounce_state_t,,debounce_counter,word,2,Current debounce count (offset 0x0c),,verified
+sensor_debounce_state_t,,fault_active_flag,byte,1,Fault currently active flag (offset 0x0e),,verified
+sensor_debounce_state_t,,sample_counter,byte,1,Sample phase counter (offset 0x0f),,verified
+sensor_debounce_state_t,,adc_raw_value,word,2,Raw A/D conversion value (offset 0x10),,verified
+sensor_debounce_state_t,,reserved_12,byte,4,Reserved bytes at offset 0x12-0x15,,verified
+
+# Cummins Data Plate Structure - ECU/engine identification block
+# Located in EEPROM, common format across Cummins ECUs
+cummins_data_plate_t,,data_plate_length,word,2,Data plate length field,,verified
+cummins_data_plate_t,,engine_make,byte,5,Engine manufacturer identifier,,verified
+cummins_data_plate_t,,engine_model,byte,17,Engine model designation,,verified
+cummins_data_plate_t,,engine_serial_number,dword,4,Engine serial number,,verified
+cummins_data_plate_t,,engine_build_month,byte,1,Engine manufacturing month,,verified
+cummins_data_plate_t,,engine_build_day,byte,1,Engine manufacturing day,,verified
+cummins_data_plate_t,,engine_build_year,byte,1,Engine manufacturing year,,verified
+cummins_data_plate_t,,engine_cpl,word,2,Engine CPL (Component Parts List),,verified
+cummins_data_plate_t,,peak_torque_low_range,word,2,Peak torque low range value,,verified
+cummins_data_plate_t,,peak_torque_high_range,word,2,Peak torque high range value,,verified
+cummins_data_plate_t,,peak_torque_rpm_low,word,2,Peak torque RPM low range,,verified
+cummins_data_plate_t,,peak_torque_rpm_high,word,2,Peak torque RPM high range,,verified
+cummins_data_plate_t,,governed_speed_low,word,2,Governed speed low range,,verified
+cummins_data_plate_t,,governed_speed_high,word,2,Governed speed high range,,verified
+cummins_data_plate_t,,horsepower_low_range,word,2,Horsepower low range value,,verified
+cummins_data_plate_t,,horsepower_high_range,word,2,Horsepower high range value,,verified
+cummins_data_plate_t,,horsepower_rpm_low,word,2,Horsepower RPM low range,,verified
+cummins_data_plate_t,,horsepower_rpm_high,word,2,Horsepower RPM high range,,verified
+cummins_data_plate_t,,fuel_code_part_number,byte,7,Fuel code part number,,verified
+cummins_data_plate_t,,percent_torque_rise,byte,1,Percent torque rise specification,,verified
+cummins_data_plate_t,,peak_torque,word,2,Peak torque specification,,verified
+cummins_data_plate_t,,peak_torque_rpm,word,2,Peak torque RPM specification,,verified
+cummins_data_plate_t,,governed_speed,word,2,Governed speed specification,,verified
+cummins_data_plate_t,,ecm_id,word,2,ECM identification number,,verified
+cummins_data_plate_t,,ecm_part_number,dword,4,ECM part number,,verified
+cummins_data_plate_t,,ecm_serial_number,dword,4,ECM serial number,,verified
+cummins_data_plate_t,,ecm_voltage_low_range,byte,1,ECM voltage low range,,verified
+cummins_data_plate_t,,ecm_voltage_high_range,byte,1,ECM voltage high range,,verified
+cummins_data_plate_t,,ecm_code,byte,10,ECM identification code,,verified
+cummins_data_plate_t,,engine_calibration_time,byte,12,Engine calibration timestamp,,verified
+cummins_data_plate_t,,sc_option_number,word,2,SC option number,,verified
+cummins_data_plate_t,,do_option_number,word,2,DO option number,,verified
+cummins_data_plate_t,,other_options,byte,40,Other options field,,verified
+cummins_data_plate_t,,oem_name,byte,15,Original equipment manufacturer name,,verified
+cummins_data_plate_t,,oem_vehicle,byte,15,OEM vehicle designation,,verified
+cummins_data_plate_t,,vin,byte,20,Vehicle identification number,,verified
+cummins_data_plate_t,,vehicle_year,byte,10,Vehicle manufacturing year,,verified
+cummins_data_plate_t,,customer_name,byte,15,Customer name,,verified
+cummins_data_plate_t,,location,byte,15,Installation location,,verified
+cummins_data_plate_t,,unit_number,byte,10,Unit identification number,,verified
+
+# Memory Operation Request - diagnostic memory read/write request format
+memory_operation_request_t,,source_data_ptr,dword,4,Pointer to source data for memory operation,,verified
+memory_operation_request_t,,target_data_ptr,dword,4,Pointer to destination memory location,,verified
+memory_operation_request_t,,operation_size,word,2,Number of bytes to copy (max varies),,verified
+memory_operation_request_t,,metadata_value,word,2,Logging metadata/timestamp for circular buffer,,verified
+
+# J1939 Source Addresses - configured J1939 network addresses
+# Used for multi-address claiming and routing
+j1939_source_addresses_t,,source_addr_1,word,2,J1939 source address 1,,verified
+j1939_source_addresses_t,,source_addr_2,word,2,J1939 source address 2,,verified
+j1939_source_addresses_t,,source_addr_3,word,2,J1939 source address 3,,verified
+j1939_source_addresses_t,,source_addr_4,word,2,J1939 source address 4,,verified
+j1939_source_addresses_t,,source_addr_5,word,2,J1939 source address 5,,verified
+
+# Network Type Switches - J1922/J1939 protocol selection
+network_type_switches_t,,type_switch_1,byte,1,Network type switch 1 (0=J1922 1=J1939),,verified
+network_type_switches_t,,type_switch_2,byte,1,Network type switch 2 (0=J1922 1=J1939),,verified
+network_type_switches_t,,type_switch_3,byte,1,Network type switch 3 (0=J1922 1=J1939),,verified
+network_type_switches_t,,type_switch_4,byte,1,Network type switch 4 (0=J1922 1=J1939),,verified
+network_type_switches_t,,type_switch_5,byte,1,Network type switch 5 (0=J1922 1=J1939),,verified
+
+# Diagnostic Transfer State - multi-packet transfer tracking
+# Used for transferring calibration data and memory blocks
+diag_transfer_state_t,,target_address,word,2,Target memory address for transfer,,verified
+diag_transfer_state_t,,data_pointer,dword,4,Pointer to source/dest data buffer,,verified
+diag_transfer_state_t,,remaining_length,word,2,Remaining bytes to transfer,,verified
+diag_transfer_state_t,,byte_count,word,2,Total byte count for operation,,verified
+diag_transfer_state_t,,tx_active_flag,byte,1,Transmit operation active (0/1),,verified
+diag_transfer_state_t,,rx_active_flag,byte,1,Receive operation active (0/1),,verified
+
+# Diagnostic Service Request - generic diagnostic request format
+diag_service_request_t,,message_length,byte,1,Total message length including header,,verified
+diag_service_request_t,,service_id,byte,1,Service identifier (3=secured 4=control 5=memory),,verified
+diag_service_request_t,,sub_function,byte,1,Sub-function code for service routing,,verified
+diag_service_request_t,,data_payload,byte,16,Variable-length request data payload,,verified
+
+# Circular Buffer Structure - generic ring buffer for sensor data
+circular_buffer_t,,write_index,word,2,Current write position (0-N),,verified
+circular_buffer_t,,entry_count,word,2,Number of entries in buffer,,verified
+circular_buffer_t,,read_index,word,2,Current read position (0-N),,verified
+circular_buffer_t,,buffer_size,word,2,Maximum buffer capacity,,verified
+
+# Address Range Entry - memory access validation table entry
+# Used by diagnostic services to validate memory read/write requests
+address_range_entry_t,,start_address,dword,4,Start of valid address range (big-endian),,verified
+address_range_entry_t,,end_address,dword,4,End of valid address range (big-endian),,verified
+address_range_entry_t,,special_mode_flag,byte,1,Access flag when in special mode (non-0x09/0x0A = allow),,verified
+address_range_entry_t,,normal_mode_flag,byte,1,Access flag in normal operation (0x09=invalid 0x0A=denied other=allow),,verified
+
+# Fuel Limit Arbitration State - multi-source fuel limit selection
+# Used by fuel arbitrator to select minimum fuel limit from multiple sources
+fuel_limit_arbitration_t,,source_id,word,2,ID of current fuel limit source (arbitrator output),,verified
+fuel_limit_arbitration_t,,demand_limited,word,2,Rate-limited fuel demand,,verified
+fuel_limit_arbitration_t,,arbitration_threshold,word,2,Fuel limit arbitration threshold,,verified
+fuel_limit_arbitration_t,,demand_delta,word,2,Fuel demand delta for rate limiting,,verified
+fuel_limit_arbitration_t,,maximum_limit,word,2,Maximum fuel demand limit,,verified
+fuel_limit_arbitration_t,,offset_value,word,2,Fuel limit offset value,,verified
+fuel_limit_arbitration_t,,comparison_low,word,2,Fuel limit comparison low value,,verified
+fuel_limit_arbitration_t,,comparison_high,word,2,Fuel limit comparison high value,,verified
+fuel_limit_arbitration_t,,rate_limit,word,2,Fuel demand rate limiting value,,verified
+
+# Engine Control Flags - engine operating state flags
+# Packed bit flags for fuel control and protection status
+engine_control_flags_t,,fuel_demand_control,word,2,Fuel demand mode control flags,,verified
+engine_control_flags_t,,protection_system,word,2,Protection system status flags,,verified
+engine_control_flags_t,,engine_operating_state,word,2,Engine operating state flags,,verified
+engine_control_flags_t,,reserved_06,word,2,Gap/reserved,,needs_review
+engine_control_flags_t,,reserved_08,word,2,Gap/reserved,,needs_review
+engine_control_flags_t,,fuel_temp_control,word,2,Fuel temp control bit flags,,verified
+
+# High RPM Protection State - overspeed protection state machine
+high_rpm_protection_t,,fault_flag,word,2,High RPM protection fault active flag,,verified
+high_rpm_protection_t,,state,word,2,State machine state,,verified
+high_rpm_protection_t,,timer,word,2,Countdown timer,,verified
+high_rpm_protection_t,,reserved_06,word,2,Reserved/gap,,needs_review
+high_rpm_protection_t,,warning_flag,word,2,Warning active flag,,verified
+
+# Oil Pressure Protection State - oil pressure monitoring state machine
+oil_pressure_protection_t,,sensor_status_history_bits,dword,4,Sensor status history bits - shifting record,,verified
+oil_pressure_protection_t,,rpm_ramp_complete,word,2,Flag indicating RPM ramp complete,,verified
+oil_pressure_protection_t,,rpm_limit_current,word,2,Current RPM limit from oil pressure,,verified
+oil_pressure_protection_t,,rpm_limit_target,word,2,Target RPM limit for oil pressure,,verified
+oil_pressure_protection_t,,rpm_limit_previous,word,2,Previous RPM limit for tracking,,verified
+oil_pressure_protection_t,,state_index,word,2,State index for oil pressure protection,,verified
+oil_pressure_protection_t,,validation_timer,word,2,Timer for oil pressure validation,,verified
+oil_pressure_protection_t,,sensor_validation_counter,word,2,Sensor status validation counter,,verified
+
+# Fault Persistence Counters - fault debounce counters
+fault_persistence_counters_t,,periodic_monitor_phase,byte,1,5-phase counter for periodic fault monitoring,,verified
+fault_persistence_counters_t,,can_pin_fault,byte,1,CAN pin switching fault persistence counter,,verified
+fault_persistence_counters_t,,io_fault_1,byte,1,I/O control fault 1 persistence counter,,verified
+fault_persistence_counters_t,,io_fault_2,byte,1,I/O control fault 2 persistence counter,,verified
+fault_persistence_counters_t,,io_fault_3,byte,1,I/O control fault 3 persistence counter,,verified
+fault_persistence_counters_t,,io_fault_4,byte,1,I/O control fault 4 persistence counter,,verified
+fault_persistence_counters_t,,io_fault_5,byte,1,I/O control fault 5 persistence counter,,verified
+fault_persistence_counters_t,,io_fault_6,byte,1,I/O control fault 6 persistence counter,,verified
+
+# Fault Status Registers - active fault flags (16 bytes)
+fault_status_registers_t,,sensor_fault_status,word,2,Sensor fault status register,,verified
+fault_status_registers_t,,fault_status_2,word,2,Fault status flags register 2,,verified
+fault_status_registers_t,,engine_fault_status,word,2,Engine fault status register,,verified
+fault_status_registers_t,,reserved_06,word,2,Reserved/gap,,needs_review
+fault_status_registers_t,,io_fault_status_1,word,2,IO fault status register 1,,verified
+fault_status_registers_t,,io_fault_status_2,word,2,IO fault status register 2,,verified
+fault_status_registers_t,,io_fault_status_3,word,2,IO fault status register 3,,verified
+fault_status_registers_t,,io_fault_status_4,word,2,IO fault status register 4,,verified
+
+# Fault Latch Registers - historical/latched faults (16 bytes)
+fault_latch_registers_t,,sensor_fault_latch,word,2,Sensor fault latch register,,verified
+fault_latch_registers_t,,fault_status_8_previous,word,2,Previous state for edge detection,,verified
+fault_latch_registers_t,,engine_fault_latch,word,2,Engine fault latch register,,verified
+fault_latch_registers_t,,reserved_06,word,2,Reserved/gap,,needs_review
+fault_latch_registers_t,,io_fault_latch_1,word,2,IO fault latch register 1,,verified
+fault_latch_registers_t,,io_fault_latch_2,word,2,IO fault latch register 2,,verified
+fault_latch_registers_t,,io_fault_latch_3,word,2,IO fault latch register 3,,verified
+fault_latch_registers_t,,io_fault_latch_4,word,2,IO fault latch register 4,,verified
+
+# Engine Operating Mode State - engine run state machine
+engine_operating_mode_t,,state,word,2,Engine operating mode state 1-8,,verified
+engine_operating_mode_t,,shutdown_complete_flag,word,2,Engine shutdown complete flag,,verified
+
+# RPM Fuel Protection State - RPM-based fuel limiting state
+rpm_fuel_protection_t,,fuel_limit_shutdown,word,2,Fuel limit during shutdown,,verified
+rpm_fuel_protection_t,,high_rpm_fuel_limit,word,2,High RPM fuel control limit,,verified
+rpm_fuel_protection_t,,low_rpm_fuel_protection_limit,word,2,Low RPM fuel protection limit,,verified
+rpm_fuel_protection_t,,rpm_rate_limiter_output,word,2,RPM rate limiter output,,verified
+rpm_fuel_protection_t,,rpm_rate_limited_value,word,2,RPM rate limited value,,verified
+rpm_fuel_protection_t,,rpm_rate_secondary_calc,word,2,Secondary RPM rate calculation,,verified
+rpm_fuel_protection_t,,rpm_state_accumulator,word,2,RPM state accumulator,,verified
+rpm_fuel_protection_t,,high_rpm_fuel_accumulator,word,2,High RPM fuel accumulator,,verified
+rpm_fuel_protection_t,,low_rpm_fuel_accumulator,word,2,Low RPM fuel accumulator,,verified
+rpm_fuel_protection_t,,fuel_demand_before_limiting,word,2,Fuel demand saved before limiting,,verified
+rpm_fuel_protection_t,,low_rpm_threshold_exceeded_flag,word,2,Low RPM threshold exceeded flag,,verified
+rpm_fuel_protection_t,,rpm_threshold_exceeded_flag,word,2,RPM threshold exceeded flag,,verified
+rpm_fuel_protection_t,,high_rpm_threshold_exceeded_flag,word,2,High RPM threshold exceeded flag,,verified
+rpm_fuel_protection_t,,fuel_protection_timer_enable,word,2,Timer enable for protection state machines,,verified
+rpm_fuel_protection_t,,fuel_system_protection_enabled,word,2,Master fuel protection system enable (1=active),,verified
+
+# Timing Mode Control State - injection timing control state machine
+timing_mode_control_t,,blend_factor,word,2,Fuel timing mode blend factor Q14,,verified
+timing_mode_control_t,,protection_blend_ramp,word,2,Timing protection blend ramp 0-16384,,verified
+timing_mode_control_t,,source_selector,word,2,Timing mode source selector 0-4,,verified
+timing_mode_control_t,,transition_result,word,2,Timing mode transition result,,verified
+timing_mode_control_t,,fuel_blend_result,word,2,Timing fuel blend result,,verified
+timing_mode_control_t,,oil_pressure_result,word,2,Timing oil pressure condition result,,verified
+timing_mode_control_t,,mode_11_result,word,2,Timing mode 11 countdown result,,verified
+timing_mode_control_t,,protection_counter_1,word,2,Timing protection counter 1,,verified
+timing_mode_control_t,,protection_counter_2,word,2,Timing protection counter 2,,verified
+timing_mode_control_t,,blend_state,word,2,Timing blend state,,verified
+timing_mode_control_t,,blend_accumulator,word,2,Timing blend accumulator,,verified
+timing_mode_control_t,,fuel_source_mode_11_state,word,2,Fuel source mode 11 state,,verified
+timing_mode_control_t,,fuel_source_mode_11_timer,word,2,Fuel source mode 11 timer,,verified
+timing_mode_control_t,,fuel_mode_transition_state,word,2,Fuel mode transition state,,verified
+timing_mode_control_t,,fuel_mode_transition_timer,word,2,Fuel mode transition timer,,verified
