@@ -156,6 +156,10 @@ cd firmware/[J90280.05|J90350.00]_analysis/ghidra
 - Never modify Ghidra directly - CSV is the source of truth
 - See `firmware/CLAUDE.md` for detailed workflow and command reference
 
+**CM848 Analysis Notes:**
+- ~180 unnamed subroutines exist in 0x005xxxxx ROM range (see global_variables.csv SUB_* entries)
+- These are valid ROM functions - ROM is 448KB (0x00000000-0x0006FFFF) but addresses may appear relocated
+
 ### calterm3/calterm-crc (C++)
 ```bash
 cd calterm3/calterm-crc

@@ -142,3 +142,13 @@ Both firmwares use the same CSV structure in `output/`:
 - **CSV is source of truth** - Never edit Ghidra directly
 - **Verify before commit** - Check decompiled output after applying changes
 - **Decimal in names** - Use decimal, not hex, in variable/function names
+
+---
+
+## Common Code Patterns
+
+### Sensor Channel Architecture
+- Sensor channels use paired functions: `sensorChannelN_init()` calls a config init function, `sensorChannelN_process()` calls the update function
+- Both functions take identical 13 parameters (calibration pointers, RAM buffers, ADC indices, output variables)
+- CM848: `sensorChannelConfigInit` (0x00500234) + `updateSensorChannelWithConfig` (0x00500a4c)
+- Look for similar patterns in CM550 firmware
