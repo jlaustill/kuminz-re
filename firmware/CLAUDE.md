@@ -8,6 +8,7 @@ This directory contains reverse-engineered Cummins CM550 ECU firmware from diffe
 |-----------|--------|--------|---------|
 | `J90280.05_analysis/` | Static binary | Reference (789 functions) | Reference firmware |
 | `J90350.00_analysis/` | Live ECU dump | Active (787 functions) | Live bench ECU |
+| `CM848_S90140.06_analysis/` | 2004.5 Dodge 5.9L | Active (1245 functions) | CM848D ECU (PowerPC) |
 
 ---
 
@@ -142,6 +143,7 @@ Both firmwares use the same CSV structure in `output/`:
 - **CSV is source of truth** - Never edit Ghidra directly
 - **Verify before commit** - Check decompiled output after applying changes
 - **Decimal in names** - Use decimal, not hex, in variable/function names
+- **Function must exist in Ghidra** - CSV renames only work for addresses Ghidra recognizes as functions; 0x005xxxxx ROM functions may need manual creation first
 
 ---
 
@@ -152,3 +154,9 @@ Both firmwares use the same CSV structure in `output/`:
 - Both functions take identical 13 parameters (calibration pointers, RAM buffers, ADC indices, output variables)
 - CM848: `sensorChannelConfigInit` (0x00500234) + `updateSensorChannelWithConfig` (0x00500a4c)
 - Look for similar patterns in CM550 firmware
+
+### Boost/MAP Sensor Data Flow (CM848)
+- MAP sensor → `boost_pressure_sensor_raw` (0x40bd8e) → `selectLoadNormalizer()` → `boost_denominator_min128` → fuel calculations
+- No single "max boost" parameter - boost limited indirectly via AFC tables (AFFLLMZA) and BIR diagnostics
+- Pressure scale factor: 0.0159064138077 IN_HG per raw count (16-bit range = ~35 bar max)
+- See `CM848_S90140.06_analysis/output/10bar_map_conversion.md` for complete parameter documentation
