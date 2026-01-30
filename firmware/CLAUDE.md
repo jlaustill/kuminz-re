@@ -143,7 +143,23 @@ Both firmwares use the same CSV structure in `output/`:
 - **CSV is source of truth** - Never edit Ghidra directly
 - **Verify before commit** - Check decompiled output after applying changes
 - **Decimal in names** - Use decimal, not hex, in variable/function names
-- **Function must exist in Ghidra** - CSV renames only work for addresses Ghidra recognizes as functions; 0x005xxxxx ROM functions may need manual creation first
+- **Function must exist in Ghidra** - CSV renames only work for addresses Ghidra recognizes as functions
+
+---
+
+## CM848 Dual-Bank Flash Architecture
+
+CM848 has two flash banks (discovered via e2m analysis):
+
+| Bank | Address Range | Size | File |
+|------|---------------|------|------|
+| Bank 1 (ROM) | 0x00000000 - 0x0006FFFF | 448KB | `cm848_rom.bin` |
+| Bank 2 (FLASH2) | 0x00500000 - 0x0053D4EA | 245KB | `cm848_flash2.bin` |
+
+Bank 2 contains utility functions called from Bank 1 (sensor processing, math routines).
+
+**Pending task:** Dump Bank 2 from live ECU to verify e2m extraction.
+See `CM848_S90140.06_analysis/docs/TASK_dump_bank2.md` for details.
 
 ---
 
