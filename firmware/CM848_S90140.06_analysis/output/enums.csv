@@ -385,3 +385,107 @@ DIAGNOSTIC_FUEL_CONTROL_MODE,0x0C,FUEL_MODE_FUEL_DELIVERY,Fuel delivery control 
 # Diagnostic Status - overall diagnostic system state
 DIAGNOSTIC_STATUS,0,NORMAL_OPERATION,No diagnostic mode active - normal operation,2
 DIAGNOSTIC_STATUS,1,FUEL_ARBITRATOR_SOURCE,Fuel arbitrator rpm_target==2 active,2
+
+# Derate Event State Machine - protection derate progression
+DERATE_EVENT_STATE,0,NO_DERATE,No derate condition active,2
+DERATE_EVENT_STATE,1,TIMING_ACTIVE,Derate timing accumulator active,2
+DERATE_EVENT_STATE,2,EVENT_COUNTED,Event counted - counter incremented,2
+
+# Diagnostic Error Source Codes - identifies where error originated
+DIAG_ERROR_SOURCE,0x02,INVALID_LENGTH,Security validator - message length mismatch,1
+DIAG_ERROR_SOURCE,0x03,SECURITY_FAILED,Security validator - security check returned non-zero,1
+DIAG_ERROR_SOURCE,0x07,CONDITION_NOT_MET,Memory operation - system_logging_state check failed,1
+DIAG_ERROR_SOURCE,0x08,ADDR_LOOKUP_FAIL,Memory resolver - initial address lookup failed,1
+DIAG_ERROR_SOURCE,0x09,ADDR_RANGE_INVALID,Address validator - address not in validation table,1
+DIAG_ERROR_SOURCE,0x0A,ADDR_ACCESS_DENIED,Address validator - access blocked in normal mode,1
+DIAG_ERROR_SOURCE,0x0B,BUFFER_WRITE_FAIL,Memory operation - circular buffer write error,1
+DIAG_ERROR_SOURCE,0x0E,PATCH_LIMIT,Response builder - memory patch count exceeded,1
+DIAG_ERROR_SOURCE,0x18,UNKNOWN_SERVICE,Service dispatcher - service ID not in dispatch table,1
+
+# Diagnostic Service 3 Command Codes (Secured Operations)
+DIAG_SERVICE_3_CMD,0x40,ENABLE_SPECIAL_MODE,Enable special diagnostic mode for high memory access,1
+DIAG_SERVICE_3_CMD,0x41,VALIDATE_SPECIAL_MODE,Validate special mode state transition,1
+DIAG_SERVICE_3_CMD,0x42,HIGH_RPM_SHUTDOWN,Trigger high RPM shutdown,1
+DIAG_SERVICE_3_CMD,0x43,SYSTEM_RESET,Diagnostic system reset,1
+DIAG_SERVICE_3_CMD,0x50,NOP,No operation - returns success,1
+DIAG_SERVICE_3_CMD,0x51,MEMORY_PATCH,Apply queued memory patches,1
+DIAG_SERVICE_3_CMD,0x52,SECURED_SHUTDOWN,Request secured engine shutdown,1
+DIAG_SERVICE_3_CMD,0x53,RESERVED_ERROR,Reserved - always returns error 0x04,1
+DIAG_SERVICE_3_CMD,0x54,CAN_BUFFER_LOG,Log CAN message buffer,1
+
+# Diagnostic Service 4 Command Codes (Control Operations)
+DIAG_SERVICE_4_CMD,0x64,CONTROL_64,System control function 64,1
+DIAG_SERVICE_4_CMD,0x65,FAULT_SCANNER,Enable fault flag scanning,1
+DIAG_SERVICE_4_CMD,0x66,STATE_RESET,Reset diagnostic_command_state to 0,1
+DIAG_SERVICE_4_CMD,0x69,DISABLE_SPECIAL_MODE,Disable special diagnostic mode,1
+DIAG_SERVICE_4_CMD,0x70,RESERVED_70,Reserved - returns error 0x04,1
+DIAG_SERVICE_4_CMD,0x71,STATE_BIT0,Set diagnostic_command_state bit 0,1
+DIAG_SERVICE_4_CMD,0x72,RESERVED_72,Reserved - returns error 0x04,1
+DIAG_SERVICE_4_CMD,0x73,STATE_BIT1,Set diagnostic_command_state bit 1,1
+DIAG_SERVICE_4_CMD,0x74,CONTROL_74,System control function 74,1
+DIAG_SERVICE_4_CMD,0x75,CONTROL_75,System control function 75,1
+DIAG_SERVICE_4_CMD,0x76,RESERVED_76,Reserved - returns error 0x04,1
+
+# Diagnostic Service 5 Mode Codes (Memory Operations)
+DIAG_SERVICE_5_MODE,0x60,MEM_READ_MODE3,Memory read mode 3 - standard read,1
+DIAG_SERVICE_5_MODE,0x80,MEM_WRITE_MODE4,Memory write mode 4 - 4-byte address,1
+DIAG_SERVICE_5_MODE,0xA0,MEM_WRITE_MODE2,Memory write mode 2 - 2-byte address,1
+DIAG_SERVICE_5_MODE,0xB0,MULTI_PKT_RX,Multi-packet receive handler,1
+DIAG_SERVICE_5_MODE,0xC0,MEM_READ_MODE2,Memory read mode 2 - compact read,1
+DIAG_SERVICE_5_MODE,0xE0,MEM_READ_MODE1,Memory read mode 1 - extended read,1
+DIAG_SERVICE_5_MODE,0xF0,MULTI_PKT_TX,Multi-packet transmit handler,1
+
+# DPA Protocol Frame Types - Cummins DPA diagnostic protocol
+DPA_FRAME_TYPE,0xC0,ASYNC,Asynchronous frame - no immediate response expected,1
+DPA_FRAME_TYPE,0x80,SYNC,Synchronous frame - wait for response,1
+
+# DPA Protocol Instructions
+DPA_INSTRUCTION,0x49,TRANSMIT,Send data to ECU (TX instruction),1
+DPA_INSTRUCTION,0x48,RECEIVE,Receive data from ECU (RX instruction),1
+
+# EEPROM Memory Block IDs
+EEPROM_MEMORY_BLOCKS,0,DATA_PLATE_BLOCK,Data plate identifier block,1
+EEPROM_MEMORY_BLOCKS,9,PRIMARY_BLOCK,Main parameter memory block,1
+
+# EF00 Service IDs - J1939 PGN 0xEF00 proprietary diagnostic services
+EF00_SERVICE_ID,0x01,QUERY_TERMINATE,QueryTerminate - CLIP compatible,1
+EF00_SERVICE_ID,0x04,SYSTEM_SERVICE_04,System service 04,1
+EF00_SERVICE_ID,0x05,SYSTEM_SERVICE_05,System service 05,1
+EF00_SERVICE_ID,0x06,SYSTEM_SERVICE_06,High RPM shutdown activation,1
+EF00_SERVICE_ID,0x07,SYSTEM_SERVICE_07,System service 07,1
+EF00_SERVICE_ID,0x0A,SYSTEM_SERVICE_0A,System service 0A,1
+EF00_SERVICE_ID,0x0B,SYSTEM_SERVICE_0B,System service 0B,1
+EF00_SERVICE_ID,0x0F,GET_PARAMETERS_BY_ID_ALT,GetParametersByID alternate,1
+EF00_SERVICE_ID,0x10,GET_PARAMETERS_BY_ID,GetParametersByID - CLIP compatible,1
+EF00_SERVICE_ID,0x15,GET_ADDRESS_BY_PARAM_ID,GetAddressByParameterID - CLIP compatible,1
+EF00_SERVICE_ID,0x16,SYSTEM_SERVICE_16,System service 16,1
+EF00_SERVICE_ID,0x18,SYSTEM_SERVICE_18,System service 18,1
+EF00_SERVICE_ID,0x41,DIAG_ADDR_RESOLVER,Address resolver via diagnosticMemoryAddressResolver,1
+EF00_SERVICE_ID,0x43,MEM_READ_2B_PARAM_4B_OFFSET,Memory read: 2-byte param + 4-byte offset,1
+EF00_SERVICE_ID,0x44,SERVICE_44,Service 44,1
+EF00_SERVICE_ID,0x45,SERVICE_45,Service 45,1
+EF00_SERVICE_ID,0x46,MEM_READ_2B_PARAM_ONLY,Memory read: 2-byte param only,1
+EF00_SERVICE_ID,0x47,SERVICE_47,Service 47,1
+EF00_SERVICE_ID,0x48,SERVICE_48,Service 48,1
+EF00_SERVICE_ID,0x49,J1939_DATA_COPY,J1939 TP memory read/copy,1
+EF00_SERVICE_ID,0x4A,MEM_READ_4B_ADDR_1B_LEN,Memory read: 4-byte addr + 1-byte len,1
+EF00_SERVICE_ID,0x4B,SERVICE_4B,Service 4B,1
+EF00_SERVICE_ID,0x4C,MEM_READ_4B_ADDR_4B_LEN,Memory read: 4-byte addr + 4-byte len,1
+EF00_SERVICE_ID,0x4D,SERVICE_4D,Service 4D,1
+
+# CAN Timer Init Modes
+CAN_TIMER_INIT_MODE,0,BASIC_DELAY,Basic timer + delay with watchdog,1
+CAN_TIMER_INIT_MODE,1,ALT_TRANSMIT,Alt timer + message transmit init,1
+CAN_TIMER_INIT_MODE,2,DIVIDED_TRANSMIT,Divided timer + message transmit init,1
+CAN_TIMER_INIT_MODE,3,CONDITIONAL_DELAY,Conditional timer + watchdog delay,1
+
+# CAN Buffer Offsets
+CAN_BUFFER_OFFSETS,0x36,CAN_STATUS_BYTE,CAN message status byte offset,1
+CAN_BUFFER_OFFSETS,0x37,PARAM_BYTE_1,First parameter byte offset,1
+CAN_BUFFER_OFFSETS,0x38,PARAM_BYTE_2,Second parameter byte offset,1
+CAN_BUFFER_OFFSETS,0x39,PARAM_BYTE_3,Third parameter byte offset,1
+
+# Interpolation Scaling Factors
+INTERPOLATION_FACTORS,3,SCALE_FACTOR,Base interpolation scaling,1
+INTERPOLATION_FACTORS,8,SHIFT_BITS,Bit shift amount for scaling,1
+INTERPOLATION_FACTORS,256,WORD_MULTIPLIER,Word-size multiplication factor,2
