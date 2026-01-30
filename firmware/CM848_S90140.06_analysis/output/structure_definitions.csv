@@ -251,3 +251,59 @@ protection_lockout_t,0x0040b11c,rpm_lockout,word,2,RPM protection lockout flag,,
 protection_lockout_t,0x0040b11c,sensor_fault_active,word,2,Sensor fault lockout flag,,verified
 protection_lockout_t,0x0040b11c,reserved_08,word,2,Gap (0xb124-0xb125),,needs_review
 protection_lockout_t,0x0040b11c,timer_expired,word,2,Lockout timer expired flag,,verified
+
+# ============================================================================
+# Generic Protocol Structures - Ported from CM550 (common across Cummins ECUs)
+# These are protocol-level definitions, not tied to specific addresses
+# ============================================================================
+
+# J1939 CAN Message Header - standard format for all J1939 messages
+j1939_header_t,,id,uint32_t,4,CAN identifier containing PGN priority and addressing info,,verified
+j1939_header_t,,length,uint16_t,2,Message data length for single/multi-frame decision,,verified
+
+# Standard CAN Receive Descriptor - generic CAN RX buffer format
+can_std_rx_desc_t,,id,uint32_t,4,11-bit or 29-bit CAN ID stored in 32-bit,,verified
+can_std_rx_desc_t,,length,uint16_t,2,DLC (Data Length Code),,verified
+can_std_rx_desc_t,,data_ptr,dword,4,Pointer to payload bytes,,verified
+
+# Parameter Response Structure - diagnostic parameter response format
+parameter_response_t,,error_code,byte,1,Error code (0=success non-zero=error),,verified
+parameter_response_t,,param_value,word,2,Retrieved parameter value,,verified
+parameter_response_t,,scaling_applied,byte,1,Flag indicating if scaling was applied,,verified
+parameter_response_t,,timestamp,dword,4,Response generation timestamp,,verified
+
+# CalTerm Protocol Structure - CalTerm diagnostic message format
+calterm_protocol_t,,command_id,byte,1,CalTerm command identifier,,verified
+calterm_protocol_t,,parameter_count,byte,1,Number of parameters in request/response,,verified
+calterm_protocol_t,,data_payload,byte,8,Parameter data payload (up to 8 bytes),,verified
+calterm_protocol_t,,checksum,byte,1,Message integrity checksum,,verified
+
+# Insite Protocol Structure - Insite live data message format
+insite_protocol_t,,function_code,byte,1,Insite function code,,verified
+insite_protocol_t,,live_data_request,byte,1,Live data monitoring request flag,,verified
+insite_protocol_t,,status_flags,byte,1,Monitoring status flags,,verified
+insite_protocol_t,,response_data,byte,6,Live parameter response data,,verified
+
+# Table Interpolation Arguments - generic lookup table input structure
+# Note: CM848 passes these as function parameters, not a structure pointer
+table_interp_args_t,,current_index,word,2,Current interpolation index into table,,verified
+table_interp_args_t,,x_axis_ptr,dword,4,Pointer to X-axis table (input values),,verified
+table_interp_args_t,,input_value,word,2,Input value for table lookup,,verified
+table_interp_args_t,,y_axis_ptr,dword,4,Pointer to Y-axis table (output values),,verified
+
+# Q16.16 Fixed Point Structure - 32-bit with 16-bit integer and fractional parts
+# Used for PID controllers and accumulators needing fractional precision
+q16_fixed_point_t,,integer_part,word,2,High 16 bits - integer/whole number portion,,verified
+q16_fixed_point_t,,fractional_part,word,2,Low 16 bits - fractional portion,,verified
+
+# DMA Descriptor Structure - DMA transfer configuration block
+dma_descriptor_t,,source_address,dword,4,DMA transfer source memory address,,verified
+dma_descriptor_t,,dest_address,dword,4,DMA transfer destination memory address,,verified
+dma_descriptor_t,,transfer_count,word,2,Number of bytes/words to transfer,,verified
+dma_descriptor_t,,control_flags,word,2,DMA control flags (mode type enable etc),,verified
+dma_descriptor_t,,next_descriptor,dword,4,Pointer to next descriptor in chain,,verified
+
+# Memory Patch Entry - RAM patching structure for diagnostic modifications
+memory_patch_entry_t,,target_address,dword,4,Memory address to patch,,verified
+memory_patch_entry_t,,patch_size,byte,1,Number of bytes to copy to target address,,verified
+memory_patch_entry_t,,reserved,byte,1,Unused padding byte for 6-byte alignment,,verified
