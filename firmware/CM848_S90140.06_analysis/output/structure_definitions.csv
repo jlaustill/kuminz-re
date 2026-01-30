@@ -1,1 +1,253 @@
 struct_name,address,field_name,type,size,comment,dependency,Status
+# UDS Response Buffer - diagnostic response structure at 0x0040b492
+# Used by processUdsTransmitBuffer and related diagnostic handlers
+# Total size: 11 bytes (0x0040b492-0x0040b49c)
+uds_response_t,0x0040b492,source_address,byte,1,Destination address for J1939 response message,,verified
+uds_response_t,0x0040b492,service_id,byte,1,UDS service ID (0x67=SecAccess 0x7F=NegResp 0x60/0x68=Cummins),,verified
+uds_response_t,0x0040b492,subfunction,byte,1,UDS subfunction code for service routing,,verified
+uds_response_t,0x0040b492,error_code,byte,1,Negative response error code (0x11=serviceNotSupported 0x37=requiredTimeDelayNotExpired),,verified
+uds_response_t,0x0040b492,data_length,byte,1,Length of data payload in response,,verified
+uds_response_t,0x0040b492,data,byte,5,Variable response payload (security seeds etc),DAT_0040b497-0x49b,verified
+uds_response_t,0x0040b492,response_pending,byte,1,Flag to trigger transmission (1=send response),,verified
+# Fuel Demand Control State - fuel demand calculation and rate limiting
+# Used by calculateFuelDemandValue and related fuel control functions
+# Total size: 28 bytes (0x0040a57a-0x0040a594)
+fuel_demand_control_t,0x0040a57a,calculated,word,2,Final calculated fuel demand value,,verified
+fuel_demand_control_t,0x0040a57a,mode,word,2,Fuel demand mode selector (0=normal),,verified
+fuel_demand_control_t,0x0040a57a,enable_flag,word,2,Fuel demand enable flag (1=enabled),,verified
+fuel_demand_control_t,0x0040a57a,rate_limiter_state,word,2,Rate limiter state machine value,,verified
+fuel_demand_control_t,0x0040a57a,rate_delta,word,2,Fuel demand rate of change delta,,verified
+fuel_demand_control_t,0x0040a57a,throttle_based,word,2,Throttle-based fuel demand component,,verified
+fuel_demand_control_t,0x0040a57a,override_value,word,2,Diagnostic override fuel demand value,,verified
+fuel_demand_control_t,0x0040a57a,override_active,word,2,Override mode active flag (1=override),,verified
+fuel_demand_control_t,0x0040a57a,rate_limited,word,2,Rate-limited fuel demand output,,verified
+fuel_demand_control_t,0x0040a57a,override_countdown,word,2,Override timeout countdown (offset 0x12),,needs_review
+fuel_demand_control_t,0x0040a57a,reserved_14,word,2,Gap/reserved (0x58e-0x590),,needs_review
+fuel_demand_control_t,0x0040a57a,reserved_16,word,2,Gap/reserved (0x590-0x592),,needs_review
+fuel_demand_control_t,0x0040a57a,delta,word,2,Fuel demand delta for rate calculations,,verified
+fuel_demand_control_t,0x0040a57a,delta_filtered,word,2,Filtered fuel demand delta,,verified
+# Protection Condition Flags - byte-packed protection evaluation flags
+# Used by protectionConditionMonitor and protectionFaultEvaluator
+# Total size: 10 bytes (0x0040b0e8-0x0040b0f1)
+protection_condition_flags_t,0x0040b0e8,condition_eval,byte,1,Protection condition evaluation result,,verified
+protection_condition_flags_t,0x0040b0e8,condition_flags_1,byte,1,Protection condition flags set 1,,verified
+protection_condition_flags_t,0x0040b0e8,load_condition_flags,byte,1,Load-based protection condition flags,,verified
+protection_condition_flags_t,0x0040b0e8,overtemp_flags,byte,1,Overtemperature protection flags,,verified
+protection_condition_flags_t,0x0040b0e8,reserved_04,byte,1,Gap/reserved byte at offset 0x04,,needs_review
+protection_condition_flags_t,0x0040b0e8,condition_flags_3,byte,1,Protection condition flags set 3,,verified
+protection_condition_flags_t,0x0040b0e8,condition_flags_2,byte,1,Protection condition flags set 2,,verified
+protection_condition_flags_t,0x0040b0e8,reserved_07,byte,1,Gap/reserved byte at offset 0x07,,needs_review
+protection_condition_flags_t,0x0040b0e8,threshold_current,byte,1,Current threshold index for protection lookup,,verified
+protection_condition_flags_t,0x0040b0e8,action_flags,byte,1,Protection action trigger flags,,verified
+# Protection Status Flags - protection state machine status
+# Continuation of protection state at 0x0040b0f2
+# Total size: 8 bytes (0x0040b0f2-0x0040b0f9)
+protection_status_flags_t,0x0040b0f2,status_flags,word,2,Protection status word (bit flags),,verified
+protection_status_flags_t,0x0040b0f2,flags,byte,3,Protection flags (3 bytes of packed bits),,verified
+protection_status_flags_t,0x0040b0f2,output_flags,byte,1,Protection output control flags,,verified
+protection_status_flags_t,0x0040b0f2,reserved_06,byte,1,Gap/reserved,,needs_review
+protection_status_flags_t,0x0040b0f2,rate_limit_flags,byte,1,Rate limit protection flags (offset 0x0c from 0xb0f2 is 0xb0fe),,needs_review
+# Protection Timer State - protection system timers and counters
+# Used by protectionTimeoutHandler and protectionStateMachine
+# Total size: 10 bytes (0x0040b100-0x0040b109)
+protection_timer_state_t,0x0040b100,status_code,dword,4,Protection status code (PROTECTION_STATUS_CODE enum),,verified
+protection_timer_state_t,0x0040b100,timeout_counter,word,2,Protection timeout countdown counter,,verified
+protection_timer_state_t,0x0040b100,state1_timer,word,2,Level 1 protection state timer value,,verified
+protection_timer_state_t,0x0040b100,state2_timer,word,2,Level 2 protection state timer value,,verified
+# Engine Crank/Run State - engine starting and running state machine
+# Used by bootStateMachine and keyOnStateMachine
+# Total size: 8 bytes (0x0040b80a-0x0040b811)
+engine_crank_state_t,0x0040b80a,start_counter,word,2,Engine start attempt counter,,verified
+engine_crank_state_t,0x0040b80a,crank_state,word,2,Cranking state machine value,,verified
+engine_crank_state_t,0x0040b80a,cranking_flag,word,2,Engine currently cranking flag (1=cranking),,verified
+engine_crank_state_t,0x0040b80a,run_state,word,2,Engine run state (ENGINE_OPERATING_MODE enum),,verified
+# Engine Sync State - crankshaft synchronization status
+# Used by engine position sensor ISR and sync detection
+# Total size: 6 bytes (0x0040b87f-0x0040b884)
+engine_sync_state_t,0x0040b87f,sync_status,byte,1,Sync detection status (0=lost 1=synced),,verified
+engine_sync_state_t,0x0040b87f,reference_count,word,2,Sync reference pulse count,,verified
+engine_sync_state_t,0x0040b87f,speed_raw,word,2,Raw engine speed from position sensor,,verified
+engine_sync_state_t,0x0040b87f,reserved_05,byte,1,Padding for alignment,,needs_review
+# Engine RPM State - current and target engine speed values
+# Used by processEngineRpmTarget and governor control
+# Total size: 16 bytes (0x0040b7ac-0x0040b7bb)
+engine_rpm_state_t,0x0040b7ac,target_rpm,word,2,Target engine RPM setpoint,,verified
+engine_rpm_state_t,0x0040b7ac,reserved_02,word,2,Gap/reserved (0xb7ae),,needs_review
+engine_rpm_state_t,0x0040b7ac,reserved_04,word,2,Gap/reserved (0xb7b0),,needs_review
+engine_rpm_state_t,0x0040b7ac,reserved_06,word,2,Gap/reserved (0xb7b2),,needs_review
+engine_rpm_state_t,0x0040b7ac,reserved_08,word,2,Gap/reserved (0xb7b4),,needs_review
+engine_rpm_state_t,0x0040b7ac,reserved_0a,word,2,Gap/reserved (0xb7b6),,needs_review
+engine_rpm_state_t,0x0040b7ac,reserved_0c,word,2,Gap/reserved (0xb7b8),,needs_review
+engine_rpm_state_t,0x0040b7ac,current_rpm,word,2,Current engine RPM measurement,,verified
+# Primary Sensor Readings - core engine sensor inputs
+# Used by sensor processing and protection monitoring
+# Total size: 8 bytes (0x0040baf2-0x0040baf9)
+sensor_readings_t,0x0040baf2,oil_pressure,word,2,Oil pressure sensor reading (PSI scaled),,verified
+sensor_readings_t,0x0040baf2,coolant_temp,word,2,Coolant temperature sensor (deg C scaled),,verified
+sensor_readings_t,0x0040baf2,intake_air_temp,word,2,Intake manifold air temperature,,verified
+sensor_readings_t,0x0040baf2,battery_voltage,word,2,Battery voltage raw ADC value,,verified
+# EEPROM Header Block - calibration validation and configuration
+# Located in RAM copy of EEPROM data at 0x003fee08
+# Total size: 32 bytes (0x003fee08-0x003fee27)
+eeprom_header_t,0x003fee08,version_marker,word,2,EEPROM data version marker,,verified
+eeprom_header_t,0x003fee08,magic,word,2,Validation magic (EEPROM_MAGIC enum: 0x600D=valid),,verified
+eeprom_header_t,0x003fee08,header_block,byte,6,EEPROM header data block,,verified
+eeprom_header_t,0x003fee08,config_dword,dword,4,EEPROM configuration dword,,verified
+eeprom_header_t,0x003fee08,config_word,word,2,EEPROM configuration word,,verified
+eeprom_header_t,0x003fee08,calibration_block1,byte,6,Calibration data block 1,,verified
+eeprom_header_t,0x003fee08,cal_word1,word,2,Calibration parameter word 1,,verified
+eeprom_header_t,0x003fee08,cal_word2,word,2,Calibration parameter word 2,,verified
+eeprom_header_t,0x003fee08,cal_word3,word,2,Calibration parameter word 3,,verified
+eeprom_header_t,0x003fee08,cal_word4,word,2,Calibration parameter word 4,,verified
+eeprom_header_t,0x003fee08,serial_number,dword,4,ECU serial number from EEPROM,,needs_review
+# Governor Output State - speed control integrator and output
+# Used by governor PID controller
+# Total size: 8 bytes (0x0040aec2-0x0040aec9)
+governor_output_t,0x0040aec2,integrator,dword,4,Speed control PID integrator (Q16.16 fixed point),,verified
+governor_output_t,0x0040aec2,output,dword,4,Governor output command value,,verified
+# Injector Control State - fuel injector enable and timing control
+# Used by fuel injection output drivers
+# Total size: 7 bytes (0x0040c117-0x0040c11d)
+injector_control_t,0x0040c117,enable_ch0_7,byte,1,Injector enable bitmap channels 0-7,,verified
+injector_control_t,0x0040c117,enable_ch8_15,byte,1,Injector enable bitmap channels 8-15,,verified
+injector_control_t,0x0040c117,channel_status,byte,1,Output channel status flags,,verified
+injector_control_t,0x0040c117,timing_mode,byte,1,Injector timing mode selector,,verified
+injector_control_t,0x0040c117,output_ch0,byte,1,Channel 0 output state,,verified
+injector_control_t,0x0040c117,fault_flags,byte,1,Injector fault detection flags,,verified
+injector_control_t,0x0040c117,output_ch1,byte,1,Channel 1 output state,,verified
+# CAN Receive State - J1939/CAN message reception tracking
+# Used by j1939ProcessReceivedMessages and CAN interrupt handlers
+# Total size: 6 bytes (0x0040b34e-0x0040b353)
+can_rx_state_t,0x0040b34e,message_index,byte,1,Current message buffer index,,verified
+can_rx_state_t,0x0040b34e,message_buffer,byte,1,Message buffer selector,,verified
+can_rx_state_t,0x0040b34e,message_counter,word,2,Received message counter,,verified
+can_rx_state_t,0x0040b34e,dm1_pending,word,2,DM1 diagnostic message pending flag,,verified
+# Protection System Enable - master protection control bits
+# Used by protectionEnableCheck and protection initialization
+# Total size: 4 bytes (0x0040c050-0x0040c053)
+protection_enable_t,0x0040c050,mode_bits,byte,1,Protection mode selection bits,,verified
+protection_enable_t,0x0040c050,system_enable_bits,byte,1,Protection subsystem enable flags,,verified
+protection_enable_t,0x0040c050,reserved_02,byte,1,Gap/reserved,,needs_review
+protection_enable_t,0x0040c050,control_word,byte,1,Protection control word,,verified
+# Fault List Management - DTC list indices and counters
+# Used by fault logging and DM1/DM2 message generation
+# Total size: 8 bytes (0x003fe11a-0x003fe121)
+fault_list_state_t,0x003fe11a,write_index,word,2,Next write position in fault list,,verified
+fault_list_state_t,0x003fe11a,read_index,word,2,Current read position in fault list,,verified
+fault_list_state_t,0x003fe11a,emission_count,word,2,Count of emission-related faults,,verified
+fault_list_state_t,0x003fe11a,total_emission_faults,word,2,Total emission fault counter,,verified
+# Data Transfer State - diagnostic memory read/write operations
+# Used by diagMemoryReadHandler and calibration download
+# Total size: 8 bytes (0x003fec82-0x003fec89)
+data_transfer_state_t,0x003fec82,byte_count,word,2,Bytes remaining to transfer,,verified
+data_transfer_state_t,0x003fec82,reserved_02,word,2,Gap (0x3fec84-0x3fec85),,needs_review
+data_transfer_state_t,0x003fec82,reserved_04,word,2,Gap (0x3fec86-0x3fec87),,needs_review
+data_transfer_state_t,0x003fec82,reserved_06,word,2,Gap (0x3fec88-0x3fec89),,needs_review
+data_transfer_state_t,0x003fec82,state,word,2,Transfer state machine value,,verified
+data_transfer_state_t,0x003fec82,status,word,2,Transfer status/result code,,verified
+# Diagnostic Session Flags - diagnostic service session state
+# Used by initDiagnosticSession and diagnostic handlers
+# Total size: 6 bytes (0x003fecbe-0x003fecc3)
+diag_session_state_t,0x003fecbe,session_flags,byte,1,Diagnostic session active flags,,verified
+diag_session_state_t,0x003fecbe,enable_flags_2,byte,1,Secondary diagnostic enable flags,,verified
+diag_session_state_t,0x003fecbe,eeprom_status,byte,1,EEPROM operation status byte,,verified
+diag_session_state_t,0x003fecbe,reserved_03,byte,1,Gap/reserved,,needs_review
+diag_session_state_t,0x003fecbe,reserved_04,byte,1,Gap/reserved,,needs_review
+diag_session_state_t,0x003fecbe,checksum_status,byte,1,EEPROM checksum validation status,,verified
+# System Status Flags - engine and protection status bitmaps
+# Used by condition monitoring and fault detection
+# Total size: 48 bytes (0x003fe974-0x003fe9a3)
+system_status_flags_t,0x003fe974,enable_state,word,2,System master enable state,,verified
+system_status_flags_t,0x003fe974,condition_monitor,word,2,Condition monitor flags,,verified
+system_status_flags_t,0x003fe974,reserved_04,word,2,Gap (0x3fe978-0x3fe979),,needs_review
+system_status_flags_t,0x003fe974,safety_bits_1,word,2,Safety condition bits set 1,,verified
+system_status_flags_t,0x003fe974,safety_bits_2,word,2,Safety condition bits set 2,,verified
+system_status_flags_t,0x003fe974,sensor_diag,word,2,Sensor diagnostic flags,,verified
+system_status_flags_t,0x003fe974,lamp_status,word,2,Fault lamp status (MIL/warning),,verified
+system_status_flags_t,0x003fe974,emission_faults,word,2,Emission-related fault flags,,verified
+system_status_flags_t,0x003fe974,reserved_10,word,2,Gap (0x3fe984-0x3fe985),,needs_review
+system_status_flags_t,0x003fe974,reserved_12,word,2,Gap (0x3fe986-0x3fe987),,needs_review
+system_status_flags_t,0x003fe974,system_faults,word,2,System fault flags,,verified
+system_status_flags_t,0x003fe974,reserved_16,word,2,Gap (0x3fe98a-0x3fe98f),,needs_review
+system_status_flags_t,0x003fe974,reserved_18,word,2,Gap,,needs_review
+system_status_flags_t,0x003fe974,reserved_1a,word,2,Gap,,needs_review
+system_status_flags_t,0x003fe974,reserved_1c,word,2,Gap,,needs_review
+system_status_flags_t,0x003fe974,severity_flags,word,2,Fault severity flags,,verified
+system_status_flags_t,0x003fe974,comm_faults,word,2,Communication fault flags,,verified
+system_status_flags_t,0x003fe974,engine_status,word,2,Engine status flags,,verified
+system_status_flags_t,0x003fe974,pending_faults,word,2,Fault pending flags,,verified
+system_status_flags_t,0x003fe974,reserved_28,word,2,Gap (0x3fe99c-0x3fe9a1),,needs_review
+system_status_flags_t,0x003fe974,protection_active,word,2,Protection active flags,,verified
+# Speed Control State - vehicle/engine speed setpoints and limits
+# Used by processEngineRpmTarget and speed governor
+# Total size: 22 bytes (0x0040a3ca-0x0040a3df)
+speed_control_state_t,0x0040a3ca,current_value,word,2,Current speed value,,verified
+speed_control_state_t,0x0040a3ca,reserved_02,word,2,Gap (0xa3cc),,needs_review
+speed_control_state_t,0x0040a3ca,reserved_04,word,2,Gap (0xa3ce),,needs_review
+speed_control_state_t,0x0040a3ca,reserved_06,word,2,Gap (0xa3d0),,needs_review
+speed_control_state_t,0x0040a3ca,lower_limit,word,2,Speed lower limit,,verified
+speed_control_state_t,0x0040a3ca,limit_adjustment,word,2,Speed limit adjustment factor,,verified
+speed_control_state_t,0x0040a3ca,reserved_0c,word,2,Gap (0xa3d6),,needs_review
+speed_control_state_t,0x0040a3ca,reserved_0e,word,2,Gap (0xa3d8),,needs_review
+speed_control_state_t,0x0040a3ca,target_setpoint,word,2,Target speed setpoint,,verified
+speed_control_state_t,0x0040a3ca,adjustment_delta,word,2,Speed adjustment delta,,verified
+speed_control_state_t,0x0040a3ca,lookup_result,word,2,Speed table lookup result,,verified
+# Throttle Fuel Trim State - throttle-based fuel calculations
+# Used by calculateFuelDemandValue and throttle processing
+# Total size: 24 bytes (0x0040a3ea-0x0040a401)
+throttle_fuel_trim_t,0x0040a3ea,efficiency_filtered,word,2,Throttle efficiency filtered value,,verified
+throttle_fuel_trim_t,0x0040a3ea,fuel_demand_final,word,2,Final throttle-based fuel demand,,verified
+throttle_fuel_trim_t,0x0040a3ea,final_trim,word,2,Final fuel trim value,,verified
+throttle_fuel_trim_t,0x0040a3ea,load_adjusted,word,2,Load-adjusted fuel value,,verified
+throttle_fuel_trim_t,0x0040a3ea,load_based_trim,word,2,Load-based fuel trim,,verified
+throttle_fuel_trim_t,0x0040a3ea,rpm_based_trim,word,2,RPM-based fuel trim,,verified
+throttle_fuel_trim_t,0x0040a3ea,reserved_0c,word,2,Gap (0xa3f6),,needs_review
+throttle_fuel_trim_t,0x0040a3ea,rpm_conversion,word,2,RPM to fuel conversion factor,,verified
+throttle_fuel_trim_t,0x0040a3ea,reserved_10,word,2,Gap (0xa3fa),,needs_review
+throttle_fuel_trim_t,0x0040a3ea,reserved_12,word,2,Gap (0xa3fc),,needs_review
+throttle_fuel_trim_t,0x0040a3ea,throttle_conversion,word,2,Throttle to fuel conversion factor,,verified
+throttle_fuel_trim_t,0x0040a3ea,reserved_16,word,2,Gap,,needs_review
+# Fuel Blend State - fuel demand blending and mode selection
+# Used by calculateFuelBlendModeSelection
+# Total size: 12 bytes (0x0040a494-0x0040a49f)
+fuel_blend_state_t,0x0040a494,blend_mode,word,2,Fuel blend mode selector,,verified
+fuel_blend_state_t,0x0040a494,reserved_02,word,2,Gap (0xa496),,needs_review
+fuel_blend_state_t,0x0040a494,reserved_04,word,2,Gap (0xa498),,needs_review
+fuel_blend_state_t,0x0040a494,reserved_06,word,2,Gap (0xa49a),,needs_review
+fuel_blend_state_t,0x0040a494,reserved_08,word,2,Gap (0xa49c),,needs_review
+fuel_blend_state_t,0x0040a494,blend_weight,word,2,Fuel blend weight factor (0-100%),,verified
+# Boost Pressure State - turbocharger boost control values
+# Used by boostBasedFuelModifier and calculateBoostPressureOffset
+# Total size: 16 bytes (0x0040a406-0x0040a415)
+boost_pressure_state_t,0x0040a406,load_input,word,2,Boost-based load input,,verified
+boost_pressure_state_t,0x0040a406,rpm_modifier,word,2,RPM-based boost modifier,,verified
+boost_pressure_state_t,0x0040a406,lookup_result,word,2,Boost table lookup result,,verified
+boost_pressure_state_t,0x0040a406,computed_value,word,2,Computed boost pressure value,,verified
+boost_pressure_state_t,0x0040a406,pressure_ratio,word,2,Boost pressure ratio,,verified
+boost_pressure_state_t,0x0040a406,reserved_0a,word,2,Gap,,needs_review
+boost_pressure_state_t,0x0040a406,reserved_0c,word,2,Gap,,needs_review
+boost_pressure_state_t,0x0040a406,reserved_0e,word,2,Gap,,needs_review
+# Torque Limit Arbitration - multi-source torque limit selection
+# Used by fuel limit arbitration and protection systems
+# Total size: 8 bytes (0x0040a2f6-0x0040a2fd)
+torque_limit_arb_t,0x0040a2f6,source_priority,word,2,Limit source priority ranking,,verified
+torque_limit_arb_t,0x0040a2f6,source_active,word,2,Currently active limit source ID,,verified
+torque_limit_arb_t,0x0040a2f6,limit_source,word,2,Torque limit source selector,,verified
+torque_limit_arb_t,0x0040a2f6,fuel_minimum,word,2,Minimum fuel limit from arbitration,,verified
+# Governor PID State - PID controller variables for speed control
+# Used by governor control loop
+# Total size: 10 bytes (0x0040af5a-0x0040af63)
+governor_pid_t,0x0040af5a,proportional_gain,word,2,PID proportional gain value,,verified
+governor_pid_t,0x0040af5a,integral_term,word,2,PID integral accumulator,,verified
+governor_pid_t,0x0040af5a,reserved_04,word,2,Gap,,needs_review
+governor_pid_t,0x0040af5a,reserved_06,word,2,Gap,,needs_review
+governor_pid_t,0x0040af5a,reserved_08,word,2,Gap,,needs_review
+# Protection Lockout State - thermal/load/rpm lockout flags
+# Used by protection system to prevent rapid cycling
+# Total size: 12 bytes (0x0040b11c-0x0040b127)
+protection_lockout_t,0x0040b11c,thermal_lockout,word,2,Thermal protection lockout flag,,verified
+protection_lockout_t,0x0040b11c,load_lockout,word,2,Load protection lockout flag,,verified
+protection_lockout_t,0x0040b11c,rpm_lockout,word,2,RPM protection lockout flag,,verified
+protection_lockout_t,0x0040b11c,sensor_fault_active,word,2,Sensor fault lockout flag,,verified
+protection_lockout_t,0x0040b11c,reserved_08,word,2,Gap (0xb124-0xb125),,needs_review
+protection_lockout_t,0x0040b11c,timer_expired,word,2,Lockout timer expired flag,,verified
