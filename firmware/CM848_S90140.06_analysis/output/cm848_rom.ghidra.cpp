@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Jan 29 19:33:36 MST 2026
+// Generated: Fri Jan 30 05:12:47 MST 2026
 
 
 //
@@ -10145,7 +10145,7 @@ void calculateLoadBasedFuelTrim(void)
   uint uVar3;
   int iVar4;
   
-  uVar1 = (uint)_load_normalizer;
+  uVar1 = (uint)_boost_denominator_min128;
   iVar4 = (int)_DAT_0040a624;
   iVar2 = iVar4 * 0x7fff;
   if ((int)(uVar1 * 0x7eb8) <= iVar2) {
@@ -10154,7 +10154,8 @@ void calculateLoadBasedFuelTrim(void)
   }
   if ((int)(uVar1 * -0x7eb8) < iVar2) {
     if (uVar1 != 0) {
-      throttle_efficiency_filtered.rpm_conversion = (word)(iVar2 / (int)(short)_load_normalizer);
+      throttle_efficiency_filtered.rpm_conversion =
+           (word)(iVar2 / (int)(short)_boost_denominator_min128);
       goto LAB_000124ac;
     }
     if (0 < iVar4) {
@@ -10174,7 +10175,7 @@ LAB_000124ac:
   throttle_efficiency_filtered.reserved_16 =
        lookupTableInterpolation((table_interp_args_t *)&DAT_003fa5d4);
   uVar1 = (uint)throttle_efficiency_filtered.reserved_16;
-  uVar3 = (uint)_load_normalizer;
+  uVar3 = (uint)_boost_denominator_min128;
   iVar2 = (int)(short)throttle_efficiency_filtered.reserved_0c;
   if ((int)(iVar2 * uVar3) < (int)(uVar1 * 0x6400)) {
     if ((int)(uVar1 * -0x6400) < (int)(iVar2 * uVar3)) {
@@ -10191,7 +10192,7 @@ LAB_000124ac:
       }
       else {
         throttle_efficiency_filtered.load_based_trim =
-             (word)((iVar2 * (short)_load_normalizer) /
+             (word)((iVar2 * (short)_boost_denominator_min128) /
                    (int)(short)throttle_efficiency_filtered.reserved_16);
       }
     }
@@ -10226,11 +10227,11 @@ void calculateRpmBasedFuelTrim(void)
        lookupTableInterpolation((table_interp_args_t *)&DAT_003fa5d2);
   uVar1 = (uint)throttle_efficiency_filtered.reserved_10;
   iVar3 = (int)(short)throttle_efficiency_filtered.reserved_12;
-  iVar2 = iVar3 * (uint)_boost_fuel_adjustment;
+  iVar2 = iVar3 * (uint)_boost_shifted_numerator;
   if (iVar2 < (int)(uVar1 * 0x6400)) {
     if ((int)(uVar1 * -0x6400) < iVar2) {
       if (uVar1 == 0) {
-        if ((iVar3 == 0) || (_boost_fuel_adjustment == 0)) {
+        if ((iVar3 == 0) || (_boost_shifted_numerator == 0)) {
           throttle_efficiency_filtered.rpm_based_trim = 0;
         }
         else if (iVar3 < 1) {
@@ -10242,7 +10243,7 @@ void calculateRpmBasedFuelTrim(void)
       }
       else {
         throttle_efficiency_filtered.rpm_based_trim =
-             (word)((iVar3 * (short)_boost_fuel_adjustment) /
+             (word)((iVar3 * (short)_boost_shifted_numerator) /
                    (int)(short)throttle_efficiency_filtered.reserved_10);
       }
     }
@@ -10443,8 +10444,8 @@ void boostBasedFuelModifier(void)
   
   boost_load_input.rpm_modifier = lookupTableInterpolation((table_interp_args_t *)0x3fa5de);
   uVar1 = lookupTableInterpolation((table_interp_args_t *)0x3fa5e0);
-  uVar3 = (uint)_air_mass_component_1 * (uint)_air_mass_component_1;
-  uVar2 = (uint)_air_mass_component_2;
+  uVar3 = (uint)_boost_pressure_squared_term * (uint)_boost_pressure_squared_term;
+  uVar2 = (uint)_boost_divisor_min819;
   if (uVar2 < 0x334) {
     uVar2 = 0x333;
   }
@@ -10455,11 +10456,11 @@ void boostBasedFuelModifier(void)
     uVar2 = 0x5000;
   }
   boost_load_input.computed_value = (word)uVar2;
-  uVar5 = _load_normalizer;
-  if (_load_normalizer < 0x81) {
+  uVar5 = _boost_denominator_min128;
+  if (_boost_denominator_min128 < 0x81) {
     uVar5 = 0x80;
   }
-  unsignedDivision32(0,(uint)_boost_fuel_adjustment << 10,0,uVar5);
+  unsignedDivision32(0,(uint)_boost_shifted_numerator << 10,0,uVar5);
   uVar3 = extraout_r4_00;
   if (0x13ff < extraout_r4_00) {
     uVar3 = 0x1400;
@@ -10469,7 +10470,7 @@ void boostBasedFuelModifier(void)
   uVar2 = (uVar3 + _boost_ratio_addend & 0xffff) * (-(int)_boost_ratio_multiplier & 0xffffU);
   unsignedDivision32((int)((ulonglong)uVar4 * (ulonglong)uVar2 >> 0x20),uVar4 * uVar2,0,
                      (uint)uVar1 << 0x10);
-  uVar3 = (uint)_fuel_efficiency_upper_limit;
+  uVar3 = (uint)_fuel_efficiency_max;
   uVar2 = uVar3;
   if (extraout_r4_01 >> 8 < uVar3) {
     uVar2 = extraout_r4_01 >> 8;
@@ -10501,9 +10502,10 @@ void loadBasedFuelAdjustment(void)
   
   unsignedDivision32((int)((ulonglong)
                            ((uint)target_engine_rpm.current_rpm * (uint)_fuel_efficiency_factor) *
-                           (ulonglong)((uint)_load_normalizer * (uint)_load_coefficient) >> 0x20),
+                           (ulonglong)((uint)_boost_denominator_min128 * (uint)_load_coefficient) >>
+                          0x20),
                      (uint)target_engine_rpm.current_rpm * (uint)_fuel_efficiency_factor *
-                     (uint)_load_normalizer * (uint)_load_coefficient,0,
+                     (uint)_boost_denominator_min128 * (uint)_load_coefficient,0,
                      (uint)boost_load_input.load_input * 0xa200);
   uVar1 = extraout_r4 >> 10;
   uVar2 = (uint)_load_limit_upper;
@@ -11014,7 +11016,7 @@ void selectLoadNormalizer(void)
         ((uVar2 != 0 ||
          (((_boost_compensation_factor & 0x10) == 0 || ((_boost_compensation_factor & 2) != 0)))))))
        ) {
-      _load_normalizer = _DAT_0040bd8e;
+      _boost_denominator_min128 = _DAT_0040bd8e;
       _DAT_0040a430 = 0;
     }
     else {
@@ -11022,15 +11024,15 @@ void selectLoadNormalizer(void)
       if ((((uVar2 == 0) && ((_boost_compensation_factor & 2) == 0)) ||
           ((uVar1 != 0 || ((_boost_compensation_factor & 0x40) != 0)))) &&
          (_DAT_0040bd8e <= _DAT_0040a420)) {
-        _load_normalizer = _DAT_0040bd8e;
+        _boost_denominator_min128 = _DAT_0040bd8e;
       }
       else {
-        _load_normalizer = _DAT_0040a420;
+        _boost_denominator_min128 = _DAT_0040a420;
       }
     }
   }
   else {
-    _load_normalizer = _DAT_0040bda6;
+    _boost_denominator_min128 = _DAT_0040bda6;
     _DAT_0040a430 = 2;
   }
   return;
@@ -13328,7 +13330,7 @@ void calculateFuelFlowWithMode(void)
     _DAT_0040a62e = _DAT_0040a65e;
   }
   else {
-    _DAT_0040a628 = (_boost_fuel_adjustment - _DAT_0040675a) - _load_normalizer;
+    _DAT_0040a628 = (_boost_shifted_numerator - _DAT_0040675a) - _boost_denominator_min128;
     _DAT_0040a624 = _DAT_0040a65c;
     if ((_DAT_0040a7d2 == 2) && (_DAT_0040a430 == 2)) {
       _DAT_0040a62a = 2;
@@ -25219,12 +25221,13 @@ void processProtectionEntry(void)
   int iVar2;
   uint uVar3;
   
-  uVar1 = _load_normalizer;
+  uVar1 = _boost_denominator_min128;
   signedDivision32((int)((ulonglong)
                          ((longlong)(int)((uint)_DAT_0040729c * 0x7d) *
-                         (longlong)(int)((uint)_load_normalizer - (uint)_DAT_003fb018)) >> 0x20),
-                   (uint)_DAT_0040729c * 0x7d * ((uint)_load_normalizer - (uint)_DAT_003fb018),0,
-                   0x3200);
+                         (longlong)(int)((uint)_boost_denominator_min128 - (uint)_DAT_003fb018)) >>
+                        0x20),
+                   (uint)_DAT_0040729c * 0x7d *
+                   ((uint)_boost_denominator_min128 - (uint)_DAT_003fb018),0,0x3200);
   _DAT_003fb018 = uVar1;
   if (extraout_r4 < -25000) {
     iVar2 = -25000;
@@ -25238,8 +25241,8 @@ void processProtectionEntry(void)
   _DAT_0040afcc = (short)iVar2;
   _DAT_0040afce = signedFirstOrderFilter((int)_DAT_0040afcc,&DAT_003fb01e);
   if ((_DAT_0040a19e == 0) ||
-     (unsignedDivision32(0,(uint)_load_normalizer << 0xc,0,_DAT_0040a19e), uVar3 = extraout_r4_00,
-     0xfffe < extraout_r4_00)) {
+     (unsignedDivision32(0,(uint)_boost_denominator_min128 << 0xc,0,_DAT_0040a19e),
+     uVar3 = extraout_r4_00, 0xfffe < extraout_r4_00)) {
     uVar3 = 0xffff;
   }
   _DAT_0040afd0 = exponentialMovingAverage(target_engine_rpm.current_rpm,&DAT_003fb026);
