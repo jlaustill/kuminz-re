@@ -444,6 +444,8 @@ address,name
 0x0001de4c,updateFaultEntryCounters
 0x0001dee0,resetFaultStatus
 0x0001df64,setFaultActiveStatus
+0x0001df88,captureFreezeFrameData
+0x0001e158,processDiagnosticFrame
 0x0001e22c,selectFuelDemandSource
 0x0001e4e8,calculateProtectionRateLimited
 0x0001e5a4,processProtectionSelection

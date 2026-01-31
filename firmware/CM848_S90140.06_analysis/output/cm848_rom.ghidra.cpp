@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Jan 31 16:47:11 MST 2026
+// Generated: Sat Jan 31 16:52:03 MST 2026
 
 
 //
@@ -16777,10 +16777,10 @@ void setFaultActiveStatus(int param_1,uint param_2)
 
 
 //
-// Function: FUN_0001df88 @ 0x0001df88
+// Function: captureFreezeFrameData @ 0x0001df88
 //
 
-void FUN_0001df88(int param_1,uint param_2,int param_3)
+void captureFreezeFrameData(int param_1,uint param_2,int param_3)
 
 {
   byte bVar1;
@@ -16859,11 +16859,12 @@ void FUN_0001df88(int param_1,uint param_2,int param_3)
 
 
 //
-// Function: FUN_0001e158 @ 0x0001e158
+// Function: processDiagnosticFrame @ 0x0001e158
 //
 
-void FUN_0001e158(undefined4 param_1,undefined4 param_2,int param_3,int param_4,int param_5,
-                 int param_6)
+void processDiagnosticFrame
+               (undefined4 param_1,undefined4 param_2,int param_3,int param_4,int param_5,
+               int param_6)
 
 {
   int unaff_r30;
@@ -88022,7 +88023,7 @@ void FUN_005327e8(uint param_1)
         }
         else {
           (&DAT_003fe682)[uVar3 * 0x18] = 0;
-          FUN_0001df88();
+          captureFreezeFrameData();
         }
         DAT_003fed71._1_1_ = (byte)DAT_003fed71 - 1;
       }
@@ -88096,7 +88097,7 @@ void FUN_00532b78(void)
       uVar2 = (uint)bVar3;
       FUN_00532654(uVar2);
       FUN_0053272c(uVar2);
-      FUN_0001e158(bVar3);
+      processDiagnosticFrame(bVar3);
       if ((*(ushort *)(&DAT_00059ecc + uVar2 * 6) & 0x2000) == 0) {
         DAT_003fe100 = DAT_003fe100 + -1;
       }
@@ -88146,7 +88147,7 @@ void SUB_00532ba8(void)
       uVar2 = (uint)unaff_r30;
       FUN_00532654(uVar2);
       FUN_0053272c(uVar2);
-      FUN_0001e158(unaff_r30);
+      processDiagnosticFrame(unaff_r30);
       if ((*(ushort *)(&DAT_00059ecc + uVar2 * 6) & 0x2000) == 0) {
         DAT_003fe100 = DAT_003fe100 + -1;
       }
@@ -88550,7 +88551,7 @@ void FUN_005333f8(uint param_1)
   *(ushort *)((int)&DAT_003feb73 + iVar1) = *(ushort *)((int)&DAT_003feb73 + iVar1) & 0xfff8;
   *(ushort *)((int)&DAT_003feb73 + iVar1) = *(ushort *)((int)&DAT_003feb73 + iVar1) & 0xfc07;
   if (((&DAT_003feb72)[iVar1] & 0x80) == 0) {
-    FUN_0001e158(param_1);
+    processDiagnosticFrame(param_1);
     uVar2 = 1;
     if (fault_list_count != 0) {
       do {
