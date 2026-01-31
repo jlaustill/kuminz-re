@@ -12,12 +12,56 @@ This document outlines the minimum parameters needed to enable the Cylinder Bala
 
 ---
 
+## Address Translation: Calterm to Actual RAM
+
+The e2m addresses shown in Calterm (0x0181AExx) are virtual addresses. They translate to actual CM848 RAM addresses using:
+
+```
+Actual_Address = Base[Column3] + Column4
+```
+
+For CBD parameters (Column3 = 81AE):
+- **Base[81AE] = 0x00408ee2** (CM848-specific)
+- Example: CBD_Enable @ 0x0181AE14 → 0x00408ee2 + 0x14 = **0x00408ef6**
+
+### CBD Parameter Address Map
+
+| Parameter | Calterm Address | Actual RAM | Verified |
+|-----------|-----------------|------------|----------|
+| `CBD_Fueling_Filter_Constant` | 0x0181AE00 | 0x00408ee2 | ✓ |
+| `CBD_Delta_Speed_Threshold` | 0x0181AE02 | 0x00408ee4 | ✓ |
+| `CBD_Upper_Speed_Limit` | 0x0181AE04 | 0x00408ee6 | ✓ |
+| `CBD_Lower_Speed_Limit` | 0x0181AE06 | 0x00408ee8 | ✓ |
+| `CBD_FFT_Filter_Coeff` | 0x0181AE08 | 0x00408eea | ✓ |
+| `CBD_Error_Filter_Constant` | 0x0181AE0A | 0x00408eec | ✓ |
+| `CBD_Fueling_Trim_Maximum` | 0x0181AE0C | 0x00408eee | ✓ |
+| `CBD_Fueling_Trim_Minimum` | 0x0181AE0E | 0x00408ef0 | ✓ |
+| `CBD_FFT_Threshold` | 0x0181AE10 | 0x00408ef2 | ✓ |
+| `CBD_Motoring_Fuel_Threshold` | 0x0181AE12 | 0x00408ef4 | ✓ |
+| **`CBD_Enable`** | 0x0181AE14 | **0x00408ef6** | ✓ |
+| `CBD_Limit_Option_Flag` | 0x0181AE15 | 0x00408ef7 | ✓ |
+
+### Live ECU Finding
+
+**Surprising discovery:** The RAM dump from a live CM848 ECU shows:
+- `cbd_enable_flag` (0x00408ef6) = **0x01 (ENABLED!)**
+- Someone has already enabled CBD on this specific ECU
+
+Values from live ECU RAM:
+- Upper RPM limit: 2000 RPM (raw: 0x3e80)
+- Lower RPM limit: 650 RPM (raw: 0x1450)
+- Trim limits: ±59 raw (±4 mm³)
+
+This confirms CBD **CAN be enabled** and the ECU will use it.
+
+---
+
 ## Quick Reference: Minimum Enable Parameters
 
-| Parameter | Address | Factory Value | Enable Value | Description |
-|-----------|---------|---------------|--------------|-------------|
-| `CBD_Enable` | 0x0181AE14 | 0 | **1** | Master enable |
-| `CBD_Compensation_Enable` | 0x0181AF10 | 0 | **1** | Apply trims to fueling |
+| Parameter | Calterm Address | RAM Address | Factory Value | Enable Value | Description |
+|-----------|-----------------|-------------|---------------|--------------|-------------|
+| `CBD_Enable` | 0x0181AE14 | 0x00408ef6 | 0 | **1** | Master enable |
+| `CBD_Compensation_Enable` | 0x0181AF10 | TBD | 0 | **1** | Apply trims to fueling |
 
 These two parameters are the absolute minimum to turn CBD on. However, the system needs properly calibrated thresholds and gains to function correctly.
 

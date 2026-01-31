@@ -1,4 +1,5 @@
 address,name,type,comment
+0x00003c30,calibration_rom_start,undefined4,
 0x000059b4,switchD,,
 0x000059b8,caseD_0,,
 0x000059bc,caseD_1,,
@@ -27,6 +28,7 @@ address,name,type,comment
 0x00005a18,caseD_18,,
 0x00005a1c,caseD_19,,
 0x00005a50,default,,
+0x00007f60,calibration_rom_end,undefined,
 0x00007f7b,PTR_FUN_00007f7b,pointer,
 0x00007f80,PTR_FUN_00007f80,pointer,
 0x00008104,PTR_DAT_00008104,pointer,
@@ -721,6 +723,7 @@ address,name,type,comment
 0x00307420,TOUCAN_B_ESR,word,
 0x00307422,TOUCAN_B_IMASK,word,
 0x00307424,TOUCAN_B_IFLAG,word,
+0x003f9800,calibration_ram_start,,
 0x003f997c,SUB_003f997c,,
 0x003f9af0,SUB_003f9af0,,
 0x003f9b40,SUB_003f9b40,,

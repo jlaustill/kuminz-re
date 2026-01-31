@@ -1,0 +1,7 @@
+function_address,function_name,old_name,new_name,type,comment
+# Format: old_name is the decompiler's generated name (e.g., puVar1)
+# Run ./analyze.sh localvars to apply, then ./analyze.sh export to see changes
+#
+# copyCalibrationToRam @ 0x00000340 - Copies ROM calibration defaults to RAM
+0x00000340,copyCalibrationToRam,puVar1,src_ptr,undefined4 *,Source pointer (ROM calibration data)
+0x00000340,copyCalibrationToRam,puVar2,dest_ptr,undefined4 *,Destination pointer (RAM working copy)

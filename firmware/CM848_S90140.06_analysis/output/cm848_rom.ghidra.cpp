@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Jan 31 07:16:38 MST 2026
+// Generated: Sat Jan 31 08:32:07 MST 2026
 
 
 //
@@ -112,16 +112,16 @@ void keyOnStateMachine(void)
 void copyCalibrationToRam(void)
 
 {
-  undefined4 *puVar1;
-  undefined4 *puVar2;
+  undefined4 *src_ptr;
+  undefined4 *dest_ptr;
   
-  puVar1 = &DAT_00003c30;
-  puVar2 = (undefined4 *)0x3f97fc;
+  src_ptr = &calibration_rom_start;
+  dest_ptr = (undefined4 *)0x3f97fc;
   do {
-    puVar2 = puVar2 + 1;
-    *puVar2 = *puVar1;
-    puVar1 = puVar1 + 1;
-  } while (puVar1 < &DAT_00007f60);
+    dest_ptr = dest_ptr + 1;
+    *dest_ptr = *src_ptr;
+    src_ptr = src_ptr + 1;
+  } while (src_ptr < &calibration_rom_end);
   return;
 }
 
@@ -1243,7 +1243,7 @@ char diagMemoryReadHandler(dword address,word length,byte *response_ptr)
           *(undefined1 *)(*(int *)(address + 6) + 3) = *(undefined1 *)(*(int *)(address + 6) + 6);
         }
         else {
-          uVar9 = (&DAT_00007f60)[(byte)(cVar6 + 0xbd)];
+          uVar9 = (&calibration_rom_end)[(byte)(cVar6 + 0xbd)];
         }
         cVar6 = SUB_003fb528(uVar9);
         bVar10 = cVar6 - 1;
@@ -1968,7 +1968,7 @@ void clearRamRegions(void)
   undefined4 *puVar1;
   word *pwVar2;
   
-  puVar1 = (undefined4 *)&DAT_003f9800;
+  puVar1 = (undefined4 *)&calibration_ram_start;
   do {
     *puVar1 = 0;
     puVar1 = puVar1 + 1;
