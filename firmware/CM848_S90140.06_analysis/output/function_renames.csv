@@ -877,10 +877,10 @@ address,name
 0x00042a2c,processProtectionParameter1
 0x00042ab8,initProtectionParameter2
 0x00042b44,processProtectionParameter2
-0x00042bd0,processTimingFilter
+0x00042bd0,cbdFillAccelerationBuffers
 0x00042cfc,processLoadThrottle
-0x00042d78,processTimingCalibrationPhase3
-0x00043a5c,initTimingFilterState
+0x00042d78,cbdCalculateCylinderTrims
+0x00043a5c,cbdInitFilterState
 0x00043ac0,processTimingCalibration
 0x00043ddc,resetEngineTimingAccumulators
 0x00044374,updateSensorDiagnosticFlags
@@ -1245,7 +1245,7 @@ address,name
 0x00503074,SUB_00503074
 0x005031b4,SUB_005031b4
 0x00503604,SUB_00503604
-0x0050370c,SUB_0050370c
+0x0050370c,checkFuelDemandEnableConditions
 0x00503964,SUB_00503964
 0x0050398c,SUB_0050398c
 0x005039b4,SUB_005039b4
@@ -1418,7 +1418,7 @@ address,name
 0x00522b64,SUB_00522b64
 0x00523068,SUB_00523068
 0x005230f4,SUB_005230f4
-0x00523148,SUB_00523148
+0x00523148,updateEngineLoadPercentage
 0x00523750,SUB_00523750
 0x00523760,SUB_00523760
 0x00523798,SUB_00523798
@@ -1522,7 +1522,7 @@ address,name
 0x005371f4,SUB_005371f4
 0x0053729c,SUB_0053729c
 0x005372c4,SUB_005372c4
-0x00537584,SUB_00537584
+0x00537584,initCalibrationSequenceHandler
 0x00537944,SUB_00537944
 0x005379b4,SUB_005379b4
 0x005379d8,SUB_005379d8
