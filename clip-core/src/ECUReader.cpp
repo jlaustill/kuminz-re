@@ -305,6 +305,10 @@ void ECUReader::buildService4ARequest(uint32_t address, uint8_t length, uint8_t*
     data[7] = 0x00;
 }
 
+// Read memory via CLIP Service 0x4A.
+// Handles two response formats:
+// - Single-frame: For small reads (1-2 bytes), ECU responds directly on PGN 0xEF00
+// - Transport Protocol: For larger reads, ECU uses J1939 TP (RTS/CTS/DT/EOM)
 bool ECUReader::readMemoryService4A(uint32_t address, uint8_t length,
                                     std::vector<uint8_t>& data, int timeoutMs)
 {
@@ -333,18 +337,30 @@ bool ECUReader::readMemoryService4A(uint32_t address, uint8_t length,
     int elapsed = 0;
     bool gotRTS = false;
     bool gotError = false;
+    bool gotSingleFrame = false;
     J1939TP::ConnectionMessage rts;
 
-    while (elapsed < timeoutMs && !gotRTS && !gotError) {
+    while (elapsed < timeoutMs && !gotRTS && !gotError && !gotSingleFrame) {
         if (m_adapter->recv(arbId, rxData, rxLen, 50)) {
             uint8_t source = J1939MessageBuilder::extractSourceAddress(arbId);
             uint8_t dest = (arbId >> 8) & 0xFF;
             uint8_t pf = (arbId >> 16) & 0xFF;
 
-            // Check for error response on PGN 0xEF00
+            // Check for single-frame response on PGN 0xEF00
             if (pf == J1939_CLIP_PGN_PF && dest == J1939_TOOL_ADDRESS && source == m_ecuAddress) {
+                // Single-frame 0x4B response: [4B][addr:4][len][data...]
+                if (rxData[0] == 0x4B && rxLen >= 7) {
+                    // Extract data bytes from single-frame response
+                    // Response format: 4B AA AA AA AA LL DD DD (for 2-byte read)
+                    // Where AA=address echo, LL=length echo, DD=data
+                    uint8_t respLen = rxData[5];
+                    if (respLen <= 2 && rxLen >= 6 + respLen) {
+                        data.assign(rxData + 6, rxData + 6 + respLen);
+                        gotSingleFrame = true;
+                    }
+                }
                 // Error response: first byte is 0x0D with error code
-                if (rxData[0] == 0x0D) {
+                else if (rxData[0] == 0x0D) {
                     std::stringstream ss;
                     ss << "Service 0x4A error at 0x" << std::hex << address
                        << ": code=0x" << static_cast<int>(rxData[1]);
@@ -353,7 +369,7 @@ bool ECUReader::readMemoryService4A(uint32_t address, uint8_t length,
                 }
             }
 
-            // Check for TP.CM RTS
+            // Check for TP.CM RTS (for larger reads)
             if (pf == J1939TP::PF_CM && source == m_ecuAddress) {
                 if (rts.decode(rxData, rxLen) && rts.isRTS()) {
                     gotRTS = true;
@@ -365,6 +381,11 @@ bool ECUReader::readMemoryService4A(uint32_t address, uint8_t length,
 
     if (gotError) {
         return false;
+    }
+
+    // Single-frame response received - we're done
+    if (gotSingleFrame) {
+        return true;
     }
 
     if (!gotRTS) {

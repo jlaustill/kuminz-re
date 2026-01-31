@@ -114,6 +114,45 @@ This shows:
 | CBD_Trim_Max | 0x0181AE0C | 0x00408eee | cbd_trim_max_limit |
 | CBD_Trim_Min | 0x0181AE0E | 0x00408ef0 | cbd_trim_min_limit |
 
+## EEPROM Layout (Verified 2026-01-31)
+
+Key locations discovered via live ECU reads:
+
+| Offset | Size | Content | Example Value |
+|--------|------|---------|---------------|
+| 0x0002 | 6 | Security Key | `ABCDEF` |
+| 0x0046 | 10 | Calibration ID | `1504 2RSAO` |
+| 0x0080 | 6 | Date Code | `060410` (2006-04-10) |
+| 0x0130 | 4 | **Calibration Version** | `00 0B 2E 06` → V11.46.06 |
+| 0x01D1 | 5 | Cummins Marker | `CMMNS` |
+| 0x0217 | 2 | Module ID | `CC` (CM848) |
+| 0x0286 | 17 | VIN | `3D3MU48C94G228471` |
+| 0x02C0 | 127 | Data Plate | (mostly zeros) |
+
+### Calibration Version Format
+
+At EEPROM 0x0130:
+```
+Byte 0: 0x00 (reserved)
+Byte 1: Major version (0x0B = 11)
+Byte 2: Minor version (0x2E = 46)
+Byte 3: Patch version (0x06 = 6)
+Byte 4-5: Build/revision
+```
+
+**This ECU:** V11.46.06
+**S90140.12 e2m file:** V11.20.13.16 (different version = different Bank 2 code)
+
+## ROM Header Layout
+
+| Offset | Size | Content | Example Value |
+|--------|------|---------|---------------|
+| 0x0000 | 8 | Reset vector | `48 00 2B CA` (branch) |
+| 0x0008 | 8 | Exception vector | `48 00 16 DE` |
+| 0x0100 | 8 | Metadata header | `48 00 16 DE 00 00 26 94` |
+| 0x010C | 6 | Build Date | `100902` (2002-10-09) |
+| 0x0112 | 6 | Version bytes | `04 01 01 02 0C 08` |
+
 ## Open Questions
 
 1. **How is the 0x00408exx calibration region initialized?**
@@ -126,13 +165,15 @@ This shows:
    - Other CBD blocks (81AF, 81B0) need verification
    - Hundreds of other Column3 values exist
 
-3. **Relationship between e2m file binary and ECU flash**
-   - E2M file contains both metadata and binary data
-   - Binary data starts at 0x00008000 in e2m file
-   - Need to map e2m binary offsets to ECU flash addresses
+3. ~~**Relationship between e2m file binary and ECU flash**~~ RESOLVED
+   - E2M files contain two sections: CSV parameters + binary hex dumps
+   - Binary section has raw code/data at absolute addresses
+   - Binary is version-specific (compiled address operands)
+   - See [E2M Integration](E2M_INTEGRATION.md) for details
 
 ## Related Documentation
 
 - [CBD Enable Experiment](cbd_enable_experiment.md) - CBD parameter addresses
 - [Injector Feedback System](injector_feedback_system.md) - CBD algorithm documentation
 - [E2M Integration](E2M_INTEGRATION.md) - E2M file format overview
+- [Service 0x4A Protocol](service_0x4a_protocol.md) - Memory read protocol for translators

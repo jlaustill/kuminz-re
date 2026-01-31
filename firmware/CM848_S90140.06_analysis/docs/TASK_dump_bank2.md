@@ -129,8 +129,107 @@ diff /tmp/e2m.hex /tmp/live.hex | head -50
 
 ## Success Criteria
 
-- [ ] Live dump obtained from ECU at 0x00500000
-- [ ] Dump size is ~245-250KB
-- [ ] Comparison with e2m extraction completed
+- [x] Live dump obtained from ECU at 0x00500000
+- [x] Dump size is ~245-250KB (253,952 bytes / 248KB)
+- [x] Comparison with e2m extraction completed
+- [x] ECU firmware version identified: **V11.46.06** (vs e2m V11.20.13.16)
 - [ ] Ghidra project updated if needed
-- [ ] Document any differences found
+- [x] Document any differences found
+
+## Results (2026-01-31)
+
+**Live dump completed successfully.**
+
+| File | Size | Source |
+|------|------|--------|
+| `cm848_flash2.bin` | 251,114 bytes | e2m extraction (S90140.12) |
+| `cm848_flash2_live.bin` | 253,952 bytes | Live ECU dump |
+
+### Comparison Results
+
+**Major finding: Files are ~79% different (198,265 bytes differ)**
+
+The differences are NOT calibration data - they're different **code addresses** embedded in PowerPC instructions. Example from offset 0x10-0x30:
+
+| Offset | Live | E2M | Interpretation |
+|--------|------|-----|----------------|
+| 0x14 | `bd88` | `b8fe` | RAM address operand |
+| 0x1E | `bdae` | `b924` | RAM address operand |
+| 0x28 | `be28` | `b99e` | RAM address operand |
+
+**Conclusion:** The live ECU runs a different firmware version than S90140.12 (the e2m calibration file). The code structure is identical but compiled against a different RAM layout.
+
+### Next Steps
+
+1. Use `cm848_flash2_live.bin` for Ghidra analysis (actual ECU code)
+2. Determine ECU's actual firmware version from ROM dump
+3. Consider renaming analysis directory to match actual version
+
+### Open Research Questions
+
+The e2m file has different address operands baked into Bank 2 instructions than the live ECU. Two hypotheses:
+
+**Hypothesis A: E2M contains code compiled for a different RAM layout**
+- Different firmware versions have different RAM variable addresses
+- Bank 2 code references RAM, so instructions have version-specific operands
+- E2M (S90140.12) was built for different firmware than what's on this ECU
+
+**Hypothesis B: Calterm queries ECU for Bank 2 binary at runtime**
+- E2M file might just be a template/reference
+- Calterm uses GetAddressByParameterID (0x16) to resolve addresses
+- The Bank 2 section in e2m might not be directly used
+
+**Calterm RE Findings (2026-01-31):**
+
+1. **Does Calterm read Bank 2 code from e2m file or query it from ECU?**
+   - **ANSWER: Primarily from e2m file, with ECU query as fallback**
+   - CUDL code shows: "Failed to load BDS from parameter" → falls back to "Using Generic e2m for download"
+   - BDS = Block Data Structure, defines memory blocks (start/end addresses + data)
+   - Calterm tries to query ECU first for BDS, but uses e2m file if query fails
+
+2. **E2M file structure confirms it contains Bank 2 code:**
+   ```
+   [Header Records]     - CalibrationVersion, ModuleID, etc.
+   [Data Records]       - Hex dumps at absolute addresses:
+     0x00010000-0x00060000  ROM
+     0x00500000-0x00530000  Bank 2 (FLASH2)
+     0x01000000            EEPROM
+   ```
+
+3. **Why addresses differ between e2m and live ECU:**
+   - E2M was built for a specific firmware version (S90140.12)
+   - Bank 2 code contains RAM address operands compiled at build time
+   - Different firmware versions = different RAM layouts = different operands
+   - This ECU has firmware that doesn't match S90140.12
+
+4. **GetAddressByParameterID (0x16) is for parameters only:**
+   - Used to resolve tuning parameter addresses in RAM
+   - NOT used for code regions like Bank 2
+   - Parameters are data, Bank 2 is executable code
+
+**RESOLVED: ECU Firmware Version Identified (2026-01-31)**
+
+| Location | Raw Bytes | Decoded |
+|----------|-----------|---------|
+| ROM 0x10C | `31 30 30 39 30 32` | "100902" (build date 2002-10-09) |
+| EEPROM 0x130 | `00 0B 2E 06 00 24` | **Calibration V11.46.06** |
+| EEPROM 0x46 | `31 35 30 34 20 32 52 53 41 4F` | "1504 2RSAO" (calibration ID) |
+| EEPROM 0x217 | `43 43` | "CC" (module ID = CM848) |
+| EEPROM 0x1D1 | `43 4D 4D 4E 53` | "CMMNS" (Cummins marker) |
+| EEPROM 0x286 | VIN | `3D3MU48C94G228471` (2004 Dodge Ram) |
+| EEPROM 0x02 | `41 42 43 44 45 46` | "ABCDEF" (security key) |
+
+**Version Mismatch Confirmed:**
+- **ECU calibration:** V11.46.06
+- **E2M file (S90140.12):** V11.20.13.16
+
+This explains the 79% difference in Bank 2 code - different calibration versions have different RAM layouts, so compiled address operands differ.
+
+**Remaining questions:**
+- Does Cummins maintain version-specific e2m files for each firmware release?
+- Can the e2m extraction be considered "correct for S90140.12" even if it doesn't match this ECU?
+
+**Files investigated:**
+- `calterm3/calterm-crc/decompiled/native/CUDL_ghidra.c` - Download/BDS handling
+- `calterm3/calterm-crc/ECU_PROGRAMMING_PROTOCOL.md` - CLIP protocol docs
+- `firmware/CM848_S90140.06_analysis/docs/S90140.12.e2m` - E2M file structure

@@ -13,6 +13,10 @@ Fully decode the Cummins Calterm e2m calibration file format to understand how p
 
 E2M files are CSV-format calibration files used by Calterm to configure Cummins ECUs. The file format was undocumented, with 16 columns of unclear purpose.
 
+## Scope Note
+
+This task focused on the **CSV parameter records** section of e2m files. E2M files also contain a **[Data Records] binary hex dump section** with raw code/data at absolute addresses (ROM, Bank 2, EEPROM). That section is documented separately in `firmware/CM848_S90140.06_analysis/docs/E2M_INTEGRATION.md`.
+
 ## Final Solution
 
 ### File Structure

@@ -4,6 +4,68 @@
 
 We extracted **2,204 internal variable names** from the S90140.12 calibration file. These names follow Cummins' internal naming conventions and provide semantic meaning for firmware parameters.
 
+## E2M File Structure (Two Distinct Sections)
+
+E2M files contain **two different types of data**:
+
+### 1. CSV Parameter Records (Documented in e2m-analysis/)
+
+The CSV section defines calibration parameters using the Column 3 + Column 4 formula:
+```
+Memory Address = BaseLookup[Column3] + Column4
+```
+
+This is used for:
+- Tuning parameters (lookup tables, constants)
+- Configuration settings
+- Sensor scaling factors
+
+**Calterm resolves these addresses at runtime** using `GetAddressByParameterID` (CLIP command 0x16).
+
+### 2. Binary Hex Dump Records (Data Records Section)
+
+The `[Data Records]` section contains **raw binary code and data** at absolute addresses:
+
+```
+[Data Records]
+# Address    | Hex Data                                         | ASCII
+0x00008000 | 4801056248010562480543CE48010562                   | H..bH..bH.C.H..b
+...
+# Extended linear address: 0x00500000
+0x00500000 | 0000A1A19421FFE07C0802A690010024                   | .....!..|......$
+...
+# Extended linear address: 0x01000000
+0x01000000 | FFFFFFFFFFFFFFFF...                                | ................
+```
+
+This section contains:
+| Region | Address Range | Content |
+|--------|---------------|---------|
+| ROM | 0x00008000+ | Firmware code |
+| Bank 2 (FLASH2) | 0x00500000+ | Utility functions (sensor processing, math) |
+| EEPROM | 0x01000000+ | Non-volatile calibration data |
+
+### Critical: Binary Code is Version-Specific
+
+The Bank 2 binary code contains **RAM addresses compiled into PowerPC instructions**:
+```
+addi r12, r12, 0xB8FE   ; E2M (S90140.12)
+addi r12, r12, 0xBD88   ; Live ECU (different version)
+```
+
+**Different firmware versions have different RAM layouts**, so:
+- Same code structure, different address operands
+- E2M binary is only correct for matching firmware version
+- Live ECU dump should be used for analysis if versions differ
+
+### Calterm Download Flow (from RE)
+
+1. Calterm tries to load **BDS (Block Data Structure)** from ECU via parameters
+2. If that fails: "Using Generic e2m for download"
+3. Binary blocks from e2m file are transferred to ECU at specified addresses
+
+This means e2m files are used to **program** the ECU, not just configure parameters.
+
 ## Generated Files
 
 | File | Description |

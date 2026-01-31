@@ -194,6 +194,15 @@ constexpr uint32_t CM848_EEPROM_END = 0x01001FFF;
 constexpr uint32_t CM848_EEPROM_SIZE = 0x00002000;  // 8KB
 
 /**
+ * @brief CM848 FLASH2 region (Bank 2 - utility code).
+ * Contains sensor processing, math routines, and utility functions
+ * called from Bank 1 (ROM). Discovered via e2m calibration analysis.
+ */
+constexpr uint32_t CM848_FLASH2_START = 0x00500000;
+constexpr uint32_t CM848_FLASH2_END = 0x0053DFFF;
+constexpr uint32_t CM848_FLASH2_SIZE = 0x0003E000;  // 248KB (rounded up from 245KB)
+
+/**
  * @brief CLIP transport frame structure.
  *
  * Represents a single CAN frame in CLIP format.

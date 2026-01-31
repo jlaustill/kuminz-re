@@ -46,7 +46,8 @@ void printUsage(const char* progname)
     std::cerr << "Memory Dump Commands (CM848 - 2003-2006 Dodge Ram 5.9L):\n";
     std::cerr << "  --cm848-dump-ram [file]     Dump CM848 RAM (280KB) to file\n";
     std::cerr << "  --cm848-dump-eeprom [file]  Dump CM848 EEPROM (8KB) to file\n";
-    std::cerr << "  --cm848-dump-rom [file]     Dump CM848 ROM (448KB) to file\n";
+    std::cerr << "  --cm848-dump-rom [file]     Dump CM848 ROM Bank 1 (448KB) to file\n";
+    std::cerr << "  --cm848-dump-flash2 [file]  Dump CM848 Flash Bank 2 (248KB) to file\n";
     std::cerr << "  --cm848-dump-all [dir]      Dump all CM848 regions to directory\n\n";
     std::cerr << "Service Scanner Commands:\n";
     std::cerr << "  --scan-services             Quick scan (0x40-0x5F, ~30 sec)\n";
@@ -334,8 +335,13 @@ int main(int argc, char* argv[])
     }
     else if (command == "--cm848-dump-rom") {
         std::string filename = outputArg.empty() ? "cm848_rom.bin" : outputArg;
-        std::cerr << "[INFO] Dumping CM848 ROM (448KB) to " << filename << " (Service 0x4A - this may take a while...)\n";
+        std::cerr << "[INFO] Dumping CM848 ROM Bank 1 (448KB) to " << filename << " (Service 0x4A - this may take a while...)\n";
         result = reader.dumpMemoryService4AToFile(CM848_ROM_START, CM848_ROM_SIZE, filename) ? 0 : 1;
+    }
+    else if (command == "--cm848-dump-flash2") {
+        std::string filename = outputArg.empty() ? "cm848_flash2.bin" : outputArg;
+        std::cerr << "[INFO] Dumping CM848 Flash Bank 2 (248KB) to " << filename << " (Service 0x4A - this may take a while...)\n";
+        result = reader.dumpMemoryService4AToFile(CM848_FLASH2_START, CM848_FLASH2_SIZE, filename) ? 0 : 1;
     }
     else if (command == "--cm848-dump-all") {
         std::string dir = outputArg.empty() ? "." : outputArg;
@@ -361,10 +367,18 @@ int main(int argc, char* argv[])
         }
         std::cout << "\n";
 
-        // ROM (largest last)
-        std::cerr << "\n=== CM848 ROM (448KB) ===\n";
+        // ROM Bank 1
+        std::cerr << "\n=== CM848 ROM Bank 1 (448KB) ===\n";
         if (!reader.dumpMemoryService4AToFile(CM848_ROM_START, CM848_ROM_SIZE, dir + "cm848_rom.bin")) {
-            std::cerr << "[ERROR] ROM dump failed\n";
+            std::cerr << "[ERROR] ROM Bank 1 dump failed\n";
+            result = 1;
+        }
+        std::cout << "\n";
+
+        // Flash Bank 2 (utility code)
+        std::cerr << "\n=== CM848 Flash Bank 2 (248KB) ===\n";
+        if (!reader.dumpMemoryService4AToFile(CM848_FLASH2_START, CM848_FLASH2_SIZE, dir + "cm848_flash2.bin")) {
+            std::cerr << "[ERROR] Flash Bank 2 dump failed\n";
             result = 1;
         }
         std::cout << "\n";

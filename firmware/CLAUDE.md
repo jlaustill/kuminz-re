@@ -154,12 +154,23 @@ CM848 has two flash banks (discovered via e2m analysis):
 | Bank | Address Range | Size | File |
 |------|---------------|------|------|
 | Bank 1 (ROM) | 0x00000000 - 0x0006FFFF | 448KB | `cm848_rom.bin` |
-| Bank 2 (FLASH2) | 0x00500000 - 0x0053D4EA | 245KB | `cm848_flash2.bin` |
+| Bank 2 (FLASH2) | 0x00500000 - 0x0053DFFF | 248KB | `cm848_flash2_live.bin` |
 
 Bank 2 contains utility functions called from Bank 1 (sensor processing, math routines).
 
-**Pending task:** Dump Bank 2 from live ECU to verify e2m extraction.
-See `CM848_S90140.06_analysis/docs/TASK_dump_bank2.md` for details.
+**Completed (2026-01-31):** Bank 2 dumped from live ECU. See `CM848_S90140.06_analysis/docs/TASK_dump_bank2.md`.
+
+### CM848 ECU Version Info
+
+| Location | Value | Description |
+|----------|-------|-------------|
+| EEPROM 0x0130 | V11.46.06 | Calibration version |
+| EEPROM 0x0046 | 1504 2RSAO | Calibration ID |
+| EEPROM 0x0217 | CC | Module ID (CM848) |
+| EEPROM 0x0002 | ABCDEF | Security key |
+| ROM 0x010C | 100902 | Build date |
+
+**Note:** E2M file S90140.12 is V11.20.13.16 - different from ECU's V11.46.06. Use live dumps for analysis.
 
 ---
 
@@ -176,3 +187,19 @@ See `CM848_S90140.06_analysis/docs/TASK_dump_bank2.md` for details.
 - No single "max boost" parameter - boost limited indirectly via AFC tables (AFFLLMZA) and BIR diagnostics
 - Pressure scale factor: 0.0159064138077 IN_HG per raw count (16-bit range = ~35 bar max)
 - See `CM848_S90140.06_analysis/output/10bar_map_conversion.md` for complete parameter documentation
+
+### Live Data Reading (CM848 Service 0x4A)
+
+Verified memory addresses for live ECU queries:
+
+| Address | Variable | Scale | Verified |
+|---------|----------|-------|----------|
+| 0x0040B7BA | `current_engine_rpm` | × 0.125 RPM | ✓ 2026-01-31 |
+| 0x0040BD8E | `boost_pressure_sensor_raw` | × 0.0159 IN_HG | ✓ 2026-01-31 |
+| 0x00408EF6 | `cbd_enable_flag` | 1=enabled | ✓ (prior session) |
+
+See `CM848_S90140.06_analysis/docs/service_0x4a_protocol.md` for complete protocol documentation.
+
+**Tools:** `tools/poll_rpm.sh` polls RPM via kuminz-cli every 0.5s.
+
+**Polling Limits:** Minimum 50ms between Service 0x4A requests - faster polling may cause ECU to throttle responses.

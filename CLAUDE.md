@@ -60,6 +60,11 @@ cmake .. && make -j4    # Build the library
 | Extended RAM | 0x008091C2 | 28KB |
 | EEPROM | 0x01000000 | 4KB |
 
+**Service 0x4A Response Handling:**
+- Small reads (1-2 bytes): ECU responds with single-frame 0x4B on PGN 0xEF00 (NOT Transport Protocol)
+- Large reads (3+ bytes): ECU uses J1939 Transport Protocol (RTS/CTS/DT/EOM)
+- CAN IDs: Tool→ECU `0x18EF00F9`, ECU→Tool `0x18EFF900` (J1939 PDU1 format)
+
 ### kuminz-cli (CLI Tool)
 ```bash
 cd kuminz-cli/build
@@ -71,7 +76,17 @@ cmake .. && make -j4    # Build the CLI
 ./kuminz-cli can0 --dump-rom [file]           # Dump 256KB ROM/Flash
 ./kuminz-cli can0 --dump-extended-ram [file]  # Dump 28KB extended RAM
 ./kuminz-cli can0 --dump-all [dir]            # Dump all regions
+./kuminz-cli can0 --read-addr 40B7BA 2        # Read 2 bytes at address (e.g., RPM)
 ./kuminz-cli --help                           # Show help
+```
+
+**Live Data Reading (Service 0x4A):**
+```bash
+# Read engine RPM (0x40B7BA, scale × 0.125)
+./kuminz-cli can0 --read-addr 40B7BA 2
+
+# Read boost pressure (0x40BD8E, scale × 0.0159 IN_HG)
+./kuminz-cli can0 --read-addr 40BD8E 2
 ```
 
 **Note:** CAN interface must be configured before running:
@@ -227,10 +242,21 @@ ls decompiled/databases/FnPDatabase/             # List 358 tables
 - `I` prefix for interfaces (ICanAdapter)
 
 ### E2M File Format (100% Decoded)
+
+E2M files contain **two sections**:
+
+**1. CSV Parameter Records:**
 - CSV format with 2 header rows, up to 16 columns
 - Memory Address Formula: `BaseLookup[Column3] + Column4`
 - 521 unique Column3 → Base Address mappings discovered
 - Column 14 = Group ID linking to Type G headers
+- Addresses resolved at runtime via `GetAddressByParameterID` (CLIP 0x16)
+
+**2. Binary Hex Dump Records (`[Data Records]`):**
+- Raw binary code/data at absolute addresses
+- Contains ROM code, Bank 2 (FLASH2), EEPROM data
+- Binary is **version-specific** - compiled address operands match specific firmware
+- Calterm downloads these blocks to ECU during programming
 
 ### Ghidra CSV Knowledge Database
 For firmware analysis, discoveries are stored in CSV files (e.g., `ghidra/CM550.rep/`):

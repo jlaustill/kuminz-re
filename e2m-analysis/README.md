@@ -5,7 +5,44 @@
 
 The overall purpose of this project is to reverse engineer the layout of the e2m files used by the Cummins Calterm program in connection with the CM550 ECUs.
 
-# What is already known?
+## E2M File Structure Overview
+
+E2M files contain **two distinct sections**:
+
+### Section 1: Header + CSV Parameter Records
+
+This section (documented below) contains calibration parameters in CSV format:
+- Memory addresses calculated via `BaseLookup[Column3] + Column4`
+- Used for tuning parameters, configuration settings, sensor scaling
+- Addresses resolved at runtime via `GetAddressByParameterID` (CLIP 0x16)
+
+### Section 2: Binary Hex Dump Records (`[Data Records]`)
+
+This section contains **raw binary code and data** at absolute addresses:
+
+```
+[Data Records]
+# Address    | Hex Data                                         | ASCII
+0x00008000 | 4801056248010562480543CE48010562                   | H..bH..bH.C.H..b
+...
+# Extended linear address: 0x00500000
+0x00500000 | 0000A1A19421FFE07C0802A690010024                   | .....!..|......$
+```
+
+**Binary regions include:**
+- **ROM code** (0x00008000+) - Firmware
+- **Bank 2 / FLASH2** (0x00500000+) - Utility functions (CM848)
+- **EEPROM** (0x01000000+) - Non-volatile storage
+
+**Important:** Binary code contains compiled-in address operands that are **firmware-version-specific**. E2M binary data is only valid for the matching firmware version.
+
+See `firmware/CM848_S90140.06_analysis/docs/E2M_INTEGRATION.md` for detailed binary section documentation.
+
+---
+
+# CSV Parameter Format (Section 1)
+
+## What is already known?
 
 1. The file format is a csv
 2. there are 2 header rows
