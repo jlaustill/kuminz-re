@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Jan 31 08:32:07 MST 2026
+// Generated: Sat Jan 31 16:47:11 MST 2026
 
 
 //
@@ -6109,7 +6109,7 @@ void phase_group_a_processing(void)
   processEngineConditionFlags();
   SUB_0051c3d8();
   SUB_0051cad4();
-  SUB_00510520();
+  configureOutputMode();
   processEngineLoadFilters();
   selectTurboModeParameters();
   calculateFuelFlowWithMode();
@@ -6150,7 +6150,7 @@ void phase_group_b_processing(void)
   calculateProtectionOutputDemand();
   applyProtectionOutputDemand();
   processProtectionMode2();
-  SUB_00505f98(0);
+  processScheduledTaskState(0);
   SUB_0051d840();
   processEngineLoadData();
   processCalibrationTablesMain();
@@ -6614,7 +6614,7 @@ void periodicTaskGroup29_calibration11(void)
   SUB_00519cc4();
   SUB_0052de14();
   SUB_00507548();
-  SUB_0051aef8();
+  updateThermalProtectionState();
   return;
 }
 
@@ -7268,7 +7268,7 @@ void main_loop(void)
     periodicTaskGroup2_controlLoop();
     periodicTaskGroup10_monitoring();
     periodicTaskGroup23_protection();
-    SUB_00534328();
+    evaluateCbdThreshold();
     main_loop_phase_index = 0x27;
     break;
   case 0x27:
@@ -7332,9 +7332,9 @@ void initSensorDefaults(void)
 void sensorChannel0_init(void)
 
 {
-  SUB_005012dc(&DAT_000592a2,&DAT_0040a062,&DAT_003fa014,&DAT_000592b2,&DAT_000592c4,0,
-               &PTR_DAT_003fa016,3,0x19,0x1a,&sensor_ch0_output_1,&sensor_ch0_output_2,&DAT_0040be14
-              );
+  sensorChannelInit_typeB
+            (&DAT_000592a2,&DAT_0040a062,&DAT_003fa014,&DAT_000592b2,&DAT_000592c4,0,
+             &PTR_DAT_003fa016,3,0x19,0x1a,&sensor_ch0_output_1,&sensor_ch0_output_2,&DAT_0040be14);
   return;
 }
 
@@ -7347,9 +7347,9 @@ void sensorChannel0_init(void)
 void sensorChannel0_process(void)
 
 {
-  SUB_00501b4c(&DAT_000592a2,&DAT_0040a062,&DAT_003fa014,&DAT_000592b2,&DAT_000592c4,0,
-               &PTR_DAT_003fa016,3,0x19,0x1a,&sensor_ch0_output_1,&sensor_ch0_output_2,&DAT_0040be14
-              );
+  sensorChannelUpdate_typeB
+            (&DAT_000592a2,&DAT_0040a062,&DAT_003fa014,&DAT_000592b2,&DAT_000592c4,0,
+             &PTR_DAT_003fa016,3,0x19,0x1a,&sensor_ch0_output_1,&sensor_ch0_output_2,&DAT_0040be14);
   return;
 }
 
@@ -7362,8 +7362,9 @@ void sensorChannel0_process(void)
 void sensorChannel1_init(void)
 
 {
-  SUB_00500234(&DAT_000592d6,&DAT_0040a06e,0x3fa01e,&DAT_000592e6,&DAT_0005930e,2,&PTR_DAT_003fa020,
-               0x14,0x96,0x97,&sensor_ch1_output_1,&sensor_ch1_output_2,&DAT_0040be16);
+  sensorChannelConfigInit
+            (&DAT_000592d6,&DAT_0040a06e,0x3fa01e,&DAT_000592e6,&DAT_0005930e,2,&PTR_DAT_003fa020,
+             0x14,0x96,0x97,&sensor_ch1_output_1,&sensor_ch1_output_2,&DAT_0040be16);
   return;
 }
 
@@ -7376,8 +7377,9 @@ void sensorChannel1_init(void)
 void sensorChannel1_process(void)
 
 {
-  SUB_00500a4c(&DAT_000592d6,&DAT_0040a06e,0x3fa01e,&DAT_000592e6,&DAT_0005930e,2,&PTR_DAT_003fa020,
-               0x14,0x96,0x97,&sensor_ch1_output_1,&sensor_ch1_output_2,&DAT_0040be16);
+  updateSensorChannelWithConfig
+            (&DAT_000592d6,&DAT_0040a06e,0x3fa01e,&DAT_000592e6,&DAT_0005930e,2,&PTR_DAT_003fa020,
+             0x14,0x96,0x97,&sensor_ch1_output_1,&sensor_ch1_output_2,&DAT_0040be16);
   return;
 }
 
@@ -7390,9 +7392,9 @@ void sensorChannel1_process(void)
 void sensorChannel2_init(void)
 
 {
-  SUB_005012dc(&DAT_00059336,&DAT_0040a07a,&DAT_003fa028,&DAT_00059346,&DAT_00059358,0,
-               &PTR_DAT_003fa02a,4,0x43,0x42,&sensor_ch2_output_1,&sensor_ch2_output_2,&DAT_0040be1c
-              );
+  sensorChannelInit_typeB
+            (&DAT_00059336,&DAT_0040a07a,&DAT_003fa028,&DAT_00059346,&DAT_00059358,0,
+             &PTR_DAT_003fa02a,4,0x43,0x42,&sensor_ch2_output_1,&sensor_ch2_output_2,&DAT_0040be1c);
   return;
 }
 
@@ -7405,9 +7407,9 @@ void sensorChannel2_init(void)
 void sensorChannel2_process(void)
 
 {
-  SUB_00501b4c(&DAT_00059336,&DAT_0040a07a,&DAT_003fa028,&DAT_00059346,&DAT_00059358,0,
-               &PTR_DAT_003fa02a,4,0x43,0x42,&sensor_ch2_output_1,&sensor_ch2_output_2,&DAT_0040be1c
-              );
+  sensorChannelUpdate_typeB
+            (&DAT_00059336,&DAT_0040a07a,&DAT_003fa028,&DAT_00059346,&DAT_00059358,0,
+             &PTR_DAT_003fa02a,4,0x43,0x42,&sensor_ch2_output_1,&sensor_ch2_output_2,&DAT_0040be1c);
   return;
 }
 
@@ -7420,9 +7422,10 @@ void sensorChannel2_process(void)
 void sensorChannel3_boostPressureInit(void)
 
 {
-  SUB_005012dc(&DAT_0005936a,&DAT_0040a086,&DAT_003fa032,&DAT_0005937a,&DAT_0005938c,0,
-               &PTR_DAT_003fa034,1,8,9,&boost_pressure_sensor_raw,&boost_pressure_sensor_filtered,
-               &DAT_0040be20);
+  sensorChannelInit_typeB
+            (&DAT_0005936a,&DAT_0040a086,&DAT_003fa032,&DAT_0005937a,&DAT_0005938c,0,
+             &PTR_DAT_003fa034,1,8,9,&boost_pressure_sensor_raw,&boost_pressure_sensor_filtered,
+             &DAT_0040be20);
   return;
 }
 
@@ -7435,9 +7438,10 @@ void sensorChannel3_boostPressureInit(void)
 void sensorChannel3_boostPressureProcess(void)
 
 {
-  SUB_00501b4c(&DAT_0005936a,&DAT_0040a086,&DAT_003fa032,&DAT_0005937a,&DAT_0005938c,0,
-               &PTR_DAT_003fa034,1,8,9,&boost_pressure_sensor_raw,&boost_pressure_sensor_filtered,
-               &DAT_0040be20);
+  sensorChannelUpdate_typeB
+            (&DAT_0005936a,&DAT_0040a086,&DAT_003fa032,&DAT_0005937a,&DAT_0005938c,0,
+             &PTR_DAT_003fa034,1,8,9,&boost_pressure_sensor_raw,&boost_pressure_sensor_filtered,
+             &DAT_0040be20);
   return;
 }
 
@@ -7450,8 +7454,9 @@ void sensorChannel3_boostPressureProcess(void)
 void sensorChannel4_init(void)
 
 {
-  SUB_005012dc(&DAT_0005939e,&DAT_0040a092,&DAT_003fa03c,&DAT_000593ae,&DAT_000593c6,0,
-               &PTR_DAT_003fa03e,0x4d,0x288,0x289,&DAT_003fa046,&DAT_003fa048,&DAT_003fa04a);
+  sensorChannelInit_typeB
+            (&DAT_0005939e,&DAT_0040a092,&DAT_003fa03c,&DAT_000593ae,&DAT_000593c6,0,
+             &PTR_DAT_003fa03e,0x4d,0x288,0x289,&DAT_003fa046,&DAT_003fa048,&DAT_003fa04a);
   return;
 }
 
@@ -7464,8 +7469,9 @@ void sensorChannel4_init(void)
 void sensorChannel4_process(void)
 
 {
-  SUB_00501b4c(&DAT_0005939e,&DAT_0040a092,&DAT_003fa03c,&DAT_000593ae,&DAT_000593c6,0,
-               &PTR_DAT_003fa03e,0x4d,0x288,0x289,&DAT_003fa046,&DAT_003fa048,&DAT_003fa04a);
+  sensorChannelUpdate_typeB
+            (&DAT_0005939e,&DAT_0040a092,&DAT_003fa03c,&DAT_000593ae,&DAT_000593c6,0,
+             &PTR_DAT_003fa03e,0x4d,0x288,0x289,&DAT_003fa046,&DAT_003fa048,&DAT_003fa04a);
   return;
 }
 
@@ -7478,8 +7484,9 @@ void sensorChannel4_process(void)
 void sensorChannel5_init(void)
 
 {
-  SUB_00500234(0x3feed2,&DAT_0040a0aa,&DAT_003fa04c,&DAT_003feee2,&DAT_003feefa,2,&DAT_003fa04e,0x69
-               ,0x2b2,0x2b3,&sensor_ch5_filtered,&sensor_ch5_output_2,&DAT_0040be22);
+  sensorChannelConfigInit
+            (0x3feed2,&DAT_0040a0aa,&DAT_003fa04c,&DAT_003feee2,&DAT_003feefa,2,&DAT_003fa04e,0x69,
+             0x2b2,0x2b3,&sensor_ch5_filtered,&sensor_ch5_output_2,&DAT_0040be22);
   return;
 }
 
@@ -7492,8 +7499,9 @@ void sensorChannel5_init(void)
 void sensorChannel5_process(void)
 
 {
-  SUB_00500a4c(0x3feed2,&DAT_0040a0aa,&DAT_003fa04c,&DAT_003feee2,&DAT_003feefa,2,&DAT_003fa04e,0x69
-               ,0x2b2,0x2b3,&sensor_ch5_filtered,&sensor_ch5_output_2,&DAT_0040be22);
+  updateSensorChannelWithConfig
+            (0x3feed2,&DAT_0040a0aa,&DAT_003fa04c,&DAT_003feee2,&DAT_003feefa,2,&DAT_003fa04e,0x69,
+             0x2b2,0x2b3,&sensor_ch5_filtered,&sensor_ch5_output_2,&DAT_0040be22);
   return;
 }
 
@@ -7506,9 +7514,10 @@ void sensorChannel5_process(void)
 void sensorChannel6_init(void)
 
 {
-  SUB_005012dc(&DAT_003fef12,&DAT_0040a0b6,&DAT_003fa056,&DAT_003fef22,&DAT_003fef4e,0,
-               &PTR_DAT_003fa058,0x6c,0x31c,0x31d,&sensor_ch6_output_1,&sensor_ch6_output_2,
-               &DAT_0040be26);
+  sensorChannelInit_typeB
+            (&DAT_003fef12,&DAT_0040a0b6,&DAT_003fa056,&DAT_003fef22,&DAT_003fef4e,0,
+             &PTR_DAT_003fa058,0x6c,0x31c,0x31d,&sensor_ch6_output_1,&sensor_ch6_output_2,
+             &DAT_0040be26);
   return;
 }
 
@@ -7521,9 +7530,10 @@ void sensorChannel6_init(void)
 void sensorChannel6_process(void)
 
 {
-  SUB_00501b4c(&DAT_003fef12,&DAT_0040a0b6,&DAT_003fa056,&DAT_003fef22,&DAT_003fef4e,0,
-               &PTR_DAT_003fa058,0x6c,0x31c,0x31d,&sensor_ch6_output_1,&sensor_ch6_output_2,
-               &DAT_0040be26);
+  sensorChannelUpdate_typeB
+            (&DAT_003fef12,&DAT_0040a0b6,&DAT_003fa056,&DAT_003fef22,&DAT_003fef4e,0,
+             &PTR_DAT_003fa058,0x6c,0x31c,0x31d,&sensor_ch6_output_1,&sensor_ch6_output_2,
+             &DAT_0040be26);
   return;
 }
 
@@ -7536,9 +7546,10 @@ void sensorChannel6_process(void)
 void sensorChannel7_init(void)
 
 {
-  SUB_00500234(&DAT_00059446,&DAT_0040a0c2,&DAT_003fa060,&DAT_00059456,&DAT_0005946c,2,
-               &PTR_DAT_003fa062,0x4b,0x282,0x283,&sensor_ch7_filtered,&sensor_ch7_output_2,
-               &DAT_0040be18);
+  sensorChannelConfigInit
+            (&DAT_00059446,&DAT_0040a0c2,&DAT_003fa060,&DAT_00059456,&DAT_0005946c,2,
+             &PTR_DAT_003fa062,0x4b,0x282,0x283,&sensor_ch7_filtered,&sensor_ch7_output_2,
+             &DAT_0040be18);
   return;
 }
 
@@ -7551,9 +7562,10 @@ void sensorChannel7_init(void)
 void sensorChannel7_process(void)
 
 {
-  SUB_00500a4c(&DAT_00059446,&DAT_0040a0c2,&DAT_003fa060,&DAT_00059456,&DAT_0005946c,2,
-               &PTR_DAT_003fa062,0x4b,0x282,0x283,&sensor_ch7_filtered,&sensor_ch7_output_2,
-               &DAT_0040be18);
+  updateSensorChannelWithConfig
+            (&DAT_00059446,&DAT_0040a0c2,&DAT_003fa060,&DAT_00059456,&DAT_0005946c,2,
+             &PTR_DAT_003fa062,0x4b,0x282,0x283,&sensor_ch7_filtered,&sensor_ch7_output_2,
+             &DAT_0040be18);
   return;
 }
 
@@ -7566,9 +7578,10 @@ void sensorChannel7_process(void)
 void sensorChannel8_init(void)
 
 {
-  SUB_005012dc(&DAT_003fef7a,&DAT_0040a0ce,&DAT_003fa06a,&DAT_003fef8a,&DAT_003fefa2,0,
-               &PTR_DAT_003fa06c,0x6d,0x2a0,0x2a1,&sensor_ch8_output_1,&sensor_ch8_output_2,
-               &DAT_0040be2c);
+  sensorChannelInit_typeB
+            (&DAT_003fef7a,&DAT_0040a0ce,&DAT_003fa06a,&DAT_003fef8a,&DAT_003fefa2,0,
+             &PTR_DAT_003fa06c,0x6d,0x2a0,0x2a1,&sensor_ch8_output_1,&sensor_ch8_output_2,
+             &DAT_0040be2c);
   return;
 }
 
@@ -7581,9 +7594,10 @@ void sensorChannel8_init(void)
 void sensorChannel8_process(void)
 
 {
-  SUB_00501b4c(&DAT_003fef7a,&DAT_0040a0ce,&DAT_003fa06a,&DAT_003fef8a,&DAT_003fefa2,0,
-               &PTR_DAT_003fa06c,0x6d,0x2a0,0x2a1,&sensor_ch8_output_1,&sensor_ch8_output_2,
-               &DAT_0040be2c);
+  sensorChannelUpdate_typeB
+            (&DAT_003fef7a,&DAT_0040a0ce,&DAT_003fa06a,&DAT_003fef8a,&DAT_003fefa2,0,
+             &PTR_DAT_003fa06c,0x6d,0x2a0,0x2a1,&sensor_ch8_output_1,&sensor_ch8_output_2,
+             &DAT_0040be2c);
   return;
 }
 
@@ -7596,8 +7610,9 @@ void sensorChannel8_process(void)
 void sensorChannel9_init(void)
 
 {
-  SUB_00500234(&DAT_000594be,&DAT_0040a0e6,&DAT_003fa074,&DAT_000594ce,&DAT_000594fa,2,
-               &PTR_DAT_003fa076,7,0x2f,0x30,&DAT_0040bdd0,&DAT_0040bdd2,&DAT_0040be3a);
+  sensorChannelConfigInit
+            (&DAT_000594be,&DAT_0040a0e6,&DAT_003fa074,&DAT_000594ce,&DAT_000594fa,2,
+             &PTR_DAT_003fa076,7,0x2f,0x30,&DAT_0040bdd0,&DAT_0040bdd2,&DAT_0040be3a);
   return;
 }
 
@@ -7610,8 +7625,9 @@ void sensorChannel9_init(void)
 void sensorChannel9_process(void)
 
 {
-  SUB_00500a4c(&DAT_000594be,&DAT_0040a0e6,&DAT_003fa074,&DAT_000594ce,&DAT_000594fa,2,
-               &PTR_DAT_003fa076,7,0x2f,0x30,&DAT_0040bdd0,&DAT_0040bdd2,&DAT_0040be3a);
+  updateSensorChannelWithConfig
+            (&DAT_000594be,&DAT_0040a0e6,&DAT_003fa074,&DAT_000594ce,&DAT_000594fa,2,
+             &PTR_DAT_003fa076,7,0x2f,0x30,&DAT_0040bdd0,&DAT_0040bdd2,&DAT_0040be3a);
   return;
 }
 
@@ -7624,9 +7640,10 @@ void sensorChannel9_process(void)
 void sensorChannel10_throttleInit(void)
 
 {
-  SUB_00500234(&DAT_00059526,&DAT_0040a0f2,&DAT_003fa07e,&DAT_00059536,&DAT_00059566,2,
-               &PTR_DAT_003fa080,9,0x13,0x14,&throttle_position_demand,&throttle_position_secondary,
-               &DAT_0040be1a);
+  sensorChannelConfigInit
+            (&DAT_00059526,&DAT_0040a0f2,&DAT_003fa07e,&DAT_00059536,&DAT_00059566,2,
+             &PTR_DAT_003fa080,9,0x13,0x14,&throttle_position_demand,&throttle_position_secondary,
+             &DAT_0040be1a);
   return;
 }
 
@@ -7639,9 +7656,10 @@ void sensorChannel10_throttleInit(void)
 void sensorChannel10_throttleProcess(void)
 
 {
-  SUB_00500a4c(&DAT_00059526,&DAT_0040a0f2,&DAT_003fa07e,&DAT_00059536,&DAT_00059566,2,
-               &PTR_DAT_003fa080,9,0x13,0x14,&throttle_position_demand,&throttle_position_secondary,
-               &DAT_0040be1a);
+  updateSensorChannelWithConfig
+            (&DAT_00059526,&DAT_0040a0f2,&DAT_003fa07e,&DAT_00059536,&DAT_00059566,2,
+             &PTR_DAT_003fa080,9,0x13,0x14,&throttle_position_demand,&throttle_position_secondary,
+             &DAT_0040be1a);
   return;
 }
 
@@ -7654,9 +7672,10 @@ void sensorChannel10_throttleProcess(void)
 void sensorChannel11_init(void)
 
 {
-  SUB_005012dc(&DAT_00059596,&DAT_0040a0fe,&DAT_003fa088,&DAT_000595a6,&DAT_000595b8,0,
-               &PTR_DAT_003fa08a,10,0xc,0xd,&sensor_ch11_output_1,&sensor_ch11_output_2,
-               &DAT_0040be24);
+  sensorChannelInit_typeB
+            (&DAT_00059596,&DAT_0040a0fe,&DAT_003fa088,&DAT_000595a6,&DAT_000595b8,0,
+             &PTR_DAT_003fa08a,10,0xc,0xd,&sensor_ch11_output_1,&sensor_ch11_output_2,&DAT_0040be24)
+  ;
   return;
 }
 
@@ -7669,9 +7688,10 @@ void sensorChannel11_init(void)
 void sensorChannel11_process(void)
 
 {
-  SUB_00501b4c(&DAT_00059596,&DAT_0040a0fe,&DAT_003fa088,&DAT_000595a6,&DAT_000595b8,0,
-               &PTR_DAT_003fa08a,10,0xc,0xd,&sensor_ch11_output_1,&sensor_ch11_output_2,
-               &DAT_0040be24);
+  sensorChannelUpdate_typeB
+            (&DAT_00059596,&DAT_0040a0fe,&DAT_003fa088,&DAT_000595a6,&DAT_000595b8,0,
+             &PTR_DAT_003fa08a,10,0xc,0xd,&sensor_ch11_output_1,&sensor_ch11_output_2,&DAT_0040be24)
+  ;
   return;
 }
 
@@ -7684,8 +7704,9 @@ void sensorChannel11_process(void)
 void sensorChannel12_init(void)
 
 {
-  SUB_005012dc(&DAT_000595ca,&DAT_0040a10a,&DAT_003fa092,&DAT_000595da,&DAT_000595ec,0,
-               &PTR_DAT_003fa094,8,0x4d,0x4e,&DAT_0040bddc,&DAT_0040bdde,&DAT_0040be42);
+  sensorChannelInit_typeB
+            (&DAT_000595ca,&DAT_0040a10a,&DAT_003fa092,&DAT_000595da,&DAT_000595ec,0,
+             &PTR_DAT_003fa094,8,0x4d,0x4e,&DAT_0040bddc,&DAT_0040bdde,&DAT_0040be42);
   return;
 }
 
@@ -7698,8 +7719,9 @@ void sensorChannel12_init(void)
 void sensorChannel12_process(void)
 
 {
-  SUB_00501b4c(&DAT_000595ca,&DAT_0040a10a,&DAT_003fa092,&DAT_000595da,&DAT_000595ec,0,
-               &PTR_DAT_003fa094,8,0x4d,0x4e,&DAT_0040bddc,&DAT_0040bdde,&DAT_0040be42);
+  sensorChannelUpdate_typeB
+            (&DAT_000595ca,&DAT_0040a10a,&DAT_003fa092,&DAT_000595da,&DAT_000595ec,0,
+             &PTR_DAT_003fa094,8,0x4d,0x4e,&DAT_0040bddc,&DAT_0040bdde,&DAT_0040be42);
   return;
 }
 
@@ -7712,8 +7734,9 @@ void sensorChannel12_process(void)
 void sensorChannel13_init(void)
 
 {
-  SUB_005012dc(&DAT_003fefba,&DAT_0040a116,&DAT_003fa09c,&DAT_000595fe,&DAT_00059610,0,
-               &PTR_DAT_003fa09e,0xd,10,0xb,&DAT_0040bde0,&DAT_0040bde2,&DAT_0040be44);
+  sensorChannelInit_typeB
+            (&DAT_003fefba,&DAT_0040a116,&DAT_003fa09c,&DAT_000595fe,&DAT_00059610,0,
+             &PTR_DAT_003fa09e,0xd,10,0xb,&DAT_0040bde0,&DAT_0040bde2,&DAT_0040be44);
   return;
 }
 
@@ -7726,8 +7749,9 @@ void sensorChannel13_init(void)
 void sensorChannel13_process(void)
 
 {
-  SUB_00501b4c(&DAT_003fefba,&DAT_0040a116,&DAT_003fa09c,&DAT_000595fe,&DAT_00059610,0,
-               &PTR_DAT_003fa09e,0xd,10,0xb,&DAT_0040bde0,&DAT_0040bde2,&DAT_0040be44);
+  sensorChannelUpdate_typeB
+            (&DAT_003fefba,&DAT_0040a116,&DAT_003fa09c,&DAT_000595fe,&DAT_00059610,0,
+             &PTR_DAT_003fa09e,0xd,10,0xb,&DAT_0040bde0,&DAT_0040bde2,&DAT_0040be44);
   return;
 }
 
@@ -7740,8 +7764,9 @@ void sensorChannel13_process(void)
 void sensorChannel14_init(void)
 
 {
-  SUB_005012dc(&DAT_00059622,&DAT_0040a122,&DAT_003fa0a6,&DAT_00059632,&DAT_00059644,0,
-               &PTR_DAT_003fa0a8,0x2a,0x152,0x151,&DAT_0040bde4,&DAT_0040bde6,&DAT_0040be46);
+  sensorChannelInit_typeB
+            (&DAT_00059622,&DAT_0040a122,&DAT_003fa0a6,&DAT_00059632,&DAT_00059644,0,
+             &PTR_DAT_003fa0a8,0x2a,0x152,0x151,&DAT_0040bde4,&DAT_0040bde6,&DAT_0040be46);
   return;
 }
 
@@ -7754,8 +7779,9 @@ void sensorChannel14_init(void)
 void sensorChannel14_process(void)
 
 {
-  SUB_00501b4c(&DAT_00059622,&DAT_0040a122,&DAT_003fa0a6,&DAT_00059632,&DAT_00059644,0,
-               &PTR_DAT_003fa0a8,0x2a,0x152,0x151,&DAT_0040bde4,&DAT_0040bde6,&DAT_0040be46);
+  sensorChannelUpdate_typeB
+            (&DAT_00059622,&DAT_0040a122,&DAT_003fa0a6,&DAT_00059632,&DAT_00059644,0,
+             &PTR_DAT_003fa0a8,0x2a,0x152,0x151,&DAT_0040bde4,&DAT_0040bde6,&DAT_0040be46);
   return;
 }
 
@@ -7768,8 +7794,9 @@ void sensorChannel14_process(void)
 void sensorChannel15_init(void)
 
 {
-  SUB_005012dc(&DAT_00059692,&DAT_0040a13a,&DAT_003fa0b0,&DAT_000596a2,&DAT_000596ba,0,
-               &PTR_DAT_003fa0b2,0x15,0xc4,0xc5,0x40bdec,&DAT_0040bdee,&DAT_0040be4a);
+  sensorChannelInit_typeB
+            (&DAT_00059692,&DAT_0040a13a,&DAT_003fa0b0,&DAT_000596a2,&DAT_000596ba,0,
+             &PTR_DAT_003fa0b2,0x15,0xc4,0xc5,0x40bdec,&DAT_0040bdee,&DAT_0040be4a);
   return;
 }
 
@@ -7782,8 +7809,9 @@ void sensorChannel15_init(void)
 void sensorChannel15_process(void)
 
 {
-  SUB_00501b4c(&DAT_00059692,&DAT_0040a13a,&DAT_003fa0b0,&DAT_000596a2,&DAT_000596ba,0,
-               &PTR_DAT_003fa0b2,0x15,0xc4,0xc5,0x40bdec,&DAT_0040bdee,&DAT_0040be4a);
+  sensorChannelUpdate_typeB
+            (&DAT_00059692,&DAT_0040a13a,&DAT_003fa0b0,&DAT_000596a2,&DAT_000596ba,0,
+             &PTR_DAT_003fa0b2,0x15,0xc4,0xc5,0x40bdec,&DAT_0040bdee,&DAT_0040be4a);
   return;
 }
 
@@ -7797,12 +7825,14 @@ void sensorChannel16_init(void)
 
 {
   if ((PTR_DAT_003fd902._0_1_ & 0x10) == 0) {
-    SUB_005012dc(&DAT_003fefca,&DAT_0040a146,&DAT_003fa0ba,&DAT_000596d2,&DAT_000596fe,0,
-                 &PTR_DAT_003fa0bc,0xf,0x36,0x37,0x40bdf0,&DAT_0040bdf2,&DAT_0040be4c);
+    sensorChannelInit_typeB
+              (&DAT_003fefca,&DAT_0040a146,&DAT_003fa0ba,&DAT_000596d2,&DAT_000596fe,0,
+               &PTR_DAT_003fa0bc,0xf,0x36,0x37,0x40bdf0,&DAT_0040bdf2,&DAT_0040be4c);
   }
   else {
-    SUB_005012dc(&DAT_003fefda,&DAT_0040a146,&DAT_003fa0ba,&DAT_000596e8,&DAT_00059714,0,
-                 &PTR_DAT_003fa0bc,0xf,0x36,0x37,0x40bdf0,&DAT_0040bdf2,&DAT_0040be4c);
+    sensorChannelInit_typeB
+              (&DAT_003fefda,&DAT_0040a146,&DAT_003fa0ba,&DAT_000596e8,&DAT_00059714,0,
+               &PTR_DAT_003fa0bc,0xf,0x36,0x37,0x40bdf0,&DAT_0040bdf2,&DAT_0040be4c);
   }
   return;
 }
@@ -7817,12 +7847,14 @@ void sensorChannel16_process(void)
 
 {
   if ((PTR_DAT_003fd902._0_1_ & 0x10) == 0) {
-    SUB_00501b4c(&DAT_003fefca,&DAT_0040a146,&DAT_003fa0ba,&DAT_000596d2,&DAT_000596fe,0,
-                 &PTR_DAT_003fa0bc,0xf,0x36,0x37,0x40bdf0,&DAT_0040bdf2,&DAT_0040be4c);
+    sensorChannelUpdate_typeB
+              (&DAT_003fefca,&DAT_0040a146,&DAT_003fa0ba,&DAT_000596d2,&DAT_000596fe,0,
+               &PTR_DAT_003fa0bc,0xf,0x36,0x37,0x40bdf0,&DAT_0040bdf2,&DAT_0040be4c);
   }
   else {
-    SUB_00501b4c(&DAT_003fefda,&DAT_0040a146,&DAT_003fa0ba,&DAT_000596e8,&DAT_00059714,0,
-                 &PTR_DAT_003fa0bc,0xf,0x36,0x37,0x40bdf0,&DAT_0040bdf2,&DAT_0040be4c);
+    sensorChannelUpdate_typeB
+              (&DAT_003fefda,&DAT_0040a146,&DAT_003fa0ba,&DAT_000596e8,&DAT_00059714,0,
+               &PTR_DAT_003fa0bc,0xf,0x36,0x37,0x40bdf0,&DAT_0040bdf2,&DAT_0040be4c);
   }
   return;
 }
@@ -7843,8 +7875,9 @@ void FUN_0000db88(void)
   puStack00000018 = &DAT_0040be4c;
   uStack00000008 = 0x36;
   uStack0000000c = 0x37;
-  SUB_00501b4c(&DAT_003fefca,&DAT_0040a146,&DAT_003fa0ba,&DAT_000596d2,&DAT_000596fe,0,
-               &PTR_DAT_003fa0bc,0xf);
+  sensorChannelUpdate_typeB
+            (&DAT_003fefca,&DAT_0040a146,&DAT_003fa0ba,&DAT_000596d2,&DAT_000596fe,0,
+             &PTR_DAT_003fa0bc,0xf);
   return;
 }
 
@@ -16124,7 +16157,7 @@ void clearDiagnosticState(void)
      ((DAT_0040af66 == '\x01' && ((diagnostic_enable_flags & 0x400) == 0)))) {
     if ((diagnostic_enable_flags & 0x400) != 0) {
       if ((diagnostic_action_state & 2) == 0) {
-        SUB_00533efc();
+        initFaultTableEntries();
       }
       else {
         uVar1 = 0;
@@ -16146,8 +16179,8 @@ void clearDiagnosticState(void)
         fault_list_status_flags = 0;
         fault_list_write_index = 0;
         fault_list_emission_count = 0;
-        SUB_00533efc();
-        SUB_00533df0();
+        initFaultTableEntries();
+        updateActiveFaultFlags();
       }
     }
     uVar1 = 1;
@@ -16201,8 +16234,8 @@ void FUN_0001d11c(void)
   fault_list_status_flags = 0;
   fault_list_write_index = 0;
   fault_list_emission_count = 0;
-  SUB_00533efc();
-  SUB_00533df0();
+  initFaultTableEntries();
+  updateActiveFaultFlags();
   uVar1 = 1;
   if (active_fault_count != 0) {
     do {
@@ -16730,11 +16763,11 @@ void setFaultActiveStatus(int param_1,uint param_2)
         if (bVar1 != param_2) {
           (&fault_entry_status_field)[param_1 * 0x18] =
                (&fault_entry_status_field)[param_1 * 0x18] | 1;
-          SUB_00534c6c();
+          evaluateFaultFlagCondition();
         }
       }
       else {
-        SUB_00534fb0();
+        processCbdCylinderTrims();
       }
     }
   }
@@ -16812,11 +16845,11 @@ void FUN_0001df88(int param_1,uint param_2,int param_3)
         if (param_3 == 1) {
           (&fault_entry_status_field)[param_1 * 0x18] =
                (&fault_entry_status_field)[param_1 * 0x18] | 1;
-          SUB_00534c6c();
+          evaluateFaultFlagCondition();
         }
       }
       else {
-        SUB_00534fb0();
+        processCbdCylinderTrims();
       }
     }
   }
@@ -16852,11 +16885,11 @@ void FUN_0001e158(undefined4 param_1,undefined4 param_2,int param_3,int param_4,
         if (param_3 == 1) {
           puVar1 = (ushort *)(param_5 + unaff_r30 + 0x2e);
           *puVar1 = *puVar1 | 1;
-          SUB_00534c6c();
+          evaluateFaultFlagCondition();
         }
       }
       else {
-        SUB_00534fb0();
+        processCbdCylinderTrims();
       }
     }
   }
@@ -20506,7 +20539,7 @@ void j1939_handle_pgn_65269_ambient_conditions(void)
   else if (((system_enable_state_reserved_12 & 0x40) == 0) &&
           ((system_enable_state_reserved_12 & 0x80) == 0)) {
     local_8[0] = ((short)(((DAT_0040bb18 >> 6) * 5 + -0xa0) / 9) + 0x111) * 0x20;
-    _DAT_003faac5 = SUB_0050b58c(local_8);
+    _DAT_003faac5 = routeDiagDataToOutput(local_8);
   }
   else {
     _DAT_003faac5 = 0xfffe;
@@ -21372,7 +21405,7 @@ void sendJ1939ExtendedResponse(undefined4 param_1,undefined2 param_2)
 void j1939_handle_pgn_65234_dm11_clear_active(void)
 
 {
-  DAT_003fab60 = SUB_0050b58c(&DAT_0005a494);
+  DAT_003fab60 = routeDiagDataToOutput(&DAT_0005a494);
   sendJ1939MultiFrame(&DAT_003fab52);
   return;
 }
@@ -21422,7 +21455,7 @@ void j1939_handle_pgn_65226_dm1_active_dtc(void)
       DAT_003fab6e = 6;
     }
     else {
-      DAT_003fab78 = SUB_0050b5b4();
+      DAT_003fab78 = routeDiagDataToOutputAlt();
       uVar3 = 1;
       if (fault_list_count != 0) {
         do {
@@ -21513,7 +21546,7 @@ void j1939_handle_pgn_65227_dm2_previous_dtc(void)
   
   if ((DAT_003fac2c & 0xf0) == 0) {
     DAT_003fabd0 = 2;
-    DAT_003fabda = SUB_0050b5b4();
+    DAT_003fabda = routeDiagDataToOutputAlt();
     if (active_fault_count == 0) {
       DAT_003fabdc = 0xffffffff;
       DAT_003fabd0 = DAT_003fabd0 + 4;
@@ -21670,7 +21703,7 @@ void j1939BuildDm4FreezeFrame(int param_1)
       uVar9 = 500;
     }
     puVar7[6] = (char)(uVar9 >> 1);
-    uVar5 = SUB_0050b58c((int)&DAT_003fe674 + iVar3 + 7);
+    uVar5 = routeDiagDataToOutput((int)&DAT_003fe674 + iVar3 + 7);
     *(undefined2 *)(puVar7 + 7) = uVar5;
     puVar7[9] = (char)((ushort)*(undefined2 *)((int)&DAT_003fe674 + iVar3 + 0xb) >> 8);
     iVar8 = ((*(short *)((int)&DAT_003fe674 + iVar3 + 0x11) >> 6) * 5 + -0xa0) / 9;
@@ -21680,7 +21713,7 @@ void j1939BuildDm4FreezeFrame(int param_1)
     puVar7[10] = (char)iVar8 + '(';
     if (DAT_0005a48e == 1) {
       local_20[0] = (undefined2)((uint)*(ushort *)((int)&DAT_003fe674 + iVar3 + 5) * 0x19c >> 8);
-      uVar5 = SUB_0050b58c(local_20);
+      uVar5 = routeDiagDataToOutput(local_20);
     }
     else {
       uVar5 = 0xffff;
@@ -21746,7 +21779,7 @@ void j1939_handle_pgn_65230_dm5_readiness(void)
   DAT_003fad57 = active_fault_count;
   DAT_003fad58 = (undefined1)DAT_0005a490;
   DAT_003fad59 = (undefined1)DAT_0005a492;
-  DAT_003fad5a = SUB_0050b58c(&DAT_0005a494);
+  DAT_003fad5a = routeDiagDataToOutput(&DAT_0005a494);
   if (DAT_0040ad82 == 1) {
     local_10[0] = 0x1000;
   }
@@ -21756,7 +21789,7 @@ void j1939_handle_pgn_65230_dm5_readiness(void)
   else if ((DAT_0040ad82 == 0) && ((DAT_0005a494 & 0x100) != 0)) {
     local_10[0] = local_10[0] & 0xfeff;
   }
-  DAT_003fad5c = SUB_0050b58c(local_10);
+  DAT_003fad5c = routeDiagDataToOutput(local_10);
   sendJ1939MultiFrame(&DAT_003fad48);
   return;
 }
@@ -21795,7 +21828,7 @@ void j1939SendDm1ResponseMessage(byte dest_address,byte fault_count)
   
   local_6 = CONCAT11(in_register_00000012,fault_count);
   DAT_003fad6e = dest_address;
-  DAT_003fad70 = SUB_0050b58c(&local_6);
+  DAT_003fad70 = routeDiagDataToOutput(&local_6);
   sendJ1939MultiFrame(&DAT_003fad60);
   return;
 }
@@ -22252,7 +22285,7 @@ void j1939_handle_pgn_65262_engine_temp(void)
   DAT_003fadff = (undefined1)iVar1;
   if (((condition_monitor_flags & 0x40) == 0) && ((condition_monitor_flags & 0x80) == 0)) {
     local_8[0] = (short)((DAT_0040bb06 * 0xa0 + -0x50000) / 0x240) + 0x2220;
-    _DAT_003fae00 = SUB_0050b58c(local_8);
+    _DAT_003fae00 = routeDiagDataToOutput(local_8);
   }
   else {
     _DAT_003fae00 = 0xfefe;
@@ -22289,7 +22322,7 @@ void FUN_000260d4(int param_1)
   *(char *)(unaff_r31 + 1) = (char)iVar2;
   if (((*(ushort *)(param_1 + 2) & 0x40) == 0) && ((*(ushort *)(param_1 + 2) & 0x80) == 0)) {
     sStack00000008 = (short)((DAT_0040bb06 * 0xa0 + -0x50000) / 0x240) + 0x2220;
-    uVar1 = SUB_0050b58c(&stack0x00000008);
+    uVar1 = routeDiagDataToOutput(&stack0x00000008);
   }
   else {
     uVar1 = 0xfefe;
@@ -22832,7 +22865,7 @@ void j1939_handle_pgn_65271_vehicle_electrical(void)
   undefined2 local_8 [4];
   
   local_8[0] = (undefined2)((uint)battery_voltage_raw * 0x14 >> 3);
-  DAT_003faef2 = SUB_0050b58c(local_8);
+  DAT_003faef2 = routeDiagDataToOutput(local_8);
   sendJ1939MultiFrame(&DAT_003faee0);
   return;
 }
@@ -25796,7 +25829,7 @@ void j1939_handle_pgn_65264_pto(void)
     DAT_003fb008 = 0xff;
     goto LAB_0002beb4;
   }
-  DAT_003fb005 = SUB_0050b58c(&protection_param_previous);
+  DAT_003fb005 = routeDiagDataToOutput(&protection_param_previous);
   if ((DAT_003fdbce._2_1_ & 8) == 0) {
     if ((protection_mode_bits_reserved_02 & 8) == 0) {
       DAT_003fb007 = 0xcc;
@@ -30306,8 +30339,9 @@ LAB_00035468:
 void processSensorLookupTable5(void)
 
 {
-  SUB_005012dc(&DAT_0005aaf0,&DAT_0040b156,&DAT_003fb1de,&DAT_0005ab00,&DAT_0005ab12,0,
-               &PTR_DAT_003fb1e0,0x47,0x180,0x181,&DAT_0040bdd4,&DAT_0040bdd6,&DAT_0040be3e);
+  sensorChannelInit_typeB
+            (&DAT_0005aaf0,&DAT_0040b156,&DAT_003fb1de,&DAT_0005ab00,&DAT_0005ab12,0,
+             &PTR_DAT_003fb1e0,0x47,0x180,0x181,&DAT_0040bdd4,&DAT_0040bdd6,&DAT_0040be3e);
   return;
 }
 
@@ -30320,8 +30354,9 @@ void processSensorLookupTable5(void)
 void initSensorLookupTable5(void)
 
 {
-  SUB_00501b4c(&DAT_0005aaf0,&DAT_0040b156,&DAT_003fb1de,&DAT_0005ab00,&DAT_0005ab12,0,
-               &PTR_DAT_003fb1e0,0x47,0x180,0x181,&DAT_0040bdd4,&DAT_0040bdd6,&DAT_0040be3e);
+  sensorChannelUpdate_typeB
+            (&DAT_0005aaf0,&DAT_0040b156,&DAT_003fb1de,&DAT_0005ab00,&DAT_0005ab12,0,
+             &PTR_DAT_003fb1e0,0x47,0x180,0x181,&DAT_0040bdd4,&DAT_0040bdd6,&DAT_0040be3e);
   return;
 }
 
@@ -30334,8 +30369,9 @@ void initSensorLookupTable5(void)
 void calculateSensorLookupValue(void)
 
 {
-  SUB_00500234(&DAT_0005ab24,&DAT_0040b162,&DAT_003fb1e8,&DAT_0005ab34,&DAT_0005ab5c,2,
-               &PTR_DAT_003fb1ea,0x45,0x17b,0x17c,&DAT_0040bd92,&DAT_0040bdb2,&DAT_0040be2a);
+  sensorChannelConfigInit
+            (&DAT_0005ab24,&DAT_0040b162,&DAT_003fb1e8,&DAT_0005ab34,&DAT_0005ab5c,2,
+             &PTR_DAT_003fb1ea,0x45,0x17b,0x17c,&DAT_0040bd92,&DAT_0040bdb2,&DAT_0040be2a);
   return;
 }
 
@@ -30348,8 +30384,9 @@ void calculateSensorLookupValue(void)
 void updateSensorLookupTable(void)
 
 {
-  SUB_00500a4c(&DAT_0005ab24,&DAT_0040b162,&DAT_003fb1e8,&DAT_0005ab34,&DAT_0005ab5c,2,
-               &PTR_DAT_003fb1ea,0x45,0x17b,0x17c,&DAT_0040bd92,&DAT_0040bdb2,&DAT_0040be2a);
+  updateSensorChannelWithConfig
+            (&DAT_0005ab24,&DAT_0040b162,&DAT_003fb1e8,&DAT_0005ab34,&DAT_0005ab5c,2,
+             &PTR_DAT_003fb1ea,0x45,0x17b,0x17c,&DAT_0040bd92,&DAT_0040bdb2,&DAT_0040be2a);
   return;
 }
 
@@ -30362,8 +30399,9 @@ void updateSensorLookupTable(void)
 void processSensorLookupTable4(void)
 
 {
-  SUB_005012dc(&DAT_0005ab84,&DAT_0040b16e,&DAT_003fb1f2,&DAT_0005ab94,&DAT_0005abbe,0,
-               &PTR_DAT_003fb1f4,0x2f,0x175,0x176,&DAT_0040be08,&DAT_0040be0a,&DAT_0040be58);
+  sensorChannelInit_typeB
+            (&DAT_0005ab84,&DAT_0040b16e,&DAT_003fb1f2,&DAT_0005ab94,&DAT_0005abbe,0,
+             &PTR_DAT_003fb1f4,0x2f,0x175,0x176,&DAT_0040be08,&DAT_0040be0a,&DAT_0040be58);
   return;
 }
 
@@ -30376,8 +30414,9 @@ void processSensorLookupTable4(void)
 void initSensorLookupTable4(void)
 
 {
-  SUB_00501b4c(&DAT_0005ab84,&DAT_0040b16e,&DAT_003fb1f2,&DAT_0005ab94,&DAT_0005abbe,0,
-               &PTR_DAT_003fb1f4,0x2f,0x175,0x176,&DAT_0040be08,&DAT_0040be0a,&DAT_0040be58);
+  sensorChannelUpdate_typeB
+            (&DAT_0005ab84,&DAT_0040b16e,&DAT_003fb1f2,&DAT_0005ab94,&DAT_0005abbe,0,
+             &PTR_DAT_003fb1f4,0x2f,0x175,0x176,&DAT_0040be08,&DAT_0040be0a,&DAT_0040be58);
   return;
 }
 
@@ -30390,8 +30429,9 @@ void initSensorLookupTable4(void)
 void processSensorLookupTable3(void)
 
 {
-  SUB_005012dc(&DAT_0005acd8,&DAT_0040b1aa,&DAT_003fb1fc,&DAT_0005ace8,&DAT_0005acfa,0,
-               &PTR_DAT_003fb1fe,0x61,0x15c,0x15b,&DAT_0040be0c,&DAT_0040be0e,&DAT_0040be5a);
+  sensorChannelInit_typeB
+            (&DAT_0005acd8,&DAT_0040b1aa,&DAT_003fb1fc,&DAT_0005ace8,&DAT_0005acfa,0,
+             &PTR_DAT_003fb1fe,0x61,0x15c,0x15b,&DAT_0040be0c,&DAT_0040be0e,&DAT_0040be5a);
   return;
 }
 
@@ -30404,8 +30444,9 @@ void processSensorLookupTable3(void)
 void initSensorLookupTable3(void)
 
 {
-  SUB_00501b4c(&DAT_0005acd8,&DAT_0040b1aa,&DAT_003fb1fc,&DAT_0005ace8,&DAT_0005acfa,0,
-               &PTR_DAT_003fb1fe,0x61,0x15c,0x15b,&DAT_0040be0c,&DAT_0040be0e,&DAT_0040be5a);
+  sensorChannelUpdate_typeB
+            (&DAT_0005acd8,&DAT_0040b1aa,&DAT_003fb1fc,&DAT_0005ace8,&DAT_0005acfa,0,
+             &PTR_DAT_003fb1fe,0x61,0x15c,0x15b,&DAT_0040be0c,&DAT_0040be0e,&DAT_0040be5a);
   return;
 }
 
@@ -30418,8 +30459,9 @@ void initSensorLookupTable3(void)
 void processSensorLookupTable2(void)
 
 {
-  SUB_005012dc(&DAT_0005ad0c,&DAT_0040b1b6,&DAT_003fb206,&DAT_0005ad1c,&DAT_0005ad2e,0,
-               &PTR_DAT_003fb208,0x62,0x15e,0x15d,&DAT_0040be10,&DAT_0040be12,&DAT_0040be5c);
+  sensorChannelInit_typeB
+            (&DAT_0005ad0c,&DAT_0040b1b6,&DAT_003fb206,&DAT_0005ad1c,&DAT_0005ad2e,0,
+             &PTR_DAT_003fb208,0x62,0x15e,0x15d,&DAT_0040be10,&DAT_0040be12,&DAT_0040be5c);
   return;
 }
 
@@ -30432,8 +30474,9 @@ void processSensorLookupTable2(void)
 void initSensorLookupTable2(void)
 
 {
-  SUB_00501b4c(&DAT_0005ad0c,&DAT_0040b1b6,&DAT_003fb206,&DAT_0005ad1c,&DAT_0005ad2e,0,
-               &PTR_DAT_003fb208,0x62,0x15e,0x15d,&DAT_0040be10,&DAT_0040be12,&DAT_0040be5c);
+  sensorChannelUpdate_typeB
+            (&DAT_0005ad0c,&DAT_0040b1b6,&DAT_003fb206,&DAT_0005ad1c,&DAT_0005ad2e,0,
+             &PTR_DAT_003fb208,0x62,0x15e,0x15d,&DAT_0040be10,&DAT_0040be12,&DAT_0040be5c);
   return;
 }
 
@@ -30446,8 +30489,9 @@ void initSensorLookupTable2(void)
 void processSensorLookupTable0(void)
 
 {
-  SUB_005012dc(&DAT_0005ad40,&DAT_0040b1c2,&DAT_003fb210,&DAT_0005ad50,&DAT_0005ad86,0,
-               &PTR_DAT_003fb212,0x4c,0x19c,0x19d,&DAT_0040be04,&DAT_0040be06,&DAT_0040be56);
+  sensorChannelInit_typeB
+            (&DAT_0005ad40,&DAT_0040b1c2,&DAT_003fb210,&DAT_0005ad50,&DAT_0005ad86,0,
+             &PTR_DAT_003fb212,0x4c,0x19c,0x19d,&DAT_0040be04,&DAT_0040be06,&DAT_0040be56);
   return;
 }
 
@@ -30460,8 +30504,9 @@ void processSensorLookupTable0(void)
 void initSensorLookupTable1(void)
 
 {
-  SUB_00501b4c(&DAT_0005ad40,&DAT_0040b1c2,&DAT_003fb210,&DAT_0005ad50,&DAT_0005ad86,0,
-               &PTR_DAT_003fb212,0x4c,0x19c,0x19d,&DAT_0040be04,&DAT_0040be06,&DAT_0040be56);
+  sensorChannelUpdate_typeB
+            (&DAT_0005ad40,&DAT_0040b1c2,&DAT_003fb210,&DAT_0005ad50,&DAT_0005ad86,0,
+             &PTR_DAT_003fb212,0x4c,0x19c,0x19d,&DAT_0040be04,&DAT_0040be06,&DAT_0040be56);
   return;
 }
 
@@ -30474,8 +30519,9 @@ void initSensorLookupTable1(void)
 void processSensorLookupTable1(void)
 
 {
-  SUB_005012dc(&DAT_0005adbc,&DAT_0040b1ce,&DAT_003fb21a,&DAT_0005adcc,&DAT_0005ade2,0,
-               &PTR_DAT_003fb21c,0x66,299,300,&DAT_0040bdf6,0x40bdf4,&DAT_0040be4e);
+  sensorChannelInit_typeB
+            (&DAT_0005adbc,&DAT_0040b1ce,&DAT_003fb21a,&DAT_0005adcc,&DAT_0005ade2,0,
+             &PTR_DAT_003fb21c,0x66,299,300,&DAT_0040bdf6,0x40bdf4,&DAT_0040be4e);
   return;
 }
 
@@ -30488,8 +30534,9 @@ void processSensorLookupTable1(void)
 void initSensorLookupTableInit1(void)
 
 {
-  SUB_00501b4c(&DAT_0005adbc,&DAT_0040b1ce,&DAT_003fb21a,&DAT_0005adcc,&DAT_0005ade2,0,
-               &PTR_DAT_003fb21c,0x66,299,300,&DAT_0040bdf6,0x40bdf4,&DAT_0040be4e);
+  sensorChannelUpdate_typeB
+            (&DAT_0005adbc,&DAT_0040b1ce,&DAT_003fb21a,&DAT_0005adcc,&DAT_0005ade2,0,
+             &PTR_DAT_003fb21c,0x66,299,300,&DAT_0040bdf6,0x40bdf4,&DAT_0040be4e);
   return;
 }
 
@@ -33681,9 +33728,9 @@ LAB_0003b37c:
         cVar1 = SUB_00539768(CONCAT11(DAT_0040b3e2,DAT_0040b3e3),&DAT_003fb3d6);
         if (cVar1 == '\0') {
           filter_coefficient_temp = (code *)(DAT_003fb3d6 + DAT_003fb3e0);
-          cVar1 = SUB_0050d784(filter_coefficient_temp,4);
+          cVar1 = checkSensorValidityForMode(filter_coefficient_temp,4);
           if ((cVar1 != '\t') &&
-             (cVar1 = SUB_0050d784(filter_coefficient_temp + 3,4), cVar1 != '\t')) {
+             (cVar1 = checkSensorValidityForMode(filter_coefficient_temp + 3,4), cVar1 != '\t')) {
             DAT_003fb3f0 = &DAT_003fb3eb;
             if ((code *)0xffffff < filter_coefficient_temp) {
               DAT_003fb3f4 = &DAT_003fd482;
@@ -33728,7 +33775,7 @@ LAB_0003b37c:
         filter_coefficient_temp = (code *)(DAT_003fb3d6 + DAT_003fb3e0);
         DAT_003fb3e6 = &DAT_0040b3e6;
         DAT_003fb3ea = '\0';
-        cVar1 = SUB_0050d784(filter_coefficient_temp,1);
+        cVar1 = checkSensorValidityForMode(filter_coefficient_temp,1);
         if (cVar1 == '\0') {
           memcpyBytes(filter_coefficient_temp,DAT_003fb3e6,1);
           DAT_003fb3ea = '\0';
@@ -36010,7 +36057,7 @@ void processFuelDemandTimeout(void)
   if ((DAT_003fb4e4 != '\0') &&
      (cVar2 = DAT_003fb4e4 + -1, bVar1 = DAT_003fb4e4 == '\x01', DAT_003fb4e4 = cVar2, bVar1)) {
     DAT_0040b5c6 = DAT_0040b604;
-    SUB_0051da58();
+    initiateStateTransition();
   }
   return;
 }
@@ -36025,7 +36072,7 @@ void FUN_0003e914(void)
 
 {
   DAT_0040b5c6 = DAT_0040b604;
-  SUB_0051da58();
+  initiateStateTransition();
   return;
 }
 
@@ -38450,8 +38497,9 @@ void dispatchModeHandlers(void)
 void initProtectionParameter1(void)
 
 {
-  SUB_005012dc(&DAT_0005b55c,&DAT_0040b722,&DAT_003fb564,&DAT_0006429c,&DAT_000642a2,0,&DAT_003fb566
-               ,0x36,0x148,0x149,&DAT_0040bdfc,0x40bdfe,&DAT_0040be52);
+  sensorChannelInit_typeB
+            (&DAT_0005b55c,&DAT_0040b722,&DAT_003fb564,&DAT_0006429c,&DAT_000642a2,0,&DAT_003fb566,
+             0x36,0x148,0x149,&DAT_0040bdfc,0x40bdfe,&DAT_0040be52);
   return;
 }
 
@@ -38464,8 +38512,9 @@ void initProtectionParameter1(void)
 void processProtectionParameter1(void)
 
 {
-  SUB_00501b4c(&DAT_0005b55c,&DAT_0040b722,&DAT_003fb564,&DAT_0006429c,&DAT_000642a2,0,&DAT_003fb566
-               ,0x36,0x148,0x149,&DAT_0040bdfc,0x40bdfe,&DAT_0040be52);
+  sensorChannelUpdate_typeB
+            (&DAT_0005b55c,&DAT_0040b722,&DAT_003fb564,&DAT_0006429c,&DAT_000642a2,0,&DAT_003fb566,
+             0x36,0x148,0x149,&DAT_0040bdfc,0x40bdfe,&DAT_0040be52);
   return;
 }
 
@@ -38478,8 +38527,9 @@ void processProtectionParameter1(void)
 void initProtectionParameter2(void)
 
 {
-  SUB_005012dc(&DAT_0005b56c,&DAT_0040b72e,&DAT_003fb56e,&DAT_000642a8,&DAT_000642ae,0,&DAT_003fb570
-               ,0x37,0x14a,0x14b,&DAT_0040be00,&DAT_0040be02,&DAT_0040be54);
+  sensorChannelInit_typeB
+            (&DAT_0005b56c,&DAT_0040b72e,&DAT_003fb56e,&DAT_000642a8,&DAT_000642ae,0,&DAT_003fb570,
+             0x37,0x14a,0x14b,&DAT_0040be00,&DAT_0040be02,&DAT_0040be54);
   return;
 }
 
@@ -38492,8 +38542,9 @@ void initProtectionParameter2(void)
 void processProtectionParameter2(void)
 
 {
-  SUB_00501b4c(&DAT_0005b56c,&DAT_0040b72e,&DAT_003fb56e,&DAT_000642a8,&DAT_000642ae,0,&DAT_003fb570
-               ,0x37,0x14a,0x14b,&DAT_0040be00,&DAT_0040be02,&DAT_0040be54);
+  sensorChannelUpdate_typeB
+            (&DAT_0005b56c,&DAT_0040b72e,&DAT_003fb56e,&DAT_000642a8,&DAT_000642ae,0,&DAT_003fb570,
+             0x37,0x14a,0x14b,&DAT_0040be00,&DAT_0040be02,&DAT_0040be54);
   return;
 }
 
@@ -39742,7 +39793,7 @@ LAB_00045154:
   if ((engine_run_state == 3) && (engine_position_counter < DAT_0040b808)) {
     DAT_0040b808 = engine_position_counter;
   }
-  SUB_00505f98(1);
+  processScheduledTaskState(1);
   return;
 }
 
@@ -49111,7 +49162,7 @@ void sendJ1939MultiFrame(undefined4 *param_1)
                *(undefined4 *)((int)param_1 + 10));
   }
   else {
-    SUB_0050c8ec(param_1);
+    validateDiagResponseBuffer(param_1);
   }
   return;
 }
@@ -49125,7 +49176,7 @@ void sendJ1939MultiFrame(undefined4 *param_1)
 void FUN_00053a34(void)
 
 {
-  SUB_0050c8ec();
+  validateDiagResponseBuffer();
   return;
 }
 
@@ -53003,8 +53054,9 @@ void FUN_0040a046(void)
 void SUB_00500004(void)
 
 {
-  SUB_00500234(&DAT_0005940e,&DAT_00409c60,&DAT_003fb9cc,&DAT_0005941e,&DAT_0005944a,2,&DAT_003fb9ce
-               ,2,0x10,0x11,&DAT_0040b8fe,&DAT_0040b924,&DAT_0040b99e);
+  sensorChannelConfigInit
+            (&DAT_0005940e,&DAT_00409c60,&DAT_003fb9cc,&DAT_0005941e,&DAT_0005944a,2,&DAT_003fb9ce,2
+             ,0x10,0x11,&DAT_0040b8fe,&DAT_0040b924,&DAT_0040b99e);
   return;
 }
 
@@ -53017,8 +53069,9 @@ void SUB_00500004(void)
 void SUB_00500090(void)
 
 {
-  SUB_00500a4c(&DAT_0005940e,&DAT_00409c60,&DAT_003fb9cc,&DAT_0005941e,&DAT_0005944a,2,&DAT_003fb9ce
-               ,2,0x10,0x11,&DAT_0040b8fe,&DAT_0040b924,&DAT_0040b99e);
+  updateSensorChannelWithConfig
+            (&DAT_0005940e,&DAT_00409c60,&DAT_003fb9cc,&DAT_0005941e,&DAT_0005944a,2,&DAT_003fb9ce,2
+             ,0x10,0x11,&DAT_0040b8fe,&DAT_0040b924,&DAT_0040b99e);
   return;
 }
 
@@ -53031,8 +53084,9 @@ void SUB_00500090(void)
 void SUB_0050011c(void)
 
 {
-  SUB_00500234(&DAT_000594b2,&DAT_00409c9c,&DAT_003fb9d6,&DAT_000594c2,&DAT_000594d8,2,&DAT_003fb9d8
-               ,0x58,0x292,0x293,&DAT_0040b946,&DAT_0040b948,&DAT_0040b9b0);
+  sensorChannelConfigInit
+            (&DAT_000594b2,&DAT_00409c9c,&DAT_003fb9d6,&DAT_000594c2,&DAT_000594d8,2,&DAT_003fb9d8,
+             0x58,0x292,0x293,&DAT_0040b946,&DAT_0040b948,&DAT_0040b9b0);
   return;
 }
 
@@ -53045,20 +53099,22 @@ void SUB_0050011c(void)
 void SUB_005001a8(void)
 
 {
-  SUB_00500a4c(&DAT_000594b2,&DAT_00409c9c,&DAT_003fb9d6,&DAT_000594c2,&DAT_000594d8,2,&DAT_003fb9d8
-               ,0x58,0x292,0x293,&DAT_0040b946,&DAT_0040b948,&DAT_0040b9b0);
+  updateSensorChannelWithConfig
+            (&DAT_000594b2,&DAT_00409c9c,&DAT_003fb9d6,&DAT_000594c2,&DAT_000594d8,2,&DAT_003fb9d8,
+             0x58,0x292,0x293,&DAT_0040b946,&DAT_0040b948,&DAT_0040b9b0);
   return;
 }
 
 
 
 //
-// Function: SUB_00500234 @ 0x00500234
+// Function: sensorChannelConfigInit @ 0x00500234
 //
 
-void SUB_00500234(int param_1,undefined2 *param_2,undefined4 param_3,undefined4 param_4,
-                 undefined4 param_5,undefined4 param_6,int param_7,uint param_8,uint param_9,
-                 uint param_10,undefined2 *param_11,undefined2 *param_12,undefined2 *param_13)
+void sensorChannelConfigInit
+               (int param_1,undefined2 *param_2,undefined4 param_3,undefined4 param_4,
+               undefined4 param_5,undefined4 param_6,int param_7,uint param_8,uint param_9,
+               uint param_10,undefined2 *param_11,undefined2 *param_12,undefined2 *param_13)
 
 {
   ushort uVar1;
@@ -53257,12 +53313,13 @@ LAB_00500a1c:
 
 
 //
-// Function: SUB_00500a4c @ 0x00500a4c
+// Function: updateSensorChannelWithConfig @ 0x00500a4c
 //
 
-void SUB_00500a4c(int param_1,undefined2 *param_2,undefined2 *param_3,undefined4 param_4,
-                 undefined4 param_5,undefined4 param_6,int *param_7,uint param_8,uint param_9,
-                 uint param_10,undefined2 *param_11,undefined2 *param_12,undefined2 *param_13)
+void updateSensorChannelWithConfig
+               (int param_1,undefined2 *param_2,undefined2 *param_3,undefined4 param_4,
+               undefined4 param_5,undefined4 param_6,int *param_7,uint param_8,uint param_9,
+               uint param_10,undefined2 *param_11,undefined2 *param_12,undefined2 *param_13)
 
 {
   ushort uVar1;
@@ -53499,8 +53556,9 @@ LAB_005010a8:
 void SUB_005011c4(void)
 
 {
-  SUB_00500234(&DAT_00059686,&DAT_00409cf0,&DAT_003fb9e0,&DAT_00059696,&DAT_000596ac,2,
-               &PTR_DAT_003fb9e2,0x65,0x2aa,0x2ab,&DAT_0040b92c,&DAT_0040b92a,&DAT_0040b9a4);
+  sensorChannelConfigInit
+            (&DAT_00059686,&DAT_00409cf0,&DAT_003fb9e0,&DAT_00059696,&DAT_000596ac,2,
+             &PTR_DAT_003fb9e2,0x65,0x2aa,0x2ab,&DAT_0040b92c,&DAT_0040b92a,&DAT_0040b9a4);
   return;
 }
 
@@ -53513,20 +53571,22 @@ void SUB_005011c4(void)
 void SUB_00501250(void)
 
 {
-  SUB_00500a4c(&DAT_00059686,&DAT_00409cf0,&DAT_003fb9e0,&DAT_00059696,&DAT_000596ac,2,
-               &PTR_DAT_003fb9e2,0x65,0x2aa,0x2ab,&DAT_0040b92c,&DAT_0040b92a,&DAT_0040b9a4);
+  updateSensorChannelWithConfig
+            (&DAT_00059686,&DAT_00409cf0,&DAT_003fb9e0,&DAT_00059696,&DAT_000596ac,2,
+             &PTR_DAT_003fb9e2,0x65,0x2aa,0x2ab,&DAT_0040b92c,&DAT_0040b92a,&DAT_0040b9a4);
   return;
 }
 
 
 
 //
-// Function: SUB_005012dc @ 0x005012dc
+// Function: sensorChannelInit_typeB @ 0x005012dc
 //
 
-void SUB_005012dc(int param_1,undefined2 *param_2,undefined4 param_3,undefined4 param_4,
-                 undefined4 param_5,undefined4 param_6,int param_7,uint param_8,uint param_9,
-                 uint param_10,undefined2 *param_11,undefined2 *param_12,undefined2 *param_13)
+void sensorChannelInit_typeB
+               (int param_1,undefined2 *param_2,undefined4 param_3,undefined4 param_4,
+               undefined4 param_5,undefined4 param_6,int param_7,uint param_8,uint param_9,
+               uint param_10,undefined2 *param_11,undefined2 *param_12,undefined2 *param_13)
 
 {
   ushort uVar1;
@@ -53729,12 +53789,13 @@ LAB_00501b1c:
 
 
 //
-// Function: SUB_00501b4c @ 0x00501b4c
+// Function: sensorChannelUpdate_typeB @ 0x00501b4c
 //
 
-void SUB_00501b4c(int param_1,undefined2 *param_2,undefined2 *param_3,undefined4 param_4,
-                 undefined4 param_5,undefined4 param_6,int *param_7,uint param_8,uint param_9,
-                 uint param_10,undefined2 *param_11,undefined2 *param_12,undefined2 *param_13)
+void sensorChannelUpdate_typeB
+               (int param_1,undefined2 *param_2,undefined2 *param_3,undefined4 param_4,
+               undefined4 param_5,undefined4 param_6,int *param_7,uint param_8,uint param_9,
+               uint param_10,undefined2 *param_11,undefined2 *param_12,undefined2 *param_13)
 
 {
   ushort uVar1;
@@ -55403,12 +55464,12 @@ void FUN_00505df0(void)
 
 
 //
-// Function: SUB_00505f98 @ 0x00505f98
+// Function: processScheduledTaskState @ 0x00505f98
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void SUB_00505f98(int param_1)
+void processScheduledTaskState(int param_1)
 
 {
   short sVar1;
@@ -59112,10 +59173,10 @@ void SUB_0050b554(int param_1,undefined4 param_2,int param_3)
 
 
 //
-// Function: SUB_0050b58c @ 0x0050b58c
+// Function: routeDiagDataToOutput @ 0x0050b58c
 //
 
-void SUB_0050b58c(int param_1,uint param_2,int param_3)
+void routeDiagDataToOutput(int param_1,uint param_2,int param_3)
 
 {
   byte *in_r9;
@@ -59140,10 +59201,10 @@ void SUB_0050b58c(int param_1,uint param_2,int param_3)
 
 
 //
-// Function: SUB_0050b5b4 @ 0x0050b5b4
+// Function: routeDiagDataToOutputAlt @ 0x0050b5b4
 //
 
-void SUB_0050b5b4(int param_1,uint param_2,int param_3)
+void routeDiagDataToOutputAlt(int param_1,uint param_2,int param_3)
 
 {
   int in_r12;
@@ -59921,10 +59982,10 @@ void FUN_0050c8c4(int param_1)
 
 
 //
-// Function: SUB_0050c8ec @ 0x0050c8ec
+// Function: validateDiagResponseBuffer @ 0x0050c8ec
 //
 
-void SUB_0050c8ec(int param_1,int param_2,uint param_3,char *param_4)
+void validateDiagResponseBuffer(int param_1,int param_2,uint param_3,char *param_4)
 
 {
   byte bVar1;
@@ -60719,10 +60780,10 @@ void FUN_0050d758(int param_1)
 
 
 //
-// Function: SUB_0050d784 @ 0x0050d784
+// Function: checkSensorValidityForMode @ 0x0050d784
 //
 
-void SUB_0050d784(int param_1,undefined4 param_2,undefined2 *param_3)
+void checkSensorValidityForMode(int param_1,undefined4 param_2,undefined2 *param_3)
 
 {
   byte in_cr0;
@@ -62741,11 +62802,11 @@ void FUN_005101cc(void)
           DAT_0040acc0 = DAT_0040acc0 | 1;
         }
         if (DAT_0040ad06 != 0) {
-          SUB_00510520(uVar1,(int)uVar3,DAT_00408350);
+          configureOutputMode(uVar1,(int)uVar3,DAT_00408350);
           return;
         }
         if ((DAT_0040acad & 0x20) != 0) {
-          SUB_00510520(uVar1,(int)uVar3,DAT_004077e0);
+          configureOutputMode(uVar1,(int)uVar3,DAT_004077e0);
           return;
         }
         DAT_0040ace2 = DAT_004077d6;
@@ -62825,11 +62886,11 @@ void SUB_0051027c(void)
         unaff_r31[0x16] = unaff_r31[0x16] | 1;
       }
       if (DAT_0040ad06 != 0) {
-        SUB_00510520(uVar3,(int)uVar5,DAT_00408350);
+        configureOutputMode(uVar3,(int)uVar5,DAT_00408350);
         return;
       }
       if ((unaff_r31[3] & 0x20) != 0) {
-        SUB_00510520(uVar3,(int)uVar5,DAT_004077e0);
+        configureOutputMode(uVar3,(int)uVar5,DAT_004077e0);
         return;
       }
       DAT_0040ace2 = DAT_004077d6;
@@ -62905,11 +62966,11 @@ void SUB_005102d4(void)
         unaff_r31[0x16] = unaff_r31[0x16] | 1;
       }
       if (DAT_0040ad06 != 0) {
-        SUB_00510520(uVar3,(int)uVar5,DAT_00408350);
+        configureOutputMode(uVar3,(int)uVar5,DAT_00408350);
         return;
       }
       if ((unaff_r31[3] & 0x20) != 0) {
-        SUB_00510520(uVar3,(int)uVar5,DAT_004077e0);
+        configureOutputMode(uVar3,(int)uVar5,DAT_004077e0);
         return;
       }
       DAT_0040ace2 = DAT_004077d6;
@@ -62975,11 +63036,11 @@ void SUB_005103ac(undefined4 param_1,short *param_2,int param_3)
       unaff_r31[0x16] = unaff_r31[0x16] | 1;
     }
     if (DAT_0040ad06 != 0) {
-      SUB_00510520(uVar2,(int)uVar4,DAT_00408350);
+      configureOutputMode(uVar2,(int)uVar4,DAT_00408350);
       return;
     }
     if ((unaff_r31[3] & 0x20) != 0) {
-      SUB_00510520(uVar2,(int)uVar4,DAT_004077e0);
+      configureOutputMode(uVar2,(int)uVar4,DAT_004077e0);
       return;
     }
     DAT_0040ace2 = DAT_004077d6;
@@ -62994,10 +63055,10 @@ void SUB_005103ac(undefined4 param_1,short *param_2,int param_3)
 
 
 //
-// Function: SUB_00510520 @ 0x00510520
+// Function: configureOutputMode @ 0x00510520
 //
 
-void SUB_00510520(undefined4 param_1,undefined4 param_2,undefined2 param_3)
+void configureOutputMode(undefined4 param_1,undefined4 param_2,undefined2 param_3)
 
 {
   byte bVar1;
@@ -63014,10 +63075,10 @@ void SUB_00510520(undefined4 param_1,undefined4 param_2,undefined2 param_3)
 
 
 //
-// Function: FUN_00510624 @ 0x00510624
+// Function: clearSensorStatusFlags @ 0x00510624
 //
 
-void FUN_00510624(void)
+void clearSensorStatusFlags(void)
 
 {
   FUN_0004f038(0x11,0);
@@ -63028,84 +63089,90 @@ void FUN_00510624(void)
 
 
 //
-// Function: FUN_00510668 @ 0x00510668
+// Function: auxSensorChannel26_init @ 0x00510668
 //
 
-void FUN_00510668(void)
+void auxSensorChannel26_init(void)
 
 {
-  SUB_00500234(&DAT_0005ac18,&DAT_0040ad3c,&DAT_003fcd28,&DAT_0005ac28,&DAT_0005ac52,2,&DAT_003fcd2a
-               ,0x1a,0x133,0x132,&DAT_0040b932,0x40b934,&DAT_0040b9a8);
+  sensorChannelConfigInit
+            (&DAT_0005ac18,&DAT_0040ad3c,&DAT_003fcd28,&DAT_0005ac28,&DAT_0005ac52,2,&DAT_003fcd2a,
+             0x1a,0x133,0x132,&DAT_0040b932,0x40b934,&DAT_0040b9a8);
   return;
 }
 
 
 
 //
-// Function: FUN_005106f4 @ 0x005106f4
+// Function: auxSensorChannel26_process @ 0x005106f4
 //
 
-void FUN_005106f4(void)
+void auxSensorChannel26_process(void)
 
 {
-  SUB_00500a4c(&DAT_0005ac18,&DAT_0040ad3c,&DAT_003fcd28,&DAT_0005ac28,&DAT_0005ac52,2,&DAT_003fcd2a
-               ,0x1a,0x133,0x132,&DAT_0040b932,0x40b934,&DAT_0040b9a8);
+  updateSensorChannelWithConfig
+            (&DAT_0005ac18,&DAT_0040ad3c,&DAT_003fcd28,&DAT_0005ac28,&DAT_0005ac52,2,&DAT_003fcd2a,
+             0x1a,0x133,0x132,&DAT_0040b932,0x40b934,&DAT_0040b9a8);
   return;
 }
 
 
 
 //
-// Function: FUN_00510780 @ 0x00510780
+// Function: auxSensorChannel28_init @ 0x00510780
 //
 
-void FUN_00510780(void)
+void auxSensorChannel28_init(void)
 
 {
-  SUB_005012dc(&DAT_0005ac7c,&DAT_0040ad48,&DAT_003fcd32,&DAT_0005ac8c,&DAT_0005ac9a,0,&DAT_003fcd34
-               ,0x1c,0x179,0x17a,&DAT_0040b936,&DAT_0040b938,&DAT_0040b9aa);
+  sensorChannelInit_typeB
+            (&DAT_0005ac7c,&DAT_0040ad48,&DAT_003fcd32,&DAT_0005ac8c,&DAT_0005ac9a,0,&DAT_003fcd34,
+             0x1c,0x179,0x17a,&DAT_0040b936,&DAT_0040b938,&DAT_0040b9aa);
   return;
 }
 
 
 
 //
-// Function: FUN_0051080c @ 0x0051080c
+// Function: auxSensorChannel28_process @ 0x0051080c
 //
 
-void FUN_0051080c(void)
+void auxSensorChannel28_process(void)
 
 {
-  SUB_00501b4c(&DAT_0005ac7c,&DAT_0040ad48,&DAT_003fcd32,&DAT_0005ac8c,&DAT_0005ac9a,0,&DAT_003fcd34
-               ,0x1c,0x179,0x17a,&DAT_0040b936,&DAT_0040b938,&DAT_0040b9aa);
+  sensorChannelUpdate_typeB
+            (&DAT_0005ac7c,&DAT_0040ad48,&DAT_003fcd32,&DAT_0005ac8c,&DAT_0005ac9a,0,&DAT_003fcd34,
+             0x1c,0x179,0x17a,&DAT_0040b936,&DAT_0040b938,&DAT_0040b9aa);
   return;
 }
 
 
 
 //
-// Function: FUN_00510898 @ 0x00510898
+// Function: auxSensorChannel29_init @ 0x00510898
 //
 
-void FUN_00510898(void)
+void auxSensorChannel29_init(void)
 
 {
-  SUB_005012dc(&DAT_0005aca8,&DAT_0040ad54,&DAT_003fcd3c,&PTR_DAT_0005acb8,&DAT_0005acc6,0,
-               &DAT_003fcd3e,0x1d,0x177,0x178,&DAT_0040b94e,&DAT_0040b950,&DAT_0040b9b6);
+  sensorChannelInit_typeB
+            (&DAT_0005aca8,&DAT_0040ad54,&DAT_003fcd3c,&PTR_DAT_0005acb8,&DAT_0005acc6,0,
+             &DAT_003fcd3e,0x1d,0x177,0x178,&DAT_0040b94e,&DAT_0040b950,&DAT_0040b9b6);
   return;
 }
 
 
 
 //
-// Function: FUN_00510924 @ 0x00510924
+// Function: auxSensorChannel29_process @ 0x00510924
 //
 
-void FUN_00510924(void)
+void auxSensorChannel29_process(void)
 
 {
-  SUB_00501b4c(&DAT_0005aca8,&DAT_0040ad54,&DAT_003fcd3c,&PTR_DAT_0005acb8,&DAT_0005acc6,0,
-               &DAT_003fcd3e,0x1d,0x177,0x178,&DAT_0040b94e,&DAT_0040b950,&DAT_0040b9b6);
+  sensorChannelUpdate_typeB
+            (&DAT_0005aca8,&DAT_0040ad54,&DAT_003fcd3c,&PTR_DAT_0005acb8,&DAT_0005acc6,0,
+             &DAT_003fcd3e,0x1d,0x177,0x178,&DAT_0040b94e,&DAT_0040b950,&DAT_0040b9b6);
   return;
 }
 
@@ -63118,22 +63185,24 @@ void FUN_00510924(void)
 void SUB_00510978(undefined4 param_1,undefined4 param_2,int param_3)
 
 {
-  SUB_00501b4c(param_1,param_2,param_3 + -0x32c4,&PTR_DAT_0005acb8,&DAT_0005acc6,0,&DAT_003fcd3e,
-               0x1d);
+  sensorChannelUpdate_typeB
+            (param_1,param_2,param_3 + -0x32c4,&PTR_DAT_0005acb8,&DAT_0005acc6,0,&DAT_003fcd3e,0x1d)
+  ;
   return;
 }
 
 
 
 //
-// Function: FUN_005109b0 @ 0x005109b0
+// Function: crankshaftSensor_init @ 0x005109b0
 //
 
-void FUN_005109b0(void)
+void crankshaftSensor_init(void)
 
 {
-  SUB_005012dc(&DAT_0005acd4,&DAT_0040ad60,&DAT_003fcd46,&DAT_0005ace4,&DAT_0005acf6,0,&DAT_003fcd48
-               ,0x44,0x17d,0x17e,&engine_tooth_counter,&engine_timing_reference,&DAT_0040b9a6);
+  sensorChannelInit_typeB
+            (&DAT_0005acd4,&DAT_0040ad60,&DAT_003fcd46,&DAT_0005ace4,&DAT_0005acf6,0,&DAT_003fcd48,
+             0x44,0x17d,0x17e,&engine_tooth_counter,&engine_timing_reference,&DAT_0040b9a6);
   return;
 }
 
@@ -63157,22 +63226,24 @@ void SUB_005109bc(void)
   puStack00000018 = &DAT_0040b9a6;
   uStack00000008 = 0x17d;
   uStack0000000c = 0x17e;
-  SUB_005012dc(&DAT_0005acd4,&DAT_0040ad60,&DAT_003fcd46,&DAT_0005ace4,&DAT_0005acf6,0,&DAT_003fcd48
-               ,0x44);
+  sensorChannelInit_typeB
+            (&DAT_0005acd4,&DAT_0040ad60,&DAT_003fcd46,&DAT_0005ace4,&DAT_0005acf6,0,&DAT_003fcd48,
+             0x44);
   return;
 }
 
 
 
 //
-// Function: FUN_00510a3c @ 0x00510a3c
+// Function: crankshaftSensor_process @ 0x00510a3c
 //
 
-void FUN_00510a3c(void)
+void crankshaftSensor_process(void)
 
 {
-  SUB_00501b4c(&DAT_0005acd4,&DAT_0040ad60,&DAT_003fcd46,&DAT_0005ace4,&DAT_0005acf6,0,&DAT_003fcd48
-               ,0x44,0x17d,0x17e,&engine_tooth_counter,&engine_timing_reference,&DAT_0040b9a6);
+  sensorChannelUpdate_typeB
+            (&DAT_0005acd4,&DAT_0040ad60,&DAT_003fcd46,&DAT_0005ace4,&DAT_0005acf6,0,&DAT_003fcd48,
+             0x44,0x17d,0x17e,&engine_tooth_counter,&engine_timing_reference,&DAT_0040b9a6);
   return;
 }
 
@@ -63196,22 +63267,24 @@ void SUB_00510a48(void)
   puStack00000018 = &DAT_0040b9a6;
   uStack00000008 = 0x17d;
   uStack0000000c = 0x17e;
-  SUB_00501b4c(&DAT_0005acd4,&DAT_0040ad60,&DAT_003fcd46,&DAT_0005ace4,&DAT_0005acf6,0,&DAT_003fcd48
-               ,0x44);
+  sensorChannelUpdate_typeB
+            (&DAT_0005acd4,&DAT_0040ad60,&DAT_003fcd46,&DAT_0005ace4,&DAT_0005acf6,0,&DAT_003fcd48,
+             0x44);
   return;
 }
 
 
 
 //
-// Function: FUN_00510ac8 @ 0x00510ac8
+// Function: auxSensorChannel103_init @ 0x00510ac8
 //
 
-void FUN_00510ac8(void)
+void auxSensorChannel103_init(void)
 
 {
-  SUB_00500234(&DAT_0005ae28,&DAT_0040ad9c,&DAT_003fcd50,&DAT_0005ae38,&DAT_0005ae60,2,&DAT_003fcd52
-               ,0x67,0x12d,0x12e,&DAT_0040b96e,&DAT_0040b970,&DAT_0040b9c6);
+  sensorChannelConfigInit
+            (&DAT_0005ae28,&DAT_0040ad9c,&DAT_003fcd50,&DAT_0005ae38,&DAT_0005ae60,2,&DAT_003fcd52,
+             0x67,0x12d,0x12e,&DAT_0040b96e,&DAT_0040b970,&DAT_0040b9c6);
   return;
 }
 
@@ -63235,8 +63308,9 @@ void SUB_00510ad4(void)
   puStack00000018 = &DAT_0040b9c6;
   uStack00000008 = 0x12d;
   uStack0000000c = 0x12e;
-  SUB_00500234(&DAT_0005ae28,&DAT_0040ad9c,&DAT_003fcd50,&DAT_0005ae38,&DAT_0005ae60,2,&DAT_003fcd52
-               ,0x67);
+  sensorChannelConfigInit
+            (&DAT_0005ae28,&DAT_0040ad9c,&DAT_003fcd50,&DAT_0005ae38,&DAT_0005ae60,2,&DAT_003fcd52,
+             0x67);
   return;
 }
 
@@ -63249,8 +63323,9 @@ void SUB_00510ad4(void)
 void FUN_00510b54(void)
 
 {
-  SUB_00500a4c(&DAT_0005ae28,&DAT_0040ad9c,&DAT_003fcd50,&DAT_0005ae38,&DAT_0005ae60,2,&DAT_003fcd52
-               ,0x67,0x12d,0x12e,&DAT_0040b96e,&DAT_0040b970,&DAT_0040b9c6);
+  updateSensorChannelWithConfig
+            (&DAT_0005ae28,&DAT_0040ad9c,&DAT_003fcd50,&DAT_0005ae38,&DAT_0005ae60,2,&DAT_003fcd52,
+             0x67,0x12d,0x12e,&DAT_0040b96e,&DAT_0040b970,&DAT_0040b9c6);
   return;
 }
 
@@ -63274,8 +63349,9 @@ void SUB_00510b60(void)
   puStack00000018 = &DAT_0040b9c6;
   uStack00000008 = 0x12d;
   uStack0000000c = 0x12e;
-  SUB_00500a4c(&DAT_0005ae28,&DAT_0040ad9c,&DAT_003fcd50,&DAT_0005ae38,&DAT_0005ae60,2,&DAT_003fcd52
-               ,0x67);
+  updateSensorChannelWithConfig
+            (&DAT_0005ae28,&DAT_0040ad9c,&DAT_003fcd50,&DAT_0005ae38,&DAT_0005ae60,2,&DAT_003fcd52,
+             0x67);
   return;
 }
 
@@ -71938,7 +72014,7 @@ void FUN_0051aae4(undefined4 param_1)
          (((iVar1 = (int)DAT_0040b114, iVar1 == 0 || (iVar1 == 1)) || (iVar1 == 3)))) {
         DAT_0040b114 = 1;
         if ((system_enable_state_reserved_10 & 0x100) != 0) {
-          SUB_0051aef8(param_1,iVar1,4);
+          updateThermalProtectionState(param_1,iVar1,4);
           return;
         }
         if (DAT_00408a0a < protection_warmup_counter) {
@@ -72066,7 +72142,7 @@ void SUB_0051ab50(undefined4 param_1)
        (((iVar1 = (int)DAT_0040b114, iVar1 == 0 || (iVar1 == 1)) || (iVar1 == 3)))) {
       DAT_0040b114 = 1;
       if ((unaff_r31[0x18] & 0x100) != 0) {
-        SUB_0051aef8(param_1,iVar1,4);
+        updateThermalProtectionState(param_1,iVar1,4);
         return;
       }
       if (DAT_00408a0a < protection_warmup_counter) {
@@ -72188,7 +72264,7 @@ void SUB_0051ab70(undefined4 param_1)
         (((iVar1 = (int)DAT_0040b114, iVar1 == 0 || (iVar1 == 1)) || (iVar1 == 3)))))) {
       DAT_0040b114 = 1;
       if ((unaff_r31[0x18] & 0x100) != 0) {
-        SUB_0051aef8(param_1,iVar1,4);
+        updateThermalProtectionState(param_1,iVar1,4);
         return;
       }
       if (DAT_00408a0a < protection_warmup_counter) {
@@ -72347,10 +72423,10 @@ void SUB_0051aecc(void)
 
 
 //
-// Function: SUB_0051aef8 @ 0x0051aef8
+// Function: updateThermalProtectionState @ 0x0051aef8
 //
 
-void SUB_0051aef8(undefined4 param_1,undefined4 param_2,undefined2 param_3)
+void updateThermalProtectionState(undefined4 param_1,undefined4 param_2,undefined2 param_3)
 
 {
   ushort uVar1;
@@ -74685,10 +74761,10 @@ void FUN_0051da4c(void)
 
 
 //
-// Function: SUB_0051da58 @ 0x0051da58
+// Function: initiateStateTransition @ 0x0051da58
 //
 
-void SUB_0051da58(byte *param_1)
+void initiateStateTransition(byte *param_1)
 
 {
   byte in_r11;
@@ -88882,10 +88958,10 @@ void FUN_00533dd8(void)
 
 
 //
-// Function: SUB_00533df0 @ 0x00533df0
+// Function: updateActiveFaultFlags @ 0x00533df0
 //
 
-void SUB_00533df0(uint param_1,uint param_2,uint param_3)
+void updateActiveFaultFlags(uint param_1,uint param_2,uint param_3)
 
 {
   byte bVar1;
@@ -88911,11 +88987,11 @@ void SUB_00533df0(uint param_1,uint param_2,uint param_3)
 
 
 //
-// Function: SUB_00533efc @ 0x00533efc
+// Function: initFaultTableEntries @ 0x00533efc
 //
 
-void SUB_00533efc(ushort param_1,ushort param_2,int param_3,int param_4,uint param_5,ushort *param_6
-                 )
+void initFaultTableEntries
+               (ushort param_1,ushort param_2,int param_3,int param_4,uint param_5,ushort *param_6)
 
 {
   ushort in_r12;
@@ -88993,7 +89069,7 @@ void FUN_00533f30(void)
     DAT_0040b5ba = 1;
     if (DAT_00409b72 < DAT_0040b5ae._0_2_) {
       DAT_003fd237 = 1;
-      SUB_00534328();
+      evaluateCbdThreshold();
       return;
     }
     DAT_0040b5a8 = 2;
@@ -89082,12 +89158,12 @@ LAB_00534390:
 
 
 //
-// Function: SUB_00534328 @ 0x00534328
+// Function: evaluateCbdThreshold @ 0x00534328
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void SUB_00534328(void)
+void evaluateCbdThreshold(void)
 
 {
   int unaff_r26;
@@ -89804,10 +89880,10 @@ void SUB_00534b68(void)
 
 
 //
-// Function: SUB_00534c6c @ 0x00534c6c
+// Function: evaluateFaultFlagCondition @ 0x00534c6c
 //
 
-void SUB_00534c6c(undefined4 param_1,int param_2)
+void evaluateFaultFlagCondition(undefined4 param_1,int param_2)
 
 {
   int iVar1;
@@ -89916,10 +89992,10 @@ void FUN_00534db4(void)
 
 
 //
-// Function: SUB_00534fb0 @ 0x00534fb0
+// Function: processCbdCylinderTrims @ 0x00534fb0
 //
 
-void SUB_00534fb0(void)
+void processCbdCylinderTrims(void)
 
 {
   undefined2 *unaff_r30;
