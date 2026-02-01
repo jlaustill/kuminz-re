@@ -1025,7 +1025,9 @@ address,name
 0x0004d570,miosTimer3SetValue
 0x0004d59c,miosTimer16InitPeriod
 0x0004d5c4,miosTimer16ScaleByPercent
+0x0004d5d4,miosTimer16ScaleOutput
 0x0004d5f0,miosTimer16SetValue
+0x0004d5fc,miosTimer16SetOutput
 0x0004d61c,miosTimer17InitPeriod
 0x0004d628,miosTimer17InitPeriodAlt
 0x0004d644,miosTimer17ScaleByPercent
@@ -1045,6 +1047,7 @@ address,name
 0x0004d770,miosTimer19SetValue
 0x0004d77c,miosTimer19SetValueAlt
 0x0004d79c,tpuChannel0Reset
+0x0004d7a8,miosTimer20Configure
 0x0004d7c0,tpuChannel0SetDuty
 0x0004d7e8,tpuChannel0Configure
 0x0004d810,tpuChannel1Reset
@@ -1245,13 +1248,16 @@ address,name
 0x00056594,exponentialMovingAverage
 0x000565c4,filterWithWeight
 0x000565d0,filterWithWeight
+0x00056638,lookupTableByIndex
 0x000566cc,dualAxisTableInterpolation
 0x000566fc,interpolateWithIndex
 0x00056c80,ringBufferWriteByte
 0x00056d38,ringBufferInit
 0x00056d58,memcpyBytes
 0x00056d88,delayMicroseconds
+0x00056db8,waitForTimeBaseTicks
 0x00056e0c,delayMicroseconds2
+0x00056e3c,waitForTimeBaseDelay
 0x00056e90,unsignedDivision64by32
 0x000570f0,signedDivision32
 0x00057120,signedDivision64
