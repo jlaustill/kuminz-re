@@ -500,6 +500,7 @@ address,name
 0x000221f0,initJ1939DiagnosticServiceHandler
 0x00022220,updateGovernorTimers
 0x00022318,initGovernorDerivativeTerms
+0x0002235c,noOperation
 0x0002236c,processSecurityAccessRequest
 0x000223f4,processGovernorControlMessage
 0x00022674,j1939_handle_pgn_65228_dm3_clear_diag
@@ -1118,6 +1119,8 @@ address,name
 0x0004e9cc,tpuOutput15Enable
 0x0004e9f0,tpuOutput15Disable
 0x0004ea18,tpuOutput15SetPeriod
+0x0004ea78,orBitsInArray
+0x0004eabc,clearBitsInArray
 0x0004eac8,checkProtectionWarningBitState
 0x0004eb48,updateEngineCycleOutputs
 0x0004eeb8,initProtectionAndOutputCycle
@@ -1127,6 +1130,7 @@ address,name
 0x0004f000,triggerProtectionEvent
 0x0004f038,clearEventFlag
 0x0004f050,protectionFlagManager
+0x0004f088,conditionalSyncFlagUpdate
 0x0004f0dc,checkProtectionModeFlags
 0x0004f190,protectionAlarmHandler
 0x0004f2b0,processProtectionFaultsAndTiming
@@ -1138,6 +1142,7 @@ address,name
 0x000535e8,processJ1939TxBufferSend
 0x00053720,queueCanReceiveMessage
 0x00053858,sendJ1939SingleFrame
+0x00053890,enqueueCanTransmitFrame
 0x000539fc,sendJ1939MultiFrame
 0x00053a4c,lookupJ1939SourceAddressIndex
 0x00053aa8,handleCanMailboxTransmitComplete
@@ -1147,9 +1152,11 @@ address,name
 0x00053c68,findJ1939MessageEntry
 0x00053cd8,addCoolantCalEntry
 0x00053d3c,addCoolantCalEntry
+0x00053d74,setDefaultCalibrationValue
 0x00053d84,addCoolantCalEntryAlt
 0x00053dc8,processCoolantCalEntries
 0x00053fa8,removeCoolantCalEntryByParams
+0x00053fe0,removeCalibrationListEntry
 0x00054064,removeCoolantCalEntry
 0x00054100,miosInterruptDispatcher
 0x0005419c,infiniteLoopHalt
@@ -1186,10 +1193,12 @@ address,name
 0x00056184,extendedDivisionWithRemainder
 0x00056260,signedDivisionWithSaturation
 0x000562fc,clampedDivisionWithBounds
-0x0005632c,thunk_FUN_000563e4
+0x0005632c,noOperation2
+0x000563e4,noOperation2
 0x000563e8,saturatingDivision16
 0x0005644c,signedFirstOrderFilter
-0x0005647c,thunk_FUN_00056488
+0x0005647c,signedFilterWithWeight
+0x00056488,signedFilterWithWeight
 0x000564c0,secondOrderFilter
 0x00056594,exponentialMovingAverage
 0x000565c4,filterWithWeight
