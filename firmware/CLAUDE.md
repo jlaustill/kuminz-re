@@ -196,6 +196,15 @@ grep -o "FUN_005[0-9a-f]*" cm848_rom.ghidra.cpp | sort | uniq -c | sort -rn | he
 - `SUB_*` - Functions in CSV with placeholder names (imported to Ghidra)
 - `FUN_*` - Ghidra auto-discovered functions not yet in CSV (need to add entries)
 
+**Counting unnamed functions:**
+```bash
+# Total FUN_* not in CSV (high priority - need to add)
+grep -oE "FUN_005[0-9a-f]+" cm848_rom.ghidra.cpp | sort -u | wc -l
+
+# Named vs placeholder in CSV
+grep -v "SUB_\|FUN_" function_renames.csv | grep -v "^address" | wc -l
+```
+
 **Key Bank 2 patterns identified:**
 - Command dispatch table at 0x00539508 (19 entries, 6 bytes each: command + function pointer)
 - State machine: `initiateStateTransition` → `dispatchByCommandCode` → command handlers
