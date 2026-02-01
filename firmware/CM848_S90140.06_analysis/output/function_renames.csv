@@ -324,7 +324,8 @@ address,name
 0x00014304,setFuelStatusFlags
 0x00014374,calculateRpmLoadLimit
 0x00014430,selectFinalLoadLimit
-0x0001444c,thunk_FUN_00014458
+0x0001444c,thunk_setFuelDemandVariable
+0x00014458,setFuelDemandVariable
 0x00014464,selectFuelLoadOverride
 0x00014498,processFuelLimitCalculations
 0x00014508,compareForFuelMapSelection
@@ -341,7 +342,8 @@ address,name
 0x00015e08,interpolateFuelMapTable
 0x00015f34,processFuelMapInterpolation
 0x000160ac,calculateFuelBlendModeSelection
-0x00016408,thunk_FUN_0001640c
+0x00016408,thunk_calculateFuelBlendMode
+0x0001640c,calculateFuelBlendMode
 0x000164ac,processFuelDemandCalculations
 0x000164e4,fuelDemandTableLookup
 0x00016724,fuelDemandRpmCorrection
@@ -526,7 +528,8 @@ address,name
 0x00023dbc,sendJ1939NegativeAck
 0x00023e8c,j1939_handle_pgn_65269_ambient_conditions
 0x00024028,j1939BuildEngineStatusByte
-0x000240b8,thunk_FUN_000240c4
+0x000240b8,thunk_prepareAndSendJ1939Frame
+0x000240c4,prepareAndSendJ1939Frame
 0x00024178,j1939_handle_pgn_65265_cruise_vehicle_speed
 0x00024664,initPgn65265CruiseSpeedHandler
 0x000246fc,j1939_handle_pgn_65261_cruise_control_setup
@@ -786,7 +789,8 @@ address,name
 0x0003b910,processProtectionCounters
 0x0003bb28,selectProtectionOverrideMode
 0x0003bd14,validateCalibrationAgainstEeprom
-0x0003be7c,thunk_FUN_0003be88
+0x0003be7c,thunk_setByteAtOffset1
+0x0003be88,setByteAtOffset1
 0x0003be90,processProtectionFaultFlags
 0x0003c26c,processEngineRpmMonitoring
 0x0003c5f0,processProtectionStateChange
@@ -924,6 +928,7 @@ address,name
 0x0004a2f8,calculateTpuTimingPeriod
 0x0004a37c,initTpuTimingInterrupts
 0x0004a490,processEnginePositionData
+0x0004a4c8,processCommunicationDiagnostic
 0x0004a748,updateEnginePositionErrors
 0x0004a7ac,filterEnginePositionDelta
 0x0004a858,initEnginePositionState
@@ -1182,12 +1187,14 @@ address,name
 0x00055500,initQadcModule
 0x000555cc,copyDataBuffer
 0x0005573c,processSecurityCodeConversion
+0x0005576c,validateSecurityCode
 0x0005586c,processEngineRpmDiagnostic
 0x00055a40,dispatchCalibrationFunctions
 0x00055c1c,initTpuConfiguration
 0x00055d2c,tpuBInterruptDispatcher
 0x00055de4,tpuAInterruptDispatcher
 0x00055e9c,emptyStubFunction
+0x00055ed0,calculateCrc16
 0x00055ef4,lookupTableInterpolation
 0x00055f24,linearInterpolate1D
 0x00056184,extendedDivisionWithRemainder
@@ -1335,6 +1342,8 @@ address,name
 0x0050bff4,SUB_0050bff4
 0x0050c27c,writeParameterWithOffset
 0x0050c8ec,validateDiagResponseBuffer
+0x0050c968,sendJ1939StatusMessage
+0x0050cf6c,processTransmitBufferData
 0x0050d60c,SUB_0050d60c
 0x0050d688,SUB_0050d688
 0x0050d784,checkSensorValidityForMode
@@ -1360,6 +1369,7 @@ address,name
 0x0050f4c0,SUB_0050f4c0
 0x0050f680,SUB_0050f680
 0x0050f6c4,SUB_0050f6c4
+0x0050f9ec,updateFaultCounterWithFlag
 0x0050fbf8,SUB_0050fbf8
 0x0050fc8c,SUB_0050fc8c
 0x0050fe54,SUB_0050fe54
@@ -1416,6 +1426,7 @@ address,name
 0x00516c18,SUB_00516c18
 0x00516df8,SUB_00516df8
 0x00516e5c,SUB_00516e5c
+0x00517648,resetProtectionEventFlags
 0x00517f48,SUB_00517f48
 0x00518324,SUB_00518324
 0x005183b4,SUB_005183b4
@@ -1462,6 +1473,7 @@ address,name
 0x0051da94,processParameterTableLookup
 0x0051dad4,SUB_0051dad4
 0x0051db0c,SUB_0051db0c
+0x0051db98,clearFilterStateVariables
 0x0051dcb0,dispatchByCommandState
 0x0051df70,dispatchCommand245
 0x0051df9c,dispatchCommand250
@@ -1537,6 +1549,7 @@ address,name
 0x00528b90,SUB_00528b90
 0x0052903c,SUB_0052903c
 0x00529068,SUB_00529068
+0x00529580,processCbdStateMachine
 0x00529994,SUB_00529994
 0x00529d1c,SUB_00529d1c
 0x00529ea4,SUB_00529ea4
@@ -1559,7 +1572,9 @@ address,name
 0x0052e540,triggerStateTransitionEvent
 0x0052eac8,SUB_0052eac8
 0x0052eae8,SUB_0052eae8
+0x0052eedc,validateProtectionStateFlags
 0x0052ef90,SUB_0052ef90
+0x0052f7bc,computeAccumulatorProduct
 0x0053005c,SUB_0053005c
 0x00530288,SUB_00530288
 0x00530298,SUB_00530298
@@ -1569,6 +1584,7 @@ address,name
 0x0053064c,SUB_0053064c
 0x00530878,clearOutputCounters
 0x00530968,SUB_00530968
+0x00530e94,checkProtectionBypassConditions
 0x005311e4,SUB_005311e4
 0x00531370,SUB_00531370
 0x0053164c,resetCbdCylinderState
@@ -1583,8 +1599,13 @@ address,name
 0x0053227c,SUB_0053227c
 0x00532418,SUB_00532418
 0x00532630,default
+0x00532654,resetFaultRecordFlags
+0x0053272c,removeFromActiveQueue
 0x00532ba8,SUB_00532ba8
+0x00532db8,validateFreezeFrameConditions
 0x00532fac,SUB_00532fac
+0x005331ec,getFaultFlagByCode
+0x005333f8,clearFaultEntryFromList
 0x00533aec,SUB_00533aec
 0x00533bc4,SUB_00533bc4
 0x00533c80,SUB_00533c80
@@ -1601,6 +1622,7 @@ address,name
 0x0053515c,SUB_0053515c
 0x00535270,SUB_00535270
 0x00535344,SUB_00535344
+0x00535998,clearFaultAccumulator
 0x0053624c,SUB_0053624c
 0x00536638,SUB_00536638
 0x0053664c,SUB_0053664c
