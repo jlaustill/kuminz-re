@@ -180,7 +180,26 @@ Bank 2 contains utility functions called from Bank 1 (sensor processing, math ro
 - Sensor channels use paired functions: `sensorChannelN_init()` calls a config init function, `sensorChannelN_process()` calls the update function
 - Both functions take identical 13 parameters (calibration pointers, RAM buffers, ADC indices, output variables)
 - CM848: `sensorChannelConfigInit` (0x00500234) + `updateSensorChannelWithConfig` (0x00500a4c)
+- Two sensor types: Type A uses `sensorChannelConfigInit`, Type B uses `sensorChannelInit_typeB`
 - Look for similar patterns in CM550 firmware
+
+### CM848 Bank 2 RE Workflow
+
+**Finding high-value naming targets:**
+```bash
+# Most-called unnamed functions (prioritize these)
+grep -o "SUB_005[0-9a-f]*" cm848_rom.ghidra.cpp | sort | uniq -c | sort -rn | head -20
+grep -o "FUN_005[0-9a-f]*" cm848_rom.ghidra.cpp | sort | uniq -c | sort -rn | head -20
+```
+
+**FUN_ vs SUB_ distinction:**
+- `SUB_*` - Functions in CSV with placeholder names (imported to Ghidra)
+- `FUN_*` - Ghidra auto-discovered functions not yet in CSV (need to add entries)
+
+**Key Bank 2 patterns identified:**
+- Command dispatch table at 0x00539508 (19 entries, 6 bytes each: command + function pointer)
+- State machine: `initiateStateTransition` → `dispatchByCommandCode` → command handlers
+- Utility functions: `addWithMask16` (pointer math), `enqueueDataRecord` (dual-queue)
 
 ### Boost/MAP Sensor Data Flow (CM848)
 - MAP sensor → `boost_pressure_sensor_raw` (0x40bd8e) → `selectLoadNormalizer()` → `boost_denominator_min128` → fuel calculations
