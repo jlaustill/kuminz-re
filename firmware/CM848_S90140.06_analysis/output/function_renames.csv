@@ -818,6 +818,7 @@ address,name
 0x0003e7f0,processFuelDemandCallback2
 0x0003e8d8,processFuelDemandTimeout
 0x0003e96c,processSensorInputFiltering
+0x0003e984,calculateTorqueLimits
 0x0003eccc,setThermalProtectionMode5
 0x0003ecdc,evaluateThermalProtectionActive
 0x0003eea8,calculateThermalLimitValue
@@ -941,6 +942,7 @@ address,name
 0x0004be4c,sensorCalibrationCheck
 0x0004bf90,validateMemoryBlockChecksum
 0x0004c070,updateProtectionTimers
+0x0004c0a8,enqueueToCircularBuffer
 0x0004c188,protectionConfigSelector
 0x0004c2d4,protectionLimitCalculator
 0x0004c69c,initProtectionLimitVariables
@@ -1120,6 +1122,7 @@ address,name
 0x0004eb48,updateEngineCycleOutputs
 0x0004eeb8,initProtectionAndOutputCycle
 0x0004ef24,setEngineProtectionFault
+0x0004ef5c,setBitInArray
 0x0004ef74,clearProtectionFault
 0x0004f000,triggerProtectionEvent
 0x0004f038,clearEventFlag
@@ -1179,6 +1182,7 @@ address,name
 0x00055de4,tpuAInterruptDispatcher
 0x00055e9c,emptyStubFunction
 0x00055ef4,lookupTableInterpolation
+0x00055f24,linearInterpolate1D
 0x00056184,extendedDivisionWithRemainder
 0x00056260,signedDivisionWithSaturation
 0x000562fc,clampedDivisionWithBounds
@@ -1188,8 +1192,10 @@ address,name
 0x0005647c,thunk_FUN_00056488
 0x000564c0,secondOrderFilter
 0x00056594,exponentialMovingAverage
-0x000565c4,thunk_FUN_000565d0
+0x000565c4,filterWithWeight
+0x000565d0,filterWithWeight
 0x000566cc,dualAxisTableInterpolation
+0x000566fc,interpolateWithIndex
 0x00056c80,ringBufferWriteByte
 0x00056d38,ringBufferInit
 0x00056d58,memcpyBytes
@@ -1197,7 +1203,9 @@ address,name
 0x00056e0c,delayMicroseconds2
 0x00056e90,unsignedDivision64by32
 0x000570f0,signedDivision32
+0x00057120,signedDivision64
 0x000571b0,unsignedDivision32
+0x000571e0,unsignedDivision64Wrapper
 0x00057204,mathMultiplyDivide32
 0x00057498,conditionalMultiplyDivide
 0x00057520,emptyStubFunction2
