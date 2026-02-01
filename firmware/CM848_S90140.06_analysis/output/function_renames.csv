@@ -1671,8 +1671,8 @@ address,name
 0x0052eedc,validateProtectionStateFlags
 0x0052ef90,processEmissionProtectionState
 0x0052f524,evaluateSafetyConditions
-0x0052f870,checkEngineLimitConditions
 0x0052f7bc,computeAccumulatorProduct
+0x0052f870,checkEngineLimitConditions
 0x0053005c,initCommunicationParameters
 0x00530288,initSpeedLimitState
 0x00530298,updateSpeedLimitState
@@ -1693,10 +1693,10 @@ address,name
 0x00531900,evaluateCbdEnableByThreshold
 0x0053195c,countActiveCbdCylinders
 0x005319e0,updateCbdCylinderTiming
-0x00531f90,cbdCylinderStateHandler
-0x00531fe8,advanceCbdFaultState
 0x00531cf8,processCbdStateTransition
 0x00531d34,processCbdStateTransitionAlt
+0x00531f90,cbdCylinderStateHandler
+0x00531fe8,advanceCbdFaultState
 0x00532208,processCbdCylinderStatus
 0x0053227c,clearCbdCylinderFlags
 0x00532418,clearCylinderBitArray
@@ -1728,8 +1728,8 @@ address,name
 0x00534328,evaluateCbdThreshold
 0x005343d0,processFaultLampLogic
 0x005344cc,checkFaultStateTransition
-0x005346c0,updateFaultCounter
 0x00534530,processCrankPositionCounter
+0x005346c0,updateFaultCounter
 0x0053473c,evaluateCrankTimingCondition
 0x0053489c,processChannelDiagnostics
 0x00534994,processCrankTimingData
@@ -1750,9 +1750,9 @@ address,name
 0x00536958,resetEngineTimingSync
 0x00536e4c,prepareTurboCalculation
 0x005371f4,processCalibrationValidations
-0x0053752c,initDataBufferPointers
 0x0053729c,returnStub
 0x005372c4,initCalibrationGroup8
+0x0053752c,initDataBufferPointers
 0x00537584,initCalibrationSequenceHandler
 0x005377f4,enqueueDataRecord
 0x00537944,processScheduledCallbacks
