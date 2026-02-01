@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Feb 01 08:15:49 MST 2026
+// Generated: Sun Feb 01 08:20:09 MST 2026
 
 
 //
@@ -56410,10 +56410,10 @@ void FUN_005078f0(void)
 
 
 //
-// Function: FUN_005079fc @ 0x005079fc
+// Function: calculateRampAdjustment @ 0x005079fc
 //
 
-ushort FUN_005079fc(int param_1,int param_2,ushort *param_3,int param_4)
+ushort calculateRampAdjustment(int param_1,int param_2,ushort *param_3,int param_4)
 
 {
   ushort uVar1;
@@ -56964,7 +56964,7 @@ void FUN_005082b8(void)
         uVar1 = 0;
       }
       else {
-        uVar1 = FUN_005079fc(puVar7,puVar3,puVar5,1);
+        uVar1 = calculateRampAdjustment(puVar7,puVar3,puVar5,1);
         if ((uVar1 < (ushort)puVar5[3]) &&
            (((uint)(ushort)(&DAT_003fd57c)[iVar2] & 1 << (uVar8 + iVar2 * -0x10 & 0x3f)) == 0)) {
           uVar1 = puVar5[3];
@@ -57020,7 +57020,7 @@ void SUB_005082f0(void)
           uVar1 = 0;
         }
         else {
-          uVar1 = FUN_005079fc(unaff_r28,unaff_r25,unaff_r27,1);
+          uVar1 = calculateRampAdjustment(unaff_r28,unaff_r25,unaff_r27,1);
           if ((uVar1 < *(ushort *)(unaff_r27 + 6)) &&
              (((uint)(ushort)(&DAT_003fd57c)[iVar2] &
               1 << (unaff_r31 +
@@ -57730,7 +57730,7 @@ void FUN_005091ec(void)
           }
         }
         else {
-          uVar1 = FUN_005079fc(puVar6,puVar7,puVar4,0);
+          uVar1 = calculateRampAdjustment(puVar6,puVar7,puVar4,0);
         }
         if (((uVar1 & 0xffff) < (uint)(ushort)puVar4[2]) &&
            (((uint)(ushort)(&DAT_003fd57c)[iVar2] & 1 << (uVar9 + iVar2 * -0x10 & 0x3f)) == 0)) {
@@ -58760,10 +58760,10 @@ void SUB_0050aba8(undefined2 *param_1)
 
 
 //
-// Function: FUN_0050ac04 @ 0x0050ac04
+// Function: processServiceRequest @ 0x0050ac04
 //
 
-undefined4 FUN_0050ac04(int param_1,undefined *param_2,uint param_3)
+undefined4 processServiceRequest(int param_1,undefined *param_2,uint param_3)
 
 {
   bool bVar1;
@@ -58778,7 +58778,7 @@ undefined4 FUN_0050ac04(int param_1,undefined *param_2,uint param_3)
     return 2;
   }
   param_3 = param_3 & 0xffff;
-  uVar3 = FUN_0050b2bc(**(undefined1 **)(param_1 + 6));
+  uVar3 = getServiceDataLength(**(undefined1 **)(param_1 + 6));
   uVar2 = (uVar3 & 0xff) + param_3 & 0xffff;
   uVar6 = (uint)*(ushort *)(param_1 + 4);
   if ((uVar6 == 8) || (uVar6 == uVar2)) {
@@ -58791,7 +58791,7 @@ undefined4 FUN_0050ac04(int param_1,undefined *param_2,uint param_3)
     bVar1 = true;
   }
   iVar7 = *(int *)(param_1 + 6) + (uVar3 & 0xff);
-  cVar5 = FUN_0050d430(param_2,param_3);
+  cVar5 = getMemoryRegionAccessCode(param_2,param_3);
   if (cVar5 != '\0') {
     if (cVar5 != '\x03') {
       if (cVar5 == '\x04') {
@@ -58904,7 +58904,7 @@ uint readParameterWithOffset(undefined4 param_1,undefined4 param_2,int param_3,u
     uVar1 = SUB_0050aec0(8);
     return uVar1;
   }
-  uVar1 = FUN_0050ac04(param_1,local_10 + param_3,param_4);
+  uVar1 = processServiceRequest(param_1,local_10 + param_3,param_4);
   return uVar1 & 0xff;
 }
 
@@ -59014,7 +59014,7 @@ undefined1 FUN_0050b0b4(int param_1)
   undefined4 local_c [2];
   
   delayMicroseconds(local_c,*(int *)(param_1 + 6) + 1,4);
-  uVar1 = FUN_0050ac04(param_1,local_c[0],*(undefined1 *)(*(int *)(param_1 + 6) + 5));
+  uVar1 = processServiceRequest(param_1,local_c[0],*(undefined1 *)(*(int *)(param_1 + 6) + 5));
   return uVar1;
 }
 
@@ -59033,7 +59033,7 @@ undefined1 FUN_0050b120(int param_1)
   
   delayMicroseconds(&local_10,*(int *)(param_1 + 6) + 1,4);
   delayMicroseconds(local_c,*(int *)(param_1 + 6) + 5,4);
-  uVar1 = FUN_0050ac04(param_1,local_10,local_c[0]);
+  uVar1 = processServiceRequest(param_1,local_10,local_c[0]);
   return uVar1;
 }
 
@@ -59098,10 +59098,10 @@ undefined2 FUN_0050b238(undefined2 *param_1)
 
 
 //
-// Function: FUN_0050b2bc @ 0x0050b2bc
+// Function: getServiceDataLength @ 0x0050b2bc
 //
 
-undefined1 FUN_0050b2bc(int param_1)
+undefined1 getServiceDataLength(int param_1)
 
 {
   undefined1 uVar1;
@@ -59584,10 +59584,10 @@ void FUN_0050c0ac(void)
 
 
 //
-// Function: FUN_0050c0d8 @ 0x0050c0d8
+// Function: processResponseFrame @ 0x0050c0d8
 //
 
-char FUN_0050c0d8(byte *param_1,uint param_2,uint param_3)
+char processResponseFrame(byte *param_1,uint param_2,uint param_3)
 
 {
   ushort uVar1;
@@ -59603,11 +59603,11 @@ char FUN_0050c0d8(byte *param_1,uint param_2,uint param_3)
   
   cVar6 = **(char **)(param_1 + 6);
   if (param_3 < 0x6e5) {
-    uVar4 = FUN_0050b2bc(cVar6);
+    uVar4 = getServiceDataLength(cVar6);
     uVar1 = *(ushort *)(param_1 + 4);
     if (((uVar1 == 8) || (uVar1 == (uVar4 & 0xff))) || ((ushort)((uVar4 & 0xff) + 10) == uVar1)) {
       uVar2 = param_3 & 0xffff;
-      cVar5 = FUN_0050d430(param_2,uVar2);
+      cVar5 = getMemoryRegionAccessCode(param_2,uVar2);
       if ((cVar5 != '\n') && (cVar5 != '\t')) {
         if ((cVar6 == 'C') && (uVar2 < 0x100)) {
           uVar8 = 0x44;
@@ -59616,7 +59616,7 @@ char FUN_0050c0d8(byte *param_1,uint param_2,uint param_3)
         else {
           uVar8 = (&DAT_00538e98)[(byte)(cVar6 + 0xbd)];
         }
-        cVar6 = FUN_0050b2bc(uVar8);
+        cVar6 = getServiceDataLength(uVar8);
         bVar9 = cVar6 - 1;
         pbVar3 = (byte *)FUN_0050d334(bVar9 + param_3 + 1 & 0xffff);
         if (pbVar3 == (byte *)0x0) {
@@ -59670,7 +59670,7 @@ writeParameterWithOffset(undefined4 param_1,undefined4 param_2,int param_3,undef
   
   cVar1 = resolveParameterAddress(param_2,&local_10);
   if (cVar1 == '\0') {
-    uVar2 = FUN_0050c0d8(param_1,local_10 + param_3,param_4);
+    uVar2 = processResponseFrame(param_1,local_10 + param_3,param_4);
   }
   else {
     uVar2 = 8;
@@ -59753,7 +59753,7 @@ undefined1 FUN_0050c45c(int param_1)
   undefined4 local_c [2];
   
   delayMicroseconds(local_c,*(int *)(param_1 + 6) + 1,4);
-  uVar1 = FUN_0050c0d8(param_1,local_c[0],*(undefined1 *)(*(int *)(param_1 + 6) + 5));
+  uVar1 = processResponseFrame(param_1,local_c[0],*(undefined1 *)(*(int *)(param_1 + 6) + 5));
   return uVar1;
 }
 
@@ -59772,7 +59772,7 @@ undefined1 FUN_0050c4c8(int param_1)
   
   delayMicroseconds(&local_10,*(int *)(param_1 + 6) + 1,4);
   delayMicroseconds(local_c,*(int *)(param_1 + 6) + 5,4);
-  uVar1 = FUN_0050c0d8(param_1,local_10,local_c[0]);
+  uVar1 = processResponseFrame(param_1,local_10,local_c[0]);
   return uVar1;
 }
 
@@ -60609,10 +60609,10 @@ void FUN_0050d3ac(void)
 
 
 //
-// Function: FUN_0050d430 @ 0x0050d430
+// Function: getMemoryRegionAccessCode @ 0x0050d430
 //
 
-undefined1 FUN_0050d430(uint param_1,int param_2)
+undefined1 getMemoryRegionAccessCode(uint param_1,int param_2)
 
 {
   uint *puVar1;
@@ -66557,10 +66557,10 @@ void FUN_00513b48(void)
 
 
 //
-// Function: FUN_00513c78 @ 0x00513c78
+// Function: updateEventFlagConditional @ 0x00513c78
 //
 
-void FUN_00513c78(int param_1,int param_2,int param_3,int param_4)
+void updateEventFlagConditional(int param_1,int param_2,int param_3,int param_4)
 
 {
   if (param_2 == 0) {
@@ -66587,7 +66587,7 @@ void FUN_00513cf4(void)
 
 {
                     /* WARNING: Subroutine does not return */
-  FUN_00513c78(0xb,DAT_00408766,DAT_00408767,DAT_003fcdde);
+  updateEventFlagConditional(0xb,DAT_00408766,DAT_00408767,DAT_003fcdde);
 }
 
 
@@ -66600,7 +66600,7 @@ void SUB_00513ddc(void)
 
 {
                     /* WARNING: Subroutine does not return */
-  FUN_00513c78(0x35);
+  updateEventFlagConditional(0x35);
 }
 
 
@@ -73241,10 +73241,10 @@ LAB_0051bdc4:
 
 
 //
-// Function: FUN_0051bed0 @ 0x0051bed0
+// Function: updateProtectionModeAndDispatch @ 0x0051bed0
 //
 
-void FUN_0051bed0(void)
+void updateProtectionModeAndDispatch(void)
 
 {
   short sVar1;
@@ -73294,7 +73294,7 @@ void FUN_0051bfc4(void)
           }
           else if ((DAT_0040acda == 0) && ((DAT_0040acab & 0x40) == 0)) {
             DAT_0040acab = DAT_0040acab | 0x40;
-            FUN_0051bed0();
+            updateProtectionModeAndDispatch();
           }
         }
         if ((DAT_0040acaa & 0x10) == 0) {
@@ -73315,7 +73315,7 @@ void FUN_0051bfc4(void)
         else if ((((DAT_0040acd0 == 0) &&
                   (bVar2 = DAT_0040acaa & 0xef, bVar1 = DAT_0040acaa & 8, DAT_0040acaa = bVar2,
                   bVar1 != 0)) && (DAT_00408a54 < DAT_0040b36e)) && ((DAT_0040bbf8 & 1) != 0)) {
-          FUN_0051bed0();
+          updateProtectionModeAndDispatch();
         }
       }
     }
@@ -73336,10 +73336,10 @@ void FUN_0051bfc4(void)
 
 
 //
-// Function: FUN_0051c278 @ 0x0051c278
+// Function: clampProtectionLimit @ 0x0051c278
 //
 
-void FUN_0051c278(uint param_1)
+void clampProtectionLimit(uint param_1)
 
 {
   uint uVar1;
@@ -73527,7 +73527,7 @@ void SUB_0051c3d8(void)
   }
   DAT_0040b152 = (short)unaff_r31;
   DAT_003fcf0c = (uint)DAT_0040b156 + (int)DAT_0040b152;
-  FUN_0051c278(DAT_003fcf0c);
+  clampProtectionLimit(DAT_003fcf0c);
   return;
 }
 
@@ -73586,7 +73586,7 @@ void FUN_0051c6c0(void)
       if ((DAT_00408a62 < (int)protection_warmup_active) && (protection_warmup_active == 0)) {
         if (DAT_00408a8e < DAT_0040bcc2) {
           DAT_003fcf0c = (uint)DAT_0040b156 + (uint)DAT_00408a90;
-          FUN_0051c278(DAT_003fcf0c);
+          clampProtectionLimit(DAT_003fcf0c);
         }
       }
       else {
@@ -73639,10 +73639,10 @@ void FUN_0051c974(void)
 
 
 //
-// Function: FUN_0051ca00 @ 0x0051ca00
+// Function: lookupParameterPointer @ 0x0051ca00
 //
 
-undefined * FUN_0051ca00(int param_1,int param_2)
+undefined * lookupParameterPointer(int param_1,int param_2)
 
 {
   undefined *puVar1;
@@ -74188,10 +74188,10 @@ void FUN_0051d1a8(void)
 
 
 //
-// Function: FUN_0051d1c8 @ 0x0051d1c8
+// Function: getActiveQueueFlags @ 0x0051d1c8
 //
 
-uint FUN_0051d1c8(void)
+uint getActiveQueueFlags(void)
 
 {
   uint uVar1;
@@ -74225,7 +74225,7 @@ undefined * FUN_0051d224(int param_1,int param_2)
   
   if (param_2 != 0) {
     if ((param_1 == 0xfa) || (param_1 == 0xfc)) {
-      puVar1 = (undefined *)FUN_0051ca00(param_1);
+      puVar1 = (undefined *)lookupParameterPointer(param_1);
       return puVar1;
     }
     if (param_1 == 0xf5) {
@@ -74237,7 +74237,7 @@ undefined * FUN_0051d224(int param_1,int param_2)
     else if (((param_1 == 0xfd) && ((param_2 + 0xffU & 0xff) < 0xed)) &&
             (puVar1 = *(undefined **)(&DAT_00539154 + ((param_2 + 0xffU) * 4 & 0x3fc)),
             puVar1 != &DAT_003fcf10)) {
-      DAT_003fcf11 = FUN_0051d1c8();
+      DAT_003fcf11 = getActiveQueueFlags();
       return puVar1;
     }
   }
@@ -76251,7 +76251,7 @@ LAB_0051f3f0:
     break;
   case 99:
     uVar5 = (uint)DAT_0040b183;
-    uVar3 = FUN_0051d1c8();
+    uVar3 = getActiveQueueFlags();
     (&current_command_code)[uVar5] = uVar3;
     DAT_0040b183 = bVar2 + 1;
     break;
@@ -77148,7 +77148,7 @@ void FUN_00521688(void)
   uVar2 = DAT_003fcf84 + 1;
   DAT_003fcf84 = (byte)uVar2;
   if (2 < (uVar2 & 0xff)) {
-    puVar1 = (undefined1 *)FUN_0051ca00(DAT_003fcf85,uRam003fcf86);
+    puVar1 = (undefined1 *)lookupParameterPointer(DAT_003fcf85,uRam003fcf86);
     if (puVar1 == (undefined1 *)0x0) {
       (&current_command_code)[DAT_0040b183] = 0xf0;
     }
@@ -77176,8 +77176,8 @@ void SUB_005216cc(void)
   undefined1 *puVar1;
   int unaff_r31;
   
-  puVar1 = (undefined1 *)FUN_0051ca00(*(undefined1 *)(unaff_r31 + 1),*(undefined1 *)(unaff_r31 + 2))
-  ;
+  puVar1 = (undefined1 *)
+           lookupParameterPointer(*(undefined1 *)(unaff_r31 + 1),*(undefined1 *)(unaff_r31 + 2));
   if (puVar1 == (undefined1 *)0x0) {
     (&current_command_code)[DAT_0040b183] = 0xf0;
   }
