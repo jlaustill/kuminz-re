@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Feb 01 09:05:11 MST 2026
+// Generated: Sun Feb 01 09:07:35 MST 2026
 
 
 //
@@ -44562,10 +44562,10 @@ void miosTimer17InitPeriod(void)
 
 
 //
-// Function: FUN_0004d628 @ 0x0004d628
+// Function: miosTimer17InitPeriodAlt @ 0x0004d628
 //
 
-void FUN_0004d628(void)
+void miosTimer17InitPeriodAlt(void)
 
 {
   miosInitChannelPeriod(&MIOS_MDASM1_AR);
@@ -44588,10 +44588,10 @@ void miosTimer17ScaleByPercent(undefined4 param_1)
 
 
 //
-// Function: FUN_0004d654 @ 0x0004d654
+// Function: miosTimer17ScaleDefault @ 0x0004d654
 //
 
-void FUN_0004d654(void)
+void miosTimer17ScaleDefault(void)
 
 {
   scalePwmByPercent(&MIOS_MDASM1_AR);
@@ -44614,10 +44614,10 @@ void miosTimer17SetValue(undefined4 param_1)
 
 
 //
-// Function: FUN_0004d67c @ 0x0004d67c
+// Function: miosTimer17SetValueAlt @ 0x0004d67c
 //
 
-void FUN_0004d67c(undefined4 param_1)
+void miosTimer17SetValueAlt(undefined4 param_1)
 
 {
   miosSetChannelValue(&MIOS_MDASM1_AR,param_1);
@@ -44640,10 +44640,10 @@ void miosTimer18InitPeriod(void)
 
 
 //
-// Function: FUN_0004d6a8 @ 0x0004d6a8
+// Function: miosTimer18InitPeriodAlt @ 0x0004d6a8
 //
 
-void FUN_0004d6a8(void)
+void miosTimer18InitPeriodAlt(void)
 
 {
   miosInitChannelPeriod(&MIOS_MDASM2_AR);
@@ -44666,10 +44666,10 @@ void miosTimer18ScaleByPercent(undefined4 param_1)
 
 
 //
-// Function: FUN_0004d6d4 @ 0x0004d6d4
+// Function: miosTimer18ScaleDefault @ 0x0004d6d4
 //
 
-void FUN_0004d6d4(void)
+void miosTimer18ScaleDefault(void)
 
 {
   scalePwmByPercent(&MIOS_MDASM2_AR);
@@ -44692,10 +44692,10 @@ void miosTimer18SetValue(undefined4 param_1)
 
 
 //
-// Function: FUN_0004d6fc @ 0x0004d6fc
+// Function: miosTimer18SetValueAlt @ 0x0004d6fc
 //
 
-void FUN_0004d6fc(undefined4 param_1)
+void miosTimer18SetValueAlt(undefined4 param_1)
 
 {
   miosSetChannelValue(&MIOS_MDASM2_AR,param_1);
@@ -44718,10 +44718,10 @@ void miosTimer19InitPeriod(void)
 
 
 //
-// Function: FUN_0004d728 @ 0x0004d728
+// Function: miosTimer19InitPeriodAlt @ 0x0004d728
 //
 
-void FUN_0004d728(void)
+void miosTimer19InitPeriodAlt(void)
 
 {
   miosInitChannelPeriod(&MIOS_MDASM3_AR);
@@ -44744,10 +44744,10 @@ void miosTimer19ScaleByPercent(undefined4 param_1)
 
 
 //
-// Function: FUN_0004d754 @ 0x0004d754
+// Function: miosTimer19ScaleDefault @ 0x0004d754
 //
 
-void FUN_0004d754(void)
+void miosTimer19ScaleDefault(void)
 
 {
   scalePwmByPercent(&MIOS_MDASM3_AR);
@@ -44770,10 +44770,10 @@ void miosTimer19SetValue(undefined4 param_1)
 
 
 //
-// Function: FUN_0004d77c @ 0x0004d77c
+// Function: miosTimer19SetValueAlt @ 0x0004d77c
 //
 
-void FUN_0004d77c(undefined4 param_1)
+void miosTimer19SetValueAlt(undefined4 param_1)
 
 {
   miosSetChannelValue(&MIOS_MDASM3_AR,param_1);
@@ -55434,7 +55434,7 @@ void FUN_00505df0(void)
         puVar3 = (undefined1 *)((0x20 / uVar4) * uVar4);
       }
     }
-    pbVar1 = (byte *)FUN_0050d334((uint)puVar3 & 0xffff);
+    pbVar1 = (byte *)allocateDiagnosticBuffer((uint)puVar3 & 0xffff);
     puVar2 = DAT_0040bdee;
     if (pbVar1 != (byte *)0x0) {
       pbVar1[0] = 0;
@@ -59618,7 +59618,7 @@ char processResponseFrame(byte *param_1,uint param_2,uint param_3)
         }
         cVar6 = getServiceDataLength(uVar8);
         bVar9 = cVar6 - 1;
-        pbVar3 = (byte *)FUN_0050d334(bVar9 + param_3 + 1 & 0xffff);
+        pbVar3 = (byte *)allocateDiagnosticBuffer(bVar9 + param_3 + 1 & 0xffff);
         if (pbVar3 == (byte *)0x0) {
           cVar5 = '\x04';
         }
@@ -60562,10 +60562,10 @@ void FUN_0050d2b8(void)
 
 
 //
-// Function: FUN_0050d334 @ 0x0050d334
+// Function: allocateDiagnosticBuffer @ 0x0050d334
 //
 
-undefined * FUN_0050d334(int param_1)
+undefined * allocateDiagnosticBuffer(int param_1)
 
 {
   undefined *puVar1;
@@ -82578,17 +82578,17 @@ void FUN_0052877c(void)
   uVar1 = Ram0030401c;
   Ram0030401c = uVar1 & 0xcfff | 0x1000;
   FUN_0004d5d4();
-  FUN_0004d628(DAT_0040901a);
+  miosTimer17InitPeriodAlt(DAT_0040901a);
   FUN_0004d5fc(DAT_0040901c);
-  FUN_0004d654();
-  FUN_0004d6a8(DAT_0040901e);
-  FUN_0004d67c(DAT_00409020);
-  FUN_0004d6d4();
-  FUN_0004d728(DAT_00409028);
-  FUN_0004d6fc(DAT_00409024);
-  FUN_0004d754();
+  miosTimer17ScaleDefault();
+  miosTimer18InitPeriodAlt(DAT_0040901e);
+  miosTimer17SetValueAlt(DAT_00409020);
+  miosTimer18ScaleDefault();
+  miosTimer19InitPeriodAlt(DAT_00409028);
+  miosTimer18SetValueAlt(DAT_00409024);
+  miosTimer19ScaleDefault();
   FUN_0004d7a8(DAT_0040902a);
-  FUN_0004d77c(DAT_00409026);
+  miosTimer19SetValueAlt(DAT_00409026);
   DAT_003fd0aa = 2;
   DAT_003fd0ac = 2;
   DAT_003fd0ae = 2;
@@ -82650,17 +82650,17 @@ void SUB_005289d4(void)
   Ram003041e0 = (uint)DAT_00409022;
   *in_r8 = *in_r8 & 0xcfff | 0x1000;
   FUN_0004d5d4();
-  FUN_0004d628(DAT_0040901a);
+  miosTimer17InitPeriodAlt(DAT_0040901a);
   FUN_0004d5fc(DAT_0040901c);
-  FUN_0004d654();
-  FUN_0004d6a8(DAT_0040901e);
-  FUN_0004d67c(DAT_00409020);
-  FUN_0004d6d4();
-  FUN_0004d728(DAT_00409028);
-  FUN_0004d6fc(DAT_00409024);
-  FUN_0004d754();
+  miosTimer17ScaleDefault();
+  miosTimer18InitPeriodAlt(DAT_0040901e);
+  miosTimer17SetValueAlt(DAT_00409020);
+  miosTimer18ScaleDefault();
+  miosTimer19InitPeriodAlt(DAT_00409028);
+  miosTimer18SetValueAlt(DAT_00409024);
+  miosTimer19ScaleDefault();
   FUN_0004d7a8(DAT_0040902a);
-  FUN_0004d77c(DAT_00409026);
+  miosTimer19SetValueAlt(DAT_00409026);
   DAT_003fd0aa = 2;
   DAT_003fd0ac = 2;
   DAT_003fd0ae = 2;
