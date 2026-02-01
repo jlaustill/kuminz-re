@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Feb 01 08:20:09 MST 2026
+// Generated: Sun Feb 01 09:05:11 MST 2026
 
 
 //
@@ -42881,10 +42881,10 @@ LAB_0004bcd0:
 
 
 //
-// Function: FUN_0004ba80 @ 0x0004ba80
+// Function: evaluateConditionDescriptor @ 0x0004ba80
 //
 
-void FUN_0004ba80(void)
+void evaluateConditionDescriptor(void)
 
 {
   char cVar1;
@@ -57870,10 +57870,10 @@ void SUB_00509848(int param_1,int param_2,int param_3,int param_4,uint param_5,i
 
 
 //
-// Function: FUN_00509894 @ 0x00509894
+// Function: updateOutputControlMask @ 0x00509894
 //
 
-undefined4 FUN_00509894(int param_1,int param_2)
+undefined4 updateOutputControlMask(int param_1,int param_2)
 
 {
   char cVar1;
@@ -57939,7 +57939,7 @@ undefined1 FUN_00509990(undefined4 param_1)
 {
   undefined1 uVar1;
   
-  uVar1 = FUN_00509894(param_1,0);
+  uVar1 = updateOutputControlMask(param_1,0);
   return uVar1;
 }
 
@@ -57954,7 +57954,7 @@ undefined1 FUN_005099b8(undefined4 param_1)
 {
   undefined1 uVar1;
   
-  uVar1 = FUN_00509894(param_1,1);
+  uVar1 = updateOutputControlMask(param_1,1);
   return uVar1;
 }
 
@@ -58020,10 +58020,10 @@ void SUB_00509a7c(undefined4 param_1,undefined4 *param_2)
 
 
 //
-// Function: FUN_00509a84 @ 0x00509a84
+// Function: clearTertiaryBitmapFlag @ 0x00509a84
 //
 
-void FUN_00509a84(uint param_1)
+void clearTertiaryBitmapFlag(uint param_1)
 
 {
   (&DAT_003fbd5e)[(int)param_1 >> 5 & 0xffff] =
@@ -58050,10 +58050,10 @@ void clearSecondaryBitmapFlag(uint param_1)
 
 
 //
-// Function: FUN_00509b04 @ 0x00509b04
+// Function: isAnyPrimaryFlagSet @ 0x00509b04
 //
 
-undefined2 FUN_00509b04(void)
+undefined2 isAnyPrimaryFlagSet(void)
 
 {
   uint uVar1;
@@ -58135,10 +58135,10 @@ LAB_00509b7c:
 
 
 //
-// Function: FUN_00509b84 @ 0x00509b84
+// Function: isAnySecondaryFlagSet @ 0x00509b84
 //
 
-undefined2 FUN_00509b84(void)
+undefined2 isAnySecondaryFlagSet(void)
 
 {
   uint uVar1;
@@ -58299,7 +58299,7 @@ void FUN_00509e60(void)
   
   clearBitmapFlag(6);
   clearSecondaryBitmapFlag(6);
-  FUN_00509a84(6);
+  clearTertiaryBitmapFlag(6);
   if ((idle_speed_target & 0x80) == 0) {
     return;
   }
@@ -58603,7 +58603,7 @@ void FUN_0050a680(void)
 {
   clearBitmapFlag(7);
   clearSecondaryBitmapFlag(7);
-  FUN_00509a84(7);
+  clearTertiaryBitmapFlag(7);
   if (((DAT_003fda48 & 0x2000) != 0) && ((idle_speed_target & 0x80) != 0)) {
     if ((DAT_0040bbd5 <= DAT_0005c370) && (DAT_0040bbd6 <= DAT_0005c370)) {
       if ((ushort)DAT_0040bbd5 < (DAT_0005c370 & 0xff)) {
@@ -58679,7 +58679,7 @@ void FUN_0050a854(void)
     evaluateIdleDiagCondition(0x1f,0);
     evaluateIdleDiagCondition(4,4);
     evaluateIdleDiagCondition(0x1f,5);
-    sVar1 = FUN_00509b04();
+    sVar1 = isAnyPrimaryFlagSet();
     if ((sVar1 == 0) || (DAT_0040a666 != 0)) {
       DAT_003fe964 = DAT_003fe964 & 0xfffb;
       DAT_003fe9c8 = DAT_003fe9c8 & 0xfffb;
@@ -58687,7 +58687,7 @@ void FUN_0050a854(void)
     else {
       DAT_003fe964 = DAT_003fe964 | 4;
     }
-    sVar1 = FUN_00509b84();
+    sVar1 = isAnySecondaryFlagSet();
     if ((sVar1 == 0) || (DAT_0040a666 != 0)) {
       DAT_003fe964 = DAT_003fe964 & 0xfffe;
       DAT_003fe9c8 = DAT_003fe9c8 & 0xfffe;
@@ -58714,7 +58714,7 @@ void FUN_0050a9c8(void)
     FUN_00509e60();
     FUN_0050a680();
     FUN_0050a3ac();
-    sVar1 = FUN_00509b04();
+    sVar1 = isAnyPrimaryFlagSet();
     if ((sVar1 == 0) || (DAT_0040a666 != 0)) {
       DAT_003fe964 = DAT_003fe964 & 0xfffb;
       DAT_003fe9c8 = DAT_003fe9c8 & 0xfffb;
@@ -58722,7 +58722,7 @@ void FUN_0050a9c8(void)
     else {
       DAT_003fe964 = DAT_003fe964 | 4;
     }
-    sVar1 = FUN_00509b84();
+    sVar1 = isAnySecondaryFlagSet();
     if ((sVar1 == 0) || (DAT_0040a666 != 0)) {
       DAT_003fe964 = DAT_003fe964 & 0xfffe;
       DAT_003fe9c8 = DAT_003fe9c8 & 0xfffe;
@@ -73760,10 +73760,10 @@ undefined4 nullParameterHandler(void)
 
 
 //
-// Function: FUN_0051cb60 @ 0x0051cb60
+// Function: getCommandParameterAddress @ 0x0051cb60
 //
 
-undefined4 FUN_0051cb60(int param_1,uint param_2)
+undefined4 getCommandParameterAddress(int param_1,uint param_2)
 
 {
   undefined4 uVar1;
@@ -74181,7 +74181,7 @@ int addWithMask16(int param_1,uint param_2)
 void FUN_0051d1a8(void)
 
 {
-  FUN_0051cb60();
+  getCommandParameterAddress();
   return;
 }
 
@@ -76995,7 +76995,7 @@ void FUN_0052131c(void)
   DAT_003fcf7c = (byte)uVar4;
   if (2 < (uVar4 & 0xff)) {
     if (DAT_0040b188 == '\x01') {
-      pbVar1 = (byte *)FUN_0051cb60(DAT_003fcf7d,DAT_003fcf7e);
+      pbVar1 = (byte *)getCommandParameterAddress(DAT_003fcf7d,DAT_003fcf7e);
       if (pbVar1 == (byte *)0x0) {
         (&current_command_code)[DAT_0040b183] = 0xf0;
         DAT_0040b183 = DAT_0040b183 + 1;
@@ -78579,10 +78579,10 @@ void FUN_00523444(void)
 
 
 //
-// Function: FUN_005234f8 @ 0x005234f8
+// Function: updateEepromConfigBits @ 0x005234f8
 //
 
-void FUN_005234f8(void)
+void updateEepromConfigBits(void)
 
 {
   byte bVar1;
@@ -78618,10 +78618,10 @@ void FUN_005234f8(void)
 
 
 //
-// Function: FUN_00523688 @ 0x00523688
+// Function: toggleEepromDataSource @ 0x00523688
 //
 
-void FUN_00523688(void)
+void toggleEepromDataSource(void)
 
 {
   if (DAT_0040b044 == 0) {
@@ -78649,12 +78649,12 @@ void FUN_00523688(void)
 
 
 //
-// Function: FUN_00523748 @ 0x00523748
+// Function: SUB_00523748 @ 0x00523748
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00523748(void)
+void SUB_00523748(void)
 
 {
   _DAT_0040b0ba = 0xffffff;
@@ -78801,10 +78801,10 @@ void SUB_00523858(undefined4 param_1)
 
 
 //
-// Function: FUN_00523884 @ 0x00523884
+// Function: generateChecksumWithSeed @ 0x00523884
 //
 
-uint FUN_00523884(void)
+uint generateChecksumWithSeed(void)
 
 {
   undefined4 uVar1;
@@ -78825,12 +78825,12 @@ uint FUN_00523884(void)
 
 
 //
-// Function: FUN_00523924 @ 0x00523924
+// Function: initializeChecksumStorage @ 0x00523924
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00523924(void)
+void initializeChecksumStorage(void)
 
 {
   uint uVar1;
@@ -78841,7 +78841,7 @@ void FUN_00523924(void)
     if ((char)protection_torque_limit == -0x80) {
       if (((fuel_demand_minimum_track._0_1_ == 0) && ((byte)fuel_demand_minimum_track == 0)) &&
          (DAT_0040afb4._0_1_ == 0)) {
-        uVar1 = FUN_00523884();
+        uVar1 = generateChecksumWithSeed();
         DAT_0040b0ce = DAT_0040b0ce & 0xfe | 1;
         bVar3 = 0;
         uVar2 = 3;
@@ -78874,12 +78874,12 @@ void FUN_00523924(void)
 
 
 //
-// Function: FUN_00523a74 @ 0x00523a74
+// Function: SUB_00523a74 @ 0x00523a74
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00523a74(void)
+void SUB_00523a74(void)
 
 {
   int iVar1;
@@ -78900,7 +78900,7 @@ void FUN_00523a74(void)
     if (iVar1 == 0) {
       DAT_003fee0e = DAT_0040afb4._0_1_;
     }
-    uVar2 = FUN_00523884();
+    uVar2 = generateChecksumWithSeed();
     bVar4 = 0;
     uVar3 = 3;
     DAT_0040b0c2 = uVar2;
@@ -78980,22 +78980,22 @@ void FUN_00523b4c(void)
   puVar4 = &DAT_003fcfd1;
   uVar2 = DAT_0040afea;
   if (DAT_0040afea < DAT_003fcfd1) {
-    FUN_005234f8();
+    updateEepromConfigBits();
   }
   *puVar4 = uVar2;
   if (eeprom_config_dword != 0) {
     uVar2 = Ram003060f6;
     if ((uVar2 & 0x8000) == 0) {
-      FUN_00523748();
+      SUB_00523748();
       DAT_0040b0ce = DAT_0040b0ce & 0xf0;
     }
     if ((DAT_0040afb6 < 0x65) && (((byte)DAT_0040afb4 & 0x2f) == 0)) {
       if (((char)protection_torque_limit == -0x80) || ((char)protection_torque_limit == '\0')) {
-        FUN_00523924();
+        initializeChecksumStorage();
       }
       else if (((char)protection_torque_limit == '\x01') ||
               ((char)protection_torque_limit == '\x02')) {
-        FUN_00523a74();
+        SUB_00523a74();
       }
     }
     if (DAT_003fcfc2 < DAT_004088d0) {
@@ -79020,7 +79020,7 @@ void FUN_00523b4c(void)
     }
     DAT_003fcfcf = ram0x0040b01d;
     if (DAT_0040b0d0 != '\0') {
-      FUN_00523688();
+      toggleEepromDataSource();
     }
   }
   return;
@@ -79091,22 +79091,22 @@ void SUB_00523b5c(void)
   puVar4 = &DAT_003fcfd1;
   uVar2 = DAT_0040afea;
   if (DAT_0040afea < DAT_003fcfd1) {
-    FUN_005234f8();
+    updateEepromConfigBits();
   }
   *puVar4 = uVar2;
   if (eeprom_config_dword != 0) {
     uVar2 = Ram003060f6;
     if ((uVar2 & 0x8000) == 0) {
-      FUN_00523748();
+      SUB_00523748();
       DAT_0040b0ce = DAT_0040b0ce & 0xf0;
     }
     if ((DAT_0040afb6 < 0x65) && (((byte)DAT_0040afb4 & 0x2f) == 0)) {
       if (((char)protection_torque_limit == -0x80) || ((char)protection_torque_limit == '\0')) {
-        FUN_00523924();
+        initializeChecksumStorage();
       }
       else if (((char)protection_torque_limit == '\x01') ||
               ((char)protection_torque_limit == '\x02')) {
-        FUN_00523a74();
+        SUB_00523a74();
       }
     }
     if (DAT_003fcfc2 < DAT_004088d0) {
@@ -79131,7 +79131,7 @@ void SUB_00523b5c(void)
     }
     DAT_003fcfcf = ram0x0040b01d;
     if (DAT_0040b0d0 != '\0') {
-      FUN_00523688();
+      toggleEepromDataSource();
     }
   }
   return;
@@ -86364,7 +86364,7 @@ void FUN_00530468(void)
     }
     uVar2 = uVar2 + 1;
   } while ((uVar2 & 0xffff) < 0x20);
-  FUN_0004ba80();
+  evaluateConditionDescriptor();
   DAT_0040b546 = DAT_0040b546 & DAT_0040b590;
   return;
 }
@@ -86428,7 +86428,7 @@ void SUB_005305dc(void)
     }
     uVar2 = uVar2 + 1;
   } while ((uVar2 & 0xffff) < 0x20);
-  FUN_0004ba80();
+  evaluateConditionDescriptor();
   DAT_0040b546 = DAT_0040b546 & DAT_0040b590;
   return;
 }
@@ -86487,7 +86487,7 @@ void SUB_0053064c(void)
     }
     uVar2 = uVar2 + 1;
   } while ((uVar2 & 0xffff) < 0x20);
-  FUN_0004ba80();
+  evaluateConditionDescriptor();
   DAT_0040b546 = DAT_0040b546 & DAT_0040b590;
   return;
 }
