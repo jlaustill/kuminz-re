@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Feb 01 09:07:35 MST 2026
+// Generated: Sun Feb 01 09:09:10 MST 2026
 
 
 //
@@ -46514,10 +46514,10 @@ void clearProtectionFault(uint param_1)
 
 
 //
-// Function: FUN_0004efac @ 0x0004efac
+// Function: dispatchSyncUpdateByFlag @ 0x0004efac
 //
 
-void FUN_0004efac(void)
+void dispatchSyncUpdateByFlag(void)
 
 {
   undefined4 in_r6;
@@ -51333,10 +51333,10 @@ int secondOrderFilter(short param_1,undefined4 *param_2)
 
 
 //
-// Function: FUN_000564f0 @ 0x000564f0
+// Function: multiplyAccumulateFixed32 @ 0x000564f0
 //
 
-int FUN_000564f0(short param_1,int param_2)
+int multiplyAccumulateFixed32(short param_1,int param_2)
 
 {
   uint uVar1;
@@ -57319,10 +57319,10 @@ void FUN_00508bb8(void)
 
 
 //
-// Function: FUN_00508bd0 @ 0x00508bd0
+// Function: evaluateBoundaryCondition @ 0x00508bd0
 //
 
-undefined4 FUN_00508bd0(int param_1,int param_2,uint param_3)
+undefined4 evaluateBoundaryCondition(int param_1,int param_2,uint param_3)
 
 {
   if ((param_3 & 4) == 0) {
@@ -57389,7 +57389,7 @@ void recordEventToBuffer(int param_1)
   if ((*DAT_003fbd3e & 0xc) != 0) {
     iVar10 = iVar11 + uVar9 * 8;
     iVar4 = (int)**(short **)PTR_DAT_003fbd42;
-    sVar5 = FUN_00508bd0(iVar4,(int)*(short *)(iVar10 + 4),*DAT_003fbd3e);
+    sVar5 = evaluateBoundaryCondition(iVar4,(int)*(short *)(iVar10 + 4),*DAT_003fbd3e);
     if (sVar5 != 0) {
       *(short *)(iVar10 + 4) = (short)iVar4;
     }
@@ -57668,7 +57668,7 @@ LAB_00509118:
       if ((uVar1 & 0xc) != 0) {
         sVar2 = **(short **)PTR_DAT_003fbd42;
         puVar9 = PTR_DAT_003fbd46;
-        sVar5 = FUN_00508bd0((int)sVar2,(int)*(short *)(PTR_DAT_003fbd46 + 8),uVar1);
+        sVar5 = evaluateBoundaryCondition((int)sVar2,(int)*(short *)(PTR_DAT_003fbd46 + 8),uVar1);
         if (sVar5 != 0) {
           *(short *)(puVar9 + 8) = sVar2;
           *(undefined4 *)(puVar9 + 10) = DAT_0040a20e;
@@ -60757,12 +60757,12 @@ void SUB_0050d688(void)
 
 
 //
-// Function: FUN_0050d728 @ 0x0050d728
+// Function: captureCrankPositionState @ 0x0050d728
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0050d728(void)
+void captureCrankPositionState(void)
 
 {
   DAT_0040aa2e = current_crank_position;
@@ -60796,7 +60796,7 @@ void FUN_0050d758(int param_1)
     }
     DAT_0040abc2 = 6;
     if (param_1 != 6) {
-      FUN_0050d728();
+      captureCrankPositionState();
     }
   }
   return;
@@ -60829,7 +60829,7 @@ void checkSensorValidityForMode(int param_1,undefined4 param_2,undefined2 *param
     }
     *param_3 = 6;
     if (param_1 != 6) {
-      FUN_0050d728();
+      captureCrankPositionState();
     }
   }
   return;
@@ -80244,7 +80244,7 @@ LAB_0052538c:
     DAT_0040b27e = 0xa00;
   }
   sVar3 = calculateTimingCorrection();
-  sVar3 = FUN_000564f0((int)sVar3,&DAT_003fd00c);
+  sVar3 = multiplyAccumulateFixed32((int)sVar3,&DAT_003fd00c);
   iVar7 = (int)sVar3;
   if (iVar7 < 12000) {
     if (iVar7 < -12000) {
@@ -80511,7 +80511,7 @@ LAB_0052538c:
     DAT_0040b27e = 0xa00;
   }
   sVar2 = calculateTimingCorrection();
-  sVar2 = FUN_000564f0((int)sVar2,&DAT_003fd00c);
+  sVar2 = multiplyAccumulateFixed32((int)sVar2,&DAT_003fd00c);
   iVar6 = (int)sVar2;
   if (iVar6 < 12000) {
     if (iVar6 < -12000) {
@@ -82713,8 +82713,8 @@ void SUB_00528b90(void)
 void FUN_00528c28(void)
 
 {
-  FUN_0004efac(0x2f);
-  FUN_0004efac(0x30);
+  dispatchSyncUpdateByFlag(0x2f);
+  dispatchSyncUpdateByFlag(0x30);
   return;
 }
 

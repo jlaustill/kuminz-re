@@ -1142,6 +1142,7 @@ address,name
 0x0004ef24,setEngineProtectionFault
 0x0004ef5c,setBitInArray
 0x0004ef74,clearProtectionFault
+0x0004efac,dispatchSyncUpdateByFlag
 0x0004f000,triggerProtectionEvent
 0x0004f038,clearEventFlag
 0x0004f050,protectionFlagManager
@@ -1217,6 +1218,7 @@ address,name
 0x0005647c,signedFilterWithWeight
 0x00056488,signedFilterWithWeight
 0x000564c0,secondOrderFilter
+0x000564f0,multiplyAccumulateFixed32
 0x00056594,exponentialMovingAverage
 0x000565c4,filterWithWeight
 0x000565d0,filterWithWeight
@@ -1322,6 +1324,7 @@ address,name
 0x00507c44,SUB_00507c44
 0x00507e20,SUB_00507e20
 0x005082f0,SUB_005082f0
+0x00508bd0,evaluateBoundaryCondition
 0x00508c10,recordEventToBuffer
 0x00508da8,captureEventSnapshot
 0x00508de8,SUB_00508de8
@@ -1366,6 +1369,7 @@ address,name
 0x0050d430,getMemoryRegionAccessCode
 0x0050d60c,SUB_0050d60c
 0x0050d688,SUB_0050d688
+0x0050d728,captureCrankPositionState
 0x0050d784,checkSensorValidityForMode
 0x0050d864,SUB_0050d864
 0x0050da60,setOperationalModeState
