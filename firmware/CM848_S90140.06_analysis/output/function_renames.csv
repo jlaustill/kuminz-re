@@ -1122,6 +1122,7 @@ address,name
 0x0004ef24,setEngineProtectionFault
 0x0004ef74,clearProtectionFault
 0x0004f000,triggerProtectionEvent
+0x0004f038,clearEventFlag
 0x0004f050,protectionFlagManager
 0x0004f0dc,checkProtectionModeFlags
 0x0004f190,protectionAlarmHandler
@@ -1264,6 +1265,7 @@ address,name
 0x00505b3c,SUB_00505b3c
 0x00505b84,SUB_00505b84
 0x00505bd8,SUB_00505bd8
+0x00505c20,transferEepromData
 0x00505d94,SUB_00505d94
 0x00505f98,processScheduledTaskState
 0x0050638c,SUB_0050638c
@@ -1280,6 +1282,7 @@ address,name
 0x00507644,SUB_00507644
 0x005077fc,SUB_005077fc
 0x00507a20,SUB_00507a20
+0x00507b68,evaluateFlagCondition
 0x00507c1c,SUB_00507c1c
 0x00507c44,SUB_00507c44
 0x00507e20,SUB_00507e20
@@ -1290,9 +1293,14 @@ address,name
 0x00509510,SUB_00509510
 0x00509848,SUB_00509848
 0x00509a2c,SUB_00509a2c
+0x00509a44,clearBitmapFlag
 0x00509a7c,SUB_00509a7c
+0x00509ac4,clearSecondaryBitmapFlag
 0x00509b5c,SUB_00509b5c
 0x00509b74,SUB_00509b74
+0x00509bc4,setBitmapFlag
+0x00509c3c,setSecondaryBitmapFlag
+0x0050a14c,evaluateIdleDiagCondition
 0x0050aba8,SUB_0050aba8
 0x0050ad1c,SUB_0050ad1c
 0x0050ae5c,SUB_0050ae5c
@@ -1404,6 +1412,9 @@ address,name
 0x0051aecc,SUB_0051aecc
 0x0051aef8,updateThermalProtectionState
 0x0051b56c,SUB_0051b56c
+0x0051b58c,checkAndDispatchCommand
+0x0051b608,accumulateWithClamp
+0x0051b658,computeClampedDelta
 0x0051b978,SUB_0051b978
 0x0051babc,SUB_0051babc
 0x0051c2d0,SUB_0051c2d0
@@ -1413,6 +1424,7 @@ address,name
 0x0051d190,addWithMask16
 0x0051d36c,dispatchByCommandCode
 0x0051d458,processCommandQueueStep
+0x0051d644,resetModeState
 0x0051d70c,SUB_0051d70c
 0x0051d810,SUB_0051d810
 0x0051d840,SUB_0051d840
@@ -1421,12 +1433,21 @@ address,name
 0x0051d9a0,SUB_0051d9a0
 0x0051da58,initiateStateTransition
 0x0051da74,default
+0x0051da7c,executeQueuedCommand
 0x0051dad4,SUB_0051dad4
 0x0051db0c,SUB_0051db0c
+0x0051dcb0,dispatchByCommandState
+0x0051e07c,cancelEventTimer
+0x0051e100,cancelAllEventTimers
+0x0051e210,tickEventTimer
+0x0051e2cc,processEventTimerTick
 0x0051e480,triggerDiagnosticEvent
 0x00521474,SUB_00521474
 0x005216cc,SUB_005216cc
+0x00521ca0,writeEepromWithRetry
 0x00522074,SUB_00522074
+0x0052261c,updateSystemEnableFlag
+0x0052269c,synchronizeEnableState
 0x00522700,SUB_00522700
 0x00522788,SUB_00522788
 0x005227ac,SUB_005227ac
@@ -1439,6 +1460,7 @@ address,name
 0x00523750,SUB_00523750
 0x00523760,SUB_00523760
 0x00523798,SUB_00523798
+0x005237b0,computeByteChecksum
 0x00523858,SUB_00523858
 0x00523b5c,SUB_00523b5c
 0x00523f60,SUB_00523f60
@@ -1468,6 +1490,7 @@ address,name
 0x0052796c,SUB_0052796c
 0x005279d8,SUB_005279d8
 0x0052801c,SUB_0052801c
+0x005280f4,calculateCbdAngleOffset
 0x00528474,SUB_00528474
 0x005289d4,SUB_005289d4
 0x00528b90,SUB_00528b90
@@ -1480,6 +1503,7 @@ address,name
 0x0052a910,SUB_0052a910
 0x0052b998,SUB_0052b998
 0x0052ba30,SUB_0052ba30
+0x0052c08c,evaluateSystemConditions
 0x0052c688,SUB_0052c688
 0x0052d140,SUB_0052d140
 0x0052d358,SUB_0052d358
@@ -1490,6 +1514,8 @@ address,name
 0x0052de14,SUB_0052de14
 0x0052e24c,SUB_0052e24c
 0x0052e29c,SUB_0052e29c
+0x0052e4fc,prepareStateTransition
+0x0052e540,triggerStateTransitionEvent
 0x0052eac8,SUB_0052eac8
 0x0052eae8,SUB_0052eae8
 0x0052ef90,SUB_0052ef90
@@ -1500,9 +1526,11 @@ address,name
 0x00530428,SUB_00530428
 0x005305dc,SUB_005305dc
 0x0053064c,SUB_0053064c
+0x00530878,clearOutputCounters
 0x00530968,SUB_00530968
 0x005311e4,SUB_005311e4
 0x00531370,SUB_00531370
+0x0053164c,resetCbdCylinderState
 0x0053168c,SUB_0053168c
 0x005316ac,SUB_005316ac
 0x005318e8,SUB_005318e8
@@ -1523,6 +1551,7 @@ address,name
 0x00534328,evaluateCbdThreshold
 0x00534530,SUB_00534530
 0x0053473c,SUB_0053473c
+0x0053489c,processChannelDiagnostics
 0x00534994,SUB_00534994
 0x00534b68,SUB_00534b68
 0x00534c6c,evaluateFaultFlagCondition
@@ -1545,6 +1574,7 @@ address,name
 0x00537944,SUB_00537944
 0x005379b4,SUB_005379b4
 0x005379d8,SUB_005379d8
+0x00537a18,enqueueToBuffer17
 0x00537acc,SUB_00537acc
 0x00538278,SUB_00538278
 0x00538748,SUB_00538748
