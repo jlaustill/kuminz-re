@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Feb 05 12:33:22 MST 2026
+// Generated: Thu Feb 05 13:19:22 MST 2026
 
 
 //
@@ -7862,10 +7862,10 @@ void sensorChannel16_process(void)
 
 
 //
-// Function: FUN_0000db88 @ 0x0000db88
+// Function: sensorChannel16BProcessOilPressure @ 0x0000db88
 //
 
-void FUN_0000db88(void)
+void sensorChannel16BProcessOilPressure(void)
 
 {
   undefined4 uStack00000008;
@@ -15400,10 +15400,10 @@ void calculateColdStartRpmAdjust(void)
 
 
 //
-// Function: FUN_0001bb78 @ 0x0001bb78
+// Function: calculateColdStartFuelOffset @ 0x0001bb78
 //
 
-void FUN_0001bb78(void)
+void calculateColdStartFuelOffset(void)
 
 {
   uint uVar1;
@@ -16209,12 +16209,12 @@ void clearDiagnosticState(void)
 
 
 //
-// Function: FUN_0001d11c @ 0x0001d11c
+// Function: clearAllDiagnosticFaults @ 0x0001d11c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0001d11c(void)
+void clearAllDiagnosticFaults(void)
 
 {
   undefined2 *unaff_r27;
@@ -18359,10 +18359,10 @@ void updateProtectionInputs(void)
 
 
 //
-// Function: FUN_00020c60 @ 0x00020c60
+// Function: initProtectionDefaults @ 0x00020c60
 //
 
-void FUN_00020c60(void)
+void initProtectionDefaults(void)
 
 {
   return;
@@ -18856,10 +18856,10 @@ undefined2 initUdsServiceHandlers(word param_1)
 
 
 //
-// Function: FUN_00021b28 @ 0x00021b28
+// Function: applyFuelDemandFilter @ 0x00021b28
 //
 
-undefined2 FUN_00021b28(undefined2 param_1)
+undefined2 applyFuelDemandFilter(undefined2 param_1)
 
 {
   undefined2 uVar1;
@@ -18930,10 +18930,10 @@ void updateProtectionThresholdsIfLow(void)
 
 
 //
-// Function: FUN_00021c9c @ 0x00021c9c
+// Function: setProtectionThresholdParameters @ 0x00021c9c
 //
 
-void FUN_00021c9c(void)
+void setProtectionThresholdParameters(void)
 
 {
   undefined2 in_r10;
@@ -19175,10 +19175,10 @@ void initGovernorDerivativeTerms(void)
 
 
 //
-// Function: FUN_0002232c @ 0x0002232c
+// Function: initGovernorControlHandler @ 0x0002232c
 //
 
-void FUN_0002232c(undefined4 param_1,undefined2 param_2)
+void initGovernorControlHandler(undefined4 param_1,undefined2 param_2)
 
 {
   DAT_0040add6 = param_2;
@@ -19225,10 +19225,10 @@ void processSecurityAccessRequest(int param_1)
 
 
 //
-// Function: FUN_000223a0 @ 0x000223a0
+// Function: clearGovernorDerivativeMode @ 0x000223a0
 //
 
-void FUN_000223a0(int param_1)
+void clearGovernorDerivativeMode(int param_1)
 
 {
   int in_r12;
@@ -19351,10 +19351,10 @@ void processGovernorControlMessage(int param_1)
 
 
 //
-// Function: FUN_00022468 @ 0x00022468
+// Function: initializeGovernorDerivatives @ 0x00022468
 //
 
-void FUN_00022468(void)
+void initializeGovernorDerivatives(void)
 
 {
   undefined2 in_r8;
@@ -19411,13 +19411,13 @@ void matchSecurityRequest(void)
 
 
 //
-// Function: FUN_00022590 @ 0x00022590
+// Function: processGovernorSecurityAccessRequest @ 0x00022590
 //
 
 /* WARNING: Removing unreachable block (ram,0x000225c8) */
 /* WARNING: Removing unreachable block (ram,0x000225d0) */
 
-void FUN_00022590(undefined4 param_1,undefined4 param_2,uint param_3)
+void processGovernorSecurityAccessRequest(undefined4 param_1,undefined4 param_2,uint param_3)
 
 {
   ushort *unaff_r29;
@@ -19623,10 +19623,10 @@ LAB_00022a00:
 
 
 //
-// Function: FUN_00022ab8 @ 0x00022ab8
+// Function: selectTorqueLimitMode @ 0x00022ab8
 //
 
-void FUN_00022ab8(void)
+void selectTorqueLimitMode(void)
 
 {
   uint unaff_r30;
@@ -19822,12 +19822,12 @@ LAB_00022f1c:
 
 
 //
-// Function: FUN_00022e3c @ 0x00022e3c
+// Function: processGovernorSpeedControlRequest @ 0x00022e3c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00022e3c(void)
+void processGovernorSpeedControlRequest(void)
 
 {
   short sVar1;
@@ -19925,12 +19925,12 @@ void FUN_00022e3c(void)
 
 
 //
-// Function: FUN_00022f90 @ 0x00022f90
+// Function: processGovernorSpeedRequest @ 0x00022f90
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00022f90(void)
+void processGovernorSpeedRequest(void)
 
 {
   int in_r12;
@@ -20184,10 +20184,10 @@ LAB_000235d0:
 
 
 //
-// Function: FUN_0002352c @ 0x0002352c
+// Function: routeGovernorHandlerByTable @ 0x0002352c
 //
 
-void FUN_0002352c(void)
+void routeGovernorHandlerByTable(void)
 
 {
   ushort in_r10;
@@ -20246,10 +20246,10 @@ LAB_000235d0:
 
 
 //
-// Function: FUN_000236b4 @ 0x000236b4
+// Function: setGovernorHandlerDefault @ 0x000236b4
 //
 
-void FUN_000236b4(void)
+void setGovernorHandlerDefault(void)
 
 {
   j1939_handler_entry_ptr = 0x43;
@@ -20443,10 +20443,10 @@ void sendJ1939ProprietaryStatus(void)
 
 
 //
-// Function: FUN_00023d14 @ 0x00023d14
+// Function: initJ1939DmHandlerBuffer @ 0x00023d14
 //
 
-void FUN_00023d14(int param_1,int param_2)
+void initJ1939DmHandlerBuffer(int param_1,int param_2)
 
 {
   *(int *)(param_2 + 6) = param_1 + -0x557c;
@@ -20505,10 +20505,10 @@ void sendJ1939NegativeAck(int param_1,undefined1 param_2)
 
 
 //
-// Function: FUN_00023e2c @ 0x00023e2c
+// Function: flushJ1939FrameBuffer @ 0x00023e2c
 //
 
-void FUN_00023e2c(void)
+void flushJ1939FrameBuffer(void)
 
 {
   sendJ1939MultiFrame();
@@ -20552,10 +20552,10 @@ void j1939_handle_pgn_65269_ambient_conditions(void)
 
 
 //
-// Function: FUN_00023f4c @ 0x00023f4c
+// Function: sendJ1939ErrorFrame @ 0x00023f4c
 //
 
-void FUN_00023f4c(void)
+void sendJ1939ErrorFrame(void)
 
 {
   int unaff_r31;
@@ -20863,10 +20863,10 @@ LAB_00024648:
 
 
 //
-// Function: FUN_00024230 @ 0x00024230
+// Function: buildPgn65228Dm3ClearInitMessage @ 0x00024230
 //
 
-void FUN_00024230(void)
+void buildPgn65228Dm3ClearInitMessage(void)
 
 {
   byte bVar1;
@@ -21037,10 +21037,11 @@ LAB_00024648:
 
 
 //
-// Function: FUN_0002439c @ 0x0002439c
+// Function: buildDiagnosticStatusMessage @ 0x0002439c
 //
 
-void FUN_0002439c(undefined4 param_1,undefined4 param_2,int param_3,int param_4,int param_5)
+void buildDiagnosticStatusMessage
+               (undefined4 param_1,undefined4 param_2,int param_3,int param_4,int param_5)
 
 {
   byte bVar1;
@@ -21271,10 +21272,10 @@ void j1939_handle_pgn_65259_component_id(void)
 
 
 //
-// Function: FUN_000248dc @ 0x000248dc
+// Function: appendGovernorDroopDataToMessage @ 0x000248dc
 //
 
-void FUN_000248dc(void)
+void appendGovernorDroopDataToMessage(void)
 
 {
   int unaff_r29;
@@ -21607,10 +21608,10 @@ void initPgn65227Dm2Handler(undefined4 param_1,undefined4 param_2,void *param_3)
 
 
 //
-// Function: FUN_00025050 @ 0x00025050
+// Function: initPgn65227Dm2ResponseHandler @ 0x00025050
 //
 
-void FUN_00025050(int param_1,int param_2,void *param_3)
+void initPgn65227Dm2ResponseHandler(int param_1,int param_2,void *param_3)
 
 {
   int in_r11;
@@ -21900,10 +21901,10 @@ LAB_000257c4:
 
 
 //
-// Function: FUN_00025884 @ 0x00025884
+// Function: setEngineControllerStateCode @ 0x00025884
 //
 
-void FUN_00025884(undefined4 param_1,undefined4 param_2,int param_3)
+void setEngineControllerStateCode(undefined4 param_1,undefined4 param_2,int param_3)
 
 {
   undefined4 in_r9;
@@ -22053,10 +22054,10 @@ LAB_00025a28:
 
 
 //
-// Function: FUN_00025a9c @ 0x00025a9c
+// Function: transmitEngineStatusMessage @ 0x00025a9c
 //
 
-void FUN_00025a9c(int param_1)
+void transmitEngineStatusMessage(int param_1)
 
 {
   sendJ1939MultiFrame(param_1 + -0x5268);
@@ -22136,10 +22137,10 @@ LAB_00025c0c:
 
 
 //
-// Function: FUN_00025d30 @ 0x00025d30
+// Function: sendEec2WithDefaultValues @ 0x00025d30
 //
 
-void FUN_00025d30(void)
+void sendEec2WithDefaultValues(void)
 
 {
   int unaff_r30;
@@ -22229,10 +22230,10 @@ void j1939_handle_pgn_65263_fluid_level_pressure(void)
 
 
 //
-// Function: FUN_00025fd8 @ 0x00025fd8
+// Function: initPgn65263FluidLevelPressureHandler @ 0x00025fd8
 //
 
-void FUN_00025fd8(undefined4 param_1,undefined1 *param_2)
+void initPgn65263FluidLevelPressureHandler(undefined4 param_1,undefined1 *param_2)
 
 {
   undefined1 in_r0;
@@ -22298,10 +22299,10 @@ void j1939_handle_pgn_65262_engine_temp(void)
 
 
 //
-// Function: FUN_000260d4 @ 0x000260d4
+// Function: buildEngineTempWithConditionCheck @ 0x000260d4
 //
 
-void FUN_000260d4(int param_1)
+void buildEngineTempWithConditionCheck(int param_1)
 
 {
   undefined2 uVar1;
@@ -22359,10 +22360,10 @@ void initPgn65262EngineTempHandler(undefined4 param_1,undefined4 param_2,void *p
 
 
 //
-// Function: FUN_0002622c @ 0x0002622c
+// Function: emptyStubFunctionJ1939A @ 0x0002622c
 //
 
-void FUN_0002622c(void)
+void emptyStubFunctionJ1939A(void)
 
 {
   return;
@@ -22507,10 +22508,10 @@ void j1939_handle_pgn_65270_inlet_exhaust_conditions(void)
 
 
 //
-// Function: FUN_0002661c @ 0x0002661c
+// Function: initPgn65270InletExhaustHandler @ 0x0002661c
 //
 
-void FUN_0002661c(undefined1 *param_1,int param_2)
+void initPgn65270InletExhaustHandler(undefined1 *param_1,int param_2)
 
 {
   undefined4 in_r11;
@@ -22601,10 +22602,10 @@ void j1939BuildProtocolModeStatus(void)
 
 
 //
-// Function: FUN_000266f8 @ 0x000266f8
+// Function: buildProtocolModeStatusMessage @ 0x000266f8
 //
 
-void FUN_000266f8(int param_1)
+void buildProtocolModeStatusMessage(int param_1)
 
 {
   undefined2 uVar1;
@@ -22656,10 +22657,10 @@ void FUN_000266f8(int param_1)
 
 
 //
-// Function: FUN_00026850 @ 0x00026850
+// Function: initPgn65256VehicleMaintenanceHandler @ 0x00026850
 //
 
-void FUN_00026850(undefined1 *param_1)
+void initPgn65256VehicleMaintenanceHandler(undefined1 *param_1)
 
 {
   undefined1 in_r0;
@@ -22780,10 +22781,10 @@ void j1939_handle_pgn_65504_proprietary_a(void)
 
 
 //
-// Function: FUN_00026aa4 @ 0x00026aa4
+// Function: buildVehicleMaintenanceStatusBits @ 0x00026aa4
 //
 
-void FUN_00026aa4(int param_1)
+void buildVehicleMaintenanceStatusBits(int param_1)
 
 {
   uint uVar1;
@@ -22887,10 +22888,10 @@ void j1939_handle_pgn_65260_vehicle_id(void)
 
 
 //
-// Function: FUN_00026dd0 @ 0x00026dd0
+// Function: emptyStubFunctionJ1939B @ 0x00026dd0
 //
 
-void FUN_00026dd0(void)
+void emptyStubFunctionJ1939B(void)
 
 {
   return;
@@ -23024,11 +23025,12 @@ void j1939FormatDm1Message(void)
 
 
 //
-// Function: FUN_00026fb8 @ 0x00026fb8
+// Function: updateGovernorTorqueLimit @ 0x00026fb8
 //
 
-void FUN_00026fb8(undefined2 *param_1,undefined2 *param_2,undefined4 param_3,undefined2 *param_4,
-                 int param_5)
+void updateGovernorTorqueLimit
+               (undefined2 *param_1,undefined2 *param_2,undefined4 param_3,undefined2 *param_4,
+               int param_5)
 
 {
   uint uVar1;
@@ -23401,12 +23403,12 @@ LAB_00027ae8:
 
 
 //
-// Function: FUN_00027174 @ 0x00027174
+// Function: selectTorqueLimitByStateMachine @ 0x00027174
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00027174(void)
+void selectTorqueLimitByStateMachine(void)
 
 {
   bool bVar1;
@@ -25990,12 +25992,12 @@ void updateTorqueLimitFromProtection(void)
 
 
 //
-// Function: FUN_0002c14c @ 0x0002c14c
+// Function: updateTorqueLimitFromThreshold @ 0x0002c14c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0002c14c(undefined4 param_1,uint param_2)
+void updateTorqueLimitFromThreshold(undefined4 param_1,uint param_2)
 
 {
   byte in_cr0;
@@ -30567,10 +30569,10 @@ void processSensorTemperatureData(void)
 
 
 //
-// Function: FUN_00035d48 @ 0x00035d48
+// Function: computeTemperatureDifferential @ 0x00035d48
 //
 
-void FUN_00035d48(undefined2 *param_1,int param_2,int param_3)
+void computeTemperatureDifferential(undefined2 *param_1,int param_2,int param_3)
 
 {
   *param_1 = 0;
@@ -33501,10 +33503,10 @@ undefined4 calculateSecurityChecksum(uint param_1,uint param_2)
 
 
 //
-// Function: FUN_0003afc8 @ 0x0003afc8
+// Function: validateDataWithChecksumTable @ 0x0003afc8
 //
 
-undefined4 FUN_0003afc8(uint param_1,uint param_2,int param_3)
+undefined4 validateDataWithChecksumTable(uint param_1,uint param_2,int param_3)
 
 {
   undefined4 uVar1;
@@ -33935,10 +33937,10 @@ LAB_0003b9e8:
 
 
 //
-// Function: FUN_0003b95c @ 0x0003b95c
+// Function: decrementProtectionChannelValue @ 0x0003b95c
 //
 
-void FUN_0003b95c(void)
+void decrementProtectionChannelValue(void)
 
 {
   short sVar1;
@@ -34045,10 +34047,10 @@ LAB_0003bcac:
 
 
 //
-// Function: FUN_0003bb74 @ 0x0003bb74
+// Function: indirectJumpDispatcher @ 0x0003bb74
 //
 
-void FUN_0003bb74(void)
+void indirectJumpDispatcher(void)
 
 {
   int in_r11;
@@ -34105,10 +34107,10 @@ void validateCalibrationAgainstEeprom(void)
 
 
 //
-// Function: FUN_0003bd5c @ 0x0003bd5c
+// Function: validateCalibratedParameterDelta @ 0x0003bd5c
 //
 
-void FUN_0003bd5c(undefined4 param_1,int param_2)
+void validateCalibratedParameterDelta(undefined4 param_1,int param_2)
 
 {
   ushort *unaff_r29;
@@ -34144,10 +34146,10 @@ void FUN_0003bd5c(undefined4 param_1,int param_2)
 
 
 //
-// Function: FUN_0003bd60 @ 0x0003bd60
+// Function: validateCalibratedParameterChange @ 0x0003bd60
 //
 
-void FUN_0003bd60(undefined4 param_1,int param_2)
+void validateCalibratedParameterChange(undefined4 param_1,int param_2)
 
 {
   ushort *unaff_r29;
@@ -34983,10 +34985,10 @@ void calculateProtectionUnitConversion(void)
 
 
 //
-// Function: FUN_0003cc10 @ 0x0003cc10
+// Function: storePressureConversionResult @ 0x0003cc10
 //
 
-void FUN_0003cc10(void)
+void storePressureConversionResult(void)
 
 {
   undefined1 extraout_r4;
@@ -35062,10 +35064,10 @@ void calculateFuelDemandLimit(void)
 
 
 //
-// Function: FUN_0003ccd4 @ 0x0003ccd4
+// Function: calculateFuelDemandLimitState @ 0x0003ccd4
 //
 
-void FUN_0003ccd4(void)
+void calculateFuelDemandLimitState(void)
 
 {
   short *unaff_r19;
@@ -36067,10 +36069,10 @@ void processFuelDemandTimeout(void)
 
 
 //
-// Function: FUN_0003e914 @ 0x0003e914
+// Function: transitionFuelDemandStateImmediate @ 0x0003e914
 //
 
-void FUN_0003e914(void)
+void transitionFuelDemandStateImmediate(void)
 
 {
   DAT_0040b5c6 = DAT_0040b604;
@@ -36165,12 +36167,12 @@ LAB_0003ec38:
 
 
 //
-// Function: FUN_0003e974 @ 0x0003e974
+// Function: calculateTorqueLimitType1 @ 0x0003e974
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0003e974(void)
+void calculateTorqueLimitType1(void)
 
 {
   uint extraout_r4;
@@ -36334,12 +36336,12 @@ LAB_0003ec38:
 
 
 //
-// Function: FUN_0003e994 @ 0x0003e994
+// Function: calculateTorqueLimitType2 @ 0x0003e994
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0003e994(void)
+void calculateTorqueLimitType2(void)
 
 {
   uint extraout_r4;
@@ -42428,10 +42430,10 @@ void evaluateProtectionSyncFaults(void)
 
 
 //
-// Function: FUN_0004ac74 @ 0x0004ac74
+// Function: evaluateProtectionSyncStateConditional @ 0x0004ac74
 //
 
-void FUN_0004ac74(void)
+void evaluateProtectionSyncStateConditional(void)
 
 {
   undefined4 uVar1;
@@ -43526,10 +43528,10 @@ void initProtectionLimitVariables(void)
 
 
 //
-// Function: FUN_0004c6d4 @ 0x0004c6d4
+// Function: initProtectionLimitStateVariant @ 0x0004c6d4
 //
 
-void FUN_0004c6d4(undefined2 param_1)
+void initProtectionLimitStateVariant(undefined2 param_1)
 
 {
   int in_r10;
@@ -43795,10 +43797,10 @@ void configureOutputChannels(void)
 
 
 //
-// Function: FUN_0004cb84 @ 0x0004cb84
+// Function: configureOutputChannelsStateParam @ 0x0004cb84
 //
 
-void FUN_0004cb84(void)
+void configureOutputChannelsStateParam(void)
 
 {
   short *psVar1;
@@ -43842,10 +43844,10 @@ void FUN_0004cb84(void)
 
 
 //
-// Function: FUN_0004cb90 @ 0x0004cb90
+// Function: configureOutputChannelsAltState @ 0x0004cb90
 //
 
-void FUN_0004cb90(void)
+void configureOutputChannelsAltState(void)
 
 {
   short *psVar1;
@@ -46331,10 +46333,10 @@ byte checkProtectionWarningBitState(uint param_1)
 
 
 //
-// Function: FUN_0004eb00 @ 0x0004eb00
+// Function: checkProtectionBitWarningState @ 0x0004eb00
 //
 
-byte FUN_0004eb00(undefined4 param_1,byte param_2)
+byte checkProtectionBitWarningState(undefined4 param_1,byte param_2)
 
 {
   int in_r9;
@@ -46906,10 +46908,11 @@ LAB_0004f6dc:
 
 
 //
-// Function: FUN_0004f324 @ 0x0004f324
+// Function: evaluateHardwareTimerState @ 0x0004f324
 //
 
-undefined4 FUN_0004f324(uint param_1,undefined4 param_2,undefined4 param_3,uint param_4)
+undefined4
+evaluateHardwareTimerState(uint param_1,undefined4 param_2,undefined4 param_3,uint param_4)
 
 {
   word wVar1;
@@ -49172,10 +49175,10 @@ void sendJ1939MultiFrame(undefined4 *param_1)
 
 
 //
-// Function: FUN_00053a34 @ 0x00053a34
+// Function: validateDiagnosticResponseWrapper @ 0x00053a34
 //
 
-void FUN_00053a34(void)
+void validateDiagnosticResponseWrapper(void)
 
 {
   validateDiagResponseBuffer();
@@ -52620,13 +52623,13 @@ void calibrationTableLookup2D(void)
 
 
 //
-// Function: FUN_0006432c @ 0x0006432c
+// Function: invalidInstructionData @ 0x0006432c
 //
 
 /* WARNING: Control flow encountered bad instruction data */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_0006432c(void)
+void invalidInstructionData(void)
 
 {
                     /* WARNING: Bad instruction - Truncating control flow here */
@@ -54796,7 +54799,7 @@ void clearPressureAccumulator(void)
 void runSystemInitSequence(void)
 
 {
-  FUN_00020c60();
+  initProtectionDefaults();
   calculatePressureRatio();
   calculateFuelTrimAdjustments();
   evaluateCoolantTemperatureMode();
@@ -55512,7 +55515,7 @@ void processScheduledTaskState(int param_1)
   if (_DAT_003fdd9c != 0) {
     DAT_003fbcd0 = _DAT_003fdd9c + -1;
   }
-  sVar1 = FUN_0004f324(DAT_003fdd9e);
+  sVar1 = evaluateHardwareTimerState(DAT_003fdd9e);
   if (sVar1 == 0) {
     DAT_003fbcd8 = 0;
   }
@@ -58358,7 +58361,7 @@ void detectEngineStateTransition(void)
       DAT_003fbd65 = 1;
       DAT_003fbd62 = 100;
     }
-    cVar2 = FUN_0004eb00(8);
+    cVar2 = checkProtectionBitWarningState(8);
     if (DAT_003fbd64 == cVar2) {
       if ((DAT_003fbd62 != 0) && (DAT_003fbd62 = DAT_003fbd62 + -0x32, DAT_003fbd62 < 1)) {
         DAT_003fbd62 = 0;
@@ -59642,7 +59645,7 @@ char processResponseFrame(byte *param_1,uint param_2,uint param_3)
             param_2 = param_2 - 0xc02b9e;
           }
           delayMicroseconds(puVar10 + bVar9,param_2,uVar2);
-          FUN_00053a34(pbVar3);
+          validateDiagnosticResponseWrapper(pbVar3);
           cVar5 = -1;
         }
       }
@@ -60266,7 +60269,7 @@ void j1939ProcessDataContinuation(int param_1)
         j1939SendStatusMessage(cVar1,DAT_003fbded);
         DAT_003fbdeb = 0;
         DAT_003fbdf9 = &DAT_003fbe05;
-        FUN_000223a0(&DAT_003fbdf3);
+        clearGovernorDerivativeMode(&DAT_003fbdf3);
         return;
       }
       if ((int)(((uint)DAT_003fbdec - (uint)DAT_003fbdef) + 1) < 6) {
@@ -69823,16 +69826,16 @@ void processCoolantProtectionCycleState(void)
 {
   if ((DAT_003fd5cc & 0x40) != 0) {
     evaluateProtectionTimerThreshold();
-    FUN_0003afc8();
+    validateDataWithChecksumTable();
     processDisplayCommandState();
     emptyCommandHandler();
     configureOutputChannelFlags();
     if ((uint)DAT_003fce74 + ((int)(uint)DAT_003fce74 >> 1) * -2 == 0) {
-      FUN_0003bb74();
-      FUN_0003bd5c();
-      FUN_0003b95c();
+      indirectJumpDispatcher();
+      validateCalibratedParameterDelta();
+      decrementProtectionChannelValue();
       evaluateProtectionChannelInput();
-      FUN_0003bd60();
+      validateCalibratedParameterChange();
     }
     else {
       updateProtectionModeState();
@@ -69850,10 +69853,10 @@ void processCoolantProtectionCycleState(void)
       checkProtectionVoltageInput();
     }
     if ((uint)DAT_003fce74 % 0xc == 3) {
-      FUN_0003ccd4();
+      calculateFuelDemandLimitState();
     }
     if ((uint)DAT_003fce74 % 0xe == 0) {
-      FUN_0003cc10();
+      storePressureConversionResult();
       evaluateVoltageThresholds();
     }
     DAT_003fce74 = DAT_003fce74 + 1;
@@ -74266,11 +74269,11 @@ void executeStateTransitionMode(void)
 {
   if ((DAT_0040b18a == '\x01') && ((DAT_0040b182 & 1) == 0)) {
     DAT_0040b18a = '\0';
-    FUN_0003e974();
+    calculateTorqueLimitType1();
     (*state_handler_function)();
   }
   else {
-    FUN_0003e914();
+    transitionFuelDemandStateImmediate();
   }
   return;
 }
@@ -74313,7 +74316,7 @@ void initCommandDispatchMode(void)
 
 {
   state_handler_function = dispatchByCommandCode;
-  FUN_0003e994();
+  calculateTorqueLimitType2();
   return;
 }
 
@@ -77469,7 +77472,7 @@ void processSecurityCommand(void)
     if (sVar1 == 0) {
       sVar1 = writeEepromWithRetry(0x1000000,local_6,2);
       if (sVar1 == 0) {
-        FUN_00021b28();
+        applyFuelDemandFilter();
       }
     }
   }
@@ -77768,7 +77771,7 @@ void updateEngineRunningCounter(void)
     DAT_0040b6fe = 1;
   }
   else {
-    FUN_00035d48();
+    computeTemperatureDifferential();
     DAT_003fcf9c = DAT_003fcf9a;
     DAT_003fcf9a = DAT_0040b6fe;
   }
@@ -82258,7 +82261,7 @@ void updateVehicleSpeedFilter(void)
   DAT_0040b3a0 = DAT_0040b3a0 + 1;
   if (cbd_start_tooth <= DAT_0040b3a0) {
     DAT_0040b3a0 = 0;
-    FUN_0004ac74();
+    evaluateProtectionSyncStateConditional();
   }
   if (DAT_0040b42b == '\x12') {
     DAT_0040b421 = DAT_0040b420;
@@ -85624,10 +85627,10 @@ void processEmissionProtectionState(void)
             ((emission_related_faults & 0x800) == 0)) &&
            (((emission_related_faults & 0x1000) == 0 && ((DAT_003fe958 & 0x8000) == 0)))) &&
           (((system_enable_state_reserved_12 & 0x400) == 0 &&
-           (((int)DAT_0040b66a <= (int)FUN_0006432c &&
+           (((int)DAT_0040b66a <= (int)invalidInstructionData &&
             ((int)DAT_0040b66a - (int)DAT_0040b6f0 < (int)(uint)uRam00064330)))))) &&
          (DAT_0040a382 == 1)) {
-        if (_FUN_0006432c < protection_ramp_timer) {
+        if (_invalidInstructionData < protection_ramp_timer) {
           system_enable_state_reserved_12 = system_enable_state_reserved_12 | 4;
           DAT_0040b52c = 2;
         }
@@ -86164,7 +86167,7 @@ void updateAuxiliaryOutputPort(void)
   else {
     DAT_0040b542 = 0;
   }
-  FUN_0006432c = 0xa000;
+  invalidInstructionData = 0xa000;
   return;
 }
 
@@ -89016,7 +89019,7 @@ void processStateTransitionGuard(void)
           if ((((*(ushort *)((int)&DAT_003feb73 + uVar1 * 3) & 1) != 0) &&
               ((*(ushort *)((int)&DAT_003feb73 + uVar1 * 3) & 2) == 0)) &&
              (((&DAT_003fe1b3)[uVar1 * 7] & 1) != 0)) {
-            FUN_0001d11c((&DAT_0005b716)[uVar4 + uVar2 * 0x10]);
+            clearAllDiagnosticFaults((&DAT_0005b716)[uVar4 + uVar2 * 0x10]);
           }
         }
         uVar4 = uVar4 + 1 & 0xff;
@@ -91705,27 +91708,27 @@ void initDiagnosticBufferPointers(void)
   DAT_003fe960 = DAT_003fe960 & 0x7fff;
   DAT_003fe9c4 = DAT_003fe9c4 & 0x7fff;
   thunk_prepareAndSendJ1939Frame();
-  FUN_000248dc();
-  FUN_00025a9c();
-  FUN_00025d30();
-  FUN_00025fd8();
-  FUN_000260d4();
-  FUN_0001bb78();
-  FUN_0002661c();
-  FUN_000266f8();
-  FUN_0002439c();
-  FUN_00026aa4();
-  FUN_00023d14();
-  FUN_00023f4c();
-  FUN_00024230();
-  FUN_0002622c();
-  FUN_00026850();
-  FUN_0002c14c();
-  FUN_00026fb8();
-  FUN_00027174();
-  FUN_00026dd0();
-  FUN_00025050();
-  FUN_00025884();
+  appendGovernorDroopDataToMessage();
+  transmitEngineStatusMessage();
+  sendEec2WithDefaultValues();
+  initPgn65263FluidLevelPressureHandler();
+  buildEngineTempWithConditionCheck();
+  calculateColdStartFuelOffset();
+  initPgn65270InletExhaustHandler();
+  buildProtocolModeStatusMessage();
+  buildDiagnosticStatusMessage();
+  buildVehicleMaintenanceStatusBits();
+  initJ1939DmHandlerBuffer();
+  sendJ1939ErrorFrame();
+  buildPgn65228Dm3ClearInitMessage();
+  emptyStubFunctionJ1939A();
+  initPgn65256VehicleMaintenanceHandler();
+  updateTorqueLimitFromThreshold();
+  updateGovernorTorqueLimit();
+  selectTorqueLimitByStateMachine();
+  emptyStubFunctionJ1939B();
+  initPgn65227Dm2ResponseHandler();
+  setEngineControllerStateCode();
   enqueueDataRecord(0,0xfef1,100,0x46,0x243f0);
   enqueueDataRecord(0,0xf004,0x14,0,&LAB_00025b04);
   enqueueDataRecord(0,0xf003,0x14,10,0x25d88);
@@ -91745,20 +91748,20 @@ void initDiagnosticBufferPointers(void)
   enqueueDataRecord(0,0xfebd,1000,0x32,0x26694);
   enqueueDataRecord(0,0xf001,100,0x14,0x258f4);
   enqueueDataRecord(0,0xfeff,10000,0x28,0x27108);
-  FUN_00022468();
-  FUN_00023e2c();
-  FUN_00022e3c();
-  FUN_00022f90();
-  FUN_0002352c();
-  FUN_000236b4();
-  FUN_00022590();
-  FUN_00022ab8();
+  initializeGovernorDerivatives();
+  flushJ1939FrameBuffer();
+  processGovernorSpeedControlRequest();
+  processGovernorSpeedRequest();
+  routeGovernorHandlerByTable();
+  setGovernorHandlerDefault();
+  processGovernorSecurityAccessRequest();
+  selectTorqueLimitMode();
   registerDiagnosticDataRecords();
-  FUN_0002232c();
+  initGovernorControlHandler();
   registerWriteServiceDispatch();
   registerWriteServiceHandlers();
   registerReadServiceHandlers();
-  FUN_00021c9c();
+  setProtectionThresholdParameters();
   registerOutputControlOperations();
   uVar1 = DAT_000645a2;
   uVar3 = (uint)DAT_0040a9b4;
@@ -91967,7 +91970,7 @@ void processBufferSequence(void)
   ushort uVar3;
   short local_10 [2];
   
-  FUN_0004c6d4();
+  initProtectionLimitStateVariant();
   uVar3 = 0;
   DAT_003fd45c = 0;
   sVar2 = configureOutputChannels();
@@ -91988,13 +91991,13 @@ void processBufferSequence(void)
   if (DAT_003fd45c != 0) {
     pushToCircularBuffer();
   }
-  local_10[0] = FUN_0004cb84();
+  local_10[0] = configureOutputChannelsStateParam();
   if (local_10[0] != 0) {
     local_10[0] = local_10[0] + DAT_003fdb68;
                     /* WARNING: Subroutine does not return */
     enqueueToCircularBuffer(&DAT_003fdb68,local_10,2);
   }
-  local_10[0] = FUN_0004cb90();
+  local_10[0] = configureOutputChannelsAltState();
                     /* WARNING: Subroutine does not return */
   enqueueToCircularBuffer(0x3fd4be,local_10,2);
 }
