@@ -1083,6 +1083,7 @@ address,name,type,comment
 0x003fe9a4,fault_enable_flags,undefined,
 0x003fe9a6,fuel_condition_flags,undefined,
 0x003fe9b4,boost_status_flags,undefined,
+0x003fe9b8,sensor_channel_fault_bitmap,u16,Bit array for sensor channel fault status (pairs with status_bitmap)
 0x003fe9be,sensor_deviation_flags,undefined,
 0x003fe9c6,fault_status_word_2,undefined,
 0x003fe9c8,fault_source_flags,undefined,
@@ -1532,7 +1533,11 @@ address,name,type,comment
 0x0040ae50,injection_delay_timer,undefined,
 0x0040ae58,diagnostic_action_state,undefined,
 0x0040ae5a,speed_control_error,undefined,
+0x0040ae52,fuel_limit_selected,u16,Selected fuel limit value after min comparison
+0x0040ae54,fuel_limit_protection,u16,Protection system fuel limit
+0x0040ae5e,fuel_limit_source_indicator,u16,Which fuel limit is active (0/2/3/4/0xd = source ID)
 0x0040ae60,service_mode_flag,undefined,
+0x0040ae62,fuel_limit_governor,u16,Governor-based fuel limit value
 0x0040ae78,injection_timing_previous,undefined,
 0x0040ae7a,injection_timing_base,undefined,
 0x0040ae7c,governor_speed_setpoint,undefined,
@@ -1593,6 +1598,9 @@ address,name,type,comment
 0x0040b008,fuel_control_mode_select,undefined,
 0x0040b020,engine_state_timer,undefined,
 0x0040b02e,fuel_rate_accumulator,undefined,
+0x0040b034,fuel_control_limit_value,i16,Selected fuel control limit after mode selection
+0x0040b035,fuel_control_limit_mode,u8,Fuel control limit mode byte
+0x0040b036,fuel_control_mode_output,i16,Fuel control mode selected output value
 0x0040b066,fuel_control_override,undefined,
 0x0040b0a2,protection_output_value,undefined,
 0x0040b0ba,protection_fuel_limit,undefined,
