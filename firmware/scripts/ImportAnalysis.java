@@ -286,18 +286,22 @@ public class ImportAnalysis extends GhidraScript {
 
     /**
      * Maps CSV type strings to Ghidra DataType objects.
-     * Supports: u8, u16, u32, u64, i8, i16, i32, pointer, undefined, undefined1/2/4/8
+     * Supports both our CSV format (u8, u16, etc.) and Ghidra's export format (byte, word, etc.)
      */
     private DataType mapCsvTypeToDataType(String typeStr) {
         switch (typeStr.toLowerCase()) {
-            // Unsigned integers
+            // Unsigned integers (CSV format)
             case "u8":
+            case "byte":
                 return ByteDataType.dataType;
             case "u16":
+            case "word":
                 return WordDataType.dataType;
             case "u32":
+            case "dword":
                 return DWordDataType.dataType;
             case "u64":
+            case "qword":
                 return QWordDataType.dataType;
 
             // Signed integers
