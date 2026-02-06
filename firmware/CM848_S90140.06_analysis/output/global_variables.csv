@@ -989,6 +989,7 @@ address,name,type,comment
 0x003fcbd8,PTR_DAT_003fcbd8,undefined,
 0x003fcbdc,PTR_DAT_003fcbdc,undefined,
 0x003fcce8,PTR_DAT_003fcce8,undefined,
+0x003fcd5a,event_flag_26_counter,u16,Event flag 26 state counter - cleared with event (40 refs)
 0x003fce8f,rpm_peak_tracker,u8,Peak RPM value tracker - updated when conditions met
 0x003fcf36,event_timer_active_count,undefined,
 0x003fcf37,event_timer_toggle_flag,undefined,
@@ -1031,6 +1032,8 @@ address,name,type,comment
 0x003fd8a7,PTR_DAT_003fd8a7,undefined,
 0x003fd902,PTR_DAT_003fd902,undefined,
 0x003fd934,protection_config_word,undefined,
+0x003fda58,sensor_calibration_array,undefined,Array of sensor calibration values indexed by channel (48 refs)
+0x003fdb58,sensor_flag_bitmap_array,undefined,Array of sensor flag bitmaps indexed by channel (41 refs)
 0x003fdba4,hardware_config_mode,undefined,
 0x003fdbae,idle_speed_target,undefined,
 0x003fdbd1,fuel_system_config,undefined,
@@ -1056,6 +1059,7 @@ address,name,type,comment
 0x003fe490,PTR_DAT_003fe490,undefined,
 0x003fe4f9,PTR_DAT_003fe4f9,undefined,
 0x003fe678,fault_entry_table_base,undefined,
+0x003fe682,fault_entry_protection_field,undefined,Fault entry protection value field (50 refs) - struct member
 0x003fe6a2,fault_entry_status_field,undefined,
 0x003fe6b2,PTR_DAT_003fe6b2,undefined,
 0x003fe954,sensor_channel_status_bitmap,u16,Bit array for sensor channel active/fault status
@@ -1108,6 +1112,7 @@ address,name,type,comment
 0x003fea18,fault_accumulator_flags,undefined,
 0x003fea32,operating_mode_flags_2,undefined,
 0x003fea34,fault_history_flags,undefined,
+0x003feb72,sensor_config_flag_array,undefined,Array of sensor config flags (bit 0x10 = enabled) indexed by channel (47 refs)
 0x003fec7a,diagnostic_timer_value,undefined,
 0x003fec7c,diagnostic_sample_value,undefined,
 0x003fec82,data_transfer_byte_count,undefined,
