@@ -989,6 +989,7 @@ address,name,type,comment
 0x003fcbd8,PTR_DAT_003fcbd8,undefined,
 0x003fcbdc,PTR_DAT_003fcbdc,undefined,
 0x003fcce8,PTR_DAT_003fcce8,undefined,
+0x003fce8f,rpm_peak_tracker,u8,Peak RPM value tracker - updated when conditions met
 0x003fcf36,event_timer_active_count,undefined,
 0x003fcf37,event_timer_toggle_flag,undefined,
 0x003fcf38,event_timer_interval,undefined,
@@ -1095,6 +1096,7 @@ address,name,type,comment
 0x003fe9e0,safety_status_flags,undefined,
 0x003fe9e2,operating_condition_flags,undefined,
 0x003fe9e4,fault_condition_flags,undefined,
+0x003fe9e8,system_enable_state_shadow,u16,Shadow copy of system_enable_state (modified in parallel)
 0x003fe9f8,protection_source_flags,undefined,
 0x003fe9fc,fault_pending_word,undefined,
 0x003fe9fe,fault_pending_flags,undefined,
@@ -1271,6 +1273,7 @@ address,name,type,comment
 0x004094ae,diagnostic_value_2,undefined,
 0x00409544,diagnostic_value_1,undefined,
 0x00409d16,engine_operating_state,undefined,
+0x00409e34,injection_timing_limit_value,u16,Injection timing limit compared against calibration
 0x00409e90,current_crank_position,undefined,
 0x0040a152,torque_limit_calculated,undefined,
 0x0040a154,filter_accumulator,undefined,
@@ -1743,6 +1746,7 @@ address,name,type,comment
 0x0040b4d0,fuel_state_word,undefined,
 0x0040b4ff,protection_override_mode,undefined,
 0x0040b526,security_checksum_byte,undefined,
+0x0040b546,protection_condition_active,u16,Protection condition active flag (checked with protection_condition_eval)
 0x0040b552,system_enable_flag_1,undefined,
 0x0040b56e,engine_mode_state,undefined,
 0x0040b5a8,warmup_filter_input,undefined,
