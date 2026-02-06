@@ -494,16 +494,16 @@ address,name,type,comment
 0x003fd45e,PTR_LAB_003fd45e,pointer,
 0x003fd544,eepromCompleteOperation,,
 0x003fd59e,fuel_control_enable_bits,,
-0x003fd5a0,system_mode_flags,,
-0x003fd5a2,system_capability_flags,,
-0x003fd5a6,calibration_feature_flags,,
+0x003fd5a0,system_mode_flags,u16,Bit flags
+0x003fd5a2,system_capability_flags,u32,System capability bit flags (32-bit)
+0x003fd5a6,calibration_feature_flags,u16,Bit flags
 0x003fd5a8,eeprom_calibration_table_ptr,pointer,
-0x003fd5b4,diagnostic_enable_flags,,
-0x003fd5c0,system_status_flags,,
-0x003fd5d6,engine_enable_flags,,
-0x003fd5ec,engine_config_flags,,
+0x003fd5b4,diagnostic_enable_flags,u16,Bit flags
+0x003fd5c0,system_status_flags,u16,Bit flags
+0x003fd5d6,engine_enable_flags,u16,Bit flags
+0x003fd5ec,engine_config_flags,u16,Bit flags
 0x003fd5f0,system_config_word,,
-0x003fd5f2,fuel_rate_config_flags,,
+0x003fd5f2,fuel_rate_config_flags,u16,Bit flags
 0x003fd7de,turbo_control_enable_flag,,
 0x003fd814,torque_limit_default,,
 0x003fd83a,PTR_DAT_003fd83a,pointer,
@@ -530,8 +530,8 @@ address,name,type,comment
 0x003fddaa,fuel_demand_enable_threshold,,
 0x003fe05a,fault_list_count,,
 0x003fe07a,active_fault_count,,
-0x003fe09a,fault_list_status_flags,,
-0x003fe0da,diagnostic_mode_flags,,
+0x003fe09a,fault_list_status_flags,u16,Bit flags
+0x003fe0da,diagnostic_mode_flags,u16,Bit flags
 0x003fe11a,fault_list_write_index,,
 0x003fe11c,fault_list_index,,
 0x003fe11e,fault_list_emission_count,,
@@ -547,52 +547,52 @@ address,name,type,comment
 0x003fe956,sensor_channel_status_bitmap_2,,
 0x003fe964,fault_flag_primary_secondary,,
 0x003fe974,system_enable_state,,
-0x003fe976,condition_monitor_flags,,
+0x003fe976,condition_monitor_flags,u16,Bit flags
 0x003fe978,system_enable_state.reserved_04,,
 0x003fe97a,safety_condition_bits,,
 0x003fe97c,safety_condition_bits_2,,
-0x003fe97e,sensor_diagnostic_flags,,
+0x003fe97e,sensor_diagnostic_flags,u16,Bit flags
 0x003fe980,fault_lamp_status,,
 0x003fe982,emission_related_faults,,
 0x003fe984,system_enable_state.reserved_10,,
 0x003fe986,system_enable_state.reserved_12,,
-0x003fe988,system_fault_flags,,
+0x003fe988,system_fault_flags,u16,Bit flags
 0x003fe98a,system_enable_state.reserved_16,,
 0x003fe98c,system_enable_state.reserved_18,,
 0x003fe98e,protection_enable_word,,
-0x003fe992,safety_enable_flags,,
-0x003fe994,control_enable_flags,,
-0x003fe998,operating_mode_flags,,
-0x003fe99a,communication_fault_flags,,
+0x003fe992,safety_enable_flags,u16,Bit flags
+0x003fe994,control_enable_flags,u16,Bit flags
+0x003fe998,operating_mode_flags,u16,Bit flags
+0x003fe99a,communication_fault_flags,u16,Bit flags
 0x003fe99c,system_status_word,,
-0x003fe99e,engine_status_flags,,
-0x003fe9a0,diagnostic_status_flags,,
-0x003fe9a2,protection_active_flags,,
-0x003fe9a4,fault_enable_flags,,
-0x003fe9a6,fuel_condition_flags,,
-0x003fe9b4,boost_status_flags,,
+0x003fe99e,engine_status_flags,u16,Bit flags
+0x003fe9a0,diagnostic_status_flags,u16,Bit flags
+0x003fe9a2,protection_active_flags,u16,Bit flags
+0x003fe9a4,fault_enable_flags,u16,Bit flags
+0x003fe9a6,fuel_condition_flags,u16,Bit flags
+0x003fe9b4,boost_status_flags,u16,Bit flags
 0x003fe9b8,sensor_channel_fault_bitmap,,
-0x003fe9be,sensor_deviation_flags,,
+0x003fe9be,sensor_deviation_flags,u16,Bit flags
 0x003fe9c6,fault_status_word_2,,
-0x003fe9c8,fault_source_flags,,
+0x003fe9c8,fault_source_flags,u16,Bit flags
 0x003fe9cc,fault_status_word_1,,
-0x003fe9ce,sensor_fault_detect_flags,,
-0x003fe9d0,diagnostic_condition_flags,,
+0x003fe9ce,sensor_fault_detect_flags,u16,Bit flags
+0x003fe9d0,diagnostic_condition_flags,u16,Bit flags
 0x003fe9d8,fuel_demand_fault_conditions,,
-0x003fe9de,engine_condition_flags,,
-0x003fe9e0,safety_status_flags,,
-0x003fe9e2,operating_condition_flags,,
-0x003fe9e4,fault_condition_flags,,
+0x003fe9de,engine_condition_flags,u16,Bit flags
+0x003fe9e0,safety_status_flags,u16,Bit flags
+0x003fe9e2,operating_condition_flags,u16,Bit flags
+0x003fe9e4,fault_condition_flags,u16,Bit flags
 0x003fe9e8,system_enable_state_shadow,,
-0x003fe9f8,protection_source_flags,,
+0x003fe9f8,protection_source_flags,u16,Bit flags
 0x003fe9fc,fault_pending_word,,
-0x003fe9fe,fault_pending_flags,,
-0x003fea00,operating_mode_flags_1,,
+0x003fe9fe,fault_pending_flags,u16,Bit flags
+0x003fea00,operating_mode_flags_1,u16,Bit flags
 0x003fea04,diagnostic_status_shadow,,
 0x003fea0a,fault_status_word_2,,
-0x003fea18,fault_accumulator_flags,,
-0x003fea32,operating_mode_flags_2,,
-0x003fea34,fault_history_flags,,
+0x003fea18,fault_accumulator_flags,u16,Bit flags
+0x003fea32,operating_mode_flags_2,u16,Bit flags
+0x003fea34,fault_history_flags,u16,Bit flags
 0x003feb72,sensor_config_flag_array,,
 0x003fec7a,diagnostic_timer_value,,
 0x003fec7c,diagnostic_sample_value,,
@@ -607,8 +607,8 @@ address,name,type,comment
 0x003fecae,qadc_control_reg_ptr,pointer,
 0x003fecb6,diagnostic_handler_callback,,
 0x003fecba,fault_clear_counter,,
-0x003fecbe,diag_session_flags,,
-0x003fecbf,diag_enable_flags_2,,
+0x003fecbe,diag_session_flags,u16,Bit flags
+0x003fecbf,diag_enable_flags_2,u8,Bit flags
 0x003fecc0,eeprom_status_byte,,
 0x003fecc5,eeprom_checksum_status,,
 0x003fecc8,serial_checksum_input,,
@@ -617,7 +617,7 @@ address,name,type,comment
 0x003fecf1,diag_subcommand_code,,
 0x003fecf2,diag_request_param,,
 0x003fed72,fault_timer_counter,,
-0x003fed74,diagnostic_mode_flags,,
+0x003fed74,diagnostic_mode_flags,u16,Bit flags
 0x003fed78,diagnostic_state_counter,,
 0x003fed7a,fault_accumulator_value,,
 0x003fedee,eeprom_calibration_version,,
@@ -878,7 +878,7 @@ address,name,type,comment
 0x0040a420,boost_torque_offset_ema,,
 0x0040a422,boost_table_lookup_1,,
 0x0040a424,boost_deviation_threshold,,
-0x0040a42c,feature_status_flags,,
+0x0040a42c,feature_status_flags,u16,Bit flags
 0x0040a42e,boost_denominator_min128,,
 0x0040a430,load_normalizer_selector,,
 0x0040a432,boost_compensation_factor,,
@@ -1018,7 +1018,7 @@ address,name,type,comment
 0x0040ae28,injection_retard_value,,
 0x0040ae2a,injection_retard_calc,,
 0x0040ae2c,injection_advance_calc,,
-0x0040ae30,speed_control_mode_flags,,
+0x0040ae30,speed_control_mode_flags,u16,Bit flags
 0x0040ae4c,timing_delay_counter,,
 0x0040ae50,injection_delay_timer,,
 0x0040ae52,fuel_limit_selected,,
@@ -1105,21 +1105,21 @@ address,name,type,comment
 0x0040b0e2,protection_temp_threshold,,
 0x0040b0e6,protection_active_flag,,
 0x0040b0e8,protection_condition_eval,,
-0x0040b0e9,protection_condition_flags_1,,
-0x0040b0ea,protection_load_condition_flags,,
-0x0040b0eb,protection_overtemp_flags,,
+0x0040b0e9,protection_condition_flags_1,u8,Bit flags
+0x0040b0ea,protection_load_condition_flags,u8,Protection bit flags
+0x0040b0eb,protection_overtemp_flags,u8,Bit flags
 0x0040b0ec,protection_condition_eval.reserved_04,,
-0x0040b0ed,protection_condition_flags_3,,
-0x0040b0ee,protection_condition_flags_2,,
+0x0040b0ed,protection_condition_flags_3,u8,Bit flags
+0x0040b0ee,protection_condition_flags_2,u8,Protection bit flags
 0x0040b0ef,protection_condition_eval.reserved_07,,
 0x0040b0f0,protection_threshold_current,,
-0x0040b0f1,protection_action_flags,,
-0x0040b0f2,protection_status_flags,,
-0x0040b0f4,protection_flags,,
-0x0040b0f6,protection_status_flags.flags[2],,
-0x0040b0f7,protection_output_flags,,
-0x0040b0f9,protection_status_flags.rate_limit_flags,,
-0x0040b0fe,protection_rate_limit_flags,,
+0x0040b0f1,protection_action_flags,u8,Bit flags
+0x0040b0f2,protection_status_flags,u8,Protection bit flags
+0x0040b0f4,protection_flags,u8,Protection bit flags
+0x0040b0f6,protection_status_flags.flags[2],u8,Protection bit flags
+0x0040b0f7,protection_output_flags,u8,Bit flags
+0x0040b0f9,protection_status_flags.rate_limit_flags,u8,Bit flags
+0x0040b0fe,protection_rate_limit_flags,u8,Protection bit flags
 0x0040b100,protection_status_code,,
 0x0040b102,protection_status_code.status_code+2,,
 0x0040b104,protection_timeout_counter,,
@@ -1208,7 +1208,7 @@ address,name,type,comment
 0x0040b3a2,fuel_rate_output,,
 0x0040b3bc,calibration_download_active,,
 0x0040b3be,can_rx_data_buffer,,
-0x0040b3d4,j1939_message_match_flags,,
+0x0040b3d4,j1939_message_match_flags,u16,Bit flags
 0x0040b3e1,uds_received_service_id,,
 0x0040b3e2,security_data_byte,,
 0x0040b3e4,security_data_low,,
@@ -1332,7 +1332,7 @@ address,name,type,comment
 0x0040bb0a,fuel_demand_base_value,,
 0x0040bb7a,protection_coolant_condition,,
 0x0040bbb4,protection_setpoint_raw,,
-0x0040bbfa,protection_config_flags,,
+0x0040bbfa,protection_config_flags,u16,Bit flags
 0x0040bd82,sensor_ch0_output_1,,
 0x0040bd84,sensor_ch5_filtered,,
 0x0040bd86,throttle_position_demand,,
@@ -1362,7 +1362,7 @@ address,name,type,comment
 0x0040c053,protection_control_word,,
 0x0040c080,security_flag_byte,,
 0x0040c081,security_state_byte,,
-0x0040c082,protection_mode_flags,,
+0x0040c082,protection_mode_flags,u16,Bit flags
 0x0040c107,diagnostic_state_byte,,
 0x0040c108,diagnostic_buffer_index,,
 0x0040c117,injector_enable_ch0_7,,
@@ -1370,7 +1370,7 @@ address,name,type,comment
 0x0040c119,output_channel_status,,
 0x0040c11a,injector_timing_mode,,
 0x0040c11b,injector_output_ch0,,
-0x0040c11c,injector_fault_flags,,
+0x0040c11c,injector_fault_flags,u16,Bit flags
 0x0040c11d,injector_output_ch1,,
 0x0040c200,PTR_DAT_0040c200,pointer,
 0x0040c262,diagnostic_result_word,,
