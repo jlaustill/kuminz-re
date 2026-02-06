@@ -1006,6 +1006,7 @@ address,name,type,comment
 0x003fcf50,event_timer_ch20_counter,undefined,
 0x003fcf52,event_timer_ch21_counter,undefined,
 0x003fcf54,event_timer_ch16_counter,undefined,
+0x003fd02c,crank_timing_reference,i32,Crank timing reference calculation (47 refs)
 0x003fd110,PTR_DAT_003fd110,undefined,
 0x003fd2c8,PTR_FUN_003fd2c8,undefined,
 0x003fd45e,PTR_LAB_003fd45e,undefined,
@@ -1059,6 +1060,7 @@ address,name,type,comment
 0x003fe6b2,PTR_DAT_003fe6b2,undefined,
 0x003fe954,sensor_channel_status_bitmap,u16,Bit array for sensor channel active/fault status
 0x003fe956,sensor_channel_status_bitmap_2,u16,Secondary sensor channel status bits
+0x003fe964,fault_flag_primary_secondary,u16,Primary/secondary fault flag word (49 refs)
 0x003fe974,system_enable_state,undefined,
 0x003fe976,condition_monitor_flags,undefined,
 0x003fe978,system_enable_state.reserved_04,undefined,
@@ -1586,6 +1588,8 @@ address,name,type,comment
 0x0040af7c,protection_entry_condition,undefined,
 0x0040af7e,rpm_lower_limit,undefined,
 0x0040af80,rpm_upper_limit,undefined,
+0x0040af8b,engine_speed_state_byte,u8,Engine speed state indicator (49 refs)
+0x0040af92,current_speed_value,u16,Current speed value tracked against peak (51 refs)
 0x0040afaa,protection_limit_active,undefined,
 0x0040afac,protection_limit_value,undefined,
 0x0040afae,protection_state_timer,undefined,
@@ -1699,6 +1703,7 @@ address,name,type,comment
 0x0040b288,voltage_compensation_output,undefined,
 0x0040b28c,voltage_error_term,undefined,
 0x0040b290,injection_rate_current,undefined,
+0x0040b292,crank_position_delta,i16,Crank position difference from timing reference (40 refs)
 0x0040b2d4,voltage_filter_output,undefined,
 0x0040b300,PTR_DAT_0040b300,undefined,
 0x0040b31c,voltage_sample_state,undefined,
@@ -1744,6 +1749,7 @@ address,name,type,comment
 0x0040b4c4,injection_state_byte,undefined,
 0x0040b4c8,fuel_control_byte,undefined,
 0x0040b4d0,fuel_state_word,undefined,
+0x0040b4fe,protection_mode_indicator,i8,Protection mode (0x7e=level1 0x7f=level2) - 50 refs
 0x0040b4ff,protection_override_mode,undefined,
 0x0040b526,security_checksum_byte,undefined,
 0x0040b546,protection_condition_active,u16,Protection condition active flag (checked with protection_condition_eval)
@@ -1760,6 +1766,7 @@ address,name,type,comment
 0x0040b640,protection_output_mode,undefined,
 0x0040b648,PTR_DAT_0040b648,undefined,
 0x0040b652,protection_derate_factor,undefined,
+0x0040b664,load_protection_derivative,i32,Load protection derivative term in derate calc (37 refs)
 0x0040b66a,protection_step_counter,undefined,
 0x0040b674,protection_ramp_timer,undefined,
 0x0040b678,protection_ramp_rate,undefined,
