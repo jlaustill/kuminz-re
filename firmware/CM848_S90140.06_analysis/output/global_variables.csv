@@ -243,7 +243,7 @@ address,name,type,comment
 0x003fa692,PTR_DAT_003fa692,pointer,
 0x003fa69e,can_transmit_state,,
 0x003fa6b2,can_state_value,,
-0x003fa6ba,can_error_counter,,
+0x003fa6ba,can_error_counter,u16,Counter
 0x003fa6cc,fuel_demand_rpm_table_ptr,pointer,
 0x003fa6e8,fuel_demand_limited,,
 0x003fa6ea,fuel_demand_lower_boundary,,
@@ -255,7 +255,7 @@ address,name,type,comment
 0x003fa70a,PTR_DAT_003fa70a,pointer,
 0x003fa716,PTR_DAT_003fa716,pointer,
 0x003fa738,PTR_PTR_003fa738,pointer,
-0x003fa74e,can_transmit_counter,,
+0x003fa74e,can_transmit_counter,u16,Counter
 0x003fa750,PTR_DAT_003fa750,pointer,
 0x003fa758,PTR_DAT_003fa758,pointer,
 0x003fa760,PTR_DAT_003fa760,pointer,
@@ -267,7 +267,7 @@ address,name,type,comment
 0x003fa868,fault_scan_index,,
 0x003fa86a,fault_clear_debounce,,
 0x003fa86c,j1939_message_timer,,
-0x003fa872,fault_debounce_counter,,
+0x003fa872,fault_debounce_counter,u16,Counter
 0x003fa884,PTR_DAT_003fa884,pointer,
 0x003fa890,timing_compensation_value,,
 0x003fa8b4,callbackQueueEntry_handler0,,
@@ -276,7 +276,7 @@ address,name,type,comment
 0x003fa9a3,j1939_pgn_handler_table.pgn_byte_0,,
 0x003fa9a4,j1939_pgn_handler_table.handler_func,,
 0x003fa9aa,PTR_j1939_handle_pgn_61443_eec2_003fa9aa,pointer,
-0x003faa62,j1939_pgn_handler_count,,
+0x003faa62,j1939_pgn_handler_count,u16,Counter
 0x003faa74,j1939_handler_entry_ptr,pointer,
 0x003faa78,response_buffer_index,,
 0x003faaea,PTR_DAT_003faaea,pointer,
@@ -298,12 +298,12 @@ address,name,type,comment
 0x003fad4e,PTR_DAT_003fad4e,pointer,
 0x003fad52,PTR_DAT_003fad52,pointer,
 0x003fad7b,diagnostic_mode_byte,,
-0x003fad90,j1939_tx_retry_count,,
+0x003fad90,j1939_tx_retry_count,u16,Counter
 0x003fadb6,PTR_DAT_003fadb6,pointer,
 0x003fadba,PTR_DAT_003fadba,pointer,
 0x003fadf6,PTR_DAT_003fadf6,pointer,
 0x003fadfa,PTR_DAT_003fadfa,pointer,
-0x003fae08,diagnostic_counter_value,,
+0x003fae08,diagnostic_counter_value,u16,Counter
 0x003fae16,PTR_DAT_003fae16,pointer,
 0x003fae1a,PTR_DAT_003fae1a,pointer,
 0x003fae78,PTR_DAT_003fae78,pointer,
@@ -359,10 +359,10 @@ address,name,type,comment
 0x003fb212,PTR_DAT_003fb212,pointer,
 0x003fb21c,PTR_DAT_003fb21c,pointer,
 0x003fb236,fault_scan_state,,
-0x003fb246,fault_debounce_counter,,
+0x003fb246,fault_debounce_counter,u16,Counter
 0x003fb256,calibration_lookup_index,,
 0x003fb260,fault_timer_array,,
-0x003fb268,fault_counter_array,,
+0x003fb268,fault_counter_array,u16,Counter
 0x003fb275,PTR_DAT_003fb275,pointer,
 0x003fb279,PTR_DAT_003fb279,pointer,
 0x003fb27d,PTR_DAT_003fb27d,pointer,
@@ -390,7 +390,7 @@ address,name,type,comment
 0x003fb36e,PTR_DAT_003fb36e,pointer,
 0x003fb372,PTR_j1939PeriodicTimerCallback_003fb372,pointer,
 0x003fb37c,voltage_sample_value,,
-0x003fb380,voltage_sample_counter,,
+0x003fb380,voltage_sample_counter,u16,Counter
 0x003fb3b0,PTR_DAT_003fb3b0,pointer,
 0x003fb3b8,PTR_DAT_003fb3b8,pointer,
 0x003fb3c4,voltage_compensation_term,,
@@ -403,7 +403,7 @@ address,name,type,comment
 0x003fb4b8,PTR_DAT_003fb4b8,pointer,
 0x003fb4c4,PTR_DAT_003fb4c4,pointer,
 0x003fb4c8,PTR_DAT_003fb4c8,pointer,
-0x003fb4e6,warmup_state_counter,,
+0x003fb4e6,warmup_state_counter,u16,Counter
 0x003fb4fc,warmup_enable_flag,,
 0x003fb4fe,warmup_threshold_value,,
 0x003fb506,warmup_filter_state,,
@@ -411,7 +411,7 @@ address,name,type,comment
 0x003fb512,PTR_DAT_003fb512,pointer,
 0x003fb522,fuel_filter_coefficient,,
 0x003fb534,fuel_calculation_temp_1,,
-0x003fb53a,warmup_counter_value,,
+0x003fb53a,warmup_counter_value,u16,Counter
 0x003fb57d,timing_filter_state,,
 0x003fb5c6,PTR_DAT_003fb5c6,pointer,
 0x003fb5d0,rpm_setpoint_limited,,
@@ -470,24 +470,24 @@ address,name,type,comment
 0x003fcbd8,PTR_DAT_003fcbd8,pointer,
 0x003fcbdc,PTR_DAT_003fcbdc,pointer,
 0x003fcce8,PTR_DAT_003fcce8,pointer,
-0x003fcd5a,event_flag_26_counter,,
+0x003fcd5a,event_flag_26_counter,u16,Counter
 0x003fce8f,rpm_peak_tracker,,
-0x003fcf36,event_timer_active_count,,
+0x003fcf36,event_timer_active_count,u16,Counter
 0x003fcf37,event_timer_toggle_flag,,
 0x003fcf38,event_timer_interval,,
-0x003fcf3a,event_timer_ch38_counter,,
-0x003fcf3c,event_timer_ch43_counter,,
-0x003fcf3e,event_timer_ch44_counter,,
-0x003fcf40,event_timer_ch53_counter,,
-0x003fcf42,event_timer_ch04_counter,,
-0x003fcf44,event_timer_ch11_counter,,
+0x003fcf3a,event_timer_ch38_counter,u16,Counter
+0x003fcf3c,event_timer_ch43_counter,u16,Counter
+0x003fcf3e,event_timer_ch44_counter,u16,Counter
+0x003fcf40,event_timer_ch53_counter,u16,Counter
+0x003fcf42,event_timer_ch04_counter,u16,Counter
+0x003fcf44,event_timer_ch11_counter,u16,Counter
 0x003fcf46,event_timer_special_flag,,
-0x003fcf4a,event_timer_ch18_counter,,
-0x003fcf4c,event_timer_ch17_counter,,
-0x003fcf4e,event_timer_ch19_counter,,
-0x003fcf50,event_timer_ch20_counter,,
-0x003fcf52,event_timer_ch21_counter,,
-0x003fcf54,event_timer_ch16_counter,,
+0x003fcf4a,event_timer_ch18_counter,u16,Counter
+0x003fcf4c,event_timer_ch17_counter,u16,Counter
+0x003fcf4e,event_timer_ch19_counter,u16,Counter
+0x003fcf50,event_timer_ch20_counter,u16,Counter
+0x003fcf52,event_timer_ch21_counter,u16,Counter
+0x003fcf54,event_timer_ch16_counter,u16,Counter
 0x003fd02c,crank_timing_reference,,
 0x003fd110,PTR_DAT_003fd110,pointer,
 0x003fd2c8,PTR_FUN_003fd2c8,pointer,
@@ -519,7 +519,7 @@ address,name,type,comment
 0x003fdbae,idle_speed_target,,
 0x003fdbd1,fuel_system_config,,
 0x003fdbde,qadc_conversion_config,,
-0x003fdcaa,calibration_block_count,,
+0x003fdcaa,calibration_block_count,u16,Counter
 0x003fdcc6,calibration_version_id,,
 0x003fdcc8,calibration_checksum_2,,
 0x003fdcca,can_receive_buffer,,
@@ -528,14 +528,14 @@ address,name,type,comment
 0x003fdd7c,torque_curve_base_ptr,pointer,
 0x003fdda6,vehicle_speed_mode,,
 0x003fddaa,fuel_demand_enable_threshold,,
-0x003fe05a,fault_list_count,,
-0x003fe07a,active_fault_count,,
+0x003fe05a,fault_list_count,u16,Counter
+0x003fe07a,active_fault_count,u16,Counter
 0x003fe09a,fault_list_status_flags,u16,Bit flags
 0x003fe0da,diagnostic_mode_flags,u16,Bit flags
 0x003fe11a,fault_list_write_index,,
 0x003fe11c,fault_list_index,,
-0x003fe11e,fault_list_emission_count,,
-0x003fe120,emission_fault_count,,
+0x003fe11e,fault_list_emission_count,u16,Counter
+0x003fe120,emission_fault_count,u16,Counter
 0x003fe197,PTR_DAT_003fe197,pointer,
 0x003fe490,PTR_DAT_003fe490,pointer,
 0x003fe4f9,PTR_DAT_003fe4f9,pointer,
@@ -596,17 +596,17 @@ address,name,type,comment
 0x003feb72,sensor_config_flag_array,,
 0x003fec7a,diagnostic_timer_value,,
 0x003fec7c,diagnostic_sample_value,,
-0x003fec82,data_transfer_byte_count,,
-0x003fec84,data_transfer_byte_count.reserved_02,,
-0x003fec86,data_transfer_byte_count.reserved_04,,
-0x003fec8a,data_transfer_byte_count.state,,
-0x003fec8b,data_transfer_byte_count.state+1,,
+0x003fec82,data_transfer_byte_count,u16,Counter
+0x003fec84,data_transfer_byte_count.reserved_02,u16,Counter
+0x003fec86,data_transfer_byte_count.reserved_04,u16,Counter
+0x003fec8a,data_transfer_byte_count.state,u16,Counter
+0x003fec8b,data_transfer_byte_count.state+1,u8,Counter byte
 0x003fec8c,data_transfer_state,,
-0x003fec8d,data_transfer_byte_count.status+1,,
+0x003fec8d,data_transfer_byte_count.status+1,u8,Counter byte
 0x003fec8e,data_transfer_status,,
 0x003fecae,qadc_control_reg_ptr,pointer,
 0x003fecb6,diagnostic_handler_callback,,
-0x003fecba,fault_clear_counter,,
+0x003fecba,fault_clear_counter,u16,Counter
 0x003fecbe,diag_session_flags,u16,Bit flags
 0x003fecbf,diag_enable_flags_2,u8,Bit flags
 0x003fecc0,eeprom_status_byte,,
@@ -616,9 +616,9 @@ address,name,type,comment
 0x003fecd0,qspi_config_value,,
 0x003fecf1,diag_subcommand_code,,
 0x003fecf2,diag_request_param,,
-0x003fed72,fault_timer_counter,,
+0x003fed72,fault_timer_counter,u16,Counter
 0x003fed74,diagnostic_mode_flags,u16,Bit flags
-0x003fed78,diagnostic_state_counter,,
+0x003fed78,diagnostic_state_counter,u16,Counter
 0x003fed7a,fault_accumulator_value,,
 0x003fedee,eeprom_calibration_version,,
 0x003fedef,eeprom_operation_state,,
@@ -767,7 +767,7 @@ address,name,type,comment
 0x0040a158,fuel_demand_actual,,
 0x0040a160,fuel_blend_weight_dynamic,,
 0x0040a168,fuel_trim_result_storage,,
-0x0040a16a,engine_mode_ramp_counter,,
+0x0040a16a,engine_mode_ramp_counter,u16,Counter
 0x0040a184,intake_temp_fuel_trim,,
 0x0040a186,coolant_temp_fuel_trim,,
 0x0040a188,temp_fuel_trim_max,,
@@ -815,7 +815,7 @@ address,name,type,comment
 0x0040a32c,torque_output_value,,
 0x0040a352,fuel_efficiency_trim,,
 0x0040a354,fuel_rate_limit_value,,
-0x0040a356,fuel_counter_value,,
+0x0040a356,fuel_counter_value,u16,Counter
 0x0040a364,fuel_trim_multiplier,,
 0x0040a366,fuel_trim_value,,
 0x0040a376,turbo_blend_base_value,,
@@ -931,7 +931,7 @@ address,name,type,comment
 0x0040a586,fuel_demand_override_value,,
 0x0040a588,fuel_demand_override_active,,
 0x0040a58a,fuel_demand_rate_limited,,
-0x0040a58c,fuel_demand_override_countdown,,
+0x0040a58c,fuel_demand_override_countdown,u16,Counter
 0x0040a590,speed_demand_filtered,,
 0x0040a592,fuel_demand_delta,,
 0x0040a594,speed_error_value,,
@@ -1019,7 +1019,7 @@ address,name,type,comment
 0x0040ae2a,injection_retard_calc,,
 0x0040ae2c,injection_advance_calc,,
 0x0040ae30,speed_control_mode_flags,u16,Bit flags
-0x0040ae4c,timing_delay_counter,,
+0x0040ae4c,timing_delay_counter,u16,Counter
 0x0040ae50,injection_delay_timer,,
 0x0040ae52,fuel_limit_selected,,
 0x0040ae54,fuel_limit_protection,,
@@ -1122,7 +1122,7 @@ address,name,type,comment
 0x0040b0fe,protection_rate_limit_flags,u8,Protection bit flags
 0x0040b100,protection_status_code,,
 0x0040b102,protection_status_code.status_code+2,,
-0x0040b104,protection_timeout_counter,,
+0x0040b104,protection_timeout_counter,u16,Counter
 0x0040b106,protection_state1_timer_value,,
 0x0040b108,protection_state2_timer_value,,
 0x0040b110,protection_monitored_value,,
@@ -1145,13 +1145,13 @@ address,name,type,comment
 0x0040b134,protection_threshold_exceeded,,
 0x0040b135,protection_threshold_exceeded+1,,
 0x0040b138,protection_timer_state,,
-0x0040b13a,protection_delay_count,,
+0x0040b13a,protection_delay_count,u16,Counter
 0x0040b13c,protection_time_exceeded,,
 0x0040b13e,protection_recovery_timer,,
 0x0040b140,protection_cooldown_active,,
 0x0040b142,protection_warmup_active,,
 0x0040b144,protection_recovery_flag,,
-0x0040b146,protection_warmup_counter,,
+0x0040b146,protection_warmup_counter,u16,Counter
 0x0040b14e,protection_output_raw,,
 0x0040b150,protection_output_filtered,,
 0x0040b152,fuel_timing_param_1,,
@@ -1161,9 +1161,9 @@ address,name,type,comment
 0x0040b184,command_buffer_pointer,,
 0x0040b196,current_command_code,,
 0x0040b1f0,engine_load_percent,,
-0x0040b1f2,protection_time_counter,,
+0x0040b1f2,protection_time_counter,u16,Counter
 0x0040b1f4,protection_system_state,,
-0x0040b1fa,protection_counter_value,,
+0x0040b1fa,protection_counter_value,u16,Counter
 0x0040b1fc,protection_timer_value,,
 0x0040b21c,fuel_blend_factor_2,,
 0x0040b224,fuel_demand_filtered_2,,
@@ -1197,8 +1197,8 @@ address,name,type,comment
 0x0040b33c,voltage_mode_state,,
 0x0040b34e,can_message_index,,
 0x0040b34f,can_message_buffer,,
-0x0040b350,can_message_counter,,
-0x0040b351,can_message_index.message_counter+1,,
+0x0040b350,can_message_counter,u16,Counter
+0x0040b351,can_message_index.message_counter+1,u8,Counter byte
 0x0040b352,j1939_dm1_pending,,
 0x0040b36e,speed_interpolation_index,,
 0x0040b377,PTR_DAT_0040b377,pointer,
@@ -1252,7 +1252,7 @@ address,name,type,comment
 0x0040b648,PTR_DAT_0040b648,pointer,
 0x0040b652,protection_derate_factor,,
 0x0040b664,load_protection_derivative,,
-0x0040b66a,protection_step_counter,,
+0x0040b66a,protection_step_counter,u16,Counter
 0x0040b674,protection_ramp_timer,,
 0x0040b678,protection_ramp_rate,,
 0x0040b67a,protection_mode_timer,,
@@ -1274,11 +1274,11 @@ address,name,type,comment
 0x0040b752,cbd_accel_buffer_4,,
 0x0040b754,cbd_accel_buffer_5,,
 0x0040b756,cbd_accel_buffer_6,,
-0x0040b77c,tpu_error_counter,,
+0x0040b77c,tpu_error_counter,u16,Counter
 0x0040b784,timing_rate_limit,,
 0x0040b788,timing_accumulator,,
 0x0040b78e,timing_error_value,,
-0x0040b790,engine_sync_pulse_count,,
+0x0040b790,engine_sync_pulse_count,u32,Engine sync pulse counter (32-bit)
 0x0040b794,timing_filter_output,,
 0x0040b79e,tpu_state_variable,,
 0x0040b7a2,governor_error_integral,,
@@ -1294,11 +1294,11 @@ address,name,type,comment
 0x0040b7d6,governor_output_demand,,
 0x0040b7d8,governor_active_flag,,
 0x0040b7ec,fault_scan_current_index,,
-0x0040b7ee,engine_sync_tooth_count,,
+0x0040b7ee,engine_sync_tooth_count,u16,Counter
 0x0040b7f2,engine_position_error,,
 0x0040b7f6,engine_timing_error,,
 0x0040b804,fuel_demand_governor,,
-0x0040b80a,engine_start_counter,,
+0x0040b80a,engine_start_counter,u16,Counter
 0x0040b80c,engine_crank_state,,
 0x0040b80e,engine_cranking_flag,,
 0x0040b810,engine_run_state,,
@@ -1306,7 +1306,7 @@ address,name,type,comment
 0x0040b85e,timing_offset_value,,
 0x0040b860,timing_output_value,,
 0x0040b87f,engine_sync_status,,
-0x0040b880,engine_sync_reference_count,,
+0x0040b880,engine_sync_reference_count,u16,Counter
 0x0040b882,engine_speed_raw,,
 0x0040b884,engine_sync_status.reserved_05,,
 0x0040b89c,diagnostic_data_word_1,,
@@ -1314,11 +1314,11 @@ address,name,type,comment
 0x0040b89f,diagnostic_data_byte_4,,
 0x0040b8a0,engine_timing_raw,,
 0x0040b8ae,diagnostic_data_word_2,,
-0x0040b8b0,engine_position_counter,,
+0x0040b8b0,engine_position_counter,u16,Counter
 0x0040b8b2,engine_position_delta,,
 0x0040b8b4,timing_correction_factor,,
 0x0040b8b6,diagnostic_data_word_3,,
-0x0040b92e,engine_tooth_counter,,
+0x0040b92e,engine_tooth_counter,u16,Counter
 0x0040b930,engine_timing_reference,,
 0x0040b9cb,PTR_DAT_0040b9cb,pointer,
 0x0040bab8,load_ema_denominator,,
