@@ -141,9 +141,19 @@ Both firmwares use the same CSV structure in `output/`:
 ## Guidelines
 
 - **CSV is source of truth** - Never edit Ghidra directly
+- **Export overwrites CSVs** - `./analyze.sh export` regenerates CSVs from Ghidra, overwriting local edits. Edit CSVs, run `import`, then `export` only to get updated decompilation.
 - **Verify before commit** - Check decompiled output after applying changes
 - **Decimal in names** - Use decimal, not hex, in variable/function names
 - **Function must exist in Ghidra** - CSV renames only work for addresses Ghidra recognizes as functions
+
+### global_variables.csv Maintenance
+
+Periodically clean garbage entries from `global_variables.csv`:
+- **Switch tables** (`switchD`, `caseD_*`, `default`) - Ghidra jump table artifacts, not real variables
+- **SUB_ entries** - Invalid addresses outside ROM/Flash ranges (e.g., 0x8a670005)
+- **mpc555_registers.csv duplicates** - Untyped entries already defined in hardware register CSV
+
+Use Python CSV module to batch-categorize and clean (see session history for script pattern).
 
 ---
 
