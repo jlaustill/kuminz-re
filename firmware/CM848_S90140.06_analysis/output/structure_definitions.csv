@@ -612,3 +612,60 @@ timing_mode_control_t,,fuel_source_mode_11_state,word,2,Fuel source mode 11 stat
 timing_mode_control_t,,fuel_source_mode_11_timer,word,2,Fuel source mode 11 timer,,verified
 timing_mode_control_t,,fuel_mode_transition_state,word,2,Fuel mode transition state,,verified
 timing_mode_control_t,,fuel_mode_transition_timer,word,2,Fuel mode transition timer,,verified
+# TSC1 Message Buffer - parsed J1939 TSC1 (Torque/Speed Control) message data
+# Populated by j1939ProcessTorqueSpeedControl when TSC1 messages arrive
+# Total size: 32 bytes (0x003fa982-0x003fa9a1)
+tsc1_message_t,0x003fa982,speed_previous,word,2,Previous speed request value stored,,verified
+tsc1_message_t,0x003fa982,byte0_control_mode,byte,1,TSC1 byte 0: Engine Override Control Mode (bits 0-1=mode 2-3=speed_cond 4-5=coast),,verified
+tsc1_message_t,0x003fa982,bytes12_requested_speed,word,2,TSC1 bytes 1-2: Requested speed (0.125 RPM/bit little-endian),,verified
+tsc1_message_t,0x003fa982,reserved_05,byte,1,Gap/reserved byte,,needs_review
+tsc1_message_t,0x003fa982,byte4_priority,byte,1,TSC1 byte 4: Override Control Mode Priority/Status,,verified
+tsc1_message_t,0x003fa982,reserved_07,byte,3,Gap/reserved bytes,,needs_review
+tsc1_message_t,0x003fa982,auxiliary_state,byte,1,TSC1 auxiliary state byte,,verified
+tsc1_message_t,0x003fa982,reserved_0b,byte,9,Gap/reserved bytes to offset 0x14,,needs_review
+tsc1_message_t,0x003fa982,control_word,byte,1,TSC1 control word from message,,verified
+tsc1_message_t,0x003fa982,requested_speed,word,2,TSC1 requested speed value (0.125 RPM/bit),,verified
+tsc1_message_t,0x003fa982,requested_torque,byte,1,TSC1 requested torque percentage,,verified
+tsc1_message_t,0x003fa982,reserved_18,byte,4,Gap/reserved bytes,,needs_review
+tsc1_message_t,0x003fa982,priority_byte,byte,1,TSC1 message priority level,,verified
+tsc1_message_t,0x003fa982,speed_stored,word,2,TSC1 requested speed stored for governor,,verified
+tsc1_message_t,0x003fa982,torque_stored,byte,1,TSC1 requested torque stored for governor,,verified
+# TSC1 State Machine - TSC1 control state variables for governor
+# Used by j1939ProcessTorqueSpeedControl, selectTorqueLimitMode, governorSpeedControl
+# Total size: 76 bytes (0x0040ae02-0x0040ae4d)
+tsc1_state_t,0x0040ae02,speed_setpoint,dword,4,TSC1 speed setpoint (low word=torque% high word=speed limit),,verified
+tsc1_state_t,0x0040ae02,control_flags,dword,4,TSC1 governor control flags (low=mode high=limit),,verified
+tsc1_state_t,0x0040ae02,torque_limit_calc,word,2,Calculated torque limit from TSC1 request (signed),,verified
+tsc1_state_t,0x0040ae02,speed_control_mode,word,2,Speed control mode bits extracted from TSC1 byte 0,,verified
+tsc1_state_t,0x0040ae02,active_state,dword,4,TSC1 active state (low=control_active high=override_state),,verified
+tsc1_state_t,0x0040ae02,mode_active,word,2,TSC1 mode active flag (1=TSC1 control active),,verified
+tsc1_state_t,0x0040ae02,disable_override,word,2,TSC1 disable override flag (1=disable 0=enable),,verified
+tsc1_state_t,0x0040ae02,handler_initialized,word,2,TSC1 handler initialized flag,,verified
+tsc1_state_t,0x0040ae02,speed_control_target,word,2,Speed control target setpoint (0.125 RPM/bit),,verified
+tsc1_state_t,0x0040ae02,coast_brake_mode,byte,1,TSC1 coast/brake mode flag (from byte 0 bits 4-5),,verified
+tsc1_state_t,0x0040ae02,address_filter,byte,1,TSC1 source address filter value (0xFF=any),,verified
+tsc1_state_t,0x0040ae02,reserved_1c,byte,12,Gap to timer region,,needs_review
+tsc1_state_t,0x0040ae02,torque_mode_timer,word,2,TSC1 torque mode timeout counter,,verified
+tsc1_state_t,0x0040ae02,torque_active_timer,word,2,TSC1 torque active timeout counter,,verified
+tsc1_state_t,0x0040ae02,speed_override_timer,word,2,TSC1 speed override timeout counter,,verified
+tsc1_state_t,0x0040ae02,torque_limit_timer,word,2,TSC1 torque limit timeout counter,,verified
+tsc1_state_t,0x0040ae02,speed_mode_flag,word,2,TSC1 speed mode flag,,verified
+tsc1_state_t,0x0040ae02,mode_timeout,word,2,TSC1 mode timeout counter,,verified
+tsc1_state_t,0x0040ae02,speed_cmd_timeout,word,2,TSC1 speed command timeout counter,,verified
+tsc1_state_t,0x0040ae02,override_timeout,word,2,TSC1 override timeout counter,,verified
+tsc1_state_t,0x0040ae02,reserved_36,byte,3,Gap to source address,,needs_review
+tsc1_state_t,0x0040ae02,source_address,byte,1,TSC1 source address of current command,,verified
+tsc1_state_t,0x0040ae02,config_entry_ptr,dword,4,Pointer to TSC1 configuration table entry,,verified
+tsc1_state_t,0x0040ae02,active_config_ptr,dword,4,Pointer to active TSC1 configuration,,verified
+tsc1_state_t,0x0040ae02,secondary_config_ptr,dword,4,Pointer to secondary TSC1 configuration,,verified
+tsc1_state_t,0x0040ae02,torque_limit_active,word,2,TSC1 torque limit mode active flag,,verified
+tsc1_state_t,0x0040ae02,message_timeout,word,2,TSC1 message timeout counter (lost message detection),,verified
+# Governor Control State - speed/torque governor state machine
+# Used by governorSpeedControl, processGovernorModeTransition
+# Total size: 12 bytes (0x0040adf4-0x0040adff)
+governor_control_t,0x0040adf4,tsc1_control_word,word,2,TSC1 control word stored from message,,verified
+governor_control_t,0x0040adf4,mode_request,word,2,Governor mode request (GOVERNOR_MODE enum),,verified
+governor_control_t,0x0040adf4,mode,word,2,Current governor mode (GOVERNOR_MODE enum),,verified
+governor_control_t,0x0040adf4,torque_limit_select,word,2,Torque limit mode selection (0=off 1=active),,verified
+governor_control_t,0x0040adf4,disable_control,word,2,TSC1 disable control flag,,verified
+governor_control_t,0x0040adf4,limit_state,dword,4,TSC1 limit state (low=torque_limit high=speed_limit),,verified
