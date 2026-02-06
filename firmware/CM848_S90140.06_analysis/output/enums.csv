@@ -517,6 +517,34 @@ J1939_THROTTLE_ENABLE,3,ASG_THROTTLE_COEFF_1,ASG throttle mode compensation filt
 J1939_THROTTLE_ENABLE,4,ASG_THROTTLE_COEFF_2,ASG throttle mode compensation filter coef 2,1
 J1939_THROTTLE_ENABLE,5,ASG_THROTTLE_COEFF_3,ASG throttle mode compensation filter coef 3,1
 
+# TSC1 Engine Override Control Mode (Byte 0 bits 0-1)
+# Defines what type of control the external device is requesting
+TSC1_ENGINE_CONTROL_MODE,0,DISABLE_OVERRIDE,Disable speed/torque override - return to pedal control,1
+TSC1_ENGINE_CONTROL_MODE,1,SPEED_CONTROL,Speed control mode - target engine speed,1
+TSC1_ENGINE_CONTROL_MODE,2,TORQUE_CONTROL,Torque control mode - limit engine torque,1
+TSC1_ENGINE_CONTROL_MODE,3,SPEED_TORQUE_LIMIT,Speed/torque limit mode - apply both limits,1
+
+# TSC1 Speed Control Condition (Byte 0 bits 2-3)
+# Specifies how the speed request should be interpreted
+TSC1_SPEED_CONDITION,0,NO_SPEED_CONDITION,No speed condition - use requested speed directly,1
+TSC1_SPEED_CONDITION,1,APPLY_AS_LIMIT,Apply requested speed as upper limit only,1
+TSC1_SPEED_CONDITION,2,NOT_AVAILABLE,Speed condition not available,1
+TSC1_SPEED_CONDITION,3,DONT_CARE,Speed condition don't care,1
+
+# TSC1 Coast/Brake Override (Byte 0 bits 4-5)
+# Controls engine braking behavior during deceleration
+TSC1_COAST_BRAKE_MODE,0,NO_COAST_BRAKE,No coast/brake override active,1
+TSC1_COAST_BRAKE_MODE,1,COAST_DECEL,Coast deceleration mode active,1
+TSC1_COAST_BRAKE_MODE,2,ENGINE_BRAKE,Engine brake / exhaust brake active,1
+TSC1_COAST_BRAKE_MODE,3,RESERVED,Reserved coast/brake mode,1
+
+# Governor Mode States
+# Internal governor state machine values
+GOVERNOR_MODE,0,GOV_DISABLED,Governor control disabled - pedal/throttle control,1
+GOVERNOR_MODE,1,GOV_SPEED_CONTROL,Speed control mode - maintain target RPM,1
+GOVERNOR_MODE,2,GOV_TORQUE_CONTROL,Torque control mode - limit engine torque,1
+GOVERNOR_MODE,3,GOV_SPEED_TORQUE,Combined speed and torque control mode,1
+
 # J1939 Diagnostic Protocol Modes
 J1939_DIAGNOSTIC_PROTOCOL,1,CALTERM_COMMUNICATION,CalTerm parameter read/write via J1939,1
 J1939_DIAGNOSTIC_PROTOCOL,2,INSITE_COMMUNICATION,Insite live data monitoring via J1939,1
