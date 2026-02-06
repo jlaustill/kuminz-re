@@ -982,13 +982,15 @@ address,name,type,comment
 0x003fbd7c,PTR_DAT_003fbd7c,undefined,
 0x003fbdcf,PTR_DAT_003fbdcf,undefined,
 0x003fc4b3,PTR_DAT_003fc4b3,undefined,
-0x003fc688,SUB_003fc688,undefined,
-0x003fc6f4,SUB_003fc6f4,undefined,
-0x003fc77c,SUB_003fc77c,undefined,
+0x003fc688,eepromPollReady,undefined,RAM function - called in EEPROM wait loops
+0x003fc6f4,eepromCheckStatus,undefined,RAM function - returns status (0=busy) in EEPROM ops
+0x003fc77c,eepromWaitCycle,undefined,RAM function - EEPROM timing wait
 0x003fcbca,PTR_DAT_003fcbca,undefined,
 0x003fcbd8,PTR_DAT_003fcbd8,undefined,
 0x003fcbdc,PTR_DAT_003fcbdc,undefined,
 0x003fcce8,PTR_DAT_003fcce8,undefined,
+0x003fcd5a,event_flag_26_counter,u16,Event flag 26 state counter - cleared with event (40 refs)
+0x003fce8f,rpm_peak_tracker,u8,Peak RPM value tracker - updated when conditions met
 0x003fcf36,event_timer_active_count,undefined,
 0x003fcf37,event_timer_toggle_flag,undefined,
 0x003fcf38,event_timer_interval,undefined,
@@ -1005,10 +1007,11 @@ address,name,type,comment
 0x003fcf50,event_timer_ch20_counter,undefined,
 0x003fcf52,event_timer_ch21_counter,undefined,
 0x003fcf54,event_timer_ch16_counter,undefined,
+0x003fd02c,crank_timing_reference,i32,Crank timing reference calculation (47 refs)
 0x003fd110,PTR_DAT_003fd110,undefined,
 0x003fd2c8,PTR_FUN_003fd2c8,undefined,
 0x003fd45e,PTR_LAB_003fd45e,undefined,
-0x003fd544,SUB_003fd544,undefined,
+0x003fd544,eepromCompleteOperation,undefined,RAM function - finalize EEPROM operation
 0x003fd59e,fuel_control_enable_bits,undefined,
 0x003fd5a0,system_mode_flags,undefined,
 0x003fd5a2,system_capability_flags,undefined,
@@ -1029,6 +1032,8 @@ address,name,type,comment
 0x003fd8a7,PTR_DAT_003fd8a7,undefined,
 0x003fd902,PTR_DAT_003fd902,undefined,
 0x003fd934,protection_config_word,undefined,
+0x003fda58,sensor_calibration_array,undefined,Array of sensor calibration values indexed by channel (48 refs)
+0x003fdb58,sensor_flag_bitmap_array,undefined,Array of sensor flag bitmaps indexed by channel (41 refs)
 0x003fdba4,hardware_config_mode,undefined,
 0x003fdbae,idle_speed_target,undefined,
 0x003fdbd1,fuel_system_config,undefined,
@@ -1054,8 +1059,12 @@ address,name,type,comment
 0x003fe490,PTR_DAT_003fe490,undefined,
 0x003fe4f9,PTR_DAT_003fe4f9,undefined,
 0x003fe678,fault_entry_table_base,undefined,
+0x003fe682,fault_entry_protection_field,undefined,Fault entry protection value field (50 refs) - struct member
 0x003fe6a2,fault_entry_status_field,undefined,
 0x003fe6b2,PTR_DAT_003fe6b2,undefined,
+0x003fe954,sensor_channel_status_bitmap,u16,Bit array for sensor channel active/fault status
+0x003fe956,sensor_channel_status_bitmap_2,u16,Secondary sensor channel status bits
+0x003fe964,fault_flag_primary_secondary,u16,Primary/secondary fault flag word (49 refs)
 0x003fe974,system_enable_state,undefined,
 0x003fe976,condition_monitor_flags,undefined,
 0x003fe978,system_enable_state.reserved_04,undefined,
@@ -1081,6 +1090,7 @@ address,name,type,comment
 0x003fe9a4,fault_enable_flags,undefined,
 0x003fe9a6,fuel_condition_flags,undefined,
 0x003fe9b4,boost_status_flags,undefined,
+0x003fe9b8,sensor_channel_fault_bitmap,u16,Bit array for sensor channel fault status (pairs with status_bitmap)
 0x003fe9be,sensor_deviation_flags,undefined,
 0x003fe9c6,fault_status_word_2,undefined,
 0x003fe9c8,fault_source_flags,undefined,
@@ -1092,6 +1102,7 @@ address,name,type,comment
 0x003fe9e0,safety_status_flags,undefined,
 0x003fe9e2,operating_condition_flags,undefined,
 0x003fe9e4,fault_condition_flags,undefined,
+0x003fe9e8,system_enable_state_shadow,u16,Shadow copy of system_enable_state (modified in parallel)
 0x003fe9f8,protection_source_flags,undefined,
 0x003fe9fc,fault_pending_word,undefined,
 0x003fe9fe,fault_pending_flags,undefined,
@@ -1101,6 +1112,7 @@ address,name,type,comment
 0x003fea18,fault_accumulator_flags,undefined,
 0x003fea32,operating_mode_flags_2,undefined,
 0x003fea34,fault_history_flags,undefined,
+0x003feb72,sensor_config_flag_array,undefined,Array of sensor config flags (bit 0x10 = enabled) indexed by channel (47 refs)
 0x003fec7a,diagnostic_timer_value,undefined,
 0x003fec7c,diagnostic_sample_value,undefined,
 0x003fec82,data_transfer_byte_count,undefined,
@@ -1124,6 +1136,8 @@ address,name,type,comment
 0x003fecf1,diag_subcommand_code,undefined,
 0x003fecf2,diag_request_param,undefined,
 0x003fed72,fault_timer_counter,undefined,
+0x003fed74,diagnostic_mode_flags,u16,Diagnostic/override mode status (bit 0x100 = override active)
+0x003fed78,diagnostic_state_counter,u16,Diagnostic state machine counter
 0x003fed7a,fault_accumulator_value,undefined,
 0x003fedee,eeprom_calibration_version,undefined,
 0x003fedef,eeprom_operation_state,undefined,
@@ -1266,6 +1280,7 @@ address,name,type,comment
 0x004094ae,diagnostic_value_2,undefined,
 0x00409544,diagnostic_value_1,undefined,
 0x00409d16,engine_operating_state,undefined,
+0x00409e34,injection_timing_limit_value,u16,Injection timing limit compared against calibration
 0x00409e90,current_crank_position,undefined,
 0x0040a152,torque_limit_calculated,undefined,
 0x0040a154,filter_accumulator,undefined,
@@ -1477,6 +1492,7 @@ address,name,type,comment
 0x0040a8d1,sensor_raw_ch7,undefined,
 0x0040a8d3,PTR_sensor_raw_ch7_0040a8d3,undefined,
 0x0040aa84,fault_active_indicator,undefined,
+0x0040aac0,fuel_efficiency_base_value,u32,Base value for fuel efficiency calculations (referenced 130x)
 0x0040abc6,PTR_DAT_0040abc6,undefined,
 0x0040ac16,PTR_DAT_0040ac16,undefined,
 0x0040ac54,PTR_DAT_0040ac54,undefined,
@@ -1527,7 +1543,11 @@ address,name,type,comment
 0x0040ae50,injection_delay_timer,undefined,
 0x0040ae58,diagnostic_action_state,undefined,
 0x0040ae5a,speed_control_error,undefined,
+0x0040ae52,fuel_limit_selected,u16,Selected fuel limit value after min comparison
+0x0040ae54,fuel_limit_protection,u16,Protection system fuel limit
+0x0040ae5e,fuel_limit_source_indicator,u16,Which fuel limit is active (0/2/3/4/0xd = source ID)
 0x0040ae60,service_mode_flag,undefined,
+0x0040ae62,fuel_limit_governor,u16,Governor-based fuel limit value
 0x0040ae78,injection_timing_previous,undefined,
 0x0040ae7a,injection_timing_base,undefined,
 0x0040ae7c,governor_speed_setpoint,undefined,
@@ -1573,6 +1593,8 @@ address,name,type,comment
 0x0040af7c,protection_entry_condition,undefined,
 0x0040af7e,rpm_lower_limit,undefined,
 0x0040af80,rpm_upper_limit,undefined,
+0x0040af8b,engine_speed_state_byte,u8,Engine speed state indicator (49 refs)
+0x0040af92,current_speed_value,u16,Current speed value tracked against peak (51 refs)
 0x0040afaa,protection_limit_active,undefined,
 0x0040afac,protection_limit_value,undefined,
 0x0040afae,protection_state_timer,undefined,
@@ -1588,6 +1610,9 @@ address,name,type,comment
 0x0040b008,fuel_control_mode_select,undefined,
 0x0040b020,engine_state_timer,undefined,
 0x0040b02e,fuel_rate_accumulator,undefined,
+0x0040b034,fuel_control_limit_value,i16,Selected fuel control limit after mode selection
+0x0040b035,fuel_control_limit_mode,u8,Fuel control limit mode byte
+0x0040b036,fuel_control_mode_output,i16,Fuel control mode selected output value
 0x0040b066,fuel_control_override,undefined,
 0x0040b0a2,protection_output_value,undefined,
 0x0040b0ba,protection_fuel_limit,undefined,
@@ -1652,6 +1677,8 @@ address,name,type,comment
 0x0040b152,fuel_timing_param_1,undefined,
 0x0040b154,fuel_timing_param_2,undefined,
 0x0040b17a,state_handler_function,undefined,
+0x0040b183,command_buffer_index,u8,Command queue length/index counter (376 refs - highest in codebase)
+0x0040b184,command_buffer_pointer,undefined4,Pointer to current position in command buffer
 0x0040b196,current_command_code,undefined,
 0x0040b1f0,engine_load_percent,undefined,
 0x0040b1f2,protection_time_counter,undefined,
@@ -1681,6 +1708,7 @@ address,name,type,comment
 0x0040b288,voltage_compensation_output,undefined,
 0x0040b28c,voltage_error_term,undefined,
 0x0040b290,injection_rate_current,undefined,
+0x0040b292,crank_position_delta,i16,Crank position difference from timing reference (40 refs)
 0x0040b2d4,voltage_filter_output,undefined,
 0x0040b300,PTR_DAT_0040b300,undefined,
 0x0040b31c,voltage_sample_state,undefined,
@@ -1692,6 +1720,7 @@ address,name,type,comment
 0x0040b350,can_message_counter,undefined,
 0x0040b351,can_message_index.message_counter+1,undefined,
 0x0040b352,j1939_dm1_pending,undefined,
+0x0040b36e,speed_interpolation_index,u16,Index for speed-based table interpolation (120 refs)
 0x0040b377,PTR_DAT_0040b377,undefined,
 0x0040b37b,PTR_DAT_0040b37b,undefined,
 0x0040b37f,PTR_j1939MessageResponseCallback_0040b37f,undefined,
@@ -1725,8 +1754,10 @@ address,name,type,comment
 0x0040b4c4,injection_state_byte,undefined,
 0x0040b4c8,fuel_control_byte,undefined,
 0x0040b4d0,fuel_state_word,undefined,
+0x0040b4fe,protection_mode_indicator,i8,Protection mode (0x7e=level1 0x7f=level2) - 50 refs
 0x0040b4ff,protection_override_mode,undefined,
 0x0040b526,security_checksum_byte,undefined,
+0x0040b546,protection_condition_active,u16,Protection condition active flag (checked with protection_condition_eval)
 0x0040b552,system_enable_flag_1,undefined,
 0x0040b56e,engine_mode_state,undefined,
 0x0040b5a8,warmup_filter_input,undefined,
@@ -1740,6 +1771,7 @@ address,name,type,comment
 0x0040b640,protection_output_mode,undefined,
 0x0040b648,PTR_DAT_0040b648,undefined,
 0x0040b652,protection_derate_factor,undefined,
+0x0040b664,load_protection_derivative,i32,Load protection derivative term in derate calc (37 refs)
 0x0040b66a,protection_step_counter,undefined,
 0x0040b674,protection_ramp_timer,undefined,
 0x0040b678,protection_ramp_rate,undefined,
@@ -1820,6 +1852,7 @@ address,name,type,comment
 0x0040bb0a,fuel_demand_base_value,undefined,
 0x0040bb7a,protection_coolant_condition,undefined,
 0x0040bbb4,protection_setpoint_raw,undefined,
+0x0040bbfa,protection_config_flags,u16,Protection configuration bits (bit 0x40 = alternate mode)
 0x0040bd82,sensor_ch0_output_1,undefined,
 0x0040bd84,sensor_ch5_filtered,undefined,
 0x0040bd86,throttle_position_demand,undefined,
