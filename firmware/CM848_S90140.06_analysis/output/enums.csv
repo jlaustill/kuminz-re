@@ -194,18 +194,18 @@ J1939_HANDLER_TYPE,0xf005,HANDLER_ENGINE_CONTROLLER,Engine Controller message,2
 
 # Protection Event Codes (passed to triggerProtectionEvent)
 PROTECTION_EVENT,0x0b,EVENT_FUEL_EFFICIENCY_DERATE,Fuel efficiency protection derate,1
-PROTECTION_EVENT,0x0c,EVENT_UNKNOWN_0C,Protection event 0x0c,1
-PROTECTION_EVENT,0x0d,EVENT_UNKNOWN_0D,Protection event 0x0d,1
-PROTECTION_EVENT,0x0e,EVENT_UNKNOWN_0E,Protection event 0x0e,1
-PROTECTION_EVENT,0x0f,EVENT_UNKNOWN_0F,Protection event 0x0f,1
+PROTECTION_EVENT,0x0c,EVENT_TEMP_TRIM_RESET_C,Temperature trim reset state C (init with 0x0b-0x0f in initProtectionEventStates),1
+PROTECTION_EVENT,0x0d,EVENT_TEMP_TRIM_RESET_D,Temperature trim reset state D (init with 0x0b-0x0f in initProtectionEventStates),1
+PROTECTION_EVENT,0x0e,EVENT_TEMP_TRIM_RESET_E,Temperature trim reset state E (init with 0x0b-0x0f in initProtectionEventStates),1
+PROTECTION_EVENT,0x0f,EVENT_TEMP_TRIM_RESET_F,Temperature trim reset state F (init with 0x0b-0x0f in initProtectionEventStates),1
 PROTECTION_EVENT,0x10,EVENT_SHUTDOWN,Shutdown protection event,1
 PROTECTION_EVENT,0x12,EVENT_LEVEL1_ACTIVE,Level 1 protection triggered,1
-PROTECTION_EVENT,0x13,EVENT_UNKNOWN_13,Protection event 0x13,1
-PROTECTION_EVENT,0x14,EVENT_UNKNOWN_14,Protection event 0x14,1
-PROTECTION_EVENT,0x15,EVENT_UNKNOWN_15,Protection event 0x15,1
-PROTECTION_EVENT,0x3f,EVENT_UNKNOWN_3F,Protection event 0x3f,1
-PROTECTION_EVENT,0x43,EVENT_UNKNOWN_43,Protection event 0x43,1
-PROTECTION_EVENT,0x48,EVENT_UNKNOWN_48,Protection event 0x48,1
+PROTECTION_EVENT,0x13,EVENT_LOAD_DERATE_PHASE_A,Engine load derate phase A - duty cycle based on protection timer counter,1
+PROTECTION_EVENT,0x14,EVENT_LOAD_DERATE_PHASE_B,Engine load derate phase B - duty cycle based on protection timer counter,1
+PROTECTION_EVENT,0x15,EVENT_LOAD_DERATE_FULL,Engine load full derate - triggered when protection_derate_factor = -25600 (-100%),1
+PROTECTION_EVENT,0x3f,EVENT_LEVEL2_ACTIVE,Level 2 protection triggered - checkProtectionModeFlags when mode_flags bit 2 clear,1
+PROTECTION_EVENT,0x43,EVENT_SENSOR_FAULT_ACTIVE,Sensor fault condition active - updateFaultConditionState debounced sensor_fault_detect_flags,1
+PROTECTION_EVENT,0x48,EVENT_DIAG_CONDITION_ACTIVE,Diagnostic condition active - processFaultConditionFlags based on diagnostic_condition_flags,1
 
 # Fuel Timing Mode State Machine (_pressure_fuel_adjustment values)
 # Controls fuel timing and oil pressure-based adjustments in temperatureSensorProcessing @ 0x0000ea00
