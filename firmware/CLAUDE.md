@@ -146,6 +146,37 @@ Both firmwares use the same CSV structure in `output/`:
 - **Decimal in names** - Use decimal, not hex, in variable/function names
 - **Function must exist in Ghidra** - CSV renames only work for addresses Ghidra recognizes as functions
 
+### Fixing Underscore-Prefixed Variables
+
+Variables with `_` prefix (e.g., `_speed_error_filtered`) indicate overlapping symbols:
+- **Cause**: Variable typed as `byte` but code accesses as `short` (2 bytes)
+- **Fix**: Change type from `byte` to `short` in global_variables.csv
+- **Batch fix**: Use Python to find all underscore vars and update types
+
+### RAM Must Be Loaded for Structure Application
+
+Structures at RAM addresses (0x003FAxxxx - 0x0043xxxx) require RAM to be loaded:
+```bash
+./analyze.sh memmap      # Loads RAM dump at 0x003FA000 (279KB)
+./analyze.sh structures  # Now applies 29+ structures instead of 1
+```
+
+### Proper Workflow Order (Critical)
+
+Export regenerates CSVs from Ghidra, overwriting manual edits not applied to Ghidra:
+```bash
+# 1. Edit CSV files manually
+# 2. Apply to Ghidra:
+./analyze.sh import      # Apply names
+./analyze.sh vartypes    # Apply types (clears stale types first)
+./analyze.sh structures  # Apply structures
+# 3. Export (regenerates CSVs + decompilation):
+./analyze.sh export
+# 4. Commit
+```
+
+**Warning**: Running `export` before `import`/`vartypes` loses your CSV edits!
+
 ### global_variables.csv Maintenance
 
 Periodically clean garbage entries from `global_variables.csv`:
