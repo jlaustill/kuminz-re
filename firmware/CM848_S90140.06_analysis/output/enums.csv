@@ -32,9 +32,11 @@ DIAG_SERVICE_ID,6,SPECIAL_CONTROL,Special timing/control functions,1
 # Filter Coefficient Init Value
 FILTER_INIT,2,COEFFICIENT_INIT,Standard filter coefficient initialization value,2
 # Protection System State Machine (_protection_system_state values)
+PROTECTION_STATE,0,PROTECTION_IDLE,Protection system inactive/normal operation,2
 PROTECTION_STATE,1,PROTECTION_LEVEL_1,First protection threshold level (warning),2
 PROTECTION_STATE,2,PROTECTION_LEVEL_2,Second protection threshold level (derate),2
 PROTECTION_STATE,3,PROTECTION_SHUTDOWN,Shutdown protection level,2
+PROTECTION_STATE,4,PROTECTION_RECOVERY,Protection condition cleared - returning to normal,2
 # Protection Status Codes (_protection_status_code values)
 PROTECTION_STATUS_CODE,0x05,STATUS_SENSOR_FAULT,Sensor fault condition detected,1
 PROTECTION_STATUS_CODE,0x0B,STATUS_TEMP_DERATE,Temperature derate active,1
@@ -381,6 +383,14 @@ DIAGNOSTIC_SOURCE_CODE,30,DIAG_STATUS_30,Diagnostic status 30 condition,2
 DIAGNOSTIC_FUEL_CONTROL_MODE,0x0A,FUEL_MODE_INSITE_DISPLAY,INSITE live data display mode,1
 DIAGNOSTIC_FUEL_CONTROL_MODE,0x0B,FUEL_MODE_RPM_THRESHOLD,RPM threshold protection mode,1
 DIAGNOSTIC_FUEL_CONTROL_MODE,0x0C,FUEL_MODE_FUEL_DELIVERY,Fuel delivery control mode,1
+
+# Fuel Control Mode Select (fuel_control_mode_select values) - main fuel control source
+FUEL_CONTROL_MODE_SELECT,0,FUELMODE_DISABLED,Fuel control disabled/idle,2
+FUEL_CONTROL_MODE_SELECT,1,FUELMODE_BASE,Base fuel control mode,2
+FUEL_CONTROL_MODE_SELECT,2,FUELMODE_LIMIT_A,Fuel limit source A (calibration),2
+FUEL_CONTROL_MODE_SELECT,3,FUELMODE_LIMIT_B,Fuel limit source B (governor),2
+FUEL_CONTROL_MODE_SELECT,4,FUELMODE_LIMIT_C,Fuel limit source C (protection),2
+FUEL_CONTROL_MODE_SELECT,5,FUELMODE_OVERRIDE,Fuel override/diagnostic mode,2
 
 # Diagnostic Status - overall diagnostic system state
 DIAGNOSTIC_STATUS,0,NORMAL_OPERATION,No diagnostic mode active - normal operation,2
