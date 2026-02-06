@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Feb 06 09:40:53 MST 2026
+// Generated: Fri Feb 06 10:05:26 MST 2026
 
 
 //
@@ -20348,7 +20348,7 @@ void processTsc1Command(can_std_rx_desc_t *rx_msg)
     }
   }
   else if (_tsc1_active_state == 1) {
-    if (tsc1_source_address == source_address) goto LAB_00022f1c;
+    if (tsc1_source_address == source_address) goto accept_tsc1_command;
     if (control_mode == 0) {
       return;
     }
@@ -20384,7 +20384,7 @@ void processTsc1Command(can_std_rx_desc_t *rx_msg)
     }
   }
   _tsc1_active_config_ptr = _tsc1_config_entry_ptr;
-LAB_00022f1c:
+accept_tsc1_command:
   _tsc1_control_word_stored = (ushort)tsc1_control_word;
   _tsc1_active_state = 1;
   tsc1_priority_byte = priority_bits;

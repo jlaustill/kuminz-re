@@ -108,6 +108,7 @@ address,name,type,comment
 0x00020e5c,caseD_7,,
 0x000210d8,default,,
 0x00022c86,PTR_DAT_00022c86,pointer,
+0x00022f1c,accept_tsc1_command,,
 0x0002583a,PTR_DAT_0002583a,undefined,
 0x00025950,switchD,,
 0x00025954,caseD_0,,
