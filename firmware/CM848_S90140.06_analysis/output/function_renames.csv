@@ -524,7 +524,7 @@ address,name
 0x00022ab8,selectTorqueLimitMode
 0x00022bc4,initJ1939TorqueSpeedHandler
 0x00022d18,initJ1939VehicleSpeedHandler
-0x00022d60,j1939MessageDispatcher
+0x00022d60,processTsc1Command
 0x00022e3c,processGovernorSpeedControlRequest
 0x00022f90,processGovernorSpeedRequest
 0x00023188,j1939_register_pgn_handler

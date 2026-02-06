@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Feb 06 09:29:31 MST 2026
+// Generated: Fri Feb 06 09:35:19 MST 2026
 
 
 //
@@ -94,16 +94,16 @@ void keyOnStateMachine(void)
 void copyCalibrationToRam(void)
 
 {
-  undefined4 *puVar1;
-  undefined4 *puVar2;
+  undefined4 *src_ptr;
+  undefined4 *dest_ptr;
   
-  puVar1 = &calibration_rom_start;
-  puVar2 = (undefined4 *)0x3f97fc;
+  src_ptr = &calibration_rom_start;
+  dest_ptr = (undefined4 *)0x3f97fc;
   do {
-    puVar2 = puVar2 + 1;
-    *puVar2 = *puVar1;
-    puVar1 = puVar1 + 1;
-  } while (puVar1 < &calibration_rom_end);
+    dest_ptr = dest_ptr + 1;
+    *dest_ptr = *src_ptr;
+    src_ptr = src_ptr + 1;
+  } while (src_ptr < &calibration_rom_end);
   return;
 }
 
@@ -18581,8 +18581,8 @@ void selectTorqueLimit(void)
     _fuel_limit_minimum = _DAT_0040ae72;
     _limit_source_active = 0xe;
   }
-  if ((_governor_mode == 3) && (_timing_base_value <= _fuel_limit_minimum)) {
-    _fuel_limit_minimum = _timing_base_value;
+  if ((_governor_mode == 3) && (_tsc1_mode3_speed_target <= _fuel_limit_minimum)) {
+    _fuel_limit_minimum = _tsc1_mode3_speed_target;
     _limit_source_active = 9;
   }
   if (_DAT_0040a27a <= _fuel_limit_minimum) {
@@ -20528,62 +20528,64 @@ void initJ1939VehicleSpeedHandler(void)
 
 
 //
-// Function: j1939MessageDispatcher @ 0x00022d60
+// Function: processTsc1Command @ 0x00022d60
 //
 
+/* WARNING: Unable to use type for symbol source_address */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void j1939MessageDispatcher(int param_1)
+void processTsc1Command(int param_1)
 
 {
-  char cVar1;
-  short sVar2;
-  byte bVar3;
-  byte bVar4;
+  word result;
+  short sVar1;
+  byte control_mode;
+  byte priority_bits;
+  char source_address;
   
   if (*(short *)(param_1 + 4) != 8) {
     return;
   }
   tsc1_control_word = **(byte **)(param_1 + 6);
-  bVar3 = tsc1_control_word & 3;
-  bVar4 = tsc1_control_word & 0x30;
+  control_mode = tsc1_control_word & 3;
+  priority_bits = tsc1_control_word & 0x30;
   _tsc1_requested_speed =
        CONCAT11(*(undefined *)(*(int *)(param_1 + 6) + 2),(*(byte **)(param_1 + 6))[1]);
   tsc1_requested_torque = *(byte *)(*(int *)(param_1 + 6) + 3);
-  cVar1 = *(char *)(param_1 + 3);
-  if (bVar3 == 0) {
-    removeCoolantCalEntryByParams(1,cVar1);
+  source_address = *(char *)(param_1 + 3);
+  if (control_mode == 0) {
+    removeCoolantCalEntryByParams(1,source_address);
     _speed_control_target = _speed_control_target & 6;
   }
   else {
-    sVar2 = findJ1939MessageEntry(1,cVar1,bVar3);
-    if (sVar2 != 0) {
+    sVar1 = findJ1939MessageEntry(1,source_address,control_mode);
+    if (sVar1 != 0) {
       return;
     }
   }
   if (_governor_mode == 0) {
-    sVar2 = governorSpeedControl(1,cVar1);
-    if (sVar2 != 0) {
+    sVar1 = governorSpeedControl(1,source_address);
+    if (sVar1 != 0) {
       return;
     }
   }
   else if (_tsc1_active_state == 1) {
-    if (tsc1_source_address == cVar1) goto LAB_00022f1c;
-    if (bVar3 == 0) {
+    if (tsc1_source_address == source_address) goto LAB_00022f1c;
+    if (control_mode == 0) {
       return;
     }
-    sVar2 = governorSpeedControl(1,cVar1);
-    if (sVar2 != 0) {
+    result = governorSpeedControl(1,source_address);
+    if (result != 0) {
       return;
     }
-    if (tsc1_priority_byte < bVar4) {
+    if (tsc1_priority_byte < priority_bits) {
       return;
     }
-    if (bVar4 == tsc1_priority_byte) {
+    if (priority_bits == tsc1_priority_byte) {
       if (_governor_mode != 3) {
         return;
       }
-      if (bVar3 == 3) {
+      if (control_mode == 3) {
         if (tsc1_torque_stored < tsc1_requested_torque) {
           return;
         }
@@ -20595,8 +20597,8 @@ void j1939MessageDispatcher(int param_1)
     }
   }
   else {
-    sVar2 = governorSpeedControl(1,cVar1);
-    if (sVar2 != 0) {
+    sVar1 = governorSpeedControl(1,source_address);
+    if (sVar1 != 0) {
       return;
     }
     if (_tsc1_active_config_ptr < _tsc1_config_entry_ptr) {
@@ -20607,27 +20609,27 @@ void j1939MessageDispatcher(int param_1)
 LAB_00022f1c:
   _tsc1_control_word_stored = (ushort)tsc1_control_word;
   _tsc1_active_state = 1;
-  tsc1_priority_byte = bVar4;
-  tsc1_source_address = cVar1;
-  if (bVar3 == 0) {
+  tsc1_priority_byte = priority_bits;
+  tsc1_source_address = source_address;
+  if (control_mode == 0) {
     _speed_error_filtered = 0;
     _governor_mode = 0;
     _governor_mode_request = 0;
     _tsc1_control_flags = 0;
   }
-  else if (bVar3 == 1) {
+  else if (control_mode == 1) {
     _speed_error_filtered = *(short *)(_tsc1_active_config_ptr + 4) + 1;
     _governor_mode = 1;
     _governor_mode_request = lookupJ1939SourceAddressIndex(*(undefined *)(param_1 + 3));
     _tsc1_control_flags = 1;
     _tsc1_speed_stored = _tsc1_requested_speed;
-    _DAT_0040ae04 = _tsc1_requested_speed;
+    _tsc1_capped_speed_target = _tsc1_requested_speed;
     if (24000 < _tsc1_requested_speed) {
-      _DAT_0040ae04 = 24000;
+      _tsc1_capped_speed_target = 24000;
     }
     _tsc1_speed_control_mode = (undefined2)((tsc1_control_word & 0xc) >> 2);
   }
-  else if (bVar3 == 2) {
+  else if (control_mode == 2) {
     _speed_error_filtered = *(short *)(_tsc1_active_config_ptr + 8) + 1;
     _governor_mode = 2;
     _governor_mode_request = lookupJ1939SourceAddressIndex(*(undefined *)(param_1 + 3));
@@ -20641,20 +20643,20 @@ LAB_00022f1c:
       _tsc1_torque_limit_calc = 0;
     }
   }
-  else if (bVar3 == 3) {
+  else if (control_mode == 3) {
     _speed_error_filtered = *(short *)(_tsc1_active_config_ptr + 0xc) + 1;
     _governor_mode = 3;
     _governor_mode_request = lookupJ1939SourceAddressIndex(*(undefined *)(param_1 + 3));
     _tsc1_control_flags = 0;
     _tsc1_speed_stored = _tsc1_requested_speed;
-    _timing_base_value = _tsc1_requested_speed;
+    _tsc1_mode3_speed_target = _tsc1_requested_speed;
     tsc1_torque_stored = tsc1_requested_torque;
-    _speed_control_state =
+    _tsc1_mode3_torque_limit =
          (short)((((int)_protection_activation_delay - (int)fault_severity_table_ptr) *
                  (int)(short)((ushort)tsc1_requested_torque * 0x100 + -32000)) / 0x6400) +
          fault_severity_table_ptr;
-    if (_speed_control_state < 0) {
-      _speed_control_state = 0;
+    if (_tsc1_mode3_torque_limit < 0) {
+      _tsc1_mode3_torque_limit = 0;
     }
   }
   if (_governor_mode_request != 1) {
@@ -20726,9 +20728,9 @@ void processGovernorSpeedControlRequest(void)
     _governor_mode_request = lookupJ1939SourceAddressIndex(*(undefined *)(unaff_r30 + 3));
     _tsc1_control_flags = 1;
     _tsc1_speed_stored = *(ushort *)(unaff_r31 + 1);
-    _DAT_0040ae04 = _tsc1_speed_stored;
+    _tsc1_capped_speed_target = _tsc1_speed_stored;
     if (24000 < _tsc1_speed_stored) {
-      _DAT_0040ae04 = 24000;
+      _tsc1_capped_speed_target = 24000;
     }
     _tsc1_speed_control_mode = (undefined2)((*unaff_r31 & 0xc) >> 2);
   }
@@ -20753,13 +20755,13 @@ void processGovernorSpeedControlRequest(void)
     _tsc1_control_flags = 0;
     _tsc1_speed_stored = *(ushort *)(unaff_r31 + 1);
     tsc1_torque_stored = unaff_r31[3];
-    _speed_control_state =
+    _tsc1_mode3_torque_limit =
          (short)((((int)_protection_activation_delay - (int)fault_severity_table_ptr) *
                  (int)(short)((ushort)tsc1_torque_stored * 0x100 + -32000)) / 0x6400) +
          fault_severity_table_ptr;
-    _timing_base_value = _tsc1_speed_stored;
-    if (_speed_control_state < 0) {
-      _speed_control_state = 0;
+    _tsc1_mode3_speed_target = _tsc1_speed_stored;
+    if (_tsc1_mode3_torque_limit < 0) {
+      _tsc1_mode3_torque_limit = 0;
     }
   }
   if (_governor_mode_request != 1) {
@@ -20788,10 +20790,10 @@ void processGovernorSpeedRequest(void)
   *unaff_r29 = 1;
   _governor_mode_request = lookupJ1939SourceAddressIndex(*(undefined *)(unaff_r30 + 3));
   _tsc1_control_flags = 1;
-  _DAT_0040ae04 = *(ushort *)(unaff_r31 + 1);
-  _tsc1_speed_stored = _DAT_0040ae04;
-  if (24000 < _DAT_0040ae04) {
-    _DAT_0040ae04 = 24000;
+  _tsc1_capped_speed_target = *(ushort *)(unaff_r31 + 1);
+  _tsc1_speed_stored = _tsc1_capped_speed_target;
+  if (24000 < _tsc1_capped_speed_target) {
+    _tsc1_capped_speed_target = 24000;
   }
   _tsc1_speed_control_mode = (short)((*unaff_r31 & 0xc) >> 2);
   if (_governor_mode_request != 1) {
@@ -21258,7 +21260,7 @@ void j1939DispatchAddressHandler(int param_1)
   
   uVar1 = (ushort)*(byte *)(param_1 + 2);
   if (((_j1939_source_address & 0xff) == uVar1) || (uVar1 == 0xff)) {
-    j1939MessageDispatcher(param_1);
+    processTsc1Command(param_1);
   }
   if (((_tsc1_secondary_address & 0xff) == uVar1) || (uVar1 == 0xff)) {
     j1939ProcessGovernorRequest(param_1);
@@ -23911,25 +23913,25 @@ void j1939FormatDm1Message(void)
       if (0xfffe < uVar1) {
         uVar1 = 0xffff;
       }
-      _speed_control_state = (ushort)uVar1;
-      if ((int)(uint)_timing_base_value < (int)(0xffff - (uint)DAT_0005c3b0)) {
-        _timing_base_value = _timing_base_value + DAT_0005c3b0;
+      _tsc1_mode3_torque_limit = (ushort)uVar1;
+      if ((int)(uint)_tsc1_mode3_speed_target < (int)(0xffff - (uint)DAT_0005c3b0)) {
+        _tsc1_mode3_speed_target = _tsc1_mode3_speed_target + DAT_0005c3b0;
       }
       else {
-        _timing_base_value = 0xffff;
+        _tsc1_mode3_speed_target = 0xffff;
       }
     }
     _governor_mode = 3;
   }
   else {
-    _speed_control_state = DAT_0005c3ae;
+    _tsc1_mode3_torque_limit = DAT_0005c3ae;
     if ((_DAT_003feb90 <= _fuel_demand_calculated) && (_DAT_0040ae1e == 1)) {
-      _speed_control_state = 0xffff;
+      _tsc1_mode3_torque_limit = 0xffff;
     }
     _governor_mode = 0;
     _governor_mode_request = 0;
-    _PTR_DAT_003faf44 = (uint)_speed_control_state << 6;
-    _timing_base_value = _current_engine_rpm;
+    _PTR_DAT_003faf44 = (uint)_tsc1_mode3_torque_limit << 6;
+    _tsc1_mode3_speed_target = _current_engine_rpm;
   }
   _tsc1_control_flags = 0;
   _speed_error_filtered = 0;
@@ -23964,12 +23966,12 @@ void updateGovernorTorqueLimit
       if (0xfffe < uVar1) {
         uVar1 = 0xffff;
       }
-      _speed_control_state = (ushort)uVar1;
-      if ((int)(uint)_timing_base_value < (int)(0xffff - (uint)DAT_0005c3b0)) {
-        _timing_base_value = _timing_base_value + DAT_0005c3b0;
+      _tsc1_mode3_torque_limit = (ushort)uVar1;
+      if ((int)(uint)_tsc1_mode3_speed_target < (int)(0xffff - (uint)DAT_0005c3b0)) {
+        _tsc1_mode3_speed_target = _tsc1_mode3_speed_target + DAT_0005c3b0;
       }
       else {
-        _timing_base_value = 0xffff;
+        _tsc1_mode3_speed_target = 0xffff;
       }
     }
     *param_2 = 3;
@@ -23977,16 +23979,16 @@ void updateGovernorTorqueLimit
     *param_1 = 0;
   }
   else {
-    _speed_control_state = DAT_0005c3ae;
+    _tsc1_mode3_torque_limit = DAT_0005c3ae;
     if (((int)(uint)_DAT_003feb90 <= param_5) && (_DAT_0040ae1e == 1)) {
-      _speed_control_state = 0xffff;
+      _tsc1_mode3_torque_limit = 0xffff;
     }
     *param_2 = 0;
     _tsc1_control_flags = 0;
     *param_4 = 0;
     _governor_mode_request = 0;
-    _PTR_DAT_003faf44 = (uint)_speed_control_state << 6;
-    _timing_base_value = _current_engine_rpm;
+    _PTR_DAT_003faf44 = (uint)_tsc1_mode3_torque_limit << 6;
+    _tsc1_mode3_speed_target = _current_engine_rpm;
   }
   _speed_error_filtered = 0;
   *param_1 = 0;
@@ -39213,7 +39215,7 @@ LAB_00040548:
   _filter_accumulator = sVar1;
   if ((((_DAT_003fb524 == 0xb) || (_current_engine_rpm <= _DAT_0040aee0)) &&
       ((_protection_ramp_rate < _protection_mode_timer ||
-       ((_governor_mode == 3 && (_speed_control_state < _protection_mode_timer)))))) ||
+       ((_governor_mode == 3 && (_tsc1_mode3_torque_limit < _protection_mode_timer)))))) ||
      (((_DAT_003fb524 == 0xb ||
        ((uint)_current_engine_rpm <= (uint)_DAT_0040aee0 + (uint)_DAT_003fefea)) &&
       (((_fuel_demand_calculated == 0 && (_fuel_rate_current != 1)) &&
@@ -40452,8 +40454,8 @@ void applyProtectionTorqueLimit(void)
 void applySpeedControlProtectionLimit(void)
 
 {
-  if ((_governor_mode == 3) && (_speed_control_state < _protection_limit_value)) {
-    _protection_limit_value = _speed_control_state;
+  if ((_governor_mode == 3) && (_tsc1_mode3_torque_limit < _protection_limit_value)) {
+    _protection_limit_value = _tsc1_mode3_torque_limit;
     _protection_state_timer = 0x14;
   }
   return;

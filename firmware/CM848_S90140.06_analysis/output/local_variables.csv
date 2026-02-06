@@ -5,3 +5,8 @@ function_address,function_name,old_name,new_name,type,comment
 # copyCalibrationToRam @ 0x00000340 - Copies ROM calibration defaults to RAM
 0x00000340,copyCalibrationToRam,puVar1,src_ptr,undefined4 *,Source pointer (ROM calibration data)
 0x00000340,copyCalibrationToRam,puVar2,dest_ptr,undefined4 *,Destination pointer (RAM working copy)
+# processTsc1Command @ 0x00022d60 - Handle TSC1 (Torque/Speed Control) J1939 messages
+0x00022d60,processTsc1Command,bVar3,control_mode,byte,TSC1 control mode (0=disable 1=speed 2=torque 3=both)
+0x00022d60,processTsc1Command,bVar4,priority_bits,byte,TSC1 priority bits (bits 4-5 of control word)
+0x00022d60,processTsc1Command,cVar1,source_address,char,J1939 source address of TSC1 sender
+0x00022d60,processTsc1Command,sVar2,result,short,Function call return value
