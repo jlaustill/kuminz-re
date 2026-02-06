@@ -45,6 +45,11 @@ function_address,function_name,param_index,new_name,new_type,comment
 0x00005fe4,handleJ1939DataTransfer,0,rx_msg,can_std_rx_desc_t*,Pointer to data transfer message
 0x00006180,handleJ1939AbortRequest,0,rx_msg,can_std_rx_desc_t*,Pointer to abort request message
 
+# TSC1 (Torque/Speed Control) Message Handlers - PGN 0 (TSC1)
+0x00022d60,processTsc1Command,0,rx_msg,can_std_rx_desc_t*,Pointer to received TSC1 message
+0x00023b38,j1939DispatchAddressHandler,0,rx_msg,can_std_rx_desc_t*,Pointer to received J1939 message for address filtering
+0x00022870,j1939ProcessTorqueSpeedControl,0,rx_msg,can_std_rx_desc_t*,Pointer to received TSC1 message (secondary handler)
+
 # -----------------------------------------------------------------------------
 # Diagnostic Service Dispatchers
 # -----------------------------------------------------------------------------
