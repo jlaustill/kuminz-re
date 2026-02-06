@@ -177,7 +177,7 @@ address,name,type,comment
 0x003fa002,tbl_register_snapshot,,
 0x003fa004,tbl_register_snapshot+2,,
 0x003fa006,key_on_flag,,
-0x003fa008,main_loop_phase_index,,
+0x003fa008,main_loop_phase_index,u16,Array index
 0x003fa00c,scheduler_task_pointer,,
 0x003fa010,initialization_pointer,,
 0x003fa016,PTR_DAT_003fa016,pointer,
@@ -264,7 +264,7 @@ address,name,type,comment
 0x003fa790,PTR_DAT_003fa790,pointer,
 0x003fa836,PTR_DAT_003fa836,pointer,
 0x003fa83a,PTR_DAT_003fa83a,pointer,
-0x003fa868,fault_scan_index,,
+0x003fa868,fault_scan_index,u16,Array index
 0x003fa86a,fault_clear_debounce,,
 0x003fa86c,j1939_message_timer,,
 0x003fa872,fault_debounce_counter,u16,Counter
@@ -278,11 +278,11 @@ address,name,type,comment
 0x003fa9aa,PTR_j1939_handle_pgn_61443_eec2_003fa9aa,pointer,
 0x003faa62,j1939_pgn_handler_count,u16,Counter
 0x003faa74,j1939_handler_entry_ptr,pointer,
-0x003faa78,response_buffer_index,,
+0x003faa78,response_buffer_index,u16,Array index
 0x003faaea,PTR_DAT_003faaea,pointer,
 0x003faaee,PTR_DAT_003faaee,pointer,
 0x003faaf5,command_state_byte,,
-0x003faaf6,command_buffer_index,,
+0x003faaf6,command_buffer_index,u16,Array index
 0x003fab02,PTR_DAT_003fab02,pointer,
 0x003fab06,PTR_DAT_003fab06,pointer,
 0x003fab1a,PTR_DAT_003fab1a,pointer,
@@ -360,7 +360,7 @@ address,name,type,comment
 0x003fb21c,PTR_DAT_003fb21c,pointer,
 0x003fb236,fault_scan_state,,
 0x003fb246,fault_debounce_counter,u16,Counter
-0x003fb256,calibration_lookup_index,,
+0x003fb256,calibration_lookup_index,u16,Array index
 0x003fb260,fault_timer_array,,
 0x003fb268,fault_counter_array,u16,Counter
 0x003fb275,PTR_DAT_003fb275,pointer,
@@ -431,7 +431,7 @@ address,name,type,comment
 0x003fb6af,PTR_DAT_003fb6af,pointer,
 0x003fb6b3,PTR_periodicTaskGroup21_calibration_003fb6b3,pointer,
 0x003fb6b7,PTR_DAT_003fb6b7,pointer,
-0x003fb6e0,j1939_tx_buffer_index,,
+0x003fb6e0,j1939_tx_buffer_index,u16,Array index
 0x003fb6e2,governor_error_term,,
 0x003fb6e4,governor_integral_value,,
 0x003fb6ee,diagnostic_state_code,,
@@ -532,8 +532,8 @@ address,name,type,comment
 0x003fe07a,active_fault_count,u16,Counter
 0x003fe09a,fault_list_status_flags,u16,Bit flags
 0x003fe0da,diagnostic_mode_flags,u16,Bit flags
-0x003fe11a,fault_list_write_index,,
-0x003fe11c,fault_list_index,,
+0x003fe11a,fault_list_write_index,u16,Array index
+0x003fe11c,fault_list_index,u16,Array index
 0x003fe11e,fault_list_emission_count,u16,Counter
 0x003fe120,emission_fault_count,u16,Counter
 0x003fe197,PTR_DAT_003fe197,pointer,
@@ -1157,7 +1157,7 @@ address,name,type,comment
 0x0040b152,fuel_timing_param_1,,
 0x0040b154,fuel_timing_param_2,,
 0x0040b17a,state_handler_function,,
-0x0040b183,command_buffer_index,,
+0x0040b183,command_buffer_index,u8,Array index
 0x0040b184,command_buffer_pointer,,
 0x0040b196,current_command_code,,
 0x0040b1f0,engine_load_percent,,
@@ -1195,12 +1195,12 @@ address,name,type,comment
 0x0040b322,can_rx_filter_mask,,
 0x0040b32e,voltage_control_word,,
 0x0040b33c,voltage_mode_state,,
-0x0040b34e,can_message_index,,
+0x0040b34e,can_message_index,u16,Array index
 0x0040b34f,can_message_buffer,,
 0x0040b350,can_message_counter,u16,Counter
 0x0040b351,can_message_index.message_counter+1,u8,Counter byte
 0x0040b352,j1939_dm1_pending,,
-0x0040b36e,speed_interpolation_index,,
+0x0040b36e,speed_interpolation_index,u16,Array index
 0x0040b377,PTR_DAT_0040b377,pointer,
 0x0040b37b,PTR_DAT_0040b37b,pointer,
 0x0040b37f,PTR_j1939MessageResponseCallback_0040b37f,pointer,
@@ -1219,7 +1219,7 @@ address,name,type,comment
 0x0040b420,injection_control_word,,
 0x0040b421,injection_control_2,,
 0x0040b441,uds_session_active,,
-0x0040b44e,uds_tx_buffer_index,,
+0x0040b44e,uds_tx_buffer_index,u16,Array index
 0x0040b450,uds_response_code,,
 0x0040b46e,injection_control_byte,,
 0x0040b492,uds_source_address,,
@@ -1243,7 +1243,7 @@ address,name,type,comment
 0x0040b5a8,warmup_filter_input,,
 0x0040b5aa,warmup_accumulator,,
 0x0040b5bc,warmup_rate_value,,
-0x0040b5cf,response_buffer_write_index,,
+0x0040b5cf,response_buffer_write_index,u8,Array index
 0x0040b60e,fuel_limit_override,,
 0x0040b612,fuel_mode_state,,
 0x0040b61c,fuel_limit_thermal,,
@@ -1293,7 +1293,7 @@ address,name,type,comment
 0x0040b7d2,engine_timing_delta,,
 0x0040b7d6,governor_output_demand,,
 0x0040b7d8,governor_active_flag,,
-0x0040b7ec,fault_scan_current_index,,
+0x0040b7ec,fault_scan_current_index,u16,Array index
 0x0040b7ee,engine_sync_tooth_count,u16,Counter
 0x0040b7f2,engine_position_error,,
 0x0040b7f6,engine_timing_error,,
@@ -1364,7 +1364,7 @@ address,name,type,comment
 0x0040c081,security_state_byte,,
 0x0040c082,protection_mode_flags,u16,Bit flags
 0x0040c107,diagnostic_state_byte,,
-0x0040c108,diagnostic_buffer_index,,
+0x0040c108,diagnostic_buffer_index,u16,Array index
 0x0040c117,injector_enable_ch0_7,,
 0x0040c118,injector_enable_ch8_15,,
 0x0040c119,output_channel_status,,
