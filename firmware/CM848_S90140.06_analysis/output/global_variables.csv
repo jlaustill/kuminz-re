@@ -2806,7 +2806,7 @@ address,name,type,comment
 0x00538de0,PTR_DAT_00538de0,,
 0x00538ea6,PTR_DAT_00538ea6,,
 0x00538eac,SUB_00538eac,,
-0x00538eb0,SUB_00538eb0,,
+0x00538eb0,registerJ1939PgnHandler,,
 0x00538ef4,SUB_00538ef4,,
 0x0053950a,bank2CommandHandler_ptr0,,
 0x00539510,PTR_FUN_00539510,,
