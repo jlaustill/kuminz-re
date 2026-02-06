@@ -982,9 +982,9 @@ address,name,type,comment
 0x003fbd7c,PTR_DAT_003fbd7c,undefined,
 0x003fbdcf,PTR_DAT_003fbdcf,undefined,
 0x003fc4b3,PTR_DAT_003fc4b3,undefined,
-0x003fc688,SUB_003fc688,undefined,
-0x003fc6f4,SUB_003fc6f4,undefined,
-0x003fc77c,SUB_003fc77c,undefined,
+0x003fc688,eepromPollReady,undefined,RAM function - called in EEPROM wait loops
+0x003fc6f4,eepromCheckStatus,undefined,RAM function - returns status (0=busy) in EEPROM ops
+0x003fc77c,eepromWaitCycle,undefined,RAM function - EEPROM timing wait
 0x003fcbca,PTR_DAT_003fcbca,undefined,
 0x003fcbd8,PTR_DAT_003fcbd8,undefined,
 0x003fcbdc,PTR_DAT_003fcbdc,undefined,
@@ -1008,7 +1008,7 @@ address,name,type,comment
 0x003fd110,PTR_DAT_003fd110,undefined,
 0x003fd2c8,PTR_FUN_003fd2c8,undefined,
 0x003fd45e,PTR_LAB_003fd45e,undefined,
-0x003fd544,SUB_003fd544,undefined,
+0x003fd544,eepromCompleteOperation,undefined,RAM function - finalize EEPROM operation
 0x003fd59e,fuel_control_enable_bits,undefined,
 0x003fd5a0,system_mode_flags,undefined,
 0x003fd5a2,system_capability_flags,undefined,
@@ -1056,6 +1056,8 @@ address,name,type,comment
 0x003fe678,fault_entry_table_base,undefined,
 0x003fe6a2,fault_entry_status_field,undefined,
 0x003fe6b2,PTR_DAT_003fe6b2,undefined,
+0x003fe954,sensor_channel_status_bitmap,u16,Bit array for sensor channel active/fault status
+0x003fe956,sensor_channel_status_bitmap_2,u16,Secondary sensor channel status bits
 0x003fe974,system_enable_state,undefined,
 0x003fe976,condition_monitor_flags,undefined,
 0x003fe978,system_enable_state.reserved_04,undefined,
@@ -1124,6 +1126,8 @@ address,name,type,comment
 0x003fecf1,diag_subcommand_code,undefined,
 0x003fecf2,diag_request_param,undefined,
 0x003fed72,fault_timer_counter,undefined,
+0x003fed74,diagnostic_mode_flags,u16,Diagnostic/override mode status (bit 0x100 = override active)
+0x003fed78,diagnostic_state_counter,u16,Diagnostic state machine counter
 0x003fed7a,fault_accumulator_value,undefined,
 0x003fedee,eeprom_calibration_version,undefined,
 0x003fedef,eeprom_operation_state,undefined,
@@ -1477,6 +1481,7 @@ address,name,type,comment
 0x0040a8d1,sensor_raw_ch7,undefined,
 0x0040a8d3,PTR_sensor_raw_ch7_0040a8d3,undefined,
 0x0040aa84,fault_active_indicator,undefined,
+0x0040aac0,fuel_efficiency_base_value,u32,Base value for fuel efficiency calculations (referenced 130x)
 0x0040abc6,PTR_DAT_0040abc6,undefined,
 0x0040ac16,PTR_DAT_0040ac16,undefined,
 0x0040ac54,PTR_DAT_0040ac54,undefined,
@@ -1652,6 +1657,8 @@ address,name,type,comment
 0x0040b152,fuel_timing_param_1,undefined,
 0x0040b154,fuel_timing_param_2,undefined,
 0x0040b17a,state_handler_function,undefined,
+0x0040b183,command_buffer_index,u8,Command queue length/index counter (376 refs - highest in codebase)
+0x0040b184,command_buffer_pointer,undefined4,Pointer to current position in command buffer
 0x0040b196,current_command_code,undefined,
 0x0040b1f0,engine_load_percent,undefined,
 0x0040b1f2,protection_time_counter,undefined,
@@ -1692,6 +1699,7 @@ address,name,type,comment
 0x0040b350,can_message_counter,undefined,
 0x0040b351,can_message_index.message_counter+1,undefined,
 0x0040b352,j1939_dm1_pending,undefined,
+0x0040b36e,speed_interpolation_index,u16,Index for speed-based table interpolation (120 refs)
 0x0040b377,PTR_DAT_0040b377,undefined,
 0x0040b37b,PTR_DAT_0040b37b,undefined,
 0x0040b37f,PTR_j1939MessageResponseCallback_0040b37f,undefined,
@@ -1820,6 +1828,7 @@ address,name,type,comment
 0x0040bb0a,fuel_demand_base_value,undefined,
 0x0040bb7a,protection_coolant_condition,undefined,
 0x0040bbb4,protection_setpoint_raw,undefined,
+0x0040bbfa,protection_config_flags,u16,Protection configuration bits (bit 0x40 = alternate mode)
 0x0040bd82,sensor_ch0_output_1,undefined,
 0x0040bd84,sensor_ch5_filtered,undefined,
 0x0040bd86,throttle_position_demand,undefined,
