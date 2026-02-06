@@ -72,6 +72,15 @@ This is a reverse engineering project focused on analyzing e2m files used by the
 2. Decode Column 15 (final unknown column - likely version/padding)
 3. Cross-file addressing validation
 
+## Commands
+
+```bash
+npm install              # Install dependencies
+npm run typecheck        # TypeScript type checking
+npm run lint             # ESLint
+npm run analyze:all      # Run all analysis tools
+```
+
 ## Key Research Principles
 
 - Manual memory address verification using Calterm lookup

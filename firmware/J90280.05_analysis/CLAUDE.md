@@ -38,6 +38,7 @@ The `ghidra/analyze.sh` script provides all analysis commands:
 ./analyze.sh import     # Import CSV changes back into Ghidra
 ./analyze.sh structures # Apply structure definitions
 ./analyze.sh enums      # Apply enum definitions
+./analyze.sh vartypes   # Apply variable types (clears stale types first)
 ./analyze.sh hwregs     # Apply MC68336 hardware register names
 ./analyze.sh labels     # Apply code labels
 ./analyze.sh funcparams # Apply function parameter types

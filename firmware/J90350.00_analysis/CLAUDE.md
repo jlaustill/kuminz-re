@@ -39,10 +39,13 @@ The `ghidra/analyze.sh` script provides all analysis commands:
 ./analyze.sh import     # Import CSV changes back into Ghidra
 ./analyze.sh structures # Apply structure definitions
 ./analyze.sh enums      # Apply enum definitions
+./analyze.sh vartypes   # Apply variable types (clears stale types first)
 ./analyze.sh hwregs     # Apply MC68336 hardware register names
 ./analyze.sh labels     # Apply code labels
 ./analyze.sh funcparams # Apply function parameter types
 ./analyze.sh localvars  # Apply local variable types
+./analyze.sh constants  # Apply constant definitions
+./analyze.sh arrays     # Apply array definitions
 ./analyze.sh decompile <addr|name>  # Decompile single function
 ./analyze.sh full       # Run complete pipeline from scratch
 ./analyze.sh status     # Show project status
@@ -113,3 +116,4 @@ To update from J90280.05 discoveries:
 - All changes must go through CSV files, never directly in Ghidra
 - Use `./analyze.sh status` to check current project state
 - Output decompilation is at `output/J90350.00.ghidra.cpp`
+- See `../CLAUDE.md` for detailed workflow order, underscore fixes, and RAM loading requirements
