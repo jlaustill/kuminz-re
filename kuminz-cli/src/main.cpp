@@ -55,6 +55,9 @@ void printUsage(const char* progname)
     std::cerr << "  --probe-service <hex-id>    Probe single service (e.g., 4A)\n\n";
     std::cerr << "Address Read Commands:\n";
     std::cerr << "  --read-addr <hex-addr> <len>  Read bytes at address (e.g., 801c7a 100)\n\n";
+    std::cerr << "Parameter Read Commands (by ID, no CLIP session):\n";
+    std::cerr << "  --read-param <hex-id>                   Read by parameter ID (Service 0x46)\n";
+    std::cerr << "  --read-param-offset <hex-id> <hex-off>  Read param+offset (Service 0x43)\n\n";
     std::cerr << "Memory Write Commands (EXPERIMENTAL - USE AT OWN RISK):\n";
     std::cerr << "  --write-service4b <hex-addr> <hex-value>  Write via Service 0x4B (RECOMMENDED)\n";
     std::cerr << "                                            J1939 write path with auth, no CRC needed\n";
@@ -76,6 +79,8 @@ void printUsage(const char* progname)
     std::cerr << "  " << progname << " can0 --scan-services\n";
     std::cerr << "  " << progname << " can0 --probe-service 4A\n";
     std::cerr << "  " << progname << " can0 --read-addr 801c7a 100\n";
+    std::cerr << "  " << progname << " can0 --read-param 0004\n";
+    std::cerr << "  " << progname << " can0 --read-param-offset 0004 00000010\n";
     std::cerr << "  " << progname << " can0 --write-service4b 800100 AA55\n\n";
     std::cerr << "Note: CAN interface must be configured before running:\n";
     std::cerr << "  sudo ip link set can0 type can bitrate 250000\n";
@@ -559,6 +564,93 @@ int main(int argc, char* argv[])
                     std::cerr << "[ERROR] Failed to read memory\n";
                     result = 1;
                 }
+            }
+        }
+    }
+    // =========================================================================
+    // Parameter Read by ID Command (Service 0x46)
+    // =========================================================================
+    else if (command == "--read-param") {
+        if (argc < 4) {
+            std::cerr << "[ERROR] --read-param requires <hex-param-id>\n";
+            std::cerr << "Example: --read-param 0004\n";
+            result = 1;
+        } else {
+            uint16_t paramId;
+            std::stringstream ss;
+            ss << std::hex << argv[3];
+            ss >> paramId;
+
+            std::cerr << "[INFO] Reading parameter 0x" << std::hex << std::uppercase
+                      << std::setw(4) << std::setfill('0') << paramId
+                      << " via Service 0x46\n\n" << std::dec;
+
+            std::vector<uint8_t> data;
+            if (reader.readParameterService46(paramId, data)) {
+                std::cerr << "[INFO] Response: " << std::dec << data.size() << " bytes\n\n";
+
+                // Raw hex dump — format unknown, dump everything for analysis
+                std::cout << "Raw response bytes (" << data.size() << "):\n";
+                for (size_t i = 0; i < data.size(); i++) {
+                    std::cout << std::hex << std::uppercase << std::setw(2)
+                              << std::setfill('0') << static_cast<int>(data[i]);
+                    if (i + 1 < data.size()) std::cout << " ";
+                    if ((i + 1) % 16 == 0) std::cout << "\n";
+                }
+                if (data.size() % 16 != 0) std::cout << "\n";
+                std::cout << std::dec;
+            } else {
+                std::cerr << "[ERROR] Service 0x46 failed for param 0x"
+                          << std::hex << paramId << std::dec << "\n";
+                result = 1;
+            }
+        }
+    }
+    // =========================================================================
+    // Parameter Read by ID + Offset Command (Service 0x43)
+    // =========================================================================
+    else if (command == "--read-param-offset") {
+        if (argc < 5) {
+            std::cerr << "[ERROR] --read-param-offset requires <hex-param-id> <hex-offset>\n";
+            std::cerr << "Example: --read-param-offset 0004 00000010\n";
+            result = 1;
+        } else {
+            uint16_t paramId;
+            uint32_t offset;
+            {
+                std::stringstream ss;
+                ss << std::hex << argv[3];
+                ss >> paramId;
+            }
+            {
+                std::stringstream ss;
+                ss << std::hex << argv[4];
+                ss >> offset;
+            }
+
+            std::cerr << "[INFO] Reading parameter 0x" << std::hex << std::uppercase
+                      << std::setw(4) << std::setfill('0') << paramId
+                      << " + offset 0x" << std::setw(8) << std::setfill('0') << offset
+                      << " via Service 0x43\n\n" << std::dec;
+
+            std::vector<uint8_t> data;
+            if (reader.readParameterService43(paramId, offset, data)) {
+                std::cerr << "[INFO] Response: " << std::dec << data.size() << " bytes\n\n";
+
+                std::cout << "Raw response bytes (" << data.size() << "):\n";
+                for (size_t i = 0; i < data.size(); i++) {
+                    std::cout << std::hex << std::uppercase << std::setw(2)
+                              << std::setfill('0') << static_cast<int>(data[i]);
+                    if (i + 1 < data.size()) std::cout << " ";
+                    if ((i + 1) % 16 == 0) std::cout << "\n";
+                }
+                if (data.size() % 16 != 0) std::cout << "\n";
+                std::cout << std::dec;
+            } else {
+                std::cerr << "[ERROR] Service 0x43 failed for param 0x"
+                          << std::hex << paramId << " + offset 0x" << offset
+                          << std::dec << "\n";
+                result = 1;
             }
         }
     }

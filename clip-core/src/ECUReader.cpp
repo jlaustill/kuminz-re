@@ -442,6 +442,262 @@ bool ECUReader::readMemoryService4A(uint32_t address, uint8_t length,
     return false;
 }
 
+bool ECUReader::readParameterService46(uint16_t paramId,
+                                       std::vector<uint8_t>& data, int timeoutMs)
+{
+    data.clear();
+
+    if (!m_connected || !m_adapter->isOpen()) {
+        log("Not connected (Service 0x46)");
+        return false;
+    }
+
+    // Build Service 0x46 request: [0x46][ParamID_HI][ParamID_LO][0x00 x5]
+    uint8_t txData[8] = {};
+    txData[0] = 0x46;
+    txData[1] = static_cast<uint8_t>((paramId >> 8) & 0xFF);
+    txData[2] = static_cast<uint8_t>(paramId & 0xFF);
+
+    uint32_t txArbId = m_j1939.buildClipDataArbId(m_ecuAddress);
+
+    {
+        std::stringstream ss;
+        ss << "Service 0x46: reading param 0x" << std::hex
+           << std::setw(4) << std::setfill('0') << paramId;
+        log(ss.str());
+    }
+
+    if (!m_adapter->send(txArbId, txData, 8)) {
+        log("Failed to send Service 0x46 request");
+        return false;
+    }
+
+    // Wait for response — same pattern as Service 0x4A:
+    // Either single-frame on PGN 0xEF00 or J1939 TP (RTS/CTS/DT/EOM)
+    uint32_t arbId;
+    uint8_t rxData[8];
+    uint8_t rxLen;
+    int elapsed = 0;
+    bool gotResponse = false;
+    bool gotRTS = false;
+    bool gotError = false;
+    J1939TP::ConnectionMessage rts;
+
+    while (elapsed < timeoutMs && !gotResponse && !gotRTS && !gotError) {
+        if (m_adapter->recv(arbId, rxData, rxLen, 50)) {
+            uint8_t source = J1939MessageBuilder::extractSourceAddress(arbId);
+            uint8_t dest = (arbId >> 8) & 0xFF;
+            uint8_t pf = (arbId >> 16) & 0xFF;
+
+            // Single-frame response on PGN 0xEF00
+            if (pf == J1939_CLIP_PGN_PF && dest == J1939_TOOL_ADDRESS && source == m_ecuAddress) {
+                if (rxData[0] == 0x0D) {
+                    // Error response
+                    std::stringstream ss;
+                    ss << "Service 0x46 error for param 0x" << std::hex << paramId
+                       << ": code=0x" << static_cast<int>(rxData[1]);
+                    log(ss.str());
+                    gotError = true;
+                } else {
+                    // Any non-error single-frame: return all bytes as raw response
+                    data.assign(rxData, rxData + rxLen);
+                    gotResponse = true;
+                }
+            }
+
+            // TP.CM RTS (for multi-frame responses)
+            if (pf == J1939TP::PF_CM && source == m_ecuAddress) {
+                if (rts.decode(rxData, rxLen) && rts.isRTS()) {
+                    gotRTS = true;
+                }
+            }
+        }
+        elapsed += 50;
+    }
+
+    if (gotError) {
+        return false;
+    }
+
+    if (gotResponse) {
+        return true;
+    }
+
+    if (!gotRTS) {
+        std::stringstream ss;
+        ss << "Timeout waiting for Service 0x46 response for param 0x"
+           << std::hex << paramId;
+        log(ss.str());
+        return false;
+    }
+
+    // Handle J1939 TP (same as Service 0x4A)
+    uint8_t ctsData[8];
+    J1939TP::buildCTS(rts.numPackets, 1, rts.pgn, ctsData);
+    uint32_t ctsArbId = J1939TP::buildCMArbId(m_ecuAddress);
+    m_adapter->send(ctsArbId, ctsData, 8);
+
+    J1939TP::Session session;
+    session.startFromRTS(rts, m_ecuAddress);
+
+    elapsed = 0;
+    while (elapsed < timeoutMs && !session.isComplete()) {
+        if (m_adapter->recv(arbId, rxData, rxLen, 50)) {
+            uint8_t source = J1939MessageBuilder::extractSourceAddress(arbId);
+            uint8_t dest = (arbId >> 8) & 0xFF;
+            uint8_t pf = (arbId >> 16) & 0xFF;
+
+            if (pf == J1939TP::PF_DT && source == m_ecuAddress && dest == J1939_TOOL_ADDRESS) {
+                uint8_t seqNum = rxData[0];
+                session.addFrame(seqNum, &rxData[1], rxLen - 1);
+            }
+        }
+        elapsed += 50;
+    }
+
+    // Send EOM
+    uint8_t eomData[8];
+    J1939TP::buildEOM(static_cast<uint16_t>(session.data.size()),
+                      session.receivedPackets, rts.pgn, eomData);
+    m_adapter->send(ctsArbId, eomData, 8);
+
+    if (session.isComplete() && !session.data.empty()) {
+        // Return raw TP payload (format unknown — discovery phase)
+        data = session.data;
+        return true;
+    }
+
+    log("Incomplete Service 0x46 TP response");
+    return false;
+}
+
+bool ECUReader::readParameterService43(uint16_t paramId, uint32_t offset,
+                                       std::vector<uint8_t>& data, int timeoutMs)
+{
+    data.clear();
+
+    if (!m_connected || !m_adapter->isOpen()) {
+        log("Not connected (Service 0x43)");
+        return false;
+    }
+
+    // Build Service 0x43 request: [0x43][ParamID:2BE][Offset:4BE]
+    uint8_t txData[8] = {};
+    txData[0] = 0x43;
+    txData[1] = static_cast<uint8_t>((paramId >> 8) & 0xFF);
+    txData[2] = static_cast<uint8_t>(paramId & 0xFF);
+    txData[3] = static_cast<uint8_t>((offset >> 24) & 0xFF);
+    txData[4] = static_cast<uint8_t>((offset >> 16) & 0xFF);
+    txData[5] = static_cast<uint8_t>((offset >> 8) & 0xFF);
+    txData[6] = static_cast<uint8_t>(offset & 0xFF);
+
+    uint32_t txArbId = m_j1939.buildClipDataArbId(m_ecuAddress);
+
+    {
+        std::stringstream ss;
+        ss << "Service 0x43: reading param 0x" << std::hex
+           << std::setw(4) << std::setfill('0') << paramId
+           << " offset 0x" << std::setw(8) << std::setfill('0') << offset;
+        log(ss.str());
+    }
+
+    if (!m_adapter->send(txArbId, txData, 8)) {
+        log("Failed to send Service 0x43 request");
+        return false;
+    }
+
+    // Wait for response — same pattern as Service 0x46
+    uint32_t arbId;
+    uint8_t rxData[8];
+    uint8_t rxLen;
+    int elapsed = 0;
+    bool gotResponse = false;
+    bool gotRTS = false;
+    bool gotError = false;
+    J1939TP::ConnectionMessage rts;
+
+    while (elapsed < timeoutMs && !gotResponse && !gotRTS && !gotError) {
+        if (m_adapter->recv(arbId, rxData, rxLen, 50)) {
+            uint8_t source = J1939MessageBuilder::extractSourceAddress(arbId);
+            uint8_t dest = (arbId >> 8) & 0xFF;
+            uint8_t pf = (arbId >> 16) & 0xFF;
+
+            if (pf == J1939_CLIP_PGN_PF && dest == J1939_TOOL_ADDRESS && source == m_ecuAddress) {
+                if (rxData[0] == 0x0D) {
+                    std::stringstream ss;
+                    ss << "Service 0x43 error for param 0x" << std::hex << paramId
+                       << "+0x" << offset << ": code=0x" << static_cast<int>(rxData[1]);
+                    log(ss.str());
+                    gotError = true;
+                } else {
+                    data.assign(rxData, rxData + rxLen);
+                    gotResponse = true;
+                }
+            }
+
+            if (pf == J1939TP::PF_CM && source == m_ecuAddress) {
+                if (rts.decode(rxData, rxLen) && rts.isRTS()) {
+                    gotRTS = true;
+                }
+            }
+        }
+        elapsed += 50;
+    }
+
+    if (gotError) {
+        return false;
+    }
+
+    if (gotResponse) {
+        return true;
+    }
+
+    if (!gotRTS) {
+        std::stringstream ss;
+        ss << "Timeout waiting for Service 0x43 response for param 0x"
+           << std::hex << paramId << "+0x" << offset;
+        log(ss.str());
+        return false;
+    }
+
+    // Handle J1939 TP
+    uint8_t ctsData[8];
+    J1939TP::buildCTS(rts.numPackets, 1, rts.pgn, ctsData);
+    uint32_t ctsArbId = J1939TP::buildCMArbId(m_ecuAddress);
+    m_adapter->send(ctsArbId, ctsData, 8);
+
+    J1939TP::Session session;
+    session.startFromRTS(rts, m_ecuAddress);
+
+    elapsed = 0;
+    while (elapsed < timeoutMs && !session.isComplete()) {
+        if (m_adapter->recv(arbId, rxData, rxLen, 50)) {
+            uint8_t source = J1939MessageBuilder::extractSourceAddress(arbId);
+            uint8_t dest = (arbId >> 8) & 0xFF;
+            uint8_t pf = (arbId >> 16) & 0xFF;
+
+            if (pf == J1939TP::PF_DT && source == m_ecuAddress && dest == J1939_TOOL_ADDRESS) {
+                uint8_t seqNum = rxData[0];
+                session.addFrame(seqNum, &rxData[1], rxLen - 1);
+            }
+        }
+        elapsed += 50;
+    }
+
+    uint8_t eomData[8];
+    J1939TP::buildEOM(static_cast<uint16_t>(session.data.size()),
+                      session.receivedPackets, rts.pgn, eomData);
+    m_adapter->send(ctsArbId, eomData, 8);
+
+    if (session.isComplete() && !session.data.empty()) {
+        data = session.data;
+        return true;
+    }
+
+    log("Incomplete Service 0x43 TP response");
+    return false;
+}
+
 bool ECUReader::readMemoryService4ALarge(uint32_t address, uint32_t totalLength,
                                          std::vector<uint8_t>& data, uint8_t chunkSize)
 {

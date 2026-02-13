@@ -212,6 +212,39 @@ public:
                                    const std::string& outputPath);
 
     // =========================================================================
+    // Service 0x46/0x43 Parameter-by-ID Read Methods (Direct, No CLIP Session)
+    // =========================================================================
+    // These methods use EF00 direct services to read by parameter ID.
+    // The ECU resolves param ID to memory address via its internal lookup table.
+
+    /**
+     * @brief Read parameter by ID using Service 0x46.
+     * @param paramId 16-bit parameter ID (e.g., 0x0004 = hour meter)
+     * @param data Output: raw response bytes (format TBD from live testing)
+     * @param timeoutMs Timeout in milliseconds
+     * @return true if response received
+     *
+     * Request format: [0x46][ParamID_HI][ParamID_LO][0x00][0x00][0x00][0x00][0x00]
+     * Response: single-frame or J1939 TP (format unknown until live test).
+     */
+    bool readParameterService46(uint16_t paramId,
+                                std::vector<uint8_t>& data, int timeoutMs = 5000);
+
+    /**
+     * @brief Read parameter by ID + offset using Service 0x43.
+     * @param paramId 16-bit parameter ID
+     * @param offset 32-bit byte offset added to resolved address
+     * @param data Output: raw response bytes (format TBD from live testing)
+     * @param timeoutMs Timeout in milliseconds
+     * @return true if response received
+     *
+     * Request format: [0x43][ParamID_HI][ParamID_LO][Off3][Off2][Off1][Off0]
+     * Response: single-frame or J1939 TP (format unknown until live test).
+     */
+    bool readParameterService43(uint16_t paramId, uint32_t offset,
+                                std::vector<uint8_t>& data, int timeoutMs = 5000);
+
+    // =========================================================================
     // Service 0x4A Memory Write Methods (Experimental)
     // =========================================================================
     // These methods attempt to write to ECU memory using Service 0x4A format.
