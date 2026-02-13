@@ -174,8 +174,8 @@ DIAG_SERVICE_ID,4,SYSTEM_CONTROL,System control operations
 DIAG_SERVICE_ID,5,MEMORY_ACCESS,Memory read/write operations
 DIAG_SERVICE_ID,6,SPECIAL_CONTROL,Special timing/control functions
 # Service 3 Sub-functions (Secured Operations) - requires systemSecurityCheck() pass
-DIAG_SECURED_SUBFUNC,0x40,WATER_IN_FUEL_CLEAR,Clear water-in-fuel fault (waterInFuelFaultClear)
-DIAG_SECURED_SUBFUNC,0x41,WATER_IN_FUEL_VALIDATE,Validate water-in-fuel condition (waterInFuelFaultValidation)
+DIAG_SECURED_SUBFUNC,0x40,SWITCH_TO_FACTORY_BANK,Switch to factory calibration bank - sets calibration_bank_selector=0 (switchToFactoryCalibrationBank)
+DIAG_SECURED_SUBFUNC,0x41,FORCE_ACTIVE_BANK,Force switch to active calibration bank (forceActiveCalibrationBank)
 DIAG_SECURED_SUBFUNC,0x42,HIGH_RPM_SHUTDOWN_ACTIVATE,Activate high RPM shutdown flag (activateHighRpmShutdownFlag)
 DIAG_SECURED_SUBFUNC,0x43,SYSTEM_RESET_TRIGGER,Trigger diagnostic system reset (triggerDiagnosticSystemReset)
 DIAG_SECURED_SUBFUNC,0x50,NOP_ACK,No operation - returns success (0)
@@ -187,7 +187,7 @@ DIAG_SECURED_SUBFUNC,0x54,CAN_BUFFER_LOGGER,CAN message buffer logger (canMessag
 DIAG_CONTROL_SUBFUNC,0x64,SYSTEM_CONTROL_100,System control function 100 (systemControl64)
 DIAG_CONTROL_SUBFUNC,0x65,FAULT_SCANNER_ENABLE,Enable fault flag scanner (enableFaultFlagScanner)
 DIAG_CONTROL_SUBFUNC,0x66,CLEAR_COMMAND_STATE,Clear diagnostic_command_state to 0
-DIAG_CONTROL_SUBFUNC,0x69,WATER_IN_FUEL_INIT,Water in fuel detection init (waterInFuelDetectionStateInit)
+DIAG_CONTROL_SUBFUNC,0x69,SWITCH_TO_ACTIVE_BANK,Switch to active calibration bank - sets calibration_bank_selector=1 (switchToActiveCalibrationBank)
 DIAG_CONTROL_SUBFUNC,0x70,RESERVED_112,Reserved - returns error code 4
 DIAG_CONTROL_SUBFUNC,0x71,SET_COMMAND_STATE_BIT0,Set bit 0 of diagnostic_command_state
 DIAG_CONTROL_SUBFUNC,0x72,RESERVED_114,Reserved - returns error code 4
@@ -702,7 +702,7 @@ DIAG_ERROR_SOURCE,0x1A,AUTH_REQUIRED_MISSING,memoryOperationDispatcher - EEPROM 
 MEMORY_OP_RESULT,0x00,SUCCESS,Memory operation completed successfully (masked from memcpy return),1
 MEMORY_OP_RESULT,0x02,INVALID_LENGTH,Message length mismatch - expected calculated_msg_length or +10 for auth,1
 MEMORY_OP_RESULT,0x03,AUTH_FAILED,hourMeterSecurityValidator returned non-zero (auth payload invalid),1
-MEMORY_OP_RESULT,0x07,LOGGING_STATE_ERROR,EEPROM write blocked - _DAT_0080dc92==1 and _DAT_0080dc6c!=0,1
+MEMORY_OP_RESULT,0x07,CALIBRATION_WRITE_BLOCKED,EEPROM write blocked - calibration_write_protect_state==1 and calibration_bank_selector!=FACTORY,1
 MEMORY_OP_RESULT,0x0A,WRITE_DENIED,Region type 4 (ROM/Flash) - write operations not permitted,1
 MEMORY_OP_RESULT,0x0B,BUFFER_WRITE_FAIL,circularBufferWrite returned error during EEPROM logging,1
 MEMORY_OP_RESULT,0x1A,AUTH_REQUIRED_MISSING,EEPROM write (region type 5) requires auth but has_auth_payload=false,1
@@ -754,10 +754,10 @@ DIAG_SERVICE_ID,0x4C,EXTENDED_4C,extendedDiagnosticService4C,1
 DIAG_SERVICE_ID,0x4F,EXTENDED_4F,extendedDiagnosticService4F,1
 DIAG_SERVICE_ID,0x51,EXTENDED_51,extendedDiagnosticService51,1
 # Service 0x03 Subfunction Codes (Secured Commands - diagnosticCommandDispatcher switch @ 0x125a6)
-# IMPORTANT: Commands 0x40-0x41 control SPECIAL DIAGNOSTIC MODE (not actually water-in-fuel related!)
-# When water_in_fuel_detection_flag=1: addressRangeValidator uses special_mode_flag (enables high memory 0xFFC800+)
-DIAG_SERVICE_3_CMD,0x40,ENABLE_SPECIAL_MODE,waterInFuelFaultClear - ENABLES special diagnostic mode (sets flag=1 for high memory access),1
-DIAG_SERVICE_3_CMD,0x41,VALIDATE_SPECIAL_MODE,waterInFuelFaultValidation - validates special mode state transition,1
+# IMPORTANT: Commands 0x40-0x41 control CALIBRATION BANK SELECTION (factory vs active tuning)
+# calibration_bank_selector @ 0x0080dc6c: 0=factory bank (read-only OEM values) 1=active bank (tunable values)
+DIAG_SERVICE_3_CMD,0x40,SWITCH_TO_FACTORY_BANK,switchToFactoryCalibrationBank - select factory calibration bank (calibration_bank_selector=0),1
+DIAG_SERVICE_3_CMD,0x41,FORCE_ACTIVE_BANK,forceActiveCalibrationBank - force active calibration bank if write protect allows,1
 DIAG_SERVICE_3_CMD,0x42,HIGH_RPM_SHUTDOWN,activateHighRpmShutdownFlag - trigger high RPM shutdown,1
 DIAG_SERVICE_3_CMD,0x43,SYSTEM_RESET,triggerDiagnosticSystemReset - diagnostic system reset,1
 DIAG_SERVICE_3_CMD,0x50,NOP,No operation - returns success (0x00),1
@@ -769,7 +769,7 @@ DIAG_SERVICE_3_CMD,0x54,CAN_BUFFER_LOG,canMessageBufferLogger - log CAN message 
 DIAG_SERVICE_4_CMD,0x64,CONTROL_64,systemControl64 - system control function,1
 DIAG_SERVICE_4_CMD,0x65,FAULT_SCANNER,enableFaultFlagScanner - enable fault flag scanning,1
 DIAG_SERVICE_4_CMD,0x66,STATE_RESET,Reset diagnostic_command_state to 0,1
-DIAG_SERVICE_4_CMD,0x69,DISABLE_SPECIAL_MODE,waterInFuelDetectionStateInit - DISABLES special diagnostic mode (clears flag if=1),1
+DIAG_SERVICE_4_CMD,0x69,SWITCH_TO_ACTIVE_BANK,switchToActiveCalibrationBank - select active calibration bank (calibration_bank_selector=1),1
 DIAG_SERVICE_4_CMD,0x70,RESERVED_70,Reserved - returns error 0x04,1
 DIAG_SERVICE_4_CMD,0x71,STATE_BIT0,Set diagnostic_command_state bit 0,1
 DIAG_SERVICE_4_CMD,0x72,RESERVED_72,Reserved - returns error 0x04,1
@@ -816,3 +816,30 @@ INSITE_CMD,0xF3,VERSION_INFO,insiteVersionInfoBuilder - response length 0x1F (31
 # Insite Response Format (insiteParameterResponseBuilder @ 0xcb1e)
 # Standard: [CMD][LEN][DATA...]
 # Multi-frame: Uses insiteMultiFrameResponseBuilder for responses > 0x14 bytes
+# -----------------------------------------------------------------------------
+# Calibration Bank System - Factory vs Active Tuning
+# -----------------------------------------------------------------------------
+# The ECU maintains dual calibration addresses in the parameter lookup table at 0x35224
+# Each 8-byte entry contains: [4 bytes factory addr][4 bytes active addr]
+# calibration_bank_selector controls which address is used for parameter reads
+# This enables "factory tune extraction" - OEM values always accessible regardless of tuning
+# Calibration Bank Selector - calibration_bank_selector @ 0x0080dc6c
+# Controls which address field is read from parameter lookup table at 0x35224
+CALIBRATION_BANK,0,FACTORY,Factory calibration bank - reads bytes 0-3 of parameter entries (original OEM values),1
+CALIBRATION_BANK,1,ACTIVE,Active calibration bank - reads bytes 4-7 of parameter entries (tunable values),1
+# Calibration Flash Source - calibration_flash_source @ 0x0080dc70
+# Indicates which flash bank was loaded at startup
+CALIBRATION_FLASH_SOURCE,0,NOT_LOADED,Calibration not loaded from flash,1
+CALIBRATION_FLASH_SOURCE,1,PRIMARY_FLASH,Loaded from primary flash bank @ 0x4000-0x55b2,1
+CALIBRATION_FLASH_SOURCE,2,SECONDARY_FLASH,Loaded from secondary flash bank @ 0x6000-0x75b2,1
+# Calibration State Signature - calibration_state_signature @ 0x0080dc90
+# Magic values indicating calibration state machine position
+CALIBRATION_STATE_SIGNATURE,0xEEEE,ACTIVE_BANK_SELECTED,Active calibration bank is selected,2
+CALIBRATION_STATE_SIGNATURE,0xEAEA,FACTORY_BANK_SELECTED,Factory calibration bank is selected,2
+CALIBRATION_STATE_SIGNATURE,0xEAEB,TRANSITION_PENDING,Transition to active bank pending,2
+CALIBRATION_STATE_SIGNATURE,0xEEEF,SYNC_COMPLETE,RAM to flash sync complete,2
+# Calibration Write Protect State - calibration_write_protect_state @ 0x0080dc92
+# Controls EEPROM write protection based on calibration bank state
+CALIBRATION_WRITE_PROTECT,0,WRITES_ALLOWED,EEPROM writes allowed - no restrictions,1
+CALIBRATION_WRITE_PROTECT,1,WRITES_BLOCKED_IF_ACTIVE,EEPROM writes blocked when active bank selected,1
+CALIBRATION_WRITE_PROTECT,2,WRITES_ALLOWED_OVERRIDE,EEPROM writes allowed via special override,1

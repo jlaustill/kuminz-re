@@ -113,9 +113,9 @@ address,name
 0x000117ec,firmwareDataCopyToWorkingMemory
 0x0001183e,j1708BufferStateSelectorB4
 0x00011880,default
-0x0001188c,waterInFuelDetectionStateInit
-0x000118b2,waterInFuelFaultClear
-0x000118cc,j1708BufferStateHandler
+0x0001188c,switchToActiveCalibrationBank
+0x000118b2,switchToFactoryCalibrationBank
+0x000118cc,forceActiveCalibrationBank
 0x000118fc,activateHighRpmShutdownFlag
 0x00011908,eepromWriteWrapper
 0x0001191a,triggerDiagnosticSystemReset
