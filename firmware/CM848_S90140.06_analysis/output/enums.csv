@@ -458,6 +458,15 @@ EEPROM_MEMORY_BLOCKS,0,DATA_PLATE_BLOCK,Data plate identifier block,1
 EEPROM_MEMORY_BLOCKS,9,PRIMARY_BLOCK,Main parameter memory block,1
 
 # EF00 Service IDs - J1939 PGN 0xEF00 proprietary diagnostic services
+# Note: Services are registered via processJ1939DiagnosticRequest or registerDiagnosticService
+# CM848 Implementation Status:
+#   0x10: STUB (returns 0) - not implemented
+#   0x15: REPURPOSED to validateCalibrationMemory (not param lookup!)
+#   0x41: IMPLEMENTED - diagService65_handler (returns address for param ID)
+#   0x43: IMPLEMENTED - diagService67_memoryReadOffset (param ID + offset read)
+#   0x46: NOT REGISTERED - documented but not available
+#   0x4A: IMPLEMENTED - diagService74_memoryRead (raw address read)
+#   0x4C: IMPLEMENTED - diagService76_memoryReadExt (extended address read)
 EF00_SERVICE_ID,0x01,QUERY_TERMINATE,QueryTerminate - CLIP compatible,1
 EF00_SERVICE_ID,0x04,SYSTEM_SERVICE_04,System service 04,1
 EF00_SERVICE_ID,0x05,SYSTEM_SERVICE_05,System service 05,1

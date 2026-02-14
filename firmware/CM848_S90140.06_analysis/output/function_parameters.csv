@@ -176,3 +176,36 @@ function_address,function_name,param_index,new_name,new_type,comment
 0x00012ad4,boostBasedFuelModifier,0,boost_denominator,ushort,Boost denominator (min 128) for fuel calc
 0x00012ad4,boostBasedFuelModifier,1,base_fueling,ushort,Base fueling command to modify
 
+# -----------------------------------------------------------------------------
+# Parameter-by-ID Lookup System - CM848 diagnostic parameter resolution
+# Resolves firmware parameter IDs (0x0000-0x12A9) to memory addresses
+# Table at ROM 0x3CDC copied to RAM 0x3F98AC (20 entries x 6 bytes)
+# -----------------------------------------------------------------------------
+0x00003f70,lookupTableEntryByKey,0,param_id,ushort,16-bit parameter ID to resolve
+
+0x000019e8,diagService65_handler,0,request_msg,int,Pointer to EF00 request message (service 0x41)
+
+0x00001cf8,diagMemoryReadWithBaseOffset,0,request_msg,dword,Pointer to request message
+0x00001cf8,diagMemoryReadWithBaseOffset,1,param_id,ushort,Parameter ID to resolve
+0x00001cf8,diagMemoryReadWithBaseOffset,2,reserved,short,Reserved (always 0)
+0x00001cf8,diagMemoryReadWithBaseOffset,3,offset,dword,Offset to add to resolved address
+
+0x00001d5c,diagService67_memoryReadOffset,0,request_msg,int,Pointer to EF00 request message (service 0x43)
+
+0x00001dc4,diagService74_memoryRead,0,request_msg,dword,Pointer to EF00 request message (service 0x4A)
+
+0x00001e30,diagService76_memoryReadExt,0,request_msg,dword,Pointer to EF00 request message (service 0x4C)
+
+# -----------------------------------------------------------------------------
+# EF00 Service Dispatch System - J1939 PGN 0xEF00 handler registration
+# Two dispatch tables: ef00_service_dispatch_table (0x3FA8B2) and diag_service_dispatch_table (0x3FDB30)
+# -----------------------------------------------------------------------------
+0x000220e4,processJ1939DiagnosticRequest,0,service_id,byte,EF00 service ID to register
+0x000220e4,processJ1939DiagnosticRequest,1,handler_ptr,void*,Function pointer for service handler
+
+0x00002c94,registerDiagnosticService,0,service_id,byte,Diagnostic service ID (0x43/0x4A/0x4C)
+0x00002c94,registerDiagnosticService,1,handler_ptr,void*,Function pointer for service handler
+
+0x00002cd8,registerPgnEf00Handler,0,sub_id,byte,Sub-identifier for PGN 0xEF00 filtering
+0x00002cd8,registerPgnEf00Handler,1,handler_func,void*,Function pointer for handler callback
+
