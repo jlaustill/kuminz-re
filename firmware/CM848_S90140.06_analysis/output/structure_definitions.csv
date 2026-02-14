@@ -674,3 +674,25 @@ governor_control_t,0x0040adf4,mode,word,2,Current governor mode (GOVERNOR_MODE e
 governor_control_t,0x0040adf4,torque_limit_select,word,2,Torque limit mode selection (0=off 1=active),,verified
 governor_control_t,0x0040adf4,disable_control,word,2,TSC1 disable control flag,,verified
 governor_control_t,0x0040adf4,limit_state,dword,4,TSC1 limit state (low=torque_limit high=speed_limit),,verified
+
+# Parameter ID Lookup Entry - firmware parameter lookup table entry
+# Located at ROM 0x3CDC (copied to RAM 0x3F98AC at boot)
+# Used by lookupTableEntryByKey to resolve parameter IDs to memory addresses
+# Total size: 6 bytes per entry (20 entries in CM848)
+param_id_entry_t,,param_id,word,2,Parameter ID (0x0000-0x12A9 for CM848),,verified
+param_id_entry_t,,address,dword,4,Resolved memory address (EEPROM/ROM/MPC555 regs),,verified
+
+# EF00 Service Dispatch Entry - PGN 0xEF00 service handler registration
+# Located at RAM 0x3FA8B2 (populated by processJ1939DiagnosticRequest)
+# Used by j1939DiagnosticServiceHandler to route service requests
+# Total size: 6 bytes per entry (max 32 entries)
+ef00_dispatch_entry_t,,service_id,byte,1,EF00 service ID (see EF00_SERVICE_ID enum),,verified
+ef00_dispatch_entry_t,,reserved,byte,1,Padding byte,,verified
+ef00_dispatch_entry_t,,handler_ptr,dword,4,Function pointer to service handler,,verified
+
+# Diagnostic Service Dispatch Entry - registerDiagnosticService table entry
+# Located at RAM 0x3FDB30 (populated by registerDiagnosticService)
+# Used by service dispatcher for 0x43/0x4A/0x4C memory read services
+# Total size: 5 bytes per entry (max 20 entries)
+diag_dispatch_entry_t,,service_id,byte,1,Diagnostic service ID (0x43=paramRead 0x4A=memRead 0x4C=memReadExt),,verified
+diag_dispatch_entry_t,,handler_ptr,dword,4,Function pointer to service handler,,verified
