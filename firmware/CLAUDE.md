@@ -124,6 +124,8 @@ J90350.00 was bootstrapped from J90280.05 using function matching:
 
 Both firmwares use the same CSV structure in `output/`:
 
+**Comment lines:** Lines starting with `#` are preserved through import/export cycles. Use them to document address mappings, function relationships, or other context.
+
 | File | Purpose |
 |------|---------|
 | `function_renames.csv` | Function names by address |
@@ -200,6 +202,16 @@ CM848 has two flash banks (discovered via e2m analysis):
 Bank 2 contains utility functions called from Bank 1 (sensor processing, math routines).
 
 **Completed (2026-01-31):** Bank 2 dumped from live ECU. See `CM848_S90140.06_analysis/docs/TASK_dump_bank2.md`.
+
+### ROM-to-RAM Code Execution (CM848)
+
+`copyCalibrationToRam()` copies ROM 0x3C30-0x7F60 (17KB) to RAM 0x3F9800-0x3FDB30 at boot. ~50 functions execute from RAM for MPC555 performance. Formula: `ROM_addr = 0x3C30 + (RAM_addr - 0x3F9800)`.
+
+Functions at `0x003Fxxxx` in decompilation (e.g. `BYTE_003fae3c()`) are ROM functions running from RAM — Ghidra already has them decompiled at their ROM source addresses. The RAM dump has these regions overwritten by CAN bus data at runtime; use the ROM binary to find the original code.
+
+Key RAM-executed functions called from `mainLoopIteration`:
+- `dispatchCanMessageHandlers` (ROM 0x526C → RAM 0x3FAE3C)
+- `processJ1939QueueStatus` (ROM 0x64C4 → RAM 0x3FC094)
 
 ### CM848 ECU Version Info
 
