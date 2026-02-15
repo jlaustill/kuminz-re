@@ -7,12 +7,16 @@
 // @menupath
 // @toolbar
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import ghidra.app.script.GhidraScript;
 import ghidra.app.decompiler.DecompInterface;
@@ -96,6 +100,38 @@ public class ExportAnalysis extends GhidraScript {
     private int exportFunctionNames(String outputDir) throws IOException {
         String outputFile = outputDir + "/function_renames.csv";
 
+        // Preserve comment lines from existing CSV (keyed by following address)
+        Map<String, List<String>> commentsBefore = new HashMap<>();
+        List<String> headerComments = new ArrayList<>();
+        if (new File(outputFile).exists()) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(outputFile))) {
+                String line;
+                List<String> pendingComments = new ArrayList<>();
+                boolean pastHeader = false;
+                while ((line = reader.readLine()) != null) {
+                    if (line.startsWith("#")) {
+                        pendingComments.add(line);
+                    } else {
+                        if (!pendingComments.isEmpty()) {
+                            if (!pastHeader) {
+                                headerComments.addAll(pendingComments);
+                            } else {
+                                // Key comments by the address line that follows them
+                                String addr = line.split(",")[0].trim();
+                                commentsBefore.put(addr, new ArrayList<>(pendingComments));
+                            }
+                            pendingComments.clear();
+                        }
+                        pastHeader = true;
+                    }
+                }
+                // Trailing comments (after last entry) - attach to special key
+                if (!pendingComments.isEmpty()) {
+                    commentsBefore.put("__trailing__", new ArrayList<>(pendingComments));
+                }
+            }
+        }
+
         // Get all functions and sort by address
         List<Function> functions = new ArrayList<>();
         FunctionIterator funcIter = currentProgram.getFunctionManager().getFunctions(true);
@@ -106,6 +142,11 @@ public class ExportAnalysis extends GhidraScript {
         Collections.sort(functions, (f1, f2) -> f1.getEntryPoint().compareTo(f2.getEntryPoint()));
 
         try (FileWriter writer = new FileWriter(outputFile)) {
+            // Write header comments (before the CSV header)
+            for (String comment : headerComments) {
+                writer.write(comment + "\n");
+            }
+
             // Write header
             writer.write("address,name\n");
 
@@ -117,7 +158,24 @@ public class ExportAnalysis extends GhidraScript {
                 }
 
                 String address = String.format("0x%08x", func.getEntryPoint().getOffset());
+
+                // Write any comment lines that preceded this address
+                List<String> comments = commentsBefore.get(address);
+                if (comments != null) {
+                    for (String comment : comments) {
+                        writer.write(comment + "\n");
+                    }
+                }
+
                 writer.write(address + "," + name + "\n");
+            }
+
+            // Write any trailing comments
+            List<String> trailing = commentsBefore.get("__trailing__");
+            if (trailing != null) {
+                for (String comment : trailing) {
+                    writer.write(comment + "\n");
+                }
             }
         }
 

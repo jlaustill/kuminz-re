@@ -1,3 +1,10 @@
+# ROM-to-RAM Mapping
+# copyCalibrationToRam() copies ROM 0x3C30-0x7F60 (17KB) to RAM 0x3F9800-0x3FDB30 at boot.
+# Formula: ROM_addr = 0x3C30 + (RAM_addr - 0x3F9800)
+# These ~50 functions execute from RAM for MPC555 performance (RAM faster than flash).
+# mainLoopIteration calls two of these RAM functions directly via bl:
+#   bl 0x3FAE3C -> dispatchCanMessageHandlers (ROM 0x526C) - CAN receive dispatcher
+#   bl 0x3FC094 -> processJ1939QueueStatus   (ROM 0x64C4) - J1939 TP queue manager
 address,name
 0x00000100,reset_vector
 0x00000184,keyOnStateMachine
@@ -108,6 +115,7 @@ address,name
 0x00004f6c,can2TransmitInterruptHandler
 0x00005064,manageCan1TransmitBuffer
 0x00005134,processCanReceiveBuffer
+# RAM copy: ROM 0x526C -> RAM 0x3FAE3C (called from mainLoopIteration via bl)
 0x0000526c,dispatchCanMessageHandlers
 0x00005400,processAdcConversionResult
 0x00005728,processAdcWithOffset
@@ -127,8 +135,11 @@ address,name
 0x00006180,handleJ1939AbortRequest
 0x000061e8,handleJ1939AbortAcknowledge
 0x0000628c,j1939DiagMessageDispatcher
+# RAM copy: ROM 0x62FC -> RAM 0x3FBECC (called from processJ1939QueueStatus)
 0x000062fc,processJ1939QueueTransmit
+# RAM copy: ROM 0x6490 -> RAM 0x3FC060 (called from processJ1939QueueStatus)
 0x00006490,decrementPauseStatusCounter
+# RAM copy: ROM 0x64C4 -> RAM 0x3FC094 (called from mainLoopIteration via bl)
 0x000064c4,processJ1939QueueStatus
 0x00006508,initDiagnosticBuffers
 0x00006580,updateSystemTimers

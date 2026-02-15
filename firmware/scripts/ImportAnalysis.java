@@ -112,7 +112,7 @@ public class ImportAnalysis extends GhidraScript {
                 }
 
                 line = line.trim();
-                if (line.isEmpty()) {
+                if (line.isEmpty() || line.startsWith("#")) {
                     continue;
                 }
 
@@ -192,7 +192,7 @@ public class ImportAnalysis extends GhidraScript {
                 }
 
                 line = line.trim();
-                if (line.isEmpty()) {
+                if (line.isEmpty() || line.startsWith("#")) {
                     continue;
                 }
 
