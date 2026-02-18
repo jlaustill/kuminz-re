@@ -728,3 +728,37 @@ protection_threshold_set_t,0x0040a502,recovery_threshold,word,2,Recovery/hystere
 protection_threshold_set_t,0x0040a502,hysteresis,word,2,Protection hysteresis band value,,verified
 protection_threshold_set_t,0x0040a502,threshold_scaled_alt,word,2,Alternate scaled threshold (same input different context),,verified
 protection_threshold_set_t,0x0040a502,threshold_base,word,2,Base protection threshold before correction,,verified
+
+# ============================================================================
+# Fault Entry (Freeze Frame) - DTC snapshot of engine state at fault activation
+# Primary array: 8 entries at 0x003fe674, 48 bytes each (0x30 stride)
+# Shadow array: 8 entries at 0x003fe7f4, same layout (always updated on fault)
+# Primary only updates when fault code changes; shadow updates every activation
+# Code evidence: setFaultActiveStatus (0x0001df64), captureFreezeFrameData (0x0001df88)
+# Iteration: addFaultToActiveList (0x0001cea4) uses pbVar3 += 0x30 with limit < 8
+# findFaultByTypeAndSeverity (0x0001ce28) uses puVar3 = &DAT_003fe674, puVar3 += 0xc (as dword*)
+# Note: fault_entry_table_base (0x003fe678) is at offset +4 (the fault_code byte), not struct base
+fault_entry_t,0x003fe674,timing_snapshot,dword,4,Fuel timing advance value at capture time,,verified
+fault_entry_t,0x003fe674,fault_code,byte,1,Fault code ID (0xAA = empty/available slot),,verified
+fault_entry_t,0x003fe674,temperature_trim,word,2,Temperature compensation trim calculation,,verified
+fault_entry_t,0x003fe674,target_rpm,word,2,Target engine RPM at fault time,,verified
+fault_entry_t,0x003fe674,sensor_scale_1,word,2,Sensor scale factor 1,,verified
+fault_entry_t,0x003fe674,fault_status,word,2,Fault active status value at capture,,verified
+fault_entry_t,0x003fe674,protection_high,word,2,Protection output high word,,verified
+fault_entry_t,0x003fe674,protection_low,word,2,Protection output low word,,verified
+fault_entry_t,0x003fe674,timing_param_1,word,2,Fuel timing parameter 1,,verified
+fault_entry_t,0x003fe674,timing_param_2,word,2,Fuel timing parameter 2,,verified
+fault_entry_t,0x003fe674,timing_param_3,word,2,Fuel timing parameter 3,,verified
+fault_entry_t,0x003fe674,sensor_scale_2,word,2,Sensor scale factor 2,,verified
+fault_entry_t,0x003fe674,reserved,dword,4,Reserved gap (not written by set/capture functions),,verified
+fault_entry_t,0x003fe674,pressure_adj,byte,1,Pressure fuel adjustment byte,,verified
+fault_entry_t,0x003fe674,battery_voltage,word,2,Battery voltage reading at fault time,,verified
+fault_entry_t,0x003fe674,load_throttle,word,2,Processed load/throttle value,,verified
+fault_entry_t,0x003fe674,torque_limit,word,2,Torque limit factor at fault time,,verified
+fault_entry_t,0x003fe674,diagnostic_word_1,word,2,Diagnostic data word 1,,verified
+fault_entry_t,0x003fe674,diagnostic_byte_3,byte,1,Diagnostic data byte 3,,verified
+fault_entry_t,0x003fe674,diagnostic_byte_4,byte,1,Diagnostic data byte 4,,verified
+fault_entry_t,0x003fe674,diagnostic_word_2,word,2,Diagnostic data word 2,,verified
+fault_entry_t,0x003fe674,diagnostic_word_3,word,2,Diagnostic data word 3,,verified
+fault_entry_t,0x003fe674,coolant_temp_raw,word,2,Coolant temperature raw sensor value,,verified
+fault_entry_t,0x003fe674,status_flags,word,2,Fault entry status/severity flags (bit 0 = newly active),,verified
