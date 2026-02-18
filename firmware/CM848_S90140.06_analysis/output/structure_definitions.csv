@@ -696,3 +696,35 @@ ef00_dispatch_entry_t,,handler_ptr,dword,4,Function pointer to service handler,,
 # Total size: 5 bytes per entry (max 20 entries)
 diag_dispatch_entry_t,,service_id,byte,1,Diagnostic service ID (0x43=paramRead 0x4A=memRead 0x4C=memReadExt),,verified
 diag_dispatch_entry_t,,handler_ptr,dword,4,Function pointer to service handler,,verified
+
+# ============================================================================
+# Scheduler Task Statistics - per-task timing and execution counters
+# 40 entries at 0x0040be6a, 12 bytes each, ending at 0x0040c04a (output_enable_bitmap)
+# Init loop zeros all fields with min_time set to 0xFFFF
+# Runtime: mainLoopIteration updates max/min time, accumulates ticks and call count
+# Code evidence: init at line 6882 (stride +3 as undefined4*), update at line 7285 (+0xC byte stride)
+scheduler_task_stat_t,0x0040be6a,total_ticks,dword,4,Cumulative execution time in timer ticks,,verified
+scheduler_task_stat_t,0x0040be6a,call_count,word,2,Number of times task has been executed,,verified
+scheduler_task_stat_t,0x0040be6a,min_time,word,2,Minimum execution time (initialized to 0xFFFF),,verified
+scheduler_task_stat_t,0x0040be6a,max_time,word,2,Maximum execution time observed,,verified
+scheduler_task_stat_t,0x0040be6a,overrun_count,word,2,Number of deadline overruns detected,,verified
+
+# Governor Channel Array - 3-channel governor derivative control
+# 3 entries at 0x0040addc, 6 bytes each (18 bytes total)
+# Accessed via (&governor_derivative_term)[uVar1 * 3] with while (uVar1 < 3)
+# processGovernorControlMessage matches channels by identifier, updates derivative bits
+# processSecurityAccessRequest clears bits per channel
+governor_channel_t,0x0040addc,derivative_term,word,2,Governor derivative term bitmask (0xFFFF=inactive),,verified
+governor_channel_t,0x0040addc,channel_identifier,word,2,Channel ID for matching incoming governor commands,,verified
+governor_channel_t,0x0040addc,gain_schedule,word,2,Gain schedule countdown timer (0=expired),,verified
+
+# Protection Threshold Lookup Results - fuel demand and RPM-corrected protection thresholds
+# 2 consecutive sets at 0x0040a502, 10 bytes each (5 u16 fields per set, 20 bytes total)
+# Set 1 (0x0040a502): Raw fuel demand table lookup results
+# Set 2 (0x0040a50c): RPM-corrected values via fuelDemandRpmCorrection()
+# lookupProtectionFuelDemand fills both sets sequentially (line 12544)
+protection_threshold_set_t,0x0040a502,threshold_scaled,word,2,Scaled protection threshold from table lookup,,verified
+protection_threshold_set_t,0x0040a502,recovery_threshold,word,2,Recovery/hysteresis exit threshold,,verified
+protection_threshold_set_t,0x0040a502,hysteresis,word,2,Protection hysteresis band value,,verified
+protection_threshold_set_t,0x0040a502,threshold_scaled_alt,word,2,Alternate scaled threshold (same input different context),,verified
+protection_threshold_set_t,0x0040a502,threshold_base,word,2,Base protection threshold before correction,,verified
