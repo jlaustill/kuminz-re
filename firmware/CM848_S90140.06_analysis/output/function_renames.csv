@@ -1952,37 +1952,52 @@ address,name
 0x005198b0,updateOilTemperatureDebounceState
 0x00519a18,initOilTemperatureProtectionThreshold
 0x00519c04,initOilTemperatureConditionState
-0x00519c64,BYTE_00519c64
-0x00519c84,BYTE_00519c84
+# Initializes oil temp values and oil_temp_condition_state_ptr
+0x00519c64,initOilTemperatureState
+# Simple indirect store of r11 to *r31
+0x00519c84,storeIndirectValueB
 0x00519c94,evaluateOilTemperatureLoadCondition
-0x00519cc4,BYTE_00519cc4
-0x00519e2c,BYTE_00519e2c
-0x0051a0a8,BYTE_0051a0a8
+# Protection step counter comparison with interpolateWithIndex
+0x00519cc4,evaluateProtectionStepCondition
+# Sets/clears protection_active_flag based on condition_eval
+0x00519e2c,updateProtectionActiveFlag
+# Oil temp sensor range with system_enable_state.sensor_diag
+0x0051a0a8,processOilTempSensorRange
 0x0051a234,evaluateOilTemperatureSensorDiagnostics
 0x0051a464,evaluateEmissionControlAdjustment
-0x0051a648,BYTE_0051a648
+# Emission control state flag processing
+0x0051a648,processEmissionControlState
 0x0051a75c,updateCalibrationPhaseCounter
-0x0051a878,BYTE_0051a878
+# Updates calibration_phase_timer and bitmask
+0x0051a878,updateCalibrationPhaseFlags
 0x0051aae4,evaluateThermalFailsafeConditions
-0x0051ab50,BYTE_0051ab50
-0x0051ab70,BYTE_0051ab70
-0x0051aecc,BYTE_0051aecc
+# Complex thermal phase transition condition checks
+0x0051ab50,evaluateThermalPhaseConditions
+# Thermal phase transition variant B
+0x0051ab70,evaluateThermalPhaseConditionsB
+# Evaluates thermal_injection_timing_range_high/low
+0x0051aecc,evaluateThermalInjectionTimingRange
 # 6 calls - thermal protection state machine for injection timing ranges
 0x0051aef8,monitorThermalProtectionState
 0x0051b158,updateThermalLockoutTimer
-0x0051b56c,BYTE_0051b56c
+# Sets protection_inhibit_flag and related DAT values
+0x0051b56c,setProtectionInhibitFlag
 0x0051b58c,checkAndDispatchCommand
 0x0051b608,accumulateWithClamp
 0x0051b658,computeClampedDelta
 0x0051b6a8,evaluateExhaustTemperatureDiagnostics
-0x0051b978,BYTE_0051b978
-0x0051babc,BYTE_0051babc
+# Complex function with many register parameters
+0x0051b978,processComplexControlLoop
+# Complex control loop variant B
+0x0051babc,processComplexControlLoopB
 0x0051bed0,updateProtectionModeAndDispatch
 0x0051bfc4,updateExhaustTemperatureProtectionMode
 0x0051c278,clampProtectionLimit
 0x0051c2b4,calculateWarmupProtectionLimit
-0x0051c2d0,BYTE_0051c2d0
-0x0051c3d8,BYTE_0051c3d8
+# Warmup protection limit calculation variant
+0x0051c2d0,calculateWarmupProtectionLimitB
+# Warmup protection limit calculation variant C
+0x0051c3d8,calculateWarmupProtectionLimitC
 0x0051c534,calculateDeltaWarmupCompensation
 0x0051c5dc,processWarmupTimerDecrement
 0x0051c6c0,updateWarmupProtectionMode
