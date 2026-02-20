@@ -1,0 +1,527 @@
+(kicad_sch (version 20230121) (generator "KiCAD-MCP-Server") (uuid 00000000-0000-0000-0000-000000000000) (paper "A4") (lib_symbols 
+
+(symbol "Device:R" (pin_numbers hide) (pin_names (offset 0)) (in_bom yes) (on_board yes) 
+
+(property "Reference" "R" (at 2.032 0 90) (effects (font (size 1.27 1.27)))) 
+
+(property "Value" "R" (at 0 0 90) (effects (font (size 1.27 1.27)))) 
+
+(property "Footprint" "" (at -1.778 0 90) (effects (font (size 1.27 1.27)) hide)) 
+
+(property "Datasheet" "~" (at 0 0 0) (effects (font (size 1.27 1.27)) hide)) 
+
+(symbol "R_0_1" 
+
+(rectangle (start -1.016 -2.54) (end 1.016 2.54) (stroke (width 0.254) (type default)) (fill (type none)))) 
+
+(symbol "R_1_1" (pin passive line (at 0 3.81 270) (length 1.27) (name "~" (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27))))) (pin passive line (at 0 -3.81 90) (length 1.27) (name "~" (effects (font (size 1.27 1.27)))) (number "2" (effects (font (size 1.27 1.27))))))) 
+
+(symbol "Device:C" (pin_numbers hide) (pin_names (offset 0.254)) (in_bom yes) (on_board yes) 
+
+(property "Reference" "C" (at 0.635 2.54 0) (effects (font (size 1.27 1.27)) (justify left))) 
+
+(property "Value" "C" (at 0.635 -2.54 0) (effects (font (size 1.27 1.27)) (justify left))) 
+
+(property "Footprint" "" (at 0.9652 -3.81 0) (effects (font (size 1.27 1.27)) hide)) 
+
+(property "Datasheet" "~" (at 0 0 0) (effects (font (size 1.27 1.27)) hide)) 
+
+(symbol "C_0_1" 
+
+(polyline (pts 
+
+(xy -2.032 -0.762) 
+
+(xy 2.032 -0.762)) (stroke (width 0.508) (type default)) (fill (type none))) 
+
+(polyline (pts 
+
+(xy -2.032 0.762) 
+
+(xy 2.032 0.762)) (stroke (width 0.508) (type default)) (fill (type none)))) 
+
+(symbol "C_1_1" (pin passive line (at 0 3.81 270) (length 2.794) (name "~" (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27))))) (pin passive line (at 0 -3.81 90) (length 2.794) (name "~" (effects (font (size 1.27 1.27)))) (number "2" (effects (font (size 1.27 1.27))))))) 
+
+(symbol "Device:LED" (pin_numbers hide) (pin_names (offset 1.016) hide) (in_bom yes) (on_board yes) 
+
+(property "Reference" "D" (at 0 2.54 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Value" "LED" (at 0 -2.54 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Footprint" "" (at 0 0 0) (effects (font (size 1.27 1.27)) hide)) 
+
+(property "Datasheet" "~" (at 0 0 0) (effects (font (size 1.27 1.27)) hide)) 
+
+(symbol "LED_0_1" 
+
+(polyline (pts 
+
+(xy -1.27 -1.27) 
+
+(xy -1.27 1.27)) (stroke (width 0.254) (type default)) (fill (type none))) 
+
+(polyline (pts 
+
+(xy -1.27 0) 
+
+(xy 1.27 0)) (stroke (width 0) (type default)) (fill (type none))) 
+
+(polyline (pts 
+
+(xy 1.27 -1.27) 
+
+(xy 1.27 1.27) 
+
+(xy -1.27 0) 
+
+(xy 1.27 -1.27)) (stroke (width 0.254) (type default)) (fill (type none)))) 
+
+(symbol "LED_1_1" (pin passive line (at -3.81 0 0) (length 2.54) (name "K" (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27))))) (pin passive line (at 3.81 0 180) (length 2.54) (name "A" (effects (font (size 1.27 1.27)))) (number "2" (effects (font (size 1.27 1.27))))))) 
+
+(symbol "S32K358:S32K358" (pin_names (offset 1.016)) (exclude_from_sim no) (in_bom yes) (on_board yes) 
+
+(property "Reference" "U" (at 0 116.84 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Value" "S32K358" (at 0 -116.84 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Footprint" "Package_QFP:TQFP-172_24x24mm_P0.5mm" (at 0 -119.38 0) (effects (font (size 1.27 1.27)) hide)) 
+
+(property "Datasheet" "https://www.nxp.com/docs/en/data-sheet/S32K3xx.pdf" (at 0 -121.92 0) (effects (font (size 1.27 1.27)) hide)) 
+
+(property "Description" "S32K358 Arm Cortex-M7 MCU, 8MB Flash, 1152KB RAM, 240MHz, HDQFP172-EP" (at 0 0 0) (effects (font (size 1.27 1.27)) hide)) 
+
+(symbol "S32K358_0_1" 
+
+(rectangle (start -31.75 114.3) (end 31.75 -114.3) (stroke (width 0.254) (type default)) (fill (type background)))) 
+
+(symbol "S32K358_1_1" (pin bidirectional line (at -36.83 109.22 0) (length 5.08) (name "PTA0" (effects (font (size 1.016 1.016)))) (number "137" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 106.68 0) (length 5.08) (name "PTA1" (effects (font (size 1.016 1.016)))) (number "135" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 104.14 0) (length 5.08) (name "PTA2" (effects (font (size 1.016 1.016)))) (number "124" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 101.6 0) (length 5.08) (name "PTA3" (effects (font (size 1.016 1.016)))) (number "123" (effects (font (size 1.016 1.016))))) (pin input line (at -36.83 99.06 0) (length 5.08) (name "PTA4/TMS" (effects (font (size 1.016 1.016)))) (number "170" (effects (font (size 1.016 1.016))))) (pin passive line (at -36.83 96.52 0) (length 5.08) (name "PTA5" (effects (font (size 1.016 1.016)))) (number "167" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 93.98 0) (length 5.08) (name "PTA6" (effects (font (size 1.016 1.016)))) (number "102" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 91.44 0) (length 5.08) (name "PTA7" (effects (font (size 1.016 1.016)))) (number "100" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 88.9 0) (length 5.08) (name "PTA8" (effects (font (size 1.016 1.016)))) (number "172" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 86.36 0) (length 5.08) (name "PTA9" (effects (font (size 1.016 1.016)))) (number "171" (effects (font (size 1.016 1.016))))) (pin output line (at -36.83 83.82 0) (length 5.08) (name "PTA10/TDO" (effects (font (size 1.016 1.016)))) (number "161" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 81.28 0) (length 5.08) (name "PTA11" (effects (font (size 1.016 1.016)))) (number "160" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 78.74 0) (length 5.08) (name "PTA12" (effects (font (size 1.016 1.016)))) (number "159" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 76.2 0) (length 5.08) (name "PTA13" (effects (font (size 1.016 1.016)))) (number "155" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 73.66 0) (length 5.08) (name "PTA14" (effects (font (size 1.016 1.016)))) (number "152" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 71.12 0) (length 5.08) (name "PTA15" (effects (font (size 1.016 1.016)))) (number "145" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 68.58 0) (length 5.08) (name "PTA16" (effects (font (size 1.016 1.016)))) (number "143" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 66.04 0) (length 5.08) (name "PTA17" (effects (font (size 1.016 1.016)))) (number "109" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 63.5 0) (length 5.08) (name "PTA18" (effects (font (size 1.016 1.016)))) (number "1" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 60.96 0) (length 5.08) (name "PTA19" (effects (font (size 1.016 1.016)))) (number "2" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 58.42 0) (length 5.08) (name "PTA20" (effects (font (size 1.016 1.016)))) (number "3" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 55.88 0) (length 5.08) (name "PTA21" (effects (font (size 1.016 1.016)))) (number "6" (effects (font (size 1.016 1.016))))) (pin input line (at -36.83 53.34 0) (length 5.08) (name "PTA24" (effects (font (size 1.016 1.016)))) (number "14" (effects (font (size 1.016 1.016))))) (pin input line (at -36.83 50.8 0) (length 5.08) (name "PTA25" (effects (font (size 1.016 1.016)))) (number "15" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 48.26 0) (length 5.08) (name "PTA28" (effects (font (size 1.016 1.016)))) (number "30" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 45.72 0) (length 5.08) (name "PTA29" (effects (font (size 1.016 1.016)))) (number "32" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 43.18 0) (length 5.08) (name "PTA30" (effects (font (size 1.016 1.016)))) (number "33" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 40.64 0) (length 5.08) (name "PTA31" (effects (font (size 1.016 1.016)))) (number "39" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 38.1 0) (length 5.08) (name "PTB0" (effects (font (size 1.016 1.016)))) (number "95" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 35.56 0) (length 5.08) (name "PTB1" (effects (font (size 1.016 1.016)))) (number "94" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 33.02 0) (length 5.08) (name "PTB3" (effects (font (size 1.016 1.016)))) (number "74" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 30.48 0) (length 5.08) (name "PTB4" (effects (font (size 1.016 1.016)))) (number "48" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 27.94 0) (length 5.08) (name "PTB5" (effects (font (size 1.016 1.016)))) (number "47" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 25.4 0) (length 5.08) (name "PTB8" (effects (font (size 1.016 1.016)))) (number "133" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 22.86 0) (length 5.08) (name "PTB9" (effects (font (size 1.016 1.016)))) (number "130" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 20.32 0) (length 5.08) (name "PTB10" (effects (font (size 1.016 1.016)))) (number "129" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 17.78 0) (length 5.08) (name "PTB11" (effects (font (size 1.016 1.016)))) (number "126" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 15.24 0) (length 5.08) (name "PTB12" (effects (font (size 1.016 1.016)))) (number "117" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 12.7 0) (length 5.08) (name "PTB13" (effects (font (size 1.016 1.016)))) (number "116" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 10.16 0) (length 5.08) (name "PTB14" (effects (font (size 1.016 1.016)))) (number "114" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 7.62 0) (length 5.08) (name "PTB15" (effects (font (size 1.016 1.016)))) (number "113" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 5.08 0) (length 5.08) (name "PTB16" (effects (font (size 1.016 1.016)))) (number "112" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 2.54 0) (length 5.08) (name "PTB17" (effects (font (size 1.016 1.016)))) (number "110" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 0.0 0) (length 5.08) (name "PTB18" (effects (font (size 1.016 1.016)))) (number "42" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 -2.54 0) (length 5.08) (name "PTB19" (effects (font (size 1.016 1.016)))) (number "43" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 -5.08 0) (length 5.08) (name "PTB20" (effects (font (size 1.016 1.016)))) (number "44" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 -7.62 0) (length 5.08) (name "PTB21" (effects (font (size 1.016 1.016)))) (number "45" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 -10.16 0) (length 5.08) (name "PTB22" (effects (font (size 1.016 1.016)))) (number "67" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 -12.7 0) (length 5.08) (name "PTB23" (effects (font (size 1.016 1.016)))) (number "69" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 -15.24 0) (length 5.08) (name "PTB24" (effects (font (size 1.016 1.016)))) (number "70" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 -17.78 0) (length 5.08) (name "PTB25" (effects (font (size 1.016 1.016)))) (number "72" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 -20.32 0) (length 5.08) (name "PTB26" (effects (font (size 1.016 1.016)))) (number "73" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 -22.86 0) (length 5.08) (name "PTB27" (effects (font (size 1.016 1.016)))) (number "75" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 -25.4 0) (length 5.08) (name "PTB28" (effects (font (size 1.016 1.016)))) (number "76" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 -27.94 0) (length 5.08) (name "PTB29" (effects (font (size 1.016 1.016)))) (number "80" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 -30.48 0) (length 5.08) (name "PTC0" (effects (font (size 1.016 1.016)))) (number "62" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 -33.02 0) (length 5.08) (name "PTC1" (effects (font (size 1.016 1.016)))) (number "61" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 -35.56 0) (length 5.08) (name "PTC2" (effects (font (size 1.016 1.016)))) (number "50" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 -38.1 0) (length 5.08) (name "PTC3" (effects (font (size 1.016 1.016)))) (number "49" (effects (font (size 1.016 1.016))))) (pin input line (at -36.83 -40.64 0) (length 5.08) (name "PTC4/TCK" (effects (font (size 1.016 1.016)))) (number "166" (effects (font (size 1.016 1.016))))) (pin input line (at -36.83 -43.18 0) (length 5.08) (name "PTC5/TDI" (effects (font (size 1.016 1.016)))) (number "165" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 -45.72 0) (length 5.08) (name "PTC6" (effects (font (size 1.016 1.016)))) (number "141" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 -48.26 0) (length 5.08) (name "PTC7" (effects (font (size 1.016 1.016)))) (number "140" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 -50.8 0) (length 5.08) (name "PTC8" (effects (font (size 1.016 1.016)))) (number "98" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 -53.34 0) (length 5.08) (name "PTC9" (effects (font (size 1.016 1.016)))) (number "97" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 -55.88 0) (length 5.08) (name "PTC10" (effects (font (size 1.016 1.016)))) (number "92" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 -58.42 0) (length 5.08) (name "PTC11" (effects (font (size 1.016 1.016)))) (number "90" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 -60.96 0) (length 5.08) (name "PTC12" (effects (font (size 1.016 1.016)))) (number "83" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 -63.5 0) (length 5.08) (name "PTC13" (effects (font (size 1.016 1.016)))) (number "81" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 -66.04 0) (length 5.08) (name "PTC14" (effects (font (size 1.016 1.016)))) (number "71" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 -68.58 0) (length 5.08) (name "PTC15" (effects (font (size 1.016 1.016)))) (number "68" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 -71.12 0) (length 5.08) (name "PTC16" (effects (font (size 1.016 1.016)))) (number "66" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 -73.66 0) (length 5.08) (name "PTC17" (effects (font (size 1.016 1.016)))) (number "65" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 -76.2 0) (length 5.08) (name "PTC18" (effects (font (size 1.016 1.016)))) (number "82" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 -78.74 0) (length 5.08) (name "PTC19" (effects (font (size 1.016 1.016)))) (number "84" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 -81.28 0) (length 5.08) (name "PTC20" (effects (font (size 1.016 1.016)))) (number "85" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 -83.82 0) (length 5.08) (name "PTC21" (effects (font (size 1.016 1.016)))) (number "86" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 -86.36 0) (length 5.08) (name "PTC23" (effects (font (size 1.016 1.016)))) (number "87" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 -88.9 0) (length 5.08) (name "PTC24" (effects (font (size 1.016 1.016)))) (number "88" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 -91.44 0) (length 5.08) (name "PTC25" (effects (font (size 1.016 1.016)))) (number "89" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 -93.98 0) (length 5.08) (name "PTC26" (effects (font (size 1.016 1.016)))) (number "91" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 -96.52 0) (length 5.08) (name "PTC27" (effects (font (size 1.016 1.016)))) (number "93" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 -99.06 0) (length 5.08) (name "PTC28" (effects (font (size 1.016 1.016)))) (number "96" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 -101.6 0) (length 5.08) (name "PTC29" (effects (font (size 1.016 1.016)))) (number "99" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 -104.14 0) (length 5.08) (name "PTC30" (effects (font (size 1.016 1.016)))) (number "101" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at -36.83 -106.68 0) (length 5.08) (name "PTC31" (effects (font (size 1.016 1.016)))) (number "103" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 109.22 180) (length 5.08) (name "PTD0" (effects (font (size 1.016 1.016)))) (number "8" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 106.68 180) (length 5.08) (name "PTD1" (effects (font (size 1.016 1.016)))) (number "7" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 104.14 180) (length 5.08) (name "PTD2" (effects (font (size 1.016 1.016)))) (number "121" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 101.6 180) (length 5.08) (name "PTD3" (effects (font (size 1.016 1.016)))) (number "120" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 99.06 180) (length 5.08) (name "PTD4" (effects (font (size 1.016 1.016)))) (number "119" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 96.52 180) (length 5.08) (name "PTD5" (effects (font (size 1.016 1.016)))) (number "53" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 93.98 180) (length 5.08) (name "PTD6" (effects (font (size 1.016 1.016)))) (number "52" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 91.44 180) (length 5.08) (name "PTD7" (effects (font (size 1.016 1.016)))) (number "51" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 88.9 180) (length 5.08) (name "PTD8" (effects (font (size 1.016 1.016)))) (number "64" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 86.36 180) (length 5.08) (name "PTD9" (effects (font (size 1.016 1.016)))) (number "63" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 83.82 180) (length 5.08) (name "PTD10" (effects (font (size 1.016 1.016)))) (number "56" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 81.28 180) (length 5.08) (name "PTD11" (effects (font (size 1.016 1.016)))) (number "55" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 78.74 180) (length 5.08) (name "PTD12" (effects (font (size 1.016 1.016)))) (number "54" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 76.2 180) (length 5.08) (name "PTD13" (effects (font (size 1.016 1.016)))) (number "41" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 73.66 180) (length 5.08) (name "PTD14" (effects (font (size 1.016 1.016)))) (number "40" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 71.12 180) (length 5.08) (name "PTD15" (effects (font (size 1.016 1.016)))) (number "35" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 68.58 180) (length 5.08) (name "PTD16" (effects (font (size 1.016 1.016)))) (number "34" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 66.04 180) (length 5.08) (name "PTD17" (effects (font (size 1.016 1.016)))) (number "31" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 63.5 180) (length 5.08) (name "PTD20" (effects (font (size 1.016 1.016)))) (number "111" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 60.96 180) (length 5.08) (name "PTD21" (effects (font (size 1.016 1.016)))) (number "115" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 58.42 180) (length 5.08) (name "PTD22" (effects (font (size 1.016 1.016)))) (number "118" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 55.88 180) (length 5.08) (name "PTD23" (effects (font (size 1.016 1.016)))) (number "122" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 53.34 180) (length 5.08) (name "PTD24" (effects (font (size 1.016 1.016)))) (number "125" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 50.8 180) (length 5.08) (name "PTD26" (effects (font (size 1.016 1.016)))) (number "131" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 48.26 180) (length 5.08) (name "PTD27" (effects (font (size 1.016 1.016)))) (number "132" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 45.72 180) (length 5.08) (name "PTD28" (effects (font (size 1.016 1.016)))) (number "134" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 43.18 180) (length 5.08) (name "PTD29" (effects (font (size 1.016 1.016)))) (number "136" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 40.64 180) (length 5.08) (name "PTD30" (effects (font (size 1.016 1.016)))) (number "138" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 38.1 180) (length 5.08) (name "PTD31" (effects (font (size 1.016 1.016)))) (number "139" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 35.56 180) (length 5.08) (name "PTE0" (effects (font (size 1.016 1.016)))) (number "163" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 33.02 180) (length 5.08) (name "PTE1" (effects (font (size 1.016 1.016)))) (number "162" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 30.48 180) (length 5.08) (name "PTE2" (effects (font (size 1.016 1.016)))) (number "147" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 27.94 180) (length 5.08) (name "PTE4" (effects (font (size 1.016 1.016)))) (number "13" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 25.4 180) (length 5.08) (name "PTE5" (effects (font (size 1.016 1.016)))) (number "12" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 22.86 180) (length 5.08) (name "PTE6" (effects (font (size 1.016 1.016)))) (number "146" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 20.32 180) (length 5.08) (name "PTE7" (effects (font (size 1.016 1.016)))) (number "104" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 17.78 180) (length 5.08) (name "PTE8" (effects (font (size 1.016 1.016)))) (number "46" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 15.24 180) (length 5.08) (name "PTE10" (effects (font (size 1.016 1.016)))) (number "10" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 12.7 180) (length 5.08) (name "PTE11" (effects (font (size 1.016 1.016)))) (number "9" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 10.16 180) (length 5.08) (name "PTE12" (effects (font (size 1.016 1.016)))) (number "29" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 7.62 180) (length 5.08) (name "PTE13" (effects (font (size 1.016 1.016)))) (number "11" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 5.08 180) (length 5.08) (name "PTE15" (effects (font (size 1.016 1.016)))) (number "5" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 2.54 180) (length 5.08) (name "PTE16" (effects (font (size 1.016 1.016)))) (number "4" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 0.0 180) (length 5.08) (name "PTE17" (effects (font (size 1.016 1.016)))) (number "142" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 -2.54 180) (length 5.08) (name "PTE18" (effects (font (size 1.016 1.016)))) (number "144" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 -5.08 180) (length 5.08) (name "PTE21" (effects (font (size 1.016 1.016)))) (number "153" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 -7.62 180) (length 5.08) (name "PTE22" (effects (font (size 1.016 1.016)))) (number "154" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 -10.16 180) (length 5.08) (name "PTE23" (effects (font (size 1.016 1.016)))) (number "156" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 -12.7 180) (length 5.08) (name "PTE24" (effects (font (size 1.016 1.016)))) (number "157" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 -15.24 180) (length 5.08) (name "PTE25" (effects (font (size 1.016 1.016)))) (number "158" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 36.83 -17.78 180) (length 5.08) (name "PTE26" (effects (font (size 1.016 1.016)))) (number "164" (effects (font (size 1.016 1.016))))) (pin input line (at 36.83 -20.32 180) (length 5.08) (name "EXTAL" (effects (font (size 1.016 1.016)))) (number "23" (effects (font (size 1.016 1.016))))) (pin output line (at 36.83 -22.86 180) (length 5.08) (name "PMOS_CTRL" (effects (font (size 1.016 1.016)))) (number "27" (effects (font (size 1.016 1.016))))) (pin output line (at 36.83 -25.4 180) (length 5.08) (name "XTAL" (effects (font (size 1.016 1.016)))) (number "25" (effects (font (size 1.016 1.016))))) (pin power_in line (at -25.4 119.38 270) (length 5.08) (name "VDD_HV_A" (effects (font (size 1.016 1.016)))) (number "18" (effects (font (size 1.016 1.016))))) (pin power_in line (at -22.86 119.38 270) (length 5.08) (name "VDD_HV_A" (effects (font (size 1.016 1.016)))) (number "108" (effects (font (size 1.016 1.016))))) (pin power_in line (at -20.32 119.38 270) (length 5.08) (name "VDD_HV_A" (effects (font (size 1.016 1.016)))) (number "128" (effects (font (size 1.016 1.016))))) (pin power_in line (at -17.78 119.38 270) (length 5.08) (name "VDD_HV_A" (effects (font (size 1.016 1.016)))) (number "151" (effects (font (size 1.016 1.016))))) (pin power_in line (at -15.24 119.38 270) (length 5.08) (name "VDD_HV_A" (effects (font (size 1.016 1.016)))) (number "169" (effects (font (size 1.016 1.016))))) (pin power_in line (at -12.7 119.38 270) (length 5.08) (name "VDD_HV_B" (effects (font (size 1.016 1.016)))) (number "38" (effects (font (size 1.016 1.016))))) (pin power_in line (at -10.16 119.38 270) (length 5.08) (name "VDD_HV_B" (effects (font (size 1.016 1.016)))) (number "57" (effects (font (size 1.016 1.016))))) (pin power_in line (at -7.62 119.38 270) (length 5.08) (name "VDD_HV_B" (effects (font (size 1.016 1.016)))) (number "77" (effects (font (size 1.016 1.016))))) (pin power_in line (at -5.08 119.38 270) (length 5.08) (name "V11" (effects (font (size 1.016 1.016)))) (number "21" (effects (font (size 1.016 1.016))))) (pin power_in line (at -2.54 119.38 270) (length 5.08) (name "V11" (effects (font (size 1.016 1.016)))) (number "59" (effects (font (size 1.016 1.016))))) (pin power_in line (at 0.0 119.38 270) (length 5.08) (name "V11" (effects (font (size 1.016 1.016)))) (number "106" (effects (font (size 1.016 1.016))))) (pin power_in line (at 2.54 119.38 270) (length 5.08) (name "V11" (effects (font (size 1.016 1.016)))) (number "149" (effects (font (size 1.016 1.016))))) (pin power_in line (at 5.08 119.38 270) (length 5.08) (name "V15" (effects (font (size 1.016 1.016)))) (number "20" (effects (font (size 1.016 1.016))))) (pin power_in line (at 7.62 119.38 270) (length 5.08) (name "V15" (effects (font (size 1.016 1.016)))) (number "36" (effects (font (size 1.016 1.016))))) (pin power_in line (at 10.16 119.38 270) (length 5.08) (name "V15" (effects (font (size 1.016 1.016)))) (number "60" (effects (font (size 1.016 1.016))))) (pin power_in line (at 12.7 119.38 270) (length 5.08) (name "V15" (effects (font (size 1.016 1.016)))) (number "79" (effects (font (size 1.016 1.016))))) (pin power_in line (at 15.24 119.38 270) (length 5.08) (name "V15" (effects (font (size 1.016 1.016)))) (number "105" (effects (font (size 1.016 1.016))))) (pin power_in line (at 17.78 119.38 270) (length 5.08) (name "V15" (effects (font (size 1.016 1.016)))) (number "148" (effects (font (size 1.016 1.016))))) (pin power_in line (at 20.32 119.38 270) (length 5.08) (name "V25" (effects (font (size 1.016 1.016)))) (number "19" (effects (font (size 1.016 1.016))))) (pin power_in line (at 22.86 119.38 270) (length 5.08) (name "VDD_DCDC" (effects (font (size 1.016 1.016)))) (number "28" (effects (font (size 1.016 1.016))))) (pin power_in line (at 25.4 119.38 270) (length 5.08) (name "VREFH" (effects (font (size 1.016 1.016)))) (number "16" (effects (font (size 1.016 1.016))))) (pin power_in line (at -13.97 -119.38 90) (length 5.08) (name "VSS" (effects (font (size 1.016 1.016)))) (number "22" (effects (font (size 1.016 1.016))))) (pin power_in line (at -11.43 -119.38 90) (length 5.08) (name "VSS" (effects (font (size 1.016 1.016)))) (number "24" (effects (font (size 1.016 1.016))))) (pin power_in line (at -8.89 -119.38 90) (length 5.08) (name "VSS" (effects (font (size 1.016 1.016)))) (number "37" (effects (font (size 1.016 1.016))))) (pin power_in line (at -6.35 -119.38 90) (length 5.08) (name "VSS" (effects (font (size 1.016 1.016)))) (number "58" (effects (font (size 1.016 1.016))))) (pin power_in line (at -3.81 -119.38 90) (length 5.08) (name "VSS" (effects (font (size 1.016 1.016)))) (number "78" (effects (font (size 1.016 1.016))))) (pin power_in line (at -1.27 -119.38 90) (length 5.08) (name "VSS" (effects (font (size 1.016 1.016)))) (number "107" (effects (font (size 1.016 1.016))))) (pin power_in line (at 1.27 -119.38 90) (length 5.08) (name "VSS" (effects (font (size 1.016 1.016)))) (number "127" (effects (font (size 1.016 1.016))))) (pin power_in line (at 3.81 -119.38 90) (length 5.08) (name "VSS" (effects (font (size 1.016 1.016)))) (number "150" (effects (font (size 1.016 1.016))))) (pin power_in line (at 6.35 -119.38 90) (length 5.08) (name "VSS" (effects (font (size 1.016 1.016)))) (number "168" (effects (font (size 1.016 1.016))))) (pin power_in line (at 8.89 -119.38 90) (length 5.08) (name "VSS_DCDC" (effects (font (size 1.016 1.016)))) (number "26" (effects (font (size 1.016 1.016))))) (pin power_in line (at 11.43 -119.38 90) (length 5.08) (name "VREFL" (effects (font (size 1.016 1.016)))) (number "17" (effects (font (size 1.016 1.016))))) (pin power_in line (at 13.97 -119.38 90) (length 5.08) (name "EP" (effects (font (size 1.016 1.016)))) (number "EP" (effects (font (size 1.016 1.016))))))) 
+
+(symbol "FS26:FS26_SBC" (pin_names (offset 1.016)) (exclude_from_sim no) (in_bom yes) (on_board yes) 
+
+(property "Reference" "U" (at 0 30.479999999999997 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Value" "FS26_SBC" (at 0 -30.479999999999997 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Footprint" "Package_QFP:LQFP-48_7x7mm_P0.5mm" (at 0 -33.019999999999996 0) (effects (font (size 1.27 1.27)) hide)) 
+
+(property "Datasheet" "https://www.nxp.com/docs/en/data-sheet/FS26_SDS.pdf" (at 0 -35.559999999999995 0) (effects (font (size 1.27 1.27)) hide)) 
+
+(property "Description" "FS26 Safety System Basis Chip, ASIL D, LQFP48" (at 0 0 0) (effects (font (size 1.27 1.27)) hide)) 
+
+(property "MPN" "MFS2633HMDAJAD" (at 0 0 0) (effects (font (size 1.27 1.27)) hide)) 
+
+(symbol "FS26_SBC_0_1" 
+
+(rectangle (start -15 27.939999999999998) (end 15 -27.939999999999998) (stroke (width 0.254) (type default)) (fill (type background)))) 
+
+(symbol "FS26_SBC_1_1" (pin power_in line (at -20.08 22.86 0) (length 5.08) (name "VSUP" (effects (font (size 1.016 1.016)))) (number "42" (effects (font (size 1.016 1.016))))) (pin power_in line (at -20.08 20.32 0) (length 5.08) (name "VSUP_PWR" (effects (font (size 1.016 1.016)))) (number "41" (effects (font (size 1.016 1.016))))) (pin input line (at -20.08 17.78 0) (length 5.08) (name "BATSENSE" (effects (font (size 1.016 1.016)))) (number "48" (effects (font (size 1.016 1.016))))) (pin input line (at -20.08 15.24 0) (length 5.08) (name "LDOIN" (effects (font (size 1.016 1.016)))) (number "10" (effects (font (size 1.016 1.016))))) (pin passive line (at -20.08 12.7 0) (length 5.08) (name "VPRE_SW" (effects (font (size 1.016 1.016)))) (number "40" (effects (font (size 1.016 1.016))))) (pin passive line (at -20.08 10.16 0) (length 5.08) (name "VPRE_BT" (effects (font (size 1.016 1.016)))) (number "39" (effects (font (size 1.016 1.016))))) (pin input line (at -20.08 7.62 0) (length 5.08) (name "VPRE_FB" (effects (font (size 1.016 1.016)))) (number "37" (effects (font (size 1.016 1.016))))) (pin input line (at -20.08 5.08 0) (length 5.08) (name "CORE_IN" (effects (font (size 1.016 1.016)))) (number "34" (effects (font (size 1.016 1.016))))) (pin passive line (at -20.08 2.54 0) (length 5.08) (name "CORE_SW" (effects (font (size 1.016 1.016)))) (number "32" (effects (font (size 1.016 1.016))))) (pin input line (at -20.08 0.0 0) (length 5.08) (name "CORE_BT" (effects (font (size 1.016 1.016)))) (number "33" (effects (font (size 1.016 1.016))))) (pin input line (at -20.08 -2.54 0) (length 5.08) (name "CORE_FB" (effects (font (size 1.016 1.016)))) (number "30" (effects (font (size 1.016 1.016))))) (pin power_out line (at -20.08 -5.08 0) (length 5.08) (name "LDO1OUT" (effects (font (size 1.016 1.016)))) (number "11" (effects (font (size 1.016 1.016))))) (pin power_out line (at -20.08 -7.62 0) (length 5.08) (name "LDO2OUT" (effects (font (size 1.016 1.016)))) (number "9" (effects (font (size 1.016 1.016))))) (pin power_out line (at -20.08 -10.16 0) (length 5.08) (name "VREF" (effects (font (size 1.016 1.016)))) (number "8" (effects (font (size 1.016 1.016))))) (pin power_out line (at -20.08 -12.7 0) (length 5.08) (name "TRK1" (effects (font (size 1.016 1.016)))) (number "4" (effects (font (size 1.016 1.016))))) (pin power_out line (at -20.08 -15.24 0) (length 5.08) (name "TRK2" (effects (font (size 1.016 1.016)))) (number "5" (effects (font (size 1.016 1.016))))) (pin input line (at -20.08 -17.78 0) (length 5.08) (name "TRKIN" (effects (font (size 1.016 1.016)))) (number "7" (effects (font (size 1.016 1.016))))) (pin output line (at 20.08 22.86 180) (length 5.08) (name "INTB" (effects (font (size 1.016 1.016)))) (number "24" (effects (font (size 1.016 1.016))))) (pin output line (at 20.08 20.32 180) (length 5.08) (name "MISO" (effects (font (size 1.016 1.016)))) (number "25" (effects (font (size 1.016 1.016))))) (pin input line (at 20.08 17.78 180) (length 5.08) (name "MOSI" (effects (font (size 1.016 1.016)))) (number "26" (effects (font (size 1.016 1.016))))) (pin input line (at 20.08 15.24 180) (length 5.08) (name "SCLK" (effects (font (size 1.016 1.016)))) (number "27" (effects (font (size 1.016 1.016))))) (pin input line (at 20.08 12.7 180) (length 5.08) (name "CSB" (effects (font (size 1.016 1.016)))) (number "28" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 20.08 10.16 180) (length 5.08) (name "RSTB" (effects (font (size 1.016 1.016)))) (number "16" (effects (font (size 1.016 1.016))))) (pin output line (at 20.08 7.62 180) (length 5.08) (name "FS0B" (effects (font (size 1.016 1.016)))) (number "13" (effects (font (size 1.016 1.016))))) (pin output line (at 20.08 5.08 180) (length 5.08) (name "FS1B" (effects (font (size 1.016 1.016)))) (number "12" (effects (font (size 1.016 1.016))))) (pin input line (at 20.08 2.54 180) (length 5.08) (name "FCCU1" (effects (font (size 1.016 1.016)))) (number "17" (effects (font (size 1.016 1.016))))) (pin input line (at 20.08 0.0 180) (length 5.08) (name "FCCU2" (effects (font (size 1.016 1.016)))) (number "18" (effects (font (size 1.016 1.016))))) (pin input line (at 20.08 -2.54 180) (length 5.08) (name "VMONPRE" (effects (font (size 1.016 1.016)))) (number "36" (effects (font (size 1.016 1.016))))) (pin input line (at 20.08 -5.08 180) (length 5.08) (name "VMONCORE" (effects (font (size 1.016 1.016)))) (number "15" (effects (font (size 1.016 1.016))))) (pin input line (at 20.08 -7.62 180) (length 5.08) (name "VMONEXT" (effects (font (size 1.016 1.016)))) (number "14" (effects (font (size 1.016 1.016))))) (pin output line (at 20.08 -10.16 180) (length 5.08) (name "AMUX" (effects (font (size 1.016 1.016)))) (number "29" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 20.08 -12.7 180) (length 5.08) (name "GPIO1" (effects (font (size 1.016 1.016)))) (number "3" (effects (font (size 1.016 1.016))))) (pin bidirectional line (at 20.08 -15.24 180) (length 5.08) (name "GPIO2" (effects (font (size 1.016 1.016)))) (number "6" (effects (font (size 1.016 1.016))))) (pin input line (at 20.08 -17.78 180) (length 5.08) (name "WAKE1" (effects (font (size 1.016 1.016)))) (number "47" (effects (font (size 1.016 1.016))))) (pin input line (at 20.08 -20.32 180) (length 5.08) (name "WAKE2" (effects (font (size 1.016 1.016)))) (number "2" (effects (font (size 1.016 1.016))))) (pin input line (at 20.08 -22.86 180) (length 5.08) (name "DEBUG" (effects (font (size 1.016 1.016)))) (number "31" (effects (font (size 1.016 1.016))))) (pin passive line (at 20.08 -25.4 180) (length 5.08) (name "VBOS" (effects (font (size 1.016 1.016)))) (number "35" (effects (font (size 1.016 1.016))))) (pin output line (at -7.62 33.019999999999996 270) (length 5.08) (name "VBST_PG" (effects (font (size 1.016 1.016)))) (number "1" (effects (font (size 1.016 1.016))))) (pin input line (at -5.08 33.019999999999996 270) (length 5.08) (name "VBST_ISH" (effects (font (size 1.016 1.016)))) (number "46" (effects (font (size 1.016 1.016))))) (pin input line (at -2.54 33.019999999999996 270) (length 5.08) (name "VBST_ISL" (effects (font (size 1.016 1.016)))) (number "44" (effects (font (size 1.016 1.016))))) (pin output line (at 0.0 33.019999999999996 270) (length 5.08) (name "VBST_G" (effects (font (size 1.016 1.016)))) (number "45" (effects (font (size 1.016 1.016))))) (pin input line (at 2.54 33.019999999999996 270) (length 5.08) (name "VBST_FB" (effects (font (size 1.016 1.016)))) (number "43" (effects (font (size 1.016 1.016))))) (pin power_out line (at 5.08 33.019999999999996 270) (length 5.08) (name "VDIG" (effects (font (size 1.016 1.016)))) (number "21" (effects (font (size 1.016 1.016))))) (pin power_in line (at 7.62 33.019999999999996 270) (length 5.08) (name "VDDIO" (effects (font (size 1.016 1.016)))) (number "23" (effects (font (size 1.016 1.016))))) (pin power_in line (at -5.08 -33.019999999999996 90) (length 5.08) (name "GND" (effects (font (size 1.016 1.016)))) (number "20" (effects (font (size 1.016 1.016))))) (pin power_in line (at -2.54 -33.019999999999996 90) (length 5.08) (name "GNDFS" (effects (font (size 1.016 1.016)))) (number "19" (effects (font (size 1.016 1.016))))) (pin power_in line (at 0.0 -33.019999999999996 90) (length 5.08) (name "GNDSUB" (effects (font (size 1.016 1.016)))) (number "22" (effects (font (size 1.016 1.016))))) (pin passive line (at 2.54 -33.019999999999996 90) (length 5.08) (name "NC" (effects (font (size 1.016 1.016)))) (number "38" (effects (font (size 1.016 1.016))))) (pin power_in line (at 5.08 -33.019999999999996 90) (length 5.08) (name "EP" (effects (font (size 1.016 1.016)))) (number "49" (effects (font (size 1.016 1.016))))))) 
+
+(symbol "Device:Crystal" (pin_numbers (hide yes)) (pin_names (offset 1.016) (hide yes)) (exclude_from_sim no) (in_bom yes) (on_board yes) 
+
+(property "Reference" "Y" (at 0 3.81 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Value" "Crystal" (at 0 -3.81 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Footprint" "" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes))) 
+
+(property "Datasheet" "~" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes))) 
+
+(property "Description" "Two pin crystal" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes))) 
+
+(property "ki_keywords" "quartz ceramic resonator oscillator" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes))) 
+
+(property "ki_fp_filters" "Crystal*" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes))) 
+
+(symbol "Crystal_0_1" 
+
+(polyline (pts 
+
+(xy -2.54 0) 
+
+(xy -1.905 0)) (stroke (width 0) (type default)) (fill (type none))) 
+
+(polyline (pts 
+
+(xy -1.905 -1.27) 
+
+(xy -1.905 1.27)) (stroke (width 0.508) (type default)) (fill (type none))) 
+
+(rectangle (start -1.143 2.54) (end 1.143 -2.54) (stroke (width 0.3048) (type default)) (fill (type none))) 
+
+(polyline (pts 
+
+(xy 1.905 -1.27) 
+
+(xy 1.905 1.27)) (stroke (width 0.508) (type default)) (fill (type none))) 
+
+(polyline (pts 
+
+(xy 2.54 0) 
+
+(xy 1.905 0)) (stroke (width 0) (type default)) (fill (type none)))) 
+
+(symbol "Crystal_1_1" (pin passive line (at -3.81 0 0) (length 1.27) (name "1" (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27))))) (pin passive line (at 3.81 0 180) (length 1.27) (name "2" (effects (font (size 1.27 1.27)))) (number "2" (effects (font (size 1.27 1.27)))))) (embedded_fonts no)) 
+
+(symbol "Connector_Generic:Conn_02x05_Odd_Even" (pin_names (offset 1.016) (hide yes)) (exclude_from_sim no) (in_bom yes) (on_board yes) 
+
+(property "Reference" "J" (at 1.27 7.62 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Value" "Conn_02x05_Odd_Even" (at 1.27 -7.62 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Footprint" "" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes))) 
+
+(property "Datasheet" "~" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes))) 
+
+(property "Description" "Generic connector, double row, 02x05, odd/even pin numbering scheme (row 1 odd numbers, row 2 even numbers), script generated (kicad-library-utils/schlib/autogen/connector/)" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes))) 
+
+(property "ki_keywords" "connector" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes))) 
+
+(property "ki_fp_filters" "Connector*:*_2x??_*" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes))) 
+
+(symbol "Conn_02x05_Odd_Even_1_1" 
+
+(rectangle (start -1.27 6.35) (end 3.81 -6.35) (stroke (width 0.254) (type default)) (fill (type background))) 
+
+(rectangle (start -1.27 5.207) (end 0 4.953) (stroke (width 0.1524) (type default)) (fill (type none))) 
+
+(rectangle (start -1.27 2.667) (end 0 2.413) (stroke (width 0.1524) (type default)) (fill (type none))) 
+
+(rectangle (start -1.27 0.127) (end 0 -0.127) (stroke (width 0.1524) (type default)) (fill (type none))) 
+
+(rectangle (start -1.27 -2.413) (end 0 -2.667) (stroke (width 0.1524) (type default)) (fill (type none))) 
+
+(rectangle (start -1.27 -4.953) (end 0 -5.207) (stroke (width 0.1524) (type default)) (fill (type none))) 
+
+(rectangle (start 3.81 5.207) (end 2.54 4.953) (stroke (width 0.1524) (type default)) (fill (type none))) 
+
+(rectangle (start 3.81 2.667) (end 2.54 2.413) (stroke (width 0.1524) (type default)) (fill (type none))) 
+
+(rectangle (start 3.81 0.127) (end 2.54 -0.127) (stroke (width 0.1524) (type default)) (fill (type none))) 
+
+(rectangle (start 3.81 -2.413) (end 2.54 -2.667) (stroke (width 0.1524) (type default)) (fill (type none))) 
+
+(rectangle (start 3.81 -4.953) (end 2.54 -5.207) (stroke (width 0.1524) (type default)) (fill (type none))) (pin passive line (at -5.08 5.08 0) (length 3.81) (name "Pin_1" (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27))))) (pin passive line (at -5.08 2.54 0) (length 3.81) (name "Pin_3" (effects (font (size 1.27 1.27)))) (number "3" (effects (font (size 1.27 1.27))))) (pin passive line (at -5.08 0 0) (length 3.81) (name "Pin_5" (effects (font (size 1.27 1.27)))) (number "5" (effects (font (size 1.27 1.27))))) (pin passive line (at -5.08 -2.54 0) (length 3.81) (name "Pin_7" (effects (font (size 1.27 1.27)))) (number "7" (effects (font (size 1.27 1.27))))) (pin passive line (at -5.08 -5.08 0) (length 3.81) (name "Pin_9" (effects (font (size 1.27 1.27)))) (number "9" (effects (font (size 1.27 1.27))))) (pin passive line (at 7.62 5.08 180) (length 3.81) (name "Pin_2" (effects (font (size 1.27 1.27)))) (number "2" (effects (font (size 1.27 1.27))))) (pin passive line (at 7.62 2.54 180) (length 3.81) (name "Pin_4" (effects (font (size 1.27 1.27)))) (number "4" (effects (font (size 1.27 1.27))))) (pin passive line (at 7.62 0 180) (length 3.81) (name "Pin_6" (effects (font (size 1.27 1.27)))) (number "6" (effects (font (size 1.27 1.27))))) (pin passive line (at 7.62 -2.54 180) (length 3.81) (name "Pin_8" (effects (font (size 1.27 1.27)))) (number "8" (effects (font (size 1.27 1.27))))) (pin passive line (at 7.62 -5.08 180) (length 3.81) (name "Pin_10" (effects (font (size 1.27 1.27)))) (number "10" (effects (font (size 1.27 1.27)))))) (embedded_fonts no)) 
+
+(symbol "Connector_Generic:Conn_01x20" (pin_names (offset 1.016) (hide yes)) (exclude_from_sim no) (in_bom yes) (on_board yes) 
+
+(property "Reference" "J" (at 0 25.4 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Value" "Conn_01x20" (at 0 -27.94 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Footprint" "" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes))) 
+
+(property "Datasheet" "~" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes))) 
+
+(property "Description" "Generic connector, single row, 01x20, script generated (kicad-library-utils/schlib/autogen/connector/)" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes))) 
+
+(property "ki_keywords" "connector" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes))) 
+
+(property "ki_fp_filters" "Connector*:*_1x??_*" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes))) 
+
+(symbol "Conn_01x20_1_1" 
+
+(rectangle (start -1.27 24.13) (end 1.27 -26.67) (stroke (width 0.254) (type default)) (fill (type background))) 
+
+(rectangle (start -1.27 22.987) (end 0 22.733) (stroke (width 0.1524) (type default)) (fill (type none))) 
+
+(rectangle (start -1.27 20.447) (end 0 20.193) (stroke (width 0.1524) (type default)) (fill (type none))) 
+
+(rectangle (start -1.27 17.907) (end 0 17.653) (stroke (width 0.1524) (type default)) (fill (type none))) 
+
+(rectangle (start -1.27 15.367) (end 0 15.113) (stroke (width 0.1524) (type default)) (fill (type none))) 
+
+(rectangle (start -1.27 12.827) (end 0 12.573) (stroke (width 0.1524) (type default)) (fill (type none))) 
+
+(rectangle (start -1.27 10.287) (end 0 10.033) (stroke (width 0.1524) (type default)) (fill (type none))) 
+
+(rectangle (start -1.27 7.747) (end 0 7.493) (stroke (width 0.1524) (type default)) (fill (type none))) 
+
+(rectangle (start -1.27 5.207) (end 0 4.953) (stroke (width 0.1524) (type default)) (fill (type none))) 
+
+(rectangle (start -1.27 2.667) (end 0 2.413) (stroke (width 0.1524) (type default)) (fill (type none))) 
+
+(rectangle (start -1.27 0.127) (end 0 -0.127) (stroke (width 0.1524) (type default)) (fill (type none))) 
+
+(rectangle (start -1.27 -2.413) (end 0 -2.667) (stroke (width 0.1524) (type default)) (fill (type none))) 
+
+(rectangle (start -1.27 -4.953) (end 0 -5.207) (stroke (width 0.1524) (type default)) (fill (type none))) 
+
+(rectangle (start -1.27 -7.493) (end 0 -7.747) (stroke (width 0.1524) (type default)) (fill (type none))) 
+
+(rectangle (start -1.27 -10.033) (end 0 -10.287) (stroke (width 0.1524) (type default)) (fill (type none))) 
+
+(rectangle (start -1.27 -12.573) (end 0 -12.827) (stroke (width 0.1524) (type default)) (fill (type none))) 
+
+(rectangle (start -1.27 -15.113) (end 0 -15.367) (stroke (width 0.1524) (type default)) (fill (type none))) 
+
+(rectangle (start -1.27 -17.653) (end 0 -17.907) (stroke (width 0.1524) (type default)) (fill (type none))) 
+
+(rectangle (start -1.27 -20.193) (end 0 -20.447) (stroke (width 0.1524) (type default)) (fill (type none))) 
+
+(rectangle (start -1.27 -22.733) (end 0 -22.987) (stroke (width 0.1524) (type default)) (fill (type none))) 
+
+(rectangle (start -1.27 -25.273) (end 0 -25.527) (stroke (width 0.1524) (type default)) (fill (type none))) (pin passive line (at -5.08 22.86 0) (length 3.81) (name "Pin_1" (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27))))) (pin passive line (at -5.08 20.32 0) (length 3.81) (name "Pin_2" (effects (font (size 1.27 1.27)))) (number "2" (effects (font (size 1.27 1.27))))) (pin passive line (at -5.08 17.78 0) (length 3.81) (name "Pin_3" (effects (font (size 1.27 1.27)))) (number "3" (effects (font (size 1.27 1.27))))) (pin passive line (at -5.08 15.24 0) (length 3.81) (name "Pin_4" (effects (font (size 1.27 1.27)))) (number "4" (effects (font (size 1.27 1.27))))) (pin passive line (at -5.08 12.7 0) (length 3.81) (name "Pin_5" (effects (font (size 1.27 1.27)))) (number "5" (effects (font (size 1.27 1.27))))) (pin passive line (at -5.08 10.16 0) (length 3.81) (name "Pin_6" (effects (font (size 1.27 1.27)))) (number "6" (effects (font (size 1.27 1.27))))) (pin passive line (at -5.08 7.62 0) (length 3.81) (name "Pin_7" (effects (font (size 1.27 1.27)))) (number "7" (effects (font (size 1.27 1.27))))) (pin passive line (at -5.08 5.08 0) (length 3.81) (name "Pin_8" (effects (font (size 1.27 1.27)))) (number "8" (effects (font (size 1.27 1.27))))) (pin passive line (at -5.08 2.54 0) (length 3.81) (name "Pin_9" (effects (font (size 1.27 1.27)))) (number "9" (effects (font (size 1.27 1.27))))) (pin passive line (at -5.08 0 0) (length 3.81) (name "Pin_10" (effects (font (size 1.27 1.27)))) (number "10" (effects (font (size 1.27 1.27))))) (pin passive line (at -5.08 -2.54 0) (length 3.81) (name "Pin_11" (effects (font (size 1.27 1.27)))) (number "11" (effects (font (size 1.27 1.27))))) (pin passive line (at -5.08 -5.08 0) (length 3.81) (name "Pin_12" (effects (font (size 1.27 1.27)))) (number "12" (effects (font (size 1.27 1.27))))) (pin passive line (at -5.08 -7.62 0) (length 3.81) (name "Pin_13" (effects (font (size 1.27 1.27)))) (number "13" (effects (font (size 1.27 1.27))))) (pin passive line (at -5.08 -10.16 0) (length 3.81) (name "Pin_14" (effects (font (size 1.27 1.27)))) (number "14" (effects (font (size 1.27 1.27))))) (pin passive line (at -5.08 -12.7 0) (length 3.81) (name "Pin_15" (effects (font (size 1.27 1.27)))) (number "15" (effects (font (size 1.27 1.27))))) (pin passive line (at -5.08 -15.24 0) (length 3.81) (name "Pin_16" (effects (font (size 1.27 1.27)))) (number "16" (effects (font (size 1.27 1.27))))) (pin passive line (at -5.08 -17.78 0) (length 3.81) (name "Pin_17" (effects (font (size 1.27 1.27)))) (number "17" (effects (font (size 1.27 1.27))))) (pin passive line (at -5.08 -20.32 0) (length 3.81) (name "Pin_18" (effects (font (size 1.27 1.27)))) (number "18" (effects (font (size 1.27 1.27))))) (pin passive line (at -5.08 -22.86 0) (length 3.81) (name "Pin_19" (effects (font (size 1.27 1.27)))) (number "19" (effects (font (size 1.27 1.27))))) (pin passive line (at -5.08 -25.4 0) (length 3.81) (name "Pin_20" (effects (font (size 1.27 1.27)))) (number "20" (effects (font (size 1.27 1.27)))))) (embedded_fonts no)) 
+
+(symbol "Connector_Generic:Conn_01x02" (pin_names (offset 1.016) (hide yes)) (exclude_from_sim no) (in_bom yes) (on_board yes) 
+
+(property "Reference" "J" (at 0 2.54 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Value" "Conn_01x02" (at 0 -5.08 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Footprint" "" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes))) 
+
+(property "Datasheet" "~" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes))) 
+
+(property "Description" "Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes))) 
+
+(property "ki_keywords" "connector" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes))) 
+
+(property "ki_fp_filters" "Connector*:*_1x??_*" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes))) 
+
+(symbol "Conn_01x02_1_1" 
+
+(rectangle (start -1.27 1.27) (end 1.27 -3.81) (stroke (width 0.254) (type default)) (fill (type background))) 
+
+(rectangle (start -1.27 0.127) (end 0 -0.127) (stroke (width 0.1524) (type default)) (fill (type none))) 
+
+(rectangle (start -1.27 -2.413) (end 0 -2.667) (stroke (width 0.1524) (type default)) (fill (type none))) (pin passive line (at -5.08 0 0) (length 3.81) (name "Pin_1" (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27))))) (pin passive line (at -5.08 -2.54 0) (length 3.81) (name "Pin_2" (effects (font (size 1.27 1.27)))) (number "2" (effects (font (size 1.27 1.27)))))) (embedded_fonts no))) 
+
+(symbol (lib_id "Device:R") (at -100 -100 0) (unit 1) (in_bom no) (on_board no) (dnp yes) (uuid 00000000-0000-0000-0000-000000000001) 
+
+(property "Reference" "_TEMPLATE_R" (at -100 -102.54 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Value" "R_TEMPLATE" (at -100 -100 90) (effects (font (size 1.27 1.27)))) 
+
+(property "Footprint" "" (at -100 -100 90) (effects (font (size 1.27 1.27)) hide)) 
+
+(property "Datasheet" "~" (at -100 -100 0) (effects (font (size 1.27 1.27)) hide)) (pin "1" (uuid 00000000-0000-0000-0000-000000000010)) (pin "2" (uuid 00000000-0000-0000-0000-000000000011))) 
+
+(symbol (lib_id "Device:C") (at -100 -110 0) (unit 1) (in_bom no) (on_board no) (dnp yes) (uuid 00000000-0000-0000-0000-000000000002) 
+
+(property "Reference" "_TEMPLATE_C" (at -100 -107.46 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Value" "C_TEMPLATE" (at -100 -112.54 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Footprint" "" (at -100 -110 0) (effects (font (size 1.27 1.27)) hide)) 
+
+(property "Datasheet" "~" (at -100 -110 0) (effects (font (size 1.27 1.27)) hide)) (pin "1" (uuid 00000000-0000-0000-0000-000000000020)) (pin "2" (uuid 00000000-0000-0000-0000-000000000021))) 
+
+(symbol (lib_id "Device:LED") (at -100 -120 0) (unit 1) (in_bom no) (on_board no) (dnp yes) (uuid 00000000-0000-0000-0000-000000000003) 
+
+(property "Reference" "_TEMPLATE_D" (at -100 -117.46 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Value" "LED_TEMPLATE" (at -100 -122.54 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Footprint" "" (at -100 -120 0) (effects (font (size 1.27 1.27)) hide)) 
+
+(property "Datasheet" "~" (at -100 -120 0) (effects (font (size 1.27 1.27)) hide)) (pin "1" (uuid 00000000-0000-0000-0000-000000000030)) (pin "2" (uuid 00000000-0000-0000-0000-000000000031))) 
+
+(symbol (lib_id "S32K358:S32K358") (at -100 -130 0) (unit 1) (in_bom no) (on_board no) (dnp yes) (uuid "108566b2-32fe-4769-a5bc-c3721a5350ee") 
+
+(property "Reference" "_TEMPLATE_S32K358_S32K358" (at -100 -132.54 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Value" "S32K358" (at -100 -127.46 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Footprint" "" (at -100 -130 0) (effects (font (size 1.27 1.27)) hide)) 
+
+(property "Datasheet" "~" (at -100 -130 0) (effects (font (size 1.27 1.27)) hide))) 
+
+(symbol (lib_id "FS26:FS26_SBC") (at -100 -140 0) (unit 1) (in_bom no) (on_board no) (dnp yes) (uuid "d1050594-64b6-4d73-9fa5-c9715826c477") 
+
+(property "Reference" "_TEMPLATE_FS26_FS26_SBC" (at -100 -142.54 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Value" "FS26_SBC" (at -100 -137.46 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Footprint" "" (at -100 -140 0) (effects (font (size 1.27 1.27)) hide)) 
+
+(property "Datasheet" "~" (at -100 -140 0) (effects (font (size 1.27 1.27)) hide))) 
+
+(symbol (lib_id "Device:Crystal") (at -100 -150 0) (unit 1) (in_bom no) (on_board no) (dnp yes) (uuid "5ef13888-70aa-470c-a9ae-2c0845462ac2") 
+
+(property "Reference" "_TEMPLATE_Device_Crystal" (at -100 -152.54 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Value" "Crystal" (at -100 -147.46 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Footprint" "" (at -100 -150 0) (effects (font (size 1.27 1.27)) hide)) 
+
+(property "Datasheet" "~" (at -100 -150 0) (effects (font (size 1.27 1.27)) hide))) 
+
+(symbol (lib_id "Connector_Generic:Conn_02x05_Odd_Even") (at -100 -160 0) (unit 1) (in_bom no) (on_board no) (dnp yes) (uuid "93d4e887-7289-42e0-8a43-2b1bd8f86bb9") 
+
+(property "Reference" "_TEMPLATE_Connector_Generic_Conn_02x05_Odd_Even" (at -100 -162.54 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Value" "Conn_02x05_Odd_Even" (at -100 -157.46 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Footprint" "" (at -100 -160 0) (effects (font (size 1.27 1.27)) hide)) 
+
+(property "Datasheet" "~" (at -100 -160 0) (effects (font (size 1.27 1.27)) hide))) 
+
+(symbol (lib_id "Connector_Generic:Conn_01x20") (at -100 -170 0) (unit 1) (in_bom no) (on_board no) (dnp yes) (uuid "16b621fa-efe3-4aa2-a8e0-65f28615e5ea") 
+
+(property "Reference" "_TEMPLATE_Connector_Generic_Conn_01x20" (at -100 -172.54 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Value" "Conn_01x20" (at -100 -167.46 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Footprint" "" (at -100 -170 0) (effects (font (size 1.27 1.27)) hide)) 
+
+(property "Datasheet" "~" (at -100 -170 0) (effects (font (size 1.27 1.27)) hide))) 
+
+(symbol (lib_id "Connector_Generic:Conn_01x02") (at -100 -180 0) (unit 1) (in_bom no) (on_board no) (dnp yes) (uuid "cd5f300f-7641-4867-a63d-b5a092300412") 
+
+(property "Reference" "_TEMPLATE_Connector_Generic_Conn_01x02" (at -100 -182.54 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Value" "Conn_01x02" (at -100 -177.46 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Footprint" "" (at -100 -180 0) (effects (font (size 1.27 1.27)) hide)) 
+
+(property "Datasheet" "~" (at -100 -180 0) (effects (font (size 1.27 1.27)) hide))) 
+
+(symbol (lib_id "Device:LED") (at -100 -190 0) (unit 1) (in_bom no) (on_board no) (dnp yes) (uuid "9b1ed83c-bd37-48a7-af02-574a022202b2") 
+
+(property "Reference" "_TEMPLATE_Device_LED" (at -100 -192.54 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Value" "LED" (at -100 -187.46 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Footprint" "" (at -100 -190 0) (effects (font (size 1.27 1.27)) hide)) 
+
+(property "Datasheet" "~" (at -100 -190 0) (effects (font (size 1.27 1.27)) hide))) (sheet_instances (path "/" (page "1"))) 
+
+(symbol (lib_id "S32K358:S32K358") (at 80 100 0) (unit 1) (in_bom yes) (on_board yes) (dnp no) (uuid "a1277256-d5b3-4d70-9246-e632b737c7a5") 
+
+(property "Reference" "U1_" (at -100 -132.54 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Value" "S32K358" (at -100 -127.46 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Footprint" "" (at -100 -130 0) (effects (font (size 1.27 1.27)) hide)) 
+
+(property "Datasheet" "~" (at -100 -130 0) (effects (font (size 1.27 1.27)) hide))) 
+
+(symbol (lib_id "FS26:FS26_SBC") (at 250 100 0) (unit 1) (in_bom yes) (on_board yes) (dnp no) (uuid "e2d2348c-481d-4370-b5a2-cf884245082e") 
+
+(property "Reference" "U2_" (at -100 -142.54 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Value" "FS26_SBC" (at -100 -137.46 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Footprint" "" (at -100 -140 0) (effects (font (size 1.27 1.27)) hide)) 
+
+(property "Datasheet" "~" (at -100 -140 0) (effects (font (size 1.27 1.27)) hide))) 
+
+(symbol (lib_id "Device:Crystal") (at 40 40 0) (unit 1) (in_bom yes) (on_board yes) (dnp no) (uuid "8b00da01-f488-4903-8da6-89fbce769ae6") 
+
+(property "Reference" "Y1_" (at -100 -152.54 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Value" "16MHz" (at -100 -147.46 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Footprint" "" (at -100 -150 0) (effects (font (size 1.27 1.27)) hide)) 
+
+(property "Datasheet" "~" (at -100 -150 0) (effects (font (size 1.27 1.27)) hide))) 
+
+(symbol (lib_id "Device:C") (at 30 50 0) (unit 1) (in_bom yes) (on_board yes) (dnp no) (uuid 9d28bfbe-7954-4bc2-9566-ed38dcf71129) 
+
+(property "Reference" "C1_" (at -100 -107.46 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Value" "100nF" (at -100 -112.54 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Footprint" "" (at -100 -110 0) (effects (font (size 1.27 1.27)) hide)) 
+
+(property "Datasheet" "~" (at -100 -110 0) (effects (font (size 1.27 1.27)) hide)) (pin "1" (uuid cee939de-c927-4428-88b3-4067adf64967)) (pin "2" (uuid 41369acd-733b-4b65-afc6-64b157375205))) 
+
+(symbol (lib_id "Device:C") (at 40 50 0) (unit 1) (in_bom yes) (on_board yes) (dnp no) (uuid f941b371-eb8d-4793-a45e-4c07882a2930) 
+
+(property "Reference" "C2_" (at -100 -107.46 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Value" "100nF" (at -100 -112.54 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Footprint" "" (at -100 -110 0) (effects (font (size 1.27 1.27)) hide)) 
+
+(property "Datasheet" "~" (at -100 -110 0) (effects (font (size 1.27 1.27)) hide)) (pin "1" (uuid 62196a43-0d67-4823-a952-198bbfea4700)) (pin "2" (uuid 5101bdd8-4f01-4016-83b1-6bfb66d09608))) 
+
+(symbol (lib_id "Device:C") (at 50 50 0) (unit 1) (in_bom yes) (on_board yes) (dnp no) (uuid 295be75f-b301-4694-a3d4-a0fbc9b210fe) 
+
+(property "Reference" "C3_" (at -100 -107.46 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Value" "10uF" (at -100 -112.54 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Footprint" "" (at -100 -110 0) (effects (font (size 1.27 1.27)) hide)) 
+
+(property "Datasheet" "~" (at -100 -110 0) (effects (font (size 1.27 1.27)) hide)) (pin "1" (uuid 7a211f76-c570-4c59-840f-072a400a6643)) (pin "2" (uuid a7a7c747-28fb-42c6-9def-73caaf628e40))) 
+
+(symbol (lib_id "Device:C") (at 35 30 0) (unit 1) (in_bom yes) (on_board yes) (dnp no) (uuid b9f0e929-2d8b-4153-924a-7df801140110) 
+
+(property "Reference" "C4_" (at -100 -107.46 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Value" "22pF" (at -100 -112.54 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Footprint" "" (at -100 -110 0) (effects (font (size 1.27 1.27)) hide)) 
+
+(property "Datasheet" "~" (at -100 -110 0) (effects (font (size 1.27 1.27)) hide)) (pin "1" (uuid 2212a86e-f8a0-4970-9452-f13b75771b22)) (pin "2" (uuid ee39cd4f-db86-4df6-805e-be217ea31191))) 
+
+(symbol (lib_id "Device:C") (at 45 30 0) (unit 1) (in_bom yes) (on_board yes) (dnp no) (uuid 65adc40a-2089-4166-84c8-a768dedc4f99) 
+
+(property "Reference" "C5_" (at -100 -107.46 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Value" "22pF" (at -100 -112.54 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Footprint" "" (at -100 -110 0) (effects (font (size 1.27 1.27)) hide)) 
+
+(property "Datasheet" "~" (at -100 -110 0) (effects (font (size 1.27 1.27)) hide)) (pin "1" (uuid a79ca373-fe30-4475-a6c8-1fb063b6911c)) (pin "2" (uuid fefa5574-15aa-4096-a790-3551f1aff196))) 
+
+(symbol (lib_id "Connector_Generic:Conn_02x05_Odd_Even") (at 40 140 0) (unit 1) (in_bom yes) (on_board yes) (dnp no) (uuid "a2947419-7ba3-42e4-971c-4b2d3cbd16ad") 
+
+(property "Reference" "J1_" (at -100 -162.54 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Value" "JTAG" (at -100 -157.46 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Footprint" "" (at -100 -160 0) (effects (font (size 1.27 1.27)) hide)) 
+
+(property "Datasheet" "~" (at -100 -160 0) (effects (font (size 1.27 1.27)) hide))) 
+
+(symbol (lib_id "Connector_Generic:Conn_01x20") (at 40 200 0) (unit 1) (in_bom yes) (on_board yes) (dnp no) (uuid "058a0e43-1ede-4ecb-a1c6-1e6107d8a4fd") 
+
+(property "Reference" "J2_" (at -100 -172.54 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Value" "GPIO_A" (at -100 -167.46 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Footprint" "" (at -100 -170 0) (effects (font (size 1.27 1.27)) hide)) 
+
+(property "Datasheet" "~" (at -100 -170 0) (effects (font (size 1.27 1.27)) hide))) 
+
+(symbol (lib_id "Connector_Generic:Conn_01x20") (at 300 200 0) (unit 1) (in_bom yes) (on_board yes) (dnp no) (uuid "160ef678-a496-417b-8047-b70b3200cc8b") 
+
+(property "Reference" "J3_" (at -100 -172.54 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Value" "GPIO_B" (at -100 -167.46 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Footprint" "" (at -100 -170 0) (effects (font (size 1.27 1.27)) hide)) 
+
+(property "Datasheet" "~" (at -100 -170 0) (effects (font (size 1.27 1.27)) hide))) 
+
+(symbol (lib_id "Connector_Generic:Conn_01x02") (at 300 50 0) (unit 1) (in_bom yes) (on_board yes) (dnp no) (uuid "45da229b-220e-4d45-8c99-fdb06bf23e26") 
+
+(property "Reference" "J4_" (at -100 -182.54 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Value" "VBAT_IN" (at -100 -177.46 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Footprint" "" (at -100 -180 0) (effects (font (size 1.27 1.27)) hide)) 
+
+(property "Datasheet" "~" (at -100 -180 0) (effects (font (size 1.27 1.27)) hide))) 
+
+(symbol (lib_id "Device:LED") (at 150 200 0) (unit 1) (in_bom yes) (on_board yes) (dnp no) (uuid "edc9320b-389c-4f80-9f1f-f04695a925a4") 
+
+(property "Reference" "D1_" (at -100 -192.54 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Value" "STATUS" (at -100 -187.46 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Footprint" "" (at -100 -190 0) (effects (font (size 1.27 1.27)) hide)) 
+
+(property "Datasheet" "~" (at -100 -190 0) (effects (font (size 1.27 1.27)) hide))) 
+
+(symbol (lib_id "Device:R") (at 150 190 0) (unit 1) (in_bom yes) (on_board yes) (dnp no) (uuid 5aa4d5d5-7a9a-4c3f-8074-762fc880e9ba) 
+
+(property "Reference" "R1_" (at -100 -102.54 0) (effects (font (size 1.27 1.27)))) 
+
+(property "Value" "330R" (at -100 -100 90) (effects (font (size 1.27 1.27)))) 
+
+(property "Footprint" "" (at -100 -100 90) (effects (font (size 1.27 1.27)) hide)) 
+
+(property "Datasheet" "~" (at -100 -100 0) (effects (font (size 1.27 1.27)) hide)) (pin "1" (uuid 1e606489-138f-4513-9755-6caa4256b806)) (pin "2" (uuid 765c38ae-4c5f-4f44-94fb-983a012c4192))))

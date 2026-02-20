@@ -119,3 +119,10 @@ insite9/*.log
 
 # Ghidra generated project directories (rebuildable via ./analyze.sh full)
 **/ghidra/project/
+
+# ===== Custom ECU Hardware =====
+# NXP reference design downloads (large, re-downloadable from nxp.com)
+custom-ecu-hardware/S32K3X8EVB-Q289-DESIGN-FILES.zip
+custom-ecu-hardware/S32K3X8EVB-Q289-DESIGN-FILES/
+custom-ecu-hardware/S32K3_HW-DesignPackage.zip
+custom-ecu-hardware/S32K3_HW-DesignPackage/

@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Wed Feb 18 11:23:19 MST 2026
+// Generated: Fri Feb 20 02:33:35 MST 2026
 
 
 //
@@ -6236,7 +6236,7 @@ void periodicTaskGroup1_sensorProcessing(void)
   processEngineRpmDiagnostic();
   setFuelDemandActiveFlag();
   updateSensorBufferValues();
-  diagnosticMainProcessor();
+  diagnosticMainStateProcessor();
   BYTE_00526560();
   BYTE_00516c18();
   return;
@@ -6264,7 +6264,7 @@ void periodicTaskGroup2_controlLoop(void)
   processSystemStatusLimits();
   processProtectionRampControl();
   calculateFuelDemandWithTrim();
-  fuelDemandBlendCalculation();
+  fuelDemandBlendCalculator();
   coldStartRpmTableLookup();
   processColdStartAdjustment();
   coldStartFuelFactorLookup();
@@ -7890,10 +7890,10 @@ word oilPressureDeltaCalculation(void)
 
 
 //
-// Function: fuelDemandBlendCalculation @ 0x0000dcdc
+// Function: fuelDemandBlendCalculator @ 0x0000dcdc
 //
 
-void fuelDemandBlendCalculation(void)
+void fuelDemandBlendCalculator(void)
 
 {
   uint uVar1;
@@ -16339,10 +16339,10 @@ void clearFaultFromActiveList(byte param_1)
 
 
 //
-// Function: scanAndProcessActiveFaults @ 0x0001cd1c
+// Function: activeFaultScanProcessor @ 0x0001cd1c
 //
 
-void scanAndProcessActiveFaults(void)
+void activeFaultScanProcessor(void)
 
 {
   int iVar1;
@@ -16426,10 +16426,10 @@ uint findFaultByTypeAndSeverity(uint param_1,ushort param_2)
 
 
 //
-// Function: addFaultToActiveList @ 0x0001cea4
+// Function: registerFaultInActiveList @ 0x0001cea4
 //
 
-void addFaultToActiveList(uint param_1)
+void registerFaultInActiveList(uint param_1)
 
 {
   byte bVar1;
@@ -16621,12 +16621,12 @@ void clearAllDiagnosticFaults(void)
 
 
 //
-// Function: processFaultTableEntry @ 0x0001d224
+// Function: faultTableEntryProcessor @ 0x0001d224
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void processFaultTableEntry(void)
+void faultTableEntryProcessor(void)
 
 {
   ushort uVar1;
@@ -16736,7 +16736,7 @@ void processFaultTableEntry(void)
             (&DAT_003fe1d4)[iVar8] = (&DAT_003fe1d4)[iVar8] + '\x01';
           }
           if (*(char *)(uVar9 + 0x3fe124) == '\0') {
-            addFaultToActiveList(uVar9);
+            registerFaultInActiveList(uVar9);
             (&DAT_003fe1d3)[iVar8] = 3;
             *(undefined4 *)(&DAT_003fe1ce + iVar8) = fuel_timing_advance;
             (&DAT_003fe1d2)[iVar8] = 0;
@@ -16836,12 +16836,12 @@ void buildFaultConditionMask(void)
 
 
 //
-// Function: diagnosticMainProcessor @ 0x0001d9b8
+// Function: diagnosticMainStateProcessor @ 0x0001d9b8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void diagnosticMainProcessor(void)
+void diagnosticMainStateProcessor(void)
 
 {
   ushort uVar1;
@@ -16863,7 +16863,7 @@ void diagnosticMainProcessor(void)
   }
   if (iVar3 < 0x32) {
     buildFaultConditionMask();
-    processFaultTableEntry();
+    faultTableEntryProcessor();
     fault_clear_debounce = fault_clear_debounce + 1;
     if (0x31 < fault_clear_debounce) {
       fault_clear_debounce = 0;
@@ -16950,7 +16950,7 @@ void diagnosticMainProcessor(void)
     sensor_scale_factor_2 = uVar1 | 0x1000;
   }
   if (0x18 < (uint)(fuel_timing_advance - DAT_003fa864)) {
-    scanAndProcessActiveFaults();
+    activeFaultScanProcessor();
     DAT_003fa864 = fuel_timing_advance;
   }
   return;
@@ -19938,10 +19938,10 @@ void processGovernorSecurityAccessRequest(undefined4 param_1,undefined4 param_2,
 
 
 //
-// Function: j1939_handle_pgn_65228_dm3_clear_diag @ 0x00022674
+// Function: j1939HandlePgn65228Dm3ClearDiag @ 0x00022674
 //
 
-void j1939_handle_pgn_65228_dm3_clear_diag(undefined4 param_1)
+void j1939HandlePgn65228Dm3ClearDiag(undefined4 param_1)
 
 {
   undefined4 uVar1;
@@ -19989,7 +19989,7 @@ LAB_0002275c:
 void initPgn65228Dm3Handler(undefined4 param_1,undefined4 param_2,void *param_3)
 
 {
-  j1939_register_pgn_handler(0xcc,0x74,param_3);
+  j1939RegisterPgnHandler(0xcc,0x74,param_3);
   return;
 }
 
@@ -20477,10 +20477,10 @@ void processGovernorSpeedRequest(void)
 
 
 //
-// Function: j1939_register_pgn_handler @ 0x00023188
+// Function: j1939RegisterPgnHandler @ 0x00023188
 //
 
-bool j1939_register_pgn_handler(byte pgn_byte_0,byte pgn_byte_1,void *handler_func)
+bool j1939RegisterPgnHandler(byte pgn_byte_0,byte pgn_byte_1,void *handler_func)
 
 {
   undefined3 in_register_0000000c;
@@ -20550,13 +20550,13 @@ void initJ1939ProtocolHandlers(undefined4 param_1,undefined4 param_2,void *param
   initPgn65242SoftwareIdHandler();
   initPgn65248VehicleDistanceHandler();
   initPgn65260VehicleIdHandler();
-  j1939_register_pgn_handler(0xed,0xfc,param_3);
-  j1939_register_pgn_handler(0xef,0xb4,param_3);
-  j1939_register_pgn_handler(0xf0,0x58,param_3);
-  j1939_register_pgn_handler(0xf5,0x8c,param_3);
-  j1939_register_pgn_handler(0xf6,0xd8,param_3);
-  j1939_register_pgn_handler(0xf7,0xf0,param_3);
-  j1939_register_pgn_handler(0xe0,0xf4,param_3);
+  j1939RegisterPgnHandler(0xed,0xfc,param_3);
+  j1939RegisterPgnHandler(0xef,0xb4,param_3);
+  j1939RegisterPgnHandler(0xf0,0x58,param_3);
+  j1939RegisterPgnHandler(0xf5,0x8c,param_3);
+  j1939RegisterPgnHandler(0xf6,0xd8,param_3);
+  j1939RegisterPgnHandler(0xf7,0xf0,param_3);
+  j1939RegisterPgnHandler(0xe0,0xf4,param_3);
   initPgn65226Dm1Handler();
   initPgn65227Dm2Handler();
   initPgn65228Dm3Handler();
@@ -21065,12 +21065,12 @@ void flushJ1939FrameBuffer(void)
 
 
 //
-// Function: j1939_handle_pgn_65269_ambient_conditions @ 0x00023e8c
+// Function: j1939HandlePgn65269AmbientConditions @ 0x00023e8c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void j1939_handle_pgn_65269_ambient_conditions(void)
+void j1939HandlePgn65269AmbientConditions(void)
 
 {
   short local_8 [2];
@@ -21228,12 +21228,12 @@ LAB_00024104:
 
 
 //
-// Function: j1939_handle_pgn_65265_cruise_vehicle_speed @ 0x00024178
+// Function: j1939HandlePgn65265CruiseVehicleSpeed @ 0x00024178
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void j1939_handle_pgn_65265_cruise_vehicle_speed(void)
+void j1939HandlePgn65265CruiseVehicleSpeed(void)
 
 {
   undefined *puVar1;
@@ -21725,19 +21725,19 @@ void initPgn65265CruiseSpeedHandler(undefined4 param_1,undefined4 param_2,void *
   PTR_DAT_003faaee = &DAT_003faafa;
   DAT_003faaf2 = 0xf3;
   _pgn65265_handler_index = 7;
-  j1939_register_pgn_handler(0xf1,0x78,param_3);
+  j1939RegisterPgnHandler(0xf1,0x78,param_3);
   return;
 }
 
 
 
 //
-// Function: j1939_handle_pgn_65261_cruise_control_setup @ 0x000246fc
+// Function: j1939HandlePgn65261CruiseControlSetup @ 0x000246fc
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void j1939_handle_pgn_65261_cruise_control_setup(void)
+void j1939HandlePgn65261CruiseControlSetup(void)
 
 {
   if (((system_capability_flags & 0x80) == 0) ||
@@ -21795,10 +21795,10 @@ void initPgn65261CruiseControlSetupStruct(void)
 
 
 //
-// Function: j1939_handle_pgn_65259_component_id @ 0x00024870
+// Function: j1939HandlePgn65259ComponentId @ 0x00024870
 //
 
-void j1939_handle_pgn_65259_component_id(void)
+void j1939HandlePgn65259ComponentId(void)
 
 {
   uint uVar1;
@@ -21870,7 +21870,7 @@ void initPgn65259ComponentIdHandler(undefined4 param_1,undefined4 param_2,void *
   PTR_DAT_003fab1a = &DAT_003fab22;
   PTR_DAT_003fab1e = &DAT_003fab4e;
   _DAT_003fab14 = CONCAT31(_DAT_003fab14,(char)j1939_source_address);
-  j1939_register_pgn_handler(0xeb,0x70,param_3);
+  j1939RegisterPgnHandler(0xeb,0x70,param_3);
   return;
 }
 
@@ -21959,10 +21959,10 @@ void sendJ1939ExtendedResponse(undefined4 param_1,undefined2 param_2)
 
 
 //
-// Function: j1939_handle_pgn_65234_dm11_clear_active @ 0x00024b28
+// Function: j1939HandlePgn65234Dm11ClearActive @ 0x00024b28
 //
 
-void j1939_handle_pgn_65234_dm11_clear_active(void)
+void j1939HandlePgn65234Dm11ClearActive(void)
 
 {
   DAT_003fab60 = BYTE_0050b58c(&DAT_0005a494);
@@ -21986,17 +21986,17 @@ void initPgn65234Dm11Handler(undefined4 param_1,undefined4 param_2,void *param_3
   PTR_DAT_003fab58 = (undefined *)&DAT_003fab60;
   PTR_DAT_003fab5c = &DAT_003fab68;
   _DAT_003fab52 = CONCAT31(_DAT_003fab52,(char)j1939_source_address);
-  j1939_register_pgn_handler(0xd2,0x28,param_3);
+  j1939RegisterPgnHandler(0xd2,0x28,param_3);
   return;
 }
 
 
 
 //
-// Function: j1939_handle_pgn_65226_dm1_active_dtc @ 0x00024be8
+// Function: j1939HandlePgn65226Dm1ActiveDtc @ 0x00024be8
 //
 
-void j1939_handle_pgn_65226_dm1_active_dtc(void)
+void j1939HandlePgn65226Dm1ActiveDtc(void)
 
 {
   uint uVar1;
@@ -22055,12 +22055,12 @@ void processDm1FaultBroadcast(void)
 {
   if (fault_list_count == '\0') {
     if (DAT_003fabcb != '\0') {
-      j1939_handle_pgn_65226_dm1_active_dtc();
+      j1939HandlePgn65226Dm1ActiveDtc();
     }
     DAT_003fabcb = 0;
   }
   else {
-    j1939_handle_pgn_65226_dm1_active_dtc();
+    j1939HandlePgn65226Dm1ActiveDtc();
     DAT_003fabcb = 1;
   }
   return;
@@ -22084,17 +22084,17 @@ void initPgn65226Dm1Handler(undefined4 param_1,undefined4 param_2,void *param_3)
   DAT_003fab79 = 0xff;
   DAT_003fab7a._3_1_ = (byte)DAT_003fab7a & 0x7f | 0x80;
   DAT_003fabcb = 0;
-  j1939_register_pgn_handler(0xca,0xe8,param_3);
+  j1939RegisterPgnHandler(0xca,0xe8,param_3);
   return;
 }
 
 
 
 //
-// Function: j1939_handle_pgn_65227_dm2_previous_dtc @ 0x00024e78
+// Function: j1939HandlePgn65227Dm2PreviousDtc @ 0x00024e78
 //
 
-void j1939_handle_pgn_65227_dm2_previous_dtc(void)
+void j1939HandlePgn65227Dm2PreviousDtc(void)
 
 {
   uint uVar1;
@@ -22159,7 +22159,7 @@ void initPgn65227Dm2Handler(undefined4 param_1,undefined4 param_2,void *param_3)
   _DAT_003fabcc = CONCAT31(_DAT_003fabcc,(char)j1939_source_address);
   DAT_003fabdb = 0xff;
   DAT_003fabdc._3_1_ = (byte)DAT_003fabdc & 0x7f | 0x80;
-  j1939_register_pgn_handler(0xcb,0x78,param_3);
+  j1939RegisterPgnHandler(0xcb,0x78,param_3);
   return;
 }
 
@@ -22177,7 +22177,7 @@ void initPgn65227Dm2ResponseHandler(int param_1,int param_2,void *param_3)
   *(char *)(param_2 + 3) = (char)*(undefined2 *)(in_r11 + -0x528c);
   *(undefined1 *)(param_1 + 1) = 0xff;
   *(byte *)(param_1 + 5) = *(byte *)(param_1 + 5) & 0x7f | 0x80;
-  j1939_register_pgn_handler(0xcb,0x78,param_3);
+  j1939RegisterPgnHandler(0xcb,0x78,param_3);
   return;
 }
 
@@ -22196,7 +22196,7 @@ void initPgn65229Dm4Handler(undefined4 param_1,undefined4 param_2,void *param_3)
   PTR_DAT_003fac34 = &DAT_003fac3c;
   PTR_DAT_003fac38 = &DAT_003fad46;
   _DAT_003fac2e = CONCAT31(_DAT_003fac2e,(char)j1939_source_address);
-  j1939_register_pgn_handler(0xcd,0x90,param_3);
+  j1939RegisterPgnHandler(0xcd,0x90,param_3);
   return;
 }
 
@@ -22295,10 +22295,10 @@ void j1939BuildDm4FreezeFrame(int param_1)
 
 
 //
-// Function: j1939_handle_pgn_65229_dm4_freeze_frame @ 0x00025390
+// Function: j1939HandlePgn65229Dm4FreezeFrame @ 0x00025390
 //
 
-void j1939_handle_pgn_65229_dm4_freeze_frame(void)
+void j1939HandlePgn65229Dm4FreezeFrame(void)
 
 {
   byte bVar1;
@@ -22328,12 +22328,12 @@ void j1939_handle_pgn_65229_dm4_freeze_frame(void)
 
 
 //
-// Function: j1939_handle_pgn_65230_dm5_readiness @ 0x00025458
+// Function: j1939HandlePgn65230Dm5Readiness @ 0x00025458
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void j1939_handle_pgn_65230_dm5_readiness(void)
+void j1939HandlePgn65230Dm5Readiness(void)
 
 {
   ushort local_10 [4];
@@ -22374,7 +22374,7 @@ void initPgn65230Dm5Handler(undefined4 param_1,undefined4 param_2,void *param_3)
   PTR_DAT_003fad4e = &DAT_003fad56;
   PTR_DAT_003fad52 = &DAT_003fad5e;
   _DAT_003fad48 = CONCAT31(_DAT_003fad48,(char)j1939_source_address);
-  j1939_register_pgn_handler(0xce,0x58,param_3);
+  j1939RegisterPgnHandler(0xce,0x58,param_3);
   return;
 }
 
@@ -22631,10 +22631,10 @@ void transmitEngineStatusMessage(int param_1)
 
 
 //
-// Function: j1939_handle_pgn_61443_eec2 @ 0x00025b10
+// Function: j1939HandlePgn61443Eec2 @ 0x00025b10
 //
 
-void j1939_handle_pgn_61443_eec2(void)
+void j1939HandlePgn61443Eec2(void)
 
 {
   byte bVar1;
@@ -22742,7 +22742,7 @@ void initPgn61443Eec2Handler(undefined4 param_1,undefined4 param_2,void *param_3
   PTR_DAT_003fadb6 = &DAT_003fada8;
   PTR_DAT_003fadba = &DAT_003fadbe;
   emptyStubFunction3();
-  j1939_register_pgn_handler(3,0x10,param_3);
+  j1939RegisterPgnHandler(3,0x10,param_3);
   return;
 }
 
@@ -22772,10 +22772,10 @@ void j1939SendOilPressureStatus(void)
 
 
 //
-// Function: j1939_handle_pgn_65263_fluid_level_pressure @ 0x00025eb4
+// Function: j1939HandlePgn65263FluidLevelPressure @ 0x00025eb4
 //
 
-void j1939_handle_pgn_65263_fluid_level_pressure(void)
+void j1939HandlePgn65263FluidLevelPressure(void)
 
 {
   if ((engine_enable_flags & 0x1000) == 0) {
@@ -22824,12 +22824,12 @@ void initPgn65263FluidLevelPressureHandler(undefined4 param_1,undefined1 *param_
 
 
 //
-// Function: j1939_handle_pgn_65262_engine_temp @ 0x00026024
+// Function: j1939HandlePgn65262EngineTemp @ 0x00026024
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void j1939_handle_pgn_65262_engine_temp(void)
+void j1939HandlePgn65262EngineTemp(void)
 
 {
   int iVar1;
@@ -22928,7 +22928,7 @@ void initPgn65262EngineTempHandler(undefined4 param_1,undefined4 param_2,void *p
   DAT_003fae02 = 0xffff;
   DAT_003fae04 = 0xff;
   DAT_003fae05 = 0xff;
-  j1939_register_pgn_handler(0xee,0x24,param_3);
+  j1939RegisterPgnHandler(0xee,0x24,param_3);
   return;
 }
 
@@ -23059,10 +23059,10 @@ void j1939SendDiagnosticStatusMessage(byte dest_address,byte status_type)
 
 
 //
-// Function: j1939_handle_pgn_65270_inlet_exhaust_conditions @ 0x000264d8
+// Function: j1939HandlePgn65270InletExhaustConditions @ 0x000264d8
 //
 
-void j1939_handle_pgn_65270_inlet_exhaust_conditions(void)
+void j1939HandlePgn65270InletExhaustConditions(void)
 
 {
   uint extraout_r4;
@@ -23257,10 +23257,10 @@ void initPgn65256VehicleMaintenanceHandler(undefined1 *param_1)
 
 
 //
-// Function: j1939_handle_pgn_65242_software_id @ 0x00026884
+// Function: j1939HandlePgn65242SoftwareId @ 0x00026884
 //
 
-void j1939_handle_pgn_65242_software_id(void)
+void j1939HandlePgn65242SoftwareId(void)
 
 {
   sendJ1939MultiFrame(&DAT_003fae72);
@@ -23311,19 +23311,19 @@ void initPgn65242SoftwareIdHandler(void)
   uStack_f = (undefined1)DAT_003fd51c;
   DAT_003faead = uStack_f;
   DAT_003faeae = 0x2a;
-  j1939_register_pgn_handler(0xda,0x84,handler_func);
+  j1939RegisterPgnHandler(0xda,0x84,handler_func);
   return;
 }
 
 
 
 //
-// Function: j1939_handle_pgn_65504_proprietary_a @ 0x000269f4
+// Function: j1939HandlePgn65504ProprietaryA @ 0x000269f4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void j1939_handle_pgn_65504_proprietary_a(void)
+void j1939HandlePgn65504ProprietaryA(void)
 
 {
   uint uVar1;
@@ -23394,10 +23394,10 @@ void buildVehicleMaintenanceStatusBits(int param_1)
 
 
 //
-// Function: j1939_handle_pgn_65248_vehicle_distance @ 0x00026bb0
+// Function: j1939HandlePgn65248VehicleDistance @ 0x00026bb0
 //
 
-void j1939_handle_pgn_65248_vehicle_distance(void)
+void j1939HandlePgn65248VehicleDistance(void)
 
 {
   undefined4 extraout_r4;
@@ -23432,17 +23432,17 @@ void initPgn65248VehicleDistanceHandler(undefined4 param_1,undefined4 param_2,vo
   PTR_DAT_003faece = (undefined *)&DAT_003faed6;
   PTR_DAT_003faed2 = &DAT_003faede;
   _DAT_003faec8 = CONCAT31(_DAT_003faec8,(char)j1939_source_address);
-  j1939_register_pgn_handler(0xe0,0xb0,param_3);
+  j1939RegisterPgnHandler(0xe0,0xb0,param_3);
   return;
 }
 
 
 
 //
-// Function: j1939_handle_pgn_65271_vehicle_electrical @ 0x00026cf0
+// Function: j1939HandlePgn65271VehicleElectrical @ 0x00026cf0
 //
 
-void j1939_handle_pgn_65271_vehicle_electrical(void)
+void j1939HandlePgn65271VehicleElectrical(void)
 
 {
   undefined2 local_8 [4];
@@ -23456,10 +23456,10 @@ void j1939_handle_pgn_65271_vehicle_electrical(void)
 
 
 //
-// Function: j1939_handle_pgn_65260_vehicle_id @ 0x00026db4
+// Function: j1939HandlePgn65260VehicleId @ 0x00026db4
 //
 
-void j1939_handle_pgn_65260_vehicle_id(void)
+void j1939HandlePgn65260VehicleId(void)
 
 {
   sendJ1939MultiFrame(&DAT_003faef8);
@@ -23502,7 +23502,7 @@ void initPgn65260VehicleIdHandler(void)
     handler_func = (void *)((int)handler_func + 1U & 0xff);
   } while (handler_func < (void *)0x14);
   DAT_003faf1b = 0x2a;
-  j1939_register_pgn_handler(0xec,0xb4,handler_func);
+  j1939RegisterPgnHandler(0xec,0xb4,handler_func);
   return;
 }
 
@@ -26535,10 +26535,10 @@ void resetProtectionBypass(void)
 
 
 //
-// Function: j1939_handle_pgn_65264_pto @ 0x0002bd58
+// Function: j1939HandlePgn65264Pto @ 0x0002bd58
 //
 
-void j1939_handle_pgn_65264_pto(void)
+void j1939HandlePgn65264Pto(void)
 
 {
   byte bVar1;
@@ -30999,10 +30999,10 @@ void processCalibrationTablesMain(void)
 
 
 //
-// Function: initProtectionSystemState @ 0x00034b14
+// Function: initProtectionSystem @ 0x00034b14
 //
 
-void initProtectionSystemState(void)
+void initProtectionSystem(void)
 
 {
   int iVar1;
