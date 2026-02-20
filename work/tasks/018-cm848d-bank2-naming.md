@@ -1,7 +1,7 @@
 # Task 018: CM848D Bank 2 Function Naming
 
 ## Status
-[ ] Todo
+[>] In Progress
 
 ## Goal
 Name the ~180 unnamed BYTE_005xxxxx (Bank 2) functions in CM848D using CM550 equivalents identified through scheduler position analysis.

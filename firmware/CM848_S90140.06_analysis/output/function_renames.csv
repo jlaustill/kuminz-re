@@ -277,7 +277,8 @@ address,name
 0x0000e2cc,checkPressureFuelDelayB
 0x0000e360,checkPressureHysteresis
 0x0000e3a4,processFuelPressureConditions
-0x0000e518,calculateFuelTrimOutput
+# HPCR (High Pressure Common Rail) specific - per-cylinder fuel trim output
+0x0000e518,hpcr_calculateFuelTrimOutput
 0x0000e78c,temperatureBasedFuelTrim
 0x0000e8cc,initTemperatureTrimCoeff
 0x0000e8dc,fuelTimingRateLimitedBlend
@@ -970,10 +971,10 @@ address,name
 0x00042a2c,processProtectionParameter1
 0x00042ab8,initProtectionParameter2
 0x00042b44,processProtectionParameter2
-0x00042bd0,cbdFillAccelerationBuffers
+0x00042bd0,hpcr_cbdFillAccelerationBuffers
 0x00042cfc,processLoadThrottle
-0x00042d78,cbdCalculateCylinderTrims
-0x00043a5c,cbdInitFilterState
+0x00042d78,hpcr_cbdCalculateCylinderTrims
+0x00043a5c,hpcr_cbdInitFilterState
 0x00043ac0,processTimingCalibration
 0x00043ddc,resetEngineTimingAccumulators
 0x00044374,updateSensorDiagnosticFlags
@@ -1257,7 +1258,8 @@ address,name
 0x0004f6f0,clearModuleSyncFlag
 0x00051038,updateEngineSyncStatus
 0x000529b8,injectorTimingCalculation
-0x000533e0,injectorPulseWidthCalc
+# HPCR specific - direct injector pulse width calculation
+0x000533e0,hpcr_injectorPulseWidthCalc
 0x000535e8,processJ1939TxBufferSend
 0x00053720,queueCanReceiveMessage
 0x00053858,sendJ1939SingleFrame
@@ -1483,7 +1485,7 @@ address,name
 0x00507c1c,BYTE_00507c1c
 0x00507c44,BYTE_00507c44
 0x00507cd8,evaluateLimitSourceFlags
-0x00507ddc,evaluateCbdSensorActivation
+0x00507ddc,evaluatehpcr_CbdSensorActivation
 0x00507e20,BYTE_00507e20
 0x00507f9c,clearProtectionStatusFlags
 0x00507fd8,evaluateLimitConditionByFlag
@@ -1535,13 +1537,15 @@ address,name
 0x0050a680,resetIdleStateFlags
 0x0050a854,idleDiagnosticProcessor
 0x0050a9c8,idleControlMaster
-0x0050aba8,BYTE_0050aba8
+# Checks diagnostic_buffer_init_flag and governor_speed_output threshold
+0x0050aba8,resetGovernorDiagnosticState
 0x0050ac04,processServiceRequest
 0x0050ad1c,BYTE_0050ad1c
 0x0050ae4c,returnZeroStub
 0x0050ae5c,BYTE_0050ae5c
 0x0050ae64,readParameterWithOffset
-0x0050aec0,BYTE_0050aec0
+# Empty stub function in phase_group_a - placeholder for disabled feature
+0x0050aec0,emptyStub_phaseGroupA
 0x0050aed4,readParameterByteOffset
 0x0050af44,readParameterDwordOffset
 0x0050afac,readParameterWordOffset
@@ -1554,15 +1558,18 @@ address,name
 0x0050b2bc,getServiceDataLength
 0x0050b2e0,validateDiagnosticServiceRequest
 0x0050b554,BYTE_0050b554
-0x0050b58c,BYTE_0050b58c
+# 13 calls - extracts J1939 message fields to RAM variables based on byte position
+0x0050b58c,extractJ1939MessageFields
 0x0050b5b4,BYTE_0050b5b4
 0x0050b634,BYTE_0050b634
 0x0050ba78,registerDiagnosticDataRecords
 0x0050bb18,enqueueDiagnosticRecord
 0x0050bb98,initDiagnosticBuffer
-0x0050bca0,BYTE_0050bca0
+# Processes diagnostic_entry_counter and diagnostic_mode_state_flag, enqueues records
+0x0050bca0,processDiagnosticStateChanges
 0x0050bfc4,prepareParameterResponseFrame
-0x0050bff4,BYTE_0050bff4
+# Called by phase_group_a - resolves parameter address and sends CAN response
+0x0050bff4,sendParameterCanResponse
 0x0050c0ac,registerWriteServiceHandlers
 0x0050c0d8,processResponseFrame
 0x0050c27c,writeParameterWithOffset
@@ -1592,7 +1599,8 @@ address,name
 0x0050d3ac,registerJ1939MessageHandlers
 0x0050d430,getMemoryRegionAccessCode
 0x0050d510,filterGovernorState
-0x0050d60c,BYTE_0050d60c
+# Calculates injection_timing_reference, filters governor_speed to governor_speed_output
+0x0050d60c,calculateGovernorSpeedFiltered
 0x0050d688,BYTE_0050d688
 0x0050d728,captureCrankPositionState
 0x0050d758,initiateGovernorMode
@@ -1653,7 +1661,8 @@ address,name
 0x0051027c,BYTE_0051027c
 0x005102d4,BYTE_005102d4
 0x005103ac,BYTE_005103ac
-0x00510520,BYTE_00510520
+# 11 calls - copies protection state to status, clears protection flags
+0x00510520,updateChannelProtectionStatus
 0x00510624,clearSensorStatusFlags
 0x00510668,auxSensorChannel26_init
 0x005106f4,auxSensorChannel26_process
@@ -1814,7 +1823,8 @@ address,name
 0x0051ab50,BYTE_0051ab50
 0x0051ab70,BYTE_0051ab70
 0x0051aecc,BYTE_0051aecc
-0x0051aef8,BYTE_0051aef8
+# 6 calls - thermal protection state machine for injection timing ranges
+0x0051aef8,monitorThermalProtectionState
 0x0051b158,updateThermalLockoutTimer
 0x0051b56c,BYTE_0051b56c
 0x0051b58c,checkAndDispatchCommand
@@ -1857,7 +1867,8 @@ address,name
 0x0051d808,handleCommandDispatchMode
 0x0051d810,BYTE_0051d810
 0x0051d840,BYTE_0051d840
-0x0051d86c,BYTE_0051d86c
+# 6 calls - command dispatch handler for command 253
+0x0051d86c,handleCommand253State
 0x0051d8c8,BYTE_0051d8c8
 0x0051d958,validateCommandState
 0x0051d9a0,BYTE_0051d9a0
@@ -2002,7 +2013,7 @@ address,name
 0x00526c3c,processVariableTimingControl
 0x00526c80,BYTE_00526c80
 0x00526cb8,BYTE_00526cb8
-0x00526f08,updateCbdDiagnosticState
+0x00526f08,updatehpcr_CbdDiagnosticState
 0x00527050,BYTE_00527050
 0x00527524,accumulateTimingOffset
 0x005275c4,evaluateTimingModifiers
@@ -2011,11 +2022,11 @@ address,name
 0x00527958,BYTE_00527958
 0x0052796c,BYTE_0052796c
 0x005279d8,BYTE_005279d8
-0x00527c90,interpolateCbdTable
+0x00527c90,interpolatehpcr_CbdTable
 0x00527fbc,updateVehicleSpeedFilter
 0x0052801c,BYTE_0052801c
-0x005280f4,calculateCbdAngleOffset
-0x00528368,applyCbdCylinderTiming
+0x005280f4,calculatehpcr_CbdAngleOffset
+0x00528368,applyhpcr_CbdCylinderTiming
 0x00528474,BYTE_00528474
 0x00528564,systemHalt
 0x005285c0,setUpLookupTableAndInterpolate
@@ -2023,12 +2034,12 @@ address,name
 0x005289d4,BYTE_005289d4
 0x00528b90,BYTE_00528b90
 0x00528c28,calculateLoadBasedFuelTrim
-0x00528e70,computeCbdAngleCorrection
+0x00528e70,computehpcr_CbdAngleCorrection
 0x0052903c,BYTE_0052903c
 0x00529068,BYTE_00529068
 0x0052922c,updateTemperatureSensorFilter
-0x00529580,processCbdStateMachine
-0x00529908,computeCbdProtectionAngle
+0x00529580,processhpcr_CbdStateMachine
+0x00529908,computehpcr_CbdProtectionAngle
 0x00529994,BYTE_00529994
 0x00529b44,processRailPressureControl
 0x00529d1c,BYTE_00529d1c
@@ -2100,25 +2111,25 @@ address,name
 0x00530f80,processDataRecordCapture
 0x005311e4,BYTE_005311e4
 0x00531370,BYTE_00531370
-0x0053164c,resetCbdCylinderState
+0x0053164c,resethpcr_CbdCylinderState
 0x0053168c,BYTE_0053168c
 0x005316ac,BYTE_005316ac
 0x00531710,calculateFaultDetectionThreshold
 0x005317a4,evaluateActiveFaultConditions
 0x005318e8,BYTE_005318e8
 0x00531900,BYTE_00531900
-0x0053195c,countActiveCbdCylinders
-0x005319e0,updateCbdCylinderTiming
+0x0053195c,countActivehpcr_CbdCylinders
+0x005319e0,updatehpcr_CbdCylinderTiming
 0x00531b14,updateSystemDiagnosticData
 0x00531cf8,BYTE_00531cf8
 0x00531d34,BYTE_00531d34
-0x00531f90,cbdCylinderStateHandler
-0x00531fe8,advanceCbdFaultState
-0x00532108,evaluateCbdCylinderActivation
-0x005321c8,activateCbdCylinderMode
+0x00531f90,hpcr_cbdCylinderStateHandler
+0x00531fe8,advancehpcr_CbdFaultState
+0x00532108,evaluatehpcr_CbdCylinderActivation
+0x005321c8,activatehpcr_CbdCylinderMode
 0x00532208,BYTE_00532208
 0x0053227c,BYTE_0053227c
-0x0053236c,deactivateCbdCylinderMode
+0x0053236c,deactivatehpcr_CbdCylinderMode
 0x00532418,BYTE_00532418
 0x0053247c,compareAndSyncFaultFlags
 0x00532630,default
