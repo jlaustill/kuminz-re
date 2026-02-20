@@ -2049,7 +2049,8 @@ address,name
 0x00528b90,BYTE_00528b90
 0x00528c28,calculateLoadBasedFuelTrim
 0x00528e70,computehpcr_CbdAngleCorrection
-0x0052903c,BYTE_0052903c
+# Adjusts CBD angle based on cbd_angle_protection_limit
+0x0052903c,hpcr_adjustCbdAngleForProtection
 0x00529068,BYTE_00529068
 0x0052922c,updateTemperatureSensorFilter
 0x00529580,processhpcr_CbdStateMachine
@@ -2057,9 +2058,11 @@ address,name
 # Initializes pressure params, checks for values 0x3a/0x76
 0x00529994,initializePressureParams
 0x00529b44,processRailPressureControl
-0x00529d1c,BYTE_00529d1c
+# Conditional interpolation when DAT_0040a06a == 1
+0x00529d1c,interpolateConditional4Point
 0x00529ea4,interpolate7PointTable
-0x00529f58,BYTE_00529f58
+# Wrapper for interpolateWithIndex with diagnostic tables
+0x00529f58,interpolateDiagnosticTable4Point
 0x0052a598,evaluatePressureLimitConditions
 # Wrapper for interpolateWithIndex with 4-point tables
 0x0052a910,interpolate4PointTable
@@ -2088,15 +2091,18 @@ address,name
 0x0052d6a8,evaluateProtectionStateMachine
 0x0052daf8,validateCalibrationType
 0x0052db98,enqueueNullDataRecord
-0x0052dcd0,BYTE_0052dcd0
+# Conditionally enqueues to circular buffer based on cr0
+0x0052dcd0,enqueueConditionalRecord
 0x0052ddb8,evaluateSpeedDelta
-0x0052de14,BYTE_0052de14
+# Compares speed values, calls setOperationalModeState(2) or (3)
+0x0052de14,setModeBySpeedComparison
 0x0052de94,processSpeedState
 0x0052dfb0,calculateSpeedDerivative
 0x0052e13c,updateSpeedFilters
 # 2 calls - calls setOperationalModeState and enqueueToCircularBuffer(1)
 0x0052e24c,setModeAndEnqueueOperation
-0x0052e29c,BYTE_0052e29c
+# Checks DAT_003fd922 bit 0x10, calls setOperationalModeState(1)
+0x0052e29c,setModeIfFlagSet
 0x0052e2d8,initSpeedControlState
 0x0052e404,resetSpeedAccumulators
 0x0052e4a0,validateSpeedThresholds
@@ -2105,7 +2111,8 @@ address,name
 0x0052e59c,updatePerformanceMetric
 # 2 calls - calls setOperationalModeState(2) or (3) based on condition
 0x0052eac8,setOperationalModeByCondition
-0x0052eae8,BYTE_0052eae8
+# Calls setOperationalModeState(2) and enqueueToCircularBuffer
+0x0052eae8,setMode2AndEnqueueState
 0x0052eb30,processProtectionEvent
 0x0052ebc4,evaluateSystemHealthStatus
 0x0052ee00,processTimerRecoverySequence
@@ -2123,13 +2130,17 @@ address,name
 0x00530214,updateAuxiliaryOutputPort
 # 2 calls - updates speed_sensor_output_flag based on engine_run_state
 0x00530288,updateSpeedSensorOutputFlag
-0x00530298,BYTE_00530298
+# Updates speed_sensor_range_flag based on sensor value range
+0x00530298,updateSpeedSensorRangeFlag
 # 2 calls - updates system_enable_state.severity_flags based on comparison
 0x00530364,updateSeverityFlags
-0x00530428,BYTE_00530428
+# Sets _engine_operating_flag = (unaff_r30 == 5)
+0x00530428,setEngineOperatingFlag
 0x00530468,processControlModeSwitching
-0x005305dc,BYTE_005305dc
-0x0053064c,BYTE_0053064c
+# Builds status flags from engine_operating, fuel_efficiency, control_mode flags
+0x005305dc,buildEngineStatusFlags
+# Similar to buildEngineStatusFlags - builds flags from operating state
+0x0053064c,buildEngineStatusFlags2
 0x00530878,clearOutputCounters
 0x0053089c,evaluateOperatingModeStatus
 # 2 calls - conditionally clears and decrements _system_enable_flag_1
@@ -2137,23 +2148,28 @@ address,name
 0x00530d70,updateDiagnosticStateTimer
 0x00530e94,checkProtectionBypassConditions
 0x00530f80,processDataRecordCapture
-0x005311e4,BYTE_005311e4
-0x00531370,BYTE_00531370
+# Calculates division by 3, initializes protection_ramp_counter
+0x005311e4,initProtectionRampCounter
+# Validates protection ramp bounds, calculates division by 3
+0x00531370,validateProtectionRampBounds
 0x0053164c,resethpcr_CbdCylinderState
 # 2 calls - initializes cbd_start_tooth and _cbd_state_byte
 0x0053168c,hpcr_initCbdToothState
-0x005316ac,BYTE_005316ac
+# Initializes cbd_cylinder_state array and threshold flags
+0x005316ac,hpcr_initCbdCylinderArray
 0x00531710,calculateFaultDetectionThreshold
 0x005317a4,evaluateActiveFaultConditions
 # 2 calls - checks protection_enable_threshold and injection_timing_limit
 0x005318e8,evaluateProtectionEnableCondition
-0x00531900,BYTE_00531900
+# Checks conditions and sets DAT_003fd1e8 protection flag
+0x00531900,evaluateProtectionConditionFlag
 0x0053195c,countActivehpcr_CbdCylinders
 0x005319e0,updatehpcr_CbdCylinderTiming
 0x00531b14,updateSystemDiagnosticData
 # 2 calls - checks conditions and calls resetCbdCylinderState
 0x00531cf8,hpcr_checkCbdResetConditions
-0x00531d34,BYTE_00531d34
+# Checks engine_operating_state and resets CBD if needed
+0x00531d34,hpcr_checkAndResetCbdState
 0x00531f90,hpcr_cbdCylinderStateHandler
 0x00531fe8,advancehpcr_CbdFaultState
 0x00532108,evaluatehpcr_CbdCylinderActivation
@@ -2262,7 +2278,8 @@ address,name
 0x005378a4,processProtectionDiagnosticState
 # 3 calls - iterates timer entries, executes callback on timestamp match
 0x00537944,executeTimerCallbacks
-0x005379b4,BYTE_005379b4
+# Iterates 10-byte timer entries, executes function pointers
+0x005379b4,iterateAndExecuteTimerEntries
 0x005379d8,BYTE_005379d8
 0x00537a18,enqueueToBuffer17
 0x00537a5c,updateProtectionLimitFilter
