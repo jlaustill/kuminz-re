@@ -2019,14 +2019,19 @@ address,name
 0x005265ac,processTurboBoostData
 0x005266fc,BYTE_005266fc
 0x005267b4,clearBoostDiagnosticFlag
-0x005267e0,BYTE_005267e0
-0x005267f4,BYTE_005267f4
+# Clears sensor_channel_status_bitmap_2 bit 0x2000 on turbo sensor fault
+0x005267e0,clearTurboSensorFaultStatus
+# Clears sensor bitmap when engine_run_state == 3
+0x005267f4,clearSensorBitmapOnRun
 0x0052686c,updateEngineSpeedGainCalculation
 0x005268d0,calculateTimingTrimOffset
-0x005268e8,BYTE_005268e8
+# Processes TPU voltage channel when DAT_003fdd86 == 3
+0x005268e8,processTpuVoltageChannel
 0x00526c3c,processVariableTimingControl
-0x00526c80,BYTE_00526c80
-0x00526cb8,BYTE_00526cb8
+# Clears bits in Ram0030440a, Ram00304412, Ram0030441e, Ram00304420
+0x00526c80,clearHardwareRegisterBits
+# Sets up Ram00304412, Ram00304522, Ram00304526 hardware registers
+0x00526cb8,initHardwareRegisterSet2
 0x00526f08,updatehpcr_CbdDiagnosticState
 0x00527050,BYTE_00527050
 0x00527524,accumulateTimingOffset
@@ -2035,9 +2040,12 @@ address,name
 0x00527860,signedDivision64Wrapper
 # Wrapper for interpolateWithIndex with 4-point CBD tables
 0x005278ac,interpolateCbdTable4Point
-0x00527958,BYTE_00527958
-0x0052796c,BYTE_0052796c
-0x005279d8,BYTE_005279d8
+# Wrapper for interpolateWithIndex
+0x00527958,interpolateWithIndexWrapper
+# Conditional interpolation when DAT_0040a06a == 1
+0x0052796c,interpolateConditionalByMode
+# Conditional interpolation when DAT_0040a06a == 1 (different tables)
+0x005279d8,interpolateConditionalByMode2
 0x00527c90,interpolatehpcr_CbdTable
 0x00527fbc,updateVehicleSpeedFilter
 # Sets param_2 = 4, calls processCbdStateMachine
