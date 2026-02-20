@@ -1812,30 +1812,38 @@ address,name
 0x00511ddc,updateTransmissionTorqueControl
 # Dynamic control vector and protection filter state processing
 0x00511ea8,processDynamicControlState
-0x00511ed4,BYTE_00511ed4
-0x00512130,BYTE_00512130
+# Clears DAT values, checks dynamic_control_vector_2 threshold
+0x00511ed4,processDynamicControlStateB
+# Increments DAT_003fcd86, checks dynamic_control_vector_2
+0x00512130,incrementDynamicControlCounter
 0x005122a0,protectionModeState2Handler
 0x00512324,evaluateEmissionCondition
 0x005123d0,selectStateCodeByCondition
 0x00512408,updateFilteredPressureValue
 0x00512484,updatePressureDifferenceAccumulator
 0x00512524,protectionModeState4Handler
-0x00512554,BYTE_00512554
+# Stores value to DAT_003fcd8e
+0x00512554,storeDynamicStateValue
 0x005125c8,protectionModeState3Handler
 0x0051265c,selectNextProtectionModeState
-0x00512678,BYTE_00512678
+# Protection mode state selection logic
+0x00512678,evaluateProtectionModeState
 0x0051270c,checkProtectionModeConditions
-0x005129b0,BYTE_005129b0
+# Returns protection control mode value (used in control_mode bitmask)
+0x005129b0,getProtectionControlMode
 0x00512b1c,detectEngineProtectionThreshold
 0x00512bc4,selectAlternateStateCode
 0x00512ca0,evaluateProtectionMainState
 0x00512eac,evaluateProtectionConditionFlags
-0x00512ff4,BYTE_00512ff4
+# Calculates protection_integrator_0_calc based on ratio
+0x00512ff4,calculateProtectionIntegrator
 0x005130f4,accumulateGovernorThresholdCounts
-0x00513200,BYTE_00513200
+# Empty stub - returns immediately
+0x00513200,emptyStub_reserved513200
 0x00513208,checkGovernorThresholdCrossing
 0x00513348,monitorGovernorMultiChannelThresholds
-0x005134e8,BYTE_005134e8
+# Sets _protection_condition_flags and tsc1_control_word
+0x005134e8,setProtectionConditionFlags
 0x00513548,evaluateGovernorThresholds
 0x0051356c,calculateGovernorSpeedError
 0x005135a4,calculateGovernorTorqueLimitAndMode
@@ -1847,30 +1855,40 @@ address,name
 0x00513b48,evaluateGovernorMode
 0x00513c78,updateEventFlagConditional
 0x00513cf4,updateEventFlag11Handler
-0x00513ddc,BYTE_00513ddc
-0x00513f5c,BYTE_00513f5c
+# Calls updateEventFlagConditional(0x35)
+0x00513ddc,updateEventFlag53
+# Copies byte values to ushort pointers
+0x00513f5c,copyByteValuesToShorts
 0x00513fe0,evaluateSpeedControlDiagnostics
-0x00514048,BYTE_00514048
-0x00514108,BYTE_00514108
-0x00514394,BYTE_00514394
+# Complex speed control calculation with many variables
+0x00514048,processSpeedControlCalculation
+# Complex speed control calculation variant B
+0x00514108,processSpeedControlCalculationB
+# Complex speed control calculation variant C
+0x00514394,processSpeedControlCalculationC
 0x00514f5c,calculateSpeedErrorAccumulator
 0x0051524c,evaluateSpeedControlActivationConditions
 0x005154e8,applySpeedControlOutputLimits
 0x00515798,evaluateSpeedControlIntegration
 0x005157c0,initSpeedControlDiagnosticState
 0x00515964,evaluateSpeedCorrectionFactor
-0x00515bac,BYTE_00515bac
-0x00515bd4,BYTE_00515bd4
-0x00515d78,BYTE_00515d78
+# Configures MPC555 timer channel (Ram003045xx registers)
+0x00515bac,configureTimerChannelA
+# Configures MPC555 timer channel variant B
+0x00515bd4,configureTimerChannelB
+# Sets _speed_correction_valid_flag based on condition
+0x00515d78,validateSpeedCorrectionFlag
 0x00515dac,initSpeedControlIntegratorState
 0x00515e60,evaluateSpeedNormalizationFactor
 0x00516014,initOilPressureState
 0x00516040,updateOilPressureFilter
 0x00516164,resetOilPressureDebounce
 0x0051617c,updateOilPressureHysteresis
-0x005161c0,BYTE_005161c0
+# Oil pressure scale factor and _oil_pressure_hysteresis_flag processing
+0x005161c0,processOilPressureHysteresis
 0x0051626c,updateOilPressureOutputFilter
-0x005162ec,BYTE_005162ec
+# Initializes oil_pressure_protection_limit=1
+0x005162ec,initOilPressureProtection
 0x00516338,calculateOilPressureRate
 0x00516420,resetOilPressureTimeout
 0x00516430,processOilPressureIntegration
@@ -1880,14 +1898,19 @@ address,name
 0x0051679c,updateOilPressureCyclicProcess
 0x00516804,evaluateBoostPressureBlending
 0x005169e4,clearEventFlag36Handler
-0x00516a20,BYTE_00516a20
+# Clears event flag 0x36, sets DAT_003fce2c=2
+0x00516a20,initEventFlag54State
 0x00516a48,initCoolantTemperatureProtectionState
 0x00516b88,interpolateCoolantProtectionValue
-0x00516bb0,BYTE_00516bb0
-0x00516c18,BYTE_00516c18
+# Wrapper for interpolateWithIndex for coolant tables
+0x00516bb0,interpolateCoolantTable
+# Sets boost_control_value and event flags 0x2b, 0x2c, 4
+0x00516c18,activateCoolantProtectionEvents
 0x00516d0c,updateCoolantEventFlags
-0x00516df8,BYTE_00516df8
-0x00516e5c,BYTE_00516e5c
+# Sets event flag 4, processes coolant_event_transition
+0x00516df8,processCoolantEventTransition
+# Clears event flags 0x2b, 0x2c, 4 based on boost_limit_threshold
+0x00516e5c,clearCoolantProtectionEvents
 0x00516f58,processCoolantProtectionEntry
 0x0051714c,selectCoolantProtectionPath1
 0x005171b4,selectCoolantProtectionPath2
@@ -1896,18 +1919,23 @@ address,name
 0x0051775c,executeCoolantProtectionPhase4
 0x00517b34,evaluateCoolantTemperatureTransition
 0x00517f20,selectCoolantLoadReference
-0x00517f48,BYTE_00517f48
+# Sets coolant_protection_reference_load based on conditions
+0x00517f48,selectCoolantProtectionReference
 0x00517fa0,updateCoolantTemperatureReference
 0x00518124,processCoolantProtectionCycleState
 0x0051826c,evaluateTemperatureDiagnosticState
-0x00518324,BYTE_00518324
-0x005183b4,BYTE_005183b4
-0x00518538,BYTE_00518538
+# Complex switch-based protection state processing
+0x00518324,processProtectionStateSwitch
+# Protection state switch case handler (in_r7==1)
+0x005183b4,handleProtectionStateSwitchCase
+# Processes diagnostic mode flags, sets fuel_control_protection_state=7
+0x00518538,processDiagnosticModeFlags
 0x005185b4,unsignedDivisionWrap64
 0x005185dc,convertTemperatureCelsiusToDisplayFormat
 0x0051862c,divideEngineParameterBy61525
 0x00518668,updateControlModeAndBuffer
-0x00518680,BYTE_00518680
+# Copies bytes, sets fuel_control_protection_state=5
+0x00518680,copyProtectionStateBuffer
 0x005186a8,wrapperCallControlMode
 0x005186cc,convertTemperatureToScale
 0x0051871c,convertSensorToPercentage
@@ -1916,8 +1944,10 @@ address,name
 0x0051876c,convertDiscreteDigitalValue
 0x00519318,emptyCommandHandler
 0x0051931c,processDisplayCommandState
-0x005196f0,BYTE_005196f0
-0x0051972c,BYTE_0051972c
+# Fault list entry processing with counter increment
+0x005196f0,processFaultListEntry
+# Fault list entry processing variant B
+0x0051972c,processFaultListEntryB
 0x00519870,initOilTemperatureEventFlag35
 0x005198b0,updateOilTemperatureDebounceState
 0x00519a18,initOilTemperatureProtectionThreshold
