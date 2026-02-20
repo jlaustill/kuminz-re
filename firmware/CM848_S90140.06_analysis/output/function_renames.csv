@@ -2054,13 +2054,15 @@ address,name
 0x0052922c,updateTemperatureSensorFilter
 0x00529580,processhpcr_CbdStateMachine
 0x00529908,computehpcr_CbdProtectionAngle
-0x00529994,BYTE_00529994
+# Initializes pressure params, checks for values 0x3a/0x76
+0x00529994,initializePressureParams
 0x00529b44,processRailPressureControl
 0x00529d1c,BYTE_00529d1c
 0x00529ea4,interpolate7PointTable
 0x00529f58,BYTE_00529f58
 0x0052a598,evaluatePressureLimitConditions
-0x0052a910,BYTE_0052a910
+# Wrapper for interpolateWithIndex with 4-point tables
+0x0052a910,interpolate4PointTable
 0x0052b2e8,interpolateFuelMapBySpeed
 0x0052b998,BYTE_0052b998
 0x0052ba30,BYTE_0052ba30
@@ -2068,16 +2070,22 @@ address,name
 0x0052bf74,processAdaptiveLoadControl
 0x0052c08c,evaluateSystemConditions
 0x0052c210,evaluateFaultCodeBoundary
-0x0052c688,BYTE_0052c688
+# Updates DAT_003fd152/154 fault monitor state
+0x0052c688,updateFaultMonitorState
 0x0052c8cc,updateFaultFlagStatus
 0x0052c97c,calculateDiagnosticAccumulator
 0x0052ce04,updateDiagnosticCounter
-0x0052d140,BYTE_0052d140
-0x0052d358,BYTE_0052d358
-0x0052d40c,BYTE_0052d40c
-0x0052d514,BYTE_0052d514
+# Updates DAT_003fd174 based on boost_pressure_deviation_limit
+0x0052d140,updateBoostDeviationAccumulator
+# Checks speed_reference limits, updates DAT_003fd178
+0x0052d358,updateSpeedReferenceAccumulator
+# Updates DAT_003fd17c, checks boost_pressure_secondary_limit
+0x0052d40c,updateProtectionAccumulator
+# Complex check of protection counters and diagnostic flags
+0x0052d514,evaluateDiagnosticModeTransition
 0x0052d650,processProtectionEngage
-0x0052d6a8,BYTE_0052d6a8
+# Checks DAT_003fd18a/b state machine for protection
+0x0052d6a8,evaluateProtectionStateMachine
 0x0052daf8,validateCalibrationType
 0x0052db98,enqueueNullDataRecord
 0x0052dcd0,BYTE_0052dcd0
@@ -2086,7 +2094,8 @@ address,name
 0x0052de94,processSpeedState
 0x0052dfb0,calculateSpeedDerivative
 0x0052e13c,updateSpeedFilters
-0x0052e24c,BYTE_0052e24c
+# 2 calls - calls setOperationalModeState and enqueueToCircularBuffer(1)
+0x0052e24c,setModeAndEnqueueOperation
 0x0052e29c,BYTE_0052e29c
 0x0052e2d8,initSpeedControlState
 0x0052e404,resetSpeedAccumulators
@@ -2094,13 +2103,15 @@ address,name
 0x0052e4fc,prepareStateTransition
 0x0052e540,triggerStateTransitionEvent
 0x0052e59c,updatePerformanceMetric
-0x0052eac8,BYTE_0052eac8
+# 2 calls - calls setOperationalModeState(2) or (3) based on condition
+0x0052eac8,setOperationalModeByCondition
 0x0052eae8,BYTE_0052eae8
 0x0052eb30,processProtectionEvent
 0x0052ebc4,evaluateSystemHealthStatus
 0x0052ee00,processTimerRecoverySequence
 0x0052eedc,validateProtectionStateFlags
-0x0052ef90,BYTE_0052ef90
+# 2 calls - complex protection state check, updates diagnostic_mode_flags
+0x0052ef90,evaluateProtectionDiagnosticState
 0x0052f144,updateTimerEventCounter
 0x0052f1b4,calculateLimitFactorAdjustment
 0x0052f524,evaluateSafetyConditions
@@ -2110,9 +2121,11 @@ address,name
 0x0052fed8,validateCommandSequence
 0x0053005c,BYTE_0053005c
 0x00530214,updateAuxiliaryOutputPort
-0x00530288,BYTE_00530288
+# 2 calls - updates speed_sensor_output_flag based on engine_run_state
+0x00530288,updateSpeedSensorOutputFlag
 0x00530298,BYTE_00530298
-0x00530364,BYTE_00530364
+# 2 calls - updates system_enable_state.severity_flags based on comparison
+0x00530364,updateSeverityFlags
 0x00530428,BYTE_00530428
 0x00530468,processControlModeSwitching
 0x005305dc,BYTE_005305dc
