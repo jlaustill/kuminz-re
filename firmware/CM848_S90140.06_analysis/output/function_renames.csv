@@ -5,6 +5,19 @@
 # mainLoopIteration calls two of these RAM functions directly via bl:
 #   bl 0x3FAE3C -> dispatchCanMessageHandlers (ROM 0x526C) - CAN receive dispatcher
 #   bl 0x3FC094 -> processJ1939QueueStatus   (ROM 0x64C4) - J1939 TP queue manager
+#
+# Cross-Firmware Scheduler Mapping (CM848D ↔ CM550)
+# Both use identical 40-phase cooperative scheduler. Task groups map by position:
+#   CM848D phase_common_processing     ↔ CM550 ioControlAndCanPinSwitchingWrapper
+#   CM848D phase_group_a_processing    ↔ CM550 evenPhaseSchedulerTaskSet
+#   CM848D phase_group_b_processing    ↔ CM550 oddPhaseSchedulerTaskSet
+#   CM848D periodicTaskGroup0_fuelFinal ↔ CM550 fuel_delivery_controller + fuel_limit_arbitrator
+#   CM848D periodicTaskGroup1_sensorProcessing ↔ CM550 engine_speed_governor
+#   CM848D periodicTaskGroup7_timing   ↔ CM550 fuelTimingCoordinator (direct)
+#   CM848D periodicTaskGroup10_monitoring ↔ CM550 slowCycle10Coordinator (direct)
+#   CM848D periodicTaskGroup11_communication ↔ CM550 diagnosticCommunicationSlowCycle10Coordinator
+# See docs/cross-firmware-analysis.md for complete mapping table.
+#
 address,name
 0x00000100,reset_vector
 0x00000184,keyOnStateMachine
@@ -1366,12 +1379,14 @@ address,name
 0x00500090,BYTE_00500090
 0x0050011c,BYTE_0050011c
 0x005001a8,BYTE_005001a8
-0x00500234,BYTE_00500234
-0x00500a4c,BYTE_00500a4c
+# Sensor channel utility functions - Type A (gain/offset config)
+0x00500234,sensorChannelConfigInit
+0x00500a4c,updateSensorChannelWithConfig
 0x005011c4,BYTE_005011c4
 0x00501250,BYTE_00501250
-0x005012dc,BYTE_005012dc
-0x00501b4c,BYTE_00501b4c
+# Sensor channel utility functions - Type B (extended filtering, 27/29 calls - most-used)
+0x005012dc,sensorChannelTypeB_configInit
+0x00501b4c,updateSensorChannelTypeB
 0x005022cc,BYTE_005022cc
 0x0050241c,BYTE_0050241c
 0x00502464,BYTE_00502464
