@@ -1603,9 +1603,11 @@ address,name
 # Checks diagnostic_buffer_init_flag and governor_speed_output threshold
 0x0050aba8,resetGovernorDiagnosticState
 0x0050ac04,processServiceRequest
-0x0050ad1c,BYTE_0050ad1c
+# Validates service request address range (0x3fd461-0x409c07)
+0x0050ad1c,validateServiceRequestAddress
 0x0050ae4c,returnZeroStub
-0x0050ae5c,BYTE_0050ae5c
+# Empty stub - returns immediately
+0x0050ae5c,emptyStub_reserved50ae5c
 0x0050ae64,readParameterWithOffset
 # Empty stub function in phase_group_a - placeholder for disabled feature
 0x0050aec0,emptyStub_phaseGroupA
@@ -1626,7 +1628,8 @@ address,name
 0x0050b58c,extractJ1939MessageFields
 # 4 calls - updates idle_state_byte_value and related variables
 0x0050b5b4,updateIdleStateVariables
-0x0050b634,BYTE_0050b634
+# Empty stub - returns immediately
+0x0050b634,emptyStub_reserved50b634
 0x0050ba78,registerDiagnosticDataRecords
 0x0050bb18,enqueueDiagnosticRecord
 0x0050bb98,initDiagnosticBuffer
@@ -1667,57 +1670,74 @@ address,name
 0x0050d510,filterGovernorState
 # Calculates injection_timing_reference, filters governor_speed to governor_speed_output
 0x0050d60c,calculateGovernorSpeedFiltered
-0x0050d688,BYTE_0050d688
+# Updates governor_speed_output with conditional logic
+0x0050d688,calculateGovernorSpeedOutput
 0x0050d728,captureCrankPositionState
 0x0050d758,initiateGovernorMode
 # 5 calls - checks governor_mode, sensor_status, triggers captureCrankPositionState
 0x0050d784,checkGovernorModeAndCaptureCrank
 0x0050d854,interpolateSpeedParameter
-0x0050d864,BYTE_0050d864
+# Wrapper: linearInterpolate1D with speed_parameter_interpolation_table
+0x0050d864,interpolateSpeedProtectionTable
 0x0050da60,setOperationalModeState
-0x0050daac,BYTE_0050daac
+# Stores operational mode value at offset -0x5533
+0x0050daac,storeOperationalModeValue
 0x0050db00,calculateSpeedRatio
-0x0050db88,BYTE_0050db88
-0x0050dba8,BYTE_0050dba8
+# Calculates speed ratio component with 0x1111 scaling
+0x0050db88,calculateSpeedRatioComponent
+# Computes speed_ratio_calculated with limits 0x6400 and 0x7f80
+0x0050dba8,computeSpeedRatioLimit
 0x0050dcac,calculateAlternateSpeedRatio
-0x0050dd40,BYTE_0050dd40
+# Empty stub - returns immediately
+0x0050dd40,emptyStub_reserved50dd40
 0x0050dd4c,processFaultCountdownTimers
-0x0050de54,BYTE_0050de54
-0x0050e000,BYTE_0050e000
-0x0050e0a0,BYTE_0050e0a0
+# Processes fault_countdown_timer_2 increment/reset logic
+0x0050de54,processFaultCountdownTimer2
+# Updates operating_condition_flags and sensor_diag based on conditions
+0x0050e000,processOperatingConditionFlags
+# Processes fuel_blend_factor_2 with fault timer logic
+0x0050e0a0,processFuelBlendFaultTimer
 0x0050e170,clearSensorDiagnosticFlag
 0x0050e1e0,checkFuelLimitCondition
 0x0050e2bc,evaluateFaultStatusWord
 0x0050e414,resetFaultStatusWord
 0x0050e4a0,calculateFuelDemandScaling
-0x0050e4c4,BYTE_0050e4c4
-0x0050e610,BYTE_0050e610
+# Division: fuel_demand_scale_factor * 0x793b / 100000
+0x0050e4c4,calculateFuelDemandScaleFactor
+# Calculates speed_interpolation_result_1/2/3, calls linearInterpolate1D
+0x0050e610,calculateSpeedInterpolationResults
 0x0050e754,interpolateFuelDemandTable
-0x0050e768,BYTE_0050e768
+# Wrapper: interpolateWithIndex with fuel demand tables (6-point)
+0x0050e768,interpolateFuelDemandTable
 # 3 calls - sets speed_interpolation_offset/scale, calls interpolateWithIndex(6)
 0x0050e7f4,calculateSpeedInterpolationParams
 0x0050e938,selectFuelDemandMode
 0x0050e970,evaluateFuelModeSelection
-0x0050ea88,BYTE_0050ea88
+# Sets fuel_mode_output_value and _fuel_mode_state_counter
+0x0050ea88,selectFuelModeOutputValue
 # 3 calls - selects fuel_mode_output_value based on mode conditions
 0x0050eaa8,selectFuelModeOutput
 0x0050eaf0,processFuelModeSelection
 0x0050eb5c,calculateFuelLimitAdjustment
-0x0050ebf0,BYTE_0050ebf0
+# Complex fuel limit adjustment processing
+0x0050ebf0,processFuelLimitAdjustments
 # 3 calls - updates fuel filter counters based on threshold comparisons
 0x0050ec08,updateFuelFilterCounters
 0x0050edbc,determineFuelLimitMode
 0x0050ee24,calculateFuelFilterAndPeak
 # 3 calls - calls linearInterpolate1D for fuel_filter_peak values
 0x0050ee44,interpolateFuelLimitValues
-0x0050ee68,BYTE_0050ee68
+# Processes fuel filter peak output with linearInterpolate1D
+0x0050ee68,processFuelFilterPeakOutput
 0x0050f060,adjustFuelParameter
 0x0050f16c,processFuelCalibration
 # 3 calls - initializes fuel condition pointers, sets _DAT_003fcc02 = 2
 0x0050f4c0,initFuelConditionPointers
 0x0050f4e0,evaluateFuelConditionDelta
-0x0050f680,BYTE_0050f680
-0x0050f6c4,BYTE_0050f6c4
+# Evaluates speed_zero_threshold_exceeded_flag condition
+0x0050f680,evaluateSpeedThresholdCondition
+# Evaluates parameter condition pair, returns 0 or 1
+0x0050f6c4,evaluateConditionPair
 0x0050f728,calculateFuelCounterState
 0x0050f8a4,processFuelFaultMonitoring
 0x0050f938,initializeFuelFaultVariables
@@ -1725,7 +1745,8 @@ address,name
 0x0050fb00,calculateWeightedFuelParameter
 # 3 calls - calculates fuel status using fault_fuel_delta_scale + filter
 0x0050fbf8,calculateFuelStatusWithFilter
-0x0050fc8c,BYTE_0050fc8c
+# Checks fault status thresholds and updates status flags
+0x0050fc8c,processFaultStatusThresholds
 0x0050fd38,calculateWeightedFuelValue
 # 3 calls - calculates fuel_parameter_delta_half and baseline values
 0x0050fe54,calculateFuelStatusParameters
@@ -1734,8 +1755,10 @@ address,name
 0x005101cc,updateChannelProtectionCondition
 # 4 calls - complex protection state evaluator with latch logic and threshold checks
 0x0051027c,evaluateProtectionLatchState
-0x005102d4,BYTE_005102d4
-0x005103ac,BYTE_005103ac
+# Complex protection event with clearEventFlag, fuel map, threshold checks
+0x005102d4,processProtectionEventConditions
+# Protection condition evaluation with fault_status_offset_scaled
+0x005103ac,evaluateProtectionConditions
 # 11 calls - copies protection state to status, clears protection flags
 0x00510520,updateChannelProtectionStatus
 0x00510624,clearSensorStatusFlags
@@ -1745,34 +1768,50 @@ address,name
 0x0051080c,auxSensorChannel28_process
 0x00510898,auxSensorChannel29_init
 0x00510924,auxSensorChannel29_process
-0x00510978,BYTE_00510978
+# Wrapper: calls updateSensorChannelTypeB for sensor 0x1d (29)
+0x00510978,auxSensor29_process
 0x005109b0,crankshaftSensor_init
-0x005109bc,BYTE_005109bc
+# Calls sensorChannelTypeB_configInit for crankshaft
+0x005109bc,crankshaftSensor_initB
 0x00510a3c,crankshaftSensor_process
-0x00510a48,BYTE_00510a48
+# Calls updateSensorChannelTypeB for crankshaft
+0x00510a48,crankshaftSensor_processB
 0x00510ac8,auxSensorChannel103_init
-0x00510ad4,BYTE_00510ad4
+# Calls sensorChannelConfigInit for aux channel 103
+0x00510ad4,auxSensorChannel103_init
 0x00510b54,updateAuxSensorChannelState
-0x00510b60,BYTE_00510b60
+# Calls updateSensorChannelWithConfig for aux channel 103
+0x00510b60,auxSensorChannel103_process
 0x00510be0,initEventFlag26Handler
-0x00510bec,BYTE_00510bec
+# Clears event flag 26 and initializes counters
+0x00510bec,initEventFlag26State
 0x00510c4c,processEventFlag26Logic
-0x00510c78,BYTE_00510c78
-0x00510d04,BYTE_00510d04
+# Event flag 26 counter logic with speed sync checks
+0x00510c78,processEventFlag26Counter
+# Empty stub - returns immediately
+0x00510d04,emptyStub_reserved510d04
 0x00510d24,evaluateSpeedSyncCondition
-0x00510d90,BYTE_00510d90
-0x00510e1c,BYTE_00510e1c
-0x00510ea8,BYTE_00510ea8
-0x00510f34,BYTE_00510f34
+# Multichannel demand comparison and counter logic
+0x00510d90,evaluateMultichannelDemandCondition
+# Speed sync and system_enable_state evaluation
+0x00510e1c,evaluateSpeedSyncSystemState
+# Multichannel state comparison with multiple DAT flags
+0x00510ea8,evaluateMultichannelStateConditions
+# Multichannel ramp rate comparison and counter
+0x00510f34,processMultichannelRampRate
 0x005115a4,processEventFlag26Dispatcher
 0x005115e8,updateProtectionLockoutState
 0x00511810,updateEngineProtectionMode
-0x005118f8,BYTE_005118f8
-0x0051193c,BYTE_0051193c
-0x00511b64,BYTE_00511b64
+# Diagnostic/protection entry counter and hysteresis processing
+0x005118f8,processProtectionHysteresis
+# Increments counter and resets protection_hysteresis when zero
+0x0051193c,updateProtectionHysteresisCounter
+# Sets multichannel_state_table entry and _DAT_003fcd7a to 2
+0x00511b64,setMultichannelStateTableEntry
 0x00511b80,updateDiagnosticTorqueLimitState
 0x00511ddc,updateTransmissionTorqueControl
-0x00511ea8,BYTE_00511ea8
+# Dynamic control vector and protection filter state processing
+0x00511ea8,processDynamicControlState
 0x00511ed4,BYTE_00511ed4
 0x00512130,BYTE_00512130
 0x005122a0,protectionModeState2Handler
