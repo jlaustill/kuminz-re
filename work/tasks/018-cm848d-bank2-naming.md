@@ -82,14 +82,29 @@ CM848D `phase_group_b_processing` has engine position tracking. Map to CM550 pat
 
 ### Session Progress (2026-02-20)
 
-**Functions Named This Session: 31+**
+**Functions Named This Session: 134+** (195 → 61 remaining)
 
 Completed batches:
-- 4-call frequency: initiateCommandDispatch, interpolate7PointTable, checkFaultCounterThreshold, resetStateVariable, emptyStub_boostControl
-- 3-call frequency: iterateFaultEntriesAndValidate, setFaultActiveBitmapEntry, linearInterpolate1DWrapper, processBoostDiagnosticFlags, incrementCounterOrSetWarmup, storeRegisterValue, initPressureControlVariables, initServiceRequestState, synchronizeTimebase (PowerPC timer), executeTimerCallbacks, enqueueToCircularBufferWrapper
-- Idle/EEPROM/Fuel: processIdleControlStateUpdate, updateIdleStateVariables, validateJ1939PacketBounds, initEepromTransferState, processProtectionParameterData, calculateFuelStatusWithFilter, calculateFuelStatusParameters, calculateSpeedInterpolationParams, selectFuelModeOutput, updateFuelFilterCounters, interpolateFuelLimitValues, initFuelConditionPointers
+- Fuel control: clearFuelBlendFactor1, calculateFuelConsumptionRate, processFuelBlendCalculations, calculateFuelTimingWithFilter, calculateFuelDemandScaleFactor, selectFuelModeOutputValue, processFuelLimitAdjustments, processFuelFilterPeakOutput
+- Speed control: updateSpeedControlState, selectSpeedControlFromSensorFlags, incrementFuelAndSpeedCounters, restoreFuelAndSpeedCounters, processSpeedControlCalculation/B/C, evaluateSpeedThresholdCondition
+- Pressure control: clearPressureModeFlags, evaluatePressureRampConditions, calculateLoadNormalizationDelta, processFuelControlCoordinator, initPressureBufferValues
+- Timing: calculateTimingFloorDivision/B, selectFuelTimingMode, calculateFuelTimingGain
+- Sensor: evaluateThrottleSensorConditions, processThrottlePositionState, clearSensorChannelFaultBits, updateSensorBitmapAndPointer, auxSensorChannel103_init/process, auxSensor29_process, crankshaftSensor_initB/processB
+- Protection: evaluateProtectionConditions, processProtectionHysteresis, updateProtectionHysteresisCounter, setProtectionConditionFlags, processProtectionStateSwitch, evaluateProtectionModeState, getProtectionControlMode, calculateProtectionIntegrator, updateProtectionActiveFlag, setProtectionInhibitFlag
+- Oil/Temperature: processOilPressureHysteresis, initOilPressureProtection, initOilTemperatureState, processOilTempSensorRange
+- Coolant: initEventFlag54State, interpolateCoolantTable, activateCoolantProtectionEvents, processCoolantEventTransition, clearCoolantProtectionEvents, selectCoolantProtectionReference
+- Thermal: updateCalibrationPhaseFlags, evaluateThermalPhaseConditions/B, evaluateThermalInjectionTimingRange
+- Emission: processEmissionControlState
+- Diagnostic: processDiagnosticModeFlags, evaluateDiagnosticLoadConditions, processFaultListEntry/B, processFaultStatusThresholds, processFaultCountdownTimer2
+- Dynamic control: processDynamicControlState/B, incrementDynamicControlCounter, storeDynamicStateValue
+- J1939: copyBufferAndUpdateJ1939Addresses
+- Timer: configureTimerChannelA/B
+- Multichannel: evaluateMultichannelDemandCondition, evaluateSpeedSyncSystemState, evaluateMultichannelStateConditions, processMultichannelRampRate, setMultichannelStateTableEntry
+- Warmup: calculateWarmupProtectionLimitB/C
+- Injection: interpolateFuelInjectionParam, updateFuelInjectionMinimumValues, calculateInjectionScaledDivision
+- Limit/ramp: adjustParameterWithRampLimit, processLimitPriorityConditions, dispatchByParamMode
 
-**Remaining BYTE_005xxxxx: ~266** (from ~320)
+**Remaining BYTE_005xxxxx: 61** (from ~320 original)
 
 ### Next Actions
 
