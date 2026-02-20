@@ -1445,9 +1445,11 @@ address,name
 0x00505b84,BYTE_00505b84
 0x00505bd8,BYTE_00505bd8
 0x00505c20,transferEepromData
-0x00505d94,BYTE_00505d94
+# 4 calls - initializes EEPROM transfer state machine and pointers
+0x00505d94,initEepromTransferState
 0x00505df0,processDiagnosticDataTransfer
-0x00505f98,BYTE_00505f98
+# 4 calls - processes protection parameter data if flags set
+0x00505f98,processProtectionParameterData
 0x0050638c,BYTE_0050638c
 0x00506780,BYTE_00506780
 0x005067bc,BYTE_005067bc
@@ -1557,10 +1559,12 @@ address,name
 0x0050b238,byteSwap16
 0x0050b2bc,getServiceDataLength
 0x0050b2e0,validateDiagnosticServiceRequest
-0x0050b554,BYTE_0050b554
+# 4 calls - updates idle_control_state_machine based on filter state
+0x0050b554,processIdleControlStateUpdate
 # 13 calls - extracts J1939 message fields to RAM variables based on byte position
 0x0050b58c,extractJ1939MessageFields
-0x0050b5b4,BYTE_0050b5b4
+# 4 calls - updates idle_state_byte_value and related variables
+0x0050b5b4,updateIdleStateVariables
 0x0050b634,BYTE_0050b634
 0x0050ba78,registerDiagnosticDataRecords
 0x0050bb18,enqueueDiagnosticRecord
@@ -1582,7 +1586,8 @@ address,name
 0x0050c598,j1939TransportProtocolRequestHandler
 0x0050c640,j1939TransportContinueTransmit
 0x0050c8c4,processJ1939DataBlock
-0x0050c8ec,BYTE_0050c8ec
+# 4 calls - validates J1939 data packet bounds and sets response fields
+0x0050c8ec,validateJ1939PacketBounds
 0x0050c968,sendJ1939StatusMessage
 0x0050ca00,j1939SendStatusMessage
 0x0050caa8,prepareJ1939StatusData
@@ -1604,7 +1609,8 @@ address,name
 0x0050d688,BYTE_0050d688
 0x0050d728,captureCrankPositionState
 0x0050d758,initiateGovernorMode
-0x0050d784,BYTE_0050d784
+# 5 calls - checks governor_mode, sensor_status, triggers captureCrankPositionState
+0x0050d784,checkGovernorModeAndCaptureCrank
 0x0050d854,interpolateSpeedParameter
 0x0050d864,BYTE_0050d864
 0x0050da60,setOperationalModeState
@@ -1627,22 +1633,27 @@ address,name
 0x0050e610,BYTE_0050e610
 0x0050e754,interpolateFuelDemandTable
 0x0050e768,BYTE_0050e768
-0x0050e7f4,BYTE_0050e7f4
+# 3 calls - sets speed_interpolation_offset/scale, calls interpolateWithIndex(6)
+0x0050e7f4,calculateSpeedInterpolationParams
 0x0050e938,selectFuelDemandMode
 0x0050e970,evaluateFuelModeSelection
 0x0050ea88,BYTE_0050ea88
-0x0050eaa8,BYTE_0050eaa8
+# 3 calls - selects fuel_mode_output_value based on mode conditions
+0x0050eaa8,selectFuelModeOutput
 0x0050eaf0,processFuelModeSelection
 0x0050eb5c,calculateFuelLimitAdjustment
 0x0050ebf0,BYTE_0050ebf0
-0x0050ec08,BYTE_0050ec08
+# 3 calls - updates fuel filter counters based on threshold comparisons
+0x0050ec08,updateFuelFilterCounters
 0x0050edbc,determineFuelLimitMode
 0x0050ee24,calculateFuelFilterAndPeak
-0x0050ee44,BYTE_0050ee44
+# 3 calls - calls linearInterpolate1D for fuel_filter_peak values
+0x0050ee44,interpolateFuelLimitValues
 0x0050ee68,BYTE_0050ee68
 0x0050f060,adjustFuelParameter
 0x0050f16c,processFuelCalibration
-0x0050f4c0,BYTE_0050f4c0
+# 3 calls - initializes fuel condition pointers, sets _DAT_003fcc02 = 2
+0x0050f4c0,initFuelConditionPointers
 0x0050f4e0,evaluateFuelConditionDelta
 0x0050f680,BYTE_0050f680
 0x0050f6c4,BYTE_0050f6c4
@@ -1651,14 +1662,17 @@ address,name
 0x0050f938,initializeFuelFaultVariables
 0x0050f9ec,updateFaultCounterWithFlag
 0x0050fb00,calculateWeightedFuelParameter
-0x0050fbf8,BYTE_0050fbf8
+# 3 calls - calculates fuel status using fault_fuel_delta_scale + filter
+0x0050fbf8,calculateFuelStatusWithFilter
 0x0050fc8c,BYTE_0050fc8c
 0x0050fd38,calculateWeightedFuelValue
-0x0050fe54,BYTE_0050fe54
+# 3 calls - calculates fuel_parameter_delta_half and baseline values
+0x0050fe54,calculateFuelStatusParameters
 0x0050ff28,filterAndAccumulatePressureSquared
 0x00510058,evaluateSensorDeviationCondition
 0x005101cc,updateChannelProtectionCondition
-0x0051027c,BYTE_0051027c
+# 4 calls - complex protection state evaluator with latch logic and threshold checks
+0x0051027c,evaluateProtectionLatchState
 0x005102d4,BYTE_005102d4
 0x005103ac,BYTE_005103ac
 # 11 calls - copies protection state to status, clears protection flags
@@ -1880,7 +1894,7 @@ address,name
 0x0051da24,commandStateHandler6
 0x0051da38,commandStateHandler7
 0x0051da4c,resetStateAndDispatch
-0x0051da58,BYTE_0051da58
+0x0051da58,initiateCommandDispatch
 0x0051da74,default
 0x0051da7c,executeQueuedCommand
 0x0051da94,processParameterTableLookup
@@ -2043,7 +2057,7 @@ address,name
 0x00529994,BYTE_00529994
 0x00529b44,processRailPressureControl
 0x00529d1c,BYTE_00529d1c
-0x00529ea4,BYTE_00529ea4
+0x00529ea4,interpolate7PointTable
 0x00529f58,BYTE_00529f58
 0x0052a598,evaluatePressureLimitConditions
 0x0052a910,BYTE_0052a910
@@ -2159,13 +2173,18 @@ address,name
 0x00533aec,BYTE_00533aec
 0x00533b18,updateSensorInputValidation
 0x00533bc4,BYTE_00533bc4
-0x00533c80,BYTE_00533c80
+# 3 calls - updates fault_active_bitmap using 7-bit value shifted by 3
+0x00533c80,setFaultActiveBitmapEntry
 0x00533cc4,processStateTransitionGuard
 0x00533dd8,evaluateTemperatureSlope
 0x00533df0,BYTE_00533df0
-0x00533efc,BYTE_00533efc
+# 3 calls - iterates fault entries 0-0xa9, validates freeze frame conditions
+0x00532fac,iterateFaultEntriesAndValidate
+# 5 calls - iterates 3-byte fault records up to 0xa9 (169), updates status bitmaps
+0x00533efc,iterateFaultStatusRecords
 0x00533f30,evaluateFaultConditions
-0x00534328,BYTE_00534328
+# 4 calls - checks fault_condition_value vs counter, updates fault flags
+0x00534328,checkFaultCounterThreshold
 0x005343d0,processFaultLampLogic
 0x005344cc,checkFaultStateTransition
 0x00534530,BYTE_00534530
@@ -2174,12 +2193,16 @@ address,name
 0x0053489c,processChannelDiagnostics
 0x00534994,BYTE_00534994
 0x00534b68,BYTE_00534b68
-0x00534c6c,BYTE_00534c6c
+# 5 calls - compares bit patterns, synchronizes diagnostic_mode_flags and diagnostic_state_counter
+0x00534c6c,synchronizeDiagnosticFlagState
 0x00534db4,calculateLoadFactorDynamic
-0x00534fb0,BYTE_00534fb0
-0x0053515c,BYTE_0053515c
+# 5 calls - calls processChannelDiagnostics 3x including cbd_cylinder_trim_accum_6
+0x00534fb0,hpcr_processMultiChannelDiagnostics
+# 3 calls - increments counter if r12==1, else sets warmup state to 4
+0x0053515c,incrementCounterOrSetWarmup
 0x00535208,updateSystemConditionMetric
-0x00535270,BYTE_00535270
+# 3 calls - simple register value store
+0x00535270,storeRegisterValue
 0x00535324,processOutputControlSequence
 0x00535344,BYTE_00535344
 0x00535408,handleEnableStateTransition
@@ -2189,26 +2212,32 @@ address,name
 0x00535d5c,processFuelingRateControl
 0x00535e2c,calculateDiagnosticThresholdLevel
 0x005360ec,updateOutputDriverControl
-0x0053624c,BYTE_0053624c
+# 3 calls - wrapper for linearInterpolate1D
+0x0053624c,linearInterpolate1DWrapper
 0x00536540,processProtectionRecoveryState
 0x00536638,BYTE_00536638
 0x0053664c,BYTE_0053664c
 0x0053665c,BYTE_0053665c
 0x005366b8,getDiagnosticStatus
 0x005367cc,validateCalibrationLookup
-0x00536958,BYTE_00536958
+0x00536958,resetStateVariable
 0x00536de0,evaluateBoostControlAuthority
-0x00536e4c,BYTE_00536e4c
+# 3 calls - processes flags 0x2b, 0x2c, 0x35 via conditionalSyncFlagUpdate
+0x00536e4c,processBoostDiagnosticFlags
 0x005371f4,BYTE_005371f4
-0x0053729c,BYTE_0053729c
+# Empty stub near boost control functions
+0x0053729c,emptyStub_boostControl
 0x005372b0,updatePressureControlTarget
-0x005372c4,BYTE_005372c4
+# 3 calls - initializes DAT_003fd25f-003fd27x pressure variables
+0x005372c4,initPressureControlVariables
 0x0053752c,initDataBufferPointers
-0x00537584,BYTE_00537584
+# 3 calls - enables service_request and checksum_seed flags
+0x00537584,initServiceRequestState
 0x005375ec,calculateFuelingMassFlowRate
 0x005377f4,enqueueDataRecord
 0x005378a4,processProtectionDiagnosticState
-0x00537944,BYTE_00537944
+# 3 calls - iterates timer entries, executes callback on timestamp match
+0x00537944,executeTimerCallbacks
 0x005379b4,BYTE_005379b4
 0x005379d8,BYTE_005379d8
 0x00537a18,enqueueToBuffer17
@@ -2220,9 +2249,11 @@ address,name
 0x005383d0,calculatePressureDropOffset
 0x005384a0,pushToCircularBuffer
 0x005385e0,processBufferSequence
-0x00538748,BYTE_00538748
+# wrapper for enqueueToCircularBuffer
+0x00538748,enqueueToCircularBufferWrapper
 0x00538880,evaluateFlowRateCondition
-0x00538974,BYTE_00538974
+# 3 calls - reads TBUr/TBLr PowerPC timebase registers
+0x00538974,synchronizeTimebase
 0x00538c78,updateEmissionControlParameter
 0x00538d3c,BYTE_00538d3c
 0x00538eac,BYTE_00538eac
