@@ -24,3 +24,4 @@
 014 [X] [firmware] Import J90350.00 into Ghidra with MC68336 memory map
 015 [X] [firmware] Cross-reference function names from J90280.05 analysis to J90350.00
 016 [ ] [clip-core] CLIP command execution - GetDataByAddress (0x14) and SetDataByAddress (0x15)
+017 [ ] [firmware] Cross-firmware name convergence - align CM550 and CM848D symbol names for side-by-side comparison
