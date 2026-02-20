@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90280.05 Firmware
-// Generated: Fri Dec 26 08:34:42 MST 2025
+// Generated: Fri Feb 20 02:37:22 MST 2026
 
 
 //
@@ -789,7 +789,7 @@ uint diagnostic_fuel_calculation_with_vp44_monitoring(void)
   if ((_vp44_status_flags_2 & 8) == 0) {
     _DAT_00800056 = _current_engine_rpm;
     _DAT_0080005e = _intake_manifold_temp_processed;
-    _diagnostic_mode_buffer = tableInterpolationLookup(0x800050);
+    _diagnostic_mode_buffer = dualAxisTableInterpolation(0x800050);
   }
   else {
     _diagnostic_mode_buffer = _DAT_00806f9e;
@@ -1172,7 +1172,7 @@ ushort shutdownProtectionCalculator(void)
      (((_fault_status_flags_2 & 8) == 0 || ((_accelerator_pedal_position & 8) == 0)))) {
     _shutdown_protection_rpm_input = _current_engine_rpm;
     _shutdown_protection_diag_input = _insite_diagnostic_reading;
-    _shutdown_protection_fuel_limit = tableInterpolationLookup(&fuel_parameter_pointer_3);
+    _shutdown_protection_fuel_limit = dualAxisTableInterpolation(&fuel_parameter_pointer_3);
     return _shutdown_protection_fuel_limit;
   }
   if (_shutdown_protection_param_1 < _current_engine_rpm) {
@@ -1393,10 +1393,10 @@ void engine_speed_governor(void)
       }
       else if (_governor_reference_fuel < _fuel_demand_command) {
         puVar3 = (undefined *)
-                 rpmFuelCalculation(_fuel_demand_command - _governor_reference_fuel,
-                                    0x100 - _IHPHTMZA,
-                                    (int)_governor_fuel_blend_limit_upper -
-                                    (int)_governor_fuel_blend_limit_lower);
+                 mathMultiplyDivide32Signed
+                           (_fuel_demand_command - _governor_reference_fuel,0x100 - _IHPHTMZA,
+                            (int)_governor_fuel_blend_limit_upper -
+                            (int)_governor_fuel_blend_limit_lower);
         if (0x1700 < (int)puVar3) {
           puVar3 = &DAT_00001700;
         }
@@ -1405,10 +1405,10 @@ void engine_speed_governor(void)
       }
       else {
         puVar3 = (undefined *)
-                 rpmFuelCalculation(_governor_reference_fuel - _fuel_demand_command,
-                                    0x100 - _IHPHTMZA,
-                                    (int)_governor_fuel_blend_limit_upper -
-                                    (int)_governor_fuel_blend_limit_lower);
+                 mathMultiplyDivide32Signed
+                           (_governor_reference_fuel - _fuel_demand_command,0x100 - _IHPHTMZA,
+                            (int)_governor_fuel_blend_limit_upper -
+                            (int)_governor_fuel_blend_limit_lower);
         if (0x1700 < (int)puVar3) {
           puVar3 = &DAT_00001700;
         }
@@ -1904,7 +1904,7 @@ void boostPressureControlInit(void)
 void engineProtectionSystemInit(void)
 
 {
-  engine_protection_init();
+  initProtectionSystem();
   diagnosticParameterPointersInit();
   vp44ControlVariablesReset();
   fuelTempControlFlagChecker();
@@ -2823,10 +2823,10 @@ void insiteCommandByteDispatcher(void)
   else {
     switch(insite_command_byte) {
     case 0xf4:
-      local_a = proportionalCalculation((short)_vehicle_distance_clutch_value,10,0x40);
+      local_a = mathMultiplyDivide32((short)_vehicle_distance_clutch_value,10,0x40);
       break;
     case 0xf5:
-      local_a = proportionalCalculation((short)_vehicle_distance_statistics_value,10,0x40);
+      local_a = mathMultiplyDivide32((short)_vehicle_distance_statistics_value,10,0x40);
       break;
     default:
       goto switchD_0000ce84_caseD_f9;
@@ -2898,7 +2898,7 @@ void paramSystemModeController(void)
     _param_table_aux = 0;
     return;
   }
-  _param_table_aux = param_address_calc((_param_system_mode_state - _param_ref_base) * 0x6400);
+  _param_table_aux = saturatingDivision16((_param_system_mode_state - _param_ref_base) * 0x6400);
   if (32000 < _param_table_aux) {
     _param_table_aux = 32000;
   }
@@ -2924,7 +2924,8 @@ void param_lookup_1(void)
     _param_table_main = 0;
     return;
   }
-  _param_table_main = param_address_calc((short)(_fuel_demand_command - _param_ref_base) * 0x6400);
+  _param_table_main = saturatingDivision16((short)(_fuel_demand_command - _param_ref_base) * 0x6400)
+  ;
   if (32000 < _param_table_main) {
     _param_table_main = 32000;
   }
@@ -2953,12 +2954,12 @@ void param_lookup_2(void)
     return;
   }
   _param_lookup_rpm_input = _current_engine_rpm;
-  sVar2 = tableInterpolationLookup(0xd8);
+  sVar2 = dualAxisTableInterpolation(0xd8);
   if ((short)(sVar2 - _param_ref_base) < 1) {
     _param_table_ctrl = 0;
     return;
   }
-  _param_table_ctrl = param_address_calc((short)(uVar3 - uVar1) * 0x6400);
+  _param_table_ctrl = saturatingDivision16((short)(uVar3 - uVar1) * 0x6400);
   if (32000 < _param_table_ctrl) {
     _param_table_ctrl = 32000;
   }
@@ -3007,7 +3008,7 @@ void param_lookup_3(void)
     return;
   }
   _param_table_ext =
-       param_address_calc(((uint)_fsmxthfl_calc_input - (uint)_param_ref_base) * 0x6400);
+       saturatingDivision16(((uint)_fsmxthfl_calc_input - (uint)_param_ref_base) * 0x6400);
   if (32000 < _param_table_ext) {
     _param_table_ext = 32000;
   }
@@ -3030,11 +3031,11 @@ short fuelTableBlendInterpolation(undefined4 param_1)
   
   if (_fuel_timing_blend_factor != 0) {
     _fuel_blend_lookup_input = param_1._0_2_;
-    unaff_D2w = tableInterpolationLookup(&fuel_blend_table_1_base);
+    unaff_D2w = dualAxisTableInterpolation(&fuel_blend_table_1_base);
   }
   if (_fuel_timing_blend_factor < 0x4000) {
     _fuel_blend_lookup_input_2 = param_1._0_2_;
-    unaff_D3w = tableInterpolationLookup(&fuel_blend_table_3_base);
+    unaff_D3w = dualAxisTableInterpolation(&fuel_blend_table_3_base);
   }
   if (_fuel_timing_blend_factor == 0x4000) {
     return _fuel_timing_base_offset + unaff_D2w;
@@ -4161,15 +4162,15 @@ undefined4 eepromCalibrationWritePrimary(void)
     delayWithWatchdogService();
     uVar4 = uVar4 + 1;
   }
-  iVar1 = flashEraseFromRam(0x4000);
+  iVar1 = flashEraseChip(0x4000);
   if (iVar1 == 0) {
     REG_SIM_SWSR = 0xaa;
     external_watchdog_service = 0xaa;
-    sVar3 = flashProgramFromRam(0x4000,0x4882);
+    sVar3 = flashWriteBlock(0x4000,0x4882);
     if (sVar3 == 1) {
       REG_SIM_SWSR = 0xaa;
       external_watchdog_service = 0xaa;
-      sVar3 = flashProgramFromRam(0x4400,0x488e);
+      sVar3 = flashWriteBlock(0x4400,0x488e);
       cVar5 = sVar3 == 0;
       if (sVar3 == 1) {
         REG_SIM_SWSR = 0xaa;
@@ -4249,15 +4250,15 @@ undefined4 eepromCalibrationWriteSecondary(void)
     delayWithWatchdogService();
     uVar4 = uVar4 + 1;
   }
-  iVar1 = flashEraseFromRam(0x6000);
+  iVar1 = flashEraseChip(0x6000);
   if (iVar1 == 0) {
     REG_SIM_SWSR = 0xaa;
     external_watchdog_service = 0xaa;
-    sVar3 = flashProgramFromRam(0x6000,0x4882);
+    sVar3 = flashWriteBlock(0x6000,0x4882);
     if (sVar3 == 1) {
       REG_SIM_SWSR = 0xaa;
       external_watchdog_service = 0xaa;
-      sVar3 = flashProgramFromRam(0x6400,0x488e);
+      sVar3 = flashWriteBlock(0x6400,0x488e);
       cVar5 = sVar3 == 0;
       if (sVar3 == 1) {
         REG_SIM_SWSR = 0xaa;
@@ -4914,9 +4915,9 @@ LAB_0000fe82:
         }
         _cold_start_sensor_sum_saved = _cold_start_sensor_reading_sum;
         uVar5 = lookupTableInterpolation(&anc_altitude_table_1_size);
-        uVar6 = tableInterpolationLookup(&anc_disable_duration_table_size);
-        uVar7 = tableInterpolationLookup(&anc_speed_limit_table_1_size);
-        uVar4 = proportionalCalculation(_cold_start_sensor_reading_sum,uVar6,0x400);
+        uVar6 = dualAxisTableInterpolation(&anc_disable_duration_table_size);
+        uVar7 = dualAxisTableInterpolation(&anc_speed_limit_table_1_size);
+        uVar4 = mathMultiplyDivide32(_cold_start_sensor_reading_sum,uVar6,0x400);
         if (uVar4 < 0xbb81) {
           _cold_start_fuel_control_state = (ushort)uVar4;
         }
@@ -4925,10 +4926,10 @@ LAB_0000fe82:
         }
         uVar3 = _cold_start_fuel_control_state;
         if (0 < _cold_start_fuel_limit_value) {
-          uVar4 = proportionalCalculation
+          uVar4 = mathMultiplyDivide32
                             ((int)_cold_start_fuel_limit_value * (uint)uVar5,0x100,&DAT_00004444,
                              0x100);
-          uVar4 = proportionalCalculation(_cold_start_fuel_control_state,(uVar4 & 0xffff) + 0x100);
+          uVar4 = mathMultiplyDivide32(_cold_start_fuel_control_state,(uVar4 & 0xffff) + 0x100);
         }
         if (uVar4 < 0xbb81) {
           _cold_start_fuel_control_state = (ushort)uVar4;
@@ -4946,8 +4947,9 @@ LAB_0000fe82:
         }
         if (_temp_below_which_cold_crank_can_run_50_293_7c10 < uVar8) {
           if ((uVar3 != 0) && (uVar5 != 0)) {
-            iVar9 = rpmFuelCalculation((int)(short)(uVar7 - _cold_start_fuel_control_state),
-                                       &DAT_00004444,(uint)uVar5 * (uint)uVar3);
+            iVar9 = mathMultiplyDivide32Signed
+                              ((int)(short)(uVar7 - _cold_start_fuel_control_state),&DAT_00004444,
+                               (uint)uVar5 * (uint)uVar3);
           }
           _cold_start_fuel_control_mode = 1;
           if (iVar9 < 0xab) {
@@ -5028,14 +5030,13 @@ LAB_0000fff4:
         }
       }
       else {
-        iVar9 = rpmFuelCalculation(((uint)_current_engine_rpm * (uint)_fuel_demand_command) / 0x1266
-                                   & 0xffff,(uint)
-                                            _time_constant_compared_with_prior_pulse_slope_in_final_cold_0_4000
-                                            - (uint)
-                                              _time_constant_compared_with_prior_pulse_time_in_final_cold_sy_400_0
-                                   ,
-                                   _the_value_above_set_speed_where_e_brakes_will_turn_off_regard_0_5_10
-                                  );
+        iVar9 = mathMultiplyDivide32Signed
+                          (((uint)_current_engine_rpm * (uint)_fuel_demand_command) / 0x1266 &
+                           0xffff,(uint)
+                                  _time_constant_compared_with_prior_pulse_slope_in_final_cold_0_4000
+                                  - (uint)
+                                    _time_constant_compared_with_prior_pulse_time_in_final_cold_sy_400_0
+                           ,_the_value_above_set_speed_where_e_brakes_will_turn_off_regard_0_5_10);
         uVar4 = (uint)_time_constant_compared_with_prior_pulse_time_in_final_cold_sy_400_0 + iVar9;
       }
       if ((int)uVar4 < 0x7f81) {
@@ -5051,7 +5052,7 @@ LAB_0000fff4:
           (uint)_intake_manifold_temp_raw < (uVar4 & 0xffff)) {
         sVar1 = _intake_manifold_temp_raw - _rpm_delta_for_timing;
         uVar6 = lookupTableInterpolation(&anc_altitude_table_3_size);
-        iVar9 = rpmFuelCalculation(uVar6,(int)sVar1,0x7800);
+        iVar9 = mathMultiplyDivide32Signed(uVar6,(int)sVar1,0x7800);
         if (iVar9 < 0xab) {
           if (iVar9 < -0xaa) {
             unaff_D2w = 0xff56;
@@ -5439,16 +5440,17 @@ uint engineRunTimeHistogramAccumulator(void)
       _rpm_histogram_threshold_saved = _engine_rpm_histogram_threshold_select;
       if (_fuel_timing_mode_blend_factor_965a == 0x4000) {
         _engine_runtime_histogram_accumulator =
-             tableInterpolationLookup(&engine_runtime_histogram_config_type_a);
+             dualAxisTableInterpolation(&engine_runtime_histogram_config_type_a);
       }
       else if (_fuel_timing_mode_blend_factor_965a == 0) {
-        _engine_runtime_histogram_accumulator = tableInterpolationLookup(&hour_meter_table_3_size);
+        _engine_runtime_histogram_accumulator = dualAxisTableInterpolation(&hour_meter_table_3_size)
+        ;
       }
       else {
-        _hour_meter_tick_divider = tableInterpolationLookup(&engine_runtime_histogram_config_type_a)
-        ;
+        _hour_meter_tick_divider =
+             dualAxisTableInterpolation(&engine_runtime_histogram_config_type_a);
         _engine_runtime_histogram_interpolation_b =
-             tableInterpolationLookup(&hour_meter_table_3_size);
+             dualAxisTableInterpolation(&hour_meter_table_3_size);
         _engine_runtime_histogram_accumulator =
              (short)((uint)_fuel_timing_mode_blend_factor_965a * (uint)_hour_meter_tick_divider >>
                     0xe) +
@@ -5691,8 +5693,9 @@ void speedDifferenceInterpolator(undefined4 param_1)
   short sVar1;
   
   _speed_diff_interp_input = param_1._0_2_;
-  sVar1 = tableInterpolationLookup(&manifold_temp_table_1_type);
-  safeDivideWithClamp((sVar1 - (_speed_difference_interpolation_result + param_1._2_2_)) * 0x6400);
+  sVar1 = dualAxisTableInterpolation(&manifold_temp_table_1_type);
+  signedDivisionWithSaturation
+            ((sVar1 - (_speed_difference_interpolation_result + param_1._2_2_)) * 0x6400);
   return;
 }
 
@@ -5766,7 +5769,8 @@ void fuelDemandPercentageCalculator(void)
   _speed_based_parameter_lookup_result = _CRACSWAC;
   _boost_pressure_protection_state_bda0 = lookupTableInterpolation(&manifold_temp_table_2_type);
   _fuel_demand_percentage =
-       safeDivideWithClamp((_fuel_demand_command - _fuel_demand_percentage_current) * 0x6400);
+       signedDivisionWithSaturation
+                 ((_fuel_demand_command - _fuel_demand_percentage_current) * 0x6400);
   return;
 }
 
@@ -5961,10 +5965,10 @@ short oldestDiagnosticTimestampSearch(undefined4 param_1)
 
 
 //
-// Function: diagnosticCodeRegistrar @ 0x0001124a
+// Function: registerFaultInActiveList @ 0x0001124a
 //
 
-void diagnosticCodeRegistrar(undefined4 param_1)
+void registerFaultInActiveList(undefined4 param_1)
 
 {
   ushort uVar1;
@@ -6118,12 +6122,12 @@ void diagnosticCodeMaskedClear(void)
 
 
 //
-// Function: diagnosticStateMachineProcessor @ 0x000115b2
+// Function: diagnosticMainStateProcessor @ 0x000115b2
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void diagnosticStateMachineProcessor(void)
+void diagnosticMainStateProcessor(void)
 
 {
   int iVar1;
@@ -6206,7 +6210,7 @@ void diagnosticStateMachineProcessor(void)
                (&diagnostic_pid_dtc_index)[(short)(uVar4 * 5) * 2] + '\x01';
         }
         if (*(char *)((short)uVar4 + 0x804f46) == '\0') {
-          diagnosticCodeRegistrar();
+          registerFaultInActiveList();
           *(undefined1 *)((short)(uVar4 * 5) * 2 + 0x804fcc) = 3;
           *(undefined4 *)((short)(uVar4 * 5) * 2 + 0x804fc4) = _system_loop_counter;
           *(undefined4 *)
@@ -6264,12 +6268,12 @@ void diagnosticStateMachineProcessor(void)
 
 
 //
-// Function: faultFlagScannerAndProcessor @ 0x00011a0a
+// Function: activeFaultScanProcessor @ 0x00011a0a
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void faultFlagScannerAndProcessor(void)
+void activeFaultScanProcessor(void)
 
 {
   ushort uVar1;
@@ -6288,7 +6292,7 @@ void faultFlagScannerAndProcessor(void)
     }
   }
   if (iVar2 < 0x20) {
-    diagnosticStateMachineProcessor();
+    diagnosticMainStateProcessor();
     _diagnostic_fault_group_index = _diagnostic_fault_group_index + 1;
     if (0x1f < _diagnostic_fault_group_index) {
       _diagnostic_fault_group_index = 0;
@@ -6950,10 +6954,10 @@ void diagnosticCommandDispatcher(void)
 
 
 //
-// Function: safeDivideWithClamp @ 0x00012966
+// Function: signedDivisionWithSaturation @ 0x00012966
 //
 
-int safeDivideWithClamp(uint param_1,int param_2)
+int signedDivisionWithSaturation(uint param_1,int param_2)
 
 {
   uint uVar1;
@@ -6994,10 +6998,10 @@ int safeDivideWithClamp(uint param_1,int param_2)
 
 
 //
-// Function: clampedDivisionCalculator @ 0x00012a26
+// Function: clampedDivisionWithBounds @ 0x00012a26
 //
 
-uint clampedDivisionCalculator(uint param_1,uint param_2,int param_3)
+uint clampedDivisionWithBounds(uint param_1,uint param_2,int param_3)
 
 {
   uint uVar1;
@@ -7050,10 +7054,10 @@ uint clampedDivisionCalculator(uint param_1,uint param_2,int param_3)
 
 
 //
-// Function: param_address_calc @ 0x00012afa
+// Function: saturatingDivision16 @ 0x00012afa
 //
 
-uint param_address_calc(uint param_1,undefined4 param_2)
+uint saturatingDivision16(uint param_1,undefined4 param_2)
 
 {
   if ((uint)param_2._0_2_ * 0xffff <= param_1) {
@@ -7467,12 +7471,12 @@ void tpuTransmissionTrigger(void)
 
 
 //
-// Function: engine_fault_monitoring_and_rpm_calculation @ 0x000132c8
+// Function: faultTableEntryProcessor @ 0x000132c8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-uint engine_fault_monitoring_and_rpm_calculation(void)
+uint faultTableEntryProcessor(void)
 
 {
   uint uVar1;
@@ -7789,13 +7793,13 @@ void fuelTimingModeBlendCalculator(void)
     _fuel_timing_blend_rpm_input_1 = _rpm_source_selector_value;
     _fuel_timing_blend_offset_input_1 =
          _fuel_timing_mode_blend_factor_c806 + _rpm_fuel_limit_blend_offset;
-    _fuel_timing_blend_rpm_component = tableInterpolationLookup(&load_trending_table_2_size);
+    _fuel_timing_blend_rpm_component = dualAxisTableInterpolation(&load_trending_table_2_size);
   }
   else if (_fuel_timing_mode_blend_factor_965a == 0) {
     _fuel_timing_blend_rpm_input_2 = _rpm_source_selector_value;
     _fuel_timing_blend_offset_input_2 =
          _fuel_timing_mode_blend_factor_c806 + _rpm_fuel_limit_blend_offset;
-    uVar1 = tableInterpolationLookup(&load_trending_table_4_size);
+    uVar1 = dualAxisTableInterpolation(&load_trending_table_4_size);
     _fuel_timing_blend_rpm_component =
          (short)((uint)uVar1 * (0x4000 - (uint)_fuel_timing_mode_blend_factor_965a) >> 0xe);
   }
@@ -7803,11 +7807,11 @@ void fuelTimingModeBlendCalculator(void)
     _fuel_timing_blend_rpm_input_1 = _rpm_source_selector_value;
     _fuel_timing_blend_offset_input_1 =
          _fuel_timing_mode_blend_factor_c806 + _rpm_fuel_limit_blend_offset;
-    uVar1 = tableInterpolationLookup(&load_trending_table_2_size);
+    uVar1 = dualAxisTableInterpolation(&load_trending_table_2_size);
     _fuel_timing_blend_rpm_input_2 = _rpm_source_selector_value;
     _fuel_timing_blend_offset_input_2 =
          _fuel_timing_mode_blend_factor_c806 + _rpm_fuel_limit_blend_offset;
-    uVar2 = tableInterpolationLookup(&load_trending_table_4_size);
+    uVar2 = dualAxisTableInterpolation(&load_trending_table_4_size);
     _fuel_timing_blend_rpm_component =
          (short)((uint)_fuel_timing_mode_blend_factor_965a * (uint)uVar1 >> 0xe) +
          (short)((uint)uVar2 * (0x4000 - (uint)_fuel_timing_mode_blend_factor_965a) >> 0xe);
@@ -8385,12 +8389,12 @@ void engineOperatingModeInit(void)
 
 
 //
-// Function: engineProtectionMultiStateSlowCycle40Coordinator @ 0x00014546
+// Function: protectionStateMachine @ 0x00014546
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-ushort engineProtectionMultiStateSlowCycle40Coordinator(void)
+ushort protectionStateMachine(void)
 
 {
   ushort uVar1;
@@ -10848,7 +10852,7 @@ void vp44_engine_management_system(void)
 {
   vp44_communication_state_machine();
   vp44_status_data_collector();
-  engine_fault_monitoring_and_rpm_calculation();
+  faultTableEntryProcessor();
   vp44_rpm_derate_monitor();
   rpm_derate_calculation_and_fault_processing();
   fuel_timing_calculation_with_fault_checking();
@@ -10887,10 +10891,10 @@ void engine_control_cycle(void)
 void engineDiagnosticSystemCoordinator(void)
 
 {
-  engine_fault_monitoring_and_rpm_calculation();
+  faultTableEntryProcessor();
   governorFuelPidController();
   sensorFaultDebounceMonitor();
-  faultFlagScannerAndProcessor();
+  activeFaultScanProcessor();
   engineModeTransitionHandler();
   rpmLoadParameterLookup();
   engineOperatingModeStateMachine();
@@ -11618,7 +11622,7 @@ undefined8 main_loop(void)
     emptySlowCycle20PlaceholderCase15();
     epsTimingCalculationSlowCycle40Coordinator();
     vp44InjectionTimingSlowCycle40Coordinator();
-    engineProtectionMultiStateSlowCycle40Coordinator();
+    protectionStateMachine();
     _main_loop_phase_index = 0x10;
     break;
   case 0x10:
@@ -12126,14 +12130,14 @@ ushort fuelDemandModeSelector(void)
 
 
 //
-// Function: flashEraseWithWatchdog @ 0x00017ed4
+// Function: flashPollUntilReady @ 0x00017ed4
 //
 
 /* WARNING: Removing unreachable block (ram,0x00018018) */
 /* WARNING: Removing unreachable block (ram,0x00018026) */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-undefined4 flashEraseWithWatchdog(void)
+undefined4 flashPollUntilReady(void)
 
 {
   ushort uVar1;
@@ -12197,12 +12201,12 @@ undefined4 flashEraseWithWatchdog(void)
 
 
 //
-// Function: flashEraseFromRam @ 0x0001802e
+// Function: flashEraseChip @ 0x0001802e
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void flashEraseFromRam(undefined4 param_1)
+void flashEraseChip(undefined4 param_1)
 
 {
   undefined2 *puVar1;
@@ -12211,7 +12215,7 @@ void flashEraseFromRam(undefined4 param_1)
   
   _flash_control_register_ptr = param_1;
   puVar1 = (undefined2 *)auStack_804;
-  for (pcVar2 = flashEraseWithWatchdog; pcVar2 < flashEraseFromRam; pcVar2 = pcVar2 + 2) {
+  for (pcVar2 = flashPollUntilReady; pcVar2 < flashEraseChip; pcVar2 = pcVar2 + 2) {
     *puVar1 = *(undefined2 *)pcVar2;
     puVar1 = puVar1 + 1;
   }
@@ -12222,14 +12226,14 @@ void flashEraseFromRam(undefined4 param_1)
 
 
 //
-// Function: flashProgramWordWithWatchdog @ 0x0001805c
+// Function: flashWriteWord @ 0x0001805c
 //
 
 /* WARNING: Removing unreachable block (ram,0x00018104) */
 /* WARNING: Removing unreachable block (ram,0x0001810e) */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-undefined4 flashProgramWordWithWatchdog(void)
+undefined4 flashWriteWord(void)
 
 {
   ushort uVar1;
@@ -12263,12 +12267,12 @@ undefined4 flashProgramWordWithWatchdog(void)
 
 
 //
-// Function: flashProgramFromRam @ 0x00018174
+// Function: flashWriteBlock @ 0x00018174
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void flashProgramFromRam(int param_1,undefined4 param_2,uint param_3)
+void flashWriteBlock(int param_1,undefined4 param_2,uint param_3)
 
 {
   undefined2 *puVar1;
@@ -12279,7 +12283,7 @@ void flashProgramFromRam(int param_1,undefined4 param_2,uint param_3)
   _flash_control_register_ptr = param_1;
   _flash_write_end_address = param_1 + (param_3 >> 0x10);
   puVar1 = (undefined2 *)auStack_804;
-  for (pcVar2 = flashProgramWordWithWatchdog; pcVar2 < flashProgramFromRam; pcVar2 = pcVar2 + 2) {
+  for (pcVar2 = flashWriteWord; pcVar2 < flashWriteBlock; pcVar2 = pcVar2 + 2) {
     *puVar1 = *(undefined2 *)pcVar2;
     puVar1 = puVar1 + 1;
   }
@@ -12346,20 +12350,20 @@ void fuelDemandTableBlendCalculator(void)
     if (_fuel_timing_mode_blend_factor_965a == 0x4000) {
       _rpm_snapshot_0 = _current_engine_rpm;
       _fuel_snapshot_0 = uVar1;
-      _fuel_demand_table_output = tableInterpolationLookup(&fuel_demand_blend_table_1_size);
+      _fuel_demand_table_output = dualAxisTableInterpolation(&fuel_demand_blend_table_1_size);
     }
     else if (_fuel_timing_mode_blend_factor_965a == 0) {
       _rpm_snapshot_1 = _current_engine_rpm;
       _fuel_snapshot_1 = uVar1;
-      _fuel_demand_table_output = tableInterpolationLookup(&fuel_demand_blend_table_2_size);
+      _fuel_demand_table_output = dualAxisTableInterpolation(&fuel_demand_blend_table_2_size);
     }
     else {
       _rpm_snapshot_0 = _current_engine_rpm;
       _fuel_snapshot_0 = uVar1;
-      uVar2 = tableInterpolationLookup(&fuel_demand_blend_table_1_size);
+      uVar2 = dualAxisTableInterpolation(&fuel_demand_blend_table_1_size);
       _rpm_snapshot_1 = _current_engine_rpm;
       _fuel_snapshot_1 = uVar1;
-      uVar3 = tableInterpolationLookup(&fuel_demand_blend_table_2_size);
+      uVar3 = dualAxisTableInterpolation(&fuel_demand_blend_table_2_size);
       _fuel_demand_table_output =
            (short)((uint)_fuel_timing_mode_blend_factor_965a * (uint)uVar2 >> 0xe) +
            (short)((uint)uVar3 * (0x4000 - (uint)_fuel_timing_mode_blend_factor_965a) >> 0xe);
@@ -12423,7 +12427,7 @@ void fuelDemandProportionalCalculationSlowCycle40Coordinator(void)
     _fuel_timing_clamp_value = 0;
     return;
   }
-  uVar1 = proportionalCalculation
+  uVar1 = mathMultiplyDivide32
                     ((uint)_current_engine_rpm * 0x280,
                      (uint)_fuel_demand_command - (uint)_fuel_demand_offset_threshold,
                      (uint)_fuel_demand_proportional_param * 0x1d7);
@@ -12505,11 +12509,11 @@ void fuel_timing_calculation_with_fault_checking(void)
   uVar1 = _fuel_timing_blend_factor;
   if (_fuel_timing_blend_factor != 0) {
     _DAT_008003b6 = _current_engine_rpm;
-    unaff_D4w = tableInterpolationLookup(&fuel_limit_table_1_base_ptr);
+    unaff_D4w = dualAxisTableInterpolation(&fuel_limit_table_1_base_ptr);
   }
   if (uVar1 < 0x4000) {
     _DAT_008003ca = _current_engine_rpm;
-    unaff_D3w = tableInterpolationLookup(&DAT_008003c4);
+    unaff_D3w = dualAxisTableInterpolation(&DAT_008003c4);
   }
   _fuel_timing_interpolated = unaff_D4w;
   if ((uVar1 != 0x4000) && (_fuel_timing_interpolated = unaff_D3w, uVar1 != 0)) {
@@ -13095,12 +13099,12 @@ short activeParamReadFunction(void)
     if (_fuel_timing_blend_factor != 0) {
       _fuel_timing_mode_rpm_input_1 = _current_engine_rpm;
       _derate_interpolation_value_1 = _proprietary_load_percent;
-      unaff_D3w = tableInterpolationLookup(&interpolation_table_1_base);
+      unaff_D3w = dualAxisTableInterpolation(&interpolation_table_1_base);
       if ((_proprietary_load_percent != 0) && (_proprietary_load_percent != 400)) {
         _derate_interpolation_value_1 = 0;
-        uVar2 = tableInterpolationLookup(&interpolation_table_1_base);
+        uVar2 = dualAxisTableInterpolation(&interpolation_table_1_base);
         _derate_interpolation_value_1 = 400;
-        uVar3 = tableInterpolationLookup(&interpolation_table_1_base);
+        uVar3 = dualAxisTableInterpolation(&interpolation_table_1_base);
         if (unaff_D3w < uVar2) {
           unaff_D3w = uVar2;
         }
@@ -13112,12 +13116,12 @@ short activeParamReadFunction(void)
     if (uVar1 < 0x4000) {
       _fuel_timing_mode_rpm_input_2 = _current_engine_rpm;
       _derate_interpolation_value_2 = _proprietary_load_percent;
-      unaff_D2w = tableInterpolationLookup(&interpolation_table_2_base);
+      unaff_D2w = dualAxisTableInterpolation(&interpolation_table_2_base);
       if ((_proprietary_load_percent != 0) && (_proprietary_load_percent != 400)) {
         _derate_interpolation_value_2 = 0;
-        uVar2 = tableInterpolationLookup(&interpolation_table_2_base);
+        uVar2 = dualAxisTableInterpolation(&interpolation_table_2_base);
         _derate_interpolation_value_2 = 400;
-        uVar3 = tableInterpolationLookup(&interpolation_table_2_base);
+        uVar3 = dualAxisTableInterpolation(&interpolation_table_2_base);
         if (unaff_D2w < uVar2) {
           unaff_D2w = uVar2;
         }
@@ -18459,12 +18463,12 @@ void initLookupTablePointers1(void)
 
 
 //
-// Function: governorFuelModeBlendCalculator @ 0x0001e3dc
+// Function: fuelDemandBlendCalculator @ 0x0001e3dc
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void governorFuelModeBlendCalculator(void)
+void fuelDemandBlendCalculator(void)
 
 {
   ushort unaff_D2w;
@@ -18472,11 +18476,11 @@ void governorFuelModeBlendCalculator(void)
   
   if (_fuel_timing_mode_blend_factor_965a != 0) {
     _governor_blend_table_1_input = _governor_rpm_target_adjusted;
-    unaff_D3w = tableInterpolationLookup(&governor_blend_table_1_type);
+    unaff_D3w = dualAxisTableInterpolation(&governor_blend_table_1_type);
   }
   if (_fuel_timing_mode_blend_factor_965a < 0x4000) {
     _governor_blend_table_2_input = _governor_rpm_target_adjusted;
-    unaff_D2w = tableInterpolationLookup(&governor_blend_table_2_type);
+    unaff_D2w = dualAxisTableInterpolation(&governor_blend_table_2_type);
   }
   if (_fuel_timing_mode_blend_factor_965a == 0x4000) {
     _governor_fuel_blend_output = unaff_D3w;
@@ -18560,7 +18564,7 @@ void governorFuelPidController(void)
       else {
         _governor_pid_derivative_term_d062 = 0x7fff;
       }
-      governorFuelModeBlendCalculator();
+      fuelDemandBlendCalculator();
       _DAT_0080d066 = _governor_fuel_blend_output + _governor_pid_fuel_sum_previous;
       if ((short)_DAT_0080d066 < 0) {
         _DAT_0080d066 = 0;
@@ -18640,7 +18644,7 @@ void governorPidFuelCalculator(void)
   _governor_pid_integral_fractional = sStack_6 * 0x10000 + -0x80000000;
   _eps_external_lost_duration_0_20 = sStack_6;
   epsInitializationWrapper();
-  governorFuelModeBlendCalculator();
+  fuelDemandBlendCalculator();
   _crank_sync_backup_lost_duration_amount_of_time_crank_sync_lost_1_20 =
        _governor_fuel_blend_output + _governor_pid_proportional_term_87c4;
   _governor_fuel_pid_integral =
@@ -19502,7 +19506,7 @@ uint crankFuelCalculationAndProtection(void)
       local_24 = (uint)_crank_fuel_divisor * 0x465;
       pdStack_28 = &firmware_vector_table_base;
       local_2c = _crank_fuel_delta_accumulator;
-      uVar1 = proportionalCalculation();
+      uVar1 = mathMultiplyDivide32();
       uVar4 = (short)_crank_timing_state_current - _crank_timing_state_delta_base;
       _crank_timing_state_previous = _crank_timing_state_current;
       uVar4 = (ushort)((uint)uVar4 * (uint)_param_scaling_factor >> 8);
@@ -19510,7 +19514,7 @@ uint crankFuelCalculationAndProtection(void)
         _crank_fuel_status_flags = _crank_fuel_status_flags | 8;
       }
       _crank_timing_delta_accumulator = uVar4 + _crank_timing_delta_accumulator;
-      uVar2 = proportionalCalculation
+      uVar2 = mathMultiplyDivide32
                         (_crank_timing_delta_accumulator,&firmware_vector_table_base,
                          (uint)_timing_command_before_cranking_is_envoked_0_120 << 7);
       puVar5 = (uint *)&stack0xffffffe0;
@@ -19537,7 +19541,7 @@ uint crankFuelCalculationAndProtection(void)
       local_24 = (uint)_crank_mode_1_calibration_factor * 0x465;
       pdStack_28 = &firmware_vector_table_base;
       puVar5 = &local_2c;
-      uVar3 = proportionalCalculation();
+      uVar3 = mathMultiplyDivide32();
       _crank_adjusted_initial_fuel_0_100 = (ushort)uVar3;
       _crank_fuel_limit_source_selector = 1;
     }
@@ -19641,7 +19645,7 @@ void fuelSmokeLimiterCalculator(void)
   
   if ((_fsmxthfl_calc_input < _fuel_demand_command) &&
      (_fsmxthfl_calc_input < _fuel_timing_interpolated)) {
-    uVar2 = proportionalCalculation
+    uVar2 = mathMultiplyDivide32
                       ((uint)_fuel_demand_command - (uint)_fsmxthfl_calc_input,
                        &firmware_vector_table_base,
                        (uint)_fuel_timing_interpolated - (uint)_fsmxthfl_calc_input);
@@ -20729,23 +20733,23 @@ void canTransmissionScheduler(void)
     puVar6 = puVar6 + 1;
   } while (bVar3 < 4);
   canBufferSetup1();
-  j1939MessageSetup_PGN_65265();
+  j1939HandlePgn65265CruiseVehicleSpeed();
   vp44Command0x100Builder();
   cumminsProprietaryDM_983_Builder();
-  secondaryParamPGN_65247_Builder();
-  extendedDiagPGN_65251_Builder();
-  cumminsProprietaryTSC_PGN_15728640_Builder();
-  fuelEconomyPGN_65266_Builder();
-  retarderConfigPGN_65249_Builder();
+  j1939HandlePgn65247SecondaryParameters();
+  j1939HandlePgn65251ExtendedDiagnostic();
+  j1939HandlePgnCumminsProprietaryTsc();
+  j1939HandlePgn65266FuelEconomy();
+  j1939HandlePgn65249RetarderConfig();
   retarderModeThresholdsSetup();
-  ambientConditionsPGN_65269_Builder();
-  engineFluidLevelPGN_65263_Builder();
-  engineHoursPGN_65252_Builder();
-  intakeManifoldPGN_65526_Builder();
-  cruiseControlPGN_65264_Builder();
-  electronicBrakePGN_65527_Builder();
-  engineCoolantPGN_65226_Builder();
-  diagnosticDM8PGN_65232_Builder();
+  j1939HandlePgn65269AmbientConditions();
+  j1939HandlePgn65263FluidLevelPressure();
+  j1939HandlePgn65252EngineHours();
+  j1939HandlePgn65526IntakeManifold();
+  j1939HandlePgn65264CruiseControl();
+  j1939HandlePgn65527ElectronicBrake();
+  j1939HandlePgn65226Dm1ActiveDtc();
+  j1939HandlePgn65232Dm8DiagResult();
   timerSchedulerSetup(0,100);
   timerSchedulerSetup(0,0x14);
   timerSchedulerSetup(0,0x32);
@@ -20861,20 +20865,20 @@ void mainCanTransmissionLoop(void)
   
   vp44Command0x100Builder();
   cumminsProprietaryDM_983_Builder();
-  secondaryParamPGN_65247_Builder();
-  extendedDiagPGN_65251_Builder();
-  cumminsProprietaryTSC_PGN_15728640_Builder();
-  fuelEconomyPGN_65266_Builder();
-  retarderConfigPGN_65249_Builder();
+  j1939HandlePgn65247SecondaryParameters();
+  j1939HandlePgn65251ExtendedDiagnostic();
+  j1939HandlePgnCumminsProprietaryTsc();
+  j1939HandlePgn65266FuelEconomy();
+  j1939HandlePgn65249RetarderConfig();
   retarderModeThresholdsSetup();
-  ambientConditionsPGN_65269_Builder();
-  engineFluidLevelPGN_65263_Builder();
-  engineHoursPGN_65252_Builder();
-  intakeManifoldPGN_65526_Builder();
-  cruiseControlPGN_65264_Builder();
-  electronicBrakePGN_65527_Builder();
-  engineCoolantPGN_65226_Builder();
-  diagnosticDM8PGN_65232_Builder();
+  j1939HandlePgn65269AmbientConditions();
+  j1939HandlePgn65263FluidLevelPressure();
+  j1939HandlePgn65252EngineHours();
+  j1939HandlePgn65526IntakeManifold();
+  j1939HandlePgn65264CruiseControl();
+  j1939HandlePgn65527ElectronicBrake();
+  j1939HandlePgn65226Dm1ActiveDtc();
+  j1939HandlePgn65232Dm8DiagResult();
   (*unaff_A4)(0,100);
   (*unaff_A4)(0,0x14);
   (*unaff_A4)(0,0x32);
@@ -21648,7 +21652,7 @@ void flashBootloaderProgrammer(void)
      (bootloader_code_end_address < flash_bootloader_code_limit)) {
     sim_data_direction_control = sim_data_direction_control | 2;
     ioControlAndCanPinSwitching();
-    iVar1 = flashEraseFromRam(0);
+    iVar1 = flashEraseChip(0);
     if (iVar1 == 0) {
       pcVar4 = (code *)0x0;
       pbVar3 = &flash_bootloader_code_start;
@@ -21659,7 +21663,7 @@ void flashBootloaderProgrammer(void)
           *pcVar2 = (code)*pbVar3;
           pcVar2 = pcVar2 + 1;
         }
-        flashProgramFromRam((short)pcVar4,(short)auStack_104);
+        flashWriteBlock((short)pcVar4,(short)auStack_104);
         pcVar4 = pcVar2 + ((int)pcVar4 - (int)auStack_104);
       }
     }
@@ -22251,7 +22255,7 @@ void fuelDemandProportionalCalculator(void)
   rpmSnapshotCapture();
   _fuel_demand_proportional_calc_result = 0x80000000;
   _DAT_0080d168 = 0;
-  uVar2 = proportionalCalculation
+  uVar2 = mathMultiplyDivide32
                     (_DAT_008036a8,
                      ((uint)_DAT_008036aa * (uint)_oil_pressure_fuel_max_threshold >> 10) + 0x200,1)
   ;
@@ -23547,24 +23551,24 @@ void diagnosticDataDump(void)
 
 {
   coreSystemControlFunction();
-  engineSerialNumberPGN_65259_Builder();
-  engineTemperaturePGN_65262_Builder();
-  intakeExhaustConditionsPGN_65257_Builder();
-  ioControlPGN_65244_Builder();
-  vehicleDistancePGN_65248_Builder();
-  vehicleHoursPGN_65255_Builder();
+  j1939HandlePgn65259ComponentId();
+  j1939HandlePgn65262EngineTemp();
+  j1939HandlePgn65270InletExhaustConditions();
+  j1939HandlePgn65244IoControl();
+  j1939HandlePgn65248VehicleDistance();
+  j1939HandlePgn65255VehicleHours();
   canTransmissionController();
   canTransmissionController();
   canTransmissionController();
   canTransmissionController();
   canTransmissionController();
   canTransmissionController();
-  engineCoolantPGN_65226_Builder();
-  diagnosticDM2PGN_65227_Builder();
+  j1939HandlePgn65226Dm1ActiveDtc();
+  j1939HandlePgn65227Dm2PreviousDtc();
   canTransmissionTrigger();
-  diagnosticDM4PGN_65229_Builder();
-  diagnosticDM5PGN_65230_Builder();
-  diagnosticDM11PGN_65234_Builder();
+  j1939HandlePgn65229Dm4FreezeFrame();
+  j1939HandlePgn65230Dm5Readiness();
+  j1939HandlePgn65234Dm11ClearActive();
   return;
 }
 
@@ -24113,14 +24117,14 @@ void engineRpmHardwareTimerSetup(void)
   if ((uVar1 == 0) ||
      (0x10c5 < _mask_used_by_a_tool_to_id_the_trip_faults_found_in_the_trip_in_0_03f)) {
     _retarder_proportion_calc_workspace = 0x4230bdc0;
-    uVar1 = proportionalCalculation(16000000,0x4230bdc0,32000000);
+    uVar1 = mathMultiplyDivide32(16000000,0x4230bdc0,32000000);
     local_8 = (uint)uVar1;
   }
   else {
     _retarder_proportion_calc_workspace =
          ((uint)_mask_used_by_a_tool_to_id_the_trip_faults_found_in_the_trip_in_0_03f * 1000000) /
          (uint)uVar1;
-    uVar1 = proportionalCalculation(16000000,_retarder_proportion_calc_workspace,32000000);
+    uVar1 = mathMultiplyDivide32(16000000,_retarder_proportion_calc_workspace,32000000);
     local_8 = CONCAT22((short)((int)(uint)uVar1 >> 1),uVar1);
   }
   _IMB_CSBAR3 = local_8;
@@ -24456,14 +24460,14 @@ ushort fuelStatisticsTracker(void)
       }
       if (_fuel_statistics_mode_selector == 0) {
         _engine_runtime_statistics_accumulator =
-             proportionalCalculation
+             mathMultiplyDivide32
                        (_vp44_fuel_demand_accumulator - _vp44_fuel_demand_previous,0x800000,
                         _fuel_statistics_divisor);
         _vp44_fuel_demand_previous = _vp44_fuel_demand_accumulator;
       }
       else {
         _engine_runtime_statistics_accumulator =
-             proportionalCalculation(_fuel_statistics_alt_value,0x5000000,0x39c2c30);
+             mathMultiplyDivide32(_fuel_statistics_alt_value,0x5000000,0x39c2c30);
       }
       if (_engine_runtime_statistics_accumulator == 0) {
         _fuel_statistics_command_value = 0;
@@ -24471,7 +24475,7 @@ ushort fuelStatisticsTracker(void)
       }
       else {
         fuel_statistics_status_byte = fuel_statistics_previous_status;
-        uVar1 = proportionalCalculation(_engine_runtime_statistics_accumulator,0x232893,0x800000);
+        uVar1 = mathMultiplyDivide32(_engine_runtime_statistics_accumulator,0x232893,0x800000);
         if (uVar1 < 0x10000) {
           _fuel_economy_statistics_value = (ushort)uVar1;
         }
@@ -24722,12 +24726,12 @@ void ambientConditionsDataBuilder(void)
 
 
 //
-// Function: ambientConditionsPGN_65269_Builder @ 0x0002956a
+// Function: j1939HandlePgn65269AmbientConditions @ 0x0002956a
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void ambientConditionsPGN_65269_Builder(void)
+void j1939HandlePgn65269AmbientConditions(void)
 
 {
   _ambient_conditions_msg_header = CONCAT13((char)((_j1939_priority_pgn65269 & 7) << 2),0xfef500);
@@ -24820,12 +24824,12 @@ void ambientConditionsDataBuilder(void)
 
 
 //
-// Function: j1939MessageSetup_PGN_65265 @ 0x00029796
+// Function: j1939HandlePgn65265CruiseVehicleSpeed @ 0x00029796
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void j1939MessageSetup_PGN_65265(void)
+void j1939HandlePgn65265CruiseVehicleSpeed(void)
 
 {
   _j1939_pgn_65265_header = CONCAT13((char)((_j1939_priority_pgn65265 & 7) << 2),0xfef100);
@@ -24888,12 +24892,12 @@ void engineSerialNumberDataBuilder(void)
 
 
 //
-// Function: engineSerialNumberPGN_65259_Builder @ 0x00029868
+// Function: j1939HandlePgn65259ComponentId @ 0x00029868
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void engineSerialNumberPGN_65259_Builder(void)
+void j1939HandlePgn65259ComponentId(void)
 
 {
   _j1939_message_buffer_pgn65259 = CONCAT13((char)((_j1939_priority_pgn65259 & 7) << 2),0xfeeb00);
@@ -25013,12 +25017,12 @@ byte activeDtcListBuilder(void)
 
 
 //
-// Function: engineCoolantPGN_65226_Builder @ 0x00029a86
+// Function: j1939HandlePgn65226Dm1ActiveDtc @ 0x00029a86
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void engineCoolantPGN_65226_Builder(void)
+void j1939HandlePgn65226Dm1ActiveDtc(void)
 
 {
   _j1939_message_buffer_pgn65226 = CONCAT13((char)((_j1939_priority_pgn65226 & 7) << 2),0xfeca00);
@@ -25089,12 +25093,12 @@ byte previousDtcListBuilder(void)
 
 
 //
-// Function: diagnosticDM2PGN_65227_Builder @ 0x00029bf4
+// Function: j1939HandlePgn65227Dm2PreviousDtc @ 0x00029bf4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void diagnosticDM2PGN_65227_Builder(void)
+void j1939HandlePgn65227Dm2PreviousDtc(void)
 
 {
   _j1939_message_buffer_pgn65227 = CONCAT13((char)((_j1939_priority_pgn65227 & 7) << 2),0xfecb00);
@@ -25242,12 +25246,12 @@ byte buildCanMessage(void)
 
 
 //
-// Function: diagnosticDM4PGN_65229_Builder @ 0x0002a090
+// Function: j1939HandlePgn65229Dm4FreezeFrame @ 0x0002a090
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void diagnosticDM4PGN_65229_Builder(void)
+void j1939HandlePgn65229Dm4FreezeFrame(void)
 
 {
   byte bVar1;
@@ -25306,12 +25310,12 @@ void diagnosticDM5DataBuilder(void)
 
 
 //
-// Function: diagnosticDM5PGN_65230_Builder @ 0x0002a1a0
+// Function: j1939HandlePgn65230Dm5Readiness @ 0x0002a1a0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void diagnosticDM5PGN_65230_Builder(void)
+void j1939HandlePgn65230Dm5Readiness(void)
 
 {
   _j1939_message_buffer_pgn65230 = CONCAT13((char)((_j1939_priority_pgn65230 & 7) << 2),0xfece00);
@@ -25344,12 +25348,12 @@ void diagnosticByteResponseSender(undefined4 param_1)
 
 
 //
-// Function: diagnosticDM8PGN_65232_Builder @ 0x0002a222
+// Function: j1939HandlePgn65232Dm8DiagResult @ 0x0002a222
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void diagnosticDM8PGN_65232_Builder(void)
+void j1939HandlePgn65232Dm8DiagResult(void)
 
 {
   _j1939_message_buffer_pgn65232 = CONCAT13((char)((_j1939_priority_pgn65232 & 7) << 2),0xfed000);
@@ -25367,12 +25371,12 @@ void diagnosticDM8PGN_65232_Builder(void)
 
 
 //
-// Function: diagnosticDM11PGN_65234_Builder @ 0x0002a29c
+// Function: j1939HandlePgn65234Dm11ClearActive @ 0x0002a29c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void diagnosticDM11PGN_65234_Builder(void)
+void j1939HandlePgn65234Dm11ClearActive(void)
 
 {
   _j1939_message_buffer_pgn65234 = CONCAT13((char)((_j1939_priority_pgn65234 & 7) << 2),0xfed200);
@@ -25582,12 +25586,12 @@ void configParamCanBuilder(void)
 
 
 //
-// Function: secondaryParamPGN_65247_Builder @ 0x0002a5da
+// Function: j1939HandlePgn65247SecondaryParameters @ 0x0002a5da
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void secondaryParamPGN_65247_Builder(void)
+void j1939HandlePgn65247SecondaryParameters(void)
 
 {
   _can_param_msg_buf_3 = CONCAT13((char)((_j1939_priority_pgn65247 & 7) << 2),0xfedf00);
@@ -25687,12 +25691,12 @@ byte fuelParameterCanMessageBuilder(void)
 
 
 //
-// Function: extendedDiagPGN_65251_Builder @ 0x0002a7f8
+// Function: j1939HandlePgn65251ExtendedDiagnostic @ 0x0002a7f8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void extendedDiagPGN_65251_Builder(void)
+void j1939HandlePgn65251ExtendedDiagnostic(void)
 
 {
   _j1939_message_buffer_pgn65251 = CONCAT13((char)((_j1939_priority_pgn65251 & 7) << 2),0xfee300);
@@ -25732,12 +25736,12 @@ void engineFluidLevelDataBuilder(void)
 
 
 //
-// Function: engineFluidLevelPGN_65263_Builder @ 0x0002a8da
+// Function: j1939HandlePgn65263FluidLevelPressure @ 0x0002a8da
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void engineFluidLevelPGN_65263_Builder(void)
+void j1939HandlePgn65263FluidLevelPressure(void)
 
 {
   _engine_fluid_level_msg_header = CONCAT13((char)((_j1939_priority_pgn65263 & 7) << 2),0xfeef00);
@@ -25811,12 +25815,12 @@ void engineFluidLevelDataBuilder(void)
 
 
 //
-// Function: engineTemperaturePGN_65262_Builder @ 0x0002aa74
+// Function: j1939HandlePgn65262EngineTemp @ 0x0002aa74
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void engineTemperaturePGN_65262_Builder(void)
+void j1939HandlePgn65262EngineTemp(void)
 
 {
   _j1939_message_buffer_pgn65262 = CONCAT13((char)((_j1939_priority_pgn65262 & 7) << 2),0xfeee00);
@@ -25888,12 +25892,12 @@ void torqueControlDataBuilder(void)
 
 
 //
-// Function: cumminsProprietaryTSC_PGN_15728640_Builder @ 0x0002aba4
+// Function: j1939HandlePgnCumminsProprietaryTsc @ 0x0002aba4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void cumminsProprietaryTSC_PGN_15728640_Builder(void)
+void j1939HandlePgnCumminsProprietaryTsc(void)
 
 {
   _cummins_tsc_msg_header = CONCAT13((char)((_j1939_priority_pgn15728640 & 7) << 2),0xf00000);
@@ -25918,11 +25922,11 @@ void intakeExhaustConditionsDataBuilder(void)
 {
   uint local_8;
   
-  local_8 = proportionalCalculation(_clutch_operating_stats_output,0x39c2c3,1000000);
-  local_8 = proportionalCalculation(local_8,2,8);
+  local_8 = mathMultiplyDivide32(_clutch_operating_stats_output,0x39c2c3,1000000);
+  local_8 = mathMultiplyDivide32(local_8,2,8);
   _intake_exhaust_clutch_stat_dword = byteSwap32(&local_8);
   local_8 = _insite_fuel_statistics_output >> 2;
-  local_8 = proportionalCalculation(local_8,0x39c2c3,1000000);
+  local_8 = mathMultiplyDivide32(local_8,0x39c2c3,1000000);
   _intake_exhaust_fuel_stat_dword = byteSwap32(&local_8);
   sendCanMessage(&j1939_message_buffer_pgn65257);
   return;
@@ -25931,12 +25935,12 @@ void intakeExhaustConditionsDataBuilder(void)
 
 
 //
-// Function: intakeExhaustConditionsPGN_65257_Builder @ 0x0002ac7a
+// Function: j1939HandlePgn65270InletExhaustConditions @ 0x0002ac7a
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void intakeExhaustConditionsPGN_65257_Builder(void)
+void j1939HandlePgn65270InletExhaustConditions(void)
 
 {
   _j1939_message_buffer_pgn65257 = CONCAT13((char)((_j1939_priority_pgn65257 & 7) << 2),0xfee900);
@@ -25965,7 +25969,7 @@ void fuelEconomyDataBuilder(void)
   undefined1 local_6;
   undefined1 uStack_5;
   
-  uVar1 = proportionalCalculation(_fuel_economy_statistics_value,0xe10,&DAT_00001f40);
+  uVar1 = mathMultiplyDivide32(_fuel_economy_statistics_value,0xe10,&DAT_00001f40);
   uVar1 = uVar1 / 10;
   if (0xc8c < uVar1) {
     uVar1 = 0xc8c;
@@ -25992,12 +25996,12 @@ void fuelEconomyDataBuilder(void)
 
 
 //
-// Function: fuelEconomyPGN_65266_Builder @ 0x0002ada8
+// Function: j1939HandlePgn65266FuelEconomy @ 0x0002ada8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void fuelEconomyPGN_65266_Builder(void)
+void j1939HandlePgn65266FuelEconomy(void)
 
 {
   _fuel_economy_msg_header = CONCAT13((char)((_j1939_priority_pgn65266 & 7) << 2),0xfef200);
@@ -26022,9 +26026,9 @@ void ioControlDataBuilder(void)
   uint local_8;
   
   local_8 = _insite_command_base_value >> 2;
-  local_8 = proportionalCalculation(local_8,0x39c2c3,1000000);
+  local_8 = mathMultiplyDivide32(local_8,0x39c2c3,1000000);
   _io_control_pgn_data_dword = byteSwap32(&local_8);
-  local_8 = proportionalCalculation(_insite_runtime_hours_accumulator,0x14,0x40);
+  local_8 = mathMultiplyDivide32(_insite_runtime_hours_accumulator,0x14,0x40);
   _io_control_runtime_hours_dword = byteSwap32(&local_8);
   sendCanMessage(&j1939_message_buffer_pgn65244);
   return;
@@ -26033,12 +26037,12 @@ void ioControlDataBuilder(void)
 
 
 //
-// Function: ioControlPGN_65244_Builder @ 0x0002ae60
+// Function: j1939HandlePgn65244IoControl @ 0x0002ae60
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void ioControlPGN_65244_Builder(void)
+void j1939HandlePgn65244IoControl(void)
 
 {
   _j1939_message_buffer_pgn65244 = CONCAT13((char)((_j1939_priority_pgn65244 & 7) << 2),0xfedc00);
@@ -26054,12 +26058,12 @@ void ioControlPGN_65244_Builder(void)
 
 
 //
-// Function: engineHoursPGN_65252_Builder @ 0x0002aee2
+// Function: j1939HandlePgn65252EngineHours @ 0x0002aee2
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void engineHoursPGN_65252_Builder(void)
+void j1939HandlePgn65252EngineHours(void)
 
 {
   _j1939_message_buffer_pgn65252 = CONCAT13((char)((_j1939_priority_pgn65252 & 7) << 2),0xfee400);
@@ -26099,12 +26103,12 @@ void intakeManifoldDataBuilder(void)
 
 
 //
-// Function: intakeManifoldPGN_65526_Builder @ 0x0002afca
+// Function: j1939HandlePgn65526IntakeManifold @ 0x0002afca
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void intakeManifoldPGN_65526_Builder(void)
+void j1939HandlePgn65526IntakeManifold(void)
 
 {
   _j1939_message_buffer_pgn65270 = CONCAT13((char)((_j1939_priority_pgn65526 & 7) << 2),0xfef600);
@@ -26125,12 +26129,12 @@ void intakeManifoldPGN_65526_Builder(void)
 
 
 //
-// Function: cruiseControlPGN_65264_Builder @ 0x0002b060
+// Function: j1939HandlePgn65264CruiseControl @ 0x0002b060
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void cruiseControlPGN_65264_Builder(void)
+void j1939HandlePgn65264CruiseControl(void)
 
 {
   _j1939_message_buffer_pgn65264 = CONCAT13((char)((_j1939_priority_pgn65264 & 7) << 2),0xfef000);
@@ -26216,12 +26220,12 @@ byte retarderConfigDataBuilder(void)
 
 
 //
-// Function: retarderConfigPGN_65249_Builder @ 0x0002b1f6
+// Function: j1939HandlePgn65249RetarderConfig @ 0x0002b1f6
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void retarderConfigPGN_65249_Builder(void)
+void j1939HandlePgn65249RetarderConfig(void)
 
 {
   _retarder_config_msg_header = CONCAT13((char)((_j1939_priority_pgn65249 & 7) << 2),0xfee100);
@@ -26246,9 +26250,9 @@ void vehicleDistanceDataBuilder(void)
 {
   undefined4 local_8;
   
-  local_8 = proportionalCalculation(_vehicle_distance_clutch_value,&DAT_00003268,&DAT_00002710);
+  local_8 = mathMultiplyDivide32(_vehicle_distance_clutch_value,&DAT_00003268,&DAT_00002710);
   _vehicle_distance_pgn_data_dword = byteSwap32(&local_8);
-  local_8 = proportionalCalculation(_vehicle_distance_statistics_value,&DAT_00003268,&DAT_00002710);
+  local_8 = mathMultiplyDivide32(_vehicle_distance_statistics_value,&DAT_00003268,&DAT_00002710);
   _vehicle_distance_data_dword = byteSwap32(&local_8);
   sendCanMessage(&j1939_message_buffer_pgn65248);
   return;
@@ -26257,12 +26261,12 @@ void vehicleDistanceDataBuilder(void)
 
 
 //
-// Function: vehicleDistancePGN_65248_Builder @ 0x0002b29e
+// Function: j1939HandlePgn65248VehicleDistance @ 0x0002b29e
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void vehicleDistancePGN_65248_Builder(void)
+void j1939HandlePgn65248VehicleDistance(void)
 
 {
   _j1939_message_buffer_pgn65248 = CONCAT13((char)((_j1939_priority_pgn65248 & 7) << 2),0xfee000);
@@ -26297,12 +26301,12 @@ void retarderDataBuilder(void)
 
 
 //
-// Function: electronicBrakePGN_65527_Builder @ 0x0002b338
+// Function: j1939HandlePgn65527ElectronicBrake @ 0x0002b338
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void electronicBrakePGN_65527_Builder(void)
+void j1939HandlePgn65527ElectronicBrake(void)
 
 {
   _j1939_message_buffer_pgn65271 = CONCAT13((char)((_j1939_priority_pgn65527 & 7) << 2),0xfef700);
@@ -26331,9 +26335,9 @@ void vehicleHoursDataBuilder(void)
 {
   undefined4 local_8;
   
-  local_8 = proportionalCalculation(_vehicle_hours_statistics_value,0x14,0x40);
+  local_8 = mathMultiplyDivide32(_vehicle_hours_statistics_value,0x14,0x40);
   _vehicle_hours_pgn_data_dword = byteSwap32(&local_8);
-  local_8 = proportionalCalculation(_insite_idle_hours_accumulator,0x14,0x40);
+  local_8 = mathMultiplyDivide32(_insite_idle_hours_accumulator,0x14,0x40);
   _vehicle_hours_idle_hours_dword = byteSwap32(&local_8);
   sendCanMessage(&j1939_message_buffer_pgn65255);
   return;
@@ -26342,12 +26346,12 @@ void vehicleHoursDataBuilder(void)
 
 
 //
-// Function: vehicleHoursPGN_65255_Builder @ 0x0002b3fc
+// Function: j1939HandlePgn65255VehicleHours @ 0x0002b3fc
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void vehicleHoursPGN_65255_Builder(void)
+void j1939HandlePgn65255VehicleHours(void)
 
 {
   _j1939_message_buffer_pgn65255 = CONCAT13((char)((_j1939_priority_pgn65255 & 7) << 2),0xfee700);
@@ -27196,9 +27200,10 @@ uint fuelTimingTransitionStateMachine(void)
   else if (_boost_pressure_accumulator < _fuel_pressure_filtered) {
     _fuel_pressure_filtered = _boost_pressure_accumulator;
   }
-  iVar2 = rpmFuelCalculation(_fuel_timing_transition_limit - _fuel_pressure_filtered,
-                             _time_to_reach_full_derate_during_intake_temp_engine_prote_0_0039_256_7082
-                             ,0x80);
+  iVar2 = mathMultiplyDivide32Signed
+                    (_fuel_timing_transition_limit - _fuel_pressure_filtered,
+                     _time_to_reach_full_derate_during_intake_temp_engine_prote_0_0039_256_7082,0x80
+                    );
   uVar4 = (uint)_shutdown_delay_for_intake_temperature_shutdown_0_255 - iVar2;
   if ((int)(uint)_shutdown_delay_for_intake_temperature_shutdown_0_255 < (int)uVar4) {
     uVar4 = (uint)_shutdown_delay_for_intake_temperature_shutdown_0_255;
@@ -27534,7 +27539,7 @@ uint engineProtectionScaledValueCalculator(uint param_1)
   uint uVar3;
   undefined2 uVar4;
   
-  uVar2 = tableInterpolationLookup();
+  uVar2 = dualAxisTableInterpolation();
   if ((ushort)uVar2 <= _minimum_threshold_for_oil_pressure_rpm_limiting_0_65535) {
     return uVar2 & 0xffff0000;
   }
@@ -27554,12 +27559,12 @@ uint engineProtectionScaledValueCalculator(uint param_1)
 
 
 //
-// Function: engine_protection_init @ 0x0002c99a
+// Function: initProtectionSystem @ 0x0002c99a
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void engine_protection_init(void)
+void initProtectionSystem(void)
 
 {
   ushort uVar1;
@@ -28894,7 +28899,7 @@ uint crankAndProtectionStateMonitor(void)
         _crank_fuel_status_flags = _crank_fuel_status_flags | 8;
       }
       _crank_protection_accumulator = uVar2 + _crank_protection_accumulator;
-      uVar1 = proportionalCalculation
+      uVar1 = mathMultiplyDivide32
                         (_crank_protection_accumulator,&firmware_vector_table_base,
                          (uint)_crank_protection_divisor * 0x280);
       _crank_adjusted_initial_rpm_0_1000 = (undefined2)uVar1;
@@ -28904,7 +28909,7 @@ uint crankAndProtectionStateMonitor(void)
       }
     }
     else if (_crank_fuel_timing_buffer_value == 3) {
-      uVar1 = proportionalCalculation
+      uVar1 = mathMultiplyDivide32
                         (uVar1,&firmware_vector_table_base,(uint)_crank_fuel_mode_3_divisor * 0x280)
       ;
       _crank_adjusted_initial_rpm_0_1000 = (undefined2)uVar1;
@@ -29007,8 +29012,8 @@ void derateTablePointerInit(void)
   _derate_table_init_flag = 0;
   _derate_table_pointer = 0x8071a8;
   _clutch_rpm_calc_numerator =
-       proportionalCalculation
-                 ((uint)_qsm_newqp_multiplier * 0xe1000,500000,_derate_table_pointer_init);
+       mathMultiplyDivide32((uint)_qsm_newqp_multiplier * 0xe1000,500000,_derate_table_pointer_init)
+  ;
   return;
 }
 
@@ -29403,7 +29408,7 @@ ushort clutchOperatingStatisticsTracker(void)
   uVar2 = _engine_operating_state_flags & 0x200;
   if ((_engine_operating_state_flags & 0x200) != 0) {
     _clutch_rpm_proportional_calc_974c =
-         proportionalCalculation
+         mathMultiplyDivide32
                    ((uint)_clutch_rpm_previous_32c8 + (uint)_clutch_rpm_accumulator,0x20000,
                     &hour_meter_conversion_table);
     if (_engine_runtime_statistics_accumulator == 0) {
@@ -29419,7 +29424,7 @@ ushort clutchOperatingStatisticsTracker(void)
     else {
       if (_clutch_rpm_proportional_calc_974c / _engine_runtime_statistics_accumulator < 0x7ff) {
         _clutch_statistics_ratio_calc_9750 =
-             proportionalCalculation
+             mathMultiplyDivide32
                        (_clutch_rpm_proportional_calc_974c,0x200000,
                         _engine_runtime_statistics_accumulator);
       }
@@ -29470,7 +29475,7 @@ ushort clutchOperatingStatisticsTracker(void)
     }
     else if (_clutch_transition_accumulator_6274 / _clutch_operating_stats_value < 0x3ff) {
       _clutch_transitions_counter_0_100 =
-           proportionalCalculation
+           mathMultiplyDivide32
                      (_clutch_transition_accumulator_6274,0x400000,_clutch_operating_stats_value);
     }
     else {
@@ -29659,12 +29664,12 @@ void vp44FaultProtectionController(void)
        (_vp44_fault_protection_threshold < _fuel_limit_rpm_based)) {
       _fuel_limit_rpm_based = _vp44_fault_protection_threshold;
     }
-    uVar2 = proportionalCalculation
+    uVar2 = mathMultiplyDivide32
                       (_boost_pressure_target_pointer,
                        (short)((uint)_vp44_boost_pressure_reference *
                                ((uint)_vp44_fault_calc_factor_1 * (uint)_vp44_fault_calc_factor_2 >>
                                 7 & 0xffff) >> 0xb),0x100);
-    uVar3 = proportionalCalculation(uVar2,8,0x3c);
+    uVar3 = mathMultiplyDivide32(uVar2,8,0x3c);
     if (uVar3 < 0x10000) {
       _vp44_fault_threshold_calc = (ushort)uVar3;
     }
@@ -30938,7 +30943,7 @@ void outputControlState4Handler(void)
     do {
       _output_control_timing_workspace = _output_control_timing_value;
       _output_control_index_workspace = (ushort)bVar3;
-      uVar2 = tableInterpolationLookup(&output_control_table_7_size);
+      uVar2 = dualAxisTableInterpolation(&output_control_table_7_size);
       *puVar4 = uVar2;
       bVar3 = bVar3 + 1;
       puVar4 = puVar4 + 1;
@@ -31475,7 +31480,7 @@ ushort rpmLoadParameterLookup(void)
   if (uVar1 != 0) {
     _rpm_load_lookup_input = _intake_manifold_temp_processed;
     _rpm_load_lookup_result_ptr = _current_engine_rpm;
-    uVar1 = tableInterpolationLookup(&fuel_demand_table_3_size);
+    uVar1 = dualAxisTableInterpolation(&fuel_demand_table_3_size);
     _rpm_load_parameter_lookup_result = uVar1;
   }
   return uVar1;
@@ -31579,7 +31584,7 @@ uint rpmDerateCalculationController(void)
       break;
     case 0xe:
     case 0xf:
-      iVar2 = rpmFuelCalculation(_fuel_demand_command,(int)_rpm_derate_calc_offset_1,0x3a);
+      iVar2 = mathMultiplyDivide32Signed(_fuel_demand_command,(int)_rpm_derate_calc_offset_1,0x3a);
       iVar2 = (uint)_current_engine_rpm + (iVar2 >> 3);
       if (iVar2 < 64000) {
         if (iVar2 < 1) {
@@ -31592,7 +31597,7 @@ uint rpmDerateCalculationController(void)
       else {
         _derate_rpm_limit_low = 64000;
       }
-      iVar2 = rpmFuelCalculation(_fuel_demand_command,(int)_rpm_derate_calc_offset_2,0x3a);
+      iVar2 = mathMultiplyDivide32Signed(_fuel_demand_command,(int)_rpm_derate_calc_offset_2,0x3a);
       iVar2 = (uint)_current_engine_rpm + (iVar2 >> 3);
       if (iVar2 < 64000) {
         if (iVar2 < 1) {
@@ -34008,7 +34013,7 @@ void baseTimingTableLookup(void)
   _base_timing_fuel_demand_input = _fuel_demand_command;
   _base_timing_rpm_input = _engine_rpm_period_value;
   _base_timing_fuel_value_input = _fuel_demand_command;
-  _vp44_timing_base_offset = tableInterpolationLookup(_base_timing_table_lookup_arg_346e);
+  _vp44_timing_base_offset = dualAxisTableInterpolation(_base_timing_table_lookup_arg_346e);
   return;
 }
 
@@ -34028,7 +34033,7 @@ void liftPumpFuelDeliveryController(void)
   
   _lift_pump_fuel_demand_input = _engine_rpm_period_value;
   _lift_pump_fuel_value_input = _fuel_demand_command;
-  _lift_pump_table_lookup_result = tableInterpolationLookup(_lift_pump_table_lookup_arg_3486);
+  _lift_pump_table_lookup_result = dualAxisTableInterpolation(_lift_pump_table_lookup_arg_3486);
   uVar2 = _lift_pump_diagnostic_fuel_value;
   if ((vp44_fso_circuit_fault_flag == '\0') &&
      (uVar2 = _diagnostic_fuel_arbitration_output, lift_pump_diagnostic_mode_flag != '\0')) {
@@ -35391,10 +35396,10 @@ short lookupTableInterpolation(short *param_1)
 
 
 //
-// Function: proportionalCalculation @ 0x000357d2
+// Function: mathMultiplyDivide32 @ 0x000357d2
 //
 
-undefined4 proportionalCalculation(uint param_1,uint param_2,uint param_3)
+undefined4 mathMultiplyDivide32(uint param_1,uint param_2,uint param_3)
 
 {
   return (int)(((ulonglong)param_2 * (ulonglong)param_1) / (ulonglong)param_3);
@@ -35403,10 +35408,10 @@ undefined4 proportionalCalculation(uint param_1,uint param_2,uint param_3)
 
 
 //
-// Function: rpmFuelCalculation @ 0x000357e4
+// Function: mathMultiplyDivide32Signed @ 0x000357e4
 //
 
-undefined4 rpmFuelCalculation(int param_1,int param_2,int param_3)
+undefined4 mathMultiplyDivide32Signed(int param_1,int param_2,int param_3)
 
 {
   return (int)(((longlong)(int)((ulonglong)((longlong)param_2 * (longlong)param_1) >> 0x20) << 0x20
@@ -35416,10 +35421,10 @@ undefined4 rpmFuelCalculation(int param_1,int param_2,int param_3)
 
 
 //
-// Function: tableInterpolationLookup @ 0x000357f6
+// Function: dualAxisTableInterpolation @ 0x000357f6
 //
 
-undefined8 tableInterpolationLookup(short *param_1)
+undefined8 dualAxisTableInterpolation(short *param_1)
 
 {
   short *psVar1;
