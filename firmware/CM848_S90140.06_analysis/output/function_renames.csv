@@ -1377,23 +1377,34 @@ address,name
 0x003fd544,eepromCompleteOperation
 0x003fd6d8,BYTE_003fd6d8
 0x003fd994,BYTE_003fd994
-0x00500004,BYTE_00500004
-0x00500090,BYTE_00500090
-0x0050011c,BYTE_0050011c
-0x005001a8,BYTE_005001a8
+# Sensor channel 0 (coolant load) - calls sensorChannelConfigInit
+0x00500004,sensorChannel0_init
+# Sensor channel 0 - calls updateSensorChannelWithConfig
+0x00500090,sensorChannel0_process
+# Sensor channel 1 (coolant sensor) - calls sensorChannelConfigInit
+0x0050011c,sensorChannel1_init
+# Sensor channel 1 - calls updateSensorChannelWithConfig
+0x005001a8,sensorChannel1_process
 # Sensor channel utility functions - Type A (gain/offset config)
 0x00500234,sensorChannelConfigInit
 0x00500a4c,updateSensorChannelWithConfig
-0x005011c4,BYTE_005011c4
-0x00501250,BYTE_00501250
+# Sensor channel calibration - calls sensorChannelConfigInit
+0x005011c4,sensorChannelCalibration_init
+# Sensor channel calibration - calls updateSensorChannelWithConfig
+0x00501250,sensorChannelCalibration_process
 # Sensor channel utility functions - Type B (extended filtering, 27/29 calls - most-used)
 0x005012dc,sensorChannelTypeB_configInit
 0x00501b4c,updateSensorChannelTypeB
-0x005022cc,BYTE_005022cc
-0x0050241c,BYTE_0050241c
-0x00502464,BYTE_00502464
-0x00502af4,BYTE_00502af4
-0x00502b24,BYTE_00502b24
+# Evaluates sensor_channel_status_bitmap_2 conditions
+0x005022cc,evaluateSensorChannelStatus
+# Updates uRam00409d26 based on sRam0040b98a mode value
+0x0050241c,updateSensorModeState
+# Processes sensor interpolation when buffer_initialization_flag set
+0x00502464,processSensorInterpolationMode
+# Limits fuel demand value to uRam0040ab6e
+0x00502af4,limitFuelDemandValue
+# Clears _buffer_initialization_flag = 0
+0x00502b24,clearBufferInitFlag
 0x00502b34,BYTE_00502b34
 0x00502b6c,BYTE_00502b6c
 0x00502eb8,BYTE_00502eb8
