@@ -80,13 +80,25 @@ CM848D `phase_group_b_processing` has engine position tracking. Map to CM550 pat
 - `/firmware/feature_comparison.csv` - Added CM848D column
 - `/firmware/CM848_S90140.06_analysis/output/function_renames.csv` - Added sensor function names + mapping comments
 
+### Session Progress (2026-02-20)
+
+**Functions Named This Session: 31+**
+
+Completed batches:
+- 4-call frequency: initiateCommandDispatch, interpolate7PointTable, checkFaultCounterThreshold, resetStateVariable, emptyStub_boostControl
+- 3-call frequency: iterateFaultEntriesAndValidate, setFaultActiveBitmapEntry, linearInterpolate1DWrapper, processBoostDiagnosticFlags, incrementCounterOrSetWarmup, storeRegisterValue, initPressureControlVariables, initServiceRequestState, synchronizeTimebase (PowerPC timer), executeTimerCallbacks, enqueueToCircularBufferWrapper
+- Idle/EEPROM/Fuel: processIdleControlStateUpdate, updateIdleStateVariables, validateJ1939PacketBounds, initEepromTransferState, processProtectionParameterData, calculateFuelStatusWithFilter, calculateFuelStatusParameters, calculateSpeedInterpolationParams, selectFuelModeOutput, updateFuelFilterCounters, interpolateFuelLimitValues, initFuelConditionPointers
+
+**Remaining BYTE_005xxxxx: ~266** (from ~320)
+
 ### Next Actions
 
-1. [ ] Name BYTE_00538ef4 (compare to timerBasedTaskScheduler)
-2. [ ] Name BYTE_0050bff4 (compare to systemStatusProcessor)
-3. [ ] Name BYTE_0050b58c (13 calls - high priority)
-4. [ ] Trace calibration group data flows to e2m parameters
-5. [ ] Create CM848D→CM550 position-based relocation map
+1. [X] Name BYTE_00538ef4 - Ghidra shows "bad instruction" (data table, not code)
+2. [X] Name BYTE_0050bff4 - Named as sendParameterCanResponse (prior session)
+3. [X] Name BYTE_0050b58c - Named as extractJ1939MessageFields (prior session)
+4. [ ] Continue with remaining 2-3 call frequency functions
+5. [ ] Trace calibration group data flows to e2m parameters
+6. [ ] Create CM848D→CM550 position-based relocation map
 
 ## Key Insight
 

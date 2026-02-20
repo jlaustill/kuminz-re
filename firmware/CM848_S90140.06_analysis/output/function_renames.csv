@@ -2119,30 +2119,36 @@ address,name
 0x0053064c,BYTE_0053064c
 0x00530878,clearOutputCounters
 0x0053089c,evaluateOperatingModeStatus
-0x00530968,BYTE_00530968
+# 2 calls - conditionally clears and decrements _system_enable_flag_1
+0x00530968,updateSystemEnableCounter
 0x00530d70,updateDiagnosticStateTimer
 0x00530e94,checkProtectionBypassConditions
 0x00530f80,processDataRecordCapture
 0x005311e4,BYTE_005311e4
 0x00531370,BYTE_00531370
 0x0053164c,resethpcr_CbdCylinderState
-0x0053168c,BYTE_0053168c
+# 2 calls - initializes cbd_start_tooth and _cbd_state_byte
+0x0053168c,hpcr_initCbdToothState
 0x005316ac,BYTE_005316ac
 0x00531710,calculateFaultDetectionThreshold
 0x005317a4,evaluateActiveFaultConditions
-0x005318e8,BYTE_005318e8
+# 2 calls - checks protection_enable_threshold and injection_timing_limit
+0x005318e8,evaluateProtectionEnableCondition
 0x00531900,BYTE_00531900
 0x0053195c,countActivehpcr_CbdCylinders
 0x005319e0,updatehpcr_CbdCylinderTiming
 0x00531b14,updateSystemDiagnosticData
-0x00531cf8,BYTE_00531cf8
+# 2 calls - checks conditions and calls resetCbdCylinderState
+0x00531cf8,hpcr_checkCbdResetConditions
 0x00531d34,BYTE_00531d34
 0x00531f90,hpcr_cbdCylinderStateHandler
 0x00531fe8,advancehpcr_CbdFaultState
 0x00532108,evaluatehpcr_CbdCylinderActivation
 0x005321c8,activatehpcr_CbdCylinderMode
-0x00532208,BYTE_00532208
-0x0053227c,BYTE_0053227c
+# 2 calls - updates cbd_cylinder_state and sensor_channel_status_bitmap
+0x00532208,hpcr_updateCbdCylinderStatusBitmap
+# 2 calls - similar sensor_channel_status_bitmap update pattern
+0x0053227c,hpcr_updateSensorStatusBitmap
 0x0053236c,deactivatehpcr_CbdCylinderMode
 0x00532418,BYTE_00532418
 0x0053247c,compareAndSyncFaultFlags
@@ -2155,7 +2161,8 @@ address,name
 0x005327e8,findFaultByCode
 0x00532a64,processDataRecordDispatch
 0x00532b78,updateFaultQueueState
-0x00532ba8,BYTE_00532ba8
+# 2 calls - iterates checking flags, calls resetFaultRecordFlags
+0x00532ba8,iterateAndResetFaultFlags
 0x00532d10,processFaultQueueEntry
 0x00532db8,validateFreezeFrameConditions
 0x00532e90,evaluateCalibrationChecksum
@@ -2189,7 +2196,8 @@ address,name
 0x005344cc,checkFaultStateTransition
 0x00534530,BYTE_00534530
 0x005346c0,updateFaultCounter
-0x0053473c,BYTE_0053473c
+# 2 calls - checks fault_timing_threshold vs injection_timing_limit
+0x0053473c,evaluateFaultTimingThreshold
 0x0053489c,processChannelDiagnostics
 0x00534994,BYTE_00534994
 0x00534b68,BYTE_00534b68
@@ -2204,7 +2212,8 @@ address,name
 # 3 calls - simple register value store
 0x00535270,storeRegisterValue
 0x00535324,processOutputControlSequence
-0x00535344,BYTE_00535344
+# 2 calls - evaluates temperature/timing/emission conditions for output control
+0x00535344,evaluateOutputControlConditions
 0x00535408,handleEnableStateTransition
 0x005354c0,evaluateTimingAdvanceLimits
 0x00535998,clearFaultAccumulator
@@ -2215,16 +2224,18 @@ address,name
 # 3 calls - wrapper for linearInterpolate1D
 0x0053624c,linearInterpolate1DWrapper
 0x00536540,processProtectionRecoveryState
-0x00536638,BYTE_00536638
-0x0053664c,BYTE_0053664c
-0x0053665c,BYTE_0053665c
+# 2 calls each - build status bitmasks from table pointers
+0x00536638,buildStatusBitmaskFromTable
+0x0053664c,buildStatusBitmaskSecondary
+0x0053665c,buildStatusBitmaskFromPointer
 0x005366b8,getDiagnosticStatus
 0x005367cc,validateCalibrationLookup
 0x00536958,resetStateVariable
 0x00536de0,evaluateBoostControlAuthority
 # 3 calls - processes flags 0x2b, 0x2c, 0x35 via conditionalSyncFlagUpdate
 0x00536e4c,processBoostDiagnosticFlags
-0x005371f4,BYTE_005371f4
+# 2 calls - calls validateCalibrationLookup multiple times with different params
+0x005371f4,validateCalibrationParameters
 # Empty stub near boost control functions
 0x0053729c,emptyStub_boostControl
 0x005372b0,updatePressureControlTarget
