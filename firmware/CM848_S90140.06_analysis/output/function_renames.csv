@@ -2031,27 +2031,34 @@ address,name
 0x00527050,BYTE_00527050
 0x00527524,accumulateTimingOffset
 0x005275c4,evaluateTimingModifiers
-0x00527860,BYTE_00527860
-0x005278ac,BYTE_005278ac
+# Wrapper for signedDivision64
+0x00527860,signedDivision64Wrapper
+# Wrapper for interpolateWithIndex with 4-point CBD tables
+0x005278ac,interpolateCbdTable4Point
 0x00527958,BYTE_00527958
 0x0052796c,BYTE_0052796c
 0x005279d8,BYTE_005279d8
 0x00527c90,interpolatehpcr_CbdTable
 0x00527fbc,updateVehicleSpeedFilter
-0x0052801c,BYTE_0052801c
+# Sets param_2 = 4, calls processCbdStateMachine
+0x0052801c,hpcr_initAndProcessCbdState
 0x005280f4,calculatehpcr_CbdAngleOffset
 0x00528368,applyhpcr_CbdCylinderTiming
-0x00528474,BYTE_00528474
+# Sets Ram0030401a = 0x30 (48)
+0x00528474,initRamVariable48
 0x00528564,systemHalt
 0x005285c0,setUpLookupTableAndInterpolate
 0x0052877c,processThrottlePosition
-0x005289d4,BYTE_005289d4
-0x00528b90,BYTE_00528b90
+# Sets up Ram00304014, Ram00304018, Ram00304190 hardware registers
+0x005289d4,initHardwareRegisters
+# Initializes DAT_003fd0b0-b4 and checks throttle diagnostic threshold
+0x00528b90,initThrottleDiagnosticState
 0x00528c28,calculateLoadBasedFuelTrim
 0x00528e70,computehpcr_CbdAngleCorrection
 # Adjusts CBD angle based on cbd_angle_protection_limit
 0x0052903c,hpcr_adjustCbdAngleForProtection
-0x00529068,BYTE_00529068
+# Adjusts CBD angle parameters when param_3 != 0 and != 0x3c
+0x00529068,hpcr_adjustCbdAngleParams
 0x0052922c,updateTemperatureSensorFilter
 0x00529580,processhpcr_CbdStateMachine
 0x00529908,computehpcr_CbdProtectionAngle
@@ -2126,7 +2133,8 @@ address,name
 0x0052f870,checkEngineLimitConditions
 0x0052fd4c,processTransmissionStatus
 0x0052fed8,validateCommandSequence
-0x0053005c,BYTE_0053005c
+# Sets _command_validation_state = 4, updates param states
+0x0053005c,initCommandValidationState
 0x00530214,updateAuxiliaryOutputPort
 # 2 calls - updates speed_sensor_output_flag based on engine_run_state
 0x00530288,updateSpeedSensorOutputFlag
@@ -2280,7 +2288,8 @@ address,name
 0x00537944,executeTimerCallbacks
 # Iterates 10-byte timer entries, executes function pointers
 0x005379b4,iterateAndExecuteTimerEntries
-0x005379d8,BYTE_005379d8
+# Executes timer callbacks via LR register (10-byte stride)
+0x005379d8,executeTimerCallbacksViaLR
 0x00537a18,enqueueToBuffer17
 0x00537a5c,updateProtectionLimitFilter
 0x00537acc,BYTE_00537acc
