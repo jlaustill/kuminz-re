@@ -186,9 +186,183 @@ Even when a feature isn't compiled into a firmware:
 
 ---
 
+---
+
+## CM550 vs CM848D Scheduler Architecture Comparison
+
+This section documents the structural comparison between CM550 (VP44 pump) and CM848D (Common Rail) ECU main loops, enabling cross-firmware function naming.
+
+### Scheduler Architecture - Identical Pattern
+
+Both ECU generations use the **same 40-phase cooperative scheduler**:
+
+| Aspect | CM550 (J90280.05) | CM848D (S90140.06) |
+|--------|-------------------|---------------------|
+| Phase count | 40 (0x00-0x27) | 40 (0x00-0x27) |
+| Phase index variable | `_main_loop_phase_index` | `main_loop_phase_index` |
+| Wrap behavior | 0x27 → 0 | 0x27 → 0 |
+| Tasks per phase | 5-7 | 6-7 |
+| Even/odd alternation | Yes | Yes |
+
+### Per-Phase Structure Mapping
+
+| Position | CM550 | CM848D | Purpose |
+|----------|-------|--------|---------|
+| 1st call | `ioControlAndCanPinSwitchingWrapper()` | `phase_common_processing()` | Common tasks + I/O |
+| 2nd call (even) | `evenPhaseSchedulerTaskSet()` | `phase_group_a_processing()` | Even-phase tasks |
+| 2nd call (odd) | `oddPhaseSchedulerTaskSet()` | `phase_group_b_processing()` | Odd-phase tasks |
+| 3rd-7th | Named coordinator functions | `periodicTaskGroupN_*()` | Domain-specific |
+
+### Core Task Group Mapping (Every 4 Phases)
+
+| CM848D Group | Address | CM550 Equivalent | Confidence |
+|--------------|---------|------------------|------------|
+| `periodicTaskGroup0_fuelFinal` | 0xb8fc | `fuel_delivery_controller` + `fuel_limit_arbitrator` | High |
+| `periodicTaskGroup1_sensorProcessing` | 0xb98c | `engine_speed_governor` | High |
+| `periodicTaskGroup2_controlLoop` | 0xba08 | `slowCycle4Coordinator` | Medium |
+| `periodicTaskGroup3_auxiliaryControl` | 0xba90 | `auxiliarySystemControlWrapper` | Medium |
+
+### Secondary Task Group Mapping (Every 8 Phases)
+
+| CM848D Group | Address | CM550 Equivalent | Confidence |
+|--------------|---------|------------------|------------|
+| `periodicTaskGroup4_canTx` | 0xbb18 | `messageQueueDispatcher` (part) | Medium |
+| `periodicTaskGroup5_diagnostics` | 0xbb40 | `diagnosticMonitoringCoordinator` | High |
+| `periodicTaskGroup6_protection` | 0xbb68 | `advancedEngineProtectionCoordinator` | High |
+| `periodicTaskGroup7_timing` | 0xbb90 | `fuelTimingCoordinator` | **Direct** |
+| `periodicTaskGroup8_outputs` | 0xbbb8 | `engineRpmHardwareTimerSetup` | Medium |
+| `periodicTaskGroup9_sensors` | 0xbbe0 | Part of `evenPhaseSchedulerTaskSet` | Low |
+| `periodicTaskGroup10_monitoring` | 0xbc08 | `slowCycle10Coordinator` | **Direct** |
+| `periodicTaskGroup11_communication` | 0xbc34 | `diagnosticCommunicationSlowCycle10Coordinator` | **Direct** |
+
+### Slow Cycle Task Mapping (Every 20-40 Phases)
+
+| CM848D Group | CM550 Equivalent | Purpose |
+|--------------|------------------|---------|
+| `periodicTaskGroup19_diagnostics` | `diagnosticStatisticsSlowCycle20Coordinator` | Diagnostic timers |
+| `periodicTaskGroup33_protection2` | `shutdownProtectionSlowCycle40Coordinator` | Engine shutdown protection |
+| `periodicTaskGroup35_fuelDemand` | `fuelDemandProportionalCalculationSlowCycle40Coordinator` | Fuel demand coordination |
+
+### Injection System Differences
+
+| Feature | CM550 (VP44) | CM848D (Common Rail) |
+|---------|--------------|----------------------|
+| Pump communication | `vp44_communication_state_machine` | N/A |
+| Cylinder trim | N/A | `cbdCalculateCylinderTrims` |
+| Injector control | Via VP44 CAN | Direct `injectorPulseWidthCalc` |
+| Fuel trim output | Single value | Per-cylinder via `calculateFuelTrimOutput` |
+
+### Common Processing Function Breakdown
+
+**CM550 `ioControlAndCanPinSwitching`** (simple I/O):
+```
+- SIM_CAN_CONTROL_PORT register writes
+- CAN filter manipulation
+- ~15 lines of code
+```
+
+**CM848D `phase_common_processing`** (comprehensive):
+```
+- processJ1939PeriodicMessages()     ← CAN messaging
+- protectionAlarmHandler()           ← Engine protection
+- injectorTimingCalculation()        ← Fuel timing
+- processFaultAndFuelDemand()        ← Fault handling
+- processFaultConditionFlags()       ← Fault flags
+- 11 total function calls
+```
+
+### CM848D Calibration Groups (No CM550 Equivalent)
+
+CM848D has 27 calibration-specific groups (12-38) that CM550 handles inline:
+
+| Group Range | Purpose | Named Functions |
+|-------------|---------|-----------------|
+| 12-18 | Primary calibration | Mostly BYTE_* (unnamed) |
+| 19-24 | Diagnostics/outputs | `updateProtectionDiagnostics`, `processProtectionControlLogic` |
+| 25-32 | Extended calibration | `processProtectionFaultSeverity`, `calculateTurboRatios` |
+| 33-38 | Protection/auxiliary | `processProtectionCoolantLookup`, `fuelDemandCoordinator` |
+
+---
+
+## Cross-Firmware Naming Opportunities
+
+Based on the scheduler analysis, these CM848D functions can be named by analogy:
+
+### High-Confidence Renames (Direct Equivalents)
+
+| CM848D Address | Current Name | Suggested Name | Source |
+|----------------|--------------|----------------|--------|
+| 0x0000b76c | `phase_common_processing` | ✓ Already named | Analysis |
+| 0x0000b7b4 | `phase_group_a_processing` | ✓ Already named | Analysis |
+| 0x0000b854 | `phase_group_b_processing` | ✓ Already named | Analysis |
+| 0x0000b8fc | `periodicTaskGroup0_fuelFinal` | `fuelDeliveryAndLimitCoordinator` | CM550 pattern |
+| 0x0000b98c | `periodicTaskGroup1_sensorProcessing` | `governorAndSensorCoordinator` | CM550 pattern |
+
+### Subfunctions to Investigate
+
+Functions called within CM848D task groups that likely have CM550 equivalents:
+
+| CM848D Function | Called In | Likely CM550 Equivalent |
+|-----------------|-----------|-------------------------|
+| `calculateFuelDemandFilter` | Group 1 | `fuelDemandBlendCalculator` |
+| `updateGovernorSpeedLimits` | Group 1 | `rpm_system_state_controller` |
+| `calculateBoostTorqueOffset` | Group 2 | `boostPressureTargetCalculator` |
+| `coldStartRpmTableLookup` | Group 2 | `coldStartFuelControlSlowCycle40Coordinator` |
+| `processThermalProtection` | Group 6 | `fuelTempProtectionLimitCalculator` |
+| `calculateTorqueCurveValue` | Group 7 | `fuelTimingModeBlendCalculator` |
+| `processUdsSecurityService` | Group 11 | `diagnosticServiceSecurityValidator` |
+
+### Bank 2 Functions (BYTE_005xxxxx) - Prime RE Targets
+
+The CM848D calibration groups call many unnamed Bank 2 functions. Priority targets:
+
+| Address | Called By | Call Count | Suggested Investigation |
+|---------|-----------|------------|------------------------|
+| BYTE_00538ef4 | phase_group_a | High | Compare to CM550 `timerBasedTaskScheduler` |
+| BYTE_0050bff4 | phase_group_a | High | Compare to CM550 sensor processing |
+| BYTE_00532fac | phase_group_b | High | Compare to CM550 `faultTableEntryProcessor` |
+| BYTE_00506780 | Phase 0 | 40/cycle | Likely scheduler bookkeeping |
+| BYTE_00538278 | Phase 1 | 40/cycle | Likely scheduler bookkeeping |
+
+---
+
+## Cross-ECU Analysis Workflow
+
+### Naming CM848D Functions from CM550
+
+1. **Identify scheduler position** - Which phase and position in that phase?
+2. **Find CM550 equivalent position** - Look at same phase structure
+3. **Compare called subfunctions** - Similar function count and patterns?
+4. **Trace data flow** - Do they read/write similar RAM regions?
+5. **Apply name with confidence tag** - Add to function_renames.csv
+
+### Example: Naming periodicTaskGroup7_timing
+
+```
+Position: 4th call in odd phases (1, 3, 5, ...)
+CM550 equivalent position: fuelTimingCoordinator (4th call in odd phases)
+
+CM848D calls:
+  - calculateTorqueCurveValue()
+  - processSensorTemperatureData()
+  - processTimingTableLookup()
+
+CM550 fuelTimingCoordinator calls:
+  - fuelTimingModeBlendCalculator() → matches calculateTorqueCurveValue
+  - fuelTimingOffsetCalculator() → matches processTimingTableLookup
+
+Conclusion: Direct equivalent - periodicTaskGroup7_timing = fuelTimingCoordinator
+```
+
+---
+
 ## Future Work
 
 - [ ] Reverse relocation map (J90350.00 → J90280.05) to find functions added in J90350.00
 - [ ] Extract build dates from all known firmware
 - [ ] Automate feature comparison generation from relocation maps
 - [ ] Track CP3/common rail firmware when available
+- [ ] Create CM848D → CM550 relocation map using scheduler position matching
+- [ ] Name top 50 most-called BYTE_005xxxxx functions using CM550 analogs
+- [ ] Document CBD (Cylinder Balance Deviation) system unique to CM848D common rail
+- [ ] Map CM848D RAM variables using CM550 variable names at equivalent offsets
