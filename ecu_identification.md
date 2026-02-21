@@ -143,6 +143,74 @@ Despite the architecture change, CM848 uses the **same diagnostic protocol** as 
 - Service 0x4A memory read works identically
 - EEPROM header format unchanged (`60 0D ABCDEF`)
 
+---
+
+## Protocol Matrix
+
+This matrix documents protocol and service support across ECU types based on testing with kuminz-cli.
+
+### Diagnostic Services (J1939 Proprietary A - PGN 0xEF00)
+
+| Service | Code | CM550 | CM848 | Description |
+|---------|------|-------|-------|-------------|
+| **Memory Read** | 0x4A | ✓ | ✓ | Read memory by address (up to 255 bytes) |
+| **Memory Write** | 0x4B | ✓ | ? | Write memory by address (authenticated) |
+| **Read Param by ID** | 0x46 | ✓ | ? | Read parameter by ID |
+| **Read Param+Offset** | 0x43 | ✓ | ? | Read parameter with offset |
+| **Service 0x05** | 0x05 | J1708 only | ? | Write service (J1708 bus, not CAN) |
+
+### CLIP Protocol (Session-Based)
+
+| Command | Code | CM550 | CM848 | Description |
+|---------|------|-------|-------|-------------|
+| **GetParametersByID** | 0x10 | ✓ | ? | Read parameters by ID |
+| **SetParametersByID** | 0x11 | ✓ | ? | Write parameters by ID |
+| **ExecuteOperation** | 0x12 | ✓ | ? | Execute ECU operation |
+| **GetDataByAddress** | 0x14 | ✓ | ? | Read memory (session) |
+| **SetDataByAddress** | 0x15 | ✓ | ? | Write memory (session) |
+| **GetAddressByParamID** | 0x16 | ✓ | ? | Resolve param ID to address |
+
+### Authentication
+
+| Aspect | CM550 | CM848 | Notes |
+|--------|-------|-------|-------|
+| **Security Key** | `ABCDEF` | `ABCDEF` | Same 6-byte key |
+| **Hour Meter Address** | 0x80BDA4 | 0x40B7BA? | Used for auth payload |
+| **Auth Algorithm** | Bit-packing | Same? | XOR + reorder tables |
+| **Write Protection** | RAM only | RAM only | ROM/EEPROM read-only via 0x4A |
+
+### CAN Bus Configuration
+
+| Parameter | CM550 | CM848 | Notes |
+|-----------|-------|-------|-------|
+| **Bus Speed** | 250 kbps | 250 kbps | J1939 standard |
+| **Tool Address** | 0xF9 | 0xF9 | Diagnostic tool SA |
+| **ECU Address** | 0x00 | 0x00 | Engine controller SA |
+| **PGN (Tool→ECU)** | 0xEF00 | 0xEF00 | Proprietary A |
+| **CAN ID (Tool→ECU)** | 0x18EF00F9 | 0x18EF00F9 | PDU1 format |
+| **CAN ID (ECU→Tool)** | 0x18EFF900 | 0x18EFF900 | PDU1 format |
+
+### Transport Protocol
+
+| Aspect | CM550 | CM848 | Notes |
+|--------|-------|-------|-------|
+| **Single Frame** | ≤8 bytes | ≤8 bytes | Direct response |
+| **Multi-Frame** | J1939 TP | J1939 TP | RTS/CTS/DT/EOM |
+| **TP PGN (CM)** | 0xEC00 | 0xEC00 | Connection Management |
+| **TP PGN (DT)** | 0xEB00 | 0xEB00 | Data Transfer |
+| **Max TP Payload** | 1785 bytes | 1785 bytes | 255 frames × 7 bytes |
+
+### Memory Regions Accessible via Service 0x4A
+
+| Region | CM550 | CM848 | Access |
+|--------|-------|-------|--------|
+| **ROM/Flash** | ✓ 256KB | ✓ 448KB | Read-only |
+| **RAM** | ✓ 37KB | ✓ 280KB | Read/Write (auth) |
+| **EEPROM** | ✓ 4KB | ✓ 8KB | Read-only via 0x4A |
+| **Flash Bank 2** | N/A | ✓ 248KB | Read-only |
+
+**Legend:** ✓ = Confirmed working, ? = Untested, N/A = Not applicable
+
 ### CM848 Variants
 
 | Variant | HP | Notes |

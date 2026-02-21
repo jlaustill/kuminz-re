@@ -17,7 +17,7 @@
 007 [ ] [firmware] Verify enum definitions via ApplyAndExport
 008 [ ] [calterm-crc] Complete remaining 2 native DLL annotations (ToolLicensing, ErrorHandling)
 009 [X] [insite9] Establish Insite reverse engineering process (decompilation 100% - 358 DLLs, 294MB)
-010 [>] [firmware] Document ECU versions table (hardware, firmware, protocols) - ecu_identification.md exists, needs protocol matrix
+010 [X] [firmware] Document ECU versions table (hardware, firmware, protocols) - protocol matrix added
 011 [X] [firmware] RAM dump correlation - use 37KB RAM dump to enhance firmware RE
 012 [X] [firmware] First live ECU firmware extraction - J90350.00 from CM550 ISB 195hp (2024-12-16)
 013 [X] [firmware] Compare J90350.00 vs J90280.05 - identify shared code and calibration differences
