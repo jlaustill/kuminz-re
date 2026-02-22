@@ -1,6 +1,8 @@
 # Service 0x4B Memory Write Path Analysis
 
-Cross-firmware comparison of the J1939 memory write implementation between J90280.05 (reference) and J90350.00 (live ECU).
+> **Note:** J90280.05 has been removed from the repository (unreliable partial ROM dump). The J90280.05 references below are retained as historical analysis context. J90350.00 is the primary CM550 firmware.
+
+Cross-firmware comparison of the J1939 memory write implementation between J90280.05 (removed) and J90350.00 (live ECU).
 
 ## Executive Summary
 
@@ -320,5 +322,5 @@ public enum PasswordType {
 ---
 
 *Generated: 2025-12-26*
-*Firmware versions analyzed: J90280.05 (reference), J90350.00 (live ECU)*
+*Firmware versions analyzed: J90280.05 (removed), J90350.00 (live ECU)*
 *Insite version analyzed: 7.6.0.272*

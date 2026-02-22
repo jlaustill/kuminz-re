@@ -24,9 +24,6 @@ PROJECT_LOCATION="$SCRIPT_DIR/project"
 OUTPUT_DIR="$PROJECT_DIR/output"
 FIRMWARE_DIR="$PROJECT_DIR/firmware"
 
-# Reference firmware for bootstrapping
-REFERENCE_DIR="$PROJECT_DIR/../CM550_J90280.05_analysis"
-
 # ============================================================================
 # SOURCE SHARED INFRASTRUCTURE
 # ============================================================================
@@ -37,70 +34,16 @@ source "$SCRIPT_DIR/../../scripts/common.sh"
 # FIRMWARE-SPECIFIC COMMANDS
 # ============================================================================
 
-cmd_ramvars() {
-    print_header "APPLYING RAM VARIABLES FROM J90280.05"
-
-    check_ghidra
-    check_project
-
-    VARS_CSV="$REFERENCE_DIR/output/global_variables.csv"
-
-    # Fall back to old location if new doesn't exist
-    if [ ! -f "$VARS_CSV" ]; then
-        VARS_CSV="$REFERENCE_DIR/ghidra/CM550.rep/global_variables.csv"
-    fi
-
-    if [ ! -f "$VARS_CSV" ]; then
-        print_error "CM550_J90280.05 global_variables.csv not found"
-        exit 1
-    fi
-
-    echo "Applying RAM variable names from CM550_J90280.05..."
-    echo "Source: $VARS_CSV"
-    echo ""
-
-    run_script ApplyRamVariables.java "$VARS_CSV"
-
-    print_success "RAM variables applied"
-}
-
-cmd_bootstrap() {
-    print_header "BOOTSTRAPPING FROM RELOCATION MAP"
-
-    check_ghidra
-
-    RELOCATION_MAP="$OUTPUT_DIR/relocation_map.csv"
-
-    if [ ! -f "$RELOCATION_MAP" ]; then
-        print_error "Relocation map not found: $RELOCATION_MAP"
-        print_error "Run 'npm run match' first to generate the map"
-        exit 1
-    fi
-
-    echo "Applying function names from CM550_J90280.05..."
-    echo "Source: $RELOCATION_MAP"
-    echo ""
-
-    run_script ApplyRelocationMap.java "$RELOCATION_MAP"
-
-    print_success "Bootstrap complete - function names applied"
-}
-
 cmd_hwregs() {
     print_header "APPLYING HARDWARE REGISTER NAMES"
 
     check_ghidra
     check_project
 
-    VARS_CSV="$REFERENCE_DIR/output/global_variables.csv"
-
-    # Fall back to old location if new doesn't exist
-    if [ ! -f "$VARS_CSV" ]; then
-        VARS_CSV="$REFERENCE_DIR/ghidra/CM550.rep/global_variables.csv"
-    fi
+    VARS_CSV="$OUTPUT_DIR/global_variables.csv"
 
     if [ ! -f "$VARS_CSV" ]; then
-        print_error "CM550_J90280.05 global_variables.csv not found"
+        print_error "global_variables.csv not found: $VARS_CSV"
         exit 1
     fi
 
@@ -120,14 +63,13 @@ cmd_hwregs() {
 cmd_full() {
     print_header "FULL ANALYSIS PIPELINE: $FIRMWARE_NAME"
 
-    echo "This will run: init -> analyze -> memmap -> ramvars -> bootstrap -> export"
+    echo "This will run: init -> analyze -> memmap -> import -> export"
     echo ""
 
     cmd_init
     cmd_analyze
     cmd_memmap
-    cmd_ramvars
-    cmd_bootstrap
+    cmd_import
     cmd_export
 
     print_header "FULL PIPELINE COMPLETE"
@@ -139,7 +81,7 @@ cmd_full() {
     echo "  - $OUTPUT_DIR/${FIRMWARE_NAME}.ghidra.cpp"
 }
 
-# Override status to show relocation map info
+# Override status
 cmd_status() {
     print_header "PROJECT STATUS: $FIRMWARE_NAME"
 
@@ -155,13 +97,6 @@ cmd_status() {
     fi
 
     echo ""
-
-    if [ -f "$OUTPUT_DIR/relocation_map.csv" ]; then
-        MATCHED=$(grep -c ",matched" "$OUTPUT_DIR/relocation_map.csv" || echo 0)
-        print_success "Relocation map exists ($MATCHED matched functions)"
-    else
-        print_warning "Relocation map not found - run 'npm run match'"
-    fi
 
     if [ -f "$OUTPUT_DIR/function_renames.csv" ]; then
         FUNCS=$(wc -l < "$OUTPUT_DIR/function_renames.csv")
@@ -187,7 +122,7 @@ cmd_status() {
     done
 }
 
-# Override help to show J90350-specific commands
+# Override help
 cmd_help() {
     echo "$FIRMWARE_NAME Ghidra Analysis CLI"
     echo ""
@@ -197,8 +132,6 @@ cmd_help() {
     echo "  init       Import firmware into new Ghidra project (no analysis)"
     echo "  analyze    Run Ghidra auto-analysis on the project"
     echo "  memmap     Add RAM and EEPROM memory regions from live dumps"
-    echo "  ramvars    Apply RAM variable names from CM550_J90280.05 (reference firmware)"
-    echo "  bootstrap  Apply CM550_J90280.05 function names via relocation map"
     echo "  export     Export function names and decompilation to CSV/CPP"
     echo "  import     Import CSV changes back into Ghidra"
     echo "  structures Apply structure definitions"
@@ -209,7 +142,7 @@ cmd_help() {
     echo "  localvars  Apply local variable types"
     echo "  vartypes   Apply global variable types (clears stale types first)"
     echo "  decompile  Decompile a single function by address or name"
-    echo "  full       Run complete pipeline: init -> analyze -> memmap -> ramvars -> bootstrap -> export"
+    echo "  full       Run complete pipeline: init -> analyze -> memmap -> import -> export"
     echo "  status     Show project status"
     echo "  help       Show this help message"
     echo ""

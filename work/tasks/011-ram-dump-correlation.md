@@ -147,16 +147,16 @@ Already identified from prior analysis:
 
 ### Input (Analysis Sources)
 - `clip-lib/build/cm550_ram.bin` - RAM dump (regenerate with `./clip-test can0 --dump-ram`)
-- `firmware/CM550_J90280.05_analysis/ghidra/CM550.rep/global_variables.csv` - 6,096 entries
-- `firmware/CM550_J90280.05_analysis/ghidra/CM550.rep/function_renames.csv` - 448 functions
-- `firmware/CM550_J90280.05_analysis/ghidra/CM550.rep/arrays.csv` - 67 arrays
+- `firmware/CM550_J90350.00_analysis/ghidra/CM550.rep/global_variables.csv` - 6,096 entries
+- `firmware/CM550_J90350.00_analysis/ghidra/CM550.rep/function_renames.csv` - 448 functions
+- `firmware/CM550_J90350.00_analysis/ghidra/CM550.rep/arrays.csv` - 67 arrays
 - `e2m-analysis/docs/common_parameters.json` - e2m parameter addresses
 
 ### Output (To Update)
-- `firmware/CM550_J90280.05_analysis/ghidra/CM550.rep/global_variables.csv`
-- `firmware/CM550_J90280.05_analysis/ghidra/CM550.rep/function_renames.csv`
-- `firmware/CM550_J90280.05_analysis/ghidra/CM550.rep/structure_definitions.csv`
-- `firmware/CM550_J90280.05_analysis/analysis/ram_memory_map.md` (new)
+- `firmware/CM550_J90350.00_analysis/ghidra/CM550.rep/global_variables.csv`
+- `firmware/CM550_J90350.00_analysis/ghidra/CM550.rep/function_renames.csv`
+- `firmware/CM550_J90350.00_analysis/ghidra/CM550.rep/structure_definitions.csv`
+- `firmware/CM550_J90350.00_analysis/analysis/ram_memory_map.md` (new)
 
 ---
 
@@ -218,7 +218,7 @@ Already identified from prior analysis:
 
 ### 2024-12-16 - Ghidra Xref Analysis Session
 **CSV Export Verified:**
-- All 13 new global variables appear correctly in `J90280.05.ghidra.c`
+- All 13 new global variables appear correctly in the Ghidra export
 - New entries include: diagnostic_request_buffer, ecu_serial_number, calibration_id_string, rpm_breakpoint_table, load_breakpoint_table, system_timer_array, etc.
 
 **Xref Analysis Results:**
@@ -334,7 +334,7 @@ This table defines which memory regions can be read via diagnostic Service 0x4A:
 - [ ] Create `--dump-eeprom` command (0x01000000-0x01000FFF, 4KB)
 - [ ] Create `--dump-rom` command (0x00000000-0x0003FFFF, 256KB)
 - [ ] Extend RAM dump to include 0x008091C2-0x0080FFFF (28KB more)
-- [ ] Compare ROM dump with J90280.05.full.bin for verification
+- [ ] Compare ROM dump with firmware binary for verification
 
 **Updated ram_memory_map.md** with Service 0x4A validation table documentation.
 

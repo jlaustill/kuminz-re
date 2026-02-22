@@ -91,7 +91,5 @@ firmware/CM550_J90350.00_analysis/firmware/
 This extraction proves:
 1. **Service 0x4A works** for CM550 memory reads
 2. **kuminz-cli is functional** for real ECU interaction
-3. **J90350.00 is a different calibration** than J90280.05 (the reference)
-4. **All accessible memory regions can be dumped**
-
-The J90280.05 analysis (with 100% function naming) can now be used as a reference to bootstrap analysis of this actual ECU firmware.
+3. **All accessible memory regions can be dumped**
+4. **J90350.00 is now the primary CM550 firmware** for analysis

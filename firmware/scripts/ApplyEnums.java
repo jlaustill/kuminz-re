@@ -41,9 +41,9 @@ public class ApplyEnums extends GhidraScript {
         if (args.length > 0) {
             csvPath = args[0];
         } else {
-            // Default to J90280.05's enums.csv since that's where the definitions are
+            // Default to local output directory
             csvPath = getProjectRootFolder().getProjectLocator().getProjectDir() +
-                    "/../../CM550_J90280.05_analysis/ghidra/CM550.rep/enums.csv";
+                    "/../output/enums.csv";
         }
 
         println("Input file: " + csvPath);

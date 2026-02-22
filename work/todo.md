@@ -20,9 +20,9 @@
 010 [X] [firmware] Document ECU versions table (hardware, firmware, protocols) - protocol matrix added
 011 [X] [firmware] RAM dump correlation - use 37KB RAM dump to enhance firmware RE
 012 [X] [firmware] First live ECU firmware extraction - J90350.00 from CM550 ISB 195hp (2024-12-16)
-013 [X] [firmware] Compare J90350.00 vs J90280.05 - identify shared code and calibration differences
+013 [X] [firmware] Compare J90350.00 vs J90280.05 - identify shared code and calibration differences (J90280 removed from repo)
 014 [X] [firmware] Import J90350.00 into Ghidra with MC68336 memory map
-015 [X] [firmware] Cross-reference function names from J90280.05 analysis to J90350.00
+015 [X] [firmware] Cross-reference function names to J90350.00 (originally from J90280.05, now removed)
 016 [X] [clip-core] CLIP command execution - GetDataByAddress (0x14) and SetDataByAddress (0x15) - already implemented
 017 [X] [firmware] Cross-firmware name convergence - align CM550 and CM848D symbol names for side-by-side comparison (41 shared names, 68 renames)
 018 [X] [firmware] Name CM848D Bank 2 utility functions using CM550 equivalents (844 functions complete)

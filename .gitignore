@@ -42,7 +42,6 @@ npm-debug.log*
 **/*.rep/working/*.db
 
 # Misplaced/duplicate files
-firmware/CM550_J90280.05_analysis/ghidra/local_variables.csv
 
 # ===== Qt/C++ (kuminz-ui) =====
 # Generated files

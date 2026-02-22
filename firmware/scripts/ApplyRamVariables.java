@@ -41,8 +41,9 @@ public class ApplyRamVariables extends GhidraScript {
         if (args.length > 0) {
             csvPath = args[0];
         } else {
+            // Default to local output directory
             csvPath = getProjectRootFolder().getProjectLocator().getProjectDir() +
-                    "/../../CM550_J90280.05_analysis/ghidra/CM550.rep/global_variables.csv";
+                    "/../output/global_variables.csv";
         }
 
         File csvFile = new File(csvPath);

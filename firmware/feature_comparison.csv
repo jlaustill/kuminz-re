@@ -1,4 +1,4 @@
-feature_name,category,j90280.05,j90350.00,cm848d_s90140,j90270.06,j90831.05,notes
+feature_name,category,j90280.05_removed,j90350.00,cm848d_s90140,j90270.06,j90831.05,notes
 vp44_can_communication,fuel_system,present,present,not_applicable,unknown,unknown,Core VP44 injection pump CAN control - CM848D uses common rail
 vp44_diagnostic_state_machine,fuel_system,present,not_found,not_applicable,unknown,unknown,VP44 diagnostic mode handling - CM848D has no VP44
 vp44_timing_validation,fuel_system,present,not_found,not_applicable,unknown,unknown,VP44 timing range validation functions

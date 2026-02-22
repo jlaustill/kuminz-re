@@ -27,7 +27,7 @@ uint param_address_calc(uint param_1, undefined4 param_2) {
 
 **Usage:** Called by param_lookup_1 and param_lookup_3 to calculate percentage/ratio values.
 
-**Match:** 100% identical to J90280.05 @ 0x012afa
+**Match:** 100% identical between firmware versions
 
 ---
 
@@ -56,7 +56,7 @@ void param_lookup_1(void) {
 - `maximum_fueling_value_that_does_not_inject_fuel_0_100` - Injection threshold
 - `_DAT_0080da16` - Output result
 
-**Match:** 81% similar to J90280.05 @ 0x00d632
+**Match:** 81% similar between firmware versions
 
 ---
 
@@ -73,7 +73,7 @@ void param_lookup_3(void) {
 
 **J1939 Integration:** This function directly calculates the value broadcast on J1939 PGN 61443.
 
-**Match:** 81% similar to J90280.05 @ 0x00d756
+**Match:** 81% similar between firmware versions
 
 ---
 
@@ -93,7 +93,7 @@ uint addressLookupFunction(undefined4 param_1) {
 
 **ROM Table:** 0x21915 - Parameter index to value mapping table
 
-**Match:** 92% similar to J90280.05 @ 0x01b7ca
+**Match:** 92% similar between firmware versions
 
 ---
 
@@ -127,7 +127,7 @@ undefined2 parameterLookupForInsite(void) {
 | 0xED | 22 bytes | Multi-value block |
 | 0xF3 | 31 bytes | Large data block |
 
-**Match:** 94% similar to J90280.05 @ 0x0271b0
+**Match:** 94% similar between firmware versions
 
 ---
 

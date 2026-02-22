@@ -2,17 +2,17 @@
 
 ## Problem
 
-The CM550 (J90280.05, MC68336, 789 functions) and CM848D (S90140.06, PowerPC MPC555, 2,196 functions) share the same Cummins codebase compiled for different architectures and engine configurations (VP44 vs HPCR). Both firmwares have been independently reverse-engineered with high naming coverage, but equivalent functions, variables, structs, and enums often have different names — making side-by-side comparison of the decompiled `.cpp` output impractical.
+The CM550 (J90350.00, MC68336, 789 functions) and CM848D (S90140.06, PowerPC MPC555, 2,196 functions) share the same Cummins codebase compiled for different architectures and engine configurations (VP44 vs HPCR). Both firmwares have been independently reverse-engineered with high naming coverage, but equivalent functions, variables, structs, and enums often have different names — making side-by-side comparison of the decompiled `.cpp` output impractical.
 
 ## Goal
 
-Update the existing CSVs in both firmware analysis directories so that equivalent symbols share the same name. After re-exporting through Ghidra, `J90280.05.ghidra.cpp` and `cm848_rom.ghidra.cpp` read like different versions of the same codebase, diffable with standard tools.
+Update the existing CSVs in both firmware analysis directories so that equivalent symbols share the same name. After re-exporting through Ghidra, `J90350.00.ghidra.cpp` and `cm848_rom.ghidra.cpp` read like different versions of the same codebase, diffable with standard tools.
 
 ## Current State
 
 ### Named Symbol Counts
 
-| Category | CM550 (J90280.05) | CM848D (S90140.06) |
+| Category | CM550 (J90350.00) | CM848D (S90140.06) |
 |----------|-------------------|---------------------|
 | Functions | 789 | 2,196 |
 | Global variables | 6,131 | 4,701 |
@@ -31,7 +31,7 @@ Update the existing CSVs in both firmware analysis directories so that equivalen
 
 ### What Doesn't Exist Yet
 
-- No cross-architecture relocation map (existing `relocation_map.csv` only covers CM550 → CM550)
+- No cross-architecture relocation map
 - `feature_comparison.csv` has no CM848D column
 - The 14 shared function names and 56 shared enum names were incidental, not from a deliberate convergence effort
 
@@ -134,7 +134,6 @@ Both firmwares use the same CSV structure. Updates touch:
 
 ## Relation to Existing Work
 
-- **J90350.00 bootstrap**: J90350.00 was bootstrapped from J90280.05 using `relocation_map.csv`. Name changes to J90280.05 can propagate to J90350.00 via `./analyze.sh bootstrap`.
 - **Bank 2 naming campaign (2026-02-05)**: Named 361 of 362 Bank 2 functions. These are CM848D-only (utility functions in flash bank 2) and won't have CM550 equivalents.
 - **DAT_0040xxxx variable naming (2026-02-18)**: Named 2,829 CM848D RAM variables. Many of these may find CM550 equivalents in this campaign.
 - **Internal parameter codes**: The 2,227 Cummins codes from `internal_names.csv` serve as a cross-generation Rosetta Stone — same codes appear in both CM550 e2m (`common_parameters.json`) and CM848D e2m files.

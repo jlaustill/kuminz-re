@@ -1,8 +1,7 @@
 /**
  * Firmware Memory Map Reference
  *
- * Based on reverse engineering of J90280.05 firmware for CM550 ECU (MC68336 microcontroller)
- * Source: https://github.com/jlaustill/J90280.05.analysis
+ * Based on reverse engineering of CM550 ECU firmware (MC68336 microcontroller)
  */
 
 export interface IFirmwareMemoryRegion {

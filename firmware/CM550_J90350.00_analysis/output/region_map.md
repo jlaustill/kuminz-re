@@ -2,7 +2,9 @@
 
 Generated: 2025-12-17T01:47:07.690Z
 
-## J90280.05 (Reference Firmware)
+> **Note:** J90280.05 has been removed from the repository. This section is retained as historical reference.
+
+## J90280.05 (Reference Firmware - Removed)
 
 | Start | End | Size | Type | Entropy | Description |
 |-------|-----|------|------|---------|-------------|

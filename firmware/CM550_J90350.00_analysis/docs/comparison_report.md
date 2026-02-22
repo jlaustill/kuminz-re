@@ -1,10 +1,14 @@
 # CM550 Firmware Comparison Report
 
+> **Note:** This report documents a historical comparison between J90280.05 and J90350.00.
+> The J90280.05 firmware has been removed from the repository (it was an unreliable partial ROM dump from the internet).
+> The comparison data and relocation map remain as historical reference.
+
 ## Executive Summary
 
-Comparison of J90280.05 (reference, fully analyzed) vs J90350.00 (live ECU extraction).
+Historical comparison of J90280.05 (reference, removed) vs J90350.00 (live ECU extraction).
 
-**Bottom Line:** The firmwares share the **same codebase** with different memory layouts and calibration. 81% of functions are found with at least partial similarity. A **selective Ghidra approach** is recommended rather than full re-analysis.
+**Bottom Line:** The firmwares shared the **same codebase** with different memory layouts and calibration. 81% of functions were found with at least partial similarity.
 
 ## Key Metrics
 
@@ -126,10 +130,10 @@ The EEPROM/calibration regions show ~48% similarity, indicating:
 
 ## Conclusion
 
-J90350.00 and J90280.05 are **variations of the same firmware** with:
+J90350.00 and J90280.05 were **variations of the same firmware** with:
 - Same core code (81% function similarity)
 - Different memory organization
 - Different calibration values
 - Minor code changes in some areas
 
-The extensive J90280.05 analysis can be **leveraged for J90350.00** with a relocation map, saving significant reverse engineering effort.
+The relocation map from this comparison was used to bootstrap J90350.00 analysis. J90280.05 has since been removed from the repository.

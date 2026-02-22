@@ -48,9 +48,9 @@ public class ApplyHardwareRegisters extends GhidraScript {
         if (args.length > 0) {
             csvPath = args[0];
         } else {
-            // Default to J90280.05's global_variables.csv
+            // Default to local output directory
             csvPath = getProjectRootFolder().getProjectLocator().getProjectDir() +
-                    "/../../CM550_J90280.05_analysis/ghidra/CM550.rep/global_variables.csv";
+                    "/../output/global_variables.csv";
         }
 
         println("Input file: " + csvPath);

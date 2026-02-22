@@ -31,7 +31,7 @@ This document tracks known Cummins ECU hardware/software combinations encountere
 |-----------|-----------|--------------------|---------------|---------------|-----------|-----|-----------|-------------|-----------|-----------|------------|---------------------|---------------------------------|
 |           |           |                    |               |               |           |     |           | 3947412     |           |           |            | Physical Chip Dump  |                                 |
 | CM550     | EN        | J90350.00          | 100898231658  | ISB 195hp     | -         | -   | -         | 98502       | T03942860 | 060498    | 1998-04-06 | Live ECU dump       | First extraction 2024-12-16     |
-| CM550     | EN        | J90280.05          | -             | ISB (unknown) | -         | -   |           | -           | -         | -         | Unknown    | Internet ROM only   | Reference firmware only (no RAM) |
+| CM550     | EN        | J90280.05          | -             | ISB (unknown) | -         | -   |           | -           | -         | -         | Unknown    | Internet ROM only   | Removed from repo (unreliable partial dump) |
 | CM550     | ?         | &I091197  | -             | 5.9L ISB      | -         | -   | -         | -           | -         | -         | 1997-09-11 | Physical Chip Dump  | Pre-production prototype, VIN embedded |
 | CM550     | E1        | J90270.06 | -             | 6BTA 5.9L     | -         | -   | -         | FP98456     | 4J,J039479121A0505648 | 062800 | 2000-06-28 | Physical Chip Dump | Chrysler T-300 commercial truck (EEPROM only) |
 | CM550     | E1        | J90831.05 | -             | 6BTA 5.9L     | -         | -   | -         | FP98849     | 039474121C0302023 | 012401 | 2001-01-24 | Physical Chip Dump | Dodge Ram Br/BE (EEPROM only) |
@@ -58,7 +58,7 @@ Based on observed patterns:
 - `J90xxx.xx` - CM550 ISB/ISC production calibrations
 - `S90xxx.xx` - CM848 production calibrations (PowerPC architecture)
 - `&Ixxxxxx` - Pre-production/prototype firmware (date-based identifier)
-- `J90280.05` - Reference firmware (unknown application)
+- `J90280.05` - Reference firmware (removed from repo - unreliable partial dump)
 - `J90270.06` - T-300 commercial truck calibration
 - `J90350.00` - ISB 195hp (extracted 2024-12-16)
 - `J90831.05` - Dodge Ram Br/BE calibration
@@ -101,7 +101,7 @@ Build dates are critical for understanding firmware evolution. When comparing tw
 |----------|------------|-----------|-------------|-------|
 | &I091197 | 1997-09-11 | ? | Dodge Ram prototype | Pre-production, VIN embedded in ROM |
 | J90350.00 | 1998-04-06 | EN | ISB 195hp | Full auth, more RAM vars |
-| J90280.05 | Unknown | EN | ISB (unknown) | Auth stub, fewer RAM vars (ROM only) |
+| J90280.05 | Unknown | EN | ISB (unknown) | Removed from repo (unreliable partial dump) |
 | J90270.06 | 2000-06-28 | E1 | Chrysler T-300 | Commercial truck (EEPROM only) |
 | J90831.05 | 2001-01-24 | E1 | Dodge Ram Br/BE | 2nd gen Ram (EEPROM only) |
 
@@ -250,7 +250,7 @@ Physical chip dumps revealed a second Module ID `E1` distinct from `EN`:
 
 | Module ID | EEPROM Value | Known Firmware | Notes |
 |-----------|--------------|----------------|-------|
-| EN | `454E` (ENUU at 0x3A) | J90350.00, J90280.05 | Live extraction (J90350), ROM only reference (J90280) |
+| EN | `454E` (ENUU at 0x3A) | J90350.00 | Live extraction |
 | E1 | `4531` (E1UU at 0x3A) | J90270.06, J90831.05 | Physical chip dumps |
 
 **Possible meanings:**
@@ -262,7 +262,7 @@ Physical chip dumps revealed a second Module ID `E1` distinct from `EN`:
 
 ### Firmware Enum Definitions
 
-From `firmware/CM550_J90280.05_analysis/ghidra/CM550.rep/enums.csv`:
+From CM550 firmware analysis `enums.csv`:
 
 ```
 CUMMINS_MODULE_IDS,0x454E,MODULE_EN,Cummins EN module family (CM550 VP44 ECUs)

@@ -808,7 +808,7 @@ def on_can_message(self, arb_id, data):
 
 # CM550 ECU-Specific Findings
 
-This section documents ECU-side implementation details discovered through reverse engineering of the CM550 firmware (J90280.05). These findings are critical for understanding how the protocol behaves on actual hardware.
+This section documents ECU-side implementation details discovered through reverse engineering of the CM550 firmware. These findings are critical for understanding how the protocol behaves on actual hardware.
 
 ## Security Implementation
 
@@ -982,7 +982,7 @@ While CM550 has minimal security, other Cummins ECUs may differ:
 
 | File | Description |
 |------|-------------|
-| `firmware/CM550_J90280.05_analysis/ghidra/CM550.rep/working/J90280.05.ghidra.c` | Full CM550 decompilation |
+| `firmware/CM550_J90350.00_analysis/output/J90350.00.ghidra.cpp` | CM550 decompilation |
 | Function at 0x00027e98 | systemSecurityCheck() |
 | Function at 0x0002b544 | addressRangeValidator() |
 | Function at 0x0001b7e8 | diagnosticServiceSecurityValidator() |
@@ -1184,9 +1184,9 @@ The service scanner was added to kuminz-cli:
 
 ---
 
-## Firmware Handler Cross-Reference (J90280.05)
+## Firmware Handler Cross-Reference (CM550)
 
-By cross-referencing the live scan results with the decompiled CM550 firmware (J90280.05), we can identify the exact handler functions for each service ID.
+By cross-referencing the live scan results with the decompiled CM550 firmware, we can identify the exact handler functions for each service ID.
 
 ### Service Registration Mechanism
 

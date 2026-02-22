@@ -1,4 +1,6 @@
-# Task 013: J90350.00 vs J90280.05 Firmware Comparison
+# Task 013: J90350.00 vs J90280.05 Firmware Comparison (Historical)
+
+> **Note:** J90280.05 has been removed from the repository (unreliable partial ROM dump). This task is retained as historical reference. The comparison data was used to bootstrap J90350.00 analysis.
 
 ## Status: [X] Done
 

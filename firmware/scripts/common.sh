@@ -5,7 +5,7 @@
 #
 
 # Required variables from caller:
-#   FIRMWARE_NAME       - e.g., "J90350.00" or "J90280.05"
+#   FIRMWARE_NAME       - e.g., "J90350.00" or "S90140.06"
 #   PROJECT_NAME        - e.g., "J90350" or "J90280"
 #   FIRMWARE_FILE       - Full path to binary (e.g., .../firmware/J90350.00.rom.bin)
 #   PROCESS_FILE        - Binary filename only (e.g., "J90350.00.rom.bin")

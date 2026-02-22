@@ -238,8 +238,7 @@ Generate/regenerate with: `npx tsx src/tools/generate-verified-lookup.ts`
 
 ### Firmware Correlation
 
-Address mappings validated against the reverse-engineered CM550 ECU firmware
-from [J90280.05.analysis](https://github.com/jlaustill/J90280.05.analysis):
+Address mappings validated against the reverse-engineered CM550 ECU firmware:
 
 - **100% of calculated addresses** fall within valid firmware memory regions
 - Memory zones align with MC68336 microcontroller architecture:

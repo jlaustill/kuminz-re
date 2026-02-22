@@ -2,7 +2,7 @@ struct_name,address,field_name,type,size,comment,dependency,Status
 # =============================================================================
 # J90350.00 Structure Definitions
 # Created: 2024-12-17
-# Based on J90280.05 analysis with address adjustments for J90350.00 memory layout
+# Based on CM550 firmware analysis
 # =============================================================================
 
 # -----------------------------------------------------------------------------

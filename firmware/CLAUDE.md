@@ -6,7 +6,6 @@ This directory contains reverse-engineered Cummins ECU firmware from different g
 
 | Directory | Source | ECU | Status | Purpose |
 |-----------|--------|-----|--------|---------|
-| `CM550_J90280.05_analysis/` | Static binary (Internet) | CM550 | Reference only | Partial ROM - no RAM dumps |
 | `CM550_J90350.00_analysis/` | Live ECU dump (bench) | CM550 | Active | Full ROM + RAM extraction |
 | `CM848_S90140.06_analysis/` | 2004.5 Dodge 5.9L | CM848D | Active | PowerPC MPC555 analysis |
 
@@ -28,12 +27,12 @@ firmware/
 │   ├── ApplyConstants.java
 │   ├── ApplyArrays.java
 │   └── ... (16 total scripts)
-├── CM550_J90280.05_analysis/
+├── CM550_J90350.00_analysis/
 │   ├── ghidra/
 │   │   ├── analyze.sh            # Thin wrapper (firmware-specific config)
 │   │   └── project/              # Ghidra project files
 │   └── output/*.csv              # CSVs + decompilation
-└── CM550_J90350.00_analysis/
+└── CM848_S90140.06_analysis/
     ├── ghidra/
     │   ├── analyze.sh            # Thin wrapper (firmware-specific config)
     │   └── project/              # Ghidra project files
@@ -42,35 +41,15 @@ firmware/
 
 ---
 
-## CM550 (J90280.05 / J90350.00) Analysis Notes
+## CM550 (J90350.00) Analysis Notes
 
-**Important:** The CM550 firmware comes from two different sources:
+**Source:** Live ECU extraction from bench — complete ROM, RAM, and EEPROM dumps.
 
-1. **J90280.05** - Static binary downloaded from the internet
-   - Contains only partial ROM dump
-   - No RAM or EEPROM dumps available
-   - Used only as a reference for instruction understanding
-   - **Not suitable for live ECU comparison**
-
-2. **J90350.00** - Live ECU extraction from bench
-   - Complete ROM, RAM, and EEPROM dumps
-   - Used for actual reverse engineering and parameter discovery
-   - Has working RAM variables and runtime state
-
-**Cross-Firmware Note:** J90350.00 was bootstrapped from J90280.05 using function matching:
-
-1. **Relocation Map** (`CM550_J90350.00_analysis/output/relocation_map.csv`)
-   - Maps function addresses between firmware versions
-   - Status: `matched` (identical), `similar` (code differs), `not_found`
-
-2. **Shared Data**
-   - RAM variables are identical (same memory layout)
-   - Hardware registers are identical (same MC68336 CPU)
-   - Enums/structures can be shared
-
-3. **Updating from Reference**
-   - Discoveries in J90280.05 can be propagated to J90350.00
-   - Use `./analyze.sh bootstrap` to re-apply relocation map
+- **MCU:** Motorola MC68336 (68020 core)
+- **ROM:** 256KB (0x00000000 - 0x0003FFFF)
+- **RAM:** 37KB at 0x00800000 (live dump available)
+- **Extended RAM:** 28KB at 0x008091C2
+- **EEPROM:** 4KB at 0x01000000
 
 ---
 
@@ -111,9 +90,7 @@ Key RAM-executed functions called from `mainLoopIteration`:
 
 ---
 
-## Workflow (Both CM550 Firmwares)
-
-Both CM550 firmwares use the same CLI workflow:
+## Workflow
 
 ```bash
 cd [firmware]_analysis/ghidra
@@ -138,7 +115,7 @@ cd [firmware]_analysis/ghidra
 ./analyze.sh labels     # Apply code labels
 ./analyze.sh constants  # Apply constant definitions
 ./analyze.sh arrays     # Apply array definitions
-./analyze.sh hwregs     # Apply MC68336 hardware register names
+./analyze.sh hwregs     # Apply hardware register names
 ./analyze.sh funcparams # Apply function parameter types
 ./analyze.sh localvars  # Apply local variable types
 ./analyze.sh decompile <addr|name>  # Decompile single function
@@ -146,23 +123,11 @@ cd [firmware]_analysis/ghidra
 ./analyze.sh status     # Show project status
 ```
 
-### CM550_J90280.05-Specific Commands
-
-J90280.05 is the **reference firmware** - other firmwares bootstrap from it:
-- `./analyze.sh full` runs: init -> analyze -> memmap -> import -> export
-
-### CM550_J90350.00-Specific Commands
-
-J90350.00 was **bootstrapped from J90280.05**:
-- `./analyze.sh ramvars` - Apply RAM variables from J90280.05
-- `./analyze.sh bootstrap` - Apply function names via relocation map
-- `./analyze.sh full` runs: init -> analyze -> memmap -> ramvars -> bootstrap -> export
-
 ---
 
 ## Common CSV Files
 
-Both firmwares use the same CSV structure in `output/`:
+All firmwares use the same CSV structure in `output/`:
 
 **Comment lines:** Lines starting with `#` are preserved through import/export cycles. Use them to document address mappings, function relationships, or other context.
 

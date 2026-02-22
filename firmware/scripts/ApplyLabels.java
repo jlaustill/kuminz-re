@@ -46,9 +46,9 @@ public class ApplyLabels extends GhidraScript {
                 relocationPath = args[1];
             }
         } else {
-            // Default to J90280.05's labels.csv
+            // Default to local output directory
             csvPath = getProjectRootFolder().getProjectLocator().getProjectDir() +
-                    "/../../CM550_J90280.05_analysis/ghidra/CM550.rep/labels.csv";
+                    "/../output/labels.csv";
             relocationPath = getProjectRootFolder().getProjectLocator().getProjectDir() +
                     "/../output/relocation_map.csv";
         }

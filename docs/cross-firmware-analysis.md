@@ -34,7 +34,9 @@ source_address,source_name,target_address,confidence,status
 | `similar` | Function exists but code differs (version change) | 60-85 |
 | `not_found` | Function doesn't exist in target firmware | 0 |
 
-### Current Statistics (J90280.05 → J90350.00)
+### Historical Statistics (J90280.05 → J90350.00)
+
+> **Note:** J90280.05 has been removed from the repository (unreliable partial ROM dump). These statistics are retained as historical reference. The relocation map was used to bootstrap J90350.00 analysis.
 
 | Status | Count | Interpretation |
 |--------|-------|----------------|
@@ -100,7 +102,7 @@ Build dates are critical for ordering firmware versions chronologically.
 
 | Firmware | Date Code | Year | Relative Age |
 |----------|-----------|------|--------------|
-| J90280.05 | Unknown | Unknown | Reference |
+| J90280.05 | Unknown | Unknown | Removed from repo |
 | J90350.00 | 060498 | 1998-04-06 | Confirmed |
 | J90270.06 | Unknown | Unknown | Pending |
 
@@ -196,7 +198,7 @@ This section documents the structural comparison between CM550 (VP44 pump) and C
 
 Both ECU generations use the **same 40-phase cooperative scheduler**:
 
-| Aspect | CM550 (J90280.05) | CM848D (S90140.06) |
+| Aspect | CM550 (J90350.00) | CM848D (S90140.06) |
 |--------|-------------------|---------------------|
 | Phase count | 40 (0x00-0x27) | 40 (0x00-0x27) |
 | Phase index variable | `_main_loop_phase_index` | `main_loop_phase_index` |
@@ -358,7 +360,7 @@ Conclusion: Direct equivalent - periodicTaskGroup7_timing = fuelTimingCoordinato
 
 ## Future Work
 
-- [ ] Reverse relocation map (J90350.00 → J90280.05) to find functions added in J90350.00
+- [X] ~~Reverse relocation map (J90350.00 → J90280.05)~~ - J90280.05 removed
 - [ ] Extract build dates from all known firmware
 - [ ] Automate feature comparison generation from relocation maps
 - [ ] Track CP3/common rail firmware when available

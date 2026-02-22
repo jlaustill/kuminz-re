@@ -50,7 +50,7 @@
 |------|-------------|
 | `output/function_renames.csv` | 489 named functions |
 | `output/global_variables.csv` | 5,866 named variables |
-| `output/relocation_map.csv` | Function mapping from J90280.05 |
+| `output/relocation_map.csv` | Historical function mapping (J90280.05 removed) |
 | `output/structure_definitions.csv` | 219 structure field definitions |
 | `output/J90350.00.ghidra.cpp` | Full decompilation (1.1MB) |
 
@@ -58,8 +58,8 @@
 
 | Script | Purpose |
 |--------|---------|
-| `ghidra/scripts/ApplyRelocationMap.java` | Bootstrap function names from J90280.05 |
-| `ghidra/scripts/ApplyRamVariables.java` | Apply RAM variable names from J90280.05 |
+| `ghidra/scripts/ApplyRelocationMap.java` | Bootstrap function names from relocation map |
+| `ghidra/scripts/ApplyRamVariables.java` | Apply RAM variable names |
 | `ghidra/scripts/SetupMemoryMap.java` | Add RAM and EEPROM memory regions |
 | `ghidra/scripts/ExportAnalysis.java` | Export to CSV and decompiled C |
 | `ghidra/scripts/ImportAnalysis.java` | Import CSV changes |
@@ -78,8 +78,8 @@ npm run ghidra:full
 npm run ghidra:init       # Import firmware
 npm run ghidra:analyze    # Auto-analysis
 npm run ghidra:memmap     # Add RAM + EEPROM regions
-npm run ghidra:ramvars    # Apply 5,227 RAM variable names
-npm run ghidra:bootstrap  # Apply 643 function names
+npm run ghidra:ramvars    # Apply RAM variable names
+npm run ghidra:bootstrap  # Apply function names from relocation map
 npm run ghidra:export     # Export CSV + decompilation
 ```
 
@@ -94,7 +94,7 @@ Commands:
   init       Import firmware into Ghidra project
   analyze    Run Ghidra auto-analysis
   memmap     Add RAM and EEPROM memory regions
-  ramvars    Apply RAM variable names from J90280.05
+  ramvars    Apply RAM variable names
   bootstrap  Apply function names via relocation map
   export     Export to CSV and decompiled C
   import     Import CSV changes back into Ghidra
@@ -142,26 +142,14 @@ See [docs/memory_map.md](docs/memory_map.md) for full details including peripher
 
 **Total extracted: 325KB** - 100% of data memory regions.
 
-## Comparison with J90280.05
-
-| Metric | Value |
-|--------|-------|
-| Byte-level similarity | 20.2% |
-| Function match (≥80%) | 293 (36.9%) |
-| Function similar (60-80%) | 350 (44.1%) |
-| Combined usable | **643 (81.1%)** |
-
-**Key finding:** Same codebase, different memory layout. Boot code is structurally identical.
-
 ## Why J90350.00 is Source of Truth
 
 1. **Live ECU available** - Can test and validate findings
 2. **100% memory coverage** - All 4 data regions extracted (ROM + RAM + EXT_RAM + EEPROM)
 3. **RAM state snapshot** - See actual runtime values
-4. **J90280.05 as reference** - 793 functions and 6,108 variables to bootstrap from
 
 ## Related Projects
 
-- `../CM550_J90280.05_analysis/` - Reference firmware (ROM only)
+- `../CM848_S90140.06_analysis/` - CM848D firmware (PowerPC, HPCR)
 - `../../kuminz-cli/` - CLI tool used for extraction
 - `../../clip-core/` - CLIP protocol library

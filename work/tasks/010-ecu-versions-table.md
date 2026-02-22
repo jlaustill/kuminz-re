@@ -31,7 +31,7 @@ Cummins has produced multiple ECU generations across different engine families. 
 ### 2. Firmware Versions Table
 | Part Number | ECU | Engine | Version | Calibration | RE Status |
 |-------------|-----|--------|---------|-------------|-----------|
-| J90280.05 | CM550 | ISB 5.9 | ? | ? | 100% named |
+| J90350.00 | CM550 | ISB 195hp | ? | 100898231658 | Active |
 | ... | | | | | |
 
 ### 3. Protocol Compatibility Matrix
@@ -77,7 +77,7 @@ Which parameters exist across ECU versions? Track coverage.
 - **RAM:** 1MB external
 - **CAN:** 250kbps J1939
 - **Protocol:** CLIP
-- **Firmware:** J90280.05 (fully named)
+- **Firmware:** J90350.00 (live extraction, actively analyzed)
 - **Status:** 793 functions, 6,087 globals named
 
 ### Planned Additions
@@ -110,7 +110,7 @@ Create: `docs/ecu-versions.md` (or similar) at repo root with:
 ## Key Files
 
 **Current Firmware:**
-- `firmware/CM550_J90280.05_analysis/` - CM550 firmware analysis
+- `firmware/CM550_J90350.00_analysis/` - CM550 firmware analysis
 
 **Data Sources:**
 - `e2m-analysis/` - Parameter files with version metadata

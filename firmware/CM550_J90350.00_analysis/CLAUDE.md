@@ -33,8 +33,6 @@ The `ghidra/analyze.sh` script provides all analysis commands:
 ./analyze.sh init       # Import firmware (no analysis)
 ./analyze.sh analyze    # Run Ghidra auto-analysis
 ./analyze.sh memmap     # Add RAM/EEPROM regions from live dumps
-./analyze.sh ramvars    # Apply 5,227 RAM variables from J90280.05
-./analyze.sh bootstrap  # Apply function names via relocation map
 ./analyze.sh export     # Export to CSVs + decompiled C
 ./analyze.sh import     # Import CSV changes back into Ghidra
 ./analyze.sh structures # Apply structure definitions
@@ -58,7 +56,7 @@ The `ghidra/analyze.sh` script provides all analysis commands:
 ### Initial Setup (from scratch)
 ```bash
 cd ghidra
-./analyze.sh full    # Runs: init -> analyze -> memmap -> ramvars -> bootstrap -> export
+./analyze.sh full    # Runs: init -> analyze -> memmap -> import -> export
 ```
 
 ### After Editing CSVs
@@ -90,24 +88,6 @@ All CSV files are in `output/`:
 | `structure_definitions.csv` | C structure definitions |
 | `function_parameters.csv` | Function parameter types |
 | `local_variables.csv` | Local variable names/types |
-| `relocation_map.csv` | Maps J90280.05 functions to J90350.00 addresses |
-
----
-
-## Cross-Reference with J90280.05
-
-This firmware was bootstrapped from J90280.05 (the reference firmware):
-
-- **Relocation Map:** `output/relocation_map.csv` maps function addresses between versions
-- **Shared Enums:** Falls back to J90280.05's enums.csv if not present locally
-- **RAM Variables:** Identical between versions (same memory layout)
-
-To update from J90280.05 discoveries:
-```bash
-./analyze.sh ramvars   # Re-apply RAM variables
-./analyze.sh enums     # Re-apply enum definitions
-./analyze.sh bootstrap # Re-apply function names via relocation map
-```
 
 ---
 
