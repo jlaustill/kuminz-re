@@ -25,7 +25,7 @@ OUTPUT_DIR="$PROJECT_DIR/output"
 FIRMWARE_DIR="$PROJECT_DIR/firmware"
 
 # Reference firmware for bootstrapping
-REFERENCE_DIR="$PROJECT_DIR/../J90280.05_analysis"
+REFERENCE_DIR="$PROJECT_DIR/../CM550_J90280.05_analysis"
 
 # ============================================================================
 # SOURCE SHARED INFRASTRUCTURE
@@ -51,11 +51,11 @@ cmd_ramvars() {
     fi
 
     if [ ! -f "$VARS_CSV" ]; then
-        print_error "J90280.05 global_variables.csv not found"
+        print_error "CM550_J90280.05 global_variables.csv not found"
         exit 1
     fi
 
-    echo "Applying RAM variable names from J90280.05..."
+    echo "Applying RAM variable names from CM550_J90280.05..."
     echo "Source: $VARS_CSV"
     echo ""
 
@@ -77,7 +77,7 @@ cmd_bootstrap() {
         exit 1
     fi
 
-    echo "Applying function names from J90280.05..."
+    echo "Applying function names from CM550_J90280.05..."
     echo "Source: $RELOCATION_MAP"
     echo ""
 
@@ -100,7 +100,7 @@ cmd_hwregs() {
     fi
 
     if [ ! -f "$VARS_CSV" ]; then
-        print_error "J90280.05 global_variables.csv not found"
+        print_error "CM550_J90280.05 global_variables.csv not found"
         exit 1
     fi
 
@@ -197,8 +197,8 @@ cmd_help() {
     echo "  init       Import firmware into new Ghidra project (no analysis)"
     echo "  analyze    Run Ghidra auto-analysis on the project"
     echo "  memmap     Add RAM and EEPROM memory regions from live dumps"
-    echo "  ramvars    Apply RAM variable names from J90280.05 (reference firmware)"
-    echo "  bootstrap  Apply J90280.05 function names via relocation map"
+    echo "  ramvars    Apply RAM variable names from CM550_J90280.05 (reference firmware)"
+    echo "  bootstrap  Apply CM550_J90280.05 function names via relocation map"
     echo "  export     Export function names and decompilation to CSV/CPP"
     echo "  import     Import CSV changes back into Ghidra"
     echo "  structures Apply structure definitions"

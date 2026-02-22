@@ -57755,7 +57755,7 @@
       <SubfileNumber xmlns="">8</SubfileNumber>
     </Parameter>
     <Parameter>
-      <Name xmlns="">IHFLTD</Name>
+      <Name xmlns="">IAH_Fuel_Threshold</Name>
       <Type xmlns="">Value</Type>
       <AvailableOffline xmlns="">true</AvailableOffline>
       <InterfaceParameter xmlns="">false</InterfaceParameter>
@@ -57764,7 +57764,7 @@
       <SubfileNumber xmlns="">5</SubfileNumber>
     </Parameter>
     <Parameter>
-      <Name xmlns="">IHFLTM</Name>
+      <Name xmlns="">IAH_Fuel_Time</Name>
       <Type xmlns="">Value</Type>
       <AvailableOffline xmlns="">true</AvailableOffline>
       <InterfaceParameter xmlns="">false</InterfaceParameter>

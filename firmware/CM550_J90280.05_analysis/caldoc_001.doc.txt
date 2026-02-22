@@ -3827,8 +3827,8 @@ Name                                    Value       Units    Comment
 ----------------------------------------------------------------------
   IHCKTM                                  15.0        SEC      DISABLE IAH IF CRANKING LONGER THAN THIS TIME~0 - 300
   IHDFTP                                  0.000       DEGF     DEFAULT INTAKE MANIFOLD TEMP USED IN IAH IF IMT HIGH ERROR ~-50 TO 293
-  IHFLTD                                  100.00      %FU      IAH POSTHEAT TERMINATED IF FUEL > THIS PARAMETER FOR TIME > IH~0 - 100
-  IHFLTM                                  30.0        SEC      IAH POSTHEAT TERMINATED IF FUEL > IHFLTD FOR THIS LENGTH OF TI~0 - 300
+  IAH_Fuel_Threshold                      100.00      %FU      IAH POSTHEAT TERMINATED IF FUEL > THIS PARAMETER FOR TIME > IAH_Fuel_Time~0 - 100
+  IAH_Fuel_Time                           30.0        SEC      IAH POSTHEAT TERMINATED IF FUEL > IAH_Fuel_Threshold FOR THIS LENGTH OF TIME~0 - 300
   IHPHCLTH                                100.000     DEGF     DISABLE POSTHEAT IF COOLANT TEMP > CAL AND POSTHEAT TEMP > I~-50 - 293
   IHPHES                                  480.0       RPM      IAH TRANSITIONS TO POSTHEAT WHEN N > IHPHES OR ENGINE STATE I~0 - 4500
   IHPHIC                                  0           NONE     IAH: INHIBITS POSTHEAT PHASE FOR THIS NUMBER OF ENGINE STARTS~0 - 200

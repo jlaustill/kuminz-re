@@ -17305,7 +17305,7 @@
       "scaled_value": 1.5
     },
     {
-      "name": "IHFLTD",
+      "name": "IAH_Fuel_Threshold",
       "address": null,
       "value": "100.00",
       "subfile": "5",
@@ -17314,13 +17314,13 @@
       "length": 2,
       "scale": 0.016983696,
       "signed": false,
-      "comment": "IAH POSTHEAT TERMINATED IF FUEL > THIS PARAMETER FOR TIME > IH~0 - 100",
+      "comment": "IAH POSTHEAT TERMINATED IF FUEL > THIS PARAMETER FOR TIME > IAH_Fuel_Time~0 - 100",
       "memoryBlockAddress": "81AD",
       "memoryBlockOffset": "2",
       "scaled_value": 1.6983696
     },
     {
-      "name": "IHFLTM",
+      "name": "IAH_Fuel_Time",
       "address": null,
       "value": "30.0",
       "subfile": "5",
@@ -17329,7 +17329,7 @@
       "length": 2,
       "scale": 0.1,
       "signed": false,
-      "comment": "IAH POSTHEAT TERMINATED IF FUEL > IHFLTD FOR THIS LENGTH OF TI~0 - 300",
+      "comment": "IAH POSTHEAT TERMINATED IF FUEL > IAH_Fuel_Threshold FOR THIS LENGTH OF TIME~0 - 300",
       "memoryBlockAddress": "81AD",
       "memoryBlockOffset": "4",
       "scaled_value": 3.0

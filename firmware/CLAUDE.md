@@ -1,14 +1,14 @@
 # Firmware Analysis Guide
 
-This directory contains reverse-engineered Cummins CM550 ECU firmware from different sources.
+This directory contains reverse-engineered Cummins ECU firmware from different generations.
 
 ## Firmware Versions
 
-| Directory | Source | Status | Purpose |
-|-----------|--------|--------|---------|
-| `J90280.05_analysis/` | Static binary | Reference (789 functions) | Reference firmware |
-| `J90350.00_analysis/` | Live ECU dump | Active (787 functions) | Live bench ECU |
-| `CM848_S90140.06_analysis/` | 2004.5 Dodge 5.9L | Active (1245 functions) | CM848D ECU (PowerPC) |
+| Directory | Source | ECU | Status | Purpose |
+|-----------|--------|-----|--------|---------|
+| `CM550_J90280.05_analysis/` | Static binary (Internet) | CM550 | Reference only | Partial ROM - no RAM dumps |
+| `CM550_J90350.00_analysis/` | Live ECU dump (bench) | CM550 | Active | Full ROM + RAM extraction |
+| `CM848_S90140.06_analysis/` | 2004.5 Dodge 5.9L | CM848D | Active | PowerPC MPC555 analysis |
 
 ---
 
@@ -28,31 +28,92 @@ firmware/
 │   ├── ApplyConstants.java
 │   ├── ApplyArrays.java
 │   └── ... (16 total scripts)
-├── J90280.05_analysis/
+├── CM550_J90280.05_analysis/
 │   ├── ghidra/
 │   │   ├── analyze.sh            # Thin wrapper (firmware-specific config)
 │   │   └── project/              # Ghidra project files
 │   └── output/*.csv              # CSVs + decompilation
-└── J90350.00_analysis/
+└── CM550_J90350.00_analysis/
     ├── ghidra/
     │   ├── analyze.sh            # Thin wrapper (firmware-specific config)
     │   └── project/              # Ghidra project files
     └── output/*.csv              # CSVs + decompilation
 ```
 
-### Adding a New Firmware
+---
 
-To add a new firmware, just create:
-1. A thin `ghidra/analyze.sh` wrapper with firmware-specific config
-2. An `output/` directory with your CSVs
+## CM550 (J90280.05 / J90350.00) Analysis Notes
 
-The thin wrapper sets variables like `FIRMWARE_NAME`, `PROJECT_NAME`, and `FIRMWARE_FILE`, then sources the shared `common.sh`.
+**Important:** The CM550 firmware comes from two different sources:
+
+1. **J90280.05** - Static binary downloaded from the internet
+   - Contains only partial ROM dump
+   - No RAM or EEPROM dumps available
+   - Used only as a reference for instruction understanding
+   - **Not suitable for live ECU comparison**
+
+2. **J90350.00** - Live ECU extraction from bench
+   - Complete ROM, RAM, and EEPROM dumps
+   - Used for actual reverse engineering and parameter discovery
+   - Has working RAM variables and runtime state
+
+**Cross-Firmware Note:** J90350.00 was bootstrapped from J90280.05 using function matching:
+
+1. **Relocation Map** (`CM550_J90350.00_analysis/output/relocation_map.csv`)
+   - Maps function addresses between firmware versions
+   - Status: `matched` (identical), `similar` (code differs), `not_found`
+
+2. **Shared Data**
+   - RAM variables are identical (same memory layout)
+   - Hardware registers are identical (same MC68336 CPU)
+   - Enums/structures can be shared
+
+3. **Updating from Reference**
+   - Discoveries in J90280.05 can be propagated to J90350.00
+   - Use `./analyze.sh bootstrap` to re-apply relocation map
 
 ---
 
-## Workflow (Both Firmwares)
+## CM848 (S90140.06) Analysis
 
-Both firmwares now use the same CLI workflow:
+### Dual-Bank Flash Architecture
+
+| Bank | Address Range | Size | File |
+|------|---------------|------|------|
+| Bank 1 (ROM) | 0x00000000 - 0x0006FFFF | 448KB | `cm848_rom.bin` |
+| Bank 2 (FLASH2) | 0x00500000 - 0x0053DFFF | 248KB | `cm848_flash2_live.bin` |
+
+Bank 2 contains utility functions called from Bank 1 (sensor processing, math routines).
+
+**Completed (2026-01-31):** Bank 2 dumped from live ECU. See `CM848_S90140.06_analysis/docs/TASK_dump_bank2.md`.
+
+### ROM-to-RAM Code Execution (CM848)
+
+`copyCalibrationToRam()` copies ROM 0x3C30-0x7F60 (17KB) to RAM 0x3F9800-0x3FDB30 at boot. ~50 functions execute from RAM for MPC555 performance. Formula: `ROM_addr = 0x3C30 + (RAM_addr - 0x3F9800)`.
+
+Functions at `0x003Fxxxx` in decompilation (e.g. `BYTE_003fae3c()`) are ROM functions running from RAM — Ghidra already has them decompiled at their ROM source addresses. The RAM dump has these regions overwritten by CAN bus data at runtime; use the ROM binary to find the original code.
+
+Key RAM-executed functions called from `mainLoopIteration`:
+- `dispatchCanMessageHandlers` (ROM 0x526C → RAM 0x3FAE3C)
+- `processJ1939QueueStatus` (ROM 0x64C4 → RAM 0x3FC094)
+
+### CM848 ECU Version Info
+
+| Location | Value | Description |
+|----------|-------|-------------|
+| EEPROM 0x0130 | V11.46.06 | Calibration version |
+| EEPROM 0x0046 | 1504 2RSAO | Calibration ID |
+| EEPROM 0x0217 | CC | Module ID (CM848) |
+| EEPROM 0x0002 | ABCDEF | Security key |
+| ROM 0x010C | 100902 | Build date |
+
+**Note:** E2M file S90140.12 is V11.20.13.16 - different from ECU's V11.46.06. Use live dumps for analysis.
+
+---
+
+## Workflow (Both CM550 Firmwares)
+
+Both CM550 firmwares use the same CLI workflow:
 
 ```bash
 cd [firmware]_analysis/ghidra
@@ -85,38 +146,17 @@ cd [firmware]_analysis/ghidra
 ./analyze.sh status     # Show project status
 ```
 
-### J90280.05-Specific Commands
+### CM550_J90280.05-Specific Commands
 
 J90280.05 is the **reference firmware** - other firmwares bootstrap from it:
-
 - `./analyze.sh full` runs: init -> analyze -> memmap -> import -> export
 
-### J90350.00-Specific Commands
+### CM550_J90350.00-Specific Commands
 
 J90350.00 was **bootstrapped from J90280.05**:
-
 - `./analyze.sh ramvars` - Apply RAM variables from J90280.05
 - `./analyze.sh bootstrap` - Apply function names via relocation map
 - `./analyze.sh full` runs: init -> analyze -> memmap -> ramvars -> bootstrap -> export
-
----
-
-## Cross-Firmware Analysis
-
-J90350.00 was bootstrapped from J90280.05 using function matching:
-
-1. **Relocation Map** (`J90350.00_analysis/output/relocation_map.csv`)
-   - Maps function addresses between firmware versions
-   - Status: `matched` (identical), `similar` (code differs), `not_found`
-
-2. **Shared Data**
-   - RAM variables are identical (same memory layout)
-   - Hardware registers are identical (same MC68336 CPU)
-   - Enums/structures can be shared
-
-3. **Updating from Reference**
-   - Discoveries in J90280.05 can be propagated to J90350.00
-   - Use `./analyze.sh bootstrap` to re-apply relocation map
 
 ---
 
@@ -187,43 +227,6 @@ Periodically clean garbage entries from `global_variables.csv`:
 - **mpc555_registers.csv duplicates** - Untyped entries already defined in hardware register CSV
 
 Use Python CSV module to batch-categorize and clean (see session history for script pattern).
-
----
-
-## CM848 Dual-Bank Flash Architecture
-
-CM848 has two flash banks (discovered via e2m analysis):
-
-| Bank | Address Range | Size | File |
-|------|---------------|------|------|
-| Bank 1 (ROM) | 0x00000000 - 0x0006FFFF | 448KB | `cm848_rom.bin` |
-| Bank 2 (FLASH2) | 0x00500000 - 0x0053DFFF | 248KB | `cm848_flash2_live.bin` |
-
-Bank 2 contains utility functions called from Bank 1 (sensor processing, math routines).
-
-**Completed (2026-01-31):** Bank 2 dumped from live ECU. See `CM848_S90140.06_analysis/docs/TASK_dump_bank2.md`.
-
-### ROM-to-RAM Code Execution (CM848)
-
-`copyCalibrationToRam()` copies ROM 0x3C30-0x7F60 (17KB) to RAM 0x3F9800-0x3FDB30 at boot. ~50 functions execute from RAM for MPC555 performance. Formula: `ROM_addr = 0x3C30 + (RAM_addr - 0x3F9800)`.
-
-Functions at `0x003Fxxxx` in decompilation (e.g. `BYTE_003fae3c()`) are ROM functions running from RAM — Ghidra already has them decompiled at their ROM source addresses. The RAM dump has these regions overwritten by CAN bus data at runtime; use the ROM binary to find the original code.
-
-Key RAM-executed functions called from `mainLoopIteration`:
-- `dispatchCanMessageHandlers` (ROM 0x526C → RAM 0x3FAE3C)
-- `processJ1939QueueStatus` (ROM 0x64C4 → RAM 0x3FC094)
-
-### CM848 ECU Version Info
-
-| Location | Value | Description |
-|----------|-------|-------------|
-| EEPROM 0x0130 | V11.46.06 | Calibration version |
-| EEPROM 0x0046 | 1504 2RSAO | Calibration ID |
-| EEPROM 0x0217 | CC | Module ID (CM848) |
-| EEPROM 0x0002 | ABCDEF | Security key |
-| ROM 0x010C | 100902 | Build date |
-
-**Note:** E2M file S90140.12 is V11.20.13.16 - different from ECU's V11.46.06. Use live dumps for analysis.
 
 ---
 

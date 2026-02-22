@@ -162,6 +162,6 @@ See [docs/memory_map.md](docs/memory_map.md) for full details including peripher
 
 ## Related Projects
 
-- `../J90280.05_analysis/` - Reference firmware (793 functions named)
+- `../CM550_J90280.05_analysis/` - Reference firmware (ROM only)
 - `../../kuminz-cli/` - CLI tool used for extraction
 - `../../clip-core/` - CLIP protocol library

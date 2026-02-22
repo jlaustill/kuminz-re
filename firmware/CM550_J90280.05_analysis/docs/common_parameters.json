@@ -72827,7 +72827,7 @@
       "comment": "DEFAULT INTAKE MANIFOLD TEMP USED IN IAH IF IMT HIGH ERROR ~-50 TO 293"
     },
     {
-      "name": "IHFLTD",
+      "name": "IAH_Fuel_Threshold",
       "engineeringUnit": "%FU",
       "type": "N",
       "subfile": 5,
@@ -72848,11 +72848,11 @@
       "enumValues": [],
       "consistentAcrossFiles": false,
       "foundInFiles": 5,
-      "rawLine": "IHFLTD,%FU,81AD,2,31D,N,37,2,1,U,0.016983696,0,5,75,8700199999;IAH POSTHEAT TERMINATED IF FUEL > THIS PARAMETER FOR TIME > IH~0 - 100\r",
-      "comment": "IAH POSTHEAT TERMINATED IF FUEL > THIS PARAMETER FOR TIME > IH~0 - 100"
+      "rawLine": "IAH_Fuel_Threshold,%FU,81AD,2,31D,N,37,2,1,U,0.016983696,0,5,75,8700199999;IAH POSTHEAT TERMINATED IF FUEL > THIS PARAMETER FOR TIME > IAH_Fuel_Time~0 - 100\r",
+      "comment": "IAH POSTHEAT TERMINATED IF FUEL > THIS PARAMETER FOR TIME > IAH_Fuel_Time~0 - 100"
     },
     {
-      "name": "IHFLTM",
+      "name": "IAH_Fuel_Time",
       "engineeringUnit": "SEC",
       "type": "N",
       "subfile": 5,
@@ -72873,8 +72873,8 @@
       "enumValues": [],
       "consistentAcrossFiles": false,
       "foundInFiles": 5,
-      "rawLine": "IHFLTM,SEC,81AD,4,31D,N,37,2,1,U,0.1,0,5,75,8700199999;IAH POSTHEAT TERMINATED IF FUEL > IHFLTD FOR THIS LENGTH OF TI~0 - 300\r",
-      "comment": "IAH POSTHEAT TERMINATED IF FUEL > IHFLTD FOR THIS LENGTH OF TI~0 - 300"
+      "rawLine": "IAH_Fuel_Time,SEC,81AD,4,31D,N,37,2,1,U,0.1,0,5,75,8700199999;IAH POSTHEAT TERMINATED IF FUEL > IAH_Fuel_Threshold FOR THIS LENGTH OF TIME~0 - 300\r",
+      "comment": "IAH POSTHEAT TERMINATED IF FUEL > IAH_Fuel_Threshold FOR THIS LENGTH OF TIME~0 - 300"
     },
     {
       "name": "IHPHCLTH",

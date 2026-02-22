@@ -112,6 +112,6 @@ CM848_S90140.06_analysis/
 
 ## Related
 
-- `/firmware/J90280.05_analysis/` - CM550 reference firmware
-- `/firmware/J90350.00_analysis/` - CM550 live extraction
+- `/firmware/CM550_J90280.05_analysis/` - CM550 reference firmware (ROM only)
+- `/firmware/CM550_J90350.00_analysis/` - CM550 live extraction (full ROM + RAM)
 - `/ecu_identification.md` - ECU database
