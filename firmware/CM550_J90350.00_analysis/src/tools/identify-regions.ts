@@ -19,7 +19,7 @@ import {
 } from '../utils/binary-reader.js';
 
 // File paths
-const J90280_PATH = path.resolve(__dirname, '../../..', 'J90280.05_analysis/firmware/J90280.05.full.bin');
+const J90280_PATH = path.resolve(__dirname, '../../..', 'CM550_J90280.05_analysis/firmware/J90280.05.full.bin');
 const J90350_PATH = path.resolve(__dirname, '../..', 'firmware/J90350.00.rom.bin');
 const OUTPUT_PATH = path.resolve(__dirname, '../..', 'output/region_map.md');
 

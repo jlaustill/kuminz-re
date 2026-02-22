@@ -147,16 +147,16 @@ Already identified from prior analysis:
 
 ### Input (Analysis Sources)
 - `clip-lib/build/cm550_ram.bin` - RAM dump (regenerate with `./clip-test can0 --dump-ram`)
-- `firmware/J90280.05_analysis/ghidra/CM550.rep/global_variables.csv` - 6,096 entries
-- `firmware/J90280.05_analysis/ghidra/CM550.rep/function_renames.csv` - 448 functions
-- `firmware/J90280.05_analysis/ghidra/CM550.rep/arrays.csv` - 67 arrays
+- `firmware/CM550_J90280.05_analysis/ghidra/CM550.rep/global_variables.csv` - 6,096 entries
+- `firmware/CM550_J90280.05_analysis/ghidra/CM550.rep/function_renames.csv` - 448 functions
+- `firmware/CM550_J90280.05_analysis/ghidra/CM550.rep/arrays.csv` - 67 arrays
 - `e2m-analysis/docs/common_parameters.json` - e2m parameter addresses
 
 ### Output (To Update)
-- `firmware/J90280.05_analysis/ghidra/CM550.rep/global_variables.csv`
-- `firmware/J90280.05_analysis/ghidra/CM550.rep/function_renames.csv`
-- `firmware/J90280.05_analysis/ghidra/CM550.rep/structure_definitions.csv`
-- `firmware/J90280.05_analysis/analysis/ram_memory_map.md` (new)
+- `firmware/CM550_J90280.05_analysis/ghidra/CM550.rep/global_variables.csv`
+- `firmware/CM550_J90280.05_analysis/ghidra/CM550.rep/function_renames.csv`
+- `firmware/CM550_J90280.05_analysis/ghidra/CM550.rep/structure_definitions.csv`
+- `firmware/CM550_J90280.05_analysis/analysis/ram_memory_map.md` (new)
 
 ---
 

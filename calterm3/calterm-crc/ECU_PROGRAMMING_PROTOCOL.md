@@ -982,7 +982,7 @@ While CM550 has minimal security, other Cummins ECUs may differ:
 
 | File | Description |
 |------|-------------|
-| `firmware/J90280.05_analysis/ghidra/CM550.rep/working/J90280.05.ghidra.c` | Full CM550 decompilation |
+| `firmware/CM550_J90280.05_analysis/ghidra/CM550.rep/working/J90280.05.ghidra.c` | Full CM550 decompilation |
 | Function at 0x00027e98 | systemSecurityCheck() |
 | Function at 0x0002b544 | addressRangeValidator() |
 | Function at 0x0001b7e8 | diagnosticServiceSecurityValidator() |

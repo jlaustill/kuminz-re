@@ -228,6 +228,6 @@ The e2m files store calibration parameters that correspond to:
 
 ## Files Referenced
 
-- `firmware/J90350.00_analysis/output/J90350.00.ghidra.cpp` - Decompiled source
-- `firmware/J90350.00_analysis/output/function_renames.csv` - Function names
-- `firmware/J90350.00_analysis/output/global_variables.csv` - RAM variable names
+- `firmware/CM550_J90350.00_analysis/output/J90350.00.ghidra.cpp` - Decompiled source
+- `firmware/CM550_J90350.00_analysis/output/function_renames.csv` - Function names
+- `firmware/CM550_J90350.00_analysis/output/global_variables.csv` - RAM variable names

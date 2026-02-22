@@ -110,7 +110,7 @@ Create: `docs/ecu-versions.md` (or similar) at repo root with:
 ## Key Files
 
 **Current Firmware:**
-- `firmware/J90280.05_analysis/` - CM550 firmware analysis
+- `firmware/CM550_J90280.05_analysis/` - CM550 firmware analysis
 
 **Data Sources:**
 - `e2m-analysis/` - Parameter files with version metadata

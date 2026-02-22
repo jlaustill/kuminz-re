@@ -80,7 +80,7 @@ SetDataByAddress (0x15): [CMD][SEQ][Addr:4BE][Len:2BE][Data]
 - `clip-core/src/CLIPInstructionBuilder.cpp` - Command packet building
 - `insite9/decompiled/native/DeviceControl_ghidra.c` - CLIP command implementation
 - `insite9/decompiled/dotnet/Interop.DeviceControl.cs` - CLIP instruction definitions
-- `firmware/J90350.00_analysis/output/J90350.00.ghidra.cpp` - ECU-side handlers
+- `firmware/CM550_J90350.00_analysis/output/J90350.00.ghidra.cpp` - ECU-side handlers
 
 ## Test Commands
 

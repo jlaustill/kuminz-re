@@ -262,7 +262,7 @@ Physical chip dumps revealed a second Module ID `E1` distinct from `EN`:
 
 ### Firmware Enum Definitions
 
-From `firmware/J90280.05_analysis/ghidra/CM550.rep/enums.csv`:
+From `firmware/CM550_J90280.05_analysis/ghidra/CM550.rep/enums.csv`:
 
 ```
 CUMMINS_MODULE_IDS,0x454E,MODULE_EN,Cummins EN module family (CM550 VP44 ECUs)

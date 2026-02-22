@@ -19,8 +19,8 @@ kuminz-re/
 ├── e2m-analysis/     # E2M file format reverse engineering (COMPLETE)
 ├── e2m-db/           # PostgreSQL database for e2m parameter storage
 ├── firmware/
-│   ├── J90280.05_analysis/  # CM550 ECU firmware (reference)
-│   ├── J90350.00_analysis/  # CM550 ISB 195hp (live extraction)
+│   ├── CM550_J90280.05_analysis/  # CM550 ECU firmware (reference ROM only)
+│   ├── CM550_J90350.00_analysis/  # CM550 ISB 195hp (live extraction)
 │   └── feature_comparison.csv  # Cross-firmware feature matrix
 ├── calterm3/
 │   └── calterm-crc/  # CRC algorithm reverse engineering for e2m files

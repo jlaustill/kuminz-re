@@ -14,7 +14,7 @@
 
 - Both firmware Ghidra projects are current (last export includes all recent naming campaigns)
 - Decompiled output files exist:
-  - `firmware/J90280.05_analysis/output/J90280.05.ghidra.cpp` (~789 functions)
+  - `firmware/CM550_J90280.05_analysis/output/J90280.05.ghidra.cpp` (~789 functions)
   - `firmware/CM848_S90140.06_analysis/output/cm848_rom.ghidra.cpp` (~2,196 functions)
 - Both `function_renames.csv` and `global_variables.csv` are current
 
@@ -40,9 +40,9 @@ These subsystems establish the shared function names that later subsystems refer
 ### Task 1: Math Utilities + Shared Helpers (Subsystem 8)
 
 **Files:**
-- Read: `firmware/J90280.05_analysis/output/J90280.05.ghidra.cpp`
+- Read: `firmware/CM550_J90280.05_analysis/output/J90280.05.ghidra.cpp`
 - Read: `firmware/CM848_S90140.06_analysis/output/cm848_rom.ghidra.cpp`
-- Modify: `firmware/J90280.05_analysis/output/function_renames.csv`
+- Modify: `firmware/CM550_J90280.05_analysis/output/function_renames.csv`
 - Modify: `firmware/CM848_S90140.06_analysis/output/function_renames.csv`
 
 **Agent context:**
@@ -76,7 +76,7 @@ Append/modify lines in both `function_renames.csv` files.
 **Step 4: Commit**
 
 ```bash
-git add firmware/J90280.05_analysis/output/function_renames.csv firmware/CM848_S90140.06_analysis/output/function_renames.csv
+git add firmware/CM550_J90280.05_analysis/output/function_renames.csv firmware/CM848_S90140.06_analysis/output/function_renames.csv
 git commit -m "firmware: Align math utility function names between CM550 and CM848D"
 ```
 
@@ -251,7 +251,7 @@ Lowest match potential — the hardware is fundamentally different (MC68336 TPU 
 **Step 1: Import and export CM550**
 
 ```bash
-cd firmware/J90280.05_analysis/ghidra
+cd firmware/CM550_J90280.05_analysis/ghidra
 ./analyze.sh import
 ./analyze.sh export
 ```
@@ -271,7 +271,7 @@ Spot-check that equivalent functions now share names in both .cpp files. Pick 10
 **Step 4: Propagate to J90350.00**
 
 ```bash
-cd firmware/J90350.00_analysis/ghidra
+cd firmware/CM550_J90350.00_analysis/ghidra
 ./analyze.sh bootstrap
 ./analyze.sh export
 ```
@@ -279,7 +279,7 @@ cd firmware/J90350.00_analysis/ghidra
 **Step 5: Commit all exported output**
 
 ```bash
-git add firmware/J90280.05_analysis/output/ firmware/CM848_S90140.06_analysis/output/ firmware/J90350.00_analysis/output/
+git add firmware/CM550_J90280.05_analysis/output/ firmware/CM848_S90140.06_analysis/output/ firmware/CM550_J90350.00_analysis/output/
 git commit -m "firmware: Re-export all firmwares after cross-firmware name convergence"
 ```
 
@@ -320,7 +320,7 @@ Each agent receives:
 ### Agent Output Format
 
 ```
-# CM550 updates (firmware/J90280.05_analysis/output/function_renames.csv)
+# CM550 updates (firmware/CM550_J90280.05_analysis/output/function_renames.csv)
 0x0002ada8,fuelEconomyPGN_65266_Builder    # no change (VP44-only, no CM848D match)
 0x000357d2,proportionalCalculation         # no change (already matched)
 0x0003566e,signedLinearInterpolation       # rename to match CM848D

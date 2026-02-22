@@ -80,7 +80,7 @@ Unlike the CLIP protocol (which requires session establishment with OpenCommRequ
 ### Files Produced
 
 ```
-firmware/J90350.00_analysis/firmware/
+firmware/CM550_J90350.00_analysis/firmware/
 ├── J90350.00.rom.bin      # 262,144 bytes - Full ROM/Flash
 ├── J90350.00.ram.bin      # 37,314 bytes - RAM snapshot
 └── J90350.00.eeprom.bin   # 4,096 bytes - EEPROM

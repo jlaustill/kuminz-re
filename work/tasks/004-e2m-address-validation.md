@@ -129,9 +129,9 @@ The validated addresses correspond to:
 ## Files Referenced
 
 - `e2m-analysis/docs/column3_base_address_lookup.md` - 521 Column3 mappings
-- `firmware/J90350.00_analysis/firmware/J90350.00.ram.bin` - 37KB RAM dump
-- `firmware/J90350.00_analysis/firmware/J90350.00.extended_ram.bin` - 28KB extended RAM dump
-- `firmware/J90350.00_analysis/firmware/J90350.00.eeprom.bin` - 4KB EEPROM
+- `firmware/CM550_J90350.00_analysis/firmware/J90350.00.ram.bin` - 37KB RAM dump
+- `firmware/CM550_J90350.00_analysis/firmware/J90350.00.extended_ram.bin` - 28KB extended RAM dump
+- `firmware/CM550_J90350.00_analysis/firmware/J90350.00.eeprom.bin` - 4KB EEPROM
 
 ## Completed Steps
 

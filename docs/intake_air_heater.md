@@ -276,8 +276,8 @@ Likely named in the decompiled output. Search for:
 
 - `firmware/CM848_S90140.06_analysis/output/e2m_parameters.csv` - Full CM848 IAH parameter list
 - `firmware/CM848_S90140.06_analysis/output/e2m_variables.csv` - CM848 variable mappings
-- `firmware/J90280.05_analysis/docs/common_parameters.json` - CM550 parameter definitions
-- `firmware/J90280.05_analysis/caldoc_001.doc.txt` - CM550 caldoc documentation
+- `firmware/CM550_J90280.05_analysis/docs/common_parameters.json` - CM550 parameter definitions
+- `firmware/CM550_J90280.05_analysis/caldoc_001.doc.txt` - CM550 caldoc documentation
 
 ---
 
