@@ -32,9 +32,9 @@ This document tracks known Cummins ECU hardware/software combinations encountere
 |           |           |                    |               |               |           |     |           | 3947412     |           |           |            | Physical Chip Dump  |                                 |
 | CM550     | EN        | J90350.00          | 100898231658  | ISB 195hp     | -         | -   | -         | 98502       | T03942860 | 060498    | 1998-04-06 | Live ECU dump       | First extraction 2024-12-16     |
 | CM550     | EN        | J90280.05          | -             | ISB (unknown) | -         | -   |           | -           | -         | -         | Unknown    | Internet ROM only   | Removed from repo (unreliable partial dump) |
-| CM550     | ?         | &I091197  | -             | 5.9L ISB      | -         | -   | -         | -           | -         | -         | 1997-09-11 | Physical Chip Dump  | Pre-production prototype, VIN embedded |
-| CM550     | E1        | J90270.06 | -             | 6BTA 5.9L     | -         | -   | -         | FP98456     | 4J,J039479121A0505648 | 062800 | 2000-06-28 | Physical Chip Dump | Chrysler T-300 commercial truck (EEPROM only) |
-| CM550     | E1        | J90831.05 | -             | 6BTA 5.9L     | -         | -   | -         | FP98849     | 039474121C0302023 | 012401 | 2001-01-24 | Physical Chip Dump | Dodge Ram Br/BE (EEPROM only) |
+| CM550     | ?         | &I091197  | -             | 5.9L ISB      | -         | -   | -         | -           | -         | -         | 1997-09-11 | Physical Chip Dump  | Pre-production prototype, VIN embedded (removed from repo, no live ECU) |
+| CM550     | E1        | J90270.06 | -             | 6BTA 5.9L     | -         | -   | -         | FP98456     | 4J,J039479121A0505648 | 062800 | 2000-06-28 | Physical Chip Dump | Chrysler T-300 commercial truck, EEPROM only (removed from repo, no live ECU) |
+| CM550     | E1        | J90831.05 | -             | 6BTA 5.9L     | -         | -   | -         | FP98849     | 039474121C0302023 | 012401 | 2001-01-24 | Physical Chip Dump | Dodge Ram Br/BE, EEPROM only (removed from repo, no live ECU) |
 | CM848D    | CC        | S90140.06 | 1504 2RSAO    | 5.9L HPCR     | 57185646  | -   | -         | 3971104     | 40333     | 041604    | 2004-04-16 | Live ECU dump       | 2004 Dodge Ram, VIN 3D3MU48C94G228471, first CM848 extraction 2026-01-28, EEPROM cal version 11.46.06.xx |
 
 ---
@@ -59,10 +59,10 @@ Based on observed patterns:
 - `S90xxx.xx` - CM848 production calibrations (PowerPC architecture)
 - `&Ixxxxxx` - Pre-production/prototype firmware (date-based identifier)
 - `J90280.05` - Reference firmware (removed from repo - unreliable partial dump)
-- `J90270.06` - T-300 commercial truck calibration
-- `J90350.00` - ISB 195hp (extracted 2024-12-16)
-- `J90831.05` - Dodge Ram Br/BE calibration
-- `S90140.06` - CM848D Dodge Ram HPCR (extracted 2026-01-28)
+- `J90270.06` - T-300 commercial truck calibration (removed from repo, no live ECU)
+- `J90350.00` - ISB 195hp (extracted 2024-12-16, active)
+- `J90831.05` - Dodge Ram Br/BE calibration (removed from repo, no live ECU)
+- `S90140.06` - CM848D Dodge Ram HPCR (extracted 2026-01-28, active)
 
 ### ROM Build Type Identifier
 
@@ -99,11 +99,11 @@ Build dates are critical for understanding firmware evolution. When comparing tw
 
 | Firmware | Build Date | Module ID | Application | Notes |
 |----------|------------|-----------|-------------|-------|
-| &I091197 | 1997-09-11 | ? | Dodge Ram prototype | Pre-production, VIN embedded in ROM |
+| &I091197 | 1997-09-11 | ? | Dodge Ram prototype | Pre-production, VIN embedded in ROM (removed from repo, no live ECU) |
 | J90350.00 | 1998-04-06 | EN | ISB 195hp | Full auth, more RAM vars |
 | J90280.05 | Unknown | EN | ISB (unknown) | Removed from repo (unreliable partial dump) |
-| J90270.06 | 2000-06-28 | E1 | Chrysler T-300 | Commercial truck (EEPROM only) |
-| J90831.05 | 2001-01-24 | E1 | Dodge Ram Br/BE | 2nd gen Ram (EEPROM only) |
+| J90270.06 | 2000-06-28 | E1 | Chrysler T-300 | EEPROM only (removed from repo, no live ECU) |
+| J90831.05 | 2001-01-24 | E1 | Dodge Ram Br/BE | EEPROM only (removed from repo, no live ECU) |
 
 ### Cross-Firmware Analysis
 

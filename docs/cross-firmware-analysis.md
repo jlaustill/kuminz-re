@@ -103,8 +103,8 @@ Build dates are critical for ordering firmware versions chronologically.
 | Firmware | Date Code | Year | Relative Age |
 |----------|-----------|------|--------------|
 | J90280.05 | Unknown | Unknown | Removed from repo |
-| J90350.00 | 060498 | 1998-04-06 | Confirmed |
-| J90270.06 | Unknown | Unknown | Pending |
+| J90350.00 | 060498 | 1998-04-06 | Confirmed (active) |
+| J90270.06 | Unknown | Unknown | Removed from repo |
 
 ---
 
