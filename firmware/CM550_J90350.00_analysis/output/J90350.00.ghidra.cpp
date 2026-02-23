@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Sun Feb 22 16:01:00 MST 2026
+// Generated: Sun Feb 22 16:58:38 MST 2026
 
 
 //
@@ -4048,7 +4048,7 @@ void insiteCommandByteDispatcher(void)
           bVar6 = (byte)((int)(uint)_DAT_00807bf6 >> 7);
           break;
         default:
-          goto switchD_0000f050_default;
+          goto switchD_0000f050_caseD_f9;
         }
         *_DAT_0080ddea = DAT_0080dde5;
         _DAT_0080ddea = (byte *)CONCAT31(_DAT_0080ddea,DAT_0080dded + '\x01');
@@ -4086,7 +4086,7 @@ void insiteCommandByteDispatcher(void)
         }
         break;
       default:
-        goto switchD_0000f050_default;
+        goto switchD_0000f050_caseD_f9;
       case 0x5b:
         local_6._1_1_ =
              (byte)(((uint)_validated_percent_throttle_commanded_by_driver_0_100 * 0xfa) / 400);
@@ -4210,7 +4210,7 @@ void insiteCommandByteDispatcher(void)
         local_6 = _DAT_00804fb2;
         break;
       default:
-        goto switchD_0000f050_default;
+        goto switchD_0000f050_caseD_f9;
       case 0xbb:
         local_6 = (short)((int)(uint)_DAT_0080dc24 >> 1);
         break;
@@ -4333,7 +4333,7 @@ void insiteCommandByteDispatcher(void)
       local_a = FUN_00035064((short)_DAT_00804fa8,10,0x40);
       break;
     default:
-      goto switchD_0000f050_default;
+      goto switchD_0000f050_caseD_f9;
     case 0xf7:
       local_a = _DAT_00804fc0 / 0x708;
       break;
@@ -4359,7 +4359,7 @@ void insiteCommandByteDispatcher(void)
 LAB_0000f6f4:
   DAT_0080ddf6 = DAT_0080ddf8 + DAT_0080ddf6;
   DAT_0080ddf7 = DAT_0080ddf7 - DAT_0080ddf8;
-switchD_0000f050_default:
+switchD_0000f050_caseD_f9:
   return;
 }
 
@@ -6308,10 +6308,10 @@ undefined1 FUN_0001183e(void)
 
 
 //
-// Function: enableFaultFlagScanner @ 0x00011880
+// Function: default @ 0x00011880
 //
 
-undefined1 enableFaultFlagScanner(void)
+undefined1 default(void)
 
 {
                     /* From J90280.05 @ 0x00f86a (confidence: 63%) */
@@ -10969,10 +10969,10 @@ void derateProtectionSlowCycle20Coordinator(void)
 
 
 //
-// Function: diagnosticStatisticsSlowCycle20Coordinator @ 0x000171aa
+// Function: caseD_3 @ 0x000171aa
 //
 
-void diagnosticStatisticsSlowCycle20Coordinator(void)
+void caseD_3(void)
 
 {
                     /* From J90280.05 @ 0x0175a6 (confidence: 64%) */
@@ -23742,15 +23742,13 @@ void ioControlEntryRemove(undefined4 param_1)
 
 
 //
-// Function: FUN_00023a90 @ 0x00023a90
+// Function: lampDriverOutputDispatcher @ 0x00023a90
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
-ushort FUN_00023a90(void)
+ushort lampDriverOutputDispatcher(void)
 
 {
-  if ((_DAT_0080daac & 0x20) == 0) {
+  if ((lamp_driver_output_bitmask & 0x20) == 0) {
     if (DAT_0080bd38 == '\0') {
       DAT_0080bd38 = '\0';
       bit_4_of_master_status_byte_a_0_1 = bit_4_of_master_status_byte_a_0_1 & 0xbf;
@@ -23760,7 +23758,7 @@ ushort FUN_00023a90(void)
     DAT_0080bd38 = '\0';
     bit_4_of_master_status_byte_a_0_1 = bit_4_of_master_status_byte_a_0_1 | 0x40;
   }
-  if ((_DAT_0080daac & 4) == 0) {
+  if ((lamp_driver_output_bitmask & 4) == 0) {
     if (DAT_0080bd1e == '\0') {
       DAT_0080bd1e = '\0';
       bit_6_which_enables_the_warning_lamp_driver_enable_disable =
@@ -23772,7 +23770,7 @@ ushort FUN_00023a90(void)
     bit_6_which_enables_the_warning_lamp_driver_enable_disable =
          bit_6_which_enables_the_warning_lamp_driver_enable_disable | 0x10;
   }
-  if ((_DAT_0080daac & 0x40) == 0) {
+  if ((lamp_driver_output_bitmask & 0x40) == 0) {
     if (DAT_0080bd38 == '\0') {
       DAT_0080bd38 = '\0';
       bit_4_of_master_status_byte_a_0_1 = bit_4_of_master_status_byte_a_0_1 & 0xbf;
@@ -23782,7 +23780,7 @@ ushort FUN_00023a90(void)
     DAT_0080bd38 = '\0';
     bit_4_of_master_status_byte_a_0_1 = bit_4_of_master_status_byte_a_0_1 | 0x40;
   }
-  if ((_DAT_0080daac & 1) == 0) {
+  if ((lamp_driver_output_bitmask & 1) == 0) {
     if (priority_of_client_currently_overriding_stop_engine_lamp_00_ff == '\0') {
       priority_of_client_currently_overriding_stop_engine_lamp_00_ff = '\0';
       bit_6_which_enables_the_warning_lamp_driver_enable_disable =
@@ -23794,7 +23792,7 @@ ushort FUN_00023a90(void)
     bit_6_which_enables_the_warning_lamp_driver_enable_disable =
          bit_6_which_enables_the_warning_lamp_driver_enable_disable | 2;
   }
-  if ((_DAT_0080daac & 8) == 0) {
+  if ((lamp_driver_output_bitmask & 8) == 0) {
     if (priority_of_client_currently_overriding_wait_to_start_lamp_00_ff == '\0') {
       priority_of_client_currently_overriding_wait_to_start_lamp_00_ff = '\0';
       bit_6_which_enables_the_warning_lamp_driver_enable_disable =
@@ -23806,7 +23804,7 @@ ushort FUN_00023a90(void)
     bit_6_which_enables_the_warning_lamp_driver_enable_disable =
          bit_6_which_enables_the_warning_lamp_driver_enable_disable | 1;
   }
-  if ((_DAT_0080daac & 2) == 0) {
+  if ((lamp_driver_output_bitmask & 2) == 0) {
     if (DAT_0080bd20 == '\0') {
       DAT_0080bd20 = '\0';
       bit_6_which_enables_the_warning_lamp_driver_enable_disable =
@@ -23818,7 +23816,7 @@ ushort FUN_00023a90(void)
     bit_6_which_enables_the_warning_lamp_driver_enable_disable =
          bit_6_which_enables_the_warning_lamp_driver_enable_disable | 0x40;
   }
-  if ((_DAT_0080daac & 0x10) == 0) {
+  if ((lamp_driver_output_bitmask & 0x10) == 0) {
     if (DAT_0080bd1c == '\0') {
       DAT_0080bd1c = '\0';
       bit_6_which_enables_the_warning_lamp_driver_enable_disable =
@@ -23829,9 +23827,9 @@ ushort FUN_00023a90(void)
     DAT_0080bd1c = 0;
     bit_6_which_enables_the_warning_lamp_driver_enable_disable =
          bit_6_which_enables_the_warning_lamp_driver_enable_disable | 4;
-    return _DAT_0080daac & 0x10;
+    return lamp_driver_output_bitmask & 0x10;
   }
-  return _DAT_0080daac & 0x10;
+  return lamp_driver_output_bitmask & 0x10;
 }
 
 
@@ -24280,7 +24278,7 @@ void FUN_00023be8(void)
 void FUN_00024804(void)
 
 {
-  FUN_00023a90();
+  lampDriverOutputDispatcher();
   FUN_00023be8();
   return;
 }
@@ -24288,12 +24286,12 @@ void FUN_00024804(void)
 
 
 //
-// Function: FUN_00024812 @ 0x00024812
+// Function: iahDisableWaitToStartLamp @ 0x00024812
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00024812(void)
+void iahDisableWaitToStartLamp(void)
 
 {
   if (priority_of_client_currently_overriding_wait_to_start_lamp_00_ff == '\0') {
@@ -24430,10 +24428,10 @@ uint ioControlToggleCycle(void)
   
                     /* From J90280.05 @ 0x01d8cc (confidence: 88%) */
   if (_DAT_008019d8 == 0) {
-    _DAT_0080daac = _DAT_0080daac | 1;
+    lamp_driver_output_bitmask = lamp_driver_output_bitmask | 1;
   }
   else if (_DAT_008019d8 == 10) {
-    _DAT_0080daac = _DAT_0080daac & 0xfffe;
+    lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffe;
   }
   else if (_DAT_008019d8 == 0x14) {
     _DAT_008019d8 = 0;
@@ -24462,17 +24460,17 @@ undefined1 ioControlLampStateMachine(void)
     if (DAT_008019e0 != '\0') {
       DAT_008019e0 = '\0';
       _DAT_008019dc = 0;
-      _DAT_0080daac = _DAT_0080daac & 0xfffd;
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffd;
     }
   }
   else {
     uVar1 = 0;
     if (_DAT_008019dc == 0) {
-      _DAT_0080daac = _DAT_0080daac | 2;
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask | 2;
       _DAT_008019dc = 1;
     }
     else if (_DAT_008019dc == _DAT_000611a0) {
-      _DAT_0080daac = _DAT_0080daac & 0xfffd;
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffd;
       _DAT_008019dc = _DAT_008019dc + 1;
     }
     else if (((uint)_DAT_000611a0 + (uint)_DAT_000611a2) - 1 == (uint)_DAT_008019dc) {
@@ -24487,17 +24485,17 @@ undefined1 ioControlLampStateMachine(void)
     if (DAT_008019e1 != '\0') {
       DAT_008019e1 = '\0';
       _DAT_008019da = 0;
-      _DAT_0080daac = _DAT_0080daac & 0xfffe;
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffe;
     }
   }
   else {
     uVar1 = 0;
     if (_DAT_008019da == 0) {
-      _DAT_0080daac = _DAT_0080daac | 1;
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask | 1;
       _DAT_008019da = 1;
     }
     else if (_DAT_008019da == _DAT_000611a0) {
-      _DAT_0080daac = _DAT_0080daac & 0xfffe;
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffe;
       _DAT_008019da = _DAT_008019da + 1;
     }
     else if (((uint)_DAT_000611a0 + (uint)_DAT_000611a2) - 1 == (uint)_DAT_008019da) {
@@ -24514,11 +24512,11 @@ undefined1 ioControlLampStateMachine(void)
   if (DAT_008019e2 == '\x01') {
     uVar1 = 0;
     if (_DAT_008019dc == 0) {
-      _DAT_0080daac = _DAT_0080daac | 2;
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask | 2;
       _DAT_008019dc = 1;
     }
     else if (_DAT_008019dc == 10) {
-      _DAT_0080daac = _DAT_0080daac & 0xfffd;
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffd;
       _DAT_008019dc = 0xb;
     }
     else if (_DAT_008019dc == 0x13) {
@@ -24531,7 +24529,7 @@ undefined1 ioControlLampStateMachine(void)
   }
   if ((0x77 < DAT_008019e3) && (DAT_008019e2 == '\x01')) {
     _DAT_008019dc = 0;
-    _DAT_0080daac = _DAT_0080daac & 0xfffd;
+    lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffd;
     DAT_008019e2 = '\0';
     DAT_008019e3 = 0;
     _DAT_0080d684 = 0;
@@ -24556,7 +24554,7 @@ uint ioControlDigitDisplaySequencer(undefined4 param_1)
   
                     /* From J90280.05 @ 0x01d9ea (confidence: 75%) */
   if (_DAT_008019d6 == 0) {
-    _DAT_0080daac = _DAT_0080daac & 0xfffe | 2;
+    lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffe | 2;
     _DAT_008019d6 = 1;
     DAT_008019e4 = (char)(param_1._0_2_ / 100);
     DAT_008019e5 = (char)(param_1._0_2_ / 10) + DAT_008019e4 * -10;
@@ -24567,7 +24565,7 @@ uint ioControlDigitDisplaySequencer(undefined4 param_1)
   else {
     uVar2 = (undefined3)(in_D0 >> 8);
     if (_DAT_008019d6 == 0x28) {
-      _DAT_0080daac = _DAT_0080daac & 0xfffd;
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffd;
       in_D0 = CONCAT31(uVar2,DAT_008019ee);
       if (DAT_008019ee == DAT_008019e4) {
         DAT_008019ee = '\0';
@@ -24720,7 +24718,7 @@ int faultCodeDisplayController(void)
               cVar2 = extraout_D0b_02;
             }
             if (cVar2 != '}') {
-              _DAT_0080daac = _DAT_0080daac & 0xfffc;
+              lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffc;
               _DAT_008019d6 = 0;
               _DAT_008019d8 = 0;
               DAT_008019ee = 0;
@@ -24735,7 +24733,7 @@ int faultCodeDisplayController(void)
           FUN_00024cd2();
           uVar1 = extraout_var_01;
           if (extraout_D0b_01 != '}') {
-            _DAT_0080daac = _DAT_0080daac & 0xfffc;
+            lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffc;
             _DAT_008019d6 = 0;
             _DAT_008019d8 = 0;
             DAT_008019ee = 0;
@@ -24750,7 +24748,7 @@ int faultCodeDisplayController(void)
         FUN_00024c5a();
         uVar1 = extraout_var_00;
         if (extraout_D0b_00 != '}') {
-          _DAT_0080daac = _DAT_0080daac & 0xfffc;
+          lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffc;
           _DAT_008019d6 = 0;
           _DAT_008019d8 = 0;
           DAT_008019ee = 0;
@@ -24766,7 +24764,7 @@ int faultCodeDisplayController(void)
       FUN_00024c5a();
       uVar1 = extraout_var;
       if (extraout_D0b != '}') {
-        _DAT_0080daac = _DAT_0080daac & 0xfff8;
+        lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfff8;
         _DAT_008019d6 = 0;
         _DAT_008019d8 = 0;
         DAT_008019ee = 0;
@@ -24776,7 +24774,7 @@ int faultCodeDisplayController(void)
       }
     }
     if (DAT_008019e7 == '}') {
-      _DAT_0080daac = _DAT_0080daac | 3;
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask | 3;
     }
     else {
       ioControlDigitDisplaySequencer();
@@ -24786,7 +24784,7 @@ int faultCodeDisplayController(void)
   }
   if (DAT_008019e8 != '\0') {
     DAT_008019e8 = '\0';
-    _DAT_0080daac = _DAT_0080daac & 0xfffc;
+    lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffc;
   }
   return 1;
 }
@@ -24865,11 +24863,11 @@ void activeFaultLampStateMachine(void)
   }
   if (bVar1) {
     if (_DAT_008019da == 0) {
-      _DAT_0080daac = _DAT_0080daac | 1;
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask | 1;
       _DAT_008019da = 1;
     }
     else if (_DAT_008019da == _DAT_000611a0) {
-      _DAT_0080daac = _DAT_0080daac & 0xfffe;
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffe;
       _DAT_008019da = _DAT_008019da + 1;
     }
     else if ((uint)_DAT_000611a0 + (uint)_DAT_000611a2 == (uint)_DAT_008019da) {
@@ -24880,18 +24878,18 @@ void activeFaultLampStateMachine(void)
     }
   }
   else if (bVar6) {
-    _DAT_0080daac = _DAT_0080daac | 1;
+    lamp_driver_output_bitmask = lamp_driver_output_bitmask | 1;
   }
   else {
-    _DAT_0080daac = _DAT_0080daac & 0xfffe;
+    lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffe;
   }
   if (bVar2) {
     if (_DAT_008019dc == 0) {
-      _DAT_0080daac = _DAT_0080daac | 2;
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask | 2;
       _DAT_008019dc = 1;
     }
     else if (_DAT_008019dc == _DAT_000611a0) {
-      _DAT_0080daac = _DAT_0080daac & 0xfffd;
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffd;
       _DAT_008019dc = _DAT_008019dc + 1;
     }
     else if ((uint)_DAT_000611a0 + (uint)_DAT_000611a2 == (uint)_DAT_008019dc) {
@@ -24902,18 +24900,18 @@ void activeFaultLampStateMachine(void)
     }
   }
   else if (bVar3) {
-    _DAT_0080daac = _DAT_0080daac | 2;
+    lamp_driver_output_bitmask = lamp_driver_output_bitmask | 2;
   }
   else {
-    _DAT_0080daac = _DAT_0080daac & 0xfffd;
+    lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffd;
   }
   if (bVar4) {
     if (_DAT_008019de == 0) {
-      _DAT_0080daac = _DAT_0080daac | 4;
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask | 4;
       _DAT_008019de = 1;
     }
     else if (_DAT_008019de == _DAT_000611a0) {
-      _DAT_0080daac = _DAT_0080daac & 0xfffb;
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffb;
       _DAT_008019de = _DAT_008019de + 1;
     }
     else if (((uint)_DAT_000611a0 + (uint)_DAT_000611a2) - 1 == (uint)_DAT_008019de) {
@@ -24924,10 +24922,10 @@ void activeFaultLampStateMachine(void)
     }
   }
   else if (bVar5) {
-    _DAT_0080daac = _DAT_0080daac | 4;
+    lamp_driver_output_bitmask = lamp_driver_output_bitmask | 4;
   }
   else {
-    _DAT_0080daac = _DAT_0080daac & 0xfffb;
+    lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffb;
   }
   return;
 }
@@ -24947,27 +24945,27 @@ void faultLampBlinkPatternGenerator(void)
   if (_DAT_00801a16 < 5) {
     _DAT_00801a18 = _DAT_00801a18 + 1;
     if ((_DAT_00801a18 != 0) && (_DAT_00801a18 < 6)) {
-      _DAT_0080daac = _DAT_0080daac | 4;
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask | 4;
       return;
     }
     if ((5 < _DAT_00801a18) && (_DAT_00801a18 < 0xc)) {
-      _DAT_0080daac = _DAT_0080daac & 0xfffb;
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffb;
       return;
     }
     if ((0xb < _DAT_00801a18) && (_DAT_00801a18 < 0x12)) {
-      _DAT_0080daac = _DAT_0080daac | 4;
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask | 4;
       return;
     }
     if ((0x11 < _DAT_00801a18) && (_DAT_00801a18 < 0x18)) {
-      _DAT_0080daac = _DAT_0080daac & 0xfffb;
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffb;
       return;
     }
     if ((0x17 < _DAT_00801a18) && (_DAT_00801a18 < 0x1e)) {
-      _DAT_0080daac = _DAT_0080daac | 4;
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask | 4;
       return;
     }
     if ((0x1d < _DAT_00801a18) && (_DAT_00801a18 < 0x30)) {
-      _DAT_0080daac = _DAT_0080daac & 0xfffb;
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffb;
       return;
     }
     _DAT_00801a18 = 0;
@@ -24989,28 +24987,28 @@ void FUN_000253b0(void)
 {
   _DAT_00801a1a = _DAT_00801a1a + 1;
   if ((_DAT_00801a1a != 0) && (_DAT_00801a1a < 6)) {
-    _DAT_0080daac = _DAT_0080daac | 2;
+    lamp_driver_output_bitmask = lamp_driver_output_bitmask | 2;
     DAT_00801a1c = 1;
     return;
   }
   if ((5 < _DAT_00801a1a) && (_DAT_00801a1a < 0x18)) {
-    _DAT_0080daac = _DAT_0080daac & 0xfffd;
+    lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffd;
     return;
   }
   if ((0x17 < _DAT_00801a1a) && (_DAT_00801a1a < 0x1e)) {
-    _DAT_0080daac = _DAT_0080daac | 2;
+    lamp_driver_output_bitmask = lamp_driver_output_bitmask | 2;
     return;
   }
   if ((0x1d < _DAT_00801a1a) && (_DAT_00801a1a < 0x30)) {
-    _DAT_0080daac = _DAT_0080daac & 0xfffd;
+    lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffd;
     return;
   }
   if ((0x2f < _DAT_00801a1a) && (_DAT_00801a1a < 0x36)) {
-    _DAT_0080daac = _DAT_0080daac | 2;
+    lamp_driver_output_bitmask = lamp_driver_output_bitmask | 2;
     return;
   }
   if ((0x35 < _DAT_00801a1a) && (_DAT_00801a1a < 0x48)) {
-    _DAT_0080daac = _DAT_0080daac & 0xfffd;
+    lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffd;
     return;
   }
   DAT_00801a1c = 0;
@@ -25046,11 +25044,11 @@ void periodicLampFlashController(void)
         _DAT_00801a1e = 0;
       }
       else {
-        _DAT_0080daac = _DAT_0080daac & 0xfffb;
+        lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffb;
       }
     }
     else {
-      _DAT_0080daac = _DAT_0080daac | 4;
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask | 4;
     }
     if (3 < _DAT_00801a20) {
       DAT_00801a1d = '\0';
@@ -28089,7 +28087,7 @@ void FUN_000284e8(void)
   FUN_0002482e();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x87ce;
-  FUN_00024812();
+  iahDisableWaitToStartLamp();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x87d4;
   initLookupTablePointers1();
@@ -28312,7 +28310,7 @@ void FUN_000284e8(void)
   FUN_0002482e();
   _DAT_00810ffc = 2;
   _DAT_00810ffe = 0x8996;
-  FUN_00024812();
+  iahDisableWaitToStartLamp();
   _DAT_00810ffc = 2;
   _DAT_00810ffe = 0x899c;
   func_0x000478c6();
@@ -28440,7 +28438,7 @@ void mainSystemInitialization(void)
   FUN_0001dbd8();
   FUN_0001db8a();
   FUN_0002482e();
-  FUN_00024812();
+  iahDisableWaitToStartLamp();
   initLookupTablePointers1();
   fuelDemandLimitSource2Selector();
   FUN_00026b82();
@@ -28515,7 +28513,7 @@ void mainSystemInitialization(void)
   FUN_0000e780();
   FUN_00025594();
   FUN_0002482e();
-  FUN_00024812();
+  iahDisableWaitToStartLamp();
   func_0x000478c6();
   do {
     do {
@@ -28562,7 +28560,7 @@ void slowCycle4Coordinator(void)
   FUN_0001dbd8();
   FUN_0001db8a();
   FUN_0002482e();
-  FUN_00024812();
+  iahDisableWaitToStartLamp();
   initLookupTablePointers1();
   fuelDemandLimitSource2Selector();
   FUN_00026b82();
@@ -28637,7 +28635,7 @@ void slowCycle4Coordinator(void)
   FUN_0000e780();
   FUN_00025594();
   FUN_0002482e();
-  FUN_00024812();
+  iahDisableWaitToStartLamp();
   func_0x000478c6();
   do {
     do {
@@ -28672,7 +28670,7 @@ void engineDiagnosticSystemCoordinator(void)
   FUN_0001dbd8();
   FUN_0001db8a();
   FUN_0002482e();
-  FUN_00024812();
+  iahDisableWaitToStartLamp();
   initLookupTablePointers1();
   fuelDemandLimitSource2Selector();
   FUN_00026b82();
@@ -28747,7 +28745,7 @@ void engineDiagnosticSystemCoordinator(void)
   FUN_0000e780();
   FUN_00025594();
   FUN_0002482e();
-  FUN_00024812();
+  iahDisableWaitToStartLamp();
   func_0x000478c6();
   do {
     do {
@@ -28835,7 +28833,7 @@ void fuelDemandUpdateOrchestrator(void)
   FUN_0000e780();
   FUN_00025594();
   FUN_0002482e();
-  FUN_00024812();
+  iahDisableWaitToStartLamp();
   func_0x000478c6();
   do {
     do {
@@ -28920,7 +28918,7 @@ void advancedEngineProtectionCoordinator(void)
   FUN_0000e780();
   FUN_00025594();
   FUN_0002482e();
-  FUN_00024812();
+  iahDisableWaitToStartLamp();
   func_0x000478c6();
   do {
     do {
@@ -28960,7 +28958,7 @@ void shutdownMinimumSelectorOrchestrator(void)
   FUN_0000e780();
   FUN_00025594();
   FUN_0002482e();
-  FUN_00024812();
+  iahDisableWaitToStartLamp();
   func_0x000478c6();
   do {
     do {
@@ -28989,7 +28987,7 @@ void FUN_00028978(void)
   FUN_0000e780();
   FUN_00025594();
   FUN_0002482e();
-  FUN_00024812();
+  iahDisableWaitToStartLamp();
   func_0x000478c6();
   do {
     do {
@@ -29015,7 +29013,7 @@ void phase4InitSequence(void)
 
 {
                     /* From J90280.05 @ 0x020780 (confidence: 69%) */
-  FUN_00024812();
+  iahDisableWaitToStartLamp();
   func_0x000478c6();
   do {
     do {
@@ -36467,11 +36465,11 @@ void FUN_00034bf8(undefined4 param_1)
 ushort vp44FaultRegisterBit2Monitor(void)
 
 {
-  ushort uVar1;
+  word wVar1;
   ushort uVar2;
   
                     /* From J90280.05 @ 0x031306 (confidence: 80%) */
-  uVar1 = _DAT_0080daac;
+  wVar1 = lamp_driver_output_bitmask;
   if ((_DAT_00803cac & 4) == 0) {
     _status_32_word_bit_mapped_system_error_status_word_4_0_1 =
          _status_32_word_bit_mapped_system_error_status_word_4_0_1 & 0xdfff;
@@ -36479,13 +36477,13 @@ ushort vp44FaultRegisterBit2Monitor(void)
   }
   else {
     if (_filtered_water_in_fuel_as_read_and_scaled_from_a_d_algorithm_2_0_3 == 1) {
-      _DAT_0080daac = _DAT_0080daac | 0x10;
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask | 0x10;
       _status_32_word_bit_mapped_system_error_status_word_4_0_1 =
            _status_32_word_bit_mapped_system_error_status_word_4_0_1 | 0x2000;
       _DAT_00806048 = _DAT_00806048 | 0x2000;
       return _DAT_00803cac & 4;
     }
-    _DAT_0080daac = _DAT_0080daac & 0xffef;
+    lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xffef;
     uVar2 = _status_32_word_bit_mapped_system_error_status_word_4_0_1 & 0x2000;
     if (uVar2 != 0) {
       uVar2 = _DAT_00806048 & 0x2000;
@@ -36496,7 +36494,7 @@ ushort vp44FaultRegisterBit2Monitor(void)
       }
     }
   }
-  _DAT_0080daac = uVar1 & 0xffef;
+  lamp_driver_output_bitmask = wVar1 & 0xffef;
   return uVar2;
 }
 

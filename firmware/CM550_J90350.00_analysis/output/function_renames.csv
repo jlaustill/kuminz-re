@@ -83,7 +83,7 @@ address,name
 0x00010fe0,eepromCalibrationWriteSecondary
 0x000114d4,validateRedundantSensors
 0x000117ec,firmwareDataCopyToWorkingMemory
-0x00011880,enableFaultFlagScanner
+0x00011880,default
 0x0001188c,waterInFuelDetectionStateInit
 0x000118b2,waterInFuelFaultClear
 0x000118fc,activateHighRpmShutdownFlag
@@ -127,7 +127,7 @@ address,name
 0x0001709e,fuelTemperatureLimitingSecondary
 0x00017150,canControllerConfigInit
 0x0001717a,derateProtectionSlowCycle20Coordinator
-0x000171aa,diagnosticStatisticsSlowCycle20Coordinator
+0x000171aa,caseD_3
 0x000171be,fuel_limit_arbitrator
 0x000176de,engineRpmSourceInit
 0x000177c2,rpmBasedFuelLimitCalculator
@@ -322,6 +322,8 @@ address,name
 0x00023920,phase3_countdown_timer_manager
 0x000239d2,diagnosticStateInitializer
 0x00023a3c,ioControlEntryRemove
+0x00023a90,lampDriverOutputDispatcher
+0x00024812,iahDisableWaitToStartLamp
 0x0002481e,initIoControlRegister
 0x00024858,ioControlMaskStateMachine
 0x000249b6,ioControlToggleCycle

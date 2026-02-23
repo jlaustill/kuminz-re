@@ -23,9 +23,52 @@ generations with varying levels of complexity.
 
 ## CM848 (S90140.06 - PowerPC MPC555)
 
-The CM848 has a comprehensive IAH system with 68 configuration parameters.
-This ECU uses HPCR (High Pressure Common Rail) fuel system with sophisticated
-grid heater control.
+### IAH Feature Status: HARDWARE PRESENT, STATE MACHINE STUB EMPTY
+
+**The ECU hardware supports IAH** — ECU connector pins 5 and 6 drive IAH relay
+1 and relay 2 respectively (confirmed by wiring diagram). However, the IAH state
+machine code slot in the S90140.06 Bank 2 flash is empty.
+
+**Hardware evidence:**
+- ECU pin 5 = Intake Air Heater Relay No. 2 (confirmed by Dodge Ram wiring diagram)
+- ECU pin 6 = Intake Air Heater Relay No. 1 (confirmed by Dodge Ram wiring diagram)
+- E2M parameters define `Cold_Start_Aid_1_Driver_Map` (0x01157956) and
+  `Cold_Start_Aid_2_Driver_Map` (0x01157958) — hardware resource assignments
+  for the relay output channels
+- E2M alias: `Cold_Start_Aid_1_Driver` = `Fuel_Heater_Driver` (same virtual
+  address 0x01157705) — "Cold Start Aid" is Cummins' alternate name for IAH
+
+**Firmware evidence (empty stub):**
+- `emptyStub_phaseGroupA` (0x0050aec0) in Bank 2 flash decompiles to `return;`
+  — this is the main loop slot where the IAH state machine would execute
+- No function in the ROM or Bank 2 flash contains a 6-state switch/case matching
+  the IAH phase model (key_on/setup/preheat/crank/postheat/off)
+- No J1850/SCI2 communication code exists in this ROM (SCI2 registers at
+  0x305020-0x305026 are never accessed despite being defined)
+- The output driver infrastructure supports IAH (channel dispatch tables,
+  function pointer tables for TPU/MIOS drivers) but no code activates the
+  IAH-specific channels
+- Bank 2 has three other empty stub functions that are similarly reserved:
+  - `emptyStub_reserved513200` (0x00513200) — called in main loop phase 5
+  - `emptyStub_reserved510d04` (0x00510d04) — called in main loop phase 9
+  - `emptyStub_reserved50dd40` (0x0050dd40) — called in main loop phase 8
+
+**E2M Chrysler-specific references (informational, NOT proof of delegation):**
+- `IAH_Postheat_Temp_Flag` description mentions "Battery Temp **(for Chrysler)**"
+- `Battery_Voltage_When_IAH_Grids_On` describes "J1850 $C0 message when IAH active"
+- These indicate IAH was DESIGNED for Chrysler platforms, but do not prove
+  another controller handles IAH in this specific build
+
+**Open questions:**
+- Whether a different calibration version fills the IAH stub with actual code
+- Whether the TIPM/body controller sends commands to the ECU to toggle relays
+- Whether the IAH relay outputs function at all in this specific calibration
+
+### IAH Configuration Parameters (from e2m file)
+
+The e2m file (S90140.12) defines 68 IAH configuration parameters. These define
+the complete IAH control system for the CM848 platform — the state machine code
+that uses them would execute from `emptyStub_phaseGroupA` if compiled in.
 
 ### IAH Control Variables
 
@@ -160,10 +203,45 @@ grid heater control.
 
 ## CM550 (J90350.00 - MC68336)
 
-The CM550 also has an IAH system but with fewer parameters and different
-addressing. This ECU uses VP44 rotary pump fuel system.
+### IAH Feature Status: EXCLUDED (#ifdef'd out)
+
+**The IAH state machine is NOT compiled into J90350.00.** The grid heater control
+code was excluded via preprocessor `#ifdef` at build time. Evidence:
+
+- The lamp driver output bitmask (`lamp_driver_output_bitmask` at 0x0080daac) has
+  bit 3 = Wait to Start lamp, but **no function in the entire ROM ever sets bit 3**
+- `iahDisableWaitToStartLamp` (0x24812) unconditionally clears the WTS lamp on every call
+- `lampDriverOutputDispatcher` (0x23a90) reads bit 3 to drive the WTS lamp, but it
+  is always 0 since nothing sets it
+- IAH calibration parameters (IHPHTPDL, IHPHSDXA, IHPHTMZA, IHPSDCXA) exist in
+  global_variables.csv at 0x80785c-0x80792c but are never referenced by ROM code
+- The e2m file defines IAH parameters for the CM550 platform, but this specific
+  build (ISB 195hp, April 1998) was compiled without IAH support
+
+This is consistent with the `#ifdef` preprocessor pattern documented in
+`docs/cross-firmware-analysis.md` — the same source code compiled with different
+flags produces different feature sets.
+
+### Lamp Driver Architecture (discovered during IAH investigation)
+
+The CM550 uses a bitmask at `lamp_driver_output_bitmask` (0x0080daac) to control
+output drivers. The dispatcher function `lampDriverOutputDispatcher` (0x23a90)
+reads this bitmask and sets/clears individual lamp driver enable bits:
+
+| Bit | Mask | Lamp | Driver Variable |
+|-----|------|------|-----------------|
+| 0 | 0x01 | Stop Engine | `stop_engine_lamp` |
+| 1 | 0x02 | Warning | `warning_lamp` |
+| 2 | 0x04 | Check Engine | `check_engine_lamp` |
+| 3 | 0x08 | **Wait to Start** | `wait_to_start_lamp_state` (0x0080169a) |
+| 4 | 0x10 | Water in Fuel | Set by `vp44FaultRegisterBit2Monitor` |
+| 5 | 0x20 | Retarder 1 | `retarder_driver_1` |
+| 6 | 0x40 | Retarder 2 | `retarder_driver_2` |
 
 ### IAH Parameter Addresses (from e2m files)
+
+These parameters are defined in e2m calibration files but are **not referenced**
+by the J90350.00 ROM code (IAH feature excluded):
 
 | Parameter | Address | Scale | Description |
 |-----------|---------|-------|-------------|
@@ -195,14 +273,6 @@ The CM550 and CM848 IAH parameters map as follows:
 - CM848 (HPCR): 0.067934784 MM3S
 
 This reflects the different fuel delivery systems - HPCR injects more fuel per stroke than VP44.
-
-### Key Differences from CM848
-
-1. **Simpler Parameter Set**: ~15 parameters vs 68 for CM848
-2. **VP44 vs HPCR**: VP44 has different fuel delivery characteristics
-3. **Address Format**: Uses e2m file addressing (0x81xx) vs direct RAM (0x01xxxxxx)
-4. **No 24V Control**: CM848 has explicit 24V system support
-5. **Reduced Monitor Support**: Less sophisticated OBDII monitoring
 
 ---
 
@@ -246,29 +316,50 @@ This parameter maps to the J1939 DTC-related status for IAH system monitoring.
 
 ---
 
-## IAH Function Locations
+## IAH Code Status Across Firmwares
 
-### CM848 Unknown Function Addresses
+| Firmware | ECU | Module ID | IAH Status | Reason |
+|----------|-----|-----------|------------|--------|
+| J90350.00 | CM550 | EN | **EXCLUDED** | ISB 195hp build, #ifdef'd out |
+| S90140.06 | CM848D | CC | **STUB EMPTY** | Hardware present (ECU pins 5/6 drive IAH relays), state machine slot empty |
 
-The decompiled code references IAH variables by raw addresses. The actual
-control functions appear as `FUN_005xxxxx` in `cm848_rom.ghidra.cpp`.
+CM550 J90350.00 has IAH excluded at compile time (#ifdef). CM848 S90140.06 has
+the IAH slot present (`emptyStub_phaseGroupA`) but containing only `return;` —
+the hardware supports IAH and e2m defines full calibration, but the state machine
+code is absent from this specific Bank 2 flash build.
 
-**To locate IAH functions:**
-1. Search for references to `0x018A3500` (IAH_Control_Status)
-2. Search for references to `0x01162B06` (IAH_Preheat_Timer)
-3. Search for references to `0x01157705` (Fuel_Heater_Driver)
+### CM848 Empty Stub Function Slots
 
-**Pattern to identify:**
-- Functions that read IAH parameters (0x011xxxxx, 0x018Axxxx)
-- Functions that write discrete outputs (0x01157xxx)
-- Functions that update IAH status (0x018A3500, 0x018A3502)
+Several Bank 2 function slots contain only `return;` — reserved for optional features:
 
-### CM550 IAH Functions
+| Stub Address | Called From | Potential Feature |
+|-------------|-------------|-------------------|
+| 0x0050aec0 | `phase_group_a_processing()` (every A-phase) | **IAH likely candidate** — high-frequency slot for state machine |
+| 0x00513200 | Main loop phase 5 | Unknown excluded feature |
+| 0x00510d04 | Main loop phase 9 | Unknown excluded feature |
+| 0x0050dd40 | Main loop phase 8 | Unknown excluded feature |
 
-Likely named in the decompiled output. Search for:
-- Functions containing "IAH" or "preheat" or "heater" patterns
-- Functions called during key-on sequence
-- Functions monitoring RPM during cranking/post-start
+### CM550 Named Functions (from IAH investigation)
+
+| Address | Function | Purpose |
+|---------|----------|---------|
+| 0x00023a90 | `lampDriverOutputDispatcher` | Reads lamp bitmask, drives output enable flags |
+| 0x00024812 | `iahDisableWaitToStartLamp` | Unconditionally clears WTS lamp (IAH disabled) |
+
+### Key Findings
+
+- **E2M files are universal**: Both CM550 and CM848 e2m files define IAH
+  parameters for ALL possible configurations, not just the compiled ROM
+- **#ifdef pattern confirmed** (CM550): Same as documented in `docs/cross-firmware-analysis.md`
+- **Hardware supports IAH** (CM848): ECU pins 5/6 are wired to IAH relay 1 and 2
+  per the Dodge Ram wiring diagram — the physical circuit is present
+- **Cold Start Aid = IAH**: `Cold_Start_Aid_1_Driver` and `Fuel_Heater_Driver`
+  are aliases at the same virtual address (0x01157705) in the e2m parameter system
+- **J1850/SCI2 absent**: No SCI2 register accesses exist in the CM848 ROM despite
+  registers being defined — J1850 communication is not compiled in
+- **Open question**: Whether a different calibration version populates
+  `emptyStub_phaseGroupA` with IAH state machine code, or whether the TIPM/body
+  controller commands the ECU to toggle relays externally
 
 ---
 
