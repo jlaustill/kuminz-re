@@ -51,6 +51,8 @@ address,name
 0x0000d584,diagnosticState7Setter
 0x0000d59e,fuelBlendTablePointerSetup
 0x0000d5e6,initBoostProtectionSystem
+# Hardware/state functions
+0x0000e780,clearKickdownControlState
 0x0000e97e,vp44ControlVariablesReset
 0x0000eaec,insiteParameterTableIterator
 0x0000eba4,diagnosticMessageTransmissionManager
@@ -61,6 +63,7 @@ address,name
 0x0000f8c6,param_lookup_1
 0x0000f930,param_lookup_3
 0x0000fa06,vp44State2TransitionHandler
+0x0000faa6,calculateGovernorDroopSpeed
 0x0000fb26,fuelLimitExceedanceStatisticsAccumulator
 0x0000fbe4,fuelSourceOilPressureConditionChecker
 0x0000ff56,initFuelArbitratorThreshold5
@@ -83,7 +86,7 @@ address,name
 0x00010fe0,eepromCalibrationWriteSecondary
 0x000114d4,validateRedundantSensors
 0x000117ec,firmwareDataCopyToWorkingMemory
-0x00011880,default
+0x00011880,caseD_4
 0x0001188c,waterInFuelDetectionStateInit
 0x000118b2,waterInFuelFaultClear
 0x000118fc,activateHighRpmShutdownFlag
@@ -108,6 +111,8 @@ address,name
 0x00014dc6,faultFlagScannerAndProcessor
 0x00014f42,insitePidDtcHandler
 0x00014fae,initHourMeterSystem
+0x00014fca,sampleDiscreteInputPins
+0x000159ee,ioDriverStrobeHandler
 0x00015dd0,initVP44StatusMonitoring
 0x00015e06,initCANBus
 0x00015f8c,emptyStubFunction4
@@ -181,17 +186,25 @@ address,name
 0x0001b39a,dutyCycleMonitorBufferInit
 0x0001b40c,phase2_slot_1_handler
 0x0001b4c2,phase2_slot_8_handler
+# Scheduler common task - called every phase (40 phases per cycle)
+# CM848 equivalent: phase_common_processing
+0x0001b4d0,ioDriverStrobeHandlerWrapper
+0x0001b4d8,evenPhaseSchedulerTaskSet
 0x0001b4ea,diagnosticMonitoringCoordinator
 0x0001b4f6,boostPressureControlInit
 0x0001b504,oddPhaseSchedulerTaskSet
 0x0001b518,vp44_engine_management_system
 0x0001b558,vp44ControlSystemCoordinator
 0x0001b56a,slowCycle10Coordinator
+# Periodic task sets - CM848 equivalent: periodicTaskGroup*
+0x0001b572,periodicTaskSet_governorProtection
 0x0001b57e,engine_control_cycle
 0x0001b5b4,slowCycle20ExtendedCoordinator
 0x0001b5ba,vp44ExtendedFaultDetectionCoordinator
+0x0001b5ce,periodicTaskSet_fuelTiming
 0x0001b604,fuelTimingCoordinator
 0x0001b60a,diagnosticDataTransmissionSlowCycle10Coordinator
+0x0001b612,periodicTaskSet_fuelDemand
 0x0001b62a,evenPhaseSchedulerTaskSet
 0x0001b666,emptyStubFunction3
 0x0001b6ba,rpm_control_system
@@ -228,6 +241,7 @@ address,name
 0x0001c9d2,fuelDemandProportionalCalculationSlowCycle40Coordinator
 0x0001ca54,fuelDemandLimitSelector11
 0x0001ca5c,canPinVp44StatusController
+0x0001cb76,calculateBlendedTableValue
 0x0001ce7c,initDiagnosticProtocol
 0x0001d2e4,update_engine_protection_thresholds
 0x0001d9b4,vp44SensorStatusMonitor
@@ -235,6 +249,8 @@ address,name
 0x0001dbee,main
 0x0001dcfc,vp44ControlStructureInit
 0x0001dd2c,diagnosticBufferPointerInit
+# Utility functions - matched with CM848 naming
+0x0001e02a,subtractAndClampValue
 0x0001e056,serialNodeAddressChecker
 0x0001e086,serialNodeAddressForwarder
 0x0001e0bc,canFrameDataCopy
@@ -274,6 +290,7 @@ address,name
 0x000200a4,j1939TorqueControlModeClear
 0x000200b4,j1939TorqueControlModeSet
 0x000200c6,systemFunction6xParameterized
+0x000202d8,setBitInArray
 0x000204b0,outputControlState1Handler
 0x00021272,canTransmissionController
 0x0002148a,memoryOperationDispatcher
@@ -325,6 +342,7 @@ address,name
 0x00023a90,lampDriverOutputDispatcher
 0x00024812,iahDisableWaitToStartLamp
 0x0002481e,initIoControlRegister
+0x0002482e,ioControlMaskInit
 0x00024858,ioControlMaskStateMachine
 0x000249b6,ioControlToggleCycle
 0x000249ee,ioControlLampStateMachine
@@ -333,6 +351,7 @@ address,name
 0x00024f30,activeFaultLampStateMachine
 0x00025316,faultLampBlinkPatternGenerator
 0x00025448,periodicLampFlashController
+0x00025594,clearSystemErrorStatus
 0x000258d6,fuelDemandTablePointerInit
 0x000258e8,epsTimingCalculationSlowCycle40Coordinator
 0x00025926,initLookupTablePointers1
@@ -490,3 +509,8 @@ address,name
 0x00034e9a,exponentialMovingAverage
 0x00034f00,unsignedLinearInterpolation
 0x00034f8a,coreTableInterpolation
+# Math utility functions
+# CM848 equivalent: mathMultiplyDivide32
+0x00035064,scaleByRatio
+0x00035076,scaleByRatioSigned
+0x00035088,tableLookup2D
