@@ -75,7 +75,7 @@ address,name,type,comment
 0x00011870,caseD_1,,
 0x00011876,caseD_2,,
 0x0001187c,caseD_3,,
-0x00011880,default,,
+0x00011880,caseD_4,,
 0x00011ba6,PTR_DAT_00011ba6,pointer,
 0x000136a8,switchD,,
 0x000136ac,switchdataD_000136ac,ushort,

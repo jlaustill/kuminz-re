@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Feb 21 06:51:30 MST 2026
+// Generated: Sun Mar 01 09:42:18 MST 2026
 
 
 //
@@ -75,7 +75,7 @@ void keyOnStateMachine(void)
           DAT_003fee2e = '\x01';
           eepromWriteWords(&DAT_003fee2a,0x1000030,4);
         }
-        FUN_003fd994();
+        systemHaltLoop_ram();
         reset_vector();
         return;
       }
@@ -134,7 +134,7 @@ void eepromProgressNotify(undefined4 param_1,int param_2,undefined4 param_3)
 
 {
   if ((param_2 != 1) && (param_2 == 2)) {
-    FUN_003fd070(param_1,param_3);
+    processSensorFilterChain_ram(param_1,param_3);
   }
   return;
 }
@@ -183,7 +183,7 @@ void loadEepromCalibration(undefined4 param_1,int param_2)
       uVar4 = 0;
       do {
         if (param_2 == 2) {
-          FUN_003fab3c();
+          can2TransmitInterruptHandler_ram();
         }
         sVar2 = 0;
         do {
@@ -197,13 +197,13 @@ void loadEepromCalibration(undefined4 param_1,int param_2)
         uVar4 = uVar4 + 1;
       } while (uVar4 < 0x32);
     }
-    FUN_003fd994();
+    systemHaltLoop_ram();
     reset_vector();
     return;
   }
   if (_eeprom_magic == 0x2b16) {
     if (param_2 == 2) {
-      FUN_003fd1ac(param_1,10);
+      processSensorWithOverride_ram(param_1,10);
     }
     bVar1 = false;
     uVar4 = *(ushort *)PTR_DAT_00008104;
@@ -270,7 +270,7 @@ void loadEepromCalibration(undefined4 param_1,int param_2)
           }
           uVar4 = uVar4 + 1;
         } while (uVar4 < 100);
-        FUN_003fd994();
+        systemHaltLoop_ram();
         reset_vector();
         return;
       }
@@ -306,7 +306,7 @@ void loadEepromCalibration(undefined4 param_1,int param_2)
           uVar5 = 0;
           do {
             if (param_2 == 2) {
-              FUN_003fab3c();
+              can2TransmitInterruptHandler_ram();
             }
             sVar2 = 0;
             do {
@@ -323,7 +323,7 @@ void loadEepromCalibration(undefined4 param_1,int param_2)
         } while (uVar4 < 0x32);
       }
       if ((_mios_dasm_status & 0x8000) != 0) {
-        FUN_003fd994();
+        systemHaltLoop_ram();
         reset_vector();
         return;
       }
@@ -371,7 +371,7 @@ short initEepromTransfer(int param_1)
   if (param_1 == 3) {
     qadc_a_result_high_1 = qadc_a_result_high_1 | 0x80;
   }
-  sVar1 = FUN_003fa5a0(0x7ffc);
+  sVar1 = initFlashMemoryConfig_ram(0x7ffc);
   if (sVar1 != 0) {
     sVar1 = flashEraseChip();
   }
@@ -382,7 +382,7 @@ short initEepromTransfer(int param_1)
     else {
       uVar2 = 0;
     }
-    FUN_003fd070(_can_tx_status,uVar2);
+    processSensorFilterChain_ram(_can_tx_status,uVar2);
   }
   _qadc_a_result_high_2 = 0;
   _qadc_a_result_ch30 = 0;
@@ -404,7 +404,7 @@ undefined4 diagServiceInitEepromTransfer(undefined4 param_1)
   short sVar2;
   undefined4 uVar1;
   
-  FUN_003fd1ac(param_1,0x96);
+  processSensorWithOverride_ram(param_1,0x96);
   _can_tx_status = param_1;
   sVar2 = initEepromTransfer(2);
   if (sVar2 == 0) {
@@ -584,8 +584,8 @@ void eepromReadWords(short param_1,undefined2 *param_2,uint param_3)
 void mainLoopIteration(void)
 
 {
-  FUN_003fae3c();
-  FUN_003fc094();
+  dispatchCanMessageHandlers_ram();
+  processJ1939QueueStatus_ram();
   dispatchSpiHandlerByState();
   handleEepromDiagnosticCallback();
   processDiagnosticAndEepromRequests();
@@ -644,7 +644,7 @@ void bootStateMachine(void)
     return;
   }
   _mios_timer_reg = _mios_timer_reg | 0x80;
-  FUN_003fd1d8();
+  watchdogTimerTick_ram();
   updateCapabilityFlags();
   if (_toucan_rx_buffer_status == 0) {
     loadCalibrationFromEeprom();
@@ -981,12 +981,12 @@ char diagService25_executeFunction(int param_1)
   char cVar1;
   code *local_20 [6];
   
-  cVar1 = FUN_003fb54c(param_1);
+  cVar1 = validateServiceDataLength_ram(param_1);
   if (cVar1 == -1) {
     eepromWaitCycle(local_20,*(int *)(param_1 + 6) + 1,4);
-    cVar1 = FUN_003fd298(local_20[0],1);
+    cVar1 = sensorFaultThresholdCheck_ram(local_20[0],1);
     if (cVar1 != '\t') {
-      FUN_003fd070(param_1,0);
+      processSensorFilterChain_ram(param_1,0);
       do {
         if (0x40c < (int)((uint)_mios_mmcsm_cnt - (uint)_mios_mmcsm_cnt)) break;
       } while ((_qadc_a_ccw_0 != _qadc_a_ccw_2) || (DAT_003024d6 == '\x01'));
@@ -1144,11 +1144,11 @@ char diagMemoryReadHandler(byte *param_1,uint param_2,uint param_3)
   
   cVar6 = **(char **)(param_1 + 6);
   if (param_3 < 0x6e5) {
-    uVar4 = FUN_003fb528(cVar6);
+    uVar4 = getServiceDataOffset_ram(cVar6);
     uVar1 = *(ushort *)(param_1 + 4);
     if (((uVar1 == 8) || (uVar1 == (uVar4 & 0xff))) || ((ushort)((uVar4 & 0xff) + 10) == uVar1)) {
       uVar2 = param_3 & 0xffff;
-      cVar5 = FUN_003fd298(param_2,uVar2);
+      cVar5 = sensorFaultThresholdCheck_ram(param_2,uVar2);
       if ((cVar5 != '\n') && (cVar5 != '\t')) {
         if ((cVar6 == 'C') && (uVar2 < 0x100)) {
           bVar8 = 0x44;
@@ -1157,9 +1157,9 @@ char diagMemoryReadHandler(byte *param_1,uint param_2,uint param_3)
         else {
           bVar8 = (&calibration_rom_end)[(byte)(cVar6 + 0xbd)];
         }
-        cVar6 = FUN_003fb528(bVar8);
+        cVar6 = getServiceDataOffset_ram(bVar8);
         bVar9 = cVar6 - 1;
-        pbVar3 = (byte *)FUN_003fc0d8(bVar9 + param_3 + 1 & 0xffff);
+        pbVar3 = (byte *)initDiagnosticBuffers_ram(bVar9 + param_3 + 1 & 0xffff);
         if (pbVar3 == (byte *)0x0) {
           cVar5 = '\x04';
         }
@@ -1321,7 +1321,7 @@ void diagSendResponseCode(undefined param_1,int param_2)
   diag_enable_flags_2 = 4;
   diagnostic_handler_callback = processDiagnosticAndEepromRequests;
   DAT_003fecd2 = param_1;
-  FUN_003fc62c();
+  initSerialTransmit_ram();
   return;
 }
 
@@ -1339,7 +1339,7 @@ void processDiagnosticAndEepromRequests(void)
   short sVar1;
   undefined4 uVar2;
   
-  FUN_003fc580();
+  validateSerialChecksum_ram();
   processDiagnosticTimeout();
   if ((eeprom_checksum_status != '\x01') || ((diag_session_flags & 1) == 0)) goto LAB_000020ac;
   if (DAT_003fecf0 == '4') {
@@ -1348,15 +1348,15 @@ void processDiagnosticAndEepromRequests(void)
     }
     if (diag_subcommand_code < 0x12) {
       if (diag_subcommand_code == 0x11) {
-        FUN_003fc9ec();
+        sendEepromVersionResponse_ram();
         diagnostic_handler_callback = processDiagnosticAndEepromRequests;
       }
       else if (diag_subcommand_code == 3) {
-        FUN_003fca7c();
+        handleEepromDiagnosticResponse_ram();
       }
       else {
         if (diag_subcommand_code != 0x10) goto LAB_0000208c;
-        FUN_003fcb24();
+        processEepromDataTransfer_ram();
       }
     }
     else if (diag_subcommand_code == 0x12) {
@@ -1629,7 +1629,7 @@ void systemInitialization(void)
   
   _USIU_SIUMCR = _USIU_SIUMCR | 0x10000;
   copyCalibrationToRam(in_BAR | 7);
-  FUN_003fd6d8();
+  initQspiHardware_ram();
   stubFunction1();
   _mios_mpwm_scr = _mios_mpwm_scr | 0x2000;
   _qadc_a_mcr = _qadc_a_mcr | 0x12;
@@ -1642,7 +1642,7 @@ void systemInitialization(void)
   _DAT_00302736 = 0xbbbb;
   _DAT_00302738 = 0;
   eepromReadWords(0x1000030,&eeprom_config_dword,4);
-  FUN_003fd284();
+  watchdogTimerTick_midEntry_ram();
   eepromReadWords(0x100008e,&eeprom_config_word,2);
   eepromWriteWords(&eeprom_config_word,0x1000034,2);
   _DAT_00302882 = 0xbec;
@@ -1651,13 +1651,13 @@ void systemInitialization(void)
   initHardwareConfig();
   do {
     dispatchSpiHandlerByState();
-    FUN_003fa2f0();
+    initCanMailboxFilters_ram();
     if (((qadc_a_result_high_1 & 0xf) != 0) && (_eeprom_magic == 0x1d0a)) {
-      FUN_003fc874();
+      processMainLoop_ram();
       initHardwareConfig();
     }
     eepromCompleteOperation();
-    FUN_003fab3c();
+    can2TransmitInterruptHandler_ram();
     dispatchSpiHandlerByState();
     bootStateMachine();
   } while( true );
@@ -1860,7 +1860,7 @@ void clearRamRegions(void)
 void softReset(void)
 
 {
-  FUN_003fd994();
+  systemHaltLoop_ram();
   reset_vector();
   return;
 }
@@ -2095,11 +2095,11 @@ void dispatchSpiHandlerByState(void)
   }
   else if (fault_clear_counter == 2) {
     if ((_qsmcm_scsr & 0x20) != 0) {
-      FUN_003fc380();
+      serialReceiveHandler_ram();
     }
   }
   else if ((fault_clear_counter == 3) && ((_qsmcm_scsr & 0x40) != 0)) {
-    FUN_003fc484();
+    serialTransmitHandler_ram();
   }
   return;
 }
@@ -5366,6 +5366,21 @@ void watchdogTimerTick(void)
 
 
 //
+// Function: watchdogTimerTick_midEntry @ 0x000076b4
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+void watchdogTimerTick_midEntry(void)
+
+{
+  _qadc_a_portqb = _eeprom_config_dword;
+  return;
+}
+
+
+
+//
 // Function: sensorFaultThresholdCheck @ 0x000076c8
 //
 
@@ -5777,10 +5792,10 @@ void phase_group_b_processing(void)
 
 
 //
-// Function: periodicTaskGroup0_fuelFinal @ 0x0000b8fc
+// Function: periodicTaskSet_fuelFinal @ 0x0000b8fc
 //
 
-void periodicTaskGroup0_fuelFinal(void)
+void periodicTaskSet_fuelFinal(void)
 
 {
   sensorChannel14_init();
@@ -5818,10 +5833,10 @@ void periodicTaskGroup0_fuelFinal(void)
 
 
 //
-// Function: periodicTaskGroup1_sensorProcessing @ 0x0000b98c
+// Function: periodicTaskSet_sensorProcessing @ 0x0000b98c
 //
 
-void periodicTaskGroup1_sensorProcessing(void)
+void periodicTaskSet_sensorProcessing(void)
 
 {
   calculateFuelDemandFilter();
@@ -5854,10 +5869,10 @@ void periodicTaskGroup1_sensorProcessing(void)
 
 
 //
-// Function: periodicTaskGroup2_controlLoop @ 0x0000ba08
+// Function: periodicTaskSet_controlLoop @ 0x0000ba08
 //
 
-void periodicTaskGroup2_controlLoop(void)
+void periodicTaskSet_controlLoop(void)
 
 {
   checkDiagnosticFuelOverride();
@@ -5893,10 +5908,10 @@ void periodicTaskGroup2_controlLoop(void)
 
 
 //
-// Function: periodicTaskGroup3_auxiliaryControl @ 0x0000ba90
+// Function: periodicTaskSet_auxiliaryControl @ 0x0000ba90
 //
 
-void periodicTaskGroup3_auxiliaryControl(void)
+void periodicTaskSet_auxiliaryControl(void)
 
 {
   updateTorqueLimitFromProtection();
@@ -5932,10 +5947,10 @@ void periodicTaskGroup3_auxiliaryControl(void)
 
 
 //
-// Function: periodicTaskGroup4_canTx @ 0x0000bb18
+// Function: periodicTaskSet_canTx @ 0x0000bb18
 //
 
-void periodicTaskGroup4_canTx(void)
+void periodicTaskSet_canTx(void)
 
 {
   calculateFuelRateFromRpm();
@@ -5947,10 +5962,10 @@ void periodicTaskGroup4_canTx(void)
 
 
 //
-// Function: periodicTaskGroup5_diagnostics @ 0x0000bb40
+// Function: periodicTaskSet_diagnostics @ 0x0000bb40
 //
 
-void periodicTaskGroup5_diagnostics(void)
+void periodicTaskSet_diagnostics(void)
 
 {
   sensorChannel1_init();
@@ -5962,10 +5977,10 @@ void periodicTaskGroup5_diagnostics(void)
 
 
 //
-// Function: periodicTaskGroup6_protection @ 0x0000bb68
+// Function: periodicTaskSet_protection @ 0x0000bb68
 //
 
-void periodicTaskGroup6_protection(void)
+void periodicTaskSet_protection(void)
 
 {
   processThermalProtection();
@@ -5977,10 +5992,10 @@ void periodicTaskGroup6_protection(void)
 
 
 //
-// Function: periodicTaskGroup7_timing @ 0x0000bb90
+// Function: periodicTaskSet_timing @ 0x0000bb90
 //
 
-void periodicTaskGroup7_timing(void)
+void periodicTaskSet_timing(void)
 
 {
   calculateTorqueCurveValue();
@@ -5992,10 +6007,10 @@ void periodicTaskGroup7_timing(void)
 
 
 //
-// Function: periodicTaskGroup8_outputs @ 0x0000bbb8
+// Function: periodicTaskSet_outputs @ 0x0000bbb8
 //
 
-void periodicTaskGroup8_outputs(void)
+void periodicTaskSet_outputs(void)
 
 {
   processGovernorSpeedLimitC();
@@ -6007,10 +6022,10 @@ void periodicTaskGroup8_outputs(void)
 
 
 //
-// Function: periodicTaskGroup9_sensors @ 0x0000bbe0
+// Function: periodicTaskSet_sensors @ 0x0000bbe0
 //
 
-void periodicTaskGroup9_sensors(void)
+void periodicTaskSet_sensors(void)
 
 {
   sensorChannel0_init();
@@ -6022,10 +6037,10 @@ void periodicTaskGroup9_sensors(void)
 
 
 //
-// Function: periodicTaskGroup10_monitoring @ 0x0000bc08
+// Function: periodicTaskSet_monitoring @ 0x0000bc08
 //
 
-void periodicTaskGroup10_monitoring(void)
+void periodicTaskSet_monitoring(void)
 
 {
   sensorChannel16_init();
@@ -6038,10 +6053,10 @@ void periodicTaskGroup10_monitoring(void)
 
 
 //
-// Function: periodicTaskGroup11_communication @ 0x0000bc34
+// Function: periodicTaskSet_communication @ 0x0000bc34
 //
 
-void periodicTaskGroup11_communication(void)
+void periodicTaskSet_communication(void)
 
 {
   processSensorDeviationOnKeyoff();
@@ -6108,10 +6123,10 @@ void periodicTaskGroup15_calibration4(void)
 
 
 //
-// Function: periodicTaskGroup16_protection @ 0x0000bce8
+// Function: periodicTaskSet_protection2 @ 0x0000bce8
 //
 
-void periodicTaskGroup16_protection(void)
+void periodicTaskSet_protection2(void)
 
 {
   protectionConditionMonitor();
@@ -6275,10 +6290,10 @@ void periodicTaskGroup32_calibration14(void)
 
 
 //
-// Function: periodicTaskGroup33_protection2 @ 0x0000beb4
+// Function: periodicTaskSet_protection3 @ 0x0000beb4
 //
 
-void periodicTaskGroup33_protection2(void)
+void periodicTaskSet_protection3(void)
 
 {
   processProtectionCoolantLookup();
@@ -6305,10 +6320,10 @@ void schedulerPhaseDispatcher(void)
 
 
 //
-// Function: periodicTaskGroup34_auxiliary @ 0x0000bee0
+// Function: periodicTaskSet_auxiliary @ 0x0000bee0
 //
 
-void periodicTaskGroup34_auxiliary(void)
+void periodicTaskSet_auxiliary(void)
 
 {
   interpolateSpeedProtectionTable();
@@ -6320,10 +6335,10 @@ void periodicTaskGroup34_auxiliary(void)
 
 
 //
-// Function: periodicTaskGroup35_fuelDemand @ 0x0000bf08
+// Function: periodicTaskSet_fuelDemand @ 0x0000bf08
 //
 
-void periodicTaskGroup35_fuelDemand(void)
+void periodicTaskSet_fuelDemand(void)
 
 {
   fuelDemandCoordinator();
@@ -6382,10 +6397,10 @@ void periodicTaskGroup38_calibration17(void)
 
 
 //
-// Function: periodicTaskGroup19_diagnostics @ 0x0000bfb0
+// Function: periodicTaskSet_diagnostics2 @ 0x0000bfb0
 //
 
-void periodicTaskGroup19_diagnostics(void)
+void periodicTaskSet_diagnostics2(void)
 
 {
   updateProtectionDiagnostics();
@@ -6442,10 +6457,10 @@ void periodicTaskGroup22_calibration(void)
 
 
 //
-// Function: periodicTaskGroup23_protection @ 0x0000c050
+// Function: periodicTaskSet_protection4 @ 0x0000c050
 //
 
-void periodicTaskGroup23_protection(void)
+void periodicTaskSet_protection4(void)
 
 {
   processProtectionControlLogic();
@@ -6457,10 +6472,10 @@ void periodicTaskGroup23_protection(void)
 
 
 //
-// Function: periodicTaskGroup24_outputs @ 0x0000c078
+// Function: periodicTaskSet_outputs2 @ 0x0000c078
 //
 
-void periodicTaskGroup24_outputs(void)
+void periodicTaskSet_outputs2(void)
 
 {
   incrementDynamicControlCounter();
@@ -6502,8 +6517,8 @@ void main_loop(void)
   case 0:
     phase_common_processing();
     phase_group_a_processing();
-    periodicTaskGroup0_fuelFinal();
-    periodicTaskGroup4_canTx();
+    periodicTaskSet_fuelFinal();
+    periodicTaskSet_canTx();
     periodicTaskGroup12_calibration1();
     periodicTaskGroup25_calibration7();
     incrementFuelAndSpeedCounters();
@@ -6513,8 +6528,8 @@ void main_loop(void)
   case 1:
     phase_common_processing();
     phase_group_b_processing();
-    periodicTaskGroup1_sensorProcessing();
-    periodicTaskGroup5_diagnostics();
+    periodicTaskSet_sensorProcessing();
+    periodicTaskSet_diagnostics();
     periodicTaskGroup13_calibration2();
     periodicTaskGroup26_calibration8();
     buildBitmapAndSetHwFlag();
@@ -6523,8 +6538,8 @@ void main_loop(void)
   case 2:
     phase_common_processing();
     phase_group_a_processing();
-    periodicTaskGroup2_controlLoop();
-    periodicTaskGroup6_protection();
+    periodicTaskSet_controlLoop();
+    periodicTaskSet_protection();
     periodicTaskGroup14_calibration3();
     periodicTaskGroup27_calibration9();
     updateCalibrationPhaseFlags();
@@ -6533,8 +6548,8 @@ void main_loop(void)
   case 3:
     phase_common_processing();
     phase_group_b_processing();
-    periodicTaskGroup3_auxiliaryControl();
-    periodicTaskGroup7_timing();
+    periodicTaskSet_auxiliaryControl();
+    periodicTaskSet_timing();
     periodicTaskGroup15_calibration4();
     periodicTaskGroup28_calibration10();
     hpcr_cbdCalculateCylinderTrims();
@@ -6544,9 +6559,9 @@ void main_loop(void)
   case 4:
     phase_common_processing();
     phase_group_a_processing();
-    periodicTaskGroup0_fuelFinal();
-    periodicTaskGroup8_outputs();
-    periodicTaskGroup16_protection();
+    periodicTaskSet_fuelFinal();
+    periodicTaskSet_outputs();
+    periodicTaskSet_protection2();
     periodicTaskGroup29_calibration11();
     hpcr_calculateFuelTrimOutput();
     main_loop_phase_index = 5;
@@ -6554,8 +6569,8 @@ void main_loop(void)
   case 5:
     phase_common_processing();
     phase_group_b_processing();
-    periodicTaskGroup1_sensorProcessing();
-    periodicTaskGroup9_sensors();
+    periodicTaskSet_sensorProcessing();
+    periodicTaskSet_sensors();
     periodicTaskGroup17_calibration5();
     periodicTaskGroup30_calibration12();
     emptyStub_reserved513200();
@@ -6564,8 +6579,8 @@ void main_loop(void)
   case 6:
     phase_common_processing();
     phase_group_a_processing();
-    periodicTaskGroup2_controlLoop();
-    periodicTaskGroup10_monitoring();
+    periodicTaskSet_controlLoop();
+    periodicTaskSet_monitoring();
     periodicTaskGroup18_calibration6();
     periodicTaskGroup31_calibration13();
     buildEngineStatusFlags2();
@@ -6574,8 +6589,8 @@ void main_loop(void)
   case 7:
     phase_common_processing();
     phase_group_b_processing();
-    periodicTaskGroup3_auxiliaryControl();
-    periodicTaskGroup11_communication();
+    periodicTaskSet_auxiliaryControl();
+    periodicTaskSet_communication();
     periodicTaskGroup32_calibration14();
     updateFuelInjectionMinimumValues();
     main_loop_phase_index = 8;
@@ -6583,36 +6598,36 @@ void main_loop(void)
   case 8:
     phase_common_processing();
     phase_group_a_processing();
-    periodicTaskGroup0_fuelFinal();
-    periodicTaskGroup4_canTx();
-    periodicTaskGroup33_protection2();
+    periodicTaskSet_fuelFinal();
+    periodicTaskSet_canTx();
+    periodicTaskSet_protection3();
     evaluateProtectionConditions();
     main_loop_phase_index = 9;
     break;
   case 9:
     phase_common_processing();
     phase_group_b_processing();
-    periodicTaskGroup1_sensorProcessing();
-    periodicTaskGroup5_diagnostics();
-    periodicTaskGroup34_auxiliary();
+    periodicTaskSet_sensorProcessing();
+    periodicTaskSet_diagnostics();
+    periodicTaskSet_auxiliary();
     initCommandAndDispatch();
     main_loop_phase_index = 10;
     break;
   case 10:
     phase_common_processing();
     phase_group_a_processing();
-    periodicTaskGroup2_controlLoop();
-    periodicTaskGroup6_protection();
+    periodicTaskSet_controlLoop();
+    periodicTaskSet_protection();
     periodicTaskGroup12_calibration1();
-    periodicTaskGroup35_fuelDemand();
+    periodicTaskSet_fuelDemand();
     processFuelBlendFaultTimer();
     main_loop_phase_index = 0xb;
     break;
   case 0xb:
     phase_common_processing();
     phase_group_b_processing();
-    periodicTaskGroup3_auxiliaryControl();
-    periodicTaskGroup7_timing();
+    periodicTaskSet_auxiliaryControl();
+    periodicTaskSet_timing();
     periodicTaskGroup13_calibration2();
     periodicTaskGroup36_calibration15();
     initColdStartTablePointers();
@@ -6621,8 +6636,8 @@ void main_loop(void)
   case 0xc:
     phase_common_processing();
     phase_group_a_processing();
-    periodicTaskGroup0_fuelFinal();
-    periodicTaskGroup8_outputs();
+    periodicTaskSet_fuelFinal();
+    periodicTaskSet_outputs();
     periodicTaskGroup14_calibration3();
     periodicTaskGroup37_calibration16();
     processColdStartStateMachine();
@@ -6631,8 +6646,8 @@ void main_loop(void)
   case 0xd:
     phase_common_processing();
     phase_group_b_processing();
-    periodicTaskGroup1_sensorProcessing();
-    periodicTaskGroup9_sensors();
+    periodicTaskSet_sensorProcessing();
+    periodicTaskSet_sensors();
     periodicTaskGroup15_calibration4();
     periodicTaskGroup38_calibration17();
     updateProtectionErrorFiltered();
@@ -6641,18 +6656,18 @@ void main_loop(void)
   case 0xe:
     phase_common_processing();
     phase_group_a_processing();
-    periodicTaskGroup2_controlLoop();
-    periodicTaskGroup10_monitoring();
-    periodicTaskGroup16_protection();
-    periodicTaskGroup19_diagnostics();
+    periodicTaskSet_controlLoop();
+    periodicTaskSet_monitoring();
+    periodicTaskSet_protection2();
+    periodicTaskSet_diagnostics2();
     processJ1939MessageWithFilter();
     main_loop_phase_index = 0xf;
     break;
   case 0xf:
     phase_common_processing();
     phase_group_b_processing();
-    periodicTaskGroup3_auxiliaryControl();
-    periodicTaskGroup11_communication();
+    periodicTaskSet_auxiliaryControl();
+    periodicTaskSet_communication();
     periodicTaskGroup17_calibration5();
     periodicTaskGroup20_calibration();
     updateDiagnosticStateWithFlag();
@@ -6661,8 +6676,8 @@ void main_loop(void)
   case 0x10:
     phase_common_processing();
     phase_group_a_processing();
-    periodicTaskGroup0_fuelFinal();
-    periodicTaskGroup4_canTx();
+    periodicTaskSet_fuelFinal();
+    periodicTaskSet_canTx();
     periodicTaskGroup18_calibration6();
     periodicTaskGroup21_calibration();
     dispatchByParamMode();
@@ -6671,8 +6686,8 @@ void main_loop(void)
   case 0x11:
     phase_common_processing();
     phase_group_b_processing();
-    periodicTaskGroup1_sensorProcessing();
-    periodicTaskGroup5_diagnostics();
+    periodicTaskSet_sensorProcessing();
+    periodicTaskSet_diagnostics();
     periodicTaskGroup22_calibration();
     emptyStub_reserved510d04();
     interpolateCoolantTable();
@@ -6682,26 +6697,26 @@ void main_loop(void)
   case 0x12:
     phase_common_processing();
     phase_group_a_processing();
-    periodicTaskGroup2_controlLoop();
-    periodicTaskGroup6_protection();
-    periodicTaskGroup23_protection();
+    periodicTaskSet_controlLoop();
+    periodicTaskSet_protection();
+    periodicTaskSet_protection4();
     emptyStub_reserved50dd40();
     main_loop_phase_index = 0x13;
     break;
   case 0x13:
     phase_common_processing();
     phase_group_b_processing();
-    periodicTaskGroup3_auxiliaryControl();
-    periodicTaskGroup7_timing();
-    periodicTaskGroup24_outputs();
+    periodicTaskSet_auxiliaryControl();
+    periodicTaskSet_timing();
+    periodicTaskSet_outputs2();
     lookupProtectionFuelDemand();
     main_loop_phase_index = 0x14;
     break;
   case 0x14:
     phase_common_processing();
     phase_group_a_processing();
-    periodicTaskGroup0_fuelFinal();
-    periodicTaskGroup8_outputs();
+    periodicTaskSet_fuelFinal();
+    periodicTaskSet_outputs();
     periodicTaskGroup12_calibration1();
     periodicTaskGroup25_calibration7();
     lookupByteFromTableB();
@@ -6710,8 +6725,8 @@ void main_loop(void)
   case 0x15:
     phase_common_processing();
     phase_group_b_processing();
-    periodicTaskGroup1_sensorProcessing();
-    periodicTaskGroup9_sensors();
+    periodicTaskSet_sensorProcessing();
+    periodicTaskSet_sensors();
     periodicTaskGroup13_calibration2();
     periodicTaskGroup26_calibration8();
     processFuelControlCoordinator();
@@ -6720,8 +6735,8 @@ void main_loop(void)
   case 0x16:
     phase_common_processing();
     phase_group_a_processing();
-    periodicTaskGroup2_controlLoop();
-    periodicTaskGroup10_monitoring();
+    periodicTaskSet_controlLoop();
+    periodicTaskSet_monitoring();
     periodicTaskGroup14_calibration3();
     periodicTaskGroup27_calibration9();
     selectSpeedControlFromSensorFlags();
@@ -6730,8 +6745,8 @@ void main_loop(void)
   case 0x17:
     phase_common_processing();
     phase_group_b_processing();
-    periodicTaskGroup3_auxiliaryControl();
-    periodicTaskGroup11_communication();
+    periodicTaskSet_auxiliaryControl();
+    periodicTaskSet_communication();
     periodicTaskGroup15_calibration4();
     periodicTaskGroup28_calibration10();
     calculateInjectionScaledDivision();
@@ -6740,9 +6755,9 @@ void main_loop(void)
   case 0x18:
     phase_common_processing();
     phase_group_a_processing();
-    periodicTaskGroup0_fuelFinal();
-    periodicTaskGroup4_canTx();
-    periodicTaskGroup16_protection();
+    periodicTaskSet_fuelFinal();
+    periodicTaskSet_canTx();
+    periodicTaskSet_protection2();
     periodicTaskGroup29_calibration11();
     storeIndirectValue();
     main_loop_phase_index = 0x19;
@@ -6750,8 +6765,8 @@ void main_loop(void)
   case 0x19:
     phase_common_processing();
     phase_group_b_processing();
-    periodicTaskGroup1_sensorProcessing();
-    periodicTaskGroup5_diagnostics();
+    periodicTaskSet_sensorProcessing();
+    periodicTaskSet_diagnostics();
     periodicTaskGroup17_calibration5();
     periodicTaskGroup30_calibration12();
     sensorChannel1_init();
@@ -6760,8 +6775,8 @@ void main_loop(void)
   case 0x1a:
     phase_common_processing();
     phase_group_a_processing();
-    periodicTaskGroup2_controlLoop();
-    periodicTaskGroup6_protection();
+    periodicTaskSet_controlLoop();
+    periodicTaskSet_protection();
     periodicTaskGroup18_calibration6();
     periodicTaskGroup31_calibration13();
     calculateSpeedInterpolationParams();
@@ -6770,8 +6785,8 @@ void main_loop(void)
   case 0x1b:
     phase_common_processing();
     phase_group_b_processing();
-    periodicTaskGroup3_auxiliaryControl();
-    periodicTaskGroup7_timing();
+    periodicTaskSet_auxiliaryControl();
+    periodicTaskSet_timing();
     periodicTaskGroup32_calibration14();
     calculateFuelStatusParameters();
     main_loop_phase_index = 0x1c;
@@ -6779,35 +6794,35 @@ void main_loop(void)
   case 0x1c:
     phase_common_processing();
     phase_group_a_processing();
-    periodicTaskGroup0_fuelFinal();
-    periodicTaskGroup8_outputs();
-    periodicTaskGroup33_protection2();
+    periodicTaskSet_fuelFinal();
+    periodicTaskSet_outputs();
+    periodicTaskSet_protection3();
     crankshaftSensor_initB();
     main_loop_phase_index = 0x1d;
     break;
   case 0x1d:
     phase_common_processing();
     phase_group_b_processing();
-    periodicTaskGroup1_sensorProcessing();
-    periodicTaskGroup9_sensors();
-    periodicTaskGroup34_auxiliary();
+    periodicTaskSet_sensorProcessing();
+    periodicTaskSet_sensors();
+    periodicTaskSet_auxiliary();
     main_loop_phase_index = 0x1e;
     break;
   case 0x1e:
     phase_common_processing();
     phase_group_a_processing();
-    periodicTaskGroup2_controlLoop();
-    periodicTaskGroup10_monitoring();
+    periodicTaskSet_controlLoop();
+    periodicTaskSet_monitoring();
     periodicTaskGroup12_calibration1();
-    periodicTaskGroup35_fuelDemand();
+    periodicTaskSet_fuelDemand();
     calculateFuelConsumptionRate();
     main_loop_phase_index = 0x1f;
     break;
   case 0x1f:
     phase_common_processing();
     phase_group_b_processing();
-    periodicTaskGroup3_auxiliaryControl();
-    periodicTaskGroup11_communication();
+    periodicTaskSet_auxiliaryControl();
+    periodicTaskSet_communication();
     periodicTaskGroup13_calibration2();
     periodicTaskGroup36_calibration15();
     updateEngineModeFromSensor();
@@ -6816,8 +6831,8 @@ void main_loop(void)
   case 0x20:
     phase_common_processing();
     phase_group_a_processing();
-    periodicTaskGroup0_fuelFinal();
-    periodicTaskGroup4_canTx();
+    periodicTaskSet_fuelFinal();
+    periodicTaskSet_canTx();
     periodicTaskGroup14_calibration3();
     periodicTaskGroup37_calibration16();
     main_loop_phase_index = 0x21;
@@ -6825,8 +6840,8 @@ void main_loop(void)
   case 0x21:
     phase_common_processing();
     phase_group_b_processing();
-    periodicTaskGroup1_sensorProcessing();
-    periodicTaskGroup5_diagnostics();
+    periodicTaskSet_sensorProcessing();
+    periodicTaskSet_diagnostics();
     periodicTaskGroup15_calibration4();
     periodicTaskGroup38_calibration17();
     main_loop_phase_index = 0x22;
@@ -6834,17 +6849,17 @@ void main_loop(void)
   case 0x22:
     phase_common_processing();
     phase_group_a_processing();
-    periodicTaskGroup2_controlLoop();
-    periodicTaskGroup6_protection();
-    periodicTaskGroup16_protection();
-    periodicTaskGroup19_diagnostics();
+    periodicTaskSet_controlLoop();
+    periodicTaskSet_protection();
+    periodicTaskSet_protection2();
+    periodicTaskSet_diagnostics2();
     main_loop_phase_index = 0x23;
     break;
   case 0x23:
     phase_common_processing();
     phase_group_b_processing();
-    periodicTaskGroup3_auxiliaryControl();
-    periodicTaskGroup7_timing();
+    periodicTaskSet_auxiliaryControl();
+    periodicTaskSet_timing();
     periodicTaskGroup17_calibration5();
     periodicTaskGroup20_calibration();
     main_loop_phase_index = 0x24;
@@ -6852,8 +6867,8 @@ void main_loop(void)
   case 0x24:
     phase_common_processing();
     phase_group_a_processing();
-    periodicTaskGroup0_fuelFinal();
-    periodicTaskGroup8_outputs();
+    periodicTaskSet_fuelFinal();
+    periodicTaskSet_outputs();
     periodicTaskGroup18_calibration6();
     periodicTaskGroup21_calibration();
     fuelDemandBlendCalculation();
@@ -6862,26 +6877,26 @@ void main_loop(void)
   case 0x25:
     phase_common_processing();
     phase_group_b_processing();
-    periodicTaskGroup1_sensorProcessing();
-    periodicTaskGroup9_sensors();
+    periodicTaskSet_sensorProcessing();
+    periodicTaskSet_sensors();
     periodicTaskGroup22_calibration();
     main_loop_phase_index = 0x26;
     break;
   case 0x26:
     phase_common_processing();
     phase_group_a_processing();
-    periodicTaskGroup2_controlLoop();
-    periodicTaskGroup10_monitoring();
-    periodicTaskGroup23_protection();
+    periodicTaskSet_controlLoop();
+    periodicTaskSet_monitoring();
+    periodicTaskSet_protection4();
     checkFaultCounterThreshold();
     main_loop_phase_index = 0x27;
     break;
   case 0x27:
     phase_common_processing();
     phase_group_b_processing();
-    periodicTaskGroup3_auxiliaryControl();
-    periodicTaskGroup11_communication();
-    periodicTaskGroup24_outputs();
+    periodicTaskSet_auxiliaryControl();
+    periodicTaskSet_communication();
+    periodicTaskSet_outputs2();
     main_loop_phase_index = 0;
     break;
   default:
@@ -39396,7 +39411,7 @@ LAB_00040548:
     filter_accumulator = 0xb;
   }
   if ((filter_accumulator == 9) || (filter_accumulator == 10)) {
-    if ((_DAT_003fb524 != 9) && ((_DAT_003fb524 != 10 && (_FUN_003fb528 == 0)))) {
+    if ((_DAT_003fb524 != 9) && ((_DAT_003fb524 != 10 && (_getServiceDataOffset_ram == 0)))) {
       updateInjectionTimingB();
     }
     goto LAB_000406b0;
@@ -39414,7 +39429,7 @@ LAB_00040548:
   }
   torque_limit_calculated = uVar2;
 LAB_000406b0:
-  _FUN_003fb528 = _timing_table_lookup_state;
+  _getServiceDataOffset_ram = _timing_table_lookup_state;
   if ((_DAT_003fb52a == 1) && (fuel_rate_current == 0)) {
     fuel_filter_coefficient = load_throttle_processed;
   }
@@ -40284,13 +40299,13 @@ void processFuelEfficiencyTrim(void)
     if ((calibration_table_base & 2) != 0) {
       scale_multiplier_a374 = 0;
     }
-    _FUN_003fb54c = 0;
+    _validateServiceDataLength_ram = 0;
   }
   else {
-    _FUN_003fb54c = _FUN_003fb54c + 1;
+    _validateServiceDataLength_ram = _validateServiceDataLength_ram + 1;
   }
-  if ((_FUN_003fb54c < governor_gain_proportional) || (_fuel_efficiency_trim_value < 0x32))
-  goto LAB_00042130;
+  if ((_validateServiceDataLength_ram < governor_gain_proportional) ||
+     (_fuel_efficiency_trim_value < 0x32)) goto LAB_00042130;
   if (((calibration_table_base & 1) == 0) || ((calibration_table_base & 2) == 0)) {
     if ((calibration_table_base & 1) != 0) goto LAB_00042100;
     if ((calibration_table_base & 2) != 0) {
@@ -40307,7 +40322,7 @@ LAB_00042100:
       setEngineProtectionFault(0xb,0);
     }
   }
-  _FUN_003fb54c = governor_gain_proportional;
+  _validateServiceDataLength_ram = governor_gain_proportional;
 LAB_00042130:
   if ((_fault_lamp_status & 0x20) != 0) {
     triggerProtectionEvent(0xb,0);
@@ -55114,12 +55129,12 @@ void invalidInstructionData(void)
 
 
 //
-// Function: FUN_003fa2f0 @ 0x003fa2f0
+// Function: initCanMailboxFilters_ram @ 0x003fa2f0
 //
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_003fa2f0(void)
+void initCanMailboxFilters_ram(void)
 
 {
                     /* WARNING: Bad instruction - Truncating control flow here */
@@ -55129,12 +55144,12 @@ void FUN_003fa2f0(void)
 
 
 //
-// Function: FUN_003fa5a0 @ 0x003fa5a0
+// Function: initFlashMemoryConfig_ram @ 0x003fa5a0
 //
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_003fa5a0(void)
+void initFlashMemoryConfig_ram(void)
 
 {
                     /* WARNING: Bad instruction - Truncating control flow here */
@@ -55144,12 +55159,12 @@ void FUN_003fa5a0(void)
 
 
 //
-// Function: FUN_003fab3c @ 0x003fab3c
+// Function: can2TransmitInterruptHandler_ram @ 0x003fab3c
 //
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_003fab3c(void)
+void can2TransmitInterruptHandler_ram(void)
 
 {
                     /* WARNING: Bad instruction - Truncating control flow here */
@@ -55159,12 +55174,12 @@ void FUN_003fab3c(void)
 
 
 //
-// Function: FUN_003fae3c @ 0x003fae3c
+// Function: dispatchCanMessageHandlers_ram @ 0x003fae3c
 //
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_003fae3c(void)
+void dispatchCanMessageHandlers_ram(void)
 
 {
                     /* WARNING: Bad instruction - Truncating control flow here */
@@ -55174,12 +55189,12 @@ void FUN_003fae3c(void)
 
 
 //
-// Function: FUN_003fb528 @ 0x003fb528
+// Function: getServiceDataOffset_ram @ 0x003fb528
 //
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_003fb528(void)
+void getServiceDataOffset_ram(void)
 
 {
                     /* WARNING: Bad instruction - Truncating control flow here */
@@ -55189,12 +55204,12 @@ void FUN_003fb528(void)
 
 
 //
-// Function: FUN_003fb54c @ 0x003fb54c
+// Function: validateServiceDataLength_ram @ 0x003fb54c
 //
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_003fb54c(void)
+void validateServiceDataLength_ram(void)
 
 {
                     /* WARNING: Bad instruction - Truncating control flow here */
@@ -55204,12 +55219,12 @@ void FUN_003fb54c(void)
 
 
 //
-// Function: FUN_003fc094 @ 0x003fc094
+// Function: processJ1939QueueStatus_ram @ 0x003fc094
 //
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_003fc094(void)
+void processJ1939QueueStatus_ram(void)
 
 {
                     /* WARNING: Bad instruction - Truncating control flow here */
@@ -55219,12 +55234,12 @@ void FUN_003fc094(void)
 
 
 //
-// Function: FUN_003fc0d8 @ 0x003fc0d8
+// Function: initDiagnosticBuffers_ram @ 0x003fc0d8
 //
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_003fc0d8(void)
+void initDiagnosticBuffers_ram(void)
 
 {
                     /* WARNING: Bad instruction - Truncating control flow here */
@@ -55234,12 +55249,12 @@ void FUN_003fc0d8(void)
 
 
 //
-// Function: FUN_003fc380 @ 0x003fc380
+// Function: serialReceiveHandler_ram @ 0x003fc380
 //
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_003fc380(void)
+void serialReceiveHandler_ram(void)
 
 {
                     /* WARNING: Bad instruction - Truncating control flow here */
@@ -55249,12 +55264,12 @@ void FUN_003fc380(void)
 
 
 //
-// Function: FUN_003fc484 @ 0x003fc484
+// Function: serialTransmitHandler_ram @ 0x003fc484
 //
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_003fc484(void)
+void serialTransmitHandler_ram(void)
 
 {
                     /* WARNING: Bad instruction - Truncating control flow here */
@@ -55264,12 +55279,12 @@ void FUN_003fc484(void)
 
 
 //
-// Function: FUN_003fc580 @ 0x003fc580
+// Function: validateSerialChecksum_ram @ 0x003fc580
 //
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_003fc580(void)
+void validateSerialChecksum_ram(void)
 
 {
                     /* WARNING: Bad instruction - Truncating control flow here */
@@ -55279,12 +55294,12 @@ void FUN_003fc580(void)
 
 
 //
-// Function: FUN_003fc62c @ 0x003fc62c
+// Function: initSerialTransmit_ram @ 0x003fc62c
 //
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_003fc62c(void)
+void initSerialTransmit_ram(void)
 
 {
                     /* WARNING: Bad instruction - Truncating control flow here */
@@ -55339,12 +55354,12 @@ void eepromWaitCycle(void)
 
 
 //
-// Function: FUN_003fc874 @ 0x003fc874
+// Function: processMainLoop_ram @ 0x003fc874
 //
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_003fc874(void)
+void processMainLoop_ram(void)
 
 {
                     /* WARNING: Bad instruction - Truncating control flow here */
@@ -55354,12 +55369,12 @@ void FUN_003fc874(void)
 
 
 //
-// Function: FUN_003fc9ec @ 0x003fc9ec
+// Function: sendEepromVersionResponse_ram @ 0x003fc9ec
 //
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_003fc9ec(void)
+void sendEepromVersionResponse_ram(void)
 
 {
                     /* WARNING: Bad instruction - Truncating control flow here */
@@ -55369,12 +55384,12 @@ void FUN_003fc9ec(void)
 
 
 //
-// Function: FUN_003fca7c @ 0x003fca7c
+// Function: handleEepromDiagnosticResponse_ram @ 0x003fca7c
 //
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_003fca7c(void)
+void handleEepromDiagnosticResponse_ram(void)
 
 {
                     /* WARNING: Bad instruction - Truncating control flow here */
@@ -55384,12 +55399,12 @@ void FUN_003fca7c(void)
 
 
 //
-// Function: FUN_003fcb24 @ 0x003fcb24
+// Function: processEepromDataTransfer_ram @ 0x003fcb24
 //
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_003fcb24(void)
+void processEepromDataTransfer_ram(void)
 
 {
                     /* WARNING: Bad instruction - Truncating control flow here */
@@ -55399,12 +55414,12 @@ void FUN_003fcb24(void)
 
 
 //
-// Function: FUN_003fd070 @ 0x003fd070
+// Function: processSensorFilterChain_ram @ 0x003fd070
 //
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_003fd070(void)
+void processSensorFilterChain_ram(void)
 
 {
                     /* WARNING: Bad instruction - Truncating control flow here */
@@ -55414,12 +55429,12 @@ void FUN_003fd070(void)
 
 
 //
-// Function: FUN_003fd1ac @ 0x003fd1ac
+// Function: processSensorWithOverride_ram @ 0x003fd1ac
 //
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_003fd1ac(void)
+void processSensorWithOverride_ram(void)
 
 {
                     /* WARNING: Bad instruction - Truncating control flow here */
@@ -55429,12 +55444,12 @@ void FUN_003fd1ac(void)
 
 
 //
-// Function: FUN_003fd1d8 @ 0x003fd1d8
+// Function: watchdogTimerTick_ram @ 0x003fd1d8
 //
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_003fd1d8(void)
+void watchdogTimerTick_ram(void)
 
 {
                     /* WARNING: Bad instruction - Truncating control flow here */
@@ -55444,12 +55459,12 @@ void FUN_003fd1d8(void)
 
 
 //
-// Function: FUN_003fd284 @ 0x003fd284
+// Function: watchdogTimerTick_midEntry_ram @ 0x003fd284
 //
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_003fd284(void)
+void watchdogTimerTick_midEntry_ram(void)
 
 {
                     /* WARNING: Bad instruction - Truncating control flow here */
@@ -55459,12 +55474,12 @@ void FUN_003fd284(void)
 
 
 //
-// Function: FUN_003fd298 @ 0x003fd298
+// Function: sensorFaultThresholdCheck_ram @ 0x003fd298
 //
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_003fd298(void)
+void sensorFaultThresholdCheck_ram(void)
 
 {
                     /* WARNING: Bad instruction - Truncating control flow here */
@@ -55489,12 +55504,12 @@ void eepromCompleteOperation(void)
 
 
 //
-// Function: FUN_003fd6d8 @ 0x003fd6d8
+// Function: initQspiHardware_ram @ 0x003fd6d8
 //
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_003fd6d8(void)
+void initQspiHardware_ram(void)
 
 {
                     /* WARNING: Bad instruction - Truncating control flow here */
@@ -55504,12 +55519,12 @@ void FUN_003fd6d8(void)
 
 
 //
-// Function: FUN_003fd994 @ 0x003fd994
+// Function: systemHaltLoop_ram @ 0x003fd994
 //
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_003fd994(void)
+void systemHaltLoop_ram(void)
 
 {
                     /* WARNING: Bad instruction - Truncating control flow here */
@@ -92964,7 +92979,7 @@ void evaluateProtectionDiagnosticState(void)
 void updateTimerEventCounter(void)
 
 {
-  FUN_003fd1ac = (code)0x4;
+  processSensorWithOverride_ram = (code)0x4;
   uRam003fd1ad = 1;
   uRam003fd1ae = 0;
   _system_enable_state_reserved_10 = _system_enable_state_reserved_10 & 0xdfff;
@@ -92987,9 +93002,9 @@ void calculateLimitFactorAdjustment(void)
   bool bVar1;
   bool bVar2;
   
-  FUN_003fd1ac = (code)((char)FUN_003fd1ac + '\x01');
-  if (3 < (byte)FUN_003fd1ac) {
-    FUN_003fd1ac = (code)0x0;
+  processSensorWithOverride_ram = (code)((char)processSensorWithOverride_ram + '\x01');
+  if (3 < (byte)processSensorWithOverride_ram) {
+    processSensorWithOverride_ram = (code)0x0;
     bVar2 = (diagnostic_torque_control_flags & 1) != 0;
     if ((cRam003fd1ae == '\0') && (bVar2)) {
       cRam003fd1ad = '\0';
@@ -98805,7 +98820,8 @@ void evaluateBoostControlAuthority(void)
       if (((speed_sync_event_flags & 8) == 0) && (_DAT_003fede0 != 0)) {
         validateCalibrationLookup(0x13,0x19,0x8e,0x8f,0x3fd291,0x3fd292,0x3fd293,0x3fd294,0x3fd295);
         validateCalibrationLookup
-                  (0x14,0x1b,0x90,0x91,0x3fd297,FUN_003fd298,0x3fd299,0x3fd29a,0x3fd29b);
+                  (0x14,0x1b,0x90,0x91,0x3fd297,sensorFaultThresholdCheck_ram,0x3fd299,0x3fd29a,
+                   0x3fd29b);
       }
     }
   }
@@ -98858,7 +98874,8 @@ void validateCalibrationParameters(void)
   validateCalibrationLookup();
   if (((*(byte *)(unaff_r30 + 1) & 8) == 0) && (_DAT_003fede0 != 0)) {
     validateCalibrationLookup(0x13,0x19,0x8e,0x8f,0x3fd291,0x3fd292,0x3fd293,0x3fd294);
-    validateCalibrationLookup(0x14,0x1b,0x90,0x91,0x3fd297,FUN_003fd298,0x3fd299,0x3fd29a);
+    validateCalibrationLookup
+              (0x14,0x1b,0x90,0x91,0x3fd297,sensorFaultThresholdCheck_ram,0x3fd299,0x3fd29a);
   }
   return;
 }
@@ -100501,4 +100518,4 @@ void dataTable_0053a110(void)
 
 
 
-// Export complete - 2242 functions processed
+// Export complete - 2243 functions processed
