@@ -1,0 +1,81 @@
+=== VARIABLES TO NAME ===
+0x00800044  (5 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00800044
+ushort FUN_0000b3d0(void)
+
+{
+  ushort uVar1;
+  
+  uVar1 = _calibration_feature_enable_flags_word_3 & 0x2000;
+  if ((_calibration_feature_enable_flags_word_3 & 0x2000) != 0) {
+    if (_engine_acceleration_below_which_anc_may_limit_timing_2560_2540 <
+        (short)_engine_acceleration_after_first_stage_low_pass_filtering_2560_2540) {
+      _anc_timing_limit_disable_due_to_bare_engine_accel_active_inactive = 1;
+      _DAT_00800040 = _duration_anc_timing_limit_will_be_disabled_after_a_bare_engine_0_20;
+    }
+    else if (_DAT_00800040 == 0) {
+      _anc_timing_limit_disable_due_to_bare_engine_accel_active_inactive = 0;
+    }
+    else {
+      _DAT_00800040 = _DAT_00800040 + -1;
+    }
+    uVar1 = _engine_acceleration_after_first_stage_low_pass_filtering_2560_2540;
+    if ((((_application_specific_anc_enable_disable_flag_set_to_false_to_dis_0_1 == 0) ||
+         (_anc_timing_limit_disable_due_to_bare_engine_accel_active_inactive != 0)) ||
+        (uVar1 = _filtered_and_linearized_coolant_temperature_50_to_293,
+        _filtered_and_linearized_coolant_temperature_50_to_293 <=
+        _calibratible_coolant_temperature_above_which_maximum_timing_m_20_255)) ||
+       ((uVar1 = _engine_acceleration_after_first_stage_low_pass_filtering_2560_2540,
+        _engine_acceleration_below_which_anc_may_limit_timing_2560_2540 <
+        (short)_engine_acceleration_after_first_stage_low_pass_filtering_2560_2540 ||
+        (uVar1 = _engine_acceleration_after_second_stage_low_pass_filtering_2560_2540,
+        (short)_engine_acceleration_after_second_stage_low_pass_filtering_2560_2540 <
+        _filtered_engine_acceleration_above_which_anc_may_limit_ti_2560_2540)))) {
+      if (_application_specific_anc_override_flag_1_engage_anc_0_1 == 0) {
+        if (_DAT_00800044 == 0) {
+          _status_indicating_conditions_proper_for_a_timing_li_active_or_inactive = 0;
+        }
+        else {
+          _DAT_00800044 = _DAT_00800044 + -1;
+        }
+      }
+      else {
+        _status_indicating_conditions_proper_for_a_timing_li_active_or_inactive = 1;
+        _DAT_00800044 = _minimum_amount_of_time_which_the_anc_timing_limit_will_be_activ_0_20;
+      }
+    }
+    else {
+      _status_indicating_conditions_proper_for_a_timing_li_active_or_inactive = 1;
+      _DAT_00800044 = _minimum_amount_of_time_which_the_anc_timing_limit_will_be_activ_0_20;
+    }
+    if (_status_indicating_conditions_proper_for_a_timing_li_active_or_inactive == 1) {
+      _DAT_0080005e = _current_engine_rpm_filtered;
+      _anc_timing_limit_interpolated_value = lookupTableInterpolation(&timing_table_2_base);
+      return _anc_timing_limit_interpolated_value;
+    }
+    if (_anc_timing_limit_interpolated_value < 0x400) {
+      _anc_timing_limit_interpolated_value =
+           _timing_increment_added_to_anc_timing_to_ramp_out_the_timing_de_0_720 +
+           _anc_timing_limit_interpolated_value;
+      uVar1 = _timing_increment_added_to_anc_timing_to_ramp_out_the_timing_de_0_720;
+      if (0x400 < _anc_timing_limit_interpolated_value) {
+        _anc_timing_limit_interpolated_value = 0x400;
+      }
+    }
+  }
+  return uVar1;
+}
+
+
+
+//
+// Function: fuelDemandLimitMinimumUpdater @ 0x0000b4ce
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

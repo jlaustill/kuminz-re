@@ -1,0 +1,77 @@
+=== VARIABLES TO NAME ===
+0x00800042  (5 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00800042
+ushort rpm_system_state_controller(void)
+
+{
+  ushort uVar1;
+  
+                    /* From J90280.05 @ 0x00a204 (confidence: 80%) */
+  uVar1 = _calibration_feature_enable_flags_word_3 & 0x1000;
+  if ((_calibration_feature_enable_flags_word_3 & 0x1000) != 0) {
+    if (_engine_acceleration_below_which_anc_may_limit_fueling_2560_2540 <
+        _engine_acceleration_after_first_stage_low_pass_filtering_2560_2540) {
+      _anc_fueling_limit_disable_due_to_bare_engine_accel_active_inactive = 1;
+      _DAT_0080003e = _duration_anc_fueling_limit_will_be_disabled_after_a_bare_engine_0_20;
+    }
+    else if (_DAT_0080003e == 0) {
+      _anc_fueling_limit_disable_due_to_bare_engine_accel_active_inactive = 0;
+    }
+    else {
+      _DAT_0080003e = _DAT_0080003e + -1;
+    }
+    if ((((_application_specific_anc_enable_disable_flag_set_to_false_to_dis_0_1 == 0) ||
+         (_anc_fueling_limit_disable_due_to_bare_engine_accel_active_inactive != 0)) ||
+        (_current_engine_rpm_filtered < _engine_speed_above_which_anc_may_limit_fueling_1000_3000))
+       || ((_engine_acceleration_below_which_anc_may_limit_fueling_2560_2540 <
+            _engine_acceleration_after_first_stage_low_pass_filtering_2560_2540 ||
+           (_engine_acceleration_after_second_stage_low_pass_filtering_2560_2540 <
+            _filtered_engine_acceleration_above_which_anc_may_limit_fu_2560_2540)))) {
+      if (_application_specific_anc_override_flag_1_engage_anc_0_1 == 0) {
+        if (_DAT_00800042 == 0) {
+          _sstatus_indicating_conditions_proper_for_a_fuel_lim_active_or_inactive = 0;
+        }
+        else {
+          _DAT_00800042 = _DAT_00800042 + -1;
+        }
+      }
+      else {
+        _sstatus_indicating_conditions_proper_for_a_fuel_lim_active_or_inactive = 1;
+        _DAT_00800042 = _minimum_amount_of_time_which_the_anc_fuel_limit_will_be_active_0_20;
+      }
+    }
+    else {
+      _sstatus_indicating_conditions_proper_for_a_fuel_lim_active_or_inactive = 1;
+      _DAT_00800042 = _minimum_amount_of_time_which_the_anc_fuel_limit_will_be_active_0_20;
+    }
+    if (_sstatus_indicating_conditions_proper_for_a_fuel_lim_active_or_inactive == 1) {
+      _DAT_00800050 = _current_engine_rpm_filtered;
+      _anc_fuel_limit_value = lookupTableInterpolation(&DAT_0080004a);
+      return _anc_fuel_limit_value;
+    }
+    uVar1 = _anc_fuel_limit_value;
+    if (_anc_fuel_limit_value < _peak_fueling_calibration_value) {
+      uVar1 = _fuel_increment_added_to_anc_fueling_to_ramp_out_the_fueling_de_0_100 +
+              _anc_fuel_limit_value;
+      _anc_fuel_limit_value = uVar1;
+      if (_peak_fueling_calibration_value < uVar1) {
+        _anc_fuel_limit_value = _peak_fueling_calibration_value;
+      }
+    }
+  }
+  return uVar1;
+}
+
+
+
+//
+// Function: shutdownMinimumSelector21 @ 0x0000b3b2
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

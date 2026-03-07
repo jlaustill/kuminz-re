@@ -1,0 +1,62 @@
+=== VARIABLES TO NAME ===
+0x00802660  (5 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00802660
+byte previousDtcListBuilder(void)
+
+{
+  byte bVar1;
+  uint uVar2;
+  byte bVar3;
+  byte bVar4;
+  uint *puVar5;
+  
+                    /* From J90280.05 @ 0x029ae4 (confidence: 88%) */
+  bVar3 = DAT_00802d60 & 0xf0;
+  if ((DAT_00802d60 & 0xf0) == 0) {
+    _DAT_00802660 = 2;
+    DAT_0080266a = FUN_00021920();
+    if (DGIEFUBF == 0) {
+      _DAT_0080266c = 0xffffffff;
+      _DAT_00802660 = _DAT_00802660 + 4;
+    }
+    else {
+      puVar5 = (uint *)&DAT_0080266c;
+      for (bVar3 = 1; bVar3 <= DGIEFUBF; bVar3 = bVar3 + 1) {
+        if ((*(ushort *)
+              (&fault_definition_flags_word +
+              (short)((ushort)(&DGIEFUBF)[(short)(ushort)bVar3] * 3) * 2) & 0x4000) == 0) {
+          bVar1 = (&DGIEFUBF)[(short)(ushort)bVar3];
+          if ((byte)(&diagnostic_fault_occurrence_count)[(short)((ushort)bVar1 * 10)] < 0x80) {
+            bVar4 = (&diagnostic_fault_occurrence_count)[(short)((ushort)bVar1 * 10)];
+          }
+          else {
+            bVar4 = 0x7f;
+          }
+          uVar2 = *(uint *)((short)(ushort)bVar1 * 4 + 0x60fac) & 0xffffe000;
+          *puVar5 = CONCAT22((short)(uVar2 >> 0x10),
+                             (ushort)bVar4 |
+                             (*(byte *)((short)(ushort)bVar1 * 4 + 0x60fae) & 0x1f) << 8 |
+                             (ushort)uVar2) | 0x80;
+          _DAT_00802660 = _DAT_00802660 + 4;
+        }
+        puVar5 = puVar5 + 1;
+      }
+    }
+    bVar3 = sendCanMessage(&DAT_0080265c);
+  }
+  return bVar3;
+}
+
+
+
+//
+// Function: diagnosticDM2PGN_65227_Builder @ 0x0003252c
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

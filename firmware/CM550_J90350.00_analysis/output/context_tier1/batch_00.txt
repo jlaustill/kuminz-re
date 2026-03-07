@@ -1,0 +1,200 @@
+=== VARIABLES TO NAME ===
+0x008001a8  (10 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_008001a8
+uint bufferDecreasingPatternCheck(void)
+
+{
+  uint uVar1;
+  uint *puVar2;
+  uint *puVar3;
+  uint local_18 [5];
+  
+  uVar1 = 0;
+  puVar3 = _anc_altitude_table_3_ptr;
+  for (puVar2 = local_18; puVar2 < &stack0xfffffffc; puVar2 = puVar2 + 1) {
+    if (puVar2 == local_18) {
+      *puVar2 = _DAT_008001a8 >> 2;
+    }
+    else {
+      *puVar2 = *puVar3 >> 2;
+      puVar3 = puVar3 + -1;
+    }
+    if (puVar3 < _cold_start_fuel_control_result) {
+      puVar3 = _DAT_008001b4;
+    }
+    uVar1 = *puVar3 >> 2;
+    *puVar2 = *puVar2 - uVar1;
+  }
+  if (((((int)local_18[4] < 1) || (uVar1 = local_18[3], (int)local_18[2] <= (int)local_18[3])) ||
+      (-1 < (int)local_18[2])) ||
+     (((uVar1 = local_18[2], (int)local_18[1] <= (int)local_18[2] ||
+       (uVar1 = local_18[0] + _time_constant_compared_with_prior_pulse_slope_in_final_cold_0_4000,
+       (int)local_18[1] <= (int)uVar1)) ||
+      (uVar1 = (uint)_time_constant_compared_with_prior_pulse_time_in_final_cold_sy_400_0,
+      (int)uVar1 <= (int)local_18[0])))) {
+    uVar1 = uVar1 & 0xffff0000;
+  }
+  else {
+    uVar1 = 1;
+  }
+  return uVar1;
+}
+
+
+
+//
+// Function: bufferThresholdValidator @ 0x000101b8
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_008001a8
+uint bufferThresholdValidator(void)
+
+{
+  uint uVar1;
+  uint uVar2;
+  uint uVar3;
+  int iVar4;
+  
+  if (_anc_altitude_table_3_ptr == _cold_start_fuel_control_result) {
+    uVar3 = *_DAT_008001b4 >> 2;
+    uVar2 = _DAT_008001b4[-1] >> 2;
+  }
+  else if (_cold_start_fuel_control_result + 1 == _anc_altitude_table_3_ptr) {
+    uVar3 = *_cold_start_fuel_control_result >> 2;
+    uVar2 = *_DAT_008001b4 >> 2;
+  }
+  else {
+    uVar3 = _anc_altitude_table_3_ptr[-1] >> 2;
+    uVar2 = _anc_altitude_table_3_ptr[-2] >> 2;
+  }
+  iVar4 = _cold_start_fuel_demand_threshold;
+  if (_filtered_and_linearized_coolant_temperature_50_to_293 <
+      _temp_below_which_cold_crank_can_run_50_293_7c10) {
+    iVar4 = _cold_start_fuel_minimum_value;
+  }
+  uVar1 = uVar2 * _value_used_to_detect_sync_pulse_0_100_7c20 >> 8;
+  if (((uVar1 <= _DAT_008001a8 >> 2) || (uVar1 = uVar3 - uVar2, iVar4 <= (int)uVar1)) &&
+     (iVar4 <= (int)uVar3)) {
+    return uVar1 & 0xffff0000;
+  }
+  return 1;
+}
+
+
+
+//
+// Function: retarderModeThresholdCalculator @ 0x0001025c
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_008001a8
+undefined2 retarderModeThresholdCalculator(undefined4 param_11)
+
+{
+  undefined2 uVar1;
+  undefined2 uVar2;
+  uint uVar3;
+  
+  if (_DAT_00803d5c == 0) {
+    uVar2 = 0;
+  }
+  else {
+    if (param_11._1_1_ == '\0') {
+      _DAT_008001a8 = _io_control_handshake_state;
+      if (_next_table_position_pointer_to_next_spot_in_pulse_per_800000_83ffff ==
+          &pulse_period_table_table_containing_main_speed_pulse_per_1000_65535) {
+        _anc_altitude_table_3_ptr = _eps_control_mode_param_1;
+      }
+      else {
+        _anc_altitude_table_3_ptr =
+             _next_table_position_pointer_to_next_spot_in_pulse_per_800000_83ffff + -4;
+      }
+      _cold_start_fuel_control_result =
+           &pulse_period_table_table_containing_main_speed_pulse_per_1000_65535;
+      _DAT_008001b4 = _eps_control_mode_param_1;
+      uVar3 = _anc_altitude_table_3_size;
+    }
+    else {
+      _DAT_008001a8 = _eps_period_backup_time_between_the_two_most_recent_eps_200_16777216;
+      if (_next_table_position_backup_pointer_to_next_spot_in_ba_800000_83ffff ==
+          &pulse_period_table_backup_table_containing_main_speed_pulse_peri_2_32) {
+        _anc_altitude_table_3_ptr = _eps_control_mode_param_3;
+      }
+      else {
+        _anc_altitude_table_3_ptr =
+             _next_table_position_backup_pointer_to_next_spot_in_ba_800000_83ffff + -4;
+      }
+      _cold_start_fuel_control_result =
+           &pulse_period_table_backup_table_containing_main_speed_pulse_peri_2_32;
+      _DAT_008001b4 = _eps_control_mode_param_3;
+      uVar3 = _anc_altitude_table_2_ptr;
+    }
+    if (_CSCKES < _fuel_demand_blend_mode_select) {
+      if (_DAT_008001a8 < uVar3) {
+        uVar2 = 1;
+      }
+      else {
+        uVar2 = 0;
+      }
+    }
+    else if (_DAT_008001a8 < uVar3) {
+      uVar2 = bufferThresholdValidator();
+    }
+    else if ((_filtered_and_linearized_coolant_temperature_50_to_293 <
+              _temp_below_which_cold_crank_can_run_50_293_7c0e) &&
+            (_fuel_demand_blend_mode_select <=
+             _engine_speed_limit_below_which_the_cold_crank_sync_determina_0_8000)) {
+      uVar2 = bufferDecreasingPatternCheck();
+    }
+    else {
+      uVar2 = 0;
+    }
+    if (param_11._1_1_ == '\0') {
+      _anc_altitude_table_3_size = _DAT_008001a8 * _value_used_to_detect_sync_pulse_0_100_7c1e >> 8;
+    }
+    else {
+      _anc_altitude_table_2_ptr = _DAT_008001a8 * _value_used_to_detect_sync_pulse_0_100_7c1e >> 8;
+    }
+  }
+  uVar1 = uVar2;
+  if (param_11._1_1_ == '\0') {
+    _DAT_0080aa16 = uVar2;
+    uVar1 = _DAT_0080aa18;
+  }
+  _DAT_0080aa18 = uVar1;
+  return uVar2;
+}
+
+
+
+//
+// Function: canBusTimingInit @ 0x00010394
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_008001a8
+void canBusTimingInit(void)
+
+{
+  _anc_altitude_table_3_size =
+       _DAT_008001a8 * (uint)_value_used_to_detect_sync_pulse_0_100_7c1e >> 8;
+  _anc_altitude_table_2_ptr = _DAT_008001a8 * (uint)_value_used_to_detect_sync_pulse_0_100_7c1e >> 8
+  ;
+  return;
+}
+
+
+
+//
+// Function: sendCanMessage @ 0x000104e8
+//
+

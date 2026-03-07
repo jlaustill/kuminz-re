@@ -1,0 +1,77 @@
+=== VARIABLES TO NAME ===
+0x0080db5d  (16 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0080db5d
+void FUN_00026b88(void)
+
+{
+  if ((commanded_driver_true_on_0_1 & 1) == 0) {
+    DAT_0080db5d = DAT_0080db5d | 8;
+  }
+  else {
+    DAT_0080db5d = DAT_0080db5d & 0xf7;
+  }
+  if ((bit_4_of_master_status_byte_a_0_1 & 0x40) == 0) {
+    DAT_0080db5d = DAT_0080db5d | 0x40;
+  }
+  else {
+    DAT_0080db5d = DAT_0080db5d & 0xbf;
+  }
+  if ((commanded_driver_true_on_0_1 & 0x80) == 0) {
+    DAT_0080db5d = DAT_0080db5d & 0xef;
+  }
+  else {
+    DAT_0080db5d = DAT_0080db5d | 0x10;
+  }
+  if ((DAT_0080bcfb & 0x20) == 0) {
+    DAT_0080db5d = DAT_0080db5d & 0xdf;
+  }
+  else {
+    DAT_0080db5d = DAT_0080db5d | 0x20;
+  }
+  if ((bit_6_which_enables_the_warning_lamp_driver_enable_disable & 1) == 0) {
+    bit_13_of_0_15_cpu_output_port_1_bit_5_warning_lamp_yellow_none =
+         bit_13_of_0_15_cpu_output_port_1_bit_5_warning_lamp_yellow_none & 0xef;
+  }
+  else {
+    bit_13_of_0_15_cpu_output_port_1_bit_5_warning_lamp_yellow_none =
+         bit_13_of_0_15_cpu_output_port_1_bit_5_warning_lamp_yellow_none | 0x10;
+  }
+  if ((bit_6_which_enables_the_warning_lamp_driver_enable_disable & 2) == 0) {
+    bit_13_of_0_15_cpu_output_port_1_bit_5_warning_lamp_yellow_none =
+         bit_13_of_0_15_cpu_output_port_1_bit_5_warning_lamp_yellow_none & 0xdf;
+  }
+  else {
+    bit_13_of_0_15_cpu_output_port_1_bit_5_warning_lamp_yellow_none =
+         bit_13_of_0_15_cpu_output_port_1_bit_5_warning_lamp_yellow_none | 0x20;
+  }
+  if ((bit_6_which_enables_the_warning_lamp_driver_enable_disable & 4) == 0) {
+    bit_13_of_0_15_cpu_output_port_1_bit_5_warning_lamp_yellow_none =
+         bit_13_of_0_15_cpu_output_port_1_bit_5_warning_lamp_yellow_none & 0xbf;
+  }
+  else {
+    bit_13_of_0_15_cpu_output_port_1_bit_5_warning_lamp_yellow_none =
+         bit_13_of_0_15_cpu_output_port_1_bit_5_warning_lamp_yellow_none | 0x40;
+  }
+  if ((bit_6_which_enables_the_warning_lamp_driver_enable_disable & 0x10) != 0) {
+    bit_13_of_0_15_cpu_output_port_1_bit_5_warning_lamp_yellow_none =
+         bit_13_of_0_15_cpu_output_port_1_bit_5_warning_lamp_yellow_none | 0x80;
+    return;
+  }
+  bit_13_of_0_15_cpu_output_port_1_bit_5_warning_lamp_yellow_none =
+       bit_13_of_0_15_cpu_output_port_1_bit_5_warning_lamp_yellow_none & 0x7f;
+  return;
+}
+
+
+
+//
+// Function: pwmOutputInit @ 0x00026c7e
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

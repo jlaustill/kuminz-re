@@ -1,0 +1,506 @@
+=== VARIABLES TO NAME ===
+0x00801a09  (5 references)
+0x00801a0a  (6 references)
+0x00801a0b  (6 references)
+0x00801a0c  (5 references)
+0x00801a0d  (5 references)
+0x00801a0e  (6 references)
+0x00801a0f  (6 references)
+0x00801a10  (5 references)
+0x00801a11  (5 references)
+0x00801a12  (6 references)
+0x00801a13  (6 references)
+0x00801a14  (5 references)
+0x00801a15  (5 references)
+
+Total: 13 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00801a09, DAT_00801a0a, DAT_00801a0b, DAT_00801a0c, DAT_00801a0d, DAT_00801a0e, DAT_00801a0f, DAT_00801a10, DAT_00801a11, DAT_00801a12, DAT_00801a13, DAT_00801a14, DAT_00801a15
+void FUN_00023be8(void)
+
+{
+  if ((value_used_for_monitoring_switch_data_0_1_2089_10_24 & 1) != 0) {
+    if (((status_of_the_water_in_fuel_lamp_output_on_off & 1) != 0) ==
+        ((io_driver_port_1_feedback & 1) != 0)) {
+      DAT_008019fa = 0;
+      DAT_008019fb = 0;
+      if ((io_driver_port_1_feedback & 1) == 0) {
+        if (((_status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0x80) != 0) &&
+           ((_fault_first_occurrence_flags_word_8 & 0x80) == 0)) {
+          if (DAT_008019fd < _DAT_000611ca) {
+            DAT_008019fd = DAT_008019fd + 1;
+          }
+          else {
+            _status_32_word_bit_mapped_system_error_status_word_8_0_1 =
+                 _status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0xff7f;
+            DAT_008019fd = 0;
+          }
+        }
+      }
+      else if (((_status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0x40) != 0) &&
+              ((_fault_first_occurrence_flags_word_8 & 0x40) == 0)) {
+        if (DAT_008019fc < _DAT_000611ca) {
+          DAT_008019fc = DAT_008019fc + 1;
+        }
+        else {
+          _status_32_word_bit_mapped_system_error_status_word_8_0_1 =
+               _status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0xffbf;
+          DAT_008019fc = 0;
+        }
+      }
+    }
+    else if ((status_of_the_water_in_fuel_lamp_output_on_off & 1) == 0) {
+      DAT_008019fb = 0;
+      if (((_status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0x80) != 0) &&
+         ((_fault_first_occurrence_flags_word_8 & 0x80) == 0)) {
+        _status_32_word_bit_mapped_system_error_status_word_8_0_1 =
+             _status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0xff7f;
+      }
+      if (DAT_008019fa < _DAT_000611c8) {
+        DAT_008019fa = DAT_008019fa + 1;
+      }
+      else {
+        _status_32_word_bit_mapped_system_error_status_word_8_0_1 =
+             _status_32_word_bit_mapped_system_error_status_word_8_0_1 | 0x40;
+        _fault_first_occurrence_flags_word_8 = _fault_first_occurrence_flags_word_8 | 0x40;
+      }
+    }
+    else {
+      DAT_008019fa = 0;
+      if (((_status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0x40) != 0) &&
+         ((_fault_first_occurrence_flags_word_8 & 0x40) == 0)) {
+        _status_32_word_bit_mapped_system_error_status_word_8_0_1 =
+             _status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0xffbf;
+      }
+      if (DAT_008019fb < _DAT_000611c8) {
+        DAT_008019fb = DAT_008019fb + 1;
+      }
+      else {
+        _status_32_word_bit_mapped_system_error_status_word_8_0_1 =
+             _status_32_word_bit_mapped_system_error_status_word_8_0_1 | 0x80;
+        _fault_first_occurrence_flags_word_8 = _fault_first_occurrence_flags_word_8 | 0x80;
+      }
+    }
+    if (((status_of_the_water_in_fuel_lamp_output_on_off & 2) != 0) ==
+        ((io_driver_port_1_feedback & 2) != 0)) {
+      DAT_008019fe = 0;
+      DAT_008019ff = 0;
+      if ((io_driver_port_1_feedback & 2) == 0) {
+        if (((_status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0x400) != 0) &&
+           ((_fault_first_occurrence_flags_word_7 & 0x400) == 0)) {
+          if (DAT_00801a01 < _DAT_000611ca) {
+            DAT_00801a01 = DAT_00801a01 + 1;
+          }
+          else {
+            _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+                 _status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0xfbff;
+            DAT_00801a01 = 0;
+          }
+        }
+      }
+      else if (((_status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0x100) != 0) &&
+              ((_fault_first_occurrence_flags_word_8 & 0x100) == 0)) {
+        if (DAT_00801a00 < _DAT_000611ca) {
+          DAT_00801a00 = DAT_00801a00 + 1;
+        }
+        else {
+          _status_32_word_bit_mapped_system_error_status_word_8_0_1 =
+               _status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0xfeff;
+          DAT_00801a00 = 0;
+        }
+      }
+    }
+    else if ((status_of_the_water_in_fuel_lamp_output_on_off & 2) == 0) {
+      DAT_008019ff = 0;
+      if (((_status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0x400) != 0) &&
+         ((_fault_first_occurrence_flags_word_7 & 0x400) == 0)) {
+        _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+             _status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0xfbff;
+      }
+      if (DAT_008019fe < _DAT_000611c8) {
+        DAT_008019fe = DAT_008019fe + 1;
+      }
+      else {
+        _status_32_word_bit_mapped_system_error_status_word_8_0_1 =
+             _status_32_word_bit_mapped_system_error_status_word_8_0_1 | 0x100;
+        _fault_first_occurrence_flags_word_8 = _fault_first_occurrence_flags_word_8 | 0x100;
+      }
+    }
+    else {
+      DAT_008019fe = 0;
+      if (((_status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0x100) != 0) &&
+         ((_fault_first_occurrence_flags_word_8 & 0x100) == 0)) {
+        _status_32_word_bit_mapped_system_error_status_word_8_0_1 =
+             _status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0xfeff;
+      }
+      if (DAT_008019ff < _DAT_000611c8) {
+        DAT_008019ff = DAT_008019ff + 1;
+      }
+      else {
+        _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+             _status_32_word_bit_mapped_system_error_status_word_7_0_1 | 0x400;
+        _fault_first_occurrence_flags_word_7 = _fault_first_occurrence_flags_word_7 | 0x400;
+      }
+    }
+    if (((status_of_the_water_in_fuel_lamp_output_on_off & 4) != 0) ==
+        ((io_driver_port_1_feedback & 4) != 0)) {
+      DAT_00801a02 = 0;
+      DAT_00801a03 = 0;
+      if ((io_driver_port_1_feedback & 4) == 0) {
+        if (((_status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0x1000) != 0) &&
+           ((_fault_first_occurrence_flags_word_7 & 0x1000) == 0)) {
+          if (DAT_00801a05 < _DAT_000611ca) {
+            DAT_00801a05 = DAT_00801a05 + 1;
+          }
+          else {
+            _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+                 _status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0xefff;
+            DAT_00801a05 = 0;
+          }
+        }
+      }
+      else if (((_status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0x800) != 0) &&
+              ((_fault_first_occurrence_flags_word_7 & 0x800) == 0)) {
+        if (DAT_00801a04 < _DAT_000611ca) {
+          DAT_00801a04 = DAT_00801a04 + 1;
+        }
+        else {
+          _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+               _status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0xf7ff;
+          DAT_00801a04 = 0;
+        }
+      }
+    }
+    else if ((status_of_the_water_in_fuel_lamp_output_on_off & 4) == 0) {
+      DAT_00801a03 = 0;
+      if (((_status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0x1000) != 0) &&
+         ((_fault_first_occurrence_flags_word_7 & 0x1000) == 0)) {
+        _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+             _status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0xefff;
+      }
+      if (DAT_00801a02 < _DAT_000611c8) {
+        DAT_00801a02 = DAT_00801a02 + 1;
+      }
+      else {
+        _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+             _status_32_word_bit_mapped_system_error_status_word_7_0_1 | 0x800;
+        _fault_first_occurrence_flags_word_7 = _fault_first_occurrence_flags_word_7 | 0x800;
+      }
+    }
+    else {
+      DAT_00801a02 = 0;
+      if (((_status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0x800) != 0) &&
+         ((_fault_first_occurrence_flags_word_7 & 0x800) == 0)) {
+        _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+             _status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0xf7ff;
+      }
+      if (DAT_00801a03 < _DAT_000611c8) {
+        DAT_00801a03 = DAT_00801a03 + 1;
+      }
+      else {
+        _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+             _status_32_word_bit_mapped_system_error_status_word_7_0_1 | 0x1000;
+        _fault_first_occurrence_flags_word_7 = _fault_first_occurrence_flags_word_7 | 0x1000;
+      }
+    }
+    if (((status_of_the_water_in_fuel_lamp_output_on_off & 0x40) != 0) ==
+        ((io_driver_port_1_feedback & 0x40) != 0)) {
+      DAT_00801a06 = 0;
+      DAT_00801a07 = 0;
+      if ((io_driver_port_1_feedback & 0x40) == 0) {
+        if (((_status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0x8000) != 0) &&
+           ((_fault_first_occurrence_flags_word_7 & 0x8000) == 0)) {
+          if (DAT_00801a09 < _DAT_000611ca) {
+            DAT_00801a09 = DAT_00801a09 + 1;
+          }
+          else {
+            _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+                 _status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0x7fff;
+            DAT_00801a09 = 0;
+          }
+        }
+      }
+      else if (((_status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0x4000) != 0) &&
+              ((_fault_first_occurrence_flags_word_7 & 0x4000) == 0)) {
+        if (DAT_00801a08 < _DAT_000611ca) {
+          DAT_00801a08 = DAT_00801a08 + 1;
+        }
+        else {
+          _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+               _status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0xbfff;
+          DAT_00801a08 = 0;
+        }
+      }
+    }
+    else if ((status_of_the_water_in_fuel_lamp_output_on_off & 0x40) == 0) {
+      DAT_00801a07 = 0;
+      if ((_status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0x8000) != 0) {
+        if ((_fault_first_occurrence_flags_word_7 & 0x8000) == 0) {
+          _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+               _status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0x7fff;
+        }
+      }
+      if (DAT_00801a06 < _DAT_000611c8) {
+        DAT_00801a06 = DAT_00801a06 + 1;
+      }
+      else {
+        _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+             _status_32_word_bit_mapped_system_error_status_word_7_0_1 | 0x4000;
+        _fault_first_occurrence_flags_word_7 = _fault_first_occurrence_flags_word_7 | 0x4000;
+      }
+    }
+    else {
+      DAT_00801a06 = 0;
+      if (((_status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0x4000) != 0) &&
+         ((_fault_first_occurrence_flags_word_7 & 0x4000) == 0)) {
+        _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+             _status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0xbfff;
+      }
+      if (DAT_00801a07 < _DAT_000611c8) {
+        DAT_00801a07 = DAT_00801a07 + 1;
+      }
+      else {
+        _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+             _status_32_word_bit_mapped_system_error_status_word_7_0_1 | 0x8000;
+        _fault_first_occurrence_flags_word_7 = _fault_first_occurrence_flags_word_7 | 0x8000;
+      }
+    }
+    if (((status_of_the_water_in_fuel_lamp_output_on_off & 0x10) != 0) ==
+        ((io_driver_port_1_feedback & 0x10) != 0)) {
+      DAT_00801a0a = 0;
+      DAT_00801a0b = 0;
+      if ((io_driver_port_1_feedback & 0x10) == 0) {
+        if (((_status_32_word_bit_mapped_system_error_status_word_8_0_1 & 1) != 0) &&
+           ((_fault_first_occurrence_flags_word_8 & 1) == 0)) {
+          if (DAT_00801a0d < _DAT_000611ca) {
+            DAT_00801a0d = DAT_00801a0d + 1;
+          }
+          else {
+            _status_32_word_bit_mapped_system_error_status_word_8_0_1 =
+                 _status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0xfffe;
+            DAT_00801a0d = 0;
+          }
+        }
+      }
+      else if (((_status_32_word_bit_mapped_system_error_status_word_8_0_1 & 2) != 0) &&
+              ((_fault_first_occurrence_flags_word_8 & 2) == 0)) {
+        if (DAT_00801a0c < _DAT_000611ca) {
+          DAT_00801a0c = DAT_00801a0c + 1;
+        }
+        else {
+          _status_32_word_bit_mapped_system_error_status_word_8_0_1 =
+               _status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0xfffd;
+          DAT_00801a0c = 0;
+        }
+      }
+    }
+    else if ((status_of_the_water_in_fuel_lamp_output_on_off & 0x10) == 0) {
+      DAT_00801a0b = 0;
+      if (((_status_32_word_bit_mapped_system_error_status_word_8_0_1 & 1) != 0) &&
+         ((_fault_first_occurrence_flags_word_8 & 1) == 0)) {
+        _status_32_word_bit_mapped_system_error_status_word_8_0_1 =
+             _status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0xfffe;
+      }
+      if (DAT_00801a0a < _DAT_000611c8) {
+        DAT_00801a0a = DAT_00801a0a + 1;
+      }
+      else {
+        _status_32_word_bit_mapped_system_error_status_word_8_0_1 =
+             _status_32_word_bit_mapped_system_error_status_word_8_0_1 | 2;
+        _fault_first_occurrence_flags_word_8 = _fault_first_occurrence_flags_word_8 | 2;
+      }
+    }
+    else {
+      DAT_00801a0a = 0;
+      if (((_status_32_word_bit_mapped_system_error_status_word_8_0_1 & 2) != 0) &&
+         ((_fault_first_occurrence_flags_word_8 & 2) == 0)) {
+        _status_32_word_bit_mapped_system_error_status_word_8_0_1 =
+             _status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0xfffd;
+      }
+      if (DAT_00801a0b < _DAT_000611c8) {
+        DAT_00801a0b = DAT_00801a0b + 1;
+      }
+      else {
+        _status_32_word_bit_mapped_system_error_status_word_8_0_1 =
+             _status_32_word_bit_mapped_system_error_status_word_8_0_1 | 1;
+        _fault_first_occurrence_flags_word_8 = _fault_first_occurrence_flags_word_8 | 1;
+      }
+    }
+    if (((status_of_the_water_in_fuel_lamp_output_on_off & 0x20) != 0) ==
+        ((io_driver_port_1_feedback & 0x20) != 0)) {
+      DAT_00801a0e = 0;
+      DAT_00801a0f = 0;
+      if ((io_driver_port_1_feedback & 0x20) == 0) {
+        if (((_status_32_word_bit_mapped_system_error_status_word_8_0_1 & 4) != 0) &&
+           ((_fault_first_occurrence_flags_word_8 & 4) == 0)) {
+          if (DAT_00801a11 < _DAT_000611ca) {
+            DAT_00801a11 = DAT_00801a11 + 1;
+          }
+          else {
+            _status_32_word_bit_mapped_system_error_status_word_8_0_1 =
+                 _status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0xfffb;
+            DAT_00801a11 = 0;
+          }
+        }
+      }
+      else if (((_status_32_word_bit_mapped_system_error_status_word_8_0_1 & 8) != 0) &&
+              ((_fault_first_occurrence_flags_word_8 & 8) == 0)) {
+        if (DAT_00801a10 < _DAT_000611ca) {
+          DAT_00801a10 = DAT_00801a10 + 1;
+        }
+        else {
+          _status_32_word_bit_mapped_system_error_status_word_8_0_1 =
+               _status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0xfff7;
+          DAT_00801a10 = 0;
+        }
+      }
+    }
+    else if ((status_of_the_water_in_fuel_lamp_output_on_off & 0x20) == 0) {
+      DAT_00801a0f = 0;
+      if (((_status_32_word_bit_mapped_system_error_status_word_8_0_1 & 4) != 0) &&
+         ((_fault_first_occurrence_flags_word_8 & 4) == 0)) {
+        _status_32_word_bit_mapped_system_error_status_word_8_0_1 =
+             _status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0xfffb;
+      }
+      if (DAT_00801a0e < _DAT_000611c8) {
+        DAT_00801a0e = DAT_00801a0e + 1;
+      }
+      else {
+        _status_32_word_bit_mapped_system_error_status_word_8_0_1 =
+             _status_32_word_bit_mapped_system_error_status_word_8_0_1 | 8;
+        _fault_first_occurrence_flags_word_8 = _fault_first_occurrence_flags_word_8 | 8;
+      }
+    }
+    else {
+      DAT_00801a0e = 0;
+      if (((_status_32_word_bit_mapped_system_error_status_word_8_0_1 & 8) != 0) &&
+         ((_fault_first_occurrence_flags_word_8 & 8) == 0)) {
+        _status_32_word_bit_mapped_system_error_status_word_8_0_1 =
+             _status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0xfff7;
+      }
+      if (DAT_00801a0f < _DAT_000611c8) {
+        DAT_00801a0f = DAT_00801a0f + 1;
+      }
+      else {
+        _status_32_word_bit_mapped_system_error_status_word_8_0_1 =
+             _status_32_word_bit_mapped_system_error_status_word_8_0_1 | 4;
+        _fault_first_occurrence_flags_word_8 = _fault_first_occurrence_flags_word_8 | 4;
+      }
+    }
+    if (((status_of_the_water_in_fuel_lamp_output_on_off & 8) != 0) !=
+        ((io_driver_port_1_feedback & 8) != 0)) {
+      if ((status_of_the_water_in_fuel_lamp_output_on_off & 8) == 0) {
+        DAT_00801a13 = 0;
+        if (((_status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0x10) != 0) &&
+           ((_fault_first_occurrence_flags_word_8 & 0x10) == 0)) {
+          _status_32_word_bit_mapped_system_error_status_word_8_0_1 =
+               _status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0xffef;
+        }
+        if (DAT_00801a12 < _DAT_000611c8) {
+          DAT_00801a12 = DAT_00801a12 + 1;
+          return;
+        }
+        _status_32_word_bit_mapped_system_error_status_word_8_0_1 =
+             _status_32_word_bit_mapped_system_error_status_word_8_0_1 | 0x20;
+        _fault_first_occurrence_flags_word_8 = _fault_first_occurrence_flags_word_8 | 0x20;
+        return;
+      }
+      DAT_00801a12 = 0;
+      if (((_status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0x20) != 0) &&
+         ((_fault_first_occurrence_flags_word_8 & 0x20) == 0)) {
+        _status_32_word_bit_mapped_system_error_status_word_8_0_1 =
+             _status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0xffdf;
+      }
+      if (DAT_00801a13 < _DAT_000611c8) {
+        DAT_00801a13 = DAT_00801a13 + 1;
+        return;
+      }
+      _status_32_word_bit_mapped_system_error_status_word_8_0_1 =
+           _status_32_word_bit_mapped_system_error_status_word_8_0_1 | 0x10;
+      _fault_first_occurrence_flags_word_8 = _fault_first_occurrence_flags_word_8 | 0x10;
+      return;
+    }
+    DAT_00801a12 = 0;
+    DAT_00801a13 = 0;
+    if ((io_driver_port_1_feedback & 8) == 0) {
+      if (((_status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0x10) != 0) &&
+         ((_fault_first_occurrence_flags_word_8 & 0x10) == 0)) {
+        if (DAT_00801a15 < _DAT_000611ca) {
+          DAT_00801a15 = DAT_00801a15 + 1;
+          return;
+        }
+        _status_32_word_bit_mapped_system_error_status_word_8_0_1 =
+             _status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0xffef;
+        DAT_00801a15 = 0;
+      }
+    }
+    else if (((_status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0x20) != 0) &&
+            ((_fault_first_occurrence_flags_word_8 & 0x20) == 0)) {
+      if (DAT_00801a14 < _DAT_000611ca) {
+        DAT_00801a14 = DAT_00801a14 + 1;
+        return;
+      }
+      _status_32_word_bit_mapped_system_error_status_word_8_0_1 =
+           _status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0xffdf;
+      DAT_00801a14 = 0;
+      return;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: FUN_00024804 @ 0x00024804
+//
+
+// Variables in this function: DAT_00801a09, DAT_00801a0a, DAT_00801a0b, DAT_00801a0c, DAT_00801a0d, DAT_00801a0e, DAT_00801a0f, DAT_00801a10, DAT_00801a11, DAT_00801a12, DAT_00801a13, DAT_00801a14, DAT_00801a15
+void clearSystemErrorStatus(void)
+
+{
+  DAT_008019fa = 0;
+  DAT_008019fb = 0;
+  DAT_008019fc = 0;
+  DAT_008019fd = 0;
+  DAT_008019fe = 0;
+  DAT_008019ff = 0;
+  DAT_00801a00 = 0;
+  DAT_00801a01 = 0;
+  DAT_00801a02 = 0;
+  DAT_00801a03 = 0;
+  DAT_00801a04 = 0;
+  DAT_00801a05 = 0;
+  DAT_00801a06 = 0;
+  DAT_00801a07 = 0;
+  DAT_00801a08 = 0;
+  DAT_00801a09 = 0;
+  _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+       _status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0x23ff;
+  DAT_00801a0a = 0;
+  DAT_00801a0b = 0;
+  DAT_00801a0c = 0;
+  DAT_00801a0d = 0;
+  DAT_00801a0e = 0;
+  DAT_00801a0f = 0;
+  DAT_00801a10 = 0;
+  DAT_00801a11 = 0;
+  DAT_00801a12 = 0;
+  DAT_00801a13 = 0;
+  DAT_00801a14 = 0;
+  DAT_00801a15 = 0;
+  _status_32_word_bit_mapped_system_error_status_word_8_0_1 =
+       _status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0xfe00;
+  return;
+}
+
+
+
+//
+// Function: FUN_0002571e @ 0x0002571e
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

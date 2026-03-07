@@ -1,0 +1,95 @@
+=== VARIABLES TO NAME ===
+0x00801e26  (6 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00801e26
+void FUN_0002f632(void)
+
+{
+  if (_jcomm_req_torque_braking_override_or_limit_value_0_125 == 0) {
+    _retarder_torque_level_stepped = 0;
+    return;
+  }
+  if ((_retarder_control_mode == 3) &&
+     (99 < _jcomm_req_torque_braking_override_or_limit_value_0_125)) {
+    _retarder_torque_level_stepped = 100;
+    return;
+  }
+  if (_DAT_00801e28 == 4) {
+    _DAT_00801e2c = _DAT_0006055a;
+  }
+  else {
+    _DAT_00801e2c = _DAT_0006056e;
+  }
+  _DAT_00801e26 =
+       (ushort)(((uint)_jcomm_req_torque_braking_override_or_limit_value_0_125 * (uint)_DAT_00801e2c
+                ) / 100);
+  _DAT_00801e36 = _engine_rpm_primary;
+  _retarder_torque_threshold_interpolated = lookupTableInterpolation(&DAT_00801e30);
+  if (_DAT_00801e26 <= _retarder_torque_threshold_interpolated) {
+    if (_retarder_control_mode == 2) {
+      _retarder_torque_level_stepped = 0x11;
+      return;
+    }
+    _retarder_torque_level_stepped = 0;
+    return;
+  }
+  _DAT_00801e44 = _engine_rpm_primary;
+  _retarder_torque_threshold_interpolated = lookupTableInterpolation(&DAT_00801e3e);
+  if (_DAT_00801e26 <= _retarder_torque_threshold_interpolated) {
+    if (_retarder_control_mode == 2) {
+      _retarder_torque_level_stepped = 0x21;
+      return;
+    }
+    _retarder_torque_level_stepped = 0x11;
+    return;
+  }
+  _DAT_00801e52 = _engine_rpm_primary;
+  _retarder_torque_threshold_interpolated = lookupTableInterpolation(&DAT_00801e4c);
+  if (_DAT_00801e26 <= _retarder_torque_threshold_interpolated) {
+    if (_retarder_control_mode == 2) {
+      _retarder_torque_level_stepped = 0x32;
+      return;
+    }
+    _retarder_torque_level_stepped = 0x21;
+    return;
+  }
+  _DAT_00801e60 = _engine_rpm_primary;
+  _retarder_torque_threshold_interpolated = lookupTableInterpolation(&DAT_00801e5a);
+  if (_DAT_00801e26 <= _retarder_torque_threshold_interpolated) {
+    if (_retarder_control_mode == 2) {
+      _retarder_torque_level_stepped = 0x43;
+      return;
+    }
+    _retarder_torque_level_stepped = 0x32;
+    return;
+  }
+  _DAT_00801e6e = _engine_rpm_primary;
+  _retarder_torque_threshold_interpolated = lookupTableInterpolation(&DAT_00801e68);
+  if (_retarder_torque_threshold_interpolated < _DAT_00801e26) {
+    if (_retarder_control_mode == 2) {
+      _retarder_torque_level_stepped = 100;
+      return;
+    }
+    _retarder_torque_level_stepped = 0x53;
+    return;
+  }
+  if (_retarder_control_mode == 2) {
+    _retarder_torque_level_stepped = 0x53;
+    return;
+  }
+  _retarder_torque_level_stepped = 0x43;
+  return;
+}
+
+
+
+//
+// Function: retarderControlModeHandler @ 0x0002f7e6
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

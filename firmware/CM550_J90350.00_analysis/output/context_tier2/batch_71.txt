@@ -1,0 +1,52 @@
+=== VARIABLES TO NAME ===
+0x008088aa  (5 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_008088aa
+void FUN_0002dbde(void)
+
+{
+  ushort uVar1;
+  
+  func_0x0004d988();
+  if (_DAT_0080dc26 == 1) {
+    if (_closed_loop_rpm_snapshot < _DAT_0080dc24) {
+      uVar1 = _DAT_0080dc24 - _closed_loop_rpm_snapshot;
+    }
+    else {
+      uVar1 = _closed_loop_rpm_snapshot - _DAT_0080dc24;
+    }
+    if (uVar1 <= _DAT_008088aa) {
+      _closed_loop_rpm_snapshot = _DAT_0080dc24;
+      return;
+    }
+    _DAT_00801c4a = (uint)_closed_loop_rpm_snapshot << 0x10;
+    uVar1 = coreTableInterpolation();
+    if (_closed_loop_rpm_snapshot < uVar1) {
+      if ((int)(uint)_DAT_008088aa <= (int)((uint)uVar1 - (uint)_closed_loop_rpm_snapshot)) {
+        _closed_loop_rpm_snapshot = uVar1;
+        return;
+      }
+      _closed_loop_rpm_snapshot = _DAT_008088aa + _closed_loop_rpm_snapshot;
+      return;
+    }
+    if ((int)(uint)_DAT_008088aa < (int)((uint)_closed_loop_rpm_snapshot - (uint)uVar1)) {
+      _closed_loop_rpm_snapshot = uVar1;
+      return;
+    }
+    _closed_loop_rpm_snapshot = _closed_loop_rpm_snapshot - _DAT_008088aa;
+  }
+  return;
+}
+
+
+
+//
+// Function: rpmSnapshotCapture @ 0x0002dc8c
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

@@ -1,0 +1,177 @@
+=== VARIABLES TO NAME ===
+0x0080069a  (8 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0080069a
+undefined4 flashEraseWithWatchdog(void)
+
+{
+  ushort uVar1;
+  ushort uVar2;
+  short sVar3;
+  ushort uVar4;
+  
+                    /* From J90280.05 @ 0x017ed4 (confidence: 89%) */
+  DAT_00fffa27 = 0xaa;
+  DAT_00ffd00f = 0xaa;
+  uVar4 = 0;
+  *_DAT_0080069a = 0x2020;
+  *_DAT_0080069a = 0xd0d0;
+  _DAT_00000000 = 0;
+  uVar2 = 0;
+  do {
+    uVar1 = uVar2 + 1;
+    if (40000 < uVar2) {
+      _DAT_00000000 = 0xffff;
+      return 1;
+    }
+    if (((DAT_00ffd000 & 1) == 0) || (_DAT_008006a6 == 1)) {
+      uVar4 = 0;
+    }
+    else {
+      uVar4 = uVar4 + 1;
+      if (3 < uVar4) {
+        *_DAT_0080069a = 0xb0b0;
+        uVar4 = 0;
+        while ((uVar2 = uVar4 + 1, uVar4 < 40000 && ((_DAT_00000000 & 0x80) != 0x80))) {
+          sVar3 = 0;
+          do {
+            uVar4 = 0;
+            do {
+              DAT_00fffa27 = 0xaa;
+              DAT_00ffd00f = 0xaa;
+              uVar4 = uVar4 + 1;
+            } while (uVar4 < 0xa0);
+            sVar3 = sVar3 + 1;
+            uVar4 = uVar2;
+          } while (sVar3 == 0);
+        }
+        _DAT_00000000 = 0xffff;
+        return 2;
+      }
+    }
+    sVar3 = 0;
+    do {
+      uVar2 = 0;
+      do {
+        DAT_00fffa27 = 0xaa;
+        DAT_00ffd00f = 0xaa;
+        uVar2 = uVar2 + 1;
+      } while (uVar2 < 0xa0);
+      sVar3 = sVar3 + 1;
+      uVar2 = uVar1;
+    } while (sVar3 == 0);
+  } while( true );
+}
+
+
+
+//
+// Function: FUN_0001c484 @ 0x0001c484
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080069a
+void FUN_0001c484(undefined4 param_1,undefined4 param_2)
+
+{
+  undefined2 *puVar1;
+  code *pcVar2;
+  undefined1 auStack_804 [2048];
+  
+  _DAT_0080069a = param_1;
+  _DAT_008006a6 = param_2;
+  puVar1 = (undefined2 *)auStack_804;
+  for (pcVar2 = flashEraseWithWatchdog; pcVar2 < FUN_0001c484; pcVar2 = pcVar2 + 2) {
+    *puVar1 = *(undefined2 *)pcVar2;
+    puVar1 = puVar1 + 1;
+  }
+  (*(code *)auStack_804)();
+  return;
+}
+
+
+
+//
+// Function: flashProgramWordWithWatchdog @ 0x0001c4ba
+//
+
+/* WARNING: Removing unreachable block (ram,0x0001c560) */
+/* WARNING: Removing unreachable block (ram,0x0001c56a) */
+/* WARNING: Removing unreachable block (ram,0x0001c5e0) */
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080069a
+undefined4 flashProgramWordWithWatchdog(void)
+
+{
+  ushort uVar1;
+  ushort uVar2;
+  bool bVar3;
+  
+                    /* From J90280.05 @ 0x01805c (confidence: 83%) */
+  uVar1 = 0;
+  while( true ) {
+    DAT_00fffa27 = 0xaa;
+    DAT_00ffd00f = 0xaa;
+    if (_DAT_008006a2 <= _DAT_0080069a) {
+      _DAT_00000000 = 0xffff;
+      return 0;
+    }
+    *_DAT_0080069a = 0x4040;
+    *_DAT_0080069a = *_DAT_0080069e;
+    uVar2 = 0;
+    do {
+      DAT_00fffa27 = 0xaa;
+      DAT_00ffd00f = 0xaa;
+      bVar3 = uVar2 < 5000;
+      uVar2 = uVar2 + 1;
+    } while (bVar3);
+    if (4 < uVar1) break;
+    uVar1 = uVar1 + 1;
+  }
+  _DAT_00000000 = 0xffff;
+  return 0;
+}
+
+
+
+//
+// Function: flashProgramFromRam @ 0x0001c5e8
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080069a
+void flashProgramFromRam(int param_1,undefined4 param_2,uint param_3)
+
+{
+  undefined2 *puVar1;
+  code *pcVar2;
+  undefined1 auStack_804 [2048];
+  
+                    /* From J90280.05 @ 0x018174 (confidence: 88%) */
+  _DAT_0080069e = param_2;
+  _DAT_0080069a = param_1;
+  _DAT_008006a2 = param_1 + (param_3 >> 0x10);
+  puVar1 = (undefined2 *)auStack_804;
+  for (pcVar2 = flashProgramWordWithWatchdog; pcVar2 < flashProgramFromRam; pcVar2 = pcVar2 + 2) {
+    *puVar1 = *(undefined2 *)pcVar2;
+    puVar1 = puVar1 + 1;
+  }
+  (*(code *)auStack_804)();
+  return;
+}
+
+
+
+//
+// Function: diagnosticStatusDefaultSetter @ 0x0001c630
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

@@ -1,0 +1,63 @@
+=== VARIABLES TO NAME ===
+0x00800aac  (6 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00800aac
+void FUN_000205c4(void)
+
+{
+  byte bVar1;
+  
+  if ((_DAT_00803cc6 & 8) != 0) {
+    _takes_raw_throttle_for_mux_limphome_on_a2d_0_1023 =
+         *(ushort *)((uint)_sampled_throttle_channel_address_none * 2 + 0xfff2b0);
+    if (_takes_raw_throttle_for_mux_limphome_on_a2d_0_1023 < 0x169) {
+      DSUSEBSW = DSUSEBSW & 0xfe;
+      user_supplied_value_for_ptp_switched_input_input_on_off =
+           user_supplied_value_for_ptp_switched_input_input_on_off | 0x80;
+      _throttle_above_idle_flag = 0;
+      return;
+    }
+    DSUSEBSW = DSUSEBSW | 1;
+    user_supplied_value_for_ptp_switched_input_input_on_off =
+         user_supplied_value_for_ptp_switched_input_input_on_off & 0x7f;
+    _throttle_above_idle_flag = 1;
+    return;
+  }
+  bVar1 = (binary_value_of_not_idle_switch_off_on & ~DAT_00800aaf |
+          DAT_00800aaf & ~binary_value_of_not_idle_switch_off_on) & 1;
+  if (bVar1 == DAT_00800aae) {
+    if ((_DAT_00800aac != 0) && (_DAT_00800aac = _DAT_00800aac + -0x32, _DAT_00800aac < 1)) {
+      _DAT_00800aac = 0;
+      if (bVar1 != 0) {
+        DSUSEBSW = DSUSEBSW | 1;
+        user_supplied_value_for_ptp_switched_input_input_on_off =
+             user_supplied_value_for_ptp_switched_input_input_on_off & 0x7f;
+        _throttle_above_idle_flag = 1;
+        return;
+      }
+      DSUSEBSW = DSUSEBSW & 0xfe;
+      user_supplied_value_for_ptp_switched_input_input_on_off =
+           user_supplied_value_for_ptp_switched_input_input_on_off | 0x80;
+      _throttle_above_idle_flag = 0;
+      return;
+    }
+  }
+  else {
+    _DAT_00800aac = 100;
+    DAT_00800aae = bVar1;
+  }
+  return;
+}
+
+
+
+//
+// Function: FUN_000206a8 @ 0x000206a8
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

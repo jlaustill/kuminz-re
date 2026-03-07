@@ -1,0 +1,65 @@
+=== VARIABLES TO NAME ===
+0x00800aa8  (5 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00800aa8
+void FUN_00020210(undefined4 param_1)
+
+{
+  *(uint *)(&DAT_00800aa8 + (uint)((ushort)(short)param_1._1_1_ >> 5) * 4) =
+       ~(1 << ((short)param_1._1_1_ & 0x1fU)) &
+       *(uint *)(&DAT_00800aa8 + (uint)((ushort)(short)param_1._1_1_ >> 5) * 4);
+  return;
+}
+
+
+
+//
+// Function: FUN_0002024a @ 0x0002024a
+//
+
+// Variables in this function: DAT_00800aa8
+uint FUN_000202a0(void)
+
+{
+  uint in_D0;
+  short sVar1;
+  int *piVar2;
+  
+  sVar1 = 0;
+  piVar2 = (int *)&DAT_00800aa8;
+  do {
+    if (*piVar2 != 0) {
+      return 1;
+    }
+    sVar1 = sVar1 + 1;
+    piVar2 = piVar2 + 1;
+  } while (sVar1 == 0);
+  return in_D0 & 0xffff0000;
+}
+
+
+
+//
+// Function: FUN_000202bc @ 0x000202bc
+//
+
+// Variables in this function: DAT_00800aa8
+void FUN_00020310(undefined4 param_1)
+
+{
+  *(uint *)(&DAT_00800aa8 + (uint)((ushort)(short)param_1._1_1_ >> 5) * 4) =
+       1 << ((short)param_1._1_1_ & 0x1fU) |
+       *(uint *)(&DAT_00800aa8 + (uint)((ushort)(short)param_1._1_1_ >> 5) * 4);
+  return;
+}
+
+
+
+//
+// Function: FUN_00020348 @ 0x00020348
+//
+

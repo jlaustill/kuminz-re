@@ -1,0 +1,74 @@
+0x00800112,asg_filtered_fuel_demand_baseline,medium,"Filtered fuel demand baseline in governor; loaded from rpm_control_override_flag on reset; blended with fuel_blend_table_5_ptr ratio; clamped to 0x1700; combined with asg_state_x6 for final fuel demand"
+0x0080015d,aux_driver_port2_bit4_high_side_error_count,medium,IO driver port 2 bit 4 high-side fault counter; sets error word 9 bit 0x10 when threshold exceeded
+0x0080015e,aux_driver_port2_bit4_low_side_error_count,medium,IO driver port 2 bit 4 low-side fault counter; sets error word 9 bit 0x8 when threshold exceeded
+0x0080015f,aux_driver_port2_bit6_high_side_error_count,medium,IO driver port 2 bit 6 high-side fault counter; sets error word 9 bit 0x40 when threshold exceeded
+0x00800161,aux_driver_port2_bit3_high_side_error_count,medium,IO driver port 2 bit 3 high-side fault counter; sets error word 9 bit 0x100 when threshold exceeded
+0x008001a8,current_pulse_period_value,medium,"Current engine speed pulse period value; loaded from io_control_handshake_state or eps_period_backup depending on sensor select; used in sync detection buffer checks and threshold scaling"
+0x008001b4,pulse_period_table_end_pointer,medium,"Pointer to end of pulse period circular buffer; set to eps_control_mode_param_1 or _3 depending on primary/backup sensor; used as wrap-around boundary in buffer traversal for sync detection"
+0x008002a6,crank_pulse_accumulator,medium,Accumulates io_control_handshake_state values over 4-sample windows in FUN_0001266e; reset to 0 at crank position match and after storing to table; stored as oil_pressure_crank_exit_ptr
+0x008005ae,engine_rpm_filtered_extended,medium,"Extended precision (32-bit) filtered engine RPM; set to engine_speed_constant_2/pulse_period_sum or DAT_0080a92c shifted left 16; cleared to 0 when speed sensor lost"
+0x008005fe,epf_fuel_limit_table_size,medium,"Lookup table descriptor size field; set to 2 during init in FUN_000185f0; used as base of table structure passed to lookupTableInterpolation for EPF fuel limit calculation"
+0x00800aa0,diagnostic_fault_status_bitmap_0,medium,32-bit word used as bitmap with set/clear/check-any-nonzero operations indexed by bit position; likely tracks active diagnostic fault states (first word of array)
+0x00800aa4,diagnostic_fault_status_bitmap_1,medium,32-bit word used as bitmap with set/clear/check-any-nonzero operations indexed by bit position; second word in parallel bitmap array
+0x00800aa8,diagnostic_fault_status_bitmap_2,medium,32-bit word used as bitmap with set/clear/check-any-nonzero operations indexed by bit position; third word in parallel bitmap array
+0x008019e2,io_control_fluids_lamp_blink_active,medium,Set to 1 when fluids lamp blink requested via io control and cleared after 0x77 blink cycles complete with associated counter reset
+0x00801a22,lamp_controller_startup_counter,medium,Incremented up to 401 each lamp cycle and gates fault lamp blink pattern generator to run only between counts 100 and 399
+0x00801e76,ecu_identity_mismatch_counter,medium,"Counter incremented on ECU identity pattern mismatch, reset to 0 on match; value 0x11 returns 1 (fail). Used in ECU identity verification function"
+0x00801ee9,ccvs_message_byte_7,medium,"Byte 7 of CCVS message; composed from switch_16 bits 5-7 mapped to J1939 status positions (0xC0 base with optional 0x10/0x04/0x01)"
+0x008034f2,software_id_data_buffer_start,medium,"Start of 28-byte data buffer for PGN 0xFEE3 (Software Identification) message; populated by FUN_0003320e and sent via sendCanMessage in FUN_0003366a/FUN_000334ec"
+0x00803bf0,stcg_switch_invert_config,medium,"Determines STCG enable XOR behavior: when 1 and throttle interlock set, STCG=0; when 0 and interlock set, STCG=1; directly assigned to STCG enable in fuelBlendTablePointerSetup"
+0x00803cca,calibration_feature_flags_word_10,medium,Bit-mapped calibration flags; bit 3 controls throttle interlock logic; bit 4 enables boost diagnostic monitoring; bit 10 controls VP44 sensor diagnostic path
+0x00803cd6,engine_brake_and_input_inversion_flags,medium,Bits 1/2/4 invert discrete input sample bits in sampleDiscreteInputPins; bit 0x10 enables J1939 engine brake command processing in FUN_00020380
+0x00803f3a,fuel_table_offset_trim,medium,added as offset to blended fuel table lookup result in calculateBlendedTableValue and throttle fuel calculation
+0x00803fe2,eeprom_calibration_checksum_primary,medium,Primary redundant checksum for EEPROM calibration data validation; compared against secondary copy (fe4) in validateRedundantSensors; written as sum of fea+fec via parameterCircularBufferWrite
+0x00803fe4,eeprom_calibration_checksum_secondary,medium,Secondary redundant checksum for EEPROM calibration data; compared against primary (fe2) to detect data corruption; synced to primary via parameterCircularBufferWrite on mismatch
+0x00803fe6,powerdown_data_loss_consecutive_count,medium,Counter of consecutive powerdown data validation failures; compared against number_of_consecutive_occurances_of_powerdown_data_lost_to_set threshold; incremented when primary/secondary checksums mismatch; triggers system error status bit 0x800
+0x00803fea,powerdown_loss_count_secondary,medium,secondary powerdown data loss counter incremented on mismatch and added to vp44_reset_count for total
+0x00804f9e,throttle_idle_position_reference,medium,Throttle reference baseline subtracted from sampled throttle to calculate percent command; derived from low idle offset plus minimum throttle
+0x00805308,data_collector_channel_config_table,medium,"Start of channel config table (array of 4-byte entries); initialized in initVp44BufferAddresses and iterated to count channels"
+0x00805fac,lamp_fault_tracking_list_count,medium,"Count of entries in fault-to-lamp tracking list in hourMeterEventLogger; incremented when fault with lamp mapping activates, decremented when deactivated"
+0x00806192,engine_cranking_event_counter,medium,Incremented when engine operating state equals 0x12; reset to zero on statistics clear; likely counts cranking or start attempts
+0x00807ce4,throttle_range_span_calibration,medium,Calibration value defining throttle sensor operating range; added to low idle offset for upper bound and to 4 for initial minimum throttle
+0x00807cf0,throttle_low_idle_offset,medium,Calibration offset for throttle low idle position; used as baseline in throttle percentage calculations and range checks
+0x00807ec8,timer_period_total_counts,medium,compared < 2 for table init position and divided by 6 for timer register and by period_meas_per_cam for prescaler - represents total timer counts for speed measurement
+0x00807ef4,crank_fuel_offset_adjustment_0_100,medium,always added to crank_exit_fuel_adjustment in fuel limit and timing table lookups during cranking
+0x00808144,hsg_maximum_reference_speed_limit,medium,used as upper bound on reference_speed_before_droop and reported in J1708 diagnostic message 46 scaled by /0x50
+0x008088a4,pid_proportional_blend_weight,medium,Used as blending weight between two gain paths (0x7fff minus this value); appears to be a calibration ratio for PID gain mixing
+0x0080899c,pwm3_period_base_counts,medium,multiplied by duty cycle and converted to timer counts for PWM3 output channel
+0x0080899e,pwm4_period_base_counts,medium,multiplied by duty cycle and converted to timer counts for PWM4 output channel
+0x008089a0,pwm5_period_base_counts,medium,used to calculate PWM5 timer period and duty cycle output registers
+0x00809232,cyl_balance_max_deviation,medium,max of two absolute deviation magnitudes capped at 15000
+0x00809276,cyl_balance_deviation_a,medium,first deviation metric clamped +/-10000 used in weighted blend for cylinder balance
+0x00809278,cyl_balance_deviation_b,medium,second deviation metric clamped +/-10000 paired with deviation_a
+0x0080927a,cyl_balance_offset_diff,medium,difference between computed value and table lookup offset in cylinder balance
+0x00809284,cyl_sensor_diff_array,medium,array of 6 differences between current sensor readings and baseline values for cylinder balance
+0x00809288,cyl_sensor_diff_1,medium,element 1 of 6-element sensor difference array used in cylinder balance cross-terms
+0x00809290,cyl_sensor_diff_3,medium,element 3 of 6-element sensor difference array used in cylinder balance cross-terms
+0x00809294,cyl_sensor_diff_4,medium,element 4 of 6-element sensor difference array used in cylinder balance cross-terms
+0x00809e9e,cyl_balance_rpm_bin_array_a,medium,array of 16 shorts by rpm bin initialized to 10000 accumulates correction values
+0x00809ebe,cyl_balance_rpm_bin_array_b,medium,array of 16 shorts by rpm bin initialized to 10000 paired with array_a
+0x0080a760,sensor_adc_override_values,medium,indexed by sensor channel to provide override A/D readings when calibration feature flags select override mode
+0x0080a8f4,high_rpm_protection_log_flag,medium,set to 1 when high rpm protection activates with logging enabled cleared on exit
+0x0080a90c,alpha_fuel_rate_interpolation_result,medium,computed by coreTableInterpolation and compared against thresholds in table to determine alpha blend return value
+0x0080a9c8,fuel_system_override_active,medium,Set to 1 to trigger smoke limiter state 3 to 4 transition; checked in fuel demand limit selector and J1708 diagnostic message 53 builder where value maps to status byte
+0x0080a9d6,boost_protection_speed_limit,medium,"Initialized to maximum_rated_engine_speed in initBoostProtectionSystem; used as speed limit in reference speed arbitration with winning source indicator=2"
+0x0080bac8,trending_trigger_secondary_flag,medium,"Set to 1 alongside trending trigger when DAT_0080036d condition met; reset to 0 when feature disabled or capture active"
+0x0080bd1c,protection_lamp_driver_state,medium,controls bit 2 of warning_lamp_driver based on lamp_driver_output_bitmask bit 4 in lampDriverOutputDispatcher
+0x0080bd2c,boot_block_program_enable_bit2,medium,Flag controlling bit 2 (0x04) of enable_flag_to_allow_boot_block_programming; set and cleared during shutdown and init sequences
+0x0080bd2d,boot_block_program_enable_bit3,medium,Flag controlling bit 3 (0x08) of enable_flag_to_allow_boot_block_programming; set and cleared during startup and shutdown sequences
+0x0080bd47,fuel_output_driver_bit5_control,medium,IO driver control byte for fuel system output bit 5; checked as char in driver strobe handler and fuel demand limit selector to set or clear bit 5
+0x0080ccb6,warmup_oil_pressure_timer,medium,timer counting toward oil pressure threshold during engine warmup protection
+0x0080ccba,warmup_algorithm_timer,medium,timer counting toward maximum warmup algorithm run time
+0x0080ccbc,warmup_fault_active_timer,medium,timer counting toward max time with active coolant or oil pressure fault
+0x0080ccbe,oil_drainback_timer,medium,timer counting toward oil drain-back time threshold after engine off
+0x0080ccca,high_rpm_limiting_flag,medium,flag set to 1 when transitioning to active high rpm fuel limiting cleared on exit
+0x0080d356,engine_shutdown_request_flag,medium,When set to 1 forces smoke limiter transition to shutdown state 8; reset to 0 in state machine init alongside smoke_limiter_output_value reset to 1
+0x0080da16,fuel_demand_percent_current,medium,Current fuel demand as percentage of injectable range scaled by 0x6400 and clamped to 32000 - based on current_fuel_demand minus no-fuel threshold
+0x0080da18,fuel_demand_percent_drivers_demand,medium,Drivers demand (4d fueling) as percentage of injectable range scaled by 0x6400 and clamped to 32000 - based on 4d_fueling minus no-fuel threshold
+0x0080da7e,datalink_speed_mode_watchdog_timer,medium,Countdown timer in fuelDemandLimitOrchestrator; loaded from session config offset +6/+10 based on control mode; triggers ioControlEntryAdd and fuelArbitratorResetHandler on expiry
+0x0080da8c,engine_brake_request_timeout_timer,medium,"Countdown timer set from DAT_0080818c in fuelDemandScaleFactorCalculator and diagnosticServiceDispatcherByPgn; cleared alongside DAT_0080da58 engine brake flag"
+0x0080da90,retarder_state_reset_flag,medium,"Always cleared to 0 during retarder resets and mode changes; cleared alongside retarder_control_mode and retarder_torque_percent in all reset paths; exact triggering purpose unclear"
+0x0080da92,datalink_command_sub_timeout_timer,medium,"Countdown timer active when DAT_00803d4a is 4 or 5; when it expires clears DAT_0080da6c; appears to be a secondary datalink command timeout"
+0x0080dc24,closed_loop_governor_target_rpm,medium,Target RPM for closed-loop governor; sent via insite param 0xBB and CAN message; compared with closed_loop_rpm_snapshot for rate-limited convergence
+0x0080dcb3,j1708_checksum_accumulator,medium,"Running sum of transmitted/received bytes; used in case 2 to compute checksum as ~sum+1; reset to 0 on init, message boundaries, and after transmit complete"
+0x0080de2e,key_switch_on_latch,medium,"Set to 1 in FUN_00011a68; checked alongside value_used_for_monitoring_switch_data bit 0 throughout fuel mode state machine — when switch data bit is off AND this is 0, transitions to shutdown state 8; cleared when switch data bit transitions on"

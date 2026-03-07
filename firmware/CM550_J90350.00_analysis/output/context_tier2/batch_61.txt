@@ -1,0 +1,106 @@
+=== VARIABLES TO NAME ===
+0x00804164  (8 references)
+0x00804166  (6 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00804164, DAT_00804166
+uint j1939TimeoutDataClearHandler(void)
+
+{
+  uint uVar1;
+  
+                    /* From J90280.05 @ 0x01ae20 (confidence: 75%) */
+  uVar1 = _calibration_feature_enable_flags_word_2 & 0x100;
+  if (((_calibration_feature_enable_flags_word_2 & 0x100) != 0) &&
+     (uVar1 = _j1922_clear_occurrence_time_time_from_last_j1922_control_befo_0_2_29 + _DAT_00804166,
+     uVar1 < _hour_meter_ecm_run_time_none)) {
+    _DAT_00804164 = 0;
+    _DAT_00804166 = 0;
+    _DAT_00804170 = 0;
+    _DAT_00804172 = 0;
+    _DAT_00804176 = 0;
+    _DAT_00804178 = 0;
+    _DAT_0080416a = 0;
+    _DAT_0080416c = 0;
+  }
+  return uVar1;
+}
+
+
+
+//
+// Function: crankStateVariablesReset @ 0x0001fd8e
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_00804164, DAT_00804166
+void crankStateVariablesReset(void)
+
+{
+                    /* From J90280.05 @ 0x01f28c (confidence: 66%) */
+  _DAT_00804164 = 0;
+  _DAT_00804166 = 0;
+  _DAT_00804170 = 0;
+  _DAT_00804172 = 0;
+  _DAT_00804176 = 0;
+  _DAT_00804178 = 0;
+  _DAT_0080416a = 0;
+  _DAT_0080416c = 0;
+  return;
+}
+
+
+
+//
+// Function: j1939MessageTypeCounter @ 0x0001fdc0
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_00804164, DAT_00804166
+uint j1939MessageTypeCounter(undefined4 param_1)
+
+{
+  uint uVar1;
+  
+                    /* From J90280.05 @ 0x01ae74 (confidence: 88%) */
+  uVar1 = _calibration_feature_enable_flags_word_2 & 0xffff0080;
+  if ((_calibration_feature_enable_flags_word_2 & 0x80) != 0) {
+    if (param_1._0_2_ == 1) {
+      _DAT_00804164 = _DAT_00804164 + 1;
+      _DAT_00804170 = _DAT_00804170 + 1;
+      _DAT_00804172 = _hour_meter_ecm_run_time_none;
+      _DAT_00804166 = _hour_meter_ecm_run_time_none;
+      return _hour_meter_ecm_run_time_none;
+    }
+    if (param_1._0_2_ == 2) {
+      _DAT_00804164 = _DAT_00804164 + 1;
+      _DAT_00804176 = _DAT_00804176 + 1;
+      _DAT_00804178 = _hour_meter_ecm_run_time_none;
+      _DAT_00804166 = _hour_meter_ecm_run_time_none;
+      return _hour_meter_ecm_run_time_none;
+    }
+    if (param_1._0_2_ != 3) {
+      return (int)param_1._0_2_;
+    }
+    _DAT_00804164 = _DAT_00804164 + 1;
+    _DAT_0080416a = _DAT_0080416a + 1;
+    _DAT_0080416c = _hour_meter_ecm_run_time_none;
+    _DAT_00804166 = _hour_meter_ecm_run_time_none;
+    uVar1 = _hour_meter_ecm_run_time_none;
+  }
+  return uVar1;
+}
+
+
+
+//
+// Function: canMessageFilterInit @ 0x0001fe40
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

@@ -1,0 +1,169 @@
+=== VARIABLES TO NAME ===
+0x00801e86  (8 references)
+0x00801e8a  (6 references)
+0x00801e8c  (6 references)
+0x00801e8e  (6 references)
+0x00801e92  (5 references)
+0x00801e94  (5 references)
+
+Total: 6 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00801e86, DAT_00801e8a, DAT_00801e8c, DAT_00801e8e, DAT_00801e92, DAT_00801e94
+void rpmHistogramAndAveragingStatistics(void)
+
+{
+  ushort uVar1;
+  
+                    /* From J90280.05 @ 0x028638 (confidence: 75%) */
+  if (_current_engine_rpm_filtered != 0) {
+    if (_DAT_00806198 < _current_engine_rpm_filtered) {
+      _DAT_00806198 = _current_engine_rpm_filtered;
+    }
+    if ((_current_engine_rpm_filtered < _DAT_00804022) || (_rpm_histogram_bin_size == 0)) {
+      uVar1 = 0;
+    }
+    else {
+      uVar1 = (short)((int)((uint)_current_engine_rpm_filtered - (uint)_DAT_00804022) /
+                     (int)(uint)_rpm_histogram_bin_size) + 1;
+      if (0x18 < uVar1) {
+        uVar1 = 0x18;
+      }
+    }
+    *(int *)(&DAT_008060c2 + (short)uVar1 * 4) = *(int *)(&DAT_008060c2 + (short)uVar1 * 4) + 1;
+  }
+  DAT_00801e96 = DAT_00801e96 + '\x01';
+  if (DAT_00801e96 == '\n') {
+    DAT_00801e96 = '\0';
+    if (_current_engine_rpm_filtered != 0) {
+      if (_DAT_0080618e != -1) {
+        _DAT_0080618e = _DAT_0080618e + 1;
+      }
+      if (_count_of_samples_used_in_the_determination_of_engine_ave_0_2000000000 != -1) {
+        _count_of_samples_used_in_the_determination_of_engine_ave_0_2000000000 =
+             _count_of_samples_used_in_the_determination_of_engine_ave_0_2000000000 + 1;
+      }
+      _DAT_00801e94 =
+           _DAT_00801e94 - (short)((int)((uint)_DAT_00801e94 - (uint)_DAT_0080db60) / _DAT_0080618e)
+      ;
+      _DAT_00801e92 =
+           _DAT_00801e92 -
+           (short)((int)((uint)_DAT_00801e92 - (uint)_DAT_0080db60) /
+                  _count_of_samples_used_in_the_determination_of_engine_ave_0_2000000000);
+      _DAT_00806186 = _DAT_00801e92;
+      _DAT_00806188 = _DAT_00801e94;
+    }
+  }
+  if (_DAT_0080d330 == 0xb) {
+    if (_DAT_00801e8c != 0) {
+      _DAT_00801e8c = _DAT_00801e8c + -1;
+    }
+    if (_DAT_00801e8a != 0) {
+      _DAT_00801e8a = _DAT_00801e8a + -1;
+    }
+    if (_DAT_00801e8e != 0) {
+      _DAT_00801e8e = _DAT_00801e8e + -1;
+    }
+    _DAT_00801e86 = 0;
+  }
+  else {
+    _DAT_00801e86 = _DAT_00801e86 + 1;
+    if (_rpm_histogram_temp_threshold < _DAT_0080a4d8) {
+      if (_if_the_engine_load_exceeds_this_threshold_the_engine_is_deemed_0_127_5 < _DAT_0080db60) {
+        _DAT_00801e8a = _minimum_time_the_engine_must_idle_before_shutdown_if_high_loa_0_1800;
+      }
+      if (_rpm_histogram_high_speed_threshold < _current_engine_rpm_filtered) {
+        _DAT_00801e8c = _minimum_idle_time_if_the_engine_was_at_high_speed_to_avoid_ho_0_1800;
+      }
+      if (_rpm_histogram_non_idle_threshold_8a5c < _DAT_00801e86) {
+        _DAT_00801e8e = _minimum_time_the_engine_must_idle_before_shutdown_if_at_high_0_1800;
+      }
+    }
+  }
+  if (((_smoke_limiter_output_value == 8) && (_DAT_00801e90 != 8)) &&
+     ((_DAT_00801e8c != 0 || _DAT_00801e8a != 0 || (_DAT_00801e8e != 0)))) {
+    _DAT_00806196 = _DAT_00806196 + 1;
+    _DAT_00801e8a = 0;
+    _DAT_00801e8c = 0;
+    _DAT_00801e8e = 0;
+  }
+  _DAT_00801e90 = _smoke_limiter_output_value;
+  if (_DAT_0080d330 == 0x12) {
+    _DAT_00806192 = _DAT_00806192 + 1;
+  }
+  return;
+}
+
+
+
+//
+// Function: fuelLimitRestoreFromCapture @ 0x0003061a
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_00801e86
+uint fuelLimitRestoreFromCapture(void)
+
+{
+  uint uVar1;
+  ushort *in_A1;
+  ushort *unaff_A2;
+  short *unaff_A3;
+  ushort *unaff_A4;
+  
+                    /* From J90280.05 @ 0x02d92c (confidence: 61%) */
+  _DAT_00801e86 = _DAT_00801e86 + 1;
+  uVar1 = (uint)_DAT_0080a4d8;
+  if (_rpm_histogram_temp_threshold < _DAT_0080a4d8) {
+    if (_if_the_engine_load_exceeds_this_threshold_the_engine_is_deemed_0_127_5 < _DAT_0080db60) {
+      *unaff_A4 = _minimum_time_the_engine_must_idle_before_shutdown_if_high_loa_0_1800;
+    }
+    if (_rpm_histogram_high_speed_threshold < *unaff_A2) {
+      *in_A1 = _minimum_idle_time_if_the_engine_was_at_high_speed_to_avoid_ho_0_1800;
+    }
+    uVar1 = _DAT_00801e86;
+    if (_rpm_histogram_non_idle_threshold_8a5c < _DAT_00801e86) {
+      *unaff_A3 = _minimum_time_the_engine_must_idle_before_shutdown_if_at_high_0_1800;
+    }
+  }
+  if (((_smoke_limiter_output_value == 8) && (_DAT_00801e90 != 8)) &&
+     ((uVar1 = (uint)(*in_A1 | *unaff_A4), (*in_A1 | *unaff_A4) != 0 || (*unaff_A3 != 0)))) {
+    _DAT_00806196 = _DAT_00806196 + 1;
+    *unaff_A4 = 0;
+    *in_A1 = 0;
+    *unaff_A3 = 0;
+  }
+  _DAT_00801e90 = _smoke_limiter_output_value;
+  if (_DAT_0080d330 == 0x12) {
+    _DAT_00806192 = _DAT_00806192 + 1;
+  }
+  return uVar1;
+}
+
+
+
+//
+// Function: FUN_000306ca @ 0x000306ca
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_00801e92, DAT_00801e94
+void FUN_00030ade(void)
+
+{
+  _DAT_0080de64 = 0;
+  _DAT_00801e82 = _DAT_0080619a;
+  _DAT_00801e92 = _DAT_00806186;
+  _DAT_00801e94 = _DAT_00806188;
+  return;
+}
+
+
+
+//
+// Function: protectionLimitValueInit @ 0x00030b04
+//
+

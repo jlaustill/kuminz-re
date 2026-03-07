@@ -1,0 +1,114 @@
+=== VARIABLES TO NAME ===
+0x0080095d  (6 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0080095d
+uint insiteMultiFrameResponseBuilder(undefined4 param_1)
+
+{
+  char cVar1;
+  uint uVar2;
+  char cVar3;
+  
+                    /* From J90280.05 @ 0x01984e (confidence: 81%) */
+  cVar1 = insite_parameter_data_size + -2;
+  insite_multiframe_total_frames = '\0';
+  DAT_0080095c = (byte)param_1;
+  cVar3 = param_1._1_1_ + '\x06';
+  for (DAT_0080095d = cVar1 - param_1._1_1_; (byte)param_1 < DAT_0080095d;
+      DAT_0080095d = DAT_0080095d - (byte)param_1) {
+    insite_multiframe_total_frames = insite_multiframe_total_frames + '\x01';
+    cVar3 = (byte)param_1 + 5 + cVar3;
+  }
+  insite_multiframe_total_frames = insite_multiframe_total_frames + '\x01';
+  insite_multiframe_current_index = 0;
+  insite_multiframe_frame_bytes_remaining = param_1._1_1_;
+  insite_response_length = param_1._1_1_ + '\x06';
+  if (_j1708_transmit_buffer_0_2_32 < _j1708_transmit_buffer_2_32_dc9c) {
+    uVar2 = (_j1708_transmit_buffer_2_32_dc9c - _j1708_transmit_buffer_0_2_32) - 2;
+  }
+  else {
+    uVar2 = (_j1708_transmit_buffer_2_32_dc9c - _j1708_transmit_buffer_0_2_32) + 0xfe;
+  }
+  if ((int)(uint)(byte)(DAT_0080095d + 5 + cVar3) < (int)uVar2) {
+    *_insite_response_write_pointer = 0xc0;
+    _insite_response_write_pointer =
+         (char *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+    *_insite_response_write_pointer = insite_multiframe_frame_bytes_remaining + '\x03';
+    _insite_response_write_pointer =
+         (char *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+    *_insite_response_write_pointer = insite_parameter_id;
+    _insite_response_write_pointer =
+         (char *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+    *_insite_response_write_pointer = insite_multiframe_total_frames << 4;
+    _insite_response_write_pointer =
+         (char *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+    *_insite_response_write_pointer = cVar1;
+    _insite_response_write_pointer =
+         (char *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+    return uVar2 & 0xffffff00;
+  }
+  _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+       _status_32_word_bit_mapped_system_error_status_word_7_0_1 | 4;
+  _fault_first_occurrence_flags_word_7 = _fault_first_occurrence_flags_word_7 | 4;
+  return 1;
+}
+
+
+
+//
+// Function: insiteMultiFrameContinuation @ 0x0001e89e
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080095d
+void insiteMultiFrameContinuation(void)
+
+{
+                    /* From J90280.05 @ 0x019952 (confidence: 75%) */
+  *_insite_response_frame_start = insite_response_length;
+  *_insite_response_write_pointer = 0;
+  _j1708_transmit_buffer_0_2_32 = _insite_response_write_pointer;
+  _insite_response_frame_start = _insite_response_write_pointer;
+  tpuTransmissionTrigger();
+  insite_multiframe_current_index = insite_multiframe_current_index + 1;
+  if (insite_multiframe_current_index < insite_multiframe_total_frames) {
+    insite_multiframe_frame_bytes_remaining = DAT_0080095c;
+  }
+  else {
+    insite_multiframe_frame_bytes_remaining = DAT_0080095d;
+  }
+  _insite_response_write_pointer =
+       (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+  *_insite_response_write_pointer = 0x80;
+  _insite_response_write_pointer =
+       (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+  insite_response_length = insite_multiframe_frame_bytes_remaining + '\x05';
+  *_insite_response_write_pointer = 0xc0;
+  _insite_response_write_pointer =
+       (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+  *_insite_response_write_pointer = insite_multiframe_frame_bytes_remaining + '\x02';
+  _insite_response_write_pointer =
+       (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+  *_insite_response_write_pointer = insite_parameter_id;
+  _insite_response_write_pointer =
+       (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+  *_insite_response_write_pointer =
+       insite_multiframe_current_index & 0xf | insite_multiframe_total_frames << 4;
+  _insite_response_write_pointer =
+       (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+  return;
+}
+
+
+
+//
+// Function: insiteLiveDataHandler @ 0x0001e956
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

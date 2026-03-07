@@ -1,0 +1,149 @@
+=== VARIABLES TO NAME ===
+0x0080a9a2  (10 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0080a9a2
+void acceleratorThrottleFaultDetector(void)
+
+{
+  if (((_DAT_00803d5a < 2) && ((uint)_DAT_0080d32e < (uint)_DAT_00807ac8 + (uint)_DAT_0080db1c)) &&
+     (_validated_percent_throttle_commanded_by_driver_0_100 == 0)) {
+    if (((_DAT_00803cca & 8) == 0) && ((state_of_the_throttle_interlock_switch_on_off & 2) != 0)) {
+      if (_DAT_00803d5a == 0) {
+        _DAT_0080a9a2 = 1;
+      }
+      else {
+        _DAT_0080a9a2 = 0;
+      }
+    }
+    else {
+      _DAT_0080a9a2 = _DAT_00803d5a;
+    }
+  }
+  if (_DAT_0080a9a2 == 0) {
+    _asg_reference_speed_for_0_throttle_input_should_be_less_tha_0_4500 = *_DAT_0080a9ac;
+    _asg_reference_speed_for_100_throttle_input_should_be_greate_0_4500 = *_DAT_0080a9b0;
+  }
+  else if (_DAT_0080a9a2 == 1) {
+    _asg_reference_speed_for_0_throttle_input_should_be_less_tha_0_4500 = *_DAT_0080a9b4;
+    _asg_reference_speed_for_100_throttle_input_should_be_greate_0_4500 = *_DAT_0080a9b8;
+  }
+  _all_speed_governor_reference_speed_based_upon_throttle_positi_0_3000 =
+       _asg_reference_speed_for_0_throttle_input_should_be_less_tha_0_4500 +
+       (short)(((uint)_validated_percent_throttle_commanded_by_driver_0_100 *
+               ((uint)_asg_reference_speed_for_100_throttle_input_should_be_greate_0_4500 -
+               (uint)_asg_reference_speed_for_0_throttle_input_should_be_less_tha_0_4500)) / 400);
+  _asg_quadratic_integral_adjustment_500_500 = 0;
+  diagnosticDataCopyHandler();
+  diagnosticState2Initializer();
+  diagnosticState7Setter();
+  return;
+}
+
+
+
+//
+// Function: FUN_0000d3b2 @ 0x0000d3b2
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080a9a2
+void FUN_0000d3b2(void)
+
+{
+  _DAT_0080a9ac = 0x803bbc;
+  _DAT_0080a9b0 = 0x803bbe;
+  _DAT_0080a9b4 = 0x803bca;
+  _DAT_0080a9b8 = 0x803bcc;
+  _DAT_0080a9a2 = _DAT_00803d5a;
+  return;
+}
+
+
+
+//
+// Function: fuelArbitratorInit @ 0x0000d3bc
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080a9a2
+void fuelArbitratorInit(void)
+
+{
+  _DAT_0080a9b0 = 0x803bbe;
+  _DAT_0080a9b4 = 0x803bca;
+  _DAT_0080a9b8 = 0x803bcc;
+  _DAT_0080a9a2 = _DAT_00803d5a;
+  return;
+}
+
+
+
+//
+// Function: initDerateSystemPointers @ 0x0000d3c6
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080a9a2
+void initDerateSystemPointers(void)
+
+{
+  _DAT_0080a9b4 = 0x803bca;
+  _DAT_0080a9b8 = 0x803bcc;
+  _DAT_0080a9a2 = _DAT_00803d5a;
+  return;
+}
+
+
+
+//
+// Function: diagnosticMode10FuelController @ 0x0000d3e6
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080a9a2
+void diagnosticMode10FuelController(void)
+
+{
+  uint uVar1;
+  
+  if (_DAT_0080a9a2 == 1) {
+    _derate_target_snapshot = _DAT_0080a990;
+    _asg_selected_droop_slope_0_30 = lookupTableInterpolation(&derate_fault_counter_1);
+  }
+  else if (_DAT_0080a9a2 == 0) {
+    _throttle_buffer_decreasing_value = _DAT_0080a990;
+    _asg_selected_droop_slope_0_30 = lookupTableInterpolation(&DAT_00800136);
+  }
+  uVar1 = (uint)(ushort)(_asg_integral_gain_2_calibration_0_6_75 +
+                        _asg_integral_gain_1_calibration_0_6_75) *
+          (uint)_asg_selected_droop_slope_0_30;
+  if (uVar1 < 0x2655879) {
+    _asg_throttle_droop_gain_1_0_1 =
+         (ushort)((0x2655879 - uVar1 >> 1) / (uVar1 + 0x2655879 >> 0xb & 0xffff));
+  }
+  else {
+    _asg_throttle_droop_gain_1_0_1 = 0;
+  }
+  _asg_throttle_droop_gain_2_0_5_1 =
+       (undefined2)((int)(_asg_throttle_droop_gain_1_0_1 + 0x400) >> 1);
+  _qpid_adjusted_asg_droop_compensated_error_integral_2000_2000 = _asg_throttle_droop_gain_1_0_1;
+  _asg_droop_gain_2_0_2 = _asg_throttle_droop_gain_2_0_5_1;
+  return;
+}
+
+
+
+//
+// Function: FUN_0000d4ae @ 0x0000d4ae
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

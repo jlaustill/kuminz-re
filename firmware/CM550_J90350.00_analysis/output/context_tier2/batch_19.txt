@@ -1,0 +1,660 @@
+=== VARIABLES TO NAME ===
+0x0080060e  (7 references)
+0x0080a254  (5 references)
+0x0080d284  (9 references)
+0x0080d28e  (7 references)
+
+Total: 4 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0080060e, DAT_0080d284, DAT_0080d28e
+ushort engineProtectionMultiStateSlowCycle40Coordinator(void)
+
+{
+  ushort uVar1;
+  
+  uVar1 = _calibration_feature_enable_flags_word_2 & 0x10;
+                    /* From J90280.05 @ 0x014546 (confidence: 88%) */
+  if ((_calibration_feature_enable_flags_word_2 & 0x10) == 0) {
+    _EPESLM = _maximum_rated_engine_speed_0_5000;
+    _DAT_0080d284 = _peak_fueling_calibration_value;
+    _indicator_from_engine_protection_that_fuel_derate_1_active_0_inact = 0;
+    _DAT_0080d28e = 0;
+  }
+  else {
+    uVar1 = _DAT_0080060e;
+    switch(_DAT_0080060e) {
+    case 0:
+      uVar1 = protectionState0FaultDurationCounter();
+      break;
+    case 1:
+      uVar1 = protectionState1DiagnosticValidator();
+      break;
+    case 2:
+      uVar1 = FUN_00019702();
+      break;
+    case 3:
+      FUN_00018e0c();
+      uVar1 = protectionState3bRpmMonitor();
+      break;
+    case 4:
+      uVar1 = FUN_00018fcc();
+    }
+    _DAT_0080060e = _DAT_0080060e + 1;
+    if (4 < _DAT_0080060e) {
+      _DAT_0080060e = 0;
+      return uVar1;
+    }
+  }
+  return uVar1;
+}
+
+
+
+//
+// Function: protectionThresholdCalculationHelper @ 0x000186ae
+//
+
+ushort protectionThresholdCalculationHelper
+                 (int param_1,int param_2,ushort *param_3,undefined4 param_4)
+
+{
+  ushort uVar1;
+  ushort uVar2;
+  ushort uVar3;
+  ushort uVar4;
+  
+                    /* From J90280.05 @ 0x0145d4 (confidence: 100%) */
+  if (param_4._0_2_ == 0) {
+    uVar3 = *param_3;
+    uVar1 = *(ushort *)(param_2 + 6);
+    uVar2 = *(ushort *)(param_1 + 2);
+    uVar4 = *(ushort *)(param_1 + 6);
+  }
+  else {
+    uVar3 = param_3[1];
+    uVar1 = *(ushort *)(param_2 + 8);
+    uVar2 = *(ushort *)(param_1 + 4);
+    uVar4 = *(ushort *)(param_1 + 8);
+  }
+  if (uVar2 < uVar1) {
+    uVar4 = uVar4 + uVar3;
+    if (0x100 < uVar4) {
+      uVar4 = 0x100;
+    }
+  }
+  else if (uVar4 < uVar3) {
+    uVar4 = uVar3 - uVar4;
+  }
+  else {
+    uVar4 = 0;
+  }
+  return uVar4;
+}
+
+
+
+//
+// Function: protectionPercentageCalculator @ 0x00018708
+//
+
+// Variables in this function: DAT_0080060e, DAT_0080a254
+void engineProtectionSystemInit(void)
+
+{
+                    /* From J90280.05 @ 0x014664 (confidence: 75%) */
+  _protection_system_sensor_data_ptr =
+       &coolant_level_low_switch_used_as_an_input_source_by_t_1_true_0_false;
+  _mask_for_input_of_coolant_level_0_65535 = 1;
+  _pointer_to_coolant_level_fuel_fault_log_data_0_2_32 = &DGCLLVLF;
+  _DAT_0080d10a = &filtered_and_linearized_coolant_temperature_50_to_293;
+  _pointer_to_coolant_temperature_fuel_min_threshold_0_2_32 =
+       &minimum_temperature_threshold_for_coolant_temperature_fuel_50_to_293;
+  _pointer_to_coolant_temperature_fuel_max_threshold_0_2_32 =
+       &maximum_temperature_threshold_for_coolant_temperature_fuel_50_to_293;
+  _pointer_to_coolant_temperature_rpm_limit_threshold_0_2_32 =
+       &minimum_threshold_for_coolant_temperature_rpm_limiting_0_4500;
+  _pointer_to_coolant_temperature_fuel_fault_log_data_0_2_32 = &DGCLTPLF;
+  _pointer_to_coolant_temperature_rpm_fault_log_data_0_2_32 = &DGCLTPLF;
+  _DAT_0080d138 = &pre_processed_imt_for_epf_due_to_exhaust_brake_on_50_to_293;
+  _pointer_to_intake_man_temp_fuel_min_threshold_0_2_32 =
+       &minimum_temperature_threshold_for_imt_fuel_limiting_50_to_293;
+  _pointer_to_intake_man_temp_fuel_max_threshold_0_2_32 =
+       &maximum_temperature_threshold_for_imt_tvo_limiting_50_to_293;
+  _pointer_to_intake_man_temp_rpm_limit_threshold_0_2_32 =
+       &minimum_threshold_for_intake_temperature_rpm_limiting_50_293;
+  _pointer_to_intake_man_temp_fuel_fault_log_data_0_2_32 = 0x8055b2;
+  _pointer_to_intake_man_temp_rpm_fault_log_data_0_2_32 = 0x8055b2;
+  _DAT_0080d166 = &flitered_and_linearized_oil_pressure_0_100;
+  _oil_pressure_fuel_min_threshold =
+       &low_oil_pressure_limit_as_calculated_for_present_engine_speed_0_100;
+  _oil_pressure_rpm_limit_threshold =
+       &very_low_oil_pressure_is_calculated_for_present_engine_speed_0_100;
+  _oil_pressure_fuel_fault_timer = &DGLOPRLF;
+  _oil_pressure_rpm_fault_counter = &DGVYPRLF;
+  _DAT_0080d194 = &filtered_water_in_fuel_as_read_and_scaled_from_a_d_algorithm_2_0_3;
+  _engine_sync_fuel_pressure_min_threshold_flag = &min_threshold_for_water_in_fuel_fuel_limiting_0_3
+  ;
+  _points_to_water_in_fuel_fuel_maximum_threshold_0_2_32 =
+       &max_threshold_for_water_in_fuel_fuel_limiting_0_3;
+  _pointer_to_water_in_fuel_rpm_limit_threshold_0_2_32 =
+       &min_threshold_for_water_in_fuel_rpm_limiting_0_65535;
+  _pointer_to_water_in_fuel_fuel_fault_log_data_0_2_32 = 0x80562a;
+  _pointer_to_water_in_fuel_rpm_fault_log_data_0_2_32 = 0x805656;
+  _DAT_0080d1c2 = &boost_pressure_0_100;
+  _engine_sync_fuel_pressure_min_threshold_flag_2 =
+       &min_threshold_for_boost_pressure_fuel_limiting_0_100;
+  _points_to_boost_pressure_fuel_maximum_threshold_0_2_32 =
+       &max_threshold_for_boost_pressure_fuel_limiting_0_100;
+  _pointer_to_boost_pressure_rpm_limit_threshold_0_2_32 =
+       &min_threshold_for_boost_fuel_pressure_rpm_limiting_0_65535;
+  _pointer_to_boost_pressure_fuel_fault_log_data_0_2_32 = 0x80567e;
+  _pointer_to_boost_pressure_rpm_fault_log_data_0_2_32 = 0x8056a6;
+  _DAT_0080d1f0 = &adsyfpft_param;
+  _engine_sync_fuel_pressure_min_threshold_flag_3 = &EPFPMNTD;
+  _engine_sync_fuel_pressure_max_threshold_flag = &EPFPMXTD;
+  _pointer_to_engine_sync_fuel_pressure_rpm_limit_threshold_0_2_32 =
+       &min_threshold_for_engine_sync_fuel_pressure_rpm_limiting_0_65535;
+  _pointer_to_fuel_pressure_fuel_fault_log_data_0_2_32 = 0x8056ce;
+  _pointer_to_fuel_pressure_rpm_fault_log_data_0_2_32 = 0x8056f6;
+  _DAT_0080d21e = &DAT_0080a254;
+  _pointer_to_fuel_temperature_min_threshold_0_2_32 =
+       &minimum_temperature_threshold_for_fuel_temperature_fuel_limi_0_65535;
+  _pointer_to_fuel_temperature_max_threshold_0_2_32 =
+       &maximum_threshold_for_fuel_temperature_fuel_limiting_0_65535;
+  _pointer_to_fuel_temperature_rpm_limit_threshold_0_2_32 =
+       &minimum_threshold_for_fuel_temperature_rpm_limiting_0_65535;
+  _pointer_to_fuel_temperature_fuel_fault_log_data_0_2_32 = 0x80571e;
+  _pointer_to_fuel_temperature_rpm_fault_log_data_0_2_32 = 0x805746;
+  _DAT_0080d24c = &filtered_ambient_air_pressure_as_read_and_scaled_from_a_d_algor_0_15;
+  _engine_sync_fuel_pressure_min_threshold_flag_4 =
+       &min_threshold_for_ambient_air_pressure_fuel_limiting_0_15;
+  _points_to_ambient_air_pressure_fuel_maximum_threshold_0_2_32 =
+       &max_threshold_for_ambient_air_pressure_fuel_limiting_0_15;
+  _pointer_to_ambient_air_pressure_rpm_limit_threshold_0_2_32 =
+       &min_threshold_for_ambient_air_pressure_rpm_limiting_0_65535;
+  _pointer_to_ambient_air_pressure_fuel_fault_log_data_0_2_32 = 0x80576e;
+  _pointer_to_ambient_air_pressure_rpm_fault_log_data_0_2_32 = 0x805796;
+  protectionThresholdPointerInit();
+  initShutdownLimitVariables();
+  FUN_000192e0();
+  _DAT_0080060e = 0;
+  return;
+}
+
+
+
+//
+// Function: protectionConditionEvaluator @ 0x00018968
+//
+
+// Variables in this function: DAT_0080d28e
+ushort FUN_00018fcc(void)
+
+{
+  short sVar1;
+  ushort uVar2;
+  ushort uVar3;
+  uint uVar4;
+  short sVar5;
+  undefined *puVar6;
+  ushort *puVar7;
+  undefined2 uVar8;
+  undefined2 uVar9;
+  
+  if (_smoke_limiter_output_value == 1) {
+    _DAT_0080061c = 0;
+  }
+  uVar2 = _calibration_feature_enable_flags_word_2 & 1;
+  if ((((_calibration_feature_enable_flags_word_2 & 1) == 0) || (_smoke_limiter_output_value == 8))
+     || (_smoke_limiter_output_value == 1)) {
+    _DAT_0080d28e = 0;
+    uVar3 = 0;
+    puVar6 = &protection_system_sensor_data_ptr;
+    do {
+      *(undefined2 *)(puVar6 + 0x1a) = 0;
+      *(undefined2 *)(puVar6 + 0x1c) = 0;
+      uVar2 = 0x2e;
+      puVar6 = puVar6 + 0x2e;
+      uVar3 = uVar3 + 1;
+    } while (uVar3 < 9);
+  }
+  else if (_DAT_0080061c == 0) {
+    _DAT_0080d28e = 0;
+    puVar7 = (ushort *)&DAT_00807032;
+    puVar6 = &protection_system_sensor_data_ptr;
+    uVar4 = 0x72;
+    uVar2 = 0;
+    if ((_general_counter_1 == 0) && (_engine_rpm_primary != 0)) {
+      _DAT_00800620 = 1;
+    }
+    else {
+      _DAT_00800620 = 0;
+    }
+    sVar5 = 0;
+    for (; puVar7 < &load_breakpoint_table; puVar7 = puVar7 + 0x12) {
+      uVar3 = *puVar7;
+      if (((uint)*(ushort *)
+                  (&calibration_feature_enable_flags_word_0 + (short)((int)uVar4 >> 4) * 2) &
+          1 << (uVar4 & 0xf)) == 0) {
+        *(undefined2 *)(puVar6 + 0x1a) = 0;
+        *(undefined2 *)(puVar6 + 0x1c) = 0;
+      }
+      else {
+        if ((((int)(short)_engine_protection_active_fault_index == (uint)uVar2) &&
+            (*(short *)(&coolant_level_fueling_severity_index_0_0_1_0 + sVar5) == 0)) &&
+           (*(short *)(&severity_index_for_epf_coolant_level_fault_0_0_1_0 + sVar5) == 0)) {
+          _engine_protection_active_fault_index = 0xff;
+          _DAT_008058d0 = 0;
+        }
+        uVar9 = SUB42(puVar6,0);
+        uVar8 = SUB42(puVar7,0);
+        if (((uVar3 & 0x300) == 0) || (*(short *)(puVar6 + 0x16) == 0)) {
+          *(undefined2 *)(puVar6 + 0x1a) = 0;
+        }
+        else {
+          if ((uVar3 & 0x100) == 0) {
+            sVar1 = protectionConditionEvaluator(uVar8,uVar9,3);
+            if (sVar1 == 0) {
+              *(undefined2 *)(puVar6 + 0x1a) = 0;
+              *(undefined2 *)(puVar6 + 0x1e) = 0;
+            }
+            else {
+              protectionStateUpdater(uVar8,uVar9);
+            }
+          }
+          else if (puVar7[8] < *(ushort *)(puVar6 + 6)) {
+            protectionStateUpdater(uVar8,uVar9);
+          }
+          else {
+            *(undefined2 *)(puVar6 + 0x1a) = 0;
+            *(undefined2 *)(puVar6 + 0x1e) = 0;
+          }
+          if (*(ushort *)(puVar6 + 0x1e) < *(ushort *)(puVar6 + 0x1a)) {
+            _DAT_0080d28e = 1;
+          }
+          if ((uint)puVar7[0xf] + (uint)*(ushort *)(puVar6 + 0x1e) <
+              (uint)*(ushort *)(puVar6 + 0x1a)) {
+            _engine_protection_shutdown_command = 1;
+            _engine_protection_active_fault_index = uVar2;
+          }
+        }
+        if (((uVar3 & 0xc00) == 0) || (*(short *)(puVar6 + 0x16) == 0)) {
+          *(undefined2 *)(puVar6 + 0x1c) = 0;
+        }
+        else {
+          if ((uVar3 & 0x400) == 0) {
+            sVar1 = protectionConditionEvaluator(uVar8,uVar9,3);
+            if (sVar1 == 0) {
+              *(undefined2 *)(puVar6 + 0x1c) = 0;
+              *(undefined2 *)(puVar6 + 0x20) = 0;
+            }
+            else {
+              protectionStateUpdater(uVar8,uVar9);
+            }
+          }
+          else if (puVar7[9] < *(ushort *)(puVar6 + 8)) {
+            protectionStateUpdater(uVar8,uVar9);
+          }
+          else {
+            *(undefined2 *)(puVar6 + 0x1c) = 0;
+            *(undefined2 *)(puVar6 + 0x20) = 0;
+          }
+          if (*(ushort *)(puVar6 + 0x20) < *(ushort *)(puVar6 + 0x1c)) {
+            _DAT_0080d28e = 1;
+          }
+          if ((uint)puVar7[0xf] + (uint)*(ushort *)(puVar6 + 0x20) <
+              (uint)*(ushort *)(puVar6 + 0x1c)) {
+            _engine_protection_shutdown_command = 1;
+            _engine_protection_active_fault_index = uVar2;
+          }
+        }
+      }
+      puVar6 = puVar6 + 0x2e;
+      uVar4 = (uint)(ushort)((short)uVar4 + 4);
+      sVar5 = sVar5 + 0x1e;
+      uVar2 = uVar2 + 1;
+    }
+    if (_DAT_0080d28a != 0 ||
+        _epf_shutdown_approaching_command_from_restart_limitat_1_true_0_false != 0) {
+      _DAT_0080d28e = 1;
+    }
+    uVar2 = _DAT_0080d28a | _epf_shutdown_engine_command_from_restart_limitation_a_1_true_0_false;
+    if (uVar2 != 0) {
+      _engine_protection_shutdown_command = 1;
+    }
+    if ((_engine_protection_shutdown_command != 0) && (_DAT_0080061c == 0)) {
+      if (_DAT_008058d2 != 0xff) {
+        _DAT_008058d2 = _DAT_008058d2 + 1;
+      }
+      uVar2 = _engine_protection_active_fault_index;
+      if (_engine_protection_active_fault_index == _DAT_0080061e) {
+        if (_DAT_008058d0 != 0xff) {
+          _DAT_008058d0 = _DAT_008058d0 + 1;
+        }
+      }
+      else {
+        _DAT_008058d0 = 1;
+      }
+    }
+    _DAT_0080061c = _engine_protection_shutdown_command;
+  }
+  else {
+    _engine_protection_shutdown_command = 1;
+  }
+  _general_counter_1 = _engine_rpm_primary;
+  return uVar2;
+}
+
+
+
+//
+// Function: FUN_000192e0 @ 0x000192e0
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080d284
+void shutdownMinimumSelector29(void)
+
+{
+                    /* From J90280.05 @ 0x01542a (confidence: 81%) */
+  if (_DAT_0080d284 < _fuel_limit_shutdown_minimum) {
+    _fuel_limit_shutdown_minimum = _DAT_0080d284;
+    _indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 = 0x1d;
+  }
+  return;
+}
+
+
+
+//
+// Function: FUN_00019702 @ 0x00019702
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080d284
+void FUN_00019702(void)
+
+{
+  short sVar2;
+  ushort uVar3;
+  int iVar1;
+  uint uVar4;
+  uint uVar5;
+  ushort uVar6;
+  undefined *puVar7;
+  ushort *puVar8;
+  ushort *puVar9;
+  
+  puVar7 = &protection_system_sensor_data_ptr;
+  puVar9 = (ushort *)&coolant_level_fueling_severity_index_0_0_1_0;
+  uVar5 = 0x70;
+  uVar4 = 0x1a0;
+  uVar6 = 0;
+  for (puVar8 = (ushort *)&DAT_00807032; puVar8 < &load_breakpoint_table; puVar8 = puVar8 + 0x12) {
+    if ((*puVar8 & 1) != 0) {
+      sVar2 = (short)((int)uVar4 >> 4);
+      if ((((uint)*(ushort *)
+                   (&calibration_feature_enable_flags_word_0 + (short)((int)uVar5 >> 4) * 2) &
+           1 << (uVar5 & 0xf)) == 0) &&
+         (((uint)*(ushort *)(&calibration_feature_enable_flags_word_0 + sVar2 * 2) &
+          1 << (uVar4 & 0xf)) == 0)) {
+        uVar3 = 0;
+      }
+      else {
+        if ((*puVar8 & 0x40) == 0) {
+          if (puVar8[1] < *(ushort *)(puVar7 + 6)) {
+            uVar3 = protectionPercentageCalculator(**(undefined2 **)(puVar7 + 10));
+          }
+          else {
+            uVar3 = 0;
+          }
+        }
+        else {
+          uVar3 = protectionThresholdCalculationHelper(puVar8,(short)puVar7,(short)puVar9);
+        }
+        if ((uVar3 < puVar9[2]) &&
+           (((uint)*(ushort *)(&calibration_feature_enable_flags_word_0 + sVar2 * 2) &
+            1 << (uVar4 & 0xf)) == 0)) {
+          uVar3 = puVar9[2];
+        }
+      }
+      *puVar9 = uVar3;
+      if ((uVar6 < uVar3) &&
+         (((uint)*(ushort *)(&calibration_feature_enable_flags_word_0 + sVar2 * 2) &
+          1 << (uVar4 & 0xf)) == 0)) {
+        uVar6 = *puVar9;
+      }
+    }
+    puVar7 = puVar7 + 0x2e;
+    puVar9 = puVar9 + 0xf;
+    uVar5 = (uint)(ushort)((short)uVar5 + 4);
+    uVar4 = (uint)(ushort)((short)uVar4 + 1);
+  }
+  if ((_DAT_00803ca2 & 0x1000) != 0) {
+    if (_engine_rpm_primary == 0) {
+      _DAT_0080062e = 0;
+    }
+    else if (_DAT_0080062e < _period_of_time_after_powerup_during_which_no_oil_pres_faults_0_255) {
+      _DAT_0080062e = _DAT_0080062e + 1;
+    }
+    if (_DAT_0080062e < _period_of_time_after_powerup_during_which_no_oil_pres_faults_0_255) {
+      _oil_pressure_fueling_severity_index_0_0_1_0 = 0x100;
+      uVar6 = 0x100;
+    }
+  }
+  if ((int)(short)(_time_to_reach_full_derate_during_engine_protection_fuelin_0_0039_256 +
+                  _engine_protection_fueling_severity_filtered) < (int)(uint)uVar6) {
+    uVar6 = _time_to_reach_full_derate_during_engine_protection_fuelin_0_0039_256 +
+            _engine_protection_fueling_severity_filtered;
+  }
+  else if ((int)(uint)uVar6 <
+           (int)(short)(_engine_protection_fueling_severity_filtered -
+                       _time_to_reach_full_derate_during_engine_protection_fuelin_0_0039_256)) {
+    uVar6 = _engine_protection_fueling_severity_filtered -
+            _time_to_reach_full_derate_during_engine_protection_fuelin_0_0039_256;
+  }
+  _engine_protection_fueling_severity_filtered = uVar6;
+  if (0x100 < (short)_engine_protection_fueling_severity_filtered) {
+    _engine_protection_fueling_severity_filtered = 0x100;
+  }
+  if (_engine_protection_fueling_severity_filtered == 0) {
+    _DAT_0080d284 = _peak_fueling_calibration_value;
+  }
+  else {
+    _arbitrated_fuel_previous = _engine_rpm_primary;
+    _DAT_0080d284 = lookupTableInterpolation(0x632);
+    iVar1 = (int)(short)(0x100 - _engine_protection_fueling_severity_filtered) *
+            (int)(short)(_fueling_value_at_100_throttle_0_100 - _DAT_0080d284);
+    if (iVar1 < 0) {
+      iVar1 = iVar1 + 0xff;
+    }
+    _DAT_0080d284 = _DAT_0080d284 + (short)((uint)iVar1 >> 8);
+  }
+  if ((short)_engine_protection_fueling_severity_filtered < 1) {
+    _indicator_from_engine_protection_that_fuel_derate_1_active_0_inact = 0;
+    return;
+  }
+  _indicator_from_engine_protection_that_fuel_derate_1_active_0_inact = 1;
+  return;
+}
+
+
+
+//
+// Function: initShutdownLimitVariables @ 0x00019960
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080d284
+void initShutdownLimitVariables(void)
+
+{
+                    /* From J90280.05 @ 0x01562e (confidence: 69%) */
+  _DAT_0080062e = 0;
+  _engine_protection_fueling_severity_filtered = 0;
+  _DAT_00800632 = 2;
+  _DAT_00800634 = &load_breakpoint_table;
+  _governor_rpm_error_previous = 0x8071a8;
+  _DAT_0080d284 = _peak_fueling_calibration_value;
+  _indicator_from_engine_protection_that_fuel_derate_1_active_0_inact = 0;
+  return;
+}
+
+
+
+//
+// Function: can1TimerBufferInitDivided @ 0x0001999c
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080a254
+uint FUN_0001cad6(void)
+
+{
+  uint uVar1;
+  
+  uVar1 = _calibration_feature_enable_flags_word_2 & 0x10;
+  if (((_calibration_feature_enable_flags_word_2 & 0x10) != 0) &&
+     ((uVar1 = _DAT_00803ca4 & 0x1000, (_DAT_00803ca4 & 0x1000) != 0 ||
+      (uVar1 = _DAT_00803ca4 & 0x2000, (_DAT_00803ca4 & 0x2000) != 0)))) {
+    if (_dzg_pressure_max_limit == 0) {
+      if ((_status_32_word_bit_mapped_system_error_status_word_18_0_1 & 0x80) != 0) {
+        _DAT_0080a254 = _default_value_for_vp44_fuel_temperature_when_sensor_is_fail_40_to_300;
+        return _status_32_word_bit_mapped_system_error_status_word_18_0_1 & 0xffff0080;
+      }
+      uVar1 = FUN_0001cb48();
+      _DAT_0080a254 = (short)uVar1;
+      return uVar1;
+    }
+    _DAT_0080a254 = _filtered_and_linearized_fuel_temperature_50_to_293;
+  }
+  return uVar1;
+}
+
+
+
+//
+// Function: FUN_0001cb3c @ 0x0001cb3c
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080a254
+void FUN_0001cb3c(void)
+
+{
+  _DAT_0080a254 = _global_default_value_for_fuel_temperature_50_to_293;
+  return;
+}
+
+
+
+//
+// Function: FUN_0001cb48 @ 0x0001cb48
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080d28e
+undefined1 ioControlLampStateMachine(void)
+
+{
+  undefined1 uVar1;
+  
+                    /* From J90280.05 @ 0x01d904 (confidence: 75%) */
+  uVar1 = 1;
+  if (_DAT_0080d67a == 0) {
+    if (DAT_008019e0 != '\0') {
+      DAT_008019e0 = '\0';
+      _warning_lamp_blink_phase = 0;
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffd;
+    }
+  }
+  else {
+    uVar1 = 0;
+    if (_warning_lamp_blink_phase == 0) {
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask | 2;
+      _warning_lamp_blink_phase = 1;
+    }
+    else if (_warning_lamp_blink_phase == _DAT_000611a0) {
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffd;
+      _warning_lamp_blink_phase = _warning_lamp_blink_phase + 1;
+    }
+    else if (((uint)_DAT_000611a0 + (uint)_DAT_000611a2) - 1 == (uint)_warning_lamp_blink_phase) {
+      _warning_lamp_blink_phase = 0;
+    }
+    else {
+      _warning_lamp_blink_phase = _warning_lamp_blink_phase + 1;
+    }
+    DAT_008019e0 = '\x01';
+  }
+  if (_DAT_0080d28e == 0) {
+    if (DAT_008019e1 != '\0') {
+      DAT_008019e1 = '\0';
+      _stop_lamp_blink_phase = 0;
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffe;
+    }
+  }
+  else {
+    uVar1 = 0;
+    if (_stop_lamp_blink_phase == 0) {
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask | 1;
+      _stop_lamp_blink_phase = 1;
+    }
+    else if (_stop_lamp_blink_phase == _DAT_000611a0) {
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffe;
+      _stop_lamp_blink_phase = _stop_lamp_blink_phase + 1;
+    }
+    else if (((uint)_DAT_000611a0 + (uint)_DAT_000611a2) - 1 == (uint)_stop_lamp_blink_phase) {
+      _stop_lamp_blink_phase = 0;
+    }
+    else {
+      _stop_lamp_blink_phase = _stop_lamp_blink_phase + 1;
+    }
+    DAT_008019e1 = '\x01';
+  }
+  if ((_DAT_0080d684 == 1) && (DAT_008019e2 == '\0')) {
+    DAT_008019e2 = '\x01';
+  }
+  if (DAT_008019e2 == '\x01') {
+    uVar1 = 0;
+    if (_warning_lamp_blink_phase == 0) {
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask | 2;
+      _warning_lamp_blink_phase = 1;
+    }
+    else if (_warning_lamp_blink_phase == 10) {
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffd;
+      _warning_lamp_blink_phase = 0xb;
+    }
+    else if (_warning_lamp_blink_phase == 0x13) {
+      _warning_lamp_blink_phase = 0;
+      DAT_008019e3 = DAT_008019e3 + 1;
+    }
+    else {
+      _warning_lamp_blink_phase = _warning_lamp_blink_phase + 1;
+    }
+  }
+  if ((0x77 < DAT_008019e3) && (DAT_008019e2 == '\x01')) {
+    _warning_lamp_blink_phase = 0;
+    lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffd;
+    DAT_008019e2 = '\0';
+    DAT_008019e3 = 0;
+    _DAT_0080d684 = 0;
+  }
+  return uVar1;
+}
+
+
+
+//
+// Function: ioControlDigitDisplaySequencer @ 0x00024b4e
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

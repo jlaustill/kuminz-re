@@ -1,0 +1,99 @@
+=== VARIABLES TO NAME ===
+0x0080d0a8  (6 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0080d0a8
+void rpmBasedFuelTimingInterpolation(void)
+
+{
+                    /* From J90280.05 @ 0x013bd8 (confidence: 73%) */
+  if (((_smoke_limiter_output_value == 2) || (_smoke_limiter_output_value == 6)) ||
+     (_smoke_limiter_output_value == 7)) {
+    governorFuelModeBlendCalculator();
+    if (_engine_rpm_primary <= _crank_initial_advace_break_speed_0_1000) {
+      _DAT_0080d09a = _DAT_0080d0a8;
+      return;
+    }
+    if (_engine_rpm_primary <= _crank_fuel_limit_source_selector) {
+      _DAT_0080d09a =
+           _DAT_0080d0a8 +
+           (short)(((int)(short)(_crank_exit_advance_0_120 - _DAT_0080d0a8) *
+                   (int)(short)(_engine_rpm_primary - _crank_initial_advace_break_speed_0_1000)) /
+                  (int)(short)(_crank_fuel_limit_source_selector -
+                              _crank_initial_advace_break_speed_0_1000));
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: frictionalLoadTorqueInterpolator @ 0x00017a8e
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080d0a8
+uint FUN_00017baa(void)
+
+{
+  ushort uVar1;
+  undefined2 uVar2;
+  uint in_D0;
+  uint uVar3;
+  
+  uVar3 = in_D0 & 0xffff0000;
+  if (((_status_32_word_bit_mapped_system_error_status_word_0_0_1 & 0x2000) == 0) ||
+     (uVar3 = CONCAT22((short)(in_D0 >> 0x10),_fault_confirm_status_word_0) & 0xffff2000,
+     (_fault_confirm_status_word_0 & 0x2000) == 0)) {
+    uVar2 = (undefined2)(uVar3 >> 0x10);
+    uVar3 = CONCAT22(uVar2,_status_32_word_bit_mapped_system_error_status_word_0_0_1) & 0xffff4000;
+    if ((((_status_32_word_bit_mapped_system_error_status_word_0_0_1 & 0x4000) == 0) ||
+        (uVar3 = CONCAT22(uVar2,_fault_confirm_status_word_0) & 0xffff4000,
+        (_fault_confirm_status_word_0 & 0x4000) == 0)) &&
+       (_crank_low_intake_manifold_temperature_50_to_293 <=
+        _filtered_and_linearized_intake_manifold_temperature_50_to_293)) {
+      if (_crank_high_intake_manifold_temperature_50_to_293 <
+          _filtered_and_linearized_intake_manifold_temperature_50_to_293) {
+        _DAT_0080d0a8 = _crank_high_intake_manifold_temperature_timing_0_120;
+        _crank_initial_advace_break_speed_0_1000 =
+             _crank_high_intake_manifold_temperature_rpm_0_1000;
+        return uVar3;
+      }
+      uVar1 = _crank_high_intake_manifold_temperature_50_to_293 -
+              _crank_low_intake_manifold_temperature_50_to_293;
+      _DAT_0080d0a8 =
+           (short)((((uint)_crank_high_intake_manifold_temperature_50_to_293 -
+                    (uint)_filtered_and_linearized_intake_manifold_temperature_50_to_293) *
+                   (uint)_crank_low_intake_manifold_temperature_tvc_0_120) / (uint)uVar1) +
+           (short)((((uint)_filtered_and_linearized_intake_manifold_temperature_50_to_293 -
+                    (uint)_crank_low_intake_manifold_temperature_50_to_293) *
+                   (uint)_crank_high_intake_manifold_temperature_timing_0_120) / (uint)uVar1);
+      uVar3 = (((uint)_crank_high_intake_manifold_temperature_50_to_293 -
+               (uint)_filtered_and_linearized_intake_manifold_temperature_50_to_293) *
+              (uint)_crank_low_intake_manifold_temperature_rpm_0_1000) / (uint)uVar1;
+      _crank_initial_advace_break_speed_0_1000 =
+           (short)uVar3 +
+           (short)((((uint)_filtered_and_linearized_intake_manifold_temperature_50_to_293 -
+                    (uint)_crank_low_intake_manifold_temperature_50_to_293) *
+                   (uint)_crank_high_intake_manifold_temperature_rpm_0_1000) / (uint)uVar1);
+      return uVar3;
+    }
+  }
+  _DAT_0080d0a8 = _crank_low_intake_manifold_temperature_tvc_0_120;
+  _crank_initial_advace_break_speed_0_1000 = _crank_low_intake_manifold_temperature_rpm_0_1000;
+  return uVar3;
+}
+
+
+
+//
+// Function: peakTorqueFuelCorrection @ 0x00017ca6
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

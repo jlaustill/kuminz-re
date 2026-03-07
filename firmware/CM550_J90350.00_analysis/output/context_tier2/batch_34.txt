@@ -1,0 +1,159 @@
+=== VARIABLES TO NAME ===
+0x008019de  (9 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_008019de
+void activeFaultLampStateMachine(void)
+
+{
+  bool bVar1;
+  bool bVar2;
+  bool bVar3;
+  bool bVar4;
+  bool bVar5;
+  bool bVar6;
+  byte bVar7;
+  
+                    /* From J90280.05 @ 0x01dd00 (confidence: 75%) */
+  bVar6 = false;
+  bVar1 = false;
+  bVar3 = false;
+  bVar2 = false;
+  bVar5 = false;
+  bVar4 = false;
+  _passes_diagnostic_output_for_stop_lamp_to_j1939_73_true_false = 0;
+  _passes_diagnostic_output_for_warning_lamp_to_j1939_73_true_false = 0;
+  _passes_diagnostic_output_for_fluids_lamp_to_j1939_73_true_false = 0;
+  for (bVar7 = 1; bVar7 <= DGAEFUBF; bVar7 = bVar7 + 1) {
+    if ((((*(ushort *)(&fault_definition_flags_word + (uint)(&DGAEFUBF)[(short)(ushort)bVar7] * 6) &
+          1) == 0) ||
+        ((*(ushort *)(&fault_definition_flags_word + (uint)(&DGAEFUBF)[(short)(ushort)bVar7] * 6) &
+         0x40) != 0)) ||
+       (((uint)*(byte *)((short)((int)(uint)(&DGAEFUBF)[(short)(ushort)bVar7] >> 3) + 0x803fb6) &
+        1 << ((&DGAEFUBF)[(short)(ushort)bVar7] & 7)) != 0)) {
+      if ((((*(ushort *)(&fault_definition_flags_word + (uint)(&DGAEFUBF)[(short)(ushort)bVar7] * 6)
+            & 2) == 0) ||
+          ((*(ushort *)(&fault_definition_flags_word + (uint)(&DGAEFUBF)[(short)(ushort)bVar7] * 6)
+           & 0x40) != 0)) ||
+         (((uint)*(byte *)((short)((int)(uint)(&DGAEFUBF)[(short)(ushort)bVar7] >> 3) + 0x803fb6) &
+          1 << ((&DGAEFUBF)[(short)(ushort)bVar7] & 7)) != 0)) {
+        if ((((*(ushort *)
+                (&fault_definition_flags_word + (uint)(&DGAEFUBF)[(short)(ushort)bVar7] * 6) & 4) !=
+              0) && ((*(ushort *)
+                       (&fault_definition_flags_word + (uint)(&DGAEFUBF)[(short)(ushort)bVar7] * 6)
+                     & 0x40) == 0)) &&
+           (((uint)*(byte *)((short)((int)(uint)(&DGAEFUBF)[(short)(ushort)bVar7] >> 3) + 0x803fb6)
+            & 1 << ((&DGAEFUBF)[(short)(ushort)bVar7] & 7)) == 0)) {
+          _passes_diagnostic_output_for_fluids_lamp_to_j1939_73_true_false = 1;
+          if ((*(ushort *)
+                (&fault_definition_flags_word + (uint)(&DGAEFUBF)[(short)(ushort)bVar7] * 6) & 8) ==
+              0) {
+            bVar5 = true;
+          }
+          else {
+            bVar4 = true;
+          }
+        }
+      }
+      else {
+        _passes_diagnostic_output_for_warning_lamp_to_j1939_73_true_false = 1;
+        if ((*(ushort *)(&fault_definition_flags_word + (uint)(&DGAEFUBF)[(short)(ushort)bVar7] * 6)
+            & 8) == 0) {
+          bVar3 = true;
+        }
+        else {
+          bVar2 = true;
+        }
+      }
+    }
+    else {
+      _passes_diagnostic_output_for_stop_lamp_to_j1939_73_true_false = 1;
+      if ((*(ushort *)(&fault_definition_flags_word + (uint)(&DGAEFUBF)[(short)(ushort)bVar7] * 6) &
+          8) == 0) {
+        bVar6 = true;
+      }
+      else {
+        bVar1 = true;
+      }
+    }
+  }
+  if (bVar1) {
+    if (_stop_lamp_blink_phase == 0) {
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask | 1;
+      _stop_lamp_blink_phase = 1;
+    }
+    else if (_stop_lamp_blink_phase == _DAT_000611a0) {
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffe;
+      _stop_lamp_blink_phase = _stop_lamp_blink_phase + 1;
+    }
+    else if ((uint)_DAT_000611a0 + (uint)_DAT_000611a2 == (uint)_stop_lamp_blink_phase) {
+      _stop_lamp_blink_phase = 0;
+    }
+    else {
+      _stop_lamp_blink_phase = _stop_lamp_blink_phase + 1;
+    }
+  }
+  else if (bVar6) {
+    lamp_driver_output_bitmask = lamp_driver_output_bitmask | 1;
+  }
+  else {
+    lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffe;
+  }
+  if (bVar2) {
+    if (_warning_lamp_blink_phase == 0) {
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask | 2;
+      _warning_lamp_blink_phase = 1;
+    }
+    else if (_warning_lamp_blink_phase == _DAT_000611a0) {
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffd;
+      _warning_lamp_blink_phase = _warning_lamp_blink_phase + 1;
+    }
+    else if ((uint)_DAT_000611a0 + (uint)_DAT_000611a2 == (uint)_warning_lamp_blink_phase) {
+      _warning_lamp_blink_phase = 0;
+    }
+    else {
+      _warning_lamp_blink_phase = _warning_lamp_blink_phase + 1;
+    }
+  }
+  else if (bVar3) {
+    lamp_driver_output_bitmask = lamp_driver_output_bitmask | 2;
+  }
+  else {
+    lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffd;
+  }
+  if (bVar4) {
+    if (_DAT_008019de == 0) {
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask | 4;
+      _DAT_008019de = 1;
+    }
+    else if (_DAT_008019de == _DAT_000611a0) {
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffb;
+      _DAT_008019de = _DAT_008019de + 1;
+    }
+    else if (((uint)_DAT_000611a0 + (uint)_DAT_000611a2) - 1 == (uint)_DAT_008019de) {
+      _DAT_008019de = 0;
+    }
+    else {
+      _DAT_008019de = _DAT_008019de + 1;
+    }
+  }
+  else if (bVar5) {
+    lamp_driver_output_bitmask = lamp_driver_output_bitmask | 4;
+  }
+  else {
+    lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffb;
+  }
+  return;
+}
+
+
+
+//
+// Function: faultLampBlinkPatternGenerator @ 0x00025316
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

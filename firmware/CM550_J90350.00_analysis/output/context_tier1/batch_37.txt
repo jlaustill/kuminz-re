@@ -1,0 +1,321 @@
+=== VARIABLES TO NAME ===
+0x0080dcb0  (11 references)
+0x0080dcb3  (18 references)
+0x0080dcba  (10 references)
+
+Total: 3 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0080dcb0, DAT_0080dcb3, DAT_0080dcba
+void tpuTransmissionTrigger(void)
+
+{
+  if (((DAT_0080dcb0 == '\x01') && ((_DAT_00fffc0c & 0x20) == 0)) && (DAT_0080dcba == '\0')) {
+    _DAT_00fffc0e = (ushort)*_j1708_transmit_buffer_2_32_dc98;
+    DAT_0080dcba = '\x01';
+    _DAT_00fff45a = 0xfc8a;
+    _DAT_00fff458 = _DAT_00fff458 & 0x7fff | 0x4000;
+    DAT_0080dcb0 = '\0';
+    _DAT_0080dcb6 = 0;
+    DAT_0080dcb1 = 1;
+    DAT_0080dcb3 = *_j1708_transmit_buffer_2_32_dc98;
+    _DAT_00fffc0a = _DAT_00fffc0a | 0x20;
+  }
+  return;
+}
+
+
+
+//
+// Function: highRpmEngineProtectionStateMachine @ 0x00016dd4
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080dcba
+void tpuTimerChannelEnable(void)
+
+{
+  DAT_0080dcba = 1;
+  _DAT_00fff45a = 0xfc8a;
+  _DAT_00fff458 = _DAT_00fff458 & 0x7fff | 0x4000;
+  return;
+}
+
+
+
+//
+// Function: epsPositionSensorIsrHandler @ 0x0001e288
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080dcb0, DAT_0080dcb3, DAT_0080dcba
+undefined8 epsPositionSensorIsrHandler(void)
+
+{
+  byte *pbVar1;
+  undefined4 in_D0;
+  undefined4 in_D1;
+  byte bVar2;
+  
+  pbVar1 = _j1708_transmit_buffer_2_32_dc98;
+  if ((_DAT_00fffc0c & 0x40) != 0) {
+    DAT_0080dcba = 0;
+    _DAT_00fff458 = _DAT_00fff458 & 0x8fff;
+    bVar2 = (byte)_DAT_00fffc0e;
+    if (DAT_0080dcb0 == '\x01') {
+      *_j1708_receive_buffer_pointer_2_32_dca6 = bVar2;
+      _j1708_receive_buffer_pointer_2_32_dca6 =
+           (byte *)CONCAT31(_j1708_receive_buffer_pointer_2_32_dca6,DAT_0080dca9 + '\x01');
+      *_j1708_receive_buffer_pointer_2_32_dca2 = *_j1708_receive_buffer_pointer_2_32_dca2 + 1;
+      DAT_0080dcb3 = bVar2 + DAT_0080dcb3;
+      if (_j1708_receive_buffer_pointer_2_32_dcaa == _j1708_receive_buffer_pointer_2_32_dca6) {
+        if (_j1708_receive_buffer_pointer_2_32_dca2 == _j1708_receive_buffer_pointer_2_32_dcaa) {
+          *_j1708_receive_buffer_pointer_2_32_dca2 = 0;
+          DAT_0080dcb3 = 0;
+          _j1708_receive_buffer_pointer_2_32_dca6 =
+               (byte *)CONCAT31(_j1708_receive_buffer_pointer_2_32_dca6,DAT_0080dca5 + '\x01');
+        }
+        else {
+          j1708_receive_buffer_full_flag_1_true_0_false = '\x01';
+          _DAT_00fffc0a = _DAT_00fffc0a & 0xffdf;
+          if (_j1708_transmit_buffer_0_2_32 != _j1708_transmit_buffer_2_32_dc9c) {
+            tpuTimerChannelEnable();
+            DAT_0080dcba = 1;
+          }
+        }
+      }
+      else {
+        tpuTimerChannelEnable();
+      }
+    }
+    else {
+      switch(_DAT_0080dcb6) {
+      case 0:
+        if (bVar2 == *_j1708_transmit_buffer_2_32_dc98) {
+          _j1708_transmit_buffer_2_32_dc98 =
+               (byte *)CONCAT31(_j1708_transmit_buffer_2_32_dc98,DAT_0080dc9b + '\x01');
+          _DAT_00fffc0e = (ushort)*_j1708_transmit_buffer_2_32_dc98;
+          tpuTimerChannelEnable();
+          DAT_0080dcb3 = *_j1708_transmit_buffer_2_32_dc98 + DAT_0080dcb3;
+          DAT_0080dcb1 = DAT_0080dcb1 + 1;
+          if (DAT_0080dcb1 == *_j1708_transmit_buffer_2_32_dc9c) {
+            _DAT_0080dcb6 = 2;
+          }
+          else {
+            _DAT_0080dcb6 = 1;
+          }
+        }
+        else if (j1708_receive_buffer_full_flag_1_true_0_false == '\0') {
+          DAT_0080dcb0 = '\x01';
+          DAT_0080dcb3 = bVar2;
+          *_j1708_receive_buffer_pointer_2_32_dca6 = bVar2;
+          _j1708_receive_buffer_pointer_2_32_dca6 =
+               (byte *)CONCAT31(_j1708_receive_buffer_pointer_2_32_dca6,DAT_0080dca9 + '\x01');
+          *_j1708_receive_buffer_pointer_2_32_dca2 = *_j1708_receive_buffer_pointer_2_32_dca2 + 1;
+          if (_j1708_receive_buffer_pointer_2_32_dca6 == _j1708_receive_buffer_pointer_2_32_dcaa) {
+            j1708_receive_buffer_full_flag_1_true_0_false = '\x01';
+            _DAT_00fffc0a = _DAT_00fffc0a & 0xffdf;
+          }
+          else {
+            tpuTimerChannelEnable();
+          }
+        }
+        else {
+          DAT_0080dcb0 = '\x01';
+          DAT_0080dcb3 = 0;
+          tpuTimerChannelEnable();
+        }
+        break;
+      case 1:
+        _j1708_transmit_buffer_2_32_dc98 =
+             (byte *)CONCAT31(_j1708_transmit_buffer_2_32_dc98,DAT_0080dc9b + '\x01');
+        _DAT_00fffc0e = (ushort)*_j1708_transmit_buffer_2_32_dc98;
+        tpuTimerChannelEnable();
+        DAT_0080dcb3 = *_j1708_transmit_buffer_2_32_dc98 + DAT_0080dcb3;
+        DAT_0080dcb1 = DAT_0080dcb1 + 1;
+        if (DAT_0080dcb1 == *_j1708_transmit_buffer_2_32_dc9c) {
+          _DAT_0080dcb6 = 2;
+        }
+        break;
+      case 2:
+        _DAT_00fffc0e = ~(ushort)DAT_0080dcb3 + 1 & 0xff;
+        tpuTimerChannelEnable();
+        _j1708_transmit_buffer_2_32_dc98 =
+             (byte *)CONCAT31(_j1708_transmit_buffer_2_32_dc98,DAT_0080dc9b + '\x01');
+        _DAT_0080dcb6 = 3;
+        break;
+      case 3:
+        _j1708_transmit_buffer_2_32_dc9c = _j1708_transmit_buffer_2_32_dc98;
+        _j1708_transmit_buffer_2_32_dc98 =
+             (byte *)CONCAT31(_j1708_transmit_buffer_2_32_dc98,DAT_0080dc9b + '\x01');
+        DAT_0080dcb3 = 0;
+        j1708_transmit_buffer_full_flag_1_true_0_false = 0;
+        if (((((_status_32_word_bit_mapped_system_error_status_word_7_0_1 & 4) != 0) &&
+             ((_DAT_00806aca & 4) != 0)) &&
+            ((_status_32_word_bit_mapped_system_error_status_word_7_0_1 & 4) != 0)) &&
+           ((_DAT_0080604e & 4) == 0)) {
+          _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+               _status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0xfffb;
+        }
+        DAT_0080dcb0 = '\x01';
+        if (j1708_receive_buffer_full_flag_1_true_0_false == '\0') {
+          _DAT_00fffc0a = _DAT_00fffc0a | 0x20;
+        }
+        else {
+          _DAT_00fffc0a = _DAT_00fffc0a & 0xffdf;
+        }
+        if (_j1708_transmit_buffer_0_2_32 != pbVar1) {
+          DAT_0080dcba = 1;
+          _DAT_00fff458 = _DAT_00fff458 | 0x4000;
+          _DAT_00fff45a = 0xfcbe;
+        }
+      }
+    }
+  }
+  return CONCAT44(in_D0,in_D1);
+}
+
+
+
+//
+// Function: tpuChannelIsrRegister @ 0x0001e522
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080dcb0, DAT_0080dcb3, DAT_0080dcba
+undefined2 FUN_00029130(void)
+
+{
+  byte bVar1;
+  
+  _buffer_used_to_store_secure_write_data_until_the_copy_0c000h_0f7efh = &DAT_0080dcbe;
+  _length_in_bytes_of_scratch_pad_buffer_0_200 = 200;
+  _address_of_scratch_pad_directory_0c000h_0f7efh = &DAT_0080dd86;
+  _number_of_entries_in_the_scratch_pad_0_10 = 0;
+  _DAT_0080ddc2 = &DAT_0080dcbe;
+  diagnosticBufferPointerInit();
+  DAT_0080dcb3 = 0;
+  DAT_0080dcbb = 0;
+  DAT_0080dcb0 = 1;
+  DAT_0080dcba = 0;
+  DAT_0080dcbc = 0;
+  DAT_0080dde2 = 0;
+  DAT_0080dde3 = 0;
+  _bit_2_0_15_enables_j1939_71_engine_broadcast_1_on_0_off = _DAT_00803f88;
+  _DAT_0080ddfa = &DAT_0080de00;
+  _DAT_0080de1e = &DAT_000612ee;
+  for (bVar1 = 0; (*_DAT_0080de1e != '\0' && (bVar1 < 0x1e)); bVar1 = bVar1 + 1) {
+    *_DAT_0080ddfa = _DAT_0080de1e[2] + _DAT_0080de1e[1];
+    _DAT_0080ddfa = _DAT_0080ddfa + 1;
+    _DAT_0080de1e = _DAT_0080de1e + 3;
+  }
+  _DAT_00fffc08 = 0x34;
+  _DAT_00fffc0a = 0x102c;
+  return _DAT_00fffc0c;
+}
+
+
+
+//
+// Function: FUN_0002c834 @ 0x0002c834
+//
+
+// Variables in this function: DAT_0080dcb0, DAT_0080dcb3, DAT_0080dcba
+undefined8 tpuChannelStateMachine(void)
+
+{
+  char cVar1;
+  undefined4 in_D0;
+  int iVar2;
+  undefined4 in_D1;
+  
+  DAT_0080dcba = 0;
+  _DAT_00fff458 = _DAT_00fff458 & 0xfff;
+  if (((DAT_0080dcb0 == '\x01') && (*_j1708_receive_buffer_pointer_2_32_dca2 != 0)) &&
+     (j1708_receive_buffer_full_flag_1_true_0_false == '\0')) {
+    if (*_j1708_receive_buffer_pointer_2_32_dca2 < 3) {
+      _j1708_receive_buffer_pointer_2_32_dca6 =
+           (byte *)CONCAT31(_j1708_receive_buffer_pointer_2_32_dca6,DAT_0080dca5 + '\x01');
+      *_j1708_receive_buffer_pointer_2_32_dca2 = 0;
+      DAT_0080dcb3 = 0;
+    }
+    else if (DAT_0080dcb3 == 0) {
+      *_j1708_receive_buffer_pointer_2_32_dca2 = *_j1708_receive_buffer_pointer_2_32_dca2 - 1;
+      _j1708_receive_buffer_pointer_2_32_dca2 =
+           (byte *)CONCAT31(_j1708_receive_buffer_pointer_2_32_dca2,DAT_0080dca9 + -1);
+      *_j1708_receive_buffer_pointer_2_32_dca2 = 0;
+    }
+    else {
+      _j1708_receive_buffer_pointer_2_32_dca6 =
+           (byte *)CONCAT31(_j1708_receive_buffer_pointer_2_32_dca6,DAT_0080dca5 + '\x01');
+      if (*_j1708_receive_buffer_pointer_2_32_dca6 < 7) {
+        if ((int)_j1708_receive_buffer_pointer_2_32_dca2 < _j1708_receive_buffer_pointer_2_32_dcaa)
+        {
+          iVar2 = (_j1708_receive_buffer_pointer_2_32_dcaa -
+                  (int)_j1708_receive_buffer_pointer_2_32_dca2) + -2;
+        }
+        else {
+          iVar2 = (_j1708_receive_buffer_pointer_2_32_dcaa -
+                  (int)_j1708_receive_buffer_pointer_2_32_dca2) + 0xfe;
+        }
+        if (3 < iVar2) {
+          DAT_0080dcbb = DAT_0080dcbb + '\x01';
+          *_j1708_receive_buffer_pointer_2_32_dca2 = 2;
+          _j1708_receive_buffer_pointer_2_32_dca2 =
+               (byte *)CONCAT31(_j1708_receive_buffer_pointer_2_32_dca2,DAT_0080dca5 + '\x01');
+          *_j1708_receive_buffer_pointer_2_32_dca2 = 6;
+          _j1708_receive_buffer_pointer_2_32_dca2 =
+               (byte *)CONCAT31(_j1708_receive_buffer_pointer_2_32_dca2,DAT_0080dca5 + '\x01');
+          *_j1708_receive_buffer_pointer_2_32_dca2 = 0x74;
+          cVar1 = DAT_0080dca5;
+          _j1708_receive_buffer_pointer_2_32_dca2 =
+               (byte *)CONCAT31(_j1708_receive_buffer_pointer_2_32_dca2,DAT_0080dca5 + '\x01');
+          _j1708_receive_buffer_pointer_2_32_dca6 =
+               (byte *)CONCAT31(_j1708_receive_buffer_pointer_2_32_dca6,cVar1 + '\x02');
+        }
+      }
+      *_j1708_receive_buffer_pointer_2_32_dca2 = 0;
+      DAT_0080dcb3 = 0;
+    }
+  }
+  if (DAT_0080dcb0 == '\0') {
+    DAT_0080dcb3 = 0;
+    DAT_0080dcb0 = '\x01';
+    DAT_0080dc9b = (char)_j1708_transmit_buffer_2_32_dc9c;
+    _j1708_transmit_buffer_2_32_dc98 =
+         (byte *)CONCAT31((int3)((uint)_j1708_transmit_buffer_2_32_dc9c >> 8),DAT_0080dc9b + '\x01')
+    ;
+    DAT_0080dcba = 1;
+    _DAT_00fff45a = 0xfcbe;
+    _DAT_00fff458 = _DAT_00fff458 & 0x7fff | 0x4000;
+  }
+  else if (_j1708_transmit_buffer_0_2_32 != _j1708_transmit_buffer_2_32_dc9c) {
+    if ((_DAT_00fffc0c & 0x20) == 0) {
+      _DAT_00fffc0e = (ushort)*_j1708_transmit_buffer_2_32_dc98;
+      DAT_0080dcb0 = '\0';
+      _DAT_0080dcb6 = 0;
+      DAT_0080dcb1 = 1;
+      DAT_0080dcb3 = *_j1708_transmit_buffer_2_32_dc98;
+      _DAT_00fffc0a = _DAT_00fffc0a | 0x20;
+    }
+    else {
+      DAT_0080dcba = 1;
+      _DAT_00fff45a = 0xfc8a;
+      _DAT_00fff458 = _DAT_00fff458 & 0x7fff | 0x4000;
+    }
+  }
+  return CONCAT44(in_D0,in_D1);
+}
+
+
+
+//
+// Function: engineSpeedIsrRegister @ 0x00030274
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

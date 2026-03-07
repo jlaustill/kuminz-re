@@ -1,0 +1,523 @@
+=== VARIABLES TO NAME ===
+0x00803f3a  (5 references)
+0x0080d372  (7 references)
+0x0080d380  (6 references)
+0x0080d388  (6 references)
+0x0080d396  (5 references)
+0x0080db20  (8 references)
+0x0080db26  (8 references)
+
+Total: 7 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0080d372, DAT_0080d380
+void FUN_000142d4(undefined4 param_1)
+
+{
+  short local_6;
+  
+  _DAT_0080d378 = param_1._0_2_;
+  _DAT_0080d380 = 400;
+  local_6 = tableLookup2D(&DAT_0080d372);
+  subtractAndClampValue(&local_6);
+  safeDivideWithClamp((local_6 - (_DAT_0080052c + param_1._2_2_)) * 0x6400);
+  return;
+}
+
+
+
+//
+// Function: FUN_00014348 @ 0x00014348
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080db20, DAT_0080db26
+void FUN_00014348(void)
+
+{
+  _DAT_0080db26 = _lsg_breakpoint_speed;
+  _frictional_load_interpolated_from_the_no_load_curve_at_lsg_ref_s_0_100 =
+       lookupTableInterpolation(&DAT_0080db20);
+  _DAT_0080db26 = _shutdown_protection_step_1;
+  _frictional_load_torque_in_fueling_at_breakpoint_3_engine_rpm_0_100_bc86 =
+       lookupTableInterpolation(&DAT_0080db20);
+  _DAT_0080db26 = _engine_running_timer_threshold;
+  _frictional_load_torque_in_fueling_at_breakpoint_4_engine_rpm_0_100_bc88 =
+       lookupTableInterpolation(&DAT_0080db20);
+  _DAT_0080db26 = _frictional_load_torque_table_value;
+  _frictional_load_torque_in_fueling_at_breakpoint_5_engine_rpm_0_100_bc8a =
+       lookupTableInterpolation(&DAT_0080db20);
+  _DAT_0080db26 = _shutdown_protection_step_2;
+  _frictional_load_torque_in_fueling_at_rated_engine_rpm_0_100_bc84 =
+       lookupTableInterpolation(&DAT_0080db20);
+  return;
+}
+
+
+
+//
+// Function: multiSpeedParameterInterpolation @ 0x000143b6
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080db20, DAT_0080db26
+void fuelDemandPercentageCalculator(void)
+
+{
+                    /* From J90280.05 @ 0x010f08 (confidence: 69%) */
+  _jcomm_no_load_torque_estimated_frictional_no_load_fueling_val_0_100 = _frictional_no_load_fueling
+  ;
+  _DAT_0080db26 = _engine_running_timer_threshold;
+  _frictional_load_torque_in_fueling_at_breakpoint_4_engine_rpm_0_100_bc88 =
+       lookupTableInterpolation(&DAT_0080db20);
+  _jcomm_percent_peak_torque_based_on_current_engine_speed_and_128_127 =
+       safeDivideWithClamp((_current_fuel_demand -
+                           _jcomm_no_load_torque_estimated_frictional_no_load_fueling_val_0_100) *
+                           0x6400);
+  return;
+}
+
+
+
+//
+// Function: diagnosticCodeDebounceHandler @ 0x000144bc
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_00803f3a, DAT_0080d372, DAT_0080d380, DAT_0080d388, DAT_0080d396
+short calculateBlendedTableValue(undefined4 param_1)
+
+{
+  int iVar1;
+  int iVar2;
+  short sVar3;
+  short sVar4;
+  short local_8;
+  short local_6;
+  
+  if (_timing_alpha_blend_factor != 0) {
+    _DAT_0080d378 = param_1._0_2_;
+    _DAT_0080d380 = param_1._2_2_;
+    local_8 = tableLookup2D(&DAT_0080d372);
+    subtractAndClampValue(&local_8);
+  }
+  if (_timing_alpha_blend_factor < 0x4000) {
+    _DAT_0080d38e = param_1._0_2_;
+    _DAT_0080d396 = param_1._2_2_;
+    local_6 = tableLookup2D(&DAT_0080d388);
+    subtractAndClampValue(&local_6);
+  }
+  if (_timing_alpha_blend_factor == 0x4000) {
+    sVar3 = _DAT_00803f3a + local_8;
+  }
+  else if (_timing_alpha_blend_factor == 0) {
+    sVar3 = _DAT_00803f3a + local_6;
+  }
+  else {
+    iVar1 = (int)local_6 * (0x4000 - (uint)_timing_alpha_blend_factor);
+    if (iVar1 < 0) {
+      iVar1 = iVar1 + 0x3fff;
+    }
+    iVar2 = (int)(short)_timing_alpha_blend_factor * (int)local_8;
+    if (iVar2 < 0) {
+      iVar2 = iVar2 + 0x3fff;
+    }
+    sVar3 = _DAT_00803f3a + (short)(iVar2 >> 0xe) + (short)(iVar1 >> 0xe);
+  }
+  sVar4 = _minimum_fueling_value_0_100;
+  if ((_minimum_fueling_value_0_100 <= sVar3) && (sVar4 = sVar3, 0x1700 < sVar3)) {
+    sVar4 = 0x1700;
+  }
+  return sVar4;
+}
+
+
+
+//
+// Function: FUN_0001cc72 @ 0x0001cc72
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080db26
+void FUN_0001d5a0(void)
+
+{
+  short sVar2;
+  int iVar1;
+  ushort uVar3;
+  
+  if (_JCHII1OD == 1) {
+    _hsg_reference_speed_after_droop = _JCHSODES;
+    _hsg_reference_speed_winning_source_indicator = 8;
+    _DAT_0080d656 = 0;
+  }
+  else {
+    _hsg_base_reference_speed_currently_in_use_esp_may_select_1500_5000 = *_DAT_0080d666;
+    if (_EPESLM < _reference_speed_before_droop_calculation_1400_4500) {
+      _reference_speed_before_droop_calculation_1400_4500 = _EPESLM;
+      _hsg_reference_speed_winning_source_indicator = 5;
+    }
+    if (_hsg_base_reference_speed_currently_in_use_esp_may_select_1500_5000 <
+        _reference_speed_before_droop_calculation_1400_4500) {
+      _hsg_reference_speed_winning_source_indicator = 6;
+      _reference_speed_before_droop_calculation_1400_4500 =
+           _hsg_base_reference_speed_currently_in_use_esp_may_select_1500_5000;
+    }
+    if ((_datalink_speed_control_mode == 3) &&
+       (_DAT_0080da5a <= _reference_speed_before_droop_calculation_1400_4500)) {
+      _reference_speed_before_droop_calculation_1400_4500 = _DAT_0080da5a;
+      _hsg_reference_speed_winning_source_indicator = 9;
+    }
+    if (_vss_tamper_derate_rpm_0_3000 <= _reference_speed_before_droop_calculation_1400_4500) {
+      _reference_speed_before_droop_calculation_1400_4500 = _vss_tamper_derate_rpm_0_3000;
+      _hsg_reference_speed_winning_source_indicator = 4;
+    }
+    if (_DAT_0080a290 <= _reference_speed_before_droop_calculation_1400_4500) {
+      _reference_speed_before_droop_calculation_1400_4500 = _DAT_0080a290;
+      _hsg_reference_speed_winning_source_indicator = 3;
+    }
+    if ((_DAT_0080a9d6 <= _reference_speed_before_droop_calculation_1400_4500) &&
+       ((_DAT_00803f42 == 0 || (_DAT_00803f42 == 1)))) {
+      _reference_speed_before_droop_calculation_1400_4500 = _DAT_0080a9d6;
+      _hsg_reference_speed_winning_source_indicator = 2;
+    }
+    if ((_DAT_0080a9d6 <= _hsg_isochronous_speed_currently_in_use_1500_3000) &&
+       ((_DAT_00803f42 == 2 || (_DAT_00803f42 == 3)))) {
+      _hsg_isochronous_speed_currently_in_use_1500_3000 = _DAT_0080a9d6;
+      _indicator_of_which_alg_is_setting_hsisrfae_0_255 = 2;
+    }
+    if (_rpm_derate_supplied_by_application_group_0_8000 <=
+        _reference_speed_before_droop_calculation_1400_4500) {
+      _reference_speed_before_droop_calculation_1400_4500 =
+           _rpm_derate_supplied_by_application_group_0_8000;
+      _hsg_reference_speed_winning_source_indicator = 7;
+    }
+    if (_max_engine_speed_while_throttle_fueling_overrides_pto_fueling_0_4500 <=
+        _reference_speed_before_droop_calculation_1400_4500) {
+      _reference_speed_before_droop_calculation_1400_4500 =
+           _max_engine_speed_while_throttle_fueling_overrides_pto_fueling_0_4500;
+      _hsg_reference_speed_winning_source_indicator = 0xb;
+    }
+    if (_DAT_0080d65c <= _reference_speed_before_droop_calculation_1400_4500) {
+      _slope_of_line_defining_droop_for_the_hsg_ref_currently_activ_0_55_13 = 0;
+      _reference_speed_before_droop_calculation_1400_4500 = _DAT_0080d65c;
+      _hsg_reference_speed_winning_source_indicator = 10;
+    }
+    if (_DAT_00808144 < _reference_speed_before_droop_calculation_1400_4500) {
+      _reference_speed_before_droop_calculation_1400_4500 = _DAT_00808144;
+    }
+    if (_hsg_reference_speed_winning_source_indicator == 9) {
+      if ((uint)_reference_speed_before_droop_calculation_1400_4500 <
+          (uint)_DAT_00807a54 + (uint)_lsg_breakpoint_speed) {
+        _reference_speed_before_droop_calculation_1400_4500 = _DAT_00807a54 + _lsg_breakpoint_speed;
+      }
+    }
+    else if (_reference_speed_before_droop_calculation_1400_4500 < _DAT_00808142) {
+      _reference_speed_before_droop_calculation_1400_4500 = _DAT_00808142;
+    }
+    if (_the_actual_hsg_derate_speed_used_in_hsg_droop_calculation_1400_5000 <
+        _reference_speed_before_droop_calculation_1400_4500) {
+      _the_actual_hsg_derate_speed_used_in_hsg_droop_calculation_1400_5000 =
+           _incremental_step_in_hsg_reference_used_when_reference_is_incre_0_300 +
+           _the_actual_hsg_derate_speed_used_in_hsg_droop_calculation_1400_5000;
+    }
+    if (_reference_speed_before_droop_calculation_1400_4500 <
+        _the_actual_hsg_derate_speed_used_in_hsg_droop_calculation_1400_5000) {
+      _the_actual_hsg_derate_speed_used_in_hsg_droop_calculation_1400_5000 =
+           _reference_speed_before_droop_calculation_1400_4500;
+    }
+    if (((_hsg_reference_speed_winning_source_indicator == 9) && (_JCEGNETY == 1)) ||
+       (_hsg_reference_speed_winning_source_indicator == 0xb)) {
+      _hsg_reference_speed_after_droop =
+           _the_actual_hsg_derate_speed_used_in_hsg_droop_calculation_1400_5000;
+      _DAT_0080d656 = 0;
+    }
+    else {
+      _DAT_0080d656 = 1;
+      if (((_DAT_0080074c != 0) || (_DAT_0080a9e0 != _DAT_0080074e)) ||
+         (_timing_alpha_blend_factor != _DAT_00800750)) {
+        _DAT_0080d36e =
+             calculateBlendedTableValue
+                       (CONCAT22(_hsg_base_reference_speed_currently_in_use_esp_may_select_1500_5000
+                                 ,400));
+        if (_DAT_0080d36e < _minimum_fueling_value_0_100) {
+          _DAT_0080d36e = _minimum_fueling_value_0_100;
+        }
+        _DAT_0080db26 = _point_at_which_the_hsg_droop_slope_line_intersects_the_no_1500_4500;
+        _DAT_0080db34 = _filtered_and_linearized_coolant_temperature_50_to_293;
+        sVar2 = lookupTableInterpolation(0xdb2e);
+        _no_load_fueling_curve_value_at_hsg_active_no_load_rpm_0_100 =
+             lookupTableInterpolation(0xdb20);
+        _no_load_fueling_curve_value_at_hsg_active_no_load_rpm_0_100 =
+             sVar2 + _no_load_fueling_curve_value_at_hsg_active_no_load_rpm_0_100;
+        _slope_of_line_defining_droop_for_the_hsg_ref_currently_activ_0_55_13 =
+             clampedDivisionCalculator
+                       ((_point_at_which_the_hsg_droop_slope_line_intersects_the_no_1500_4500 -
+                        _hsg_base_reference_speed_currently_in_use_esp_may_select_1500_5000) *
+                        0x1111);
+      }
+      if (_slope_of_line_defining_droop_for_the_hsg_ref_currently_activ_0_55_13 < 1) {
+        _slope_of_line_defining_droop_for_the_hsg_ref_currently_activ_0_55_13 = 0;
+        _hsg_reference_speed_after_droop =
+             _the_actual_hsg_derate_speed_used_in_hsg_droop_calculation_1400_5000;
+        _DAT_0080d656 = 0;
+      }
+      else {
+        uVar3 = _maximum_allowable_fuel_that_may_be_used_to_determine_hsg_droop_0_100;
+        if ((_DAT_0080d62c <= _maximum_allowable_fuel_that_may_be_used_to_determine_hsg_droop_0_100)
+           && (uVar3 = _DAT_0080d62c,
+              _DAT_0080d62c < _minimum_allowable_fuel_that_may_be_used_to_determine_hsg_droop_0_100)
+           ) {
+          uVar3 = _minimum_allowable_fuel_that_may_be_used_to_determine_hsg_droop_0_100;
+        }
+        iVar1 = scaleByRatioSigned(_slope_of_line_defining_droop_for_the_hsg_ref_currently_activ_0_55_13
+                                   ,_full_fueling_value_at_hsg_bef_droop_speed_0_100 - uVar3,
+                                   &DAT_00001111);
+        if ((uint)_the_actual_hsg_derate_speed_used_in_hsg_droop_calculation_1400_5000 + iVar1 <
+            0x10000) {
+          _DAT_0080d64a =
+               (ushort)((uint)_the_actual_hsg_derate_speed_used_in_hsg_droop_calculation_1400_5000 +
+                       iVar1);
+        }
+        else {
+          _DAT_0080d64a = 0xffff;
+        }
+        if (_the_actual_hsg_derate_speed_used_in_hsg_droop_calculation_1400_5000 < _DAT_0080d64a) {
+          _hsg_reference_speed_after_droop = _DAT_0080d64a;
+        }
+        else {
+          _hsg_reference_speed_after_droop =
+               _the_actual_hsg_derate_speed_used_in_hsg_droop_calculation_1400_5000;
+        }
+        _DAT_0080074c = 0;
+      }
+      if (_hsg_isochronous_speed_currently_in_use_1500_3000 < _hsg_reference_speed_after_droop) {
+        _hsg_reference_speed_after_droop = _hsg_isochronous_speed_currently_in_use_1500_3000;
+      }
+    }
+    _reference_speed_before_droop_sent_hsg_ref_hsg_gain_sched_1400_3000 =
+         _reference_speed_before_droop_calculation_1400_4500;
+    _reference_speed_before_droop_calculation_1400_4500 = _maximum_rated_engine_speed_0_5000;
+    _winning_active_isochronous_speed_1500_4500 = _hsg_isochronous_speed_currently_in_use_1500_3000;
+    _winning_active_isochronous_speed_state_0_255 =
+         _indicator_of_which_alg_is_setting_hsisrfae_0_255;
+    _hsg_isochronous_speed_currently_in_use_1500_3000 = 0xffff;
+    _indicator_of_which_alg_is_setting_hsisrfae_0_255 = 0;
+  }
+  _DAT_0080074e = _DAT_0080a9e0;
+  _DAT_00800750 = _timing_alpha_blend_factor;
+  _HSINRFST = _hsg_reference_speed_winning_source_indicator;
+  return;
+}
+
+
+
+//
+// Function: FUN_0001d94e @ 0x0001d94e
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080d372, DAT_0080d388, DAT_0080db20
+void FUN_0001ddb4(void)
+
+{
+  _DAT_0080d374 = 0x6086e;
+  _DAT_0080d372 = 2;
+  _DAT_0080d37c = 0x6089a;
+  _DAT_0080d37a = 2;
+  _DAT_0080d382 = 0x608a4;
+  _DAT_0080d38a = 0x6094c;
+  _DAT_0080d388 = 2;
+  _DAT_0080d392 = 0x60978;
+  _DAT_0080d390 = 2;
+  _DAT_0080d398 = 0x60982;
+  _DAT_0080db22 = 0x611fa;
+  _DAT_0080db28 = 0x6120e;
+  _DAT_0080db20 = 2;
+  _DAT_0080db30 = 0x61222;
+  _DAT_0080db36 = 0x61236;
+  _DAT_0080db2e = 2;
+  FUN_00014348();
+  return;
+}
+
+
+
+//
+// Function: FUN_0001de58 @ 0x0001de58
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_00803f3a, DAT_0080d372, DAT_0080d380, DAT_0080d388, DAT_0080d396
+undefined4 FUN_0001de58(void)
+
+{
+  ushort uVar1;
+  short sVar2;
+  int iVar3;
+  short sVar4;
+  ushort uVar5;
+  ushort local_10;
+  ushort local_e;
+  ushort local_c;
+  ushort local_a;
+  ushort local_8;
+  ushort local_6;
+  
+  uVar1 = _timing_alpha_blend_factor;
+  uVar5 = _validated_percent_throttle_commanded_by_driver_0_100;
+  if (((_feature_enable_flags_word & 0x200) != 0) &&
+     (_DAT_000608a0 < _validated_percent_throttle_commanded_by_driver_0_100)) {
+    uVar5 = _DAT_000608a0;
+  }
+  sVar2 = 0;
+  sVar4 = _minimum_fueling_value_0_100;
+  if (uVar5 != 0) {
+    if (_timing_alpha_blend_factor != 0) {
+      _DAT_0080d378 = _engine_rpm_primary;
+      _DAT_0080d380 = uVar5;
+      local_6 = tableLookup2D(&DAT_0080d372);
+      subtractAndClampValue(&local_6);
+      _DAT_0080d380 = 0;
+      local_c = tableLookup2D(&DAT_0080d372);
+      subtractAndClampValue(&local_c);
+      _DAT_0080d380 = 400;
+      local_a = tableLookup2D(&DAT_0080d372);
+      subtractAndClampValue(&local_a);
+      if ((_feature_enable_flags_word & 0x200) == 0) {
+        if (local_6 < local_c) {
+          local_6 = local_c;
+        }
+        if (local_a < local_6) {
+          local_6 = local_a;
+        }
+      }
+    }
+    if (uVar1 < 0x4000) {
+      _DAT_0080d38e = _engine_rpm_primary;
+      _DAT_0080d396 = uVar5;
+      local_8 = tableLookup2D(&DAT_0080d388);
+      subtractAndClampValue(&local_8);
+      _DAT_0080d396 = 0;
+      local_10 = tableLookup2D(&DAT_0080d388);
+      subtractAndClampValue(&local_10);
+      _DAT_0080d396 = 400;
+      local_e = tableLookup2D(&DAT_0080d388);
+      subtractAndClampValue(&local_e);
+      if ((_feature_enable_flags_word & 0x200) == 0) {
+        if (local_8 < local_10) {
+          local_8 = local_10;
+        }
+        if (local_e < local_8) {
+          local_8 = local_e;
+        }
+      }
+    }
+    sVar2 = 0;
+    uVar5 = local_8;
+    if ((uVar1 != 0) && (uVar5 = local_6, uVar1 != 0x4000)) {
+      iVar3 = (int)(short)uVar1 * ((uint)local_6 - (uint)local_8);
+      if (iVar3 < 0) {
+        iVar3 = iVar3 + 0x3fff;
+      }
+      sVar2 = (short)(char)((uint)iVar3 >> 0x18) >> 6;
+      uVar5 = local_8 + (short)(iVar3 >> 0xe);
+    }
+    sVar4 = _DAT_00803f3a + uVar5;
+    if ((short)(_DAT_00803f3a + uVar5) < _minimum_fueling_value_0_100) {
+      sVar4 = _minimum_fueling_value_0_100;
+    }
+  }
+  if (_maximum_user_fueling_allowed_0_100 < sVar4) {
+    sVar4 = _maximum_user_fueling_allowed_0_100;
+  }
+  _maximum_user_fueling_allowed_0_100 = 0x1700;
+  return CONCAT22(sVar2,sVar4);
+}
+
+
+
+//
+// Function: subtractAndClampValue @ 0x0001e02a
+//
+
+// Variables in this function: DAT_0080d372, DAT_0080d380, DAT_0080d388, DAT_0080d396
+void governorFuelPidController(void)
+
+{
+  int iVar1;
+  ushort local_8;
+  ushort local_6;
+  
+                    /* From J90280.05 @ 0x01e462 (confidence: 73%) */
+  if (_timing_alpha_blend_factor != 0) {
+    _DAT_0080d378 = _lsg_reference_speed_adjusted_with_throttle_position_300_2000;
+    _DAT_0080d380 = 400;
+    local_6 = tableLookup2D(&DAT_0080d372);
+    subtractAndClampValue(&local_6);
+  }
+  if (_timing_alpha_blend_factor < 0x4000) {
+    _DAT_0080d38e = _lsg_reference_speed_adjusted_with_throttle_position_300_2000;
+    _DAT_0080d396 = 400;
+    local_8 = tableLookup2D(&DAT_0080d388);
+    subtractAndClampValue(&local_8);
+  }
+  if (_timing_alpha_blend_factor == 0x4000) {
+    _fuel_economy_sample_3 = local_6;
+  }
+  else if (_timing_alpha_blend_factor == 0) {
+    _fuel_economy_sample_3 = local_8;
+  }
+  else {
+    iVar1 = (uint)_timing_alpha_blend_factor * ((uint)local_6 - (uint)local_8);
+    if (iVar1 < 0) {
+      iVar1 = iVar1 + 0x3fff;
+    }
+    iVar1 = (uint)local_8 + (iVar1 >> 0xe);
+    if (iVar1 < 0) {
+      _fuel_economy_sample_3 = 0;
+    }
+    else if (iVar1 < 0x1701) {
+      _fuel_economy_sample_3 = (ushort)iVar1;
+    }
+    else {
+      _fuel_economy_sample_3 = 0x1700;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: fuel_delivery_controller @ 0x00025a30
+//
+
+// Variables in this function: DAT_0080db20, DAT_0080db26
+void FUN_00026b3a(void)
+
+{
+  short sVar1;
+  short sVar2;
+  
+  _DAT_0080db26 = _engine_rpm_primary;
+  _DAT_0080db34 = _filtered_and_linearized_coolant_temperature_50_to_293;
+  sVar1 = lookupTableInterpolation(&DAT_0080db2e);
+  sVar2 = lookupTableInterpolation(&DAT_0080db20);
+  _frictional_no_load_fueling = sVar1 + sVar2;
+  return;
+}
+
+
+
+//
+// Function: FUN_00026b82 @ 0x00026b82
+//
+

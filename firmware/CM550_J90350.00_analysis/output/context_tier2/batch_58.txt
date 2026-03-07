@@ -1,0 +1,158 @@
+=== VARIABLES TO NAME ===
+0x00803fca  (8 references)
+0x00803fcc  (8 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00803fca, DAT_00803fcc
+void engineModeTimingAdjuster(void)
+
+{
+                    /* From J90280.05 @ 0x01ee5c (confidence: 75%) */
+  if (((_calibration_feature_enable_flags_word_3 & 8) == 0) ||
+     (((_status_32_word_bit_mapped_system_error_status_word_7_0_1 & 2) != 0 &&
+      ((_DAT_00806aca & 2) != 0)))) {
+    _rpm_averaging_accumulator_1 = 0;
+  }
+  else if ((rpm_averaging_accumulator_2 == '\0') &&
+          ((debounced_switch_value_for_switch_16_on_off & 0x20) != 0)) {
+    _rpm_averaging_accumulator_1 =
+         _idle_increment_decrement_step_value_0_100 + _rpm_averaging_accumulator_1;
+    if ((int)((uint)_DAT_00803fcc - (uint)_lsg_base_reference_speed_calibration) <
+        (int)_rpm_averaging_accumulator_1) {
+      _rpm_averaging_accumulator_1 = _DAT_00803fcc - _lsg_base_reference_speed_calibration;
+    }
+  }
+  else if (((DAT_00801a81 == '\0') && ((debounced_switch_value_for_switch_16_on_off & 0x40) != 0))
+          && (_rpm_averaging_accumulator_1 =
+                   _rpm_averaging_accumulator_1 - _idle_increment_decrement_step_value_0_100,
+             (int)_rpm_averaging_accumulator_1 <
+             (int)((uint)_DAT_00803fca - (uint)_lsg_base_reference_speed_calibration))) {
+    _rpm_averaging_accumulator_1 = _DAT_00803fca - _lsg_base_reference_speed_calibration;
+  }
+  _operator_adjusted_lsg_breakpoint_speed_300_1000 =
+       _rpm_averaging_accumulator_1 + _lsg_base_reference_speed_calibration;
+  if ((_calibration_feature_enable_flags_word_9 & 1) == 0) {
+    _rpm_added_to_lsg_reference_300_300 = 0;
+  }
+  else {
+    _rpm_added_to_lsg_reference_300_300 = _rpm_averaging_accumulator_1;
+  }
+  rpm_averaging_accumulator_2 = -((debounced_switch_value_for_switch_16_on_off & 0x20) != 0) & 1;
+  DAT_00801a81 = -((debounced_switch_value_for_switch_16_on_off & 0x40) != 0) & 1;
+  return;
+}
+
+
+
+//
+// Function: vp44_rpm_derate_monitor @ 0x00026484
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_00803fca, DAT_00803fcc
+void vp44_rpm_derate_monitor(void)
+
+{
+  short *unaff_A2;
+  int unaff_A3;
+  
+                    /* From J90280.05 @ 0x02bc2a (confidence: 67%) */
+  if (((_calibration_feature_enable_flags_word_3 & 8) == 0) ||
+     (((_status_32_word_bit_mapped_system_error_status_word_7_0_1 & 2) != 0 &&
+      ((_DAT_00806aca & 2) != 0)))) {
+    *unaff_A2 = 0;
+  }
+  else if ((rpm_averaging_accumulator_2 == '\0') && ((*(byte *)(unaff_A3 + 1) & 0x20) != 0)) {
+    *unaff_A2 = _idle_increment_decrement_step_value_0_100 + *unaff_A2;
+    if ((int)((uint)_DAT_00803fcc - (uint)_lsg_base_reference_speed_calibration) < (int)*unaff_A2) {
+      *unaff_A2 = _DAT_00803fcc - _lsg_base_reference_speed_calibration;
+    }
+  }
+  else if (((DAT_00801a81 == '\0') && ((*(byte *)(unaff_A3 + 1) & 0x40) != 0)) &&
+          (*unaff_A2 = *unaff_A2 - _idle_increment_decrement_step_value_0_100,
+          (int)*unaff_A2 < (int)((uint)_DAT_00803fca - (uint)_lsg_base_reference_speed_calibration))
+          ) {
+    *unaff_A2 = _DAT_00803fca - _lsg_base_reference_speed_calibration;
+  }
+  _operator_adjusted_lsg_breakpoint_speed_300_1000 =
+       *unaff_A2 + _lsg_base_reference_speed_calibration;
+  if ((_calibration_feature_enable_flags_word_9 & 1) == 0) {
+    _rpm_added_to_lsg_reference_300_300 = 0;
+  }
+  else {
+    _rpm_added_to_lsg_reference_300_300 = *unaff_A2;
+  }
+  rpm_averaging_accumulator_2 = -((*(byte *)(unaff_A3 + 1) & 0x20) != 0) & 1;
+  DAT_00801a81 = -((*(byte *)(unaff_A3 + 1) & 0x40) != 0) & 1;
+  return;
+}
+
+
+
+//
+// Function: fuelDemandLimitSource2Selector @ 0x0002658c
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_00803fca, DAT_00803fcc
+void fuelDemandLimitSource2Selector(void)
+
+{
+                    /* From J90280.05 @ 0x03141c (confidence: 61%) */
+  if ((_calibration_feature_enable_flags_word_9 & 1) == 0) {
+    _rpm_added_to_lsg_reference_300_300 = 0;
+  }
+  _DAT_0080db08 = 0;
+  if (_DAT_00803fca < _DAT_00808342) {
+    _DAT_00803fca = _DAT_00808342;
+  }
+  if (_DAT_00808344 < _DAT_00803fcc) {
+    _DAT_00803fcc = _DAT_00808344;
+  }
+  _rpm_averaging_accumulator_1 = _rpm_added_to_lsg_reference_300_300;
+  return;
+}
+
+
+
+//
+// Function: initVP44StatusFlags @ 0x0002659a
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_00803fca, DAT_00803fcc
+void initVP44StatusFlags(void)
+
+{
+  ushort *in_A1;
+  ushort *unaff_A2;
+  
+                    /* From J90280.05 @ 0x01ee02 (confidence: 81%) */
+  if ((_calibration_feature_enable_flags_word_9 & 1) == 0) {
+    _rpm_added_to_lsg_reference_300_300 = 0;
+  }
+  _DAT_0080db08 = 0;
+  if (_DAT_00803fca < *in_A1) {
+    _DAT_00803fca = *in_A1;
+  }
+  if (*unaff_A2 < _DAT_00803fcc) {
+    _DAT_00803fcc = *unaff_A2;
+  }
+  _rpm_averaging_accumulator_1 = _rpm_added_to_lsg_reference_300_300;
+  return;
+}
+
+
+
+//
+// Function: epsRpmTargetModeChecker @ 0x000265e6
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

@@ -1,0 +1,90 @@
+=== VARIABLES TO NAME ===
+0x0080dc2e  (6 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0080dc2e
+uint oil_pressure_shutdown_controller(void)
+
+{
+  uint in_D0;
+  uint uVar1;
+  
+                    /* From J90280.05 @ 0x026110 (confidence: 75%) */
+  if ((((_FSDSFLST == 1) || (_FSDSFLST == 2)) || (_FSDSFLST == 0x1e)) || (_FSDSFLST == 3)) {
+    _selected_fueling_state_from_pto_fl_state_and_user_fl_state_1_8 = _FSDSFLST;
+    _DAT_0080dc30 = _fuel_demand_selected;
+    _DAT_0080dc2e = 0;
+    _max_engine_speed_while_throttle_fueling_overrides_pto_fueling_0_4500 =
+         _maximum_rated_engine_speed_0_5000;
+    return in_D0;
+  }
+  if (_DAT_0080dc26 == 1) {
+    in_D0 = _calibration_feature_enable_flags_word_3 & 0x10;
+    if ((_calibration_feature_enable_flags_word_3 & 0x10) != 0) {
+      if ((_FSDSFLST == 7) || (_FSDSFLST == 8)) {
+        uVar1 = (uint)_fuel_demand_selected;
+        if (_DAT_0080dc00 <= _fuel_demand_selected) {
+          uVar1 = _calibration_feature_enable_flags_word_2 & 0x2000;
+          if ((_calibration_feature_enable_flags_word_2 & 0x2000) != 0) {
+            _DAT_0080dc30 = _fuel_demand_selected;
+            _selected_fueling_state_from_pto_fl_state_and_user_fl_state_1_8 = _FSDSFLST;
+            _max_engine_speed_while_throttle_fueling_overrides_pto_fueling_0_4500 = _DAT_0080400a;
+            _DAT_0080dc2e = 1;
+            return uVar1;
+          }
+        }
+        _DAT_0080dc30 = _DAT_0080dc00;
+        _selected_fueling_state_from_pto_fl_state_and_user_fl_state_1_8 = 4;
+        _DAT_0080dc2e = 0;
+        _max_engine_speed_while_throttle_fueling_overrides_pto_fueling_0_4500 =
+             _maximum_rated_engine_speed_0_5000;
+        return uVar1;
+      }
+      if ((_FSDSFLST != 6) && (_FSDSFLST != 5)) {
+        return in_D0;
+      }
+      _DAT_0080dc30 = _DAT_0080dc00;
+      _selected_fueling_state_from_pto_fl_state_and_user_fl_state_1_8 = 4;
+      _DAT_0080dc2e = 0;
+      _max_engine_speed_while_throttle_fueling_overrides_pto_fueling_0_4500 =
+           _maximum_rated_engine_speed_0_5000;
+      return in_D0;
+    }
+  }
+  _selected_fueling_state_from_pto_fl_state_and_user_fl_state_1_8 = _FSDSFLST;
+  _DAT_0080dc30 = _fuel_demand_selected;
+  _DAT_0080dc2e = 0;
+  _max_engine_speed_while_throttle_fueling_overrides_pto_fueling_0_4500 =
+       _maximum_rated_engine_speed_0_5000;
+  return in_D0;
+}
+
+
+
+//
+// Function: FUN_0002ddbc @ 0x0002ddbc
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080dc2e
+void FUN_0002ddbc(void)
+
+{
+  _DAT_0080dc2e = 0;
+  _max_engine_speed_while_throttle_fueling_overrides_pto_fueling_0_4500 =
+       _maximum_rated_engine_speed_0_5000;
+  return;
+}
+
+
+
+//
+// Function: hardwareTimerFlagsInit @ 0x0002ddce
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

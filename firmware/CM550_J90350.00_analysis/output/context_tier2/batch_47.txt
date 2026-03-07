@@ -1,0 +1,71 @@
+=== VARIABLES TO NAME ===
+0x00801e76  (6 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00801e76
+undefined1 FUN_0002fcdc(undefined4 param_1)
+
+{
+  bool bVar1;
+  undefined1 uVar2;
+  byte bVar3;
+  char cVar4;
+  uint *puVar5;
+  char *pcVar6;
+  undefined1 *puVar7;
+  uint local_12;
+  char acStack_e [6];
+  undefined1 auStack_8 [4];
+  
+  if (_DAT_00803b98 == 0xff) {
+    uVar2 = 0;
+  }
+  else if (DAT_00801e76 == '\x11') {
+    uVar2 = 1;
+  }
+  else {
+    FUN_0002fbd8(param_1,acStack_e);
+    bVar3 = 1;
+    puVar5 = &local_12;
+    puVar7 = auStack_8;
+    do {
+      *(undefined1 *)puVar5 = *puVar7;
+      bVar3 = bVar3 + 1;
+      puVar5 = (uint *)((int)puVar5 + 1);
+      puVar7 = puVar7 + 1;
+    } while (bVar3 < 4);
+    if ((_hour_meter_ecm_run_time_none & 0xffffff00) - (local_12 & 0xffffff00) < 0x1a) {
+      bVar1 = true;
+      pcVar6 = acStack_e;
+      for (cVar4 = '\0'; (bVar1 && (cVar4 < '\x06')); cVar4 = cVar4 + '\x01') {
+        if ((&ecu_identity_test_pattern)[(short)cVar4] != *pcVar6) {
+          bVar1 = false;
+        }
+        pcVar6 = pcVar6 + 1;
+      }
+      if (bVar1) {
+        uVar2 = 0;
+        DAT_00801e76 = '\0';
+      }
+      else {
+        uVar2 = 1;
+        DAT_00801e76 = DAT_00801e76 + '\x01';
+      }
+    }
+    else {
+      uVar2 = 1;
+      DAT_00801e76 = DAT_00801e76 + '\x01';
+    }
+  }
+  return uVar2;
+}
+
+
+
+//
+// Function: FUN_0002fd90 @ 0x0002fd90
+//
+

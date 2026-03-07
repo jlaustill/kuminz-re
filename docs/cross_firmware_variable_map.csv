@@ -1,0 +1,21 @@
+cm550_address,cm848_address,name,match_type,evidence
+0x0080974a,0x00408cea,boost_pressure_interpolation_result,plausible,Both use in boost/fuel interpolation paths
+0x0080c408,0x0040b7ba,current_engine_rpm,plausible,Both store current engine RPM for fuel/timing calculations
+0x00805574,0x0040a91c,diagnostic_buffer_write_index,plausible,Both use as write index for diagnostic circular buffer
+0x0080cfce,0x0040b51c,diagnostic_mode_state,confirmed,State machine (0-6) in diagnostic/fault processing
+0x008035dc,0x003fe9a0,diagnostic_status_flags,confirmed,Bitfield used in fuel limit and fault mode decisions
+0x008002ec,0x003fa0e8,engine_mode_transition_flag,confirmed,Used in fuel timing mode controller with derivative math
+0x0080c810,0x0040b000,engine_operating_mode,confirmed,Both: engine state machine controlling operating mode transitions
+0x008002f2,0x0040b020,engine_state_timer,confirmed,Timer used in speed control limit/ramp calculations
+0x0080cc50,0x0040a592,fuel_demand_delta,plausible,Delta value in fuel demand calculation pipeline
+0x0080cc4c,0x003fa6e8,fuel_demand_limited,confirmed,Rate-limited fuel demand comparing calculated vs target
+0x008031f4,0x0040a4f2,fuel_demand_rpm_lookup_result,confirmed,Result of RPM-based fuel demand table interpolation
+0x00801a3c,0x003fa6ee,fuel_demand_target,confirmed,Both: fuel demand target with rate limiting and boundary clamping
+0x008096ac,0x0040ae54,fuel_limit_protection,confirmed,Fuel limit value from protection system evaluation
+0x00809d2a,0x0040abc2,governor_mode_state,confirmed,Governor state machine with states 0/2/6
+0x00809d32,0x0040ae7c,governor_speed_setpoint,confirmed,Governor speed setpoint selection (0/1/2/3)
+0x00800358,0x003fa008,main_loop_phase_index,confirmed,Both: 40-phase cooperative scheduler index (0x00-0x27)
+0x00809cfe,0x0040b7ac,target_engine_rpm,confirmed,Both: target RPM used in fuel/timing table lookups
+0x008096a8,0x0040a37a,throttle_position_filtered,confirmed,Both: filtered throttle for fuel/load/idle control
+0x0080926e,0x0040a1cc,throttle_position_raw,confirmed,Both: raw throttle sensor input processing
+0x008087f4,0x0040681e,throttle_position_threshold,plausible,Threshold compared against throttle_position_filtered

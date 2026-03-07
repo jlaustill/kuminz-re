@@ -1,0 +1,223 @@
+=== VARIABLES TO NAME ===
+0x0080a990  (9 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0080a990
+void dzgTimingAndPressureControlStateMachine(void)
+
+{
+                    /* From J90280.05 @ 0x032380 (confidence: 64%) */
+  if (_DAT_008000fe == 7) {
+    _io_control_fuel_table_1_lookup_arg = _retarder_mode_lookup_table_pointer;
+  }
+  else {
+    _io_control_fuel_table_1_lookup_arg = _asg_filtered_reference_speed_0_4500;
+  }
+  _retarder_mode_lookup_table_pointer = _DAT_0080a990 - _io_control_fuel_table_1_lookup_arg;
+  if ((int)(short)_retarder_mode_lookup_table_pointer < (int)-(uint)_ASTHPFRL) {
+    _retarder_mode_lookup_table_pointer = (ushort)-(uint)_ASTHPFRL;
+  }
+  if ((int)(uint)_ASTHPFRL < (int)(short)_retarder_mode_lookup_table_pointer) {
+    _retarder_mode_lookup_table_pointer = _ASTHPFRL;
+  }
+  _retarder_mode_lookup_table_pointer =
+       _io_control_fuel_table_1_lookup_arg + _retarder_mode_lookup_table_pointer;
+  if ((int)((int)(short)_retarder_mode_lookup_table_pointer -
+           (uint)_asg_filtered_reference_speed_0_4500) < 0) {
+    _fuel_blend_table_4_base =
+         -(_retarder_mode_lookup_table_pointer - _asg_filtered_reference_speed_0_4500);
+  }
+  else {
+    _fuel_blend_table_4_base =
+         _retarder_mode_lookup_table_pointer - _asg_filtered_reference_speed_0_4500;
+  }
+  _fuel_blend_table_5_ptr = lookupTableInterpolation(&fuel_blend_table_3_ptr);
+  _asg_filtered_reference_speed_0_4500 =
+       (short)((int)((uint)_asg_filtered_reference_speed_0_4500 * (uint)_fuel_blend_table_5_ptr +
+                    (uint)_DAT_0080a990 * (0x4000 - (uint)_fuel_blend_table_5_ptr)) >> 0xe);
+  return;
+}
+
+
+
+//
+// Function: engine_speed_governor @ 0x0000c962
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080a990
+void diagnosticDataCopyHandler(void)
+
+{
+                    /* From J90280.05 @ 0x00bdd4 (confidence: 81%) */
+  if ((_asg_application_specific_reference_override_mode_true_false != 0) &&
+     (_asg_quadratic_integral_adjustment_500_500 == 0)) {
+    _asg_quadratic_integral_adjustment_500_500 = 0x1e;
+    _DAT_0080a990 = _asg_application_specific_reference_speed_0_4500;
+    _qpid_adjusted_asg_droop_compensated_error_integral_2000_2000 =
+         _asg_application_specific_droop_gain_1_0_2;
+    _asg_droop_gain_2_0_2 = _asg_application_specific_droop_gain_2_0_2;
+    _asg_governor_gains_ptr = &asg_application_specific_proportional_gain_1_0_0_135;
+    _asg_droop_compensated_error_2000_2000 =
+         &asg_application_specific_reference_filter_coefficient_0_1;
+    _asg_reset_state_x1_2000_2000 = _asg_application_specific_state_x1_reset_value_2000_2000;
+    _asg_reset_state_x2_0_100 = _asg_application_specific_state_x2_reset_value_0_100;
+    _asg_reset_state_x3_0_4500 = _asg_application_specific_state_x3_reset_value_0_4500;
+    _asg_reset_state_x4_100_100 = _asg_application_specific_state_x4_reset_value_100_100;
+    _asg_reset_state_x5_0_100 = _asg_application_specific_state_x5_reset_value_0_100;
+    _ASRSSTX6 = _ASAPSTX6;
+    _asg_external_reset_flag_true_false = _asg_application_specific_reset_true_false;
+    _asg_fueling_high_limit_0_100 = _asg_application_specific_fueling_high_limit_0_100;
+    _asg_fueling_lower_limit_0_50 = _asg_application_specific_fueling_lower_limit_0_50;
+  }
+  return;
+}
+
+
+
+//
+// Function: fuelDeliverySystemInit @ 0x0000d0fc
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080a990
+void fuelDeliverySystemInit(void)
+
+{
+                    /* From J90280.05 @ 0x0188f6 (confidence: 63%) */
+  _DAT_0080a990 = _asg_application_specific_reference_speed_0_4500;
+  _qpid_adjusted_asg_droop_compensated_error_integral_2000_2000 =
+       _asg_application_specific_droop_gain_1_0_2;
+  _asg_droop_gain_2_0_2 = _asg_application_specific_droop_gain_2_0_2;
+  _asg_governor_gains_ptr = &asg_application_specific_proportional_gain_1_0_0_135;
+  _asg_droop_compensated_error_2000_2000 =
+       &asg_application_specific_reference_filter_coefficient_0_1;
+  _asg_reset_state_x1_2000_2000 = _asg_application_specific_state_x1_reset_value_2000_2000;
+  _asg_reset_state_x2_0_100 = _asg_application_specific_state_x2_reset_value_0_100;
+  _asg_reset_state_x3_0_4500 = _asg_application_specific_state_x3_reset_value_0_4500;
+  _asg_reset_state_x4_100_100 = _asg_application_specific_state_x4_reset_value_100_100;
+  _asg_reset_state_x5_0_100 = _asg_application_specific_state_x5_reset_value_0_100;
+  _ASRSSTX6 = _ASAPSTX6;
+  _asg_external_reset_flag_true_false = _asg_application_specific_reset_true_false;
+  _asg_fueling_high_limit_0_100 = _asg_application_specific_fueling_high_limit_0_100;
+  _asg_fueling_lower_limit_0_50 = _asg_application_specific_fueling_lower_limit_0_50;
+  return;
+}
+
+
+
+//
+// Function: diagnosticStatus30Setter @ 0x0000d18a
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080a990
+void diagnosticState2Initializer(void)
+
+{
+                    /* From J90280.05 @ 0x00bf0a (confidence: 81%) */
+  if ((_asg_quadratic_integral_adjustment_500_500 == 0) && (_datalink_speed_control_mode == 1)) {
+    _asg_quadratic_integral_adjustment_500_500 = 2;
+    _DAT_0080a990 = _DAT_0080da5e;
+  }
+  return;
+}
+
+
+
+//
+// Function: dualTableLookupSum @ 0x0000d23c
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080a990
+void dualTableLookupSum(void)
+
+{
+  short sVar1;
+  short sVar2;
+  
+                    /* From J90280.05 @ 0x02f8dc (confidence: 75%) */
+  _DAT_0080011e = _DAT_0080a990;
+  _throttle_validation_state = _filtered_and_linearized_coolant_temperature_50_to_293;
+  sVar1 = lookupTableInterpolation(&io_control_fuel_table_param);
+  sVar2 = lookupTableInterpolation(&DAT_00800118);
+  _rpm_control_override_flag = sVar1 + sVar2;
+  return;
+}
+
+
+
+//
+// Function: interpolationTableSetup @ 0x0000d280
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080a990
+void diagnosticMode10FuelController(void)
+
+{
+  uint uVar1;
+  
+                    /* From J90280.05 @ 0x02d210 (confidence: 63%) */
+  if (_asg_throttle_source_selector == 1) {
+    _derate_target_snapshot = _DAT_0080a990;
+    _asg_selected_droop_slope_0_30 = lookupTableInterpolation(&derate_fault_counter_1);
+  }
+  else if (_asg_throttle_source_selector == 0) {
+    _throttle_buffer_decreasing_value = _DAT_0080a990;
+    _asg_selected_droop_slope_0_30 = lookupTableInterpolation(&DAT_00800136);
+  }
+  uVar1 = (uint)(ushort)(_asg_integral_gain_2_calibration_0_6_75 +
+                        _asg_integral_gain_1_calibration_0_6_75) *
+          (uint)_asg_selected_droop_slope_0_30;
+  if (uVar1 < 0x2655879) {
+    _asg_throttle_droop_gain_1_0_1 =
+         (ushort)((0x2655879 - uVar1 >> 1) / (uVar1 + 0x2655879 >> 0xb & 0xffff));
+  }
+  else {
+    _asg_throttle_droop_gain_1_0_1 = 0;
+  }
+  _asg_throttle_droop_gain_2_0_5_1 =
+       (undefined2)((int)(_asg_throttle_droop_gain_1_0_1 + 0x400) >> 1);
+  _qpid_adjusted_asg_droop_compensated_error_integral_2000_2000 = _asg_throttle_droop_gain_1_0_1;
+  _asg_droop_gain_2_0_2 = _asg_throttle_droop_gain_2_0_5_1;
+  return;
+}
+
+
+
+//
+// Function: FUN_0000d4ae @ 0x0000d4ae
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080a990
+void diagnosticState7Setter(void)
+
+{
+                    /* From J90280.05 @ 0x00c0e6 (confidence: 75%) */
+  if (_asg_quadratic_integral_adjustment_500_500 == 0) {
+    _DAT_0080a990 = _all_speed_governor_reference_speed_based_upon_throttle_positi_0_3000;
+    _asg_quadratic_integral_adjustment_500_500 = 7;
+  }
+  return;
+}
+
+
+
+//
+// Function: fuelBlendTablePointerSetup @ 0x0000d59e
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

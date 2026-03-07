@@ -1,0 +1,294 @@
+=== VARIABLES TO NAME ===
+0x00806ac2  (6 references)
+0x0080a8f4  (5 references)
+0x0080ccb2  (9 references)
+0x0080ccb4  (8 references)
+0x0080ccb6  (5 references)
+0x0080ccba  (6 references)
+0x0080ccbc  (6 references)
+0x0080ccbe  (5 references)
+0x0080ccc6  (7 references)
+0x0080ccca  (5 references)
+
+Total: 10 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00806ac2, DAT_0080a8f4, DAT_0080ccb2, DAT_0080ccb4, DAT_0080ccb6, DAT_0080ccba, DAT_0080ccbc, DAT_0080ccbe, DAT_0080ccc6, DAT_0080ccca
+uint highRpmEngineProtectionStateMachine(void)
+
+{
+  ushort uVar1;
+  uint uVar2;
+  
+                    /* From J90280.05 @ 0x018c62 (confidence: 80%) */
+  if (((_feature_enable_flags_word & 2) == 0) ||
+     (((_DAT_0080ccb4 != 0 && (_smoke_limiter_output_value != 1)) || (_DAT_0080ccc8 != 0)))) {
+    _DAT_0080ccb4 = 1;
+    _DAT_0080ccb2 = 0;
+    _DAT_0080a8f4 = 0;
+    _DAT_0080ccca = 0;
+    _DAT_0080ccc6 = _peak_fueling_calibration_value;
+    return _feature_enable_flags_word & 2;
+  }
+  uVar2 = (uint)(_feature_enable_flags_word & 2);
+  if ((_feature_enable_flags_word & 2) != 0) {
+    if (_smoke_limiter_output_value == 1) {
+      _timer_counting_against_oil_pressure_threshold_time_0_60 = 0;
+      _DAT_0080ccb6 = 0;
+      _DAT_0080ccba = 0;
+      _DAT_0080ccbc = 0;
+      uVar2 = (uint)_DAT_0080ccbe;
+      if (_DAT_0080ccbe < _time_for_oil_to_drain_back_to_sump_with_engine_off_0_54) {
+        _DAT_0080ccbe = _DAT_0080ccbe + 1;
+      }
+      else {
+        _DAT_0080ccb4 = 0;
+        _DAT_0080ccb2 = 1;
+        _DAT_0080ccc0 = 0;
+        _DAT_0080ccca = 1;
+        if (_DAT_00807dde != 0) {
+          _DAT_0080a8f4 = 1;
+        }
+      }
+      if (_DAT_0080ccc0 != 0) {
+        _DAT_0080ccb4 = 1;
+        _DAT_0080ccb2 = 0;
+        _DAT_0080ccca = 0;
+      }
+      _DAT_0080ccc2 = 0;
+      _DAT_0080ccc6 = _peak_fueling_calibration_value;
+      return uVar2;
+    }
+    if (((_smoke_limiter_output_value == 2) || (_smoke_limiter_output_value == 7)) ||
+       ((_smoke_limiter_output_value == 3 || (_smoke_limiter_output_value == 6)))) {
+      _DAT_0080ccbe = 0;
+      if (_DAT_0080ccba < _maximum_time_engine_warmup_algorithm_will_run_0_100) {
+        _DAT_0080ccba = _DAT_0080ccba + 1;
+      }
+      if ((((((_status_32_word_bit_mapped_system_error_status_word_3_0_1 & 4) != 0) &&
+            ((_DAT_00806ac2 & 4) != 0)) ||
+           ((((_status_32_word_bit_mapped_system_error_status_word_3_0_1 & 8) != 0 &&
+             ((_DAT_00806ac2 & 8) != 0)) ||
+            (((_status_32_word_bit_mapped_system_error_status_word_3_0_1 & 0x20) != 0 &&
+             ((_DAT_00806ac2 & 0x20) != 0)))))) ||
+          ((((_status_32_word_bit_mapped_system_error_status_word_3_0_1 & 0x40) != 0 &&
+            ((_DAT_00806ac2 & 0x40) != 0)) ||
+           (((((_status_32_word_bit_mapped_system_error_status_word_2_0_1 & 2) != 0 &&
+              ((_fault_latch_status_word_2 & 2) != 0)) ||
+             (((_status_32_word_bit_mapped_system_error_status_word_2_0_1 & 1) != 0 &&
+              ((_fault_latch_status_word_2 & 1) != 0)))) ||
+            (((_status_32_word_bit_mapped_system_error_status_word_6_0_1 & 0x2000) != 0 &&
+             ((_DAT_00806ac8 & 0x2000) != 0)))))))) &&
+         (_DAT_0080ccbc < _max_time_algorithm_will_run_with_active_cool_or_oil_press_fa_0_100)) {
+        _DAT_0080ccbc = _DAT_0080ccbc + 1;
+      }
+      uVar1 = _DAT_0080ccba;
+      if ((_maximum_time_engine_warmup_algorithm_will_run_0_100 <= _DAT_0080ccba) ||
+         (uVar1 = _DAT_0080ccbc,
+         _max_time_algorithm_will_run_with_active_cool_or_oil_press_fa_0_100 <= _DAT_0080ccbc)) {
+        _DAT_0080ccb4 = 1;
+        _DAT_0080ccb2 = 0;
+        _DAT_0080a8f4 = 0;
+        _DAT_0080ccca = 0;
+        _DAT_0080ccc6 = _peak_fueling_calibration_value;
+        return (uint)uVar1;
+      }
+      if (_DAT_0080ccc2 == 0) {
+        if (_flitered_and_linearized_oil_pressure_0_100 <
+            _calibratible_threshold_for_rifle_oil_pressure_for_engine_warmu_0_100) {
+          _timer_counting_against_oil_pressure_threshold_time_0_60 = 0;
+        }
+        else {
+          _timer_counting_against_oil_pressure_threshold_time_0_60 =
+               _timer_counting_against_oil_pressure_threshold_time_0_60 + 1;
+        }
+        uVar2 = (uint)_timer_counting_against_oil_pressure_threshold_time_0_60;
+        if (_time_oil_pressure_must_continuously_be_above_oil_pressure_thres_0_60 <
+            _timer_counting_against_oil_pressure_threshold_time_0_60) {
+          _DAT_0080ccc2 = 1;
+          _DAT_00800594 = _filtered_and_linearized_coolant_temperature_50_to_293;
+          uVar2 = lookupTableInterpolation(&DAT_0080058e);
+          _DAT_0080ccb8 = (ushort)uVar2;
+        }
+      }
+      else {
+        uVar2 = (uint)_DAT_0080ccb6;
+        if (_DAT_0080ccb6 < _DAT_0080ccb8) {
+          _DAT_0080ccb6 = _DAT_0080ccb6 + 1;
+        }
+        else {
+          _DAT_0080ccb4 = 1;
+          _DAT_0080ccb2 = 0;
+          _DAT_0080a8f4 = 0;
+          _DAT_0080ccca = 0;
+        }
+      }
+      if (_DAT_0080ccb2 == 0) {
+        _DAT_0080ccc6 = _peak_fueling_calibration_value;
+        return uVar2;
+      }
+      _DAT_008005a2 = _engine_rpm_primary;
+      uVar2 = lookupTableInterpolation(&DAT_0080059c);
+      _DAT_0080ccc6 = (undefined2)uVar2;
+    }
+  }
+  return uVar2;
+}
+
+
+
+//
+// Function: fuelTemperatureLimitingSecondary @ 0x0001709e
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080a8f4, DAT_0080ccb2, DAT_0080ccb4
+ushort fuelTemperatureLimitingSecondary(void)
+
+{
+                    /* From J90280.05 @ 0x031a76 (confidence: 67%) */
+  _DAT_0080ccc8 = 0;
+  if ((_feature_enable_flags_word & 2) == 0) {
+    _DAT_0080ccb2 = 0;
+    _DAT_0080ccb4 = 1;
+  }
+  else {
+    _DAT_0080ccb2 = 1;
+    _DAT_0080ccb4 = 0;
+    if (_DAT_00807dde != 0) {
+      _DAT_0080a8f4 = 1;
+    }
+  }
+  _DAT_00800590 = 0x60846;
+  _DAT_0080058e = 2;
+  _DAT_00800596 = 0x6085a;
+  _DAT_0080059e = 0x607f2;
+  _DAT_0080059c = 2;
+  _DAT_008005a4 = 0x6081c;
+  return _feature_enable_flags_word & 2;
+}
+
+
+
+//
+// Function: FUN_00017120 @ 0x00017120
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080ccb2, DAT_0080ccc6
+void FUN_00017120(void)
+
+{
+  if (((_smoke_limiter_output_value == 3) && (_DAT_0080ccb2 != 0)) &&
+     (_DAT_0080ccc6 < _fuel_limit_shutdown_minimum)) {
+    _fuel_limit_shutdown_minimum = _DAT_0080ccc6;
+    _indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 = 0x21;
+  }
+  return;
+}
+
+
+
+//
+// Function: canControllerConfigInit @ 0x00017150
+//
+
+// Variables in this function: DAT_00806ac2
+void FUN_00032e4c(void)
+
+{
+  if (((((_status_32_word_bit_mapped_system_error_status_word_4_0_1 & 0x20) == 0) ||
+       ((_fault_confirm_status_word_4 & 0x20) == 0)) &&
+      (((_status_32_word_bit_mapped_system_error_status_word_4_0_1 & 8) == 0 ||
+       ((_fault_confirm_status_word_4 & 8) == 0)))) &&
+     ((((_status_32_word_bit_mapped_system_error_status_word_4_0_1 & 2) == 0 ||
+       ((_fault_confirm_status_word_4 & 2) == 0)) &&
+      (((_status_32_word_bit_mapped_system_error_status_word_4_0_1 & 4) == 0 ||
+       ((_fault_confirm_status_word_4 & 4) == 0)))))) {
+    if (_jcomm_throttle_kickdown_threshold_throt_position_above_which_k_0_100 <
+        _validated_percent_throttle_commanded_by_driver_0_100) {
+      vp44_feedback_pulse_low_fault_counter = 0xf4;
+    }
+    else {
+      vp44_feedback_pulse_low_fault_counter = 0xf0;
+    }
+  }
+  else {
+    vp44_feedback_pulse_low_fault_counter = 0xf8;
+  }
+  if ((_switch_override_configuration & 0x80) == 0) {
+    if ((((_status_32_word_bit_mapped_system_error_status_word_4_0_1 & 8) == 0) ||
+        ((_fault_confirm_status_word_4 & 8) == 0)) &&
+       (((_status_32_word_bit_mapped_system_error_status_word_4_0_1 & 0x10) == 0 ||
+        ((_fault_confirm_status_word_4 & 0x10) == 0)))) {
+      if (_throttle_above_idle_flag == 0) {
+        vp44_feedback_pulse_low_fault_counter = vp44_feedback_pulse_low_fault_counter | 1;
+      }
+    }
+    else {
+      vp44_feedback_pulse_low_fault_counter = vp44_feedback_pulse_low_fault_counter | 2;
+    }
+  }
+  else {
+    vp44_feedback_pulse_low_fault_counter = vp44_feedback_pulse_low_fault_counter | 3;
+  }
+  if ((((_status_32_word_bit_mapped_system_error_status_word_4_0_1 & 0x20) == 0) ||
+      ((_fault_confirm_status_word_4 & 0x20) == 0)) &&
+     (((((_status_32_word_bit_mapped_system_error_status_word_4_0_1 & 8) == 0 ||
+        ((_fault_confirm_status_word_4 & 8) == 0)) &&
+       (((_status_32_word_bit_mapped_system_error_status_word_4_0_1 & 2) == 0 ||
+        ((_fault_confirm_status_word_4 & 2) == 0)))) &&
+      (((_status_32_word_bit_mapped_system_error_status_word_4_0_1 & 4) == 0 ||
+       ((_fault_confirm_status_word_4 & 4) == 0)))))) {
+    if ((_calibration_feature_enable_flags_word_5 & 0x400) == 0) {
+      vp44_feedback_pulse_high_fault_counter =
+           (char)((int)(uint)_validated_percent_throttle_commanded_by_driver_0_100 >> 1) +
+           (char)((int)(uint)_validated_percent_throttle_commanded_by_driver_0_100 >> 3);
+    }
+    else {
+      vp44_feedback_pulse_high_fault_counter = -1;
+    }
+  }
+  else {
+    vp44_feedback_pulse_high_fault_counter = -2;
+  }
+  param_lookup_3();
+  lift_pump_timing_smoothed =
+       (undefined1)
+       ((ushort)_jcomm_ind_percent_load_ratio_of_actual_engine_torque_to_max_to_0_125 >> 8);
+  if (_JCFSTLFG == 1) {
+    lift_pump_timing_smoothed = 0xfe;
+  }
+  if (((_feature_enable_flags_word & 0x1000) == 0) ||
+     ((_calibration_feature_enable_flags_word_5 & 0x800) != 0)) {
+    DAT_008034ad = -1;
+  }
+  else if ((((_status_32_word_bit_mapped_system_error_status_word_3_0_1 & 0x400) == 0) ||
+           ((_DAT_00806ac2 & 0x400) == 0)) &&
+          (((_status_32_word_bit_mapped_system_error_status_word_3_0_1 & 0x800) == 0 ||
+           ((_DAT_00806ac2 & 0x800) == 0)))) {
+    DAT_008034ad = (char)((int)(uint)_filtered_and_linearized_remote_throttle_0_100 >> 1) +
+                   (char)((int)(uint)_filtered_and_linearized_remote_throttle_0_100 >> 3);
+  }
+  else {
+    DAT_008034ad = -2;
+  }
+  derate_threshold_previous = 0xff;
+  DAT_008034af = 0xff;
+  fso_fault_previous_value = 0xff;
+  DAT_008034b1 = 0xff;
+  sendCanMessage(&fso_fault_latched_value);
+  return;
+}
+
+
+
+//
+// Function: cumminsProprietaryDM_983_Builder @ 0x00033064
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

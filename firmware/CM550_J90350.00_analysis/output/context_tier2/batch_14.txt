@@ -1,0 +1,1468 @@
+=== VARIABLES TO NAME ===
+0x00800532  (8 references)
+0x0080599a  (13 references)
+0x0080599c  (7 references)
+0x0080dde7  (5 references)
+0x0080ddf5  (9 references)
+0x0080de76  (8 references)
+
+Total: 6 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0080dde7
+void insiteParameterTableIterator(void)
+
+{
+  short sVar1;
+  byte bVar2;
+  byte bVar3;
+  
+                    /* From J90280.05 @ 0x00c9f0 (confidence: 73%) */
+  _insite_parameter_table_pointer = &DAT_000612ee;
+  _insite_parameter_schedule_pointer = &DAT_0080de00;
+  _insite_response_frame_start = _j1708_transmit_buffer_0_2_32;
+  _insite_response_write_pointer = _j1708_transmit_buffer_0_2_32;
+  DAT_0080dde7 = 0;
+  insite_response_length = 0;
+  insite_parameter_id = DAT_000612ee;
+  for (bVar2 = 0; (insite_parameter_id != 0 && (bVar2 < 0x1e)); bVar2 = bVar2 + 1) {
+    if (DAT_0080ddfe == *_insite_parameter_schedule_pointer) {
+      *_insite_parameter_schedule_pointer =
+           _insite_parameter_table_pointer[1] + *_insite_parameter_schedule_pointer;
+      bVar3 = '\x01' << (insite_parameter_id & 7);
+      sVar1 = (short)((int)(uint)insite_parameter_id >> 3);
+      if (((bVar3 & *(byte *)(sVar1 + 0x6134a)) != 0) &&
+         ((bVar3 & (&vp44_fuel_demand_accumulator)[sVar1]) == 0)) {
+        activeParamReadFunction();
+      }
+    }
+    _insite_parameter_table_pointer = _insite_parameter_table_pointer + 3;
+    insite_parameter_id = *_insite_parameter_table_pointer;
+    _insite_parameter_schedule_pointer = _insite_parameter_schedule_pointer + 1;
+  }
+  responseBufferFinalize();
+  return;
+}
+
+
+
+//
+// Function: diagnosticMessageTransmissionManager @ 0x0000eba4
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080de76
+void insiteCommandByteDispatcher(void)
+
+{
+  undefined4 uVar1;
+  undefined2 uVar3;
+  undefined2 uVar4;
+  char cVar5;
+  uint uVar2;
+  byte bVar6;
+  undefined1 uVar7;
+  undefined4 local_a;
+  undefined2 local_6;
+  
+                    /* From J90280.05 @ 0x00cc64 (confidence: 81%) */
+  uVar1 = _accumulated_amount_of_fuel_used_during_vehicle_operatio_0_0_10000000;
+  if (insite_parameter_id < 0x80) {
+    if (insite_parameter_id < 0x59) {
+      if (insite_parameter_id < 0x54) {
+        if (insite_parameter_id == 2) {
+          local_6._1_1_ = 0;
+          uVar1 = diagnosticCodeTableSearch();
+          if ((char)uVar1 == '\0') {
+            uVar1 = diagnosticCodeTableSearch();
+            if ((char)uVar1 == '\0') {
+              uVar1 = diagnosticCodeTableSearch();
+              if ((char)uVar1 != '\0') {
+                local_6._1_1_ = 0x20;
+              }
+            }
+            else {
+              local_6._1_1_ = 0x20;
+            }
+          }
+          else {
+            local_6._1_1_ = 0x20;
+          }
+          uVar3 = (undefined2)CONCAT31((int3)((uint)uVar1 >> 8),DAT_0080656d);
+          uVar1 = diagnosticCodeTableSearch();
+          if ((char)uVar1 != '\0') {
+            local_6._1_1_ = (byte)local_6 | 0x10;
+          }
+          uVar4 = (undefined2)CONCAT31((int3)((uint)uVar1 >> 8),DAT_008065b1);
+          uVar1 = diagnosticCodeTableSearch(uVar3);
+          if ((char)uVar1 != '\0') {
+            local_6._1_1_ = (byte)local_6 | 8;
+          }
+          uVar3 = (undefined2)CONCAT31((int3)((uint)uVar1 >> 8),DAT_008065cb);
+          cVar5 = diagnosticCodeTableSearch(uVar4);
+          if (cVar5 != '\0') {
+            local_6._1_1_ = (byte)local_6 | 4;
+          }
+          cVar5 = diagnosticCodeTableSearch(uVar3);
+          if (cVar5 == '\0') {
+            cVar5 = diagnosticCodeTableSearch();
+            if (cVar5 != '\0') {
+              local_6._1_1_ = (byte)local_6 | 2;
+            }
+          }
+          else {
+            local_6._1_1_ = (byte)local_6 | 2;
+          }
+          cVar5 = diagnosticCodeTableSearch();
+          if (cVar5 != '\0') {
+            local_6._1_1_ = (byte)local_6 | 1;
+          }
+        }
+        else if (insite_parameter_id == 3) {
+          local_6._1_1_ = (debounced_switch_value_for_switch_16_on_off & 0x80) != 0;
+          if ((debounced_switch_value_for_switch_16_on_off & 0x40) != 0) {
+            local_6._1_1_ = (byte)local_6 | 2;
+          }
+          if ((debounced_switch_value_for_switch_16_on_off & 0x20) != 0) {
+            local_6._1_1_ = (byte)local_6 | 4;
+          }
+        }
+        else if (insite_parameter_id == 0x1d) {
+          local_6._1_1_ = (byte)(((uint)_DAT_0080aa8e * 0xfa) / 400);
+        }
+        else if (insite_parameter_id == 0x1e) {
+          if ((ushort)((int)(uint)*(ushort *)
+                                   (&filtered_and_linearized_intake_manifold_temperature_50_to_293 +
+                                   (short)((ushort)DAT_0080d283 * 0xb) * 2) >> 4) < 0x7f) {
+            local_6._1_1_ =
+                 (byte)((int)(uint)*(ushort *)
+                                    (&filtered_and_linearized_intake_manifold_temperature_50_to_293
+                                    + (short)((ushort)DAT_0080d283 * 0xb) * 2) >> 4);
+          }
+          else {
+            local_6._1_1_ = 0x7f;
+          }
+        }
+        else if (insite_parameter_id == 0x2c) {
+          local_6._1_1_ = 0xc0;
+          if ((bit_6_which_enables_the_warning_lamp_driver_enable_disable & 4) != 0) {
+            local_6._1_1_ = 0xd0;
+          }
+          if ((bit_6_which_enables_the_warning_lamp_driver_enable_disable & 0x40) != 0) {
+            local_6._1_1_ = (byte)local_6 | 4;
+          }
+          if ((bit_6_which_enables_the_warning_lamp_driver_enable_disable & 2) != 0) {
+            local_6._1_1_ = (byte)local_6 | 1;
+          }
+        }
+        else if (insite_parameter_id == 0x2d) {
+          local_6._1_1_ = 0xcf;
+          if ((bit_6_which_enables_the_warning_lamp_driver_enable_disable & 1) != 0) {
+            local_6._1_1_ = 0xcf;
+          }
+        }
+        else if (insite_parameter_id == 0x47) {
+          local_6._1_1_ = 0;
+          if ((_vp44_sensor_countdown_timer != 0) && (_vp44_sensor_countdown_timer < _DAT_00803c02))
+          {
+            local_6._1_1_ = 0x80;
+          }
+          if ((_calibration_feature_enable_flags_word_3 & 2) != 0) {
+            local_6._1_1_ = (byte)local_6 | 8;
+          }
+          if ((_DAT_0080d672 != 0) && ((_calibration_feature_enable_flags_word_3 & 4) != 0)) {
+            local_6._1_1_ = (byte)local_6 | 4;
+          }
+          if ((_engine_protection_shutdown_command != 0) && (_vp44_sensor_countdown_timer == 0)) {
+            local_6._1_1_ = (byte)local_6 | 2;
+          }
+          if (_DAT_0080d67a != 0) {
+            local_6._1_1_ = (byte)local_6 | 1;
+          }
+        }
+        else if (insite_parameter_id == 0x4a) {
+          local_6._1_1_ = (byte)((int)(uint)_DAT_0080a9dc >> 7);
+        }
+        else {
+          if (insite_parameter_id != 0x53) {
+            return;
+          }
+          if (_indicator_as_to_which_algorithm_is_in_control_of_fueling_after_it_1_12 == 10) {
+            local_6._1_1_ = 0x80;
+          }
+          else {
+            local_6._1_1_ = 0;
+          }
+        }
+        *_insite_response_write_pointer = insite_parameter_id;
+        _insite_response_write_pointer =
+             (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+        *_insite_response_write_pointer = (byte)local_6;
+        _insite_response_write_pointer =
+             (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+      }
+      else {
+        switch(insite_parameter_id) {
+        case 0x54:
+          bVar6 = (byte)((int)(uint)_sampled_road_speed_after_it_has_been_filtered_0_255_9961 >> 7);
+          break;
+        case 0x55:
+          bVar6 = 0;
+          if (_DAT_0080a9c4 != 0) {
+            bVar6 = 0x80;
+          }
+          if ((debounced_switch_value_for_switch_16_on_off & 4) != 0) {
+            bVar6 = bVar6 | 0x40;
+          }
+          if ((debounced_switch_value_for_switch_16_on_off & 8) != 0) {
+            bVar6 = bVar6 | 0x20;
+          }
+          if ((switch_status_cruise_coast_switch_bit_3_on_off & 2) != 0) {
+            bVar6 = bVar6 | 0x10;
+          }
+          if ((switch_status_cruise_coast_switch_bit_3_on_off & 1) != 0) {
+            bVar6 = bVar6 | 8;
+          }
+          if ((switch_status_cruise_coast_switch_bit_3_on_off & 8) != 0) {
+            bVar6 = bVar6 | 4;
+          }
+          if ((switch_status_cruise_coast_switch_bit_3_on_off & 4) != 0) {
+            bVar6 = bVar6 | 2;
+          }
+          if ((switch_status_cruise_coast_switch_bit_3_on_off & 0x10) != 0) {
+            bVar6 = bVar6 | 1;
+          }
+          break;
+        case 0x56:
+          bVar6 = (byte)((int)(uint)_DAT_0080a9c6 >> 7);
+          break;
+        case 0x57:
+          bVar6 = (byte)((int)(uint)_DAT_00804fc6 >> 7);
+          break;
+        case 0x58:
+          bVar6 = (byte)((int)(uint)_DAT_00807bf6 >> 7);
+          break;
+        default:
+          goto switchD_0000f050_caseD_f9;
+        }
+        *_insite_response_write_pointer = insite_parameter_id;
+        _insite_response_write_pointer =
+             (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+        *_insite_response_write_pointer = bVar6;
+        _insite_response_write_pointer =
+             (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+      }
+    }
+    else if (insite_parameter_id < 0x69) {
+      switch(insite_parameter_id) {
+      case 0x59:
+        local_6._1_1_ = 0;
+        if (_DAT_0080dc26 != 0) {
+          local_6._1_1_ = 0x80;
+        }
+        if ((debounced_switch_value_for_switch_16_on_off & 4) != 0) {
+          local_6._1_1_ = (byte)local_6 | 0x40;
+        }
+        if ((debounced_switch_value_for_switch_16_on_off & 8) != 0) {
+          local_6._1_1_ = (byte)local_6 | 0x20;
+        }
+        if ((DSPTSESW & 2) != 0) {
+          local_6._1_1_ = (byte)local_6 | 0x10;
+        }
+        if ((DSPTSESW & 1) != 0) {
+          local_6._1_1_ = (byte)local_6 | 8;
+        }
+        if ((DSPTSESW & 8) != 0) {
+          local_6._1_1_ = (byte)local_6 | 4;
+        }
+        if ((DSPTSESW & 4) != 0) {
+          local_6._1_1_ = (byte)local_6 | 2;
+        }
+        if ((DSPTSESW & 0x10) != 0) {
+          local_6._1_1_ = (byte)local_6 | 1;
+        }
+        break;
+      default:
+        goto switchD_0000f050_caseD_f9;
+      case 0x5b:
+        local_6._1_1_ =
+             (byte)(((uint)_validated_percent_throttle_commanded_by_driver_0_100 * 0xfa) / 400);
+        break;
+      case 0x5c:
+        local_6._1_1_ = (byte)((int)(uint)_percent_load_at_current_speed >> 7);
+        break;
+      case 0x61:
+        local_6._1_1_ = 0;
+        if ((bit_6_which_enables_the_warning_lamp_driver_enable_disable & 0x10) != 0) {
+          local_6._1_1_ = 0x80;
+        }
+        break;
+      case 100:
+        local_6._1_1_ = (byte)((int)(uint)_flitered_and_linearized_oil_pressure_0_100 >> 6);
+        break;
+      case 0x66:
+        if ((ushort)((int)(uint)_boost_pressure_0_100 >> 4) < 0xff) {
+          local_6._1_1_ = (byte)((int)(uint)_boost_pressure_0_100 >> 4);
+        }
+        else {
+          local_6._1_1_ = 0xff;
+        }
+      }
+      *_insite_response_write_pointer = insite_parameter_id;
+      _insite_response_write_pointer =
+           (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+      *_insite_response_write_pointer = (byte)local_6;
+      _insite_response_write_pointer =
+           (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+    }
+    else {
+      if (insite_parameter_id == 0x69) {
+        if (_filtered_and_linearized_intake_manifold_temperature_50_to_293 < 0x1900) {
+          uVar7 = 0;
+        }
+        else {
+          uVar7 = (undefined1)
+                  ((int)(_filtered_and_linearized_intake_manifold_temperature_50_to_293 - 0x1900) >>
+                  7);
+        }
+      }
+      else if (insite_parameter_id == 0x6c) {
+        uVar7 = (undefined1)
+                ((int)(uint)_filtered_ambient_air_pressure_as_read_and_scaled_from_a_d_algor_0_15 >>
+                3);
+      }
+      else if (insite_parameter_id == 0x6e) {
+        if (_filtered_and_linearized_coolant_temperature_50_to_293 < 0x1900) {
+          uVar7 = 0;
+        }
+        else {
+          uVar7 = (undefined1)
+                  ((int)(_filtered_and_linearized_coolant_temperature_50_to_293 - 0x1900) >> 7);
+        }
+      }
+      else {
+        if (insite_parameter_id != 0x79) {
+          return;
+        }
+        switch(_engine_brake_active_cylinder_count) {
+        case 0:
+          uVar7 = 0;
+          break;
+        case 1:
+        case 2:
+          uVar7 = 0x81;
+          break;
+        case 3:
+          uVar7 = 0x82;
+          break;
+        case 4:
+          uVar7 = 0x84;
+          break;
+        default:
+          uVar7 = 0x88;
+        }
+      }
+      *_insite_response_write_pointer = insite_parameter_id;
+      _insite_response_write_pointer =
+           (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+      *_insite_response_write_pointer = uVar7;
+      _insite_response_write_pointer =
+           (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+    }
+  }
+  else if (insite_parameter_id < 0xc1) {
+    if (insite_parameter_id < 0xb9) {
+      if (insite_parameter_id == 0x85) {
+        local_6 = 0;
+      }
+      else if ((insite_parameter_id != 0x9c) && (insite_parameter_id != 0x9d)) {
+        if (insite_parameter_id == 0xa6) {
+          local_6 = CONCAT11(DAT_01000304,DAT_01000303);
+        }
+        else if (insite_parameter_id == 0xa8) {
+          local_6 = (short)((int)(uint)_filtered_and_linearized_battery_voltage_0_40 >> 1) +
+                    _filtered_and_linearized_battery_voltage_0_40 * 2;
+        }
+        else if (insite_parameter_id != 0xaf) {
+          if (insite_parameter_id == 0xb6) {
+            local_6 = (short)_DAT_00804fa4;
+          }
+          else if (insite_parameter_id == 0xb7) {
+            local_6 = _instantaneous_fuel_rate_formatted_for_j1587_broadcast_pid_18_0_284421;
+          }
+          else {
+            if (insite_parameter_id != 0xb8) {
+              return;
+            }
+            local_6 = _DAT_00804fb0;
+          }
+        }
+      }
+      *_insite_response_write_pointer = insite_parameter_id;
+      _insite_response_write_pointer =
+           (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+      *_insite_response_write_pointer = (byte)local_6;
+      _insite_response_write_pointer =
+           (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+      *_insite_response_write_pointer = local_6._0_1_;
+      _insite_response_write_pointer =
+           (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+    }
+    else {
+      switch(insite_parameter_id) {
+      case 0xb9:
+        local_6 = _DAT_00804fb2;
+        break;
+      default:
+        goto switchD_0000f050_caseD_f9;
+      case 0xbb:
+        local_6 = (short)((int)(uint)_DAT_0080dc24 >> 1);
+        break;
+      case 0xbc:
+        local_6 = (short)((int)(uint)_lsg_breakpoint_speed >> 1);
+        break;
+      case 0xbd:
+        local_6 = (short)((int)(uint)_intake_manifold_temp_threshold >> 1);
+        break;
+      case 0xbe:
+        local_6 = (short)((int)(uint)_current_engine_rpm_filtered >> 1);
+      }
+      *_insite_response_write_pointer = insite_parameter_id;
+      _insite_response_write_pointer =
+           (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+      *_insite_response_write_pointer = (byte)local_6;
+      _insite_response_write_pointer =
+           (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+      *_insite_response_write_pointer = local_6._0_1_;
+      _insite_response_write_pointer =
+           (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+    }
+  }
+  else if (insite_parameter_id < 0xf4) {
+    if (insite_parameter_id == 0xc1) {
+      insiteActiveFaultListBuilder();
+      return;
+    }
+    if (insite_parameter_id == 0xc2) {
+      insiteFaultDetailBuilder();
+      return;
+    }
+    if (insite_parameter_id == 0xc4) {
+      *_insite_response_write_pointer = 0xc4;
+      _insite_response_write_pointer =
+           (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+      if (((insite_dtc_command_action_byte & 0xc0) == 0x80) ||
+         ((insite_dtc_command_action_byte & 0xc0) == 0x40)) {
+        *_insite_response_write_pointer = 2;
+        _insite_response_write_pointer =
+             (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+      }
+      else if ((insite_dtc_command_action_byte & 0xc0) == 0) {
+        if (_DAT_0080de76 == 0) {
+          *_insite_response_write_pointer = 0;
+          _insite_response_write_pointer =
+               (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01')
+          ;
+          goto LAB_0000f6f4;
+        }
+        *_insite_response_write_pointer = 5;
+        _insite_response_write_pointer =
+             (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+      }
+      *_insite_response_write_pointer = DAT_0080de25;
+      _insite_response_write_pointer =
+           (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+      *_insite_response_write_pointer = insite_dtc_command_action_byte;
+      _insite_response_write_pointer =
+           (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+      if (((insite_dtc_command_action_byte & 0xc0) == 0) && (_DAT_0080de76 != 0)) {
+        bVar6 = 1;
+        do {
+          *_insite_response_write_pointer = (char)(_DAT_0080de76 / 100) + 0x30;
+          _DAT_0080de76 = (_DAT_0080de76 % 100) * 10;
+          _insite_response_write_pointer =
+               (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01')
+          ;
+          bVar6 = bVar6 + 1;
+        } while (bVar6 < 4);
+      }
+    }
+    else {
+      if (insite_parameter_id == 0xea) {
+        insiteVersionInfoBuilder();
+        return;
+      }
+      if (insite_parameter_id == 0xeb) {
+        uVar2 = _DAT_00804fb4 / 0x708;
+        *_insite_response_write_pointer = 0xeb;
+        _insite_response_write_pointer =
+             (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+        *_insite_response_write_pointer = 4;
+        _insite_response_write_pointer =
+             (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+        local_a._3_1_ = (undefined1)uVar2;
+        *_insite_response_write_pointer = (undefined1)local_a;
+        _insite_response_write_pointer =
+             (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+        local_a._2_1_ = (undefined1)(uVar2 >> 8);
+        *_insite_response_write_pointer = local_a._2_1_;
+        _insite_response_write_pointer =
+             (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+        local_a._1_1_ = (undefined1)(uVar2 >> 0x10);
+        *_insite_response_write_pointer = local_a._1_1_;
+        _insite_response_write_pointer =
+             (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+        *_insite_response_write_pointer = 0;
+        _insite_response_write_pointer =
+             (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+      }
+      else {
+        if (insite_parameter_id != 0xec) {
+          if (insite_parameter_id == 0xed) {
+            insiteCapacityResponseBuilder();
+            return;
+          }
+          if (insite_parameter_id != 0xf3) {
+            return;
+          }
+          FUN_000277e6();
+          return;
+        }
+        *_insite_response_write_pointer = 0xec;
+        _insite_response_write_pointer =
+             (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+        *_insite_response_write_pointer = 4;
+        _insite_response_write_pointer =
+             (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+        local_a._3_1_ = (undefined1)uVar1;
+        *_insite_response_write_pointer = (undefined1)local_a;
+        _insite_response_write_pointer =
+             (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+        local_a._2_1_ = (undefined1)((uint)uVar1 >> 8);
+        *_insite_response_write_pointer = local_a._2_1_;
+        _insite_response_write_pointer =
+             (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+        local_a._1_1_ = (undefined1)((uint)uVar1 >> 0x10);
+        *_insite_response_write_pointer = local_a._1_1_;
+        _insite_response_write_pointer =
+             (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+        local_a._0_1_ = (undefined1)((uint)uVar1 >> 0x18);
+        *_insite_response_write_pointer = local_a._0_1_;
+        _insite_response_write_pointer =
+             (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+      }
+    }
+  }
+  else {
+    switch(insite_parameter_id) {
+    case 0xf4:
+      local_a = scaleByRatio((short)_DAT_00804fac,10,0x40);
+      break;
+    case 0xf5:
+      local_a = scaleByRatio((short)_DAT_00804fa8,10,0x40);
+      break;
+    default:
+      goto switchD_0000f050_caseD_f9;
+    case 0xf7:
+      local_a = _DAT_00804fc0 / 0x708;
+      break;
+    case 0xf8:
+      local_a = _DAT_00804fbc / 0x708;
+      break;
+    case 0xfa:
+      local_a = _DAT_00804fa0;
+    }
+    *_insite_response_write_pointer = insite_parameter_id;
+    _insite_response_write_pointer =
+         (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+    *_insite_response_write_pointer = 4;
+    _insite_response_write_pointer =
+         (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+    *_insite_response_write_pointer = (undefined1)local_a;
+    _insite_response_write_pointer =
+         (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+    *_insite_response_write_pointer = local_a._2_1_;
+    _insite_response_write_pointer =
+         (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+    *_insite_response_write_pointer = local_a._1_1_;
+    _insite_response_write_pointer =
+         (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+    *_insite_response_write_pointer = local_a._0_1_;
+    _insite_response_write_pointer =
+         (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+  }
+LAB_0000f6f4:
+  insite_response_length = insite_parameter_data_size + insite_response_length;
+  insite_response_space_available = insite_response_space_available - insite_parameter_data_size;
+switchD_0000f050_caseD_f9:
+  return;
+}
+
+
+
+//
+// Function: FUN_0000f716 @ 0x0000f716
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_00800532, DAT_0080599a
+void diagnosticCodeDebounceHandler(undefined4 param_1)
+
+{
+  int iVar1;
+  short sVar2;
+  
+                    /* From J90280.05 @ 0x010fee (confidence: 81%) */
+  if (((((&diagnostic_fault_status_table)[(short)((ushort)param_1._1_1_ * 5) * 2] & 1) == 0) &&
+      (*(char *)((uint)param_1._1_1_ * 6 + 0x8067c9) != '\0')) &&
+     ((&diagnostic_fault_occurrence_count)[(short)((ushort)param_1._1_1_ * 5) * 2] != '\0')) {
+    iVar1 = (int)(short)((ushort)*(byte *)((uint)param_1._1_1_ * 6 + 0x8067c9) << 3);
+    if (((*(int *)((short)((ushort)param_1._1_1_ * 5) * 2 + 0x805a20) == 0) &&
+        (*(uint *)(iVar1 + 0x80654c) <=
+         (uint)(_hour_meter_ecm_run_time_none -
+               *(int *)(&DGFUCUBF + (short)((ushort)param_1._1_1_ * 5) * 2)))) ||
+       ((*(int *)((short)((ushort)param_1._1_1_ * 5) * 2 + 0x805a20) != 0 &&
+        (*(uint *)(iVar1 + 0x806550) <=
+         (uint)(_hour_meter_ecm_run_time_none -
+               *(int *)((short)((ushort)param_1._1_1_ * 5) * 2 + 0x805a20)))))) {
+      sVar2 = (ushort)param_1._1_1_ * 10;
+      *(int *)(sVar2 + 0x805a20) = _hour_meter_ecm_run_time_none;
+      if ((&diagnostic_fault_occurrence_count)[sVar2] != '\0') {
+        (&diagnostic_fault_occurrence_count)[sVar2] =
+             (&diagnostic_fault_occurrence_count)[sVar2] + -1;
+      }
+      if ((&diagnostic_fault_occurrence_count)[sVar2] == '\0') {
+        diagnosticTableEntryClear();
+        if (((&fault_definition_spn_byte)[(uint)param_1._1_1_ * 6] != '\0') &&
+           ((*(ushort *)(&fault_definition_flags_word + (uint)param_1._1_1_ * 6) & 0x2000) == 0)) {
+          _DAT_0080599a = _DAT_0080599a + -1;
+        }
+        DGIEFUBF = DGIEFUBF + -1;
+        _DGIEFOBF = _DGIEFOBF + -1;
+        (&DGIEFUBF)[_DAT_00800532] = (&DGIEFUBF)[_inactive_fault_list_count];
+        iVar1 = (int)_inactive_fault_list_count;
+        _inactive_fault_list_count = _inactive_fault_list_count + -1;
+        *(undefined2 *)(&DGIEFOBF + _DAT_00800532 * 2) = *(undefined2 *)(&DGIEFOBF + iVar1 * 2);
+        _DAT_00800532 = _DAT_00800532 + -1;
+      }
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: phase2_sensor_data_processor @ 0x0001452e
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080599a
+void phase2_sensor_data_processor(void)
+
+{
+  int iVar1;
+  short sVar2;
+  short in_D0w;
+  byte unaff_D2b;
+  int unaff_A3;
+  short *unaff_A4;
+  int *unaff_A5;
+  
+                    /* From J90280.05 @ 0x011060 (confidence: 88%) */
+  if (((*(int *)((short)((ushort)unaff_D2b * 5) * 2 + 0x805a20) == 0) &&
+      (*(uint *)(in_D0w + 0x80654c) <=
+       (uint)(*unaff_A5 - *(int *)(&DGFUCUBF + (short)((ushort)unaff_D2b * 5) * 2)))) ||
+     ((*(int *)((short)((ushort)unaff_D2b * 5) * 2 + 0x805a20) != 0 &&
+      (*(uint *)(in_D0w + 0x806550) <=
+       (uint)(*unaff_A5 - *(int *)((short)((ushort)unaff_D2b * 5) * 2 + 0x805a20)))))) {
+    sVar2 = (ushort)unaff_D2b * 10;
+    *(int *)(sVar2 + 0x805a20) = *unaff_A5;
+    if ((&diagnostic_fault_occurrence_count)[sVar2] != '\0') {
+      (&diagnostic_fault_occurrence_count)[sVar2] = (&diagnostic_fault_occurrence_count)[sVar2] + -1
+      ;
+    }
+    if ((&diagnostic_fault_occurrence_count)[sVar2] == '\0') {
+      diagnosticTableEntryClear();
+      if ((*(char *)(unaff_A3 + 4 + (uint)unaff_D2b * 6) != '\0') &&
+         ((*(ushort *)(unaff_A3 + 2 + (uint)unaff_D2b * 6) & 0x2000) == 0)) {
+        _DAT_0080599a = _DAT_0080599a + -1;
+      }
+      DGIEFUBF = DGIEFUBF + -1;
+      _DGIEFOBF = _DGIEFOBF + -1;
+      (&DGIEFUBF)[*unaff_A4] = (&DGIEFUBF)[_inactive_fault_list_count];
+      iVar1 = (int)_inactive_fault_list_count;
+      _inactive_fault_list_count = _inactive_fault_list_count + -1;
+      *(undefined2 *)(&DGIEFOBF + *unaff_A4 * 2) = *(undefined2 *)(&DGIEFOBF + iVar1 * 2);
+      *unaff_A4 = *unaff_A4 + -1;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: FUN_00014670 @ 0x00014670
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_00800532
+void FUN_00014670(void)
+
+{
+  for (_DAT_00800532 = 1; _DAT_00800532 <= DGIEFUBF; _DAT_00800532 = _DAT_00800532 + 1) {
+    diagnosticCodeDebounceHandler();
+  }
+  return;
+}
+
+
+
+//
+// Function: oldestDiagnosticTimestampSearch @ 0x000146b4
+//
+
+// Variables in this function: DAT_0080599a
+void FUN_00014812(void)
+
+{
+  byte bVar1;
+  
+  if (_DAT_0080dc92 == 2) {
+    for (bVar1 = 1; bVar1 <= DGIEFUBF; bVar1 = bVar1 + 1) {
+      diagnosticTableEntryClear();
+    }
+    DGIEFUBF = 0;
+    _DGIEFOBF = 0;
+    _inactive_fault_list_count = 0;
+    _DAT_0080599a = 0;
+    _fault_to_erase_none = 0;
+  }
+  _action_00_no_clear_action_01_clear_inactive_02_clear_active_03_clear_al_0_6 = 0;
+  return;
+}
+
+
+
+//
+// Function: FUN_00014872 @ 0x00014872
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080599a, DAT_0080599c
+void FUN_00014872(void)
+
+{
+  int iVar1;
+  int iVar2;
+  ushort uVar3;
+  ushort uVar4;
+  ushort uVar5;
+  bool bVar6;
+  byte bVar7;
+  ushort uVar8;
+  ushort local_6;
+  
+  uVar3 = *(ushort *)
+           (&status_32_word_bit_mapped_system_error_status_word_0_0_1 +
+           _fault_status_word_scan_index * 2);
+  uVar4 = *(ushort *)(&fault_first_occurrence_flags_word_0 + _fault_status_word_scan_index * 2);
+  *(undefined2 *)(&fault_first_occurrence_flags_word_0 + _fault_status_word_scan_index * 2) = 0;
+  uVar8 = 1;
+  local_6 = 0;
+  do {
+    if ((uVar8 & (uVar4 | uVar3)) == 0) {
+      if (((((uVar8 & *(ushort *)(&DAT_00806080 + _fault_status_word_scan_index * 2)) != 0) &&
+           (uVar5 = *(ushort *)
+                     ((short)(local_6 + _fault_status_word_scan_index * 0x10) * 2 + 0x80656c),
+           uVar5 < 0x7d)) &&
+          ((uVar8 & *(ushort *)(&fault_confirm_status_word_0 + _fault_status_word_scan_index * 2))
+           != 0)) &&
+         ((*(char *)((short)uVar5 + 0x80599e) != '\0' &&
+          (*(char *)((short)uVar5 + 0x80599e) = *(char *)((short)uVar5 + 0x80599e) + -1,
+          *(char *)((short)uVar5 + 0x80599e) == '\0')))) {
+        (&diagnostic_fault_status_table)[(short)(uVar5 * 5) * 2] = 2;
+        *(undefined4 *)(&DGFUCUBF + (short)(uVar5 * 5) * 2) = _hour_meter_ecm_run_time_none;
+        bVar6 = false;
+        bVar7 = 0;
+        iVar1 = (uint)uVar5 * 6;
+        while (!bVar6) {
+          bVar7 = bVar7 + 1;
+          if ((uint)DGAEFUBF == bVar7 - 1) {
+            bVar6 = true;
+          }
+          else if ((&DGAEFUBF)[(short)(ushort)bVar7] == uVar5) {
+            bVar6 = true;
+            if ((&fault_definition_spn_byte)[iVar1] != '\0') {
+              if ((*(ushort *)(&fault_definition_flags_word + iVar1) & 0x40) == 0) {
+                circularBufferPush(0x80bc8c);
+              }
+              if (((*(ushort *)(&fault_definition_flags_word + iVar1) & 0x2000) == 0) &&
+                 (('\x01' << ((&fault_definition_spn_byte)[iVar1] & 7) &
+                  *(byte *)((short)((int)(uint)(byte)(&fault_definition_spn_byte)[iVar1] >> 3) +
+                           0x6134a)) != 0)) {
+                _DAT_00805998 = _DAT_00805998 + -1;
+              }
+            }
+            DGAEFUBF = DGAEFUBF - 1;
+            _DGAEFOBF = _DGAEFOBF + -1;
+            (&DGAEFUBF)[(short)(ushort)bVar7] = (&DGAEFUBF)[_active_fault_list_count];
+            iVar2 = (int)_active_fault_list_count;
+            _active_fault_list_count = _active_fault_list_count + -1;
+            *(undefined2 *)(&DGAEFOBF + (short)(ushort)bVar7 * 2) =
+                 *(undefined2 *)(&DGAEFOBF + iVar2 * 2);
+          }
+        }
+        if (DGIEFUBF != 0x1f) {
+          DGIEFUBF = DGIEFUBF + 1;
+          _DGIEFOBF = _DGIEFOBF + 1;
+          _inactive_fault_list_count = _inactive_fault_list_count + 1;
+          (&DGIEFUBF)[_inactive_fault_list_count] = (char)uVar5;
+          iVar1 = (uint)uVar5 * 6;
+          *(undefined2 *)(&DGIEFOBF + _inactive_fault_list_count * 2) =
+               *(undefined2 *)(&DAT_008067c4 + iVar1);
+          if (((((&fault_definition_spn_byte)[(uint)uVar5 * 6] != '\0') &&
+               ((*(ushort *)(&fault_definition_flags_word + (uint)uVar5 * 6) & 0x2000) == 0)) &&
+              (('\x01' << ((&fault_definition_spn_byte)[iVar1] & 7) &
+               *(byte *)((short)((int)(uint)(byte)(&fault_definition_spn_byte)[iVar1] >> 3) +
+                        0x6134a)) != 0)) &&
+             (_DAT_0080599a = _DAT_0080599a + 1, insite_fault_change_queue_count < 0x1f)) {
+            insite_fault_change_queue_count = insite_fault_change_queue_count + 1;
+            (&insite_fault_change_queue_count)[(short)(ushort)insite_fault_change_queue_count] =
+                 (char)uVar5;
+          }
+        }
+        _DAT_0080599c = _DAT_0080599c + -1;
+      }
+    }
+    else {
+      uVar5 = *(ushort *)((short)(local_6 + _fault_status_word_scan_index * 0x10) * 2 + 0x80656c);
+      if (((uVar5 < 0x7d) &&
+          ((uVar8 & *(ushort *)(&DAT_00806080 + _fault_status_word_scan_index * 2)) == 0)) &&
+         ((DGAEFUBF != 0x1f &&
+          ((uVar8 & *(ushort *)(&fault_confirm_status_word_0 + _fault_status_word_scan_index * 2))
+           != 0)))) {
+        if ((&diagnostic_fault_occurrence_count)[(short)(uVar5 * 5) * 2] != -1) {
+          (&diagnostic_fault_occurrence_count)[(short)(uVar5 * 5) * 2] =
+               (&diagnostic_fault_occurrence_count)[(short)(uVar5 * 5) * 2] + '\x01';
+        }
+        if (*(char *)((short)uVar5 + 0x80599e) == '\0') {
+          diagnosticCodeRegistrar();
+          (&diagnostic_fault_status_table)[(short)(uVar5 * 5) * 2] = 3;
+          *(undefined4 *)(&DGFUCUBF + (short)(uVar5 * 5) * 2) = _hour_meter_ecm_run_time_none;
+          *(undefined4 *)((short)(uVar5 * 5) * 2 + 0x805a20) = 0;
+          bVar6 = false;
+          bVar7 = 0;
+          iVar1 = (uint)uVar5 * 6;
+          while (!bVar6) {
+            bVar7 = bVar7 + 1;
+            if ((uint)DGIEFUBF == bVar7 - 1) {
+              bVar6 = true;
+            }
+            else if ((&DGIEFUBF)[(short)(ushort)bVar7] == uVar5) {
+              bVar6 = true;
+              if ((((&fault_definition_spn_byte)[iVar1] != '\0') &&
+                  ((*(ushort *)(&fault_definition_flags_word + iVar1) & 0x40) == 0)) &&
+                 (('\x01' << ((&fault_definition_spn_byte)[iVar1] & 7) &
+                  *(byte *)((short)((int)(uint)(byte)(&fault_definition_spn_byte)[iVar1] >> 3) +
+                           0x6134a)) != 0)) {
+                _DAT_0080599a = _DAT_0080599a + -1;
+              }
+              DGIEFUBF = DGIEFUBF - 1;
+              _DGIEFOBF = _DGIEFOBF + -1;
+              (&DGIEFUBF)[(short)(ushort)bVar7] = (&DGIEFUBF)[_inactive_fault_list_count];
+              iVar2 = (int)_inactive_fault_list_count;
+              _inactive_fault_list_count = _inactive_fault_list_count + -1;
+              *(undefined2 *)(&DGIEFOBF + (short)(ushort)bVar7 * 2) =
+                   *(undefined2 *)(&DGIEFOBF + iVar2 * 2);
+            }
+          }
+          DGAEFUBF = DGAEFUBF + 1;
+          _DGAEFOBF = _DGAEFOBF + 1;
+          _active_fault_list_count = _active_fault_list_count + 1;
+          (&DGAEFUBF)[_active_fault_list_count] = (char)uVar5;
+          *(undefined2 *)(&DGAEFOBF + _active_fault_list_count * 2) =
+               *(undefined2 *)(&DAT_008067c4 + (uint)uVar5 * 6);
+          if ((&fault_definition_spn_byte)[(uint)uVar5 * 6] != '\0') {
+            if ((*(ushort *)(&fault_definition_flags_word + (uint)uVar5 * 6) & 0x40) == 0) {
+              circularBufferPush(0x80bc8c);
+            }
+            iVar1 = (uint)uVar5 * 6;
+            if (((*(ushort *)(&fault_definition_flags_word + iVar1) & 0x2000) == 0) &&
+               (('\x01' << ((&fault_definition_spn_byte)[iVar1] & 7) &
+                *(byte *)((short)((int)(uint)(byte)(&fault_definition_spn_byte)[iVar1] >> 3) +
+                         0x6134a)) != 0)) {
+              _DAT_00805998 = _DAT_00805998 + 1;
+            }
+          }
+          _DAT_0080599c = _DAT_0080599c + 1;
+        }
+        if (*(char *)((short)uVar5 + 0x80599e) != -1) {
+          *(char *)((short)uVar5 + 0x80599e) = *(char *)((short)uVar5 + 0x80599e) + '\x01';
+        }
+      }
+    }
+    uVar8 = uVar8 * 2;
+    local_6 = local_6 + 1;
+  } while (local_6 < 0x10);
+  *(ushort *)(&DAT_00806080 + _fault_status_word_scan_index * 2) = uVar4 | uVar3;
+  return;
+}
+
+
+
+//
+// Function: faultFlagScannerAndProcessor @ 0x00014dc6
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080de76
+void insitePidDtcHandler(undefined4 param_1)
+
+{
+  bool bVar1;
+  short sVar2;
+  byte bVar3;
+  undefined2 *puVar4;
+  
+                    /* From J90280.05 @ 0x011ba0 (confidence: 81%) */
+  bVar1 = false;
+  _DAT_0080de76 = 0;
+  puVar4 = (undefined2 *)&DAT_008067c4;
+  sVar2 = 0;
+  for (bVar3 = 0; (!bVar1 && (bVar3 < 0x7d)); bVar3 = bVar3 + 1) {
+    if ((param_1._1_1_ == *(char *)(puVar4 + 2)) &&
+       (((_DAT_0080de74 & 0x3f) == ((int)(uint)(ushort)puVar4[1] >> 7 & 0x3fU) &&
+        ((&diagnostic_fault_occurrence_count)[sVar2] != '\0')))) {
+      _DAT_0080de76 = *puVar4;
+      bVar1 = true;
+    }
+    sVar2 = sVar2 + 10;
+    puVar4 = puVar4 + 3;
+  }
+  return;
+}
+
+
+
+//
+// Function: initHourMeterSystem @ 0x00014fae
+//
+
+// Variables in this function: DAT_0080dde7, DAT_0080ddf5
+void insiteLiveDataHandler(void)
+
+{
+  byte bVar1;
+  char cVar2;
+  short sVar3;
+  char cVar4;
+  char cVar5;
+  byte bVar6;
+  byte bVar7;
+  char *pcVar8;
+  
+                    /* From J90280.05 @ 0x019a0a (confidence: 75%) */
+  _insite_request_read_pointer = _j1708_receive_buffer_pointer_2_32_dcaa;
+  _insite_response_frame_start = _j1708_transmit_buffer_0_2_32;
+  _insite_response_write_pointer = _j1708_transmit_buffer_0_2_32;
+  DAT_0080dde7 = 1;
+  bVar1 = *_j1708_receive_buffer_pointer_2_32_dcaa;
+  if (bVar1 < 0x15) {
+    DAT_0080ddf5 = (char)_j1708_receive_buffer_pointer_2_32_dcaa;
+    cVar5 = DAT_0080ddf5;
+    _insite_request_read_pointer = (undefined3)((uint)_j1708_receive_buffer_pointer_2_32_dcaa >> 8);
+    _insite_request_read_pointer =
+         (byte *)CONCAT31(_insite_request_read_pointer,DAT_0080ddf5 + '\x01');
+    cVar2 = *_insite_request_read_pointer;
+    _insite_request_read_pointer = (byte *)CONCAT31(_insite_request_read_pointer,cVar5 + '\x02');
+    bVar7 = 1;
+    insite_response_length = 0;
+    responseBufferSpaceCheck();
+    if (insite_response_space_available != '\0') {
+LAB_0001eb76:
+      if (bVar7 < bVar1) {
+        insite_parameter_id = *_insite_request_read_pointer;
+        _insite_request_read_pointer =
+             (byte *)CONCAT31(_insite_request_read_pointer,DAT_0080ddf5 + '\x01');
+        cVar5 = insiteParameterParser();
+        if (cVar5 == '\0') goto LAB_0001eb7c;
+        bVar7 = cVar5 + bVar7;
+        cVar4 = DAT_0080ddf5;
+        if (insite_parameter_id == 0) {
+          insite_parameter_id = *_insite_request_read_pointer;
+          _insite_request_read_pointer =
+               (byte *)CONCAT31(_insite_request_read_pointer,DAT_0080ddf5 + '\x01');
+          insite_parameter_data_size = parameterLookupForInsite();
+          bVar6 = '\x01' << (insite_parameter_id & 7);
+          sVar3 = (short)((int)(uint)insite_parameter_id >> 3);
+          if (((bVar6 & *(byte *)(sVar3 + 0x6134a)) != 0) &&
+             ((bVar6 & (&vp44_fuel_demand_accumulator)[sVar3]) == 0)) {
+            activeParamReadFunction();
+          }
+        }
+        else if (insite_parameter_id == 0x80) {
+          insite_parameter_id = *_insite_request_read_pointer;
+          _insite_request_read_pointer =
+               (byte *)CONCAT31(_insite_request_read_pointer,DAT_0080ddf5 + '\x01');
+          cVar5 = *_insite_request_read_pointer;
+          _insite_request_read_pointer =
+               (byte *)CONCAT31(_insite_request_read_pointer,cVar4 + '\x02');
+          if (cVar5 == -0x80) {
+            insite_parameter_data_size = parameterLookupForInsite();
+            bVar6 = '\x01' << (insite_parameter_id & 7);
+            sVar3 = (short)((int)(uint)insite_parameter_id >> 3);
+            if (((bVar6 & *(byte *)(sVar3 + 0x6134a)) != 0) &&
+               ((bVar6 & (&vp44_fuel_demand_accumulator)[sVar3]) == 0)) {
+              activeParamReadFunction();
+            }
+          }
+        }
+        else if (insite_parameter_id == 0xc3) {
+          _insite_request_read_pointer =
+               (byte *)CONCAT31(_insite_request_read_pointer,DAT_0080ddf5 + '\x01');
+          cVar5 = *_insite_request_read_pointer;
+          _insite_request_read_pointer =
+               (byte *)CONCAT31(_insite_request_read_pointer,cVar4 + '\x02');
+          DAT_0080de25 = *_insite_request_read_pointer;
+          _insite_request_read_pointer =
+               (byte *)CONCAT31(_insite_request_read_pointer,cVar4 + '\x03');
+          insite_dtc_command_action_byte = *_insite_request_read_pointer;
+          _insite_request_read_pointer =
+               (byte *)CONCAT31(_insite_request_read_pointer,cVar4 + '\x04');
+          if ((cVar5 == -0x80) && ((insite_dtc_command_action_byte & 0xc0) < 0xc0)) {
+            bVar6 = 0;
+            pcVar8 = &DAT_0006136c;
+            while( true ) {
+              if ((*pcVar8 == '\0') || (9 < bVar6)) goto LAB_0001eb76;
+              if (cVar2 == *pcVar8) break;
+              bVar6 = bVar6 + 1;
+              pcVar8 = pcVar8 + 1;
+            }
+            _DAT_0080de74 = (ushort)insite_dtc_command_action_byte;
+            if (((insite_dtc_command_action_byte & 0xc0) == 0x80) ||
+               ((insite_dtc_command_action_byte & 0xc0) == 0x40)) {
+              _action_00_no_clear_action_01_clear_inactive_02_clear_active_03_clear_al_0_6 = 1;
+              _fault_to_erase_none = (ushort)DAT_0080de25;
+            }
+            else {
+              insitePidDtcHandler();
+            }
+            insite_parameter_id = 0xc4;
+            insite_parameter_data_size = parameterLookupForInsite();
+            activeParamReadFunction();
+          }
+        }
+        else {
+          _insite_request_read_pointer =
+               (byte *)CONCAT31(_insite_request_read_pointer,cVar5 + -1 + DAT_0080ddf5);
+        }
+        goto LAB_0001eb76;
+      }
+LAB_0001eb7c:
+      responseBufferFinalize();
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: responseBufferSpaceCheck @ 0x0001eb88
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080599c
+void insiteActiveFaultListBuilder(void)
+
+{
+  char cVar1;
+  byte bVar2;
+  
+                    /* From J90280.05 @ 0x01fa00 (confidence: 75%) */
+  if (insite_parameter_data_size < 0x14) {
+    *_insite_response_write_pointer = insite_parameter_id;
+    _insite_response_write_pointer =
+         (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+    cVar1 = (char)_DAT_0080599c;
+    *_insite_response_write_pointer = cVar1;
+    _insite_response_write_pointer =
+         (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+    bVar2 = 1;
+    for (; cVar1 != '\0'; cVar1 = cVar1 + -1) {
+      *_insite_response_write_pointer = (&DGAEFUBF)[(short)(ushort)bVar2] | 0x80;
+      _insite_response_write_pointer =
+           (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+      bVar2 = bVar2 + 1;
+    }
+    insite_response_length = insite_parameter_data_size + insite_response_length;
+    insite_response_space_available = insite_response_space_available - insite_parameter_data_size;
+    return;
+  }
+  cVar1 = insiteMultiFrameResponseBuilder(0xe000f);
+  if (cVar1 == '\0') {
+    bVar2 = 1;
+    while (insite_multiframe_current_index <= insite_multiframe_total_frames) {
+      while (cVar1 = insite_multiframe_frame_bytes_remaining + -1,
+            insite_multiframe_frame_bytes_remaining != '\0') {
+        insite_multiframe_frame_bytes_remaining = cVar1;
+        *_insite_response_write_pointer = (&DGAEFUBF)[(short)(ushort)bVar2] & 0x80;
+        bVar2 = bVar2 + 1;
+        _insite_response_write_pointer =
+             (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+      }
+      if (insite_multiframe_current_index == insite_multiframe_total_frames) {
+        insite_multiframe_frame_bytes_remaining = cVar1;
+        responseBufferFinalize();
+        _insite_response_frame_start = _insite_response_write_pointer;
+        insite_multiframe_current_index = insite_multiframe_current_index + 1;
+        insite_response_length = '\0';
+      }
+      else {
+        insite_multiframe_frame_bytes_remaining = cVar1;
+        insiteMultiFrameContinuation();
+      }
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: insiteFaultDetailBuilder @ 0x00026fea
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080599a, DAT_0080dde7
+void insiteFaultDetailBuilder(void)
+
+{
+  byte bVar1;
+  short sVar2;
+  char cVar3;
+  byte bVar4;
+  byte bVar6;
+  ushort uVar5;
+  ushort uVar7;
+  byte *pbVar8;
+  byte *pbVar9;
+  
+                    /* From J90280.05 @ 0x01fafe (confidence: 70%) */
+  if (insite_parameter_data_size < 0x14) {
+    *_insite_response_write_pointer = insite_parameter_id;
+    _insite_response_write_pointer =
+         (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+    if (DAT_0080dde7 == '\0') {
+      *_insite_response_write_pointer =
+           (insite_fault_change_queue_count + (char)_DAT_00805998) * '\x02';
+      _insite_response_write_pointer =
+           (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+      bVar4 = 1;
+      bVar6 = 0;
+      uVar5 = 1;
+      while ((bVar4 <= DGAEFUBF && (bVar6 < _DAT_00805998))) {
+        sVar2 = (ushort)(&DGAEFUBF)[(short)uVar5] * 6;
+        if (((*(ushort *)(&fault_definition_flags_word + sVar2) & 0x2000) == 0) &&
+           (((&fault_definition_spn_byte)[sVar2] != '\0' &&
+            (('\x01' << ((&fault_definition_spn_byte)[sVar2] & 7) &
+             *(byte *)((short)((int)(uint)(byte)(&fault_definition_spn_byte)[sVar2] >> 3) + 0x6134a)
+             ) != 0)))) {
+          *_insite_response_write_pointer = (&fault_definition_spn_byte)[sVar2];
+          _insite_response_write_pointer =
+               (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01')
+          ;
+          *_insite_response_write_pointer =
+               (byte)((int)(uint)*(ushort *)(&fault_definition_flags_word + sVar2) >> 7) & 0x3f;
+          _insite_response_write_pointer =
+               (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01')
+          ;
+          bVar6 = bVar6 + 1;
+        }
+        bVar4 = bVar4 + 1;
+        uVar5 = (ushort)(byte)((char)uVar5 + 1);
+      }
+      pbVar8 = &insite_fault_change_queue_count + (short)(ushort)insite_fault_change_queue_count;
+      for (; insite_fault_change_queue_count != 0;
+          insite_fault_change_queue_count = insite_fault_change_queue_count - 1) {
+        bVar6 = *pbVar8;
+        *_insite_response_write_pointer = (&fault_definition_spn_byte)[(short)((ushort)bVar6 * 6)];
+        _insite_response_write_pointer =
+             (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+        *_insite_response_write_pointer =
+             (byte)((int)(uint)*(ushort *)
+                                (&fault_definition_flags_word + (short)((ushort)bVar6 * 6)) >> 7) &
+             0x3f | 0x40;
+        _insite_response_write_pointer =
+             (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+        pbVar8 = pbVar8 + -1;
+      }
+      insite_fault_change_queue_count = 0;
+    }
+    else {
+      *_insite_response_write_pointer = ((char)_DAT_0080599a + (char)_DAT_00805998) * '\x03';
+      _insite_response_write_pointer =
+           (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01');
+      bVar4 = 1;
+      bVar6 = 0;
+      uVar5 = 1;
+      while ((bVar4 <= DGAEFUBF && (bVar6 < _DAT_00805998))) {
+        bVar1 = (&DGAEFUBF)[(short)uVar5];
+        sVar2 = (ushort)bVar1 * 6;
+        if (((*(ushort *)(&fault_definition_flags_word + sVar2) & 0x2000) == 0) &&
+           (((&fault_definition_spn_byte)[sVar2] != '\0' &&
+            (('\x01' << ((&fault_definition_spn_byte)[sVar2] & 7) &
+             *(byte *)((short)((int)(uint)(byte)(&fault_definition_spn_byte)[sVar2] >> 3) + 0x6134a)
+             ) != 0)))) {
+          *_insite_response_write_pointer = (&fault_definition_spn_byte)[sVar2];
+          _insite_response_write_pointer =
+               (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01')
+          ;
+          *_insite_response_write_pointer =
+               (byte)((int)(uint)*(ushort *)(&fault_definition_flags_word + sVar2) >> 7) & 0x3f |
+               0x80;
+          _insite_response_write_pointer =
+               (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01')
+          ;
+          *_insite_response_write_pointer =
+               (&diagnostic_fault_occurrence_count)[(short)((ushort)bVar1 * 5) * 2];
+          _insite_response_write_pointer =
+               (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01')
+          ;
+          bVar6 = bVar6 + 1;
+        }
+        bVar4 = bVar4 + 1;
+        uVar5 = (ushort)(byte)((char)uVar5 + 1);
+      }
+      bVar4 = 1;
+      bVar6 = 0;
+      uVar5 = 1;
+      while ((bVar4 <= DGIEFUBF && (bVar6 < _DAT_0080599a))) {
+        bVar1 = (&DGIEFUBF)[(short)uVar5];
+        sVar2 = (ushort)bVar1 * 6;
+        if (((*(ushort *)(&fault_definition_flags_word + sVar2) & 0x2000) == 0) &&
+           ((&fault_definition_spn_byte)[sVar2] != '\0')) {
+          *_insite_response_write_pointer = (&fault_definition_spn_byte)[sVar2];
+          _insite_response_write_pointer =
+               (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01')
+          ;
+          *_insite_response_write_pointer =
+               (byte)((int)(uint)*(ushort *)(&fault_definition_flags_word + sVar2) >> 7) & 0x3f |
+               0xc0;
+          _insite_response_write_pointer =
+               (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01')
+          ;
+          *_insite_response_write_pointer =
+               (&diagnostic_fault_occurrence_count)[(short)((ushort)bVar1 * 5) * 2];
+          _insite_response_write_pointer =
+               (byte *)CONCAT31(_insite_response_write_pointer,insite_response_byte_offset + '\x01')
+          ;
+          bVar6 = bVar6 + 1;
+        }
+        bVar4 = bVar4 + 1;
+        uVar5 = (ushort)(byte)((char)uVar5 + 1);
+      }
+    }
+    insite_response_length = insite_parameter_data_size + insite_response_length;
+    insite_response_space_available = insite_response_space_available - insite_parameter_data_size;
+    return;
+  }
+  if (DAT_0080dde7 == '\0') {
+    cVar3 = insiteMultiFrameResponseBuilder(0xe000e);
+    if (cVar3 == '\0') {
+      uVar5 = 1;
+      bVar4 = 1;
+      bVar6 = 1;
+      while (insite_multiframe_current_index <= insite_multiframe_total_frames) {
+        pbVar8 = &insite_fault_change_queue_count + (short)(ushort)bVar4;
+        while (insite_multiframe_frame_bytes_remaining != '\0') {
+          if ((DGAEFUBF < (byte)uVar5) || (_DAT_00805998 < bVar6)) {
+            if (insite_fault_change_queue_count != 0) {
+              bVar1 = *pbVar8;
+              *_insite_response_write_pointer =
+                   (&fault_definition_spn_byte)[(short)((ushort)bVar1 * 6)];
+              _insite_response_write_pointer =
+                   (byte *)CONCAT31(_insite_response_write_pointer,
+                                    insite_response_byte_offset + '\x01');
+              *_insite_response_write_pointer =
+                   (byte)((int)(uint)*(ushort *)
+                                      (&fault_definition_flags_word + (short)((ushort)bVar1 * 6)) >>
+                         7) & 0x3f | 0x40;
+              _insite_response_write_pointer =
+                   (byte *)CONCAT31(_insite_response_write_pointer,
+                                    insite_response_byte_offset + '\x01');
+              insite_multiframe_frame_bytes_remaining = insite_multiframe_frame_bytes_remaining + -2
+              ;
+              if (bVar4 == insite_fault_change_queue_count) {
+                insite_fault_change_queue_count = 0;
+              }
+              else {
+                pbVar8 = pbVar8 + 1;
+                bVar4 = bVar4 + 1;
+              }
+            }
+          }
+          else {
+            uVar7 = (ushort)(byte)((byte)uVar5 + 1);
+            sVar2 = (ushort)(&DGAEFUBF)[(short)uVar5] * 6;
+            uVar5 = uVar7;
+            if ((((*(ushort *)(&fault_definition_flags_word + sVar2) & 0x2000) == 0) &&
+                ((&fault_definition_spn_byte)[sVar2] != '\0')) &&
+               (('\x01' << ((&fault_definition_spn_byte)[sVar2] & 7) &
+                *(byte *)((short)((int)(uint)(byte)(&fault_definition_spn_byte)[sVar2] >> 3) +
+                         0x6134a)) != 0)) {
+              *_insite_response_write_pointer = (&fault_definition_spn_byte)[sVar2];
+              _insite_response_write_pointer =
+                   (byte *)CONCAT31(_insite_response_write_pointer,
+                                    insite_response_byte_offset + '\x01');
+              *_insite_response_write_pointer =
+                   (byte)((int)(uint)*(ushort *)(&fault_definition_flags_word + sVar2) >> 7) & 0x3f;
+              _insite_response_write_pointer =
+                   (byte *)CONCAT31(_insite_response_write_pointer,
+                                    insite_response_byte_offset + '\x01');
+              bVar6 = bVar6 + 1;
+              insite_multiframe_frame_bytes_remaining = insite_multiframe_frame_bytes_remaining + -2
+              ;
+            }
+          }
+        }
+        if (insite_multiframe_current_index == insite_multiframe_total_frames) {
+          responseBufferFinalize();
+          _insite_response_frame_start = _insite_response_write_pointer;
+          insite_multiframe_current_index = insite_multiframe_current_index + 1;
+          insite_response_length = '\0';
+        }
+        else {
+          insiteMultiFrameContinuation();
+        }
+      }
+      return;
+    }
+  }
+  else {
+    cVar3 = insiteMultiFrameResponseBuilder(0xc000f);
+    if (cVar3 == '\0') {
+      bVar6 = 0;
+      pbVar8 = &DAT_008058d5;
+      uVar5 = _DAT_00805998;
+      while (insite_multiframe_current_index <= insite_multiframe_total_frames) {
+        while (insite_multiframe_frame_bytes_remaining != '\0') {
+          pbVar9 = pbVar8;
+          if ((char)uVar5 == '\0') {
+            pbVar9 = &DAT_008058f5;
+            bVar6 = 0x40;
+            uVar5 = _DAT_0080599a;
+          }
+          pbVar8 = pbVar9 + 1;
+          bVar4 = *pbVar9;
+          sVar2 = (ushort)bVar4 * 6;
+          if ((((*(ushort *)(&fault_definition_flags_word + sVar2) & 0x2000) == 0) &&
+              ((&fault_definition_spn_byte)[sVar2] != '\0')) &&
+             (('\x01' << ((&fault_definition_spn_byte)[sVar2] & 7) &
+              *(byte *)((short)((int)(uint)(byte)(&fault_definition_spn_byte)[sVar2] >> 3) + 0x6134a
+                       )) != 0)) {
+            *_insite_response_write_pointer = (&fault_definition_spn_byte)[sVar2];
+            _insite_response_write_pointer =
+                 (byte *)CONCAT31(_insite_response_write_pointer,
+                                  insite_response_byte_offset + '\x01');
+            *_insite_response_write_pointer =
+                 bVar6 | (byte)((int)(uint)*(ushort *)(&fault_definition_flags_word + sVar2) >> 7) &
+                         0x3f | 0x80;
+            _insite_response_write_pointer =
+                 (byte *)CONCAT31(_insite_response_write_pointer,
+                                  insite_response_byte_offset + '\x01');
+            *_insite_response_write_pointer =
+                 (&diagnostic_fault_occurrence_count)[(short)((ushort)bVar4 * 5) * 2];
+            _insite_response_write_pointer =
+                 (byte *)CONCAT31(_insite_response_write_pointer,
+                                  insite_response_byte_offset + '\x01');
+            uVar5 = (ushort)(byte)((char)uVar5 - 1);
+            insite_multiframe_frame_bytes_remaining = insite_multiframe_frame_bytes_remaining + -3;
+          }
+        }
+        if (insite_multiframe_current_index == insite_multiframe_total_frames) {
+          responseBufferFinalize();
+          _insite_response_frame_start = _j1708_transmit_buffer_0_2_32;
+          _insite_response_write_pointer = _j1708_transmit_buffer_0_2_32;
+          insite_multiframe_current_index = insite_multiframe_current_index + 1;
+          insite_response_length = '\0';
+        }
+        else {
+          insiteMultiFrameContinuation();
+        }
+      }
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: insiteVersionInfoBuilder @ 0x0002758e
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080599a, DAT_0080599c, DAT_0080dde7, DAT_0080de76
+undefined2 parameterLookupForInsite(void)
+
+{
+  short sVar1;
+  
+                    /* From J90280.05 @ 0x0271b0 (confidence: 94%) */
+  if (insite_parameter_id < 0x80) {
+    return 2;
+  }
+  if (insite_parameter_id < 0xc0) {
+    return 3;
+  }
+  if (insite_parameter_id == 0xc1) {
+    return CONCAT11((char)((ushort)_DAT_0080599c >> 8),(char)_DAT_0080599c + '\x02');
+  }
+  if (insite_parameter_id == 0xc2) {
+    if (DAT_0080dde7 == '\0') {
+      return CONCAT11((char)((ushort)_DAT_00805998 >> 8),
+                      (insite_fault_change_queue_count + (char)_DAT_00805998) * '\x02' + '\x02');
+    }
+    sVar1 = (_DAT_0080599a + _DAT_00805998) * 3;
+    return CONCAT11((char)((ushort)sVar1 >> 8),(char)sVar1 + '\x02');
+  }
+  if (insite_parameter_id == 0xc4) {
+    if ((insite_dtc_command_action_byte & 0xc0) != 0) {
+      return 4;
+    }
+    if (_DAT_0080de76 == 0) {
+      return 2;
+    }
+    return 7;
+  }
+  if (insite_parameter_id == 0xea) {
+    return 0x18;
+  }
+  if (insite_parameter_id != 0xed) {
+    if (insite_parameter_id != 0xf3) {
+      return 6;
+    }
+    return 0x1f;
+  }
+  return 0x16;
+}
+
+
+
+//
+// Function: diagnosticServiceDispatcher @ 0x0002eea2
+//
+

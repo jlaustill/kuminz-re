@@ -1,0 +1,69 @@
+=== VARIABLES TO NAME ===
+0x00801e78  (5 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00801e78
+void engineRpmHardwareTimerSetup(void)
+
+{
+  ushort uVar1;
+  undefined4 local_8;
+  
+                    /* From J90280.05 @ 0x0283dc (confidence: 92%) */
+  uVar1 = _engine_rpm_primary;
+  if (_DRTKODMD == 1) {
+    uVar1 = _rpm_value_for_tach_if_normal_input_is_overridden_0_4500;
+  }
+  if ((uVar1 != 0) && (uVar1 < _DAT_00801e78)) {
+    uVar1 = _DAT_00801e78;
+  }
+  if ((uVar1 == 0) || (0x10c5 < _DAT_00808a3e)) {
+    _DAT_0080de40 = 0xffffffff;
+    local_8 = 0xffff;
+  }
+  else {
+    _DAT_0080de40 = ((uint)_DAT_00808a3e * 1000000) / (uint)uVar1;
+    uVar1 = scaleByRatio(16000000,_DAT_0080de40,32000000);
+    local_8 = CONCAT22((short)((int)(uint)uVar1 >> 1),uVar1);
+  }
+  _DAT_00ffffc4 = local_8;
+  return;
+}
+
+
+
+//
+// Function: can1ControllerInit @ 0x00030342
+//
+
+/* WARNING: Removing unreachable block (ram,0x000303c0) */
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_00801e78
+void can1ControllerInit(void)
+
+{
+                    /* From J90280.05 @ 0x0284aa (confidence: 92%) */
+  _DAT_00fffe0a = _DAT_00fffe0a & 0xefff;
+  _DAT_00fffe20 = _DAT_00fffe20 & 0xefff;
+  _DAT_00fffe0c = _DAT_00fffe0c & 0xfff0 | 0xb;
+  _DAT_00ffffc0 = 0x92;
+  _DAT_00ffffc4 = 0xffff;
+  _DAT_00fffe18 = _DAT_00fffe18 & 0xfcff | 0x200;
+  _DAT_00fffe1c = _DAT_00fffe1c & 0xfcff | 0x100;
+  _DAT_00801e78 = (ushort)((int)((uint)_DAT_00808a3e * 0x1e84) >> 10);
+  if (_DAT_00801e78 < _DAT_00808a40) {
+    _DAT_00801e78 = _DAT_00808a40;
+  }
+  return;
+}
+
+
+
+//
+// Function: emptyStubFunction9 @ 0x000303c8
+//
+

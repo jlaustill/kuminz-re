@@ -1,0 +1,189 @@
+=== VARIABLES TO NAME ===
+0x008012c5  (8 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_008012c5
+void vp44CanFrameBuilder(undefined4 param_1)
+
+{
+  undefined1 local_20;
+  undefined1 uStack_1f;
+  undefined1 local_1e;
+  undefined1 uStack_1c;
+  undefined1 uStack_1b;
+  undefined1 uStack_1a;
+  undefined1 uStack_19;
+  undefined1 uStack_18;
+  undefined1 uStack_17;
+  undefined1 uStack_16;
+  undefined1 local_15;
+  undefined4 local_12;
+  undefined2 local_e;
+  undefined1 *local_c;
+  
+                    /* From J90280.05 @ 0x01c440 (confidence: 94%) */
+  local_12 = CONCAT31(CONCAT21(0x18ec,param_1._1_1_),j1939_engine_node_source_address);
+  local_e = 8;
+  local_c = &uStack_1c;
+  uStack_1c = 0x13;
+  uStack_1f = (undefined1)_DAT_008012d0;
+  uStack_1b = uStack_1f;
+  local_20 = (undefined1)((ushort)_DAT_008012d0 >> 8);
+  uStack_1a = local_20;
+  uStack_19 = DAT_008012c5;
+  uStack_18 = 0xff;
+  uStack_17 = 0;
+  local_1e = (undefined1)((uint)param_1 >> 8);
+  uStack_16 = local_1e;
+  local_15 = 0;
+  sendCanSingleFrame(local_12);
+  return;
+}
+
+
+
+//
+// Function: vp44MessageTransmitter @ 0x00022ad8
+//
+
+// Variables in this function: DAT_008012c5
+void vp44FuelTempHandler(undefined4 *param_1)
+
+{
+  int iVar1;
+  undefined1 uVar2;
+  undefined2 in_D0w;
+  char cVar3;
+  undefined2 local_8;
+  short local_6;
+  
+                    /* From J90280.05 @ 0x01c538 (confidence: 94%) */
+  iVar1 = *(int *)((int)param_1 + 6);
+  local_6 = (ushort)*(byte *)(iVar1 + 6) << 8;
+  local_8 = CONCAT11(*(undefined1 *)(iVar1 + 2),*(undefined1 *)(iVar1 + 1));
+  uVar2 = (undefined1)((ushort)in_D0w >> 8);
+  if ((((vp44_multiframe_rx_active == '\x01') && (*(char *)((int)param_1 + 3) != DAT_008012cf)) ||
+      (*(byte *)(iVar1 + 6) != 0xef)) || (0x6a4 < local_8)) {
+    messageErrorHandler(local_6);
+  }
+  else {
+    vp44_multiframe_rx_active = '\x01';
+    _DAT_008012cc = *param_1;
+    _DAT_008012c6 = local_6;
+    DAT_008012c5 = *(byte *)(iVar1 + 3);
+    _DAT_008012d0 = local_8;
+    _DAT_008012ca = 0x70;
+    DAT_008012c8 = 1;
+    DAT_008012c9 = DAT_008012c5;
+    if (5 < DAT_008012c5) {
+      DAT_008012c9 = 5;
+    }
+    cVar3 = vp44MessageTransmitter
+                      (CONCAT22(CONCAT11(uVar2,*(char *)((int)param_1 + 3)),CONCAT11(uVar2,1)),
+                       0xef00);
+    if (cVar3 != '\0') {
+      messageErrorHandler(_DAT_008012c6);
+      vp44_multiframe_rx_active = '\0';
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: vp44MultiFrameResponseHandler @ 0x00022c26
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_008012c5
+void vp44MultiFrameResponseHandler(int param_1)
+
+{
+  byte bVar1;
+  undefined3 uVar2;
+  undefined4 in_D0;
+  char cVar4;
+  int iVar3;
+  byte bVar5;
+  byte bVar6;
+  undefined1 *puVar7;
+  undefined1 *puVar8;
+  
+                    /* From J90280.05 @ 0x01c60e (confidence: 94%) */
+  if (((*(short *)(param_1 + 4) == 8) &&
+      (cVar4 = *(char *)(param_1 + 3), vp44_multiframe_rx_active == '\x01')) &&
+     (cVar4 == DAT_008012cf)) {
+    bVar1 = **(byte **)(param_1 + 6);
+    if (bVar1 == DAT_008012c8) {
+      if (bVar1 == DAT_008012c5) {
+        bVar6 = DAT_008012d1 + bVar1 * -7 + 7;
+      }
+      else {
+        bVar6 = 7;
+      }
+      puVar8 = *(undefined1 **)(param_1 + 6);
+      puVar7 = (undefined1 *)(_DAT_008012d2 + (uint)bVar1 * 7 + -7);
+      for (bVar5 = 0; puVar8 = puVar8 + 1, bVar5 < bVar6; bVar5 = bVar5 + 1) {
+        *puVar7 = *puVar8;
+        puVar7 = puVar7 + 1;
+      }
+      DAT_008012c8 = DAT_008012c8 + 1;
+      DAT_008012c9 = DAT_008012c9 + -1;
+      if (DAT_008012c9 == '\0') {
+        if (bVar1 == DAT_008012c5) {
+          vp44CanFrameBuilder(_DAT_008012c6);
+          vp44_multiframe_rx_active = 0;
+          _DAT_008012d2 = 0x8012de;
+          diagnosticServiceDispatcher(&DAT_008012cc);
+          return;
+        }
+        iVar3 = ((uint)DAT_008012c5 - (uint)DAT_008012c8) + 1;
+        if (iVar3 < 6) {
+          DAT_008012c9 = (DAT_008012c5 - DAT_008012c8) + '\x01';
+          iVar3 = CONCAT31((int3)((uint)iVar3 >> 8),DAT_008012c9);
+        }
+        else {
+          DAT_008012c9 = '\x05';
+        }
+        uVar2 = (undefined3)((uint)iVar3 >> 8);
+        cVar4 = vp44MessageTransmitter
+                          (CONCAT22((short)CONCAT31(uVar2,cVar4),(short)CONCAT31(uVar2,DAT_008012c8)
+                                   ),_DAT_008012c6);
+        if (cVar4 != '\0') {
+          messageErrorHandler(_DAT_008012c6);
+          vp44_multiframe_rx_active = 0;
+          return;
+        }
+      }
+      else {
+        _DAT_008012ca = 0x19;
+      }
+    }
+    else {
+      uVar2 = (undefined3)((uint)in_D0 >> 8);
+      cVar4 = vp44MessageTransmitter
+                        (CONCAT22((short)CONCAT31(uVar2,cVar4),(short)CONCAT31(uVar2,DAT_008012c8)),
+                         _DAT_008012c6);
+      if (cVar4 != '\0') {
+        messageErrorHandler(_DAT_008012c6);
+        vp44_multiframe_rx_active = 0;
+        return;
+      }
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: diagnosticStatusRequestHandler @ 0x00022d8e
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

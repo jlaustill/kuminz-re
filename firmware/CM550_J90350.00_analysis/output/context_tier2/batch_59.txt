@@ -1,0 +1,545 @@
+=== VARIABLES TO NAME ===
+0x00803fd6  (9 references)
+0x00803fde  (9 references)
+0x00803fe2  (15 references)
+0x00803fe4  (12 references)
+0x00803fe6  (10 references)
+0x00803fea  (5 references)
+0x00803fec  (8 references)
+
+Total: 7 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00803fd6, DAT_00803fde
+undefined4 eepromCalibrationWriteSecondary(void)
+
+{
+  int iVar1;
+  short sVar3;
+  undefined4 uVar2;
+  ushort uVar4;
+  byte bVar5;
+  char in_XF;
+  char in_NF;
+  char in_ZF;
+  char in_VF;
+  byte in_CF;
+  char cVar6;
+  ushort uVar7;
+  short local_6;
+  
+                    /* From J90280.05 @ 0x00ef80 (confidence: 80%) */
+  if ((_DAT_00803fde + _DAT_00803fd6 & 1U) == 0) {
+    local_6 = _DAT_00803fd6 + 1;
+  }
+  else {
+    local_6 = _DAT_00803fd6 + 2;
+  }
+  parameterCircularBufferWrite
+            (0x3fd6,(short)&local_6,in_XF << 4 | in_NF << 3 | in_ZF << 2 | in_VF << 1 | in_CF);
+  uVar4 = 0;
+  while ((uVar4 < 5000 && (_DAT_00803fd6 != local_6))) {
+    emptyPlaceholderFunction();
+    watchdogServiceLoop();
+    uVar4 = uVar4 + 1;
+  }
+  iVar1 = FUN_0001c484(0x4000,0);
+  if (iVar1 == 0) {
+    DAT_00fffa27 = 0xaa;
+    DAT_00ffd00f = 0xaa;
+    sVar3 = flashProgramFromRam(0x4000,0x4f96);
+    if (sVar3 == 1) {
+      DAT_00fffa27 = 0xaa;
+      DAT_00ffd00f = 0xaa;
+      sVar3 = flashProgramFromRam(0x4004,0x4f9a);
+      cVar6 = sVar3 == 0;
+      if (sVar3 == 1) {
+        DAT_00fffa27 = 0xaa;
+        DAT_00ffd00f = 0xaa;
+        local_6 = arrayRangeSum(0x4000,0x55b2);
+        DAT_00fffa27 = 0xaa;
+        DAT_00ffd00f = 0xaa;
+        uVar7 = (ushort)(byte)(cVar6 << 4 | 8);
+        parameterCircularBufferWrite(0x3b12,(short)&local_6,uVar7);
+        uVar4 = 0;
+        while ((uVar4 < 5000 && (_DAT_00803b12 != local_6))) {
+          emptyPlaceholderFunction();
+          watchdogServiceLoop();
+          uVar4 = uVar4 + 1;
+        }
+        parameterCircularBufferWrite(0x3fd8,0x3fd6,uVar7);
+        uVar4 = 0;
+        while ((uVar4 < 5000 && (_DAT_00803fd8 != _DAT_00803fd6))) {
+          emptyPlaceholderFunction();
+          watchdogServiceLoop();
+          uVar4 = uVar4 + 1;
+        }
+        _calibration_bank_active = 1;
+        canMemoryPointerTableInit();
+        uVar2 = 0;
+      }
+      else {
+        uVar2 = 2;
+      }
+    }
+    else {
+      uVar2 = 2;
+    }
+  }
+  else {
+    bVar5 = 0;
+    while (bVar5 < 4) {
+      DAT_00fffa27 = 0xaa;
+      DAT_00ffd00f = 0xaa;
+      sampleDiscreteInputPins();
+      watchdogServiceLoop();
+      bVar5 = bVar5 + 1;
+    }
+    if ((value_used_for_monitoring_switch_data_0_1_2089_10_24 & 1) == 0) {
+      uVar2 = 2;
+    }
+    else {
+      uVar2 = 1;
+    }
+  }
+  return uVar2;
+}
+
+
+
+//
+// Function: FUN_0001125a @ 0x0001125a
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_00803fd6, DAT_00803fde
+undefined4 FUN_0001125a(void)
+
+{
+  int iVar1;
+  short sVar3;
+  undefined4 uVar2;
+  ushort uVar4;
+  byte bVar5;
+  char in_XF;
+  char in_NF;
+  char in_ZF;
+  char in_VF;
+  byte in_CF;
+  char cVar6;
+  ushort uVar7;
+  short local_6;
+  
+  if ((_DAT_00803fde + _DAT_00803fd6 & 1U) == 0) {
+    local_6 = _DAT_00803fde + 2;
+  }
+  else {
+    local_6 = _DAT_00803fde + 1;
+  }
+  parameterCircularBufferWrite
+            (0x3fde,(short)&local_6,in_XF << 4 | in_NF << 3 | in_ZF << 2 | in_VF << 1 | in_CF);
+  uVar4 = 0;
+  while ((uVar4 < 5000 && (_DAT_00803fde != local_6))) {
+    emptyPlaceholderFunction();
+    watchdogServiceLoop();
+    uVar4 = uVar4 + 1;
+  }
+  iVar1 = FUN_0001c484(0x6000,0);
+  if (iVar1 == 0) {
+    DAT_00fffa27 = 0xaa;
+    DAT_00ffd00f = 0xaa;
+    sVar3 = flashProgramFromRam(0x6000,0x4f96);
+    if (sVar3 == 1) {
+      DAT_00fffa27 = 0xaa;
+      DAT_00ffd00f = 0xaa;
+      sVar3 = flashProgramFromRam(0x6004,0x4f9a);
+      cVar6 = sVar3 == 0;
+      if (sVar3 == 1) {
+        DAT_00fffa27 = 0xaa;
+        DAT_00ffd00f = 0xaa;
+        local_6 = arrayRangeSum(0x6000,0x75b2);
+        DAT_00fffa27 = 0xaa;
+        DAT_00ffd00f = 0xaa;
+        uVar7 = (ushort)(byte)(cVar6 << 4 | 8);
+        parameterCircularBufferWrite(0x3b14,(short)&local_6,uVar7);
+        uVar4 = 0;
+        while ((uVar4 < 5000 && (_DAT_00803b14 != local_6))) {
+          emptyPlaceholderFunction();
+          watchdogServiceLoop();
+          uVar4 = uVar4 + 1;
+        }
+        parameterCircularBufferWrite(0x3fe0,0x3fde,uVar7);
+        uVar4 = 0;
+        while ((uVar4 < 5000 && (_DAT_00803fe0 != _DAT_00803fde))) {
+          emptyPlaceholderFunction();
+          watchdogServiceLoop();
+          uVar4 = uVar4 + 1;
+        }
+        _calibration_bank_active = 2;
+        canMemoryPointerTableInit();
+        uVar2 = 0;
+      }
+      else {
+        uVar2 = 2;
+      }
+    }
+    else {
+      uVar2 = 2;
+    }
+  }
+  else {
+    bVar5 = 0;
+    while (bVar5 < 4) {
+      DAT_00fffa27 = 0xaa;
+      DAT_00ffd00f = 0xaa;
+      sampleDiscreteInputPins();
+      watchdogServiceLoop();
+      bVar5 = bVar5 + 1;
+    }
+    if ((value_used_for_monitoring_switch_data_0_1_2089_10_24 & 1) == 0) {
+      uVar2 = 2;
+    }
+    else {
+      uVar2 = 1;
+    }
+  }
+  return uVar2;
+}
+
+
+
+//
+// Function: validateRedundantSensors @ 0x000114d4
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_00803fd6, DAT_00803fde, DAT_00803fe2, DAT_00803fe4, DAT_00803fe6, DAT_00803fea, DAT_00803fec
+void validateRedundantSensors(void)
+
+{
+  short sVar1;
+  ushort uVar2;
+  bool bVar3;
+  bool bVar4;
+  bool bVar5;
+  bool bVar6;
+  bool bVar7;
+  ushort uVar8;
+  
+                    /* From J90280.05 @ 0x00f1ae (confidence: 83%) */
+  _calibration_bank_active = 0;
+  if ((DAT_000055b2 == -0x5e5f) && (DAT_000075b2 == -0x5e5f)) {
+    calibrationDataCopyWithChecksum();
+    _DAT_00806548 = 0;
+  }
+  else if ((_DAT_00803fd6 != _DAT_00803fd8) || (_DAT_00803fde != _DAT_00803fe0)) {
+    if (_DAT_00803fd6 != _DAT_00803fd8) {
+      if (_DAT_00803fde == _DAT_00803fe0) {
+        calibrationDataCopySecondary();
+      }
+    }
+    else {
+      calibrationDataCopyWithChecksum();
+    }
+  }
+  else if ((_DAT_00803fde + _DAT_00803fd6 & 1U) == 0) {
+    sVar1 = calibrationDataCopySecondary();
+    if (sVar1 != 0) {
+      calibrationDataCopyWithChecksum();
+    }
+  }
+  else {
+    sVar1 = calibrationDataCopyWithChecksum();
+    if (sVar1 != 0) {
+      calibrationDataCopySecondary();
+    }
+  }
+  if (_calibration_bank_active == 0) {
+LAB_000115ca:
+    _status_32_word_bit_mapped_system_error_status_word_0_0_1 =
+         _status_32_word_bit_mapped_system_error_status_word_0_0_1 | 0x1000;
+    _fault_first_occurrence_flags_word_0 = _fault_first_occurrence_flags_word_0 | 0x1000;
+  }
+  else {
+    if ((_status_32_word_bit_mapped_system_error_status_word_0_0_1 & 0x1000) != 0) {
+      if ((_fault_confirm_status_word_0 & 0x1000) != 0) {
+        if (_flag_indicating_if_engine_should_be_ran_if_all_powerdown_da_true_false == 0)
+        goto LAB_000115ca;
+      }
+    }
+    _status_32_word_bit_mapped_system_error_status_word_0_0_1 =
+         _status_32_word_bit_mapped_system_error_status_word_0_0_1 & 0xefff;
+  }
+  if ((((_status_32_word_bit_mapped_system_error_status_word_0_0_1 & 0x1000) == 0) ||
+      ((_fault_confirm_status_word_0 & 0x1000) == 0)) ||
+     (_flag_indicating_if_engine_should_be_ran_if_all_powerdown_da_true_false != 0)) {
+    _engine_startup_inhibit_true_false = 0;
+  }
+  else {
+    _engine_startup_inhibit_true_false = 1;
+  }
+  bVar7 = _DAT_00803fe2 < _DAT_00803fe4;
+  bVar3 = (short)(_DAT_00803fe2 - _DAT_00803fe4) < 0;
+  if (_DAT_00803fe2 == _DAT_00803fe4) {
+    uVar8 = (ushort)(byte)(bVar7 << 4 | bVar3 << 3 | 4U | SBORROW2(_DAT_00803fe2,_DAT_00803fe4) << 1
+                          | bVar7);
+    _hour_meter_tick_divider = 0;
+    parameterCircularBufferWrite(&DAT_00803fe6,0x1d2,uVar8);
+    uVar2 = 0;
+    while ((uVar2 < 5000 && (_DAT_00803fe6 != _hour_meter_tick_divider))) {
+      emptyPlaceholderFunction();
+      watchdogServiceLoop();
+      uVar2 = uVar2 + 1;
+    }
+    _hour_meter_tick_divider = _DAT_00803fec + 1;
+    parameterCircularBufferWrite(&DAT_00803fec,0x1d2);
+    uVar2 = 0;
+    while ((uVar2 < 5000 && (_DAT_00803fec != _hour_meter_tick_divider))) {
+      emptyPlaceholderFunction();
+      watchdogServiceLoop();
+      uVar2 = uVar2 + 1;
+    }
+    bVar7 = (uVar8 & 0x10) != 0;
+    bVar4 = (uVar8 & 8) != 0;
+    bVar5 = (uVar8 & 4) != 0;
+    bVar6 = (uVar8 & 2) != 0;
+    bVar3 = (uVar8 & 1) != 0;
+    _status_32_word_bit_mapped_system_error_status_word_0_0_1 =
+         _status_32_word_bit_mapped_system_error_status_word_0_0_1 & 0xf7ff;
+  }
+  else {
+    uVar8 = (ushort)(byte)(bVar7 << 4 | bVar3 << 3 | SBORROW2(_DAT_00803fe2,_DAT_00803fe4) << 1 |
+                          bVar7);
+    _hour_meter_tick_divider = _DAT_00803fe6 + 1;
+    parameterCircularBufferWrite(&DAT_00803fe6,0x1d2,uVar8);
+    uVar2 = 0;
+    while ((uVar2 < 5000 && (_DAT_00803fe6 != _hour_meter_tick_divider))) {
+      emptyPlaceholderFunction();
+      watchdogServiceLoop();
+      uVar2 = uVar2 + 1;
+    }
+    _hour_meter_tick_divider = _DAT_00803fea + 1;
+    parameterCircularBufferWrite(&DAT_00803fea,0x1d2,uVar8);
+    uVar2 = 0;
+    while ((uVar2 < 5000 && (_DAT_00803fea != _hour_meter_tick_divider))) {
+      emptyPlaceholderFunction();
+      watchdogServiceLoop();
+      uVar2 = uVar2 + 1;
+    }
+    bVar7 = _DAT_00803fe6 < _number_of_consecutive_occurances_of_powerdown_data_lost_to_set_1_255;
+    bVar6 = SBORROW2(_DAT_00803fe6,
+                     _number_of_consecutive_occurances_of_powerdown_data_lost_to_set_1_255);
+    bVar4 = (short)(_DAT_00803fe6 -
+                   _number_of_consecutive_occurances_of_powerdown_data_lost_to_set_1_255) < 0;
+    bVar5 = _DAT_00803fe6 == _number_of_consecutive_occurances_of_powerdown_data_lost_to_set_1_255;
+    bVar3 = bVar7;
+    if (_number_of_consecutive_occurances_of_powerdown_data_lost_to_set_1_255 < _DAT_00803fe6) {
+      _status_32_word_bit_mapped_system_error_status_word_0_0_1 =
+           _status_32_word_bit_mapped_system_error_status_word_0_0_1 | 0x800;
+      _fault_first_occurrence_flags_word_0 = _fault_first_occurrence_flags_word_0 | 0x800;
+    }
+    else {
+      _status_32_word_bit_mapped_system_error_status_word_0_0_1 =
+           _status_32_word_bit_mapped_system_error_status_word_0_0_1 & 0xf7ff;
+    }
+  }
+  _hour_meter_tick_divider = _DAT_00803fea + _DAT_00803fec;
+  parameterCircularBufferWrite
+            (&DAT_00803fe2,0x1d2,bVar7 << 4 | bVar4 << 3 | bVar5 << 2 | bVar6 << 1 | bVar3);
+  uVar2 = 0;
+  while ((uVar2 < 5000 && (_DAT_00803fe2 != _hour_meter_tick_divider))) {
+    emptyPlaceholderFunction();
+    watchdogServiceLoop();
+    uVar2 = uVar2 + 1;
+  }
+  return;
+}
+
+
+
+//
+// Function: firmwareDataCopyToWorkingMemory @ 0x000117ec
+//
+
+// Variables in this function: DAT_00803fe2, DAT_00803fea, DAT_00803fec
+void vp44StatusInitAndWait(void)
+
+{
+  short sVar1;
+  ushort uVar2;
+  char in_XF;
+  char cVar3;
+  char cVar4;
+  char cVar5;
+  byte bVar6;
+  ushort uVar7;
+  short local_6;
+  
+                    /* From J90280.05 @ 0x020de4 (confidence: 100%) */
+  DAT_00fffa27 = 0xaa;
+  DAT_00ffd00f = 0xaa;
+  cVar3 = '\x01';
+  cVar4 = '\0';
+  cVar5 = '\0';
+  bVar6 = 0;
+  initVP44StatusMonitoring();
+  uVar7 = (ushort)(byte)(in_XF << 4 | cVar3 << 3 | cVar4 << 2 | cVar5 << 1 | bVar6);
+  local_6 = _DAT_00803fec + 1;
+  parameterCircularBufferWrite(&DAT_00803fec,(short)&local_6,uVar7);
+  uVar2 = 0;
+  while ((uVar2 < 1000 && (_DAT_00803fec != local_6))) {
+    emptyPlaceholderFunction();
+    watchdogServiceLoop();
+    uVar2 = uVar2 + 1;
+  }
+  local_6 = _DAT_00803fea + _DAT_00803fec;
+  parameterCircularBufferWrite(&DAT_00803fe2,(short)&local_6,uVar7);
+  uVar2 = 0;
+  while ((uVar2 < 1000 && (_DAT_00803fe2 != local_6))) {
+    emptyPlaceholderFunction();
+    sVar1 = 0;
+    do {
+      uVar7 = 0;
+      do {
+        DAT_00fffa27 = 0xaa;
+        DAT_00ffd00f = 0xaa;
+        uVar7 = uVar7 + 1;
+      } while (uVar7 < 0xa0);
+      sVar1 = sVar1 + 1;
+    } while (sVar1 == 0);
+    uVar2 = uVar2 + 1;
+  }
+  DAT_00fffa27 = 0xaa;
+  DAT_00ffd00f = 0xaa;
+  FUN_00028978();
+  return;
+}
+
+
+
+//
+// Function: FUN_00027c20 @ 0x00027c20
+//
+
+// Variables in this function: DAT_00803fe2, DAT_00803fe4
+void FUN_00027cd0(undefined4 param_1)
+
+{
+  short sVar1;
+  byte bVar2;
+  ushort uVar3;
+  ushort uVar4;
+  
+  if (param_1._1_1_ == '\x01') {
+    bVar2 = 1;
+    do {
+      DAT_00fffa27 = 0xaa;
+      DAT_00ffd00f = 0xaa;
+      sVar1 = eepromCalibrationWriteSecondary();
+      if (sVar1 != 2) {
+        bVar2 = 3;
+      }
+      bVar2 = bVar2 + 1;
+    } while (bVar2 < 4);
+    if (sVar1 == 2) {
+      _DAT_00803fe8 = 1;
+      if (_enable_to_protects_parameter_block_data_at_powerdown_enabled_disabled == 0) {
+        bVar2 = 1;
+        do {
+          DAT_00fffa27 = 0xaa;
+          DAT_00ffd00f = 0xaa;
+          sVar1 = FUN_0001125a();
+          if (sVar1 != 2) {
+            bVar2 = 3;
+          }
+          bVar2 = bVar2 + 1;
+        } while (bVar2 < 4);
+      }
+    }
+    else {
+      _DAT_00803fe8 = 0;
+    }
+  }
+  else {
+    bVar2 = 1;
+    do {
+      DAT_00fffa27 = 0xaa;
+      DAT_00ffd00f = 0xaa;
+      sVar1 = FUN_0001125a();
+      if (sVar1 != 2) {
+        bVar2 = 3;
+      }
+      bVar2 = bVar2 + 1;
+    } while (bVar2 < 4);
+    if (sVar1 == 2) {
+      _DAT_00803fe8 = 1;
+      if (_enable_to_protects_parameter_block_data_at_powerdown_enabled_disabled == 0) {
+        bVar2 = 1;
+        do {
+          DAT_00fffa27 = 0xaa;
+          DAT_00ffd00f = 0xaa;
+          sVar1 = eepromCalibrationWriteSecondary();
+          if (sVar1 != 2) {
+            bVar2 = 3;
+          }
+          bVar2 = bVar2 + 1;
+        } while (bVar2 < 4);
+      }
+    }
+    else {
+      _DAT_00803fe8 = 0;
+    }
+  }
+  DAT_00fffa27 = 0xaa;
+  DAT_00ffd00f = 0xaa;
+  if (sVar1 == 1) {
+    vp44StatusInitAndWait();
+  }
+  if (_DAT_00803fe2 != _DAT_00803fe4) {
+    parameterCircularBufferWrite
+              (&DAT_00803fe4,0x3fe2,
+               (_DAT_00803fe2 < _DAT_00803fe4) << 4 |
+               ((short)(_DAT_00803fe2 - _DAT_00803fe4) < 0) << 3 |
+               SBORROW2(_DAT_00803fe2,_DAT_00803fe4) << 1 | _DAT_00803fe2 < _DAT_00803fe4);
+    uVar4 = 0;
+    while( true ) {
+      DAT_00fffa27 = 0xaa;
+      DAT_00ffd00f = 0xaa;
+      if ((999 < uVar4) || (_DAT_00803fe2 == _DAT_00803fe4)) break;
+      emptyPlaceholderFunction();
+      sVar1 = 0;
+      do {
+        uVar3 = 0;
+        do {
+          uVar3 = uVar3 + 1;
+        } while (uVar3 < 0xa0);
+        sVar1 = sVar1 + 1;
+      } while (sVar1 == 0);
+      uVar4 = uVar4 + 1;
+    }
+  }
+  bVar2 = 0;
+  while (bVar2 < 4) {
+    DAT_00fffa27 = 0xaa;
+    DAT_00ffd00f = 0xaa;
+    sampleDiscreteInputPins();
+    watchdogServiceLoop();
+    bVar2 = bVar2 + 1;
+  }
+  if ((value_used_for_monitoring_switch_data_0_1_2089_10_24 & 1) != 0) {
+    vp44StatusInitAndWait();
+  }
+  return;
+}
+
+
+
+//
+// Function: FUN_00027f9c @ 0x00027f9c
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

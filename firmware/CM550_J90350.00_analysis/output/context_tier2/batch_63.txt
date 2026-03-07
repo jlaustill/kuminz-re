@@ -1,0 +1,278 @@
+=== VARIABLES TO NAME ===
+0x008049f4  (9 references)
+0x00804a00  (7 references)
+0x00804a02  (7 references)
+
+Total: 3 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00804a00, DAT_00804a02
+ushort FUN_00031496(void)
+
+{
+  ushort uVar1;
+  
+  uVar1 = _feature_enable_flags_word & 0x10;
+  if (((uVar1 != 0) && (_smoke_limiter_output_value != 1)) && (_trending_data_capture_active == 1))
+  {
+    if ((_DAT_00808a80 < _current_engine_rpm_filtered) ||
+       (_current_engine_rpm_filtered <= _rpm_divisor_value)) {
+      _DAT_00801e98 = 0;
+    }
+    else {
+      _DAT_00801e98 = 1;
+    }
+    if ((_upper_limit_at_which_loading_trigger_is_satisfied_in_trendin_0_127_5 <
+         _percent_load_at_current_speed) ||
+       (_percent_load_at_current_speed <=
+        _lower_limit_at_which_loading_trigger_is_satisfied_in_trendin_0_127_5)) {
+      _DAT_00801e9a = 0;
+    }
+    else {
+      _DAT_00801e9a = 1;
+    }
+    if ((_DAT_00808a88 < _filtered_and_linearized_intake_manifold_temperature_50_to_293) ||
+       (_filtered_and_linearized_intake_manifold_temperature_50_to_293 <= _DAT_00808a8a)) {
+      _DAT_00801e9c = 0;
+    }
+    else {
+      _DAT_00801e9c = 1;
+    }
+    if ((_DAT_00808a8c < _filtered_and_linearized_coolant_temperature_50_to_293) ||
+       (_filtered_and_linearized_coolant_temperature_50_to_293 <= _DAT_00808a8e)) {
+      _DAT_00801e9e = 0;
+    }
+    else {
+      _DAT_00801e9e = 1;
+    }
+    uVar1 = _percent_load_at_current_speed;
+    if ((((_DAT_00801e98 == 0) || (_DAT_00801e9a == 0)) || (_DAT_00801e9c == 0)) ||
+       (_DAT_00801e9e == 0)) {
+      _DAT_00804a08 = 0;
+      _DAT_00804a00 = 0;
+      _DAT_00804a02 = 0;
+    }
+    else {
+      _DAT_00804a08 = 1;
+      if (_DAT_00804a02 == 0) {
+        _DAT_00804a00 = _DAT_00804a00 + 1;
+        uVar1 = _time_that_trigger_must_be_satisfied_to_allow_trending_data_co_0_3600 * 10;
+        if (uVar1 == _DAT_00804a00) {
+          _DAT_00804a02 = 1;
+          return uVar1;
+        }
+      }
+    }
+  }
+  return uVar1;
+}
+
+
+
+//
+// Function: FUN_000315be @ 0x000315be
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_008049f4, DAT_00804a00, DAT_00804a02
+void FUN_000315be(void)
+
+{
+  bool bVar1;
+  short sVar2;
+  byte bVar3;
+  ushort uVar4;
+  
+  _DAT_00801ea0 = _DAT_00801ea0 + 1;
+  if (((_DAT_00801ea0 == 300) && (_DAT_00801ea0 = 0, (_feature_enable_flags_word & 0x10) != 0)) &&
+     (_smoke_limiter_output_value != 1)) {
+    if (_DAT_008049f4 == 0) {
+      _DAT_00804a16 = _DAT_0080617a;
+    }
+    if (_trending_total_sample_count < 3) {
+      uVar4 = 2000;
+    }
+    else {
+      uVar4 = _DAT_00808a7c * 0x3c;
+    }
+    if (_trending_sample_phase_counter == 0) {
+      _DAT_008049f4 = _DAT_008049f4 + 1;
+      if (uVar4 == _DAT_008049f4) {
+        _DAT_008049f6 = uVar4 / 10;
+        _trending_sample_phase_counter = 1;
+      }
+    }
+    else {
+      _trending_sample_phase_counter = _trending_sample_phase_counter + 1;
+      if (_trending_sample_phase_counter < _DAT_008049f6) {
+        _trending_data_capture_active = 1;
+      }
+      else {
+        _trending_data_capture_active = 0;
+      }
+    }
+    _output_control_countdown_timer = _output_control_countdown_timer + 1;
+    _engine_run_counter_snapshot_1 =
+         _duty_cycle_monitor_calculated_load_factor_0_0_130_0 + _engine_run_counter_snapshot_1;
+    bVar1 = false;
+    bVar3 = 0;
+    sVar2 = 0;
+    do {
+      if (((&diagnostic_fault_status_table)[sVar2] == '\x01') ||
+         ((&diagnostic_fault_status_table)[sVar2] == '\x03')) {
+        bVar1 = true;
+      }
+      sVar2 = sVar2 + 10;
+      bVar3 = bVar3 + 1;
+    } while (bVar3 < 0x7d);
+    if (bVar1) {
+      if ((_trending_data_capture_active == 0) && (_DAT_00804a06 == 1)) {
+        *(undefined2 *)(&histogram_stored_ticks + (short)(_trending_write_index * 7) * 2) = 0;
+        *(undefined2 *)(&engine_runtime_total_counter + (short)(_trending_write_index * 7) * 2) = 0;
+        *(undefined2 *)((short)(_trending_write_index * 7) * 2 + 0x804a1e) = 0;
+        *(undefined2 *)(&runtime_histogram_array_1 + (short)(_trending_write_index * 7) * 2) = 0;
+        *(undefined2 *)((short)(_trending_write_index * 7) * 2 + 0x804a22) = 0;
+        _DAT_008049f0 = _time_that_the_engine_is_not_in_stop_state_0_2_29 & 0xffffff00;
+        _DAT_00804a12 = _fueling_value_at_100_throttle_0_100 & 0xff00;
+        *(uint *)((short)(_trending_write_index * 7) * 2 + 0x804a24) =
+             _DAT_008049f0 | (int)(uint)_DAT_00804a12 >> 8;
+        _output_control_countdown_timer = 0;
+        _trending_write_index = _trending_write_index + 1;
+        if (_trending_write_index ==
+            _user_specified_number_of_engine_data_samples_taken_by_trending_f_0_100) {
+          _trending_write_index = 0;
+        }
+        _trending_total_sample_count = _trending_total_sample_count + 1;
+        if (_user_specified_number_of_engine_data_samples_taken_by_trending_f_0_100 <=
+            _trending_total_sample_count) {
+          _trending_total_sample_count = 3;
+          _trending_write_index = _trending_write_index + 3;
+          if (_user_specified_number_of_engine_data_samples_taken_by_trending_f_0_100 <=
+              _trending_write_index) {
+            _trending_write_index =
+                 _trending_write_index -
+                 _user_specified_number_of_engine_data_samples_taken_by_trending_f_0_100;
+          }
+        }
+        _DAT_008049f4 = 0;
+        _trending_sample_phase_counter = 0;
+        _DAT_00804a00 = 0;
+        _DAT_00804a02 = 0;
+        _trending_data_capture_active = 0;
+        _engine_run_counter_snapshot_1 = 0;
+      }
+    }
+    else {
+      if ((_trending_data_capture_active == 1) && (_DAT_00804a02 != 0)) {
+        DAT_00801ea2 = '\x01';
+        *(undefined2 *)(&histogram_stored_ticks + (short)(_trending_write_index * 7) * 2) =
+             _flitered_and_linearized_oil_pressure_0_100;
+        *(undefined2 *)(&engine_runtime_total_counter + (short)(_trending_write_index * 7) * 2) =
+             _boost_pressure_0_100;
+        *(undefined2 *)((short)(_trending_write_index * 7) * 2 + 0x804a1e) =
+             _filtered_and_linearized_coolant_temperature_50_to_293;
+      }
+      if ((_trending_data_capture_active == 0) && (_DAT_00804a06 == 1)) {
+        if ((_DAT_00801e98 == 0) ||
+           (((_DAT_00801e9a != 0 || (_DAT_00801e9c == 0)) || (_DAT_00801e9e == 0)))) {
+          *(undefined2 *)(&histogram_stored_ticks + (short)(_trending_write_index * 7) * 2) = 0;
+        }
+        else {
+          *(undefined2 *)(&histogram_stored_ticks + (short)(_trending_write_index * 7) * 2) =
+               _flitered_and_linearized_oil_pressure_0_100;
+        }
+        DAT_00801ea2 = '\x01';
+        *(undefined2 *)(&engine_runtime_total_counter + (short)(_trending_write_index * 7) * 2) = 0;
+        *(undefined2 *)((short)(_trending_write_index * 7) * 2 + 0x804a1e) = 0;
+      }
+      if (DAT_00801ea2 != '\0') {
+        if ((uint)_trending_sample_phase_counter + (uint)_DAT_008049f4 == 0) {
+          _engine_run_counter_snapshot_0 = 0;
+        }
+        else {
+          _engine_run_counter_snapshot_0 =
+               (undefined2)
+               ((uint)(_DAT_0080617a - _DAT_00804a16) /
+               (((uint)_trending_sample_phase_counter + (uint)_DAT_008049f4) / 0x3c));
+        }
+        *(undefined2 *)(&runtime_histogram_array_1 + (short)(_trending_write_index * 7) * 2) =
+             _engine_run_counter_snapshot_0;
+        _engine_run_counter_snapshot_2 =
+             (undefined2)(_engine_run_counter_snapshot_1 / _output_control_countdown_timer);
+        *(undefined2 *)((short)(_trending_write_index * 7) * 2 + 0x804a22) =
+             _engine_run_counter_snapshot_2;
+        _DAT_008049f0 = _time_that_the_engine_is_not_in_stop_state_0_2_29 & 0xffffff00;
+        _DAT_00804a12 = _fueling_value_at_100_throttle_0_100 & 0xff00;
+        *(uint *)((short)(_trending_write_index * 7) * 2 + 0x804a24) =
+             _DAT_008049f0 | (int)(uint)_DAT_00804a12 >> 8;
+        _output_control_countdown_timer = 0;
+        _trending_write_index = _trending_write_index + 1;
+        if (_trending_write_index ==
+            _user_specified_number_of_engine_data_samples_taken_by_trending_f_0_100) {
+          _trending_write_index = 0;
+        }
+        _trending_total_sample_count = _trending_total_sample_count + 1;
+        if (_user_specified_number_of_engine_data_samples_taken_by_trending_f_0_100 <=
+            _trending_total_sample_count) {
+          _trending_total_sample_count = 3;
+          _trending_write_index = _trending_write_index + 3;
+          if (_user_specified_number_of_engine_data_samples_taken_by_trending_f_0_100 <=
+              _trending_write_index) {
+            _trending_write_index =
+                 _trending_write_index -
+                 _user_specified_number_of_engine_data_samples_taken_by_trending_f_0_100;
+          }
+        }
+        _DAT_008049f4 = 0;
+        _trending_sample_phase_counter = 0;
+        _DAT_00804a00 = 0;
+        _DAT_00804a02 = 0;
+        _trending_data_capture_active = 0;
+        _engine_run_counter_snapshot_1 = 0;
+      }
+    }
+    _DAT_00804a06 = _trending_data_capture_active;
+    DAT_00801ea2 = '\0';
+  }
+  return;
+}
+
+
+
+//
+// Function: FUN_00031a68 @ 0x00031a68
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_008049f4, DAT_00804a00, DAT_00804a02
+ushort FUN_00031a68(void)
+
+{
+  if (((_feature_enable_flags_word & 0x10) != 0) && (_DAT_008049ea != 0)) {
+    _DAT_008049f4 = 0;
+    _trending_sample_phase_counter = 0;
+    _DAT_00804a00 = 0;
+    _DAT_00804a02 = 0;
+    _trending_data_capture_active = 0;
+    _DAT_00804a06 = 0;
+    _output_control_countdown_timer = 0;
+    _DAT_008049ea = 0;
+    _DAT_008049fe = _trending_total_sample_count;
+    _trending_total_sample_count = 0;
+    _calibration_validator_ptr = _time_that_the_engine_is_not_in_stop_state_0_2_29;
+    _engine_run_counter_snapshot_1 = 0;
+  }
+  return _feature_enable_flags_word & 0x10;
+}
+
+
+
+//
+// Function: diagnosticSessionValidator @ 0x00031ace
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

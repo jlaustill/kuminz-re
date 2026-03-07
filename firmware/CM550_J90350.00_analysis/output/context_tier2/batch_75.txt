@@ -1,0 +1,63 @@
+=== VARIABLES TO NAME ===
+0x0080a922  (7 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0080a922
+ushort rpmHistogramAndProtectionStatisticsAccumulator(void)
+
+{
+                    /* From J90280.05 @ 0x02e84a (confidence: 66%) */
+  if (((_calibration_feature_enable_flags_word_1 & 0x20) == 0) || (_smoke_limiter_output_value != 3)
+     ) {
+    _DAT_0080a922 = _peak_fueling_calibration_value;
+    return _calibration_feature_enable_flags_word_1 & 0x20;
+  }
+  if ((((_status_32_word_bit_mapped_system_error_status_word_1_0_1 & 4) == 0) ||
+      ((_fault_confirm_status_word_1 & 4) == 0)) &&
+     (((_status_32_word_bit_mapped_system_error_status_word_1_0_1 & 8) == 0 ||
+      ((_fault_confirm_status_word_1 & 8) == 0)))) {
+    _diagnostic_data_table_1_base = _engine_rpm_primary;
+    _diagnostic_data_intake_temp_ptr =
+         _filtered_ambient_air_pressure_as_read_and_scaled_from_a_d_algor_0_15;
+    _DAT_0080a922 = tableLookup2D(&diagnostic_data_table_1_ptr);
+    return _DAT_0080a922;
+  }
+  if (_engine_speed_above_which_derating_will_occur_when_ambient_air_0_8000 < _engine_rpm_primary) {
+    _DAT_0080a922 = _default_fueling_to_be_used_by_altitude_derate_if_ambient_air_p_0_100;
+    return _engine_rpm_primary;
+  }
+  _DAT_0080a922 = _peak_fueling_calibration_value;
+  return _engine_rpm_primary;
+}
+
+
+
+//
+// Function: fuelParameterPointerSetup @ 0x0000c714
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080a922
+void shutdownMinimumSelector15(void)
+
+{
+                    /* From J90280.05 @ 0x00b556 (confidence: 77%) */
+  if (_DAT_0080a922 < _fuel_limit_shutdown_minimum) {
+    _fuel_limit_shutdown_minimum = _DAT_0080a922;
+    _indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 = 0xf;
+  }
+  return;
+}
+
+
+
+//
+// Function: tpuTimerInitializer @ 0x0000c760
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

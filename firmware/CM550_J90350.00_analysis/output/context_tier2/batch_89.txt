@@ -1,0 +1,54 @@
+=== VARIABLES TO NAME ===
+0x0080dee4  (6 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0080dee4
+void FUN_00034d52(void)
+
+{
+  if (_fueling_value_above_which_wet_stack_timing_is_set_to_zero_0_100 < _current_fuel_demand) {
+    _DAT_0080dee4 =
+         _DAT_0080dee8 -
+         (short)((int)((uint)_vp44_fault_counter_threshold_2 *
+                      ((uint)_current_fuel_demand -
+                      (uint)_fueling_value_above_which_wet_stack_timing_is_set_to_zero_0_100)) / 100
+                );
+  }
+  else {
+    _DAT_0080dee4 = _DAT_0080dee8;
+  }
+  if ((int)(short)_DAT_0080dee4 < (int)(uint)_DAT_00808ac4) {
+    _DAT_0080dee4 = _DAT_00808ac4;
+  }
+  return;
+}
+
+
+
+//
+// Function: FUN_00034dba @ 0x00034dba
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080dee4
+void FUN_00034dba(void)
+
+{
+  _timing_command_just_before_wet_stack_modification_0_120 = _fuel_timing_advance_value;
+  if (_fuel_timing_advance_value < _DAT_0080dee4) {
+    _fuel_timing_advance_value = _DAT_0080dee4;
+    _intermediate_timing_state_used_before_final_timing_selction_0_10 = _DAT_008036e2;
+  }
+  return;
+}
+
+
+
+//
+// Function: lookupTableInterpolation @ 0x00034de0
+//
+

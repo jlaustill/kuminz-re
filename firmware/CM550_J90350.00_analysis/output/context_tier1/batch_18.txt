@@ -1,0 +1,51 @@
+=== VARIABLES TO NAME ===
+0x00801a18  (15 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00801a18
+void faultLampBlinkPatternGenerator(void)
+
+{
+  if (_DAT_00801a16 < 5) {
+    _DAT_00801a18 = _DAT_00801a18 + 1;
+    if ((_DAT_00801a18 != 0) && (_DAT_00801a18 < 6)) {
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask | 4;
+      return;
+    }
+    if ((5 < _DAT_00801a18) && (_DAT_00801a18 < 0xc)) {
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffb;
+      return;
+    }
+    if ((0xb < _DAT_00801a18) && (_DAT_00801a18 < 0x12)) {
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask | 4;
+      return;
+    }
+    if ((0x11 < _DAT_00801a18) && (_DAT_00801a18 < 0x18)) {
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffb;
+      return;
+    }
+    if ((0x17 < _DAT_00801a18) && (_DAT_00801a18 < 0x1e)) {
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask | 4;
+      return;
+    }
+    if ((0x1d < _DAT_00801a18) && (_DAT_00801a18 < 0x30)) {
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffb;
+      return;
+    }
+    _DAT_00801a18 = 0;
+    _DAT_00801a16 = _DAT_00801a16 + 1;
+  }
+  return;
+}
+
+
+
+//
+// Function: FUN_000253b0 @ 0x000253b0
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

@@ -1,0 +1,79 @@
+=== VARIABLES TO NAME ===
+0x00805fac  (7 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00805fac
+void hourMeterEventLogger(void)
+
+{
+  byte bVar1;
+  bool bVar2;
+  short sVar3;
+  int iVar4;
+  char cVar5;
+  ushort uVar6;
+  byte bVar7;
+  byte *pbVar8;
+  byte local_5;
+  
+                    /* From J90280.05 @ 0x0202a4 (confidence: 100%) */
+  while( true ) {
+    cVar5 = circularBufferPop(0x80bc8c,&local_5);
+    if (cVar5 != '\0') break;
+    iVar4 = (uint)(local_5 & 0x7f) * 6;
+    if ((((&fault_definition_spn_byte)[iVar4] != '\0') &&
+        ((*(ushort *)(&fault_definition_flags_word + iVar4) & 0x800) == 0)) &&
+       (((uint)DAT_00027996 &
+        1 << ((int)(*(ushort *)(&fault_definition_flags_word + iVar4) & 0x780) >> 7)) != 0)) {
+      bVar1 = (&fault_definition_spn_byte)[iVar4];
+      bVar7 = '\x01' << (bVar1 & 7);
+      sVar3 = (short)((int)(uint)bVar1 >> 3);
+      if ((bVar7 & *(byte *)(sVar3 + 0x6134a)) != 0) {
+        uVar6 = _DAT_00805fac;
+        for (pbVar8 = &crank_protection_threshold_time; (uVar6 != 0 && (bVar1 != *pbVar8));
+            pbVar8 = pbVar8 + 2) {
+          uVar6 = uVar6 - 1;
+        }
+        if (uVar6 == 0) {
+          if ((local_5 & 0x80) != 0) {
+            *pbVar8 = bVar1;
+            pbVar8[1] = 1;
+            _DAT_00805fac = _DAT_00805fac + 1;
+            (&vp44_fuel_demand_accumulator)[sVar3] = bVar7 | (&vp44_fuel_demand_accumulator)[sVar3];
+          }
+        }
+        else if ((local_5 & 0x80) == 0) {
+          bVar1 = pbVar8[1] - 1;
+          pbVar8[1] = bVar1;
+          if (bVar1 == 0) {
+            (&vp44_fuel_demand_accumulator)[sVar3] = ~bVar7 & (&vp44_fuel_demand_accumulator)[sVar3]
+            ;
+            uVar6 = _DAT_00805fac - 1;
+            bVar2 = 1 < _DAT_00805fac;
+            _DAT_00805fac = uVar6;
+            if (bVar2) {
+              *pbVar8 = (&crank_protection_threshold_time)[(short)uVar6 * 2];
+              pbVar8[1] = (&DAT_00805faf)[(short)_DAT_00805fac * 2];
+            }
+          }
+        }
+        else {
+          pbVar8[1] = pbVar8[1] + 1;
+        }
+      }
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: vp44StatusInitAndWait @ 0x00027af0
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

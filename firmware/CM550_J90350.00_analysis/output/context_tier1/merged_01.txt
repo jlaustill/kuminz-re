@@ -1,0 +1,1690 @@
+=== VARIABLES TO NAME ===
+0x00801a18  (15 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00801a18
+void faultLampBlinkPatternGenerator(void)
+
+{
+  if (_DAT_00801a16 < 5) {
+    _DAT_00801a18 = _DAT_00801a18 + 1;
+    if ((_DAT_00801a18 != 0) && (_DAT_00801a18 < 6)) {
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask | 4;
+      return;
+    }
+    if ((5 < _DAT_00801a18) && (_DAT_00801a18 < 0xc)) {
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffb;
+      return;
+    }
+    if ((0xb < _DAT_00801a18) && (_DAT_00801a18 < 0x12)) {
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask | 4;
+      return;
+    }
+    if ((0x11 < _DAT_00801a18) && (_DAT_00801a18 < 0x18)) {
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffb;
+      return;
+    }
+    if ((0x17 < _DAT_00801a18) && (_DAT_00801a18 < 0x1e)) {
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask | 4;
+      return;
+    }
+    if ((0x1d < _DAT_00801a18) && (_DAT_00801a18 < 0x30)) {
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffb;
+      return;
+    }
+    _DAT_00801a18 = 0;
+    _DAT_00801a16 = _DAT_00801a16 + 1;
+  }
+  return;
+}
+
+
+
+//
+// Function: FUN_000253b0 @ 0x000253b0
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+
+
+=== VARIABLES TO NAME ===
+0x00801a1a  (15 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00801a1a
+void FUN_000253b0(void)
+
+{
+  _DAT_00801a1a = _DAT_00801a1a + 1;
+  if ((_DAT_00801a1a != 0) && (_DAT_00801a1a < 6)) {
+    lamp_driver_output_bitmask = lamp_driver_output_bitmask | 2;
+    DAT_00801a1c = 1;
+    return;
+  }
+  if ((5 < _DAT_00801a1a) && (_DAT_00801a1a < 0x18)) {
+    lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffd;
+    return;
+  }
+  if ((0x17 < _DAT_00801a1a) && (_DAT_00801a1a < 0x1e)) {
+    lamp_driver_output_bitmask = lamp_driver_output_bitmask | 2;
+    return;
+  }
+  if ((0x1d < _DAT_00801a1a) && (_DAT_00801a1a < 0x30)) {
+    lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffd;
+    return;
+  }
+  if ((0x2f < _DAT_00801a1a) && (_DAT_00801a1a < 0x36)) {
+    lamp_driver_output_bitmask = lamp_driver_output_bitmask | 2;
+    return;
+  }
+  if ((0x35 < _DAT_00801a1a) && (_DAT_00801a1a < 0x48)) {
+    lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffd;
+    return;
+  }
+  DAT_00801a1c = 0;
+  _DAT_00801a1a = 0;
+  return;
+}
+
+
+
+//
+// Function: periodicLampFlashController @ 0x00025448
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+
+
+=== VARIABLES TO NAME ===
+0x00801a1e  (12 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00801a1e
+void periodicLampFlashController(void)
+
+{
+  if (DAT_00801a1d == '\0') {
+    _DAT_00801a1e = _DAT_00801a1e + 1;
+    if (36000 < _DAT_00801a1e) {
+      DAT_00801a1d = 1;
+      _DAT_00801a1e = 0;
+      return;
+    }
+  }
+  else {
+    _DAT_00801a1e = _DAT_00801a1e + 1;
+    if ((_DAT_00801a1e == 0) || (0x13 < _DAT_00801a1e)) {
+      if ((_DAT_00801a1e < 0x14) || (0x4f < _DAT_00801a1e)) {
+        _DAT_00801a20 = _DAT_00801a20 + 1;
+        _DAT_00801a1e = 0;
+      }
+      else {
+        lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffb;
+      }
+    }
+    else {
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask | 4;
+    }
+    if (3 < _DAT_00801a20) {
+      DAT_00801a1d = '\0';
+      _DAT_00801a1e = 0;
+      _DAT_00801a20 = 0;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: FUN_000254b6 @ 0x000254b6
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+
+
+=== VARIABLES TO NAME ===
+0x00803492  (31 references)
+0x0080da01  (39 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0080da01
+uint FUN_000212b2(void)
+
+{
+  char cVar1;
+  bool bVar2;
+  ushort uVar3;
+  uint uVar4;
+  byte bVar5;
+  char *pcVar6;
+  short *psVar7;
+  undefined *puVar8;
+  short local_6;
+  
+  uVar3 = _DAT_00fff404;
+  uVar4 = _DAT_00803caa & 0xffff0008;
+  if ((_DAT_00803caa & 8) != 0) {
+    while ((uVar4 = (uint)_DAT_00fff404 - (uint)uVar3,
+           (int)((uint)_DAT_00fff404 - (uint)uVar3) < 0xfa &&
+           ((_DAT_0080d9b6 != _DAT_0080d9ba || (uVar4 = _DAT_0080d9b6, DAT_0080d9bf == '\x01'))))) {
+      bVar5 = *(byte *)(_DAT_0080d9ba + 1);
+      cVar1 = *(char *)(_DAT_0080d9ba + 2);
+      local_6 = *(short *)(_DAT_0080d9ba + 1);
+      if (bVar5 == 0) {
+        if (((cVar1 == DAT_0080da01) || (cVar1 == DAT_0080da0b)) || (cVar1 == -1)) {
+          local_6 = 0;
+        }
+      }
+      else if ((bVar5 < 0xf0) && ((cVar1 == DAT_0080da01 || (cVar1 == -1)))) {
+        local_6 = (ushort)bVar5 << 8;
+      }
+      DAT_0080d9dc = *(char *)(_DAT_0080d9ba + 3);
+      bVar2 = false;
+      pcVar6 = &DAT_0080d9e0;
+      do {
+        if ((*pcVar6 == -2) || ((char *)0x80d9e3 < pcVar6)) goto LAB_0002136c;
+        cVar1 = *pcVar6;
+        pcVar6 = pcVar6 + 1;
+      } while (DAT_0080d9dc != cVar1);
+      bVar2 = true;
+LAB_0002136c:
+      if (!bVar2) {
+        psVar7 = (short *)&DAT_00800ab0;
+        for (bVar5 = 0; bVar5 < DAT_00800b10; bVar5 = bVar5 + 1) {
+          if (*psVar7 == local_6) {
+            (**(code **)(psVar7 + 1))(_DAT_0080d9ba);
+            break;
+          }
+          psVar7 = psVar7 + 3;
+        }
+      }
+      _DAT_0080d9ba = _DAT_0080d9ba + 0x12;
+      if (0x80d884 < _DAT_0080d9ba) {
+        _DAT_0080d9ba = 0x80d72e;
+      }
+      if (DAT_0080d9bf == '\x01') {
+        DAT_0080d9bf = '\0';
+        puVar8 = &DAT_00ffd810 + (uint)_DAT_0080d9f4 * 0x10;
+        bVar5 = DAT_0080d9f5;
+        while (bVar5 = bVar5 + 1, bVar5 <= _DAT_0080d9f6) {
+          *puVar8 = 0xfb;
+          puVar8 = puVar8 + 0x10;
+        }
+      }
+    }
+  }
+  return uVar4;
+}
+
+
+
+//
+// Function: FUN_0002142c @ 0x0002142c
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080da01
+void messageErrorHandler(undefined4 param_1)
+
+{
+  undefined *puVar1;
+  byte bVar2;
+  undefined *puVar3;
+  undefined local_1e;
+  undefined uStack_1c;
+  undefined auStack_1b [9];
+  undefined4 local_12;
+  undefined2 local_e;
+  undefined *local_c;
+  
+  local_12 = CONCAT31(CONCAT21(0x18ec,param_1._1_1_),DAT_0080da01);
+  local_e = 8;
+  local_c = &uStack_1c;
+  uStack_1c = 0xff;
+  bVar2 = 0;
+  puVar1 = auStack_1b;
+  do {
+    puVar3 = puVar1;
+    *puVar3 = 0xff;
+    bVar2 = bVar2 + 1;
+    puVar1 = puVar3 + 1;
+  } while (bVar2 < 4);
+  puVar3[1] = 0;
+  local_1e = (undefined)((uint)param_1 >> 8);
+  puVar3[2] = local_1e;
+  puVar3[3] = 0;
+  sendCanSingleFrame(local_12);
+  return;
+}
+
+
+
+//
+// Function: vp44CanFrameBuilder @ 0x00022a58
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080da01
+void vp44CanFrameBuilder(undefined4 param_1)
+
+{
+  undefined local_20;
+  undefined uStack_1f;
+  undefined local_1e;
+  undefined uStack_1c;
+  undefined uStack_1b;
+  undefined uStack_1a;
+  undefined uStack_19;
+  undefined uStack_18;
+  undefined uStack_17;
+  undefined uStack_16;
+  undefined local_15;
+  undefined4 local_12;
+  undefined2 local_e;
+  undefined *local_c;
+  
+  local_12 = CONCAT31(CONCAT21(0x18ec,param_1._1_1_),DAT_0080da01);
+  local_e = 8;
+  local_c = &uStack_1c;
+  uStack_1c = 0x13;
+  uStack_1f = (undefined)_DAT_008012d0;
+  uStack_1b = uStack_1f;
+  local_20 = (undefined)((ushort)_DAT_008012d0 >> 8);
+  uStack_1a = local_20;
+  uStack_19 = DAT_008012c5;
+  uStack_18 = 0xff;
+  uStack_17 = 0;
+  local_1e = (undefined)((uint)param_1 >> 8);
+  uStack_16 = local_1e;
+  local_15 = 0;
+  sendCanSingleFrame(local_12);
+  return;
+}
+
+
+
+//
+// Function: vp44MessageTransmitter @ 0x00022ad8
+//
+
+// Variables in this function: DAT_0080da01
+undefined vp44MessageTransmitter(undefined4 param_1,undefined2 param_2)
+
+{
+  undefined local_1e;
+  undefined auStack_1c [2];
+  undefined uStack_1a;
+  undefined uStack_19;
+  undefined uStack_18;
+  undefined uStack_17;
+  undefined uStack_16;
+  undefined local_15;
+  undefined local_13;
+  undefined4 local_12;
+  undefined2 local_e;
+  undefined *local_c;
+  
+  local_12 = CONCAT31(CONCAT21(0x18ec,param_1._1_1_),DAT_0080da01);
+  local_e = 8;
+  local_c = auStack_1c;
+  auStack_1c[0] = 0x11;
+  uStack_1a = (undefined)param_1;
+  uStack_19 = 0xff;
+  uStack_18 = 0xff;
+  uStack_17 = 0;
+  local_1e = (undefined)((ushort)param_2 >> 8);
+  uStack_16 = local_1e;
+  local_15 = 0;
+  sendCanSingleFrame(local_12);
+  return local_13;
+}
+
+
+
+//
+// Function: vp44FuelTempHandler @ 0x00022b50
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080da01
+void canTransmissionScheduler(void)
+
+{
+  byte bVar1;
+  uint uVar2;
+  byte bVar3;
+  byte bVar4;
+  byte bVar5;
+  byte bVar6;
+  undefined *puVar7;
+  
+  _DAT_0080d9b2 = 0x80d896;
+  _DAT_0080d9ae = 0x80d896;
+  _DAT_0080d9ba = 0x80d72e;
+  _DAT_0080d9b6 = 0x80d72e;
+  vp44DiagnosticBufferPointersInit();
+  _DAT_0080d9de = 4;
+  bVar4 = 0;
+  puVar7 = &DAT_0080d9e0;
+  do {
+    *puVar7 = 0xfe;
+    bVar4 = bVar4 + 1;
+    puVar7 = puVar7 + 1;
+  } while (bVar4 < 4);
+  canBufferSetup1();
+  FUN_00031ed2();
+  FUN_00032c22();
+  vp44Command0x100Builder();
+  cumminsProprietaryDM_983_Builder();
+  secondaryParamPGN_65247_Builder();
+  FUN_00033692();
+  cumminsProprietaryTSC_PGN_15728640_Builder();
+  FUN_00033a1e();
+  fuelEconomyPGN_65266_Builder();
+  FUN_000341e6();
+  FUN_0002faa4();
+  j1939MessageSetup_PGN_65265();
+  engineFluidLevelPGN_65263_Builder();
+  engineHoursPGN_65252_Builder();
+  intakeManifoldPGN_65526_Builder();
+  cruiseControlPGN_65264_Builder();
+  electronicBrakePGN_65527_Builder();
+  FUN_000344ce();
+  engineCoolantPGN_65226_Builder();
+  diagnosticDM8PGN_65232_Builder();
+  FUN_0001fe84(0,100);
+  FUN_0001fe84(0,0x14);
+  FUN_0001fe84(0,0x32);
+  FUN_0001fe84(0,0xfa);
+  FUN_0001fe84(0,5000);
+  FUN_0001fe84(1,100);
+  FUN_0001fe84(0,100);
+  FUN_0001fe84(1,5000);
+  FUN_0001fe84(0,1000);
+  FUN_0001fe84(0,1000);
+  FUN_0001fe84(0,500);
+  FUN_0001fe84(0,100);
+  FUN_0001fe84(0,1000);
+  FUN_0001fe84(0,500);
+  FUN_0001fe84(0,1000);
+  FUN_0001fe84(0,1000);
+  FUN_0001fe84(0,1000);
+  FUN_0001fe84(0,100);
+  FUN_0001fe84(0,10000);
+  systemControlFunction1();
+  FUN_0002fbb2();
+  systemControlFunction3();
+  diagnosticDataDump();
+  systemControlFunction2();
+  FUN_00021ef6();
+  FUN_000226da();
+  systemFunction1xCaller();
+  FUN_00021872();
+  systemFunction8xMaximum();
+  systemFunction6xParameterized();
+  _DAT_0080d9f4 = _can_s_last_message_object_used_0_15 + 1;
+  _can_s_last_message_object_used_0_15 = _can_s_last_message_object_used_0_15 + 0xf;
+  _DAT_0080d9c2 = &DAT_00ffd800 + (uint)_DAT_0080d9f4 * 0x10;
+  _DAT_0080d9f6 = _can_s_last_message_object_used_0_15;
+  *_DAT_0080d9c2 = 0x55;
+  _DAT_0080d9c2[1] = 0xfb;
+  *_DAT_0080d9c2 = 0xef;
+  _DAT_0080d9c2[6] = 4;
+  puVar7 = &DAT_00ffd810 + (uint)_DAT_0080d9f4 * 0x10;
+  uVar2 = (uint)_j1939_network_address_for_ecm_as_engine_node_0_255;
+  bVar6 = DAT_0080da01 << 3;
+  bVar3 = 0;
+  bVar5 = 0;
+  for (bVar4 = 0; bVar4 < _can_number_of_engine_destination_specific_rx_objects_0_14;
+      bVar4 = bVar4 + 1) {
+    bVar5 = bVar5 + 1;
+    *puVar7 = 0x99;
+    puVar7[6] = 4;
+    puVar7[1] = 0xdf;
+    puVar7[2] = *(undefined *)(bVar3 + 0x8084c0);
+    puVar7[3] = (byte)((int)(uVar2 & 0xe0) >> 5) | *(byte *)((byte)(bVar3 + 1) + 0x8084c0) & 0xf8;
+    bVar1 = bVar3 + 3;
+    puVar7[4] = bVar6 | *(byte *)((byte)(bVar3 + 2) + 0x8084c0) & 7;
+    bVar3 = bVar3 + 4;
+    puVar7[5] = *(undefined *)(bVar1 + 0x8084c0);
+    puVar7 = puVar7 + 0x10;
+  }
+  for (bVar4 = 0; bVar4 < _can_number_of_engine_destination_non_specific_rx_objects_0_14;
+      bVar4 = bVar4 + 1) {
+    bVar5 = bVar5 + 1;
+    *puVar7 = 0x99;
+    puVar7[1] = 0xdf;
+    puVar7[6] = 4;
+    puVar7[2] = *(undefined *)(bVar3 + 0x8084c0);
+    puVar7[3] = *(undefined *)((byte)(bVar3 + 1) + 0x8084c0);
+    bVar6 = bVar3 + 3;
+    puVar7[4] = *(undefined *)((byte)(bVar3 + 2) + 0x8084c0);
+    bVar3 = bVar3 + 4;
+    puVar7[5] = *(undefined *)(bVar6 + 0x8084c0);
+    puVar7 = puVar7 + 0x10;
+  }
+  uVar2 = (uint)_j1939_network_address_for_ecm_as_engine_retarder_node_0_255;
+  bVar6 = DAT_0080da0b << 3;
+  for (bVar4 = 0; bVar4 < _can_number_of_retarder_destination_specific_rx_objects_0_14;
+      bVar4 = bVar4 + 1) {
+    bVar5 = bVar5 + 1;
+    *puVar7 = 0x99;
+    puVar7[1] = 0xdf;
+    puVar7[6] = 4;
+    puVar7[2] = *(undefined *)(bVar3 + 0x8084c0);
+    puVar7[3] = (byte)((int)(uVar2 & 0xe0) >> 5) | *(byte *)((byte)(bVar3 + 1) + 0x8084c0) & 0xf8;
+    bVar1 = bVar3 + 3;
+    puVar7[4] = bVar6 | *(byte *)((byte)(bVar3 + 2) + 0x8084c0) & 7;
+    bVar3 = bVar3 + 4;
+    puVar7[5] = *(undefined *)(bVar1 + 0x8084c0);
+    puVar7 = puVar7 + 0x10;
+  }
+  for (bVar4 = 0; bVar4 < _can_number_of_retarder_destination_non_specific_rx_objects_0_14;
+      bVar4 = bVar4 + 1) {
+    bVar5 = bVar5 + 1;
+    *puVar7 = 0x99;
+    puVar7[1] = 0xdf;
+    puVar7[6] = 4;
+    puVar7[2] = *(undefined *)(bVar3 + 0x8084c0);
+    puVar7[3] = *(undefined *)((byte)(bVar3 + 1) + 0x8084c0);
+    bVar6 = bVar3 + 3;
+    puVar7[4] = *(undefined *)((byte)(bVar3 + 2) + 0x8084c0);
+    bVar3 = bVar3 + 4;
+    puVar7[5] = *(undefined *)(bVar6 + 0x8084c0);
+    puVar7 = puVar7 + 0x10;
+  }
+  for (; bVar5 < 0xe; bVar5 = bVar5 + 1) {
+    *puVar7 = 0x99;
+    puVar7[1] = 0xdf;
+    puVar7[6] = 4;
+    puVar7[2] = *(undefined *)(bVar3 + 0x8084c0);
+    puVar7[3] = *(undefined *)((byte)(bVar3 + 1) + 0x8084c0);
+    bVar4 = bVar3 + 3;
+    puVar7[4] = *(undefined *)((byte)(bVar3 + 2) + 0x8084c0);
+    bVar3 = bVar3 + 4;
+    puVar7[5] = *(undefined *)(bVar4 + 0x8084c0);
+    puVar7 = puVar7 + 0x10;
+  }
+  DAT_00ffd800 = DAT_00ffd800 | 10;
+  return;
+}
+
+
+
+//
+// Function: mainCanTransmissionLoop @ 0x00028e32
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080da01
+void mainCanTransmissionLoop(void)
+
+{
+  byte bVar1;
+  uint uVar2;
+  byte bVar3;
+  byte bVar4;
+  byte bVar5;
+  byte bVar6;
+  undefined *puVar7;
+  int unaff_A3;
+  int *unaff_A5;
+  
+  systemControlFunction2();
+  FUN_00021ef6();
+  FUN_000226da();
+  systemFunction1xCaller();
+  FUN_00021872();
+  systemFunction8xMaximum();
+  systemFunction6xParameterized();
+  _DAT_0080d9f4 = _can_s_last_message_object_used_0_15 + 1;
+  _can_s_last_message_object_used_0_15 = _can_s_last_message_object_used_0_15 + 0xf;
+  uVar2 = (uint)_DAT_0080d9f4;
+  _DAT_0080d9f6 = _can_s_last_message_object_used_0_15;
+  *unaff_A5 = (int)(&DAT_00ffd800 + uVar2 * 0x10);
+  (&DAT_00ffd800)[uVar2 * 0x10] = 0x55;
+  *(undefined *)(*unaff_A5 + 1) = 0xfb;
+  *(undefined *)*unaff_A5 = 0xef;
+  *(undefined *)(*unaff_A5 + 6) = 4;
+  puVar7 = &DAT_00ffd810 + (uint)_DAT_0080d9f4 * 0x10;
+  uVar2 = (uint)_j1939_network_address_for_ecm_as_engine_node_0_255;
+  bVar6 = DAT_0080da01 << 3;
+  bVar3 = 0;
+  bVar5 = 0;
+  for (bVar4 = 0; bVar4 < _can_number_of_engine_destination_specific_rx_objects_0_14;
+      bVar4 = bVar4 + 1) {
+    bVar5 = bVar5 + 1;
+    *puVar7 = 0x99;
+    puVar7[6] = 4;
+    puVar7[1] = 0xdf;
+    puVar7[2] = *(undefined *)(unaff_A3 + (uint)bVar3);
+    puVar7[3] = (byte)((int)(uVar2 & 0xe0) >> 5) |
+                *(byte *)(unaff_A3 + (uint)(byte)(bVar3 + 1)) & 0xf8;
+    bVar1 = bVar3 + 3;
+    puVar7[4] = bVar6 | *(byte *)(unaff_A3 + (uint)(byte)(bVar3 + 2)) & 7;
+    bVar3 = bVar3 + 4;
+    puVar7[5] = *(undefined *)(unaff_A3 + (uint)bVar1);
+    puVar7 = puVar7 + 0x10;
+  }
+  for (bVar4 = 0; bVar4 < _can_number_of_engine_destination_non_specific_rx_objects_0_14;
+      bVar4 = bVar4 + 1) {
+    bVar5 = bVar5 + 1;
+    *puVar7 = 0x99;
+    puVar7[1] = 0xdf;
+    puVar7[6] = 4;
+    puVar7[2] = *(undefined *)(unaff_A3 + (uint)bVar3);
+    puVar7[3] = *(undefined *)(unaff_A3 + (uint)(byte)(bVar3 + 1));
+    bVar6 = bVar3 + 3;
+    puVar7[4] = *(undefined *)(unaff_A3 + (uint)(byte)(bVar3 + 2));
+    bVar3 = bVar3 + 4;
+    puVar7[5] = *(undefined *)(unaff_A3 + (uint)bVar6);
+    puVar7 = puVar7 + 0x10;
+  }
+  uVar2 = (uint)_j1939_network_address_for_ecm_as_engine_retarder_node_0_255;
+  bVar6 = DAT_0080da0b << 3;
+  for (bVar4 = 0; bVar4 < _can_number_of_retarder_destination_specific_rx_objects_0_14;
+      bVar4 = bVar4 + 1) {
+    bVar5 = bVar5 + 1;
+    *puVar7 = 0x99;
+    puVar7[1] = 0xdf;
+    puVar7[6] = 4;
+    puVar7[2] = *(undefined *)(unaff_A3 + (uint)bVar3);
+    puVar7[3] = (byte)((int)(uVar2 & 0xe0) >> 5) |
+                *(byte *)(unaff_A3 + (uint)(byte)(bVar3 + 1)) & 0xf8;
+    bVar1 = bVar3 + 3;
+    puVar7[4] = bVar6 | *(byte *)(unaff_A3 + (uint)(byte)(bVar3 + 2)) & 7;
+    bVar3 = bVar3 + 4;
+    puVar7[5] = *(undefined *)(unaff_A3 + (uint)bVar1);
+    puVar7 = puVar7 + 0x10;
+  }
+  for (bVar4 = 0; bVar4 < _can_number_of_retarder_destination_non_specific_rx_objects_0_14;
+      bVar4 = bVar4 + 1) {
+    bVar5 = bVar5 + 1;
+    *puVar7 = 0x99;
+    puVar7[1] = 0xdf;
+    puVar7[6] = 4;
+    puVar7[2] = *(undefined *)(unaff_A3 + (uint)bVar3);
+    puVar7[3] = *(undefined *)(unaff_A3 + (uint)(byte)(bVar3 + 1));
+    bVar6 = bVar3 + 3;
+    puVar7[4] = *(undefined *)(unaff_A3 + (uint)(byte)(bVar3 + 2));
+    bVar3 = bVar3 + 4;
+    puVar7[5] = *(undefined *)(unaff_A3 + (uint)bVar6);
+    puVar7 = puVar7 + 0x10;
+  }
+  for (; bVar5 < 0xe; bVar5 = bVar5 + 1) {
+    *puVar7 = 0x99;
+    puVar7[1] = 0xdf;
+    puVar7[6] = 4;
+    puVar7[2] = *(undefined *)(unaff_A3 + (uint)bVar3);
+    puVar7[3] = *(undefined *)(unaff_A3 + (uint)(byte)(bVar3 + 1));
+    bVar4 = bVar3 + 3;
+    puVar7[4] = *(undefined *)(unaff_A3 + (uint)(byte)(bVar3 + 2));
+    bVar3 = bVar3 + 4;
+    puVar7[5] = *(undefined *)(unaff_A3 + (uint)bVar4);
+    puVar7 = puVar7 + 0x10;
+  }
+  DAT_00ffd800 = DAT_00ffd800 | 10;
+  return;
+}
+
+
+
+//
+// Function: FUN_00029130 @ 0x00029130
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080da01
+void FUN_0002f4be(int param_1)
+
+{
+  byte bVar1;
+  char *pcVar2;
+  
+  pcVar2 = &DAT_00801d5a;
+  if ((*(char *)(param_1 + 2) == DAT_0080da01) || (*(char *)(param_1 + 2) == -1)) {
+    for (bVar1 = 0; bVar1 < DAT_00801e1a; bVar1 = bVar1 + 1) {
+      if ((pcVar2[1] == **(char **)(param_1 + 6)) &&
+         (*(char *)(*(int *)(param_1 + 6) + 1) == *pcVar2)) {
+        (**(code **)(pcVar2 + 2))((short)param_1);
+        break;
+      }
+      pcVar2 = pcVar2 + 6;
+    }
+    if ((bVar1 == DAT_00801e1a) && (*(char *)(param_1 + 2) != -1)) {
+      diagnosticCanResponseSender((short)param_1);
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: diagnosticDataDump @ 0x0002f538
+//
+
+// Variables in this function: DAT_0080da01
+void torqueControlAddressDispatcher(int param_1)
+
+{
+  char cVar1;
+  
+  cVar1 = *(char *)(param_1 + 2);
+  if ((cVar1 == DAT_0080da01) || (cVar1 == -1)) {
+    torqueControlModeHandler(param_1);
+  }
+  if ((cVar1 == DAT_0080da0b) || (cVar1 == -1)) {
+    retarderControlModeHandler(param_1);
+  }
+  return;
+}
+
+
+
+//
+// Function: FUN_0002fbb2 @ 0x0002fbb2
+//
+
+// Variables in this function: DAT_0080da01
+void j1939MessageSetup_PGN_65265(void)
+
+{
+  _DAT_00801ebc = CONCAT13((char)((_DAT_00803f50 & 7) << 2),0xfef500);
+  _DAT_00801ec0 = 8;
+  _DAT_00801ec2 = &DAT_00801eca;
+  _DAT_00801ec6 = 0x801ed2;
+  _DAT_00801ebc = CONCAT31(_DAT_00801ebc,DAT_0080da01);
+  DAT_00801ecb = 0xff;
+  DAT_00801ecc = 0xff;
+  DAT_00801ecd = 0xff;
+  DAT_00801ece = 0xff;
+  DAT_00801ecf = 0xff;
+  _DAT_00801ed0 = 0xffff;
+  return;
+}
+
+
+
+//
+// Function: FUN_00031c84 @ 0x00031c84
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080da01
+void FUN_00031ed2(void)
+
+{
+  _DAT_00801ed4 = CONCAT13((char)((_DAT_00803f52 & 7) << 2),0xfef100);
+  _DAT_00801ed4 = CONCAT31(_DAT_00801ed4,DAT_0080da01);
+  _DAT_00801ed8 = 8;
+  _DAT_00801eda = &DAT_00801ee2;
+  _DAT_00801ede = 0x801eea;
+  DAT_00801ee2 = 0xf3;
+  FUN_0002f47e();
+  return;
+}
+
+
+
+//
+// Function: FUN_00031f30 @ 0x00031f30
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080da01
+void FUN_00031fee(void)
+
+{
+  _DAT_00801eec = CONCAT13((char)((_DAT_00803f52 & 7) << 2),0xfeed00);
+  _DAT_00801ef0 = 8;
+  _DAT_00801ef2 = &DAT_00801efa;
+  _DAT_00801ef6 = 0x801f02;
+  _DAT_00801eec = CONCAT31(_DAT_00801eec,DAT_0080da01);
+  DAT_00801efd = 0xff;
+  DAT_00801efe = 0xff;
+  DAT_00801eff = 0xff;
+  DAT_00801f00 = 0xff;
+  DAT_00801f01 = 0xff;
+  return;
+}
+
+
+
+//
+// Function: FUN_00032052 @ 0x00032052
+//
+
+// Variables in this function: DAT_0080da01
+void engineSerialNumberPGN_65259_Builder(void)
+
+{
+  _DAT_00801f04 = CONCAT13((char)((_DAT_00803f54 & 7) << 2),0xfeeb00);
+  _DAT_00801f08 = 0x28;
+  _DAT_00801f0a = &DAT_00801f12;
+  _DAT_00801f0e = 0x801f3a;
+  _DAT_00801f04 = CONCAT31(_DAT_00801f04,DAT_0080da01);
+  FUN_0002f47e();
+  return;
+}
+
+
+
+//
+// Function: diagnosticMultiPacketResponseBuilder @ 0x0003216a
+//
+
+// Variables in this function: DAT_0080da01
+void diagnosticDM11PGN_65234_Builder(void)
+
+{
+  _DAT_00801f3e = CONCAT13((char)((_DAT_00803f60 & 7) << 2),0xfed200);
+  _DAT_00801f42 = 2;
+  _DAT_00801f44 = &DAT_00801f4c;
+  _DAT_00801f48 = 0x801f54;
+  _DAT_00801f3e = CONCAT31(_DAT_00801f3e,DAT_0080da01);
+  FUN_0002f47e();
+  return;
+}
+
+
+
+//
+// Function: activeDtcListBuilder @ 0x000322ae
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080da01
+void engineCoolantPGN_65226_Builder(void)
+
+{
+  _DAT_00801f56 = CONCAT13((char)((_DAT_00803f56 & 7) << 2),0xfeca00);
+  _DAT_00801f5c = &DAT_00801f64;
+  _DAT_00801f60 = &DAT_0080265a;
+  _DAT_00801f56 = CONCAT31(_DAT_00801f56,DAT_0080da01);
+  DAT_00801f65 = 0xff;
+  DAT_00801f69 = DAT_00801f69 | 0x80;
+  FUN_0002f47e();
+  return;
+}
+
+
+
+//
+// Function: previousDtcListBuilder @ 0x0003241c
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080da01
+void diagnosticDM2PGN_65227_Builder(void)
+
+{
+  _DAT_0080265c = CONCAT13((char)((_DAT_00803f58 & 7) << 2),0xfecb00);
+  _DAT_00802662 = &DAT_0080266a;
+  _DAT_00802666 = &DAT_00802d60;
+  _DAT_0080265c = CONCAT31(_DAT_0080265c,DAT_0080da01);
+  DAT_0080266b = 0xff;
+  DAT_0080266f = DAT_0080266f | 0x80;
+  FUN_0002f47e();
+  return;
+}
+
+
+
+//
+// Function: buildCanMessage @ 0x0003258a
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080da01
+void diagnosticDM4PGN_65229_Builder(void)
+
+{
+  byte bVar1;
+  undefined *puVar2;
+  
+  _DAT_00802d62 = CONCAT13((char)((_DAT_00803f5a & 7) << 2),0xfecd00);
+  _DAT_00802d68 = &DAT_00802d70;
+  _DAT_00802d6c = &DAT_00803448;
+  _DAT_00802d62 = CONCAT31(_DAT_00802d62,DAT_0080da01);
+  bVar1 = 0;
+  puVar2 = &DAT_00802d70;
+  do {
+    *puVar2 = 0x49;
+    puVar2[5] = 0xff;
+    puVar2 = puVar2 + 0x49;
+    bVar1 = bVar1 + 1;
+  } while (bVar1 < 0x14);
+  FUN_0002f47e();
+  return;
+}
+
+
+
+//
+// Function: diagnosticDM5DataBuilder @ 0x00032a42
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080da01
+void diagnosticDM5PGN_65230_Builder(void)
+
+{
+  _oil_pressure_table_2_ptr = CONCAT13((char)((_DAT_00803f5c & 7) << 2),0xfece00);
+  _oil_pressure_table_3_ptr = 8;
+  _DAT_00803450 = &DAT_00803458;
+  _DAT_00803454 = &base_timing_rpm_input;
+  _oil_pressure_table_2_ptr = CONCAT31(_oil_pressure_table_2_ptr,DAT_0080da01);
+  FUN_0002f47e();
+  return;
+}
+
+
+
+//
+// Function: diagnosticByteResponseSender @ 0x00032b38
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080da01
+void diagnosticDM8PGN_65232_Builder(void)
+
+{
+  _vp44_timing_table_size = CONCAT13((char)((_DAT_00803f5e & 7) << 2),0xfed000);
+  _DAT_00803466 = 8;
+  _base_timing_fuel_value_input = &DAT_00803470;
+  _DAT_0080346c = &lift_pump_fuel_demand_input;
+  _vp44_timing_table_size = CONCAT31(_vp44_timing_table_size,DAT_0080da01);
+  DAT_00803471 = 0xff;
+  _vp44_lift_pump_table_ptr = 0xffff;
+  _DAT_00803476 = 0xffff;
+  return;
+}
+
+
+
+//
+// Function: FUN_00032c22 @ 0x00032c22
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080da01
+void FUN_00032c22(void)
+
+{
+  _vp44_lift_pump_table_3_ptr = CONCAT13((char)((_DAT_00803f90 & 7) << 2),0xf00100);
+  _vp44_lift_pump_table_3_ptr = CONCAT31(_vp44_lift_pump_table_3_ptr,DAT_0080da01);
+  _lift_pump_table_lookup_arg_3486 = 5;
+  vp44_lift_pump_table_2_size = 0xff;
+  vp44_lift_pump_table_2_ptr = 0xff;
+  _DAT_00803488 = &vp44_lift_pump_table_2_size;
+  _vp44_can_msg_timeout_counter = &vp44_timing_expected_table_ptr;
+  return;
+}
+
+
+
+//
+// Function: FUN_00032c76 @ 0x00032c76
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_00803492
+void FUN_00032c76(void)
+
+{
+  undefined local_6;
+  undefined uStack_5;
+  
+  if (_DAT_0080da50 == 0) {
+    switch(_DAT_0080d330) {
+    case 1:
+    case 2:
+    case 3:
+    case 7:
+    case 8:
+    case 0x1e:
+    case 0x25:
+      if (_state_of_selected_alternate_throttle_priority_0_9 ==
+          _priority_of_remote_throttle_feature_w_r_to_other_throttle_0_to_10) {
+        DAT_00803492 = 0xfb;
+      }
+      else {
+        DAT_00803492 = 0xf1;
+      }
+      break;
+    case 4:
+      DAT_00803492 = 0xf3;
+      break;
+    default:
+      DAT_00803492 = 0xfe;
+      break;
+    case 9:
+      DAT_00803492 = 0xf2;
+      break;
+    case 10:
+      DAT_00803492 = 0xf4;
+      break;
+    case 0xb:
+      DAT_00803492 = 0xf0;
+      break;
+    case 0xc:
+      DAT_00803492 = 0xf9;
+      break;
+    case 0xd:
+    case 0xe:
+    case 0xf:
+    case 0x10:
+    case 0x11:
+    case 0x12:
+    case 0x13:
+    case 0x14:
+    case 0x15:
+    case 0x1c:
+    case 0x1d:
+    case 0x1f:
+    case 0x21:
+    case 0x22:
+    case 0x23:
+    case 0x24:
+    case 0x26:
+    case 0x27:
+    case 0x28:
+    case 0x29:
+      DAT_00803492 = 0xf8;
+      break;
+    case 0x18:
+      DAT_00803492 = 0xfa;
+    }
+  }
+  else if (((_DAT_0080d330 == 2) || (_DAT_0080d330 == 1)) || (_DAT_0080d330 == 0x14)) {
+    if (_source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_da4e == 1) {
+      DAT_00803492 = 0xf6;
+    }
+    else if (_source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_da4e == 3) {
+      DAT_00803492 = 0xf5;
+    }
+    else if (_source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_da4e == 2) {
+      DAT_00803492 = 0xf7;
+    }
+    else {
+      DAT_00803492 = 0xfe;
+    }
+  }
+  else {
+    DAT_00803492 = 0xfe;
+  }
+  paramSystemModeController();
+  DAT_00803493 = (char)((ushort)_DAT_0080da18 >> 8) + '}';
+  param_lookup_1();
+  vp44_timing_expected_init = (char)((ushort)_DAT_0080da16 >> 8) + '}';
+  if (_JCFSTLFG == 1) {
+    vp44_timing_expected_init = -2;
+  }
+  uStack_5 = (undefined)_DAT_0080ccf6;
+  DAT_00803495 = uStack_5;
+  local_6 = (undefined)((ushort)_DAT_0080ccf6 >> 8);
+  DAT_00803496 = local_6;
+  sendCanMessage(&vp44_diagnostic_threshold_state);
+  return;
+}
+
+
+
+//
+// Function: vp44Message300FaultFlagProcessor @ 0x00032c7a
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_00803492
+void vp44Message300FaultFlagProcessor(void)
+
+{
+  int unaff_A6;
+  
+  if (_DAT_0080da50 == 0) {
+    switch(_DAT_0080d330) {
+    case 1:
+    case 2:
+    case 3:
+    case 7:
+    case 8:
+    case 0x1e:
+    case 0x25:
+      if (_state_of_selected_alternate_throttle_priority_0_9 ==
+          _priority_of_remote_throttle_feature_w_r_to_other_throttle_0_to_10) {
+        DAT_00803492 = 0xfb;
+      }
+      else {
+        DAT_00803492 = 0xf1;
+      }
+      break;
+    case 4:
+      DAT_00803492 = 0xf3;
+      break;
+    default:
+      DAT_00803492 = 0xfe;
+      break;
+    case 9:
+      DAT_00803492 = 0xf2;
+      break;
+    case 10:
+      DAT_00803492 = 0xf4;
+      break;
+    case 0xb:
+      DAT_00803492 = 0xf0;
+      break;
+    case 0xc:
+      DAT_00803492 = 0xf9;
+      break;
+    case 0xd:
+    case 0xe:
+    case 0xf:
+    case 0x10:
+    case 0x11:
+    case 0x12:
+    case 0x13:
+    case 0x14:
+    case 0x15:
+    case 0x1c:
+    case 0x1d:
+    case 0x1f:
+    case 0x21:
+    case 0x22:
+    case 0x23:
+    case 0x24:
+    case 0x26:
+    case 0x27:
+    case 0x28:
+    case 0x29:
+      DAT_00803492 = 0xf8;
+      break;
+    case 0x18:
+      DAT_00803492 = 0xfa;
+    }
+  }
+  else if (((_DAT_0080d330 == 2) || (_DAT_0080d330 == 1)) || (_DAT_0080d330 == 0x14)) {
+    if (_source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_da4e == 1) {
+      DAT_00803492 = 0xf6;
+    }
+    else if (_source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_da4e == 3) {
+      DAT_00803492 = 0xf5;
+    }
+    else if (_source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_da4e == 2) {
+      DAT_00803492 = 0xf7;
+    }
+    else {
+      DAT_00803492 = 0xfe;
+    }
+  }
+  else {
+    DAT_00803492 = 0xfe;
+  }
+  paramSystemModeController();
+  DAT_00803493 = (char)((ushort)_DAT_0080da18 >> 8) + '}';
+  param_lookup_1();
+  vp44_timing_expected_init = (char)((ushort)_DAT_0080da16 >> 8) + '}';
+  if (_JCFSTLFG == 1) {
+    vp44_timing_expected_init = -2;
+  }
+  *(undefined2 *)(unaff_A6 + -2) = _DAT_0080ccf6;
+  DAT_00803495 = *(undefined *)(unaff_A6 + -1);
+  DAT_00803496 = *(undefined *)(unaff_A6 + -2);
+  sendCanMessage(&vp44_diagnostic_threshold_state);
+  return;
+}
+
+
+
+//
+// Function: vp44Command0x100Builder @ 0x00032e08
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_00803492, DAT_0080da01
+void vp44Command0x100Builder(void)
+
+{
+  _vp44_diagnostic_threshold_state = CONCAT13((char)((_DAT_00803f62 & 7) << 2),0xf00400);
+  _vp44_diagnostic_threshold_state = CONCAT31(_vp44_diagnostic_threshold_state,DAT_0080da01);
+  _DAT_0080349e = 5;
+  _vp44_fso_fault_active_flag = &DAT_00803492;
+  _derate_threshold_change_counter = &vp44_timing_min_fault_counter;
+  return;
+}
+
+
+
+//
+// Function: FUN_00032e4c @ 0x00032e4c
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080da01
+void cumminsProprietaryDM_983_Builder(void)
+
+{
+  _fso_fault_latched_value = CONCAT13((char)((_DAT_00803f64 & 7) << 2),0xf00300);
+  _fso_fault_latched_value = CONCAT31(_fso_fault_latched_value,DAT_0080da01);
+  _fso_fault_debounce_counter = 5;
+  _fso_high_cmd_fault_debounce_counter = &vp44_feedback_pulse_low_fault_counter;
+  _vp44_fso_range2_fault_counter = &vp44_fso_bit1_recovery_counter;
+  FUN_0000f99a();
+  FUN_0002f47e();
+  return;
+}
+
+
+
+//
+// Function: configParamCanBuilder @ 0x000330c4
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080da01
+void secondaryParamPGN_65247_Builder(void)
+
+{
+  _vp44_fso_condition_counter = CONCAT13((char)((_DAT_00803f66 & 7) << 2),0xfedf00);
+  _vp44_fso_condition_counter = CONCAT31(_vp44_fso_condition_counter,DAT_0080da01);
+  _vp44_fso_timing_fault_counter = 4;
+  _vp44_fso_bit0_fault_counter = &fso_range_fault_high_counter;
+  _vp44_fso_bit15_fault_counter = &vp44_fso_bit15_recovery_counter;
+  return;
+}
+
+
+
+//
+// Function: FUN_00033164 @ 0x00033164
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080da01
+void engineFluidLevelPGN_65263_Builder(void)
+
+{
+  _vp44_fso_multibit_fault_debounce_counter = CONCAT13((char)((_DAT_00803f6a & 7) << 2),0xfeef00);
+  _vp44_fso_multibit_fault_accumulator = 8;
+  _vp44_fso_multibit_fault_state = &vp44_fso_rpm_fault_counter;
+  _vp44_fso_stuck_high_recovery_counter = 0x8034f0;
+  _vp44_fso_multibit_fault_debounce_counter =
+       CONCAT31(_vp44_fso_multibit_fault_debounce_counter,DAT_0080da01);
+  vp44_fso_rpm_fault_counter = 0xff;
+  _DAT_008034ec = 0xffff;
+  DAT_008034ef = 0xff;
+  DAT_008034e9 = 0xff;
+  return;
+}
+
+
+
+//
+// Function: FUN_0003320e @ 0x0003320e
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080da01
+void FUN_00033692(void)
+
+{
+  _DAT_0080352a = CONCAT13((char)((_DAT_00803f68 & 7) << 2),0xfee300);
+  _DAT_0080352a = CONCAT31(_DAT_0080352a,DAT_0080da01);
+  _DAT_0080352e = 0x1c;
+  _DAT_00803530 = &DAT_008034f2;
+  _DAT_00803534 = &DAT_00803538;
+  DAT_00803503 = 0xff;
+  DAT_00803504 = 0xff;
+  DAT_0080351f = 0xff;
+  DAT_00803520 = 0xff;
+  DAT_0080350c = 0x7d;
+  DAT_00803528 = 0x7d;
+  FUN_000185f0();
+  FUN_0000ff48();
+  return;
+}
+
+
+
+//
+// Function: FUN_00033716 @ 0x00033716
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080da01
+void FUN_00033754(void)
+
+{
+  _DAT_0080353a = CONCAT13((char)((_DAT_00803f8c & 7) << 2),0xfee500);
+  _DAT_0080353e = 8;
+  _DAT_00803540 = &DAT_00803548;
+  _DAT_00803544 = 0x803550;
+  _DAT_0080353a = CONCAT31(_DAT_0080353a,DAT_0080da01);
+  DAT_0080354f = 0xff;
+  DAT_0080354e = 0xff;
+  DAT_0080354d = 0xff;
+  DAT_0080354c = 0xff;
+  FUN_0002f47e();
+  return;
+}
+
+
+
+//
+// Function: FUN_000337c4 @ 0x000337c4
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080da01
+void engineTemperaturePGN_65262_Builder(void)
+
+{
+  _DAT_00803552 = CONCAT13((char)((_DAT_00803f70 & 7) << 2),0xfeee00);
+  _DAT_00803556 = 8;
+  _DAT_00803558 = &DAT_00803560;
+  _DAT_0080355c = 0x803568;
+  _DAT_00803552 = CONCAT31(_DAT_00803552,DAT_0080da01);
+  _DAT_00803564 = 0xffff;
+  DAT_00803566 = 0xff;
+  DAT_00803567 = 0xff;
+  FUN_0002f47e();
+  return;
+}
+
+
+
+//
+// Function: dutyCycleMonitorAltIsrHandler @ 0x000338ea
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080da01
+void FUN_00033a1e(void)
+
+{
+  _DAT_0080358a = CONCAT13((char)((_DAT_00803f92 & 7) << 2),0xfebd00);
+  _DAT_0080358a = CONCAT31(_DAT_0080358a,DAT_0080da01);
+  _DAT_0080358e = 2;
+  _DAT_00803590 = 0x803582;
+  _DAT_00803594 = 0x803598;
+  return;
+}
+
+
+
+//
+// Function: FUN_00033a62 @ 0x00033a62
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080da01
+void retarderConfigPGN_65249_Builder(void)
+
+{
+  _DAT_0080359a = CONCAT13((char)((_DAT_00803f72 & 7) << 2),0xfee900);
+  _DAT_0080359e = 8;
+  _DAT_008035a0 = &DAT_008035a8;
+  _DAT_008035a4 = 0x8035b0;
+  _DAT_0080359a = CONCAT31(_DAT_0080359a,DAT_0080da01);
+  FUN_0002f47e();
+  return;
+}
+
+
+
+//
+// Function: fuelEconomyDataBuilder @ 0x00033b40
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080da01
+void fuelEconomyPGN_65266_Builder(void)
+
+{
+  _DAT_008035bc = CONCAT13((char)((_DAT_00803f74 & 7) << 2),0xfef200);
+  _DAT_008035bc = CONCAT31(_DAT_008035bc,DAT_0080da01);
+  _DAT_008035c0 = 6;
+  _DAT_008035c2 = &DAT_008035b4;
+  _DAT_008035c6 = 0x8035ca;
+  return;
+}
+
+
+
+//
+// Function: ioControlDataBuilder @ 0x00033c6c
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080da01
+void ioControlPGN_65244_Builder(void)
+
+{
+  _DAT_008035d0 = CONCAT13((char)((_DAT_00803f76 & 7) << 2),0xfedc00);
+  _vp44_status_flags_1 = 8;
+  _fuel_demand_control_flags = &DAT_008035de;
+  _engine_operating_state_flags = 0x8035e6;
+  _DAT_008035d0 = CONCAT31(_DAT_008035d0,DAT_0080da01);
+  FUN_0002f47e();
+  return;
+}
+
+
+
+//
+// Function: engineHoursPGN_65252_Builder @ 0x00033dfa
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080da01
+void engineHoursPGN_65252_Builder(void)
+
+{
+  _DAT_008035e8 = CONCAT13((char)((_DAT_00803f78 & 7) << 2),0xfee400);
+  _vp44_status_flags_2 = 8;
+  _DAT_008035ee = &DAT_008035f6;
+  _DAT_008035f2 = 0x8035fe;
+  _DAT_008035e8 = CONCAT31(_DAT_008035e8,DAT_0080da01);
+  DAT_008035fa = 0xff;
+  DAT_008035fb = 0xff;
+  DAT_008035fc = 0xff;
+  DAT_008035fd = 0xff;
+  return;
+}
+
+
+
+//
+// Function: FUN_00033e58 @ 0x00033e58
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080da01
+void intakeManifoldPGN_65526_Builder(void)
+
+{
+  _DAT_00803600 = CONCAT13((char)((_DAT_00803f7a & 7) << 2),0xfef600);
+  _DAT_00803604 = 8;
+  _DAT_00803606 = &DAT_0080360e;
+  _DAT_0080360a = 0x803616;
+  _DAT_00803600 = CONCAT31(_DAT_00803600,DAT_0080da01);
+  DAT_0080360e = 0xff;
+  DAT_00803611 = 0xff;
+  DAT_00803612 = 0xff;
+  DAT_00803613 = 0xff;
+  derate_percentage_active = 0xff;
+  DAT_00803615 = 0xff;
+  return;
+}
+
+
+
+//
+// Function: FUN_00033f5a @ 0x00033f5a
+//
+
+// Variables in this function: DAT_0080da01
+void cruiseControlPGN_65264_Builder(void)
+
+{
+  _engine_operating_mode_flags = CONCAT13((char)((_DAT_00803f7e & 7) << 2),0xfef000);
+  _DAT_0080361c = 8;
+  _DAT_0080361e = &DAT_00803626;
+  _DAT_00803622 = 0x80362e;
+  _engine_operating_mode_flags = CONCAT31(_engine_operating_mode_flags,DAT_0080da01);
+  DAT_00803626 = 0xff;
+  DAT_00803627 = 0xff;
+  DAT_00803628 = 0xff;
+  DAT_0080362d = 0xff;
+  return;
+}
+
+
+
+//
+// Function: vp44CanMessage100ResponseBuilder @ 0x0003407a
+//
+
+/* WARNING: Removing unreachable block (ram,0x000340ca) */
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080da01
+void vehicleDistancePGN_65248_Builder(void)
+
+{
+  _DAT_00803654 = CONCAT13((char)((_DAT_00803f82 & 7) << 2),0xfee000);
+  _DAT_00803658 = 8;
+  _DAT_0080365a = &DAT_00803662;
+  _DAT_0080365e = 0x80366a;
+  _DAT_00803654 = CONCAT31(_DAT_00803654,DAT_0080da01);
+  FUN_0002f47e();
+  return;
+}
+
+
+
+//
+// Function: retarderDataBuilder @ 0x000342f0
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080da01
+void electronicBrakePGN_65527_Builder(void)
+
+{
+  _DAT_0080366c = CONCAT13((char)((_DAT_00803f84 & 7) << 2),0xfef700);
+  _DAT_00803670 = 8;
+  _DAT_00803672 = &eeprom_calibration_write_state;
+  _DAT_00803676 = &eeprom_calibration_check_value_2;
+  _DAT_0080366c = CONCAT31(_DAT_0080366c,DAT_0080da01);
+  eeprom_calibration_write_state = 0xff;
+  DAT_0080367b = 0xff;
+  _eeprom_calibration_check_value_1 = 0xffff;
+  _protection_flag_source_1 = 0xffff;
+  return;
+}
+
+
+
+//
+// Function: FUN_00034394 @ 0x00034394
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080da01
+void vehicleHoursPGN_65255_Builder(void)
+
+{
+  _eeprom_calibration_check_value_3 = CONCAT13((char)((_DAT_00803f86 & 7) << 2),0xfee700);
+  _vp44_comm_test_sensor_value = 8;
+  _redundant_sensor_param_1 = &protection_flag_source_2;
+  _redundant_sensor_param_3 = &fuel_demand_rate_limit_init;
+  _eeprom_calibration_check_value_3 = CONCAT31(_eeprom_calibration_check_value_3,DAT_0080da01);
+  _protection_flag_source_2 = 0xffffffff;
+  FUN_0002f47e();
+  return;
+}
+
+
+
+//
+// Function: FUN_00034440 @ 0x00034440
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080da01
+void FUN_00034440(void)
+
+{
+  _DAT_0080369c = CONCAT13((char)((_DAT_00803f8e & 7) << 2),0xfeec00);
+  _DAT_008036a0 = 0x14;
+  _oil_pressure_rpm_limit_max = 0x803e7f;
+  _DAT_008036a6 = 0x8036aa;
+  _DAT_0080369c = CONCAT31(_DAT_0080369c,DAT_0080da01);
+  FUN_0002f47e();
+  return;
+}
+
+
+
+//
+// Function: FUN_000344ce @ 0x000344ce
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080da01
+void FUN_000344ce(void)
+
+{
+  _DAT_008036b4 = CONCAT13((char)((_DAT_00803f94 & 7) << 2),0xfeff00);
+  _DAT_008036b4 = CONCAT31(_DAT_008036b4,DAT_0080da01);
+  _DAT_008036b8 = 1;
+  _vp44_comm_fault_monitor_state = &DAT_008036ac;
+  _DAT_008036be = 0x8036c2;
+  return;
+}
+
+
+
+//
+// Function: FUN_00034512 @ 0x00034512
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+
+
+=== VARIABLES TO NAME ===
+0x0080356a  (17 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0080356a
+void dutyCycleMonitorAltIsrHandler(void)
+
+{
+  if ((_DAT_00803c98 & 0x1000) == 0) {
+    DAT_0080356a = 0;
+  }
+  else {
+    DAT_0080356a = 0x40;
+  }
+  if (_DAT_0080a9ca != 0) {
+    DAT_0080356a = DAT_0080356a | 0x10;
+  }
+  switch(_DAT_0080a9cc) {
+  case 1:
+  case 4:
+    if (_EB39CNID == 1) {
+      DAT_0080356a = DAT_0080356a | 6;
+    }
+    else if (_EB39CNID == 3) {
+      DAT_0080356a = DAT_0080356a | 5;
+    }
+    else if (_EB39CNID == 2) {
+      DAT_0080356a = DAT_0080356a | 7;
+    }
+    else {
+      DAT_0080356a = DAT_0080356a | 0xe;
+    }
+    break;
+  case 2:
+    DAT_0080356a = DAT_0080356a | 2;
+    break;
+  case 3:
+    DAT_0080356a = DAT_0080356a | 1;
+  }
+  if (_total_number_of_engine_brake_output_drivers_at_the_ecm_0_255 == 0) {
+    DAT_0080356b = -1;
+  }
+  else {
+    ioControlBasedFuelCalculator();
+    DAT_0080356b = '}' - (char)((ushort)
+                                _jcomm_ind_retarder_torque_amount_of_torque_provided_by_retarde_0_125
+                               >> 8);
+  }
+  sendCanMessage(&DAT_00803572);
+  return;
+}
+
+
+
+//
+// Function: cumminsProprietaryTSC_PGN_15728640_Builder @ 0x000339b0
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080356a
+void cumminsProprietaryTSC_PGN_15728640_Builder(void)
+
+{
+  _DAT_00803572 = CONCAT13((char)((_DAT_00803f6e & 7) << 2),0xf00000);
+  _DAT_00803572 = CONCAT31(_DAT_00803572,DAT_0080da0b);
+  throttleTablePointerSetup();
+  _DAT_00803576 = 2;
+  _DAT_00803578 = &DAT_0080356a;
+  _DAT_0080357c = 0x803580;
+  return;
+}
+
+
+
+//
+// Function: FUN_00033a1e @ 0x00033a1e
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+
+

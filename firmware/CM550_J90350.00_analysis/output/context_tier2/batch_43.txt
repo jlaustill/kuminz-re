@@ -1,0 +1,87 @@
+=== VARIABLES TO NAME ===
+0x00801c78  (5 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00801c78
+void FUN_0002ec50(void)
+
+{
+  if ((_feature_enable_flags_word & 0x1000) == 0) {
+    if (_DAT_0080aa90 == _priority_of_remote_throttle_feature_w_r_to_other_throttle_0_to_10) {
+      _DAT_0080aa90 = 0;
+      _DAT_0080aa8e = 0;
+      return;
+    }
+  }
+  else if ((_feature_enable_flags_word & 0x2000) == 0) {
+    if ((debounced_value_for_rear_axle_ratio_switch_on_off & 8) == 0) {
+      if (_DAT_0080aa90 == _priority_of_remote_throttle_feature_w_r_to_other_throttle_0_to_10) {
+        _DAT_0080aa90 = 0;
+        return;
+      }
+    }
+    else if (_DAT_0080aa90 < _priority_of_remote_throttle_feature_w_r_to_other_throttle_0_to_10) {
+      _DAT_0080aa90 = _priority_of_remote_throttle_feature_w_r_to_other_throttle_0_to_10;
+      _DAT_0080aa8e = _filtered_and_linearized_remote_throttle_0_100;
+      return;
+    }
+  }
+  else {
+    if (((_status_32_word_bit_mapped_system_error_status_word_3_0_1 & 0x800) == 0) ||
+       ((_DAT_00806046 & 0x800) != 0)) {
+      if ((_filtered_and_linearized_remote_throttle_0_100 <=
+           _intermediate_calculated_value_of_commanded_throttle_based_on_s_0_100) &&
+         ((debounced_value_for_rear_axle_ratio_switch_on_off & 8) != 0)) {
+        _DAT_00801c78 = 1;
+      }
+      if ((_intermediate_calculated_value_of_commanded_throttle_based_on_s_0_100 <=
+           _filtered_and_linearized_remote_throttle_0_100) &&
+         ((debounced_value_for_rear_axle_ratio_switch_on_off & 8) == 0)) {
+        _DAT_00801c78 = 0;
+      }
+    }
+    else if (_intermediate_calculated_value_of_commanded_throttle_based_on_s_0_100 <=
+             _filtered_and_linearized_remote_throttle_0_100) {
+      _DAT_00801c78 = 0;
+    }
+    if (_DAT_00801c78 == 1) {
+      if (_DAT_0080aa90 < _priority_of_remote_throttle_feature_w_r_to_other_throttle_0_to_10) {
+        _DAT_0080aa90 = _priority_of_remote_throttle_feature_w_r_to_other_throttle_0_to_10;
+        _DAT_0080aa8e = _filtered_and_linearized_remote_throttle_0_100;
+        return;
+      }
+    }
+    else if (_DAT_0080aa90 == _priority_of_remote_throttle_feature_w_r_to_other_throttle_0_to_10) {
+      _DAT_0080aa90 = 0;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: FUN_0002ed62 @ 0x0002ed62
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_00801c78
+void FUN_0002ed62(void)
+
+{
+  _DAT_00801c78 = 0;
+  return;
+}
+
+
+
+//
+// Function: insiteParameterParser @ 0x0002ed6a
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

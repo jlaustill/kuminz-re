@@ -1,0 +1,90 @@
+=== VARIABLES TO NAME ===
+0x00803631  (5 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00803631
+byte vp44CanMessage100ResponseBuilder(void)
+
+{
+  byte bVar1;
+  undefined1 local_6;
+  undefined1 uStack_5;
+  
+  bVar1 = DAT_00803652 & 0xf0;
+                    /* From J90280.05 @ 0x0339c2 (confidence: 81%) */
+  if ((DAT_00803652 & 0xf0) == 0) {
+    if (_total_number_of_engine_brake_output_drivers_at_the_ecm_0_255 < 2) {
+      _total_number_of_engine_brake_output_drivers_at_the_ecm_0_255 = 1;
+      DAT_00803630 = 0x14;
+    }
+    else {
+      DAT_00803630 = 3;
+    }
+    if (_indicates_of_cyl_brakes_driven_by_eb_driver_1_for_j1939_ret_ma_0_6 == 0) {
+      DAT_00803631 = 0xff;
+    }
+    else if (_indicates_of_cyl_brakes_driven_by_eb_driver_1_for_j1939_ret_ma_0_6 == 1) {
+      DAT_00803631 = 6;
+    }
+    else if (_indicates_of_cyl_brakes_driven_by_eb_driver_1_for_j1939_ret_ma_0_6 == 2) {
+      DAT_00803631 = 3;
+    }
+    else if (_indicates_of_cyl_brakes_driven_by_eb_driver_1_for_j1939_ret_ma_0_6 == 3) {
+      DAT_00803631 = 2;
+    }
+    else if (_indicates_of_cyl_brakes_driven_by_eb_driver_1_for_j1939_ret_ma_0_6 == 6) {
+      DAT_00803631 = 1;
+    }
+    uStack_5 = (undefined1)_JCRDISRP;
+    DAT_00803632 = uStack_5;
+    local_6 = (undefined1)((ushort)_JCRDISRP >> 8);
+    DAT_00803633 = local_6;
+    DAT_00803634 = '}' - (char)((ushort)
+                                _jcomm_retarder_torque_at_idle_available_torque_that_retarder_0_125
+                               >> 8);
+    uStack_5 = (undefined1)_JCMXEBRP;
+    DAT_00803635 = uStack_5;
+    local_6 = (undefined1)((ushort)_JCMXEBRP >> 8);
+    DAT_00803636 = local_6;
+    DAT_00803637 = '}' - (char)((ushort)
+                                _jcomm_retarder_torque_at_max_speed_available_torque_that_retar_0_125
+                               >> 8);
+    uStack_5 = (undefined1)_DAT_008089ae;
+    DAT_00803638 = uStack_5;
+    local_6 = (undefined1)((ushort)_DAT_008089ae >> 8);
+    DAT_00803639 = local_6;
+    DAT_0080363a = '}' - (char)((ushort)
+                                _jcomm_retarder_torque_at_pt_3_available_torque_that_retarder_0_125
+                               >> 8);
+    uStack_5 = (undefined1)_DAT_008089b0;
+    DAT_0080363b = uStack_5;
+    local_6 = (undefined1)((ushort)_DAT_008089b0 >> 8);
+    DAT_0080363c = local_6;
+    DAT_0080363d = '}' - (char)((ushort)
+                                _jcomm_retarder_torque_at_pt_4_available_torque_that_retarder_0_125
+                               >> 8);
+    uStack_5 = (undefined1)_DAT_008089ac;
+    DAT_0080363e = uStack_5;
+    local_6 = (undefined1)((ushort)_DAT_008089ac >> 8);
+    DAT_0080363f = local_6;
+    uStack_5 = (undefined1)_jcomm_reference_retarder_torque_reference_ret_torque_that_co_0_64255;
+    DAT_00803640 = uStack_5;
+    local_6 = (undefined1)
+              ((ushort)_jcomm_reference_retarder_torque_reference_ret_torque_that_co_0_64255 >> 8);
+    DAT_00803641 = local_6;
+    bVar1 = sendCanMessage(&DAT_00803644);
+  }
+  return bVar1;
+}
+
+
+
+//
+// Function: FUN_000341e6 @ 0x000341e6
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

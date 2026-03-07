@@ -1,0 +1,118 @@
+=== VARIABLES TO NAME ===
+0x0080d298  (6 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0080d298
+void rpmTimingDeltaComparatorWithReturn(void)
+
+{
+                    /* From J90280.05 @ 0x015f26 (confidence: 75%) */
+  if (_DAT_0080aa16 == 0) {
+    if (_backup_lost_counter_timeout_counter_for_secondary_speed_inp_0_10000 == 0) {
+      eps_main_in_phase_if_flase_eps_main_lags_backup_true_false = 1;
+      return;
+    }
+    if (_eps_pulse_number_eps_tooth_counter_0_24 ==
+        _eps_pulse_number_backup_eps_backup_tooth_counter_0_24) {
+      _DAT_0080d298 = _backup_signal_edge_time_stamp_0_65535 - _main_signal_edge_time_stamp_0_65535;
+      if (_eps_positive_out_of_phase_threshold_flag_thres_for_dif_32768_32767 < _DAT_0080d298) {
+        if (_eps_positive_out_of_phase_count_teeth_phase_shift_thresho_0_65535 <
+            _eps_out_of_phase_persistence_cnts_input_is_bad_before_a_flag_0_65535) {
+          _eps_positive_out_of_phase_count_teeth_phase_shift_thresho_0_65535 =
+               _eps_positive_out_of_phase_count_teeth_phase_shift_thresho_0_65535 + 1;
+        }
+        else {
+          eps_backup_in_phase_if_flase_eps_backup_lags_main_true_false = 0;
+        }
+        _eps_negative_out_of_phase_count_teeth_phase_shift_thresho_0_65535 = 0;
+        eps_main_in_phase_if_flase_eps_main_lags_backup_true_false = 1;
+        return;
+      }
+      if (_DAT_0080d298 < _eps_negative_out_of_phase_threshold_flag_thres_for_dif_32768_32767) {
+        if (_eps_negative_out_of_phase_count_teeth_phase_shift_thresho_0_65535 <
+            _eps_out_of_phase_persistence_cnts_input_is_bad_before_a_flag_0_65535) {
+          _eps_negative_out_of_phase_count_teeth_phase_shift_thresho_0_65535 =
+               _eps_negative_out_of_phase_count_teeth_phase_shift_thresho_0_65535 + 1;
+        }
+        else {
+          eps_main_in_phase_if_flase_eps_main_lags_backup_true_false = 0;
+        }
+        _eps_positive_out_of_phase_count_teeth_phase_shift_thresho_0_65535 = 0;
+        eps_backup_in_phase_if_flase_eps_backup_lags_main_true_false = 1;
+        return;
+      }
+      _eps_positive_out_of_phase_count_teeth_phase_shift_thresho_0_65535 = 0;
+      _eps_negative_out_of_phase_count_teeth_phase_shift_thresho_0_65535 = 0;
+      eps_main_in_phase_if_flase_eps_main_lags_backup_true_false = 1;
+      eps_backup_in_phase_if_flase_eps_backup_lags_main_true_false = 1;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: FUN_0001a298 @ 0x0001a298
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080d298
+void FUN_0001a298(void)
+
+{
+  if (_DAT_0080aa18 == 0) {
+    if (_main_lost_counter_timeout_counter_for_primary_speed_sensor_0_10000 == 0) {
+      eps_backup_in_phase_if_flase_eps_backup_lags_main_true_false = 1;
+      return;
+    }
+    if (_eps_pulse_number_eps_tooth_counter_0_24 ==
+        _eps_pulse_number_backup_eps_backup_tooth_counter_0_24) {
+      _DAT_0080d298 = _backup_signal_edge_time_stamp_0_65535 - _main_signal_edge_time_stamp_0_65535;
+      if (_eps_positive_out_of_phase_threshold_flag_thres_for_dif_32768_32767 < _DAT_0080d298) {
+        if (_eps_positive_out_of_phase_count_teeth_phase_shift_thresho_0_65535 <
+            _eps_out_of_phase_persistence_cnts_input_is_bad_before_a_flag_0_65535) {
+          _eps_positive_out_of_phase_count_teeth_phase_shift_thresho_0_65535 =
+               _eps_positive_out_of_phase_count_teeth_phase_shift_thresho_0_65535 + 1;
+        }
+        else {
+          eps_backup_in_phase_if_flase_eps_backup_lags_main_true_false = 0;
+        }
+        _eps_negative_out_of_phase_count_teeth_phase_shift_thresho_0_65535 = 0;
+        eps_main_in_phase_if_flase_eps_main_lags_backup_true_false = 1;
+        return;
+      }
+      if (_DAT_0080d298 < _eps_negative_out_of_phase_threshold_flag_thres_for_dif_32768_32767) {
+        if (_eps_negative_out_of_phase_count_teeth_phase_shift_thresho_0_65535 <
+            _eps_out_of_phase_persistence_cnts_input_is_bad_before_a_flag_0_65535) {
+          _eps_negative_out_of_phase_count_teeth_phase_shift_thresho_0_65535 =
+               _eps_negative_out_of_phase_count_teeth_phase_shift_thresho_0_65535 + 1;
+        }
+        else {
+          eps_main_in_phase_if_flase_eps_main_lags_backup_true_false = 0;
+        }
+        _eps_positive_out_of_phase_count_teeth_phase_shift_thresho_0_65535 = 0;
+        eps_backup_in_phase_if_flase_eps_backup_lags_main_true_false = 1;
+        return;
+      }
+      _eps_positive_out_of_phase_count_teeth_phase_shift_thresho_0_65535 = 0;
+      _eps_negative_out_of_phase_count_teeth_phase_shift_thresho_0_65535 = 0;
+      eps_main_in_phase_if_flase_eps_main_lags_backup_true_false = 1;
+      eps_backup_in_phase_if_flase_eps_backup_lags_main_true_false = 1;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: FUN_0001a350 @ 0x0001a350
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

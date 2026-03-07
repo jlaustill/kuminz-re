@@ -1,0 +1,306 @@
+=== VARIABLES TO NAME ===
+0x00800698  (15 references)
+0x0080dec8  (21 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0080dec8
+void shutdownMinimumSelector21(void)
+
+{
+  if (_DAT_0080a28c < _DAT_0080dec8) {
+    _DAT_0080dec8 = _DAT_0080a28c;
+    _indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 = 0x11;
+  }
+  return;
+}
+
+
+
+//
+// Function: FUN_0000b3d0 @ 0x0000b3d0
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080dec8
+void shutdownMinimumSelector15(void)
+
+{
+  if (_DAT_0080a922 < _DAT_0080dec8) {
+    _DAT_0080dec8 = _DAT_0080a922;
+    _indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 = 0xf;
+  }
+  return;
+}
+
+
+
+//
+// Function: tpuTimerInitializer @ 0x0000c760
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080dec8
+void FUN_00017120(void)
+
+{
+  if (((_smoke_limiter_output_value == 3) && (_DAT_0080ccb2 != 0)) &&
+     (_DAT_0080ccc6 < _DAT_0080dec8)) {
+    _DAT_0080dec8 = _DAT_0080ccc6;
+    _indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 = 0x21;
+  }
+  return;
+}
+
+
+
+//
+// Function: canControllerConfigInit @ 0x00017150
+//
+
+// Variables in this function: DAT_0080dec8
+void shutdownMinimumSelector29(void)
+
+{
+  if (_DAT_0080d284 < _DAT_0080dec8) {
+    _DAT_0080dec8 = _DAT_0080d284;
+    _indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 = 0x1d;
+  }
+  return;
+}
+
+
+
+//
+// Function: FUN_00019702 @ 0x00019702
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_00800698
+void diagnosticFuelLimitInterpolator(void)
+
+{
+  if (_indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 == 0xd) {
+    _DAT_00800698 = _desired_engine_fueling_after_derate_without_air_handl_derate_0_100;
+    _DAT_0080d330 = _FSLMDSST;
+    return;
+  }
+  if ((_DAT_0080a926 != 0) && ((_DAT_0080d336 & 1) == 1)) {
+    if (_override_fueling_to_slave_fuel_selection_0_100 <=
+        _smallest_derate_fueling_value_among_group_2_ah_derate_algori_0_100) {
+      _DAT_00800698 = _override_fueling_to_slave_fuel_selection_0_100;
+      _DAT_0080d330 = 0x20;
+      return;
+    }
+    _DAT_00800698 = _smallest_derate_fueling_value_among_group_2_ah_derate_algori_0_100;
+    _DAT_0080d330 = _FSLMAHST;
+    return;
+  }
+  if (_desired_engine_fueling_after_derate_without_air_handl_derate_0_100 <=
+      _smallest_derate_fueling_value_among_group_2_ah_derate_algori_0_100) {
+    _DAT_00800698 = _desired_engine_fueling_after_derate_without_air_handl_derate_0_100;
+    _DAT_0080d330 = _FSLMDSST;
+    return;
+  }
+  _DAT_00800698 = _smallest_derate_fueling_value_among_group_2_ah_derate_algori_0_100;
+  _DAT_0080d330 = _FSLMAHST;
+  return;
+}
+
+
+
+//
+// Function: FUN_0001c0d4 @ 0x0001c0d4
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080dec8
+void FUN_0001c0d4(void)
+
+{
+  int iVar1;
+  
+  if (_max_torque_at_current_rpm_in_foot_pounds_0_10000 == 0) {
+    _max_torque_at_current_rpm_in_foot_pounds_0_10000 = 1;
+  }
+  iVar1 = scaleByRatioSigned(_DAT_0080d338,
+                             (uint)_max_fueling_without_programmable_power_for_esp_tau_0_0_100 -
+                             (uint)_DAT_0080db1c,_max_torque_at_current_rpm_in_foot_pounds_0_10000);
+  iVar1 = (uint)_DAT_0080db1c + iVar1;
+  if (iVar1 < 0) {
+    iVar1 = 0;
+  }
+  if (iVar1 < (int)(uint)_DAT_0080dec8) {
+    _DAT_0080dec8 = (ushort)iVar1;
+    _indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 =
+         _indicates_origin_of_tqdqta_value_0_10;
+  }
+  _DAT_0080d338 = 0xffff;
+  _indicates_origin_of_tqdqta_value_0_10 = 0x28;
+  return;
+}
+
+
+
+//
+// Function: fuelTimingOilPressureModeController @ 0x0001c152
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_00800698, DAT_0080dec8
+void fuelTimingOilPressureModeController(void)
+
+{
+  if ((_DAT_00803c96 & 0x10) == 0) {
+    FUN_00030c3c();
+    FUN_0001c0d4();
+  }
+  else {
+    _DAT_0080dec8 = _DAT_00803f2a;
+    _indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 = 0xd;
+  }
+  if (_DAT_0080a8f0 < _DAT_0080dec8) {
+    _desired_engine_fueling_after_derate_without_air_handl_derate_0_100 = _DAT_0080a8f0;
+    _FSLMDSST = _indicator_as_to_which_algorithm_is_in_control_of_fueling_after_it_1_12;
+  }
+  else {
+    _desired_engine_fueling_after_derate_without_air_handl_derate_0_100 = _DAT_0080dec8;
+    _FSLMDSST = _indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41;
+  }
+  if (_smoke_limiter_output_value == 1) {
+    _DAT_0080d32e = 0;
+    _DAT_0080d330 = 0x1a;
+  }
+  else if (_smoke_limiter_output_value == 8) {
+    _DAT_0080d32e = _DAT_0080800a;
+    _DAT_0080d330 = 0x1b;
+  }
+  else {
+    if (_smoke_limiter_output_value == 5) {
+      _DAT_00800698 = _DAT_00808008;
+      _DAT_0080d330 = 0x19;
+    }
+    else if ((_DAT_00803c96 & 2) == 0) {
+      if (_smoke_limiter_output_value == 4) {
+        _DAT_00800698 = _DAT_00808006;
+        _DAT_0080d330 = 0x18;
+      }
+      else if ((_smoke_limiter_output_value == 2) || (_smoke_limiter_output_value == 6)) {
+        _DAT_00800698 = _engine_mode_timing_init_flag;
+        _DAT_0080d330 = 0x16;
+      }
+      else {
+        if ((_indicator_as_to_which_algorithm_is_in_control_of_fueling_after_it_1_12 == 0xb) &&
+           ((_indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 == 0x14 &&
+            (_DAT_0080dec8 <= _smallest_derate_fueling_value_among_group_2_ah_derate_algori_0_100)))
+           ) {
+          _DAT_00800698 = _DAT_0080a8f0;
+          _DAT_0080d330 = 0xb;
+        }
+        else {
+          diagnosticFuelLimitInterpolator();
+        }
+        if ((_smoke_limiter_output_value == 7) && (_DAT_00800698 < _engine_mode_timing_init_flag)) {
+          _DAT_00800698 = _engine_mode_timing_init_flag;
+          _DAT_0080d330 = 0x16;
+        }
+      }
+    }
+    else {
+      _DAT_00800698 = _DAT_00803f2c;
+      _DAT_0080d330 = 0x17;
+    }
+    if (_DAT_00808004 < _DAT_00800698) {
+      _DAT_0080d32e = _DAT_00808004;
+    }
+    else if (_DAT_00800698 < _DAT_0080800a) {
+      _DAT_0080d32e = _DAT_0080800a;
+    }
+    else {
+      _DAT_0080d32e = _DAT_00800698;
+    }
+  }
+  if ((_indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 != 0xd) &&
+     (_smallest_derate_fueling_value_among_group_2_ah_derate_algori_0_100 < _DAT_0080dec8)) {
+    _DAT_0080dec8 = _smallest_derate_fueling_value_among_group_2_ah_derate_algori_0_100;
+    _indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 = _FSLMAHST;
+  }
+  if ((_DAT_0080d33c != 0xb) && (_DAT_0080d330 == 0xb)) {
+    _semaphore_used_to_latch_lsg_events_that_occur_betwe_0_false_1_true = 1;
+  }
+  _DAT_0080d33c = _DAT_0080d330;
+  return;
+}
+
+
+
+//
+// Function: FUN_0001c308 @ 0x0001c308
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080dec8
+void FUN_0001ce58(void)
+
+{
+  _DAT_0080dec8 = _fueling_value_at_100_throttle_0_100;
+  _indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 = 0x13;
+  _smallest_derate_fueling_value_among_group_2_ah_derate_algori_0_100 =
+       _fueling_value_at_100_throttle_0_100;
+  _FSLMAHST = 0x28;
+  return;
+}
+
+
+
+//
+// Function: initDiagnosticProtocol @ 0x0001ce7c
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080dec8
+void shutdownMinimumSelector28(void)
+
+{
+  if (_fuel_system_specific_fuel_derate_that_is_input_to_the_core_sys_0_100 < _DAT_0080dec8) {
+    _DAT_0080dec8 = _fuel_system_specific_fuel_derate_that_is_input_to_the_core_sys_0_100;
+    _indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 = 0x1c;
+  }
+  return;
+}
+
+
+
+//
+// Function: shutdownMinimumSelector20 @ 0x00030c14
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080dec8
+void shutdownMinimumSelector20(void)
+
+{
+  if ((_DAT_0080da50 == 3) &&
+     (_jcomm_torque_derate_fueling_maximum_allowed_fuel_as_per_link_u_0_100 < _DAT_0080dec8)) {
+    _DAT_0080dec8 = _jcomm_torque_derate_fueling_maximum_allowed_fuel_as_per_link_u_0_100;
+    _indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 = 0x14;
+  }
+  return;
+}
+
+
+
+//
+// Function: FUN_00030c3c @ 0x00030c3c
+//
+

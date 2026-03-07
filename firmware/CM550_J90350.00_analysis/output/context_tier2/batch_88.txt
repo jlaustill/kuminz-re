@@ -1,0 +1,134 @@
+=== VARIABLES TO NAME ===
+0x0080de6a  (7 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0080de6a
+void diagnosticTableSnapshotCapture(undefined4 param_1)
+
+{
+  short sVar1;
+  
+                    /* From J90280.05 @ 0x027f4c (confidence: 81%) */
+  if ((*(ushort *)(&fault_definition_flags_word + (short)(param_1._2_2_ * 3) * 2) & 0x10) != 0) {
+    sVar1 = param_1._0_2_ * 0x30;
+    *(short *)(&DAT_0080462e + sVar1) = param_1._2_2_;
+    *(undefined2 *)(&DAT_00804636 + sVar1) = _percent_load_at_current_speed;
+    *(undefined2 *)(&DAT_00804630 + sVar1) =
+         _sampled_road_speed_after_it_has_been_filtered_0_255_9961;
+    *(undefined2 *)(sVar1 + 0x804632) = _current_engine_rpm_filtered;
+    *(undefined2 *)(sVar1 + 0x804638) = _validated_percent_throttle_commanded_by_driver_0_100;
+    *(undefined2 *)(&DAT_0080463a + sVar1) = _boost_pressure_0_100;
+    *(undefined4 *)(sVar1 + 0x80462a) = _hour_meter_ecm_run_time_none;
+    *(undefined2 *)(&DAT_0080463c + sVar1) = _filtered_and_linearized_coolant_temperature_50_to_293;
+    *(undefined2 *)(sVar1 + 0x80463e) =
+         _filtered_and_linearized_intake_manifold_temperature_50_to_293;
+    *(undefined2 *)(sVar1 + 0x804640) = _flitered_and_linearized_oil_pressure_0_100;
+    *(undefined2 *)(sVar1 + 0x804634) = _bit_mapped_system_switch_status_0_false_1_true_bcc8;
+    *(undefined2 *)(sVar1 + 0x804642) = _bit_mapped_system_switch_status_0_false_1_true_bcca;
+    *(undefined4 *)(sVar1 + 0x804644) = _time_that_the_engine_is_not_in_stop_state_0_2_29;
+    *(undefined2 *)(sVar1 + 0x804648) = _DAT_0080d330;
+    *(undefined2 *)(sVar1 + 0x80464a) = _filtered_and_linearized_battery_voltage_0_40;
+    *(undefined2 *)(sVar1 + 0x80464c) = _current_fuel_demand;
+    *(undefined2 *)(sVar1 + 0x80464e) = _DAT_0080de6a;
+    *(undefined2 *)(sVar1 + 0x804650) = _DAT_0080a18e;
+    *(undefined2 *)(sVar1 + 0x804652) = _DAT_0080a188;
+    *(undefined2 *)(sVar1 + 0x804654) = _DAT_0080a454;
+    *(undefined2 *)(sVar1 + 0x804656) = _DAT_0080a17e;
+    *(undefined2 *)(sVar1 + 0x804658) = _bit_mapped_system_switch_status_0_false_1_true_bccc;
+  }
+  param_1._0_2_ = param_1._0_2_ * 0x30;
+  if (param_1._2_2_ != *(short *)(&diagnostic_fault_code_table + param_1._0_2_)) {
+    *(short *)(&diagnostic_fault_code_table + param_1._0_2_) = param_1._2_2_;
+    *(undefined2 *)(param_1._0_2_ + 0x804276) = _percent_load_at_current_speed;
+    *(undefined2 *)(param_1._0_2_ + 0x804270) =
+         _sampled_road_speed_after_it_has_been_filtered_0_255_9961;
+    *(undefined2 *)(param_1._0_2_ + 0x804272) = _current_engine_rpm_filtered;
+    *(undefined2 *)(param_1._0_2_ + 0x804278) =
+         _validated_percent_throttle_commanded_by_driver_0_100;
+    *(undefined2 *)(param_1._0_2_ + 0x80427a) = _boost_pressure_0_100;
+    *(undefined4 *)(param_1._0_2_ + 0x80426a) = _hour_meter_ecm_run_time_none;
+    *(undefined2 *)(param_1._0_2_ + 0x80427c) =
+         _filtered_and_linearized_coolant_temperature_50_to_293;
+    *(undefined2 *)(param_1._0_2_ + 0x80427e) =
+         _filtered_and_linearized_intake_manifold_temperature_50_to_293;
+    *(undefined2 *)(param_1._0_2_ + 0x804280) = _flitered_and_linearized_oil_pressure_0_100;
+    *(undefined2 *)(param_1._0_2_ + 0x804274) = _bit_mapped_system_switch_status_0_false_1_true_bcc8
+    ;
+    *(undefined2 *)(param_1._0_2_ + 0x804282) = _bit_mapped_system_switch_status_0_false_1_true_bcca
+    ;
+    *(undefined4 *)(param_1._0_2_ + 0x804284) = _time_that_the_engine_is_not_in_stop_state_0_2_29;
+    *(undefined2 *)(param_1._0_2_ + 0x804288) = _DAT_0080d330;
+    *(undefined2 *)(param_1._0_2_ + 0x80428a) = _filtered_and_linearized_battery_voltage_0_40;
+    *(undefined2 *)(param_1._0_2_ + 0x80428c) = _current_fuel_demand;
+    *(undefined2 *)(param_1._0_2_ + 0x80428e) = _DAT_0080de6a;
+    *(undefined2 *)(param_1._0_2_ + 0x804290) = _DAT_0080a18e;
+    *(undefined2 *)(param_1._0_2_ + 0x804292) = _DAT_0080a188;
+    *(undefined2 *)(param_1._0_2_ + 0x804294) = _DAT_0080a454;
+    *(undefined2 *)(param_1._0_2_ + 0x804296) = _DAT_0080a17e;
+    *(undefined2 *)(param_1._0_2_ + 0x804298) = _bit_mapped_system_switch_status_0_false_1_true_bccc
+    ;
+  }
+  return;
+}
+
+
+
+//
+// Function: tpuChannelStateMachine @ 0x000300d4
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080de6a
+ushort vp44InjectionSystemStateController(void)
+
+{
+  ushort uVar1;
+  
+                    /* From J90280.05 @ 0x031768 (confidence: 67%) */
+  uVar1 = FUN_00030b34();
+  _test_variable_used_to_snapshot_the_system_interface_variable_s_0_120 = _fuel_timing_advance_value
+  ;
+  if (_DAT_0080d330 == 0x1b) {
+    _DAT_0080de6a = _diagnostic_fuel_arbitration_state_10_value;
+    _DAT_0080d34c = 10;
+    _timing_control_status_flags = 0;
+  }
+  else if (_DAT_0080d330 == 0x19) {
+    _DAT_0080de6a = _diagnostic_fuel_arbitration_state_9_value;
+    _DAT_0080d34c = 9;
+    _timing_control_status_flags = 0;
+  }
+  else if (_DAT_0080d330 == 0x1a) {
+    _DAT_0080de6a = 0;
+    _DAT_0080d34c = 8;
+    _timing_control_status_flags = 0;
+  }
+  else {
+    uVar1 = _calibration_feature_enable_flags_word_1 & 8;
+    if (uVar1 == 0) {
+      _DAT_0080de6a = _fuel_timing_advance_value;
+      _DAT_0080d34c = _intermediate_timing_state_used_before_final_timing_selction_0_10;
+    }
+    else {
+      _DAT_0080de6a = _DAT_00804024;
+      _DAT_0080d34c = 7;
+      _timing_control_status_flags = 0;
+    }
+  }
+  _flags_of_final_timing_increment_states_0_ff = _timing_control_status_flags;
+  _timing_control_status_flags = 0;
+  return uVar1;
+}
+
+
+
+//
+// Function: shutdownMinimumSelector28 @ 0x00030bf6
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

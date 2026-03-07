@@ -1,0 +1,50 @@
+=== VARIABLES TO NAME ===
+0x00801a1e  (12 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00801a1e
+void periodicLampFlashController(void)
+
+{
+  if (DAT_00801a1d == '\0') {
+    _DAT_00801a1e = _DAT_00801a1e + 1;
+    if (36000 < _DAT_00801a1e) {
+      DAT_00801a1d = 1;
+      _DAT_00801a1e = 0;
+      return;
+    }
+  }
+  else {
+    _DAT_00801a1e = _DAT_00801a1e + 1;
+    if ((_DAT_00801a1e == 0) || (0x13 < _DAT_00801a1e)) {
+      if ((_DAT_00801a1e < 0x14) || (0x4f < _DAT_00801a1e)) {
+        _DAT_00801a20 = _DAT_00801a20 + 1;
+        _DAT_00801a1e = 0;
+      }
+      else {
+        lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffb;
+      }
+    }
+    else {
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask | 4;
+    }
+    if (3 < _DAT_00801a20) {
+      DAT_00801a1d = '\0';
+      _DAT_00801a1e = 0;
+      _DAT_00801a20 = 0;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: FUN_000254b6 @ 0x000254b6
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

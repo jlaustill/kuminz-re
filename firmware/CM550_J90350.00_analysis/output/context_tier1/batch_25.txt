@@ -1,0 +1,84 @@
+=== VARIABLES TO NAME ===
+0x0080356a  (17 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0080356a
+void dutyCycleMonitorAltIsrHandler(void)
+
+{
+  if ((_DAT_00803c98 & 0x1000) == 0) {
+    DAT_0080356a = 0;
+  }
+  else {
+    DAT_0080356a = 0x40;
+  }
+  if (_DAT_0080a9ca != 0) {
+    DAT_0080356a = DAT_0080356a | 0x10;
+  }
+  switch(_DAT_0080a9cc) {
+  case 1:
+  case 4:
+    if (_EB39CNID == 1) {
+      DAT_0080356a = DAT_0080356a | 6;
+    }
+    else if (_EB39CNID == 3) {
+      DAT_0080356a = DAT_0080356a | 5;
+    }
+    else if (_EB39CNID == 2) {
+      DAT_0080356a = DAT_0080356a | 7;
+    }
+    else {
+      DAT_0080356a = DAT_0080356a | 0xe;
+    }
+    break;
+  case 2:
+    DAT_0080356a = DAT_0080356a | 2;
+    break;
+  case 3:
+    DAT_0080356a = DAT_0080356a | 1;
+  }
+  if (_total_number_of_engine_brake_output_drivers_at_the_ecm_0_255 == 0) {
+    DAT_0080356b = -1;
+  }
+  else {
+    ioControlBasedFuelCalculator();
+    DAT_0080356b = '}' - (char)((ushort)
+                                _jcomm_ind_retarder_torque_amount_of_torque_provided_by_retarde_0_125
+                               >> 8);
+  }
+  sendCanMessage(&DAT_00803572);
+  return;
+}
+
+
+
+//
+// Function: cumminsProprietaryTSC_PGN_15728640_Builder @ 0x000339b0
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080356a
+void cumminsProprietaryTSC_PGN_15728640_Builder(void)
+
+{
+  _DAT_00803572 = CONCAT13((char)((_DAT_00803f6e & 7) << 2),0xf00000);
+  _DAT_00803572 = CONCAT31(_DAT_00803572,DAT_0080da0b);
+  throttleTablePointerSetup();
+  _DAT_00803576 = 2;
+  _DAT_00803578 = &DAT_0080356a;
+  _DAT_0080357c = 0x803580;
+  return;
+}
+
+
+
+//
+// Function: FUN_00033a1e @ 0x00033a1e
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

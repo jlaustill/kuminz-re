@@ -86,7 +86,7 @@ address,name
 0x00010fe0,eepromCalibrationWriteSecondary
 0x000114d4,validateRedundantSensors
 0x000117ec,firmwareDataCopyToWorkingMemory
-0x00011880,caseD_4
+0x00011880,default
 0x0001188c,waterInFuelDetectionStateInit
 0x000118b2,waterInFuelFaultClear
 0x000118fc,activateHighRpmShutdownFlag

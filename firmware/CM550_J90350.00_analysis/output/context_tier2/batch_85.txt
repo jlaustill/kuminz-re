@@ -1,0 +1,60 @@
+=== VARIABLES TO NAME ===
+0x0080db04  (8 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0080db04
+void FUN_00026616(void)
+
+{
+  bool bVar1;
+  bool bVar2;
+  
+  bVar2 = _filtered_and_linearized_coolant_temperature_50_to_293 <
+          _cold_idle_coolant_temperature_50_to_293;
+  if ((_calibration_feature_enable_flags_word_9 & 0x4000) == 0) {
+    bVar1 = false;
+  }
+  else if (_DAT_0080db08 == 0) {
+    bVar1 = false;
+  }
+  else {
+    bVar1 = true;
+  }
+  if (_smoke_limiter_output_value == 1) {
+    _rpm_histogram_sample_divider = 0;
+    if (bVar2) {
+      _DAT_0080db04 = _cold_idle_speed_300_1000;
+    }
+    else {
+      _DAT_0080db04 = 0;
+    }
+  }
+  else if (_smoke_limiter_output_value != 2) {
+    if ((bVar2) && (_rpm_histogram_sample_divider < _cold_idle_time_0_65535)) {
+      _rpm_histogram_sample_divider = _rpm_histogram_sample_divider + 1;
+    }
+    if ((_smoke_limiter_output_value == 3) &&
+       ((_cold_idle_time_0_65535 <= _rpm_histogram_sample_divider || (!bVar2)))) {
+      if (_lsg_idle_ramp_rate_0_1000 < _DAT_0080db04) {
+        _DAT_0080db04 = _DAT_0080db04 - _lsg_idle_ramp_rate_0_1000;
+      }
+      else {
+        _DAT_0080db04 = 0;
+      }
+    }
+  }
+  if ((_operator_adjusted_lsg_breakpoint_speed_300_1000 < _DAT_0080db04) && (!bVar1)) {
+    _operator_adjusted_lsg_breakpoint_speed_300_1000 = _DAT_0080db04;
+  }
+  return;
+}
+
+
+
+//
+// Function: timingOffsetCalculatorWrapper @ 0x000266d2
+//
+

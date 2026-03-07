@@ -1,0 +1,50 @@
+=== VARIABLES TO NAME ===
+0x00801a1a  (15 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00801a1a
+void FUN_000253b0(void)
+
+{
+  _DAT_00801a1a = _DAT_00801a1a + 1;
+  if ((_DAT_00801a1a != 0) && (_DAT_00801a1a < 6)) {
+    lamp_driver_output_bitmask = lamp_driver_output_bitmask | 2;
+    DAT_00801a1c = 1;
+    return;
+  }
+  if ((5 < _DAT_00801a1a) && (_DAT_00801a1a < 0x18)) {
+    lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffd;
+    return;
+  }
+  if ((0x17 < _DAT_00801a1a) && (_DAT_00801a1a < 0x1e)) {
+    lamp_driver_output_bitmask = lamp_driver_output_bitmask | 2;
+    return;
+  }
+  if ((0x1d < _DAT_00801a1a) && (_DAT_00801a1a < 0x30)) {
+    lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffd;
+    return;
+  }
+  if ((0x2f < _DAT_00801a1a) && (_DAT_00801a1a < 0x36)) {
+    lamp_driver_output_bitmask = lamp_driver_output_bitmask | 2;
+    return;
+  }
+  if ((0x35 < _DAT_00801a1a) && (_DAT_00801a1a < 0x48)) {
+    lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffd;
+    return;
+  }
+  DAT_00801a1c = 0;
+  _DAT_00801a1a = 0;
+  return;
+}
+
+
+
+//
+// Function: periodicLampFlashController @ 0x00025448
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

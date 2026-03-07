@@ -1,0 +1,80 @@
+=== VARIABLES TO NAME ===
+0x0080d338  (5 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0080d338
+void FUN_0001c0d4(void)
+
+{
+  int iVar1;
+  
+  if (_max_torque_at_current_rpm_in_foot_pounds_0_10000 == 0) {
+    _max_torque_at_current_rpm_in_foot_pounds_0_10000 = 1;
+  }
+  iVar1 = scaleByRatioSigned(_DAT_0080d338,
+                             (uint)_max_fueling_without_programmable_power_for_esp_tau_0_0_100 -
+                             (uint)_frictional_no_load_fueling,
+                             _max_torque_at_current_rpm_in_foot_pounds_0_10000);
+  iVar1 = (uint)_frictional_no_load_fueling + iVar1;
+  if (iVar1 < 0) {
+    iVar1 = 0;
+  }
+  if (iVar1 < (int)(uint)_fuel_limit_shutdown_minimum) {
+    _fuel_limit_shutdown_minimum = (ushort)iVar1;
+    _indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 =
+         _indicates_origin_of_tqdqta_value_0_10;
+  }
+  _DAT_0080d338 = 0xffff;
+  _indicates_origin_of_tqdqta_value_0_10 = 0x28;
+  return;
+}
+
+
+
+//
+// Function: fuelTimingOilPressureModeController @ 0x0001c152
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080d338
+void FUN_0001c308(void)
+
+{
+  _DAT_0080d338 = 0xffff;
+  _indicates_origin_of_tqdqta_value_0_10 = 0x28;
+  return;
+}
+
+
+
+//
+// Function: flashEraseWithWatchdog @ 0x0001c31a
+//
+
+/* WARNING: Removing unreachable block (ram,0x0001c46e) */
+/* WARNING: Removing unreachable block (ram,0x0001c47c) */
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080d338
+void FUN_0002d9a8(void)
+
+{
+  if ((_DAT_0080dc26 == 1) && (_DAT_0080400e < _DAT_0080d338)) {
+    _DAT_0080d338 = _DAT_0080400e;
+    _indicates_origin_of_tqdqta_value_0_10 = 0x22;
+  }
+  return;
+}
+
+
+
+//
+// Function: fuelDemandProportionalCalculator @ 0x0002d9d2
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

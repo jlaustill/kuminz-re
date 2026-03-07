@@ -1,0 +1,209 @@
+=== VARIABLES TO NAME ===
+0x0080051e  (6 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0080051e
+uint FUN_000138b6(void)
+
+{
+  uint uVar1;
+  undefined1 uVar2;
+  byte bVar3;
+  short sVar4;
+  undefined *puVar5;
+  
+  _DAT_0080051e = _DAT_0080051e + 1;
+  if (trending_sample_rate_divisor <= _DAT_0080051e) {
+    scheduler_phase_execution_time = '\x01';
+    _DAT_0080051e = 0;
+  }
+  uVar1 = (uint)(_feature_enable_flags_word & 0x20);
+  if ((_feature_enable_flags_word & 0x20) == 0) {
+    _DAT_0080baca = 0;
+    _DAT_0080bac6 = 0;
+    _DAT_0080bac8 = 0;
+    DAT_00800352 = '\0';
+  }
+  else {
+    if ((DAT_00800352 == '\0') && (_DAT_0080bac4 == 0)) {
+      uVar1 = FUN_00013d42();
+      trending_sample_rate_divisor = (byte)uVar1;
+      if (_DAT_00803dc6 == 1) {
+        FUN_00013dbe();
+        uVar1 = FUN_00013e64();
+      }
+    }
+    if (_smoke_limiter_output_value == 1) {
+      _DAT_0080baca = 0;
+      _DAT_0080bac6 = 0;
+      _DAT_0080bac8 = 0;
+      return uVar1;
+    }
+    if (_DAT_0080bac4 != 0) {
+      _DAT_0080baca = 0;
+      _DAT_0080bac6 = 0;
+      _DAT_0080bac8 = 0;
+      return uVar1;
+    }
+    if (_DAT_00803dc6 == 1) {
+      if (scheduler_phase_execution_time != '\0') {
+        bVar3 = 0;
+        puVar5 = &flash_write_end_address;
+        sVar4 = 0;
+        do {
+          if ((&DAT_00803d65)[sVar4] == '\0') {
+            uVar2 = FUN_00013ed8();
+            *puVar5 = uVar2;
+          }
+          else {
+            *puVar5 = 1;
+          }
+          uVar1 = 0x10;
+          sVar4 = sVar4 + 0x10;
+          puVar5 = puVar5 + 1;
+          bVar3 = bVar3 + 1;
+        } while (bVar3 < 3);
+        if (DAT_00803d95 == '\0') {
+          uVar1 = FUN_00013ed8();
+          DAT_0080036d = (char)uVar1;
+        }
+        else {
+          DAT_0080036d = '\0';
+        }
+        if (((flash_write_end_address == '\0') || (DAT_0080036b == '\0')) || (DAT_0080036c == '\0'))
+        {
+          if (DAT_0080036d != '\0') {
+            _DAT_0080baca = 1;
+            _DAT_0080bac8 = 1;
+            return uVar1;
+          }
+        }
+        else {
+          _DAT_0080baca = 1;
+          _DAT_0080bac6 = 1;
+          if (DAT_0080036d != '\0') {
+            _DAT_0080bac8 = 1;
+            return uVar1;
+          }
+        }
+      }
+    }
+    else {
+      if ((debounced_value_for_rear_axle_ratio_switch_on_off & 0x40) == 0) {
+        DAT_00800520 = 0;
+        return uVar1;
+      }
+      if (DAT_00800520 == '\0') {
+        _DAT_0080baca = 1;
+        DAT_00800520 = 1;
+        return uVar1;
+      }
+    }
+  }
+  return uVar1;
+}
+
+
+
+//
+// Function: FUN_00013a5c @ 0x00013a5c
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080051e
+void FUN_00013cc8(void)
+
+{
+  ushort uVar1;
+  short sVar2;
+  byte *pbVar3;
+  undefined1 *puVar4;
+  undefined *puVar5;
+  
+  _DAT_0080051e = 0;
+  scheduler_phase_execution_time = 0;
+  uVar1 = 0;
+  pbVar3 = &flash_write_data_pointer;
+  puVar5 = &fuel_demand_rating_table_size;
+  sVar2 = 0;
+  do {
+    if (*(short *)(&DAT_00803d66 + sVar2) == 1) {
+      *puVar5 = (&diagnostic_fault_status_table)[(short)((ushort)*pbVar3 * 5) * 2];
+    }
+    sVar2 = sVar2 + 0x10;
+    puVar5 = puVar5 + 1;
+    pbVar3 = pbVar3 + 1;
+    uVar1 = uVar1 + 1;
+  } while (uVar1 < 4);
+  uVar1 = 0;
+  puVar4 = &fuel_demand_blend_input;
+  do {
+    *puVar4 = 0;
+    uVar1 = uVar1 + 1;
+    puVar4 = puVar4 + 1;
+  } while (uVar1 < 400);
+  _data_record_buffer_write_ptr = &fuel_demand_blend_input;
+  DAT_00800372 = 1;
+  return;
+}
+
+
+
+//
+// Function: FUN_00013d42 @ 0x00013d42
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080051e
+undefined4 FUN_00013d42(void)
+
+{
+  uint uVar1;
+  uint uVar2;
+  
+  if ((_DAT_00803dc6 == 1) && (2 < _DAT_00803dc4)) {
+    _DAT_00803dc4 = 2;
+  }
+  uVar1 = (uint)_DAT_00803dc4;
+  if (uVar1 < 6) {
+    uVar2 = CONCAT22(_DAT_00803dc4 >> 0xf,(&switchD_00013d76::switchdataD_00013d7a)[uVar1]);
+    switch(uVar1) {
+    case 0:
+      trending_sample_rate_divisor = 5;
+      break;
+    case 1:
+      trending_sample_rate_divisor = 10;
+      break;
+    case 2:
+      trending_sample_rate_divisor = 0x14;
+      break;
+    case 3:
+      trending_sample_rate_divisor = 0x28;
+      break;
+    case 4:
+      trending_sample_rate_divisor = 0x50;
+      break;
+    case 5:
+      trending_sample_rate_divisor = 0xa0;
+    }
+  }
+  else {
+    trending_sample_rate_divisor = 5;
+    uVar2 = uVar1;
+  }
+  scheduler_phase_execution_time = 0;
+  _DAT_0080051e = 0;
+  return CONCAT31((int3)(uVar2 >> 8),trending_sample_rate_divisor);
+}
+
+
+
+//
+// Function: FUN_00013dbe @ 0x00013dbe
+//
+

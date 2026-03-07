@@ -1,0 +1,160 @@
+=== VARIABLES TO NAME ===
+0x0080d9bf  (5 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0080d9bf
+void FUN_0001e5f0(undefined4 param_1)
+
+{
+  int iVar1;
+  ushort uVar2;
+  undefined1 *puVar3;
+  undefined1 *puVar4;
+  
+  if (DAT_0080d9bf == '\0') {
+    iVar1 = (uint)param_1._1_1_ * 0x10;
+    if (param_1._1_1_ == 0xf) {
+      *_can_receive_buffer_write_pointer = *(uint *)(&DAT_00ffd802 + iVar1) >> 3;
+      *(short *)(_can_receive_buffer_write_pointer + 1) =
+           (short)((int)((byte)(&DAT_00ffd806)[iVar1] & 0xf0) >> 4);
+      *(uint *)((int)_can_receive_buffer_write_pointer + 6) =
+           (int)_can_receive_buffer_write_pointer + 10;
+      uVar2 = 0;
+      puVar3 = (undefined1 *)((int)_can_receive_buffer_write_pointer + 10);
+      puVar4 = (undefined1 *)(iVar1 + 0xffd807);
+      do {
+        *puVar3 = *puVar4;
+        uVar2 = uVar2 + 1;
+        puVar3 = puVar3 + 1;
+        puVar4 = puVar4 + 1;
+      } while (uVar2 < 8);
+      (&DAT_00ffd800)[iVar1] = 0xfd;
+      (&DAT_00ffd801)[iVar1] = 0x7d;
+    }
+    else {
+      do {
+        (&DAT_00ffd801)[iVar1] = 0xfd;
+        *_can_receive_buffer_write_pointer = *(uint *)(&DAT_00ffd802 + iVar1) >> 3;
+        *(short *)(_can_receive_buffer_write_pointer + 1) =
+             (short)((int)((byte)(&DAT_00ffd806)[iVar1] & 0xf0) >> 4);
+        *(uint *)((int)_can_receive_buffer_write_pointer + 6) =
+             (int)_can_receive_buffer_write_pointer + 10;
+        uVar2 = 0;
+        puVar3 = (undefined1 *)((int)_can_receive_buffer_write_pointer + 10);
+        puVar4 = (undefined1 *)(iVar1 + 0xffd807);
+        do {
+          *puVar3 = *puVar4;
+          uVar2 = uVar2 + 1;
+          puVar3 = puVar3 + 1;
+          puVar4 = puVar4 + 1;
+        } while (uVar2 < 8);
+      } while (((&DAT_00ffd801)[iVar1] & 2) != 0);
+    }
+    _can_receive_buffer_write_pointer = (uint *)((int)_can_receive_buffer_write_pointer + 0x12);
+    if ((uint *)0x80d884 < _can_receive_buffer_write_pointer) {
+      _can_receive_buffer_write_pointer = (uint *)0x80d72e;
+    }
+    if (_can_receive_buffer_write_pointer == _can_receive_buffer_read_pointer) {
+      DAT_0080d9bf = '\x01';
+      puVar3 = &DAT_00ffd810 + (uint)_can_first_receive_object_index * 0x10;
+      uVar2 = _can_first_receive_object_index;
+      while (uVar2 = uVar2 + 1, uVar2 <= _DAT_0080d9f6) {
+        *puVar3 = 0xf7;
+        *puVar3 = 0xfd;
+        puVar3 = puVar3 + 0x10;
+      }
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: interruptCounter1Increment @ 0x0001e734
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080d9bf
+uint FUN_000212b2(void)
+
+{
+  char cVar1;
+  bool bVar2;
+  ushort uVar3;
+  uint uVar4;
+  byte bVar5;
+  char *pcVar6;
+  short *psVar7;
+  undefined1 *puVar8;
+  short local_6;
+  
+  uVar3 = _DAT_00fff404;
+  uVar4 = _diagnostic_subsystem_enable_flags & 0xffff0008;
+  if ((_diagnostic_subsystem_enable_flags & 8) != 0) {
+    while ((uVar4 = (uint)_DAT_00fff404 - (uint)uVar3,
+           (int)((uint)_DAT_00fff404 - (uint)uVar3) < 0xfa &&
+           ((_can_receive_buffer_write_pointer != _can_receive_buffer_read_pointer ||
+            (uVar4 = _can_receive_buffer_write_pointer, DAT_0080d9bf == '\x01'))))) {
+      bVar5 = *(byte *)(_can_receive_buffer_read_pointer + 1);
+      cVar1 = *(char *)(_can_receive_buffer_read_pointer + 2);
+      local_6 = *(short *)(_can_receive_buffer_read_pointer + 1);
+      if (bVar5 == 0) {
+        if (((cVar1 == j1939_engine_node_source_address) || (cVar1 == DAT_0080da0b)) ||
+           (cVar1 == -1)) {
+          local_6 = 0;
+        }
+      }
+      else if ((bVar5 < 0xf0) && ((cVar1 == j1939_engine_node_source_address || (cVar1 == -1)))) {
+        local_6 = (ushort)bVar5 << 8;
+      }
+      can_received_source_address = *(char *)(_can_receive_buffer_read_pointer + 3);
+      bVar2 = false;
+      pcVar6 = &DAT_0080d9e0;
+      do {
+        if ((*pcVar6 == -2) || ((char *)0x80d9e3 < pcVar6)) goto LAB_0002136c;
+        cVar1 = *pcVar6;
+        pcVar6 = pcVar6 + 1;
+      } while (can_received_source_address != cVar1);
+      bVar2 = true;
+LAB_0002136c:
+      if (!bVar2) {
+        psVar7 = (short *)&DAT_00800ab0;
+        for (bVar5 = 0; bVar5 < DAT_00800b10; bVar5 = bVar5 + 1) {
+          if (*psVar7 == local_6) {
+            (**(code **)(psVar7 + 1))(_can_receive_buffer_read_pointer);
+            break;
+          }
+          psVar7 = psVar7 + 3;
+        }
+      }
+      _can_receive_buffer_read_pointer = _can_receive_buffer_read_pointer + 0x12;
+      if (0x80d884 < _can_receive_buffer_read_pointer) {
+        _can_receive_buffer_read_pointer = 0x80d72e;
+      }
+      if (DAT_0080d9bf == '\x01') {
+        DAT_0080d9bf = '\0';
+        puVar8 = &DAT_00ffd810 + (uint)_can_first_receive_object_index * 0x10;
+        bVar5 = DAT_0080d9f5;
+        while (bVar5 = bVar5 + 1, bVar5 <= _DAT_0080d9f6) {
+          *puVar8 = 0xfb;
+          puVar8 = puVar8 + 0x10;
+        }
+      }
+    }
+  }
+  return uVar4;
+}
+
+
+
+//
+// Function: FUN_0002142c @ 0x0002142c
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

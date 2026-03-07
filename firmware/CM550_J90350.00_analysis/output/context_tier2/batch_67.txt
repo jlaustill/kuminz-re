@@ -1,0 +1,384 @@
+=== VARIABLES TO NAME ===
+0x00807ec8  (8 references)
+0x00808f04  (5 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00807ec8, DAT_00808f04
+void can1TimerBufferInitDivided(void)
+
+{
+  int *piVar1;
+  
+                    /* From J90280.05 @ 0x015fb6 (confidence: 81%) */
+  _DAT_00fffe1c = _DAT_00fffe1c & 0xffcf;
+  _DAT_00fffe0a = _DAT_00fffe0a & 0xfbff;
+  _DAT_00fffe20 = _DAT_00fffe20 & 0xfbff;
+  _eps_control_mode_param_1 =
+       (int *)(&sample_crank_degrees_backup_crank_degrees_between_vss_inter_0_36000 +
+              (uint)period_meas_per_cam_number_of_primary_speed_pulse_periods_mea_0_255 * 4);
+  for (piVar1 = (int *)&pulse_period_table_table_containing_main_speed_pulse_per_1000_65535;
+      piVar1 <= _eps_control_mode_param_1; piVar1 = piVar1 + 1) {
+    *piVar1 = _initialization_pulse_period_initial_value_for_pulse_period_table_2_32;
+  }
+  _eps_override_output_state = &pulse_period_table_table_containing_main_speed_pulse_per_1000_65535;
+  if (_DAT_00807ec8 < 2) {
+    _next_table_position_pointer_to_next_spot_in_pulse_per_800000_83ffff =
+         &pulse_period_table_table_containing_main_speed_pulse_per_1000_65535;
+  }
+  else {
+    _next_table_position_pointer_to_next_spot_in_pulse_per_800000_83ffff =
+         &pulse_period_table_table_containing_main_speed_pulse_per_1000_65535 +
+         (uint)period_meas_per_average_num_of_primary_speed_pulse_periods_mea_0_255 * 4;
+  }
+  _pulse_period_sum_primary =
+       _initialization_pulse_period_initial_value_for_pulse_period_table_2_32 *
+       (uint)period_meas_per_cam_number_of_primary_speed_pulse_periods_mea_0_255;
+  _average_pulse_period_time_period_over_1_cyl_of_primary_s_1000_65535 =
+       _initialization_pulse_period_initial_value_for_pulse_period_table_2_32 *
+       (uint)period_meas_per_average_num_of_primary_speed_pulse_periods_mea_0_255;
+  _DAT_00808f04 = rpmTimerInterruptHandler2;
+  _DAT_00fffe0e = _DAT_00fffe0e & 0xf0ff | 0xd00;
+  _DAT_00ffffa2 = (ushort)DAT_00807ecc << 8;
+  _DAT_00ffffa6 = 0;
+  _DAT_00ffffa8 = 0;
+  _DAT_00ffffa0 = 0xb;
+  _DAT_00fffe14 = _DAT_00fffe14 & 0xffcf | 0x30;
+  _DAT_00fffe18 = _DAT_00fffe18 & 0xffcf | 0x30;
+  _DAT_00fffe0a = _DAT_00fffe0a | 0x400;
+  _DAT_00fffe1c = _DAT_00fffe1c & 0xffcf | 0x20;
+  if (speed_measurement_mode == '\0') {
+    _DAT_0080d08c = 0x17f74;
+  }
+  return;
+}
+
+
+
+//
+// Function: phase2_slot_0_handler @ 0x000199fa
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_00808f04
+void phase2_slot_0_handler(void)
+
+{
+  byte *in_A1;
+  int unaff_A3;
+  int *unaff_A4;
+  
+                    /* From J90280.05 @ 0x0171a6 (confidence: 80%) */
+  _next_table_position_pointer_to_next_spot_in_pulse_per_800000_83ffff = unaff_A3 + (uint)*in_A1 * 4
+  ;
+  _pulse_period_sum_primary =
+       *unaff_A4 * (uint)period_meas_per_cam_number_of_primary_speed_pulse_periods_mea_0_255;
+  _average_pulse_period_time_period_over_1_cyl_of_primary_s_1000_65535 = *unaff_A4 * (uint)*in_A1;
+  _DAT_00808f04 = rpmTimerInterruptHandler2;
+  _DAT_00fffe0e = _DAT_00fffe0e & 0xf0ff | 0xd00;
+  _DAT_00ffffa2 = (ushort)DAT_00807ecc << 8;
+  _DAT_00ffffa6 = 0;
+  _DAT_00ffffa8 = 0;
+  _DAT_00ffffa0 = 0xb;
+  _DAT_00fffe14 = _DAT_00fffe14 & 0xffcf | 0x30;
+  _DAT_00fffe18 = _DAT_00fffe18 & 0xffcf | 0x30;
+  _DAT_00fffe0a = _DAT_00fffe0a | 0x400;
+  _DAT_00fffe1c = _DAT_00fffe1c & 0xffcf | 0x20;
+  if (speed_measurement_mode == '\0') {
+    _DAT_0080d08c = 0x17f74;
+  }
+  return;
+}
+
+
+
+//
+// Function: delayWithWatchdogServiceWrapper2 @ 0x00019ac2
+//
+
+// Variables in this function: DAT_00807ec8, DAT_00808f04
+void FUN_00019caa(void)
+
+{
+  int *piVar1;
+  
+  _DAT_00fffe1c = _DAT_00fffe1c & 0xffcf;
+  _DAT_00fffe0a = _DAT_00fffe0a & 0xfbff;
+  _DAT_00fffe20 = _DAT_00fffe20 & 0xfbff;
+  _eps_control_mode_param_1 =
+       (int *)(&sample_crank_degrees_backup_crank_degrees_between_vss_inter_0_36000 +
+              (uint)period_meas_per_cam_number_of_primary_speed_pulse_periods_mea_0_255 * 4);
+  for (piVar1 = (int *)&pulse_period_table_table_containing_main_speed_pulse_per_1000_65535;
+      piVar1 <= _eps_control_mode_param_1; piVar1 = piVar1 + 1) {
+    *piVar1 = _initialization_pulse_period_initial_value_for_pulse_period_table_2_32;
+  }
+  _eps_override_output_state = &pulse_period_table_table_containing_main_speed_pulse_per_1000_65535;
+  if (_DAT_00807ec8 < 2) {
+    _next_table_position_pointer_to_next_spot_in_pulse_per_800000_83ffff =
+         &pulse_period_table_table_containing_main_speed_pulse_per_1000_65535;
+  }
+  else {
+    _next_table_position_pointer_to_next_spot_in_pulse_per_800000_83ffff =
+         &pulse_period_table_table_containing_main_speed_pulse_per_1000_65535 +
+         (uint)period_meas_per_average_num_of_primary_speed_pulse_periods_mea_0_255 * 4;
+  }
+  _pulse_period_sum_primary =
+       _initialization_pulse_period_initial_value_for_pulse_period_table_2_32 *
+       (uint)period_meas_per_cam_number_of_primary_speed_pulse_periods_mea_0_255;
+  _average_pulse_period_time_period_over_1_cyl_of_primary_s_1000_65535 =
+       _initialization_pulse_period_initial_value_for_pulse_period_table_2_32 *
+       (uint)period_meas_per_average_num_of_primary_speed_pulse_periods_mea_0_255;
+  _DAT_00808f04 = FUN_00019e90;
+  _DAT_00fffe0e = _DAT_00fffe0e & 0xf0ff | 0xd00;
+  _DAT_00ffffa2 = (ushort)DAT_00807ecc << 8;
+  _DAT_00ffffa6 = 0;
+  _DAT_00ffffa8 = 0;
+  _DAT_00ffffa0 = 0xb;
+  _DAT_00fffe14 = _DAT_00fffe14 & 0xffcf | 0x30;
+  _DAT_00fffe18 = _DAT_00fffe18 & 0xffcf | 0x30;
+  _DAT_00fffe0a = _DAT_00fffe0a | 0x400;
+  _DAT_00fffe1c = _DAT_00fffe1c & 0xffcf | 0x20;
+  if (speed_measurement_mode == '\0') {
+    _DAT_0080d08c = 0x17f74;
+  }
+  return;
+}
+
+
+
+//
+// Function: can1MessageTransmitInit2 @ 0x00019dd0
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_00807ec8, DAT_00808f04
+void FUN_0001a350(void)
+
+{
+  int *piVar1;
+  
+  _DAT_00fffe1c = _DAT_00fffe1c & 0xffcf;
+  _DAT_00fffe0a = _DAT_00fffe0a & 0xfbff;
+  _DAT_00fffe20 = _DAT_00fffe20 & 0xfbff;
+  _eps_control_mode_param_1 =
+       (int *)(&sample_crank_degrees_backup_crank_degrees_between_vss_inter_0_36000 +
+              (uint)period_meas_per_cam_number_of_primary_speed_pulse_periods_mea_0_255 * 4);
+  for (piVar1 = (int *)&pulse_period_table_table_containing_main_speed_pulse_per_1000_65535;
+      piVar1 <= _eps_control_mode_param_1; piVar1 = piVar1 + 1) {
+    *piVar1 = _initialization_pulse_period_initial_value_for_pulse_period_table_2_32;
+  }
+  _eps_override_output_state = &pulse_period_table_table_containing_main_speed_pulse_per_1000_65535;
+  if (_DAT_00807ec8 < 2) {
+    _next_table_position_pointer_to_next_spot_in_pulse_per_800000_83ffff =
+         &pulse_period_table_table_containing_main_speed_pulse_per_1000_65535;
+  }
+  else {
+    _next_table_position_pointer_to_next_spot_in_pulse_per_800000_83ffff =
+         &pulse_period_table_table_containing_main_speed_pulse_per_1000_65535 +
+         (uint)period_meas_per_average_num_of_primary_speed_pulse_periods_mea_0_255 * 4;
+  }
+  _pulse_period_sum_primary =
+       _initialization_pulse_period_initial_value_for_pulse_period_table_2_32 *
+       (uint)period_meas_per_cam_number_of_primary_speed_pulse_periods_mea_0_255;
+  _average_pulse_period_time_period_over_1_cyl_of_primary_s_1000_65535 =
+       _initialization_pulse_period_initial_value_for_pulse_period_table_2_32 *
+       (uint)period_meas_per_average_num_of_primary_speed_pulse_periods_mea_0_255;
+  _DAT_00808f04 = FUN_0001a52c;
+  _DAT_00fffe0e = _DAT_00fffe0e & 0xf0ff | 0xd00;
+  _DAT_00ffffa2 =
+       _DAT_00807ec8 / period_meas_per_cam_number_of_primary_speed_pulse_periods_mea_0_255 << 8;
+  _DAT_00ffffa6 = 0;
+  _DAT_00ffffa8 = 0;
+  _DAT_00ffffa0 = 0xb;
+  _DAT_00fffe14 = _DAT_00fffe14 & 0xffcf | 0x30;
+  _DAT_00fffe18 = _DAT_00fffe18 & 0xffcf | 0x30;
+  _DAT_00fffe0a = _DAT_00fffe0a | 0x400;
+  _DAT_00fffe1c = _DAT_00fffe1c & 0xffcf | 0x20;
+  if (speed_measurement_mode == '\0') {
+    _DAT_0080d08c = 0x17f74;
+  }
+  return;
+}
+
+
+
+//
+// Function: FUN_0001a47c @ 0x0001a47c
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_00807ec8, DAT_00808f04
+uint can1TimerBufferInitConditional(void)
+
+{
+  uint uVar1;
+  int *piVar2;
+  
+  uVar1 = _ESSXSNEN & 0xffff0001;
+                    /* From J90280.05 @ 0x0163f8 (confidence: 75%) */
+  if ((_ESSXSNEN & 1) != 0) {
+    _DAT_00fffe1c = _DAT_00fffe1c & 0xffcf;
+    _DAT_00fffe0a = _DAT_00fffe0a & 0xfbff;
+    _DAT_00fffe20 = _DAT_00fffe20 & 0xfbff;
+    _eps_control_mode_param_1 =
+         (int *)(&sample_crank_degrees_backup_crank_degrees_between_vss_inter_0_36000 +
+                (uint)period_meas_per_cam_number_of_primary_speed_pulse_periods_mea_0_255 * 4);
+    for (piVar2 = (int *)&pulse_period_table_table_containing_main_speed_pulse_per_1000_65535;
+        piVar2 <= _eps_control_mode_param_1; piVar2 = piVar2 + 1) {
+      *piVar2 = _initialization_pulse_period_initial_value_for_pulse_period_table_2_32;
+    }
+    _eps_override_output_state =
+         &pulse_period_table_table_containing_main_speed_pulse_per_1000_65535;
+    if (_DAT_00807ec8 < 2) {
+      _next_table_position_pointer_to_next_spot_in_pulse_per_800000_83ffff =
+           &pulse_period_table_table_containing_main_speed_pulse_per_1000_65535;
+    }
+    else {
+      _next_table_position_pointer_to_next_spot_in_pulse_per_800000_83ffff =
+           &pulse_period_table_table_containing_main_speed_pulse_per_1000_65535 +
+           (uint)period_meas_per_average_num_of_primary_speed_pulse_periods_mea_0_255 * 4;
+    }
+    _pulse_period_sum_primary =
+         _initialization_pulse_period_initial_value_for_pulse_period_table_2_32 *
+         (uint)period_meas_per_cam_number_of_primary_speed_pulse_periods_mea_0_255;
+    uVar1 = _initialization_pulse_period_initial_value_for_pulse_period_table_2_32 *
+            (uint)period_meas_per_average_num_of_primary_speed_pulse_periods_mea_0_255;
+    _DAT_00800668 = &pulse_period_table_table_containing_main_speed_pulse_per_1000_65535;
+    _DAT_00808f04 = FUN_0001a8a4;
+    _DAT_00fffe0e = _DAT_00fffe0e & 0xf0ff | 0xd00;
+    _DAT_00ffffa2 = 0x100;
+    _DAT_00ffffa6 = 0;
+    _DAT_00ffffa8 = 0;
+    _DAT_00ffffa0 = 7;
+    _DAT_00fffe14 = _DAT_00fffe14 & 0xffcf | 0x20;
+    _DAT_00fffe18 = _DAT_00fffe18 & 0xffcf | 0x30;
+    _DAT_00fffe0a = _DAT_00fffe0a | 0x400;
+    _DAT_00fffe1c = _DAT_00fffe1c & 0xffcf | 0x20;
+    _DAT_0080d090 = 0x1ab6a;
+    _average_pulse_period_time_period_over_1_cyl_of_primary_s_1000_65535 = uVar1;
+  }
+  if (speed_measurement_mode == '\0') {
+    _DAT_0080d08c = 0x17f74;
+  }
+  return uVar1;
+}
+
+
+
+//
+// Function: FUN_0001a89a @ 0x0001a89a
+//
+
+// Variables in this function: DAT_00807ec8
+void pwmTimerMode0Init(void)
+
+{
+  int iVar1;
+  int iVar2;
+  uint uVar3;
+  int *piVar4;
+  
+                    /* From J90280.05 @ 0x02b5aa (confidence: 88%) */
+  if (speed_measurement_mode == '\0') {
+    _DAT_00808edc = 0x19c88;
+    _DAT_00fffe12 = _DAT_00fffe12 & 0xfff0 | 0xc;
+    _DAT_00ffff04 = _DAT_00807ec8 / 6;
+    _DAT_00ffff02 = 0xe;
+    _DAT_00ffff00 = 0xb;
+    _DAT_00fffe16 = _DAT_00fffe16 & 0xfffc | 1;
+    _DAT_00fffe1a = _DAT_00fffe1a & 0xfffc | 1;
+    _DAT_00fffe1e = _DAT_00fffe1e & 0xfffc | 2;
+    _DAT_00fffe0a = _DAT_00fffe0a & 0xfffe | 1;
+    _DAT_00fffe20 = _DAT_00fffe20 & 0xfffe;
+    return;
+  }
+  if (speed_measurement_mode != '\x01') {
+    return;
+  }
+  current_cylinder_index = index_of_first_tdc_after_missed_pulse_1_6 + -1;
+  iVar1 = 0;
+  iVar2 = 0;
+  uVar3 = (uint)base_number_of_speed_pulses_per_cam_1_254;
+  piVar4 = (int *)&DAT_0080a23a;
+  do {
+    *piVar4 = iVar2 / 6;
+    iVar2 = uVar3 * 0x10000 + iVar2;
+    iVar1 = iVar1 + 1;
+    piVar4 = piVar4 + 1;
+  } while (iVar1 < 6);
+  _DAT_0080a236 = (uint)base_number_of_speed_pulses_per_cam_1_254 << 0x10;
+  pwmTimerMode1Update();
+  return;
+}
+
+
+
+//
+// Function: timerCaptureHardwareInit @ 0x00034696
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_00807ec8
+void timerCaptureHardwareInit(void)
+
+{
+                    /* From J90280.05 @ 0x02ed96 (confidence: 88%) */
+  _DAT_00808edc = 0x19c88;
+  _DAT_00fffe12 = _DAT_00fffe12 & 0xfff0 | 0xc;
+  _DAT_00ffff04 = _DAT_00807ec8 / 6;
+  _DAT_00ffff02 = 0xe;
+  _DAT_00ffff00 = 0xb;
+  _DAT_00fffe16 = _DAT_00fffe16 & 0xfffc | 1;
+  _DAT_00fffe1a = _DAT_00fffe1a & 0xfffc | 1;
+  _DAT_00fffe1e = _DAT_00fffe1e & 0xfffc | 2;
+  _DAT_00fffe0a = _DAT_00fffe0a & 0xfffe | 1;
+  _DAT_00fffe20 = _DAT_00fffe20 & 0xfffe;
+  return;
+}
+
+
+
+//
+// Function: pwmTimerMode0Reset @ 0x0003478c
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_00807ec8
+void pwmTimerModeDispatcher(void)
+
+{
+                    /* From J90280.05 @ 0x02b9b8 (confidence: 88%) */
+  if (speed_measurement_mode == '\0') {
+    _DAT_00ffff04 = _DAT_00807ec8 / 6;
+    _DAT_00fffe0a = _DAT_00fffe0a & 0xfff7;
+    _DAT_00fffe20 = _DAT_00fffe20 & 0xfff7;
+    _DAT_00fffe12 = _DAT_00fffe12 & 0xfff | 0xa000;
+    _DAT_00ffff34 = 0;
+    _DAT_00ffff38 = 0x19b;
+    _DAT_00ffff30 = 0x8e;
+    _DAT_00fffe16 = _DAT_00fffe16 & 0xff3f;
+    _DAT_00fffe1a = _DAT_00fffe1a & 0xff3f | 0x80;
+    _DAT_00fffe1e = _DAT_00fffe1e & 0xff3f | 0x40;
+  }
+  if ((pmm_error_type_signifies_the_type_of_sync_error_found_by_pmma_0_ff != '\0') &&
+     (speed_measurement_mode == '\x01')) {
+    pwmTimerMode1ChannelSetup();
+  }
+  return;
+}
+
+
+
+//
+// Function: pwmTimerCycleAdvance @ 0x00034b20
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

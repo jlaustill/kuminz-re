@@ -1,0 +1,104 @@
+=== VARIABLES TO NAME ===
+0x008019e2  (5 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_008019e2
+undefined1 ioControlLampStateMachine(void)
+
+{
+  undefined1 uVar1;
+  
+                    /* From J90280.05 @ 0x01d904 (confidence: 75%) */
+  uVar1 = 1;
+  if (_DAT_0080d67a == 0) {
+    if (DAT_008019e0 != '\0') {
+      DAT_008019e0 = '\0';
+      _warning_lamp_blink_phase = 0;
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffd;
+    }
+  }
+  else {
+    uVar1 = 0;
+    if (_warning_lamp_blink_phase == 0) {
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask | 2;
+      _warning_lamp_blink_phase = 1;
+    }
+    else if (_warning_lamp_blink_phase == _DAT_000611a0) {
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffd;
+      _warning_lamp_blink_phase = _warning_lamp_blink_phase + 1;
+    }
+    else if (((uint)_DAT_000611a0 + (uint)_DAT_000611a2) - 1 == (uint)_warning_lamp_blink_phase) {
+      _warning_lamp_blink_phase = 0;
+    }
+    else {
+      _warning_lamp_blink_phase = _warning_lamp_blink_phase + 1;
+    }
+    DAT_008019e0 = '\x01';
+  }
+  if (_DAT_0080d28e == 0) {
+    if (DAT_008019e1 != '\0') {
+      DAT_008019e1 = '\0';
+      _stop_lamp_blink_phase = 0;
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffe;
+    }
+  }
+  else {
+    uVar1 = 0;
+    if (_stop_lamp_blink_phase == 0) {
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask | 1;
+      _stop_lamp_blink_phase = 1;
+    }
+    else if (_stop_lamp_blink_phase == _DAT_000611a0) {
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffe;
+      _stop_lamp_blink_phase = _stop_lamp_blink_phase + 1;
+    }
+    else if (((uint)_DAT_000611a0 + (uint)_DAT_000611a2) - 1 == (uint)_stop_lamp_blink_phase) {
+      _stop_lamp_blink_phase = 0;
+    }
+    else {
+      _stop_lamp_blink_phase = _stop_lamp_blink_phase + 1;
+    }
+    DAT_008019e1 = '\x01';
+  }
+  if ((_DAT_0080d684 == 1) && (DAT_008019e2 == '\0')) {
+    DAT_008019e2 = '\x01';
+  }
+  if (DAT_008019e2 == '\x01') {
+    uVar1 = 0;
+    if (_warning_lamp_blink_phase == 0) {
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask | 2;
+      _warning_lamp_blink_phase = 1;
+    }
+    else if (_warning_lamp_blink_phase == 10) {
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffd;
+      _warning_lamp_blink_phase = 0xb;
+    }
+    else if (_warning_lamp_blink_phase == 0x13) {
+      _warning_lamp_blink_phase = 0;
+      DAT_008019e3 = DAT_008019e3 + 1;
+    }
+    else {
+      _warning_lamp_blink_phase = _warning_lamp_blink_phase + 1;
+    }
+  }
+  if ((0x77 < DAT_008019e3) && (DAT_008019e2 == '\x01')) {
+    _warning_lamp_blink_phase = 0;
+    lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffd;
+    DAT_008019e2 = '\0';
+    DAT_008019e3 = 0;
+    _DAT_0080d684 = 0;
+  }
+  return uVar1;
+}
+
+
+
+//
+// Function: ioControlDigitDisplaySequencer @ 0x00024b4e
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

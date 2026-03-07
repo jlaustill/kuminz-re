@@ -1,0 +1,234 @@
+=== VARIABLES TO NAME ===
+0x00800340  (9 references)
+0x0080034a  (7 references)
+0x0080034c  (9 references)
+0x00805302  (12 references)
+0x00805308  (5 references)
+
+Total: 5 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00800340, DAT_0080034c, DAT_00805308
+void circularBufferWriteWithStatus(void)
+
+{
+  undefined1 *puVar1;
+  uint *puVar2;
+  
+                    /* From J90280.05 @ 0x010466 (confidence: 67%) */
+  puVar2 = (uint *)&DAT_00805308;
+  do {
+    while( true ) {
+      while( true ) {
+        if ((*puVar2 == 0) || (&DAT_00805308 + (uint)_DAT_0080034c * 4 <= puVar2)) {
+          return;
+        }
+        if (*puVar2 < 0x1000000) break;
+        puVar1 = _logical_address_of_the_last_value_stored_to_the_data_collector_bu_none + 1;
+        *_logical_address_of_the_last_value_stored_to_the_data_collector_bu_none = 0;
+        _logical_address_of_the_last_value_stored_to_the_data_collector_bu_none = puVar1;
+        puVar1 = _logical_address_of_the_last_value_stored_to_the_data_collector_bu_none + 1;
+        *_logical_address_of_the_last_value_stored_to_the_data_collector_bu_none = 0;
+        _logical_address_of_the_last_value_stored_to_the_data_collector_bu_none = puVar1;
+        puVar2 = puVar2 + 1;
+      }
+      if (_DAT_00800348 != 0) break;
+      *_logical_address_of_the_last_value_stored_to_the_data_collector_bu_none =
+           *(undefined1 *)*puVar2;
+      puVar2 = puVar2 + 1;
+      _DAT_00800348 = 1;
+    }
+    _logical_address_of_the_last_value_stored_to_the_data_collector_bu_none =
+         _logical_address_of_the_last_value_stored_to_the_data_collector_bu_none + 1;
+    if (_physical_ram_address_of_the_end_of_the_data_collector_buffer_none <
+        _logical_address_of_the_last_value_stored_to_the_data_collector_bu_none) {
+      _logical_address_of_the_last_value_stored_to_the_data_collector_bu_none =
+           _actual_starting_ram_address_of_the_data_collector_buffer_none;
+    }
+    *_logical_address_of_the_last_value_stored_to_the_data_collector_bu_none =
+         *(undefined1 *)*puVar2;
+    puVar2 = puVar2 + 1;
+    if ((_logical_address_of_the_last_value_stored_to_the_data_collector_bu_none ==
+         _logical_beginning_address_of_the_data_collector_buffer_none) &&
+       (_logical_beginning_address_of_the_data_collector_buffer_none =
+             _logical_beginning_address_of_the_data_collector_buffer_none + 1,
+       _physical_ram_address_of_the_end_of_the_data_collector_buffer_none <
+       _logical_beginning_address_of_the_data_collector_buffer_none)) {
+      _logical_beginning_address_of_the_data_collector_buffer_none =
+           _actual_starting_ram_address_of_the_data_collector_buffer_none;
+    }
+  } while (_logical_address_of_the_last_value_stored_to_the_data_collector_bu_none != _DAT_00800340)
+  ;
+  _engine_rpm_previous_sample = 3;
+  return;
+}
+
+
+
+//
+// Function: vp44_communication_state_machine @ 0x00013616
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_00800340, DAT_0080034a, DAT_0080034c, DAT_00805302, DAT_00805308
+uint vp44_communication_state_machine(undefined4 param_1)
+
+{
+  int iVar1;
+  uint uVar2;
+  uint uVar3;
+  int *piVar4;
+  
+                    /* From J90280.05 @ 0x010504 (confidence: 75%) */
+  piVar4 = (int *)&DAT_00805308;
+  uVar3 = _calibration_feature_enable_flags_word_0 & 0xffff0100;
+  if ((((_calibration_feature_enable_flags_word_0 & 0x100) != 0) &&
+      (uVar3 = (uint)_DAT_008052fe, _DAT_008052fe == param_1._0_2_)) && (_DAT_00805308 != 0)) {
+    if (_DAT_0080034a == 0) {
+      if (1 < _DAT_00805304) {
+        _DAT_0080034a = 1;
+      }
+      if ((_engine_rpm_previous_sample == 3) && (_DAT_00805300 == 0)) {
+        _engine_rpm_previous_sample = 0;
+      }
+      uVar3 = _engine_rpm_previous_sample;
+      if (_engine_rpm_previous_sample < 4) {
+        uVar3 = (uint)(&switchD_000136a8::switchdataD_000136ac)[_engine_rpm_previous_sample];
+        switch(_engine_rpm_previous_sample) {
+        case 0:
+          _DAT_0080aabe = 1;
+          for (; (*piVar4 != 0 &&
+                 (piVar4 < &duty_cycle_mon_approxiamte_short_term_map_1_start_0_0_50000_0));
+              piVar4 = piVar4 + 1) {
+            _DAT_0080034c = _DAT_0080034c + 1;
+          }
+          iVar1 = _actual_starting_ram_address_of_the_data_collector_buffer_none -
+                  0x1000U % (uint)_DAT_0080034c;
+          _physical_ram_address_of_the_end_of_the_data_collector_buffer_none = iVar1 + 0xfff;
+          uVar2 = 0x1000 / _DAT_0080034c;
+          _DAT_00800350 = (ushort)uVar2;
+          _DAT_0080034e = _DAT_00800350 * _DAT_0080034c;
+          _logical_address_of_the_last_value_stored_to_the_data_collector_bu_none =
+               _actual_starting_ram_address_of_the_data_collector_buffer_none;
+          _logical_beginning_address_of_the_data_collector_buffer_none =
+               _actual_starting_ram_address_of_the_data_collector_buffer_none;
+          _DAT_00800348 = 0;
+          if (_DAT_00805300 == 0) {
+            _engine_rpm_previous_sample = 1;
+            _DAT_00800340 = iVar1 + 0x1000;
+            uVar3 = circularBufferWriteWithStatus();
+          }
+          else {
+            if (2 < _DAT_00805302) {
+              _DAT_00805302 = 0;
+            }
+            uVar3 = (uint)_DAT_00805302;
+            if (_DAT_00805302 == 0) {
+              uVar3 = 3;
+              _engine_rpm_previous_sample = 3;
+            }
+            else if (_DAT_00805302 == 1) {
+              _engine_rpm_previous_sample = 2;
+              _DAT_00800340 =
+                   (_actual_starting_ram_address_of_the_data_collector_buffer_none +
+                   ((int)uVar2 >> 1) * (uint)_DAT_0080034c) - 1;
+              uVar3 = circularBufferWriteWithStatus();
+            }
+            else if (_DAT_00805302 == 2) {
+              _engine_rpm_previous_sample = 2;
+              _DAT_00800340 = _physical_ram_address_of_the_end_of_the_data_collector_buffer_none;
+              uVar3 = circularBufferWriteWithStatus();
+            }
+          }
+          break;
+        case 1:
+          if (_DAT_00805300 == 0) {
+            uVar3 = circularBufferWriteWithStatus();
+          }
+          else {
+            if (2 < _DAT_00805302) {
+              _DAT_00805302 = 0;
+            }
+            uVar3 = (uint)_DAT_00805302;
+            if (_DAT_00805302 == 0) {
+              uVar3 = 3;
+              _engine_rpm_previous_sample = 3;
+            }
+            else if (_DAT_00805302 == 1) {
+              _engine_rpm_previous_sample = 2;
+              _logical_address_canter_value_stored_to_the_data_collector_buffer_none =
+                   _logical_address_of_the_last_value_stored_to_the_data_collector_bu_none + 1;
+              if (_physical_ram_address_of_the_end_of_the_data_collector_buffer_none <
+                  _logical_address_canter_value_stored_to_the_data_collector_buffer_none) {
+                _logical_address_canter_value_stored_to_the_data_collector_buffer_none =
+                     _actual_starting_ram_address_of_the_data_collector_buffer_none;
+              }
+              _DAT_00800340 =
+                   _logical_address_of_the_last_value_stored_to_the_data_collector_bu_none +
+                   ((int)(uint)_DAT_00800350 >> 1) * (uint)_DAT_0080034c;
+              if (_physical_ram_address_of_the_end_of_the_data_collector_buffer_none < _DAT_00800340
+                 ) {
+                _DAT_00800340 = _DAT_00800340 - _DAT_0080034e;
+              }
+              uVar3 = circularBufferWriteWithStatus();
+            }
+            else if (_DAT_00805302 == 2) {
+              _engine_rpm_previous_sample = 2;
+              _DAT_00800340 = _physical_ram_address_of_the_end_of_the_data_collector_buffer_none;
+              _logical_address_of_the_last_value_stored_to_the_data_collector_bu_none =
+                   _actual_starting_ram_address_of_the_data_collector_buffer_none;
+              _logical_beginning_address_of_the_data_collector_buffer_none =
+                   _actual_starting_ram_address_of_the_data_collector_buffer_none;
+              _DAT_00800348 = 0;
+              uVar3 = circularBufferWriteWithStatus();
+            }
+          }
+          break;
+        case 2:
+          uVar3 = circularBufferWriteWithStatus();
+          break;
+        case 3:
+          _DAT_0080034c = 0;
+          _DAT_0080aabe = 0;
+        }
+      }
+    }
+    else {
+      _DAT_0080034a = _DAT_0080034a + 1;
+      uVar3 = (uint)_DAT_0080034a;
+      if (_DAT_00805304 <= _DAT_0080034a) {
+        _DAT_0080034a = 0;
+      }
+    }
+  }
+  return uVar3;
+}
+
+
+
+//
+// Function: initVp44BufferAddresses @ 0x000138a0
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_00805308
+void initVp44BufferAddresses(void)
+
+{
+                    /* From J90280.05 @ 0x01078e (confidence: 64%) */
+  _actual_starting_ram_address_of_the_data_collector_buffer_none = 0x80aac4;
+  _DAT_0080aac0 = &DAT_00805308;
+  return;
+}
+
+
+
+//
+// Function: FUN_000138b6 @ 0x000138b6
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

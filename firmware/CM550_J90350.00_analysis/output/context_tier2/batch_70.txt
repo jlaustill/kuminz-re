@@ -1,0 +1,339 @@
+=== VARIABLES TO NAME ===
+0x00808159  (5 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00808159
+uint outputControlState1Handler(void)
+
+{
+  uint uVar1;
+  
+                    /* From J90280.05 @ 0x0301a6 (confidence: 72%) */
+  FUN_000201d6();
+  FUN_0002024a();
+  FUN_00020210();
+  uVar1 = _switch_override_configuration & 0xffff0080;
+  if (((_switch_override_configuration & 0x80) != 0) &&
+     (uVar1 = (uint)_j1939_source_address_of_commanding_device,
+     priority_of_client_which_is_currently_overriding_switch_8_0_ff <= uVar1)) {
+    uVar1 = (uint)priority_of_client_which_is_currently_overriding_switch_8_0_ff;
+    if (uVar1 <= _j1939_source_address_of_commanding_device) {
+      priority_of_client_which_is_currently_overriding_switch_8_0_ff = DAT_00808159;
+    }
+    if (_DAT_00804240 == 0) {
+      FUN_00020348();
+      uVar1 = FUN_00020310();
+      return uVar1;
+    }
+    if (multiplex_value_for_idle_switch_on_off == '\x03') {
+      uVar1 = setBitInArray();
+      if (priority_of_client_which_is_currently_overriding_switch_8_0_ff == 0) {
+        priority_of_client_which_is_currently_overriding_switch_8_0_ff = 0;
+        if ((_default_initialization_value_for_switch_31_on_off & 0x80) != 0) {
+          user_supplied_value_for_ptp_switched_input_input_on_off =
+               user_supplied_value_for_ptp_switched_input_input_on_off | 0x80;
+          return _default_initialization_value_for_switch_31_on_off;
+        }
+        user_supplied_value_for_ptp_switched_input_input_on_off =
+             user_supplied_value_for_ptp_switched_input_input_on_off & 0x7f;
+        return _default_initialization_value_for_switch_31_on_off;
+      }
+    }
+    else if (multiplex_value_for_idle_switch_on_off == '\x02') {
+      if (priority_of_client_which_is_currently_overriding_switch_8_0_ff == 0) {
+        priority_of_client_which_is_currently_overriding_switch_8_0_ff = 0;
+        if ((_default_initialization_value_for_switch_31_on_off & 0x80) != 0) {
+          user_supplied_value_for_ptp_switched_input_input_on_off =
+               user_supplied_value_for_ptp_switched_input_input_on_off | 0x80;
+          return _default_initialization_value_for_switch_31_on_off;
+        }
+        user_supplied_value_for_ptp_switched_input_input_on_off =
+             user_supplied_value_for_ptp_switched_input_input_on_off & 0x7f;
+        return _default_initialization_value_for_switch_31_on_off;
+      }
+    }
+    else if (priority_of_client_which_is_currently_overriding_switch_8_0_ff == 0) {
+      priority_of_client_which_is_currently_overriding_switch_8_0_ff = 0;
+      if (multiplex_value_for_idle_switch_on_off != '\0') {
+        user_supplied_value_for_ptp_switched_input_input_on_off =
+             user_supplied_value_for_ptp_switched_input_input_on_off | 0x80;
+        return uVar1;
+      }
+      user_supplied_value_for_ptp_switched_input_input_on_off =
+           user_supplied_value_for_ptp_switched_input_input_on_off & 0x7f;
+    }
+  }
+  return uVar1;
+}
+
+
+
+//
+// Function: FUN_000205c4 @ 0x000205c4
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_00808159
+uint FUN_000206a8(uint param_1,uint param_2)
+
+{
+  uint uVar1;
+  
+  uVar1 = (uint)*(ushort *)
+                 (&calibration_feature_enable_flags_word_0 +
+                 (short)((int)((param_1 & 0xffff) + 0xd0) >> 4) * 2) &
+          1 << ((param_1 & 0xffff) + 0xd0) % 0x10;
+  if ((uVar1 != 0) &&
+     (uVar1 = (uint)_j1939_source_address_of_commanding_device,
+     *(byte *)(param_2 + 0x80bd4a) <= uVar1)) {
+    uVar1 = (uint)*(byte *)(param_1 + 0x80bd4a);
+    if (uVar1 <= _j1939_source_address_of_commanding_device) {
+      *(undefined1 *)(param_1 + 0x80bd4a) = DAT_00808159;
+    }
+    if (*(char *)(param_1 + 0x80bd4a) == '\0') {
+      *(undefined1 *)(param_1 + 0x80bd4a) = 0;
+      if (((uint)(byte)(&bit_6_which_enables_the_warning_lamp_driver_enable_disable)
+                       [(short)((int)(param_2 & 0xffff) >> 3)] & 1 << (param_2 & 7)) != 0) {
+        uVar1 = (int)(param_1 & 0xffff) >> 3;
+        (&user_supplied_value_for_ptp_switched_input_input_on_off)[uVar1] =
+             '\x01' << ((byte)param_1 & 7) |
+             (&user_supplied_value_for_ptp_switched_input_input_on_off)[uVar1];
+        return uVar1;
+      }
+      uVar1 = (int)(param_1 & 0xffff) >> 3;
+      (&user_supplied_value_for_ptp_switched_input_input_on_off)[uVar1] =
+           ~('\x01' << ((byte)param_1 & 7)) &
+           (&user_supplied_value_for_ptp_switched_input_input_on_off)[uVar1];
+    }
+  }
+  return uVar1;
+}
+
+
+
+//
+// Function: FUN_00020784 @ 0x00020784
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_00808159
+uint FUN_00020890(undefined4 param_1)
+
+{
+  int iVar1;
+  ushort uVar2;
+  undefined2 uVar4;
+  uint uVar3;
+  
+  iVar1 = param_1._0_2_ * 10;
+  uVar4 = (undefined2)CONCAT31((int3)((uint)(param_1._0_2_ * 5) >> 8),(&DAT_0002010c)[iVar1]);
+  FUN_0002024a();
+  FUN_000201d6(uVar4);
+  uVar3 = (uint)*(ushort *)
+                 (&calibration_feature_enable_flags_word_0 +
+                 (short)((int)(*(ushort *)(&DAT_00020110 + iVar1) + 0xd0) >> 4) * 2) &
+          1 << (*(ushort *)(&DAT_00020110 + iVar1) + 0xd0) % 0x10;
+  if ((uVar3 != 0) &&
+     (uVar3 = (uint)*(byte *)(*(int *)(&DAT_0002010e + param_1._0_2_ * 10) + 0x80bd4a),
+     uVar3 <= _j1939_source_address_of_commanding_device)) {
+    if (*(byte *)(*(int *)(&DAT_0002010e + param_1._0_2_ * 10) + 0x80bd4a) <=
+        _j1939_source_address_of_commanding_device) {
+      *(undefined1 *)(*(int *)(&DAT_0002010e + param_1._0_2_ * 10) + 0x80bd4a) = DAT_00808159;
+    }
+    if (*(short *)(&DAT_00804234 + (short)(char)(&DAT_0002010c)[param_1._0_2_ * 10] * 2) == 0) {
+      FUN_00020348();
+      uVar3 = *(uint *)(&DAT_0002010e + param_1._0_2_ * 10);
+      if (*(char *)(uVar3 + 0x80bd4a) == '\0') {
+        iVar1 = param_1._0_2_ * 10;
+        uVar3 = *(uint *)(&DAT_0002010e + iVar1);
+        *(undefined1 *)(uVar3 + 0x80bd4a) = 0;
+        if ((*(uint *)(&default_initialization_value_for_switch_31_on_off +
+                      (short)((int)(uVar3 & 0xffff) >> 5) * 4) &
+            1 << (*(uint *)(&DAT_0002010e + iVar1) & 0x1f)) != 0) {
+          uVar2 = *(ushort *)(&DAT_00020110 + iVar1);
+          (&user_supplied_value_for_ptp_switched_input_input_on_off)[(short)((int)(uint)uVar2 >> 3)]
+               = '\x01' << ((&DAT_00020111)[iVar1] & 7) |
+                 (&user_supplied_value_for_ptp_switched_input_input_on_off)
+                 [(short)((int)(uint)uVar2 >> 3)];
+          return (int)(uint)uVar2 >> 3;
+        }
+        uVar2 = *(ushort *)(&DAT_00020110 + iVar1);
+        (&user_supplied_value_for_ptp_switched_input_input_on_off)[(short)((int)(uint)uVar2 >> 3)] =
+             ~('\x01' << ((&DAT_00020111)[iVar1] & 7)) &
+             (&user_supplied_value_for_ptp_switched_input_input_on_off)
+             [(short)((int)(uint)uVar2 >> 3)];
+        return (int)(uint)uVar2 >> 3;
+      }
+    }
+    else if (**(char **)(&DAT_00020108 + param_1._0_2_ * 10) == '\x03') {
+      setBitInArray();
+      uVar3 = *(uint *)(&DAT_0002010e + param_1._0_2_ * 10);
+      if (*(char *)(uVar3 + 0x80bd4a) == '\0') {
+        uVar3 = *(uint *)(&DAT_0002010e + param_1._0_2_ * 10);
+        *(undefined1 *)(uVar3 + 0x80bd4a) = 0;
+        uVar3 = uVar3 & 0xffff;
+        if ((*(uint *)(&default_initialization_value_for_switch_31_on_off +
+                      (short)((int)uVar3 >> 5) * 4) & 1 << uVar3 % 0x20) != 0) {
+          uVar3 = (int)(*(uint *)(&DAT_0002010e + param_1._0_2_ * 10) & 0xffff) >> 3;
+          (&user_supplied_value_for_ptp_switched_input_input_on_off)[(short)uVar3] =
+               '\x01' << ((byte)*(undefined4 *)(&DAT_0002010e + param_1._0_2_ * 10) & 7) |
+               (&user_supplied_value_for_ptp_switched_input_input_on_off)[(short)uVar3];
+          return uVar3;
+        }
+        uVar3 = (int)(*(uint *)(&DAT_0002010e + param_1._0_2_ * 10) & 0xffff) >> 3;
+        (&user_supplied_value_for_ptp_switched_input_input_on_off)[(short)uVar3] =
+             ~('\x01' << ((byte)*(undefined4 *)(&DAT_0002010e + param_1._0_2_ * 10) & 7)) &
+             (&user_supplied_value_for_ptp_switched_input_input_on_off)[(short)uVar3];
+        return uVar3;
+      }
+    }
+    else if (**(char **)(&DAT_00020108 + param_1._0_2_ * 10) == '\x02') {
+      uVar3 = *(uint *)(&DAT_0002010e + param_1._0_2_ * 10);
+      if (*(char *)(uVar3 + 0x80bd4a) == '\0') {
+        uVar3 = *(uint *)(&DAT_0002010e + param_1._0_2_ * 10);
+        *(undefined1 *)(uVar3 + 0x80bd4a) = 0;
+        uVar3 = uVar3 & 0xffff;
+        if ((*(uint *)(&default_initialization_value_for_switch_31_on_off +
+                      (short)((int)uVar3 >> 5) * 4) & 1 << uVar3 % 0x20) != 0) {
+          uVar3 = (int)(*(uint *)(&DAT_0002010e + param_1._0_2_ * 10) & 0xffff) >> 3;
+          (&user_supplied_value_for_ptp_switched_input_input_on_off)[(short)uVar3] =
+               '\x01' << ((byte)*(undefined4 *)(&DAT_0002010e + param_1._0_2_ * 10) & 7) |
+               (&user_supplied_value_for_ptp_switched_input_input_on_off)[(short)uVar3];
+          return uVar3;
+        }
+        uVar3 = (int)(*(uint *)(&DAT_0002010e + param_1._0_2_ * 10) & 0xffff) >> 3;
+        (&user_supplied_value_for_ptp_switched_input_input_on_off)[(short)uVar3] =
+             ~('\x01' << ((byte)*(undefined4 *)(&DAT_0002010e + param_1._0_2_ * 10) & 7)) &
+             (&user_supplied_value_for_ptp_switched_input_input_on_off)[(short)uVar3];
+        return uVar3;
+      }
+    }
+    else {
+      uVar3 = *(uint *)(&DAT_0002010e + param_1._0_2_ * 10);
+      if (*(char *)(uVar3 + 0x80bd4a) == '\0') {
+        *(undefined1 *)(*(int *)(&DAT_0002010e + param_1._0_2_ * 10) + 0x80bd4a) = 0;
+        if (**(char **)(&DAT_00020108 + param_1._0_2_ * 10) != '\0') {
+          uVar3 = (int)(*(uint *)(&DAT_0002010e + param_1._0_2_ * 10) & 0xffff) >> 3;
+          (&user_supplied_value_for_ptp_switched_input_input_on_off)[(short)uVar3] =
+               '\x01' << ((byte)*(undefined4 *)(&DAT_0002010e + param_1._0_2_ * 10) & 7) |
+               (&user_supplied_value_for_ptp_switched_input_input_on_off)[(short)uVar3];
+          return uVar3;
+        }
+        uVar3 = (int)(*(uint *)(&DAT_0002010e + param_1._0_2_ * 10) & 0xffff) >> 3;
+        (&user_supplied_value_for_ptp_switched_input_input_on_off)[(short)uVar3] =
+             ~('\x01' << ((byte)*(undefined4 *)(&DAT_0002010e + param_1._0_2_ * 10) & 7)) &
+             (&user_supplied_value_for_ptp_switched_input_input_on_off)[(short)uVar3];
+      }
+    }
+  }
+  return uVar3;
+}
+
+
+
+//
+// Function: FUN_00020c98 @ 0x00020c98
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_00808159
+uint FUN_00020e14(void)
+
+{
+  uint uVar1;
+  
+  FUN_000201d6();
+  FUN_0002024a();
+  FUN_00020210();
+  uVar1 = _calibration_feature_enable_flags_word_5 & 0x400;
+  if (((((_calibration_feature_enable_flags_word_5 & 0x400) != 0) &&
+       (uVar1 = _switch_override_configuration & 0x80, (_switch_override_configuration & 0x80) != 0)
+       ) && (uVar1 = (uint)_j1939_source_address_of_commanding_device,
+            priority_of_client_which_is_currently_overriding_switch_8_0_ff <= uVar1)) &&
+     (uVar1 = (uint)_j1939_source_address_of_commanding_device,
+     priority_of_client_which_is_currently_overriding_switch_9_0_ff <= uVar1)) {
+    if (priority_of_client_which_is_currently_overriding_switch_8_0_ff <=
+        _j1939_source_address_of_commanding_device) {
+      priority_of_client_which_is_currently_overriding_switch_8_0_ff = DAT_00808159;
+    }
+    uVar1 = (uint)priority_of_client_which_is_currently_overriding_switch_9_0_ff;
+    if (uVar1 <= _j1939_source_address_of_commanding_device) {
+      priority_of_client_which_is_currently_overriding_switch_9_0_ff = DAT_00808159;
+    }
+    if (pgn_timeout_error_flag_for_aps_ivs_remote_throttle_not_log_true_false == '\0') {
+      if (multiplex_value_for_idle_switch_on_off < 2) {
+        if (priority_of_client_which_is_currently_overriding_switch_8_0_ff == 0) {
+          priority_of_client_which_is_currently_overriding_switch_8_0_ff = 0;
+          if (multiplex_value_for_idle_switch_on_off == 0) {
+            user_supplied_value_for_ptp_switched_input_input_on_off =
+                 user_supplied_value_for_ptp_switched_input_input_on_off & 0x7f;
+          }
+          else {
+            user_supplied_value_for_ptp_switched_input_input_on_off =
+                 user_supplied_value_for_ptp_switched_input_input_on_off | 0x80;
+          }
+        }
+        if (priority_of_client_which_is_currently_overriding_switch_9_0_ff == 0) {
+          priority_of_client_which_is_currently_overriding_switch_9_0_ff = 0;
+          uVar1 = ~(uint)multiplex_value_for_idle_switch_on_off;
+          if ((~(uint)multiplex_value_for_idle_switch_on_off & 1) != 0) {
+            DSUSEBSW = DSUSEBSW | 1;
+            return uVar1;
+          }
+          DSUSEBSW = DSUSEBSW & 0xfe;
+          return uVar1;
+        }
+      }
+      else {
+        if (priority_of_client_which_is_currently_overriding_switch_8_0_ff == 0) {
+          priority_of_client_which_is_currently_overriding_switch_8_0_ff = 0;
+          if ((_default_initialization_value_for_switch_31_on_off & 0x80) == 0) {
+            user_supplied_value_for_ptp_switched_input_input_on_off =
+                 user_supplied_value_for_ptp_switched_input_input_on_off & 0x7f;
+            uVar1 = _default_initialization_value_for_switch_31_on_off;
+          }
+          else {
+            user_supplied_value_for_ptp_switched_input_input_on_off =
+                 user_supplied_value_for_ptp_switched_input_input_on_off | 0x80;
+            uVar1 = _default_initialization_value_for_switch_31_on_off;
+          }
+        }
+        if (priority_of_client_which_is_currently_overriding_switch_9_0_ff == 0) {
+          priority_of_client_which_is_currently_overriding_switch_9_0_ff = 0;
+          if ((_default_initialization_value_for_switch_31_on_off & 0x100) == 0) {
+            DSUSEBSW = DSUSEBSW & 0xfe;
+            uVar1 = _default_initialization_value_for_switch_31_on_off;
+          }
+          else {
+            DSUSEBSW = DSUSEBSW | 1;
+            uVar1 = _default_initialization_value_for_switch_31_on_off;
+          }
+        }
+        if (multiplex_value_for_idle_switch_on_off == 2) {
+          _status_32_word_bit_mapped_system_error_status_word_0_0_1 =
+               _status_32_word_bit_mapped_system_error_status_word_0_0_1 | 1;
+          _fault_first_occurrence_flags_word_0 = _fault_first_occurrence_flags_word_0 | 1;
+          return uVar1;
+        }
+        ivs_parameter_not_properly_configured_not_logged_as_a_faul_true_false = 1;
+        uVar1 = setBitInArray();
+      }
+    }
+  }
+  return uVar1;
+}
+
+
+
+//
+// Function: FUN_00020fac @ 0x00020fac
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

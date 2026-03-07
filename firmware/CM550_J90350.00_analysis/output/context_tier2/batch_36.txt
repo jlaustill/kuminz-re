@@ -1,0 +1,274 @@
+=== VARIABLES TO NAME ===
+0x008019e7  (8 references)
+0x008019e9  (8 references)
+0x00801a22  (5 references)
+
+Total: 3 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_008019e9
+void ioControlMaskInit(void)
+
+{
+  DAT_008019d2 = 1;
+  DAT_008019d3 = 1;
+  DAT_008019d4 = 0;
+  DAT_008019e9 = 0;
+  fault_flash_repetition_count = 0;
+  _DAT_008019f0 = 0;
+  return;
+}
+
+
+
+//
+// Function: ioControlMaskStateMachine @ 0x00024858
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_008019e9
+uint ioControlDigitDisplaySequencer(undefined4 param_1)
+
+{
+  ushort uVar1;
+  undefined3 uVar2;
+  uint in_D0;
+  
+                    /* From J90280.05 @ 0x01d9ea (confidence: 75%) */
+  if (_fault_digit_display_phase == 0) {
+    lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffe | 2;
+    _fault_digit_display_phase = 1;
+    DAT_008019e4 = (char)(param_1._0_2_ / 100);
+    DAT_008019e5 = (char)(param_1._0_2_ / 10) + DAT_008019e4 * -10;
+    uVar1 = (short)(param_1._0_2_ / 10) * 10;
+    in_D0 = (uint)uVar1;
+    DAT_008019e6 = (char)((uint)param_1 >> 0x10) - (char)uVar1;
+  }
+  else {
+    uVar2 = (undefined3)(in_D0 >> 8);
+    if (_fault_digit_display_phase == 0x28) {
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffd;
+      in_D0 = CONCAT31(uVar2,fault_digit_blink_counter);
+      if (fault_digit_blink_counter == DAT_008019e4) {
+        fault_digit_blink_counter = '\0';
+        _fault_digit_display_phase = 0x29;
+      }
+      else {
+        in_D0 = ioControlToggleCycle();
+        if ((char)in_D0 != '\0') {
+          fault_digit_blink_counter = fault_digit_blink_counter + '\x01';
+        }
+      }
+    }
+    else if (_fault_digit_display_phase == 0x50) {
+      in_D0 = CONCAT31(uVar2,fault_digit_blink_counter);
+      if (fault_digit_blink_counter == DAT_008019e5) {
+        fault_digit_blink_counter = '\0';
+        _fault_digit_display_phase = 0x51;
+      }
+      else {
+        in_D0 = ioControlToggleCycle();
+        if ((char)in_D0 != '\0') {
+          fault_digit_blink_counter = fault_digit_blink_counter + '\x01';
+        }
+      }
+    }
+    else if (_fault_digit_display_phase == 0x78) {
+      in_D0 = CONCAT31(uVar2,fault_digit_blink_counter);
+      if (fault_digit_blink_counter == DAT_008019e6) {
+        fault_digit_blink_counter = '\0';
+        _fault_digit_display_phase = 0x79;
+      }
+      else {
+        in_D0 = ioControlToggleCycle();
+        if ((char)in_D0 != '\0') {
+          fault_digit_blink_counter = fault_digit_blink_counter + '\x01';
+        }
+      }
+    }
+    else {
+      if (_fault_digit_display_phase != 0xa0) {
+        _fault_digit_display_phase = _fault_digit_display_phase + 1;
+        return 1;
+      }
+      _fault_digit_display_phase = 0;
+      DAT_008019e9 = 1;
+    }
+  }
+  return in_D0 & 0xffffff00;
+}
+
+
+
+//
+// Function: FUN_00024c5a @ 0x00024c5a
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_008019e7, DAT_008019e9
+int faultCodeDisplayController(void)
+
+{
+  uint3 extraout_var;
+  uint3 extraout_var_00;
+  uint3 extraout_var_01;
+  uint3 uVar1;
+  uint3 extraout_var_02;
+  uint3 extraout_var_03;
+  char extraout_D0b;
+  char extraout_D0b_00;
+  char extraout_D0b_01;
+  char extraout_D0b_02;
+  char cVar2;
+  
+                    /* From J90280.05 @ 0x01db66 (confidence: 72%) */
+  if (((debounced_switch_value_for_switch_16_on_off & 0x80) != 0) &&
+     (_smoke_limiter_output_value == 1)) {
+    DAT_008019e8 = 1;
+    if (((debounced_switch_value_for_switch_16_on_off & 0x80) == 0) || (DAT_008019ed != '\0')) {
+      if (((debounced_switch_value_for_switch_16_on_off & 0x20) == 0) || (DAT_008019eb != '\0')) {
+        uVar1 = 0;
+        if (((debounced_switch_value_for_switch_16_on_off & 0x40) == 0) || (DAT_008019ec != '\0')) {
+          if ((DAT_0080820c != '\0') &&
+             ((fault_flash_repetition_count == 0 || (DAT_008019e9 != '\0')))) {
+            if ((DAT_008019e9 != '\0') &&
+               (fault_flash_count_number_of_times_each_fault_code_is_flashed_1_255 <=
+                fault_flash_repetition_count)) {
+              fault_flash_repetition_count = 0;
+            }
+            uVar1 = 0;
+            cVar2 = DAT_008019e7;
+            if (fault_flash_repetition_count == 0) {
+              FUN_00024c5a();
+              uVar1 = extraout_var_02;
+              cVar2 = extraout_D0b_02;
+            }
+            if (cVar2 != '}') {
+              lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffc;
+              _fault_digit_display_phase = 0;
+              _lamp_toggle_cycle_counter = 0;
+              fault_digit_blink_counter = 0;
+              DAT_008019e9 = '\0';
+              fault_flash_repetition_count = fault_flash_repetition_count + 1;
+              DAT_008019e7 = cVar2;
+            }
+          }
+        }
+        else {
+          fault_flash_repetition_count = 0;
+          FUN_00024cd2();
+          uVar1 = extraout_var_01;
+          if (extraout_D0b_01 != '}') {
+            lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffc;
+            _fault_digit_display_phase = 0;
+            _lamp_toggle_cycle_counter = 0;
+            fault_digit_blink_counter = 0;
+            fault_flash_repetition_count = 1;
+            DAT_008019e9 = '\0';
+            DAT_008019e7 = extraout_D0b_01;
+          }
+        }
+      }
+      else {
+        fault_flash_repetition_count = 0;
+        FUN_00024c5a();
+        uVar1 = extraout_var_00;
+        if (extraout_D0b_00 != '}') {
+          lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffc;
+          _fault_digit_display_phase = 0;
+          _lamp_toggle_cycle_counter = 0;
+          fault_digit_blink_counter = 0;
+          fault_flash_repetition_count = 1;
+          DAT_008019e9 = '\0';
+          DAT_008019e7 = extraout_D0b_00;
+        }
+      }
+    }
+    else {
+      fault_flash_repetition_count = 0;
+      DAT_008019e7 = '}';
+      FUN_00024c5a();
+      uVar1 = extraout_var;
+      if (extraout_D0b != '}') {
+        lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfff8;
+        _fault_digit_display_phase = 0;
+        _lamp_toggle_cycle_counter = 0;
+        fault_digit_blink_counter = 0;
+        fault_flash_repetition_count = 1;
+        DAT_008019e9 = '\0';
+        DAT_008019e7 = extraout_D0b;
+      }
+    }
+    if (DAT_008019e7 == '}') {
+      lamp_driver_output_bitmask = lamp_driver_output_bitmask | 3;
+    }
+    else {
+      ioControlDigitDisplaySequencer();
+      uVar1 = extraout_var_03;
+    }
+    return (uint)uVar1 << 8;
+  }
+  if (DAT_008019e8 != '\0') {
+    DAT_008019e8 = '\0';
+    lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffc;
+  }
+  return 1;
+}
+
+
+
+//
+// Function: activeFaultLampStateMachine @ 0x00024f30
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_008019e7, DAT_00801a22
+void FUN_000254b6(void)
+
+{
+  char cVar1;
+  
+  if (DAT_008019d2 != '\0') {
+    ioControlMaskStateMachine();
+    return;
+  }
+  cVar1 = faultCodeDisplayController();
+  if (cVar1 != '\0') {
+    cVar1 = ioControlLampStateMachine();
+    if (cVar1 != '\0') {
+      DAT_008019e7 = 0x7d;
+      activeFaultLampStateMachine();
+    }
+  }
+  if (_DAT_00801a22 < 0x191) {
+    _DAT_00801a22 = _DAT_00801a22 + 1;
+  }
+  if (((99 < _DAT_00801a22) && (_DAT_00801a22 < 400)) &&
+     (_set_when_leading_threshold_has_expired_time_to_change_oil_1_0 != 0)) {
+    faultLampBlinkPatternGenerator();
+  }
+  if ((_DAT_0080dab0 != 0) || (DAT_00801a1c != '\0')) {
+    FUN_000253b0();
+  }
+  if (((_DAT_00803c42 != 0) && (_set_when_leading_threshold_has_expired_time_to_change_oil_1_0 != 0)
+      ) && (_smoke_limiter_output_value == 3)) {
+    periodicLampFlashController();
+  }
+  DAT_008019eb = -((debounced_switch_value_for_switch_16_on_off & 0x20) != 0) & 1;
+  DAT_008019ec = -((debounced_switch_value_for_switch_16_on_off & 0x40) != 0) & 1;
+  DAT_008019ed = -((debounced_switch_value_for_switch_16_on_off & 0x80) != 0) & 1;
+  return;
+}
+
+
+
+//
+// Function: clearSystemErrorStatus @ 0x00025594
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

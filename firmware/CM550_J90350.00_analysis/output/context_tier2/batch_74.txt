@@ -1,0 +1,183 @@
+=== VARIABLES TO NAME ===
+0x0080a90c  (7 references)
+0x0080a90e  (5 references)
+0x0080a912  (5 references)
+0x0080a914  (5 references)
+
+Total: 4 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0080a90c, DAT_0080a90e, DAT_0080a912, DAT_0080a914
+ushort vp44RpmBasedFaultDetector(void)
+
+{
+                    /* From J90280.05 @ 0x035488 (confidence: 64%) */
+  if (((_smoke_limiter_output_value == 1) || (_smoke_limiter_output_value == 2)) ||
+     (_smoke_limiter_output_value == 6)) {
+    _DAT_0080a90e = 1;
+    _trace_the_time_since_fueling_state_has_left_lsg_state_0_900 =
+         _time_that_must_expire_without_lsg_commanding_fuel_before_alpha_0_900;
+    _DAT_0080a912 = 1;
+    _DAT_0080a914 = _time_that_must_elapse_without_afc_limiting_before_alpha_may_be_0_900;
+    _DAT_0080a90c = 0;
+    _DAT_0080a91e = 0;
+    _APAPBA = 0;
+  }
+  else {
+    timingProtectionFlagsOrchestrator();
+  }
+  if (_DAT_0080a926 == 0) {
+    if ((_calibration_feature_enable_flags_word_1 & 1) == 0) {
+      if (((_calibration_feature_enable_flags_word_0 & 0x4000) == 0) ||
+         (_indicator_from_engine_protection_that_fuel_derate_1_active_0_inact != 1)) {
+        _APAPST = 0;
+        _alpha_blend_factor = _APAPBA;
+      }
+      else {
+        _APAPST = 3;
+        _alpha_blend_factor = _DAT_00807aac;
+      }
+    }
+    else {
+      _APAPST = 1;
+      _alpha_blend_factor = _DAT_00803d4c;
+    }
+  }
+  else {
+    _APAPST = 4;
+    _alpha_blend_factor = _ASALPHA;
+  }
+  if (0x4000 < _alpha_blend_factor) {
+    _alpha_blend_factor = 0x4000;
+  }
+  if ((_calibration_feature_enable_flags_word_9 & 0x10) == 0) {
+    _timing_alpha_blend_factor = _alpha_blend_factor;
+  }
+  return _calibration_feature_enable_flags_word_9 & 0x10;
+}
+
+
+
+//
+// Function: FUN_0000c404 @ 0x0000c404
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080a90c
+undefined2 FUN_0000c404(void)
+
+{
+  ushort uVar1;
+  
+  uVar1 = _DAT_0080a9e0 + 1;
+  if ((_semaphore_used_to_latch_lsg_events_that_occur_betwe_0_false_1_true == 1) &&
+     (*(ushort *)((uint)uVar1 * 2 + 0x807a5c) < _DAT_0080a90c)) {
+    _DAT_0080a90c = *(ushort *)((uint)uVar1 * 2 + 0x807a5c);
+    _DAT_0080a91e = (uint)_DAT_0080a90c << 0x10;
+  }
+  _DAT_0080a90c = coreTableInterpolation();
+  if (_DAT_0080a90c <= *(ushort *)((uint)uVar1 * 2 + 0x807a5c)) {
+    return 0;
+  }
+  if (*(ushort *)((short)uVar1 * 2 + 0x807a7e) < _DAT_0080a90c) {
+    return 1;
+  }
+  return _APFLRTAP;
+}
+
+
+
+//
+// Function: FUN_0000c496 @ 0x0000c496
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080a90e
+int FUN_0000c4b2(void)
+
+{
+  ushort uVar1;
+  undefined4 in_D0;
+  
+  uVar1 = (ushort)((uint)in_D0 >> 0x10);
+  if ((_DAT_0080d330 == 0xb) ||
+     (_semaphore_used_to_latch_lsg_events_that_occur_betwe_0_false_1_true == 1)) {
+    _trace_the_time_since_fueling_state_has_left_lsg_state_0_900 =
+         _time_that_must_expire_without_lsg_commanding_fuel_before_alpha_0_900;
+    _DAT_0080a90e = 1;
+    return (uint)uVar1 << 0x10;
+  }
+  if ((_DAT_0080a90e == 1) && (_trace_the_time_since_fueling_state_has_left_lsg_state_0_900 != 0)) {
+    _trace_the_time_since_fueling_state_has_left_lsg_state_0_900 =
+         _trace_the_time_since_fueling_state_has_left_lsg_state_0_900 + -1;
+    return (uint)uVar1 << 0x10;
+  }
+  _DAT_0080a90e = 0;
+  return 1;
+}
+
+
+
+//
+// Function: fuelModeTransitionCountdownHandler @ 0x0000c504
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080a912, DAT_0080a914
+int fuelModeTransitionCountdownHandler(void)
+
+{
+  ushort uVar1;
+  undefined4 in_D0;
+  
+                    /* From J90280.05 @ 0x00b35c (confidence: 75%) */
+  uVar1 = (ushort)((uint)in_D0 >> 0x10);
+  if ((_semaphore_used_to_latch_afc_events_that_occur_betwe_0_false_1_true == 1) ||
+     (_semaphore_used_to_latch_lsg_events_that_occur_betwe_0_false_1_true == 1)) {
+    _DAT_0080a914 = _time_that_must_elapse_without_afc_limiting_before_alpha_may_be_0_900;
+    _DAT_0080a912 = 1;
+    return (uint)uVar1 << 0x10;
+  }
+  if ((_DAT_0080a912 == 1) && (_DAT_0080a914 != 0)) {
+    _DAT_0080a914 = _DAT_0080a914 + -1;
+    return (uint)uVar1 << 0x10;
+  }
+  _DAT_0080a912 = 0;
+  return 1;
+}
+
+
+
+//
+// Function: FUN_0000c556 @ 0x0000c556
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080a90e, DAT_0080a912
+void vp44ControlStructureInit(void)
+
+{
+                    /* From J90280.05 @ 0x018eb4 (confidence: 70%) */
+  _DAT_0080a91e = 0;
+  _DAT_0080a91a = &time_constant_of_lb_hr_filter_used_in_the_alpha_fuel_rate_calcula_0_1;
+  _APAPBA = 0;
+  _DAT_0080a90e = 0;
+  _DAT_0080a912 = 0;
+  _DAT_0080a916 = 0;
+  _semaphore_used_to_latch_lsg_events_that_occur_betwe_0_false_1_true = 0;
+  return;
+}
+
+
+
+//
+// Function: diagnosticBufferPointerInit @ 0x0001dd2c
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

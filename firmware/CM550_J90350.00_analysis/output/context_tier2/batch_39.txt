@@ -1,0 +1,75 @@
+=== VARIABLES TO NAME ===
+0x00801a3c  (7 references)
+0x0080dab8  (8 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00801a3c, DAT_0080dab8
+void FUN_0002571e(void)
+
+{
+  uint uVar1;
+  
+  if (_FSDSFLST == 6) {
+    _DAT_0080dabc = coreTableInterpolation();
+    uVar1 = ((uint)_DAT_00808210 * (uint)_DAT_0080dabc) / 0x8b21;
+    if ((uint)_DAT_00808212 < (uint)_DAT_00808216 + (uVar1 & 0xffff)) {
+      _DAT_0080daba = _DAT_00808216;
+    }
+    else {
+      _DAT_0080daba = _DAT_00808212 - (short)uVar1;
+    }
+    if ((uint)_DAT_0080821c + (uint)_DAT_0080daba < (uint)_DAT_00801a3c) {
+      _DAT_00801a3c = _DAT_00801a3c - _DAT_0080821c;
+    }
+    else {
+      _DAT_00801a3c = _DAT_0080daba;
+    }
+    if (_throttle_above_idle_flag == 1) {
+      if (_retarder_mode_control_byte_mirror == 1) {
+        _DAT_0080dab8 = _DAT_00808214 + _DAT_0080dab8;
+        if (_DAT_00801a3c < _DAT_0080dab8) {
+          _DAT_0080dab8 = _DAT_00801a3c;
+        }
+      }
+      else {
+        _DAT_0080dab8 = _DAT_00808218;
+      }
+    }
+    else {
+      _DAT_0080dab8 = _minimum_fueling_value_0_100;
+    }
+    _fuel_demand_selected = _DAT_0080dab8;
+  }
+  _retarder_mode_control_byte_mirror = _throttle_above_idle_flag;
+  return;
+}
+
+
+
+//
+// Function: FUN_00025806 @ 0x00025806
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_00801a3c, DAT_0080dab8
+void FUN_000258b0(void)
+
+{
+  _DAT_0080dab8 = _current_fuel_demand;
+  _DAT_00801a3c = _current_fuel_demand;
+  _can_transmission_active_count = (uint)_current_engine_rpm_filtered << 0x10;
+  return;
+}
+
+
+
+//
+// Function: fuelDemandTablePointerInit @ 0x000258d6
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

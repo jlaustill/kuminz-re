@@ -1,0 +1,160 @@
+=== VARIABLES TO NAME ===
+0x00800504  (10 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00800504
+undefined * FUN_00013a5c(void)
+
+{
+  undefined *puVar1;
+  byte bVar3;
+  ushort uVar2;
+  byte bVar4;
+  short sVar5;
+  undefined4 uVar6;
+  undefined *puVar7;
+  
+  puVar1 = (undefined *)(_DAT_00803cb8 & 0x20);
+  if ((((_DAT_00803cb8 & 0x20) == 0) && (_DAT_0080baca != 1)) && (_DAT_0080bac4 != 1)) {
+    if (DAT_00800372 == '\0') {
+      uVar2 = 0;
+      puVar7 = &fuel_demand_blend_input;
+      do {
+        *puVar7 = 0;
+        uVar2 = uVar2 + 1;
+        puVar7 = puVar7 + 1;
+      } while (uVar2 < 400);
+      _DAT_00800504 = &fuel_demand_blend_input;
+      DAT_00800372 = '\x01';
+    }
+  }
+  else {
+    if ((DAT_00800352 == '\0') && (_DAT_0080bac4 == 0)) {
+      DAT_00800352 = '\x01';
+      FUN_00013e12();
+      bVar3 = 0;
+      DAT_00800521 = 0;
+      sVar5 = 0;
+      for (bVar4 = 0; puVar1 = (undefined *)(uint)bVar4, puVar1 < (undefined *)(uint)_DAT_00803dc8;
+          bVar4 = bVar4 + 1) {
+        bVar3 = (char)*(undefined2 *)(&DAT_00803da4 + sVar5) + bVar3;
+        if (bVar3 < 0xb) {
+          DAT_00800521 = DAT_00800521 + 1;
+        }
+        sVar5 = sVar5 + 6;
+      }
+      _DAT_00800504 = &fuel_demand_blend_input;
+    }
+    if (scheduler_phase_execution_time != '\0') {
+      scheduler_phase_execution_time = '\0';
+      if (_DAT_0080baca != 0) {
+        _DAT_0080bac4 = 1;
+        puVar1 = _DAT_00800504 + -0x800374;
+        _DAT_00800522 = SUB42(puVar1,0);
+        _DAT_00800524 = _hour_meter_ecm_run_time_none;
+        DAT_00800528 = DAT_0080bac7;
+        DAT_00800529 = DAT_0080bac9;
+        DAT_0080051c = '\0';
+      }
+      for (bVar3 = 0; bVar3 < DAT_00800521; bVar3 = bVar3 + 1) {
+        for (bVar4 = 0;
+            puVar1 = (undefined *)(uint)*(ushort *)(&DAT_00803da4 + (short)((ushort)bVar3 * 6)),
+            (undefined *)(uint)bVar4 < puVar1; bVar4 = bVar4 + 1) {
+          *_DAT_00800504 =
+               *(undefined *)(*(int *)(&DAT_00800508 + (short)((ushort)bVar3 << 2)) + (uint)bVar4);
+          _DAT_00800504 = _DAT_00800504 + 1;
+          if (_DAT_00800504 == &DAT_00800504) {
+            _DAT_00800504 = &fuel_demand_blend_input;
+          }
+          if ((_DAT_0080bac4 == 1) && (DAT_0080051c = DAT_0080051c + '\x01', DAT_0080051c == -0x38))
+          {
+            bVar4 = (byte)*(undefined2 *)(&DAT_00803da4 + (short)((ushort)bVar3 * 6));
+            DAT_0080052a = '\x01';
+          }
+        }
+        if ((_DAT_0080bac4 == 1) && (DAT_0080051c == -0x38)) {
+          bVar3 = DAT_00800521;
+        }
+      }
+      DAT_00800372 = '\0';
+      if ((_DAT_0080bac4 == 1) && (DAT_0080052a != '\0')) {
+        if (_DAT_008052fa == 0) {
+          uVar6 = 0x804fca;
+          _DAT_008052ea = _DAT_00800522;
+          _DAT_008052ec = _DAT_00800524;
+          DAT_008052f0 = DAT_00800528;
+          DAT_008052f1 = DAT_00800529;
+          _DAT_008052fa = 1;
+        }
+        else {
+          uVar6 = 0x80515a;
+          _DAT_008052f2 = _DAT_00800522;
+          _DAT_008052f4 = _DAT_00800524;
+          DAT_008052f8 = DAT_00800528;
+          DAT_008052f9 = DAT_00800529;
+          _DAT_008052fc = 1;
+        }
+        puVar1 = (undefined *)FUN_00014292(&fuel_demand_blend_input,uVar6);
+        _DAT_0080bac4 = 0;
+        DAT_0080052a = '\0';
+      }
+    }
+  }
+  return puVar1;
+}
+
+
+
+//
+// Function: FUN_00013cc8 @ 0x00013cc8
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_00800504
+void FUN_00013cc8(void)
+
+{
+  ushort uVar1;
+  short sVar2;
+  byte *pbVar3;
+  undefined *puVar4;
+  
+  _DAT_0080051e = 0;
+  scheduler_phase_execution_time = 0;
+  uVar1 = 0;
+  pbVar3 = &flash_write_data_pointer;
+  puVar4 = &fuel_demand_rating_table_size;
+  sVar2 = 0;
+  do {
+    if (*(short *)(&DAT_00803d66 + sVar2) == 1) {
+      *puVar4 = (&DAT_00805a24)[(short)((ushort)*pbVar3 * 5) * 2];
+    }
+    sVar2 = sVar2 + 0x10;
+    puVar4 = puVar4 + 1;
+    pbVar3 = pbVar3 + 1;
+    uVar1 = uVar1 + 1;
+  } while (uVar1 < 4);
+  uVar1 = 0;
+  puVar4 = &fuel_demand_blend_input;
+  do {
+    *puVar4 = 0;
+    uVar1 = uVar1 + 1;
+    puVar4 = puVar4 + 1;
+  } while (uVar1 < 400);
+  _DAT_00800504 = &fuel_demand_blend_input;
+  DAT_00800372 = 1;
+  return;
+}
+
+
+
+//
+// Function: FUN_00013d42 @ 0x00013d42
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

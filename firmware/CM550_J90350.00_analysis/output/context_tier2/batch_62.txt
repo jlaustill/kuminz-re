@@ -1,0 +1,154 @@
+=== VARIABLES TO NAME ===
+0x008041fc  (5 references)
+0x00804216  (5 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_008041fc, DAT_00804216
+void diagnosticGroupSnapshotCapture(undefined4 param_1)
+
+{
+                    /* From J90280.05 @ 0x01b916 (confidence: 75%) */
+  if (param_1._1_1_ == '\0') {
+    _DAT_0080422a = 1;
+    _DAT_0080422e = _source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_da4e;
+    DAT_008041f8 = 0;
+    DAT_008041f9 = datalink_command_source_id;
+    _DAT_008041fa = _source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_da4e;
+    _DAT_008041fc = 1;
+    _DAT_008041fe = _datalink_speed_control_mode;
+    _DAT_00804200 = 0;
+    _DAT_00804202 = 0;
+    _DAT_00804204 = 0;
+    _DAT_00804206 = 0;
+    _DAT_00804208 = _hour_meter_ecm_run_time_none;
+    _DAT_0080420c = 0;
+    return;
+  }
+  _DAT_0080422c = 1;
+  _DAT_00804230 = _source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_d9e6;
+  DAT_00804212 = 1;
+  DAT_00804213 = DAT_0080d9e9;
+  _DAT_00804214 = _source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_d9e6;
+  _DAT_00804216 = 1;
+  _DAT_00804218 = _retarder_control_mode;
+  _DAT_0080421a = 0;
+  _DAT_0080421c = 0;
+  _DAT_0080421e = 0;
+  _DAT_00804220 = 0;
+  _DAT_00804222 = _hour_meter_ecm_run_time_none;
+  _DAT_00804226 = 0;
+  return;
+}
+
+
+
+//
+// Function: memoryRegisterController @ 0x00022070
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_008041fc, DAT_00804216
+uint memoryRegisterController(void)
+
+{
+  uint uVar1;
+  undefined2 *puVar2;
+  
+                    /* From J90280.05 @ 0x01b9da (confidence: 81%) */
+  uVar1 = _calibration_feature_enable_flags_word_2 & 0xffff0800;
+  if ((_calibration_feature_enable_flags_word_2 & 0x800) != 0) {
+    if (((_datalink_speed_control_mode != _DAT_00800b12) || (_JCEGNETY != _DAT_00800b16)) ||
+       (datalink_command_source_id != DAT_00800b18)) {
+      if (_datalink_speed_control_mode == 0) {
+        if ((_DAT_00800b12 != 0) && (_DAT_00800b16 == 1)) {
+          _DAT_0080422a = 0;
+          _DAT_0080420c = _hour_meter_ecm_run_time_none - _DAT_00804208;
+          diagnosticGroupPositionBufferStore();
+        }
+      }
+      else if (_JCEGNETY == 1) {
+        if (_DAT_0080422a == 1) {
+          if (datalink_command_source_id == DAT_00800b18) {
+            if (_DAT_008041fc < 5) {
+              uVar1 = (uint)_DAT_008041fc;
+              _DAT_008041fc = _DAT_008041fc + 1;
+              *(short *)(&DAT_008041fe + uVar1 * 2) = _datalink_speed_control_mode;
+            }
+            else {
+              for (puVar2 = (undefined2 *)&DAT_008041fe; puVar2 < &DAT_00804206; puVar2 = puVar2 + 1
+                  ) {
+                *puVar2 = puVar2[1];
+              }
+              _DAT_00804206 = _datalink_speed_control_mode;
+            }
+          }
+          else {
+            _DAT_0080420c = _hour_meter_ecm_run_time_none - _DAT_00804208;
+            diagnosticGroupPositionBufferStore();
+            diagnosticGroupSnapshotCapture();
+          }
+        }
+        else {
+          diagnosticGroupSnapshotCapture();
+        }
+      }
+      else if (_DAT_00800b16 == 1) {
+        _DAT_0080422a = 0;
+        diagnosticGroupPositionBufferStore();
+      }
+    }
+    _DAT_00800b12 = _datalink_speed_control_mode;
+    _DAT_00800b16 = _JCEGNETY;
+    DAT_00800b18 = datalink_command_source_id;
+    uVar1 = (uint)_retarder_control_mode;
+    if ((_retarder_control_mode != _DAT_00800b14) ||
+       (uVar1 = (uint)_DAT_0080d9e8, uVar1 != DAT_00800b19)) {
+      if (_retarder_control_mode == 0) {
+        if (_DAT_00800b14 != 0) {
+          _DAT_0080422c = 0;
+          _DAT_00804226 = _hour_meter_ecm_run_time_none - _DAT_00804222;
+          uVar1 = diagnosticGroupPositionBufferStore();
+        }
+      }
+      else if (_DAT_0080422c == 1) {
+        if (_DAT_0080d9e8 == DAT_00800b19) {
+          if (_DAT_00804216 < 5) {
+            uVar1 = (uint)_DAT_00804216;
+            _DAT_00804216 = _DAT_00804216 + 1;
+            *(ushort *)(&DAT_00804218 + uVar1 * 2) = _retarder_control_mode;
+          }
+          else {
+            uVar1 = 0xe;
+            for (puVar2 = (undefined2 *)&DAT_00804218; puVar2 < &DAT_00804220; puVar2 = puVar2 + 1)
+            {
+              *puVar2 = puVar2[1];
+            }
+            _DAT_00804220 = _retarder_control_mode;
+          }
+        }
+        else {
+          _DAT_00804226 = _hour_meter_ecm_run_time_none - _DAT_00804222;
+          diagnosticGroupPositionBufferStore();
+          uVar1 = diagnosticGroupSnapshotCapture();
+        }
+      }
+      else {
+        uVar1 = diagnosticGroupSnapshotCapture();
+      }
+    }
+    _DAT_00800b14 = _retarder_control_mode;
+    DAT_00800b19 = DAT_0080d9e9;
+  }
+  return uVar1;
+}
+
+
+
+//
+// Function: canDiagnosticResponseSender @ 0x000222b4
+//
+

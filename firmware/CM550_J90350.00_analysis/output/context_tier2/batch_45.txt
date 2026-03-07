@@ -1,0 +1,157 @@
+=== VARIABLES TO NAME ===
+0x00801d4c  (7 references)
+0x00801d4f  (7 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00801d4c, DAT_00801d4f
+void torqueControlModeHandler(int param_1)
+
+{
+  char cVar1;
+  byte bVar2;
+  byte bVar3;
+  byte bVar4;
+  undefined3 uVar5;
+  undefined4 in_D0;
+  undefined4 uVar6;
+  short sVar7;
+  
+                    /* From J90280.05 @ 0x027528 (confidence: 81%) */
+  if (*(short *)(param_1 + 4) == 8) {
+    DAT_00801d4c = **(byte **)(param_1 + 6);
+    bVar4 = DAT_00801d4c & 3;
+    bVar3 = DAT_00801d4c & 3;
+    bVar2 = DAT_00801d4c & 0x30;
+    DAT_00801d4e = *(undefined1 *)(*(int *)(param_1 + 6) + 1);
+    DAT_00801d4d = *(undefined1 *)(*(int *)(param_1 + 6) + 2);
+    DAT_00801d4f = *(byte *)(*(int *)(param_1 + 6) + 3);
+    cVar1 = *(char *)(param_1 + 3);
+    uVar5 = (undefined3)((uint)in_D0 >> 8);
+    if ((DAT_00801d4c & 3) == 0) {
+      uVar6 = diagnosticStateInitializer((short)CONCAT31(uVar5,cVar1));
+    }
+    else {
+      uVar6 = diagnosticMessageValidator((short)CONCAT31(uVar5,cVar1));
+      if ((short)uVar6 != 0) {
+        return;
+      }
+    }
+    uVar5 = (undefined3)((uint)uVar6 >> 8);
+    if (_datalink_speed_control_mode == 0) {
+      sVar7 = diagnosticSessionValidator((short)CONCAT31(uVar5,cVar1));
+      if (sVar7 != 0) {
+        return;
+      }
+      _datalink_active_session_pointer = _datalink_session_config_pointer;
+    }
+    else if (_JCEGNETY == 1) {
+      if (cVar1 != datalink_command_source_id) {
+        if (bVar4 == 0) {
+          return;
+        }
+        sVar7 = diagnosticSessionValidator((short)CONCAT31(uVar5,cVar1));
+        if (sVar7 != 0) {
+          return;
+        }
+        if (DAT_00801d54 < bVar2) {
+          return;
+        }
+        if (bVar2 == DAT_00801d54) {
+          if (_datalink_speed_control_mode != 3) {
+            return;
+          }
+          if (bVar3 == 3) {
+            if (DAT_00801d58 < DAT_00801d4f) {
+              return;
+            }
+            if ((DAT_00801d58 == DAT_00801d4f) &&
+               (_DAT_00801d56 <= CONCAT11(DAT_00801d4d,DAT_00801d4e))) {
+              return;
+            }
+          }
+        }
+        _datalink_active_session_pointer = _datalink_session_config_pointer;
+      }
+    }
+    else {
+      sVar7 = diagnosticSessionValidator((short)CONCAT31(uVar5,cVar1));
+      if (sVar7 != 0) {
+        return;
+      }
+      if (_datalink_active_session_pointer < _datalink_session_config_pointer) {
+        return;
+      }
+      _datalink_active_session_pointer = _datalink_session_config_pointer;
+    }
+    _byte_indicating_engine_commands_as_received_over_datalink_0_255 = (ushort)DAT_00801d4c;
+    DAT_00801d54 = bVar2;
+    _JCEGNETY = 1;
+    datalink_command_source_id = cVar1;
+    switch(bVar3) {
+    case 0:
+      _datalink_command_timeout_counter = 0;
+      _datalink_speed_control_mode = 0;
+      _source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_da4e = 0;
+      _jcomm_speed_control_status_1_speed_control_mode_0_n_true_false = 0;
+      return;
+    case 1:
+      _datalink_command_timeout_counter = *(short *)(_datalink_active_session_pointer + 4) + 1;
+      _datalink_speed_control_mode = 1;
+      _source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_da4e = canBusConfigTypeSelector();
+      _jcomm_speed_control_status_1_speed_control_mode_0_n_true_false = 1;
+      _DAT_0080da5e = CONCAT11(DAT_00801d4d,DAT_00801d4e);
+      _DAT_00801d56 = _DAT_0080da5e;
+      if (24000 < _DAT_0080da5e) {
+        _DAT_0080da5e = 24000;
+      }
+      _jcomm_speed_governor_mode_indicator_of_which_speed_mode_characte_0_3 =
+           (short)((int)(DAT_00801d4c & 0xc) >> 2);
+      return;
+    case 2:
+      _datalink_command_timeout_counter = *(short *)(_datalink_active_session_pointer + 8) + 1;
+      _datalink_speed_control_mode = 2;
+      _source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_da4e = canBusConfigTypeSelector();
+      _jcomm_speed_control_status_1_speed_control_mode_0_n_true_false = 0;
+      DAT_00801d58 = DAT_00801d4f;
+      _DAT_0080da5c = (ushort)DAT_00801d4f * 0x100 + -32000;
+      _datalink_torque_demand_fueling =
+           _maximum_fueling_value_that_does_not_inject_fuel_0_100 +
+           (short)(((int)_DAT_0080da5c *
+                   ((int)_jcomm_peak_fueling_ref_fuel_for_all_indicated_percent_peak_tor_0_100 -
+                   (int)_maximum_fueling_value_that_does_not_inject_fuel_0_100)) / 0x6400);
+      if (_datalink_torque_demand_fueling < 0) {
+        _datalink_torque_demand_fueling = 0;
+        return;
+      }
+      return;
+    case 3:
+      _datalink_command_timeout_counter = *(short *)(_datalink_active_session_pointer + 0xc) + 1;
+      _datalink_speed_control_mode = 3;
+      _source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_da4e = canBusConfigTypeSelector();
+      _jcomm_speed_control_status_1_speed_control_mode_0_n_true_false = 0;
+      _DAT_00801d56 = CONCAT11(DAT_00801d4d,DAT_00801d4e);
+      _DAT_0080da5a = _DAT_00801d56;
+      DAT_00801d58 = DAT_00801d4f;
+      _jcomm_torque_derate_fueling_maximum_allowed_fuel_as_per_link_u_0_100 =
+           _maximum_fueling_value_that_does_not_inject_fuel_0_100 +
+           (short)(((int)(short)((ushort)DAT_00801d4f * 0x100 + -32000) *
+                   ((int)_jcomm_peak_fueling_ref_fuel_for_all_indicated_percent_peak_tor_0_100 -
+                   (int)_maximum_fueling_value_that_does_not_inject_fuel_0_100)) / 0x6400);
+      if (_jcomm_torque_derate_fueling_maximum_allowed_fuel_as_per_link_u_0_100 < 0) {
+        _jcomm_torque_derate_fueling_maximum_allowed_fuel_as_per_link_u_0_100 = 0;
+        return;
+      }
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: FUN_0002f4be @ 0x0002f4be
+//
+

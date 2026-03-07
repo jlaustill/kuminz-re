@@ -1,0 +1,248 @@
+=== VARIABLES TO NAME ===
+0x008019d0  (23 references)
+0x008019d1  (23 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_008019d0
+uint diagnosticMessageValidator(undefined4 param_1,undefined4 param_2)
+
+{
+  uint in_D0;
+  byte bVar1;
+  short *psVar2;
+  
+  psVar2 = (short *)&DAT_00801994;
+  bVar1 = 0;
+  while( true ) {
+    if (DAT_008019d0 <= bVar1) {
+      return in_D0 & 0xffff0000;
+    }
+    if (((param_1._0_2_ == *psVar2) && ((char)param_1 == *(char *)(psVar2 + 1))) &&
+       (param_2._0_2_ == psVar2[2])) break;
+    psVar2 = psVar2 + 4;
+    bVar1 = bVar1 + 1;
+  }
+  psVar2[3] = _jcomm_recovery_time_time_that_time_limited_node_must_be_silen_0_1000;
+  return 1;
+}
+
+
+
+//
+// Function: ioControlTimeoutTableLookup @ 0x00023870
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_008019d1
+uint ioControlTimeoutTableLookup(undefined4 param_11)
+
+{
+  uint in_D0;
+  byte bVar1;
+  char *pcVar2;
+  
+  pcVar2 = &DAT_008019bc;
+  bVar1 = 0;
+  while( true ) {
+    if (DAT_008019d1 <= bVar1) {
+      return in_D0 & 0xffff0000;
+    }
+    if (param_11._1_1_ == *pcVar2) break;
+    pcVar2 = pcVar2 + 4;
+    bVar1 = bVar1 + 1;
+  }
+  *(undefined2 *)(pcVar2 + 2) =
+       _jcomm_recovery_time_time_that_time_limited_node_must_be_silen_0_1000;
+  return 1;
+}
+
+
+
+//
+// Function: ioControlEntryAdd @ 0x000238ac
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_008019d0
+void ioControlEntryAdd(undefined4 param_1,undefined4 param_2)
+
+{
+  int iVar1;
+  
+  if (DAT_008019d0 < 5) {
+    iVar1 = (uint)DAT_008019d0 * 8;
+    DAT_008019d0 = DAT_008019d0 + 1;
+    *(undefined2 *)(&DAT_00801994 + iVar1) = param_1._0_2_;
+    (&DAT_00801996)[iVar1] = (undefined)param_1;
+    *(undefined2 *)(&diagnostic_service_state_counter + iVar1) = param_2._0_2_;
+    *(undefined2 *)(&diagnostic_security_access_mode + iVar1) =
+         _jcomm_recovery_time_time_that_time_limited_node_must_be_silen_0_1000;
+  }
+  return;
+}
+
+
+
+//
+// Function: ioControlTimeoutEntryAdd @ 0x000238ec
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_008019d1
+void ioControlTimeoutEntryAdd(undefined4 param_1)
+
+{
+  uint uVar1;
+  
+  if (DAT_008019d1 < 5) {
+    uVar1 = (uint)DAT_008019d1;
+    DAT_008019d1 = DAT_008019d1 + 1;
+    (&DAT_008019bc)[uVar1 * 4] = param_1._1_1_;
+    *(undefined2 *)(&DAT_008019be + uVar1 * 4) =
+         _jcomm_recovery_time_time_that_time_limited_node_must_be_silen_0_1000;
+  }
+  return;
+}
+
+
+
+//
+// Function: phase3_countdown_timer_manager @ 0x00023920
+//
+
+// Variables in this function: DAT_008019d0, DAT_008019d1
+void phase3_countdown_timer_manager(void)
+
+{
+  short sVar1;
+  int iVar2;
+  uint uVar3;
+  byte bVar4;
+  undefined2 *puVar5;
+  undefined *puVar6;
+  
+  if (DAT_008019d0 != 0) {
+    puVar5 = (undefined2 *)(&DAT_0080198c + (uint)DAT_008019d0 * 8);
+    for (bVar4 = DAT_008019d0; bVar4 != 0; bVar4 = bVar4 - 1) {
+      sVar1 = puVar5[3] + -1;
+      puVar5[3] = sVar1;
+      if (sVar1 == 0) {
+        if (bVar4 == DAT_008019d0) {
+          DAT_008019d0 = DAT_008019d0 - 1;
+        }
+        else {
+          DAT_008019d0 = DAT_008019d0 - 1;
+          iVar2 = (uint)DAT_008019d0 * 8;
+          *puVar5 = *(undefined2 *)(&DAT_00801994 + iVar2);
+          *(undefined *)(puVar5 + 1) = (&DAT_00801996)[iVar2];
+          puVar5[2] = *(undefined2 *)(&diagnostic_service_state_counter + iVar2);
+          puVar5[3] = *(undefined2 *)(&diagnostic_security_access_mode + iVar2);
+        }
+      }
+      puVar5 = puVar5 + -4;
+    }
+  }
+  if (DAT_008019d1 != 0) {
+    puVar6 = &diag_service_pgn_dispatch_ptr + (uint)DAT_008019d1 * 4;
+    for (bVar4 = DAT_008019d1; bVar4 != 0; bVar4 = bVar4 - 1) {
+      sVar1 = *(short *)(puVar6 + 2) + -1;
+      *(short *)(puVar6 + 2) = sVar1;
+      if (sVar1 == 0) {
+        if (bVar4 == DAT_008019d1) {
+          DAT_008019d1 = DAT_008019d1 - 1;
+        }
+        else {
+          DAT_008019d1 = DAT_008019d1 - 1;
+          uVar3 = (uint)DAT_008019d1;
+          *puVar6 = (&DAT_008019bc)[uVar3 * 4];
+          *(undefined2 *)(puVar6 + 2) = *(undefined2 *)(&DAT_008019be + uVar3 * 4);
+        }
+      }
+      puVar6 = puVar6 + -4;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: diagnosticStateInitializer @ 0x000239d2
+//
+
+// Variables in this function: DAT_008019d0
+void diagnosticStateInitializer(undefined4 param_1)
+
+{
+  int iVar1;
+  byte bVar2;
+  short *psVar3;
+  
+  if (DAT_008019d0 != 0) {
+    psVar3 = (short *)(&DAT_0080198c + (uint)DAT_008019d0 * 8);
+    for (bVar2 = DAT_008019d0; bVar2 != 0; bVar2 = bVar2 - 1) {
+      if ((param_1._0_2_ == *psVar3) && ((char)param_1 == *(char *)(psVar3 + 1))) {
+        if (bVar2 == DAT_008019d0) {
+          DAT_008019d0 = DAT_008019d0 - 1;
+        }
+        else {
+          DAT_008019d0 = DAT_008019d0 - 1;
+          iVar1 = (uint)DAT_008019d0 * 8;
+          *psVar3 = *(short *)(&DAT_00801994 + iVar1);
+          *(undefined *)(psVar3 + 1) = (&DAT_00801996)[iVar1];
+          psVar3[2] = *(short *)(&diagnostic_service_state_counter + iVar1);
+          psVar3[3] = *(short *)(&diagnostic_security_access_mode + iVar1);
+        }
+      }
+      psVar3 = psVar3 + -4;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: ioControlEntryRemove @ 0x00023a3c
+//
+
+// Variables in this function: DAT_008019d1
+void ioControlEntryRemove(undefined4 param_11)
+
+{
+  uint uVar1;
+  byte bVar2;
+  char *pcVar3;
+  
+  if (DAT_008019d1 != 0) {
+    pcVar3 = &diag_service_pgn_dispatch_ptr + (uint)DAT_008019d1 * 4;
+    for (bVar2 = DAT_008019d1; bVar2 != 0; bVar2 = bVar2 - 1) {
+      if (param_11._1_1_ == *pcVar3) {
+        if (bVar2 == DAT_008019d1) {
+          DAT_008019d1 = DAT_008019d1 - 1;
+        }
+        else {
+          DAT_008019d1 = DAT_008019d1 - 1;
+          uVar1 = (uint)DAT_008019d1;
+          *pcVar3 = (&DAT_008019bc)[uVar1 * 4];
+          *(undefined2 *)(pcVar3 + 2) = *(undefined2 *)(&DAT_008019be + uVar1 * 4);
+        }
+      }
+      pcVar3 = pcVar3 + -4;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: lampDriverOutputDispatcher @ 0x00023a90
+//
+

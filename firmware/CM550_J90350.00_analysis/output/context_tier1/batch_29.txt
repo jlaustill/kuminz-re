@@ -1,0 +1,336 @@
+=== VARIABLES TO NAME ===
+0x0080426e  (13 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0080426e
+short oldestDiagnosticTimestampSearch(undefined4 param_11)
+
+{
+  short sVar1;
+  short sVar2;
+  short sVar3;
+  uint uVar4;
+  short sVar5;
+  
+  uVar4 = 0xffffffff;
+  sVar5 = -1;
+  sVar2 = 0;
+  sVar3 = 0;
+  do {
+    sVar1 = *(short *)(&DAT_0080426e + sVar3) * 10;
+    if (((byte)(&DAT_00805a24)[sVar1] == param_11._0_2_) && (*(uint *)(&DGFUCUBF + sVar1) < uVar4))
+    {
+      uVar4 = *(uint *)(&DGFUCUBF + sVar1);
+      sVar5 = sVar2;
+    }
+    sVar3 = sVar3 + 0x30;
+    sVar2 = sVar2 + 1;
+  } while (sVar2 < 0x14);
+  return sVar5;
+}
+
+
+
+//
+// Function: diagnosticCodeRegistrar @ 0x00014720
+//
+
+// Variables in this function: DAT_0080426e
+void diagnosticCodeRegistrar(undefined4 param_11)
+
+{
+  ushort uVar1;
+  short sVar2;
+  short sVar3;
+  
+  sVar2 = 0;
+  sVar3 = 0;
+  do {
+    if (param_11._0_2_ == *(short *)(&DAT_0080426e + sVar3)) {
+      diagnosticTableSnapshotCapture();
+      return;
+    }
+    sVar3 = sVar3 + 0x30;
+    sVar2 = sVar2 + 1;
+  } while (sVar2 < 0x14);
+  sVar2 = 0;
+  sVar3 = 0;
+  do {
+    if (*(short *)(&DAT_0080426e + sVar3) == 0x7d) {
+      diagnosticTableSnapshotCapture();
+      return;
+    }
+    sVar3 = sVar3 + 0x30;
+    sVar2 = sVar2 + 1;
+  } while (sVar2 < 0x14);
+  uVar1 = oldestDiagnosticTimestampSearch();
+  if (uVar1 < 0x14) {
+    sVar2 = *(short *)(&DAT_0080426e + (short)(uVar1 * 6) * 8);
+    diagnosticTableSnapshotCapture();
+    (&DAT_00805a24)[(short)(sVar2 * 5) * 2] = 0;
+    return;
+  }
+  uVar1 = oldestDiagnosticTimestampSearch();
+  if (uVar1 < 0x14) {
+    sVar2 = *(short *)(&DAT_0080426e + (short)(uVar1 * 6) * 8);
+    diagnosticTableSnapshotCapture();
+    (&DAT_00805a24)[(short)(sVar2 * 5) * 2] = 1;
+  }
+  return;
+}
+
+
+
+//
+// Function: FUN_00014812 @ 0x00014812
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080426e
+void FUN_0002fd90(undefined4 param_11)
+
+{
+  bool bVar1;
+  short sVar2;
+  byte bVar3;
+  
+  bVar1 = false;
+  bVar3 = 0;
+  sVar2 = 0;
+  while ((bVar3 < 0x14 && (!bVar1))) {
+    if (param_11._0_2_ == *(short *)(&DAT_0080426e + sVar2)) {
+      *(undefined2 *)(&DAT_0080426e + sVar2) = 0x7d;
+      *(undefined2 *)(&DAT_0080462e + sVar2) = 0x7d;
+      bVar1 = true;
+    }
+    sVar2 = sVar2 + 0x30;
+    bVar3 = bVar3 + 1;
+  }
+  return;
+}
+
+
+
+//
+// Function: diagnosticTableEntryClear @ 0x0002fddc
+//
+
+// Variables in this function: DAT_0080426e
+void diagnosticTableSnapshotCapture(undefined4 param_1)
+
+{
+  short sVar1;
+  
+  if ((*(ushort *)(&DAT_008067c6 + (short)(param_1._2_2_ * 3) * 2) & 0x10) != 0) {
+    sVar1 = param_1._0_2_ * 0x30;
+    *(short *)(&DAT_0080462e + sVar1) = param_1._2_2_;
+    *(undefined2 *)(&DAT_00804636 + sVar1) = _DAT_0080db5e;
+    *(undefined2 *)(&DAT_00804630 + sVar1) =
+         _sampled_road_speed_after_it_has_been_filtered_0_255_9961;
+    *(undefined2 *)(&DAT_00804632 + sVar1) = _DAT_0080ccf4;
+    *(undefined2 *)(&DAT_00804638 + sVar1) = _validated_percent_throttle_commanded_by_driver_0_100;
+    *(undefined2 *)(&DAT_0080463a + sVar1) = _boost_pressure_0_100;
+    *(undefined4 *)(&DAT_0080462a + sVar1) = _hour_meter_ecm_run_time_none;
+    *(undefined2 *)(&DAT_0080463c + sVar1) = _filtered_and_linearized_coolant_temperature_50_to_293;
+    *(undefined2 *)(&DAT_0080463e + sVar1) =
+         _filtered_and_linearized_intake_manifold_temperature_50_to_293;
+    *(undefined2 *)(&DAT_00804640 + sVar1) = _flitered_and_linearized_oil_pressure_0_100;
+    *(undefined2 *)(&DAT_00804634 + sVar1) = _bit_mapped_system_switch_status_0_false_1_true_bcc8;
+    *(undefined2 *)(&DAT_00804642 + sVar1) = _bit_mapped_system_switch_status_0_false_1_true_bcca;
+    *(undefined4 *)(sVar1 + 0x804644) = _time_that_the_engine_is_not_in_stop_state_0_2_29;
+    *(undefined2 *)(sVar1 + 0x804648) = _DAT_0080d330;
+    *(undefined2 *)(sVar1 + 0x80464a) = _filtered_and_linearized_battery_voltage_0_40;
+    *(undefined2 *)(sVar1 + 0x80464c) = _DAT_0080d32e;
+    *(undefined2 *)(sVar1 + 0x80464e) = _DAT_0080de6a;
+    *(undefined2 *)(sVar1 + 0x804650) = _DAT_0080a18e;
+    *(undefined2 *)(sVar1 + 0x804652) = _DAT_0080a188;
+    *(undefined2 *)(sVar1 + 0x804654) = _DAT_0080a454;
+    *(undefined2 *)(sVar1 + 0x804656) = _DAT_0080a17e;
+    *(undefined2 *)(sVar1 + 0x804658) = _bit_mapped_system_switch_status_0_false_1_true_bccc;
+  }
+  param_1._0_2_ = param_1._0_2_ * 0x30;
+  if (param_1._2_2_ != *(short *)(&DAT_0080426e + param_1._0_2_)) {
+    *(short *)(&DAT_0080426e + param_1._0_2_) = param_1._2_2_;
+    *(undefined2 *)(&DAT_00804276 + param_1._0_2_) = _DAT_0080db5e;
+    *(undefined2 *)(&DAT_00804270 + param_1._0_2_) =
+         _sampled_road_speed_after_it_has_been_filtered_0_255_9961;
+    *(undefined2 *)(&DAT_00804272 + param_1._0_2_) = _DAT_0080ccf4;
+    *(undefined2 *)(&DAT_00804278 + param_1._0_2_) =
+         _validated_percent_throttle_commanded_by_driver_0_100;
+    *(undefined2 *)(&DAT_0080427a + param_1._0_2_) = _boost_pressure_0_100;
+    *(undefined4 *)(&DAT_0080426a + param_1._0_2_) = _hour_meter_ecm_run_time_none;
+    *(undefined2 *)(&DAT_0080427c + param_1._0_2_) =
+         _filtered_and_linearized_coolant_temperature_50_to_293;
+    *(undefined2 *)(&DAT_0080427e + param_1._0_2_) =
+         _filtered_and_linearized_intake_manifold_temperature_50_to_293;
+    *(undefined2 *)(&DAT_00804280 + param_1._0_2_) = _flitered_and_linearized_oil_pressure_0_100;
+    *(undefined2 *)(&DAT_00804274 + param_1._0_2_) =
+         _bit_mapped_system_switch_status_0_false_1_true_bcc8;
+    *(undefined2 *)(&DAT_00804282 + param_1._0_2_) =
+         _bit_mapped_system_switch_status_0_false_1_true_bcca;
+    *(undefined4 *)(param_1._0_2_ + 0x804284) = _time_that_the_engine_is_not_in_stop_state_0_2_29;
+    *(undefined2 *)(param_1._0_2_ + 0x804288) = _DAT_0080d330;
+    *(undefined2 *)(param_1._0_2_ + 0x80428a) = _filtered_and_linearized_battery_voltage_0_40;
+    *(undefined2 *)(param_1._0_2_ + 0x80428c) = _DAT_0080d32e;
+    *(undefined2 *)(param_1._0_2_ + 0x80428e) = _DAT_0080de6a;
+    *(undefined2 *)(param_1._0_2_ + 0x804290) = _DAT_0080a18e;
+    *(undefined2 *)(param_1._0_2_ + 0x804292) = _DAT_0080a188;
+    *(undefined2 *)(param_1._0_2_ + 0x804294) = _DAT_0080a454;
+    *(undefined2 *)(param_1._0_2_ + 0x804296) = _DAT_0080a17e;
+    *(undefined2 *)(param_1._0_2_ + 0x804298) = _bit_mapped_system_switch_status_0_false_1_true_bccc
+    ;
+  }
+  return;
+}
+
+
+
+//
+// Function: tpuChannelStateMachine @ 0x000300d4
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080426e
+byte buildCanMessage(void)
+
+{
+  undefined4 uVar1;
+  int iVar2;
+  short sVar3;
+  undefined2 uVar4;
+  byte bVar5;
+  ushort uVar6;
+  char cVar7;
+  byte bVar8;
+  int iVar9;
+  short sVar10;
+  undefined *puVar11;
+  undefined2 local_6;
+  
+  bVar5 = DAT_00803448 & 0xf0;
+  if ((DAT_00803448 & 0xf0) == 0) {
+    _DAT_00802d66 = 0;
+    if ((DGAEFUBF == '\0') && (DGIEFUBF == '\0')) {
+      DAT_00802d70 = 0;
+      DAT_00802d71 = 0;
+      DAT_00802d72 = 0;
+      DAT_00802d73 = 0;
+      DAT_00802d74 = 0;
+      DAT_00802d75 = 0xff;
+      DAT_00802d76 = 0xff;
+      DAT_00802d77 = 0xff;
+      _DAT_00802d66 = 8;
+    }
+    else {
+      bVar5 = 0;
+      puVar11 = &DAT_00802d70;
+      iVar9 = 0;
+      do {
+        sVar10 = (short)iVar9;
+        if (*(short *)(&DAT_0080426e + sVar10) != 0x7d) {
+          iVar2 = (uint)(*(short *)(&DAT_0080462e + sVar10) != 0x7d) * 0x3c0;
+          sVar3 = (short)iVar2;
+          uVar6 = (ushort)((uint)(((int)(uint)*(ushort *)(&DAT_0080427a + (short)(sVar10 + sVar3))
+                                  >> 7) * 0x1afa) / 1000);
+          if (500 < uVar6) {
+            uVar6 = 500;
+          }
+          puVar11[6] = (char)((int)(uint)uVar6 >> 1);
+          uVar4 = byteSwap16(&DAT_00804272 + iVar9 + iVar2);
+          puVar11[8] = (char)uVar4;
+          puVar11[7] = (char)((ushort)uVar4 >> 8);
+          puVar11[9] = (char)((ushort)*(undefined2 *)(&DAT_00804276 + (short)(sVar10 + sVar3)) >> 8)
+          ;
+          iVar2 = ((short)((int)(uint)*(ushort *)(&DAT_0080427c + (short)(sVar10 + sVar3)) >> 7) * 5
+                  + -0xa0) / 9;
+          cVar7 = (char)iVar2;
+          if ((short)iVar2 < -0x28) {
+            cVar7 = -0x28;
+          }
+          puVar11[10] = cVar7 + '(';
+          if (_DAT_00060fa2 == 1) {
+            local_6 = (undefined2)
+                      ((uint)*(ushort *)(&DAT_00804270 + (short)(sVar10 + sVar3)) * 0x19c >> 8);
+            uVar4 = byteSwap16(&local_6);
+            puVar11[0xc] = (char)uVar4;
+            puVar11[0xb] = (char)((ushort)uVar4 >> 8);
+          }
+          else {
+            puVar11[0xb] = 0xff;
+            puVar11[0xc] = 0xff;
+          }
+          puVar11[0xd] = (char)*(undefined2 *)(&DAT_0080426e + (short)(sVar10 + sVar3));
+          puVar11[0xe] = (char)((ushort)*(undefined2 *)(&DAT_0080426e + (short)(sVar10 + sVar3)) >>
+                               8);
+          puVar11[0xf] = 0;
+          puVar11[0x10] = DAT_00060fa1;
+          bVar8 = 0;
+          do {
+            iVar2 = (uint)bVar8 * 0x1c;
+            uVar1 = *(undefined4 *)(&DAT_0080426a + (short)(sVar10 + (ushort)bVar8 * 0x3c0));
+            puVar11[iVar2 + 0x14] = (char)uVar1;
+            puVar11[iVar2 + 0x13] = (char)((uint)uVar1 >> 8);
+            puVar11[iVar2 + 0x12] = (char)((uint)uVar1 >> 0x10);
+            puVar11[iVar2 + 0x11] = (char)((uint)uVar1 >> 0x18);
+            uVar4 = *(undefined2 *)(&DAT_0080426e + (short)(sVar10 + (ushort)bVar8 * 0x3c0));
+            puVar11[iVar2 + 0x16] = (char)uVar4;
+            puVar11[iVar2 + 0x15] = (char)((ushort)uVar4 >> 8);
+            uVar4 = *(undefined2 *)(&DAT_00804270 + (short)(sVar10 + (ushort)bVar8 * 0x3c0));
+            puVar11[iVar2 + 0x18] = (char)uVar4;
+            puVar11[iVar2 + 0x17] = (char)((ushort)uVar4 >> 8);
+            uVar4 = *(undefined2 *)(&DAT_00804272 + (short)(sVar10 + (ushort)bVar8 * 0x3c0));
+            puVar11[iVar2 + 0x1a] = (char)uVar4;
+            puVar11[iVar2 + 0x19] = (char)((ushort)uVar4 >> 8);
+            uVar4 = *(undefined2 *)(&DAT_00804274 + (short)(sVar10 + (ushort)bVar8 * 0x3c0));
+            puVar11[iVar2 + 0x1c] = (char)uVar4;
+            puVar11[iVar2 + 0x1b] = (char)((ushort)uVar4 >> 8);
+            uVar4 = *(undefined2 *)(&DAT_00804276 + (short)(sVar10 + (ushort)bVar8 * 0x3c0));
+            puVar11[iVar2 + 0x1e] = (char)uVar4;
+            puVar11[iVar2 + 0x1d] = (char)((ushort)uVar4 >> 8);
+            uVar4 = *(undefined2 *)(&DAT_00804278 + (short)(sVar10 + (ushort)bVar8 * 0x3c0));
+            puVar11[iVar2 + 0x20] = (char)uVar4;
+            puVar11[iVar2 + 0x1f] = (char)((ushort)uVar4 >> 8);
+            uVar4 = *(undefined2 *)(&DAT_0080427a + (short)(sVar10 + (ushort)bVar8 * 0x3c0));
+            puVar11[iVar2 + 0x22] = (char)uVar4;
+            puVar11[iVar2 + 0x21] = (char)((ushort)uVar4 >> 8);
+            uVar4 = *(undefined2 *)(&DAT_0080427c + (short)(sVar10 + (ushort)bVar8 * 0x3c0));
+            puVar11[iVar2 + 0x24] = (char)uVar4;
+            puVar11[iVar2 + 0x23] = (char)((ushort)uVar4 >> 8);
+            uVar4 = *(undefined2 *)(&DAT_0080427e + (short)(sVar10 + (ushort)bVar8 * 0x3c0));
+            puVar11[iVar2 + 0x26] = (char)uVar4;
+            puVar11[iVar2 + 0x25] = (char)((ushort)uVar4 >> 8);
+            puVar11[iVar2 + 0x27] = 0;
+            puVar11[iVar2 + 0x28] = 0;
+            uVar4 = *(undefined2 *)(&DAT_00804280 + (short)(sVar10 + (ushort)bVar8 * 0x3c0));
+            puVar11[iVar2 + 0x2a] = (char)uVar4;
+            puVar11[iVar2 + 0x29] = (char)((ushort)uVar4 >> 8);
+            uVar4 = *(undefined2 *)(&DAT_00804282 + (short)(sVar10 + (ushort)bVar8 * 0x3c0));
+            puVar11[iVar2 + 0x2c] = (char)uVar4;
+            puVar11[iVar2 + 0x2b] = (char)((ushort)uVar4 >> 8);
+            bVar8 = bVar8 + 1;
+          } while (bVar8 < 2);
+          _DAT_00802d66 = _DAT_00802d66 + 0x49;
+        }
+        iVar9 = iVar9 + 0x30;
+        puVar11 = puVar11 + 0x49;
+        bVar5 = bVar5 + 1;
+      } while (bVar5 < 0x14);
+    }
+    bVar5 = sendCanMessage(&DAT_00802d62);
+  }
+  return bVar5;
+}
+
+
+
+//
+// Function: diagnosticDM4PGN_65229_Builder @ 0x000329d2
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

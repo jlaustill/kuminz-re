@@ -1,0 +1,405 @@
+=== VARIABLES TO NAME ===
+0x00800182  (9 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00800182
+void calculateGovernorDroopSpeed(undefined4 param_1)
+
+{
+  uint uVar1;
+  
+  if (_slope_of_line_defining_droop_for_the_hsg_ref_currently_activ_0_55_13 == 0) {
+    _torque_curve_speed_at_breakpoint_2_hsg_breakpoint_0_5000 = _DAT_00800182;
+  }
+  else {
+    uVar1 = (uint)_reference_speed_before_droop_calculation_1400_4500 +
+            (((uint)(ushort)((_full_fueling_value_at_hsg_bef_droop_speed_0_100 - param_1._0_2_) * 8)
+             * (uint)_slope_of_line_defining_droop_for_the_hsg_ref_currently_activ_0_55_13) / 0x8888
+            & 0xffff);
+    if (uVar1 < 0x9c41) {
+      _torque_curve_speed_at_breakpoint_2_hsg_breakpoint_0_5000 = (undefined2)uVar1;
+    }
+    else {
+      _torque_curve_speed_at_breakpoint_2_hsg_breakpoint_0_5000 = 40000;
+    }
+  }
+  if ((char)param_1 == '\0') {
+    _torque_curve_speed_at_breakpoint_5_0_5000 = _JC39P5RP;
+  }
+  else {
+    _torque_curve_speed_at_breakpoint_5_0_5000 =
+         _torque_curve_speed_at_breakpoint_2_hsg_breakpoint_0_5000;
+  }
+  _torque_curve_fueling_at_point_2_speed_breakpoint_0_100 = param_1._0_2_;
+  _torque_curve_fueling_at_point_5_speed_breakpoint_0_100 = param_1._0_2_;
+  return;
+}
+
+
+
+//
+// Function: fuelLimitExceedanceStatisticsAccumulator @ 0x0000fb26
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_00800182
+void fuelLimitExceedanceStatisticsAccumulator(void)
+
+{
+  char cVar1;
+  char unaff_D3b;
+  
+                    /* From J90280.05 @ 0x02e7b0 (confidence: 69%) */
+  if (((int)(uint)_lsg_base_reference_speed_calibration <
+       (int)((uint)_lsg_breakpoint_speed -
+            (uint)_difference_between_the_lsg_breakpoint_and_the_lsg_reference_s_0_5000)) ||
+     ((uint)_difference_between_the_lsg_breakpoint_and_the_lsg_reference_s_0_5000 +
+      (uint)_lsg_breakpoint_speed < (uint)_lsg_base_reference_speed_calibration)) {
+    cVar1 = '\x04';
+  }
+  else {
+    cVar1 = '\0';
+  }
+  if ((_indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 == 0xf) ||
+     ((_indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 == 0x10 &&
+      ((((_status_32_word_bit_mapped_system_error_status_word_1_0_1 & 0x200) != 0 &&
+        ((_fault_confirm_status_word_1 & 0x200) != 0)) ||
+       (((_status_32_word_bit_mapped_system_error_status_word_1_0_1 & 0x400) != 0 &&
+        ((_fault_confirm_status_word_1 & 0x400) != 0)))))))) {
+    cVar1 = cVar1 + '\x02';
+    if (_timing_alpha_blend_factor == 0x4000) {
+      unaff_D3b = '\0';
+    }
+    else {
+      unaff_D3b = '\x01';
+    }
+  }
+  if ((((_hsg_reference_speed_winning_source_indicator == 2) ||
+       (_hsg_reference_speed_winning_source_indicator == 4)) ||
+      (_hsg_reference_speed_winning_source_indicator == 5)) ||
+     (_hsg_reference_speed_winning_source_indicator == 1)) {
+    cVar1 = cVar1 + '\x01';
+    _DAT_00800182 = _reference_speed_before_droop_calculation_1400_4500;
+  }
+  else {
+    _DAT_00800182 = _hsg_base_reference_speed_currently_in_use_esp_may_select_1500_5000;
+  }
+  switch(cVar1) {
+  case '\x01':
+    if (_torque_curve_speed_at_breakpoint_2_hsg_breakpoint_0_5000 <
+        _torque_curve_speed_at_breakpoint_5_0_5000) {
+      _torque_curve_speed_at_breakpoint_5_0_5000 =
+           _torque_curve_speed_at_breakpoint_2_hsg_breakpoint_0_5000;
+      _torque_curve_fueling_at_point_5_speed_breakpoint_0_100 =
+           _torque_curve_fueling_at_point_2_speed_breakpoint_0_100;
+    }
+    break;
+  case '\x02':
+    vp44State2TransitionHandler();
+    if (unaff_D3b == '\0') {
+      _torque_curve_speed_at_breakpoint_2_hsg_breakpoint_0_5000 =
+           _jcomm_rpm_low_hp_pt_2_in_engine_config_when_torque_dera_0_8031_875;
+      _torque_curve_fueling_at_point_2_speed_breakpoint_0_100 =
+           _jcomm_fueling_low_hp_value_at_pt_2_in_engine_config_when_tor_0_100;
+    }
+    else {
+      _torque_curve_speed_at_breakpoint_2_hsg_breakpoint_0_5000 =
+           _jcomm_rpm_hi_hp_pt_2_in_engine_config_when_torque_derat_0_8031_875;
+      _torque_curve_fueling_at_point_2_speed_breakpoint_0_100 =
+           _jcomm_fueling_hi_hp_value_at_pt_2_in_engine_config_when_torq_0_100;
+    }
+    _torque_curve_speed_at_breakpoint_3_0_5000 = _JC39P3RP;
+    _torque_curve_speed_at_breakpoint_4_0_5000 = _JC39P4RP;
+    _torque_curve_speed_at_breakpoint_5_0_5000 = _JC39P5RP;
+    _torque_curve_fueling_at_point_3_speed_breakpoint_0_100 =
+         _jcomm_fueling_value_at_pt_3_in_engine_config_message_when_to_0_100;
+    _torque_curve_fueling_at_point_4_speed_breakpoint_0_100 =
+         _jcomm_fueling_value_at_pt_4_in_engine_config_message_when_to_0_100;
+    _torque_curve_fueling_at_point_5_speed_breakpoint_0_100 =
+         _jcomm_fueling_value_at_pt_5_in_engine_config_message_when_to_0_100;
+    break;
+  case '\x03':
+    vp44State2TransitionHandler();
+    if (_DAT_00800182 < _DAT_00808174) {
+      calculateGovernorDroopSpeed
+                (CONCAT22(_jcomm_fueling_value_at_pt_4_in_engine_config_message_when_to_0_100,1));
+    }
+    else {
+      calculateGovernorDroopSpeed
+                ((uint)_jcomm_fueling_value_at_pt_5_in_engine_config_message_when_to_0_100 << 0x10);
+    }
+    _torque_curve_speed_at_breakpoint_3_0_5000 = _JC39P3RP;
+    _torque_curve_speed_at_breakpoint_4_0_5000 = _JC39P4RP;
+    _torque_curve_fueling_at_point_3_speed_breakpoint_0_100 =
+         _jcomm_fueling_value_at_pt_3_in_engine_config_message_when_to_0_100;
+    _torque_curve_fueling_at_point_4_speed_breakpoint_0_100 =
+         _jcomm_fueling_value_at_pt_4_in_engine_config_message_when_to_0_100;
+    break;
+  case '\x04':
+    if (_torque_curve_speed_at_breakpoint_3_0_5000 <
+        _torque_curve_speed_at_breakpoint_1_lsg_reference_0_5000) {
+      _torque_curve_speed_at_breakpoint_3_0_5000 =
+           _torque_curve_speed_at_breakpoint_1_lsg_reference_0_5000;
+      _torque_curve_fueling_at_point_3_speed_breakpoint_0_100 =
+           _torque_curve_fueling_at_idle_speed_breakpoint_0_100;
+    }
+    break;
+  case '\x05':
+    if (_torque_curve_speed_at_breakpoint_3_0_5000 <
+        _torque_curve_speed_at_breakpoint_1_lsg_reference_0_5000) {
+      _torque_curve_speed_at_breakpoint_3_0_5000 =
+           _torque_curve_speed_at_breakpoint_1_lsg_reference_0_5000;
+      _torque_curve_fueling_at_point_3_speed_breakpoint_0_100 =
+           _torque_curve_fueling_at_idle_speed_breakpoint_0_100;
+    }
+    if (_torque_curve_speed_at_breakpoint_2_hsg_breakpoint_0_5000 <
+        _torque_curve_speed_at_breakpoint_5_0_5000) {
+      _torque_curve_speed_at_breakpoint_5_0_5000 =
+           _torque_curve_speed_at_breakpoint_2_hsg_breakpoint_0_5000;
+      _torque_curve_fueling_at_point_5_speed_breakpoint_0_100 =
+           _torque_curve_fueling_at_point_2_speed_breakpoint_0_100;
+    }
+    break;
+  case '\x06':
+    FUN_0000fa68();
+    if (unaff_D3b == '\0') {
+      _torque_curve_speed_at_breakpoint_2_hsg_breakpoint_0_5000 =
+           _jcomm_rpm_low_hp_pt_2_in_engine_config_when_torque_dera_0_8031_875;
+      _torque_curve_fueling_at_point_2_speed_breakpoint_0_100 =
+           _jcomm_fueling_low_hp_value_at_pt_2_in_engine_config_when_tor_0_100;
+    }
+    else {
+      _torque_curve_speed_at_breakpoint_2_hsg_breakpoint_0_5000 =
+           _jcomm_rpm_hi_hp_pt_2_in_engine_config_when_torque_derat_0_8031_875;
+      _torque_curve_fueling_at_point_2_speed_breakpoint_0_100 =
+           _jcomm_fueling_hi_hp_value_at_pt_2_in_engine_config_when_torq_0_100;
+    }
+    _torque_curve_speed_at_breakpoint_4_0_5000 = _JC39P4RP;
+    _torque_curve_speed_at_breakpoint_5_0_5000 = _JC39P5RP;
+    _torque_curve_fueling_at_point_4_speed_breakpoint_0_100 =
+         _jcomm_fueling_value_at_pt_4_in_engine_config_message_when_to_0_100;
+    _torque_curve_fueling_at_point_5_speed_breakpoint_0_100 =
+         _jcomm_fueling_value_at_pt_5_in_engine_config_message_when_to_0_100;
+    break;
+  case '\a':
+    FUN_0000fa68();
+    if (_DAT_00800182 < _DAT_00808174) {
+      calculateGovernorDroopSpeed
+                (CONCAT22(_jcomm_fueling_value_at_pt_4_in_engine_config_message_when_to_0_100,1));
+    }
+    else {
+      calculateGovernorDroopSpeed
+                ((uint)_jcomm_fueling_value_at_pt_5_in_engine_config_message_when_to_0_100 << 0x10);
+    }
+    _torque_curve_speed_at_breakpoint_4_0_5000 = _JC39P4RP;
+    _torque_curve_fueling_at_point_4_speed_breakpoint_0_100 =
+         _jcomm_fueling_value_at_pt_4_in_engine_config_message_when_to_0_100;
+  }
+  _jcomm_ind_torque_at_idle_available_torque_that_engine_can_prov_0_125 =
+       clampedDivisionCalculator
+                 ((_torque_curve_fueling_at_idle_speed_breakpoint_0_100 -
+                  _maximum_fueling_value_that_does_not_inject_fuel_0_100) * 0x6400);
+  _jcomm_ind_torque_at_point_2_available_torque_that_engine_can_0_125 =
+       clampedDivisionCalculator
+                 (((uint)_torque_curve_fueling_at_point_2_speed_breakpoint_0_100 -
+                  (uint)_maximum_fueling_value_that_does_not_inject_fuel_0_100) * 0x6400);
+  _jcomm_ind_torque_at_point_3_available_torque_that_engine_can_0_125 =
+       clampedDivisionCalculator
+                 (((uint)_torque_curve_fueling_at_point_3_speed_breakpoint_0_100 -
+                  (uint)_maximum_fueling_value_that_does_not_inject_fuel_0_100) * 0x6400);
+  _jcomm_ind_torque_at_point_4_available_torque_that_engine_can_p_0_125 =
+       clampedDivisionCalculator
+                 (((uint)_torque_curve_fueling_at_point_4_speed_breakpoint_0_100 -
+                  (uint)_maximum_fueling_value_that_does_not_inject_fuel_0_100) * 0x6400);
+  _jcomm_ind_torque_at_point_5_available_torque_that_engine_can_0_125 =
+       clampedDivisionCalculator
+                 (((uint)_torque_curve_fueling_at_point_5_speed_breakpoint_0_100 -
+                  (uint)_maximum_fueling_value_that_does_not_inject_fuel_0_100) * 0x6400);
+  _jcomm_determined_rpm_at_engine_configuration_idle_speed_0_8031_875 =
+       _torque_curve_speed_at_breakpoint_1_lsg_reference_0_5000;
+  _JCEVRPP2 = _torque_curve_speed_at_breakpoint_2_hsg_breakpoint_0_5000;
+  _jcomm_determine_rpm_at_engine_configuration_point_3_0_8031_875_da2e =
+       _torque_curve_speed_at_breakpoint_3_0_5000;
+  _jcomm_determine_rpm_at_engine_configuration_point_3_0_8031_875_da30 =
+       _torque_curve_speed_at_breakpoint_4_0_5000;
+  _jcomm_determined_rpm_at_pt_5_for_engine_config_map_0_8031_875 =
+       _torque_curve_speed_at_breakpoint_5_0_5000;
+  _torque_curve_fueling_at_idle_speed_breakpoint_0_100 = _peak_fueling_calibration_value;
+  _torque_curve_fueling_at_point_2_speed_breakpoint_0_100 = _peak_fueling_calibration_value;
+  _torque_curve_fueling_at_point_3_speed_breakpoint_0_100 = _peak_fueling_calibration_value;
+  _torque_curve_fueling_at_point_4_speed_breakpoint_0_100 = _peak_fueling_calibration_value;
+  _torque_curve_fueling_at_point_5_speed_breakpoint_0_100 = _peak_fueling_calibration_value;
+  return;
+}
+
+
+
+//
+// Function: fuelSourceOilPressureConditionChecker @ 0x0000fbe4
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_00800182
+void fuelSourceOilPressureConditionChecker(void)
+
+{
+  char unaff_D2b;
+  char unaff_D3b;
+  ushort *unaff_A2;
+  ushort *unaff_A3;
+  ushort *unaff_A4;
+  ushort *unaff_A5;
+  
+                    /* From J90280.05 @ 0x00b2ee (confidence: 70%) */
+  if (((_hsg_reference_speed_winning_source_indicator == 4) ||
+      (_hsg_reference_speed_winning_source_indicator == 5)) ||
+     (_hsg_reference_speed_winning_source_indicator == 1)) {
+    unaff_D2b = unaff_D2b + '\x01';
+    _DAT_00800182 = _reference_speed_before_droop_calculation_1400_4500;
+  }
+  else {
+    _DAT_00800182 = _hsg_base_reference_speed_currently_in_use_esp_may_select_1500_5000;
+  }
+  switch(unaff_D2b) {
+  case '\x01':
+    if (*unaff_A2 < *unaff_A5) {
+      *unaff_A5 = *unaff_A2;
+      _torque_curve_fueling_at_point_5_speed_breakpoint_0_100 = *unaff_A3;
+    }
+    break;
+  case '\x02':
+    vp44State2TransitionHandler();
+    if (unaff_D3b == '\0') {
+      *unaff_A2 = _jcomm_rpm_low_hp_pt_2_in_engine_config_when_torque_dera_0_8031_875;
+      *unaff_A3 = _jcomm_fueling_low_hp_value_at_pt_2_in_engine_config_when_tor_0_100;
+    }
+    else {
+      *unaff_A2 = _jcomm_rpm_hi_hp_pt_2_in_engine_config_when_torque_derat_0_8031_875;
+      *unaff_A3 = _jcomm_fueling_hi_hp_value_at_pt_2_in_engine_config_when_torq_0_100;
+    }
+    *unaff_A4 = _JC39P3RP;
+    _torque_curve_speed_at_breakpoint_4_0_5000 = _JC39P4RP;
+    *unaff_A5 = _JC39P5RP;
+    _torque_curve_fueling_at_point_3_speed_breakpoint_0_100 =
+         _jcomm_fueling_value_at_pt_3_in_engine_config_message_when_to_0_100;
+    _torque_curve_fueling_at_point_4_speed_breakpoint_0_100 =
+         _jcomm_fueling_value_at_pt_4_in_engine_config_message_when_to_0_100;
+    _torque_curve_fueling_at_point_5_speed_breakpoint_0_100 =
+         _jcomm_fueling_value_at_pt_5_in_engine_config_message_when_to_0_100;
+    break;
+  case '\x03':
+    vp44State2TransitionHandler();
+    if (_DAT_00800182 < _DAT_00808174) {
+      calculateGovernorDroopSpeed
+                (CONCAT22(_jcomm_fueling_value_at_pt_4_in_engine_config_message_when_to_0_100,1));
+    }
+    else {
+      calculateGovernorDroopSpeed
+                ((uint)_jcomm_fueling_value_at_pt_5_in_engine_config_message_when_to_0_100 << 0x10);
+    }
+    *unaff_A4 = _JC39P3RP;
+    _torque_curve_speed_at_breakpoint_4_0_5000 = _JC39P4RP;
+    _torque_curve_fueling_at_point_3_speed_breakpoint_0_100 =
+         _jcomm_fueling_value_at_pt_3_in_engine_config_message_when_to_0_100;
+    _torque_curve_fueling_at_point_4_speed_breakpoint_0_100 =
+         _jcomm_fueling_value_at_pt_4_in_engine_config_message_when_to_0_100;
+    break;
+  case '\x04':
+    if (*unaff_A4 < _torque_curve_speed_at_breakpoint_1_lsg_reference_0_5000) {
+      *unaff_A4 = _torque_curve_speed_at_breakpoint_1_lsg_reference_0_5000;
+      _torque_curve_fueling_at_point_3_speed_breakpoint_0_100 =
+           _torque_curve_fueling_at_idle_speed_breakpoint_0_100;
+    }
+    break;
+  case '\x05':
+    if (*unaff_A4 < _torque_curve_speed_at_breakpoint_1_lsg_reference_0_5000) {
+      *unaff_A4 = _torque_curve_speed_at_breakpoint_1_lsg_reference_0_5000;
+      _torque_curve_fueling_at_point_3_speed_breakpoint_0_100 =
+           _torque_curve_fueling_at_idle_speed_breakpoint_0_100;
+    }
+    if (*unaff_A2 < *unaff_A5) {
+      *unaff_A5 = *unaff_A2;
+      _torque_curve_fueling_at_point_5_speed_breakpoint_0_100 = *unaff_A3;
+    }
+    break;
+  case '\x06':
+    FUN_0000fa68();
+    if (unaff_D3b == '\0') {
+      *unaff_A2 = _jcomm_rpm_low_hp_pt_2_in_engine_config_when_torque_dera_0_8031_875;
+      *unaff_A3 = _jcomm_fueling_low_hp_value_at_pt_2_in_engine_config_when_tor_0_100;
+    }
+    else {
+      *unaff_A2 = _jcomm_rpm_hi_hp_pt_2_in_engine_config_when_torque_derat_0_8031_875;
+      *unaff_A3 = _jcomm_fueling_hi_hp_value_at_pt_2_in_engine_config_when_torq_0_100;
+    }
+    _torque_curve_speed_at_breakpoint_4_0_5000 = _JC39P4RP;
+    *unaff_A5 = _JC39P5RP;
+    _torque_curve_fueling_at_point_4_speed_breakpoint_0_100 =
+         _jcomm_fueling_value_at_pt_4_in_engine_config_message_when_to_0_100;
+    _torque_curve_fueling_at_point_5_speed_breakpoint_0_100 =
+         _jcomm_fueling_value_at_pt_5_in_engine_config_message_when_to_0_100;
+    break;
+  case '\a':
+    FUN_0000fa68();
+    if (_DAT_00800182 < _DAT_00808174) {
+      calculateGovernorDroopSpeed
+                (CONCAT22(_jcomm_fueling_value_at_pt_4_in_engine_config_message_when_to_0_100,1));
+    }
+    else {
+      calculateGovernorDroopSpeed
+                ((uint)_jcomm_fueling_value_at_pt_5_in_engine_config_message_when_to_0_100 << 0x10);
+    }
+    _torque_curve_speed_at_breakpoint_4_0_5000 = _JC39P4RP;
+    _torque_curve_fueling_at_point_4_speed_breakpoint_0_100 =
+         _jcomm_fueling_value_at_pt_4_in_engine_config_message_when_to_0_100;
+  }
+  _jcomm_ind_torque_at_idle_available_torque_that_engine_can_prov_0_125 =
+       clampedDivisionCalculator
+                 ((_torque_curve_fueling_at_idle_speed_breakpoint_0_100 -
+                  _maximum_fueling_value_that_does_not_inject_fuel_0_100) * 0x6400);
+  _jcomm_ind_torque_at_point_2_available_torque_that_engine_can_0_125 =
+       clampedDivisionCalculator
+                 (((uint)*unaff_A3 - (uint)_maximum_fueling_value_that_does_not_inject_fuel_0_100) *
+                  0x6400);
+  _jcomm_ind_torque_at_point_3_available_torque_that_engine_can_0_125 =
+       clampedDivisionCalculator
+                 (((uint)_torque_curve_fueling_at_point_3_speed_breakpoint_0_100 -
+                  (uint)_maximum_fueling_value_that_does_not_inject_fuel_0_100) * 0x6400);
+  _jcomm_ind_torque_at_point_4_available_torque_that_engine_can_p_0_125 =
+       clampedDivisionCalculator
+                 (((uint)_torque_curve_fueling_at_point_4_speed_breakpoint_0_100 -
+                  (uint)_maximum_fueling_value_that_does_not_inject_fuel_0_100) * 0x6400);
+  _jcomm_ind_torque_at_point_5_available_torque_that_engine_can_0_125 =
+       clampedDivisionCalculator
+                 (((uint)_torque_curve_fueling_at_point_5_speed_breakpoint_0_100 -
+                  (uint)_maximum_fueling_value_that_does_not_inject_fuel_0_100) * 0x6400);
+  _torque_curve_fueling_at_point_3_speed_breakpoint_0_100 = _peak_fueling_calibration_value;
+  _jcomm_determined_rpm_at_engine_configuration_idle_speed_0_8031_875 =
+       _torque_curve_speed_at_breakpoint_1_lsg_reference_0_5000;
+  _JCEVRPP2 = *unaff_A2;
+  _jcomm_determine_rpm_at_engine_configuration_point_3_0_8031_875_da2e = *unaff_A4;
+  _jcomm_determine_rpm_at_engine_configuration_point_3_0_8031_875_da30 =
+       _torque_curve_speed_at_breakpoint_4_0_5000;
+  _jcomm_determined_rpm_at_pt_5_for_engine_config_map_0_8031_875 = *unaff_A5;
+  _torque_curve_fueling_at_idle_speed_breakpoint_0_100 = _peak_fueling_calibration_value;
+  *unaff_A3 = _peak_fueling_calibration_value;
+  _torque_curve_fueling_at_point_4_speed_breakpoint_0_100 =
+       _torque_curve_fueling_at_point_3_speed_breakpoint_0_100;
+  _torque_curve_fueling_at_point_5_speed_breakpoint_0_100 =
+       _torque_curve_fueling_at_point_3_speed_breakpoint_0_100;
+  return;
+}
+
+
+
+//
+// Function: FUN_0000ff48 @ 0x0000ff48
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

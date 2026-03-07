@@ -1,0 +1,215 @@
+=== VARIABLES TO NAME ===
+0x00803bf0  (5 references)
+0x0080dc30  (6 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00803bf0
+uint FUN_0000d4ae(undefined4 param_1)
+
+{
+  uint uVar1;
+  
+  uVar1 = (uint)_DAT_00807ac8 + (uint)_frictional_no_load_fueling;
+  if ((_current_fuel_demand < uVar1) && (_validated_percent_throttle_commanded_by_driver_0_100 == 0)
+     ) {
+    uVar1 = _DAT_00803cca & 8;
+    if (((_DAT_00803cca & 8) == 0) ||
+       (uVar1 = (byte)-((state_of_the_throttle_interlock_switch_on_off & 2) != 0) & 1, uVar1 != 1))
+    {
+      _stcg_enable_stcg_switch_xor_user_selected_throttle_control_0_1 = _DAT_00803bf0;
+    }
+    else if (_DAT_00803bf0 == 1) {
+      _stcg_enable_stcg_switch_xor_user_selected_throttle_control_0_1 = 0;
+    }
+    else if (_DAT_00803bf0 == 0) {
+      _stcg_enable_stcg_switch_xor_user_selected_throttle_control_0_1 = 1;
+    }
+  }
+  if ((_FSDSFLST == 0) && (_stcg_enable_stcg_switch_xor_user_selected_throttle_control_0_1 == 1)) {
+    _FSDSFLST = 7;
+    uVar1 = diagnosticMode10FuelController();
+    if ((param_1._0_2_ != 7) && (param_1._0_2_ != 3)) {
+      _asg_governor_gains_ptr = &asg_proportional_gain_1_calibration_0_0_135;
+      _asg_external_reset_flag_true_false = 0;
+      _asg_fueling_lower_limit_0_50 = _ASCNLOLM;
+      _asg_fueling_high_limit_0_100 = _ASCNHILM;
+      _asg_droop_compensated_error_2000_2000 = &ASFTCF;
+    }
+  }
+  return uVar1;
+}
+
+
+
+//
+// Function: diagnosticState7Setter @ 0x0000d584
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_00803bf0
+void fuelBlendTablePointerSetup(void)
+
+{
+                    /* From J90280.05 @ 0x00dbc2 (confidence: 67%) */
+  _DAT_00800136 = 2;
+  _throttle_buffer_validation_value = 0x60462;
+  _DAT_0080013e = 0x60472;
+  _derate_fault_counter_1 = 2;
+  _derate_fault_counter_2 = 0x60482;
+  _derate_lower_limit = 0x60492;
+  _stcg_enable_stcg_switch_xor_user_selected_throttle_control_0_1 = _DAT_00803bf0;
+  return;
+}
+
+
+
+//
+// Function: initBoostProtectionSystem @ 0x0000d5e6
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_00803bf0, DAT_0080dc30
+void paramSystemModeController(void)
+
+{
+  ushort uVar1;
+  
+                    /* From J90280.05 @ 0x00d57c (confidence: 72%) */
+  uVar1 = _DAT_0080d33e;
+  if (_DAT_00803bf0 == 1) {
+    uVar1 = FUN_0000f716();
+  }
+  if ((((_indicator_as_to_which_algorithm_is_in_control_of_fueling_after_it_1_12 == 5) ||
+       (_indicator_as_to_which_algorithm_is_in_control_of_fueling_after_it_1_12 == 9)) ||
+      (_indicator_as_to_which_algorithm_is_in_control_of_fueling_after_it_1_12 == 6)) ||
+     ((_indicator_as_to_which_algorithm_is_in_control_of_fueling_after_it_1_12 == 10 ||
+      (_indicator_as_to_which_algorithm_is_in_control_of_fueling_after_it_1_12 == 4)))) {
+    _four_d_fueling_value_used_to_determine_jcomm_drivers_demand_ind_tor_0_100 = _DAT_0080a8f0;
+  }
+  else {
+    _four_d_fueling_value_used_to_determine_jcomm_drivers_demand_ind_tor_0_100 = uVar1;
+    if (((_indicator_as_to_which_algorithm_is_in_control_of_fueling_after_it_1_12 != 8) &&
+        (_indicator_as_to_which_algorithm_is_in_control_of_fueling_after_it_1_12 != 3)) &&
+       (_indicator_as_to_which_algorithm_is_in_control_of_fueling_after_it_1_12 != 7)) {
+      if ((_selected_fueling_state_from_pto_fl_state_and_user_fl_state_1_8 == 1) ||
+         (_selected_fueling_state_from_pto_fl_state_and_user_fl_state_1_8 == 2)) {
+        _four_d_fueling_value_used_to_determine_jcomm_drivers_demand_ind_tor_0_100 =
+             _cold_start_fuel_demand_snapshot;
+      }
+      else if ((_indicator_as_to_which_algorithm_is_in_control_of_fueling_after_it_1_12 == 0xb) ||
+              ((_indicator_as_to_which_algorithm_is_in_control_of_fueling_after_it_1_12 == 0xc &&
+               (((int)(uint)_DAT_0080a8f0 <
+                 (int)_selected_fueling_state_from_pto_fl_state_and_user_fl_state_1_8 ||
+                (_DAT_0080a9c4 == 0)))))) {
+        if ((_selected_fueling_state_from_pto_fl_state_and_user_fl_state_1_8 == 6) ||
+           (_selected_fueling_state_from_pto_fl_state_and_user_fl_state_1_8 == 4)) {
+          _four_d_fueling_value_used_to_determine_jcomm_drivers_demand_ind_tor_0_100 = _DAT_0080dc30
+          ;
+        }
+      }
+      else {
+        _four_d_fueling_value_used_to_determine_jcomm_drivers_demand_ind_tor_0_100 =
+             _DAT_0080a8f0 + 0x75;
+      }
+    }
+  }
+  _cold_start_fuel_demand_snapshot =
+       _four_d_fueling_value_used_to_determine_jcomm_drivers_demand_ind_tor_0_100;
+  if (0 < (short)(_determined_peak_engine_fueling_0_100 -
+                 _maximum_fueling_value_that_does_not_inject_fuel_0_100)) {
+    if (0 < (short)(_four_d_fueling_value_used_to_determine_jcomm_drivers_demand_ind_tor_0_100 -
+                   _maximum_fueling_value_that_does_not_inject_fuel_0_100)) {
+      _DAT_0080da18 =
+           param_address_calc((
+                              _four_d_fueling_value_used_to_determine_jcomm_drivers_demand_ind_tor_0_100
+                              - _maximum_fueling_value_that_does_not_inject_fuel_0_100) * 0x6400);
+      if (32000 < _DAT_0080da18) {
+        _DAT_0080da18 = 32000;
+      }
+      return;
+    }
+    _DAT_0080da18 = 0;
+    return;
+  }
+  _DAT_0080da18 = 0;
+  return;
+}
+
+
+
+//
+// Function: param_lookup_1 @ 0x0000f8c6
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080dc30
+uint oil_pressure_shutdown_controller(void)
+
+{
+  uint in_D0;
+  uint uVar1;
+  
+                    /* From J90280.05 @ 0x026110 (confidence: 75%) */
+  if ((((_FSDSFLST == 1) || (_FSDSFLST == 2)) || (_FSDSFLST == 0x1e)) || (_FSDSFLST == 3)) {
+    _selected_fueling_state_from_pto_fl_state_and_user_fl_state_1_8 = _FSDSFLST;
+    _DAT_0080dc30 = _fuel_demand_selected;
+    _DAT_0080dc2e = 0;
+    _max_engine_speed_while_throttle_fueling_overrides_pto_fueling_0_4500 =
+         _maximum_rated_engine_speed_0_5000;
+    return in_D0;
+  }
+  if (_DAT_0080dc26 == 1) {
+    in_D0 = _calibration_feature_enable_flags_word_3 & 0x10;
+    if ((_calibration_feature_enable_flags_word_3 & 0x10) != 0) {
+      if ((_FSDSFLST == 7) || (_FSDSFLST == 8)) {
+        uVar1 = (uint)_fuel_demand_selected;
+        if (_DAT_0080dc00 <= _fuel_demand_selected) {
+          uVar1 = _calibration_feature_enable_flags_word_2 & 0x2000;
+          if ((_calibration_feature_enable_flags_word_2 & 0x2000) != 0) {
+            _DAT_0080dc30 = _fuel_demand_selected;
+            _selected_fueling_state_from_pto_fl_state_and_user_fl_state_1_8 = _FSDSFLST;
+            _max_engine_speed_while_throttle_fueling_overrides_pto_fueling_0_4500 = _DAT_0080400a;
+            _DAT_0080dc2e = 1;
+            return uVar1;
+          }
+        }
+        _DAT_0080dc30 = _DAT_0080dc00;
+        _selected_fueling_state_from_pto_fl_state_and_user_fl_state_1_8 = 4;
+        _DAT_0080dc2e = 0;
+        _max_engine_speed_while_throttle_fueling_overrides_pto_fueling_0_4500 =
+             _maximum_rated_engine_speed_0_5000;
+        return uVar1;
+      }
+      if ((_FSDSFLST != 6) && (_FSDSFLST != 5)) {
+        return in_D0;
+      }
+      _DAT_0080dc30 = _DAT_0080dc00;
+      _selected_fueling_state_from_pto_fl_state_and_user_fl_state_1_8 = 4;
+      _DAT_0080dc2e = 0;
+      _max_engine_speed_while_throttle_fueling_overrides_pto_fueling_0_4500 =
+           _maximum_rated_engine_speed_0_5000;
+      return in_D0;
+    }
+  }
+  _selected_fueling_state_from_pto_fl_state_and_user_fl_state_1_8 = _FSDSFLST;
+  _DAT_0080dc30 = _fuel_demand_selected;
+  _DAT_0080dc2e = 0;
+  _max_engine_speed_while_throttle_fueling_overrides_pto_fueling_0_4500 =
+       _maximum_rated_engine_speed_0_5000;
+  return in_D0;
+}
+
+
+
+//
+// Function: FUN_0002ddbc @ 0x0002ddbc
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

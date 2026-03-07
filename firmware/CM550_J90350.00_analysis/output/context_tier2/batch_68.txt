@@ -1,0 +1,171 @@
+=== VARIABLES TO NAME ===
+0x00807ef4  (6 references)
+0x0080dee8  (6 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00807ef4
+void rpmBasedFuelLimitCalculator(void)
+
+{
+                    /* From J90280.05 @ 0x013930 (confidence: 75%) */
+  if (((_smoke_limiter_output_value == 2) || (_smoke_limiter_output_value == 6)) ||
+     (_smoke_limiter_output_value == 7)) {
+    _crank_adjusted_initial_rpm_0_1000 =
+         _eng_spd_val_to_be_added_to_crk_init_fuel_brk_spd_0_1000 +
+         _crank_initial_fuel_break_speed_0_1000;
+    if (_crank_low_coolant_temperature_rpm_0_1000 < _crank_adjusted_initial_rpm_0_1000) {
+      _crank_adjusted_initial_rpm_0_1000 = _crank_low_coolant_temperature_rpm_0_1000;
+    }
+    _crank_adjusted_initial_fuel_0_100 =
+         _fueling_val_to_be_added_to_crank_initial_fuel_val_0_100 + _DAT_0080d0a6;
+    if (_crank_low_coolant_temperature_fueling_0_100 < _crank_adjusted_initial_fuel_0_100) {
+      _crank_adjusted_initial_fuel_0_100 = _crank_low_coolant_temperature_fueling_0_100;
+    }
+    if (_engine_rpm_primary < _crank_adjusted_initial_rpm_0_1000) {
+      _engine_mode_timing_init_flag = _crank_adjusted_initial_fuel_0_100;
+      return;
+    }
+    if ((_crank_adjusted_initial_rpm_0_1000 <= _engine_rpm_primary) &&
+       (_engine_rpm_primary <= _crank_fuel_limit_source_selector)) {
+      _engine_mode_timing_init_flag =
+           (short)((((uint)_engine_rpm_primary - (uint)_crank_adjusted_initial_rpm_0_1000) *
+                   ((uint)_crank_exit_fuel_adjustment_0_100 + (uint)_DAT_00807ef4)) /
+                  (uint)(ushort)(_crank_fuel_limit_source_selector -
+                                _crank_adjusted_initial_rpm_0_1000)) +
+           (short)(((uint)_crank_adjusted_initial_fuel_0_100 *
+                   ((uint)_crank_fuel_limit_source_selector - (uint)_engine_rpm_primary)) /
+                  (uint)(ushort)(_crank_fuel_limit_source_selector -
+                                _crank_adjusted_initial_rpm_0_1000));
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: governorFuelModeBlendCalculator @ 0x000178b0
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_00807ef4, DAT_0080dee8
+void governorFuelModeBlendCalculator(void)
+
+{
+  ushort uVar1;
+  ushort uVar2;
+  
+                    /* From J90280.05 @ 0x01e3dc (confidence: 67%) */
+  if (_alpha_blend_factor == 0x4000) {
+    _DAT_008005c8 = _crank_fuel_limit_source_selector;
+    _DAT_008005d0 = _crank_exit_fuel_adjustment_0_100 + _DAT_00807ef4;
+    _four_d_timing_output_by_crank_0_120 = tableLookup2D(&DAT_008005c2);
+  }
+  else if (_alpha_blend_factor == 0) {
+    _DAT_008005de = _crank_fuel_limit_source_selector;
+    _DAT_008005e6 = _crank_exit_fuel_adjustment_0_100 + _DAT_00807ef4;
+    uVar1 = tableLookup2D(&DAT_008005d8);
+    _four_d_timing_output_by_crank_0_120 =
+         (ushort)((uint)uVar1 * (0x4000 - (uint)_alpha_blend_factor) >> 0xe);
+  }
+  else {
+    _DAT_008005c8 = _crank_fuel_limit_source_selector;
+    _DAT_008005d0 = _crank_exit_fuel_adjustment_0_100 + _DAT_00807ef4;
+    uVar1 = tableLookup2D(&DAT_008005c2);
+    _DAT_008005de = _crank_fuel_limit_source_selector;
+    _DAT_008005e6 = _crank_exit_fuel_adjustment_0_100 + _DAT_00807ef4;
+    uVar2 = tableLookup2D(&DAT_008005d8);
+    _four_d_timing_output_by_crank_0_120 =
+         (short)((uint)_alpha_blend_factor * (uint)uVar1 >> 0xe) +
+         (short)((uint)uVar2 * (0x4000 - (uint)_alpha_blend_factor) >> 0xe);
+  }
+  if ((uint)_crank_exit_fuel_adjustment_0_100 + (uint)_DAT_00807ef4 <
+      (uint)_fueling_value_above_which_wet_stack_timing_is_set_to_zero_0_100) {
+    _wet_stack_timing_outputed_by_crank_0_120 = _DAT_0080dee8;
+  }
+  else {
+    _wet_stack_timing_outputed_by_crank_0_120 = 0;
+  }
+  if (_wet_stack_timing_outputed_by_crank_0_120 < _four_d_timing_output_by_crank_0_120) {
+    _crank_exit_advance_0_120 = _four_d_timing_output_by_crank_0_120;
+    return;
+  }
+  _crank_exit_advance_0_120 = _wet_stack_timing_outputed_by_crank_0_120;
+  return;
+}
+
+
+
+//
+// Function: rpmBasedFuelTimingInterpolation @ 0x00017a06
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080dee8
+void liftPumpFuelDeliveryController(void)
+
+{
+  ushort uVar1;
+  
+                    /* From J90280.05 @ 0x033c84 (confidence: 72%) */
+  _DAT_008036c6 = 2;
+  _DAT_008036c8 = &vp44_fault_timer_threshold;
+  _DAT_008036cc = _filtered_and_linearized_intake_manifold_temperature_50_to_293;
+  _DAT_008036ce = 0x8071f6;
+  _DAT_008036d4 = 2;
+  _DAT_008036d6 = 0x80720c;
+  _DAT_008036da = _filtered_and_linearized_coolant_temperature_50_to_293;
+  _DAT_008036dc = &WSCLTATB;
+  uVar1 = lookupTableInterpolation(&DAT_008036c6);
+  _DAT_0080dee8 = lookupTableInterpolation(&DAT_008036d4);
+  if (_DAT_0080dee8 <= uVar1) {
+    _DAT_0080dee8 = uVar1;
+    _DAT_008036e2 = 1;
+    return;
+  }
+  _DAT_008036e2 = 0xd;
+  return;
+}
+
+
+
+//
+// Function: FUN_00034d52 @ 0x00034d52
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080dee8
+void FUN_00034d52(void)
+
+{
+  if (_fueling_value_above_which_wet_stack_timing_is_set_to_zero_0_100 < _current_fuel_demand) {
+    _DAT_0080dee4 =
+         _DAT_0080dee8 -
+         (short)((int)((uint)_vp44_fault_counter_threshold_2 *
+                      ((uint)_current_fuel_demand -
+                      (uint)_fueling_value_above_which_wet_stack_timing_is_set_to_zero_0_100)) / 100
+                );
+  }
+  else {
+    _DAT_0080dee4 = _DAT_0080dee8;
+  }
+  if ((int)(short)_DAT_0080dee4 < (int)(uint)_DAT_00808ac4) {
+    _DAT_0080dee4 = _DAT_00808ac4;
+  }
+  return;
+}
+
+
+
+//
+// Function: FUN_00034dba @ 0x00034dba
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

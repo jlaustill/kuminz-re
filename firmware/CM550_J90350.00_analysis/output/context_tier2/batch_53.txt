@@ -1,0 +1,132 @@
+=== VARIABLES TO NAME ===
+0x008034f2  (5 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_008034f2
+void FUN_000334ec(void)
+
+{
+  undefined1 uVar1;
+  undefined2 uVar2;
+  char cVar3;
+  
+  _DAT_0080350e = _DAT_008034f2;
+  _DAT_00803512 = _DAT_008034f6;
+  _DAT_00803516 = _calibration_validation_buffer;
+  _DAT_0080351a = _DAT_008034fe;
+  _DAT_0080351e = _calibration_checksum_expected_2;
+  _DAT_00803522 = _DAT_00803506;
+  _DAT_00803526 = _DAT_0080350a;
+  FUN_0003320e(&DAT_008034f2);
+  uVar2 = FUN_000333d6(_DAT_008034f2 >> 0x10);
+  if ((char)uVar2 != '\x01') {
+    uVar1 = (undefined1)((ushort)uVar2 >> 8);
+    cVar3 = FUN_00033460(CONCAT22(CONCAT11(uVar1,DAT_00803510),CONCAT11(uVar1,DAT_008034f4)));
+    if (cVar3 != '\x01') {
+      uVar2 = FUN_000333d6(CONCAT22(CONCAT11(DAT_00803511,DAT_00803512),
+                                    CONCAT11(DAT_008034f5,DAT_008034f6)));
+      if ((char)uVar2 != '\x01') {
+        uVar1 = (undefined1)((ushort)uVar2 >> 8);
+        cVar3 = FUN_00033460(CONCAT22(CONCAT11(uVar1,DAT_00803513),CONCAT11(uVar1,DAT_008034f7)));
+        if (cVar3 != '\x01') {
+          uVar2 = FUN_000333d6(CONCAT22(_DAT_00803514,(short)_DAT_008034f6));
+          if ((char)uVar2 != '\x01') {
+            uVar1 = (undefined1)((ushort)uVar2 >> 8);
+            cVar3 = FUN_00033460(CONCAT22(CONCAT11(uVar1,DAT_00803516),
+                                          CONCAT11(uVar1,calibration_validation_buffer)));
+            if ((cVar3 != '\x01') &&
+               (uVar2 = FUN_000333d6(_calibration_validation_buffer >> 8 & 0xffff),
+               (char)uVar2 != '\x01')) {
+              uVar1 = (undefined1)((ushort)uVar2 >> 8);
+              cVar3 = FUN_00033460(CONCAT22(CONCAT11(uVar1,DAT_00803519),
+                                            CONCAT11(uVar1,DAT_008034fd)));
+              if (cVar3 != '\x01') {
+                uVar2 = FUN_000333d6(_DAT_008034fe >> 0x10);
+                if ((char)uVar2 != '\x01') {
+                  uVar1 = (undefined1)((ushort)uVar2 >> 8);
+                  cVar3 = FUN_00033460(CONCAT22(CONCAT11(uVar1,DAT_0080351c),
+                                                CONCAT11(uVar1,calibration_checksum_expected_1)));
+                  if (cVar3 != '\x01') {
+                    uVar2 = FUN_000333d6(CONCAT22(CONCAT11(DAT_0080351d,DAT_0080351e),
+                                                  CONCAT11(DAT_00803501,
+                                                           calibration_checksum_expected_2)));
+                    if ((char)uVar2 != '\x01') {
+                      uVar1 = (undefined1)((ushort)uVar2 >> 8);
+                      cVar3 = FUN_00033460(CONCAT22(CONCAT11(uVar1,DAT_00803529),
+                                                    CONCAT11(uVar1,DAT_0080350d)));
+                      if (cVar3 != '\x01') {
+                        return;
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  FUN_0003366a();
+  return;
+}
+
+
+
+//
+// Function: FUN_0003366a @ 0x0003366a
+//
+
+// Variables in this function: DAT_008034f2
+byte FUN_0003366a(void)
+
+{
+  byte bVar1;
+  
+  bVar1 = DAT_00803538 & 0xf0;
+  if (bVar1 == 0) {
+    FUN_0003320e(&DAT_008034f2);
+    bVar1 = sendCanMessage(&DAT_0080352a);
+  }
+  return bVar1;
+}
+
+
+
+//
+// Function: FUN_00033692 @ 0x00033692
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_008034f2
+void FUN_00033692(void)
+
+{
+  _DAT_0080352a = CONCAT13((char)((_DAT_00803f68 & 7) << 2),0xfee300);
+  _DAT_0080352a = CONCAT31(_DAT_0080352a,j1939_engine_node_source_address);
+  _DAT_0080352e = 0x1c;
+  _DAT_00803530 = &DAT_008034f2;
+  _DAT_00803534 = &DAT_00803538;
+  DAT_00803503 = 0xff;
+  DAT_00803504 = 0xff;
+  DAT_0080351f = 0xff;
+  DAT_00803520 = 0xff;
+  DAT_0080350c = 0x7d;
+  DAT_00803528 = 0x7d;
+  FUN_000185f0();
+  FUN_0000ff48();
+  return;
+}
+
+
+
+//
+// Function: FUN_00033716 @ 0x00033716
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

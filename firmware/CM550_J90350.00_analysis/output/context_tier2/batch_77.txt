@@ -1,0 +1,350 @@
+=== VARIABLES TO NAME ===
+0x0080bd1c  (6 references)
+0x0080bd21  (6 references)
+0x0080bd22  (6 references)
+
+Total: 3 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0080bd21, DAT_0080bd22
+void ioDriverStrobeHandler(void)
+
+{
+  uint uVar1;
+  uint uVar2;
+  uint uVar3;
+  byte bStack_f;
+  undefined4 local_e;
+  undefined4 local_a;
+  
+  if (request_to_strobe_set_0_then_set_1_fso_driver_0_1 != '\0') {
+    if (DAT_00800536 == '\0') {
+      if (DAT_0080bd21 == '\0') {
+        DAT_0080bd21 = '\0';
+        bit_6_which_enables_the_warning_lamp_driver_enable_disable =
+             bit_6_which_enables_the_warning_lamp_driver_enable_disable & 0x7f;
+      }
+      DAT_00800536 = '\x01';
+    }
+    else {
+      if (DAT_0080bd21 == '\0') {
+        DAT_0080bd21 = '\0';
+        bit_6_which_enables_the_warning_lamp_driver_enable_disable =
+             bit_6_which_enables_the_warning_lamp_driver_enable_disable | 0x80;
+      }
+      DAT_00800536 = '\0';
+      request_to_strobe_set_0_then_set_1_fso_driver_0_1 = '\0';
+    }
+  }
+  if (request_to_strobe_set_0_then_set_1_engine_braker_driver_0_1 != '\0') {
+    if (DAT_00800537 == '\0') {
+      if (DAT_0080bd22 == '\0') {
+        DAT_0080bd22 = '\0';
+        commanded_driver_true_on_0_1 = commanded_driver_true_on_0_1 & 0xfe;
+      }
+      DAT_00800537 = '\x01';
+    }
+    else {
+      if (DAT_0080bd22 == '\0') {
+        DAT_0080bd22 = '\0';
+        commanded_driver_true_on_0_1 = commanded_driver_true_on_0_1 | 1;
+      }
+      DAT_00800537 = '\0';
+      request_to_strobe_set_0_then_set_1_engine_braker_driver_0_1 = '\0';
+    }
+  }
+  if (request_to_strobe_set_0_then_set_1_cold_start_aid_1_driver_0_1 != '\0') {
+    if (DAT_00800538 == '\0') {
+      if (DAT_0080bd23 == '\0') {
+        DAT_0080bd23 = '\0';
+        commanded_driver_true_on_0_1 = commanded_driver_true_on_0_1 & 0xfd;
+      }
+      DAT_00800538 = '\x01';
+    }
+    else {
+      if (DAT_0080bd23 == '\0') {
+        DAT_0080bd23 = '\0';
+        commanded_driver_true_on_0_1 = commanded_driver_true_on_0_1 | 2;
+      }
+      DAT_00800538 = '\0';
+      request_to_strobe_set_0_then_set_1_cold_start_aid_1_driver_0_1 = '\0';
+    }
+  }
+  if (request_to_strobe_set_0_then_set_1_cold_start_aid_2_driver_0_1 != '\0') {
+    if (DAT_00800539 == '\0') {
+      if (DAT_0080bd24 == '\0') {
+        DAT_0080bd24 = '\0';
+        commanded_driver_true_on_0_1 = commanded_driver_true_on_0_1 & 0xfb;
+      }
+      DAT_00800539 = '\x01';
+    }
+    else {
+      if (DAT_0080bd24 == '\0') {
+        DAT_0080bd24 = '\0';
+        commanded_driver_true_on_0_1 = commanded_driver_true_on_0_1 | 4;
+      }
+      DAT_00800539 = '\0';
+      request_to_strobe_set_0_then_set_1_cold_start_aid_2_driver_0_1 = '\0';
+    }
+  }
+  if (_request_to_strobe_set_0_then_set_1_ether_start_driver_0_1 != 0) {
+    if (DAT_0080053a == '\0') {
+      if (DAT_0080bd27 == '\0') {
+        DAT_0080bd27 = '\0';
+        commanded_driver_true_on_0_1 = commanded_driver_true_on_0_1 & 0xdf;
+      }
+      DAT_0080053a = '\x01';
+    }
+    else {
+      if (DAT_0080bd27 == '\0') {
+        DAT_0080bd27 = '\0';
+        commanded_driver_true_on_0_1 = commanded_driver_true_on_0_1 | 0x20;
+      }
+      DAT_0080053a = '\0';
+      _request_to_strobe_set_0_then_set_1_ether_start_driver_0_1 = 0;
+    }
+  }
+  io_driver_port_1_feedback = DAT_00ffd004;
+  io_driver_port_2_feedback = DAT_00ffd006;
+  DAT_0080bd0a = DAT_00fffa11 & 0xdf | ~DAT_00fffa11 & 0x20;
+  local_a = CONCAT13(DAT_00ffd003,CONCAT12(DAT_00ffd002,CONCAT11(DAT_00ffd001,DAT_00ffd000)));
+  local_e._1_3_ = (uint3)CONCAT11(DAT_00ffd007,DAT_00ffd005);
+  local_e = CONCAT13(DAT_00fffa11,local_e._1_3_);
+  uVar1 = local_a & ~_user_inversion_bit_mask_for_the_user_datalogger_switc_invert_no_invert |
+          _user_inversion_bit_mask_for_the_user_datalogger_switc_invert_no_invert & ~local_a;
+  uVar3 = ~local_e;
+  uVar2 = local_e & ~_engine_overspeed_counter_limit | _engine_overspeed_counter_limit & uVar3;
+  bStack_f = DAT_00fffa19 & ~(byte)_protection_state_config_table |
+             (byte)_protection_state_config_table & ~DAT_00fffa19;
+  DAT_00fffa27 = 0xaa;
+  DAT_00ffd00f = 0xaa;
+  local_a._3_1_ = (byte)uVar1;
+  DAT_0080bcfe = (byte)local_a & ~_discrete_input_override_mask_ptr[1] |
+                 user_supplied_value_for_ptp_switched_input_input_on_off &
+                 _discrete_input_override_mask_ptr[1];
+  local_a._2_1_ = (byte)(uVar1 >> 8);
+  DAT_0080bcff = *_discrete_input_override_mask_ptr & DSUSEBSW |
+                 ~*_discrete_input_override_mask_ptr & local_a._2_1_;
+  local_a._1_1_ = (byte)(uVar1 >> 0x10);
+  DAT_0080bd00 = local_a._1_1_ & ~_discrete_input_override_mask_ptr[3] |
+                 user_supplied_value_for_coolant_level_low_switch_input_on_off &
+                 _discrete_input_override_mask_ptr[3];
+  local_a._0_1_ = (byte)(uVar1 >> 0x18);
+  DAT_0080bd01 = user_selected_value_for_stcg_asg_droop_input_on_off &
+                 _discrete_input_override_mask_ptr[2] |
+                 ~_discrete_input_override_mask_ptr[2] & local_a._0_1_;
+  local_e._3_1_ = (byte)uVar2;
+  status_of_the_water_in_fuel_lamp_output_on_off =
+       (byte)local_e & ~_discrete_input_override_mask_ptr[5] |
+       clien_specified_value_for_water_in_fuel_lamp_feedback_on_off &
+       _discrete_input_override_mask_ptr[5];
+  local_e._2_1_ = (byte)(uVar2 >> 8);
+  DSFMCHFB = client_specified_value_for_the_solenoid_b_feedback_on_off &
+             _discrete_input_override_mask_ptr[4] |
+             ~_discrete_input_override_mask_ptr[4] & local_e._2_1_;
+  local_e._1_1_ = (undefined1)((_engine_overspeed_counter_limit & uVar3) >> 0x10);
+  DAT_0080bd04 = local_e._1_1_;
+  local_e._0_1_ = (undefined1)(uVar2 >> 0x18);
+  DAT_0080bd05 = local_e._0_1_;
+  DAT_0080bd06 = bStack_f;
+  DAT_00ffd004 = bit_6_which_enables_the_warning_lamp_driver_enable_disable;
+  DAT_00ffd006 = commanded_driver_true_on_0_1;
+  DAT_00fffa11 = enable_flag_to_allow_boot_block_programming_enable_disable & 0xdf |
+                 ~enable_flag_to_allow_boot_block_programming_enable_disable & 0x20;
+  DAT_0080bd0d = DAT_0080bd18;
+  DAT_0080bd18 = fuel_system_output_driver_control;
+  if ((~fuel_system_output_driver_control & 0x20) == 0) {
+    _DAT_00fffe18 = _DAT_00fffe18 & 0xf3ff | 0x800;
+  }
+  else {
+    _DAT_00fffe18 = _DAT_00fffe18 & 0xf3ff | 0x400;
+  }
+  return;
+}
+
+
+
+//
+// Function: initVP44StatusMonitoring @ 0x00015dd0
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080bd1c, DAT_0080bd21, DAT_0080bd22
+void FUN_00015df0(void)
+
+{
+  if (DAT_0080bd1c == '\0') {
+    DAT_0080bd1c = '\0';
+    bit_6_which_enables_the_warning_lamp_driver_enable_disable =
+         bit_6_which_enables_the_warning_lamp_driver_enable_disable & 0xfb;
+  }
+  DAT_00ffd008 = 0xf;
+  DAT_00ffd009 = 0x80;
+  DAT_00ffd00a = 0x80;
+  DAT_00ffd004 = 0;
+  if (DAT_0080bd2e == '\0') {
+    DAT_0080bd2e = '\0';
+    enable_flag_to_allow_boot_block_programming_enable_disable =
+         enable_flag_to_allow_boot_block_programming_enable_disable | 0x10;
+  }
+  _DAT_00fffe0a = _DAT_00fffe0a & 0xdfff;
+  _DAT_00fffe20 = _DAT_00fffe20 & 0xdfff;
+  _DAT_00fffe0c = _DAT_00fffe0c & 0xff0f | 0xe0;
+  _DAT_00ffffd0 = 0x113;
+  _DAT_00fffe1c = _DAT_00fffe1c & 0xf3ff | 0x400;
+  do {
+  } while ((_DAT_00ffffd2 & 0x8000) != 0);
+  do {
+  } while ((_DAT_00ffffd2 & 0x8000) == 0);
+  do {
+  } while ((_DAT_00ffffd2 & 0x8000) != 0);
+  DAT_00ffd006 = DAT_00ffd006 & 0x7f | 0x80;
+  _DAT_00fffe18 = _DAT_00fffe18 & 0xf3ff | 0x400;
+  if (DAT_0080bd21 == '\0') {
+    DAT_0080bd21 = '\0';
+    bit_6_which_enables_the_warning_lamp_driver_enable_disable =
+         bit_6_which_enables_the_warning_lamp_driver_enable_disable | 0x80;
+  }
+  if (DAT_0080bd47 == '\0') {
+    DAT_0080bd47 = '\0';
+    fuel_system_output_driver_control = fuel_system_output_driver_control | 0x20;
+  }
+  if (priority_of_client_currently_overriding_wait_to_start_lamp_00_ff == '\0') {
+    priority_of_client_currently_overriding_wait_to_start_lamp_00_ff = '\0';
+    bit_6_which_enables_the_warning_lamp_driver_enable_disable =
+         bit_6_which_enables_the_warning_lamp_driver_enable_disable & 0xfe;
+  }
+  if (DAT_0080bd22 == '\0') {
+    DAT_0080bd22 = '\0';
+    commanded_driver_true_on_0_1 = commanded_driver_true_on_0_1 | 1;
+  }
+  if (engine_brake_lamp_driver_control == '\0') {
+    engine_brake_lamp_driver_control = '\0';
+    bit_4_of_master_status_byte_a_0_1 = bit_4_of_master_status_byte_a_0_1 | 0x40;
+  }
+  if (engine_brake_lamp_driver_control == '\0') {
+    engine_brake_lamp_driver_control = '\0';
+    bit_4_of_master_status_byte_a_0_1 = bit_4_of_master_status_byte_a_0_1 | 0x40;
+  }
+  if (engine_brake_lamp_driver_control == '\0') {
+    engine_brake_lamp_driver_control = '\0';
+    bit_4_of_master_status_byte_a_0_1 = bit_4_of_master_status_byte_a_0_1 | 0x40;
+  }
+  if (engine_brake_lamp_driver_control == '\0') {
+    engine_brake_lamp_driver_control = '\0';
+    bit_4_of_master_status_byte_a_0_1 = bit_4_of_master_status_byte_a_0_1 | 0x40;
+  }
+  if (engine_brake_lamp_driver_control == '\0') {
+    engine_brake_lamp_driver_control = '\0';
+    bit_4_of_master_status_byte_a_0_1 = bit_4_of_master_status_byte_a_0_1 | 0x40;
+  }
+  ioDriverStrobeHandler();
+  return;
+}
+
+
+
+//
+// Function: initCANBus @ 0x00015e06
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0080bd1c
+ushort lampDriverOutputDispatcher(void)
+
+{
+  if ((lamp_driver_output_bitmask & 0x20) == 0) {
+    if (engine_brake_lamp_driver_control == '\0') {
+      engine_brake_lamp_driver_control = '\0';
+      bit_4_of_master_status_byte_a_0_1 = bit_4_of_master_status_byte_a_0_1 & 0xbf;
+    }
+  }
+  else if (engine_brake_lamp_driver_control == '\0') {
+    engine_brake_lamp_driver_control = '\0';
+    bit_4_of_master_status_byte_a_0_1 = bit_4_of_master_status_byte_a_0_1 | 0x40;
+  }
+  if ((lamp_driver_output_bitmask & 4) == 0) {
+    if (DAT_0080bd1e == '\0') {
+      DAT_0080bd1e = '\0';
+      bit_6_which_enables_the_warning_lamp_driver_enable_disable =
+           bit_6_which_enables_the_warning_lamp_driver_enable_disable & 0xef;
+    }
+  }
+  else if (DAT_0080bd1e == '\0') {
+    DAT_0080bd1e = '\0';
+    bit_6_which_enables_the_warning_lamp_driver_enable_disable =
+         bit_6_which_enables_the_warning_lamp_driver_enable_disable | 0x10;
+  }
+  if ((lamp_driver_output_bitmask & 0x40) == 0) {
+    if (engine_brake_lamp_driver_control == '\0') {
+      engine_brake_lamp_driver_control = '\0';
+      bit_4_of_master_status_byte_a_0_1 = bit_4_of_master_status_byte_a_0_1 & 0xbf;
+    }
+  }
+  else if (engine_brake_lamp_driver_control == '\0') {
+    engine_brake_lamp_driver_control = '\0';
+    bit_4_of_master_status_byte_a_0_1 = bit_4_of_master_status_byte_a_0_1 | 0x40;
+  }
+  if ((lamp_driver_output_bitmask & 1) == 0) {
+    if (priority_of_client_currently_overriding_stop_engine_lamp_00_ff == '\0') {
+      priority_of_client_currently_overriding_stop_engine_lamp_00_ff = '\0';
+      bit_6_which_enables_the_warning_lamp_driver_enable_disable =
+           bit_6_which_enables_the_warning_lamp_driver_enable_disable & 0xfd;
+    }
+  }
+  else if (priority_of_client_currently_overriding_stop_engine_lamp_00_ff == '\0') {
+    priority_of_client_currently_overriding_stop_engine_lamp_00_ff = '\0';
+    bit_6_which_enables_the_warning_lamp_driver_enable_disable =
+         bit_6_which_enables_the_warning_lamp_driver_enable_disable | 2;
+  }
+  if ((lamp_driver_output_bitmask & 8) == 0) {
+    if (priority_of_client_currently_overriding_wait_to_start_lamp_00_ff == '\0') {
+      priority_of_client_currently_overriding_wait_to_start_lamp_00_ff = '\0';
+      bit_6_which_enables_the_warning_lamp_driver_enable_disable =
+           bit_6_which_enables_the_warning_lamp_driver_enable_disable & 0xfe;
+    }
+  }
+  else if (priority_of_client_currently_overriding_wait_to_start_lamp_00_ff == '\0') {
+    priority_of_client_currently_overriding_wait_to_start_lamp_00_ff = '\0';
+    bit_6_which_enables_the_warning_lamp_driver_enable_disable =
+         bit_6_which_enables_the_warning_lamp_driver_enable_disable | 1;
+  }
+  if ((lamp_driver_output_bitmask & 2) == 0) {
+    if (DAT_0080bd20 == '\0') {
+      DAT_0080bd20 = '\0';
+      bit_6_which_enables_the_warning_lamp_driver_enable_disable =
+           bit_6_which_enables_the_warning_lamp_driver_enable_disable & 0xbf;
+    }
+  }
+  else if (DAT_0080bd20 == '\0') {
+    DAT_0080bd20 = '\0';
+    bit_6_which_enables_the_warning_lamp_driver_enable_disable =
+         bit_6_which_enables_the_warning_lamp_driver_enable_disable | 0x40;
+  }
+  if ((lamp_driver_output_bitmask & 0x10) == 0) {
+    if (DAT_0080bd1c == '\0') {
+      DAT_0080bd1c = '\0';
+      bit_6_which_enables_the_warning_lamp_driver_enable_disable =
+           bit_6_which_enables_the_warning_lamp_driver_enable_disable & 0xfb;
+    }
+  }
+  else if (DAT_0080bd1c == '\0') {
+    DAT_0080bd1c = 0;
+    bit_6_which_enables_the_warning_lamp_driver_enable_disable =
+         bit_6_which_enables_the_warning_lamp_driver_enable_disable | 4;
+    return lamp_driver_output_bitmask & 0x10;
+  }
+  return lamp_driver_output_bitmask & 0x10;
+}
+
+
+
+//
+// Function: FUN_00023be8 @ 0x00023be8
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
