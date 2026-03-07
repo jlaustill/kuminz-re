@@ -1,0 +1,238 @@
+=== VARIABLES TO NAME ===
+0x0040b14c  (6 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040b14c
+void decrementProtectionTimers(void)
+
+{
+  if (_protection_status_code_status_code_2 != 0) {
+    _protection_status_code_status_code_2 = _protection_status_code_status_code_2 + -1;
+  }
+  if (_protection_state1_timer_value != 0) {
+    _protection_state1_timer_value = _protection_state1_timer_value + -1;
+  }
+  if (_protection_state2_timer_value != 0) {
+    _protection_state2_timer_value = _protection_state2_timer_value + -1;
+  }
+  if (protection_timer_countdown_2 != 0) {
+    protection_timer_countdown_2 = protection_timer_countdown_2 + -1;
+  }
+  if (calibration_phase_timer != 0) {
+    calibration_phase_timer = calibration_phase_timer + -1;
+  }
+  if (protection_cooldown_active != 0) {
+    protection_cooldown_active = protection_cooldown_active + -1;
+  }
+  if (protection_warmup_active._0_2_ != 0) {
+    protection_warmup_active._0_2_ = protection_warmup_active._0_2_ + -1;
+  }
+  if (_protection_thermal_lockout != 0) {
+    _protection_thermal_lockout = _protection_thermal_lockout + -1;
+  }
+  if (_protection_load_lockout != 0) {
+    _protection_load_lockout = _protection_load_lockout + -1;
+  }
+  if (protection_inhibit_flag != 0) {
+    protection_inhibit_flag = protection_inhibit_flag + -1;
+  }
+  if (protection_active_flag != 0) {
+    protection_active_flag = protection_active_flag + -1;
+  }
+  if (protection_timer_state != 0) {
+    protection_timer_state = protection_timer_state + -1;
+  }
+  if (_protection_sensor_fault_active != 0) {
+    _protection_sensor_fault_active = _protection_sensor_fault_active + -1;
+  }
+  if (protection_warmup_state != 0) {
+    protection_warmup_state = protection_warmup_state + -1;
+  }
+  if (_protection_timeout_counter != 0) {
+    _protection_timeout_counter = _protection_timeout_counter + -1;
+  }
+  if (protection_load_condition_timer != 0) {
+    protection_load_condition_timer = protection_load_condition_timer + -1;
+  }
+  if (protection_timer_countdown_1 != 0) {
+    protection_timer_countdown_1 = protection_timer_countdown_1 + -1;
+  }
+  if (protection_state_hold_timer != 0) {
+    protection_state_hold_timer = protection_state_hold_timer + -1;
+  }
+  if (_protection_rpm_lockout != 0) {
+    _protection_rpm_lockout = _protection_rpm_lockout + -1;
+  }
+  if (_protection_thermal_lockout_timer_expired != 0) {
+    _protection_thermal_lockout_timer_expired = _protection_thermal_lockout_timer_expired + -1;
+  }
+  if (_protection_thermal_lockout_reserved_08 != 0) {
+    _protection_thermal_lockout_reserved_08 = _protection_thermal_lockout_reserved_08 + -1;
+  }
+  if (protection_state_transition_timer != 0) {
+    protection_state_transition_timer = protection_state_transition_timer + -1;
+  }
+  if (protection_fuel_demand_timer != 0) {
+    protection_fuel_demand_timer = protection_fuel_demand_timer + -1;
+  }
+  if (_DAT_0040b14c != 0) {
+    _DAT_0040b14c = _DAT_0040b14c + -1;
+  }
+  return;
+}
+
+
+
+//
+// Function: calculateProtectionConditions @ 0x00033948
+//
+
+/* WARNING: Type propagation algorithm not settling */
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0040b14c
+void initProtectionSystem(void)
+
+{
+  int iVar1;
+  undefined2 *puVar2;
+  
+  protection_system_state = 1;
+  engine_rpm_peak = 0;
+  protection_level_current = 0;
+  protection_enable_state = 0;
+  protection_threshold_timer = 0;
+  protection_condition_flags_1 = protection_condition_flags_1 & 0xf7;
+  protection_delay_count._1_1_ = 0;
+  protection_time_exceeded._0_1_ = 0;
+  triggerProtectionEvent(0x12,0);
+  triggerProtectionEvent(0x10,0);
+  protection_flags = protection_flags & 0xef;
+  protection_status_flags_rate_limit_flags = protection_status_flags_rate_limit_flags & 0xfe;
+  protection_load_condition_flags = protection_load_condition_flags & 0xbb;
+  protection_condition_eval = protection_condition_eval & 0xb9;
+  protection_status_flags = protection_status_flags & 0x7f;
+  protection_condition_flags_1 = protection_condition_flags_1 & 0xde;
+  _protection_status_code_status_code_2 = 0;
+  _protection_timeout_counter = 0;
+  _protection_state1_timer_value = 0;
+  _protection_state2_timer_value = 0;
+  protection_timer_countdown_1 = 0;
+  protection_timer_countdown_2 = 0;
+  calibration_phase_timer = 0;
+  _protection_thermal_lockout = 0;
+  _protection_load_lockout = 0;
+  _protection_rpm_lockout = 0;
+  _protection_sensor_fault_active = 0;
+  _protection_thermal_lockout_reserved_08 = 0;
+  _protection_thermal_lockout_timer_expired = 0;
+  protection_inhibit_flag = 0;
+  protection_load_condition_timer = 0;
+  protection_state_hold_timer = 0;
+  protection_active_flag = 0;
+  protection_timer_state = 0;
+  protection_state_transition_timer = 0;
+  protection_fuel_demand_timer = 0;
+  _DAT_0040b14c = 0;
+  if ((PTR_DAT_003fd902._0_1_ & 8) == 0) {
+    protection_overtemp_flags = protection_overtemp_flags & 0x9d | 8;
+  }
+  else {
+    protection_overtemp_flags = protection_overtemp_flags & 0x9f | 10;
+  }
+  _DAT_003fb17a = 2;
+  _DAT_003fb17c = 2;
+  _DAT_003fb17e = 2;
+  _DAT_003fb180 = 2;
+  _DAT_003fb182 = 2;
+  _DAT_003fb184 = 2;
+  _DAT_003fb186 = 2;
+  _DAT_003fb188 = 2;
+  _DAT_003fb18a = 2;
+  _DAT_003fb18c = 2;
+  _DAT_003fb18e = 2;
+  _DAT_003fb1d2 = 0;
+  PTR_protection_parameter_10_003fb1ce = (undefined *)&protection_parameter_10;
+  _DAT_003fb1da = 0;
+  PTR_protection_status_flag_6_003fb1d6 = &protection_status_flag_6;
+  _DAT_003fb174 = 0;
+  PTR_protection_parameter_4_003fb170 = (undefined *)&protection_parameter_4;
+  iVar1 = 0;
+  puVar2 = (undefined2 *)&DAT_003fb190;
+  do {
+    puVar2 = puVar2 + 1;
+    *puVar2 = 0;
+    iVar1 = iVar1 + 1;
+  } while (iVar1 < 0x1b);
+  _DAT_003fb1c8 = 0;
+  return;
+}
+
+
+
+//
+// Function: processProtectionFaultSeverity @ 0x00034dd4
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0040b14c
+void processProtectionRateLimitFlags(void)
+
+{
+  if (((protection_mode_flags & 4) == 0) || (_DAT_003fb1ca != 0)) {
+    if ((((protection_mode_flags & 4) == 0) &&
+        ((_DAT_003fb1ca != 0 && (_DAT_003fb1cc == ((protection_rate_limit_flags & 1) != 0))))) ||
+       ((protection_condition_eval & 0x40) != 0)) {
+      protection_rate_limit_flags = protection_rate_limit_flags & 0xfe;
+    }
+  }
+  else {
+    protection_rate_limit_flags = protection_rate_limit_flags | 1;
+  }
+  if (((protection_rate_limit_flags & 4) != 0) && ((protection_condition_eval & 0x40) == 0)) {
+    protection_rate_limit_flags = protection_rate_limit_flags & 0xfb;
+  }
+  _DAT_003fb1ca = protection_mode_flags & 4;
+  _DAT_003fb1cc = (ushort)((protection_rate_limit_flags & 1) != 0);
+  if (((protection_rate_limit_flags & 1) == 0) || ((protection_rate_limit_flags & 4) != 0)) {
+    _DAT_0040b14c = protection_fault_code_6;
+    return;
+  }
+  if (_DAT_0040b14c == 0) {
+    protection_condition_eval = protection_condition_eval | 0x40;
+    protection_rate_limit_flags = protection_rate_limit_flags | 4;
+    return;
+  }
+  if ((protection_mode_flags & 4) != 0) {
+    if (protection_system_state == 4) {
+      if ((protection_condition_threshold_value <= protection_fault_code_3) ||
+         (protection_fault_code_4 <= protection_condition_threshold_value)) goto LAB_00035108;
+    }
+    else if (protection_system_state == 3) {
+      if ((protection_condition_threshold_value <= protection_fault_code_1) ||
+         (protection_fault_code_2 <= protection_condition_threshold_value)) goto LAB_00035108;
+    }
+    else if (((protection_system_state != 2) ||
+             (protection_condition_threshold_value <= protection_ack_response)) ||
+            (protection_diagnostic_code <= protection_condition_threshold_value)) goto LAB_00035108;
+    protection_rate_limit_flags = protection_rate_limit_flags & 0xfa;
+  }
+LAB_00035108:
+  if (protection_system_state == 1) {
+    protection_rate_limit_flags = protection_rate_limit_flags & 0xfa;
+  }
+  return;
+}
+
+
+
+//
+// Function: calculateProtectionThresholdLimit @ 0x00035154
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

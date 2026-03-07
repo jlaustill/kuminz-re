@@ -1,0 +1,177 @@
+=== VARIABLES TO NAME ===
+0x0040b268  (6 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040b268
+void checkProtectionOutputConditions(void)
+
+{
+  if (((protection_output_mode == 0) || (load_profile_mode <= battery_voltage_filtered)) ||
+     (voltage_override_flag != 0)) {
+    _DAT_003fb384 = 0;
+  }
+  else {
+    _DAT_003fb384 = _DAT_003fb384 + 1;
+  }
+  if (load_profile_fault_flag <= _DAT_003fb384) {
+    _DAT_0040b268 = _DAT_0040b268 + 1;
+    _DAT_003fb384 = load_profile_fault_flag;
+  }
+  if (load_profile_enable_flag <= _DAT_0040b268) {
+    protection_active_flags = protection_active_flags | 2;
+    _DAT_0040b268 = load_profile_enable_flag;
+  }
+  if (((protection_output_mode == 2) && (_battery_voltage_raw < load_profile_timeout_counter)) &&
+     ((voltage_mode_state._0_2_ == 5 && (voltage_override_flag == 0)))) {
+    _DAT_003fb386 = _DAT_003fb386 + 1;
+  }
+  else {
+    _DAT_003fb386 = 0;
+  }
+  if (load_profile_calibration_2 <= _DAT_003fb386) {
+    protection_active_flags = protection_active_flags | 4;
+    _DAT_003fb386 = load_profile_calibration_2;
+  }
+  if (((protection_active_flags & 4) == 0) || (_battery_voltage_raw <= load_profile_recovery_timer))
+  {
+    _DAT_003fb388 = 0;
+  }
+  else {
+    _DAT_003fb388 = _DAT_003fb388 + 1;
+  }
+  if (load_profile_calibration_1 <= _DAT_003fb388) {
+    protection_active_flags = protection_active_flags & 0xfffb;
+    _DAT_003fea06 = _DAT_003fea06 & 0xfffb;
+    _DAT_003fb388 = load_profile_calibration_1;
+  }
+  return;
+}
+
+
+
+//
+// Function: processProtectionMode2 @ 0x00038120
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0040b268
+void initProtectionFilterValues(void)
+
+{
+  _DAT_003fb38e = 2;
+  _DAT_003fb390 = 2;
+  _DAT_003fb392 = 2;
+  _DAT_003fb394 = 2;
+  _DAT_003fb396 = 2;
+  _DAT_003fb398 = 2;
+  _DAT_003fb39a = 2;
+  protection_output_mode = 0;
+  protection_output_demand = 0;
+  voltage_filter_coefficient = 0;
+  voltage_recovery_timer = 0;
+  protection_output_state = 0;
+  voltage_rate_value = 0;
+  voltage_filter_state = 0;
+  _DAT_0040b276 = 0;
+  protection_demand_output = 0;
+  _DAT_003fb384 = 0;
+  _DAT_003fb386 = 0;
+  _DAT_003fb388 = 0;
+  _DAT_0040b268 = 0;
+  voltage_protection_flag = 0;
+  protection_active_flags = protection_active_flags & 0xfff8;
+  _DAT_003fea06 = _DAT_003fea06 & 0xfff8;
+  _DAT_003fb37e = 0;
+  voltage_sample_counter = 0;
+  _DAT_003fb382 = 0;
+  if ((can_receive_buffer != 0) && (can_receive_buffer < 0x33)) {
+    (*(code *)(&PTR_DAT_0053ac46)[(uint)can_receive_buffer * 4])();
+  }
+  return;
+}
+
+
+
+//
+// Function: processEngineRpmTarget @ 0x0003866c
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0040b268
+void updateFuelDemandCalculation(void)
+
+{
+  ushort uVar1;
+  undefined2 uVar2;
+  int iVar3;
+  uint uVar4;
+  int iVar5;
+  undefined2 uStack_30;
+  undefined2 uStack_2e;
+  
+  uRam003fcff8 = 2;
+  timing_adjustment_change_detected_flag = 0;
+  engine_tooth_minimum = 0;
+  _timing_adjustment_active_flag = 0;
+  uRam003fcff2 = 1;
+  uStack_30 = 2;
+  uStack_2e = 2;
+  uVar2 = calculateTimingPeriod(fuel_timing_calibration_reference - sRam003fd8f2,uRam003fd50e);
+  uRam003fcfea = interpolateTableWrapper
+                           (sRam003fd8f2,&uStack_30,uVar2,&timing_offset_table_numerator,400,
+                            &timing_scale_factor_default,&timing_gain_multiplier_max,4);
+  uVar2 = calculateTimingPeriod(fuel_timing_calibration_reference - _DAT_003fd8f6,uRam003fd50e);
+  uRam003fcfee = interpolateTableWrapper
+                           (_DAT_003fd8f6,&uStack_30,uVar2,&timing_offset_table_numerator,400,
+                            &timing_scale_factor_default,&timing_gain_multiplier_max,4);
+  if (_DAT_003fdd86 == 1) {
+    voltage_protection_flag = uRam003fcfea;
+    voltage_offset_value = uRam003fcfee;
+  }
+  uVar2 = calculateTimingPeriod(fuel_timing_calibration_reference - sRam003fd8f2,_DAT_003fd514);
+  uRam003fcfec = interpolateTableWrapper
+                           (sRam003fd8f2,&uStack_30,uVar2,&timing_offset_table_numerator,400,
+                            &timing_scale_factor_default,&timing_gain_multiplier_max,4);
+  uVar2 = calculateTimingPeriod(fuel_timing_calibration_reference - _DAT_003fd8f6,_DAT_003fd514);
+  uRam003fcff0 = interpolateTableWrapper
+                           (_DAT_003fd8f6,&uStack_30,uVar2,&timing_offset_table_numerator,400,
+                            &timing_scale_factor_default,&timing_gain_multiplier_max,4);
+  uVar1 = calibration_limit_value._0_2_;
+  if ((uint)timing_reference_min < (uint)calibration_limit_value._0_2_) {
+    uVar4 = (uint)calibration_limit_value._0_2_ - (uint)timing_reference_min;
+    iVar5 = (uVar4 & 0xffff) * 0x22c8;
+    iVar3 = 0x410000;
+    uVar2 = calculateScaledValue(_DAT_003fd8f0,iVar5,uVar4);
+    *(undefined2 *)(iVar3 + -0x4db0) = uVar2;
+    voltage_recovery_timer = calculateScaledValue(_DAT_003fd8f4,iVar5,uVar4);
+  }
+  else {
+    timing_adjustment_output_value = 0;
+    voltage_recovery_timer = 0;
+  }
+  battery_voltage_reference = _battery_voltage_state_value;
+  voltage_state_flag = _battery_voltage_state_value;
+  _DAT_0040b268 = uVar1;
+  fuel_demand_calculation_value = uVar1;
+  voltage_protection_offset_value = 0;
+  timing_adjustment_value = 0;
+  protection_output_demand = voltage_recovery_timer;
+  protection_output_mode = voltage_offset_value;
+  voltage_protection_flag = uRam003fcfea;
+  voltage_offset_value = uRam003fcfee;
+  return;
+}
+
+
+
+//
+// Function: calculateTimingAdvanceRate @ 0x00524cac
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

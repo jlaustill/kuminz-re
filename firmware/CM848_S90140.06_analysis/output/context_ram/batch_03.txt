@@ -1,0 +1,240 @@
+=== VARIABLES TO NAME ===
+0x00409e40  (5 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00409e40
+void calculateEngineTimingData(void)
+
+{
+  undefined2 uVar1;
+  uint uVar2;
+  int iVar3;
+  int iVar4;
+  int iVar5;
+  int iVar6;
+  int iVar7;
+  int iVar8;
+  
+  _DAT_003fb728 = _coolant_temp_sensor;
+  _DAT_003fb72a = intake_air_temp_secondary;
+  if (((fuel_demand_accumulator == 2) || (fuel_demand_accumulator == 6)) ||
+     (fuel_demand_accumulator == 7)) {
+    engine_tooth_counter =
+         dualAxisTableInterpolation
+                   (&DAT_003fb708,_current_engine_rpm,&DAT_00060df0,_coolant_temp_sensor,
+                    &DAT_00060e04,&DAT_00060e18,6);
+    if (_DAT_00409e40 == 3) {
+      engine_timing_reference = engine_timing_reference | 8;
+    }
+    _limit_source_priority = 5;
+    goto LAB_0004b524;
+  }
+  _DAT_003fb72c = _intake_air_temp_sensor;
+  _DAT_003fb72e = coolant_temp_sensor_raw_value;
+  engine_timing_rpm_lookup_3 =
+       dualAxisTableInterpolation
+                 (&DAT_003fb714,_current_engine_rpm,&DAT_00060eba,load_throttle_processed,
+                  &DAT_00060ed6,&DAT_00060eee,4);
+  engine_timing_rpm_lookup_2 =
+       dualAxisTableInterpolation
+                 (&DAT_003fb718,_current_engine_rpm,&DAT_0006100c,load_throttle_processed,
+                  &DAT_00061028,&DAT_00061040,4);
+  engine_timing_rpm_lookup_1 =
+       dualAxisTableInterpolation
+                 (&DAT_003fb71c,_current_engine_rpm,&DAT_0006115e,load_throttle_processed,
+                  &DAT_0006117a,&DAT_00061192,4);
+  engine_timing_rpm_lookup_5 =
+       dualAxisTableInterpolation
+                 (&DAT_003fb720,_current_engine_rpm,&DAT_000612b0,load_throttle_processed,
+                  &DAT_000612cc,&DAT_000612e4,4);
+  engine_timing_dual_axis_lookup_3 =
+       dualAxisTableInterpolation
+                 (&DAT_003fb70c,_DAT_003fb728,&DAT_00060d00,intake_air_temp_secondary,&DAT_00060d12,
+                  &DAT_00060d24,7);
+  engine_timing_lookup_interpolation_2 =
+       lookupTableInterpolation(&DAT_003fb710,_DAT_003fb72a,&DAT_00060da4,&DAT_00060dbe,3);
+  engine_timing_lookup_interpolation_1 =
+       lookupTableInterpolation(&DAT_003fb712,_DAT_003fb72c,&DAT_00060dd8,&DAT_00060de4,2);
+  uVar1 = oilPressureDeltaCalculation();
+  engine_timing_rpm_lookup_4 =
+       dualAxisTableInterpolation
+                 (&DAT_003fb724,_current_engine_rpm,&DAT_00061402,uVar1,&DAT_00061412,&DAT_0006142a,
+                  4);
+  uVar2 = (int)engine_timing_rpm_lookup_3 * (int)engine_timing_dual_axis_lookup_3;
+  engine_timing_tooth_counter_3 =
+       (short)((int)uVar2 >> 0xc) + (ushort)((int)uVar2 < 0 && (uVar2 & 0xfff) != 0);
+  iVar8 = (int)engine_timing_tooth_counter_3;
+  uVar2 = (int)engine_timing_rpm_lookup_2 * (int)engine_timing_lookup_interpolation_2;
+  engine_timing_tooth_counter_2 =
+       (short)((int)uVar2 >> 0xc) + (ushort)((int)uVar2 < 0 && (uVar2 & 0xfff) != 0);
+  iVar5 = (int)engine_timing_tooth_counter_2;
+  uVar2 = (int)engine_timing_rpm_lookup_1 * (int)engine_timing_lookup_interpolation_1;
+  engine_timing_tooth_counter_1 =
+       (short)((int)uVar2 >> 0xc) + (ushort)((int)uVar2 < 0 && (uVar2 & 0xfff) != 0);
+  iVar4 = (int)engine_timing_tooth_counter_1;
+  uVar2 = (int)engine_timing_rpm_lookup_5 * (int)engine_timing_rpm_lookup_4;
+  engine_timing_tooth_counter_4 =
+       (short)((int)uVar2 >> 0xc) + (ushort)((int)uVar2 < 0 && (uVar2 & 0xfff) != 0);
+  iVar7 = (int)engine_timing_tooth_counter_4;
+  engine_timing_state_value = _DAT_00409e48;
+  if (protection_fault_detection_flag != '\0') {
+    engine_timing_state_value = _DAT_00409e46;
+  }
+  iVar3 = (int)engine_timing_state_value;
+  if (_DAT_00409e42 == 0) {
+    iVar6 = iVar8 + iVar5 + iVar4 + iVar7 + (int)turbo_blend_coefficient + iVar3;
+    if (iVar6 < -0x400) {
+      iVar6 = -0x400;
+    }
+    else if (0x400 < iVar6) {
+      iVar6 = 0x400;
+    }
+    _limit_source_priority = 0x12;
+    if (iVar8 != 0) {
+      engine_timing_reference = engine_timing_reference | 0x10;
+    }
+    if (iVar5 != 0) {
+      engine_timing_reference = engine_timing_reference | 0x20;
+    }
+    if (iVar4 != 0) {
+      engine_timing_reference = engine_timing_reference | 0x40;
+    }
+    if (iVar7 != 0) {
+      engine_timing_reference = engine_timing_reference | 0x80;
+    }
+    engine_tooth_counter = (short)iVar6;
+    if (iVar3 != 0) {
+      engine_timing_reference = engine_timing_reference | 0x200;
+    }
+  }
+  else if (_DAT_00409e42 == 1) {
+    engine_tooth_counter = turbo_blend_coefficient;
+    _limit_source_priority = 0x12;
+    if (turbo_blend_coefficient < iVar8) {
+      _limit_source_priority = 0x14;
+      engine_tooth_counter = engine_timing_tooth_counter_3;
+    }
+    if (engine_tooth_counter < iVar4) {
+      _limit_source_priority = 0x15;
+      engine_tooth_counter = engine_timing_tooth_counter_1;
+    }
+    if (engine_tooth_counter < iVar7) {
+      _limit_source_priority = 0x16;
+      engine_tooth_counter = engine_timing_tooth_counter_4;
+    }
+    if (engine_tooth_counter < iVar5) {
+      _limit_source_priority = 0x13;
+      engine_tooth_counter = engine_timing_tooth_counter_2;
+    }
+    if (engine_tooth_counter < iVar3) {
+LAB_0004b424:
+      _limit_source_priority = 0x1f;
+      engine_tooth_counter = engine_timing_state_value;
+    }
+  }
+  else {
+    _limit_source_priority = 0x15;
+    engine_tooth_counter = engine_timing_tooth_counter_1;
+    if (iVar5 < engine_timing_tooth_counter_1) {
+      _limit_source_priority = 0x13;
+      engine_tooth_counter = engine_timing_tooth_counter_2;
+    }
+    if (iVar8 < engine_tooth_counter) {
+      _limit_source_priority = 0x14;
+      engine_tooth_counter = engine_timing_tooth_counter_3;
+    }
+    if (iVar7 < engine_tooth_counter) {
+      _limit_source_priority = 0x16;
+      engine_tooth_counter = engine_timing_tooth_counter_4;
+    }
+    if (turbo_blend_coefficient < engine_tooth_counter) {
+      engine_tooth_counter = turbo_blend_coefficient;
+      _limit_source_priority = 0x12;
+    }
+    if (iVar3 < engine_tooth_counter) goto LAB_0004b424;
+  }
+  if ((_limit_source_priority == 0x12) && (speed_error_raw == 0x1c)) {
+    _limit_source_priority = 0x1e;
+  }
+  if ((_limit_source_priority == 0x12) && (speed_error_raw == 0x1b)) {
+    _limit_source_priority = 0x1d;
+  }
+  if (engine_tooth_counter < engine_tooth_counter_limit) {
+    engine_tooth_counter = engine_tooth_counter_limit;
+    _limit_source_priority = 0xb;
+    engine_timing_reference = 0;
+  }
+  if ((_speed_limit_constraint_active_flag != 0) && (engine_tooth_counter < _DAT_00409e44)) {
+    engine_tooth_counter = _DAT_00409e44;
+    _limit_source_priority = 0x17;
+    engine_timing_reference = 0;
+  }
+  if (engine_tooth_counter < engine_tooth_minimum) {
+    engine_tooth_counter = engine_tooth_minimum;
+    _limit_source_priority = 0x18;
+    engine_timing_reference = 0;
+  }
+LAB_0004b524:
+  if (_DAT_00409e40 == 3) {
+    iVar7 = (int)engine_tooth_counter + (int)_DAT_003fd808 + (int)DAT_0005a48a;
+    if (iVar7 < -0x400) {
+      iVar7 = -0x400;
+    }
+    else if (0x400 < iVar7) {
+      iVar7 = 0x400;
+    }
+    torque_limit_factor = (short)iVar7;
+    engine_timing_reference = engine_timing_reference | 8;
+  }
+  else {
+    torque_limit_factor = engine_tooth_counter;
+  }
+  return;
+}
+
+
+
+//
+// Function: updateEngineStatusFlags @ 0x0004b5b8
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_00409e40
+void updateEngineStatusFlags(void)
+
+{
+  engine_status_flags_composite =
+       (int)_engine_status_flag_byte_high << 0x18 | ((int)_engine_status_flag_byte & 0xffU) << 0x10
+       | ((int)_engine_status_priority_flags & 0xffU) << 8 | (int)_limit_source_priority & 0xffU;
+  engine_timing_reference = 0;
+  if ((_fuel_blend_weight_active_flag == 0) && (fuel_demand_offset_active_flag != 0)) {
+    engine_timing_reference = 2;
+  }
+  if (_fuel_timing_offset_flag != 0) {
+    engine_timing_reference = engine_timing_reference | 1;
+  }
+  if (scale_multiplier_a47e != 0) {
+    engine_timing_reference = engine_timing_reference | 4;
+  }
+  if (_DAT_00409e40 == 2) {
+    torque_limit_factor = _DAT_003fd808;
+    _limit_source_priority = 7;
+  }
+  else if ((_DAT_00409e40 == 1) || (_DAT_00409e40 == 3)) {
+    calculateEngineTimingData();
+  }
+  return;
+}
+
+
+
+//
+// Function: calculateFuel2DTableLookup @ 0x0004b6cc
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

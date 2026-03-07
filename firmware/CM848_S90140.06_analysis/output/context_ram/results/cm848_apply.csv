@@ -1,0 +1,9 @@
+address,proposed_name,confidence,reasoning
+0x00408ea8,protection_load_threshold,high,Compared against load_throttle_processed in processProtectionSystemBit3 and processTemperatureTrim
+0x00408f9c,engine_timing_delta_initial,high,Assigned to engine_timing_delta in resetEngineTimingAccumulators and multiple engine run state handlers
+0x00409e40,engine_timing_calculation_mode,high,Compared to 1/2/3 in calculateEngineTimingData to select timing calculation strategy
+0x0040ad24,j1939_tx_queue_write_ptr,high,Write pointer for J1939 TX circular queue incremented by 0xc per frame
+0x0040ad28,j1939_tx_queue_read_ptr,high,Read pointer for J1939 TX circular queue incremented by 0xc per frame
+0x0040b14a,engine_load_rate_of_change,high,Computed as current minus history in filterProtectionLoadValue
+0x0040b14c,protection_rate_limit_countdown,high,Decremented in decrementProtectionTimers triggers rate limit evaluation at zero
+0x0040b478,rail_pressure_rate_limit_active,high,Set to 1 when RPM and load below thresholds activating rate-limited pressure output

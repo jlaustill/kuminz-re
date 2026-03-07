@@ -1,0 +1,515 @@
+=== VARIABLES TO NAME ===
+0x0040b4a6  (8 references)
+0x0040b4de  (13 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040b4de
+void initUdsResponseBuffer(void)
+
+{
+  _uds_init_flag = 0;
+  _uds_response_pending = 1;
+  _uds_response_pending_code = 0x50;
+  uds_transmit_timeout_value = 200;
+  uds_transmit_buffer_offset = 0xb00;
+  _uds_message_init_flag = 0;
+  fuel_demand_accumulator_copy = 0;
+  _uds_message_init_flag_2 = 0;
+  _engine_load_accumulator_value = 0;
+  protection_timer_counter = 100;
+  _DAT_0040b4a9 = 0;
+  _DAT_0040b4ad = 1;
+  _DAT_0040b4b4 = 1000;
+  _DAT_0040b4bd = 0x708;
+  injection_state_byte = 0x6a4;
+  ram0x0040b4cb = 0x640;
+  _DAT_0040b4d3 = 0x5dc;
+  _DAT_0040b4d7 = 0x28;
+  _DAT_0040b4de = 0x1e;
+  _j1939_rx_buffer_byte_1 = 0x14;
+  _j1939_tx_buffer_byte_1 = 10;
+  _j1939_status_byte_1_b4f3 = 1;
+  fuel_demand_init_value_2 = 0xff37;
+  fuel_demand_previous_1 = 0xff37;
+  ram0x0040b432 = 0xff37;
+  can_rx_message_id = 0xff37;
+  protection_channel_init_value_2 = 0xff37;
+  ram0x0040b3f7 = 0;
+  ram0x0040b3fb = 0;
+  _cbd_synchronization_index = 0;
+  protection_msg_timeout_1 = 0xff37;
+  protection_msg_timeout_2 = 0xff37;
+  ram0x0040b40d = 500;
+  ram0x0040b415 = 0xff37;
+  protection_msg_timeout_4 = 0xff37;
+  protection_msg_timeout_init_2 = 800;
+  _injection_control_2 = 0xff37;
+  fuel_demand_init_value_9 = 0xff37;
+  fuel_demand_init_value_4 = 0xff37;
+  fuel_demand_init_value_5 = 0xff37;
+  return;
+}
+
+
+
+//
+// Function: processJ1939DM1Pending @ 0x0003a290
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0040b4a6, DAT_0040b4de
+void interpolateFuelMapBySpeed(void)
+
+{
+  short sVar1;
+  undefined2 uVar2;
+  int extraout_r4;
+  uint uVar3;
+  int iVar4;
+  short unaff_r27;
+  short unaff_r29;
+  int iVar5;
+  int iVar6;
+  int iVar7;
+  
+  uRam003fd14a = protection_step_counter;
+  uRam003fd14c = protection_ramp_rate;
+  uRam003fd148 = protection_mode_timer_current;
+  if (((engine_run_state == 2) || (engine_run_state == 6)) || (engine_run_state == 7)) {
+    sRam0040b4fa = interpolateWithIndex
+                             (0x3fd140,ram0x0040b36e,0x62e16,protection_step_counter,0x62e2a,0x62e3e
+                              ,6);
+    _j1939_message_state = 10;
+    goto code_r0x0052bb78;
+  }
+  if (sRam00409e92 == 0xb) {
+    if (((int)(uint)ram0x0040b36e <=
+         (int)((uint)fault_active_indicator - (uint)speed_interpolation_tolerance_band)) ||
+       ((uint)fault_active_indicator + (uint)speed_interpolation_tolerance_band <=
+        (uint)ram0x0040b36e)) goto code_r0x0052b418;
+    protection_mode_indicator = 1;
+    protection_speed_limit_value_b500 = fault_active_indicator;
+    _DAT_0040b4a6 = _DAT_0040b4a6 | 0x100;
+  }
+  else {
+code_r0x0052b418:
+    if (sRam00409e92 == 4) {
+      if (((int)((uint)fuel_map_speed_interpolation_factor -
+                (uint)speed_interpolation_tolerance_band) < (int)(uint)ram0x0040b36e) &&
+         ((uint)ram0x0040b36e <
+          (uint)fuel_map_speed_interpolation_factor + (uint)speed_interpolation_tolerance_band)) {
+        protection_mode_indicator = 1;
+        protection_speed_limit_value_b500 = fuel_map_speed_interpolation_factor;
+        goto code_r0x0052b478;
+      }
+    }
+    protection_mode_indicator = 0;
+    protection_speed_limit_value_b500 = ram0x0040b36e;
+  }
+code_r0x0052b478:
+  sVar1 = interpolateWithIndex
+                    (0x3fd12c,protection_speed_limit_value_b500,0x62ee0,uRam0040b31a,&BYTE_00062f08,
+                     &BYTE_00062f2a,4);
+  if (sRam0040a068 == 1) {
+    unaff_r29 = interpolateWithIndex
+                          (0x3fd144,protection_speed_limit_value_b500,0x63824,uRam0040b31a,
+                           &BYTE_0006384c,&BYTE_0006386e,4);
+  }
+  else if (sRam0040a068 == 2) {
+    unaff_r29 = interpolateWithIndex
+                          (0x3fd144,protection_speed_limit_value_b500,0x63ace,uRam0040b31a,0x63af6,
+                           0x63b18,4);
+  }
+  else if (sRam0040a068 == 3) {
+    unaff_r29 = interpolateWithIndex
+                          (0x3fd144,protection_speed_limit_value_b500,0x63d78,uRam0040b31a,0x63da0,
+                           0x63dc2,4);
+  }
+  else if (sRam0040a068 == 4) {
+    unaff_r29 = interpolateWithIndex
+                          (0x3fd144,protection_speed_limit_value_b500,0x64022,uRam0040b31a,0x6404a,
+                           0x6406c,4);
+  }
+  if (sRam0040a06a == 1) {
+    unaff_r27 = interpolateWithIndex
+                          (0x3fd144,protection_speed_limit_value_b500,0x63824,uRam0040b31a,
+                           &BYTE_0006384c,&BYTE_0006386e,4);
+  }
+  else if (sRam0040a06a == 2) {
+    unaff_r27 = interpolateWithIndex
+                          (0x3fd144,protection_speed_limit_value_b500,0x63ace,uRam0040b31a,0x63af6,
+                           0x63b18,4);
+  }
+  else if (sRam0040a06a == 3) {
+    unaff_r27 = interpolateWithIndex
+                          (0x3fd144,protection_speed_limit_value_b500,0x63d78,uRam0040b31a,0x63da0,
+                           0x63dc2,4);
+  }
+  else if (sRam0040a06a == 4) {
+    unaff_r27 = interpolateWithIndex
+                          (0x3fd144,protection_speed_limit_value_b500,0x64022,uRam0040b31a,0x6404a,
+                           0x6406c,4);
+  }
+  _j1939_rx_buffer_byte_0 =
+       setFuelDemandVariable
+                 ((int)unaff_r29,(int)unaff_r27,(int)sVar1,sRam0040a068,sRam0040a06a,uRam0040a060,
+                  uRam0040a056);
+  sRam0040b4ea = interpolateWithIndex
+                           (0x3fd13c,protection_speed_limit_value_b500,0x6318a,uRam0040b31a,0x631a6,
+                            0x631be,4);
+  _DAT_0040b4e8 = interpolateWithIndex(0x3fd138,uRam003fd14a,0x62d26,uRam003fd14c,0x62d38,0x62d4a,7)
+  ;
+  uVar3 = (int)sRam0040b4ea * (int)_DAT_0040b4e8;
+  sRam0040b4e6 = (short)((int)uVar3 >> 0xc) + (ushort)((int)uVar3 < 0 && (uVar3 & 0xfff) != 0);
+  sRam0040b4e2 = interpolateWithIndex
+                           (0x3fd128,protection_speed_limit_value_b500,0x632dc,uRam0040b31a,0x632f8,
+                            0x63310,4);
+  _DAT_0040b4e0 = linearInterpolate1D(0x3fd122,uRam003fd14c,0x62dca,0x62de4,3);
+  uVar3 = (int)sRam0040b4e2 * (int)_DAT_0040b4e0;
+  _DAT_0040b4de = (short)((int)uVar3 >> 0xc) + (ushort)((int)uVar3 < 0 && (uVar3 & 0xfff) != 0);
+  sRam0040b4dc = interpolateWithIndex
+                           (0x3fd124,protection_speed_limit_value_b500,0x6342e,uRam0040b31a,0x6344a,
+                            0x63462,4);
+  _DAT_0040b4da = linearInterpolate1D(0x3fd120,uRam003fd148,0x62dfe,0x62e0a,2);
+  uVar3 = (int)sRam0040b4dc * (int)_DAT_0040b4da;
+  sRam0040b4d8 = (short)((int)uVar3 >> 0xc) + (ushort)((int)uVar3 < 0 && (uVar3 & 0xfff) != 0);
+  _j1939_control_byte =
+       interpolateWithIndex
+                 (0x3fd134,protection_speed_limit_value_b500,0x63580,uRam0040b31a,0x6359c,0x635b4,4)
+  ;
+  uVar2 = sensorChannel16BProcessOilPressure();
+  _DAT_0040b4f6 =
+       interpolateWithIndex
+                 (0x3fd130,protection_speed_limit_value_b500,0x636d2,uVar2,0x636ee,0x63706,4);
+  uVar3 = (int)_j1939_control_byte * (int)_DAT_0040b4f6;
+  sRam0040b4f4 = (short)((int)uVar3 >> 0xc) + (ushort)((int)uVar3 < 0 && (uVar3 & 0xfff) != 0);
+  iVar4 = (int)sRam0040b4f4;
+  _j1939_timeout_threshold = sRam00409a40;
+  if (cRam0040b45c != '\0') {
+    _j1939_timeout_threshold = sRam00409a3e;
+  }
+  iVar5 = (int)_j1939_timeout_threshold;
+  if (sRam00409a36 == 0) {
+    iVar5 = (int)_j1939_rx_buffer_byte_0 + (int)sRam0040b4e6 + (int)_DAT_0040b4de +
+            (int)sRam0040b4d8 + iVar4 + iVar5;
+    if (iVar5 < -0x400) {
+      sRam0040b4fa = -0x400;
+    }
+    else if (iVar5 < 0x401) {
+      sRam0040b4fa = (short)iVar5;
+    }
+    else {
+      sRam0040b4fa = 0x400;
+    }
+    _j1939_message_state = 0xb;
+    goto code_r0x0052bb78;
+  }
+  if (sRam00409a36 == 1) {
+    iVar7 = (int)_j1939_rx_buffer_byte_0;
+    iVar6 = (int)sRam0040b4e6;
+    if (iVar6 < iVar7) {
+      if (iVar7 <= _DAT_0040b4de) {
+code_r0x0052ba38:
+        iVar7 = (int)_DAT_0040b4de;
+      }
+    }
+    else {
+      iVar7 = iVar6;
+      if (iVar6 <= _DAT_0040b4de) goto code_r0x0052ba38;
+    }
+    iVar6 = (int)sRam0040b4d8;
+    if (iVar6 < iVar7) {
+      iVar6 = iVar7;
+    }
+    if (iVar6 <= iVar5) {
+      iVar6 = iVar5;
+    }
+    sRam0040b4fa = sRam0040b4f4;
+    if (iVar6 <= iVar4) goto code_r0x0052bb78;
+  }
+  else {
+    if (sRam00409a36 != 2) {
+      if (sRam00409a36 == 3) {
+        sRam0040b4fa = sRam0040b4e6;
+        if (((((sRam00409eb8 != 0x14) && (sRam00409eb8 != 0x18)) &&
+             (sRam0040b4fa = _DAT_0040b4de, sRam00409eb8 != 0x13)) &&
+            ((sRam0040b4fa = sRam0040b4d8, sRam00409eb8 != 0x15 &&
+             (sRam0040b4fa = sRam0040b4f4, sRam00409eb8 != 0x16)))) &&
+           ((sRam00409eb8 != 0xb && (sRam0040b4fa = _j1939_rx_buffer_byte_0, sRam00409eb8 == 0x1f)))
+           ) {
+          sRam0040b4fa = _j1939_timeout_threshold;
+        }
+        _j1939_message_state = 0xc;
+      }
+      goto code_r0x0052bb78;
+    }
+    iVar7 = (int)_j1939_rx_buffer_byte_0;
+    iVar6 = (int)sRam0040b4e6;
+    if (iVar7 < iVar6) {
+      if (_DAT_0040b4de <= iVar7) {
+code_r0x0052bab0:
+        iVar7 = (int)_DAT_0040b4de;
+      }
+    }
+    else {
+      iVar7 = iVar6;
+      if (_DAT_0040b4de <= iVar6) goto code_r0x0052bab0;
+    }
+    iVar6 = (int)sRam0040b4d8;
+    if (iVar7 < iVar6) {
+      iVar6 = iVar7;
+    }
+    if (iVar4 <= iVar6) {
+      iVar6 = iVar4;
+    }
+    sRam0040b4fa = _j1939_timeout_threshold;
+    if (iVar5 <= iVar6) goto code_r0x0052bb78;
+  }
+  sRam0040b4fa = (short)iVar6;
+code_r0x0052bb78:
+  iVar4 = (int)sRam0040b4fa;
+  if (_j1939_rx_buffer_byte_0 == iVar4) {
+    _j1939_message_state = 1;
+  }
+  else if (sRam0040b4e6 == iVar4) {
+    _j1939_message_state = 2;
+  }
+  else if (_DAT_0040b4de == iVar4) {
+    _j1939_message_state = 3;
+  }
+  else if (sRam0040b4d8 == iVar4) {
+    _j1939_message_state = 4;
+  }
+  else if (sRam0040b4f4 == iVar4) {
+    _j1939_message_state = 5;
+  }
+  else if (_j1939_timeout_threshold == iVar4) {
+    _j1939_message_state = 0xf;
+  }
+  if (protection_mode_indicator == 0) {
+    _j1939_message_format = sRam0040b4fa;
+  }
+  else {
+    signedDivision64((int)((ulonglong)((longlong)iVar4 * (longlong)(int)(uint)ram0x0040b36e) >> 0x20
+                          ),iVar4 * (uint)ram0x0040b36e,0,protection_speed_limit_value_b500);
+    if (extraout_r4 < -0x8000) {
+      iVar4 = -0x8000;
+    }
+    else {
+      iVar4 = extraout_r4;
+      if (0x7fff < extraout_r4) {
+        iVar4 = 0x7fff;
+      }
+    }
+    _j1939_message_format = (short)iVar4;
+    _DAT_0040b4a6 = _DAT_0040b4a6 | 0x100;
+  }
+  return;
+}
+
+
+
+//
+// Function: interpolateFuelMapBySpeedB @ 0x0052b998
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0040b4a6, DAT_0040b4de
+void interpolateFuelMapBySpeedB(void)
+
+{
+  int extraout_r4;
+  int in_r11;
+  short *unaff_r20;
+  short *unaff_r21;
+  short *unaff_r23;
+  short *unaff_r24;
+  short *unaff_r25;
+  int iVar1;
+  short *unaff_r26;
+  int unaff_r27;
+  short *unaff_r28;
+  int unaff_r29;
+  int iVar2;
+  short sVar3;
+  
+  sVar3 = (short)unaff_r29;
+  if (in_r11 != 2) {
+    if (in_r11 == 3) {
+      if ((sRam00409eb8 == 0x14) || (sRam00409eb8 == 0x18)) {
+        sVar3 = *unaff_r28;
+      }
+      else if (sRam00409eb8 == 0x13) {
+        sVar3 = *unaff_r26;
+      }
+      else if (sRam00409eb8 == 0x15) {
+        sVar3 = *unaff_r24;
+      }
+      else if ((sRam00409eb8 == 0x16) || (sRam00409eb8 == 0xb)) {
+        sVar3 = (short)unaff_r27;
+      }
+      else if (sRam00409eb8 != 0x1f) {
+        sVar3 = *unaff_r21;
+      }
+      *unaff_r25 = sVar3;
+      _j1939_message_state = 0xc;
+    }
+    goto code_r0x0052bb78;
+  }
+  iVar1 = (int)*unaff_r21;
+  iVar2 = (int)*unaff_r28;
+  if (iVar1 < iVar2) {
+    if (*unaff_r26 <= iVar1) {
+code_r0x0052bab0:
+      iVar1 = (int)*unaff_r26;
+    }
+  }
+  else {
+    iVar1 = iVar2;
+    if (*unaff_r26 <= iVar2) goto code_r0x0052bab0;
+  }
+  iVar2 = (int)*unaff_r24;
+  if (iVar1 < iVar2) {
+    iVar2 = iVar1;
+  }
+  if (unaff_r27 <= iVar2) {
+    iVar2 = unaff_r27;
+  }
+  if (iVar2 < unaff_r29) {
+    *unaff_r25 = (short)iVar2;
+  }
+  else {
+    *unaff_r25 = sVar3;
+  }
+code_r0x0052bb78:
+  iVar1 = (int)*unaff_r20;
+  if (*unaff_r21 == iVar1) {
+    _j1939_message_state = 1;
+  }
+  else if (sRam0040b4e6 == iVar1) {
+    _j1939_message_state = 2;
+  }
+  else if (_DAT_0040b4de == iVar1) {
+    _j1939_message_state = 3;
+  }
+  else if (sRam0040b4d8 == iVar1) {
+    _j1939_message_state = 4;
+  }
+  else if (sRam0040b4f4 == iVar1) {
+    _j1939_message_state = 5;
+  }
+  else if (_j1939_timeout_threshold == iVar1) {
+    _j1939_message_state = 0xf;
+  }
+  sVar3 = *unaff_r20;
+  if (*unaff_r23 != 0) {
+    signedDivision64((int)((ulonglong)((longlong)iVar1 * (longlong)(int)(uint)ram0x0040b36e) >> 0x20
+                          ),iVar1 * (uint)ram0x0040b36e,0,protection_speed_limit_value_b500);
+    if (extraout_r4 < -0x8000) {
+      iVar1 = -0x8000;
+    }
+    else {
+      iVar1 = extraout_r4;
+      if (0x7fff < extraout_r4) {
+        iVar1 = 0x7fff;
+      }
+    }
+    _DAT_0040b4a6 = _DAT_0040b4a6 | 0x100;
+    sVar3 = (short)iVar1;
+  }
+  _j1939_message_format = sVar3;
+  return;
+}
+
+
+
+//
+// Function: interpolateFuelMapBySpeedC @ 0x0052ba30
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0040b4a6, DAT_0040b4de
+void interpolateFuelMapBySpeedC(void)
+
+{
+  short sVar1;
+  int extraout_r4;
+  short *unaff_r20;
+  short *unaff_r21;
+  short *unaff_r23;
+  short *unaff_r24;
+  undefined2 *unaff_r25;
+  int iVar2;
+  int unaff_r27;
+  int unaff_r29;
+  int unaff_r30;
+  
+  iVar2 = (int)*unaff_r24;
+  if (iVar2 < unaff_r30) {
+    if (unaff_r29 < unaff_r30) goto code_r0x0052ba68;
+  }
+  else {
+    unaff_r30 = iVar2;
+    if (unaff_r29 < iVar2) goto code_r0x0052ba68;
+  }
+  unaff_r30 = unaff_r29;
+code_r0x0052ba68:
+  if (unaff_r27 < unaff_r30) {
+    *unaff_r25 = (short)unaff_r30;
+  }
+  else {
+    *unaff_r25 = (short)unaff_r27;
+  }
+  iVar2 = (int)*unaff_r20;
+  if (*unaff_r21 == iVar2) {
+    _j1939_message_state = 1;
+  }
+  else if (sRam0040b4e6 == iVar2) {
+    _j1939_message_state = 2;
+  }
+  else if (_DAT_0040b4de == iVar2) {
+    _j1939_message_state = 3;
+  }
+  else if (sRam0040b4d8 == iVar2) {
+    _j1939_message_state = 4;
+  }
+  else if (sRam0040b4f4 == iVar2) {
+    _j1939_message_state = 5;
+  }
+  else if (_j1939_timeout_threshold == iVar2) {
+    _j1939_message_state = 0xf;
+  }
+  sVar1 = *unaff_r20;
+  if (*unaff_r23 != 0) {
+    signedDivision64((int)((ulonglong)((longlong)iVar2 * (longlong)(int)(uint)ram0x0040b36e) >> 0x20
+                          ),iVar2 * (uint)ram0x0040b36e,0,protection_speed_limit_value_b500);
+    if (extraout_r4 < -0x8000) {
+      iVar2 = -0x8000;
+    }
+    else {
+      iVar2 = extraout_r4;
+      if (0x7fff < extraout_r4) {
+        iVar2 = 0x7fff;
+      }
+    }
+    _DAT_0040b4a6 = _DAT_0040b4a6 | 0x100;
+    sVar1 = (short)iVar2;
+  }
+  _j1939_message_format = sVar1;
+  return;
+}
+
+
+
+//
+// Function: updateFaultMonitorCounter @ 0x0052bca8
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

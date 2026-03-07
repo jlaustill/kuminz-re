@@ -1,0 +1,14 @@
+address,proposed_name,confidence,reasoning
+0x00408de8,timing_hold_duration_calibration,medium,Used as PTR_DAT in timing state initialization and injection timing
+0x0040b28a,timing_advance_rate_current,medium,Written by processEngineRpmTarget and calculateTimingAdvanceRate
+0x00408eb8,cbd_fault_occurrence_limit,medium,Compared against fault counter in updatehpcr_CbdDiagnosticState
+0x00408ebe,cbd_diagnostic_slew_rate,medium,Slew rate on cbd_diagnostic_state_accumulator
+0x0040b268,voltage_fault_accumulator,medium,Incremented in checkProtectionOutputConditions when voltage below threshold
+0x0040b30a,boost_pressure_filtered,medium,Y-axis input in turbo compensation and fuel demand limit calculations
+0x0040b46c,rail_pressure_cranking_limit,medium,Result of interpolation used in injection_control_byte state transitions
+0x0040b4a6,fuel_map_status_flags,medium,OR'd with 0x100 when protection active
+0x0040b4de,fuel_timing_iat_component,medium,Additive timing component from interpolation
+0x0040b4b4,pressure_limit_speed_component,medium,Interpolation product of speed and step-counter tables
+0x0040b4bc,pressure_limit_rpm_component,medium,Interpolation product of RPM-load table
+0x0040b4d2,pressure_limit_state_component,medium,Result of interpolateWithIndex on RPM-load table
+0x0040b4d6,fuel_timing_minimum_limit,medium,Minimum timing limit enforced via comparison

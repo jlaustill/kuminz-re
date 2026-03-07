@@ -1,0 +1,167 @@
+=== VARIABLES TO NAME ===
+0x0040b14a  (5 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040b14a
+void filterProtectionLoadValue(void)
+
+{
+  ushort uVar1;
+  int iVar2;
+  uint uVar3;
+  undefined2 uStack_6;
+  
+  uVar1 = engine_load_percent;
+  if (protection_parameter_11 == 0) {
+    _DAT_003fb190 = _DAT_003fb190 + 1;
+    if (protection_load_filter_threshold <= _DAT_003fb190) {
+      _DAT_003fb190 = 0;
+      iVar2 = (uint)engine_load_percent - (uint)engine_load_percent_previous;
+      if (iVar2 < 0x8000) {
+        if (iVar2 < -0x8000) {
+          uStack_6 = 0x8000;
+        }
+        else {
+          uStack_6 = (undefined2)iVar2;
+        }
+      }
+      else {
+        uStack_6 = 0x7fff;
+      }
+      engine_load_percent_previous = engine_load_percent;
+      protection_rate_value = uStack_6;
+    }
+  }
+  else {
+    *(ushort *)(&DAT_003fb192 + (uint)_DAT_003fb1c8 * 2) = engine_load_percent;
+    uVar3 = (_DAT_003fb1c8 + 1) % 0x1b;
+    _DAT_0040b14a = uVar1 - *(short *)(&DAT_003fb192 + uVar3 * 2);
+    _DAT_003fb1c8 = (ushort)uVar3;
+    protection_rate_value =
+         signedFirstOrderFilter((int)_DAT_0040b14a,&PTR_protection_parameter_10_003fb1ce);
+  }
+  return;
+}
+
+
+
+//
+// Function: evaluateProtectionFaultCondition @ 0x00034a30
+//
+
+// Variables in this function: DAT_0040b14a
+void calculateDeltaWarmupCompensation(void)
+
+{
+  int extraout_r4;
+  int iVar1;
+  
+  signedDivision64((int)((ulonglong)
+                         ((longlong)_DAT_0040b14a *
+                         (longlong)(int)((uint)delta_warmup_scale_multiplier * 0x100)) >> 0x20),
+                   _DAT_0040b14a * (uint)delta_warmup_scale_multiplier * 0x100,0,
+                   (uint)delta_warmup_shift_factor << 7);
+  if (extraout_r4 < 0x6401) {
+    iVar1 = extraout_r4;
+    if (extraout_r4 < -0x6400) {
+      iVar1 = -0x6400;
+    }
+  }
+  else {
+    iVar1 = 0x6400;
+  }
+  protection_cooldown_active = (short)iVar1;
+  iRam003fcf0c = (uint)protection_mode_lookup_result + (int)protection_cooldown_active;
+  clampProtectionLimit(iRam003fcf0c);
+  return;
+}
+
+
+
+//
+// Function: processWarmupTimerDecrement @ 0x0051c5dc
+//
+
+// Variables in this function: DAT_0040b14a
+void updateWarmupProtectionMode(void)
+
+{
+  uint uVar1;
+  uint extraout_r4;
+  undefined4 extraout_r4_00;
+  uint uVar2;
+  ushort uVar3;
+  
+  if ((((uRam003fd588 & 4) != 0) && ((protection_mode_flags_acb9 & 1) == 0)) &&
+     ((protection_warmup_flags & 1) == 0)) {
+    if ((protection_condition_flags_group1 & 0x10) == 0) {
+      uVar2 = (uint)protection_mode_threshold_value - (uint)fuel_timing_param_2;
+      if ((int)uVar2 < 1) {
+        uVar2 = 0;
+      }
+      else {
+        uVar1 = linearInterpolate1D(0x3fcf04,protection_threshold_base,
+                                    &warmup_interpolation_lower_bound,
+                                    &warmup_interpolation_upper_bound,1);
+        uVar1 = uVar1 & 0xffff;
+        signedDivision64((int)((ulonglong)uVar1 * (ulonglong)uVar2 >> 0x20) +
+                         uVar1 * ((int)uVar2 >> 0x1f),uVar1 * uVar2,0,100);
+        if ((int)extraout_r4 < 0xfa01) {
+          uVar2 = extraout_r4;
+          if ((int)extraout_r4 < 0) {
+            uVar2 = 0;
+          }
+        }
+        else {
+          uVar2 = 64000;
+        }
+      }
+      protection_warmup_counter = (undefined2)uVar2;
+      protection_warmup_active = (uint)thermal_injection_timing_current - (uVar2 & 0xffff);
+      if ((_warmup_mode_comparison_threshold < protection_warmup_active) &&
+         (thermal_injection_timing_current == 0)) {
+        if (_warmup_mode_threshold < protection_mode_output_value) {
+          iRam003fcf0c = (uint)protection_mode_lookup_result + (uint)warmup_base_offset;
+          clampProtectionLimit(iRam003fcf0c);
+        }
+      }
+      else {
+        _DAT_0040b14a = protection_warmup_active - iRam003fcf08;
+        protection_output_raw = protection_output_raw + protection_warmup_active;
+        iRam003fcf08 = protection_warmup_active;
+        calculateWarmupProtectionLimit();
+        calculateDeltaWarmupCompensation();
+        processWarmupTimerDecrement();
+      }
+      uVar3 = protection_mode_lookup_result;
+      if (exhaust_mode_dispatch_flag == '\x01') {
+        uVar3 = 0x6400 - protection_mode_lookup_result;
+      }
+    }
+    else {
+      uVar3 = 0x5f00;
+    }
+    if ((_DAT_003fdc88 != 0) && (_DAT_003fdc88 < 0x33)) {
+      protection_mode_output_value = uVar3;
+      (*(code *)(&PTR_LAB_005397ba)[(uint)_DAT_003fdc88 * 4])(uVar3);
+    }
+    if ((_DAT_003fdc88 != 0) && (_DAT_003fdc88 < 0x33)) {
+      unsignedDivision64Wrapper(0,1000000,0,warmup_divisor_constant);
+      uRam0040bd36 = extraout_r4_00;
+      (**(code **)(&UNK_005397b6 + (uint)_DAT_003fdc88 * 0x10))(extraout_r4_00);
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: initWarmupStateAndTimers @ 0x0051c974
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
