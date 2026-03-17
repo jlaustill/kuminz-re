@@ -14,6 +14,7 @@ Usage:
 import argparse
 import csv
 import os
+import re
 import sys
 from collections import OrderedDict
 
@@ -310,13 +311,106 @@ def generate_globals_header(output_dir):
 
 
 # ---------------------------------------------------------------------------
-# Task 4 stub: firmware_functions.hpp
+# Task 4: firmware_functions.hpp
 # ---------------------------------------------------------------------------
 
+def extract_function_signatures(cpp_path):
+    """
+    Parse function signatures from a .ghidra.cpp decompiled output file.
+
+    The file structure around each function is:
+
+        //
+        // Function: <name> @ <addr>
+        //
+
+        [optional /* WARNING: ... */ comment lines]
+
+        <return_type> <name>(<params>)    # may be split across multiple lines
+
+        {
+
+    Returns a list of (name, addr, signature_string) tuples where
+    signature_string is the complete single-line signature, e.g.:
+        "undefined1 diagMemoryReadWithBaseOffset(dword param_1, ...)"
+    """
+    with open(cpp_path) as f:
+        text = f.read()
+
+    # Split text by function header blocks.
+    # Each match produces 3 items in the split: name, addr, body.
+    header_pattern = re.compile(
+        r'^//\n// Function: (.+?) @ (0x[0-9a-f]+)\n//\n',
+        re.MULTILINE,
+    )
+    parts = header_pattern.split(text)
+
+    # parts layout: [preamble, name0, addr0, body0, name1, addr1, body1, ...]
+    names  = parts[1::3]
+    addrs  = parts[2::3]
+    bodies = parts[3::3]
+
+    results = []
+    for name, addr, body in zip(names, addrs, bodies):
+        # Everything before the first '\n{' is the signature block.
+        brace_idx = body.find('\n{')
+        if brace_idx == -1:
+            # No opening brace found — skip (shouldn't happen in well-formed output).
+            continue
+        pre_brace = body[:brace_idx]
+
+        # Strip WARNING comment lines and blank lines.
+        # WARNING blocks look like:
+        #   /* WARNING: ... */
+        # or span two lines:
+        #   /* WARNING: ...
+        #   */
+        # Drop any line whose stripped form starts with '/*' or '*'.
+        sig_lines = []
+        for line in pre_brace.splitlines():
+            stripped = line.strip()
+            if not stripped:
+                continue
+            if stripped.startswith('/*') or stripped.startswith('*'):
+                continue
+            sig_lines.append(stripped)
+
+        if not sig_lines:
+            continue
+
+        # Join multiple lines and collapse interior whitespace.
+        signature = ' '.join(sig_lines)
+        signature = re.sub(r'\s+', ' ', signature).strip()
+
+        results.append((name, addr, signature))
+
+    return results
+
+
 def generate_functions_header(output_dir):
-    """Stub: generate firmware_functions.hpp."""
-    content = '#pragma once\n/* TODO: function declarations */\n'
-    stats = {'functions': 0}
+    """
+    Generate firmware_functions.hpp with forward declarations for all
+    functions found in the .ghidra.cpp decompiled output.
+
+    Returns (content_str, stats_dict).
+    """
+    cpp_path = find_ghidra_cpp(output_dir)
+    signatures = extract_function_signatures(cpp_path)
+
+    lines = [
+        '#pragma once',
+        '#include "firmware_types.hpp"',
+        '',
+        '// Function Forward Declarations (from decompiled output)',
+        '',
+    ]
+
+    for _name, addr, sig in signatures:
+        lines.append(f'{sig};  // @ {addr}')
+
+    content = '\n'.join(lines) + '\n'
+
+    stats = {'functions': len(signatures)}
     return content, stats
 
 
@@ -397,7 +491,7 @@ def main():
     # --- firmware_functions.hpp ----------------------------------------------
     print("\n[3/3] Generating firmware_functions.hpp ...")
     functions_content, functions_stats = generate_functions_header(output_dir)
-    print(f"      Functions: {functions_stats['functions']} (stub)")
+    print(f"      Functions: {functions_stats['functions']} forward declarations")
 
     functions_path = os.path.join(header_dir, 'firmware_functions.hpp')
     if args.dry_run:
