@@ -3,16 +3,16 @@
 
 // Function Forward Declarations (from decompiled output)
 
-short mc68k_huffmanTreeBuilder(int param_1);  // @ 0x00003640
-void mc68k_huffmanDecompress(int param_1,undefined4 param_2);  // @ 0x00003792
+short cm550_huffmanTreeBuilder(int param_1);  // @ 0x00003640
+void cm550_huffmanDecompress(int param_1,undefined4 param_2);  // @ 0x00003792
 void cm550_huffmanDecompressMain(void);  // @ 0x00003836
 void cm550_busyWaitDelayLoop(undefined4 param_1);  // @ 0x00003870
 byte mc68k_portPinTestSequence2(void);  // @ 0x0000388a
-void mc68k_FUN_0000395a(void);  // @ 0x0000395a
+void cm550_FUN_0000395a(void);  // @ 0x0000395a
 undefined4 mc68k_tpuAndQadcVerification(void);  // @ 0x000039a8
 void mc68k_hardwareInitAndStartup(void);  // @ 0x00003a94
 void mc68k_FUN_00003abe(void);  // @ 0x00003abe
-void mc68k_ramClearWithWatchdog(void);  // @ 0x00003c20
+void cm550_ramClearWithWatchdog(void);  // @ 0x00003c20
 uint cm550_FUN_0000ac3c(void);  // @ 0x0000ac3c
 void cm550_FUN_0000af70(void);  // @ 0x0000af70
 void cm550_writeHourMeterConversionData(void);  // @ 0x0000b130
@@ -107,12 +107,12 @@ void cm550_memoryPatchCountDecrement(void);  // @ 0x00010536
 uint vp44_rpmDerateCalculationController(void);  // @ 0x00010568
 ulonglong vp44_derateThresholdMonitorAndFaultController(void);  // @ 0x00010822
 void cm550_FUN_00010e06(void);  // @ 0x00010e06
-uint mc68k_calibrationDataCopyWithChecksum(void);  // @ 0x00010e80
-uint mc68k_calibrationDataCopySecondary(void);  // @ 0x00010f32
-undefined4 mc68k_eepromCalibrationWriteSecondary(void);  // @ 0x00010fe0
-undefined4 mc68k_FUN_0001125a(void);  // @ 0x0001125a
+uint cm550_calibrationDataCopyWithChecksum(void);  // @ 0x00010e80
+uint cm550_calibrationDataCopySecondary(void);  // @ 0x00010f32
+undefined4 cm550_eepromCalibrationWriteSecondary(void);  // @ 0x00010fe0
+undefined4 cm550_FUN_0001125a(void);  // @ 0x0001125a
 void vp44_validateRedundantSensors(void);  // @ 0x000114d4
-void mc68k_firmwareDataCopyToWorkingMemory(void);  // @ 0x000117ec
+void cm550_firmwareDataCopyToWorkingMemory(void);  // @ 0x000117ec
 undefined1 cm550_FUN_0001183e(void);  // @ 0x0001183e
 undefined1 default(void);  // @ 0x00011880
 uint cm550_waterInFuelDetectionStateInit(void);  // @ 0x0001188c
@@ -339,9 +339,9 @@ void cm550_diagnosticFuelLimitInterpolator(void);  // @ 0x0001c03c
 void cm550_FUN_0001c0d4(void);  // @ 0x0001c0d4
 void fuelTimingOilPressureModeController(void);  // @ 0x0001c152
 void cm550_FUN_0001c308(void);  // @ 0x0001c308
-undefined4 mc68k_flashEraseWithWatchdog(void);  // @ 0x0001c31a
+undefined4 cm550_flashEraseWithWatchdog(void);  // @ 0x0001c31a
 void cm550_FUN_0001c484(undefined4 param_1,undefined4 param_2);  // @ 0x0001c484
-undefined4 mc68k_flashProgramWordWithWatchdog(void);  // @ 0x0001c4ba
+undefined4 cm550_flashProgramWordWithWatchdog(void);  // @ 0x0001c4ba
 void cm550_flashProgramFromRam(int param_1,undefined4 param_2,uint param_3);  // @ 0x0001c5e8
 void cm550_diagnosticStatusDefaultSetter(void);  // @ 0x0001c630
 void cm550_diagnostic_parameter_handler(void);  // @ 0x0001c640
@@ -378,7 +378,7 @@ void cm550_subtractAndClampValue(short *param_1);  // @ 0x0001e02a
 void cm550_FUN_0001e04c(void);  // @ 0x0001e04c
 void cm550_serialNodeAddressChecker(undefined4 param_1);  // @ 0x0001e056
 void cm550_serialNodeAddressForwarder(undefined4 param_1);  // @ 0x0001e086
-undefined8 mc68k_FUN_0001e0fa(void);  // @ 0x0001e0fa
+undefined8 cm550_FUN_0001e0fa(void);  // @ 0x0001e0fa
 void cm550_canMessageInterruptHandlerSetup(void);  // @ 0x0001e1a0
 void cm550_emptyStubWrapper1(void);  // @ 0x0001e1ac
 void cm550_modeBasedDataDispatcherWrapper(void);  // @ 0x0001e1be
@@ -388,7 +388,7 @@ void mc68k_tpuTimerChannelEnable(void);  // @ 0x0001e266
 undefined8 mc68k_epsPositionSensorIsrHandler(void);  // @ 0x0001e288
 void cm550_tpuChannelIsrRegister(void);  // @ 0x0001e522
 uint serialTransmitHandler(void);  // @ 0x0001e52e
-void mc68k_FUN_0001e5f0(undefined4 param_1);  // @ 0x0001e5f0
+void cm550_FUN_0001e5f0(undefined4 param_1);  // @ 0x0001e5f0
 undefined8 cm550_interruptCounter1Increment(void);  // @ 0x0001e734
 undefined8 cm550_interruptCounter2Increment(void);  // @ 0x0001e76a
 void cm550_initVectorTable(void);  // @ 0x0001e77a
@@ -591,17 +591,17 @@ void cm550_FUN_00028978(void);  // @ 0x00028978
 void cm550_phase4InitSequence(void);  // @ 0x00028990
 void mc68k_dualCanControllerInit(void);  // @ 0x00028a04
 void initDiagnosticBufferPointers(void);  // @ 0x00028b80
-void mc68k_mainCanTransmissionLoop(void);  // @ 0x00028e32
+void cm550_mainCanTransmissionLoop(void);  // @ 0x00028e32
 undefined2 mc68k_FUN_00029130(void);  // @ 0x00029130
-short mc68k_FUN_0002c834(int param_1);  // @ 0x0002c834
-void mc68k_FUN_0002c986(int param_1,undefined4 param_2);  // @ 0x0002c986
+short cm550_FUN_0002c834(int param_1);  // @ 0x0002c834
+void cm550_FUN_0002c986(int param_1,undefined4 param_2);  // @ 0x0002c986
 void cm550_FUN_0002ca2a(void);  // @ 0x0002ca2a
 void cm550_FUN_0002ca64(undefined4 param_1);  // @ 0x0002ca64
 byte mc68k_FUN_0002ca7e(void);  // @ 0x0002ca7e
-void mc68k_FUN_0002cb4e(void);  // @ 0x0002cb4e
+void cm550_FUN_0002cb4e(void);  // @ 0x0002cb4e
 undefined4 mc68k_FUN_0002cb9c(void);  // @ 0x0002cb9c
 void mc68k_FUN_0002cc88(void);  // @ 0x0002cc88
-void mc68k_FUN_0002ce14(void);  // @ 0x0002ce14
+void cm550_FUN_0002ce14(void);  // @ 0x0002ce14
 void cm550_FUN_0002ce64(void);  // @ 0x0002ce64
 void cm550_FUN_0002cf52(undefined1 *param_1,undefined4 param_2);  // @ 0x0002cf52
 uint cm550_FUN_0002cf7e(undefined4 param_1);  // @ 0x0002cf7e
@@ -625,7 +625,7 @@ uint oilPressureRpmFaultMonitor(void);  // @ 0x0002dde8
 uint mc68k_waterInFuelDiagnosticHandler(void);  // @ 0x0002e2f4
 uint mc68k_pwmFuelDemandOutputCalculator(void);  // @ 0x0002e5c0
 void initQadcModule(void);  // @ 0x0002e95e
-void mc68k_clearWorkingMemory(void);  // @ 0x0002e9ac
+void cm550_clearWorkingMemory(void);  // @ 0x0002e9ac
 void cm550_canMemoryPointerTableInit(void);  // @ 0x0002e9f8
 void cm550_canMessageMemorySyncController(void);  // @ 0x0002eadc
 void cm550_FUN_0002ec50(void);  // @ 0x0002ec50
@@ -766,8 +766,8 @@ void mc68k_pwmTimerMode1ChannelSetup(void);  // @ 0x0003480e
 void mc68k_pwmTimerMode1Update(void);  // @ 0x0003494a
 void mc68k_pwmTimerModeDispatcher(void);  // @ 0x00034a82
 undefined8 mc68k_pwmTimerCycleAdvance(void);  // @ 0x00034b20
-void mc68k_watchdogServiceLoop(undefined4 param_1);  // @ 0x00034bba
-void mc68k_FUN_00034bf8(undefined4 param_1);  // @ 0x00034bf8
+void cm550_watchdogServiceLoop(undefined4 param_1);  // @ 0x00034bba
+void cm550_FUN_00034bf8(undefined4 param_1);  // @ 0x00034bf8
 ushort vp44FaultRegisterBit2Monitor(void);  // @ 0x00034c36
 void vp44_liftPumpFuelDeliveryController(void);  // @ 0x00034cc4
 void vp44_FUN_00034d52(void);  // @ 0x00034d52
