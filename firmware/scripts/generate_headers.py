@@ -229,13 +229,83 @@ def generate_types_header(output_dir):
 
 
 # ---------------------------------------------------------------------------
-# Task 3 stub: firmware_globals.hpp
+# Task 3: firmware_globals.hpp
 # ---------------------------------------------------------------------------
 
+GLOBALS_TYPE_MAP = {
+    'undefined':   'undefined',
+    'undefined1':  'undefined1',
+    'undefined2':  'undefined2',
+    'undefined4':  'undefined4',
+    'byte':        'byte',
+    'short':       'short',
+    'ushort':      'ushort',
+    'int':         'int',
+    'uint':        'uint',
+    'word':        'word',
+    'dword':       'dword',
+    'pointer':     'void *',
+    'undefined *': 'undefined *',
+}
+
+GLOBALS_HEADER_PREAMBLE = """\
+#pragma once
+#include "firmware_types.hpp"
+
+// Global Variable Declarations (from global_variables.csv)
+// Ghidra artifact entries (switchD, caseD_, etc.) are excluded.
+"""
+
+# Exact names that are Ghidra artifacts and must be excluded
+_GLOBALS_EXCLUDE_EXACT = {'switchD', 'default', ''}
+
+def _is_globals_artifact(name):
+    """Return True if the name is a Ghidra artifact that should be excluded."""
+    if name in _GLOBALS_EXCLUDE_EXACT:
+        return True
+    if name.startswith('caseD_'):
+        return True
+    if name.startswith('switchdataD_'):
+        return True
+    return False
+
+
+def _map_globals_type(raw_type):
+    """Map a CSV type string to a C type for globals declarations."""
+    raw_type = raw_type.strip()
+    if not raw_type:
+        return 'undefined'
+    return GLOBALS_TYPE_MAP.get(raw_type, raw_type)
+
+
 def generate_globals_header(output_dir):
-    """Stub: generate firmware_globals.hpp."""
-    content = '#pragma once\n/* TODO: global variable declarations */\n'
-    stats = {'globals': 0}
+    """
+    Generate firmware_globals.hpp from global_variables.csv.
+
+    Returns (content_str, stats_dict).
+    """
+    csv_path = os.path.join(output_dir, 'global_variables.csv')
+    rows = read_csv_skip_comments(csv_path)
+
+    lines = [GLOBALS_HEADER_PREAMBLE]
+    declared = 0
+    excluded = 0
+
+    for row in rows:
+        name    = row.get('name', '').strip()
+        address = row.get('address', '').strip()
+        raw_type = row.get('type', '').strip()
+
+        if _is_globals_artifact(name):
+            excluded += 1
+            continue
+
+        c_type = _map_globals_type(raw_type)
+        lines.append(f'extern {c_type} {name};  // {address}')
+        declared += 1
+
+    content = '\n'.join(lines) + '\n'
+    stats = {'declared': declared, 'excluded': excluded}
     return content, stats
 
 
@@ -315,7 +385,7 @@ def main():
     # --- firmware_globals.hpp ------------------------------------------------
     print("\n[2/3] Generating firmware_globals.hpp ...")
     globals_content, globals_stats = generate_globals_header(output_dir)
-    print(f"      Globals: {globals_stats['globals']} (stub)")
+    print(f"      Globals: {globals_stats['declared']} declared, {globals_stats['excluded']} excluded")
 
     globals_path = os.path.join(header_dir, 'firmware_globals.hpp')
     if args.dry_run:
