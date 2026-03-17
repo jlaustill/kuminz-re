@@ -137,6 +137,35 @@ def parse_functions(filepath):
     return functions
 
 
+def load_name_maps(csv_paths):
+    """Load name-map CSVs and build overlay dicts.
+
+    Returns:
+        name_overlay: dict of old_name -> new_name (for callee substitution)
+        addr_overlay: dict of address -> new_name (for function name overlay)
+    """
+    name_overlay = {}
+    addr_overlay = {}
+    for csv_path in csv_paths:
+        with open(csv_path, 'r') as f:
+            for line in f:
+                line = line.strip()
+                if line.startswith('#') or line.startswith('address') or not line:
+                    continue
+                parts = line.split(',', 1)
+                if len(parts) >= 2:
+                    addr = parts[0].strip()
+                    name = parts[1].strip()
+                    addr_overlay[addr] = name
+                    # Build FUN_xxxxxxxx -> name mapping from address
+                    # Address format: 0x00xxxxxx -> FUN_00xxxxxx
+                    if addr.startswith('0x'):
+                        fun_name = 'FUN_' + addr[2:]
+                        if fun_name != name:
+                            name_overlay[fun_name] = name
+    return name_overlay, addr_overlay
+
+
 def load_global_names(output_dir):
     """Load named global variables from global_variables.csv."""
     csv_path = os.path.join(output_dir, 'global_variables.csv')
@@ -165,7 +194,7 @@ def load_global_names(output_dir):
 # Feature extraction
 # ---------------------------------------------------------------------------
 
-def extract_features(name, address, body, shared_globals):
+def extract_features(name, address, body, shared_globals, name_overlay=None):
     """Extract fingerprint features from a function body."""
     feat = FunctionFeatures(name=name, address=address)
 
@@ -200,6 +229,9 @@ def extract_features(name, address, body, shared_globals):
         # Skip DAT_/Ram/USIU references that look like function calls
         if callee.startswith(('DAT_', '_DAT_', 'Ram', 'USIU_', 'UNK_')):
             continue
+        # Apply name overlay: substitute mapped name for callee matching
+        if name_overlay and callee in name_overlay:
+            callee = name_overlay[callee]
         feat.callees.add(callee)
 
     # --- Structure ---
@@ -347,6 +379,8 @@ def main():
                         help='Output CSV path')
     parser.add_argument('--min-score', type=int, default=15,
                         help='Minimum score to include')
+    parser.add_argument('--name-map', action='append', default=[],
+                        help='function_renames.csv files for name overlay (can repeat)')
     args = parser.parse_args()
 
     # --- Load functions ---
@@ -361,6 +395,15 @@ def main():
     cm848_raw = parse_functions(cm848_cpp)
     print(f"  {len(cm848_raw)} functions")
 
+    # --- Load name maps ---
+    name_overlay = None
+    addr_overlay = None
+    if args.name_map:
+        print(f"Loading name maps: {args.name_map}")
+        name_overlay, addr_overlay = load_name_maps(args.name_map)
+        print(f"  Name overlay entries: {len(name_overlay)}")
+        print(f"  Address overlay entries: {len(addr_overlay)}")
+
     # --- Load shared globals ---
     cm550_globals = load_global_names(args.cm550_dir)
     cm848_globals = load_global_names(args.cm848_dir)
@@ -371,11 +414,16 @@ def main():
     print("Extracting features...")
     cm550_feats = []
     for name, addr, body in cm550_raw:
-        cm550_feats.append(extract_features(name, addr, body, shared_globals))
+        # Apply name overlay to function name itself
+        overlaid_name = addr_overlay.get(addr, name) if addr_overlay else name
+        cm550_feats.append(extract_features(overlaid_name, addr, body, shared_globals,
+                                            name_overlay))
 
     cm848_feats = []
     for name, addr, body in cm848_raw:
-        cm848_feats.append(extract_features(name, addr, body, shared_globals))
+        overlaid_name = addr_overlay.get(addr, name) if addr_overlay else name
+        cm848_feats.append(extract_features(overlaid_name, addr, body, shared_globals,
+                                            name_overlay))
 
     # --- Build frequency maps ---
     print("Building frequency maps...")
