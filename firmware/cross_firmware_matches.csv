@@ -1,5 +1,4 @@
 cm550_addr,cm550_name,cm848_addr,cm848_name,score,evidence,action
-0x00032c7a,vp44Message300FaultFlagProcessor,0x00536de0,evaluateBoostControlAuthority,43,rare_const:0x29;common_const:9;jaccard:0.15;struct:similar,rename_both:vp44Message300FaultFlagProcessor
 0x000138b6,FUN_000138b6,0x00014304,setFuelStatusFlags,29,common_const:3;jaccard:1.00,review
 0x000159ee,ioDriverStrobeHandler,0x0051931c,processDisplayCommandState,29,common_const:7;jaccard:0.29;struct:similar,review
 0x0001ce58,FUN_0001ce58,0x0001f318,initProtectionStateWithFuelDemand,29,common_const:2;jaccard:1.00;struct:similar,review
