@@ -117,10 +117,10 @@ address,name
 0x00014dc6,faultFlagScannerAndProcessor
 0x00014f42,insitePidDtcHandler
 0x00014fae,initHourMeterSystem
-0x00014fca,sampleDiscreteInputPins
+0x00014fca,injectorTimingCalculation
 0x000159ee,ioDriverStrobeHandler
 0x00015dd0,initVP44StatusMonitoring
-0x00015e06,initCANBus
+0x00015e06,clearModuleSyncFlag
 0x00015f8c,emptyStubFunction4
 0x00015f8e,diagnosticCommandDispatcher
 0x0001645e,safeDivideWithClamp
@@ -463,7 +463,7 @@ address,name
 0x000323be,engineCoolantPGN_65226_Builder
 0x0003241c,previousDtcListBuilder
 0x0003252c,diagnosticDM2PGN_65227_Builder
-0x0003258a,buildCanMessage
+0x0003258a,evaluateTemperatureDiagnosticState
 0x000329d2,diagnosticDM4PGN_65229_Builder
 0x00032a42,diagnosticDM5DataBuilder
 0x00032ae2,diagnosticDM5PGN_65230_Builder
@@ -530,3 +530,4 @@ address,name
 0x0000b7bc,validateServiceDataLength
 0x0002fcdc,sensorRangeValidation
 0x00033692,initFaultTimerMessage
+0x00023be8,diagnosticMainStateProcessor

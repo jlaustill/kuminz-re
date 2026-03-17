@@ -1856,7 +1856,7 @@ address,name
 0x00508b8c,setFuelEfficiencyTrimFlag
 0x00508bb8,clearBoostRequestFlag
 0x00508bd0,evaluateBoundaryCondition
-0x00508c10,recordEventToBuffer
+0x00508c10,protectionStateProcessor
 0x00508da8,protectionStateValidator
 0x00508de8,clearSensorChannelFaultBits
 0x00508e78,updateSensorBitmapAndPointer
@@ -2544,7 +2544,7 @@ address,name
 0x005366b8,getDiagnosticStatus
 0x005367cc,validateCalibrationLookup
 0x00536958,resetStateVariable
-0x00536de0,evaluateBoostControlAuthority
+0x00536de0,vp44Message300FaultFlagProcessor
 0x00536e4c,processBoostDiagnosticFlags
 0x005371f4,validateCalibrationParameters
 0x0053729c,emptyStub_boostControl
