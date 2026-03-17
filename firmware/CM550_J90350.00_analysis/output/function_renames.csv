@@ -1,3 +1,10 @@
+# Hardware/state functions
+# Scheduler common task - called every phase (40 phases per cycle)
+# CM848 equivalent: phase_common_processing
+# Periodic task sets - CM848 equivalent: periodicTaskGroup*
+# Utility functions - matched with CM848 naming
+# Math utility functions
+# CM848 equivalent: mathMultiplyDivide32
 address,name
 0x00003640,huffmanTreeBuilder
 0x00003792,huffmanDecompress
@@ -51,7 +58,6 @@ address,name
 0x0000d584,diagnosticState7Setter
 0x0000d59e,fuelBlendTablePointerSetup
 0x0000d5e6,initBoostProtectionSystem
-# Hardware/state functions
 0x0000e780,clearKickdownControlState
 0x0000e97e,vp44ControlVariablesReset
 0x0000eaec,insiteParameterTableIterator
@@ -161,7 +167,7 @@ address,name
 0x00018cb6,protectionState1DiagnosticValidator
 0x00018dae,protectionUpdateHandler
 0x00018f4c,protectionThresholdPointerInit
-0x00018f86,protectionStateUpdater
+0x00018f86,incrementDiagnosticCounters
 0x000192f2,protectionCalculationHelper
 0x00019332,protectionStateProcessor
 0x00019436,protectionStateValidator
@@ -186,8 +192,6 @@ address,name
 0x0001b39a,dutyCycleMonitorBufferInit
 0x0001b40c,phase2_slot_1_handler
 0x0001b4c2,phase2_slot_8_handler
-# Scheduler common task - called every phase (40 phases per cycle)
-# CM848 equivalent: phase_common_processing
 0x0001b4d0,ioDriverStrobeHandlerWrapper
 0x0001b4d8,evenPhaseSchedulerTaskSet
 0x0001b4ea,diagnosticMonitoringCoordinator
@@ -196,7 +200,6 @@ address,name
 0x0001b518,vp44_engine_management_system
 0x0001b558,vp44ControlSystemCoordinator
 0x0001b56a,slowCycle10Coordinator
-# Periodic task sets - CM848 equivalent: periodicTaskGroup*
 0x0001b572,periodicTaskSet_governorProtection
 0x0001b57e,engine_control_cycle
 0x0001b5b4,slowCycle20ExtendedCoordinator
@@ -249,7 +252,6 @@ address,name
 0x0001dbee,main
 0x0001dcfc,vp44ControlStructureInit
 0x0001dd2c,diagnosticBufferPointerInit
-# Utility functions - matched with CM848 naming
 0x0001e02a,subtractAndClampValue
 0x0001e056,serialNodeAddressChecker
 0x0001e086,serialNodeAddressForwarder
@@ -268,7 +270,7 @@ address,name
 0x0001e77a,initVectorTable
 0x0001e79a,insiteMultiFrameResponseBuilder
 0x0001e89e,insiteMultiFrameContinuation
-0x0001e956,insiteLiveDataHandler
+0x0001e956,buildPgn65228Dm3ClearInitMessage
 0x0001eb88,responseBufferSpaceCheck
 0x0001ec08,responseBufferFinalize
 0x0001ec3c,diagnosticMemoryWriteHandler
@@ -339,7 +341,7 @@ address,name
 0x00023920,phase3_countdown_timer_manager
 0x000239d2,diagnosticStateInitializer
 0x00023a3c,ioControlEntryRemove
-0x00023a90,lampDriverOutputDispatcher
+0x00023a90,processProtectionFlagConditions
 0x00024812,iahDisableWaitToStartLamp
 0x0002481e,initIoControlRegister
 0x0002482e,ioControlMaskInit
@@ -380,7 +382,7 @@ address,name
 0x00026ab8,rpmLoadParameterLookup
 0x00026b00,vp44OperatingConditionChecker
 0x00026c7e,pwmOutputInit
-0x00026cc8,fuelSmokeLimiterCalculator
+0x00026cc8,calculateSpeedRatioComponent
 0x00026eec,insiteActiveFaultListBuilder
 0x00026fea,insiteFaultDetailBuilder
 0x0002758e,insiteVersionInfoBuilder
@@ -395,7 +397,7 @@ address,name
 0x00028936,shutdownMinimumSelectorOrchestrator
 0x00028990,phase4InitSequence
 0x00028a04,dualCanControllerInit
-0x00028b80,canTransmissionScheduler
+0x00028b80,initDiagnosticBufferPointers
 0x00028e32,mainCanTransmissionLoop
 0x0002d09e,systemControl64
 0x0002d1c2,systemControl74
@@ -410,7 +412,7 @@ address,name
 0x0002dde8,oilPressureRpmFaultMonitor
 0x0002e2f4,waterInFuelDiagnosticHandler
 0x0002e5c0,pwmFuelDemandOutputCalculator
-0x0002e95e,initQADC
+0x0002e95e,initQadcModule
 0x0002e9ac,clearWorkingMemory
 0x0002e9f8,canMemoryPointerTableInit
 0x0002eadc,canMessageMemorySyncController
@@ -457,7 +459,7 @@ address,name
 0x000320f6,engineSerialNumberPGN_65259_Builder
 0x0003216a,diagnosticMultiPacketResponseBuilder
 0x00032244,diagnosticDM11PGN_65234_Builder
-0x000322ae,activeDtcListBuilder
+0x000322ae,j1939HandlePgn65226Dm1ActiveDtc
 0x000323be,engineCoolantPGN_65226_Builder
 0x0003241c,previousDtcListBuilder
 0x0003252c,diagnosticDM2PGN_65227_Builder
@@ -509,8 +511,22 @@ address,name
 0x00034e9a,exponentialMovingAverage
 0x00034f00,unsignedLinearInterpolation
 0x00034f8a,coreTableInterpolation
-# Math utility functions
-# CM848 equivalent: mathMultiplyDivide32
 0x00035064,scaleByRatio
 0x00035076,scaleByRatioSigned
 0x00035088,tableLookup2D
+0x00032c76,j1939GetEngineStateCode
+0x0001b876,main_loop
+0x0000d610,updateEngineSyncStatus
+0x00032e4c,j1939HandlePgn61443Eec2
+0x0002f632,j1939FormatMultiFrameResponse
+0x0002d3c6,initProtectionParamCalculation
+0x00018fcc,processDiagnosticLimitStatus
+0x00026b88,hpcr_injectorPulseWidthCalc
+0x0003320e,faultTimerHandler
+0x00031c84,j1939HandlePgn65265CruiseVehicleSpeed
+0x00031fee,initPgn65261CruiseControlSetupStruct
+0x00031f30,j1939HandlePgn65261CruiseControlSetup
+0x0001d392,selectSensorRawChannels
+0x0000b7bc,validateServiceDataLength
+0x0002fcdc,sensorRangeValidation
+0x00033692,initFaultTimerMessage
