@@ -150,18 +150,42 @@ short huffmanTreeBuilder(int param_1)
 
 ### Function Signature Extraction
 
-Parse each function header from the `.ghidra.cpp`:
+Parse each function header from the `.ghidra.cpp`. Ghidra's decompiled output has this structure:
+
 ```
+//
+// Function: <name> @ <addr>
+//
+
+[optional WARNING comment lines]
+
 <return_type> <name>(<params>)
+
+{
 ```
 
-The decompiled output always has the signature on its own line(s) between the `//` comment and the `{`. Regex: capture everything between the `//\n\n` and the first `\n{` as the signature.
+The signature parser must:
+1. Skip `/* WARNING: ... */` lines between the `//` block and the signature
+2. Handle multi-line signatures (Ghidra wraps long parameter lists)
+3. Capture everything from the first non-comment, non-blank line after `//` through the line before `{`
 
-### Handling Duplicates and Conflicts
+Regex pattern (multiline): `^//\n\n(?:/\*.*?\*/\n\n)?(.*?)\n\n\{` with `re.DOTALL`.
 
-- Variables with `_` prefix (overlapping symbols) are included with a comment noting the overlap
-- `switchD`/`caseD_`/`default` entries are excluded from `firmware_globals.hpp` (Ghidra artifacts)
-- Hardware register names (e.g., `USIU_PLPRCR`, `Ram002fc280`) are included as-is — they'll eventually get proper `#define` mappings in `firmware_types.hpp`
+### Filtering Ghidra Artifacts from globals.hpp
+
+The following entries in `global_variables.csv` are Ghidra artifacts and must be **excluded** from `firmware_globals.hpp`:
+
+| Pattern | Example | Reason |
+|---------|---------|--------|
+| `switchD` | `switchD` | Jump table metadata |
+| `caseD_*` | `caseD_54` | Switch case labels |
+| `switchdataD_*` | `switchdataD_0000f054` | Switch table data |
+| `default` | `default` | Default case labels |
+
+These are included:
+- Variables with `_` prefix (overlapping symbols) — included with a comment noting the overlap
+- Hardware register names (e.g., `USIU_PLPRCR`, `Ram002fc280`) — included as-is, will get proper `#define` mappings later
+- All named variables regardless of type quality (even bare `undefined`)
 
 ---
 
@@ -179,6 +203,21 @@ A Python script that compares every function in CM550 against every function in 
 - "Rare" = appears in fewer than 5 functions per firmware
 - Two functions sharing 3+ rare constants are almost certainly the same function
 - Cummins-specific values: scaling factors, PGN IDs, timer presets, table sizes
+
+**Address-range exclusions** — constants falling in memory-mapped regions are architecture-specific addresses, not algorithm constants, and must be excluded from fingerprinting:
+
+| Range | Firmware | What It Is |
+|-------|----------|------------|
+| `0x00000000-0x0006FFFF` | Both | ROM (overlapping ranges) |
+| `0x00500000-0x0053DFFF` | CM848 | Bank 2 Flash |
+| `0x003F0000-0x0043FFFF` | CM848 | RAM (includes ROM-to-RAM copy region) |
+| `0x00800000-0x0080FFFF` | CM550 | RAM |
+| `0x008091C2-0x0080FFFF` | CM550 | Extended RAM |
+| `0x01000000-0x01000FFF` | Both | EEPROM |
+| `0x002F0000-0x00310000` | CM848 | MPC555 hardware registers |
+| `0x00FF0000-0x00FFFFFF` | CM550 | MC68336 hardware registers |
+
+**Keep** constants in `0x0000-0x2FFFF` that don't fall in ROM function address ranges — these are typically algorithm constants, scaling factors, bit masks, and protocol IDs.
 
 **Signal 2: Shared callee names (high weight)**
 - Extract all function calls from each body
@@ -213,11 +252,28 @@ Thresholds:
 ### Output
 
 ```
-output/cross_firmware_matches.csv:
+firmware/cross_firmware_matches.csv:
 cm550_addr,cm550_name,cm848_addr,cm848_name,score,evidence,action
-0x0000bcf0,initADCChannelConfiguration,0x00052abc,initQadcModule,45,"rare_const:0x1100+0x81f7 callees:initQADC",rename_cm550
-0x00032c76,FUN_00032c76,0x00041234,j1939GetEngineStateCode,32,"rare_const:0xf2+0xf4 structure:similar",name_cm550
+0x0000bcf0,initADCChannelConfiguration,0x00052abc,initQadcModule,45,"rare_const:0x1100+0x81f7 callees:initQADC",rename_both:initQadcModule
+0x00032c76,FUN_00032c76,0x00041234,j1939GetEngineStateCode,32,"rare_const:0xf2+0xf4 structure:similar",name_cm550:j1939GetEngineStateCode
 ```
+
+**Action column semantics:**
+- `rename_both:<name>` — Both firmwares adopt `<name>` (best name wins)
+- `rename_cm550:<name>` — CM550 function renamed to match CM848's name
+- `rename_cm848:<name>` — CM848 function renamed to match CM550's name
+- `name_cm550:<name>` — Unnamed CM550 FUN_ gets a name from CM848
+- `name_cm848:<name>` — Unnamed CM848 FUN_ gets a name from CM550
+- `review` — Medium confidence, needs human review before action
+
+**Location:** `firmware/cross_firmware_matches.csv` (spans both firmwares, lives at firmware/ root).
+
+### Name Collision Detection
+
+Before applying any rename, the apply script must:
+1. Check the target CSV for existing entries with the proposed name
+2. If collision found: flag as `conflict` in the output, do not auto-apply
+3. Report all conflicts for human resolution
 
 ### Script Location
 
@@ -247,9 +303,17 @@ Round 2: More matches found (call graph is richer)
 Round N: Diminishing returns → stop
 ```
 
+### Optimization: In-Memory Name Propagation
+
+Each Ghidra import/export cycle takes minutes per firmware. To avoid 4-8 Ghidra runs during bootstrapping, the fingerprint script can maintain an in-memory name mapping that propagates between rounds. Only do the final Ghidra import/export once after convergence plateaus. The script re-reads the `.ghidra.cpp` files but substitutes known matched names when computing call graph signals.
+
 ### Convergence Criteria
 
 Stop iterating when a round produces fewer than 5 new high-confidence matches or when all high-confidence matches fall below the threshold.
+
+### Note on CM848 Bank 2
+
+The `cm848_rom.ghidra.cpp` includes 844 Bank 2 functions (`0x005xxxxx`). These are utility functions (sensor processing, math, CAN helpers) — many are likely shared with CM550 equivalents and are good fingerprinting targets.
 
 ### Automation
 
@@ -285,8 +349,8 @@ After convergence plateaus, classify all remaining unmatched functions and varia
 | CM848-only, HPCR-related | `hpcr_` | `hpcr_calculateRailPressure` |
 | CM550-only, MC68336 hardware | `mc68k_` | `mc68k_tpuChannelInit` |
 | CM848-only, MPC555 hardware | `mpc555_` | `mpc555_qadcConversionTrigger` |
-| CM550-only, generic/unknown | `vp44_` | Default for CM550-unique code |
-| CM848-only, generic/unknown | `hpcr_` | Default for CM848-unique code |
+| CM550-only, generic/unknown | `cm550_` | Unique to CM550, reason unknown |
+| CM848-only, generic/unknown | `cm848_` | Unique to CM848, reason unknown |
 | Bank 2 utility functions | (no prefix) | These are shared utilities, just in a different flash bank |
 
 ### Detection Heuristics
@@ -332,7 +396,7 @@ After convergence plateaus, classify all remaining unmatched functions and varia
 | `output/firmware_types.hpp` | Per-firmware type definitions |
 | `output/firmware_globals.hpp` | Per-firmware global declarations |
 | `output/firmware_functions.hpp` | Per-firmware function forward decls |
-| `output/cross_firmware_matches.csv` | Match results (in firmware/ root) |
+| `firmware/cross_firmware_matches.csv` | Match results (firmware/ root, spans both) |
 
 ### Modified Files
 | File | Change |
@@ -342,9 +406,19 @@ After convergence plateaus, classify all remaining unmatched functions and varia
 | `output/global_variables.csv` | Converged names (phases 2-4) |
 | `firmware/feature_comparison.csv` | Filled in from match data |
 
+## Validation Gates
+
+Each phase has a concrete validation step before proceeding:
+
+**Phase 1:** Run `gcc -fsyntax-only -c <firmware>.ghidra.cpp` — expect only type errors and undefined references, not syntax errors. All function signatures and global declarations must parse. Count of syntax errors = 0 is the gate.
+
+**Phase 2/3:** For each round of applied matches, spot-check 10% of high-confidence matches by reading both function bodies side by side. If any false positive is found in the spot check, tighten the confidence threshold and re-run.
+
+**Phase 4:** After prefix application, verify no name collisions exist: `sort function_renames.csv | uniq -d` on the name column must be empty for both firmwares.
+
 ## Risks
 
 - **False positive matches**: Mitigated by confidence scoring and human review for medium-confidence matches
 - **Ghidra decompiler quirks**: MC68336 and PowerPC decompilers produce different idioms for the same patterns. Constants are reliable; structural features less so.
-- **Address constants as false fingerprints**: Constants in the 0x10000-0x30000 range could be either algorithm constants or relocated addresses. The script must filter aggressively.
+- **Address constants as false fingerprints**: Mitigated by explicit per-firmware address-range exclusion lists (see Phase 2 Signal 1).
 - **Type incompatibility**: The `.hpp` won't compile initially due to `undefined` types and missing pointer information. This is expected and will resolve as typing progresses.
