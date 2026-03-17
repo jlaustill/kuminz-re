@@ -121,6 +121,8 @@ def field_declaration(field_name, c_type, size):
 TYPE_ALIAS_PREAMBLE = """\
 #pragma once
 #include <stdint.h>
+
+// Ghidra primitive type aliases
 typedef uint8_t   undefined;
 typedef uint8_t   undefined1;
 typedef uint16_t  undefined2;
@@ -132,6 +134,18 @@ typedef uint32_t  uint;
 typedef uint16_t  word;
 typedef uint32_t  dword;
 typedef int32_t   bool32;
+
+// Ghidra CONCATxy macros — concatenate x bytes of a with y bytes of b
+// e.g. CONCAT22(hi16, lo16) produces a 32-bit value
+#define CONCAT11(a, b) ((uint16_t)((uint16_t)((uint8_t)(a)) << 8 | (uint16_t)((uint8_t)(b))))
+#define CONCAT12(a, b) ((uint32_t)((uint32_t)((uint8_t)(a)) << 16 | (uint32_t)((uint16_t)(b))))
+#define CONCAT13(a, b) ((uint32_t)((uint32_t)((uint8_t)(a)) << 24 | (uint32_t)(b) & 0xFFFFFF))
+#define CONCAT14(a, b) ((uint64_t)((uint64_t)((uint8_t)(a)) << 32 | (uint64_t)((uint32_t)(b))))
+#define CONCAT21(a, b) ((uint32_t)((uint32_t)((uint16_t)(a)) << 8 | (uint32_t)((uint8_t)(b))))
+#define CONCAT22(a, b) ((uint32_t)((uint32_t)((uint16_t)(a)) << 16 | (uint32_t)((uint16_t)(b))))
+#define CONCAT24(a, b) ((uint64_t)((uint64_t)((uint16_t)(a)) << 32 | (uint64_t)((uint32_t)(b))))
+#define CONCAT31(a, b) ((uint32_t)((uint32_t)(a) << 8 | (uint32_t)((uint8_t)(b))))
+#define CONCAT44(a, b) ((uint64_t)((uint64_t)((uint32_t)(a)) << 32 | (uint64_t)((uint32_t)(b))))
 """
 
 
