@@ -2,6 +2,10 @@
 // Generated: Sat Mar 07 12:07:45 MST 2026
 
 
+#include "firmware_types.hpp"
+#include "firmware_globals.hpp"
+#include "firmware_functions.hpp"
+
 //
 // Function: huffmanTreeBuilder @ 0x00003640
 //

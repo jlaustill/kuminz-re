@@ -418,9 +418,39 @@ def generate_functions_header(output_dir):
 # Task 5 stub: prepend #includes to .ghidra.cpp
 # ---------------------------------------------------------------------------
 
+INCLUDE_BLOCK = """\
+#include "firmware_types.hpp"
+#include "firmware_globals.hpp"
+#include "firmware_functions.hpp"
+"""
+
+
 def prepend_includes(ghidra_cpp_path, dry_run=False):
-    """Stub: prepend #include directives to .ghidra.cpp."""
-    return {'prepended': False}
+    """Add #include lines to .ghidra.cpp after the header comments.
+
+    Idempotent — skips if includes are already present.
+    Returns dict with 'prepended' bool.
+    """
+    with open(ghidra_cpp_path) as f:
+        content = f.read()
+
+    if '#include "firmware_types.hpp"' in content:
+        print(f"\n      Includes already present in {os.path.basename(ghidra_cpp_path)}")
+        return {'prepended': False}
+
+    # Insert after the "// Generated: ..." line + blank lines
+    match = re.search(r'(// Generated:.*?\n)\n+', content)
+    if match:
+        insert_pos = match.end()
+        new_content = content[:insert_pos] + INCLUDE_BLOCK + '\n' + content[insert_pos:]
+    else:
+        new_content = INCLUDE_BLOCK + '\n' + content
+
+    if not dry_run:
+        with open(ghidra_cpp_path, 'w') as f:
+            f.write(new_content)
+        print(f"\n      Added #include block to {os.path.basename(ghidra_cpp_path)}")
+    return {'prepended': True}
 
 
 # ---------------------------------------------------------------------------
@@ -500,10 +530,10 @@ def main():
         write_file(functions_path, functions_content)
         print(f"      Written: {functions_path}")
 
-    # --- prepend_includes (stub) ---------------------------------------------
+    # --- prepend #includes ----------------------------------------------------
     prepend_result = prepend_includes(ghidra_cpp, dry_run=args.dry_run)
-    if args.dry_run:
-        print(f"\n[stub] prepend_includes: would modify {os.path.basename(ghidra_cpp)}")
+    if args.dry_run and prepend_result['prepended']:
+        print(f"\n      (dry-run) Would add #include block to {os.path.basename(ghidra_cpp)}")
 
     print("\nDone.")
 

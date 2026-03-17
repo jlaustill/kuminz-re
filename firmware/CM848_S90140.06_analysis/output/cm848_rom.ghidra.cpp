@@ -2,6 +2,10 @@
 // Generated: Sat Mar 07 12:13:13 MST 2026
 
 
+#include "firmware_types.hpp"
+#include "firmware_globals.hpp"
+#include "firmware_functions.hpp"
+
 //
 // Function: reset_vector @ 0x00000100
 //
