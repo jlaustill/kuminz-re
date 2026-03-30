@@ -1,0 +1,237 @@
+<!-- XDF Definition File for CM848D (2004.5 Dodge 5.9L Cummins) MAP Sensor -->
+<!-- Generated from firmware reverse engineering of S90140.06 -->
+<!-- For use with TunerPro / HP Tuners -->
+<!--
+  ADDRESS SPACE: These are physical ROM addresses matching the HP Tuners BIN.
+  Allowed ranges: 0x040000-0x06E78B, 0x06E7B3-0x06FC64, 0x500000-0x53EA6E
+
+  All data is big-endian (MSB first) per MPC555 architecture.
+  All pressure values scale: raw x 0.0159064138077 = IN_HG
+
+  Calterm uses logical EEPROM addresses (0x011xxxxx) that do NOT appear in the
+  HP Tuners BIN. The physical data lives in ROM at the addresses below.
+
+  NOTE: The AFC fuel limiting table (AFFLLMZA) and some BIR thresholds use
+  indirect pointer structures in firmware. Their ROM addresses have not yet
+  been traced. Only confirmed ROM addresses are included in this XDF.
+-->
+<XDFFORMAT version="1.60">
+
+  <XDFHEADER>
+    <flags>0x1</flags>
+    <deftitle>CM848D S90140.06 - MAP Sensor Calibration</deftitle>
+    <description>Boost/MAP sensor linearization tables and turbo diagnostic thresholds for the 2004.5 Dodge Cummins 5.9L HPCR (CM848D ECU).&#013;&#010;&#013;&#010;Firmware: S90140.06 (MPC555 PowerPC)&#013;&#010;Calibration: V11.46.06&#013;&#010;&#013;&#010;Derived from reverse engineering of ROM sensor channel 3 config at 0x0005936a.&#013;&#010;Table size: 8 breakpoints per axis (confirmed from ROM byte count word 0x0010 = 16 bytes).&#013;&#010;&#013;&#010;Addresses are physical ROM offsets matching the HP Tuners BIN file.</description>
+    <BASEOFFSET offset="0" subtract="0" />
+    <DEFAULTS datasizeinbits="16" sigdigits="4" outputtype="1" signed="0" lsbfirst="0" float="0" />
+    <REGION type="0xFFFFFFFF" startaddress="0x0" size="0x53FFFF" regionflags="0x0" name="CM848D ROM + Flash2" desc="Bank 1 ROM (0x000000-0x06FFFF) + Bank 2 Flash (0x500000-0x53FFFF)" />
+  </XDFHEADER>
+
+  <!-- ================================================================== -->
+  <!-- CATEGORY DEFINITIONS                                               -->
+  <!-- ================================================================== -->
+  <XDFCATEGORY index="0" name="MAP Sensor - Linearization" />
+  <XDFCATEGORY index="1" name="Turbo Boost Diagnostics" />
+
+  <!-- ================================================================== -->
+  <!-- MAP SENSOR LINEARIZATION TABLES (ADC -> Pressure)                  -->
+  <!-- ROM sensor channel 3 config at 0x0005936a                          -->
+  <!-- X-axis ROM data: 0x0005937A (byte count) + 0x0005937C (8 values)   -->
+  <!-- Y-axis ROM data: 0x0005938C (byte count) + 0x0005938E (8 values)   -->
+  <!-- Calterm logical addresses: ADBSPRXA=0x01101600, ADBSPRYA=0x01101500 -->
+  <!--                                                                     -->
+  <!-- ROM default X: 0, 17, 18, 102, 921, 1021, 1022, 1023 (ADC counts)  -->
+  <!-- ROM default Y: 754, 754, 754, 754, 6585, 6585, 6585, 6585 (raw)    -->
+  <!--    = 11.99, 11.99, 11.99, 11.99, 104.73, 104.73, 104.73, 104.73 IN_HG -->
+  <!-- ================================================================== -->
+
+  <!-- ADBSPRXA: ADC breakpoints (input axis of the lookup) -->
+  <XDFTABLE uniqueid="0x0001" flags="0x30">
+    <title>MAP Sensor ADC Breakpoints (ADBSPRXA)</title>
+    <description>MAP sensor linearization X-axis: 8 ADC breakpoint values.&#013;&#010;These define the input side of the ADC-to-pressure lookup table.&#013;&#010;&#013;&#010;10-bit ADC range: 0-1023 (0.5V-4.5V sensor output)&#013;&#010;Values must be monotonically increasing.&#013;&#010;&#013;&#010;Calterm name: ADBSPRXA&#013;&#010;Calterm logical address: 0x01101600&#013;&#010;&#013;&#010;To recalibrate for a 10-bar sensor: adjust these breakpoints to match&#013;&#010;the ADC values at your desired pressure calibration points.</description>
+    <CATEGORYMEM index="0" category="0" />
+
+    <XDFAXIS id="x" uniqueid="0x0">
+      <EMBEDDEDDATA mmedelementsizebits="16" mmedmajorstridebits="0" mmedminorstridebits="0" />
+      <units>Index</units>
+      <indexcount>8</indexcount>
+      <outputtype>4</outputtype>
+      <datatype>0</datatype>
+      <unittype>0</unittype>
+      <DALINK index="0" />
+      <LABEL index="0" value="0" />
+      <LABEL index="1" value="1" />
+      <LABEL index="2" value="2" />
+      <LABEL index="3" value="3" />
+      <LABEL index="4" value="4" />
+      <LABEL index="5" value="5" />
+      <LABEL index="6" value="6" />
+      <LABEL index="7" value="7" />
+      <MATH equation="X">
+        <VAR id="X" />
+      </MATH>
+    </XDFAXIS>
+
+    <XDFAXIS id="y" uniqueid="0x0">
+      <EMBEDDEDDATA mmedelementsizebits="16" mmedmajorstridebits="0" mmedminorstridebits="0" />
+      <units>Index</units>
+      <indexcount>1</indexcount>
+      <outputtype>4</outputtype>
+      <datatype>0</datatype>
+      <unittype>0</unittype>
+      <DALINK index="0" />
+      <LABEL index="0" value="ADC Counts" />
+      <MATH equation="X">
+        <VAR id="X" />
+      </MATH>
+    </XDFAXIS>
+
+    <XDFAXIS id="z">
+      <EMBEDDEDDATA mmedaddress="0x05937C" mmedelementsizebits="16" mmedrowcount="1" mmedcolcount="8" mmedmajorstridebits="0" mmedminorstridebits="0" />
+      <units>ADC Counts</units>
+      <decimalpl>0</decimalpl>
+      <min>0.000000</min>
+      <max>1023.000000</max>
+      <outputtype>1</outputtype>
+      <MATH equation="X">
+        <VAR id="X" />
+      </MATH>
+    </XDFAXIS>
+  </XDFTABLE>
+
+  <!-- ADBSPRYA: Pressure output (output axis of the lookup) -->
+  <XDFTABLE uniqueid="0x0002" flags="0x30">
+    <title>MAP Sensor Pressure Output (ADBSPRYA)</title>
+    <description>MAP sensor linearization Y-axis: 8 pressure output values in IN_HG.&#013;&#010;Each value corresponds to the ADC breakpoint at the same index in ADBSPRXA.&#013;&#010;&#013;&#010;Example: If ADBSPRXA[3] = 512 and ADBSPRYA[3] = 29.4 IN_HG,&#013;&#010;then an ADC reading of 512 maps to 29.4 IN_HG (1 bar gauge).&#013;&#010;The ECU interpolates between breakpoints for intermediate values.&#013;&#010;&#013;&#010;Calterm name: ADBSPRYA&#013;&#010;Calterm logical address: 0x01101500&#013;&#010;Scale: raw x 0.0159064138077 = IN_HG&#013;&#010;&#013;&#010;Signal flow: ADC -> ADBSPRXA (match) -> ADBSPRYA (output) -> boost_pressure_sensor_raw (RAM 0x0040BD8E)</description>
+    <CATEGORYMEM index="0" category="0" />
+
+    <XDFAXIS id="x" uniqueid="0x0">
+      <EMBEDDEDDATA mmedelementsizebits="16" mmedmajorstridebits="0" mmedminorstridebits="0" />
+      <units>Index</units>
+      <indexcount>8</indexcount>
+      <outputtype>4</outputtype>
+      <datatype>0</datatype>
+      <unittype>0</unittype>
+      <DALINK index="0" />
+      <LABEL index="0" value="0" />
+      <LABEL index="1" value="1" />
+      <LABEL index="2" value="2" />
+      <LABEL index="3" value="3" />
+      <LABEL index="4" value="4" />
+      <LABEL index="5" value="5" />
+      <LABEL index="6" value="6" />
+      <LABEL index="7" value="7" />
+      <MATH equation="X">
+        <VAR id="X" />
+      </MATH>
+    </XDFAXIS>
+
+    <XDFAXIS id="y" uniqueid="0x0">
+      <EMBEDDEDDATA mmedelementsizebits="16" mmedmajorstridebits="0" mmedminorstridebits="0" />
+      <units>Index</units>
+      <indexcount>1</indexcount>
+      <outputtype>4</outputtype>
+      <datatype>0</datatype>
+      <unittype>0</unittype>
+      <DALINK index="0" />
+      <LABEL index="0" value="Pressure (IN_HG)" />
+      <MATH equation="X">
+        <VAR id="X" />
+      </MATH>
+    </XDFAXIS>
+
+    <XDFAXIS id="z">
+      <EMBEDDEDDATA mmedaddress="0x05938E" mmedelementsizebits="16" mmedrowcount="1" mmedcolcount="8" mmedmajorstridebits="0" mmedminorstridebits="0" />
+      <units>IN_HG</units>
+      <decimalpl>2</decimalpl>
+      <min>0.000000</min>
+      <max>300.000000</max>
+      <outputtype>1</outputtype>
+      <MATH equation="X*0.0159064138077">
+        <VAR id="X" />
+      </MATH>
+    </XDFAXIS>
+  </XDFTABLE>
+
+  <!-- ================================================================== -->
+  <!-- TURBO BOOST DIAGNOSTIC THRESHOLDS                                  -->
+  <!-- Referenced by cm848_processTurboBoostData (0x005265ac)              -->
+  <!-- and cm848_processTurboBoostDiagnostic (0x005266fc)                 -->
+  <!-- ROM data block at 0x0005C990                                        -->
+  <!-- ================================================================== -->
+
+  <XDFCONSTANT uniqueid="0x0020" flags="0x0">
+    <title>Turbo Diag - Boost High Timer Max</title>
+    <description>Maximum value for the boost-high timer counter.&#013;&#010;Referenced as DAT_0005c99a in cm848_processTurboBoostData.&#013;&#010;When the high-boost timer reaches this value it saturates.</description>
+    <CATEGORYMEM index="0" category="1" />
+    <EMBEDDEDDATA mmedaddress="0x05C99A" mmedelementsizebits="16" mmedmajorstridebits="0" mmedminorstridebits="0" />
+    <units>counts</units>
+    <decimalpl>0</decimalpl>
+    <datatype>0</datatype>
+    <unittype>0</unittype>
+    <DALINK index="0" />
+    <MATH equation="X">
+      <VAR id="X" />
+    </MATH>
+  </XDFCONSTANT>
+
+  <XDFCONSTANT uniqueid="0x0021" flags="0x0">
+    <title>Turbo Diag - Boost Event Counter Max</title>
+    <description>Maximum value for the boost-event counter.&#013;&#010;Referenced as DAT_0005c994 in cm848_processTurboBoostData.&#013;&#010;When both this counter AND the high timer are saturated, a boost fault is set.</description>
+    <CATEGORYMEM index="0" category="1" />
+    <EMBEDDEDDATA mmedaddress="0x05C994" mmedelementsizebits="16" mmedmajorstridebits="0" mmedminorstridebits="0" />
+    <units>counts</units>
+    <decimalpl>0</decimalpl>
+    <datatype>0</datatype>
+    <unittype>0</unittype>
+    <DALINK index="0" />
+    <MATH equation="X">
+      <VAR id="X" />
+    </MATH>
+  </XDFCONSTANT>
+
+  <XDFCONSTANT uniqueid="0x0022" flags="0x0">
+    <title>Turbo Diag - RPM Threshold for BIR Check</title>
+    <description>Minimum engine RPM before BIR high-boost diagnostic activates.&#013;&#010;Referenced as DAT_0005c996 in cm848_processTurboBoostData.&#013;&#010;Below this RPM the boost event counter resets to zero (turbo spool-up expected).&#013;&#010;Default: 24000 raw = 3000 RPM.</description>
+    <CATEGORYMEM index="0" category="1" />
+    <EMBEDDEDDATA mmedaddress="0x05C996" mmedelementsizebits="16" mmedmajorstridebits="0" mmedminorstridebits="0" />
+    <units>RPM</units>
+    <decimalpl>0</decimalpl>
+    <datatype>0</datatype>
+    <unittype>0</unittype>
+    <DALINK index="0" />
+    <MATH equation="X*0.125">
+      <VAR id="X" />
+    </MATH>
+  </XDFCONSTANT>
+
+  <XDFCONSTANT uniqueid="0x0023" flags="0x0">
+    <title>Turbo Diag - Stabilized Boost Delta Threshold</title>
+    <description>Filtered boost delta must exceed this value to increment the boost-event counter.&#013;&#010;Referenced as DAT_0005c99e in cm848_processTurboBoostData.&#013;&#010;This is the core over-boost detection threshold - increase for higher boost targets.</description>
+    <CATEGORYMEM index="0" category="1" />
+    <EMBEDDEDDATA mmedaddress="0x05C99E" mmedelementsizebits="16" mmedmajorstridebits="0" mmedminorstridebits="0" />
+    <units>raw</units>
+    <decimalpl>0</decimalpl>
+    <datatype>0</datatype>
+    <unittype>0</unittype>
+    <DALINK index="0" />
+    <MATH equation="X">
+      <VAR id="X" />
+    </MATH>
+  </XDFCONSTANT>
+
+  <XDFCONSTANT uniqueid="0x0024" flags="0x0">
+    <title>Turbo Diag - Boost Event Count Threshold</title>
+    <description>Number of boost-event increments before the event counter itself is incremented.&#013;&#010;Referenced as DAT_0005c9a4 in cm848_processTurboBoostData.</description>
+    <CATEGORYMEM index="0" category="1" />
+    <EMBEDDEDDATA mmedaddress="0x05C9A4" mmedelementsizebits="16" mmedmajorstridebits="0" mmedminorstridebits="0" />
+    <units>counts</units>
+    <decimalpl>0</decimalpl>
+    <datatype>0</datatype>
+    <unittype>0</unittype>
+    <DALINK index="0" />
+    <MATH equation="X">
+      <VAR id="X" />
+    </MATH>
+  </XDFCONSTANT>
+
+</XDFFORMAT>

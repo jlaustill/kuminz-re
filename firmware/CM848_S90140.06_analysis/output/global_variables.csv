@@ -353,6 +353,14 @@ address,name,type,comment
 0x000583b2,PTR_SUB_0050f680_000583b2,dword,
 0x000583ee,tpuAChannelHandler_ptr0,byte,
 0x000592a4,oil_pressure_baseline_ref,word,
+# Boost pressure (MAP) sensor channel 3 - ROM config and linearization tables
+# Config struct: 16 bytes at 0x5936a (sensor type/range/defaults)
+# X/Y tables: 8 breakpoints each (first word = byte count 0x0010 = 16 bytes)
+# EEPROM calibration: X=0x01101600 (ADBSPRXA) Y=0x01101500 (ADBSPRYA)
+# Scale: raw × 0.0159064138077 = IN_HG
+0x0005936a,boost_pressure_sensor_config,word[8],ROM config struct for MAP sensor channel 3 (8 words)
+0x0005937a,boost_pressure_linearization_x_axis,word[9],MAP sensor ADC breakpoints (1 size word + 8 breakpoints) - EEPROM override at 0x01101600 (ADBSPRXA)
+0x0005938c,boost_pressure_linearization_y_axis,word[9],MAP sensor pressure output IN_HG (1 size word + 8 values) - EEPROM override at 0x01101500 (ADBSPRYA)
 0x00059b32,BYTE_00059b32,byte,
 0x00059e9c,fault_definition_table,byte,
 0x00059e9e,fault_entry_flags,byte,
@@ -704,7 +712,8 @@ address,name,type,comment
 0x003fa018,PTR_DAT_003fa016+2,,
 0x003fa020,PTR_DAT_003fa020,pointer,
 0x003fa02a,PTR_DAT_003fa02a,pointer,
-0x003fa034,PTR_DAT_003fa034,pointer,
+0x003fa032,boost_pressure_interp_index,word,MAP sensor channel 3 interpolation state (last table index)
+0x003fa034,boost_pressure_filter_state_ptr,pointer,MAP sensor channel 3 filter state pointer
 0x003fa03e,PTR_DAT_003fa03e,pointer,
 0x003fa058,PTR_DAT_003fa058,pointer,
 0x003fa062,PTR_DAT_003fa062,pointer,
@@ -2713,6 +2722,7 @@ address,name,type,comment
 0x00409e40,engine_timing_calculation_mode,undefined2,
 0x00409e90,current_crank_position,undefined2,
 0x00409ea8,fault_monitor_divisor_value,undefined2,
+0x0040a086,boost_pressure_sensor_workspace,word[6],MAP sensor channel 3 RAM workspace (ADC value + filter + fault state)
 0x0040a0ac,speed_ratio_max_divisor,undefined2,
 0x0040a0b6,sensor_ch6_input_gain,undefined2,
 0x0040a0c2,sensor_ch7_input_gain,undefined2,

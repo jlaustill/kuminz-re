@@ -17,10 +17,12 @@ These tables convert raw ADC counts to pressure in IN_HG. Both must be recalibra
 
 ### ADC-to-Pressure Lookup Tables
 
-| Parameter | Address | Unit | Scale | Description |
-|-----------|---------|------|-------|-------------|
-| **ADBSPRXA** (Boost_Pressure_X_Axis) | 0x01101600 | CNTS | 1.0 | ADC breakpoint table (input axis) |
-| **ADBSPRYA** (Boost_Pressure_Y_Axis) | 0x01101500 | IN_HG | 0.0159064138077 | Pressure output table (output axis) |
+| Parameter | EEPROM Address | Unit | Scale | Size | Description |
+|-----------|---------------|------|-------|------|-------------|
+| **ADBSPRXA** (Boost_Pressure_X_Axis) | 0x01101600 | CNTS | 1.0 | **8 x u16 (16 bytes)** | ADC breakpoint table (input axis) |
+| **ADBSPRYA** (Boost_Pressure_Y_Axis) | 0x01101500 | IN_HG | 0.0159064138077 | **8 x u16 (16 bytes)** | Pressure output table (output axis) |
+
+**Table Size Confirmed:** 8 breakpoints per axis (verified from ROM default tables at 0x0005937a/0x0005938c — first word is byte count 0x0010 = 16 bytes, pattern confirmed across multiple sensor channels).
 
 **Scale Factor:** Raw value × 0.0159064138077 = IN_HG
 - Example: Raw 1024 = 16.29 IN_HG ≈ 0.55 bar
@@ -186,20 +188,49 @@ These thresholds determine when the ECU sets "boost out of range" fault codes.
 
 ## 7. ROM Sensor Configuration Data
 
-The ROM contains sensor channel 3 (boost) configuration at 0x5936a:
+The ROM contains sensor channel 3 (boost) default/fallback linearization tables at 0x5937a/0x5938c. These are overridden by EEPROM calibration values (ADBSPRXA/ADBSPRYA) when valid.
 
+### ROM Config Structure (0x0005936a, 16 bytes)
 ```
-Offset 0x5936a: Sensor channel config structure
-  388f 0000 03e0 002d 0001 0001 0177 0000
-
-Offset 0x5937a: X-axis pointers/data
-  0010 0000 0011 0012 0066 0399 03fd 03fe 03ff
-
-Offset 0x5938c: Y-axis pointers/data
-  0010 02f2 02f2 02f2 02f2 19b9 19b9 19b9 19b9
+388f 0000 03e0 002d 0001 0001 0177 0000
 ```
 
-These appear to be pointers to EEPROM tables or default ROM values. The actual calibration tables are stored in EEPROM at the addresses listed above.
+### ROM Default X-Axis (0x0005937a) — ADC Breakpoints
+```
+Format: [byte_count] [data...]
+0010  0000 0011 0012 0066 0399 03fd 03fe 03ff
+```
+
+| Word | Hex | Decimal | Meaning |
+|------|-----|---------|---------|
+| 0 | 0x0010 | 16 | Byte count (16 bytes = 8 breakpoints) |
+| 1 | 0x0000 | 0 | ADC min |
+| 2 | 0x0011 | 17 | |
+| 3 | 0x0012 | 18 | |
+| 4 | 0x0066 | 102 | |
+| 5 | 0x0399 | 921 | |
+| 6 | 0x03FD | 1021 | |
+| 7 | 0x03FE | 1022 | |
+| 8 | 0x03FF | 1023 | ADC max (10-bit) |
+
+### ROM Default Y-Axis (0x0005938c) — Pressure Output (IN_HG)
+```
+Format: [byte_count] [data...]
+0010  02f2 02f2 02f2 02f2 19b9 19b9 19b9 19b9
+```
+
+| Word | Hex | Raw | IN_HG (×0.0159064) | PSI |
+|------|-----|-----|---------------------|-----|
+| 0 | 0x0010 | 16 | Byte count | — |
+| 1-4 | 0x02F2 | 754 | 11.99 | 5.89 |
+| 5-8 | 0x19B9 | 6585 | 104.73 | 51.46 |
+
+**Note:** ROM defaults are a simple two-step function (fallback only). Live ECU EEPROM values at 0x01101600/0x01101500 contain the actual calibration curve.
+
+### Table Format Convention
+The first u16 word of each sensor linearization table is the **byte count** of the data that follows. Number of breakpoints = byte_count / 2. This pattern is consistent across all sensor channels:
+- Channels 0, 2, 3 (boost): 0x0010 = 16 bytes = **8 breakpoints**
+- Channel 4+: 0x0016 = 22 bytes = **11 breakpoints**
 
 ---
 
@@ -242,9 +273,46 @@ These appear to be pointers to EEPROM tables or default ROM values. The actual c
 
 ---
 
+## 9. HP Tuners User Defined Parameters
+
+### Live Monitoring (Scanner UDP)
+
+| Parameter | RAM Address | Data Type | Scale | Offset | Unit | Description |
+|-----------|-------------|-----------|-------|--------|------|-------------|
+| Boost Raw | 0x0040BD8E | u16 | 0.0159064138077 | 0 | IN_HG | Unfiltered MAP sensor reading |
+| Boost Filtered | 0x0040BDA6 | u16 | 0.0159064138077 | 0 | IN_HG | Filtered MAP sensor reading |
+
+### Calibration Editing (EEPROM Tables)
+
+**Sensor Linearization (8 breakpoints each, 16 bytes per table):**
+
+| Table | EEPROM Address | Data Type | Scale | Unit | Description |
+|-------|---------------|-----------|-------|------|-------------|
+| ADBSPRXA | 0x01101600 | 8 x u16 | 1.0 | CNTS | ADC breakpoints (0-1023 range) |
+| ADBSPRYA | 0x01101500 | 8 x u16 | 0.0159064138077 | IN_HG | Pressure output values |
+
+**AFC Fuel Limiting:**
+
+| Table | EEPROM Address | Data Type | Scale | Unit | Size |
+|-------|---------------|-----------|-------|------|------|
+| AFFLLMYA | 0x01104D00 | u16 | 0.0159062501 | IN_HG | 14 values (boost axis) |
+| AFFLLMXA | 0x01104E00 | u16 | 0.125 | RPM | 21 values (RPM axis) |
+| AFFLLMZA | 0x01104F00 | u16 | 0.06793478400 | MM3/stroke | 14x21 table |
+
+**BIR Thresholds (single values):**
+
+| Parameter | EEPROM Address | Data Type | Scale | Unit |
+|-----------|---------------|-----------|-------|------|
+| BIR_Stabilized_Boost | 0x01163108 | u16 | 0.0159062501 | IN_HG |
+| Turbo_Max_High_Boost | 0x01162E02 | u16 | 0.0159064138077 | IN_HG |
+| Turbo_Max_Low_Boost | 0x01162E06 | u16 | 0.0159064138077 | IN_HG |
+
+---
+
 ## Notes
 
-- All addresses are EEPROM calibration addresses (0x01xxxxxx range)
+- All calibration addresses are in the 0x01xxxxxx range (EEPROM/cal flash)
+- RAM addresses (0x0040xxxx) are for live monitoring only
 - Scale factors must be applied when reading/writing values
 - Test changes incrementally - start with linearization tables, then AFC
 - Always verify with diagnostic scan tool after changes
