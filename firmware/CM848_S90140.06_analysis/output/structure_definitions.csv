@@ -762,3 +762,25 @@ fault_entry_t,0x003fe674,diagnostic_word_2,word,2,Diagnostic data word 2,,verifi
 fault_entry_t,0x003fe674,diagnostic_word_3,word,2,Diagnostic data word 3,,verified
 fault_entry_t,0x003fe674,coolant_temp_raw,word,2,Coolant temperature raw sensor value,,verified
 fault_entry_t,0x003fe674,status_flags,word,2,Fault entry status/severity flags (bit 0 = newly active),,verified
+# Boost In Range (BIR) Configuration - ROM calibration thresholds for P0069/Fault 433
+# Loaded from EEPROM at boot, maps to BIR parameters (DGBSHTTD, DGSTBSTD, DGLWTD, etc.)
+# Total size: 18 bytes (0x0005c994-0x0005c9a5)
+boost_in_range_config_t,0x0005c994,deviation_count_threshold,word,2,BIR deviation count threshold for setting fault,,needs_review
+boost_in_range_config_t,0x0005c994,load_threshold,word,2,BIR load threshold for high boost check (maps to DGLWTD),,needs_review
+boost_in_range_config_t,0x0005c994,unknown1,word,2,BIR calibration value (unknown purpose),,needs_review
+boost_in_range_config_t,0x0005c994,operating_time_threshold,word,2,BIR operating time threshold for fault (maps to DGBSHTTD),,needs_review
+boost_in_range_config_t,0x0005c994,timing_threshold,word,2,BIR injection timing threshold,,needs_review
+boost_in_range_config_t,0x0005c994,high_boost_threshold,word,2,BIR high boost pressure threshold (maps to DGSTBSTD),,needs_review
+boost_in_range_config_t,0x0005c994,speed_threshold,word,2,BIR RPM threshold (maps to DGLSRSOF),,needs_review
+boost_in_range_config_t,0x0005c994,unknown2,word,2,BIR calibration value (gap at 0x0005c9a2),,needs_review
+boost_in_range_config_t,0x0005c994,consecutive_high_threshold,word,2,BIR consecutive high count before deviation increment,,needs_review
+# Boost In Range (BIR) State - RAM working state for BIR diagnostic
+# Total size: 10 bytes (0x003fd064-0x003fd06d)
+boost_in_range_state_t,0x003fd064,filtered_speed_ratio,word,2,BIR filtered alternate speed ratio,,needs_review
+boost_in_range_state_t,0x003fd064,previous_boost_scale,word,2,BIR previous boost_pressure_scale value,,needs_review
+boost_in_range_state_t,0x003fd064,high_boost_counter,word,2,BIR consecutive high boost count,,needs_review
+boost_in_range_state_t,0x003fd064,filter_state_ptr,pointer,4,BIR speed ratio filter state pointer,,needs_review
+# Boost In Range (BIR) Counters - RAM fault accumulation counters
+# Total size: 4 bytes (0x003fee5e-0x003fee61)
+boost_in_range_counters_t,0x003fee5e,deviation_count,word,2,BIR boost deviation event count,,needs_review
+boost_in_range_counters_t,0x003fee5e,operating_time_counter,word,2,BIR time at operating condition counter,,needs_review

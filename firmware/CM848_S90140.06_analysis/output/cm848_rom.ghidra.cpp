@@ -1,10 +1,6 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Tue Mar 17 09:12:55 MDT 2026
+// Generated: Thu Apr 02 06:56:59 MDT 2026
 
-
-#include "firmware_types.hpp"
-#include "firmware_globals.hpp"
-#include "firmware_functions.hpp"
 
 //
 // Function: mpc555_reset_vector @ 0x00000100
@@ -6113,7 +6109,7 @@ void cm848_phase_group_a_processing(void)
   cm848_resetGovernorDiagnosticState();
   cm848_emptyStub_phaseGroupA();
   cm848_dispatchFaultTimerHandlers();
-  cm848_processTurboBoostDiagnostic();
+  cm848_evaluateBoostInRangeDiagnostic();
   cm848_sensorChannel4_init();
   cm848_processLoadNormalizerSelection();
   cm848_sensorChannel10_throttleInit();
@@ -6259,7 +6255,7 @@ void cm848_periodicTaskSet_sensorProcessing(void)
   cm848_setFuelDemandActiveFlag();
   cm848_updateSensorBufferValues();
   diagnosticMainStateProcessor();
-  cm848_processTurboBoostDataB();
+  cm848_setBoostInRangeHighFlagB();
   cm848_activateCoolantProtectionEvents();
   return;
 }
@@ -6442,7 +6438,7 @@ void cm848_periodicTaskSet_monitoring(void)
 
 {
   cm848_sensorChannel16_init();
-  cm848_clearSensorBitmapOnRun();
+  cm848_clearBoostInRangeOnEngineRun();
   cm848_processEngineRpmMonitoring();
   cm848_initProtectionParameter2();
   return;
@@ -6664,7 +6660,7 @@ void cm848_periodicTaskGroup31_calibration13(void)
 {
   cm848_computeSpeedRatioLimit();
   cm848_processDiagnosticModeFlags();
-  cm848_processBoostDiagnosticFlags();
+  cm848_processBoostInRangeFlags();
   cm848_calculateTurboRatios();
   return;
 }
@@ -7448,9 +7444,10 @@ void cm848_sensorChannel3_boostPressureInit(void)
 
 {
   cm848_sensorChannelTypeB_configInit
-            (&DAT_0005936a,&DAT_0040a086,&DAT_003fa032,&DAT_0005937a,&DAT_0005938c,0,
-             &PTR_DAT_003fa034,1,8,9,&boost_pressure_sensor_raw,&boost_pressure_sensor_filtered,
-             &boost_protection_input);
+            (&boost_pressure_sensor_config,&boost_pressure_sensor_workspace,
+             &boost_pressure_interp_index,&boost_pressure_linearization_x_axis,
+             &boost_pressure_linearization_y_axis,0,&boost_pressure_filter_state_ptr,1,8,9,
+             &boost_pressure_sensor_raw,&boost_pressure_sensor_filtered,&boost_protection_input);
   return;
 }
 
@@ -7464,9 +7461,10 @@ void cm848_sensorChannel3_boostPressureProcess(void)
 
 {
   cm848_updateSensorChannelTypeB
-            (&DAT_0005936a,&DAT_0040a086,&DAT_003fa032,&DAT_0005937a,&DAT_0005938c,0,
-             &PTR_DAT_003fa034,1,8,9,&boost_pressure_sensor_raw,&boost_pressure_sensor_filtered,
-             &boost_protection_input);
+            (&boost_pressure_sensor_config,&boost_pressure_sensor_workspace,
+             &boost_pressure_interp_index,&boost_pressure_linearization_x_axis,
+             &boost_pressure_linearization_y_axis,0,&boost_pressure_filter_state_ptr,1,8,9,
+             &boost_pressure_sensor_raw,&boost_pressure_sensor_filtered,&boost_protection_input);
   return;
 }
 
@@ -52807,7 +52805,7 @@ void hpcr_exceptionHandler(void)
   cm848_validateFuelRateTarget();
   cm848_initProtectionEventStates();
   cm848_updateSpeedBandConditionsB();
-  cm848_clearTurboSensorFaultStatus();
+  cm848_clearBoostInRangeOnSensorFault();
   cm848_enableProtectionRateLimit();
   cm848_setProtectionControlValue();
   mpc555_processTpuVoltageChannel();
@@ -75322,7 +75320,7 @@ void cm848_evaluateOilTemperatureSensorDiagnostics(void)
   
   if ((((DAT_003fd5d2 & 0x20) != 0) && (DAT_003fd914 == 0)) && (engine_run_state == 3)) {
     oil_temperature_filtered_value =
-         cm848_filterWithWeight(_turbo_boost_sensor_fault_flag,&DAT_003fcec8);
+         cm848_filterWithWeight(_boost_in_range_sensor_fault_flag,&DAT_003fcec8);
     if ((uint)oil_temp_sensor_diagnostic_threshold < (uint)oil_temperature_filtered_value) {
       uVar2 = ((uint)ram0x0040b36e << 8) / (uint)oil_temperature_filtered_value;
       protection_status_flags._4_2_ = SUB42(uVar2,0);
@@ -84912,7 +84910,7 @@ void cm848_evaluateSpeedDerateConditions(void)
 {
   if ((((governor_speed_injection_timing_threshold <= injection_timing_limit_value) &&
        (engine_run_state != 1)) && (DAT_00409e6e == 0)) && (DAT_003fdd86 == 5)) {
-    if (_turbo_boost_sensor_fault_flag != 0) {
+    if (_boost_in_range_sensor_fault_flag != 0) {
       if ((DAT_003fd516 != 0) && ((fuel_limit_status_flags & 0x80) != 0)) {
                     /* WARNING: Subroutine does not return */
         cm848_unsignedDivision64Wrapper(0,(uint)_DAT_0040b360 << 0xf,0,(uint)DAT_003fd514 << 3);
@@ -85029,18 +85027,19 @@ void cm848_processSpeedWindowComparisonC(void)
 
 
 //
-// Function: cm848_setBoostDiagnosticFlag @ 0x00526510
+// Function: cm848_setBoostInRangeHighFlag @ 0x00526510
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void cm848_setBoostDiagnosticFlag(void)
+void cm848_setBoostInRangeHighFlag(void)
 
 {
   if (((((protection_condition_active & 1) != 0) && ((_protection_ramp_rate_b54a & 1) == 0)) &&
       ((DAT_003fd594 & 0x100) != 0)) &&
-     (((_turbo_boost_sensor_fault_flag == 0 && (DAT_0005c99c < injection_timing_limit_value)) &&
-      (DAT_0005c9a0 <= alternate_speed_ratio_value)))) {
+     (((_boost_in_range_sensor_fault_flag == 0 &&
+       (boost_in_range_config.timing_threshold < injection_timing_limit_value)) &&
+      (boost_in_range_config.speed_threshold <= alternate_speed_ratio_value)))) {
     sensor_channel_status_bitmap_2 = sensor_channel_status_bitmap_2 | 0x2000;
   }
   return;
@@ -85049,16 +85048,16 @@ void cm848_setBoostDiagnosticFlag(void)
 
 
 //
-// Function: cm848_processTurboBoostDataB @ 0x00526560
+// Function: cm848_setBoostInRangeHighFlagB @ 0x00526560
 //
 
-void cm848_processTurboBoostDataB(void)
+void cm848_setBoostInRangeHighFlagB(void)
 
 {
   int in_r12;
   
-  if ((DAT_0005c99c < *(ushort *)(in_r12 + -0x61cc)) &&
-     (DAT_0005c9a0 <= alternate_speed_ratio_value)) {
+  if ((boost_in_range_config.timing_threshold < *(ushort *)(in_r12 + -0x61cc)) &&
+     (boost_in_range_config.speed_threshold <= alternate_speed_ratio_value)) {
     sensor_channel_status_bitmap_2 = sensor_channel_status_bitmap_2 | 0x2000;
   }
   return;
@@ -85067,47 +85066,55 @@ void cm848_processTurboBoostDataB(void)
 
 
 //
-// Function: cm848_processTurboBoostData @ 0x005265ac
+// Function: cm848_evaluateBoostInRangeHigh @ 0x005265ac
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void cm848_processTurboBoostData(void)
+void cm848_evaluateBoostInRangeHigh(void)
 
 {
   char cVar1;
   
   if (((protection_condition_active & 2) != 0) && ((_protection_ramp_rate_b54a & 2) == 0)) {
     if (((DAT_003fd594 & 0x200) == 0) ||
-       (((_turbo_boost_sensor_fault_flag != 0 || ((sensor_channel_status_bitmap & 0x100) != 0)) ||
-        ((sensor_channel_status_bitmap & 0x200) != 0)))) {
-      DAT_003fd064 = alternate_speed_ratio_value;
-      DAT_003fee60 = 0;
-      DAT_003fee5e = 0;
+       (((_boost_in_range_sensor_fault_flag != 0 || ((sensor_channel_status_bitmap & 0x100) != 0))
+        || ((sensor_channel_status_bitmap & 0x200) != 0)))) {
+      boost_in_range_state.filtered_speed_ratio = alternate_speed_ratio_value;
+      boost_in_range_counters.operating_time_counter = 0;
+      boost_in_range_counters.deviation_count = 0;
     }
     else {
-      DAT_003fd064 = cm848_filterWithWeight(alternate_speed_ratio_value,&DAT_003fd06a);
-      if (((engine_run_state == 3) && (DAT_003fd066 == 0)) && (boost_pressure_scale == 1)) {
-        DAT_003fee60 = DAT_003fee60 + 1;
+      boost_in_range_state.filtered_speed_ratio =
+           cm848_filterWithWeight(alternate_speed_ratio_value,0x3fd06a);
+      if (((engine_run_state == 3) && (boost_in_range_state.previous_boost_scale == 0)) &&
+         (boost_pressure_scale == 1)) {
+        boost_in_range_counters.operating_time_counter =
+             boost_in_range_counters.operating_time_counter + 1;
       }
-      if (DAT_0005c996 < protection_threshold_scaled) {
-        if (DAT_0005c99e < DAT_003fd064) {
-          DAT_003fd068 = DAT_003fd068 + 1;
+      if (boost_in_range_config.load_threshold < protection_threshold_scaled) {
+        if (boost_in_range_config.high_boost_threshold < boost_in_range_state.filtered_speed_ratio)
+        {
+          boost_in_range_state.high_boost_counter = boost_in_range_state.high_boost_counter + 1;
         }
       }
       else {
-        DAT_003fd068 = 0;
+        boost_in_range_state.high_boost_counter = 0;
       }
-      if (DAT_0005c9a4 <= DAT_003fd068) {
-        DAT_003fee5e = DAT_003fee5e + 1;
-        DAT_003fd068 = 0;
+      if (boost_in_range_config.consecutive_high_threshold <=
+          boost_in_range_state.high_boost_counter) {
+        boost_in_range_counters.deviation_count = boost_in_range_counters.deviation_count + 1;
+        boost_in_range_state.high_boost_counter = 0;
       }
-      cVar1 = DAT_0005c99a <= DAT_003fee60;
+      cVar1 = boost_in_range_config.operating_time_threshold <=
+              boost_in_range_counters.operating_time_counter;
       if ((bool)cVar1) {
-        DAT_003fee60 = DAT_0005c99a;
+        boost_in_range_counters.operating_time_counter =
+             boost_in_range_config.operating_time_threshold;
       }
-      if (DAT_0005c994 <= DAT_003fee5e) {
-        DAT_003fee5e = DAT_0005c994;
+      if (boost_in_range_config.deviation_count_threshold <= boost_in_range_counters.deviation_count
+         ) {
+        boost_in_range_counters.deviation_count = boost_in_range_config.deviation_count_threshold;
         cVar1 = cVar1 + '\x01';
       }
       if (cVar1 == '\x02') {
@@ -85121,10 +85128,10 @@ void cm848_processTurboBoostData(void)
 
 
 //
-// Function: cm848_processTurboBoostDiagnostic @ 0x005266fc
+// Function: cm848_evaluateBoostInRangeDiagnostic @ 0x005266fc
 //
 
-void cm848_processTurboBoostDiagnostic
+void cm848_evaluateBoostInRangeDiagnostic
                (undefined4 param_1,ushort *param_2,undefined2 *param_3,ushort *param_4)
 
 {
@@ -85134,12 +85141,12 @@ void cm848_processTurboBoostDiagnostic
   
   *param_4 = in_r12 + 1;
   *param_3 = 0;
-  cVar1 = DAT_0005c99a <= *param_2;
+  cVar1 = boost_in_range_config.operating_time_threshold <= *param_2;
   if ((bool)cVar1) {
-    *param_2 = DAT_0005c99a;
+    *param_2 = boost_in_range_config.operating_time_threshold;
   }
-  if (DAT_0005c994 <= *param_4) {
-    *param_4 = DAT_0005c994;
+  if (boost_in_range_config.deviation_count_threshold <= *param_4) {
+    *param_4 = boost_in_range_config.deviation_count_threshold;
     cVar1 = cVar1 + '\x01';
   }
   if (cVar1 == '\x02') {
@@ -85151,22 +85158,22 @@ void cm848_processTurboBoostDiagnostic
 
 
 //
-// Function: cm848_clearBoostDiagnosticFlag @ 0x005267b4
+// Function: cm848_clearBoostInRangeFlag @ 0x005267b4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void cm848_clearBoostDiagnosticFlag(void)
+void cm848_clearBoostInRangeFlag(void)
 
 {
   if (((((DAT_003fd594 & 0x200) == 0) && ((DAT_003fd594 & 0x100) == 0)) ||
-      ((_turbo_boost_sensor_fault_flag != 0 && (engine_run_state == 3)))) &&
+      ((_boost_in_range_sensor_fault_flag != 0 && (engine_run_state == 3)))) &&
      ((sensor_channel_status_bitmap_2 & 0x2000) != 0)) {
     sensor_channel_status_bitmap_2 = sensor_channel_status_bitmap_2 & 0xdfff;
     DAT_003fe9ba = DAT_003fe9ba & 0xdfff;
-    DAT_003fee60 = 0;
-    DAT_003fee5e = 0;
-    DAT_003fd068 = 0;
+    boost_in_range_counters.operating_time_counter = 0;
+    boost_in_range_counters.deviation_count = 0;
+    boost_in_range_state.high_boost_counter = 0;
   }
   return;
 }
@@ -85174,24 +85181,24 @@ void cm848_clearBoostDiagnosticFlag(void)
 
 
 //
-// Function: cm848_clearTurboSensorFaultStatus @ 0x005267e0
+// Function: cm848_clearBoostInRangeOnSensorFault @ 0x005267e0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void cm848_clearTurboSensorFaultStatus(void)
+void cm848_clearBoostInRangeOnSensorFault(void)
 
 {
   byte in_cr0;
   
   if ((((bool)(in_cr0 >> 1 & 1)) ||
-      ((_turbo_boost_sensor_fault_flag != 0 && (engine_run_state == 3)))) &&
+      ((_boost_in_range_sensor_fault_flag != 0 && (engine_run_state == 3)))) &&
      ((sensor_channel_status_bitmap_2 & 0x2000) != 0)) {
     sensor_channel_status_bitmap_2 = sensor_channel_status_bitmap_2 & 0xdfff;
     DAT_003fe9ba = DAT_003fe9ba & 0xdfff;
-    DAT_003fee60 = 0;
-    DAT_003fee5e = 0;
-    DAT_003fd068 = 0;
+    boost_in_range_counters.operating_time_counter = 0;
+    boost_in_range_counters.deviation_count = 0;
+    boost_in_range_state.high_boost_counter = 0;
   }
   return;
 }
@@ -85199,18 +85206,18 @@ void cm848_clearTurboSensorFaultStatus(void)
 
 
 //
-// Function: cm848_clearSensorBitmapOnRun @ 0x005267f4
+// Function: cm848_clearBoostInRangeOnEngineRun @ 0x005267f4
 //
 
-void cm848_clearSensorBitmapOnRun(void)
+void cm848_clearBoostInRangeOnEngineRun(void)
 
 {
   if ((engine_run_state == 3) && ((sensor_channel_status_bitmap_2 & 0x2000) != 0)) {
     sensor_channel_status_bitmap_2 = sensor_channel_status_bitmap_2 & 0xdfff;
     DAT_003fe9ba = DAT_003fe9ba & 0xdfff;
-    DAT_003fee60 = 0;
-    DAT_003fee5e = 0;
-    DAT_003fd068 = 0;
+    boost_in_range_counters.operating_time_counter = 0;
+    boost_in_range_counters.deviation_count = 0;
+    boost_in_range_state.high_boost_counter = 0;
   }
   return;
 }
@@ -85218,16 +85225,16 @@ void cm848_clearSensorBitmapOnRun(void)
 
 
 //
-// Function: cm848_updateEngineSpeedGainCalculation @ 0x0052686c
+// Function: cm848_updateBoostInRangeDiagnostics @ 0x0052686c
 //
 
-void cm848_updateEngineSpeedGainCalculation(void)
+void cm848_updateBoostInRangeDiagnostics(void)
 
 {
-  cm848_setBoostDiagnosticFlag();
-  cm848_processTurboBoostData();
-  cm848_clearBoostDiagnosticFlag();
-  DAT_003fd066 = boost_pressure_scale;
+  cm848_setBoostInRangeHighFlag();
+  cm848_evaluateBoostInRangeHigh();
+  cm848_clearBoostInRangeFlag();
+  boost_in_range_state.previous_boost_scale = boost_pressure_scale;
   return;
 }
 
@@ -95136,10 +95143,10 @@ void vp44Message300FaultFlagProcessor(void)
 
 
 //
-// Function: cm848_processBoostDiagnosticFlags @ 0x00536e4c
+// Function: cm848_processBoostInRangeFlags @ 0x00536e4c
 //
 
-void cm848_processBoostDiagnosticFlags(void)
+void cm848_processBoostInRangeFlags(void)
 
 {
   undefined2 *unaff_r29;

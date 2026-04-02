@@ -240,10 +240,9 @@
 # Speed band condition update variant
 # Speed window comparison processing variant
 # Speed window comparison processing variant C
-# Turbo boost data processing variant
-# Turbo boost diagnostic processing
-# Clears sensor_channel_status_bitmap_2 bit 0x2000 on turbo sensor fault
-# Clears sensor bitmap when engine_run_state == 3
+# Boost In Range (BIR) diagnostic - P0069/Fault 433 (SPN 102)
+# Bit 0x2000 in sensor_channel_status_bitmap_2 = BIR fault active
+# Config struct at 0x0005c994, state at 0x003fd064, counters at 0x003fee5e
 # Processes TPU voltage channel when DAT_003fdd86 == 3
 # Clears bits in Ram0030440a, Ram00304412, Ram0030441e, Ram00304420
 # Sets up Ram00304412, Ram00304522, Ram00304526 hardware registers
@@ -2348,14 +2347,14 @@ address,name
 0x005263e0,cm848_processSpeedWindowComparison
 0x00526414,cm848_processSpeedWindowComparisonB
 0x005264d4,cm848_processSpeedWindowComparisonC
-0x00526510,cm848_setBoostDiagnosticFlag
-0x00526560,cm848_processTurboBoostDataB
-0x005265ac,cm848_processTurboBoostData
-0x005266fc,cm848_processTurboBoostDiagnostic
-0x005267b4,cm848_clearBoostDiagnosticFlag
-0x005267e0,cm848_clearTurboSensorFaultStatus
-0x005267f4,cm848_clearSensorBitmapOnRun
-0x0052686c,cm848_updateEngineSpeedGainCalculation
+0x00526510,cm848_setBoostInRangeHighFlag
+0x00526560,cm848_setBoostInRangeHighFlagB
+0x005265ac,cm848_evaluateBoostInRangeHigh
+0x005266fc,cm848_evaluateBoostInRangeDiagnostic
+0x005267b4,cm848_clearBoostInRangeFlag
+0x005267e0,cm848_clearBoostInRangeOnSensorFault
+0x005267f4,cm848_clearBoostInRangeOnEngineRun
+0x0052686c,cm848_updateBoostInRangeDiagnostics
 0x005268d0,mpc555_calculateTimingTrimOffset
 0x005268e8,mpc555_processTpuVoltageChannel
 0x00526c3c,mpc555_processVariableTimingControl
@@ -2546,7 +2545,7 @@ address,name
 0x005367cc,cm848_validateCalibrationLookup
 0x00536958,cm848_resetStateVariable
 0x00536de0,vp44Message300FaultFlagProcessor
-0x00536e4c,cm848_processBoostDiagnosticFlags
+0x00536e4c,cm848_processBoostInRangeFlags
 0x005371f4,cm848_validateCalibrationParameters
 0x0053729c,cm848_emptyStub_boostControl
 0x005372b0,cm848_updatePressureControlTarget

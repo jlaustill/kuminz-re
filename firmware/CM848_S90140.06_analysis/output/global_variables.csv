@@ -353,14 +353,9 @@ address,name,type,comment
 0x000583b2,PTR_SUB_0050f680_000583b2,dword,
 0x000583ee,tpuAChannelHandler_ptr0,byte,
 0x000592a4,oil_pressure_baseline_ref,word,
-# Boost pressure (MAP) sensor channel 3 - ROM config and linearization tables
-# Config struct: 16 bytes at 0x5936a (sensor type/range/defaults)
-# X/Y tables: 8 breakpoints each (first word = byte count 0x0010 = 16 bytes)
-# EEPROM calibration: X=0x01101600 (ADBSPRXA) Y=0x01101500 (ADBSPRYA)
-# Scale: raw × 0.0159064138077 = IN_HG
-0x0005936a,boost_pressure_sensor_config,word[8],ROM config struct for MAP sensor channel 3 (8 words)
-0x0005937a,boost_pressure_linearization_x_axis,word[9],MAP sensor ADC breakpoints (1 size word + 8 breakpoints) - EEPROM override at 0x01101600 (ADBSPRXA)
-0x0005938c,boost_pressure_linearization_y_axis,word[9],MAP sensor pressure output IN_HG (1 size word + 8 values) - EEPROM override at 0x01101500 (ADBSPRYA)
+0x0005936a,boost_pressure_sensor_config,undefined,
+0x0005937a,boost_pressure_linearization_x_axis,undefined,
+0x0005938c,boost_pressure_linearization_y_axis,undefined,
 0x00059b32,BYTE_00059b32,byte,
 0x00059e9c,fault_definition_table,byte,
 0x00059e9e,fault_entry_flags,byte,
@@ -374,6 +369,13 @@ address,name,type,comment
 0x0005c30c,timing_limit_upper,word,
 0x0005c398,fault_severity_table_ptr,word,
 0x0005c7c0,PTR_PTR_0005c7c0,byte,
+0x0005c994,boost_in_range_config,boost_in_range_config_t,
+0x0005c996,boost_in_range_config.load_threshold,,
+0x0005c99a,boost_in_range_config.operating_time_threshold,,
+0x0005c99c,boost_in_range_config.timing_threshold,,
+0x0005c99e,boost_in_range_config.high_boost_threshold,,
+0x0005c9a0,boost_in_range_config.speed_threshold,,
+0x0005c9a4,boost_in_range_config.consecutive_high_threshold,,
 0x00062f08,BYTE_00062f08,byte,
 0x00062f2a,BYTE_00062f2a,byte,
 0x0006384c,BYTE_0006384c,byte,
@@ -712,8 +714,8 @@ address,name,type,comment
 0x003fa018,PTR_DAT_003fa016+2,,
 0x003fa020,PTR_DAT_003fa020,pointer,
 0x003fa02a,PTR_DAT_003fa02a,pointer,
-0x003fa032,boost_pressure_interp_index,word,MAP sensor channel 3 interpolation state (last table index)
-0x003fa034,boost_pressure_filter_state_ptr,pointer,MAP sensor channel 3 filter state pointer
+0x003fa032,boost_pressure_interp_index,word,
+0x003fa034,boost_pressure_filter_state_ptr,pointer,
 0x003fa03e,PTR_DAT_003fa03e,pointer,
 0x003fa058,PTR_DAT_003fa058,pointer,
 0x003fa062,PTR_DAT_003fa062,pointer,
@@ -1042,6 +1044,10 @@ address,name,type,comment
 0x003fcf54,event_timer_ch16_counter,undefined,
 0x003fd02c,crank_timing_reference,undefined4,
 0x003fd02e,crank_timing_reference+2,,
+0x003fd064,boost_in_range_state,boost_in_range_state_t,
+0x003fd066,boost_in_range_state.previous_boost_scale,,
+0x003fd068,boost_in_range_state.high_boost_counter,,
+0x003fd06a,boost_in_range_state.filter_state_ptr,,
 0x003fd110,PTR_DAT_003fd110,pointer,
 0x003fd2c8,PTR_FUN_003fd2c8,pointer,
 0x003fd45e,PTR_LAB_003fd45e,pointer,
@@ -1223,6 +1229,8 @@ address,name,type,comment
 0x003fee46,protection_error_filtered,undefined2,
 0x003fee48,protection_error_term,undefined4,
 0x003fee4a,protection_error_term+2,,
+0x003fee5e,boost_in_range_counters,boost_in_range_counters_t,
+0x003fee60,boost_in_range_counters.operating_time_counter,,
 0x003fee78,diagnostic_accumulator,undefined2,
 0x003fee82,cbd_cylinder_trim_accum_1,undefined2,
 0x003fee84,cbd_cylinder_trim_accum_2,undefined2,
@@ -2722,7 +2730,7 @@ address,name,type,comment
 0x00409e40,engine_timing_calculation_mode,undefined2,
 0x00409e90,current_crank_position,undefined2,
 0x00409ea8,fault_monitor_divisor_value,undefined2,
-0x0040a086,boost_pressure_sensor_workspace,word[6],MAP sensor channel 3 RAM workspace (ADC value + filter + fault state)
+0x0040a086,boost_pressure_sensor_workspace,undefined,
 0x0040a0ac,speed_ratio_max_divisor,undefined2,
 0x0040a0b6,sensor_ch6_input_gain,undefined2,
 0x0040a0c2,sensor_ch7_input_gain,undefined2,
@@ -4040,7 +4048,7 @@ address,name,type,comment
 0x0040b154,fuel_timing_param_2,undefined2,
 0x0040b156,protection_mode_lookup_result,undefined2,
 0x0040b158,fault_countdown_active_flag,undefined1,
-0x0040b15c,turbo_boost_sensor_fault_flag,undefined1,
+0x0040b15c,boost_in_range_sensor_fault_flag,undefined1,
 0x0040b170,voltage_compensation_final_value,undefined2,
 0x0040b176,governor_speed_control_state,undefined1,
 0x0040b17a,state_handler_function,undefined4,
