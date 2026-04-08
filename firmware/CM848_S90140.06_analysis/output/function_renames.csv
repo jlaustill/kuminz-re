@@ -774,6 +774,24 @@ address,name
 0x0001b778,cm848_processFaultMessageTiming
 0x0001b900,initFaultTimerMessage
 0x0001b99c,cm848_calculateColdStartFuelAdjust
+#
+# J1939 periodic TX handlers — registered via cm848_enqueueDataRecord
+# calls inside cm848_initJ1939ProtocolHandlers @ 0x232B4 (see decompile
+# lines ~95932-95951). Each entry is (queue, tag, period_ms, phase_offset,
+# handler); the handler runs every period_ms from processProtectionDiagnosticState
+# @ 0x5378a4. J1939 acronyms per SAE J1939-71 where confident; addresses
+# with no suffix are periodic TX handlers whose PGN semantics haven't been
+# verified yet.
+#
+# Thunk quirk: 3 of the TX handlers (0x258f4 / 0x26060 / 0x26694) are
+# stub entry-points that jump into the middle of other functions. Ghidra
+# auto-names these as thunk_FUN_<target> on every export, overriding any
+# manual rename. Mapping:
+#   0x000258f4 thunk_FUN_00025a28 = TX handler for PGN 61441 (0xF001)
+#                                   — jumps into j1939GetEngineStateCode @ 0x2588c
+#   0x00026060 thunk_FUN_000260a8 = TX handler for PGN 65247 (0xFEDF, EEC3)
+#   0x00026694 thunk_FUN_0002669c = TX handler for PGN 65213 (0xFEBD)
+0x0001b9a8,cm848_j1939SendPgn65251_FEE3_EngineConfig
 0x0001bb30,cm848_initColdStartLimits
 0x0001bb48,cm848_calculateColdStartRpmAdjust
 0x0001bb78,cm848_calculateColdStartFuelOffset
@@ -906,9 +924,12 @@ address,name
 0x00024028,cm848_j1939BuildEngineStatusByte
 0x000240b8,cm848_prepareAndSendJ1939Frame
 0x000240c4,cm848_prepareAndSendJ1939Frame
+0x00024104,cm848_j1939SendPgn65269_FEF5_AmbientConditions
 0x00024178,j1939HandlePgn65265CruiseVehicleSpeed
 0x00024230,buildPgn65228Dm3ClearInitMessage
+0x000242a0,cm848_j1939SendPgn65241_FED9
 0x0002439c,cm848_buildDiagnosticStatusMessage
+0x000243f0,cm848_j1939SendPgn65265_FEF1_CruiseVehicleSpeed
 0x00024664,cm848_initPgn65265CruiseSpeedHandler
 0x000246fc,j1939HandlePgn65261CruiseControlSetup
 0x00024800,initPgn65261CruiseControlSetupStruct
@@ -923,6 +944,7 @@ address,name
 0x00024d78,cm848_processDm1FaultBroadcast
 0x00024dd8,cm848_initPgn65226Dm1Handler
 0x00024e78,cm848_j1939HandlePgn65227Dm2PreviousDtc
+0x00024ff0,cm848_j1939SendPgn65226_FECA_Dm1ActiveFaults
 0x00025000,cm848_initPgn65227Dm2Handler
 0x00025050,cm848_initPgn65227Dm2ResponseHandler
 0x00025094,cm848_initPgn65229Dm4Handler
@@ -934,27 +956,37 @@ address,name
 0x0002567c,cm848_j1939BuildEngineControlByte
 0x00025884,cm848_setEngineControllerStateCode
 0x0002588c,j1939GetEngineStateCode
+0x000258f4,thunk_FUN_00025a28
 0x00025a9c,cm848_transmitEngineStatusMessage
+0x00025b04,cm848_j1939SendPgn61444_F004_EngineSpeedTorqueEec1
 0x00025b10,j1939HandlePgn61443Eec2
 0x00025d30,cm848_sendEec2WithDefaultValues
 0x00025d60,cm848_initPgn61443Eec2Handler
+0x00025d88,cm848_j1939SendPgn61443_F003_AcceleratorPedalEec2
 0x00025de8,cm848_j1939SendOilPressureStatus
 0x00025eb4,cm848_j1939HandlePgn65263FluidLevelPressure
 0x00025fd8,cm848_initPgn65263FluidLevelPressureHandler
 0x00026024,cm848_j1939HandlePgn65262EngineTemp
+0x00026060,thunk_FUN_000260a8
 0x000260d4,cm848_buildEngineTempWithConditionCheck
+0x0002612c,cm848_j1939SendPgn65263_FEEF_FluidLevelPressure
 0x0002619c,cm848_initPgn65262EngineTempHandler
 0x0002622c,cm848_emptyStubFunctionJ1939A
 0x00026238,cm848_j1939BuildVehicleOperatingStatus
+0x0002629c,cm848_j1939SendPgn65262_FEEE_EngineTemp1
 0x000263a4,cm848_initJ1939SpeedControlMessage
 0x0002641c,cm848_j1939SendDiagnosticStatusMessage
+0x000264b0,cm848_j1939SendPgn61440_F000
 0x000264d8,cm848_j1939HandlePgn65270InletExhaustConditions
 0x0002661c,cm848_initPgn65270InletExhaustHandler
 0x00026650,cm848_j1939BuildProtocolModeStatus
+0x00026694,thunk_FUN_0002669c
 0x000266f8,cm848_buildProtocolModeStatusMessage
+0x00026750,cm848_j1939SendPgn65270_FEF6_InletExhaustConditions
 0x00026850,cm848_initPgn65256VehicleMaintenanceHandler
 0x00026884,cm848_j1939HandlePgn65242SoftwareId
 0x000268ac,cm848_initPgn65242SoftwareIdHandler
+0x000268c8,cm848_j1939SendPgn65249_FEE1
 0x000269f4,cm848_j1939HandlePgn65504ProprietaryA
 0x00026aa4,cm848_buildVehicleMaintenanceStatusBits
 0x00026bb0,cm848_j1939HandlePgn65248VehicleDistance
@@ -964,10 +996,12 @@ address,name
 0x00026dd0,cm848_emptyStubFunctionJ1939B
 0x00026ddc,cm848_initPgn65260VehicleIdHandler
 0x00026e90,cm848_j1939SendSafetyStatusMessage
+0x00026f68,cm848_j1939SendPgn65271_FEF7_VehicleElectricalPower
 0x00026f78,emptyStubFunction4
 0x00026f7c,cm848_emptyStubFunction5
 0x00026f80,cm848_j1939FormatDm1Message
 0x00026fb8,cm848_updateGovernorTorqueLimit
+0x00027108,cm848_j1939SendPgn65279_FEFF
 0x00027118,cm848_resetGovernorState
 0x0002715c,cm848_processGovernorModeTransition
 0x00027174,cm848_selectTorqueLimitByStateMachine
@@ -1022,6 +1056,7 @@ address,name
 0x0002bd58,cm848_j1939HandlePgn65264Pto
 0x0002bf44,cm848_updateFaultOnKeyoff
 0x0002bf6c,cm848_calculateRpmLimitsFromProtection
+0x0002bfd0,cm848_j1939SendPgn65264_FEF0_PowerTakeoff
 0x0002c0fc,cm848_emptyStubFunction6
 0x0002c100,cm848_initProtectionLimitVariables
 0x0002c114,cm848_updateTorqueLimitFromProtection

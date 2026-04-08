@@ -26,7 +26,7 @@ FFE0 | 65504 | Proprietary A                   | 18EAFF00#E0FF00 | 18FFE000#00 0
 
 # Not responding (tested):
 # FEE3 | 65251 | Engine Config (different from DM5)
-# FEE5 | 65253 | Engine Hours (hours tracked via different mechanism)
+# FEE5 | 65253 | Engine Hours - NOT COMPILED INTO FIRMWARE (see docs/engine_hours_and_odometer.md)
 # FEFC | 65276 | Fuel Economy (not supported on this ECU)
 # FEF2 | 65266 | Fuel Consumption (not supported)
 # F004 | 61444 | EEC1 - Engine Speed/Torque (responds on F003 EEC2 instead)
@@ -34,5 +34,8 @@ FFE0 | 65504 | Proprietary A                   | 18EAFF00#E0FF00 | 18FFE000#00 0
 # Notes:
 # - Engine RPM is NOT available via J1939 request on this ECU
 # - EEC1 (61444) which normally contains RPM does not respond
-# - Vehicle Hours may be in EEPROM rather than broadcast via J1939
+# - PGN FEE5 (Engine Hours) is absent from both TX schedule and RX handler
+#   table in cm848_rom.ghidra.cpp - not an #ifdef, it's not in the binary.
+#   Read hours via CLIP Service 0x4A against EEPROM instead.
+#   See docs/engine_hours_and_odometer.md for the full map.
 # - Fuel economy PGNs (65266, 65276) not implemented on CM848

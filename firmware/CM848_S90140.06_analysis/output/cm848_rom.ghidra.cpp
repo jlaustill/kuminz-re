@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Apr 02 07:49:41 MDT 2026
+// Generated: Wed Apr 08 15:16:48 MDT 2026
 
 
 //
@@ -7796,7 +7796,7 @@ void cm848_sensorChannel14_init(void)
   cm848_sensorChannelTypeB_configInit
             (&DAT_00059622,&sensor_ch14_input_gain,&DAT_003fa0a6,&DAT_00059632,&DAT_00059644,0,
              &PTR_DAT_003fa0a8,0x2a,0x152,0x151,&sensor_channel_14_input,
-             &eeprom_transfer_end_address,&sensor_channel_14_output_2);
+             &eeprom_circular_buffer_lower_bound,&sensor_channel_14_output_2);
   return;
 }
 
@@ -7812,7 +7812,7 @@ void cm848_sensorChannel14_process(void)
   cm848_updateSensorChannelTypeB
             (&DAT_00059622,&sensor_ch14_input_gain,&DAT_003fa0a6,&DAT_00059632,&DAT_00059644,0,
              &PTR_DAT_003fa0a8,0x2a,0x152,0x151,&sensor_channel_14_input,
-             &eeprom_transfer_end_address,&sensor_channel_14_output_2);
+             &eeprom_circular_buffer_lower_bound,&sensor_channel_14_output_2);
   return;
 }
 
@@ -16247,6 +16247,54 @@ void cm848_calculateColdStartFuelAdjust(void)
 
 
 //
+// Function: cm848_j1939SendPgn65251_FEE3_EngineConfig @ 0x0001b9a8
+//
+
+void cm848_j1939SendPgn65251_FEE3_EngineConfig(void)
+
+{
+  uint uVar1;
+  short sVar2;
+  uint uVar3;
+  uint uVar4;
+  uint uVar5;
+  uint uVar6;
+  
+  if (((fuel_demand_accumulator == 2) || (fuel_demand_accumulator == 6)) ||
+     (sVar2 = cold_start_fuel_demand_value, fuel_demand_accumulator == 7)) {
+    cold_start_fuel_lookup_result =
+         cm848_dualAxisTableInterpolation(&DAT_003fa84e,oil_pressure_sensor.coolant_temp,0xb25c);
+    if (cold_start_fuel_override_value != 0) {
+      cold_start_fuel_lookup_result = cold_start_fuel_override_value;
+    }
+    uVar6 = (uint)DAT_0005b1bc;
+    if ((uint)cold_start_temp_table_result_2 + (uint)intake_temp_value < uVar6) {
+      uVar6 = (uint)cold_start_temp_table_result_2 + (uint)intake_temp_value;
+    }
+    cold_start_rpm_threshold = (undefined2)uVar6;
+    uVar3 = (uint)DAT_0005b1ba;
+    if ((uint)cold_start_temp_table_result_1 + (uint)cold_start_timing_offset < uVar3) {
+      uVar3 = (uint)cold_start_temp_table_result_1 + (uint)cold_start_timing_offset;
+    }
+    cold_start_fuel_adjust_result = (short)uVar3;
+    uVar1 = uVar6 & 0xffff;
+    uVar4 = (uint)target_engine_rpm.current_rpm;
+    sVar2 = cold_start_fuel_adjust_result;
+    if (((uVar1 <= uVar4) && (sVar2 = cold_start_fuel_demand_value, uVar1 <= uVar4)) &&
+       (uVar5 = (uint)intake_pressure_value, uVar4 <= uVar5)) {
+      uVar6 = uVar5 - uVar6 & 0xffff;
+      sVar2 = (short)((((uint)cold_start_fuel_lookup_result + (uint)cold_start_fuel_accumulator) *
+                      (uVar4 - uVar1)) / uVar6) +
+              (short)(((uVar3 & 0xffff) * (uVar5 - uVar4)) / uVar6);
+    }
+  }
+  cold_start_fuel_demand_value = sVar2;
+  return;
+}
+
+
+
+//
 // Function: cm848_initColdStartLimits @ 0x0001bb30
 //
 
@@ -17138,7 +17186,8 @@ void cm848_clearDiagnosticState(void)
     fault_list_write_index.read_index = 0;
     fault_list_write_index.total_emission_faults = 0;
     speed_control_diagnostic_result = 0;
-    if (DAT_003fdd6c <= (uint)DAT_003fd944 * 8000) {
+    if (total_vehicle_distance_raw <=
+        (uint)vehicle_distance_fault_clear_threshold_miles._0_1_ * 8000) {
       _DAT_003fedfc = 0;
       DAT_003feebc = 0;
       protection_error_term._2_2_ = 0;
@@ -17191,7 +17240,8 @@ void cm848_clearAllDiagnosticFaults(void)
   fault_list_write_index.read_index = 0;
   fault_list_write_index.total_emission_faults = 0;
   speed_control_diagnostic_result = 0;
-  if (DAT_003fdd6c <= (uint)DAT_003fd944 * 8000) {
+  if (total_vehicle_distance_raw <= (uint)vehicle_distance_fault_clear_threshold_miles._0_1_ * 8000)
+  {
     _DAT_003fedfc = 0;
     DAT_003feebc = 0;
     protection_error_term._2_2_ = 0;
@@ -20668,13 +20718,14 @@ LAB_00022900:
     goto LAB_00022900;
   }
   tsc1_coast_brake_mode = (tsc1_speed_previous.byte0_control_mode & 0x30) == 0x10;
-  if ((((DAT_003fdda4._2_2_ == 4) || (DAT_003fdda4._2_2_ == 5)) &&
+  if ((((eeprom_scatter_source_table._2_2_ == 4) || (eeprom_scatter_source_table._2_2_ == 5)) &&
       ((tsc1_speed_previous.byte0_control_mode & 3) < 2)) &&
      ((tsc1_speed_previous.byte0_control_mode & 0x30) < 0x11)) {
     _tsc1_mode_timeout = DAT_0005c3a0 + 1;
     _tsc1_mode_active = 1;
   }
-  if (((DAT_003fdda4._2_2_ != 4) && (DAT_003fdda4._2_2_ != 5)) || (_tsc1_mode_active == 1)) {
+  if (((eeprom_scatter_source_table._2_2_ != 4) && (eeprom_scatter_source_table._2_2_ != 5)) ||
+     (_tsc1_mode_active == 1)) {
     if (((tsc1_speed_previous.byte0_control_mode & 0x30) == 0) &&
        ((tsc1_speed_previous.byte0_control_mode & 3) == 0)) {
       tsc1_control_word_stored.disable_control = 1;
@@ -20687,7 +20738,7 @@ LAB_00022900:
     }
   }
 LAB_00022a00:
-  if ((DAT_003fdda4._2_2_ == 4) &&
+  if ((eeprom_scatter_source_table._2_2_ == 4) &&
      (tsc1_speed_previous.bytes12_requested_speed =
            CONCAT11(*(undefined1 *)(*(int *)(param_1 + 6) + 2),(*(byte **)(param_1 + 6))[1]),
      tsc1_speed_previous.bytes12_requested_speed < 0xfb00)) {
@@ -20776,7 +20827,7 @@ void cm848_initJ1939TorqueSpeedHandler(void)
   tsc1_message_timeout = 0;
   _tsc1_speed_cmd_timeout = DAT_0005c3a4;
   _tsc1_handler_initialized = 1;
-  if (DAT_003fdda4._2_2_ == 4) {
+  if (eeprom_scatter_source_table._2_2_ == 4) {
     system_enable_state.condition_monitor = system_enable_state.condition_monitor & 0xdfff;
     DAT_003fe9da = DAT_003fe9da & 0xdfff;
   }
@@ -21793,12 +21844,12 @@ void cm848_prepareAndSendJ1939Frame(byte *param_1,undefined4 param_2,int param_3
   else {
     if ((protection_mode_bits.mode_bits & 4) != 0) {
       param_4 = param_4 | 4;
-      goto LAB_00024104;
+      goto cm848_j1939SendPgn65269_FEF5_AmbientConditions;
     }
     bVar1 = 0;
   }
   param_4 = param_4 | bVar1;
-LAB_00024104:
+cm848_j1939SendPgn65269_FEF5_AmbientConditions:
   *param_1 = param_4;
   sendJ1939MultiFrame(&DAT_003faad4);
   return;
@@ -21822,13 +21873,28 @@ void cm848_prepareAndSendJ1939Frame(byte *param_1,undefined4 param_2,int param_3
   else {
     if ((protection_mode_bits.mode_bits & 4) != 0) {
       param_4 = param_4 | 4;
-      goto LAB_00024104;
+      goto cm848_j1939SendPgn65269_FEF5_AmbientConditions;
     }
     bVar1 = 0;
   }
   param_4 = param_4 | bVar1;
-LAB_00024104:
+cm848_j1939SendPgn65269_FEF5_AmbientConditions:
   *param_1 = param_4;
+  sendJ1939MultiFrame(&DAT_003faad4);
+  return;
+}
+
+
+
+//
+// Function: cm848_j1939SendPgn65269_FEF5_AmbientConditions @ 0x00024104
+//
+
+void cm848_j1939SendPgn65269_FEF5_AmbientConditions
+               (undefined1 *param_1,undefined4 param_2,undefined1 param_3)
+
+{
+  *param_1 = param_3;
   sendJ1939MultiFrame(&DAT_003faad4);
   return;
 }
@@ -21857,7 +21923,7 @@ void j1939HandlePgn65265CruiseVehicleSpeed(void)
   else {
     DAT_003faaf2 = 0xfd;
   }
-  if (DAT_003fdda4._2_2_ < 1) {
+  if (eeprom_scatter_source_table._2_2_ < 1) {
     _DAT_003faaf3 = 0xffff;
   }
   else {
@@ -22198,6 +22264,165 @@ LAB_00024648:
 
 
 //
+// Function: cm848_j1939SendPgn65241_FED9 @ 0x000242a0
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+void cm848_j1939SendPgn65241_FED9
+               (undefined4 param_1,undefined4 param_2,int param_3,undefined4 param_4,int param_5,
+               byte param_6)
+
+{
+  byte bVar1;
+  byte bVar2;
+  undefined1 uVar3;
+  int in_r12;
+  
+  if ((*(byte *)(in_r12 + -0x3faf) & 8) != 0) {
+    *(byte *)(param_5 + 3) = param_6 | 0x10;
+  }
+  if ((system_capability_flags & 0x40) == 0) {
+    bVar2 = 0xf;
+LAB_0002432c:
+    *(byte *)(param_5 + 3) = *(byte *)(param_5 + 3) | bVar2;
+  }
+  else {
+    if ((*(byte *)(param_3 + 3) & 0x80) == 0) {
+      if ((protection_mode_bits.control_word & 0x80) != 0) {
+        bVar2 = 4;
+        goto LAB_00024304;
+      }
+    }
+    else {
+      bVar2 = 0xc;
+LAB_00024304:
+      *(byte *)(param_5 + 3) = *(byte *)(param_5 + 3) | bVar2;
+    }
+    if (fuel_rate_current != 0) {
+      bVar2 = 1;
+      goto LAB_0002432c;
+    }
+  }
+  if ((system_capability_flags & 0x40) == 0) {
+    bVar2 = 0xff;
+LAB_00024510:
+    *(byte *)(param_5 + 4) = bVar2;
+  }
+  else {
+    if ((((*(byte *)(param_3 + 3) & 0x80) == 0) || ((protection_mode_bits.control_word & 0x80) == 0)
+        ) && (((*(byte *)(param_3 + 3) & 0x80) == 0 ||
+              ((protection_mode_bits.control_word & 0x80) != 0)))) {
+      if ((protection_mode_bits.control_word & 0x80) == 0) {
+        bVar2 = 0;
+      }
+      else {
+        bVar2 = 0x40;
+      }
+    }
+    else {
+      bVar2 = 0xc0;
+    }
+    *(byte *)(param_5 + 4) = bVar2;
+    if ((*(byte *)(param_3 + 3) & 0x80) == 0) {
+      if ((((protection_mode_bits.control_word & 0x80) != 0) ||
+          ((DAT_003fd530 == 0 && ((protection_mode_bits.control_word & 0x80) != 0)))) ||
+         ((DAT_003fd530 != 0 && ((protection_mode_bits.control_word & 0x80) != 0)))) {
+        bVar1 = 0x10;
+        goto LAB_00024424;
+      }
+    }
+    else {
+      bVar1 = 0x30;
+LAB_00024424:
+      *(byte *)(param_5 + 4) = bVar2 | bVar1;
+    }
+    if ((((*(byte *)(param_3 + 3) & 0x80) == 0) || ((protection_mode_bits.control_word & 0x80) != 0)
+        ) && (((*(byte *)(param_3 + 3) & 0x80) == 0 ||
+              ((protection_mode_bits.control_word & 0x80) == 0)))) {
+      if ((protection_mode_bits.control_word & 0x80) != 0) {
+        bVar2 = 4;
+        goto LAB_00024494;
+      }
+    }
+    else {
+      bVar2 = 0xc;
+LAB_00024494:
+      *(byte *)(param_5 + 4) = *(byte *)(param_5 + 4) | bVar2;
+    }
+    if ((*(byte *)(param_3 + 3) & 0x80) != 0) {
+      bVar2 = 3;
+LAB_00024500:
+      bVar2 = *(byte *)(param_5 + 4) | bVar2;
+      goto LAB_00024510;
+    }
+    if ((((protection_mode_bits.control_word & 0x80) != 0) ||
+        ((DAT_003fd530 != 0 && ((protection_mode_bits.control_word & 0x80) != 0)))) ||
+       ((DAT_003fd530 == 0 && ((protection_mode_bits.control_word & 0x80) != 0)))) {
+      bVar2 = 1;
+      goto LAB_00024500;
+    }
+  }
+  if ((system_capability_flags & 0x40) == 0) {
+    uVar3 = 0xff;
+  }
+  else {
+    uVar3 = (undefined1)((uint)fuel_rate_target * 0x19c >> 0x10);
+  }
+  *(undefined1 *)(param_5 + 5) = uVar3;
+  if (_pgn65265_handler_index < 8) {
+    bVar2 = (byte)((int)_pgn65265_handler_index << 5);
+  }
+  else {
+    bVar2 = 0;
+  }
+  *(byte *)(param_5 + 6) = bVar2;
+  if ((system_capability_flags & 0x10) == 0) {
+    bVar2 = bVar2 | 0x1f;
+  }
+  else {
+    bVar2 = bVar2 | (byte)protection_eval_result;
+  }
+  *(byte *)(param_5 + 6) = bVar2;
+  if ((*(byte *)(param_3 + 3) & 0x80) == 0) {
+    if ((protection_mode_bits.control_word & 0x80) == 0) {
+      bVar2 = 0xc0;
+    }
+    else {
+      bVar2 = 0xd0;
+    }
+  }
+  else {
+    bVar2 = 0xf0;
+  }
+  *(byte *)(param_5 + 7) = bVar2;
+  if ((*(byte *)(param_3 + 3) & 0x80) == 0) {
+    if ((protection_mode_bits.control_word & 0x80) != 0) {
+      bVar1 = 0xc4;
+      goto LAB_00024604;
+    }
+  }
+  else {
+    bVar1 = 0xcc;
+LAB_00024604:
+    *(byte *)(param_5 + 7) = bVar2 | bVar1;
+  }
+  if ((*(byte *)(param_3 + 3) & 0x80) == 0) {
+    if ((protection_mode_bits.control_word & 0x80) == 0) goto LAB_00024648;
+    bVar2 = 0xc1;
+  }
+  else {
+    bVar2 = 0xc3;
+  }
+  *(byte *)(param_5 + 7) = *(byte *)(param_5 + 7) | bVar2;
+LAB_00024648:
+  sendJ1939MultiFrame(&DAT_003faae4);
+  return;
+}
+
+
+
+//
 // Function: cm848_buildDiagnosticStatusMessage @ 0x0002439c
 //
 
@@ -22310,6 +22535,108 @@ LAB_00024604:
     bVar2 = 0xc3;
   }
   *(byte *)(param_5 + 7) = *(byte *)(param_5 + 7) | bVar2;
+LAB_00024648:
+  sendJ1939MultiFrame(&DAT_003faae4);
+  return;
+}
+
+
+
+//
+// Function: cm848_j1939SendPgn65265_FEF1_CruiseVehicleSpeed @ 0x000243f0
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+void cm848_j1939SendPgn65265_FEF1_CruiseVehicleSpeed
+               (undefined4 param_1,int param_2,int param_3,int param_4,int param_5,byte param_6)
+
+{
+  byte bVar1;
+  undefined1 uVar2;
+  byte bVar3;
+  
+  if (((DAT_003fd530 == 0) && (param_2 != 0)) || ((DAT_003fd530 != 0 && (param_2 != 0)))) {
+    *(byte *)(param_5 + 4) = param_6 | 0x10;
+  }
+  if ((((*(byte *)(param_3 + 3) & 0x80) == 0) || ((protection_mode_bits.control_word & 0x80) != 0))
+     && (((*(byte *)(param_3 + 3) & 0x80) == 0 || ((protection_mode_bits.control_word & 0x80) == 0))
+        )) {
+    if ((protection_mode_bits.control_word & 0x80) != 0) {
+      bVar1 = 4;
+      goto LAB_00024494;
+    }
+  }
+  else {
+    bVar1 = 0xc;
+LAB_00024494:
+    *(byte *)(param_5 + 4) = *(byte *)(param_5 + 4) | bVar1;
+  }
+  if ((*(byte *)(param_3 + 3) & 0x80) == 0) {
+    if ((((protection_mode_bits.control_word & 0x80) != 0) ||
+        ((DAT_003fd530 != 0 && ((protection_mode_bits.control_word & 0x80) != 0)))) ||
+       ((DAT_003fd530 == 0 && ((protection_mode_bits.control_word & 0x80) != 0)))) {
+      bVar1 = 1;
+      goto LAB_00024500;
+    }
+  }
+  else {
+    bVar1 = 3;
+LAB_00024500:
+    *(byte *)(param_5 + 4) = *(byte *)(param_5 + 4) | bVar1;
+  }
+  if ((*(ushort *)(param_4 + 6) & 0x40) == 0) {
+    uVar2 = 0xff;
+  }
+  else {
+    uVar2 = (undefined1)((uint)fuel_rate_target * 0x19c >> 0x10);
+  }
+  *(undefined1 *)(param_5 + 5) = uVar2;
+  if (_pgn65265_handler_index < 8) {
+    bVar1 = (byte)((int)_pgn65265_handler_index << 5);
+  }
+  else {
+    bVar1 = 0;
+  }
+  *(byte *)(param_5 + 6) = bVar1;
+  if ((*(ushort *)(param_4 + 6) & 0x10) == 0) {
+    bVar1 = bVar1 | 0x1f;
+  }
+  else {
+    bVar1 = bVar1 | (byte)protection_eval_result;
+  }
+  *(byte *)(param_5 + 6) = bVar1;
+  if ((*(byte *)(param_3 + 3) & 0x80) == 0) {
+    if ((protection_mode_bits.control_word & 0x80) == 0) {
+      bVar1 = 0xc0;
+    }
+    else {
+      bVar1 = 0xd0;
+    }
+  }
+  else {
+    bVar1 = 0xf0;
+  }
+  *(byte *)(param_5 + 7) = bVar1;
+  if ((*(byte *)(param_3 + 3) & 0x80) == 0) {
+    if ((protection_mode_bits.control_word & 0x80) != 0) {
+      bVar3 = 0xc4;
+      goto LAB_00024604;
+    }
+  }
+  else {
+    bVar3 = 0xcc;
+LAB_00024604:
+    *(byte *)(param_5 + 7) = bVar1 | bVar3;
+  }
+  if ((*(byte *)(param_3 + 3) & 0x80) == 0) {
+    if ((protection_mode_bits.control_word & 0x80) == 0) goto LAB_00024648;
+    bVar1 = 0xc1;
+  }
+  else {
+    bVar1 = 0xc3;
+  }
+  *(byte *)(param_5 + 7) = *(byte *)(param_5 + 7) | bVar1;
 LAB_00024648:
   sendJ1939MultiFrame(&DAT_003faae4);
   return;
@@ -22753,6 +23080,18 @@ void cm848_j1939HandlePgn65227Dm2PreviousDtc(void)
 
 
 //
+// Function: cm848_j1939SendPgn65226_FECA_Dm1ActiveFaults @ 0x00024ff0
+//
+
+void cm848_j1939SendPgn65226_FECA_Dm1ActiveFaults(void)
+
+{
+  return;
+}
+
+
+
+//
 // Function: cm848_initPgn65227Dm2Handler @ 0x00025000
 //
 
@@ -23104,23 +23443,23 @@ void j1939GetEngineStateCode(void)
        (pressure_fuel_adjustment == 0x14)) {
       if (tsc1_control_word_stored.mode_request == 1) {
         j1939_tx_retry_count = 0xf6;
-        goto LAB_00025a28;
+        goto FUN_00025a28;
       }
       if (tsc1_control_word_stored.mode_request == 2) {
         j1939_tx_retry_count = 0xf7;
-        goto LAB_00025a28;
+        goto FUN_00025a28;
       }
       if (tsc1_control_word_stored.mode_request == 3) {
         j1939_tx_retry_count = 0xf5;
-        goto LAB_00025a28;
+        goto FUN_00025a28;
       }
     }
     j1939_tx_retry_count = 0xfe;
-    goto LAB_00025a28;
+    goto FUN_00025a28;
   }
   if ((int)protection_state_timer == (int)pressure_fuel_adjustment) {
     j1939_tx_retry_count = 0xf8;
-    goto LAB_00025a28;
+    goto FUN_00025a28;
   }
   switch((int)pressure_fuel_adjustment) {
   case 0:
@@ -23133,7 +23472,7 @@ void j1939GetEngineStateCode(void)
     goto LAB_000259f4;
   case 4:
     j1939_tx_retry_count = 0xf3;
-    goto LAB_00025a28;
+    goto FUN_00025a28;
   case 5:
     break;
   case 6:
@@ -23144,16 +23483,16 @@ void j1939GetEngineStateCode(void)
     goto LAB_000259f4;
   case 9:
     j1939_tx_retry_count = 0xf2;
-    goto LAB_00025a28;
+    goto FUN_00025a28;
   case 10:
     j1939_tx_retry_count = 0xf4;
-    goto LAB_00025a28;
+    goto FUN_00025a28;
   case 0xb:
     j1939_tx_retry_count = 0xf0;
-    goto LAB_00025a28;
+    goto FUN_00025a28;
   case 0xc:
     j1939_tx_retry_count = 0xf9;
-    goto LAB_00025a28;
+    goto FUN_00025a28;
   case 0xd:
     break;
   case 0xe:
@@ -23178,7 +23517,7 @@ void j1939GetEngineStateCode(void)
     break;
   case 0x18:
     j1939_tx_retry_count = 0xfa;
-    goto LAB_00025a28;
+    goto FUN_00025a28;
   case 0x19:
     break;
   case 0x1a:
@@ -23206,10 +23545,10 @@ void j1939GetEngineStateCode(void)
   case 0x25:
 LAB_000259f4:
     j1939_tx_retry_count = 0xf1;
-    goto LAB_00025a28;
+    goto FUN_00025a28;
   }
   j1939_tx_retry_count = 0xfe;
-LAB_00025a28:
+FUN_00025a28:
   cm848_selectTorqueLimitStateMachine();
   j1939_tx_retry_count_1 = (char)((ushort)torque_limit_state_value >> 8) + '}';
   cm848_calculateLoadRateOfChange();
@@ -23228,6 +23567,70 @@ LAB_00025a28:
 
 
 //
+// Function: thunk_FUN_00025a28 @ 0x000258f4
+//
+
+void thunk_FUN_00025a28(undefined1 param_1)
+
+{
+  word wVar1;
+  undefined1 uStack00000008;
+  undefined1 uStack00000009;
+  
+  j1939_tx_retry_count = param_1;
+  cm848_selectTorqueLimitStateMachine();
+  j1939_tx_retry_count_1 = (char)((ushort)torque_limit_state_value >> 8) + '}';
+  cm848_calculateLoadRateOfChange();
+  DAT_003fad92 = (char)((ushort)load_rate_of_change_value >> 8) + '}';
+  if (scale_multiplier_a336 == 1) {
+    DAT_003fad92 = -2;
+  }
+  _uStack00000008 = target_engine_rpm.current_rpm;
+  wVar1 = _uStack00000008;
+  uStack00000009 = (undefined1)target_engine_rpm.current_rpm;
+  DAT_003fad93 = uStack00000009;
+  uStack00000008 = (undefined1)(target_engine_rpm.current_rpm >> 8);
+  DAT_003fad94 = uStack00000008;
+  _uStack00000008 = wVar1;
+  sendJ1939MultiFrame(0x3fad98);
+  return;
+}
+
+
+
+//
+// Function: FUN_00025a28 @ 0x00025a28
+//
+
+void FUN_00025a28(undefined1 param_1)
+
+{
+  word wVar1;
+  undefined1 uStack00000008;
+  undefined1 uStack00000009;
+  
+  j1939_tx_retry_count = param_1;
+  cm848_selectTorqueLimitStateMachine();
+  j1939_tx_retry_count_1 = (char)((ushort)torque_limit_state_value >> 8) + '}';
+  cm848_calculateLoadRateOfChange();
+  DAT_003fad92 = (char)((ushort)load_rate_of_change_value >> 8) + '}';
+  if (scale_multiplier_a336 == 1) {
+    DAT_003fad92 = -2;
+  }
+  _uStack00000008 = target_engine_rpm.current_rpm;
+  wVar1 = _uStack00000008;
+  uStack00000009 = (undefined1)target_engine_rpm.current_rpm;
+  DAT_003fad93 = uStack00000009;
+  uStack00000008 = (undefined1)(target_engine_rpm.current_rpm >> 8);
+  DAT_003fad94 = uStack00000008;
+  _uStack00000008 = wVar1;
+  sendJ1939MultiFrame(0x3fad98);
+  return;
+}
+
+
+
+//
 // Function: cm848_transmitEngineStatusMessage @ 0x00025a9c
 //
 
@@ -23235,6 +23638,21 @@ void cm848_transmitEngineStatusMessage(int param_1)
 
 {
   sendJ1939MultiFrame(param_1 + -0x5268);
+  return;
+}
+
+
+
+//
+// Function: cm848_j1939SendPgn61444_F004_EngineSpeedTorqueEec1 @ 0x00025b04
+//
+
+void cm848_j1939SendPgn61444_F004_EngineSpeedTorqueEec1(int param_1)
+
+{
+  int in_r10;
+  
+  *(int *)(param_1 + 10) = in_r10 + -0x525a;
   return;
 }
 
@@ -23351,6 +23769,29 @@ void cm848_initPgn61443Eec2Handler(undefined4 param_1,undefined4 param_2,void *p
   DAT_003fadb4 = 5;
   PTR_DAT_003fadb6 = &DAT_003fada8;
   PTR_DAT_003fadba = &DAT_003fadbe;
+  emptyStubFunction3();
+  cm848_j1939RegisterPgnHandler(3,0x10,param_3);
+  return;
+}
+
+
+
+//
+// Function: cm848_j1939SendPgn61443_F003_AcceleratorPedalEec2 @ 0x00025d88
+//
+
+void cm848_j1939SendPgn61443_F003_AcceleratorPedalEec2
+               (byte *param_1,undefined4 param_2,void *param_3)
+
+{
+  byte in_r10;
+  
+  *param_1 = (in_r10 & 7) << 2 | *param_1 & 0xe3;
+  param_1[3] = (byte)j1939_source_address;
+  param_1[4] = 0;
+  param_1[5] = 5;
+  *(undefined1 **)(param_1 + 6) = &DAT_003fada8;
+  *(undefined **)(param_1 + 10) = &DAT_003fadbe;
   emptyStubFunction3();
   cm848_j1939RegisterPgnHandler(3,0x10,param_3);
   return;
@@ -23484,6 +23925,80 @@ void cm848_j1939HandlePgn65262EngineTemp(void)
 
 
 //
+// Function: thunk_FUN_000260a8 @ 0x00026060
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+void thunk_FUN_000260a8(int param_1,undefined1 param_2)
+
+{
+  int iVar1;
+  short sStack00000008;
+  
+  if (((*(ushort *)(param_1 + 4) & 0x8000) == 0) && ((*(ushort *)(param_1 + 6) & 1) == 0)) {
+    iVar1 = ((coolant_temp_sensor_raw_value >> 6) * 5 + -0xa0) / 9 + 0x28;
+    sStack00000008 = (short)iVar1;
+    if (sStack00000008 < 0) {
+      iVar1 = 0;
+    }
+  }
+  else {
+    iVar1 = 0xfe;
+  }
+  DAT_003fadff = (undefined1)iVar1;
+  DAT_003fadfe = param_2;
+  if (((*(ushort *)(param_1 + 2) & 0x40) == 0) && ((*(ushort *)(param_1 + 2) & 0x80) == 0)) {
+    sStack00000008 = (short)((coolant_temp_converted_value * 0xa0 + -0x50000) / 0x240) + 0x2220;
+    _DAT_003fae00 = mpc555_extractJ1939MessageFields(&stack0x00000008);
+  }
+  else {
+    _DAT_003fae00 = 0xfefe;
+  }
+  sendJ1939MultiFrame(&DAT_003fadf0);
+  return;
+}
+
+
+
+//
+// Function: FUN_000260a8 @ 0x000260a8
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+void FUN_000260a8(int param_1,undefined1 param_2)
+
+{
+  int iVar1;
+  short sStack00000008;
+  
+  if (((*(ushort *)(param_1 + 4) & 0x8000) == 0) && ((*(ushort *)(param_1 + 6) & 1) == 0)) {
+    iVar1 = ((coolant_temp_sensor_raw_value >> 6) * 5 + -0xa0) / 9 + 0x28;
+    sStack00000008 = (short)iVar1;
+    if (sStack00000008 < 0) {
+      iVar1 = 0;
+    }
+  }
+  else {
+    iVar1 = 0xfe;
+  }
+  DAT_003fadff = (undefined1)iVar1;
+  DAT_003fadfe = param_2;
+  if (((*(ushort *)(param_1 + 2) & 0x40) == 0) && ((*(ushort *)(param_1 + 2) & 0x80) == 0)) {
+    sStack00000008 = (short)((coolant_temp_converted_value * 0xa0 + -0x50000) / 0x240) + 0x2220;
+    _DAT_003fae00 = mpc555_extractJ1939MessageFields(&stack0x00000008);
+  }
+  else {
+    _DAT_003fae00 = 0xfefe;
+  }
+  sendJ1939MultiFrame(&DAT_003fadf0);
+  return;
+}
+
+
+
+//
 // Function: cm848_buildEngineTempWithConditionCheck @ 0x000260d4
 //
 
@@ -23508,6 +24023,32 @@ void cm848_buildEngineTempWithConditionCheck(int param_1)
   }
   *(char *)(unaff_r31 + 1) = (char)iVar2;
   if (((*(ushort *)(param_1 + 2) & 0x40) == 0) && ((*(ushort *)(param_1 + 2) & 0x80) == 0)) {
+    sStack00000008 = (short)((coolant_temp_converted_value * 0xa0 + -0x50000) / 0x240) + 0x2220;
+    uVar1 = mpc555_extractJ1939MessageFields(&stack0x00000008);
+  }
+  else {
+    uVar1 = 0xfefe;
+  }
+  *(undefined2 *)(unaff_r31 + 2) = uVar1;
+  sendJ1939MultiFrame(&DAT_003fadf0);
+  return;
+}
+
+
+
+//
+// Function: cm848_j1939SendPgn65263_FEEF_FluidLevelPressure @ 0x0002612c
+//
+
+void cm848_j1939SendPgn65263_FEEF_FluidLevelPressure(int param_1)
+
+{
+  undefined2 uVar1;
+  int in_r12;
+  int unaff_r31;
+  short sStack00000008;
+  
+  if ((in_r12 == 0) && ((*(ushort *)(param_1 + 2) & 0x80) == 0)) {
     sStack00000008 = (short)((coolant_temp_converted_value * 0xa0 + -0x50000) / 0x240) + 0x2220;
     uVar1 = mpc555_extractJ1939MessageFields(&stack0x00000008);
   }
@@ -23627,6 +24168,66 @@ LAB_00026340:
 
 
 //
+// Function: cm848_j1939SendPgn65262_FEEE_EngineTemp1 @ 0x0002629c
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+void cm848_j1939SendPgn65262_FEEE_EngineTemp1(byte param_1,int param_2)
+
+{
+  byte bVar1;
+  byte in_cr0;
+  
+  if ((!(bool)(in_cr0 >> 1 & 1)) && (param_2 != 1)) goto LAB_00026340;
+  if (temperature_compensation_mode == 1) {
+LAB_000262e8:
+    if (_protection_control_source_index == 1) {
+      bVar1 = 6;
+    }
+    else {
+      if (_protection_control_source_index != 3) {
+        if (_protection_control_source_index == 2) {
+          bVar1 = 7;
+          goto LAB_00026320;
+        }
+        bVar1 = 0xe;
+        goto LAB_0002632c;
+      }
+      bVar1 = 5;
+    }
+    diagnostic_counter_value = param_1 | bVar1;
+  }
+  else {
+    if (temperature_compensation_mode == 2) {
+      bVar1 = 2;
+LAB_00026320:
+      diagnostic_counter_value = param_1 | bVar1;
+      goto LAB_00026340;
+    }
+    if (temperature_compensation_mode != 3) {
+      if (temperature_compensation_mode != 4) goto LAB_00026340;
+      goto LAB_000262e8;
+    }
+    bVar1 = 1;
+LAB_0002632c:
+    diagnostic_counter_value = param_1 | bVar1;
+  }
+LAB_00026340:
+  if ((DAT_0005c47c == 0) || ((_protection_condition_flags & 8) == 0)) {
+    diagnostic_counter_value_1 = -1;
+  }
+  else {
+    cm848_calculateSpeedControlError();
+    diagnostic_counter_value_1 = '}' - (char)((ushort)speed_control_error_value >> 8);
+  }
+  sendJ1939MultiFrame(&DAT_003fae10);
+  return;
+}
+
+
+
+//
 // Function: cm848_initJ1939SpeedControlMessage @ 0x000263a4
 //
 
@@ -23663,6 +24264,24 @@ void cm848_j1939SendDiagnosticStatusMessage(byte dest_address,byte status_type)
     DAT_003fae21 = 0xfe;
   }
   sendJ1939MultiFrame(&DAT_003fae28);
+  return;
+}
+
+
+
+//
+// Function: cm848_j1939SendPgn61440_F000 @ 0x000264b0
+//
+
+void cm848_j1939SendPgn61440_F000(int param_1)
+
+{
+  undefined1 in_r9;
+  
+  *(undefined1 *)(param_1 + 3) = in_r9;
+  *(undefined2 *)(param_1 + 4) = 2;
+  *(undefined1 **)(param_1 + 6) = &DAT_003fae20;
+  *(undefined **)(param_1 + 10) = &DAT_003fae36;
   return;
 }
 
@@ -23793,6 +24412,136 @@ void cm848_j1939BuildProtocolModeStatus(void)
 
 
 //
+// Function: thunk_FUN_0002669c @ 0x00026694
+//
+
+void thunk_FUN_0002669c(undefined4 param_1,undefined1 param_2)
+
+{
+  undefined2 uVar1;
+  undefined1 uStack00000008;
+  undefined1 uStack00000009;
+  
+  if (DAT_0005c47e == 0) {
+    DAT_003fae51 = 0xff;
+  }
+  else if (DAT_0005c47e == 1) {
+    DAT_003fae51 = 6;
+  }
+  else if (DAT_0005c47e == 2) {
+    DAT_003fae51 = 3;
+  }
+  else if (DAT_0005c47e == 3) {
+    DAT_003fae51 = 2;
+  }
+  else if (DAT_0005c47e == 6) {
+    DAT_003fae51 = 1;
+  }
+  uStack00000009 = (undefined1)DAT_0005c36e;
+  DAT_003fae52 = uStack00000009;
+  uStack00000008 = (undefined1)((ushort)DAT_0005c36e >> 8);
+  DAT_003fae53 = uStack00000008;
+  DAT_003fae54 = '}' - (char)((ushort)DAT_0005c376 >> 8);
+  uStack00000009 = (undefined1)DAT_0005c37e;
+  DAT_003fae55 = uStack00000009;
+  uStack00000008 = (undefined1)((ushort)DAT_0005c37e >> 8);
+  DAT_003fae56 = uStack00000008;
+  DAT_003fae57 = '}' - (char)((ushort)DAT_0005c378 >> 8);
+  uStack00000009 = (undefined1)DAT_0005c372;
+  DAT_003fae58 = uStack00000009;
+  uStack00000008 = (undefined1)((ushort)DAT_0005c372 >> 8);
+  DAT_003fae59 = uStack00000008;
+  DAT_003fae5a = '}' - (char)((ushort)DAT_0005c37a >> 8);
+  uStack00000009 = (undefined1)DAT_0005c374;
+  DAT_003fae5b = uStack00000009;
+  uStack00000008 = (undefined1)((ushort)DAT_0005c374 >> 8);
+  DAT_003fae5c = uStack00000008;
+  DAT_003fae5d = '}' - (char)((ushort)DAT_0005c37c >> 8);
+  uStack00000009 = (undefined1)DAT_0005c370;
+  DAT_003fae5e = uStack00000009;
+  uStack00000008 = (undefined1)((ushort)DAT_0005c370 >> 8);
+  DAT_003fae5f = uStack00000008;
+  _uStack00000008 = DAT_0005c36a;
+  uVar1 = _uStack00000008;
+  uStack00000009 = (undefined1)DAT_0005c36a;
+  DAT_003fae60 = uStack00000009;
+  uStack00000008 = (undefined1)((ushort)DAT_0005c36a >> 8);
+  DAT_003fae61 = uStack00000008;
+  DAT_003fae62 = '}' - (char)((ushort)DAT_0005c380 >> 8);
+  DAT_003fae50 = param_2;
+  _uStack00000008 = uVar1;
+  sendJ1939MultiFrame(&DAT_003fae63);
+  return;
+}
+
+
+
+//
+// Function: FUN_0002669c @ 0x0002669c
+//
+
+void FUN_0002669c(undefined4 param_1,undefined1 param_2)
+
+{
+  undefined2 uVar1;
+  undefined1 uStack00000008;
+  undefined1 uStack00000009;
+  
+  if (DAT_0005c47e == 0) {
+    DAT_003fae51 = 0xff;
+  }
+  else if (DAT_0005c47e == 1) {
+    DAT_003fae51 = 6;
+  }
+  else if (DAT_0005c47e == 2) {
+    DAT_003fae51 = 3;
+  }
+  else if (DAT_0005c47e == 3) {
+    DAT_003fae51 = 2;
+  }
+  else if (DAT_0005c47e == 6) {
+    DAT_003fae51 = 1;
+  }
+  uStack00000009 = (undefined1)DAT_0005c36e;
+  DAT_003fae52 = uStack00000009;
+  uStack00000008 = (undefined1)((ushort)DAT_0005c36e >> 8);
+  DAT_003fae53 = uStack00000008;
+  DAT_003fae54 = '}' - (char)((ushort)DAT_0005c376 >> 8);
+  uStack00000009 = (undefined1)DAT_0005c37e;
+  DAT_003fae55 = uStack00000009;
+  uStack00000008 = (undefined1)((ushort)DAT_0005c37e >> 8);
+  DAT_003fae56 = uStack00000008;
+  DAT_003fae57 = '}' - (char)((ushort)DAT_0005c378 >> 8);
+  uStack00000009 = (undefined1)DAT_0005c372;
+  DAT_003fae58 = uStack00000009;
+  uStack00000008 = (undefined1)((ushort)DAT_0005c372 >> 8);
+  DAT_003fae59 = uStack00000008;
+  DAT_003fae5a = '}' - (char)((ushort)DAT_0005c37a >> 8);
+  uStack00000009 = (undefined1)DAT_0005c374;
+  DAT_003fae5b = uStack00000009;
+  uStack00000008 = (undefined1)((ushort)DAT_0005c374 >> 8);
+  DAT_003fae5c = uStack00000008;
+  DAT_003fae5d = '}' - (char)((ushort)DAT_0005c37c >> 8);
+  uStack00000009 = (undefined1)DAT_0005c370;
+  DAT_003fae5e = uStack00000009;
+  uStack00000008 = (undefined1)((ushort)DAT_0005c370 >> 8);
+  DAT_003fae5f = uStack00000008;
+  _uStack00000008 = DAT_0005c36a;
+  uVar1 = _uStack00000008;
+  uStack00000009 = (undefined1)DAT_0005c36a;
+  DAT_003fae60 = uStack00000009;
+  uStack00000008 = (undefined1)((ushort)DAT_0005c36a >> 8);
+  DAT_003fae61 = uStack00000008;
+  DAT_003fae62 = '}' - (char)((ushort)DAT_0005c380 >> 8);
+  DAT_003fae50 = param_2;
+  _uStack00000008 = uVar1;
+  sendJ1939MultiFrame(&DAT_003fae63);
+  return;
+}
+
+
+
+//
 // Function: cm848_buildProtocolModeStatusMessage @ 0x000266f8
 //
 
@@ -23840,6 +24589,49 @@ void cm848_buildProtocolModeStatusMessage(int param_1)
   uStack00000008 = (undefined1)((ushort)uVar1 >> 8);
   *(undefined1 *)(param_1 + 0x11) = uStack00000008;
   *(char *)(param_1 + 0x12) = '}' - (char)((ushort)DAT_0005c380 >> 8);
+  _uStack00000008 = uVar1;
+  sendJ1939MultiFrame(&DAT_003fae63);
+  return;
+}
+
+
+
+//
+// Function: cm848_j1939SendPgn65270_FEF6_InletExhaustConditions @ 0x00026750
+//
+
+void cm848_j1939SendPgn65270_FEF6_InletExhaustConditions(int param_1,char param_2)
+
+{
+  undefined2 uVar1;
+  undefined1 uStack00000008;
+  undefined1 uStack00000009;
+  
+  *(char *)(param_1 + 7) = param_2 - (char)((ushort)DAT_0005c378 >> 8);
+  uVar1 = DAT_0005c372;
+  uStack00000009 = (undefined1)DAT_0005c372;
+  *(undefined1 *)(param_1 + 8) = uStack00000009;
+  uStack00000008 = (undefined1)((ushort)uVar1 >> 8);
+  *(undefined1 *)(param_1 + 9) = uStack00000008;
+  *(char *)(param_1 + 10) = param_2 - (char)((ushort)DAT_0005c37a >> 8);
+  uVar1 = DAT_0005c374;
+  uStack00000009 = (undefined1)DAT_0005c374;
+  *(undefined1 *)(param_1 + 0xb) = uStack00000009;
+  uStack00000008 = (undefined1)((ushort)uVar1 >> 8);
+  *(undefined1 *)(param_1 + 0xc) = uStack00000008;
+  *(char *)(param_1 + 0xd) = param_2 - (char)((ushort)DAT_0005c37c >> 8);
+  uVar1 = DAT_0005c370;
+  uStack00000009 = (undefined1)DAT_0005c370;
+  *(undefined1 *)(param_1 + 0xe) = uStack00000009;
+  uStack00000008 = (undefined1)((ushort)uVar1 >> 8);
+  *(undefined1 *)(param_1 + 0xf) = uStack00000008;
+  uVar1 = DAT_0005c36a;
+  _uStack00000008 = DAT_0005c36a;
+  uStack00000009 = (undefined1)DAT_0005c36a;
+  *(undefined1 *)(param_1 + 0x10) = uStack00000009;
+  uStack00000008 = (undefined1)((ushort)uVar1 >> 8);
+  *(undefined1 *)(param_1 + 0x11) = uStack00000008;
+  *(char *)(param_1 + 0x12) = param_2 - (char)((ushort)DAT_0005c380 >> 8);
   _uStack00000008 = uVar1;
   sendJ1939MultiFrame(&DAT_003fae63);
   return;
@@ -23921,6 +24713,60 @@ void cm848_initPgn65242SoftwareIdHandler(void)
   uStack_f = (undefined1)DAT_003fd51c;
   DAT_003faead = uStack_f;
   DAT_003faeae = 0x2a;
+  cm848_j1939RegisterPgnHandler(0xda,0x84,handler_func);
+  return;
+}
+
+
+
+//
+// Function: cm848_j1939SendPgn65249_FEE1 @ 0x000268c8
+//
+
+void cm848_j1939SendPgn65249_FEE1(void)
+
+{
+  undefined2 uVar1;
+  void *handler_func;
+  uint in_r11;
+  uint *unaff_r30;
+  uint uVar2;
+  undefined1 uStack00000008;
+  undefined1 uStack00000009;
+  
+  *unaff_r30 = in_r11 | 0xda00;
+  *(byte *)unaff_r30 = *(byte *)unaff_r30 & 0xe3 | 0x18;
+  *(undefined2 *)(unaff_r30 + 1) = 0x2f;
+  *(undefined1 **)((int)unaff_r30 + 6) = &DAT_003fae80;
+  *(undefined **)((int)unaff_r30 + 10) = &DAT_003faeaf;
+  *(byte *)((int)unaff_r30 + 3) = (byte)j1939_source_address;
+  DAT_003fae80 = 6;
+  cm848_governorDroopCalculation(&DAT_003fd69b,&DAT_003fae81,8);
+  DAT_003fae89 = 0x2a;
+  cm848_governorDroopCalculation(&DAT_003fd69f,&DAT_003fae8a,8);
+  DAT_003fae92 = 0x2a;
+  uVar2 = 0;
+  do {
+    (&DAT_003fae93)[uVar2] = s_0000000000000000000000_003fd6a5[uVar2 + 10];
+    uVar2 = uVar2 + 1 & 0xff;
+  } while (uVar2 < 0xc);
+  DAT_003fae9f = 0x2a;
+  handler_func = (void *)0x1;
+  cm848_governorDroopCalculation(&DAT_0000b74a,&DAT_003faea0);
+  DAT_003faea8 = 0x2a;
+  uStack00000008 = (undefined1)((ushort)DAT_003fd4b8 >> 8);
+  DAT_003faea9 = uStack00000008;
+  uStack00000009 = (undefined1)DAT_003fd4b8;
+  DAT_003faeaa = uStack00000009;
+  DAT_003faeab = 0x2a;
+  _uStack00000008 = DAT_003fd51c;
+  uVar1 = _uStack00000008;
+  uStack00000008 = (undefined1)((ushort)DAT_003fd51c >> 8);
+  DAT_003faeac = uStack00000008;
+  uStack00000009 = (undefined1)DAT_003fd51c;
+  DAT_003faead = uStack00000009;
+  DAT_003faeae = 0x2a;
+  _uStack00000008 = uVar1;
   cm848_j1939RegisterPgnHandler(0xda,0x84,handler_func);
   return;
 }
@@ -24015,15 +24861,16 @@ void cm848_j1939HandlePgn65248VehicleDistance(void)
   undefined4 local_10;
   
   cm848_unsignedDivision32
-            ((int)((ulonglong)DAT_003fdd70 * 0xc47400 >> 0x20),DAT_003fdd70 * 0xc47400,0,64000000);
+            ((int)((ulonglong)trip_vehicle_distance_raw * 0xc47400 >> 0x20),
+             trip_vehicle_distance_raw * 0xc47400,0,64000000);
   local_10 = extraout_r4;
-  DAT_003faed6 = mpc555_processIdleControlStateUpdate(&local_10);
+  j1939_txFrame_pgn65248_tripDistance = mpc555_processIdleControlStateUpdate(&local_10);
   cm848_unsignedDivision32
-            ((int)((ulonglong)DAT_003fdd6c * 0xc47400 >> 0x20),DAT_003fdd6c * 0xc47400,0,0xdcd65000)
-  ;
+            ((int)((ulonglong)total_vehicle_distance_raw * 0xc47400 >> 0x20),
+             total_vehicle_distance_raw * 0xc47400,0,0xdcd65000);
   local_10 = extraout_r4_00;
-  DAT_003faeda = mpc555_processIdleControlStateUpdate(&local_10);
-  sendJ1939MultiFrame(&DAT_003faec8);
+  j1939_txFrame_pgn65248_totalVehicleDistance = mpc555_processIdleControlStateUpdate(&local_10);
+  sendJ1939MultiFrame(&j1939_txFrame_pgn65248_VehicleDistance_id);
   return;
 }
 
@@ -24033,16 +24880,17 @@ void cm848_j1939HandlePgn65248VehicleDistance(void)
 // Function: cm848_initPgn65248VehicleDistanceHandler @ 0x00026c6c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_initPgn65248VehicleDistanceHandler(undefined4 param_1,undefined4 param_2,void *param_3)
 
 {
-  _DAT_003faec8 = CONCAT13(((byte)PTR_DAT_003fd86a._0_2_ & 7) << 2,0xfee000);
-  DAT_003faecc = 8;
-  PTR_DAT_003faece = (undefined *)&DAT_003faed6;
-  PTR_DAT_003faed2 = &DAT_003faede;
-  _DAT_003faec8 = CONCAT31(_DAT_003faec8,(char)j1939_source_address);
+  j1939_txFrame_pgn65248_VehicleDistance_id =
+       CONCAT13(((byte)PTR_DAT_003fd86a._0_2_ & 7) << 2,0xfee000);
+  j1939_txFrame_pgn65248_VehicleDistance_dlc = 8;
+  PTR_j1939_txFrame_pgn65248_tripDistance_003faece =
+       (undefined *)&j1939_txFrame_pgn65248_tripDistance;
+  PTR_j1939_txFrame_pgn65248_tail_003faed2 = (undefined *)&j1939_txFrame_pgn65248_tail;
+  j1939_txFrame_pgn65248_VehicleDistance_id =
+       CONCAT31(j1939_txFrame_pgn65248_VehicleDistance_id._0_3_,(char)j1939_source_address);
   cm848_j1939RegisterPgnHandler(0xe0,0xb0,param_3);
   return;
 }
@@ -24136,6 +24984,20 @@ void cm848_j1939SendSafetyStatusMessage(void)
     DAT_003faf1c = 0xfd;
   }
   sendJ1939MultiFrame(&DAT_003faf24);
+  return;
+}
+
+
+
+//
+// Function: cm848_j1939SendPgn65271_FEF7_VehicleElectricalPower @ 0x00026f68
+//
+
+void cm848_j1939SendPgn65271_FEF7_VehicleElectricalPower(int param_1,undefined1 param_2)
+
+{
+  *(undefined1 *)(param_1 + 6) = param_2;
+  *(undefined1 *)(param_1 + 7) = param_2;
   return;
 }
 
@@ -24281,6 +25143,22 @@ void cm848_updateGovernorTorqueLimit
 
 
 //
+// Function: cm848_j1939SendPgn65279_FEFF @ 0x00027108
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+void cm848_j1939SendPgn65279_FEFF(undefined2 *param_1,undefined2 param_2)
+
+{
+  _tsc1_speed_error_timeout = param_2;
+  *param_1 = param_2;
+  return;
+}
+
+
+
+//
 // Function: cm848_resetGovernorState @ 0x00027118
 //
 
@@ -24404,7 +25282,7 @@ void cm848_processGovernorModeTransition(void)
     _tsc1_disable_override = 0;
     _tsc1_override_timeout = 0;
   }
-  if ((DAT_003fdda4._2_2_ == 4) || (DAT_003fdda4._2_2_ == 5)) {
+  if ((eeprom_scatter_source_table._2_2_ == 4) || (eeprom_scatter_source_table._2_2_ == 5)) {
     if (_tsc1_mode_timeout != 0) {
       _tsc1_mode_timeout = _tsc1_mode_timeout + -1;
     }
@@ -24419,7 +25297,7 @@ void cm848_processGovernorModeTransition(void)
       bVar4 = true;
     }
   }
-  if (DAT_003fdda4._2_2_ == 4) {
+  if (eeprom_scatter_source_table._2_2_ == 4) {
     if (((fuel_demand_accumulator == 3) || (fuel_demand_accumulator == 4)) ||
        (fuel_demand_accumulator == 5)) {
       _governor_mode_transition_counter = _governor_mode_transition_counter + 1;
@@ -24715,7 +25593,7 @@ void cm848_selectTorqueLimitByStateMachine(void)
     _tsc1_disable_override = 0;
     _tsc1_override_timeout = 0;
   }
-  if ((DAT_003fdda4._2_2_ == 4) || (DAT_003fdda4._2_2_ == 5)) {
+  if ((eeprom_scatter_source_table._2_2_ == 4) || (eeprom_scatter_source_table._2_2_ == 5)) {
     if (_tsc1_mode_timeout != 0) {
       _tsc1_mode_timeout = _tsc1_mode_timeout + -1;
     }
@@ -24730,7 +25608,7 @@ void cm848_selectTorqueLimitByStateMachine(void)
       unaff_r24 = 1;
     }
   }
-  if (DAT_003fdda4._2_2_ == 4) {
+  if (eeprom_scatter_source_table._2_2_ == 4) {
     if (((fuel_demand_accumulator == 3) || (fuel_demand_accumulator == 4)) ||
        (fuel_demand_accumulator == 5)) {
       _governor_mode_transition_counter = _governor_mode_transition_counter + 1;
@@ -27303,6 +28181,52 @@ void cm848_calculateRpmLimitsFromProtection(void)
       rpm_lower_limit =
            (short)(uVar2 * DAT_003fdd24 >> 7) + (short)((0x80 - uVar2) * (uint)DAT_003fdd16 >> 7);
     }
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_j1939SendPgn65264_FEF0_PowerTakeoff @ 0x0002bfd0
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+void cm848_j1939SendPgn65264_FEF0_PowerTakeoff(void)
+
+{
+  ushort uVar1;
+  uint uVar2;
+  
+  _exception_handler_flag = 0;
+  uVar1 = DAT_003fd526;
+  if ((DAT_003fd5d2 & 8) == 0) {
+    uVar2 = 1;
+    do {
+      if (speed_error_filtered < *(ushort *)(&DAT_0005a9c4 + uVar2 * 2)) {
+        uVar1 = *(ushort *)(uVar2 * 2 + 0x5a9d2);
+        break;
+      }
+      uVar2 = uVar2 + 1 & 0xffff;
+      uVar1 = protection_entry_condition;
+    } while (uVar2 < 7);
+  }
+  protection_entry_condition = uVar1;
+  uVar2 = (uint)protection_entry_condition;
+  if (uVar2 == 0) {
+    rpm_upper_limit = DAT_003fdd14;
+    rpm_lower_limit = DAT_003fdd16;
+  }
+  else if (uVar2 == 0x80) {
+    rpm_upper_limit = DAT_003fdd22;
+    rpm_lower_limit = DAT_003fdd24;
+  }
+  else {
+    rpm_upper_limit =
+         (short)(uVar2 * DAT_003fdd22 >> 7) + (short)((0x80 - uVar2) * (uint)DAT_003fdd14 >> 7);
+    rpm_lower_limit =
+         (short)(uVar2 * DAT_003fdd24 >> 7) + (short)((0x80 - uVar2) * (uint)DAT_003fdd16 >> 7);
   }
   return;
 }
@@ -32346,8 +33270,8 @@ void cm848_processSensorLookupTable1(void)
 {
   cm848_sensorChannelTypeB_configInit
             (&DAT_0005adbc,&DAT_0040b1ce,&DAT_003fb21a,&DAT_0005adcc,&DAT_0005ade2,0,
-             &PTR_DAT_003fb21c,0x66,299,300,&eeprom_transfer_write_pointer,&sensor_loss_threshold,
-             &sensor_lookup_1_output);
+             &PTR_DAT_003fb21c,0x66,299,300,&eeprom_circular_buffer_write_ptr,&sensor_loss_threshold
+             ,&sensor_lookup_1_output);
   return;
 }
 
@@ -32362,8 +33286,8 @@ void cm848_initSensorLookupTableInit1(void)
 {
   cm848_updateSensorChannelTypeB
             (&DAT_0005adbc,&DAT_0040b1ce,&DAT_003fb21a,&DAT_0005adcc,&DAT_0005ade2,0,
-             &PTR_DAT_003fb21c,0x66,299,300,&eeprom_transfer_write_pointer,&sensor_loss_threshold,
-             &sensor_lookup_1_output);
+             &PTR_DAT_003fb21c,0x66,299,300,&eeprom_circular_buffer_write_ptr,&sensor_loss_threshold
+             ,&sensor_lookup_1_output);
   return;
 }
 
@@ -40548,7 +41472,8 @@ void cm848_processSpeedControlLimits(void)
   
   if ((((speed_error_filtered < DAT_0005c94e) && (pressure_ramp_filter_output == 0)) ||
       ((system_enable_state.condition_monitor & 0x2000) != 0)) ||
-     (((system_enable_state.condition_monitor & 0x4000) != 0 || (DAT_003fdda4._2_2_ == 0)))) {
+     (((system_enable_state.condition_monitor & 0x4000) != 0 ||
+      (eeprom_scatter_source_table._2_2_ == 0)))) {
     DAT_003fb55c = DAT_0005c948;
     DAT_003fb55e = DAT_0005c94a;
     DAT_003fb560 = (DAT_0005c94a - DAT_0005c948) + 0x8000;
@@ -40937,7 +41862,7 @@ void cm848_initProtectionParameter2(void)
 {
   cm848_sensorChannelTypeB_configInit
             (&DAT_0005b56c,&protection_parameter_2_state,&DAT_003fb56e,&DAT_000642a8,&DAT_000642ae,0
-             ,&DAT_003fb570,0x37,0x14a,0x14b,&protection_parameter_2_data_start,
+             ,&DAT_003fb570,0x37,0x14a,0x14b,&eeprom_circular_buffer_data_start,
              &protection_parameter_2_output,&protection_parameter_2_output_2);
   return;
 }
@@ -40953,7 +41878,7 @@ void cm848_processProtectionParameter2(void)
 {
   cm848_updateSensorChannelTypeB
             (&DAT_0005b56c,&protection_parameter_2_state,&DAT_003fb56e,&DAT_000642a8,&DAT_000642ae,0
-             ,&DAT_003fb570,0x37,0x14a,0x14b,&protection_parameter_2_data_start,
+             ,&DAT_003fb570,0x37,0x14a,0x14b,&eeprom_circular_buffer_data_start,
              &protection_parameter_2_output,&protection_parameter_2_output_2);
   return;
 }
@@ -46322,7 +47247,7 @@ void cm848_initProtectionLimitVariables(void)
   sensor_sample_buffer = 0;
   DAT_003fb820 = 0x8ea;
   DAT_003fb81e = 0x1154;
-  sensor_filter_state = (undefined *)&DAT_003fdd6c;
+  sensor_filter_state = (undefined *)&total_vehicle_distance_raw;
   cm848_protectionLimitCalculator();
   return;
 }
@@ -46341,7 +47266,7 @@ void cm848_initProtectionLimitStateVariant(undefined2 param_1)
   *(undefined2 *)(in_r10 + -0x47d0) = param_1;
   DAT_003fb820 = 0x8ea;
   DAT_003fb81e = 0x1154;
-  sensor_filter_state = (undefined *)&DAT_003fdd6c;
+  sensor_filter_state = (undefined *)&total_vehicle_distance_raw;
   cm848_protectionLimitCalculator();
   return;
 }
@@ -58342,15 +59267,15 @@ void cm848_transferEepromData(void)
   uint uVar3;
   undefined1 uVar4;
   
-  puVar1 = DAT_003fbcc6;
-  piVar2 = &DAT_003fdda4;
+  puVar1 = eeprom_scatter_write_limit;
+  piVar2 = &eeprom_scatter_source_table;
   do {
     if (*piVar2 == 0) {
       return;
     }
-    uVar3 = (uint)DAT_003fbcd2;
+    uVar3 = (uint)eeprom_scatter_entry_count;
     while( true ) {
-      if (&DAT_003fdda4 + uVar3 <= piVar2) {
+      if (&eeprom_scatter_source_table + uVar3 <= piVar2) {
         return;
       }
       if ((undefined *)*piVar2 < &DAT_01000000) {
@@ -58359,43 +59284,43 @@ void cm848_transferEepromData(void)
       else {
         uVar4 = 0;
       }
-      if (DAT_003fbcce != 0) break;
-      *_eeprom_transfer_write_pointer = uVar4;
-      DAT_003fbcce = 1;
+      if (_eeprom_scatter_byte_pending != 0) break;
+      *_eeprom_circular_buffer_write_ptr = uVar4;
+      _eeprom_scatter_byte_pending = 1;
       piVar2 = piVar2 + 1;
       if (*piVar2 == 0) {
-        DAT_003fbcce = 1;
+        _eeprom_scatter_byte_pending = 1;
         return;
       }
     }
-    _eeprom_transfer_write_pointer = _eeprom_transfer_write_pointer + 1;
-    if (_eeprom_transfer_start_address < _eeprom_transfer_write_pointer) {
-      _eeprom_transfer_write_pointer = _eeprom_transfer_end_address;
+    _eeprom_circular_buffer_write_ptr = _eeprom_circular_buffer_write_ptr + 1;
+    if (_eeprom_circular_buffer_upper_bound < _eeprom_circular_buffer_write_ptr) {
+      _eeprom_circular_buffer_write_ptr = _eeprom_circular_buffer_lower_bound;
     }
-    if (_eeprom_transfer_write_pointer == _eeprom_transfer_current_index) {
-      if (DAT_003fdd9a == 3) {
-        if (_eeprom_transfer_end_address <= _eeprom_transfer_write_pointer + -1) {
-          DAT_003fbcca = 3;
-          DAT_003fdd98 = 1;
-          _eeprom_transfer_write_pointer = _eeprom_transfer_write_pointer + -1;
+    if (_eeprom_circular_buffer_write_ptr == _eeprom_transfer_current_index) {
+      if (eeprom_save_mode == 3) {
+        if (_eeprom_circular_buffer_lower_bound <= _eeprom_circular_buffer_write_ptr + -1) {
+          _eeprom_scatter_phase = 3;
+          eeprom_save_dirty_flag = 1;
+          _eeprom_circular_buffer_write_ptr = _eeprom_circular_buffer_write_ptr + -1;
           _eeprom_transfer_state_machine = 2;
           return;
         }
-        DAT_003fbcca = 3;
-        DAT_003fdd98 = 1;
-        _eeprom_transfer_write_pointer = _eeprom_transfer_start_address;
+        _eeprom_scatter_phase = 3;
+        eeprom_save_dirty_flag = 1;
+        _eeprom_circular_buffer_write_ptr = _eeprom_circular_buffer_upper_bound;
         _eeprom_transfer_state_machine = 2;
         return;
       }
       _eeprom_transfer_current_index = _eeprom_transfer_current_index + 1;
-      if (_eeprom_transfer_start_address < _eeprom_transfer_current_index) {
-        _eeprom_transfer_current_index = _eeprom_transfer_end_address;
+      if (_eeprom_circular_buffer_upper_bound < _eeprom_transfer_current_index) {
+        _eeprom_transfer_current_index = _eeprom_circular_buffer_lower_bound;
       }
     }
-    *_eeprom_transfer_write_pointer = uVar4;
+    *_eeprom_circular_buffer_write_ptr = uVar4;
     piVar2 = piVar2 + 1;
-  } while (_eeprom_transfer_write_pointer != puVar1);
-  DAT_003fbcca = 3;
+  } while (_eeprom_circular_buffer_write_ptr != puVar1);
+  _eeprom_scatter_phase = 3;
   return;
 }
 
@@ -58411,13 +59336,13 @@ void cm848_initEepromTransferState(void)
 
 {
   _eeprom_transfer_state_machine = 0;
-  DAT_003fdd98 = 0;
-  _eeprom_transfer_end_address = &protection_parameter_2_data_start;
-  _eeprom_transfer_write_pointer = &protection_parameter_2_data_start;
-  _eeprom_transfer_current_index = &protection_parameter_2_data_start;
-  _protection_parameter_1_pointer = &DAT_003fdda4;
-  DAT_003fbcca = 0;
-  DAT_003fbcd2 = 0;
+  eeprom_save_dirty_flag = 0;
+  _eeprom_circular_buffer_lower_bound = &eeprom_circular_buffer_data_start;
+  _eeprom_circular_buffer_write_ptr = &eeprom_circular_buffer_data_start;
+  _eeprom_transfer_current_index = &eeprom_circular_buffer_data_start;
+  _protection_parameter_1_pointer = &eeprom_scatter_source_table;
+  _eeprom_scatter_phase = 0;
+  eeprom_scatter_entry_count = 0;
   return;
 }
 
@@ -58439,17 +59364,19 @@ void cm848_processDiagnosticDataTransfer(void)
   undefined1 *puVar5;
   
   puVar2 = _eeprom_transfer_current_index;
-  if ((DAT_003fdd9a == 3) && (_eeprom_transfer_current_index != _eeprom_transfer_write_pointer)) {
-    if (_eeprom_transfer_current_index < _eeprom_transfer_write_pointer) {
+  if ((eeprom_save_mode == 3) &&
+     (_eeprom_transfer_current_index != _eeprom_circular_buffer_write_ptr)) {
+    if (_eeprom_transfer_current_index < _eeprom_circular_buffer_write_ptr) {
       puVar3 = (undefined1 *)(1 - (int)_eeprom_transfer_current_index);
     }
     else {
-      puVar3 = _eeprom_transfer_start_address +
-               (-(int)_eeprom_transfer_current_index - (int)_eeprom_transfer_end_address) + 2;
+      puVar3 = _eeprom_circular_buffer_upper_bound +
+               (-(int)_eeprom_transfer_current_index - (int)_eeprom_circular_buffer_lower_bound) + 2
+      ;
     }
-    puVar3 = _eeprom_transfer_write_pointer + (int)puVar3;
+    puVar3 = _eeprom_circular_buffer_write_ptr + (int)puVar3;
     if (0x20 < ((uint)puVar3 & 0xffff)) {
-      uVar4 = (uint)DAT_003fbcd2;
+      uVar4 = (uint)eeprom_scatter_entry_count;
       if (uVar4 == 0) {
         puVar3 = (undefined1 *)0x0;
       }
@@ -58471,13 +59398,13 @@ void cm848_processDiagnosticDataTransfer(void)
       for (; ((uint)puVar3 & 0xffff) != 0; puVar3 = puVar3 + 0xffff) {
         *puVar2 = *puVar5;
         puVar2 = puVar2 + 1;
-        if (_eeprom_transfer_write_pointer == puVar5) {
-          DAT_003fbcce = 0;
+        if (_eeprom_circular_buffer_write_ptr == puVar5) {
+          _eeprom_scatter_byte_pending = 0;
           break;
         }
         puVar5 = puVar5 + 1;
-        if (_eeprom_transfer_start_address < puVar5) {
-          puVar5 = _eeprom_transfer_end_address;
+        if (_eeprom_circular_buffer_upper_bound < puVar5) {
+          puVar5 = _eeprom_circular_buffer_lower_bound;
         }
       }
       cm848_j1939TransportProtocolRequestHandler(pbVar1);
@@ -58515,121 +59442,123 @@ void cm848_processProtectionParameterData(int param_1)
   int iVar4;
   int *piVar5;
   
-  piVar5 = &DAT_003fdda4;
-  if ((DAT_003fd57c & 0x100) == 0) {
-    DAT_003fbcca = 0;
+  piVar5 = &eeprom_scatter_source_table;
+  if ((eeprom_system_enable_flags & 0x100) == 0) {
+    _eeprom_scatter_phase = 0;
     return;
   }
-  if (DAT_003fdd96 != param_1) {
+  if (eeprom_save_parameter_id != param_1) {
     return;
   }
-  if (DAT_003fdda4 == 0) {
+  if (eeprom_scatter_source_table == 0) {
     return;
   }
-  if (DAT_003fbcd0 != 0) {
-    DAT_003fbcd0 = DAT_003fbcd0 + -1;
+  if (eeprom_save_interval_countdown != 0) {
+    eeprom_save_interval_countdown = eeprom_save_interval_countdown + -1;
     goto LAB_00506360;
   }
-  if (_DAT_003fdd9c != 0) {
-    DAT_003fbcd0 = _DAT_003fdd9c + -1;
+  if (eeprom_save_interval_initial != 0) {
+    eeprom_save_interval_countdown = eeprom_save_interval_initial + -1;
   }
-  sVar1 = hpcr_evaluateHardwareTimerState(DAT_003fdd9e);
+  sVar1 = hpcr_evaluateHardwareTimerState(eeprom_save_timer_id);
   if (sVar1 == 0) {
-    DAT_003fbcd8 = 0;
+    _eeprom_save_timer_debounce = 0;
   }
   else {
-    DAT_003fdd98 = 1;
-    if (DAT_003fbcd8 == 0) {
-      DAT_003fdda0 = DAT_003fdda0 + 1;
-      DAT_003fbcd8 = 1;
+    eeprom_save_dirty_flag = 1;
+    if (_eeprom_save_timer_debounce == 0) {
+      eeprom_save_cycle_counter._0_2_ = eeprom_save_cycle_counter._0_2_ + 1;
+      _eeprom_save_timer_debounce = 1;
     }
   }
-  if (DAT_003fbcca == 0) {
+  if (_eeprom_scatter_phase == 0) {
     _eeprom_transfer_state_machine = 1;
-    if (DAT_003fdda4 != 0) {
+    if (eeprom_scatter_source_table != 0) {
       do {
-        DAT_003fbcd2 = DAT_003fbcd2 + 1;
+        eeprom_scatter_entry_count = eeprom_scatter_entry_count + 1;
         piVar5 = piVar5 + 1;
         if (*piVar5 == 0) break;
       } while (piVar5 < &DAT_003fde24);
     }
-    uVar3 = (uint)DAT_003fbcd2;
+    uVar3 = (uint)eeprom_scatter_entry_count;
     uVar2 = 0x8000 / uVar3;
-    iVar4 = _eeprom_transfer_end_address - (0x8000 - uVar3 * uVar2);
-    _eeprom_transfer_start_address = iVar4 + 0x7fff;
-    DAT_003fbcd6 = (ushort)uVar2;
-    DAT_003fbcd4 = DAT_003fbcd2 * DAT_003fbcd6;
-    _eeprom_transfer_write_pointer = _eeprom_transfer_end_address;
-    _eeprom_transfer_current_index = _eeprom_transfer_end_address;
-    DAT_003fbcce = 0;
-    DAT_003fbcc6 = iVar4 + 0x8000;
-    if (DAT_003fdd98 == 0) {
-      DAT_003fbcca = 1;
+    iVar4 = _eeprom_circular_buffer_lower_bound - (0x8000 - uVar3 * uVar2);
+    _eeprom_circular_buffer_upper_bound = iVar4 + 0x7fff;
+    eeprom_scatter_entries_per_page = (ushort)uVar2;
+    eeprom_scatter_total_buffer_bytes = eeprom_scatter_entry_count * eeprom_scatter_entries_per_page
+    ;
+    _eeprom_circular_buffer_write_ptr = _eeprom_circular_buffer_lower_bound;
+    _eeprom_transfer_current_index = _eeprom_circular_buffer_lower_bound;
+    _eeprom_scatter_byte_pending = 0;
+    eeprom_scatter_write_limit = iVar4 + 0x8000;
+    if (eeprom_save_dirty_flag == 0) {
+      _eeprom_scatter_phase = 1;
       cm848_transferEepromData();
       goto LAB_00506360;
     }
-    if (DAT_003fdd9a == 1) {
-      DAT_003fbcca = 2;
-      DAT_003fbcc6 = (_eeprom_transfer_end_address + uVar3 * (uVar2 >> 1)) - 1;
+    if (eeprom_save_mode == 1) {
+      _eeprom_scatter_phase = 2;
+      eeprom_scatter_write_limit = (_eeprom_circular_buffer_lower_bound + uVar3 * (uVar2 >> 1)) - 1;
       cm848_transferEepromData();
       goto LAB_00506360;
     }
-    if (DAT_003fdd9a == 2) {
-      DAT_003fbcca = 2;
-      DAT_003fbcc6 = _eeprom_transfer_start_address;
+    if (eeprom_save_mode == 2) {
+      _eeprom_scatter_phase = 2;
+      eeprom_scatter_write_limit = _eeprom_circular_buffer_upper_bound;
       cm848_transferEepromData();
       goto LAB_00506360;
     }
   }
   else {
-    if (DAT_003fbcca != 1) {
-      if (DAT_003fbcca == 2) {
+    if (_eeprom_scatter_phase != 1) {
+      if (_eeprom_scatter_phase == 2) {
         cm848_transferEepromData();
       }
-      else if (DAT_003fbcca == 3) {
-        if (DAT_003fdd98 == 0) {
-          DAT_003fbcca = 0;
+      else if (_eeprom_scatter_phase == 3) {
+        if (eeprom_save_dirty_flag == 0) {
+          _eeprom_scatter_phase = 0;
         }
         else {
           if (_eeprom_transfer_state_machine != 2) {
             _eeprom_transfer_state_machine = 0;
           }
-          if (DAT_003fdd9a != 3) {
-            DAT_003fbcd2 = 0;
+          if (eeprom_save_mode != 3) {
+            eeprom_scatter_entry_count = 0;
           }
         }
       }
       goto LAB_00506360;
     }
-    if (DAT_003fdd98 == 0) {
+    if (eeprom_save_dirty_flag == 0) {
       cm848_transferEepromData();
       goto LAB_00506360;
     }
-    if (DAT_003fdd9a == 1) {
-      DAT_003fbcca = 2;
-      _eeprom_transfer_next_address = _eeprom_transfer_write_pointer + 1;
-      if (_eeprom_transfer_start_address < _eeprom_transfer_next_address) {
-        _eeprom_transfer_next_address = _eeprom_transfer_end_address;
+    if (eeprom_save_mode == 1) {
+      _eeprom_scatter_phase = 2;
+      _eeprom_transfer_next_address = _eeprom_circular_buffer_write_ptr + 1;
+      if (_eeprom_circular_buffer_upper_bound < _eeprom_transfer_next_address) {
+        _eeprom_transfer_next_address = _eeprom_circular_buffer_lower_bound;
       }
-      DAT_003fbcc6 = _eeprom_transfer_write_pointer + (uint)DAT_003fbcd2 * (uint)(DAT_003fbcd6 >> 1)
-      ;
-      if (_eeprom_transfer_start_address < DAT_003fbcc6) {
-        DAT_003fbcc6 = DAT_003fbcc6 - DAT_003fbcd4;
+      eeprom_scatter_write_limit =
+           _eeprom_circular_buffer_write_ptr +
+           (uint)eeprom_scatter_entry_count * (uint)(eeprom_scatter_entries_per_page >> 1);
+      if (_eeprom_circular_buffer_upper_bound < eeprom_scatter_write_limit) {
+        eeprom_scatter_write_limit = eeprom_scatter_write_limit - eeprom_scatter_total_buffer_bytes;
       }
       cm848_transferEepromData();
       goto LAB_00506360;
     }
-    if (DAT_003fdd9a == 2) {
-      DAT_003fbcca = 2;
-      DAT_003fbcc6 = _eeprom_transfer_start_address;
-      _eeprom_transfer_write_pointer = _eeprom_transfer_end_address;
-      _eeprom_transfer_current_index = _eeprom_transfer_end_address;
-      DAT_003fbcce = 0;
+    if (eeprom_save_mode == 2) {
+      _eeprom_scatter_phase = 2;
+      eeprom_scatter_write_limit = _eeprom_circular_buffer_upper_bound;
+      _eeprom_circular_buffer_write_ptr = _eeprom_circular_buffer_lower_bound;
+      _eeprom_transfer_current_index = _eeprom_circular_buffer_lower_bound;
+      _eeprom_scatter_byte_pending = 0;
       cm848_transferEepromData();
       goto LAB_00506360;
     }
   }
-  DAT_003fbcca = 3;
+  _eeprom_scatter_phase = 3;
 LAB_00506360:
   cm848_processDiagnosticDataTransfer();
   return;
@@ -59800,9 +60729,11 @@ void hpcr_evaluatehpcr_CbdSensorActivation(void)
     uVar2 = (uint)DAT_003fdf98 * 4 + 0x80 & 0xffff;
     iVar3 = uVar2 + 2;
     iVar6 = iVar3 >> 4;
-    if ((((uint)(ushort)(&DAT_003fd57c)[iVar6] & 1 << (iVar3 + iVar6 * -0x10 & 0x3fU)) != 0) &&
+    if ((((uint)(ushort)(&eeprom_system_enable_flags)[iVar6] & 1 << (iVar3 + iVar6 * -0x10 & 0x3fU))
+         != 0) &&
        (iVar3 = uVar2 + 3, iVar6 = iVar3 >> 4,
-       ((uint)(ushort)(&DAT_003fd57c)[iVar6] & 1 << (iVar3 + iVar6 * -0x10 & 0x3fU)) != 0)) {
+       ((uint)(ushort)(&eeprom_system_enable_flags)[iVar6] & 1 << (iVar3 + iVar6 * -0x10 & 0x3fU))
+       != 0)) {
       uVar1 = *puVar8;
       if (((uVar1 & 1) != 0) && (sVar4 = cm848_evaluateFlagCondition(puVar8,iVar7,0,0), sVar4 != 0))
       {
@@ -59977,9 +60908,11 @@ void cm848_iterateAndApplyLimitConditions(void)
     do {
       if ((((int)DAT_003fdf98 == uVar4) &&
           (iVar2 = (int)(uVar5 + 2) >> 4,
-          ((uint)(ushort)(&DAT_003fd57c)[iVar2] & 1 << (uVar5 + 2 + iVar2 * -0x10 & 0x3f)) != 0)) &&
+          ((uint)(ushort)(&eeprom_system_enable_flags)[iVar2] &
+          1 << (uVar5 + 2 + iVar2 * -0x10 & 0x3f)) != 0)) &&
          (iVar2 = (int)(uVar5 + 3) >> 4,
-         ((uint)(ushort)(&DAT_003fd57c)[iVar2] & 1 << (uVar5 + 3 + iVar2 * -0x10 & 0x3f)) != 0)) {
+         ((uint)(ushort)(&eeprom_system_enable_flags)[iVar2] &
+         1 << (uVar5 + 3 + iVar2 * -0x10 & 0x3f)) != 0)) {
         cm848_evaluateLimitConditionByFlag(puVar1,ptVar3,puVar6);
         cm848_checkLimitBoundaryCondition(uVar4,ptVar3,puVar1);
       }
@@ -60024,21 +60957,24 @@ void cm848_calculateTorqueLimiterRamp(void)
   do {
     if ((*puVar7 & 2) != 0) {
       iVar2 = (int)uVar8 >> 4;
-      if ((((uint)(ushort)(&DAT_003fd57c)[(int)uVar6 >> 4] &
+      if ((((uint)(ushort)(&eeprom_system_enable_flags)[(int)uVar6 >> 4] &
            1 << (uVar6 + ((int)uVar6 >> 4) * -0x10 & 0x3f)) == 0) &&
-         (((uint)(ushort)(&DAT_003fd57c)[iVar2] & 1 << (uVar8 + iVar2 * -0x10 & 0x3f)) == 0)) {
+         (((uint)(ushort)(&eeprom_system_enable_flags)[iVar2] & 1 << (uVar8 + iVar2 * -0x10 & 0x3f))
+          == 0)) {
         uVar1 = 0;
       }
       else {
         uVar1 = cm848_calculateRampAdjustment(puVar7,ptVar3,puVar5,1);
         if ((uVar1 < (ushort)puVar5[3]) &&
-           (((uint)(ushort)(&DAT_003fd57c)[iVar2] & 1 << (uVar8 + iVar2 * -0x10 & 0x3f)) == 0)) {
+           (((uint)(ushort)(&eeprom_system_enable_flags)[iVar2] &
+            1 << (uVar8 + iVar2 * -0x10 & 0x3f)) == 0)) {
           uVar1 = puVar5[3];
         }
       }
       puVar5[1] = uVar1;
       if ((uVar4 < uVar1) &&
-         (((uint)(ushort)(&DAT_003fd57c)[iVar2] & 1 << (uVar8 + iVar2 * -0x10 & 0x3f)) == 0)) {
+         (((uint)(ushort)(&eeprom_system_enable_flags)[iVar2] & 1 << (uVar8 + iVar2 * -0x10 & 0x3f))
+          == 0)) {
         uVar4 = uVar1;
       }
     }
@@ -60077,11 +61013,11 @@ void cm848_processSensorBitmapConditions(void)
     do {
       if ((*unaff_r28 & 2) != 0) {
         iVar2 = (int)unaff_r31 >> 4;
-        if ((((uint)(ushort)(&DAT_003fd57c)[(int)unaff_r29 >> 4] &
+        if ((((uint)(ushort)(&eeprom_system_enable_flags)[(int)unaff_r29 >> 4] &
              1 << (unaff_r29 +
                    (((int)unaff_r29 >> 4) + (uint)((int)unaff_r29 < 0 && (unaff_r29 & 0xf) != 0)) *
                    -0x10 & 0x3f)) == 0) &&
-           (((uint)(ushort)(&DAT_003fd57c)[iVar2] &
+           (((uint)(ushort)(&eeprom_system_enable_flags)[iVar2] &
             1 << (unaff_r31 + (iVar2 + (uint)((int)unaff_r31 < 0 && (unaff_r31 & 0xf) != 0)) * -0x10
                  & 0x3f)) == 0)) {
           uVar1 = 0;
@@ -60089,7 +61025,7 @@ void cm848_processSensorBitmapConditions(void)
         else {
           uVar1 = cm848_calculateRampAdjustment(unaff_r28,unaff_r25,unaff_r27,1);
           if ((uVar1 < *(ushort *)(unaff_r27 + 6)) &&
-             (((uint)(ushort)(&DAT_003fd57c)[iVar2] &
+             (((uint)(ushort)(&eeprom_system_enable_flags)[iVar2] &
               1 << (unaff_r31 +
                     (iVar2 + (uint)((int)unaff_r31 < 0 && (unaff_r31 & 0xf) != 0)) * -0x10 & 0x3f))
               == 0)) {
@@ -60098,7 +61034,7 @@ void cm848_processSensorBitmapConditions(void)
         }
         *(ushort *)(unaff_r27 + 2) = uVar1;
         if ((unaff_r26 < uVar1) &&
-           (((uint)(ushort)(&DAT_003fd57c)[iVar2] &
+           (((uint)(ushort)(&eeprom_system_enable_flags)[iVar2] &
             1 << (unaff_r31 + (iVar2 + (uint)((int)unaff_r31 < 0 && (unaff_r31 & 0xf) != 0)) * -0x10
                  & 0x3f)) == 0)) {
           unaff_r26 = uVar1;
@@ -60213,7 +61149,7 @@ void processDiagnosticLimitStatus(void)
     DAT_003fbd3a = 0;
     do {
       uVar1 = *puVar5;
-      if (((uint)(ushort)(&DAT_003fd57c)[(int)uVar6 >> 4] &
+      if (((uint)(ushort)(&eeprom_system_enable_flags)[(int)uVar6 >> 4] &
           1 << (uVar6 + ((int)uVar6 >> 4) * -0x10 & 0x3f)) == 0) {
         ptVar8[3].source_active = 0;
 LAB_005088c8:
@@ -60795,9 +61731,10 @@ void cm848_calculatePrimaryFuelAdjustment(void)
   do {
     if ((*puVar6 & 1) != 0) {
       iVar2 = (int)uVar9 >> 4;
-      if ((((uint)(ushort)(&DAT_003fd57c)[(int)uVar5 >> 4] &
+      if ((((uint)(ushort)(&eeprom_system_enable_flags)[(int)uVar5 >> 4] &
            1 << (uVar5 + ((int)uVar5 >> 4) * -0x10 & 0x3f)) == 0) &&
-         (((uint)(ushort)(&DAT_003fd57c)[iVar2] & 1 << (uVar9 + iVar2 * -0x10 & 0x3f)) == 0)) {
+         (((uint)(ushort)(&eeprom_system_enable_flags)[iVar2] & 1 << (uVar9 + iVar2 * -0x10 & 0x3f))
+          == 0)) {
         uVar1 = 0;
       }
       else {
@@ -60815,13 +61752,15 @@ void cm848_calculatePrimaryFuelAdjustment(void)
           uVar1 = cm848_calculateRampAdjustment(puVar6,ptVar7,puVar4,0);
         }
         if (((uVar1 & 0xffff) < (uint)(ushort)puVar4[2]) &&
-           (((uint)(ushort)(&DAT_003fd57c)[iVar2] & 1 << (uVar9 + iVar2 * -0x10 & 0x3f)) == 0)) {
+           (((uint)(ushort)(&eeprom_system_enable_flags)[iVar2] &
+            1 << (uVar9 + iVar2 * -0x10 & 0x3f)) == 0)) {
           uVar1 = (uint)(ushort)puVar4[2];
         }
       }
       *puVar4 = (short)uVar1;
       if ((uVar3 < (uVar1 & 0xffff)) &&
-         (((uint)(ushort)(&DAT_003fd57c)[iVar2] & 1 << (uVar9 + iVar2 * -0x10 & 0x3f)) == 0)) {
+         (((uint)(ushort)(&eeprom_system_enable_flags)[iVar2] & 1 << (uVar9 + iVar2 * -0x10 & 0x3f))
+          == 0)) {
         uVar3 = uVar1 & 0xffff;
       }
     }
@@ -95930,25 +96869,25 @@ void initDiagnosticBufferPointers(void)
   cm848_emptyStubFunctionJ1939B();
   cm848_initPgn65227Dm2ResponseHandler();
   cm848_setEngineControllerStateCode();
-  cm848_enqueueDataRecord(0,0xfef1,100,0x46,0x243f0);
-  cm848_enqueueDataRecord(0,0xf004,0x14,0,&LAB_00025b04);
-  cm848_enqueueDataRecord(0,0xf003,0x14,10,0x25d88);
-  cm848_enqueueDataRecord(0,0xfedf,0x32,0x1e,0x26060);
-  cm848_enqueueDataRecord(0,0xfee3,5000,0x6e,0x1b9a8);
-  cm848_enqueueDataRecord(1,0xf000,100,0x32,&LAB_000264b0);
-  cm848_enqueueDataRecord(1,0xfee1,5000,0x12d,0x268c8);
-  cm848_enqueueDataRecord(0,0xfeee,1000,0x1ae,0x2629c);
-  cm848_enqueueDataRecord(0,0xfed9,0xfa,200,0x242a0);
-  cm848_enqueueDataRecord(0,0xfeef,500,0x82,0x2612c);
-  cm848_enqueueDataRecord(0,0xfef0,100,0x96,0x2bfd0);
-  cm848_enqueueDataRecord(0,0xfef5,1000,0xaa,0x24104);
-  cm848_enqueueDataRecord(0,0xfef6,500,0xbe,0x26750);
-  cm848_enqueueDataRecord(0,0xfef7,1000,0xd2,&LAB_00026f68);
+  cm848_enqueueDataRecord(0,0xfef1,100,0x46,cm848_j1939SendPgn65265_FEF1_CruiseVehicleSpeed);
+  cm848_enqueueDataRecord(0,0xf004,0x14,0,cm848_j1939SendPgn61444_F004_EngineSpeedTorqueEec1);
+  cm848_enqueueDataRecord(0,0xf003,0x14,10,cm848_j1939SendPgn61443_F003_AcceleratorPedalEec2);
+  cm848_enqueueDataRecord(0,0xfedf,0x32,0x1e,thunk_FUN_000260a8);
+  cm848_enqueueDataRecord(0,0xfee3,5000,0x6e,cm848_j1939SendPgn65251_FEE3_EngineConfig);
+  cm848_enqueueDataRecord(1,0xf000,100,0x32,cm848_j1939SendPgn61440_F000);
+  cm848_enqueueDataRecord(1,0xfee1,5000,0x12d,cm848_j1939SendPgn65249_FEE1);
+  cm848_enqueueDataRecord(0,0xfeee,1000,0x1ae,cm848_j1939SendPgn65262_FEEE_EngineTemp1);
+  cm848_enqueueDataRecord(0,0xfed9,0xfa,200,cm848_j1939SendPgn65241_FED9);
+  cm848_enqueueDataRecord(0,0xfeef,500,0x82,cm848_j1939SendPgn65263_FEEF_FluidLevelPressure);
+  cm848_enqueueDataRecord(0,0xfef0,100,0x96,cm848_j1939SendPgn65264_FEF0_PowerTakeoff);
+  cm848_enqueueDataRecord(0,0xfef5,1000,0xaa,cm848_j1939SendPgn65269_FEF5_AmbientConditions);
+  cm848_enqueueDataRecord(0,0xfef6,500,0xbe,cm848_j1939SendPgn65270_FEF6_InletExhaustConditions);
+  cm848_enqueueDataRecord(0,0xfef7,1000,0xd2,cm848_j1939SendPgn65271_FEF7_VehicleElectricalPower);
   cm848_enqueueDataRecord(0,0xffe0,200,0xfa,cm848_initPgn65248VehicleDistanceHandler);
-  cm848_enqueueDataRecord(0,0xfeca,1000,500,0x24ff0);
-  cm848_enqueueDataRecord(0,0xfebd,1000,0x32,0x26694);
-  cm848_enqueueDataRecord(0,0xf001,100,0x14,0x258f4);
-  cm848_enqueueDataRecord(0,0xfeff,10000,0x28,0x27108);
+  cm848_enqueueDataRecord(0,0xfeca,1000,500,cm848_j1939SendPgn65226_FECA_Dm1ActiveFaults);
+  cm848_enqueueDataRecord(0,0xfebd,1000,0x32,thunk_FUN_0002669c);
+  cm848_enqueueDataRecord(0,0xf001,100,0x14,thunk_FUN_00025a28);
+  cm848_enqueueDataRecord(0,0xfeff,10000,0x28,cm848_j1939SendPgn65279_FEFF);
   cm848_initializeGovernorDerivatives();
   cm848_flushJ1939FrameBuffer();
   cm848_processGovernorSpeedControlRequest();
@@ -96521,4 +97460,4 @@ void cm848_dataTable_0053a110(void)
 
 
 
-// Export complete - 2244 functions processed
+// Export complete - 2265 functions processed
