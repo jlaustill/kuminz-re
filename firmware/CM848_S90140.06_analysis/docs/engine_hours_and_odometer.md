@@ -22,7 +22,9 @@ be re-verified on the bench before being trusted — see
 | **Vehicle distance (trip + total)**    | PGN 0xFEE0 (VD)            | —                                     | Works today       |
 | **Odometer (ECU-internal, miles)**     | *none*                     | Svc 0x4A at EEPROM `0x01000BD8` (u32) | Works (read-back path exercised by `tools/update_odometer.sh`) |
 | **Rolls odometer buffer**              | *none*                     | Svc 0x4A at EEPROM `0x01001A84` (u16) | Works             |
-| **ECM run time (key-on seconds)**      | *none*                     | Svc 0x4A at EEPROM `0x01000400` (u32 × 0.2 s) | **In Svc 0x4A window — unverified, needs bench read** |
+| **ECM run time (key-on seconds)**      | *none*                     | Svc 0x4A at EEPROM `0x01000030` (u32) — firmware-traced via `mpc555_keyOnStateMachine` | **Needs truck verification** (see below) |
+| **ECM run time (RAM, live)**           | *none*                     | Svc 0x4A at RAM `0x00302012` (`ecm_runtime_accumulator`) | **Needs truck verification** |
+| **Session time (RAM, live)**           | *none*                     | Svc 0x4A at RAM `0x0040B150` (`session_time_counter`, 1.5 Hz) | Bench-verified 2026-04-08 |
 | **Engine run time (engine-running s)** | *none*                     | `0x0111BC00` is **not a physical address** — unreachable via known services | **Blocked** (see dead end below) |
 | **PGN 0xFEE5 (Engine Hours/Revs)**     | **Does not exist in firmware** | —                                 | Ruled out        |
 
@@ -142,17 +144,44 @@ This address is used by `tools/update_odometer.sh` for *writes* against a
 live ECU, so we have strong circumstantial evidence it is correct for
 S90140.06. Add a `tools/read_odometer.sh` that only does the read.
 
-### 3. ECM run time (key-on seconds) — EEPROM direct, **unverified**
+### 3. ECM run time (key-on seconds) — EEPROM 0x01000030, firmware-traced
+
+**Previous hypothesis:** e2m listed `0x01000400` — bench-verified as wrong
+(static value 0x12, never changes).
+
+**Firmware-traced path (2026-04-09):**
+
+`mpc555_watchdogTimerTick` @ 0x7608 runs periodically. Every 40 ticks
+(`watchdog_tick_prescaler` reaches 0x28), it increments both:
+- `ecm_runtime_accumulator` @ 0x00302012 (lifetime counter)
+- `keyon_duration_counter` @ 0x003028a6 (session counter)
+
+`mpc555_keyOnStateMachine` @ 0x184 saves to EEPROM in two scenarios:
+1. **Periodic save:** `keyon_duration_counter > 0x2903` (10,499 ticks)
+2. **Key-off save:** `mios_key_off_detection` bit 15 set AND
+   `eeprom_version_marker.magic == 0x600d`
+
+Save path: `ecm_runtime_accumulator` → `eeprom_runtime_write_staging`
+(0x003fee2a) → `mpc555_eepromWriteWords(0x3fee2a, &DAT_01000030, 4)`
+→ **EEPROM 0x01000030**.
+
+On boot, `mpc555_watchdogTimerTick_midEntry` @ 0x76B4 reloads
+`ecm_runtime_accumulator` from `eeprom_version_marker.config_dword`,
+which is read from EEPROM 0x01000034 (line 669).
 
 ```bash
-./kuminz-cli can0 --read-addr 01000400 2
-./kuminz-cli can0 --read-addr 01000402 2
-# u32 BE × 0.2 s → seconds
+# Read EEPROM runtime counter (firmware-traced, needs truck verification)
+./kuminz-cli can0 --read-addr 01000030 4
+
+# Read live RAM accumulator (may be in 0x003xxxxx window — needs verification)
+./kuminz-cli can0 --read-addr 00302012 4
 ```
 
-Source: `e2m_parameters.csv` (ECM_Run_Time @ 0x01000400, u32, 0.2 SEC).
-Not referenced as a literal in `cm848_rom.ghidra.cpp`, so treat the address
-as a hypothesis until bench-verified. Backup copy at `0x01002700`.
+**Scale factor unknown.** The watchdog tick rate determines the time-per-count.
+Bench session showed `session_time_counter` at 0x0040B150 runs at 1.5 Hz
+with a different prescaler. The watchdog prescaler is 40 ticks, so if the
+watchdog runs at 60 Hz, each `ecm_runtime_accumulator` count = 40/60 = 0.667s
+(matching the 1.5 Hz observation). **Needs truck verification to confirm.**
 
 ### 4. Engine run time (engine-running seconds) — **dead end via known services**
 
@@ -245,7 +274,9 @@ timeout 10 candump -t a can0 | grep -iE '18ffe0' || echo "no FFE0 broadcast"
 
 ---
 
-## Bench Results (2026-04-08)
+## Verification Results
+
+### Bench Session (2026-04-08)
 
 Tested using OCT Teensy MicroMod bench firmware on CAN2 (FlexCAN_T4).
 ECU was HP Tuners-flashed — all EEPROM runtime counters were reset by the
@@ -318,34 +349,193 @@ addresses. The lifetime hours accumulator location in EEPROM is still unknown.
 
 ### What's still needed
 
-The ECU was HP Tuners-flashed, which zeroed all EEPROM runtime data. To find
-the lifetime hours address, the plan is:
+The ECU was HP Tuners-flashed, which zeroed all EEPROM runtime data. The
+shutdown save path has been traced (see section 3 above), identifying
+EEPROM 0x01000030 as the target. Remaining:
 
-1. **HP Tuners reflash test:** dump EEPROM before and after an HP Tuners
-   flash to see exactly which addresses get zeroed. Any address that goes
-   from non-zero to zero is a runtime counter.
-2. **Extended run + key-off test:** run the engine for 30+ minutes, key off,
-   wait 30 seconds for full ECU shutdown, key on, re-read EEPROM. The
-   session counter should be flushed somewhere.
-3. **Trace the shutdown save path in firmware:** find the key-off ISR or
-   shutdown handler that triggers `cm848_transferEepromData` and writes
-   the RAM circular buffer to SPI EEPROM.
+1. **Truck verification of EEPROM 0x01000030:** read before/after key cycle
+   to confirm accumulation. See [Truck Testing Plan](#truck-testing-plan).
+2. **Scale factor determination:** measure time-per-count to convert raw
+   counter to hours/seconds.
+3. **HP Tuners EEPROM diff (optional):** dump EEPROM → flash HP Tuners → dump
+   again → diff. Reveals all addresses that get zeroed.
 
 ## Follow-ups
 
 - [ ] Add `tools/read_odometer.sh` (mirror of `update_odometer.sh` without writes).
+- [ ] **Truck verification of EEPROM 0x01000030** — read this address at key-on,
+      drive/idle for a period, key-off, key-on, read again. Confirm it accumulates.
+      See [Truck Testing Plan](#truck-testing-plan) below.
 - [ ] **HP Tuners EEPROM diff:** dump EEPROM → flash HP Tuners → dump again → diff.
       This will reveal all runtime counter EEPROM addresses at once.
-- [ ] **Extended run test:** 30+ min engine run → key off → wait 30s → key on →
-      read EEPROM. Look for session counter flush.
-- [ ] Trace the ECU shutdown path in `cm848_rom.ghidra.cpp` — find the
-      key-off handler that triggers the SPI EEPROM flush.
 - [ ] Update `docs/service_0x4a_protocol.md` to document the wider Service
       0x4A window (0x003Fxxxx is readable, not just 0x00408000+).
+- [X] ~~Trace the ECU shutdown path~~ — found `mpc555_keyOnStateMachine` @ 0x184
+      saves `ecm_runtime_accumulator` to EEPROM 0x01000030 (2026-04-09).
 - [X] ~~Bench-verify `ECM_Run_Time` @ `0x01000400`~~ — confirmed NOT the
       hours counter (static value, never changes).
 - [X] ~~Implement `--resolve-param` / Service 0x15/0x16~~ — deleted, CM848
       has only 20 parameter IDs, services are stubs.
+
+## Truck Testing Plan
+
+**Context:** The ECU is in a running 2004.5 Dodge 5.9L, not on a bench.
+CAN adapter connects via OBD-II port. All reads use `kuminz-cli` over
+Service 0x4A. The ECU was HP Tuners-flashed, which zeroed all EEPROM
+runtime data, so current values will be small.
+
+### Prerequisites
+
+```bash
+sudo ip link set can0 type can bitrate 250000
+sudo ip link set can0 up
+```
+
+### Test 1: Baseline Read (key-on, engine off)
+
+Purpose: Confirm EEPROM 0x01000030 is readable and capture current value.
+
+```bash
+# 1a. Sanity check — RPM should be 0 (engine off)
+./kuminz-cli can0 --read-addr 40B7BA 2
+
+# 1b. EEPROM runtime counter (firmware-traced target)
+./kuminz-cli can0 --read-addr 01000030 2
+./kuminz-cli can0 --read-addr 01000032 2
+# Combine as u32 BE. Record value as BASELINE_EEPROM.
+
+# 1c. RAM runtime accumulator (may or may not be in 0x4A window)
+./kuminz-cli can0 --read-addr 00302012 2
+./kuminz-cli can0 --read-addr 00302014 2
+# If this returns data, record as BASELINE_RAM. If NACK, address
+# is outside the Service 0x4A window — skip RAM reads in later tests.
+
+# 1d. Session time counter (known-good, bench-verified)
+./kuminz-cli can0 --read-addr 0040B150 2
+# Should be small (just powered on). Record as BASELINE_SESSION.
+
+# 1e. Known-good odometer for reference
+./kuminz-cli can0 --read-addr 01000BD8 2
+./kuminz-cli can0 --read-addr 01000BDA 2
+```
+
+### Test 2: Live Accumulation (engine running, 5 minutes)
+
+Purpose: Watch the RAM counters tick up while the engine runs.
+
+```bash
+# Start engine, wait for idle to stabilize (~10 seconds)
+
+# 2a. Confirm engine is running
+./kuminz-cli can0 --read-addr 40B7BA 2
+# Expect ~750 RPM (raw ÷ 8 × 0.125)
+
+# 2b. Read session counter
+./kuminz-cli can0 --read-addr 0040B150 2
+# Record value. Wait 120 seconds...
+
+# 2c. Re-read session counter
+./kuminz-cli can0 --read-addr 0040B150 2
+# Expect delta ≈ 180 counts (120s × 1.5 Hz). Confirms counter is live.
+
+# 2d. If RAM 0x302012 was readable in Test 1:
+./kuminz-cli can0 --read-addr 00302012 2
+./kuminz-cli can0 --read-addr 00302014 2
+# Record value. If it changed from BASELINE_RAM, the accumulator
+# is live and ticking.
+```
+
+### Test 3: Key-Off → Key-On EEPROM Flush (THE KEY TEST)
+
+Purpose: Confirm `mpc555_keyOnStateMachine` flushes the runtime counter
+to EEPROM 0x01000030 on shutdown.
+
+```bash
+# 3a. With engine running, note approximate time since key-on.
+#     This tells us expected delta in EEPROM counter.
+
+# 3b. Turn ignition OFF. Wait 30 seconds for full ECU shutdown.
+#     (ECU needs time to complete SPI EEPROM flush before power dies.)
+
+# 3c. Turn ignition ON (don't start engine).
+#     Wait 3 seconds for ECU boot.
+
+# 3d. Read EEPROM runtime counter again
+./kuminz-cli can0 --read-addr 01000030 2
+./kuminz-cli can0 --read-addr 01000032 2
+# Combine as u32 BE. Record as POST_CYCLE_EEPROM.
+
+# EXPECTED: POST_CYCLE_EEPROM > BASELINE_EEPROM
+# The delta should correspond to the key-on duration.
+# If watchdog runs at 60 Hz with 40x prescaler → 1 count per 0.667s.
+# 5 min key-on ≈ 300s ÷ 0.667 ≈ 450 counts delta.
+```
+
+### Test 4: Scale Factor Calibration
+
+Purpose: Determine the exact time-per-count for `ecm_runtime_accumulator`.
+
+```bash
+# 4a. At key-on, immediately read EEPROM and note wall-clock time
+./kuminz-cli can0 --read-addr 01000030 2
+./kuminz-cli can0 --read-addr 01000032 2
+# Record as T0_EEPROM, T0_CLOCK
+
+# 4b. Leave key on (engine can be on or off) for exactly 30 minutes.
+
+# 4c. Key off, wait 30 seconds, key on, read again
+./kuminz-cli can0 --read-addr 01000030 2
+./kuminz-cli can0 --read-addr 01000032 2
+# Record as T1_EEPROM, T1_CLOCK
+
+# CALCULATE:
+# delta_counts = T1_EEPROM - T0_EEPROM
+# delta_seconds = T1_CLOCK - T0_CLOCK (should be ~1830s including shutdown)
+# scale = delta_seconds / delta_counts
+# Expected: ~0.667 s/count (matching 1.5 Hz bench observation)
+# Or: ~0.2 s/count (matching e2m database claim for ECM_Run_Time)
+```
+
+### Test 5: Keyon-Duration Threshold Check (optional)
+
+Purpose: Verify the 0x2903 (10,499) threshold on `keyon_duration_counter`.
+At 1.5 Hz, that's ~7000 seconds = ~117 minutes. This means a key-on session
+shorter than ~2 hours may NOT trigger a periodic save — only the key-off
+save would fire.
+
+```bash
+# Short session test: key on for 5 minutes, key off, key on, read EEPROM.
+# If delta is present → key-off save path works (most likely).
+# If delta is zero → ECU didn't have time to flush before power died.
+#   This would mean the truck's keep-alive power duration matters.
+```
+
+### Recording Results
+
+Add results to the [Bench Results](#bench-results-2026-04-08) section
+(rename to "Verification Results"). Key values to record:
+
+| Test | Address | Raw Value | Computed | Notes |
+|------|---------|-----------|----------|-------|
+| 1b | 0x01000030 | | | EEPROM baseline |
+| 1c | 0x00302012 | | | RAM baseline (or NACK) |
+| 1d | 0x0040B150 | | | Session counter baseline |
+| 3d | 0x01000030 | | | Post key-cycle EEPROM |
+| 4 | | | | Scale factor s/count |
+
+### Failure Modes
+
+- **EEPROM 0x01000030 returns NACK:** Address outside 0x4A window at that
+  offset. Try reading the surrounding area (0x01000020–0x01000040).
+- **EEPROM value doesn't change after key cycle:** The key-off save needs
+  sufficient keep-alive power. Dodge trucks typically hold ECU power for
+  ~10-30 seconds after key-off, but if the battery is weak or there's a
+  relay issue, the ECU may lose power before the SPI flush completes.
+- **RAM 0x302012 returns NACK:** This address is in MPC555 module space,
+  which may not be in the Service 0x4A accessible window. Not a problem —
+  the EEPROM address is the important one.
+- **Delta doesn't match expected scale:** The watchdog tick rate assumption
+  (60 Hz) may be wrong. Calculate the actual scale from measured data.
 
 ## Cross-references
 
