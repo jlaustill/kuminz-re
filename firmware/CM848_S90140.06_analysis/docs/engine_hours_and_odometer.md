@@ -243,35 +243,109 @@ candump -T 2000 can0      # nothing on 18FEE500, expect 18E8xxxx NACK
 timeout 10 candump -t a can0 | grep -iE '18ffe0' || echo "no FFE0 broadcast"
 ```
 
-Fill in results here once run:
-
-```
-# ECM_Run_Time @ 0x01000400 raw: __________  decoded: ________ hours
-# Odometer     @ 0x01000BD8 raw: __________  decoded: ________ miles
-# FEE5 request response:          __________
-# FFE0 passive capture:           __________
-```
-
 ---
 
-## Follow-ups (do not block the writeup)
+## Bench Results (2026-04-08)
+
+Tested using OCT Teensy MicroMod bench firmware on CAN2 (FlexCAN_T4).
+ECU was HP Tuners-flashed — all EEPROM runtime counters were reset by the
+flash. Dash odometer reads 293,199 miles (stored in instrument cluster, not
+ECU). Full test output saved in `/tmp/bench_output.txt`, `/tmp/eeprom_scan.txt`,
+`/tmp/ram_scan.txt`, `/tmp/hours_id.txt`, `/tmp/post_shutdown.txt`.
+
+### Confirmed working
+
+| Address | Value | Notes |
+|---------|-------|-------|
+| **J1939 PGN FEE0** | trip=0 km, total=355.62 km | Accumulated since HP Tuners flash, not lifetime |
+| **EEPROM 0x01000BD8** (odometer) | raw=0x03736429 = 7,236.74 miles | Accumulated since flash; dash shows 293,199 mi |
+| **EEPROM 0x01001A84** (Rolls_Odometer) | 0x0280 (640) | Working |
+| **RAM 0x0040B7BA** (RPM) | 750 RPM (engine running), 0 (key on only) | Confirmed |
+
+### Service 0x4A window is WIDER than documented
+
+The documented window was `0x00408000–0x0040FFFF` (RAM) + `0x01000000–0x01001FFF`
+(EEPROM). Bench probing confirmed **0x003Fxxxx is also readable**:
+
+| Address | Value | Variable |
+|---------|-------|----------|
+| 0x003FDD6C | 0x000C7E46 (818,758) | `total_vehicle_distance_raw` |
+| 0x003FDD70 | 0x00000000 | `trip_vehicle_distance_raw` |
+| 0x003FDDA0 | 0x00000000 | `eeprom_save_cycle_counter` |
+| 0x003FDDA4 | 0x00000000 | `eeprom_scatter_source_table` |
+| 0x003FA000 | 0x0000 | `key_on_flag` area |
+| 0x003FEE12 | 0x0000 | EEPROM mirror area |
+
+### EEPROM is write-on-shutdown only
+
+Full 8KB EEPROM dump (0x01000000–0x01001FFF) before/after 60 seconds with
+engine running: **zero bytes changed**. The ECU accumulates counters in RAM
+and only flushes to EEPROM on key-off shutdown. The scatter-gather RAM
+write pointer at 0x0040BDF6 WAS moving (0x722→0x730 across test cycles),
+confirming the save system is active in RAM — but the SPI flush to physical
+EEPROM doesn't happen during operation.
+
+### ECM_Run_Time @ 0x01000400 — NOT the hours counter
+
+Reads raw=0x12 (18) = 3.6 seconds. **Never changes** — not while running,
+not after key cycle. This is a static EEPROM calibration value at this
+offset on S90140.06 firmware, not a runtime counter. The e2m database
+address was wrong for this firmware version.
+
+### EEPROM 0x10000D6 / 0x10000F4 — NOT hours counters either
+
+Initially looked promising (0x1F9C40 = 2,071,616 and 0x1FC1F1 = 2,081,265,
+which at various scales could represent ~115-384 hours). But:
+- Did not change during 3 minutes of engine-running operation
+- **Did not change after key-off/key-on cycle**
+- These are static calibration or configuration values, not runtime counters
+
+### Live session-time counter FOUND in RAM
+
+**RAM 0x0040B150** (and copies at 0x0040B2C2, 0x0040BA44) contains a live
+session-time counter that:
+- Starts near 0 at key-on
+- Increments at **1.5 Hz** (one count every 0.667 seconds)
+- Was at 9545 counts after ~106 minutes of key-on time (9545 × 0.667s = 6363s = 106 min ✓)
+- Resets to 0 on each key cycle
+
+Rate confirmed by delta test: 177-182 counts per 120 seconds = 1.48-1.52/s,
+centered on exactly 1.5 Hz.
+
+**Unsolved: where this session counter gets persisted to EEPROM on shutdown.**
+The EEPROM delta test after key-off showed zero changes at the two candidate
+addresses. The lifetime hours accumulator location in EEPROM is still unknown.
+
+### What's still needed
+
+The ECU was HP Tuners-flashed, which zeroed all EEPROM runtime data. To find
+the lifetime hours address, the plan is:
+
+1. **HP Tuners reflash test:** dump EEPROM before and after an HP Tuners
+   flash to see exactly which addresses get zeroed. Any address that goes
+   from non-zero to zero is a runtime counter.
+2. **Extended run + key-off test:** run the engine for 30+ minutes, key off,
+   wait 30 seconds for full ECU shutdown, key on, re-read EEPROM. The
+   session counter should be flushed somewhere.
+3. **Trace the shutdown save path in firmware:** find the key-off ISR or
+   shutdown handler that triggers `cm848_transferEepromData` and writes
+   the RAM circular buffer to SPI EEPROM.
+
+## Follow-ups
 
 - [ ] Add `tools/read_odometer.sh` (mirror of `update_odometer.sh` without writes).
-- [ ] **Do not** implement `--resolve-param` / Service 0x15 / Service 0x16
-      in `kuminz-cli`. Originally planned as Thread 5; investigation in
-      `docs/parameter_by_id_system.md` shows CM848's parameter table has
-      only 20 entries (none of which are engine hours), and the spec says
-      CLIP 0x10/0x15 are stubs on this ECU. Deleted from the plan.
-- [ ] Bench-verify `ECM_Run_Time` @ `0x01000400` increments at ~5 counts/s
-      (0.2 s scale) with key on. This is now the *only* known near-term
-      hours path.
-- [ ] **RE task:** diff RAM `0x00408000-0x0040FFFF` and EEPROM
-      `0x01000000-0x01001FFF` before/after 60 s engine run time to locate
-      the lifetime engine-running-hours counter. This is the only way to
-      recover `Engine_Run_Time` (CMEGTR) on CM848 — the e2m address
-      `0x0111BC00` is not a physical address.
-- [ ] Extend `scripts/pgn_scan.sh` (or create one if absent) to sweep
-      `0xFF00-0xFFFF` and log any responders beyond FFE0.
+- [ ] **HP Tuners EEPROM diff:** dump EEPROM → flash HP Tuners → dump again → diff.
+      This will reveal all runtime counter EEPROM addresses at once.
+- [ ] **Extended run test:** 30+ min engine run → key off → wait 30s → key on →
+      read EEPROM. Look for session counter flush.
+- [ ] Trace the ECU shutdown path in `cm848_rom.ghidra.cpp` — find the
+      key-off handler that triggers the SPI EEPROM flush.
+- [ ] Update `docs/service_0x4a_protocol.md` to document the wider Service
+      0x4A window (0x003Fxxxx is readable, not just 0x00408000+).
+- [X] ~~Bench-verify `ECM_Run_Time` @ `0x01000400`~~ — confirmed NOT the
+      hours counter (static value, never changes).
+- [X] ~~Implement `--resolve-param` / Service 0x15/0x16~~ — deleted, CM848
+      has only 20 parameter IDs, services are stubs.
 
 ## Cross-references
 

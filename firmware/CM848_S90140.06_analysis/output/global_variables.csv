@@ -4108,7 +4108,7 @@ address,name,type,comment
 0x0040b14a,engine_load_rate_of_change,undefined4,
 0x0040b14c,protection_rate_limit_countdown,,
 0x0040b14e,protection_output_raw,undefined4,
-0x0040b150,protection_output_filtered,,
+0x0040b150,session_time_counter,undefined2,"Live session-time counter. Increments at 1.5 Hz (0.667s/count) while ECU is powered. Resets to 0 on each key cycle. Bench-verified 2026-04-08: 9545 counts after ~106 min key-on. Copies at 0x0040B2C2 and 0x0040BA44. Lifetime total persists to EEPROM on shutdown — EEPROM address TBD."
 0x0040b152,fuel_timing_param_1,undefined2,
 0x0040b154,fuel_timing_param_2,undefined2,
 0x0040b156,protection_mode_lookup_result,undefined2,

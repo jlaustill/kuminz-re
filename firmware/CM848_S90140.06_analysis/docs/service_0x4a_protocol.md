@@ -164,8 +164,15 @@ Based on Service 0x4A probing, these ranges are readable:
 
 | Range | Description |
 |-------|-------------|
+| 0x003F9800 - 0x003FFFFF | ROM-to-RAM region + runtime RAM (verified 2026-04-08) |
 | 0x00408000 - 0x0040FFFF | RAM (calibration, runtime variables) |
 | 0x01000000 - 0x01001FFF | EEPROM (8KB) |
+
+**Updated 2026-04-08:** the 0x003Fxxxx range IS readable via Service 0x4A,
+contrary to prior documentation. Bench-verified: 0x003FA000, 0x003FDD6C,
+0x003FDD70, 0x003FDDA0, 0x003FDDA4, 0x003FEE12 all returned valid data.
+This includes the ROM-to-RAM calibration copy region (0x3F9800-0x3FDB30)
+and runtime RAM beyond it.
 
 **Not accessible via Service 0x4A:** ROM (use Service 0x36 block read instead)
 
