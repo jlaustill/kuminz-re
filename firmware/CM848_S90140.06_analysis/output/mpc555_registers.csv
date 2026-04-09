@@ -59,10 +59,9 @@ address,name,type,comment
 # TPU3 - Time Processing Unit 3 (0x302000 - 0x303FFF)
 # =============================================================================
 0x00302000,TPU3_TPUMCR,u16,TPU Module Configuration Register
-0x00302002,TPU3_TCR,u16,TPU Test Configuration Register
-0x00302004,TPU3_DSCR,u16,TPU Development Support Control Register
-0x00302006,keyon_state_machine_phase,u16,TPU3_DSSR repurposed; 0=waiting for key-on 1=key-on confirmed
-0x00302008,TPU3_TICR,u16,TPU Interrupt Configuration Register
+# 0x00302002-0x00302009: TPU3 registers repurposed as general storage (firmware doesn't use TPU3)
+# ecu_power_state_flags (dword @ 0x00302002) and keyon_state_machine_phase (dword @ 0x00302006)
+# are defined in global_variables.csv
 0x0030200a,TPU3_CIER,u16,Channel Interrupt Enable Register
 0x0030200c,TPU3_CFSR0,u16,Channel Function Select Register 0 (ch 0-3)
 0x0030200e,TPU3_CFSR1,u16,Channel Function Select Register 1 (ch 4-7)

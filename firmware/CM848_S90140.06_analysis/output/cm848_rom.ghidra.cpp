@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Apr 09 09:24:55 MDT 2026
+// Generated: Thu Apr 09 09:42:17 MDT 2026
 
 
 //
@@ -57,11 +57,11 @@ void mpc555_keyOnStateMachine(void)
   dword keyon_phase;
   word signal_value;
   
-  keyon_phase = Ram00302006;
+  keyon_phase = keyon_state_machine_phase;
   if (keyon_phase == 0) {
     wVar2 = mios_key_off_detection;
     if ((wVar2 & 0x8000) == 0) {
-      Ram00302006 = 1;
+      keyon_state_machine_phase = 1;
     }
     else {
       keyon_duration_counter = 0;
@@ -84,7 +84,7 @@ void mpc555_keyOnStateMachine(void)
       }
     }
     else {
-      Ram00302006 = 0;
+      keyon_state_machine_phase = 0;
       keyon_duration_counter = 0;
       if (eeprom_version_marker.magic == 0x600d) {
         if (eeprom_runtime_write_once_flag == 0) {
@@ -1751,7 +1751,7 @@ void mpc555_systemInitialization(void)
   cm848_generateCrcTable();
   cm848_stubFunction2();
   mpc555_initCanController();
-  Ram00302006 = 0;
+  keyon_state_machine_phase = 0;
   Ram00302736 = 0xbbbb;
   Ram00302738 = 0;
   mpc555_eepromReadWords(&DAT_01000030,0x3fee12,4);
@@ -20874,7 +20874,6 @@ void cm848_initJ1939VehicleSpeedHandler(void)
 // Function: torqueControlModeHandler @ 0x00022d60
 //
 
-/* WARNING: Unable to use type for symbol source_address */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void torqueControlModeHandler(int param_1)
@@ -20884,7 +20883,7 @@ void torqueControlModeHandler(int param_1)
   short sVar1;
   byte control_mode;
   byte priority_bits;
-  char source_address;
+  byte source_address;
   
   if (*(short *)(param_1 + 4) != 8) {
     return;
@@ -20895,7 +20894,7 @@ void torqueControlModeHandler(int param_1)
   tsc1_speed_previous.requested_speed =
        CONCAT11(*(undefined1 *)(*(int *)(param_1 + 6) + 2),(*(byte **)(param_1 + 6))[1]);
   tsc1_speed_previous.requested_torque = *(byte *)(*(int *)(param_1 + 6) + 3);
-  source_address = *(char *)(param_1 + 3);
+  source_address = *(byte *)(param_1 + 3);
   if (control_mode == 0) {
     cm848_removeCoolantCalEntryByParams(1,source_address);
     _speed_control_target = _speed_control_target & 6;
@@ -21061,7 +21060,7 @@ void cm848_processGovernorSpeedControlRequest(void)
   tsc1_control_word_stored.tsc1_control_word = (word)*unaff_r31;
   tsc1_speed_previous.priority_byte = (byte)unaff_r26;
   _tsc1_active_state = 1;
-  tsc1_source_address = (undefined1)unaff_r27;
+  tsc1_source_address = (byte)unaff_r27;
   if (unaff_r28 == 0) {
     _tsc1_speed_error_timeout = 0;
     *unaff_r29 = 0;
@@ -26790,7 +26789,7 @@ void cm848_calculateProtectionSpeedLimits(void)
   else {
     thermal_speed_limit_lookup = 0;
   }
-  if ((tsc1_coast_brake_mode == '\x01') && (DAT_003faf76 < DAT_003faf8a)) {
+  if ((tsc1_coast_brake_mode == 1) && (DAT_003faf76 < DAT_003faf8a)) {
     speed_control_integrator_integrator_2._2_2_ = 10;
     governor_limit_accum_1 = 0;
     governor_limit_accum_2 = 0;
@@ -26933,7 +26932,7 @@ LAB_000299e8:
   else {
     _speed_limit_constraint_active_flag = 0;
   }
-  if (tsc1_coast_brake_mode == '\0') {
+  if (tsc1_coast_brake_mode == 0) {
     DAT_003faf76 = 0;
   }
   else if (DAT_003faf76 < DAT_003faf8a) {
@@ -41348,7 +41347,7 @@ void cm848_processTemperatureTrim(void)
       fuel_trim_multiplier = 0;
     }
   }
-  if (tsc1_coast_brake_mode == '\0') {
+  if (tsc1_coast_brake_mode == 0) {
     DAT_003fb554 = 0;
   }
   if (fuel_trim_multiplier != 0) {
@@ -41357,7 +41356,7 @@ void cm848_processTemperatureTrim(void)
   if (fuel_efficiency_trim == 0) {
     temperature_trim_value = 0;
   }
-  if (tsc1_coast_brake_mode != '\0') {
+  if (tsc1_coast_brake_mode != 0) {
     if (DAT_00408eb6 < DAT_003fb554) {
       fuel_trim_multiplier = 0;
     }
@@ -65296,7 +65295,7 @@ void cm848_processFaultCountdownTimers(void)
 
 {
   if (((control_mode_status_flags & 0x40) == 0) && (DAT_0040add9 == '\0')) {
-    if (fault_countdown_init_flag == '\0') {
+    if (fault_countdown_init_flag == 0) {
       if ((_sensor_channel_9_status_flags & 0x800) == 0) {
         if ((system_enable_state_shadow & 0x1000) != 0) {
           system_enable_state.reserved_10 = system_enable_state.reserved_10 & 0xefff;
@@ -65309,7 +65308,7 @@ void cm848_processFaultCountdownTimers(void)
       }
       else {
         system_enable_state.reserved_10 = system_enable_state.reserved_10 | 0x1000;
-        fault_countdown_init_flag = '\x01';
+        fault_countdown_init_flag = 1;
         fault_countdown_timer_1 = 0;
       }
     }
@@ -89862,9 +89861,9 @@ undefined4 cm848_updateSpeedFilters(void)
         DAT_003fd1a6 = '\x01';
       }
       if (DAT_00064320 < DAT_003fd18e) {
-        if (speed_filter_init_flag == '\0') {
+        if (speed_filter_init_flag == 0) {
           DAT_003fd1a9 = speed_sensor_value_current;
-          speed_filter_init_flag = '\x01';
+          speed_filter_init_flag = 1;
         }
         if (DAT_0006431e < DAT_003fd18e) {
           uVar2 = 0;
