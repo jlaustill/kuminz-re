@@ -181,17 +181,17 @@ system_status_flags_t,0x003fe974,protection_active,word,2,Protection active flag
 # Speed Control State - vehicle/engine speed setpoints and limits
 # Used by processEngineRpmTarget and speed governor
 # Total size: 22 bytes (0x0040a3ca-0x0040a3df)
-speed_control_state_t,0x0040a3ca,current_value,word,2,Current speed value,,verified
-speed_control_state_t,0x0040a3ca,reserved_02,word,2,Gap (0xa3cc),,needs_review
-speed_control_state_t,0x0040a3ca,reserved_04,word,2,Gap (0xa3ce),,needs_review
-speed_control_state_t,0x0040a3ca,reserved_06,word,2,Gap (0xa3d0),,needs_review
-speed_control_state_t,0x0040a3ca,lower_limit,word,2,Speed lower limit,,verified
-speed_control_state_t,0x0040a3ca,limit_adjustment,word,2,Speed limit adjustment factor,,verified
-speed_control_state_t,0x0040a3ca,reserved_0c,word,2,Gap (0xa3d6),,needs_review
-speed_control_state_t,0x0040a3ca,reserved_0e,word,2,Gap (0xa3d8),,needs_review
-speed_control_state_t,0x0040a3ca,target_setpoint,word,2,Target speed setpoint,,verified
-speed_control_state_t,0x0040a3ca,adjustment_delta,word,2,Speed adjustment delta,,verified
-speed_control_state_t,0x0040a3ca,lookup_result,word,2,Speed table lookup result,,verified
+rpm_governor_state_t,0x0040a3ca,commanded_rpm,word,2,Governor output RPM,,verified
+rpm_governor_state_t,0x0040a3ca,reserved_02,word,2,Gap (0xa3cc),,needs_review
+rpm_governor_state_t,0x0040a3ca,reserved_04,word,2,Gap (0xa3ce),,needs_review
+rpm_governor_state_t,0x0040a3ca,reserved_06,word,2,Gap (0xa3d0),,needs_review
+rpm_governor_state_t,0x0040a3ca,lower_rpm_limit,word,2,Bottom of governor droop band,,verified
+rpm_governor_state_t,0x0040a3ca,limit_adjustment,word,2,Pressure-based limit trim,,verified
+rpm_governor_state_t,0x0040a3ca,reserved_0c,word,2,Gap (0xa3d6),,needs_review
+rpm_governor_state_t,0x0040a3ca,reserved_0e,word,2,Gap (0xa3d8),,needs_review
+rpm_governor_state_t,0x0040a3ca,desired_rpm,word,2,Target RPM setpoint,,verified
+rpm_governor_state_t,0x0040a3ca,adjustment_delta,word,2,Pressure-based setpoint trim,,verified
+rpm_governor_state_t,0x0040a3ca,base_rpm_lookup,word,2,Base RPM from calibration table before adjustments,,verified
 # Throttle Fuel Trim State - throttle-based fuel calculations
 # Used by calculateFuelDemandValue and throttle processing
 # Total size: 24 bytes (0x0040a3ea-0x0040a401)
