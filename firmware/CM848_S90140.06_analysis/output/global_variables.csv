@@ -1133,6 +1133,8 @@ address,name,type,comment
 0x003fd8a7,PTR_DAT_003fd8a7,pointer,
 0x003fd8cc,speed_fuel_config_and_emission_threshold,dword,
 0x003fd902,PTR_DAT_003fd902,pointer,
+0x003fd920,vss_monitor_config,byte,
+0x003fd921,vss_sensor_status,byte,
 0x003fd934,protection_config_word,word,
 0x003fd944,vehicle_distance_fault_clear_threshold_miles,word,
 0x003fda58,sensor_calibration_array,byte,

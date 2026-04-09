@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Apr 09 07:56:57 MDT 2026
+// Generated: Thu Apr 09 07:58:58 MDT 2026
 
 
 //
@@ -40583,7 +40583,7 @@ void cm848_calculateFuelRateFromRpm(void)
   
   uVar1 = ((uint)_vehicle_speed_monitor_enable * (uint)protection_control_gain) / 0x3c & 0x7fff;
   fuel_rate_from_rpm_value = (word)uVar1;
-  if (_DAT_003fd920 == 0) {
+  if (_vss_monitor_config == 0) {
     uVar1 = ((uint)target_engine_rpm.current_rpm << 0x10) / (uVar1 * fuel_rate_divisor_factor >> 9)
             >> 2;
     if (0x8000 < uVar1) {
@@ -78527,10 +78527,10 @@ undefined4 insiteCommandByteDispatcher(int param_1,uint param_2)
     uVar1 = cm848_addWithMask16(&DAT_003fd91f,0);
     return uVar1;
   case 0xce:
-    uVar1 = cm848_addWithMask16(&DAT_003fd920,0);
+    uVar1 = cm848_addWithMask16(&vss_monitor_config,0);
     return uVar1;
   case 0xcf:
-    uVar1 = cm848_addWithMask16(&DAT_003fd921,0);
+    uVar1 = cm848_addWithMask16(&vss_sensor_status,0);
     return uVar1;
   case 0xd0:
     uVar1 = cm848_addWithMask16(&DAT_003fd922,0);
@@ -89839,7 +89839,7 @@ undefined4 cm848_updateSpeedFilters(void)
   ushort uVar2;
   byte local_10 [4];
   
-  if ((DAT_003fd920 & 0x20) == 0) {
+  if ((vss_monitor_config & 0x20) == 0) {
     uVar1 = 4;
   }
   else {
@@ -89858,17 +89858,17 @@ undefined4 cm848_updateSpeedFilters(void)
           if (speed_sensor_value_current < DAT_003fd1a9) {
             uVar2 = speed_sensor_value_current - DAT_003fd1a9;
           }
-          local_10[0] = DAT_003fd921;
+          local_10[0] = vss_sensor_status;
           speed_filter_init_flag = 0;
           if (DAT_00064322 < uVar2) {
-            local_10[0] = DAT_003fd921 & 0xfe;
+            local_10[0] = vss_sensor_status & 0xfe;
             cm848_setOperationalModeState(2);
           }
           else {
             vehicle_speed_monitor_passed = 1;
           }
                     /* WARNING: Subroutine does not return */
-          cm848_enqueueToCircularBuffer(&DAT_003fd921,local_10,1);
+          cm848_enqueueToCircularBuffer(&vss_sensor_status,local_10,1);
         }
       }
     }
