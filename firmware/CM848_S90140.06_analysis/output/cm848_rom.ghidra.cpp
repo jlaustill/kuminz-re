@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Apr 09 08:45:52 MDT 2026
+// Generated: Thu Apr 09 09:19:33 MDT 2026
 
 
 //
@@ -5654,29 +5654,30 @@ void mpc555_processSensorWithOverride(undefined4 param_1,undefined2 param_2)
 void mpc555_watchdogTimerTick(void)
 
 {
-  dword dVar1;
-  word wVar2;
-  byte bVar3;
+  word wVar1;
+  byte prescaler_count;
+  dword runtime_value;
+  word counter_value;
   
-  bVar3 = watchdog_tick_prescaler;
-  if (bVar3 < 0x28) {
-    watchdog_tick_prescaler = bVar3 + 1;
+  prescaler_count = watchdog_tick_prescaler;
+  if (prescaler_count < 0x28) {
+    watchdog_tick_prescaler = prescaler_count + 1;
   }
   else {
-    wVar2 = watchdog_timeout_countdown;
-    if (wVar2 != 0) {
-      watchdog_timeout_countdown = wVar2 - 1;
-      if ((word)(wVar2 - 1) == 0) {
+    counter_value = watchdog_timeout_countdown;
+    if (counter_value != 0) {
+      watchdog_timeout_countdown = counter_value - 1;
+      if ((word)(counter_value - 1) == 0) {
         mpc555_systemHaltLoop();
         mpc555_reset_vector();
         return;
       }
     }
     watchdog_tick_prescaler = 0;
-    dVar1 = ecm_runtime_accumulator;
-    ecm_runtime_accumulator = dVar1 + 1;
-    wVar2 = keyon_duration_counter;
-    keyon_duration_counter = wVar2 + 1;
+    runtime_value = ecm_runtime_accumulator;
+    ecm_runtime_accumulator = runtime_value + 1;
+    wVar1 = keyon_duration_counter;
+    keyon_duration_counter = wVar1 + 1;
   }
   return;
 }
