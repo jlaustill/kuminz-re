@@ -25,6 +25,10 @@ function_address,function_name,old_name,new_name,type,comment
 0x00007608,mpc555_watchdogTimerTick,bVar3,prescaler_count,byte,Current prescaler value (0-39)
 0x00007608,mpc555_watchdogTimerTick,dVar1,runtime_value,dword,Runtime snapshot before increment
 0x00007608,mpc555_watchdogTimerTick,wVar2,counter_value,word,Reused for timeout countdown and keyon counter
+# mpc555_keyOnStateMachine @ 0x00000184 - Key-on/key-off state machine with runtime EEPROM save
+0x00000184,mpc555_keyOnStateMachine,iVar2,keyon_phase,int,State machine phase: 0=waiting for key-on 1=running
+0x00000184,mpc555_keyOnStateMachine,wVar3,signal_value,word,Reused for MIOS key-off signal and keyon counter
+0x00000184,mpc555_keyOnStateMachine,uVar1,power_flags,uint,Copy of ecu_power_state_flags for bit manipulation
 0x000032dc,mpc555_generateSerialChallenge,seed_value,challenge_value,dword,Copy of serial_challenge_value for byte extraction
 0x000032dc,mpc555_generateSerialChallenge,seed_high_byte,challenge_high_byte,byte,Upper byte of 16-bit challenge (bits 15-8)
 0x000032dc,mpc555_generateSerialChallenge,uVar3,write_pos,uint,Current write position in diag_serial_buffer

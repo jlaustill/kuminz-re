@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Apr 09 09:19:33 MDT 2026
+// Generated: Thu Apr 09 09:24:55 MDT 2026
 
 
 //
@@ -52,33 +52,34 @@ void mpc555_reset_vector(void)
 void mpc555_keyOnStateMachine(void)
 
 {
-  uint uVar1;
-  int iVar2;
-  word wVar3;
+  dword dVar1;
+  word wVar2;
+  dword keyon_phase;
+  word signal_value;
   
-  iVar2 = Ram00302006;
-  if (iVar2 == 0) {
-    wVar3 = mios_key_off_detection;
-    if ((wVar3 & 0x8000) == 0) {
+  keyon_phase = Ram00302006;
+  if (keyon_phase == 0) {
+    wVar2 = mios_key_off_detection;
+    if ((wVar2 & 0x8000) == 0) {
       Ram00302006 = 1;
     }
     else {
       keyon_duration_counter = 0;
     }
   }
-  else if (iVar2 == 1) {
-    wVar3 = mios_key_off_detection;
-    if ((wVar3 & 0x8000) == 0) {
-      wVar3 = keyon_duration_counter;
-      if (0x2903 < wVar3) {
+  else if (keyon_phase == 1) {
+    wVar2 = mios_key_off_detection;
+    if ((wVar2 & 0x8000) == 0) {
+      signal_value = keyon_duration_counter;
+      if (0x2903 < signal_value) {
         if (eeprom_runtime_write_once_flag == 0) {
           eeprom_runtime_write_staging = ecm_runtime_accumulator;
           eeprom_runtime_write_once_flag = 1;
           mpc555_eepromWriteWords(0x3fee2a,(word *)&DAT_01000030,4);
         }
         if (eeprom_version_marker.config_dword == eeprom_runtime_write_staging) {
-          uVar1 = Ram00302002;
-          Ram00302002 = uVar1 & 0xfffffffd;
+          dVar1 = ecu_power_state_flags;
+          ecu_power_state_flags = dVar1 & 0xfffffffd;
         }
       }
     }
@@ -165,54 +166,55 @@ void mpc555_loadEepromCalibration(undefined4 param_1,int param_2)
 
 {
   bool bVar1;
-  byte bVar2;
-  word wVar3;
-  short sVar4;
-  ushort uVar5;
+  dword dVar2;
+  byte bVar3;
+  word wVar4;
+  short sVar5;
   ushort uVar6;
   ushort uVar7;
-  uint uVar8;
-  ushort *puVar9;
-  uint uVar10;
-  short *psVar11;
+  ushort uVar8;
+  uint uVar9;
+  ushort *puVar10;
+  uint uVar11;
   short *psVar12;
-  uint *puVar13;
+  short *psVar13;
+  uint *puVar14;
   ushort local_38 [2];
   dword local_34 [2];
   
-  bVar2 = qadc_a_result_high_1;
-  qadc_a_result_high_1 = bVar2 & 0x7f;
+  bVar3 = qadc_a_result_high_1;
+  qadc_a_result_high_1 = bVar3 & 0x7f;
   watchdog_timeout_countdown = 0;
   mpc555_eepromReadWords(0x1000000,0x3fee0a,2);
   if (eeprom_version_marker.magic == 0x600d) {
     cm848_eepromProgressNotify(param_1,param_2,0);
     if (param_2 == 3) {
-      uVar6 = 0;
+      uVar7 = 0;
       do {
-        while (sVar4 = cm848_eepromCheckStatus(), sVar4 == 0) {
+        while (sVar5 = cm848_eepromCheckStatus(), sVar5 == 0) {
           cm848_eepromPollReady();
           cm848_eepromCompleteOperation();
         }
-        uVar6 = uVar6 + 1;
-      } while (uVar6 < 5);
+        uVar7 = uVar7 + 1;
+      } while (uVar7 < 5);
     }
     else {
-      uVar6 = 0;
+      uVar7 = 0;
       do {
         if (param_2 == 2) {
           cm848_can2TransmitInterruptHandler_ram();
         }
-        sVar4 = 0;
+        sVar5 = 0;
         do {
-          uVar7 = 0;
+          uVar8 = 0;
           do {
-            uVar7 = uVar7 + 1;
-          } while (uVar7 < 400);
-          sVar4 = sVar4 + 1;
-        } while (sVar4 == 0);
+            uVar8 = uVar8 + 1;
+          } while (uVar8 < 400);
+          sVar5 = sVar5 + 1;
+        } while (sVar5 == 0);
         cm848_eepromCompleteOperation();
-        uVar6 = uVar6 + 1;
-      } while (uVar6 < 0x32);
+        uVar7 = uVar7 + 1;
+      } while (uVar7 < 0x32);
     }
     cm848_systemHaltLoop_ram();
     mpc555_reset_vector();
@@ -223,52 +225,52 @@ void mpc555_loadEepromCalibration(undefined4 param_1,int param_2)
       cm848_processSensorWithOverride_ram(param_1,10);
     }
     bVar1 = false;
-    uVar6 = *(ushort *)PTR_DAT_00008104;
-    puVar9 = (ushort *)(PTR_DAT_00008104 + 2);
-    uVar7 = 0;
-    if (uVar6 != 0) {
+    uVar7 = *(ushort *)PTR_DAT_00008104;
+    puVar10 = (ushort *)(PTR_DAT_00008104 + 2);
+    uVar8 = 0;
+    if (uVar7 != 0) {
       do {
         local_38[0] = 0;
-        psVar12 = *(short **)(puVar9 + 1);
-        psVar11 = *(short **)(puVar9 + 3);
-        while (psVar12 <= psVar11) {
-          uVar5 = 0;
-          if (psVar12 <= psVar11) {
+        psVar13 = *(short **)(puVar10 + 1);
+        psVar12 = *(short **)(puVar10 + 3);
+        while (psVar13 <= psVar12) {
+          uVar6 = 0;
+          if (psVar13 <= psVar12) {
             do {
-              local_38[0] = local_38[0] + *psVar12;
-              psVar12 = psVar12 + 1;
+              local_38[0] = local_38[0] + *psVar13;
+              psVar13 = psVar13 + 1;
               cm848_eepromPollReady();
-              uVar5 = uVar5 + 1;
-              if (psVar11 < psVar12) break;
-            } while (uVar5 < 0x200);
+              uVar6 = uVar6 + 1;
+              if (psVar12 < psVar13) break;
+            } while (uVar6 < 0x200);
           }
           cm848_eepromCompleteOperation();
           cm848_eepromCheckStatus();
         }
-        if (local_38[0] != *puVar9) {
+        if (local_38[0] != *puVar10) {
           bVar1 = true;
           break;
         }
-        puVar9 = puVar9 + 5;
-        uVar7 = uVar7 + 1;
-      } while (uVar7 < uVar6);
+        puVar10 = puVar10 + 5;
+        uVar8 = uVar8 + 1;
+      } while (uVar8 < uVar7);
     }
     if (!bVar1) {
-      uVar6 = Ram003028b1;
-      uVar8 = (uint)uVar6;
-      if (uVar8 == DAT_00008116) {
-        puVar13 = &DAT_0000811e + (uint)DAT_00008116 * 2;
-        uVar10 = 0;
-        if (uVar8 != 0) {
+      uVar7 = Ram003028b1;
+      uVar9 = (uint)uVar7;
+      if (uVar9 == DAT_00008116) {
+        puVar14 = &DAT_0000811e + (uint)DAT_00008116 * 2;
+        uVar11 = 0;
+        if (uVar9 != 0) {
           do {
-            if ((*(undefined **)(&UNK_003028b3 + uVar10 * 8) != (&PTR_DAT_0000811a)[uVar10]) ||
-               (*(uint *)(&UNK_003028b7 + uVar10 * 8) < *puVar13)) {
+            if ((*(undefined **)(&UNK_003028b3 + uVar11 * 8) != (&PTR_DAT_0000811a)[uVar11]) ||
+               (*(uint *)(&UNK_003028b7 + uVar11 * 8) < *puVar14)) {
               bVar1 = true;
               break;
             }
-            puVar13 = puVar13 + 1;
-            uVar10 = uVar10 + 1 & 0xffff;
-          } while (uVar10 < uVar8);
+            puVar14 = puVar14 + 1;
+            uVar11 = uVar11 + 1 & 0xffff;
+          } while (uVar11 < uVar9);
         }
       }
       else {
@@ -280,14 +282,14 @@ void mpc555_loadEepromCalibration(undefined4 param_1,int param_2)
       if (param_2 == 3) {
         eeprom_calibration_version = 0;
         eeprom_operation_state = 0x40;
-        uVar6 = 0;
+        uVar7 = 0;
         do {
-          while (sVar4 = cm848_eepromCheckStatus(), sVar4 == 0) {
+          while (sVar5 = cm848_eepromCheckStatus(), sVar5 == 0) {
             cm848_eepromPollReady();
             cm848_eepromCompleteOperation();
           }
-          uVar6 = uVar6 + 1;
-        } while (uVar6 < 100);
+          uVar7 = uVar7 + 1;
+        } while (uVar7 < 100);
         cm848_systemHaltLoop_ram();
         mpc555_reset_vector();
         return;
@@ -308,46 +310,46 @@ void mpc555_loadEepromCalibration(undefined4 param_1,int param_2)
       local_34[0] = ecm_runtime_accumulator;
       mpc555_eepromWriteWords((dword)local_34,(word *)&DAT_01000030,4);
       if (param_2 == 3) {
-        uVar6 = 0;
+        uVar7 = 0;
         do {
-          while (sVar4 = cm848_eepromCheckStatus(), sVar4 == 0) {
+          while (sVar5 = cm848_eepromCheckStatus(), sVar5 == 0) {
             cm848_eepromPollReady();
             cm848_eepromCompleteOperation();
           }
-          uVar6 = uVar6 + 1;
-        } while (uVar6 < 100);
+          uVar7 = uVar7 + 1;
+        } while (uVar7 < 100);
       }
       else {
         cm848_eepromProgressNotify(param_1,param_2,0);
-        uVar6 = 0;
+        uVar7 = 0;
         do {
-          uVar7 = 0;
+          uVar8 = 0;
           do {
             if (param_2 == 2) {
               cm848_can2TransmitInterruptHandler_ram();
             }
-            sVar4 = 0;
+            sVar5 = 0;
             do {
-              uVar5 = 0;
+              uVar6 = 0;
               do {
-                uVar5 = uVar5 + 1;
-              } while (uVar5 < 400);
-              sVar4 = sVar4 + 1;
-            } while (sVar4 == 0);
+                uVar6 = uVar6 + 1;
+              } while (uVar6 < 400);
+              sVar5 = sVar5 + 1;
+            } while (sVar5 == 0);
             cm848_eepromCompleteOperation();
-            uVar7 = uVar7 + 1;
-          } while (uVar7 < 10);
-          uVar6 = uVar6 + 1;
-        } while (uVar6 < 0x32);
+            uVar8 = uVar8 + 1;
+          } while (uVar8 < 10);
+          uVar7 = uVar7 + 1;
+        } while (uVar7 < 0x32);
       }
-      wVar3 = mios_key_off_detection;
-      if ((wVar3 & 0x8000) != 0) {
+      wVar4 = mios_key_off_detection;
+      if ((wVar4 & 0x8000) != 0) {
         cm848_systemHaltLoop_ram();
         mpc555_reset_vector();
         return;
       }
-      uVar8 = Ram00302002;
-      Ram00302002 = uVar8 & 0xfffffffd;
+      dVar2 = ecu_power_state_flags;
+      ecu_power_state_flags = dVar2 & 0xfffffffd;
     }
   }
   else {
@@ -469,39 +471,40 @@ uint cm848_computeCrcCcitt(undefined4 *param_1,uint param_2)
 void mpc555_updateCapabilityFlags(void)
 
 {
-  word wVar1;
-  ushort uVar2;
-  uint uVar3;
+  dword dVar1;
+  word wVar2;
+  ushort uVar3;
+  uint uVar4;
   
-  wVar1 = mios_key_off_detection;
-  if ((wVar1 & 0x8000) == 0) {
-    uVar3 = Ram00302002;
-    uVar3 = uVar3 & 0xfffffffe;
+  wVar2 = mios_key_off_detection;
+  if ((wVar2 & 0x8000) == 0) {
+    dVar1 = ecu_power_state_flags;
+    uVar4 = dVar1 & 0xfffffffe;
   }
   else {
-    uVar3 = Ram00302002;
-    uVar3 = uVar3 | 1;
+    dVar1 = ecu_power_state_flags;
+    uVar4 = dVar1 | 1;
   }
-  Ram00302002 = uVar3;
-  if ((uVar3 & 2) == 0) {
-    uVar3 = Ram002fc024;
-    uVar3 = uVar3 & 0xfffffbff;
-  }
-  else {
-    uVar3 = Ram002fc024;
-    uVar3 = uVar3 | 0x400;
-  }
-  Ram002fc024 = uVar3;
-  uVar3 = Ram00302002;
-  if ((uVar3 & 0x10) == 0) {
-    uVar2 = Ram00306100;
-    uVar2 = uVar2 & 0xdfff;
+  ecu_power_state_flags = uVar4;
+  if ((uVar4 & 2) == 0) {
+    uVar4 = Ram002fc024;
+    uVar4 = uVar4 & 0xfffffbff;
   }
   else {
-    uVar2 = Ram00306100;
-    uVar2 = uVar2 | 0x2000;
+    uVar4 = Ram002fc024;
+    uVar4 = uVar4 | 0x400;
   }
-  Ram00306100 = uVar2;
+  Ram002fc024 = uVar4;
+  dVar1 = ecu_power_state_flags;
+  if ((dVar1 & 0x10) == 0) {
+    uVar3 = Ram00306100;
+    uVar3 = uVar3 & 0xdfff;
+  }
+  else {
+    uVar3 = Ram00306100;
+    uVar3 = uVar3 | 0x2000;
+  }
+  Ram00306100 = uVar3;
   return;
 }
 
@@ -1595,32 +1598,33 @@ void mpc555_initDiagnosticSession(void)
 void mpc555_eepromValidationCycle(void)
 
 {
-  int iVar1;
-  uint uVar2;
+  dword dVar1;
+  int iVar2;
+  uint uVar3;
   
-  iVar1 = DAT_003fee34 + 1;
-  if (iVar1 < 0x19) {
-    if (iVar1 != 0xc) {
-      DAT_003fee34 = iVar1;
+  iVar2 = DAT_003fee34 + 1;
+  if (iVar2 < 0x19) {
+    if (iVar2 != 0xc) {
+      DAT_003fee34 = iVar2;
       return;
     }
     DAT_003fee34 = 0xc;
     if (eeprom_version_marker.magic == 0x600d) {
-      DAT_003fee34 = iVar1;
+      DAT_003fee34 = iVar2;
       return;
     }
   }
   else {
     DAT_003fee34 = 0;
   }
-  uVar2 = Ram00302002;
-  if ((uVar2 & 0x10) == 0) {
-    uVar2 = uVar2 | 0x10;
+  dVar1 = ecu_power_state_flags;
+  if ((dVar1 & 0x10) == 0) {
+    uVar3 = dVar1 | 0x10;
   }
   else {
-    uVar2 = uVar2 & 0xffffffef;
+    uVar3 = dVar1 & 0xffffffef;
   }
-  Ram00302002 = uVar2;
+  ecu_power_state_flags = uVar3;
   return;
 }
 
@@ -1728,9 +1732,8 @@ void mpc555_systemInitialization(void)
 
 {
   dword dVar1;
-  uint uVar2;
-  byte bVar3;
-  ushort uVar4;
+  byte bVar2;
+  ushort uVar3;
   uint in_BAR;
   
   dVar1 = USIU_SIUMCR;
@@ -1738,11 +1741,11 @@ void mpc555_systemInitialization(void)
   cm848_copyCalibrationToRam(in_BAR | 7);
   cm848_initQspiHardware_ram();
   cm848_stubFunction1();
-  uVar2 = Ram00302002;
-  Ram00302002 = uVar2 | 2;
-  uVar4 = Ram00306102;
-  Ram00306102 = uVar4 | 0x2000;
-  Ram00302002 = uVar2 | 0x12;
+  dVar1 = ecu_power_state_flags;
+  ecu_power_state_flags = dVar1 | 2;
+  uVar3 = Ram00306102;
+  Ram00306102 = uVar3 | 0x2000;
+  ecu_power_state_flags = dVar1 | 0x12;
   Ram00306006 = 0x4000;
   Ram0030600e = 0x4000;
   cm848_generateCrcTable();
@@ -1762,8 +1765,8 @@ void mpc555_systemInitialization(void)
   do {
     mpc555_dispatchSpiHandlerByState();
     cm848_initCanMailboxFilters_ram();
-    bVar3 = qadc_a_result_high_1;
-    if (((bVar3 & 0xf) != 0) && (eeprom_version_marker.magic == 0x1d0a)) {
+    bVar2 = qadc_a_result_high_1;
+    if (((bVar2 & 0xf) != 0) && (eeprom_version_marker.magic == 0x1d0a)) {
       cm848_processMainLoop_ram();
       mpc555_initHardwareConfig();
     }
@@ -74826,7 +74829,7 @@ LAB_00518d14:
       else if (DAT_003fce94 == 0) {
         fuel_control_mode_output = 1;
         temperature_diagnostic_output_value = 0;
-        temperature_output_msb = '\0';
+        temperature_output_msb = 0;
         temperature_output_lsb = 0;
         temperature_output_format_value._0_1_ = s_00000000000000000000000000000000_003fd6c3[0x24];
         DAT_003fce94 = 1;
@@ -74878,14 +74881,14 @@ LAB_00518d14:
     }
     else if (DAT_003fce95 == '\x02') {
       temperature_diagnostic_output_value = diagnostics_temperature_output_value._0_1_;
-      temperature_output_msb = (char)diagnostics_temperature_output_value;
+      temperature_output_msb = (byte)diagnostics_temperature_output_value;
       temperature_output_lsb = 0;
       temperature_output_format_value._0_1_ = '\0';
       DAT_003fce95 = '\x03';
     }
     else if (DAT_003fce95 == '\x03') {
       temperature_diagnostic_output_value = 0;
-      temperature_output_msb = '\0';
+      temperature_output_msb = 0;
       temperature_output_lsb = 0;
       temperature_output_format_value._0_1_ = '\0';
       DAT_003fce95 = '\0';
