@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Apr 09 07:58:58 MDT 2026
+// Generated: Thu Apr 09 08:02:23 MDT 2026
 
 
 //
@@ -28727,28 +28727,28 @@ void cm848_selectFuelControlMode(void)
 
 {
   if ((fuel_control_mode_flags & 1) == 0) {
-    fuel_control_mode_select = 5;
+    fuel_control_mode_select = FUELMODE_DISABLED;
   }
   else if (fuel_control_override == 0) {
     if (fault_threshold_condition_value == 0) {
       if ((speed_fuel_config_and_emission_threshold._0_2_ & 2) == 0) {
         if (engine_rpm_zero_condition_flag == 0) {
-          fuel_control_mode_select = 0;
+          fuel_control_mode_select = FUELMODE_NORMAL;
         }
         else {
-          fuel_control_mode_select = 1;
+          fuel_control_mode_select = FUELMODE_IDLE;
         }
       }
       else {
-        fuel_control_mode_select = 2;
+        fuel_control_mode_select = FUELMODE_CALIBRATION_LIMIT;
       }
     }
     else {
-      fuel_control_mode_select = 3;
+      fuel_control_mode_select = FUELMODE_FAULT_LIMIT;
     }
   }
   else {
-    fuel_control_mode_select = 4;
+    fuel_control_mode_select = FUELMODE_PROTECTION_LIMIT;
   }
   return;
 }
@@ -28838,7 +28838,8 @@ void cm848_updateSpeedControlOutputs(void)
   
   cm848_calculateSpeedControlRampUp();
   cm848_calculateSpeedControlRampDown();
-  if ((fuel_control_mode_select == 0) || (fuel_control_mode_select == 1)) {
+  if ((fuel_control_mode_select == FUELMODE_NORMAL) || (fuel_control_mode_select == FUELMODE_IDLE))
+  {
     pwVar1 = (word *)&engine_rpm_ramp_limited_demand;
   }
   else {
@@ -28846,7 +28847,7 @@ void cm848_updateSpeedControlOutputs(void)
   }
   engine_rpm_control_input_value = *pwVar1;
   engine_rpm_control_base_reference = engine_rpm_ramp_limited_demand;
-  if (fuel_control_mode_select == 3) {
+  if (fuel_control_mode_select == FUELMODE_FAULT_LIMIT) {
     engine_rpm_control_base_reference = 0;
   }
   return;
@@ -29036,18 +29037,19 @@ void cm848_selectFuelControlModeOutput(void)
   word wVar1;
   word *pwVar2;
   
-  if (fuel_control_mode_select == 0) {
+  if (fuel_control_mode_select == FUELMODE_NORMAL) {
     fuel_control_mode_output_value = engine_rpm_control_integrator_output;
     _fuel_control_mode_output = 0;
     _fuel_control_limit_value = 0;
   }
   else {
     wVar1 = fuel_control_mode_1_output;
-    if ((((fuel_control_mode_select != 1) &&
-         (wVar1 = fuel_control_mode_3_override, fuel_control_mode_select != 2)) &&
-        (wVar1 = fuel_control_mode_3_output, fuel_control_mode_select != 3)) &&
-       ((wVar1 = fuel_control_mode_4_output, fuel_control_mode_select != 4 &&
-        (wVar1 = _fuel_control_mode_output, fuel_control_mode_select == 5)))) {
+    if ((((fuel_control_mode_select != FUELMODE_IDLE) &&
+         (wVar1 = fuel_control_mode_3_override,
+         fuel_control_mode_select != FUELMODE_CALIBRATION_LIMIT)) &&
+        (wVar1 = fuel_control_mode_3_output, fuel_control_mode_select != FUELMODE_FAULT_LIMIT)) &&
+       ((wVar1 = fuel_control_mode_4_output, fuel_control_mode_select != FUELMODE_PROTECTION_LIMIT
+        && (wVar1 = _fuel_control_mode_output, fuel_control_mode_select == FUELMODE_DISABLED)))) {
       wVar1 = 0;
     }
     _fuel_control_mode_output = wVar1;

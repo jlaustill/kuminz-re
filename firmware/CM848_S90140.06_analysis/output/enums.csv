@@ -384,13 +384,13 @@ DIAGNOSTIC_FUEL_CONTROL_MODE,0x0A,FUEL_MODE_INSITE_DISPLAY,INSITE live data disp
 DIAGNOSTIC_FUEL_CONTROL_MODE,0x0B,FUEL_MODE_RPM_THRESHOLD,RPM threshold protection mode,1
 DIAGNOSTIC_FUEL_CONTROL_MODE,0x0C,FUEL_MODE_FUEL_DELIVERY,Fuel delivery control mode,1
 
-# Fuel Control Mode Select (fuel_control_mode_select values) - main fuel control source
-FUEL_CONTROL_MODE_SELECT,0,FUELMODE_DISABLED,Fuel control disabled/idle,2
-FUEL_CONTROL_MODE_SELECT,1,FUELMODE_BASE,Base fuel control mode,2
-FUEL_CONTROL_MODE_SELECT,2,FUELMODE_LIMIT_A,Fuel limit source A (calibration),2
-FUEL_CONTROL_MODE_SELECT,3,FUELMODE_LIMIT_B,Fuel limit source B (governor),2
-FUEL_CONTROL_MODE_SELECT,4,FUELMODE_LIMIT_C,Fuel limit source C (protection),2
-FUEL_CONTROL_MODE_SELECT,5,FUELMODE_OVERRIDE,Fuel override/diagnostic mode,2
+# Fuel Control Mode Select (fuel_control_mode_select values) - selects fuel demand source
+FUEL_CONTROL_MODE_SELECT,0,FUELMODE_NORMAL,PID governor controls fuel (engine running),2
+FUEL_CONTROL_MODE_SELECT,1,FUELMODE_IDLE,Engine at zero RPM (base idle fueling),2
+FUEL_CONTROL_MODE_SELECT,2,FUELMODE_CALIBRATION_LIMIT,Calibration table fuel limit override,2
+FUEL_CONTROL_MODE_SELECT,3,FUELMODE_FAULT_LIMIT,Fault threshold fuel derate,2
+FUEL_CONTROL_MODE_SELECT,4,FUELMODE_PROTECTION_LIMIT,Protection override fuel limit,2
+FUEL_CONTROL_MODE_SELECT,5,FUELMODE_DISABLED,Fuel control bypassed (mode flags off),2
 
 # Diagnostic Status - overall diagnostic system state
 DIAGNOSTIC_STATUS,0,NORMAL_OPERATION,No diagnostic mode active - normal operation,2
