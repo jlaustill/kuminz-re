@@ -11,6 +11,16 @@ function_address,function_name,old_name,new_name,type,comment
 0x00022d60,processTsc1Command,cVar1,source_address,char,J1939 source address of TSC1 sender
 0x00022d60,processTsc1Command,sVar2,result,short,Function call return value
 # mpc555_generateSerialChallenge @ 0x000032dc - Generate serial handshake challenge and queue response
+# cm848_validateWriteAuth @ 0x00007370 - Validate scrambled auth token for calibration writes
+0x00007370,cm848_validateWriteAuth,param_1,scrambled_token,undefined4,Pointer to 10-byte scrambled auth data from tool
+0x00007370,cm848_validateWriteAuth,bVar2,attempt_count,byte,Current value of write_auth_attempt_counter
+0x00007370,cm848_validateWriteAuth,dVar2,current_runtime,dword,Snapshot of ecm_runtime_accumulator for timestamp check
+0x00007370,cm848_validateWriteAuth,bVar1,key_matches,byte,Whether all 6 descrambled key bytes match EEPROM header
+0x00007370,cm848_validateWriteAuth,cVar8,compare_index,char,Loop counter for 6-byte key comparison
+0x00007370,cm848_validateWriteAuth,bVar7,copy_count,byte,Loop counter for 3-byte timestamp extraction
+0x00007370,cm848_validateWriteAuth,uVar6,result,undefined4,Return value: 0=authorized 1=denied
+0x00007370,cm848_validateWriteAuth,pbVar4,timestamp_src,byte *,Source pointer for timestamp byte copy
+0x00007370,cm848_validateWriteAuth,pbVar5,timestamp_dest,byte *,Destination pointer for timestamp byte copy
 0x000032dc,mpc555_generateSerialChallenge,seed_value,challenge_value,dword,Copy of serial_challenge_value for byte extraction
 0x000032dc,mpc555_generateSerialChallenge,seed_high_byte,challenge_high_byte,byte,Upper byte of 16-bit challenge (bits 15-8)
 0x000032dc,mpc555_generateSerialChallenge,uVar3,write_pos,uint,Current write position in diag_serial_buffer

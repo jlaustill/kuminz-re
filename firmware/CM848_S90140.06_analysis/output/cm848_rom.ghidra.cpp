@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Apr 09 08:28:34 MDT 2026
+// Generated: Thu Apr 09 08:45:52 MDT 2026
 
 
 //
@@ -3854,7 +3854,7 @@ byte mpc555_processAdcConversionResult(int param_1,uint param_2,uint param_3)
         if (!bVar1) {
           return 0x1a;
         }
-        cVar8 = sensorRangeValidation(*(int *)(param_1 + 6) + (uVar5 & 0xff) + (uint)local_20[0]);
+        cVar8 = cm848_validateWriteAuth(*(int *)(param_1 + 6) + (uVar5 & 0xff) + (uint)local_20[0]);
         if (cVar8 != '\0') {
           return 3;
         }
@@ -3893,7 +3893,7 @@ byte mpc555_processAdcConversionResult(int param_1,uint param_2,uint param_3)
       if (!bVar1) {
         return 3;
       }
-      cVar8 = sensorRangeValidation(*(int *)(param_1 + 6) + (uVar5 & 0xff) + (uint)local_20[0]);
+      cVar8 = cm848_validateWriteAuth(*(int *)(param_1 + 6) + (uVar5 & 0xff) + (uint)local_20[0]);
       if (cVar8 != '\0') {
         return 3;
       }
@@ -4052,12 +4052,12 @@ undefined1 cm848_getServiceDataOffset(int param_1)
 undefined4 validateServiceDataLength(int param_1)
 
 {
-  uint uVar1;
-  char cVar2;
-  bool bVar3;
+  bool bVar1;
+  uint uVar2;
+  char cVar3;
   uint uVar4;
   
-  uVar1 = (uint)*(ushort *)(param_1 + 4);
+  uVar2 = (uint)*(ushort *)(param_1 + 4);
   switch(**(undefined1 **)(param_1 + 6)) {
   case 0:
     break;
@@ -4092,7 +4092,7 @@ undefined4 validateServiceDataLength(int param_1)
   case 0xf:
 LAB_00005a40:
     uVar4 = 0xb;
-    bVar3 = false;
+    bVar1 = false;
     goto LAB_00005a58;
   case 0x10:
     goto LAB_00005a20;
@@ -4113,20 +4113,20 @@ LAB_00005a40:
   case 0x18:
 LAB_00005a20:
     uVar4 = 0xb;
-    bVar3 = true;
+    bVar1 = true;
 LAB_00005a58:
-    if ((eeprom_version_marker.version_marker == 0xff) || (!bVar3)) {
-      if ((uVar1 == uVar4) || (uVar1 == 8)) {
+    if ((eeprom_version_marker.version_marker == 0xff) || (!bVar1)) {
+      if ((uVar2 == uVar4) || (uVar2 == 8)) {
         return 0xff;
       }
     }
     else {
-      if (uVar1 == 8) {
+      if (uVar2 == 8) {
         return 0x1a;
       }
-      if (uVar1 == uVar4) {
-        cVar2 = sensorRangeValidation(*(undefined1 **)(param_1 + 6) + (uVar4 - 10));
-        if (cVar2 == '\0') {
+      if (uVar2 == uVar4) {
+        cVar3 = cm848_validateWriteAuth(*(undefined1 **)(param_1 + 6) + (uVar4 - 10));
+        if (cVar3 == '\0') {
           return 0xff;
         }
         return 3;
@@ -4135,7 +4135,7 @@ LAB_00005a58:
     return 2;
   case 0x19:
     uVar4 = 0xf;
-    bVar3 = true;
+    bVar1 = true;
     goto LAB_00005a58;
   }
   return 0xff;
@@ -5411,10 +5411,10 @@ LAB_000071c8:
 
 
 //
-// Function: cm848_scrambleBitPattern @ 0x000071f8
+// Function: cm848_descrambleAuthToken @ 0x000071f8
 //
 
-void cm848_scrambleBitPattern(int param_1,int param_2)
+void cm848_descrambleAuthToken(int param_1,int param_2)
 
 {
   byte bVar1;
@@ -5498,65 +5498,66 @@ void cm848_scrambleBitPattern(int param_1,int param_2)
 
 
 //
-// Function: sensorRangeValidation @ 0x00007370
+// Function: cm848_validateWriteAuth @ 0x00007370
 //
 
-undefined4 sensorRangeValidation(undefined4 param_1)
+undefined4 cm848_validateWriteAuth(undefined4 scrambled_token)
 
 {
-  bool bVar1;
-  dword dVar2;
-  char cVar3;
-  byte *pbVar4;
-  byte *pbVar5;
-  undefined4 uVar6;
-  byte bVar7;
-  char cVar8;
+  byte *timestamp_src;
+  byte *timestamp_dest;
+  undefined4 result;
+  byte copy_count;
+  byte compare_index;
   byte local_30 [6];
   byte local_2a [5];
   byte bStack_25;
   uint local_24 [7];
+  dword current_runtime;
+  byte attempt_count;
+  byte key_matches;
   
   if (eeprom_version_marker.version_marker == 0xff) {
-    uVar6 = 0;
+    result = 0;
   }
   else {
-    cVar3 = DAT_003028a8;
-    if (cVar3 == '\x11') {
-      uVar6 = 1;
+    attempt_count = write_auth_attempt_counter;
+    if (attempt_count == 0x11) {
+      result = 1;
     }
     else {
-      cm848_scrambleBitPattern(param_1,local_30);
-      bVar7 = 1;
-      pbVar4 = local_30 + 5;
-      pbVar5 = &bStack_25;
+      cm848_descrambleAuthToken(scrambled_token,local_30);
+      copy_count = 1;
+      timestamp_src = local_30 + 5;
+      timestamp_dest = &bStack_25;
       do {
-        pbVar4 = pbVar4 + 1;
-        pbVar5 = pbVar5 + 1;
-        *pbVar5 = *pbVar4;
-        bVar7 = bVar7 + 1;
-      } while (bVar7 < 4);
+        timestamp_src = timestamp_src + 1;
+        timestamp_dest = timestamp_dest + 1;
+        *timestamp_dest = *timestamp_src;
+        copy_count = copy_count + 1;
+      } while (copy_count < 4);
       local_24[0] = local_24[0] & 0xffffff00;
-      dVar2 = ecm_runtime_accumulator;
-      if ((dVar2 & 0xffffff00) - local_24[0] < 0x1a) {
-        bVar1 = true;
-        cVar8 = '\0';
+      current_runtime = ecm_runtime_accumulator;
+      if ((current_runtime & 0xffffff00) - local_24[0] < 0x1a) {
+        key_matches = 1;
+        compare_index = 0;
         do {
-          if (local_30[cVar8] != eeprom_version_marker.header_block[cVar8]) {
-            bVar1 = false;
+          if (local_30[(char)compare_index] !=
+              eeprom_version_marker.header_block[(char)compare_index]) {
+            key_matches = 0;
           }
-          cVar8 = cVar8 + '\x01';
-        } while ((bVar1) && (cVar8 < '\x06'));
-        if (bVar1) {
-          DAT_003028a8 = 0;
+          compare_index = compare_index + 1;
+        } while (((bool)key_matches) && ((char)compare_index < '\x06'));
+        if ((bool)key_matches) {
+          write_auth_attempt_counter = 0;
           return 0;
         }
       }
-      uVar6 = 1;
-      DAT_003028a8 = cVar3 + '\x01';
+      result = 1;
+      write_auth_attempt_counter = attempt_count + 1;
     }
   }
-  return uVar6;
+  return result;
 }
 
 

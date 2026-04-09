@@ -478,6 +478,7 @@ address,name,type,comment
 0x0030288a,watchdog_timeout_countdown,word,
 0x003028a5,watchdog_tick_prescaler,byte,
 0x003028a6,keyon_duration_counter,word,
+0x003028a8,write_auth_attempt_counter,byte,
 0x003028ad,qadc_a_result_ch28,byte,
 0x003028b1,qadc_a_result_ch30,byte,
 0x00302903,qadc_a_queue_status_1,byte,
