@@ -10,3 +10,7 @@ function_address,function_name,old_name,new_name,type,comment
 0x00022d60,processTsc1Command,bVar4,priority_bits,byte,TSC1 priority bits (bits 4-5 of control word)
 0x00022d60,processTsc1Command,cVar1,source_address,char,J1939 source address of TSC1 sender
 0x00022d60,processTsc1Command,sVar2,result,short,Function call return value
+# mpc555_generateSerialChallenge @ 0x000032dc - Generate serial handshake challenge and queue response
+0x000032dc,mpc555_generateSerialChallenge,seed_value,challenge_value,dword,Copy of serial_challenge_value for byte extraction
+0x000032dc,mpc555_generateSerialChallenge,seed_high_byte,challenge_high_byte,byte,Upper byte of 16-bit challenge (bits 15-8)
+0x000032dc,mpc555_generateSerialChallenge,uVar3,write_pos,uint,Current write position in diag_serial_buffer

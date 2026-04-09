@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Apr 09 08:02:23 MDT 2026
+// Generated: Thu Apr 09 08:28:34 MDT 2026
 
 
 //
@@ -1388,26 +1388,26 @@ void mpc555_initDiagResponseHandlers(void)
 // Function: cm848_diagSendResponseCode @ 0x00001ef8
 //
 
-void cm848_diagSendResponseCode(undefined1 param_1,int param_2)
+void cm848_diagSendResponseCode(byte param_1,int param_2)
 
 {
   if (param_2 == 0x51) {
-    qspi_config_value = 0x51;
-    DAT_003fecd1 = 1;
+    diag_serial_buffer[0] = 0x51;
+    diag_serial_buffer[1] = 1;
   }
   else {
     if (param_2 == 0x74) {
-      qspi_config_value = 0x74;
+      diag_serial_buffer[0] = 0x74;
     }
     else {
-      qspi_config_value = 0x7f;
+      diag_serial_buffer[0] = 0x7f;
     }
-    DAT_003fecd1 = (&DAT_003fecf0)[param_2 == 0x74];
+    diag_serial_buffer[1] = diag_serial_buffer[(param_2 == 0x74) + 0x20];
   }
-  DAT_003fecd3 = 0;
-  diag_session_flags.enable_flags_2 = 4;
+  diag_serial_buffer[3] = 0;
+  diag_session_flags.response_write_index = 4;
   diagnostic_handler_callback = (dword)mpc555_processDiagnosticAndEepromRequests;
-  DAT_003fecd2 = param_1;
+  diag_serial_buffer[2] = param_1;
   cm848_initSerialTransmit_ram();
   return;
 }
@@ -1438,7 +1438,7 @@ void mpc555_processDiagnosticAndEepromRequests(void)
   request_ptr = (byte *)uVar4;
   if ((eeprom_checksum_status != 1) || ((diag_session_flags.session_flags & 1) == 0))
   goto LAB_000020ac;
-  if (DAT_003fecf0 == '4') {
+  if (diag_serial_buffer[0x20] == 0x34) {
     bVar1 = qadc_a_result_high_1;
     if ((bVar1 & 0x80) != 0) {
       watchdog_timeout_countdown = 0x28;
@@ -1557,16 +1557,16 @@ void mpc555_initDiagnosticSession(void)
   undefined2 local_8 [4];
   
   local_8[0] = Ram0030500c;
-  DAT_003feccc._1_1_ = 0;
-  DAT_003fecce = 0;
+  DAT_003feccd = 0;
+  serial_lockout_countdown = 0;
   if (eeprom_version_marker.cal_word4 == 0) {
     cm848_initSchedulerCallback();
     diag_session_flags.session_flags = diag_session_flags.session_flags & 0xfc;
-    DAT_003feccc._0_1_ = 0;
-    DAT_003fecc4 = 0;
+    serial_verify_result = 0;
+    serial_handshake_state = 0;
     fault_clear_counter = 0;
-    diag_session_flags.enable_flags_2 = 0;
-    diag_session_flags._2_4_ = &qspi_config_value;
+    diag_session_flags.response_write_index = 0;
+    diag_session_flags._2_4_ = diag_serial_buffer;
     Ram00305008 = 0xa0;
     Ram0030500a = 0x102c;
   }
@@ -1574,11 +1574,11 @@ void mpc555_initDiagnosticSession(void)
     local_8[0] = 0;
     mpc555_eepromWriteWords((dword)local_8,(word *)&DAT_01000056,2);
     diag_session_flags.session_flags = diag_session_flags.session_flags | 1;
-    DAT_003fecc4 = 1;
+    serial_handshake_state = 1;
     fault_clear_counter = 2;
     cm848_initDiagnosticCallback();
-    diag_session_flags.enable_flags_2 = 0;
-    diag_session_flags._2_4_ = &qspi_config_value;
+    diag_session_flags.response_write_index = 0;
+    diag_session_flags._2_4_ = diag_serial_buffer;
     Ram00305008 = 0x14;
     Ram0030500a = 0x102c;
     cm848_setDataTransferMode();
@@ -2140,10 +2140,10 @@ void mpc555_initSchedulerTaskTable(void)
 {
   undefined2 uVar1;
   
-  diag_session_flags.enable_flags_2 = diag_session_flags.enable_flags_2 - 1;
-  diag_session_flags._2_4_ = &qspi_config_value;
+  diag_session_flags.response_write_index = diag_session_flags.response_write_index - 1;
+  diag_session_flags._2_4_ = diag_serial_buffer;
   uVar1 = Ram0030500c;
-  Ram0030500e = (ushort)qspi_config_value;
+  Ram0030500e = (ushort)diag_serial_buffer[0];
   mpc555_enableSpiTransmitInterrupt();
   return;
 }
@@ -2164,8 +2164,8 @@ void mpc555_spiReceiveHandler(void)
   if ((uVar1 & 0x40) != 0) {
     if ((((uVar1 & 4) == 0) && ((uVar1 & 8) == 0)) && ((uVar1 & 2) == 0)) {
       uVar2 = Ram0030500e;
-      (&qspi_config_value)[diag_session_flags.enable_flags_2] = (byte)uVar2;
-      diag_session_flags.enable_flags_2 = diag_session_flags.enable_flags_2 + 1;
+      diag_serial_buffer[diag_session_flags.response_write_index] = (byte)uVar2;
+      diag_session_flags.response_write_index = diag_session_flags.response_write_index + 1;
       eeprom_checksum_status = 1;
       uVar1 = Ram0030500a;
       Ram0030500a = uVar1 & 0xffdf;
@@ -2191,7 +2191,7 @@ void mpc555_spiTransmitCompleteHandler(void)
   
   uVar1 = Ram0030500c;
   if ((uVar1 & 0x80) != 0) {
-    if (diag_session_flags.enable_flags_2 == 0) {
+    if (diag_session_flags.response_write_index == 0) {
       if ((diag_session_flags.session_flags & 2) == 0) {
         uVar2 = 0xa0;
       }
@@ -2205,7 +2205,7 @@ void mpc555_spiTransmitCompleteHandler(void)
       mpc555_enableSystemInterrupts();
     }
     else {
-      diag_session_flags.enable_flags_2 = diag_session_flags.enable_flags_2 - 1;
+      diag_session_flags.response_write_index = diag_session_flags.response_write_index - 1;
       diag_session_flags._2_4_ = diag_session_flags._2_4_ + 1;
       Ram0030500e = (ushort)*(byte *)diag_session_flags._2_4_;
     }
@@ -2257,8 +2257,8 @@ void mpc555_dispatchSpiHandlerByState(void)
 void cm848_resetEepromStatusPointer(void)
 
 {
-  diag_session_flags.enable_flags_2 = 0;
-  diag_session_flags._2_4_ = &qspi_config_value;
+  diag_session_flags.response_write_index = 0;
+  diag_session_flags._2_4_ = diag_serial_buffer;
   return;
 }
 
@@ -2327,8 +2327,8 @@ void cm848_processDiagnosticResponseCallback(void)
   
   pbVar1 = (byte *)cm848_lookupEepromParameterAddress(*(undefined1 *)diag_session_flags._2_4_);
   if (pbVar1 != (byte *)0x0) {
-    (&qspi_config_value)[diag_session_flags.enable_flags_2] = *pbVar1;
-    diag_session_flags.enable_flags_2 = diag_session_flags.enable_flags_2 + 1;
+    diag_serial_buffer[diag_session_flags.response_write_index] = *pbVar1;
+    diag_session_flags.response_write_index = diag_session_flags.response_write_index + 1;
   }
   diagnostic_handler_callback = (dword)cm848_registerSchedulerTask;
   cm848_processTimerInterrupt();
@@ -2339,33 +2339,34 @@ void cm848_processDiagnosticResponseCallback(void)
 
 
 //
-// Function: mpc555_generateSerialChecksumResponse @ 0x000032dc
+// Function: mpc555_generateSerialChallenge @ 0x000032dc
 //
 
-void mpc555_generateSerialChecksumResponse(void)
+void mpc555_generateSerialChallenge(void)
 
 {
-  dword dVar1;
-  byte bVar2;
-  uint uVar3;
+  uint uVar1;
+  byte challenge_high_byte;
+  dword write_pos;
+  dword challenge_value;
   
-  if (DAT_003fecc4 == '\x01') {
-    serial_checksum_input = 0;
+  if (serial_handshake_state == 1) {
+    serial_challenge_value = 0;
   }
   else {
-    serial_checksum_input = ecm_runtime_accumulator;
-    if ((serial_checksum_input & 0xffff) == 0) {
-      serial_checksum_input = serial_checksum_input + 1;
+    serial_challenge_value = ecm_runtime_accumulator;
+    if ((serial_challenge_value & 0xffff) == 0) {
+      serial_challenge_value = serial_challenge_value + 1;
     }
   }
-  dVar1 = serial_checksum_input;
-  bVar2 = (byte)(serial_checksum_input >> 8);
-  (&qspi_config_value)[diag_session_flags.enable_flags_2] = bVar2;
-  uVar3 = diag_session_flags.enable_flags_2 + 1 & 0xff;
-  (&qspi_config_value)[uVar3] = (byte)dVar1;
-  uVar3 = uVar3 + 1;
-  (&qspi_config_value)[uVar3 & 0xff] = bVar2 + 0x2b + (byte)dVar1;
-  diag_session_flags.enable_flags_2 = (char)uVar3 + 1;
+  challenge_value = serial_challenge_value;
+  challenge_high_byte = (byte)(serial_challenge_value >> 8);
+  diag_serial_buffer[diag_session_flags.response_write_index] = challenge_high_byte;
+  uVar1 = diag_session_flags.response_write_index + 1 & 0xff;
+  diag_serial_buffer[uVar1] = (byte)challenge_value;
+  write_pos = uVar1 + 1;
+  diag_serial_buffer[write_pos & 0xff] = challenge_high_byte + 0x2b + (byte)challenge_value;
+  diag_session_flags.response_write_index = (char)write_pos + 1;
   diagnostic_handler_callback = (dword)cm848_registerSchedulerTask;
   cm848_processTimerInterrupt();
   mpc555_initSchedulerTaskTable();
@@ -2396,8 +2397,8 @@ void cm848_initDiagnosticRequestHandler(void)
 void cm848_decrementDiagnosticTimeout(void)
 
 {
-  if (DAT_003fecce != 0) {
-    DAT_003fecce = DAT_003fecce + -1;
+  if (serial_lockout_countdown != 0) {
+    serial_lockout_countdown = serial_lockout_countdown - 1;
   }
   return;
 }
@@ -2419,42 +2420,42 @@ void cm848_processDiagnosticRequest(void)
   DAT_003fee38._2_1_ = (byte)uVar1;
   if (2 < (uVar1 & 0xff)) {
     if ((char)((char)DAT_003fee38 + DAT_003fee3c._0_1_ + ',') == DAT_003fee3c._1_1_) {
-      if (DAT_003fecc4 == '\x01') {
-        (&qspi_config_value)[diag_session_flags.enable_flags_2] = 0;
-        diag_session_flags.enable_flags_2 = diag_session_flags.enable_flags_2 + 1;
+      if (serial_handshake_state == 1) {
+        diag_serial_buffer[diag_session_flags.response_write_index] = 0;
+        diag_session_flags.response_write_index = diag_session_flags.response_write_index + 1;
       }
-      else if (((byte)DAT_003feccc < 3) && (DAT_003fecc4 != '\x02')) {
-        if (DAT_003fecce == 0) {
-          DAT_003fecc6 = CONCAT11((char)DAT_003fee38,DAT_003fee3c._0_1_);
-          cm848_computeSerialChecksum();
-          if (DAT_003feccc._0_1_ == '\0') {
-            DAT_003feccc._1_1_ = (byte)DAT_003feccc + 1;
-            DAT_003fecce = 1000;
-            (&qspi_config_value)[diag_session_flags.enable_flags_2] = 1;
-            diag_session_flags.enable_flags_2 = diag_session_flags.enable_flags_2 + 1;
+      else if ((DAT_003feccd < 3) && (serial_handshake_state != 2)) {
+        if (serial_lockout_countdown == 0) {
+          serial_response_received = CONCAT11((char)DAT_003fee38,DAT_003fee3c._0_1_);
+          cm848_verifySerialResponse();
+          if (serial_verify_result == 0) {
+            DAT_003feccd = DAT_003feccd + 1;
+            serial_lockout_countdown = 1000;
+            diag_serial_buffer[diag_session_flags.response_write_index] = 1;
+            diag_session_flags.response_write_index = diag_session_flags.response_write_index + 1;
           }
           else {
-            DAT_003feccc._1_1_ = 0;
-            DAT_003fecce = 0;
-            DAT_003fecc4 = '\x01';
-            (&qspi_config_value)[diag_session_flags.enable_flags_2] = 0;
-            diag_session_flags.enable_flags_2 = diag_session_flags.enable_flags_2 + 1;
+            DAT_003feccd = 0;
+            serial_lockout_countdown = 0;
+            serial_handshake_state = 1;
+            diag_serial_buffer[diag_session_flags.response_write_index] = 0;
+            diag_session_flags.response_write_index = diag_session_flags.response_write_index + 1;
           }
         }
         else {
-          (&qspi_config_value)[diag_session_flags.enable_flags_2] = 2;
-          diag_session_flags.enable_flags_2 = diag_session_flags.enable_flags_2 + 1;
+          diag_serial_buffer[diag_session_flags.response_write_index] = 2;
+          diag_session_flags.response_write_index = diag_session_flags.response_write_index + 1;
         }
       }
       else {
-        DAT_003fecc4 = '\x02';
-        (&qspi_config_value)[diag_session_flags.enable_flags_2] = 3;
-        diag_session_flags.enable_flags_2 = diag_session_flags.enable_flags_2 + 1;
+        serial_handshake_state = 2;
+        diag_serial_buffer[diag_session_flags.response_write_index] = 3;
+        diag_session_flags.response_write_index = diag_session_flags.response_write_index + 1;
       }
     }
     else {
-      (&qspi_config_value)[diag_session_flags.enable_flags_2] = 2;
-      diag_session_flags.enable_flags_2 = diag_session_flags.enable_flags_2 + 1;
+      diag_serial_buffer[diag_session_flags.response_write_index] = 2;
+      diag_session_flags.response_write_index = diag_session_flags.response_write_index + 1;
     }
     diagnostic_handler_callback = (dword)cm848_registerSchedulerTask;
     cm848_processTimerInterrupt();
@@ -2486,7 +2487,7 @@ void cm848_initDiagnosticSessionHandler(void)
 void cm848_processDiagnosticSessionFlags(void)
 
 {
-  if ((*(char *)diag_session_flags._2_4_ == '\x01') && (DAT_003fecc4 == '\x01')) {
+  if ((*(char *)diag_session_flags._2_4_ == '\x01') && (serial_handshake_state == 1)) {
     diag_session_flags.session_flags = diag_session_flags.session_flags | 3;
     cm848_processTimerInterrupt();
     mpc555_initSchedulerTaskTable();
@@ -2512,10 +2513,10 @@ void cm848_sendDiagnosticResponse(void)
   
   uVar1 = 0;
   do {
-    (&qspi_config_value)[uVar1] = (&DAT_00007f94)[uVar1];
+    diag_serial_buffer[uVar1] = (&DAT_00007f94)[uVar1];
     uVar1 = uVar1 + 1 & 0xff;
   } while (uVar1 < 6);
-  diag_session_flags.enable_flags_2 = 6;
+  diag_session_flags.response_write_index = 6;
   diagnostic_handler_callback = (dword)cm848_registerSchedulerTask;
   cm848_processTimerInterrupt();
   mpc555_initSchedulerTaskTable();
@@ -2681,19 +2682,19 @@ void mpc555_diagServiceTransferBlock(void)
 
 
 //
-// Function: cm848_computeSerialChecksum @ 0x00003a5c
+// Function: cm848_verifySerialResponse @ 0x00003a5c
 //
 
-void cm848_computeSerialChecksum(void)
+void cm848_verifySerialResponse(void)
 
 {
-  DAT_003feccc._0_1_ =
-       ((serial_checksum_input ^
-         *(ushort *)(&DAT_00007f9a + (serial_checksum_input >> 0xc & 0xf) * 2) ^
-         (uint)*(ushort *)(&DAT_00007f9a + (serial_checksum_input >> 8 & 0xf) * 2) ^
-         (uint)*(ushort *)(&DAT_00007f9a + (serial_checksum_input >> 4 & 0xf) * 2) ^
-         (uint)*(ushort *)(&DAT_00007f9a + (serial_checksum_input & 0xf) * 2) ^ 0x1911) & 0xffff) ==
-       (uint)DAT_003fecc6;
+  serial_verify_result =
+       ((serial_challenge_value ^
+         *(ushort *)(&DAT_00007f9a + (serial_challenge_value >> 0xc & 0xf) * 2) ^
+         (uint)*(ushort *)(&DAT_00007f9a + (serial_challenge_value >> 8 & 0xf) * 2) ^
+         (uint)*(ushort *)(&DAT_00007f9a + (serial_challenge_value >> 4 & 0xf) * 2) ^
+         (uint)*(ushort *)(&DAT_00007f9a + (serial_challenge_value & 0xf) * 2) ^ 0x1911) & 0xffff)
+       == (uint)serial_response_received;
   return;
 }
 
@@ -4789,26 +4790,26 @@ undefined * mpc555_initDiagnosticBuffers(int param_1)
 // Function: cm848_updateSystemTimers @ 0x00006580
 //
 
-void cm848_updateSystemTimers(undefined1 param_1,int param_2)
+void cm848_updateSystemTimers(byte param_1,int param_2)
 
 {
   if (param_2 == 0x51) {
-    qspi_config_value = 0x51;
-    DAT_003fecd1 = 1;
+    diag_serial_buffer[0] = 0x51;
+    diag_serial_buffer[1] = 1;
   }
   else {
     if (param_2 == 0x74) {
-      qspi_config_value = 0x74;
+      diag_serial_buffer[0] = 0x74;
     }
     else {
-      qspi_config_value = 0x7f;
+      diag_serial_buffer[0] = 0x7f;
     }
-    DAT_003fecd1 = (&DAT_003fecf0)[param_2 == 0x74];
+    diag_serial_buffer[1] = diag_serial_buffer[(param_2 == 0x74) + 0x20];
   }
-  DAT_003fecd3 = 0;
-  diag_session_flags.enable_flags_2 = 4;
+  diag_serial_buffer[3] = 0;
+  diag_session_flags.response_write_index = 4;
   diagnostic_handler_callback = (dword)&DAT_003fc1fc;
-  DAT_003fecd2 = param_1;
+  diag_serial_buffer[2] = param_1;
   mpc555_initSerialTransmit();
   return;
 }
@@ -4833,7 +4834,7 @@ void mpc555_diagnosticSubcommandDispatcher(byte subcommand,byte *data_ptr)
   if ((diag_session_flags.session_flags & 1) == 0) {
     return;
   }
-  if (DAT_003fecf0 == '4') {
+  if (diag_serial_buffer[0x20] == 0x34) {
     bVar1 = qadc_a_result_high_1;
     if ((bVar1 & 0x80) != 0) {
       watchdog_timeout_countdown = 0x28;
@@ -4889,8 +4890,11 @@ void mpc555_diagnosticSubcommandDispatcher(byte subcommand,byte *data_ptr)
 void cm848_resetSerialReceiveBuffer(void)
 
 {
-  diag_session_flags.enable_flags_2 = 0;
-  diag_session_flags._2_4_ = &DAT_003fecf0;
+  diag_session_flags.response_write_index = 0;
+  diag_session_flags.eeprom_status = 0;
+  diag_session_flags.reserved_03 = 0x3f;
+  diag_session_flags.reserved_04 = 0xec;
+  diag_session_flags.checksum_status = 0xf0;
   return;
 }
 
@@ -4909,11 +4913,11 @@ void mpc555_serialReceiveHandler(void)
   uVar1 = Ram0030500c;
   uVar2 = Ram0030500e;
   if ((uVar1 & 0x40) != 0) {
-    if (((uVar1 & 0xe) == 0) && (diag_session_flags.enable_flags_2 < 0xfe)) {
-      (&DAT_003fecf0)[diag_session_flags.enable_flags_2] = (char)uVar2;
-      diag_session_flags.enable_flags_2 = diag_session_flags.enable_flags_2 + 1;
+    if (((uVar1 & 0xe) == 0) && (diag_session_flags.response_write_index < 0xfe)) {
+      diag_serial_buffer[diag_session_flags.response_write_index + 0x20] = (byte)uVar2;
+      diag_session_flags.response_write_index = diag_session_flags.response_write_index + 1;
       DAT_003fedfa = 2;
-      DAT_003fedfc = DAT_003fedfc + (char)uVar2;
+      DAT_003fedfc = DAT_003fedfc + (byte)uVar2;
       return;
     }
     cm848_resetSerialReceiveBuffer();
@@ -4958,7 +4962,7 @@ void serialTransmitHandler(void)
   uVar1 = Ram0030500c;
   if ((uVar1 & 0x80) != 0) {
     DAT_003fedfb = DAT_003fedfb + *(char *)diag_session_flags._2_4_;
-    if (diag_session_flags.enable_flags_2 == 0) {
+    if (diag_session_flags.response_write_index == 0) {
       uVar1 = Ram0030500a;
       Ram0030500a = uVar1 & 0xffbf;
       Ram0030500e = ~(ushort)DAT_003fedfb & 0x1ff;
@@ -4966,7 +4970,7 @@ void serialTransmitHandler(void)
       mpc555_resetSerialCommunication();
     }
     else {
-      diag_session_flags.enable_flags_2 = diag_session_flags.enable_flags_2 - 1;
+      diag_session_flags.response_write_index = diag_session_flags.response_write_index - 1;
       diag_session_flags._2_4_ = diag_session_flags._2_4_ + 1;
       Ram0030500e = (ushort)*(byte *)diag_session_flags._2_4_;
     }
@@ -5006,8 +5010,8 @@ void mpc555_validateSerialChecksum(void)
   ushort uVar1;
   
   if ((DAT_003fedfa != '\0') && (DAT_003fedfa = DAT_003fedfa + -1, DAT_003fedfa == '\0')) {
-    if ((char)(DAT_003fedfc - (&DAT_003fecef)[diag_session_flags.enable_flags_2]) ==
-        (char)~(&DAT_003fecef)[diag_session_flags.enable_flags_2]) {
+    if ((byte)(DAT_003fedfc - diag_serial_buffer[diag_session_flags.response_write_index + 0x1f]) ==
+        (byte)~diag_serial_buffer[diag_session_flags.response_write_index + 0x1f]) {
       uVar1 = Ram0030500a;
       Ram0030500a = uVar1 & 0xffdf;
       eeprom_checksum_status = 1;
@@ -5031,10 +5035,10 @@ void mpc555_initSerialTransmit(void)
 {
   undefined2 uVar1;
   
-  diag_session_flags.enable_flags_2 = diag_session_flags.enable_flags_2 - 1;
-  diag_session_flags._2_4_ = &qspi_config_value;
+  diag_session_flags.response_write_index = diag_session_flags.response_write_index - 1;
+  diag_session_flags._2_4_ = diag_serial_buffer;
   uVar1 = Ram0030500c;
-  Ram0030500e = (ushort)qspi_config_value;
+  Ram0030500e = (ushort)diag_serial_buffer[0];
   mpc555_enableSerialTransmit();
   return;
 }
@@ -20865,59 +20869,61 @@ void cm848_initJ1939VehicleSpeedHandler(void)
 // Function: torqueControlModeHandler @ 0x00022d60
 //
 
+/* WARNING: Unable to use type for symbol source_address */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void torqueControlModeHandler(int param_1)
 
 {
-  byte bVar1;
-  short sVar2;
-  byte bVar3;
-  byte bVar4;
+  word result;
+  short sVar1;
+  byte control_mode;
+  byte priority_bits;
+  char source_address;
   
   if (*(short *)(param_1 + 4) != 8) {
     return;
   }
   tsc1_speed_previous.control_word = **(byte **)(param_1 + 6);
-  bVar3 = tsc1_speed_previous.control_word & 3;
-  bVar4 = tsc1_speed_previous.control_word & 0x30;
+  control_mode = tsc1_speed_previous.control_word & 3;
+  priority_bits = tsc1_speed_previous.control_word & 0x30;
   tsc1_speed_previous.requested_speed =
        CONCAT11(*(undefined1 *)(*(int *)(param_1 + 6) + 2),(*(byte **)(param_1 + 6))[1]);
   tsc1_speed_previous.requested_torque = *(byte *)(*(int *)(param_1 + 6) + 3);
-  bVar1 = *(byte *)(param_1 + 3);
-  if (bVar3 == 0) {
-    cm848_removeCoolantCalEntryByParams(1,bVar1);
+  source_address = *(char *)(param_1 + 3);
+  if (control_mode == 0) {
+    cm848_removeCoolantCalEntryByParams(1,source_address);
     _speed_control_target = _speed_control_target & 6;
   }
   else {
-    sVar2 = cm848_findJ1939MessageEntry(1,bVar1,bVar3);
-    if (sVar2 != 0) {
+    sVar1 = cm848_findJ1939MessageEntry(1,source_address,control_mode);
+    if (sVar1 != 0) {
       return;
     }
   }
   if (tsc1_control_word_stored.mode == 0) {
-    sVar2 = cm848_governorSpeedControl(1,bVar1);
-    if (sVar2 != 0) {
+    sVar1 = cm848_governorSpeedControl(1,source_address);
+    if (sVar1 != 0) {
       return;
     }
   }
   else if (_tsc1_active_state == 1) {
-    if (tsc1_source_address == bVar1) goto accept_tsc1_command;
-    if (bVar3 == 0) {
+    if (tsc1_source_address == source_address) goto accept_tsc1_command;
+    if (control_mode == 0) {
       return;
     }
-    sVar2 = cm848_governorSpeedControl(1,bVar1);
-    if (sVar2 != 0) {
+    result = cm848_governorSpeedControl(1,source_address);
+    if (result != 0) {
       return;
     }
-    if (tsc1_speed_previous.priority_byte < bVar4) {
+    if (tsc1_speed_previous.priority_byte < priority_bits) {
       return;
     }
-    if (bVar4 == tsc1_speed_previous.priority_byte) {
+    if (priority_bits == tsc1_speed_previous.priority_byte) {
       if (tsc1_control_word_stored.mode != 3) {
         return;
       }
-      if (bVar3 == 3) {
+      if (control_mode == 3) {
         if (tsc1_speed_previous.torque_stored < tsc1_speed_previous.requested_torque) {
           return;
         }
@@ -20929,8 +20935,8 @@ void torqueControlModeHandler(int param_1)
     }
   }
   else {
-    sVar2 = cm848_governorSpeedControl(1,bVar1);
-    if (sVar2 != 0) {
+    sVar1 = cm848_governorSpeedControl(1,source_address);
+    if (sVar1 != 0) {
       return;
     }
     if (_tsc1_active_config_ptr < _tsc1_config_entry_ptr) {
@@ -20941,15 +20947,15 @@ void torqueControlModeHandler(int param_1)
 accept_tsc1_command:
   tsc1_control_word_stored.tsc1_control_word = (word)tsc1_speed_previous.control_word;
   _tsc1_active_state = 1;
-  tsc1_speed_previous.priority_byte = bVar4;
-  tsc1_source_address = bVar1;
-  if (bVar3 == 0) {
+  tsc1_speed_previous.priority_byte = priority_bits;
+  tsc1_source_address = source_address;
+  if (control_mode == 0) {
     _tsc1_speed_error_timeout = 0;
     tsc1_control_word_stored.mode = 0;
     tsc1_control_word_stored.mode_request = 0;
     _tsc1_control_flags = 0;
   }
-  else if (bVar3 == 1) {
+  else if (control_mode == 1) {
     _tsc1_speed_error_timeout = *(short *)(_tsc1_active_config_ptr + 4) + 1;
     tsc1_control_word_stored.mode = 1;
     tsc1_control_word_stored.mode_request =
@@ -20962,7 +20968,7 @@ accept_tsc1_command:
     }
     _tsc1_speed_control_mode = (undefined2)((tsc1_speed_previous.control_word & 0xc) >> 2);
   }
-  else if (bVar3 == 2) {
+  else if (control_mode == 2) {
     _tsc1_speed_error_timeout = *(short *)(_tsc1_active_config_ptr + 8) + 1;
     tsc1_control_word_stored.mode = 2;
     tsc1_control_word_stored.mode_request =
@@ -20977,7 +20983,7 @@ accept_tsc1_command:
       _tsc1_torque_limit_calc = 0;
     }
   }
-  else if (bVar3 == 3) {
+  else if (control_mode == 3) {
     _tsc1_speed_error_timeout = *(short *)(_tsc1_active_config_ptr + 0xc) + 1;
     tsc1_control_word_stored.mode = 3;
     tsc1_control_word_stored.mode_request =
@@ -21050,7 +21056,7 @@ void cm848_processGovernorSpeedControlRequest(void)
   tsc1_control_word_stored.tsc1_control_word = (word)*unaff_r31;
   tsc1_speed_previous.priority_byte = (byte)unaff_r26;
   _tsc1_active_state = 1;
-  tsc1_source_address = (byte)unaff_r27;
+  tsc1_source_address = (undefined1)unaff_r27;
   if (unaff_r28 == 0) {
     _tsc1_speed_error_timeout = 0;
     *unaff_r29 = 0;
@@ -26779,7 +26785,7 @@ void cm848_calculateProtectionSpeedLimits(void)
   else {
     thermal_speed_limit_lookup = 0;
   }
-  if ((tsc1_coast_brake_mode == 1) && (DAT_003faf76 < DAT_003faf8a)) {
+  if ((tsc1_coast_brake_mode == '\x01') && (DAT_003faf76 < DAT_003faf8a)) {
     speed_control_integrator_integrator_2._2_2_ = 10;
     governor_limit_accum_1 = 0;
     governor_limit_accum_2 = 0;
@@ -26922,7 +26928,7 @@ LAB_000299e8:
   else {
     _speed_limit_constraint_active_flag = 0;
   }
-  if (tsc1_coast_brake_mode == 0) {
+  if (tsc1_coast_brake_mode == '\0') {
     DAT_003faf76 = 0;
   }
   else if (DAT_003faf76 < DAT_003faf8a) {
@@ -41337,7 +41343,7 @@ void cm848_processTemperatureTrim(void)
       fuel_trim_multiplier = 0;
     }
   }
-  if (tsc1_coast_brake_mode == 0) {
+  if (tsc1_coast_brake_mode == '\0') {
     DAT_003fb554 = 0;
   }
   if (fuel_trim_multiplier != 0) {
@@ -41346,7 +41352,7 @@ void cm848_processTemperatureTrim(void)
   if (fuel_efficiency_trim == 0) {
     temperature_trim_value = 0;
   }
-  if (tsc1_coast_brake_mode != 0) {
+  if (tsc1_coast_brake_mode != '\0') {
     if (DAT_00408eb6 < DAT_003fb554) {
       fuel_trim_multiplier = 0;
     }
@@ -65285,7 +65291,7 @@ void cm848_processFaultCountdownTimers(void)
 
 {
   if (((control_mode_status_flags & 0x40) == 0) && (DAT_0040add9 == '\0')) {
-    if (fault_countdown_init_flag == 0) {
+    if (fault_countdown_init_flag == '\0') {
       if ((_sensor_channel_9_status_flags & 0x800) == 0) {
         if ((system_enable_state_shadow & 0x1000) != 0) {
           system_enable_state.reserved_10 = system_enable_state.reserved_10 & 0xefff;
@@ -65298,7 +65304,7 @@ void cm848_processFaultCountdownTimers(void)
       }
       else {
         system_enable_state.reserved_10 = system_enable_state.reserved_10 | 0x1000;
-        fault_countdown_init_flag = 1;
+        fault_countdown_init_flag = '\x01';
         fault_countdown_timer_1 = 0;
       }
     }
@@ -89851,9 +89857,9 @@ undefined4 cm848_updateSpeedFilters(void)
         DAT_003fd1a6 = '\x01';
       }
       if (DAT_00064320 < DAT_003fd18e) {
-        if (speed_filter_init_flag == 0) {
+        if (speed_filter_init_flag == '\0') {
           DAT_003fd1a9 = speed_sensor_value_current;
-          speed_filter_init_flag = 1;
+          speed_filter_init_flag = '\x01';
         }
         if (DAT_0006431e < DAT_003fd18e) {
           uVar2 = 0;

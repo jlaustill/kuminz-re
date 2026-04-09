@@ -149,7 +149,7 @@ data_transfer_state_t,0x003fec82,status,word,2,Transfer status/result code,,veri
 # Used by initDiagnosticSession and diagnostic handlers
 # Total size: 6 bytes (0x003fecbe-0x003fecc3)
 diag_session_state_t,0x003fecbe,session_flags,byte,1,Diagnostic session active flags,,verified
-diag_session_state_t,0x003fecbe,enable_flags_2,byte,1,Secondary diagnostic enable flags,,verified
+diag_session_state_t,0x003fecbe,response_write_index,byte,1,Write cursor into diag_serial_buffer,,verified
 diag_session_state_t,0x003fecbe,eeprom_status,byte,1,EEPROM operation status byte,,verified
 diag_session_state_t,0x003fecbe,reserved_03,byte,1,Gap/reserved,,needs_review
 diag_session_state_t,0x003fecbe,reserved_04,byte,1,Gap/reserved,,needs_review
