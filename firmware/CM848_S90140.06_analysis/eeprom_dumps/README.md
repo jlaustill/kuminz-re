@@ -93,21 +93,132 @@ If hours aren't persisted, the ELD restoration strategy shifts: the OCT device
 authoritative hours source, and the restore tool only needs to rewrite the
 odometer.
 
-## For the restore tool
+## Resolution: OCT as the canonical odometer + hours source
 
-1. **Odometer restore**: write desired miles to 0x01000BD8 as u32 big-endian,
-   scaled by 0.000125 (i.e., `raw = miles × 8000`). Already implemented in
-   `tools/update_odometer.sh`.
-2. **Engine hours**: investigation ongoing. If the ECU doesn't persist hours,
-   use OCT's own hours accumulator for ELD reporting.
+After reviewing the findings, the ELD restoration strategy is:
+**stop trying to restore runtime counters in the ECU itself.**
+Instead, OCT (the Teensy-based dash device) owns both counters:
+
+- OCT accumulates **engine hours** from live RPM (already implemented,
+  see `oct/src/domain/oct-domain.cpp`)
+- OCT will iterate toward accumulating **odometer** from J1939 CCVS
+  (PGN FEF1 vehicle speed), seeded from the dash cluster's real value
+- OCT persists both to the Teensy's internal EEPROM every 30 seconds
+- HP Tuners flashes don't touch the Teensy, so the values survive flashes
+
+The ECU-internal odometer at 0x01000BD8 is unreliable anyway — HPT writes
+arbitrary values from the tune file during each flash (not zero, not the
+real value, just whatever the last ECU "read" captured). The J1939 FEE0
+total distance is also not the real odometer — it accumulates from zero
+after each flash.
+
+No further ECU-side restore work is needed for the ELD use case.
+
+---
+
+## Using these dumps as RE baselines
+
+The three dumps are valuable beyond the odometer/hours investigation —
+they form a **flash-diff baseline**. Future HP Tuners flashes with small,
+targeted tune changes let us isolate exactly which EEPROM bytes correspond
+to which tune parameter.
+
+### RE workflow for identifying tune parameters
+
+1. **Current baseline: `eeprom_after_hpt_2.bin`** (last known state after
+   an unchanged-tune flash on 2026-04-12).
+2. In HP Tuners, change **one** parameter by a small amount. Record
+   exactly what you changed (parameter name, old value, new value).
+3. Flash the ECU.
+4. Dump EEPROM:
+   `kuminz-cli slcan0 --cm848-dump-eeprom eeprom_after_<descriptive>.bin`
+5. Diff against the baseline:
+   ```python
+   # See the analysis script in git history at commit 7f76567
+   # Compare byte-by-byte, look for:
+   # - Bytes that changed to values matching your HPT change
+   # - Bytes in the "deterministic" category from the 2026-04-12 analysis
+   ```
+6. Ignore the "always changes" addresses from the HPT-variable list below.
+7. The remaining changed bytes are the EEPROM storage for that parameter.
+
+### HPT-variable addresses to IGNORE in future diffs
+
+These 55 addresses change on every flash regardless of tune content
+(checksums, flash counter, session markers). Subtract these from any diff
+to see the real tune-parameter changes:
+
+```
+0x01000032  (calibration header checksum)
+0x01000044  (HPT flash counter — increments by 10 each flash)
+0x01000052, 0x01000054  (flash session markers, increment by 1)
+0x0100005C  (another checksum)
+0x010009C4  (mirror of 0x1000044)
+0x01000B48  (checksum)
+0x01000E6C, 0x01000E6E  (checksum block)
+0x0100106C, 0x01001072, 0x01001074  (checksum block)
+0x010011F4–0x0100127C  (DTC snapshot records set A — calibration stamps)
+0x01001374–0x010013FC  (DTC snapshot records set B — same data, different slot)
+0x010019A0  (counter)
+```
+
+The regions 0x011F0-0x012FF and 0x01370-0x013FF appear to be two parallel
+copies of DTC snapshot metadata — probably a ping-pong buffer. These
+change every flash because they contain calibration timestamps/IDs.
+
+### Full list of HPT-deterministic writes (69 addresses)
+
+These are written to fixed values by HPT that don't depend on prior state —
+they represent the tune file's actual content at specific EEPROM offsets.
+Most of these are what you'll see move when you change tune parameters:
+
+Key areas:
+- 0x01000806–0x01000926: small flags/counters (HPT resets to small values)
+- 0x010009C2, 0x010009C8, 0x01000B0E, 0x01000B2A, 0x01000B46: calibration markers
+- 0x01000BD8–0x01000BFA: **odometer u32 values** (HPT writes tune-file values)
+- 0x01000C18–0x01000CA0: DTC config (small integer adjustments)
+- 0x01001200–0x010014BE: **DTC freeze frame templates** (big block of tune-specific values)
+- 0x0100161E, 0x01001910–0x01001914: adaptive limits
+- 0x0100193A–0x0100193C: sensor adaptation anchors
+- 0x010019CE, 0x01001A34: more adaptation data
+
+See commit 7f76567 message or run the Python diff script against the three
+dump files to reproduce the full list.
 
 ## Source dump files
 
 All three dumps are 8192 bytes (full CM848 EEPROM, 0x01000000–0x01001FFF):
 
-- `eeprom_before_hpt.bin` — baseline with 7,236 mi of post-flash driving
-- `eeprom_after_hpt_1.bin` — immediately after first HPT flash
-- `eeprom_after_hpt_2.bin` — immediately after second HPT flash (same tune)
+| File | Capture | Content |
+|------|---------|---------|
+| `eeprom_before_hpt.bin` | 2026-04-12, pre-test | 7,236 mi of driving accumulated since prior HPT flash; diagnostic + fault history populated |
+| `eeprom_after_hpt_1.bin` | 2026-04-12, post-flash 1 | Same tune as flash 2; odometer overwritten by HPT; runtime data wiped |
+| `eeprom_after_hpt_2.bin` | 2026-04-12, post-flash 2 | Same tune re-flashed; differs from flash 1 only in checksums/counters — **USE THIS AS THE CURRENT BASELINE** |
+
+**ECU state for these dumps:**
+- Firmware: CM848 S90140.06 (V11.46.06, 1504 2RSAO)
+- VIN: 3D3MU48C94G228471
+- 2004.5 Dodge Ram 3500 5.9L Cummins
+- Calibration: custom HP Tuners tune (unchanged between flashes 1 and 2)
+- Bench conditions: key-on, engine on at idle ~750 RPM for first 30 min
+  before flash 1; brief key-on only during flash 1 → flash 2 interval
 
 Captured using `kuminz-cli slcan0 --cm848-dump-eeprom` over the Teensy
 MicroMod SLCAN bridge (`tools/teensy-slcan/`).
+
+## Adding new dumps to this baseline
+
+When capturing future flash dumps for tune-parameter RE, follow this
+naming convention so the baselines stay organized:
+
+```
+eeprom_<date>_<tune-description>_<flash-n>.bin
+```
+
+Examples:
+- `eeprom_20260415_afc_curve_+10pct_1.bin`
+- `eeprom_20260415_afc_curve_+10pct_2.bin`  (confirm repeatability)
+- `eeprom_20260420_timing_+2deg_1.bin`
+
+Add each new dump's purpose and findings to this README so the baseline
+grows into a tune-parameter reference over time.
