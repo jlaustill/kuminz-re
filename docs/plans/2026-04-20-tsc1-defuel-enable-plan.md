@@ -30,9 +30,9 @@ an opportunity to make the code self-documenting.
 
 ### Names already known from planning (apply in the very first pre-hook, before Step 1):
 
-**function_renames.csv additions:**
+**function_renames.csv additions (rename existing `cm848_selectTorqueLimit`):**
 ```
-<find addr of lines 18927-19088 arbitration fn>,cm848_arbitrateFuelLimitSources
+0x0001fd94,cm848_arbitrateFuelLimitSources
 ```
 
 **global_variables.csv additions:**
@@ -81,7 +81,8 @@ FUEL_LIMIT_SOURCE,15,fuel_limit_source_torque_output
 `cm848_j1939ProcessTorqueSpeedControl` and `cm848_arbitrateFuelLimitSources`.
 
 ```bash
-./kuminz-cli can0 --read-addr 0005a470 1   # tsc1_source_address_filter (ROM)
+./kuminz-cli can0 --read-addr 0005a470 1   # tsc1_source_address_filter (ROM, read-only)
+./kuminz-cli can0 --read-addr 0040ae3d 1   # tsc1_source_address (RAM copy — patchable)
 ./kuminz-cli can0 --read-addr 0040ae10 2   # disable_control flag
 ./kuminz-cli can0 --read-addr 0040ae08 2   # tsc1_control_word_stored.mode
 ./kuminz-cli can0 --read-addr 0040a2f4 2   # limit_source_priority.fuel_minimum
@@ -108,10 +109,11 @@ read as clearly as expected after the pre-Step-1 naming pass?
 ### 2a. Apply RAM patches
 ```bash
 # Clear disable_control so TSC1 handler is no longer blocked
-./kuminz-cli can0 --write-addr 0040ae10 01 00
+./kuminz-cli can0 --write-service4b 0040ae10 00
 
-# If tsc1_source_address_filter was not 0xFF, set to wildcard
-./kuminz-cli can0 --write-addr 0005a470 01 ff   # only if needed
+# If Step 1 read of tsc1_source_address (RAM mirror of ROM filter) was not 0xFF:
+# Write the RAM copy at 0x0040ae3d — ROM at 0x0005a470 is read-only flash
+./kuminz-cli can0 --write-service4b 0040ae3d ff   # only if needed
 ```
 
 ### 2b. Send TSC1 Mode 3 from Teensy SLCAN bridge
@@ -154,7 +156,9 @@ the vocation byte. Write a known value, key-cycle, dump EEPROM, diff.
 
 ```bash
 ./kuminz-cli can0 --dump-eeprom eeprom_dumps/eeprom_checksum_test_before.bin
-./kuminz-cli can0 --write-addr 010009c0 01 AA   # example sacrificial byte
+# Write a sacrificial byte inside 0x0D00-0x0DC4 (NOT the vocation byte at 0x0DA6)
+# 0x01000D20 = EEPROM offset 0x0D20, confirmed zero in all three baseline dumps
+./kuminz-cli can0 --write-service4b 01000d20 AA
 # key off, key on
 ./kuminz-cli can0 --dump-eeprom eeprom_dumps/eeprom_checksum_test_after.bin
 # diff the two dumps — which checksum fields changed?
@@ -232,7 +236,8 @@ Each step produces entries in `docs/plans/tsc1-defuel-implementation.md`:
 |---|---|---|
 | EEPROM `0x0DA6` | vocation_config_byte | Target: `0x04` (Allison) |
 | RAM `0x003FDDA6` | eeprom_scatter_source_table._2_2_ | Scatter-loaded from EEPROM |
-| ROM `0x0005A470` | tsc1_source_address_filter | May need `0xFF` wildcard |
+| ROM `0x0005A470` | tsc1_source_address_filter | Read-only flash — read only |
+| RAM `0x0040AE3D` | tsc1_source_address | RAM copy of filter — patch here if needed |
 | RAM `0x0040AE10` | tsc1_control_word_stored.disable_control | Step 2: write `0x00` |
 | RAM `0x0040AE08` | tsc1_control_word_stored.mode | Mode 3 = defuel |
 | RAM `0x0040A2F4` | limit_source_priority.fuel_minimum | Verify goes to 0x0000 |
@@ -248,5 +253,5 @@ Each step produces entries in `docs/plans/tsc1-defuel-implementation.md`:
 | `firmware/CM848_S90140.06_analysis/output/enums.csv` | Arbitration source enum |
 | `firmware/CM848_S90140.06_analysis/eeprom_dumps/` | All before/after dumps |
 | `firmware/CM848_S90140.06_analysis/eeprom_dumps/README.md` | Checksum coverage map |
-| `firmware/CM848_S90140.06_analysis/docs/plans/tsc1-defuel-implementation.md` | Session notes |
+| `docs/plans/tsc1-defuel-implementation.md` | Session notes |
 | `firmware/CM848_S90140.06_analysis/ghidra/analyze.sh` | Import/export workflow |
