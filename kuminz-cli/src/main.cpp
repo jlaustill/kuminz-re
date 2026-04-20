@@ -63,8 +63,6 @@ void printUsage(const char* progname)
     std::cerr << "                                            J1939 write path with auth, no CRC needed\n";
     std::cerr << "                                            e.g., 800100 AA55 (write 0xAA55 to 0x800100)\n";
     std::cerr << "  --write-service5 <hex-addr> <hex-value>   Write via Service 0x05 (J1708 ONLY - won't work on CAN)\n";
-    std::cerr << "  --write-addr <hex-addr> <hex-value>       Write via 0x4A (DEPRECATED - read service)\n";
-    std::cerr << "  --write-addr-auth <hex-addr> <hex-value>  Auth write via 0x4A (DEPRECATED)\n";
     std::cerr << "  --write-clip <hex-addr> <hex-value>       Write via CLIP session (command 0x15)\n\n";
     std::cerr << "Security Authentication Commands:\n";
     std::cerr << "  --auth-test                 Test security algorithm (offline - no ECU needed)\n";
@@ -655,102 +653,6 @@ int main(int argc, char* argv[])
         }
     }
     // =========================================================================
-    // Memory Write Command (EXPERIMENTAL)
-    // =========================================================================
-    else if (command == "--write-addr") {
-        if (argc < 5) {
-            std::cerr << "[ERROR] --write-addr requires <hex-addr> <hex-value>\n";
-            std::cerr << "Example: --write-addr 803586 B522\n";
-            result = 1;
-        } else {
-            // Parse hex address
-            uint32_t address;
-            std::stringstream ssAddr;
-            ssAddr << std::hex << argv[3];
-            ssAddr >> address;
-
-            // Parse hex value (1-4 hex chars = 1-2 bytes)
-            std::string valueStr = argv[4];
-            if (valueStr.length() > 4) {
-                std::cerr << "[ERROR] Value must be 1-4 hex chars (1-2 bytes)\n";
-                result = 1;
-            } else {
-                uint32_t value;
-                std::stringstream ssVal;
-                ssVal << std::hex << valueStr;
-                ssVal >> value;
-
-                // Convert value to bytes (big-endian for ECU)
-                std::vector<uint8_t> data;
-                if (value > 0xFF) {
-                    // 2-byte value (big-endian)
-                    data.push_back(static_cast<uint8_t>((value >> 8) & 0xFF));
-                    data.push_back(static_cast<uint8_t>(value & 0xFF));
-                } else {
-                    // 1-byte value
-                    data.push_back(static_cast<uint8_t>(value & 0xFF));
-                }
-
-                std::cerr << "\n";
-                std::cerr << "╔════════════════════════════════════════════════════════╗\n";
-                std::cerr << "║  ⚠️  EXPERIMENTAL MEMORY WRITE - USE AT OWN RISK  ⚠️    ║\n";
-                std::cerr << "╠════════════════════════════════════════════════════════╣\n";
-                std::cerr << "║  Address: 0x" << std::hex << std::uppercase
-                          << std::setw(8) << std::setfill('0') << address
-                          << "                             ║\n";
-                std::cerr << "║  Value:   0x" << std::setw(4) << value
-                          << " (" << std::dec << data.size() << " byte"
-                          << (data.size() > 1 ? "s" : "") << ")"
-                          << "                                 ║\n";
-                std::cerr << "╚════════════════════════════════════════════════════════╝\n";
-                std::cerr << std::dec;
-
-                // First, read current value
-                std::vector<uint8_t> currentData;
-                if (reader.readMemoryService4A(address, static_cast<uint8_t>(data.size()), currentData)) {
-                    std::cerr << "[INFO] Current value at 0x" << std::hex << std::uppercase
-                              << std::setw(8) << std::setfill('0') << address << ": ";
-                    for (size_t i = 0; i < currentData.size(); i++) {
-                        std::cerr << std::setw(2) << static_cast<int>(currentData[i]);
-                    }
-                    std::cerr << std::dec << "\n";
-                }
-
-                // Attempt write
-                std::cerr << "[INFO] Attempting write...\n";
-                if (reader.writeMemoryService4A(address, data)) {
-                    std::cerr << "[SUCCESS] Write command acknowledged!\n";
-
-                    // Verify by reading back
-                    std::vector<uint8_t> verifyData;
-                    if (reader.readMemoryService4A(address, static_cast<uint8_t>(data.size()), verifyData)) {
-                        std::cerr << "[INFO] Verification read: ";
-                        bool match = (verifyData.size() == data.size());
-                        for (size_t i = 0; i < verifyData.size(); i++) {
-                            std::cerr << std::hex << std::uppercase << std::setw(2)
-                                      << std::setfill('0') << static_cast<int>(verifyData[i]);
-                            if (i < data.size() && verifyData[i] != data[i]) {
-                                match = false;
-                            }
-                        }
-                        std::cerr << std::dec << "\n";
-
-                        if (match) {
-                            std::cerr << "[✓] Write verified successfully!\n";
-                        } else {
-                            std::cerr << "[✗] Verification FAILED - value did not change\n";
-                            std::cerr << "    (ECU may have rejected write, or address is read-only)\n";
-                            result = 1;
-                        }
-                    }
-                } else {
-                    std::cerr << "[ERROR] Write failed - no acknowledgment from ECU\n";
-                    result = 1;
-                }
-            }
-        }
-    }
-    // =========================================================================
     // Service 0x4B Memory Write (RECOMMENDED - J1939 write path)
     // =========================================================================
     else if (command == "--write-service4b") {
@@ -922,86 +824,6 @@ int main(int argc, char* argv[])
                         std::cerr << "\n[✓] Service 0x05 write completed and verified!\n";
                     } else {
                         std::cerr << "\n[✗] Service 0x05 write failed\n";
-                        result = 1;
-                    }
-                }
-            }
-        }
-    }
-    // =========================================================================
-    // Authenticated Memory Write Command (DEPRECATED - uses Service 0x4A)
-    // =========================================================================
-    else if (command == "--write-addr-auth") {
-        if (argc < 5) {
-            std::cerr << "[ERROR] --write-addr-auth requires <hex-addr> <hex-value>\n";
-            std::cerr << "Example: --write-addr-auth 803064 AA55\n";
-            result = 1;
-        } else {
-            // Parse hex address
-            uint32_t address;
-            std::stringstream ss;
-            ss << std::hex << argv[3];
-            ss >> address;
-
-            // Parse hex value
-            std::vector<uint8_t> data;
-            std::string valueStr = argv[4];
-            for (size_t i = 0; i < valueStr.length(); i += 2) {
-                if (i + 1 < valueStr.length()) {
-                    uint8_t byte = static_cast<uint8_t>(
-                        std::stoi(valueStr.substr(i, 2), nullptr, 16)
-                    );
-                    data.push_back(byte);
-                }
-            }
-
-            if (data.empty()) {
-                std::cerr << "[ERROR] Invalid hex value\n";
-                result = 1;
-            } else {
-                std::cerr << "\n";
-                std::cerr << "╔════════════════════════════════════════════════════════╗\n";
-                std::cerr << "║  ⚠️  AUTHENTICATED MEMORY WRITE - USE AT OWN RISK  ⚠️   ║\n";
-                std::cerr << "╠════════════════════════════════════════════════════════╣\n";
-                std::cerr << "║  Address: 0x" << std::hex << std::uppercase
-                          << std::setw(8) << std::setfill('0') << address << "                       ║\n";
-                std::cerr << "║  Value:   0x";
-                for (auto b : data) {
-                    std::cerr << std::hex << std::uppercase << std::setw(2) << std::setfill('0')
-                              << static_cast<int>(b);
-                }
-                std::cerr << " (" << std::dec << data.size() << " bytes)                              ║\n";
-                std::cerr << "╚════════════════════════════════════════════════════════╝\n";
-                std::cerr << std::dec;
-
-                // Step 1: Read hour meter
-                std::cerr << "\n[1/3] Reading hour meter from ECU...\n";
-                uint32_t hourMeter;
-                if (!reader.readHourMeter(hourMeter)) {
-                    std::cerr << "[ERROR] Failed to read hour meter\n";
-                    result = 1;
-                } else {
-                    std::cerr << "[LOG] Hour meter: 0x" << std::hex << std::uppercase
-                              << std::setw(8) << std::setfill('0') << hourMeter << std::dec << "\n";
-
-                    // Step 2: Show auth payload that will be used
-                    std::cerr << "\n[2/3] Generating auth payload...\n";
-                    std::vector<uint8_t> authPayload;
-                    if (SecurityAuth::generateAuthPayload(hourMeter, authPayload)) {
-                        std::cerr << "[LOG] Auth payload: ";
-                        for (auto b : authPayload) {
-                            std::cerr << std::hex << std::uppercase << std::setw(2)
-                                      << std::setfill('0') << static_cast<int>(b) << " ";
-                        }
-                        std::cerr << std::dec << "\n";
-                    }
-
-                    // Step 3: Send authenticated write
-                    std::cerr << "\n[3/3] Sending authenticated write via J1939 TP...\n";
-                    if (reader.writeMemoryService4AAuth(address, data, hourMeter)) {
-                        std::cerr << "\n[✓] Authenticated write completed!\n";
-                    } else {
-                        std::cerr << "\n[✗] Authenticated write failed\n";
                         result = 1;
                     }
                 }
