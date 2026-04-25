@@ -1,6 +1,8 @@
 # CM848 Memory Address Mapping
 
-This document explains how e2m virtual addresses (used by Calterm) translate to actual ECU memory addresses.
+This document maps the CM848D ECU memory regions and known address assignments discovered through firmware analysis, live ECU reads, and EEPROM dumps.
+
+> **Note:** The e2m virtual address translation (Column3 → base address) was decoded for the CM550. The CM848D section below is **theoretical** — based on the same formula pattern but only one Column3 mapping (0x81AE(33198)) has been confirmed via live ECU reads. The S90140.12 e2m file in this directory is a different calibration version (V11.20.13.16) than the ECU (V11.46.06), so its addresses may not match.
 
 ## Memory Region Files
 
