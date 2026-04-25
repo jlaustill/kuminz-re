@@ -1,0 +1,111 @@
+# offset 0x01000000(16777216)
+# EEPROM - Non-volatile storage
+# Size: 8192 bytes (8 KB)
+# Address range: 0x01000000(16777216) - 0x01001FFF(16785407)
+# Format: <decimal_offset> <description>
+# To get absolute address: offset + 0x01000000(16777216)
+
+2 Security Key byte 1 ('A' of ABCDEF)
+3 Security Key byte 2 ('B' of ABCDEF)
+4 Security Key byte 3 ('C' of ABCDEF)
+5 Security Key byte 4 ('D' of ABCDEF)
+6 Security Key byte 5 ('E' of ABCDEF)
+7 Security Key byte 6 ('F' of ABCDEF)
+50 Calibration checksum (recomputed on flash)
+68 Calibration download counter low byte
+69 Calibration download counter high byte
+70 Calibration ID byte 1 ('1' of '1504 2RSAO')
+71 Calibration ID byte 2 ('5')
+72 Calibration ID byte 3 ('0')
+73 Calibration ID byte 4 ('4')
+74 Calibration ID byte 5 (' ')
+75 Calibration ID byte 6 ('2')
+76 Calibration ID byte 7 ('R')
+77 Calibration ID byte 8 ('S')
+78 Calibration ID byte 9 ('A')
+79 Calibration ID byte 10 ('O')
+82 Flash session marker low byte (increments by 1 each flash)
+84 Flash session marker high byte
+92 Flash counter (HPT variable)
+128 Date Code byte 1 ('1' of '060410')
+129 Date Code byte 2 ('0')
+130 Date Code byte 3 ('0')
+131 Date Code byte 4 ('9')
+132 Date Code byte 5 ('0')
+133 Date Code byte 6 ('2')
+304 Calibration Version byte 0 (reserved, 0x00)
+305 Calibration Version byte 1 - Major (0x0B = 11)
+306 Calibration Version byte 2 - Minor (0x2E = 46)
+307 Calibration Version byte 3 - Patch (0x06 = 6)
+308 Calibration Version byte 4 - Build
+309 Calibration Version byte 5 - Revision
+465 Cummins Marker byte 1 ('C')
+466 Cummins Marker byte 2 ('M')
+467 Cummins Marker byte 3 ('M')
+468 Cummins Marker byte 4 ('N')
+469 Cummins Marker byte 5 ('S')
+535 Module ID byte 1 ('C' of 'CC' = CM848)
+536 Module ID byte 2 ('C')
+646 VIN byte 1 ('3')
+647 VIN byte 2 ('D')
+648 VIN byte 3 ('3')
+649 VIN byte 4 ('M')
+650 VIN byte 5 ('U')
+651 VIN byte 6 ('4')
+652 VIN byte 7 ('8')
+653 VIN byte 8 ('C')
+654 VIN byte 9 ('9')
+655 VIN byte 10 ('4')
+656 VIN byte 11 ('G')
+657 VIN byte 12 ('2')
+658 VIN byte 13 ('2')
+659 VIN byte 14 ('8')
+660 VIN byte 15 ('4')
+661 VIN byte 16 ('7')
+662 VIN byte 17 ('1')
+704 Data Plate start (127 bytes, mostly zeros)
+
+# --- gap: 0x010002C0(16777920) to 0x010008E8(16779496) ---
+
+2280 Runtime counter block start (zeroed by HPT)
+2292 Possible runtime counter (raw 0x0000D227 = 53799, ~10.0 hours at 0.667s/count)
+2294 Runtime counter block end
+2496 Diagnostic/histogram block start (zeroed by HPT)
+2500 Calibration download counter mirror
+2740 Possible runtime counter (raw 0x00008651 = 34385)
+2796 Possible runtime counter (raw 0x00032AF2 = 207602)
+2832 Histogram bucket region start
+2856 Histogram bucket region end
+2864 Diagnostic/histogram block end
+3032 Primary odometer (u32, scale x0.000125 mi)
+3033 Primary odometer byte 2
+3034 Primary odometer byte 3
+3035 Primary odometer byte 4
+3064 Secondary odometer (u32, scale x0.000125 mi)
+3065 Secondary odometer byte 2
+3066 Secondary odometer byte 3
+3067 Secondary odometer byte 4
+
+# --- gap: 0x01000BFB(16780283) to 0x01000D00(16780544) ---
+
+3328 DTC configuration block start
+3524 DTC configuration block end
+3688 DTC snapshot data start (contains 0x0AAE checksum markers)
+
+# --- gap: 0x01000E68(16780904) to 0x01000FC0(16781248) ---
+
+4032 DTC snapshot data end
+4096 DTC freeze frame records start
+
+# --- gap: 0x01001000(16781312) to 0x01001200(16781824) ---
+
+4608 DTC freeze frame set 1 start
+4863 DTC freeze frame set 1 end
+4976 DTC freeze frame set 2 start
+5119 DTC freeze frame set 2 end
+5310 DTC freeze frame records end
+5376 Adaptive calibration data start (fuel trims, sensor adaptations)
+
+# --- gap: 0x01001500(16782592) to 0x01001A14(16783892) ---
+
+6676 Adaptive calibration data end

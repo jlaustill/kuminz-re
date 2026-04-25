@@ -1,0 +1,1784 @@
+# offset 0x00500000(5242880)
+# Bank 2 (FLASH2) - Utility functions
+# Size: 251115 bytes (245 KB)
+# Address range: 0x00500000(5242880) - 0x0053D4EA(5493994)
+# Format: <decimal_offset> <description>
+# To get absolute address: offset + 0x00500000(5242880)
+
+4 [function] cm848_sensorChannel0_init
+144 [function] cm848_sensorChannel0_process
+284 [function] cm848_sensorChannel1_init
+424 [function] cm848_sensorChannel1_process
+564 [function] cm848_sensorChannelConfigInit
+
+# --- gap: 0x00500234(5243444) to 0x00500A4C(5245516) ---
+
+2636 [function] cm848_updateSensorChannelWithConfig
+
+# --- gap: 0x00500A4C(5245516) to 0x005011C4(5247428) ---
+
+4548 [function] cm848_sensorChannelCalibration_init
+4688 [function] cm848_sensorChannelCalibration_process
+4828 [function] cm848_sensorChannelTypeB_configInit
+
+# --- gap: 0x005012DC(5247708) to 0x00501B4C(5249868) ---
+
+6988 [function] cm848_updateSensorChannelTypeB
+
+# --- gap: 0x00501B4C(5249868) to 0x005022CC(5251788) ---
+
+8908 [function] mpc555_evaluateSensorChannelStatus
+
+# --- gap: 0x005022CC(5251788) to 0x0050241C(5252124) ---
+
+9244 [function] cm848_updateSensorModeState
+9316 [function] cm848_processSensorInterpolationMode
+
+# --- gap: 0x00502464(5252196) to 0x00502AF4(5253876) ---
+
+10996 [function] cm848_limitFuelDemandValue
+11044 [function] cm848_clearBufferInitFlag
+11060 [function] mpc555_initSensorBufferValues
+11116 [function] cm848_filterAndInterpolateSensor
+
+# --- gap: 0x00502B6C(5253996) to 0x00502EB8(5254840) ---
+
+11960 [function] cm848_initAndFilterSensor
+
+# --- gap: 0x00502EB8(5254840) to 0x00503074(5255284) ---
+
+12404 [function] cm848_initGovernorModeState
+
+# --- gap: 0x00503074(5255284) to 0x005031B4(5255604) ---
+
+12724 [function] cm848_clearProtectionModeVariables
+
+# --- gap: 0x005031B4(5255604) to 0x005033A0(5256096) ---
+
+13216 [function] cm848_evaluateSpeedControlTiming
+
+# --- gap: 0x005033A0(5256096) to 0x00503604(5256708) ---
+
+13828 [function] cm848_evaluateSpeedModeConditions
+
+# --- gap: 0x00503604(5256708) to 0x0050370C(5256972) ---
+
+14092 [function] cm848_evaluateFuelConditionFlags
+14224 [function] cm848_normalizeSpeedValue
+
+# --- gap: 0x00503790(5257104) to 0x00503960(5257568) ---
+
+14688 [function] cm848_resetSpeedControlState
+14692 [function] cm848_processSpeedControlPipeline
+14732 [function] cm848_initSpeedControlSystem
+14772 [function] cm848_interpolateSpeedControl6Point
+
+# --- gap: 0x005039B4(5257652) to 0x00503B2C(5258028) ---
+
+15148 [function] cm848_initializeSpeedIntegratorStates
+15188 [function] cm848_calculateLoadNormalizationDelta
+
+# --- gap: 0x00503B54(5258068) to 0x00503CBC(5258428) ---
+
+15548 [function] cm848_calculateSpeedFilterTerm
+
+# --- gap: 0x00503CBC(5258428) to 0x00503ED0(5258960) ---
+
+16080 [function] cm848_calculateSpeedOffsetTerm
+16224 [function] cm848_calculateSpeedFilterCoefficients
+16260 [function] cm848_interpolateSpeedControlOutput
+
+# --- gap: 0x00503F84(5259140) to 0x00504110(5259536) ---
+
+16656 [function] cm848_initializeSpeedControlOutputs
+16688 [function] mpc555_calculateFuelTimingGain
+16828 [function] cm848_interpolateFuelTrimPrimary
+16940 [function] cm848_calculateFuelScaleMultiplier
+
+# --- gap: 0x0050422C(5259820) to 0x005043B4(5260212) ---
+
+17332 [function] cm848_interpolateFuelTrimSecondary
+
+# --- gap: 0x005043B4(5260212) to 0x00504528(5260584) ---
+
+17704 [function] cm848_calculateFuelTrimAdjustments
+
+# --- gap: 0x00504528(5260584) to 0x00504654(5260884) ---
+
+18004 [function] cm848_calculatePressureRatio
+18260 [function] mpc555_initPressureBufferValues
+18300 [function] cm848_selectMaximumPressureValue
+
+# --- gap: 0x0050477C(5261180) to 0x00504938(5261624) ---
+
+18744 [function] cm848_clearPressureAccumulator
+18760 [function] cm848_processFuelControlCoordinator
+18836 [function] cm848_interpolateBoostTrimCalibration
+
+# --- gap: 0x00504994(5261716) to 0x00504B0C(5262092) ---
+
+19212 [function] cm848_interpolateBoostTrimTable
+
+# --- gap: 0x00504B0C(5262092) to 0x00504D38(5262648) ---
+
+19768 [function] cm848_interpolateFuelTrimTable
+
+# --- gap: 0x00504D38(5262648) to 0x00504EB0(5263024) ---
+
+20144 [function] cm848_interpolateCoolantTrimTable
+
+# --- gap: 0x00504EB0(5263024) to 0x005050F4(5263604) ---
+
+20724 [function] cm848_processPressureAndTemperatureTrim
+
+# --- gap: 0x005050F4(5263604) to 0x00505260(5263968) ---
+
+21088 [function] cm848_packFuelControlStatusFlags
+21260 [function] cm848_calculateFuelBlendMode
+21456 [function] cm848_clearFuelBlendFactor1
+21472 [function] cm848_updateFuelTrimAccumulator
+
+# --- gap: 0x005053E0(5264352) to 0x00505574(5264756) ---
+
+21876 [function] cm848_clearFuelAccumulatorBuffers
+21920 [function] cm848_validatePressureEnableConditions
+22016 [function] cm848_evaluateEngineSpeedMode
+22264 [function] cm848_evaluateCoolantTemperatureMode
+22492 [function] cm848_initPressureBufferPointer
+22508 [function] cm848_evaluateEngineLoadConditions
+22696 [function] cm848_calculateFuelConsumptionRate
+
+# --- gap: 0x005058A8(5265576) to 0x005059EC(5265900) ---
+
+23020 [function] mpc555_evaluateThrottleSensorConditions
+
+# --- gap: 0x005059EC(5265900) to 0x00505B3C(5266236) ---
+
+23356 [function] cm848_processThrottlePositionState
+23428 [function] cm848_selectSpeedControlFromSensorFlags
+23512 [function] cm848_updateSpeedControlState
+23584 [function] cm848_transferEepromData
+
+# --- gap: 0x00505C20(5266464) to 0x00505D94(5266836) ---
+
+23956 [function] cm848_initEepromTransferState
+24048 [function] cm848_processDiagnosticDataTransfer
+
+# --- gap: 0x00505DF0(5266928) to 0x00505F98(5267352) ---
+
+24472 [function] cm848_processProtectionParameterData
+
+# --- gap: 0x00505F98(5267352) to 0x0050638C(5268364) ---
+
+25484 [function] cm848_processFuelBlendCalculations
+
+# --- gap: 0x0050638C(5268364) to 0x00506780(5269376) ---
+
+26496 [function] cm848_incrementFuelAndSpeedCounters
+26556 [function] cm848_restoreFuelAndSpeedCounters
+26592 [function] cm848_calculateSignedRatioDivision
+
+# --- gap: 0x005067E0(5269472) to 0x00506968(5269864) ---
+
+26984 [function] cm848_calculateDivisionWithReset
+27196 [function] cm848_calculateTimingFloorDivision
+27236 [function] cm848_calculateTimingFloorDivisionB
+27348 [function] cm848_calculateTimingOffsetWithFilter
+27444 [function] cm848_calculateFuelTimingWithFilter
+
+# --- gap: 0x00506B34(5270324) to 0x00506C94(5270676) ---
+
+27796 BYTE_00506c94 (byte)
+27860 [function] cm848_interpolateFuelTimingWithCheck
+
+# --- gap: 0x00506CD4(5270740) to 0x00506E18(5271064) ---
+
+28184 [function] cm848_selectFuelTimingSourceByFlag
+28200 [function] cm848_selectFuelTimingMode
+28260 [function] cm848_updateFuelTimingInterpolation
+28352 [function] cm848_filterPressureAdjustmentWithFlags
+28520 [function] cm848_evaluatePressureRampConditions
+28736 [function] cm848_processPressureRampControl
+
+# --- gap: 0x00507040(5271616) to 0x005071B8(5271992) ---
+
+29112 [function] cm848_clearPressureModeFlags
+29148 [function] cm848_clearPressureModeFlagAtOffset
+29172 [function] cm848_calculatePressureDeltaAndUpdate
+29284 [function] cm848_initPressureControlState
+29504 [function] cm848_interpolateLoadNormalizationMap
+29684 [function] cm848_interpolateTemperatureScale
+29864 [function] cm848_updateLoadAndTemperatureScales
+29956 [function] cm848_interpolateAuxiliaryParameter
+30024 [function] cm848_interpolateFuelInjectionParam
+30136 BYTE_005075b8 (byte)
+30276 [function] cm848_updateFuelInjectionMinimumValues
+30340 BYTE_00507684 (byte)
+30412 [function] cm848_processFuelInjectionControl
+
+# --- gap: 0x005076CC(5273292) to 0x005077FC(5273596) ---
+
+30716 [function] cm848_calculateInjectionScaledDivision
+30752 BYTE_00507820 (byte)
+30960 [function] hpcr_dispatchMultiPhaseStateMachine
+
+# --- gap: 0x005078F0(5273840) to 0x005079FC(5274108) ---
+
+31228 [function] cm848_calculateRampAdjustment
+31264 [function] cm848_adjustParameterWithRampLimit
+31340 [function] cm848_interpolate2DTable
+31436 [function] cm848_initProtectionLimiterState
+31592 [function] cm848_evaluateFlagCondition
+31772 [function] cm848_emptyStub_reserved507c1c
+31812 [function] cm848_dispatchByParamMode
+31960 [function] protectionState0FaultDurationCounter
+
+# --- gap: 0x00507CD8(5274840) to 0x00507DDC(5275100) ---
+
+32220 [function] hpcr_evaluatehpcr_CbdSensorActivation
+32288 [function] cm848_processLimitPriorityConditions
+
+# --- gap: 0x00507E20(5275168) to 0x00507F9C(5275548) ---
+
+32668 [function] cm848_clearProtectionStatusFlags
+32728 [function] cm848_evaluateLimitConditionByFlag
+32948 [function] cm848_checkLimitBoundaryCondition
+33120 [function] cm848_iterateAndApplyLimitConditions
+
+# --- gap: 0x00508160(5276000) to 0x005082B8(5276344) ---
+
+33464 [function] cm848_calculateTorqueLimiterRamp
+33520 [function] cm848_processSensorBitmapConditions
+
+# --- gap: 0x005082F0(5276400) to 0x00508490(5276816) ---
+
+33936 [function] cm848_initTorqueLimitState
+34016 [function] incrementDiagnosticCounters
+34116 [function] processDiagnosticLimitStatus
+
+# --- gap: 0x00508544(5276996) to 0x00508A94(5278356) ---
+
+35476 [function] cm848_resetFuelEfficiencyTrimState
+35724 [function] cm848_setFuelEfficiencyTrimFlag
+35768 [function] cm848_clearBoostRequestFlag
+35792 [function] cm848_evaluateBoundaryCondition
+35856 [function] protectionStateProcessor
+
+# --- gap: 0x00508C10(5278736) to 0x00508DA8(5279144) ---
+
+36264 [function] protectionStateValidator
+36328 [function] cm848_clearSensorChannelFaultBits
+36472 [function] cm848_updateSensorBitmapAndPointer
+36620 [function] cm848_calculateSubtractionWithProduct
+36644 [function] cm848_handleEventCaptureAndSnapshot
+
+# --- gap: 0x00508F24(5279524) to 0x005091EC(5280236) ---
+
+37356 [function] cm848_calculatePrimaryFuelAdjustment
+
+# --- gap: 0x005091EC(5280236) to 0x005094C0(5280960) ---
+
+38080 [function] cm848_initFuelAdjustmentState
+38160 [function] mpc555_evaluateDiagnosticLoadConditions
+
+# --- gap: 0x00509510(5281040) to 0x00509848(5281864) ---
+
+38984 [function] cm848_copyBufferAndUpdateJ1939Addresses
+39060 [function] cm848_updateOutputControlMask
+39312 [function] cm848_updateOutputControlMaskIndex4
+39352 [function] cm848_updateOutputControlMaskIndex5
+39392 [function] cm848_registerOutputControlOperations
+39468 [function] cm848_emptyStub_noOp
+39492 [function] cm848_clearBitmapFlag
+39548 [function] cm848_storeIndirectValue
+39556 [function] cm848_clearTertiaryBitmapFlag
+39620 [function] cm848_clearSecondaryBitmapFlag
+39684 [function] cm848_isAnyPrimaryFlagSet
+39748 [function] cm848_checkTertiaryBitmapFlagStatus
+39772 [function] cm848_pollUntilConditionMet
+39796 [function] cm848_searchArrayForNonZero
+39812 [function] cm848_isAnySecondaryFlagSet
+39876 [function] cm848_setBitmapFlag
+39936 [function] cm848_setPrimaryBitmapFlag
+39996 [function] cm848_setSecondaryBitmapFlag
+40056 [function] cm848_handleIdleSpeedControlFlag
+40312 [function] cm848_processBoostPressureOffset
+40544 [function] cm848_updateIdleControlStateAndBitmap
+
+# --- gap: 0x00509E60(5283424) to 0x00509F78(5283704) ---
+
+40824 [function] cm848_detectEngineStateTransition
+
+# --- gap: 0x00509F78(5283704) to 0x0050A14C(5284172) ---
+
+41292 [function] cm848_evaluateIdleDiagCondition
+41512 [function] cm848_evaluateIdleCondition
+
+# --- gap: 0x0050A228(5284392) to 0x0050A3AC(5284780) ---
+
+41900 [function] cm848_processIdleControlLoop
+
+# --- gap: 0x0050A3AC(5284780) to 0x0050A680(5285504) ---
+
+42624 [function] cm848_resetIdleStateFlags
+
+# --- gap: 0x0050A680(5285504) to 0x0050A854(5285972) ---
+
+43092 [function] cm848_idleDiagnosticProcessor
+
+# --- gap: 0x0050A854(5285972) to 0x0050A9C8(5286344) ---
+
+43464 [function] cm848_idleControlMaster
+
+# --- gap: 0x0050A9C8(5286344) to 0x0050ABA8(5286824) ---
+
+43944 [function] cm848_resetGovernorDiagnosticState
+44036 [function] cm848_processServiceRequest
+
+# --- gap: 0x0050AC04(5286916) to 0x0050AD1C(5287196) ---
+
+44316 [function] cm848_validateServiceRequestAddress
+
+# --- gap: 0x0050AD1C(5287196) to 0x0050AE4C(5287500) ---
+
+44620 [function] cm848_returnZeroStub
+44636 [function] cm848_emptyStub_reserved50ae5c
+44644 [function] cm848_readParameterWithOffset
+44736 [function] cm848_emptyStub_phaseGroupA
+44756 [function] cm848_readParameterByteOffset
+44868 [function] cm848_readParameterDwordOffset
+44972 [function] cm848_readParameterWordOffset
+45112 [function] cm848_readParameterDwordDualOffset
+45236 [function] cm848_readParameterDwordImmediate
+45344 [function] cm848_readParameterDwordImmediateDual
+45444 [function] cm848_registerReadServiceHandlers
+45568 [function] byteSwap32
+45624 [function] byteSwap16
+45756 [function] cm848_getServiceDataLength
+45792 [function] cm848_validateDiagnosticServiceRequest
+
+# --- gap: 0x0050B2E0(5288672) to 0x0050B554(5289300) ---
+
+46420 [function] mpc555_processIdleControlStateUpdate
+46476 [function] mpc555_extractJ1939MessageFields
+46516 [function] mpc555_updateIdleStateVariables
+46644 [function] cm848_emptyStub_reserved50b634
+
+# --- gap: 0x0050B634(5289524) to 0x0050BA78(5290616) ---
+
+47736 [function] cm848_registerDiagnosticDataRecords
+47896 [function] cm848_enqueueDiagnosticRecord
+48024 [function] cm848_initDiagnosticBuffer
+
+# --- gap: 0x0050BB98(5290904) to 0x0050BCA0(5291168) ---
+
+48288 [function] cm848_processDiagnosticStateChanges
+
+# --- gap: 0x0050BCA0(5291168) to 0x0050BFC4(5291972) ---
+
+49092 [function] cm848_prepareParameterResponseFrame
+49140 [function] cm848_sendParameterCanResponse
+49324 [function] cm848_registerWriteServiceHandlers
+49368 [function] cm848_processResponseFrame
+
+# --- gap: 0x0050C0D8(5292248) to 0x0050C27C(5292668) ---
+
+49788 [function] cm848_writeParameterWithOffset
+49900 [function] cm848_writeParameterDwordOffset
+50004 [function] cm848_writeParameterWordOffset
+50144 [function] cm848_writeParameterDwordDualOffset
+50268 [function] cm848_writeParameterDwordImmediate
+50376 [function] cm848_writeParameterDwordImmediateDual
+50476 [function] cm848_registerWriteServiceDispatch
+50584 [function] cm848_j1939TransportProtocolRequestHandler
+50752 [function] cm848_j1939TransportContinueTransmit
+
+# --- gap: 0x0050C640(5293632) to 0x0050C8C4(5294276) ---
+
+51396 [function] cm848_processJ1939DataBlock
+51436 [function] cm848_validateJ1939PacketBounds
+51560 [function] cm848_sendJ1939StatusMessage
+51712 [function] cm848_j1939SendStatusMessage
+51880 [function] cm848_prepareJ1939StatusData
+52028 [function] cm848_j1939ProcessIncomingMessage
+
+# --- gap: 0x0050CB3C(5294908) to 0x0050CC54(5295188) ---
+
+52308 [function] cm848_j1939ProcessDataContinuation
+
+# --- gap: 0x0050CC54(5295188) to 0x0050CDF0(5295600) ---
+
+52720 [function] cm848_j1939ProcessAcknowledge
+52824 [function] cm848_j1939ProcessAbort
+52988 [function] cm848_j1939DispatchMessageByType
+53100 [function] cm848_processTransmitBufferData
+
+# --- gap: 0x0050CF6C(5295980) to 0x0050D0F0(5296368) ---
+
+53488 [function] cm848_j1939TransmitDataFrames
+
+# --- gap: 0x0050D0F0(5296368) to 0x0050D284(5296772) ---
+
+53892 [function] cm848_j1939DecrementTimeout
+53944 [function] cm848_j1939ProcessTransmitQueue
+54068 [function] cm848_allocateDiagnosticBuffer
+54188 [function] cm848_registerJ1939MessageHandlers
+54320 [function] cm848_getMemoryRegionAccessCode
+54544 [function] mpc555_filterGovernorState
+54796 [function] cm848_calculateGovernorSpeedFiltered
+54920 [function] cm848_calculateGovernorSpeedOutput
+55080 [function] cm848_captureCrankPositionState
+55128 [function] cm848_initiateGovernorMode
+55172 [function] cm848_checkGovernorModeAndCaptureCrank
+55380 [function] cm848_interpolateSpeedParameter
+55396 [function] cm848_interpolateSpeedProtectionTable
+
+# --- gap: 0x0050D864(5298276) to 0x0050DA60(5298784) ---
+
+55904 [function] cm848_setOperationalModeState
+55980 [function] cm848_storeOperationalModeValue
+56064 [function] cm848_calculateSpeedRatio
+56200 [function] calculateSpeedRatioComponent
+56232 [function] cm848_computeSpeedRatioLimit
+
+# --- gap: 0x0050DBA8(5299112) to 0x0050DCAC(5299372) ---
+
+56492 [function] cm848_calculateAlternateSpeedRatio
+56592 BYTE_0050dd10 (byte)
+56640 [function] cm848_emptyStub_reserved50dd40
+56652 [function] cm848_processFaultCountdownTimers
+
+# --- gap: 0x0050DD4C(5299532) to 0x0050DE54(5299796) ---
+
+56916 [function] cm848_processFaultCountdownTimer2
+
+# --- gap: 0x0050DE54(5299796) to 0x0050E000(5300224) ---
+
+57344 [function] cm848_processOperatingConditionFlags
+57504 [function] cm848_processFuelBlendFaultTimer
+57712 [function] cm848_clearSensorDiagnosticFlag
+57824 [function] cm848_checkFuelLimitCondition
+58044 [function] cm848_evaluateFaultStatusWord
+
+# --- gap: 0x0050E2BC(5300924) to 0x0050E414(5301268) ---
+
+58388 [function] cm848_resetFaultStatusWord
+58528 [function] cm848_calculateFuelDemandScaling
+58564 [function] cm848_calculateFuelDemandScaleFactor
+
+# --- gap: 0x0050E4C4(5301444) to 0x0050E610(5301776) ---
+
+58896 [function] cm848_calculateSpeedInterpolationResults
+
+# --- gap: 0x0050E610(5301776) to 0x0050E754(5302100) ---
+
+59220 [function] cm848_interpolateFuelDemandTable
+59240 [function] cm848_interpolateFuelDemandTable
+59380 [function] cm848_calculateSpeedInterpolationParams
+
+# --- gap: 0x0050E7F4(5302260) to 0x0050E938(5302584) ---
+
+59704 [function] cm848_selectFuelDemandMode
+59760 [function] cm848_evaluateFuelModeSelection
+
+# --- gap: 0x0050E970(5302640) to 0x0050EA88(5302920) ---
+
+60040 [function] cm848_selectFuelModeOutputValue
+60072 [function] cm848_selectFuelModeOutput
+60144 [function] cm848_processFuelModeSelection
+60252 [function] cm848_calculateFuelLimitAdjustment
+60400 [function] cm848_processFuelLimitAdjustments
+60424 [function] cm848_updateFuelFilterCounters
+
+# --- gap: 0x0050EC08(5303304) to 0x0050EDBC(5303740) ---
+
+60860 [function] cm848_determineFuelLimitMode
+60964 [function] cm848_calculateFuelFilterAndPeak
+60996 [function] cm848_interpolateFuelLimitValues
+61032 [function] cm848_processFuelFilterPeakOutput
+
+# --- gap: 0x0050EE68(5303912) to 0x0050F060(5304416) ---
+
+61536 [function] cm848_adjustFuelParameter
+
+# --- gap: 0x0050F060(5304416) to 0x0050F16C(5304684) ---
+
+61804 [function] cm848_processFuelCalibration
+
+# --- gap: 0x0050F16C(5304684) to 0x0050F4C0(5305536) ---
+
+62656 [function] cm848_initFuelConditionPointers
+62688 [function] cm848_evaluateFuelConditionDelta
+
+# --- gap: 0x0050F4E0(5305568) to 0x0050F680(5305984) ---
+
+63104 [function] cm848_evaluateSpeedThresholdCondition
+63172 [function] cm848_evaluateConditionPair
+63272 [function] cm848_calculateFuelCounterState
+
+# --- gap: 0x0050F728(5306152) to 0x0050F8A4(5306532) ---
+
+63652 [function] cm848_processFuelFaultMonitoring
+63800 [function] cm848_initializeFuelFaultVariables
+63980 [function] cm848_updateFaultCounterWithFlag
+
+# --- gap: 0x0050F9EC(5306860) to 0x0050FB00(5307136) ---
+
+64256 [function] cm848_calculateWeightedFuelParameter
+64504 [function] cm848_calculateFuelStatusWithFilter
+64652 [function] cm848_processFaultStatusThresholds
+64824 [function] cm848_calculateWeightedFuelValue
+
+# --- gap: 0x0050FD38(5307704) to 0x0050FE54(5307988) ---
+
+65108 [function] cm848_calculateFuelStatusParameters
+65320 [function] cm848_filterAndAccumulatePressureSquared
+
+# --- gap: 0x0050FF28(5308200) to 0x00510058(5308504) ---
+
+65624 [function] cm848_evaluateSensorDeviationCondition
+
+# --- gap: 0x00510058(5308504) to 0x005101CC(5308876) ---
+
+65996 [function] cm848_updateChannelProtectionCondition
+66172 [function] cm848_evaluateProtectionLatchState
+66260 [function] cm848_processProtectionEventConditions
+66476 [function] cm848_evaluateProtectionConditions
+
+# --- gap: 0x005103AC(5309356) to 0x00510520(5309728) ---
+
+66848 [function] cm848_updateChannelProtectionStatus
+
+# --- gap: 0x00510520(5309728) to 0x00510624(5309988) ---
+
+67108 [function] cm848_clearSensorStatusFlags
+67176 [function] cm848_auxSensorChannel26_init
+67316 [function] cm848_auxSensorChannel26_process
+67456 [function] cm848_auxSensorChannel28_init
+67596 [function] cm848_auxSensorChannel28_process
+67736 [function] cm848_auxSensorChannel29_init
+67876 [function] cm848_auxSensorChannel29_process
+67960 [function] cm848_auxSensor29_process
+68016 [function] cm848_crankshaftSensor_init
+68028 [function] cm848_crankshaftSensor_initB
+68156 [function] cm848_crankshaftSensor_process
+68168 [function] cm848_crankshaftSensor_processB
+68296 [function] cm848_auxSensorChannel103_init
+68308 [function] cm848_auxSensorChannel103_init
+68436 [function] cm848_updateAuxSensorChannelState
+68448 [function] cm848_auxSensorChannel103_process
+68576 [function] cm848_initEventFlag26Handler
+68588 [function] cm848_initEventFlag26State
+68684 [function] cm848_processEventFlag26Logic
+68728 [function] cm848_processEventFlag26Counter
+68868 [function] cm848_emptyStub_reserved510d04
+68900 [function] cm848_evaluateSpeedSyncCondition
+69008 [function] cm848_evaluateMultichannelDemandCondition
+69148 [function] cm848_evaluateSpeedSyncSystemState
+69288 [function] cm848_evaluateMultichannelStateConditions
+69428 [function] cm848_processMultichannelRampRate
+
+# --- gap: 0x00510F34(5312308) to 0x005115A4(5313956) ---
+
+71076 [function] cm848_processEventFlag26Dispatcher
+71144 [function] cm848_updateProtectionLockoutState
+
+# --- gap: 0x005115E8(5314024) to 0x00511810(5314576) ---
+
+71696 [function] mpc555_updateEngineProtectionMode
+71928 [function] cm848_processProtectionHysteresis
+71996 [function] cm848_updateProtectionHysteresisCounter
+
+# --- gap: 0x0051193C(5314876) to 0x00511B64(5315428) ---
+
+72548 [function] cm848_setMultichannelStateTableEntry
+72576 [function] cm848_updateDiagnosticTorqueLimitState
+
+# --- gap: 0x00511B80(5315456) to 0x00511DDC(5316060) ---
+
+73180 [function] cm848_updateTransmissionTorqueControl
+73384 [function] cm848_processDynamicControlState
+73428 [function] cm848_processDynamicControlStateB
+
+# --- gap: 0x00511ED4(5316308) to 0x00512130(5316912) ---
+
+74032 [function] cm848_incrementDynamicControlCounter
+
+# --- gap: 0x00512130(5316912) to 0x005122A0(5317280) ---
+
+74400 [function] cm848_protectionModeState2Handler
+74532 [function] cm848_evaluateEmissionCondition
+74704 [function] cm848_selectStateCodeByCondition
+74760 [function] cm848_updateFilteredPressureValue
+74884 [function] cm848_updatePressureDifferenceAccumulator
+75044 [function] cm848_protectionModeState4Handler
+75092 [function] cm848_storeDynamicStateValue
+75208 [function] cm848_protectionModeState3Handler
+75356 [function] cm848_selectNextProtectionModeState
+75384 [function] cm848_evaluateProtectionModeState
+75532 [function] cm848_checkProtectionModeConditions
+
+# --- gap: 0x0051270C(5318412) to 0x005129B0(5319088) ---
+
+76208 [function] cm848_getProtectionControlMode
+
+# --- gap: 0x005129B0(5319088) to 0x00512B1C(5319452) ---
+
+76572 [function] cm848_detectEngineProtectionThreshold
+76740 [function] cm848_selectAlternateStateCode
+76960 [function] cm848_evaluateProtectionMainState
+
+# --- gap: 0x00512CA0(5319840) to 0x00512EAC(5320364) ---
+
+77484 [function] mpc555_evaluateProtectionConditionFlags
+
+# --- gap: 0x00512EAC(5320364) to 0x00512FF4(5320692) ---
+
+77812 [function] cm848_calculateProtectionIntegrator
+78068 [function] cm848_accumulateGovernorThresholdCounts
+
+# --- gap: 0x005130F4(5320948) to 0x00513200(5321216) ---
+
+78336 [function] cm848_emptyStub_reserved513200
+78344 [function] cm848_checkGovernorThresholdCrossing
+
+# --- gap: 0x00513208(5321224) to 0x00513348(5321544) ---
+
+78664 [function] cm848_monitorGovernorMultiChannelThresholds
+
+# --- gap: 0x00513348(5321544) to 0x005134E8(5321960) ---
+
+79080 [function] cm848_setProtectionConditionFlags
+79176 [function] cm848_evaluateGovernorThresholds
+79212 [function] cm848_calculateGovernorSpeedError
+79268 [function] cm848_calculateGovernorTorqueLimitAndMode
+
+# --- gap: 0x005135A4(5322148) to 0x005136DC(5322460) ---
+
+79580 [function] cm848_interpolateGovernorModeLimit
+79760 [function] cm848_applyCrankPositionHysteresis
+79980 [function] cm848_interpolateGovernorModeByIndex
+80116 [function] cm848_interpolateBoostPressureLimit
+
+# --- gap: 0x005138F4(5322996) to 0x005139F8(5323256) ---
+
+80376 [function] cm848_initializeGovernorState
+
+# --- gap: 0x005139F8(5323256) to 0x00513B48(5323592) ---
+
+80712 [function] cm848_evaluateGovernorMode
+
+# --- gap: 0x00513B48(5323592) to 0x00513C78(5323896) ---
+
+81016 [function] cm848_updateEventFlagConditional
+81140 [function] cm848_updateEventFlag11Handler
+81372 [function] cm848_updateEventFlag53
+81420 BYTE_00513e0c (byte)
+
+# --- gap: 0x00513E0C(5324300) to 0x00513F5C(5324636) ---
+
+81756 [function] cm848_copyByteValuesToShorts
+81888 [function] cm848_evaluateSpeedControlDiagnostics
+81992 [function] cm848_processSpeedControlCalculation
+82184 [function] cm848_processSpeedControlCalculationB
+
+# --- gap: 0x00514108(5325064) to 0x00514394(5325716) ---
+
+82836 [function] cm848_processSpeedControlCalculationC
+
+# --- gap: 0x00514394(5325716) to 0x00514F5C(5328732) ---
+
+85852 [function] cm848_calculateSpeedErrorAccumulator
+
+# --- gap: 0x00514F5C(5328732) to 0x0051524C(5329484) ---
+
+86604 [function] cm848_evaluateSpeedControlActivationConditions
+
+# --- gap: 0x0051524C(5329484) to 0x005154E8(5330152) ---
+
+87272 [function] cm848_applySpeedControlOutputLimits
+
+# --- gap: 0x005154E8(5330152) to 0x00515798(5330840) ---
+
+87960 [function] cm848_evaluateSpeedControlIntegration
+88000 [function] cm848_initSpeedControlDiagnosticState
+
+# --- gap: 0x005157C0(5330880) to 0x00515964(5331300) ---
+
+88420 [function] cm848_evaluateSpeedCorrectionFactor
+
+# --- gap: 0x00515964(5331300) to 0x00515BAC(5331884) ---
+
+89004 [function] mpc555_configureTimerChannelA
+89044 [function] mpc555_configureTimerChannelB
+
+# --- gap: 0x00515BD4(5331924) to 0x00515D78(5332344) ---
+
+89464 [function] cm848_validateSpeedCorrectionFlag
+89516 [function] cm848_initSpeedControlIntegratorState
+89696 [function] mpc555_evaluateSpeedNormalizationFactor
+
+# --- gap: 0x00515E60(5332576) to 0x00516014(5333012) ---
+
+90132 [function] cm848_initOilPressureState
+90176 [function] cm848_updateOilPressureFilter
+
+# --- gap: 0x00516040(5333056) to 0x00516164(5333348) ---
+
+90468 [function] cm848_resetOilPressureDebounce
+90492 [function] cm848_updateOilPressureHysteresis
+90560 [function] cm848_processOilPressureHysteresis
+90732 [function] cm848_updateOilPressureOutputFilter
+90860 [function] cm848_initOilPressureProtection
+90936 [function] cm848_calculateOilPressureRate
+91168 [function] cm848_resetOilPressureTimeout
+91184 [function] cm848_processOilPressureIntegration
+
+# --- gap: 0x00516430(5334064) to 0x005165FC(5334524) ---
+
+91644 [function] cm848_resetProtectionRateLimit
+91660 [function] cm848_initOilPressureStateAndLimits
+91776 [function] cm848_updateProtectionRateLimitState
+
+# --- gap: 0x00516680(5334656) to 0x0051679C(5334940) ---
+
+92060 [function] cm848_updateOilPressureCyclicProcess
+92164 [function] cm848_evaluateBoostPressureBlending
+
+# --- gap: 0x00516804(5335044) to 0x005169E4(5335524) ---
+
+92644 [function] cm848_clearEventFlag36Handler
+92704 [function] cm848_initEventFlag54State
+92744 [function] cm848_initCoolantTemperatureProtectionState
+
+# --- gap: 0x00516A48(5335624) to 0x00516B88(5335944) ---
+
+93064 [function] cm848_interpolateCoolantProtectionValue
+93104 [function] cm848_interpolateCoolantTable
+93208 [function] cm848_activateCoolantProtectionEvents
+93452 [function] cm848_updateCoolantEventFlags
+93688 [function] cm848_processCoolantEventTransition
+93788 [function] cm848_clearCoolantProtectionEvents
+94040 [function] cm848_processCoolantProtectionEntry
+
+# --- gap: 0x00516F58(5336920) to 0x0051714C(5337420) ---
+
+94540 [function] cm848_selectCoolantProtectionPath1
+94644 [function] cm848_selectCoolantProtectionPath2
+
+# --- gap: 0x005171B4(5337524) to 0x0051730C(5337868) ---
+
+94988 [function] cm848_processProtectionStateTransition
+
+# --- gap: 0x0051730C(5337868) to 0x00517648(5338696) ---
+
+95816 [function] cm848_resetProtectionEventFlags
+
+# --- gap: 0x00517648(5338696) to 0x0051775C(5338972) ---
+
+96092 [function] cm848_executeCoolantProtectionPhase4
+
+# --- gap: 0x0051775C(5338972) to 0x00517B34(5339956) ---
+
+97076 [function] cm848_evaluateCoolantTemperatureTransition
+
+# --- gap: 0x00517B34(5339956) to 0x00517F20(5340960) ---
+
+98080 [function] cm848_selectCoolantLoadReference
+98120 [function] cm848_selectCoolantProtectionReference
+98208 [function] cm848_updateCoolantTemperatureReference
+
+# --- gap: 0x00517FA0(5341088) to 0x00518124(5341476) ---
+
+98596 [function] cm848_processCoolantProtectionCycleState
+
+# --- gap: 0x00518124(5341476) to 0x0051826C(5341804) ---
+
+98924 [function] evaluateTemperatureDiagnosticState
+99108 [function] cm848_processProtectionStateSwitch
+99252 [function] cm848_handleProtectionStateSwitchCase
+
+# --- gap: 0x005183B4(5342132) to 0x00518538(5342520) ---
+
+99640 [function] cm848_processDiagnosticModeFlags
+99764 [function] cm848_unsignedDivisionWrap64
+99804 [function] cm848_convertTemperatureCelsiusToDisplayFormat
+99884 [function] cm848_divideEngineParameterBy61525
+99944 [function] cm848_updateControlModeAndBuffer
+99968 [function] cm848_copyProtectionStateBuffer
+100008 [function] cm848_wrapperCallControlMode
+100044 [function] cm848_convertTemperatureToScale
+100124 [function] cm848_convertSensorToPercentage
+100164 [function] cm848_clampAndConvertByteValue
+100192 [function] cm848_useFixedConstantValue
+100204 [function] cm848_convertDiscreteDigitalValue
+
+# --- gap: 0x0051876C(5343084) to 0x00519318(5346072) ---
+
+103192 [function] cm848_emptyCommandHandler
+103196 [function] cm848_processDisplayCommandState
+
+# --- gap: 0x0051931C(5346076) to 0x005196F0(5347056) ---
+
+104176 [function] cm848_processFaultListEntry
+104236 [function] cm848_processFaultListEntryB
+
+# --- gap: 0x0051972C(5347116) to 0x00519870(5347440) ---
+
+104560 [function] cm848_initOilTemperatureEventFlag35
+104624 [function] cm848_updateOilTemperatureDebounceState
+
+# --- gap: 0x005198B0(5347504) to 0x00519A18(5347864) ---
+
+104984 [function] cm848_initOilTemperatureProtectionThreshold
+
+# --- gap: 0x00519A18(5347864) to 0x00519C04(5348356) ---
+
+105476 [function] mpc555_initOilTemperatureConditionState
+105572 [function] cm848_initOilTemperatureState
+105604 [function] cm848_storeIndirectValueB
+105620 [function] cm848_evaluateOilTemperatureLoadCondition
+105668 [function] cm848_evaluateProtectionStepCondition
+
+# --- gap: 0x00519CC4(5348548) to 0x00519E2C(5348908) ---
+
+106028 [function] cm848_updateProtectionActiveFlag
+
+# --- gap: 0x00519E2C(5348908) to 0x00519FFC(5349372) ---
+
+106492 BYTE_00519ffc (byte)
+106520 BYTE_0051a018 (byte)
+106664 [function] cm848_processOilTempSensorRange
+
+# --- gap: 0x0051A0A8(5349544) to 0x0051A234(5349940) ---
+
+107060 [function] cm848_evaluateOilTemperatureSensorDiagnostics
+
+# --- gap: 0x0051A234(5349940) to 0x0051A464(5350500) ---
+
+107620 [function] mpc555_evaluateEmissionControlAdjustment
+
+# --- gap: 0x0051A464(5350500) to 0x0051A5F8(5350904) ---
+
+108024 BYTE_0051a5f8 (byte)
+108104 [function] cm848_processEmissionControlState
+
+# --- gap: 0x0051A648(5350984) to 0x0051A75C(5351260) ---
+
+108380 [function] cm848_updateCalibrationPhaseCounter
+
+# --- gap: 0x0051A75C(5351260) to 0x0051A878(5351544) ---
+
+108664 [function] cm848_updateCalibrationPhaseFlags
+
+# --- gap: 0x0051A878(5351544) to 0x0051AAE4(5352164) ---
+
+109284 [function] cm848_evaluateThermalFailsafeConditions
+109392 [function] cm848_evaluateThermalPhaseConditions
+109424 [function] cm848_evaluateThermalPhaseConditionsB
+
+# --- gap: 0x0051AB70(5352304) to 0x0051AECC(5353164) ---
+
+110284 [function] cm848_evaluateThermalInjectionTimingRange
+110328 [function] cm848_monitorThermalProtectionState
+
+# --- gap: 0x0051AEF8(5353208) to 0x0051B158(5353816) ---
+
+110936 [function] cm848_updateThermalLockoutTimer
+
+# --- gap: 0x0051B158(5353816) to 0x0051B56C(5354860) ---
+
+111980 [function] cm848_setProtectionInhibitFlag
+112012 [function] cm848_checkAndDispatchCommand
+112136 [function] cm848_accumulateWithClamp
+112216 [function] cm848_computeClampedDelta
+112296 [function] cm848_evaluateExhaustTemperatureDiagnostics
+
+# --- gap: 0x0051B6A8(5355176) to 0x0051B978(5355896) ---
+
+113016 [function] cm848_processComplexControlLoop
+
+# --- gap: 0x0051B978(5355896) to 0x0051BABC(5356220) ---
+
+113340 [function] cm848_processComplexControlLoopB
+
+# --- gap: 0x0051BABC(5356220) to 0x0051BED0(5357264) ---
+
+114384 [function] cm848_updateProtectionModeAndDispatch
+114628 [function] cm848_updateExhaustTemperatureProtectionMode
+
+# --- gap: 0x0051BFC4(5357508) to 0x0051C278(5358200) ---
+
+115320 [function] cm848_clampProtectionLimit
+115380 [function] cm848_calculateWarmupProtectionLimit
+115408 [function] cm848_calculateWarmupProtectionLimitB
+
+# --- gap: 0x0051C2D0(5358288) to 0x0051C3D8(5358552) ---
+
+115672 [function] cm848_calculateWarmupProtectionLimitC
+
+# --- gap: 0x0051C3D8(5358552) to 0x0051C534(5358900) ---
+
+116020 [function] cm848_calculateDeltaWarmupCompensation
+116188 [function] cm848_processWarmupTimerDecrement
+116416 [function] cm848_updateWarmupProtectionMode
+
+# --- gap: 0x0051C6C0(5359296) to 0x0051C974(5359988) ---
+
+117108 [function] cm848_initWarmupStateAndTimers
+117248 [function] cm848_lookupParameterPointer
+117460 [function] cm848_selectDataPointerByBitFlag
+117588 [function] cm848_nullParameterHandler
+117600 [function] insiteCommandByteDispatcher
+
+# --- gap: 0x0051CB60(5360480) to 0x0051CD88(5361032) ---
+
+118152 [function] cm848_dispatchByJumpTable
+
+# --- gap: 0x0051CD88(5361032) to 0x0051D190(5362064) ---
+
+119184 [function] cm848_addWithMask16
+119208 [function] cm848_getCommandAddressFromMemory
+119240 [function] cm848_getActiveQueueFlags
+119332 [function] cm848_lookupParameterByCommandAndOffset
+119544 [function] cm848_executeStateTransitionMode
+119660 [function] cm848_dispatchByCommandCode
+119804 [function] cm848_initCommandDispatchMode
+119852 [function] cm848_processProtectionTimerState
+119896 [function] mpc555_processCommandQueueStep
+
+# --- gap: 0x0051D458(5362776) to 0x0051D58C(5363084) ---
+
+120204 [function] mpc555_processCommandQueueStateMachine
+120356 [function] cm848_initCommandQueueState
+120388 [function] mpc555_resetModeState
+120476 [function] mpc555_activateCommandQueueExecution
+120568 [function] cm848_syncCfgValuesToEeprom
+120588 [function] cm848_syncDiagnosticsTemperatureToEeprom
+120768 [function] cm848_initCommandDispatchExecution
+120840 [function] cm848_handleCommandDispatchMode
+120848 [function] cm848_handleCommandF5toF8
+120896 [function] cm848_dispatchByOffsetTable
+120940 [function] cm848_handleCommand253State
+121032 [function] cm848_wrapperProcessCommandQueue
+121176 [function] cm848_validateCommandState
+121248 [function] cm848_emptyStateHandler
+121280 [function] cm848_commandStateHandler1
+121300 [function] cm848_commandStateHandler2
+121308 [function] cm848_commandStateHandler3
+121340 [function] cm848_commandStateHandler4
+121360 [function] cm848_commandStateHandler5
+121380 [function] cm848_commandStateHandler6
+121400 [function] cm848_commandStateHandler7
+121420 [function] cm848_resetStateAndDispatch
+121432 [function] cm848_initiateCommandDispatch
+121460 [function] default
+121468 [function] cm848_executeQueuedCommand
+121492 [function] cm848_processParameterTableLookup
+121556 [function] cm848_lookupAndDispatchCommand
+121612 [function] cm848_lookupCommandCodeFromTable
+121752 [function] cm848_clearFilterStateVariables
+121800 [function] cm848_buildStatusFlags
+121908 [function] cm848_packFaultCountersToWords
+122032 [function] cm848_dispatchByCommandState
+
+# --- gap: 0x0051DCB0(5364912) to 0x0051DF70(5365616) ---
+
+122736 [function] cm848_dispatchCommand245
+122780 [function] cm848_dispatchCommand250
+122824 [function] cm848_dispatchCommand251
+122868 [function] cm848_dispatchCommand252
+122912 [function] cm848_dispatchCommand253
+122956 [function] cm848_initEventTimerProcessingMode
+123004 [function] cm848_cancelEventTimer
+123136 [function] cm848_cancelAllEventTimers
+
+# --- gap: 0x0051E100(5366016) to 0x0051E210(5366288) ---
+
+123408 [function] cm848_tickEventTimer
+123596 [function] cm848_processEventTimerTick
+
+# --- gap: 0x0051E2CC(5366476) to 0x0051E480(5366912) ---
+
+124032 [function] cm848_triggerDiagnosticEvent
+124160 [function] cm848_processEventTimerState
+
+# --- gap: 0x0051E500(5367040) to 0x0051EADC(5368540) ---
+
+125660 [function] cm848_initCommandExecutionMode
+125708 [function] cm848_processCommandSwitch
+
+# --- gap: 0x0051EB0C(5368588) to 0x0051ECA4(5368996) ---
+
+126116 [function] diagnosticCommandDispatcher
+
+# --- gap: 0x0051ECA4(5368996) to 0x005200E4(5374180) ---
+
+131300 [function] cm848_processCommandResponseReset
+
+# --- gap: 0x005200E4(5374180) to 0x00520208(5374472) ---
+
+131592 [function] cm848_decrementCountdownTimer
+131648 [function] cm848_initCommandSequence
+131696 [function] cm848_resetStateCounters
+131760 [function] cm848_initializeCommandState
+131864 [function] cm848_initProcessDiagnosticStatus
+131912 [function] cm848_processDiagnosticStatusPackage
+
+# --- gap: 0x00520348(5374792) to 0x005206C4(5375684) ---
+
+132804 [function] cm848_initProcessResetCommand
+132864 [function] hpcr_processResetCommand
+
+# --- gap: 0x00520700(5375744) to 0x005212E0(5378784) ---
+
+135904 [function] cm848_initProcessEepromWrite
+135964 [function] cm848_processEepromWriteCommand
+
+# --- gap: 0x0052131C(5378844) to 0x00521474(5379188) ---
+
+136308 [function] cm848_initCommandAndDispatch
+136436 [function] cm848_initProcessParameterRead
+136496 [function] cm848_processParameterReadCommand
+
+# --- gap: 0x00521530(5379376) to 0x0052164C(5379660) ---
+
+136780 [function] cm848_initWriteParameterByAddress
+136840 [function] mpc555_writeParameterByLookup
+136908 [function] cm848_processParameterWriteCommand
+137048 [function] cm848_initReadDiagnosticValue
+137096 [function] cm848_readDiagnosticValue
+
+# --- gap: 0x00521788(5379976) to 0x00521928(5380392) ---
+
+137512 [function] cm848_processEngineSpeedResponse
+137712 [function] cm848_initProcessChecksumValidation
+137772 [function] cm848_decrementTimeout
+137812 [function] cm848_processChecksumValidation
+
+# --- gap: 0x00521A54(5380692) to 0x00521C30(5381168) ---
+
+138288 [function] cm848_initProcessSecurityCommand
+138336 [function] cm848_completeCommandExecution
+138400 [function] cm848_writeEepromWithRetry
+138564 [function] cm848_processSecurityCommand
+138768 [function] cm848_buildParameterValuePacket8
+139008 [function] cm848_buildParameterValuePacketAA
+
+# --- gap: 0x00521F00(5381888) to 0x00522018(5382168) ---
+
+139288 [function] cm848_initReadSensorChannelStatus
+139348 [function] cm848_lookupParameterTableEntry
+139380 [function] cm848_lookupSensorParameterEntry
+139420 [function] cm848_checkSensorActiveStatus
+139544 [function] cm848_readSensorChannelStatus
+
+# --- gap: 0x00522118(5382424) to 0x00522260(5382752) ---
+
+139872 [function] cm848_validateResponseChecksum
+
+# --- gap: 0x00522260(5382752) to 0x00522398(5383064) ---
+
+140184 [function] cm848_updateEngineRunningCounter
+
+# --- gap: 0x00522398(5383064) to 0x0052261C(5383708) ---
+
+140828 [function] cm848_updateSystemEnableFlag
+140956 [function] cm848_synchronizeEnableState
+141056 [function] cm848_updateDiagnosticStateWithFlag
+141136 [function] cm848_processOperatingStateTransition
+141192 [function] cm848_conditionalSyncEnableState
+141228 [function] cm848_evaluateOperatingStateConditions
+
+# --- gap: 0x005227AC(5384108) to 0x005229C0(5384640) ---
+
+141760 [function] cm848_updateSystemEnableFlagConditional
+141828 [function] cm848_clearEnableStateBit10
+
+# --- gap: 0x00522A04(5384708) to 0x00522B64(5385060) ---
+
+142180 [function] cm848_evaluateOperatingStateTransition
+
+# --- gap: 0x00522B64(5385060) to 0x00522D34(5385524) ---
+
+142644 [function] cm848_updateEngineLoadDiagnostics
+
+# --- gap: 0x00522D34(5385524) to 0x00523068(5386344) ---
+
+143464 [function] cm848_updateProtectionErrorFiltered
+143604 [function] cm848_calculateProtectionCounterValue
+143688 [function] cm848_calculateEngineLoadProtection
+
+# --- gap: 0x00523148(5386568) to 0x00523444(5387332) ---
+
+144452 [function] cm848_interpolateBoostPressureMap
+144632 [function] cm848_updateEepromConfigBits
+
+# --- gap: 0x005234F8(5387512) to 0x00523688(5387912) ---
+
+145032 [function] cm848_toggleEepromDataSource
+145224 [function] cm848_clearTorqueProtectionState
+145232 [function] cm848_initFuelCorrectionState
+145248 [function] cm848_initFuelCorrectionStateB
+145296 [function] cm848_lookupByteFromTable
+145304 [function] cm848_lookupByteFromTableB
+145328 [function] cm848_computeByteChecksum
+145388 [function] cm848_computeAndStoreChecksum
+145496 [function] cm848_computeProtectionFuelLimit
+145540 [function] cm848_generateChecksumWithSeed
+145700 [function] cm848_initializeChecksumStorage
+
+# --- gap: 0x00523924(5388580) to 0x00523A74(5388916) ---
+
+146036 [function] cm848_applyTorqueLimitProtection
+146252 [function] mpc555_validateEepromDataIntegrity
+146268 [function] mpc555_processProtectionCounterToggle
+
+# --- gap: 0x00523B5C(5389148) to 0x00523F4C(5390156) ---
+
+147276 [function] cm848_processIdleSpeedControl
+147296 [function] cm848_processStateTransitionLogic
+
+# --- gap: 0x00523F60(5390176) to 0x00524180(5390720) ---
+
+147840 [function] cm848_calculateFuelInjectionTiming
+
+# --- gap: 0x00524180(5390720) to 0x005242F8(5391096) ---
+
+148216 [function] cm848_calculateTimingAdjustmentRegion
+148320 [function] cm848_calculateProtectionAdjustment
+
+# --- gap: 0x00524360(5391200) to 0x00524594(5391764) ---
+
+148884 [function] cm848_calculateProtectionAdjustmentB
+
+# --- gap: 0x00524594(5391764) to 0x005246B0(5392048) ---
+
+149168 [function] cm848_updateProtectionLimitsB
+149208 [function] cm848_updateProtectionLimits
+149216 [function] cm848_updateProtectionLimitsC
+
+# --- gap: 0x005246E0(5392096) to 0x00524858(5392472) ---
+
+149592 [function] cm848_calculateTimingPeriod
+149792 [function] cm848_interpolateTableWrapper
+149948 [function] cm848_calculateScaledValue
+149984 [function] cm848_updateFuelDemandCalculation
+
+# --- gap: 0x005249E0(5392864) to 0x00524CAC(5393580) ---
+
+150700 [function] cm848_calculateTimingAdvanceRate
+150816 [function] cm848_calculateTimingCorrection
+150992 [function] cm848_initializeTimingState
+151028 [function] cm848_initializeTimingStateB
+
+# --- gap: 0x00524DF4(5393908) to 0x005250F0(5394672) ---
+
+151792 [function] mpc555_updateInjectionTiming
+152036 [function] cm848_updateInjectionTimingB
+
+# --- gap: 0x005251E4(5394916) to 0x00525504(5395716) ---
+
+152836 [function] cm848_updateInjectionTimingC
+
+# --- gap: 0x00525504(5395716) to 0x00525A40(5397056) ---
+
+154176 [function] cm848_processGovernorSpeedLimit
+
+# --- gap: 0x00525A40(5397056) to 0x00525DE4(5397988) ---
+
+155108 [function] cm848_processGovernorSpeedLimitB
+155220 [function] cm848_processGovernorSpeedLimitC
+
+# --- gap: 0x00525E54(5398100) to 0x00526000(5398528) ---
+
+155648 [function] cm848_calculateEngineSpeedLimitTorque
+
+# --- gap: 0x00526000(5398528) to 0x0052614C(5398860) ---
+
+155980 [function] cm848_evaluateSpeedDerateConditions
+
+# --- gap: 0x0052614C(5398860) to 0x005262E8(5399272) ---
+
+156392 [function] cm848_updateSpeedBandConditions
+156584 [function] cm848_updateSpeedBandConditionsB
+156640 [function] cm848_processSpeedWindowComparison
+156692 [function] cm848_processSpeedWindowComparisonB
+156884 [function] cm848_processSpeedWindowComparisonC
+156944 [function] cm848_setBoostInRangeHighFlag
+157024 [function] cm848_setBoostInRangeHighFlagB
+157100 [function] cm848_evaluateBoostInRangeHigh
+
+# --- gap: 0x005265AC(5399980) to 0x005266FC(5400316) ---
+
+157436 [function] cm848_evaluateBoostInRangeDiagnostic
+157620 [function] cm848_clearBoostInRangeFlag
+157664 [function] cm848_clearBoostInRangeOnSensorFault
+157684 [function] cm848_clearBoostInRangeOnEngineRun
+157804 [function] cm848_updateBoostInRangeDiagnostics
+157904 [function] mpc555_calculateTimingTrimOffset
+157928 [function] mpc555_processTpuVoltageChannel
+
+# --- gap: 0x005268E8(5400808) to 0x00526C3C(5401660) ---
+
+158780 [function] mpc555_processVariableTimingControl
+158848 [function] mpc555_clearHardwareRegisterBits
+158904 [function] mpc555_initHardwareRegisterSet2
+
+# --- gap: 0x00526CB8(5401784) to 0x00526F08(5402376) ---
+
+159496 [function] hpcr_updatehpcr_CbdDiagnosticState
+
+# --- gap: 0x00526F08(5402376) to 0x00527050(5402704) ---
+
+159824 [function] hpcr_updatehpcr_CbdDiagnosticStateB
+
+# --- gap: 0x00527050(5402704) to 0x00527524(5403940) ---
+
+161060 [function] cm848_accumulateTimingOffset
+161220 [function] cm848_evaluateTimingModifiers
+
+# --- gap: 0x005275C4(5404100) to 0x00527860(5404768) ---
+
+161888 [function] cm848_signedDivision64Wrapper
+161964 [function] cm848_interpolateCbdTable4Point
+162136 [function] cm848_interpolateWithIndexWrapper
+162156 [function] cm848_interpolateConditionalByMode
+162264 [function] cm848_interpolateConditionalByMode2
+
+# --- gap: 0x005279D8(5405144) to 0x00527C90(5405840) ---
+
+162960 [function] hpcr_interpolatehpcr_CbdTable
+
+# --- gap: 0x00527C90(5405840) to 0x00527FBC(5406652) ---
+
+163772 [function] hpcr_updateVehicleSpeedFilter
+163868 [function] hpcr_initAndProcessCbdState
+164084 [function] hpcr_calculatehpcr_CbdAngleOffset
+
+# --- gap: 0x005280F4(5406964) to 0x00528368(5407592) ---
+
+164712 [function] hpcr_applyhpcr_CbdCylinderTiming
+
+# --- gap: 0x00528368(5407592) to 0x00528474(5407860) ---
+
+164980 [function] mpc555_initRamVariable48
+165220 [function] hpcr_systemHalt
+165312 [function] mpc555_setUpLookupTableAndInterpolate
+
+# --- gap: 0x005285C0(5408192) to 0x0052877C(5408636) ---
+
+165756 [function] hpcr_processThrottlePosition
+
+# --- gap: 0x0052877C(5408636) to 0x005289D4(5409236) ---
+
+166356 [function] mpc555_initHardwareRegisters
+
+# --- gap: 0x005289D4(5409236) to 0x00528B90(5409680) ---
+
+166800 [function] cm848_initThrottleDiagnosticState
+166952 [function] cm848_calculateLoadBasedFuelTrim
+
+# --- gap: 0x00528C28(5409832) to 0x00528E70(5410416) ---
+
+167536 [function] hpcr_computehpcr_CbdAngleCorrection
+
+# --- gap: 0x00528E70(5410416) to 0x0052903C(5410876) ---
+
+167996 [function] hpcr_adjustCbdAngleForProtection
+168040 [function] hpcr_adjustCbdAngleParams
+
+# --- gap: 0x00529068(5410920) to 0x0052922C(5411372) ---
+
+168492 [function] hpcr_updateTemperatureSensorFilter
+
+# --- gap: 0x0052922C(5411372) to 0x00529580(5412224) ---
+
+169344 [function] hpcr_processhpcr_CbdStateMachine
+
+# --- gap: 0x00529580(5412224) to 0x00529908(5413128) ---
+
+170248 [function] hpcr_computehpcr_CbdProtectionAngle
+170388 [function] mpc555_initializePressureParams
+
+# --- gap: 0x00529994(5413268) to 0x00529B44(5413700) ---
+
+170820 [function] hpcr_processRailPressureControl
+
+# --- gap: 0x00529B44(5413700) to 0x00529D1C(5414172) ---
+
+171292 [function] cm848_interpolateConditional4Point
+
+# --- gap: 0x00529D1C(5414172) to 0x00529EA4(5414564) ---
+
+171684 [function] cm848_interpolate7PointTable
+171864 [function] cm848_interpolateDiagnosticTable4Point
+
+# --- gap: 0x00529F58(5414744) to 0x0052A598(5416344) ---
+
+173464 [function] cm848_evaluatePressureLimitConditions
+
+# --- gap: 0x0052A598(5416344) to 0x0052A910(5417232) ---
+
+174352 [function] cm848_interpolate4PointTable
+
+# --- gap: 0x0052A910(5417232) to 0x0052B2E8(5419752) ---
+
+176872 [function] cm848_interpolateFuelMapBySpeed
+
+# --- gap: 0x0052B2E8(5419752) to 0x0052B998(5421464) ---
+
+178584 [function] cm848_interpolateFuelMapBySpeedB
+178624 BYTE_0052b9c0 (byte)
+178736 [function] cm848_interpolateFuelMapBySpeedC
+
+# --- gap: 0x0052BA30(5421616) to 0x0052BCA8(5422248) ---
+
+179368 [function] hpcr_updateFaultMonitorCounter
+
+# --- gap: 0x0052BCA8(5422248) to 0x0052BF74(5422964) ---
+
+180084 [function] cm848_processAdaptiveLoadControl
+
+# --- gap: 0x0052BF74(5422964) to 0x0052C08C(5423244) ---
+
+180364 [function] cm848_evaluateSystemConditions
+
+# --- gap: 0x0052C08C(5423244) to 0x0052C210(5423632) ---
+
+180752 [function] cm848_evaluateFaultCodeBoundary
+
+# --- gap: 0x0052C210(5423632) to 0x0052C688(5424776) ---
+
+181896 [function] cm848_updateFaultMonitorState
+
+# --- gap: 0x0052C688(5424776) to 0x0052C8CC(5425356) ---
+
+182476 [function] cm848_updateFaultFlagStatus
+182652 [function] cm848_calculateDiagnosticAccumulator
+
+# --- gap: 0x0052C97C(5425532) to 0x0052CE04(5426692) ---
+
+183812 [function] cm848_updateDiagnosticCounter
+
+# --- gap: 0x0052CE04(5426692) to 0x0052D140(5427520) ---
+
+184640 [function] cm848_updateBoostDeviationAccumulator
+
+# --- gap: 0x0052D140(5427520) to 0x0052D358(5428056) ---
+
+185176 [function] cm848_updateSpeedReferenceAccumulator
+185356 [function] cm848_updateProtectionAccumulator
+
+# --- gap: 0x0052D40C(5428236) to 0x0052D514(5428500) ---
+
+185620 [function] cm848_evaluateDiagnosticModeTransition
+
+# --- gap: 0x0052D514(5428500) to 0x0052D650(5428816) ---
+
+185936 [function] hpcr_processProtectionEngage
+186024 [function] hpcr_evaluateProtectionStateMachine
+
+# --- gap: 0x0052D6A8(5428904) to 0x0052DAF8(5430008) ---
+
+187128 [function] cm848_validateCalibrationType
+187288 [function] cm848_enqueueNullDataRecord
+
+# --- gap: 0x0052DB98(5430168) to 0x0052DCD0(5430480) ---
+
+187600 [function] cm848_enqueueConditionalRecord
+187688 BYTE_0052dd28 (byte)
+187832 [function] cm848_evaluateSpeedDelta
+187924 [function] cm848_setModeBySpeedComparison
+188052 [function] hpcr_processSpeedState
+
+# --- gap: 0x0052DE94(5430932) to 0x0052DFB0(5431216) ---
+
+188336 [function] cm848_calculateSpeedDerivative
+
+# --- gap: 0x0052DFB0(5431216) to 0x0052E13C(5431612) ---
+
+188732 [function] cm848_updateSpeedFilters
+
+# --- gap: 0x0052E13C(5431612) to 0x0052E24C(5431884) ---
+
+189004 [function] cm848_setModeAndEnqueueOperation
+189084 [function] cm848_setModeIfFlagSet
+189144 [function] cm848_initSpeedControlState
+
+# --- gap: 0x0052E2D8(5432024) to 0x0052E404(5432324) ---
+
+189444 [function] cm848_resetSpeedAccumulators
+189600 [function] cm848_validateSpeedThresholds
+189692 [function] cm848_prepareStateTransition
+189760 [function] cm848_triggerStateTransitionEvent
+189852 [function] cm848_updatePerformanceMetric
+
+# --- gap: 0x0052E59C(5432732) to 0x0052EAC8(5434056) ---
+
+191176 [function] cm848_setOperationalModeByCondition
+191208 [function] cm848_setMode2AndEnqueueState
+191280 [function] cm848_processProtectionEvent
+191428 [function] cm848_evaluateSystemHealthStatus
+
+# --- gap: 0x0052EBC4(5434308) to 0x0052EE00(5434880) ---
+
+192000 [function] cm848_processTimerRecoverySequence
+192220 [function] cm848_validateProtectionStateFlags
+192400 [function] cm848_evaluateProtectionDiagnosticState
+
+# --- gap: 0x0052EF90(5435280) to 0x0052F144(5435716) ---
+
+192836 [function] cm848_updateTimerEventCounter
+192948 [function] cm848_calculateLimitFactorAdjustment
+
+# --- gap: 0x0052F1B4(5435828) to 0x0052F524(5436708) ---
+
+193828 [function] cm848_evaluateSafetyConditions
+
+# --- gap: 0x0052F524(5436708) to 0x0052F7BC(5437372) ---
+
+194492 [function] hpcr_computeAccumulatorProduct
+194672 [function] hpcr_checkEngineLimitConditions
+
+# --- gap: 0x0052F870(5437552) to 0x0052FD4C(5438796) ---
+
+195916 [function] cm848_processTransmissionStatus
+
+# --- gap: 0x0052FD4C(5438796) to 0x0052FED8(5439192) ---
+
+196312 [function] cm848_validateCommandSequence
+
+# --- gap: 0x0052FED8(5439192) to 0x0053005C(5439580) ---
+
+196700 [function] cm848_initCommandValidationState
+
+# --- gap: 0x0053005C(5439580) to 0x00530214(5440020) ---
+
+197140 [function] cm848_updateAuxiliaryOutputPort
+197256 [function] cm848_updateSpeedSensorOutputFlag
+197272 [function] cm848_updateSpeedSensorRangeFlag
+197476 [function] cm848_updateSeverityFlags
+197672 [function] cm848_setEngineOperatingFlag
+197736 [function] cm848_processControlModeSwitching
+
+# --- gap: 0x00530468(5440616) to 0x005305DC(5440988) ---
+
+198108 [function] cm848_buildEngineStatusFlags
+198220 [function] cm848_buildEngineStatusFlags2
+
+# --- gap: 0x0053064C(5441100) to 0x00530878(5441656) ---
+
+198776 [function] cm848_clearOutputCounters
+198812 [function] cm848_evaluateOperatingModeStatus
+199016 [function] cm848_updateSystemEnableCounter
+
+# --- gap: 0x00530968(5441896) to 0x00530D70(5442928) ---
+
+200048 [function] cm848_updateDiagnosticStateTimer
+
+# --- gap: 0x00530D70(5442928) to 0x00530E94(5443220) ---
+
+200340 [function] cm848_checkProtectionBypassConditions
+200576 [function] cm848_processDataRecordCapture
+
+# --- gap: 0x00530F80(5443456) to 0x005311E4(5444068) ---
+
+201188 [function] cm848_initProtectionRampCounter
+
+# --- gap: 0x005311E4(5444068) to 0x00531370(5444464) ---
+
+201584 [function] cm848_validateProtectionRampBounds
+
+# --- gap: 0x00531370(5444464) to 0x0053164C(5445196) ---
+
+202316 [function] hpcr_resethpcr_CbdCylinderState
+202380 [function] hpcr_initCbdToothState
+202412 [function] hpcr_initCbdCylinderArray
+202512 [function] hpcr_calculateFaultDetectionThreshold
+202660 [function] cm848_evaluateActiveFaultConditions
+
+# --- gap: 0x005317A4(5445540) to 0x005318E8(5445864) ---
+
+202984 [function] cm848_evaluateProtectionEnableCondition
+203008 [function] cm848_evaluateProtectionConditionFlag
+203100 [function] hpcr_countActivehpcr_CbdCylinders
+203232 [function] hpcr_updatehpcr_CbdCylinderTiming
+
+# --- gap: 0x005319E0(5446112) to 0x00531B14(5446420) ---
+
+203540 [function] hpcr_updateSystemDiagnosticData
+
+# --- gap: 0x00531B14(5446420) to 0x00531CF8(5446904) ---
+
+204024 [function] hpcr_checkCbdResetConditions
+204084 [function] hpcr_checkAndResetCbdState
+
+# --- gap: 0x00531D34(5446964) to 0x00531F90(5447568) ---
+
+204688 [function] hpcr_cbdCylinderStateHandler
+204776 [function] hpcr_advancehpcr_CbdFaultState
+
+# --- gap: 0x00531FE8(5447656) to 0x00532108(5447944) ---
+
+205064 [function] hpcr_evaluatehpcr_CbdCylinderActivation
+205256 [function] hpcr_activatehpcr_CbdCylinderMode
+205320 [function] hpcr_updateCbdCylinderStatusBitmap
+205436 [function] hpcr_updateSensorStatusBitmap
+205676 [function] hpcr_deactivatehpcr_CbdCylinderMode
+205848 [function] hpcr_deactivatehpcr_CbdCylinderModeB
+205948 [function] hpcr_compareAndSyncFaultFlags
+
+# --- gap: 0x0053247C(5448828) to 0x00532630(5449264) ---
+
+206384 [function] default
+206420 [function] cm848_resetFaultRecordFlags
+206464 [function] cm848_incrementFaultCounters
+206532 [function] cm848_shiftFaultCounters
+206588 [function] cm848_resetFaultTimers
+206636 [function] cm848_removeFromActiveQueue
+206824 [function] cm848_findFaultByCode
+
+# --- gap: 0x005327E8(5449704) to 0x00532A64(5450340) ---
+
+207460 [function] cm848_processDataRecordDispatch
+
+# --- gap: 0x00532A64(5450340) to 0x00532B78(5450616) ---
+
+207736 [function] cm848_updateFaultQueueState
+207784 [function] cm848_iterateAndResetFaultFlags
+
+# --- gap: 0x00532BA8(5450664) to 0x00532D10(5451024) ---
+
+208144 [function] cm848_processFaultQueueEntry
+208312 [function] cm848_validateFreezeFrameConditions
+208528 [function] cm848_evaluateCalibrationChecksum
+
+# --- gap: 0x00532E90(5451408) to 0x00532FAC(5451692) ---
+
+208812 [function] cm848_scanFaultsForFreezeFrameConditions
+209020 [function] cm848_processFaultTableEntry
+209048 [function] cm848_updateMemoryAllocationState
+
+# --- gap: 0x00533098(5451928) to 0x005331EC(5452268) ---
+
+209388 [function] cm848_getFaultFlagByCode
+209488 [function] cm848_updateFaultTableEntry
+209572 [function] cm848_processEnvironmentalLimits
+
+# --- gap: 0x005332A4(5452452) to 0x005333F8(5452792) ---
+
+209912 [function] cm848_clearFaultEntryFromList
+
+# --- gap: 0x005333F8(5452792) to 0x005334FC(5453052) ---
+
+210172 [function] cm848_calculateOffsetCompensation
+
+# --- gap: 0x005334FC(5453052) to 0x0053364C(5453388) ---
+
+210508 [function] cm848_setFaultActiveBit
+210640 [function] cm848_captureFaultSnapshot
+
+# --- gap: 0x005336D0(5453520) to 0x005337D4(5453780) ---
+
+210900 [function] cm848_scanFaultTable
+
+# --- gap: 0x005337D4(5453780) to 0x00533AEC(5454572) ---
+
+211692 [function] cm848_updateCylinderQueueSelection
+211736 [function] cm848_updateSensorInputValidation
+211908 [function] cm848_setFaultTimestampFlags
+212096 [function] cm848_setFaultActiveBitmapEntry
+212164 [function] cm848_processStateTransitionGuard
+
+# --- gap: 0x00533CC4(5455044) to 0x00533DD8(5455320) ---
+
+212440 [function] cm848_evaluateTemperatureSlope
+212464 [function] cm848_updateFaultBitmapFromStateGuards
+
+# --- gap: 0x00533DF0(5455344) to 0x00533EFC(5455612) ---
+
+212732 [function] cm848_iterateFaultStatusRecords
+212784 [function] hpcr_evaluateFaultConditions
+
+# --- gap: 0x00533F30(5455664) to 0x00534328(5456680) ---
+
+213800 [function] cm848_checkFaultCounterThreshold
+213968 [function] cm848_processFaultLampLogic
+214220 [function] cm848_checkFaultStateTransition
+214320 [function] cm848_evaluateFuelDemandFaultCondition
+
+# --- gap: 0x00534530(5457200) to 0x005346C0(5457600) ---
+
+214720 [function] cm848_updateFaultCounter
+214844 [function] cm848_evaluateFaultTimingThreshold
+
+# --- gap: 0x0053473C(5457724) to 0x0053489C(5458076) ---
+
+215196 [function] cm848_processChannelDiagnostics
+215444 [function] cm848_evaluateInjectionTimingStability
+
+# --- gap: 0x00534994(5458324) to 0x00534B68(5458792) ---
+
+215912 [function] cm848_evaluateSensorChannelStateMatch
+
+# --- gap: 0x00534B68(5458792) to 0x00534C6C(5459052) ---
+
+216172 [function] cm848_synchronizeDiagnosticFlagState
+
+# --- gap: 0x00534C6C(5459052) to 0x00534DB4(5459380) ---
+
+216500 [function] hpcr_calculateLoadFactorDynamic
+
+# --- gap: 0x00534DB4(5459380) to 0x00534FB0(5459888) ---
+
+217008 [function] hpcr_processMultiChannelDiagnostics
+
+# --- gap: 0x00534FB0(5459888) to 0x0053515C(5460316) ---
+
+217436 [function] cm848_incrementCounterOrSetWarmup
+217608 [function] cm848_updateSystemConditionMetric
+217712 [function] cm848_storeRegisterValue
+217892 [function] cm848_processOutputControlSequence
+217924 [function] cm848_evaluateOutputControlConditions
+218120 [function] cm848_handleEnableStateTransition
+218304 [function] cm848_evaluateTimingAdvanceLimits
+
+# --- gap: 0x005354C0(5461184) to 0x00535998(5462424) ---
+
+219544 [function] cm848_clearFaultAccumulator
+219572 [function] cm848_updateFilteredRpmValue
+
+# --- gap: 0x005359B4(5462452) to 0x00535D5C(5463388) ---
+
+220508 [function] cm848_processFuelingRateControl
+220716 [function] cm848_calculateDiagnosticThresholdLevel
+
+# --- gap: 0x00535E2C(5463596) to 0x005360EC(5464300) ---
+
+221420 [function] cm848_updateOutputDriverControl
+
+# --- gap: 0x005360EC(5464300) to 0x0053624C(5464652) ---
+
+221772 [function] cm848_linearInterpolate1DWrapper
+
+# --- gap: 0x0053624C(5464652) to 0x00536540(5465408) ---
+
+222528 [function] cm848_processProtectionRecoveryState
+222776 [function] cm848_buildStatusBitmaskFromTable
+222796 [function] cm848_buildStatusBitmaskSecondary
+222812 [function] cm848_buildStatusBitmaskFromPointer
+222904 [function] cm848_getDiagnosticStatus
+
+# --- gap: 0x005366B8(5465784) to 0x005367CC(5466060) ---
+
+223180 [function] cm848_validateCalibrationLookup
+
+# --- gap: 0x005367CC(5466060) to 0x00536958(5466456) ---
+
+223576 [function] cm848_resetStateVariable
+
+# --- gap: 0x00536958(5466456) to 0x00536DE0(5467616) ---
+
+224736 [function] vp44Message300FaultFlagProcessor
+224844 [function] cm848_processBoostInRangeFlags
+
+# --- gap: 0x00536E4C(5467724) to 0x005371F4(5468660) ---
+
+225780 [function] cm848_validateCalibrationParameters
+225948 [function] cm848_emptyStub_boostControl
+225968 [function] cm848_updatePressureControlTarget
+225988 [function] cm848_initPressureControlVariables
+
+# --- gap: 0x005372C4(5468868) to 0x0053752C(5469484) ---
+
+226604 [function] cm848_initDataBufferPointers
+226692 [function] cm848_initServiceRequestState
+226796 [function] cm848_calculateFuelingMassFlowRate
+
+# --- gap: 0x005375EC(5469676) to 0x005377F4(5470196) ---
+
+227316 [function] cm848_enqueueDataRecord
+227492 [function] cm848_processProtectionDiagnosticState
+227652 [function] cm848_executeTimerCallbacks
+227764 [function] cm848_iterateAndExecuteTimerEntries
+227800 [function] cm848_executeTimerCallbacksViaLR
+227864 [function] cm848_enqueueToBuffer17
+227932 [function] mpc555_updateProtectionLimitFilter
+228044 [function] mpc555_processJ1939MessageWithFilter
+
+# --- gap: 0x00537ACC(5470924) to 0x00537CF8(5471480) ---
+
+228600 [function] initDiagnosticBufferPointers
+
+# --- gap: 0x00537CF8(5471480) to 0x00538278(5472888) ---
+
+230008 [function] mpc555_buildBitmapAndSetHwFlag
+230096 [function] cm848_resolveParameterAddress
+230352 [function] mpc555_calculatePressureDropOffset
+230560 [function] cm848_pushToCircularBuffer
+
+# --- gap: 0x005384A0(5473440) to 0x005385E0(5473760) ---
+
+230880 [function] mpc555_processBufferSequence
+
+# --- gap: 0x005385E0(5473760) to 0x00538748(5474120) ---
+
+231240 [function] cm848_enqueueToCircularBufferWrapper
+
+# --- gap: 0x00538748(5474120) to 0x00538880(5474432) ---
+
+231552 [function] cm848_evaluateFlowRateCondition
+231796 [function] cm848_synchronizeTimebase
+
+# --- gap: 0x00538974(5474676) to 0x00538A84(5474948) ---
+
+232068 BYTE_00538a84 (byte)
+
+# --- gap: 0x00538A84(5474948) to 0x00538C78(5475448) ---
+
+232568 [function] cm848_updateEmissionControlParameter
+232764 [function] cm848_dispatchFaultTimerHandlers
+232928 PTR_DAT_00538de0 (pointer)
+233126 PTR_DAT_00538ea6 (pointer)
+233132 [function] cm848_dataTable_00538eac
+233136 [function] cm848_registerJ1939PgnHandler
+233204 [function] cm848_dataTable_00538ef4
+
+# --- gap: 0x00538EF4(5476084) to 0x0053950A(5477642) ---
+
+234762 bank2CommandHandler_ptr0 (pointer)
+234768 PTR_FUN_00539510 (pointer)
+
+# --- gap: 0x00539510(5477648) to 0x00539768(5478248) ---
+
+235368 [function] cm848_dataTable_00539768
+235428 PTR_DAT_005397a4 (pointer)
+235438 PTR_LAB_005397ae (pointer)
+235442 PTR_LAB_005397b2 (pointer)
+235450 PTR_LAB_005397ba (pointer)
+235624 [function] cm848_dataTable_00539868
+
+# --- gap: 0x00539868(5478504) to 0x00539ADE(5479134) ---
+
+236254 paramHashBuckets (byte)
+
+# --- gap: 0x00539ADE(5479134) to 0x00539D18(5479704) ---
+
+236824 [function] cm848_dataTable_00539d18
+
+# --- gap: 0x00539D18(5479704) to 0x0053A110(5480720) ---
+
+237840 [function] cm848_dataTable_0053a110
+
+# --- gap: 0x0053A110(5480720) to 0x0053A968(5482856) ---
+
+239976 paramAddressEntries (byte)
+239978 PTR_DAT_0053a96a (pointer)
+
+# --- gap: 0x0053A96A(5482858) to 0x0053AC46(5483590) ---
+
+240710 PTR_DAT_0053ac46 (pointer)
+240722 calibration_handler_table (pointer)
+240902 PTR_WORD_0053ad06 (pointer)
+240974 PTR_FUN_0053ad4e (pointer)
