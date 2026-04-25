@@ -184,6 +184,22 @@ See [bank1.txt](bank1.txt) for full byte-level map.
 | 0x010C(268) | 6 | Build Date | `100902` (2002-10-09) |
 | 0x0112(274) | 6 | Version bytes | `04 01 01 02 0C 08` |
 
+## Keeping Files in Sync
+
+When a new memory address is identified and named, it **must** be updated in both places:
+
+1. **Ghidra CSVs** (`output/global_variables.csv`, `output/function_renames.csv`, etc.) — this is the source of truth for Ghidra analysis
+2. **Memory mapping files** (`bank1.txt`, `bank2.txt`, `ram.txt`, or `eeprom.txt`) — this is the human-readable reference
+
+The memory mapping txt files are generated from the Ghidra CSVs plus manually documented fields (EEPROM layout, ROM header). If you name a new variable or function:
+
+1. Add/update the entry in the appropriate Ghidra CSV
+2. Run `./analyze.sh import` then `./analyze.sh export` to apply to Ghidra
+3. Add the corresponding line to the appropriate memory mapping txt file
+4. Use the decimal offset as the line number and include the name and type
+
+Failing to update both will cause the documentation to drift out of sync with the Ghidra project.
+
 ## Open Questions
 
 1. **How is the 0x00408Exx(4231xxx) calibration region initialized?**
