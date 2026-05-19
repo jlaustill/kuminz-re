@@ -57,13 +57,13 @@ cmd_memmap() {
 cmd_full() {
     print_header "FULL ANALYSIS PIPELINE: $FIRMWARE_NAME (PowerPC)"
 
-    echo "This will run: init -> analyze -> memmap -> import -> export"
+    echo "This will run: init -> memmap -> import -> analyze -> export"
     echo ""
 
     cmd_init
-    cmd_analyze
     cmd_memmap
     cmd_import
+    cmd_analyze
     cmd_export
 
     print_header "FULL PIPELINE COMPLETE"

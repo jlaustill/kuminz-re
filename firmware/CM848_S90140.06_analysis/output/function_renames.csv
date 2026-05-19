@@ -1325,7 +1325,6 @@ address,name
 0x00040938,cm848_protectionFuelRateStep
 0x00040978,cm848_protectionFuelRateRamp
 0x000409b0,cm848_processTimingTableLookup
-0x00040d40,cm848_initFuelRateFromCapability
 0x00040d74,cm848_validateFuelRateTarget
 0x00040dd4,cm848_copyProtectionRampValue
 0x00040de8,cm848_processTorqueLimitBounded
@@ -1787,7 +1786,6 @@ address,name
 0x0050241c,cm848_updateSensorModeState
 0x00502464,cm848_processSensorInterpolationMode
 0x00502af4,cm848_limitFuelDemandValue
-0x00502b24,cm848_clearBufferInitFlag
 0x00502b34,mpc555_initSensorBufferValues
 0x00502b6c,cm848_filterAndInterpolateSensor
 0x00502eb8,cm848_initAndFilterSensor
@@ -1851,6 +1849,7 @@ address,name
 0x00506a64,cm848_calculateTimingFloorDivisionB
 0x00506ad4,cm848_calculateTimingOffsetWithFilter
 0x00506b34,cm848_calculateFuelTimingWithFilter
+0x00506c94,BYTE_00506c94
 0x00506cd4,cm848_interpolateFuelTimingWithCheck
 0x00506e18,cm848_selectFuelTimingSourceByFlag
 0x00506e28,cm848_selectFuelTimingMode
@@ -1867,9 +1866,12 @@ address,name
 0x005074a8,cm848_updateLoadAndTemperatureScales
 0x00507504,cm848_interpolateAuxiliaryParameter
 0x00507548,cm848_interpolateFuelInjectionParam
+0x005075b8,BYTE_005075b8
 0x00507644,cm848_updateFuelInjectionMinimumValues
+0x00507684,BYTE_00507684
 0x005076cc,cm848_processFuelInjectionControl
 0x005077fc,cm848_calculateInjectionScaledDivision
+0x00507820,BYTE_00507820
 0x005078f0,hpcr_dispatchMultiPhaseStateMachine
 0x005079fc,cm848_calculateRampAdjustment
 0x00507a20,cm848_adjustParameterWithRampLimit
@@ -2001,6 +2003,7 @@ address,name
 0x0050db88,calculateSpeedRatioComponent
 0x0050dba8,cm848_computeSpeedRatioLimit
 0x0050dcac,cm848_calculateAlternateSpeedRatio
+0x0050dd10,BYTE_0050dd10
 0x0050dd40,cm848_emptyStub_reserved50dd40
 0x0050dd4c,cm848_processFaultCountdownTimers
 0x0050de54,cm848_processFaultCountdownTimer2
@@ -2121,6 +2124,7 @@ address,name
 0x00513c78,cm848_updateEventFlagConditional
 0x00513cf4,cm848_updateEventFlag11Handler
 0x00513ddc,cm848_updateEventFlag53
+0x00513e0c,BYTE_00513e0c
 0x00513f5c,cm848_copyByteValuesToShorts
 0x00513fe0,cm848_evaluateSpeedControlDiagnostics
 0x00514048,cm848_processSpeedControlCalculation
@@ -2200,9 +2204,12 @@ address,name
 0x00519c94,cm848_evaluateOilTemperatureLoadCondition
 0x00519cc4,cm848_evaluateProtectionStepCondition
 0x00519e2c,cm848_updateProtectionActiveFlag
+0x00519ffc,BYTE_00519ffc
+0x0051a018,BYTE_0051a018
 0x0051a0a8,cm848_processOilTempSensorRange
 0x0051a234,cm848_evaluateOilTemperatureSensorDiagnostics
 0x0051a464,mpc555_evaluateEmissionControlAdjustment
+0x0051a5f8,BYTE_0051a5f8
 0x0051a648,cm848_processEmissionControlState
 0x0051a75c,cm848_updateCalibrationPhaseCounter
 0x0051a878,cm848_updateCalibrationPhaseFlags
@@ -2434,6 +2441,7 @@ address,name
 0x0052a910,cm848_interpolate4PointTable
 0x0052b2e8,cm848_interpolateFuelMapBySpeed
 0x0052b998,cm848_interpolateFuelMapBySpeedB
+0x0052b9c0,BYTE_0052b9c0
 0x0052ba30,cm848_interpolateFuelMapBySpeedC
 0x0052bca8,hpcr_updateFaultMonitorCounter
 0x0052bf74,cm848_processAdaptiveLoadControl
@@ -2452,6 +2460,7 @@ address,name
 0x0052daf8,cm848_validateCalibrationType
 0x0052db98,cm848_enqueueNullDataRecord
 0x0052dcd0,cm848_enqueueConditionalRecord
+0x0052dd28,BYTE_0052dd28
 0x0052ddb8,cm848_evaluateSpeedDelta
 0x0052de14,cm848_setModeBySpeedComparison
 0x0052de94,hpcr_processSpeedState
@@ -2576,7 +2585,6 @@ address,name
 0x005360ec,cm848_updateOutputDriverControl
 0x0053624c,cm848_linearInterpolate1DWrapper
 0x00536540,cm848_processProtectionRecoveryState
-0x00536638,cm848_buildStatusBitmaskFromTable
 0x0053664c,cm848_buildStatusBitmaskSecondary
 0x0053665c,cm848_buildStatusBitmaskFromPointer
 0x005366b8,cm848_getDiagnosticStatus
@@ -2608,6 +2616,7 @@ address,name
 0x00538748,cm848_enqueueToCircularBufferWrapper
 0x00538880,cm848_evaluateFlowRateCondition
 0x00538974,cm848_synchronizeTimebase
+0x00538a84,BYTE_00538a84
 0x00538c78,cm848_updateEmissionControlParameter
 0x00538d3c,cm848_dispatchFaultTimerHandlers
 0x00538eac,cm848_dataTable_00538eac
