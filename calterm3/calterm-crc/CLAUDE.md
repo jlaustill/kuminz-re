@@ -91,8 +91,6 @@ for each byte in string:
 
 ## Calterm III Installation Path
 
-The Calterm III installation being analyzed is at:
-`/home/jlaustill/Software/Calterm III/`
-
-Test e2m files are at:
-`/home/jlaustill/Downloads/Cummins ECFG + E2M Files/`
+Paths are machine-specific. Adjust to your local install:
+- Calterm III: typically `~/Software/Calterm III/` or a Windows path if running via Wine
+- Test e2m files: see `originals/` directory in `e2m-analysis/` for committed samples

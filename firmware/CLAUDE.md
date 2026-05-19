@@ -92,6 +92,12 @@ Key RAM-executed functions called from `mainLoopIteration`:
 
 ## Workflow
 
+> **CM848 Pipeline Note:** CM848 has dual-bank Flash (ROM + Flash2). Flash2 must be
+> loaded (`memmap`) and entry points seeded (`import`) *before* Ghidra auto-analysis
+> runs — otherwise cross-bank `bl` calls into Flash2 produce fabricated decompilation.
+> CM848's `analyze.sh full` uses: `init → memmap → import → analyze → export`.
+> CM550's `analyze.sh full` uses: `init → analyze → memmap → import → export`.
+
 ```bash
 cd [firmware]_analysis/ghidra
 

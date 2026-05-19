@@ -58,19 +58,11 @@ This is a reverse engineering project focused on analyzing e2m files used by the
 3. Cross-reference Type G parameters with Calterm groups
 4. Hypothesis testing through formula verification
 
-## Current Research Status
+## Status: COMPLETE
 
-### COMPLETED
-1. ✅ File structure analysis (248K+ rows analyzed)
-2. ✅ Memory address formula reverse-engineering
-3. ✅ Base address mapping (15 confirmed mappings)
-4. ✅ Parameter grouping mechanism discovery
-5. ✅ Column 3, 4, 5, 7, 14, 16 purposes decoded
-
-### REMAINING TASKS
-1. Complete base address mapping (628 combinations remaining)
-2. Decode Column 15 (final unknown column - likely version/padding)
-3. Cross-file addressing validation
+All reverse engineering objectives achieved. See `docs/` for final findings.
+Key milestones: file format decoded, memory address formula confirmed,
+521 base address mappings discovered, Column 14 grouping mechanism confirmed.
 
 ## Commands
 
@@ -79,6 +71,8 @@ npm install              # Install dependencies
 npm run typecheck        # TypeScript type checking
 npm run lint             # ESLint
 npm run analyze:all      # Run all analysis tools
+npx tsx src/tools/validate-against-firmware.ts   # Validate addresses against firmware
+npx tsx src/tools/generate-verified-lookup.ts    # Generate lookup table
 ```
 
 ## Key Research Principles
