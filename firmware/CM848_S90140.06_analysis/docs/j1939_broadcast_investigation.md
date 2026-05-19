@@ -141,30 +141,26 @@ to EF00 service bytes):
 
 ## Open Questions / Next Steps
 
-### Priority 1: Live measurement
-Connect Calterm while truck is running. Read gate addresses with kuminz-cli:
-```bash
-kuminz-cli slcan0 --read-addr 40BA74 2   # Gate A
-kuminz-cli slcan0 --read-addr 40BA76 2   # Gate B
-```
-Compare with key-off values (0x0000). The non-zero value when Calterm is active
-tells us exactly what bits Calterm sets and confirms the gate address.
+**Note:** Calterm is NOT available — that is why this project exists. All paths below are firmware RE or direct ECU memory writes via kuminz-cli.
 
-### Priority 2: Find which EF00 service enables op code 5
-The output control dispatcher maps command codes to op codes. The EF00 service byte
-that triggers `cm848_updateOutputControlMaskIndex5` (op 5) needs to be found.
-Look for: dispatch table at 0x0040A7D0–0x0040A7D4 area that maps EF00 byte → op code.
+### Path A (Ghidra): Trace EF00 → op code dispatch table
+The output control dispatcher has a table that maps EF00 command bytes to op codes.
+Look for: callers of `cm848_registerOutputControlOperations` in `cm848_rom.ghidra.cpp`,
+then find the dispatch table entry near `0x0040A7D0` that routes an EF00 byte to op 5.
+Pattern to find: `lbz rN, offset(r_payload)` followed by compare/branch to output control handler.
 
-### Priority 3: Decode Flash2[0x539868]
-Function has floating-point save opcodes that Ghidra can't decode. Read binary manually
-to find what it initializes. Called once at boot from `hpcr_exceptionHandler @ ROM[0x544C4]`.
+### Path B (kuminz-cli): Direct gate write — bypass the EF00 question entirely
+Write `0x000c` directly to `0x0040BA74` and `0x0040BA76` via kuminz-cli and observe
+whether the ECU starts broadcasting EEC1/EEC2/etc. on the CAN bus.
+If yes: we have a working implementation regardless of which EF00 byte Calterm uses.
+Note: `--write-addr` was removed in commit 01d5096 — would need a new `--enable-broadcasts`
+command or targeted write support re-added.
 
-### Priority 4: Decode PGN handlers
-Map which PGNs are registered:
-- EEC1 (0xF004) → `cm848_j1939SendPgn61444_F004_EngineSpeedTorqueEec1`
-- EEC2 (0xF003) → `cm848_j1939SendPgn61443_F003_AcceleratorPedalEec2`
-- EEC3 (0xFEDF) → `cm848_j1939BuildPgn65247_FEDF_Eec3`
-- All 16 PGNs now visible from `initDiagnosticBufferPointers` decompilation
+### Path C (binary): Decode Flash2[0x539868]
+Function has floating-point save/restore opcodes (`stfd`/`lfd`) that Ghidra can't decode.
+First 48 bytes suggest MPC555 TouCAN peripheral init (0x003070xx registers).
+Full decode may reveal additional broadcast control initialization.
+Called once at boot: `hpcr_exceptionHandler @ ROM[0x544C4]` → this function → `initDiagnosticBufferPointers`.
 
 ---
 
