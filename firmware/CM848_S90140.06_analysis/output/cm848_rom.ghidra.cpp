@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Wed May 20 06:56:54 MDT 2026
+// Generated: Wed May 20 12:35:31 MDT 2026
 
 
 //
@@ -97493,6 +97493,21 @@ void cm848_processJ1939RxDispatch(void)
 
 
 //
+// Function: cm848_initAllJ1939Handlers @ 0x00539190
+//
+
+/* WARNING: Control flow encountered bad instruction data */
+
+void cm848_initAllJ1939Handlers(void)
+
+{
+                    /* WARNING: Bad instruction - Truncating control flow here */
+  halt_baddata();
+}
+
+
+
+//
 // Function: cm848_lookupJ1939PgnHandlerByHash @ 0x00539768
 //
 
@@ -97562,4 +97577,4 @@ void cm848_dispatchCommandSequenceHandlers(void)
 
 
 
-// Export complete - 2292 functions processed
+// Export complete - 2293 functions processed

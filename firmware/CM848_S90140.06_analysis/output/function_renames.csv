@@ -2638,6 +2638,7 @@ address,name
 0x00538eac,cm848_noOpStub
 0x00538eb0,cm848_registerJ1939PgnHandler
 0x00538ef4,cm848_processJ1939RxDispatch
+0x00539190,cm848_initAllJ1939Handlers
 0x00539768,cm848_lookupJ1939PgnHandlerByHash
 0x00539868,cm848_clearProtectionStateAndEvalSensors
 0x00539d18,cm848_enableJ1939OutputAndSync
