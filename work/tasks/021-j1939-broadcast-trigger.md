@@ -158,6 +158,28 @@ After sending service 0x07 or 0x16, monitor CAN for periodic EEC1/EEC2 traffic. 
 
 **Named 6 previously unnamed Flash2 dataTable_ stubs:**
 - `cm848_noOpStub`, `cm848_processJ1939RxDispatch`, `cm848_lookupJ1939PgnHandlerByHash`
-- `cm848_clearProtectionStateAndEvalSensors`, `cm848_enableJ1939OutputAndSync`, `cm848_dispatchCommandSequenceHandlers`
+- `cm848_initTouCanAndJ1939Handlers`, `cm848_enableJ1939OutputAndSync`, `cm848_dispatchCommandSequenceHandlers`
 
 **Conclusion:** Complete Calterm handshake is EF00 0x0a → EF00 0x07. Service 0x16 is a shortcut that skips the init step. The broadcast trigger is now fully identified.
+
+### 2026-05-20 (continued) — Boot chain confirmed in decompiled output
+
+**Flash2 memory stale data:** Flash2 block had wrong content at 0x539xxx — `ForceAnalyzeFunction` was reading garbage bytes and "successfully" creating broken functions. Root cause: `memmap` must be run before `forceanalyze` to ensure the Flash2 block holds live-dump data. After `memmap`, forceanalyze correctly disassembles.
+
+**`clearCodeUnits` required before `disassemble`:** `ForceAnalyzeFunction.java` updated to call `listing.clearCodeUnits(addr, addr.add(3), false)` before `disassemble(addr)`. Without this, stale "bad instruction" code units at the entry point block the disassembler silently (returns `true` but writes nothing). Re-running `./analyze.sh analyze` after forceanalyze does NOT fix this — Ghidra skips already-analyzed addresses.
+
+**Auto-analysis does not fix already-known broken functions:** Running `./analyze.sh analyze` after the functions existed as stale records did nothing — the aggressive instruction finder skips addresses that already have function records. `forceanalyze` (delete → clearCodeUnits → disassemble → createFunction) is the correct fix.
+
+**Name correction:** `cm848_clearProtectionStateAndEvalSensors` (0x00539868) was renamed to `cm848_initTouCanAndJ1939Handlers`. Real decompilation shows TouCAN A hardware init (clears IMASK, configures MB0, zeros 16 mailbox data bytes, clears MCR) followed by `cm848_initAllJ1939Handlers()`. Protection state clearing was a wrong-binary artifact.
+
+**Boot chain visible in decompiled output:** `hpcr_exceptionHandler` calls many init functions, then calls `FUN_00527860` which is the last visible call. The code from 0x00054a9c onwards is a second init batch Ghidra thought was dead code. Created `cm848_initializationContinuation` at 0x00054a9c via forceanalyze — it now appears in the decompilation and includes the call to `cm848_initTouCanAndJ1939Handlers`. Full chain now visible:
+
+```
+hpcr_exceptionHandler (boot reset handler)
+  → cm848_initializationContinuation (0x00054a9c) [second init batch]
+      → cm848_initTouCanAndJ1939Handlers (0x00539868) [TouCAN init + J1939 setup]
+          → cm848_initAllJ1939Handlers (0x00539190) [registers all PGN handlers]
+              → cm848_registerJ1939DiagnosticHandlers [populates EF00 dispatch table]
+```
+
+Added `forceanalyze` command to `analyze.sh` / `common.sh` (backed by `ForceAnalyzeFunction.java`) for future use on functions missed by Ghidra auto-analysis.

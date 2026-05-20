@@ -387,6 +387,39 @@ cmd_decompile() {
     run_script DecompileFunction.java "$target"
 }
 
+cmd_forceanalyze() {
+    local addr="$1"
+    local name="$2"
+
+    if [ -z "$addr" ]; then
+        print_error "Usage: $0 forceanalyze <address> [name]"
+        print_error "Examples:"
+        print_error "  $0 forceanalyze 0x00539190 cm848_initAllJ1939Handlers"
+        print_error "  $0 forceanalyze 0x00539768"
+        print_error ""
+        print_error "Use for functions missed by Ghidra auto-analysis (e.g. indirect-only"
+        print_error "call targets). Removes any stale function, forces disassembly, then"
+        print_error "recreates the function so the decompiler has real code to work with."
+        exit 1
+    fi
+
+    check_ghidra
+    check_project
+
+    print_header "FORCE ANALYZING FUNCTION: $addr"
+
+    if [ -n "$name" ]; then
+        echo "Address: $addr"
+        echo "Name:    $name"
+        run_script ForceAnalyzeFunction.java "$addr" "$name"
+    else
+        echo "Address: $addr"
+        run_script ForceAnalyzeFunction.java "$addr"
+    fi
+
+    print_success "Force analysis complete — run '$0 export' to update decompilation"
+}
+
 cmd_status() {
     print_header "PROJECT STATUS: $FIRMWARE_NAME"
 
@@ -446,8 +479,9 @@ cmd_help() {
     echo "  vartypes   Apply global variable types (clears stale types first)"
     echo "  constants  Apply constant definitions (magic numbers with names)"
     echo "  arrays     Apply array definitions"
-    echo "  decompile  Decompile a single function by address or name"
-    echo "  full       Run complete pipeline (firmware-specific)"
+    echo "  decompile     Decompile a single function by address or name"
+    echo "  forceanalyze  Force disassembly + function creation at an address"
+    echo "  full          Run complete pipeline (firmware-specific)"
     echo "  status     Show project status"
     echo "  help       Show this help message"
     echo ""
@@ -477,7 +511,8 @@ dispatch_command() {
         vartypes)   cmd_vartypes ;;
         constants)  cmd_constants ;;
         arrays)     cmd_arrays ;;
-        decompile)  cmd_decompile "$@" ;;
+        decompile)      cmd_decompile "$@" ;;
+        forceanalyze)   cmd_forceanalyze "$@" ;;
         status)     cmd_status ;;
         help|--help|-h) cmd_help ;;
         *)
