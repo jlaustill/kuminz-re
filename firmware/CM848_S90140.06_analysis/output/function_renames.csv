@@ -884,7 +884,13 @@ address,name
 0x00022220,cm848_updateGovernorTimers
 0x00022318,cm848_initGovernorDerivativeTerms
 0x0002232c,cm848_initGovernorControlHandler
-0x0002235c,cm848_noOperation
+# 0x0002235c is the epilogue of cm848_initGovernorControlHandler (not a separate function).
+# Previously misidentified as cm848_noOperation because e2m Flash2 (V11.20.13.16) had
+# bl instructions targeting this address where cm848_processJ1939DiagnosticRequest lived
+# in the old ROM version. After switching to cm848_flash2_live.bin (V11.46.06), this
+# address is no longer called from Bank 2.  Remove from CSV so Ghidra merges it back
+# into the parent function.
+# 0x0002235c,cm848_noOperation
 0x0002236c,cm848_processSecurityAccessRequest
 0x000223a0,cm848_clearGovernorDerivativeMode
 0x000223f4,cm848_processGovernorControlMessage

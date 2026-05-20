@@ -186,7 +186,7 @@ and runtime RAM beyond it.
 
 ## Related Documentation
 
-- [Memory Address Mapping](memory_address_mapping.md) - Calterm to RAM address translation
+- [Memory Address Mapping](memory-mappings/README.md) - Calterm to RAM address translation
 - [CBD Enable Experiment](cbd_enable_experiment.md) - CBD parameter addresses
 - [TASK_dump_bank2.md](TASK_dump_bank2.md) - ECU version information
 

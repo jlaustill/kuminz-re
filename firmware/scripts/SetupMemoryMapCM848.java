@@ -45,14 +45,16 @@ public class SetupMemoryMapCM848 extends GhidraScript {
         Memory memory = currentProgram.getMemory();
 
         // Add extended flash region (Bank 2 - utility functions)
-        // Extracted from e2m file using scripts/extract_flash2.py
-        String flash2File = firmwareDir + "/cm848_flash2.bin";
+        // Use live ECU dump (matches ROM version V11.46.06) instead of e2m
+        // extraction (S90140.12 / V11.20.13.16) to avoid cross-bank call
+        // resolution errors from firmware version mismatch
+        String flash2File = firmwareDir + "/cm848_flash2_live.bin";
         if (new File(flash2File).exists()) {
-            println("[1/3] Adding extended flash region (Bank 2)...");
+            println("[1/3] Adding extended flash region (Bank 2 - live dump)...");
             addMemoryRegion(memory, "FLASH2", FLASH2_BASE, flash2File, true, false, true);
         } else {
-            println("[1/3] SKIPPED: Flash2 file not found: " + flash2File);
-            println("       Run: python3 scripts/extract_flash2.py docs/S90140.12.e2m originals/cm848_flash2.bin");
+            println("[1/3] SKIPPED: Flash2 live dump not found: " + flash2File);
+            println("       Dump Bank 2 from live ECU using kuminz-cli");
         }
 
         // Add RAM region (CM848 has 280KB continuous RAM)
