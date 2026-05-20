@@ -80,21 +80,23 @@ extern undefined protection_threshold_high;  // 0x0006432e
 extern byte BYTE_000645b6;  // 0x000645b6
 extern byte fault_table_entry_5;  // 0x000645c4
 extern byte fault_table_entry_6;  // 0x000645f0
+// USIU - SIU Configuration (0x2FC000-0x2FC044)
 extern dword USIU_SIUMCR;  // 0x002fc000
 extern dword USIU_SYPCR;  // 0x002fc004
 extern word USIU_SWSR;  // 0x002fc00e
 extern dword USIU_SIPEND;  // 0x002fc010
-extern undefined scheduler_task_enable_flags;  // 0x002fc014
-extern undefined scheduler_task_pending_flags;  // 0x002fc018
+extern dword scheduler_task_enable_flags;  // 0x002fc014 (hardware: USIU_SIMASK)
+extern dword scheduler_task_pending_flags;  // 0x002fc018 (hardware: USIU_SIEL)
 extern dword USIU_SIVEC;  // 0x002fc01c
 extern dword USIU_TESR;  // 0x002fc020
-extern undefined system_capability_flags;  // 0x002fc024
-extern undefined calibration_config_word;  // 0x002fc028
+extern dword system_capability_flags;  // 0x002fc024 (reserved USIU space)
+extern dword calibration_config_word;  // 0x002fc028 (reserved USIU space)
 extern dword USIU_SGPIODT1;  // 0x002fc030
 extern dword USIU_SGPIODT2;  // 0x002fc034
 extern dword USIU_SGPIOCR;  // 0x002fc038
 extern dword USIU_EMCR;  // 0x002fc03c
 extern dword USIU_PDMCR;  // 0x002fc044
+// USIU - Memory Controller (0x2FC100-0x2FC11C)
 extern dword USIU_BR0;  // 0x002fc100
 extern dword USIU_OR0;  // 0x002fc104
 extern dword USIU_BR1;  // 0x002fc108
@@ -103,23 +105,39 @@ extern dword USIU_BR2;  // 0x002fc110
 extern dword USIU_OR2;  // 0x002fc114
 extern dword USIU_BR3;  // 0x002fc118
 extern dword USIU_OR3;  // 0x002fc11c
-extern undefined mios_timer_reg;  // 0x002fc240
+// USIU - Timebase Status/Control (0x2FC200-0x2FC208)
+extern word USIU_TBSCR;  // 0x002fc200
+extern dword USIU_TBREFF0;  // 0x002fc204
+extern dword USIU_TBREFF1;  // 0x002fc208
+// USIU - RTC (0x2FC220-0x2FC22C)
+extern word USIU_RTCSC;  // 0x002fc220
+extern dword USIU_RTC;  // 0x002fc224
+extern dword USIU_RTSEC;  // 0x002fc228
+extern dword USIU_RTCAL;  // 0x002fc22c
+// USIU - PIT (0x2FC240-0x2FC248)
+extern word USIU_PISCR;  // 0x002fc240 (was mios_timer_reg)
+extern word USIU_PITC;  // 0x002fc244
+extern word USIU_PITR;  // 0x002fc248
+// USIU - System Clock and Reset (0x2FC280-0x2FC290)
+extern dword USIU_SCCR;  // 0x002fc280
 extern dword USIU_PLPRCR;  // 0x002fc284
-extern word USIU_COLIR;  // 0x002fc288
-extern dword USIU_SCCR;  // 0x002fc28c
+extern word USIU_RSR;  // 0x002fc288 (was USIU_COLIR)
+extern word USIU_COLIR;  // 0x002fc28c (was USIU_SCCR)
+extern word USIU_VSRMCR;  // 0x002fc290
+// USIU - Key Registers (0x2FC300-0x2FC388)
 extern dword USIU_TBSCRK;  // 0x002fc300
-extern word USIU_TBSCR;  // 0x002fc304
-extern dword USIU_TBREF0K;  // 0x002fc308
-extern word USIU_TBREF0;  // 0x002fc30c
-extern dword USIU_TBREF1K;  // 0x002fc310
-extern word USIU_TBREF1;  // 0x002fc314
-extern word USIU_PISCR;  // 0x002fc340
-extern dword USIU_PITC;  // 0x002fc344
-extern dword USIU_PITR;  // 0x002fc348
-extern word USIU_RTCSC;  // 0x002fc380
-extern dword USIU_RTC;  // 0x002fc384
-extern dword USIU_RTSEC;  // 0x002fc388
-extern dword USIU_RTCAL;  // 0x002fc38c
+extern dword USIU_TBREFF0K;  // 0x002fc304
+extern dword USIU_TBREFF1K;  // 0x002fc308
+extern dword USIU_TBK;  // 0x002fc30c
+extern dword USIU_RTCSK;  // 0x002fc320
+extern dword USIU_RTCK;  // 0x002fc324
+extern dword USIU_RTSECK;  // 0x002fc328
+extern dword USIU_RTCALK;  // 0x002fc32c
+extern dword USIU_PISCRK;  // 0x002fc340
+extern dword USIU_PITCK;  // 0x002fc344
+extern dword USIU_SCCRK;  // 0x002fc380
+extern dword USIU_PLPRCK;  // 0x002fc384
+extern dword USIU_RSRK;  // 0x002fc388
 extern undefined qadc_control_reg_1;  // 0x002fc808
 extern undefined qadc_result_buffer;  // 0x002fc848
 extern word TPU3_TPUMCR;  // 0x00302000
