@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Wed May 20 06:53:18 MDT 2026
+// Generated: Wed May 20 06:56:54 MDT 2026
 
 
 //
@@ -5741,7 +5741,7 @@ void cm848_phase_group_a_processing(void)
   cm848_processSensorFilterCalibration();
   cm848_processEngineConditionFlags();
   cm848_calculateWarmupProtectionLimitC();
-  cm848_selectDataPointerByBitFlag();
+  cm848_calculateProtectionOutputValue();
   cm848_updateChannelProtectionStatus();
   cm848_processEngineLoadFilters();
   cm848_selectTurboModeParameters();
@@ -6230,7 +6230,7 @@ void cm848_periodicTaskGroup28_calibration10(void)
 {
   cm848_processFaultCountdownTimer2();
   cm848_processOperatingConditionFlags();
-  cm848_evaluateThermalPhaseConditionsB();
+  cm848_evaluateProtectionRampConditions();
   cm848_interpolateFuelMapBySpeedB();
   return;
 }
@@ -6339,7 +6339,7 @@ void cm848_periodicTaskSet_auxiliary(void)
 
 {
   cm848_interpolateSpeedProtectionTable();
-  cm848_resetStateVariable();
+  cm848_coolantProtectionStateMachine();
   cm848_evaluateSpeedModeConditions();
   return;
 }
@@ -6356,7 +6356,7 @@ void periodicTaskSet_fuelDemand(void)
   cm848_fuelDemandCoordinator();
   cm848_calculateEngineLoadProtection();
   cm848_evaluateFuelConditionFlags();
-  cm848_initServiceRequestState();
+  cm848_evaluateTurboProtectionConditions();
   return;
 }
 
@@ -6370,7 +6370,7 @@ void hpcr_periodicTaskGroup36_calibration15(void)
 
 {
   hpcr_checkAndResetCbdState();
-  cm848_executeTimerCallbacksViaLR();
+  cm848_accumulateProtectionRuntime();
   cm848_updateProtectionAccumulator();
   cm848_validateProtectionRampBounds();
   return;
@@ -6430,7 +6430,7 @@ void cm848_periodicTaskSet_diagnostics2(void)
 void hpcr_periodicTaskGroup20_calibration(void)
 
 {
-  hpcr_deactivatehpcr_CbdCylinderModeB();
+  hpcr_deactivateCbdCylinderModeB();
   cm848_evaluateSpeedSyncSystemState();
   cm848_processFaultListEntryB();
   return;
@@ -52781,7 +52781,7 @@ void hpcr_exceptionHandler(void)
   QSMCM_IDSPI_1 = 0;
   _qsmcm_scsr = 0;
   mpc555_initTpuConfiguration();
-  cm848_synchronizeTimebase();
+  cm848_clearProtectionRamRegion();
   _system_startup_initialize_flag = _USIU_COLIR;
   _USIU_COLIR = 0xffff;
   _exception_handler_frame_count = in_SPRG0;
@@ -52949,7 +52949,7 @@ void hpcr_exceptionHandler(void)
   cm848_storeDynamicStateValue();
   hpcr_cbdInitFilterState();
   cm848_processLimitPriorityConditions();
-  cm848_processMultichannelRampRate();
+  cm848_triggerMultichannelProtectionEvent();
   cm848_initSensorLookupTable4();
   cm848_initEventFlag54State();
   cm848_initJ1939CommunicationSystem();
@@ -52957,7 +52957,7 @@ void hpcr_exceptionHandler(void)
   mpc555_resetEngineTimingAccumulators();
   cm848_enableSensorFilterUpdate();
   cm848_initProtectionFilterAccumulators();
-  cm848_processProtectionStateSwitch();
+  cm848_clearProtectionSubstateCounter();
   cm848_clearCoolantProtectionEvents();
   cm848_initProtectionTorqueLimit();
   cm848_initEngineRpmFilterPointers();
@@ -52980,7 +52980,7 @@ void hpcr_exceptionHandler(void)
   cm848_processProtectionParameter1();
   cm848_processProtectionParameter2();
   BYTE_0051a018();
-  hpcr_checkCbdResetConditions();
+  hpcr_clearBoostProtectionModeFlags();
   cm848_buildEngineStatusFlags();
   cm848_evaluateOutputControlConditions();
   BYTE_0052dd28();
@@ -53030,7 +53030,7 @@ void hpcr_exceptionHandler(void)
   cm848_clearFuelDemandState();
   cm848_initTemperatureTrimTableSizes();
   mpc555_initThermalProtectionFilters();
-  hpcr_updatehpcr_CbdDiagnosticStateB();
+  hpcr_updateCbdDiagnosticStateB();
   mpc555_initHardwareRegisterSet2();
   cm848_clearProtectionModeVariables();
   cm848_searchArrayForNonZero();
@@ -53040,8 +53040,8 @@ void hpcr_exceptionHandler(void)
   cm848_buildStatusBitmaskSecondary();
   cm848_validateCalibrationParameters();
   cm848_clearGovernorFilterAccumulators();
-  cm848_iterateAndExecuteTimerEntries();
-  cm848_evaluateThermalPhaseConditions();
+  cm848_setProtectionActiveFlag();
+  cm848_initProtectionPhaseCounters();
   cm848_initSensorFaultVariables();
   cm848_processSpeedControlCalculationC();
   cm848_evaluateDiagnosticModeTransition();
@@ -53124,7 +53124,7 @@ void hpcr_exceptionHandler(void)
   mpc555_initTurboCompensationVariables();
   mpc555_initFuelDemandTrackingState();
   mpc555_initFuelDemandFilterPointers();
-  cm848_executeTimerCallbacks();
+  cm848_initCoolantProtectionCounters();
   hpcr_initCbdToothState();
   hpcr_clearTimingCalibrationData();
   cm848_calculateFuelDemandScaleFactor();
@@ -60053,7 +60053,7 @@ void hpcr_dispatchMultiPhaseStateMachine(void)
     fuel_efficiency_trim = 3;
   }
   else {
-    hpcr_evaluatehpcr_CbdSensorActivation();
+    hpcr_evaluateCbdSensorActivation();
     if (DAT_003fbd28 < 3) {
       if (DAT_003fbd28 == 2) {
         cm848_calculatePrimaryFuelAdjustment();
@@ -60386,10 +60386,10 @@ LAB_00507db4:
 
 
 //
-// Function: hpcr_evaluatehpcr_CbdSensorActivation @ 0x00507ddc
+// Function: hpcr_evaluateCbdSensorActivation @ 0x00507ddc
 //
 
-void hpcr_evaluatehpcr_CbdSensorActivation(void)
+void hpcr_evaluateCbdSensorActivation(void)
 
 {
   ushort uVar1;
@@ -68439,10 +68439,10 @@ void cm848_evaluateMultichannelStateConditions
 
 
 //
-// Function: cm848_processMultichannelRampRate @ 0x00510f34
+// Function: cm848_triggerMultichannelProtectionEvent @ 0x00510f34
 //
 
-void cm848_processMultichannelRampRate
+void cm848_triggerMultichannelProtectionEvent
                (undefined4 param_1,undefined4 param_2,int param_3,int param_4,int param_5)
 
 {
@@ -74335,10 +74335,10 @@ void evaluateTemperatureDiagnosticState(void)
         case 3:
           break;
         case 4:
-          cm848_unsignedDivisionWrap64();
+          cm848_periodicProtectionTaskScheduler();
           return;
         case 5:
-          cm848_convertTemperatureCelsiusToDisplayFormat();
+          cm848_periodicProtectionTaskDispatcher();
           return;
         case 6:
           break;
@@ -74770,14 +74770,14 @@ default:
 
 
 //
-// Function: cm848_processProtectionStateSwitch @ 0x00518324
+// Function: cm848_clearProtectionSubstateCounter @ 0x00518324
 //
 
 /* WARNING: Removing unreachable block (ram,0x00518ce8) */
 /* WARNING: Removing unreachable block (ram,0x00518ea8) */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void cm848_processProtectionStateSwitch(void)
+void cm848_clearProtectionSubstateCounter(void)
 
 {
   ushort uVar1;
@@ -75112,13 +75112,13 @@ void cm848_processDiagnosticModeFlags(void)
 
 
 //
-// Function: cm848_unsignedDivisionWrap64 @ 0x005185b4
+// Function: cm848_periodicProtectionTaskScheduler @ 0x005185b4
 //
 
 /* WARNING: Removing unreachable block (ram,0x005185d4) */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void cm848_unsignedDivisionWrap64(void)
+void cm848_periodicProtectionTaskScheduler(void)
 
 {
   undefined1 uVar1;
@@ -75144,12 +75144,12 @@ void cm848_unsignedDivisionWrap64(void)
 
 
 //
-// Function: cm848_convertTemperatureCelsiusToDisplayFormat @ 0x005185dc
+// Function: cm848_periodicProtectionTaskDispatcher @ 0x005185dc
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void cm848_convertTemperatureCelsiusToDisplayFormat(void)
+void cm848_periodicProtectionTaskDispatcher(void)
 
 {
   undefined2 *unaff_r28;
@@ -76638,12 +76638,12 @@ void cm848_evaluateThermalFailsafeConditions(undefined4 param_1)
 
 
 //
-// Function: cm848_evaluateThermalPhaseConditions @ 0x0051ab50
+// Function: cm848_initProtectionPhaseCounters @ 0x0051ab50
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void cm848_evaluateThermalPhaseConditions(undefined4 param_1)
+void cm848_initProtectionPhaseCounters(undefined4 param_1)
 
 {
   int iVar1;
@@ -76772,12 +76772,12 @@ void cm848_evaluateThermalPhaseConditions(undefined4 param_1)
 
 
 //
-// Function: cm848_evaluateThermalPhaseConditionsB @ 0x0051ab70
+// Function: cm848_evaluateProtectionRampConditions @ 0x0051ab70
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void cm848_evaluateThermalPhaseConditionsB(undefined4 param_1)
+void cm848_evaluateProtectionRampConditions(undefined4 param_1)
 
 {
   int iVar1;
@@ -78312,10 +78312,10 @@ void cm848_initWarmupStateAndTimers(void)
 
 
 //
-// Function: cm848_lookupParameterPointer @ 0x0051ca00
+// Function: cm848_computePeriodicDiagnosticRate @ 0x0051ca00
 //
 
-undefined * cm848_lookupParameterPointer(int param_1,int param_2)
+undefined * cm848_computePeriodicDiagnosticRate(int param_1,int param_2)
 
 {
   undefined *puVar1;
@@ -78394,10 +78394,10 @@ LAB_0051caac:
 
 
 //
-// Function: cm848_selectDataPointerByBitFlag @ 0x0051cad4
+// Function: cm848_calculateProtectionOutputValue @ 0x0051cad4
 //
 
-undefined * cm848_selectDataPointerByBitFlag(undefined4 param_1,uint param_2)
+undefined * cm848_calculateProtectionOutputValue(undefined4 param_1,uint param_2)
 
 {
   undefined *puVar1;
@@ -78915,7 +78915,7 @@ undefined * cm848_lookupParameterByCommandAndOffset(int param_1,int param_2)
   
   if (param_2 != 0) {
     if ((param_1 == 0xfa) || (param_1 == 0xfc)) {
-      puVar1 = (undefined *)cm848_lookupParameterPointer(param_1);
+      puVar1 = (undefined *)cm848_computePeriodicDiagnosticRate(param_1);
       return puVar1;
     }
     if (param_1 == 0xf5) {
@@ -81875,7 +81875,7 @@ void mpc555_writeParameterByLookup(void)
   uVar2 = DAT_003fcf84 + 1;
   DAT_003fcf84 = (byte)uVar2;
   if (2 < (uVar2 & 0xff)) {
-    puVar1 = (undefined1 *)cm848_lookupParameterPointer(DAT_003fcf85,uRam003fcf86);
+    puVar1 = (undefined1 *)cm848_computePeriodicDiagnosticRate(DAT_003fcf85,uRam003fcf86);
     if (puVar1 == (undefined1 *)0x0) {
       (&current_command_code)[command_buffer_index] = 0xf0;
     }
@@ -81904,7 +81904,7 @@ void cm848_processParameterWriteCommand(void)
   int unaff_r31;
   
   puVar1 = (undefined1 *)
-           cm848_lookupParameterPointer
+           cm848_computePeriodicDiagnosticRate
                      (*(undefined1 *)(unaff_r31 + 1),*(undefined1 *)(unaff_r31 + 2));
   if (puVar1 == (undefined1 *)0x0) {
     (&current_command_code)[command_buffer_index] = 0xf0;
@@ -86544,13 +86544,13 @@ void mpc555_initHardwareRegisterSet2(void)
 
 
 //
-// Function: hpcr_updatehpcr_CbdDiagnosticState @ 0x00526f08
+// Function: hpcr_updateCbdDiagnosticState @ 0x00526f08
 //
 
 /* WARNING: Removing unreachable block (ram,0x00527390) */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void hpcr_updatehpcr_CbdDiagnosticState(void)
+void hpcr_updateCbdDiagnosticState(void)
 
 {
   word wVar1;
@@ -86687,13 +86687,13 @@ void hpcr_updatehpcr_CbdDiagnosticState(void)
 
 
 //
-// Function: hpcr_updatehpcr_CbdDiagnosticStateB @ 0x00527050
+// Function: hpcr_updateCbdDiagnosticStateB @ 0x00527050
 //
 
 /* WARNING: Removing unreachable block (ram,0x00527390) */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void hpcr_updatehpcr_CbdDiagnosticStateB
+void hpcr_updateCbdDiagnosticStateB
                (int param_1,undefined4 param_2,short param_3,char param_4,uint param_5)
 
 {
@@ -87068,10 +87068,10 @@ LAB_00527bb0:
 
 
 //
-// Function: hpcr_interpolatehpcr_CbdTable @ 0x00527c90
+// Function: hpcr_interpolateCbdTable @ 0x00527c90
 //
 
-void hpcr_interpolatehpcr_CbdTable(void)
+void hpcr_interpolateCbdTable(void)
 
 {
                     /* WARNING: Subroutine does not return */
@@ -87098,12 +87098,12 @@ void hpcr_updateVehicleSpeedFilter(void)
   if (cbd_state_machine_status == 0x12) {
     injection_control_2 = injection_control_word;
     injection_control_word = 4;
-    hpcr_processhpcr_CbdStateMachine();
+    hpcr_processCbdStateMachine();
   }
   else {
     injection_control_2 = injection_control_word;
     injection_control_word = 1;
-    hpcr_computehpcr_CbdProtectionAngle();
+    hpcr_computeCbdProtectionAngle();
   }
   return;
 }
@@ -87122,19 +87122,19 @@ void hpcr_initAndProcessCbdState(undefined4 param_1,undefined1 *param_2)
   
   *(undefined1 *)(in_r11 + -0x4bdf) = in_r10;
   *param_2 = 4;
-  hpcr_processhpcr_CbdStateMachine();
+  hpcr_processCbdStateMachine();
   return;
 }
 
 
 
 //
-// Function: hpcr_calculatehpcr_CbdAngleOffset @ 0x005280f4
+// Function: hpcr_calculateCbdAngleOffset @ 0x005280f4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void hpcr_calculatehpcr_CbdAngleOffset(int param_1,int param_2,undefined2 param_3,int param_4)
+void hpcr_calculateCbdAngleOffset(int param_1,int param_2,undefined2 param_3,int param_4)
 
 {
   uint uVar1;
@@ -87220,12 +87220,12 @@ LAB_005282dc:
 
 
 //
-// Function: hpcr_applyhpcr_CbdCylinderTiming @ 0x00528368
+// Function: hpcr_applyCbdCylinderTiming @ 0x00528368
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void hpcr_applyhpcr_CbdCylinderTiming(int param_1)
+void hpcr_applyCbdCylinderTiming(int param_1)
 
 {
   uint uVar1;
@@ -87322,7 +87322,7 @@ void mpc555_setUpLookupTableAndInterpolate(void)
 
 
 //
-// Function: hpcr_processThrottlePosition @ 0x0052877c
+// Function: hpcr_configureInjectionPulseTiming @ 0x0052877c
 //
 
 /* WARNING: Removing unreachable block (ram,0x00528830) */
@@ -87333,7 +87333,7 @@ void mpc555_setUpLookupTableAndInterpolate(void)
 /* WARNING: Removing unreachable block (ram,0x00528c08) */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void hpcr_processThrottlePosition(void)
+void hpcr_configureInjectionPulseTiming(void)
 
 {
   cbd_angle_offset_correction = 0;
@@ -87456,12 +87456,12 @@ void cm848_calculateLoadBasedFuelTrim(void)
 
 
 //
-// Function: hpcr_computehpcr_CbdAngleCorrection @ 0x00528e70
+// Function: hpcr_computeCbdAngleCorrection @ 0x00528e70
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void hpcr_computehpcr_CbdAngleCorrection(void)
+void hpcr_computeCbdAngleCorrection(void)
 
 {
   ushort uVar1;
@@ -87689,13 +87689,13 @@ void hpcr_updateTemperatureSensorFilter(void)
     cm848_processCommunicationDiagnostic();
     fuel_demand_state_copy_1 = fuel_demand_accumulator_copy;
     cm848_advanceSyncPointer();
-    hpcr_updatehpcr_CbdDiagnosticState();
+    hpcr_updateCbdDiagnosticState();
     hpcr_systemHalt();
     cm848_checkEngineSyncPulse();
     mpc555_updateEngineStatusWord();
-    hpcr_computehpcr_CbdAngleCorrection();
+    hpcr_computeCbdAngleCorrection();
     cm848_processMultiAxisInterpolation();
-    hpcr_interpolatehpcr_CbdTable();
+    hpcr_interpolateCbdTable();
   }
   else {
     if (injection_control_word == 2) {
@@ -87716,16 +87716,16 @@ void hpcr_updateTemperatureSensorFilter(void)
         sVar6 = (ram0x0040b408 - temperature_sensor_offset_trim) - temperature_filter_trim_offset;
       }
       cm848_validateSyncCount(bVar1);
-      hpcr_calculatehpcr_CbdAngleOffset
+      hpcr_calculateCbdAngleOffset
                 (cbd_synchronization_index,(int)(short)cbd_offset_correction_2,
                  (int)(short)boost_control_trim_offset,4);
-      hpcr_calculatehpcr_CbdAngleOffset
+      hpcr_calculateCbdAngleOffset
                 (cbd_synchronization_index,(int)(short)cbd_offset_correction_1,
                  (int)(short)engine_load_filter_state,8);
-      hpcr_calculatehpcr_CbdAngleOffset
+      hpcr_calculateCbdAngleOffset
                 (cbd_synchronization_index,(int)(short)(temperature_filter_trim_offset + sVar6),
                  (int)(short)fuel_timing_trim_offset,0xc);
-      hpcr_applyhpcr_CbdCylinderTiming(_cbd_tooth_counter & 0xff);
+      hpcr_applyCbdCylinderTiming(_cbd_tooth_counter & 0xff);
       cm848_accumulateTimingOffset();
       bVar7 = 8;
     }
@@ -87741,7 +87741,7 @@ void hpcr_updateTemperatureSensorFilter(void)
         }
         else {
           cm848_advanceSyncPointer();
-          hpcr_updatehpcr_CbdDiagnosticState();
+          hpcr_updateCbdDiagnosticState();
           hpcr_systemHalt();
           cm848_checkEngineSyncPulse();
           mpc555_updateEngineStatusWord();
@@ -87765,16 +87765,16 @@ void hpcr_updateTemperatureSensorFilter(void)
           sVar6 = (ram0x0040b408 - temperature_sensor_offset_trim) - temperature_filter_trim_offset;
         }
         cm848_validateSyncCount(bVar1);
-        hpcr_calculatehpcr_CbdAngleOffset
+        hpcr_calculateCbdAngleOffset
                   (uVar5,(int)(short)wVar4,(int)(short)boost_control_trim_offset,4);
-        hpcr_calculatehpcr_CbdAngleOffset
-                  (uVar5,(int)(short)wVar3,(int)(short)engine_load_filter_state,8);
-        hpcr_calculatehpcr_CbdAngleOffset
+        hpcr_calculateCbdAngleOffset(uVar5,(int)(short)wVar3,(int)(short)engine_load_filter_state,8)
+        ;
+        hpcr_calculateCbdAngleOffset
                   (uVar5,(int)(short)(wVar2 + sVar6),(int)(short)fuel_timing_trim_offset,0xc);
-        hpcr_applyhpcr_CbdCylinderTiming(_cbd_tooth_counter & 0xff);
+        hpcr_applyCbdCylinderTiming(_cbd_tooth_counter & 0xff);
         cm848_accumulateTimingOffset();
         cm848_processMultiAxisInterpolation();
-        hpcr_interpolatehpcr_CbdTable();
+        hpcr_interpolateCbdTable();
         injection_control_2 = injection_control_word;
         injection_control_word = 8;
         return;
@@ -87790,12 +87790,12 @@ void hpcr_updateTemperatureSensorFilter(void)
 
 
 //
-// Function: hpcr_processhpcr_CbdStateMachine @ 0x00529580
+// Function: hpcr_processCbdStateMachine @ 0x00529580
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void hpcr_processhpcr_CbdStateMachine(void)
+void hpcr_processCbdStateMachine(void)
 
 {
   uint uVar1;
@@ -87808,7 +87808,7 @@ void hpcr_processhpcr_CbdStateMachine(void)
   uVar5 = (uint)_cbd_tooth_counter;
   cbd_state_machine_status = 0x12;
   if (injection_control_word == 2) {
-    hpcr_interpolatehpcr_CbdTable();
+    hpcr_interpolateCbdTable();
     if (cbd_angle_correction_target < cbd_state_transition_threshold) {
       injection_control_2 = injection_control_word;
       injection_control_word = 4;
@@ -87853,7 +87853,7 @@ void hpcr_processhpcr_CbdStateMachine(void)
       uVar5 = uVar5 + 1;
     }
     else {
-      hpcr_interpolatehpcr_CbdTable();
+      hpcr_interpolateCbdTable();
     }
   }
   if ((injection_control_word == 1) || (injection_control_word == 4)) {
@@ -87899,12 +87899,12 @@ void hpcr_processhpcr_CbdStateMachine(void)
 
 
 //
-// Function: hpcr_computehpcr_CbdProtectionAngle @ 0x00529908
+// Function: hpcr_computeCbdProtectionAngle @ 0x00529908
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void hpcr_computehpcr_CbdProtectionAngle(void)
+void hpcr_computeCbdProtectionAngle(void)
 
 {
   byte bVar1;
@@ -88874,12 +88874,12 @@ LAB_0052c740:
 
 
 //
-// Function: cm848_updateFaultFlagStatus @ 0x0052c8cc
+// Function: cm848_interpolateFuelTimingByDemandMode @ 0x0052c8cc
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void cm848_updateFaultFlagStatus(void)
+void cm848_interpolateFuelTimingByDemandMode(void)
 
 {
   if ((DAT_003fea4e & 2) == (system_enable_state_reserved_12 & 2)) {
@@ -88978,7 +88978,7 @@ void cm848_calculateDiagnosticAccumulator(void)
       if ((_diagnostic_mode_state != 2) && (_diagnostic_mode_state != 3)) {
         return;
       }
-      cm848_updateFaultFlagStatus();
+      cm848_interpolateFuelTimingByDemandMode();
       return;
     }
     if ((((((protection_condition_active & 0x10) == 0) || ((short)DAT_003fd162 < DAT_00064302)) ||
@@ -92045,12 +92045,12 @@ void cm848_validateProtectionRampBounds
 
 
 //
-// Function: hpcr_resethpcr_CbdCylinderState @ 0x0053164c
+// Function: hpcr_resetCbdCylinderState @ 0x0053164c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void hpcr_resethpcr_CbdCylinderState(void)
+void hpcr_resetCbdCylinderState(void)
 
 {
   uint uVar1;
@@ -92157,7 +92157,7 @@ void hpcr_calculateFaultDetectionThreshold(void)
 
 {
   protection_enable_threshold = 0;
-  hpcr_resethpcr_CbdCylinderState();
+  hpcr_resetCbdCylinderState();
   DAT_003fd1f3 = fault_active_indicator;
   if ((DAT_003fd5ce & 0x8000) == 0) {
     DAT_003fd1fe = 0;
@@ -92266,10 +92266,10 @@ void cm848_evaluateProtectionConditionFlag(void)
 
 
 //
-// Function: hpcr_countActivehpcr_CbdCylinders @ 0x0053195c
+// Function: hpcr_countActiveCbdCylinders @ 0x0053195c
 //
 
-void hpcr_countActivehpcr_CbdCylinders(void)
+void hpcr_countActiveCbdCylinders(void)
 
 {
   uint uVar1;
@@ -92297,12 +92297,12 @@ void hpcr_countActivehpcr_CbdCylinders(void)
 
 
 //
-// Function: hpcr_updatehpcr_CbdCylinderTiming @ 0x005319e0
+// Function: hpcr_updateCbdCylinderTiming @ 0x005319e0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void hpcr_updatehpcr_CbdCylinderTiming(void)
+void hpcr_updateCbdCylinderTiming(void)
 
 {
   word wVar1;
@@ -92331,12 +92331,12 @@ LAB_00531aa4:
   if (cbd_start_tooth < cbd_reset_pending_flag) {
     cm848_evaluateActiveFaultConditions();
     if (DAT_003fd1e8 == '\0') {
-      hpcr_resethpcr_CbdCylinderState();
+      hpcr_resetCbdCylinderState();
     }
     else {
       _cbd_threshold_check_flag = 0;
       _cbd_debounce_counter = 0;
-      hpcr_countActivehpcr_CbdCylinders();
+      hpcr_countActiveCbdCylinders();
     }
   }
   return;
@@ -92369,7 +92369,7 @@ void hpcr_updateSystemDiagnosticData(void)
       DAT_003fd1fe = 4;
       DAT_003fd202 = 0;
       _cbd_state_byte = 0;
-      hpcr_resethpcr_CbdCylinderState();
+      hpcr_resetCbdCylinderState();
       default();
       return;
     }
@@ -92427,7 +92427,7 @@ void hpcr_updateSystemDiagnosticData(void)
           if (((DAT_0006449d <= injection_timing_limit_value) ||
               ((uint)DAT_003fd1f3 != (uint)fault_active_indicator)) ||
              (((thermal_protection_lockout_flags & 8) != 0 || (DAT_003fd1e7 != '\0')))) {
-            hpcr_resethpcr_CbdCylinderState();
+            hpcr_resetCbdCylinderState();
             default();
             return;
           }
@@ -92474,23 +92474,23 @@ void hpcr_updateSystemDiagnosticData(void)
           return;
         }
       }
-      hpcr_resethpcr_CbdCylinderState();
+      hpcr_resetCbdCylinderState();
       default();
       return;
     case 1:
       hpcr_cbdCylinderStateHandler();
       return;
     case 2:
-      hpcr_advancehpcr_CbdFaultState();
+      hpcr_advanceCbdFaultState();
       return;
     case 3:
-      hpcr_evaluatehpcr_CbdCylinderActivation();
+      hpcr_evaluateCbdCylinderActivation();
       return;
     case 4:
-      hpcr_activatehpcr_CbdCylinderMode();
+      hpcr_activateCbdCylinderMode();
       return;
     case 5:
-      hpcr_deactivatehpcr_CbdCylinderMode();
+      hpcr_deactivateCbdCylinderMode();
       return;
     case 6:
       hpcr_compareAndSyncFaultFlags();
@@ -92504,12 +92504,12 @@ void hpcr_updateSystemDiagnosticData(void)
 
 
 //
-// Function: hpcr_checkCbdResetConditions @ 0x00531cf8
+// Function: hpcr_clearBoostProtectionModeFlags @ 0x00531cf8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void hpcr_checkCbdResetConditions(void)
+void hpcr_clearBoostProtectionModeFlags(void)
 
 {
   int in_r10;
@@ -92524,7 +92524,7 @@ void hpcr_checkCbdResetConditions(void)
   if (((((int)(unaff_r26 + *(ushort *)(in_r10 + 0x4491)) < unaff_r23) ||
        ((int)(uint)DAT_00064499 < unaff_r23)) || (DAT_00064493 < speed_ratio_calculated)) ||
      ((DAT_0006449b <= speed_control_floor || (engine_operating_state != 0xb)))) {
-    hpcr_resethpcr_CbdCylinderState();
+    hpcr_resetCbdCylinderState();
     default();
     return;
   }
@@ -92546,7 +92546,7 @@ void hpcr_checkCbdResetConditions(void)
     }
     if (((DAT_0006449d <= injection_timing_limit_value) || (DAT_003fd1f3 != unaff_r26)) ||
        (((thermal_protection_lockout_flags & 8) != 0 || (DAT_003fd1e7 != '\0')))) {
-      hpcr_resethpcr_CbdCylinderState();
+      hpcr_resetCbdCylinderState();
       default();
       return;
     }
@@ -92604,7 +92604,7 @@ void hpcr_checkAndResetCbdState(void)
   short sVar2;
   
   if ((DAT_0006449b <= *(ushort *)(in_r12 + -0x5ec4)) || (engine_operating_state != 0xb)) {
-    hpcr_resethpcr_CbdCylinderState();
+    hpcr_resetCbdCylinderState();
     default();
     return;
   }
@@ -92626,7 +92626,7 @@ void hpcr_checkAndResetCbdState(void)
     }
     if ((((DAT_0006449d <= injection_timing_limit_value) || (DAT_003fd1f3 != unaff_r26)) ||
         ((thermal_protection_lockout_flags & 8) != 0)) || (DAT_003fd1e7 != '\0')) {
-      hpcr_resethpcr_CbdCylinderState();
+      hpcr_resetCbdCylinderState();
       default();
       return;
     }
@@ -92677,7 +92677,7 @@ void hpcr_cbdCylinderStateHandler(void)
   
   cm848_evaluateActiveFaultConditions();
   if (DAT_003fd1e8 == '\0') {
-    hpcr_resethpcr_CbdCylinderState();
+    hpcr_resetCbdCylinderState();
     default();
     return;
   }
@@ -92695,12 +92695,12 @@ void hpcr_cbdCylinderStateHandler(void)
 
 
 //
-// Function: hpcr_advancehpcr_CbdFaultState @ 0x00531fe8
+// Function: hpcr_advanceCbdFaultState @ 0x00531fe8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void hpcr_advancehpcr_CbdFaultState(void)
+void hpcr_advanceCbdFaultState(void)
 
 {
   int iVar1;
@@ -92710,7 +92710,7 @@ void hpcr_advancehpcr_CbdFaultState(void)
   
   cm848_evaluateActiveFaultConditions();
   if (DAT_003fd1e8 == '\0') {
-    hpcr_resethpcr_CbdCylinderState();
+    hpcr_resetCbdCylinderState();
     default();
     return;
   }
@@ -92745,19 +92745,19 @@ void hpcr_advancehpcr_CbdFaultState(void)
 
 
 //
-// Function: hpcr_evaluatehpcr_CbdCylinderActivation @ 0x00532108
+// Function: hpcr_evaluateCbdCylinderActivation @ 0x00532108
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void hpcr_evaluatehpcr_CbdCylinderActivation(void)
+void hpcr_evaluateCbdCylinderActivation(void)
 
 {
   undefined4 *unaff_r31;
   
   cm848_evaluateActiveFaultConditions();
   if (DAT_003fd1e8 == '\0') {
-    hpcr_resethpcr_CbdCylinderState();
+    hpcr_resetCbdCylinderState();
     default();
     return;
   }
@@ -92766,7 +92766,7 @@ void hpcr_evaluatehpcr_CbdCylinderActivation(void)
   }
   if ((_cbd_tooth_counter == DAT_003fd1f7) && (DAT_003fd1fb != 0)) {
     DAT_003fd1f1 = 0;
-    hpcr_updatehpcr_CbdCylinderTiming();
+    hpcr_updateCbdCylinderTiming();
     DAT_003fd1fb = 0;
     default();
     return;
@@ -92786,12 +92786,12 @@ void hpcr_evaluatehpcr_CbdCylinderActivation(void)
 
 
 //
-// Function: hpcr_activatehpcr_CbdCylinderMode @ 0x005321c8
+// Function: hpcr_activateCbdCylinderMode @ 0x005321c8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void hpcr_activatehpcr_CbdCylinderMode(void)
+void hpcr_activateCbdCylinderMode(void)
 
 {
   undefined4 *unaff_r25;
@@ -92927,12 +92927,12 @@ void hpcr_updateSensorStatusBitmap(void)
 
 
 //
-// Function: hpcr_deactivatehpcr_CbdCylinderMode @ 0x0053236c
+// Function: hpcr_deactivateCbdCylinderMode @ 0x0053236c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void hpcr_deactivatehpcr_CbdCylinderMode(void)
+void hpcr_deactivateCbdCylinderMode(void)
 
 {
   undefined4 *unaff_r25;
@@ -92962,10 +92962,10 @@ void hpcr_deactivatehpcr_CbdCylinderMode(void)
 
 
 //
-// Function: hpcr_deactivatehpcr_CbdCylinderModeB @ 0x00532418
+// Function: hpcr_deactivateCbdCylinderModeB @ 0x00532418
 //
 
-void hpcr_deactivatehpcr_CbdCylinderModeB(ushort *param_1)
+void hpcr_deactivateCbdCylinderModeB(ushort *param_1)
 
 {
   int iVar1;
@@ -94876,10 +94876,10 @@ LAB_00534bc8:
 
 
 //
-// Function: cm848_evaluateInjectionTimingStability @ 0x00534994
+// Function: cm848_scanAndDispatchActiveFaults @ 0x00534994
 //
 
-void cm848_evaluateInjectionTimingStability
+void cm848_scanAndDispatchActiveFaults
                (int param_1,char *param_2,undefined4 param_3,int param_4,undefined4 param_5,
                int param_6,undefined4 param_7,uint param_8)
 
@@ -95873,12 +95873,12 @@ undefined4 cm848_getDiagnosticStatus(int param_1)
 
 
 //
-// Function: cm848_validateCalibrationLookup @ 0x005367cc
+// Function: cm848_evaluateCoolantProtectionTransition @ 0x005367cc
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void cm848_validateCalibrationLookup
+void cm848_evaluateCoolantProtectionTransition
                (uint param_1,uint param_2,uint param_3,uint param_4,byte *param_5,byte *param_6,
                byte *param_7,byte *param_8,ushort *param_9)
 
@@ -95963,7 +95963,7 @@ void cm848_validateCalibrationLookup
       if ((_protection_mode_diagnostic_flag == 0) &&
          ((protection_channel_condition_flags & 0x20) != 0)) {
         *param_6 = bVar1 + 1;
-        cm848_resetStateVariable();
+        cm848_coolantProtectionStateMachine();
         return;
       }
     }
@@ -96034,10 +96034,10 @@ LAB_00536d1c:
 
 
 //
-// Function: cm848_resetStateVariable @ 0x00536958
+// Function: cm848_coolantProtectionStateMachine @ 0x00536958
 //
 
-void cm848_resetStateVariable(void)
+void cm848_coolantProtectionStateMachine(void)
 
 {
   undefined1 *unaff_r28;
@@ -96083,7 +96083,7 @@ void vp44Message300FaultFlagProcessor(void)
     if (((4 < DAT_003fd25e) && (DAT_003fd25e = 0, (diagnostic_status_flags_byte_1 & 1) != 0)) &&
        ((control_mode_status_flags & 0x40) == 0)) {
       if (DAT_003feddc != 0) {
-        cm848_validateCalibrationLookup
+        cm848_evaluateCoolantProtectionTransition
                   (0x26,6,0x173,0x174,&DAT_003fd25f,&DAT_003fd260,&DAT_003fd261,&DAT_003fd262,
                    &DAT_003fd275);
       }
@@ -96091,41 +96091,41 @@ void vp44Message300FaultFlagProcessor(void)
         DAT_003fee9c = 1;
       }
       if (DAT_003fee9c != 0) {
-        cm848_validateCalibrationLookup
+        cm848_evaluateCoolantProtectionTransition
                   (0xb,5,0x29,0x2a,&DAT_003fd263,&DAT_003fd264,&DAT_003fd265,&DAT_003fd266,
                    &DAT_003fd277);
       }
-      cm848_validateCalibrationLookup
+      cm848_evaluateCoolantProtectionTransition
                 (0x2b,9,0x127,0x126,&DAT_003fd267,&DAT_003fd268,&DAT_003fd269,&DAT_003fd26a,
                  &DAT_003fd279);
-      cm848_validateCalibrationLookup
+      cm848_evaluateCoolantProtectionTransition
                 (0x2c,10,0x129,0x128,&DAT_003fd26b,&DAT_003fd26c,&DAT_003fd26d,&DAT_003fd26e,
                  &DAT_003fd27b);
-      cm848_validateCalibrationLookup
+      cm848_evaluateCoolantProtectionTransition
                 (0x35,1,0x182,0x183,&DAT_003fd26f,&DAT_003fd270,&DAT_003fd271,&DAT_003fd272,
                  &DAT_003fd27d);
-      cm848_validateCalibrationLookup
+      cm848_evaluateCoolantProtectionTransition
                 (0x10,0x16,0x88,0x89,&DAT_003fd27f,&DAT_003fd280,&DAT_003fd281,&DAT_003fd282,
                  &DAT_003fd283);
       if ((protection_channel_condition_flags & 1) != 0) {
-        cm848_validateCalibrationLookup
+        cm848_evaluateCoolantProtectionTransition
                   (0x11,0x17,0x8a,0x8b,&DAT_003fd285,&DAT_003fd286,&DAT_003fd287,&DAT_003fd288,
                    &DAT_003fd289);
       }
       if ((protection_channel_condition_flags & 1) != 0) {
-        cm848_validateCalibrationLookup
+        cm848_evaluateCoolantProtectionTransition
                   (0x12,0x18,0x8c,0x8d,&DAT_003fd28b,&DAT_003fd28c,&DAT_003fd28d,&DAT_003fd28e,
                    &DAT_003fd28f);
       }
       if (((speed_sync_event_flags & 8) == 0) && (DAT_003fede0 != 0)) {
-        cm848_validateCalibrationLookup
+        cm848_evaluateCoolantProtectionTransition
                   (0x15,0x1c,0x92,0x93,0x3fd29d,0x3fd29e,0x3fd29f,0x3fd2a0,&DAT_003fd2a1);
       }
       if (((speed_sync_event_flags & 8) == 0) && (DAT_003fede0 != 0)) {
-        cm848_validateCalibrationLookup
+        cm848_evaluateCoolantProtectionTransition
                   (0x13,0x19,0x8e,0x8f,&DAT_003fd291,&DAT_003fd292,&DAT_003fd293,&DAT_003fd294,
                    &DAT_003fd295);
-        cm848_validateCalibrationLookup
+        cm848_evaluateCoolantProtectionTransition
                   (0x14,0x1b,0x90,0x91,&DAT_003fd297,cm848_sensorFaultThresholdCheck_ram,
                    &DAT_003fd299,&DAT_003fd29a,&DAT_003fd29b);
       }
@@ -96176,11 +96176,11 @@ void cm848_validateCalibrationParameters(void)
 {
   int unaff_r30;
   
-  cm848_validateCalibrationLookup();
+  cm848_evaluateCoolantProtectionTransition();
   if (((*(byte *)(unaff_r30 + 1) & 8) == 0) && (DAT_003fede0 != 0)) {
-    cm848_validateCalibrationLookup
+    cm848_evaluateCoolantProtectionTransition
               (0x13,0x19,0x8e,0x8f,&DAT_003fd291,&DAT_003fd292,&DAT_003fd293,&DAT_003fd294);
-    cm848_validateCalibrationLookup
+    cm848_evaluateCoolantProtectionTransition
               (0x14,0x1b,0x90,0x91,&DAT_003fd297,cm848_sensorFaultThresholdCheck_ram,&DAT_003fd299,
                &DAT_003fd29a);
   }
@@ -96331,12 +96331,12 @@ void cm848_initPressureControlVariables(void)
 
 
 //
-// Function: cm848_initDataBufferPointers @ 0x0053752c
+// Function: cm848_incrementProtectionDurationCounter @ 0x0053752c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void cm848_initDataBufferPointers(void)
+void cm848_incrementProtectionDurationCounter(void)
 
 {
   undefined4 *puVar1;
@@ -96361,12 +96361,12 @@ void cm848_initDataBufferPointers(void)
 
 
 //
-// Function: cm848_initServiceRequestState @ 0x00537584
+// Function: cm848_evaluateTurboProtectionConditions @ 0x00537584
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void cm848_initServiceRequestState
+void cm848_evaluateTurboProtectionConditions
                (undefined4 param_1,undefined4 param_2,uint *param_3,uint param_4,uint param_5)
 
 {
@@ -96389,18 +96389,18 @@ void cm848_initServiceRequestState
 
 
 //
-// Function: cm848_calculateFuelingMassFlowRate @ 0x005375ec
+// Function: cm848_evaluateOilPressureProtectionThresholds @ 0x005375ec
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void cm848_calculateFuelingMassFlowRate(void)
+void cm848_evaluateOilPressureProtectionThresholds(void)
 
 {
   short *psVar1;
   
   if ((DAT_003fd2be == 0) && (_service_request_enable_flag_bbc0 != 0)) {
-    cm848_initDataBufferPointers();
+    cm848_incrementProtectionDurationCounter();
   }
   if (_service_request_enable_flag_bbc0 != 0) {
     if ((short *)DAT_003fd2b0[1] <= DAT_003fd2b8) {
@@ -96447,11 +96447,12 @@ void cm848_calculateFuelingMassFlowRate(void)
 
 
 //
-// Function: cm848_enqueueDataRecord @ 0x005377f4
+// Function: cm848_evaluateOilPressureProtectionCounter @ 0x005377f4
 //
 
 undefined4
-cm848_enqueueDataRecord(int param_1,undefined2 param_2,int param_3,int param_4,undefined4 param_5)
+cm848_evaluateOilPressureProtectionCounter
+          (int param_1,undefined2 param_2,int param_3,int param_4,undefined4 param_5)
 
 {
   short sVar1;
@@ -96530,10 +96531,10 @@ void cm848_dispatchProtectionTimerCallbacks(void)
 
 
 //
-// Function: cm848_executeTimerCallbacks @ 0x00537944
+// Function: cm848_initCoolantProtectionCounters @ 0x00537944
 //
 
-void cm848_executeTimerCallbacks(void)
+void cm848_initCoolantProtectionCounters(void)
 
 {
   byte bVar1;
@@ -96577,10 +96578,10 @@ void cm848_executeTimerCallbacks(void)
 
 
 //
-// Function: cm848_iterateAndExecuteTimerEntries @ 0x005379b4
+// Function: cm848_setProtectionActiveFlag @ 0x005379b4
 //
 
-void cm848_iterateAndExecuteTimerEntries(void)
+void cm848_setProtectionActiveFlag(void)
 
 {
   short *unaff_r27;
@@ -96603,10 +96604,10 @@ void cm848_iterateAndExecuteTimerEntries(void)
 
 
 //
-// Function: cm848_executeTimerCallbacksViaLR @ 0x005379d8
+// Function: cm848_accumulateProtectionRuntime @ 0x005379d8
 //
 
-void cm848_executeTimerCallbacksViaLR(void)
+void cm848_accumulateProtectionRuntime(void)
 
 {
   short *unaff_r27;
@@ -96893,25 +96894,38 @@ void initDiagnosticBufferPointers(void)
   cm848_emptyStubFunctionJ1939B();
   cm848_initPgn65227Dm2ResponseHandler();
   cm848_setEngineControllerStateCode();
-  cm848_enqueueDataRecord(0,0xfef1,100,0x46,cm848_j1939SendPgn65265_FEF1_CruiseVehicleSpeed);
-  cm848_enqueueDataRecord(0,0xf004,0x14,0,cm848_j1939SendPgn61444_F004_EngineSpeedTorqueEec1);
-  cm848_enqueueDataRecord(0,0xf003,0x14,10,cm848_j1939SendPgn61443_F003_AcceleratorPedalEec2);
-  cm848_enqueueDataRecord(0,0xfedf,0x32,0x1e,cm848_j1939BuildPgn65247_FEDF_Eec3);
-  cm848_enqueueDataRecord(0,0xfee3,5000,0x6e,cm848_j1939SendPgn65251_FEE3_EngineConfig);
-  cm848_enqueueDataRecord(1,0xf000,100,0x32,cm848_j1939SendPgn61440_F000);
-  cm848_enqueueDataRecord(1,0xfee1,5000,0x12d,cm848_j1939SendPgn65249_FEE1);
-  cm848_enqueueDataRecord(0,0xfeee,1000,0x1ae,cm848_j1939SendPgn65262_FEEE_EngineTemp1);
-  cm848_enqueueDataRecord(0,0xfed9,0xfa,200,cm848_j1939SendPgn65241_FED9);
-  cm848_enqueueDataRecord(0,0xfeef,500,0x82,cm848_j1939SendPgn65263_FEEF_FluidLevelPressure);
-  cm848_enqueueDataRecord(0,0xfef0,100,0x96,cm848_j1939SendPgn65264_FEF0_PowerTakeoff);
-  cm848_enqueueDataRecord(0,0xfef5,1000,0xaa,cm848_j1939SendPgn65269_FEF5_AmbientConditions);
-  cm848_enqueueDataRecord(0,0xfef6,500,0xbe,cm848_j1939SendPgn65270_FEF6_InletExhaustConditions);
-  cm848_enqueueDataRecord(0,0xfef7,1000,0xd2,cm848_j1939SendPgn65271_FEF7_VehicleElectricalPower);
-  cm848_enqueueDataRecord(0,0xffe0,200,0xfa,cm848_initPgn65248VehicleDistanceHandler);
-  cm848_enqueueDataRecord(0,0xfeca,1000,500,cm848_j1939SendPgn65226_FECA_Dm1ActiveFaults);
-  cm848_enqueueDataRecord(0,0xfebd,1000,0x32,cm848_j1939BuildPgn65213_FEBD_BrakeJobber);
-  cm848_enqueueDataRecord(0,0xf001,100,0x14,cm848_j1939BuildPgn61441_F001_Etc2);
-  cm848_enqueueDataRecord(0,0xfeff,10000,0x28,cm848_j1939SendPgn65279_FEFF);
+  cm848_evaluateOilPressureProtectionCounter
+            (0,0xfef1,100,0x46,cm848_j1939SendPgn65265_FEF1_CruiseVehicleSpeed);
+  cm848_evaluateOilPressureProtectionCounter
+            (0,0xf004,0x14,0,cm848_j1939SendPgn61444_F004_EngineSpeedTorqueEec1);
+  cm848_evaluateOilPressureProtectionCounter
+            (0,0xf003,0x14,10,cm848_j1939SendPgn61443_F003_AcceleratorPedalEec2);
+  cm848_evaluateOilPressureProtectionCounter(0,0xfedf,0x32,0x1e,cm848_j1939BuildPgn65247_FEDF_Eec3);
+  cm848_evaluateOilPressureProtectionCounter
+            (0,0xfee3,5000,0x6e,cm848_j1939SendPgn65251_FEE3_EngineConfig);
+  cm848_evaluateOilPressureProtectionCounter(1,0xf000,100,0x32,cm848_j1939SendPgn61440_F000);
+  cm848_evaluateOilPressureProtectionCounter(1,0xfee1,5000,0x12d,cm848_j1939SendPgn65249_FEE1);
+  cm848_evaluateOilPressureProtectionCounter
+            (0,0xfeee,1000,0x1ae,cm848_j1939SendPgn65262_FEEE_EngineTemp1);
+  cm848_evaluateOilPressureProtectionCounter(0,0xfed9,0xfa,200,cm848_j1939SendPgn65241_FED9);
+  cm848_evaluateOilPressureProtectionCounter
+            (0,0xfeef,500,0x82,cm848_j1939SendPgn65263_FEEF_FluidLevelPressure);
+  cm848_evaluateOilPressureProtectionCounter
+            (0,0xfef0,100,0x96,cm848_j1939SendPgn65264_FEF0_PowerTakeoff);
+  cm848_evaluateOilPressureProtectionCounter
+            (0,0xfef5,1000,0xaa,cm848_j1939SendPgn65269_FEF5_AmbientConditions);
+  cm848_evaluateOilPressureProtectionCounter
+            (0,0xfef6,500,0xbe,cm848_j1939SendPgn65270_FEF6_InletExhaustConditions);
+  cm848_evaluateOilPressureProtectionCounter
+            (0,0xfef7,1000,0xd2,cm848_j1939SendPgn65271_FEF7_VehicleElectricalPower);
+  cm848_evaluateOilPressureProtectionCounter
+            (0,0xffe0,200,0xfa,cm848_initPgn65248VehicleDistanceHandler);
+  cm848_evaluateOilPressureProtectionCounter
+            (0,0xfeca,1000,500,cm848_j1939SendPgn65226_FECA_Dm1ActiveFaults);
+  cm848_evaluateOilPressureProtectionCounter
+            (0,0xfebd,1000,0x32,cm848_j1939BuildPgn65213_FEBD_BrakeJobber);
+  cm848_evaluateOilPressureProtectionCounter(0,0xf001,100,0x14,cm848_j1939BuildPgn61441_F001_Etc2);
+  cm848_evaluateOilPressureProtectionCounter(0,0xfeff,10000,0x28,cm848_j1939SendPgn65279_FEFF);
   cm848_initializeGovernorDerivatives();
   cm848_flushJ1939FrameBuffer();
   cm848_processGovernorSpeedControlRequest();
@@ -97179,12 +97193,12 @@ void cm848_enqueueToCircularBufferWrapper(void)
 
 
 //
-// Function: cm848_evaluateFlowRateCondition @ 0x00538880
+// Function: cm848_clearProtectionBitmapFlags @ 0x00538880
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void cm848_evaluateFlowRateCondition(void)
+void cm848_clearProtectionBitmapFlags(void)
 
 {
   char cVar1;
@@ -97210,10 +97224,10 @@ void cm848_evaluateFlowRateCondition(void)
 
 
 //
-// Function: cm848_synchronizeTimebase @ 0x00538974
+// Function: cm848_clearProtectionRamRegion @ 0x00538974
 //
 
-void cm848_synchronizeTimebase(void)
+void cm848_clearProtectionRamRegion(void)
 
 {
   int iVar1;
