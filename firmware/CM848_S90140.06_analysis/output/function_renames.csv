@@ -778,7 +778,7 @@ address,name
 # J1939 periodic TX handlers — registered via cm848_enqueueDataRecord
 # calls inside cm848_initJ1939ProtocolHandlers @ 0x232B4 (see decompile
 # lines ~95932-95951). Each entry is (queue, tag, period_ms, phase_offset,
-# handler); the handler runs every period_ms from processProtectionDiagnosticState
+# handler); the handler runs every period_ms from cm848_dispatchProtectionTimerCallbacks
 # @ 0x5378a4. J1939 acronyms per SAE J1939-71 where confident; addresses
 # with no suffix are periodic TX handlers whose PGN semantics haven't been
 # verified yet.
@@ -865,10 +865,18 @@ address,name
 0x000212dc,cm848_initProtectionDelayDefaults
 0x00021314,cm848_calculateSpeedControlError
 0x0002156c,cm848_initSpeedControlTableDimensions
+# EF00 service handlers (0x01, 0x07): formerly LAB_ labels, now explicit functions
+0x00021584,cm848_advanceDiagnosticActionState
+0x00021624,cm848_enableJ1939Output
 0x00021668,cm848_initJ1939MessageBuffers
+# EF00 service handlers (0x16, 0x06): formerly LAB_ labels
+0x00021694,cm848_enableJ1939OutputDirect
+0x000216e8,cm848_setColdStartActiveFlag
 0x000216fc,mpc555_processJ1939RxQueue
 0x000218b0,cm848_j1939ProcessRxQueueDefault
 0x000218dc,cm848_j1939ProcessRxQueueParam
+# EF00 service handler (0x18): formerly LAB_ label
+0x00021904,cm848_setColdStartMode2Flag
 0x00021918,cm848_validateCalibrationMemory
 0x00021a24,cm848_registerJ1939DiagnosticHandlers
 0x00021ac0,cm848_initUdsServiceHandlers
@@ -884,6 +892,7 @@ address,name
 0x00022220,cm848_updateGovernorTimers
 0x00022318,cm848_initGovernorDerivativeTerms
 0x0002232c,cm848_initGovernorControlHandler
+0x0002235c,cm848_noOperation
 # 0x0002235c is the epilogue of cm848_initGovernorControlHandler (not a separate function).
 # Previously misidentified as cm848_noOperation because e2m Flash2 (V11.20.13.16) had
 # bl instructions targeting this address where cm848_processJ1939DiagnosticRequest lived
@@ -1912,10 +1921,10 @@ address,name
 0x005094c0,cm848_initFuelAdjustmentState
 0x00509510,mpc555_evaluateDiagnosticLoadConditions
 0x00509848,cm848_copyBufferAndUpdateJ1939Addresses
-0x00509894,cm848_updateOutputControlMask
-0x00509990,cm848_updateOutputControlMaskIndex4
-0x005099b8,cm848_updateOutputControlMaskIndex5
-0x005099e0,cm848_registerOutputControlOperations
+0x00509894,cm848_selectBoostDemandSource
+0x00509990,cm848_selectBoostDemandSourceFromParam
+0x005099b8,cm848_copyBoostDemandToBuffer
+0x005099e0,cm848_setBoostDemandNumerator
 0x00509a2c,cm848_emptyStub_noOp
 0x00509a44,cm848_clearBitmapFlag
 0x00509a7c,cm848_storeIndirectValue
@@ -2606,7 +2615,7 @@ address,name
 0x00537584,cm848_initServiceRequestState
 0x005375ec,cm848_calculateFuelingMassFlowRate
 0x005377f4,cm848_enqueueDataRecord
-0x005378a4,cm848_processProtectionDiagnosticState
+0x005378a4,cm848_dispatchProtectionTimerCallbacks
 0x00537944,cm848_executeTimerCallbacks
 0x005379b4,cm848_iterateAndExecuteTimerEntries
 0x005379d8,cm848_executeTimerCallbacksViaLR
@@ -2625,10 +2634,10 @@ address,name
 0x00538a84,BYTE_00538a84
 0x00538c78,cm848_updateEmissionControlParameter
 0x00538d3c,cm848_dispatchFaultTimerHandlers
-0x00538eac,cm848_dataTable_00538eac
+0x00538eac,cm848_noOpStub
 0x00538eb0,cm848_registerJ1939PgnHandler
-0x00538ef4,cm848_dataTable_00538ef4
-0x00539768,cm848_dataTable_00539768
-0x00539868,cm848_dataTable_00539868
-0x00539d18,cm848_dataTable_00539d18
-0x0053a110,cm848_dataTable_0053a110
+0x00538ef4,cm848_processJ1939RxDispatch
+0x00539768,cm848_lookupJ1939PgnHandlerByHash
+0x00539868,cm848_clearProtectionStateAndEvalSensors
+0x00539d18,cm848_enableJ1939OutputAndSync
+0x0053a110,cm848_dispatchCommandSequenceHandlers
