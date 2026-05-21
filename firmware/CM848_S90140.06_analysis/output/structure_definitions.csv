@@ -784,3 +784,38 @@ boost_in_range_state_t,0x003fd064,filter_state_ptr,pointer,4,BIR speed ratio fil
 # Total size: 4 bytes (0x003fee5e-0x003fee61)
 boost_in_range_counters_t,0x003fee5e,deviation_count,word,2,BIR boost deviation event count,,needs_review
 boost_in_range_counters_t,0x003fee5e,operating_time_counter,word,2,BIR time at operating condition counter,,needs_review
+# =============================================================================
+# USIU PIT Sub-structure - Periodic Interrupt Timer registers at 0x002FC240
+# Reference: RTEMS MPC555 BSP usiu_ struct; confirmed by firmware access patterns
+# Total size: 10 bytes (0x002FC240-0x002FC249)
+# =============================================================================
+usiu_pit_t,0x002fc240,PISCR,word,2,PIT Status and Control Register (firmware writes 0x101 to enable PIE+PS),,verified
+usiu_pit_t,0x002fc240,_pad_piscr,word,2,Padding after PISCR (16-bit register in 32-bit slot),,verified
+usiu_pit_t,0x002fc240,PITC,word,2,PIT Count Register (firmware writes 4999 for 5000-count period),,verified
+usiu_pit_t,0x002fc240,_pad_pitc,word,2,Padding after PITC,,verified
+usiu_pit_t,0x002fc240,PITR,word,2,PIT Register (read-only current count value),,verified
+# =============================================================================
+# USIU Clock/Reset Sub-structure - System clock and reset registers at 0x002FC280
+# Reference: RTEMS MPC555 BSP usiu_ struct; SCCR/RSR/COLIR confirmed by firmware behavior
+# Total size: 18 bytes (0x002FC280-0x002FC291)
+# =============================================================================
+usiu_clock_t,0x002fc280,SCCR,dword,4,System Clock Control Register (firmware writes 0x2010000/0xe010000),,verified
+usiu_clock_t,0x002fc280,PLPRCR,dword,4,PLL Low Power and Reset Control Register (firmware writes 0x1304001),,verified
+usiu_clock_t,0x002fc280,RSR,word,2,Reset Status Register (read at startup then cleared with 0xFFFF),,verified
+usiu_clock_t,0x002fc280,_pad_rsr,word,2,Padding after RSR (16-bit register in 32-bit slot),,verified
+usiu_clock_t,0x002fc280,COLIR,word,2,Change of Lock Interrupt Register,,verified
+usiu_clock_t,0x002fc280,_pad_colir,word,2,Padding after COLIR,,verified
+usiu_clock_t,0x002fc280,VSRMCR,word,2,VDD Sense Mode Control Register (firmware writes 0x400),,verified
+# =============================================================================
+# USIU Memory Controller Sub-structure - Bank registers at 0x002FC100
+# 4 banks with BR (Base Register) and OR (Option Register) pairs
+# Total size: 32 bytes (0x002FC100-0x002FC11F)
+# =============================================================================
+usiu_memc_t,0x002fc100,BR0,dword,4,Base Register 0 (Flash2 chip select),,verified
+usiu_memc_t,0x002fc100,OR0,dword,4,Option Register 0,,verified
+usiu_memc_t,0x002fc100,BR1,dword,4,Base Register 1 (RAM chip select),,verified
+usiu_memc_t,0x002fc100,OR1,dword,4,Option Register 1,,verified
+usiu_memc_t,0x002fc100,BR2,dword,4,Base Register 2,,verified
+usiu_memc_t,0x002fc100,OR2,dword,4,Option Register 2,,verified
+usiu_memc_t,0x002fc100,BR3,dword,4,Base Register 3,,verified
+usiu_memc_t,0x002fc100,OR3,dword,4,Option Register 3,,verified
