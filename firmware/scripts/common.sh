@@ -182,6 +182,12 @@ cmd_import() {
     echo "Importing from: $OUTPUT_DIR"
     echo ""
 
+    # Apply struct type definitions first so ImportAnalysis can reference them by name
+    STRUCT_CSV="$OUTPUT_DIR/structure_definitions.csv"
+    if [ -f "$STRUCT_CSV" ]; then
+        run_script ApplyStructures.java "$STRUCT_CSV"
+    fi
+
     run_script ImportAnalysis.java "$OUTPUT_DIR"
 
     print_success "Import complete"

@@ -232,7 +232,7 @@ public class ImportAnalysis extends GhidraScript {
                             continue;
                         }
 
-                        DataType dataType = mapCsvTypeToDataType(typeStr);
+                        DataType dataType = mapCsvTypeToDataType(typeStr, currentProgram.getDataTypeManager());
                         if (dataType == null) {
                             typeSkippedNoType++;
                             continue;
@@ -289,7 +289,7 @@ public class ImportAnalysis extends GhidraScript {
      * Maps CSV type strings to Ghidra DataType objects.
      * Supports both our CSV format (u8, u16, etc.) and Ghidra's export format (byte, word, etc.)
      */
-    private DataType mapCsvTypeToDataType(String typeStr) {
+    private DataType mapCsvTypeToDataType(String typeStr, DataTypeManager dtm) {
         switch (typeStr.toLowerCase()) {
             // Unsigned integers (CSV format)
             case "u8":
@@ -334,9 +334,19 @@ public class ImportAnalysis extends GhidraScript {
                 return null;
 
             default:
-                // Unknown type - skip
-                return null;
+                // Unknown type - fall through to named type lookup
+                break;
         }
+
+        // Look up user-defined types (structs, etc.) by name in the DataTypeManager
+        if (dtm != null) {
+            java.util.List<DataType> found = new java.util.ArrayList<>();
+            dtm.findDataTypes(typeStr, found);
+            if (!found.isEmpty()) {
+                return found.get(0);
+            }
+        }
+        return null;
     }
 
     private long parseAddressString(String addressStr) {
