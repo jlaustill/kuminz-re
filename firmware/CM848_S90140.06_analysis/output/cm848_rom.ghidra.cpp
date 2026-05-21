@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu May 21 14:12:07 MDT 2026
+// Generated: Thu May 21 14:41:55 MDT 2026
 
 
 //
@@ -508,7 +508,7 @@ void mpc555_eepromWriteWords(undefined2 *param_1,short param_2,uint param_3)
     eeprom_timing_reg_2 = 0xce;
     _DAT_00305186 = *param_1;
     DAT_003051c3 = 0x4e;
-    _eeprom_control_register = _eeprom_control_register | 0x8000;
+    __qspi_spcr1 = __qspi_spcr1 | 0x8000;
     param_1 = param_1 + 1;
     sVar2 = _eeprom_data_register + 2;
     uVar3 = uVar3 + 0xffff;
@@ -521,7 +521,7 @@ void mpc555_eepromWriteWords(undefined2 *param_1,short param_2,uint param_3)
       eeprom_timing_reg_0 = 0x9e;
       _eeprom_address_register = 0;
       eeprom_timing_reg_1 = 0xe;
-      _eeprom_control_register = _eeprom_control_register | 0x8000;
+      __qspi_spcr1 = __qspi_spcr1 | 0x8000;
       do {
       } while ((qadc_queue_status & 0x80) == 0);
       qadc_queue_status = qadc_queue_status & 0x7f;
@@ -562,7 +562,7 @@ void mpc555_eepromReadWords(short param_1,undefined2 *param_2,uint param_3)
     eeprom_timing_reg_1 = 0xce;
     _eeprom_data_register = 0;
     eeprom_timing_reg_2 = 0x4e;
-    _eeprom_control_register = _eeprom_control_register | 0x8000;
+    __qspi_spcr1 = __qspi_spcr1 | 0x8000;
     sVar1 = _eeprom_address_register + 2;
     uVar2 = uVar2 + 0xffff;
     do {
@@ -1728,7 +1728,7 @@ void mpc555_hardwareInitialization(void)
   _mios_mmcsm_cnt = 0;
   _mios_mmcsm_ml = 0;
   qadc_queue_status = qadc_queue_status & 0x7f;
-  _eeprom_control_register = _eeprom_control_register & 0x7fff;
+  __qspi_spcr1 = __qspi_spcr1 & 0x7fff;
   _eeprom_status_register = _eeprom_status_register & 0x7ff0;
   qsmcm_sccr0 = 0;
   _qsmcm_scsr = 0;
@@ -2656,7 +2656,7 @@ void mpc555_initQspiRegisters(void)
   QSMCM_SPSR = 0x7e;
   qsmcm_qspi_ddqrs = 0x7f;
   _qsmcm_qspi_spcr0 = 0x800a;
-  _eeprom_control_register = _eeprom_control_register & 0x80ff | 0x2200;
+  __qspi_spcr1 = __qspi_spcr1 & 0x80ff | 0x2200;
   if ((qadc_queue_status & 0x80) != 0) {
     qadc_queue_status = qadc_queue_status & 0x7f;
   }
@@ -5565,7 +5565,7 @@ void mpc555_systemWatchdogReset(void)
     DAT_003051c4 = 0x5d;
     _DAT_0030518a = 0xf400;
     DAT_003051c5 = 0x5d;
-    _eeprom_control_register = _eeprom_control_register | 0x8000;
+    __qspi_spcr1 = __qspi_spcr1 | 0x8000;
     do {
     } while ((qadc_queue_status & 0x80) == 0);
     qadc_queue_status = qadc_queue_status & 0x7f;
@@ -5612,7 +5612,7 @@ void mpc555_initQspiHardware(void)
     DAT_003051c3 = 0x5d;
     _DAT_00305188 = 0x4200;
     DAT_003051c4 = 0x5d;
-    _eeprom_control_register = _eeprom_control_register | 0x8000;
+    __qspi_spcr1 = __qspi_spcr1 | 0x8000;
     do {
     } while ((qadc_queue_status & 0x80) == 0);
     qadc_queue_status = qadc_queue_status & 0x7f;
@@ -5640,7 +5640,7 @@ void mpc555_initQspiHardware(void)
       DAT_003fdb9e = 1;
     }
     _eeprom_address_register = 0xf200;
-    _eeprom_control_register = _eeprom_control_register | 0x8000;
+    __qspi_spcr1 = __qspi_spcr1 | 0x8000;
     do {
     } while ((qadc_queue_status & 0x80) == 0);
     qadc_queue_status = qadc_queue_status & 0x7f;
@@ -8971,8 +8971,8 @@ undefined8 mpc555_timerInterruptHandler(undefined4 param_1,undefined4 param_2)
   } while (iVar3 != iVar4);
   _scheduler_task_enable_flags =
        _scheduler_task_enable_flags &
-       *(ushort *)((int)&PTR_DAT_000575bc + (uint)(USIU_SIVEC >> 2) * 2);
-  (**(code **)(&DAT_000575de + (uint)(USIU_SIVEC >> 2) * 4))();
+       *(ushort *)((int)&mpc555_interrupt_task_mask_table + (uint)(USIU_SIVEC >> 2) * 2);
+  (*(code *)(&mpc555_interrupt_dispatch_table)[USIU_SIVEC >> 2])();
   _scheduler_task_enable_flags = uVar6;
   if ((uVar6 & 1) != 0) {
     do {
@@ -37993,7 +37993,7 @@ void mpc555_j1939InitTransmitBuffer(char param_1)
   else {
     qsmcm_qspi_ddqrs = qsmcm_qspi_ddqrs | 4;
   }
-  _eeprom_control_register = (&DAT_003fb436)[uVar1 * 2];
+  __qspi_spcr1 = (&DAT_003fb436)[uVar1 * 2];
   return;
 }
 
@@ -38105,8 +38105,8 @@ void mpc555_j1939ConfigureMultiFrame(int param_1,int param_2)
   int iVar6;
   undefined4 *puVar7;
   
-  if (((_eeprom_control_register & 0x8000) == 0) && (j1939_queued_tx_in_flight == 0)) {
-    j1939_queued_tx_in_flight = 1;
+  if (((__qspi_spcr1 & 0x8000) == 0) && (j1939_multiFrame_tx_in_flight == 0)) {
+    j1939_multiFrame_tx_in_flight = 1;
     iVar6 = param_2 * 0x43;
     puVar7 = *(undefined4 **)(iVar6 + param_1 * 4 + 0x3fb449);
     bVar5 = 0;
@@ -38134,7 +38134,7 @@ void mpc555_j1939ConfigureMultiFrame(int param_1,int param_2)
     _eeprom_status_register =
          _eeprom_status_register & 0xe0e0 |
          (ushort)*(byte *)((int)puVar7 + 5) * 0x100 - 0x100 & 0x1f00;
-    _eeprom_control_register = _eeprom_control_register | 0x8000;
+    __qspi_spcr1 = __qspi_spcr1 | 0x8000;
   }
   return;
 }
@@ -38223,7 +38223,7 @@ void cm848_j1939ProcessTransmitQueue(void)
     (**(code **)((int)puVar4 + 0x12))();
   }
   (&DAT_003fb448)[(uint)DAT_003fb4cc * 0x43] = (&DAT_003fb448)[(uint)DAT_003fb4cc * 0x43] + -1;
-  j1939_queued_tx_in_flight = 0;
+  j1939_multiFrame_tx_in_flight = 0;
   uVar7 = 0;
   do {
     if ((&DAT_003fb448)[uVar7 * 0x43] != '\0') {
@@ -38233,7 +38233,7 @@ void cm848_j1939ProcessTransmitQueue(void)
     }
     uVar7 = uVar7 + 1 & 0xff;
   } while (uVar7 < 2);
-  j1939_queued_tx_in_flight = 0;
+  j1939_multiFrame_tx_in_flight = 0;
   return;
 }
 
