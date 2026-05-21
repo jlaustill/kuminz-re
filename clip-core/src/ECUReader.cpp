@@ -698,6 +698,67 @@ bool ECUReader::readParameterService43(uint16_t paramId, uint32_t offset,
     return false;
 }
 
+bool ECUReader::enableJ1939Broadcasts(bool directEnable, int timeoutMs)
+{
+    if (!m_connected || !m_adapter->isOpen()) {
+        log("Not connected (enableJ1939Broadcasts)");
+        return false;
+    }
+
+    uint32_t txArbId = m_j1939.buildClipDataArbId(m_ecuAddress);
+
+    // sendEF00Control: send a single service byte and wait briefly for optional ACK.
+    // Returns false only if the CAN frame could not be sent.
+    auto sendEF00Control = [&](uint8_t serviceId) -> bool {
+        uint8_t txData[8] = {};
+        txData[0] = serviceId;
+
+        std::stringstream ss;
+        ss << "EF00 service 0x" << std::hex << std::setw(2) << std::setfill('0')
+           << static_cast<int>(serviceId);
+        log(ss.str());
+
+        if (!m_adapter->send(txArbId, txData, 8)) {
+            log("Failed to send EF00 service frame");
+            return false;
+        }
+
+        // Wait for optional single-frame ACK — not required for success.
+        uint32_t arbId;
+        uint8_t rxData[8];
+        uint8_t rxLen;
+        int elapsed = 0;
+        while (elapsed < timeoutMs) {
+            if (m_adapter->recv(arbId, rxData, rxLen, 50)) {
+                uint8_t source = J1939MessageBuilder::extractSourceAddress(arbId);
+                uint8_t dest   = (arbId >> 8) & 0xFF;
+                uint8_t pf     = (arbId >> 16) & 0xFF;
+                if (pf == J1939_CLIP_PGN_PF && dest == J1939_TOOL_ADDRESS && source == m_ecuAddress) {
+                    std::stringstream rs;
+                    rs << "EF00 service 0x" << std::hex << static_cast<int>(serviceId)
+                       << " response: 0x" << std::setw(2) << std::setfill('0')
+                       << static_cast<int>(rxData[0]);
+                    log(rs.str());
+                    break;
+                }
+            }
+            elapsed += 50;
+        }
+        return true;
+    };
+
+    if (directEnable) {
+        log("Enabling J1939 broadcasts via service 0x16 (direct)");
+        return sendEF00Control(0x16);
+    }
+
+    log("Enabling J1939 broadcasts via 0x0a -> 0x07 sequence");
+    if (!sendEF00Control(0x0a)) {
+        return false;
+    }
+    return sendEF00Control(0x07);
+}
+
 bool ECUReader::readMemoryService4ALarge(uint32_t address, uint32_t totalLength,
                                          std::vector<uint8_t>& data, uint8_t chunkSize)
 {

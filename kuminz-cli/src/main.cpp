@@ -49,6 +49,9 @@ void printUsage(const char* progname)
     std::cerr << "  --cm848-dump-rom [file]     Dump CM848 ROM Bank 1 (448KB) to file\n";
     std::cerr << "  --cm848-dump-flash2 [file]  Dump CM848 Flash Bank 2 (248KB) to file\n";
     std::cerr << "  --cm848-dump-all [dir]      Dump all CM848 regions to directory\n\n";
+    std::cerr << "CM848 J1939 Broadcast Commands:\n";
+    std::cerr << "  --enable-j1939              Enable periodic J1939 broadcasts (EF00 0x0a -> 0x07)\n";
+    std::cerr << "  --enable-j1939-direct       Enable J1939 broadcasts via EF00 0x16 (no init step)\n\n";
     std::cerr << "Service Scanner Commands:\n";
     std::cerr << "  --scan-services             Quick scan (0x40-0x5F, ~30 sec)\n";
     std::cerr << "  --scan-services-full        Full scan (0x00-0xFF, ~2-3 min)\n";
@@ -79,7 +82,8 @@ void printUsage(const char* progname)
     std::cerr << "  " << progname << " can0 --read-addr 801c7a 100\n";
     std::cerr << "  " << progname << " can0 --read-param 0004\n";
     std::cerr << "  " << progname << " can0 --read-param-offset 0004 00000010\n";
-    std::cerr << "  " << progname << " can0 --write-service4b 800100 AA55\n\n";
+    std::cerr << "  " << progname << " can0 --write-service4b 800100 AA55\n";
+    std::cerr << "  " << progname << " can0 --enable-j1939\n\n";
     std::cerr << "Note: CAN interface must be configured before running:\n";
     std::cerr << "  sudo ip link set can0 type can bitrate 250000\n";
     std::cerr << "  sudo ip link set can0 up\n";
@@ -385,6 +389,32 @@ int main(int argc, char* argv[])
             result = 1;
         }
         std::cout << "\n";
+    }
+    // =========================================================================
+    // CM848 J1939 Broadcast Enable
+    // =========================================================================
+    else if (command == "--enable-j1939" || command == "--enable-j1939-direct") {
+        bool direct = (command == "--enable-j1939-direct");
+
+        std::cerr << "\n=== CM848 J1939 Broadcast Enable ===\n\n";
+        if (direct) {
+            std::cerr << "Method: EF00 service 0x16 (direct enable, no init step)\n\n";
+        } else {
+            std::cerr << "Method: EF00 0x0a (init) -> EF00 0x07 (enable)\n\n";
+            std::cerr << "[1/2] Sending service 0x0a (cm848_initJ1939MessageBuffers)...\n";
+            std::cerr << "      Sets output_enable_bitmap=0, arms precondition flag\n\n";
+            std::cerr << "[2/2] Sending service 0x07 (cm848_enableJ1939Output)...\n";
+            std::cerr << "      Sets output_enable_bitmap=1, periodic TX should start\n\n";
+        }
+
+        if (reader.enableJ1939Broadcasts(direct)) {
+            std::cerr << "[OK] Enable sequence sent.\n";
+            std::cerr << "     Verify with: candump " << canDevice << "\n";
+            std::cerr << "     Expect periodic EEC1 (PGN F004), EEC2 (F003), EEC3 (FEDF), etc.\n";
+        } else {
+            std::cerr << "[ERROR] Failed to send enable sequence\n";
+            result = 1;
+        }
     }
     // =========================================================================
     // Service Scanner Commands
