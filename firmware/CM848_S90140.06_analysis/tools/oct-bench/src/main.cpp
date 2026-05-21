@@ -1,8 +1,12 @@
-// CM848D EEPROM Dumper — outputs full 8KB EEPROM as hex for diffing.
-// Run between HP Tuners flashes to identify runtime counter addresses.
+// CM848D Broadcast Diagnostic Monitor
 //
-// Output format: raw hex lines, one u16 word per line with address prefix.
-// Easy to diff with standard tools.
+// Reads the three variables that gate J1939 EEC1/EEC2 broadcasts:
+//   fuel_demand_accumulator    0x0040A7C0 — engine state (1=key-on, 2+=running)
+//   protection_condition_flags 0x0040ADEE — broadcast gate (needs bit 2 or 3 set)
+//   current_engine_rpm         0x0040B7BA — RPM (x0.125)
+//
+// If protection_condition_flags stays 0x0000 with engine running, the
+// protection parameter init path never fired — that's the broadcast blocker.
 
 #include <Arduino.h>
 #include <FlexCAN_T4.h>
@@ -65,50 +69,42 @@ void setup() {
     can.onReceive(onReceive);
     delay(100);
 
-    // Sanity check
     uint16_t rpm;
     if (!readWord(0x0040B7BA, rpm)) {
         Serial.println("ERROR: ECU NOT RESPONDING");
         while (1) delay(1000);
     }
 
-    Serial.println("EEPROM_DUMP_START");
-
-    uint32_t base = 0x01000000;
-    uint32_t end = 0x01002000;  // 8KB
-    int errors = 0;
-
-    for (uint32_t addr = base; addr < end; addr += 2) {
-        uint16_t val;
-        if (readWord(addr, val)) {
-            // Format: ADDRESS XXXX
-            Serial.print(addr, HEX);
-            Serial.print(" ");
-            if (val < 0x1000) Serial.print("0");
-            if (val < 0x100) Serial.print("0");
-            if (val < 0x10) Serial.print("0");
-            Serial.println(val, HEX);
-        } else {
-            Serial.print(addr, HEX);
-            Serial.println(" DEAD");
-            errors++;
-        }
-
-        // Progress every 512 words (1KB)
-        if (((addr - base) & 0x3FF) == 0 && addr != base) {
-            // Print progress to stderr-style marker that won't break the diff
-            Serial.print("# Progress: ");
-            Serial.print((addr - base) / 2);
-            Serial.print("/4096 words (");
-            Serial.print((addr - base) * 100 / (end - base));
-            Serial.println("%)");
-        }
-    }
-
-    Serial.print("EEPROM_DUMP_END errors=");
-    Serial.println(errors);
-
-    while (1) { can.events(); delay(100); }
+    Serial.println("=== CM848 BROADCAST DIAGNOSTIC ===");
+    Serial.println("fuel_demand_accumulator    : 1=key-on/idle, 2+=running");
+    Serial.println("protection_condition_flags : needs bit2/3 set for EEC1/EEC2");
+    Serial.println("rpm                        : raw x0.125 = RPM");
+    Serial.println("---");
 }
 
-void loop() {}
+void loop() {
+    uint16_t rpm = 0, fuel_state = 0, prot_flags = 0;
+    bool rpm_ok   = readWord(0x0040B7BA, rpm);
+    bool fuel_ok  = readWord(0x0040A7C0, fuel_state);
+    bool prot_ok  = readWord(0x0040ADEE, prot_flags);
+
+    Serial.print("RPM=");
+    if (rpm_ok) { Serial.print((float)rpm * 0.125f, 0); } else { Serial.print("?"); }
+
+    Serial.print("  fuel_demand_accumulator=0x");
+    if (fuel_ok) { Serial.print(fuel_state, HEX); } else { Serial.print("?"); }
+
+    Serial.print("  protection_condition_flags=0x");
+    if (prot_ok) {
+        if (prot_flags < 0x1000) Serial.print("0");
+        if (prot_flags < 0x100)  Serial.print("0");
+        if (prot_flags < 0x10)   Serial.print("0");
+        Serial.print(prot_flags, HEX);
+        if ((prot_flags & 0x000C) == 0) Serial.print(" <-- BROADCAST BLOCKED");
+    } else {
+        Serial.print("?");
+    }
+
+    Serial.println();
+    delay(1000);
+}
