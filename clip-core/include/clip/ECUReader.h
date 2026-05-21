@@ -245,6 +245,31 @@ public:
                                 std::vector<uint8_t>& data, int timeoutMs = 5000);
 
     // =========================================================================
+    // CM848 J1939 Broadcast Enable (EF00 service sequence)
+    // =========================================================================
+
+    /**
+     * @brief Enable periodic J1939 broadcasts from the CM848D ECU.
+     * @param directEnable If true, send only service 0x16 (no precondition).
+     *                     If false (default), send 0x0a then 0x07.
+     * @param timeoutMs Per-service response wait timeout in milliseconds.
+     * @return true if all frames were sent successfully.
+     *
+     * Normal sequence (directEnable=false):
+     *   1. EF00 service 0x0a (cm848_initJ1939MessageBuffers):
+     *      sets output_enable_bitmap=0, arms _j1939_message_buffer_init=1
+     *   2. EF00 service 0x07 (cm848_enableJ1939Output):
+     *      sets output_enable_bitmap=1, starts periodic EEC1/EEC2/EEC3 TX
+     *
+     * Shortcut (directEnable=true):
+     *   1. EF00 service 0x16 (cm848_enableJ1939OutputDirect):
+     *      sets output_enable_bitmap=1 directly, skips precondition check
+     *
+     * The ECU may or may not send a single-frame ACK; timeout is not an error.
+     */
+    bool enableJ1939Broadcasts(bool directEnable = false, int timeoutMs = 500);
+
+    // =========================================================================
     // Service 0x4A Memory Write Methods (Experimental)
     // =========================================================================
     // These methods attempt to write to ECU memory using Service 0x4A format.

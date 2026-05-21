@@ -28,4 +28,4 @@
 018 [X] [firmware] Name CM848D Bank 2 utility functions using CM550 equivalents (844 functions complete)
 019 [X] [firmware] Cross-firmware RAM variable naming campaign - CM550 Tier 1+2 (455 named), CM848 (8 named), 20 cross-firmware matches validated
 020 [ ] [all] Test coverage implementation - Catch2 for C++, Vitest for TypeScript, 6 phases by priority
-021 [>] [firmware/kuminz-cli] CM848D J1939 broadcast trigger - find EF00 service byte that enables broadcasts (gate addrs known: 0x0040BA74/76, enable fn: Flash2[0x5099B8])
+021 [?] [firmware/kuminz-cli] CM848D J1939 broadcast trigger - EF00 0x0a→0x07 (or 0x16 alone) — needs live truck test to verify broadcasts start
