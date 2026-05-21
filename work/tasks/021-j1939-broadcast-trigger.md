@@ -92,12 +92,49 @@ J1939 periodic TX is managed through timer dispatch tables in RAM:
 
 | Function | Address | Table | Gate condition |
 |----------|---------|-------|----------------|
-| `cm848_dispatchProtectionTimerCallbacks` | Flash2 0x005378A4 | 0x3FD2C2 (group A), 0x3FD38A (group B) | `output_control_mask & 4/8` AND `protection_diagnostic_state_flags & 4/8` |
+| `cm848_dispatchFaultTimerHandlers` | Flash2 0x00538D3C | 0x3FD2E2 (group A, max 20), 0x3FD3AA (group B, max 10) | `j1939_dispatch_mode_flags & 8` AND `protection_condition_flags & 4/8` AND `governor_derivative_term_masked & 4/8` |
 | `cm848_dispatchCommandSequenceHandlers` | Flash2 0x0053A110 | Jump table at 0x53AC4A | Iterates 48 command slots, updates `command_sequence_state` bitmap |
 
-Timer entries are 10-byte records: `[interval:2][padding:2][handler_ptr:4][counter:2]`.
+**NOTE (2026-05-21 correction):** Flash2 0x005378A4 is `cm848_dispatchProtectionTimerCallbacks` — a protection accumulator, NOT the J1939 TX dispatcher. Tables previously listed as 0x3FD2C2/0x3FD38A were wrong. Correct tables are at 0x3FD2E2 (group A) and 0x3FD3AA (group B).
 
-**Who populates these tables?** Not yet traced — this is still open. Setting `output_enable_bitmap = 1` via service 0x07 or 0x16 may be sufficient if the tables are populated at boot, or the tables may need seeding by a separate step.
+Timer entries are 10-byte records: `[interval:2][padding:2][handler_ptr:4][counter:2]`.
+- `j1939_group_a_entry_count` (0x3FD40E) and `j1939_group_b_entry_count` (0x3FD40F) track counts.
+- `j1939_group_a_tick_counter` (0x3FD410) and `j1939_group_b_tick_counter` (0x3FD412) are phase-match ticks.
+- Tables are populated at boot by `cm848_buildDiagnosticMessageSequence`.
+
+**Triple gate for EEC1/EEC2 broadcasts — all three required:**
+1. `j1939_dispatch_mode_flags & 8` (0x3FD5B2) — set during engine-start completion
+2. `protection_condition_flags & 4` or `& 8` (0x40ADEE) — requires protection system active (engine running)
+3. `governor_derivative_term_masked & 4` or `& 8` (0x40ADE4) — three-channel consensus: `governor_derivative_term[0] & [1] & [2]`; requires engine running
+
+**Conclusion (2026-05-21):** Service 0x16 alone is NOT sufficient. EEC1/EEC2 periodic broadcasts require a physically running engine. Testing requires the truck to be started.
+
+### `j1939_protection_mode_active` (formerly `output_enable_bitmap`)
+
+Variable at 0x0040C04A. Name "output_enable_bitmap" was misleading:
+
+| Value | Set by | Meaning |
+|-------|--------|---------|
+| 1 | Boot (`cm848_initializeProtectionPointerTable`) | Protection/normal-operation mode active |
+| 1 | Service 0x07, 0x16, `cm848_enableJ1939OutputAndSync` | Same — "enable" is re-enabling protection mode |
+| 0 | Service 0x0a (`cm848_initJ1939MessageBuffers`) | Basic status mode — simple status queuing active |
+
+**Important:** Basic status messages (`cm848_j1939QueueStatusMessage`) only queue when this is 0. EEC1/EEC2 broadcasts via `cm848_dispatchFaultTimerHandlers` don't gate on this directly — they gate on the protection condition flags above.
+
+### Queued TX Gate: `j1939_queued_tx_in_flight` (0x3FB4CD)
+
+- `mpc555_j1939ConfigureMultiFrame` gates on `j1939_queued_tx_in_flight == 0` before queuing a broadcast frame.
+- Should be cleared by `cm848_j1939ProcessTransmitQueue`, but **Flash2 version at 0x0050D2B8 is a no-op stub** (`return;`).
+- ROM version at 0x0003DBC0 correctly resets it.
+- CLIP response frames bypass this gate entirely via `mpc555_sendJ1939SingleFrame` (direct CAN TX).
+
+### Governor Derivative Term Array (Three-Channel)
+
+`cm848_updateGovernorTimers` proves this is a stride-3 array:
+- `governor_derivative_term` (0x0040ADDC) — channel 0
+- `governor_derivative_term_1` (0x0040ADE2) — channel 1
+- `governor_derivative_term_2` (0x0040ADE8) — channel 2
+- `governor_derivative_term_masked` (0x0040ADE4) — AND of all three channels
 
 ### J1939 RX/TX Infrastructure
 
@@ -105,26 +142,32 @@ Timer entries are 10-byte records: `[interval:2][padding:2][handler_ptr:4][count
 |----------|---------|------|
 | `cm848_processJ1939RxDispatch` | Flash2 0x00538EF4 | Reads CAN RX queue at 0x40AD30, dispatches by PGN to handlers at 0x3FD414 |
 | `cm848_lookupJ1939PgnHandlerByHash` | Flash2 0x00539768 | Hash-based PGN lookup: `PGN % 0x761 → 0x53AF76 index → 0x53BE38 chain` |
-| `cm848_enableJ1939OutputAndSync` | Flash2 0x00539D18 | Sets `output_enable_bitmap = 1`, busy-waits for protection timer sync |
+| `cm848_enableJ1939OutputAndSync` | Flash2 0x00539D18 | Sets `j1939_protection_mode_active = 1`, busy-waits for protection timer sync |
+| `cm848_syncProtectionCalibrationChunk` | Flash2 0x00538A84 | Copies 100 words/call of protection calibration from Flash2 to RAM during cold-start |
 | `initDiagnosticBufferPointers` | Flash2 0x00537CF8 | Registers 16 PGNs at boot (EEC1, EEC2, EEC3, etc.) |
+| `cm848_initEec1TxDescriptor` | ROM 0x00025AB8 | Initializes EEC1 TX descriptor at 0x3FAD98 with PGN 0xF004 |
+| `cm848_engineStartCompletionB` | ROM 0x00054D30 | Second engine-start completion path: loops `cm848_syncProtectionCalibrationChunk` until flag ≠ 0, then calls `cm848_enableJ1939OutputAndSync` |
 
 ---
 
 ## Next Steps
 
-### Step 1: Implement in kuminz-cli (ready to do now)
+### Step 1: Test with engine running
 
-The trigger is known. Add `--enable-j1939` to kuminz-cli that sends:
-1. EF00 service 0x0a (disable/init)
-2. EF00 service 0x07 (enable)
+OCT cipher fix is complete and confirmed working (`0C 16 FF FF FF FF FF FF` response = service 0x16 success). No EEC1/EEC2 broadcasts appear on bench because the triple gate requires a running engine.
 
-Or equivalently, just EF00 service 0x16 (direct enable, no precondition).
+**Action:** Flash OCT, start truck engine, monitor CAN2 for EEC1 (PGN 0xF004) and EEC2 (PGN 0xF003) periodic frames.
 
-Then capture CAN traffic to verify J1939 PGNs start appearing.
+**Expected result if firmware analysis is correct:** Broadcasts appear within seconds of engine start, at ~10ms (EEC1) and ~50ms (EEC2) intervals.
 
-### Step 2: Verify timer table population
+**If broadcasts still don't appear with engine running:**
+- Check `j1939_dispatch_mode_flags & 8` (0x3FD5B2) — may need a different boot sequence
+- Check `j1939_queued_tx_in_flight` (0x3FB4CD) — Flash2 no-op stub may permanently block queued TX path; ROM version may need to be called
+- Read `protection_condition_flags` (0x40ADEE) via service 0x4A to verify bits 4/8 are set
 
-After sending service 0x07 or 0x16, monitor CAN for periodic EEC1/EEC2 traffic. If it doesn't appear, the timer dispatch tables at 0x3FD2C2/0x3FD38A may also need seeding — trace `initDiagnosticBufferPointers` call chain to understand boot vs. on-demand population.
+### Step 2: If engine-running test confirms broadcasts
+
+Update todo.md to mark task 021 complete. Document confirmed sequence in task file.
 
 ---
 
@@ -183,3 +226,32 @@ hpcr_exceptionHandler (boot reset handler)
 ```
 
 Added `forceanalyze` command to `analyze.sh` / `common.sh` (backed by `ForceAnalyzeFunction.java`) for future use on functions missed by Ghidra auto-analysis.
+
+### 2026-05-21 — Response decoding, broadcast root cause, naming cleanup
+
+**`cm848_sendJ1939ResponseFrame` decoded (0x000249C4):**
+- Response prefix `0x0C` = service returned 0 (success)
+- Response prefix `0x0D` = service returned non-zero (error); next byte is return code, then service byte
+- Response prefix `0x0E` = extended response (data follows)
+- OCT log `0C 16 FF FF FF FF FF FF` confirms service 0x16 succeeded and `j1939_protection_mode_active = 1`
+
+**Broadcast root cause identified — engine must be running:**
+`cm848_dispatchFaultTimerHandlers` (Flash2 0x00538D3C) — the actual J1939 EEC1/EEC2 periodic TX dispatcher — has a triple gate that all requires the engine running:
+1. `j1939_dispatch_mode_flags & 8` (0x3FD5B2) — set during engine-start completion via `cm848_initializationContinuation` / `cm848_engineStartCompletionB`
+2. `protection_condition_flags & 4` or `& 8` (0x40ADEE, type corrected to `word`) — protection monitoring active
+3. `governor_derivative_term_masked & 4` or `& 8` — three-channel governor consensus, all channels non-zero only when engine is running and controlling speed
+
+Service 0x16 alone cannot trigger periodic broadcasts on a bench without a running engine.
+
+**`j1939_protection_mode_active` (formerly `output_enable_bitmap`, 0x0040C04A):**
+Name "output_enable_bitmap" was misleading — value 1 = normal/protection mode (set at boot and by service 0x07/0x16); value 0 = basic status mode (set by service 0x0a). Basic status messages only queue when it's 0; EEC1/EEC2 broadcasts don't gate on this directly.
+
+**`j1939_queued_tx_in_flight` (0x3FB4CD):**
+Queued J1939 TX path (`mpc555_j1939ConfigureMultiFrame`) is permanently gated unless this = 0. Flash2 `cm848_j1939ProcessTransmitQueue` (0x0050D2B8) is a no-op stub — never clears it. ROM version (0x0003DBC0) works correctly. CLIP responses bypass this via `mpc555_sendJ1939SingleFrame` directly.
+
+**Three-channel governor derivative array confirmed:**
+Stride-3 array: `governor_derivative_term` (0x0040ADDC), `governor_derivative_term_1` (0x0040ADE2), `governor_derivative_term_2` (0x0040ADE8). Previously `0x0040ADE8` was misnamed `governor_derivative_mask`.
+
+**CSV changes applied (2026-05-21):**
+- function_renames: +`cm848_syncProtectionCalibrationChunk` (0x538A84), +`cm848_initEec1TxDescriptor` (0x25AB8), +`cm848_engineStartCompletionB` (0x54D30)
+- global_variables: renamed `output_enable_bitmap` → `j1939_protection_mode_active`, `governor_derivative_mask` → `governor_derivative_term_2`; type fix `protection_condition_flags` byte→word; added 9 new variables: `j1939_queued_tx_in_flight`, `protection_calibration_changed_flag`, `protection_calibration_sync_prev_mode`, `j1939_group_a/b_entry_count`, `j1939_group_a/b_tick_counter`, `j1939_dispatch_mode_flags`, `governor_derivative_term_1`
