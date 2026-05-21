@@ -131,7 +131,8 @@ public class ImportAnalysis extends GhidraScript {
 
                     Function func = functionManager.getFunctionAt(address);
                     if (func == null) {
-                        // Try to create function
+                        // Disassemble first so the decompiler has analyzed code to work with
+                        disassemble(address);
                         func = createFunction(address, newName);
                         if (func != null) {
                             changesApplied++;
