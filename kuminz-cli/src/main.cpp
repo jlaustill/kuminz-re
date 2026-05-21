@@ -400,11 +400,13 @@ int main(int argc, char* argv[])
         if (direct) {
             std::cerr << "Method: EF00 service 0x16 (direct enable, no init step)\n\n";
         } else {
-            std::cerr << "Method: EF00 0x0a (init) -> EF00 0x07 (enable)\n\n";
-            std::cerr << "[1/2] Sending service 0x0a (cm848_initJ1939MessageBuffers)...\n";
-            std::cerr << "      Sets output_enable_bitmap=0, arms precondition flag\n\n";
-            std::cerr << "[2/2] Sending service 0x07 (cm848_enableJ1939Output)...\n";
-            std::cerr << "      Sets output_enable_bitmap=1, periodic TX should start\n\n";
+            std::cerr << "Method: EF00 0x0a -> 0x07 -> 0x05[01 01]\n\n";
+            std::cerr << "[1/3] Sending service 0x0a (cm848_initJ1939MessageBuffers)...\n";
+            std::cerr << "      Clears j1939_protection_mode_active, arms _j1939_message_buffer_init\n\n";
+            std::cerr << "[2/3] Sending service 0x07 (cm848_enableJ1939Output)...\n";
+            std::cerr << "      Sets j1939_protection_mode_active=1\n\n";
+            std::cerr << "[3/3] Sending service 0x05 01 01 (flash2_cm848_checkJ1939ParameterValidityType2)...\n";
+            std::cerr << "      Sets protection_condition_flags |= 0x0C (unlocks EEC1/EEC2 timer dispatch)\n\n";
         }
 
         if (reader.enableJ1939Broadcasts(direct)) {

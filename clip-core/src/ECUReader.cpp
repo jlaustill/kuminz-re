@@ -707,15 +707,19 @@ bool ECUReader::enableJ1939Broadcasts(bool directEnable, int timeoutMs)
 
     uint32_t txArbId = m_j1939.buildClipDataArbId(m_ecuAddress);
 
-    // sendEF00Control: send a single service byte and wait briefly for optional ACK.
+    // sendEF00Service: send a service frame and wait briefly for optional ACK.
+    // payload[0] is the service ID; additional bytes are service-specific data.
     // Returns false only if the CAN frame could not be sent.
-    auto sendEF00Control = [&](uint8_t serviceId) -> bool {
+    auto sendEF00Service = [&](std::initializer_list<uint8_t> payload) -> bool {
         uint8_t txData[8] = {};
-        txData[0] = serviceId;
+        uint8_t i = 0;
+        for (uint8_t b : payload) { if (i < 8) txData[i++] = b; }
 
         std::stringstream ss;
         ss << "EF00 service 0x" << std::hex << std::setw(2) << std::setfill('0')
-           << static_cast<int>(serviceId);
+           << static_cast<int>(txData[0]);
+        for (uint8_t j = 1; j < i; j++)
+            ss << " 0x" << std::setw(2) << std::setfill('0') << static_cast<int>(txData[j]);
         log(ss.str());
 
         if (!m_adapter->send(txArbId, txData, 8)) {
@@ -735,7 +739,7 @@ bool ECUReader::enableJ1939Broadcasts(bool directEnable, int timeoutMs)
                 uint8_t pf     = (arbId >> 16) & 0xFF;
                 if (pf == J1939_CLIP_PGN_PF && dest == J1939_TOOL_ADDRESS && source == m_ecuAddress) {
                     std::stringstream rs;
-                    rs << "EF00 service 0x" << std::hex << static_cast<int>(serviceId)
+                    rs << "EF00 service 0x" << std::hex << static_cast<int>(txData[0])
                        << " response: 0x" << std::setw(2) << std::setfill('0')
                        << static_cast<int>(rxData[0]);
                     log(rs.str());
@@ -749,14 +753,19 @@ bool ECUReader::enableJ1939Broadcasts(bool directEnable, int timeoutMs)
 
     if (directEnable) {
         log("Enabling J1939 broadcasts via service 0x16 (direct)");
-        return sendEF00Control(0x16);
+        return sendEF00Service({0x16});
     }
 
-    log("Enabling J1939 broadcasts via 0x0a -> 0x07 sequence");
-    if (!sendEF00Control(0x0a)) {
-        return false;
-    }
-    return sendEF00Control(0x07);
+    // Full sequence:
+    //   0x0a: cm848_initJ1939MessageBuffers   — arms _j1939_message_buffer_init
+    //   0x07: cm848_enableJ1939Output         — sets j1939_protection_mode_active=1
+    //   0x05 01 01: flash2_cm848_checkJ1939ParameterValidityType2
+    //               sets protection_condition_flags |= 0x0C (bits 2/3)
+    //               without these bits the EEC1/EEC2 timer dispatch is permanently blocked
+    log("Enabling J1939 broadcasts via 0x0a -> 0x07 -> 0x05[01 01] sequence");
+    if (!sendEF00Service({0x0a})) return false;
+    if (!sendEF00Service({0x07})) return false;
+    return sendEF00Service({0x05, 0x01, 0x01});
 }
 
 bool ECUReader::readMemoryService4ALarge(uint32_t address, uint32_t totalLength,
