@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri May 22 17:15:48 MDT 2026
+// Generated: Fri May 22 17:35:04 MDT 2026
 
 
 //
@@ -20882,13 +20882,13 @@ LAB_00023878:
       tsc1_handler_source_index = cm848_lookupJ1939SourceAddressIndex(*(undefined1 *)(param_1 + 3));
       if (tsc1_j1939_handler_ptr == 0) {
         protection_state_value = 0x7d;
-        speed_control_mode_flags = *(short *)(tsc1_secondary_config_ptr + 0xe) + 1;
+        tsc1_mode_transition_timer = *(short *)(tsc1_secondary_config_ptr + 0xe) + 1;
         tsc1_speed_mode_flag = 0;
         return;
       }
     }
     tsc1_speed_mode_flag = 0;
-    speed_control_mode_flags = 0;
+    tsc1_mode_transition_timer = 0;
     protection_state_value = 0x7d;
     return;
   }
@@ -20897,9 +20897,9 @@ LAB_00023878:
     tsc1_handler_source_index = cm848_lookupJ1939SourceAddressIndex(*(undefined1 *)(param_1 + 3));
     tsc1_multiframe_result = cm848_j1939SetupMultiFrameTransfer(tsc1_msg_torque);
     tsc1_multiframe_timeout = *(short *)(tsc1_secondary_config_ptr + 0x12) + 1;
-    speed_control_mode_flags = tsc1_multiframe_timeout;
+    tsc1_mode_transition_timer = tsc1_multiframe_timeout;
     if (protection_state_value != 0) {
-      speed_control_mode_flags = 0;
+      tsc1_mode_transition_timer = 0;
     }
     tsc1_speed_mode_flag = 0;
     j1939FormatMultiFrameResponse();
@@ -24798,7 +24798,7 @@ void cm848_resetGovernorState(void)
   protection_state_value = 0x7d;
   tsc1_multiframe_timeout = 0;
   tsc1_error_fault_timer = 0;
-  speed_control_mode_flags = 0;
+  tsc1_mode_transition_timer = 0;
   tsc1_speed_mode_flag = 0;
   return;
 }
@@ -24874,14 +24874,14 @@ void cm848_processGovernorModeTransition(void)
     tsc1_disable_control = 0;
     tsc1_speed_override_timer = 0;
   }
-  if (((speed_control_mode_flags != 0) &&
-      (speed_control_mode_flags = speed_control_mode_flags + -1, DAT_003faf3b != governor_error_term
-      )) && (governor_error_term == 0)) {
+  if (((tsc1_mode_transition_timer != 0) &&
+      (tsc1_mode_transition_timer = tsc1_mode_transition_timer + -1,
+      DAT_003faf3b != governor_error_term)) && (governor_error_term == 0)) {
     bVar5 = true;
   }
-  bVar4 = speed_control_mode_flags == 1;
+  bVar4 = tsc1_mode_transition_timer == 1;
   if (bVar4) {
-    speed_control_mode_flags = 0;
+    tsc1_mode_transition_timer = 0;
   }
   bVar4 = bVar4 || (bVar3 || (bVar2 || bVar1 && wVar8 == 0));
   if (tsc1_message_timeout != 0) {
@@ -25181,13 +25181,13 @@ void cm848_selectTorqueLimitByStateMachine(void)
     tsc1_speed_override_timer = 0;
     unaff_r24 = 1;
   }
-  if (((speed_control_mode_flags != 0) &&
-      (speed_control_mode_flags = speed_control_mode_flags + -1, DAT_003faf3b != governor_error_term
-      )) && (governor_error_term == 0)) {
+  if (((tsc1_mode_transition_timer != 0) &&
+      (tsc1_mode_transition_timer = tsc1_mode_transition_timer + -1,
+      DAT_003faf3b != governor_error_term)) && (governor_error_term == 0)) {
     bVar1 = true;
   }
-  if (speed_control_mode_flags == 1) {
-    speed_control_mode_flags = 0;
+  if (tsc1_mode_transition_timer == 1) {
+    tsc1_mode_transition_timer = 0;
     unaff_r24 = 1;
   }
   if (tsc1_message_timeout != 0) {
@@ -65652,7 +65652,7 @@ void flash2_cm848_emptyStub_phaseGroupA(void)
       (DAT_0005c36c <= timing_compensation_final)))) {
     governor_error_term = 0;
     protection_state_value = 0x7d;
-    speed_control_mode_flags = 0;
+    tsc1_mode_transition_timer = 0;
     tsc1_speed_mode_flag = 0;
   }
   return;
@@ -65671,7 +65671,7 @@ void flash2_cm848_readParameterByteOffset(void)
      ((governor_mode_request == 1 && (DAT_0005c36c <= timing_compensation_final)))) {
     governor_error_term = 0;
     protection_state_value = 0x7d;
-    speed_control_mode_flags = 0;
+    tsc1_mode_transition_timer = 0;
     tsc1_speed_mode_flag = 0;
   }
   return;
@@ -65686,7 +65686,7 @@ void flash2_cm848_readParameterByteOffset(void)
 void flash2_cm848_readParameterDwordOffset(undefined4 param_1,undefined2 param_2)
 
 {
-  speed_control_mode_flags = param_2;
+  tsc1_mode_transition_timer = param_2;
   tsc1_speed_mode_flag = param_2;
   return;
 }

@@ -4036,7 +4036,7 @@ address,name,type,comment
 0x0040ae2a,tsc1_torque_active_timer,undefined2,
 0x0040ae2c,tsc1_speed_override_timer,undefined2,
 0x0040ae2e,tsc1_torque_limit_timer,undefined2,
-0x0040ae30,speed_control_mode_flags,undefined2,
+0x0040ae30,tsc1_mode_transition_timer,undefined2,
 0x0040ae32,tsc1_speed_mode_flag,undefined2,
 0x0040ae34,tsc1_mode_timeout,undefined2,
 0x0040ae36,tsc1_speed_cmd_timeout,undefined2,

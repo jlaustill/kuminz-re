@@ -852,7 +852,7 @@ tsc1_governor_state_t,0x0040adf8,tsc1_torque_mode_timer,word,2,Countdown for tor
 tsc1_governor_state_t,0x0040adf8,tsc1_torque_active_timer,word,2,Countdown for torque active confirmation,,verified
 tsc1_governor_state_t,0x0040adf8,tsc1_speed_override_timer,word,2,Countdown for speed override hold duration,,verified
 tsc1_governor_state_t,0x0040adf8,tsc1_torque_limit_timer,word,2,Countdown for torque limit assertion hold,,verified
-tsc1_governor_state_t,0x0040adf8,speed_control_mode_flags,word,2,Copy of tsc1_multiframe_timeout on entry; decremented separately,,needs_review
+tsc1_governor_state_t,0x0040adf8,tsc1_mode_transition_timer,word,2,Countdown: parallel to tsc1_multiframe_timeout but fires to clear local state rather than call resetGovernorState,,verified
 tsc1_governor_state_t,0x0040adf8,tsc1_speed_mode_flag,word,2,Speed mode active flag,,verified
 tsc1_governor_state_t,0x0040adf8,tsc1_mode_timeout,word,2,Countdown: TSC1 mode hold duration (loaded from config),,verified
 tsc1_governor_state_t,0x0040adf8,tsc1_speed_cmd_timeout,word,2,Countdown: speed command timeout (loaded from config),,verified
