@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri May 22 05:40:47 MDT 2026
+// Generated: Fri May 22 06:00:23 MDT 2026
 
 
 //
@@ -16514,9 +16514,9 @@ void cm848_faultTableEntryProcessor(void)
             *(char *)(uVar10 + 0x3fe124) = *(char *)(uVar10 + 0x3fe124) + -1;
             if (((diagnostic_enable_flags & 0x400) != 0) &&
                (iVar8 = uVar10 * 3, ((&fault_status_byte_array)[iVar8] & 0x80) != 0)) {
-              *(ushort *)((int)&fault_status_word_array + iVar8) =
+              *(ushort *)((int)&fault_status_entry_word + iVar8) =
                    (ushort)fault_timestamp_counter._0_1_ << 10 |
-                   *(ushort *)((int)&fault_status_word_array + iVar8) & 0x3ff;
+                   *(ushort *)((int)&fault_status_entry_word + iVar8) & 0x3ff;
             }
             if (*(char *)(uVar10 + 0x3fe124) == '\0') {
               (&DAT_003fe1d3)[uVar10 * 7] = 2;
@@ -27752,12 +27752,12 @@ LAB_0002beb4:
 
 
 //
-// Function: cm848_initJ1939Pgn65264Buffer @ 0x0002bed4
+// Function: cm848_initJ1939PtoBuffer @ 0x0002bed4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void cm848_initJ1939Pgn65264Buffer(void)
+void cm848_initJ1939PtoBuffer(void)
 
 {
   _DAT_003faff4 = CONCAT13(((byte)DAT_003fd866 & 7) << 2,0xfef000);
@@ -73434,10 +73434,10 @@ int flash2_cm848_evaluateTimingLookupCondition_A(void)
 
 
 //
-// Function: flash2_thunk_FUN_00512670 @ 0x0051265c
+// Function: flash2_thunk_cm848_passThruShortParam3 @ 0x0051265c
 //
 
-int flash2_thunk_FUN_00512670(undefined4 param_1,undefined4 param_2,short param_3)
+int flash2_thunk_cm848_passThruShortParam3(undefined4 param_1,undefined4 param_2,short param_3)
 
 {
   return (int)param_3;
@@ -73488,10 +73488,10 @@ int flash2_cm848_evaluateProtectionModeState(void)
 
 
 //
-// Function: flash2_thunk_FUN_00512720 @ 0x0051270c
+// Function: flash2_thunk_cm848_stubNoOp512720 @ 0x0051270c
 //
 
-void flash2_thunk_FUN_00512720(void)
+void flash2_thunk_cm848_stubNoOp512720(void)
 
 {
   return;
@@ -73936,10 +73936,10 @@ undefined4 flash2_cm848_selectAlternateStateCode(void)
 
 
 //
-// Function: flash2_thunk_FUN_00512e6c @ 0x00512ca0
+// Function: flash2_thunk_cm848_stubNoOp512e6c @ 0x00512ca0
 //
 
-void flash2_thunk_FUN_00512e6c(void)
+void flash2_thunk_cm848_stubNoOp512e6c(void)
 
 {
   return;
@@ -79121,7 +79121,7 @@ LAB_00519128:
         uVar6 = (uint)DAT_003fce99;
         do {
           if (((((&fault_status_byte_array)[uVar6 * 3] & 0x80) != 0) ||
-              (((*(ushort *)((int)&fault_status_word_array + uVar6 * 3) & 1) != 0 && (bVar4 == 7))))
+              (((*(ushort *)((int)&fault_status_entry_word + uVar6 * 3) & 1) != 0 && (bVar4 == 7))))
              && (((&fault_entry_flags)[uVar6 * 6] & 4) != 0)) {
             *(undefined2 *)(&DAT_003fce85 + uVar7 * 2) = (&DAT_0005b57c)[uVar6];
             uVar7 = uVar7 + 1 & 0xff;
@@ -79805,7 +79805,7 @@ LAB_00519128:
         uVar5 = (uint)DAT_003fce99;
         do {
           if (((((&fault_status_byte_array)[uVar5 * 3] & 0x80) != 0) ||
-              (((*(ushort *)((int)&fault_status_word_array + uVar5 * 3) & 1) != 0 && (bVar4 == 7))))
+              (((*(ushort *)((int)&fault_status_entry_word + uVar5 * 3) & 1) != 0 && (bVar4 == 7))))
              && (((&fault_entry_flags)[uVar5 * 6] & 4) != 0)) {
             *(undefined2 *)(&DAT_003fce85 + uVar6 * 2) = (&DAT_0005b57c)[uVar5];
             uVar6 = uVar6 + 1 & 0xff;
@@ -80372,7 +80372,7 @@ LAB_00519128:
         uVar5 = (uint)DAT_003fce99;
         do {
           if (((((&fault_status_byte_array)[uVar5 * 3] & 0x80) != 0) ||
-              (((*(ushort *)((int)&fault_status_word_array + uVar5 * 3) & 1) != 0 && (bVar4 == 7))))
+              (((*(ushort *)((int)&fault_status_entry_word + uVar5 * 3) & 1) != 0 && (bVar4 == 7))))
              && (((&fault_entry_flags)[uVar5 * 6] & 4) != 0)) {
             *(undefined2 *)(&DAT_003fce85 + uVar6 * 2) = (&DAT_0005b57c)[uVar5];
             uVar6 = uVar6 + 1 & 0xff;
@@ -80940,7 +80940,7 @@ LAB_00519128:
         uVar5 = (uint)DAT_003fce99;
         do {
           if (((((&fault_status_byte_array)[uVar5 * 3] & 0x80) != 0) ||
-              (((*(ushort *)((int)&fault_status_word_array + uVar5 * 3) & 1) != 0 && (bVar7 == 7))))
+              (((*(ushort *)((int)&fault_status_entry_word + uVar5 * 3) & 1) != 0 && (bVar7 == 7))))
              && (((&fault_entry_flags)[uVar5 * 6] & 4) != 0)) {
             *(undefined2 *)(&DAT_003fce85 + uVar6 * 2) = (&DAT_0005b57c)[uVar5];
             uVar6 = uVar6 + 1 & 0xff;
@@ -81502,7 +81502,7 @@ void flash2_cm848_clampAndConvertByteValue(void)
       uVar1 = (uint)DAT_003fce99;
       do {
         if (((((&fault_status_byte_array)[uVar1 * 3] & 0x80) != 0) ||
-            (((*(ushort *)((int)&fault_status_word_array + uVar1 * 3) & 1) != 0 && (in_r7 == 7))))
+            (((*(ushort *)((int)&fault_status_entry_word + uVar1 * 3) & 1) != 0 && (in_r7 == 7))))
            && (((&fault_entry_flags)[uVar1 * 6] & 4) != 0)) {
           *(undefined2 *)(&DAT_003fce85 + uVar2 * 2) = (&DAT_0005b57c)[uVar1];
           uVar2 = uVar2 + 1 & 0xff;
@@ -91287,7 +91287,7 @@ void flash2_cm848_processFaultCodeArray(void)
   uVar4 = 0;
   do {
     cVar3 = (char)iVar2;
-    if ((*(ushort *)((int)&fault_status_word_array + uVar4 * 3) & 1) != 0) {
+    if ((*(ushort *)((int)&fault_status_entry_word + uVar4 * 3) & 1) != 0) {
       uVar1 = (&DAT_0005b57c)[uVar4];
       uVar5 = (uint)uVar1;
       if (uVar5 != 0) {
@@ -107485,8 +107485,8 @@ void flash2_cm848_updateCylinderQueueSelection(int param_1)
 
 {
   param_1 = param_1 * 3;
-  *(ushort *)((int)&fault_status_word_array + param_1) =
-       *(ushort *)((int)&fault_status_word_array + param_1) & 0x3ff;
+  *(ushort *)((int)&fault_status_entry_word + param_1) =
+       *(ushort *)((int)&fault_status_entry_word + param_1) & 0x3ff;
   (&fault_status_byte_array)[param_1] = 0;
   return;
 }
@@ -107777,13 +107777,13 @@ void flash2_cm848_updateFaultBitmapFromStateGuards(void)
   uVar2 = 0;
   do {
     iVar1 = uVar2 * 3;
-    *(ushort *)((int)&fault_status_word_array + iVar1) =
-         *(ushort *)((int)&fault_status_word_array + iVar1) & 0x3ff;
+    *(ushort *)((int)&fault_status_entry_word + iVar1) =
+         *(ushort *)((int)&fault_status_entry_word + iVar1) & 0x3ff;
     (&fault_status_byte_array)[iVar1] = 0;
-    *(ushort *)((int)&fault_status_word_array + iVar1) =
-         *(ushort *)((int)&fault_status_word_array + iVar1) & 0xfc07;
-    *(ushort *)((int)&fault_status_word_array + iVar1) =
-         *(ushort *)((int)&fault_status_word_array + iVar1) & 0xfff8;
+    *(ushort *)((int)&fault_status_entry_word + iVar1) =
+         *(ushort *)((int)&fault_status_entry_word + iVar1) & 0xfc07;
+    *(ushort *)((int)&fault_status_entry_word + iVar1) =
+         *(ushort *)((int)&fault_status_entry_word + iVar1) & 0xfff8;
     uVar2 = uVar2 + 1 & 0xff;
   } while (uVar2 < 0xaa);
   _coolant_protection_reference_load = 0;
@@ -107826,15 +107826,15 @@ void flash2_cm848_iterateFaultStatusRecords(void)
   uVar1 = 1;
   if (active_fault_count != 0) {
     do {
-      *(ushort *)((int)&fault_status_word_array + (uint)(&active_fault_count)[uVar1] * 3) =
-           *(ushort *)((int)&fault_status_word_array + (uint)(&active_fault_count)[uVar1] * 3) &
+      *(ushort *)((int)&fault_status_entry_word + (uint)(&active_fault_count)[uVar1] * 3) =
+           *(ushort *)((int)&fault_status_entry_word + (uint)(&active_fault_count)[uVar1] * 3) &
            0x3ff;
       (&fault_status_byte_array)[(uint)(&active_fault_count)[uVar1] * 3] = 0;
-      *(ushort *)((int)&fault_status_word_array + (uint)(&active_fault_count)[uVar1] * 3) =
-           *(ushort *)((int)&fault_status_word_array + (uint)(&active_fault_count)[uVar1] * 3) &
+      *(ushort *)((int)&fault_status_entry_word + (uint)(&active_fault_count)[uVar1] * 3) =
+           *(ushort *)((int)&fault_status_entry_word + (uint)(&active_fault_count)[uVar1] * 3) &
            0xfff8;
-      *(ushort *)((int)&fault_status_word_array + (uint)(&active_fault_count)[uVar1] * 3) =
-           *(ushort *)((int)&fault_status_word_array + (uint)(&active_fault_count)[uVar1] * 3) &
+      *(ushort *)((int)&fault_status_entry_word + (uint)(&active_fault_count)[uVar1] * 3) =
+           *(ushort *)((int)&fault_status_entry_word + (uint)(&active_fault_count)[uVar1] * 3) &
            0xfc07;
       flash2_cm848_setFaultActiveBitmapEntry((&active_fault_count)[uVar1]);
       flash2_cm848_setFaultTimestampFlags((&active_fault_count)[uVar1]);
@@ -107917,7 +107917,7 @@ void flash2_cm848_selectCylinderQueueByConditions(void)
     iVar4 = (uint)bVar3 * 3;
     if ((((((&fault_status_byte_array)[iVar4] & 0x80) != 0) &&
          (((&fault_status_byte_array)[iVar4] & 0x10) == 0)) &&
-        (*(ushort *)((int)&fault_status_word_array + iVar4) >> 10 ==
+        (*(ushort *)((int)&fault_status_entry_word + iVar4) >> 10 ==
          (ushort)fault_timestamp_counter._0_1_)) && (((&DAT_003fe1d3)[(uint)bVar3 * 7] & 1) == 0)) {
       uVar2 = (uint)bVar3;
       flash2_cm848_updateCylinderQueueSelection(uVar2);
@@ -108366,10 +108366,10 @@ void flash2_cm848_resetCylinderQueueFaultState(uint param_1)
   uint uVar3;
   
   iVar1 = param_1 * 3;
-  *(ushort *)((int)&fault_status_word_array + iVar1) =
-       *(ushort *)((int)&fault_status_word_array + iVar1) & 0xfff8;
-  *(ushort *)((int)&fault_status_word_array + iVar1) =
-       *(ushort *)((int)&fault_status_word_array + iVar1) & 0xfc07;
+  *(ushort *)((int)&fault_status_entry_word + iVar1) =
+       *(ushort *)((int)&fault_status_entry_word + iVar1) & 0xfff8;
+  *(ushort *)((int)&fault_status_entry_word + iVar1) =
+       *(ushort *)((int)&fault_status_entry_word + iVar1) & 0xfc07;
   if (((&fault_status_byte_array)[iVar1] & 0x80) == 0) {
     cm848_resetFaultStatus(param_1);
     uVar2 = 1;
@@ -108405,10 +108405,10 @@ void flash2_cm848_processChannelDiagnostics(uint param_1)
   uint uVar3;
   
   iVar1 = param_1 * 3;
-  *(ushort *)((int)&fault_status_word_array + iVar1) =
-       *(ushort *)((int)&fault_status_word_array + iVar1) & 0xfff8;
-  *(ushort *)((int)&fault_status_word_array + iVar1) =
-       *(ushort *)((int)&fault_status_word_array + iVar1) & 0xfc07;
+  *(ushort *)((int)&fault_status_entry_word + iVar1) =
+       *(ushort *)((int)&fault_status_entry_word + iVar1) & 0xfff8;
+  *(ushort *)((int)&fault_status_entry_word + iVar1) =
+       *(ushort *)((int)&fault_status_entry_word + iVar1) & 0xfc07;
   if (((&fault_status_byte_array)[iVar1] & 0x80) == 0) {
     cm848_resetFaultStatus(param_1);
     uVar2 = 1;
@@ -108445,8 +108445,8 @@ void flash2_cm848_scanAndDispatchActiveFaults(void)
   bVar2 = 0;
   do {
     iVar1 = (uint)bVar2 * 3;
-    if (((*(ushort *)((int)&fault_status_word_array + iVar1) & 1) != 0) &&
-       ((*(ushort *)((int)&fault_status_word_array + iVar1) & 2) == 0)) {
+    if (((*(ushort *)((int)&fault_status_entry_word + iVar1) & 1) != 0) &&
+       ((*(ushort *)((int)&fault_status_entry_word + iVar1) & 2) == 0)) {
       if (DAT_0040af06 == '\x01') {
         if (((&fault_entry_flags)[(uint)bVar2 * 6] & 2) == 0) {
           if (((&fault_entry_flags)[(uint)bVar2 * 6] & 0x10) == 0) {
@@ -108454,10 +108454,10 @@ LAB_00534a88:
             flash2_cm848_resetCylinderQueueFaultState(bVar2);
           }
         }
-        else if ((((*(ushort *)((int)&fault_status_word_array + iVar1) & 4) != 0) ||
-                 ((*(ushort *)((int)&fault_status_word_array + iVar1) >> 3 & 0x7f) -
+        else if ((((*(ushort *)((int)&fault_status_entry_word + iVar1) & 4) != 0) ||
+                 ((*(ushort *)((int)&fault_status_entry_word + iVar1) >> 3 & 0x7f) -
                   (uint)DAT_003fed90 == 1)) ||
-                (((*(ushort *)((int)&fault_status_word_array + iVar1) >> 3 & 0x7f) == 0 &&
+                (((*(ushort *)((int)&fault_status_entry_word + iVar1) >> 3 & 0x7f) == 0 &&
                  (DAT_003fed90 == 0x50)))) goto LAB_00534a88;
       }
       if ((((&fault_entry_flags)[(uint)bVar2 * 6] & 0x10) != 0) &&
@@ -108668,8 +108668,8 @@ void flash2_hpcr_processMultiChannelDiagnostics(int param_1,uint param_2)
   int iVar2;
   
   iVar2 = param_2 * 3;
-  if ((*(ushort *)((int)&fault_status_word_array + iVar2) & 1) == 0) {
-    puVar1 = (ushort *)((int)&fault_status_word_array + iVar2);
+  if ((*(ushort *)((int)&fault_status_entry_word + iVar2) & 1) == 0) {
+    puVar1 = (ushort *)((int)&fault_status_entry_word + iVar2);
     *puVar1 = *puVar1 & 7 | 2 | *puVar1 & 0xfff8;
     *puVar1 = *puVar1 & 7 | 1 | *puVar1 & 0xfff8;
     (&DAT_0040af0c)[(int)param_2 >> 3] =
@@ -108677,20 +108677,20 @@ void flash2_hpcr_processMultiChannelDiagnostics(int param_1,uint param_2)
     (&fault_status_byte_array)[iVar2] = (&fault_status_byte_array)[iVar2] & 0x9f;
     if (((&fault_entry_flags)[param_2 * 6] & 2) != 0) {
       *puVar1 = *puVar1 & 7 | 4 | *puVar1 & 0xfff8;
-      *(ushort *)((int)&fault_status_word_array + iVar2) =
-           (DAT_003fed90 & 0x7f) << 3 | *(ushort *)((int)&fault_status_word_array + iVar2) & 0xfc07;
+      *(ushort *)((int)&fault_status_entry_word + iVar2) =
+           (DAT_003fed90 & 0x7f) << 3 | *(ushort *)((int)&fault_status_entry_word + iVar2) & 0xfc07;
     }
   }
-  else if ((*(ushort *)((int)&fault_status_word_array + iVar2) & 2) == 0) {
+  else if ((*(ushort *)((int)&fault_status_entry_word + iVar2) & 2) == 0) {
     if (((&fault_entry_status_field)[param_1 * 0x18] & 1) == 0) {
       (&fault_entry_status_field)[param_1 * 0x18] = (&fault_entry_status_field)[param_1 * 0x18] | 1;
       flash2_cm848_synchronizeDiagnosticFlagState();
     }
     flash2_cm848_evaluateSensorChannelStateMatch(param_2);
-    *(ushort *)((int)&fault_status_word_array + iVar2) =
-         *(ushort *)((int)&fault_status_word_array + iVar2) & 0xfff8;
-    *(ushort *)((int)&fault_status_word_array + iVar2) =
-         *(ushort *)((int)&fault_status_word_array + iVar2) & 0xfc07;
+    *(ushort *)((int)&fault_status_entry_word + iVar2) =
+         *(ushort *)((int)&fault_status_entry_word + iVar2) & 0xfff8;
+    *(ushort *)((int)&fault_status_entry_word + iVar2) =
+         *(ushort *)((int)&fault_status_entry_word + iVar2) & 0xfc07;
     (&DAT_0040af0c)[(int)param_2 >> 3] =
          (&DAT_0040af0c)[(int)param_2 >> 3] | (byte)(1 << (param_2 & 7));
   }
@@ -108722,8 +108722,8 @@ void flash2_cm848_incrementCounterOrSetWarmup(void)
       do {
         uVar1 = (uint)(byte)(&DAT_0005b6e6)[uVar4 + uVar2 * 0x10];
         if (uVar1 != 0xaa) {
-          if ((((*(ushort *)((int)&fault_status_word_array + uVar1 * 3) & 1) != 0) &&
-              ((*(ushort *)((int)&fault_status_word_array + uVar1 * 3) & 2) == 0)) &&
+          if ((((*(ushort *)((int)&fault_status_entry_word + uVar1 * 3) & 1) != 0) &&
+              ((*(ushort *)((int)&fault_status_entry_word + uVar1 * 3) & 2) == 0)) &&
              (((&DAT_003fe1d3)[uVar1 * 7] & 1) != 0)) {
             cm848_registerFaultInActiveList((&DAT_0005b6e6)[uVar4 + uVar2 * 0x10]);
           }
@@ -108782,8 +108782,8 @@ void flash2_cm848_updateSystemConditionMetric
         param_2 = unaff_r30[unaff_r31];
         param_4 = (uint)param_2;
       } while (param_4 == 0xaa);
-    } while (((*(ushort *)((int)&fault_status_word_array + param_4 * 3) & 1) == 0) ||
-            ((*(ushort *)((int)&fault_status_word_array + param_4 * 3) & 2) != 0));
+    } while (((*(ushort *)((int)&fault_status_entry_word + param_4 * 3) & 1) == 0) ||
+            ((*(ushort *)((int)&fault_status_entry_word + param_4 * 3) & 2) != 0));
     in_r12 = 0x400000;
   } while( true );
 }
@@ -108872,7 +108872,7 @@ void flash2_SUB_00535344(void)
   DAT_003fd22d = uRam0005a9c2;
   uVar1 = 0;
   do {
-    puVar2 = (ushort *)((int)&fault_status_word_array + uVar1 * 3);
+    puVar2 = (ushort *)((int)&fault_status_entry_word + uVar1 * 3);
     *puVar2 = *puVar2 & 5 | *puVar2 & 0xfff8;
     *puVar2 = *puVar2 & 3 | *puVar2 & 0xfff8;
     (&fault_status_byte_array)[uVar1 * 3] = (&fault_status_byte_array)[uVar1 * 3] & 0xfe;
@@ -112259,7 +112259,7 @@ void flash2_cm848_initAllJ1939Handlers(void)
   cm848_initJ1939AmbientConditionsBuffer();
   cm848_initJ1939FluidLevelPressureBuffer();
   cm848_initJ1939InletExhaustConditionsBuffer();
-  cm848_initJ1939Pgn65264Buffer();
+  cm848_initJ1939PtoBuffer();
   cm848_initJ1939VehicleElectricalBuffer();
   cm848_initJ1939SafetyStatusBuffer();
   cm848_initJ1939ProprietaryPgn65504Buffer();

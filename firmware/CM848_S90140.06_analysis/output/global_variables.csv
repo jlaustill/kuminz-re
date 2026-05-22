@@ -1459,7 +1459,7 @@ address,name,type,comment
 0x003fea38,boost_protection_status_flags_2,word,
 0x003feb72,sensor_config_flag_array,byte,
 0x003feb92,fault_status_byte_array,byte,
-0x003feb93,fault_status_word_array,undefined2,
+0x003feb93,fault_status_entry_word,undefined2,
 0x003fec7a,diagnostic_timer_value,dword,
 0x003fec7c,diagnostic_sample_value,,
 0x003fec82,data_transfer_byte_count,undefined2,
