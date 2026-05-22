@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri May 22 06:00:23 MDT 2026
+// Generated: Fri May 22 17:15:48 MDT 2026
 
 
 //
@@ -18180,8 +18180,8 @@ void cm848_selectTorqueLimit(void)
     fuel_limit_minimum = torque_limit_fuel_min;
     limit_source_active = 0xe;
   }
-  if ((governor_mode == 3) && (tsc1_limit_state._2_2_ <= fuel_limit_minimum)) {
-    fuel_limit_minimum = tsc1_limit_state._2_2_;
+  if ((governor_mode == 3) && (tsc1_torque_limit_value <= fuel_limit_minimum)) {
+    fuel_limit_minimum = tsc1_torque_limit_value;
     limit_source_active = 9;
   }
   if (_pressure_ramp_state_flag <= fuel_limit_minimum) {
@@ -18241,7 +18241,7 @@ LAB_0002012c:
   if (fuel_limit_minimum < torque_limit_request) {
     torque_limit_request = fuel_limit_minimum;
   }
-  if ((((limit_source_active == 9) && (_tsc1_active_state == 1)) || (limit_source_active == 0xb)) ||
+  if ((((limit_source_active == 9) && (tsc1_active_state == 1)) || (limit_source_active == 0xb)) ||
      ((((limit_source_active == 0xd || (limit_source_active == 0xf)) &&
        (_limit_source_disable_flag == 0)) || (limit_source_active == 0x10)))) {
     torque_limit_source = torque_limit_request;
@@ -20055,8 +20055,6 @@ void cm848_initJ1939Dm1RequestHandler(void)
 // Function: cm848_j1939ProcessTorqueSpeedControl @ 0x00022870
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_j1939ProcessTorqueSpeedControl(int param_1)
 
 {
@@ -20070,30 +20068,30 @@ void cm848_j1939ProcessTorqueSpeedControl(int param_1)
   tsc1_byte0_control_mode = **(byte **)(param_1 + 6);
   if (0xfa < tsc1_byte0_control_mode) goto LAB_00022a00;
   if ((tsc1_byte0_control_mode & 0xc) == 0) {
-    _tsc1_disable_override = 1;
+    tsc1_disable_override = 1;
 LAB_00022900:
-    _tsc1_override_timeout = DAT_0005c3a6;
+    tsc1_override_timeout = DAT_0005c3a6;
   }
   else if ((tsc1_byte0_control_mode & 0xc) == 4) {
-    _tsc1_disable_override = 0;
+    tsc1_disable_override = 0;
     goto LAB_00022900;
   }
   tsc1_coast_brake_mode = (tsc1_byte0_control_mode & 0x30) == 0x10;
   if ((((eeprom_scatter_source_table._2_2_ == 4) || (eeprom_scatter_source_table._2_2_ == 5)) &&
       ((tsc1_byte0_control_mode & 3) < 2)) && ((tsc1_byte0_control_mode & 0x30) < 0x11)) {
-    _tsc1_mode_timeout = DAT_0005c3a0 + 1;
-    _tsc1_mode_active = 1;
+    tsc1_mode_timeout = DAT_0005c3a0 + 1;
+    tsc1_mode_active = 1;
   }
   if (((eeprom_scatter_source_table._2_2_ != 4) && (eeprom_scatter_source_table._2_2_ != 5)) ||
-     (_tsc1_mode_active == 1)) {
+     (tsc1_mode_active == 1)) {
     if (((tsc1_byte0_control_mode & 0x30) == 0) && ((tsc1_byte0_control_mode & 3) == 0)) {
       tsc1_disable_control = 1;
-      _tsc1_speed_override_timer = DAT_0005c38e + 1;
-      DAT_0040ae10 = 1;
+      tsc1_speed_override_timer = DAT_0005c38e + 1;
+      tsc1_speed_disable_latch = 1;
     }
     else {
       tsc1_disable_control = 0;
-      _tsc1_speed_override_timer = 0;
+      tsc1_speed_override_timer = 0;
     }
   }
 LAB_00022a00:
@@ -20101,7 +20099,7 @@ LAB_00022a00:
      (tsc1_bytes12_requested_speed =
            CONCAT11(*(undefined1 *)(*(int *)(param_1 + 6) + 2),(*(byte **)(param_1 + 6))[1]),
      tsc1_bytes12_requested_speed < 0xfb00)) {
-    _tsc1_speed_cmd_timeout = DAT_0005c3a2 + 1;
+    tsc1_speed_cmd_timeout = DAT_0005c3a2 + 1;
     tsc1_speed_previous = tsc1_speed_requested;
     tsc1_speed_requested = tsc1_bytes12_requested_speed;
     condition_monitor_flags = condition_monitor_flags & 0xdfff;
@@ -20110,32 +20108,32 @@ LAB_00022a00:
   tsc1_byte4_priority = *(byte *)(*(int *)(param_1 + 6) + 4);
   if ((tsc1_byte4_priority & 3) == 1) {
     if (tsc1_torque_limit_active == 0) {
-      if (_tsc1_torque_active_timer == 0) {
-        _tsc1_torque_active_timer = DAT_0005c388 + 1;
+      if (tsc1_torque_active_timer == 0) {
+        tsc1_torque_active_timer = DAT_0005c388 + 1;
       }
       if ((governor_mode == 1) && (governor_mode_request == 1)) {
         torque_limit_mode_select = 1;
       }
-      _tsc1_torque_mode_timer = DAT_0005c386 + 1;
+      tsc1_torque_mode_timer = DAT_0005c386 + 1;
     }
     else {
-      _tsc1_torque_mode_timer = DAT_0005c38c + 1;
+      tsc1_torque_mode_timer = DAT_0005c38c + 1;
     }
   }
   else if ((tsc1_byte4_priority & 3) == 0) {
     tsc1_torque_limit_active = 0;
-    _speed_control_target = _speed_control_target & 3;
+    speed_control_target = speed_control_target & 3;
     torque_limit_mode_select = 0;
-    _tsc1_torque_active_timer = 0;
-    _tsc1_torque_mode_timer = 0;
+    tsc1_torque_active_timer = 0;
+    tsc1_torque_mode_timer = 0;
   }
   if ((tsc1_byte4_priority & 0xc) == 4) {
-    tsc1_limit_state._0_2_ = 1;
-    _tsc1_torque_limit_timer = DAT_0005c390 + 1;
+    tsc1_torque_limit_flag = 1;
+    tsc1_torque_limit_timer = DAT_0005c390 + 1;
   }
   else if ((tsc1_byte4_priority & 0xc) != 0xc) {
-    tsc1_limit_state._0_2_ = 0;
-    _tsc1_torque_limit_timer = 0;
+    tsc1_torque_limit_flag = 0;
+    tsc1_torque_limit_timer = 0;
   }
   tsc1_message_timeout = DAT_0005c38a + 1U;
   return;
@@ -20147,27 +20145,25 @@ LAB_00022a00:
 // Function: cm848_selectTorqueLimitMode @ 0x00022ab8
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_selectTorqueLimitMode(void)
 
 {
   uint unaff_r30;
   
-  if (_tsc1_torque_active_timer == 0) {
-    _tsc1_torque_active_timer = DAT_0005c388 + 1;
+  if (tsc1_torque_active_timer == 0) {
+    tsc1_torque_active_timer = DAT_0005c388 + 1;
   }
   if ((governor_mode == 1) && (governor_mode_request == 1)) {
     torque_limit_mode_select = 1;
   }
-  _tsc1_torque_mode_timer = DAT_0005c386 + 1;
+  tsc1_torque_mode_timer = DAT_0005c386 + 1;
   if ((unaff_r30 & 0xc) == 4) {
-    tsc1_limit_state._0_2_ = 1;
-    _tsc1_torque_limit_timer = DAT_0005c390 + 1;
+    tsc1_torque_limit_flag = 1;
+    tsc1_torque_limit_timer = DAT_0005c390 + 1;
   }
   else if ((unaff_r30 & 0xc) != 0xc) {
-    tsc1_limit_state._0_2_ = 0;
-    _tsc1_torque_limit_timer = 0;
+    tsc1_torque_limit_flag = 0;
+    tsc1_torque_limit_timer = 0;
   }
   return;
 }
@@ -20178,14 +20174,12 @@ void cm848_selectTorqueLimitMode(void)
 // Function: cm848_initJ1939TorqueSpeedHandler @ 0x00022bc4
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_initJ1939TorqueSpeedHandler(void)
 
 {
   tsc1_message_timeout = 0;
-  _tsc1_speed_cmd_timeout = DAT_0005c3a4;
-  _tsc1_handler_initialized = 1;
+  tsc1_speed_cmd_timeout = DAT_0005c3a4;
+  tsc1_handler_initialized = 1;
   if (eeprom_scatter_source_table._2_2_ == 4) {
     condition_monitor_flags = condition_monitor_flags & 0xdfff;
     DAT_003fe9da = DAT_003fe9da & 0xdfff;
@@ -20215,8 +20209,6 @@ void cm848_initJ1939VehicleSpeedHandler(void)
 // Function: torqueControlModeHandler @ 0x00022d60
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void torqueControlModeHandler(int param_1)
 
 {
@@ -20231,13 +20223,13 @@ void torqueControlModeHandler(int param_1)
   tsc1_control_word = **(byte **)(param_1 + 6);
   bVar3 = tsc1_control_word & 3;
   bVar4 = tsc1_control_word & 0x30;
-  _tsc1_requested_speed =
+  tsc1_requested_speed =
        CONCAT11(*(undefined1 *)(*(int *)(param_1 + 6) + 2),(*(byte **)(param_1 + 6))[1]);
   tsc1_requested_torque = *(byte *)(*(int *)(param_1 + 6) + 3);
   bVar1 = *(byte *)(param_1 + 3);
   if (bVar3 == 0) {
     cm848_removeCoolantCalEntryByParams(1,bVar1);
-    _speed_control_target = _speed_control_target & 6;
+    speed_control_target = speed_control_target & 6;
   }
   else {
     sVar2 = cm848_findJ1939MessageEntry(1,bVar1,bVar3);
@@ -20251,7 +20243,7 @@ void torqueControlModeHandler(int param_1)
       return;
     }
   }
-  else if (_tsc1_active_state == 1) {
+  else if (tsc1_active_state == 1) {
     if (tsc1_source_address == bVar1) goto accept_tsc1_command;
     if (bVar3 == 0) {
       return;
@@ -20272,7 +20264,7 @@ void torqueControlModeHandler(int param_1)
           return;
         }
         if ((tsc1_torque_stored == tsc1_requested_torque) &&
-           (tsc1_speed_stored <= _tsc1_requested_speed)) {
+           (tsc1_speed_stored <= tsc1_requested_speed)) {
           return;
         }
       }
@@ -20283,62 +20275,62 @@ void torqueControlModeHandler(int param_1)
     if (sVar2 != 0) {
       return;
     }
-    if (_tsc1_active_config_ptr < _tsc1_config_entry_ptr) {
+    if (tsc1_active_config_ptr < tsc1_config_entry_ptr) {
       return;
     }
   }
-  _tsc1_active_config_ptr = _tsc1_config_entry_ptr;
+  tsc1_active_config_ptr = tsc1_config_entry_ptr;
 accept_tsc1_command:
   tsc1_control_word_stored = (ushort)tsc1_control_word;
-  _tsc1_active_state = 1;
+  tsc1_active_state = 1;
   tsc1_priority_byte = bVar4;
   tsc1_source_address = bVar1;
   if (bVar3 == 0) {
-    _tsc1_speed_error_timeout = 0;
+    tsc1_speed_error_timeout = 0;
     governor_mode = 0;
     governor_mode_request = 0;
-    _tsc1_control_flags = 0;
+    tsc1_control_flags = 0;
   }
   else if (bVar3 == 1) {
-    _tsc1_speed_error_timeout = *(short *)(_tsc1_active_config_ptr + 4) + 1;
+    tsc1_speed_error_timeout = *(short *)(tsc1_active_config_ptr + 4) + 1;
     governor_mode = 1;
     governor_mode_request = cm848_lookupJ1939SourceAddressIndex(*(undefined1 *)(param_1 + 3));
-    _tsc1_control_flags = 1;
-    tsc1_speed_stored = _tsc1_requested_speed;
-    _tsc1_capped_speed_target = _tsc1_requested_speed;
-    if (24000 < _tsc1_requested_speed) {
-      _tsc1_capped_speed_target = 24000;
+    tsc1_control_flags = 1;
+    tsc1_speed_stored = tsc1_requested_speed;
+    tsc1_capped_speed_target = tsc1_requested_speed;
+    if (24000 < tsc1_requested_speed) {
+      tsc1_capped_speed_target = 24000;
     }
-    _tsc1_speed_control_mode = (undefined2)((tsc1_control_word & 0xc) >> 2);
+    tsc1_speed_control_mode = (undefined2)((tsc1_control_word & 0xc) >> 2);
   }
   else if (bVar3 == 2) {
-    _tsc1_speed_error_timeout = *(short *)(_tsc1_active_config_ptr + 8) + 1;
+    tsc1_speed_error_timeout = *(short *)(tsc1_active_config_ptr + 8) + 1;
     governor_mode = 2;
     governor_mode_request = cm848_lookupJ1939SourceAddressIndex(*(undefined1 *)(param_1 + 3));
-    _tsc1_control_flags = 0;
+    tsc1_control_flags = 0;
     tsc1_torque_stored = tsc1_requested_torque;
-    _tsc1_speed_setpoint = (ushort)tsc1_requested_torque * 0x100 + -32000;
-    _tsc1_torque_limit_calc =
+    tsc1_speed_setpoint = (ushort)tsc1_requested_torque * 0x100 + -32000;
+    tsc1_torque_limit_calc =
          (short)((((int)(short)protection_activation_delay - (int)(short)fault_severity_table_ptr) *
-                 (int)_tsc1_speed_setpoint) / 0x6400) + fault_severity_table_ptr;
-    if (_tsc1_torque_limit_calc < 0) {
-      _tsc1_torque_limit_calc = 0;
+                 (int)tsc1_speed_setpoint) / 0x6400) + fault_severity_table_ptr;
+    if (tsc1_torque_limit_calc < 0) {
+      tsc1_torque_limit_calc = 0;
     }
   }
   else if (bVar3 == 3) {
-    _tsc1_speed_error_timeout = *(short *)(_tsc1_active_config_ptr + 0xc) + 1;
+    tsc1_speed_error_timeout = *(short *)(tsc1_active_config_ptr + 0xc) + 1;
     governor_mode = 3;
     governor_mode_request = cm848_lookupJ1939SourceAddressIndex(*(undefined1 *)(param_1 + 3));
-    _tsc1_control_flags = 0;
-    tsc1_speed_stored = _tsc1_requested_speed;
-    tsc1_limit_state._2_2_ = _tsc1_requested_speed;
+    tsc1_control_flags = 0;
+    tsc1_speed_stored = tsc1_requested_speed;
+    tsc1_torque_limit_value = tsc1_requested_speed;
     tsc1_torque_stored = tsc1_requested_torque;
-    _tsc1_mode3_torque_limit =
+    tsc1_mode3_torque_limit =
          (short)((((int)(short)protection_activation_delay - (int)(short)fault_severity_table_ptr) *
                  (int)(short)((ushort)tsc1_requested_torque * 0x100 + -32000)) / 0x6400) +
          fault_severity_table_ptr;
-    if (_tsc1_mode3_torque_limit < 0) {
-      _tsc1_mode3_torque_limit = 0;
+    if (tsc1_mode3_torque_limit < 0) {
+      tsc1_mode3_torque_limit = 0;
     }
   }
   if (governor_mode_request != 1) {
@@ -20352,8 +20344,6 @@ accept_tsc1_command:
 //
 // Function: cm848_processGovernorSpeedControlRequest @ 0x00022e3c
 //
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void cm848_processGovernorSpeedControlRequest(void)
 
@@ -20392,58 +20382,58 @@ void cm848_processGovernorSpeedControlRequest(void)
         }
       }
     }
-    _tsc1_active_config_ptr = _tsc1_config_entry_ptr;
+    tsc1_active_config_ptr = tsc1_config_entry_ptr;
   }
   tsc1_control_word_stored = (ushort)*unaff_r31;
   tsc1_priority_byte = (byte)unaff_r26;
-  _tsc1_active_state = 1;
+  tsc1_active_state = 1;
   tsc1_source_address = (byte)unaff_r27;
   if (unaff_r28 == 0) {
-    _tsc1_speed_error_timeout = 0;
+    tsc1_speed_error_timeout = 0;
     *unaff_r29 = 0;
     governor_mode_request = 0;
-    _tsc1_control_flags = 0;
+    tsc1_control_flags = 0;
   }
   else if (unaff_r28 == 1) {
-    _tsc1_speed_error_timeout = *(short *)(_tsc1_active_config_ptr + 4) + 1;
+    tsc1_speed_error_timeout = *(short *)(tsc1_active_config_ptr + 4) + 1;
     *unaff_r29 = 1;
     governor_mode_request = cm848_lookupJ1939SourceAddressIndex(*(undefined1 *)(unaff_r30 + 3));
-    _tsc1_control_flags = 1;
+    tsc1_control_flags = 1;
     tsc1_speed_stored = *(ushort *)(unaff_r31 + 1);
-    _tsc1_capped_speed_target = tsc1_speed_stored;
+    tsc1_capped_speed_target = tsc1_speed_stored;
     if (24000 < tsc1_speed_stored) {
-      _tsc1_capped_speed_target = 24000;
+      tsc1_capped_speed_target = 24000;
     }
-    _tsc1_speed_control_mode = (undefined2)((*unaff_r31 & 0xc) >> 2);
+    tsc1_speed_control_mode = (undefined2)((*unaff_r31 & 0xc) >> 2);
   }
   else if (unaff_r28 == 2) {
-    _tsc1_speed_error_timeout = *(short *)(_tsc1_active_config_ptr + 8) + 1;
+    tsc1_speed_error_timeout = *(short *)(tsc1_active_config_ptr + 8) + 1;
     *unaff_r29 = 2;
     governor_mode_request = cm848_lookupJ1939SourceAddressIndex(*(undefined1 *)(unaff_r30 + 3));
-    _tsc1_control_flags = 0;
+    tsc1_control_flags = 0;
     tsc1_torque_stored = unaff_r31[3];
-    _tsc1_speed_setpoint = (ushort)tsc1_torque_stored * 0x100 + -32000;
-    _tsc1_torque_limit_calc =
+    tsc1_speed_setpoint = (ushort)tsc1_torque_stored * 0x100 + -32000;
+    tsc1_torque_limit_calc =
          (short)((((int)(short)protection_activation_delay - (int)(short)fault_severity_table_ptr) *
-                 (int)_tsc1_speed_setpoint) / 0x6400) + fault_severity_table_ptr;
-    if (_tsc1_torque_limit_calc < 0) {
-      _tsc1_torque_limit_calc = 0;
+                 (int)tsc1_speed_setpoint) / 0x6400) + fault_severity_table_ptr;
+    if (tsc1_torque_limit_calc < 0) {
+      tsc1_torque_limit_calc = 0;
     }
   }
   else if (unaff_r28 == 3) {
-    _tsc1_speed_error_timeout = *(short *)(_tsc1_active_config_ptr + 0xc) + 1;
+    tsc1_speed_error_timeout = *(short *)(tsc1_active_config_ptr + 0xc) + 1;
     *unaff_r29 = 3;
     governor_mode_request = cm848_lookupJ1939SourceAddressIndex(*(undefined1 *)(unaff_r30 + 3));
-    _tsc1_control_flags = 0;
+    tsc1_control_flags = 0;
     tsc1_speed_stored = *(ushort *)(unaff_r31 + 1);
     tsc1_torque_stored = unaff_r31[3];
-    _tsc1_mode3_torque_limit =
+    tsc1_mode3_torque_limit =
          (short)((((int)(short)protection_activation_delay - (int)(short)fault_severity_table_ptr) *
                  (int)(short)((ushort)tsc1_torque_stored * 0x100 + -32000)) / 0x6400) +
          fault_severity_table_ptr;
-    tsc1_limit_state._2_2_ = tsc1_speed_stored;
-    if (_tsc1_mode3_torque_limit < 0) {
-      _tsc1_mode3_torque_limit = 0;
+    tsc1_torque_limit_value = tsc1_speed_stored;
+    if (tsc1_mode3_torque_limit < 0) {
+      tsc1_mode3_torque_limit = 0;
     }
   }
   if (governor_mode_request != 1) {
@@ -20458,8 +20448,6 @@ void cm848_processGovernorSpeedControlRequest(void)
 // Function: cm848_processGovernorSpeedRequest @ 0x00022f90
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_processGovernorSpeedRequest(void)
 
 {
@@ -20468,16 +20456,16 @@ void cm848_processGovernorSpeedRequest(void)
   int unaff_r30;
   byte *unaff_r31;
   
-  *(short *)(in_r12 + -0x51de) = *(short *)(_tsc1_active_config_ptr + 4) + 1;
+  *(short *)(in_r12 + -0x51de) = *(short *)(tsc1_active_config_ptr + 4) + 1;
   *unaff_r29 = 1;
   governor_mode_request = cm848_lookupJ1939SourceAddressIndex(*(undefined1 *)(unaff_r30 + 3));
-  _tsc1_control_flags = 1;
-  _tsc1_capped_speed_target = *(ushort *)(unaff_r31 + 1);
-  tsc1_speed_stored = _tsc1_capped_speed_target;
-  if (24000 < _tsc1_capped_speed_target) {
-    _tsc1_capped_speed_target = 24000;
+  tsc1_control_flags = 1;
+  tsc1_capped_speed_target = *(ushort *)(unaff_r31 + 1);
+  tsc1_speed_stored = tsc1_capped_speed_target;
+  if (24000 < tsc1_capped_speed_target) {
+    tsc1_capped_speed_target = 24000;
   }
-  _tsc1_speed_control_mode = (short)((*unaff_r31 & 0xc) >> 2);
+  tsc1_speed_control_mode = (short)((*unaff_r31 & 0xc) >> 2);
   if (governor_mode_request != 1) {
     torque_limit_mode_select = 0;
   }
@@ -20800,8 +20788,6 @@ void cm848_setGovernorHandlerDefault(void)
 // Function: cm848_j1939ProcessGovernorRequest @ 0x000236f0
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_j1939ProcessGovernorRequest(int param_1)
 
 {
@@ -20830,7 +20816,7 @@ void cm848_j1939ProcessGovernorRequest(int param_1)
   }
   if (bVar2 == 0) {
     cm848_removeCoolantCalEntry(bVar1);
-    _speed_control_target = _speed_control_target & 5;
+    speed_control_target = speed_control_target & 5;
   }
   else {
     sVar3 = cm848_addCoolantCalEntry(bVar1,bVar2);
@@ -20865,7 +20851,7 @@ void cm848_j1939ProcessGovernorRequest(int param_1)
       }
     }
   }
-  _tsc1_secondary_config_ptr = _tsc1_config_entry_ptr;
+  tsc1_secondary_config_ptr = tsc1_config_entry_ptr;
 LAB_00023878:
   tsc1_msg_speed_stored = tsc1_msg_torque;
   tsc1_handler_address = (word)bVar1;
@@ -20875,7 +20861,7 @@ LAB_00023878:
     governor_error_term = 0;
     tsc1_handler_source_index = 0;
     protection_state_value = 0x7d;
-    _speed_control_derivative = 0;
+    tsc1_multiframe_timeout = 0;
     return;
   }
   tsc1_msg_priority = bVar5;
@@ -20886,23 +20872,23 @@ LAB_00023878:
     tsc1_j1939_handler_ptr = j1939_handler_entry_ptr;
     if ((((bVar1 == DAT_0005a470) && (governor_mode == 1)) && (governor_mode_request == 1)) &&
        ((DAT_0005c36c <= timing_compensation_final && (wVar4 != 0)))) {
-      _speed_control_derivative = 0;
+      tsc1_multiframe_timeout = 0;
       governor_error_term = 0;
       tsc1_handler_source_index = 0;
     }
     else {
-      _speed_control_derivative = *(short *)(_tsc1_secondary_config_ptr + 0xe) + 1;
+      tsc1_multiframe_timeout = *(short *)(tsc1_secondary_config_ptr + 0xe) + 1;
       governor_error_term = 2;
       tsc1_handler_source_index = cm848_lookupJ1939SourceAddressIndex(*(undefined1 *)(param_1 + 3));
       if (tsc1_j1939_handler_ptr == 0) {
         protection_state_value = 0x7d;
-        _speed_control_mode_flags = *(short *)(_tsc1_secondary_config_ptr + 0xe) + 1;
-        _tsc1_speed_mode_flag = 0;
+        speed_control_mode_flags = *(short *)(tsc1_secondary_config_ptr + 0xe) + 1;
+        tsc1_speed_mode_flag = 0;
         return;
       }
     }
-    _tsc1_speed_mode_flag = 0;
-    _speed_control_mode_flags = 0;
+    tsc1_speed_mode_flag = 0;
+    speed_control_mode_flags = 0;
     protection_state_value = 0x7d;
     return;
   }
@@ -20910,12 +20896,12 @@ LAB_00023878:
     governor_error_term = 3;
     tsc1_handler_source_index = cm848_lookupJ1939SourceAddressIndex(*(undefined1 *)(param_1 + 3));
     tsc1_multiframe_result = cm848_j1939SetupMultiFrameTransfer(tsc1_msg_torque);
-    _speed_control_derivative = *(short *)(_tsc1_secondary_config_ptr + 0x12) + 1;
-    _speed_control_mode_flags = _speed_control_derivative;
+    tsc1_multiframe_timeout = *(short *)(tsc1_secondary_config_ptr + 0x12) + 1;
+    speed_control_mode_flags = tsc1_multiframe_timeout;
     if (protection_state_value != 0) {
-      _speed_control_mode_flags = 0;
+      speed_control_mode_flags = 0;
     }
-    _tsc1_speed_mode_flag = 0;
+    tsc1_speed_mode_flag = 0;
     j1939FormatMultiFrameResponse();
     protection_state_value = j1939_handler_entry_ptr;
     return;
@@ -24382,8 +24368,8 @@ void cm848_j1939HandlePgn65504ProprietaryA(void)
   else {
     local_18 = (undefined1)((ushort)current_engine_rpm >> 8);
     _DAT_003faeb0 = CONCAT11((char)current_engine_rpm,local_18);
-    local_12 = (undefined1)((ushort)(_proprietary_offset_value + 0x7d7f) >> 8);
-    _DAT_003faeb2 = CONCAT11((char)(_proprietary_offset_value + 0x7d7f),local_12);
+    local_12 = (undefined1)((ushort)(proprietary_offset_value + 0x7d7f) >> 8);
+    _DAT_003faeb2 = CONCAT11((char)(proprietary_offset_value + 0x7d7f),local_12);
     uVar1 = TBLr;
     uVar2 = uVar1 >> 7 & 0xffff;
     DAT_003faeb6 = (undefined1)uVar2;
@@ -24685,8 +24671,6 @@ void cm848_emptyStubFunction5(void)
 // Function: cm848_j1939FormatDm1Message @ 0x00026f80
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_j1939FormatDm1Message(void)
 
 {
@@ -24694,7 +24678,7 @@ void cm848_j1939FormatDm1Message(void)
   
   DAT_003faf34 = governor_mode;
   if (((DAT_0005c3aa < fuel_demand_calculated) && (fuel_demand_calculated < DAT_003feb90)) &&
-     (_tsc1_speed_error_timeout_flag == 1)) {
+     (tsc1_speed_error_timeout_flag == 1)) {
     if (DAT_0040b1ee == 1) {
       if (PTR_DAT_003faf44 < (undefined *)(-1 - (uint)DAT_0005c3b2)) {
         PTR_DAT_003faf44 = PTR_DAT_003faf44 + DAT_0005c3b2;
@@ -24706,29 +24690,29 @@ void cm848_j1939FormatDm1Message(void)
       if (0xfffe < uVar1) {
         uVar1 = 0xffff;
       }
-      _tsc1_mode3_torque_limit = (ushort)uVar1;
-      if ((int)(uint)tsc1_limit_state._2_2_ < (int)(0xffff - (uint)DAT_0005c3b0)) {
-        tsc1_limit_state._2_2_ = tsc1_limit_state._2_2_ + DAT_0005c3b0;
+      tsc1_mode3_torque_limit = (ushort)uVar1;
+      if ((int)(uint)tsc1_torque_limit_value < (int)(0xffff - (uint)DAT_0005c3b0)) {
+        tsc1_torque_limit_value = tsc1_torque_limit_value + DAT_0005c3b0;
       }
       else {
-        tsc1_limit_state._2_2_ = 0xffff;
+        tsc1_torque_limit_value = 0xffff;
       }
     }
     governor_mode = 3;
   }
   else {
-    _tsc1_mode3_torque_limit = DAT_0005c3ae;
-    if ((DAT_003feb90 <= fuel_demand_calculated) && (_tsc1_speed_error_timeout_flag == 1)) {
-      _tsc1_mode3_torque_limit = 0xffff;
+    tsc1_mode3_torque_limit = DAT_0005c3ae;
+    if ((DAT_003feb90 <= fuel_demand_calculated) && (tsc1_speed_error_timeout_flag == 1)) {
+      tsc1_mode3_torque_limit = 0xffff;
     }
     governor_mode = 0;
     governor_mode_request = 0;
-    PTR_DAT_003faf44 = (undefined *)((uint)_tsc1_mode3_torque_limit << 6);
-    tsc1_limit_state._2_2_ = current_engine_rpm;
+    PTR_DAT_003faf44 = (undefined *)((uint)tsc1_mode3_torque_limit << 6);
+    tsc1_torque_limit_value = current_engine_rpm;
   }
-  _tsc1_control_flags = 0;
-  _tsc1_speed_error_timeout = 0;
-  _injection_advance_raw_2 = 0;
+  tsc1_control_flags = 0;
+  tsc1_speed_error_timeout = 0;
+  tsc1_activation_confirm_timer = 0;
   return;
 }
 
@@ -24738,8 +24722,6 @@ void cm848_j1939FormatDm1Message(void)
 // Function: cm848_updateGovernorTorqueLimit @ 0x00026fb8
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_updateGovernorTorqueLimit
                (undefined2 *param_1,undefined2 *param_2,undefined4 param_3,undefined2 *param_4,
                int param_5)
@@ -24747,7 +24729,7 @@ void cm848_updateGovernorTorqueLimit
 {
   uint uVar1;
   
-  if ((param_5 < (int)(uint)DAT_003feb90) && (_tsc1_speed_error_timeout_flag == 1)) {
+  if ((param_5 < (int)(uint)DAT_003feb90) && (tsc1_speed_error_timeout_flag == 1)) {
     if (DAT_0040b1ee == 1) {
       if (PTR_DAT_003faf44 < (undefined *)(-1 - (uint)DAT_0005c3b2)) {
         PTR_DAT_003faf44 = PTR_DAT_003faf44 + DAT_0005c3b2;
@@ -24759,31 +24741,31 @@ void cm848_updateGovernorTorqueLimit
       if (0xfffe < uVar1) {
         uVar1 = 0xffff;
       }
-      _tsc1_mode3_torque_limit = (ushort)uVar1;
-      if ((int)(uint)tsc1_limit_state._2_2_ < (int)(0xffff - (uint)DAT_0005c3b0)) {
-        tsc1_limit_state._2_2_ = tsc1_limit_state._2_2_ + DAT_0005c3b0;
+      tsc1_mode3_torque_limit = (ushort)uVar1;
+      if ((int)(uint)tsc1_torque_limit_value < (int)(0xffff - (uint)DAT_0005c3b0)) {
+        tsc1_torque_limit_value = tsc1_torque_limit_value + DAT_0005c3b0;
       }
       else {
-        tsc1_limit_state._2_2_ = 0xffff;
+        tsc1_torque_limit_value = 0xffff;
       }
     }
     *param_2 = 3;
-    _tsc1_control_flags = 0;
+    tsc1_control_flags = 0;
     *param_1 = 0;
   }
   else {
-    _tsc1_mode3_torque_limit = DAT_0005c3ae;
-    if (((int)(uint)DAT_003feb90 <= param_5) && (_tsc1_speed_error_timeout_flag == 1)) {
-      _tsc1_mode3_torque_limit = 0xffff;
+    tsc1_mode3_torque_limit = DAT_0005c3ae;
+    if (((int)(uint)DAT_003feb90 <= param_5) && (tsc1_speed_error_timeout_flag == 1)) {
+      tsc1_mode3_torque_limit = 0xffff;
     }
     *param_2 = 0;
-    _tsc1_control_flags = 0;
+    tsc1_control_flags = 0;
     *param_4 = 0;
     governor_mode_request = 0;
-    PTR_DAT_003faf44 = (undefined *)((uint)_tsc1_mode3_torque_limit << 6);
-    tsc1_limit_state._2_2_ = current_engine_rpm;
+    PTR_DAT_003faf44 = (undefined *)((uint)tsc1_mode3_torque_limit << 6);
+    tsc1_torque_limit_value = current_engine_rpm;
   }
-  _tsc1_speed_error_timeout = 0;
+  tsc1_speed_error_timeout = 0;
   *param_1 = 0;
   return;
 }
@@ -24794,12 +24776,10 @@ void cm848_updateGovernorTorqueLimit
 // Function: cm848_j1939SendPgn65279_FEFF @ 0x00027108
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_j1939SendPgn65279_FEFF(undefined2 *param_1,undefined2 param_2)
 
 {
-  _tsc1_speed_error_timeout = param_2;
+  tsc1_speed_error_timeout = param_2;
   *param_1 = param_2;
   return;
 }
@@ -24810,18 +24790,16 @@ void cm848_j1939SendPgn65279_FEFF(undefined2 *param_1,undefined2 param_2)
 // Function: cm848_resetGovernorState @ 0x00027118
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_resetGovernorState(void)
 
 {
   governor_error_term = 0;
   tsc1_handler_source_index = 0;
   protection_state_value = 0x7d;
-  _speed_control_derivative = 0;
-  _injection_advance_raw = 0;
-  _speed_control_mode_flags = 0;
-  _tsc1_speed_mode_flag = 0;
+  tsc1_multiframe_timeout = 0;
+  tsc1_error_fault_timer = 0;
+  speed_control_mode_flags = 0;
+  tsc1_speed_mode_flag = 0;
   return;
 }
 
@@ -24855,55 +24833,55 @@ void cm848_processGovernorModeTransition(void)
   if ((DAT_003faf39 != torque_limit_mode_select) && (torque_limit_mode_select == 1)) {
     bVar5 = true;
   }
-  if (_tsc1_torque_mode_timer != 0) {
-    _tsc1_torque_mode_timer = _tsc1_torque_mode_timer + -1;
+  if (tsc1_torque_mode_timer != 0) {
+    tsc1_torque_mode_timer = tsc1_torque_mode_timer + -1;
     bVar5 = true;
   }
-  bVar1 = _tsc1_torque_mode_timer == 1;
+  bVar1 = tsc1_torque_mode_timer == 1;
   if (bVar1) {
     torque_limit_mode_select = 0;
     tsc1_torque_limit_active = 0;
-    _speed_control_target = _speed_control_target & 3;
-    _tsc1_torque_mode_timer = 0;
-    _tsc1_torque_active_timer = 0;
+    speed_control_target = speed_control_target & 3;
+    tsc1_torque_mode_timer = 0;
+    tsc1_torque_active_timer = 0;
   }
-  if (_tsc1_torque_active_timer != 0) {
-    _tsc1_torque_active_timer = _tsc1_torque_active_timer + -1;
+  if (tsc1_torque_active_timer != 0) {
+    tsc1_torque_active_timer = tsc1_torque_active_timer + -1;
   }
-  if (_tsc1_torque_active_timer == 1) {
+  if (tsc1_torque_active_timer == 1) {
     torque_limit_mode_select = 0;
     tsc1_torque_limit_active = 1;
-    _speed_control_target = _speed_control_target | 4;
-    _tsc1_torque_mode_timer = DAT_0005c38c + 1;
+    speed_control_target = speed_control_target | 4;
+    tsc1_torque_mode_timer = DAT_0005c38c + 1;
   }
-  if (((_tsc1_torque_limit_timer != 0) &&
-      (_tsc1_torque_limit_timer = _tsc1_torque_limit_timer + -1,
-      DAT_003faf3e != tsc1_limit_state._0_2_)) && (tsc1_limit_state._0_2_ == 1)) {
+  if (((tsc1_torque_limit_timer != 0) &&
+      (tsc1_torque_limit_timer = tsc1_torque_limit_timer + -1,
+      DAT_003faf3e != tsc1_torque_limit_flag)) && (tsc1_torque_limit_flag == 1)) {
     bVar5 = true;
   }
-  bVar2 = _tsc1_torque_limit_timer == 1;
+  bVar2 = tsc1_torque_limit_timer == 1;
   if (bVar2) {
-    tsc1_limit_state._0_2_ = 0;
-    _tsc1_torque_limit_timer = 0;
+    tsc1_torque_limit_flag = 0;
+    tsc1_torque_limit_timer = 0;
   }
-  if (((_tsc1_speed_override_timer != 0) &&
-      (_tsc1_speed_override_timer = _tsc1_speed_override_timer + -1,
+  if (((tsc1_speed_override_timer != 0) &&
+      (tsc1_speed_override_timer = tsc1_speed_override_timer + -1,
       DAT_003faf40 != tsc1_disable_control)) && (tsc1_disable_control == 1)) {
     bVar5 = true;
   }
-  bVar3 = _tsc1_speed_override_timer == 1;
+  bVar3 = tsc1_speed_override_timer == 1;
   if (bVar3) {
     tsc1_disable_control = 0;
-    _tsc1_speed_override_timer = 0;
+    tsc1_speed_override_timer = 0;
   }
-  if (((_speed_control_mode_flags != 0) &&
-      (_speed_control_mode_flags = _speed_control_mode_flags + -1,
-      DAT_003faf3b != governor_error_term)) && (governor_error_term == 0)) {
+  if (((speed_control_mode_flags != 0) &&
+      (speed_control_mode_flags = speed_control_mode_flags + -1, DAT_003faf3b != governor_error_term
+      )) && (governor_error_term == 0)) {
     bVar5 = true;
   }
-  bVar4 = _speed_control_mode_flags == 1;
+  bVar4 = speed_control_mode_flags == 1;
   if (bVar4) {
-    _speed_control_mode_flags = 0;
+    speed_control_mode_flags = 0;
   }
   bVar4 = bVar4 || (bVar3 || (bVar2 || bVar1 && wVar8 == 0));
   if (tsc1_message_timeout != 0) {
@@ -24920,20 +24898,20 @@ void cm848_processGovernorModeTransition(void)
     injection_delay_timer = 0;
     tsc1_address_filter = 0xff;
   }
-  if (_tsc1_override_timeout != 0) {
-    _tsc1_override_timeout = _tsc1_override_timeout + -1;
+  if (tsc1_override_timeout != 0) {
+    tsc1_override_timeout = tsc1_override_timeout + -1;
   }
-  if (_tsc1_override_timeout == 1) {
-    _tsc1_disable_override = 0;
-    _tsc1_override_timeout = 0;
+  if (tsc1_override_timeout == 1) {
+    tsc1_disable_override = 0;
+    tsc1_override_timeout = 0;
   }
   if ((eeprom_scatter_source_table._2_2_ == 4) || (eeprom_scatter_source_table._2_2_ == 5)) {
-    if (_tsc1_mode_timeout != 0) {
-      _tsc1_mode_timeout = _tsc1_mode_timeout + -1;
+    if (tsc1_mode_timeout != 0) {
+      tsc1_mode_timeout = tsc1_mode_timeout + -1;
     }
-    if ((_tsc1_mode_timeout == 1) || (tsc1_message_timeout == 0)) {
-      _tsc1_mode_timeout = 0;
-      _tsc1_mode_active = 0;
+    if ((tsc1_mode_timeout == 1) || (tsc1_message_timeout == 0)) {
+      tsc1_mode_timeout = 0;
+      tsc1_mode_active = 0;
     }
     if ((_governor_mode_transition_timer != 0) &&
        (_governor_mode_transition_timer = _governor_mode_transition_timer + -1,
@@ -24945,53 +24923,52 @@ void cm848_processGovernorModeTransition(void)
   if (eeprom_scatter_source_table._2_2_ == 4) {
     if (((fuel_demand_accumulator == 3) || (fuel_demand_accumulator == 4)) ||
        (fuel_demand_accumulator == 5)) {
-      _governor_mode_transition_counter = _governor_mode_transition_counter + 1;
+      governor_mode_transition_counter = governor_mode_transition_counter + 1;
     }
     else {
-      _governor_mode_transition_counter = 0;
+      governor_mode_transition_counter = 0;
     }
     if ((protection_mode_bits & 1) == 0) {
-      _tsc1_handler_initialized = 1;
+      tsc1_handler_initialized = 1;
     }
-    else if ((fuel_demand_accumulator == 1) || (DAT_0005c3a8 <= _governor_mode_transition_counter))
-    {
-      _tsc1_handler_initialized = 0;
+    else if ((fuel_demand_accumulator == 1) || (DAT_0005c3a8 <= governor_mode_transition_counter)) {
+      tsc1_handler_initialized = 0;
     }
     else {
-      _tsc1_handler_initialized = 1;
+      tsc1_handler_initialized = 1;
     }
-    if (_tsc1_speed_cmd_timeout != 0) {
-      _tsc1_speed_cmd_timeout = _tsc1_speed_cmd_timeout + -1;
+    if (tsc1_speed_cmd_timeout != 0) {
+      tsc1_speed_cmd_timeout = tsc1_speed_cmd_timeout + -1;
     }
-    if (((_tsc1_speed_cmd_timeout == 0) && (_tsc1_handler_initialized == 0)) &&
+    if (((tsc1_speed_cmd_timeout == 0) && (tsc1_handler_initialized == 0)) &&
        ((condition_monitor_flags & 0x2000) == 0)) {
       tsc1_speed_requested = 0;
       condition_monitor_flags = condition_monitor_flags | 0x2000;
     }
   }
-  if (((DAT_003faf34 == governor_mode) && ((int)DAT_003faf36 == (int)_tsc1_active_state)) &&
+  if (((DAT_003faf34 == governor_mode) && ((int)DAT_003faf36 == (int)tsc1_active_state)) &&
      (DAT_003faf38 == tsc1_source_address)) {
-    if (_tsc1_speed_error_timeout != 0) {
-      _tsc1_speed_error_timeout = _tsc1_speed_error_timeout - 1;
+    if (tsc1_speed_error_timeout != 0) {
+      tsc1_speed_error_timeout = tsc1_speed_error_timeout - 1;
     }
-    if (_injection_advance_raw_2 != 0) {
-      _injection_advance_raw_2 = _injection_advance_raw_2 + -1;
+    if (tsc1_activation_confirm_timer != 0) {
+      tsc1_activation_confirm_timer = tsc1_activation_confirm_timer + -1;
     }
-    _tsc1_speed_error_timeout_flag = (ushort)(_tsc1_speed_error_timeout < 2);
+    tsc1_speed_error_timeout_flag = (ushort)(tsc1_speed_error_timeout < 2);
     if (governor_mode == 0) {
       torque_limit_mode_select = 0;
-      if (_tsc1_speed_error_timeout < 2) {
+      if (tsc1_speed_error_timeout < 2) {
         cm848_j1939FormatDm1Message();
       }
     }
     else {
       if (governor_mode == 1) {
-        if (_tsc1_speed_error_timeout != 1) {
+        if (tsc1_speed_error_timeout != 1) {
           uVar9 = 1;
 LAB_00027800:
-          if (_injection_advance_raw_2 == 1) {
-            cm848_addCoolantCalEntry((int)_tsc1_active_state,tsc1_source_address,uVar9);
-            _speed_control_target = _speed_control_target | 1;
+          if (tsc1_activation_confirm_timer == 1) {
+            cm848_addCoolantCalEntry((int)tsc1_active_state,tsc1_source_address,uVar9);
+            speed_control_target = speed_control_target | 1;
             cm848_j1939FormatDm1Message();
           }
           goto LAB_00027848;
@@ -24999,20 +24976,20 @@ LAB_00027800:
       }
       else if (governor_mode == 2) {
         torque_limit_mode_select = 0;
-        if (_tsc1_speed_error_timeout != 1) {
+        if (tsc1_speed_error_timeout != 1) {
           uVar9 = 2;
           goto LAB_00027800;
         }
       }
-      else if ((governor_mode != 3) || (torque_limit_mode_select = 0, 1 < _tsc1_speed_error_timeout)
-              ) goto LAB_00027848;
+      else if ((governor_mode != 3) || (torque_limit_mode_select = 0, 1 < tsc1_speed_error_timeout))
+      goto LAB_00027848;
       torque_limit_mode_select = 0;
       cm848_j1939FormatDm1Message();
       bVar4 = true;
     }
   }
   else if (governor_mode == 0) {
-    _injection_advance_raw_2 = 0;
+    tsc1_activation_confirm_timer = 0;
   }
   else {
     if (governor_mode == 1) {
@@ -25021,19 +24998,19 @@ LAB_00027800:
     else {
       if (governor_mode != 2) {
         if (governor_mode == 3) {
-          _injection_advance_raw_2 = 0;
+          tsc1_activation_confirm_timer = 0;
           bVar5 = true;
         }
         goto LAB_00027848;
       }
       iVar10 = 10;
     }
-    _injection_advance_raw_2 = *(short *)(_tsc1_active_config_ptr + iVar10) + 1;
+    tsc1_activation_confirm_timer = *(short *)(tsc1_active_config_ptr + iVar10) + 1;
     bVar5 = true;
   }
 LAB_00027848:
   if (bVar4) {
-    if (_tsc1_active_state == 1) {
+    if (tsc1_active_state == 1) {
       bVar7 = true;
     }
     else {
@@ -25041,7 +25018,7 @@ LAB_00027848:
     }
   }
   else if (bVar5) {
-    if (_tsc1_active_state == 1) {
+    if (tsc1_active_state == 1) {
       DAT_003faf42 = '\x01';
     }
     else {
@@ -25049,38 +25026,38 @@ LAB_00027848:
     }
   }
   DAT_003faf34 = governor_mode;
-  DAT_003faf36 = _tsc1_active_state;
+  DAT_003faf36 = tsc1_active_state;
   DAT_003faf38 = tsc1_source_address;
   DAT_003faf39 = torque_limit_mode_select;
-  DAT_003faf3e = tsc1_limit_state._0_2_;
+  DAT_003faf3e = tsc1_torque_limit_flag;
   DAT_003faf40 = tsc1_disable_control;
   if ((DAT_003faf3b == governor_error_term) && (DAT_003faf3d == tsc1_handler_address)) {
-    if (_speed_control_derivative != 0) {
-      _speed_control_derivative = _speed_control_derivative + -1;
+    if (tsc1_multiframe_timeout != 0) {
+      tsc1_multiframe_timeout = tsc1_multiframe_timeout + -1;
     }
-    if (_injection_advance_raw != 0) {
-      _injection_advance_raw = _injection_advance_raw + -1;
+    if (tsc1_error_fault_timer != 0) {
+      tsc1_error_fault_timer = tsc1_error_fault_timer + -1;
     }
     if (governor_error_term == 2) {
-      if (_speed_control_derivative == 1) {
+      if (tsc1_multiframe_timeout == 1) {
 LAB_000279e8:
         cm848_resetGovernorState();
         bVar7 = true;
       }
-      else if (_injection_advance_raw == 1) {
+      else if (tsc1_error_fault_timer == 1) {
         cm848_addCoolantCalEntryAlt(tsc1_handler_address & 0xff,2);
-        _speed_control_target = _speed_control_target | 2;
+        speed_control_target = speed_control_target | 2;
         cm848_resetGovernorState();
       }
     }
-    else if ((governor_error_term == 3) && (_speed_control_derivative == 1)) goto LAB_000279e8;
+    else if ((governor_error_term == 3) && (tsc1_multiframe_timeout == 1)) goto LAB_000279e8;
   }
   else {
     if (governor_error_term == 2) {
-      _injection_advance_raw = *(short *)(_tsc1_secondary_config_ptr + 0x10) + 1;
+      tsc1_error_fault_timer = *(short *)(tsc1_secondary_config_ptr + 0x10) + 1;
     }
     else {
-      _injection_advance_raw = 0;
+      tsc1_error_fault_timer = 0;
       if (governor_error_term != 3) goto LAB_000279f0;
     }
     DAT_003faf42 = '\x01';
@@ -25160,57 +25137,57 @@ void cm848_selectTorqueLimitByStateMachine(void)
   if ((DAT_003faf39 != torque_limit_mode_select) && (torque_limit_mode_select == 1)) {
     bVar1 = true;
   }
-  if (_tsc1_torque_mode_timer != 0) {
-    _tsc1_torque_mode_timer = _tsc1_torque_mode_timer + -1;
+  if (tsc1_torque_mode_timer != 0) {
+    tsc1_torque_mode_timer = tsc1_torque_mode_timer + -1;
     bVar1 = true;
   }
-  if (_tsc1_torque_mode_timer == 1) {
+  if (tsc1_torque_mode_timer == 1) {
     if (tsc1_torque_limit_active == 0) {
       unaff_r24 = 1;
     }
     torque_limit_mode_select = 0;
     tsc1_torque_limit_active = 0;
-    _speed_control_target = _speed_control_target & 3;
-    _tsc1_torque_mode_timer = 0;
-    _tsc1_torque_active_timer = 0;
+    speed_control_target = speed_control_target & 3;
+    tsc1_torque_mode_timer = 0;
+    tsc1_torque_active_timer = 0;
   }
-  if (_tsc1_torque_active_timer != 0) {
-    _tsc1_torque_active_timer = _tsc1_torque_active_timer + -1;
+  if (tsc1_torque_active_timer != 0) {
+    tsc1_torque_active_timer = tsc1_torque_active_timer + -1;
   }
-  if (_tsc1_torque_active_timer == 1) {
+  if (tsc1_torque_active_timer == 1) {
     torque_limit_mode_select = 0;
     tsc1_torque_limit_active = 1;
-    _speed_control_target = _speed_control_target | 4;
-    _tsc1_torque_mode_timer = DAT_0005c38c + 1;
+    speed_control_target = speed_control_target | 4;
+    tsc1_torque_mode_timer = DAT_0005c38c + 1;
   }
-  if (((_tsc1_torque_limit_timer != 0) &&
-      (_tsc1_torque_limit_timer = _tsc1_torque_limit_timer + -1,
-      DAT_003faf3e != tsc1_limit_state._0_2_)) && (tsc1_limit_state._0_2_ == 1)) {
+  if (((tsc1_torque_limit_timer != 0) &&
+      (tsc1_torque_limit_timer = tsc1_torque_limit_timer + -1,
+      DAT_003faf3e != tsc1_torque_limit_flag)) && (tsc1_torque_limit_flag == 1)) {
     bVar1 = true;
   }
-  if (_tsc1_torque_limit_timer == 1) {
-    tsc1_limit_state._0_2_ = 0;
-    _tsc1_torque_limit_timer = 0;
+  if (tsc1_torque_limit_timer == 1) {
+    tsc1_torque_limit_flag = 0;
+    tsc1_torque_limit_timer = 0;
     unaff_r24 = 1;
   }
   puStack00000008 = &tsc1_disable_control;
-  if (((_tsc1_speed_override_timer != 0) &&
-      (_tsc1_speed_override_timer = _tsc1_speed_override_timer + -1,
+  if (((tsc1_speed_override_timer != 0) &&
+      (tsc1_speed_override_timer = tsc1_speed_override_timer + -1,
       DAT_003faf40 != tsc1_disable_control)) && (tsc1_disable_control == 1)) {
     bVar1 = true;
   }
-  if (_tsc1_speed_override_timer == 1) {
+  if (tsc1_speed_override_timer == 1) {
     tsc1_disable_control = 0;
-    _tsc1_speed_override_timer = 0;
+    tsc1_speed_override_timer = 0;
     unaff_r24 = 1;
   }
-  if (((_speed_control_mode_flags != 0) &&
-      (_speed_control_mode_flags = _speed_control_mode_flags + -1,
-      DAT_003faf3b != governor_error_term)) && (governor_error_term == 0)) {
+  if (((speed_control_mode_flags != 0) &&
+      (speed_control_mode_flags = speed_control_mode_flags + -1, DAT_003faf3b != governor_error_term
+      )) && (governor_error_term == 0)) {
     bVar1 = true;
   }
-  if (_speed_control_mode_flags == 1) {
-    _speed_control_mode_flags = 0;
+  if (speed_control_mode_flags == 1) {
+    speed_control_mode_flags = 0;
     unaff_r24 = 1;
   }
   if (tsc1_message_timeout != 0) {
@@ -25227,20 +25204,20 @@ void cm848_selectTorqueLimitByStateMachine(void)
     injection_delay_timer = 0;
     tsc1_address_filter = 0xff;
   }
-  if (_tsc1_override_timeout != 0) {
-    _tsc1_override_timeout = _tsc1_override_timeout + -1;
+  if (tsc1_override_timeout != 0) {
+    tsc1_override_timeout = tsc1_override_timeout + -1;
   }
-  if (_tsc1_override_timeout == 1) {
-    _tsc1_disable_override = 0;
-    _tsc1_override_timeout = 0;
+  if (tsc1_override_timeout == 1) {
+    tsc1_disable_override = 0;
+    tsc1_override_timeout = 0;
   }
   if ((eeprom_scatter_source_table._2_2_ == 4) || (eeprom_scatter_source_table._2_2_ == 5)) {
-    if (_tsc1_mode_timeout != 0) {
-      _tsc1_mode_timeout = _tsc1_mode_timeout + -1;
+    if (tsc1_mode_timeout != 0) {
+      tsc1_mode_timeout = tsc1_mode_timeout + -1;
     }
-    if ((_tsc1_mode_timeout == 1) || (tsc1_message_timeout == 0)) {
-      _tsc1_mode_timeout = 0;
-      _tsc1_mode_active = 0;
+    if ((tsc1_mode_timeout == 1) || (tsc1_message_timeout == 0)) {
+      tsc1_mode_timeout = 0;
+      tsc1_mode_active = 0;
     }
     if ((_governor_mode_transition_timer != 0) &&
        (_governor_mode_transition_timer = _governor_mode_transition_timer + -1,
@@ -25252,53 +25229,52 @@ void cm848_selectTorqueLimitByStateMachine(void)
   if (eeprom_scatter_source_table._2_2_ == 4) {
     if (((fuel_demand_accumulator == 3) || (fuel_demand_accumulator == 4)) ||
        (fuel_demand_accumulator == 5)) {
-      _governor_mode_transition_counter = _governor_mode_transition_counter + 1;
+      governor_mode_transition_counter = governor_mode_transition_counter + 1;
     }
     else {
-      _governor_mode_transition_counter = 0;
+      governor_mode_transition_counter = 0;
     }
     if ((protection_mode_bits & 1) == 0) {
-      _tsc1_handler_initialized = 1;
+      tsc1_handler_initialized = 1;
     }
-    else if ((fuel_demand_accumulator == 1) || (DAT_0005c3a8 <= _governor_mode_transition_counter))
-    {
-      _tsc1_handler_initialized = 0;
+    else if ((fuel_demand_accumulator == 1) || (DAT_0005c3a8 <= governor_mode_transition_counter)) {
+      tsc1_handler_initialized = 0;
     }
     else {
-      _tsc1_handler_initialized = 1;
+      tsc1_handler_initialized = 1;
     }
-    if (_tsc1_speed_cmd_timeout != 0) {
-      _tsc1_speed_cmd_timeout = _tsc1_speed_cmd_timeout + -1;
+    if (tsc1_speed_cmd_timeout != 0) {
+      tsc1_speed_cmd_timeout = tsc1_speed_cmd_timeout + -1;
     }
-    if (((_tsc1_speed_cmd_timeout == 0) && (_tsc1_handler_initialized == 0)) &&
+    if (((tsc1_speed_cmd_timeout == 0) && (tsc1_handler_initialized == 0)) &&
        ((condition_monitor_flags & 0x2000) == 0)) {
       tsc1_speed_requested = 0;
       condition_monitor_flags = condition_monitor_flags | 0x2000;
     }
   }
-  if (((DAT_003faf34 == governor_mode) && ((int)DAT_003faf36 == (int)_tsc1_active_state)) &&
+  if (((DAT_003faf34 == governor_mode) && ((int)DAT_003faf36 == (int)tsc1_active_state)) &&
      (DAT_003faf38 == tsc1_source_address)) {
-    if (_tsc1_speed_error_timeout != 0) {
-      _tsc1_speed_error_timeout = _tsc1_speed_error_timeout - 1;
+    if (tsc1_speed_error_timeout != 0) {
+      tsc1_speed_error_timeout = tsc1_speed_error_timeout - 1;
     }
-    if (_injection_advance_raw_2 != 0) {
-      _injection_advance_raw_2 = _injection_advance_raw_2 + -1;
+    if (tsc1_activation_confirm_timer != 0) {
+      tsc1_activation_confirm_timer = tsc1_activation_confirm_timer + -1;
     }
-    _tsc1_speed_error_timeout_flag = (ushort)(_tsc1_speed_error_timeout < 2);
+    tsc1_speed_error_timeout_flag = (ushort)(tsc1_speed_error_timeout < 2);
     if (governor_mode == 0) {
       torque_limit_mode_select = 0;
-      if (_tsc1_speed_error_timeout < 2) {
+      if (tsc1_speed_error_timeout < 2) {
         cm848_j1939FormatDm1Message();
       }
     }
     else {
       if (governor_mode == 1) {
-        if (_tsc1_speed_error_timeout != 1) {
+        if (tsc1_speed_error_timeout != 1) {
           uVar3 = 1;
 LAB_00027800:
-          if (_injection_advance_raw_2 == 1) {
-            cm848_addCoolantCalEntry((int)_tsc1_active_state,tsc1_source_address,uVar3);
-            _speed_control_target = _speed_control_target | 1;
+          if (tsc1_activation_confirm_timer == 1) {
+            cm848_addCoolantCalEntry((int)tsc1_active_state,tsc1_source_address,uVar3);
+            speed_control_target = speed_control_target | 1;
             cm848_j1939FormatDm1Message();
           }
           goto LAB_00027848;
@@ -25306,20 +25282,20 @@ LAB_00027800:
       }
       else if (governor_mode == 2) {
         torque_limit_mode_select = 0;
-        if (_tsc1_speed_error_timeout != 1) {
+        if (tsc1_speed_error_timeout != 1) {
           uVar3 = 2;
           goto LAB_00027800;
         }
       }
-      else if ((governor_mode != 3) || (torque_limit_mode_select = 0, 1 < _tsc1_speed_error_timeout)
-              ) goto LAB_00027848;
+      else if ((governor_mode != 3) || (torque_limit_mode_select = 0, 1 < tsc1_speed_error_timeout))
+      goto LAB_00027848;
       torque_limit_mode_select = 0;
       cm848_j1939FormatDm1Message();
       unaff_r24 = 1;
     }
   }
   else if (governor_mode == 0) {
-    _injection_advance_raw_2 = 0;
+    tsc1_activation_confirm_timer = 0;
   }
   else {
     if (governor_mode == 1) {
@@ -25328,19 +25304,19 @@ LAB_00027800:
     else {
       if (governor_mode != 2) {
         if (governor_mode == 3) {
-          _injection_advance_raw_2 = 0;
+          tsc1_activation_confirm_timer = 0;
           bVar1 = true;
         }
         goto LAB_00027848;
       }
       iVar4 = 10;
     }
-    _injection_advance_raw_2 = *(short *)(_tsc1_active_config_ptr + iVar4) + 1;
+    tsc1_activation_confirm_timer = *(short *)(tsc1_active_config_ptr + iVar4) + 1;
     bVar1 = true;
   }
 LAB_00027848:
   if (unaff_r24 == 1) {
-    if (_tsc1_active_state == 1) {
+    if (tsc1_active_state == 1) {
       unaff_r18 = 1;
     }
     else {
@@ -25348,7 +25324,7 @@ LAB_00027848:
     }
   }
   else if (bVar1) {
-    if (_tsc1_active_state == 1) {
+    if (tsc1_active_state == 1) {
       DAT_003faf42 = '\x01';
     }
     else {
@@ -25356,38 +25332,38 @@ LAB_00027848:
     }
   }
   DAT_003faf34 = governor_mode;
-  DAT_003faf36 = _tsc1_active_state;
+  DAT_003faf36 = tsc1_active_state;
   DAT_003faf38 = tsc1_source_address;
   DAT_003faf39 = torque_limit_mode_select;
-  DAT_003faf3e = tsc1_limit_state._0_2_;
+  DAT_003faf3e = tsc1_torque_limit_flag;
   DAT_003faf40 = *puStack00000008;
   if ((DAT_003faf3b == governor_error_term) && (DAT_003faf3d == tsc1_handler_address)) {
-    if (_speed_control_derivative != 0) {
-      _speed_control_derivative = _speed_control_derivative + -1;
+    if (tsc1_multiframe_timeout != 0) {
+      tsc1_multiframe_timeout = tsc1_multiframe_timeout + -1;
     }
-    if (_injection_advance_raw != 0) {
-      _injection_advance_raw = _injection_advance_raw + -1;
+    if (tsc1_error_fault_timer != 0) {
+      tsc1_error_fault_timer = tsc1_error_fault_timer + -1;
     }
     if (governor_error_term == 2) {
-      if (_speed_control_derivative == 1) {
+      if (tsc1_multiframe_timeout == 1) {
 LAB_000279e8:
         cm848_resetGovernorState();
         unaff_r18 = 1;
       }
-      else if (_injection_advance_raw == 1) {
+      else if (tsc1_error_fault_timer == 1) {
         cm848_addCoolantCalEntryAlt(tsc1_handler_address & 0xff,2);
-        _speed_control_target = _speed_control_target | 2;
+        speed_control_target = speed_control_target | 2;
         cm848_resetGovernorState();
       }
     }
-    else if ((governor_error_term == 3) && (_speed_control_derivative == 1)) goto LAB_000279e8;
+    else if ((governor_error_term == 3) && (tsc1_multiframe_timeout == 1)) goto LAB_000279e8;
   }
   else {
     if (governor_error_term == 2) {
-      _injection_advance_raw = *(short *)(_tsc1_secondary_config_ptr + 0x10) + 1;
+      tsc1_error_fault_timer = *(short *)(tsc1_secondary_config_ptr + 0x10) + 1;
     }
     else {
-      _injection_advance_raw = 0;
+      tsc1_error_fault_timer = 0;
       if (governor_error_term != 3) goto LAB_000279f0;
     }
     DAT_003faf42 = '\x01';
@@ -25503,8 +25479,6 @@ void cm848_governorDroopCalculation(uint *param_1,int param_2,int param_3)
 // Function: cm848_governorSpeedControl @ 0x00027cc4
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 undefined4 cm848_governorSpeedControl(int param_1,uint param_2)
 
 {
@@ -25521,7 +25495,7 @@ undefined4 cm848_governorSpeedControl(int param_1,uint param_2)
       return 1;
     }
   }
-  _tsc1_config_entry_ptr = psVar1;
+  tsc1_config_entry_ptr = (undefined *)psVar1;
   return 0;
 }
 
@@ -39958,7 +39932,7 @@ LAB_00040548:
   filter_accumulator = wVar1;
   if ((((DAT_003fb524 == 0xb) || (current_engine_rpm <= speed_ramp_rate_limited_value)) &&
       ((protection_ramp_rate < protection_mode_timer ||
-       ((governor_mode == 3 && (_tsc1_mode3_torque_limit < protection_mode_timer)))))) ||
+       ((governor_mode == 3 && (tsc1_mode3_torque_limit < protection_mode_timer)))))) ||
      (((DAT_003fb524 == 0xb ||
        ((uint)current_engine_rpm <= (uint)speed_ramp_rate_limited_value + (uint)DAT_003fefea)) &&
       (((fuel_demand_calculated == 0 && (fuel_rate_current != 1)) &&
@@ -40517,7 +40491,7 @@ void cm848_processProtectionSystemBit3(void)
     scale_multiplier_a360 = 1;
     DAT_003fb548 = DAT_00408eaa;
   }
-  DAT_003fb54e = _tsc1_disable_override;
+  DAT_003fb54e = tsc1_disable_override;
   if ((eeprom_calibration_table_ptr & 4) != 0) {
     DAT_003fb54e = (ushort)((protection_rate_limit_flags & 1) != 0);
   }
@@ -41187,13 +41161,11 @@ void cm848_applyProtectionTorqueLimit(void)
 // Function: cm848_applySpeedControlProtectionLimit @ 0x000427cc
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_applySpeedControlProtectionLimit(void)
 
 {
-  if ((governor_mode == 3) && (_tsc1_mode3_torque_limit < protection_limit_value)) {
-    protection_limit_value = _tsc1_mode3_torque_limit;
+  if ((governor_mode == 3) && (tsc1_mode3_torque_limit < protection_limit_value)) {
+    protection_limit_value = tsc1_mode3_torque_limit;
     protection_state_timer = 0x14;
   }
   return;
@@ -41246,14 +41218,12 @@ void cm848_initProtectionTorqueLimit(void)
 // Function: cm848_setEngineOperatingMode1 @ 0x00042894
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_setEngineOperatingMode1(void)
 
 {
   if ((engine_operating_mode == 0) && (governor_mode == 2)) {
     engine_operating_mode = 1;
-    timing_compensation_final = _tsc1_torque_limit_calc;
+    timing_compensation_final = tsc1_torque_limit_calc;
   }
   return;
 }
@@ -52319,8 +52289,6 @@ void cm848_addCoolantCalEntryAlt(undefined1 param_1,undefined2 param_2)
 // Function: cm848_processCoolantCalEntries @ 0x00053dc8
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_processCoolantCalEntries(void)
 
 {
@@ -52343,7 +52311,7 @@ void cm848_processCoolantCalEntries(void)
       if ((short)(sVar1 + -1) == 0) {
         if (((*psVar5 == 1) && (*(byte *)(psVar2 + -3) == DAT_0005a470)) && (psVar2[-2] == 1)) {
           torque_limit_mode_select = 0;
-          _speed_control_target = _speed_control_target & 6;
+          speed_control_target = speed_control_target & 6;
         }
         if (coolant_temp_cal_low == uVar4) {
           coolant_temp_cal_low = coolant_temp_cal_low - 1;
@@ -52370,7 +52338,7 @@ void cm848_processCoolantCalEntries(void)
       *(short *)(pbVar3 + -2) = sVar1 + -1;
       if ((short)(sVar1 + -1) == 0) {
         if ((*pbVar6 == DAT_0005a470) && (*(short *)(pbVar3 + -4) == 2)) {
-          _speed_control_target = _speed_control_target & 5;
+          speed_control_target = speed_control_target & 5;
         }
         if (coolant_temp_cal_high == uVar4) {
           coolant_temp_cal_high = coolant_temp_cal_high - 1;
@@ -57645,8 +57613,8 @@ void flash2_cm848_initGovernorModeState(int param_1)
   
   if ((engine_operating_mode == 0) && (governor_mode == 1)) {
     engine_operating_mode = 2;
-    fuel_timing_target = _tsc1_capped_speed_target;
-    iVar1 = (uint)_tsc1_speed_control_mode * 0x12;
+    fuel_timing_target = tsc1_capped_speed_target;
+    iVar1 = (uint)tsc1_speed_control_mode * 0x12;
     fuel_trim_accumulator = (undefined *)(iVar1 + 0x5c1d6);
     engine_mode_config_3 = *(word *)(iVar1 + 0x5c1da);
     engine_mode_config_4 = *(word *)(iVar1 + 0x5c1dc);
@@ -58315,15 +58283,13 @@ void flash2_mpc555_calculateFuelTimingGain(void)
 // Function: flash2_cm848_interpolateFuelTrimPrimary @ 0x005041bc
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void flash2_cm848_interpolateFuelTrimPrimary(void)
 
 {
   short sVar1;
   
   sVar1 = lookupTableInterpolation(&DAT_003fba1a,current_engine_rpm,&DAT_00406470,&DAT_00406498,2);
-  DAT_0040a5ac = (ushort)((int)sVar1 < _proprietary_offset_value * 2);
+  DAT_0040a5ac = (ushort)((int)sVar1 < proprietary_offset_value * 2);
   return;
 }
 
@@ -58490,7 +58456,7 @@ void flash2_cm848_calculatePressureRatio(void)
     }
   }
   _protection_active_flag_state = (short)uVar2;
-  _proprietary_offset_value =
+  proprietary_offset_value =
        (short)(((int)(short)(load_rate_of_change_value - (short)uVar2) *
                (int)(short)protection_conversion_divisor) / 0x43ca) >> 1;
   return;
@@ -65677,8 +65643,6 @@ void flash2_cm848_readParameterWithOffset(void)
 // Function: flash2_cm848_emptyStub_phaseGroupA @ 0x0050aec0
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void flash2_cm848_emptyStub_phaseGroupA(void)
 
 {
@@ -65688,8 +65652,8 @@ void flash2_cm848_emptyStub_phaseGroupA(void)
       (DAT_0005c36c <= timing_compensation_final)))) {
     governor_error_term = 0;
     protection_state_value = 0x7d;
-    _speed_control_mode_flags = 0;
-    _tsc1_speed_mode_flag = 0;
+    speed_control_mode_flags = 0;
+    tsc1_speed_mode_flag = 0;
   }
   return;
 }
@@ -65700,8 +65664,6 @@ void flash2_cm848_emptyStub_phaseGroupA(void)
 // Function: flash2_cm848_readParameterByteOffset @ 0x0050aed4
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void flash2_cm848_readParameterByteOffset(void)
 
 {
@@ -65709,8 +65671,8 @@ void flash2_cm848_readParameterByteOffset(void)
      ((governor_mode_request == 1 && (DAT_0005c36c <= timing_compensation_final)))) {
     governor_error_term = 0;
     protection_state_value = 0x7d;
-    _speed_control_mode_flags = 0;
-    _tsc1_speed_mode_flag = 0;
+    speed_control_mode_flags = 0;
+    tsc1_speed_mode_flag = 0;
   }
   return;
 }
@@ -65721,13 +65683,11 @@ void flash2_cm848_readParameterByteOffset(void)
 // Function: flash2_cm848_readParameterDwordOffset @ 0x0050af44
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void flash2_cm848_readParameterDwordOffset(undefined4 param_1,undefined2 param_2)
 
 {
-  _speed_control_mode_flags = param_2;
-  _tsc1_speed_mode_flag = param_2;
+  speed_control_mode_flags = param_2;
+  tsc1_speed_mode_flag = param_2;
   return;
 }
 
@@ -66616,8 +66576,6 @@ void flash2_cm848_prepareParameterResponseFrame(int param_1)
 // Function: flash2_cm848_sendParameterCanResponse @ 0x0050bff4
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void flash2_cm848_sendParameterCanResponse(void)
 
 {
@@ -66638,7 +66596,7 @@ void flash2_cm848_sendParameterCanResponse(void)
   }
   psVar2 = &DAT_003fbd6c;
   psVar1 = &DAT_003fbd70;
-  if (((governor_mode != DAT_003fbd6c) || (_tsc1_active_state != DAT_003fbd70)) ||
+  if (((governor_mode != DAT_003fbd6c) || (tsc1_active_state != DAT_003fbd70)) ||
      (psVar4 = psVar1, DAT_003fbd72 != tsc1_source_address)) {
     psVar4 = &DAT_003fbd70;
     if (governor_mode == 0) {
@@ -66650,7 +66608,7 @@ LAB_0050c1a0:
         psVar4 = psVar1;
       }
     }
-    else if (_tsc1_active_state == 1) {
+    else if (tsc1_active_state == 1) {
       if (DAT_003feb82 == 1) {
         if (DAT_003fbd72 == tsc1_source_address) {
           if (DAT_003feb54 < 5) {
@@ -66677,7 +66635,7 @@ LAB_0050c1a0:
   }
 LAB_0050c1a8:
   *psVar2 = governor_mode;
-  *psVar4 = _tsc1_active_state;
+  *psVar4 = tsc1_active_state;
   pwVar5 = &DAT_003fbd6e;
   pwVar9 = &tsc1_handler_address;
   puVar8 = &DAT_003fbd73;
@@ -72799,8 +72757,6 @@ void flash2_cm848_updateProtectionHysteresisCounter(void)
 // Function: flash2_cm848_setMultichannelStateTableEntry @ 0x00511b64
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void flash2_cm848_setMultichannelStateTableEntry(void)
 
 {
@@ -72837,7 +72793,7 @@ LAB_00511bf4:
   else {
     protection_transition_pending = 0;
   }
-  if ((governor_mode == 0) || (_tsc1_speed_error_timeout_flag != 0)) {
+  if ((governor_mode == 0) || (tsc1_speed_error_timeout_flag != 0)) {
     if (DAT_004086c8 <= DAT_003fcd7a) goto LAB_00511cac;
     sVar2 = 1;
   }
@@ -72900,8 +72856,6 @@ LAB_00511cac:
 // Function: flash2_cm848_updateDiagnosticTorqueLimitState @ 0x00511b80
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void flash2_cm848_updateDiagnosticTorqueLimitState(void)
 
 {
@@ -72940,7 +72894,7 @@ LAB_00511bf4:
   else {
     protection_transition_pending = 0;
   }
-  if ((governor_mode == 0) || (_tsc1_speed_error_timeout_flag != 0)) {
+  if ((governor_mode == 0) || (tsc1_speed_error_timeout_flag != 0)) {
     if (DAT_004086c8 <= DAT_003fcd7a) goto LAB_00511cac;
     sVar2 = 1;
   }
@@ -94617,7 +94571,7 @@ void flash2_cm848_processGovernorSpeedLimitC(void)
       PTR_DAT_0040b6e8 = (undefined *)auStack_30;
       uVar3 = exponentialMovingAverage(speed_synchronization_counter,&PTR_DAT_0040b6e8);
       speed_error_filtered = (word)uVar3;
-      if ((_tsc1_mode_active != 1) ||
+      if ((tsc1_mode_active != 1) ||
          ((eeprom_scatter_source_table._2_2_ != 4 && (eeprom_scatter_source_table._2_2_ != 5)))) {
         uVar5 = (uint)speed_synchronization_counter;
         if ((uVar3 & 0xffff) < uVar5) {
@@ -94644,7 +94598,7 @@ void flash2_cm848_processGovernorSpeedLimitC(void)
           speed_error_filtered = speed_synchronization_counter;
         }
       }
-      if ((_tsc1_mode_active != 1) ||
+      if ((tsc1_mode_active != 1) ||
          ((eeprom_scatter_source_table._2_2_ != 4 && (eeprom_scatter_source_table._2_2_ != 5)))) {
         if (((8000 < current_engine_rpm) ||
             (sVar2 = DAT_0005c93a, temperature_trim_calc <= DAT_0005c93c)) &&
@@ -94727,7 +94681,7 @@ void flash2_cm848_calculateEngineSpeedLimitTorque(undefined4 param_1,undefined4 
   speed_synchronization_counter = extraout_r4;
   uVar2 = exponentialMovingAverage(extraout_r4,&PTR_DAT_0040b6e8);
   speed_error_filtered = (word)uVar2;
-  if ((_tsc1_mode_active != 1) || ((*unaff_r31 != 4 && (*unaff_r31 != 5)))) {
+  if ((tsc1_mode_active != 1) || ((*unaff_r31 != 4 && (*unaff_r31 != 5)))) {
     uVar4 = (uint)speed_synchronization_counter;
     if ((uVar2 & 0xffff) < uVar4) {
       uVar3 = uVar4 - uVar2;
@@ -94753,7 +94707,7 @@ void flash2_cm848_calculateEngineSpeedLimitTorque(undefined4 param_1,undefined4 
       speed_error_filtered = speed_synchronization_counter;
     }
   }
-  if ((_tsc1_mode_active != 1) || ((*unaff_r31 != 4 && (*unaff_r31 != 5)))) {
+  if ((tsc1_mode_active != 1) || ((*unaff_r31 != 4 && (*unaff_r31 != 5)))) {
     if (((8000 < current_engine_rpm) || (sVar1 = DAT_0005c93a, *unaff_r30 <= DAT_0005c93c)) &&
        (sVar1 = DAT_0040b6fa, DAT_0040b6fa != 0)) {
       sVar1 = DAT_0040b6fa + -1;
@@ -94992,13 +94946,11 @@ void flash2_cm848_processSpeedWindowComparisonB(void)
 // Function: flash2_cm848_processSpeedWindowComparisonC @ 0x005264d4
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void flash2_cm848_processSpeedWindowComparisonC(void)
 
 {
   if ((((warmup_filter_initial_value <= temperature_trim_calc) && (fuel_demand_accumulator != 1)) &&
-      (_tsc1_mode_active == 1)) &&
+      (tsc1_mode_active == 1)) &&
      ((eeprom_scatter_source_table._2_2_ == 4 || (eeprom_scatter_source_table._2_2_ == 5)))) {
     pressure_ramp_filter_output = tsc1_disable_control;
     if (tsc1_disable_control != 0) {
