@@ -50,7 +50,7 @@ void printUsage(const char* progname)
     std::cerr << "  --cm848-dump-flash2 [file]  Dump CM848 Flash Bank 2 (248KB) to file\n";
     std::cerr << "  --cm848-dump-all [dir]      Dump all CM848 regions to directory\n\n";
     std::cerr << "CM848 J1939 Broadcast Commands:\n";
-    std::cerr << "  --enable-j1939              Enable periodic J1939 broadcasts (EF00 0x0a -> 0x07)\n";
+    std::cerr << "  --enable-j1939              Enable periodic J1939 broadcasts (0x0a -> 0x07 -> 0x05[01 01])\n";
     std::cerr << "  --enable-j1939-direct       Enable J1939 broadcasts via EF00 0x16 (no init step)\n\n";
     std::cerr << "Service Scanner Commands:\n";
     std::cerr << "  --scan-services             Quick scan (0x40-0x5F, ~30 sec)\n";

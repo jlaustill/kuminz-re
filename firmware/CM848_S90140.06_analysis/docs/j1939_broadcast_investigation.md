@@ -1,6 +1,6 @@
 # CM848D J1939 Broadcast Trigger Investigation
 
-**Status:** In progress — broadcast scheduler mapped, CLIP trigger not yet confirmed  
+**Status:** RESOLVED — see `j1939-broadcasting.md` for the definitive operational reference  
 **Firmware:** Bank 1 `cm848_rom.bin` (448KB) + Bank 2 `cm848_flash2_live.bin` (248KB), S90140.06
 
 ---
