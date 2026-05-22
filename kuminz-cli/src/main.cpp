@@ -51,7 +51,7 @@ void printUsage(const char* progname)
     std::cerr << "  --cm848-dump-all [dir]      Dump all CM848 regions to directory\n\n";
     std::cerr << "CM848 J1939 Broadcast Commands:\n";
     std::cerr << "  --enable-j1939              Enable periodic J1939 broadcasts (0x0a -> 0x07 -> 0x05[01 01])\n";
-    std::cerr << "  --enable-j1939-direct       Enable J1939 broadcasts via EF00 0x16 (no init step)\n\n";
+    std::cerr << "  --enable-j1939-direct       Send EF00 service 0x16 only (ineffective on CM848D — use --enable-j1939)\n\n";
     std::cerr << "Service Scanner Commands:\n";
     std::cerr << "  --scan-services             Quick scan (0x40-0x5F, ~30 sec)\n";
     std::cerr << "  --scan-services-full        Full scan (0x00-0xFF, ~2-3 min)\n";
@@ -398,7 +398,7 @@ int main(int argc, char* argv[])
 
         std::cerr << "\n=== CM848 J1939 Broadcast Enable ===\n\n";
         if (direct) {
-            std::cerr << "Method: EF00 service 0x16 (direct enable, no init step)\n\n";
+            std::cerr << "Method: EF00 service 0x16 (legacy probe — confirmed ineffective on CM848D)\n\n";
         } else {
             std::cerr << "Method: EF00 0x0a -> 0x07 -> 0x05[01 01]\n\n";
             std::cerr << "[1/3] Sending service 0x0a (cm848_initJ1939MessageBuffers)...\n";

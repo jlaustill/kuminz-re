@@ -44,7 +44,7 @@ The exact propagation path from `0x0040ADEE` → `0x0040BA74/BA76` is partially 
 
 ## Enable Sequence
 
-Three EF00 service frames, sent to the ECU via CLIP on PGN 0xEF00 with 200ms between each step.
+Three EF00 service frames, sent to the ECU via CLIP on PGN 61184 with 200ms between each step.
 
 | Step | Service byte(s) | Firmware function | What it does |
 |------|----------------|-------------------|--------------|
@@ -84,13 +84,13 @@ This sends all three steps in order with appropriate delays and logs each step:
 
 ## CLIP Frame Format
 
-All EF00 service frames use the J1939 proprietary protocol (PGN 0xEF00). The ECU source
+All EF00 service frames use the J1939 proprietary protocol (PGN 61184). The ECU source
 address is `0x00`; the tool address is `0xF9` (Calterm/Insite convention).
 
 | Direction | CAN ID (extended) | Description |
 |-----------|-------------------|-------------|
-| Tool → ECU | `0x18EF00F9` | Request: priority 6, PGN EF00, dest=0x00, src=0xF9 |
-| ECU → Tool | `0x18EFF900` | Response: priority 6, PGN EF00, dest=0xF9, src=0x00 |
+| Tool → ECU | `0x18EF00F9` | Request: priority 6, PGN 61184, dest=0x00, src=0xF9 |
+| ECU → Tool | `0x18EFF900` | Response: priority 6, PGN 61184, dest=0xF9, src=0x00 |
 
 Single-frame EF00 request format (8 bytes, zero-padded):
 ```
@@ -210,7 +210,7 @@ intake air temperature, not ambient outside temperature.
 
 ## Watchdog Behaviour (Embedded OCT Device)
 
-The oct embedded bridge (Teensy 4.1, `~/code/oct`) runs a watchdog to handle ECU resets:
+The oct embedded bridge (Teensy 4.1, separate repo) runs a watchdog to handle ECU resets:
 
 1. After enabling, monitor for EEC1 frames on CAN ID `0x0CF00400`.
 2. If EEC1 is absent for 1000ms, read `protection_condition_flags @ 0x0040ADEE` via CLIP service 0x4A.
@@ -284,5 +284,5 @@ which writes a bit pattern (`0x0C`) to an output control mask variable.
 | `docs/j1939_broadcast_investigation.md` | Full RE journey: dead ends, corrections, binary decodes |
 | `clip-core/src/ECUReader.cpp` | `enableJ1939Broadcasts()` implementation |
 | `kuminz-cli/src/main.cpp` | `--enable-j1939` CLI command handler |
-| `~/code/oct/src/data/cm848-broadcast-controller.cpp` | Embedded watchdog implementation |
-| `~/code/oct/src/data/cm848-j1939-receiver.cpp` | Full SPN decode for all 7 parsed PGNs |
+| `oct:src/data/cm848-broadcast-controller.cpp` | Embedded watchdog implementation (oct repo) |
+| `oct:src/data/cm848-j1939-receiver.cpp` | Full SPN decode for all 7 parsed PGNs (oct repo) |
