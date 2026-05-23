@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat May 23 06:33:13 MDT 2026
+// Generated: Sat May 23 06:37:51 MDT 2026
 
 
 //
@@ -1145,12 +1145,12 @@ bool cm848_registerPgnResponseHandler(undefined2 param_1,undefined4 param_2)
   byte bVar1;
   uint uVar2;
   
-  bVar1 = DAT_0030349d;
+  bVar1 = pgn_response_handler_count;
   uVar2 = (uint)bVar1;
   if (uVar2 != 4) {
-    DAT_0030349d = bVar1 + 1;
-    *(undefined2 *)(&DAT_00303485 + uVar2 * 6) = param_1;
-    *(undefined4 *)(&DAT_00303487 + uVar2 * 6) = param_2;
+    pgn_response_handler_count = bVar1 + 1;
+    *(undefined2 *)(&pgn_response_handler_table + uVar2 * 6) = param_1;
+    *(undefined4 *)(&pgn_response_handler_callbacks + uVar2 * 6) = param_2;
   }
   return uVar2 == 4;
 }
@@ -3845,9 +3845,9 @@ void mpc555_dispatchCanMessageHandlers(void)
     if ((bVar1 < 0xf0) && (uVar7 = Ram0030251c, (uVar7 & 0xff) == (ushort)*(byte *)(iVar2 + 2))) {
       local_28 = (ushort)bVar1 << 8;
     }
-    psVar6 = (short *)&DAT_00303485;
+    psVar6 = (short *)&pgn_response_handler_table;
     bVar8 = 0;
-    bVar1 = DAT_0030349d;
+    bVar1 = pgn_response_handler_count;
     if (bVar1 != 0) {
       do {
         if (*psVar6 == local_28) {
@@ -4243,11 +4243,11 @@ void mpc555_multiFrameCanTransmit(uint *param_1)
   undefined1 uStack_1b;
   
   bVar1 = *(byte *)((int)param_1 + 1);
-  if ((bVar1 < 0xf0) && (*(char *)((int)param_1 + 2) != -1)) {
+  if ((bVar1 < 0xf0) && (*(byte *)((int)param_1 + 2) != 0xff)) {
     cVar2 = qadc_a_queue_status_1;
     if (cVar2 == '\0') {
       qadc_a_queue_status_1 = 1;
-      DAT_00302904 = *(char *)((int)param_1 + 2);
+      qadc_a_active_channel_id = *(byte *)((int)param_1 + 2);
       Ram00302905 = *(ushort *)((int)param_1 + 1) & 0xff00;
       Ram0030290b = *(ushort *)(param_1 + 1);
       qadc_a_queue_status_2 = (char)((int)(*(ushort *)(param_1 + 1) - 1) / 7) + '\x01';
@@ -4304,26 +4304,26 @@ void mpc555_handleJ1939QueueRequest(int param_1)
 {
   byte bVar1;
   char cVar2;
-  short sVar3;
-  byte bVar4;
+  byte bVar3;
+  short sVar4;
   byte bVar5;
   undefined2 local_18;
   
   bVar1 = *(byte *)(*(int *)(param_1 + 6) + 2);
   local_18 = (ushort)*(byte *)(*(int *)(param_1 + 6) + 6) << 8;
   cVar2 = qadc_a_queue_status_1;
-  if ((cVar2 == '\x01') && (cVar2 = DAT_00302904, cVar2 == *(char *)(param_1 + 3))) {
-    bVar4 = qadc_a_queue_status_2;
-    if (((uint)bVar1 <= (uint)bVar4) && (sVar3 = Ram00302905, local_18 == sVar3)) {
+  if ((cVar2 == '\x01') && (bVar3 = qadc_a_active_channel_id, bVar3 == *(byte *)(param_1 + 3))) {
+    bVar3 = qadc_a_queue_status_2;
+    if (((uint)bVar1 <= (uint)bVar3) && (sVar4 = Ram00302905, local_18 == sVar4)) {
       bVar5 = *(byte *)(*(int *)(param_1 + 6) + 1);
       if (bVar5 == 0) {
         Ram00302915 = 0x37;
       }
       else {
-        if ((int)(uint)bVar4 < (int)((uint)bVar1 + (uint)bVar5 + -1)) {
-          bVar5 = (bVar4 - bVar1) + 1;
+        if ((int)(uint)bVar3 < (int)((uint)bVar1 + (uint)bVar5 + -1)) {
+          bVar5 = (bVar3 - bVar1) + 1;
         }
-        DAT_00302908 = bVar1;
+        qadc_a_range_start = bVar1;
         qadc_a_queue_ptr = bVar5;
       }
     }
@@ -4461,7 +4461,7 @@ mpc555_sendDiagAcknowledgeFrame
 void mpc555_handleJ1939DataRequest(undefined4 *param_1)
 
 {
-  char cVar1;
+  byte bVar1;
   undefined2 uVar2;
   char cVar3;
   byte bVar4;
@@ -4471,12 +4471,12 @@ void mpc555_handleJ1939DataRequest(undefined4 *param_1)
   
   iVar5 = *(int *)((int)param_1 + 6);
   local_28 = (ushort)*(byte *)(iVar5 + 6) << 8;
-  cVar1 = *(char *)((int)param_1 + 3);
+  bVar1 = *(byte *)((int)param_1 + 3);
   local_24 = CONCAT11(*(undefined1 *)(iVar5 + 2),*(undefined1 *)(iVar5 + 1));
   cVar3 = qadc_a_pause_status;
-  if ((((cVar3 == '\x01') && (cVar3 = DAT_00302930, cVar3 != cVar1)) ||
+  if ((((cVar3 == '\x01') && (bVar4 = qadc_a_paused_channel_id, bVar4 != bVar1)) ||
       (*(byte *)(iVar5 + 6) != 0xef)) || (0x410 < local_24)) {
-    mpc555_processAdcChannelGroup(cVar1,local_28);
+    mpc555_processAdcChannelGroup(bVar1,local_28);
   }
   else {
     qadc_a_pause_status = 1;
@@ -4491,10 +4491,10 @@ void mpc555_handleJ1939DataRequest(undefined4 *param_1)
       bVar4 = 0x19;
     }
     qadc_a_ccw_idx = bVar4;
-    cVar3 = mpc555_sendDiagAcknowledgeFrame(cVar1,1);
+    cVar3 = mpc555_sendDiagAcknowledgeFrame(bVar1,1);
     if (cVar3 != '\0') {
       uVar2 = Ram00302927;
-      mpc555_processAdcChannelGroup(cVar1,uVar2);
+      mpc555_processAdcChannelGroup(bVar1,uVar2);
       qadc_a_pause_status = 0;
     }
   }
@@ -4510,7 +4510,7 @@ void mpc555_handleJ1939DataRequest(undefined4 *param_1)
 void mpc555_handleJ1939DataTransfer(int param_1)
 
 {
-  char cVar1;
+  byte bVar1;
   byte bVar2;
   undefined2 uVar3;
   undefined1 uVar4;
@@ -4528,11 +4528,11 @@ void mpc555_handleJ1939DataTransfer(int param_1)
   if (*(short *)(param_1 + 4) != 8) {
     return;
   }
-  cVar1 = *(char *)(param_1 + 3);
+  bVar1 = *(byte *)(param_1 + 3);
   cVar9 = qadc_a_pause_status;
   if (cVar9 == '\x01') {
-    cVar9 = DAT_00302930;
-    if (cVar9 != cVar1) {
+    bVar11 = qadc_a_paused_channel_id;
+    if (bVar11 != bVar1) {
       return;
     }
     pbVar13 = *(byte **)(param_1 + 6);
@@ -4570,10 +4570,10 @@ void mpc555_handleJ1939DataTransfer(int param_1)
       bVar2 = qadc_a_pause_ctrl;
       if (uVar8 == bVar2) {
         uVar3 = Ram00302927;
-        mpc555_sendJ1939DiagnosticMessage(cVar1,uVar3);
+        mpc555_sendJ1939DiagnosticMessage(bVar1,uVar3);
         qadc_a_pause_status = 0;
         Ram00302933 = 0x303075;
-        cm848_dispatchDiagnosticService(&DAT_0030292d);
+        cm848_dispatchDiagnosticService(&qadc_diag_service_request_buf);
         return;
       }
       if ((int)(((uint)bVar2 - (uint)bVar11) + 1) < 0x1a) {
@@ -4587,10 +4587,10 @@ void mpc555_handleJ1939DataTransfer(int param_1)
     uVar4 = qadc_a_queue_intr;
     uVar5 = qadc_a_ccw_idx;
     uVar3 = Ram00302927;
-    cVar9 = mpc555_sendDiagAcknowledgeFrame(cVar1,uVar4,uVar5,uVar3);
+    cVar9 = mpc555_sendDiagAcknowledgeFrame(bVar1,uVar4,uVar5,uVar3);
     if (cVar9 != '\0') {
       uVar3 = Ram00302927;
-      mpc555_processAdcChannelGroup(cVar1,uVar3);
+      mpc555_processAdcChannelGroup(bVar1,uVar3);
       qadc_a_pause_status = 0;
     }
     return;
@@ -4608,17 +4608,18 @@ void mpc555_handleJ1939AbortRequest(int param_1)
 
 {
   char cVar1;
-  short sVar2;
-  undefined1 *puVar3;
+  byte bVar2;
+  short sVar3;
+  undefined1 *puVar4;
   undefined2 local_10;
   
   cVar1 = qadc_a_queue_status_1;
-  if ((cVar1 == '\x01') && (cVar1 = DAT_00302904, cVar1 == *(char *)(param_1 + 3))) {
+  if ((cVar1 == '\x01') && (bVar2 = qadc_a_active_channel_id, bVar2 == *(byte *)(param_1 + 3))) {
     local_10 = (ushort)*(byte *)(*(int *)(param_1 + 6) + 6) << 8;
-    sVar2 = Ram00302905;
-    if (local_10 == sVar2) {
-      puVar3 = (undefined1 *)Ram00302911;
-      *puVar3 = 9;
+    sVar3 = Ram00302905;
+    if (local_10 == sVar3) {
+      puVar4 = (undefined1 *)Ram00302911;
+      *puVar4 = 9;
       qadc_a_queue_status_1 = 0;
     }
   }
@@ -4635,22 +4636,23 @@ void mpc555_handleJ1939AbortAcknowledge(int param_1)
 
 {
   char cVar1;
-  short sVar2;
-  undefined1 *puVar3;
+  byte bVar2;
+  short sVar3;
+  undefined1 *puVar4;
   undefined2 local_10;
   
   local_10 = (ushort)*(byte *)(*(int *)(param_1 + 6) + 6) << 8;
   cVar1 = qadc_a_queue_status_1;
-  if (((cVar1 == '\x01') && (cVar1 = DAT_00302904, cVar1 == *(char *)(param_1 + 3))) &&
-     (sVar2 = Ram00302905, local_10 == sVar2)) {
-    puVar3 = (undefined1 *)Ram00302911;
-    *puVar3 = 10;
+  if (((cVar1 == '\x01') && (bVar2 = qadc_a_active_channel_id, bVar2 == *(byte *)(param_1 + 3))) &&
+     (sVar3 = Ram00302905, local_10 == sVar3)) {
+    puVar4 = (undefined1 *)Ram00302911;
+    *puVar4 = 10;
     qadc_a_queue_status_1 = 0;
   }
   else {
     cVar1 = qadc_a_pause_status;
-    if (((cVar1 == '\x01') && (cVar1 = DAT_00302930, cVar1 == *(char *)(param_1 + 3))) &&
-       (sVar2 = Ram00302927, local_10 == sVar2)) {
+    if (((cVar1 == '\x01') && (bVar2 = qadc_a_paused_channel_id, bVar2 == *(byte *)(param_1 + 3)))
+       && (sVar3 = Ram00302927, local_10 == sVar3)) {
       qadc_a_pause_status = 0;
     }
   }
@@ -4728,14 +4730,14 @@ LAB_00006458:
     }
   }
   else {
-    bVar15 = DAT_00302908;
+    bVar15 = qadc_a_range_start;
     uVar10 = (uint)bVar15;
     if (bVar14 < 0x10) {
       qadc_a_queue_ptr = 0;
       Ram00302915 = 0x70;
     }
     else {
-      DAT_00302908 = bVar15 + 0xf;
+      qadc_a_range_start = bVar15 + 0xf;
       qadc_a_queue_ptr = bVar14 - 0xf;
       bVar14 = 0xf;
     }
@@ -4849,7 +4851,7 @@ undefined * mpc555_initDiagnosticBuffers(int param_1)
     Ram00303060 = 0x303064;
   }
   else {
-    bVar1 = DAT_00303055;
+    bVar1 = diag_buffer_b_status;
     if ((bVar1 & 0xf0) == 0) {
       Ram0030304d = 0x30293f;
       Ram0030304b = (short)param_1;
@@ -5690,10 +5692,10 @@ LAB_000074f8:
     }
     else if (param_2 == 0xfe) {
       *puVar5 = 0xe;
-      uVar1 = DAT_003034a0;
+      uVar1 = pgn_response_cached_word;
       puVar5[1] = uVar1;
       puVar5 = puVar5 + 2;
-      bVar6 = DAT_003034a1;
+      bVar6 = pgn_response_cached_len;
       param_2 = (uint)bVar6;
     }
     else {
