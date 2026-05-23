@@ -20,9 +20,14 @@ public class SetupMemoryMapCM848 extends GhidraScript {
     // CM848 PowerPC Memory Map
     // Bank 1 (main ROM) is loaded during initial import at 0x00000000
     // Bank 2 (extended flash) contains utility functions called from main ROM
-    private static final long FLASH2_BASE = 0x500000L;   // 245 KB extended flash (utility functions)
-    private static final long RAM_BASE = 0x3FA000L;      // 280 KB RAM
-    private static final long EEPROM_BASE = 0x1000000L;  // 8 KB EEPROM
+    private static final long FLASH2_BASE  = 0x500000L;   // 245 KB extended flash (utility functions)
+    private static final long RAM_BASE     = 0x3FA000L;   // 280 KB RAM
+    private static final long EEPROM_BASE  = 0x1000000L;  // 8 KB EEPROM
+    // MPC555 USIU internal peripheral registers — not in any dump file, mapped
+    // at MBAR+0x4000. Uninitialized block so ApplyStructures can place USIU
+    // struct definitions (usiu_memc_t, usiu_pit_t, usiu_clock_t, etc.).
+    private static final long USIU_BASE    = 0x002FC000L; // USIU internal registers
+    private static final long USIU_LENGTH  = 0x1000L;    // 4 KB covers all known USIU structs
 
     @Override
     public void run() throws Exception {
@@ -69,11 +74,16 @@ public class SetupMemoryMapCM848 extends GhidraScript {
         // Add EEPROM region (CM848 has 8KB EEPROM)
         String eepromFile = firmwareDir + "/cm848_eeprom.bin";
         if (new File(eepromFile).exists()) {
-            println("[3/3] Adding EEPROM region...");
+            println("[3/4] Adding EEPROM region...");
             addMemoryRegion(memory, "EEPROM", EEPROM_BASE, eepromFile, true, true, false);
         } else {
-            println("[3/3] SKIPPED: EEPROM file not found: " + eepromFile);
+            println("[3/4] SKIPPED: EEPROM file not found: " + eepromFile);
         }
+
+        // Add MPC555 USIU peripheral register space (uninitialized — no backing data)
+        // Enables ApplyStructures to place usiu_memc_t, usiu_pit_t, usiu_clock_t, etc.
+        println("[4/4] Adding MPC555 USIU peripheral register space (uninitialized)...");
+        addPeripheralRegion(memory, "USIU_PERIPH", USIU_BASE, USIU_LENGTH);
 
         println("");
         println("======================================================================");
@@ -127,6 +137,30 @@ public class SetupMemoryMapCM848 extends GhidraScript {
         println("    Address: " + String.format("0x%08x - 0x%08x", baseAddress, baseAddress + data.length - 1));
         println("    Size:    " + data.length + " bytes (" + (data.length / 1024) + " KB)");
         println("    Perms:   " + (read ? "r" : "-") + (write ? "w" : "-") + (execute ? "x" : "-"));
+    }
+
+    private void addPeripheralRegion(Memory memory, String name, long baseAddress, long length)
+            throws Exception {
+
+        Address addr = toAddr(baseAddress);
+
+        MemoryBlock existingBlock = memory.getBlock(addr);
+        if (existingBlock != null) {
+            println("  Block already exists at " + String.format("0x%08x", baseAddress) +
+                    " (" + existingBlock.getName() + ") — skipping");
+            return;
+        }
+
+        MemoryBlock block = memory.createUninitializedBlock(name, addr, length, false);
+        block.setRead(true);
+        block.setWrite(true);
+        block.setExecute(false);
+        block.setVolatile(true);
+
+        println("  Created " + name + " block (uninitialized):");
+        println("    Address: " + String.format("0x%08x - 0x%08x", baseAddress, baseAddress + length - 1));
+        println("    Size:    " + length + " bytes");
+        println("    Perms:   rw- (volatile)");
     }
 
     private void printMemoryMap(Memory memory) {
