@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat May 23 06:37:51 MDT 2026
+// Generated: Sat May 23 06:41:42 MDT 2026
 
 
 //
@@ -77,7 +77,7 @@ void mpc555_keyOnStateMachine(void)
         if (DAT_003fee2e == '\0') {
           _DAT_003fee2a = Ram00302012;
           DAT_003fee2e = '\x01';
-          mpc555_eepromWriteWords(&DAT_003fee2a,&DAT_01000030,4);
+          mpc555_eepromWriteWords(&DAT_003fee2a,&eeprom_config_block,4);
         }
         if (eeprom_header_t_003fee08.config_dword == _DAT_003fee2a) {
           uVar1 = Ram00302002;
@@ -92,7 +92,7 @@ void mpc555_keyOnStateMachine(void)
         if (DAT_003fee2e == '\0') {
           _DAT_003fee2a = Ram00302012;
           DAT_003fee2e = '\x01';
-          mpc555_eepromWriteWords(&DAT_003fee2a,&DAT_01000030,4);
+          mpc555_eepromWriteWords(&DAT_003fee2a,&eeprom_config_block,4);
         }
         func_0x003fd994();
         mpc555_reset_vector();
@@ -300,15 +300,15 @@ void mpc555_loadEepromCalibration(undefined4 param_1,int param_2)
       mpc555_eepromWriteWords(local_38,0x1000000,2);
       if (param_2 == 3) {
         local_38[0] = eeprom_header_t_003fee08.cal_word1 & 0xfffd | 8;
-        mpc555_eepromWriteWords(local_38,&DAT_01000050,2);
+        mpc555_eepromWriteWords(local_38,&eeprom_cal_word1,2);
         local_38[0] = eeprom_header_t_003fee08.cal_word2 + 1;
-        mpc555_eepromWriteWords(local_38,&DAT_01000052,2);
+        mpc555_eepromWriteWords(local_38,&eeprom_cal_word2,2);
         DAT_003fedee = 0;
         DAT_003fedef = 0x61;
         func_0x003fc6f4();
       }
       local_34[0] = Ram00302012;
-      mpc555_eepromWriteWords(local_34,&DAT_01000030,4);
+      mpc555_eepromWriteWords(local_34,&eeprom_config_block,4);
       if (param_2 == 3) {
         uVar5 = 0;
         do {
@@ -648,12 +648,12 @@ void cm848_loadCalibrationFromEeprom(void)
 {
   mpc555_eepromValidationCycle();
   mpc555_keyOnStateMachine();
-  mpc555_eepromReadWords(&DAT_0100004a,0x3fee18,6);
-  mpc555_eepromReadWords(&DAT_01000050,0x3fee1e,2);
-  mpc555_eepromReadWords(&DAT_01000052,0x3fee20,2);
-  mpc555_eepromReadWords(&DAT_01000054,0x3fee22,2);
-  mpc555_eepromReadWords(&DAT_0100000c,0x3fee26,4);
-  mpc555_eepromReadWords(&DAT_01000056,0x3fee24,2);
+  mpc555_eepromReadWords(&eeprom_calibration_block,0x3fee18,6);
+  mpc555_eepromReadWords(&eeprom_cal_word1,0x3fee1e,2);
+  mpc555_eepromReadWords(&eeprom_cal_word2,0x3fee20,2);
+  mpc555_eepromReadWords(&eeprom_cal_word3,0x3fee22,2);
+  mpc555_eepromReadWords(&eeprom_status_block,0x3fee26,4);
+  mpc555_eepromReadWords(&eeprom_cal_word4,0x3fee24,2);
   return;
 }
 
@@ -666,11 +666,11 @@ void cm848_loadCalibrationFromEeprom(void)
 void cm848_loadVersionConfigFromEeprom(void)
 
 {
-  mpc555_eepromReadWords(&DAT_01000034,&eeprom_header_t_003fee08,2);
+  mpc555_eepromReadWords(&eeprom_version_marker,&eeprom_header_t_003fee08,2);
   mpc555_eepromReadWords(0x1000000,0x3fee0a,2);
-  mpc555_eepromReadWords(&DAT_01000002,0x3fee0c,6);
-  mpc555_eepromReadWords(&DAT_01000030,0x3fee12,4);
-  mpc555_eepromReadWords(&DAT_0100008e,0x3fee16,2);
+  mpc555_eepromReadWords(&eeprom_security_key,0x3fee0c,6);
+  mpc555_eepromReadWords(&eeprom_config_block,0x3fee12,4);
+  mpc555_eepromReadWords(&eeprom_serial_number,0x3fee16,2);
   return;
 }
 
@@ -1603,7 +1603,7 @@ void mpc555_initDiagnosticSession(void)
   }
   else {
     local_8[0] = 0;
-    mpc555_eepromWriteWords(local_8,&DAT_01000056,2);
+    mpc555_eepromWriteWords(local_8,&eeprom_cal_word4,2);
     diag_session_state_t_003fecbe.session_flags = diag_session_state_t_003fecbe.session_flags | 1;
     DAT_003fecc4 = 1;
     _DAT_003fecba = 2;
@@ -1783,12 +1783,12 @@ void mpc555_systemInitialization(void)
   Ram00302006 = 0;
   Ram00302736 = 0xbbbb;
   Ram00302738 = 0;
-  mpc555_eepromReadWords(&DAT_01000030,0x3fee12,4);
+  mpc555_eepromReadWords(&eeprom_config_block,0x3fee12,4);
   func_0x003fd284();
-  mpc555_eepromReadWords(&DAT_0100008e,0x3fee16,2);
-  mpc555_eepromWriteWords(0x3fee16,&DAT_01000034,2);
+  mpc555_eepromReadWords(&eeprom_serial_number,0x3fee16,2);
+  mpc555_eepromWriteWords(0x3fee16,&eeprom_version_marker,2);
   Ram00302882 = 0xbec;
-  mpc555_eepromReadWords(&DAT_01000056,0x3fee24,2);
+  mpc555_eepromReadWords(&eeprom_cal_word4,0x3fee24,2);
   mpc555_initDiagnosticSession();
   mpc555_initHardwareConfig();
   do {
@@ -2623,9 +2623,9 @@ void cm848_beginEepromCalibrationWrite(void)
   DAT_003fedef = 0x78;
   DAT_003fecc5 = 0;
   local_8[0] = eeprom_header_t_003fee08.cal_word1 & 0xfff5;
-  mpc555_eepromWriteWords(local_8,&DAT_01000050,2);
+  mpc555_eepromWriteWords(local_8,&eeprom_cal_word1,2);
   local_8[0] = eeprom_header_t_003fee08.cal_word3 + 1;
-  mpc555_eepromWriteWords(local_8,&DAT_01000054,2);
+  mpc555_eepromWriteWords(local_8,&eeprom_cal_word3,2);
   _DAT_003fedf4 = 1;
   return;
 }
