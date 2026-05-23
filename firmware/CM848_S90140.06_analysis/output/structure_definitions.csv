@@ -1175,3 +1175,32 @@ mios1_global_regs_t,0x003060f0,MIOS1ER,word,2,MIOS1 Interrupt Enable Register (b
 mios1_global_regs_t,0x003060f0,MIOS1RPR,word,2,MIOS1 Request Pending Register,,verified
 mios1_global_regs_t,0x003060f0,_pad,word,2,Reserved,,verified
 mios1_global_regs_t,0x003060f0,MIOS1LVL,word,2,MIOS1 Interrupt Level Register,,verified
+# =============================================================================
+# QSMCM QSPI runtime control registers
+# 0x30501a: QSPI control (bit 15 = SPE/start transfer); 0x30501c = SPCR2 (ENDQP/NEWQP)
+# Used by mpc555_eepromWriteWords — values 0x100/0x200/0x300 = queue entry count
+# Note: SPCR0-3 in mpc555_registers.csv at 0x305010-0x305016 are MC68336 offsets;
+#       MPC555 QSMCM actually uses these registers at 0x30501a/0x30501c
+# =============================================================================
+qsmcm_qspi_ctrl_t,0x00305018,PORTQS,byte,1,Port QS Data Register (pin state),,verified
+qsmcm_qspi_ctrl_t,0x00305018,_pad,byte,1,Reserved,,verified
+qsmcm_qspi_ctrl_t,0x00305018,SPE,word,2,QSPI start/enable register (bit 15 = start transfer),,verified
+qsmcm_qspi_ctrl_t,0x00305018,SPCR2,word,2,QSPI queue pointer control (ENDQP bits11-8 NEWQP bits3-0),,verified
+# =============================================================================
+# QSMCM QSPI RAM — MPC555 places these at base+0x140/+0x180 NOT base+0x040/+0x060
+# RECRAM (receive): 0x305140 — firmware reads back SPI EEPROM response here
+# TRANRAM (transmit): 0x305180 — firmware writes SPI opcodes/address/data here
+# Used by mpc555_eepromWriteWords (up to 6 active entries per transfer)
+# =============================================================================
+qsmcm_recram_t,0x00305140,RX0,word,2,QSPI Receive RAM entry 0,,verified
+qsmcm_recram_t,0x00305140,RX1,word,2,QSPI Receive RAM entry 1,,verified
+qsmcm_recram_t,0x00305140,RX2,word,2,QSPI Receive RAM entry 2,,verified
+qsmcm_recram_t,0x00305140,RX3,word,2,QSPI Receive RAM entry 3,,verified
+qsmcm_recram_t,0x00305140,RX4,word,2,QSPI Receive RAM entry 4 (injector sequence index at bits 3-0),,verified
+qsmcm_recram_t,0x00305140,RX5,word,2,QSPI Receive RAM entry 5,,verified
+qsmcm_txram_t,0x00305180,TX0,word,2,QSPI Transmit RAM entry 0 (SPI opcode byte),,verified
+qsmcm_txram_t,0x00305180,TX1,word,2,QSPI Transmit RAM entry 1 (SPI write command byte),,verified
+qsmcm_txram_t,0x00305180,TX2,word,2,QSPI Transmit RAM entry 2 (EEPROM address / SPI data),,verified
+qsmcm_txram_t,0x00305180,TX3,word,2,QSPI Transmit RAM entry 3 (write data word),,verified
+qsmcm_txram_t,0x00305180,TX4,word,2,QSPI Transmit RAM entry 4,,verified
+qsmcm_txram_t,0x00305180,TX5,word,2,QSPI Transmit RAM entry 5,,verified

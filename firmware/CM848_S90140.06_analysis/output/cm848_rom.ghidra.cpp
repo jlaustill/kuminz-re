@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat May 23 15:55:54 MDT 2026
+// Generated: Sat May 23 16:03:00 MDT 2026
 
 
 //
@@ -525,10 +525,10 @@ void cm848_stubFunction1(void)
 // Function: mpc555_eepromWriteWords @ 0x00000bec
 //
 
-void mpc555_eepromWriteWords(undefined2 *param_1,short param_2,uint param_3)
+void mpc555_eepromWriteWords(word *param_1,word param_2,uint param_3)
 
 {
-  ushort uVar1;
+  word wVar1;
   byte bVar2;
   uint uVar3;
   
@@ -537,17 +537,17 @@ void mpc555_eepromWriteWords(undefined2 *param_1,short param_2,uint param_3)
     uVar3 = uVar3 + 1;
   }
   do {
-    Ram0030501c = 0x300;
-    Ram00305180 = 6;
+    qsmcm_qspi_spcr0.SPCR2 = 0x300;
+    eeprom_command_register.TX0 = 6;
     eeprom_timing_reg_0 = 0x1e;
-    Ram00305182 = 2;
+    eeprom_command_register.TX1 = 2;
     eeprom_timing_reg_1 = 0x9e;
-    Ram00305184 = param_2;
+    eeprom_command_register.TX2 = param_2;
     eeprom_timing_reg_2 = 0xce;
-    Ram00305186 = *param_1;
+    eeprom_command_register.TX3 = *param_1;
     eeprom_timing_reg_3 = 0x4e;
-    uVar1 = Ram0030501a;
-    Ram0030501a = uVar1 | 0x8000;
+    wVar1 = qsmcm_qspi_spcr0.SPE;
+    qsmcm_qspi_spcr0.SPE = wVar1 | 0x8000;
     param_1 = param_1 + 1;
     param_2 = param_2 + 2;
     uVar3 = uVar3 + 0xffff;
@@ -557,23 +557,23 @@ void mpc555_eepromWriteWords(undefined2 *param_1,short param_2,uint param_3)
     bVar2 = qadc_queue_status;
     qadc_queue_status = bVar2 & 0x7f;
     do {
-      Ram0030501c = 0x100;
-      Ram00305180 = 5;
+      qsmcm_qspi_spcr0.SPCR2 = 0x100;
+      eeprom_command_register.TX0 = 5;
       eeprom_timing_reg_0 = 0x9e;
-      Ram00305182 = 0;
+      eeprom_command_register.TX1 = 0;
       eeprom_timing_reg_1 = 0xe;
-      uVar1 = Ram0030501a;
-      Ram0030501a = uVar1 | 0x8000;
+      wVar1 = qsmcm_qspi_spcr0.SPE;
+      qsmcm_qspi_spcr0.SPE = wVar1 | 0x8000;
       do {
         bVar2 = qadc_queue_status;
       } while ((bVar2 & 0x80) == 0);
       bVar2 = qadc_queue_status;
       qadc_queue_status = bVar2 & 0x7f;
-      uVar1 = Ram00305142;
+      wVar1 = qsmcm_recram_t_00305140.RX1;
       func_0x003fc688();
       func_0x003fc6f4();
       func_0x003fd544();
-    } while ((uVar1 & 1) != 0);
+    } while ((wVar1 & 1) != 0);
   } while ((uVar3 & 0xffff) != 0);
   return;
 }
@@ -584,40 +584,39 @@ void mpc555_eepromWriteWords(undefined2 *param_1,short param_2,uint param_3)
 // Function: mpc555_eepromReadWords @ 0x00000d88
 //
 
-void mpc555_eepromReadWords(short param_1,undefined2 *param_2,uint param_3)
+void mpc555_eepromReadWords(word param_1,word *param_2,uint param_3)
 
 {
-  ushort uVar1;
+  word wVar1;
   byte bVar2;
-  undefined2 uVar3;
-  uint uVar4;
+  uint uVar3;
   
-  uVar4 = (int)param_3 >> 1;
+  uVar3 = (int)param_3 >> 1;
   if ((param_3 & 1) != 0) {
-    uVar4 = uVar4 + 1;
+    uVar3 = uVar3 + 1;
   }
   do {
-    Ram0030501c = 0x200;
-    Ram00305180 = 3;
+    qsmcm_qspi_spcr0.SPCR2 = 0x200;
+    eeprom_command_register.TX0 = 3;
     eeprom_timing_reg_0 = 0x9e;
-    Ram00305182 = param_1;
+    eeprom_command_register.TX1 = param_1;
     eeprom_timing_reg_1 = 0xce;
-    Ram00305184 = 0;
+    eeprom_command_register.TX2 = 0;
     eeprom_timing_reg_2 = 0x4e;
-    uVar1 = Ram0030501a;
-    Ram0030501a = uVar1 | 0x8000;
+    wVar1 = qsmcm_qspi_spcr0.SPE;
+    qsmcm_qspi_spcr0.SPE = wVar1 | 0x8000;
     param_1 = param_1 + 2;
-    uVar4 = uVar4 + 0xffff;
+    uVar3 = uVar3 + 0xffff;
     do {
       bVar2 = qadc_queue_status;
     } while ((bVar2 & 0x80) == 0);
     bVar2 = qadc_queue_status;
     qadc_queue_status = bVar2 & 0x7f;
-    uVar3 = Ram00305144;
-    *param_2 = uVar3;
+    wVar1 = qsmcm_recram_t_00305140.RX2;
+    *param_2 = wVar1;
     param_2 = param_2 + 1;
     mpc555_dispatchSpiHandlerByState();
-  } while ((uVar4 & 0xffff) != 0);
+  } while ((uVar3 & 0xffff) != 0);
   return;
 }
 
@@ -1819,9 +1818,8 @@ void mpc555_systemInitialization(void)
 void mpc555_hardwareInitialization(void)
 
 {
-  ushort uVar1;
-  undefined2 uVar2;
-  byte bVar3;
+  word wVar1;
+  byte bVar2;
   
   USIU_BR0.BR0 = 0x50080b;
   USIU_BR0.OR0 = 0xfff00062;
@@ -1836,16 +1834,16 @@ void mpc555_hardwareInitialization(void)
   mios_mmcsm_cnt.SCRD = 0x60f;
   mios_mmcsm_cnt.CNT = 0;
   mios_mmcsm_cnt.ML = 0;
-  bVar3 = qadc_queue_status;
-  qadc_queue_status = bVar3 & 0x7f;
-  uVar1 = Ram0030501a;
-  Ram0030501a = uVar1 & 0x7fff;
-  uVar1 = Ram0030501c;
-  Ram0030501c = uVar1 & 0x7fff;
-  uVar1 = Ram0030501c;
-  Ram0030501c = uVar1 & 0xfff0;
-  uVar2 = Ram0030501c;
-  Ram0030501c = uVar2;
+  bVar2 = qadc_queue_status;
+  qadc_queue_status = bVar2 & 0x7f;
+  wVar1 = qsmcm_qspi_spcr0.SPE;
+  qsmcm_qspi_spcr0.SPE = wVar1 & 0x7fff;
+  wVar1 = qsmcm_qspi_spcr0.SPCR2;
+  qsmcm_qspi_spcr0.SPCR2 = wVar1 & 0x7fff;
+  wVar1 = qsmcm_qspi_spcr0.SPCR2;
+  qsmcm_qspi_spcr0.SPCR2 = wVar1 & 0xfff0;
+  wVar1 = qsmcm_qspi_spcr0.SPCR2;
+  qsmcm_qspi_spcr0.SPCR2 = wVar1;
   qsmcm_sccr0 = 0;
   qsmcm_sccr1.SCC1R1 = 0;
   tpu_a_mcr.TPUMCR = 0x8000;
@@ -2821,17 +2819,17 @@ void cm848_saveSchedulerCallbackPointer(void)
 void mpc555_initQspiRegisters(void)
 
 {
-  ushort uVar1;
+  word wVar1;
   byte bVar2;
   
   QSMCM_SPCR3 = 0x7b;
   QSMCM_SPSR = 0x7e;
   qsmcm_qspi_ddqrs = 0x7f;
-  Ram00305018 = 0x800a;
-  uVar1 = Ram0030501a;
-  Ram0030501a = uVar1 & 0x80ff;
-  uVar1 = Ram0030501a;
-  Ram0030501a = uVar1 | 0x2200;
+  qsmcm_qspi_spcr0._0_2_ = 0x800a;
+  wVar1 = qsmcm_qspi_spcr0.SPE;
+  qsmcm_qspi_spcr0.SPE = wVar1 & 0x80ff;
+  wVar1 = qsmcm_qspi_spcr0.SPE;
+  qsmcm_qspi_spcr0.SPE = wVar1 | 0x2200;
   bVar2 = qadc_queue_status;
   if ((bVar2 & 0x80) != 0) {
     bVar2 = qadc_queue_status;
@@ -5947,38 +5945,37 @@ undefined1 mpc555_processTransferCrc(byte *param_1,uint param_2,int param_3)
 void mpc555_systemWatchdogReset(void)
 
 {
-  ushort uVar1;
+  word wVar1;
   byte bVar2;
-  word wVar3;
   
-  wVar3 = mios_mmcsm_cnt.CNT;
-  if (0x222 < (ushort)(wVar3 - tpu3_timer_capture_value)) {
-    Ram0030501c = 0x500;
-    Ram00305180 = *(byte *)(injector_sequence_index + 0x3f989c) | 0xe000;
+  wVar1 = mios_mmcsm_cnt.CNT;
+  if (0x222 < (ushort)(wVar1 - tpu3_timer_capture_value)) {
+    qsmcm_qspi_spcr0.SPCR2 = 0x500;
+    eeprom_command_register.TX0 = *(byte *)(injector_sequence_index + 0x3f989c) | 0xe000;
     eeprom_timing_reg_0 = 0x5d;
-    Ram00305182 = *(byte *)(injector_sequence_index + 0x3f988c) | 0xe000;
+    eeprom_command_register.TX1 = *(byte *)(injector_sequence_index + 0x3f988c) | 0xe000;
     eeprom_timing_reg_1 = 0x5d;
-    Ram00305184 = *(byte *)(injector_sequence_index + 0x3f987c) | 0xe000;
+    eeprom_command_register.TX2 = *(byte *)(injector_sequence_index + 0x3f987c) | 0xe000;
     eeprom_timing_reg_2 = 0x5d;
-    Ram00305186 = *(byte *)(injector_sequence_index + 0x3f986c) | 0xe000;
+    eeprom_command_register.TX3 = *(byte *)(injector_sequence_index + 0x3f986c) | 0xe000;
     eeprom_timing_reg_3 = 0x5d;
-    Ram00305188 = 0xf200;
+    eeprom_command_register.TX4 = 0xf200;
     eeprom_timing_reg_4 = 0x5d;
-    Ram0030518a = 0xf400;
+    eeprom_command_register.TX5 = 0xf400;
     eeprom_timing_reg_5 = 0x5d;
-    uVar1 = Ram0030501a;
-    Ram0030501a = uVar1 | 0x8000;
+    wVar1 = qsmcm_qspi_spcr0.SPE;
+    qsmcm_qspi_spcr0.SPE = wVar1 | 0x8000;
     do {
       bVar2 = qadc_queue_status;
     } while ((bVar2 & 0x80) == 0);
     bVar2 = qadc_queue_status;
     qadc_queue_status = bVar2 & 0x7f;
-    uVar1 = Ram00305148;
-    injector_sequence_index = uVar1 & 0xf;
-    uVar1 = Ram00305148;
-    _tpu3_channel_status_count = uVar1 >> 4 & 7;
+    wVar1 = qsmcm_recram_t_00305140.RX4;
+    injector_sequence_index = wVar1 & 0xf;
+    wVar1 = qsmcm_recram_t_00305140.RX4;
+    _tpu3_channel_status_count = wVar1 >> 4 & 7;
     if (_DAT_003fdba0 < _tpu3_channel_status_count) {
-      _DAT_003fdba2 = Ram0030514a;
+      _DAT_003fdba2 = qsmcm_recram_t_00305140.RX5;
       _DAT_003fdba0 = _tpu3_channel_status_count;
     }
     tpu3_timer_capture_value = mios_mmcsm_cnt.CNT;
@@ -5997,81 +5994,81 @@ void mpc555_systemWatchdogReset(void)
 void mpc555_initQspiHardware(void)
 
 {
-  undefined2 uVar1;
-  ushort uVar2;
-  byte bVar3;
-  ushort uVar4;
-  word wVar5;
-  word wVar6;
-  undefined2 *puVar7;
+  ushort uVar1;
+  undefined2 uVar2;
+  word wVar3;
+  word wVar4;
+  byte bVar5;
+  word *pwVar6;
   int in_DER;
   
-  uVar1 = Ram00305018;
-  Ram00305018 = 0x800a;
+  uVar2 = qsmcm_qspi_spcr0._0_2_;
+  qsmcm_qspi_spcr0._0_2_ = 0x800a;
   qsmcm_qspi_ddqrs = 0x7b;
-  puVar7 = (undefined2 *)&eeprom_status_register;
-  Ram0030501c = 0x400;
-  wVar5 = mios_mmcsm_cnt.CNT;
+  pwVar6 = &qsmcm_qspi_spcr0.SPCR2;
+  qsmcm_qspi_spcr0.SPCR2 = 0x400;
+  wVar4 = mios_mmcsm_cnt.CNT;
   do {
-    Ram00305180 = 0x1400;
+    eeprom_command_register.TX0 = 0x1400;
     eeprom_timing_reg_0 = 0x5d;
-    Ram00305182 = 0x181e;
+    eeprom_command_register.TX1 = 0x181e;
     eeprom_timing_reg_1 = 0x5d;
-    Ram00305184 = 0xf200;
+    eeprom_command_register.TX2 = 0xf200;
     eeprom_timing_reg_2 = 0x5d;
-    Ram00305186 = 0xc214;
+    eeprom_command_register.TX3 = 0xc214;
     eeprom_timing_reg_3 = 0x5d;
-    Ram00305188 = 0x4200;
+    eeprom_command_register.TX4 = 0x4200;
     eeprom_timing_reg_4 = 0x5d;
-    uVar2 = Ram0030501a;
-    Ram0030501a = uVar2 | 0x8000;
+    wVar3 = qsmcm_qspi_spcr0.SPE;
+    qsmcm_qspi_spcr0.SPE = wVar3 | 0x8000;
     do {
-      bVar3 = qadc_queue_status;
-    } while ((bVar3 & 0x80) == 0);
-    bVar3 = qadc_queue_status;
-    qadc_queue_status = bVar3 & 0x7f;
-    wVar6 = mios_mmcsm_cnt.CNT;
-  } while ((wVar6 <= (ushort)(wVar5 + 0xa89)) && (uVar2 = Ram00305148, (uVar2 & 0xff) != 0x14));
-  uVar2 = Ram00305148;
-  if ((uVar2 & 0xff) == 0x14) {
+      bVar5 = qadc_queue_status;
+    } while ((bVar5 & 0x80) == 0);
+    bVar5 = qadc_queue_status;
+    qadc_queue_status = bVar5 & 0x7f;
+    wVar3 = mios_mmcsm_cnt.CNT;
+  } while ((wVar3 <= (ushort)(wVar4 + 0xa89)) &&
+          (wVar3 = qsmcm_recram_t_00305140.RX4, (wVar3 & 0xff) != 0x14));
+  wVar4 = qsmcm_recram_t_00305140.RX4;
+  if ((wVar4 & 0xff) == 0x14) {
     tpu3_timer_capture_value = mios_mmcsm_cnt.CNT;
-    uVar2 = tpu3_timer_capture_value + 0x7990;
-    uVar4 = Ram00305144;
-    injector_sequence_index = uVar4 & 0xf;
-    uVar4 = Ram00305144;
-    _tpu3_channel_status_count = uVar4 >> 4 & 7;
+    uVar1 = tpu3_timer_capture_value + 0x7990;
+    wVar4 = qsmcm_recram_t_00305140.RX2;
+    injector_sequence_index = wVar4 & 0xf;
+    wVar4 = qsmcm_recram_t_00305140.RX2;
+    _tpu3_channel_status_count = wVar4 >> 4 & 7;
     if (_tpu3_channel_status_count != 0) {
-      wVar5 = mios_mmcsm_cnt.CNT;
-      while ((wVar5 <= uVar2 && (mpc555_systemWatchdogReset(), _tpu3_channel_status_count != 0))) {
-        wVar5 = mios_mmcsm_cnt.CNT;
+      wVar4 = mios_mmcsm_cnt.CNT;
+      while ((wVar4 <= uVar1 && (mpc555_systemWatchdogReset(), _tpu3_channel_status_count != 0))) {
+        wVar4 = mios_mmcsm_cnt.CNT;
       }
     }
     _DAT_003fdba0 = 0;
-    *puVar7 = 0x100;
+    *pwVar6 = 0x100;
     if (((in_DER == 0x2002000f) && (_bus_hardware_status_byte == 0)) &&
        (_tpu3_channel_status_count == 0)) {
-      Ram00305180 = 0x1440;
+      eeprom_command_register.TX0 = 0x1440;
       _DAT_003fdb9e = 0;
     }
     else {
-      Ram00305180 = 0x1400;
+      eeprom_command_register.TX0 = 0x1400;
       _DAT_003fdb9e = 1;
     }
     eeprom_timing_reg_0 = 0x5d;
-    Ram00305182 = 0xf200;
+    eeprom_command_register.TX1 = 0xf200;
     eeprom_timing_reg_1 = 0x5d;
-    uVar2 = Ram0030501a;
-    Ram0030501a = uVar2 | 0x8000;
+    wVar4 = qsmcm_qspi_spcr0.SPE;
+    qsmcm_qspi_spcr0.SPE = wVar4 | 0x8000;
     do {
-      bVar3 = qadc_queue_status;
-    } while ((bVar3 & 0x80) == 0);
-    bVar3 = qadc_queue_status;
-    qadc_queue_status = bVar3 & 0x7f;
-    uVar2 = Ram00305142;
-    injector_sequence_index = uVar2 & 0xf;
+      bVar5 = qadc_queue_status;
+    } while ((bVar5 & 0x80) == 0);
+    bVar5 = qadc_queue_status;
+    qadc_queue_status = bVar5 & 0x7f;
+    wVar4 = qsmcm_recram_t_00305140.RX1;
+    injector_sequence_index = wVar4 & 0xf;
     tpu3_timer_capture_value = mios_mmcsm_cnt.CNT;
   }
-  Ram00305018 = uVar1;
+  qsmcm_qspi_spcr0._0_2_ = uVar2;
   qsmcm_qspi_ddqrs = 0x7b;
   return;
 }
@@ -6088,52 +6085,52 @@ void mpc555_systemHaltLoop(void)
 
 {
   undefined2 uVar1;
-  ushort uVar2;
+  word wVar2;
   byte bVar3;
   ushort uVar4;
   
-  uVar1 = Ram00305018;
-  Ram00305018 = 0x800a;
+  uVar1 = qsmcm_qspi_spcr0._0_2_;
+  qsmcm_qspi_spcr0._0_2_ = 0x800a;
   qsmcm_qspi_ddqrs = 0x7b;
-  Ram0030501c = 0x100;
-  Ram00305180 = 0x1440;
+  qsmcm_qspi_spcr0.SPCR2 = 0x100;
+  eeprom_command_register.TX0 = 0x1440;
   eeprom_timing_reg_0 = 0x5d;
-  Ram00305182 = 0x1801;
+  eeprom_command_register.TX1 = 0x1801;
   eeprom_timing_reg_1 = 0x5d;
-  uVar4 = Ram0030501a;
-  Ram0030501a = uVar4 | 0x8000;
+  wVar2 = qsmcm_qspi_spcr0.SPE;
+  qsmcm_qspi_spcr0.SPE = wVar2 | 0x8000;
   do {
     bVar3 = qadc_queue_status;
   } while ((bVar3 & 0x80) == 0);
   bVar3 = qadc_queue_status;
   qadc_queue_status = bVar3 & 0x7f;
   uVar4 = 0;
-  Ram0030501c = 0x400;
+  qsmcm_qspi_spcr0.SPCR2 = 0x400;
   do {
     uVar4 = uVar4 + 1;
-    Ram00305180 = 0xe000;
+    eeprom_command_register.TX0 = 0xe000;
     eeprom_timing_reg_0 = 0x5d;
-    Ram00305182 = 0xe000;
+    eeprom_command_register.TX1 = 0xe000;
     eeprom_timing_reg_1 = 0x5d;
-    Ram00305184 = 0xe000;
+    eeprom_command_register.TX2 = 0xe000;
     eeprom_timing_reg_2 = 0x5d;
-    Ram00305186 = 0xe000;
+    eeprom_command_register.TX3 = 0xe000;
     eeprom_timing_reg_3 = 0x5d;
-    Ram00305188 = 0xf200;
+    eeprom_command_register.TX4 = 0xf200;
     eeprom_timing_reg_4 = 0x5d;
-    uVar2 = Ram0030501a;
-    Ram0030501a = uVar2 | 0x8000;
+    wVar2 = qsmcm_qspi_spcr0.SPE;
+    qsmcm_qspi_spcr0.SPE = wVar2 | 0x8000;
     do {
       bVar3 = qadc_queue_status;
     } while ((bVar3 & 0x80) == 0);
     bVar3 = qadc_queue_status;
     qadc_queue_status = bVar3 & 0x7f;
-    uVar2 = Ram00305148;
-    injector_sequence_index = uVar2 & 0xf;
-    uVar2 = Ram00305148;
-    _tpu3_channel_status_count = uVar2 >> 4 & 7;
+    wVar2 = qsmcm_recram_t_00305140.RX4;
+    injector_sequence_index = wVar2 & 0xf;
+    wVar2 = qsmcm_recram_t_00305140.RX4;
+    _tpu3_channel_status_count = wVar2 >> 4 & 7;
   } while (uVar4 < 0x10);
-  Ram00305018 = uVar1;
+  qsmcm_qspi_spcr0._0_2_ = uVar1;
   qsmcm_qspi_ddqrs = 0x7b;
   return;
 }
@@ -39685,7 +39682,7 @@ void mpc555_j1939InitTransmitBuffer(char param_1)
   
   DAT_003fb444 = param_1;
   iVar1 = (uint)(byte)(param_1 - 1) * 4;
-  Ram00305018 = *(undefined2 *)(&DAT_003fb434 + iVar1);
+  qsmcm_qspi_spcr0._0_2_ = *(undefined2 *)(&DAT_003fb434 + iVar1);
   if (((byte)(&DAT_003fb434)[iVar1] >> 1 & 1) == 0) {
     bVar2 = qsmcm_qspi_ddqrs;
     bVar2 = bVar2 & 0xfb;
@@ -39695,7 +39692,7 @@ void mpc555_j1939InitTransmitBuffer(char param_1)
     bVar2 = bVar2 | 4;
   }
   qsmcm_qspi_ddqrs = bVar2;
-  Ram0030501a = *(undefined2 *)(&DAT_003fb436 + (uint)(byte)(param_1 - 1) * 4);
+  qsmcm_qspi_spcr0.SPE = *(word *)(&DAT_003fb436 + (uint)(byte)(param_1 - 1) * 4);
   return;
 }
 
@@ -39797,53 +39794,52 @@ LAB_0003d754:
 void mpc555_j1939ConfigureMultiFrame(int param_1,int param_2)
 
 {
-  ushort uVar1;
-  undefined2 uVar2;
-  undefined *puVar3;
-  undefined2 *puVar4;
-  undefined1 *puVar5;
-  undefined2 *puVar6;
-  byte bVar7;
-  int iVar8;
-  undefined4 *puVar9;
+  word wVar1;
+  undefined *puVar2;
+  undefined2 *puVar3;
+  undefined1 *puVar4;
+  undefined2 *puVar5;
+  byte bVar6;
+  int iVar7;
+  undefined4 *puVar8;
   
-  uVar1 = Ram0030501a;
-  if (((uVar1 & 0x8000) == 0) && (DAT_003fb4cd == '\0')) {
+  wVar1 = qsmcm_qspi_spcr0.SPE;
+  if (((wVar1 & 0x8000) == 0) && (DAT_003fb4cd == '\0')) {
     DAT_003fb4cd = '\x01';
-    iVar8 = param_2 * 0x43;
-    puVar9 = *(undefined4 **)(iVar8 + param_1 * 4 + 0x3fb449);
-    bVar7 = 0;
-    if (*(char *)((int)puVar9 + 5) != '\0') {
-      puVar5 = (undefined1 *)(*(int *)((int)puVar9 + 10) + -1);
-      puVar3 = &UNK_003051bf;
-      puVar6 = (undefined2 *)(*(int *)((int)puVar9 + 6) + -2);
-      puVar4 = (undefined2 *)&UNK_0030517e;
+    iVar7 = param_2 * 0x43;
+    puVar8 = *(undefined4 **)(iVar7 + param_1 * 4 + 0x3fb449);
+    bVar6 = 0;
+    if (*(char *)((int)puVar8 + 5) != '\0') {
+      puVar4 = (undefined1 *)(*(int *)((int)puVar8 + 10) + -1);
+      puVar2 = &UNK_003051bf;
+      puVar5 = (undefined2 *)(*(int *)((int)puVar8 + 6) + -2);
+      puVar3 = (undefined2 *)&UNK_0030517e;
       do {
-        puVar6 = puVar6 + 1;
-        puVar4 = puVar4 + 1;
-        *puVar4 = *puVar6;
         puVar5 = puVar5 + 1;
         puVar3 = puVar3 + 1;
         *puVar3 = *puVar5;
-        bVar7 = bVar7 + 1;
-      } while (bVar7 < *(byte *)((int)puVar9 + 5));
+        puVar4 = puVar4 + 1;
+        puVar2 = puVar2 + 1;
+        *puVar2 = *puVar4;
+        bVar6 = bVar6 + 1;
+      } while (bVar6 < *(byte *)((int)puVar8 + 5));
     }
-    if (DAT_003fb444 != *(char *)(puVar9 + 1)) {
-      mpc555_j1939InitTransmitBuffer(*(char *)(puVar9 + 1));
+    if (DAT_003fb444 != *(char *)(puVar8 + 1)) {
+      mpc555_j1939InitTransmitBuffer(*(char *)(puVar8 + 1));
     }
     fault_occurrence_index = (byte)param_2;
-    (&DAT_003fb446)[iVar8] = (char)param_1;
-    *puVar9 = 2;
-    uVar1 = Ram0030501c;
-    Ram0030501c = uVar1 & 0xffe0;
-    uVar2 = Ram0030501c;
-    Ram0030501c = uVar2;
-    uVar1 = Ram0030501c;
-    Ram0030501c = uVar1 & 0xe0ff;
-    uVar1 = Ram0030501c;
-    Ram0030501c = uVar1 | (ushort)*(byte *)((int)puVar9 + 5) * 0x100 - 0x100 & 0x1f00;
-    uVar1 = Ram0030501a;
-    Ram0030501a = uVar1 | 0x8000;
+    (&DAT_003fb446)[iVar7] = (char)param_1;
+    *puVar8 = 2;
+    wVar1 = qsmcm_qspi_spcr0.SPCR2;
+    qsmcm_qspi_spcr0.SPCR2 = wVar1 & 0xffe0;
+    wVar1 = qsmcm_qspi_spcr0.SPCR2;
+    qsmcm_qspi_spcr0.SPCR2 = wVar1;
+    wVar1 = qsmcm_qspi_spcr0.SPCR2;
+    qsmcm_qspi_spcr0.SPCR2 = wVar1 & 0xe0ff;
+    wVar1 = qsmcm_qspi_spcr0.SPCR2;
+    qsmcm_qspi_spcr0.SPCR2 = wVar1 | (ushort)*(byte *)((int)puVar8 + 5) * 0x100 - 0x100 & 0x1f00;
+    wVar1 = qsmcm_qspi_spcr0.SPE;
+    qsmcm_qspi_spcr0.SPE = wVar1 | 0x8000;
   }
   return;
 }
@@ -39976,15 +39972,16 @@ void mpc555_initQsmcmQspiModule(void)
 
 {
   ushort uVar1;
+  word wVar2;
   
   QSMCM_SPCR3 = 0x7b;
   QSMCM_SPSR = 0x7e;
   qsmcm_qspi_ddqrs = 0x7f;
-  Ram00305018 = 0x800a;
+  qsmcm_qspi_spcr0._0_2_ = 0x800a;
   uVar1 = Ram002fc014;
   Ram002fc014 = uVar1 | 0x100;
-  uVar1 = Ram0030501c;
-  Ram0030501c = uVar1 | 0x8000;
+  wVar2 = qsmcm_qspi_spcr0.SPCR2;
+  qsmcm_qspi_spcr0.SPCR2 = wVar2 | 0x8000;
   return;
 }
 
