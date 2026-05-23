@@ -880,3 +880,298 @@ etc1_config_entry_t,0x0005c3b4,speed_error_timeout_mode3,word,2,etc1_speed_error
 etc1_config_entry_t,0x0005c3b4,multiframe_timeout_mode2,word,2,etc1_multiframe_timeout and etc1_mode_transition_timer reload for mode 2 multi-frame,,verified
 etc1_config_entry_t,0x0005c3b4,error_fault_timeout,word,2,etc1_error_fault_timer reload value (fired on governor_error_term==2),,verified
 etc1_config_entry_t,0x0005c3b4,multiframe_timeout_mode3,word,2,etc1_multiframe_timeout reload value for mode 3 multi-frame (governor_error_term==3),,verified
+# =============================================================================
+# TPUA Module Register Block - Time Processing Unit A control registers
+# Applied at 0x304000 (IMB3 base + 0x4000) — crank timing TPU module
+# Register offsets match TPU3 at 0x302000; confirmed by mpc555_initTpuConfiguration
+# Total size: 44 bytes (offsets 0x00-0x2b with padding for gaps)
+# =============================================================================
+tpua_module_regs_t,0x00304000,TPUMCR,word,2,Module Configuration Register (0x8000=STOP 0x4460=run w/prescaler),,verified
+tpua_module_regs_t,0x00304000,_pad1,word,2,Reserved (TPU3 offset +0x02),,verified
+tpua_module_regs_t,0x00304000,_pad2,word,2,Reserved (TPU3 offset +0x04),,verified
+tpua_module_regs_t,0x00304000,_pad3,word,2,Reserved (TPU3 offset +0x06),,verified
+tpua_module_regs_t,0x00304000,TICR,word,2,Timer Interrupt Configuration Register (written 0x100 at init),,verified
+tpua_module_regs_t,0x00304000,CIER,word,2,Channel Interrupt Enable Register,,verified
+tpua_module_regs_t,0x00304000,CFSR0,word,2,Channel Function Select Register 0 (ch 0-3),,verified
+tpua_module_regs_t,0x00304000,CFSR1,word,2,Channel Function Select Register 1 (ch 4-7),,verified
+tpua_module_regs_t,0x00304000,CFSR2,word,2,Channel Function Select Register 2 (ch 8-11),,verified
+tpua_module_regs_t,0x00304000,CFSR3,word,2,Channel Function Select Register 3 (ch 12-15),,verified
+tpua_module_regs_t,0x00304000,HSQR0,word,2,Host Sequence Register 0 (ch 0-7),,verified
+tpua_module_regs_t,0x00304000,HSQR1,word,2,Host Sequence Register 1 (ch 8-15),,verified
+tpua_module_regs_t,0x00304000,HSRR0,word,2,Host Service Request Register 0 (ch 0-7),,verified
+tpua_module_regs_t,0x00304000,HSRR1,word,2,Host Service Request Register 1 (ch 8-15),,verified
+tpua_module_regs_t,0x00304000,CPR0,word,2,Channel Priority Register 0 (ch 0-7),,verified
+tpua_module_regs_t,0x00304000,CPR1,word,2,Channel Priority Register 1 (ch 8-15),,verified
+tpua_module_regs_t,0x00304000,CISR,word,2,Channel Interrupt Status Register,,verified
+tpua_module_regs_t,0x00304000,_pad4,word,2,Reserved (TPU3 offset +0x22),,verified
+tpua_module_regs_t,0x00304000,_pad5,word,2,Reserved (TPU3 offset +0x24),,verified
+tpua_module_regs_t,0x00304000,_pad6,word,2,Reserved (TPU3 offset +0x26),,verified
+tpua_module_regs_t,0x00304000,R028,word,2,Unknown register at +0x28 (written 0x80/0x20 at init),,verified
+tpua_module_regs_t,0x00304000,R02A,word,2,Unknown register at +0x2A (written 0x00 at init),,verified
+# =============================================================================
+# TPUB Module Register Block - Time Processing Unit B control registers
+# Applied at 0x304400 (IMB3 base + 0x4400) — mpc555_tpuBInterruptDispatcher
+# Same register layout as TPUA; TPUMCR written 0x4430 (different prescaler than A)
+# Total size: 44 bytes (offsets 0x00-0x2b with padding for gaps)
+# =============================================================================
+tpub_module_regs_t,0x00304400,TPUMCR,word,2,Module Configuration Register (0x8000=STOP 0x4430=run w/prescaler),,verified
+tpub_module_regs_t,0x00304400,_pad1,word,2,Reserved (TPU3 offset +0x02),,verified
+tpub_module_regs_t,0x00304400,_pad2,word,2,Reserved (TPU3 offset +0x04),,verified
+tpub_module_regs_t,0x00304400,_pad3,word,2,Reserved (TPU3 offset +0x06),,verified
+tpub_module_regs_t,0x00304400,TICR,word,2,Timer Interrupt Configuration Register (written 0x200 at init),,verified
+tpub_module_regs_t,0x00304400,CIER,word,2,Channel Interrupt Enable Register,,verified
+tpub_module_regs_t,0x00304400,CFSR0,word,2,Channel Function Select Register 0 (ch 0-3),,verified
+tpub_module_regs_t,0x00304400,CFSR1,word,2,Channel Function Select Register 1 (ch 4-7),,verified
+tpub_module_regs_t,0x00304400,CFSR2,word,2,Channel Function Select Register 2 (ch 8-11),,verified
+tpub_module_regs_t,0x00304400,CFSR3,word,2,Channel Function Select Register 3 (ch 12-15),,verified
+tpub_module_regs_t,0x00304400,HSQR0,word,2,Host Sequence Register 0 (ch 0-7),,verified
+tpub_module_regs_t,0x00304400,HSQR1,word,2,Host Sequence Register 1 (ch 8-15),,verified
+tpub_module_regs_t,0x00304400,HSRR0,word,2,Host Service Request Register 0 (ch 0-7),,verified
+tpub_module_regs_t,0x00304400,HSRR1,word,2,Host Service Request Register 1 (ch 8-15),,verified
+tpub_module_regs_t,0x00304400,CPR0,word,2,Channel Priority Register 0 (ch 0-7),,verified
+tpub_module_regs_t,0x00304400,CPR1,word,2,Channel Priority Register 1 (ch 8-15),,verified
+tpub_module_regs_t,0x00304400,CISR,word,2,Channel Interrupt Status Register,,verified
+tpub_module_regs_t,0x00304400,_pad4,word,2,Reserved (TPU3 offset +0x22),,verified
+tpub_module_regs_t,0x00304400,_pad5,word,2,Reserved (TPU3 offset +0x24),,verified
+tpub_module_regs_t,0x00304400,_pad6,word,2,Reserved (TPU3 offset +0x26),,verified
+tpub_module_regs_t,0x00304400,R028,word,2,Unknown register at +0x28 (written 0x80/0x20 at init),,verified
+tpub_module_regs_t,0x00304400,R02A,word,2,Unknown register at +0x2A (written 0x1E at init),,verified
+# =============================================================================
+# MIOS14 Peripheral Structs - Modular I/O Subsystem channel register layouts
+# Purpose: define struct TYPES for typed pointer arguments in MIOS functions
+# Applied at representative first instances only; other channels keep flat labels
+# Reference: MPC555 UM/D MIOS14 chapter; confirmed by firmware access patterns
+# =============================================================================
+# MIOS PWM Submodule (MPWMSM) - 4 x u16 = 8 bytes
+# Functions: cm848_miosInitChannelPeriod, cm848_scalePwmByPercent, cm848_miosSetChannelValue
+# Usage: param_1 = &MIOS_MPWSMx_PERR; param_1+6 = SCR (enable/config)
+mios_mpwmsm_t,0x00306000,PERR,word,2,Period Register (sets PWM frequency),,verified
+mios_mpwmsm_t,0x00306000,PULR,word,2,Pulse Width Register (sets duty cycle),,verified
+mios_mpwmsm_t,0x00306000,CNTR,word,2,Counter Register (current count value),,verified
+mios_mpwmsm_t,0x00306000,SCR,word,2,Status/Control Register (0x9=enable 0x4ff=period-mode),,verified
+# =============================================================================
+# MIOS Double Action Submodule (MDASM) - 4 x u16 = 8 bytes
+# Functions: cm848_miosChannelEnable, mpc555_miosReadChannelStatus, mpc555_miosSetPwmOutput
+# Usage: param_1 = &MIOS_MDASMx_AR; *(param_1+6) = SCRD write (0x9=enable)
+mios_mdasm_t,0x00306058,AR,word,2,A Register (capture/compare value A),,verified
+mios_mdasm_t,0x00306058,BR,word,2,B Register (capture/compare value B),,verified
+mios_mdasm_t,0x00306058,XR,word,2,X Register (extended capture/status value),,verified
+mios_mdasm_t,0x00306058,SCRD,word,2,Status/Control Register D (0x9=enable output),,verified
+# =============================================================================
+# MIOS Modulus Counter Submodule (MMCSM) - 4 x u16 = 8 bytes
+# MMCSM6 used as reference timebase for mpc555_miosReadChannelStatus
+mios_mmcsm_t,0x00306020,CNT,word,2,Up-Counter Register (current count),,verified
+mios_mmcsm_t,0x00306020,ML,word,2,Modulus Latch Register (period/reload value),,verified
+mios_mmcsm_t,0x00306020,_pad,word,2,Reserved/unused padding byte,,verified
+mios_mmcsm_t,0x00306020,SCRD,word,2,Status/Control Register D,,verified
+# =============================================================================
+# QADC64 Peripheral Struct - Queued ADC module register layout
+# Applied at QADC64A (0x304800) and QADC64B (0x304C00) bus-interface blocks
+# Functions: mpc555_initQadcRegisters writes CCW/result registers directly
+# =============================================================================
+# QADC64 Module Control Registers - 18 bytes (9 x u16)
+qadc64_regs_t,0x00304800,MCR,word,2,Module Configuration Register (bit15=QSTOP),,verified
+qadc64_regs_t,0x00304800,TEST,word,2,Test Register (reserved/debug),,verified
+qadc64_regs_t,0x00304800,INTC,word,2,Interrupt Configure Register,,verified
+qadc64_regs_t,0x00304800,PORTQA_B,word,2,Port QA (high byte) and QB (low byte) Data Registers,,verified
+qadc64_regs_t,0x00304800,DDRQA_B,word,2,Port QA (high byte) and QB (low byte) Data Direction Registers,,verified
+qadc64_regs_t,0x00304800,CCW,word,2,Current Command Word pointer (queue head),,verified
+qadc64_regs_t,0x00304800,RJURR,word,2,Right-Justified Unsigned Result Register,,verified
+qadc64_regs_t,0x00304800,LJSRR,word,2,Left-Justified Signed Result Register,,verified
+qadc64_regs_t,0x00304800,LJURR,word,2,Left-Justified Unsigned Result Register,,verified
+# =============================================================================
+# TPU3 Channel Parameter Block - 16 bytes (8 x u16 parameters)
+# Applied at TPUA_CH0 (0x304100); same layout for all channels of TPUA/TPUB
+# Parameters encode function-specific data (SCR, compare values, period captures)
+# =============================================================================
+tpu3_ch_params_t,0x00304100,PARAM0,word,2,Channel parameter 0 (SCR/function config),,verified
+tpu3_ch_params_t,0x00304100,PARAM1,word,2,Channel parameter 1,,verified
+tpu3_ch_params_t,0x00304100,PARAM2,word,2,Channel parameter 2,,verified
+tpu3_ch_params_t,0x00304100,PARAM3,word,2,Channel parameter 3,,verified
+tpu3_ch_params_t,0x00304100,PARAM4,word,2,Channel parameter 4,,verified
+tpu3_ch_params_t,0x00304100,PARAM5,word,2,Channel parameter 5,,verified
+tpu3_ch_params_t,0x00304100,PARAM6,word,2,Channel parameter 6,,verified
+tpu3_ch_params_t,0x00304100,PARAM7,word,2,Channel parameter 7,,verified
+# =============================================================================
+# QADC64B Peripheral Struct - second QADC module at 0x304C00
+# Same register layout as qadc64_regs_t (QADC64A at 0x304800)
+# Separate type name required — ApplyStructures uses all rows with same name for TYPE
+# =============================================================================
+qadc64b_regs_t,0x00304c00,MCR,word,2,Module Configuration Register (bit15=QSTOP),,verified
+qadc64b_regs_t,0x00304c00,TEST,word,2,Test Register (reserved/debug),,verified
+qadc64b_regs_t,0x00304c00,INTC,word,2,Interrupt Configure Register,,verified
+qadc64b_regs_t,0x00304c00,PORTQA_B,word,2,Port QA (high byte) and QB (low byte) Data Registers,,verified
+qadc64b_regs_t,0x00304c00,DDRQA_B,word,2,Port QA (high byte) and QB (low byte) Data Direction Registers,,verified
+qadc64b_regs_t,0x00304c00,CCW,word,2,Current Command Word pointer (queue head),,verified
+qadc64b_regs_t,0x00304c00,RJURR,word,2,Right-Justified Unsigned Result Register,,verified
+qadc64b_regs_t,0x00304c00,LJSRR,word,2,Left-Justified Signed Result Register,,verified
+qadc64b_regs_t,0x00304c00,LJURR,word,2,Left-Justified Unsigned Result Register,,verified
+# =============================================================================
+# TPUA additional channel parameter blocks
+# Each channel occupies 16 bytes (8 × u16); base = TPUA_base + 0x100 + (ch × 0x10)
+# Separate type per channel required for ApplyStructures to place at each address
+# =============================================================================
+tpua_ch1_params_t,0x00304110,PARAM0,word,2,Channel 1 parameter 0,,verified
+tpua_ch1_params_t,0x00304110,PARAM1,word,2,Channel 1 parameter 1,,verified
+tpua_ch1_params_t,0x00304110,PARAM2,word,2,Channel 1 parameter 2,,verified
+tpua_ch1_params_t,0x00304110,PARAM3,word,2,Channel 1 parameter 3,,verified
+tpua_ch1_params_t,0x00304110,PARAM4,word,2,Channel 1 parameter 4,,verified
+tpua_ch1_params_t,0x00304110,PARAM5,word,2,Channel 1 parameter 5,,verified
+tpua_ch1_params_t,0x00304110,PARAM6,word,2,Channel 1 parameter 6,,verified
+tpua_ch1_params_t,0x00304110,PARAM7,word,2,Channel 1 parameter 7,,verified
+tpua_ch9_params_t,0x00304190,PARAM0,word,2,Channel 9 parameter 0,,verified
+tpua_ch9_params_t,0x00304190,PARAM1,word,2,Channel 9 parameter 1,,verified
+tpua_ch9_params_t,0x00304190,PARAM2,word,2,Channel 9 parameter 2,,verified
+tpua_ch9_params_t,0x00304190,PARAM3,word,2,Channel 9 parameter 3,,verified
+tpua_ch9_params_t,0x00304190,PARAM4,word,2,Channel 9 parameter 4,,verified
+tpua_ch9_params_t,0x00304190,PARAM5,word,2,Channel 9 parameter 5,,verified
+tpua_ch9_params_t,0x00304190,PARAM6,word,2,Channel 9 parameter 6,,verified
+tpua_ch9_params_t,0x00304190,PARAM7,word,2,Channel 9 parameter 7,,verified
+tpua_ch12_params_t,0x003041c0,PARAM0,word,2,Channel 12 parameter 0,,verified
+tpua_ch12_params_t,0x003041c0,PARAM1,word,2,Channel 12 parameter 1,,verified
+tpua_ch12_params_t,0x003041c0,PARAM2,word,2,Channel 12 parameter 2,,verified
+tpua_ch12_params_t,0x003041c0,PARAM3,word,2,Channel 12 parameter 3,,verified
+tpua_ch12_params_t,0x003041c0,PARAM4,word,2,Channel 12 parameter 4,,verified
+tpua_ch12_params_t,0x003041c0,PARAM5,word,2,Channel 12 parameter 5,,verified
+tpua_ch12_params_t,0x003041c0,PARAM6,word,2,Channel 12 parameter 6,,verified
+tpua_ch12_params_t,0x003041c0,PARAM7,word,2,Channel 12 parameter 7,,verified
+tpua_ch14_params_t,0x003041e0,PARAM0,word,2,Channel 14 parameter 0,,verified
+tpua_ch14_params_t,0x003041e0,PARAM1,word,2,Channel 14 parameter 1,,verified
+tpua_ch14_params_t,0x003041e0,PARAM2,word,2,Channel 14 parameter 2,,verified
+tpua_ch14_params_t,0x003041e0,PARAM3,word,2,Channel 14 parameter 3,,verified
+tpua_ch14_params_t,0x003041e0,PARAM4,word,2,Channel 14 parameter 4,,verified
+tpua_ch14_params_t,0x003041e0,PARAM5,word,2,Channel 14 parameter 5,,verified
+tpua_ch14_params_t,0x003041e0,PARAM6,word,2,Channel 14 parameter 6,,verified
+tpua_ch14_params_t,0x003041e0,PARAM7,word,2,Channel 14 parameter 7,,verified
+# =============================================================================
+# TPUB additional channel parameter blocks
+# Base = TPUB_base (0x304400) + 0x100 + (ch × 0x10)
+# =============================================================================
+tpub_ch0_params_t,0x00304500,PARAM0,word,2,TPUB Channel 0 parameter 0,,verified
+tpub_ch0_params_t,0x00304500,PARAM1,word,2,TPUB Channel 0 parameter 1,,verified
+tpub_ch0_params_t,0x00304500,PARAM2,word,2,TPUB Channel 0 parameter 2,,verified
+tpub_ch0_params_t,0x00304500,PARAM3,word,2,TPUB Channel 0 parameter 3,,verified
+tpub_ch0_params_t,0x00304500,PARAM4,word,2,TPUB Channel 0 parameter 4,,verified
+tpub_ch0_params_t,0x00304500,PARAM5,word,2,TPUB Channel 0 parameter 5,,verified
+tpub_ch0_params_t,0x00304500,PARAM6,word,2,TPUB Channel 0 parameter 6,,verified
+tpub_ch0_params_t,0x00304500,PARAM7,word,2,TPUB Channel 0 parameter 7,,verified
+tpub_ch11_params_t,0x003045b0,PARAM0,word,2,TPUB Channel 11 parameter 0,,verified
+tpub_ch11_params_t,0x003045b0,PARAM1,word,2,TPUB Channel 11 parameter 1,,verified
+tpub_ch11_params_t,0x003045b0,PARAM2,word,2,TPUB Channel 11 parameter 2,,verified
+tpub_ch11_params_t,0x003045b0,PARAM3,word,2,TPUB Channel 11 parameter 3,,verified
+tpub_ch11_params_t,0x003045b0,PARAM4,word,2,TPUB Channel 11 parameter 4,,verified
+tpub_ch11_params_t,0x003045b0,PARAM5,word,2,TPUB Channel 11 parameter 5,,verified
+tpub_ch11_params_t,0x003045b0,PARAM6,word,2,TPUB Channel 11 parameter 6,,verified
+tpub_ch11_params_t,0x003045b0,PARAM7,word,2,TPUB Channel 11 parameter 7,,verified
+tpub_ch14_params_t,0x003045e0,PARAM0,word,2,TPUB Channel 14 parameter 0,,verified
+tpub_ch14_params_t,0x003045e0,PARAM1,word,2,TPUB Channel 14 parameter 1,,verified
+tpub_ch14_params_t,0x003045e0,PARAM2,word,2,TPUB Channel 14 parameter 2,,verified
+tpub_ch14_params_t,0x003045e0,PARAM3,word,2,TPUB Channel 14 parameter 3,,verified
+tpub_ch14_params_t,0x003045e0,PARAM4,word,2,TPUB Channel 14 parameter 4,,verified
+tpub_ch14_params_t,0x003045e0,PARAM5,word,2,TPUB Channel 14 parameter 5,,verified
+tpub_ch14_params_t,0x003045e0,PARAM6,word,2,TPUB Channel 14 parameter 6,,verified
+tpub_ch14_params_t,0x003045e0,PARAM7,word,2,TPUB Channel 14 parameter 7,,verified
+# =============================================================================
+# MIOS additional channel submodule instances
+# MPWMSM = PWM Submodule (PERR/PULR/CNTR/SCR) - channels 1-3 at +8/+10/+18
+# MMCSM  = Modulus Counter Submodule (CNT/ML/_pad/SCRD) - second instance at +30
+# MDASM  = Double Action Submodule (AR/BR/XR/SCRD) - channels 12/15/0-3
+# MPWMSM5 = fifth PWM submodule at MIOS_base+0xE8
+# Separate type per instance required — ApplyStructures constraint
+# =============================================================================
+mios_mpwmsm1_t,0x00306008,PERR,word,2,MPWMSM1 Period Register,,verified
+mios_mpwmsm1_t,0x00306008,PULR,word,2,MPWMSM1 Pulse Width Register,,verified
+mios_mpwmsm1_t,0x00306008,CNTR,word,2,MPWMSM1 Counter Register,,verified
+mios_mpwmsm1_t,0x00306008,SCR,word,2,MPWMSM1 Status/Control Register,,verified
+mios_mpwmsm2_t,0x00306010,PERR,word,2,MPWMSM2 Period Register,,verified
+mios_mpwmsm2_t,0x00306010,PULR,word,2,MPWMSM2 Pulse Width Register,,verified
+mios_mpwmsm2_t,0x00306010,CNTR,word,2,MPWMSM2 Counter Register,,verified
+mios_mpwmsm2_t,0x00306010,SCR,word,2,MPWMSM2 Status/Control Register,,verified
+mios_mpwmsm3_t,0x00306018,PERR,word,2,MPWMSM3 Period Register,,verified
+mios_mpwmsm3_t,0x00306018,PULR,word,2,MPWMSM3 Pulse Width Register,,verified
+mios_mpwmsm3_t,0x00306018,CNTR,word,2,MPWMSM3 Counter Register,,verified
+mios_mpwmsm3_t,0x00306018,SCR,word,2,MPWMSM3 Status/Control Register,,verified
+# MMCSM second instance (slot at 0x306030 = MIOS_base+0x30; channel number from labels)
+mios_mmcsm_b_t,0x00306030,CNT,word,2,Up-Counter Register,,verified
+mios_mmcsm_b_t,0x00306030,ML,word,2,Modulus Latch Register (period/reload value),,verified
+mios_mmcsm_b_t,0x00306030,_pad,word,2,Reserved/unused padding,,verified
+mios_mmcsm_b_t,0x00306030,SCRD,word,2,Status/Control Register D,,verified
+mios_mdasm12_t,0x00306060,AR,word,2,MDASM12 A Register,,verified
+mios_mdasm12_t,0x00306060,BR,word,2,MDASM12 B Register,,verified
+mios_mdasm12_t,0x00306060,XR,word,2,MDASM12 X Register (extended status),,verified
+mios_mdasm12_t,0x00306060,SCRD,word,2,MDASM12 Status/Control Register D,,verified
+mios_mdasm15_t,0x00306078,AR,word,2,MDASM15 A Register,,verified
+mios_mdasm15_t,0x00306078,BR,word,2,MDASM15 B Register,,verified
+mios_mdasm15_t,0x00306078,XR,word,2,MDASM15 X Register,,verified
+mios_mdasm15_t,0x00306078,SCRD,word,2,MDASM15 Status/Control Register D,,verified
+mios_mdasm0_t,0x00306080,AR,word,2,MDASM0 A Register,,verified
+mios_mdasm0_t,0x00306080,BR,word,2,MDASM0 B Register,,verified
+mios_mdasm0_t,0x00306080,XR,word,2,MDASM0 X Register,,verified
+mios_mdasm0_t,0x00306080,SCRD,word,2,MDASM0 Status/Control Register D,,verified
+mios_mdasm1_t,0x00306088,AR,word,2,MDASM1 A Register,,verified
+mios_mdasm1_t,0x00306088,BR,word,2,MDASM1 B Register,,verified
+mios_mdasm1_t,0x00306088,XR,word,2,MDASM1 X Register,,verified
+mios_mdasm1_t,0x00306088,SCRD,word,2,MDASM1 Status/Control Register D,,verified
+mios_mdasm2_t,0x00306090,AR,word,2,MDASM2 A Register,,verified
+mios_mdasm2_t,0x00306090,BR,word,2,MDASM2 B Register,,verified
+mios_mdasm2_t,0x00306090,XR,word,2,MDASM2 X Register,,verified
+mios_mdasm2_t,0x00306090,SCRD,word,2,MDASM2 Status/Control Register D,,verified
+mios_mdasm3_t,0x00306098,AR,word,2,MDASM3 A Register,,verified
+mios_mdasm3_t,0x00306098,BR,word,2,MDASM3 B Register,,verified
+mios_mdasm3_t,0x00306098,XR,word,2,MDASM3 X Register,,verified
+mios_mdasm3_t,0x00306098,SCRD,word,2,MDASM3 Status/Control Register D,,verified
+mios_mpwmsm5_t,0x003060e8,PERR,word,2,MPWMSM5 Period Register,,verified
+mios_mpwmsm5_t,0x003060e8,PULR,word,2,MPWMSM5 Pulse Width Register,,verified
+mios_mpwmsm5_t,0x003060e8,CNTR,word,2,MPWMSM5 Counter Register,,verified
+mios_mpwmsm5_t,0x003060e8,SCR,word,2,MPWMSM5 Status/Control Register,,verified
+# =============================================================================
+# TouCAN A Message Buffer structs - 16 bytes each (8 x u16)
+# MB area starts at TouCAN_A_base + 0x80; each MB = 16 bytes (spacing confirmed)
+# Fields: CTRL (code+flags), ID_HI, ID_LO, DATA0..DATA6, _pad (timestamp/reserved)
+# =============================================================================
+toucan_a_mb0_t,0x00307080,CTRL,word,2,Message Buffer 0 Control/Status (code+DLC+flags),,verified
+toucan_a_mb0_t,0x00307080,ID_HI,word,2,Message Buffer 0 ID High (bits 28-16),,verified
+toucan_a_mb0_t,0x00307080,ID_LO,word,2,Message Buffer 0 ID Low (bits 15-0),,verified
+toucan_a_mb0_t,0x00307080,DATA0,word,2,Message Buffer 0 Data bytes 0-1,,verified
+toucan_a_mb0_t,0x00307080,DATA2,word,2,Message Buffer 0 Data bytes 2-3,,verified
+toucan_a_mb0_t,0x00307080,DATA4,word,2,Message Buffer 0 Data bytes 4-5,,verified
+toucan_a_mb0_t,0x00307080,DATA6,word,2,Message Buffer 0 Data bytes 6-7,,verified
+toucan_a_mb0_t,0x00307080,_pad,word,2,Reserved (timestamp),,verified
+toucan_a_mb1_t,0x00307090,CTRL,word,2,Message Buffer 1 Control/Status,,verified
+toucan_a_mb1_t,0x00307090,ID_HI,word,2,Message Buffer 1 ID High,,verified
+toucan_a_mb1_t,0x00307090,ID_LO,word,2,Message Buffer 1 ID Low,,verified
+toucan_a_mb1_t,0x00307090,DATA0,word,2,Message Buffer 1 Data bytes 0-1,,verified
+toucan_a_mb1_t,0x00307090,DATA2,word,2,Message Buffer 1 Data bytes 2-3,,verified
+toucan_a_mb1_t,0x00307090,DATA4,word,2,Message Buffer 1 Data bytes 4-5,,verified
+toucan_a_mb1_t,0x00307090,DATA6,word,2,Message Buffer 1 Data bytes 6-7,,verified
+toucan_a_mb1_t,0x00307090,_pad,word,2,Reserved (timestamp),,verified
+toucan_a_mb2_t,0x003070a0,CTRL,word,2,Message Buffer 2 Control/Status,,verified
+toucan_a_mb2_t,0x003070a0,ID_HI,word,2,Message Buffer 2 ID High,,verified
+toucan_a_mb2_t,0x003070a0,ID_LO,word,2,Message Buffer 2 ID Low,,verified
+toucan_a_mb2_t,0x003070a0,DATA0,word,2,Message Buffer 2 Data bytes 0-1,,verified
+toucan_a_mb2_t,0x003070a0,DATA2,word,2,Message Buffer 2 Data bytes 2-3,,verified
+toucan_a_mb2_t,0x003070a0,DATA4,word,2,Message Buffer 2 Data bytes 4-5,,verified
+toucan_a_mb2_t,0x003070a0,DATA6,word,2,Message Buffer 2 Data bytes 6-7,,verified
+toucan_a_mb2_t,0x003070a0,_pad,word,2,Reserved (timestamp),,verified
+# =============================================================================
+# QSMCM SCI1 register block - 4 x u16 = 8 bytes at 0x305008
+# SCC1R0/SCC1R1 = SCI1 control registers; SC1SR = status; SC1DR = data
+# Used by CM848 serial/diagnostic communication (e.g. Calterm datalink?)
+# =============================================================================
+qsmcm_sci1_regs_t,0x00305008,SCC1R0,word,2,SCI1 Control Register 0 (baud/config),,verified
+qsmcm_sci1_regs_t,0x00305008,SCC1R1,word,2,SCI1 Control Register 1 (interrupt enables),,verified
+qsmcm_sci1_regs_t,0x00305008,SC1SR,word,2,SCI1 Status Register (TDRE/RDRF/OR/FE/NF/PF),,verified
+qsmcm_sci1_regs_t,0x00305008,SC1DR,word,2,SCI1 Data Register (read=RX data write=TX data),,verified
+# =============================================================================
+# MIOS1 Global Registers - 14 bytes at MIOS_base+0xF0
+# MCPSMSCR: prescaler control; MIOS1SR0/1: interrupt status; MIOS1ER: enable
+# MIOS1RPR: request pending; MIOS1LVL: interrupt level
+# Used by mpc555_updateCapabilityFlags to read MIOS1ER (bit 15 = channel live)
+# =============================================================================
+mios1_global_regs_t,0x003060f0,MCPSMSCR,word,2,MIOS Counter Prescaler Status/Control Register,,verified
+mios1_global_regs_t,0x003060f0,MIOS1SR0,word,2,MIOS1 Interrupt Status Register 0,,verified
+mios1_global_regs_t,0x003060f0,MIOS1SR1,word,2,MIOS1 Interrupt Status Register 1,,verified
+mios1_global_regs_t,0x003060f0,MIOS1ER,word,2,MIOS1 Interrupt Enable Register (bit15=ch0 live),,verified
+mios1_global_regs_t,0x003060f0,MIOS1RPR,word,2,MIOS1 Request Pending Register,,verified
+mios1_global_regs_t,0x003060f0,_pad,word,2,Reserved,,verified
+mios1_global_regs_t,0x003060f0,MIOS1LVL,word,2,MIOS1 Interrupt Level Register,,verified

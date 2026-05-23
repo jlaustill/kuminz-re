@@ -116,6 +116,124 @@ address,name,type,comment
 0x003021f0,TPU3_CH15_PARAM0,u16,TPU3 Channel 15 Parameter 0
 
 # =============================================================================
+# TPUA - Time Processing Unit A (0x304000 - 0x3043FF)
+# Second TPU3 instance used for crank/cam timing (mpc555_initTpuConfiguration)
+# Module control registers at 0x304000; channel param RAM at 0x304100-0x3041FF
+# =============================================================================
+0x00304000,TPUA_TPUMCR,u16,TPU-A Module Configuration Register (0x8000=STOP 0x4460=run)
+0x00304008,TPUA_TICR,u16,TPU-A Timer Interrupt Configuration Register
+0x0030400a,TPUA_CIER,u16,TPU-A Channel Interrupt Enable Register
+0x0030400c,TPUA_CFSR0,u16,TPU-A Channel Function Select Register 0 (ch 0-3)
+0x0030400e,TPUA_CFSR1,u16,TPU-A Channel Function Select Register 1 (ch 4-7)
+0x00304010,TPUA_CFSR2,u16,TPU-A Channel Function Select Register 2 (ch 8-11)
+0x00304012,TPUA_CFSR3,u16,TPU-A Channel Function Select Register 3 (ch 12-15)
+0x00304014,TPUA_HSQR0,u16,TPU-A Host Sequence Register 0 (ch 0-7)
+0x00304016,TPUA_HSQR1,u16,TPU-A Host Sequence Register 1 (ch 8-15)
+0x00304018,TPUA_HSRR0,u16,TPU-A Host Service Request Register 0 (ch 0-7)
+0x0030401a,TPUA_HSRR1,u16,TPU-A Host Service Request Register 1 (ch 8-15)
+0x0030401c,TPUA_CPR0,u16,TPU-A Channel Priority Register 0 (ch 0-7)
+0x0030401e,TPUA_CPR1,u16,TPU-A Channel Priority Register 1 (ch 8-15)
+0x00304020,TPUA_CISR,u16,TPU-A Channel Interrupt Status Register
+0x00304028,TPUA_R028,u16,TPU-A Register 0x28 (function unknown; written 0x80/0x20 at init)
+0x0030402a,TPUA_R02A,u16,TPU-A Register 0x2A (function unknown; written 0x00 at init)
+
+# TPUA Channel Parameter RAM (0x304100 - 0x3041FF)
+# Each channel occupies 0x10 bytes (8 x u16 parameters, PARAM0-PARAM7)
+0x00304100,TPUA_CH0_PARAM0,u16,TPU-A Channel 0 Parameter 0 (SCR/channel config)
+0x00304108,TPUA_CH0_PARAM4,u16,TPU-A Channel 0 Parameter 4
+0x0030410c,TPUA_CH0_PARAM6,u16,TPU-A Channel 0 Parameter 6 (crank_mios_compare_b)
+0x0030410e,TPUA_CH0_PARAM7,u16,TPU-A Channel 0 Parameter 7 (crank_mios_compare_a)
+0x00304110,TPUA_CH1_PARAM0,u16,TPU-A Channel 1 Parameter 0 (channel config)
+0x00304112,TPUA_CH1_PARAM1,u16,TPU-A Channel 1 Parameter 1
+0x00304118,TPUA_CH1_PARAM4,u16,TPU-A Channel 1 Parameter 4
+0x0030411c,TPUA_CH1_PARAM6,u16,TPU-A Channel 1 Parameter 6 (mios_timing_byte_b)
+0x0030411e,TPUA_CH1_PARAM7,u16,TPU-A Channel 1 Parameter 7 (mios_period_byte)
+0x00304120,TPUA_CH2_PARAM0,u16,TPU-A Channel 2 Parameter 0
+0x00304126,TPUA_CH2_PARAM3,u16,TPU-A Channel 2 Parameter 3
+0x00304128,TPUA_CH2_PARAM4,u16,TPU-A Channel 2 Parameter 4
+0x00304130,TPUA_CH3_PARAM0,u16,TPU-A Channel 3 Parameter 0
+0x00304134,TPUA_CH3_PARAM2,u16,TPU-A Channel 3 Parameter 2
+0x00304136,TPUA_CH3_PARAM3,u16,TPU-A Channel 3 Parameter 3
+0x00304140,TPUA_CH4_PARAM0,u16,TPU-A Channel 4 Parameter 0
+0x00304150,TPUA_CH5_PARAM0,u16,TPU-A Channel 5 Parameter 0
+0x00304160,TPUA_CH6_PARAM0,u16,TPU-A Channel 6 Parameter 0
+0x00304170,TPUA_CH7_PARAM0,u16,TPU-A Channel 7 Parameter 0
+0x00304176,TPUA_CH7_PARAM3,u16,TPU-A Channel 7 Parameter 3
+0x00304178,TPUA_CH7_PARAM4,u16,TPU-A Channel 7 Parameter 4
+0x00304180,TPUA_CH8_PARAM0,u16,TPU-A Channel 8 Parameter 0
+0x00304190,TPUA_CH9_PARAM0,u16,TPU-A Channel 9 Parameter 0
+0x003041a0,TPUA_CH10_PARAM0,u16,TPU-A Channel 10 Parameter 0
+0x003041b0,TPUA_CH11_PARAM0,u16,TPU-A Channel 11 Parameter 0 (crank_period_capture[0])
+0x003041b2,TPUA_CH11_PARAM1,u16,TPU-A Channel 11 Parameter 1 (crank_period_capture[1])
+0x003041b4,TPUA_CH11_PARAM2,u16,TPU-A Channel 11 Parameter 2 (crank_period_capture[2])
+0x003041b6,TPUA_CH11_PARAM3,u16,TPU-A Channel 11 Parameter 3 (crank_period_capture[3])
+0x003041b8,TPUA_CH11_PARAM4,u16,TPU-A Channel 11 Parameter 4 (crank_period_capture[4])
+0x003041ba,TPUA_CH11_PARAM5,u16,TPU-A Channel 11 Parameter 5 (crank_period_capture[5])
+0x003041bc,TPUA_CH11_PARAM6,u16,TPU-A Channel 11 Parameter 6 (crank_period_capture[6])
+0x003041be,TPUA_CH11_PARAM7,u16,TPU-A Channel 11 Parameter 7 (crank_period_capture[7])
+0x003041c0,TPUA_CH12_PARAM0,u16,TPU-A Channel 12 Parameter 0
+0x003041c4,TPUA_CH12_PARAM2,u16,TPU-A Channel 12 Parameter 2 (crank period high word[0])
+0x003041c6,TPUA_CH12_PARAM3,u16,TPU-A Channel 12 Parameter 3 (crank period high word[1])
+0x003041c8,TPUA_CH12_PARAM4,u16,TPU-A Channel 12 Parameter 4 (crank period high word[2])
+0x003041ca,TPUA_CH12_PARAM5,u16,TPU-A Channel 12 Parameter 5 (crank period high word[3])
+0x003041cc,TPUA_CH12_PARAM6,u16,TPU-A Channel 12 Parameter 6 (crank_period_capture_index_max)
+0x003041ce,TPUA_CH12_PARAM7,u16,TPU-A Channel 12 Parameter 7 (crank_rpm_divisor)
+0x003041d0,TPUA_CH13_PARAM0,u16,TPU-A Channel 13 Parameter 0
+0x003041d6,TPUA_CH13_PARAM3,u16,TPU-A Channel 13 Parameter 3 (20MHz/teeth high word[0])
+0x003041d8,TPUA_CH13_PARAM4,u16,TPU-A Channel 13 Parameter 4 (20MHz/teeth high word[1])
+0x003041da,TPUA_CH13_PARAM5,u16,TPU-A Channel 13 Parameter 5 (20MHz/teeth high word[2])
+0x003041dc,TPUA_CH13_PARAM6,u16,TPU-A Channel 13 Parameter 6 (20MHz/teeth high word[3])
+0x003041de,TPUA_CH13_PARAM7,u16,TPU-A Channel 13 Parameter 7 (20MHz/teeth high word[4])
+0x003041e0,TPUA_CH14_PARAM0,u16,TPU-A Channel 14 Parameter 0
+0x003041e6,TPUA_CH14_PARAM3,u16,TPU-A Channel 14 Parameter 3
+0x003041ea,TPUA_CH14_PARAM5,u16,TPU-A Channel 14 Parameter 5
+0x003041ec,TPUA_CH14_PARAM6,u16,TPU-A Channel 14 Parameter 6
+0x003041ee,TPUA_CH14_PARAM7,u16,TPU-A Channel 14 Parameter 7
+0x003041f0,TPUA_CH15_PARAM0,u16,TPU-A Channel 15 Parameter 0
+
+# =============================================================================
+# TPUB - Time Processing Unit B (0x304400 - 0x3047FF)
+# Third TPU3 instance; mpc555_tpuBInterruptDispatcher handles its channels
+# Module control registers at 0x304400; channel param RAM at 0x304500-0x3045FF
+# =============================================================================
+0x00304400,TPUB_TPUMCR,u16,TPU-B Module Configuration Register (0x8000=STOP 0x4430=run)
+0x00304408,TPUB_TICR,u16,TPU-B Timer Interrupt Configuration Register
+0x0030440a,TPUB_CIER,u16,TPU-B Channel Interrupt Enable Register
+0x0030440c,TPUB_CFSR0,u16,TPU-B Channel Function Select Register 0 (ch 0-3)
+0x0030440e,TPUB_CFSR1,u16,TPU-B Channel Function Select Register 1 (ch 4-7)
+0x00304410,TPUB_CFSR2,u16,TPU-B Channel Function Select Register 2 (ch 8-11)
+0x00304412,TPUB_CFSR3,u16,TPU-B Channel Function Select Register 3 (ch 12-15)
+0x00304414,TPUB_HSQR0,u16,TPU-B Host Sequence Register 0 (ch 0-7)
+0x00304416,TPUB_HSQR1,u16,TPU-B Host Sequence Register 1 (ch 8-15)
+0x00304418,TPUB_HSRR0,u16,TPU-B Host Service Request Register 0 (ch 0-7)
+0x0030441a,TPUB_HSRR1,u16,TPU-B Host Service Request Register 1 (ch 8-15)
+0x0030441c,TPUB_CPR0,u16,TPU-B Channel Priority Register 0 (ch 0-7)
+0x0030441e,TPUB_CPR1,u16,TPU-B Channel Priority Register 1 (ch 8-15)
+0x00304420,TPUB_CISR,u16,TPU-B Channel Interrupt Status Register
+0x00304428,TPUB_R028,u16,TPU-B Register 0x28 (function unknown; written 0x80/0x20 at init)
+0x0030442a,TPUB_R02A,u16,TPU-B Register 0x2A (function unknown; written 0x1E at init)
+
+# TPUB Channel Parameter RAM (0x304500 - 0x3045FF)
+# Each channel occupies 0x10 bytes (8 x u16 parameters, PARAM0-PARAM7)
+0x00304500,TPUB_CH0_PARAM0,u16,TPU-B Channel 0 Parameter 0
+0x00304510,TPUB_CH1_PARAM0,u16,TPU-B Channel 1 Parameter 0
+0x00304520,TPUB_CH2_PARAM0,u16,TPU-B Channel 2 Parameter 0
+0x00304530,TPUB_CH3_PARAM0,u16,TPU-B Channel 3 Parameter 0
+0x00304540,TPUB_CH4_PARAM0,u16,TPU-B Channel 4 Parameter 0
+0x00304550,TPUB_CH5_PARAM0,u16,TPU-B Channel 5 Parameter 0
+0x00304560,TPUB_CH6_PARAM0,u16,TPU-B Channel 6 Parameter 0
+0x00304570,TPUB_CH7_PARAM0,u16,TPU-B Channel 7 Parameter 0
+0x00304580,TPUB_CH8_PARAM0,u16,TPU-B Channel 8 Parameter 0
+0x00304590,TPUB_CH9_PARAM0,u16,TPU-B Channel 9 Parameter 0
+0x003045a0,TPUB_CH10_PARAM0,u16,TPU-B Channel 10 Parameter 0
+0x003045b0,TPUB_CH11_PARAM0,u16,TPU-B Channel 11 Parameter 0
+0x003045c0,TPUB_CH12_PARAM0,u16,TPU-B Channel 12 Parameter 0
+0x003045d0,TPUB_CH13_PARAM0,u16,TPU-B Channel 13 Parameter 0
+0x003045e0,TPUB_CH14_PARAM0,u16,TPU-B Channel 14 Parameter 0
+0x003045e8,TPUB_CH14_PARAM4,u16,TPU-B Channel 14 Parameter 4
+0x003045f0,TPUB_CH15_PARAM0,u16,TPU-B Channel 15 Parameter 0
+
+# =============================================================================
 # QADC64A - Queued ADC Module A (0x304800 - 0x304BFF)
 # =============================================================================
 0x00304800,QADC64A_MCR,u16,QADC64A Module Configuration Register
