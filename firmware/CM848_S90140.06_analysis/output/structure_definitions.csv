@@ -865,3 +865,17 @@ tsc1_governor_state_t,0x0040adf8,tsc1_active_config_ptr,pointer,4,short* to prim
 tsc1_governor_state_t,0x0040adf8,tsc1_secondary_config_ptr,pointer,4,short* to secondary config entry (used for multi-frame response timers),,verified
 tsc1_governor_state_t,0x0040adf8,tsc1_torque_limit_active,word,2,1=TSC1 torque limit currently limiting fuel,,verified
 tsc1_governor_state_t,0x0040adf8,tsc1_message_timeout,word,2,Countdown: fires if no TSC1 message received within window,,verified
+# TSC1 Config Table Entry (DAT_0005c3b4 - 10 entries x 20 bytes, ROM/Bank1)
+# Search loop: match_key + source_address_filter select the active config entry
+# Pointer stride: tsc1_config_entry_ptr advances by 10 shorts (20 bytes) per iteration
+# activation_confirm_timeout: loaded at offset+6 (mode1) or offset+10 (mode2); mode3 hardcodes 0
+tsc1_config_entry_t,0x0005c3b4,match_key,word,2,J1939 control byte type for entry matching (1=wildcard; must match TSC1 byte0 type),,verified
+tsc1_config_entry_t,0x0005c3b4,source_address_filter,word,2,Low byte = J1939 SA to match (0xFF=wildcard); high byte = priority filter,,verified
+tsc1_config_entry_t,0x0005c3b4,speed_error_timeout_mode1,word,2,tsc1_speed_error_timeout reload value for GOV_SPEED_CONTROL (mode 1),,verified
+tsc1_config_entry_t,0x0005c3b4,activation_confirm_timeout_mode1,word,2,tsc1_activation_confirm_timer reload value for GOV_SPEED_CONTROL (mode 1),,verified
+tsc1_config_entry_t,0x0005c3b4,speed_error_timeout_mode2,word,2,tsc1_speed_error_timeout reload value for GOV_TORQUE_CONTROL (mode 2),,verified
+tsc1_config_entry_t,0x0005c3b4,activation_confirm_timeout_mode2,word,2,tsc1_activation_confirm_timer reload value for GOV_TORQUE_CONTROL (mode 2),,verified
+tsc1_config_entry_t,0x0005c3b4,speed_error_timeout_mode3,word,2,tsc1_speed_error_timeout reload value for GOV_SPEED_TORQUE (mode 3),,verified
+tsc1_config_entry_t,0x0005c3b4,multiframe_timeout_mode2,word,2,tsc1_multiframe_timeout and tsc1_mode_transition_timer reload for mode 2 multi-frame,,verified
+tsc1_config_entry_t,0x0005c3b4,error_fault_timeout,word,2,tsc1_error_fault_timer reload value (fired on governor_error_term==2),,verified
+tsc1_config_entry_t,0x0005c3b4,multiframe_timeout_mode3,word,2,tsc1_multiframe_timeout reload value for mode 3 multi-frame (governor_error_term==3),,verified

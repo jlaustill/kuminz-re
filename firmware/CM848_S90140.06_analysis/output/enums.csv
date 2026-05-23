@@ -547,6 +547,14 @@ TSC1_COAST_BRAKE_MODE,1,COAST_DECEL,Coast deceleration mode active,1
 TSC1_COAST_BRAKE_MODE,2,ENGINE_BRAKE,Engine brake / exhaust brake active,1
 TSC1_COAST_BRAKE_MODE,3,RESERVED,Reserved coast/brake mode,1
 
+# Drivetrain Interface Type (drivetrain_type @ 0x003fdda6)
+# Calibration constant set at build time; controls J1939/VSS/TPU interface mode
+DRIVETRAIN_TYPE,0,DRIVETRAIN_STANDALONE,No transmission interface - standalone engine,2
+DRIVETRAIN_TYPE,1,DRIVETRAIN_MANUAL_VSS,Manual transmission with vehicle speed sensor (VSS),2
+DRIVETRAIN_TYPE,3,DRIVETRAIN_MANUAL_TPU,Manual transmission with direct TPU hardware throttle/PTO,2
+DRIVETRAIN_TYPE,4,DRIVETRAIN_AUTO_J1939_FULL,Automatic trans - J1939 TSC1 + cruise/vehicle speed,2
+DRIVETRAIN_TYPE,5,DRIVETRAIN_AUTO_J1939_TSC1,Automatic trans - J1939 TSC1 shift defuel only,2
+
 # Governor Mode States
 # Internal governor state machine values
 GOVERNOR_MODE,0,GOV_DISABLED,Governor control disabled - pedal/throttle control,1
