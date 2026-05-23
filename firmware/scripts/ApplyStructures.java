@@ -370,11 +370,9 @@ public class ApplyStructures extends GhidraScript {
 
                 if (struct != null && addr != null) {
                     try {
-                        // Clear existing data at address
-                        Data existingData = listing.getDataAt(addr);
-                        if (existingData != null) {
-                            listing.clearCodeUnits(addr, addr.add(struct.getLength() - 1), false);
-                        }
+                        // Always clear the full struct range — typed data anywhere within
+                        // the range (not just at the base) would block createData otherwise
+                        listing.clearCodeUnits(addr, addr.add(struct.getLength() - 1), false);
 
                         // Apply structure
                         listing.createData(addr, struct);

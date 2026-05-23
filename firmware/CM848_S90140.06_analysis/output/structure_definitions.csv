@@ -104,7 +104,8 @@ eeprom_header_t,0x003fee08,serial_number,dword,4,ECU serial number from EEPROM,,
 # Used by governor PID controller
 # Total size: 8 bytes (0x0040aec2-0x0040aec9)
 governor_output_t,0x0040aec2,integrator,dword,4,Speed control PID integrator (Q16.16 fixed point),,verified
-governor_output_t,0x0040aec2,output,dword,4,Governor output command value,,verified
+governor_output_t,0x0040aec2,governor_output,word,2,Governor output command (lower word),,verified
+governor_output_t,0x0040aec2,governor_output_high,word,2,Governor output command (upper word),,verified
 # Injector Control State - fuel injector enable and timing control
 # Used by fuel injection output drivers
 # Total size: 7 bytes (0x0040c117-0x0040c11d)
