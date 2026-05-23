@@ -188,6 +188,19 @@ public class ApplyGlobalVariableTypes extends GhidraScript {
             return null;
         }
 
+        // Handle pointer-to-named-type: "struct_name *"
+        if (typeName.endsWith(" *")) {
+            String baseName = typeName.substring(0, typeName.length() - 2).trim();
+            DataType baseType = getDataType(baseName);
+            if (baseType == null) {
+                baseType = findStructureType(baseName);
+            }
+            if (baseType != null) {
+                return new PointerDataType(baseType);
+            }
+            return null;
+        }
+
         String lowerType = typeName.toLowerCase();
 
         switch (lowerType) {
@@ -210,6 +223,8 @@ public class ApplyGlobalVariableTypes extends GhidraScript {
                 return IntegerDataType.dataType;
             case "undefined":
                 return Undefined1DataType.dataType;
+            case "pointer":
+                return PointerDataType.dataType;
             default:
                 return null; // Let caller try struct lookup
         }

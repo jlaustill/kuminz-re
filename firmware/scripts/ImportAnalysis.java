@@ -338,6 +338,22 @@ public class ImportAnalysis extends GhidraScript {
                 break;
         }
 
+        // Handle pointer-to-named-type: "struct_name *"
+        if (typeStr.endsWith(" *")) {
+            String baseName = typeStr.substring(0, typeStr.length() - 2).trim();
+            DataType baseType = mapCsvTypeToDataType(baseName, dtm);
+            if (baseType == null && dtm != null) {
+                java.util.List<DataType> baseFound = new java.util.ArrayList<>();
+                dtm.findDataTypes(baseName, baseFound);
+                if (!baseFound.isEmpty()) {
+                    baseType = baseFound.get(0);
+                }
+            }
+            if (baseType != null) {
+                return new PointerDataType(baseType);
+            }
+        }
+
         // Look up user-defined types (structs, etc.) by name in the DataTypeManager
         if (dtm != null) {
             java.util.List<DataType> found = new java.util.ArrayList<>();
