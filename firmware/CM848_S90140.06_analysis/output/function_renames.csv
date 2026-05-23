@@ -161,7 +161,7 @@
 # Returns protection control mode value (used in control_mode bitmask)
 # Calculates protection_integrator_0_calc based on ratio
 # Empty stub - returns immediately
-# Sets _protection_condition_flags and tsc1_control_word
+# Sets _protection_condition_flags and etc1_control_word
 # Calls updateEventFlagConditional(0x35)
 # Copies byte values to ushort pointers
 # Complex speed control calculation with many variables
@@ -896,9 +896,9 @@ address,name
 0x00022770,cm848_initPgn65228Dm3Handler
 0x000227a0,cm848_j1939HandleDm1RequestMessage
 0x00022840,cm848_initJ1939Dm1RequestHandler
-0x00022870,cm848_j1939ProcessTorqueSpeedControl
+0x00022870,cm848_j1939ProcessPgn61442Etc1
 0x00022ab8,cm848_selectTorqueLimitMode
-0x00022bc4,cm848_initJ1939TorqueSpeedHandler
+0x00022bc4,cm848_initJ1939Pgn61442Etc1Handler
 0x00022d18,cm848_initJ1939VehicleSpeedHandler
 0x00022d60,torqueControlModeHandler
 0x00022e3c,cm848_processGovernorSpeedControlRequest
@@ -2022,8 +2022,8 @@ address,name
 0x0050bb98,flash2_cm848_initDiagnosticBuffer
 0x0050bca0,flash2_cm848_processDiagnosticStateChanges
 0x0050bdcc,flash2_cm848_registerJ1939PgnHandlers
-0x0050be6c,flash2_cm848_rotateTSC1ReceiveBuffer
-0x0050beec,flash2_cm848_initGovernorStateAndTSC1
+0x0050be6c,flash2_cm848_rotateETC1ReceiveBuffer
+0x0050beec,flash2_cm848_initGovernorStateAndETC1
 0x0050bfc4,flash2_cm848_prepareParameterResponseFrame
 0x0050bff4,flash2_cm848_sendParameterCanResponse
 0x0050c0ac,flash2_cm848_registerWriteServiceHandlers

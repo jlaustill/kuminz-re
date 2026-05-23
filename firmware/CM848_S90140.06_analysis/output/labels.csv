@@ -1,2 +1,2 @@
 address,label_name,comment
-0x00022f1c,accept_tsc1_command,Entry point to accept and apply TSC1 command after arbitration passes
+0x00022f1c,accept_etc1_command,Accept and apply ETC1 (PGN 61442) driveline command after source address arbitration

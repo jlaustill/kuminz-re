@@ -188,10 +188,10 @@ J1939_FAULT_CODE,753,FAULT_0753_SPN_190,CAM SHAFT GEAR OUT OF SYNCH (YELLOW),2
 
 # J1939 Handler Registration Codes (passed to registerJ1939MessageHandler thunk)
 J1939_HANDLER_TYPE,0xdd00,HANDLER_DIAGNOSTIC_CALLBACK,Diagnostic callback handler,2
-J1939_HANDLER_TYPE,0xdf00,HANDLER_GOVERNOR_CONTROL,Governor control message (TSC1),2
+J1939_HANDLER_TYPE,0xdf00,HANDLER_GOVERNOR_CONTROL,Governor control message (proprietary),2
 J1939_HANDLER_TYPE,0xe300,HANDLER_DM1_REQUEST,DM1 active fault request handler,2
 J1939_HANDLER_TYPE,0xef00,HANDLER_DIAGNOSTIC_SERVICE,Diagnostic service handler (DM14),2
-J1939_HANDLER_TYPE,0xf002,HANDLER_TORQUE_SPEED_CONTROL,Torque/Speed Control (TSC1 PGN 0),2
+J1939_HANDLER_TYPE,0xf002,HANDLER_ETC1,Electronic Transmission Controller 1 (ETC1 PGN 61442),2
 J1939_HANDLER_TYPE,0xf005,HANDLER_ENGINE_CONTROLLER,Engine Controller message,2
 
 # Protection Event Codes (passed to triggerProtectionEvent)
@@ -520,46 +520,60 @@ J1939_CRUISE_CONTROL_ENABLE,3,SPEED_CONTROL_STATUS,Speed control status (1=SPEED
 J1939_CRUISE_CONTROL_ENABLE,4,SPEED_BRAKE_INTERACTION,Enable speed control/engine braking interaction,1
 
 # J1939 Throttle Enable Flags
-J1939_THROTTLE_ENABLE,1,TSC1_RECEIVE_ENABLE,TSC1 message reception enable,1
+J1939_THROTTLE_ENABLE,1,ETC1_RECEIVE_ENABLE,ETC1(PGN 61442) message reception enable,1
 J1939_THROTTLE_ENABLE,2,J1939_MESSAGE_FLAGS,J1939 message enable flags table,1
 J1939_THROTTLE_ENABLE,3,ASG_THROTTLE_COEFF_1,ASG throttle mode compensation filter coef 1,1
 J1939_THROTTLE_ENABLE,4,ASG_THROTTLE_COEFF_2,ASG throttle mode compensation filter coef 2,1
 J1939_THROTTLE_ENABLE,5,ASG_THROTTLE_COEFF_3,ASG throttle mode compensation filter coef 3,1
 
-# TSC1 Engine Override Control Mode (Byte 0 bits 0-1)
-# Defines what type of control the external device is requesting
-TSC1_ENGINE_CONTROL_MODE,0,DISABLE_OVERRIDE,Disable speed/torque override - return to pedal control,1
-TSC1_ENGINE_CONTROL_MODE,1,SPEED_CONTROL,Speed control mode - target engine speed,1
-TSC1_ENGINE_CONTROL_MODE,2,TORQUE_CONTROL,Torque control mode - limit engine torque,1
-TSC1_ENGINE_CONTROL_MODE,3,SPEED_TORQUE_LIMIT,Speed/torque limit mode - apply both limits,1
+# ETC1_SPN560_DRIVELINE_STATE - SPN 560: Transmission Driveline Engaged (ETC1 byte 1 bits 1-2)
+# 0=not defined 1=disengaged 2=engaged 3=N/A
+ETC1_SPN560_DRIVELINE_STATE,0,DRIVELINE_NOT_DEFINED,Driveline state not defined/not supported,1
+ETC1_SPN560_DRIVELINE_STATE,1,DRIVELINE_DISENGAGED,Transmission driveline disengaged,1
+ETC1_SPN560_DRIVELINE_STATE,2,DRIVELINE_ENGAGED,Transmission driveline engaged,1
+ETC1_SPN560_DRIVELINE_STATE,3,DRIVELINE_NA,Driveline state not available,1
 
-# TSC1 Speed Control Condition (Byte 0 bits 2-3)
-# Specifies how the speed request should be interpreted
-TSC1_SPEED_CONDITION,0,NO_SPEED_CONDITION,No speed condition - use requested speed directly,1
-TSC1_SPEED_CONDITION,1,APPLY_AS_LIMIT,Apply requested speed as upper limit only,1
-TSC1_SPEED_CONDITION,2,NOT_AVAILABLE,Speed condition not available,1
-TSC1_SPEED_CONDITION,3,DONT_CARE,Speed condition don't care,1
+# ETC1_SPN573_TC_LOCKUP_STATE - SPN 573: Torque Converter Lockup Engaged (ETC1 byte 1 bits 3-4)
+# 0=disengaged 1=engaging 2=engaged 3=N/A
+ETC1_SPN573_TC_LOCKUP_STATE,0,TC_LOCKUP_DISENGAGED,Torque converter lockup disengaged,1
+ETC1_SPN573_TC_LOCKUP_STATE,1,TC_LOCKUP_ENGAGING,Torque converter lockup engaging (in progress),1
+ETC1_SPN573_TC_LOCKUP_STATE,2,TC_LOCKUP_ENGAGED,Torque converter lockup fully engaged,1
+ETC1_SPN573_TC_LOCKUP_STATE,3,TC_LOCKUP_NA,Torque converter lockup state not available,1
 
-# TSC1 Coast/Brake Override (Byte 0 bits 4-5)
-# Controls engine braking behavior during deceleration
-TSC1_COAST_BRAKE_MODE,0,NO_COAST_BRAKE,No coast/brake override active,1
-TSC1_COAST_BRAKE_MODE,1,COAST_DECEL,Coast deceleration mode active,1
-TSC1_COAST_BRAKE_MODE,2,ENGINE_BRAKE,Engine brake / exhaust brake active,1
-TSC1_COAST_BRAKE_MODE,3,RESERVED,Reserved coast/brake mode,1
+# ETC1_SPN574_SHIFT_STATE - SPN 574: Transmission Shift In Process (ETC1 byte 1 bits 5-6)
+# 0=no shift 1=shift in process 2=reserved 3=N/A
+ETC1_SPN574_SHIFT_STATE,0,NO_SHIFT_IN_PROCESS,No transmission shift in progress,1
+ETC1_SPN574_SHIFT_STATE,1,SHIFT_IN_PROCESS,Transmission shift currently in process,1
+ETC1_SPN574_SHIFT_STATE,2,SHIFT_RESERVED,Reserved (not used),1
+ETC1_SPN574_SHIFT_STATE,3,SHIFT_NA,Shift state not available,1
+
+# ETC1_SPN606_OVERSPEED_ENABLE - SPN 606: Engine Momentary Overspeed Enable (ETC1 byte 5 bits 1-2)
+# Transmission requests engine speed boost up to maximum governed speed
+ETC1_SPN606_OVERSPEED_ENABLE,0,OVERSPEED_DISABLED,Engine momentary overspeed not requested,1
+ETC1_SPN606_OVERSPEED_ENABLE,1,OVERSPEED_ENABLED,Engine momentary overspeed requested by transmission,1
+ETC1_SPN606_OVERSPEED_ENABLE,2,OVERSPEED_RESERVED,Reserved,1
+ETC1_SPN606_OVERSPEED_ENABLE,3,OVERSPEED_NA,Overspeed enable state not available,1
+
+# ETC1_SPN607_PROGRESSIVE_SHIFT - SPN 607: Progressive Shift Disable (ETC1 byte 5 bits 3-4)
+# Transmission commands engine to disable progressive shift (fuel ramp during shifts)
+ETC1_SPN607_PROGRESSIVE_SHIFT,0,PROGRESSIVE_SHIFT_ALLOW,Progressive shift allowed by transmission,1
+ETC1_SPN607_PROGRESSIVE_SHIFT,1,PROGRESSIVE_SHIFT_DISABLE,Progressive shift disabled - transmission controlling torque,1
+ETC1_SPN607_PROGRESSIVE_SHIFT,2,PROGRESSIVE_SHIFT_RESERVED,Reserved,1
+ETC1_SPN607_PROGRESSIVE_SHIFT,3,PROGRESSIVE_SHIFT_NA,Progressive shift state not available,1
 
 # Drivetrain Interface Type (drivetrain_type @ 0x003fdda6)
 # Calibration constant set at build time; controls J1939/VSS/TPU interface mode
 DRIVETRAIN_TYPE,0,DRIVETRAIN_STANDALONE,No transmission interface - standalone engine,2
 DRIVETRAIN_TYPE,1,DRIVETRAIN_MANUAL_VSS,Manual transmission with vehicle speed sensor (VSS),2
 DRIVETRAIN_TYPE,3,DRIVETRAIN_MANUAL_TPU,Manual transmission with direct TPU hardware throttle/PTO,2
-DRIVETRAIN_TYPE,4,DRIVETRAIN_AUTO_J1939_FULL,Automatic trans - J1939 TSC1 + cruise/vehicle speed,2
-DRIVETRAIN_TYPE,5,DRIVETRAIN_AUTO_J1939_TSC1,Automatic trans - J1939 TSC1 shift defuel only,2
+DRIVETRAIN_TYPE,4,DRIVETRAIN_AUTO_J1939_FULL,Automatic trans - J1939 ETC1(PGN 61442) + cruise/vehicle speed,2
+DRIVETRAIN_TYPE,5,DRIVETRAIN_AUTO_J1939_ETC1,Automatic trans - J1939 ETC1(PGN 61442) shift defuel only,2
 
 # Governor Mode States
 # Internal governor state machine values
 GOVERNOR_MODE,0,GOV_DISABLED,Governor control disabled - pedal/throttle control,1
-GOVERNOR_MODE,1,GOV_SPEED_CONTROL,Speed control mode - maintain target RPM,1
-GOVERNOR_MODE,2,GOV_TORQUE_CONTROL,Torque control mode - limit engine torque,1
+GOVERNOR_MODE,1,GOV_DRIVELINE_DISENGAGED,Speed control mode - maintain target RPM,1
+GOVERNOR_MODE,2,GOV_DRIVELINE_ENGAGED,Torque control mode - limit engine torque,1
 GOVERNOR_MODE,3,GOV_SPEED_TORQUE,Combined speed and torque control mode,1
 
 # J1939 Diagnostic Protocol Modes

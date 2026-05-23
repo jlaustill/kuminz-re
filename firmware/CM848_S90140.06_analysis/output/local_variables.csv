@@ -5,11 +5,11 @@ function_address,function_name,old_name,new_name,type,comment
 # copyCalibrationToRam @ 0x00000340 - Copies ROM calibration defaults to RAM
 0x00000340,copyCalibrationToRam,puVar1,src_ptr,undefined4 *,Source pointer (ROM calibration data)
 0x00000340,copyCalibrationToRam,puVar2,dest_ptr,undefined4 *,Destination pointer (RAM working copy)
-# processTsc1Command @ 0x00022d60 - Handle TSC1 (Torque/Speed Control) J1939 messages
-0x00022d60,processTsc1Command,bVar3,control_mode,byte,TSC1 control mode (0=disable 1=speed 2=torque 3=both)
-0x00022d60,processTsc1Command,bVar4,priority_bits,byte,TSC1 priority bits (bits 4-5 of control word)
-0x00022d60,processTsc1Command,cVar1,source_address,char,J1939 source address of TSC1 sender
-0x00022d60,processTsc1Command,sVar2,result,short,Function call return value
+# cm848_j1939ProcessPgn61442Etc1 @ 0x00022d60 - Handle ETC1 (Electronic Transmission Controller 1) PGN 61442 messages
+0x00022d60,cm848_j1939ProcessPgn61442Etc1,bVar3,control_mode,byte,ETC1 byte1 bits1-2 SPN560 driveline engaged state (0=undef 1=disengaged 2=engaged 3=NA)
+0x00022d60,cm848_j1939ProcessPgn61442Etc1,bVar4,priority_bits,byte,ETC1 byte5 SPN607 progressive shift disable bits
+0x00022d60,cm848_j1939ProcessPgn61442Etc1,cVar1,source_address,char,J1939 source address of ETC1 sender (SPN 1482)
+0x00022d60,cm848_j1939ProcessPgn61442Etc1,sVar2,result,short,Function call return value
 # mpc555_generateSerialChallenge @ 0x000032dc - Generate serial handshake challenge and queue response
 # cm848_validateWriteAuth @ 0x00007370 - Validate scrambled auth token for calibration writes
 0x00007370,cm848_validateWriteAuth,param_1,scrambled_token,undefined4,Pointer to 10-byte scrambled auth data from tool

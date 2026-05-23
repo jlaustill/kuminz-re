@@ -612,68 +612,68 @@ timing_mode_control_t,,fuel_source_mode_11_state,word,2,Fuel source mode 11 stat
 timing_mode_control_t,,fuel_source_mode_11_timer,word,2,Fuel source mode 11 timer,,verified
 timing_mode_control_t,,fuel_mode_transition_state,word,2,Fuel mode transition state,,verified
 timing_mode_control_t,,fuel_mode_transition_timer,word,2,Fuel mode transition timer,,verified
-# TSC1 Message Buffer - parsed J1939 TSC1 (Torque/Speed Control) message data
-# Populated by j1939ProcessTorqueSpeedControl when TSC1 messages arrive
+# ETC1 Message Buffer - parsed J1939 ETC1 (Torque/Speed Control) message data
+# Populated by j1939ProcessTorqueSpeedControl when ETC1 messages arrive
 # Total size: 32 bytes (0x003fa982-0x003fa9a1)
-tsc1_message_t,0x003fa982,speed_previous,word,2,Previous speed request value stored,,verified
-tsc1_message_t,0x003fa982,byte0_control_mode,byte,1,TSC1 byte 0: Engine Override Control Mode (bits 0-1=mode 2-3=speed_cond 4-5=coast),,verified
-tsc1_message_t,0x003fa982,bytes12_requested_speed,word,2,TSC1 bytes 1-2: Requested speed (0.125 RPM/bit little-endian),,verified
-tsc1_message_t,0x003fa982,reserved_05,byte,1,Gap/reserved byte,,needs_review
-tsc1_message_t,0x003fa982,byte4_priority,byte,1,TSC1 byte 4: Override Control Mode Priority/Status,,verified
-tsc1_message_t,0x003fa982,reserved_07,byte,3,Gap/reserved bytes,,needs_review
-tsc1_message_t,0x003fa982,auxiliary_state,byte,1,TSC1 auxiliary state byte,,verified
-tsc1_message_t,0x003fa982,reserved_0b,byte,9,Gap/reserved bytes to offset 0x14,,needs_review
-tsc1_message_t,0x003fa982,control_word,byte,1,TSC1 control word from message,,verified
-tsc1_message_t,0x003fa982,requested_speed,word,2,TSC1 requested speed value (0.125 RPM/bit),,verified
-tsc1_message_t,0x003fa982,requested_torque,byte,1,TSC1 requested torque percentage,,verified
-tsc1_message_t,0x003fa982,reserved_18,byte,4,Gap/reserved bytes,,needs_review
-tsc1_message_t,0x003fa982,priority_byte,byte,1,TSC1 message priority level,,verified
-tsc1_message_t,0x003fa982,speed_stored,word,2,TSC1 requested speed stored for governor,,verified
-tsc1_message_t,0x003fa982,torque_stored,byte,1,TSC1 requested torque stored for governor,,verified
-# TSC1 State Machine - TSC1 control state variables for governor
-# Used by processTsc1Command, j1939ProcessTorqueSpeedControl, selectTorqueLimitMode, governorSpeedControl
+etc1_message_t,0x003fa982,speed_previous,word,2,Previous speed request value stored,,verified
+etc1_message_t,0x003fa982,byte1_status,byte,1,ETC1 byte 1: SPN560(bits1-2=driveline) SPN573(bits3-4=TC_lockup) SPN574(bits5-6=shift),,verified
+etc1_message_t,0x003fa982,spn191_output_shaft_speed,word,2,ETC1 bytes 2-3: SPN191 Transmission Output Shaft Speed,,verified
+etc1_message_t,0x003fa982,spn522_clutch_slip,byte,1,ETC1 byte 4: SPN522 Percent Clutch Slip,,verified
+etc1_message_t,0x003fa982,byte5_control,byte,1,ETC1 byte 5: SPN606(bits1-2=overspeed_enable) SPN607(bits3-4=progressive_shift_disable),,verified
+etc1_message_t,0x003fa982,reserved_07,byte,3,Gap/reserved bytes,,needs_review
+etc1_message_t,0x003fa982,auxiliary_state,byte,1,ETC1 auxiliary state byte,,verified
+etc1_message_t,0x003fa982,reserved_0b,byte,9,Gap/reserved bytes to offset 0x14,,needs_review
+etc1_message_t,0x003fa982,control_word,byte,1,ETC1 byte 1 status word (packed SPN560+SPN573+SPN574),,verified
+etc1_message_t,0x003fa982,requested_speed,word,2,SPN191 Transmission Output Shaft Speed stored,,verified
+etc1_message_t,0x003fa982,requested_torque,byte,1,SPN522 Percent Clutch Slip,,verified
+etc1_message_t,0x003fa982,reserved_18,byte,4,Gap/reserved bytes,,needs_review
+etc1_message_t,0x003fa982,priority_byte,byte,1,ETC1 byte 5 control stored (SPN606+SPN607),,verified
+etc1_message_t,0x003fa982,speed_stored,word,2,SPN191 Output Shaft Speed stored for comparison,,verified
+etc1_message_t,0x003fa982,torque_stored,byte,1,SPN522 Percent Clutch Slip stored for comparison,,verified
+# ETC1 State Machine - ETC1 control state variables for governor
+# Used by processEtc1Command, j1939ProcessTorqueSpeedControl, selectTorqueLimitMode, governorSpeedControl
 # Total size: 78 bytes (0x0040ae00-0x0040ae4d)
 # Note: Uses word-sized fields to avoid overlapping symbol issues
-tsc1_state_t,0x0040ae00,mode3_speed_target,word,2,TSC1 mode 3 requested speed target,,verified
-tsc1_state_t,0x0040ae00,speed_setpoint,word,2,TSC1 speed setpoint for torque calculation,,verified
-tsc1_state_t,0x0040ae00,capped_speed_target,word,2,TSC1 mode 1 speed target capped at 24000 (3000 RPM),,verified
-tsc1_state_t,0x0040ae00,control_flags,word,2,TSC1 control flags,,verified
-tsc1_state_t,0x0040ae00,mode3_torque_limit,word,2,TSC1 mode 3 calculated torque limit,,verified
-tsc1_state_t,0x0040ae00,torque_limit_calc,word,2,Calculated torque limit from TSC1 request (signed),,verified
-tsc1_state_t,0x0040ae00,speed_control_mode,word,2,Speed control mode bits extracted from TSC1 byte 0,,verified
-tsc1_state_t,0x0040ae00,active_state,word,2,TSC1 active state (1=control active),,verified
-tsc1_state_t,0x0040ae00,reserved_10,word,2,Reserved/gap at offset 0x10,,needs_review
-tsc1_state_t,0x0040ae00,mode_active,word,2,TSC1 mode active flag (1=TSC1 control active),,verified
-tsc1_state_t,0x0040ae00,disable_override,word,2,TSC1 disable override flag (1=disable 0=enable),,verified
-tsc1_state_t,0x0040ae00,handler_initialized,word,2,TSC1 handler initialized flag,,verified
-tsc1_state_t,0x0040ae00,speed_control_target,word,2,Speed control target setpoint (0.125 RPM/bit),,verified
-tsc1_state_t,0x0040ae00,coast_brake_mode,byte,1,TSC1 coast/brake mode flag (from byte 0 bits 4-5),,verified
-tsc1_state_t,0x0040ae00,address_filter,byte,1,TSC1 source address filter value (0xFF=any),,verified
-tsc1_state_t,0x0040ae00,reserved_1c,byte,10,Gap to timer region,,needs_review
-tsc1_state_t,0x0040ae00,torque_mode_timer,word,2,TSC1 torque mode timeout counter,,verified
-tsc1_state_t,0x0040ae00,torque_active_timer,word,2,TSC1 torque active timeout counter,,verified
-tsc1_state_t,0x0040ae00,speed_override_timer,word,2,TSC1 speed override timeout counter,,verified
-tsc1_state_t,0x0040ae00,torque_limit_timer,word,2,TSC1 torque limit timeout counter,,verified
-tsc1_state_t,0x0040ae00,speed_mode_flag,word,2,TSC1 speed mode flag,,verified
-tsc1_state_t,0x0040ae00,mode_timeout,word,2,TSC1 mode timeout counter,,verified
-tsc1_state_t,0x0040ae00,speed_cmd_timeout,word,2,TSC1 speed command timeout counter,,verified
-tsc1_state_t,0x0040ae00,override_timeout,word,2,TSC1 override timeout counter,,verified
-tsc1_state_t,0x0040ae00,reserved_36,byte,3,Gap to source address,,needs_review
-tsc1_state_t,0x0040ae00,source_address,byte,1,TSC1 source address of current command,,verified
-tsc1_state_t,0x0040ae00,config_entry_ptr,dword,4,Pointer to TSC1 configuration table entry,,verified
-tsc1_state_t,0x0040ae00,active_config_ptr,dword,4,Pointer to active TSC1 configuration,,verified
-tsc1_state_t,0x0040ae00,secondary_config_ptr,dword,4,Pointer to secondary TSC1 configuration,,verified
-tsc1_state_t,0x0040ae00,torque_limit_active,word,2,TSC1 torque limit mode active flag,,verified
-tsc1_state_t,0x0040ae00,message_timeout,word,2,TSC1 message timeout counter (lost message detection),,verified
+etc1_state_t,0x0040ae00,mode3_speed_target,word,2,ETC1 mode 3 requested speed target,,verified
+etc1_state_t,0x0040ae00,speed_setpoint,word,2,ETC1 speed setpoint for torque calculation,,verified
+etc1_state_t,0x0040ae00,capped_speed_target,word,2,ETC1 mode 1 speed target capped at 24000 (3000 RPM),,verified
+etc1_state_t,0x0040ae00,control_flags,word,2,ETC1 control flags,,verified
+etc1_state_t,0x0040ae00,mode3_torque_limit,word,2,ETC1 mode 3 calculated torque limit,,verified
+etc1_state_t,0x0040ae00,torque_limit_calc,word,2,Calculated torque limit from ETC1 request (signed),,verified
+etc1_state_t,0x0040ae00,speed_control_mode,word,2,Speed control mode bits extracted from ETC1 byte 1 (SPN560 driveline state),,verified
+etc1_state_t,0x0040ae00,active_state,word,2,ETC1 active state (1=control active),,verified
+etc1_state_t,0x0040ae00,reserved_10,word,2,Reserved/gap at offset 0x10,,needs_review
+etc1_state_t,0x0040ae00,control_active,word,2,ETC1 control active flag (1=ETC1 handler processing shifts),,verified
+etc1_state_t,0x0040ae00,spn573_tc_lockup_disengage,word,2,SPN573 TC lockup disengaged: 1=disable override when TC not locked,,verified
+etc1_state_t,0x0040ae00,handler_initialized,word,2,ETC1 handler initialized flag,,verified
+etc1_state_t,0x0040ae00,speed_control_target,word,2,Speed control target setpoint (0.125 RPM/bit),,verified
+etc1_state_t,0x0040ae00,spn574_shift_in_process,byte,1,SPN574 Shift In Process: 1=transmission shift active (ETC1 byte 1 bits 5-6 = 01),,verified
+etc1_state_t,0x0040ae00,address_filter,byte,1,ETC1 source address filter value (0xFF=any),,verified
+etc1_state_t,0x0040ae00,reserved_1c,byte,10,Gap to timer region,,needs_review
+etc1_state_t,0x0040ae00,torque_mode_timer,word,2,ETC1 torque mode timeout counter,,verified
+etc1_state_t,0x0040ae00,torque_active_timer,word,2,ETC1 torque active timeout counter,,verified
+etc1_state_t,0x0040ae00,speed_override_timer,word,2,ETC1 speed override timeout counter,,verified
+etc1_state_t,0x0040ae00,torque_limit_timer,word,2,ETC1 torque limit timeout counter,,verified
+etc1_state_t,0x0040ae00,speed_mode_flag,word,2,ETC1 speed mode flag,,verified
+etc1_state_t,0x0040ae00,mode_timeout,word,2,ETC1 mode timeout counter,,verified
+etc1_state_t,0x0040ae00,speed_cmd_timeout,word,2,ETC1 speed command timeout counter,,verified
+etc1_state_t,0x0040ae00,override_timeout,word,2,ETC1 override timeout counter,,verified
+etc1_state_t,0x0040ae00,reserved_36,byte,3,Gap to source address,,needs_review
+etc1_state_t,0x0040ae00,source_address,byte,1,ETC1 source address of current command,,verified
+etc1_state_t,0x0040ae00,config_entry_ptr,dword,4,Pointer to ETC1 configuration table entry,,verified
+etc1_state_t,0x0040ae00,active_config_ptr,dword,4,Pointer to active ETC1 configuration,,verified
+etc1_state_t,0x0040ae00,secondary_config_ptr,dword,4,Pointer to secondary ETC1 configuration,,verified
+etc1_state_t,0x0040ae00,torque_limit_active,word,2,ETC1 torque limit mode active flag,,verified
+etc1_state_t,0x0040ae00,message_timeout,word,2,ETC1 message timeout counter (lost message detection),,verified
 # Governor Control State - speed/torque governor state machine
 # Used by governorSpeedControl, processGovernorModeTransition
 # Total size: 12 bytes (0x0040adf4-0x0040adff)
-governor_control_t,0x0040adf4,tsc1_control_word,word,2,TSC1 control word stored from message,,verified
+governor_control_t,0x0040adf4,etc1_control_word,word,2,ETC1 control word stored from message,,verified
 governor_control_t,0x0040adf4,mode_request,word,2,Governor mode request (GOVERNOR_MODE enum),,verified
 governor_control_t,0x0040adf4,mode,word,2,Current governor mode (GOVERNOR_MODE enum),,verified
 governor_control_t,0x0040adf4,torque_limit_select,word,2,Torque limit mode selection (0=off 1=active),,verified
-governor_control_t,0x0040adf4,disable_control,word,2,TSC1 disable control flag,,verified
-governor_control_t,0x0040adf4,limit_state,dword,4,TSC1 limit state (low=torque_limit high=speed_limit),,verified
+governor_control_t,0x0040adf4,disable_control,word,2,ETC1 disable control flag,,verified
+governor_control_t,0x0040adf4,limit_state,dword,4,ETC1 limit state (low=torque_limit high=speed_limit),,verified
 
 # Parameter ID Lookup Entry - firmware parameter lookup table entry
 # Located at ROM 0x3CDC (copied to RAM 0x3F98AC at boot)
@@ -819,63 +819,63 @@ usiu_memc_t,0x002fc100,BR2,dword,4,Base Register 2,,verified
 usiu_memc_t,0x002fc100,OR2,dword,4,Option Register 2,,verified
 usiu_memc_t,0x002fc100,BR3,dword,4,Base Register 3,,verified
 usiu_memc_t,0x002fc100,OR3,dword,4,Option Register 3,,verified
-# TSC1 / Governor State Block - combined TSC1 handler and governor control state
+# ETC1 / Governor State Block - combined ETC1 handler and governor control state
 # Used by cm848_j1939ProcessTorqueSpeedControl, torqueControlModeHandler,
 #   cm848_j1939ProcessGovernorRequest, cm848_processGovernorModeTransition
 # Total size: 86 bytes (0x0040adf8-0x0040ae4d)
-tsc1_governor_state_t,0x0040adf8,governor_mode,word,2,GOV_DISABLED=0 GOV_SPEED_CONTROL=1 GOV_TORQUE_CONTROL=2 GOV_SPEED_TORQUE=3,,verified
-tsc1_governor_state_t,0x0040adf8,torque_limit_mode_select,word,2,Selects which torque limit algorithm is active,,verified
-tsc1_governor_state_t,0x0040adf8,tsc1_disable_control,word,2,Set when TSC1 mode bits 0x30+0x03 both clear (speed disable),,verified
-tsc1_governor_state_t,0x0040adf8,tsc1_torque_limit_flag,word,2,1=TSC1 torque limit active (was tsc1_limit_state._0_2_),,verified
-tsc1_governor_state_t,0x0040adf8,tsc1_torque_limit_value,word,2,Torque limit value applied to fuel_limit_minimum when gov_mode=3 (was tsc1_limit_state._2_2_),,verified
-tsc1_governor_state_t,0x0040adf8,tsc1_speed_setpoint,word,2,Requested speed setpoint from TSC1 message,,verified
-tsc1_governor_state_t,0x0040adf8,tsc1_capped_speed_target,word,2,Speed target capped to valid operating range,,verified
-tsc1_governor_state_t,0x0040adf8,tsc1_control_flags,word,2,Packed control flags from TSC1 byte 0,,verified
-tsc1_governor_state_t,0x0040adf8,tsc1_mode3_torque_limit,word,2,Torque limit applied in GOV_SPEED_TORQUE mode,,verified
-tsc1_governor_state_t,0x0040adf8,tsc1_torque_limit_calc,word,2,Calculated torque limit intermediate value,,verified
-tsc1_governor_state_t,0x0040adf8,tsc1_speed_control_mode,word,2,Speed control sub-mode selector,,verified
-tsc1_governor_state_t,0x0040adf8,tsc1_active_state,word,2,1=TSC1 session active (source address accepted),,verified
-tsc1_governor_state_t,0x0040adf8,tsc1_speed_disable_latch,word,2,Set when TSC1 speed override is disabled (byte0 bits 0x30+0x03 == 0),,verified
-tsc1_governor_state_t,0x0040adf8,tsc1_mode_active,word,2,1=TSC1 mode activated (trans type 4 or 5 required),,verified
-tsc1_governor_state_t,0x0040adf8,tsc1_disable_override,word,2,1=TSC1 disable override asserted,,verified
-tsc1_governor_state_t,0x0040adf8,tsc1_handler_initialized,word,2,1=TSC1 handler init complete,,verified
-tsc1_governor_state_t,0x0040adf8,speed_control_target,word,2,Bitmask: bit0=mode1 active bit1=mode2 active bit2=torque active,,verified
-tsc1_governor_state_t,0x0040adf8,tsc1_coast_brake_mode,byte,1,1=coast/brake mode from TSC1 byte0 bits 0x30==0x10,,verified
-tsc1_governor_state_t,0x0040adf8,tsc1_address_filter,byte,1,Source address filter (0xFF=accept all),,verified
-tsc1_governor_state_t,0x0040adf8,proprietary_offset_value,word,2,Proprietary PGN offset value,,needs_review
-tsc1_governor_state_t,0x0040adf8,tsc1_speed_error_timeout_flag,word,2,1=speed error timeout has fired,,verified
-tsc1_governor_state_t,0x0040adf8,tsc1_activation_confirm_timer,word,2,Countdown: loaded from config+6/+10 by gov mode; fires to confirm mode transition and log fault,,verified
-tsc1_governor_state_t,0x0040adf8,tsc1_speed_error_timeout,word,2,Countdown: fires to trigger DM1 on speed error,,verified
-tsc1_governor_state_t,0x0040adf8,tsc1_error_fault_timer,word,2,Countdown: loaded from secondary_config+0x10; fires to log fault and call resetGovernorState,,verified
-tsc1_governor_state_t,0x0040adf8,tsc1_multiframe_timeout,word,2,Countdown: loaded from secondary_config+0xe/+0x12 after multi-frame transfer; fires to call resetGovernorState,,verified
-tsc1_governor_state_t,0x0040adf8,tsc1_torque_mode_timer,word,2,Countdown for torque mode hold duration,,verified
-tsc1_governor_state_t,0x0040adf8,tsc1_torque_active_timer,word,2,Countdown for torque active confirmation,,verified
-tsc1_governor_state_t,0x0040adf8,tsc1_speed_override_timer,word,2,Countdown for speed override hold duration,,verified
-tsc1_governor_state_t,0x0040adf8,tsc1_torque_limit_timer,word,2,Countdown for torque limit assertion hold,,verified
-tsc1_governor_state_t,0x0040adf8,tsc1_mode_transition_timer,word,2,Countdown: parallel to tsc1_multiframe_timeout but fires to clear local state rather than call resetGovernorState,,verified
-tsc1_governor_state_t,0x0040adf8,tsc1_speed_mode_flag,word,2,Speed mode active flag,,verified
-tsc1_governor_state_t,0x0040adf8,tsc1_mode_timeout,word,2,Countdown: TSC1 mode hold duration (loaded from config),,verified
-tsc1_governor_state_t,0x0040adf8,tsc1_speed_cmd_timeout,word,2,Countdown: speed command timeout (loaded from config),,verified
-tsc1_governor_state_t,0x0040adf8,tsc1_override_timeout,word,2,Countdown: disable override hold duration (loaded from config),,verified
-tsc1_governor_state_t,0x0040adf8,governor_mode_transition_counter,word,2,Counter tracking governor mode transitions,,verified
-tsc1_governor_state_t,0x0040adf8,_pad,byte,1,Alignment padding,,verified
-tsc1_governor_state_t,0x0040adf8,tsc1_source_address,byte,1,J1939 source address of active TSC1 sender,,verified
-tsc1_governor_state_t,0x0040adf8,tsc1_config_entry_ptr,pointer,4,short* into tsc1 config table at DAT_0005c3b4 (10 entries x 20 bytes),,verified
-tsc1_governor_state_t,0x0040adf8,tsc1_active_config_ptr,pointer,4,short* to primary config entry (accepts TSC1 with lower priority),,verified
-tsc1_governor_state_t,0x0040adf8,tsc1_secondary_config_ptr,pointer,4,short* to secondary config entry (used for multi-frame response timers),,verified
-tsc1_governor_state_t,0x0040adf8,tsc1_torque_limit_active,word,2,1=TSC1 torque limit currently limiting fuel,,verified
-tsc1_governor_state_t,0x0040adf8,tsc1_message_timeout,word,2,Countdown: fires if no TSC1 message received within window,,verified
-# TSC1 Config Table Entry (DAT_0005c3b4 - 10 entries x 20 bytes, ROM/Bank1)
+etc1_governor_state_t,0x0040adf8,governor_mode,word,2,GOV_DISABLED=0 GOV_SPEED_CONTROL=1 GOV_TORQUE_CONTROL=2 GOV_SPEED_TORQUE=3,,verified
+etc1_governor_state_t,0x0040adf8,torque_limit_mode_select,word,2,Selects which torque limit algorithm is active,,verified
+etc1_governor_state_t,0x0040adf8,etc1_disable_control,word,2,Set when ETC1 mode bits 0x30+0x03 both clear (speed disable),,verified
+etc1_governor_state_t,0x0040adf8,etc1_spn607_progressive_shift_disable,word,2,1=ETC1 torque limit active (was etc1_limit_state._0_2_),,verified
+etc1_governor_state_t,0x0040adf8,etc1_torque_limit_value,word,2,Torque limit value applied to fuel_limit_minimum when gov_mode=3 (was etc1_limit_state._2_2_),,verified
+etc1_governor_state_t,0x0040adf8,etc1_speed_setpoint,word,2,Requested speed setpoint from ETC1 message,,verified
+etc1_governor_state_t,0x0040adf8,etc1_capped_speed_target,word,2,Speed target capped to valid operating range,,verified
+etc1_governor_state_t,0x0040adf8,etc1_control_flags,word,2,Packed control flags from ETC1 byte 1 (SPN560+SPN573+SPN574),,verified
+etc1_governor_state_t,0x0040adf8,etc1_mode3_torque_limit,word,2,Torque limit applied in GOV_SPEED_TORQUE mode,,verified
+etc1_governor_state_t,0x0040adf8,etc1_torque_limit_calc,word,2,Calculated torque limit intermediate value,,verified
+etc1_governor_state_t,0x0040adf8,etc1_speed_control_mode,word,2,Speed control sub-mode selector,,verified
+etc1_governor_state_t,0x0040adf8,etc1_active_state,word,2,1=ETC1 session active (source address accepted),,verified
+etc1_governor_state_t,0x0040adf8,etc1_speed_disable_latch,word,2,Set when ETC1 speed override is disabled (byte0 bits 0x30+0x03 == 0),,verified
+etc1_governor_state_t,0x0040adf8,etc1_control_active,word,2,1=ETC1 mode activated (trans type 4 or 5 required),,verified
+etc1_governor_state_t,0x0040adf8,etc1_spn573_tc_lockup_disengage,word,2,1=ETC1 disable override asserted,,verified
+etc1_governor_state_t,0x0040adf8,etc1_handler_initialized,word,2,1=ETC1 handler init complete,,verified
+etc1_governor_state_t,0x0040adf8,speed_control_target,word,2,Bitmask: bit0=mode1 active bit1=mode2 active bit2=torque active,,verified
+etc1_governor_state_t,0x0040adf8,etc1_spn574_shift_in_process,byte,1,1=coast/brake mode from ETC1 byte0 bits 0x30==0x10,,verified
+etc1_governor_state_t,0x0040adf8,etc1_address_filter,byte,1,Source address filter (0xFF=accept all),,verified
+etc1_governor_state_t,0x0040adf8,proprietary_offset_value,word,2,Proprietary PGN offset value,,needs_review
+etc1_governor_state_t,0x0040adf8,etc1_speed_error_timeout_flag,word,2,1=speed error timeout has fired,,verified
+etc1_governor_state_t,0x0040adf8,etc1_activation_confirm_timer,word,2,Countdown: loaded from config+6/+10 by gov mode; fires to confirm mode transition and log fault,,verified
+etc1_governor_state_t,0x0040adf8,etc1_speed_error_timeout,word,2,Countdown: fires to trigger DM1 on speed error,,verified
+etc1_governor_state_t,0x0040adf8,etc1_error_fault_timer,word,2,Countdown: loaded from secondary_config+0x10; fires to log fault and call resetGovernorState,,verified
+etc1_governor_state_t,0x0040adf8,etc1_multiframe_timeout,word,2,Countdown: loaded from secondary_config+0xe/+0x12 after multi-frame transfer; fires to call resetGovernorState,,verified
+etc1_governor_state_t,0x0040adf8,etc1_torque_mode_timer,word,2,Countdown for torque mode hold duration,,verified
+etc1_governor_state_t,0x0040adf8,etc1_torque_active_timer,word,2,Countdown for torque active confirmation,,verified
+etc1_governor_state_t,0x0040adf8,etc1_speed_override_timer,word,2,Countdown for speed override hold duration,,verified
+etc1_governor_state_t,0x0040adf8,etc1_torque_limit_timer,word,2,Countdown for torque limit assertion hold,,verified
+etc1_governor_state_t,0x0040adf8,etc1_mode_transition_timer,word,2,Countdown: parallel to etc1_multiframe_timeout but fires to clear local state rather than call resetGovernorState,,verified
+etc1_governor_state_t,0x0040adf8,etc1_speed_mode_flag,word,2,Speed mode active flag,,verified
+etc1_governor_state_t,0x0040adf8,etc1_mode_timeout,word,2,Countdown: ETC1 mode hold duration (loaded from config),,verified
+etc1_governor_state_t,0x0040adf8,etc1_speed_cmd_timeout,word,2,Countdown: speed command timeout (loaded from config),,verified
+etc1_governor_state_t,0x0040adf8,etc1_override_timeout,word,2,Countdown: disable override hold duration (loaded from config),,verified
+etc1_governor_state_t,0x0040adf8,governor_mode_transition_counter,word,2,Counter tracking governor mode transitions,,verified
+etc1_governor_state_t,0x0040adf8,_pad,byte,1,Alignment padding,,verified
+etc1_governor_state_t,0x0040adf8,etc1_spn1482_source_address,byte,1,J1939 source address of active ETC1 sender,,verified
+etc1_governor_state_t,0x0040adf8,etc1_config_entry_ptr,pointer,4,short* into etc1 config table at DAT_0005c3b4 (10 entries x 20 bytes),,verified
+etc1_governor_state_t,0x0040adf8,etc1_active_config_ptr,pointer,4,short* to primary config entry (accepts ETC1 with lower priority),,verified
+etc1_governor_state_t,0x0040adf8,etc1_secondary_config_ptr,pointer,4,short* to secondary config entry (used for multi-frame response timers),,verified
+etc1_governor_state_t,0x0040adf8,etc1_torque_limit_active,word,2,1=ETC1 torque limit currently limiting fuel,,verified
+etc1_governor_state_t,0x0040adf8,etc1_message_timeout,word,2,Countdown: fires if no ETC1 message received within window,,verified
+# ETC1 Config Table Entry (DAT_0005c3b4 - 10 entries x 20 bytes, ROM/Bank1)
 # Search loop: match_key + source_address_filter select the active config entry
-# Pointer stride: tsc1_config_entry_ptr advances by 10 shorts (20 bytes) per iteration
+# Pointer stride: etc1_config_entry_ptr advances by 10 shorts (20 bytes) per iteration
 # activation_confirm_timeout: loaded at offset+6 (mode1) or offset+10 (mode2); mode3 hardcodes 0
-tsc1_config_entry_t,0x0005c3b4,match_key,word,2,J1939 control byte type for entry matching (1=wildcard; must match TSC1 byte0 type),,verified
-tsc1_config_entry_t,0x0005c3b4,source_address_filter,word,2,Low byte = J1939 SA to match (0xFF=wildcard); high byte = priority filter,,verified
-tsc1_config_entry_t,0x0005c3b4,speed_error_timeout_mode1,word,2,tsc1_speed_error_timeout reload value for GOV_SPEED_CONTROL (mode 1),,verified
-tsc1_config_entry_t,0x0005c3b4,activation_confirm_timeout_mode1,word,2,tsc1_activation_confirm_timer reload value for GOV_SPEED_CONTROL (mode 1),,verified
-tsc1_config_entry_t,0x0005c3b4,speed_error_timeout_mode2,word,2,tsc1_speed_error_timeout reload value for GOV_TORQUE_CONTROL (mode 2),,verified
-tsc1_config_entry_t,0x0005c3b4,activation_confirm_timeout_mode2,word,2,tsc1_activation_confirm_timer reload value for GOV_TORQUE_CONTROL (mode 2),,verified
-tsc1_config_entry_t,0x0005c3b4,speed_error_timeout_mode3,word,2,tsc1_speed_error_timeout reload value for GOV_SPEED_TORQUE (mode 3),,verified
-tsc1_config_entry_t,0x0005c3b4,multiframe_timeout_mode2,word,2,tsc1_multiframe_timeout and tsc1_mode_transition_timer reload for mode 2 multi-frame,,verified
-tsc1_config_entry_t,0x0005c3b4,error_fault_timeout,word,2,tsc1_error_fault_timer reload value (fired on governor_error_term==2),,verified
-tsc1_config_entry_t,0x0005c3b4,multiframe_timeout_mode3,word,2,tsc1_multiframe_timeout reload value for mode 3 multi-frame (governor_error_term==3),,verified
+etc1_config_entry_t,0x0005c3b4,match_key,word,2,J1939 control byte type for entry matching (1=wildcard; must match ETC1 byte0 type),,verified
+etc1_config_entry_t,0x0005c3b4,source_address_filter,word,2,Low byte = J1939 SA to match (0xFF=wildcard); high byte = priority filter,,verified
+etc1_config_entry_t,0x0005c3b4,speed_error_timeout_mode1,word,2,etc1_speed_error_timeout reload value for GOV_SPEED_CONTROL (mode 1),,verified
+etc1_config_entry_t,0x0005c3b4,activation_confirm_timeout_mode1,word,2,etc1_activation_confirm_timer reload value for GOV_SPEED_CONTROL (mode 1),,verified
+etc1_config_entry_t,0x0005c3b4,speed_error_timeout_mode2,word,2,etc1_speed_error_timeout reload value for GOV_TORQUE_CONTROL (mode 2),,verified
+etc1_config_entry_t,0x0005c3b4,activation_confirm_timeout_mode2,word,2,etc1_activation_confirm_timer reload value for GOV_TORQUE_CONTROL (mode 2),,verified
+etc1_config_entry_t,0x0005c3b4,speed_error_timeout_mode3,word,2,etc1_speed_error_timeout reload value for GOV_SPEED_TORQUE (mode 3),,verified
+etc1_config_entry_t,0x0005c3b4,multiframe_timeout_mode2,word,2,etc1_multiframe_timeout and etc1_mode_transition_timer reload for mode 2 multi-frame,,verified
+etc1_config_entry_t,0x0005c3b4,error_fault_timeout,word,2,etc1_error_fault_timer reload value (fired on governor_error_term==2),,verified
+etc1_config_entry_t,0x0005c3b4,multiframe_timeout_mode3,word,2,etc1_multiframe_timeout reload value for mode 3 multi-frame (governor_error_term==3),,verified
