@@ -29,3 +29,4 @@
 019 [X] [firmware] Cross-firmware RAM variable naming campaign - CM550 Tier 1+2 (455 named), CM848 (8 named), 20 cross-firmware matches validated
 020 [ ] [all] Test coverage implementation - Catch2 for C++, Vitest for TypeScript, 6 phases by priority
 021 [?] [firmware/kuminz-cli] CM848D J1939 broadcast trigger - EF00 0x0a→0x07 (or 0x16 alone) — needs live truck test to verify broadcasts start
+022 [>] [firmware/oct] CM848D J1939 drive-by-wire — trace j1939_governor_config_flags gate, enable TSC1 speed control
