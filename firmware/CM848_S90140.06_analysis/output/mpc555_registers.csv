@@ -462,3 +462,4 @@ address,name,type,comment
 0x00307420,TOUCAN_B_ESR,u16,TouCAN B Error and Status Register
 0x00307422,TOUCAN_B_IMASK,u16,TouCAN B Interrupt Mask Register
 0x00307424,TOUCAN_B_IFLAG,u16,TouCAN B Interrupt Flag Register
+0x00307f80,toucan_can_ext_ctrl,u16,TouCAN extended control (written 0 at startup)

@@ -1367,3 +1367,31 @@ diag_buf_a_ctrl_t,0x0030305a,end_ptr,dword,4,Pointer to end of buffer A data are
 # =============================================================================
 boot_state_t,0x003034a0,boot_param,word,2,Boot state machine initialization parameter,,verified
 boot_state_t,0x003034a0,boot_phase,word,2,Boot phase counter (cycles 0-3 per PISCR interrupt),,verified
+# =============================================================================
+# MIOS MDASM channel 27 @ 0x3060d8
+# Same 8-byte layout as mios_mdasm_t (AR, BR, XR, SCRD)
+# Injector channel 0x7d - consecutive to MDASM15 (0x7c) in the switch dispatch
+# SCRD at offset 6 (0x3060de): written 0x405/0x205 for injector timing enable
+# =============================================================================
+mios_mdasm27_t,0x003060d8,AR,word,2,A Register (capture/compare value A),,verified
+mios_mdasm27_t,0x003060d8,BR,word,2,B Register (capture/compare value B),,verified
+mios_mdasm27_t,0x003060d8,XR,word,2,X Register (extended capture/status value),,verified
+mios_mdasm27_t,0x003060d8,SCRD,word,2,Status/Control Register D (0x405=enable / 0x205=mode),,verified
+# =============================================================================
+# MIOS1 extended control registers @ 0x306100
+# Unused MIOS1 sub-register file space repurposed as firmware RAM
+# ctrl_a: bit 0x2000 set by capability_flags; bits 0x8000/0x200 by flash/ADC init
+# ctrl_b: initialized 0x2000 at startup; bits 0x8200 by flash init
+# Also buffers DM1 lamp status bytes during J1939 DM1 transmission
+# =============================================================================
+mios1_ext_ctrl_t,0x00306100,ctrl_a,word,2,Control/status word A (bit 0x2000=capability flag),,verified
+mios1_ext_ctrl_t,0x00306100,ctrl_b,word,2,Control/status word B (startup: 0x2000),,verified
+# =============================================================================
+# MIOS1 ISR flag and enable registers @ 0x306c00
+# MBAR + 0xEC00 = 0x306C00 - MIOS1 interrupt service registers
+# FLG: mpc555_miosInterruptDispatcher reads and clears bits (0xf84f channel mask)
+# EN:  interrupt enable mask (ANDed with FLG to find active channel)
+# =============================================================================
+mios1_isr_t,0x00306c00,FLG,word,2,MIOS1 interrupt flag register (bits cleared on service),,verified
+mios1_isr_t,0x00306c00,_pad2,word,2,Reserved,,verified
+mios1_isr_t,0x00306c00,EN,word,2,MIOS1 interrupt enable register (channel mask),,verified

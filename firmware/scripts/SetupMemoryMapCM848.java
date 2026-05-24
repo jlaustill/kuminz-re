@@ -28,6 +28,10 @@ public class SetupMemoryMapCM848 extends GhidraScript {
     // struct definitions (usiu_memc_t, usiu_pit_t, usiu_clock_t, etc.).
     private static final long USIU_BASE    = 0x002FC000L; // USIU internal registers
     private static final long USIU_LENGTH  = 0x1000L;    // 4 KB covers all known USIU structs
+    // MPC555 peripheral bus register space (TPU3, MIOS1, TouCAN A/B, etc.)
+    // Covers 0x302000-0x307FFF (includes all named peripheral structs)
+    private static final long MBAR_PERIPH_BASE   = 0x00302000L; // MBAR+0xA000
+    private static final long MBAR_PERIPH_LENGTH = 0x6000L;    // 24 KB: 0x302000-0x307FFF
 
     @Override
     public void run() throws Exception {
@@ -84,6 +88,11 @@ public class SetupMemoryMapCM848 extends GhidraScript {
         // Enables ApplyStructures to place usiu_memc_t, usiu_pit_t, usiu_clock_t, etc.
         println("[4/4] Adding MPC555 USIU peripheral register space (uninitialized)...");
         addPeripheralRegion(memory, "USIU_PERIPH", USIU_BASE, USIU_LENGTH);
+
+        // Add MPC555 peripheral bus space (TPU3, MIOS1, TouCAN A/B, etc.)
+        // Uninitialized block — allows vartypes and structures to cover all peripheral registers
+        println("[5/5] Adding MPC555 peripheral bus register space (uninitialized)...");
+        addPeripheralRegion(memory, "MBAR_PERIPH", MBAR_PERIPH_BASE, MBAR_PERIPH_LENGTH);
 
         println("");
         println("======================================================================");
