@@ -1204,3 +1204,166 @@ qsmcm_txram_t,0x00305180,TX2,word,2,QSPI Transmit RAM entry 2 (EEPROM address / 
 qsmcm_txram_t,0x00305180,TX3,word,2,QSPI Transmit RAM entry 3 (write data word),,verified
 qsmcm_txram_t,0x00305180,TX4,word,2,QSPI Transmit RAM entry 4,,verified
 qsmcm_txram_t,0x00305180,TX5,word,2,QSPI Transmit RAM entry 5,,verified
+# =============================================================================
+# TPU3-repurposed RAM state machine variables (0x302000-0x303FFF)
+# MPC555 TPU3 peripheral is disabled; this address range is used as general
+# firmware RAM for state machines, ring buffers, and protocol state.
+# Structs defined here cause Ghidra to show named field accesses in decompiler
+# rather than Ram003020xx / Ram003028xx anonymous references.
+# =============================================================================
+# Key-on capability flags and state machine @ 0x302002
+# capability_flags: bit0=MIOS_ER_active bit1=key_on_allowed bit4=IMB3_config
+# mailbox_index: CAN mailbox slot index incremented by initDiagnosticSubsystem
+# transfer_crc: CRC-CCITT running value used in processTransferCrc
+# eeprom_write_count: incremented each key-on cycle, saved to EEPROM config_dword
+# =============================================================================
+keyon_flags_t,0x00302002,capability_flags,dword,4,ECU capability bitmask (bit0=MIOS_ER bit1=key_on bit4=IMB3),,verified
+keyon_flags_t,0x00302002,state,dword,4,Key-on state machine state (0=idle 1=active),,verified
+keyon_flags_t,0x00302002,transfer_crc,word,2,CRC-CCITT block transfer running accumulator,,verified
+keyon_flags_t,0x00302002,_pad10,word,2,Reserved,,verified
+keyon_flags_t,0x00302002,mailbox_index,word,2,CAN mailbox slot index for channel assignment,,verified
+keyon_flags_t,0x00302002,_pad14,word,2,Reserved,,verified
+keyon_flags_t,0x00302002,eeprom_write_count,dword,4,EEPROM config counter incremented per key-on cycle,,verified
+# =============================================================================
+# CAN transmit/receive ring buffer pointers @ 0x3024c6
+# j1939_tx: J1939 message queue ring buffer (12-byte records, base 0x3022e6)
+# can_rx: CAN receive record ring buffer (18-byte records, base 0x302016)
+# toucan_mb_ptr: active TouCAN mailbox base for current diagnostic session
+# =============================================================================
+can_tx_ring_t,0x003024c6,j1939_tx_write_ptr,dword,4,J1939 TX queue write pointer (12-byte records base 0x3022E6),,verified
+can_tx_ring_t,0x003024c6,j1939_tx_read_ptr,dword,4,J1939 TX queue read pointer,,verified
+can_tx_ring_t,0x003024c6,can_rx_write_ptr,dword,4,CAN RX queue write pointer (18-byte records base 0x302016),,verified
+can_tx_ring_t,0x003024c6,can_rx_read_ptr,dword,4,CAN RX queue read pointer,,verified
+can_tx_ring_t,0x003024c6,_pad16,dword,4,Reserved,,verified
+can_tx_ring_t,0x003024c6,toucan_mb_ptr,dword,4,Active TouCAN mailbox base pointer for diagnostic session,,verified
+# =============================================================================
+# ADC scan trigger state @ 0x3024f4
+# sensor_param_ptr: pointer to active sensor parameter block (set in ADC init)
+# adc_scan_active: flag indicating ADC sensor scan is in progress (0/1)
+# =============================================================================
+adc_trigger_t,0x003024f4,sensor_param_ptr,dword,4,Pointer to active ADC sensor parameter block,,verified
+adc_trigger_t,0x003024f4,adc_scan_active,word,2,ADC scan active flag (0=idle 1=scanning),,verified
+adc_trigger_t,0x003024f4,_pad6,word,2,Reserved,,verified
+# =============================================================================
+# CAN mailbox slot assignment range @ 0x302510
+# Configured in mpc555_initDiagnosticSubsystem to (mailbox_index, mailbox_index+4)
+# Used to match incoming J1939 messages to ECU diagnostic service handlers
+# =============================================================================
+can_slot_range_t,0x00302510,slot_start,word,2,First CAN mailbox slot for diagnostic service,,verified
+can_slot_range_t,0x00302510,slot_end,word,2,Last CAN mailbox slot for diagnostic service,,verified
+# =============================================================================
+# CAN receive channel ID filter @ 0x30251c
+# J1939 source address filter used in mpc555_processCanReceiveBuffer
+# =============================================================================
+can_rx_channel_t,0x0030251c,channel_id,word,2,J1939 source address filter for CAN receive matching,,verified
+# =============================================================================
+# EEPROM diagnostic service callback parameter @ 0x30252a
+# Pointer/handle passed to mpc555_diagServiceInitEepromTransfer callback
+# =============================================================================
+eeprom_param_t,0x0030252a,callback_param,dword,4,Diagnostic callback parameter for EEPROM transfer,,verified
+# =============================================================================
+# System initialization sentinel @ 0x302736
+# Written in mpc555_systemInitialization: sentinel=0xBBBB counter=0
+# Sentinel checked at boot to detect cold-start vs warm-reset
+# =============================================================================
+sys_init_flags_t,0x00302736,init_sentinel,word,2,System initialization sentinel (0xBBBB = fully initialized),,verified
+sys_init_flags_t,0x00302736,init_counter,word,2,System initialization counter (zeroed at startup),,verified
+# =============================================================================
+# EEPROM data transfer state machine @ 0x302878
+# bytes_transferred: current byte offset progress within transfer block
+# block_length: total bytes in current transfer block
+# write_callback_ptr: called to write calibration data to EEPROM
+# read_callback_ptr: called to read/verify calibration data from EEPROM
+# transfer_timer: timeout countdown (0x28=40 or 0x4b=75 ticks)
+# =============================================================================
+eeprom_xfer_state_t,0x00302878,bytes_transferred,dword,4,Current byte offset progress in EEPROM transfer block,,verified
+eeprom_xfer_state_t,0x00302878,block_length,dword,4,Total bytes in current EEPROM transfer block,,verified
+eeprom_xfer_state_t,0x00302878,_pad8,word,2,Reserved,,verified
+eeprom_xfer_state_t,0x00302878,write_callback_ptr,dword,4,Function pointer for calibration block write operation,,verified
+eeprom_xfer_state_t,0x00302878,read_callback_ptr,dword,4,Function pointer for calibration block read/verify operation,,verified
+eeprom_xfer_state_t,0x00302878,transfer_timer,word,2,Transfer timeout countdown (0x28 or 0x4B ticks init),,verified
+# =============================================================================
+# EEPROM block range tracking @ 0x3028a6
+# watchdog_counter: incremented per tick to detect transfer stalls
+# last_write_addr: previous block write address for sequential continuity check
+# block_start_addr: start address of current transfer address range
+# block_count: number of completed transfer blocks recorded (max 9)
+# Note: last_write_addr and block_start_addr are UNALIGNED dwords (packed struct)
+# =============================================================================
+eeprom_block_tracking_t,0x003028a6,watchdog_counter,word,2,Transfer watchdog counter (reset each block),,verified
+eeprom_block_tracking_t,0x003028a6,_pad2,byte,1,Reserved,,verified
+eeprom_block_tracking_t,0x003028a6,last_write_addr,dword,4,Previous block write address for continuity validation,,verified
+eeprom_block_tracking_t,0x003028a6,block_start_addr,dword,4,Start address of current EEPROM transfer range,,verified
+eeprom_block_tracking_t,0x003028a6,block_count,word,2,Completed transfer block count (max 9),,verified
+# =============================================================================
+# J1939 Transport Protocol queue/RTS-CTS state machine @ 0x302905
+# Used by mpc555_handleJ1939DataRequest / mpc555_processJ1939QueueTransmit
+# session_pgn: PGN for active queue TP session (top byte 0xEF)
+# total_bytes: total data bytes for TP session (from CTS request)
+# data_buf_ptr: pointer to source data buffer for multi-packet transmission
+# state_ptr: pointer to session status byte (updated with J1939 TP state codes)
+# retry_timer: CTS retry countdown (nominal 0x37 = 55 ticks)
+# can_header: CAN frame first-4-byte header (alternates PGN 0xEC00/0xEB00)
+# packet_size: bytes to send in current CTS grant (max 8)
+# tx_buf_ptr: pointer to CAN TX assembly buffer (initialized to 0x30306D)
+# =============================================================================
+j1939_tp_queue_t,0x00302905,session_pgn,word,2,Active J1939 TP queue session PGN (0xEF__ format),,verified
+j1939_tp_queue_t,0x00302905,queue_status2,byte,1,J1939 TP queue entry count (number of packets in queue),,verified
+j1939_tp_queue_t,0x00302905,range_start,byte,1,J1939 TP batch range start index (incremented by batch size),,verified
+j1939_tp_queue_t,0x00302905,queue_ptr,byte,1,J1939 TP remaining packet pointer (decremented by batch size),,verified
+j1939_tp_queue_t,0x00302905,_pad5,byte,1,Reserved,,verified
+j1939_tp_queue_t,0x00302905,total_bytes,word,2,Total data bytes for TP queue session,,verified
+j1939_tp_queue_t,0x00302905,data_buf_ptr,dword,4,Pointer to source data buffer for queue TP session,,verified
+j1939_tp_queue_t,0x00302905,state_ptr,dword,4,Pointer to session status byte (J1939 TP state codes),,verified
+j1939_tp_queue_t,0x00302905,retry_timer,word,2,CTS retry countdown timer (nominal 0x37 ticks),,verified
+j1939_tp_queue_t,0x00302905,can_header,dword,4,CAN frame header word (PGN 0xEC00 RTS or 0xEB00 DT),,verified
+j1939_tp_queue_t,0x00302905,packet_size,word,2,Bytes in current CTS packet grant (max 8),,verified
+j1939_tp_queue_t,0x00302905,tx_buf_ptr,dword,4,Pointer to CAN TX assembly buffer (0x30306D),,verified
+# =============================================================================
+# J1939 Transport Protocol pause/DataRequest state @ 0x302927
+# Used by mpc555_handleJ1939DataRequest / mpc555_handleJ1939DataTransfer
+# pause_pgn: PGN for pause session (0xEF00 = ECU diagnostic response)
+# pause_timer: pause session countdown (0x70 init, 0x19 per packet)
+# pause_data: copy of first dword from DataRequest CAN frame
+# data_count: number of QADC data items requested
+# rx_buf_ptr: pointer to CAN RX data assembly buffer (initialized to 0x303075)
+# =============================================================================
+j1939_tp_pause_t,0x00302927,pause_pgn,word,2,J1939 DataRequest session PGN (0xEF00),,verified
+j1939_tp_pause_t,0x00302927,_pad2,word,2,Reserved,,verified
+j1939_tp_pause_t,0x00302927,pause_timer,word,2,Pause session countdown (0x70 init / 0x19 per packet),,verified
+j1939_tp_pause_t,0x00302927,pause_data,dword,4,First dword of DataRequest CAN frame copy,,verified
+j1939_tp_pause_t,0x00302927,data_count,word,2,Number of QADC data items in DataRequest,,verified
+j1939_tp_pause_t,0x00302927,rx_buf_ptr,dword,4,Pointer to CAN RX data assembly buffer (0x303075),,verified
+# =============================================================================
+# Diagnostic buffer B control state @ 0x30304B
+# Handles large diagnostic service requests (service count >= 9)
+# service_count: param_1 stored at buffer init (size/count of service request)
+# data_ptr: pointer to start of buffer B data area (initialized to 0x30293F)
+# end_ptr: pointer to end of buffer B data area (initialized to 0x303055)
+# Buffer B data at UNK_00303047
+# =============================================================================
+diag_buf_b_ctrl_t,0x0030304b,service_count,word,2,Service count/size parameter for buffer B,,verified
+diag_buf_b_ctrl_t,0x0030304b,data_ptr,dword,4,Pointer to start of buffer B data area (0x30293F),,verified
+diag_buf_b_ctrl_t,0x0030304b,end_ptr,dword,4,Pointer to end of buffer B data area (0x303055),,verified
+# =============================================================================
+# Diagnostic buffer A control state @ 0x30305A
+# Handles small diagnostic service requests (service count < 9)
+# service_count: param_1 stored at buffer init (size/count of service request)
+# data_ptr: pointer to start of buffer A data area (initialized to 0x303065)
+# end_ptr: pointer to end of buffer A data area (initialized to 0x303064)
+# Buffer A data at UNK_00303056
+# =============================================================================
+diag_buf_a_ctrl_t,0x0030305a,service_count,word,2,Service count/size parameter for buffer A,,verified
+diag_buf_a_ctrl_t,0x0030305a,data_ptr,dword,4,Pointer to start of buffer A data area (0x303065),,verified
+diag_buf_a_ctrl_t,0x0030305a,end_ptr,dword,4,Pointer to end of buffer A data area (0x303064),,verified
+# =============================================================================
+# Boot state machine phase counter @ 0x3034A0
+# mpc555_bootStateMachine cycles phase 0->1->2->3->0 per PISCR interrupt
+# phase 0: loadCalibrationFromEeprom
+# phase 1/2: mainLoopIteration
+# phase 3: loadVersionConfigFromEeprom
+# boot_param: parameter value set during mpc555_processScheduledTasks
+# boot_phase: current phase counter (0-3)
+# =============================================================================
+boot_state_t,0x003034a0,boot_param,word,2,Boot state machine initialization parameter,,verified
+boot_state_t,0x003034a0,boot_phase,word,2,Boot phase counter (cycles 0-3 per PISCR interrupt),,verified
