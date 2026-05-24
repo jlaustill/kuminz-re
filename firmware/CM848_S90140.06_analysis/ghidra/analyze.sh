@@ -123,6 +123,52 @@ cmd_status() {
     done
 }
 
+cmd_batchforce() {
+    local addrfile="$1"
+    if [ -z "$addrfile" ]; then
+        print_error "Usage: $0 batchforce <address-list-file>"
+        exit 1
+    fi
+    print_header "BATCH FORCE ANALYZE: $FIRMWARE_NAME"
+    check_ghidra
+    check_project
+    echo "Address list: $addrfile"
+    echo ""
+    run_script BatchForceAnalyze.java "$addrfile"
+    print_success "Batch force analyze complete — run './analyze.sh bank2export' next"
+}
+
+cmd_batchforcenamed() {
+    local csvfile="$1"
+    if [ -z "$csvfile" ]; then
+        print_error "Usage: $0 batchforcenamed <address-name-csv>"
+        exit 1
+    fi
+    print_header "BATCH FORCE ANALYZE (NAMED): $FIRMWARE_NAME"
+    check_ghidra
+    check_project
+    echo "CSV: $csvfile"
+    echo ""
+    run_script BatchForceAnalyzeNamed.java "$csvfile"
+    print_success "Named batch force complete — run './analyze.sh export' next"
+}
+
+cmd_bank2export() {
+    local outfile="${1:-$OUTPUT_DIR/bank2_functions.cpp}"
+    print_header "EXPORTING BANK 2 FUNCTIONS: $FIRMWARE_NAME"
+
+    check_ghidra
+    check_project
+
+    echo "Decompiling all functions in 0x00500000-0x0053DFFF..."
+    echo "Output: $outfile"
+    echo ""
+
+    run_script ExportBank2Functions.java "$outfile"
+
+    print_success "Bank 2 export complete: $outfile"
+}
+
 cmd_hwregs() {
     print_header "APPLYING MPC555 HARDWARE REGISTERS: $FIRMWARE_NAME"
 
