@@ -238,22 +238,20 @@ public class ImportAnalysis extends GhidraScript {
                             continue;
                         }
 
-                        // Check if type already matches
+                        // Always clear and re-apply types — never skip on match.
+                        // Skipping leaves Ghidra's inferred wider types (e.g. dword from a
+                        // lwz instruction) shadowing our explicitly-typed smaller variables,
+                        // causing underscore-prefixed overlap warnings in the decompiler.
                         Data existingData = listing.getDataAt(address);
-                        boolean typeMatches = (existingData != null &&
-                            existingData.getDataType().getName().equals(dataType.getName()));
-
-                        if (typeMatches) {
-                            typeSkippedMatch++;
-                            continue;
-                        }
 
                         try {
-                            // Clear existing data at address if needed
+                            // Clear using max(old size, new size) so replacing e.g. a 4-byte
+                            // pointer with a 1-byte flag fully removes the old data object.
                             if (existingData != null) {
-                                listing.clearCodeUnits(address, address.add(dataType.getLength() - 1), false);
+                                int clearLen = Math.max(existingData.getLength(), dataType.getLength());
+                                listing.clearCodeUnits(address, address.add(clearLen - 1), false);
                             }
-                            // Create data with the specified type
+                            // Re-create with the correct type every time
                             listing.createData(address, dataType);
                             typeChanges++;
                         } catch (Exception e) {

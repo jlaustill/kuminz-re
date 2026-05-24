@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun May 24 11:12:15 MDT 2026
+// Generated: Sun May 24 11:31:58 MDT 2026
 
 
 //
@@ -17189,7 +17189,7 @@ void cm848_clearDiagnosticState(void)
     fault_list_state_t_003fe11a.read_index = 0;
     fault_list_state_t_003fe11a.total_emission_faults = 0;
     emission_fault_overflow_flag = 0;
-    if (_sensor_validation_accum <= (uint)sensor_validation_timeout_cal._0_1_ * 8000) {
+    if (sensor_validation_accum <= (uint)sensor_validation_timeout_cal._0_1_ * 8000) {
       _diag_response_write_count = 0;
       _protection_b_fault_active_flag = 0;
       _sensor_validation_ready_flag = 0;
@@ -17242,7 +17242,7 @@ void cm848_clearAllDiagnosticFaults(void)
   fault_list_state_t_003fe11a.read_index = 0;
   fault_list_state_t_003fe11a.total_emission_faults = 0;
   emission_fault_overflow_flag = 0;
-  if (_sensor_validation_accum <= (uint)sensor_validation_timeout_cal._0_1_ * 8000) {
+  if (sensor_validation_accum <= (uint)sensor_validation_timeout_cal._0_1_ * 8000) {
     _diag_response_write_count = 0;
     _protection_b_fault_active_flag = 0;
     _sensor_validation_ready_flag = 0;
@@ -25504,8 +25504,8 @@ void cm848_j1939HandlePgn65248VehicleDistance(void)
   local_10 = extraout_r4;
   _DAT_003faed6 = j1939_reverseByteOrder32(&local_10);
   cm848_unsignedDivision32
-            ((int)((ulonglong)_sensor_validation_accum * 0xc47400 >> 0x20),
-             _sensor_validation_accum * 0xc47400,0,0xdcd65000);
+            ((int)((ulonglong)sensor_validation_accum * 0xc47400 >> 0x20),
+             sensor_validation_accum * 0xc47400,0,0xdcd65000);
   local_10 = extraout_r4_00;
   _DAT_003faeda = j1939_reverseByteOrder32(&local_10);
   sendJ1939MultiFrame(&DAT_003faec8);
@@ -39317,12 +39317,10 @@ void cm848_storePressureConversionResult(void)
 // Function: cm848_captureVehicleDistanceHighByte @ 0x0003cc98
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_captureVehicleDistanceHighByte(void)
 
 {
-  j1939_msg_slot_x_status = (byte)((_sensor_validation_accum >> 6) >> 0x10);
+  j1939_msg_slot_x_status = (byte)((sensor_validation_accum >> 6) >> 0x10);
   return;
 }
 
@@ -73136,7 +73134,7 @@ void governorCruiseTimerManagement(void)
   
   if (((fault_management_status_flags & 0x2000) != 0) && ((j1939_governor_feature_byte & 4) != 0)) {
     if (_cold_start_phase != 1) {
-      _DAT_003fee3a = _sensor_validation_accum - iRam003fee42;
+      _DAT_003fee3a = sensor_validation_accum - dRam003fee42;
       uRam0040b54a = cm848_dualAxisTableInterpolation
                                (0x3fced8,sensor_readings_t_0040baf2.coolant_temp,0x5c80e,
                                 engine_rpm_state_t_0040b7ac.target_rpm,0x5c824,0x5c83a,1);
@@ -73173,7 +73171,7 @@ void governorCruiseTimerManagement(void)
       uRam003fee36 = 0;
       _sensor_init_retry_timer = 0;
       sensor_initialization_sequence_count = 0;
-      iRam003fee42 = _sensor_validation_accum;
+      dRam003fee42 = sensor_validation_accum;
       uRam0040ae5e = 0;
       j1939_feature_enable_cmd_flag = 0;
     }
@@ -75187,8 +75185,6 @@ void governorDataValidation(void)
 // Function: sensorChannelValidationIndex @ 0x00523068
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void sensorChannelValidationIndex(void)
 
 {
@@ -75196,11 +75192,11 @@ void sensorChannelValidationIndex(void)
   uint uVar2;
   uint uVar3;
   
-  if (8000 < _sensor_validation_accum) {
+  if (8000 < sensor_validation_accum) {
     uVar2 = (uint)bRam003fcfb2;
     uVar1 = (uint)*(ushort *)(uVar2 * 2 + 0x3fee50);
     if (uVar1 < 0xffff) {
-      uVar3 = _sensor_validation_accum / 64000;
+      uVar3 = sensor_validation_accum / 64000;
       if (0xffff < uVar3) {
         uVar3 = 0xffff;
       }
@@ -75390,12 +75386,12 @@ void j1939FuelDemandProcessing(void)
           uRam003fee64 = uRam003fee64 | 0x20;
           register0x00000074 = 0;
         }
-        if (_sensor_validation_accum < -uRam0040b63c - 1) {
-          _sensor_validation_accum = _sensor_validation_accum + uRam0040b63c;
+        if (sensor_validation_accum < -uRam0040b63c - 1) {
+          sensor_validation_accum = sensor_validation_accum + uRam0040b63c;
         }
         else {
           uRam003fee64 = uRam003fee64 | 4;
-          _sensor_validation_accum = 0;
+          sensor_validation_accum = 0;
         }
       }
     }
@@ -81012,7 +81008,7 @@ code_r0x0052ffc8:
 void hpcr_calibration_group25_load(void)
 
 {
-  if ((uint)sensor_validation_timeout_cal._0_1_ * 8000 < _sensor_validation_accum) {
+  if ((uint)sensor_validation_timeout_cal._0_1_ * 8000 < sensor_validation_accum) {
     diag_suppress_stateMachine(0);
   }
   else if (sRam003fd93c == 0x13ec) {
