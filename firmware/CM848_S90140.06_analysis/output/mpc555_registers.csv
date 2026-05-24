@@ -15,6 +15,9 @@ address,name,type,comment
 0x002fc018,USIU_SIEL,u32,SIU Interrupt Edge/Level Register
 0x002fc01c,USIU_SIVEC,u32,SIU Interrupt Vector Register
 0x002fc020,USIU_TESR,u32,Transfer Error Status Register
+0x002fc024,USIU_PADCFG_A,u32,Pad/peripheral configuration A (bit 10 controlled by ECU capability)
+0x002fc028,USIU_PADCFG_B,u32,Pad/peripheral configuration B
+0x002fc02c,USIU_INITCFG,u32,System initialization config (written 0x2004 at boot)
 0x002fc030,USIU_SGPIODT1,u32,SIU GPIO Data Register 1
 0x002fc034,USIU_SGPIODT2,u32,SIU GPIO Data Register 2
 0x002fc038,USIU_SGPIOCR,u32,SIU GPIO Control Register
