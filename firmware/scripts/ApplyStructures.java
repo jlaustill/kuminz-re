@@ -277,7 +277,14 @@ public class ApplyStructures extends GhidraScript {
     }
 
     private DataType getDataType(String typeName, int size) {
-        // Handle pointer types
+        // Handle pointer types (trailing *)
+        if (typeName.endsWith("*")) {
+            String baseTypeName = typeName.substring(0, typeName.length() - 1).trim();
+            DataType baseType = getDataType(baseTypeName, 0);
+            return dtm.getPointer(baseType != null ? baseType : VoidDataType.dataType, 4);
+        }
+
+        // Handle explicit ptr: prefix or bare "pointer"
         if (typeName.startsWith("ptr:") || typeName.equals("pointer")) {
             return PointerDataType.dataType;
         }

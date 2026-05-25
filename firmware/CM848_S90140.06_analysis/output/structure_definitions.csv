@@ -1,4 +1,23 @@
 struct_name,address,field_name,type,size,comment,dependency,Status
+# J1939 CAN RX Ring Buffer Message Descriptor
+# Populated by mpc555_processCanReceiveBuffer from TouCAN mailbox hardware
+# Passed as param_1 to all J1939 RX handlers (torqueControlModeHandler, cm848_j1939DispatchPgnHandler, etc.)
+# Ring buffer: 39 slots x 18 bytes, base 0x302016, wraps at 0x3022d4
+# data_ptr always points to this struct's own inline_data field (self-referential)
+j1939_rx_msg_t,0x00302016,priority_dp_flags,byte,1,J1939 priority/reserved/data-page bits packed from upper CAN ID,,needs_review
+j1939_rx_msg_t,0x00302016,pgn_pf,byte,1,PDU Format - high byte of PGN (0xEF=EF00 0xDF=DF00 0x00=TSC1 etc),,verified
+j1939_rx_msg_t,0x00302016,pgn_ps,byte,1,PDU Specific - destination address (PDU1 PF<0xF0) or PGN low byte (PDU2),,verified
+j1939_rx_msg_t,0x00302016,source_address,byte,1,J1939 source address of sending node,,verified
+j1939_rx_msg_t,0x00302016,data_length,word,2,CAN DLC - payload byte count (handlers expect 8 for TSC1/ETC1),,verified
+j1939_rx_msg_t,0x00302016,data_ptr,tsc1_payload_t*,4,Pointer to inline_data below (always this+10 per processCanReceiveBuffer),,verified
+j1939_rx_msg_t,0x00302016,inline_data,byte,8,CAN payload bytes copied directly from TouCAN mailbox data registers,,verified
+# TSC1 (Torque/Speed Control 1, PGN 0) payload - SAE J1939-71
+# Pointed to by j1939_rx_msg_t.data_ptr; also lives inline at j1939_rx_msg_t+10
+# Total size: 8 bytes
+tsc1_payload_t,0x00302020,control_byte,byte,1,Override control mode (bits 0-1) priority (bits 4-5) tx_rate (bits 6-7),,verified
+tsc1_payload_t,0x00302020,requested_speed,word,2,Requested speed/speed limit - little-endian 0.125 rpm/bit,,verified
+tsc1_payload_t,0x00302020,requested_torque,byte,1,Requested torque/torque limit - 1pct/bit offset -125pct,,verified
+tsc1_payload_t,0x00302020,reserved,byte,4,Reserved bytes 4-7 per J1939-71,,needs_review
 # UDS Response Buffer - diagnostic response structure at 0x0040b492
 # Used by processUdsTransmitBuffer and related diagnostic handlers
 # Total size: 11 bytes (0x0040b492-0x0040b49c)

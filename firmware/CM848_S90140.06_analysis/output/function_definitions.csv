@@ -218,3 +218,11 @@ function_address,function_name,param_index,name,type,comment
 0x000216e8,cm848_setColdStartActiveFlag,return,,DIAG_RESPONSE,Always DIAG_ACK - unconditional flag set
 0x00021904,cm848_setColdStartMode2Flag,return,,DIAG_RESPONSE,Always DIAG_ACK - unconditional flag set
 0x00021918,cm848_validateCalibrationMemory,return,,DIAG_RESPONSE,Returns DIAG_ACK(0) or DIAG_NACK_PROTECTED(7)
+
+# -----------------------------------------------------------------------------
+# J1939 RX Message Handlers - all receive j1939_rx_msg_t* as first param
+# -----------------------------------------------------------------------------
+0x00022d60,torqueControlModeHandler,0,msg,j1939_rx_msg_t*,Incoming J1939 RX message descriptor from CAN ring buffer
+0x000236f0,cm848_j1939ProcessGovernorRequest,0,msg,j1939_rx_msg_t*,Incoming J1939 RX message descriptor from CAN ring buffer
+0x000231cc,cm848_j1939DispatchPgnHandler,0,msg,j1939_rx_msg_t*,Incoming J1939 RX message descriptor from CAN ring buffer
+0x00023b38,cm848_j1939DispatchAddressHandler,0,msg,j1939_rx_msg_t*,Incoming J1939 RX message descriptor from CAN ring buffer
