@@ -1,4 +1,4 @@
-function_address,function_name,param_index,new_name,new_type,comment
+function_address,function_name,param_index,name,type,comment
 # =============================================================================
 # J90350.00 Function Parameter Definitions
 # Created: 2024-12-18

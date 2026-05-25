@@ -169,5 +169,5 @@ Byte 3-6: Offset (big-endian)
 
 - `output/global_variables.csv` - Added dispatch table and lookup table entries
 - `output/structure_definitions.csv` - Added param_id_entry_t, ef00_dispatch_entry_t, diag_dispatch_entry_t
-- `output/function_parameters.csv` - Added parameter types for lookup functions
+- `output/function_definitions.csv` - Added parameter types for lookup functions
 - `output/enums.csv` - Added implementation status comments for EF00_SERVICE_ID

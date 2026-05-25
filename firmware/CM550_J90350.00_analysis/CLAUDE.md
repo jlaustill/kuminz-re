@@ -39,7 +39,7 @@ The `ghidra/analyze.sh` script provides all analysis commands:
 ./analyze.sh enums      # Apply enum definitions
 ./analyze.sh hwregs     # Apply MC68336 hardware register names
 ./analyze.sh labels     # Apply code labels
-./analyze.sh funcparams # Apply function parameter types
+./analyze.sh funcdefs   # Apply function definitions (params + return types)
 ./analyze.sh localvars  # Apply local variable types
 ./analyze.sh constants  # Apply constant definitions
 ./analyze.sh arrays     # Apply array definitions
@@ -85,7 +85,7 @@ All CSV files are in `output/`:
 | `enums.csv` | Enum definitions |
 | `labels.csv` | Code labels |
 | `structure_definitions.csv` | C structure definitions |
-| `function_parameters.csv` | Function parameter types |
+| `function_definitions.csv` | Function parameter types and return types |
 | `local_variables.csv` | Local variable names/types |
 
 ---

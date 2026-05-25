@@ -246,12 +246,12 @@ J1939 Dispatch Table @ 0x801c7a
 ### J90350.00
 - `output/local_variables.csv` - Variable names for write path functions
 - `output/enums.csv` - MEMORY_OP_RESULT enum
-- `output/function_parameters.csv` - Parameter documentation
+- `output/function_definitions.csv` - Parameter documentation
 
 ### J90280.05
 - `output/local_variables.csv` - Variable names + cross-reference comments
 - `output/enums.csv` - MEMORY_OP_RESULT enum (with stub note)
-- `output/function_parameters.csv` - Parameter documentation
+- `output/function_definitions.csv` - Parameter documentation
 
 ---
 

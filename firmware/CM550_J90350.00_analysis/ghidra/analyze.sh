@@ -114,7 +114,7 @@ cmd_status() {
 
     # Count optional CSVs
     echo ""
-    for csv in enums labels constants arrays structure_definitions local_variables function_parameters; do
+    for csv in enums labels constants arrays structure_definitions local_variables function_definitions; do
         if [ -f "$OUTPUT_DIR/${csv}.csv" ]; then
             COUNT=$(wc -l < "$OUTPUT_DIR/${csv}.csv")
             print_success "${csv}.csv ($((COUNT-1)) entries)"
@@ -138,7 +138,7 @@ cmd_help() {
     echo "  enums      Apply enum definitions for magic number replacement"
     echo "  hwregs     Apply MC68336 hardware register names"
     echo "  labels     Apply code labels"
-    echo "  funcparams Apply function parameter types"
+    echo "  funcdefs    Apply function definitions (params + return types)"
     echo "  localvars  Apply local variable types"
     echo "  vartypes   Apply global variable types (clears stale types first)"
     echo "  decompile  Decompile a single function by address or name"

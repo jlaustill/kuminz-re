@@ -122,7 +122,7 @@ cd [firmware]_analysis/ghidra
 ./analyze.sh constants  # Apply constant definitions
 ./analyze.sh arrays     # Apply array definitions
 ./analyze.sh hwregs     # Apply hardware register names
-./analyze.sh funcparams # Apply function parameter types
+./analyze.sh funcdefs   # Apply function definitions (params + return types)
 ./analyze.sh localvars  # Apply local variable types
 ./analyze.sh decompile <addr|name>  # Decompile single function
 ./analyze.sh full       # Run complete pipeline
@@ -146,7 +146,7 @@ All firmwares use the same CSV structure in `output/`:
 | `structure_definitions.csv` | C structure definitions |
 | `constants.csv` | Magic number documentation |
 | `arrays.csv` | Array/buffer definitions |
-| `function_parameters.csv` | Function parameter types |
+| `function_definitions.csv` | Function parameter types and return types |
 | `local_variables.csv` | Local variable names/types |
 
 ---

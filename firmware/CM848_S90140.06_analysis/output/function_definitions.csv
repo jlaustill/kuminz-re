@@ -1,4 +1,4 @@
-function_address,function_name,param_index,new_name,new_type,comment
+function_address,function_name,param_index,name,type,comment
 # -----------------------------------------------------------------------------
 # Table Interpolation Functions - Ported from CM550 (same pattern across ECU families)
 # -----------------------------------------------------------------------------
@@ -209,3 +209,13 @@ function_address,function_name,param_index,new_name,new_type,comment
 0x00002cd8,registerPgnEf00Handler,0,sub_id,byte,Sub-identifier for PGN 0xEF00 filtering
 0x00002cd8,registerPgnEf00Handler,1,handler_func,void*,Function pointer for handler callback
 
+# -----------------------------------------------------------------------------
+# J1939 Diagnostic Handler Return Types
+# All handlers registered via processJ1939DiagnosticRequest share the
+# DIAG_RESPONSE callback contract (ACK=0, NACK_NOT_READY=4, NACK_PROTECTED=7)
+# -----------------------------------------------------------------------------
+0x00021584,cm848_advanceDiagnosticActionState,return,,DIAG_RESPONSE,Returns DIAG_ACK(0) or DIAG_NACK_PROTECTED(7)
+0x00021668,cm848_resetDiagnosticSession,return,,DIAG_RESPONSE,Always DIAG_ACK - unconditional state clear
+0x000216e8,cm848_setColdStartActiveFlag,return,,DIAG_RESPONSE,Always DIAG_ACK - unconditional flag set
+0x00021904,cm848_setColdStartMode2Flag,return,,DIAG_RESPONSE,Always DIAG_ACK - unconditional flag set
+0x00021918,cm848_validateCalibrationMemory,return,,DIAG_RESPONSE,Returns DIAG_ACK(0) or DIAG_NACK_PROTECTED(7)
