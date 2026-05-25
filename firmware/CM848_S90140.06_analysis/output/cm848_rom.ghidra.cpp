@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon May 25 13:13:48 MDT 2026
+// Generated: Mon May 25 13:20:11 MDT 2026
 
 
 //
@@ -19675,6 +19675,8 @@ DIAG_RESPONSE cm848_forceActivateDiagnosticSession(void)
 //
 
 /* WARNING: Unknown calling convention -- yet parameter storage is locked */
+/* jlaustill reviewed 2026-5-25 - annoyed that = 1 rejects bool = TRUE, but otherwise hoping
+   accurate */
 
 DIAG_RESPONSE cm848_setEngineStarting(void)
 

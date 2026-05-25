@@ -855,7 +855,7 @@ address,name
 0x00021668,cm848_resetDiagnosticSession,jlaustill review 2026-05-25 - hopefully accurate
 # EF00 service handlers (0x16, 0x06): formerly LAB_ labels
 0x00021694,cm848_forceActivateDiagnosticSession,jlaustill reviewed 2026-05-25 - frustrated about != 1 and == 0xea/0xee not working as enums
-0x000216e8,cm848_setEngineStarting
+0x000216e8,cm848_setEngineStarting,jlaustill reviewed 2026-5-25 - annoyed that = 1 rejects bool = TRUE, but otherwise hoping accurate
 0x000216fc,mpc555_processJ1939RxQueue
 0x000218b0,cm848_j1939ProcessRxQueueDefault
 0x000218dc,cm848_j1939ProcessRxQueueParam
