@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun May 24 20:21:26 MDT 2026
+// Generated: Sun May 24 22:07:25 MDT 2026
 
 
 //
@@ -848,7 +848,7 @@ undefined2 cm848_flashWriteWord(undefined2 *param_1,undefined2 *param_2)
     uRam00500aaa = 0x20;
     _DAT_003fee30 = 1;
   }
-  _flash2_command_register = 0xa0;
+  flash2_command_register._0_2_ = 0xa0;
   *param_1 = *param_2;
   uVar1 = cm848_flashPollUntilReady(*param_2,param_1,_DAT_003fdc32);
   return uVar1;
@@ -893,7 +893,7 @@ undefined4 cm848_flashWriteBlock(int param_1,int param_2,uint param_3)
       } while (((uVar4 & 0xffff) != 0) && (uVar3 < _DAT_003fdc38));
     }
     if (_DAT_003fee30 != 0) {
-      _flash2_command_register = 0;
+      flash2_command_register._0_2_ = 0;
       _DAT_003fee30 = 0;
     }
     if ((uVar4 & 0xffff) == 0) {
@@ -918,7 +918,7 @@ void mpc555_initHardwareConfig(void)
   uint in_IMMR;
   
   if (0x302f < in_IMMR >> 0x10) {
-    qadc_init_done_flag = 1;
+    qadc_init_done_flag._0_1_ = 1;
     qadc_mode_register_base = 0x28000000;
     qadc_channel_config_mask = 0x1e0000;
     qadc_control_word_cal = 0xc20;
@@ -929,8 +929,8 @@ void mpc555_initHardwareConfig(void)
     _DAT_003fdbc6 = 0x520;
     _DAT_003fdbca = 0x620;
     _DAT_003fdbce = 0x720;
-    _qadc_fault_bit_array = 1;
-    DAT_003fdba5 = 8;
+    qadc_fault_bit_array._0_2_ = 1;
+    qadc_init_done_flag._1_1_ = 8;
     qadc_accumulate_count_cal = 100;
     qadc_channel_config_base = 0x28000000;
     qadc_channel_config_mask_b = 0x4f0000;
@@ -941,7 +941,7 @@ void mpc555_initHardwareConfig(void)
     _DAT_003fdbf2 = 0xf0000;
     _DAT_003fdbf6 = 0xf0000;
     _DAT_003fdbfa = 0xf0000;
-    _qadc_queue_timing_config = 0xc20;
+    qadc_queue_timing_config = 0xc20;
     _DAT_003fdc02 = 0xd20;
     _DAT_003fdc06 = 0xe20;
     _DAT_003fdc0a = 0xf20;
@@ -957,7 +957,7 @@ void mpc555_initHardwareConfig(void)
     _DAT_003fdc28 = 0x14;
     _DAT_003fdc2a = 0x14;
     _DAT_003fdc2c = 48000;
-    _DAT_003fdbd4 = 8;
+    qadc_fault_bit_array._2_2_ = 8;
   }
   if ((char)data_transfer_state_t_003fec82.status == '\0') {
     data_transfer_state_t_003fec82.status._1_1_ = '\x01';
@@ -1526,7 +1526,7 @@ LAB_000020ac:
   }
   if (sensor_fault_mode_pending != 0) {
     security_access_state = 0x20;
-    sensor_fault_mode_active = (byte)sensor_fault_mode_pending;
+    sensor_fault_mode_active._0_1_ = (undefined1)sensor_fault_mode_pending;
     cm848_diagRequestTypeDispatcher();
     sensor_fault_mode_pending = 0;
   }
@@ -1559,8 +1559,9 @@ void cm848_initDiagnosticCallback(void)
 void cm848_processDiagnosticTimeout(void)
 
 {
-  if ((sensor_init_delay_timer != 0) &&
-     (sensor_init_delay_timer = sensor_init_delay_timer - 1, sensor_init_delay_timer == 0)) {
+  if ((sensor_init_delay_timer._0_1_ != '\0') &&
+     (sensor_init_delay_timer._0_1_ = sensor_init_delay_timer._0_1_ + -1,
+     sensor_init_delay_timer._0_1_ == '\0')) {
     cm848_diagSendResponseCode(2,0x51);
   }
   return;
@@ -1575,7 +1576,7 @@ void cm848_processDiagnosticTimeout(void)
 void cm848_setDataTransferMode(void)
 
 {
-  sensor_init_delay_timer = 2;
+  sensor_init_delay_timer._0_1_ = 2;
   return;
 }
 
@@ -1584,8 +1585,6 @@ void cm848_setDataTransferMode(void)
 //
 // Function: mpc555_initDiagnosticSession @ 0x000021d0
 //
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void mpc555_initDiagnosticSession(void)
 
@@ -1601,7 +1600,7 @@ void mpc555_initDiagnosticSession(void)
     ;
     DAT_003feccc = 0;
     diagnostic_session_active_flag = 0;
-    _eeprom_request_state = 0;
+    eeprom_request_state = 0;
     diag_session_state_t_003fecbe.response_write_index = 0;
     diag_session_state_t_003fecbe._2_4_ = &diag_response_buffer;
     qsmcm_sccr1.SCC1R0 = 0xa0;
@@ -1612,7 +1611,7 @@ void mpc555_initDiagnosticSession(void)
     mpc555_eepromWriteWords(local_8,&eeprom_cal_word4,2);
     diag_session_state_t_003fecbe.session_flags = diag_session_state_t_003fecbe.session_flags | 1;
     diagnostic_session_active_flag = 1;
-    _eeprom_request_state = 2;
+    eeprom_request_state = 2;
     cm848_initDiagnosticCallback();
     diag_session_state_t_003fecbe.response_write_index = 0;
     diag_session_state_t_003fecbe._2_4_ = &diag_response_buffer;
@@ -1629,38 +1628,35 @@ void mpc555_initDiagnosticSession(void)
 // Function: mpc555_eepromValidationCycle @ 0x00002310
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void mpc555_eepromValidationCycle(void)
 
 {
   dword dVar1;
-  int iVar2;
-  uint uVar3;
+  uint uVar2;
   
-  iVar2 = _sensor_initialization_sequence_count + 1;
-  if (iVar2 < 0x19) {
-    if (iVar2 != 0xc) {
-      _sensor_initialization_sequence_count = iVar2;
+  dVar1 = sensor_initialization_sequence_count + 1;
+  if ((int)dVar1 < 0x19) {
+    if (dVar1 != 0xc) {
+      sensor_initialization_sequence_count = dVar1;
       return;
     }
-    _sensor_initialization_sequence_count = 0xc;
+    sensor_initialization_sequence_count = 0xc;
     if (eeprom_header_t_003fee08.magic == 0x600d) {
-      _sensor_initialization_sequence_count = iVar2;
+      sensor_initialization_sequence_count = dVar1;
       return;
     }
   }
   else {
-    _sensor_initialization_sequence_count = 0;
+    sensor_initialization_sequence_count = 0;
   }
   dVar1 = ecu_power_state_flags.capability_flags;
   if ((dVar1 & 0x10) == 0) {
-    uVar3 = dVar1 | 0x10;
+    uVar2 = dVar1 | 0x10;
   }
   else {
-    uVar3 = dVar1 & 0xffffffef;
+    uVar2 = dVar1 & 0xffffffef;
   }
-  ecu_power_state_flags.capability_flags = uVar3;
+  ecu_power_state_flags.capability_flags = uVar2;
   return;
 }
 
@@ -1820,14 +1816,16 @@ void mpc555_systemInitialization(void)
 //
 
 /* WARNING: This function may have set the stack pointer */
-/* WARNING: Removing unreachable block (ram,0x000028ec) */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void mpc555_hardwareInitialization(void)
 
 {
-  word wVar1;
-  byte bVar2;
+  dword dVar1;
+  word wVar2;
+  byte bVar3;
+  ushort uVar4;
+  uint uVar5;
   
   USIU_BR0.BR0 = 0x50080b;
   USIU_BR0.OR0 = 0xfff00062;
@@ -1842,16 +1840,16 @@ void mpc555_hardwareInitialization(void)
   mios_mmcsm_cnt.SCRD = 0x60f;
   mios_mmcsm_cnt.CNT = 0;
   mios_mmcsm_cnt.ML = 0;
-  bVar2 = qadc_queue_status;
-  qadc_queue_status = bVar2 & 0x7f;
-  wVar1 = qsmcm_qspi_spcr0.SPE;
-  qsmcm_qspi_spcr0.SPE = wVar1 & 0x7fff;
-  wVar1 = qsmcm_qspi_spcr0.SPCR2;
-  qsmcm_qspi_spcr0.SPCR2 = wVar1 & 0x7fff;
-  wVar1 = qsmcm_qspi_spcr0.SPCR2;
-  qsmcm_qspi_spcr0.SPCR2 = wVar1 & 0xfff0;
-  wVar1 = qsmcm_qspi_spcr0.SPCR2;
-  qsmcm_qspi_spcr0.SPCR2 = wVar1;
+  bVar3 = qadc_queue_status;
+  qadc_queue_status = bVar3 & 0x7f;
+  wVar2 = qsmcm_qspi_spcr0.SPE;
+  qsmcm_qspi_spcr0.SPE = wVar2 & 0x7fff;
+  wVar2 = qsmcm_qspi_spcr0.SPCR2;
+  qsmcm_qspi_spcr0.SPCR2 = wVar2 & 0x7fff;
+  wVar2 = qsmcm_qspi_spcr0.SPCR2;
+  qsmcm_qspi_spcr0.SPCR2 = wVar2 & 0xfff0;
+  wVar2 = qsmcm_qspi_spcr0.SPCR2;
+  qsmcm_qspi_spcr0.SPCR2 = wVar2;
   qsmcm_sccr0 = 0;
   qsmcm_sccr1.SCC1R1 = 0;
   tpu_a_mcr.TPUMCR = 0x8000;
@@ -1886,16 +1884,27 @@ void mpc555_hardwareInitialization(void)
   uRam00500554 = 0x55;
                     /* WARNING: Read-only address (ram,0x00500aaa) is written */
   uRam00500aaa = 0x90;
-  if (_flash2_command_register == 1) {
+  if (flash2_command_register._0_2_ == 1) {
     qadc_a_result_low = 1;
-    _flash2_command_register = 0xf0;
+    flash2_command_register._0_2_ = 0xf0;
+    if (flash2_command_register._2_2_ != 0x2203) {
+      if (flash2_command_register._2_2_ == 0x2281) goto LAB_0000291c;
+      goto LAB_00002900;
+    }
+    dVar1 = USIU_BR0.OR0;
+    uVar5 = dVar1 & 0xffefffff;
   }
-  qadc_a_result_low = 0;
-  USIU_BR0.BR0 = 0;
-  USIU_BR0.OR0 = 0;
-  _bus_hardware_status_byte = mpc555_checkBusHardwareStatus();
-  _bus_hardware_status_byte = _bus_hardware_status_byte & 0xff;
-  if ((_bus_hardware_status_byte != 0) || (eeprom_header_t_003fee08.magic != 0x600d)) {
+  else {
+LAB_00002900:
+    qadc_a_result_low = 0;
+    USIU_BR0.BR0 = 0;
+    uVar5 = 0;
+  }
+  USIU_BR0.OR0 = uVar5;
+LAB_0000291c:
+  uVar4 = mpc555_checkBusHardwareStatus();
+  bus_hardware_status_byte._0_2_ = uVar4 & 0xff;
+  if ((bus_hardware_status_byte._0_2_ != 0) || (eeprom_header_t_003fee08.magic != 0x600d)) {
     mpc555_systemInitialization();
   }
   (*(code *)systemStartupInit_ptr)(0);
@@ -2261,32 +2270,30 @@ void mpc555_spiTransmitCompleteHandler(void)
 // Function: mpc555_dispatchSpiHandlerByState @ 0x000030ec
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void mpc555_dispatchSpiHandlerByState(void)
 
 {
   word wVar1;
   
-  if (_eeprom_request_state == 0) {
+  if (eeprom_request_state == 0) {
     wVar1 = qsmcm_sccr1.SCC1R1;
     if ((wVar1 & 0x20) != 0) {
       mpc555_spiReceiveHandler();
     }
   }
-  else if (_eeprom_request_state == 1) {
+  else if (eeprom_request_state == 1) {
     wVar1 = qsmcm_sccr1.SCC1R1;
     if ((wVar1 & 0x40) != 0) {
       mpc555_spiTransmitCompleteHandler();
     }
   }
-  else if (_eeprom_request_state == 2) {
+  else if (eeprom_request_state == 2) {
     wVar1 = qsmcm_sccr1.SCC1R1;
     if ((wVar1 & 0x20) != 0) {
       func_0x003fc380();
     }
   }
-  else if ((_eeprom_request_state == 3) && (wVar1 = qsmcm_sccr1.SCC1R1, (wVar1 & 0x40) != 0)) {
+  else if ((eeprom_request_state == 3) && (wVar1 = qsmcm_sccr1.SCC1R1, (wVar1 & 0x40) != 0)) {
     func_0x003fc484();
   }
   return;
@@ -2312,14 +2319,12 @@ void cm848_resetEepromStatusPointer(void)
 // Function: mpc555_enableSystemInterrupts @ 0x000031c0
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void mpc555_enableSystemInterrupts(void)
 
 {
   word wVar1;
   
-  _eeprom_request_state = 0;
+  eeprom_request_state = 0;
   cm848_resetEepromStatusPointer();
   diag_request_pending_flag = 0;
   wVar1 = qsmcm_sccr1.SCC1R1;
@@ -2335,14 +2340,12 @@ void mpc555_enableSystemInterrupts(void)
 // Function: mpc555_enableSpiTransmitInterrupt @ 0x00003218
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void mpc555_enableSpiTransmitInterrupt(void)
 
 {
   word wVar1;
   
-  _eeprom_request_state = 1;
+  eeprom_request_state = 1;
   wVar1 = qsmcm_sccr1.SCC1R1;
   qsmcm_sccr1.SCC1R1 = wVar1 | 0x40;
   return;
@@ -2392,8 +2395,6 @@ void cm848_processDiagnosticResponseCallback(void)
 // Function: mpc555_generateSerialChallenge @ 0x000032dc
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void mpc555_generateSerialChallenge(void)
 
 {
@@ -2402,16 +2403,16 @@ void mpc555_generateSerialChallenge(void)
   uint uVar3;
   
   if (diagnostic_session_active_flag == 1) {
-    _crc16_working_value = 0;
+    crc16_working_value = 0;
   }
   else {
-    _crc16_working_value = ecu_power_state_flags.eeprom_write_count;
-    if ((_crc16_working_value & 0xffff) == 0) {
-      _crc16_working_value = _crc16_working_value + 1;
+    crc16_working_value = ecu_power_state_flags.eeprom_write_count;
+    if ((crc16_working_value & 0xffff) == 0) {
+      crc16_working_value = crc16_working_value + 1;
     }
   }
-  dVar1 = _crc16_working_value;
-  bVar2 = (byte)(_crc16_working_value >> 8);
+  dVar1 = crc16_working_value;
+  bVar2 = (byte)(crc16_working_value >> 8);
   (&diag_response_buffer)[diag_session_state_t_003fecbe.response_write_index] = bVar2;
   uVar3 = diag_session_state_t_003fecbe.response_write_index + 1 & 0xff;
   (&diag_response_buffer)[uVar3] = (byte)dVar1;
@@ -2611,7 +2612,7 @@ void cm848_beginEepromCalibrationWrite(void)
   
   eeprom_calibration_pending_flag = 1;
   cm848_diagSendResponseCode(0x78,0x74);
-  while (_eeprom_request_state == 3) {
+  while (eeprom_request_state == 3) {
     func_0x003fc688();
     func_0x003fd544();
   }
@@ -2631,8 +2632,6 @@ void cm848_beginEepromCalibrationWrite(void)
 // Function: cm848_updateEepromMagicAndReload @ 0x000037e0
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_updateEepromMagicAndReload(void)
 
 {
@@ -2644,7 +2643,7 @@ void cm848_updateEepromMagicAndReload(void)
   eeprom_calibration_pending_flag = 1;
   if (eeprom_header_t_003fee08.magic == 0x1d0a) {
     cm848_diagSendResponseCode(0x78,0x74);
-    while (_eeprom_request_state == 3) {
+    while (eeprom_request_state == 3) {
       func_0x003fc688();
       func_0x003fd544();
     }
@@ -2677,10 +2676,10 @@ void cm848_diagRequestTypeDispatcher(void)
 
 {
   cm848_resetEepromCalibrationState();
-  if (sensor_fault_mode_active == 1) {
+  if (sensor_fault_mode_active._0_1_ == '\x01') {
     cm848_beginEepromCalibrationWrite();
   }
-  else if (sensor_fault_mode_active == 2) {
+  else if (sensor_fault_mode_active._0_1_ == '\x02') {
     cm848_updateEepromMagicAndReload();
   }
   else {
@@ -2694,8 +2693,6 @@ void cm848_diagRequestTypeDispatcher(void)
 //
 // Function: mpc555_diagServiceTransferBlock @ 0x00003948
 //
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void mpc555_diagServiceTransferBlock(void)
 
@@ -2713,7 +2710,7 @@ void mpc555_diagServiceTransferBlock(void)
   dVar3 = eeprom_xfer_state.block_length;
   if (dVar2 == dVar3) {
     wVar1 = ecu_power_state_flags.transfer_crc;
-    if (wVar1 != _sensor_fault_mode_active) {
+    if (wVar1 != sensor_fault_mode_active._0_2_) {
       cm848_diagSendResponseCode(0x77,0x7f);
       return;
     }
@@ -2750,11 +2747,11 @@ void mpc555_diagServiceTransferBlock(void)
 void cm848_verifySerialResponse(void)
 
 {
-  DAT_003feccc = ((_crc16_working_value ^
-                   *(ushort *)(&DAT_00007f9a + (_crc16_working_value >> 0xc & 0xf) * 2) ^
-                   (uint)*(ushort *)(&DAT_00007f9a + (_crc16_working_value >> 8 & 0xf) * 2) ^
-                   (uint)*(ushort *)(&DAT_00007f9a + (_crc16_working_value >> 4 & 0xf) * 2) ^
-                   (uint)*(ushort *)(&DAT_00007f9a + (_crc16_working_value & 0xf) * 2) ^ 0x1911) &
+  DAT_003feccc = ((crc16_working_value ^
+                   *(ushort *)(&DAT_00007f9a + (crc16_working_value >> 0xc & 0xf) * 2) ^
+                   (uint)*(ushort *)(&DAT_00007f9a + (crc16_working_value >> 8 & 0xf) * 2) ^
+                   (uint)*(ushort *)(&DAT_00007f9a + (crc16_working_value >> 4 & 0xf) * 2) ^
+                   (uint)*(ushort *)(&DAT_00007f9a + (crc16_working_value & 0xf) * 2) ^ 0x1911) &
                  0xffff) == (uint)_DAT_003fecc6;
   return;
 }
@@ -3159,18 +3156,16 @@ void mpc555_initAdcChannelConfig(void)
 // Function: mpc555_configureAdcConversionRegs @ 0x00004320
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void mpc555_configureAdcConversionRegs(void)
 
 {
-  if (qadc_init_done_flag == 0) {
+  if (qadc_init_done_flag._0_1_ == '\0') {
     mbar_qadc64a_ccw = qadc_channel_config_base | qadc_channel_config_mask_b;
     mbar_qadc64b_ccw = qadc_channel_config_base | qadc_channel_config_mask_b;
   }
   else {
-    mbar_qadc64a_port = _qadc_queue_timing_config;
-    mbar_qadc64b_port = _qadc_queue_timing_config;
+    mbar_qadc64a_port = qadc_queue_timing_config;
+    mbar_qadc64b_port = qadc_queue_timing_config;
   }
   mbar_qadc64a_mcr = 0x85000000;
   mbar_qadc64b_mcr = 0x85000000;
@@ -3191,13 +3186,13 @@ void mpc555_configureAdcChannelRange(uint param_1)
   undefined *puVar1;
   dword *pdVar2;
   
-  if (qadc_init_done_flag == 0) {
+  if (qadc_init_done_flag._0_1_ == '\0') {
     mbar_qadc64a_ccw = qadc_channel_config_base | qadc_channel_config_mask_b;
     mbar_qadc64b_ccw = qadc_channel_config_base | qadc_channel_config_mask_b;
   }
   else {
-    mbar_qadc64a_port = _qadc_queue_timing_config;
-    mbar_qadc64b_port = _qadc_queue_timing_config;
+    mbar_qadc64a_port = qadc_queue_timing_config;
+    mbar_qadc64b_port = qadc_queue_timing_config;
   }
   if ((int)param_1 < 8) {
     param_1 = param_1 & 0x3f;
@@ -3211,11 +3206,11 @@ void mpc555_configureAdcChannelRange(uint param_1)
     _DAT_003fecb2 = &mbar_qadc64b_port;
     pdVar2 = &mbar_qadc64a_ccw;
   }
-  _qadc_channel_select_value = qadc_channel_config_base | 0x8000 >> param_1;
+  qadc_channel_select_value = qadc_channel_config_base | 0x8000 >> param_1;
   *pdVar2 = qadc_channel_config_base | qadc_channel_config_mask_b;
   puVar1 = qadc_active_register_ptr;
-  *(uint *)qadc_active_register_ptr = _qadc_channel_select_value | qadc_channel_config_mask_b;
-  *(uint *)puVar1 = _qadc_channel_select_value | qadc_channel_config_mask_b | 2;
+  *(dword *)qadc_active_register_ptr = qadc_channel_select_value | qadc_channel_config_mask_b;
+  *(dword *)puVar1 = qadc_channel_select_value | qadc_channel_config_mask_b | 2;
   return;
 }
 
@@ -3245,7 +3240,7 @@ void cm848_initDataTransferCopyBuffer(undefined *param_1)
   } while (uVar3 < 0x20);
   data_transfer_scan_ptr = param_1;
   qadc_channel_index = 0;
-  _DAT_003fdbda = _qadc_channel_select_value | qadc_channel_config_mask_b | 3;
+  _DAT_003fdbda = qadc_channel_select_value | qadc_channel_config_mask_b | 3;
   qadc_scan_step_counter = 0;
   return;
 }
@@ -3268,22 +3263,21 @@ undefined4 cm848_advanceAdcChannelQueue(void)
   
   bVar2 = qadc_channel_index;
   uVar3 = (uint)qadc_channel_index;
-  if (qadc_init_done_flag != 0) {
-    *_DAT_003fecb2 = *(undefined4 *)(&qadc_queue_timing_config + uVar3 * 2);
+  if (qadc_init_done_flag._0_1_ != '\0') {
+    *_DAT_003fecb2 = (&qadc_queue_timing_config)[uVar3];
   }
   *(uint *)qadc_active_register_ptr = _DAT_003fdbda;
   wVar4 = qadc_scan_step_counter + 1;
   bVar1 = *(ushort *)(&DAT_003fdc1e + uVar3 * 2) <= qadc_scan_step_counter;
   qadc_scan_step_counter = wVar4;
   if (bVar1) {
-    if ((int)(_DAT_003fdbd4 - 1) <= (int)uVar3) {
+    if ((int)(qadc_fault_bit_array._2_2_ - 1) <= (int)uVar3) {
       return 0;
     }
     qadc_channel_index = bVar2 + 1;
     qadc_scan_step_counter = 0;
   }
-  _DAT_003fdbda = _qadc_channel_select_value | (&qadc_channel_config_mask_b)[qadc_channel_index] | 3
-  ;
+  _DAT_003fdbda = qadc_channel_select_value | (&qadc_channel_config_mask_b)[qadc_channel_index] | 3;
   return 1;
 }
 
@@ -3332,8 +3326,8 @@ int cm848_checkDataTransferBufferStatus(void)
 void cm848_startAdcConversion(void)
 
 {
-  *(uint *)qadc_active_register_ptr = _qadc_channel_select_value | qadc_channel_config_mask_b;
-  if (qadc_init_done_flag != 0) {
+  *(dword *)qadc_active_register_ptr = qadc_channel_select_value | qadc_channel_config_mask_b;
+  if (qadc_init_done_flag._0_1_ != '\0') {
     *_DAT_003fecb2 = 0;
   }
   return;
@@ -3446,8 +3440,6 @@ LAB_000049a0:
 // Function: mpc555_initFlashMemoryConfig @ 0x000049d0
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 bool mpc555_initFlashMemoryConfig(uint param_1)
 
 {
@@ -3476,7 +3468,7 @@ bool mpc555_initFlashMemoryConfig(uint param_1)
   if ((param_1 & 0xff00) != 0) {
     bVar1 = true;
     mbar_qadc64a_mcr = 0x85000000;
-    if (qadc_init_done_flag != 0) {
+    if (qadc_init_done_flag._0_1_ != '\0') {
       mbar_qadc64a_port = qadc_control_word_cal;
     }
     mbar_qadc64a_ccw = uVar8 | qadc_channel_config_mask | 4;
@@ -3499,7 +3491,7 @@ bool mpc555_initFlashMemoryConfig(uint param_1)
   if ((param_1 & 0xff) != 0) {
     bVar2 = true;
     mbar_qadc64b_mcr = 0x85000000;
-    if (qadc_init_done_flag != 0) {
+    if (qadc_init_done_flag._0_1_ != '\0') {
       mbar_qadc64b_port = qadc_control_word_cal;
     }
     mbar_qadc64b_ccw = uVar9 | qadc_channel_config_mask | 4;
@@ -3521,11 +3513,11 @@ bool mpc555_initFlashMemoryConfig(uint param_1)
       uVar6 = 0;
     }
     else {
-      uVar6 = DAT_003fdba5 + 0xff & 0xff;
+      uVar6 = (byte)qadc_init_done_flag + 0xff & 0xff;
     }
-    if ((iVar7 != 0) && (uVar6 < DAT_003fdba5)) {
+    if ((iVar7 != 0) && (uVar6 < (byte)qadc_init_done_flag)) {
       while (qadc_data_accumulate_count < qadc_accumulate_count_cal) {
-        if ((qadc_init_done_flag != 0) && (uVar6 != 0)) {
+        if ((qadc_init_done_flag._0_1_ != '\0') && (uVar6 != 0)) {
           if (bVar1) {
             mbar_qadc64a_port = (&qadc_control_word_cal)[uVar6];
           }
@@ -3534,7 +3526,7 @@ bool mpc555_initFlashMemoryConfig(uint param_1)
           }
         }
         uVar10 = 0;
-        if ((iVar7 != 0) && (uVar5 = 0, _qadc_fault_bit_array != 0)) {
+        if ((iVar7 != 0) && (uVar5 = 0, qadc_fault_bit_array._0_2_ != 0)) {
           while (uVar10 = uVar5, qadc_data_accumulate_count < qadc_accumulate_count_cal) {
             if (bVar1) {
               mbar_qadc64a_ccw = uVar8 | qadc_channel_config_mask | 7;
@@ -3559,12 +3551,13 @@ bool mpc555_initFlashMemoryConfig(uint param_1)
               mbar_qadc64b_ccw = uVar9 | qadc_channel_config_mask | 6;
             }
             uVar10 = uVar10 + 1;
-            if ((iVar7 == 0) || (uVar5 = uVar10, _qadc_fault_bit_array <= (uVar10 & 0xff))) break;
+            if ((iVar7 == 0) || (uVar5 = uVar10, qadc_fault_bit_array._0_2_ <= (uVar10 & 0xff)))
+            break;
           }
         }
         uVar6 = uVar6 + 1 & 0xff;
         qadc_data_accumulate_count = qadc_data_accumulate_count + (uVar10 & 0xff);
-        if ((iVar7 == 0) || (DAT_003fdba5 <= uVar6)) break;
+        if ((iVar7 == 0) || ((byte)qadc_init_done_flag <= uVar6)) break;
       }
     }
     iVar7 = 0;
@@ -3584,7 +3577,7 @@ bool mpc555_initFlashMemoryConfig(uint param_1)
       mpc555_updateSensorDiagnostics();
     }
   } while (iVar7 != 0);
-  if (qadc_init_done_flag != 0) {
+  if (qadc_init_done_flag._0_1_ != '\0') {
     if (bVar1) {
       mbar_qadc64a_port = 0;
     }
@@ -4941,8 +4934,8 @@ void mpc555_diagnosticSubcommandDispatcher(void)
       diag_request_pending_flag = 0;
       return;
     }
-    if ((sensor_fault_mode_active == 1) || (sensor_fault_mode_active == 2)) {
-      sensor_fault_mode_pending = (word)sensor_fault_mode_active;
+    if ((sensor_fault_mode_active._0_1_ == 1) || (sensor_fault_mode_active._0_1_ == 2)) {
+      sensor_fault_mode_pending = (word)sensor_fault_mode_active._0_1_;
       if ((bVar1 & 0xf) == 0) {
         diag_request_pending_flag = 0;
         return;
@@ -5014,15 +5007,13 @@ void mpc555_serialReceiveHandler(void)
 // Function: mpc555_resetSerialCommunication @ 0x0000685c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void mpc555_resetSerialCommunication(void)
 
 {
   word wVar1;
   
   cm848_resetSerialReceiveBuffer();
-  _eeprom_request_state = 2;
+  eeprom_request_state = 2;
   diag_clear_flags_t_003fedfc.diag_response_write_count = 0;
   wVar1 = qsmcm_sccr1.SCC1R1;
   qsmcm_sccr1.SCC1R1 = wVar1 & 0xffbf;
@@ -5068,14 +5059,12 @@ void serialTransmitHandler(void)
 // Function: mpc555_enableSerialTransmit @ 0x00006974
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void mpc555_enableSerialTransmit(void)
 
 {
   word wVar1;
   
-  _eeprom_request_state = 3;
+  eeprom_request_state = 3;
   diag_response_checksum = 0;
   wVar1 = qsmcm_sccr1.SCC1R1;
   qsmcm_sccr1.SCC1R1 = wVar1 & 0xffdf;
@@ -5139,20 +5128,18 @@ void mpc555_initSerialTransmit(void)
 // Function: mpc555_sensorFaultDetection @ 0x00006ab8
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void mpc555_sensorFaultDetection(void)
 
 {
   word wVar1;
   
-  if (_eeprom_request_state == 2) {
+  if (eeprom_request_state == 2) {
     wVar1 = qsmcm_sccr1.SCC1R1;
     if ((wVar1 & 0x20) != 0) {
       mpc555_serialReceiveHandler();
     }
   }
-  else if ((_eeprom_request_state == 3) && (wVar1 = qsmcm_sccr1.SCC1R1, (wVar1 & 0x40) != 0)) {
+  else if ((eeprom_request_state == 3) && (wVar1 = qsmcm_sccr1.SCC1R1, (wVar1 & 0x40) != 0)) {
     serialTransmitHandler();
   }
   return;
@@ -5383,9 +5370,9 @@ void mpc555_handleEepromDiagnosticResponse(void)
   if (eeprom_calibration_pending_flag == 0) {
     if (eeprom_header_t_003fee08.magic == 0x1d0a) {
       ram0x003fedfd = 0;
-      ram0x003fee01 = _sensor_fault_mode_active;
+      ram0x003fee01 = sensor_fault_mode_active;
       eeprom_xfer_state.block_length = _DAT_003fecf6;
-      cVar2 = cm848_sensorFaultThresholdCheck(_sensor_fault_mode_active,1);
+      cVar2 = cm848_sensorFaultThresholdCheck(sensor_fault_mode_active,1);
       if (cVar2 != '\t') {
         uVar1 = 0x73;
         goto LAB_00006f3c;
@@ -5429,13 +5416,13 @@ void mpc555_processEepromDataTransfer(void)
     cm848_updateSystemTimers(0x78,0x74);
     return;
   }
-  local_30[0] = (ushort)sensor_fault_mode_active;
+  local_30[0] = (ushort)sensor_fault_mode_active._0_1_;
   dVar1 = eeprom_xfer_state.bytes_transferred;
   register0x00000010 = ram0x003fee01 + dVar1;
-  if ((sensor_fault_mode_active < 0xfb) && ((register0x00000010 & 1) == 0)) {
+  if ((sensor_fault_mode_active._0_1_ < 0xfb) && ((register0x00000010 & 1) == 0)) {
     dVar2 = eeprom_xfer_state.block_length;
     if (dVar1 <= dVar2) {
-      cVar5 = mpc555_sensorAcquisitionCycle(&DAT_003fecf3,register0x00000010,local_30,3);
+      cVar5 = mpc555_sensorAcquisitionCycle(0x3fecf3,register0x00000010,local_30,3);
       sensor_fault_threshold_state = cm848_sensorFaultThresholdCheck(ram0x003fee01,local_30[0]);
       if (cVar5 != -1) {
         uVar6 = 0x74;
@@ -5445,7 +5432,7 @@ void mpc555_processEepromDataTransfer(void)
         diag_request_pending_flag = 0;
         if (sensor_fault_threshold_state != 4) {
           pcVar3 = (code *)eeprom_xfer_state.read_callback_ptr;
-          sVar4 = (*pcVar3)(&DAT_003fecf3,ram0x003fedfd,local_30[0]);
+          sVar4 = (*pcVar3)(0x3fecf3,ram0x003fedfd,local_30[0]);
           if (sVar4 == 0) {
             eeprom_calibration_pending_flag = 0;
             cm848_updateSystemTimers(0x40,0x7f);
@@ -5459,8 +5446,7 @@ LAB_00007110:
         }
         dVar1 = eeprom_xfer_state.bytes_transferred;
         dVar2 = eeprom_xfer_state.block_length;
-        cVar5 = cm848_dataTransferBufferWrite
-                          (&DAT_003fecf3,ram0x003fedfd,local_30[0],dVar1 == dVar2,2);
+        cVar5 = cm848_dataTransferBufferWrite(0x3fecf3,ram0x003fedfd,local_30[0],dVar1 == dVar2,2);
         if (cVar5 != '\x01') {
           eeprom_calibration_pending_flag = cVar5 == '\x02';
           goto LAB_00007110;
@@ -5471,12 +5457,12 @@ LAB_00007110:
         eeprom_calibration_pending_flag = 1;
         DAT_003fee06 = 1;
         cm848_updateSystemTimers(0x78,0x74);
-        while (_eeprom_request_state == 3) {
+        while (eeprom_request_state == 3) {
           mpc555_sensorFaultDetection();
         }
         diag_request_pending_flag = 0;
         pcVar3 = (code *)eeprom_xfer_state.write_callback_ptr;
-        (*pcVar3)(&DAT_003fecf3,unique0x10000152 - 0x1000000,local_30[0]);
+        (*pcVar3)(0x3fecf3,unique0x10000152 - 0x1000000,local_30[0]);
         eeprom_calibration_pending_flag = 0;
         diag_session_state_byte = 0x73;
         DAT_003fee06 = 0;
@@ -5983,10 +5969,10 @@ void mpc555_systemWatchdogReset(void)
     wVar1 = qsmcm_recram_t_00305140.RX4;
     injector_sequence_index = wVar1 & 0xf;
     wVar1 = qsmcm_recram_t_00305140.RX4;
-    _tpu3_channel_status_count = wVar1 >> 4 & 7;
-    if (_DAT_003fdba0 < _tpu3_channel_status_count) {
+    tpu3_channel_status_count = wVar1 >> 4 & 7;
+    if (_DAT_003fdba0 < tpu3_channel_status_count) {
       _DAT_003fdba2 = qsmcm_recram_t_00305140.RX5;
-      _DAT_003fdba0 = _tpu3_channel_status_count;
+      _DAT_003fdba0 = tpu3_channel_status_count;
     }
     tpu3_timer_capture_value = mios_mmcsm_cnt.CNT;
   }
@@ -6046,23 +6032,23 @@ void mpc555_initQspiHardware(void)
     wVar4 = qsmcm_recram_t_00305140.RX2;
     injector_sequence_index = wVar4 & 0xf;
     wVar4 = qsmcm_recram_t_00305140.RX2;
-    _tpu3_channel_status_count = wVar4 >> 4 & 7;
-    if (_tpu3_channel_status_count != 0) {
+    tpu3_channel_status_count = wVar4 >> 4 & 7;
+    if (tpu3_channel_status_count != 0) {
       wVar4 = mios_mmcsm_cnt.CNT;
-      while ((wVar4 <= uVar1 && (mpc555_systemWatchdogReset(), _tpu3_channel_status_count != 0))) {
+      while ((wVar4 <= uVar1 && (mpc555_systemWatchdogReset(), tpu3_channel_status_count != 0))) {
         wVar4 = mios_mmcsm_cnt.CNT;
       }
     }
     _DAT_003fdba0 = 0;
     *pwVar6 = 0x100;
-    if (((in_DER == 0x2002000f) && (_bus_hardware_status_byte == 0)) &&
-       (_tpu3_channel_status_count == 0)) {
+    if (((in_DER == 0x2002000f) && (bus_hardware_status_byte._0_2_ == 0)) &&
+       (tpu3_channel_status_count == 0)) {
       eeprom_command_register.TX0 = 0x1440;
-      _DAT_003fdb9e = 0;
+      bus_hardware_status_byte._2_2_ = 0;
     }
     else {
       eeprom_command_register.TX0 = 0x1400;
-      _DAT_003fdb9e = 1;
+      bus_hardware_status_byte._2_2_ = 1;
     }
     eeprom_timing_reg_0 = 0x5d;
     eeprom_command_register.TX1 = 0xf200;
@@ -6088,8 +6074,6 @@ void mpc555_initQspiHardware(void)
 //
 // Function: mpc555_systemHaltLoop @ 0x00007dc4
 //
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void mpc555_systemHaltLoop(void)
 
@@ -6138,7 +6122,7 @@ void mpc555_systemHaltLoop(void)
     wVar2 = qsmcm_recram_t_00305140.RX4;
     injector_sequence_index = wVar2 & 0xf;
     wVar2 = qsmcm_recram_t_00305140.RX4;
-    _tpu3_channel_status_count = wVar2 >> 4 & 7;
+    tpu3_channel_status_count = wVar2 >> 4 & 7;
   } while (uVar4 < 0x10);
   qsmcm_qspi_spcr0._0_2_ = uVar1;
   qsmcm_qspi_ddqrs = 0x7b;
@@ -7003,7 +6987,7 @@ void main_loop(void)
   _DAT_003fa006 = (ushort)((system_feature_config_flags & 0x80) != 0);
   wVar3 = USIU_PISCR.PISCR;
   USIU_PISCR.PISCR = wVar3;
-  switch(_boot_sequence_state) {
+  switch(boot_sequence_state) {
   case 0:
     cm848_phase_common_processing();
     cm848_phase_group_a_processing();
@@ -7013,7 +6997,7 @@ void main_loop(void)
     hpcr_periodicTaskGroup25_calibration7();
     cm848_mainLoop_step_4();
     scheduler_task_stat_ptr_b = (undefined *)&scheduler_task_stat_t_0040be6a;
-    _boot_sequence_state = 1;
+    boot_sequence_state = 1;
     break;
   case 1:
     cm848_phase_common_processing();
@@ -7023,7 +7007,7 @@ void main_loop(void)
     cm848_periodicTaskGroup13_calibration2();
     cm848_periodicTaskGroup26_calibration8();
     cm848_mainLoopMonitor();
-    _boot_sequence_state = 2;
+    boot_sequence_state = 2;
     break;
   case 2:
     cm848_phase_common_processing();
@@ -7033,7 +7017,7 @@ void main_loop(void)
     cm848_periodicTaskGroup14_calibration3();
     cm848_periodicTaskGroup27_calibration9();
     governorCruiseTimerManagement();
-    _boot_sequence_state = 3;
+    boot_sequence_state = 3;
     break;
   case 3:
     cm848_phase_common_processing();
@@ -7044,7 +7028,7 @@ void main_loop(void)
     cm848_periodicTaskGroup28_calibration10();
     hpcr_cbdCalculateCylinderTrims();
     hpcr_processTimingCalibration();
-    _boot_sequence_state = 4;
+    boot_sequence_state = 4;
     break;
   case 4:
     cm848_phase_common_processing();
@@ -7054,7 +7038,7 @@ void main_loop(void)
     cm848_periodicTaskSet_protection2();
     cm848_periodicTaskGroup29_calibration11();
     hpcr_calculateFuelTrimOutput();
-    _boot_sequence_state = 5;
+    boot_sequence_state = 5;
     break;
   case 5:
     cm848_phase_common_processing();
@@ -7064,7 +7048,7 @@ void main_loop(void)
     cm848_periodicTaskGroup17_calibration5();
     cm848_periodicTaskGroup30_calibration12();
     protection_fault_latch_update();
-    _boot_sequence_state = 6;
+    boot_sequence_state = 6;
     break;
   case 6:
     cm848_phase_common_processing();
@@ -7074,7 +7058,7 @@ void main_loop(void)
     cm848_periodicTaskGroup18_calibration6();
     cm848_periodicTaskGroup31_calibration13();
     cm848_main_loop_protection_eval();
-    _boot_sequence_state = 7;
+    boot_sequence_state = 7;
     break;
   case 7:
     cm848_phase_common_processing();
@@ -7083,7 +7067,7 @@ void main_loop(void)
     cm848_periodicTaskSet_communication();
     cm848_periodicTaskGroup32_calibration14();
     cm848_mainLoop_step_5();
-    _boot_sequence_state = 8;
+    boot_sequence_state = 8;
     break;
   case 8:
     cm848_phase_common_processing();
@@ -7092,7 +7076,7 @@ void main_loop(void)
     cm848_periodicTaskSet_canTx();
     cm848_periodicTaskSet_protection3();
     sensor_fault_safety_check();
-    _boot_sequence_state = 9;
+    boot_sequence_state = 9;
     break;
   case 9:
     cm848_phase_common_processing();
@@ -7101,7 +7085,7 @@ void main_loop(void)
     cm848_periodicTaskSet_diagnostics();
     cm848_periodicTaskSet_auxiliary();
     protectionVoltageTimeoutControl();
-    _boot_sequence_state = 10;
+    boot_sequence_state = 10;
     break;
   case 10:
     cm848_phase_common_processing();
@@ -7111,7 +7095,7 @@ void main_loop(void)
     cm848_periodicTaskGroup12_calibration1();
     periodicTaskSet_fuelDemand();
     main_loop_resetGovernorDiagnosticFlags();
-    _boot_sequence_state = 0xb;
+    boot_sequence_state = 0xb;
     break;
   case 0xb:
     cm848_phase_common_processing();
@@ -7121,7 +7105,7 @@ void main_loop(void)
     cm848_periodicTaskGroup13_calibration2();
     hpcr_periodicTaskGroup36_calibration15();
     cm848_initColdStartTablePointers();
-    _boot_sequence_state = 0xc;
+    boot_sequence_state = 0xc;
     break;
   case 0xc:
     cm848_phase_common_processing();
@@ -7131,7 +7115,7 @@ void main_loop(void)
     cm848_periodicTaskGroup14_calibration3();
     cm848_periodicTaskGroup37_calibration16();
     cm848_processColdStartStateMachine();
-    _boot_sequence_state = 0xd;
+    boot_sequence_state = 0xd;
     break;
   case 0xd:
     cm848_phase_common_processing();
@@ -7141,7 +7125,7 @@ void main_loop(void)
     cm848_periodicTaskGroup15_calibration4();
     cm848_periodicTaskGroup38_calibration17();
     sensorChannelValidationIndex();
-    _boot_sequence_state = 0xe;
+    boot_sequence_state = 0xe;
     break;
   case 0xe:
     cm848_phase_common_processing();
@@ -7151,7 +7135,7 @@ void main_loop(void)
     cm848_periodicTaskSet_protection2();
     cm848_periodicTaskSet_diagnostics2();
     cm848_mainLoopDispatcher();
-    _boot_sequence_state = 0xf;
+    boot_sequence_state = 0xf;
     break;
   case 0xf:
     cm848_phase_common_processing();
@@ -7161,7 +7145,7 @@ void main_loop(void)
     cm848_periodicTaskGroup17_calibration5();
     hpcr_periodicTaskGroup20_calibration();
     bufferManagementWithBounds();
-    _boot_sequence_state = 0x10;
+    boot_sequence_state = 0x10;
     break;
   case 0x10:
     cm848_phase_common_processing();
@@ -7171,7 +7155,7 @@ void main_loop(void)
     cm848_periodicTaskGroup18_calibration6();
     cm848_periodicTaskGroup21_calibration();
     cm848_resetGovernorStartupReadyFlag();
-    _boot_sequence_state = 0x11;
+    boot_sequence_state = 0x11;
     break;
   case 0x11:
     cm848_phase_common_processing();
@@ -7182,7 +7166,7 @@ void main_loop(void)
     sensorChannelTypeB_configInit_axis4();
     eeprom_calibration_load_periodic();
     cm848_main_loop_initialization();
-    _boot_sequence_state = 0x12;
+    boot_sequence_state = 0x12;
     break;
   case 0x12:
     cm848_phase_common_processing();
@@ -7191,7 +7175,7 @@ void main_loop(void)
     cm848_periodicTaskSet_protection();
     hpcr_periodicTaskSet_protection4();
     main_loop_validateDiagnosticChannels();
-    _boot_sequence_state = 0x13;
+    boot_sequence_state = 0x13;
     break;
   case 0x13:
     cm848_phase_common_processing();
@@ -7200,7 +7184,7 @@ void main_loop(void)
     cm848_periodicTaskSet_timing();
     cm848_periodicTaskSet_outputs2();
     cm848_lookupProtectionFuelDemand();
-    _boot_sequence_state = 0x14;
+    boot_sequence_state = 0x14;
     break;
   case 0x14:
     cm848_phase_common_processing();
@@ -7210,7 +7194,7 @@ void main_loop(void)
     cm848_periodicTaskGroup12_calibration1();
     hpcr_periodicTaskGroup25_calibration7();
     governorSpeedCompensation();
-    _boot_sequence_state = 0x15;
+    boot_sequence_state = 0x15;
     break;
   case 0x15:
     cm848_phase_common_processing();
@@ -7220,7 +7204,7 @@ void main_loop(void)
     cm848_periodicTaskGroup13_calibration2();
     cm848_periodicTaskGroup26_calibration8();
     cm848_mainLoop_step();
-    _boot_sequence_state = 0x16;
+    boot_sequence_state = 0x16;
     break;
   case 0x16:
     cm848_phase_common_processing();
@@ -7230,7 +7214,7 @@ void main_loop(void)
     cm848_periodicTaskGroup14_calibration3();
     cm848_periodicTaskGroup27_calibration9();
     cm848_mainLoop_step_3();
-    _boot_sequence_state = 0x17;
+    boot_sequence_state = 0x17;
     break;
   case 0x17:
     cm848_phase_common_processing();
@@ -7240,7 +7224,7 @@ void main_loop(void)
     cm848_periodicTaskGroup15_calibration4();
     cm848_periodicTaskGroup28_calibration10();
     main_loop_callPhaseGroupProcessors();
-    _boot_sequence_state = 0x18;
+    boot_sequence_state = 0x18;
     break;
   case 0x18:
     cm848_phase_common_processing();
@@ -7250,7 +7234,7 @@ void main_loop(void)
     cm848_periodicTaskSet_protection2();
     cm848_periodicTaskGroup29_calibration11();
     cm848_updateSensorValidationFlags();
-    _boot_sequence_state = 0x19;
+    boot_sequence_state = 0x19;
     break;
   case 0x19:
     cm848_phase_common_processing();
@@ -7260,7 +7244,7 @@ void main_loop(void)
     cm848_periodicTaskGroup17_calibration5();
     cm848_periodicTaskGroup30_calibration12();
     cm848_sensorChannel7_init_configBundle();
-    _boot_sequence_state = 0x1a;
+    boot_sequence_state = 0x1a;
     break;
   case 0x1a:
     cm848_phase_common_processing();
@@ -7270,7 +7254,7 @@ void main_loop(void)
     cm848_periodicTaskGroup18_calibration6();
     cm848_periodicTaskGroup31_calibration13();
     cm848_blendBoostAndThrottleFuelDemand();
-    _boot_sequence_state = 0x1b;
+    boot_sequence_state = 0x1b;
     break;
   case 0x1b:
     cm848_phase_common_processing();
@@ -7279,7 +7263,7 @@ void main_loop(void)
     cm848_periodicTaskSet_timing();
     cm848_periodicTaskGroup32_calibration14();
     phase_group_b_computeGovernorFuelDemandOutput();
-    _boot_sequence_state = 0x1c;
+    boot_sequence_state = 0x1c;
     break;
   case 0x1c:
     cm848_phase_common_processing();
@@ -7288,7 +7272,7 @@ void main_loop(void)
     cm848_periodicTaskSet_outputs();
     cm848_periodicTaskSet_protection3();
     sensorChannelTypeB_configInit_axis1();
-    _boot_sequence_state = 0x1d;
+    boot_sequence_state = 0x1d;
     break;
   case 0x1d:
     cm848_phase_common_processing();
@@ -7296,7 +7280,7 @@ void main_loop(void)
     cm848_periodicTaskSet_sensorProcessing();
     cm848_periodicTaskSet_sensors();
     cm848_periodicTaskSet_auxiliary();
-    _boot_sequence_state = 0x1e;
+    boot_sequence_state = 0x1e;
     break;
   case 0x1e:
     cm848_phase_common_processing();
@@ -7306,7 +7290,7 @@ void main_loop(void)
     cm848_periodicTaskGroup12_calibration1();
     periodicTaskSet_fuelDemand();
     cm848_mainLoop_step_2();
-    _boot_sequence_state = 0x1f;
+    boot_sequence_state = 0x1f;
     break;
   case 0x1f:
     cm848_phase_common_processing();
@@ -7316,7 +7300,7 @@ void main_loop(void)
     cm848_periodicTaskGroup13_calibration2();
     hpcr_periodicTaskGroup36_calibration15();
     cm848_updateEngineModeFromSensor();
-    _boot_sequence_state = 0x20;
+    boot_sequence_state = 0x20;
     break;
   case 0x20:
     cm848_phase_common_processing();
@@ -7325,7 +7309,7 @@ void main_loop(void)
     cm848_periodicTaskSet_canTx();
     cm848_periodicTaskGroup14_calibration3();
     cm848_periodicTaskGroup37_calibration16();
-    _boot_sequence_state = 0x21;
+    boot_sequence_state = 0x21;
     break;
   case 0x21:
     cm848_phase_common_processing();
@@ -7334,7 +7318,7 @@ void main_loop(void)
     cm848_periodicTaskSet_diagnostics();
     cm848_periodicTaskGroup15_calibration4();
     cm848_periodicTaskGroup38_calibration17();
-    _boot_sequence_state = 0x22;
+    boot_sequence_state = 0x22;
     break;
   case 0x22:
     cm848_phase_common_processing();
@@ -7343,7 +7327,7 @@ void main_loop(void)
     cm848_periodicTaskSet_protection();
     cm848_periodicTaskSet_protection2();
     cm848_periodicTaskSet_diagnostics2();
-    _boot_sequence_state = 0x23;
+    boot_sequence_state = 0x23;
     break;
   case 0x23:
     cm848_phase_common_processing();
@@ -7352,7 +7336,7 @@ void main_loop(void)
     cm848_periodicTaskSet_timing();
     cm848_periodicTaskGroup17_calibration5();
     hpcr_periodicTaskGroup20_calibration();
-    _boot_sequence_state = 0x24;
+    boot_sequence_state = 0x24;
     break;
   case 0x24:
     cm848_phase_common_processing();
@@ -7362,7 +7346,7 @@ void main_loop(void)
     cm848_periodicTaskGroup18_calibration6();
     cm848_periodicTaskGroup21_calibration();
     cm848_fuelDemandBlendCalculation();
-    _boot_sequence_state = 0x25;
+    boot_sequence_state = 0x25;
     break;
   case 0x25:
     cm848_phase_common_processing();
@@ -7370,7 +7354,7 @@ void main_loop(void)
     cm848_periodicTaskSet_sensorProcessing();
     cm848_periodicTaskSet_sensors();
     cm848_periodicTaskGroup22_calibration();
-    _boot_sequence_state = 0x26;
+    boot_sequence_state = 0x26;
     break;
   case 0x26:
     cm848_phase_common_processing();
@@ -7379,7 +7363,7 @@ void main_loop(void)
     cm848_periodicTaskSet_monitoring();
     hpcr_periodicTaskSet_protection4();
     cm848_mainLoopServiceMonitor();
-    _boot_sequence_state = 0x27;
+    boot_sequence_state = 0x27;
     break;
   case 0x27:
     cm848_phase_common_processing();
@@ -7387,10 +7371,10 @@ void main_loop(void)
     cm848_periodicTaskSet_auxiliaryControl();
     cm848_periodicTaskSet_communication();
     cm848_periodicTaskSet_outputs2();
-    _boot_sequence_state = 0;
+    boot_sequence_state = 0;
     break;
   default:
-    _boot_sequence_state = 0;
+    boot_sequence_state = 0;
   }
   puVar4 = scheduler_task_stat_ptr_b;
   if ((system_feature_config_flags & 0x80) != 0) {
@@ -8029,7 +8013,7 @@ word cm848_oilPressureDeltaCalculation(void)
   word wVar1;
   
   wVar1 = sensor_readings_t_0040baf2.oil_pressure;
-  if (_DAT_003feff6 != 0) {
+  if (protection_sensor_mode_flag != 0) {
     if (_DAT_003feff4 == 0) {
       if (oil_pressure_baseline_ref < sensor_readings_t_0040baf2.oil_pressure) {
         return sensor_readings_t_0040baf2.oil_pressure - oil_pressure_baseline_ref;
@@ -8073,7 +8057,7 @@ void cm848_fuelDemandBlendCalculator(void)
       if ((uVar2 & 0xffff) < (uVar1 & 0xffff)) {
         oil_pressure_fuel_limit = (ushort)uVar2;
       }
-      if (_governor_mode_code == 0x10) {
+      if (governor_mode_code == 0x10) {
         fuel_ramp_increase_counter = 0;
         if (fuel_ramp_decrease_counter < _DAT_003ff00a) {
           fuel_ramp_decrease_counter = fuel_ramp_decrease_counter + 1;
@@ -8197,7 +8181,7 @@ LAB_0000e150:
   }
   else {
     wVar2 = DAT_0005be64;
-    if (_governor_mode_code != 0xf) {
+    if (governor_mode_code != 0xf) {
       if (governor_init_countdown == 0) goto LAB_0000e150;
       wVar2 = governor_init_countdown - 1;
     }
@@ -8220,7 +8204,7 @@ int cm848_calculateSensorEma(void)
 {
   int iVar1;
   
-  if ((_cold_start_active_flag_c == 1) && (DAT_0005be72 < intake_temp_ema)) {
+  if ((cold_start_active_flag_c == 1) && (DAT_0005be72 < intake_temp_ema)) {
     _DAT_003fa0d6 = (uint)DAT_0005be72 << 0x10;
   }
   intake_temp_ema = exponentialMovingAverage(fuel_rate_rpm_factor_raw);
@@ -8244,14 +8228,12 @@ int cm848_calculateSensorEma(void)
 // Function: cm848_checkFuelRateCondition @ 0x0000e218
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 undefined4 cm848_checkFuelRateCondition(void)
 
 {
   undefined4 uVar1;
   
-  if ((_governor_mode_code == 10) || (_governor_override_active_flag == 1)) {
+  if ((governor_mode_code == 10) || (governor_override_active_flag == 1)) {
     uVar1 = 1;
   }
   else {
@@ -8273,7 +8255,7 @@ undefined4 cm848_checkPressureFuelDelayA(void)
 {
   undefined4 uVar1;
   
-  if (_cold_start_active_flag_c == 1) {
+  if (cold_start_active_flag_c == 1) {
     cold_start_timer_a = DAT_0005be6e;
     _DAT_003fa0da = 1;
     uVar1 = 0;
@@ -8302,7 +8284,7 @@ undefined4 cm848_checkPressureFuelDelayB(void)
 {
   undefined4 uVar1;
   
-  if ((_cold_start_pressure_active_flag == 1) || (_cold_start_active_flag_c == 1)) {
+  if ((cold_start_pressure_active_flag == 1) || (cold_start_active_flag_c == 1)) {
     cold_start_timer_b = DAT_0005be60;
     _DAT_003fa0dc = 1;
     uVar1 = 0;
@@ -8357,20 +8339,20 @@ void timingProtectionFlagsOrchestrator(void)
   
   uVar2 = 0;
   if ((governor_fault_status_flags & 0x400) != 0) {
-    _pressure_fuel_delay_a_status = cm848_checkPressureFuelDelayA();
-    uVar2 = _pressure_fuel_delay_a_status;
+    pressure_fuel_delay_a_status = cm848_checkPressureFuelDelayA();
+    uVar2 = pressure_fuel_delay_a_status;
   }
   if ((governor_fault_status_flags & 0x800) != 0) {
-    _pressure_fuel_delay_b_status = cm848_checkPressureFuelDelayB();
-    uVar2 = uVar2 | _pressure_fuel_delay_b_status;
+    pressure_fuel_delay_b_status = cm848_checkPressureFuelDelayB();
+    uVar2 = uVar2 | pressure_fuel_delay_b_status;
   }
   if ((governor_fault_status_flags & 0x1000) != 0) {
     cold_start_sensor_ema = cm848_calculateSensorEma();
     uVar2 = uVar2 | cold_start_sensor_ema;
   }
   if ((governor_fault_status_flags & 0x2000) != 0) {
-    _fuel_rate_condition_status = cm848_checkFuelRateCondition();
-    uVar2 = uVar2 | _fuel_rate_condition_status;
+    fuel_rate_condition_status = cm848_checkFuelRateCondition();
+    uVar2 = uVar2 | fuel_rate_condition_status;
   }
   if ((governor_fault_status_flags & 0x8000) != 0) {
     pressure_hysteresis_state = cm848_checkPressureHysteresis();
@@ -8389,9 +8371,9 @@ void timingProtectionFlagsOrchestrator(void)
       fuel_demand_ramp_factor = 0x4000;
     }
   }
-  _DAT_003fa0d0 = _governor_mode_code;
-  _cold_start_active_flag_c = 0;
-  _cold_start_pressure_active_flag = 0;
+  _DAT_003fa0d0 = governor_mode_code;
+  cold_start_active_flag_c = 0;
+  cold_start_pressure_active_flag = 0;
   return;
 }
 
@@ -8409,7 +8391,7 @@ void hpcr_calculateFuelTrimOutput(void)
   word *pwVar1;
   ulonglong uVar2;
   
-  if (((_cold_start_phase == 1) || (_cold_start_phase == 2)) || (_cold_start_phase == 6)) {
+  if (((cold_start_phase == 1) || (cold_start_phase == 2)) || (cold_start_phase == 6)) {
     _DAT_003fa0da = 1;
     cold_start_timer_a = DAT_0005be6e;
     _DAT_003fa0dc = 1;
@@ -8424,7 +8406,7 @@ void hpcr_calculateFuelTrimOutput(void)
     timingProtectionFlagsOrchestrator();
   }
   pwVar1 = &governor_fault_status_flags;
-  if (_fuel_limit_mode_active_flag == 0) {
+  if (fuel_limit_mode_active_flag._0_2_ == 0) {
     if (((_DAT_003fd5c6 & 0x8000) == 0) || (governor_startup_threshold != 0x4000)) {
       if ((governor_feature_flags & 1) == 0) {
         uVar2 = cm848_checkPressureFuelState();
@@ -8433,32 +8415,32 @@ void hpcr_calculateFuelTrimOutput(void)
           if (((pwVar1[1] & 1) == 0) &&
              ((((governor_init_countdown == 0 && ((pwVar1[0x13] & 0x20) != 0)) ||
                ((pwVar1[0x13] & 0x20) == 0)) &&
-              (((*pwVar1 & 0x4000) != 0 && (_governor_startup_ready_flag == 1)))))) {
-            _governor_startup_state = 3;
+              (((*pwVar1 & 0x4000) != 0 && (governor_startup_ready_flag == 1)))))) {
+            governor_startup_state = 3;
             fuel_blend_coefficient = DAT_0005be6c;
           }
           else {
-            _governor_startup_state = 0;
+            governor_startup_state = 0;
             fuel_blend_coefficient = fuel_demand_ramp_factor;
           }
         }
         else {
-          _governor_startup_state = 2;
+          governor_startup_state = 2;
           fuel_blend_coefficient = DAT_0005be62;
         }
       }
       else {
-        _governor_startup_state = 1;
+        governor_startup_state = 1;
         fuel_blend_coefficient = _DAT_003fd514;
       }
     }
     else {
-      _governor_startup_state = 5;
+      governor_startup_state = 5;
       fuel_blend_coefficient = _DAT_003fd516;
     }
   }
   else {
-    _governor_startup_state = 4;
+    governor_startup_state = 4;
     fuel_blend_coefficient = governor_startup_fuel_blend_coeff;
   }
   if (0x4000 < fuel_blend_coefficient) {
@@ -8536,24 +8518,24 @@ void cm848_fuelTimingRateLimitedBlend(void)
   uint uVar2;
   
   uVar1 = (uint)fuel_trim_speed_filtered;
-  _speed_request_rate_limited_prev = _speed_request_rate_limited;
-  if (_engine_mode_tracking != 7) {
-    _speed_request_rate_limited_prev = uVar1;
+  speed_request_rate_limited_prev = speed_request_rate_limited;
+  if (engine_mode_tracking != 7) {
+    speed_request_rate_limited_prev = uVar1;
   }
   uVar2 = (uint)_DAT_003ff68c;
-  _speed_request_rate_limited = speed_request_filtered - _speed_request_rate_limited_prev;
-  if ((int)(speed_request_filtered - _speed_request_rate_limited_prev) < (int)-uVar2) {
-    _speed_request_rate_limited = -uVar2;
+  speed_request_rate_limited = speed_request_filtered - speed_request_rate_limited_prev;
+  if ((int)(speed_request_filtered - speed_request_rate_limited_prev) < (int)-uVar2) {
+    speed_request_rate_limited = -uVar2;
   }
-  if ((int)uVar2 < (int)_speed_request_rate_limited) {
-    _speed_request_rate_limited = uVar2;
+  if ((int)uVar2 < (int)speed_request_rate_limited) {
+    speed_request_rate_limited = uVar2;
   }
-  _speed_request_rate_limited = _speed_request_rate_limited + _speed_request_rate_limited_prev;
-  if ((int)(_speed_request_rate_limited - uVar1) < 0) {
-    uVar1 = uVar1 - _speed_request_rate_limited;
+  speed_request_rate_limited = speed_request_rate_limited + speed_request_rate_limited_prev;
+  if ((int)(speed_request_rate_limited - uVar1) < 0) {
+    uVar1 = uVar1 - speed_request_rate_limited;
   }
   else {
-    uVar1 = _speed_request_rate_limited - uVar1;
+    uVar1 = speed_request_rate_limited - uVar1;
   }
   speed_timing_blend_weight =
        lookupTableInterpolation(&DAT_003fa0f0,uVar1 & 0xffff,&DAT_0005c272,&DAT_0005c27e,0);
@@ -8580,24 +8562,24 @@ void cm848_fuelTimingCompensation(void)
   int unaff_r30;
   
   uVar1 = (uint)*(ushort *)(unaff_r30 + -0x5e50);
-  _speed_request_rate_limited_prev = _speed_request_rate_limited;
-  if (_engine_mode_tracking != 7) {
-    _speed_request_rate_limited_prev = uVar1;
+  speed_request_rate_limited_prev = speed_request_rate_limited;
+  if (engine_mode_tracking != 7) {
+    speed_request_rate_limited_prev = uVar1;
   }
   uVar2 = (uint)_DAT_003ff68c;
-  _speed_request_rate_limited = speed_request_filtered - _speed_request_rate_limited_prev;
-  if ((int)(speed_request_filtered - _speed_request_rate_limited_prev) < (int)-uVar2) {
-    _speed_request_rate_limited = -uVar2;
+  speed_request_rate_limited = speed_request_filtered - speed_request_rate_limited_prev;
+  if ((int)(speed_request_filtered - speed_request_rate_limited_prev) < (int)-uVar2) {
+    speed_request_rate_limited = -uVar2;
   }
-  if ((int)uVar2 < (int)_speed_request_rate_limited) {
-    _speed_request_rate_limited = uVar2;
+  if ((int)uVar2 < (int)speed_request_rate_limited) {
+    speed_request_rate_limited = uVar2;
   }
-  _speed_request_rate_limited = _speed_request_rate_limited + _speed_request_rate_limited_prev;
-  if ((int)(_speed_request_rate_limited - uVar1) < 0) {
-    uVar1 = uVar1 - _speed_request_rate_limited;
+  speed_request_rate_limited = speed_request_rate_limited + speed_request_rate_limited_prev;
+  if ((int)(speed_request_rate_limited - uVar1) < 0) {
+    uVar1 = uVar1 - speed_request_rate_limited;
   }
   else {
-    uVar1 = _speed_request_rate_limited - uVar1;
+    uVar1 = speed_request_rate_limited - uVar1;
   }
   speed_timing_blend_weight =
        lookupTableInterpolation(&DAT_003fa0f0,uVar1 & 0xffff,&DAT_0005c272,&DAT_0005c27e,0);
@@ -8623,7 +8605,7 @@ void fuelTimingOilPressureModeController(void)
   uint uVar1;
   short sVar2;
   ushort uVar3;
-  short *psVar4;
+  dword dVar4;
   uint uVar5;
   int extraout_r4;
   int extraout_r4_00;
@@ -8631,112 +8613,114 @@ void fuelTimingOilPressureModeController(void)
   int extraout_r4_02;
   uint extraout_r4_03;
   int extraout_r4_04;
-  word wVar6;
-  int iVar7;
+  int iVar6;
+  word wVar7;
   int iVar8;
-  ushort uVar10;
-  word wVar11;
-  word *pwVar9;
-  short sVar12;
-  int iVar13;
-  word wVar15;
-  word *pwVar14;
-  int iVar16;
-  uint uVar17;
+  int iVar9;
+  ushort uVar11;
+  word wVar12;
+  word *pwVar10;
+  short sVar13;
+  int iVar14;
+  word wVar16;
+  word *pwVar15;
+  int iVar17;
   uint uVar18;
+  uint uVar19;
   word wStack_2e;
   
-  if ((((_engine_operating_mode != 7) && (_engine_operating_mode != 2)) &&
-      (_engine_operating_mode != 0x1e)) && (_engine_operating_mode != 0x25)) {
-    _engine_mode_tracking = _engine_operating_mode;
+  if ((((engine_operating_mode != 7) && (engine_operating_mode != 2)) &&
+      (engine_operating_mode != 0x1e)) && (engine_operating_mode != 0x25)) {
+    engine_mode_tracking = engine_operating_mode;
     return;
   }
   cm848_calculateFuelTimingBlend();
-  if (_engine_mode_tracking == _engine_operating_mode) {
-    iVar16 = (int)(short)fuel_demand_pid_reference_working;
+  if (engine_mode_tracking == engine_operating_mode) {
+    iVar17 = (int)(short)fuel_demand_pid_reference_working;
   }
   else {
-    iVar16 = (uint)governor_pid_proportional_gain *
-             ((int)_fuel_demand_pid_coeffs[2] + (int)_fuel_demand_pid_coeffs[3]);
-    uVar18 = (uint)governor_rpm_actual;
-    if (iVar16 != 0) {
-      iVar16 = (int)((0x400 - (uint)governor_pid_integral_gain) *
+    iVar17 = (uint)governor_pid_proportional_gain *
+             ((int)*(short *)(fuel_demand_pid_coeffs + 4) +
+             (int)*(short *)(fuel_demand_pid_coeffs + 6));
+    uVar19 = (uint)governor_rpm_actual;
+    if (iVar17 != 0) {
+      iVar17 = (int)((0x400 - (uint)governor_pid_integral_gain) *
                      ((uint)fuel_demand_computed - (uint)governor_fuel_demand_reference) * 0x80) /
-               iVar16;
-      if (iVar16 < 0x30d4) {
-        if (iVar16 < -0x30d3) {
-          iVar16 = -32000;
+               iVar17;
+      if (iVar17 < 0x30d4) {
+        if (iVar17 < -0x30d3) {
+          iVar17 = -32000;
         }
         else {
-          iVar16 = (iVar16 << 8) / 100;
+          iVar17 = (iVar17 << 8) / 100;
         }
       }
       else {
-        iVar16 = 32000;
+        iVar17 = 32000;
       }
-      uVar18 = iVar16 + (uint)governor_rpm_actual;
-      if ((int)uVar18 < 0x10000) {
-        if ((int)uVar18 < 0) {
-          uVar18 = 0;
+      uVar19 = iVar17 + (uint)governor_rpm_actual;
+      if ((int)uVar19 < 0x10000) {
+        if ((int)uVar19 < 0) {
+          uVar19 = 0;
         }
       }
       else {
-        uVar18 = 0xffff;
+        uVar19 = 0xffff;
       }
     }
-    fuel_trim_speed_filtered = (word)uVar18;
-    fuel_trim_speed_high_word = (uVar18 & 0xffff) << 0x10;
-    iVar16 = (uVar18 & 0xffff) - (uint)governor_rpm_actual;
-    if (iVar16 < 32000) {
-      if (iVar16 < -31999) {
-        iVar16 = -32000;
+    fuel_trim_speed_filtered = (word)uVar19;
+    fuel_trim_speed_high_word = (uVar19 & 0xffff) << 0x10;
+    iVar17 = (uVar19 & 0xffff) - (uint)governor_rpm_actual;
+    if (iVar17 < 32000) {
+      if (iVar17 < -31999) {
+        iVar17 = -32000;
       }
       else {
-        wStack_2e = (word)iVar16;
-        iVar16 = (int)(short)wStack_2e;
+        wStack_2e = (word)iVar17;
+        iVar17 = (int)(short)wStack_2e;
       }
     }
     else {
-      iVar16 = 32000;
+      iVar17 = 32000;
     }
   }
-  if (_engine_operating_mode == 7) {
+  if (engine_operating_mode == 7) {
     cm848_fuelTimingRateLimitedBlend();
     if ((((((protection_enable_t_0040c050.system_enable_bits & 8) == 0) &&
           ((protection_enable_t_0040c050.mode_bits & 4) == 0)) || (_DAT_003ff69a == 0)) &&
         ((_DAT_003ff698 <= fuel_temp_trim_snapshot &&
-         ((_fuel_trim_speed_override_flag == 0 || (_fuel_correction_active_flag != 0)))))) &&
-       ((_fuel_correction_mode_flag == 0 ||
-        ((_fuel_correction_active_flag == 0 && (fuel_trim_speed_filtered != 0)))))) {
-      _fuel_trim_speed_active_flag = 1;
+         ((fuel_trim_speed_override_flag == 0 || (fuel_correction_active_flag != 0)))))) &&
+       ((fuel_correction_mode_flag == 0 ||
+        ((fuel_correction_active_flag == 0 && (fuel_trim_speed_filtered != 0)))))) {
+      fuel_trim_speed_active_flag = 1;
     }
     else {
-      _fuel_trim_speed_active_flag = 0;
+      fuel_trim_speed_active_flag = 0;
     }
-    if (_fuel_trim_speed_active_flag != 0) {
+    if (fuel_trim_speed_active_flag != 0) {
       if (_DAT_003ff696 < fuel_trim_speed_filtered) {
         if (_DAT_003ff692 == 0) {
-          uVar10 = _DAT_003ff696 - _DAT_003ff694;
+          uVar11 = _DAT_003ff696 - _DAT_003ff694;
           goto LAB_0000ecec;
         }
         fuel_trim_speed_filtered = fuel_trim_speed_filtered - _DAT_003ff692;
-        uVar10 = _DAT_003ff696;
+        uVar11 = _DAT_003ff696;
         if (fuel_trim_speed_filtered < _DAT_003ff696) goto LAB_0000ecec;
       }
       else {
         if (_DAT_003ff694 == 0) {
-          uVar10 = 0;
+          uVar11 = 0;
         }
         else {
-          uVar10 = fuel_trim_speed_filtered - _DAT_003ff694;
+          uVar11 = fuel_trim_speed_filtered - _DAT_003ff694;
         }
 LAB_0000ecec:
-        fuel_trim_speed_filtered = uVar10;
+        fuel_trim_speed_filtered = uVar11;
       }
-      uVar18 = (uint)engine_rpm_state_t_0040b7ac.current_rpm + (uint)_DAT_003ff6ac +
+      uVar19 = (uint)engine_rpm_state_t_0040b7ac.current_rpm + (uint)_DAT_003ff6ac +
                ((uint)_DAT_003ff6ae * (uint)sensor_readings_t_0040baf2.oil_pressure >> 7);
-      if ((uVar18 & 0xffff) < (uint)fuel_trim_speed_filtered) {
-        fuel_trim_speed_filtered = (word)uVar18;
+      if ((uVar19 & 0xffff) < (uint)fuel_trim_speed_filtered) {
+        fuel_trim_speed_filtered = (word)uVar19;
       }
       if (fuel_trim_speed_floor <= fuel_trim_speed_filtered) goto LAB_0000ed58;
     }
@@ -8748,30 +8732,30 @@ LAB_0000ecec:
     speed_timing_blend_weight = *(ushort *)fuel_trim_speed_ema_state_ptr >> 2;
   }
 LAB_0000ed58:
-  wVar11 = fuel_demand_computed;
-  wVar6 = governor_rpm_actual;
-  uVar18 = (uint)governor_rpm_actual;
-  iVar13 = fuel_trim_speed_filtered - uVar18;
-  if (iVar13 < 32000) {
-    if (iVar13 < -31999) {
-      wVar15 = 0x8300;
+  wVar12 = fuel_demand_computed;
+  wVar7 = governor_rpm_actual;
+  uVar19 = (uint)governor_rpm_actual;
+  iVar14 = fuel_trim_speed_filtered - uVar19;
+  if (iVar14 < 32000) {
+    if (iVar14 < -31999) {
+      wVar16 = 0x8300;
     }
     else {
-      wStack_2e = (word)iVar13;
-      wVar15 = wStack_2e;
+      wStack_2e = (word)iVar14;
+      wVar16 = wStack_2e;
     }
   }
   else {
-    wVar15 = 32000;
+    wVar16 = 32000;
   }
-  fuel_demand_pid_reference_working = wVar15;
-  if (_fuel_trim_mode_active_flag == 1) {
-    _fuel_correction_output_active_flag = 1;
-    iVar16 = (int)(short)fuel_trim_pid_error_accum;
+  fuel_demand_pid_reference_working = wVar16;
+  if (fuel_trim_mode_active_flag == 1) {
+    fuel_correction_output_active_flag = 1;
+    iVar17 = (int)(short)fuel_trim_pid_error_accum;
     _DAT_003fa0e2 = fuel_trim_pid_ema_ref;
-    iVar13 = (int)(short)fuel_trim_pid_clamp_value;
-    uVar10 = fuel_trim_pid_clamped;
-    wVar11 = fuel_trim_pid_correction;
+    iVar14 = (int)(short)fuel_trim_pid_clamp_value;
+    uVar11 = fuel_trim_pid_clamped;
+    wVar12 = fuel_trim_pid_correction;
     uVar3 = fuel_trim_pid_integral;
 LAB_0000efb0:
     governor_pid_integral_state = (uint)uVar3 << 0x10;
@@ -8779,71 +8763,70 @@ LAB_0000efb0:
   }
   else {
     if (((governor_fuel_demand_tracking != fuel_demand_computed) ||
-        (_engine_operating_mode != _engine_mode_tracking)) &&
-       ((_fuel_demand_pilot_active_flag != 1 ||
-        (((((_governor_mode_code != 0xb && (_governor_mode_code != 0xc)) &&
-           (_governor_mode_code != 0x10)) &&
-          ((_governor_mode_code != 0x13 && (_governor_mode_code != 2)))) &&
-         (_governor_mode_code != 0x31)))))) {
-      _fuel_correction_output_active_flag = 1;
-      iVar8 = (int)_fuel_demand_pid_coeffs[6];
-      iVar13 = (int)_fuel_demand_pid_coeffs[7];
-      if (iVar8 == iVar13) {
-        uVar10 = 0;
+        (engine_operating_mode != engine_mode_tracking)) &&
+       ((fuel_demand_pilot_active_flag._0_2_ != 1 ||
+        (((((governor_mode_code != 0xb && (governor_mode_code != 0xc)) &&
+           (governor_mode_code != 0x10)) &&
+          ((governor_mode_code != 0x13 && (governor_mode_code != 2)))) &&
+         (governor_mode_code != 0x31)))))) {
+      fuel_correction_output_active_flag = 1;
+      iVar9 = (int)*(short *)(fuel_demand_pid_coeffs + 0xc);
+      iVar14 = (int)*(short *)(fuel_demand_pid_coeffs + 0xe);
+      if (iVar9 == iVar14) {
+        uVar11 = 0;
       }
       else {
         uVar1 = (uint)fuel_demand_computed;
         uVar5 = (uint)fuel_demand_integrator;
-        uVar17 = (uint)governor_fuel_demand_reference;
-        if (uVar17 + uVar5 < uVar1) {
-          iVar7 = (uVar1 - uVar17) - uVar5;
+        uVar18 = (uint)governor_fuel_demand_reference;
+        if (uVar18 + uVar5 < uVar1) {
+          iVar8 = (uVar1 - uVar18) - uVar5;
+          iVar6 = 0x100 - *(short *)(fuel_demand_pid_coeffs + 0x10);
           cm848_signedDivision32
-                    ((int)((ulonglong)
-                           ((longlong)iVar7 * (longlong)(0x100 - _fuel_demand_pid_coeffs[8])) >>
-                          0x20),iVar7 * (0x100 - _fuel_demand_pid_coeffs[8]),iVar8 - iVar13 >> 0x1f,
-                     iVar8 - iVar13);
-          iVar13 = extraout_r4;
+                    ((int)((ulonglong)((longlong)iVar8 * (longlong)iVar6) >> 0x20),iVar8 * iVar6,
+                     iVar9 - iVar14 >> 0x1f,iVar9 - iVar14);
+          iVar14 = extraout_r4;
           if (0x1700 < extraout_r4) {
-            iVar13 = 0x1700;
+            iVar14 = 0x1700;
           }
-          uVar10 = (ushort)iVar13;
+          uVar11 = (ushort)iVar14;
         }
         else {
-          iVar7 = (uVar17 - uVar1) + uVar5;
+          iVar8 = (uVar18 - uVar1) + uVar5;
+          iVar6 = 0x100 - *(short *)(fuel_demand_pid_coeffs + 0x10);
           cm848_signedDivision32
-                    ((int)((ulonglong)
-                           ((longlong)iVar7 * (longlong)(0x100 - _fuel_demand_pid_coeffs[8])) >>
-                          0x20),iVar7 * (0x100 - _fuel_demand_pid_coeffs[8]),iVar8 - iVar13 >> 0x1f,
-                     iVar8 - iVar13);
-          iVar13 = extraout_r4_00;
+                    ((int)((ulonglong)((longlong)iVar8 * (longlong)iVar6) >> 0x20),iVar8 * iVar6,
+                     iVar9 - iVar14 >> 0x1f,iVar9 - iVar14);
+          iVar14 = extraout_r4_00;
           if (0x1700 < extraout_r4_00) {
-            iVar13 = 0x1700;
+            iVar14 = 0x1700;
           }
-          uVar10 = -(short)iVar13;
+          uVar11 = -(short)iVar14;
         }
       }
-      _DAT_003fa0e2 = wVar6;
-      iVar13 = 0;
-      wVar11 = (wVar11 - governor_fuel_demand_reference) - fuel_demand_integrator;
-      uVar3 = uVar10;
+      _DAT_003fa0e2 = wVar7;
+      iVar14 = 0;
+      wVar12 = (wVar12 - governor_fuel_demand_reference) - fuel_demand_integrator;
+      uVar3 = uVar11;
       goto LAB_0000efb0;
     }
-    iVar13 = (int)(short)governor_pid_integral_clamp_value;
-    _fuel_correction_output_active_flag = 0;
-    uVar10 = governor_pid_integral_clamped;
-    wVar11 = fuel_demand_correction_working;
+    iVar14 = (int)(short)governor_pid_integral_clamp_value;
+    fuel_correction_output_active_flag = 0;
+    uVar11 = governor_pid_integral_clamped;
+    wVar12 = fuel_demand_correction_working;
   }
-  psVar4 = _fuel_demand_pid_coeffs;
-  if ((fuel_demand_control_t_0040a57a.calculated == 0) && (_fuel_demand_pilot_active_flag == 1)) {
-    if (_governor_mode_code == 0xb) {
-      iVar8 = (((uint)fuel_demand_computed - (uint)fuel_demand_previous) +
+  dVar4 = fuel_demand_pid_coeffs;
+  if ((fuel_demand_control_t_0040a57a.calculated == 0) && (fuel_demand_pilot_active_flag._0_2_ == 1)
+     ) {
+    if (governor_mode_code == 0xb) {
+      iVar9 = (((uint)fuel_demand_computed - (uint)fuel_demand_previous) +
               (uint)fuel_demand_integrator) - (uint)_DAT_003ff6a0;
-      if (iVar8 < 0) {
+      if (iVar9 < 0) {
 LAB_0000f0b0:
         fuel_demand_integrator = 0;
       }
-      else if (iVar8 < 0x10000) {
-        wStack_2e = (word)iVar8;
+      else if (iVar9 < 0x10000) {
+        wStack_2e = (word)iVar9;
         fuel_demand_integrator = wStack_2e;
       }
       else {
@@ -8852,60 +8835,63 @@ LAB_0000f0b0:
     }
     else if (governor_output_t_0040aec2.integrator._0_2_ <= engine_rpm_state_t_0040b7ac.current_rpm)
     {
-      if (fuel_demand_integrator <= _DAT_003ff69e) goto LAB_0000f0b0;
-      fuel_demand_integrator = fuel_demand_integrator - _DAT_003ff69e;
+      if (fuel_demand_integrator <= fuel_demand_pilot_active_flag._2_2_) goto LAB_0000f0b0;
+      fuel_demand_integrator = fuel_demand_integrator - fuel_demand_pilot_active_flag._2_2_;
     }
     if (_DAT_003ff6c8 < fuel_demand_integrator) {
       fuel_demand_integrator = _DAT_003ff6c8;
     }
   }
-  iVar8 = uVar18 - _DAT_003fa0e2;
-  if (iVar8 < 8000) {
-    if (iVar8 < -7999) {
+  iVar9 = uVar19 - _DAT_003fa0e2;
+  if (iVar9 < 8000) {
+    if (iVar9 < -7999) {
       wStack_2e = 0xe0c0;
     }
     else {
-      wStack_2e = (word)iVar8;
+      wStack_2e = (word)iVar9;
     }
   }
   else {
     wStack_2e = 8000;
   }
-  _DAT_003fa0e2 = wVar6;
-  iVar8 = (short)wVar15 - iVar16;
-  if (iVar8 < 32000) {
-    if (iVar8 < -31999) {
-      iVar8 = -32000;
+  _DAT_003fa0e2 = wVar7;
+  iVar9 = (short)wVar16 - iVar17;
+  if (iVar9 < 32000) {
+    if (iVar9 < -31999) {
+      iVar9 = -32000;
     }
   }
   else {
-    iVar8 = 32000;
+    iVar9 = 32000;
   }
-  fuel_demand_pid_input = (word)iVar8;
-  iVar16 = (int)(fuel_demand_pid_accum_hi +
+  fuel_demand_pid_input = (word)iVar9;
+  iVar17 = (int)(fuel_demand_pid_accum_hi +
                  (((int)(short)fuel_demand_pid_input *
-                   ((int)*_fuel_demand_pid_coeffs + (int)_fuel_demand_pid_coeffs[2]) +
-                  iVar16 * ((int)_fuel_demand_pid_coeffs[2] + (int)_fuel_demand_pid_coeffs[3])) -
-                 (int)(short)wStack_2e * (int)_fuel_demand_pid_coeffs[1]) + fuel_demand_pid_accum_lo
-                ) >> 9;
+                   ((int)*(short *)fuel_demand_pid_coeffs +
+                   (int)*(short *)(fuel_demand_pid_coeffs + 4)) +
+                  iVar17 * ((int)*(short *)(fuel_demand_pid_coeffs + 4) +
+                           (int)*(short *)(fuel_demand_pid_coeffs + 6))) -
+                 (int)(short)wStack_2e * (int)*(short *)(fuel_demand_pid_coeffs + 2)) +
+                fuel_demand_pid_accum_lo) >> 9;
   _DAT_003fa0e4 = 0xe6000;
-  if ((iVar16 < 0xe6000) && (_DAT_003fa0e4 = iVar16, iVar16 < -0xe5fff)) {
+  if ((iVar17 < 0xe6000) && (_DAT_003fa0e4 = iVar17, iVar17 < -0xe5fff)) {
     _DAT_003fa0e4 = -0xe6000;
   }
   fuel_demand_pid_prev_output = wStack_2e;
   cm848_signedDivision32
             ((int)((ulonglong)
                    ((longlong)(int)(short)fuel_demand_pid_input *
-                   (longlong)(int)_fuel_demand_pid_coeffs[4]) >> 0x20),
-             (int)(short)fuel_demand_pid_input * (int)_fuel_demand_pid_coeffs[4],0,4);
+                   (longlong)(int)*(short *)(fuel_demand_pid_coeffs + 8)) >> 0x20),
+             (int)(short)fuel_demand_pid_input * (int)*(short *)(fuel_demand_pid_coeffs + 8),0,4);
   cm848_signedDivision32
-            ((int)((ulonglong)((longlong)(int)(short)wStack_2e * (longlong)(int)psVar4[5]) >> 0x20),
-             (int)(short)wStack_2e * (int)psVar4[5],0,4);
-  wVar6 = fuel_demand_integrator;
-  iVar16 = _fuel_timing_blend_accumulator + (extraout_r4_01 - extraout_r4_02) >> 0xb;
-  wStack_2e = (word)iVar16;
-  if (iVar16 < 0x7fff) {
-    if (iVar16 < -0x7fff) {
+            ((int)((ulonglong)
+                   ((longlong)(int)(short)wStack_2e * (longlong)(int)*(short *)(dVar4 + 10)) >> 0x20
+                  ),(int)(short)wStack_2e * (int)*(short *)(dVar4 + 10),0,4);
+  wVar7 = fuel_demand_integrator;
+  iVar17 = (int)(fuel_timing_blend_accumulator + (extraout_r4_01 - extraout_r4_02)) >> 0xb;
+  wStack_2e = (word)iVar17;
+  if (iVar17 < 0x7fff) {
+    if (iVar17 < -0x7fff) {
       wStack_2e = -0x8000;
     }
   }
@@ -8914,7 +8900,7 @@ LAB_0000f0b0:
   }
   if ((int)(short)wStack_2e < (int)_DAT_003ff686) {
     if (-(int)_DAT_003ff686 < (int)(short)wStack_2e) {
-      wVar15 = 0;
+      wVar16 = 0;
       goto LAB_0000f2f8;
     }
     governor_demand_rate_limited = wStack_2e + _DAT_003ff686;
@@ -8924,15 +8910,15 @@ LAB_0000f0b0:
   }
   else {
     governor_demand_rate_limited = wStack_2e - _DAT_003ff686;
-    wVar15 = _DAT_003ff68a;
+    wVar16 = _DAT_003ff68a;
     if ((short)_DAT_003ff68a <= (short)governor_demand_rate_limited) {
 LAB_0000f2f8:
-      governor_demand_rate_limited = wVar15;
+      governor_demand_rate_limited = wVar16;
     }
   }
   wStack_2e = (short)((int)((int)(short)governor_demand_rate_limited *
                            (uint)governor_pid_proportional_gain) >> 10) +
-              (short)(iVar13 * _DAT_003ff688 >> 10);
+              (short)(iVar14 * _DAT_003ff688 >> 10);
   if ((short)wStack_2e < 0x1700) {
     governor_pid_integral_clamp_value = wStack_2e;
     if ((short)wStack_2e < -0x16ff) {
@@ -8942,14 +8928,14 @@ LAB_0000f2f8:
   else {
     governor_pid_integral_clamp_value = 0x1700;
   }
-  iVar16 = ((int)(_DAT_003fa0e4 * (uint)governor_pid_proportional_gain) >> 1) +
+  iVar17 = ((int)(_DAT_003fa0e4 * (uint)governor_pid_proportional_gain) >> 1) +
            ((int)(((int)governor_pid_integral_state >> 9) * (uint)governor_pid_integral_gain) >> 3)
-           + (governor_pid_integral_gain - 0x400) * iVar13 * 0x10;
-  if (iVar16 < -0x5c00000) {
+           + (governor_pid_integral_gain - 0x400) * iVar14 * 0x10;
+  if (iVar17 < -0x5c00000) {
     governor_pid_integral_state = 0xe9000000;
   }
-  else if (iVar16 < 0x5c00000) {
-    governor_pid_integral_state = iVar16 * 4;
+  else if (iVar17 < 0x5c00000) {
+    governor_pid_integral_state = iVar17 * 4;
   }
   else {
     governor_pid_integral_state = 0x17000000;
@@ -8963,127 +8949,128 @@ LAB_0000f2f8:
   else if (0x1700 < (short)governor_pid_integral_clamped) {
     governor_pid_integral_clamped = 0x1700;
   }
-  iVar13 = ((int)(short)governor_pid_integral_clamped * (int)psVar4[6] -
-           (int)(short)uVar10 * (int)psVar4[7]) + (int)(short)wVar11 * (int)psVar4[8];
-  iVar16 = iVar13 >> 8;
-  if (iVar16 < -0x16ff) {
+  iVar14 = ((int)(short)governor_pid_integral_clamped * (int)*(short *)(dVar4 + 0xc) -
+           (int)(short)uVar11 * (int)*(short *)(dVar4 + 0xe)) +
+           (int)(short)wVar12 * (int)*(short *)(dVar4 + 0x10);
+  iVar17 = iVar14 >> 8;
+  if (iVar17 < -0x16ff) {
     wStack_2e = 0xe900;
   }
-  else if (iVar16 < 0x1700) {
-    wStack_2e = (word)((uint)iVar13 >> 8);
+  else if (iVar17 < 0x1700) {
+    wStack_2e = (word)((uint)iVar14 >> 8);
   }
   else {
     wStack_2e = 0x1700;
   }
-  uVar18 = (int)((uint)governor_fuel_demand_reference * (0x4000 - (uint)speed_timing_blend_weight) +
+  uVar19 = (int)((uint)governor_fuel_demand_reference * (0x4000 - (uint)speed_timing_blend_weight) +
                 (uint)governor_fuel_demand_prev_ref * (uint)speed_timing_blend_weight) >> 0xe;
-  governor_fuel_demand_prev_ref = (word)uVar18;
-  if (0x1700 < (uVar18 & 0xffff)) {
+  governor_fuel_demand_prev_ref = (word)uVar19;
+  if (0x1700 < (uVar19 & 0xffff)) {
     governor_fuel_demand_prev_ref = 0x1700;
   }
   governor_fuel_demand_tracking = wStack_2e + governor_fuel_demand_prev_ref;
   fuel_demand_correction_working = wStack_2e;
-  if (_fuel_demand_pilot_active_flag == 1) {
+  if (fuel_demand_pilot_active_flag._0_2_ == 1) {
     governor_fuel_demand_tracking = governor_fuel_demand_tracking + fuel_demand_integrator;
-    if (((_governor_mode_code == 0x10) || (_governor_mode_code == 0x13)) ||
-       (wVar11 = fuel_demand_integrator, _governor_mode_code == 0x31)) {
-      wVar11 = (fuel_demand_integrator - fuel_demand_previous) + fuel_demand_computed;
+    if (((governor_mode_code == 0x10) || (governor_mode_code == 0x13)) ||
+       (wVar12 = fuel_demand_integrator, governor_mode_code == 0x31)) {
+      wVar12 = (fuel_demand_integrator - fuel_demand_previous) + fuel_demand_computed;
     }
-    iVar16 = (int)(short)wVar11;
+    iVar17 = (int)(short)wVar12;
     if ((uint)governor_output_t_0040aec2.integrator._0_2_ <=
         (uint)engine_rpm_state_t_0040b7ac.current_rpm) {
-      uVar18 = (uint)engine_rpm_state_t_0040b7ac.current_rpm -
+      uVar19 = (uint)engine_rpm_state_t_0040b7ac.current_rpm -
                (uint)governor_output_t_0040aec2.integrator._0_2_;
       cm848_signedDivision32
-                (((int)uVar18 >> 0x1f) * 0xa6 + (int)((ulonglong)uVar18 * 0xa6 >> 0x20),
-                 uVar18 * 0xa6,0,8);
+                (((int)uVar19 >> 0x1f) * 0xa6 + (int)((ulonglong)uVar19 * 0xa6 >> 0x20),
+                 uVar19 * 0xa6,0,8);
       cm848_signedDivision32
                 (((int)extraout_r4_03 >> 0x1f) * 0x3a +
                  (int)((ulonglong)extraout_r4_03 * 0x3a >> 0x20),extraout_r4_03 * 0x3a,0,
                  _DAT_003ff6c6);
-      iVar13 = (uint)_DAT_003ff6c8 - extraout_r4_04;
-      if (iVar13 < -0x8000) {
-        iVar13 = -0x8000;
+      iVar14 = (uint)_DAT_003ff6c8 - extraout_r4_04;
+      if (iVar14 < -0x8000) {
+        iVar14 = -0x8000;
       }
-      else if (iVar13 < 0x8000) {
-        wStack_2e = (word)iVar13;
-        iVar13 = (int)(short)wStack_2e;
+      else if (iVar14 < 0x8000) {
+        wStack_2e = (word)iVar14;
+        iVar14 = (int)(short)wStack_2e;
       }
       else {
-        iVar13 = 0x7fff;
+        iVar14 = 0x7fff;
       }
-      if (iVar13 < iVar16) {
-        iVar16 = (int)(short)iVar13;
+      if (iVar14 < iVar17) {
+        iVar17 = (int)(short)iVar14;
       }
     }
     if (((protection_enable_t_0040c050.system_enable_bits & 8) != 0) ||
        ((protection_enable_t_0040c050.mode_bits & 4) != 0)) {
-      if ((int)(uint)_DAT_003ff69e < iVar16) {
-        iVar16 = (int)(short)((short)iVar16 - _DAT_003ff69e);
+      if ((int)(uint)fuel_demand_pilot_active_flag._2_2_ < iVar17) {
+        iVar17 = (int)(short)((short)iVar17 - fuel_demand_pilot_active_flag._2_2_);
       }
       else {
-        iVar16 = 0;
+        iVar17 = 0;
       }
     }
-    if (iVar16 < 0) {
-      iVar16 = 0;
+    if (iVar17 < 0) {
+      iVar17 = 0;
     }
-    if (iVar16 < (int)(uint)wVar6) goto LAB_0000f6bc;
+    if (iVar17 < (int)(uint)wVar7) goto LAB_0000f6bc;
   }
   else {
-    iVar16 = 0;
+    iVar17 = 0;
 LAB_0000f6bc:
-    fuel_demand_integrator = (word)iVar16;
+    fuel_demand_integrator = (word)iVar17;
   }
-  pwVar9 = &governor_fuel_demand_tracking_limit;
+  pwVar10 = &governor_fuel_demand_tracking_limit;
   if ((int)(short)governor_fuel_demand_tracking < (int)(short)governor_fuel_demand_tracking_limit) {
-    uVar18 = (uint)(short)fuel_trim_speed_reference;
-    if ((int)uVar18 < (int)(short)governor_fuel_demand_tracking) {
-      pwVar9 = &governor_fuel_demand_tracking;
+    uVar19 = (uint)(short)fuel_trim_speed_reference;
+    if ((int)uVar19 < (int)(short)governor_fuel_demand_tracking) {
+      pwVar10 = &governor_fuel_demand_tracking;
       goto LAB_0000f700;
     }
   }
   else {
 LAB_0000f700:
-    uVar18 = (uint)*pwVar9;
+    uVar19 = (uint)*pwVar10;
   }
-  fuel_demand_previous = (word)uVar18;
-  if ((_governor_override_active_flag == 1) && ((fuel_feature_control_flags & 0x10) != 0)) {
-    if ((uint)_DAT_003ff6ce < (uVar18 & 0xffff)) {
+  fuel_demand_previous = (word)uVar19;
+  if ((governor_override_active_flag == 1) && ((fuel_feature_control_flags & 0x10) != 0)) {
+    if ((uint)_DAT_003ff6ce < (uVar19 & 0xffff)) {
       fuel_demand_previous = fuel_demand_previous - _DAT_003ff6ce;
     }
     else {
       fuel_demand_previous = 0;
     }
   }
-  sVar12 = _DAT_003ff6a4;
+  sVar13 = _DAT_003ff6a4;
   sVar2 = _DAT_003ff6a8;
   if (_DAT_003ff6aa < (short)(cam_timing_measured - cam_timing_reference_b)) {
-    sVar12 = _DAT_003ff6a2;
+    sVar13 = _DAT_003ff6a2;
     sVar2 = _DAT_003ff6a6;
   }
-  wVar6 = fuel_demand_base_offset - sVar2;
-  if ((short)wVar6 < 0) {
-    wVar6 = 0;
+  wVar7 = fuel_demand_base_offset - sVar2;
+  if ((short)wVar7 < 0) {
+    wVar7 = 0;
   }
-  wVar11 = fuel_demand_previous;
-  if ((((short)fuel_demand_previous <= (short)wVar6) &&
-      (wVar11 = fuel_demand_previous,
+  wVar12 = fuel_demand_previous;
+  if ((((short)fuel_demand_previous <= (short)wVar7) &&
+      (wVar12 = fuel_demand_previous,
       (short)fuel_demand_previous <= (short)fuel_demand_integrator_max)) &&
-     (wVar11 = fuel_demand_previous, sVar12 != 0)) {
-    if ((short)wVar6 < (short)fuel_demand_integrator_max) {
-      fuel_demand_integrator_max = wVar6;
+     (wVar12 = fuel_demand_previous, sVar13 != 0)) {
+    if ((short)wVar7 < (short)fuel_demand_integrator_max) {
+      fuel_demand_integrator_max = wVar7;
     }
-    fuel_demand_integrator_max = fuel_demand_integrator_max - sVar12;
+    fuel_demand_integrator_max = fuel_demand_integrator_max - sVar13;
     if ((short)fuel_demand_integrator_max < (short)fuel_demand_previous) {
       fuel_demand_integrator_max = fuel_demand_previous;
     }
-    wVar11 = fuel_demand_integrator_max;
+    wVar12 = fuel_demand_integrator_max;
     if ((short)fuel_demand_integrator_max < 0) {
-      wVar11 = 0;
+      wVar12 = 0;
     }
   }
-  fuel_demand_integrator_max = wVar11;
+  fuel_demand_integrator_max = wVar12;
   if (engine_rpm_state_t_0040b7ac.current_rpm < engine_rpm_prev_snapshot) {
     engine_rpm_delta = engine_rpm_prev_snapshot - engine_rpm_state_t_0040b7ac.current_rpm;
   }
@@ -9091,40 +9078,40 @@ LAB_0000f700:
     engine_rpm_delta = 0;
   }
   if (sensor_readings_t_0040baf2.oil_pressure < _DAT_003ff6ba) {
-    sVar12 = 0;
+    sVar13 = 0;
     fuel_demand_integrator_b._0_2_ = 0;
   }
   else if (_DAT_003ff6bc < engine_rpm_state_t_0040b7ac.current_rpm) {
-    sVar12 = engine_rpm_delta - _DAT_003ff6b8;
+    sVar13 = engine_rpm_delta - _DAT_003ff6b8;
   }
   else {
-    sVar12 = engine_rpm_delta - _DAT_003ff6b0;
+    sVar13 = engine_rpm_delta - _DAT_003ff6b0;
   }
-  uVar18 = (uint)_DAT_003ff6b2 * (int)sVar12;
+  uVar19 = (uint)_DAT_003ff6b2 * (int)sVar13;
   fuel_demand_integrator_b._0_2_ =
        fuel_demand_integrator_b._0_2_ +
-       (short)(uVar18 >> 8) + (ushort)((int)uVar18 < 0 && (uVar18 & 0xff) != 0);
+       (short)(uVar19 >> 8) + (ushort)((int)uVar19 < 0 && (uVar19 & 0xff) != 0);
   if ((short)fuel_demand_integrator_b._0_2_ < 0) {
-    wVar6 = 0;
+    wVar7 = 0;
 LAB_0000f928:
-    fuel_demand_integrator_b._0_2_ = wVar6;
+    fuel_demand_integrator_b._0_2_ = wVar7;
   }
   else {
-    wVar6 = _DAT_003ff6b4;
+    wVar7 = _DAT_003ff6b4;
     if ((short)_DAT_003ff6b4 < (short)fuel_demand_integrator_b._0_2_) goto LAB_0000f928;
   }
-  uVar18 = (uint)_DAT_003ff6b6 * (int)sVar12;
+  uVar19 = (uint)_DAT_003ff6b6 * (int)sVar13;
   fuel_demand_integrator_b._2_2_ =
-       (short)(uVar18 >> 8) + (ushort)((int)uVar18 < 0 && (uVar18 & 0xff) != 0);
-  pwVar9 = &fuel_demand_integrator_b_sum;
+       (short)(uVar19 >> 8) + (ushort)((int)uVar19 < 0 && (uVar19 & 0xff) != 0);
+  pwVar10 = &fuel_demand_integrator_b_sum;
   fuel_demand_integrator_b_sum = fuel_demand_integrator_b._2_2_ + fuel_demand_integrator_b._0_2_;
   if ((short)fuel_demand_integrator_b_sum < 0) {
-    wVar6 = 0;
+    wVar7 = 0;
 LAB_0000f988:
-    fuel_demand_integrator_b_sum = wVar6;
+    fuel_demand_integrator_b_sum = wVar7;
   }
   else {
-    wVar6 = _DAT_003ff6b4;
+    wVar7 = _DAT_003ff6b4;
     if ((short)_DAT_003ff6b4 < (short)fuel_demand_integrator_b_sum) goto LAB_0000f988;
   }
   if ((_DAT_003ff6c4 < engine_temp_protection_input) ||
@@ -9135,7 +9122,7 @@ LAB_0000fa44:
   else {
     if (fuel_demand_previous < fuel_demand_ramp_state) {
       fuel_demand_ramp_state = fuel_demand_previous;
-      pwVar14 = &fuel_demand_integrator_max;
+      pwVar15 = &fuel_demand_integrator_max;
       if ((int)(short)fuel_demand_integrator_max <= (int)(uint)fuel_demand_previous)
       goto LAB_0000fa58;
     }
@@ -9151,23 +9138,23 @@ LAB_0000fa44:
         fuel_demand_ramp_state = fuel_demand_ramp_state + _DAT_003ff6c0;
         goto LAB_0000fa58;
       }
-      pwVar14 = (word *)&DAT_003ff6be;
+      pwVar15 = (word *)&DAT_003ff6be;
     }
-    fuel_demand_ramp_state = *pwVar14;
+    fuel_demand_ramp_state = *pwVar15;
   }
 LAB_0000fa58:
   if ((int)(short)fuel_demand_integrator_b_sum <= (int)(short)fuel_demand_integrator_max) {
     if ((int)(short)fuel_demand_integrator_max <= (int)(uint)fuel_demand_ramp_state) {
-      _engine_mode_tracking = _engine_operating_mode;
+      engine_mode_tracking = engine_operating_mode;
       engine_rpm_prev_snapshot = engine_rpm_state_t_0040b7ac.current_rpm;
       governor_proportional_gain = fuel_demand_integrator_max;
       return;
     }
-    pwVar9 = &fuel_demand_ramp_state;
+    pwVar10 = &fuel_demand_ramp_state;
   }
-  governor_proportional_gain = *pwVar9;
+  governor_proportional_gain = *pwVar10;
   engine_rpm_prev_snapshot = engine_rpm_state_t_0040b7ac.current_rpm;
-  _engine_mode_tracking = _engine_operating_mode;
+  engine_mode_tracking = engine_operating_mode;
   return;
 }
 
@@ -9184,8 +9171,8 @@ void cm848_initFuelDemandVariables(void)
 {
   fuel_demand_pid_accum_lo = 0;
   fuel_demand_pid_accum_hi = 0;
-  _fuel_timing_blend_accumulator = 0;
-  protection_mode_prev_flag = _governor_protection_mode_flag;
+  fuel_timing_blend_accumulator = 0;
+  protection_mode_prev_flag = governor_protection_mode_flag;
   _DAT_003fa0f2 = 2;
   _DAT_003fa0f4 = 2;
   _DAT_003fa0f6 = 2;
@@ -9201,17 +9188,15 @@ void cm848_initFuelDemandVariables(void)
 // Function: cm848_restoreEngineOperatingMode @ 0x0000fb28
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_restoreEngineOperatingMode(void)
 
 {
-  if ((_engine_operating_mode == 0) && (fuel_trim_save_valid_flag != 0)) {
-    _engine_operating_mode = 0x1e;
+  if ((engine_operating_mode == 0) && (fuel_trim_save_valid_flag != 0)) {
+    engine_operating_mode = 0x1e;
     speed_request_filtered = fuel_trim_saved_speed_request;
     governor_pid_integral_gain = fuel_trim_saved_integral_gain;
     governor_pid_proportional_gain = fuel_trim_saved_proportional_gain;
-    _fuel_demand_pid_coeffs = &fuel_trim_pid_coeff_0;
+    fuel_demand_pid_coeffs = (dword)&fuel_trim_pid_coeff_0;
     fuel_pid_shadow_coeff2 = fuel_trim_pid_coeff_2;
     fuel_pid_shadow_coeff3 = fuel_trim_pid_coeff_3;
     fuel_pid_shadow_coeff0 = fuel_trim_pid_coeff_0;
@@ -9230,7 +9215,7 @@ void cm848_restoreEngineOperatingMode(void)
     fuel_trim_pid_clamp_value = fuel_trim_saved_clamp_value;
     fuel_trim_pid_clamped = fuel_trim_saved_clamped;
     fuel_trim_pid_correction = fuel_trim_saved_correction;
-    _fuel_trim_mode_active_flag = fuel_trim_saved_mode_flag;
+    fuel_trim_mode_active_flag = fuel_trim_saved_mode_flag;
     governor_fuel_demand_tracking_limit = fuel_trim_saved_demand_limit;
     fuel_trim_speed_reference = fuel_trim_saved_speed_reference;
     fuel_trim_speed_request_working = fuel_trim_saved_alt_speed_request;
@@ -9244,8 +9229,6 @@ void cm848_restoreEngineOperatingMode(void)
 // Function: cm848_calculateFuelTimingBlend @ 0x0000fcd0
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_calculateFuelTimingBlend(void)
 
 {
@@ -9256,23 +9239,23 @@ void cm848_calculateFuelTimingBlend(void)
   uint uVar3;
   
   wVar1 = speed_request_filtered;
-  if (_engine_operating_mode == 0x1e) {
+  if (engine_operating_mode == 0x1e) {
     wVar1 = fuel_trim_speed_request_working;
   }
   sVar4 = lookupTableInterpolation
                     (&DAT_003fa10a,sensor_readings_t_0040baf2.coolant_temp,&DAT_0005c242,
                      &DAT_0005c25a,1);
-  if (_fuel_timing_blend_factor == 0) {
+  if (fuel_timing_blend_factor == 0) {
     sVar5 = lookupTableInterpolation(&DAT_003fa10e,wVar1,&DAT_0005972a,&DAT_0005973c,0);
   }
-  else if (_fuel_timing_blend_factor == 0x80) {
+  else if (fuel_timing_blend_factor == 0x80) {
     sVar5 = lookupTableInterpolation(&DAT_003fa10c,wVar1,&DAT_0005c21e,&DAT_0005c230,0);
   }
   else {
     uVar2 = lookupTableInterpolation(&DAT_003fa10c,wVar1,&DAT_0005c21e,&DAT_0005c230,0);
     uVar3 = lookupTableInterpolation(&DAT_003fa10e,wVar1,&DAT_0005972a,&DAT_0005973c,0);
-    sVar5 = (short)((uint)_fuel_timing_blend_factor * (uVar2 & 0xffff) >> 7) +
-            (short)((0x80 - (uint)_fuel_timing_blend_factor) * (uVar3 & 0xffff) >> 7);
+    sVar5 = (short)((uint)fuel_timing_blend_factor * (uVar2 & 0xffff) >> 7) +
+            (short)((0x80 - (uint)fuel_timing_blend_factor) * (uVar3 & 0xffff) >> 7);
   }
   governor_fuel_demand_reference = sVar4 + sVar5;
   return;
@@ -9345,16 +9328,16 @@ void cm848_calculateFuelTrimValues(void)
   ushort unaff_r30;
   
   wVar1 = governor_speed_scale_factor;
-  if (_fuel_timing_blend_factor < 0x81) {
-    if (_fuel_timing_blend_factor != 0) {
+  if (fuel_timing_blend_factor < 0x81) {
+    if (fuel_timing_blend_factor != 0) {
       unaff_r30 = lookupTableInterpolation
                             (&DAT_003fa112,speed_request_base,&DAT_0005976e,&DAT_0005977e,0);
     }
     wVar1 = unaff_r30;
-    if (_fuel_timing_blend_factor != 0x80) {
+    if (fuel_timing_blend_factor != 0x80) {
       wVar1 = lookupTableInterpolation
                         (&DAT_003fa110,speed_request_base,&DAT_0005974e,&DAT_0005975e,0);
-      uVar3 = (uint)_fuel_timing_blend_factor;
+      uVar3 = (uint)fuel_timing_blend_factor;
       if (uVar3 != 0) {
         wVar1 = (short)(uVar3 * unaff_r30 >> 7) + (short)((0x80 - uVar3) * (uint)wVar1 >> 7);
       }
@@ -9405,14 +9388,14 @@ LAB_000100d0:
 void cm848_initEngineOperatingMode(int param_1)
 
 {
-  if ((_engine_operating_mode == 0) && (protection_mode_prev_flag == 1)) {
+  if ((engine_operating_mode == 0) && (protection_mode_prev_flag == 1)) {
     cm848_calculateRpmLimitsFromProtection();
-    _engine_operating_mode = 7;
+    engine_operating_mode = 7;
     cm848_calculateFuelTimingTarget();
     cm848_emptyStubFunction6();
     cm848_calculateFuelTrimValues();
     if (param_1 != 7) {
-      _fuel_demand_pid_coeffs = &DAT_003ff6da;
+      fuel_demand_pid_coeffs = (dword)&DAT_003ff6da;
       fuel_pid_shadow_coeff2 = _DAT_003ff6de;
       fuel_pid_shadow_coeff3 = _DAT_003ff6e0;
       fuel_pid_shadow_coeff0 = _DAT_003ff6da;
@@ -9423,7 +9406,7 @@ void cm848_initEngineOperatingMode(int param_1)
       fuel_pid_shadow_coeff7 = _DAT_003ff6e8;
       fuel_pid_shadow_coeff8 = _DAT_003ff6ea;
       fuel_pid_shadow_ema_state = _DAT_003ff6d0;
-      _fuel_trim_mode_active_flag = 0;
+      fuel_trim_mode_active_flag = 0;
       fuel_trim_speed_reference = _DAT_003ff6d4;
       governor_fuel_demand_tracking_limit = _DAT_003ff6d2;
       fuel_trim_speed_ema_state_ptr = &DAT_003ff6d0;
@@ -9534,18 +9517,16 @@ void mpc555_fatalErrorHalt(void)
 // Function: cm848_selectTurboModeParameters @ 0x000107ec
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_selectTurboModeParameters(void)
 
 {
-  _sensor_channel4_fault_snapshot = _sensor_channel4_fault_status;
-  if (_sensor_channel4_fault_status == 2) {
-    _turbo_sensor_fault_mode_flag = 2;
+  sensor_channel4_fault_snapshot = sensor_channel4_fault_status._0_2_;
+  if (sensor_channel4_fault_status._0_2_ == 2) {
+    turbo_sensor_fault_mode_flag = 2;
     fuel_timing_error_scale = fuel_timing_sensor_filtered;
   }
   else {
-    _turbo_sensor_fault_mode_flag = 0;
+    turbo_sensor_fault_mode_flag = 0;
     fuel_timing_error_scale = fuel_timing_sensor_raw;
   }
   return;
@@ -9557,13 +9538,11 @@ void cm848_selectTurboModeParameters(void)
 // Function: cm848_selectTemperatureTrimValue @ 0x00010874
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_selectTemperatureTrimValue(void)
 
 {
   fuel_demand_rate_min = fuel_demand_rate_min_temp_trim;
-  if (_fuel_mode_switch_state != 1) {
+  if (fuel_mode_switch_state != 1) {
     fuel_demand_rate_min = fuel_demand_rate_cap_input;
   }
   return;
@@ -9713,17 +9692,17 @@ void cm848_calculateTurboBlendOutput(void)
   if (((throttle_rate_threshold_a_flag == 0) && (throttle_rate_threshold_c_flag == 0)) &&
      (throttle_rate_threshold_b_flag == 0)) {
     fuel_demand_rate_limited = fuel_demand_rate_min;
-    _fuel_demand_rate_below_min_flag = 0;
+    fuel_demand_rate_below_min_flag = 0;
   }
   else if ((uVar4 & 0xffff) < (uint)fuel_demand_rate_min) {
     fuel_demand_rate_limited = (word)uVar4;
-    _fuel_demand_rate_below_min_flag = 1;
+    fuel_demand_rate_below_min_flag = 1;
   }
   else {
     fuel_demand_rate_limited = fuel_demand_rate_min;
-    _fuel_demand_rate_below_min_flag = 0;
+    fuel_demand_rate_below_min_flag = 0;
   }
-  if (((_boost_fuel_mode_active == 0) || ((short)boost_fuel_correction < _DAT_003ff734)) &&
+  if (((boost_fuel_mode_active == 0) || ((short)boost_fuel_correction < _DAT_003ff734)) &&
      (_DAT_003fa12e != 0)) {
     fuel_demand_rate_input = fuel_demand_high_limit;
     iVar3 = (int)_DAT_003ff73c;
@@ -9770,7 +9749,7 @@ void cm848_calculateTurboRatioWithMode(void)
   uint uVar5;
   
   uVar1 = _DAT_003ff730;
-  if (_boost_control_mode == 1) {
+  if (boost_control_mode == 1) {
     uVar1 = _DAT_003ff73e;
   }
   uVar2 = lookupTableInterpolation
@@ -10007,10 +9986,10 @@ void cm848_selectLoadAdjustmentLimits(void)
   throttle_fuel_rate_limit_snapshot = _DAT_003ffc86;
   throttle_fuel_rate_cal_snapshot = throttle_fuel_rate_cal;
   if ((_DAT_003fa170 == 0) && (_DAT_003fd7da != 0)) {
-    _throttle_fuel_rate_limit_active = 1;
+    throttle_fuel_rate_limit_active = 1;
   }
   else {
-    _throttle_fuel_rate_limit_active = 0;
+    throttle_fuel_rate_limit_active = 0;
   }
   return;
 }
@@ -10029,7 +10008,7 @@ void cm848_calculateLoadCompensation(void)
   uint uVar1;
   uint uVar2;
   
-  if (_throttle_fuel_rate_limit_active != 0) {
+  if (throttle_fuel_rate_limit_active != 0) {
     throttle_fuel_rate_factor =
          cm848_dualAxisTableInterpolation
                    (&DAT_003fa168,
@@ -10100,7 +10079,7 @@ void cm848_calculateLoadIntegral(void)
       ))) {
     bVar2 = false;
   }
-  if ((_throttle_fuel_rate_limit_active == 0) && (_DAT_003fd7d8 == 0)) {
+  if ((throttle_fuel_rate_limit_active == 0) && (_DAT_003fd7d8 == 0)) {
     bVar1 = false;
   }
   else {
@@ -10428,7 +10407,7 @@ void cm848_boostCompensatedRpmGovernor(void)
        lookupTableInterpolation
                  (&DAT_003fa186,engine_rpm_state_t_0040b7ac.current_rpm,&DAT_003ffcde,
                   &governor_base_rpm_output_cal,2);
-  if (_fuel_mode_switch_state == 0) {
+  if (fuel_mode_switch_state == 0) {
     if (_DAT_003fd7e4 == 0) {
       rpm_governor_state_t_0040a3ca.desired_rpm = (word)iVar7;
     }
@@ -10731,15 +10710,13 @@ void cm848_calculateRpmBasedFuelTrim(void)
 // Function: cm848_checkFuelSystemFaultFlags @ 0x00012724
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 undefined4 cm848_checkFuelSystemFaultFlags(void)
 
 {
   undefined4 uVar1;
   
-  if ((((_boost_correction_block_flag == 0) && (_boost_fuel_mode_state == 0)) &&
-      (_fuel_demand_mode_index == 0)) && (_fuel_demand_mode_index_init_flag == 0)) {
+  if ((((boost_correction_block_flag == 0) && (boost_fuel_mode_state == 0)) &&
+      (fuel_demand_mode_index == 0)) && (fuel_demand_mode_index_init_flag._0_2_ == 0)) {
     uVar1 = 0;
   }
   else {
@@ -10754,15 +10731,13 @@ undefined4 cm848_checkFuelSystemFaultFlags(void)
 // Function: cm848_checkEngineFaultConditions @ 0x00012778
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 undefined4 cm848_checkEngineFaultConditions(void)
 
 {
   undefined4 uVar1;
   
-  if (((_boost_correction_block_flag == 0) && (_fuel_demand_droop_state == 0)) &&
-     (_boost_correction_block_mode_flag == 0)) {
+  if (((boost_correction_block_flag == 0) && (fuel_demand_droop_state == 0)) &&
+     (boost_correction_block_mode_flag._0_2_ == 0)) {
     uVar1 = 0;
   }
   else {
@@ -10777,12 +10752,10 @@ undefined4 cm848_checkEngineFaultConditions(void)
 // Function: cm848_selectFuelTrimMode @ 0x000127bc
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_selectFuelTrimMode(void)
 
 {
-  if (_rpm_fuel_trim_select_cal == 0) {
+  if (rpm_fuel_trim_select_cal == 0) {
     cm848_calculateRpmBasedFuelTrim();
     throttle_fuel_trim_t_0040a3ea.final_trim = throttle_fuel_trim_upper_cal;
     if (((short)throttle_fuel_trim_upper_cal <= (short)throttle_fuel_trim_t_0040a3ea.rpm_based_trim)
@@ -10805,7 +10778,7 @@ void cm848_selectFuelTrimMode(void)
     }
     engine_fuel_fault_status = cm848_checkFuelSystemFaultFlags();
   }
-  if (_boost_fuel_mode_active != 0) {
+  if (boost_fuel_mode_active != 0) {
     throttle_fuel_trim_t_0040a3ea.final_trim = 0;
   }
   return;
@@ -10998,16 +10971,14 @@ void cm848_loadBasedFuelAdjustment(void)
 // Function: cm848_fuelDemandWithLoadCompensation @ 0x00012dc4
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_fuelDemandWithLoadCompensation(void)
 
 {
-  boost_pressure_state_t_0040a406.load_input = _fuel_demand_boost_offset + 0x7300;
+  boost_pressure_state_t_0040a406.load_input = fuel_demand_boost_offset + 0x7300;
   cm848_boostBasedFuelModifier();
   cm848_loadBasedFuelAdjustment();
-  if (((_fuel_demand_phase_state == 0) && (_fuel_demand_mode_index == 0)) &&
-     (_fuel_demand_droop_state == 0)) {
+  if (((fuel_demand_phase_state == 0) && (fuel_demand_mode_index == 0)) &&
+     (fuel_demand_droop_state == 0)) {
     boost_pressure_state_t_0040a406.reserved_0a = 0;
   }
   else {
@@ -11112,8 +11083,6 @@ void cm848_initFuelDemandBlendPointers(void)
 // Function: cm848_fuelDemandBlendCalculation @ 0x00012f60
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_fuelDemandBlendCalculation(void)
 
 {
@@ -11126,13 +11095,13 @@ void cm848_fuelDemandBlendCalculation(void)
   uint uVar4;
   uint uVar5;
   int iVar6;
-  short sVar7;
+  word wVar7;
   
   wVar2 = boost_fuel_blend_weight_b;
   wVar1 = boost_fuel_blend_weight_a_cal;
-  sVar7 = _fuel_demand_boost_offset;
-  if (_boost_fuel_mode_active != 0) {
-    uVar4 = (int)_fuel_demand_boost_offset * (int)(short)(0x2000 - boost_fuel_blend_weight_b);
+  wVar7 = fuel_demand_boost_offset;
+  if (boost_fuel_mode_active != 0) {
+    uVar4 = (int)(short)fuel_demand_boost_offset * (int)(short)(0x2000 - boost_fuel_blend_weight_b);
     cm848_signedDivision32
               ((int)((ulonglong)
                      ((longlong)(int)(uint)boost_fuel_input_value *
@@ -11157,10 +11126,10 @@ void cm848_fuelDemandBlendCalculation(void)
     if (0x7ffe < extraout_r4_01) {
       iVar6 = 0x7fff;
     }
-    sVar7 = (short)((int)uVar4 >> 0xd) + (ushort)((int)uVar4 < 0 && (uVar4 & 0x1fff) != 0) +
+    wVar7 = (short)((int)uVar4 >> 0xd) + (ushort)((int)uVar4 < 0 && (uVar4 & 0x1fff) != 0) +
             (short)iVar6;
   }
-  fuel_demand_blend_filtered = cm848_signedFirstOrderFilter((int)sVar7,&DAT_003fa5ea);
+  fuel_demand_blend_filtered = cm848_signedFirstOrderFilter((int)(short)wVar7,&DAT_003fa5ea);
   return;
 }
 
@@ -11245,8 +11214,6 @@ void cm848_initFuelFilterDefaults(void)
 // Function: cm848_calculateBoostTorqueOffset @ 0x00013294
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_calculateBoostTorqueOffset(void)
 
 {
@@ -11269,40 +11236,40 @@ void cm848_calculateBoostTorqueOffset(void)
        lookupTableInterpolation
                  (&DAT_003fa5fc,engine_rpm_state_t_0040b7ac.current_rpm,&fuel_demand_rpm_axis_b_cal,
                   &fuel_demand_rpm_factor_values_cal,0);
-  _fuel_demand_computed = (uint)fuel_demand_base_quantity * (uint)fuel_demand_rpm_factor;
+  fuel_demand_computed = (uint)fuel_demand_base_quantity * (uint)fuel_demand_rpm_factor;
   uVar1 = (uint)boost_fuel_scale_divisor;
   cm848_unsignedDivision32
-            ((int)((ulonglong)uVar1 * (ulonglong)_fuel_demand_computed >> 0x20) +
-             uVar1 * ((int)_fuel_demand_computed >> 0x1f),uVar1 * _fuel_demand_computed,0,0xfa000);
-  _fuel_demand_computed = extraout_r4 - (uint)fuel_demand_correction_offset_cal;
-  if ((int)_fuel_demand_computed < 0) {
+            ((int)((ulonglong)uVar1 * (ulonglong)fuel_demand_computed >> 0x20) +
+             uVar1 * ((int)fuel_demand_computed >> 0x1f),uVar1 * fuel_demand_computed,0,0xfa000);
+  fuel_demand_computed = extraout_r4 - (uint)fuel_demand_correction_offset_cal;
+  if ((int)fuel_demand_computed < 0) {
     uVar1 = 0;
   }
   else {
-    uVar1 = _fuel_demand_computed;
-    if (0x3200 < (int)_fuel_demand_computed) {
+    uVar1 = fuel_demand_computed;
+    if (0x3200 < (int)fuel_demand_computed) {
       uVar1 = 0x3200;
     }
   }
   boost_pressure_target_filtered = exponentialMovingAverage(uVar1 & 0xffff,&DAT_003fa5fe);
-  if ((((((engine_feature_enable_flags & 0x8000) == 0) || (_boost_control_mode == 2)) ||
+  if ((((((engine_feature_enable_flags & 0x8000) == 0) || (boost_control_mode == 2)) ||
        (fuel_demand_quantity < boost_control_fuel_lower_threshold_cal)) ||
       (((boost_control_fuel_upper_threshold_cal < fuel_demand_quantity ||
-        (_fuel_demand_phase_state == 2)) ||
-       ((_fuel_demand_state_b == 2 ||
+        (fuel_demand_phase_state == 2)) ||
+       ((fuel_demand_state_b == 2 ||
         ((fuel_boost_mode_state == 2 || ((protection_feature_status_flags & 0x8000) == 0)))))))) ||
      ((boost_fuel_bypass_flags & 0x8000) != 0)) {
-    _boost_fuel_weight_factor = 0x80;
+    boost_fuel_weight_factor = 0x80;
   }
-  else if ((((_fuel_demand_phase_state == 1) || (_fuel_demand_state_b == 1)) ||
-           (fuel_boost_mode_state == 1)) || (_boost_control_mode == 1)) {
-    _boost_fuel_weight_factor = 0x40;
+  else if ((((fuel_demand_phase_state == 1) || (fuel_demand_state_b == 1)) ||
+           (fuel_boost_mode_state == 1)) || (boost_control_mode == 1)) {
+    boost_fuel_weight_factor = 0x40;
   }
   else {
-    _boost_fuel_weight_factor = 0;
+    boost_fuel_weight_factor = 0;
   }
   boost_pressure_target = boost_pressure_target_filtered;
-  _boost_fuel_weight_snapshot = _boost_fuel_weight_factor;
+  boost_fuel_weight_snapshot = boost_fuel_weight_factor;
   return;
 }
 
@@ -11312,16 +11279,14 @@ void cm848_calculateBoostTorqueOffset(void)
 // Function: cm848_checkBoostControlCondition @ 0x00013564
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_checkBoostControlCondition(void)
 
 {
-  if ((_map_sensor_fault_status == 0) && (_boost_fuel_weight_snapshot == 0)) {
-    _boost_condition_active_flag = 1;
+  if ((map_sensor_fault_status == 0) && (boost_fuel_weight_snapshot == 0)) {
+    boost_condition_active_flag = 1;
   }
   else {
-    _boost_condition_active_flag = 0;
+    boost_condition_active_flag = 0;
   }
   return;
 }
@@ -11343,10 +11308,10 @@ void cm848_processBoostControlState(void)
   word wVar4;
   uint uVar5;
   
-  if (_boost_condition_active_flag == 0) {
+  if (boost_condition_active_flag == 0) {
     fuel_demand_cal_percent = 0;
   }
-  else if (_boost_condition_active_flag != 0) {
+  else if (boost_condition_active_flag != 0) {
     if (fuel_demand_cal_percent == 0) {
       fuel_demand_cal_percent = 100;
     }
@@ -11354,7 +11319,7 @@ void cm848_processBoostControlState(void)
       fuel_demand_cal_percent = 100;
     }
   }
-  if (((_DAT_003fd5c6 & 0x10) == 0) || (_DAT_003fd7f0 != 0)) {
+  if (((_DAT_003fd5c6 & 0x10) == 0) || (cold_start_inhibit_cal != 0)) {
     bVar1 = true;
   }
   else {
@@ -11398,7 +11363,7 @@ LAB_00013704:
   if (fuel_demand_step_accumulator < uVar5) {
     if ((uint)fuel_demand_step_accumulator <= (uint)fuel_demand_step_min_threshold_cal) {
       engine_sync_validation_flags = engine_sync_validation_flags & 0x7fff;
-      _DAT_003fea18 = _DAT_003fea18 & 0x7fff;
+      j1939_message_state_flags_b = j1939_message_state_flags_b & 0x7fff;
     }
   }
   else {
@@ -11422,7 +11387,7 @@ void cm848_processBoostProtectionConditions(void)
   ushort uVar2;
   ushort uVar3;
   
-  uVar2 = _map_sensor_fault_status;
+  uVar2 = map_sensor_fault_status;
   if ((((system_status_flags_t_003fe974.enable_state & 0x100) == 0) || ((DAT_003ff06f & 1) == 0)) &&
      (((system_status_flags_t_003fe974.enable_state & 0x200) == 0 || ((DAT_003ff06f >> 1 & 1) == 0))
      )) {
@@ -11469,7 +11434,7 @@ void cm848_selectLoadNormalizer(void)
   ushort uVar1;
   ushort uVar2;
   
-  fuel_mode_combined_flags = _DAT_003fa60c | _boost_fuel_weight_snapshot;
+  fuel_mode_combined_flags = _DAT_003fa60c | boost_fuel_weight_snapshot;
   uVar1 = fuel_mode_combined_flags & 0x80;
   if (((uVar1 == 0) && ((fuel_mode_combined_flags & 0x40) == 0)) ||
      (((fuel_mode_combined_flags & 0x20) == 0 && ((fuel_mode_combined_flags & 2) == 0)))) {
@@ -11480,10 +11445,10 @@ void cm848_selectLoadNormalizer(void)
         ((uVar2 != 0 ||
          (((fuel_mode_combined_flags & 0x10) == 0 || ((fuel_mode_combined_flags & 2) != 0)))))))) {
       map_fuel_correction_factor = boost_pressure_sensor_raw;
-      _fuel_demand_mode_index = 0;
+      fuel_demand_mode_index = 0;
     }
     else {
-      _fuel_demand_mode_index = 1;
+      fuel_demand_mode_index = 1;
       if ((((uVar2 == 0) && ((fuel_mode_combined_flags & 2) == 0)) ||
           ((uVar1 != 0 || ((fuel_mode_combined_flags & 0x40) != 0)))) &&
          (boost_pressure_sensor_raw <= boost_pressure_target)) {
@@ -11496,7 +11461,7 @@ void cm848_selectLoadNormalizer(void)
   }
   else {
     map_fuel_correction_factor = boost_pressure_sensor_filtered;
-    _fuel_demand_mode_index = 2;
+    fuel_demand_mode_index = 2;
   }
   return;
 }
@@ -11521,51 +11486,49 @@ void cm848_processLoadNormalizerSelection(void)
 // Function: cm848_processBoostProtectionMode @ 0x00013aec
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_processBoostProtectionMode(undefined4 param_1,int param_2)
 
 {
   int unaff_r31;
   int iVar1;
   
-  if ((_fuel_demand_state_b == 2) || ((engine_feature_enable_flags & 0x4000) == 0)) {
-    _injection_enable_mode_byte = 0x80;
+  if ((fuel_demand_state_b == 2) || ((engine_feature_enable_flags & 0x4000) == 0)) {
+    injection_enable_mode_byte = 0x80;
   }
-  else if (_fuel_demand_state_b == 1) {
-    _injection_enable_mode_byte = 0x40;
+  else if (fuel_demand_state_b == 1) {
+    injection_enable_mode_byte = 0x40;
   }
   else {
-    _injection_enable_mode_byte = 0;
+    injection_enable_mode_byte = 0;
   }
-  if (_boost_map_index_current == 1) {
+  if (boost_map_index_current == 1) {
     unaff_r31 = (int)(short)injection_timing_offset_boost1_cal;
   }
-  else if (_boost_map_index_current == 2) {
+  else if (boost_map_index_current == 2) {
     unaff_r31 = (int)(short)injection_timing_offset_boost2_cal;
   }
-  else if (_boost_map_index_current == 3) {
+  else if (boost_map_index_current == 3) {
     unaff_r31 = (int)(short)injection_timing_offset_boost3_cal;
   }
-  else if (_boost_map_index_current == 4) {
+  else if (boost_map_index_current == 4) {
     unaff_r31 = (int)(short)injection_timing_offset_boost4_cal;
   }
-  if (_boost_map_index_target == 1) {
+  if (boost_map_index_target == 1) {
     param_2 = (int)(short)injection_timing_offset_boost1_cal;
   }
-  else if (_boost_map_index_target == 2) {
+  else if (boost_map_index_target == 2) {
     param_2 = (int)(short)injection_timing_offset_boost2_cal;
   }
-  else if (_boost_map_index_target == 3) {
+  else if (boost_map_index_target == 3) {
     param_2 = (int)(short)injection_timing_offset_boost3_cal;
   }
-  else if (_boost_map_index_target == 4) {
+  else if (boost_map_index_target == 4) {
     param_2 = (int)(short)injection_timing_offset_boost4_cal;
   }
   injection_timing_offset_filtered =
        cm848_filterInputValue
                  (unaff_r31,param_2,(int)(short)injection_timing_filter_coeff_cal,
-                  _boost_map_index_current,_boost_map_index_target,
+                  boost_map_index_current,boost_map_index_target,
                   fuel_blend_state_t_0040a494.blend_weight,fuel_blend_state_t_0040a494.blend_mode);
   iVar1 = ((int)(short)(fuel_demand_timing_input - injection_timing_offset_filtered) *
            (int)(short)fuel_demand_timing_scale_cal >> 0xb) +
@@ -11637,27 +11600,28 @@ void cm848_calculateThrottleFiltered(void)
        lookupTableInterpolation
                  (&DAT_003fa618,fuel_quantity_ema_filtered,&fuel_quantity_ema_axis_cal,
                   &fuel_quantity_ema_output_cal,0);
-  iVar2 = (int)(short)_sensor_channel9_fault_status;
-  if (((iVar2 != 0) || (_DAT_003fd7f0 != 0)) ||
-     (pressure_correction_scale = _DAT_003fa616, (_DAT_003fd5c4 & 0x4000) == 0)) {
+  iVar2 = (int)(short)sensor_channel9_fault_status;
+  if (((iVar2 != 0) || (cold_start_inhibit_cal != 0)) ||
+     (pressure_correction_scale = _DAT_003fa616, (cold_start_feature_enable_flags & 0x4000) == 0)) {
     pressure_correction_scale = 0;
   }
   cm848_calculateThrottleDerivative();
   wVar1 = pressure_correction_raw;
-  if (((iVar2 == 0) && (_DAT_003fd7f0 == 0)) && ((_DAT_003fd5c4 & 0x4000) != 0)) {
+  if (((iVar2 == 0) && (cold_start_inhibit_cal == 0)) &&
+     ((cold_start_feature_enable_flags & 0x4000) != 0)) {
     _DAT_003fa620 = cm848_signedFirstOrderFilter((int)(short)pressure_correction_raw,&DAT_003fa624);
     wVar1 = cm848_signedFirstOrderFilter((int)_DAT_003fa620,&DAT_003fa62c);
   }
   _DAT_003fa622 = wVar1;
   if ((((system_status_flags_t_003fe974.condition_monitor & 8) != 0) && ((DAT_003ff073 & 1) != 0))
-     || ((uVar4 = _injection_enable_mode_byte,
+     || ((uVar4 = injection_enable_mode_byte,
          (system_status_flags_t_003fe974.condition_monitor & 0x10) != 0 &&
          ((DAT_003ff073 >> 1 & 1) != 0)))) {
-    uVar4 = _sensor_channel9_fault_status | _injection_enable_mode_byte;
+    uVar4 = sensor_channel9_fault_status | injection_enable_mode_byte;
   }
-  if (((((_injection_fault_shadow_flags & 0x40) == 0) ||
+  if (((((injection_fault_shadow_flags & 0x40) == 0) ||
        ((*(byte *)(DAT_00059b26 * 3 + 0x3feb92) & 0x10) == 0)) || ((DAT_003ff073 >> 5 & 1) == 0)) &&
-     ((((_injection_fault_shadow_flags & 4) == 0 ||
+     ((((injection_fault_shadow_flags & 4) == 0 ||
        ((*(byte *)(DAT_00059b1e * 3 + 0x3feb92) & 0x10) == 0)) || ((DAT_003ff073 >> 6 & 1) == 0))))
   {
     uVar3 = 0;
@@ -11665,20 +11629,20 @@ void cm848_calculateThrottleFiltered(void)
   else {
     uVar3 = 0x20;
   }
-  _fuel_demand_phase_status_flags = uVar4 | uVar3;
+  fuel_demand_phase_status_flags = uVar4 | uVar3;
   if (((uVar4 & 0x80) == 0) || (((uVar4 & 2) == 0 && ((uVar4 & 0x20) == 0 && uVar3 == 0)))) {
     if (((uVar4 & 2) == 0) && ((uVar4 & 0x20) == 0 && uVar3 == 0)) {
-      _fuel_demand_phase_state = 0;
-      _fuel_demand_boost_offset = wVar1;
+      fuel_demand_phase_state = 0;
+      fuel_demand_boost_offset = wVar1;
     }
     else {
-      _fuel_demand_phase_state = 1;
-      _fuel_demand_boost_offset = fuel_demand_boost_offset_filtered;
+      fuel_demand_phase_state = 1;
+      fuel_demand_boost_offset = fuel_demand_boost_offset_filtered;
     }
   }
   else {
-    _fuel_demand_boost_offset = sensor_channel9_pressure_filtered;
-    _fuel_demand_phase_state = 2;
+    fuel_demand_boost_offset = sensor_channel9_pressure_filtered;
+    fuel_demand_phase_state = 2;
   }
   return;
 }
@@ -11713,20 +11677,20 @@ void cm848_calculateRpmLoadTables(void)
     fuel_demand_mode_enable_flag = (word)(fuel_demand_mode_offset_cal != 0);
     _DAT_003fa63c = fuel_correction_output_snapshot + fuel_demand_mode_offset_cal;
   }
-  fuel_demand_mode_code_snapshot = _fuel_demand_mode_code;
+  fuel_demand_mode_code_snapshot = fuel_demand_mode_code;
   if ((short)fuel_demand_rpm_load_lookup < (short)_DAT_003fa63c) {
     _DAT_003fa642 = _DAT_003fa63c;
   }
   else {
     _DAT_003fa642 = fuel_demand_rpm_load_lookup;
-    _fuel_demand_mode_code = 0x1c;
+    fuel_demand_mode_code = 0x1c;
   }
-  _DAT_003fa644 = _fuel_demand_mode_code;
+  _DAT_003fa644 = fuel_demand_mode_code;
   if ((short)_DAT_003fa642 < (short)injection_timing_advance_calc) {
     injection_timing_advance_calc = _DAT_003fa642;
   }
   else {
-    _fuel_demand_mode_code = 0x1b;
+    fuel_demand_mode_code = 0x1b;
   }
   return;
 }
@@ -11769,12 +11733,10 @@ void cm848_selectFuelLimitOverride(void)
 // Function: cm848_setFuelStatusFlags @ 0x00014304
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_setFuelStatusFlags(void)
 
 {
-  if (_boost_fuel_blend_active_flag != 0) {
+  if (boost_fuel_blend_active_flag != 0) {
     fuel_demand_mode_flags = fuel_demand_mode_flags | 0x40;
   }
   if (engine_load_correction_active_flag != 0) {
@@ -11792,8 +11754,6 @@ void cm848_setFuelStatusFlags(void)
 // Function: cm848_calculateRpmLoadLimit @ 0x00014374
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_calculateRpmLoadLimit(void)
 
 {
@@ -11803,7 +11763,7 @@ void cm848_calculateRpmLoadLimit(void)
                   &fuel_demand_load_rate_cap_rpm_axis_cal,engine_load_input_value,
                   &fuel_demand_load_rate_cap_ystart_cal,&fuel_demand_load_rate_cap_yend_cal,2);
   fuel_demand_load_rate_cap_snapshot = fuel_demand_load_rate_cap;
-  if (_boost_fuel_mode_active == 0) {
+  if (boost_fuel_mode_active == 0) {
     fuel_demand_load_rate_cap = fuel_demand_rate_output;
     if (0xc7ff < fuel_demand_rate_output) {
       fuel_demand_load_rate_cap = 0xc800;
@@ -11961,56 +11921,56 @@ void cm848_calculateFuelDemandMode1(void)
   uint unaff_r30;
   uint unaff_r31;
   
-  if (_boost_map_index_current == 1) {
+  if (boost_map_index_current == 1) {
     fuel_demand_mode1_boost_map1 =
          cm848_dualAxisTableInterpolation
                    (&DAT_003fa6ba,engine_rpm_state_t_0040b7ac.current_rpm,&fuel_demand_rpm_axis_cal,
                     fuel_demand_limit,&fuel_demand_load_axis_cal,_DAT_003fa686,0);
     unaff_r31 = (uint)fuel_demand_mode1_boost_map1;
   }
-  else if (_boost_map_index_current == 2) {
+  else if (boost_map_index_current == 2) {
     fuel_demand_mode1_boost_map2 =
          cm848_dualAxisTableInterpolation
                    (&DAT_003fa6ba,engine_rpm_state_t_0040b7ac.current_rpm,&fuel_demand_xaxis_cal_2,
                     fuel_demand_limit,&fuel_demand_xaxis_cal_1,_DAT_003fa68a,0);
     unaff_r31 = (uint)fuel_demand_mode1_boost_map2;
   }
-  else if (_boost_map_index_current == 3) {
+  else if (boost_map_index_current == 3) {
     fuel_demand_mode1_boost_map3 =
          cm848_dualAxisTableInterpolation
                    (&DAT_003fa6ba,engine_rpm_state_t_0040b7ac.current_rpm,&fuel_demand_xaxis_cal_4,
                     fuel_demand_limit,&fuel_demand_xaxis_cal_3,_DAT_003fa68e,0);
     unaff_r31 = (uint)fuel_demand_mode1_boost_map3;
   }
-  else if (_boost_map_index_current == 4) {
+  else if (boost_map_index_current == 4) {
     fuel_demand_mode1_boost_map4 =
          cm848_dualAxisTableInterpolation
                    (&DAT_003fa6ba,engine_rpm_state_t_0040b7ac.current_rpm,&fuel_demand_xaxis_cal_6,
                     fuel_demand_limit,&fuel_demand_xaxis_cal_5,_DAT_003fa692,0);
     unaff_r31 = (uint)fuel_demand_mode1_boost_map4;
   }
-  if (_boost_map_index_target == 1) {
+  if (boost_map_index_target == 1) {
     fuel_demand_mode1_boost_map1 =
          cm848_dualAxisTableInterpolation
                    (&DAT_003fa6ba,engine_rpm_state_t_0040b7ac.current_rpm,&fuel_demand_rpm_axis_cal,
                     fuel_demand_limit,&fuel_demand_load_axis_cal,_DAT_003fa686,0);
     unaff_r30 = (uint)fuel_demand_mode1_boost_map1;
   }
-  else if (_boost_map_index_target == 2) {
+  else if (boost_map_index_target == 2) {
     fuel_demand_mode1_boost_map2 =
          cm848_dualAxisTableInterpolation
                    (&DAT_003fa6ba,engine_rpm_state_t_0040b7ac.current_rpm,&fuel_demand_xaxis_cal_2,
                     fuel_demand_limit,&fuel_demand_xaxis_cal_1,_DAT_003fa68a,0);
     unaff_r30 = (uint)fuel_demand_mode1_boost_map2;
   }
-  else if (_boost_map_index_target == 3) {
+  else if (boost_map_index_target == 3) {
     fuel_demand_mode1_boost_map3 =
          cm848_dualAxisTableInterpolation
                    (&DAT_003fa6ba,engine_rpm_state_t_0040b7ac.current_rpm,&fuel_demand_xaxis_cal_4,
                     fuel_demand_limit,&fuel_demand_xaxis_cal_3,_DAT_003fa68e,0);
     unaff_r30 = (uint)fuel_demand_mode1_boost_map3;
   }
-  else if (_boost_map_index_target == 4) {
+  else if (boost_map_index_target == 4) {
     fuel_demand_mode1_boost_map4 =
          cm848_dualAxisTableInterpolation
                    (&DAT_003fa6ba,engine_rpm_state_t_0040b7ac.current_rpm,&fuel_demand_xaxis_cal_6,
@@ -12023,8 +11983,8 @@ void cm848_calculateFuelDemandMode1(void)
                   fuel_demand_limit,&fuel_table_load_axis_cal,&fuel_demand_mode1_map_values_cal,0);
   fuel_demand_mode1_filtered =
        cm848_filterInputValue
-                 (unaff_r31,unaff_r30,fuel_demand_mode1_boost5_lookup,_boost_map_index_current,
-                  _boost_map_index_target,fuel_blend_state_t_0040a494.blend_weight,
+                 (unaff_r31,unaff_r30,fuel_demand_mode1_boost5_lookup,boost_map_index_current,
+                  boost_map_index_target,fuel_blend_state_t_0040a494.blend_weight,
                   fuel_blend_state_t_0040a494.blend_mode);
   return;
 }
@@ -12043,56 +12003,56 @@ void cm848_calculateFuelDemandMode2(void)
   int unaff_r30;
   int unaff_r31;
   
-  if (_boost_map_index_current == 1) {
+  if (boost_map_index_current == 1) {
     fuel_demand_mode2_boost_map1 =
          cm848_dualAxisTableInterpolation
                    (&DAT_003fa6b2,engine_rpm_state_t_0040b7ac.current_rpm,&fuel_demand_rpm_axis_cal,
                     fuel_demand_limit,&fuel_demand_load_axis_cal,_DAT_003fa676,4);
     unaff_r31 = (int)(short)fuel_demand_mode2_boost_map1;
   }
-  else if (_boost_map_index_current == 2) {
+  else if (boost_map_index_current == 2) {
     fuel_demand_mode2_boost_map2 =
          cm848_dualAxisTableInterpolation
                    (&DAT_003fa6b2,engine_rpm_state_t_0040b7ac.current_rpm,&fuel_demand_xaxis_cal_2,
                     fuel_demand_limit,&fuel_demand_xaxis_cal_1,_DAT_003fa67a,4);
     unaff_r31 = (int)(short)fuel_demand_mode2_boost_map2;
   }
-  else if (_boost_map_index_current == 3) {
+  else if (boost_map_index_current == 3) {
     fuel_demand_mode2_boost_map3 =
          cm848_dualAxisTableInterpolation
                    (&DAT_003fa6b2,engine_rpm_state_t_0040b7ac.current_rpm,&fuel_demand_xaxis_cal_4,
                     fuel_demand_limit,&fuel_demand_xaxis_cal_3,_DAT_003fa67e,4);
     unaff_r31 = (int)(short)fuel_demand_mode2_boost_map3;
   }
-  else if (_boost_map_index_current == 4) {
+  else if (boost_map_index_current == 4) {
     fuel_demand_mode2_boost_map4 =
          cm848_dualAxisTableInterpolation
                    (&DAT_003fa6b2,engine_rpm_state_t_0040b7ac.current_rpm,&fuel_demand_xaxis_cal_6,
                     fuel_demand_limit,&fuel_demand_xaxis_cal_5,_DAT_003fa682,4);
     unaff_r31 = (int)(short)fuel_demand_mode2_boost_map4;
   }
-  if (_boost_map_index_target == 1) {
+  if (boost_map_index_target == 1) {
     fuel_demand_mode2_boost_map1 =
          cm848_dualAxisTableInterpolation
                    (&DAT_003fa6b2,engine_rpm_state_t_0040b7ac.current_rpm,&fuel_demand_rpm_axis_cal,
                     fuel_demand_limit,&fuel_demand_load_axis_cal,_DAT_003fa676,4);
     unaff_r30 = (int)(short)fuel_demand_mode2_boost_map1;
   }
-  else if (_boost_map_index_target == 2) {
+  else if (boost_map_index_target == 2) {
     fuel_demand_mode2_boost_map2 =
          cm848_dualAxisTableInterpolation
                    (&DAT_003fa6b2,engine_rpm_state_t_0040b7ac.current_rpm,&fuel_demand_xaxis_cal_2,
                     fuel_demand_limit,&fuel_demand_xaxis_cal_1,_DAT_003fa67a,4);
     unaff_r30 = (int)(short)fuel_demand_mode2_boost_map2;
   }
-  else if (_boost_map_index_target == 3) {
+  else if (boost_map_index_target == 3) {
     fuel_demand_mode2_boost_map3 =
          cm848_dualAxisTableInterpolation
                    (&DAT_003fa6b2,engine_rpm_state_t_0040b7ac.current_rpm,&fuel_demand_xaxis_cal_4,
                     fuel_demand_limit,&fuel_demand_xaxis_cal_3,_DAT_003fa67e,4);
     unaff_r30 = (int)(short)fuel_demand_mode2_boost_map3;
   }
-  else if (_boost_map_index_target == 4) {
+  else if (boost_map_index_target == 4) {
     fuel_demand_mode2_boost_map4 =
          cm848_dualAxisTableInterpolation
                    (&DAT_003fa6b2,engine_rpm_state_t_0040b7ac.current_rpm,&fuel_demand_xaxis_cal_6,
@@ -12106,7 +12066,7 @@ void cm848_calculateFuelDemandMode2(void)
   fuel_demand_mode2_filtered =
        cm848_filterInputValue
                  (unaff_r31,unaff_r30,(int)(short)fuel_demand_mode2_map5_lookup,
-                  _boost_map_index_current,_boost_map_index_target,
+                  boost_map_index_current,boost_map_index_target,
                   fuel_blend_state_t_0040a494.blend_weight,fuel_blend_state_t_0040a494.blend_mode);
   return;
 }
@@ -12150,33 +12110,33 @@ void cm848_calculateFuelDemandTimingOffset(void)
                  (&DAT_003fa6a6,engine_rpm_state_t_0040b7ac.current_rpm,&fuel_demand_xaxis_cal_6,
                   fuel_demand_limit,&fuel_demand_xaxis_cal_5,_DAT_003fa672,4);
   iVar5 = (int)(short)fuel_demand_calc_boost5_lookup;
-  if (_boost_map_index_current == 1) {
+  if (boost_map_index_current == 1) {
     iVar6 = (int)(short)fuel_demand_calc_c;
   }
-  else if (_boost_map_index_current == 2) {
+  else if (boost_map_index_current == 2) {
     iVar6 = (int)(short)fuel_demand_calc_b;
   }
-  else if (_boost_map_index_current == 3) {
+  else if (boost_map_index_current == 3) {
     iVar6 = (int)(short)fuel_demand_calc_a;
   }
   else {
     iVar6 = iVar5;
-    if (_boost_map_index_current != 4) {
+    if (boost_map_index_current != 4) {
       iVar6 = unaff_r27;
     }
   }
-  if (_boost_map_index_target == 1) {
+  if (boost_map_index_target == 1) {
     iVar4 = (int)(short)fuel_demand_calc_c;
   }
-  else if (_boost_map_index_target == 2) {
+  else if (boost_map_index_target == 2) {
     iVar4 = (int)(short)fuel_demand_calc_b;
   }
-  else if (_boost_map_index_target == 3) {
+  else if (boost_map_index_target == 3) {
     iVar4 = (int)(short)fuel_demand_calc_a;
   }
   else {
     iVar4 = iVar5;
-    if (_boost_map_index_target != 4) {
+    if (boost_map_index_target != 4) {
       iVar4 = unaff_r22;
     }
   }
@@ -12213,19 +12173,19 @@ void cm848_calculateFuelDemandTimingOffset(void)
                   fuel_demand_limit,&fuel_table_load_axis_cal,&fuel_demand_mode_b_map_values_cal,4);
   wVar1 = fuel_blend_state_t_0040a494.blend_mode;
   wVar2 = cm848_filterInputValue
-                    (iVar6,iVar4,(int)(short)fuel_demand_timing_lookup,_boost_map_index_current,
-                     _boost_map_index_target,fuel_blend_state_t_0040a494.blend_weight,
+                    (iVar6,iVar4,(int)(short)fuel_demand_timing_lookup,boost_map_index_current,
+                     boost_map_index_target,fuel_blend_state_t_0040a494.blend_weight,
                      fuel_blend_state_t_0040a494.blend_mode);
-  if ((wVar1 == 0) && (_fuel_blend_bypass_flag != 0)) {
-    fuel_blend_state_t_0040a494.reserved_06 =
+  if ((wVar1 == 0) && (fuel_blend_bypass_flag != 0)) {
+    fuel_blend_state_t_0040a494.bypass_load_correction =
          cm848_dualAxisTableInterpolation
                    (&DAT_003fa6ae,engine_rpm_state_t_0040b7ac.current_rpm,&fuel_blend_rpm_axis_cal,
                     fuel_demand_limit,&fuel_blend_ystart_cal,&fuel_blend_yend_cal,4);
-    _boost_fuel_blend_active_flag = 1;
-    engine_load_normalized = wVar2 + fuel_blend_state_t_0040a494.reserved_06;
+    boost_fuel_blend_active_flag = 1;
+    engine_load_normalized = wVar2 + fuel_blend_state_t_0040a494.bypass_load_correction;
   }
   else {
-    _boost_fuel_blend_active_flag = 0;
+    boost_fuel_blend_active_flag = 0;
     engine_load_normalized = wVar2;
   }
   fuel_demand_mode_flags = 0;
@@ -12250,56 +12210,56 @@ void cm848_calculateFuelDemandMode3(void)
   uint unaff_r30;
   uint unaff_r31;
   
-  if (_boost_map_index_current == 1) {
+  if (boost_map_index_current == 1) {
     fuel_demand_mode3_boost_map1 =
          cm848_dualAxisTableInterpolation
                    (&DAT_003fa69e,engine_rpm_state_t_0040b7ac.current_rpm,&fuel_demand_rpm_axis_cal,
                     fuel_table_load_axis,&fuel_demand_load_axis_cal,_DAT_003fa656,0);
     unaff_r31 = (uint)fuel_demand_mode3_boost_map1;
   }
-  else if (_boost_map_index_current == 2) {
+  else if (boost_map_index_current == 2) {
     fuel_demand_mode3_boost_map2 =
          cm848_dualAxisTableInterpolation
                    (&DAT_003fa69e,engine_rpm_state_t_0040b7ac.current_rpm,&fuel_demand_xaxis_cal_2,
                     fuel_table_load_axis,&fuel_demand_xaxis_cal_1,_DAT_003fa65a,0);
     unaff_r31 = (uint)fuel_demand_mode3_boost_map2;
   }
-  else if (_boost_map_index_current == 3) {
+  else if (boost_map_index_current == 3) {
     fuel_demand_mode3_boost_map3 =
          cm848_dualAxisTableInterpolation
                    (&DAT_003fa69e,engine_rpm_state_t_0040b7ac.current_rpm,&fuel_demand_xaxis_cal_4,
                     fuel_table_load_axis,&fuel_demand_xaxis_cal_3,_DAT_003fa65e,0);
     unaff_r31 = (uint)fuel_demand_mode3_boost_map3;
   }
-  else if (_boost_map_index_current == 4) {
+  else if (boost_map_index_current == 4) {
     fuel_demand_mode3_boost_map4 =
          cm848_dualAxisTableInterpolation
                    (&DAT_003fa69e,engine_rpm_state_t_0040b7ac.current_rpm,&fuel_demand_xaxis_cal_6,
                     fuel_table_load_axis,&fuel_demand_xaxis_cal_5,_DAT_003fa662,0);
     unaff_r31 = (uint)fuel_demand_mode3_boost_map4;
   }
-  if (_boost_map_index_target == 1) {
+  if (boost_map_index_target == 1) {
     fuel_demand_mode3_boost_map1 =
          cm848_dualAxisTableInterpolation
                    (&DAT_003fa69e,engine_rpm_state_t_0040b7ac.current_rpm,&fuel_demand_rpm_axis_cal,
                     fuel_table_load_axis,&fuel_demand_load_axis_cal,_DAT_003fa656,0);
     unaff_r30 = (uint)fuel_demand_mode3_boost_map1;
   }
-  else if (_boost_map_index_target == 2) {
+  else if (boost_map_index_target == 2) {
     fuel_demand_mode3_boost_map2 =
          cm848_dualAxisTableInterpolation
                    (&DAT_003fa69e,engine_rpm_state_t_0040b7ac.current_rpm,&fuel_demand_xaxis_cal_2,
                     fuel_table_load_axis,&fuel_demand_xaxis_cal_1,_DAT_003fa65a,0);
     unaff_r30 = (uint)fuel_demand_mode3_boost_map2;
   }
-  else if (_boost_map_index_target == 3) {
+  else if (boost_map_index_target == 3) {
     fuel_demand_mode3_boost_map3 =
          cm848_dualAxisTableInterpolation
                    (&DAT_003fa69e,engine_rpm_state_t_0040b7ac.current_rpm,&fuel_demand_xaxis_cal_4,
                     fuel_table_load_axis,&fuel_demand_xaxis_cal_3,_DAT_003fa65e,0);
     unaff_r30 = (uint)fuel_demand_mode3_boost_map3;
   }
-  else if (_boost_map_index_target == 4) {
+  else if (boost_map_index_target == 4) {
     fuel_demand_mode3_boost_map4 =
          cm848_dualAxisTableInterpolation
                    (&DAT_003fa69e,engine_rpm_state_t_0040b7ac.current_rpm,&fuel_demand_xaxis_cal_6,
@@ -12313,8 +12273,8 @@ void cm848_calculateFuelDemandMode3(void)
   ;
   fuel_demand_rate_raw =
        cm848_filterInputValue
-                 (unaff_r31,unaff_r30,fuel_demand_rate_map5_lookup,_boost_map_index_current,
-                  _boost_map_index_target,fuel_blend_state_t_0040a494.blend_weight,
+                 (unaff_r31,unaff_r30,fuel_demand_rate_map5_lookup,boost_map_index_current,
+                  boost_map_index_target,fuel_blend_state_t_0040a494.blend_weight,
                   fuel_blend_state_t_0040a494.blend_mode);
   return;
 }
@@ -12357,33 +12317,33 @@ void cm848_calculateFuelDemandBlendTables(void)
                  (&DAT_003fa696,engine_rpm_state_t_0040b7ac.current_rpm,&fuel_demand_xaxis_cal_6,
                   fuel_table_load_axis,&fuel_demand_xaxis_cal_5,_DAT_003fa652,0);
   uVar2 = (uint)fuel_quantity_channel_boost5_lookup;
-  if (_boost_map_index_current == 1) {
+  if (boost_map_index_current == 1) {
     uVar5 = (uint)fuel_quantity_channel_a;
   }
-  else if (_boost_map_index_current == 2) {
+  else if (boost_map_index_current == 2) {
     uVar5 = (uint)fuel_quantity_channel_b;
   }
-  else if (_boost_map_index_current == 3) {
+  else if (boost_map_index_current == 3) {
     uVar5 = (uint)fuel_quantity_channel_c;
   }
   else {
     uVar5 = uVar2;
-    if (_boost_map_index_current != 4) {
+    if (boost_map_index_current != 4) {
       uVar5 = unaff_r30;
     }
   }
-  if (_boost_map_index_target == 1) {
+  if (boost_map_index_target == 1) {
     uVar4 = (uint)fuel_quantity_channel_a;
   }
-  else if (_boost_map_index_target == 2) {
+  else if (boost_map_index_target == 2) {
     uVar4 = (uint)fuel_quantity_channel_b;
   }
-  else if (_boost_map_index_target == 3) {
+  else if (boost_map_index_target == 3) {
     uVar4 = (uint)fuel_quantity_channel_c;
   }
   else {
     uVar4 = uVar2;
-    if (_boost_map_index_target != 4) {
+    if (boost_map_index_target != 4) {
       uVar4 = unaff_r22;
     }
   }
@@ -12419,10 +12379,10 @@ void cm848_calculateFuelDemandBlendTables(void)
                      fuel_table_load_axis,&fuel_table_load_axis_cal,
                      &fuel_demand_rate_b_map_values_cal,0);
   fuel_demand_rate_b_base_lookup = wVar1;
-  if ((_fuel_blend_bypass_flag == 0) && (fuel_blend_state_t_0040a494.reserved_02 == 0)) {
+  if ((fuel_blend_bypass_flag == 0) && (fuel_blend_state_t_0040a494.blend_enable == 0)) {
     fuel_demand_rate_output_b =
          cm848_filterInputValue
-                   (uVar5,uVar4,wVar1,_boost_map_index_current,_boost_map_index_target,
+                   (uVar5,uVar4,wVar1,boost_map_index_current,boost_map_index_target,
                     fuel_blend_state_t_0040a494.blend_weight,fuel_blend_state_t_0040a494.blend_mode)
     ;
   }
@@ -12442,64 +12402,62 @@ void cm848_calculateFuelDemandBlendTables(void)
 // Function: cm848_lookupFuelDemandRpmTables @ 0x00015760
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_lookupFuelDemandRpmTables(void)
 
 {
   uint unaff_r30;
   uint unaff_r31;
   
-  if (_boost_map_index_current == 1) {
+  if (boost_map_index_current == 1) {
     fuel_demand_rpm_table_boost1 =
          lookupTableInterpolation
                    (&fuel_map_interpolation_state,engine_rpm_state_t_0040b7ac.current_rpm,
                     &fuel_map_rpm_axis_cal,&fuel_rpm_table_boost1_cal,0);
     unaff_r31 = (uint)fuel_demand_rpm_table_boost1;
   }
-  else if (_boost_map_index_current == 2) {
+  else if (boost_map_index_current == 2) {
     fuel_demand_rpm_table_boost2 =
          lookupTableInterpolation
                    (&fuel_map_interpolation_state,engine_rpm_state_t_0040b7ac.current_rpm,
                     &fuel_map_rpm_axis_cal,&fuel_rpm_table_boost2_cal,0);
     unaff_r31 = (uint)fuel_demand_rpm_table_boost2;
   }
-  else if (_boost_map_index_current == 3) {
+  else if (boost_map_index_current == 3) {
     fuel_demand_rpm_table_boost3 =
          lookupTableInterpolation
                    (&fuel_map_interpolation_state,engine_rpm_state_t_0040b7ac.current_rpm,
                     &fuel_map_rpm_axis_cal,&fuel_rpm_table_boost3_cal,0);
     unaff_r31 = (uint)fuel_demand_rpm_table_boost3;
   }
-  else if (_boost_map_index_current == 4) {
+  else if (boost_map_index_current == 4) {
     fuel_demand_rpm_table_boost4 =
          lookupTableInterpolation
                    (&fuel_map_interpolation_state,engine_rpm_state_t_0040b7ac.current_rpm,
                     &fuel_map_rpm_axis_cal,&fuel_rpm_table_boost4_cal,0);
     unaff_r31 = (uint)fuel_demand_rpm_table_boost4;
   }
-  if (_boost_map_index_target == 1) {
+  if (boost_map_index_target == 1) {
     fuel_demand_rpm_table_boost1 =
          lookupTableInterpolation
                    (&fuel_map_interpolation_state,engine_rpm_state_t_0040b7ac.current_rpm,
                     &fuel_map_rpm_axis_cal,&fuel_rpm_table_boost1_cal,0);
     unaff_r30 = (uint)fuel_demand_rpm_table_boost1;
   }
-  else if (_boost_map_index_target == 2) {
+  else if (boost_map_index_target == 2) {
     fuel_demand_rpm_table_boost2 =
          lookupTableInterpolation
                    (&fuel_map_interpolation_state,engine_rpm_state_t_0040b7ac.current_rpm,
                     &fuel_map_rpm_axis_cal,&fuel_rpm_table_boost2_cal,0);
     unaff_r30 = (uint)fuel_demand_rpm_table_boost2;
   }
-  else if (_boost_map_index_target == 3) {
+  else if (boost_map_index_target == 3) {
     fuel_demand_rpm_table_boost3 =
          lookupTableInterpolation
                    (&fuel_map_interpolation_state,engine_rpm_state_t_0040b7ac.current_rpm,
                     &fuel_map_rpm_axis_cal,&fuel_rpm_table_boost3_cal,0);
     unaff_r30 = (uint)fuel_demand_rpm_table_boost3;
   }
-  else if (_boost_map_index_target == 4) {
+  else if (boost_map_index_target == 4) {
     fuel_demand_rpm_table_boost4 =
          lookupTableInterpolation
                    (&fuel_map_interpolation_state,engine_rpm_state_t_0040b7ac.current_rpm,
@@ -12512,8 +12470,8 @@ void cm848_lookupFuelDemandRpmTables(void)
                   &governor_fuel_demand_values_cal,0);
   fuel_demand_load_axis =
        cm848_filterInputValue
-                 (unaff_r31,unaff_r30,fuel_demand_load_axis_base_lookup,_boost_map_index_current,
-                  _boost_map_index_target,fuel_blend_state_t_0040a494.blend_weight,
+                 (unaff_r31,unaff_r30,fuel_demand_load_axis_base_lookup,boost_map_index_current,
+                  boost_map_index_target,fuel_blend_state_t_0040a494.blend_weight,
                   fuel_blend_state_t_0040a494.blend_mode);
   return;
 }
@@ -12556,12 +12514,12 @@ void cm848_calculateFuelLimitSource(void)
     fuel_table_load_working = wVar3;
   }
   uVar2 = (uint)(short)fuel_demand_arbitrated_snapshot;
-  fuel_blend_state_t_0040a494.reserved_08 = fuel_demand_arbitrated_snapshot;
+  fuel_blend_state_t_0040a494.fuel_demand_snapshot = fuel_demand_arbitrated_snapshot;
   bVar1 = (int)(short)fuel_demand_blend_threshold_cal <= (int)uVar2;
   if (bVar1) {
     uVar2 = uVar2 - (int)(short)fuel_demand_offset_correction;
   }
-  fuel_blend_state_t_0040a494.reserved_04 = (word)bVar1;
+  fuel_blend_state_t_0040a494.demand_above_threshold = (word)bVar1;
   if ((engine_feature_enable_flags & 0x400) == 0) {
     _DAT_003fa6d0 = governor_fuel_mode_snapshot;
     if ((int)uVar2 < 0) {
@@ -12631,11 +12589,11 @@ void cm848_selectFuelLimitWithFiltering(void)
   fuel_blend_load_ratio = (word)uVar1;
   if ((uVar1 & 0xffff) < (uint)fuel_blend_load_ratio_upper_cal) {
     if ((uVar1 & 0xffff) <= (uint)fuel_blend_load_ratio_lower_cal) {
-      _fuel_blend_bypass_flag = 0;
+      fuel_blend_bypass_flag = 0;
     }
   }
   else {
-    _fuel_blend_bypass_flag = 1;
+    fuel_blend_bypass_flag = 1;
   }
   return;
 }
@@ -12731,8 +12689,6 @@ void cm848_interpolateFuelMapTable
 // Function: cm848_processFuelMapInterpolation @ 0x00015f34
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_processFuelMapInterpolation(void)
 
 {
@@ -12742,7 +12698,7 @@ void cm848_processFuelMapInterpolation(void)
   word local_20;
   word local_1e;
   word local_1c;
-  undefined2 local_1a;
+  word local_1a;
   word local_18;
   word local_16;
   word local_14;
@@ -12784,7 +12740,7 @@ void cm848_processFuelMapInterpolation(void)
   fuel_blend_filter_state_b_saved = local_20;
   sensor_filter_state_a = local_1e;
   sensor_filter_state_b = local_1c;
-  _fuel_blend_boost_map_index_saved = local_1a;
+  fuel_blend_boost_map_index_saved = local_1a;
   return;
 }
 
@@ -12793,8 +12749,6 @@ void cm848_processFuelMapInterpolation(void)
 //
 // Function: cm848_calculateFuelBlendModeSelection @ 0x000160ac
 //
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void cm848_calculateFuelBlendModeSelection(void)
 
@@ -12809,7 +12763,7 @@ void cm848_calculateFuelBlendModeSelection(void)
   word local_22;
   word local_20;
   word local_1c;
-  undefined2 local_1a;
+  word local_1a;
   word local_18;
   word local_16;
   word local_14;
@@ -12834,27 +12788,27 @@ void cm848_calculateFuelBlendModeSelection(void)
   if (((((bVar1) || ((fuel_mode_status_flags & 1) != 0)) ||
        (((fuel_mode_status_flags & 2) != 0 ||
         (((fuel_mode_status_flags & 0x20) != 0 &&
-         (_fuel_demand_boost_offset <= (short)fuel_demand_boost_offset_lower_cal)))))) ||
+         ((short)fuel_demand_boost_offset <= (short)fuel_demand_boost_offset_lower_cal)))))) ||
       (((fuel_mode_status_flags & 0x40) != 0 &&
        ((short)fuel_demand_boost_input <= (short)fuel_demand_boost_input_lower_cal)))) ||
      (((fuel_mode_status_flags & 0x80) != 0 || ((fuel_mode_status_flags & 0x100) != 0)))) {
-    _fuel_blend_enable_flag = 1;
+    fuel_blend_enable_flag = 1;
   }
   else {
-    _fuel_blend_enable_flag = 0;
+    fuel_blend_enable_flag = 0;
   }
-  fuel_blend_state_t_0040a494.reserved_02 = _fuel_blend_enable_flag;
+  fuel_blend_state_t_0040a494.blend_enable = fuel_blend_enable_flag;
   if ((engine_feature_enable_flags & 0x100) != 0) {
-    fuel_blend_state_t_0040a494.reserved_02 = fuel_blend_mode_override_cal;
+    fuel_blend_state_t_0040a494.blend_enable = fuel_blend_mode_override_cal;
   }
   cm848_processFuelMapInterpolation();
-  if (_fuel_blend_enable_flag == 0) {
+  if (fuel_blend_enable_flag == 0) {
     local_16 = fuel_blend_scale_factor;
     local_18 = fuel_blend_filter_state_a_saved;
     local_14 = fuel_blend_filter_state_b_saved;
     local_12 = sensor_filter_state_a;
     local_10 = sensor_filter_state_b;
-    local_1a = _fuel_blend_boost_map_index_saved;
+    local_1a = fuel_blend_boost_map_index_saved;
   }
   else {
     local_16 = local_22;
@@ -12898,7 +12852,7 @@ void cm848_calculateFuelBlendModeSelection(void)
   fuel_blend_state_t_0040a494.blend_weight = local_2e;
   fuel_blend_weight_stored = local_30;
   fuel_blend_step_b_stored = local_2c;
-  _fuel_blend_table_size = local_1a;
+  fuel_blend_table_size = local_1a;
   if (3 < local_2a) {
     cm848_calculateFuelBlendMode();
     return;
@@ -12906,7 +12860,7 @@ void cm848_calculateFuelBlendModeSelection(void)
   if (local_2a < 2) {
     local_2a = 1;
   }
-  _boost_map_index_current = local_2a;
+  boost_map_index_current = local_2a;
   if (local_28 < 4) {
     if (local_28 < 2) {
       local_28 = 1;
@@ -12915,10 +12869,10 @@ void cm848_calculateFuelBlendModeSelection(void)
   else {
     local_28 = 4;
   }
-  _boost_map_index_target = local_28;
+  boost_map_index_target = local_28;
   fuel_blend_state_t_0040a494.blend_mode = fuel_blend_mode_default_cal;
   if ((engine_feature_enable_flags & 0x20) == 0) {
-    if ((local_2e < fuel_blend_threshold_cal) && (fuel_blend_state_t_0040a494.reserved_02 == 0)) {
+    if ((local_2e < fuel_blend_threshold_cal) && (fuel_blend_state_t_0040a494.blend_enable == 0)) {
       fuel_blend_state_t_0040a494.blend_mode = (word)((uint)fuel_blend_coefficient * 100 >> 0xe);
     }
     else {
@@ -12934,26 +12888,24 @@ void cm848_calculateFuelBlendModeSelection(void)
 // Function: cm848_calculateFuelBlendMode @ 0x00016408
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_calculateFuelBlendMode(int param_1)
 
 {
   short *unaff_r29;
   int unaff_r30;
-  undefined2 unaff_r31;
-  ushort uStack00000010;
+  word unaff_r31;
+  word wStack00000010;
   
-  _boost_map_index_current = unaff_r31;
-  if (uStack00000010 < 4) {
-    if (uStack00000010 < 2) {
-      uStack00000010 = 1;
+  boost_map_index_current = unaff_r31;
+  if (wStack00000010 < 4) {
+    if (wStack00000010 < 2) {
+      wStack00000010 = 1;
     }
   }
   else {
-    uStack00000010 = 4;
+    wStack00000010 = 4;
   }
-  _boost_map_index_target = uStack00000010;
+  boost_map_index_target = wStack00000010;
   fuel_blend_state_t_0040a494.blend_mode = fuel_blend_mode_default_cal;
   if ((*(ushort *)(unaff_r30 + 10) & 0x20) == 0) {
     if ((param_1 < (int)(uint)fuel_blend_threshold_cal) && (*unaff_r29 == 0)) {
@@ -12972,26 +12924,24 @@ void cm848_calculateFuelBlendMode(int param_1)
 // Function: cm848_calculateFuelBlendMode @ 0x0001640c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_calculateFuelBlendMode(int param_1)
 
 {
   short *unaff_r29;
   int unaff_r30;
-  undefined2 unaff_r31;
-  ushort uStack00000010;
+  word unaff_r31;
+  word wStack00000010;
   
-  _boost_map_index_current = unaff_r31;
-  if (uStack00000010 < 4) {
-    if (uStack00000010 < 2) {
-      uStack00000010 = 1;
+  boost_map_index_current = unaff_r31;
+  if (wStack00000010 < 4) {
+    if (wStack00000010 < 2) {
+      wStack00000010 = 1;
     }
   }
   else {
-    uStack00000010 = 4;
+    wStack00000010 = 4;
   }
-  _boost_map_index_target = uStack00000010;
+  boost_map_index_target = wStack00000010;
   fuel_blend_state_t_0040a494.blend_mode = fuel_blend_mode_default_cal;
   if ((*(ushort *)(unaff_r30 + 10) & 0x20) == 0) {
     if ((param_1 < (int)(uint)fuel_blend_threshold_cal) && (*unaff_r29 == 0)) {
@@ -13029,8 +12979,6 @@ void cm848_processFuelDemandCalculations(void)
 // Function: cm848_fuelDemandTableLookup @ 0x000164e4
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 undefined2 cm848_fuelDemandTableLookup(undefined4 param_1)
 
 {
@@ -13038,42 +12986,42 @@ undefined2 cm848_fuelDemandTableLookup(undefined4 param_1)
   undefined2 unaff_r29;
   undefined2 unaff_r30;
   
-  if (_boost_map_index_current == 1) {
+  if (boost_map_index_current == 1) {
     unaff_r30 = lookupTableInterpolation
                           (&fuel_map_interpolation_state,param_1,&fuel_map_rpm_axis_cal,
                            &fuel_rpm_table_boost1_cal,0);
   }
-  else if (_boost_map_index_current == 2) {
+  else if (boost_map_index_current == 2) {
     unaff_r30 = lookupTableInterpolation
                           (&fuel_map_interpolation_state,param_1,&fuel_map_rpm_axis_cal,
                            &fuel_rpm_table_boost2_cal,0);
   }
-  else if (_boost_map_index_current == 3) {
+  else if (boost_map_index_current == 3) {
     unaff_r30 = lookupTableInterpolation
                           (&fuel_map_interpolation_state,param_1,&fuel_map_rpm_axis_cal,
                            &fuel_rpm_table_boost3_cal,0);
   }
-  else if (_boost_map_index_current == 4) {
+  else if (boost_map_index_current == 4) {
     unaff_r30 = lookupTableInterpolation
                           (&fuel_map_interpolation_state,param_1,&fuel_map_rpm_axis_cal,
                            &fuel_rpm_table_boost4_cal,0);
   }
-  if (_boost_map_index_target == 1) {
+  if (boost_map_index_target == 1) {
     unaff_r29 = lookupTableInterpolation
                           (&fuel_map_interpolation_state,param_1,&fuel_map_rpm_axis_cal,
                            &fuel_rpm_table_boost1_cal,0);
   }
-  else if (_boost_map_index_target == 2) {
+  else if (boost_map_index_target == 2) {
     unaff_r29 = lookupTableInterpolation
                           (&fuel_map_interpolation_state,param_1,&fuel_map_rpm_axis_cal,
                            &fuel_rpm_table_boost2_cal,0);
   }
-  else if (_boost_map_index_target == 3) {
+  else if (boost_map_index_target == 3) {
     unaff_r29 = lookupTableInterpolation
                           (&fuel_map_interpolation_state,param_1,&fuel_map_rpm_axis_cal,
                            &fuel_rpm_table_boost3_cal,0);
   }
-  else if (_boost_map_index_target == 4) {
+  else if (boost_map_index_target == 4) {
     unaff_r29 = lookupTableInterpolation
                           (&fuel_map_interpolation_state,param_1,&fuel_map_rpm_axis_cal,
                            &fuel_rpm_table_boost4_cal,0);
@@ -13082,7 +13030,7 @@ undefined2 cm848_fuelDemandTableLookup(undefined4 param_1)
                     (&DAT_003fa6ca,param_1,&fuel_map_rpm_axis_cal,&governor_fuel_demand_values_cal,0
                     );
   uVar1 = cm848_filterInputValue
-                    (unaff_r30,unaff_r29,uVar1,_boost_map_index_current,_boost_map_index_target,
+                    (unaff_r30,unaff_r29,uVar1,boost_map_index_current,boost_map_index_target,
                      fuel_blend_state_t_0040a494.blend_weight,fuel_blend_state_t_0040a494.blend_mode
                     );
   return uVar1;
@@ -13215,15 +13163,13 @@ void cm848_calculateFuelInjectionTiming(void)
 // Function: cm848_calculateManifoldPressureOffset @ 0x00016c40
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_calculateManifoldPressureOffset(void)
 
 {
   uint uVar1;
   uint uVar2;
   
-  uVar2 = (int)(short)fuel_demand_mode2_filtered - (int)_fuel_demand_boost_offset;
+  uVar2 = (int)(short)fuel_demand_mode2_filtered - (int)(short)fuel_demand_boost_offset;
   uVar1 = (uint)(short)fuel_demand_mode2_upper_limit_cal;
   if (((int)uVar2 < (int)uVar1) &&
      (uVar1 = uVar2, (int)uVar2 <= (int)(short)fuel_demand_blend_lower_cal)) {
@@ -13294,8 +13240,9 @@ void cm848_applyFuelDemandOffset(void)
     fuel_correction_output = 0x400;
   }
   _DAT_003fa6dc = fuel_correction_output;
-  if ((((_fuel_blend_correction_inhibit_flag == 0) && (fuel_blend_state_t_0040a494.reserved_02 == 0)
-       ) && (fuel_blend_state_t_0040a494.blend_mode != 0)) &&
+  if ((((fuel_blend_correction_inhibit_flag._0_2_ == 0) &&
+       (fuel_blend_state_t_0040a494.blend_enable == 0)) &&
+      (fuel_blend_state_t_0040a494.blend_mode != 0)) &&
      ((uint)fuel_blend_state_t_0040a494.blend_weight << 10 <
       (uint)fuel_blend_weight_threshold_cal * 100)) {
     engine_load_correction_mode_flag = 0;
@@ -13374,8 +13321,6 @@ void cm848_storeFuelLimitValues(void)
 // Function: cm848_fuelDemandBaseCalculation @ 0x0001702c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_fuelDemandBaseCalculation(void)
 
 {
@@ -13385,10 +13330,10 @@ void cm848_fuelDemandBaseCalculation(void)
   uVar2 = (uint)throttle_fuel_demand_adjusted;
   throttle_fuel_demand_adjusted = throttle_fuel_demand_adjusted;
   if (((fault_active_status_array & 0x400) == 0) && ((fault_active_status_array & 0x800) == 0)) {
-    _throttle_fuel_enable_flag = 0;
+    throttle_fuel_enable_flag._0_2_ = 0;
   }
   else {
-    _throttle_fuel_enable_flag = 1;
+    throttle_fuel_enable_flag._0_2_ = 1;
   }
   if ((governor_feature_flags & 4) == 0) {
     uVar1 = (uint)fuel_demand_cal_index;
@@ -13402,7 +13347,7 @@ void cm848_fuelDemandBaseCalculation(void)
       fuel_demand_control_t_0040a57a.enable_flag = 0;
     }
   }
-  if ((((_throttle_fuel_enable_flag == 0) &&
+  if ((((throttle_fuel_enable_flag._0_2_ == 0) &&
        ((system_status_flags_t_003fe974.safety_bits_1 & 0x8000) == 0)) &&
       ((system_status_flags_t_003fe974.safety_bits_2 & 0x10) == 0)) && (uVar1 < uVar2)) {
     uVar2 = ((uVar2 - uVar1) * 400) / (uint)DAT_0005c292;
@@ -13689,8 +13634,6 @@ void cm848_fuelDemandSmoothingController(void)
 // Function: cm848_fuelDemandFinalCalculation @ 0x0001782c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_fuelDemandFinalCalculation(void)
 
 {
@@ -13722,10 +13665,11 @@ LAB_000178d0:
          fuel_demand_control_t_0040a57a.override_active;
     fuel_demand_control_t_0040a57a.override_active = 0;
   }
-  fuel_demand_control_t_0040a57a.delta = fuel_demand_control_t_0040a57a.calculated - _DAT_003fa6f2;
+  fuel_demand_control_t_0040a57a.delta =
+       fuel_demand_control_t_0040a57a.calculated - throttle_fuel_enable_flag._2_2_;
   fuel_demand_control_t_0040a57a.delta_filtered =
        cm848_signedFirstOrderFilter((int)(short)fuel_demand_control_t_0040a57a.delta,&DAT_003fa6f4);
-  _DAT_003fa6f2 = fuel_demand_control_t_0040a57a.calculated;
+  throttle_fuel_enable_flag._2_2_ = fuel_demand_control_t_0040a57a.calculated;
   return;
 }
 
@@ -13735,19 +13679,17 @@ LAB_000178d0:
 // Function: cm848_fuelDemandCoordinator @ 0x00017980
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_fuelDemandCoordinator(void)
 
 {
   if (((fuel_demand_feature_flags & 0x2000) == 0) && (fuel_demand_enable_flag != 1)) {
     if ((governor_feature_flags & 4) == 0) {
       if ((system_status_flags_t_003fe974.reserved_18 & 0x20) != 0) {
-        _throttle_fuel_enable_flag = 1;
+        throttle_fuel_enable_flag._0_2_ = 1;
       }
       cm848_fuelDemandModeSelector();
       cm848_fuelDemandEnableChecker();
-      if (_throttle_fuel_enable_flag == 0) {
+      if (throttle_fuel_enable_flag._0_2_ == 0) {
         cm848_fuelDemandRateLimiterStateMachine();
         cm848_fuelDemandOverrideHandler();
       }
@@ -13793,7 +13735,7 @@ void cm848_initFuelDemandRateVariables(void)
   fuel_demand_control_t_0040a57a.rate_limiter_state = 0;
   fuel_demand_control_t_0040a57a.throttle_based = throttle_fuel_demand_threshold_cal + 4;
   fuel_demand_control_t_0040a57a.enable_flag = 0;
-  _DAT_003fa6f2 = 0;
+  throttle_fuel_enable_flag._2_2_ = 0;
   _DAT_003fa6f8 = 0;
   _DAT_003fa6f4 = &DAT_0005c2aa;
   return;
@@ -13813,7 +13755,7 @@ void cm848_storeFuelDemandPreviousValues(void)
   _DAT_003fa700 = fuel_correction_output;
   _DAT_003fa702 = 0x19;
   fuel_correction_output_snapshot = fuel_correction_output;
-  _fuel_demand_mode_code = 0x19;
+  fuel_demand_mode_code = 0x19;
   return;
 }
 
@@ -13883,25 +13825,25 @@ undefined2 cm848_calculateFuelFlowRate(void)
 void cm848_selectFuelFlowMode(void)
 
 {
-  if (((_fuel_demand_mode_state == 2) && (_fuel_demand_state_b == 2)) ||
-     ((_DAT_003fd5c2 & 0x80) == 0)) {
-    _fuel_timing_range_flag = 0;
+  if (((fuel_demand_mode_state == 2) && (fuel_demand_state_b == 2)) || ((_DAT_003fd5c2 & 0x80) == 0)
+     ) {
+    fuel_timing_range_flag = 0;
   }
   else {
-    _fuel_timing_range_flag = 1;
+    fuel_timing_range_flag = 1;
   }
-  if (_fuel_timing_range_flag == 0) {
+  if (fuel_timing_range_flag == 0) {
     fuel_flow_rate = fuel_flow_rate_default_cal;
-    _fuel_timing_state_code = 2;
+    fuel_timing_state_code = 2;
   }
   else {
     fuel_flow_rate = cm848_calculateFuelFlowRate();
-    if (((_fuel_demand_mode_state == 0) && (_fuel_demand_state_b == 0)) &&
-       ((boost_pressure_state_t_0040a406.reserved_0e == 0 && (_boost_control_mode != 2)))) {
-      _fuel_timing_state_code = 0;
+    if (((fuel_demand_mode_state == 0) && (fuel_demand_state_b == 0)) &&
+       ((boost_pressure_state_t_0040a406.reserved_0e == 0 && (boost_control_mode != 2)))) {
+      fuel_timing_state_code = 0;
     }
     else {
-      _fuel_timing_state_code = 1;
+      fuel_timing_state_code = 1;
     }
   }
   fuel_flow_rate_snapshot = fuel_flow_rate;
@@ -13950,35 +13892,33 @@ LAB_00017f34:
 // Function: cm848_calculateFuelFlowWithMode @ 0x00017f50
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_calculateFuelFlowWithMode(void)
 
 {
-  if (_boost_correction_alt_mode_cal == 0) {
+  if (boost_correction_alt_mode_cal == 0) {
     boost_fuel_correction = boost_pressure_correction_raw;
     boost_fuel_correction_prev = 0;
-    _boost_fuel_mode_state = 2;
-    _fuel_demand_enable_state_cached = _fuel_demand_enable_state;
+    boost_fuel_mode_state = 2;
+    fuel_demand_enable_state_cached = fuel_demand_enable_state;
   }
   else {
     boost_fuel_correction =
          (boost_pressure_current_raw - boost_pressure_baseline_cal) - map_fuel_correction_factor;
     boost_fuel_correction_prev = boost_pressure_correction_raw;
-    if ((_fuel_demand_droop_state == 2) && (_fuel_demand_mode_index == 2)) {
-      _boost_fuel_correction_state = 2;
+    if ((fuel_demand_droop_state == 2) && (fuel_demand_mode_index == 2)) {
+      boost_fuel_correction_state = 2;
     }
-    else if ((_fuel_demand_droop_state == 0) && (_fuel_demand_mode_index == 0)) {
-      _boost_fuel_correction_state = 0;
+    else if ((fuel_demand_droop_state == 0) && (fuel_demand_mode_index == 0)) {
+      boost_fuel_correction_state = 0;
     }
     else {
-      _boost_fuel_correction_state = 1;
+      boost_fuel_correction_state = 1;
     }
-    _boost_fuel_mode_state = _fuel_demand_enable_state;
-    _fuel_demand_enable_state_cached = _boost_fuel_correction_state;
+    boost_fuel_mode_state = fuel_demand_enable_state;
+    fuel_demand_enable_state_cached = boost_fuel_correction_state;
   }
   boost_fuel_correction_neg = -boost_fuel_correction;
-  _boost_fuel_correction_state = _fuel_demand_enable_state_cached;
+  boost_fuel_correction_state = fuel_demand_enable_state_cached;
   return;
 }
 
@@ -14096,56 +14036,54 @@ void cm848_calculateThrottleProtectionLimit(void)
 // Function: cm848_checkProtectionEnableConditions @ 0x00018384
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_checkProtectionEnableConditions(void)
 
 {
   bool bVar1;
   bool bVar2;
   
-  if (((_boost_correction_inhibit_flag == 0) && (_sensor_channel105_fault_status == 0)) &&
-     (_boost_correction_block_flag == 0)) {
-    _engine_running_flag = 0;
+  if (((boost_correction_inhibit_flag == 0) && (sensor_channel105_fault_status == 0)) &&
+     (boost_correction_block_flag == 0)) {
+    engine_running_flag = 0;
   }
   else {
-    _engine_running_flag = 1;
+    engine_running_flag = 1;
   }
-  if (((_engine_running_flag == 0) && (engine_rpm_state_t_0040b7ac.current_rpm == 0)) &&
+  if (((engine_running_flag == 0) && (engine_rpm_state_t_0040b7ac.current_rpm == 0)) &&
      (((protection_enable_t_0040c050.mode_bits & 1) == 0 &&
       ((short)boost_decel_input_threshold_cal < (short)fuel_demand_boost_input)))) {
-    _boost_decel_mode_flag = 1;
+    boost_decel_mode_flag = 1;
   }
   else {
-    _boost_decel_mode_flag = 0;
+    boost_decel_mode_flag = 0;
   }
-  if ((((short)boost_decel_offset_threshold_cal < _fuel_demand_boost_offset) &&
-      (_boost_fuel_mode_active == 1)) && (_fuel_demand_phase_state == 0)) {
+  if ((((short)boost_decel_offset_threshold_cal < (short)fuel_demand_boost_offset) &&
+      (boost_fuel_mode_active == 1)) && (fuel_demand_phase_state == 0)) {
     bVar1 = true;
   }
   else {
     bVar1 = false;
   }
-  if ((_boost_fuel_mode_active == 0) && (fuel_demand_quantity <= boost_mode_fuel_qty_threshold_cal))
+  if ((boost_fuel_mode_active == 0) && (fuel_demand_quantity <= boost_mode_fuel_qty_threshold_cal))
   {
     bVar2 = true;
   }
   else {
     bVar2 = false;
   }
-  if (_boost_correction_alt_mode_cal == 0) {
-    if ((_boost_decel_mode_flag == 1) && (bVar2)) {
-      _boost_decel_active_flag = 1;
+  if (boost_correction_alt_mode_cal == 0) {
+    if ((boost_decel_mode_flag == 1) && (bVar2)) {
+      boost_decel_active_flag._0_2_ = 1;
     }
     else {
-      _boost_decel_active_flag = 0;
+      boost_decel_active_flag._0_2_ = 0;
     }
   }
-  else if ((_boost_decel_mode_flag == 1) && (bVar1)) {
-    _boost_decel_active_flag = 1;
+  else if ((boost_decel_mode_flag == 1) && (bVar1)) {
+    boost_decel_active_flag._0_2_ = 1;
   }
   else {
-    _boost_decel_active_flag = 0;
+    boost_decel_active_flag._0_2_ = 0;
   }
   return;
 }
@@ -14182,12 +14120,12 @@ void cm848_checkFaultConditionThreshold(void)
     uVar1 = 0;
   }
   _DAT_003fa714 = uVar1;
-  if ((((_DAT_003fdfb2 & 1) == 0) && (_engine_running_flag != 1)) &&
+  if ((((_DAT_003fdfb2 & 1) == 0) && (engine_running_flag != 1)) &&
      (uVar1 < engine_fuel_enable_count_cal)) {
-    _map_sensor_fault_mode_flag = 0;
+    map_sensor_fault_mode_flag = 0;
   }
   else {
-    _map_sensor_fault_mode_flag = 1;
+    map_sensor_fault_mode_flag = 1;
   }
   return;
 }
@@ -14381,10 +14319,10 @@ void cm848_updateFaultStatusRegisters(void)
 {
   _DAT_003fa722 = sensor_channel105_raw;
   _DAT_003fa724 = boost_fault_filter_param_b_cal;
-  _DAT_003fa726 = _boost_decel_active_flag;
+  _DAT_003fa726 = boost_decel_active_flag._0_2_;
   _DAT_003fa72a = boost_fault_filter_threshold_cal;
   _DAT_003fa72c = boost_fault_filter_hysteresis_cal;
-  _DAT_003fa732 = _DAT_003fd7f0;
+  _DAT_003fa732 = cold_start_inhibit_cal;
   _DAT_003fa736 = 10;
   _DAT_003fa738 = &DAT_003fa716;
   cm848_processFaultStateWithFilter(&DAT_003fa720);
@@ -14400,7 +14338,7 @@ void cm848_updateFaultStatusRegisters(void)
     diagnostic_status_bits_b = diagnostic_status_bits_b | 0x8000;
   }
   sensor_channel105_pressure_diff = sensor_channel105_raw - _DAT_003fdfb0;
-  _DAT_003fa71e = _sensor_channel105_fault_status | _DAT_003fa734;
+  _DAT_003fa71e = sensor_channel105_fault_status | _DAT_003fa734;
   return;
 }
 
@@ -14415,14 +14353,14 @@ void cm848_updateFaultStatusRegisters(void)
 void cm848_selectFaultProtectionValue(void)
 
 {
-  _sensor_channel105_fault_combined = _DAT_003fa71e;
+  sensor_channel105_fault_combined._0_2_ = _DAT_003fa71e;
   if (((_DAT_003fa71e & 8) == 0) && ((_DAT_003fa71e & 2) == 0)) {
     boost_pressure_correction_raw = sensor_channel105_pressure_diff;
-    _fuel_demand_enable_state = 0;
+    fuel_demand_enable_state = 0;
   }
   else {
     boost_pressure_correction_raw = sensor_channel105_filtered;
-    _fuel_demand_enable_state = 2;
+    fuel_demand_enable_state = 2;
   }
   boost_pressure_correction_snapshot = boost_pressure_correction_raw;
   return;
@@ -14487,12 +14425,12 @@ LAB_00018c70:
     _DAT_003fa742 = 0;
   }
   _DAT_003fa746 = _DAT_003fa744;
-  _DAT_003fa744 = _boost_correction_enable_flag;
+  _DAT_003fa744 = boost_correction_enable_flag;
   if ((_DAT_003fa742 == 0) || (governor_speed_rate_d_at_max_flag != 1)) {
-    _boost_correction_enable_flag = 0;
+    boost_correction_enable_flag = 0;
   }
   else {
-    _boost_correction_enable_flag = 1;
+    boost_correction_enable_flag = 1;
   }
   return;
 }
@@ -14512,7 +14450,7 @@ void cm848_processSensorFaultDetection(void)
   word wVar2;
   ushort uVar3;
   uint uVar4;
-  byte *pbVar5;
+  word *pwVar5;
   uint uVar6;
   
   bVar1 = boost_fuel_correction_input < boost_fuel_correction_input_threshold_cal;
@@ -14538,9 +14476,9 @@ void cm848_processSensorFaultDetection(void)
   governor_speed_rate_b = wVar2;
   bVar1 = uVar4 <= governor_speed_rate_b;
   governor_speed_rate_b_at_max_flag = (word)bVar1;
-  pbVar5 = &boost_correction_enable_flag;
+  pwVar5 = &boost_correction_enable_flag;
   uVar4 = (uint)bVar1;
-  if ((((_boost_correction_enable_flag == 0) || (_DAT_003fa744 == 0)) || (_DAT_003fa746 == 0)) ||
+  if ((((boost_correction_enable_flag == 0) || (_DAT_003fa744 == 0)) || (_DAT_003fa746 == 0)) ||
      (bVar1)) {
     _DAT_003fa748 = 0;
   }
@@ -14562,7 +14500,7 @@ void cm848_processSensorFaultDetection(void)
   governor_speed_rate_d._0_2_ = uVar3;
   governor_speed_rate_d_at_max_flag = (word)(uVar6 <= governor_speed_rate_d._0_2_);
   cm848_processSensorProtectionRamp();
-  if (*(short *)pbVar5 == 0) {
+  if (*pwVar5 == 0) {
     if (uVar4 != 0) {
       diagnostic_status_bits = diagnostic_status_bits | 0x80;
     }
@@ -14637,10 +14575,10 @@ void cm848_calculateSensorDiagnosticValue(void)
   }
   _DAT_003fa74c = engine_feature_status_flags & 0x10;
   if (((engine_feature_status_flags & 8) != 0) && ((diagnostic_status_flags & 0x100) == 0)) {
-    if ((short)_fuel_timing_error_working < 0) {
-      _fuel_timing_error_working = -_fuel_timing_error_working;
+    if ((short)fuel_timing_error_working < 0) {
+      fuel_timing_error_working = -fuel_timing_error_working;
     }
-    sVar4 = fuel_timing_error_offset_cal + _fuel_timing_error_working;
+    sVar4 = fuel_timing_error_offset_cal + fuel_timing_error_working;
     if (-1 < sVar4) {
       uVar2 = (int)((ulonglong)(uint)(int)sVar4 * (ulonglong)(uint)fuel_timing_error_scale >> 0x20)
               << 0x18 | (int)sVar4 * (uint)fuel_timing_error_scale >> 8;
@@ -14649,7 +14587,7 @@ void cm848_calculateSensorDiagnosticValue(void)
   }
   uVar2 = 0;
 LAB_000190cc:
-  _fuel_timing_error_working = fuel_timing_error_stored;
+  fuel_timing_error_working = fuel_timing_error_stored;
   uVar2 = uVar2 - (int)(short)boost_fuel_demand_correction;
   if ((int)uVar2 < 0) {
     uVar2 = -uVar2;
@@ -14704,7 +14642,7 @@ void cm848_processSensorMonitoringLogic(void)
   _DAT_003fa774 = (ushort)((short)boost_fuel_input_limit_cal <= (short)fuel_demand_boost_input);
   sVar1 = cm848_signedFirstOrderFilter((int)(short)boost_fuel_correction,&DAT_003fa750);
   _DAT_003fa776 = (ushort)((short)boost_correction_threshold_cal <= sVar1);
-  if ((_boost_correction_inhibit_flag == 0) && (_boost_fuel_correction_state == 0)) {
+  if ((boost_correction_inhibit_flag == 0) && (boost_fuel_correction_state == 0)) {
     _DAT_003fa778 = 0;
   }
   else {
@@ -14723,10 +14661,10 @@ void cm848_processSensorMonitoringLogic(void)
   }
   _DAT_003fa77a = (short)uVar3;
   if ((uVar2 <= (uVar3 & 0xffff)) && ((diagnostic_status_bits & 0x100) != 0)) {
-    _DAT_003fe9d6 = _DAT_003fe9d6 | 0x800;
+    diagnostic_status_flags_b = diagnostic_status_flags_b | 0x800;
   }
   if ((diagnostic_status_bits & 0x100) != 1) {
-    _DAT_003fe9d6 = _DAT_003fe9d6 & 0xf7ff;
+    diagnostic_status_flags_b = diagnostic_status_flags_b & 0xf7ff;
     _DAT_003fea3a = _DAT_003fea3a & 0xf7ff;
   }
   return;
@@ -14737,8 +14675,6 @@ void cm848_processSensorMonitoringLogic(void)
 //
 // Function: cm848_updateEngineModeFromSensor @ 0x00019390
 //
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void cm848_updateEngineModeFromSensor(void)
 
@@ -14765,7 +14701,7 @@ void cm848_updateEngineModeFromSensor(void)
   engine_boost_load_raw = (word)uVar2;
   engine_boost_load_ema = exponentialMovingAverage(uVar2 & 0xffff,&DAT_003fa760);
   fuel_demand_boost_input_limited = fuel_demand_boost_input;
-  if (_boost_correction_inhibit_flag != 0) {
+  if (boost_correction_inhibit_flag != 0) {
     fuel_demand_boost_input_limited = boost_fuel_input_limit_cal;
   }
   boost_fuel_demand_with_offset =
@@ -14847,21 +14783,21 @@ void cm848_calculateSensorBlendFactor(void)
 
 {
   if ((engine_feature_status_flags & 8) == 0) {
-    _governor_operating_mode = 4;
+    governor_operating_mode = 4;
   }
-  else if (_governor_speed_b_mode_select_flag == 1) {
-    _governor_operating_mode = 3;
+  else if (governor_speed_b_mode_select_flag == 1) {
+    governor_operating_mode = 3;
   }
   else if ((_DAT_003fd7f8 & 2) == 0) {
     if (governor_speed_at_target_flag == 1) {
-      _governor_operating_mode = 1;
+      governor_operating_mode = 1;
     }
     else {
-      _governor_operating_mode = 0;
+      governor_operating_mode = 0;
     }
   }
   else {
-    _governor_operating_mode = 2;
+    governor_operating_mode = 2;
   }
   return;
 }
@@ -14933,7 +14869,7 @@ LAB_0001999c:
   }
   governor_speed_ramp_output = *pwVar2;
   pwVar2 = &governor_speed_ramp_output;
-  if ((_governor_operating_mode != 0) && (_governor_operating_mode != 1)) {
+  if ((governor_operating_mode != 0) && (governor_operating_mode != 1)) {
     pwVar2 = &boost_pressure_filtered;
   }
   boost_pressure_target_input = *pwVar2;
@@ -14956,8 +14892,8 @@ void cm848_initSensorBlendVariables(void)
   if ((_DAT_003fd7f8 & 1) == 0) {
     if (governor_speed_target_mode_flag == 0) {
       governor_speed_target_input = throttle_fuel_demand_limit;
-      if (_boost_decel_mode_flag != 0) {
-        if (_boost_correction_alt_mode_cal == 0) {
+      if (boost_decel_mode_flag != 0) {
+        if (boost_correction_alt_mode_cal == 0) {
           governor_speed_target_input = 0x3200;
         }
         else {
@@ -15085,7 +15021,7 @@ LAB_00019d08:
   else {
     bVar1 = false;
   }
-  _DAT_003fa78e = _governor_operating_mode;
+  _DAT_003fa78e = governor_operating_mode;
   if (!bVar1) {
     dVar4 = governor_speed_integral_b + dVar4;
   }
@@ -15115,27 +15051,25 @@ LAB_00019d08:
 // Function: cm848_selectFuelDemandUpperLimit @ 0x00019e08
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_selectFuelDemandUpperLimit(int param_1)
 
 {
   int iVar1;
   
-  if (_governor_operating_mode == 0) {
+  if (governor_operating_mode == 0) {
     iVar1 = (int)(short)governor_speed_derivative_value;
   }
   else {
-    if (_governor_operating_mode == 1) {
+    if (governor_operating_mode == 1) {
       param_1 = (int)(short)governor_mode1_param_cal;
     }
-    else if (_governor_operating_mode == 2) {
+    else if (governor_operating_mode == 2) {
       param_1 = (int)(short)governor_speed_mode2_param_cal;
     }
-    else if (_governor_operating_mode == 3) {
+    else if (governor_operating_mode == 3) {
       param_1 = (int)(short)governor_mode3_speed_param;
     }
-    else if (_governor_operating_mode == 4) {
+    else if (governor_operating_mode == 4) {
       param_1 = 0;
     }
     iVar1 = (int)(short)governor_speed_b_output_min_cal;
@@ -15247,24 +15181,24 @@ LAB_0001a084:
   sVar2 = 0;
 LAB_0001a0a0:
   if ((_DAT_003fa79a == sVar2) || (governor_speed_range_valid_enable_cal != 1)) {
-    _governor_speed_range_valid_flag = 0;
+    governor_speed_range_valid_flag = 0;
   }
   else {
-    _governor_speed_range_valid_flag = 1;
+    governor_speed_range_valid_flag = 1;
   }
-  if ((governor_speed_range_below_threshold_flag == 0) && (_governor_speed_range_valid_flag == 0)) {
+  if ((governor_speed_range_below_threshold_flag == 0) && (governor_speed_range_valid_flag == 0)) {
     wVar3 = governor_speed_range_output;
-    if ((_j1939_pgn_handler_index != 0) && (_j1939_pgn_handler_index < 0x33)) {
+    if ((j1939_pgn_handler_index != 0) && (j1939_pgn_handler_index < 0x33)) {
       governor_cruise_output_cached = governor_speed_range_output_b;
-      (**(code **)(&j1939_pgn_handler_table_func3 + (uint)_j1939_pgn_handler_index * 0x10))
+      (**(code **)(&j1939_pgn_handler_table_func3 + (uint)j1939_pgn_handler_index * 0x10))
                 (governor_speed_range_output_b);
       wVar3 = governor_speed_range_output;
     }
   }
   else {
-    if ((_j1939_pgn_handler_index != 0) && (_j1939_pgn_handler_index < 0x33)) {
+    if ((j1939_pgn_handler_index != 0) && (j1939_pgn_handler_index < 0x33)) {
       governor_cruise_output_cached = 0;
-      (**(code **)(&j1939_pgn_handler_table_func3 + (uint)_j1939_pgn_handler_index * 0x10))(0);
+      (**(code **)(&j1939_pgn_handler_table_func3 + (uint)j1939_pgn_handler_index * 0x10))(0);
     }
     wVar3 = 0;
   }
@@ -15321,16 +15255,16 @@ void cm848_initFuelDemandLimitVariables(void)
   _DAT_003fa786 = &governor_speed_integral_limit_working;
   _DAT_003fa794 = 0;
   _DAT_003fa790 = &j1939_handler_param_table_cal;
-  if ((_j1939_pgn_handler_index != 0) && (_j1939_pgn_handler_index < 0x33)) {
-    (**(code **)(&j1939_pgn_handler_table + (uint)_j1939_pgn_handler_index * 0x10))();
+  if ((j1939_pgn_handler_index != 0) && (j1939_pgn_handler_index < 0x33)) {
+    (**(code **)(&j1939_pgn_handler_table + (uint)j1939_pgn_handler_index * 0x10))();
   }
-  if ((_j1939_pgn_handler_index != 0) && (_j1939_pgn_handler_index < 0x33)) {
+  if ((j1939_pgn_handler_index != 0) && (j1939_pgn_handler_index < 0x33)) {
     governor_cruise_output_cached = 0;
-    (**(code **)(&j1939_pgn_handler_table_func3 + (uint)_j1939_pgn_handler_index * 0x10))(0);
+    (**(code **)(&j1939_pgn_handler_table_func3 + (uint)j1939_pgn_handler_index * 0x10))(0);
   }
-  if ((_j1939_pgn_handler_index != 0) && (_j1939_pgn_handler_index < 0x33)) {
+  if ((j1939_pgn_handler_index != 0) && (j1939_pgn_handler_index < 0x33)) {
     j1939_calib_handler_a_period = (dword)j1939_pgn_handler_state_value_cal;
-    (**(code **)(&j1939_pgn_handler_table_func2 + (uint)_j1939_pgn_handler_index * 0x10))();
+    (**(code **)(&j1939_pgn_handler_table_func2 + (uint)j1939_pgn_handler_index * 0x10))();
   }
   return;
 }
@@ -15351,28 +15285,28 @@ void cm848_processConditionTimerA(int param_1)
   ushort uVar3;
   
   uVar2 = (uint)governor_speed_ramp_a_limit_cal;
-  if (_cold_start_valid_flag == 0) {
+  if (cold_start_valid_flag._0_2_ == 0) {
     if (param_1 == 0) {
-      if (_governor_speed_ramp_state_a < 2) {
+      if (governor_speed_ramp_state_a < 2) {
         uVar3 = 0;
       }
       else {
-        uVar3 = _governor_speed_ramp_state_a - 1;
+        uVar3 = governor_speed_ramp_state_a - 1;
       }
     }
     else {
       uVar3 = governor_speed_ramp_a_limit_cal;
       if ((governor_speed_ramp_a_step_cal <= uVar2) &&
-         ((int)(uint)_governor_speed_ramp_state_a <= (int)(uVar2 - governor_speed_ramp_a_step_cal)))
+         ((int)(uint)governor_speed_ramp_state_a <= (int)(uVar2 - governor_speed_ramp_a_step_cal)))
       {
-        uVar3 = _governor_speed_ramp_state_a + governor_speed_ramp_a_step_cal;
+        uVar3 = governor_speed_ramp_state_a + governor_speed_ramp_a_step_cal;
       }
     }
   }
   else {
     uVar3 = 0;
   }
-  _governor_speed_ramp_state_a = uVar3;
+  governor_speed_ramp_state_a = uVar3;
   uVar1 = (uint)uVar3;
   _DAT_003fa7b2 = (ushort)(uVar2 <= uVar1);
   _DAT_003fa7b4 = (ushort)(uVar1 == 0);
@@ -15383,10 +15317,10 @@ void cm848_processConditionTimerA(int param_1)
     _DAT_003fa7b6 = 1;
   }
   if ((_DAT_003fa7b6 == 0) && (param_1 == 0)) {
-    _condition_timer_a_output_flag = 1;
+    condition_timer_a_output_flag = 1;
   }
   else {
-    _condition_timer_a_output_flag = 0;
+    condition_timer_a_output_flag = 0;
   }
   return;
 }
@@ -15407,17 +15341,17 @@ void cm848_processConditionTimerB(int param_1)
   uint uVar3;
   
   if ((((_DAT_003fa7ba == 0) || (_DAT_003fa7b8 == 0)) || (param_1 != 0)) ||
-     (_cold_start_enable_flag_b == 0)) {
-    _cold_start_timing_active_flag = 0;
+     (cold_start_enable_flag_b._0_2_ == 0)) {
+    cold_start_timing_active_flag._0_2_ = 0;
   }
   else {
-    _cold_start_timing_active_flag = 1;
+    cold_start_timing_active_flag._0_2_ = 1;
   }
   uVar3 = (uint)governor_target_speed_a_limit_cal;
-  if (_cold_start_valid_flag == 0) {
+  if (cold_start_valid_flag._0_2_ == 0) {
     wVar1 = governor_target_speed_a;
-    if ((param_1 == 0) && (_cold_start_timing_active_flag == 0)) goto LAB_0001a578;
-    if (_cold_start_timing_active_flag == 0) {
+    if ((param_1 == 0) && (cold_start_timing_active_flag._0_2_ == 0)) goto LAB_0001a578;
+    if (cold_start_timing_active_flag._0_2_ == 0) {
       wVar1 = governor_target_speed_a_limit_cal;
       if ((governor_target_speed_a_step_cal <= uVar3) &&
          (wVar1 = governor_target_speed_a_limit_cal,
@@ -15436,15 +15370,15 @@ void cm848_processConditionTimerB(int param_1)
 LAB_0001a578:
   governor_target_speed_a = wVar1;
   uVar2 = (uint)governor_target_speed_a;
-  _governor_speed_condition_met = (ushort)(governor_speed_condition_threshold_cal <= uVar2);
+  governor_speed_condition_met = (ushort)(governor_speed_condition_threshold_cal <= uVar2);
   governor_calc_valid_flag = (ushort)(uVar2 == 0);
   _DAT_003fa7b8 = _DAT_003fa7ba;
-  _DAT_003fa7ba = _cold_start_enable_flag_b;
-  if (((uVar2 < uVar3) || (_DAT_003fd800 == 0)) && (_condition_timer_a_output_flag == 1)) {
-    _cold_start_enable_flag_b = 1;
+  _DAT_003fa7ba = cold_start_enable_flag_b._0_2_;
+  if (((uVar2 < uVar3) || (_DAT_003fd800 == 0)) && (condition_timer_a_output_flag == 1)) {
+    cold_start_enable_flag_b._0_2_ = 1;
   }
   else {
-    _cold_start_enable_flag_b = 0;
+    cold_start_enable_flag_b._0_2_ = 0;
   }
   return;
 }
@@ -15465,42 +15399,42 @@ void cm848_processConditionTimerC(void)
   ushort uVar3;
   
   uVar2 = (uint)governor_speed_ramp_b_limit_cal;
-  if (_cold_start_valid_flag == 0) {
-    if (_governor_speed_target_valid == 0) {
-      if (_governor_speed_ramp_state_b < 2) {
+  if (cold_start_valid_flag._0_2_ == 0) {
+    if (governor_speed_target_valid == 0) {
+      if (governor_speed_ramp_state_b < 2) {
         uVar3 = 0;
       }
       else {
-        uVar3 = _governor_speed_ramp_state_b - 1;
+        uVar3 = governor_speed_ramp_state_b - 1;
       }
     }
     else {
       uVar3 = governor_speed_ramp_b_limit_cal;
       if ((governor_speed_ramp_b_step_cal <= uVar2) &&
-         ((int)(uint)_governor_speed_ramp_state_b <= (int)(uVar2 - governor_speed_ramp_b_step_cal)))
+         ((int)(uint)governor_speed_ramp_state_b <= (int)(uVar2 - governor_speed_ramp_b_step_cal)))
       {
-        uVar3 = _governor_speed_ramp_state_b + governor_speed_ramp_b_step_cal;
+        uVar3 = governor_speed_ramp_state_b + governor_speed_ramp_b_step_cal;
       }
     }
   }
   else {
     uVar3 = 0;
   }
-  _governor_speed_ramp_state_b = uVar3;
+  governor_speed_ramp_state_b = uVar3;
   uVar1 = (uint)uVar3;
-  _DAT_003fa7cc = (ushort)(uVar2 <= uVar1);
+  cold_start_enable_flag_b._2_2_ = (ushort)(uVar2 <= uVar1);
   _DAT_003fa7ce = (ushort)(uVar1 == 0);
   if (uVar1 == 0) {
-    _DAT_003fa7be = 0;
+    cold_start_valid_flag._2_2_ = 0;
   }
   else if (uVar2 <= uVar1) {
-    _DAT_003fa7be = 1;
+    cold_start_valid_flag._2_2_ = 1;
   }
-  if ((_DAT_003fa7be == 0) && (_governor_speed_target_valid == 0)) {
-    _cold_start_speed_b_at_limit_flag = 1;
+  if ((cold_start_valid_flag._2_2_ == 0) && (governor_speed_target_valid == 0)) {
+    cold_start_speed_b_at_limit_flag = 1;
   }
   else {
-    _cold_start_speed_b_at_limit_flag = 0;
+    cold_start_speed_b_at_limit_flag = 0;
   }
   return;
 }
@@ -15520,17 +15454,17 @@ void cm848_processConditionTimerD(void)
   uint uVar2;
   uint uVar3;
   
-  if ((((_DAT_003fa7c2 == 0) || (_DAT_003fa7c0 == 0)) || (_governor_speed_target_valid != 0)) ||
-     (_cold_start_enable_flag_a == 0)) {
+  if ((((_DAT_003fa7c2 == 0) || (_DAT_003fa7c0 == 0)) || (governor_speed_target_valid != 0)) ||
+     (cold_start_enable_flag_a == 0)) {
     _DAT_003fa7e2 = 0;
   }
   else {
     _DAT_003fa7e2 = 1;
   }
   uVar3 = (uint)governor_target_speed_b_limit_cal;
-  if (_cold_start_valid_flag == 0) {
+  if (cold_start_valid_flag._0_2_ == 0) {
     wVar1 = governor_target_speed_b;
-    if ((_governor_speed_target_valid == 0) && (_DAT_003fa7e2 == 0)) goto LAB_0001a860;
+    if ((governor_speed_target_valid == 0) && (_DAT_003fa7e2 == 0)) goto LAB_0001a860;
     if (_DAT_003fa7e2 == 0) {
       wVar1 = governor_target_speed_b_limit_cal;
       if ((governor_target_speed_b_step_cal <= uVar3) &&
@@ -15540,7 +15474,7 @@ void cm848_processConditionTimerD(void)
       }
       goto LAB_0001a860;
     }
-    if (_governor_speed_target_valid != 0) goto LAB_0001a860;
+    if (governor_speed_target_valid != 0) goto LAB_0001a860;
     if (governor_target_speed_b_decay_cal < governor_target_speed_b) {
       wVar1 = governor_target_speed_b - governor_target_speed_b_decay_cal;
       goto LAB_0001a860;
@@ -15550,13 +15484,13 @@ void cm848_processConditionTimerD(void)
 LAB_0001a860:
   governor_target_speed_b = wVar1;
   _DAT_003fa7c2 = _DAT_003fa7c0;
-  _DAT_003fa7c0 = _cold_start_enable_flag_a;
+  _DAT_003fa7c0 = cold_start_enable_flag_a;
   uVar2 = (uint)governor_target_speed_b;
-  if (((uVar2 < uVar3) || (_DAT_003fd800 == 0)) && (_cold_start_speed_b_at_limit_flag == 1)) {
-    _cold_start_enable_flag_a = 1;
+  if (((uVar2 < uVar3) || (_DAT_003fd800 == 0)) && (cold_start_speed_b_at_limit_flag == 1)) {
+    cold_start_enable_flag_a = 1;
   }
   else {
-    _cold_start_enable_flag_a = 0;
+    cold_start_enable_flag_a = 0;
   }
   _DAT_003fa7e4 = (ushort)(governor_target_speed_b_threshold_cal <= uVar2);
   governor_speed_zero_flag = (ushort)(uVar2 == 0);
@@ -15614,12 +15548,12 @@ void cm848_processFuelDemandFaultConditions(void)
   undefined4 uVar5;
   
   bVar1 = (engine_idle_mode_flags & 0x10) != 0;
-  _DAT_003fa7d2 = (ushort)bVar1;
+  cold_start_timing_active_flag._2_2_ = (ushort)bVar1;
   bVar2 = (engine_idle_mode_flags & 0x40) != 0;
   _DAT_003fa7d4 = (ushort)bVar2;
   bVar3 = (engine_idle_mode_flags & 0x100) != 0;
-  _governor_speed_target_valid = (ushort)bVar3;
-  _DAT_003fa7d6 = _governor_speed_target_valid;
+  governor_speed_target_valid = (word)bVar3;
+  _DAT_003fa7d6 = governor_speed_target_valid;
   if ((fuel_feature_control_flags & 1) != 0) {
     bVar3 = (protection_enable_t_0040c050.reserved_02 & 1) != 0;
     _DAT_003fa7d6 = (ushort)bVar3;
@@ -15634,7 +15568,7 @@ void cm848_processFuelDemandFaultConditions(void)
   }
   cm848_processConditionTimerA(uVar5);
   cm848_processConditionTimerB(uVar5);
-  sVar4 = cm848_bothConditionsTrue(bVar1,_governor_speed_condition_met);
+  sVar4 = cm848_bothConditionsTrue(bVar1,governor_speed_condition_met);
   if (governor_calc_valid_flag == 0) {
     if (sVar4 != 0) {
       _DAT_003fa7da = 1;
@@ -15650,7 +15584,7 @@ void cm848_processFuelDemandFaultConditions(void)
   else {
     diagnostic_status_bits = diagnostic_status_bits | 1;
   }
-  sVar4 = cm848_bothConditionsTrue(_DAT_003fa7d4,_governor_speed_condition_met);
+  sVar4 = cm848_bothConditionsTrue(_DAT_003fa7d4,governor_speed_condition_met);
   if (governor_calc_valid_flag == 0) {
     if (sVar4 != 0) {
       _DAT_003fa7dc = 1;
@@ -15666,7 +15600,7 @@ void cm848_processFuelDemandFaultConditions(void)
   else {
     diagnostic_status_bits = diagnostic_status_bits | 2;
   }
-  sVar4 = cm848_bothConditionsTrue(_DAT_003fa7d6,_governor_speed_condition_met);
+  sVar4 = cm848_bothConditionsTrue(_DAT_003fa7d6,governor_speed_condition_met);
   if (governor_calc_valid_flag == 0) {
     if (sVar4 != 0) {
       _DAT_003fa7de = 1;
@@ -15682,7 +15616,7 @@ void cm848_processFuelDemandFaultConditions(void)
   else {
     diagnostic_status_bits = diagnostic_status_bits | 4;
   }
-  sVar4 = cm848_bothConditionsTrue(_DAT_003fa7d8,_governor_speed_condition_met);
+  sVar4 = cm848_bothConditionsTrue(_DAT_003fa7d8,governor_speed_condition_met);
   if (governor_calc_valid_flag == 0) {
     if (sVar4 != 0) {
       _DAT_003fa7e0 = 1;
@@ -15701,7 +15635,7 @@ void cm848_processFuelDemandFaultConditions(void)
   cm848_processConditionTimerC();
   cm848_processConditionTimerD();
   if (governor_calc_valid_flag == 0) {
-    if (_governor_speed_condition_met != 0) {
+    if (governor_speed_condition_met != 0) {
       _DAT_003fa7c4 = 1;
     }
   }
@@ -15715,11 +15649,11 @@ void cm848_processFuelDemandFaultConditions(void)
   else {
     diagnostic_status_bits = diagnostic_status_bits | 0x40;
   }
-  if ((_cold_start_enable_flag_a == 0) || (_cold_start_enable_flag_b == 0)) {
-    _diagnostic_mode_active_flag = 1;
+  if ((cold_start_enable_flag_a == 0) || (cold_start_enable_flag_b._0_2_ == 0)) {
+    diagnostic_mode_active_flag = 1;
   }
   else {
-    _diagnostic_mode_active_flag = 0;
+    diagnostic_mode_active_flag = 0;
   }
   return;
 }
@@ -15738,15 +15672,15 @@ void cm848_initFuelDemandFaultVariables(void)
   diagnostic_status_bits = diagnostic_status_bits & 0xffa0;
   sensor_fault_status_flags = sensor_fault_status_flags & 0xffa0;
   governor_calc_valid_flag = 0;
-  _governor_speed_ramp_state_a = 0;
+  governor_speed_ramp_state_a = 0;
   governor_target_speed_a = 0;
-  _governor_speed_ramp_state_b = 0;
+  governor_speed_ramp_state_b = 0;
   governor_target_speed_b = 0;
   _DAT_003fa7ae = 0;
   _DAT_003fa7b0 = 0;
-  _cold_start_valid_flag = 0;
-  _cold_start_timing_active_flag = 0;
-  _DAT_003fa7be = 0;
+  cold_start_valid_flag._0_2_ = 0;
+  cold_start_timing_active_flag._0_2_ = 0;
+  cold_start_valid_flag._2_2_ = 0;
   _DAT_003fa7b6 = 0;
   _DAT_003fa7c4 = 0;
   _DAT_003fa7c6 = 0;
@@ -15793,15 +15727,15 @@ void cm848_processFaultTimingConditions(void)
   }
   if (((uVar2 & 0xffff) < (uint)engine_feature_activation_threshold_cal) ||
      (governor_speed_hysteresis_count_cal <= uVar3)) {
-    _engine_feature_active_flag_b = 1;
+    engine_feature_active_flag_b._0_2_ = 1;
   }
   if (_DAT_003fa7f6 != 0) {
-    _engine_feature_active_flag_b = 0;
+    engine_feature_active_flag_b._0_2_ = 0;
   }
   uVar2 = (uint)cold_start_fuel_confirm_count_cal;
   if (_DAT_003fa7ea == 0) {
     wVar1 = cold_start_fuel_confirm_counter;
-    if (((_engine_feature_active_flag_b != 0) &&
+    if (((engine_feature_active_flag_b._0_2_ != 0) &&
         (wVar1 = cold_start_fuel_confirm_count_cal, uVar2 != 0)) &&
        (wVar1 = cold_start_fuel_confirm_count_cal,
        (int)(uint)cold_start_fuel_confirm_counter <= (int)(uVar2 - 1))) {
@@ -15812,7 +15746,7 @@ void cm848_processFaultTimingConditions(void)
     wVar1 = 0;
   }
   cold_start_fuel_confirm_counter = wVar1;
-  _governor_speed_b_mode_select_flag = (ushort)(cold_start_fuel_confirm_counter < uVar2);
+  governor_speed_b_mode_select_flag = (ushort)(cold_start_fuel_confirm_counter < uVar2);
   governor_mode3_speed_param = governor_mode3_speed_param_cal;
   return;
 }
@@ -15828,13 +15762,13 @@ void cm848_processFaultTimingConditions(void)
 void cm848_updateFaultConditionState(void)
 
 {
-  short sVar1;
-  short sVar2;
+  word wVar1;
+  word wVar2;
   int iVar3;
   short sVar4;
   
-  sVar2 = _sensor_channel7_fault_status;
-  sVar1 = _diagnostic_mode_active_flag;
+  wVar2 = sensor_channel7_fault_status;
+  wVar1 = diagnostic_mode_active_flag;
   if (((diagnostic_status_bits & 0x100) == 0) && ((diagnostic_status_bits & 0x80) == 0)) {
     iVar3 = 0;
   }
@@ -15842,14 +15776,14 @@ void cm848_updateFaultConditionState(void)
     iVar3 = 1;
   }
   _DAT_003fa7f2 = (undefined2)iVar3;
-  if (((_diagnostic_mode_active_flag == 0) && ((diagnostic_status_bits & 0x40) == 0)) &&
-     (iVar3 == 0)) {
-    _diagnostic_clear_condition_flag = 1;
+  if (((diagnostic_mode_active_flag == 0) && ((diagnostic_status_bits & 0x40) == 0)) && (iVar3 == 0)
+     ) {
+    diagnostic_clear_condition_flag = 1;
   }
   else {
-    _diagnostic_clear_condition_flag = 0;
+    diagnostic_clear_condition_flag = 0;
   }
-  if ((_sensor_channel7_fault_status < 2) && ((diagnostic_status_bits & 0x20) == 0)) {
+  if (((short)sensor_channel7_fault_status < 2) && ((diagnostic_status_bits & 0x20) == 0)) {
     sVar4 = 0;
   }
   else {
@@ -15865,16 +15799,16 @@ void cm848_updateFaultConditionState(void)
   _DAT_003fa7ec = sVar4;
   _DAT_003fa7f4 = _DAT_003fa7f2;
   cm848_processFaultTimingConditions();
-  if ((iVar3 == 0) && (_governor_speed_b_mode_select_flag == 0)) {
+  if ((iVar3 == 0) && (governor_speed_b_mode_select_flag == 0)) {
     governor_speed_target_mode_flag = 0;
   }
   else {
     governor_speed_target_mode_flag = 1;
   }
-  if ((sVar4 == 0) && (sVar2 == 0)) {
+  if ((sVar4 == 0) && (wVar2 == 0)) {
     governor_speed_enable_counter = 0;
   }
-  else if ((sVar4 != 0) || (sVar2 != 0)) {
+  else if ((sVar4 != 0) || (wVar2 != 0)) {
     if (governor_speed_enable_counter < 200) {
       governor_speed_enable_counter = governor_speed_enable_counter + 1;
     }
@@ -15882,23 +15816,23 @@ void cm848_updateFaultConditionState(void)
       governor_speed_enable_counter = 200;
     }
   }
-  if (((sVar4 == 0) && (sVar2 == 0)) || (199 < governor_speed_enable_counter)) {
+  if (((sVar4 == 0) && (wVar2 == 0)) || (199 < governor_speed_enable_counter)) {
     _DAT_003fa7ee = 1;
   }
   else {
     _DAT_003fa7ee = 0;
   }
-  if ((_DAT_003fa7ee == 0) || (sVar1 != 0)) {
+  if ((_DAT_003fa7ee == 0) || (wVar1 != 0)) {
     cm848_triggerProtectionEvent(0x43,0);
   }
   else {
     cm848_setEngineProtectionFault(0x43,0);
   }
-  if ((_engine_feature_active_flag_b == 0) || ((engine_feature_status_flags & 8) == 0)) {
-    _engine_feature_8_active_flag = 0;
+  if ((engine_feature_active_flag_b._0_2_ == 0) || ((engine_feature_status_flags & 8) == 0)) {
+    engine_feature_8_active_flag._0_2_ = 0;
   }
   else {
-    _engine_feature_8_active_flag = 1;
+    engine_feature_8_active_flag._0_2_ = 1;
   }
   return;
 }
@@ -16156,7 +16090,7 @@ void initFaultTimerMessage(void)
 
 {
   _DAT_003fa830 = CONCAT13(((byte)_DAT_003fd854 & 7) << 2,0xfee300);
-  _DAT_003fa830 = CONCAT31(_DAT_003fa830,(char)j1939_source_address);
+  _DAT_003fa830 = CONCAT31(_DAT_003fa830,(char)j1939_source_address._0_2_);
   _DAT_003fa834 = 0x1c;
   _DAT_003fa836 = &fault_timer_state_base;
   _DAT_003fa83a = &DAT_003fa83e;
@@ -16175,8 +16109,6 @@ void initFaultTimerMessage(void)
 // Function: cm848_calculateColdStartFuelAdjust @ 0x0001b99c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_calculateColdStartFuelAdjust(void)
 
 {
@@ -16187,8 +16119,8 @@ void cm848_calculateColdStartFuelAdjust(void)
   uint uVar5;
   uint uVar6;
   
-  if (((_cold_start_phase == 2) || (_cold_start_phase == 6)) ||
-     (wVar2 = _governor_cold_start_rpm_output, _cold_start_phase == 7)) {
+  if (((cold_start_phase == 2) || (cold_start_phase == 6)) ||
+     (wVar2 = governor_cold_start_rpm_output, cold_start_phase == 7)) {
     fuel_timing_correction_c =
          cm848_dualAxisTableInterpolation
                    (&DAT_003fa84e,sensor_readings_t_0040baf2.coolant_temp,&DAT_0005b25c,
@@ -16209,7 +16141,7 @@ void cm848_calculateColdStartFuelAdjust(void)
     uVar1 = uVar6 & 0xffff;
     uVar4 = (uint)engine_rpm_state_t_0040b7ac.current_rpm;
     wVar2 = injection_timing_base_limit_working;
-    if (((uVar1 <= uVar4) && (wVar2 = _governor_cold_start_rpm_output, uVar1 <= uVar4)) &&
+    if (((uVar1 <= uVar4) && (wVar2 = governor_cold_start_rpm_output, uVar1 <= uVar4)) &&
        (uVar5 = (uint)governor_rpm_setpoint_output, uVar4 <= uVar5)) {
       uVar6 = uVar5 - uVar6 & 0xffff;
       wVar2 = (short)((((uint)fuel_timing_correction_c + (uint)fuel_timing_correction_b) *
@@ -16217,7 +16149,7 @@ void cm848_calculateColdStartFuelAdjust(void)
               (short)(((uVar3 & 0xffff) * (uVar5 - uVar4)) / uVar6);
     }
   }
-  _governor_cold_start_rpm_output = wVar2;
+  governor_cold_start_rpm_output = wVar2;
   return;
 }
 
@@ -16226,8 +16158,6 @@ void cm848_calculateColdStartFuelAdjust(void)
 //
 // Function: cm848_j1939SendPgn65251_FEE3_EngineConfig @ 0x0001b9a8
 //
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void cm848_j1939SendPgn65251_FEE3_EngineConfig(void)
 
@@ -16239,8 +16169,8 @@ void cm848_j1939SendPgn65251_FEE3_EngineConfig(void)
   uint uVar5;
   uint uVar6;
   
-  if (((_cold_start_phase == 2) || (_cold_start_phase == 6)) ||
-     (wVar2 = _governor_cold_start_rpm_output, _cold_start_phase == 7)) {
+  if (((cold_start_phase == 2) || (cold_start_phase == 6)) ||
+     (wVar2 = governor_cold_start_rpm_output, cold_start_phase == 7)) {
     fuel_timing_correction_c =
          cm848_dualAxisTableInterpolation
                    (&DAT_003fa84e,sensor_readings_t_0040baf2.coolant_temp,&DAT_0005b25c,
@@ -16261,7 +16191,7 @@ void cm848_j1939SendPgn65251_FEE3_EngineConfig(void)
     uVar1 = uVar6 & 0xffff;
     uVar4 = (uint)engine_rpm_state_t_0040b7ac.current_rpm;
     wVar2 = injection_timing_base_limit_working;
-    if (((uVar1 <= uVar4) && (wVar2 = _governor_cold_start_rpm_output, uVar1 <= uVar4)) &&
+    if (((uVar1 <= uVar4) && (wVar2 = governor_cold_start_rpm_output, uVar1 <= uVar4)) &&
        (uVar5 = (uint)governor_rpm_setpoint_output, uVar4 <= uVar5)) {
       uVar6 = uVar5 - uVar6 & 0xffff;
       wVar2 = (short)((((uint)fuel_timing_correction_c + (uint)fuel_timing_correction_b) *
@@ -16269,7 +16199,7 @@ void cm848_j1939SendPgn65251_FEE3_EngineConfig(void)
               (short)(((uVar3 & 0xffff) * (uVar5 - uVar4)) / uVar6);
     }
   }
-  _governor_cold_start_rpm_output = wVar2;
+  governor_cold_start_rpm_output = wVar2;
   return;
 }
 
@@ -16293,8 +16223,6 @@ void cm848_initColdStartLimits(void)
 // Function: cm848_calculateColdStartRpmAdjust @ 0x0001bb48
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_calculateColdStartRpmAdjust(void)
 
 {
@@ -16305,7 +16233,7 @@ void cm848_calculateColdStartRpmAdjust(void)
   uint uVar4;
   int iVar5;
   
-  if (((_cold_start_phase == 2) || (_cold_start_phase == 6)) || (_cold_start_phase == 7)) {
+  if (((cold_start_phase == 2) || (cold_start_phase == 6)) || (cold_start_phase == 7)) {
     cm848_initColdStartLimits();
     uVar1 = (uint)engine_rpm_state_t_0040b7ac.current_rpm;
     uVar4 = (uint)fuel_timing_advance_cal;
@@ -16495,7 +16423,7 @@ void cm848_checkColdStartConditions(void)
   if (engine_rpm_state_t_0040b7ac.current_rpm == 0) {
     cold_start_rpm_threshold = cold_start_rpm_base_cal;
   }
-  _DAT_003fa856 = _cold_start_phase;
+  cold_start_phase_prev_check = cold_start_phase;
   return;
 }
 
@@ -16505,19 +16433,17 @@ void cm848_checkColdStartConditions(void)
 // Function: cm848_processColdStartAdjustment @ 0x0001bf44
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_processColdStartAdjustment(void)
 
 {
-  if (((_DAT_003fa858 == 1) && (_cold_start_phase == 2)) ||
-     ((_DAT_003fa858 == 3 && (_cold_start_phase == 7)))) {
+  if (((cold_start_phase_prev_adjust == 1) && (cold_start_phase == 2)) ||
+     ((cold_start_phase_prev_adjust == 3 && (cold_start_phase == 7)))) {
     cm848_calculateColdStartTempTable();
     cm848_calculateIntakeAirAdjustment();
     cm848_selectColdStartRpmLimit();
   }
   cm848_checkColdStartConditions();
-  _DAT_003fa858 = _cold_start_phase;
+  cold_start_phase_prev_adjust = cold_start_phase;
   return;
 }
 
@@ -16527,15 +16453,13 @@ void cm848_processColdStartAdjustment(void)
 // Function: cm848_initColdStartTablePointers @ 0x0001bfc8
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_initColdStartTablePointers(void)
 
 {
   word wVar1;
   
   wVar1 = torque_fuel_offset_trim;
-  if (((_cold_start_phase == 6) &&
+  if (((cold_start_phase == 6) &&
       (engine_rpm_state_t_0040b7ac.current_rpm < fuel_timing_rpm_upper_limit)) &&
      ((short)cold_start_coolant_temp_threshold_cal < (short)sensor_readings_t_0040baf2.coolant_temp)
      ) {
@@ -16561,12 +16485,10 @@ void cm848_initColdStartTablePointers(void)
 // Function: cm848_processColdStartStateMachine @ 0x0001c080
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_processColdStartStateMachine(void)
 
 {
-  if (((_cold_start_phase == 2) || (_cold_start_phase == 6)) &&
+  if (((cold_start_phase == 2) || (cold_start_phase == 6)) &&
      (cold_start_fuel_timing_rpm_threshold_cal < engine_rpm_state_t_0040b7ac.current_rpm)) {
     fuel_timing_correction_b =
          fuel_timing_correction_b + cold_start_fuel_timing_correction_addend_cal;
@@ -16574,10 +16496,10 @@ void cm848_processColdStartStateMachine(void)
       fuel_timing_correction_b = fuel_timing_correction_b_max_cal;
     }
   }
-  if ((_DAT_003fa85a != 3) && (_cold_start_phase == 3)) {
+  if ((cold_start_phase_prev_sm != 3) && (cold_start_phase == 3)) {
     fuel_timing_correction_b = 0;
   }
-  _DAT_003fa85a = _cold_start_phase;
+  cold_start_phase_prev_sm = cold_start_phase;
   return;
 }
 
@@ -16592,20 +16514,21 @@ void cm848_processColdStartStateMachine(void)
 void cm848_coldStartRpmTableLookup(void)
 
 {
-  if (_cold_start_phase == 3) {
+  if (cold_start_phase == 3) {
     cold_start_advance_counter = cold_start_advance_counter + 1;
   }
-  if (_cold_start_phase == 1) {
+  if (cold_start_phase == 1) {
     cold_start_advance_counter = 0;
     _DAT_003fa840 = 0;
   }
-  if (_cold_start_phase == 2) {
+  if (cold_start_phase == 2) {
     crank_event_sample_counter = crank_event_sample_counter + 1;
   }
-  else if (((_DAT_003fa85c == 7) && (_cold_start_phase == 1)) || (_cold_start_phase == 8)) {
+  else if (((cold_start_phase_prev_rpm == 7) && (cold_start_phase == 1)) || (cold_start_phase == 8))
+  {
     crank_event_sample_counter = 0;
   }
-  _DAT_003fa85c = _cold_start_phase;
+  cold_start_phase_prev_rpm = cold_start_phase;
   return;
 }
 
@@ -16615,21 +16538,20 @@ void cm848_coldStartRpmTableLookup(void)
 // Function: cm848_coldStartFuelFactorLookup @ 0x0001c1a4
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_coldStartFuelFactorLookup(void)
 
 {
-  if (((_DAT_003fa85e == 3) && (_cold_start_phase == 7)) &&
+  if (((cold_start_phase_prev_fuel == 3) && (cold_start_phase == 7)) &&
      (cold_start_advance_count_cal < cold_start_advance_counter)) {
     governor_fuel_timing_offset = cold_start_governor_fuel_timing_offset_cal;
     torque_fuel_offset_trim = cold_start_torque_fuel_offset_cal;
   }
-  else if (((_DAT_003fa85e == 7) && (_cold_start_phase == 1)) || (_cold_start_phase == 8)) {
+  else if (((cold_start_phase_prev_fuel == 7) && (cold_start_phase == 1)) || (cold_start_phase == 8)
+          ) {
     governor_fuel_timing_offset = 0;
     torque_fuel_offset_trim = 0;
   }
-  _DAT_003fa85e = _cold_start_phase;
+  cold_start_phase_prev_fuel = cold_start_phase;
   return;
 }
 
@@ -16667,8 +16589,9 @@ void cm848_selectColdStartFactor(void)
 void mpc555_processColdStartMainLoop(void)
 
 {
-  word wVar1;
-  uint uVar2;
+  int iVar1;
+  word wVar2;
+  uint uVar3;
   
   if (cold_start_mode_enabled_flag == 0) {
     if (engine_rpm_state_t_0040b7ac.current_rpm < cold_start_enable_rpm_threshold_cal) {
@@ -16683,9 +16606,9 @@ void mpc555_processColdStartMainLoop(void)
              system_status_flags_t_003fe974.condition_monitor | 0x800;
         if (_DAT_003fe056 == 0) {
           _DAT_003fe056 = 1;
-          uVar2 = (uint)fault_rpm_log_index;
-          *(undefined4 *)(&DAT_003fdfde + uVar2 * 8) = _fault_timing_snapshot;
-          *(undefined2 *)(&DAT_003fdfe4 + uVar2 * 8) = 0;
+          uVar3 = (uint)fault_rpm_log_index;
+          *(dword *)(&DAT_003fdfde + uVar3 * 8) = fault_timing_snapshot;
+          *(undefined2 *)(&DAT_003fdfe4 + uVar3 * 8) = 0;
         }
         else if (engine_rpm_state_t_0040b7ac.current_rpm <=
                  *(ushort *)(&DAT_003fdfe2 + (uint)fault_rpm_log_index * 8)) goto LAB_0001c480;
@@ -16698,79 +16621,78 @@ void mpc555_processColdStartMainLoop(void)
     cold_start_mode_enabled_flag = 0;
     system_status_flags_t_003fe974.condition_monitor =
          system_status_flags_t_003fe974.condition_monitor & 0xf7ff;
-    _engine_timing_shadow_flags = _engine_timing_shadow_flags & 0xf7ff;
+    engine_timing_shadow_flags = engine_timing_shadow_flags & 0xf7ff;
     *(short *)(&DAT_003fdfe4 + (uint)fault_rpm_log_index * 8) =
-         (short)_fault_timing_snapshot -
+         (short)fault_timing_snapshot -
          (short)*(undefined4 *)(&DAT_003fdfde + (uint)fault_rpm_log_index * 8);
     _DAT_003fe056 = 0;
     fault_rpm_log_index = (ushort)(fault_rpm_log_index + 1) % 5;
   }
 LAB_0001c480:
-  switch(_cold_start_phase) {
+  switch(cold_start_phase) {
   case 0:
   default:
-    _cold_start_phase = 1;
+    cold_start_phase = 1;
     goto LAB_0001c8b8;
   case 1:
     if ((engine_rpm_trigger_cal < engine_rpm_state_t_0040b7ac.current_rpm) && (_DAT_003fdfdc == 0))
     {
-      _cold_start_phase = 2;
-      if (_crank_event_timebase_e == 0) {
-        _crank_event_timebase_e = TBLr;
-        _crank_event_timebase_e = _crank_event_timebase_e - _timebase_previous_capture;
+      cold_start_phase = 2;
+      if (crank_event_timebase_e == 0) {
+        iVar1 = TBLr;
+        crank_event_timebase_e = iVar1 - timebase_previous_capture;
       }
     }
     else {
-      wVar1 = MIOS_MCPSMSCR.MIOS1ER;
-      if ((((wVar1 & 0x8000) == 0) && (_engine_shutdown_active_flag == 0)) ||
-         (_engine_start_active_flag == 1)) {
-        _cold_start_phase = 8;
+      wVar2 = MIOS_MCPSMSCR.MIOS1ER;
+      if ((((wVar2 & 0x8000) == 0) && (engine_shutdown_active_flag == 0)) ||
+         (engine_start_active_flag == 1)) {
+        cold_start_phase = 8;
       }
     }
     goto LAB_0001c8b8;
   case 2:
     if (engine_rpm_state_t_0040b7ac.current_rpm <= engine_rpm_trigger_cal) {
 LAB_0001c62c:
-      _cold_start_phase = 1;
+      cold_start_phase = 1;
       goto LAB_0001c8b8;
     }
     if (governor_rpm_setpoint_output <= engine_rpm_state_t_0040b7ac.current_rpm) {
 LAB_0001c5e0:
-      _cold_start_phase = 3;
-      if (_crank_event_timebase_d == 0) {
-        _crank_event_timebase_d = TBLr;
-        _crank_event_timebase_d = _crank_event_timebase_d - _timebase_previous_capture;
+      cold_start_phase = 3;
+      if (crank_event_timebase_d == 0) {
+        iVar1 = TBLr;
+        crank_event_timebase_d = iVar1 - timebase_previous_capture;
       }
       goto LAB_0001c8b8;
     }
     if (cold_start_crank_event_threshold_cal < crank_event_sample_counter) {
-      _cold_start_phase = 6;
+      cold_start_phase = 6;
       goto LAB_0001c8b8;
     }
     break;
   case 3:
-    if ((_fuel_mode_switch_state == 1) && (_DAT_003fd53e == 0)) {
-      _cold_start_phase = 4;
+    if ((fuel_mode_switch_state == 1) && (_DAT_003fd53e == 0)) {
+      cold_start_phase = 4;
       goto LAB_0001c8b8;
     }
     if (engine_rpm_state_t_0040b7ac.current_rpm <= cold_start_rpm_threshold) {
-      _cold_start_phase = 7;
+      cold_start_phase = 7;
       goto LAB_0001c8b8;
     }
-    if ((((_engine_start_inhibit_flag != 0) ||
-         (wVar1 = MIOS_MCPSMSCR.MIOS1ER, (wVar1 & 0x8000) != 0)) ||
-        (_engine_shutdown_active_flag != 0)) &&
-       ((_engine_start_inhibit_flag != 1 && (_engine_start_active_flag != 1)))) {
+    if ((((engine_start_inhibit_flag != 0) || (wVar2 = MIOS_MCPSMSCR.MIOS1ER, (wVar2 & 0x8000) != 0)
+         ) || (engine_shutdown_active_flag != 0)) &&
+       ((engine_start_inhibit_flag != 1 && (engine_start_active_flag != 1)))) {
       if (cold_start_mode_enabled_flag == 1) {
-        _cold_start_phase = 5;
+        cold_start_phase = 5;
       }
       goto LAB_0001c8b8;
     }
     goto LAB_0001c754;
   case 4:
-    if (_fuel_mode_switch_state == 0) {
+    if (fuel_mode_switch_state == 0) {
 LAB_0001c714:
-      _cold_start_phase = 3;
+      cold_start_phase = 3;
       goto LAB_0001c8b8;
     }
     break;
@@ -16786,57 +16708,57 @@ LAB_0001c714:
     if (governor_rpm_setpoint_output <= engine_rpm_state_t_0040b7ac.current_rpm) goto LAB_0001c714;
     break;
   case 8:
-    if ((((_engine_start_active_flag == 1) && (engine_rpm_state_t_0040b7ac.current_rpm == 0)) ||
-        ((_engine_start_active_flag == 0 && (wVar1 = MIOS_MCPSMSCR.MIOS1ER, (wVar1 & 0x8000) != 0)))
-        ) && (((_engine_start_inhibit_flag != 1 &&
-               (_cold_start_phase = 1, engine_rpm_state_t_0040b7ac.current_rpm == 0)) &&
-              (_engine_start_active_flag == 1)))) {
-      _engine_start_active_flag = 0;
+    if ((((engine_start_active_flag == 1) && (engine_rpm_state_t_0040b7ac.current_rpm == 0)) ||
+        ((engine_start_active_flag == 0 && (wVar2 = MIOS_MCPSMSCR.MIOS1ER, (wVar2 & 0x8000) != 0))))
+       && (((engine_start_inhibit_flag != 1 &&
+            (cold_start_phase = 1, engine_rpm_state_t_0040b7ac.current_rpm == 0)) &&
+           (engine_start_active_flag == 1)))) {
+      engine_start_active_flag = 0;
     }
     if (((engine_rpm_state_t_0040b7ac.current_rpm == 0) &&
-        (wVar1 = MIOS_MCPSMSCR.MIOS1ER, (wVar1 & 0x8000) == 0)) &&
-       ((_engine_shutdown_active_flag == 0 && (_engine_start_inhibit_flag != 1)))) {
+        (wVar2 = MIOS_MCPSMSCR.MIOS1ER, (wVar2 & 0x8000) == 0)) &&
+       ((engine_shutdown_active_flag == 0 && (engine_start_inhibit_flag != 1)))) {
       governor_speed_engage_count = governor_speed_engage_count + 1;
     }
     else {
       governor_speed_engage_count = 0;
     }
     if ((governor_speed_engage_count_target_cal == governor_speed_engage_count) ||
-       (((governor_speed_engage_count != 0 && (_governor_speed_engage_reset_flag == 0)) &&
+       (((governor_speed_engage_count != 0 && (governor_speed_engage_reset_flag._0_2_ == 0)) &&
         ((governor_speed_engage_fault_count_threshold_cal <= governor_speed_engage_count &&
-         (_map_sensor_fault_mode_flag != 0)))))) {
-      _hardware_operation_complete_flag = 1;
+         (map_sensor_fault_mode_flag != 0)))))) {
+      hardware_operation_complete_flag = 1;
     }
-    if (_cold_start_phase == 8) {
-      _governor_speed_engage_reset_flag = 0;
+    if (cold_start_phase == 8) {
+      governor_speed_engage_reset_flag._0_2_ = 0;
     }
     goto LAB_0001c8b8;
   }
-  wVar1 = MIOS_MCPSMSCR.MIOS1ER;
-  if ((((wVar1 & 0x8000) == 0) && (_engine_shutdown_active_flag == 0)) ||
-     (_engine_start_active_flag == 1)) {
+  wVar2 = MIOS_MCPSMSCR.MIOS1ER;
+  if ((((wVar2 & 0x8000) == 0) && (engine_shutdown_active_flag == 0)) ||
+     (engine_start_active_flag == 1)) {
 LAB_0001c754:
-    _cold_start_phase = 8;
+    cold_start_phase = 8;
   }
 LAB_0001c8b8:
-  wVar1 = MIOS_MCPSMSCR.MIOS1ER;
-  if (((wVar1 & 0x8000) != 0) && (DAT_003fa862 == '\0')) {
-    _engine_shutdown_active_flag = 0;
+  wVar2 = MIOS_MCPSMSCR.MIOS1ER;
+  if (((wVar2 & 0x8000) != 0) && (mios_timer_active_flag == 0)) {
+    engine_shutdown_active_flag = 0;
   }
-  if (_cold_start_phase == 3) {
+  if (cold_start_phase == 3) {
     cold_start_phase3_flag = 1;
   }
-  else if ((_cold_start_phase == 1) || (_cold_start_phase == 8)) {
+  else if ((cold_start_phase == 1) || (cold_start_phase == 8)) {
     cold_start_phase3_flag = 0;
   }
-  if ((_cold_start_phase == 2) || (_cold_start_phase == 6)) {
+  if ((cold_start_phase == 2) || (cold_start_phase == 6)) {
     cold_start_phase_2_6_flag = 1;
   }
   else {
     cold_start_phase_2_6_flag = 0;
   }
-  wVar1 = MIOS_MCPSMSCR.MIOS1ER;
-  DAT_003fa862 = '\x01' - ((wVar1 & 0x8000) == 0);
+  wVar2 = MIOS_MCPSMSCR.MIOS1ER;
+  mios_timer_active_flag = 1 - ((wVar2 & 0x8000) == 0);
   return;
 }
 
@@ -16846,14 +16768,12 @@ LAB_0001c8b8:
 // Function: cm848_initCrankingLimits @ 0x0001c978
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_initCrankingLimits(void)
 
 {
-  _engine_start_inhibit_flag = 0;
-  _cold_start_phase = 1;
-  DAT_003fa862 = 0;
+  engine_start_inhibit_flag = 0;
+  cold_start_phase = 1;
+  mios_timer_active_flag = 0;
   return;
 }
 
@@ -16862,8 +16782,6 @@ void cm848_initCrankingLimits(void)
 //
 // Function: cm848_faultTimeoutHandler @ 0x0001c9a0
 //
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void cm848_faultTimeoutHandler(byte param_1)
 
@@ -16878,10 +16796,10 @@ void cm848_faultTimeoutHandler(byte param_1)
       iVar1 = ((byte)(&DAT_00059e9f)[(uint)param_1 * 6] & 3) * 8;
       if ((((&fault_entry_debounce_array)[iVar3] == 0) &&
           (*(uint *)(&DAT_0005983a + iVar1) <
-           (uint)(_fault_timing_snapshot - *(int *)((int)&fault_timestamp_array + iVar3)))) ||
+           fault_timing_snapshot - *(int *)((int)&fault_timestamp_array + iVar3))) ||
          (((&fault_entry_debounce_array)[iVar3] != 0 &&
           (*(uint *)(&DAT_0005983e + iVar1) <
-           ((_fault_timing_snapshot - *(int *)((int)&fault_timestamp_array + iVar3)) -
+           ((fault_timing_snapshot - *(int *)((int)&fault_timestamp_array + iVar3)) -
            *(uint *)(&DAT_0005983a + iVar1)) -
            *(uint *)(&DAT_0005983e + iVar1) * ((&fault_entry_debounce_array)[iVar3] - 1))))) {
         (&fault_entry_debounce_array)[iVar3] = (&fault_entry_debounce_array)[iVar3] + 1;
@@ -16895,14 +16813,13 @@ void cm848_faultTimeoutHandler(byte param_1)
                  fault_list_state_t_003fe11a.total_emission_faults - 1;
           }
           active_fault_count = active_fault_count - 1;
-          _emission_fault_count = _emission_fault_count + -1;
-          (&active_fault_count)[_active_fault_scan_counter] =
+          emission_fault_count = emission_fault_count - 1;
+          (&active_fault_count)[active_fault_scan_counter] =
                (&active_fault_count)[fault_list_state_t_003fe11a.read_index];
           uVar2 = (uint)fault_list_state_t_003fe11a.read_index;
           fault_list_state_t_003fe11a.read_index = fault_list_state_t_003fe11a.read_index - 1;
-          *(undefined2 *)(&emission_fault_count + (uint)_active_fault_scan_counter * 2) =
-               *(undefined2 *)(&emission_fault_count + uVar2 * 2);
-          _active_fault_scan_counter = _active_fault_scan_counter - 1;
+          (&emission_fault_count)[active_fault_scan_counter] = (&emission_fault_count)[uVar2];
+          active_fault_scan_counter = active_fault_scan_counter - 1;
         }
       }
     }
@@ -16915,8 +16832,6 @@ void cm848_faultTimeoutHandler(byte param_1)
 //
 // Function: cm848_clearFaultFromActiveList @ 0x0001cb94
 //
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void cm848_clearFaultFromActiveList(byte param_1)
 
@@ -16955,10 +16870,9 @@ void cm848_clearFaultFromActiveList(byte param_1)
                (&active_fault_count)[fault_list_state_t_003fe11a.read_index];
           uVar4 = (uint)fault_list_state_t_003fe11a.read_index;
           fault_list_state_t_003fe11a.read_index = fault_list_state_t_003fe11a.read_index - 1;
-          *(undefined2 *)(&emission_fault_count + uVar2 * 2) =
-               *(undefined2 *)(&emission_fault_count + uVar4 * 2);
+          (&emission_fault_count)[uVar2] = (&emission_fault_count)[uVar4];
           active_fault_count = active_fault_count - 1;
-          _emission_fault_count = _emission_fault_count + -1;
+          emission_fault_count = emission_fault_count - 1;
           return;
         }
         uVar2 = uVar2 + 1 & 0xff;
@@ -16974,22 +16888,20 @@ void cm848_clearFaultFromActiveList(byte param_1)
 // Function: cm848_activeFaultScanProcessor @ 0x0001cd1c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_activeFaultScanProcessor(void)
 
 {
   int iVar1;
   
-  _active_fault_scan_counter = 1;
+  active_fault_scan_counter = 1;
   if (active_fault_count != 0) {
     do {
-      iVar1 = (uint)(&active_fault_count)[_active_fault_scan_counter] * 6;
+      iVar1 = (uint)(&active_fault_count)[active_fault_scan_counter] * 6;
       if ((((&fault_entry_flags)[iVar1] & 1) == 0) || (((&DAT_00059e9f)[iVar1] & 0x80) != 0)) {
-        cm848_faultTimeoutHandler((uint)(&active_fault_count)[_active_fault_scan_counter]);
+        cm848_faultTimeoutHandler((uint)(&active_fault_count)[active_fault_scan_counter]);
       }
-      _active_fault_scan_counter = _active_fault_scan_counter + 1;
-    } while (_active_fault_scan_counter <= active_fault_count);
+      active_fault_scan_counter = active_fault_scan_counter + 1;
+    } while (active_fault_scan_counter <= active_fault_count);
   }
   return;
 }
@@ -17140,18 +17052,16 @@ LAB_0001cff4:
 // Function: cm848_clearDiagnosticState @ 0x0001d01c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_clearDiagnosticState(void)
 
 {
   uint uVar1;
   
-  if ((((_diagnostic_clear_request_state & 7) != 0) ||
+  if ((((diagnostic_clear_request_state & 7) != 0) ||
       ((protection_mode_select_flag == 0 && ((protection_enable_t_0040c050.mode_bits & 1) != 0))))
      || ((protection_mode_select_flag == 1 && ((fault_management_status_flags & 0x400) == 0)))) {
     if ((fault_management_status_flags & 0x400) != 0) {
-      if ((_diagnostic_clear_request_state & 2) == 0) {
+      if ((diagnostic_clear_request_state & 2) == 0) {
         diag_resetAllFaults();
       }
       else {
@@ -17186,7 +17096,7 @@ void cm848_clearDiagnosticState(void)
       } while (uVar1 <= active_fault_count);
     }
     active_fault_count = 0;
-    _emission_fault_count = 0;
+    emission_fault_count = 0;
     fault_list_state_t_003fe11a.read_index = 0;
     fault_list_state_t_003fe11a.total_emission_faults = 0;
     emission_fault_overflow_flag = 0;
@@ -17198,7 +17108,7 @@ void cm848_clearDiagnosticState(void)
       j1939_cruise_engaged = 0;
     }
   }
-  _diagnostic_clear_request_state = 0;
+  diagnostic_clear_request_state = 0;
   return;
 }
 
@@ -17207,8 +17117,6 @@ void cm848_clearDiagnosticState(void)
 //
 // Function: cm848_clearAllDiagnosticFaults @ 0x0001d11c
 //
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void cm848_clearAllDiagnosticFaults(void)
 
@@ -17240,7 +17148,7 @@ void cm848_clearAllDiagnosticFaults(void)
     } while (uVar1 <= active_fault_count);
   }
   active_fault_count = 0;
-  _emission_fault_count = 0;
+  emission_fault_count = 0;
   fault_list_state_t_003fe11a.read_index = 0;
   fault_list_state_t_003fe11a.total_emission_faults = 0;
   emission_fault_overflow_flag = 0;
@@ -17299,7 +17207,7 @@ void cm848_faultTableEntryProcessor(void)
             }
             if (*(char *)(uVar11 + 0x3fe124) == '\0') {
               (&fault_entry_status_array)[uVar11 * 7] = 2;
-              *(undefined4 *)((int)&fault_timestamp_array + uVar11 * 7) = _fault_timing_snapshot;
+              *(dword *)((int)&fault_timestamp_array + uVar11 * 7) = fault_timing_snapshot;
               bVar2 = false;
               uVar9 = 0;
               do {
@@ -17327,14 +17235,13 @@ void cm848_faultTableEntryProcessor(void)
                 }
               } while (!bVar2);
               if (active_fault_count != 0x1f) {
-                _active_fault_added_flag = 1;
+                active_fault_added_flag._0_2_ = 1;
                 active_fault_count = active_fault_count + 1;
-                _emission_fault_count = _emission_fault_count + 1;
+                emission_fault_count = emission_fault_count + 1;
                 fault_list_state_t_003fe11a.read_index = fault_list_state_t_003fe11a.read_index + 1;
                 (&active_fault_count)[fault_list_state_t_003fe11a.read_index] = (byte)uVar1;
-                *(undefined2 *)
-                 (&emission_fault_count + (uint)fault_list_state_t_003fe11a.read_index * 2) =
-                     *(undefined2 *)(uVar11 * 6 + 0x59e9a);
+                (&emission_fault_count)[fault_list_state_t_003fe11a.read_index] =
+                     *(word *)(uVar11 * 6 + 0x59e9a);
                 if ((*(ushort *)(&fault_definition_table + uVar11 * 6) & 0x2000) == 0) {
                   fault_list_state_t_003fe11a.total_emission_faults =
                        fault_list_state_t_003fe11a.total_emission_faults + 1;
@@ -17377,7 +17284,7 @@ void cm848_faultTableEntryProcessor(void)
           if (*(char *)(uVar9 + 0x3fe124) == '\0') {
             cm848_registerFaultInActiveList(uVar9);
             (&fault_entry_status_array)[iVar8] = 3;
-            *(undefined4 *)((int)&fault_timestamp_array + iVar8) = _fault_timing_snapshot;
+            *(dword *)((int)&fault_timestamp_array + iVar8) = fault_timing_snapshot;
             (&fault_entry_debounce_array)[iVar8] = 0;
             bVar2 = false;
             uVar11 = 0;
@@ -17393,16 +17300,15 @@ void cm848_faultTableEntryProcessor(void)
                        fault_list_state_t_003fe11a.total_emission_faults - 1;
                 }
                 active_fault_count = active_fault_count - 1;
-                _emission_fault_count = _emission_fault_count + -1;
+                emission_fault_count = emission_fault_count - 1;
                 (&active_fault_count)[uVar11] =
                      (&active_fault_count)[fault_list_state_t_003fe11a.read_index];
                 uVar3 = (uint)fault_list_state_t_003fe11a.read_index;
                 fault_list_state_t_003fe11a.read_index = fault_list_state_t_003fe11a.read_index - 1;
-                *(undefined2 *)(&emission_fault_count + uVar11 * 2) =
-                     *(undefined2 *)(&emission_fault_count + uVar3 * 2);
+                (&emission_fault_count)[uVar11] = (&emission_fault_count)[uVar3];
               }
             } while (!bVar2);
-            _pending_fault_added_flag = 1;
+            pending_fault_added_flag = 1;
             pending_fault_count = pending_fault_count + 1;
             fault_pending_counter_array = fault_pending_counter_array + 1;
             fault_list_state_t_003fe11a.write_index = fault_list_state_t_003fe11a.write_index + 1;
@@ -17443,18 +17349,16 @@ void cm848_faultTableEntryProcessor(void)
 // Function: cm848_buildFaultConditionMask @ 0x0001d8f8
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_buildFaultConditionMask(void)
 
 {
   byte bVar1;
-  short sVar2;
+  word wVar2;
   byte bVar3;
   uint uVar4;
   
   bVar3 = fault_enable_override_flag;
-  sVar2 = _cold_start_phase;
+  wVar2 = cold_start_phase;
   uVar4 = 0;
   bVar1 = protection_enable_t_0040c050.mode_bits & 1;
   do {
@@ -17467,7 +17371,7 @@ void cm848_buildFaultConditionMask(void)
       (&fault_enable_bitmask_array)[uVar4] =
            (&fault_enable_bitmask_array)[uVar4] | (&DAT_0005a35e)[uVar4];
     }
-    if (sVar2 == 2) {
+    if (wVar2 == 2) {
       (&fault_enable_bitmask_array)[uVar4] =
            (&fault_enable_bitmask_array)[uVar4] | (&DAT_0005a3c2)[uVar4];
     }
@@ -17481,8 +17385,6 @@ void cm848_buildFaultConditionMask(void)
 //
 // Function: diagnosticMainStateProcessor @ 0x0001d9b8
 //
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void diagnosticMainStateProcessor(void)
 
@@ -17512,7 +17414,7 @@ void diagnosticMainStateProcessor(void)
       fault_scan_index = 0;
     }
   }
-  if ((_diagnostic_clear_request_state & 1) != 0) {
+  if ((diagnostic_clear_request_state & 1) != 0) {
     cm848_clearDiagnosticState();
   }
   if (((fault_management_status_flags & 0x400) != 0) &&
@@ -17592,9 +17494,9 @@ void diagnosticMainStateProcessor(void)
   else {
     diagnostic_fault_flags_b = uVar1 | 0x1000;
   }
-  if (0x18 < (uint)(_fault_timing_snapshot - _DAT_003fa864)) {
+  if (0x18 < fault_timing_snapshot - fault_event_timing_prev) {
     cm848_activeFaultScanProcessor();
-    _DAT_003fa864 = _fault_timing_snapshot;
+    fault_event_timing_prev = fault_timing_snapshot;
   }
   return;
 }
@@ -17716,8 +17618,6 @@ void cm848_resetFaultStatus(int param_1)
 // Function: hpcr_setFaultActiveStatus @ 0x0001df64
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void hpcr_setFaultActiveStatus(int param_1,uint param_2)
 
 {
@@ -17732,13 +17632,13 @@ void hpcr_setFaultActiveStatus(int param_1,uint param_2)
     *(word *)(&DAT_003fe7fb + iVar2) = engine_rpm_state_t_0040b7ac.target_rpm;
     *(word *)(&DAT_003fe801 + iVar2) = protection_fuel_demand_snapshot;
     *(word *)(&DAT_003fe803 + iVar2) = protection_fuel_low_snapshot;
-    *(dword *)(&DAT_003fe7f4 + iVar2) = _fault_timing_snapshot;
+    *(dword *)(&DAT_003fe7f4 + iVar2) = fault_timing_snapshot;
     *(word *)(&DAT_003fe805 + iVar2) = protection_coolant_temp_active;
     *(word *)(&DAT_003fe807 + iVar2) = fault_timing_snapshot;
     *(word *)(&DAT_003fe809 + iVar2) = fuel_quantity_demand_input;
     *(word *)(&DAT_003fe7fd + iVar2) = diagnostic_fault_flags_a;
     *(word *)(&DAT_003fe80b + iVar2) = diagnostic_fault_flags_b;
-    (&DAT_003fe811)[iVar2] = (char)_governor_mode_code;
+    (&DAT_003fe811)[iVar2] = (char)governor_mode_code;
     *(word *)(&DAT_003fe812 + iVar2) = sensor_readings_t_0040baf2.battery_voltage;
     *(word *)(&DAT_003fe814 + iVar2) = fuel_demand_computed;
     *(word *)(&DAT_003fe816 + iVar2) = torque_limit_fault_snapshot;
@@ -17757,13 +17657,13 @@ void hpcr_setFaultActiveStatus(int param_1,uint param_2)
     (&fault_entry_t_003fe674)[param_1].target_rpm = engine_rpm_state_t_0040b7ac.target_rpm;
     (&fault_entry_t_003fe674)[param_1].protection_high = protection_fuel_demand_snapshot;
     (&fault_entry_t_003fe674)[param_1].protection_low = protection_fuel_low_snapshot;
-    (&fault_entry_t_003fe674)[param_1].timing_snapshot = _fault_timing_snapshot;
+    (&fault_entry_t_003fe674)[param_1].timing_snapshot = fault_timing_snapshot;
     (&fault_entry_t_003fe674)[param_1].timing_param_1 = protection_coolant_temp_active;
     (&fault_entry_t_003fe674)[param_1].timing_param_2 = fault_timing_snapshot;
     (&fault_entry_t_003fe674)[param_1].timing_param_3 = fuel_quantity_demand_input;
     (&fault_entry_t_003fe674)[param_1].sensor_scale_1 = diagnostic_fault_flags_a;
     (&fault_entry_t_003fe674)[param_1].sensor_scale_2 = diagnostic_fault_flags_b;
-    (&fault_entry_t_003fe674)[param_1].pressure_adj = (byte)_governor_mode_code;
+    (&fault_entry_t_003fe674)[param_1].pressure_adj = (byte)governor_mode_code;
     (&fault_entry_t_003fe674)[param_1].battery_voltage = sensor_readings_t_0040baf2.battery_voltage;
     (&fault_entry_t_003fe674)[param_1].load_throttle = fuel_demand_computed;
     (&fault_entry_t_003fe674)[param_1].torque_limit = torque_limit_fault_snapshot;
@@ -17797,8 +17697,6 @@ void hpcr_setFaultActiveStatus(int param_1,uint param_2)
 // Function: hpcr_captureFreezeFrameData @ 0x0001df88
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void hpcr_captureFreezeFrameData(int param_1,uint param_2,int param_3)
 
 {
@@ -17815,13 +17713,13 @@ void hpcr_captureFreezeFrameData(int param_1,uint param_2,int param_3)
     *(word *)(&DAT_003fe7fb + iVar2) = engine_rpm_state_t_0040b7ac.target_rpm;
     *(word *)(&DAT_003fe801 + iVar2) = protection_fuel_demand_snapshot;
     *(word *)(&DAT_003fe803 + iVar2) = protection_fuel_low_snapshot;
-    *(dword *)(&DAT_003fe7f4 + iVar2) = _fault_timing_snapshot;
+    *(dword *)(&DAT_003fe7f4 + iVar2) = fault_timing_snapshot;
     *(word *)(&DAT_003fe805 + iVar2) = protection_coolant_temp_active;
     *(word *)(&DAT_003fe807 + iVar2) = fault_timing_snapshot;
     *(word *)(&DAT_003fe809 + iVar2) = fuel_quantity_demand_input;
     *(word *)(&DAT_003fe7fd + iVar2) = diagnostic_fault_flags_a;
     *(word *)(&DAT_003fe80b + iVar2) = diagnostic_fault_flags_b;
-    (&DAT_003fe811)[iVar2] = (char)_governor_mode_code;
+    (&DAT_003fe811)[iVar2] = (char)governor_mode_code;
     *(word *)(&DAT_003fe812 + iVar2) = sensor_readings_t_0040baf2.battery_voltage;
     *(word *)(&DAT_003fe814 + iVar2) = fuel_demand_computed;
     *(word *)(&DAT_003fe816 + iVar2) = torque_limit_fault_snapshot;
@@ -17840,13 +17738,13 @@ void hpcr_captureFreezeFrameData(int param_1,uint param_2,int param_3)
     (&fault_entry_t_003fe674)[param_1].target_rpm = engine_rpm_state_t_0040b7ac.target_rpm;
     (&fault_entry_t_003fe674)[param_1].protection_high = protection_fuel_demand_snapshot;
     (&fault_entry_t_003fe674)[param_1].protection_low = protection_fuel_low_snapshot;
-    (&fault_entry_t_003fe674)[param_1].timing_snapshot = _fault_timing_snapshot;
+    (&fault_entry_t_003fe674)[param_1].timing_snapshot = fault_timing_snapshot;
     (&fault_entry_t_003fe674)[param_1].timing_param_1 = protection_coolant_temp_active;
     (&fault_entry_t_003fe674)[param_1].timing_param_2 = fault_timing_snapshot;
     (&fault_entry_t_003fe674)[param_1].timing_param_3 = fuel_quantity_demand_input;
     (&fault_entry_t_003fe674)[param_1].sensor_scale_1 = diagnostic_fault_flags_a;
     (&fault_entry_t_003fe674)[param_1].sensor_scale_2 = diagnostic_fault_flags_b;
-    (&fault_entry_t_003fe674)[param_1].pressure_adj = (byte)_governor_mode_code;
+    (&fault_entry_t_003fe674)[param_1].pressure_adj = (byte)governor_mode_code;
     (&fault_entry_t_003fe674)[param_1].battery_voltage = sensor_readings_t_0040baf2.battery_voltage;
     (&fault_entry_t_003fe674)[param_1].load_throttle = fuel_demand_computed;
     (&fault_entry_t_003fe674)[param_1].torque_limit = torque_limit_fault_snapshot;
@@ -17930,40 +17828,40 @@ void cm848_selectFuelDemandSource(void)
   word wVar1;
   
   fuel_timing_target_arbitrated = fuel_timing_target_raw;
-  _governor_mode_code = governor_mode_select;
-  if ((_fuel_limit_mode_active_flag == 0) || (_fuel_limit_secondary_flag != 0)) {
-    if (_cold_start_phase == 1) {
-      _governor_mode_code = 0x1a;
+  governor_mode_code = governor_mode_select;
+  if ((fuel_limit_mode_active_flag._0_2_ == 0) || (fuel_limit_secondary_flag != 0)) {
+    if (cold_start_phase == 1) {
+      governor_mode_code = 0x1a;
     }
     else {
       if (governor_mode_override_active != 1) {
-        if (_cold_start_phase == 8) {
+        if (cold_start_phase == 8) {
           fuel_timing_arbitration_output = timing_limit_upper;
-          _governor_mode_code = 0x1b;
+          governor_mode_code = 0x1b;
         }
         else {
-          if (_cold_start_phase == 5) {
+          if (cold_start_phase == 5) {
             fuel_timing_target_arbitrated = DAT_0005c30a;
-            _governor_mode_code = 0x19;
+            governor_mode_code = 0x19;
           }
           else if ((governor_feature_flags & 2) == 0) {
-            if (_cold_start_phase == 4) {
+            if (cold_start_phase == 4) {
               fuel_timing_target_arbitrated = DAT_0005c308;
-              _governor_mode_code = 0x18;
+              governor_mode_code = 0x18;
             }
-            else if ((_cold_start_phase == 2) || (_cold_start_phase == 6)) {
-              fuel_timing_target_arbitrated = _governor_cold_start_rpm_output;
-              _governor_mode_code = 0x16;
+            else if ((cold_start_phase == 2) || (cold_start_phase == 6)) {
+              fuel_timing_target_arbitrated = governor_cold_start_rpm_output;
+              governor_mode_code = 0x16;
             }
-            else if ((_cold_start_phase == 7) &&
-                    (fuel_timing_target_raw < _governor_cold_start_rpm_output)) {
-              fuel_timing_target_arbitrated = _governor_cold_start_rpm_output;
-              _governor_mode_code = 0x16;
+            else if ((cold_start_phase == 7) &&
+                    (fuel_timing_target_raw < governor_cold_start_rpm_output)) {
+              fuel_timing_target_arbitrated = governor_cold_start_rpm_output;
+              governor_mode_code = 0x16;
             }
           }
           else {
             fuel_timing_target_arbitrated = _DAT_003fd804;
-            _governor_mode_code = 0x17;
+            governor_mode_code = 0x17;
           }
           wVar1 = timing_limit_lower;
           if ((timing_limit_lower < fuel_timing_target_arbitrated) ||
@@ -17974,36 +17872,36 @@ void cm848_selectFuelDemandSource(void)
         }
         goto LAB_0001e3e4;
       }
-      _governor_mode_code = 0x29;
+      governor_mode_code = 0x29;
     }
     fuel_timing_arbitration_output = 0;
   }
   else {
     fuel_timing_arbitration_output = fuel_demand_arbitrated_a;
-    _governor_mode_code = 0x20;
+    governor_mode_code = 0x20;
   }
 LAB_0001e3e4:
   fuel_demand_computed = fuel_timing_arbitration_output;
-  if ((governor_mode_code_prev != 0xb) && (_governor_mode_code == 0xb)) {
-    _cold_start_active_flag_c = 1;
+  if ((governor_mode_code_prev != 0xb) && (governor_mode_code == 0xb)) {
+    cold_start_active_flag_c = 1;
   }
-  if ((_governor_mode_code == 0x10) || (_governor_mode_code == 0x3a)) {
-    _cold_start_pressure_active_flag = 1;
+  if ((governor_mode_code == 0x10) || (governor_mode_code == 0x3a)) {
+    cold_start_pressure_active_flag = 1;
   }
-  if ((_governor_mode_code == 0x2d) ||
-     ((_governor_mode_code == 0xc && (torque_limit_arb_t_0040a2f6.source_active == 0xd)))) {
-    _governor_torque_speed_mode_flag = 1;
+  if ((governor_mode_code == 0x2d) ||
+     ((governor_mode_code == 0xc && (torque_limit_arb_t_0040a2f6.source_active == 0xd)))) {
+    governor_torque_speed_mode_flag = 1;
   }
   else {
-    _governor_torque_speed_mode_flag = 0;
+    governor_torque_speed_mode_flag = 0;
   }
-  if (((_governor_mode_code == 0x1b) || ((engine_diag_shadow_flags & 0x10) != 0)) &&
+  if (((governor_mode_code == 0x1b) || ((engine_diag_shadow_flags & 0x10) != 0)) &&
      (_DAT_003fa86e == 0)) {
     _DAT_003feaa2 = _DAT_003fa870;
     _DAT_003feaa0 = governor_mode_code_prev;
     _DAT_003fa86e = 1;
   }
-  governor_mode_code_prev = _governor_mode_code;
+  governor_mode_code_prev = governor_mode_code;
   _DAT_003fa870 = fuel_timing_arbitration_output;
   return;
 }
@@ -18065,7 +17963,7 @@ void cm848_processProtectionSelection(void)
   }
   if (governor_fuel_demand_value < protection_fuel_limit_active) {
     fuel_demand_arbitration_working = governor_fuel_demand_value;
-    wVar1 = _governor_fuel_demand_mode;
+    wVar1 = governor_fuel_demand_mode;
   }
   else {
     fuel_demand_arbitration_working = protection_fuel_limit_active;
@@ -18074,10 +17972,10 @@ void cm848_processProtectionSelection(void)
   governor_fuel_mode_arbitrated = wVar1;
   if (governor_fuel_mode_command == 0xd) {
     fuel_demand_arbitrated = fuel_demand_arbitration_working;
-    _governor_fuel_mode_prev = wVar1;
+    governor_fuel_mode_prev = wVar1;
     goto LAB_0001e768;
   }
-  if ((_fuel_limit_mode_active_flag == 1) && (_fuel_limit_secondary_flag == 1)) {
+  if ((fuel_limit_mode_active_flag._0_2_ == 1) && (fuel_limit_secondary_flag == 1)) {
     if (fuel_demand_arbitrated_a < fuel_demand_minimum_tracked) {
       fuel_demand_arbitrated = fuel_demand_arbitrated_a;
       wVar1 = 0x20;
@@ -18087,16 +17985,16 @@ void cm848_processProtectionSelection(void)
       wVar1 = governor_fuel_mode_input;
     }
 LAB_0001e744:
-    _governor_fuel_mode_prev = wVar1;
+    governor_fuel_mode_prev = wVar1;
   }
-  else if ((_fuel_limit_mode_active_flag == 0) || (_fuel_limit_secondary_flag == 0)) {
+  else if ((fuel_limit_mode_active_flag._0_2_ == 0) || (fuel_limit_secondary_flag == 0)) {
     if (fuel_demand_arbitration_working < fuel_demand_minimum_tracked) {
       fuel_demand_arbitrated = fuel_demand_arbitration_working;
-      _governor_fuel_mode_prev = wVar1;
+      governor_fuel_mode_prev = wVar1;
     }
     else {
       fuel_demand_arbitrated = fuel_demand_minimum_tracked;
-      _governor_fuel_mode_prev = governor_fuel_mode_input;
+      governor_fuel_mode_prev = governor_fuel_mode_input;
     }
     if (fuel_demand_arbitration_working == fuel_demand_minimum_tracked) goto LAB_0001e744;
   }
@@ -18105,12 +18003,12 @@ LAB_0001e744:
     governor_fuel_mode_command = governor_fuel_mode_input;
   }
 LAB_0001e768:
-  if (((_governor_fuel_demand_mode == 0xb) && (governor_fuel_mode_command == 0x14)) &&
+  if (((governor_fuel_demand_mode == 0xb) && (governor_fuel_mode_command == 0x14)) &&
      (protection_fuel_limit_active <= fuel_demand_minimum_tracked)) {
     fuel_demand_arbitrated = governor_fuel_demand_value;
-    _governor_fuel_mode_prev = 0xb;
+    governor_fuel_mode_prev = 0xb;
   }
-  governor_fuel_mode_snapshot = _governor_fuel_mode_prev;
+  governor_fuel_mode_snapshot = governor_fuel_mode_prev;
   _DAT_003fa876 = fuel_demand_arbitrated;
   if (fuel_demand_blend_threshold_cal <= fuel_demand_arbitrated) {
     if ((short)fuel_demand_offset_correction < (short)fuel_demand_arbitrated) {
@@ -18130,13 +18028,11 @@ LAB_0001e768:
 // Function: cm848_initEngineOperatingState @ 0x0001e810
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_initEngineOperatingState(void)
 
 {
-  if (_engine_operating_mode == 0) {
-    _engine_operating_mode = 8;
+  if (engine_operating_mode == 0) {
+    engine_operating_mode = 8;
   }
   return;
 }
@@ -18147,12 +18043,10 @@ void cm848_initEngineOperatingState(void)
 // Function: cm848_updateEngineTimingCompensation @ 0x0001e830
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_updateEngineTimingCompensation(void)
 
 {
-  if (_engine_operating_mode == 8) {
+  if (engine_operating_mode == 8) {
     governor_proportional_gain_calc = cm848_calculateDualAxisFuelLimit();
     governor_proportional_gain = governor_proportional_gain_calc;
   }
@@ -18205,11 +18099,11 @@ void cm848_processTorqueLimitState(void)
            (short)((int)uVar3 >> 0xe) + (ushort)((int)uVar3 < 0 && (uVar3 & 0x3fff) != 0) +
            (short)((int)uVar4 >> 0xe) + (ushort)((int)uVar4 < 0 && (uVar4 & 0x3fff) != 0);
     }
-    _fuel_demand_mode_code = 0;
+    fuel_demand_mode_code = 0;
   }
   else {
     governor_rpm_offset = _DAT_003fd808;
-    _fuel_demand_mode_code = 2;
+    fuel_demand_mode_code = 2;
   }
   if ((governor_feature_config_word & 0x4000) != 0) {
     governor_rpm_offset = governor_rpm_offset + _DAT_003fd806;
@@ -18243,17 +18137,15 @@ void cm848_initProtectionTableSizes(void)
 // Function: cm848_initFaultSeverityTables @ 0x0001ea94
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_initFaultSeverityTables(void)
 
 {
-  _fuel_demand_threshold_interp_state = 2;
-  _fuel_demand_threshold_interp_state_y = 2;
-  _governor_fuel_demand_interp_state = 2;
-  _governor_fuel_demand_interp_state_y = 2;
-  _governor_torque_interp_state = 2;
-  _coolant_temp_interp_state = 2;
+  fuel_demand_threshold_interp_state = 2;
+  fuel_demand_threshold_interp_state_y = 2;
+  governor_fuel_demand_interp_state = 2;
+  governor_fuel_demand_interp_state_y._0_2_ = 2;
+  governor_torque_interp_state = 2;
+  coolant_temp_interp_state._0_2_ = 2;
   cm848_faultSeverityEvaluation();
   return;
 }
@@ -18263,8 +18155,6 @@ void cm848_initFaultSeverityTables(void)
 //
 // Function: cm848_calculateFuelDemandChangeRate @ 0x0001eae8
 //
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void cm848_calculateFuelDemandChangeRate(void)
 
@@ -18283,28 +18173,28 @@ void cm848_calculateFuelDemandChangeRate(void)
   fuel_mode_ema_output =
        lookupTableInterpolation
                  (&DAT_003fa882,uVar1 & 0xffff,&fuel_mode_ema_axis_cal,&fuel_mode_ema_output_cal,0);
-  if ((_fuel_limit_mode_flags & 2) == 0) {
+  if ((fuel_limit_mode_flags & 2) == 0) {
     if (wVar2 <= fuel_mode_ema_output) goto LAB_0001ebf8;
     if ((int)uVar3 < 0) {
-      _fuel_limit_mode_flags = _fuel_limit_mode_flags | 3;
+      fuel_limit_mode_flags = fuel_limit_mode_flags | 3;
       goto LAB_0001ebf8;
     }
     uVar4 = 0xfffe;
-    _fuel_limit_mode_flags = _fuel_limit_mode_flags | 2;
+    fuel_limit_mode_flags = fuel_limit_mode_flags | 2;
   }
   else {
-    if ((_fuel_limit_mode_flags & 1) == 0) {
+    if ((fuel_limit_mode_flags & 1) == 0) {
       if ((int)uVar3 <= (int)DAT_0005c30e) {
-        _fuel_limit_mode_flags = _fuel_limit_mode_flags & 0xfffd;
+        fuel_limit_mode_flags = fuel_limit_mode_flags & 0xfffd;
       }
       goto LAB_0001ebf8;
     }
     if ((int)uVar3 <= -(int)DAT_0005c30e) goto LAB_0001ebf8;
     uVar4 = 0xfffd;
   }
-  _fuel_limit_mode_flags = _fuel_limit_mode_flags & uVar4;
+  fuel_limit_mode_flags = fuel_limit_mode_flags & uVar4;
 LAB_0001ebf8:
-  if (((_fuel_limit_mode_flags & 2) == 0) || (fuel_mode_ema_output < fuel_mode_ema_min)) {
+  if (((fuel_limit_mode_flags & 2) == 0) || (fuel_mode_ema_output < fuel_mode_ema_min)) {
     fuel_mode_ema_min = fuel_mode_ema_output;
   }
   fuel_demand_ema_tracked =
@@ -18540,8 +18430,6 @@ uint cm848_processActiveFaultList(undefined4 param_1,undefined4 param_2)
 // Function: cm848_calculateFuelDemandWithTrim @ 0x0001f17c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_calculateFuelDemandWithTrim(void)
 
 {
@@ -18554,19 +18442,19 @@ void cm848_calculateFuelDemandWithTrim(void)
       wVar2 = 0;
     }
     sVar1 = cm848_processActiveFaultList(engine_rpm_state_t_0040b7ac.current_rpm,400);
-    _protection_fuel_limit_cal_active = sVar1 + wVar2;
+    protection_fuel_limit_cal_active = sVar1 + wVar2;
     sVar1 = cm848_fuelDemandTableLookup(torque_limit_fuel_reference);
     fuel_demand_torque_table_output = sVar1 + wVar2;
-    _torque_limit_table_output = cm848_fuelDemandTableLookup(torque_limit_error_integrator._2_2_);
-    _torque_limit_table_output = _torque_limit_table_output + wVar2;
+    sVar1 = cm848_fuelDemandTableLookup(torque_limit_error_integrator._2_2_);
+    torque_limit_table_output = sVar1 + wVar2;
     sVar1 = cm848_dualAxisTableInterpolation
                       (&DAT_003fa88c,engine_rpm_state_t_0040b7ac.current_rpm,
                        &fuel_demand_rpm_threshold_cal,400,&fuel_demand_rpm_limit_low_cal,
                        &fuel_demand_rpm_limit_high_cal,4);
     injection_timing_demand_output = sVar1 + wVar2;
     cm848_processFaultIncrement(&injection_timing_demand_output);
-    if ((uint)_protection_fuel_limit_cal_active < (uint)timing_limit_upper) {
-      _protection_fuel_limit_cal_active = timing_limit_upper;
+    if ((uint)protection_fuel_limit_cal_active < (uint)timing_limit_upper) {
+      protection_fuel_limit_cal_active = timing_limit_upper;
     }
     if ((int)(short)injection_timing_demand_output < (int)(uint)timing_limit_upper) {
       injection_timing_demand_output = timing_limit_upper;
@@ -18608,14 +18496,12 @@ void cm848_initFuelDemandTableDimensions(void)
 // Function: cm848_initProtectionStateWithFuelDemand @ 0x0001f318
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_initProtectionStateWithFuelDemand(void)
 
 {
-  protection_fuel_limit_active = _protection_fuel_limit_cal_active;
+  protection_fuel_limit_active = protection_fuel_limit_cal_active;
   governor_fuel_mode_command = 0x13;
-  fuel_demand_minimum_tracked = _protection_fuel_limit_cal_active;
+  fuel_demand_minimum_tracked = protection_fuel_limit_cal_active;
   governor_fuel_mode_input = 0x28;
   return;
 }
@@ -18635,7 +18521,7 @@ void cm848_calculateTimingCompensation(void)
   int iVar2;
   dword dVar3;
   
-  if (_governor_mode_code != 0xc) {
+  if (governor_mode_code != 0xc) {
     iVar2 = (int)(short)injection_timing_max_cal_load;
     iVar1 = iVar2;
     if (iVar2 < 1) {
@@ -18720,7 +18606,7 @@ void cm848_processTorqueLimitTiming(void)
              (int)(short)governor_mode_c_rpm_offset_cal) <
         (int)(uint)engine_rpm_state_t_0040b7ac.current_rpm) &&
       (governor_fuel_demand_value < governor_mode_c_fuel_demand_threshold_cal)) &&
-     (_governor_fuel_demand_mode == 0xc)) {
+     (governor_fuel_demand_mode == 0xc)) {
     timing_compensation_accumulator = (uint)injection_timing_compensation_init_cal << 0x10;
     injection_timing_compensation_b = injection_timing_compensation_init_cal;
     fuel_demand_filtered_ema = 0;
@@ -18858,7 +18744,7 @@ void cm848_initSensorRawChannels(void)
   fuel_ema_coeff_2 = fuel_ema_coeff_2_cal;
   fuel_ema_coeff_3 = fuel_ema_coeff_3_cal;
   fuel_ema_coeff_4 = fuel_ema_coeff_4_cal;
-  _fuel_demand_state_code = 0x10;
+  fuel_demand_state_code = 0x10;
   injection_timing_compensation_b = injection_timing_compensation_limit_cal;
   injection_timing_compensation_int = 0;
   fuel_demand_ema_coeff_ptr = (undefined *)&fuel_ema_coeff_4;
@@ -18884,7 +18770,7 @@ void selectSensorRawChannels(void)
     fuel_ema_coeff_2 = fuel_ema_coeff_2_cal;
     fuel_ema_coeff_3 = fuel_ema_coeff_3_cal;
     fuel_ema_coeff_4 = fuel_ema_coeff_4_cal;
-    _fuel_demand_state_code = 0x10;
+    fuel_demand_state_code = 0x10;
   }
   else {
     _DAT_003fa89e = _DAT_003fa89c * 0x14;
@@ -18916,21 +18802,21 @@ void selectSensorRawChannels(void)
             fuel_ema_coeff_2 = DAT_0005c328;
             fuel_ema_coeff_3 = DAT_0005c324;
             fuel_ema_coeff_4 = DAT_0005c326;
-            _fuel_demand_state_code = 0x12;
+            fuel_demand_state_code = 0x12;
           }
           else if (DAT_0005c318 < torque_limit_load_working) {
             fuel_ema_coeff_1 = DAT_0005c320;
             fuel_ema_coeff_2 = DAT_0005c31e;
             fuel_ema_coeff_3 = DAT_0005c31a;
             fuel_ema_coeff_4 = DAT_0005c31c;
-            _fuel_demand_state_code = 0x13;
+            fuel_demand_state_code = 0x13;
           }
           else {
             fuel_ema_coeff_1 = fuel_ema_coeff_1_cal;
             fuel_ema_coeff_2 = fuel_ema_coeff_2_cal;
             fuel_ema_coeff_3 = fuel_ema_coeff_3_cal;
             fuel_ema_coeff_4 = fuel_ema_coeff_4_cal;
-            _fuel_demand_state_code = 0x10;
+            fuel_demand_state_code = 0x10;
           }
         }
         else {
@@ -18938,17 +18824,17 @@ void selectSensorRawChannels(void)
           fuel_ema_coeff_2 = fuel_ema_coeff_2_working;
           fuel_ema_coeff_3 = fuel_ema_coeff_3_working;
           fuel_ema_coeff_4 = fuel_ema_coeff_4_working;
-          _fuel_demand_state_code = fuel_demand_mode_code;
+          fuel_demand_state_code = fuel_demand_mode_code;
         }
         fuel_demand_ema_coeff_ptr = (undefined *)&fuel_ema_coeff_4;
       }
     }
-    else if (_fuel_demand_state_code != 0x11) {
+    else if (fuel_demand_state_code != 0x11) {
       fuel_ema_coeff_1 = DAT_0005c332;
       fuel_ema_coeff_2 = DAT_0005c330;
       fuel_ema_coeff_3 = DAT_0005c32c;
       fuel_ema_coeff_4 = DAT_0005c32e;
-      _fuel_demand_state_code = 0x11;
+      fuel_demand_state_code = 0x11;
       fuel_demand_ema_coeff_ptr = (undefined *)&fuel_ema_coeff_4;
       _DAT_003fa89c = 0;
     }
@@ -18980,33 +18866,33 @@ void cm848_selectTorqueLimit(void)
   torque_limit_fuel_floor_working = torque_limit_fuel_floor;
   torque_limit_load_snapshot = torque_limit_load_working;
   torque_limit_fuel_reference = torque_limit_fuel_reference_stored;
-  _fuel_limit_state_code = 1;
+  fuel_limit_state_code = 1;
   if (torque_limit_fuel_reference_stored < torque_limit_fuel_upper) {
     torque_limit_fuel_reference = torque_limit_fuel_upper;
-    _fuel_limit_state_code = 2;
+    fuel_limit_state_code = 2;
   }
   else if (torque_limit_fuel_floor < torque_limit_fuel_reference_stored) {
     torque_limit_fuel_reference = torque_limit_fuel_floor;
-    _fuel_limit_state_code = 3;
+    fuel_limit_state_code = 3;
   }
   torque_limit_fuel_upper = 0;
   torque_limit_fuel_floor = torque_limit_fuel_minimum;
-  if (_torque_limit_offset_enable_flag == 1) {
+  if (torque_limit_offset_enable_flag == 1) {
     torque_limit_offset_calc = torque_limit_offset_stored + torque_limit_fuel_reference;
   }
   if (governor_active_flag_b648 != 0) {
     torque_limit_fuel_upper = 0;
-    _torque_limit_override_active_flag = 0;
+    torque_limit_override_active_flag = 0;
     torque_limit_arb_t_0040a2f6.limit_source = torque_limit_override_source_cal;
     torque_limit_arb_t_0040a2f6.source_active = 0x10;
-    _torque_limit_source_code = 0x10;
+    torque_limit_source_code = 0x10;
     return;
   }
-  if (_DAT_0040adfa == 1) {
+  if (j1939_tsc1_speed_override_active_flag == 1) {
     torque_limit_arb_t_0040a2f6.source_active = 8;
     torque_limit_arb_t_0040a2f6.limit_source = DAT_0005c39a;
-    _torque_limit_override_active_flag = 0;
-    _torque_limit_source_code = 8;
+    torque_limit_override_active_flag = 0;
+    torque_limit_source_code = 8;
     torque_limit_fuel_floor = torque_limit_fuel_minimum;
     torque_limit_fuel_upper = 0;
     torque_limit_load_snapshot = torque_limit_load_working;
@@ -19024,7 +18910,7 @@ void cm848_selectTorqueLimit(void)
     torque_limit_arb_t_0040a2f6.fuel_minimum = torque_limit_fuel_min_working;
     torque_limit_arb_t_0040a2f6.source_active = 0xe;
   }
-  if ((_DAT_0040adf8 == 3) &&
+  if ((j1939_tsc1_override_state == 3) &&
      (etc1_state_t_0040ae00.mode3_speed_target <= torque_limit_arb_t_0040a2f6.fuel_minimum)) {
     torque_limit_arb_t_0040a2f6.fuel_minimum = etc1_state_t_0040ae00.mode3_speed_target;
     torque_limit_arb_t_0040a2f6.source_active = 9;
@@ -19097,11 +18983,11 @@ LAB_0002012c:
        (torque_limit_source_d_f_disable_cal == 0)) ||
       (torque_limit_arb_t_0040a2f6.source_active == 0x10)))) {
     torque_limit_arb_t_0040a2f6.limit_source = torque_limit_error_integrator._2_2_;
-    _torque_limit_override_active_flag = 0;
+    torque_limit_override_active_flag = 0;
   }
   else {
-    _torque_limit_override_active_flag = 1;
-    if (_torque_limit_lookup_disable_flag == 0) {
+    torque_limit_override_active_flag = 1;
+    if (torque_limit_lookup_disable_flag == 0) {
       sVar1 = lookupTableInterpolation
                         (&governor_torque_interp_state,torque_limit_offset_calc,
                          &calibration_table_base,&calibration_table_offset,0);
@@ -19118,7 +19004,7 @@ LAB_0002012c:
     uVar5 = torque_limit_error_integrator._2_2_;
     if (torque_limit_error_integrator._0_2_ < 1) {
       torque_limit_arb_t_0040a2f6.limit_source = torque_limit_error_integrator._2_2_;
-      _torque_limit_override_active_flag = 0;
+      torque_limit_override_active_flag = 0;
     }
     else {
       iVar4 = (int)(short)injection_timing_compensation_b;
@@ -19132,9 +19018,9 @@ LAB_0002012c:
       cm848_signedDivision32
                 ((int)((ulonglong)
                        ((longlong)(int)torque_limit_error_integrator._0_2_ *
-                       (longlong)(int)((uint)_torque_limit_table_output - iVar4)) >> 0x20),
+                       (longlong)(int)((uint)torque_limit_table_output - iVar4)) >> 0x20),
                  (int)torque_limit_error_integrator._0_2_ *
-                 ((uint)_torque_limit_table_output - iVar4),0,0x1111);
+                 ((uint)torque_limit_table_output - iVar4),0,0x1111);
       uVar6 = uVar3 + extraout_r4;
       if ((int)uVar6 < 0) {
         uVar6 = 0;
@@ -19158,7 +19044,7 @@ LAB_0002012c:
   torque_limit_arb_t_0040a2f6.fuel_minimum = torque_limit_fuel_minimum;
   torque_limit_fuel_demand = torque_limit_fuel_minimum;
   torque_limit_state_machine = 0;
-  _torque_limit_source_code = torque_limit_arb_t_0040a2f6.source_active;
+  torque_limit_source_code = torque_limit_arb_t_0040a2f6.source_active;
   return;
 }
 
@@ -19177,13 +19063,13 @@ void cm848_initTorqueLimitDefaults(void)
   torque_limit_fuel_reference_stored = _DAT_003fdcf8;
   torque_limit_offset_calc = _DAT_003fd80c;
   torque_limit_arb_t_0040a2f6.source_active = 6;
-  _torque_limit_source_code = 6;
+  torque_limit_source_code = 6;
   torque_limit_arb_t_0040a2f6.fuel_minimum = torque_limit_fuel_minimum;
   torque_fuel_minimum_working = torque_limit_fuel_minimum;
   torque_limit_fuel_min_working = torque_limit_fuel_minimum;
   torque_fuel_limit_active = torque_limit_fuel_minimum;
   torque_limit_fuel_minimum_snapshot = torque_limit_fuel_minimum;
-  _torque_limit_init_flag = 0;
+  torque_limit_init_flag._0_2_ = 0;
   return;
 }
 
@@ -19252,7 +19138,7 @@ uint cm848_calculateEffectiveFuelLimit(void)
   uVar5 = (uint)torque_limit_error_integrator._0_2_;
   uVar6 = (uint)torque_limit_fuel_reference;
   uVar3 = (uint)engine_rpm_state_t_0040b7ac.current_rpm;
-  if ((_torque_limit_override_active_flag == 0) ||
+  if ((torque_limit_override_active_flag == 0) ||
      ((torque_limit_arb_t_0040a2f6.fuel_minimum <= uVar3 &&
       (torque_limit_arb_t_0040a2f6.source_active != 9)))) {
     uVar5 = 0;
@@ -19272,7 +19158,7 @@ uint cm848_calculateEffectiveFuelLimit(void)
         uVar5 = 0;
       }
       else {
-        uVar5 = (uint)_protection_fuel_limit_cal_active;
+        uVar5 = (uint)protection_fuel_limit_cal_active;
         if ((int)uVar6 <= (int)uVar5) {
           uVar5 = uVar6 & 0xffff;
         }
@@ -19302,7 +19188,7 @@ uint cm848_calculateEffectiveFuelLimit(void)
   }
   if (((governor_system_config_flags & 0x800) == 0) || (governor_fuel_mode_command == 0x14)) {
     uVar3 = fuel_trim_speed_filtered - uVar3;
-    if (_engine_operating_mode == 7) {
+    if (engine_operating_mode == 7) {
       _DAT_003fa8a2 = governor_speed_scale_factor;
     }
     uVar2 = (uint)DAT_0005c368;
@@ -19326,7 +19212,7 @@ uint cm848_calculateEffectiveFuelLimit(void)
                 (((int)uVar3 >> 0x1f) * 0x2655 + (int)((ulonglong)uVar3 * 0x2655 >> 0x20),
                  uVar3 * 0x2655,0,uVar6 << 3);
       uVar4 = extraout_r4_02 + (uint)governor_fuel_demand_reference;
-      if (_fuel_demand_pilot_active_flag == 1) {
+      if (fuel_demand_pilot_active_flag._0_2_ == 1) {
         uVar4 = uVar4 + fuel_demand_integrator;
       }
     }
@@ -19349,8 +19235,6 @@ uint cm848_calculateEffectiveFuelLimit(void)
 // Function: cm848_selectTorqueLimitStateMachine @ 0x00020860
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_selectTorqueLimitStateMachine(void)
 
 {
@@ -19358,25 +19242,25 @@ void cm848_selectTorqueLimitStateMachine(void)
   word wVar2;
   
   wVar2 = governor_proportional_gain_calc;
-  if (_governor_protection_mode_flag == 1) {
+  if (governor_protection_mode_flag == 1) {
     wVar2 = cm848_calculateEffectiveFuelLimit();
   }
   wVar1 = governor_fuel_demand_value;
-  if (((((((_governor_fuel_demand_mode != 5) &&
-          (wVar1 = governor_fuel_demand_value, _governor_fuel_demand_mode != 9)) &&
-         (wVar1 = governor_fuel_demand_value, _governor_fuel_demand_mode != 6)) &&
-        ((wVar1 = governor_fuel_demand_value, _governor_fuel_demand_mode != 10 &&
-         (wVar1 = governor_fuel_demand_value, _governor_fuel_demand_mode != 4)))) &&
-       ((wVar1 = wVar2, _governor_fuel_demand_mode != 8 &&
-        ((_governor_fuel_demand_mode != 7 &&
+  if (((((((governor_fuel_demand_mode != 5) &&
+          (wVar1 = governor_fuel_demand_value, governor_fuel_demand_mode != 9)) &&
+         (wVar1 = governor_fuel_demand_value, governor_fuel_demand_mode != 6)) &&
+        ((wVar1 = governor_fuel_demand_value, governor_fuel_demand_mode != 10 &&
+         (wVar1 = governor_fuel_demand_value, governor_fuel_demand_mode != 4)))) &&
+       ((wVar1 = wVar2, governor_fuel_demand_mode != 8 &&
+        ((governor_fuel_demand_mode != 7 &&
          (wVar1 = governor_pid_integral_prev, governor_pid_t_0040af5a.integral_term != 1)))))) &&
       (governor_pid_t_0040af5a.integral_term != 2)) &&
      ((governor_pid_t_0040af5a.integral_term != 0x25 &&
       (governor_pid_t_0040af5a.integral_term != 0x26)))) {
-    if ((_governor_fuel_demand_mode == 0xb) ||
-       ((_governor_fuel_demand_mode == 0xc &&
+    if ((governor_fuel_demand_mode == 0xb) ||
+       ((governor_fuel_demand_mode == 0xc &&
         ((governor_fuel_demand_value < governor_pid_t_0040af5a.proportional_gain ||
-         (_governor_override_active_flag == 0)))))) {
+         (governor_override_active_flag == 0)))))) {
       if ((governor_pid_t_0040af5a.integral_term == 6) ||
          (wVar1 = wVar2, governor_pid_t_0040af5a.integral_term == 4)) {
         wVar1 = governor_pid_t_0040af5a.proportional_gain;
@@ -19429,22 +19313,20 @@ void cm848_calculateLoadRateOfChange(void)
 // Function: cm848_calculateLoadToFuelRatio @ 0x00020a58
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_calculateLoadToFuelRatio(void)
 
 {
   if ((int)((uint)fuel_demand_computed - (uint)fault_severity_table_ptr) < -31999) {
     j1939_engine_torque_output_a = 0x8300;
   }
-  else if ((short)(_protection_fuel_limit_cal_active - fault_severity_table_ptr) < -31999) {
+  else if ((short)(protection_fuel_limit_cal_active - fault_severity_table_ptr) < -31999) {
     j1939_engine_torque_output_a = 0x8300;
   }
   else {
     j1939_engine_torque_output_a =
          cm848_saturatingDivision16
                    (((uint)fuel_demand_computed - (uint)fault_severity_table_ptr) * 0x6400,
-                    _protection_fuel_limit_cal_active - fault_severity_table_ptr);
+                    protection_fuel_limit_cal_active - fault_severity_table_ptr);
     if (32000 < j1939_engine_torque_output_a) {
       j1939_engine_torque_output_a = 32000;
     }
@@ -19565,7 +19447,7 @@ void cm848_processJ1939RxMessage(int param_1,int param_2)
   else {
     puVar1 = (undefined *)
              ((((uint)torque_limit_error_integrator._0_2_ *
-               (((uint)_torque_limit_table_output - param_1) * 8 & 0xfff8)) / 0x8888 & 0xffff) +
+               (((uint)torque_limit_table_output - param_1) * 8 & 0xfff8)) / 0x8888 & 0xffff) +
              (uint)torque_limit_load_working);
     if (&DAT_00009c40 < puVar1) {
       puVar1 = &DAT_00009c40;
@@ -19775,46 +19657,46 @@ void cm848_calculateSpeedControlError(void)
   undefined *in_r6;
   uint uVar2;
   
-  _fuel_operation_mode_index = 0;
+  fuel_operation_mode_index = 0;
   if ((fuel_demand_config_flags & 8) != 0) {
-    _fuel_operation_mode_index = _cal_fuel_operation_mode_1_en;
+    fuel_operation_mode_index = cal_fuel_operation_mode_1_en;
   }
   if ((fuel_demand_config_flags & 0x10) != 0) {
-    _fuel_operation_mode_index = _fuel_operation_mode_index + DAT_0005c480;
+    fuel_operation_mode_index = fuel_operation_mode_index + DAT_0005c480;
   }
   if ((fuel_demand_config_flags & 0x20) != 0) {
-    _fuel_operation_mode_index = _fuel_operation_mode_index + DAT_0005c482;
+    fuel_operation_mode_index = fuel_operation_mode_index + DAT_0005c482;
   }
   if ((fuel_demand_config_flags & 0x40) != 0) {
-    _fuel_operation_mode_index = _fuel_operation_mode_index + DAT_0005c484;
+    fuel_operation_mode_index = fuel_operation_mode_index + DAT_0005c484;
   }
   if ((fuel_demand_config_flags & 0x80) != 0) {
-    _fuel_operation_mode_index = _fuel_operation_mode_index + DAT_0005c486;
+    fuel_operation_mode_index = fuel_operation_mode_index + DAT_0005c486;
   }
-  if (_fuel_operation_mode_index == 0) {
+  if (fuel_operation_mode_index == 0) {
     j1939_engine_torque_encoded = 0;
     throttle_demand_integrator = 0;
     _DAT_003fa8ac = 0;
   }
   else {
-    if (_fuel_operation_mode_index < 5) {
-      if (_fuel_operation_mode_index == 4) {
+    if (fuel_operation_mode_index < 5) {
+      if (fuel_operation_mode_index == 4) {
         in_r6 = &DAT_0005a44e;
       }
-      else if (_fuel_operation_mode_index == 1) {
+      else if (fuel_operation_mode_index == 1) {
         in_r6 = &DAT_0005a430;
       }
-      else if (_fuel_operation_mode_index == 2) {
+      else if (fuel_operation_mode_index == 2) {
         in_r6 = &DAT_0005a43a;
       }
-      else if (_fuel_operation_mode_index == 3) {
+      else if (fuel_operation_mode_index == 3) {
         in_r6 = &DAT_0005a444;
       }
     }
-    else if (_fuel_operation_mode_index == 5) {
+    else if (fuel_operation_mode_index == 5) {
       in_r6 = &DAT_0005a458;
     }
-    else if (_fuel_operation_mode_index == 6) {
+    else if (fuel_operation_mode_index == 6) {
       in_r6 = &DAT_0005a462;
     }
     sVar1 = lookupTableInterpolation
@@ -19865,8 +19747,6 @@ void cm848_initSpeedControlTableDimensions(void)
 // Function: cm848_advanceDiagnosticActionState @ 0x00021584
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 undefined4 cm848_advanceDiagnosticActionState(void)
 
 {
@@ -19875,17 +19755,17 @@ undefined4 cm848_advanceDiagnosticActionState(void)
   uVar1 = 7;
   if (((protection_mode_select_flag == 0) && ((protection_enable_t_0040c050.mode_bits & 1) != 0)) ||
      ((protection_mode_select_flag == 1 && ((fault_management_status_flags & 0x400) == 0)))) {
-    if (_diagnostic_clear_request_state == 0) {
-      _diagnostic_clear_request_state = 1;
+    if (diagnostic_clear_request_state == 0) {
+      diagnostic_clear_request_state = 1;
     }
-    else if (_diagnostic_clear_request_state == 1) {
-      _diagnostic_clear_request_state = 1;
+    else if (diagnostic_clear_request_state == 1) {
+      diagnostic_clear_request_state = 1;
     }
-    else if (_diagnostic_clear_request_state == 2) {
-      _diagnostic_clear_request_state = 3;
+    else if (diagnostic_clear_request_state == 2) {
+      diagnostic_clear_request_state = 3;
     }
-    else if (_diagnostic_clear_request_state == 3) {
-      _diagnostic_clear_request_state = 3;
+    else if (diagnostic_clear_request_state == 3) {
+      diagnostic_clear_request_state = 3;
     }
     uVar1 = 0;
   }
@@ -19898,17 +19778,15 @@ undefined4 cm848_advanceDiagnosticActionState(void)
 // Function: cm848_enableJ1939Output @ 0x00021624
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 undefined4 cm848_enableJ1939Output(void)
 
 {
   undefined4 uVar1;
   
   uVar1 = 4;
-  if (_j1939_init_pending_flag == 1) {
-    _j1939_init_pending_flag = 0;
-    _uds_session_active_flag = 1;
+  if (j1939_init_pending_flag == 1) {
+    j1939_init_pending_flag = 0;
+    uds_session_active_flag = 1;
     j1939_lamp_status_byte = 0xee;
     uVar1 = 0;
   }
@@ -19921,13 +19799,11 @@ undefined4 cm848_enableJ1939Output(void)
 // Function: cm848_initJ1939MessageBuffers @ 0x00021668
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 undefined4 cm848_initJ1939MessageBuffers(void)
 
 {
-  _uds_session_active_flag = 0;
-  _j1939_init_pending_flag = 1;
+  uds_session_active_flag = 0;
+  j1939_init_pending_flag = 1;
   j1939_lamp_status_byte = 0xea;
   return 0;
 }
@@ -19938,8 +19814,6 @@ undefined4 cm848_initJ1939MessageBuffers(void)
 // Function: cm848_enableJ1939OutputDirect @ 0x00021694
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 undefined4 cm848_enableJ1939OutputDirect(void)
 
 {
@@ -19947,10 +19821,10 @@ undefined4 cm848_enableJ1939OutputDirect(void)
   
   uVar1 = 7;
   if (protection_mode_select_flag != 1) {
-    _uds_session_active_flag = 1;
+    uds_session_active_flag = 1;
     if (j1939_lamp_status_byte == 0xea) {
       j1939_lamp_status_byte = 0xee;
-      _j1939_init_pending_flag = 0;
+      j1939_init_pending_flag = 0;
     }
     uVar1 = 0;
   }
@@ -19963,12 +19837,10 @@ undefined4 cm848_enableJ1939OutputDirect(void)
 // Function: cm848_setColdStartActiveFlag @ 0x000216e8
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 undefined4 cm848_setColdStartActiveFlag(void)
 
 {
-  _engine_start_active_flag = 1;
+  engine_start_active_flag = 1;
   return 0;
 }
 
@@ -19986,16 +19858,16 @@ undefined4 mpc555_processJ1939RxQueue(undefined4 param_1,int param_2)
 {
   char cVar1;
   undefined4 uVar2;
-  int local_18 [2];
+  dword local_18 [2];
   
   uVar2 = 7;
-  if (_cold_start_phase == 1) {
+  if (cold_start_phase == 1) {
     while (cVar1 = cm848_protectionEnableCheck(), cVar1 == '\0') {
       cm848_delayMicroseconds2(0x13);
     }
-    local_18[0] = _fault_timing_snapshot;
+    local_18[0] = fault_timing_snapshot;
     cm848_updateProtectionTimers(&DAT_003fd4b2,local_18,4);
-    if (_uds_session_active_flag == 0) {
+    if (uds_session_active_flag == 0) {
       cm848_delayMicroseconds2(9);
     }
     else if (_DAT_003fd4b2 != local_18[0]) {
@@ -20003,9 +19875,9 @@ undefined4 mpc555_processJ1939RxQueue(undefined4 param_1,int param_2)
         cm848_delayMicroseconds2(0x13);
       } while (_DAT_003fd4b2 != local_18[0]);
     }
-    local_18[0] = _protection_timer_config_a;
+    local_18[0] = protection_timer_config_a;
     cm848_updateProtectionTimers(&DAT_003fd4c4,local_18,4);
-    if (_uds_session_active_flag == 0) {
+    if (uds_session_active_flag == 0) {
       cm848_delayMicroseconds2(9);
     }
     else if (_DAT_003fd4c4 != local_18[0]) {
@@ -20065,12 +19937,10 @@ undefined1 cm848_j1939ProcessRxQueueParam(undefined4 param_1)
 // Function: cm848_setColdStartMode2Flag @ 0x00021904
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 undefined4 cm848_setColdStartMode2Flag(void)
 
 {
-  _engine_shutdown_active_flag = 1;
+  engine_shutdown_active_flag = 1;
   return 0;
 }
 
@@ -20159,8 +20029,6 @@ void cm848_registerJ1939DiagnosticHandlers(void)
 // Function: cm848_initUdsServiceHandlers @ 0x00021ac0
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 undefined2 cm848_initUdsServiceHandlers(undefined4 param_1)
 
 {
@@ -20184,14 +20052,14 @@ undefined2 cm848_initUdsServiceHandlers(undefined4 param_1)
   uVar2 = cm848_dualAxisTableInterpolation
                     (&local_30,param_1,&j1939_fuel_table_xaxis_cal,0,&j1939_fuel_table_ystart_cal,
                      &j1939_fuel_table_yend_cal,0);
-  uVar1 = (uint)_boost_map_index_current << 0xe;
+  uVar1 = (uint)boost_map_index_current << 0xe;
   if (0xffff < uVar1) {
     uVar1 = 0xffff;
   }
   uVar3 = cm848_dualAxisTableInterpolation
                     (&local_2c,param_1,&j1939_fuel_table_xaxis_cal,uVar1 & 0xffff,
                      &j1939_fuel_table_ystart_cal,&j1939_fuel_table_yend_cal,0);
-  uVar1 = (uint)_boost_map_index_target << 0xe;
+  uVar1 = (uint)boost_map_index_target << 0xe;
   if (0xffff < uVar1) {
     uVar1 = 0xffff;
   }
@@ -20199,7 +20067,7 @@ undefined2 cm848_initUdsServiceHandlers(undefined4 param_1)
                     (&local_28,param_1,&j1939_fuel_table_xaxis_cal,uVar1 & 0xffff,
                      &j1939_fuel_table_ystart_cal,&j1939_fuel_table_yend_cal,0);
   uVar2 = cm848_filterInputValue
-                    (uVar3,uVar4,uVar2,_boost_map_index_current,_boost_map_index_target,
+                    (uVar3,uVar4,uVar2,boost_map_index_current,boost_map_index_target,
                      fuel_blend_state_t_0040a494.blend_weight,fuel_blend_state_t_0040a494.blend_mode
                     );
   return uVar2;
@@ -20210,8 +20078,6 @@ undefined2 cm848_initUdsServiceHandlers(undefined4 param_1)
 //
 // Function: cm848_applyFuelDemandFilter @ 0x00021b28
 //
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 undefined2 cm848_applyFuelDemandFilter(undefined2 param_1)
 
@@ -20224,20 +20090,20 @@ undefined2 cm848_applyFuelDemandFilter(undefined2 param_1)
   undefined4 unaff_r29;
   undefined4 unaff_r30;
   
-  uVar1 = (uint)_boost_map_index_current << 0xe;
+  uVar1 = (uint)boost_map_index_current << 0xe;
   if (0xffff < uVar1) {
     uVar1 = 0xffff;
   }
   uVar2 = cm848_dualAxisTableInterpolation
                     (&stack0x0000000c,unaff_r30,unaff_r29,uVar1 & 0xffff,unaff_r28,unaff_r27,0);
-  uVar1 = (uint)_boost_map_index_target << 0xe;
+  uVar1 = (uint)boost_map_index_target << 0xe;
   if (0xffff < uVar1) {
     uVar1 = 0xffff;
   }
   uVar3 = cm848_dualAxisTableInterpolation
                     (&stack0x00000010,unaff_r30,unaff_r29,uVar1 & 0xffff,unaff_r28,unaff_r27,0);
   uVar2 = cm848_filterInputValue
-                    (uVar2,uVar3,param_1,_boost_map_index_current,_boost_map_index_target,
+                    (uVar2,uVar3,param_1,boost_map_index_current,boost_map_index_target,
                      fuel_blend_state_t_0040a494.blend_weight,fuel_blend_state_t_0040a494.blend_mode
                     );
   return uVar2;
@@ -20505,8 +20371,6 @@ void cm848_initJ1939DiagnosticServiceHandler(void)
 // Function: cm848_updateGovernorTimers @ 0x00022220
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_updateGovernorTimers(void)
 
 {
@@ -20531,7 +20395,7 @@ void cm848_updateGovernorTimers(void)
        governor_derivative_mask_b;
   if ((((governor_channel_t_0040addc.gain_schedule == 0) && (governor_channel1_gain_schedule == 0))
       && (governor_channel2_gain_schedule == 0)) && (engine_state_transition_timer == 0)) {
-    _governor_derivative_active_flag = 0;
+    governor_derivative_active_flag = 0;
   }
   return;
 }
@@ -20542,12 +20406,10 @@ void cm848_updateGovernorTimers(void)
 // Function: cm848_resetGovernorControlState @ 0x000222f8
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_resetGovernorControlState(void)
 
 {
-  _governor_derivative_active_flag = 1;
+  governor_derivative_active_flag = 1;
   engine_state_transition_timer = governor_gain_schedule_cal;
   return;
 }
@@ -20650,8 +20512,6 @@ void cm848_clearGovernorDerivativeMode(int param_1)
 // Function: cm848_processGovernorControlMessage @ 0x000223f4
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_processGovernorControlMessage(int param_1)
 
 {
@@ -20748,7 +20608,7 @@ void cm848_processGovernorControlMessage(int param_1)
         uVar12 = uVar12 + 1 & 0xff;
       } while (uVar12 < 3);
       engine_state_transition_timer = 0;
-      _governor_derivative_active_flag = 0;
+      governor_derivative_active_flag = 0;
     }
   }
   return;
@@ -20759,8 +20619,6 @@ void cm848_processGovernorControlMessage(int param_1)
 //
 // Function: cm848_initializeGovernorDerivatives @ 0x00022468
 //
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void cm848_initializeGovernorDerivatives(void)
 
@@ -20775,7 +20633,7 @@ void cm848_initializeGovernorDerivatives(void)
     *(undefined2 *)(unaff_r29 + in_r10 * 6 + 4) = unaff_r28;
   }
   engine_state_transition_timer = 0;
-  _governor_derivative_active_flag = 0;
+  governor_derivative_active_flag = 0;
   return;
 }
 
@@ -20852,8 +20710,6 @@ void cm848_processGovernorSecurityAccessRequest(undefined4 param_1,undefined4 pa
 // Function: cm848_j1939HandlePgn65228Dm3ClearDiag @ 0x00022674
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_j1939HandlePgn65228Dm3ClearDiag(undefined4 param_1)
 
 {
@@ -20861,17 +20717,17 @@ void cm848_j1939HandlePgn65228Dm3ClearDiag(undefined4 param_1)
   
   if (((protection_mode_select_flag == 0) && ((protection_enable_t_0040c050.mode_bits & 1) != 0)) ||
      ((protection_mode_select_flag == 1 && ((fault_management_status_flags & 0x400) == 0)))) {
-    if (_diagnostic_clear_request_state == 0) {
-      _diagnostic_clear_request_state = 1;
+    if (diagnostic_clear_request_state == 0) {
+      diagnostic_clear_request_state = 1;
     }
-    else if (_diagnostic_clear_request_state == 1) {
-      _diagnostic_clear_request_state = 1;
+    else if (diagnostic_clear_request_state == 1) {
+      diagnostic_clear_request_state = 1;
     }
-    else if (_diagnostic_clear_request_state == 2) {
-      _diagnostic_clear_request_state = 3;
+    else if (diagnostic_clear_request_state == 2) {
+      diagnostic_clear_request_state = 3;
     }
-    else if (_diagnostic_clear_request_state == 3) {
-      _diagnostic_clear_request_state = 3;
+    else if (diagnostic_clear_request_state == 3) {
+      diagnostic_clear_request_state = 3;
     }
     if (j1939_dm1_active_flag == 0) {
       uVar1 = 0;
@@ -20912,14 +20768,12 @@ void cm848_initPgn65228Dm3Handler(void)
 // Function: cm848_j1939HandleDm1RequestMessage @ 0x000227a0
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_j1939HandleDm1RequestMessage(int param_1)
 
 {
   DAT_003fa97a = **(byte **)(param_1 + 6);
   if ((DAT_003fa97a == 0) && ((j1939_feature_config_word & 0x100) != 0)) {
-    cm848_j1939SendDm1ResponseMessage(0,_j1939_dm1_response_mode);
+    cm848_j1939SendDm1ResponseMessage(0,j1939_dm1_response_mode);
   }
   else if ((DAT_003fa97a == 1) && ((j1939_feature_config_word & 0x200) != 0)) {
     cm848_j1939SendDm1ResponseMessage(1,j1939_dm1_response_destination);
@@ -20949,17 +20803,15 @@ void cm848_initJ1939Dm1RequestHandler(void)
 // Function: cm848_j1939ProcessPgn61442Etc1 @ 0x00022870
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_j1939ProcessPgn61442Etc1(int param_1)
 
 {
-  if ((*(byte *)(param_1 + 3) != _j1939_ecu_source_address_cal) &&
-     (_j1939_ecu_source_address_cal != 0xff)) {
+  if ((*(byte *)(param_1 + 3) != j1939_ecu_source_address_cal) &&
+     (j1939_ecu_source_address_cal != 0xff)) {
     return;
   }
   if (*(short *)(param_1 + 4) != 8) {
-    _DAT_0040ae4c = DAT_0005c38a + 1;
+    etc1_override_timer_countdown = DAT_0005c38a + 1U;
     return;
   }
   etc1_message_t_003fa982.byte1_status = **(byte **)(param_1 + 6);
@@ -20975,27 +20827,27 @@ LAB_00022900:
   }
   etc1_state_t_0040ae00.spn574_shift_in_process =
        (etc1_message_t_003fa982.byte1_status & 0x30) == 0x10;
-  if ((((_etc1_transmission_mode == 4) || (_etc1_transmission_mode == 5)) &&
+  if ((((etc1_transmission_mode == 4) || (etc1_transmission_mode == 5)) &&
       ((etc1_message_t_003fa982.byte1_status & 3) < 2)) &&
      ((etc1_message_t_003fa982.byte1_status & 0x30) < 0x11)) {
     etc1_state_t_0040ae00.override_timeout = DAT_0005c3a0 + 1;
     etc1_state_t_0040ae00.control_active = 1;
   }
-  if (((_etc1_transmission_mode != 4) && (_etc1_transmission_mode != 5)) ||
+  if (((etc1_transmission_mode != 4) && (etc1_transmission_mode != 5)) ||
      (etc1_state_t_0040ae00.control_active == 1)) {
     if (((etc1_message_t_003fa982.byte1_status & 0x30) == 0) &&
        ((etc1_message_t_003fa982.byte1_status & 3) == 0)) {
-      _DAT_0040adfc = 1;
+      j1939_etc1_torque_limit_flag = 1;
       etc1_state_t_0040ae00.torque_limit_timer = DAT_0005c38e + 1;
       etc1_state_t_0040ae00.reserved_10 = 1;
     }
     else {
-      _DAT_0040adfc = 0;
+      j1939_etc1_torque_limit_flag = 0;
       etc1_state_t_0040ae00.torque_limit_timer = 0;
     }
   }
 LAB_00022a00:
-  if ((_etc1_transmission_mode == 4) &&
+  if ((etc1_transmission_mode == 4) &&
      (etc1_message_t_003fa982.spn191_output_shaft_speed =
            CONCAT11(*(undefined1 *)(*(int *)(param_1 + 6) + 2),(*(byte **)(param_1 + 6))[1]),
      etc1_message_t_003fa982.spn191_output_shaft_speed < 0xfb00)) {
@@ -21004,16 +20856,16 @@ LAB_00022a00:
     output_shaft_speed_prev = etc1_message_t_003fa982.spn191_output_shaft_speed;
     system_status_flags_t_003fe974.condition_monitor =
          system_status_flags_t_003fe974.condition_monitor & 0xdfff;
-    _engine_timing_shadow_flags = _engine_timing_shadow_flags & 0xdfff;
+    engine_timing_shadow_flags = engine_timing_shadow_flags & 0xdfff;
   }
   etc1_message_t_003fa982.byte5_control = *(byte *)(*(int *)(param_1 + 6) + 4);
   if ((etc1_message_t_003fa982.byte5_control & 3) == 1) {
-    if (_DAT_0040ae4a == 0) {
+    if (etc1_prev_speed_ctrl_active_flag == 0) {
       if (etc1_state_t_0040ae00.speed_override_timer == 0) {
         etc1_state_t_0040ae00.speed_override_timer = DAT_0005c388 + 1;
       }
-      if ((_DAT_0040adf8 == 1) && (_j1939_governor_source_index == 1)) {
-        _DAT_0040adfa = 1;
+      if ((j1939_tsc1_override_state == 1) && (j1939_governor_source_index == 1)) {
+        j1939_tsc1_speed_override_active_flag = 1;
       }
       etc1_state_t_0040ae00.torque_active_timer = DAT_0005c386 + 1;
     }
@@ -21022,21 +20874,21 @@ LAB_00022a00:
     }
   }
   else if ((etc1_message_t_003fa982.byte5_control & 3) == 0) {
-    _DAT_0040ae4a = 0;
+    etc1_prev_speed_ctrl_active_flag = 0;
     etc1_state_t_0040ae00.speed_control_target = etc1_state_t_0040ae00.speed_control_target & 3;
-    _DAT_0040adfa = 0;
+    j1939_tsc1_speed_override_active_flag = 0;
     etc1_state_t_0040ae00.speed_override_timer = 0;
     etc1_state_t_0040ae00.torque_active_timer = 0;
   }
   if ((etc1_message_t_003fa982.byte5_control & 0xc) == 4) {
-    _DAT_0040adfe = 1;
+    j1939_etc1_speed_mode_flag = 1;
     etc1_state_t_0040ae00.speed_mode_flag = DAT_0005c390 + 1;
   }
   else if ((etc1_message_t_003fa982.byte5_control & 0xc) != 0xc) {
-    _DAT_0040adfe = 0;
+    j1939_etc1_speed_mode_flag = 0;
     etc1_state_t_0040ae00.speed_mode_flag = 0;
   }
-  _DAT_0040ae4c = DAT_0005c38a + 1;
+  etc1_override_timer_countdown = DAT_0005c38a + 1U;
   return;
 }
 
@@ -21046,8 +20898,6 @@ LAB_00022a00:
 // Function: cm848_selectTorqueLimitMode @ 0x00022ab8
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_selectTorqueLimitMode(void)
 
 {
@@ -21056,16 +20906,16 @@ void cm848_selectTorqueLimitMode(void)
   if (etc1_state_t_0040ae00.speed_override_timer == 0) {
     etc1_state_t_0040ae00.speed_override_timer = DAT_0005c388 + 1;
   }
-  if ((_DAT_0040adf8 == 1) && (_j1939_governor_source_index == 1)) {
-    _DAT_0040adfa = 1;
+  if ((j1939_tsc1_override_state == 1) && (j1939_governor_source_index == 1)) {
+    j1939_tsc1_speed_override_active_flag = 1;
   }
   etc1_state_t_0040ae00.torque_active_timer = DAT_0005c386 + 1;
   if ((unaff_r30 & 0xc) == 4) {
-    _DAT_0040adfe = 1;
+    j1939_etc1_speed_mode_flag = 1;
     etc1_state_t_0040ae00.speed_mode_flag = DAT_0005c390 + 1;
   }
   else if ((unaff_r30 & 0xc) != 0xc) {
-    _DAT_0040adfe = 0;
+    j1939_etc1_speed_mode_flag = 0;
     etc1_state_t_0040ae00.speed_mode_flag = 0;
   }
   return;
@@ -21077,18 +20927,16 @@ void cm848_selectTorqueLimitMode(void)
 // Function: cm848_initJ1939Pgn61442Etc1Handler @ 0x00022bc4
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_initJ1939Pgn61442Etc1Handler(void)
 
 {
-  _DAT_0040ae4c = 0;
+  etc1_override_timer_countdown = 0;
   etc1_state_t_0040ae00.reserved_36._0_2_ = DAT_0005c3a4;
   etc1_state_t_0040ae00.handler_initialized = 1;
-  if (_etc1_transmission_mode == 4) {
+  if (etc1_transmission_mode == 4) {
     system_status_flags_t_003fe974.condition_monitor =
          system_status_flags_t_003fe974.condition_monitor & 0xdfff;
-    _engine_timing_shadow_flags = _engine_timing_shadow_flags & 0xdfff;
+    engine_timing_shadow_flags = engine_timing_shadow_flags & 0xdfff;
   }
   j1939_handlerInitializer(0xf002,cm848_j1939ProcessPgn61442Etc1);
   return;
@@ -21115,8 +20963,6 @@ void cm848_initJ1939VehicleSpeedHandler(void)
 //
 // Function: torqueControlModeHandler @ 0x00022d60
 //
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void torqueControlModeHandler(int param_1)
 
@@ -21146,7 +20992,7 @@ void torqueControlModeHandler(int param_1)
       return;
     }
   }
-  if (_DAT_0040adf8 == 0) {
+  if (j1939_tsc1_override_state == 0) {
     sVar2 = cm848_governorSpeedControl(1,cVar1);
     if (sVar2 != 0) {
       return;
@@ -21165,7 +21011,7 @@ void torqueControlModeHandler(int param_1)
       return;
     }
     if (bVar4 == etc1_message_t_003fa982.priority_byte) {
-      if (_DAT_0040adf8 != 3) {
+      if (j1939_tsc1_override_state != 3) {
         return;
       }
       if (bVar3 == 3) {
@@ -21190,23 +21036,22 @@ void torqueControlModeHandler(int param_1)
   }
   etc1_state_t_0040ae00.secondary_config_ptr = etc1_state_t_0040ae00.active_config_ptr;
 accept_etc1_command:
-  _etc1_control_word_cached = (ushort)etc1_message_t_003fa982.control_word;
+  etc1_control_word_cached = (word)etc1_message_t_003fa982.control_word;
   etc1_state_t_0040ae00.active_state = 1;
   etc1_message_t_003fa982.priority_byte = bVar4;
   etc1_state_t_0040ae00.config_entry_ptr._3_1_ = cVar1;
   if (bVar3 == 0) {
     etc1_state_t_0040ae00.reserved_1c[6] = 0;
     etc1_state_t_0040ae00.reserved_1c[7] = 0;
-    _DAT_0040adf8 = 0;
-    _j1939_governor_source_index = 0;
+    j1939_tsc1_override_state = 0;
+    j1939_governor_source_index = 0;
     etc1_state_t_0040ae00.control_flags = 0;
   }
   else if (bVar3 == 1) {
     etc1_state_t_0040ae00.reserved_1c._6_2_ =
          *(short *)(etc1_state_t_0040ae00.secondary_config_ptr + 4) + 1;
-    _DAT_0040adf8 = 1;
-    _j1939_governor_source_index = cm848_lookupJ1939SourceAddressIndex(*(undefined1 *)(param_1 + 3))
-    ;
+    j1939_tsc1_override_state = 1;
+    j1939_governor_source_index = cm848_lookupJ1939SourceAddressIndex(*(undefined1 *)(param_1 + 3));
     etc1_state_t_0040ae00.control_flags = 1;
     etc1_message_t_003fa982.speed_stored = etc1_message_t_003fa982.requested_speed;
     etc1_state_t_0040ae00.capped_speed_target = etc1_message_t_003fa982.requested_speed;
@@ -21219,9 +21064,8 @@ accept_etc1_command:
   else if (bVar3 == 2) {
     etc1_state_t_0040ae00.reserved_1c._6_2_ =
          *(short *)(etc1_state_t_0040ae00.secondary_config_ptr + 8) + 1;
-    _DAT_0040adf8 = 2;
-    _j1939_governor_source_index = cm848_lookupJ1939SourceAddressIndex(*(undefined1 *)(param_1 + 3))
-    ;
+    j1939_tsc1_override_state = 2;
+    j1939_governor_source_index = cm848_lookupJ1939SourceAddressIndex(*(undefined1 *)(param_1 + 3));
     etc1_state_t_0040ae00.control_flags = 0;
     etc1_message_t_003fa982.torque_stored = etc1_message_t_003fa982.requested_torque;
     etc1_state_t_0040ae00.speed_setpoint =
@@ -21237,9 +21081,8 @@ accept_etc1_command:
   else if (bVar3 == 3) {
     etc1_state_t_0040ae00.reserved_1c._6_2_ =
          *(short *)(etc1_state_t_0040ae00.secondary_config_ptr + 0xc) + 1;
-    _DAT_0040adf8 = 3;
-    _j1939_governor_source_index = cm848_lookupJ1939SourceAddressIndex(*(undefined1 *)(param_1 + 3))
-    ;
+    j1939_tsc1_override_state = 3;
+    j1939_governor_source_index = cm848_lookupJ1939SourceAddressIndex(*(undefined1 *)(param_1 + 3));
     etc1_state_t_0040ae00.control_flags = 0;
     etc1_message_t_003fa982.speed_stored = etc1_message_t_003fa982.requested_speed;
     etc1_state_t_0040ae00.mode3_speed_target = etc1_message_t_003fa982.requested_speed;
@@ -21252,8 +21095,8 @@ accept_etc1_command:
       etc1_state_t_0040ae00.mode3_torque_limit = 0;
     }
   }
-  if (_j1939_governor_source_index != 1) {
-    _DAT_0040adfa = 0;
+  if (j1939_governor_source_index != 1) {
+    j1939_tsc1_speed_override_active_flag = 0;
   }
   return;
 }
@@ -21263,8 +21106,6 @@ accept_etc1_command:
 //
 // Function: cm848_processGovernorSpeedControlRequest @ 0x00022e3c
 //
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void cm848_processGovernorSpeedControlRequest(void)
 
@@ -21305,7 +21146,7 @@ void cm848_processGovernorSpeedControlRequest(void)
     }
     etc1_state_t_0040ae00.secondary_config_ptr = etc1_state_t_0040ae00.active_config_ptr;
   }
-  _etc1_control_word_cached = (ushort)*unaff_r31;
+  etc1_control_word_cached = (word)*unaff_r31;
   etc1_message_t_003fa982.priority_byte = (byte)unaff_r26;
   etc1_state_t_0040ae00.active_state = 1;
   etc1_state_t_0040ae00.config_entry_ptr._3_1_ = (undefined1)unaff_r27;
@@ -21313,14 +21154,14 @@ void cm848_processGovernorSpeedControlRequest(void)
     etc1_state_t_0040ae00.reserved_1c[6] = 0;
     etc1_state_t_0040ae00.reserved_1c[7] = 0;
     *unaff_r29 = 0;
-    _j1939_governor_source_index = 0;
+    j1939_governor_source_index = 0;
     etc1_state_t_0040ae00.control_flags = 0;
   }
   else if (unaff_r28 == 1) {
     etc1_state_t_0040ae00.reserved_1c._6_2_ =
          *(short *)(etc1_state_t_0040ae00.secondary_config_ptr + 4) + 1;
     *unaff_r29 = 1;
-    _j1939_governor_source_index =
+    j1939_governor_source_index =
          cm848_lookupJ1939SourceAddressIndex(*(undefined1 *)(unaff_r30 + 3));
     etc1_state_t_0040ae00.control_flags = 1;
     etc1_message_t_003fa982.speed_stored = *(word *)(unaff_r31 + 1);
@@ -21334,7 +21175,7 @@ void cm848_processGovernorSpeedControlRequest(void)
     etc1_state_t_0040ae00.reserved_1c._6_2_ =
          *(short *)(etc1_state_t_0040ae00.secondary_config_ptr + 8) + 1;
     *unaff_r29 = 2;
-    _j1939_governor_source_index =
+    j1939_governor_source_index =
          cm848_lookupJ1939SourceAddressIndex(*(undefined1 *)(unaff_r30 + 3));
     etc1_state_t_0040ae00.control_flags = 0;
     etc1_message_t_003fa982.torque_stored = unaff_r31[3];
@@ -21352,7 +21193,7 @@ void cm848_processGovernorSpeedControlRequest(void)
     etc1_state_t_0040ae00.reserved_1c._6_2_ =
          *(short *)(etc1_state_t_0040ae00.secondary_config_ptr + 0xc) + 1;
     *unaff_r29 = 3;
-    _j1939_governor_source_index =
+    j1939_governor_source_index =
          cm848_lookupJ1939SourceAddressIndex(*(undefined1 *)(unaff_r30 + 3));
     etc1_state_t_0040ae00.control_flags = 0;
     etc1_message_t_003fa982.speed_stored = *(word *)(unaff_r31 + 1);
@@ -21366,8 +21207,8 @@ void cm848_processGovernorSpeedControlRequest(void)
       etc1_state_t_0040ae00.mode3_torque_limit = 0;
     }
   }
-  if (_j1939_governor_source_index != 1) {
-    _DAT_0040adfa = 0;
+  if (j1939_governor_source_index != 1) {
+    j1939_tsc1_speed_override_active_flag = 0;
   }
   return;
 }
@@ -21377,8 +21218,6 @@ void cm848_processGovernorSpeedControlRequest(void)
 //
 // Function: cm848_processGovernorSpeedRequest @ 0x00022f90
 //
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void cm848_processGovernorSpeedRequest(void)
 
@@ -21390,8 +21229,7 @@ void cm848_processGovernorSpeedRequest(void)
   
   *(short *)(in_r12 + -0x51de) = *(short *)(etc1_state_t_0040ae00.secondary_config_ptr + 4) + 1;
   *unaff_r29 = 1;
-  _j1939_governor_source_index = cm848_lookupJ1939SourceAddressIndex(*(undefined1 *)(unaff_r30 + 3))
-  ;
+  j1939_governor_source_index = cm848_lookupJ1939SourceAddressIndex(*(undefined1 *)(unaff_r30 + 3));
   etc1_state_t_0040ae00.control_flags = 1;
   etc1_state_t_0040ae00.capped_speed_target = *(word *)(unaff_r31 + 1);
   etc1_message_t_003fa982.speed_stored = etc1_state_t_0040ae00.capped_speed_target;
@@ -21399,8 +21237,8 @@ void cm848_processGovernorSpeedRequest(void)
     etc1_state_t_0040ae00.capped_speed_target = 24000;
   }
   etc1_state_t_0040ae00.speed_control_mode = (word)((*unaff_r31 & 0xc) >> 2);
-  if (_j1939_governor_source_index != 1) {
-    _DAT_0040adfa = 0;
+  if (j1939_governor_source_index != 1) {
+    j1939_tsc1_speed_override_active_flag = 0;
   }
   return;
 }
@@ -21439,7 +21277,7 @@ void cm848_j1939DispatchPgnHandler(int param_1)
   j1939_pgn_handler_entry_t *pjVar2;
   
   pjVar2 = &j1939_pgn_handler_entry_t_003fa9a2;
-  if (((j1939_source_address & 0xff) == (ushort)*(byte *)(param_1 + 2)) ||
+  if (((j1939_source_address._0_2_ & 0xff) == (ushort)*(byte *)(param_1 + 2)) ||
      (*(byte *)(param_1 + 2) == 0xff)) {
     bVar1 = 0;
     if (engine_state_seq_counter != 0) {
@@ -21571,11 +21409,11 @@ void j1939FormatMultiFrameResponse(void)
   
   uVar1 = (uint)j1939_transfer_frame_count;
   if (uVar1 == 0) {
-    _governor_output_percentage = 0;
+    governor_output_percentage = 0;
     return;
   }
-  if ((_governor_mode_state == 3) && (99 < uVar1)) {
-    _governor_output_percentage = 100;
+  if ((governor_mode_state == 3) && (99 < uVar1)) {
+    governor_output_percentage = 100;
     return;
   }
   _DAT_003faa76 = DAT_0005a46a;
@@ -21608,40 +21446,40 @@ void j1939FormatMultiFrameResponse(void)
                          (&DAT_003faa82,engine_rpm_state_t_0040b7ac.current_rpm,
                           &governor_load_xaxis_cal,&DAT_0005a458,0);
           if (governor_speed_request_maximum < j1939_governor_speed_demand) {
-            if (_governor_mode_state == 2) {
-              _governor_output_percentage = 100;
+            if (governor_mode_state == 2) {
+              governor_output_percentage = 100;
               return;
             }
-            _governor_output_percentage = 0x53;
+            governor_output_percentage = 0x53;
             return;
           }
-          if (_governor_mode_state == 2) {
-            _governor_output_percentage = 0x53;
+          if (governor_mode_state == 2) {
+            governor_output_percentage = 0x53;
             return;
           }
         }
-        else if (_governor_mode_state != 2) {
-          _governor_output_percentage = 0x32;
+        else if (governor_mode_state != 2) {
+          governor_output_percentage = 0x32;
           return;
         }
-        _governor_output_percentage = 0x43;
+        governor_output_percentage = 0x43;
         return;
       }
-      if (_governor_mode_state == 2) {
-        _governor_output_percentage = 0x32;
+      if (governor_mode_state == 2) {
+        governor_output_percentage = 0x32;
         return;
       }
     }
-    else if (_governor_mode_state != 2) goto LAB_000235d0;
-    _governor_output_percentage = 0x21;
+    else if (governor_mode_state != 2) goto LAB_000235d0;
+    governor_output_percentage = 0x21;
   }
   else {
-    if (_governor_mode_state != 2) {
-      _governor_output_percentage = 0;
+    if (governor_mode_state != 2) {
+      governor_output_percentage = 0;
       return;
     }
 LAB_000235d0:
-    _governor_output_percentage = 0x11;
+    governor_output_percentage = 0x11;
   }
   return;
 }
@@ -21651,8 +21489,6 @@ LAB_000235d0:
 //
 // Function: cm848_routeGovernorHandlerByTable @ 0x0002352c
 //
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void cm848_routeGovernorHandlerByTable(void)
 
@@ -21688,39 +21524,39 @@ void cm848_routeGovernorHandlerByTable(void)
                           &governor_load_xaxis_cal,&DAT_0005a458,0);
           if (governor_speed_request_maximum < *unaff_r28) {
             if (*unaff_r31 != 2) {
-              _governor_output_percentage = 0x53;
+              governor_output_percentage = 0x53;
               return;
             }
-            _governor_output_percentage = 100;
+            governor_output_percentage = 100;
             return;
           }
           if (*unaff_r31 == 2) {
-            _governor_output_percentage = 0x53;
+            governor_output_percentage = 0x53;
             return;
           }
         }
         else if (*unaff_r31 != 2) {
-          _governor_output_percentage = 0x32;
+          governor_output_percentage = 0x32;
           return;
         }
-        _governor_output_percentage = 0x43;
+        governor_output_percentage = 0x43;
         return;
       }
       if (*unaff_r31 == 2) {
-        _governor_output_percentage = 0x32;
+        governor_output_percentage = 0x32;
         return;
       }
     }
     else if (*unaff_r31 != 2) goto LAB_000235d0;
-    _governor_output_percentage = 0x21;
+    governor_output_percentage = 0x21;
   }
   else {
     if (*unaff_r31 != 2) {
-      _governor_output_percentage = 0;
+      governor_output_percentage = 0;
       return;
     }
 LAB_000235d0:
-    _governor_output_percentage = 0x11;
+    governor_output_percentage = 0x11;
   }
   return;
 }
@@ -21731,12 +21567,10 @@ LAB_000235d0:
 // Function: cm848_setGovernorHandlerDefault @ 0x000236b4
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_setGovernorHandlerDefault(void)
 
 {
-  _governor_output_percentage = 0x43;
+  governor_output_percentage = 0x43;
   return;
 }
 
@@ -21745,8 +21579,6 @@ void cm848_setGovernorHandlerDefault(void)
 //
 // Function: cm848_j1939ProcessGovernorRequest @ 0x000236f0
 //
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void cm848_j1939ProcessGovernorRequest(int param_1)
 
@@ -21757,7 +21589,7 @@ void cm848_j1939ProcessGovernorRequest(int param_1)
   word wVar4;
   byte bVar5;
   
-  if (_j1939_dm_feature_mode == 0) {
+  if (j1939_dm_feature_mode == 0) {
     return;
   }
   if (*(short *)(param_1 + 4) != 8) {
@@ -21771,7 +21603,7 @@ void cm848_j1939ProcessGovernorRequest(int param_1)
   bVar5 = tsc1_rx_byte_0 & 0x30;
   tsc1_rx_byte_3 = (*(byte **)(param_1 + 6))[3];
   bVar1 = *(byte *)(param_1 + 3);
-  if (((governor_feature_config_word & 0x1000) == 0) && (bVar1 == _j1939_ecu_source_address_cal)) {
+  if (((governor_feature_config_word & 0x1000) == 0) && (bVar1 == j1939_ecu_source_address_cal)) {
     return;
   }
   if (bVar2 == 0) {
@@ -21784,14 +21616,14 @@ void cm848_j1939ProcessGovernorRequest(int param_1)
       return;
     }
   }
-  if (_governor_mode_state == 0) {
+  if (governor_mode_state == 0) {
     sVar3 = cm848_governorSpeedControl(1,bVar1);
     if (sVar3 != 0) {
       return;
     }
   }
   else {
-    if (bVar1 == _governor_mode_transition_state) goto LAB_00023878;
+    if (bVar1 == governor_mode_transition_state) goto LAB_00023878;
     if (bVar2 == 0) {
       return;
     }
@@ -21803,7 +21635,7 @@ void cm848_j1939ProcessGovernorRequest(int param_1)
       return;
     }
     if (bVar5 == DAT_003faa66) {
-      if (_governor_mode_state == 2) {
+      if (governor_mode_state == 2) {
         return;
       }
       if ((bVar2 == 3) && (tsc1_rx_byte_3 <= DAT_003faa67)) {
@@ -21815,13 +21647,13 @@ void cm848_j1939ProcessGovernorRequest(int param_1)
   etc1_state_t_0040ae00.message_timeout = etc1_state_t_0040ae00.active_config_ptr._2_2_;
 LAB_00023878:
   DAT_003faa67 = tsc1_rx_byte_3;
-  _governor_mode_transition_state = (ushort)bVar1;
+  governor_mode_transition_state = (word)bVar1;
   tsc1_rx_byte0_cached = (word)tsc1_rx_byte_0;
   if (bVar2 == 0) {
     DAT_003faa66 = bVar5;
-    _governor_mode_state = 0;
-    _j1939_source_address_index = 0;
-    _j1939_governor_output_percent_tx = 0x7d;
+    governor_mode_state = 0;
+    j1939_source_address_index = 0;
+    j1939_governor_output_percent_tx = 0x7d;
     etc1_state_t_0040ae00.torque_mode_timer = 0;
     return;
   }
@@ -21830,21 +21662,21 @@ LAB_00023878:
     wVar4 = cm848_j1939SetupMultiFrameTransfer(tsc1_rx_byte_3);
     j1939_transfer_frame_count = wVar4;
     j1939FormatMultiFrameResponse();
-    j1939_governor_output_percent_cached = _governor_output_percentage;
-    if ((((bVar1 == _j1939_ecu_source_address_cal) && (_DAT_0040adf8 == 1)) &&
-        (_j1939_governor_source_index == 1)) &&
+    j1939_governor_output_percent_cached = governor_output_percentage;
+    if ((((bVar1 == j1939_ecu_source_address_cal) && (j1939_tsc1_override_state == 1)) &&
+        (j1939_governor_source_index == 1)) &&
        ((DAT_0005c36c <= governor_proportional_gain && (wVar4 != 0)))) {
       etc1_state_t_0040ae00.torque_mode_timer = 0;
-      _governor_mode_state = 0;
-      _j1939_source_address_index = 0;
+      governor_mode_state = 0;
+      j1939_source_address_index = 0;
     }
     else {
       etc1_state_t_0040ae00.torque_mode_timer = *(short *)(etc1_state_t_0040ae00._70_4_ + 0xe) + 1;
-      _governor_mode_state = 2;
-      _j1939_source_address_index =
-           cm848_lookupJ1939SourceAddressIndex(*(undefined1 *)(param_1 + 3));
+      governor_mode_state = 2;
+      j1939_source_address_index = cm848_lookupJ1939SourceAddressIndex(*(undefined1 *)(param_1 + 3))
+      ;
       if (j1939_governor_output_percent_cached == 0) {
-        _j1939_governor_output_percent_tx = 0x7d;
+        j1939_governor_output_percent_tx = 0x7d;
         etc1_state_t_0040ae00.mode_timeout = *(short *)(etc1_state_t_0040ae00._70_4_ + 0xe) + 1;
         etc1_state_t_0040ae00.speed_cmd_timeout = 0;
         return;
@@ -21852,21 +21684,21 @@ LAB_00023878:
     }
     etc1_state_t_0040ae00.speed_cmd_timeout = 0;
     etc1_state_t_0040ae00.mode_timeout = 0;
-    _j1939_governor_output_percent_tx = 0x7d;
+    j1939_governor_output_percent_tx = 0x7d;
     return;
   }
   if (bVar2 == 3) {
-    _governor_mode_state = 3;
-    _j1939_source_address_index = cm848_lookupJ1939SourceAddressIndex(*(undefined1 *)(param_1 + 3));
+    governor_mode_state = 3;
+    j1939_source_address_index = cm848_lookupJ1939SourceAddressIndex(*(undefined1 *)(param_1 + 3));
     j1939_transfer_frame_count = cm848_j1939SetupMultiFrameTransfer(tsc1_rx_byte_3);
     etc1_state_t_0040ae00.torque_mode_timer = *(short *)(etc1_state_t_0040ae00._70_4_ + 0x12) + 1;
     etc1_state_t_0040ae00.mode_timeout = etc1_state_t_0040ae00.torque_mode_timer;
-    if (_j1939_governor_output_percent_tx != 0) {
+    if (j1939_governor_output_percent_tx != 0) {
       etc1_state_t_0040ae00.mode_timeout = 0;
     }
     etc1_state_t_0040ae00.speed_cmd_timeout = 0;
     j1939FormatMultiFrameResponse();
-    _j1939_governor_output_percent_tx = _governor_output_percentage;
+    j1939_governor_output_percent_tx = governor_output_percentage;
     return;
   }
   return;
@@ -21883,11 +21715,11 @@ LAB_00023878:
 void cm848_initGovernorProtectionState(void)
 
 {
-  _j1939_governor_output_percent_tx = 100;
-  _governor_mode_state = 0;
-  _j1939_source_address_index = 0;
+  j1939_governor_output_percent_tx = 100;
+  governor_mode_state = 0;
+  j1939_source_address_index = 0;
   _DAT_003faa72 =
-       _cal_fuel_operation_mode_1_en + DAT_0005c480 + DAT_0005c482 + DAT_0005c484 + DAT_0005c486 +
+       cal_fuel_operation_mode_1_en + DAT_0005c480 + DAT_0005c482 + DAT_0005c484 + DAT_0005c486 +
        DAT_0005c488;
   _DAT_003faa7a = 2;
   _DAT_003faa7c = 2;
@@ -21903,18 +21735,16 @@ void cm848_initGovernorProtectionState(void)
 // Function: cm848_j1939DispatchAddressHandler @ 0x00023b38
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_j1939DispatchAddressHandler(int param_1)
 
 {
   ushort uVar1;
   
   uVar1 = (ushort)*(byte *)(param_1 + 2);
-  if (((j1939_source_address & 0xff) == uVar1) || (uVar1 == 0xff)) {
+  if (((j1939_source_address._0_2_ & 0xff) == uVar1) || (uVar1 == 0xff)) {
     torqueControlModeHandler(param_1);
   }
-  if (((_j1939_source_address & 0xff) == uVar1) || (uVar1 == 0xff)) {
+  if (((j1939_source_address_b & 0xff) == uVar1) || (uVar1 == 0xff)) {
     cm848_j1939ProcessGovernorRequest(param_1);
   }
   return;
@@ -21970,7 +21800,7 @@ void cm848_initJ1939ProprietaryStatusBuffer(void)
 
 {
   _DAT_003faa8c = CONCAT13(((byte)_DAT_003fd880 & 7) << 2,0xdc2800);
-  _DAT_003faa8c = CONCAT31(_DAT_003faa8c,(char)j1939_source_address);
+  _DAT_003faa8c = CONCAT31(_DAT_003faa8c,(char)j1939_source_address._0_2_);
   _DAT_003faa90 = 8;
   puRam003faa92 = &DAT_003faa84;
   puRam003faa96 = &DAT_003faa9a;
@@ -22143,7 +21973,8 @@ void cm848_initJ1939AmbientConditionsBuffer(void)
   _DAT_003faab8 = 8;
   _DAT_003faaba = &DAT_003faac2;
   _DAT_003faabe = &DAT_003faaca;
-  j1939_pgn65269_tx_header = CONCAT31(j1939_pgn65269_tx_header._0_3_,(char)j1939_source_address);
+  j1939_pgn65269_tx_header =
+       CONCAT31(j1939_pgn65269_tx_header._0_3_,(char)j1939_source_address._0_2_);
   _DAT_003faac3 = 0xffff;
   DAT_003faac7 = 0xff;
   _DAT_003faac8 = 0xffff;
@@ -22155,8 +21986,6 @@ void cm848_initJ1939AmbientConditionsBuffer(void)
 //
 // Function: cm848_j1939BuildEngineStatusByte @ 0x00024028
 //
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void cm848_j1939BuildEngineStatusByte(void)
 
@@ -22176,7 +22005,7 @@ LAB_00024080:
     }
     bVar1 = 0x43;
   }
-  if (_qadc_init_done_flag == 0) {
+  if (qadc_init_done_flag == 0) {
     bVar2 = 0x30;
   }
   else {
@@ -22284,7 +22113,7 @@ void cm848_j1939SendPgn65269_FEF5_AmbientConditions
 void cm848_initJ1939EngineStatusBuffer(void)
 
 {
-  j1939_pgn65241_tx_header = CONCAT31(0x14fed9,(char)j1939_source_address);
+  j1939_pgn65241_tx_header = CONCAT31(0x14fed9,(char)j1939_source_address._0_2_);
   _DAT_003faad8 = 1;
   _DAT_003faada = &j1939_pgn65269_tx_data;
   _DAT_003faade = &DAT_003faae2;
@@ -22315,7 +22144,7 @@ void j1939HandlePgn65265CruiseVehicleSpeed(void)
   else {
     j1939_dm1_status_byte = 0xfd;
   }
-  if (_etc1_transmission_mode < 1) {
+  if ((short)etc1_transmission_mode < 1) {
     _DAT_003faaf3 = 0xffff;
   }
   else {
@@ -22365,7 +22194,7 @@ LAB_0002432c:
 LAB_00024304:
       j1939_ccvs1_override_status = j1939_ccvs1_override_status | bVar2;
     }
-    if (_governor_override_active_flag != 0) {
+    if (governor_override_active_flag != 0) {
       bVar2 = 1;
       goto LAB_0002432c;
     }
@@ -22390,10 +22219,9 @@ LAB_00024304:
     }
     if ((protection_override_flags & 0x80) == 0) {
       if ((((protection_enable_t_0040c050.control_word & 0x80) != 0) ||
-          ((_j1939_tsc1_active_flag == 0 &&
-           ((protection_enable_t_0040c050.control_word & 0x80) != 0)))) ||
-         ((_j1939_tsc1_active_flag != 0 && ((protection_enable_t_0040c050.control_word & 0x80) != 0)
-          ))) {
+          ((j1939_tsc1_active_flag == 0 && ((protection_enable_t_0040c050.control_word & 0x80) != 0)
+           ))) || ((j1939_tsc1_active_flag != 0 &&
+                   ((protection_enable_t_0040c050.control_word & 0x80) != 0)))) {
         bVar2 = 0x10;
         goto LAB_00024424;
       }
@@ -22419,10 +22247,9 @@ LAB_00024494:
     }
     if ((protection_override_flags & 0x80) == 0) {
       if ((((protection_enable_t_0040c050.control_word & 0x80) == 0) &&
-          ((_j1939_tsc1_active_flag == 0 ||
-           ((protection_enable_t_0040c050.control_word & 0x80) == 0)))) &&
-         ((_j1939_tsc1_active_flag != 0 || ((protection_enable_t_0040c050.control_word & 0x80) == 0)
-          ))) goto LAB_00024514;
+          ((j1939_tsc1_active_flag == 0 || ((protection_enable_t_0040c050.control_word & 0x80) == 0)
+           ))) && ((j1939_tsc1_active_flag != 0 ||
+                   ((protection_enable_t_0040c050.control_word & 0x80) == 0)))) goto LAB_00024514;
       bVar2 = 1;
     }
     else {
@@ -22437,8 +22264,8 @@ LAB_00024514:
   else {
     j1939_cruise_speed_byte = (byte)((uint)cruise_speed_command * 0x19c >> 0x10);
   }
-  if (_j1939_status_field_3bit < 8) {
-    bVar2 = (byte)((int)_j1939_status_field_3bit << 5);
+  if ((short)j1939_status_field_3bit < 8) {
+    bVar2 = (byte)((int)(short)j1939_status_field_3bit << 5);
   }
   else {
     bVar2 = 0;
@@ -22447,7 +22274,7 @@ LAB_00024514:
     j1939_ccvs1_event_bits = bVar2 | 0x1f;
   }
   else {
-    j1939_ccvs1_event_bits = bVar2 | (byte)_protection_event_code;
+    j1939_ccvs1_event_bits = bVar2 | (byte)protection_event_code;
   }
   if ((protection_override_flags & 0x80) == 0) {
     if ((protection_enable_t_0040c050.control_word & 0x80) == 0) {
@@ -22489,8 +22316,6 @@ LAB_00024648:
 //
 // Function: buildPgn65228Dm3ClearInitMessage @ 0x00024230
 //
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void buildPgn65228Dm3ClearInitMessage(void)
 
@@ -22541,7 +22366,7 @@ LAB_0002432c:
 LAB_00024304:
       *(byte *)(in_r7 + 3) = *(byte *)(in_r7 + 3) | bVar2;
     }
-    if (_governor_override_active_flag != 0) {
+    if (governor_override_active_flag != 0) {
       bVar2 = 1;
       goto LAB_0002432c;
     }
@@ -22569,10 +22394,9 @@ LAB_00024510:
     *(byte *)(in_r7 + 4) = bVar2;
     if ((protection_override_flags & 0x80) == 0) {
       if ((((protection_enable_t_0040c050.control_word & 0x80) != 0) ||
-          ((_j1939_tsc1_active_flag == 0 &&
-           ((protection_enable_t_0040c050.control_word & 0x80) != 0)))) ||
-         ((_j1939_tsc1_active_flag != 0 && ((protection_enable_t_0040c050.control_word & 0x80) != 0)
-          ))) {
+          ((j1939_tsc1_active_flag == 0 && ((protection_enable_t_0040c050.control_word & 0x80) != 0)
+           ))) || ((j1939_tsc1_active_flag != 0 &&
+                   ((protection_enable_t_0040c050.control_word & 0x80) != 0)))) {
         bVar1 = 0x10;
         goto LAB_00024424;
       }
@@ -22603,9 +22427,9 @@ LAB_00024500:
       goto LAB_00024510;
     }
     if ((((protection_enable_t_0040c050.control_word & 0x80) != 0) ||
-        ((_j1939_tsc1_active_flag != 0 && ((protection_enable_t_0040c050.control_word & 0x80) != 0))
-        )) || ((_j1939_tsc1_active_flag == 0 &&
-               ((protection_enable_t_0040c050.control_word & 0x80) != 0)))) {
+        ((j1939_tsc1_active_flag != 0 && ((protection_enable_t_0040c050.control_word & 0x80) != 0)))
+        ) || ((j1939_tsc1_active_flag == 0 &&
+              ((protection_enable_t_0040c050.control_word & 0x80) != 0)))) {
       bVar2 = 1;
       goto LAB_00024500;
     }
@@ -22617,8 +22441,8 @@ LAB_00024500:
     uVar3 = (undefined1)((uint)cruise_speed_command * 0x19c >> 0x10);
   }
   *(undefined1 *)(in_r7 + 5) = uVar3;
-  if (_j1939_status_field_3bit < 8) {
-    bVar2 = (byte)((int)_j1939_status_field_3bit << 5);
+  if ((short)j1939_status_field_3bit < 8) {
+    bVar2 = (byte)((int)(short)j1939_status_field_3bit << 5);
   }
   else {
     bVar2 = 0;
@@ -22628,7 +22452,7 @@ LAB_00024500:
     bVar2 = bVar2 | 0x1f;
   }
   else {
-    bVar2 = bVar2 | (byte)_protection_event_code;
+    bVar2 = bVar2 | (byte)protection_event_code;
   }
   *(byte *)(in_r7 + 6) = bVar2;
   if ((protection_override_flags & 0x80) == 0) {
@@ -22673,8 +22497,6 @@ LAB_00024648:
 // Function: cm848_j1939SendPgn65241_FED9 @ 0x000242a0
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_j1939SendPgn65241_FED9
                (undefined4 param_1,undefined4 param_2,int param_3,undefined4 param_4,int param_5,
                byte param_6)
@@ -22705,7 +22527,7 @@ LAB_0002432c:
 LAB_00024304:
       *(byte *)(param_5 + 3) = *(byte *)(param_5 + 3) | bVar2;
     }
-    if (_governor_override_active_flag != 0) {
+    if (governor_override_active_flag != 0) {
       bVar2 = 1;
       goto LAB_0002432c;
     }
@@ -22733,10 +22555,9 @@ LAB_00024510:
     *(byte *)(param_5 + 4) = bVar2;
     if ((*(byte *)(param_3 + 3) & 0x80) == 0) {
       if ((((protection_enable_t_0040c050.control_word & 0x80) != 0) ||
-          ((_j1939_tsc1_active_flag == 0 &&
-           ((protection_enable_t_0040c050.control_word & 0x80) != 0)))) ||
-         ((_j1939_tsc1_active_flag != 0 && ((protection_enable_t_0040c050.control_word & 0x80) != 0)
-          ))) {
+          ((j1939_tsc1_active_flag == 0 && ((protection_enable_t_0040c050.control_word & 0x80) != 0)
+           ))) || ((j1939_tsc1_active_flag != 0 &&
+                   ((protection_enable_t_0040c050.control_word & 0x80) != 0)))) {
         bVar1 = 0x10;
         goto LAB_00024424;
       }
@@ -22767,9 +22588,9 @@ LAB_00024500:
       goto LAB_00024510;
     }
     if ((((protection_enable_t_0040c050.control_word & 0x80) != 0) ||
-        ((_j1939_tsc1_active_flag != 0 && ((protection_enable_t_0040c050.control_word & 0x80) != 0))
-        )) || ((_j1939_tsc1_active_flag == 0 &&
-               ((protection_enable_t_0040c050.control_word & 0x80) != 0)))) {
+        ((j1939_tsc1_active_flag != 0 && ((protection_enable_t_0040c050.control_word & 0x80) != 0)))
+        ) || ((j1939_tsc1_active_flag == 0 &&
+              ((protection_enable_t_0040c050.control_word & 0x80) != 0)))) {
       bVar2 = 1;
       goto LAB_00024500;
     }
@@ -22781,8 +22602,8 @@ LAB_00024500:
     uVar3 = (undefined1)((uint)cruise_speed_command * 0x19c >> 0x10);
   }
   *(undefined1 *)(param_5 + 5) = uVar3;
-  if (_j1939_status_field_3bit < 8) {
-    bVar2 = (byte)((int)_j1939_status_field_3bit << 5);
+  if ((short)j1939_status_field_3bit < 8) {
+    bVar2 = (byte)((int)(short)j1939_status_field_3bit << 5);
   }
   else {
     bVar2 = 0;
@@ -22792,7 +22613,7 @@ LAB_00024500:
     bVar2 = bVar2 | 0x1f;
   }
   else {
-    bVar2 = bVar2 | (byte)_protection_event_code;
+    bVar2 = bVar2 | (byte)protection_event_code;
   }
   *(byte *)(param_5 + 6) = bVar2;
   if ((*(byte *)(param_3 + 3) & 0x80) == 0) {
@@ -22837,8 +22658,6 @@ LAB_00024648:
 // Function: cm848_buildDiagnosticStatusMessage @ 0x0002439c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_buildDiagnosticStatusMessage
                (undefined4 param_1,undefined4 param_2,int param_3,int param_4,int param_5)
 
@@ -22857,9 +22676,9 @@ void cm848_buildDiagnosticStatusMessage
   *(byte *)(param_5 + 4) = bVar2;
   if ((*(byte *)(param_3 + 3) & 0x80) == 0) {
     if ((((protection_enable_t_0040c050.control_word & 0x80) != 0) ||
-        ((_j1939_tsc1_active_flag == 0 && ((protection_enable_t_0040c050.control_word & 0x80) != 0))
-        )) || ((_j1939_tsc1_active_flag != 0 &&
-               ((protection_enable_t_0040c050.control_word & 0x80) != 0)))) {
+        ((j1939_tsc1_active_flag == 0 && ((protection_enable_t_0040c050.control_word & 0x80) != 0)))
+        ) || ((j1939_tsc1_active_flag != 0 &&
+              ((protection_enable_t_0040c050.control_word & 0x80) != 0)))) {
       bVar1 = 0x10;
       goto LAB_00024424;
     }
@@ -22885,9 +22704,9 @@ LAB_00024494:
   }
   if ((*(byte *)(param_3 + 3) & 0x80) == 0) {
     if ((((protection_enable_t_0040c050.control_word & 0x80) != 0) ||
-        ((_j1939_tsc1_active_flag != 0 && ((protection_enable_t_0040c050.control_word & 0x80) != 0))
-        )) || ((_j1939_tsc1_active_flag == 0 &&
-               ((protection_enable_t_0040c050.control_word & 0x80) != 0)))) {
+        ((j1939_tsc1_active_flag != 0 && ((protection_enable_t_0040c050.control_word & 0x80) != 0)))
+        ) || ((j1939_tsc1_active_flag == 0 &&
+              ((protection_enable_t_0040c050.control_word & 0x80) != 0)))) {
       bVar2 = 1;
       goto LAB_00024500;
     }
@@ -22904,8 +22723,8 @@ LAB_00024500:
     uVar3 = (undefined1)((uint)cruise_speed_command * 0x19c >> 0x10);
   }
   *(undefined1 *)(param_5 + 5) = uVar3;
-  if (_j1939_status_field_3bit < 8) {
-    bVar2 = (byte)((int)_j1939_status_field_3bit << 5);
+  if ((short)j1939_status_field_3bit < 8) {
+    bVar2 = (byte)((int)(short)j1939_status_field_3bit << 5);
   }
   else {
     bVar2 = 0;
@@ -22915,7 +22734,7 @@ LAB_00024500:
     bVar2 = bVar2 | 0x1f;
   }
   else {
-    bVar2 = bVar2 | (byte)_protection_event_code;
+    bVar2 = bVar2 | (byte)protection_event_code;
   }
   *(byte *)(param_5 + 6) = bVar2;
   if ((*(byte *)(param_3 + 3) & 0x80) == 0) {
@@ -22960,8 +22779,6 @@ LAB_00024648:
 // Function: cm848_j1939SendPgn65265_FEF1_CruiseVehicleSpeed @ 0x000243f0
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_j1939SendPgn65265_FEF1_CruiseVehicleSpeed
                (undefined4 param_1,int param_2,int param_3,int param_4,int param_5,byte param_6)
 
@@ -22970,8 +22787,8 @@ void cm848_j1939SendPgn65265_FEF1_CruiseVehicleSpeed
   undefined1 uVar2;
   byte bVar3;
   
-  if (((_j1939_tsc1_active_flag == 0) && (param_2 != 0)) ||
-     ((_j1939_tsc1_active_flag != 0 && (param_2 != 0)))) {
+  if (((j1939_tsc1_active_flag == 0) && (param_2 != 0)) ||
+     ((j1939_tsc1_active_flag != 0 && (param_2 != 0)))) {
     *(byte *)(param_5 + 4) = param_6 | 0x10;
   }
   if ((((*(byte *)(param_3 + 3) & 0x80) == 0) ||
@@ -22990,9 +22807,9 @@ LAB_00024494:
   }
   if ((*(byte *)(param_3 + 3) & 0x80) == 0) {
     if ((((protection_enable_t_0040c050.control_word & 0x80) != 0) ||
-        ((_j1939_tsc1_active_flag != 0 && ((protection_enable_t_0040c050.control_word & 0x80) != 0))
-        )) || ((_j1939_tsc1_active_flag == 0 &&
-               ((protection_enable_t_0040c050.control_word & 0x80) != 0)))) {
+        ((j1939_tsc1_active_flag != 0 && ((protection_enable_t_0040c050.control_word & 0x80) != 0)))
+        ) || ((j1939_tsc1_active_flag == 0 &&
+              ((protection_enable_t_0040c050.control_word & 0x80) != 0)))) {
       bVar1 = 1;
       goto LAB_00024500;
     }
@@ -23009,8 +22826,8 @@ LAB_00024500:
     uVar2 = (undefined1)((uint)cruise_speed_command * 0x19c >> 0x10);
   }
   *(undefined1 *)(param_5 + 5) = uVar2;
-  if (_j1939_status_field_3bit < 8) {
-    bVar1 = (byte)((int)_j1939_status_field_3bit << 5);
+  if ((short)j1939_status_field_3bit < 8) {
+    bVar1 = (byte)((int)(short)j1939_status_field_3bit << 5);
   }
   else {
     bVar1 = 0;
@@ -23020,7 +22837,7 @@ LAB_00024500:
     bVar1 = bVar1 | 0x1f;
   }
   else {
-    bVar1 = bVar1 | (byte)_protection_event_code;
+    bVar1 = bVar1 | (byte)protection_event_code;
   }
   *(byte *)(param_5 + 6) = bVar1;
   if ((*(byte *)(param_3 + 3) & 0x80) == 0) {
@@ -23071,12 +22888,13 @@ void cm848_initPgn65265CruiseSpeedHandler(void)
 
 {
   j1939_pgn65265_tx_header = CONCAT13(((byte)_DAT_003fd83e & 7) << 2,0xfef100);
-  j1939_pgn65265_tx_header = CONCAT31(j1939_pgn65265_tx_header._0_3_,(char)j1939_source_address);
+  j1939_pgn65265_tx_header =
+       CONCAT31(j1939_pgn65265_tx_header._0_3_,(char)j1939_source_address._0_2_);
   _DAT_003faae8 = 8;
   _DAT_003faaea = &j1939_dm1_status_byte;
   _DAT_003faaee = &DAT_003faafa;
   j1939_dm1_status_byte = 0xf3;
-  _j1939_status_field_3bit = 7;
+  j1939_status_field_3bit = 7;
   cm848_j1939RegisterPgnHandler(0xfef1,j1939HandlePgn65265CruiseVehicleSpeed);
   return;
 }
@@ -23133,7 +22951,7 @@ void initPgn65261CruiseControlSetupStruct(void)
   _DAT_003fab00 = 8;
   _DAT_003fab02 = &DAT_003fab0a;
   _DAT_003fab06 = &DAT_003fab12;
-  _DAT_003faafc = CONCAT31(_DAT_003faafc,(char)j1939_source_address);
+  _DAT_003faafc = CONCAT31(_DAT_003faafc,(char)j1939_source_address._0_2_);
   DAT_003fab0d = 0xff;
   DAT_003fab0e = 0xff;
   DAT_003fab0f = 0xff;
@@ -23219,7 +23037,8 @@ void cm848_initPgn65259ComponentIdHandler(void)
   _DAT_003fab18 = 0x2c;
   _DAT_003fab1a = &DAT_003fab22;
   _DAT_003fab1e = &DAT_003fab4e;
-  j1939_pgn65259_tx_header = CONCAT31(j1939_pgn65259_tx_header._0_3_,(char)j1939_source_address);
+  j1939_pgn65259_tx_header =
+       CONCAT31(j1939_pgn65259_tx_header._0_3_,(char)j1939_source_address._0_2_);
   cm848_j1939RegisterPgnHandler(0xfeeb,cm848_j1939HandlePgn65259ComponentId);
   return;
 }
@@ -23339,7 +23158,7 @@ void cm848_initPgn65234Dm11Handler(void)
   _DAT_003fab56 = 2;
   _DAT_003fab58 = &DAT_003fab60;
   _DAT_003fab5c = &DAT_003fab68;
-  _DAT_003fab52 = CONCAT31(_DAT_003fab52,(char)j1939_source_address);
+  _DAT_003fab52 = CONCAT31(_DAT_003fab52,(char)j1939_source_address._0_2_);
   cm848_j1939RegisterPgnHandler(0xfed2,cm848_j1939HandlePgn65234Dm11ClearActive);
   return;
 }
@@ -23436,7 +23255,7 @@ void cm848_initPgn65226Dm1Handler(void)
   _DAT_003fab6a = CONCAT13(((byte)_DAT_003fd842 & 7) << 2,0xfeca00);
   _DAT_003fab70 = &DAT_003fab78;
   _DAT_003fab74 = &DAT_003fabca;
-  _DAT_003fab6a = CONCAT31(_DAT_003fab6a,(char)j1939_source_address);
+  _DAT_003fab6a = CONCAT31(_DAT_003fab6a,(char)j1939_source_address._0_2_);
   DAT_003fab79 = 0xff;
   DAT_003fab7d = DAT_003fab7d & 0x7f | 0x80;
   DAT_003fabcb = 0;
@@ -23526,7 +23345,7 @@ void cm848_initPgn65227Dm2Handler(void)
   _DAT_003fabcc = CONCAT13(((byte)_DAT_003fd844 & 7) << 2,0xfecb00);
   _DAT_003fabd2 = &DAT_003fabda;
   _DAT_003fabd6 = &DAT_003fac2c;
-  _DAT_003fabcc = CONCAT31(_DAT_003fabcc,(char)j1939_source_address);
+  _DAT_003fabcc = CONCAT31(_DAT_003fabcc,(char)j1939_source_address._0_2_);
   uRam003fabdb = 0xff;
   bRam003fabdf = bRam003fabdf & 0x7f | 0x80;
   cm848_j1939RegisterPgnHandler(0xfecb,cm848_j1939HandlePgn65227Dm2PreviousDtc);
@@ -23565,7 +23384,7 @@ void cm848_initPgn65229Dm4Handler(void)
   _DAT_003fac2e = CONCAT13(((byte)_DAT_003fd846 & 7) << 2,0xfecd00);
   _DAT_003fac34 = &DAT_003fac3c;
   _DAT_003fac38 = &DAT_003fad46;
-  _DAT_003fac2e = CONCAT31(_DAT_003fac2e,(char)j1939_source_address);
+  _DAT_003fac2e = CONCAT31(_DAT_003fac2e,(char)j1939_source_address._0_2_);
   cm848_j1939RegisterPgnHandler(0xfecd,cm848_j1939HandlePgn65229Dm4FreezeFrame);
   return;
 }
@@ -23719,13 +23538,13 @@ void cm848_j1939HandlePgn65230Dm5Readiness(void)
   DAT_003fad58 = (undefined1)DAT_0005a490;
   DAT_003fad59 = (undefined1)DAT_0005a492;
   _DAT_003fad5a = j1939_reverseByteOrder16(&j1939_feature_config_word);
-  if (_j1939_dm1_response_mode == 1) {
+  if (j1939_dm1_response_mode == 1) {
     local_10[0] = 0x1000;
   }
   else if ((j1939_feature_config_word & 0x100) == 0) {
     local_10[0] = 0x1000;
   }
-  else if ((_j1939_dm1_response_mode == 0) && ((j1939_feature_config_word & 0x100) != 0)) {
+  else if ((j1939_dm1_response_mode == 0) && ((j1939_feature_config_word & 0x100) != 0)) {
     local_10[0] = local_10[0] & 0xfeff;
   }
   _DAT_003fad5c = j1939_reverseByteOrder16(local_10);
@@ -23748,7 +23567,7 @@ void cm848_initPgn65230Dm5Handler(void)
   _DAT_003fad4c = 8;
   _DAT_003fad4e = &DAT_003fad56;
   _DAT_003fad52 = &DAT_003fad5e;
-  _DAT_003fad48 = CONCAT31(_DAT_003fad48,(char)j1939_source_address);
+  _DAT_003fad48 = CONCAT31(_DAT_003fad48,(char)j1939_source_address._0_2_);
   cm848_j1939RegisterPgnHandler(0xfece,cm848_j1939HandlePgn65230Dm5Readiness);
   return;
 }
@@ -23788,7 +23607,7 @@ void cm848_initJ1939EngineControlBuffer(void)
   _DAT_003fad64 = 8;
   _DAT_003fad66 = &DAT_003fad6e;
   _DAT_003fad6a = &DAT_003fad76;
-  _DAT_003fad60 = CONCAT31(_DAT_003fad60,(char)j1939_source_address);
+  _DAT_003fad60 = CONCAT31(_DAT_003fad60,(char)j1939_source_address._0_2_);
   DAT_003fad6f = 0xff;
   _DAT_003fad72 = 0xffff;
   _DAT_003fad74 = 0xffff;
@@ -23800,8 +23619,6 @@ void cm848_initJ1939EngineControlBuffer(void)
 //
 // Function: cm848_j1939BuildEngineControlByte @ 0x0002567c
 //
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void cm848_j1939BuildEngineControlByte(void)
 
@@ -23850,7 +23667,7 @@ LAB_0002576c:
   }
   j1939_status_byte_a = j1939_status_byte_a | bVar1;
 LAB_000257c4:
-  if (((_DAT_003fd5b6 & 1) == 0) && ((_j1939_dm_control_flags & 8) != 0)) {
+  if (((fault_feature_config_flags & 1) == 0) && ((j1939_dm_control_flags & 8) != 0)) {
     DAT_003fad7c = (undefined1)((int)((uint)governor_load_percent_output * 5) >> 1);
   }
   else {
@@ -23872,7 +23689,7 @@ void cm848_initJ1939Etc1ControlBuffer(void)
 
 {
   _DAT_003fad80 = CONCAT13(((byte)_DAT_003fd878 & 7) << 2,0xf00100);
-  _DAT_003fad80 = CONCAT31(_DAT_003fad80,(char)j1939_source_address);
+  _DAT_003fad80 = CONCAT31(_DAT_003fad80,(char)j1939_source_address._0_2_);
   _DAT_003fad84 = 5;
   DAT_003fad78 = 0xff;
   DAT_003fad7a = 0xff;
@@ -23903,26 +23720,23 @@ void cm848_setEngineControllerStateCode(undefined4 param_1,undefined4 param_2,in
 // Function: j1939GetEngineStateCode @ 0x0002588c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void j1939GetEngineStateCode(void)
 
 {
   undefined1 uStack_8;
   undefined1 uStack_7;
   
-  if (_DAT_0040adf8 != 0) {
-    if (((_governor_mode_code != 2) && (_governor_mode_code != 1)) && (_governor_mode_code != 0x14))
-    {
+  if (j1939_tsc1_override_state != 0) {
+    if (((governor_mode_code != 2) && (governor_mode_code != 1)) && (governor_mode_code != 0x14)) {
       cm848_j1939BuildPgn61441_F001_Etc2(0xfe);
       return;
     }
-    if (_j1939_governor_source_index != 1) {
-      if (_j1939_governor_source_index == 2) {
+    if (j1939_governor_source_index != 1) {
+      if (j1939_governor_source_index == 2) {
         cm848_j1939BuildPgn61441_F001_Etc2(0xf7);
         return;
       }
-      if (_j1939_governor_source_index == 3) {
+      if (j1939_governor_source_index == 3) {
         cm848_j1939BuildPgn61441_F001_Etc2(0xf5);
         return;
       }
@@ -23932,11 +23746,11 @@ void j1939GetEngineStateCode(void)
     j1939_engine_status_byte = 0xf6;
     goto code_r0x00025a28;
   }
-  if ((int)(short)governor_fuel_mode_command == (int)_governor_mode_code) {
+  if ((int)(short)governor_fuel_mode_command == (int)(short)governor_mode_code) {
     cm848_j1939BuildPgn61441_F001_Etc2(0xf8);
     return;
   }
-  switch((int)_governor_mode_code) {
+  switch((int)(short)governor_mode_code) {
   case 0:
     break;
   case 1:
@@ -24028,7 +23842,7 @@ code_r0x00025a28:
   DAT_003fad91 = (char)(j1939_dm1_spn_b_word >> 8) + '}';
   cm848_calculateLoadRateOfChange();
   j1939_dm1_spn_fmi_byte = (char)(j1939_dm1_spn_a_word >> 8) + 0x7d;
-  if (_j1939_broadcast_enable_flag == 1) {
+  if (j1939_broadcast_enable_flag._0_2_ == 1) {
     j1939_dm1_spn_fmi_byte = 0xfe;
   }
   uStack_7 = (undefined1)engine_rpm_state_t_0040b7ac.current_rpm;
@@ -24045,8 +23859,6 @@ code_r0x00025a28:
 // Function: cm848_j1939BuildPgn61441_F001_Etc2 @ 0x000258f4
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_j1939BuildPgn61441_F001_Etc2(byte param_1)
 
 {
@@ -24059,7 +23871,7 @@ void cm848_j1939BuildPgn61441_F001_Etc2(byte param_1)
   DAT_003fad91 = (char)(j1939_dm1_spn_b_word >> 8) + '}';
   cm848_calculateLoadRateOfChange();
   j1939_dm1_spn_fmi_byte = (char)(j1939_dm1_spn_a_word >> 8) + 0x7d;
-  if (_j1939_broadcast_enable_flag == 1) {
+  if (j1939_broadcast_enable_flag._0_2_ == 1) {
     j1939_dm1_spn_fmi_byte = 0xfe;
   }
   _uStack00000008 = engine_rpm_state_t_0040b7ac.current_rpm;
@@ -24092,8 +23904,6 @@ void cm848_j1939SendEtc1NotAvailable(void)
 // Function: cm848_j1939BuildPgn61441_F001_Etc2 @ 0x00025a28
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_j1939BuildPgn61441_F001_Etc2(byte param_1)
 
 {
@@ -24106,7 +23916,7 @@ void cm848_j1939BuildPgn61441_F001_Etc2(byte param_1)
   DAT_003fad91 = (char)(j1939_dm1_spn_b_word >> 8) + '}';
   cm848_calculateLoadRateOfChange();
   j1939_dm1_spn_fmi_byte = (char)(j1939_dm1_spn_a_word >> 8) + 0x7d;
-  if (_j1939_broadcast_enable_flag == 1) {
+  if (j1939_broadcast_enable_flag._0_2_ == 1) {
     j1939_dm1_spn_fmi_byte = 0xfe;
   }
   _uStack00000008 = engine_rpm_state_t_0040b7ac.current_rpm;
@@ -24145,7 +23955,8 @@ void cm848_initEec1TxDescriptor(void)
 
 {
   j1939_pgn61444_tx_header = CONCAT13(((byte)_DAT_003fd84e & 7) << 2,0xf00400);
-  j1939_pgn61444_tx_header = CONCAT31(j1939_pgn61444_tx_header._0_3_,(char)j1939_source_address);
+  j1939_pgn61444_tx_header =
+       CONCAT31(j1939_pgn61444_tx_header._0_3_,(char)j1939_source_address._0_2_);
   _DAT_003fad9c = 5;
   _DAT_003fad9e = &j1939_engine_status_byte;
   uRam003fada2 = 0x3fada6;
@@ -24172,8 +23983,6 @@ void cm848_j1939SendPgn61444_F004_EngineSpeedTorqueEec1(int param_1)
 //
 // Function: j1939HandlePgn61443Eec2 @ 0x00025b10
 //
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void j1939HandlePgn61443Eec2(void)
 
@@ -24225,7 +24034,7 @@ LAB_00025c0c:
   }
   cm848_calculateLoadToFuelRatio();
   DAT_003fadaa = (undefined1)(j1939_engine_torque_output_a >> 8);
-  if (_j1939_broadcast_enable_flag == 1) {
+  if (j1939_broadcast_enable_flag._0_2_ == 1) {
     DAT_003fadaa = 0xfe;
   }
   if (((system_feature_config_flags & 0x1000) == 0) || ((fuel_demand_feature_flags & 0x100) != 0)) {
@@ -24278,7 +24087,8 @@ void cm848_initPgn61443Eec2Handler(void)
 
 {
   j1939_pgn61443_tx_header = CONCAT13(((byte)_DAT_003fd850 & 7) << 2,0xf00300);
-  j1939_pgn61443_tx_header = CONCAT31(j1939_pgn61443_tx_header._0_3_,(char)j1939_source_address);
+  j1939_pgn61443_tx_header =
+       CONCAT31(j1939_pgn61443_tx_header._0_3_,(char)j1939_source_address._0_2_);
   uRam003fadb4 = 5;
   pbRam003fadb6 = &j1939_status_byte_b;
   puRam003fadba = &DAT_003fadbe;
@@ -24299,7 +24109,7 @@ void cm848_j1939SendPgn61443_F003_AcceleratorPedalEec2(byte *param_1)
   byte in_r10;
   
   *param_1 = (in_r10 & 7) << 2 | *param_1 & 0xe3;
-  param_1[3] = (byte)j1939_source_address;
+  param_1[3] = (byte)j1939_source_address._0_2_;
   param_1[4] = 0;
   param_1[5] = 5;
   *(byte **)(param_1 + 6) = &j1939_status_byte_b;
@@ -24344,7 +24154,7 @@ void cm848_initJ1939OilPressureBuffer(void)
 
 {
   _DAT_003fadc8 = CONCAT13(((byte)_DAT_003fd852 & 7) << 2,0xfedf00);
-  _DAT_003fadc8 = CONCAT31(_DAT_003fadc8,(char)j1939_source_address);
+  _DAT_003fadc8 = CONCAT31(_DAT_003fadc8,(char)j1939_source_address._0_2_);
   _DAT_003fadcc = 4;
   _DAT_003fadce = &DAT_003fadc0;
   _DAT_003fadd2 = &DAT_003fadd6;
@@ -24398,7 +24208,7 @@ void cm848_initJ1939FluidLevelPressureBuffer(void)
   uRam003fade5 = 8;
   pbRam003fade7 = &j1939_engine_load_byte;
   puRam003fadeb = &DAT_003fadd8;
-  _DAT_003fade1 = CONCAT31(_DAT_003fade1,(char)j1939_source_address);
+  _DAT_003fade1 = CONCAT31(_DAT_003fade1,(char)j1939_source_address._0_2_);
   DAT_003fadda = 0xff;
   _DAT_003faddd = 0xffff;
   DAT_003fade0 = 0xff;
@@ -24422,7 +24232,7 @@ void cm848_initPgn65263FluidLevelPressureHandler(undefined4 param_1,undefined1 *
   *(undefined2 *)(param_2 + 4) = 8;
   *(byte **)(param_2 + 6) = &j1939_engine_load_byte;
   *(undefined **)(param_2 + 10) = &DAT_003fadd8;
-  param_2[3] = (char)j1939_source_address;
+  param_2[3] = (char)j1939_source_address._0_2_;
   DAT_003fadda = 0xff;
   _DAT_003faddd = 0xffff;
   DAT_003fade0 = 0xff;
@@ -24627,7 +24437,8 @@ void cm848_initPgn65262EngineTempHandler(void)
   _DAT_003fadf4 = 8;
   _DAT_003fadf6 = &DAT_003fadfe;
   _DAT_003fadfa = &DAT_003fae06;
-  j1939_pgn65262_tx_header = CONCAT31(j1939_pgn65262_tx_header._0_3_,(char)j1939_source_address);
+  j1939_pgn65262_tx_header =
+       CONCAT31(j1939_pgn65262_tx_header._0_3_,(char)j1939_source_address._0_2_);
   _DAT_003fae02 = 0xffff;
   DAT_003fae04 = 0xff;
   DAT_003fae05 = 0xff;
@@ -24653,14 +24464,12 @@ void cm848_emptyStubFunctionJ1939A(void)
 // Function: cm848_j1939BuildVehicleOperatingStatus @ 0x00026238
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_j1939BuildVehicleOperatingStatus(void)
 
 {
   byte bVar1;
   
-  if ((_j1939_dm_control_flags & 8) == 0) {
+  if ((j1939_dm_control_flags & 8) == 0) {
     j1939_vehicle_op_status_byte = 0xff;
     goto LAB_00026340;
   }
@@ -24670,16 +24479,16 @@ void cm848_j1939BuildVehicleOperatingStatus(void)
   else {
     j1939_vehicle_op_status_byte = 0xd0;
   }
-  if (((j1939_governor_fuel_input == 0) && (_governor_request_processing_state != 4)) &&
-     (_governor_request_processing_state != 1)) goto LAB_00026340;
-  if (_governor_request_processing_state == 1) {
+  if (((j1939_governor_fuel_input == 0) && (governor_request_processing_state != 4)) &&
+     (governor_request_processing_state != 1)) goto LAB_00026340;
+  if (governor_request_processing_state == 1) {
 LAB_000262e8:
-    if (_j1939_build_state_machine == 1) {
+    if (j1939_build_state_machine == 1) {
       bVar1 = 6;
     }
     else {
-      if (_j1939_build_state_machine != 3) {
-        if (_j1939_build_state_machine == 2) {
+      if (j1939_build_state_machine != 3) {
+        if (j1939_build_state_machine == 2) {
           bVar1 = 7;
           goto LAB_00026320;
         }
@@ -24691,14 +24500,14 @@ LAB_000262e8:
     j1939_vehicle_op_status_byte = j1939_vehicle_op_status_byte | bVar1;
   }
   else {
-    if (_governor_request_processing_state == 2) {
+    if (governor_request_processing_state == 2) {
       bVar1 = 2;
 LAB_00026320:
       j1939_vehicle_op_status_byte = j1939_vehicle_op_status_byte | bVar1;
       goto LAB_00026340;
     }
-    if (_governor_request_processing_state != 3) {
-      if (_governor_request_processing_state != 4) goto LAB_00026340;
+    if (governor_request_processing_state != 3) {
+      if (governor_request_processing_state != 4) goto LAB_00026340;
       goto LAB_000262e8;
     }
     bVar1 = 1;
@@ -24706,7 +24515,7 @@ LAB_0002632c:
     j1939_vehicle_op_status_byte = j1939_vehicle_op_status_byte | bVar1;
   }
 LAB_00026340:
-  if ((_j1939_dm_feature_mode == 0) || ((_j1939_dm_control_flags & 8) == 0)) {
+  if ((j1939_dm_feature_mode == 0) || ((j1939_dm_control_flags & 8) == 0)) {
     DAT_003fae09 = -1;
   }
   else {
@@ -24723,8 +24532,6 @@ LAB_00026340:
 // Function: cm848_j1939SendPgn65262_FEEE_EngineTemp1 @ 0x0002629c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_j1939SendPgn65262_FEEE_EngineTemp1(byte param_1,int param_2)
 
 {
@@ -24732,14 +24539,14 @@ void cm848_j1939SendPgn65262_FEEE_EngineTemp1(byte param_1,int param_2)
   byte in_cr0;
   
   if ((!(bool)(in_cr0 >> 1 & 1)) && (param_2 != 1)) goto LAB_00026340;
-  if (_governor_request_processing_state == 1) {
+  if (governor_request_processing_state == 1) {
 LAB_000262e8:
-    if (_j1939_build_state_machine == 1) {
+    if (j1939_build_state_machine == 1) {
       bVar1 = 6;
     }
     else {
-      if (_j1939_build_state_machine != 3) {
-        if (_j1939_build_state_machine == 2) {
+      if (j1939_build_state_machine != 3) {
+        if (j1939_build_state_machine == 2) {
           bVar1 = 7;
           goto LAB_00026320;
         }
@@ -24751,14 +24558,14 @@ LAB_000262e8:
     j1939_vehicle_op_status_byte = param_1 | bVar1;
   }
   else {
-    if (_governor_request_processing_state == 2) {
+    if (governor_request_processing_state == 2) {
       bVar1 = 2;
 LAB_00026320:
       j1939_vehicle_op_status_byte = param_1 | bVar1;
       goto LAB_00026340;
     }
-    if (_governor_request_processing_state != 3) {
-      if (_governor_request_processing_state != 4) goto LAB_00026340;
+    if (governor_request_processing_state != 3) {
+      if (governor_request_processing_state != 4) goto LAB_00026340;
       goto LAB_000262e8;
     }
     bVar1 = 1;
@@ -24766,7 +24573,7 @@ LAB_0002632c:
     j1939_vehicle_op_status_byte = param_1 | bVar1;
   }
 LAB_00026340:
-  if ((_j1939_dm_feature_mode == 0) || ((_j1939_dm_control_flags & 8) == 0)) {
+  if ((j1939_dm_feature_mode == 0) || ((j1939_dm_control_flags & 8) == 0)) {
     DAT_003fae09 = -1;
   }
   else {
@@ -24789,7 +24596,7 @@ void cm848_initJ1939SpeedControlMessage(void)
 
 {
   j1939_pgn61440_tx_header = CONCAT13(((byte)_DAT_003fd858 & 7) << 2,0xf00000);
-  j1939_pgn61440_tx_header = CONCAT31(j1939_pgn61440_tx_header._0_3_,(char)_j1939_source_address);
+  j1939_pgn61440_tx_header = CONCAT31(j1939_pgn61440_tx_header._0_3_,(char)j1939_source_address_b);
   cm848_initSpeedControlTableDimensions();
   _DAT_003fae14 = 2;
   _DAT_003fae16 = &j1939_vehicle_op_status_byte;
@@ -24803,14 +24610,12 @@ void cm848_initJ1939SpeedControlMessage(void)
 // Function: cm848_j1939SendDiagnosticStatusMessage @ 0x0002641c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_j1939SendDiagnosticStatusMessage(void)
 
 {
   DAT_003fae20 = (undefined1)((uint)j1939_diag_param_a * 5 >> 9);
-  if (_j1939_diag_code < 0x10) {
-    DAT_003fae21 = (byte)_j1939_diag_code | 0xf0;
+  if (j1939_diag_code._0_2_ < 0x10) {
+    DAT_003fae21 = (byte)j1939_diag_code._0_2_ | 0xf0;
   }
   else {
     DAT_003fae21 = 0xfe;
@@ -24831,7 +24636,7 @@ void cm848_initJ1939BrakeRetarderBuffer(void)
 
 {
   _DAT_003fae28 = CONCAT13(((byte)_DAT_003fd87a & 7) << 2,0xfebd00);
-  _DAT_003fae28 = CONCAT31(_DAT_003fae28,(char)j1939_source_address);
+  _DAT_003fae28 = CONCAT31(_DAT_003fae28,(char)j1939_source_address._0_2_);
   uRam003fae2c = 2;
   puRam003fae2e = &DAT_003fae20;
   puRam003fae32 = &DAT_003fae36;
@@ -24901,7 +24706,7 @@ void cm848_initJ1939InletExhaustConditionsBuffer(void)
   _BYTE_003fae3c = 8;
   _DAT_003fae3e = &DAT_003fae46;
   uRam003fae42 = 0x3fae4e;
-  _DAT_003fae38 = CONCAT31(_DAT_003fae38,(char)j1939_source_address);
+  _DAT_003fae38 = CONCAT31(_DAT_003fae38,(char)j1939_source_address._0_2_);
   DAT_003fae46 = 0xff;
   uRam003fae49 = 0xff;
   uRam003fae4a = 0xff;
@@ -24922,7 +24727,7 @@ void cm848_initPgn65270InletExhaustHandler(undefined1 *param_1,int param_2)
   undefined4 in_r11;
   
   *(undefined4 *)(param_2 + 10) = in_r11;
-  *(char *)(param_2 + 3) = (char)j1939_source_address;
+  *(char *)(param_2 + 3) = (char)j1939_source_address._0_2_;
   *param_1 = 0xff;
   param_1[3] = 0xff;
   param_1[4] = 0xff;
@@ -24937,8 +24742,6 @@ void cm848_initPgn65270InletExhaustHandler(undefined1 *param_1,int param_2)
 // Function: cm848_j1939BuildProtocolModeStatus @ 0x00026650
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_j1939BuildProtocolModeStatus(void)
 
 {
@@ -24946,29 +24749,29 @@ void cm848_j1939BuildProtocolModeStatus(void)
   undefined1 uStack_7;
   
   if ((DAT_003fae71 & 0xf0) == 0) {
-    if (1 < _j1939_dm_feature_mode) {
-      cm848_j1939BuildPgn65213_FEBD_BrakeJobber(_j1939_dm_feature_mode,3);
+    if (1 < j1939_dm_feature_mode) {
+      cm848_j1939BuildPgn65213_FEBD_BrakeJobber(j1939_dm_feature_mode,3);
       return;
     }
-    if (_j1939_dm_feature_mode == 1) {
+    if (j1939_dm_feature_mode == 1) {
       j1939_pgn_dest_address = 0x14;
     }
     else {
       j1939_pgn_dest_address = 0xff;
     }
-    if (_cal_fuel_operation_mode_1_en == 0) {
+    if (cal_fuel_operation_mode_1_en == 0) {
       j1939_pgn65249_byte0 = 0xff;
     }
-    else if (_cal_fuel_operation_mode_1_en == 1) {
+    else if (cal_fuel_operation_mode_1_en == 1) {
       j1939_pgn65249_byte0 = 6;
     }
-    else if (_cal_fuel_operation_mode_1_en == 2) {
+    else if (cal_fuel_operation_mode_1_en == 2) {
       j1939_pgn65249_byte0 = 3;
     }
-    else if (_cal_fuel_operation_mode_1_en == 3) {
+    else if (cal_fuel_operation_mode_1_en == 3) {
       j1939_pgn65249_byte0 = 2;
     }
-    else if (_cal_fuel_operation_mode_1_en == 6) {
+    else if (cal_fuel_operation_mode_1_en == 6) {
       j1939_pgn65249_byte0 = 1;
     }
     uStack_7 = (undefined1)j1939_pgn65249_cal_a;
@@ -25011,8 +24814,6 @@ void cm848_j1939BuildProtocolModeStatus(void)
 // Function: cm848_j1939BuildPgn65213_FEBD_BrakeJobber @ 0x00026694
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_j1939BuildPgn65213_FEBD_BrakeJobber(undefined4 param_1,byte param_2)
 
 {
@@ -25020,19 +24821,19 @@ void cm848_j1939BuildPgn65213_FEBD_BrakeJobber(undefined4 param_1,byte param_2)
   undefined1 uStack00000008;
   undefined1 uStack00000009;
   
-  if (_cal_fuel_operation_mode_1_en == 0) {
+  if (cal_fuel_operation_mode_1_en == 0) {
     j1939_pgn65249_byte0 = 0xff;
   }
-  else if (_cal_fuel_operation_mode_1_en == 1) {
+  else if (cal_fuel_operation_mode_1_en == 1) {
     j1939_pgn65249_byte0 = 6;
   }
-  else if (_cal_fuel_operation_mode_1_en == 2) {
+  else if (cal_fuel_operation_mode_1_en == 2) {
     j1939_pgn65249_byte0 = 3;
   }
-  else if (_cal_fuel_operation_mode_1_en == 3) {
+  else if (cal_fuel_operation_mode_1_en == 3) {
     j1939_pgn65249_byte0 = 2;
   }
-  else if (_cal_fuel_operation_mode_1_en == 6) {
+  else if (cal_fuel_operation_mode_1_en == 6) {
     j1939_pgn65249_byte0 = 1;
   }
   uStack00000009 = (undefined1)j1939_pgn65249_cal_a;
@@ -25078,8 +24879,6 @@ void cm848_j1939BuildPgn65213_FEBD_BrakeJobber(undefined4 param_1,byte param_2)
 // Function: cm848_j1939BuildPgn65213_FEBD_BrakeJobber @ 0x0002669c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_j1939BuildPgn65213_FEBD_BrakeJobber(undefined4 param_1,byte param_2)
 
 {
@@ -25087,19 +24886,19 @@ void cm848_j1939BuildPgn65213_FEBD_BrakeJobber(undefined4 param_1,byte param_2)
   undefined1 uStack00000008;
   undefined1 uStack00000009;
   
-  if (_cal_fuel_operation_mode_1_en == 0) {
+  if (cal_fuel_operation_mode_1_en == 0) {
     j1939_pgn65249_byte0 = 0xff;
   }
-  else if (_cal_fuel_operation_mode_1_en == 1) {
+  else if (cal_fuel_operation_mode_1_en == 1) {
     j1939_pgn65249_byte0 = 6;
   }
-  else if (_cal_fuel_operation_mode_1_en == 2) {
+  else if (cal_fuel_operation_mode_1_en == 2) {
     j1939_pgn65249_byte0 = 3;
   }
-  else if (_cal_fuel_operation_mode_1_en == 3) {
+  else if (cal_fuel_operation_mode_1_en == 3) {
     j1939_pgn65249_byte0 = 2;
   }
-  else if (_cal_fuel_operation_mode_1_en == 6) {
+  else if (cal_fuel_operation_mode_1_en == 6) {
     j1939_pgn65249_byte0 = 1;
   }
   uStack00000009 = (undefined1)j1939_pgn65249_cal_a;
@@ -25249,7 +25048,7 @@ void cm848_initJ1939ProtocolModeStatusBuffer(void)
 
 {
   j1939_pgn65249_tx_header = CONCAT13(((byte)_DAT_003fd868 & 7) << 2,0xfee100);
-  j1939_pgn65249_tx_header = CONCAT31(j1939_pgn65249_tx_header._0_3_,(char)_j1939_source_address);
+  j1939_pgn65249_tx_header = CONCAT31(j1939_pgn65249_tx_header._0_3_,(char)j1939_source_address_b);
   uRam003fae67 = 0x13;
   pbRam003fae69 = &j1939_pgn_dest_address;
   puRam003fae6d = &DAT_003fae71;
@@ -25262,15 +25061,13 @@ void cm848_initJ1939ProtocolModeStatusBuffer(void)
 // Function: cm848_initPgn65256VehicleMaintenanceHandler @ 0x00026850
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_initPgn65256VehicleMaintenanceHandler(undefined1 *param_1)
 
 {
   undefined1 in_r0;
   
   *param_1 = in_r0;
-  param_1[3] = (char)_j1939_source_address;
+  param_1[3] = (char)j1939_source_address_b;
   *(undefined2 *)(param_1 + 4) = 0x13;
   *(byte **)(param_1 + 6) = &j1939_pgn_dest_address;
   *(undefined **)(param_1 + 10) = &DAT_003fae71;
@@ -25308,7 +25105,7 @@ void cm848_initPgn65242SoftwareIdHandler(void)
   uRam003fae76 = 0x2f;
   puRam003fae78 = &DAT_003fae80;
   puRam003fae7c = &DAT_003faeaf;
-  _DAT_003fae72 = CONCAT31(0x18feda,(char)j1939_source_address);
+  _DAT_003fae72 = CONCAT31(0x18feda,(char)j1939_source_address._0_2_);
   DAT_003fae80 = 6;
   cm848_governorDroopCalculation(&DAT_003fd69b,&DAT_003fae81,8);
   DAT_003fae89 = 0x2a;
@@ -25359,7 +25156,7 @@ void cm848_j1939SendPgn65249_FEE1(void)
   *(undefined2 *)(unaff_r30 + 1) = 0x2f;
   *(undefined1 **)((int)unaff_r30 + 6) = &DAT_003fae80;
   *(undefined **)((int)unaff_r30 + 10) = &DAT_003faeaf;
-  *(byte *)((int)unaff_r30 + 3) = (byte)j1939_source_address;
+  *(byte *)((int)unaff_r30 + 3) = (byte)j1939_source_address._0_2_;
   DAT_003fae80 = 6;
   cm848_governorDroopCalculation(&DAT_003fd69b,&DAT_003fae81,8);
   DAT_003fae89 = 0x2a;
@@ -25479,7 +25276,8 @@ void cm848_initJ1939ProprietaryPgn65504Buffer(void)
 
 {
   j1939_pgn57344_tx_header = CONCAT13(((byte)_DAT_003fd87e & 7) << 2,0xffe000);
-  j1939_pgn57344_tx_header = CONCAT31(j1939_pgn57344_tx_header._0_3_,(char)j1939_source_address);
+  j1939_pgn57344_tx_header =
+       CONCAT31(j1939_pgn57344_tx_header._0_3_,(char)j1939_source_address._0_2_);
   _DAT_003faebc = 8;
   _DAT_003faebe = &DAT_003faeb0;
   _DAT_003faec2 = &DAT_003faec6;
@@ -25530,7 +25328,7 @@ void cm848_initPgn65248VehicleDistanceHandler(void)
   _DAT_003faecc = 8;
   _DAT_003faece = &DAT_003faed6;
   _DAT_003faed2 = &DAT_003faede;
-  _DAT_003faec8 = CONCAT31(_DAT_003faec8,(char)j1939_source_address);
+  _DAT_003faec8 = CONCAT31(_DAT_003faec8,(char)j1939_source_address._0_2_);
   cm848_j1939RegisterPgnHandler(0xfee0,cm848_j1939HandlePgn65248VehicleDistance);
   return;
 }
@@ -25569,7 +25367,7 @@ void cm848_initJ1939VehicleElectricalBuffer(void)
   _DAT_003faee4 = 8;
   _DAT_003faee6 = &DAT_003faeee;
   _DAT_003faeea = &DAT_003faef6;
-  _DAT_003faee0 = CONCAT31(_DAT_003faee0,(char)j1939_source_address);
+  _DAT_003faee0 = CONCAT31(_DAT_003faee0,(char)j1939_source_address._0_2_);
   DAT_003faeee = 0xff;
   DAT_003faeef = 0xff;
   _DAT_003faef0 = 0xffff;
@@ -25619,7 +25417,7 @@ void cm848_initPgn65260VehicleIdHandler(void)
   _DAT_003faefc = 0x15;
   _DAT_003faefe = &DAT_003faf07;
   _DAT_003faf02 = &DAT_003faf06;
-  _DAT_003faef8 = CONCAT31(_DAT_003faef8,(char)j1939_source_address);
+  _DAT_003faef8 = CONCAT31(_DAT_003faef8,(char)j1939_source_address._0_2_);
   uVar1 = 0;
   do {
     (&DAT_003faf07)[uVar1] = (&j1939_source_address_table)[uVar1];
@@ -25664,7 +25462,7 @@ void cm848_initJ1939SafetyStatusBuffer(void)
 
 {
   _DAT_003faf24 = CONCAT13(((byte)_DAT_003fd87c & 7) << 2,0xfeff00);
-  _DAT_003faf24 = CONCAT31(_DAT_003faf24,(char)j1939_source_address);
+  _DAT_003faf24 = CONCAT31(_DAT_003faf24,(char)j1939_source_address._0_2_);
   _DAT_003faf28 = 1;
   _DAT_003faf2a = &DAT_003faf1c;
   _DAT_003faf2e = &DAT_003faf32;
@@ -25729,11 +25527,11 @@ void cm848_j1939FormatDm1Message(void)
 {
   uint uVar1;
   
-  governor_mode_snapshot = _DAT_0040adf8;
+  governor_mode_snapshot = j1939_tsc1_override_state;
   if (((DAT_0005c3aa < fuel_demand_control_t_0040a57a.calculated) &&
       (fuel_demand_control_t_0040a57a.calculated < _DAT_003feb90)) &&
      (etc1_state_t_0040ae00.reserved_1c._2_2_ == 1)) {
-    if (_fuel_demand_timing_enable_flag == 1) {
+    if (fuel_demand_timing_enable_flag == 1) {
       if (etc1_torque_limit_integrator < -(uint)DAT_0005c3b2 - 1) {
         etc1_torque_limit_integrator = etc1_torque_limit_integrator + DAT_0005c3b2;
       }
@@ -25754,7 +25552,7 @@ void cm848_j1939FormatDm1Message(void)
         etc1_state_t_0040ae00.mode3_speed_target = 0xffff;
       }
     }
-    _DAT_0040adf8 = 3;
+    j1939_tsc1_override_state = 3;
   }
   else {
     etc1_state_t_0040ae00.mode3_torque_limit = DAT_0005c3ae;
@@ -25762,8 +25560,8 @@ void cm848_j1939FormatDm1Message(void)
        (etc1_state_t_0040ae00.reserved_1c._2_2_ == 1)) {
       etc1_state_t_0040ae00.mode3_torque_limit = 0xffff;
     }
-    _DAT_0040adf8 = 0;
-    _j1939_governor_source_index = 0;
+    j1939_tsc1_override_state = 0;
+    j1939_governor_source_index = 0;
     etc1_torque_limit_integrator = (uint)etc1_state_t_0040ae00.mode3_torque_limit << 6;
     etc1_state_t_0040ae00.mode3_speed_target = engine_rpm_state_t_0040b7ac.current_rpm;
   }
@@ -25791,7 +25589,7 @@ void cm848_updateGovernorTorqueLimit
   uint uVar1;
   
   if ((param_5 < (int)(uint)_DAT_003feb90) && (etc1_state_t_0040ae00.reserved_1c._2_2_ == 1)) {
-    if (_fuel_demand_timing_enable_flag == 1) {
+    if (fuel_demand_timing_enable_flag == 1) {
       if (etc1_torque_limit_integrator < -(uint)DAT_0005c3b2 - 1) {
         etc1_torque_limit_integrator = etc1_torque_limit_integrator + DAT_0005c3b2;
       }
@@ -25824,7 +25622,7 @@ void cm848_updateGovernorTorqueLimit
     *param_2 = 0;
     etc1_state_t_0040ae00.control_flags = 0;
     *param_4 = 0;
-    _j1939_governor_source_index = 0;
+    j1939_governor_source_index = 0;
     etc1_torque_limit_integrator = (uint)etc1_state_t_0040ae00.mode3_torque_limit << 6;
     etc1_state_t_0040ae00.mode3_speed_target = engine_rpm_state_t_0040b7ac.current_rpm;
   }
@@ -25854,14 +25652,12 @@ void cm848_j1939SendPgn65279_FEFF(byte *param_1,undefined2 param_2)
 // Function: cm848_resetGovernorState @ 0x00027118
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_resetGovernorState(void)
 
 {
-  _governor_mode_state = 0;
-  _j1939_source_address_index = 0;
-  _j1939_governor_output_percent_tx = 0x7d;
+  governor_mode_state = 0;
+  j1939_source_address_index = 0;
+  j1939_governor_output_percent_tx = 0x7d;
   etc1_state_t_0040ae00.torque_mode_timer = 0;
   etc1_state_t_0040ae00.reserved_1c[8] = 0;
   etc1_state_t_0040ae00.reserved_1c[9] = 0;
@@ -25889,15 +25685,16 @@ void cm848_processGovernorModeTransition(void)
   bool bVar5;
   bool bVar6;
   bool bVar7;
-  short sVar8;
+  word wVar8;
   undefined4 uVar9;
   int iVar10;
   
-  sVar8 = _DAT_0040ae4a;
+  wVar8 = etc1_prev_speed_ctrl_active_flag;
   bVar7 = false;
   bVar6 = false;
   bVar5 = false;
-  if ((_DAT_003faf39 != _DAT_0040adfa) && (_DAT_0040adfa == 1)) {
+  if ((_DAT_003faf39 != j1939_tsc1_speed_override_active_flag) &&
+     (j1939_tsc1_speed_override_active_flag == 1)) {
     bVar5 = true;
   }
   if (etc1_state_t_0040ae00.torque_active_timer != 0) {
@@ -25906,8 +25703,8 @@ void cm848_processGovernorModeTransition(void)
   }
   bVar1 = etc1_state_t_0040ae00.torque_active_timer == 1;
   if (bVar1) {
-    _DAT_0040adfa = 0;
-    _DAT_0040ae4a = 0;
+    j1939_tsc1_speed_override_active_flag = 0;
+    etc1_prev_speed_ctrl_active_flag = 0;
     etc1_state_t_0040ae00.speed_control_target = etc1_state_t_0040ae00.speed_control_target & 3;
     etc1_state_t_0040ae00.torque_active_timer = 0;
     etc1_state_t_0040ae00.speed_override_timer = 0;
@@ -25916,46 +25713,46 @@ void cm848_processGovernorModeTransition(void)
     etc1_state_t_0040ae00.speed_override_timer = etc1_state_t_0040ae00.speed_override_timer - 1;
   }
   if (etc1_state_t_0040ae00.speed_override_timer == 1) {
-    _DAT_0040adfa = 0;
-    _DAT_0040ae4a = 1;
+    j1939_tsc1_speed_override_active_flag = 0;
+    etc1_prev_speed_ctrl_active_flag = 1;
     etc1_state_t_0040ae00.speed_control_target = etc1_state_t_0040ae00.speed_control_target | 4;
     etc1_state_t_0040ae00.torque_active_timer = etc1_torque_mode_timeout_cal + 1;
   }
   if (((etc1_state_t_0040ae00.speed_mode_flag != 0) &&
       (etc1_state_t_0040ae00.speed_mode_flag = etc1_state_t_0040ae00.speed_mode_flag - 1,
-      _DAT_003faf3e != _DAT_0040adfe)) && (_DAT_0040adfe == 1)) {
+      _DAT_003faf3e != j1939_etc1_speed_mode_flag)) && (j1939_etc1_speed_mode_flag == 1)) {
     bVar5 = true;
   }
   bVar2 = etc1_state_t_0040ae00.speed_mode_flag == 1;
   if (bVar2) {
-    _DAT_0040adfe = 0;
+    j1939_etc1_speed_mode_flag = 0;
     etc1_state_t_0040ae00.speed_mode_flag = 0;
   }
   if (((etc1_state_t_0040ae00.torque_limit_timer != 0) &&
       (etc1_state_t_0040ae00.torque_limit_timer = etc1_state_t_0040ae00.torque_limit_timer - 1,
-      _DAT_003faf40 != _DAT_0040adfc)) && (_DAT_0040adfc == 1)) {
+      _DAT_003faf40 != j1939_etc1_torque_limit_flag)) && (j1939_etc1_torque_limit_flag == 1)) {
     bVar5 = true;
   }
   bVar3 = etc1_state_t_0040ae00.torque_limit_timer == 1;
   if (bVar3) {
-    _DAT_0040adfc = 0;
+    j1939_etc1_torque_limit_flag = 0;
     etc1_state_t_0040ae00.torque_limit_timer = 0;
   }
   if (((etc1_state_t_0040ae00.mode_timeout != 0) &&
       (etc1_state_t_0040ae00.mode_timeout = etc1_state_t_0040ae00.mode_timeout - 1,
-      _governor_mode_state_prev != _governor_mode_state)) && (_governor_mode_state == 0)) {
+      governor_mode_state_prev != governor_mode_state)) && (governor_mode_state == 0)) {
     bVar5 = true;
   }
   bVar4 = etc1_state_t_0040ae00.mode_timeout == 1;
   if (bVar4) {
     etc1_state_t_0040ae00.mode_timeout = 0;
   }
-  bVar4 = bVar4 || (bVar3 || (bVar2 || bVar1 && sVar8 == 0));
-  if (_DAT_0040ae4c != 0) {
-    _DAT_0040ae4c = _DAT_0040ae4c + -1;
+  bVar4 = bVar4 || (bVar3 || (bVar2 || bVar1 && wVar8 == 0));
+  if (etc1_override_timer_countdown != 0) {
+    etc1_override_timer_countdown = etc1_override_timer_countdown - 1;
   }
-  if (_DAT_0040ae4c == 1) {
-    _DAT_0040ae4c = 0;
+  if (etc1_override_timer_countdown == 1) {
+    etc1_override_timer_countdown = 0;
     etc1_state_t_0040ae00.spn574_shift_in_process = 0;
   }
   if (governor_timeout_countdown != 0) {
@@ -25973,11 +25770,11 @@ void cm848_processGovernorModeTransition(void)
     etc1_state_t_0040ae00.reserved_36[2] = 0;
     etc1_state_t_0040ae00.source_address = 0;
   }
-  if ((_etc1_transmission_mode == 4) || (_etc1_transmission_mode == 5)) {
+  if ((etc1_transmission_mode == 4) || (etc1_transmission_mode == 5)) {
     if (etc1_state_t_0040ae00.override_timeout != 0) {
       etc1_state_t_0040ae00.override_timeout = etc1_state_t_0040ae00.override_timeout - 1;
     }
-    if ((etc1_state_t_0040ae00.override_timeout == 1) || (_DAT_0040ae4c == 0)) {
+    if ((etc1_state_t_0040ae00.override_timeout == 1) || (etc1_override_timer_countdown == 0)) {
       etc1_state_t_0040ae00.override_timeout = 0;
       etc1_state_t_0040ae00.control_active = 0;
     }
@@ -25987,8 +25784,8 @@ void cm848_processGovernorModeTransition(void)
       bVar4 = true;
     }
   }
-  if (_etc1_transmission_mode == 4) {
-    if (((_cold_start_phase == 3) || (_cold_start_phase == 4)) || (_cold_start_phase == 5)) {
+  if (etc1_transmission_mode == 4) {
+    if (((cold_start_phase == 3) || (cold_start_phase == 4)) || (cold_start_phase == 5)) {
       etc1_state_t_0040ae00.config_entry_ptr._0_2_ =
            etc1_state_t_0040ae00.config_entry_ptr._0_2_ + 1;
     }
@@ -25998,7 +25795,7 @@ void cm848_processGovernorModeTransition(void)
     if ((protection_enable_t_0040c050.mode_bits & 1) == 0) {
       etc1_state_t_0040ae00.handler_initialized = 1;
     }
-    else if ((_cold_start_phase == 1) ||
+    else if ((cold_start_phase == 1) ||
             (DAT_0005c3a8 <= etc1_state_t_0040ae00.config_entry_ptr._0_2_)) {
       etc1_state_t_0040ae00.handler_initialized = 0;
     }
@@ -26016,7 +25813,7 @@ void cm848_processGovernorModeTransition(void)
            system_status_flags_t_003fe974.condition_monitor | 0x2000;
     }
   }
-  if (((governor_mode_snapshot == _DAT_0040adf8) &&
+  if (((governor_mode_snapshot == j1939_tsc1_override_state) &&
       ((int)(short)_DAT_003faf36 == (int)(short)etc1_state_t_0040ae00.active_state)) &&
      (DAT_003faf38 == (char)etc1_state_t_0040ae00.config_entry_ptr)) {
     if (etc1_state_t_0040ae00.reserved_1c._6_2_ != 0) {
@@ -26027,14 +25824,14 @@ void cm848_processGovernorModeTransition(void)
     }
     etc1_state_t_0040ae00.reserved_1c[2] = 0;
     etc1_state_t_0040ae00.reserved_1c[3] = (ushort)etc1_state_t_0040ae00.reserved_1c._6_2_ < 2;
-    if (_DAT_0040adf8 == 0) {
-      _DAT_0040adfa = 0;
+    if (j1939_tsc1_override_state == 0) {
+      j1939_tsc1_speed_override_active_flag = 0;
       if ((ushort)etc1_state_t_0040ae00.reserved_1c._6_2_ < 2) {
         cm848_j1939FormatDm1Message();
       }
     }
     else {
-      if (_DAT_0040adf8 == 1) {
+      if (j1939_tsc1_override_state == 1) {
         if (etc1_state_t_0040ae00.reserved_1c._6_2_ != 1) {
           uVar9 = 1;
 LAB_00027800:
@@ -26049,32 +25846,32 @@ LAB_00027800:
           goto LAB_00027848;
         }
       }
-      else if (_DAT_0040adf8 == 2) {
-        _DAT_0040adfa = 0;
+      else if (j1939_tsc1_override_state == 2) {
+        j1939_tsc1_speed_override_active_flag = 0;
         if (etc1_state_t_0040ae00.reserved_1c._6_2_ != 1) {
           uVar9 = 2;
           goto LAB_00027800;
         }
       }
-      else if ((_DAT_0040adf8 != 3) ||
-              (_DAT_0040adfa = 0, 1 < (ushort)etc1_state_t_0040ae00.reserved_1c._6_2_))
-      goto LAB_00027848;
-      _DAT_0040adfa = 0;
+      else if ((j1939_tsc1_override_state != 3) ||
+              (j1939_tsc1_speed_override_active_flag = 0,
+              1 < (ushort)etc1_state_t_0040ae00.reserved_1c._6_2_)) goto LAB_00027848;
+      j1939_tsc1_speed_override_active_flag = 0;
       cm848_j1939FormatDm1Message();
       bVar4 = true;
     }
   }
-  else if (_DAT_0040adf8 == 0) {
+  else if (j1939_tsc1_override_state == 0) {
     etc1_state_t_0040ae00.reserved_1c[4] = 0;
     etc1_state_t_0040ae00.reserved_1c[5] = 0;
   }
   else {
-    if (_DAT_0040adf8 == 1) {
+    if (j1939_tsc1_override_state == 1) {
       iVar10 = 6;
     }
     else {
-      if (_DAT_0040adf8 != 2) {
-        if (_DAT_0040adf8 == 3) {
+      if (j1939_tsc1_override_state != 2) {
+        if (j1939_tsc1_override_state == 3) {
           etc1_state_t_0040ae00.reserved_1c[4] = 0;
           etc1_state_t_0040ae00.reserved_1c[5] = 0;
           bVar5 = true;
@@ -26104,49 +25901,49 @@ LAB_00027848:
       cold_start_state_flag_b = 1;
     }
   }
-  governor_mode_snapshot = _DAT_0040adf8;
+  governor_mode_snapshot = j1939_tsc1_override_state;
   _DAT_003faf36 = etc1_state_t_0040ae00.active_state;
   DAT_003faf38 = (char)etc1_state_t_0040ae00.config_entry_ptr;
-  _DAT_003faf39 = _DAT_0040adfa;
-  _DAT_003faf3e = _DAT_0040adfe;
-  _DAT_003faf40 = _DAT_0040adfc;
-  if ((_governor_mode_state_prev == _governor_mode_state) &&
-     (DAT_003faf3d == _governor_mode_transition_state)) {
+  _DAT_003faf39 = j1939_tsc1_speed_override_active_flag;
+  _DAT_003faf3e = j1939_etc1_speed_mode_flag;
+  _DAT_003faf40 = j1939_etc1_torque_limit_flag;
+  if ((governor_mode_state_prev == governor_mode_state) &&
+     (DAT_003faf3d == governor_mode_transition_state)) {
     if (etc1_state_t_0040ae00.torque_mode_timer != 0) {
       etc1_state_t_0040ae00.torque_mode_timer = etc1_state_t_0040ae00.torque_mode_timer - 1;
     }
     if (etc1_state_t_0040ae00.reserved_1c._8_2_ != 0) {
       etc1_state_t_0040ae00.reserved_1c._8_2_ = etc1_state_t_0040ae00.reserved_1c._8_2_ + -1;
     }
-    if (_governor_mode_state == 2) {
+    if (governor_mode_state == 2) {
       if (etc1_state_t_0040ae00.torque_mode_timer == 1) {
 LAB_000279e8:
         cm848_resetGovernorState();
         bVar7 = true;
       }
       else if (etc1_state_t_0040ae00.reserved_1c._8_2_ == 1) {
-        cm848_addCoolantCalEntryAlt(_governor_mode_transition_state & 0xff,2);
+        cm848_addCoolantCalEntryAlt(governor_mode_transition_state & 0xff,2);
         etc1_state_t_0040ae00.speed_control_target = etc1_state_t_0040ae00.speed_control_target | 2;
         cm848_resetGovernorState();
       }
     }
-    else if ((_governor_mode_state == 3) && (etc1_state_t_0040ae00.torque_mode_timer == 1))
+    else if ((governor_mode_state == 3) && (etc1_state_t_0040ae00.torque_mode_timer == 1))
     goto LAB_000279e8;
   }
   else {
-    if (_governor_mode_state == 2) {
+    if (governor_mode_state == 2) {
       etc1_state_t_0040ae00.reserved_1c._8_2_ = *(short *)(etc1_state_t_0040ae00._70_4_ + 0x10) + 1;
     }
     else {
       etc1_state_t_0040ae00.reserved_1c[8] = 0;
       etc1_state_t_0040ae00.reserved_1c[9] = 0;
-      if (_governor_mode_state != 3) goto LAB_000279f0;
+      if (governor_mode_state != 3) goto LAB_000279f0;
     }
     cold_start_state_flag_a = 1;
   }
 LAB_000279f0:
-  _governor_mode_state_prev = _governor_mode_state;
-  DAT_003faf3d = (byte)_governor_mode_transition_state;
+  governor_mode_state_prev = governor_mode_state;
+  DAT_003faf3d = (byte)governor_mode_transition_state;
   if (bVar6) {
     if ((int)(uint)etc1_state_timeout_counter < (int)(DAT_0005c39c - 1)) {
       etc1_state_timeout_counter = etc1_state_timeout_counter + 1;
@@ -26216,11 +26013,12 @@ void cm848_selectTorqueLimitByStateMachine(void)
   int unaff_r18;
   int unaff_r24;
   int iVar4;
-  undefined2 *puStack00000008;
+  word *pwStack00000008;
   
   bVar2 = false;
   bVar1 = false;
-  if ((_DAT_003faf39 != _DAT_0040adfa) && (_DAT_0040adfa == 1)) {
+  if ((_DAT_003faf39 != j1939_tsc1_speed_override_active_flag) &&
+     (j1939_tsc1_speed_override_active_flag == 1)) {
     bVar1 = true;
   }
   if (etc1_state_t_0040ae00.torque_active_timer != 0) {
@@ -26228,11 +26026,11 @@ void cm848_selectTorqueLimitByStateMachine(void)
     bVar1 = true;
   }
   if (etc1_state_t_0040ae00.torque_active_timer == 1) {
-    if (_DAT_0040ae4a == 0) {
+    if (etc1_prev_speed_ctrl_active_flag == 0) {
       unaff_r24 = 1;
     }
-    _DAT_0040adfa = 0;
-    _DAT_0040ae4a = 0;
+    j1939_tsc1_speed_override_active_flag = 0;
+    etc1_prev_speed_ctrl_active_flag = 0;
     etc1_state_t_0040ae00.speed_control_target = etc1_state_t_0040ae00.speed_control_target & 3;
     etc1_state_t_0040ae00.torque_active_timer = 0;
     etc1_state_t_0040ae00.speed_override_timer = 0;
@@ -26241,46 +26039,46 @@ void cm848_selectTorqueLimitByStateMachine(void)
     etc1_state_t_0040ae00.speed_override_timer = etc1_state_t_0040ae00.speed_override_timer - 1;
   }
   if (etc1_state_t_0040ae00.speed_override_timer == 1) {
-    _DAT_0040adfa = 0;
-    _DAT_0040ae4a = 1;
+    j1939_tsc1_speed_override_active_flag = 0;
+    etc1_prev_speed_ctrl_active_flag = 1;
     etc1_state_t_0040ae00.speed_control_target = etc1_state_t_0040ae00.speed_control_target | 4;
     etc1_state_t_0040ae00.torque_active_timer = etc1_torque_mode_timeout_cal + 1;
   }
   if (((etc1_state_t_0040ae00.speed_mode_flag != 0) &&
       (etc1_state_t_0040ae00.speed_mode_flag = etc1_state_t_0040ae00.speed_mode_flag - 1,
-      _DAT_003faf3e != _DAT_0040adfe)) && (_DAT_0040adfe == 1)) {
+      _DAT_003faf3e != j1939_etc1_speed_mode_flag)) && (j1939_etc1_speed_mode_flag == 1)) {
     bVar1 = true;
   }
   if (etc1_state_t_0040ae00.speed_mode_flag == 1) {
-    _DAT_0040adfe = 0;
+    j1939_etc1_speed_mode_flag = 0;
     etc1_state_t_0040ae00.speed_mode_flag = 0;
     unaff_r24 = 1;
   }
-  puStack00000008 = (undefined2 *)&DAT_0040adfc;
+  pwStack00000008 = &j1939_etc1_torque_limit_flag;
   if (((etc1_state_t_0040ae00.torque_limit_timer != 0) &&
       (etc1_state_t_0040ae00.torque_limit_timer = etc1_state_t_0040ae00.torque_limit_timer - 1,
-      _DAT_003faf40 != _DAT_0040adfc)) && (_DAT_0040adfc == 1)) {
+      _DAT_003faf40 != j1939_etc1_torque_limit_flag)) && (j1939_etc1_torque_limit_flag == 1)) {
     bVar1 = true;
   }
   if (etc1_state_t_0040ae00.torque_limit_timer == 1) {
-    _DAT_0040adfc = 0;
+    j1939_etc1_torque_limit_flag = 0;
     etc1_state_t_0040ae00.torque_limit_timer = 0;
     unaff_r24 = 1;
   }
   if (((etc1_state_t_0040ae00.mode_timeout != 0) &&
       (etc1_state_t_0040ae00.mode_timeout = etc1_state_t_0040ae00.mode_timeout - 1,
-      _governor_mode_state_prev != _governor_mode_state)) && (_governor_mode_state == 0)) {
+      governor_mode_state_prev != governor_mode_state)) && (governor_mode_state == 0)) {
     bVar1 = true;
   }
   if (etc1_state_t_0040ae00.mode_timeout == 1) {
     etc1_state_t_0040ae00.mode_timeout = 0;
     unaff_r24 = 1;
   }
-  if (_DAT_0040ae4c != 0) {
-    _DAT_0040ae4c = _DAT_0040ae4c + -1;
+  if (etc1_override_timer_countdown != 0) {
+    etc1_override_timer_countdown = etc1_override_timer_countdown - 1;
   }
-  if (_DAT_0040ae4c == 1) {
-    _DAT_0040ae4c = 0;
+  if (etc1_override_timer_countdown == 1) {
+    etc1_override_timer_countdown = 0;
     etc1_state_t_0040ae00.spn574_shift_in_process = 0;
   }
   if (governor_timeout_countdown != 0) {
@@ -26298,11 +26096,11 @@ void cm848_selectTorqueLimitByStateMachine(void)
     etc1_state_t_0040ae00.reserved_36[2] = 0;
     etc1_state_t_0040ae00.source_address = 0;
   }
-  if ((_etc1_transmission_mode == 4) || (_etc1_transmission_mode == 5)) {
+  if ((etc1_transmission_mode == 4) || (etc1_transmission_mode == 5)) {
     if (etc1_state_t_0040ae00.override_timeout != 0) {
       etc1_state_t_0040ae00.override_timeout = etc1_state_t_0040ae00.override_timeout - 1;
     }
-    if ((etc1_state_t_0040ae00.override_timeout == 1) || (_DAT_0040ae4c == 0)) {
+    if ((etc1_state_t_0040ae00.override_timeout == 1) || (etc1_override_timer_countdown == 0)) {
       etc1_state_t_0040ae00.override_timeout = 0;
       etc1_state_t_0040ae00.control_active = 0;
     }
@@ -26312,8 +26110,8 @@ void cm848_selectTorqueLimitByStateMachine(void)
       unaff_r24 = 1;
     }
   }
-  if (_etc1_transmission_mode == 4) {
-    if (((_cold_start_phase == 3) || (_cold_start_phase == 4)) || (_cold_start_phase == 5)) {
+  if (etc1_transmission_mode == 4) {
+    if (((cold_start_phase == 3) || (cold_start_phase == 4)) || (cold_start_phase == 5)) {
       etc1_state_t_0040ae00.config_entry_ptr._0_2_ =
            etc1_state_t_0040ae00.config_entry_ptr._0_2_ + 1;
     }
@@ -26323,7 +26121,7 @@ void cm848_selectTorqueLimitByStateMachine(void)
     if ((protection_enable_t_0040c050.mode_bits & 1) == 0) {
       etc1_state_t_0040ae00.handler_initialized = 1;
     }
-    else if ((_cold_start_phase == 1) ||
+    else if ((cold_start_phase == 1) ||
             (DAT_0005c3a8 <= etc1_state_t_0040ae00.config_entry_ptr._0_2_)) {
       etc1_state_t_0040ae00.handler_initialized = 0;
     }
@@ -26341,7 +26139,7 @@ void cm848_selectTorqueLimitByStateMachine(void)
            system_status_flags_t_003fe974.condition_monitor | 0x2000;
     }
   }
-  if (((governor_mode_snapshot == _DAT_0040adf8) &&
+  if (((governor_mode_snapshot == j1939_tsc1_override_state) &&
       ((int)(short)_DAT_003faf36 == (int)(short)etc1_state_t_0040ae00.active_state)) &&
      (DAT_003faf38 == (char)etc1_state_t_0040ae00.config_entry_ptr)) {
     if (etc1_state_t_0040ae00.reserved_1c._6_2_ != 0) {
@@ -26352,14 +26150,14 @@ void cm848_selectTorqueLimitByStateMachine(void)
     }
     etc1_state_t_0040ae00.reserved_1c[2] = 0;
     etc1_state_t_0040ae00.reserved_1c[3] = (ushort)etc1_state_t_0040ae00.reserved_1c._6_2_ < 2;
-    if (_DAT_0040adf8 == 0) {
-      _DAT_0040adfa = 0;
+    if (j1939_tsc1_override_state == 0) {
+      j1939_tsc1_speed_override_active_flag = 0;
       if ((ushort)etc1_state_t_0040ae00.reserved_1c._6_2_ < 2) {
         cm848_j1939FormatDm1Message();
       }
     }
     else {
-      if (_DAT_0040adf8 == 1) {
+      if (j1939_tsc1_override_state == 1) {
         if (etc1_state_t_0040ae00.reserved_1c._6_2_ != 1) {
           uVar3 = 1;
 LAB_00027800:
@@ -26374,32 +26172,32 @@ LAB_00027800:
           goto LAB_00027848;
         }
       }
-      else if (_DAT_0040adf8 == 2) {
-        _DAT_0040adfa = 0;
+      else if (j1939_tsc1_override_state == 2) {
+        j1939_tsc1_speed_override_active_flag = 0;
         if (etc1_state_t_0040ae00.reserved_1c._6_2_ != 1) {
           uVar3 = 2;
           goto LAB_00027800;
         }
       }
-      else if ((_DAT_0040adf8 != 3) ||
-              (_DAT_0040adfa = 0, 1 < (ushort)etc1_state_t_0040ae00.reserved_1c._6_2_))
-      goto LAB_00027848;
-      _DAT_0040adfa = 0;
+      else if ((j1939_tsc1_override_state != 3) ||
+              (j1939_tsc1_speed_override_active_flag = 0,
+              1 < (ushort)etc1_state_t_0040ae00.reserved_1c._6_2_)) goto LAB_00027848;
+      j1939_tsc1_speed_override_active_flag = 0;
       cm848_j1939FormatDm1Message();
       unaff_r24 = 1;
     }
   }
-  else if (_DAT_0040adf8 == 0) {
+  else if (j1939_tsc1_override_state == 0) {
     etc1_state_t_0040ae00.reserved_1c[4] = 0;
     etc1_state_t_0040ae00.reserved_1c[5] = 0;
   }
   else {
-    if (_DAT_0040adf8 == 1) {
+    if (j1939_tsc1_override_state == 1) {
       iVar4 = 6;
     }
     else {
-      if (_DAT_0040adf8 != 2) {
-        if (_DAT_0040adf8 == 3) {
+      if (j1939_tsc1_override_state != 2) {
+        if (j1939_tsc1_override_state == 3) {
           etc1_state_t_0040ae00.reserved_1c[4] = 0;
           etc1_state_t_0040ae00.reserved_1c[5] = 0;
           bVar1 = true;
@@ -26429,49 +26227,49 @@ LAB_00027848:
       cold_start_state_flag_b = 1;
     }
   }
-  governor_mode_snapshot = _DAT_0040adf8;
+  governor_mode_snapshot = j1939_tsc1_override_state;
   _DAT_003faf36 = etc1_state_t_0040ae00.active_state;
   DAT_003faf38 = (char)etc1_state_t_0040ae00.config_entry_ptr;
-  _DAT_003faf39 = _DAT_0040adfa;
-  _DAT_003faf3e = _DAT_0040adfe;
-  _DAT_003faf40 = *puStack00000008;
-  if ((_governor_mode_state_prev == _governor_mode_state) &&
-     (DAT_003faf3d == _governor_mode_transition_state)) {
+  _DAT_003faf39 = j1939_tsc1_speed_override_active_flag;
+  _DAT_003faf3e = j1939_etc1_speed_mode_flag;
+  _DAT_003faf40 = *pwStack00000008;
+  if ((governor_mode_state_prev == governor_mode_state) &&
+     (DAT_003faf3d == governor_mode_transition_state)) {
     if (etc1_state_t_0040ae00.torque_mode_timer != 0) {
       etc1_state_t_0040ae00.torque_mode_timer = etc1_state_t_0040ae00.torque_mode_timer - 1;
     }
     if (etc1_state_t_0040ae00.reserved_1c._8_2_ != 0) {
       etc1_state_t_0040ae00.reserved_1c._8_2_ = etc1_state_t_0040ae00.reserved_1c._8_2_ + -1;
     }
-    if (_governor_mode_state == 2) {
+    if (governor_mode_state == 2) {
       if (etc1_state_t_0040ae00.torque_mode_timer == 1) {
 LAB_000279e8:
         cm848_resetGovernorState();
         unaff_r18 = 1;
       }
       else if (etc1_state_t_0040ae00.reserved_1c._8_2_ == 1) {
-        cm848_addCoolantCalEntryAlt(_governor_mode_transition_state & 0xff,2);
+        cm848_addCoolantCalEntryAlt(governor_mode_transition_state & 0xff,2);
         etc1_state_t_0040ae00.speed_control_target = etc1_state_t_0040ae00.speed_control_target | 2;
         cm848_resetGovernorState();
       }
     }
-    else if ((_governor_mode_state == 3) && (etc1_state_t_0040ae00.torque_mode_timer == 1))
+    else if ((governor_mode_state == 3) && (etc1_state_t_0040ae00.torque_mode_timer == 1))
     goto LAB_000279e8;
   }
   else {
-    if (_governor_mode_state == 2) {
+    if (governor_mode_state == 2) {
       etc1_state_t_0040ae00.reserved_1c._8_2_ = *(short *)(etc1_state_t_0040ae00._70_4_ + 0x10) + 1;
     }
     else {
       etc1_state_t_0040ae00.reserved_1c[8] = 0;
       etc1_state_t_0040ae00.reserved_1c[9] = 0;
-      if (_governor_mode_state != 3) goto LAB_000279f0;
+      if (governor_mode_state != 3) goto LAB_000279f0;
     }
     cold_start_state_flag_a = 1;
   }
 LAB_000279f0:
-  _governor_mode_state_prev = _governor_mode_state;
-  DAT_003faf3d = (byte)_governor_mode_transition_state;
+  governor_mode_state_prev = governor_mode_state;
+  DAT_003faf3d = (byte)governor_mode_transition_state;
   if (bVar2) {
     if ((int)(uint)etc1_state_timeout_counter < (int)(DAT_0005c39c - 1)) {
       etc1_state_timeout_counter = etc1_state_timeout_counter + 1;
@@ -26678,29 +26476,29 @@ void cm848_updateSpeedProtectionLimits(int param_1)
              (int)(short)governor_speed_error_delta *
              (int)(short)governor_speed_setpoint_raw * (int)(short)governor_speed_pid_gain,0,
              &PTR_DAT_00022c86);
-  _governor_fuel_demand_correction = (uVar3 - extraout_r4) - param_1;
-  if (((_cold_start_phase == 3) && (cold_start_fuel_demand_correction_enable_cal != 0)) &&
+  governor_fuel_demand_correction = (uVar3 - extraout_r4) - param_1;
+  if (((cold_start_phase == 3) && (cold_start_fuel_demand_correction_enable_cal != 0)) &&
      (((short)governor_speed_low_clamp < (short)cold_start_governor_speed_clamp_threshold_cal ||
       (fuel_temperature_trim <= cold_start_fuel_temp_trim_threshold_cal)))) {
-    _governor_fuel_demand_correction = (int)(short)governor_fuel_demand_correction;
+    governor_fuel_demand_correction = (dword)(short)governor_fuel_demand_correction;
     governor_fuel_demand_correction_active_flag = 1;
   }
   else {
     governor_fuel_demand_correction_active_flag = 0;
   }
-  if (_governor_fuel_demand_correction <= (short)wVar4) {
-    if (((_fuel_correction_mode_flag != 0) &&
+  if ((int)governor_fuel_demand_correction <= (int)(short)wVar4) {
+    if (((fuel_correction_mode_flag != 0) &&
         (wVar4 = governor_fuel_correction_lower_cal,
-        _governor_fuel_demand_correction < (short)governor_fuel_correction_lower_cal)) ||
-       ((_fuel_correction_mode_flag == 0 &&
+        (int)governor_fuel_demand_correction < (int)(short)governor_fuel_correction_lower_cal)) ||
+       ((fuel_correction_mode_flag == 0 &&
         (wVar4 = governor_fuel_correction_lower_b_cal,
-        _governor_fuel_demand_correction < (short)governor_fuel_correction_lower_b_cal))))
+        (int)governor_fuel_demand_correction < (int)(short)governor_fuel_correction_lower_b_cal))))
     goto LAB_00027fb0;
-    pwVar5 = (word *)&DAT_003faf4a;
+    pwVar5 = (word *)((int)&governor_fuel_demand_correction + 2);
   }
   wVar4 = *pwVar5;
 LAB_00027fb0:
-  _governor_fuel_demand_correction = (uint)wVar4 << 0x10;
+  governor_fuel_demand_correction = (uint)wVar4 << 0x10;
   governor_speed_weight_a = 0;
   governor_speed_weight_b = 0;
   governor_speed_error_derivative = 0;
@@ -26727,37 +26525,38 @@ void cm848_processSpeedGovernorControl(void)
   int extraout_r4_02;
   int iVar2;
   uint uVar3;
-  int iVar4;
+  dword dVar4;
   int iVar5;
   int iVar6;
   int iVar7;
-  word wVar8;
+  int iVar8;
   word wVar9;
-  short sVar10;
+  word wVar10;
+  short sVar11;
   word wStack_4e;
   
-  if (_governor_request_active_flag == 0) {
+  if (governor_request_active_flag == 0) {
     governor_fuel_demand_upper_working = governor_speed_setpoint_integrated;
-    _governor_speed_debounce_b = 0;
+    governor_speed_debounce_b = 0;
     _DAT_003faf50 = 0;
     goto LAB_00028594;
   }
   if (governor_integrator_include_enable_cal == 0) {
-    iVar7 = 0;
+    iVar8 = 0;
   }
   else {
-    iVar7 = (int)governor_output_t_0040aec2.integrator._2_2_;
+    iVar8 = (int)governor_output_t_0040aec2.integrator._2_2_;
   }
   if (governor_mode_code_prev == 0xb) {
-    _governor_speed_debounce_b = 0;
+    governor_speed_debounce_b = 0;
   }
-  else if (_governor_speed_debounce_b < governor_speed_debounce_limit_cal) {
-    _governor_speed_debounce_b = _governor_speed_debounce_b + 1;
+  else if (governor_speed_debounce_b < governor_speed_debounce_limit_cal) {
+    governor_speed_debounce_b = governor_speed_debounce_b + 1;
   }
   _DAT_003faf4e = governor_speed_setpoint_raw;
   cm848_updateGovernorSetpointParameters();
-  if ((_DAT_003faf50 == 0) || (_governor_speed_debounce_b == governor_speed_debounce_limit_cal)) {
-    cm848_updateSpeedProtectionLimits(iVar7);
+  if ((_DAT_003faf50 == 0) || (governor_speed_debounce_b == governor_speed_debounce_limit_cal)) {
+    cm848_updateSpeedProtectionLimits(iVar8);
     governor_speed_low_clamp = 0;
   }
   uVar3 = (uint)(short)(governor_output_t_0040aec2.integrator._0_2_ + governor_integrator_offset_cal
@@ -26768,7 +26567,7 @@ void cm848_processSpeedGovernorControl(void)
   if (((uVar3 & 0xffff) < (uint)engine_rpm_state_t_0040b7ac.current_rpm) &&
      (governor_fuel_demand_value < governor_fuel_demand_reset_threshold_cal)) {
     governor_fuel_demand_correction = governor_fuel_correction_init_cal;
-    _governor_fuel_demand_correction = (uint)governor_fuel_correction_init_cal << 0x10;
+    governor_fuel_demand_correction = (uint)governor_fuel_correction_init_cal << 0x10;
     governor_speed_weight_a = 0;
     governor_speed_weight_b = 0;
     governor_speed_error_derivative = 0;
@@ -26778,20 +26577,20 @@ void cm848_processSpeedGovernorControl(void)
     governor_pid_gain_factor_b = 0x80;
     governor_speed_pid_gain = 0x80;
     cm848_processSpeedSensorCompensation();
-    wVar8 = governor_speed_error_delta;
+    wVar9 = governor_speed_error_delta;
     governor_speed_setpoint_integrated =
          governor_speed_setpoint_integrated_init_cal + governor_speed_correction;
     if ((short)governor_speed_setpoint_integrated < 0) {
       governor_speed_setpoint_integrated = 0;
     }
-    wVar9 = governor_speed_pid_output_init_cal + governor_speed_correction;
-    iVar6 = (int)(short)governor_speed_error_delta;
-    iVar4 = (int)(short)governor_speed_setpoint_raw;
-    iVar5 = (int)(short)governor_speed_pid_gain;
-    iVar2 = iVar4 * iVar5;
-    governor_speed_pid_output_working = wVar9;
+    wVar10 = governor_speed_pid_output_init_cal + governor_speed_correction;
+    iVar7 = (int)(short)governor_speed_error_delta;
+    iVar5 = (int)(short)governor_speed_setpoint_raw;
+    iVar6 = (int)(short)governor_speed_pid_gain;
+    iVar2 = iVar5 * iVar6;
+    governor_speed_pid_output_working = wVar10;
     cm848_signedDivision32
-              ((int)((ulonglong)((longlong)iVar6 * (longlong)iVar2) >> 0x20),iVar6 * iVar2,0,
+              ((int)((ulonglong)((longlong)iVar7 * (longlong)iVar2) >> 0x20),iVar7 * iVar2,0,
                &PTR_DAT_00022c86);
     uVar3 = (int)(short)governor_speed_weight_a * (int)(short)governor_speed_weight_a_scale_cal;
     iVar2 = extraout_r4 +
@@ -26811,11 +26610,11 @@ void cm848_processSpeedGovernorControl(void)
     governor_speed_weight_a = wStack_4e;
     cm848_signedDivision32
               ((int)((ulonglong)
-                     ((longlong)(int)_governor_speed_error_rate *
+                     ((longlong)(int)(short)governor_speed_error_rate *
                      (longlong)
                      ((int)(short)governor_p_gain_from_table *
                      (int)(short)governor_pid_gain_factor_a)) >> 0x20),
-               (int)_governor_speed_error_rate *
+               (int)(short)governor_speed_error_rate *
                (int)(short)governor_p_gain_from_table * (int)(short)governor_pid_gain_factor_a,0,
                &DAT_00008b21);
     iVar2 = extraout_r4_00 +
@@ -26829,11 +26628,11 @@ void cm848_processSpeedGovernorControl(void)
         wStack_4e = (word)iVar2;
       }
     }
-    iVar5 = (iVar4 - (short)_DAT_003faf4e) * iVar5;
+    iVar6 = (iVar5 - (short)_DAT_003faf4e) * iVar6;
     governor_speed_weight_b = wStack_4e;
     cm848_signedDivision32
-              ((int)((ulonglong)((longlong)(int)(short)wVar8 * (longlong)iVar5) >> 0x20),
-               (short)wVar8 * iVar5,0,&PTR_DAT_00022c86);
+              ((int)((ulonglong)((longlong)(int)(short)wVar9 * (longlong)iVar6) >> 0x20),
+               (short)wVar9 * iVar6,0,&PTR_DAT_00022c86);
     if (extraout_r4_01 < 0x2281) {
       if (extraout_r4_01 < -0x2280) {
         iVar2 = -0x22800000;
@@ -26847,45 +26646,45 @@ void cm848_processSpeedGovernorControl(void)
     }
     cm848_signedDivision32
               ((int)((ulonglong)
-                     ((longlong)iVar6 *
+                     ((longlong)iVar7 *
                      (longlong)
                      ((int)(short)governor_d_gain_from_table *
                      (int)(short)governor_pid_gain_factor_b)) >> 0x20),
-               iVar6 * (int)(short)governor_d_gain_from_table *
+               iVar7 * (int)(short)governor_d_gain_from_table *
                        (int)(short)governor_pid_gain_factor_b,0,0x23);
-    iVar2 = (_governor_fuel_demand_correction - iVar2) + extraout_r4_02;
-    governor_fuel_demand_correction = (word)((uint)iVar2 >> 0x10);
-    if (((short)wVar9 <= (short)governor_fuel_demand_correction) ||
-       (bVar1 = (short)governor_fuel_demand_correction <
+    dVar4 = (governor_fuel_demand_correction - iVar2) + extraout_r4_02;
+    governor_fuel_demand_correction._0_2_ = (word)(dVar4 >> 0x10);
+    if (((short)wVar10 <= (short)governor_fuel_demand_correction._0_2_) ||
+       (bVar1 = (short)governor_fuel_demand_correction._0_2_ <
                 (short)governor_fuel_correction_threshold_cal,
-       wVar9 = governor_fuel_correction_threshold_cal, _governor_fuel_demand_correction = iVar2,
+       wVar10 = governor_fuel_correction_threshold_cal, governor_fuel_demand_correction = dVar4,
        bVar1)) {
-      _governor_fuel_demand_correction = (uint)wVar9 << 0x10;
+      governor_fuel_demand_correction = (uint)wVar10 << 0x10;
     }
-    governor_fuel_demand_correction = governor_fuel_demand_correction;
+    governor_fuel_demand_correction = governor_fuel_demand_correction._0_2_;
     uVar3 = (int)(short)governor_speed_error_derivative *
             (int)(short)governor_speed_derivative_scale_cal;
-    sVar10 = (short)(((int)(short)governor_speed_error_rate_adjusted *
+    sVar11 = (short)(((int)(short)governor_speed_error_rate_adjusted *
                      (int)(short)governor_j1939_gain_extra_working) / 0x116) +
              (short)((int)uVar3 >> 5) + (ushort)((int)uVar3 < 0 && (uVar3 & 0x1f) != 0);
-    if ((int)(short)governor_derivative_deadband_cal < (int)sVar10) {
-      wVar8 = governor_derivative_clamp_cal;
-      governor_speed_error_derivative = sVar10 - governor_derivative_deadband_cal;
-      if ((short)governor_derivative_clamp_cal < (short)(sVar10 - governor_derivative_deadband_cal))
+    if ((int)(short)governor_derivative_deadband_cal < (int)sVar11) {
+      wVar9 = governor_derivative_clamp_cal;
+      governor_speed_error_derivative = sVar11 - governor_derivative_deadband_cal;
+      if ((short)governor_derivative_clamp_cal < (short)(sVar11 - governor_derivative_deadband_cal))
       goto LAB_000284d0;
     }
     else {
-      if ((int)sVar10 < -(int)(short)governor_derivative_deadband_cal) {
-        governor_speed_error_derivative = sVar10 + governor_derivative_deadband_cal;
+      if ((int)sVar11 < -(int)(short)governor_derivative_deadband_cal) {
+        governor_speed_error_derivative = sVar11 + governor_derivative_deadband_cal;
         if (-(int)(short)governor_derivative_clamp_cal <=
             (int)(short)governor_speed_error_derivative) goto LAB_000284d4;
-        wVar8 = -governor_derivative_clamp_cal;
+        wVar9 = -governor_derivative_clamp_cal;
       }
       else {
-        wVar8 = 0;
+        wVar9 = 0;
       }
 LAB_000284d0:
-      governor_speed_error_derivative = wVar8;
+      governor_speed_error_derivative = wVar9;
     }
 LAB_000284d4:
     governor_speed_filter_output =
@@ -26894,28 +26693,28 @@ LAB_000284d4:
                                       ((uint)protection_fuel_output_target -
                                       (uint)governor_speed_filter_fuel_offset_cal)) >> 0xe),
                     &DAT_003faf56);
-    iVar7 = (int)(short)governor_speed_weight_a + (int)(short)governor_speed_weight_b +
+    iVar8 = (int)(short)governor_speed_weight_a + (int)(short)governor_speed_weight_b +
             (int)(short)governor_fuel_demand_correction +
-            (int)(short)governor_speed_error_derivative + iVar7 +
+            (int)(short)governor_speed_error_derivative + iVar8 +
             (int)(short)governor_speed_filter_output;
     wStack_4e = governor_speed_setpoint_integrated;
-    if ((iVar7 <= (int)(uint)governor_speed_setpoint_integrated) &&
+    if ((iVar8 <= (int)(uint)governor_speed_setpoint_integrated) &&
        (wStack_4e = governor_cold_start_fuel_step_cal,
-       (int)(uint)governor_cold_start_fuel_step_cal <= iVar7)) {
-      wStack_4e = (word)iVar7;
+       (int)(uint)governor_cold_start_fuel_step_cal <= iVar8)) {
+      wStack_4e = (word)iVar8;
     }
     governor_fuel_demand_upper_working = wStack_4e;
-    if (_governor_fuel_demand_mode == 0xb) {
+    if (governor_fuel_demand_mode == 0xb) {
       governor_fuel_demand_value = wStack_4e;
     }
   }
   _DAT_003faf50 = 1;
 LAB_00028594:
   uVar3 = (int)(short)governor_speed_error_filtered + (int)(short)_DAT_003faf52;
-  wVar8 = (short)((int)uVar3 >> 1) + (ushort)((int)uVar3 < 0 && (uVar3 & 1) != 0);
+  wVar9 = (short)((int)uVar3 >> 1) + (ushort)((int)uVar3 < 0 && (uVar3 & 1) != 0);
   _DAT_003faf52 = governor_speed_error_filtered;
-  if ((short)wVar8 < (short)governor_speed_low_clamp) {
-    governor_speed_low_clamp = wVar8;
+  if ((short)wVar9 < (short)governor_speed_low_clamp) {
+    governor_speed_low_clamp = wVar9;
   }
   return;
 }
@@ -26971,8 +26770,8 @@ void cm848_processGovernorLoadCondition(void)
   int iVar1;
   word wVar2;
   
-  if (((governor_feature_flags & 0x1000) != 0) && (_governor_fuel_demand_mode == 0xb)) {
-    if (((governor_cold_start_load_timer == 0) && (_cold_start_phase == 3)) ||
+  if (((governor_feature_flags & 0x1000) != 0) && (governor_fuel_demand_mode == 0xb)) {
+    if (((governor_cold_start_load_timer == 0) && (cold_start_phase == 3)) ||
        ((governor_cold_start_load_timer != 0 &&
         (governor_cold_start_load_timer < governor_cold_start_load_timer_limit)))) {
       governor_cold_start_load_timer = governor_cold_start_load_timer + 1;
@@ -26980,7 +26779,7 @@ void cm848_processGovernorLoadCondition(void)
     if (governor_cold_start_load_timer_limit <= governor_cold_start_load_timer) {
       governor_cold_start_load_timer = governor_cold_start_load_timer_limit;
     }
-    if (_cold_start_phase == 1) {
+    if (cold_start_phase == 1) {
       governor_cold_start_load_timer = 0;
     }
     iVar1 = (int)(short)governor_speed_error_delta;
@@ -27005,15 +26804,15 @@ void cm848_processGovernorLoadCondition(void)
         cold_start_delay_counter = 0;
       }
     }
-    if (_governor_enabled_flag == 0) {
-      if (((_governor_active_flag == 1) &&
+    if (governor_enabled_flag == 0) {
+      if (((governor_active_flag == 1) &&
           (((iVar1 + (short)governor_active_speed_offset_cal < 0 &&
             ((protection_enable_t_0040c050.system_enable_bits & 0x80) == 0)) ||
            ((fuel_temp_trim_low_threshold_cal <= fuel_temperature_trim &&
             (fuel_temp_trim_confirm_counter == fuel_temp_trim_confirm_count_cal)))))) ||
          (fuel_temperature_trim_governor_enable_threshold_cal < fuel_temperature_trim)) {
-        _governor_enabled_flag = 1;
-        _governor_active_flag = 0;
+        governor_enabled_flag = 1;
+        governor_active_flag = 0;
         cold_start_delay_counter = 0;
       }
     }
@@ -27022,25 +26821,25 @@ void cm848_processGovernorLoadCondition(void)
              ((short)governor_cold_start_coolant_threshold_cal <
               (short)sensor_readings_t_0040baf2.coolant_temp)) &&
             (governor_cold_start_load_timer_limit <= governor_cold_start_load_timer)) {
-      _governor_enabled_flag = 0;
+      governor_enabled_flag = 0;
     }
-    if (_governor_enabled_flag == 0) {
-      if (_governor_active_flag == 0) {
+    if (governor_enabled_flag == 0) {
+      if (governor_active_flag == 0) {
         if (((short)governor_speed_error_upper_threshold_cal < iVar1) ||
            (((short)governor_speed_error_lower_threshold_cal < iVar1 &&
             ((int)(short)governor_speed_error_filtered + (int)(short)governor_speed_error_offset_cal
              < 0)))) {
-          _governor_active_flag = 1;
+          governor_active_flag = 1;
         }
       }
       else if ((iVar1 < (int)(short)governor_speed_error_lower_threshold_cal -
                         (int)(short)governor_speed_error_lower_offset_cal) ||
               ((iVar1 < (short)governor_speed_error_upper_threshold_cal &&
                ((short)governor_speed_error_offset_cal < (short)governor_speed_error_filtered)))) {
-        _governor_active_flag = 0;
+        governor_active_flag = 0;
       }
     }
-    if (_governor_active_flag == 1) {
+    if (governor_active_flag == 1) {
       _governor_mode_state = 1;
       governor_setpoint_table_ptr = &governor_setpoint_table_cal;
     }
@@ -27071,13 +26870,11 @@ void cm848_clearGovernorTimerCounters(void)
 // Function: cm848_resetGovernorLoadState @ 0x000289ac
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_resetGovernorLoadState(void)
 
 {
-  _governor_active_flag = 0;
-  _governor_enabled_flag = 1;
+  governor_active_flag = 0;
+  governor_enabled_flag = 1;
   governor_cold_start_load_timer = 0;
   return;
 }
@@ -27119,7 +26916,7 @@ void cm848_updateGovernorSetpointParameters(void)
   if ((sVar1 == 0) &&
      (governor_operational_mode = _governor_mode_state,
      governor_setpoint_table_ptr = governor_setpoint_table_ptr, _governor_mode_state == 0)) {
-    governor_setpoint_table_ptr = &governor_setpoint_table_a;
+    governor_setpoint_table_ptr = (undefined *)&governor_setpoint_table_a;
   }
   governor_speed_setpoint_raw = *(word *)governor_setpoint_table_ptr;
   governor_d_gain_from_table = *(word *)(governor_setpoint_table_ptr + 2);
@@ -27154,7 +26951,7 @@ void cm848_initGovernorLoadStateWrapper(void)
 {
   cm848_resetGovernorLoadState();
   _governor_mode_state = 0;
-  governor_j1939_speed_target = _governor_setpoint_table_a;
+  governor_j1939_speed_target = governor_setpoint_table_a;
   governor_j1939_d_gain_stored = governor_j1939_d_gain_default_cal;
   governor_j1939_p_gain_stored = governor_j1939_p_gain_default_cal;
   governor_j1939_i_gain_stored = governor_j1939_i_gain_default_cal;
@@ -27167,14 +26964,12 @@ void cm848_initGovernorLoadStateWrapper(void)
 // Function: cm848_getGovernorOverrideSource @ 0x00028b38
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 undefined4 cm848_getGovernorOverrideSource(void)
 
 {
   undefined4 uVar1;
   
-  if ((_DAT_0040adf8 == 0) || ((governor_feature_flags & 0x8000) == 0)) {
+  if ((j1939_tsc1_override_state == 0) || ((governor_feature_flags & 0x8000) == 0)) {
     uVar1 = 0;
   }
   else {
@@ -27197,7 +26992,7 @@ void cm848_calculateSpeedRateLimiting(void)
 
 {
   word wVar1;
-  short sVar2;
+  word wVar2;
   word wVar3;
   uint uVar4;
   uint uVar5;
@@ -27225,23 +27020,23 @@ void cm848_calculateSpeedRateLimiting(void)
     iVar6 = (int)sStack_e;
   }
   governor_speed_error_delta = cm848_signedFirstOrderFilter(iVar6,&DAT_003faf66);
-  sVar2 = _governor_speed_error_rate;
+  wVar2 = governor_speed_error_rate;
   wVar3 = DAT_0005c4b2;
   if (((short)DAT_0005c4b2 < (short)governor_speed_error_delta) ||
      (wVar3 = DAT_0005c4b4, (short)governor_speed_error_delta < (short)DAT_0005c4b4)) {
     _DAT_003faf6a = (int)(short)wVar3 << 0x10;
     governor_speed_error_delta = wVar3;
   }
-  _governor_speed_error_rate = governor_speed_error_delta - wVar1;
-  if (_governor_speed_error_rate < 0x641) {
-    if (_governor_speed_error_rate < -0x640) {
-      _governor_speed_error_rate = -0x640;
+  governor_speed_error_rate = governor_speed_error_delta - wVar1;
+  if ((short)governor_speed_error_rate < 0x641) {
+    if ((short)governor_speed_error_rate < -0x640) {
+      governor_speed_error_rate = 0xf9c0;
     }
   }
   else {
-    _governor_speed_error_rate = 0x640;
+    governor_speed_error_rate = 0x640;
   }
-  governor_speed_error_rate_adjusted = _governor_speed_error_rate - sVar2;
+  governor_speed_error_rate_adjusted = governor_speed_error_rate - wVar2;
   return;
 }
 
@@ -27302,13 +27097,13 @@ void cm848_updateSpeedLimitFromCoolant(void)
     governor_speed_limit_cal = (&DAT_0005c4c8)[uVar1];
   }
   if ((governor_speed_limit_enable_cal == 0) &&
-     ((_fuel_correction_mode_flag == 0 || (fuel_temp_governor_switch_cal < fuel_temperature_trim))))
+     ((fuel_correction_mode_flag == 0 || (fuel_temp_governor_switch_cal < fuel_temperature_trim))))
   {
     governor_speed_limit_cal = 0;
   }
   if (((governor_speed_disengage_timer_limit != 0) &&
       (iVar3 < (short)governor_disengage_timer_threshold_cal)) &&
-     ((_governor_fuel_demand_mode == 0xb && (_cold_start_phase == 3)))) {
+     ((governor_fuel_demand_mode == 0xb && (cold_start_phase == 3)))) {
     governor_speed_disengage_timer = governor_speed_disengage_timer + 1;
   }
   if ((short)governor_disengage_timer_threshold_cal <= iVar3) {
@@ -27321,7 +27116,7 @@ void cm848_updateSpeedLimitFromCoolant(void)
   }
   iVar2 = (int)(short)governor_speed_limit_threshold_cal;
   if (governor_speed_limit_count_cal != 0) {
-    if (((iVar2 <= iVar3) && (_governor_fuel_demand_mode == 0xb)) && (_cold_start_phase == 3)) {
+    if (((iVar2 <= iVar3) && (governor_fuel_demand_mode == 0xb)) && (cold_start_phase == 3)) {
       governor_speed_limit_count = governor_speed_limit_count + 1;
     }
     if (iVar3 < (int)(iVar2 - (uint)governor_speed_limit_hysteresis_cal)) {
@@ -27335,8 +27130,8 @@ void cm848_updateSpeedLimitFromCoolant(void)
     }
   }
   if (((governor_speed_engage_timer_limit != 0) && (iVar2 <= iVar3)) &&
-     ((_governor_fuel_demand_mode == 0xb &&
-      ((_cold_start_phase == 3 &&
+     ((governor_fuel_demand_mode == 0xb &&
+      ((cold_start_phase == 3 &&
        (governor_output_t_0040aec2.integrator._0_2_ == governor_speed_limit_cal)))))) {
     governor_speed_engage_timer = governor_speed_engage_timer + 1;
   }
@@ -27365,7 +27160,7 @@ void cm848_calculateProtectionSpeedLimits(void)
   word wVar1;
   uint uVar2;
   
-  if ((_fuel_correction_mode_flag == 0) ||
+  if ((fuel_correction_mode_flag == 0) ||
      (governor_speed_limit_cal_temp = governor_speed_limit_temp_fuel_mode_cal,
      fuel_temp_governor_switch_cal < fuel_temperature_trim)) {
     governor_speed_limit_cal_temp = governor_speed_limit_temp_cal;
@@ -27378,8 +27173,8 @@ void cm848_calculateProtectionSpeedLimits(void)
   if ((protection_enable_t_0040c050.system_enable_bits & 0x20) == 0) {
     governor_speed_limit_cal_b = 0;
   }
-  if (((((_governor_fuel_demand_mode == 0xb) && (_cold_start_phase == 3)) &&
-       (_fuel_correction_mode_flag != 0)) &&
+  if (((((governor_fuel_demand_mode == 0xb) && (cold_start_phase == 3)) &&
+       (fuel_correction_mode_flag != 0)) &&
       (((short)oil_temp_raw < (short)governor_speed_limit_oil_temp_threshold_cal &&
        ((short)sensor_readings_t_0040baf2.coolant_temp <
         (short)governor_speed_limit_coolant_threshold_cal)))) &&
@@ -27388,12 +27183,12 @@ void cm848_calculateProtectionSpeedLimits(void)
          ((short)engine_load_output_value <= (short)governor_speed_limit_load_threshold_cal)))) &&
        (fuel_demand_control_t_0040a57a.enable_flag == 0)) &&
       (fuel_temperature_trim <= governor_speed_limit_fuel_temp_threshold_cal)))) {
-    _governor_speed_limit_exceeded_flag = 1;
+    governor_speed_limit_exceeded_flag._0_2_ = 1;
   }
   else {
-    _governor_speed_limit_exceeded_flag = 0;
+    governor_speed_limit_exceeded_flag._0_2_ = 0;
   }
-  if (_governor_speed_limit_exceeded_flag == 0) {
+  if (governor_speed_limit_exceeded_flag._0_2_ == 0) {
     governor_speed_debounce_count = 0;
     governor_speed_limit_cal_a = 0;
   }
@@ -27402,7 +27197,7 @@ void cm848_calculateProtectionSpeedLimits(void)
   }
   if ((governor_speed_debounce_count_cal <= governor_speed_debounce_count) ||
      (((governor_output_t_0040aec2.governor_output == 0 && (governor_speed_debounce_enable_cal != 0)
-       ) && (_governor_speed_limit_exceeded_flag != 0)))) {
+       ) && (governor_speed_limit_exceeded_flag._0_2_ != 0)))) {
     governor_speed_limit_cal_a = governor_speed_limit_value_cal;
     governor_speed_debounce_count = governor_speed_debounce_count_cal;
   }
@@ -27435,25 +27230,25 @@ void cm848_calculateProtectionSpeedLimits(void)
   }
   governor_cold_start_iat_correction = uVar2 * 0x100;
   if ((governor_iat_correction_mode_enable_cal == 0) &&
-     ((_fuel_correction_mode_flag == 0 || (fuel_temp_governor_switch_cal < fuel_temperature_trim))))
+     ((fuel_correction_mode_flag == 0 || (fuel_temp_governor_switch_cal < fuel_temperature_trim))))
   {
     unique0x100004cf = 0;
   }
   else {
     unique0x100004bf = governor_cold_start_iat_correction;
-    if ((_governor_cold_start_band_cal != 0) &&
-       ((((governor_output_t_0040aec2.governor_output == 9 && (_cold_start_phase == 3)) &&
-         (unique0x100004cb = _governor_speed_setpoint_snapshot + _governor_cold_start_band_cal,
+    if ((governor_cold_start_band_cal != 0) &&
+       ((((governor_output_t_0040aec2.governor_output == 9 && (cold_start_phase == 3)) &&
+         (unique0x100004cb = governor_speed_setpoint_snapshot + governor_cold_start_band_cal,
          governor_cold_start_iat_correction <=
-         _governor_speed_setpoint_snapshot + _governor_cold_start_band_cal)) &&
+         governor_speed_setpoint_snapshot + governor_cold_start_band_cal)) &&
         (unique0x100004d3 = governor_cold_start_iat_correction,
-        governor_cold_start_iat_correction + _governor_cold_start_band_cal <
-        _governor_speed_setpoint_snapshot)))) {
-      unique0x100004bb = _governor_speed_setpoint_snapshot - _governor_cold_start_band_cal;
+        governor_cold_start_iat_correction + governor_cold_start_band_cal <
+        governor_speed_setpoint_snapshot)))) {
+      unique0x100004bb = governor_speed_setpoint_snapshot - governor_cold_start_band_cal;
     }
   }
-  if (((((_governor_fuel_demand_mode != 0xb) || (_cold_start_phase != 3)) ||
-       (((_fuel_correction_mode_flag == 0 ||
+  if (((((governor_fuel_demand_mode != 0xb) || (cold_start_phase != 3)) ||
+       (((fuel_correction_mode_flag == 0 ||
          (((protection_enable_t_0040c050.system_enable_bits & 8) != 0 ||
           ((protection_enable_t_0040c050.mode_bits & 4) != 0)))) ||
         (fuel_demand_control_t_0040a57a.enable_flag != 0)))) ||
@@ -27466,9 +27261,9 @@ void cm848_calculateProtectionSpeedLimits(void)
   if (governor_speed_limit_enable_flag == 0) {
     governor_speed_limit_mode = 0;
   }
-  else if ((((((protection_feature_flags & 0x10) == 0) || (_governor_fuel_demand_mode != 0xb)) ||
-            (_cold_start_phase != 3)) ||
-           ((_fuel_correction_mode_flag == 0 ||
+  else if ((((((protection_feature_flags & 0x10) == 0) || (governor_fuel_demand_mode != 0xb)) ||
+            (cold_start_phase != 3)) ||
+           ((fuel_correction_mode_flag == 0 ||
             ((protection_enable_t_0040c050.system_enable_bits & 8) != 0)))) ||
           ((((protection_enable_t_0040c050.mode_bits & 4) != 0 ||
             ((fuel_demand_control_t_0040a57a.enable_flag != 0 || (fuel_temperature_trim != 0)))) ||
@@ -27479,7 +27274,7 @@ void cm848_calculateProtectionSpeedLimits(void)
     governor_speed_limit_floor = governor_speed_limit_floor_cal;
     governor_speed_limit_mode = 1;
   }
-  _governor_speed_setpoint_snapshot = register0x00000078;
+  governor_speed_setpoint_snapshot = register0x00000078;
   if (((protection_enable_t_0040c050.system_enable_bits & 8) == 0) &&
      ((protection_enable_t_0040c050.mode_bits & 4) == 0)) {
     governor_speed_limit_dynamic =
@@ -27547,12 +27342,12 @@ void cm848_calculateProtectionSpeedLimits(void)
       thermal_governor_cal_b = thermal_governor_b_cal;
       governor_speed_limit_active = governor_speed_limit_dynamic;
     }
-    if (_DAT_003faf7c != governor_speed_limit_output) {
+    if (governor_speed_limit_exceeded_flag._2_2_ != governor_speed_limit_output) {
       governor_speed_limit_active = governor_speed_limit_output;
       governor_output_t_0040aec2.governor_output = 5;
     }
   }
-  if ((governor_etc1_override_enable_cal == 1) && (_DAT_0040adf8 != 0)) {
+  if ((governor_etc1_override_enable_cal == 1) && (j1939_tsc1_override_state != 0)) {
     governor_speed_limit_active = governor_rpm_limit_cal;
     governor_output_t_0040aec2.governor_output = 6;
     thermal_governor_cal_a = 0;
@@ -27576,11 +27371,11 @@ void cm848_applySpeedLimitConstraints(void)
   uint uVar2;
   uint uVar3;
   
-  if ((((_cold_start_phase == 3) && (governor_output_t_0040aec2.governor_output != 0xb)) &&
+  if ((((cold_start_phase == 3) && (governor_output_t_0040aec2.governor_output != 0xb)) &&
       (_DAT_003faf90 != 0xb)) &&
      ((cold_start_governor_output_enable_cal != 0 ||
-      ((_fuel_correction_mode_flag != 0 && (fuel_temperature_trim <= fuel_temp_governor_switch_cal))
-      )))) {
+      ((fuel_correction_mode_flag != 0 && (fuel_temperature_trim <= fuel_temp_governor_switch_cal)))
+      ))) {
     if ((int)(short)thermal_governor_offset_cal + (int)(short)thermal_governor_cal_b < 2) {
       uVar2 = 1;
     }
@@ -27628,11 +27423,11 @@ LAB_000299e8:
   governor_speed_error_computed = (word)uVar2;
   if (((uVar2 == governor_speed_limit_value_cal) &&
       (governor_speed_debounce_count_cal == governor_speed_debounce_count)) &&
-     (_governor_speed_limit_exceeded_flag != 0)) {
-    _governor_speed_limit_active_flag = 1;
+     (governor_speed_limit_exceeded_flag._0_2_ != 0)) {
+    governor_speed_limit_active_flag = 1;
   }
   else {
-    _governor_speed_limit_active_flag = 0;
+    governor_speed_limit_active_flag = 0;
   }
   if (etc1_state_t_0040ae00.spn574_shift_in_process == 0) {
     governor_speed_debounce_timer = 0;
@@ -27711,8 +27506,8 @@ void cm848_initGovernorStateVariables(void)
   governor_speed_debounce_timer = 0;
   _DAT_003faf8c = 0;
   _DAT_003faf8e = 0;
-  _DAT_003faf7c = governor_speed_limit_output;
-  _DAT_0040adf8 = 0;
+  governor_speed_limit_exceeded_flag._2_2_ = governor_speed_limit_output;
+  j1939_tsc1_override_state = 0;
   governor_output_t_0040aec2.governor_output = 5;
   _DAT_003faf90 = 5;
   return;
@@ -27729,7 +27524,7 @@ void cm848_initGovernorStateVariables(void)
 void cm848_initGovernorLookupDimensions(void)
 
 {
-  _governor_torque_interp_state = 2;
+  governor_torque_interp_state = 2;
   _DAT_003faf7e = 2;
   return;
 }
@@ -27739,8 +27534,6 @@ void cm848_initGovernorLookupDimensions(void)
 //
 // Function: cm848_calculateFuelDemandFilter @ 0x00029c98
 //
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void cm848_calculateFuelDemandFilter(void)
 
@@ -27754,7 +27547,7 @@ void cm848_calculateFuelDemandFilter(void)
                     (&DAT_003faf98,engine_rpm_state_t_0040b7ac.current_rpm,
                      &j1939_fuel_table_xaxis_cal,0,&j1939_fuel_table_ystart_cal,
                      &j1939_fuel_table_yend_cal,0);
-  uVar4 = (uint)_boost_map_index_current << 0xe;
+  uVar4 = (uint)boost_map_index_current << 0xe;
   if (0xffff < uVar4) {
     uVar4 = 0xffff;
   }
@@ -27762,7 +27555,7 @@ void cm848_calculateFuelDemandFilter(void)
                     (&DAT_003faf9c,engine_rpm_state_t_0040b7ac.current_rpm,
                      &j1939_fuel_table_xaxis_cal,uVar4 & 0xffff,&j1939_fuel_table_ystart_cal,
                      &j1939_fuel_table_yend_cal,0);
-  uVar4 = (uint)_boost_map_index_target << 0xe;
+  uVar4 = (uint)boost_map_index_target << 0xe;
   if (0xffff < uVar4) {
     uVar4 = 0xffff;
   }
@@ -27772,7 +27565,7 @@ void cm848_calculateFuelDemandFilter(void)
                      &j1939_fuel_table_yend_cal,0);
   fuel_demand_filter_dimension =
        cm848_filterInputValue
-                 (uVar2,uVar3,uVar1,_boost_map_index_current,_boost_map_index_target,
+                 (uVar2,uVar3,uVar1,boost_map_index_current,boost_map_index_target,
                   fuel_blend_state_t_0040a494.blend_weight,fuel_blend_state_t_0040a494.blend_mode);
   if (fuel_demand_filter_dimension == 0) {
     fuel_demand_filter_dimension = 1;
@@ -27929,7 +27722,7 @@ void cm848_processSensorDeviationOnKeyoff(void)
 
 {
   if (((protection_config_flags_b & 0x20) != 0) && (_DAT_003fafaa == 1)) {
-    if (_cold_start_phase == 1) {
+    if (cold_start_phase == 1) {
       _DAT_003fafa8 = _DAT_003fafa8 + 1;
       if (cold_start_sensor_deviation_delay_cal < _DAT_003fafa8) {
         cm848_checkSensorDeviationFlags();
@@ -28026,10 +27819,10 @@ void cm848_calculateProtectionLoadCompensation(void)
   dword extraout_r4;
   dword extraout_r4_00;
   dword extraout_r4_01;
-  int extraout_r4_02;
+  dword extraout_r4_02;
   dword extraout_r4_03;
   dword extraout_r4_04;
-  int extraout_r4_05;
+  dword extraout_r4_05;
   int extraout_r4_06;
   uint extraout_r4_07;
   int extraout_r4_08;
@@ -28101,10 +27894,10 @@ void cm848_calculateProtectionLoadCompensation(void)
   if (uVar5 < governor_integrator_state_b._0_2_) {
     uVar6 = uVar7 * (governor_integrator_state_b._0_2_ - uVar5);
     cm848_unsignedDivision32(uVar6 >> 0xe,uVar6 * 0x40000,0,0xeb851);
-    _governor_pid_derivative_prev = extraout_r4_02;
+    governor_pid_derivative_prev = extraout_r4_02;
   }
   else {
-    _governor_pid_derivative_prev = 0;
+    governor_pid_derivative_prev = 0;
   }
   iVar3 = 0x8000 - (uint)governor_blend_factor_cal;
   uVar9 = (uint)governor_blend_factor_cal + (uVar7 * iVar3 >> 0xe & 0xffff);
@@ -28113,15 +27906,15 @@ void cm848_calculateProtectionLoadCompensation(void)
   wVar8 = governor_speed_p_scale_cal;
   uVar6 = (uint)governor_speed_p_scale_cal * (uVar9 & 0xffff);
   cm848_unsignedDivision32(uVar6 >> 0xe,uVar6 * 0x40000,0,0x1d70a3);
-  if (_governor_mode_code != 4) {
+  if (governor_mode_code != 4) {
     uVar6 = (uint)fuel_demand_computed;
     if (uVar5 < uVar6) {
       uVar7 = uVar7 * (uVar6 - uVar5);
       cm848_unsignedDivision32(uVar7 >> 0xe,uVar7 * 0x40000,0,0xeb851);
-      _governor_pid_derivative_prev = extraout_r4_05;
+      governor_pid_derivative_prev = extraout_r4_05;
     }
     else {
-      _governor_pid_derivative_prev = 0;
+      governor_pid_derivative_prev = 0;
     }
     governor_speed_product = uVar6 * (uVar9 & 0xffff);
     cm848_unsignedDivision32
@@ -28132,8 +27925,8 @@ void cm848_calculateProtectionLoadCompensation(void)
   cm848_signedDivision32
             ((int)((ulonglong)
                    ((longlong)iVar3 *
-                   (longlong)(int)(governor_pid_derivative - _governor_pid_derivative_prev)) >> 0x20
-                  ),iVar3 * (governor_pid_derivative - _governor_pid_derivative_prev),0,0x8000);
+                   (longlong)(int)(governor_pid_derivative - governor_pid_derivative_prev)) >> 0x20)
+             ,iVar3 * (governor_pid_derivative - governor_pid_derivative_prev),0,0x8000);
   uVar5 = (uint)governor_speed_d_gain_factor_b;
   cm848_signedDivision32
             ((int)((ulonglong)uVar5 * (ulonglong)extraout_r4_07 >> 0x20) +
@@ -28144,7 +27937,7 @@ void cm848_calculateProtectionLoadCompensation(void)
      (dVar10 = extraout_r4_04, (int)governor_speed_product < (int)extraout_r4_04)) {
     governor_speed_product = dVar10;
   }
-  _governor_speed_product_cached = governor_speed_product;
+  governor_speed_product_cached = governor_speed_product;
   uVar5 = dVar1 + governor_speed_product;
   if (((int)extraout_r4_04 < (int)uVar5) &&
      (wVar8 = _DAT_003fdd7a, (int)uVar5 < (int)extraout_r4_03)) {
@@ -28167,7 +27960,7 @@ void cm848_calculateProtectionLoadCompensation(void)
 void cm848_checkProtectionParamLimit(void)
 
 {
-  if ((_governor_fuel_active_flag == 1) && (_DAT_003fd89e < governor_fuel_limit_cap)) {
+  if ((governor_fuel_active_flag == 1) && (_DAT_003fd89e < governor_fuel_limit_cap)) {
     governor_fuel_limit_cap = _DAT_003fd89e;
     governor_fuel_mode_command_cached = 0x22;
   }
@@ -28233,7 +28026,7 @@ void initProtectionParamCalculation(void)
   cm848_unsignedDivision32
             (governor_speed_product >> 0xe,governor_speed_product * 0x40000,0,0x1d70a3);
   governor_speed_product = extraout_r4;
-  _governor_speed_product_cached = extraout_r4;
+  governor_speed_product_cached = extraout_r4;
   governor_integrator_state_b._0_2_ = wVar1;
   return;
 }
@@ -28249,7 +28042,7 @@ void initProtectionParamCalculation(void)
 void cm848_processProtectionParamDelta(void)
 
 {
-  if (_governor_fuel_active_flag == 0) {
+  if (governor_fuel_active_flag == 0) {
     governor_integrator_state_b._0_2_ = 0;
   }
   else if (_DAT_003fafc2 == 0) {
@@ -28261,7 +28054,7 @@ void cm848_processProtectionParamDelta(void)
     cm848_calculateProtectionRpmFilter();
     cm848_calculateProtectionLoadCompensation();
   }
-  _DAT_003fafc2 = _governor_fuel_active_flag;
+  _DAT_003fafc2 = governor_fuel_active_flag;
   return;
 }
 
@@ -28307,7 +28100,7 @@ void cm848_smoothProtectionParamTransition(void)
   
   cm848_updateProtectionPreviousParam();
   wVar3 = protection_monitored_rpm;
-  if (_governor_fuel_active_flag == 1) {
+  if (governor_fuel_active_flag == 1) {
     if (protection_monitored_rpm < protection_rpm_reference) {
       uVar4 = protection_rpm_reference - protection_monitored_rpm;
     }
@@ -28377,50 +28170,50 @@ void cm848_initProtectionSmoothingPointer(void)
 void cm848_evaluateProtectionCondition(void)
 
 {
-  undefined2 uVar1;
+  word wVar1;
   
-  if (_protection_eval_state == 1) {
+  if (protection_eval_state == 1) {
     if (protection_monitored_rpm == governor_rpm_reference_integrator._2_2_) {
-      _protection_event_code = 2;
+      protection_event_code = 2;
       return;
     }
-    if (_governor_idle_transition_flag == 0) {
+    if (governor_idle_transition_flag == 0) {
       if ((_DAT_003fdcfe == governor_rpm_reference_integrator._2_2_) &&
          (protection_monitored_rpm != governor_rpm_reference_integrator._2_2_)) {
-        _protection_event_code = 0xc;
+        protection_event_code = 0xc;
         return;
       }
       if ((_DAT_003fd88e == governor_rpm_reference_integrator._2_2_) &&
          (protection_monitored_rpm != governor_rpm_reference_integrator._2_2_)) {
-        _protection_event_code = 0xd;
+        protection_event_code = 0xd;
         return;
       }
       if ((_DAT_003fd890 == governor_rpm_reference_integrator._2_2_) &&
          (protection_monitored_rpm != governor_rpm_reference_integrator._2_2_)) {
-        _protection_event_code = 0xe;
+        protection_event_code = 0xe;
         return;
       }
       if ((_DAT_003fd892 == governor_rpm_reference_integrator._2_2_) &&
          (protection_monitored_rpm != governor_rpm_reference_integrator._2_2_)) {
-        _protection_event_code = 0xf;
+        protection_event_code = 0xf;
         return;
       }
       if (_DAT_003fd894 != governor_rpm_reference_integrator._2_2_) {
         return;
       }
       if (protection_monitored_rpm != governor_rpm_reference_integrator._2_2_) {
-        _protection_event_code = 0x10;
+        protection_event_code = 0x10;
         return;
       }
       return;
     }
   }
   else {
-    if (_protection_eval_state == 2) {
-      _protection_event_code = 0;
+    if (protection_eval_state == 2) {
+      protection_event_code = 0;
       return;
     }
-    if (_protection_eval_state != 3) {
+    if (protection_eval_state != 3) {
       return;
     }
     if (((((protection_control_state_flags & 1) == 0) ||
@@ -28428,23 +28221,23 @@ void cm848_evaluateProtectionCondition(void)
         (((protection_control_state_flags & 4) == 0 ||
          (governor_rpm_reference_integrator._2_2_ == _DAT_003fd88a)))) &&
        (protection_monitored_rpm == governor_rpm_reference_integrator._2_2_)) {
-      _protection_event_code = 1;
+      protection_event_code = 1;
       return;
     }
     if (((protection_control_state_flags & 4) != 0) && (_DAT_003fd88a < protection_monitored_rpm)) {
-      _protection_event_code = 6;
+      protection_event_code = 6;
       return;
     }
     if (((protection_control_state_flags & 1) != 0) && (protection_monitored_rpm < _DAT_003fdd00)) {
-      _protection_event_code = 8;
+      protection_event_code = 8;
       return;
     }
-    if (_governor_idle_transition_flag == 0) {
+    if (governor_idle_transition_flag == 0) {
       if (_DAT_003fdd54 == governor_rpm_reference_integrator._2_2_) {
         if ((protection_control_state_flags & 5) == 5) {
           return;
         }
-        uVar1 = 10;
+        wVar1 = 10;
       }
       else {
         if (_DAT_003fdd50 == governor_rpm_reference_integrator._2_2_) {
@@ -28452,7 +28245,7 @@ void cm848_evaluateProtectionCondition(void)
             return;
           }
           if (protection_monitored_rpm != governor_rpm_reference_integrator._2_2_) {
-            _protection_event_code = 0xb;
+            protection_event_code = 0xb;
             return;
           }
           return;
@@ -28460,16 +28253,16 @@ void cm848_evaluateProtectionCondition(void)
         if (_DAT_003fd896 != governor_rpm_reference_integrator._2_2_) {
           return;
         }
-        uVar1 = 0x11;
+        wVar1 = 0x11;
       }
       if (protection_monitored_rpm != governor_rpm_reference_integrator._2_2_) {
-        _protection_event_code = uVar1;
+        protection_event_code = wVar1;
         return;
       }
       return;
     }
   }
-  _protection_event_code = 9;
+  protection_event_code = 9;
   return;
 }
 
@@ -28540,7 +28333,7 @@ LAB_0002b0f0:
   if (governor_speed_request_state == 1) {
     protection_control_state_flags = protection_control_state_flags | 0x40000;
   }
-  if (_protection_eval_state == 0) {
+  if (protection_eval_state == 0) {
     if (((((j1939_governor_feature_cal & 0x10) == 0) || ((j1939_governor_feature_byte & 2) == 0)) ||
         ((protection_eval_frame_counter <= protection_eval_frame_limit_cal &&
          (protection_eval_step_index != _DAT_003fd88c)))) || (protection_eval_step_index == 0)) {
@@ -28549,11 +28342,11 @@ LAB_0002b0f0:
            (fuel_temperature_trim_threshold < fuel_temperature_trim)) ||
           (((system_status_flags_t_003fe974.condition_monitor & 0x4000) != 0 ||
            ((system_status_flags_t_003fe974.condition_monitor & 0x2000) != 0)))) ||
-         ((_cold_start_phase == 1 || (_cold_start_phase == 8)))) goto LAB_0002b5f4;
+         ((cold_start_phase == 1 || (cold_start_phase == 8)))) goto LAB_0002b5f4;
       if ((protection_eval_frame_limit_cal < protection_eval_sub_counter) &&
-         ((_protection_override_active_flag == 0 || ((protection_control_state_flags & 0x1000) != 0)
-          ))) {
-        _protection_eval_state = 3;
+         ((protection_override_active_flag._0_2_ == 0 ||
+          ((protection_control_state_flags & 0x1000) != 0)))) {
+        protection_eval_state = 3;
         uVar3 = governor_rpm_integrator_high;
         goto LAB_0002b88c;
       }
@@ -28568,21 +28361,21 @@ LAB_0002b0f0:
     else if (((((fault_management_status_flags & 0x800) == 0) ||
               ((protection_control_state_flags & 0x10000) == 0)) &&
              ((protection_control_state_flags & 0x40000) == 0)) &&
-            ((((governor_system_config_flags & 0x400) == 0 || (_fuel_correction_mode_flag != 0)) &&
-             (_protection_override_active_flag != 1)))) {
-      _protection_eval_state = 1;
+            ((((governor_system_config_flags & 0x400) == 0 || (fuel_correction_mode_flag != 0)) &&
+             (protection_override_active_flag._0_2_ != 1)))) {
+      protection_eval_state = 1;
       uVar3 = *(ushort *)(&DAT_003fafe8 + (uint)protection_eval_step_index * 2);
 LAB_0002b88c:
       governor_rpm_reference_integrator._2_2_ = uVar3;
     }
     else {
 LAB_0002b5f4:
-      _protection_eval_state = 2;
+      protection_eval_state = 2;
     }
   }
-  else if (_protection_eval_state == 1) {
+  else if (protection_eval_state == 1) {
     if ((protection_control_state_flags & 0x1000) == 0) {
-      _protection_eval_state = 0;
+      protection_eval_state = 0;
       protection_eval_step_index = 0;
 LAB_0002b3d0:
       protection_eval_sub_counter = protection_eval_sub_counter + 1;
@@ -28590,21 +28383,21 @@ LAB_0002b3d0:
     }
     else if ((((fuel_temperature_trim_threshold < fuel_temperature_trim) ||
               ((system_status_flags_t_003fe974.condition_monitor & 0x2000) != 0)) ||
-             (((_cold_start_phase == 1 || (_cold_start_phase == 8)) ||
+             (((cold_start_phase == 1 || (cold_start_phase == 8)) ||
               ((((fault_management_status_flags & 0x800) != 0 &&
                 ((protection_control_state_flags & 0x10000) != 0)) ||
                ((protection_control_state_flags & 0x40000) != 0)))))) ||
-            (((governor_system_config_flags & 0x400) != 0 && (_fuel_correction_mode_flag == 0))))
+            (((governor_system_config_flags & 0x400) != 0 && (fuel_correction_mode_flag == 0))))
     goto LAB_0002b5f4;
   }
-  else if (_protection_eval_state == 2) {
+  else if (protection_eval_state == 2) {
     if (((fuel_temperature_trim_threshold < fuel_temperature_trim) ||
         (engine_rpm_state_t_0040b7ac.current_rpm < protection_eval_rpm_lower_cal)) ||
        ((protection_eval_rpm_upper_cal < engine_rpm_state_t_0040b7ac.current_rpm ||
         (((((system_status_flags_t_003fe974.condition_monitor & 0x4000) != 0 ||
            ((system_status_flags_t_003fe974.condition_monitor & 0x2000) != 0)) ||
           ((protection_control_state_flags & 0x3000) != 0x1000)) ||
-         (_protection_transition_block_flag != 0)))))) {
+         (protection_transition_block_flag != 0)))))) {
       if (((((j1939_governor_feature_cal & 0x10) != 0) && ((j1939_governor_feature_byte & 1) != 0))
           && (((protection_control_state_flags & 0x10) != 0 &&
               (((fuel_temperature_trim <= fuel_temperature_trim_threshold &&
@@ -28612,20 +28405,20 @@ LAB_0002b3d0:
                ((engine_rpm_state_t_0040b7ac.current_rpm <= protection_eval_rpm_upper_cal &&
                 (((system_status_flags_t_003fe974.condition_monitor & 0x4000) == 0 &&
                  ((system_status_flags_t_003fe974.condition_monitor & 0x2000) == 0)))))))))) &&
-         (((_protection_override_active_flag == 0 ||
+         (((protection_override_active_flag._0_2_ == 0 ||
            ((protection_control_state_flags & 0x1000) != 0)) &&
           ((((protection_control_state_flags & 0x4000) == 0 ||
             ((fault_management_status_flags & 0x1000) == 0)) &&
            (((((protection_control_state_flags & 0x10000) == 0 ||
               ((fault_management_status_flags & 0x800) == 0)) &&
-             ((((governor_system_config_flags & 0x400) == 0 || (_fuel_correction_mode_flag != 0)) &&
+             ((((governor_system_config_flags & 0x400) == 0 || (fuel_correction_mode_flag != 0)) &&
               (((protection_control_state_flags & 0xc0) == 0x80 ||
                (((((protection_control_state_flags & 0x300) == 0x200 ||
                   ((protection_control_state_flags & 0xc00) == 0x800)) ||
                  ((protection_control_state_flags & 800) == 0x100)) ||
                 ((protection_control_state_flags & 0xe0) == 0x40)))))))) &&
-            (_protection_transition_block_flag == 0)))))))) {
-        _protection_eval_state = 3;
+            (protection_transition_block_flag == 0)))))))) {
+        protection_eval_state = 3;
         uVar3 = _DAT_003fdd54;
         if (((protection_control_state_flags & 0x100) != 0) ||
            (uVar3 = _DAT_003fdd50, (protection_control_state_flags & 0x40) != 0)) {
@@ -28639,54 +28432,54 @@ LAB_0002b3d0:
       }
     }
     else {
-      _protection_eval_state = 0;
+      protection_eval_state = 0;
       protection_eval_step_index = 1;
       protection_eval_sub_counter = 0;
       protection_eval_frame_counter = protection_eval_frame_counter + 1;
     }
   }
-  else if (_protection_eval_state == 3) {
+  else if (protection_eval_state == 3) {
     if ((((fuel_temperature_trim_threshold < fuel_temperature_trim) ||
          ((system_status_flags_t_003fe974.condition_monitor & 0x4000) != 0)) ||
         ((system_status_flags_t_003fe974.condition_monitor & 0x2000) != 0)) ||
-       (((protection_control_state_flags & 0x1000) == 0 || (_protection_override_active_flag != 0)))
-       ) {
+       (((protection_control_state_flags & 0x1000) == 0 ||
+        (protection_override_active_flag._0_2_ != 0)))) {
       if ((((protection_control_state_flags & 0x10) == 0) ||
           ((fuel_temperature_trim_threshold < fuel_temperature_trim ||
            ((system_status_flags_t_003fe974.condition_monitor & 0x2000) != 0)))) ||
          ((((fault_management_status_flags & 0x1000) != 0 &&
            ((protection_control_state_flags & 0x4000) != 0)) ||
           (((((((fault_management_status_flags & 0x800) != 0 &&
-               ((protection_control_state_flags & 0x10000) != 0)) || (_cold_start_phase == 1)) ||
-             ((_cold_start_phase == 8 || ((protection_control_state_flags & 0x40000) != 0)))) ||
-            (((governor_system_config_flags & 0x400) != 0 && (_fuel_correction_mode_flag == 0)))) ||
-           ((_protection_override_active_flag != 0 &&
+               ((protection_control_state_flags & 0x10000) != 0)) || (cold_start_phase == 1)) ||
+             ((cold_start_phase == 8 || ((protection_control_state_flags & 0x40000) != 0)))) ||
+            (((governor_system_config_flags & 0x400) != 0 && (fuel_correction_mode_flag == 0)))) ||
+           ((protection_override_active_flag._0_2_ != 0 &&
             ((protection_control_state_flags & 0x1000) == 0)))))))) goto LAB_0002b5f4;
     }
     else {
-      _protection_eval_state = 0;
+      protection_eval_state = 0;
       protection_eval_step_index = 1;
       protection_eval_sub_counter = 0;
       protection_eval_frame_counter = protection_eval_frame_counter + 1;
       governor_rpm_integrator_high = governor_rpm_reference_integrator._2_2_;
     }
   }
-  _protection_transition_block_flag = 0;
-  if ((_protection_eval_state == 3) || (_protection_eval_state == 1)) {
-    _governor_fuel_active_flag = 1;
+  protection_transition_block_flag = 0;
+  if ((protection_eval_state == 3) || (protection_eval_state == 1)) {
+    governor_fuel_active_flag = 1;
     protection_eval_step_index = 0;
     protection_eval_sub_counter = 0;
     protection_eval_frame_counter = 0;
   }
-  else if (_protection_eval_state == 2) {
-    _governor_rpm_transition_flag = 0;
-    _governor_fuel_active_flag = 0;
+  else if (protection_eval_state == 2) {
+    governor_rpm_transition_flag = 0;
+    governor_fuel_active_flag = 0;
     protection_eval_step_index = 0;
     protection_eval_sub_counter = 0;
     protection_eval_frame_counter = 0;
     governor_rpm_integrator_high = 0;
   }
-  if (_protection_eval_state != 3) goto LAB_0002ba64;
+  if (protection_eval_state != 3) goto LAB_0002ba64;
   if ((protection_control_state_flags & 0x800) == 0) {
     if (((protection_control_state_flags & 10) == 0) &&
        ((uVar3 = _DAT_003fdd54, (protection_control_state_flags & 0x300) == 0x200 ||
@@ -28741,21 +28534,21 @@ LAB_0002ba64:
 void cm848_updateProtectionPreviousParam(void)
 
 {
-  if (_governor_fuel_active_flag == 1) {
+  if (governor_fuel_active_flag == 1) {
     if (((ushort)(governor_rpm_reference_integrator._0_2_ + _DAT_003fd886) <
-         governor_rpm_reference_integrator._2_2_) && (_governor_rpm_transition_flag == 0)) {
+         governor_rpm_reference_integrator._2_2_) && (governor_rpm_transition_flag == 0)) {
       governor_rpm_reference_integrator._0_2_ =
            governor_rpm_reference_integrator._0_2_ + _DAT_003fd886;
     }
     else {
       governor_rpm_reference_integrator._0_2_ = governor_rpm_reference_integrator._2_2_;
-      _governor_rpm_transition_flag = 1;
+      governor_rpm_transition_flag = 1;
     }
     protection_rpm_reference = governor_rpm_reference_integrator._0_2_;
   }
   else {
     protection_rpm_reference = engine_rpm_state_t_0040b7ac.current_rpm;
-    _governor_rpm_transition_flag = 0;
+    governor_rpm_transition_flag = 0;
   }
   governor_rpm_reference_integrator._0_2_ = protection_rpm_reference;
   return;
@@ -28772,8 +28565,8 @@ void cm848_updateProtectionPreviousParam(void)
 void cm848_initProtectionEvalState(void)
 
 {
-  _protection_eval_state = 2;
-  _governor_fuel_active_flag = 0;
+  protection_eval_state = 2;
+  governor_fuel_active_flag = 0;
   protection_rpm_reference = 0;
   _DAT_003fafe8 = _DAT_003fdcfe;
   _DAT_003fafea = _DAT_003fdcfe;
@@ -28785,10 +28578,10 @@ void cm848_initProtectionEvalState(void)
   protection_eval_sub_counter = 0;
   protection_eval_frame_counter = 0;
   protection_eval_step_index = 0;
-  _governor_rpm_transition_flag = 0;
+  governor_rpm_transition_flag = 0;
   governor_rpm_reference_integrator._0_2_ = 0;
   protection_control_state_flags = protection_control_state_flags | 0x2000;
-  _fuel_correction_mode_flag = 1;
+  fuel_correction_mode_flag = 1;
   return;
 }
 
@@ -28798,32 +28591,30 @@ void cm848_initProtectionEvalState(void)
 // Function: cm848_updateGovernorFromProtection @ 0x0002bbe8
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_updateGovernorFromProtection(void)
 
 {
-  if ((((_engine_operating_mode == 1) || (_engine_operating_mode == 2)) ||
-      (_engine_operating_mode == 0x25)) || (_engine_operating_mode == 0x26)) {
-    governor_pid_t_0040af5a.integral_term = _engine_operating_mode;
+  if ((((engine_operating_mode == 1) || (engine_operating_mode == 2)) ||
+      (engine_operating_mode == 0x25)) || (engine_operating_mode == 0x26)) {
+    governor_pid_t_0040af5a.integral_term = engine_operating_mode;
     governor_pid_t_0040af5a.proportional_gain = governor_proportional_gain;
   }
-  else if ((_governor_fuel_active_flag == 1) && ((j1939_governor_feature_cal & 0x10) != 0)) {
-    if (((_engine_operating_mode == 7) || (_engine_operating_mode == 0x1e)) ||
-       (_engine_operating_mode == 8)) {
+  else if ((governor_fuel_active_flag == 1) && ((j1939_governor_feature_cal & 0x10) != 0)) {
+    if (((engine_operating_mode == 7) || (engine_operating_mode == 0x1e)) ||
+       (engine_operating_mode == 8)) {
       if ((governor_integrator_state_b._0_2_ <= governor_proportional_gain) &&
          ((governor_feature_config_word & 0x2000) != 0)) {
-        governor_fuel_idle_limit = _DAT_003fd89c;
-        _governor_idle_transition_flag = 1;
+        governor_fuel_idle_limit = protection_override_active_flag._2_2_;
+        governor_idle_transition_flag = 1;
         governor_pid_t_0040af5a.proportional_gain = governor_proportional_gain;
-        governor_pid_t_0040af5a.integral_term = _engine_operating_mode;
+        governor_pid_t_0040af5a.integral_term = engine_operating_mode;
         return;
       }
       governor_pid_t_0040af5a.proportional_gain = governor_integrator_state_b._0_2_;
       governor_pid_t_0040af5a.integral_term = 4;
     }
     else {
-      if ((_engine_operating_mode != 6) && (_engine_operating_mode != 5)) {
+      if ((engine_operating_mode != 6) && (engine_operating_mode != 5)) {
         return;
       }
       governor_pid_t_0040af5a.proportional_gain = governor_integrator_state_b._0_2_;
@@ -28832,9 +28623,9 @@ void cm848_updateGovernorFromProtection(void)
   }
   else {
     governor_pid_t_0040af5a.proportional_gain = governor_proportional_gain;
-    governor_pid_t_0040af5a.integral_term = _engine_operating_mode;
+    governor_pid_t_0040af5a.integral_term = engine_operating_mode;
   }
-  _governor_idle_transition_flag = 0;
+  governor_idle_transition_flag = 0;
   governor_fuel_idle_limit = torque_limit_fuel_minimum;
   return;
 }
@@ -28845,12 +28636,10 @@ void cm848_updateGovernorFromProtection(void)
 // Function: cm848_resetProtectionBypass @ 0x0002bd38
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_resetProtectionBypass(void)
 
 {
-  _governor_idle_transition_flag = 0;
+  governor_idle_transition_flag = 0;
   governor_fuel_idle_limit = torque_limit_fuel_minimum;
   return;
 }
@@ -28936,7 +28725,7 @@ void cm848_initJ1939PtoBuffer(void)
   _DAT_003faff8 = 8;
   _DAT_003faffa = &DAT_003fb002;
   _DAT_003faffe = &DAT_003fb00a;
-  _DAT_003faff4 = CONCAT31(_DAT_003faff4,(char)j1939_source_address);
+  _DAT_003faff4 = CONCAT31(_DAT_003faff4,(char)j1939_source_address._0_2_);
   DAT_003fb002 = 0xff;
   _DAT_003fb003 = 0xffff;
   DAT_003fb009 = 0xff;
@@ -28949,12 +28738,10 @@ void cm848_initJ1939PtoBuffer(void)
 // Function: cm848_updateFaultOnKeyoff @ 0x0002bf44
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_updateFaultOnKeyoff(void)
 
 {
-  protection_mode_select_flag = _cold_start_phase != 1;
+  protection_mode_select_flag = cold_start_phase != 1;
   return;
 }
 
@@ -28969,28 +28756,28 @@ void cm848_updateFaultOnKeyoff(void)
 void cm848_calculateRpmLimitsFromProtection(void)
 
 {
-  ushort uVar1;
+  word wVar1;
   uint uVar2;
   
   if ((((fuel_demand_control_t_0040a57a.calculated == 0) &&
        ((uint)fuel_demand_computed < (uint)governor_speed_target_base + (uint)_DAT_003ff68e)) &&
       (_DAT_003fd526 < 0x100)) ||
-     ((high_idle_override_reset_enable_cal != 0 && (_high_idle_override_flag != 0)))) {
-    _high_idle_override_flag = 0;
-    uVar1 = _DAT_003fd526;
+     ((high_idle_override_reset_enable_cal != 0 && (high_idle_override_flag._0_2_ != 0)))) {
+    high_idle_override_flag._0_2_ = 0;
+    wVar1 = _DAT_003fd526;
     if ((governor_system_config_flags & 8) == 0) {
       uVar2 = 1;
       do {
         if (engine_temp_protection_input < *(ushort *)(&DAT_0005a9c4 + uVar2 * 2)) {
-          uVar1 = *(ushort *)(uVar2 * 2 + 0x5a9d2);
+          wVar1 = *(word *)(uVar2 * 2 + 0x5a9d2);
           break;
         }
         uVar2 = uVar2 + 1 & 0xffff;
-        uVar1 = _fuel_timing_blend_factor;
+        wVar1 = fuel_timing_blend_factor;
       } while (uVar2 < 7);
     }
-    _fuel_timing_blend_factor = uVar1;
-    uVar2 = (uint)_fuel_timing_blend_factor;
+    fuel_timing_blend_factor = wVar1;
+    uVar2 = (uint)fuel_timing_blend_factor;
     if (uVar2 == 0) {
       governor_speed_error_high = governor_speed_error_high_working;
       governor_speed_error_low = _DAT_003fdd16;
@@ -29021,24 +28808,24 @@ void cm848_calculateRpmLimitsFromProtection(void)
 void cm848_j1939SendPgn65264_FEF0_PowerTakeoff(void)
 
 {
-  ushort uVar1;
+  word wVar1;
   uint uVar2;
   
-  _high_idle_override_flag = 0;
-  uVar1 = _DAT_003fd526;
+  high_idle_override_flag._0_2_ = 0;
+  wVar1 = _DAT_003fd526;
   if ((governor_system_config_flags & 8) == 0) {
     uVar2 = 1;
     do {
       if (engine_temp_protection_input < *(ushort *)(&DAT_0005a9c4 + uVar2 * 2)) {
-        uVar1 = *(ushort *)(uVar2 * 2 + 0x5a9d2);
+        wVar1 = *(word *)(uVar2 * 2 + 0x5a9d2);
         break;
       }
       uVar2 = uVar2 + 1 & 0xffff;
-      uVar1 = _fuel_timing_blend_factor;
+      wVar1 = fuel_timing_blend_factor;
     } while (uVar2 < 7);
   }
-  _fuel_timing_blend_factor = uVar1;
-  uVar2 = (uint)_fuel_timing_blend_factor;
+  fuel_timing_blend_factor = wVar1;
+  uVar2 = (uint)fuel_timing_blend_factor;
   if (uVar2 == 0) {
     governor_speed_error_high = governor_speed_error_high_working;
     governor_speed_error_low = _DAT_003fdd16;
@@ -29080,7 +28867,7 @@ void cm848_emptyStubFunction6(void)
 void cm848_initProtectionLimitVariables(void)
 
 {
-  _fuel_timing_blend_factor = _DAT_003fd526;
+  fuel_timing_blend_factor = _DAT_003fd526;
   return;
 }
 
@@ -29175,14 +28962,14 @@ void cm848_processProtectionLimitActivation(void)
     if (protection_retry_counter == 0) {
       return;
     }
-    _protection_retry_count = _protection_retry_count + 1;
+    protection_retry_count = protection_retry_count + 1;
     if ((protection_retry_counter == 1) && (_DAT_003fb00e == 0)) {
-      _protection_retry_count = 0;
+      protection_retry_count = 0;
       return;
     }
-    if ((protection_retry_counter < 3) || (DAT_0005c66a < _protection_retry_count)) {
-      if (DAT_0005c66a < _protection_retry_count) {
-        _protection_retry_count = 0;
+    if ((protection_retry_counter < 3) || (DAT_0005c66a < protection_retry_count)) {
+      if (DAT_0005c66a < protection_retry_count) {
+        protection_retry_count = 0;
         protection_retry_counter = 0;
         return;
       }
@@ -29247,7 +29034,7 @@ void cm848_processProtectionControlLogic(void)
   protection_enable_t *ppVar4;
   word *pwVar5;
   
-  if (((_cold_start_phase != 1) ||
+  if (((cold_start_phase != 1) ||
       (ppVar4 = &protection_enable_t_0040c050, (protection_enable_t_0040c050.mode_bits & 1) == 0))
      || ((j1939_feature_enable_flags & 0x400) == 0)) {
     DAT_003fb00c = 0;
@@ -29309,7 +29096,7 @@ void cm848_updateRpmProtectionLimits(void)
       protection_enable_t_0040c050.control_word = protection_enable_t_0040c050.control_word | 0x80;
     }
   }
-  if (((_cold_start_phase == 1) && ((protection_enable_t_0040c050.mode_bits & 1) != 0)) &&
+  if (((cold_start_phase == 1) && ((protection_enable_t_0040c050.mode_bits & 1) != 0)) &&
      ((j1939_feature_enable_flags & 0x400) != 0)) {
     if ((protection_enable_t_0040c050.control_word & 0x80) != 0) {
       protection_enable_t_0040c050.control_word = protection_enable_t_0040c050.control_word | 0x80;
@@ -29353,15 +29140,15 @@ void cm848_updateProtectionEntryConditions(void)
   wVar1 = protection_mode_prev_flag;
   if (((((uint)fuel_demand_computed <= (uint)fuel_demand_base_offset + (uint)_DAT_003ff68e) &&
        (fuel_demand_control_t_0040a57a.calculated == 0)) &&
-      (wVar1 = _governor_protection_mode_flag, (governor_system_config_flags & 8) != 0)) &&
-     (wVar1 = _governor_protection_mode_flag,
-     (protection_enable_t_0040c050.control_word & 0x80) != 0)) {
-    if (_governor_protection_mode_flag == 1) {
+      (wVar1 = governor_protection_mode_flag, (governor_system_config_flags & 8) != 0)) &&
+     (wVar1 = governor_protection_mode_flag, (protection_enable_t_0040c050.control_word & 0x80) != 0
+     )) {
+    if (governor_protection_mode_flag == 1) {
       wVar1 = 0;
     }
     else {
       wVar1 = protection_mode_prev_flag;
-      if (_governor_protection_mode_flag == 0) {
+      if (governor_protection_mode_flag == 0) {
         wVar1 = 1;
       }
     }
@@ -29434,17 +29221,17 @@ void cm848_processProtectionEntry(void)
   }
   governor_speed_temp_corrected = governor_speed_reference_raw - governor_temperature_correction;
   governor_speed_reference_uncorrected = governor_speed_reference_raw;
-  if (((((protection_config_flags_b & 1) == 0) || (_fuel_demand_mode_index == 2)) ||
-      (_fuel_demand_mode_state == 2)) ||
-     ((_fuel_demand_state_b == 2 || (_fuel_demand_phase_state == 2)))) {
-    _governor_correction_mode_flags = 0x80;
+  if (((((protection_config_flags_b & 1) == 0) || (fuel_demand_mode_index == 2)) ||
+      (fuel_demand_mode_state == 2)) ||
+     ((fuel_demand_state_b == 2 || (fuel_demand_phase_state == 2)))) {
+    governor_correction_mode_flags = 0x80;
   }
-  else if (((_fuel_demand_mode_index == 1) || (_fuel_demand_mode_state == 1)) ||
-          ((_fuel_demand_state_b == 1 || (_fuel_demand_phase_state == 1)))) {
-    _governor_correction_mode_flags = 0x40;
+  else if (((fuel_demand_mode_index == 1) || (fuel_demand_mode_state == 1)) ||
+          ((fuel_demand_state_b == 1 || (fuel_demand_phase_state == 1)))) {
+    governor_correction_mode_flags = 0x40;
   }
   else {
-    _governor_correction_mode_flags = 0;
+    governor_correction_mode_flags = 0;
   }
   return;
 }
@@ -29505,10 +29292,10 @@ void cm848_checkSpeedZeroCondition(void)
      (((uint)throttle_zero_confirm_count_cal <= (uVar1 & 0xffff) ||
       (((int)(short)governor_speed_tracking <= (int)(uint)governor_output_zero_threshold_cal &&
        ((uint)governor_output_prev_snapshot <= (uint)governor_output_zero_threshold_cal)))))) {
-    _throttle_rate_enable_flag = 1;
+    throttle_rate_enable_flag = 1;
   }
   else {
-    _throttle_rate_enable_flag = 0;
+    throttle_rate_enable_flag = 0;
   }
   return;
 }
@@ -29525,28 +29312,28 @@ void cm848_selectFuelControlMode(void)
 
 {
   if ((engine_feature_status_flags_2 & 1) == 0) {
-    _governor_fuel_mode_state = 5;
+    governor_fuel_mode_state = 5;
   }
-  else if (_fault_threshold_condition_flag == 0) {
+  else if (fault_threshold_condition_flag == 0) {
     if (throttle_speed_rate_cal == 0) {
       if ((_DAT_003fd8cc & 2) == 0) {
-        if (_throttle_rate_enable_flag == 0) {
-          _governor_fuel_mode_state = 0;
+        if (throttle_rate_enable_flag == 0) {
+          governor_fuel_mode_state = 0;
         }
         else {
-          _governor_fuel_mode_state = 1;
+          governor_fuel_mode_state = 1;
         }
       }
       else {
-        _governor_fuel_mode_state = 2;
+        governor_fuel_mode_state = 2;
       }
     }
     else {
-      _governor_fuel_mode_state = 3;
+      governor_fuel_mode_state = 3;
     }
   }
   else {
-    _governor_fuel_mode_state = 4;
+    governor_fuel_mode_state = 4;
   }
   return;
 }
@@ -29557,36 +29344,34 @@ void cm848_selectFuelControlMode(void)
 // Function: cm848_calculateSpeedControlRampUp @ 0x0002cbe8
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_calculateSpeedControlRampUp(void)
 
 {
   word wVar1;
   word wVar2;
-  byte *pbVar3;
+  word *pwVar3;
   
   wVar2 = governor_speed_tracking_offset_cal;
   if ((int)(uint)governor_speed_tracking_lower_threshold_cal <= (int)(short)governor_speed_tracking)
   {
     wVar2 = 0;
   }
-  pbVar3 = &throttle_speed_rate_lower;
   wVar1 = throttle_speed_rate_lower_cal;
   if ((int)(uint)fuel_control_setpoint_working < (int)(short)throttle_speed_rate_lower_cal) {
-    wVar1 = _throttle_speed_rate_lower;
+    wVar1 = throttle_speed_rate_lower;
   }
-  _throttle_speed_rate_lower = wVar1 + wVar2;
-  if ((int)(short)throttle_speed_rate_lower_cal < (int)(short)_throttle_speed_rate_lower) {
-    _throttle_speed_rate_lower = throttle_speed_rate_lower_cal;
+  throttle_speed_rate_lower = wVar1 + wVar2;
+  if ((int)(short)throttle_speed_rate_lower_cal < (int)(short)throttle_speed_rate_lower) {
+    throttle_speed_rate_lower = throttle_speed_rate_lower_cal;
   }
-  if ((short)_throttle_speed_rate_lower < 0) {
-    _throttle_speed_rate_lower = 0;
+  if ((short)throttle_speed_rate_lower < 0) {
+    throttle_speed_rate_lower = 0;
   }
-  if ((int)(short)_throttle_speed_rate_lower < (int)(uint)fuel_control_setpoint_working) {
-    pbVar3 = (byte *)&fuel_control_setpoint_working;
+  pwVar3 = &throttle_speed_rate_lower;
+  if ((int)(short)throttle_speed_rate_lower < (int)(uint)fuel_control_setpoint_working) {
+    pwVar3 = &fuel_control_setpoint_working;
   }
-  throttle_speed_rate_current = *(word *)pbVar3;
+  throttle_speed_rate_current = *pwVar3;
   return;
 }
 
@@ -29603,28 +29388,28 @@ void cm848_calculateSpeedControlRampDown(void)
 {
   word wVar1;
   word wVar2;
-  byte *pbVar3;
+  word *pwVar3;
   
   wVar2 = governor_speed_tracking_upper_offset_cal;
   if ((short)governor_speed_tracking <= (short)governor_speed_tracking_upper_threshold_cal) {
     wVar2 = 0;
   }
-  pbVar3 = &throttle_speed_rate_upper;
   wVar1 = throttle_speed_rate_upper_cal;
   if ((int)(short)throttle_speed_rate_upper_cal < (int)(uint)throttle_speed_rate_current) {
-    wVar1 = _throttle_speed_rate_upper;
+    wVar1 = throttle_speed_rate_upper;
   }
-  _throttle_speed_rate_upper = wVar1 + wVar2;
-  if (0x3200 < (short)_throttle_speed_rate_upper) {
-    _throttle_speed_rate_upper = 0x3200;
+  throttle_speed_rate_upper = wVar1 + wVar2;
+  if (0x3200 < (short)throttle_speed_rate_upper) {
+    throttle_speed_rate_upper = 0x3200;
   }
-  if ((int)(short)_throttle_speed_rate_upper < (int)(short)throttle_speed_rate_upper_cal) {
-    _throttle_speed_rate_upper = throttle_speed_rate_upper_cal;
+  if ((int)(short)throttle_speed_rate_upper < (int)(short)throttle_speed_rate_upper_cal) {
+    throttle_speed_rate_upper = throttle_speed_rate_upper_cal;
   }
-  if ((int)(uint)throttle_speed_rate_current < (int)(short)_throttle_speed_rate_upper) {
-    pbVar3 = (byte *)&throttle_speed_rate_current;
+  pwVar3 = &throttle_speed_rate_upper;
+  if ((int)(uint)throttle_speed_rate_current < (int)(short)throttle_speed_rate_upper) {
+    pwVar3 = &throttle_speed_rate_current;
   }
-  _DAT_003fb034 = *(word *)pbVar3;
+  _DAT_003fb034 = *pwVar3;
   return;
 }
 
@@ -29643,7 +29428,7 @@ void cm848_updateSpeedControlOutputs(void)
   
   cm848_calculateSpeedControlRampUp();
   cm848_calculateSpeedControlRampDown();
-  if ((_governor_fuel_mode_state == 0) || (_governor_fuel_mode_state == 1)) {
+  if ((governor_fuel_mode_state == 0) || (governor_fuel_mode_state == 1)) {
     pwVar1 = (word *)&DAT_003fb034;
   }
   else {
@@ -29651,7 +29436,7 @@ void cm848_updateSpeedControlOutputs(void)
   }
   governor_speed_raw_input = *pwVar1;
   governor_output_prev_snapshot = _DAT_003fb034;
-  if (_governor_fuel_mode_state == 3) {
+  if (governor_fuel_mode_state == 3) {
     governor_output_prev_snapshot = 0;
   }
   return;
@@ -29795,7 +29580,7 @@ LAB_0002d0fc:
   else {
     bVar1 = false;
   }
-  _DAT_003fb048 = _governor_fuel_mode_state;
+  _DAT_003fb048 = governor_fuel_mode_state;
   if (!bVar1) {
     dVar5 = governor_fuel_integral_b + dVar5;
   }
@@ -29827,26 +29612,24 @@ LAB_0002d0fc:
 // Function: cm848_selectFuelControlModeOutput @ 0x0002d208
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_selectFuelControlModeOutput(void)
 
 {
   word wVar1;
   word *pwVar2;
   
-  if (_governor_fuel_mode_state == 0) {
+  if (governor_fuel_mode_state == 0) {
     governor_fuel_output_a_working = governor_fuel_demand_raw;
     governor_fuel_output_a = 0;
     governor_fuel_output_a_prev = 0;
   }
   else {
     wVar1 = governor_fuel_output_mode0_cal;
-    if ((((_governor_fuel_mode_state != 1) &&
-         (wVar1 = governor_fuel_output_mode1_cal, _governor_fuel_mode_state != 2)) &&
-        (wVar1 = governor_fuel_output_mode3_working, _governor_fuel_mode_state != 3)) &&
-       ((wVar1 = governor_fuel_output_mode4_working, _governor_fuel_mode_state != 4 &&
-        (wVar1 = governor_fuel_output_a, _governor_fuel_mode_state == 5)))) {
+    if ((((governor_fuel_mode_state != 1) &&
+         (wVar1 = governor_fuel_output_mode1_cal, governor_fuel_mode_state != 2)) &&
+        (wVar1 = governor_fuel_output_mode3_working, governor_fuel_mode_state != 3)) &&
+       ((wVar1 = governor_fuel_output_mode4_working, governor_fuel_mode_state != 4 &&
+        (wVar1 = governor_fuel_output_a, governor_fuel_mode_state == 5)))) {
       wVar1 = 0;
     }
     governor_fuel_output_a = wVar1;
@@ -29946,10 +29729,10 @@ void cm848_processFuelControlProtectionFlags(void)
     cm848_clearProtectionFault(0x47);
   }
   if ((_DAT_003fb04e == uVar2) || (governor_output_update_enable_cal == 0)) {
-    _governor_output_updated_flag = 0;
+    governor_output_updated_flag = 0;
   }
   else {
-    _governor_output_updated_flag = 1;
+    governor_output_updated_flag = 1;
   }
   _DAT_003fb04e = (ushort)uVar2;
   uVar2 = (uint)(short)fuel_control_limit_upper;
@@ -29962,7 +29745,7 @@ void cm848_processFuelControlProtectionFlags(void)
   governor_fuel_output_magnitude = (word)uVar2;
   bVar1 = (uVar2 & 0xffff) < (uint)governor_fuel_output_zero_threshold_cal;
   governor_fuel_output_zero_flag = (word)bVar1;
-  if ((_governor_output_updated_flag != 0) || (bVar1)) {
+  if ((governor_output_updated_flag != 0) || (bVar1)) {
     governor_fuel_output_scaled = 0;
     governor_fuel_control_limit_active = 0;
   }
@@ -29970,9 +29753,9 @@ void cm848_processFuelControlProtectionFlags(void)
     governor_fuel_output_scaled = governor_fuel_output_magnitude * 2;
     governor_fuel_control_limit_active = fuel_control_limit_upper;
   }
-  if ((_j1939_pgn_handler_index_e != 0) && (_j1939_pgn_handler_index_e < 0x33)) {
+  if ((j1939_pgn_handler_index_e != 0) && (j1939_pgn_handler_index_e < 0x33)) {
     j1939_calib_handler_e_param = governor_fuel_output_scaled;
-    (**(code **)(&j1939_pgn_handler_table_func3 + (uint)_j1939_pgn_handler_index_e * 0x10))
+    (**(code **)(&j1939_pgn_handler_table_func3 + (uint)j1939_pgn_handler_index_e * 0x10))
               (governor_fuel_output_scaled);
   }
   return;
@@ -29999,12 +29782,10 @@ void cm848_processFuelControlOutput(void)
 // Function: cm848_initProtectionModeDefaults @ 0x0002d600
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_initProtectionModeDefaults(void)
 
 {
-  if (_governor_fuel_b_mode_flag != 0) {
+  if (governor_fuel_b_mode_flag != 0) {
     cm848_processSpeedControlModeLogic();
     cm848_calculateSpeedControlFiltered();
     cm848_processFuelControlOutput();
@@ -30025,8 +29806,8 @@ void cm848_initFuelControlStateVariables(void)
 {
   _DAT_003fb048 = 3;
   _DAT_003fb04e = 0;
-  _throttle_speed_rate_lower = 0;
-  _throttle_speed_rate_upper = 0;
+  throttle_speed_rate_lower = 0;
+  throttle_speed_rate_upper = 0;
   governor_fuel_integral_b = 0;
   _DAT_003fb03a = 0;
   _DAT_003fb036 = &governor_derivative_gain_working;
@@ -30034,17 +29815,17 @@ void cm848_initFuelControlStateVariables(void)
   _DAT_003fb03e = &governor_ema_filter_state_cal;
   _DAT_003fb046 = 0;
   governor_fuel_output_scaled = 0;
-  if ((_j1939_pgn_handler_index_e != 0) && (_j1939_pgn_handler_index_e < 0x33)) {
-    (**(code **)(&j1939_pgn_handler_table + (uint)_j1939_pgn_handler_index_e * 0x10))();
+  if ((j1939_pgn_handler_index_e != 0) && (j1939_pgn_handler_index_e < 0x33)) {
+    (**(code **)(&j1939_pgn_handler_table + (uint)j1939_pgn_handler_index_e * 0x10))();
   }
-  if ((_j1939_pgn_handler_index_e != 0) && (_j1939_pgn_handler_index_e < 0x33)) {
+  if ((j1939_pgn_handler_index_e != 0) && (j1939_pgn_handler_index_e < 0x33)) {
     j1939_calib_handler_e_param = governor_fuel_output_scaled;
-    (**(code **)(&j1939_pgn_handler_table_func3 + (uint)_j1939_pgn_handler_index_e * 0x10))
+    (**(code **)(&j1939_pgn_handler_table_func3 + (uint)j1939_pgn_handler_index_e * 0x10))
               (governor_fuel_output_scaled);
   }
-  if ((_j1939_pgn_handler_index_e != 0) && (_j1939_pgn_handler_index_e < 0x33)) {
+  if ((j1939_pgn_handler_index_e != 0) && (j1939_pgn_handler_index_e < 0x33)) {
     j1939_calib_handler_e_period = (dword)j1939_governor_output_param_cal;
-    (**(code **)(&j1939_pgn_handler_table_func2 + (uint)_j1939_pgn_handler_index_e * 0x10))
+    (**(code **)(&j1939_pgn_handler_table_func2 + (uint)j1939_pgn_handler_index_e * 0x10))
               (j1939_calib_handler_e_period);
   }
   return;
@@ -30055,8 +29836,6 @@ void cm848_initFuelControlStateVariables(void)
 //
 // Function: cm848_updateSpeedControlCounter1 @ 0x0002d7a4
 //
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void cm848_updateSpeedControlCounter1(int param_1)
 
@@ -30087,10 +29866,10 @@ void cm848_updateSpeedControlCounter1(int param_1)
     governor_fuel_rate_d._2_2_ = 1;
   }
   if ((param_1 == 0) && (governor_fuel_rate_d._2_2_ == 0)) {
-    _protection_confirm_b_flag = 1;
+    protection_confirm_b_flag = 1;
   }
   else {
-    _protection_confirm_b_flag = 0;
+    protection_confirm_b_flag = 0;
   }
   return;
 }
@@ -30115,11 +29894,11 @@ void cm848_processSpeedControlFilter1(int param_1)
   sVar1 = _DAT_003fb054;
   _DAT_003fb058 = _DAT_003fb056;
   _DAT_003fb056 = _DAT_003fb054;
-  _DAT_003fb054 = _governor_fuel_rate_a_active;
+  _DAT_003fb054 = governor_fuel_rate_a_active;
   if ((param_1 != 0) ||
-     (((wVar3 = governor_fuel_rate_a, _governor_fuel_rate_a_active != 0 && (sVar1 != 0)) &&
+     (((wVar3 = governor_fuel_rate_a, governor_fuel_rate_a_active != 0 && (sVar1 != 0)) &&
       (sVar2 != 0)))) {
-    if ((((param_1 == 0) && (_governor_fuel_rate_a_active != 0)) && (sVar1 != 0)) && (sVar2 != 0)) {
+    if ((((param_1 == 0) && (governor_fuel_rate_a_active != 0)) && (sVar1 != 0)) && (sVar2 != 0)) {
       if (governor_fuel_rate_a_decay_step_cal < governor_fuel_rate_a) {
         wVar3 = governor_fuel_rate_a - governor_fuel_rate_a_decay_step_cal;
       }
@@ -30141,12 +29920,12 @@ void cm848_processSpeedControlFilter1(int param_1)
   uVar4 = (uint)governor_fuel_rate_a;
   governor_speed_below_threshold_flag = uVar4 < governor_fuel_rate_a_threshold_b_cal ^ 1;
   protection_overflow_flag = (ushort)~(ushort)(-uVar4 >> 0x10) >> 0xf;
-  if ((_protection_confirm_b_flag == 0) ||
+  if ((protection_confirm_b_flag == 0) ||
      ((_DAT_003fd8d0 != 0 && (governor_fuel_rate_a_threshold_cal <= uVar4)))) {
-    _governor_fuel_rate_a_active = 0;
+    governor_fuel_rate_a_active = 0;
   }
   else {
-    _governor_fuel_rate_a_active = 1;
+    governor_fuel_rate_a_active = 1;
   }
   return;
 }
@@ -30156,8 +29935,6 @@ void cm848_processSpeedControlFilter1(int param_1)
 //
 // Function: cm848_updateSpeedControlCounter2 @ 0x0002d9f4
 //
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void cm848_updateSpeedControlCounter2(int param_1)
 
@@ -30188,10 +29965,10 @@ void cm848_updateSpeedControlCounter2(int param_1)
     governor_fuel_rate_c._2_2_ = 1;
   }
   if ((param_1 == 0) && (governor_fuel_rate_c._2_2_ == 0)) {
-    _protection_confirm_c_flag = 1;
+    protection_confirm_c_flag = 1;
   }
   else {
-    _protection_confirm_c_flag = 0;
+    protection_confirm_c_flag = 0;
   }
   return;
 }
@@ -30216,11 +29993,11 @@ bool cm848_processSpeedControlFilter2(int param_1)
   sVar1 = _DAT_003fb05c;
   _DAT_003fb060 = _DAT_003fb05e;
   _DAT_003fb05e = _DAT_003fb05c;
-  _DAT_003fb05c = _governor_fuel_rate_b_active;
+  _DAT_003fb05c = governor_fuel_rate_b_active;
   if ((param_1 != 0) ||
-     (((wVar3 = governor_fuel_rate_b, _governor_fuel_rate_b_active != 0 && (sVar1 != 0)) &&
+     (((wVar3 = governor_fuel_rate_b, governor_fuel_rate_b_active != 0 && (sVar1 != 0)) &&
       (sVar2 != 0)))) {
-    if ((((param_1 == 0) && (_governor_fuel_rate_b_active != 0)) && (sVar1 != 0)) && (sVar2 != 0)) {
+    if ((((param_1 == 0) && (governor_fuel_rate_b_active != 0)) && (sVar1 != 0)) && (sVar2 != 0)) {
       if (governor_fuel_rate_b_decay_step_cal < governor_fuel_rate_b) {
         wVar3 = governor_fuel_rate_b - governor_fuel_rate_b_decay_step_cal;
       }
@@ -30241,12 +30018,12 @@ bool cm848_processSpeedControlFilter2(int param_1)
   governor_fuel_rate_b = wVar3;
   uVar4 = (uint)governor_fuel_rate_b;
   governor_output_limit_flag = (ushort)~(ushort)(-uVar4 >> 0x10) >> 0xf;
-  if ((_protection_confirm_c_flag == 0) ||
+  if ((protection_confirm_c_flag == 0) ||
      ((_DAT_003fd8d0 != 0 && (governor_fuel_rate_b_threshold_cal <= uVar4)))) {
-    _governor_fuel_rate_b_active = 0;
+    governor_fuel_rate_b_active = 0;
   }
   else {
-    _governor_fuel_rate_b_active = 1;
+    governor_fuel_rate_b_active = 1;
   }
   return governor_fuel_rate_a_active_threshold_cal <= uVar4;
 }
@@ -30269,7 +30046,7 @@ void cm848_initProtectionControlState(void)
   uint uVar5;
   undefined4 uVar6;
   
-  if (_governor_fuel_b_mode_flag != 0) {
+  if (governor_fuel_b_mode_flag != 0) {
     bVar1 = (engine_idle_mode_flags & 0x20) != 0;
     bVar2 = (engine_idle_mode_flags & 0x80) != 0;
     uVar4 = (uint)((engine_idle_mode_flags & 0x100) != 0);
@@ -30330,11 +30107,11 @@ void cm848_initProtectionControlState(void)
     else {
       diagnostic_status_flags = diagnostic_status_flags | 0x100;
     }
-    if ((_governor_fuel_rate_a_active == 0) || (_governor_fuel_rate_b_active == 0)) {
-      _protection_fault_pending_flag = 1;
+    if ((governor_fuel_rate_a_active == 0) || (governor_fuel_rate_b_active == 0)) {
+      protection_fault_pending_flag._0_2_ = 1;
     }
     else {
-      _protection_fault_pending_flag = 0;
+      protection_fault_pending_flag._0_2_ = 0;
     }
   }
   return;
@@ -30353,10 +30130,10 @@ void cm848_clearDiagnosticConditionFlags(void)
 {
   diagnostic_status_flags = diagnostic_status_flags & 0xfe83;
   j1939_comm_status_flags = j1939_comm_status_flags & 0xfe83;
-  _governor_fuel_rate_a_active = 0;
+  governor_fuel_rate_a_active = 0;
   _DAT_003fb054 = 0;
   _DAT_003fb056 = 0;
-  _governor_fuel_rate_b_active = 0;
+  governor_fuel_rate_b_active = 0;
   _DAT_003fb05c = 0;
   _DAT_003fb05e = 0;
   governor_fuel_rate_a = 0;
@@ -30374,15 +30151,13 @@ void cm848_clearDiagnosticConditionFlags(void)
 // Function: cm848_processFaultCounterTimeout @ 0x0002e17c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_processFaultCounterTimeout(void)
 
 {
-  if (_protection_governor_active_flag == 0) {
+  if (protection_governor_active_flag._0_2_ == 0) {
     protection_startup_counter = 0;
   }
-  else if (_protection_governor_active_flag != 0) {
+  else if (protection_governor_active_flag._0_2_ != 0) {
     if (protection_startup_counter < 200) {
       protection_startup_counter = protection_startup_counter + 1;
     }
@@ -30390,11 +30165,11 @@ void cm848_processFaultCounterTimeout(void)
       protection_startup_counter = 200;
     }
   }
-  if ((protection_startup_counter < 200) && (_protection_governor_active_flag != 0)) {
-    _DAT_003fb07e = 0;
+  if ((protection_startup_counter < 200) && (protection_governor_active_flag._0_2_ != 0)) {
+    protection_governor_active_flag._2_2_ = 0;
   }
   else {
-    _DAT_003fb07e = 1;
+    protection_governor_active_flag._2_2_ = 1;
   }
   return;
 }
@@ -30404,8 +30179,6 @@ void cm848_processFaultCounterTimeout(void)
 //
 // Function: cm848_incrementFaultTimeoutCounter @ 0x0002e1f0
 //
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void cm848_incrementFaultTimeoutCounter(void)
 
@@ -30418,10 +30191,10 @@ void cm848_incrementFaultTimeoutCounter(void)
   }
   if ((governor_startup_warmup_timer < 0x3c) &&
      (governor_startup_rpm_threshold_cal <= engine_rpm_state_t_0040b7ac.current_rpm)) {
-    _protection_confirm_trigger_flag = 1;
+    protection_confirm_trigger_flag = 1;
   }
   else {
-    _protection_confirm_trigger_flag = 0;
+    protection_confirm_trigger_flag = 0;
   }
   return;
 }
@@ -30444,21 +30217,21 @@ void cm848_processFaultConditionLogic(void)
   
   cm848_incrementFaultTimeoutCounter();
   if ((_DAT_003fb082 == 0) || (_DAT_003fb072 != 0)) {
-    _protection_threshold_exceeded_flag = 0;
+    protection_threshold_exceeded_flag = 0;
   }
   else {
-    _protection_threshold_exceeded_flag = 1;
+    protection_threshold_exceeded_flag = 1;
   }
   _DAT_003fb082 = _DAT_003fb072;
-  if (_protection_threshold_exceeded_flag == 0) {
-    if (_protection_confirm_trigger_flag != 0) {
+  if (protection_threshold_exceeded_flag == 0) {
+    if (protection_confirm_trigger_flag != 0) {
       _DAT_003fb08a = 1;
     }
   }
   else {
     _DAT_003fb08a = 0;
   }
-  if (_protection_threshold_exceeded_flag == 0) {
+  if (protection_threshold_exceeded_flag == 0) {
     uVar3 = (uint)protection_confirm_limit_cal;
     if ((uVar3 != 0) && ((int)(uint)_DAT_003fb084 <= (int)(uVar3 - 1))) {
       uVar3 = _DAT_003fb084 + 1;
@@ -30479,7 +30252,7 @@ void cm848_processFaultConditionLogic(void)
   else {
     bVar1 = false;
   }
-  if (_protection_threshold_exceeded_flag == 0) {
+  if (protection_threshold_exceeded_flag == 0) {
     if (bVar1) {
       _DAT_003fb088 = 1;
     }
@@ -30488,7 +30261,7 @@ void cm848_processFaultConditionLogic(void)
     _DAT_003fb088 = 0;
   }
   uVar3 = (uint)fault_threshold_count_cal;
-  if (_protection_threshold_exceeded_flag == 0) {
+  if (protection_threshold_exceeded_flag == 0) {
     wVar2 = fault_confirm_counter_a;
     if (((_DAT_003fb088 != 0) && (wVar2 = fault_threshold_count_cal, uVar3 != 0)) &&
        (wVar2 = fault_threshold_count_cal, (int)(uint)fault_confirm_counter_a <= (int)(uVar3 - 1)))
@@ -30501,16 +30274,16 @@ void cm848_processFaultConditionLogic(void)
   }
   fault_confirm_counter_a = wVar2;
   if (((fault_confirm_counter_a < uVar3) && (_DAT_003fb08a == 0)) && (_DAT_003fd8d2 != 0)) {
-    _fault_threshold_condition_flag = 1;
+    fault_threshold_condition_flag = 1;
   }
   else {
-    _fault_threshold_condition_flag = 0;
+    fault_threshold_condition_flag = 0;
   }
-  if ((_DAT_003fb088 == 0) || (_fault_threshold_condition_flag == 0)) {
-    _protection_confirm_enable_a = 0;
+  if ((_DAT_003fb088 == 0) || (fault_threshold_condition_flag == 0)) {
+    protection_confirm_enable_a = 0;
   }
   else {
-    _protection_confirm_enable_a = 1;
+    protection_confirm_enable_a = 1;
   }
   governor_fuel_output_mode4_working = protection_confirm_mode3_fuel_output_cal;
   return;
@@ -30558,13 +30331,14 @@ void cm848_processFaultThresholdCondition(void)
   uint uVar7;
   uint uVar8;
   
-  if ((_protection_fault_condition_flag == 0) && (_DAT_003fb076 == 0)) {
+  if ((protection_fault_condition_flag._0_2_ == 0) && (protection_fault_condition_flag._2_2_ == 0))
+  {
     bVar1 = false;
   }
   else {
     bVar1 = true;
   }
-  if (_fault_threshold_condition_flag == 0) {
+  if (fault_threshold_condition_flag == 0) {
     if (bVar1) {
       _DAT_003fb092 = 1;
     }
@@ -30580,13 +30354,13 @@ void cm848_processFaultThresholdCondition(void)
   }
   pwVar6 = &throttle_speed_rate_cal;
   throttle_speed_rate_cal = (word)uVar4;
-  if ((bVar1) || (_fault_threshold_condition_flag != 0)) {
+  if ((bVar1) || (fault_threshold_condition_flag != 0)) {
     bVar1 = true;
   }
   else {
     bVar1 = false;
   }
-  if ((_protection_fault_condition_flag == 0) && (_fault_threshold_condition_flag == 0)) {
+  if ((protection_fault_condition_flag._0_2_ == 0) && (fault_threshold_condition_flag == 0)) {
     uVar8 = 0;
   }
   else {
@@ -30622,10 +30396,10 @@ void cm848_processFaultThresholdCondition(void)
     _DAT_003fb094 = 0;
   }
   if ((_DAT_003fd8d4 == 0) || (_DAT_003fb094 == 0)) {
-    _protection_confirm_enable_b = 0;
+    protection_confirm_enable_b = 0;
   }
   else {
-    _protection_confirm_enable_b = 1;
+    protection_confirm_enable_b = 1;
   }
   if (bVar1) {
     wVar5 = 0;
@@ -30667,8 +30441,8 @@ void cm848_processFaultConditionFlags(void)
   short sVar3;
   uint uVar4;
   
-  sVar3 = _protection_fault_pending_flag;
-  if (_governor_fuel_b_mode_flag != 0) {
+  sVar3 = protection_fault_pending_flag._0_2_;
+  if (governor_fuel_b_mode_flag != 0) {
     governor_rpm_limit_working = governor_rpm_limit_fuel_b_default_cal;
     if (((diagnostic_status_flags & 0x400) == 0) &&
        (governor_rpm_limit_working = governor_rpm_limit_diag_b_cal,
@@ -30682,28 +30456,28 @@ void cm848_processFaultConditionFlags(void)
     else {
       _DAT_003fb070 = 1;
     }
-    if ((_DAT_003fb070 == 0) && (_protection_fault_pending_flag == 0)) {
-      _protection_confirm_active_b2 = 1;
+    if ((_DAT_003fb070 == 0) && (protection_fault_pending_flag._0_2_ == 0)) {
+      protection_confirm_active_b2 = 1;
     }
     else {
-      _protection_confirm_active_b2 = 0;
+      protection_confirm_active_b2 = 0;
     }
     uVar4 = (uint)(short)protection_fault_condition_value;
     if (((int)uVar4 < 2) && ((diagnostic_status_flags & 0x80) == 0)) {
-      _protection_fault_condition_flag = 0;
+      protection_fault_condition_flag._0_2_ = 0;
     }
     else {
-      _protection_fault_condition_flag = 1;
+      protection_fault_condition_flag._0_2_ = 1;
     }
     _DAT_003fb07a = (ushort)((-uVar4 & ~uVar4) >> 0x1f);
-    if ((_protection_fault_condition_flag == 0) && (-1 < (int)(-uVar4 & ~uVar4))) {
-      _protection_governor_active_flag = 0;
+    if ((protection_fault_condition_flag._0_2_ == 0) && (-1 < (int)(-uVar4 & ~uVar4))) {
+      protection_governor_active_flag._0_2_ = 0;
     }
     else {
-      _protection_governor_active_flag = 1;
+      protection_governor_active_flag._0_2_ = 1;
     }
     cm848_processFaultCounterTimeout();
-    if ((sVar3 == 0) && (_DAT_003fb07e != 0)) {
+    if ((sVar3 == 0) && (protection_governor_active_flag._2_2_ != 0)) {
       cm848_setEngineProtectionFault(0x48,0);
     }
     else {
@@ -30713,22 +30487,22 @@ void cm848_processFaultConditionFlags(void)
     cm848_processFaultConditionLogic();
     bVar1 = engine_feature_status_flags_2 & 1;
     if ((((engine_feature_status_flags_2 & 1) == 0) || (_DAT_003fb07a != 0)) ||
-       (_protection_confirm_enable_a == 0)) {
-      _protection_confirm_active_a = 0;
+       (protection_confirm_enable_a == 0)) {
+      protection_confirm_active_a = 0;
     }
     else {
-      _protection_confirm_active_a = 1;
+      protection_confirm_active_a = 1;
     }
-    _DAT_003fb076 = governor_status_flags & 0x8000;
+    protection_fault_condition_flag._2_2_ = governor_status_flags & 0x8000;
     uVar2 = governor_status_flags & 0x4000;
     _DAT_003fb078 = governor_status_flags & 0x4000;
     cm848_processFaultThresholdCondition();
     if (((bVar1 == 0) || (uVar2 != 0)) ||
-       ((_protection_confirm_enable_b == 0 || (_protection_confirm_active_b2 == 0)))) {
-      _throttle_rate_active_flag = 0;
+       ((protection_confirm_enable_b == 0 || (protection_confirm_active_b2 == 0)))) {
+      throttle_rate_active_flag = 0;
     }
     else {
-      _throttle_rate_active_flag = 1;
+      throttle_rate_active_flag = 1;
     }
   }
   return;
@@ -30751,7 +30525,7 @@ void cm848_processFaultStatusCalculation(void)
   uint uVar4;
   
   wVar1 = _DAT_003fb09a;
-  if (_governor_fuel_b_mode_flag != 0) {
+  if (governor_fuel_b_mode_flag != 0) {
     uVar4 = (uint)governor_demand_rate_a_limit_cal;
     wVar3 = governor_demand_rate_a;
     if ((governor_rpm_monitor_threshold <= governor_rpm_monitored) ||
@@ -30776,9 +30550,9 @@ void cm848_processFaultStatusCalculation(void)
       }
     }
     governor_demand_rate_a = wVar3;
-    _governor_demand_rate_a_flag = governor_demand_rate_a < uVar4 ^ 1;
+    governor_demand_rate_a_flag = governor_demand_rate_a < uVar4 ^ 1;
     uVar4 = (uint)governor_demand_rate_confirm_count_cal;
-    if (_governor_demand_rate_a_flag == 0) {
+    if (governor_demand_rate_a_flag == 0) {
       wVar3 = governor_demand_rate_confirm_count_cal;
       if ((uVar4 != 0) && ((int)(uint)_DAT_003fb0a0 <= (int)(uVar4 - 1))) {
         wVar3 = _DAT_003fb0a0 + 1;
@@ -30787,14 +30561,14 @@ void cm848_processFaultStatusCalculation(void)
     else {
       wVar3 = 0;
     }
-    _governor_rate_limit_flag = wVar3 < uVar4 ^ 1;
+    governor_rate_limit_flag = wVar3 < uVar4 ^ 1;
     _DAT_003fb09c = _DAT_003fb09a;
-    _DAT_003fb09a = _governor_protection_active;
+    _DAT_003fb09a = governor_protection_active;
     uVar4 = (uint)governor_demand_rate_b_limit_cal;
-    if ((_governor_demand_rate_a_flag != 0) ||
-       ((wVar2 = governor_demand_rate_b, _governor_protection_active != 0 && (wVar1 != 0)))) {
-      if ((_governor_demand_rate_a_flag == 0) &&
-         ((_governor_protection_active != 0 && (wVar1 != 0)))) {
+    if ((governor_demand_rate_a_flag != 0) ||
+       ((wVar2 = governor_demand_rate_b, governor_protection_active != 0 && (wVar1 != 0)))) {
+      if ((governor_demand_rate_a_flag == 0) && ((governor_protection_active != 0 && (wVar1 != 0))))
+      {
         if (governor_demand_rate_b_decay_step_cal < governor_demand_rate_b) {
           wVar2 = governor_demand_rate_b - governor_demand_rate_b_decay_step_cal;
         }
@@ -30812,17 +30586,17 @@ void cm848_processFaultStatusCalculation(void)
       }
     }
     governor_demand_rate_b = wVar2;
-    if ((_governor_rate_limit_flag == 0) ||
+    if ((governor_rate_limit_flag == 0) ||
        ((_DAT_003fd8d6 != 0 && (uVar4 <= governor_demand_rate_b)))) {
-      _governor_protection_active = 0;
+      governor_protection_active = 0;
     }
     else {
-      _governor_protection_active = 1;
+      governor_protection_active = 1;
     }
     _DAT_003fb0a0 = wVar3;
-    governor_protection_active_prev = _governor_protection_active;
-    if (_governor_protection_active == 0) {
-      if (_governor_demand_rate_a_flag != 0) {
+    governor_protection_active_prev = governor_protection_active;
+    if (governor_protection_active == 0) {
+      if (governor_demand_rate_a_flag != 0) {
         diagnostic_status_flags = diagnostic_status_flags | 0x200;
       }
     }
@@ -30848,13 +30622,13 @@ void cm848_clearFaultStatusValues(void)
   governor_demand_rate_a = 0;
   _DAT_003fb0a0 = 0;
   governor_demand_rate_b = 0;
-  _governor_protection_active = 0;
+  governor_protection_active = 0;
   _DAT_003fb09a = 0;
   _DAT_003fb09c = 0;
   diagnostic_status_flags = diagnostic_status_flags & 0xfdff;
   j1939_comm_status_flags = j1939_comm_status_flags & 0xfdff;
-  _governor_demand_rate_a_flag = 0;
-  _governor_rate_limit_flag = 0;
+  governor_demand_rate_a_flag = 0;
+  governor_rate_limit_flag = 0;
   governor_protection_active_prev = 0;
   return;
 }
@@ -30876,14 +30650,14 @@ void cm848_processFaultCondition1(void)
   uint uVar3;
   
   uVar3 = (uint)protection_confirm_limit_a_cal;
-  if (_protection_confirm_active_a == 0) {
+  if (protection_confirm_active_a == 0) {
     wVar2 = 0;
   }
   else {
     wVar2 = protection_confirm_counter_b;
-    if (((_protection_confirm_active_a != 0) && (wVar2 = protection_confirm_limit_a_cal, uVar3 != 0)
-        ) && (wVar2 = protection_confirm_limit_a_cal,
-             (int)(uint)protection_confirm_counter_b <= (int)(uVar3 - 1))) {
+    if (((protection_confirm_active_a != 0) && (wVar2 = protection_confirm_limit_a_cal, uVar3 != 0))
+       && (wVar2 = protection_confirm_limit_a_cal,
+          (int)(uint)protection_confirm_counter_b <= (int)(uVar3 - 1))) {
       wVar2 = protection_confirm_counter_b + 1;
     }
   }
@@ -30984,7 +30758,7 @@ void cm848_processFaultConditionMain(void)
   else {
     _DAT_003fb0d0 = 1;
   }
-  if (_fault_threshold_condition_flag == 0) {
+  if (fault_threshold_condition_flag == 0) {
     if (_DAT_003fb0c0 != 0) {
       _DAT_003fb0c2 = 1;
     }
@@ -30992,7 +30766,7 @@ void cm848_processFaultConditionMain(void)
   else {
     _DAT_003fb0c2 = 0;
   }
-  if ((_fault_threshold_condition_flag == 0) || (_DAT_003fb0d0 != 0)) {
+  if ((fault_threshold_condition_flag == 0) || (_DAT_003fb0d0 != 0)) {
     _DAT_003fb0c0 = 0;
   }
   else {
@@ -31026,14 +30800,14 @@ void cm848_processFaultCondition2(void)
   uint uVar3;
   
   uVar3 = (uint)protection_confirm_limit_a_cal;
-  if (_protection_confirm_active_b == 0) {
+  if (protection_confirm_active_b == 0) {
     wVar2 = 0;
   }
   else {
     wVar2 = protection_confirm_counter_c;
-    if (((_protection_confirm_active_b != 0) && (wVar2 = protection_confirm_limit_a_cal, uVar3 != 0)
-        ) && (wVar2 = protection_confirm_limit_a_cal,
-             (int)(uint)protection_confirm_counter_c <= (int)(uVar3 - 1))) {
+    if (((protection_confirm_active_b != 0) && (wVar2 = protection_confirm_limit_a_cal, uVar3 != 0))
+       && (wVar2 = protection_confirm_limit_a_cal,
+          (int)(uint)protection_confirm_counter_c <= (int)(uVar3 - 1))) {
       wVar2 = protection_confirm_counter_c + 1;
     }
   }
@@ -31135,12 +30909,12 @@ void cm848_processFaultStatusWord2(void)
   }
   uVar1 = (uint)protection_rpm_confirm_cal;
   _DAT_003fb0aa = (ushort)((int)uVar1 <= (int)sVar2);
-  if ((_throttle_rate_active_flag == 0) ||
-     ((throttle_speed_rate_cal == 0 && (_throttle_rate_enable_flag == 0)))) {
-    _protection_confirm_active_b = 0;
+  if ((throttle_rate_active_flag == 0) ||
+     ((throttle_speed_rate_cal == 0 && (throttle_rate_enable_flag == 0)))) {
+    protection_confirm_active_b = 0;
   }
   else {
-    _protection_confirm_active_b = 1;
+    protection_confirm_active_b = 1;
   }
   cm848_processFaultCondition2();
   if (_DAT_003fb0ac == 0) {
@@ -31204,20 +30978,20 @@ void cm848_calculateFaultRateValue(void)
 // Function: cm848_processFaultStatusMain @ 0x0002f5a4
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_processFaultStatusMain(void)
 
 {
+  ushort uVar1;
+  
   cm848_processFaultConditionMain();
   cm848_processFaultStatusWord2();
   if ((governor_status_flags & 0x8000) == 0) {
-    _protection_fault_severity = 0;
+    uVar1 = 0;
   }
   else {
-    _protection_fault_severity = 8;
+    uVar1 = 8;
   }
-  _protection_fault_severity = protection_fault_condition_value | _protection_fault_severity;
+  protection_fault_severity = protection_fault_condition_value | uVar1;
   cm848_calculateFaultRateValue();
   return;
 }
@@ -31227,8 +31001,6 @@ void cm848_processFaultStatusMain(void)
 //
 // Function: cm848_calculateDiagnosticStatusBits @ 0x0002f604
 //
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void cm848_calculateDiagnosticStatusBits(void)
 
@@ -31242,7 +31014,7 @@ void cm848_calculateDiagnosticStatusBits(void)
   else {
     uVar1 = 0x20;
   }
-  if ((uVar1 | _protection_fault_severity) == 0) {
+  if ((uVar1 | protection_fault_severity) == 0) {
     governor_speed_tracking = protection_speed_tracking_target;
     governor_speed_tracking_mode = 0;
   }
@@ -31256,7 +31028,7 @@ void cm848_calculateDiagnosticStatusBits(void)
   else {
     uVar2 = 8;
   }
-  protection_diagnostic_status = uVar1 | _protection_fault_severity | uVar2;
+  protection_diagnostic_status = uVar1 | protection_fault_severity | uVar2;
   return;
 }
 
@@ -31271,7 +31043,7 @@ void cm848_calculateDiagnosticStatusBits(void)
 void cm848_processFaultStatusFlags(void)
 
 {
-  if (_governor_fuel_b_mode_flag != 0) {
+  if (governor_fuel_b_mode_flag != 0) {
     if ((_DAT_003fe9c8 & 0x400) == 0) {
       diagnostic_status_bits_b = diagnostic_status_bits_b & 0xffdf;
       protection_condition_shadow_flags = protection_condition_shadow_flags & 0xffdf;
@@ -31310,7 +31082,7 @@ void cm848_initFaultStatusFilterState(void)
   _DAT_003fb0c2 = 0;
   _DAT_003fb0d6 = (int)_DAT_003fede0 << 0x10;
   _DAT_003fb0d2 = &fault_status_filter_coeff_cal;
-  if (_governor_fuel_b_mode_flag == 0) {
+  if (governor_fuel_b_mode_flag == 0) {
     diagnostic_status_bits_b = diagnostic_status_bits_b & 0xff9f;
     protection_condition_shadow_flags = protection_condition_shadow_flags & 0xff9f;
   }
@@ -31356,8 +31128,6 @@ void cm848_protectionNormalHandler(void)
 // Function: cm848_protectionOverloadHandler @ 0x0002f920
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_protectionOverloadHandler(void)
 
 {
@@ -31369,7 +31139,7 @@ void cm848_protectionOverloadHandler(void)
   protection_status_byte = *(word *)((uint)protection_status_table_index * 2 + 0x3fede2);
   protection_status_entry =
        *(word *)(&eeprom_calibration_pending_flag + (uint)protection_status_table_index * 2);
-  if (_protection_derate_level == 1) {
+  if (protection_derate_level == 1) {
     bVar2 = protection_condition_flags_t_0040b0e8.action_flags & 0xfd;
     if ((protection_condition_flags_t_0040b0e8.action_flags & 1) == 0) {
       if (protection_derate_l1_rpm_threshold_cal < engine_rpm_state_t_0040b7ac.current_rpm) {
@@ -31421,7 +31191,7 @@ void cm848_protectionOverloadHandler(void)
       protection_timer_state_t_0040b100.status_code._0_2_ = 0xd;
     }
   }
-  else if (_protection_derate_level == 2) {
+  else if (protection_derate_level == 2) {
     if (((protection_derate_l2_load_threshold_cal < protection_engine_load_scaled) ||
         (protection_lockout_t_0040b11c.timer_expired == 0)) ||
        ((protection_condition_flags_t_0040b0e8.action_flags & 1) == 0)) {
@@ -31472,7 +31242,7 @@ void cm848_protectionOverloadHandler(void)
       }
     }
   }
-  else if (_protection_derate_level == 3) {
+  else if (protection_derate_level == 3) {
     if (((protection_derate_l3_load_threshold_cal < protection_engine_load_scaled) ||
         (protection_lockout_t_0040b11c.timer_expired == 0)) ||
        (((protection_condition_flags_t_0040b0e8.action_flags & 2) == 0 &&
@@ -31496,7 +31266,7 @@ void cm848_protectionOverloadHandler(void)
       protection_timer_state_t_0040b100.status_code._0_2_ = 0xb;
     }
   }
-  else if (_protection_derate_level == 4) {
+  else if (protection_derate_level == 4) {
     cm848_protectionNormalHandler();
     protection_derate_rpm_limit =
          lookupTableInterpolation
@@ -31513,8 +31283,6 @@ void cm848_protectionOverloadHandler(void)
 // Function: cm848_protectionCleanupHandler @ 0x0002fe48
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_protectionCleanupHandler(void)
 
 {
@@ -31524,7 +31292,7 @@ void cm848_protectionCleanupHandler(void)
   if ((short)protection_load_input <= (short)protection_load_min_threshold_cal) {
     return;
   }
-  if ((_protection_derate_level == 3) &&
+  if ((protection_derate_level == 3) &&
      ((protection_condition_flags_t_0040b0e8.overtemp_flags & 8) != 0)) {
     if (protection_rate_integrator._2_2_ != 0) {
       return;
@@ -31547,7 +31315,7 @@ void cm848_protectionCleanupHandler(void)
        ((protection_condition_flags_t_0040b0e8.overtemp_flags & 0x20) == 0)) goto LAB_00030024;
   }
   else {
-    if (_protection_derate_level != 4) {
+    if (protection_derate_level != 4) {
       return;
     }
     if (protection_lockout_t_0040b11c.load_lockout != 0) {
@@ -31579,16 +31347,14 @@ LAB_00030024:
 // Function: cm848_protectionShutdownHandler @ 0x0003004c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_protectionShutdownHandler(void)
 
 {
   ushort uVar1;
   
   if (((protection_condition_flags_t_0040b0e8.condition_eval & 0x40) == 0) &&
-     (2 < _protection_derate_level)) {
-    if (_protection_derate_level == 3) {
+     (2 < protection_derate_level)) {
+    if (protection_derate_level == 3) {
       uVar1 = lookupTableInterpolation
                         (&DAT_003fb134,engine_load_filtered,&protection_fuel_threshold_l3_axis_cal,
                          &protection_fuel_threshold_l3_values_cal,0);
@@ -31624,7 +31390,6 @@ LAB_00030150:
 //
 
 /* WARNING: Type propagation algorithm not settling */
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void cm848_protectionOutputController(void)
 
@@ -31647,10 +31412,10 @@ void cm848_protectionOutputController(void)
   if ((protection_condition_flags_t_0040b0e8.condition_eval & 0x40) != 0) {
     return;
   }
-  if (_fuel_correction_mode_flag != 0) {
+  if (fuel_correction_mode_flag != 0) {
     return;
   }
-  if (_protection_derate_level == 2) {
+  if (protection_derate_level == 2) {
     uVar2 = lookupTableInterpolation
                       (&DAT_003fb102,engine_load_filtered,&protection_threshold_l8_axis_cal,
                        &protection_threshold_l8_output_cal,0);
@@ -31665,13 +31430,13 @@ void cm848_protectionOutputController(void)
                    (&DAT_003fb13a,engine_load_filtered,&protection_fuel_limit_l2_axis_cal,
                     &protection_fuel_limit_l2_values_cal,0);
     if ((((((protection_ramp_position == 0x7f) || (protection_ramp_position == 0x7e)) ||
-          (_protection_trigger_active_flag != 0)) ||
+          (protection_trigger_active_flag != 0)) ||
          (protection_timer_state_t_0040b100.status_code._0_2_ == 0x18)) &&
         (((protection_config_flags_b & 8) != 0 && (protection_rate_integrator._2_2_ == 0)))) &&
        ((protection_derate_countdown == 0 && (protection_entry_countdown == 0)))) {
       if ((protection_derate_fuel_exit_threshold_cal < fuel_demand_control_t_0040a57a.calculated) ||
          ((protection_condition_flags_t_0040b0e8.load_condition_flags & 2) != 0)) {
-        if (_protection_trigger_active_flag != 0) {
+        if (protection_trigger_active_flag != 0) {
           uVar4 = fuel_demand_limit_working;
           uVar3 = uVar2;
         }
@@ -31685,7 +31450,7 @@ void cm848_protectionOutputController(void)
            protection_condition_flags_t_0040b0e8.condition_flags_1 & 0xdf;
     }
   }
-  if ((_protection_derate_level == 3) &&
+  if ((protection_derate_level == 3) &&
      ((protection_condition_flags_t_0040b0e8.overtemp_flags & 8) != 0)) {
     uVar3 = lookupTableInterpolation
                       (&DAT_003fb15c,sensor_readings_t_0040baf2.coolant_temp,
@@ -31715,8 +31480,8 @@ void cm848_protectionOutputController(void)
        ((((uVar3 < engine_load_filtered && (protection_rate_integrator._2_2_ == 0)) &&
          (protection_lockout_t_0040b11c.thermal_lockout == 0)) &&
         (protection_lockout_t_0040b11c.rpm_lockout == 0)))) {
-      if (_protection_trigger_active_flag == 0) {
-        if ((_protection_fuel_check_bypass_flag == 0) &&
+      if (protection_trigger_active_flag == 0) {
+        if ((protection_fuel_check_bypass_flag == 0) &&
            ((protection_enable_t_0040c050.system_enable_bits & 0x10) != 0)) {
           if (uVar6 <= fuel_demand_control_t_0040a57a.calculated) goto joined_r0x00030600;
         }
@@ -31732,7 +31497,7 @@ void cm848_protectionOutputController(void)
                     (short)protection_load_fault_bypass_threshold_cal)))))))) goto LAB_000306ac;
 LAB_00030694:
         cm848_setEngineProtectionFault(0x12,0);
-        _protection_limit_active_flag = 1;
+        protection_limit_active_flag = 1;
       }
       else {
         uVar4 = fuel_demand_limit_working;
@@ -31746,10 +31511,10 @@ LAB_000306ac:
            protection_condition_flags_t_0040b0e8.condition_flags_1 & 0xdf;
     }
   }
-  if (_protection_derate_level != 4) {
+  if (protection_derate_level != 4) {
     return;
   }
-  if ((_protection_limit_active_flag != 0) ||
+  if ((protection_limit_active_flag != 0) ||
      ((protection_status_flags_t_0040b0f2.flags[0] & 8) != 0)) {
     protection_oil_pressure_input = 0;
   }
@@ -31806,17 +31571,17 @@ LAB_000306ac:
     return;
   }
   wVar1 = fuel_demand_limit_working;
-  if (_protection_trigger_active_flag == 0) {
+  if (protection_trigger_active_flag == 0) {
     if ((protection_condition_flags_t_0040b0e8.condition_flags_1 & 0x10) == 0) {
       wVar1 = uVar7;
       uVar3 = uVar6;
-      if ((_protection_fuel_check_bypass_flag == 0) &&
+      if ((protection_fuel_check_bypass_flag == 0) &&
          ((protection_enable_t_0040c050.system_enable_bits & 0x10) != 0)) goto joined_r0x00030a54;
     }
     else {
       wVar1 = uVar9;
       uVar3 = uVar8;
-      if ((_protection_fuel_check_bypass_flag == 0) &&
+      if ((protection_fuel_check_bypass_flag == 0) &&
          ((protection_enable_t_0040c050.system_enable_bits & 0x10) != 0)) {
         wVar1 = uVar11;
         uVar3 = uVar10;
@@ -31830,7 +31595,7 @@ joined_r0x00030a54:
      (((protection_condition_flags_t_0040b0e8.condition_flags_1 & 0x20) != 0 &&
       (fuel_demand_control_t_0040a57a.calculated < uVar4)))) {
     cm848_setEngineProtectionFault(0x12,0);
-    _protection_limit_active_flag = 0;
+    protection_limit_active_flag = 0;
   }
   protection_condition_flags_t_0040b0e8.condition_flags_1 =
        protection_condition_flags_t_0040b0e8.condition_flags_1 & 0xdf;
@@ -31843,8 +31608,6 @@ joined_r0x00030a54:
 // Function: cm848_protectionFinalizeState @ 0x00030ad4
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_protectionFinalizeState(void)
 
 {
@@ -31856,10 +31619,10 @@ void cm848_protectionFinalizeState(void)
   uint uVar5;
   
   if ((((protection_condition_flags_t_0040b0e8.condition_eval & 0x40) == 0) &&
-      (((protection_config_flags_b & 8) != 0 || (2 < _protection_derate_level)))) &&
-     (((protection_config_flags_b & 8) == 0 || (_protection_derate_level != 1)))) {
-    if (_protection_derate_level == 1) goto LAB_00030b88;
-    if (((_protection_derate_level == 2) && ((protection_config_flags_b & 8) != 0)) &&
+      (((protection_config_flags_b & 8) != 0 || (2 < protection_derate_level)))) &&
+     (((protection_config_flags_b & 8) == 0 || (protection_derate_level != 1)))) {
+    if (protection_derate_level == 1) goto LAB_00030b88;
+    if (((protection_derate_level == 2) && ((protection_config_flags_b & 8) != 0)) &&
        ((protection_action_mode_bits._0_1_ & 4) != 0)) {
       uVar1 = lookupTableInterpolation
                         (&DAT_003fb12e,engine_load_filtered,&protection_fuel_limit_l2_alt_axis_cal,
@@ -31868,7 +31631,7 @@ void cm848_protectionFinalizeState(void)
            lookupTableInterpolation
                      (&DAT_003fb13a,engine_load_filtered,&protection_fuel_limit_l2_axis_cal,
                       &protection_fuel_limit_l2_values_cal,0);
-      if (_protection_trigger_active_flag == 0) {
+      if (protection_trigger_active_flag == 0) {
         if ((((protection_ramp_position == 0x7f) || (protection_ramp_position == 0x7e)) ||
             (protection_timer_state_t_0040b100.status_code._0_2_ == 0x18)) &&
            (fuel_demand_control_t_0040a57a.calculated <= uVar1)) goto LAB_00030fdc;
@@ -31880,7 +31643,7 @@ LAB_00030f98:
       }
     }
     else {
-      if ((_protection_derate_level == 3) && ((protection_action_mode_bits._0_1_ & 4) != 0)) {
+      if ((protection_derate_level == 3) && ((protection_action_mode_bits._0_1_ & 4) != 0)) {
         uVar1 = lookupTableInterpolation
                           (&DAT_003fb130,engine_load_filtered,&protection_load_axis_e_cal,
                            &protection_load_values_e_cal,0);
@@ -31891,8 +31654,8 @@ LAB_00030f98:
              lookupTableInterpolation
                        (&DAT_003fb13c,engine_load_filtered,&protection_fuel_limit_l3_axis_cal,
                         &protection_fuel_limit_l3_values_cal,0);
-        if (_protection_trigger_active_flag == 0) {
-          if ((_protection_fuel_check_bypass_flag == 0) &&
+        if (protection_trigger_active_flag == 0) {
+          if ((protection_fuel_check_bypass_flag == 0) &&
              ((protection_enable_t_0040c050.system_enable_bits & 0x10) != 0)) {
             uVar1 = uVar2;
           }
@@ -31906,10 +31669,10 @@ LAB_00030f98:
         protection_rate_integrator._2_2_ = protection_countdown_cal;
         protection_lockout_t_0040b11c.sensor_fault_active = protection_sensor_fault_cal;
         cm848_triggerProtectionEvent(0x12,0);
-        _protection_limit_active_flag = 0;
+        protection_limit_active_flag = 0;
         goto LAB_00030fdc;
       }
-      if ((_protection_derate_level != 4) || ((protection_action_mode_bits._0_1_ & 4) == 0))
+      if ((protection_derate_level != 4) || ((protection_action_mode_bits._0_1_ & 4) == 0))
       goto LAB_00030fdc;
       uVar2 = lookupTableInterpolation
                         (&DAT_003fb12c,engine_load_filtered,&protection_fuel_load_rate_b_axis_cal,
@@ -31927,8 +31690,8 @@ LAB_00030f98:
       uVar1 = lookupTableInterpolation
                         (&DAT_003fb140,engine_load_filtered,&protection_fuel_threshold_f_axis_cal,
                          &protection_fuel_threshold_f_values_cal,0);
-      if (_protection_trigger_active_flag != 0) goto LAB_00030f98;
-      if ((_protection_fuel_check_bypass_flag == 0) &&
+      if (protection_trigger_active_flag != 0) goto LAB_00030f98;
+      if ((protection_fuel_check_bypass_flag == 0) &&
          ((protection_enable_t_0040c050.system_enable_bits & 0x10) != 0)) {
         if ((protection_condition_flags_t_0040b0e8.condition_flags_1 & 0x10) != 0) {
           uVar1 = uVar4;
@@ -31954,16 +31717,16 @@ LAB_00030b88:
   protection_lockout_t_0040b11c.sensor_fault_active = protection_sensor_fault_cal;
   cm848_triggerProtectionEvent(0x12,0);
 LAB_00030fdc:
-  if ((_fuel_correction_mode_flag != 0) && ((protection_action_mode_bits._0_1_ & 4) != 0)) {
+  if ((fuel_correction_mode_flag != 0) && ((protection_action_mode_bits._0_1_ & 4) != 0)) {
     protection_lockout_t_0040b11c.sensor_fault_active = protection_sensor_fault_cal;
     cm848_triggerProtectionEvent(0x12,0);
-    if (_protection_derate_level == 2) {
+    if (protection_derate_level == 2) {
       protection_derate_countdown = protection_derate_countdown_init_cal;
     }
-    else if (_protection_derate_level == 3) {
+    else if (protection_derate_level == 3) {
       protection_lockout_t_0040b11c.thermal_lockout = protection_thermal_lockout_cal;
     }
-    else if (_protection_derate_level == 4) {
+    else if (protection_derate_level == 4) {
       protection_lockout_t_0040b11c.load_lockout = protection_load_lockout_cal;
     }
   }
@@ -31979,9 +31742,9 @@ LAB_00030fdc:
     protection_lockout_t_0040b11c.thermal_lockout = protection_thermal_lockout_cal;
   }
   protection_ramp_position_working = protection_ramp_position;
-  if (_protection_derate_level != 4) {
+  if (protection_derate_level != 4) {
     if ((protection_condition_flags_t_0040b0e8.load_condition_flags & 0x80) == 0) {
-      if ((_protection_derate_level == 2) &&
+      if ((protection_derate_level == 2) &&
          ((((protection_status_flags_t_0040b0f2.flags[0] & 0x40) != 0 ||
            ((protection_status_flags_t_0040b0f2.status_flags._0_1_ & 0x20) != 0)) ||
           ((protection_status_flags_t_0040b0f2.flags[0] & 1) != 0)))) {
@@ -32005,21 +31768,21 @@ LAB_00030fdc:
              (int)((uint)engine_load_filtered - (uint)engine_rpm_state_t_0040b7ac.current_rpm))) {
       cm848_triggerProtectionEvent(0x12,0);
       protection_lockout_t_0040b11c.load_lockout = protection_load_lockout_cal;
-      if (_protection_trigger_active_flag != 0) {
+      if (protection_trigger_active_flag != 0) {
         protection_lockout_t_0040b11c.load_lockout = protection_load_lockout_value_cal;
       }
       protection_condition_flags_t_0040b0e8.load_condition_flags =
            protection_condition_flags_t_0040b0e8.load_condition_flags & 0x7f | 0x40;
     }
   }
-  if ((((protection_ramp_position == 0x7e) && (_protection_derate_level == 2)) &&
+  if ((((protection_ramp_position == 0x7e) && (protection_derate_level == 2)) &&
       ((protection_action_mode_bits._0_1_ & 4) != 0)) &&
      (engine_load_filtered < protection_derate_l2_load_exit_threshold_cal)) {
     protection_lockout_t_0040b11c.sensor_fault_active = protection_sensor_fault_active_code_cal;
     cm848_triggerProtectionEvent(0x12,0);
   }
   if (((protection_ramp_position == 0x7e) || (protection_ramp_position == 0x7f)) &&
-     ((_protection_derate_level == 3 &&
+     ((protection_derate_level == 3 &&
       (((protection_action_mode_bits._0_1_ & 4) != 0 &&
        (engine_load_filtered < protection_load_fault_threshold_cal)))))) {
     protection_lockout_t_0040b11c.sensor_fault_active = protection_sensor_fault_active_code_cal;
@@ -32033,8 +31796,6 @@ LAB_00030fdc:
 //
 // Function: cm848_protectionFuelDemandCheck @ 0x00031320
 //
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void cm848_protectionFuelDemandCheck(void)
 
@@ -32057,7 +31818,7 @@ void cm848_protectionFuelDemandCheck(void)
   uVar4 = lookupTableInterpolation
                     (&DAT_003fb150,engine_load_filtered,&protection_threshold_l5_axis_cal,
                      &protection_threshold_l5_output_cal,0);
-  if ((_protection_fuel_check_bypass_flag == 0) &&
+  if ((protection_fuel_check_bypass_flag == 0) &&
      ((protection_enable_t_0040c050.system_enable_bits & 0x10) != 0)) {
     if (fuel_demand_control_t_0040a57a.calculated < uVar2) {
       if (uVar4 <= fuel_demand_control_t_0040a57a.calculated) {
@@ -32166,8 +31927,6 @@ void cm848_protectionWarmupHandler(void)
 // Function: cm848_protectionStatusFlagHandler @ 0x000316cc
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_protectionStatusFlagHandler(void)
 
 {
@@ -32187,7 +31946,7 @@ void cm848_protectionStatusFlagHandler(void)
                     (&DAT_003fb15a,engine_load_filtered,&protection_load_axis_c_cal,
                      &protection_load_values_c_cal,0);
   bVar3 = protection_status_flags_t_0040b0f2.status_flags._0_1_;
-  if (_protection_derate_level == 1) {
+  if (protection_derate_level == 1) {
     bVar2 = protection_status_flags_t_0040b0f2.status_flags._0_1_ & 0xdf;
     uVar4 = (uint)engine_rpm_state_t_0040b7ac.current_rpm;
     if (protection_rpm_peak_a < uVar4) {
@@ -32248,8 +32007,8 @@ void cm848_protectionStatusFlagHandler(void)
     }
   }
   else {
-    if (_protection_derate_level != 2) {
-      if (_protection_derate_level == 3) {
+    if (protection_derate_level != 2) {
+      if (protection_derate_level == 3) {
         protection_timer_state_t_0040b100.status_code._0_2_ = 5;
         bVar3 = protection_status_flags_t_0040b0f2.status_flags._0_1_ & 0xbf;
         protection_derate_rpm_limit = uVar1;
@@ -32257,16 +32016,16 @@ void cm848_protectionStatusFlagHandler(void)
           if (protection_recovery_timer == 0) {
             if ((protection_status_flags_t_0040b0f2.status_flags._0_1_ & 8) == 0) {
               if (protection_rpm_peak_threshold < protection_rpm_peak_b) {
-                if ((uint)protection_status_entry + (uint)_protection_status_step_delta < 0x100) {
-                  protection_status_entry = protection_status_entry + _protection_status_step_delta;
+                if ((uint)protection_status_entry + (uint)protection_status_step_delta < 0x100) {
+                  protection_status_entry = protection_status_entry + protection_status_step_delta;
                 }
                 else {
                   protection_status_entry = 0xff;
                 }
               }
               else if (protection_rpm_peak_b < protection_rpm_peak_low_threshold_cal) {
-                if (_protection_status_step_delta < protection_status_entry) {
-                  protection_status_entry = protection_status_entry - _protection_status_step_delta;
+                if (protection_status_step_delta < protection_status_entry) {
+                  protection_status_entry = protection_status_entry - protection_status_step_delta;
                 }
                 else {
                   protection_status_entry = 0;
@@ -32301,16 +32060,16 @@ void cm848_protectionStatusFlagHandler(void)
       }
       if ((protection_status_flags_t_0040b0f2.status_flags._0_1_ & 8) == 0) {
         if (protection_rpm_peak_threshold < protection_rpm_peak_a) {
-          if ((uint)protection_status_byte + (uint)_protection_status_step_delta < 0x100) {
-            protection_status_byte = protection_status_byte + _protection_status_step_delta;
+          if ((uint)protection_status_byte + (uint)protection_status_step_delta < 0x100) {
+            protection_status_byte = protection_status_byte + protection_status_step_delta;
           }
           else {
             protection_status_byte = 0xff;
           }
         }
         else if (protection_rpm_peak_a < protection_rpm_peak_low_threshold_cal) {
-          if (_protection_status_step_delta < protection_status_byte) {
-            protection_status_byte = protection_status_byte - _protection_status_step_delta;
+          if (protection_status_step_delta < protection_status_byte) {
+            protection_status_byte = protection_status_byte - protection_status_step_delta;
           }
           else {
             protection_status_byte = 0;
@@ -32403,8 +32162,6 @@ LAB_00031b70:
 // Function: cm848_protectionStateTransitionCheck @ 0x00031d98
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_protectionStateTransitionCheck(void)
 
 {
@@ -32442,7 +32199,7 @@ void cm848_protectionStateTransitionCheck(void)
   uVar4 = lookupTableInterpolation
                     (&DAT_003fb158,engine_load_filtered,&protection_threshold_l4_axis_c_cal,
                      &protection_threshold_l4_output_c_cal,0);
-  if ((_protection_fuel_check_bypass_flag == 0) &&
+  if ((protection_fuel_check_bypass_flag == 0) &&
      ((protection_enable_t_0040c050.system_enable_bits & 0x10) != 0)) {
     if (fuel_demand_control_t_0040a57a.calculated < uVar3) {
       if ((uVar4 <= fuel_demand_control_t_0040a57a.calculated) ||
@@ -32466,7 +32223,7 @@ void cm848_protectionStateTransitionCheck(void)
 LAB_00031f94:
   uVar6 = (uint)fuel_temperature_trim;
   uVar5 = (uint)cruise_speed_command + (uint)protection_fuel_temp_cruise_offset_cal;
-  if ((((_protection_derate_level == 4) &&
+  if ((((protection_derate_level == 4) &&
        (fuel_demand_control_t_0040a57a.calculated < protection_fuel_demand_l4_threshold_cal)) &&
       (uVar5 < uVar6)) && (0 < protection_rate_integrator._0_2_)) {
     if ((protection_load_check_timer_a == 0) &&
@@ -32481,7 +32238,7 @@ LAB_00031f94:
     protection_load_check_timer_a = protection_load_check_timer_a_cal;
   }
   if ((((protection_condition_flags_t_0040b0e8.condition_flags_1 & 1) != 0) &&
-      (_protection_derate_level == 3)) &&
+      (protection_derate_level == 3)) &&
      ((protection_fuel_demand_l4_threshold_cal < fuel_demand_control_t_0040a57a.calculated &&
       ((uVar6 < uVar5 && (protection_load_check_timer_b == 0)))))) {
     protection_condition_flags_t_0040b0e8.condition_eval =
@@ -32546,8 +32303,6 @@ uint cm848_protectionScaledLimitCalculation(int param_1)
 // Function: cm848_protectionRateOfChangeCalculation @ 0x00032250
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_protectionRateOfChangeCalculation(void)
 
 {
@@ -32560,10 +32315,10 @@ void cm848_protectionRateOfChangeCalculation(void)
   word wStack_16;
   
   if (-1 < protection_rate_integrator._0_2_) {
-    protection_derate_level_trial = _protection_derate_level + 1;
+    protection_derate_level_trial = protection_derate_level + 1;
     protection_scaled_limit_b =
          cm848_protectionScaledLimitCalculation(protection_derate_level_trial);
-    if (_protection_derate_level < 4) {
+    if (protection_derate_level < 4) {
       protection_derate_level_trial = protection_derate_level_trial + 1;
     }
     wVar1 = cm848_protectionScaledLimitCalculation(protection_derate_level_trial);
@@ -32623,8 +32378,6 @@ void cm848_protectionRateOfChangeCalculation(void)
 // Function: cm848_calculateProtectionFuelDemandThreshold @ 0x0003241c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_calculateProtectionFuelDemandThreshold(void)
 
 {
@@ -32636,9 +32389,8 @@ void cm848_calculateProtectionFuelDemandThreshold(void)
   if (protection_derate_fuel_demand_threshold_cal < fuel_demand_control_t_0040a57a.calculated) {
     protection_rate_integrator_delta =
          protection_rate_integrator_snapshot - protection_rate_integrator._0_2_;
-    protection_derate_level_trial = _protection_derate_level;
-    protection_scaled_limit_b = cm848_protectionScaledLimitCalculation(_protection_derate_level + 1)
-    ;
+    protection_derate_level_trial = protection_derate_level;
+    protection_scaled_limit_b = cm848_protectionScaledLimitCalculation(protection_derate_level + 1);
     protection_scaled_limit_delta = protection_scaled_limit_current - protection_scaled_limit_b;
     iVar2 = (int)(short)protection_rate_integrator_delta;
     if (0 < iVar2) {
@@ -32676,15 +32428,13 @@ void cm848_calculateProtectionFuelDemandThreshold(void)
 // Function: cm848_processProtectionStateFlags @ 0x0003257c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_processProtectionStateFlags(void)
 
 {
   byte bVar1;
   
   bVar1 = protection_status_flags_t_0040b0f2.flags[0] | 0x20;
-  if (_protection_derate_level == 1) {
+  if (protection_derate_level == 1) {
     bVar1 = protection_status_flags_t_0040b0f2.flags[0] & 0xbf | 0x20;
     if (protection_timer_state_t_0040b100.state1_timer != 0) {
       protection_status_flags_t_0040b0f2.flags[0] = bVar1;
@@ -32725,9 +32475,9 @@ void cm848_processProtectionStateFlags(void)
                       &protection_load_table_cal_b,0);
       protection_timer_state_t_0040b100.status_code._0_2_ = 0x12;
       protection_rate_integrator_snapshot = protection_rate_integrator._0_2_;
-      protection_derate_level_trial = _protection_derate_level;
+      protection_derate_level_trial = protection_derate_level;
       protection_scaled_limit_current =
-           cm848_protectionScaledLimitCalculation(_protection_derate_level + 1);
+           cm848_protectionScaledLimitCalculation(protection_derate_level + 1);
       return;
     }
     protection_derate_rpm_limit =
@@ -32737,7 +32487,7 @@ void cm848_processProtectionStateFlags(void)
     protection_timer_state_t_0040b100.status_code._0_2_ = 0x14;
     return;
   }
-  if (_protection_derate_level == 2) {
+  if (protection_derate_level == 2) {
     if (protection_timer_state_t_0040b100.state1_timer != 0) {
       if (protection_timer_state_t_0040b100.status_code._2_2_ == 0) {
         protection_status_flags_t_0040b0f2.flags[0] = bVar1;
@@ -32793,8 +32543,8 @@ void cm848_processProtectionStateFlags(void)
     bVar1 = protection_status_flags_t_0040b0f2.flags[0] | 0x40;
   }
   else {
-    if (_protection_derate_level != 3) {
-      if (_protection_derate_level != 4) {
+    if (protection_derate_level != 3) {
+      if (protection_derate_level != 4) {
         protection_status_flags_t_0040b0f2.flags[0] = bVar1;
         return;
       }
@@ -32845,12 +32595,10 @@ void cm848_processProtectionStateFlags(void)
 // Function: cm848_protectionThresholdMonitor @ 0x00032b00
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_protectionThresholdMonitor(void)
 
 {
-  if (_protection_derate_level == 1) {
+  if (protection_derate_level == 1) {
     protection_fuel_limit_b =
          lookupTableInterpolation
                    (&DAT_003fb116,engine_load_filtered,&protection_fuel_limit_l1_axis_cal,
@@ -32860,7 +32608,7 @@ void cm848_protectionThresholdMonitor(void)
                    (&DAT_003fb118,engine_load_filtered,&protection_load_rate_l1_axis_cal,
                     &protection_load_rate_l1_output_cal,0);
   }
-  else if (_protection_derate_level == 2) {
+  else if (protection_derate_level == 2) {
     protection_fuel_limit_b =
          lookupTableInterpolation
                    (&DAT_003fb11a,engine_load_filtered,&protection_fuel_limit_l2_axis_cal,
@@ -32870,7 +32618,7 @@ void cm848_protectionThresholdMonitor(void)
                    (&DAT_003fb11c,engine_load_filtered,&protection_load_rate_l2_axis_cal,
                     &protection_load_rate_l2_output_cal,0);
   }
-  else if ((_protection_fuel_check_bypass_flag == 0) &&
+  else if ((protection_fuel_check_bypass_flag == 0) &&
           ((protection_enable_t_0040c050.system_enable_bits & 0x10) != 0)) {
     protection_fuel_limit_b =
          lookupTableInterpolation
@@ -32908,7 +32656,7 @@ LAB_00032e40:
     protection_status_flags_t_0040b0f2.flags[0] = protection_status_flags_t_0040b0f2.flags[0] & 0xdf
     ;
   }
-  else if (_protection_derate_level == 1) {
+  else if (protection_derate_level == 1) {
     protection_status_flags_t_0040b0f2.flags[0] = protection_status_flags_t_0040b0f2.flags[0] | 0x80
     ;
     protection_timer_state_t_0040b100.state1_timer = protection_state1_timer_cal;
@@ -32919,7 +32667,7 @@ LAB_00032e40:
     protection_timer_state_t_0040b100.status_code._0_2_ = 0x12;
   }
   else {
-    if (_protection_derate_level != 2) goto LAB_00032e40;
+    if (protection_derate_level != 2) goto LAB_00032e40;
     protection_status_flags_t_0040b0f2.flags[0] = protection_status_flags_t_0040b0f2.flags[0] | 0x40
     ;
     protection_timer_state_t_0040b100.state2_timer = protection_state2_timer_cal;
@@ -32960,8 +32708,6 @@ LAB_00032ee0:
 // Function: cm848_protectionStateMachine @ 0x00032efc
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_protectionStateMachine(void)
 
 {
@@ -32972,7 +32718,7 @@ void cm848_protectionStateMachine(void)
     if (((protection_condition_flags_t_0040b0e8.condition_flags_2 & 4) == 0) &&
        ((protection_condition_flags_t_0040b0e8.condition_flags_3 & 2) == 0)) {
       if (((protection_action_mode_bits._0_1_ & 4) == 0) ||
-         ((_protection_trigger_active_flag != 0 && (_protection_derate_level == 2)))) {
+         ((protection_trigger_active_flag != 0 && (protection_derate_level == 2)))) {
         if (protection_lockout_t_0040b11c.sensor_fault_active == 0) {
           if ((protection_status_flags_t_0040b0f2.status_flags._0_1_ & 0x80) == 0) {
             if (fuel_temp_trim_ema < 0x201) {
@@ -32993,8 +32739,8 @@ void cm848_protectionStateMachine(void)
       else {
         cm848_protectionThresholdMonitor();
         if ((protection_status_flags_t_0040b0f2.output_flags & 2) == 0) {
-          if (_protection_derate_level < 3) {
-            if (((_protection_derate_level == 2) && ((protection_config_flags_b & 8) != 0)) &&
+          if (protection_derate_level < 3) {
+            if (((protection_derate_level == 2) && ((protection_config_flags_b & 8) != 0)) &&
                ((protection_ramp_position == 0x7f || (protection_ramp_position == 0x7e)))) {
               protection_derate_rpm_limit = protection_derate_l2_ramp_rpm_limit_cal;
               protection_timer_state_t_0040b100.status_code._0_2_ = 0x11;
@@ -33077,8 +32823,8 @@ void cm848_evaluateProtectionModeFlags(void)
        ((protection_status_flags_t_0040b0f2.output_flags & 1) == 0)) &&
       ((protection_status_flags_t_0040b0f2.output_flags & 2) == 0)) &&
      ((protection_status_flags_t_0040b0f2.output_flags & 4) == 0)) {
-    _protection_mode_changed_flag = 1;
-    if (_governor_override_active_flag == 1) {
+    protection_mode_changed_flag = 1;
+    if (governor_override_active_flag == 1) {
       protection_condition_flags_t_0040b0e8.condition_flags_1 =
            protection_condition_flags_t_0040b0e8.condition_flags_1 | 0x10;
     }
@@ -33086,13 +32832,13 @@ void cm848_evaluateProtectionModeFlags(void)
       protection_condition_flags_t_0040b0e8.condition_flags_1 =
            protection_condition_flags_t_0040b0e8.condition_flags_1 & 0xef;
     }
-    if (_DAT_003feff6 == 0) {
+    if (protection_sensor_mode_flag == 0) {
       protection_oil_pressure_input = sensor_readings_t_0040baf2.oil_pressure;
     }
     else {
       if (_DAT_003feff4 == 0) {
         if (oil_pressure_baseline_ref < sensor_readings_t_0040baf2.oil_pressure) {
-          _protection_mode_changed_flag = 1;
+          protection_mode_changed_flag = 1;
           protection_oil_pressure_input =
                sensor_readings_t_0040baf2.oil_pressure - oil_pressure_baseline_ref;
           return;
@@ -33100,7 +32846,7 @@ void cm848_evaluateProtectionModeFlags(void)
       }
       else if (sensor_readings_t_0040baf2.intake_air_temp < sensor_readings_t_0040baf2.oil_pressure)
       {
-        _protection_mode_changed_flag = 1;
+        protection_mode_changed_flag = 1;
         protection_oil_pressure_input =
              sensor_readings_t_0040baf2.oil_pressure - sensor_readings_t_0040baf2.intake_air_temp;
         return;
@@ -33109,7 +32855,7 @@ void cm848_evaluateProtectionModeFlags(void)
     }
   }
   else {
-    _protection_mode_changed_flag = 0;
+    protection_mode_changed_flag = 0;
   }
   return;
 }
@@ -33211,7 +32957,6 @@ void cm848_decrementProtectionTimers(void)
 //
 
 /* WARNING: Type propagation algorithm not settling */
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void cm848_calculateProtectionConditions(void)
 
@@ -33269,9 +33014,9 @@ void cm848_calculateProtectionConditions(void)
          ((protection_load_fault_threshold_cal <= wVar2 ||
           ((protection_ramp_position_fault_threshold_cal <= protection_ramp_position_b &&
            (protection_timer_state_t_0040b100.status_code._0_2_ != 0x11)))))) {
-        if (_protection_derate_level == 2) {
+        if (protection_derate_level == 2) {
           protection_lockout_t_0040b11c.thermal_lockout = protection_thermal_lockout_cal;
-          if (_protection_trigger_active_flag != 0) {
+          if (protection_trigger_active_flag != 0) {
             protection_lockout_t_0040b11c.thermal_lockout = protection_thermal_lockout_trigger_cal;
           }
           protection_condition_flags_t_0040b0e8.load_condition_flags =
@@ -33280,20 +33025,20 @@ void cm848_calculateProtectionConditions(void)
         }
       }
       else {
-        if ((_protection_derate_level == 3) &&
+        if ((protection_derate_level == 3) &&
            (protection_entry_countdown = protection_entry_countdown_init_cal,
-           _protection_trigger_active_flag != 0)) {
+           protection_trigger_active_flag != 0)) {
           protection_entry_countdown = protection_entry_countdown_trigger_cal;
         }
-        _protection_derate_level = 2;
+        protection_derate_level = 2;
         protection_condition_flags_t_0040b0e8.load_condition_flags =
              protection_condition_flags_t_0040b0e8.load_condition_flags | 2;
-        if ((_fuel_mode_switch_state != 0) && ((protection_condition_state._0_1_ & 2) == 0)) {
+        if ((fuel_mode_switch_state != 0) && ((protection_condition_state._0_1_ & 2) == 0)) {
           protection_condition_state._0_1_ = protection_condition_state._0_1_ | 3;
         }
       }
       if ((protection_condition_flags_t_0040b0e8.load_condition_flags & 2) == 0) {
-        _protection_derate_level = 3;
+        protection_derate_level = 3;
       }
     }
     else {
@@ -33310,35 +33055,35 @@ void cm848_calculateProtectionConditions(void)
         uVar4 = protection_debounce_fuel_threshold_b_cal;
       }
       if (uVar11 < uVar4) {
-        if (_protection_derate_level == 1) {
-          if (_protection_trigger_active_flag == 0) {
+        if (protection_derate_level == 1) {
+          if (protection_trigger_active_flag == 0) {
             protection_derate_countdown = protection_derate_countdown_init_cal;
           }
           else {
             protection_derate_countdown = protection_derate_countdown_cal;
           }
         }
-        else if ((_protection_derate_level == 3) &&
+        else if ((protection_derate_level == 3) &&
                 (protection_entry_countdown = protection_entry_countdown_init_cal,
-                _protection_trigger_active_flag != 0)) {
+                protection_trigger_active_flag != 0)) {
           protection_entry_countdown = protection_entry_countdown_trigger_cal;
         }
-        _protection_derate_level = 2;
+        protection_derate_level = 2;
       }
       else {
         protection_condition_flags_t_0040b0e8.condition_flags_1 =
              protection_condition_flags_t_0040b0e8.condition_flags_1 & 0xdf;
-        _protection_derate_level = 1;
+        protection_derate_level = 1;
       }
     }
   }
   else {
-    if ((_protection_derate_level == 3) &&
+    if ((protection_derate_level == 3) &&
        (protection_lockout_t_0040b11c.load_lockout = protection_load_lockout_cal,
-       _protection_trigger_active_flag != 0)) {
+       protection_trigger_active_flag != 0)) {
       protection_lockout_t_0040b11c.load_lockout = protection_load_lockout_value_cal;
     }
-    _protection_derate_level = 4;
+    protection_derate_level = 4;
     protection_condition_flags_t_0040b0e8.load_condition_flags =
          protection_condition_flags_t_0040b0e8.load_condition_flags & 0x7f;
   }
@@ -33362,8 +33107,8 @@ void cm848_calculateProtectionConditions(void)
                       (&DAT_003fb18a,engine_load_filtered,&protection_fuel_derate4_axis_cal,
                        &protection_fuel_derate4_values_cal,0);
     if ((((protection_ramp_position == 0x7f) || (protection_ramp_position == 0x7e)) &&
-        (_protection_derate_level == 2)) && ((protection_config_flags_b & 8) != 0)) {
-      if ((_protection_fuel_check_bypass_flag != 0) ||
+        (protection_derate_level == 2)) && ((protection_config_flags_b & 8) != 0)) {
+      if ((protection_fuel_check_bypass_flag != 0) ||
          ((protection_enable_t_0040c050.system_enable_bits & 0x10) == 0)) goto joined_r0x000341e0;
 joined_r0x000341b8:
       if (uVar7 <= fuel_demand_control_t_0040a57a.calculated) goto LAB_00034278;
@@ -33371,11 +33116,11 @@ joined_r0x000341b8:
     else {
       uVar7 = uVar8;
       uVar4 = uVar5;
-      if (_protection_derate_level == 3) {
+      if (protection_derate_level == 3) {
         uVar7 = uVar6;
         uVar4 = uVar3;
       }
-      if ((_protection_fuel_check_bypass_flag == 0) &&
+      if ((protection_fuel_check_bypass_flag == 0) &&
          ((protection_enable_t_0040c050.system_enable_bits & 0x10) != 0)) goto joined_r0x000341b8;
       if ((protection_condition_flags_t_0040b0e8.condition_flags_1 & 0x10) != 0) goto LAB_00034278;
 joined_r0x000341e0:
@@ -33413,7 +33158,7 @@ joined_r0x000341e0:
                     (&DAT_003fb186,sVar9,&protection_fuel_derate2_axis_cal,
                      &protection_fuel_derate2_values_cal,0);
   if ((((protection_ramp_position == 0x7f) || (protection_ramp_position == 0x7e)) &&
-      (_protection_derate_level == 2)) && ((protection_config_flags_b & 8) != 0)) {
+      (protection_derate_level == 2)) && ((protection_config_flags_b & 8) != 0)) {
     uVar4 = uVar8;
     if ((protection_enable_t_0040c050.system_enable_bits & 0x10) == 0) goto joined_r0x00033fe4;
 joined_r0x00033fb8:
@@ -33422,7 +33167,7 @@ joined_r0x00033fcc:
     if (fuel_demand_control_t_0040a57a.calculated < uVar4) goto LAB_00034278;
   }
   else {
-    if ((_protection_derate_level == 3) && ((protection_condition_state._0_1_ & 4) == 0)) {
+    if ((protection_derate_level == 3) && ((protection_condition_state._0_1_ & 4) == 0)) {
       uVar7 = uVar3;
       if ((protection_enable_t_0040c050.system_enable_bits & 0x10) != 0) goto joined_r0x00033fcc;
     }
@@ -33478,8 +33223,6 @@ LAB_00034278:
 // Function: processProtectionFlagConditions @ 0x000343ac
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void processProtectionFlagConditions(void)
 
 {
@@ -33522,12 +33265,12 @@ void processProtectionFlagConditions(void)
   if (((short)protection_trigger_load_threshold_cal < (short)protection_load_input) ||
      ((short)protection_trigger_coolant_threshold_cal <
       (short)sensor_readings_t_0040baf2.coolant_temp)) {
-    _protection_trigger_active_flag = 1;
+    protection_trigger_active_flag = 1;
   }
   else if (((short)protection_load_input < (short)protection_trigger_load_clear_threshold_cal) &&
           ((short)sensor_readings_t_0040baf2.coolant_temp <
            (short)protection_trigger_coolant_clear_threshold_cal)) {
-    _protection_trigger_active_flag = 0;
+    protection_trigger_active_flag = 0;
   }
   if ((short)protection_fault_active_threshold_cal < (short)protection_load_input) {
     protection_fault_active_flag = 1;
@@ -33579,7 +33322,7 @@ void processProtectionFlagConditions(void)
   else if (fuel_demand_control_t_0040a57a.calculated <
            protection_fuel_demand_status80_clear_threshold_cal) {
     if (protection_rpm_peak_threshold < protection_rpm_peak_a) {
-      uVar4 = *(short *)(iVar5 * 2 + 0x3fede2) + _protection_status_step_delta;
+      uVar4 = *(short *)(iVar5 * 2 + 0x3fede2) + protection_status_step_delta;
       if ((protection_status_lower_limit_cal < uVar4) && (uVar4 < protection_status_upper_limit_cal)
          ) {
         *(ushort *)(iVar5 * 2 + 0x3fede2) = uVar4;
@@ -33587,7 +33330,7 @@ void processProtectionFlagConditions(void)
     }
     if (wVar2 < protection_rpm_peak_b) {
       uVar4 = *(short *)(&eeprom_calibration_pending_flag + iVar5 * 2) +
-              _protection_status_step_delta;
+              protection_status_step_delta;
       if ((protection_status_entry_lower_limit_cal < uVar4) &&
          (uVar4 < protection_status_entry_upper_limit_cal)) {
         *(ushort *)(&eeprom_calibration_pending_flag + iVar5 * 2) = uVar4;
@@ -33694,16 +33437,14 @@ void cm848_filterProtectionLoadValue(void)
 // Function: cm848_evaluateProtectionFaultCondition @ 0x00034a30
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_evaluateProtectionFaultCondition(void)
 
 {
   if (((((protection_condition_flags_t_0040b0e8.condition_flags_2 & 1) == 0) &&
        ((protection_condition_flags_t_0040b0e8.condition_flags_2 & 2) == 0)) &&
       ((protection_condition_flags_t_0040b0e8.threshold_current & 0x10) == 0)) &&
-     (((protection_condition_flags_t_0040b0e8.condition_flags_3 & 1) == 0 &&
-      (_cold_start_phase != 1)))) {
+     (((protection_condition_flags_t_0040b0e8.condition_flags_3 & 1) == 0 && (cold_start_phase != 1)
+      ))) {
     cm848_setEngineProtectionFault(0x10,0);
   }
   else {
@@ -33718,13 +33459,11 @@ void cm848_evaluateProtectionFaultCondition(void)
 // Function: cm848_processCalibrationTablesMain @ 0x00034abc
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_processCalibrationTablesMain(void)
 
 {
   if (((protection_config_flags_b & 4) != 0) &&
-     (cm848_evaluateProtectionModeFlags(), _protection_mode_changed_flag != 0)) {
+     (cm848_evaluateProtectionModeFlags(), protection_mode_changed_flag != 0)) {
     cm848_decrementProtectionTimers();
     cm848_calculateProtectionConditions();
     processProtectionFlagConditions();
@@ -33748,7 +33487,7 @@ void cm848_initProtectionSystem(void)
   int iVar1;
   word *pwVar2;
   
-  _protection_derate_level = 1;
+  protection_derate_level = 1;
   protection_rpm_peak_a = 0;
   protection_rpm_peak_b = 0;
   protection_state_counter_a = 0;
@@ -33928,24 +33667,24 @@ void cm848_processProtectionRateLimitFlags(void)
     return;
   }
   if ((protection_action_mode_bits._0_1_ & 4) != 0) {
-    if (_protection_derate_level == 4) {
+    if (protection_derate_level == 4) {
       if ((protection_derate_measurement <= protection_derate_l4_measurement_lower_cal) ||
          (protection_derate_l4_measurement_upper_cal <= protection_derate_measurement))
       goto LAB_00035108;
     }
-    else if (_protection_derate_level == 3) {
+    else if (protection_derate_level == 3) {
       if ((protection_derate_measurement <= protection_derate_l3_measurement_lower_cal) ||
          (protection_derate_l3_measurement_upper_cal <= protection_derate_measurement))
       goto LAB_00035108;
     }
-    else if (((_protection_derate_level != 2) ||
+    else if (((protection_derate_level != 2) ||
              (protection_derate_measurement <= protection_derate_l2_measurement_lower_cal)) ||
             (protection_derate_l2_measurement_upper_cal <= protection_derate_measurement))
     goto LAB_00035108;
     protection_condition_state._0_1_ = protection_condition_state._0_1_ & 0xfa;
   }
 LAB_00035108:
-  if (_protection_derate_level == 1) {
+  if (protection_derate_level == 1) {
     protection_condition_state._0_1_ = protection_condition_state._0_1_ & 0xfa;
   }
   return;
@@ -33956,8 +33695,6 @@ LAB_00035108:
 //
 // Function: cm848_calculateProtectionThresholdLimit @ 0x00035154
 //
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void cm848_calculateProtectionThresholdLimit(void)
 
@@ -33973,9 +33710,9 @@ void cm848_calculateProtectionThresholdLimit(void)
                      &protection_load_values_e_cal,0);
   if ((((((protection_condition_flags_t_0040b0e8.condition_flags_1 & 4) == 0) &&
         (protection_ramp_position != 0x7e)) && (protection_ramp_position != 0x7f)) &&
-      (((2 < _protection_derate_level &&
+      (((2 < protection_derate_level &&
         ((protection_condition_flags_t_0040b0e8.condition_eval & 0x40) == 0)) &&
-       ((_protection_trigger_active_flag == 0 &&
+       ((protection_trigger_active_flag == 0 &&
         ((protection_enable_t_0040c050.system_enable_bits & 0x10) == 0)))))) &&
      ((fuel_demand_control_t_0040a57a.calculated < uVar1 ||
       (((protection_condition_flags_t_0040b0e8.load_condition_flags & 4) != 0 &&
@@ -34009,12 +33746,10 @@ void cm848_calculateProtectionThresholdLimit(void)
 // Function: cm848_processProtectionStateMachine @ 0x00035328
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_processProtectionStateMachine(void)
 
 {
-  if (((protection_config_flags_b & 4) != 0) && (_protection_mode_changed_flag != 0)) {
+  if (((protection_config_flags_b & 4) != 0) && (protection_mode_changed_flag != 0)) {
     cm848_protectionStateMachine();
     cm848_calculateProtectionThresholdLimit();
   }
@@ -34440,8 +34175,6 @@ void cm848_processSensorFilterCalibration(void)
 // Function: cm848_processFaultScanLookup @ 0x00035fa8
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_processFaultScanLookup(void)
 
 {
@@ -34493,7 +34226,7 @@ void cm848_processFaultScanLookup(void)
   }
   (&per_cylinder_timing_offset_table)[*puVar10] = wVar3;
   **(word **)(&BYTE_00057642 + iVar8) = wVar3;
-  if (((((_cold_start_phase == 3) &&
+  if (((((cold_start_phase == 3) &&
         (((uint)(&system_status_flags_t_003fe974.enable_state)
                 [(int)(uint)*(ushort *)(&DAT_00057696 + iVar6) >> 4] &
          1 << (*(ushort *)(&DAT_00057696 + iVar6) & 0xf)) == 0)) &&
@@ -34605,7 +34338,7 @@ void cm848_processFaultScanLookup(void)
          (&per_cylinder_sync_counter)[cylinder_event_index] - 1;
   }
   wVar3 = per_cylinder_timing_max_cal;
-  if (_cold_start_phase != 3) {
+  if (cold_start_phase != 3) {
     return;
   }
   if ((protection_config_flags & 0x40) != 0) {
@@ -34873,21 +34606,21 @@ void cm848_j1939UpdateTxTimers(void)
   }
   else if (engine_phase_sync_enable_flag == 0) {
     _DAT_003fb266 = _DAT_003fb2cf & 0xf;
-    _engine_position_phase_bits = _DAT_003fb2cf >> 4 & 7;
+    engine_position_phase_bits = _DAT_003fb2cf >> 4 & 7;
     if (engine_phase_sync_count < 8) {
-      if (_DAT_003fb33f < _engine_position_phase_bits) {
-        if (engine_phase_sync_count < _engine_position_phase_bits) {
-          engine_phase_sync_count = _engine_position_phase_bits;
+      if (_DAT_003fb33f < engine_position_phase_bits) {
+        if (engine_phase_sync_count < engine_position_phase_bits) {
+          engine_phase_sync_count = engine_position_phase_bits;
         }
-        if ((4 < _engine_position_phase_bits) && (_DAT_003fb33f < 5)) {
+        if ((4 < engine_position_phase_bits) && (_DAT_003fb33f < 5)) {
           engine_phase_sync_acquire_count = engine_phase_sync_acquire_count + 1;
         }
       }
     }
-    else if (_engine_position_phase_bits == 0) {
+    else if (engine_position_phase_bits == 0) {
       engine_phase_sync_count = 0;
     }
-    _DAT_003fb33f = _engine_position_phase_bits;
+    _DAT_003fb33f = engine_position_phase_bits;
     cm848_j1939CheckTxTimeouts();
   }
   return;
@@ -34921,7 +34654,7 @@ void cm848_updateJ1939TxTimerCounter(void)
 void cm848_j1939QueueStatusMessage(void)
 
 {
-  if (_uds_session_active_flag == 0) {
+  if (uds_session_active_flag == 0) {
     _DAT_003fb33b = j1939_message_word_b220;
     cm848_j1939QueueTransmitMessage(&DAT_003fb325,1);
   }
@@ -34973,8 +34706,6 @@ void cm848_j1939FormatProprietaryStatus(void)
 // Function: cm848_processJ1939PeriodicMessages @ 0x00036cec
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_processJ1939PeriodicMessages(void)
 
 {
@@ -34997,7 +34728,7 @@ void cm848_processJ1939PeriodicMessages(void)
   }
   diag_sequence_counter_b = diag_sequence_counter_b + 1;
   if (99 < diag_sequence_counter_b) {
-    if (_uds_session_active_flag == 0) {
+    if (uds_session_active_flag == 0) {
       cm848_j1939FormatProprietaryStatus();
     }
     diag_sequence_counter_b = 0;
@@ -35016,7 +34747,8 @@ void cm848_processJ1939PeriodicMessages(void)
 void cm848_initJ1939TimerBuffers(void)
 
 {
-  uint uVar1;
+  ushort uVar1;
+  uint uVar2;
   int local_28;
   byte local_24;
   undefined1 local_23;
@@ -35032,10 +34764,10 @@ void cm848_initJ1939TimerBuffers(void)
   do {
     _DAT_003fb343 = 0x8c02;
     _DAT_003fb345 = 0xc00;
-    _j1939_pgn_source_byte = j1939_address_cached & 0xff;
-    _DAT_003fb347 = _j1939_pgn_source_byte | 0xc200;
-    _DAT_003fb349 = _j1939_pgn_source_byte | 0xc400;
-    _j1939_pgn_source_byte = _j1939_pgn_source_byte | 0xc800;
+    uVar1 = j1939_address_cached & 0xff;
+    _DAT_003fb347 = uVar1 | 0xc200;
+    _DAT_003fb349 = uVar1 | 0xc400;
+    j1939_pgn_source_byte._0_2_ = uVar1 | 0xc800;
     local_23 = 5;
     local_16 = 0;
     cm848_j1939QueueTransmitMessage(&local_28,1);
@@ -35044,10 +34776,10 @@ void cm848_initJ1939TimerBuffers(void)
   } while ((_DAT_003fb351 & 0xff) != 2);
   _DAT_003fb343 = j1939_address_cached & 0xff | 0xda00;
   _DAT_003fb345 = j1939_address_cached & 0xff | 0xdc00;
-  uVar1 = 30000000 / ((uint)j1939_timer_period_factor_a * (uint)j1939_timer_period_factor_b._0_1_);
-  _DAT_003fb347 = (ushort)uVar1 & 0xff | 0xd000;
+  uVar2 = 30000000 / ((uint)j1939_timer_period_factor_a * (uint)j1939_timer_period_factor_b._0_1_);
+  _DAT_003fb347 = (ushort)uVar2 & 0xff | 0xd000;
   _DAT_003fb349 =
-       (ushort)(uVar1 >> 8) & 0xf | ((byte)j1939_timer_period_factor_b & 7) << 4 |
+       (ushort)(uVar2 >> 8) & 0xf | ((byte)j1939_timer_period_factor_b & 7) << 4 |
        (j1939_timer_mode_flag & 1) << 7 | 0xd600;
   local_23 = 4;
   local_16 = 0;
@@ -35091,10 +34823,10 @@ void cm848_initJ1939StatusMessages(void)
     sVar6 = cm848_j1939QueueTransmitMessage(&j1939_tx_message_buffer_c,1);
   } while (sVar6 != 0);
   do {
-  } while (_j1939_tx_message_buffer_c != 0);
+  } while (j1939_tx_message_buffer_c != 0);
   _DAT_003fb266 = _DAT_003fb2cb & 0xf;
-  _engine_position_phase_bits = _DAT_003fb2cb >> 4 & 7;
-  if (_engine_position_phase_bits != 0) {
+  engine_position_phase_bits = _DAT_003fb2cb >> 4 & 7;
+  if (engine_position_phase_bits != 0) {
     do {
       do {
         uVar3 = TBUr;
@@ -35110,11 +34842,11 @@ void cm848_initJ1939StatusMessages(void)
       } while ((uVar4 < uVar3) || (uVar2 < iVar1 + 5000U));
       cm848_j1939CheckTxTimeouts();
       do {
-      } while (_j1939_tx_message_buffer_c != 0);
+      } while (j1939_tx_message_buffer_c != 0);
       _DAT_003fb266 = _DAT_003fb2cf & 0xf;
-      _engine_position_phase_bits = _DAT_003fb2cf >> 4 & 7;
+      engine_position_phase_bits = _DAT_003fb2cf >> 4 & 7;
       bVar7 = bVar7 + 1;
-    } while ((_engine_position_phase_bits != 0) && (bVar7 < 0x14));
+    } while ((engine_position_phase_bits != 0) && (bVar7 < 0x14));
   }
   if (in_DER == 0x2002000f) {
     can_tx_msg_header_word._0_2_ = 0x1440;
@@ -35128,9 +34860,9 @@ void cm848_initJ1939StatusMessages(void)
     sVar6 = cm848_j1939QueueTransmitMessage(&j1939_tx_message_buffer_c,1);
   } while (sVar6 != 0);
   do {
-  } while (_j1939_tx_message_buffer_c != 0);
+  } while (j1939_tx_message_buffer_c != 0);
   engine_phase_sync_count = 8;
-  _DAT_003fb33f = _engine_position_phase_bits;
+  _DAT_003fb33f = engine_position_phase_bits;
   _DAT_003fb26b = 0;
   return;
 }
@@ -35422,8 +35154,8 @@ void cm848_dispatchProtectionOutputMode(void)
 
 {
   if ((governor_system_config_flags & 1) != 0) {
-    _DAT_003fb39c = _cruise_state_machine_index;
-    _cruise_state_machine_index = (*(code *)(&PTR_LAB_00057730)[_cruise_state_machine_index])();
+    _DAT_003fb39c = cruise_state_machine_index;
+    cruise_state_machine_index = (*(code *)(&PTR_LAB_00057730)[cruise_state_machine_index])();
   }
   return;
 }
@@ -35447,26 +35179,26 @@ void cm848_filterProtectionOutput(void)
          (word)((int)((uint)cold_start_fuel_ema * (0x10000 - (uint)cold_start_fuel_ema_coeff_cal) +
                      (uint)protection_fuel_output_target * (uint)cold_start_fuel_ema_coeff_cal) /
                0x10000);
-    if (_cruise_state_machine_index == 0) {
+    if (cruise_state_machine_index == 0) {
       battery_voltage_confirm_counter = 0;
       protection_fuel_output_target = protection_fuel_output_idle_cal;
       if ((power_state_status_flags & 1) == 0) {
         protection_fuel_output_target = 0;
       }
       battery_voltage_scan_index = 0;
-      _cruise_voltage_fault_state = 0;
+      cruise_voltage_fault_state = 0;
     }
-    else if (_cruise_state_machine_index == 1) {
+    else if (cruise_state_machine_index == 1) {
       protection_fuel_output_target =
            lookupTableInterpolation
                      (&DAT_003fb390,battery_voltage_scan_index,&DAT_0005b122,&DAT_0005b12e,0);
       battery_voltage_scan_index = battery_voltage_scan_index + 1;
       battery_voltage_confirm_counter = 0;
     }
-    else if (_cruise_state_machine_index == 3) {
+    else if (cruise_state_machine_index == 3) {
       battery_voltage_confirm_counter = battery_voltage_confirm_counter + 1;
       if (_DAT_003fb39c != 3) {
-        _cruise_voltage_fault_state = 1;
+        cruise_voltage_fault_state = 1;
         cold_start_fuel_ema_snapshot = cold_start_fuel_ema;
         cruise_voltage_debounce_timer =
              lookupTableInterpolation
@@ -35480,9 +35212,9 @@ void cm848_filterProtectionOutput(void)
         cruise_voltage_debounce_timer = cruise_voltage_debounce_timer - 1;
       }
       if (cruise_voltage_debounce_timer == 0) {
-        if (_cruise_voltage_fault_state == 1) {
+        if (cruise_voltage_fault_state == 1) {
           protection_fuel_output_target = cold_start_fuel_ema_snapshot;
-          _cruise_voltage_fault_state = 2;
+          cruise_voltage_fault_state = 2;
         }
         else {
           uVar1 = lookupTableInterpolation
@@ -35500,7 +35232,7 @@ void cm848_filterProtectionOutput(void)
       protection_fuel_output_target =
            lookupTableInterpolation
                      (&DAT_003fb392,battery_voltage_delta,&DAT_0005b0ce,&DAT_0005b0e8,1);
-      _cruise_voltage_fault_state = 0;
+      cruise_voltage_fault_state = 0;
       battery_voltage_confirm_counter = 0;
       battery_voltage_scan_index = 0;
     }
@@ -35523,51 +35255,51 @@ void cm848_calculateProtectionOutputDemand(void)
 
 {
   dword extraout_r4;
-  int extraout_r4_00;
-  int extraout_r4_01;
-  int iVar1;
+  dword extraout_r4_00;
+  dword extraout_r4_01;
+  dword dVar1;
   int iVar2;
   uint uVar3;
   
-  if ((((operating_mode_flags & 0x20) != 0) && (_cruise_state_machine_index != 0)) &&
-     (_cruise_state_machine_index != 1)) {
-    if ((_DAT_003fb39c == 1) && (_cruise_state_machine_index == 2)) {
+  if ((((operating_mode_flags & 0x20) != 0) && (cruise_state_machine_index != 0)) &&
+     (cruise_state_machine_index != 1)) {
+    if ((_DAT_003fb39c == 1) && (cruise_state_machine_index == 2)) {
       cm848_signedDivision32(0,(uint)protection_fuel_output_target * 0x640,0,0x100);
       cruise_speed_roc_integrator = extraout_r4;
     }
     iVar2 = (int)(short)battery_voltage_delta;
     if (iVar2 < (int)(uint)battery_voltage_delta_threshold_cal) {
       _DAT_003fb3a2 = battery_voltage_gain_a_cal;
-      _DAT_003fb3a4 = _battery_voltage_integral_rate_a_cal;
+      _DAT_003fb3a4 = battery_voltage_integral_rate_a_cal;
       _DAT_003fb3a8 = battery_voltage_ema_rate_a_cal;
     }
     else {
       _DAT_003fb3a2 = battery_voltage_gain_b_cal;
-      _DAT_003fb3a4 = _battery_voltage_integral_rate_b_cal;
+      _DAT_003fb3a4 = battery_voltage_integral_rate_b_cal;
       _DAT_003fb3a8 = battery_voltage_ema_rate_b_cal;
     }
     uVar3 = (uint)_DAT_003fb3a8;
-    iVar1 = (int)(iVar2 * (uint)_DAT_003fb3a2 * 0x100) >> 4;
+    dVar1 = (int)(iVar2 * (uint)_DAT_003fb3a2 * 0x100) >> 4;
     cruise_speed_roc_integrator = cruise_speed_roc_integrator + _DAT_003fb3a4 * iVar2;
-    _battery_voltage_p_term = iVar1;
+    battery_voltage_p_term = dVar1;
     cm848_signedDivision32
               (cruise_speed_roc_integrator >> 0x18 | ((int)cruise_speed_roc_integrator >> 0x1f) << 8
                ,cruise_speed_roc_integrator * 0x100,0,0x640);
-    if (extraout_r4_00 < 0) {
-      _cruise_integral_clamp_value = 0;
+    if ((int)extraout_r4_00 < 0) {
+      cruise_integral_clamp_value = 0;
       cruise_speed_roc_integrator = 0;
     }
     else {
-      _cruise_integral_clamp_value = extraout_r4_00;
-      if (0x6400 < extraout_r4_00) {
-        _cruise_integral_clamp_value = 0x6400;
+      cruise_integral_clamp_value = extraout_r4_00;
+      if (0x6400 < (int)extraout_r4_00) {
+        cruise_integral_clamp_value = 0x6400;
         cruise_speed_roc_integrator = 160000;
       }
     }
     cm848_signedDivision32
               ((int)((ulonglong)((longlong)(iVar2 - _DAT_003fb3aa) * (longlong)(int)(uVar3 * 0x100))
                     >> 0x20),(iVar2 - _DAT_003fb3aa) * uVar3 * 0x100,0,0x640);
-    iVar2 = extraout_r4_01 + iVar1 + _cruise_integral_clamp_value;
+    iVar2 = extraout_r4_01 + dVar1 + cruise_integral_clamp_value;
     if (iVar2 < 0) {
       iVar2 = 0;
     }
@@ -35575,7 +35307,7 @@ void cm848_calculateProtectionOutputDemand(void)
       iVar2 = 0x6400;
     }
     protection_fuel_output_target = (word)iVar2;
-    _battery_voltage_d_term = extraout_r4_01;
+    battery_voltage_d_term = extraout_r4_01;
     protection_fuel_output_target_prev = protection_fuel_output_target;
   }
   return;
@@ -35587,8 +35319,6 @@ void cm848_calculateProtectionOutputDemand(void)
 // Function: cm848_applyProtectionOutputDemand @ 0x00037c74
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_applyProtectionOutputDemand(void)
 
 {
@@ -35599,7 +35329,7 @@ void cm848_applyProtectionOutputDemand(void)
     if ((system_status_flags_t_003fe974.safety_bits_2 & 4) != 0) {
       protection_fuel_output_target = protection_fuel_output_safety_cal;
     }
-    if (_battery_voltage_fault_flag != 0) {
+    if (battery_voltage_fault_flag != 0) {
       protection_fuel_output_target = 0;
     }
     if (protection_fuel_output_override_enable_cal != 0) {
@@ -35609,8 +35339,8 @@ void cm848_applyProtectionOutputDemand(void)
     if (protection_fuel_output_invert_enable_cal == 0) {
       wVar2 = 0x6400 - protection_fuel_output_target;
     }
-    if ((_protection_voltage_active_flag != 0) &&
-       ((_cold_start_phase == 1 || (protection_voltage_cold_start_flag_cal == 1)))) {
+    if ((protection_voltage_active_flag != 0) &&
+       ((cold_start_phase == 1 || (protection_voltage_cold_start_flag_cal == 1)))) {
       wVar2 = protection_fuel_voltage_active_output_cal;
     }
     if (protection_mode_b_override_flag == 1) {
@@ -35648,9 +35378,9 @@ void cm848_applyProtectionOutputDemand(void)
         battery_monitor_timer = 0;
       }
     }
-    if ((_j1939_pgn_handler_index_f != 0) && (_j1939_pgn_handler_index_f < 0x33)) {
+    if ((j1939_pgn_handler_index_f != 0) && (j1939_pgn_handler_index_f < 0x33)) {
       j1939_calib_handler_f_param = wVar2;
-      (**(code **)(&j1939_pgn_handler_table_func3 + (uint)_j1939_pgn_handler_index_f * 0x10))();
+      (**(code **)(&j1939_pgn_handler_table_func3 + (uint)j1939_pgn_handler_index_f * 0x10))();
     }
     if (battery_voltage_scan_rate_cal == 0) {
       dVar1 = 0xffffffff;
@@ -35658,9 +35388,9 @@ void cm848_applyProtectionOutputDemand(void)
     else {
       dVar1 = 1000000 / battery_voltage_scan_rate_cal;
     }
-    if ((_j1939_pgn_handler_index_f != 0) && (_j1939_pgn_handler_index_f < 0x33)) {
+    if ((j1939_pgn_handler_index_f != 0) && (j1939_pgn_handler_index_f < 0x33)) {
       j1939_calib_handler_f_period = dVar1;
-      (**(code **)(&j1939_pgn_handler_table_func2 + (uint)_j1939_pgn_handler_index_f * 0x10))();
+      (**(code **)(&j1939_pgn_handler_table_func2 + (uint)j1939_pgn_handler_index_f * 0x10))();
     }
   }
   return;
@@ -35672,14 +35402,12 @@ void cm848_applyProtectionOutputDemand(void)
 // Function: cm848_checkProtectionOutputConditions @ 0x00037f28
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_checkProtectionOutputConditions(void)
 
 {
-  if (((_cruise_state_machine_index == 0) ||
+  if (((cruise_state_machine_index == 0) ||
       ((short)battery_voltage_cruise_check_threshold_cal <= (short)battery_voltage_filtered)) ||
-     (_protection_voltage_active_flag != 0)) {
+     (protection_voltage_active_flag != 0)) {
     cruise_check_sample_count = 0;
   }
   else {
@@ -35693,9 +35421,9 @@ void cm848_checkProtectionOutputConditions(void)
     power_state_status_flags = power_state_status_flags | 2;
     cruise_monitor_timer = cruise_monitor_timer_max_cal;
   }
-  if (((_cruise_state_machine_index == 2) &&
+  if (((cruise_state_machine_index == 2) &&
       (sensor_readings_t_0040baf2.battery_voltage < battery_voltage_low_threshold_cal)) &&
-     ((battery_voltage_protection_state == 5 && (_protection_voltage_active_flag == 0)))) {
+     ((battery_voltage_protection_state == 5 && (protection_voltage_active_flag == 0)))) {
     cruise_enable_sample_count_b = cruise_enable_sample_count_b + 1;
   }
   else {
@@ -35714,7 +35442,7 @@ void cm848_checkProtectionOutputConditions(void)
   }
   if (cruise_sensor_sample_count_max_cal <= cruise_sensor_sample_count) {
     power_state_status_flags = power_state_status_flags & 0xfffb;
-    _battery_diag_shadow_flags = _battery_diag_shadow_flags & 0xfffb;
+    battery_diag_shadow_flags = battery_diag_shadow_flags & 0xfffb;
     cruise_sensor_sample_count = cruise_sensor_sample_count_max_cal;
   }
   return;
@@ -35731,12 +35459,12 @@ void cm848_checkProtectionOutputConditions(void)
 void cm848_processProtectionMode2(void)
 
 {
-  if (((((_cruise_state_machine_index == 2) && (battery_voltage_protection_state == 5)) &&
+  if (((((cruise_state_machine_index == 2) && (battery_voltage_protection_state == 5)) &&
        (battery_voltage_sample_rpm_threshold_cal < engine_rpm_state_t_0040b7ac.current_rpm)) &&
       (((power_state_status_flags & 1) == 0 && ((power_state_status_flags & 4) == 0)))) &&
      (((power_state_status_flags & 2) == 0 &&
       (((int)(uint)battery_voltage_sample_threshold_cal < (int)(short)battery_voltage_filtered &&
-       (_protection_voltage_active_flag == 0)))))) {
+       (protection_voltage_active_flag == 0)))))) {
     battery_voltage_sample_count = battery_voltage_sample_count + 1;
   }
   else {
@@ -35744,7 +35472,7 @@ void cm848_processProtectionMode2(void)
   }
   if (battery_voltage_sample_count < battery_voltage_sample_count_max_cal) {
     cruise_enable_sample_count = 0;
-    _battery_voltage_fault_flag = 0;
+    battery_voltage_fault_flag = 0;
     cruise_confirm_counter = 0;
     cruise_enable_count = 0;
   }
@@ -35753,12 +35481,12 @@ void cm848_processProtectionMode2(void)
     battery_voltage_sample_count = battery_voltage_sample_count_max_cal;
     if (battery_fault_sample_count_threshold_cal == cruise_enable_sample_count) {
       _DAT_003fb37c = sensor_readings_t_0040baf2.battery_voltage;
-      _battery_voltage_fault_flag = 1;
+      battery_voltage_fault_flag = 1;
     }
-    if (_battery_voltage_fault_flag != 0) {
+    if (battery_voltage_fault_flag != 0) {
       if ((int)(uint)battery_fault_clear_delta_cal <
           (int)((uint)_DAT_003fb37c - (uint)sensor_readings_t_0040baf2.battery_voltage)) {
-        _battery_voltage_fault_flag = 0;
+        battery_voltage_fault_flag = 0;
         cruise_enable_sample_count = 0;
         cruise_confirm_counter = 0;
         cruise_enable_count = 0;
@@ -35769,7 +35497,7 @@ void cm848_processProtectionMode2(void)
     }
     if (cruise_enable_count_threshold_cal <= cruise_enable_count) {
       cruise_confirm_counter = cruise_confirm_counter + 1;
-      _battery_voltage_fault_flag = 0;
+      battery_voltage_fault_flag = 0;
       cruise_enable_sample_count = 0;
       cruise_enable_count = 0;
     }
@@ -35798,27 +35526,27 @@ void cm848_initProtectionFilterValues(void)
   _DAT_003fb396 = 2;
   _DAT_003fb398 = 2;
   _DAT_003fb39a = 2;
-  _cruise_state_machine_index = 0;
+  cruise_state_machine_index = 0;
   protection_fuel_output_target = 0;
   cold_start_fuel_ema = 0;
   cruise_voltage_debounce_timer = 0;
-  _cruise_voltage_fault_state = 0;
-  _battery_voltage_p_term = 0;
-  _cruise_integral_clamp_value = 0;
-  _battery_voltage_d_term = 0;
+  cruise_voltage_fault_state = 0;
+  battery_voltage_p_term = 0;
+  cruise_integral_clamp_value = 0;
+  battery_voltage_d_term = 0;
   protection_fuel_output_target_prev = 0;
   cruise_check_sample_count = 0;
   cruise_enable_sample_count_b = 0;
   cruise_sensor_sample_count = 0;
   cruise_monitor_timer = 0;
-  _battery_voltage_fault_flag = 0;
+  battery_voltage_fault_flag = 0;
   power_state_status_flags = power_state_status_flags & 0xfff8;
-  _battery_diag_shadow_flags = _battery_diag_shadow_flags & 0xfff8;
+  battery_diag_shadow_flags = battery_diag_shadow_flags & 0xfff8;
   battery_voltage_sample_count = 0;
   cruise_enable_sample_count = 0;
   cruise_enable_count = 0;
-  if ((_j1939_pgn_handler_index_f != 0) && (_j1939_pgn_handler_index_f < 0x33)) {
-    (**(code **)(&j1939_pgn_handler_table + (uint)_j1939_pgn_handler_index_f * 0x10))();
+  if ((j1939_pgn_handler_index_f != 0) && (j1939_pgn_handler_index_f < 0x33)) {
+    (**(code **)(&j1939_pgn_handler_table + (uint)j1939_pgn_handler_index_f * 0x10))();
   }
   return;
 }
@@ -35945,7 +35673,7 @@ void cm848_processSafetyConditionProtection(void)
        ((system_status_flags_t_003fe974.safety_bits_1 & 0x400) == 0)) &&
       ((system_status_flags_t_003fe974.safety_bits_1 & 0x800) == 0)) &&
      ((system_status_flags_t_003fe974.safety_bits_1 & 0x1000) == 0)) {
-    _safety_condition_active_flag = 0;
+    safety_condition_active_flag._0_2_ = 0;
     if (safety_fuel_blend_fraction == 0) {
       uVar1 = (uint)fuel_demand_load_axis;
       goto LAB_00038a4c;
@@ -35953,12 +35681,12 @@ void cm848_processSafetyConditionProtection(void)
     safety_fuel_blend_fraction = safety_fuel_blend_fraction - safety_fuel_blend_decrement_cal;
   }
   else {
-    _safety_condition_active_flag = 1;
+    safety_condition_active_flag._0_2_ = 1;
     safety_fuel_limit_lookup =
          lookupTableInterpolation
                    (&DAT_003fb3c2,engine_rpm_state_t_0040b7ac.current_rpm,
                     &safety_fuel_limit_rpm_axis_cal,&safety_fuel_limit_rpm_output_cal,0);
-    if (((_DAT_003fb3c0 == 0) && (_safety_condition_active_flag != 0)) &&
+    if (((_DAT_003fb3c0 == 0) && (safety_condition_active_flag._0_2_ != 0)) &&
        (safety_fuel_limit_lookup < fuel_demand_computed)) {
       safety_blend_fuel_demand_prev = fuel_demand_load_axis;
     }
@@ -35976,7 +35704,7 @@ LAB_00038a4c:
     protection_fuel_limit_active = (word)uVar1;
   }
   safety_fuel_blend_output = (word)uVar1;
-  _DAT_003fb3c0 = _safety_condition_active_flag;
+  _DAT_003fb3c0 = safety_condition_active_flag._0_2_;
   return;
 }
 
@@ -36087,7 +35815,8 @@ void cm848_j1939ProcessPeriodicTx(void)
     if (0x14 < can_rx_state_t_0040b34e.message_counter._0_1_) {
       can_rx_state_t_0040b34e.message_counter._0_1_ = 0x14;
     }
-    (&uds_received_data_buffer)[can_rx_state_t_0040b34e.message_counter._0_1_] = DAT_003fb3c7;
+    (&uds_received_data_buffer)[can_rx_state_t_0040b34e.message_counter._0_1_] =
+         (byte)uds_session_status_byte;
     uVar3 = can_rx_state_t_0040b34e.message_counter._0_1_ + 1;
     uVar4 = uVar3 & 0xff;
     can_rx_state_t_0040b34e.message_counter._0_1_ = (byte)uVar3;
@@ -36195,8 +35924,9 @@ void cm848_processCalibrationChecksumResponse(void)
   int iVar7;
   uint uVar8;
   
-  bVar2 = DAT_003fb3c7;
-  (&uds_received_data_buffer)[can_rx_state_t_0040b34e.message_counter._0_1_] = DAT_003fb3c7;
+  bVar2 = (byte)uds_session_status_byte;
+  (&uds_received_data_buffer)[can_rx_state_t_0040b34e.message_counter._0_1_] =
+       (byte)uds_session_status_byte;
   can_rx_state_t_0040b34e.message_counter._0_1_ = can_rx_state_t_0040b34e.message_counter._0_1_ + 1;
   if ((j1939_request_state_flags & 0x1f) == 0) {
     can_rx_state_t_0040b34e.message_index = 0;
@@ -36283,7 +36013,7 @@ void cm848_processCalibrationChecksumResponse(void)
       (&uds_received_data_buffer)[uVar8] = (&uds_received_data_buffer)[uVar5];
       uVar8 = uVar8 + 1 & 0xff;
     }
-    DAT_003fb3c7 = (&uds_received_data_buffer)[uVar5];
+    uds_session_status_byte._1_1_ = (&uds_received_data_buffer)[uVar5];
     can_rx_state_t_0040b34e.message_counter._0_1_ = (byte)uVar8;
     uds_security_service_status = 0x80;
     j1939_request_state_flags = j1939_request_state_flags & 0xe0;
@@ -36677,14 +36407,14 @@ void cm848_j1939MessageResponseCallback(void)
   word wVar1;
   bool bVar2;
   
-  _uds_session_status_byte = uds_session_control_word;
-  wVar1 = _uds_session_status_byte;
-  uds_session_status_byte = (byte)(uds_session_control_word >> 8);
+  uds_session_status_byte = uds_session_control_word;
+  wVar1 = uds_session_status_byte;
+  uds_session_status_byte._0_1_ = (byte)(uds_session_control_word >> 8);
   if ((uds_session_control_word & 0x800) != 0) {
     ram0x0040b352 = 1;
   }
-  uds_security_service_status = uds_session_status_byte & 0xe0;
-  _uds_session_status_byte = wVar1;
+  uds_security_service_status = uds_session_status_byte._0_1_ & 0xe0;
+  uds_session_status_byte = wVar1;
   if ((uds_session_control_word & 0xe000) != 0) {
     if (((uds_security_service_status == 0xe0) || (uds_security_service_status == 0xc0)) ||
        (uds_security_service_status == 0xa0)) {
@@ -37299,15 +37029,15 @@ void mpc555_initJ1939TransmitSchedule(void)
   j1939_diagnostic_state_byte = 0x57;
   j1939_periodic_timer_handle._0_1_ = cm848_configurePeriodicTimer(0,2000,0x352,0x28);
   j1939_response_session_active = 1;
-  _j1939_response_code_ptr = &uds_response_code;
-  _j1939_diagnostic_state_ptr_a = &j1939_diagnostic_state_byte;
-  _j1939_diagnostic_data_ptr = &j1939_diagnostic_state_word;
+  j1939_response_code_ptr = (dword)&uds_response_code;
+  j1939_diagnostic_state_ptr_a = (dword)&j1939_diagnostic_state_byte;
+  j1939_diagnostic_data_ptr = (dword)&j1939_diagnostic_state_word;
   j1939_response_mode_active = 1;
-  _j1939_response_state_ptr = &j1939_response_state;
-  _j1939_diagnostic_state_ptr_b = &j1939_diagnostic_state_byte;
-  _j1939_session_control_ptr = &uds_session_control_word;
+  j1939_response_state_ptr = (dword)&j1939_response_state;
+  j1939_diagnostic_state_ptr_b = (dword)&j1939_diagnostic_state_byte;
+  j1939_session_control_ptr = (dword)&uds_session_control_word;
   j1939_response_state = 2;
-  _j1939_message_response_callback = cm848_j1939MessageResponseCallback;
+  j1939_message_response_callback = (dword)cm848_j1939MessageResponseCallback;
   j1939_tx_priority_flag = 1;
   j1939_message_response_pending_flag = 0;
   j1939_transmit_callback_ptr = cm848_j1939TransmitScheduleCallback;
@@ -37328,8 +37058,6 @@ void mpc555_initJ1939TransmitSchedule(void)
 // Function: cm848_initJ1939CommunicationSystem @ 0x0003ad04
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_initJ1939CommunicationSystem(void)
 
 {
@@ -37342,7 +37070,7 @@ void cm848_initJ1939CommunicationSystem(void)
   j1939_fault_processor_initialize();
   cm848_resetUdsSessionState();
   power_state_status_flags = power_state_status_flags & 0x7fff;
-  _battery_diag_shadow_flags = _battery_diag_shadow_flags & 0x7fff;
+  battery_diag_shadow_flags = battery_diag_shadow_flags & 0x7fff;
   mpc555_initJ1939TransmitSchedule();
   can_rx_state_t_0040b34e.message_counter._1_1_ = 1;
   return;
@@ -37596,8 +37324,7 @@ void cm848_processUdsSecurityService(void)
                      (ushort)uds_service_parameter_byte +
                      (ushort)uds_service_subfunction_byte * 0x100;
                 uds_security_checksum_result =
-                     cm848_calculateSecurityChecksum(_uds_security_challenge,uds_security_seed_word)
-                ;
+                     cm848_calculateSecurityChecksum(uds_security_challenge,uds_security_seed_word);
                 if (uds_security_checksum_result == 0) {
                   if ((ushort)(tsc1_retry_count + 1) < 3) {
                     uds_request_data_pointer = uds_security_request_state;
@@ -37629,22 +37356,22 @@ void cm848_processUdsSecurityService(void)
                 goto LAB_0003b37c;
               }
               if (tsc1_condition_active_flag != 1) {
-                _uds_security_challenge = (undefined2)_fault_timing_snapshot;
-                if ((_fault_timing_snapshot & 0xffff) == 0) {
-                  _uds_security_challenge = 1;
+                uds_security_challenge = (word)fault_timing_snapshot;
+                if ((fault_timing_snapshot & 0xffff) == 0) {
+                  uds_security_challenge = 1;
                 }
                 uds_request_data_pointer = uds_security_request_state;
                 uds_response_type_code = 5;
                 uds_response_t_0040b492.source_address = bVar2;
                 uds_response_t_0040b492.service_id = 0x67;
                 uds_response_t_0040b492.subfunction = 1;
-                uds_response_t_0040b492.error_code = (byte)((ushort)_uds_security_challenge >> 8);
-                uds_response_t_0040b492.data_length = (byte)_uds_security_challenge;
+                uds_response_t_0040b492.error_code = (byte)(uds_security_challenge >> 8);
+                uds_response_t_0040b492.data_length = (byte)uds_security_challenge;
                 ram0x0040b49c = 1;
                 uds_upload_active_flag = 1;
                 return;
               }
-              _uds_security_challenge = 0;
+              uds_security_challenge = 0;
               uds_upload_active_flag = 1;
               uds_response_t_0040b492.service_id = 0x67;
               uds_response_t_0040b492.subfunction = 1;
@@ -37760,16 +37487,16 @@ LAB_0003b37c:
           uds_processing_clear_flag = 0;
         }
         else if (cVar1 == '\x03') {
-          if (((_uds_session_active_flag != 0) && (&DAT_003fd480 < uds_write_target_pointer)) &&
+          if (((uds_session_active_flag != 0) && (&DAT_003fd480 < uds_write_target_pointer)) &&
              (uds_write_target_pointer < &sensor_channel_ram_start)) goto LAB_0003b608;
           cm848_memcpyBytes(uds_write_target_pointer,uds_data_source_ptr,1);
           uds_processing_clear_flag = 0;
         }
         else if (cVar1 == '\x05') {
-          if ((protection_mode_select_flag == 1) && (_uds_session_active_flag != 0)) {
+          if ((protection_mode_select_flag == 1) && (uds_session_active_flag != 0)) {
             uds_processing_clear_flag = 7;
           }
-          else if (_uds_session_active_flag == 1) {
+          else if (uds_session_active_flag == 1) {
             cVar1 = cm848_validateMemoryBlockChecksum
                               ((uint)(uds_write_target_pointer + -0x1000000) & 0xffff,
                                uds_data_source_ptr,1);
@@ -37869,15 +37596,15 @@ void cm848_processProtectionCounters(void)
   if (uds_control_session_flag == 0) {
     if (((byte)uds_service_flags & 0x3f) == 0) {
       if (cruise_torque_limit_integrator._0_2_ <= DAT_0005c7cd) {
-        _injection_fault_shadow_flags = _injection_fault_shadow_flags & 0xfff7;
-        _DAT_003fea04 = _DAT_003fea04 & 0xfff7;
+        injection_fault_shadow_flags = injection_fault_shadow_flags & 0xfff7;
+        protection_diag_shadow_flags_b = protection_diag_shadow_flags_b & 0xfff7;
         goto LAB_0003b9e8;
       }
       sVar1 = -1;
     }
     else {
       if (DAT_0005c7cc <= cruise_torque_limit_integrator._0_2_) {
-        _injection_fault_shadow_flags = _injection_fault_shadow_flags | 8;
+        injection_fault_shadow_flags = injection_fault_shadow_flags | 8;
         goto LAB_0003b9e8;
       }
       sVar1 = 1;
@@ -37965,8 +37692,6 @@ void cm848_decrementProtectionChannelValue(void)
 // Function: cm848_selectProtectionOverrideMode @ 0x0003bb28
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_selectProtectionOverrideMode(void)
 
 {
@@ -37988,10 +37713,10 @@ void cm848_selectProtectionOverrideMode(void)
     protection_ramp_position = 0x7d;
     break;
   case 4:
-    if (_fuel_correction_active_flag == 1) {
+    if (fuel_correction_active_flag == 1) {
       protection_ramp_position = 0x80;
     }
-    else if ((_fuel_correction_active_flag == 2) || (_fuel_correction_active_flag == 3)) {
+    else if ((fuel_correction_active_flag == 2) || (fuel_correction_active_flag == 3)) {
       if ((uds_transmit_status_flags & 1) == 1) {
         protection_ramp_position = 0x80;
       }
@@ -38002,21 +37727,21 @@ void cm848_selectProtectionOverrideMode(void)
     goto LAB_0003bcac;
   case 5:
     if ((uds_transmit_status_flags & 1) == 1) {
-      if (_fuel_correction_active_flag == 1) {
+      if (fuel_correction_active_flag == 1) {
 LAB_0003bca0:
         protection_ramp_position = 0x81;
       }
-      else if ((_fuel_correction_active_flag == 2) || (_fuel_correction_active_flag == 3)) {
+      else if ((fuel_correction_active_flag == 2) || (fuel_correction_active_flag == 3)) {
         protection_ramp_position = 0x80;
       }
     }
-    else if (_fuel_correction_active_flag == 1) {
+    else if (fuel_correction_active_flag == 1) {
       protection_ramp_position = 0x82;
     }
-    else if ((_fuel_correction_active_flag == 2) || (_fuel_correction_active_flag == 3))
+    else if ((fuel_correction_active_flag == 2) || (fuel_correction_active_flag == 3))
     goto LAB_0003bca0;
 LAB_0003bcac:
-    if ((fuel_correction_enable_flag != 0) && (_fuel_correction_active_flag == 3)) {
+    if ((fuel_correction_enable_flag != 0) && (fuel_correction_active_flag == 3)) {
       protection_ramp_position = 0x80;
     }
     break;
@@ -38324,8 +38049,6 @@ void cm848_checkSpeedDerivativeMode(void)
 // Function: cm848_updateProtectionOverrideFlags @ 0x0003c044
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_updateProtectionOverrideFlags(void)
 
 {
@@ -38339,7 +38062,7 @@ void cm848_updateProtectionOverrideFlags(void)
   }
   governor_speed_demand_set = 0xb04;
 LAB_0003c0a8:
-  if ((protection_fault_active_flag == 0) && (_engine_run_mode_flag == 0)) {
+  if ((protection_fault_active_flag == 0) && (engine_run_mode_flag == 0)) {
     uds_transmit_status_flags = uds_transmit_status_flags & 0xfd;
   }
   else {
@@ -38368,8 +38091,6 @@ LAB_0003c0a8:
 // Function: cm848_processProtectionChannelConfig @ 0x0003c064
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_processProtectionChannelConfig(byte *param_1,byte param_2,byte *param_3)
 
 {
@@ -38379,7 +38100,7 @@ void cm848_processProtectionChannelConfig(byte *param_1,byte param_2,byte *param
     governor_speed_demand_set = 0xb04;
     *param_3 = param_2 | 1;
   }
-  if ((protection_fault_active_flag == 0) && (_engine_run_mode_flag == 0)) {
+  if ((protection_fault_active_flag == 0) && (engine_run_mode_flag == 0)) {
     bVar1 = *param_3 & 0xfd;
   }
   else {
@@ -38410,8 +38131,6 @@ void cm848_processProtectionChannelConfig(byte *param_1,byte param_2,byte *param
 // Function: cm848_evaluateProtectionChannelInput @ 0x0003c090
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_evaluateProtectionChannelInput(byte *param_1,byte param_2,byte *param_3)
 
 {
@@ -38422,7 +38141,7 @@ void cm848_evaluateProtectionChannelInput(byte *param_1,byte param_2,byte *param
     governor_speed_demand_set = 0xb04;
     *param_3 = param_2 & 0xfe;
   }
-  if ((protection_fault_active_flag == 0) && (_engine_run_mode_flag == 0)) {
+  if ((protection_fault_active_flag == 0) && (engine_run_mode_flag == 0)) {
     bVar1 = *param_3 & 0xfd;
   }
   else {
@@ -38658,7 +38377,7 @@ void cm848_buildOutputChannelStatusWord(void)
   else {
     cVar6 = '\x01';
   }
-  bVar3 = (0 < _fuel_correction_active_flag) << 5;
+  bVar3 = (0 < (short)fuel_correction_active_flag) << 5;
   if (j1939_cruise_engaged == 0) {
     engine_status_combined_flags =
          CONCAT11(((etc1_status_byte & 2) != 0) << 2 |
@@ -38673,7 +38392,7 @@ void cm848_buildOutputChannelStatusWord(void)
     }
   }
   else {
-    if ((_governor_fuel_mode_d == 0) || (_governor_fuel_mode_d == 0xd)) {
+    if ((governor_fuel_mode_d == 0) || (governor_fuel_mode_d == 0xd)) {
       cVar2 = '\0';
     }
     else {
@@ -38684,7 +38403,7 @@ void cm848_buildOutputChannelStatusWord(void)
                   cVar2 << 3 |
                   bVar3 | cVar6 << 6 | cVar4 << 7 | engine_status_combined_flags._0_1_ & 0x13,
                   (byte)engine_status_combined_flags);
-    if (_governor_fuel_mode_d == 0xd) {
+    if (governor_fuel_mode_d == 0xd) {
       bVar3 = 1;
     }
     else {
@@ -38703,8 +38422,8 @@ void cm848_buildOutputChannelStatusWord(void)
                 cVar4 << 1 |
                 ((protection_enable_t_0040c050.system_enable_bits & 8) != 0) << 2 |
                 ((protection_enable_byte_34 & 0x40) == 0) << 3 |
-                (_fuel_correction_mode_flag != 1) << 6 |
-                (_fuel_correction_active_flag < 1) << 7 |
+                (fuel_correction_mode_flag != 1) << 6 |
+                ((short)fuel_correction_active_flag < 1) << 7 |
                 bVar3 | (byte)engine_status_combined_flags & 0x30);
   uVar5 = 0;
   do {
@@ -38723,13 +38442,11 @@ void cm848_buildOutputChannelStatusWord(void)
 // Function: cm848_configureOutputChannelFlags @ 0x0003c33c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_configureOutputChannelFlags
                (uint param_1,undefined4 param_2,undefined4 param_3,ushort *param_4)
 
 {
-  short sVar1;
+  word wVar1;
   byte bVar2;
   char cVar4;
   uint uVar3;
@@ -38742,9 +38459,9 @@ void cm848_configureOutputChannelFlags
     cVar4 = '\x01';
   }
   *(byte *)param_4 = cVar4 << 6 | *(byte *)param_4 & 0xbf;
-  *(byte *)param_4 = (0 < _fuel_correction_active_flag) << 5 | *(byte *)param_4 & 0xdf;
+  *(byte *)param_4 = (0 < (short)fuel_correction_active_flag) << 5 | *(byte *)param_4 & 0xdf;
   bVar2 = etc1_status_byte;
-  sVar1 = _governor_fuel_mode_d;
+  wVar1 = governor_fuel_mode_d;
   if (j1939_cruise_engaged == 0) {
     *(byte *)param_4 = ((etc1_status_byte & 8) != 0) << 3 | *(byte *)param_4 & 0xf7;
     *(byte *)param_4 = ((bVar2 & 2) != 0) << 2 | *(byte *)param_4 & 0xfb;
@@ -38756,7 +38473,7 @@ void cm848_configureOutputChannelFlags
     }
   }
   else {
-    if ((_governor_fuel_mode_d == 0) || (_governor_fuel_mode_d == 0xd)) {
+    if ((governor_fuel_mode_d == 0) || (governor_fuel_mode_d == 0xd)) {
       cVar4 = '\0';
     }
     else {
@@ -38764,7 +38481,7 @@ void cm848_configureOutputChannelFlags
     }
     *(byte *)param_4 = cVar4 << 3 | *(byte *)param_4 & 0xf7;
     *(byte *)param_4 = (etc1_throttle_active_flag != 0) << 2 | *(byte *)param_4 & 0xfb;
-    if (sVar1 == 0xd) {
+    if (wVar1 == 0xd) {
       bVar2 = 1;
     }
     else {
@@ -38773,8 +38490,9 @@ void cm848_configureOutputChannelFlags
   }
   *(byte *)((int)param_4 + 1) = bVar2 | (byte)*param_4 & 0xfe;
   *(byte *)param_4 = (byte)j1939_governor_auth_granted & 1 | *(byte *)param_4 & 0xfe;
-  *(byte *)((int)param_4 + 1) = (_fuel_correction_active_flag < 1) << 7 | (byte)*param_4 & 0x7f;
-  *(byte *)((int)param_4 + 1) = (_fuel_correction_mode_flag != 1) << 6 | (byte)*param_4 & 0xbf;
+  *(byte *)((int)param_4 + 1) =
+       ((short)fuel_correction_active_flag < 1) << 7 | (byte)*param_4 & 0x7f;
+  *(byte *)((int)param_4 + 1) = (fuel_correction_mode_flag != 1) << 6 | (byte)*param_4 & 0xbf;
   *(byte *)((int)param_4 + 1) =
        ((protection_enable_byte_34 & 0x40) == 0) << 3 | (byte)*param_4 & 0xf7;
   *(byte *)((int)param_4 + 1) =
@@ -38809,22 +38527,22 @@ void cm848_configureOutputChannelFlags
 void cm848_processProtectionStateChange(void)
 
 {
-  short sVar1;
-  short sVar2;
+  word wVar1;
+  word wVar2;
   uint uVar3;
   undefined2 uStack_8;
   
-  sVar2 = _protection_sensor_state_b;
-  sVar1 = _protection_sensor_state_a;
-  if ((_DAT_003fb404 != _protection_sensor_state_a) || (_DAT_003fb406 != _protection_sensor_state_b)
-     ) {
+  wVar2 = protection_sensor_state_b;
+  wVar1 = protection_sensor_state_a;
+  if ((_DAT_003fb404 != protection_sensor_state_a) || (_DAT_003fb406 != protection_sensor_state_b))
+  {
     uStack_8._1_1_ = 0;
     uStack_8._0_1_ = 0;
-    if (_protection_sensor_state_a == 1) {
+    if (protection_sensor_state_a == 1) {
       uStack_8._1_1_ = 0;
       uStack_8._0_1_ = 0x20;
     }
-    if (_protection_sensor_state_b == 1) {
+    if (protection_sensor_state_b == 1) {
       uStack_8 = (ushort)uStack_8._0_1_ << 8 | 0x1000;
     }
     uVar3 = 0;
@@ -38834,8 +38552,8 @@ void cm848_processProtectionStateChange(void)
     } while (uVar3 < 2);
     governor_speed_setpoint_low = 0x3ea;
   }
-  _DAT_003fb404 = sVar1;
-  _DAT_003fb406 = sVar2;
+  _DAT_003fb404 = wVar1;
+  _DAT_003fb406 = wVar2;
   return;
 }
 
@@ -38901,7 +38619,7 @@ void cm848_processProtectionTimingCounter(void)
   wVar1 = protection_entry_threshold;
   DAT_003fb40c = DAT_003fb40c + 1;
   if (protection_entry_threshold < _DAT_003fb40f) {
-    if ((_injection_timing_done_flag == 0) && (_DAT_003fb408 != 0)) {
+    if ((injection_timing_done_flag == 0) && (_DAT_003fb408 != 0)) {
       injection_timing_delta = (&tpu_b_mcr)[injection_timing_cylinder_index].PARAM1 & 0xff;
     }
     else if (injection_timing_prev_value < injection_timing_capture_prev) {
@@ -38912,7 +38630,7 @@ void cm848_processProtectionTimingCounter(void)
     }
     bStack_20 = (byte)injection_timing_delta;
     injection_timing_capture_prev = injection_timing_prev_value;
-    _DAT_003fb408 = _injection_timing_done_flag;
+    _DAT_003fb408 = injection_timing_done_flag;
     uVar3 = (uint)DAT_003fb40c;
     uVar2 = (uint)engine_rpm_state_t_0040b7ac.current_rpm;
     uVar4 = uVar3 * uVar2 * 3;
@@ -38971,7 +38689,7 @@ void cm848_evaluateProtectionTimerThreshold(undefined4 param_1,undefined4 param_
   undefined2 uStack0000000b;
   
   if ((bool)(in_cr0 >> 2 & 1)) {
-    if ((_injection_timing_done_flag == 0) && (_DAT_003fb408 != 0)) {
+    if ((injection_timing_done_flag == 0) && (_DAT_003fb408 != 0)) {
       injection_timing_delta = (&tpu_b_mcr)[injection_timing_cylinder_index].PARAM1 & 0xff;
     }
     else if (injection_timing_prev_value < injection_timing_capture_prev) {
@@ -38982,7 +38700,7 @@ void cm848_evaluateProtectionTimerThreshold(undefined4 param_1,undefined4 param_
     }
     uStack00000008 = (undefined1)injection_timing_delta;
     injection_timing_capture_prev = injection_timing_prev_value;
-    _DAT_003fb408 = _injection_timing_done_flag;
+    _DAT_003fb408 = injection_timing_done_flag;
     iVar2 = (param_3 & 0xff) * (uint)engine_rpm_state_t_0040b7ac.current_rpm;
     uVar1 = iVar2 * 3;
     cm848_unsignedDivision32
@@ -39034,7 +38752,7 @@ void cm848_updateCbdThresholdState(void)
     j1939_timeout_counter = 0x4be;
   }
   eeprom_cal_byte_b4ab = eeprom_header_t_003fee08.calibration_block1[2];
-  if (_cold_start_qualifier_flag != 0) {
+  if (cold_start_qualifier_flag != 0) {
     eeprom_cal_byte_b4ab = 0;
   }
   _DAT_003fb412 = cbd_enable_state;
@@ -39047,13 +38765,11 @@ void cm848_updateCbdThresholdState(void)
 // Function: cm848_checkProtectionVoltageInput @ 0x0003c8bc
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_checkProtectionVoltageInput(undefined2 *param_1,undefined2 param_2,int param_3)
 
 {
   *(byte *)(param_3 + -0x4b55) = eeprom_header_t_003fee08.calibration_block1[2];
-  if (_cold_start_qualifier_flag != 0) {
+  if (cold_start_qualifier_flag != 0) {
     *(byte *)(param_3 + -0x4b55) = 0;
   }
   *param_1 = param_2;
@@ -39341,7 +39057,7 @@ void cm848_calculateFuelDemandLimit(void)
   uint uVar1;
   uint uVar2;
   
-  if ((_DAT_003fd5b6 & 4) == 0) {
+  if ((fault_feature_config_flags & 4) == 0) {
     fuel_demand_rate_output = 0x1700;
   }
   else {
@@ -39351,7 +39067,7 @@ void cm848_calculateFuelDemandLimit(void)
                      (&DAT_003fb41c,engine_rpm_state_t_0040b7ac.current_rpm,
                       &fuel_demand_table_base_cal,0,&fuel_demand_table_yaxis_cal,
                       &fuel_demand_table_xaxis_cal,0);
-      uVar2 = (uint)_boost_map_index_current << 0xe;
+      uVar2 = (uint)boost_map_index_current << 0xe;
       if (0xffff < uVar2) {
         uVar2 = 0xffff;
       }
@@ -39360,7 +39076,7 @@ void cm848_calculateFuelDemandLimit(void)
                      (&DAT_003fb41c,engine_rpm_state_t_0040b7ac.current_rpm,
                       &fuel_demand_table_base_cal,uVar2 & 0xffff,&fuel_demand_table_yaxis_cal,
                       &fuel_demand_table_xaxis_cal,0);
-      uVar2 = (uint)_boost_map_index_target << 0xe;
+      uVar2 = (uint)boost_map_index_target << 0xe;
       if (0xffff < uVar2) {
         uVar2 = 0xffff;
       }
@@ -39371,8 +39087,8 @@ void cm848_calculateFuelDemandLimit(void)
                       &fuel_demand_table_xaxis_cal,0);
       governor_integral_accumulator =
            cm848_filterInputValue
-                     (_DAT_003fb424,_DAT_003fb426,_DAT_003fb422,_boost_map_index_current,
-                      _boost_map_index_target,fuel_blend_state_t_0040a494.blend_weight,
+                     (_DAT_003fb424,_DAT_003fb426,_DAT_003fb422,boost_map_index_current,
+                      boost_map_index_target,fuel_blend_state_t_0040a494.blend_weight,
                       fuel_blend_state_t_0040a494.blend_mode);
       uVar2 = (uint)governor_integral_accumulator + (uint)governor_integral_component_a +
               (int)(short)governor_integral_component_b;
@@ -39432,7 +39148,7 @@ void cm848_calculateFuelDemandLimitState(void)
                      (&DAT_003fb41c,engine_rpm_state_t_0040b7ac.current_rpm,
                       &fuel_demand_table_base_cal,0,&fuel_demand_table_yaxis_cal,
                       &fuel_demand_table_xaxis_cal,0);
-      uVar3 = (uint)_boost_map_index_current << 0xe;
+      uVar3 = (uint)boost_map_index_current << 0xe;
       if (0xffff < uVar3) {
         uVar3 = 0xffff;
       }
@@ -39441,7 +39157,7 @@ void cm848_calculateFuelDemandLimitState(void)
                      (&DAT_003fb41c,engine_rpm_state_t_0040b7ac.current_rpm,
                       &fuel_demand_table_base_cal,uVar3 & 0xffff,&fuel_demand_table_yaxis_cal,
                       &fuel_demand_table_xaxis_cal,0);
-      uVar3 = (uint)_boost_map_index_target << 0xe;
+      uVar3 = (uint)boost_map_index_target << 0xe;
       if (0xffff < uVar3) {
         uVar3 = 0xffff;
       }
@@ -39452,8 +39168,8 @@ void cm848_calculateFuelDemandLimitState(void)
                       &fuel_demand_table_xaxis_cal,0);
       governor_integral_accumulator =
            cm848_filterInputValue
-                     (_DAT_003fb424,_DAT_003fb426,_DAT_003fb422,_boost_map_index_current,
-                      _boost_map_index_target,fuel_blend_state_t_0040a494.blend_weight,
+                     (_DAT_003fb424,_DAT_003fb426,_DAT_003fb422,boost_map_index_current,
+                      boost_map_index_target,fuel_blend_state_t_0040a494.blend_weight,
                       fuel_blend_state_t_0040a494.blend_mode);
       uVar3 = (uint)governor_integral_accumulator + (uint)governor_integral_component_a +
               (int)(short)governor_integral_component_b;
@@ -39495,12 +39211,11 @@ LAB_0003cee0:
 // Function: cm848_trackFuelDemandMinimum @ 0x0003cefc
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_trackFuelDemandMinimum(void)
 
 {
-  if (((_DAT_003fd5b6 & 4) != 0) && (fuel_demand_rate_output < fuel_demand_minimum_tracked)) {
+  if (((fault_feature_config_flags & 4) != 0) &&
+     (fuel_demand_rate_output < fuel_demand_minimum_tracked)) {
     fuel_demand_minimum_tracked = fuel_demand_rate_output;
     governor_fuel_mode_input = 0x3b;
   }
@@ -40057,8 +39772,6 @@ void mpc555_initQsmcmQspiModule(void)
 // Function: cm848_processEngineConditionFlags @ 0x0003dd98
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_processEngineConditionFlags(void)
 
 {
@@ -40070,15 +39783,15 @@ void cm848_processEngineConditionFlags(void)
      ((system_status_flags_t_003fe974.enable_state & 1) == 0)) {
     if ((((protection_feature_status_flags & 0x10000000) == 0) ||
         ((protection_enable_t_0040c050.reserved_02 & 0x10) != 0)) ||
-       ((_cold_start_phase != 3 || (fuel_temp_trim_snapshot <= cruise_fuel_temp_trim_threshold_cal))
-       )) {
+       ((cold_start_phase != 3 || (fuel_temp_trim_snapshot <= cruise_fuel_temp_trim_threshold_cal)))
+       ) {
       cruise_debounce_timer_a = cruise_debounce_timer_a_init_cal;
       cruise_debounce_timer_b = cruise_debounce_timer_b_init_cal;
-      _fuel_state_index = 0;
+      fuel_state_index = 0;
     }
     else {
-      if ((_fuel_state_index != 3) && (_fuel_state_index != 2)) {
-        _fuel_state_index = 1;
+      if ((fuel_state_index != 3) && (fuel_state_index != 2)) {
+        fuel_state_index = 1;
       }
       if (fuel_flow_ema < cruise_debounce_fuel_threshold_cal) {
         cruise_debounce_timer_b = cruise_debounce_timer_b_init_cal;
@@ -40087,7 +39800,7 @@ void cm848_processEngineConditionFlags(void)
                system_status_flags_t_003fe974.protection_active | 1;
           protection_condition_flags_t_0040b0e8.threshold_current =
                protection_condition_flags_t_0040b0e8.threshold_current | 0x20;
-          _fuel_state_index = 3;
+          fuel_state_index = 3;
         }
         else {
           cruise_debounce_timer_a = cruise_debounce_timer_a - 1;
@@ -40101,7 +39814,7 @@ void cm848_processEngineConditionFlags(void)
           crank_sync_status_flags = crank_sync_status_flags & 0xfffe;
           protection_condition_flags_t_0040b0e8.threshold_current =
                protection_condition_flags_t_0040b0e8.threshold_current & 0xdf;
-          _fuel_state_index = 2;
+          fuel_state_index = 2;
         }
         else {
           cruise_debounce_timer_b = cruise_debounce_timer_b - 1;
@@ -40110,7 +39823,7 @@ void cm848_processEngineConditionFlags(void)
     }
   }
   else {
-    _fuel_state_index = 4;
+    fuel_state_index = 4;
   }
   return;
 }
@@ -40131,12 +39844,12 @@ void cm848_calculateFuelDemandValue(void)
   uint uVar2;
   
   wVar1 = fault_trigger_count;
-  uVar2 = _fuel_temp_correction_factor * (uint)_DAT_003fd8f4;
-  if (_injection_timing_done_flag != 0) {
-    _injection_timing_done_flag = _injection_timing_done_flag + -1;
+  uVar2 = fuel_temp_correction_factor * _DAT_003fd8f4;
+  if (injection_timing_done_flag != 0) {
+    injection_timing_done_flag = injection_timing_done_flag - 1;
   }
-  _fuel_temp_trim_product_prev = uVar2;
-  if (_injection_timing_done_flag == 0) {
+  fuel_temp_trim_product_prev = uVar2;
+  if (injection_timing_done_flag == 0) {
     fuel_temp_trim_raw = 0;
   }
   else if ((fault_trigger_count < fuel_temp_fault_trigger_count_max_cal) && (uVar2 < _DAT_003fd8fa))
@@ -40159,12 +39872,12 @@ void cm848_calculateFuelDemandValue(void)
     fault_trigger_count = wVar1 + 1;
   }
   else {
-    fuel_temp_trim_raw = (word)(_fuel_temp_trim_numerator / uVar2);
+    fuel_temp_trim_raw = (word)(fuel_temp_trim_numerator / uVar2);
     fault_trigger_count = 0;
   }
   fuel_temperature_trim = exponentialMovingAverage(fuel_temp_trim_raw,&fuel_temp_trim_filter_state);
   if (fault_trigger_count == 0) {
-    _DAT_003fb4da = _fuel_temp_trim_product_prev;
+    _DAT_003fb4da = fuel_temp_trim_product_prev;
   }
   if (fuel_temp_trim_mode_cal == 1) {
     fuel_temperature_trim = fuel_temp_trim_step_cal;
@@ -40190,13 +39903,11 @@ void cm848_calculateFuelDemandValue(void)
 // Function: cm848_setFuelDemandActiveFlag @ 0x0003e210
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_setFuelDemandActiveFlag(void)
 
 {
   if (fuel_temp_trim_raw != 0) {
-    _governor_speed_engage_reset_flag = 1;
+    governor_speed_engage_reset_flag._0_2_ = 1;
   }
   return;
 }
@@ -40212,14 +39923,14 @@ void cm848_setFuelDemandActiveFlag(void)
 void cm848_initFuelDemandFilterState(void)
 
 {
-  undefined4 extraout_r4;
+  dword extraout_r4;
   
-  _fuel_temp_trim_init_flag = 0;
-  _fuel_temp_trim_filter_state = &fuel_temp_trim_filter_state_cal;
+  fuel_temp_trim_init_flag = 0;
+  fuel_temp_trim_filter_state = (dword)&fuel_temp_trim_filter_state_cal;
   cm848_unsignedDivision32
             ((int)((ulonglong)((uint)_DAT_003fd8f4 * 0xe1000) * 40000000 >> 0x20),
              (uint)_DAT_003fd8f4 * 0x11a00000,0,_DAT_003fd8f0 << 7);
-  _fuel_temp_trim_numerator = extraout_r4;
+  fuel_temp_trim_numerator = extraout_r4;
   return;
 }
 
@@ -40229,14 +39940,12 @@ void cm848_initFuelDemandFilterState(void)
 // Function: cm848_processTorqueLimitConfig @ 0x0003e2bc
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_processTorqueLimitConfig(void)
 
 {
   word wVar1;
   
-  if (((fuel_feature_control_flags & 8) == 0) || (_fuel_correction_active_flag != 3)) {
+  if (((fuel_feature_control_flags & 8) == 0) || (fuel_correction_active_flag != 3)) {
     torque_limit_fuel_ramp = torque_limit_fuel_minimum;
   }
   else {
@@ -40254,7 +39963,7 @@ void cm848_processTorqueLimitConfig(void)
        ((fuel_demand_control_t_0040a57a.calculated <= temperature_protection_fuel_upper_cal &&
         (fuel_temperature_trim < temperature_protection_trim_threshold_cal)))) {
       torque_limit_fuel_ramp = temperature_torque_limit_ramp_cal;
-      _fuel_temp_trim_active_flag = 0;
+      fuel_temp_trim_active_flag = 0;
     }
     else {
       wVar1 = torque_limit_fuel_minimum;
@@ -40262,8 +39971,8 @@ void cm848_processTorqueLimitConfig(void)
         wVar1 = torque_limit_fuel_ramp + torque_limit_fuel_ramp_addend_cal;
       }
       torque_limit_fuel_ramp = wVar1;
-      if (_fuel_temp_trim_active_flag == 0) {
-        _fuel_temp_trim_active_flag = 1;
+      if (fuel_temp_trim_active_flag == 0) {
+        fuel_temp_trim_active_flag = 1;
       }
     }
   }
@@ -40284,7 +39993,7 @@ void cm848_calculateTorqueCurveValue(void)
   uint uVar1;
   word wVar2;
   
-  if (_cold_start_qualifier_flag == 0) {
+  if (cold_start_qualifier_flag == 0) {
     uVar1 = (uint)_DAT_003fd52c;
   }
   else {
@@ -40308,7 +40017,7 @@ void cm848_calculateTorqueCurveValue(void)
     wVar2 = fuel_pressure_threshold_working;
   }
   fuel_pressure_raw = wVar2;
-  _DAT_003fb4e2 = _cold_start_qualifier_flag;
+  _DAT_003fb4e2 = cold_start_qualifier_flag;
   return;
 }
 
@@ -40318,15 +40027,13 @@ void cm848_calculateTorqueCurveValue(void)
 // Function: cm848_dispatchFuelDemandCallback @ 0x0003e5ac
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_dispatchFuelDemandCallback(void)
 
 {
-  if (_fuel_demand_callback_mode == 0) {
+  if (fuel_demand_callback_mode == 0) {
     fuelDemandSerialRx();
   }
-  else if (_fuel_demand_callback_mode == 1) {
+  else if (fuel_demand_callback_mode == 1) {
     fuelDemandSerialInterruptHandler();
   }
   return;
@@ -40352,15 +40059,13 @@ void cm848_registerFuelDemandCallback(void)
 // Function: cm848_processFuelDemandCallback @ 0x0003e620
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_processFuelDemandCallback(void)
 
 {
   char cVar1;
   
-  if (_cold_start_phase == 1) {
-    cVar1 = *_fuel_demand_command_ptr;
+  if (cold_start_phase == 1) {
+    cVar1 = *(char *)fuel_demand_command_ptr;
     if (((cVar1 == '\x13') || (cVar1 == '\x14')) || (cVar1 == '\x15')) {
       if (cVar1 == '\x13') {
         if ((fuel_demand_state_gate_flag == 0) || (fuel_demand_receive_flag == 0)) {
@@ -40423,36 +40128,34 @@ void cm848_registerFuelDemandCallback2(void)
 // Function: cm848_processFuelDemandCallback2 @ 0x0003e7f0
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_processFuelDemandCallback2(void)
 
 {
   char cVar1;
-  uint uVar2;
+  dword dVar2;
   byte bVar3;
   uint uVar4;
   
-  cVar1 = *_fuel_demand_command_ptr;
+  cVar1 = *(char *)fuel_demand_command_ptr;
   if (cVar1 == '\x02') {
     fuel_demand_receive_flag = 1;
   }
   if (fault_timing_reset_flag == 1) {
-    _fault_timing_counter_snapshot = 0;
+    fault_timing_counter_snapshot = 0;
   }
   else {
-    _fault_timing_counter_snapshot = _fault_timing_snapshot;
-    if ((_fault_timing_snapshot & 0xffff) == 0) {
-      _fault_timing_counter_snapshot = _fault_timing_snapshot + 1;
+    fault_timing_counter_snapshot = fault_timing_snapshot;
+    if ((fault_timing_snapshot & 0xffff) == 0) {
+      fault_timing_counter_snapshot = fault_timing_snapshot + 1;
     }
   }
-  uVar2 = _fault_timing_counter_snapshot;
-  bVar3 = (byte)(_fault_timing_counter_snapshot >> 8);
+  dVar2 = fault_timing_counter_snapshot;
+  bVar3 = (byte)(fault_timing_counter_snapshot >> 8);
   (&fuel_demand_state_queue)[fuel_demand_queue_write_index] = bVar3;
   uVar4 = fuel_demand_queue_write_index + 1 & 0xff;
-  (&fuel_demand_state_queue)[uVar4] = (byte)uVar2;
+  (&fuel_demand_state_queue)[uVar4] = (byte)dVar2;
   uVar4 = uVar4 + 1;
-  (&fuel_demand_state_queue)[uVar4 & 0xff] = cVar1 + '5' + bVar3 + (byte)uVar2;
+  (&fuel_demand_state_queue)[uVar4 & 0xff] = cVar1 + '5' + bVar3 + (byte)dVar2;
   fuel_demand_queue_write_index = (char)uVar4 + 1;
   fuel_demand_callback_ptr = &DAT_0051d780;
   fuelDemandSerialTx();
@@ -40550,11 +40253,11 @@ void cm848_processSensorInputFiltering(void)
   uint uVar3;
   short sVar4;
   
-  if (((protection_feature_flags & 0x20) == 0) || (_fuel_correction_active_flag == 0)) {
+  if (((protection_feature_flags & 0x20) == 0) || (fuel_correction_active_flag == 0)) {
     torque_limit_fuel_working = torque_limit_fuel_minimum;
     return;
   }
-  if ((engine_load_filtered == 0) || (_torque_limit_enable_cal != 1)) {
+  if ((engine_load_filtered == 0) || (torque_limit_enable_cal != 1)) {
     cm848_unsignedDivision32
               ((int)((ulonglong)(uint)fuel_temperature_trim * (ulonglong)_fuel_temp_trim_scale_cal
                     >> 0x20),fuel_temperature_trim * _fuel_temp_trim_scale_cal,0,0xf0000);
@@ -40583,7 +40286,7 @@ void cm848_processSensorInputFiltering(void)
   }
   uVar3 = (uVar3 * torque_limit_rpm_scale >> 6) + (uint)torque_limit_rpm_offset;
   if (((uint)torque_limit_rpm_spread_threshold < (uVar2 & 0xffff)) &&
-     (_fuel_correction_mode_flag == 0)) {
+     (fuel_correction_mode_flag == 0)) {
     if (uVar3 < 0xffff) {
       uVar3 = uVar3 & 0xffff;
     }
@@ -40592,14 +40295,14 @@ void cm848_processSensorInputFiltering(void)
     }
     if (uVar1 <= uVar3) goto LAB_0003ec38;
     if (torque_fuel_accumulator_limit <= torque_fuel_accumulator) {
-      _engine_run_mode_flag = 1;
+      engine_run_mode_flag = 1;
       goto LAB_0003ec38;
     }
     sVar4 = 1;
   }
   else {
     if (torque_fuel_accumulator == 0) {
-      _engine_run_mode_flag = 0;
+      engine_run_mode_flag = 0;
       goto LAB_0003ec38;
     }
     uVar1 = (uint)torque_limit_cycle_divisor;
@@ -40613,7 +40316,7 @@ void cm848_processSensorInputFiltering(void)
   torque_limit_cycle_counter = 0;
 LAB_0003ec38:
   torque_limit_fuel_working = torque_limit_fuel_computed;
-  if (_fuel_correction_mode_flag != 0) {
+  if (fuel_correction_mode_flag != 0) {
     torque_limit_fuel_working = torque_limit_fuel_minimum;
   }
   if (torque_limit_fuel_working < torque_limit_arb_t_0040a2f6.fuel_minimum) {
@@ -40641,11 +40344,11 @@ void cm848_calculateTorqueLimitType1(void)
   uint uVar3;
   short sVar4;
   
-  if (((protection_feature_flags & 0x20) == 0) || (_fuel_correction_active_flag == 0)) {
+  if (((protection_feature_flags & 0x20) == 0) || (fuel_correction_active_flag == 0)) {
     torque_limit_fuel_working = torque_limit_fuel_minimum;
     return;
   }
-  if ((engine_load_filtered == 0) || (_torque_limit_enable_cal != 1)) {
+  if ((engine_load_filtered == 0) || (torque_limit_enable_cal != 1)) {
     cm848_unsignedDivision32
               ((int)((ulonglong)(uint)fuel_temperature_trim * (ulonglong)_fuel_temp_trim_scale_cal
                     >> 0x20),fuel_temperature_trim * _fuel_temp_trim_scale_cal,0,0xf0000);
@@ -40674,7 +40377,7 @@ void cm848_calculateTorqueLimitType1(void)
   }
   uVar3 = (uVar3 * torque_limit_rpm_scale >> 6) + (uint)torque_limit_rpm_offset;
   if (((uint)torque_limit_rpm_spread_threshold < (uVar2 & 0xffff)) &&
-     (_fuel_correction_mode_flag == 0)) {
+     (fuel_correction_mode_flag == 0)) {
     if (uVar3 < 0xffff) {
       uVar3 = uVar3 & 0xffff;
     }
@@ -40683,14 +40386,14 @@ void cm848_calculateTorqueLimitType1(void)
     }
     if (uVar1 <= uVar3) goto LAB_0003ec38;
     if (torque_fuel_accumulator_limit <= torque_fuel_accumulator) {
-      _engine_run_mode_flag = 1;
+      engine_run_mode_flag = 1;
       goto LAB_0003ec38;
     }
     sVar4 = 1;
   }
   else {
     if (torque_fuel_accumulator == 0) {
-      _engine_run_mode_flag = 0;
+      engine_run_mode_flag = 0;
       goto LAB_0003ec38;
     }
     uVar1 = (uint)torque_limit_cycle_divisor;
@@ -40704,7 +40407,7 @@ void cm848_calculateTorqueLimitType1(void)
   torque_limit_cycle_counter = 0;
 LAB_0003ec38:
   torque_limit_fuel_working = torque_limit_fuel_computed;
-  if (_fuel_correction_mode_flag != 0) {
+  if (fuel_correction_mode_flag != 0) {
     torque_limit_fuel_working = torque_limit_fuel_minimum;
   }
   if (torque_limit_fuel_working < torque_limit_arb_t_0040a2f6.fuel_minimum) {
@@ -40733,11 +40436,11 @@ void cm848_calculateTorqueLimits(void)
   short sVar4;
   int in_r12;
   
-  if (((*(ushort *)(in_r12 + -0x2a10) & 0x20) == 0) || (_fuel_correction_active_flag == 0)) {
+  if (((*(ushort *)(in_r12 + -0x2a10) & 0x20) == 0) || (fuel_correction_active_flag == 0)) {
     torque_limit_fuel_working = torque_limit_fuel_minimum;
     return;
   }
-  if ((engine_load_filtered == 0) || (_torque_limit_enable_cal != 1)) {
+  if ((engine_load_filtered == 0) || (torque_limit_enable_cal != 1)) {
     cm848_unsignedDivision32
               ((int)((ulonglong)(uint)fuel_temperature_trim * (ulonglong)_fuel_temp_trim_scale_cal
                     >> 0x20),fuel_temperature_trim * _fuel_temp_trim_scale_cal,0,0xf0000);
@@ -40766,7 +40469,7 @@ void cm848_calculateTorqueLimits(void)
   }
   uVar3 = (uVar3 * torque_limit_rpm_scale >> 6) + (uint)torque_limit_rpm_offset;
   if (((uint)torque_limit_rpm_spread_threshold < (uVar2 & 0xffff)) &&
-     (_fuel_correction_mode_flag == 0)) {
+     (fuel_correction_mode_flag == 0)) {
     if (uVar3 < 0xffff) {
       uVar3 = uVar3 & 0xffff;
     }
@@ -40775,14 +40478,14 @@ void cm848_calculateTorqueLimits(void)
     }
     if (uVar1 <= uVar3) goto LAB_0003ec38;
     if (torque_fuel_accumulator_limit <= torque_fuel_accumulator) {
-      _engine_run_mode_flag = 1;
+      engine_run_mode_flag = 1;
       goto LAB_0003ec38;
     }
     sVar4 = 1;
   }
   else {
     if (torque_fuel_accumulator == 0) {
-      _engine_run_mode_flag = 0;
+      engine_run_mode_flag = 0;
       goto LAB_0003ec38;
     }
     uVar1 = (uint)torque_limit_cycle_divisor;
@@ -40796,7 +40499,7 @@ void cm848_calculateTorqueLimits(void)
   torque_limit_cycle_counter = 0;
 LAB_0003ec38:
   torque_limit_fuel_working = torque_limit_fuel_computed;
-  if (_fuel_correction_mode_flag != 0) {
+  if (fuel_correction_mode_flag != 0) {
     torque_limit_fuel_working = torque_limit_fuel_minimum;
   }
   if (torque_limit_fuel_working < torque_limit_arb_t_0040a2f6.fuel_minimum) {
@@ -40824,11 +40527,11 @@ void cm848_calculateTorqueLimitType2(void)
   uint uVar3;
   short sVar4;
   
-  if (_fuel_correction_active_flag == 0) {
+  if (fuel_correction_active_flag == 0) {
     torque_limit_fuel_working = torque_limit_fuel_minimum;
     return;
   }
-  if ((engine_load_filtered == 0) || (_torque_limit_enable_cal != 1)) {
+  if ((engine_load_filtered == 0) || (torque_limit_enable_cal != 1)) {
     cm848_unsignedDivision32
               ((int)((ulonglong)(uint)fuel_temperature_trim * (ulonglong)_fuel_temp_trim_scale_cal
                     >> 0x20),fuel_temperature_trim * _fuel_temp_trim_scale_cal,0,0xf0000);
@@ -40857,7 +40560,7 @@ void cm848_calculateTorqueLimitType2(void)
   }
   uVar3 = (uVar3 * torque_limit_rpm_scale >> 6) + (uint)torque_limit_rpm_offset;
   if (((uint)torque_limit_rpm_spread_threshold < (uVar2 & 0xffff)) &&
-     (_fuel_correction_mode_flag == 0)) {
+     (fuel_correction_mode_flag == 0)) {
     if (uVar3 < 0xffff) {
       uVar3 = uVar3 & 0xffff;
     }
@@ -40866,14 +40569,14 @@ void cm848_calculateTorqueLimitType2(void)
     }
     if (uVar1 <= uVar3) goto LAB_0003ec38;
     if (torque_fuel_accumulator_limit <= torque_fuel_accumulator) {
-      _engine_run_mode_flag = 1;
+      engine_run_mode_flag = 1;
       goto LAB_0003ec38;
     }
     sVar4 = 1;
   }
   else {
     if (torque_fuel_accumulator == 0) {
-      _engine_run_mode_flag = 0;
+      engine_run_mode_flag = 0;
       goto LAB_0003ec38;
     }
     uVar1 = (uint)torque_limit_cycle_divisor;
@@ -40887,7 +40590,7 @@ void cm848_calculateTorqueLimitType2(void)
   torque_limit_cycle_counter = 0;
 LAB_0003ec38:
   torque_limit_fuel_working = torque_limit_fuel_computed;
-  if (_fuel_correction_mode_flag != 0) {
+  if (fuel_correction_mode_flag != 0) {
     torque_limit_fuel_working = torque_limit_fuel_minimum;
   }
   if (torque_limit_fuel_working < torque_limit_arb_t_0040a2f6.fuel_minimum) {
@@ -40919,71 +40622,69 @@ void cm848_setThermalProtectionMode5(void)
 // Function: cm848_evaluateThermalProtectionActive @ 0x0003ecdc
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_evaluateThermalProtectionActive(void)
 
 {
-  if (_fuel_correction_active_flag == 0) {
+  if (fuel_correction_active_flag == 0) {
     if (((governor_system_config_flags & 0x1000) == 0) ||
        ((fuel_temperature_trim != 0 &&
         (engine_temp_protection_input < engine_temp_protection_threshold_cal)))) {
-      _torque_limit_active_flag = 0;
+      torque_limit_active_flag = 0;
       if ((protection_feature_flags & 0x1000) != 0) {
         if (engine_temp_injection_cutout_threshold_cal <= engine_temp_protection_input) {
-          _fuel_injection_state = 0;
-          _torque_limit_active_flag = 1;
+          fuel_injection_state = 0;
+          torque_limit_active_flag = 1;
           return;
         }
         if (engine_temp_injection_reduce_threshold_cal <= engine_temp_protection_input) {
-          _fuel_injection_state = 1;
-          _torque_limit_active_flag = 1;
+          fuel_injection_state = 1;
+          torque_limit_active_flag = 1;
           return;
         }
         if (engine_temp_injection_partial_threshold_cal <= engine_temp_protection_input) {
-          _fuel_injection_state = 2;
-          _torque_limit_active_flag = 1;
+          fuel_injection_state = 2;
+          torque_limit_active_flag = 1;
           return;
         }
-        _fuel_injection_state = 3;
-        _torque_limit_active_flag = 0;
+        fuel_injection_state = 3;
+        torque_limit_active_flag = 0;
         return;
       }
     }
     else {
-      _torque_limit_active_flag = 1;
+      torque_limit_active_flag = 1;
     }
-    _fuel_injection_state = 3;
+    fuel_injection_state = 3;
     return;
   }
-  if (_fuel_correction_active_flag == 1) {
-    if (_fuel_demand_timing_enable_flag == 1) {
+  if (fuel_correction_active_flag == 1) {
+    if (fuel_demand_timing_enable_flag == 1) {
       if (fuel_temperature_trim == 0) {
-        _torque_limit_active_flag = 1;
+        torque_limit_active_flag = 1;
         return;
       }
       if (engine_temp_protection_threshold_cal <= engine_temp_protection_input) {
-        _torque_limit_active_flag = 1;
+        torque_limit_active_flag = 1;
         return;
       }
     }
   }
   else {
-    if (_fuel_correction_active_flag != 2) {
-      if (_fuel_correction_active_flag == 3) {
+    if (fuel_correction_active_flag != 2) {
+      if (fuel_correction_active_flag == 3) {
         cm848_setThermalProtectionMode5();
         return;
       }
       return;
     }
-    if ((_protection_derate_level == 4) ||
-       ((_protection_derate_level == 0xff &&
+    if ((protection_derate_level == 4) ||
+       ((protection_derate_level == 0xff &&
         (engine_temp_protection_input <= engine_temp_protection_l4_threshold_cal)))) {
-      _torque_limit_active_flag = 1;
+      torque_limit_active_flag = 1;
       return;
     }
   }
-  _torque_limit_active_flag = 0;
+  torque_limit_active_flag = 0;
   return;
 }
 
@@ -40993,8 +40694,6 @@ void cm848_evaluateThermalProtectionActive(void)
 // Function: cm848_calculateThermalLimitValue @ 0x0003eea8
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_calculateThermalLimitValue(void)
 
 {
@@ -41002,7 +40701,7 @@ void cm848_calculateThermalLimitValue(void)
   word local_10;
   word local_e;
   
-  if (_fuel_injection_state == 3) {
+  if (fuel_injection_state == 3) {
     fuel_demand_offset_working =
          cm848_dualAxisTableInterpolation
                    (&DAT_003fb4ec,engine_rpm_state_t_0040b7ac.current_rpm,&DAT_0005b4d6,
@@ -41013,7 +40712,7 @@ void cm848_calculateThermalLimitValue(void)
       local_e = cm848_dualAxisTableInterpolation
                           (&fuel_demand_threshold_interp_state,
                            engine_rpm_state_t_0040b7ac.current_rpm,&fuel_demand_rpm_threshold_cal,
-                           *(undefined2 *)((uint)_fuel_injection_state * 2 + 0x4068b8),
+                           *(undefined2 *)((uint)fuel_injection_state * 2 + 0x4068b8),
                            &fuel_demand_rpm_limit_low_cal,&fuel_demand_rpm_limit_high_cal,4);
       cm848_processFaultIncrement(&local_e);
     }
@@ -41021,7 +40720,7 @@ void cm848_calculateThermalLimitValue(void)
       local_10 = cm848_dualAxisTableInterpolation
                            (&governor_fuel_demand_interp_state,
                             engine_rpm_state_t_0040b7ac.current_rpm,&governor_fuel_table_xaxis_cal,
-                            *(undefined2 *)((uint)_fuel_injection_state * 2 + 0x406996),
+                            *(undefined2 *)((uint)fuel_injection_state * 2 + 0x406996),
                             &governor_fuel_table_ystart_cal,&governor_fuel_table_yend_cal,4);
       cm848_processFaultIncrement(&local_10);
     }
@@ -41046,12 +40745,10 @@ void cm848_calculateThermalLimitValue(void)
 // Function: cm848_processThermalDelayTimer @ 0x0003f054
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_processThermalDelayTimer(void)
 
 {
-  if ((_torque_limit_enable_flag == 1) && (_torque_limit_active_flag == 0)) {
+  if ((torque_limit_enable_flag == 1) && (torque_limit_active_flag == 0)) {
     torque_limit_entry_timer = torque_limit_entry_timer_cal;
   }
   if (torque_limit_entry_timer != 0) {
@@ -41067,20 +40764,18 @@ void cm848_processThermalDelayTimer(void)
 // Function: cm848_processThermalRecovery @ 0x0003f0b8
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_processThermalRecovery(void)
 
 {
-  if ((_torque_limit_enable_flag == 1) && (_torque_limit_active_flag == 0)) {
-    _torque_limit_active_flag_b = 1;
+  if ((torque_limit_enable_flag == 1) && (torque_limit_active_flag == 0)) {
+    torque_limit_active_flag_b = 1;
   }
-  if ((torque_limit_entry_timer == 0) && (_torque_limit_active_flag_b == 1)) {
+  if ((torque_limit_entry_timer == 0) && (torque_limit_active_flag_b == 1)) {
     protection_fuel_min_source = protection_fuel_min_raw + torque_limit_fuel_min_offset_cal;
   }
   if ((uint)fuel_demand_computed + (uint)torque_limit_fuel_demand_offset_cal <
       (uint)protection_fuel_min_source) {
-    _torque_limit_active_flag_b = 0;
+    torque_limit_active_flag_b = 0;
   }
   return;
 }
@@ -41096,11 +40791,11 @@ void cm848_processThermalRecovery(void)
 void cm848_processThermalProtectionState(void)
 
 {
-  if ((_torque_limit_enable_flag == 0) && (_torque_limit_active_flag == 1)) {
-    _torque_limit_stable_flag = 1;
+  if ((torque_limit_enable_flag == 0) && (torque_limit_active_flag == 1)) {
+    torque_limit_stable_flag = 1;
   }
-  if (_torque_limit_stable_flag == 1) {
-    if (_torque_limit_enable_flag == 0) {
+  if (torque_limit_stable_flag == 1) {
+    if (torque_limit_enable_flag == 0) {
       if (protection_fuel_deadband <= _DAT_003fb4f4) {
         protection_fuel_min_source = _DAT_003fb4f4 - protection_fuel_deadband;
         goto LAB_0003f1e4;
@@ -41113,10 +40808,10 @@ void cm848_processThermalProtectionState(void)
     protection_fuel_min_source = 0;
   }
 LAB_0003f1e4:
-  if ((_torque_limit_stable_flag == 1) && (protection_fuel_min_source < fuel_demand_offset_working))
+  if ((torque_limit_stable_flag == 1) && (protection_fuel_min_source < fuel_demand_offset_working))
   {
     protection_fuel_min_source = fuel_demand_offset_working;
-    _torque_limit_stable_flag = 0;
+    torque_limit_stable_flag = 0;
   }
   return;
 }
@@ -41127,17 +40822,15 @@ LAB_0003f1e4:
 // Function: cm848_calculateThermalFuelLimit @ 0x0003f218
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_calculateThermalFuelLimit(void)
 
 {
-  if ((((_torque_limit_active_flag == 0) && (torque_limit_entry_timer == 0)) &&
-      (_torque_limit_active_flag_b == 0)) && (_torque_limit_stable_flag == 0)) {
+  if ((((torque_limit_active_flag == 0) && (torque_limit_entry_timer == 0)) &&
+      (torque_limit_active_flag_b == 0)) && (torque_limit_stable_flag == 0)) {
     protection_fuel_min_source = 0x1700;
   }
-  if (((_torque_limit_active_flag == 1) && (torque_limit_entry_timer == 0)) &&
-     ((_torque_limit_active_flag_b == 0 && (_torque_limit_stable_flag == 0)))) {
+  if (((torque_limit_active_flag == 1) && (torque_limit_entry_timer == 0)) &&
+     ((torque_limit_active_flag_b == 0 && (torque_limit_stable_flag == 0)))) {
     protection_fuel_min_source = fuel_demand_offset_working;
   }
   return;
@@ -41155,7 +40848,7 @@ void cm848_processThermalProtection(void)
 
 {
   if ((((governor_system_config_flags & 0x1000) == 0) && ((protection_feature_flags & 0x1000) == 0))
-     || (_fuel_correction_active_flag == 3)) {
+     || (fuel_correction_active_flag == 3)) {
     protection_fuel_min_source = 0x1700;
   }
   else {
@@ -41166,7 +40859,7 @@ void cm848_processThermalProtection(void)
     cm848_processThermalProtectionState();
     cm848_calculateThermalFuelLimit();
     _DAT_003fb4f4 = fuel_demand_computed;
-    _torque_limit_enable_flag = _torque_limit_active_flag;
+    torque_limit_enable_flag = torque_limit_active_flag;
     protection_fuel_min_raw = protection_fuel_min_source;
   }
   return;
@@ -41199,16 +40892,16 @@ void cm848_applyThermalFuelLimit(void)
 void cm848_initThermalProtectionState(void)
 
 {
-  _torque_limit_active_flag = 0;
-  _torque_limit_enable_flag = 0;
+  torque_limit_active_flag = 0;
+  torque_limit_enable_flag = 0;
   protection_fuel_min_source = 0x1700;
   protection_fuel_min_raw = 0x1700;
   _DAT_003fb4f4 = 0x1700;
   _DAT_003fb4ec = 2;
   _DAT_003fb4ee = 2;
-  _torque_limit_active_flag_b = 0;
-  _torque_limit_stable_flag = 0;
-  _fuel_injection_state = 3;
+  torque_limit_active_flag_b = 0;
+  torque_limit_stable_flag = 0;
+  fuel_injection_state = 3;
   return;
 }
 
@@ -41224,7 +40917,7 @@ void cm848_processEngineLoadData(void)
 
 {
   word wVar1;
-  int iVar2;
+  dword dVar2;
   short extraout_r4;
   word *pwVar3;
   uint uVar4;
@@ -41233,14 +40926,14 @@ void cm848_processEngineLoadData(void)
   if ((protection_config_flags_b & 4) == 0) {
     return;
   }
-  if ((((_fuel_flow_rate_working == 0) ||
-       (iVar2 = _fuel_flow_rate_protection_cap_cal,
+  if ((((fuel_flow_rate_working == 0) ||
+       (dVar2 = fuel_flow_rate_protection_cap_cal,
        (protection_enable_t_0040c050.reserved_02 & 0x10) == 0)) &&
-      (iVar2 = _fuel_flow_rate_working, _fuel_flow_rate_working != 0)) &&
-     ((_cold_start_phase == 3 && (fuel_temp_flow_rate_threshold_cal < fuel_temperature_trim)))) {
-    iVar2 = _fuel_flow_rate_working + -1;
+      (dVar2 = fuel_flow_rate_working, fuel_flow_rate_working != 0)) &&
+     ((cold_start_phase == 3 && (fuel_temp_flow_rate_threshold_cal < fuel_temperature_trim)))) {
+    dVar2 = fuel_flow_rate_working - 1;
   }
-  _fuel_flow_rate_working = iVar2;
+  fuel_flow_rate_working = dVar2;
   if ((((system_status_flags_t_003fe974.pending_faults & 0x2000) == 0) &&
       ((system_status_flags_t_003fe974.pending_faults & 0x4000) == 0)) &&
      ((system_status_flags_t_003fe974.pending_faults & 0x400) == 0)) {
@@ -41262,7 +40955,7 @@ void cm848_processEngineLoadData(void)
       goto LAB_0003f598;
     }
     protection_load_input = protection_load_input_static_cal;
-    if (_fuel_flow_rate_working != 0) goto LAB_0003f598;
+    if (fuel_flow_rate_working != 0) goto LAB_0003f598;
     pwVar3 = &protection_load_input_default_cal;
   }
   else {
@@ -41270,8 +40963,7 @@ void cm848_processEngineLoadData(void)
   }
   protection_load_input = *pwVar3;
 LAB_0003f598:
-  if (((protection_status_flags_t_0040b0f2.rate_limit_flags & 2) == 0) && (_cold_start_phase == 3))
-  {
+  if (((protection_status_flags_t_0040b0f2.rate_limit_flags & 2) == 0) && (cold_start_phase == 3)) {
     wVar1 = torque_limit_setpoint_working;
     if ((_DAT_003fdb84 & 0x80) == 0) {
       if (_DAT_003fdb46 < 0x81) {
@@ -41315,8 +41007,6 @@ LAB_0003f598:
 // Function: cm848_processEngineLoadFilters @ 0x0003f734
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_processEngineLoadFilters(void)
 
 {
@@ -41349,11 +41039,11 @@ void cm848_processEngineLoadFilters(void)
     }
     else {
       fuel_flow_calculation._0_2_ = fuel_flow_default_cal;
-      if ((_fuel_flow_rate_divisor <= _fuel_flow_divisor_upper_threshold_cal) &&
+      if ((fuel_flow_rate_divisor <= fuel_flow_divisor_upper_threshold_cal) &&
          (fuel_flow_calculation._0_2_ = fuel_flow_rate_max_cal,
-         _fuel_flow_divisor_lower_threshold_cal <= _fuel_flow_rate_divisor)) {
+         fuel_flow_divisor_lower_threshold_cal <= fuel_flow_rate_divisor)) {
         fuel_flow_calculation._0_2_ =
-             (word)((fuel_consumption_accumulator << 3) / _fuel_flow_rate_divisor);
+             (word)((fuel_consumption_accumulator << 3) / fuel_flow_rate_divisor);
       }
     }
     goto LAB_0003f974;
@@ -41364,17 +41054,17 @@ void cm848_processEngineLoadFilters(void)
   if (fuel_injection_delay_timer == 0) {
     uVar1 = 8;
   }
-  else if (_fuel_flow_rate_divisor < _fuel_flow_divisor_lower_threshold_cal) {
+  else if (fuel_flow_rate_divisor < fuel_flow_divisor_lower_threshold_cal) {
 LAB_0003f82c:
     uVar1 = (uint)fuel_flow_rate_max_cal;
   }
-  else if (_fuel_flow_divisor_upper_threshold_cal < _fuel_flow_rate_divisor) {
+  else if (fuel_flow_divisor_upper_threshold_cal < fuel_flow_rate_divisor) {
     uVar1 = (uint)fuel_flow_default_cal;
   }
   else {
     cm848_unsignedDivision32
               (fuel_consumption_accumulator >> 0x1d,fuel_consumption_accumulator << 3,0,
-               _fuel_flow_rate_divisor);
+               fuel_flow_rate_divisor);
     uVar1 = extraout_r4;
     if (fuel_flow_rate_max_cal < extraout_r4) goto LAB_0003f82c;
   }
@@ -41417,19 +41107,17 @@ void cm848_initEngineLoadFilterState(void)
 // Function: mpc555_calculateTimerFrequencyConversion @ 0x0003fa5c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void mpc555_calculateTimerFrequencyConversion(void)
 
 {
   uint uVar1;
-  undefined4 extraout_r4;
+  dword extraout_r4;
   
   fuel_injection_delay_timer = fuel_injection_delay_timer_cal;
   uVar1 = TPUB_CH14_PARAM0._8_4_;
   TPUB_CH14_PARAM0.PARAM4 = 0;
   cm848_unsignedDivision32((int)((ulonglong)uVar1 * 1000000 >> 0x20),uVar1 * 1000000,0,0x4c4b4);
-  _fuel_flow_rate_divisor = extraout_r4;
+  fuel_flow_rate_divisor = extraout_r4;
   return;
 }
 
@@ -41451,7 +41139,7 @@ void cm848_initEngineLoadProtection(void)
   cm848_triggerProtectionEvent(0x15,0);
   _DAT_003fb51c = 0;
   governor_cycle_counter = 0;
-  _governor_cycle_active_flag = 0;
+  governor_cycle_active_flag = 0;
   fuel_step_counter = 0;
   return;
 }
@@ -41467,14 +41155,15 @@ void cm848_initEngineLoadProtection(void)
 void cm848_processEngineLoadCalculation(void)
 
 {
-  int extraout_r4;
+  dword extraout_r4;
   int extraout_r4_00;
-  int extraout_r4_01;
-  int iVar1;
-  uint uVar2;
-  int iVar3;
-  uint uVar4;
-  int iVar5;
+  dword extraout_r4_01;
+  dword dVar1;
+  int iVar2;
+  uint uVar3;
+  int iVar4;
+  uint uVar5;
+  int iVar6;
   
   if ((fuel_feature_control_flags & 0x10) == 0) {
     cm848_triggerProtectionEvent(0x13,0);
@@ -41485,32 +41174,32 @@ void cm848_processEngineLoadCalculation(void)
   }
   fuel_demand_feed_forward = fuel_demand_feed_forward_default_cal;
   if ((fuel_demand_mode_b_enable_cal == 0) &&
-     ((_governor_override_active_flag == 0 ||
-      (fuel_demand_feed_forward = fuel_demand_governor_output, _governor_mode_code == 6)))) {
+     ((governor_override_active_flag == 0 ||
+      (fuel_demand_feed_forward = fuel_demand_governor_output, governor_mode_code == 6)))) {
     fuel_demand_rate_accumulator = fuel_demand_rate_accumulator_init_cal;
     fuel_demand_feed_forward = 0;
     cm848_triggerProtectionEvent(0x13,0);
     cm848_triggerProtectionEvent(0x14,0);
     cm848_triggerProtectionEvent(0x15,0);
-    if (_governor_mode_code != 6) {
+    if (governor_mode_code != 6) {
       return;
     }
-    _governor_cycle_active_flag = 1;
+    governor_cycle_active_flag = 1;
     return;
   }
   fuel_demand_error = fuel_demand_feed_forward - fuel_demand_control_t_0040a57a.calculated;
-  uVar4 = (uint)(short)fuel_demand_error;
-  uVar2 = uVar4;
-  if ((int)uVar4 < 0) {
-    uVar2 = -uVar4;
+  uVar5 = (uint)(short)fuel_demand_error;
+  uVar3 = uVar5;
+  if ((int)uVar5 < 0) {
+    uVar3 = -uVar5;
   }
-  if ((((int)(uVar2 & 0xffff) < (int)(short)fuel_demand_error_deadband_cal) &&
-      (fuel_demand_feed_forward != 0)) || (uVar4 == 0)) {
+  if ((((int)(uVar3 & 0xffff) < (int)(short)fuel_demand_error_deadband_cal) &&
+      (fuel_demand_feed_forward != 0)) || (uVar5 == 0)) {
     fuel_demand_error = 0;
     fuel_demand_rate_accumulator = 0;
     _DAT_003fb51c = 0;
   }
-  if (_governor_cycle_active_flag == 0) {
+  if (governor_cycle_active_flag == 0) {
     if (((short)fuel_demand_error_step_threshold_cal < (short)fuel_demand_error) &&
        ((protection_enable_t_0040c050.system_enable_bits & 8) == 0)) {
       fuel_step_counter = fuel_step_counter + 1;
@@ -41519,85 +41208,85 @@ void cm848_processEngineLoadCalculation(void)
       fuel_step_counter = 0;
     }
     if (fuel_step_counter_threshold_cal <= fuel_step_counter) {
-      _governor_cycle_active_flag = 1;
+      governor_cycle_active_flag = 1;
     }
   }
   if (fuel_demand_mode_a_enable_cal == 0) {
-    iVar5 = (int)(short)fuel_demand_error;
-    uVar4 = (uint)(short)fuel_demand_error;
-    uVar2 = (uint)fuel_demand_proportional_gain_cal;
+    iVar6 = (int)(short)fuel_demand_error;
+    uVar5 = (uint)(short)fuel_demand_error;
+    uVar3 = (uint)fuel_demand_proportional_gain_cal;
     cm848_signedDivision32
-              ((int)((ulonglong)uVar2 * (ulonglong)uVar4 >> 0x20) + uVar2 * ((int)uVar4 >> 0x1f),
-               uVar2 * uVar4,0,4);
-    uVar2 = (uint)fuel_demand_integral_gain_cal;
-    _fuel_demand_p_term = extraout_r4;
+              ((int)((ulonglong)uVar3 * (ulonglong)uVar5 >> 0x20) + uVar3 * ((int)uVar5 >> 0x1f),
+               uVar3 * uVar5,0,4);
+    uVar3 = (uint)fuel_demand_integral_gain_cal;
+    fuel_demand_p_term = extraout_r4;
     cm848_signedDivision32
-              ((int)((ulonglong)uVar2 * (ulonglong)uVar4 >> 0x20) + uVar2 * ((int)uVar4 >> 0x1f),
-               uVar2 * uVar4,0,4);
-    iVar3 = (short)fuel_demand_rate_accumulator + extraout_r4_00;
-    iVar1 = (int)(short)fuel_demand_rate_lower_clamp_cal;
-    if ((iVar1 <= iVar3) && (iVar1 = iVar3, (short)fuel_timing_output_upper_limit_cal < iVar3)) {
-      iVar1 = (int)(short)fuel_timing_output_upper_limit_cal;
+              ((int)((ulonglong)uVar3 * (ulonglong)uVar5 >> 0x20) + uVar3 * ((int)uVar5 >> 0x1f),
+               uVar3 * uVar5,0,4);
+    iVar4 = (short)fuel_demand_rate_accumulator + extraout_r4_00;
+    iVar2 = (int)(short)fuel_demand_rate_lower_clamp_cal;
+    if ((iVar2 <= iVar4) && (iVar2 = iVar4, (short)fuel_timing_output_upper_limit_cal < iVar4)) {
+      iVar2 = (int)(short)fuel_timing_output_upper_limit_cal;
     }
-    uVar4 = (uint)fuel_demand_derivative_gain_cal;
-    uVar2 = iVar5 - _DAT_003fb51c;
+    uVar5 = (uint)fuel_demand_derivative_gain_cal;
+    uVar3 = iVar6 - _DAT_003fb51c;
     cm848_signedDivision32
-              ((int)((ulonglong)uVar4 * (ulonglong)uVar2 >> 0x20) + uVar4 * ((int)uVar2 >> 0x1f),
-               uVar4 * uVar2,0,4);
-    iVar3 = extraout_r4_01 + extraout_r4 + iVar1;
-    _engine_load_trim_rpm = (int)(short)fuel_demand_trim_upper_limit_cal;
-    _DAT_003fb51c = iVar5;
-    _fuel_demand_d_term = extraout_r4_01;
-    if (_engine_load_trim_rpm < iVar3) {
-      iVar3 = _engine_load_trim_rpm;
-      if (iVar5 < 0) {
+              ((int)((ulonglong)uVar5 * (ulonglong)uVar3 >> 0x20) + uVar5 * ((int)uVar3 >> 0x1f),
+               uVar5 * uVar3,0,4);
+    dVar1 = extraout_r4_01 + extraout_r4 + iVar2;
+    engine_load_trim_rpm = (dword)(short)fuel_demand_trim_upper_limit_cal;
+    _DAT_003fb51c = iVar6;
+    fuel_demand_d_term = extraout_r4_01;
+    if ((int)engine_load_trim_rpm < (int)dVar1) {
+      dVar1 = engine_load_trim_rpm;
+      if (iVar6 < 0) {
 LAB_0003ff80:
-        _engine_load_trim_rpm = iVar3;
-        fuel_demand_rate_accumulator = (word)iVar1;
+        engine_load_trim_rpm = dVar1;
+        fuel_demand_rate_accumulator = (word)iVar2;
       }
     }
     else {
-      _engine_load_trim_rpm = (int)(short)fuel_demand_trim_lower_limit_cal;
-      if ((_engine_load_trim_rpm <= iVar3) || (iVar3 = _engine_load_trim_rpm, 0 < iVar5))
+      engine_load_trim_rpm = (dword)(short)fuel_demand_trim_lower_limit_cal;
+      if (((int)engine_load_trim_rpm <= (int)dVar1) || (dVar1 = engine_load_trim_rpm, 0 < iVar6))
       goto LAB_0003ff80;
     }
   }
   else {
-    _engine_load_trim_rpm = (int)(short)fuel_demand_trim_mode_b_limit_cal;
+    engine_load_trim_rpm = (dword)(short)fuel_demand_trim_mode_b_limit_cal;
   }
-  if (_engine_load_trim_rpm == 0) {
+  if (engine_load_trim_rpm == 0) {
     engine_load_governor_threshold = 0x6400;
   }
   else {
-    if (-1 < _engine_load_trim_rpm) {
+    if (-1 < (int)engine_load_trim_rpm) {
       engine_load_governor_threshold = 0x6400;
-      iVar1 = _engine_load_trim_rpm;
+      dVar1 = engine_load_trim_rpm;
       goto LAB_0003ffc8;
     }
-    engine_load_governor_threshold = (short)_engine_load_trim_rpm + 0x6400;
+    engine_load_governor_threshold = (short)engine_load_trim_rpm + 0x6400;
   }
-  iVar1 = 0;
+  dVar1 = 0;
 LAB_0003ffc8:
-  fuel_demand_trim_output = (word)iVar1;
-  if (_engine_load_trim_rpm == -0x6400) {
+  fuel_demand_trim_output = (word)dVar1;
+  if (engine_load_trim_rpm == 0xffff9c00) {
     cm848_triggerProtectionEvent(0x15,0);
   }
   else {
     cm848_setEngineProtectionFault(0x15,0);
   }
   governor_cycle_counter = governor_cycle_counter + 1;
-  uVar2 = (uint)governor_cycle_period_cal;
-  if (uVar2 < governor_cycle_counter) {
+  uVar3 = (uint)governor_cycle_period_cal;
+  if (uVar3 < governor_cycle_counter) {
     governor_cycle_counter = 1;
   }
-  uVar4 = (uint)fuel_demand_trim_output;
-  if (((engine_load_governor_threshold * uVar2) / 0x6400 & 0xffff) < (uint)governor_cycle_counter) {
+  uVar5 = (uint)fuel_demand_trim_output;
+  if (((engine_load_governor_threshold * uVar3) / 0x6400 & 0xffff) < (uint)governor_cycle_counter) {
     cm848_triggerProtectionEvent(0x13,0);
   }
   else {
     cm848_setEngineProtectionFault(0x13,0);
   }
-  if (((uVar4 * uVar2) / 0x6400 & 0xffff) < (uint)governor_cycle_counter) {
+  if (((uVar5 * uVar3) / 0x6400 & 0xffff) < (uint)governor_cycle_counter) {
     cm848_triggerProtectionEvent(0x14,0);
   }
   else {
@@ -41611,8 +41300,6 @@ LAB_0003ffc8:
 //
 // Function: cm848_processFuelRateConfig @ 0x000400b8
 //
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void cm848_processFuelRateConfig(void)
 
@@ -41634,7 +41321,7 @@ void cm848_processFuelRateConfig(void)
     if (fuel_demand_output_invert_enable_cal != 0) {
       wVar2 = 0x6400 - wVar2;
     }
-    if (_governor_load_cycle_active_flag != 0) {
+    if (governor_load_cycle_active_flag != 0) {
       fuel_demand_phase_counter = fuel_demand_phase_counter + 1;
       if ((uint)fuel_demand_phase_counter < (uint)fuel_demand_phase_threshold_cal) {
         wVar2 = 0;
@@ -41645,7 +41332,7 @@ void cm848_processFuelRateConfig(void)
       }
       else {
         fuel_demand_phase_counter = 0;
-        _governor_load_cycle_active_flag = 0;
+        governor_load_cycle_active_flag = 0;
       }
       if ((j1939_pgn_handler_b_flags & 0x800) == 0) {
         governor_fuel_mode_counter = 0;
@@ -41655,20 +41342,19 @@ void cm848_processFuelRateConfig(void)
       }
       else {
         fuel_demand_phase_counter = 0;
-        _governor_load_cycle_active_flag = 1;
+        governor_load_cycle_active_flag = 1;
         governor_fuel_mode_counter = 0;
       }
     }
-    if ((_j1939_pgn_handler_index_b != 0) && (_j1939_pgn_handler_index_b < 0x33)) {
+    if ((j1939_pgn_handler_index_b != 0) && (j1939_pgn_handler_index_b < 0x33)) {
       cm848_unsignedDivision32(0,1000000,0,fuel_demand_cycle_period_cal);
       j1939_calib_handler_period = extraout_r4;
-      (**(code **)(&j1939_pgn_handler_table_func2 + (uint)_j1939_pgn_handler_index_b * 0x10))
+      (**(code **)(&j1939_pgn_handler_table_func2 + (uint)j1939_pgn_handler_index_b * 0x10))
                 (extraout_r4);
     }
-    if ((_j1939_pgn_handler_index_b != 0) && (_j1939_pgn_handler_index_b < 0x33)) {
+    if ((j1939_pgn_handler_index_b != 0) && (j1939_pgn_handler_index_b < 0x33)) {
       j1939_calib_handler_param = wVar2;
-      (**(code **)(&j1939_pgn_handler_table_func3 + (uint)_j1939_pgn_handler_index_b * 0x10))(wVar2)
-      ;
+      (**(code **)(&j1939_pgn_handler_table_func3 + (uint)j1939_pgn_handler_index_b * 0x10))(wVar2);
     }
   }
   return;
@@ -41680,24 +41366,22 @@ void cm848_processFuelRateConfig(void)
 // Function: cm848_dispatchCalibrationBlockHandlers @ 0x000402d4
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_dispatchCalibrationBlockHandlers(void)
 
 {
   dword extraout_r4;
   
-  if ((_j1939_pgn_handler_index_b != 0) && (_j1939_pgn_handler_index_b < 0x33)) {
-    (**(code **)(&j1939_pgn_handler_table + (uint)_j1939_pgn_handler_index_b * 0x10))();
+  if ((j1939_pgn_handler_index_b != 0) && (j1939_pgn_handler_index_b < 0x33)) {
+    (**(code **)(&j1939_pgn_handler_table + (uint)j1939_pgn_handler_index_b * 0x10))();
   }
-  if ((_j1939_pgn_handler_index_b != 0) && (_j1939_pgn_handler_index_b < 0x33)) {
+  if ((j1939_pgn_handler_index_b != 0) && (j1939_pgn_handler_index_b < 0x33)) {
     j1939_calib_handler_param = 0;
-    (**(code **)(&j1939_pgn_handler_table_func3 + (uint)_j1939_pgn_handler_index_b * 0x10))(0);
+    (**(code **)(&j1939_pgn_handler_table_func3 + (uint)j1939_pgn_handler_index_b * 0x10))(0);
   }
-  if ((_j1939_pgn_handler_index_b != 0) && (_j1939_pgn_handler_index_b < 0x33)) {
+  if ((j1939_pgn_handler_index_b != 0) && (j1939_pgn_handler_index_b < 0x33)) {
     cm848_unsignedDivision32(0,1000000,0,fuel_demand_cycle_period_cal);
     j1939_calib_handler_period = extraout_r4;
-    (**(code **)(&j1939_pgn_handler_table_func2 + (uint)_j1939_pgn_handler_index_b * 0x10))
+    (**(code **)(&j1939_pgn_handler_table_func2 + (uint)j1939_pgn_handler_index_b * 0x10))
               (extraout_r4);
   }
   return;
@@ -41734,7 +41418,7 @@ void cm848_processProtectionRampControl(void)
 {
   word wVar1;
   
-  governor_fuel_demand_mode_prev = _governor_fuel_demand_mode;
+  governor_fuel_demand_mode_prev = governor_fuel_demand_mode;
   _DAT_003fb526 = governor_pid_integral_snapshot;
   cm848_copyProtectionRampValue();
   cm848_processTorqueLimitBounded();
@@ -41755,7 +41439,7 @@ void cm848_processProtectionRampControl(void)
         }
       }
       else {
-        wVar1 = _governor_fuel_demand_mode;
+        wVar1 = governor_fuel_demand_mode;
         if ((governor_fuel_demand_low_threshold <= governor_fuel_demand_working) &&
            (cruise_fuel_demand_setpoint < governor_fuel_demand_working)) {
           if ((governor_fuel_demand_low_threshold <= cruise_fuel_demand_setpoint) ||
@@ -41769,46 +41453,47 @@ LAB_00040548:
       wVar1 = 0xc;
     }
   }
-  _governor_fuel_demand_mode = wVar1;
+  governor_fuel_demand_mode = wVar1;
   if ((((governor_fuel_demand_mode_prev == 0xb) ||
        (engine_rpm_state_t_0040b7ac.current_rpm <= governor_speed_demand_working)) &&
       ((governor_fuel_demand_working < governor_fuel_demand_upper ||
-       ((_DAT_0040adf8 == 3 &&
+       ((j1939_tsc1_override_state == 3 &&
         (etc1_state_t_0040ae00.mode3_torque_limit < governor_fuel_demand_upper)))))) ||
      (((governor_fuel_demand_mode_prev == 0xb ||
        ((uint)engine_rpm_state_t_0040b7ac.current_rpm <=
         (uint)governor_speed_demand_working + (uint)_DAT_003fefea)) &&
-      (((fuel_demand_control_t_0040a57a.calculated == 0 && (_governor_override_active_flag != 1)) &&
+      (((fuel_demand_control_t_0040a57a.calculated == 0 && (governor_override_active_flag != 1)) &&
        ((governor_pid_t_0040af5a.integral_term == 7 || (governor_pid_t_0040af5a.integral_term == 8))
        )))))) {
-    _governor_fuel_demand_mode = 0xb;
+    governor_fuel_demand_mode = 0xb;
   }
-  if ((_governor_fuel_demand_mode == 9) || (_governor_fuel_demand_mode == 10)) {
+  if ((governor_fuel_demand_mode == 9) || (governor_fuel_demand_mode == 10)) {
     if ((governor_fuel_demand_mode_prev != 9) &&
-       ((governor_fuel_demand_mode_prev != 10 && (_BYTE_003fb528 == 0)))) {
+       ((governor_fuel_demand_mode_prev != 10 && (fuel_demand_enable_sync_flag_shadow._0_2_ == 0))))
+    {
       protectionRampRateControl();
     }
     goto LAB_000406b0;
   }
   wVar1 = governor_fuel_demand_threshold_cal;
-  if (_governor_fuel_demand_mode != 0xc) {
-    if (_governor_fuel_demand_mode == 0xb) {
-      if (_governor_request_active_flag == 0) {
+  if (governor_fuel_demand_mode != 0xc) {
+    if (governor_fuel_demand_mode == 0xb) {
+      if (governor_request_active_flag == 0) {
         cm848_resetSpeedControlTracking();
       }
       goto LAB_000406b0;
     }
     wVar1 = governor_pid_t_0040af5a.proportional_gain;
-    if (governor_pid_t_0040af5a.integral_term != _governor_fuel_demand_mode) goto LAB_000406b0;
+    if (governor_pid_t_0040af5a.integral_term != governor_fuel_demand_mode) goto LAB_000406b0;
   }
   governor_fuel_demand_value = wVar1;
 LAB_000406b0:
-  _BYTE_003fb528 = _fuel_demand_enable_sync_flag;
-  if ((_DAT_003fb52a == 1) && (_governor_override_active_flag == 0)) {
+  fuel_demand_enable_sync_flag_shadow._0_2_ = fuel_demand_enable_sync_flag;
+  if ((fuel_demand_enable_sync_flag_shadow._2_2_ == 1) && (governor_override_active_flag == 0)) {
     fuel_demand_corrected_working = fuel_demand_computed;
   }
-  if ((((_fuel_correction_active_flag == 0) && (_governor_fuel_mode_d == 0xb)) ||
-      ((_fuel_correction_active_flag == 1 && (_governor_fuel_mode_d == 0xc)))) &&
+  if ((((fuel_correction_active_flag == 0) && (governor_fuel_mode_d == 0xb)) ||
+      ((fuel_correction_active_flag == 1 && (governor_fuel_mode_d == 0xc)))) &&
      (fuel_demand_corrected_working != 0)) {
     if (_DAT_003feff0 < fuel_demand_corrected_working) {
       fuel_demand_corrected_working = fuel_demand_corrected_working - _DAT_003feff0;
@@ -41830,13 +41515,13 @@ LAB_000406b0:
             (governor_pid_t_0040af5a.integral_term != 0x26)))) {
     governor_fuel_demand_value = fuel_demand_corrected_working;
   }
-  _DAT_003fb52a = _governor_override_active_flag;
-  if (_governor_fuel_demand_mode == 0xb) {
-    _governor_request_active_flag = 1;
+  fuel_demand_enable_sync_flag_shadow._2_2_ = governor_override_active_flag;
+  if (governor_fuel_demand_mode == 0xb) {
+    governor_request_active_flag = 1;
   }
   else if ((int)((uint)governor_speed_demand_working + (int)(short)governor_integrator_offset_cal) <
            (int)(uint)engine_rpm_state_t_0040b7ac.current_rpm) {
-    _governor_request_active_flag = 0;
+    governor_request_active_flag = 0;
   }
   return;
 }
@@ -41847,13 +41532,11 @@ LAB_000406b0:
 // Function: cm848_initFuelFilterCoefficients @ 0x00040828
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_initFuelFilterCoefficients(void)
 
 {
   fuel_demand_corrected_working = 0;
-  _governor_fuel_demand_mode = 0xb;
+  governor_fuel_demand_mode = 0xb;
   return;
 }
 
@@ -41870,7 +41553,7 @@ void cm848_calculateFuelRateFromRpm(void)
 {
   uint uVar1;
   
-  uVar1 = ((uint)_DAT_003fee7a * (uint)protection_temp_scale_factor) / 0x3c & 0x7fff;
+  uVar1 = ((uint)protection_timing_period_cal * (uint)protection_temp_scale_factor) / 0x3c & 0x7fff;
   fuel_flow_rpm_numerator = (word)uVar1;
   if (_DAT_003fd920 == 0) {
     uVar1 = ((uint)engine_rpm_state_t_0040b7ac.current_rpm << 0x10) /
@@ -41967,8 +41650,8 @@ void cm848_processTimingTableLookup(void)
   iVar6 = (int)(short)fuel_demand_speed_error;
   switch(iVar6) {
   case 0:
-    _governor_override_active_flag = 0;
-    _fuel_demand_enable_sync_flag = 0;
+    governor_override_active_flag = 0;
+    fuel_demand_enable_sync_flag = 0;
     governor_fuel_enable_state = 0;
     return;
   case 1:
@@ -41981,14 +41664,14 @@ void cm848_processTimingTableLookup(void)
       cruise_speed_command = *pwVar5;
       *pwVar4 = cruise_speed_command;
     }
-    _governor_override_active_flag = 1;
+    governor_override_active_flag = 1;
     governor_fuel_enable_state = 1;
     cruise_confirm_flag_b = 1;
     break;
   case 2:
-    _governor_override_active_flag = 1;
+    governor_override_active_flag = 1;
     cruise_speed_command = cruise_speed_target_working;
-    _fuel_demand_enable_sync_flag = 1;
+    fuel_demand_enable_sync_flag = 1;
     cruise_confirm_flag_a = 1;
     break;
   case 3:
@@ -42001,22 +41684,22 @@ void cm848_processTimingTableLookup(void)
     cm848_protectionFuelRateStep(protection_fuel_rate_step_b_param_cal);
     break;
   case 6:
-    if ((((_governor_mode_code == 9) || (_governor_mode_code == 7)) || (_governor_mode_code == 8))
-       || (((((_governor_mode_code == 0x13 || (_governor_mode_code == 0x10)) ||
-             ((_governor_mode_code == 0x3b ||
-              ((_governor_mode_code == 0x35 || (_governor_mode_code == 0x2d)))))) &&
-            ((_governor_fuel_demand_mode == 7 ||
-             ((_governor_fuel_demand_mode == 8 || (_governor_fuel_demand_mode == 9)))))) &&
-           ((uint)cruise_speed_command <
-            (uint)cruise_speed_setpoint_adjusted + (uint)cruise_speed_margin_cal)))) {
+    if ((((governor_mode_code == 9) || (governor_mode_code == 7)) || (governor_mode_code == 8)) ||
+       (((((governor_mode_code == 0x13 || (governor_mode_code == 0x10)) ||
+          ((governor_mode_code == 0x3b ||
+           ((governor_mode_code == 0x35 || (governor_mode_code == 0x2d)))))) &&
+         ((governor_fuel_demand_mode == 7 ||
+          ((governor_fuel_demand_mode == 8 || (governor_fuel_demand_mode == 9)))))) &&
+        ((uint)cruise_speed_command <
+         (uint)cruise_speed_setpoint_adjusted + (uint)cruise_speed_margin_cal)))) {
       cm848_protectionFuelRateRamp(cruise_speed_margin_cal);
     }
     break;
   case 7:
     break;
   case 8:
-    _governor_override_active_flag = 0;
-    _fuel_demand_enable_sync_flag = 0;
+    governor_override_active_flag = 0;
+    fuel_demand_enable_sync_flag = 0;
     return;
   }
   wVar2 = cruise_speed_command;
@@ -42033,7 +41716,7 @@ void cm848_processTimingTableLookup(void)
     if ((cruise_speed_setpoint_adjusted < cruise_speed_target_working) &&
        (wVar2 = cruise_speed_setpoint_adjusted,
        cruise_speed_setpoint_adjusted < cruise_speed_min_cal)) {
-      _governor_override_active_flag = 0;
+      governor_override_active_flag = 0;
       wVar2 = cruise_speed_command;
     }
   }
@@ -42050,9 +41733,9 @@ void cm848_processTimingTableLookup(void)
   else {
     governor_fuel_enable_state = 1;
   }
-  if ((_governor_override_active_flag != 1) ||
+  if ((governor_override_active_flag != 1) ||
      (((iVar6 != 2 && (iVar6 != 7)) || (cruise_speed_command <= cruise_speed_setpoint_adjusted)))) {
-    _fuel_demand_enable_sync_flag = 0;
+    fuel_demand_enable_sync_flag = 0;
   }
   _DAT_003fb52e = wVar1;
   return;
@@ -42115,13 +41798,12 @@ void cm848_copyProtectionRampValue(void)
 //
 
 /* WARNING: Removing unreachable block (ram,0x00040e40) */
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void cm848_processTorqueLimitBounded(void)
 
 {
   governor_fuel_demand_upper = governor_fuel_demand_upper_working;
-  if (_governor_fuel_demand_mode == 0xb) {
+  if (governor_fuel_demand_mode == 0xb) {
     governor_fuel_demand_upper = governor_fuel_demand_value + governor_fuel_demand_mode_b_offset_cal
     ;
   }
@@ -42144,7 +41826,8 @@ void cm848_processGovernorFuelRate(void)
 {
   uint uVar1;
   uint uVar2;
-  int iVar3;
+  dword dVar3;
+  int iVar4;
   
   if (_DAT_003fb530 != 1) {
     governor_pid_fuel_output = governor_pid_t_0040af5a.proportional_gain;
@@ -42154,39 +41837,39 @@ void cm848_processGovernorFuelRate(void)
   uVar2 = (uint)cruise_speed_command;
   if (uVar2 < uVar1) {
     if (cruise_speed_reference_a != 0) {
-      _cruise_mode_transition_flag = 1;
+      cruise_mode_transition_flag = 1;
       cruise_speed_reference_active = cruise_speed_reference_a;
-      iVar3 = uVar1 - uVar2;
+      iVar4 = uVar1 - uVar2;
       goto LAB_00040f00;
     }
 LAB_00040f6c:
-    iVar3 = 0;
+    dVar3 = 0;
   }
   else {
     if (cruise_speed_reference_b != 0) {
-      _cruise_mode_transition_flag = 0;
+      cruise_mode_transition_flag = 0;
       cruise_speed_reference_active = cruise_speed_reference_b;
-      iVar3 = uVar2 - uVar1;
+      iVar4 = uVar2 - uVar1;
 LAB_00040f00:
-      uVar1 = (uint)(iVar3 * 0x400) / (uint)cruise_speed_reference_active;
-      if (_cruise_mode_transition_flag == 0) {
-        _cruise_speed_deviation = uVar1 + cruise_speed_offset_b;
+      uVar1 = (uint)(iVar4 * 0x400) / (uint)cruise_speed_reference_active;
+      if (cruise_mode_transition_flag == 0) {
+        cruise_speed_deviation = uVar1 + cruise_speed_offset_b;
       }
       else {
-        _cruise_speed_deviation = cruise_speed_setpoint_b - uVar1;
+        cruise_speed_deviation = cruise_speed_setpoint_b - uVar1;
       }
-      if (_cruise_speed_deviation < 0x1701) {
-        iVar3 = _cruise_speed_deviation;
-        if (_cruise_speed_deviation < 0) goto LAB_00040f6c;
+      if ((int)cruise_speed_deviation < 0x1701) {
+        dVar3 = cruise_speed_deviation;
+        if ((int)cruise_speed_deviation < 0) goto LAB_00040f6c;
         goto LAB_00040f74;
       }
     }
-    iVar3 = 0x1700;
+    dVar3 = 0x1700;
   }
 LAB_00040f74:
-  governor_pid_fuel_output = (word)iVar3;
+  governor_pid_fuel_output = (word)dVar3;
 LAB_00040f7c:
-  _DAT_003fb530 = (uint)_governor_override_active_flag;
+  _DAT_003fb530 = (uint)governor_override_active_flag;
   return;
 }
 
@@ -42197,13 +41880,13 @@ LAB_00040f7c:
 //
 
 /* WARNING: Removing unreachable block (ram,0x00041198) */
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void cm848_processProtectionRampTimer(void)
 
 {
   uint uVar1;
   uint uVar2;
+  dword dVar3;
   
   if (((((j1939_governor_feature_cal & 0x80) == 0) ||
        ((system_status_flags_t_003fe974.condition_monitor & 0x2000) != 0)) ||
@@ -42213,22 +41896,22 @@ void cm848_processProtectionRampTimer(void)
     return;
   }
   if (((j1939_governor_feature_cal & 0x100) == 0) || (governor_j1939_bypass_flag == 1)) {
-    uVar2 = (uint)cruise_speed_setpoint_adjusted;
-    uVar1 = (uint)fuel_pressure_threshold_working;
-    if (uVar1 < uVar2) {
+    uVar1 = (uint)cruise_speed_setpoint_adjusted;
+    uVar2 = (uint)fuel_pressure_threshold_working;
+    if (uVar2 < uVar1) {
       if (cruise_speed_reference_c != 0) {
-        _cruise_mode_transition_flag = 1;
+        cruise_mode_transition_flag = 1;
         cruise_speed_reference_active = cruise_speed_reference_c;
-        _cruise_speed_deviation = (uVar2 - uVar1) * 0x400;
+        cruise_speed_deviation = (uVar1 - uVar2) * 0x400;
         goto LAB_000410d0;
       }
       cruise_fuel_demand_setpoint = 0;
     }
     else {
       if (cruise_speed_reference_d != 0) {
-        _cruise_mode_transition_flag = 0;
+        cruise_mode_transition_flag = 0;
         cruise_speed_reference_active = cruise_speed_reference_d;
-        _cruise_speed_deviation = (uVar1 - uVar2) * 0x400;
+        cruise_speed_deviation = (uVar2 - uVar1) * 0x400;
         goto LAB_000410d0;
       }
       cruise_fuel_demand_setpoint = 0x1700;
@@ -42246,25 +41929,25 @@ void cm848_processProtectionRampTimer(void)
   }
 LAB_000410d0:
   if (cruise_speed_reference_active != 0) {
-    _cruise_speed_deviation = _cruise_speed_deviation / cruise_speed_reference_active;
-    if (_cruise_mode_transition_flag == 0) {
-      _cruise_speed_deviation = _cruise_speed_deviation + cruise_speed_offset_c;
+    uVar1 = cruise_speed_deviation / cruise_speed_reference_active;
+    if (cruise_mode_transition_flag == 0) {
+      cruise_speed_deviation = uVar1 + cruise_speed_offset_c;
     }
     else {
-      _cruise_speed_deviation = cruise_speed_setpoint_c - _cruise_speed_deviation;
+      cruise_speed_deviation = cruise_speed_setpoint_c - uVar1;
     }
-    if ((int)_cruise_speed_deviation < 0x1701) {
-      uVar2 = _cruise_speed_deviation;
-      if ((int)_cruise_speed_deviation < 0) {
-        uVar2 = 0;
+    if ((int)cruise_speed_deviation < 0x1701) {
+      dVar3 = cruise_speed_deviation;
+      if ((int)cruise_speed_deviation < 0) {
+        dVar3 = 0;
       }
     }
     else {
-      uVar2 = 0x1700;
+      dVar3 = 0x1700;
     }
-    cruise_fuel_demand_setpoint = (word)uVar2;
+    cruise_fuel_demand_setpoint = (word)dVar3;
   }
-  if ((_governor_fuel_demand_mode == 10) &&
+  if ((governor_fuel_demand_mode == 10) &&
      (governor_fuel_demand_value + 0x3a < (uint)cruise_fuel_demand_setpoint)) {
     if (governor_fuel_demand_value + 0x3a < 0x1701) {
       cruise_fuel_demand_setpoint = governor_fuel_demand_value + 0x3a;
@@ -42282,8 +41965,6 @@ LAB_000410d0:
 // Function: cm848_calculateProtectionLevelLimit @ 0x000411b0
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_calculateProtectionLevelLimit(void)
 
 {
@@ -42296,12 +41977,12 @@ void cm848_calculateProtectionLevelLimit(void)
     uVar2 = 0xffff;
   }
   uVar1 = governor_pid_fuel_output;
-  if (((_governor_override_active_flag == 0) ||
-      ((uint)governor_override_threshold <= (uVar2 & 0xffff))) && (_governor_fuel_demand_mode == 9))
+  if (((governor_override_active_flag == 0) ||
+      ((uint)governor_override_threshold <= (uVar2 & 0xffff))) && (governor_fuel_demand_mode == 9))
   {
     uVar1 = governor_fuel_demand_value;
   }
-  if ((((_governor_override_active_flag == 0) ||
+  if ((((governor_override_active_flag == 0) ||
        ((((uVar1 < governor_pid_t_0040af5a.proportional_gain &&
           (governor_override_fuel_threshold_cal < fuel_demand_control_t_0040a57a.calculated)) &&
          ((cruise_speed_command != fuel_pressure_threshold_working ||
@@ -42342,14 +42023,14 @@ void cm848_processProtectionSystemBit3(void)
   
   if ((protection_enable_t_0040c050.system_enable_bits & 8) == 0) {
     if (fuel_mode_delay_timer == 0) {
-      _engine_idle_validation_flag = 0;
+      engine_idle_validation_flag = 0;
     }
     else {
       fuel_mode_delay_timer = fuel_mode_delay_timer - 1;
     }
   }
   else {
-    _engine_idle_validation_flag = 1;
+    engine_idle_validation_flag = 1;
     fuel_mode_delay_timer = fuel_mode_delay_timer_cal;
   }
   tc_lockup_disengage_state = etc1_state_t_0040ae00.spn573_tc_lockup_disengage;
@@ -42361,32 +42042,32 @@ void cm848_processProtectionSystemBit3(void)
        (((short)intercooler_temp_threshold <= (short)intercooler_temp_raw &&
         (intercooler_rpm_threshold_high_cal < engine_rpm_state_t_0040b7ac.current_rpm)))) &&
       (uVar1 = cm848_oilPressureDeltaCalculation(), uVar1 < oil_pressure_delta_tc_threshold_cal)) &&
-     ((((((_governor_fuel_demand_mode != 0xb && (_governor_fuel_demand_mode != 4)) &&
+     ((((((governor_fuel_demand_mode != 0xb && (governor_fuel_demand_mode != 4)) &&
          (fuel_demand_computed <= fuel_demand_computed_min_cal)) ||
-        ((_governor_fuel_demand_mode == 0xb &&
+        ((governor_fuel_demand_mode == 0xb &&
          (((uint)fuel_demand_computed <= (uint)fuel_demand_computed_min_cal ||
           (((uint)fuel_demand_computed <=
             (uint)fuel_demand_threshold_a_cal + (uint)fuel_demand_offset_correction &&
            ((int)(short)sensor_readings_t_0040baf2.coolant_temp <
             (short)coolant_temp_threshold + -0x140)))))))) ||
-       ((_governor_fuel_demand_mode == 4 &&
+       ((governor_fuel_demand_mode == 4 &&
         ((((uint)fuel_demand_computed <=
            (uint)fuel_demand_threshold_b_cal + (uint)fuel_demand_offset_correction &&
           (protection_monitored_rpm <= protection_monitored_rpm_threshold_cal)) &&
          ((int)(short)sensor_readings_t_0040baf2.coolant_temp <
           (short)coolant_temp_threshold + -0x140)))))) &&
-      ((tc_lockup_disengage_state == 0 || (_fuel_correction_mode_flag != 0)))))) {
+      ((tc_lockup_disengage_state == 0 || (fuel_correction_mode_flag != 0)))))) {
     DAT_003fb550 = true;
   }
   else {
     DAT_003fb550 = false;
   }
   if ((((fuel_demand_control_t_0040a57a.calculated == 0) &&
-       ((_governor_fuel_active_flag == 0 || ((governor_system_config_flags & 0x8000) == 0)))) &&
+       ((governor_fuel_active_flag == 0 || ((governor_system_config_flags & 0x8000) == 0)))) &&
       (((protection_enable_t_0040c050.system_enable_bits & 0x80) == 0 ||
        ((governor_feature_config_word & 0x40) == 0)))) &&
-     (((_engine_idle_validation_flag == 1 || ((system_feature_config_flags & 0x4000) == 0)) ||
-      (_governor_mode_request_code == 2)))) {
+     (((engine_idle_validation_flag == 1 || ((system_feature_config_flags & 0x4000) == 0)) ||
+      (governor_mode_request_code == 2)))) {
     DAT_003fb552 = true;
   }
   else {
@@ -42396,28 +42077,28 @@ void cm848_processProtectionSystemBit3(void)
         (engine_rpm_state_t_0040b7ac.current_rpm < intercooler_rpm_exit_threshold_cal)) ||
        (((short)intercooler_temp_threshold <= (short)intercooler_temp_raw &&
         (engine_rpm_state_t_0040b7ac.current_rpm <= _DAT_003fd924)))) ||
-      (((_governor_fuel_demand_mode != 0xb && (_governor_fuel_demand_mode != 4)) &&
+      (((governor_fuel_demand_mode != 0xb && (governor_fuel_demand_mode != 4)) &&
        ((fuel_demand_computed_min_cal < governor_fuel_demand_value &&
         (fuel_temperature_trim <= _DAT_003fd92c)))))) ||
-     (((_governor_fuel_demand_mode == 0xb &&
+     (((governor_fuel_demand_mode == 0xb &&
        (((uint)fuel_demand_threshold_a_cal + (uint)fuel_demand_offset_correction <
          (uint)fuel_demand_computed ||
         ((((short)coolant_temp_threshold < (short)sensor_readings_t_0040baf2.coolant_temp &&
           (fuel_temperature_trim <= _DAT_003fd92c)) &&
          ((uint)fuel_demand_computed_min_cal < (uint)fuel_demand_computed)))))) ||
-      (((_governor_fuel_demand_mode == 4 &&
+      (((governor_fuel_demand_mode == 4 &&
         ((((uint)fuel_demand_threshold_b_cal + (uint)fuel_demand_offset_correction <
            (uint)fuel_demand_computed ||
           (protection_monitored_rpm_threshold_cal < protection_monitored_rpm)) ||
          ((short)coolant_temp_threshold < (short)sensor_readings_t_0040baf2.coolant_temp)))) ||
-       ((tc_lockup_disengage_state != 0 && (_fuel_correction_mode_flag == 0)))))))) {
+       ((tc_lockup_disengage_state != 0 && (fuel_correction_mode_flag == 0)))))))) {
     DAT_003fb551 = true;
   }
   else {
     DAT_003fb551 = false;
   }
   if (((fuel_demand_control_t_0040a57a.calculated == 0) &&
-      ((_governor_fuel_active_flag == 0 || ((governor_system_config_flags & 0x8000) == 0)))) &&
+      ((governor_fuel_active_flag == 0 || ((governor_system_config_flags & 0x8000) == 0)))) &&
      (((protection_enable_t_0040c050.system_enable_bits & 0x80) == 0 ||
       ((governor_feature_config_word & 0x40) == 0)))) {
     DAT_003fb553 = false;
@@ -42425,26 +42106,26 @@ void cm848_processProtectionSystemBit3(void)
   else {
     DAT_003fb553 = true;
   }
-  if ((_governor_speed_limit_active_flag == 0) || ((operating_mode_flags & 1) == 0)) {
+  if ((governor_speed_limit_active_flag == 0) || ((operating_mode_flags & 1) == 0)) {
     if (((governor_speed_setpoint == 0) && (!(bool)DAT_003fb550)) ||
        ((governor_speed_setpoint != 0 && ((bool)DAT_003fb551)))) {
-      _fuel_correction_active_flag = 0;
+      fuel_correction_active_flag = 0;
       goto LAB_000418e0;
     }
     if ((((governor_speed_setpoint != 0) || (!(bool)DAT_003fb550)) || (!(bool)DAT_003fb552)) &&
        (((governor_speed_setpoint == 0 || ((bool)DAT_003fb551)) || ((bool)DAT_003fb553)))) {
-      _fuel_correction_active_flag = 1;
+      fuel_correction_active_flag = 1;
       goto LAB_000418e0;
     }
   }
-  _fuel_correction_active_flag = 2;
+  fuel_correction_active_flag = 2;
   governor_load_percent_min = 0x65;
 LAB_000418e0:
-  if ((_engine_idle_validation_flag == 1) && ((_DAT_003fd5ce & 1) != 0)) {
-    _engine_idle_cal_valid_flag = 1;
+  if ((engine_idle_validation_flag == 1) && ((_DAT_003fd5ce & 1) != 0)) {
+    engine_idle_cal_valid_flag._0_2_ = 1;
   }
   else {
-    _engine_idle_cal_valid_flag = 0;
+    engine_idle_cal_valid_flag._0_2_ = 0;
   }
   _DAT_003fb53e = governor_speed_setpoint_prev;
   governor_speed_setpoint_prev = governor_speed_setpoint;
@@ -42457,8 +42138,6 @@ LAB_000418e0:
 // Function: cm848_processProtectionSystemBit4 @ 0x00041938
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_processProtectionSystemBit4(void)
 
 {
@@ -42469,9 +42148,9 @@ void cm848_processProtectionSystemBit4(void)
     governor_load_percent_protection_output = 100;
   }
   governor_load_percent_output = governor_load_percent_computed;
-  if ((((_DAT_003fd5b6 & 1) == 0) &&
+  if ((((fault_feature_config_flags & 1) == 0) &&
       (governor_load_percent_output = governor_load_percent_protection_output,
-      _governor_speed_limit_active_flag != 0)) && ((operating_mode_flags & 1) != 0)) {
+      governor_speed_limit_active_flag != 0)) && ((operating_mode_flags & 1) != 0)) {
     governor_load_percent_output = 100;
   }
   governor_load_percent_snapshot = governor_load_percent_output;
@@ -42489,14 +42168,12 @@ void cm848_processProtectionSystemBit4(void)
 // Function: cm848_applyMinimumProtectionLimit @ 0x00041a10
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_applyMinimumProtectionLimit(void)
 
 {
   if (governor_load_percent_output < governor_load_percent_min) {
     governor_load_percent_min = governor_load_percent_output;
-    _governor_mode_request_code = 3;
+    governor_mode_request_code = 3;
   }
   return;
 }
@@ -42507,28 +42184,26 @@ void cm848_applyMinimumProtectionLimit(void)
 // Function: cm848_processGovernorErrorState @ 0x00041a40
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_processGovernorErrorState(void)
 
 {
-  _fuel_correction_state = 6;
-  if ((_governor_mode_state == 0) || (_governor_override_mode_state == 1)) {
+  fuel_correction_state = 6;
+  if ((governor_mode_state == 0) || (governor_override_mode_state == 1)) {
     governor_speed_setpoint_error_state = 0;
-    _fuel_correction_state = 6;
-    _j1939_build_state_machine = 0;
+    fuel_correction_state = 6;
+    j1939_build_state_machine = 0;
   }
-  else if ((_governor_mode_state == 2) || (_governor_override_mode_state == 2)) {
+  else if ((governor_mode_state == 2) || (governor_override_mode_state == 2)) {
     governor_speed_setpoint_error_state = j1939_governor_output_percent_cached;
-    _fuel_correction_state = 1;
-    _j1939_build_state_machine = _j1939_source_address_index;
+    fuel_correction_state = 1;
+    j1939_build_state_machine = j1939_source_address_index;
   }
-  else if (((_governor_mode_state == 3) || (_governor_override_mode_state == 3)) &&
-          (_j1939_governor_output_percent_tx < governor_load_percent_min)) {
-    _fuel_correction_state = 6;
-    _j1939_build_state_machine = _j1939_source_address_index;
-    governor_load_percent_min = _j1939_governor_output_percent_tx;
-    _governor_mode_request_code = 4;
+  else if (((governor_mode_state == 3) || (governor_override_mode_state == 3)) &&
+          (j1939_governor_output_percent_tx < governor_load_percent_min)) {
+    fuel_correction_state = 6;
+    j1939_build_state_machine = j1939_source_address_index;
+    governor_load_percent_min = j1939_governor_output_percent_tx;
+    governor_mode_request_code = 4;
   }
   return;
 }
@@ -42539,29 +42214,27 @@ void cm848_processGovernorErrorState(void)
 // Function: cm848_processTemperatureCompensationMode @ 0x00041b24
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_processTemperatureCompensationMode(void)
 
 {
-  if (_temp_compensation_active_flag == 0) {
-    if (_fuel_correction_active_flag == 0) {
+  if (temp_compensation_active_flag == 0) {
+    if (fuel_correction_active_flag == 0) {
       governor_speed_setpoint = 0;
-      _governor_request_processing_state = 0;
+      governor_request_processing_state = 0;
     }
-    else if ((_fuel_correction_state == 6) && (_fuel_correction_active_flag == 1)) {
+    else if ((fuel_correction_state == 6) && (fuel_correction_active_flag == 1)) {
       governor_speed_setpoint = 0;
-      _governor_request_processing_state = 0;
+      governor_request_processing_state = 0;
     }
-    else if ((_fuel_correction_state == 6) || (_fuel_correction_active_flag == 0)) {
-      if ((_fuel_correction_state == 6) && (_fuel_correction_active_flag == 2)) {
+    else if ((fuel_correction_state == 6) || (fuel_correction_active_flag == 0)) {
+      if ((fuel_correction_state == 6) && (fuel_correction_active_flag == 2)) {
         governor_speed_setpoint = governor_load_percent_min;
-        _governor_request_processing_state = _governor_mode_request_code;
+        governor_request_processing_state = governor_mode_request_code;
       }
     }
     else {
       governor_speed_setpoint = governor_speed_setpoint_error_state;
-      _governor_request_processing_state = _fuel_correction_state;
+      governor_request_processing_state = fuel_correction_state;
     }
   }
   return;
@@ -42579,9 +42252,9 @@ void cm848_processTemperatureTrim(void)
 
 {
   bool bVar1;
-  undefined2 uVar2;
+  word wVar2;
   
-  uVar2 = _fuel_mode_switch_state;
+  wVar2 = fuel_mode_switch_state;
   if ((((system_status_flags_t_003fe974.enable_state & 0x200) == 0) &&
       ((system_status_flags_t_003fe974.enable_state & 0x100) == 0)) &&
      ((system_status_flags_t_003fe974.safety_bits_2 & 1) == 0)) {
@@ -42608,7 +42281,7 @@ void cm848_processTemperatureTrim(void)
      ((governor_speed_setpoint_prev != 0 || (bVar1)))) {
     if ((((bVar1) && (governor_cruise_enable_count_cal != 0)) && (governor_speed_setpoint != 0)) &&
        (governor_speed_setpoint_prev == 0)) {
-      _fuel_correction_trigger_flag = 1;
+      fuel_correction_trigger_flag = 1;
     }
     else if ((((((cruise_rpm_range_high_cal < engine_rpm_state_t_0040b7ac.current_rpm) &&
                 (governor_speed_setpoint != 0)) && ((3 < governor_enable_delay_counter && (!bVar1)))
@@ -42623,52 +42296,52 @@ void cm848_processTemperatureTrim(void)
             (((engine_rpm_state_t_0040b7ac.current_rpm <= cruise_rpm_range_low_cal &&
               (governor_speed_setpoint != 0)) && ((10 < governor_enable_delay_counter && (!bVar1))))
             )) {
-      _fuel_correction_trigger_flag = 0;
+      fuel_correction_trigger_flag = 0;
     }
     else if ((bVar1) && (governor_cruise_enable_count_cal < governor_cruise_mode_count)) {
-      _fuel_correction_trigger_flag = 0;
+      fuel_correction_trigger_flag = 0;
     }
   }
   else {
-    _fuel_correction_trigger_flag = 1;
+    fuel_correction_trigger_flag = 1;
   }
   if (governor_speed_setpoint != 0) {
-    if ((_governor_speed_limit_active_flag == 0) || ((operating_mode_flags & 1) == 0)) {
-      _fuel_mode_switch_state = 1;
+    if ((governor_speed_limit_active_flag == 0) || ((operating_mode_flags & 1) == 0)) {
+      fuel_mode_switch_state = 1;
     }
     else {
-      _fuel_mode_switch_state = 0;
-      _fuel_correction_trigger_flag = 0;
+      fuel_mode_switch_state = 0;
+      fuel_correction_trigger_flag = 0;
     }
   }
   if (etc1_state_t_0040ae00.spn574_shift_in_process == 0) {
     _DAT_003fb554 = 0;
   }
-  if (_fuel_correction_trigger_flag != 0) {
-    _fuel_correction_trigger_flag = 0;
+  if (fuel_correction_trigger_flag != 0) {
+    fuel_correction_trigger_flag = 0;
   }
   if (governor_speed_setpoint == 0) {
-    _fuel_mode_switch_state = 0;
+    fuel_mode_switch_state = 0;
   }
   if (etc1_state_t_0040ae00.spn574_shift_in_process != 0) {
     if (fuel_correction_trigger_threshold_cal < _DAT_003fb554) {
-      _fuel_correction_trigger_flag = 0;
+      fuel_correction_trigger_flag = 0;
     }
     else {
-      _fuel_correction_trigger_flag = 1;
+      fuel_correction_trigger_flag = 1;
       _DAT_003fb554 = _DAT_003fb554 + 1;
-      _fuel_mode_switch_state = uVar2;
+      fuel_mode_switch_state = wVar2;
     }
   }
   if ((((j1939_governor_fuel_input == 0) && (_DAT_003fb542 != 0)) ||
       (((fuel_demand_config_flags & 8) == 0 && (_DAT_003fb558 != 0)))) &&
-     (_fuel_correction_trigger_flag == 0)) {
+     (fuel_correction_trigger_flag == 0)) {
     _DAT_003fb544 = 1;
     governor_cruise_engage_count = 0;
   }
   if (_DAT_003fb544 != 0) {
     if (governor_cruise_engage_threshold_cal <= governor_cruise_engage_count) {
-      _fuel_mode_switch_state = 0;
+      fuel_mode_switch_state = 0;
       _DAT_003fb544 = 0;
     }
     if (governor_cruise_engage_count != 0xffff) {
@@ -42694,32 +42367,32 @@ void cm848_processFuelEfficiencyTrim(void)
   
   _DAT_003fb542 = j1939_governor_fuel_input;
   uVar1 = governor_speed_setpoint;
-  if (_fuel_correction_trigger_flag != 0) {
+  if (fuel_correction_trigger_flag != 0) {
     uVar1 = j1939_governor_fuel_input;
   }
   j1939_governor_fuel_input = uVar1;
   if (uVar1 < 0x32) {
-    if ((_governor_engage_mode_flags & 1) != 0) {
+    if ((governor_engage_mode_flags & 1) != 0) {
       cm848_triggerProtectionEvent(0xb,0);
     }
-    if ((_governor_engage_mode_flags & 2) != 0) {
-      _j1939_governor_engage_flag = 0;
+    if ((governor_engage_mode_flags & 2) != 0) {
+      j1939_governor_engage_flag = 0;
     }
-    _BYTE_003fb54c = 0;
+    governor_j1939_fuel_input_counter = 0;
   }
   else {
-    _BYTE_003fb54c = _BYTE_003fb54c + 1;
+    governor_j1939_fuel_input_counter = governor_j1939_fuel_input_counter + 1;
   }
-  if ((_BYTE_003fb54c < governor_j1939_fuel_input_threshold_cal) ||
+  if ((governor_j1939_fuel_input_counter < governor_j1939_fuel_input_threshold_cal) ||
      (j1939_governor_fuel_input < 0x32)) goto LAB_00042130;
-  if (((_governor_engage_mode_flags & 1) == 0) || ((_governor_engage_mode_flags & 2) == 0)) {
-    if ((_governor_engage_mode_flags & 1) != 0) goto LAB_00042100;
-    if ((_governor_engage_mode_flags & 2) != 0) {
-      _j1939_governor_engage_flag = 1;
+  if (((governor_engage_mode_flags & 1) == 0) || ((governor_engage_mode_flags & 2) == 0)) {
+    if ((governor_engage_mode_flags & 1) != 0) goto LAB_00042100;
+    if ((governor_engage_mode_flags & 2) != 0) {
+      j1939_governor_engage_flag = 1;
     }
   }
   else {
-    _j1939_governor_engage_flag = 1;
+    j1939_governor_engage_flag = 1;
     if (j1939_governor_engage_rpm_threshold_cal < engine_rpm_state_t_0040b7ac.current_rpm) {
       cm848_triggerProtectionEvent(0xb,0);
     }
@@ -42728,16 +42401,16 @@ LAB_00042100:
       cm848_setEngineProtectionFault(0xb,0);
     }
   }
-  _BYTE_003fb54c = governor_j1939_fuel_input_threshold_cal;
+  governor_j1939_fuel_input_counter = governor_j1939_fuel_input_threshold_cal;
 LAB_00042130:
   if ((system_status_flags_t_003fe974.lamp_status & 0x20) != 0) {
     cm848_triggerProtectionEvent(0xb,0);
   }
   if ((protection_enable_t_0040c050.system_enable_bits & 0x10) == 0) {
-    _fuel_efficiency_trim_pct = 0;
+    fuel_efficiency_trim_pct = 0;
   }
   else {
-    _fuel_efficiency_trim_pct = 100;
+    fuel_efficiency_trim_pct = 100;
   }
   return;
 }
@@ -42778,7 +42451,7 @@ void cm848_initProtectionEventStates(void)
   cm848_triggerProtectionEvent(0xe,0);
   cm848_triggerProtectionEvent(0xf,0);
   j1939_governor_fuel_input = 0;
-  _fuel_correction_trigger_flag = 0;
+  fuel_correction_trigger_flag = 0;
   governor_speed_setpoint_prev = 0;
   _DAT_003fb53e = 0;
   governor_cruise_mode_count = 0;
@@ -42786,14 +42459,14 @@ void cm848_initProtectionEventStates(void)
   _DAT_003fb544 = 0;
   governor_cruise_engage_count = 0;
   fuel_mode_delay_timer = 0;
-  _fuel_mode_switch_state = 0;
-  _fuel_correction_state = 5;
-  _governor_request_processing_state = 5;
-  _engine_idle_validation_flag = 0;
-  _engine_idle_cal_valid_flag = 0;
-  _fuel_correction_active_flag = 0;
-  _governor_override_mode_state = 0;
-  _temp_compensation_active_flag = 0;
+  fuel_mode_switch_state = 0;
+  fuel_correction_state = 5;
+  governor_request_processing_state = 5;
+  engine_idle_validation_flag = 0;
+  engine_idle_cal_valid_flag._0_2_ = 0;
+  fuel_correction_active_flag = 0;
+  governor_override_mode_state = 0;
+  temp_compensation_active_flag = 0;
   fuel_demand_rate_min_temp_trim = 0;
   tc_lockup_disengage_state = 0;
   return;
@@ -42812,20 +42485,20 @@ void cm848_processSpeedControlLimits(void)
 {
   uint uVar1;
   
-  if ((((engine_temp_protection_input < DAT_0005c94e) && (_fuel_trim_speed_override_flag == 0)) ||
+  if ((((engine_temp_protection_input < DAT_0005c94e) && (fuel_trim_speed_override_flag == 0)) ||
       ((system_status_flags_t_003fe974.condition_monitor & 0x2000) != 0)) ||
      (((system_status_flags_t_003fe974.condition_monitor & 0x4000) != 0 ||
-      (_etc1_transmission_mode == 0)))) {
+      (etc1_transmission_mode == 0)))) {
     cruise_speed_factor_a = DAT_0005c948;
     cruise_speed_factor_b = DAT_0005c94a;
     cruise_speed_offset = (DAT_0005c94a - DAT_0005c948) + 0x8000;
-    _cruise_speed_override_flag = 1;
+    cruise_speed_override_flag = 1;
   }
   else {
     cruise_speed_factor_a = 0x8000;
     cruise_speed_factor_b = cruise_speed_default_cal;
     cruise_speed_offset = cruise_speed_default_cal;
-    _cruise_speed_override_flag = 0;
+    cruise_speed_override_flag = 0;
   }
   cruise_speed_offset_saved = cruise_speed_offset;
   if ((uint)_DAT_003fb55a * (uint)cruise_speed_factor_b <
@@ -42858,7 +42531,7 @@ void cm848_processSpeedControlLimits(void)
 void cm848_initEngineSpeedTracking(void)
 
 {
-  _cruise_speed_override_flag = 0;
+  cruise_speed_override_flag = 0;
   governor_fuel_rate_tracking = engine_rpm_state_t_0040b7ac.current_rpm;
   cruise_speed_rpm_base = engine_rpm_state_t_0040b7ac.current_rpm;
   _DAT_003fb55a = engine_rpm_state_t_0040b7ac.current_rpm;
@@ -42911,8 +42584,8 @@ void cm848_processGovernorSpeedSetpoint(void)
 {
   uint uVar1;
   
-  if (_governor_fuel_demand_mode == 0xb) {
-    if (_governor_enabled_flag == 1) {
+  if (governor_fuel_demand_mode == 0xb) {
+    if (governor_enabled_flag == 1) {
       if (((short)governor_speed_error_exit_upper_cal < (short)governor_speed_error_delta) ||
          ((short)governor_speed_error_delta < (short)governor_speed_error_exit_lower_cal)) {
         _governor_mode_state = 0;
@@ -42966,12 +42639,10 @@ void cm848_processGovernorSpeedSetpoint(void)
 // Function: cm848_enableProtectionRateLimit @ 0x0004271c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_enableProtectionRateLimit(void)
 
 {
-  _governor_enabled_flag = 1;
+  governor_enabled_flag = 1;
   return;
 }
 
@@ -42987,7 +42658,7 @@ void cm848_applyProtectionControlLimit(void)
 
 {
   if ((_DAT_003fd536 != 0) &&
-     (protection_temp_scale_factor = _DAT_003fd534,
+     (protection_temp_scale_factor = protection_temp_scale_cal,
      (protection_enable_t_0040c050.control_word & 0x80) == 0)) {
     protection_temp_scale_factor = _DAT_003fd52e;
   }
@@ -43000,12 +42671,10 @@ void cm848_applyProtectionControlLimit(void)
 // Function: cm848_setProtectionControlValue @ 0x00042770
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_setProtectionControlValue(void)
 
 {
-  protection_temp_scale_factor = _DAT_003fd534;
+  protection_temp_scale_factor = protection_temp_scale_cal;
   return;
 }
 
@@ -43044,12 +42713,10 @@ void cm848_applyProtectionTorqueLimit(void)
 // Function: cm848_applySpeedControlProtectionLimit @ 0x000427cc
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_applySpeedControlProtectionLimit(void)
 
 {
-  if ((_DAT_0040adf8 == 3) &&
+  if ((j1939_tsc1_override_state == 3) &&
      (etc1_state_t_0040ae00.mode3_torque_limit < protection_fuel_limit_active)) {
     protection_fuel_limit_active = etc1_state_t_0040ae00.mode3_torque_limit;
     governor_fuel_mode_command = 0x14;
@@ -43104,13 +42771,11 @@ void cm848_initProtectionTorqueLimit(void)
 // Function: cm848_setEngineOperatingMode1 @ 0x00042894
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_setEngineOperatingMode1(void)
 
 {
-  if ((_engine_operating_mode == 0) && (_DAT_0040adf8 == 2)) {
-    _engine_operating_mode = 1;
+  if ((engine_operating_mode == 0) && (j1939_tsc1_override_state == 2)) {
+    engine_operating_mode = 1;
     governor_proportional_gain = etc1_state_t_0040ae00.torque_limit_calc;
   }
   return;
@@ -43127,8 +42792,8 @@ void cm848_setEngineOperatingMode1(void)
 void cm848_setEngineOperatingMode5(void)
 
 {
-  if ((_engine_operating_mode == 0) && ((_DAT_003fd5a4 & 1) != 0)) {
-    _engine_operating_mode = 5;
+  if ((engine_operating_mode == 0) && ((_DAT_003fd5a4 & 1) != 0)) {
+    engine_operating_mode = 5;
     governor_proportional_gain = _DAT_003fd8b4;
   }
   return;
@@ -43140,15 +42805,13 @@ void cm848_setEngineOperatingMode5(void)
 // Function: cm848_resetEngineOperatingMode @ 0x00042918
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_resetEngineOperatingMode(void)
 
 {
   int iVar1;
   
-  iVar1 = (int)_engine_operating_mode;
-  _engine_operating_mode = 0;
+  iVar1 = (int)(short)engine_operating_mode;
+  engine_operating_mode = 0;
   cm848_restoreEngineOperatingMode();
   cm848_setEngineOperatingMode1();
   cm848_engineMode_reset(iVar1);
@@ -43253,10 +42916,10 @@ void hpcr_cbdFillAccelerationBuffers(void)
   word wVar2;
   int iVar3;
   
-  if ((cbd_enable_flag == 1) || (_cbd_active_flag == 1)) {
+  if ((cbd_enable_flag == 1) || (cbd_active_flag == 1)) {
     if (engine_crank_state_t_0040b80a.run_state == 4) {
       bVar1 = cbd_sync_byte_a_cal;
-      if (_cbd_active_flag == 1) {
+      if (cbd_active_flag == 1) {
         bVar1 = DAT_00064479;
       }
       wVar2 = tpu_a_ch0_param0.PARAM4;
@@ -43288,8 +42951,6 @@ void hpcr_cbdFillAccelerationBuffers(void)
 // Function: hpcr_processLoadThrottle @ 0x00042cfc
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void hpcr_processLoadThrottle(void)
 
 {
@@ -43297,7 +42958,7 @@ void hpcr_processLoadThrottle(void)
   int iVar2;
   uint uVar3;
   
-  if ((cbd_enable_flag == 1) || (_cbd_active_flag == 1)) {
+  if ((cbd_enable_flag == 1) || (cbd_active_flag == 1)) {
     uVar3 = ((uint)governor_fuel_demand_setpoint - (uint)fuel_demand_computed) *
             (uint)cbd_fuel_demand_blend_scale_cal;
     iVar1 = ((int)uVar3 >> 0xd) + (uint)((int)uVar3 < 0 && (uVar3 & 0x1fff) != 0);
@@ -43349,7 +43010,7 @@ void hpcr_cbdCalculateCylinderTrims(void)
   short local_58 [8];
   short local_48 [10];
   
-  if ((cbd_enable_flag != 1) && (_cbd_active_flag != 1)) {
+  if ((cbd_enable_flag != 1) && (cbd_active_flag != 1)) {
     return;
   }
   uVar1 = cm848_dualAxisTableInterpolation
@@ -43372,7 +43033,7 @@ LAB_00042e48:
     else {
       iVar4 = uVar15 - uVar16;
     }
-    if (((int)(uint)cylinder_sync_rpm_delta_threshold_cal < iVar4) || (_cold_start_phase != 3))
+    if (((int)(uint)cylinder_sync_rpm_delta_threshold_cal < iVar4) || (cold_start_phase != 3))
     goto LAB_00042e48;
     cylinder_sync_valid_flag = false;
   }
@@ -43433,7 +43094,7 @@ LAB_00042e48:
   }
   if ((((governor_fuel_demand_setpoint <= fuel_demand_setpoint_zero_threshold_cal) &&
        (fuel_demand_computed == 0)) && (fuel_demand_zero_rpm_lower_cal < uVar15)) &&
-     ((uVar15 < fuel_demand_zero_rpm_upper_cal && (_cold_start_phase == 3)))) {
+     ((uVar15 < fuel_demand_zero_rpm_upper_cal && (cold_start_phase == 3)))) {
     uVar7 = (uint)cylinder_timing_rpm_divisor_cal;
     if (uVar7 != 0) {
       unaff_r27 = (int)(uVar15 * unaff_r27) / (int)uVar7;
@@ -43595,7 +43256,7 @@ LAB_000434f0:
   if (crank_sync_inhibit_flag != 0) {
     crank_state_debounce_timer = crank_state_debounce_timer_cal;
   }
-  if ((((_engine_sync_debounce_flag != 0) || (_DAT_003fee92 != 1)) ||
+  if ((((engine_sync_debounce_flag != 0) || (_DAT_003fee92 != 1)) ||
       ((bool)cylinder_sync_valid_flag)) ||
      (((engine_crank_state_t_0040b80a.run_state != 4 || (crank_state_debounce_timer != 0)) ||
       ((crank_sync_fuel_temp_threshold_cal < fuel_temperature_trim ||
@@ -43631,7 +43292,7 @@ LAB_000434f0:
       } while (uVar7 < uVar16);
     }
   }
-  if ((_engine_sync_debounce_flag == 0) && (_DAT_003fee92 == 1)) {
+  if ((engine_sync_debounce_flag == 0) && (_DAT_003fee92 == 1)) {
     uVar15 = 0;
     if (uVar16 != 0) {
       do {
@@ -43705,7 +43366,7 @@ LAB_000434f0:
   }
   cylinder_event_seq_counter = 0xff;
 LAB_00043994:
-  if ((_DAT_003fee92 != 0) && (_engine_sync_debounce_flag == 0)) {
+  if ((_DAT_003fee92 != 0) && (engine_sync_debounce_flag == 0)) {
     if (crank_state_debounce_timer == 0) {
       uVar15 = 0;
       if (uVar16 != 0) {
@@ -43786,14 +43447,14 @@ void hpcr_processTimingCalibration(void)
              (short)engine_sync_coolant_lower_threshold_cal ||
             ((short)engine_sync_coolant_upper_threshold_cal <=
              (short)sensor_readings_t_0040baf2.coolant_temp)))) ||
-          ((_engine_sync_debounce_flag != 0 || (crank_sync_inhibit_flag != 0)))) {
+          ((engine_sync_debounce_flag != 0 || (crank_sync_inhibit_flag != 0)))) {
     engine_sync_confirmation_state = 2;
   }
   else {
     engine_sync_confirmation_state = 1;
     crank_pattern_sync_flag = 0;
     if ((cylinder_diag_active_flag != 0) && (DAT_003fb596 == '\0')) {
-      _uds_session_active_flag = 0;
+      uds_session_active_flag = 0;
       uVar5 = 0;
       do {
         *(word *)(&DAT_003fb598 + uVar5 * 2) = (&cylinder_diag_accumulator_array)[uVar5];
@@ -43836,7 +43497,7 @@ void hpcr_processTimingCalibration(void)
       (&cylinder_diag_accumulator_array)[uVar5] = *(word *)(&DAT_003fb598 + uVar5 * 2);
       uVar5 = uVar5 + 1 & 0xff;
     } while (uVar5 < 6);
-    _uds_session_active_flag = 1;
+    uds_session_active_flag = 1;
   }
   DAT_003fb596 = bVar1;
   DAT_003fb597 = bVar2;
@@ -43874,7 +43535,7 @@ void mpc555_resetEngineTimingAccumulators(void)
   speed_setpoint_raw = 0;
   engine_rpm_state_t_0040b7ac.current_rpm = 0;
   _DAT_003fb5a8 = 0;
-  _crank_position_valid_flag = 0;
+  crank_position_valid_flag = 0;
   system_status_flags_t_003fe974.protection_active =
        system_status_flags_t_003fe974.protection_active & 0x7fff;
   crank_sync_status_flags = crank_sync_status_flags & 0x7fff;
@@ -43885,7 +43546,7 @@ void mpc555_resetEngineTimingAccumulators(void)
          (uint)(byte)crank_timer_offset_cal * (2500000 / crank_teeth_per_rev) * 8;
     uVar2 = uVar2 + 1 & 0xff;
   } while (uVar2 < 4);
-  _crank_period_capture_index = 0;
+  crank_period_capture_index = 0;
   wVar1 = tpu_a_mcr.CPR1;
   tpu_a_mcr.CPR1 = wVar1 & 0xfffc;
   wVar1 = tpu_a_mcr.CFSR3;
@@ -43900,8 +43561,8 @@ void mpc555_resetEngineTimingAccumulators(void)
   tpu_a_ch0_param0.PARAM6 = CONCAT11(crank_mios_compare_b_high_cal,crank_mios_compare_b_low_cal);
   wVar1 = tpu_a_mcr.CPR1;
   tpu_a_mcr.CPR1 = wVar1 & 0xfffc | 2;
-  _crank_sync_valid_flag = 1;
-  _DAT_003fb5bd = 2;
+  crank_sync_valid_flag = 1;
+  crank_sync_phase_counter._2_2_ = 2;
   crank_mios_timing_output = 0;
   _DAT_003fb5bf = 2;
   _DAT_003fb5c1 = 2;
@@ -44060,39 +43721,39 @@ void mpc555_updateSensorDiagnosticFlags(void)
     crank_derived_rpm = 0;
   }
   else {
-    crank_derived_rpm = (word)(_crank_period_scale_cal / crank_period_accumulator);
+    crank_derived_rpm = (word)(crank_period_scale_cal / crank_period_accumulator);
     crank_period_countdown = crank_period_countdown - 1;
   }
   if (engine_sync_startup_countdown == 0) {
     crank_tooth_rpm = 0;
   }
   else {
-    crank_tooth_rpm = (word)(_crank_tooth_rpm_divisor_cal / crank_tooth_period_raw);
+    crank_tooth_rpm = (word)(crank_tooth_rpm_divisor_cal / crank_tooth_period_raw);
     engine_sync_startup_countdown = engine_sync_startup_countdown - 1;
   }
-  if (_crank_position_valid_flag == 1) {
-    _engine_event_active_flag = 1;
+  if (crank_position_valid_flag == 1) {
+    engine_event_active_flag = 1;
   }
   else {
     if ((crank_period_countdown != 0) || (engine_crank_state_t_0040b80a.crank_state != 4)) {
       if (2 < (short)engine_crank_state_t_0040b80a.run_state) {
 LAB_00044754:
-        _engine_event_active_flag = 0;
+        engine_event_active_flag = 0;
         goto LAB_00044774;
       }
       if (engine_crank_state_t_0040b80a.crank_state != 4) {
         if (engine_crank_state_t_0040b80a.run_state == 1) goto LAB_00044754;
         if (engine_crank_state_t_0040b80a.crank_state != 1) {
-          _engine_event_active_flag = 0;
+          engine_event_active_flag = 0;
           goto LAB_00044774;
         }
       }
     }
-    _engine_event_active_flag = 1;
+    engine_event_active_flag = 1;
   }
 LAB_00044774:
   speed_setpoint_raw = crank_tooth_rpm;
-  if (_engine_event_active_flag == 0) {
+  if (engine_event_active_flag == 0) {
     speed_setpoint_raw = crank_derived_rpm;
   }
   engine_rpm_state_t_0040b7ac.target_rpm =
@@ -44120,7 +43781,7 @@ LAB_00044854:
   engine_rpm_state_t_0040b7ac.current_rpm = engine_rpm_state_t_0040b7ac.target_rpm;
   crank_mios_timing_output =
        lookupTableInterpolation
-                 (&DAT_003fb5bd,speed_setpoint_raw,&crank_mios_timing_axis_cal,
+                 (0x3fb5bd,speed_setpoint_raw,&crank_mios_timing_axis_cal,
                   &crank_mios_timing_values_cal,0);
   if (speed_setpoint_raw < crank_speed_setpoint_threshold_cal) {
     tpu_a_ch0_param0.PARAM7 = CONCAT11(crank_mios_compare_a_high_cal,crank_mios_compare_a_low_cal);
@@ -44134,7 +43795,7 @@ LAB_00044854:
     tpu_a_ch1_param2.PARAM6 = wVar1 & 0xff00 | 0x40 - (crank_mios_timing_output >> 1) & 0xff;
     wVar1 = tpu_a_mcr.HSQR1;
     tpu_a_mcr.HSQR1 = wVar1 & 0xfff3 | 4;
-    _crank_sync_valid_flag = 1;
+    crank_sync_valid_flag = 1;
   }
   if (crank_speed_setpoint_threshold_cal < speed_setpoint_raw) {
     tpu_a_ch0_param0.PARAM7 = CONCAT11(mios_config_byte_a_cal,crank_mios_config_e_cal);
@@ -44148,7 +43809,7 @@ LAB_00044854:
     tpu_a_ch1_param2.PARAM6 = wVar1 & 0xff00 | 0x40 - (crank_mios_timing_output >> 1) & 0xff;
     wVar1 = tpu_a_mcr.HSQR1;
     tpu_a_mcr.HSQR1 = wVar1 & 0xfff3;
-    _crank_sync_valid_flag = 0;
+    crank_sync_valid_flag = 0;
   }
   if ((speed_setpoint_raw == 0) && (_DAT_003fb5a8 != 0)) {
     wVar1 = tpu_a_ch0_param0.PARAM0;
@@ -44186,8 +43847,6 @@ void cm848_setEngineRunState3(void)
 // Function: mpc555_evaluateProtectionThresholds @ 0x00044ae0
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void mpc555_evaluateProtectionThresholds(void)
 
 {
@@ -44198,7 +43857,7 @@ void mpc555_evaluateProtectionThresholds(void)
   wVar1 = tpu_a_ch0_param0.PARAM0;
   tpu_a_ch0_param0.PARAM0 = wVar1 | 1;
   tpu_a_mcr.HSRR1 = 2;
-  _crank_position_valid_flag = 0;
+  crank_position_valid_flag = 0;
   system_status_flags_t_003fe974.protection_active =
        system_status_flags_t_003fe974.protection_active & 0x7fff;
   crank_sync_status_flags = crank_sync_status_flags & 0x7fff;
@@ -44223,7 +43882,7 @@ void mpc555_initEngineCrankSequence(void)
   wVar1 = tpu_a_ch1_param2.PARAM0;
   tpu_a_ch1_param2.PARAM0 = wVar1 | 1;
   tpu_a_mcr.HSRR1 = 8;
-  _crank_position_valid_flag = 1;
+  crank_position_valid_flag = 1;
   if (_DAT_003fb5ce < crank_position_count_max_cal) {
     _DAT_003fb5ce = _DAT_003fb5ce + 1;
   }
@@ -44240,14 +43899,12 @@ void mpc555_initEngineCrankSequence(void)
 // Function: mpc555_processProtectionConditions @ 0x00044bf4
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void mpc555_processProtectionConditions(void)
 
 {
   word wVar1;
   
-  if (_crank_position_valid_flag == 0) {
+  if (crank_position_valid_flag == 0) {
     do {
       wVar1 = tpu_a_mcr.HSRR1;
     } while ((wVar1 & 3) != 0);
@@ -44258,7 +43915,7 @@ void mpc555_processProtectionConditions(void)
                     &cylinder_event_values_a_cal,0);
     cm848_protection_condition_eval_set2();
   }
-  else if (_crank_position_valid_flag == 1) {
+  else if (crank_position_valid_flag == 1) {
     wVar1 = tpu_a_ch1_param2.PARAM4;
     cylinder_event_index =
          lookupTableInterpolation
@@ -44276,13 +43933,11 @@ void mpc555_processProtectionConditions(void)
 // Function: cm848_setEngineCrankState1 @ 0x00044cc8
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_setEngineCrankState1(void)
 
 {
   engine_crank_state_t_0040b80a.crank_state = 1;
-  if (_crank_position_valid_flag == 1) {
+  if (crank_position_valid_flag == 1) {
     mpc555_evaluateProtectionThresholds();
     mpc555_processProtectionConditions();
   }
@@ -44295,13 +43950,11 @@ void cm848_setEngineCrankState1(void)
 // Function: cm848_setEngineRunState1 @ 0x00044d20
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_setEngineRunState1(void)
 
 {
   engine_crank_state_t_0040b80a.run_state = 1;
-  if ((_crank_position_valid_flag == 0) && (engine_crank_state_t_0040b80a.crank_state == 4)) {
+  if ((crank_position_valid_flag == 0) && (engine_crank_state_t_0040b80a.crank_state == 4)) {
     mpc555_initEngineCrankSequence();
     mpc555_processProtectionConditions();
   }
@@ -44314,17 +43967,17 @@ void cm848_setEngineRunState1(void)
 // Function: cm848_engineRunState4Handler @ 0x00044d70
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_engineRunState4Handler(void)
 
 {
+  int iVar1;
+  
   engine_crank_state_t_0040b80a.run_state = 4;
   mpc555_evaluateProtectionThresholds();
   mpc555_processProtectionConditions();
-  if (_crank_tooth_period_tbl == 0) {
-    _crank_tooth_period_tbl = TBLr;
-    _crank_tooth_period_tbl = _crank_tooth_period_tbl - _timebase_previous_capture;
+  if (crank_tooth_period_tbl == 0) {
+    iVar1 = TBLr;
+    crank_tooth_period_tbl = iVar1 - timebase_previous_capture;
   }
   return;
 }
@@ -44335,8 +43988,6 @@ void cm848_engineRunState4Handler(void)
 // Function: cm848_engineRunState3Handler @ 0x00044dd0
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_engineRunState3Handler(void)
 
 {
@@ -44344,7 +43995,7 @@ void cm848_engineRunState3Handler(void)
   crank_sync_period_captured._0_2_ = 0;
   engine_event_countdown = engine_event_countdown_cal;
   engine_crank_state_t_0040b80a.run_state = 3;
-  if (_crank_position_valid_flag == 1) {
+  if (crank_position_valid_flag == 1) {
     mpc555_evaluateProtectionThresholds();
   }
   mpc555_processProtectionConditions();
@@ -44357,19 +44008,19 @@ void cm848_engineRunState3Handler(void)
 // Function: cm848_engineRunState4Conditional @ 0x00044e3c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_engineRunState4Conditional(void)
 
 {
+  int iVar1;
+  
   engine_crank_state_t_0040b80a.run_state = 4;
-  if (_crank_position_valid_flag == 1) {
+  if (crank_position_valid_flag == 1) {
     mpc555_evaluateProtectionThresholds();
     mpc555_processProtectionConditions();
   }
-  if (_crank_tooth_period_tbl == 0) {
-    _crank_tooth_period_tbl = TBLr;
-    _crank_tooth_period_tbl = _crank_tooth_period_tbl - _timebase_previous_capture;
+  if (crank_tooth_period_tbl == 0) {
+    iVar1 = TBLr;
+    crank_tooth_period_tbl = iVar1 - timebase_previous_capture;
   }
   return;
 }
@@ -44380,17 +44031,17 @@ void cm848_engineRunState4Conditional(void)
 // Function: cm848_engineRunState4Handler2 @ 0x00044eac
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_engineRunState4Handler2(void)
 
 {
+  int iVar1;
+  
   engine_crank_state_t_0040b80a.run_state = 4;
   mpc555_evaluateProtectionThresholds();
   mpc555_processProtectionConditions();
-  if (_crank_tooth_period_tbl == 0) {
-    _crank_tooth_period_tbl = TBLr;
-    _crank_tooth_period_tbl = _crank_tooth_period_tbl - _timebase_previous_capture;
+  if (crank_tooth_period_tbl == 0) {
+    iVar1 = TBLr;
+    crank_tooth_period_tbl = iVar1 - timebase_previous_capture;
   }
   return;
 }
@@ -44401,22 +44052,22 @@ void cm848_engineRunState4Handler2(void)
 // Function: cm848_protectionOverrideEvaluator @ 0x00044f0c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_protectionOverrideEvaluator(void)
 
 {
+  int iVar1;
+  
   crank_period_prev_snapshot = crank_period_accumulator;
   crank_sync_period_captured._0_2_ = 0;
   engine_event_countdown = engine_event_countdown_cal;
   engine_crank_state_t_0040b80a.run_state = 3;
-  if (_crank_position_valid_flag == 1) {
+  if (crank_position_valid_flag == 1) {
     mpc555_evaluateProtectionThresholds();
   }
   mpc555_processProtectionConditions();
-  if (_crank_event_timebase_b == 0) {
-    _crank_event_timebase_b = TBLr;
-    _crank_event_timebase_b = _crank_event_timebase_b - _timebase_previous_capture;
+  if (crank_event_timebase_b == 0) {
+    iVar1 = TBLr;
+    crank_event_timebase_b = iVar1 - timebase_previous_capture;
   }
   return;
 }
@@ -44432,75 +44083,76 @@ void cm848_protectionOverrideEvaluator(void)
 void hpcr_processEngineSyncPulses(void)
 
 {
-  word wVar1;
+  int iVar1;
   word wVar2;
-  uint uVar3;
-  word wVar4;
-  ushort uVar5;
+  word wVar3;
+  uint uVar4;
+  word wVar5;
+  ushort uVar6;
   
-  if (_timebase_previous_capture == 0) {
-    _timebase_previous_capture = TBLr;
+  if (timebase_previous_capture == 0) {
+    timebase_previous_capture = TBLr;
   }
   crank_period_accumulator = TPUA_CH14_PARAM0._6_4_;
-  wVar1 = TPUA_CH12_PARAM0.PARAM7;
-  uVar5 = wVar1 & 0xff;
-  if (uVar5 < 5) {
-    if (uVar5 == 4) {
-      wVar2 = TPUA_CH12_PARAM0.PARAM4;
-      wVar1 = TPUA_CH11_PARAM4;
-      crank_capture_period_packed = (wVar2 & 0xff00) << 8 | (uint)wVar1;
+  wVar2 = TPUA_CH12_PARAM0.PARAM7;
+  uVar6 = wVar2 & 0xff;
+  if (uVar6 < 5) {
+    if (uVar6 == 4) {
+      wVar3 = TPUA_CH12_PARAM0.PARAM4;
+      wVar2 = TPUA_CH11_PARAM4;
+      crank_capture_period_packed = (wVar3 & 0xff00) << 8 | (uint)wVar2;
       goto LAB_00045154;
     }
-    if ((wVar1 & 0xff) == 0) {
-      wVar2 = TPUA_CH12_PARAM0.PARAM2;
-      wVar1 = TPUA_CH11_PARAM0;
-      crank_capture_period_packed = (wVar2 & 0xff00) << 8 | (uint)wVar1;
+    if ((wVar2 & 0xff) == 0) {
+      wVar3 = TPUA_CH12_PARAM0.PARAM2;
+      wVar2 = TPUA_CH11_PARAM0;
+      crank_capture_period_packed = (wVar3 & 0xff00) << 8 | (uint)wVar2;
       goto LAB_00045154;
     }
-    if (uVar5 == 1) {
-      wVar2 = TPUA_CH12_PARAM0.PARAM2;
-      wVar1 = TPUA_CH11_PARAM1;
-      crank_capture_period_packed = (wVar2 & 0xff) << 0x10 | (uint)wVar1;
+    if (uVar6 == 1) {
+      wVar3 = TPUA_CH12_PARAM0.PARAM2;
+      wVar2 = TPUA_CH11_PARAM1;
+      crank_capture_period_packed = (wVar3 & 0xff) << 0x10 | (uint)wVar2;
       goto LAB_00045154;
     }
-    if (uVar5 != 2) {
-      if (uVar5 != 3) goto LAB_00045154;
+    if (uVar6 != 2) {
+      if (uVar6 != 3) goto LAB_00045154;
 LAB_000450fc:
-      wVar2 = TPUA_CH12_PARAM0.PARAM3;
-      wVar1 = TPUA_CH11_PARAM3;
-      crank_capture_period_packed = (wVar2 & 0xff) << 0x10 | (uint)wVar1;
+      wVar3 = TPUA_CH12_PARAM0.PARAM3;
+      wVar2 = TPUA_CH11_PARAM3;
+      crank_capture_period_packed = (wVar3 & 0xff) << 0x10 | (uint)wVar2;
       goto LAB_00045154;
     }
 LAB_000450e0:
-    wVar2 = TPUA_CH12_PARAM0.PARAM3;
-    wVar1 = TPUA_CH11_PARAM2;
-    crank_capture_period_packed = (wVar2 & 0xff00) << 8 | (uint)wVar1;
+    wVar3 = TPUA_CH12_PARAM0.PARAM3;
+    wVar2 = TPUA_CH11_PARAM2;
+    crank_capture_period_packed = (wVar3 & 0xff00) << 8 | (uint)wVar2;
   }
   else {
-    if (uVar5 != 5) {
-      if (uVar5 == 6) {
-        wVar2 = TPUA_CH12_PARAM0.PARAM5;
-        wVar1 = TPUA_CH11_PARAM6;
-        crank_capture_period_packed = (wVar2 & 0xff00) << 8 | (uint)wVar1;
+    if (uVar6 != 5) {
+      if (uVar6 == 6) {
+        wVar3 = TPUA_CH12_PARAM0.PARAM5;
+        wVar2 = TPUA_CH11_PARAM6;
+        crank_capture_period_packed = (wVar3 & 0xff00) << 8 | (uint)wVar2;
         goto LAB_00045154;
       }
-      if (uVar5 != 0xff) goto LAB_00045154;
-      wVar1 = TPUA_CH12_PARAM0.PARAM7;
-      uVar5 = wVar1 >> 8;
-      if (uVar5 == 3) goto LAB_000450e0;
-      if (uVar5 == 4) goto LAB_000450fc;
-      if (uVar5 != 6) {
-        if (uVar5 == 8) {
-          wVar2 = TPUA_CH12_PARAM0.PARAM5;
-          wVar1 = TPUA_CH11_PARAM7;
-          crank_capture_period_packed = (wVar2 & 0xff) << 0x10 | (uint)wVar1;
+      if (uVar6 != 0xff) goto LAB_00045154;
+      wVar2 = TPUA_CH12_PARAM0.PARAM7;
+      uVar6 = wVar2 >> 8;
+      if (uVar6 == 3) goto LAB_000450e0;
+      if (uVar6 == 4) goto LAB_000450fc;
+      if (uVar6 != 6) {
+        if (uVar6 == 8) {
+          wVar3 = TPUA_CH12_PARAM0.PARAM5;
+          wVar2 = TPUA_CH11_PARAM7;
+          crank_capture_period_packed = (wVar3 & 0xff) << 0x10 | (uint)wVar2;
         }
         goto LAB_00045154;
       }
     }
-    wVar2 = TPUA_CH12_PARAM0.PARAM4;
-    wVar1 = TPUA_CH11_PARAM5;
-    crank_capture_period_packed = (wVar2 & 0xff) << 0x10 | (uint)wVar1;
+    wVar3 = TPUA_CH12_PARAM0.PARAM4;
+    wVar2 = TPUA_CH11_PARAM5;
+    crank_capture_period_packed = (wVar3 & 0xff) << 0x10 | (uint)wVar2;
   }
 LAB_00045154:
   _DAT_003fb5b9 = TPUA_CH3_PARAM3;
@@ -44509,27 +44161,27 @@ LAB_00045154:
        engine_rpm_state_t_0040b7ac._2_4_ + crank_capture_period_packed;
   engine_rpm_state_t_0040b7ac.reserved_0a = engine_rpm_state_t_0040b7ac.reserved_0a + 1;
   hpcr_cbdFillAccelerationBuffers();
-  wVar1 = _crank_tooth_position_count;
+  wVar2 = crank_tooth_position_count;
   if ((engine_crank_state_t_0040b80a.run_state == 2) &&
-     (wVar2 = _crank_tooth_position_count + 1, wVar1 = wVar2,
-     wVar2 == crank_tooth_position_target_cal)) {
-    wVar1 = tpu_a_ch0_param0.PARAM0;
-    uVar5 = -((short)wVar1 >> 0xf);
-    DAT_003fb5b8 = (byte)(wVar1 >> 0xf);
-    wVar4 = tpu_a_ch0_param0.PARAM4;
-    if (uVar5 != 0) {
-      wVar4 = wVar4 - crank_mios_compare_b_high_cal;
+     (wVar3 = crank_tooth_position_count + 1, wVar2 = wVar3,
+     wVar3 == crank_tooth_position_target_cal)) {
+    wVar2 = tpu_a_ch0_param0.PARAM0;
+    uVar6 = -((short)wVar2 >> 0xf);
+    DAT_003fb5b8 = (byte)(wVar2 >> 0xf);
+    wVar5 = tpu_a_ch0_param0.PARAM4;
+    if (uVar6 != 0) {
+      wVar5 = wVar5 - crank_mios_compare_b_high_cal;
     }
-    wVar1 = _crank_tooth_position_count;
-    if (ram0x00408fa6 <= (wVar4 & 0xff)) {
-      uVar3 = (uint)crank_tooth_count_a -
-              (uint)((ushort)crank_tooth_timer_max_cal._0_1_ < (wVar4 & 0xff));
-      _crank_tooth_position_count = wVar2;
-      if ((uVar3 == crank_pattern_tooth_count_cal) || (crank_pattern_valid_flag != 0)) {
-        if ((byte)crank_sync_event_count_min_cal != uVar5) {
+    wVar2 = crank_tooth_position_count;
+    if (ram0x00408fa6 <= (wVar5 & 0xff)) {
+      uVar4 = (uint)crank_tooth_count_a -
+              (uint)((ushort)crank_tooth_timer_max_cal._0_1_ < (wVar5 & 0xff));
+      crank_tooth_position_count = wVar3;
+      if ((uVar4 == crank_pattern_tooth_count_cal) || (crank_pattern_valid_flag != 0)) {
+        if ((byte)crank_sync_event_count_min_cal != uVar6) {
           tpu_a_mcr.HSRR1 = 1;
-          _timebase_delta_ticks = TBLr;
-          _timebase_delta_ticks = _timebase_delta_ticks - _timebase_previous_capture;
+          iVar1 = TBLr;
+          timebase_delta_ticks = iVar1 - timebase_previous_capture;
           crank_tbl_event_counter = crank_tbl_event_counter + 1;
         }
         cm848_protectionOverrideEvaluator();
@@ -44537,38 +44189,38 @@ LAB_00045154:
              lookupTableInterpolation
                        (&DAT_003fb5c3,2,&engine_event_countdown_axis_cal,
                         &engine_event_countdown_values_cal,1);
-        wVar1 = _crank_tooth_position_count;
+        wVar2 = crank_tooth_position_count;
       }
       else {
-        wVar1 = wVar2;
-        if (crank_pattern_tooth_count_cal - 1 == uVar3) {
-          if ((byte)crank_sync_event_count_min_cal == uVar5) {
+        wVar2 = wVar3;
+        if (crank_pattern_tooth_count_cal - 1 == uVar4) {
+          if ((byte)crank_sync_event_count_min_cal == uVar6) {
             tpu_a_mcr.HSRR1 = 1;
-            _timebase_delta_ticks = TBLr;
-            _timebase_delta_ticks = _timebase_delta_ticks - _timebase_previous_capture;
+            iVar1 = TBLr;
+            timebase_delta_ticks = iVar1 - timebase_previous_capture;
             crank_tbl_event_counter = crank_tbl_event_counter + 1;
           }
           cm848_protectionOverrideEvaluator();
-          wVar1 = _crank_tooth_position_count;
+          wVar2 = crank_tooth_position_count;
         }
       }
     }
   }
-  _crank_tooth_position_count = wVar1;
+  crank_tooth_position_count = wVar2;
   if ((engine_crank_state_t_0040b80a.run_state == 3) && (_DAT_003fb5b9 == 0)) {
-    uVar3 = (_crank_period_scale_cal / crank_period_accumulator -
-            _crank_period_scale_cal / crank_period_prev_snapshot) *
-            (_crank_period_scale_cal / crank_period_accumulator +
-            _crank_period_scale_cal / crank_period_prev_snapshot);
+    uVar4 = (crank_period_scale_cal / crank_period_accumulator -
+            crank_period_scale_cal / crank_period_prev_snapshot) *
+            (crank_period_scale_cal / crank_period_accumulator +
+            crank_period_scale_cal / crank_period_prev_snapshot);
     crank_period_variation_metric =
-         (word)((int)(((int)uVar3 >> 7) + (uint)((int)uVar3 < 0 && (uVar3 & 0x7f) != 0)) /
+         (word)((int)(((int)uVar4 >> 7) + (uint)((int)uVar4 < 0 && (uVar4 & 0x7f) != 0)) /
                (int)(uint)crank_period_scale_divisor);
     crank_period_prev_snapshot = crank_period_accumulator;
     if ((crank_sync_period_captured_threshold_cal < crank_sync_period_captured._0_2_) &&
-       (_crank_period_tooth_count_threshold_cal < (short)crank_period_variation_metric)) {
-      if (_crank_event_timebase_c == 0) {
-        _crank_event_timebase_c = TBLr;
-        _crank_event_timebase_c = _crank_event_timebase_c - _timebase_previous_capture;
+       ((int)crank_period_tooth_count_threshold_cal < (int)(short)crank_period_variation_metric)) {
+      if (crank_event_timebase_c == 0) {
+        iVar1 = TBLr;
+        crank_event_timebase_c = iVar1 - timebase_previous_capture;
       }
       crank_tooth_count_b = crank_tooth_count_b + 1;
     }
@@ -44588,22 +44240,21 @@ LAB_00045154:
 // Function: mpc555_updateEngineRunState @ 0x00045478
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void mpc555_updateEngineRunState(void)
 
 {
-  ushort uVar1;
-  word wVar2;
+  int iVar1;
+  ushort uVar2;
+  word wVar3;
   
-  wVar2 = tpu_a_ch0_param0.PARAM0;
-  DAT_003fb5b8 = (byte)(wVar2 >> 0xf);
-  wVar2 = tpu_a_ch0_param0.PARAM4;
-  uVar1 = wVar2 >> 8;
-  wVar2 = tpu_a_ch0_param0.PARAM4;
-  if (((uVar1 == 0) || ((uVar1 & 0x40) != 0)) || (engine_crank_state_t_0040b80a.run_state == 0)) {
-    if (((uVar1 & 0x40) == 0) || (engine_crank_state_t_0040b80a.run_state == 0)) {
-      if ((engine_crank_state_t_0040b80a.cranking_flag != 0) && (uVar1 == 0)) {
+  wVar3 = tpu_a_ch0_param0.PARAM0;
+  DAT_003fb5b8 = (byte)(wVar3 >> 0xf);
+  wVar3 = tpu_a_ch0_param0.PARAM4;
+  uVar2 = wVar3 >> 8;
+  wVar3 = tpu_a_ch0_param0.PARAM4;
+  if (((uVar2 == 0) || ((uVar2 & 0x40) != 0)) || (engine_crank_state_t_0040b80a.run_state == 0)) {
+    if (((uVar2 & 0x40) == 0) || (engine_crank_state_t_0040b80a.run_state == 0)) {
+      if ((engine_crank_state_t_0040b80a.cranking_flag != 0) && (uVar2 == 0)) {
         engine_crank_state_t_0040b80a.cranking_flag =
              engine_crank_state_t_0040b80a.cranking_flag - 1;
       }
@@ -44613,15 +44264,15 @@ void mpc555_updateEngineRunState(void)
              engine_crank_state_t_0040b80a.start_counter + 1;
       }
       if (engine_crank_state_t_0040b80a.run_state == 0) {
-        wVar2 = TPUA_CH14_PARAM0.PARAM7;
-        TPUA_CH14_PARAM0.PARAM7 = wVar2 & 0xff00 | (ushort)crank_timer_offset_cal._0_1_;
-        wVar2 = tpu_a_ch0_param0.PARAM4;
-        tpu_a_ch0_param0.PARAM4 = wVar2 & 0xff;
+        wVar3 = TPUA_CH14_PARAM0.PARAM7;
+        TPUA_CH14_PARAM0.PARAM7 = wVar3 & 0xff00 | (ushort)crank_timer_offset_cal._0_1_;
+        wVar3 = tpu_a_ch0_param0.PARAM4;
+        tpu_a_ch0_param0.PARAM4 = wVar3 & 0xff;
         crank_tooth_count_a = 0;
         crank_sync_period_counter = 0;
         engine_crank_state_t_0040b80a.run_state = 2;
         crank_sync_attempt_counter = 0;
-        _crank_tooth_position_count = 0;
+        crank_tooth_position_count = 0;
       }
       else if (engine_crank_state_t_0040b80a.run_state == 1) {
         if ((engine_crank_state_t_0040b80a.crank_state == 4) &&
@@ -44634,7 +44285,7 @@ void mpc555_updateEngineRunState(void)
       }
       else if (engine_crank_state_t_0040b80a.run_state == 2) {
         crank_tooth_count_a = 0;
-        _crank_tooth_position_count = 0;
+        crank_tooth_position_count = 0;
         crank_sync_attempt_counter = crank_sync_attempt_counter + 1;
         if (crank_sync_attempt_limit_cal <= crank_sync_attempt_counter) {
           engine_event_countdown = engine_event_countdown_cal;
@@ -44649,17 +44300,17 @@ void mpc555_updateEngineRunState(void)
           if (crank_tooth_count_b_min_cal <= crank_tooth_count_b) {
             engine_crank_state_t_0040b80a.run_state = 4;
             mpc555_evaluateProtectionThresholds();
-            if (_crank_tooth_period_tbl == 0) {
-              _crank_tooth_period_tbl = TBLr;
-              _crank_tooth_period_tbl = _crank_tooth_period_tbl - _timebase_previous_capture;
+            if (crank_tooth_period_tbl == 0) {
+              iVar1 = TBLr;
+              crank_tooth_period_tbl = iVar1 - timebase_previous_capture;
             }
           }
           if (crank_tooth_count_b == 0) {
             tpu_a_mcr.HSRR1 = 1;
-            _timebase_delta_ticks = TBLr;
-            _timebase_delta_ticks = _timebase_delta_ticks - _timebase_previous_capture;
+            iVar1 = TBLr;
+            timebase_delta_ticks = iVar1 - timebase_previous_capture;
             crank_tbl_event_counter = crank_tbl_event_counter + 1;
-            if (_crank_position_valid_flag == 0) {
+            if (crank_position_valid_flag == 0) {
               mpc555_processProtectionConditions();
             }
           }
@@ -44677,8 +44328,8 @@ void mpc555_updateEngineRunState(void)
     }
     if ((engine_crank_state_t_0040b80a.run_state == 2) &&
        (engine_crank_state_t_0040b80a.crank_state != 4)) {
-      wVar2 = tpu_a_ch0_param0.PARAM4;
-      tpu_a_ch0_param0.PARAM4 = wVar2 & 0xff;
+      wVar3 = tpu_a_ch0_param0.PARAM4;
+      tpu_a_ch0_param0.PARAM4 = wVar3 & 0xff;
     }
     else {
       cm848_setEngineRunState1();
@@ -44699,70 +44350,71 @@ void mpc555_updateEngineRunState(void)
 void mpc555_updateEngineCrankState(void)
 
 {
-  ushort uVar1;
-  word wVar2;
+  int iVar1;
+  ushort uVar2;
   word wVar3;
-  char cVar5;
-  uint uVar4;
-  uint uVar6;
+  word wVar4;
+  char cVar6;
+  uint uVar5;
   uint uVar7;
   uint uVar8;
   uint uVar9;
+  uint uVar10;
   
-  uVar4 = tpu_a_ch1_param2._2_4_;
-  wVar2 = tpu_a_ch1_param2.PARAM4;
-  uVar1 = wVar2 >> 8;
-  wVar2 = tpu_a_ch1_param2.PARAM4;
-  uVar8 = wVar2 & 0xff;
-  wVar3 = TPUA_CH3_PARAM2;
+  uVar5 = tpu_a_ch1_param2._2_4_;
+  wVar3 = tpu_a_ch1_param2.PARAM4;
+  uVar2 = wVar3 >> 8;
+  wVar3 = tpu_a_ch1_param2.PARAM4;
   uVar9 = wVar3 & 0xff;
-  crank_period_computed = (word)uVar9;
-  if ((wVar2 & 0xff) == 0) {
+  wVar4 = TPUA_CH3_PARAM2;
+  uVar10 = wVar4 & 0xff;
+  crank_period_computed = (word)uVar10;
+  if ((wVar3 & 0xff) == 0) {
     crank_pattern_valid_flag = true;
   }
   else {
     engine_sync_startup_countdown = _DAT_003fb5b6;
-    (&crank_period_capture_array)[_crank_period_capture_index] = uVar4 & 0xffffff;
-    _crank_period_capture_index = _crank_period_capture_index + 1;
-    uVar7 = (uint)crank_period_capture_index_max_cal._0_1_;
-    if (uVar7 <= _crank_period_capture_index) {
-      _crank_period_capture_index = 0;
+    (&crank_period_capture_array)[crank_period_capture_index] = uVar5 & 0xffffff;
+    crank_period_capture_index = crank_period_capture_index + 1;
+    uVar8 = (uint)crank_period_capture_index_max_cal._0_1_;
+    if (uVar8 <= crank_period_capture_index) {
+      crank_period_capture_index = 0;
     }
     crank_tooth_period_raw = 0;
-    uVar6 = 0;
-    if (uVar7 != 0) {
+    uVar7 = 0;
+    if (uVar8 != 0) {
       crank_tooth_period_raw = 0;
       do {
-        crank_tooth_period_raw = crank_tooth_period_raw + (&crank_period_capture_array)[uVar6];
-        uVar6 = uVar6 + 1 & 0xff;
-      } while (uVar6 < uVar7);
+        crank_tooth_period_raw = crank_tooth_period_raw + (&crank_period_capture_array)[uVar7];
+        uVar7 = uVar7 + 1 & 0xff;
+      } while (uVar7 < uVar8);
     }
     engine_rpm_state_t_0040b7ac._6_4_ =
          engine_rpm_state_t_0040b7ac._6_4_ +
-         ((uVar4 & 0xffffff) / (uint)crank_rpm_divisor_cal) * uVar7;
+         ((uVar5 & 0xffffff) / (uint)crank_rpm_divisor_cal) * uVar8;
     engine_rpm_state_t_0040b7ac.reserved_0c = engine_rpm_state_t_0040b7ac.reserved_0c + 1;
     crank_pattern_valid_flag = false;
   }
   if (engine_crank_state_t_0040b80a.crank_state == 0) {
-    if (uVar1 == 0) {
+    if (uVar2 == 0) {
       engine_crank_state_t_0040b80a.crank_state = 4;
     }
-    else if ((uVar1 & 0x40) == 0) {
+    else if ((uVar2 & 0x40) == 0) {
 LAB_00045970:
       engine_crank_state_t_0040b80a.crank_state = 1;
     }
   }
   else if (engine_crank_state_t_0040b80a.crank_state == 1) {
-    if (uVar1 == 0) {
+    if (uVar2 == 0) {
       engine_crank_state_t_0040b80a.crank_state = 4;
     }
-    else if ((uVar1 & 0x40) != 0) {
+    else if ((uVar2 & 0x40) != 0) {
       engine_crank_state_t_0040b80a.crank_state = 0;
     }
   }
   else if (engine_crank_state_t_0040b80a.crank_state == 4) {
-    if ((uVar1 & 0x40) == 0) {
-      if (uVar1 != 0) goto LAB_00045970;
+    if ((uVar2 & 0x40) == 0) {
+      if (uVar2 != 0) goto LAB_00045970;
     }
     else {
       engine_crank_state_t_0040b80a.crank_state = 0;
@@ -44770,36 +44422,36 @@ LAB_00045970:
   }
   if (engine_crank_state_t_0040b80a.crank_state == 0) {
     if (engine_crank_state_t_0040b80a.run_state != 0) {
-      cVar5 = '\0';
-      uVar4 = 0;
+      cVar6 = '\0';
+      uVar5 = 0;
       if (crank_tooth_pattern_size_cal != 0) {
         do {
-          if (((&crank_tooth_pattern_table)[uVar4] == uVar9) ||
-             (uVar9 - 1 == (uint)(&crank_tooth_pattern_table)[uVar4])) {
-            cVar5 = cVar5 + '\x01';
+          if (((&crank_tooth_pattern_table)[uVar5] == uVar10) ||
+             (uVar10 - 1 == (uint)(&crank_tooth_pattern_table)[uVar5])) {
+            cVar6 = cVar6 + '\x01';
           }
-          uVar4 = uVar4 + 1 & 0xff;
-        } while (uVar4 < crank_tooth_pattern_size_cal);
+          uVar5 = uVar5 + 1 & 0xff;
+        } while (uVar5 < crank_tooth_pattern_size_cal);
       }
-      if (cVar5 == '\0') {
+      if (cVar6 == '\0') {
         crank_tooth_count_a = 0;
         crank_sync_period_counter = 0;
       }
       else {
         crank_tooth_count_a = crank_tooth_count_a + 1;
         crank_sync_period_counter = crank_sync_period_counter + 1;
-        if (((((bool)crank_pattern_valid_flag) && (_crank_position_valid_flag == 0)) &&
+        if (((((bool)crank_pattern_valid_flag) && (crank_position_valid_flag == 0)) &&
             (((engine_crank_state_t_0040b80a.run_state == 3 &&
               ((byte)crank_sync_period_limit_state1_cal < crank_sync_period_counter)) ||
              ((engine_crank_state_t_0040b80a.run_state == 1 &&
               (crank_sync_period_limit_state1_cal._0_1_ < crank_sync_period_counter)))))) &&
            (crank_tooth_count_b == 0)) {
-          wVar2 = tpu_a_ch0_param0.PARAM0;
-          DAT_003fb5b8 = (byte)(wVar2 >> 0xf);
-          if (wVar2 >> 0xf != (ushort)(byte)crank_sync_event_count_min_cal) {
+          wVar3 = tpu_a_ch0_param0.PARAM0;
+          DAT_003fb5b8 = (byte)(wVar3 >> 0xf);
+          if (wVar3 >> 0xf != (ushort)(byte)crank_sync_event_count_min_cal) {
             tpu_a_mcr.HSRR1 = 1;
-            _timebase_delta_ticks = TBLr;
-            _timebase_delta_ticks = _timebase_delta_ticks - _timebase_previous_capture;
+            iVar1 = TBLr;
+            timebase_delta_ticks = iVar1 - timebase_previous_capture;
             crank_tbl_event_counter = crank_tbl_event_counter + 1;
             if (engine_crank_state_t_0040b80a.run_state == 3) {
               mpc555_processProtectionConditions();
@@ -44821,32 +44473,32 @@ LAB_00045970:
   if (engine_crank_state_t_0040b80a.start_counter != 0) {
     engine_crank_state_t_0040b80a.start_counter = engine_crank_state_t_0040b80a.start_counter - 1;
   }
-  if (_crank_event_timebase_a == 0) {
-    _crank_event_timebase_a = TBLr;
-    _crank_event_timebase_a = _crank_event_timebase_a - _timebase_previous_capture;
+  if (crank_event_timebase_a == 0) {
+    iVar1 = TBLr;
+    crank_event_timebase_a = iVar1 - timebase_previous_capture;
   }
   if (engine_crank_state_t_0040b80a.run_state != 4) {
     if ((engine_crank_state_t_0040b80a.run_state == 2) ||
        (engine_crank_state_t_0040b80a.run_state == 3)) {
-      uVar4 = (uint)crank_period_computed;
-      if (((&crank_tooth_pattern_table)[uVar8] == uVar4) ||
-         ((uint)(&crank_tooth_pattern_table)[uVar8] == uVar4 - 1)) {
+      uVar5 = (uint)crank_period_computed;
+      if (((&crank_tooth_pattern_table)[uVar9] == uVar5) ||
+         ((uint)(&crank_tooth_pattern_table)[uVar9] == uVar5 - 1)) {
         crank_sync_period_counter = crank_sync_period_counter + 1;
       }
-      else if (((&crank_tooth_pattern_table)[_crank_sync_tooth_count_cal + uVar8] == uVar4) ||
-              ((uint)(&crank_tooth_pattern_table)[_crank_sync_tooth_count_cal + uVar8] == uVar4 - 1)
-              ) {
+      else if (((&crank_tooth_pattern_table)[crank_sync_tooth_count_cal + uVar9] == uVar5) ||
+              ((uint)(&crank_tooth_pattern_table)[crank_sync_tooth_count_cal + uVar9] == uVar5 - 1))
+      {
         crank_sync_period_counter = crank_sync_period_counter + 1;
         tpu_a_mcr.HSRR1 = 1;
-        _timebase_delta_ticks = TBLr;
-        _timebase_delta_ticks = _timebase_delta_ticks - _timebase_previous_capture;
+        iVar1 = TBLr;
+        timebase_delta_ticks = iVar1 - timebase_previous_capture;
         crank_tbl_event_counter = crank_tbl_event_counter + 1;
-        if (_crank_position_valid_flag == 0) {
+        if (crank_position_valid_flag == 0) {
           mpc555_processProtectionConditions();
         }
       }
       if ((crank_pattern_valid_flag != 0) &&
-         (crank_sync_period_counter == _crank_sync_tooth_count_cal)) {
+         (crank_sync_period_counter == crank_sync_tooth_count_cal)) {
         if (engine_crank_state_t_0040b80a.run_state == 2) {
           cm848_engineRunState4Handler2();
         }
@@ -44861,7 +44513,7 @@ LAB_00045970:
         engine_crank_state_t_0040b80a.cranking_flag =
              engine_crank_state_t_0040b80a.cranking_flag + 1;
       }
-      if ((_crank_position_valid_flag == 0) &&
+      if ((crank_position_valid_flag == 0) &&
          (cranking_flag_threshold_cal < engine_crank_state_t_0040b80a.cranking_flag)) {
         mpc555_initEngineCrankSequence();
         mpc555_processProtectionConditions();
@@ -44869,24 +44521,24 @@ LAB_00045970:
     }
     goto LAB_00045ea0;
   }
-  uVar4 = (uint)crank_period_computed;
-  if (((&crank_tooth_pattern_table)[uVar8] == uVar4) ||
-     ((uint)(&crank_tooth_pattern_table)[uVar8] == uVar4 - 1)) {
+  uVar5 = (uint)crank_period_computed;
+  if (((&crank_tooth_pattern_table)[uVar9] == uVar5) ||
+     ((uint)(&crank_tooth_pattern_table)[uVar9] == uVar5 - 1)) {
     if (crank_sync_timeout_count != 0) {
       crank_sync_timeout_count = crank_sync_timeout_count - 1;
     }
-    _crank_sync_phase_counter = 0;
+    crank_sync_phase_counter._0_2_ = 0;
 LAB_00045c84:
     crank_sync_period_counter = crank_sync_period_counter + 1;
   }
   else {
-    if (((&crank_tooth_pattern_table)[_crank_sync_tooth_count_cal + uVar8] == uVar4) ||
-       ((uint)(&crank_tooth_pattern_table)[_crank_sync_tooth_count_cal + uVar8] == uVar4 - 1)) {
+    if (((&crank_tooth_pattern_table)[crank_sync_tooth_count_cal + uVar9] == uVar5) ||
+       ((uint)(&crank_tooth_pattern_table)[crank_sync_tooth_count_cal + uVar9] == uVar5 - 1)) {
       tpu_a_mcr.HSRR1 = 1;
-      _timebase_delta_ticks = TBLr;
-      _timebase_delta_ticks = _timebase_delta_ticks - _timebase_previous_capture;
+      iVar1 = TBLr;
+      timebase_delta_ticks = iVar1 - timebase_previous_capture;
       crank_tbl_event_counter = crank_tbl_event_counter + 1;
-      _crank_sync_phase_counter = _crank_sync_phase_counter + 1;
+      crank_sync_phase_counter._0_2_ = crank_sync_phase_counter._0_2_ + 1;
       goto LAB_00045c84;
     }
     crank_sync_period_counter = 0;
@@ -44894,8 +44546,8 @@ LAB_00045c84:
       crank_sync_timeout_count = crank_sync_timeout_count + 1;
     }
   }
-  if (crank_sync_phase_counter_threshold_cal < _crank_sync_phase_counter) {
-    _crank_sync_phase_counter = 0;
+  if (crank_sync_phase_counter_threshold_cal < crank_sync_phase_counter._0_2_) {
+    crank_sync_phase_counter._0_2_ = 0;
     cm848_setEngineRunState3();
   }
 LAB_00045ea0:
@@ -44928,19 +44580,19 @@ void cm848_calculateFuelDemandWithConditions(void)
   int iVar10;
   int iVar11;
   
-  if ((_DAT_003fd5dc & 4) == 0) {
+  if ((governor_fuel_feature_flags & 4) == 0) {
     fuel_demand_governor_output = fuel_demand_control_t_0040a57a.calculated;
     return;
   }
   bVar1 = false;
-  if ((((_governor_fuel_demand_mode == 7) &&
-       ((((fuel_feature_control_flags & 0x10) != 0 || (_fuel_demand_pilot_active_flag != 1)) ||
+  if ((((governor_fuel_demand_mode == 7) &&
+       ((((fuel_feature_control_flags & 0x10) != 0 || (fuel_demand_pilot_active_flag._0_2_ != 1)) ||
         (fuel_demand_integrator == 0)))) ||
-      ((((_governor_fuel_demand_mode == 0xb || (_governor_fuel_demand_mode == 2)) ||
-        (_governor_fuel_demand_mode == 1)) || (_governor_mode_code == 0x14)))) ||
-     ((((_governor_fuel_demand_mode == 0xc && (governor_pid_t_0040af5a.integral_term == 7)) &&
+      ((((governor_fuel_demand_mode == 0xb || (governor_fuel_demand_mode == 2)) ||
+        (governor_fuel_demand_mode == 1)) || (governor_mode_code == 0x14)))) ||
+     ((((governor_fuel_demand_mode == 0xc && (governor_pid_t_0040af5a.integral_term == 7)) &&
        (governor_fuel_demand_value < governor_pid_t_0040af5a.proportional_gain)) ||
-      (0x80 < _fuel_timing_blend_factor)))) {
+      (0x80 < fuel_timing_blend_factor)))) {
     if ((fuel_feature_control_flags & 0x10) == 0) {
       uVar7 = (uint)fuel_demand_control_t_0040a57a.calculated;
     }
@@ -44962,15 +44614,15 @@ void cm848_calculateFuelDemandWithConditions(void)
                       (&DAT_003fb5e4,governor_speed_error_input,&DAT_0005976e,&DAT_0005977e,0);
     uVar8 = lookupTableInterpolation
                       (&DAT_003fb5e2,governor_speed_error_input,&DAT_0005974e,&DAT_0005975e,0);
-    uVar7 = ((uint)_fuel_timing_blend_factor * (uVar7 & 0xffff) >> 7) +
-            ((0x80 - (uint)_fuel_timing_blend_factor) * (uVar8 & 0xffff) >> 7) & 0xffff;
+    uVar7 = ((uint)fuel_timing_blend_factor * (uVar7 & 0xffff) >> 7) +
+            ((0x80 - (uint)fuel_timing_blend_factor) * (uVar8 & 0xffff) >> 7) & 0xffff;
     if (governor_fuel_timing_correction_threshold_cal < uVar7) {
       uVar8 = lookupTableInterpolation
                         (&DAT_003fb5dc,governor_speed_error_input,&DAT_0005c21e,&DAT_0005c230,0);
       uVar9 = lookupTableInterpolation
                         (&DAT_003fb5de,governor_speed_error_input,&DAT_0005972a,&DAT_0005973c,0);
       _DAT_003fb5d6 = sensor_readings_t_0040baf2.coolant_temp;
-      uVar5 = (uint)_fuel_timing_blend_factor;
+      uVar5 = (uint)fuel_timing_blend_factor;
       uVar2 = lookupTableInterpolation
                         (&DAT_003fb5e0,sensor_readings_t_0040baf2.coolant_temp,&DAT_0005c242,
                          &DAT_0005c25a,1);
@@ -45035,12 +44687,12 @@ LAB_00046214:
     uVar7 = (((uint)governor_speed_error_input - (uint)governor_speed_error_high) * 400) /
             ((uint)governor_speed_error_low - (uint)governor_speed_error_high) & 0xffff;
   }
-  if ((_governor_override_active_flag == 0) && (_governor_fuel_active_flag == 0)) {
+  if ((governor_override_active_flag == 0) && (governor_fuel_active_flag == 0)) {
     governor_fuel_integral_accumulator = 0;
     governor_rpm_integral = 0;
     goto LAB_0004662c;
   }
-  if (_governor_override_active_flag == 0) {
+  if (governor_override_active_flag == 0) {
     if (((((uint)governor_fuel_demand_value <= (uint)fuel_demand_computed) &&
          ((int)(uint)governor_fuel_demand_value <
           (int)((uint)active_fault_fuel_correction - (uint)fuel_correction_hysteresis_cal))) &&
@@ -45168,8 +44820,6 @@ void cm848_initRpmSetpointFilters(void)
 // Function: cm848_calculateGovernorOutput @ 0x000466a8
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_calculateGovernorOutput(void)
 
 {
@@ -45182,7 +44832,7 @@ void cm848_calculateGovernorOutput(void)
   short sVar7;
   short sVar8;
   int extraout_r4;
-  uint extraout_r4_00;
+  dword extraout_r4_00;
   uint uVar9;
   int iVar10;
   word wStack_2e;
@@ -45192,7 +44842,7 @@ void cm848_calculateGovernorOutput(void)
   wVar1 = sensor_readings_t_0040baf2.coolant_temp;
   sVar7 = 0;
   sVar8 = 0;
-  if ((_crank_position_valid_flag != 0) && (engine_sync_force_reset_cal == 1)) {
+  if ((crank_position_valid_flag != 0) && (engine_sync_force_reset_cal == 1)) {
     crank_sync_threshold = 0;
     crank_sync_state_counter = 0xe;
     return;
@@ -45246,60 +44896,60 @@ void cm848_calculateGovernorOutput(void)
                    ((longlong)((short)crank_rpm_calc_factor_a * 10) *
                    (longlong)(int)(uint)crank_rpm_calc_factor_b) >> 0x20),
              (short)crank_rpm_calc_factor_a * 10 * (uint)crank_rpm_calc_factor_b,0,0x8000);
-  _governor_fuel_demand_limit_hi = extraout_r4_00;
+  governor_fuel_demand_limit_hi = extraout_r4_00;
   sVar5 = cm848_dualAxisTableInterpolation
                     (&DAT_003fb5ee,engine_rpm_state_t_0040b7ac.current_rpm,&DAT_0005c976,
                      fuel_demand_computed,0x5c99e,&DAT_0005c9c0,4);
-  if (_boost_map_index_current == 1) {
+  if (boost_map_index_current == 1) {
     sVar7 = cm848_dualAxisTableInterpolation
                       (&DAT_003fb602,engine_rpm_state_t_0040b7ac.current_rpm,&DAT_0005d2aa,
                        fuel_demand_computed,&DAT_0005d2d2,&DAT_0005d2f4,4);
   }
-  else if (_boost_map_index_current == 2) {
+  else if (boost_map_index_current == 2) {
     sVar7 = cm848_dualAxisTableInterpolation
                       (&DAT_003fb602,engine_rpm_state_t_0040b7ac.current_rpm,&DAT_0005d554,
                        fuel_demand_computed,&DAT_0005d57c,&DAT_0005d59e,4);
   }
-  else if (_boost_map_index_current == 3) {
+  else if (boost_map_index_current == 3) {
     sVar7 = cm848_dualAxisTableInterpolation
                       (&DAT_003fb602,engine_rpm_state_t_0040b7ac.current_rpm,&DAT_0005d7fe,
                        fuel_demand_computed,&DAT_0005d826,&DAT_0005d848,4);
   }
-  else if (_boost_map_index_current == 4) {
+  else if (boost_map_index_current == 4) {
     sVar7 = cm848_dualAxisTableInterpolation
                       (&DAT_003fb602,engine_rpm_state_t_0040b7ac.current_rpm,&DAT_0005daa8,
                        fuel_demand_computed,&DAT_0005dad0,&DAT_0005daf2,4);
   }
-  if (_boost_map_index_target == 1) {
+  if (boost_map_index_target == 1) {
     sVar8 = cm848_dualAxisTableInterpolation
                       (&DAT_003fb602,engine_rpm_state_t_0040b7ac.current_rpm,&DAT_0005d2aa,
                        fuel_demand_computed,&DAT_0005d2d2,&DAT_0005d2f4,4);
   }
-  else if (_boost_map_index_target == 2) {
+  else if (boost_map_index_target == 2) {
     sVar8 = cm848_dualAxisTableInterpolation
                       (&DAT_003fb602,engine_rpm_state_t_0040b7ac.current_rpm,&DAT_0005d554,
                        fuel_demand_computed,&DAT_0005d57c,&DAT_0005d59e,4);
   }
-  else if (_boost_map_index_target == 3) {
+  else if (boost_map_index_target == 3) {
     sVar8 = cm848_dualAxisTableInterpolation
                       (&DAT_003fb602,engine_rpm_state_t_0040b7ac.current_rpm,&DAT_0005d7fe,
                        fuel_demand_computed,&DAT_0005d826,&DAT_0005d848,4);
   }
-  else if (_boost_map_index_target == 4) {
+  else if (boost_map_index_target == 4) {
     sVar8 = cm848_dualAxisTableInterpolation
                       (&DAT_003fb602,engine_rpm_state_t_0040b7ac.current_rpm,&DAT_0005daa8,
                        fuel_demand_computed,&DAT_0005dad0,&DAT_0005daf2,4);
   }
   injection_timing_boost_blend =
        cm848_filterInputValue
-                 ((int)sVar7,(int)sVar8,(int)sVar5,_boost_map_index_current,_boost_map_index_target,
+                 ((int)sVar7,(int)sVar8,(int)sVar5,boost_map_index_current,boost_map_index_target,
                   fuel_blend_state_t_0040a494.blend_weight,fuel_blend_state_t_0040a494.blend_mode);
   uVar9 = (uint)injection_timing_boost_blend;
   iVar10 = 1;
   if (injection_timing_mode_select_cal == 2) {
-    if ((int)_governor_fuel_demand_limit_hi < (int)uVar9) {
+    if ((int)governor_fuel_demand_limit_hi < (int)uVar9) {
       iVar10 = 5;
-      uVar9 = _governor_fuel_demand_limit_hi;
+      uVar9 = governor_fuel_demand_limit_hi;
     }
     if ((int)(uint)governor_fuel_demand_limit_lo < (int)uVar9) {
       iVar10 = 4;
@@ -45308,9 +44958,9 @@ void cm848_calculateGovernorOutput(void)
     if ((int)uVar9 <= (int)(short)injection_timing_demand_cyl6) goto LAB_00046c70;
   }
   else {
-    if ((int)uVar9 < (int)_governor_fuel_demand_limit_hi) {
+    if ((int)uVar9 < (int)governor_fuel_demand_limit_hi) {
       iVar10 = 5;
-      uVar9 = _governor_fuel_demand_limit_hi;
+      uVar9 = governor_fuel_demand_limit_hi;
     }
     if ((int)uVar9 < (int)(uint)governor_fuel_demand_limit_lo) {
       iVar10 = 4;
@@ -45331,7 +44981,7 @@ LAB_00046c70:
   }
   injection_timing_arb_source_packed =
        ((int)(short)injection_timing_source_byte_2 & 0xffU) << 0x10 | iVar10 << 8 |
-       (int)_governor_mode_code & 0xffU;
+       (int)(short)governor_mode_code & 0xffU;
   crank_sync_state_counter = (word)iVar10;
   crank_sync_threshold = (word)uVar9;
   return;
@@ -45620,7 +45270,7 @@ void cm848_calculateEngineTimingInterpolation(void)
     }
     if ((uVar3 & 0xffff) <= uVar5) {
       dVar4 = crank_tooth_period_raw;
-      if (_engine_event_active_flag == 0) {
+      if (engine_event_active_flag == 0) {
         dVar4 = crank_period_accumulator;
       }
       if ((int)(short)(cam_sync_period_reference_a * -5) -
@@ -45701,7 +45351,7 @@ void cm848_processDualAxisLookup(void)
   }
   if ((uVar1 & 0xffff) <= uVar3) {
     dVar2 = crank_tooth_period_raw;
-    if (_engine_event_active_flag == 0) {
+    if (engine_event_active_flag == 0) {
       dVar2 = crank_period_accumulator;
     }
     if ((int)(short)(cam_sync_period_reference_a * -5) -
@@ -45771,7 +45421,7 @@ void cm848_calculateEngineFaultTiming(int param_1)
                       (&DAT_003fb612,cam_sync_position,&cam_sync_timing_xaxis_cal,
                        &cam_sync_timing_yaxis_cal,1);
     dVar7 = crank_tooth_period_raw;
-    if (_engine_event_active_flag == 0) {
+    if (engine_event_active_flag == 0) {
       dVar7 = crank_period_accumulator;
     }
     if ((int)(short)(injection_period_capture_a * -5) -
@@ -45819,9 +45469,9 @@ void cm848_calculateEngineFaultTiming(int param_1)
     if (uVar5 < uVar3) {
       uVar5 = 0;
     }
-    _injection_timing_active_flag = uVar5;
+    injection_timing_active_flag = uVar5;
     if (cruise_speed_rate_of_change < uVar5) {
-      _injection_timing_active_flag = cruise_speed_rate_of_change;
+      injection_timing_active_flag = cruise_speed_rate_of_change;
     }
     if (injection_timing_timing_mode_cal == 0) {
       if ((fuel_quantity_active < uVar6) &&
@@ -45830,9 +45480,9 @@ void cm848_calculateEngineFaultTiming(int param_1)
     }
     else if (fuel_injection_quantity_threshold <= uVar6) goto LAB_00047628;
   }
-  _injection_timing_active_flag = 0;
+  injection_timing_active_flag = 0;
 LAB_00047628:
-  if ((engine_timing_delta != 0) && (_injection_timing_active_flag == 0)) {
+  if ((engine_timing_delta != 0) && (injection_timing_active_flag == 0)) {
     if ((wVar1 & 1) == 0) {
       engine_timing_reference_high = engine_timing_reference_high + engine_timing_delta;
     }
@@ -45871,7 +45521,7 @@ void cm848_validateSyncCount(void)
                     (&DAT_003fb612,*unaff_r29,&cam_sync_timing_xaxis_cal,&cam_sync_timing_yaxis_cal,
                      1);
   dVar6 = crank_tooth_period_raw;
-  if (_engine_event_active_flag == 0) {
+  if (engine_event_active_flag == 0) {
     dVar6 = crank_period_accumulator;
   }
   if ((int)(short)(injection_period_capture_a * -5) - (int)(short)(cam_sync_period_reference_b * -5)
@@ -45919,9 +45569,9 @@ void cm848_validateSyncCount(void)
   if (uVar4 < uVar2) {
     uVar4 = 0;
   }
-  _injection_timing_active_flag = uVar4;
+  injection_timing_active_flag = uVar4;
   if (cruise_speed_rate_of_change < uVar4) {
-    _injection_timing_active_flag = cruise_speed_rate_of_change;
+    injection_timing_active_flag = cruise_speed_rate_of_change;
   }
   if (injection_timing_timing_mode_cal == 0) {
     if ((fuel_quantity_active < uVar5) &&
@@ -45929,10 +45579,10 @@ void cm848_validateSyncCount(void)
     goto LAB_00047628;
   }
   else if (fuel_injection_quantity_threshold <= uVar5) goto LAB_00047628;
-  _injection_timing_active_flag = 0;
+  injection_timing_active_flag = 0;
 LAB_00047628:
   uVar2 = *unaff_r27;
-  if ((uVar2 != 0) && (_injection_timing_active_flag == 0)) {
+  if ((uVar2 != 0) && (injection_timing_active_flag == 0)) {
     if ((unaff_r25 & 1) == 0) {
       engine_timing_reference_high = engine_timing_reference_high + uVar2;
     }
@@ -45950,8 +45600,6 @@ LAB_00047628:
 // Function: cm848_selectGovernorFilterOutput @ 0x0004769c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_selectGovernorFilterOutput(void)
 
 {
@@ -45961,7 +45609,7 @@ void cm848_selectGovernorFilterOutput(void)
   if ((cylinder_event_index & 1) == 0) {
     engine_timing_reference_high = engine_timing_reference;
     dVar2 = crank_tooth_period_raw;
-    if (_engine_event_active_flag == 0) {
+    if (engine_event_active_flag == 0) {
       dVar2 = crank_period_accumulator;
     }
     if (0xffff < dVar2) {
@@ -45996,8 +45644,6 @@ void cm848_selectGovernorFilterOutput(void)
 // Function: cm848_checkEngineSyncPulse @ 0x000476d4
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_checkEngineSyncPulse(void)
 
 {
@@ -46005,7 +45651,7 @@ void cm848_checkEngineSyncPulse(void)
   dword dVar2;
   
   dVar2 = crank_tooth_period_raw;
-  if (_engine_event_active_flag == 0) {
+  if (engine_event_active_flag == 0) {
     dVar2 = crank_period_accumulator;
   }
   if (0xffff < dVar2) {
@@ -46199,11 +45845,11 @@ void cm848_calculateEngineTimingOffset(void)
   dword local_64;
   dword local_60;
   dword local_5c;
-  undefined4 local_58;
+  dword local_58;
   dword local_54;
   dword local_50;
   dword local_4c;
-  undefined4 local_48;
+  dword local_48;
   word local_44;
   ushort uStack_42;
   word wStack_40;
@@ -46219,7 +45865,7 @@ void cm848_calculateEngineTimingOffset(void)
     return;
   }
   if ((engine_sync_cold_start_flag != 0) &&
-     ((_cold_start_phase == 1 || (engine_sync_cold_start_enable2_cal == 1)))) {
+     ((cold_start_phase == 1 || (engine_sync_cold_start_enable2_cal == 1)))) {
     engine_sync_state_t_0040b87f.speed_raw = engine_sync_cold_start_speed_cal;
     return;
   }
@@ -46230,13 +45876,13 @@ void cm848_calculateEngineTimingOffset(void)
         (speed_setpoint_raw < cam_sync_speed_phase_max_cal)) &&
        ((engine_sync_state_t_0040b87f.sync_status != 8 &&
         (engine_sync_state_t_0040b87f.sync_status != 0x10)))) {
-      if (cam_sync_confirm_count_threshold_cal < _cam_sync_confirm_counter) {
+      if (cam_sync_confirm_count_threshold_cal < cam_sync_confirm_counter) {
         cam_sync_status_prev = engine_sync_state_t_0040b87f.sync_status;
         engine_sync_state_t_0040b87f.sync_status = 8;
         cam_sync_tooth_match_flag = 0;
       }
       else {
-        _cam_sync_confirm_counter = _cam_sync_confirm_counter + 1;
+        cam_sync_confirm_counter = cam_sync_confirm_counter + 1;
       }
     }
     if ((((system_status_flags_t_003fe974.reserved_28 & 1) != 0) ||
@@ -46244,21 +45890,20 @@ void cm848_calculateEngineTimingOffset(void)
        (((power_state_status_flags & 0x200) != 0 || ((power_state_status_flags & 0x400) != 0)))) {
       engine_sync_state_t_0040b87f.sync_status = 0x40;
     }
-    if (((protection_enable_t_0040c050.mode_bits & 1) == 0) && (_engine_shutdown_active_flag == 0))
-    {
+    if (((protection_enable_t_0040c050.mode_bits & 1) == 0) && (engine_shutdown_active_flag == 0)) {
       engine_sync_state_t_0040b87f.sync_status = 0x10;
     }
     wVar13 = engine_sync_protection_output_a;
     if (engine_sync_state_t_0040b87f.sync_status < 9) {
       if (engine_sync_state_t_0040b87f.sync_status == 8) {
-        _cam_sync_phase_counter = _cam_sync_phase_counter + 1;
-        if ((((cam_sync_phase_count_limit_cal < _cam_sync_phase_counter) ||
+        cam_sync_phase_counter = cam_sync_phase_counter + 1;
+        if ((((cam_sync_phase_count_limit_cal < cam_sync_phase_counter) ||
              ((short)cam_sync_timing_upper_threshold_cal <= (short)cam_timing_reference_b)) ||
             (cam_sync_speed_phase_max_cal <= speed_setpoint_raw)) ||
            (speed_setpoint_raw <= cam_sync_speed_phase_min_cal)) {
           engine_sync_state_t_0040b87f.sync_status = cam_sync_status_prev;
-          _cam_sync_phase_counter = 0;
-          _cam_sync_confirm_counter = 0;
+          cam_sync_phase_counter = 0;
+          cam_sync_confirm_counter = 0;
           if (((cam_sync_status_prev == 2) || (cam_sync_status_prev == 4)) &&
              (wVar13 = engine_sync_state_t_0040b87f.reference_count,
              wVar14 = engine_sync_state_t_0040b87f.reference_count,
@@ -46299,8 +45944,8 @@ LAB_00047f84:
       }
     }
     else if (engine_sync_state_t_0040b87f.sync_status == 0x10) {
-      if (((protection_enable_t_0040c050.mode_bits & 1) != 0) || (_engine_shutdown_active_flag == 1)
-         ) goto LAB_0004800c;
+      if (((protection_enable_t_0040c050.mode_bits & 1) != 0) || (engine_shutdown_active_flag == 1))
+      goto LAB_0004800c;
     }
     else if ((engine_sync_state_t_0040b87f.sync_status == 0x20) ||
             (((engine_sync_state_t_0040b87f.sync_status == 0x40 &&
@@ -46351,7 +45996,7 @@ LAB_0004800c:
         local_5c = (int)((ulonglong)injection_timing_scale_cyl3_a_cal * (ulonglong)(uVar2 & 0xffff)
                         >> 0x20) << 0x14 |
                    injection_timing_scale_cyl3_a_cal * (uVar2 & 0xffff) >> 0xc;
-        local_58 = _engine_sync_prot_scale_a_cal;
+        local_58 = engine_sync_prot_scale_a_cal;
         uVar2 = lookupTableInterpolation
                           (&DAT_003fb64a,speed_setpoint_raw,&cam_sync_cyl4_timing_axis_a_cal,
                            &cam_sync_cyl4_timing_values_a_cal,0);
@@ -46370,7 +46015,7 @@ LAB_0004800c:
         local_4c = (int)((ulonglong)injection_timing_scale_cyl6_a_cal * (ulonglong)(uVar2 & 0xffff)
                         >> 0x20) << 0x14 |
                    injection_timing_scale_cyl6_a_cal * (uVar2 & 0xffff) >> 0xc;
-        local_48 = _engine_sync_prot_scale_b_cal;
+        local_48 = engine_sync_prot_scale_b_cal;
         uVar2 = lookupTableInterpolation
                           (&DAT_003fb650,speed_setpoint_raw,&cam_sync_prot_gain_axis_cal,
                            &cam_sync_prot_gain_values_cal,0);
@@ -46419,11 +46064,11 @@ LAB_0004800c:
         local_64 = injection_timing_scale_cyl1_a_cal;
         local_60 = injection_timing_scale_cyl2_a_cal;
         local_5c = injection_timing_scale_cyl3_a_cal;
-        local_58 = _engine_sync_prot_scale_a_cal;
+        local_58 = engine_sync_prot_scale_a_cal;
         local_54 = injection_timing_scale_cyl4_a_cal;
         local_50 = injection_timing_scale_cyl5_a_cal;
         local_4c = injection_timing_scale_cyl6_a_cal;
-        local_48 = _engine_sync_prot_scale_b_cal;
+        local_48 = engine_sync_prot_scale_b_cal;
         local_44 = engine_sync_prot_gain_cal;
         uStack_42 = injection_timing_scale_cyl4_hi_cal;
         wStack_40 = injection_timing_scale_cyl4_lo_cal;
@@ -46454,7 +46099,7 @@ LAB_0004800c:
       engine_sync_protection_output_b =
            cm848_protectionModeSelector(&local_54,&engine_sync_protection_output_a,(int)sVar6,10000)
       ;
-      if ((DAT_003fb6c5 == '\x01') && (_engine_sync_state_a == 5)) {
+      if ((DAT_003fb6c5 == '\x01') && (engine_sync_state_a == 5)) {
         wVar3 = lookupTableInterpolation
                           (&DAT_003fb65a,speed_setpoint_raw,&cam_sync_output_a_axis_cal,
                            &cam_sync_output_a_values_cal,2);
@@ -46485,7 +46130,7 @@ LAB_0004800c:
           engine_sync_protection_output_b = 0xfff;
         }
         engine_sync_protection_output_a = engine_sync_protection_output_b;
-        _engine_sync_signal_flag = 1;
+        engine_sync_signal_flag = 1;
         DAT_003fb6c5 = '\0';
         wVar13 = engine_sync_protection_output_b;
       }
@@ -46509,29 +46154,29 @@ LAB_0004800c:
   wVar4 = lookupTableInterpolation
                     (&DAT_003fb65c,speed_setpoint_raw,&cam_sync_output_b_axis_cal,
                      &cam_sync_output_b_values_cal,2);
-  if (_engine_sync_state_a == 0) {
+  if (engine_sync_state_a == 0) {
     iVar11 = 0xe;
 LAB_00048130:
     iVar11 = (int)*(short *)((int)&per_cylinder_timing_offset_table + iVar11);
   }
-  else if (_engine_sync_state_a == 1) {
+  else if (engine_sync_state_a == 1) {
     iVar11 = 4;
 LAB_00048114:
     iVar11 = (int)*(short *)((int)&per_cylinder_timing_offset_table + iVar11);
   }
-  else if (_engine_sync_state_a == 2) {
+  else if (engine_sync_state_a == 2) {
     iVar11 = (int)(short)engine_load_output_value;
   }
   else {
-    if (_engine_sync_state_a == 3) {
+    if (engine_sync_state_a == 3) {
       iVar11 = 0x8a;
       goto LAB_00048114;
     }
-    if (_engine_sync_state_a == 4) {
+    if (engine_sync_state_a == 4) {
       iVar11 = 0x28;
       goto LAB_00048130;
     }
-    if (_engine_sync_state_a == 5) {
+    if (engine_sync_state_a == 5) {
       iVar11 = (int)(short)engine_sync_speed_raw;
     }
     else {
@@ -46544,29 +46189,29 @@ LAB_00048114:
       }
     }
   }
-  if (_engine_sync_state_b == 0) {
+  if (engine_sync_state_b == 0) {
     iVar12 = 0xe;
 LAB_000481e4:
     unaff_r29 = (uint)*(short *)((int)&per_cylinder_timing_offset_table + iVar12);
   }
-  else if (_engine_sync_state_b == 1) {
+  else if (engine_sync_state_b == 1) {
     iVar12 = 4;
 LAB_000481c8:
     unaff_r29 = (uint)*(short *)((int)&per_cylinder_timing_offset_table + iVar12);
   }
-  else if (_engine_sync_state_b == 2) {
+  else if (engine_sync_state_b == 2) {
     unaff_r29 = (uint)(short)engine_load_output_value;
   }
   else {
-    if (_engine_sync_state_b == 3) {
+    if (engine_sync_state_b == 3) {
       iVar12 = 0x8a;
       goto LAB_000481c8;
     }
-    if (_engine_sync_state_b == 4) {
+    if (engine_sync_state_b == 4) {
       iVar12 = 0x28;
       goto LAB_000481e4;
     }
-    if (_engine_sync_state_b == 5) {
+    if (engine_sync_state_b == 5) {
       unaff_r29 = (uint)(short)engine_sync_speed_raw;
     }
     else {
@@ -46593,7 +46238,7 @@ LAB_000489d0:
                     (&DAT_003fb642,speed_setpoint_raw,&cam_sync_speed_ref_limit_axis_cal,
                      &cam_sync_speed_ref_limit_values_cal,2);
   wVar14 = engine_sync_timing_upper_limit_cal;
-  if (_cold_start_phase == 3) {
+  if (cold_start_phase == 3) {
     wVar14 = engine_sync_timing_coldstart_limit_cal;
   }
   uVar10 = (uint)(short)engine_sync_state_t_0040b87f.reference_count;
@@ -46627,7 +46272,7 @@ LAB_000489d0:
                      (&DAT_003fb660,unaff_r29 & 0xffff,&engine_sync_speed_scale_axis_cal,
                       &engine_sync_speed_scale_values_cal,3);
     }
-    else if ((engine_sync_confirmed_flag == 1) && (_engine_sync_state_b == 5)) {
+    else if ((engine_sync_confirmed_flag == 1) && (engine_sync_state_b == 5)) {
       engine_sync_protection_output_a =
            lookupTableInterpolation
                      (&DAT_003fb660,engine_sync_speed_raw,&engine_sync_speed_scale_axis_cal,
@@ -46635,7 +46280,7 @@ LAB_000489d0:
     }
     if (engine_sync_confirmed_flag == 1) {
       engine_sync_confirmed_flag = 0;
-      _engine_sync_signal_flag = 1;
+      engine_sync_signal_flag = 1;
     }
     iVar11 = (int)(short)(sVar7 + sVar8);
     if ((short)engine_sync_protection_upper_limit_cal < iVar11) {
@@ -46647,13 +46292,13 @@ LAB_000489d0:
       iVar11 = (int)(short)engine_sync_protection_lower_limit_cal;
     }
     engine_sync_state_t_0040b87f.speed_raw = (short)(iVar11 * (short)wVar14 >> 0xc) + wVar14;
-    if ((speed_setpoint_raw == 0) && (_governor_zero_speed_count < governor_zero_speed_count_cal)) {
+    if ((speed_setpoint_raw == 0) && (governor_zero_speed_count < governor_zero_speed_count_cal)) {
       engine_sync_state_t_0040b87f.speed_raw = engine_sync_zero_speed_output_cal;
     }
-    uVar1 = _governor_zero_speed_count + 1;
-    _governor_zero_speed_count = _governor_zero_speed_count + 1;
+    uVar1 = governor_zero_speed_count + 1;
+    governor_zero_speed_count = governor_zero_speed_count + 1;
     if (governor_zero_speed_count_cal < uVar1) {
-      _governor_zero_speed_count = governor_zero_speed_count_cal;
+      governor_zero_speed_count = governor_zero_speed_count_cal;
     }
   }
   else {
@@ -46692,15 +46337,15 @@ LAB_000489d0:
       engine_sync_protection_active_flag = 0;
     }
     if ((j1939_pgn_handler_f_flags & 0x10) == 0) {
-      _engine_sync_retry_counter = 0;
+      engine_sync_retry_counter._0_2_ = 0;
     }
-    else if (_engine_sync_retry_counter < engine_sync_retry_count_max_cal) {
-      _engine_sync_retry_counter = _engine_sync_retry_counter + 1;
+    else if (engine_sync_retry_counter._0_2_ < engine_sync_retry_count_max_cal) {
+      engine_sync_retry_counter._0_2_ = engine_sync_retry_counter._0_2_ + 1;
     }
     else {
       engine_sync_cycle_counter = 0;
       engine_sync_protection_active_flag = 1;
-      _engine_sync_retry_counter = 0;
+      engine_sync_retry_counter._0_2_ = 0;
     }
   }
   if (engine_sync_speed_fault_flags == 0) {
@@ -46709,9 +46354,9 @@ LAB_000489d0:
                    ((int)(short)engine_sync_state_t_0040b87f.speed_raw,&DAT_003fb6af);
     if (((int)(uint)cam_sync_error_rate_threshold_cal < (int)sVar6) &&
        ((int)(uint)cam_speed_rate_threshold_cal < (int)(short)cam_speed_rate)) {
-      _engine_sync_phase_counter = _engine_sync_phase_counter + 1;
-      if (engine_sync_phase_counter_max_cal < _engine_sync_phase_counter) {
-        _engine_sync_phase_counter = engine_sync_phase_counter_max_cal;
+      engine_sync_phase_counter = engine_sync_phase_counter + 1;
+      if (engine_sync_phase_counter_max_cal < engine_sync_phase_counter) {
+        engine_sync_phase_counter = engine_sync_phase_counter_max_cal;
       }
       uVar2 = ((int)(short)cam_speed_rate * (uint)sensor_readings_t_0040baf2.battery_voltage * 5) /
               (uint)(sVar6 * 2);
@@ -46719,12 +46364,12 @@ LAB_000489d0:
       engine_sync_rpm_filtered = exponentialMovingAverage(uVar2 & 0xffff,&DAT_003fb6b7);
     }
     else {
-      _engine_sync_phase_counter = 0;
+      engine_sync_phase_counter = 0;
     }
-    if ((engine_sync_phase_counter_max_cal <= _engine_sync_phase_counter) &&
+    if ((engine_sync_phase_counter_max_cal <= engine_sync_phase_counter) &&
        (engine_sync_speed_raw =
              (short)(((uint)engine_sync_rpm_scale_cal * (uint)engine_sync_rpm_filtered) / 0x138) +
-             engine_sync_rpm_offset_cal, _engine_sync_signal_flag == 0)) {
+             engine_sync_rpm_offset_cal, engine_sync_signal_flag == 0)) {
       DAT_003fb6c5 = '\x01';
       engine_sync_confirmed_flag = 1;
     }
@@ -46787,8 +46432,8 @@ void cm848_resetEngineSyncState(void)
   cam_sync_status_prev = 1;
   cylinder_event_sequence_index = 0;
   engine_sync_tooth_count = 0;
-  _cam_sync_confirm_counter = 0;
-  _cam_sync_phase_counter = 0;
+  cam_sync_confirm_counter = 0;
+  cam_sync_phase_counter = 0;
   engine_sync_reference_snapshot = 0;
   _DAT_003fb683 = 0;
   engine_sync_protection_output_a = 0;
@@ -46831,11 +46476,11 @@ void cm848_resetEngineSyncState(void)
   cam_speed_rate = 0;
   engine_sync_rpm_filtered = engine_sync_rpm_filter_initial_cal;
   engine_sync_speed_raw = sensor_readings_t_0040baf2.coolant_temp;
-  _engine_sync_signal_flag = 0;
-  _engine_sync_phase_counter = 0;
+  engine_sync_signal_flag = 0;
+  engine_sync_phase_counter = 0;
   DAT_003fb6c5 = 0;
   engine_sync_confirmed_flag = 0;
-  _governor_zero_speed_count = 0;
+  governor_zero_speed_count = 0;
   return;
 }
 
@@ -46860,8 +46505,6 @@ void cm848_filterEngineSensorValue(void)
 // Function: cm848_processEnginePositionDiagnostics @ 0x00049264
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_processEnginePositionDiagnostics(void)
 
 {
@@ -46870,7 +46513,7 @@ void cm848_processEnginePositionDiagnostics(void)
   short sVar3;
   short sVar4;
   
-  if ((_cold_start_phase == 3) && (cold_start_sync_status == 0)) {
+  if ((cold_start_phase == 3) && (cold_start_sync_status == 0)) {
     sVar4 = cam_timing_measured - cam_sync_position;
     engine_position_diagnostic_flags = 0;
     if ((engine_rpm_state_t_0040b7ac.current_rpm == 0) || ((protection_feature_flags & 0x2000) == 0)
@@ -46945,8 +46588,8 @@ LAB_00049380:
          (((short)cam_sync_coolant_temp_threshold_cal <
            (short)sensor_readings_t_0040baf2.coolant_temp &&
           ((short)cam_sync_ref_count_diag_threshold_cal <
-           (short)engine_sync_state_t_0040b87f.reference_count)))))) && (_governor_mode_code == 0xb)
-       ) {
+           (short)engine_sync_state_t_0040b87f.reference_count)))))) && (governor_mode_code == 0xb))
+    {
       engine_position_diagnostic_flags = engine_position_diagnostic_flags | 0x40;
     }
   }
@@ -47079,9 +46722,9 @@ void cm848_updateEngineDiagnosticCounters(void)
   }
   fault_diagnostic_word_1 =
        lookupTableInterpolation
-                 (&DAT_003fb6cc,((int)(short)wVar1 & 0x3fffU) << 2,&DAT_00060bb0,&DAT_00060bbe,3);
+                 (0x3fb6cc,((int)(short)wVar1 & 0x3fffU) << 2,&DAT_00060bb0,&DAT_00060bbe,3);
   if (((((short)engine_sync_fault_word_threshold_hi_cal < (short)fault_diagnostic_word_1) &&
-       (_cold_start_phase == 3)) && ((protection_config_flags & 0x40) == 0)) &&
+       (cold_start_phase == 3)) && ((protection_config_flags & 0x40) == 0)) &&
      ((governor_inhibit_flag == 0 &&
       ((short)engine_sync_state_t_0040b87f.speed_raw < (short)engine_sync_speed_fault_upper_cal))))
   {
@@ -47107,7 +46750,7 @@ void cm848_updateEngineDiagnosticCounters(void)
     }
   }
   if (((((short)fault_diagnostic_word_1 < (short)engine_sync_fault_word_threshold_lo_cal) &&
-       (_cold_start_phase == 3)) && ((protection_config_flags & 0x40) == 0)) &&
+       (cold_start_phase == 3)) && ((protection_config_flags & 0x40) == 0)) &&
      ((governor_inhibit_flag == 0 &&
       ((short)engine_sync_speed_fault_lower_cal < (short)engine_sync_state_t_0040b87f.speed_raw))))
   {
@@ -47141,14 +46784,12 @@ void cm848_updateEngineDiagnosticCounters(void)
 // Function: cm848_protectionInputValidator @ 0x00049df0
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_protectionInputValidator(void)
 
 {
   ushort uVar1;
   
-  uVar1 = _cold_start_qualifier_flag & 8;
+  uVar1 = cold_start_qualifier_flag & 8;
   if ((diagnostic_timer_flags & 0x2000) != 0) {
     uVar1 = uVar1 | cold_start_diag_timer_mask_cal;
   }
@@ -47161,13 +46802,13 @@ void cm848_protectionInputValidator(void)
   if ((j1939_message_state_flags & 0x100) != 0) {
     uVar1 = uVar1 | cold_start_j1939_mask_cal;
   }
-  if ((_DAT_003fea04 & 1) != 0) {
+  if ((protection_diag_shadow_flags_b & 1) != 0) {
     uVar1 = uVar1 | cold_start_ecu_flag_mask_cal;
   }
   if ((uVar1 & 8) != 0) {
     cm848_setEngineProtectionFault(0x36,0);
   }
-  _cold_start_qualifier_flag = uVar1;
+  cold_start_qualifier_flag = uVar1;
   return;
 }
 
@@ -47176,8 +46817,6 @@ void cm848_protectionInputValidator(void)
 //
 // Function: cm848_protectionSensorFaultHandler @ 0x00049edc
 //
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void cm848_protectionSensorFaultHandler(void)
 
@@ -47196,11 +46835,11 @@ void cm848_protectionSensorFaultHandler(void)
       torque_fuel_minimum_working = torque_fuel_min_max_cal;
     }
   }
-  if (((_cold_start_qualifier_flag & 1) != 0) &&
+  if (((cold_start_qualifier_flag & 1) != 0) &&
      (cold_start_fuel_limit_a_cal < governor_fuel_limit_source)) {
     governor_fuel_limit_source = cold_start_fuel_limit_a_cal;
   }
-  if (((_cold_start_qualifier_flag & 2) != 0) &&
+  if (((cold_start_qualifier_flag & 2) != 0) &&
      (cold_start_fuel_min_limit_cal < torque_fuel_minimum_working)) {
     torque_fuel_minimum_working = cold_start_fuel_min_limit_cal;
   }
@@ -47208,11 +46847,11 @@ void cm848_protectionSensorFaultHandler(void)
     if (((((diagnostic_timer_flags & 1) != 0) || ((diagnostic_timer_flags & 2) != 0)) ||
         ((comm_faults_shadow_flags & 0x100) != 0)) || ((crank_sync_status_flags & 0x2000) != 0))
     goto LAB_0004a098;
-    if ((_cold_start_qualifier_flag & 1) == 0) {
+    if ((cold_start_qualifier_flag & 1) == 0) {
       governor_fuel_limit_source = 0x1700;
     }
     wVar1 = torque_limit_fuel_minimum;
-    if ((_cold_start_qualifier_flag & 2) != 0) goto LAB_0004a098;
+    if ((cold_start_qualifier_flag & 2) != 0) goto LAB_0004a098;
   }
   else {
     if (governor_fuel_limit_override_cal < governor_fuel_limit_source) {
@@ -47239,8 +46878,6 @@ LAB_0004a098:
 // Function: cm848_checkProtectionFaultConditions @ 0x0004a114
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_checkProtectionFaultConditions(void)
 
 {
@@ -47249,8 +46886,8 @@ void cm848_checkProtectionFaultConditions(void)
         (((crank_sync_status_flags & 0x2000) == 0 || ((engine_sync_enable_mask & 4) == 0)))) &&
        (((diagnostic_timer_flags & 1) == 0 || ((engine_sync_enable_mask & 8) == 0)))) &&
       (((((diagnostic_timer_flags & 2) == 0 || ((engine_sync_enable_mask & 0x10) == 0)) &&
-        (((_cold_start_qualifier_flag & 1) == 0 || ((engine_sync_enable_mask & 0x20) == 0)))) &&
-       (((_cold_start_qualifier_flag & 2) == 0 || ((engine_sync_enable_mask & 0x40) == 0)))))) &&
+        (((cold_start_qualifier_flag & 1) == 0 || ((engine_sync_enable_mask & 0x20) == 0)))) &&
+       (((cold_start_qualifier_flag & 2) == 0 || ((engine_sync_enable_mask & 0x40) == 0)))))) &&
      (((pending_faults_shadow_flags & 0x8000) == 0 || ((engine_sync_enable_mask & 0x80) == 0)))) {
     engine_sync_fault_active_flag = 0;
   }
@@ -47281,7 +46918,7 @@ void cm848_initEngineDiagnosticData(void)
   engine_sync_event_counter_b = 0;
   engine_sync_event_counter = 0;
   engine_sync_timeout_count_b = 0;
-  _DAT_003fb6cc = 2;
+  ram0x003fb6cc = 2;
   _DAT_003fb6ce = 2;
   _DAT_003fb6d0 = 2;
   _DAT_003fb6d2 = 2;
@@ -47596,7 +47233,7 @@ void cm848_updateEnginePosition(void)
 {
   uint uVar1;
   
-  if ((_cold_start_phase != 4) && (engine_crank_state_t_0040b80a.crank_state != 4)) {
+  if ((cold_start_phase != 4) && (engine_crank_state_t_0040b80a.crank_state != 4)) {
     cam_sync_position = cam_sync_position_calculated;
     if ((_DAT_003fdb7c & 4) == 0) {
       if (_DAT_003fdabc < 0x81) {
@@ -47850,12 +47487,12 @@ void cm848_calculateEngineTimingData(void)
   
   _DAT_003fb728 = sensor_readings_t_0040baf2.coolant_temp;
   _DAT_003fb72a = engine_load_output_value;
-  if (((_cold_start_phase == 2) || (_cold_start_phase == 6)) || (_cold_start_phase == 7)) {
+  if (((cold_start_phase == 2) || (cold_start_phase == 6)) || (cold_start_phase == 7)) {
     injection_timing_demand =
          cm848_dualAxisTableInterpolation
                    (&DAT_003fb708,engine_rpm_state_t_0040b7ac.current_rpm,&DAT_00060df0,
                     sensor_readings_t_0040baf2.coolant_temp,&DAT_00060e04,&DAT_00060e18,6);
-    if (_injection_delivery_mode == 3) {
+    if (injection_delivery_mode == 3) {
       timing_arbitration_status_bits = timing_arbitration_status_bits | 8;
     }
     torque_limit_arb_t_0040a2f6.source_priority = 5;
@@ -47985,10 +47622,10 @@ LAB_0004b424:
     }
     if (iVar3 < (short)injection_timing_demand) goto LAB_0004b424;
   }
-  if ((torque_limit_arb_t_0040a2f6.source_priority == 0x12) && (_fuel_demand_mode_code == 0x1c)) {
+  if ((torque_limit_arb_t_0040a2f6.source_priority == 0x12) && (fuel_demand_mode_code == 0x1c)) {
     torque_limit_arb_t_0040a2f6.source_priority = 0x1e;
   }
-  if ((torque_limit_arb_t_0040a2f6.source_priority == 0x12) && (_fuel_demand_mode_code == 0x1b)) {
+  if ((torque_limit_arb_t_0040a2f6.source_priority == 0x12) && (fuel_demand_mode_code == 0x1b)) {
     torque_limit_arb_t_0040a2f6.source_priority = 0x1d;
   }
   if ((short)injection_timing_demand < (short)injection_timing_demand_floor) {
@@ -47996,7 +47633,7 @@ LAB_0004b424:
     torque_limit_arb_t_0040a2f6.source_priority = 0xb;
     timing_arbitration_status_bits = 0;
   }
-  if ((_governor_speed_limit_active_flag != 0) &&
+  if ((governor_speed_limit_active_flag != 0) &&
      ((short)injection_timing_demand < (short)injection_timing_demand_lower_limit_cal)) {
     injection_timing_demand = injection_timing_demand_lower_limit_cal;
     torque_limit_arb_t_0040a2f6.source_priority = 0x17;
@@ -48008,7 +47645,7 @@ LAB_0004b424:
     timing_arbitration_status_bits = 0;
   }
 LAB_0004b524:
-  if (_injection_delivery_mode == 3) {
+  if (injection_delivery_mode == 3) {
     iVar7 = (int)(short)injection_timing_demand + (int)_DAT_003fd808 + (int)DAT_0005a48a;
     if (iVar7 < -0x400) {
       iVar7 = -0x400;
@@ -48045,17 +47682,17 @@ void cm848_updateEngineStatusFlags(void)
   if ((engine_load_correction_mode_flag == 0) && (engine_load_correction_active_flag != 0)) {
     timing_arbitration_status_bits = 2;
   }
-  if (_boost_fuel_blend_active_flag != 0) {
+  if (boost_fuel_blend_active_flag != 0) {
     timing_arbitration_status_bits = timing_arbitration_status_bits | 1;
   }
   if (fuel_demand_mode_enable_flag != 0) {
     timing_arbitration_status_bits = timing_arbitration_status_bits | 4;
   }
-  if (_injection_delivery_mode == 2) {
+  if (injection_delivery_mode == 2) {
     torque_limit_fault_snapshot = _DAT_003fd808;
     torque_limit_arb_t_0040a2f6.source_priority = 7;
   }
-  else if ((_injection_delivery_mode == 1) || (_injection_delivery_mode == 3)) {
+  else if ((injection_delivery_mode == 1) || (injection_delivery_mode == 3)) {
     cm848_calculateEngineTimingData();
   }
   return;
@@ -48072,61 +47709,61 @@ void cm848_updateEngineStatusFlags(void)
 void cm848_calculateFuel2DTableLookup(void)
 
 {
-  if (((_DAT_003fd5da & 1) != 0) && (_engine_operating_mode == 7)) {
+  if (((_DAT_003fd5da & 1) != 0) && (engine_operating_mode == 7)) {
     _DAT_003fb740 =
          cm848_dualAxisTableInterpolation
                    (&DAT_003fb738,engine_rpm_state_t_0040b7ac.current_rpm,&fault_table_entry_5,
                     fuel_demand_control_t_0040a57a.calculated,&fault_table_entry_6,&DAT_000645fe,0);
-    if (_boost_map_index_current == 1) {
+    if (boost_map_index_current == 1) {
       injection_timing_trim_a =
            cm848_dualAxisTableInterpolation
                      (&DAT_003fb73c,engine_rpm_state_t_0040b7ac.current_rpm,&fault_table_entry_5,
                       fuel_demand_control_t_0040a57a.calculated,&fault_table_entry_6,&DAT_000646fa,0
                      );
     }
-    else if (_boost_map_index_current == 2) {
+    else if (boost_map_index_current == 2) {
       injection_timing_trim_a =
            cm848_dualAxisTableInterpolation
                      (&DAT_003fb73c,engine_rpm_state_t_0040b7ac.current_rpm,&fault_table_entry_5,
                       fuel_demand_control_t_0040a57a.calculated,&fault_table_entry_6,&DAT_000647f6,0
                      );
     }
-    else if (_boost_map_index_current == 3) {
+    else if (boost_map_index_current == 3) {
       injection_timing_trim_a =
            cm848_dualAxisTableInterpolation
                      (&DAT_003fb73c,engine_rpm_state_t_0040b7ac.current_rpm,&fault_table_entry_5,
                       fuel_demand_control_t_0040a57a.calculated,&fault_table_entry_6,&DAT_000648f2,0
                      );
     }
-    else if (_boost_map_index_current == 4) {
+    else if (boost_map_index_current == 4) {
       injection_timing_trim_a =
            cm848_dualAxisTableInterpolation
                      (&DAT_003fb73c,engine_rpm_state_t_0040b7ac.current_rpm,&fault_table_entry_5,
                       fuel_demand_control_t_0040a57a.calculated,&fault_table_entry_6,&DAT_000649ee,0
                      );
     }
-    if (_boost_map_index_target == 1) {
+    if (boost_map_index_target == 1) {
       injection_timing_trim_b =
            cm848_dualAxisTableInterpolation
                      (&DAT_003fb73c,engine_rpm_state_t_0040b7ac.current_rpm,&fault_table_entry_5,
                       fuel_demand_control_t_0040a57a.calculated,&fault_table_entry_6,&DAT_000646fa,0
                      );
     }
-    else if (_boost_map_index_target == 2) {
+    else if (boost_map_index_target == 2) {
       injection_timing_trim_b =
            cm848_dualAxisTableInterpolation
                      (&DAT_003fb73c,engine_rpm_state_t_0040b7ac.current_rpm,&fault_table_entry_5,
                       fuel_demand_control_t_0040a57a.calculated,&fault_table_entry_6,&DAT_000647f6,0
                      );
     }
-    else if (_boost_map_index_target == 3) {
+    else if (boost_map_index_target == 3) {
       injection_timing_trim_b =
            cm848_dualAxisTableInterpolation
                      (&DAT_003fb73c,engine_rpm_state_t_0040b7ac.current_rpm,&fault_table_entry_5,
                       fuel_demand_control_t_0040a57a.calculated,&fault_table_entry_6,&DAT_000648f2,0
                      );
     }
-    else if (_boost_map_index_target == 4) {
+    else if (boost_map_index_target == 4) {
       injection_timing_trim_b =
            cm848_dualAxisTableInterpolation
                      (&DAT_003fb73c,engine_rpm_state_t_0040b7ac.current_rpm,&fault_table_entry_5,
@@ -48136,7 +47773,7 @@ void cm848_calculateFuel2DTableLookup(void)
     protection_fuel_limit_working =
          cm848_filterInputValue
                    (injection_timing_trim_a,injection_timing_trim_b,_DAT_003fb740,
-                    _boost_map_index_current,_boost_map_index_target,
+                    boost_map_index_current,boost_map_index_target,
                     fuel_blend_state_t_0040a494.blend_weight,fuel_blend_state_t_0040a494.blend_mode)
     ;
     if ((protection_feature_flags & 0x100) != 0) {
@@ -48157,7 +47794,7 @@ void cm848_calculateFuel2DTableLookup(void)
 void cm848_applyProtectionLimit(void)
 
 {
-  if ((((_DAT_003fd5da & 1) != 0) && (_engine_operating_mode == 7)) &&
+  if ((((_DAT_003fd5da & 1) != 0) && (engine_operating_mode == 7)) &&
      (protection_fuel_limit_working < protection_fuel_limit_active)) {
     protection_fuel_limit_active = protection_fuel_limit_working;
     governor_fuel_mode_command = 0x2a;
@@ -48462,16 +48099,14 @@ bool cm848_protectionEnableCheck(void)
 // Function: cm848_protectionConditionMonitor @ 0x0004bd5c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_protectionConditionMonitor(void)
 
 {
   uint uVar1;
   short sVar2;
   
-  if (_engine_position_init_done_flag == 0) {
-    _engine_position_init_done_flag = 1;
+  if (engine_position_init_done_flag == 0) {
+    engine_position_init_done_flag = 1;
     sensor_validation_period_array = 3;
     sensor_validation_phase_array = 0x9e;
     protection_condition_snapshot = protection_condition_mode;
@@ -48489,7 +48124,7 @@ void cm848_protectionConditionMonitor(void)
     j1939_protection_response_callback = cm848_j1939ProtectionDataResponse;
     sVar2 = cm848_j1939QueueTransmitMessage(&j1939_tx_message_buffer_b,1);
     if (sVar2 != 0) {
-      _engine_position_init_done_flag = 0;
+      engine_position_init_done_flag = 0;
     }
   }
   return;
@@ -48546,8 +48181,8 @@ void cm848_sensorCalibrationCheck(void)
 {
   short sVar1;
   
-  if ((engine_position_event_counter != 0) && (_engine_position_init_done_flag == 0)) {
-    _engine_position_init_done_flag = 3;
+  if ((engine_position_event_counter != 0) && (engine_position_init_done_flag == 0)) {
+    engine_position_init_done_flag = 3;
     sensor_validation_trigger_flag = 0;
     sensor_validation_period_array = 6;
     sensor_validation_phase_array = 0x1e;
@@ -48567,7 +48202,7 @@ void cm848_sensorCalibrationCheck(void)
            (short)((int)(uint)(ushort)(sensor_validation_array_index + 1) >> 6) * -0x40;
     }
     else {
-      _engine_position_init_done_flag = 0;
+      engine_position_init_done_flag = 0;
     }
   }
   return;
@@ -48739,8 +48374,6 @@ undefined1 cm848_enqueueToCircularBuffer(undefined4 param_1,short *param_2)
 // Function: cm848_protectionConfigSelector @ 0x0004c188
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_protectionConfigSelector(void)
 
 {
@@ -48781,7 +48414,7 @@ void cm848_protectionConfigSelector(void)
   if (j1939_tx_queue_error_code != 0) {
     system_status_flags_t_003fe974.system_faults =
          system_status_flags_t_003fe974.system_faults | 0x20;
-    _engine_position_init_done_flag = 0;
+    engine_position_init_done_flag = 0;
   }
   return;
 }
@@ -48812,10 +48445,10 @@ void cm848_protectionLimitCalculator(void)
   byte bVar13;
   
   wVar3 = sensor_validation_entry_count;
-  if (_engine_position_init_done_flag == 0) {
-    _engine_position_init_done_flag = 4;
+  if (engine_position_init_done_flag == 0) {
+    engine_position_init_done_flag = 4;
     uVar9 = 0;
-    if (_sensor_validation_state == 1) {
+    if (sensor_validation_state == 1) {
       uVar12 = (uint)(short)sensor_validation_period_remaining;
       if (0x20 < (int)uVar12) {
         if ((sensor_validation_sample_base & 0x1f) == 0) {
@@ -48855,7 +48488,7 @@ void cm848_protectionLimitCalculator(void)
       (&sensor_validation_period_array)[bVar13] = *pwVar8;
       engine_sync_diagnostic_code = bVar13 + 1;
       (&sensor_validation_phase_array)[uVar12] = 0x4e;
-      _sensor_validation_state = 3;
+      sensor_validation_state = 3;
       sensor_validation_trigger_flag = 0;
       j1939_protection_response_callback = cm848_protectionConfigSelector;
       sVar6 = cm848_j1939QueueTransmitMessage(&j1939_tx_message_buffer_b,1);
@@ -48881,11 +48514,11 @@ void cm848_protectionLimitCalculator(void)
       }
     }
     else {
-      if (_sensor_validation_state != 3) {
-        _engine_position_init_done_flag = 4;
+      if (sensor_validation_state != 3) {
+        engine_position_init_done_flag = 4;
         return;
       }
-      _engine_position_init_done_flag = 4;
+      engine_position_init_done_flag = 4;
       sensor_validation_period_array = 3;
       sensor_validation_phase_array = 0x8e;
       protection_condition_snapshot = sensor_validation_sample_base;
@@ -48900,7 +48533,7 @@ void cm848_protectionLimitCalculator(void)
         uVar12 = uVar12 + 1 & 0xff;
         uVar10 = uVar10 + 1 & 0xff;
       } while (uVar10 <= wVar3);
-      _sensor_validation_state = 2;
+      sensor_validation_state = 2;
       j1939_protection_response_callback = cm848_validateSensorData;
       sVar6 = cm848_j1939QueueTransmitMessage(&j1939_tx_message_buffer_b,1);
       if (sVar6 != 0) {
@@ -48925,7 +48558,7 @@ void cm848_protectionLimitCalculator(void)
     if (0x1f < uVar9) {
       system_status_flags_t_003fe974.system_faults =
            system_status_flags_t_003fe974.system_faults | 0x20;
-      _engine_position_init_done_flag = 0;
+      engine_position_init_done_flag = 0;
     }
   }
   return;
@@ -48942,7 +48575,7 @@ void cm848_protectionLimitCalculator(void)
 void cm848_initProtectionLimitVariables(void)
 
 {
-  _sensor_validation_state = 1;
+  sensor_validation_state = 1;
   _DAT_003fb82a = 0;
   sensor_validation_retry_counter = 0;
   _DAT_003fb82e = 0;
@@ -48984,17 +48617,17 @@ void cm848_initProtectionLimitStateVariant(undefined2 param_1)
 void cm848_j1939ProtectionConfigResponse(void)
 
 {
-  int iVar1;
+  dword dVar1;
   
   j1939_tx_queue_error_code = 0xffff;
   if ((_DAT_003fb898 & 1) != 0) {
     cm848_protectionConfigSelector();
   }
-  iVar1 = _engine_position_init_done_flag;
+  dVar1 = engine_position_init_done_flag;
   if (j1939_tx_queue_error_code == 0xffff) {
-    _engine_position_init_done_flag = 0;
+    engine_position_init_done_flag = 0;
     if (engine_position_event_counter == 0) {
-      if ((_sensor_validation_state == 0) || (iVar1 == 3)) {
+      if ((sensor_validation_state == 0) || (dVar1 == 3)) {
         protection_condition_mode = protection_condition_calculated;
         cm848_protectionConditionMonitor();
       }
@@ -49015,8 +48648,6 @@ void cm848_j1939ProtectionConfigResponse(void)
 // Function: cm848_j1939ProtectionDataResponse @ 0x0004c7ec
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_j1939ProtectionDataResponse(void)
 
 {
@@ -49026,7 +48657,7 @@ void cm848_j1939ProtectionDataResponse(void)
   
   wVar2 = protection_condition_reference;
   puVar1 = sensor_cal_table_ptr;
-  if (_uds_session_active_flag != 0) {
+  if (uds_session_active_flag != 0) {
     uVar3 = 2;
     if (protection_condition_mode < protection_condition_reference) {
       do {
@@ -49041,9 +48672,9 @@ void cm848_j1939ProtectionDataResponse(void)
       sensor_measurement_ready_flag = 1;
     }
   }
-  _engine_position_init_done_flag = 0;
+  engine_position_init_done_flag = 0;
   if (engine_position_event_counter == 0) {
-    if (_sensor_validation_state != 0) {
+    if (sensor_validation_state != 0) {
       cm848_protectionLimitCalculator();
     }
   }
@@ -49071,7 +48702,7 @@ void cm848_validateSensorData(void)
   ushort uVar5;
   
   uVar3 = 2;
-  if ((_sensor_validation_state == 2) &&
+  if ((sensor_validation_state == 2) &&
      (uVar5 = 0, pwVar2 = (word *)sensor_validation_table_ptr, sensor_validation_entry_count != 0))
   {
     do {
@@ -49079,8 +48710,8 @@ void cm848_validateSensorData(void)
         sensor_validation_retry_counter = sensor_validation_retry_counter + 1;
         if (sensor_validation_retry_counter < 3) {
           _DAT_003fb82e = _DAT_003fb82e + 1;
-          _sensor_validation_state = 1;
-          _engine_position_init_done_flag = 0;
+          sensor_validation_state = 1;
+          engine_position_init_done_flag = 0;
           cm848_protectionLimitCalculator();
         }
         else {
@@ -49093,7 +48724,7 @@ void cm848_validateSensorData(void)
       uVar3 = uVar3 + 1;
     } while (uVar5 < sensor_validation_entry_count);
   }
-  if (_sensor_validation_state == 2) {
+  if (sensor_validation_state == 2) {
     uVar5 = 0;
     if (sensor_validation_entry_count != 0) {
       psVar1 = (short *)(sensor_validation_table_ptr + -2);
@@ -49118,16 +48749,16 @@ void cm848_validateSensorData(void)
         system_status_flags_t_003fe974.system_faults =
              system_status_flags_t_003fe974.system_faults | 0x20;
       }
-      _engine_position_init_done_flag = 0;
-      _sensor_validation_state = 0;
+      engine_position_init_done_flag = 0;
+      sensor_validation_state = 0;
       if (engine_position_event_counter != 0) {
         cm848_sensorCalibrationCheck();
       }
       sensor_validation_trigger_flag = 0;
     }
     else {
-      _sensor_validation_state = 1;
-      _engine_position_init_done_flag = 0;
+      sensor_validation_state = 1;
+      engine_position_init_done_flag = 0;
       if (engine_position_event_counter == 0) {
         cm848_protectionLimitCalculator();
       }
@@ -49145,12 +48776,10 @@ void cm848_validateSensorData(void)
 // Function: cm848_isSensorValidationComplete @ 0x0004cb34
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 bool cm848_isSensorValidationComplete(void)
 
 {
-  return _sensor_validation_state == 0;
+  return sensor_validation_state == 0;
 }
 
 
@@ -49194,9 +48823,9 @@ void cm848_initSensorValidationSystem(void)
   ushort uVar2;
   word *pwVar3;
   
-  _uds_session_active_flag = 1;
+  uds_session_active_flag = 1;
   protection_condition_mode = 0;
-  _sensor_validation_state = 0;
+  sensor_validation_state = 0;
   sensor_cal_table_ptr = &sensor_cal_table;
   protection_condition_reference = 0x1a40;
   DAT_003fb8da = cm848_configurePeriodicTimer(0,2000,0x352,0x28);
@@ -49245,9 +48874,9 @@ void cm848_configureOutputChannels(void)
   ushort uVar2;
   word *pwVar3;
   
-  _uds_session_active_flag = 1;
+  uds_session_active_flag = 1;
   protection_condition_mode = 0;
-  _sensor_validation_state = 0;
+  sensor_validation_state = 0;
   sensor_cal_table_ptr = &sensor_cal_table;
   protection_condition_reference = 0x1a40;
   DAT_003fb8da = cm848_configurePeriodicTimer(0,2000,0x352,0x28);
@@ -49298,7 +48927,7 @@ void cm848_configureOutputChannelsStateParam(void)
   word *pwVar3;
   
   *(undefined2 *)(in_r10 + -0x47ec) = 0;
-  _sensor_validation_state = 0;
+  sensor_validation_state = 0;
   sensor_cal_table_ptr = &sensor_cal_table;
   protection_condition_reference = 0x1a40;
   DAT_003fb8da = cm848_configurePeriodicTimer(0,2000,0x352,0x28);
@@ -51972,7 +51601,7 @@ void mpc555_updateEngineCycleOutputs(void)
   wVar3 = MIOS_MCPSMSCR.MIOS1ER;
   uVar6 = (uint)((wVar3 & 0x8000) != 0);
   if ((_DAT_003fb912 != 0) && (uVar6 == 0)) {
-    _DAT_003fdda8 = _DAT_003fdda8 + 1;
+    cold_start_crank_counter = cold_start_crank_counter + 1;
   }
   _DAT_003fb912 = uVar6;
   return;
@@ -52054,7 +51683,7 @@ void cm848_clearProtectionFault(uint param_1)
   uVar1 = (uint)(&qadc_result_array)[param_1];
   cm848_setEngineProtectionFault(param_1,0);
   if (uVar1 != 0) {
-    if (((uint)(&qadc_fault_bit_array)[(int)param_1 >> 3] &
+    if (((uint)*(byte *)((int)&qadc_fault_bit_array + ((int)param_1 >> 3)) &
         1 << (param_1 + (((int)param_1 >> 3) + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8
              & 0x3f)) == 0) {
       clearModuleSyncFlag(uVar1);
@@ -52139,7 +51768,7 @@ void cm848_protectionFlagManager(uint param_1)
   uVar1 = (uint)(&qadc_result_array)[param_1];
   cm848_triggerProtectionEvent(param_1,0);
   if (uVar1 != 0) {
-    if (((uint)(&qadc_fault_bit_array)[(int)param_1 >> 3] &
+    if (((uint)*(byte *)((int)&qadc_fault_bit_array + ((int)param_1 >> 3)) &
         1 << (param_1 + (((int)param_1 >> 3) + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8
              & 0x3f)) == 0) {
       updateEngineSyncStatus(uVar1);
@@ -52189,7 +51818,7 @@ void cm848_checkProtectionModeFlags(void)
   word *pwVar1;
   
   pwVar1 = &qadc_result_array;
-  if ((qadc_queue_timing_config != 0) && (_DAT_003fdc58 != 0)) {
+  if ((qadc_queue_timing_config._0_2_ != 0) && (_DAT_003fdc58 != 0)) {
     if ((protection_action_mode_bits._0_1_ & 2) == 0) {
       cm848_triggerProtectionEvent(0x3e,0);
     }
@@ -52236,7 +51865,7 @@ void cm848_protectionAlarmHandler(void)
       iVar2 = (int)uVar5 >> 3;
       uVar3 = 1 << (uVar5 + iVar2 * -8 & 0x3f);
       uVar4 = (&protection_fault_status_bits)[iVar2] & uVar3;
-      uVar3 = (&qadc_fault_bit_array)[iVar2] & uVar3;
+      uVar3 = *(byte *)((int)&qadc_fault_bit_array + iVar2) & uVar3;
       iVar2 = (int)(uint)uVar1 >> 3;
       if ((uVar3 & ~uVar4) == 0 && (uVar4 & ~uVar3) == 0) {
         (&j1939_dm2_fault_bit_array)[iVar2] =
@@ -54493,14 +54122,12 @@ void hpcr_injectorPulseWidthCalc(void)
 // Function: mpc555_processJ1939TxBufferSend @ 0x000535e8
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void mpc555_processJ1939TxBufferSend(void)
 
 {
   word wVar1;
   
-  _engine_data_log_read_ready_flag = 1;
+  engine_data_log_read_ready_flag = 1;
   wVar1 = toucan_a_mb2_t_003070a0.ID_LO;
   toucan_a_mb2_t_003070a0.ID_LO =
        wVar1 & ~(ushort)(1 << (can_tx_mailbox_start_index + 0xffff & 0x3f));
@@ -54588,8 +54215,6 @@ void mpc555_queueCanReceiveMessage(int param_1)
 // Function: mpc555_sendJ1939SingleFrame @ 0x00053858
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void mpc555_sendJ1939SingleFrame(uint param_1,uint param_2,int param_3,undefined1 *param_4)
 
 {
@@ -54647,7 +54272,7 @@ void mpc555_sendJ1939SingleFrame(uint param_1,uint param_2,int param_3,undefined
         engine_data_log_read_ptr = &engine_data_log_buffer;
       }
       if ((engine_data_log_read_ptr == (undefined *)engine_data_log_write_sentinel) &&
-         (engine_data_log_active_flag = 1, _engine_data_log_read_ready_flag == 1)) {
+         (engine_data_log_active_flag = 1, engine_data_log_read_ready_flag == 1)) {
         system_status_flags_t_003fe974.lamp_status =
              system_status_flags_t_003fe974.lamp_status | 0x8000;
       }
@@ -54666,8 +54291,6 @@ void mpc555_sendJ1939SingleFrame(uint param_1,uint param_2,int param_3,undefined
 //
 // Function: mpc555_enqueueCanTransmitFrame @ 0x00053890
 //
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void mpc555_enqueueCanTransmitFrame(uint param_1,uint param_2,int param_3)
 
@@ -54726,7 +54349,7 @@ void mpc555_enqueueCanTransmitFrame(uint param_1,uint param_2,int param_3)
         *unaff_r31 = (uint)&engine_data_log_buffer;
       }
       if ((*unaff_r31 == unaff_r31[1]) &&
-         (*(undefined1 *)(unaff_r31 + 4) = 1, _engine_data_log_read_ready_flag == 1)) {
+         (*(undefined1 *)(unaff_r31 + 4) = 1, engine_data_log_read_ready_flag == 1)) {
         system_status_flags_t_003fe974.lamp_status =
              system_status_flags_t_003fe974.lamp_status | 0x8000;
       }
@@ -54780,14 +54403,12 @@ void cm848_validateDiagnosticResponseWrapper(void)
 // Function: cm848_lookupJ1939SourceAddressIndex @ 0x00053a4c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 undefined4 cm848_lookupJ1939SourceAddressIndex(uint param_1)
 
 {
   undefined4 uVar1;
   
-  if ((_j1939_ecu_source_address_cal & 0xff) == param_1) {
+  if ((j1939_ecu_source_address_cal & 0xff) == param_1) {
     uVar1 = 1;
   }
   else if ((DAT_0005a472 & 0xff) == param_1) {
@@ -55038,8 +54659,6 @@ void cm848_addCoolantCalEntryAlt(byte param_1,undefined2 param_2)
 // Function: cm848_processCoolantCalEntries @ 0x00053dc8
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_processCoolantCalEntries(void)
 
 {
@@ -55061,9 +54680,9 @@ void cm848_processCoolantCalEntries(void)
       wVar1 = pwVar3[-1];
       pwVar3[-1] = wVar1 - 1;
       if ((word)(wVar1 - 1) == 0) {
-        if (((*pwVar6 == 1) && (*(byte *)(pwVar3 + -3) == _j1939_ecu_source_address_cal)) &&
+        if (((*pwVar6 == 1) && (*(byte *)(pwVar3 + -3) == j1939_ecu_source_address_cal)) &&
            (pwVar3[-2] == 1)) {
-          _DAT_0040adfa = 0;
+          j1939_tsc1_speed_override_active_flag = 0;
           etc1_state_t_0040ae00.speed_control_target =
                etc1_state_t_0040ae00.speed_control_target & 6;
         }
@@ -55091,7 +54710,7 @@ void cm848_processCoolantCalEntries(void)
       sVar2 = *(short *)(pbVar4 + -2);
       *(short *)(pbVar4 + -2) = sVar2 + -1;
       if ((short)(sVar2 + -1) == 0) {
-        if ((*pbVar7 == _j1939_ecu_source_address_cal) && (*(short *)(pbVar4 + -4) == 2)) {
+        if ((*pbVar7 == j1939_ecu_source_address_cal) && (*(short *)(pbVar4 + -4) == 2)) {
           etc1_state_t_0040ae00.speed_control_target =
                etc1_state_t_0040ae00.speed_control_target & 5;
         }
@@ -55318,8 +54937,6 @@ void cm848_emptyStubFunction(void)
 // Function: cm848_checkRpmOverspeedProtection @ 0x00054224
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_checkRpmOverspeedProtection(void)
 
 {
@@ -55331,18 +54948,18 @@ void cm848_checkRpmOverspeedProtection(void)
   if (engine_rpm_state_t_0040b7ac.current_rpm <= overspeed_protection_recovery_threshold) {
     cm848_clearProtectionFault(0x2f);
     cm848_clearProtectionFault(0x30);
-    if ((_protection_enable_shadow_flags & 0x40) != 0) {
+    if ((protection_enable_shadow_flags & 0x40) != 0) {
       j1939_receive_status_flags = j1939_receive_status_flags & 0xffbf;
-      _protection_enable_shadow_flags = _protection_enable_shadow_flags & 0xffbf;
+      protection_enable_shadow_flags = protection_enable_shadow_flags & 0xffbf;
     }
   }
   if (overspeed_warning_threshold < engine_rpm_state_t_0040b7ac.current_rpm) {
     j1939_receive_status_flags = j1939_receive_status_flags | 0x80;
   }
   if ((engine_rpm_state_t_0040b7ac.current_rpm <= overspeed_warning_recovery_threshold) &&
-     ((_protection_enable_shadow_flags & 0x80) != 0)) {
+     ((protection_enable_shadow_flags & 0x80) != 0)) {
     j1939_receive_status_flags = j1939_receive_status_flags & 0xff7f;
-    _protection_enable_shadow_flags = _protection_enable_shadow_flags & 0xff7f;
+    protection_enable_shadow_flags = protection_enable_shadow_flags & 0xff7f;
   }
   return;
 }
@@ -55428,7 +55045,7 @@ void hpcr_exceptionHandler(void)
   cm848_initSensorValidationSystem();
   cm848_initPeriodicTimerSystem();
   cm848_clearProtectionFault(0x1b);
-  if (_DAT_003fdc88 == _DAT_003fdc8a) {
+  if (qadc_scan_read_index == qadc_scan_write_index) {
     system_status_flags_t_003fe974.sensor_diag = system_status_flags_t_003fe974.sensor_diag & 0xfffb
     ;
     sensor_diag_shadow_flags = sensor_diag_shadow_flags & 0xfffb;
@@ -55478,7 +55095,7 @@ void hpcr_exceptionHandler(void)
         if (4999 < uVar1) break;
       } while (protection_timer_b != local_20[0]);
     }
-    _high_idle_override_flag = 1;
+    high_idle_override_flag._0_2_ = 1;
     if (DAT_000645ba < sensor_diag_timeout_counter) {
       system_status_flags_t_003fe974.sensor_diag =
            system_status_flags_t_003fe974.sensor_diag | 0x200;
@@ -55490,14 +55107,14 @@ void hpcr_exceptionHandler(void)
     }
   }
   local_20[0] = protection_timer_a + protection_timer_b;
-  cm848_updateProtectionTimers(&DAT_003fdc88,local_20,2);
+  cm848_updateProtectionTimers(&qadc_scan_read_index,local_20,2);
   uVar1 = 0;
-  if (_DAT_003fdc88 != local_20[0]) {
+  if (qadc_scan_read_index != local_20[0]) {
     do {
       cm848_delayMicroseconds(0x13);
       uVar1 = uVar1 + 1;
       if (4999 < uVar1) break;
-    } while (_DAT_003fdc88 != local_20[0]);
+    } while (qadc_scan_read_index != local_20[0]);
   }
   if (_DAT_003fdc8e == 0) {
     system_status_flags_t_003fe974.sensor_diag = system_status_flags_t_003fe974.sensor_diag & 0xffef
@@ -55793,7 +55410,7 @@ void cm848_initializationContinuation(void)
   cm848_initialization_step_2();
   cm848_completeEngineStartSequence();
   cm848_initSensorChannelDataStructures();
-  _hardware_operation_complete_flag = 0;
+  hardware_operation_complete_flag = 0;
   if (hardware_timer_capture == 0) {
     hardware_timer_capture = TBLr;
   }
@@ -55802,7 +55419,7 @@ void cm848_initializationContinuation(void)
   uVar2 = 0x1e848;
   do {
     uVar2 = cm848_initProtectionModule(uVar2);
-  } while (_hardware_operation_complete_flag == 0);
+  } while (hardware_operation_complete_flag == 0);
   _DAT_003fb9a6 = scheduler_task_enable_flags._0_2_;
   scheduler_task_enable_flags._0_2_ = 0x100;
   sensorDiagnosticsConfiguration(0x30d4);
@@ -55834,7 +55451,7 @@ void cm848_engineStartCompletionB(void)
   cm848_initialization_step_2();
   cm848_completeEngineStartSequence();
   cm848_initSensorChannelDataStructures();
-  _hardware_operation_complete_flag = 0;
+  hardware_operation_complete_flag = 0;
   if (hardware_timer_capture == 0) {
     hardware_timer_capture = TBLr;
   }
@@ -55843,7 +55460,7 @@ void cm848_engineStartCompletionB(void)
   uVar2 = 0x1e848;
   do {
     uVar2 = cm848_initProtectionModule(uVar2);
-  } while (_hardware_operation_complete_flag == 0);
+  } while (hardware_operation_complete_flag == 0);
   _DAT_003fb9a6 = scheduler_task_enable_flags._0_2_;
   scheduler_task_enable_flags._0_2_ = 0x100;
   sensorDiagnosticsConfiguration(0x30d4);
@@ -56411,7 +56028,7 @@ undefined4 cm848_processSecurityCodeConversion(undefined4 param_1)
       *pcVar4 = *pcVar3;
       bVar6 = bVar6 + 1;
     } while (bVar6 < 4);
-    if ((_fault_timing_snapshot & 0xffffff00) - (uStack_18 & 0xffffff00) < 0x1a) {
+    if ((fault_timing_snapshot & 0xffffff00) - (uStack_18 & 0xffffff00) < 0x1a) {
       bVar1 = true;
       cVar7 = '\0';
       do {
@@ -56436,8 +56053,6 @@ undefined4 cm848_processSecurityCodeConversion(undefined4 param_1)
 //
 // Function: cm848_validateSecurityCode @ 0x0005576c
 //
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 undefined4 cm848_validateSecurityCode(void)
 
@@ -56464,7 +56079,7 @@ undefined4 cm848_validateSecurityCode(void)
       *puVar4 = *puVar3;
       bVar5 = bVar5 + 1;
     } while (bVar5 < 4);
-    if ((_fault_timing_snapshot & 0xffffff00) - (in_stack_00000008 & 0xffffff00) < 0x1a) {
+    if ((fault_timing_snapshot & 0xffffff00) - (in_stack_00000008 & 0xffffff00) < 0x1a) {
       bVar2 = true;
       cVar6 = '\0';
       do {
@@ -56514,21 +56129,21 @@ void cm848_processEngineRpmDiagnostic(void)
     protection_timeout_sentinel = ((uint)UNK_000645be._2_2_ * 1000000) / uVar3;
     wVar2 = 0x3200;
   }
-  if ((_j1939_pgn_handler_index_c != 0) && (_j1939_pgn_handler_index_c < 0x33)) {
+  if ((j1939_pgn_handler_index_c != 0) && (j1939_pgn_handler_index_c < 0x33)) {
     j1939_calib_handler_c_period = protection_timeout_sentinel;
-    (**(code **)(&j1939_pgn_handler_table_func2 + (uint)_j1939_pgn_handler_index_c * 0x10))();
+    (**(code **)(&j1939_pgn_handler_table_func2 + (uint)j1939_pgn_handler_index_c * 0x10))();
   }
-  if ((_j1939_pgn_handler_index_c != 0) && (_j1939_pgn_handler_index_c < 0x33)) {
+  if ((j1939_pgn_handler_index_c != 0) && (j1939_pgn_handler_index_c < 0x33)) {
     j1939_calib_handler_c_param = wVar2;
-    (**(code **)(&j1939_pgn_handler_table_func3 + (uint)_j1939_pgn_handler_index_c * 0x10))(wVar2);
+    (**(code **)(&j1939_pgn_handler_table_func3 + (uint)j1939_pgn_handler_index_c * 0x10))(wVar2);
   }
-  if ((_j1939_pgn_handler_index_d != 0) && (_j1939_pgn_handler_index_d < 0x33)) {
+  if ((j1939_pgn_handler_index_d != 0) && (j1939_pgn_handler_index_d < 0x33)) {
     j1939_calib_handler_d_period = protection_timeout_sentinel;
-    (**(code **)(&j1939_pgn_handler_table_func2 + (uint)_j1939_pgn_handler_index_d * 0x10))();
+    (**(code **)(&j1939_pgn_handler_table_func2 + (uint)j1939_pgn_handler_index_d * 0x10))();
   }
-  if ((_j1939_pgn_handler_index_d != 0) && (_j1939_pgn_handler_index_d < 0x33)) {
+  if ((j1939_pgn_handler_index_d != 0) && (j1939_pgn_handler_index_d < 0x33)) {
     j1939_calib_handler_d_param = wVar2;
-    (**(code **)(&j1939_pgn_handler_table_func3 + (uint)_j1939_pgn_handler_index_d * 0x10))(wVar2);
+    (**(code **)(&j1939_pgn_handler_table_func3 + (uint)j1939_pgn_handler_index_d * 0x10))(wVar2);
   }
   return;
 }
@@ -56551,29 +56166,29 @@ void cm848_dispatchCalibrationFunctions(void)
   if ((uVar1 & 0xffff) < (uint)DAT_000645c2) {
     _DAT_003fb9aa = DAT_000645c2;
   }
-  if ((_j1939_pgn_handler_index_c != 0) && (_j1939_pgn_handler_index_c < 0x33)) {
-    (**(code **)(&j1939_pgn_handler_table + (uint)_j1939_pgn_handler_index_c * 0x10))();
+  if ((j1939_pgn_handler_index_c != 0) && (j1939_pgn_handler_index_c < 0x33)) {
+    (**(code **)(&j1939_pgn_handler_table + (uint)j1939_pgn_handler_index_c * 0x10))();
   }
-  if ((_j1939_pgn_handler_index_c != 0) && (_j1939_pgn_handler_index_c < 0x33)) {
+  if ((j1939_pgn_handler_index_c != 0) && (j1939_pgn_handler_index_c < 0x33)) {
     j1939_calib_handler_c_period = 0xffffffff;
-    (**(code **)(&j1939_pgn_handler_table_func2 + (uint)_j1939_pgn_handler_index_c * 0x10))
+    (**(code **)(&j1939_pgn_handler_table_func2 + (uint)j1939_pgn_handler_index_c * 0x10))
               (0xffffffff);
   }
-  if ((_j1939_pgn_handler_index_c != 0) && (_j1939_pgn_handler_index_c < 0x33)) {
+  if ((j1939_pgn_handler_index_c != 0) && (j1939_pgn_handler_index_c < 0x33)) {
     j1939_calib_handler_c_param = 0;
-    (**(code **)(&j1939_pgn_handler_table_func3 + (uint)_j1939_pgn_handler_index_c * 0x10))(0);
+    (**(code **)(&j1939_pgn_handler_table_func3 + (uint)j1939_pgn_handler_index_c * 0x10))(0);
   }
-  if ((_j1939_pgn_handler_index_d != 0) && (_j1939_pgn_handler_index_d < 0x33)) {
-    (**(code **)(&j1939_pgn_handler_table + (uint)_j1939_pgn_handler_index_d * 0x10))();
+  if ((j1939_pgn_handler_index_d != 0) && (j1939_pgn_handler_index_d < 0x33)) {
+    (**(code **)(&j1939_pgn_handler_table + (uint)j1939_pgn_handler_index_d * 0x10))();
   }
-  if ((_j1939_pgn_handler_index_d != 0) && (_j1939_pgn_handler_index_d < 0x33)) {
+  if ((j1939_pgn_handler_index_d != 0) && (j1939_pgn_handler_index_d < 0x33)) {
     j1939_calib_handler_d_period = 0xffffffff;
-    (**(code **)(&j1939_pgn_handler_table_func2 + (uint)_j1939_pgn_handler_index_d * 0x10))
+    (**(code **)(&j1939_pgn_handler_table_func2 + (uint)j1939_pgn_handler_index_d * 0x10))
               (0xffffffff);
   }
-  if ((_j1939_pgn_handler_index_d != 0) && (_j1939_pgn_handler_index_d < 0x33)) {
+  if ((j1939_pgn_handler_index_d != 0) && (j1939_pgn_handler_index_d < 0x33)) {
     j1939_calib_handler_d_param = 0;
-    (**(code **)(&j1939_pgn_handler_table_func3 + (uint)_j1939_pgn_handler_index_d * 0x10))(0);
+    (**(code **)(&j1939_pgn_handler_table_func3 + (uint)j1939_pgn_handler_index_d * 0x10))(0);
   }
   return;
 }
@@ -59675,8 +59290,6 @@ void cm848_initialization_step(void)
 // Function: cm848_calibrationGroup5_periodic @ 0x00502464
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_calibrationGroup5_periodic(void)
 
 {
@@ -59690,8 +59303,8 @@ void cm848_calibrationGroup5_periodic(void)
   int iVar7;
   
   wVar4 = timing_limit_lower;
-  if (((governor_feature_flags & 0x20) != 0) && (wVar4 = timing_limit_lower, _cold_start_phase == 3)
-     ) {
+  if (((governor_feature_flags & 0x20) != 0) && (wVar4 = timing_limit_lower, cold_start_phase == 3))
+  {
     wVar4 = wRam003ff062;
     if (throttle_rate_filter_reset_flag != 1) {
       if (((((*(byte *)(UNK_00059b02 * 3 + 0x3feb92) & 0x10) != 0) &&
@@ -59738,7 +59351,7 @@ void cm848_calibrationGroup5_periodic(void)
         return;
       }
       if ((((*(byte *)(UNK_00059b2a * 3 + 0x3feb92) & 0x10) != 0) &&
-          ((_injection_fault_shadow_flags & 0x100) != 0)) && ((bRam003ff069 >> 5 & 1) != 0)) {
+          ((injection_fault_shadow_flags & 0x100) != 0)) && ((bRam003ff069 >> 5 & 1) != 0)) {
         fuel_correction_upper_limit = wRam0040a192;
         return;
       }
@@ -59779,12 +59392,12 @@ void cm848_calibrationGroup5_periodic(void)
         return;
       }
       if ((((*(byte *)(DAT_00059b26 * 3 + 0x3feb92) & 0x10) != 0) &&
-          ((_injection_fault_shadow_flags & 0x40) != 0)) && ((bRam003ff071 >> 5 & 1) != 0)) {
+          ((injection_fault_shadow_flags & 0x40) != 0)) && ((bRam003ff071 >> 5 & 1) != 0)) {
         fuel_correction_upper_limit = wRam0040a192;
         return;
       }
       if ((((*(byte *)(DAT_00059b1e * 3 + 0x3feb92) & 0x10) != 0) &&
-          ((_injection_fault_shadow_flags & 4) != 0)) && ((bRam003ff071 >> 6 & 1) != 0)) {
+          ((injection_fault_shadow_flags & 4) != 0)) && ((bRam003ff071 >> 6 & 1) != 0)) {
         fuel_correction_upper_limit = wRam0040a192;
         return;
       }
@@ -59883,8 +59496,6 @@ void cm848_protection_torqueLimit(void)
 // Function: hpcr_fuelFinal_exponentialAverage @ 0x00502b6c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void hpcr_fuelFinal_exponentialAverage(void)
 
 {
@@ -59896,10 +59507,10 @@ void hpcr_fuelFinal_exponentialAverage(void)
   sRam0040a1a4 = cm848_dualAxisTableInterpolation
                            (0x3fb9de,uRam003fb9d8,0x3ff108,fuel_temp_trim_snapshot,0x3ff3b6,0x3ff12e
                             ,0);
-  if ((_fuel_demand_state_b == 2) || (boost_pressure_state_t_0040a406.reserved_0e == 2)) {
+  if ((fuel_demand_state_b == 2) || (boost_pressure_state_t_0040a406.reserved_0e == 2)) {
     sRam0040a19c = 2;
   }
-  else if ((_fuel_demand_state_b == 1) || (boost_pressure_state_t_0040a406.reserved_0e == 1)) {
+  else if ((fuel_demand_state_b == 1) || (boost_pressure_state_t_0040a406.reserved_0e == 1)) {
     sRam0040a19c = 1;
   }
   else {
@@ -59922,7 +59533,7 @@ void hpcr_fuelFinal_exponentialAverage(void)
     if (uRam0040a162 == 0) {
       boost_fuel_scale_divisor = 1;
     }
-    _fuel_demand_mode_state = fuel_boost_mode_state;
+    fuel_demand_mode_state = fuel_boost_mode_state;
     if ((boost_pressure_state_t_0040a406.reserved_0e == 2) || (fuel_boost_mode_state == 2)) {
       wRam0040a198 = 2;
     }
@@ -59943,13 +59554,13 @@ void hpcr_fuelFinal_exponentialAverage(void)
     }
     wRam0040a198 = fuel_boost_mode_state;
     if ((boost_pressure_state_t_0040a406.reserved_0e == 2) || (fuel_boost_mode_state == 2)) {
-      _fuel_demand_mode_state = 2;
+      fuel_demand_mode_state = 2;
     }
     else if ((fuel_boost_mode_state == 1) || (boost_pressure_state_t_0040a406.reserved_0e == 1)) {
-      _fuel_demand_mode_state = 1;
+      fuel_demand_mode_state = 1;
     }
     else {
-      _fuel_demand_mode_state = 0;
+      fuel_demand_mode_state = 0;
     }
   }
   if (0x75e < fuel_pressure_sensor_reference) {
@@ -59970,8 +59581,6 @@ void hpcr_fuelFinal_exponentialAverage(void)
 // Function: cm848_initialization_step_3 @ 0x00502eb8
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_initialization_step_3(void)
 
 {
@@ -59987,7 +59596,7 @@ void cm848_initialization_step_3(void)
   iRam003fb9e6 = (int)sRam003fb9d6 << 0x10;
   uRam003fb9e2 = 0x3ff076;
   boost_fuel_demand_blend_a = fuel_demand_timing_input;
-  uRam0040a19c = _fuel_demand_state_b;
+  wRam0040a19c = fuel_demand_state_b;
   wRam0040a1a6 = fuel_boost_mode_state;
   fuel_pressure_sensor_reference = wRam0040a162;
   boost_fuel_scale_divisor = wRam0040a162;
@@ -60009,21 +59618,19 @@ void cm848_initialization_step_3(void)
 // Function: cm848_engineMode_reset @ 0x00503074
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_engineMode_reset(int param_1)
 
 {
   int iVar1;
   
-  if ((_engine_operating_mode == 0) && (_DAT_0040adf8 == 1)) {
-    _engine_operating_mode = 2;
+  if ((engine_operating_mode == 0) && (j1939_tsc1_override_state == 1)) {
+    engine_operating_mode = 2;
     speed_request_filtered = etc1_state_t_0040ae00.capped_speed_target;
     iVar1 = (uint)etc1_state_t_0040ae00.speed_control_mode * 0x12;
-    _fuel_demand_pid_coeffs = (word *)(iVar1 + 0x5c1d6);
+    fuel_demand_pid_coeffs = iVar1 + 0x5c1d6;
     fuel_pid_shadow_coeff2 = *(word *)(iVar1 + 0x5c1da);
     fuel_pid_shadow_coeff3 = *(word *)(iVar1 + 0x5c1dc);
-    fuel_pid_shadow_coeff0 = *_fuel_demand_pid_coeffs;
+    fuel_pid_shadow_coeff0 = *(word *)fuel_demand_pid_coeffs;
     fuel_pid_shadow_coeff1 = *(word *)(iVar1 + 0x5c1d8);
     fuel_pid_shadow_coeff4 = *(word *)(iVar1 + 0x5c1de);
     fuel_pid_shadow_coeff5 = *(word *)(iVar1 + 0x5c1e0);
@@ -60032,7 +59639,7 @@ void cm848_engineMode_reset(int param_1)
     fuel_pid_shadow_coeff8 = *(word *)(iVar1 + 0x5c1e6);
     governor_rpm_actual = engine_rpm_state_t_0040b7ac.current_rpm;
     if (param_1 != 2) {
-      _fuel_trim_mode_active_flag = 0;
+      fuel_trim_mode_active_flag = 0;
       governor_pid_integral_gain = 0x400;
       governor_pid_proportional_gain = 0x400;
       fuel_trim_speed_reference = wRam0005c1d4;
@@ -60050,16 +59657,14 @@ void cm848_engineMode_reset(int param_1)
 // Function: cm848_protection_init @ 0x005031b4
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_protection_init(void)
 
 {
-  _governor_override_active_flag = 0;
+  governor_override_active_flag = 0;
   cruise_speed_command = 0;
   fuel_temperature_trim = 0;
   engine_temp_protection_input = 0;
-  _fuel_trim_speed_override_flag = 0;
+  fuel_trim_speed_override_flag = 0;
   torque_limit_fuel_abs_min = torque_limit_fuel_minimum;
   j1939_prop_status_tx_state = 0;
   return;
@@ -60093,7 +59698,7 @@ void governor_adjustment_counter_update(void)
       uRam003fb9fe = 10;
     }
   }
-  if (((_DAT_003fd5c2 & 0x2000) == 0) || (_DAT_003fd7f0 != 0)) {
+  if (((_DAT_003fd5c2 & 0x2000) == 0) || (cold_start_inhibit_cal != 0)) {
     bVar1 = true;
   }
   else {
@@ -60139,11 +59744,11 @@ void governor_adjustment_counter_update(void)
   uRam0040a44c = uVar4;
   if (uRam0040a44c < uVar5) {
     if (uRam0040a44c == 0) {
-      uRam0040a444 = 0;
+      fuel_blend_correction_inhibit_flag._2_2_ = 0;
     }
   }
   else {
-    uRam0040a444 = 1;
+    fuel_blend_correction_inhibit_flag._2_2_ = 1;
   }
   return;
 }
@@ -60153,8 +59758,6 @@ void governor_adjustment_counter_update(void)
 //
 // Function: fuel_boostCorrection_enableCheck_trimCalc @ 0x005033a0
 //
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void fuel_boostCorrection_enableCheck_trimCalc(void)
 
@@ -60167,13 +59770,13 @@ void fuel_boostCorrection_enableCheck_trimCalc(void)
   
   uVar2 = (uint)fuel_quantity_ema;
   iVar3 = (int)(short)fuel_demand_boost_input;
-  if ((((_boost_correction_alt_mode_cal == 0) || (_boost_correction_inhibit_flag != 0)) ||
-      (_boost_correction_block_mode_flag != 0)) ||
-     (((_fuel_demand_mode_index_init_flag != 0 || (engine_fuel_fault_status != 0)) ||
+  if ((((boost_correction_alt_mode_cal == 0) || (boost_correction_inhibit_flag != 0)) ||
+      (boost_correction_block_mode_flag._0_2_ != 0)) ||
+     (((fuel_demand_mode_index_init_flag._0_2_ != 0 || (engine_fuel_fault_status != 0)) ||
       ((uVar2 < uRam004051f0 || (iVar3 < (int)(uint)uRam004051ec)))))) {
     uRam0040a44e = 0;
   }
-  else if (((_boost_correction_block_flag == 0) && (_fuel_demand_enable_state == 0)) &&
+  else if (((boost_correction_block_flag == 0) && (fuel_demand_enable_state == 0)) &&
           (((diagnostic_status_bits & 0x20) == 0 &&
            ((((engine_sync_validation_flags & 8) == 0 &&
              (sRam004051f4 <= (short)boost_pressure_filtered)) &&
@@ -60243,28 +59846,26 @@ void fuel_boostCorrection_enableCheck_trimCalc(void)
 // Function: cm848_auxiliary_periodic @ 0x00503604
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_auxiliary_periodic(void)
 
 {
   fuel_boostCorrection_enableCheck_trimCalc();
-  if ((((((_fuel_demand_mode_index == 2) || (_fuel_demand_droop_state == 2)) ||
-        (_fuel_demand_phase_state != 0)) ||
-       ((_fuel_demand_enable_state != 0 || (_boost_correction_block_flag != 0)))) ||
-      ((_fuel_demand_mode_index_init_flag != 0 ||
+  if ((((((fuel_demand_mode_index == 2) || (fuel_demand_droop_state == 2)) ||
+        (fuel_demand_phase_state != 0)) ||
+       ((fuel_demand_enable_state != 0 || (boost_correction_block_flag != 0)))) ||
+      ((fuel_demand_mode_index_init_flag._0_2_ != 0 ||
        (((diagnostic_status_bits & 0x100) != 0 || ((diagnostic_status_bits & 0x80) != 0)))))) ||
-     (((diagnostic_status_bits & 0x40) != 0 || (sRam0040a444 != 0)))) {
+     (((diagnostic_status_bits & 0x40) != 0 || (fuel_blend_correction_inhibit_flag._2_2_ != 0)))) {
     uRam0040a446 = 1;
   }
   else {
     uRam0040a446 = 0;
   }
-  if ((_fuel_demand_mode_index == 1) || (_fuel_demand_droop_state == 1)) {
-    _fuel_blend_correction_inhibit_flag = 1;
+  if ((fuel_demand_mode_index == 1) || (fuel_demand_droop_state == 1)) {
+    fuel_blend_correction_inhibit_flag._0_2_ = 1;
   }
   else {
-    _fuel_blend_correction_inhibit_flag = 0;
+    fuel_blend_correction_inhibit_flag._0_2_ = 0;
   }
   return;
 }
@@ -60453,8 +60054,6 @@ void fuel_boostTrim_ramVars_init(void)
 // Function: cm848_auxiliaryControl_process @ 0x00503b54
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_auxiliaryControl_process(void)
 
 {
@@ -60465,12 +60064,12 @@ void cm848_auxiliaryControl_process(void)
   uint uVar3;
   
   uVar1 = (uint)uRam00405d4e;
-  iVar2 = (uVar1 - uRam0040a68a) * 0x20;
+  iVar2 = (uVar1 - boost_correction_block_mode_flag._2_2_) * 0x20;
   cm848_signedDivision32
             ((int)((ulonglong)((longlong)iVar2 * (longlong)(int)(uint)uRam00405d50) >> 0x20),
              iVar2 * (uint)uRam00405d50,0,0x80);
   iVar2 = extraout_r4 + uVar1 * 0x20;
-  if (iVar2 < _fuel_demand_boost_offset) {
+  if (iVar2 < (short)fuel_demand_boost_offset) {
     uVar3 = 0;
   }
   else {
@@ -60478,7 +60077,8 @@ void cm848_auxiliaryControl_process(void)
     if (uVar1 < 2) {
       uVar1 = 1;
     }
-    uVar3 = (iVar2 - _fuel_demand_boost_offset >> 6 & 0xffffU) * (uint)fuel_quantity_ema_filtered;
+    uVar3 = (iVar2 - (short)fuel_demand_boost_offset >> 6 & 0xffffU) *
+            (uint)fuel_quantity_ema_filtered;
     if (uVar1 * 0xc800 <= uVar3) {
       uVar3 = uVar1 * 0xc800;
     }
@@ -60781,8 +60381,9 @@ void governor_adjustment_compare(void)
   uRam0040a5b0 = (ushort)(uRam0040a5a8 <= fuel_demand_quantity);
   bVar1 = (int)sRam0040a5a4 <= (int)((uint)fuel_flow_rate << 1);
   uRam0040a5ae = (ushort)bVar1;
-  uRam0040a5b2 = (ushort)(uRam0040a5aa <= uRam0040a68a);
-  if (((uRam0040a5a8 <= fuel_demand_quantity) || (bVar1)) || (uRam0040a5aa <= uRam0040a68a)) {
+  uRam0040a5b2 = (ushort)(uRam0040a5aa <= boost_correction_block_mode_flag._2_2_);
+  if (((uRam0040a5a8 <= fuel_demand_quantity) || (bVar1)) ||
+     (uRam0040a5aa <= boost_correction_block_mode_flag._2_2_)) {
     uRam0040a5a6 = 1;
   }
   else {
@@ -60797,8 +60398,6 @@ void governor_adjustment_compare(void)
 // Function: fuel_blendMode_conditionCheck_update @ 0x00504528
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void fuel_blendMode_conditionCheck_update(void)
 
 {
@@ -60806,13 +60405,14 @@ void fuel_blendMode_conditionCheck_update(void)
   governor_adjustment_blend_check();
   governor_adjustment_compare();
   if ((((sRam0040a5ac == 0) || (sRam0040a598 == 0)) || (sRam0040a5a6 == 0)) ||
-     ((_DAT_003fd5c4 & 0x100) == 0)) {
+     ((cold_start_feature_enable_flags & 0x100) == 0)) {
     sRam0040a59a = 0;
   }
   else {
     sRam0040a59a = 1;
   }
-  if ((((_DAT_003fd5c4 & 0x100) == 0) || (sRam0040a59c == 0)) || (sRam0040a5a6 == 0)) {
+  if ((((cold_start_feature_enable_flags & 0x100) == 0) || (sRam0040a59c == 0)) ||
+     (sRam0040a5a6 == 0)) {
     sRam0040a59e = 0;
   }
   else {
@@ -60988,8 +60588,6 @@ void cm848_mainLoop_step(void)
 // Function: fuel_demand_boost_emaFiltered_compensate @ 0x00504994
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void fuel_demand_boost_emaFiltered_compensate(void)
 
 {
@@ -60998,7 +60596,7 @@ void fuel_demand_boost_emaFiltered_compensate(void)
   short sVar3;
   uint uVar2;
   
-  uRam0040a5e6 = lookupTableInterpolation(0x3fba32,_fuel_demand_boost_offset,0x4071e0,0x40720c,1);
+  uRam0040a5e6 = lookupTableInterpolation(0x3fba32,fuel_demand_boost_offset,0x4071e0,0x40720c,1);
   iVar1 = (int)(short)(map_fuel_correction_factor * 8 - uRam0040a5e6);
   if (iVar1 == 0) {
     if (uRam0040a5e6 == 0) {
@@ -61028,7 +60626,7 @@ LAB_00504a4c:
     uVar2 = 0xfffe;
   }
   uRam0040a5ea = (short)uVar2;
-  if ((cold_start_phase3_flag != 0) && (_boost_fuel_mode_active == 0)) {
+  if ((cold_start_phase3_flag != 0) && (boost_fuel_mode_active == 0)) {
     iRam003fddb2 = iRam003fddb2 + (uVar2 & 0xffff) / 5;
   }
   return;
@@ -61119,8 +60717,6 @@ LAB_00504cf4:
 // Function: fuel_demand_boost_ema_compensate @ 0x00504d38
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void fuel_demand_boost_ema_compensate(void)
 
 {
@@ -61159,7 +60755,7 @@ LAB_00504df0:
     uVar2 = 0xfffe;
   }
   uRam0040a5e8 = (short)uVar2;
-  if ((cold_start_phase3_flag != 0) && (_boost_fuel_mode_active == 0)) {
+  if ((cold_start_phase3_flag != 0) && (boost_fuel_mode_active == 0)) {
     iRam003fddae = iRam003fddae + (uVar2 & 0xffff) / 5;
   }
   return;
@@ -61306,7 +60902,7 @@ void fuel_modeStatusBits_pack(void)
 {
   uRam0040a5ec = uRam0040a5a0 | sRam0040a5fc * 2 | sRam0040a5b6 << 2 |
                  (ushort)(sRam0040a600 != 0) << 3 | sRam0040a5f8 << 4 | sRam0040a5f4 << 5 |
-                 (ushort)(sRam0040a8a9 != 0) << 6 | sRam003fba36 << 7;
+                 (ushort)(governor_fuel_demand_interp_state_y._2_2_ != 0) << 6 | sRam003fba36 << 7;
   return;
 }
 
@@ -61324,10 +60920,10 @@ void fuel_modeStatusFlags_update(void)
   fuel_mode_status_flags = wRam00406568;
   if (sRam003fd7ea == 0) {
     if (sRam0040a5f4 == 0) {
-      uVar1 = uRam0040a8a9 | uRam0040a600;
+      uVar1 = governor_fuel_demand_interp_state_y._2_2_ | uRam0040a600;
     }
     else {
-      uVar1 = uRam0040a8a9 | uRam0040a600 | 1;
+      uVar1 = governor_fuel_demand_interp_state_y._2_2_ | uRam0040a600 | 1;
     }
     if ((sRam0040a5f8 != 0) || (sRam0040a5b6 != 0)) {
       uVar1 = uVar1 | 0x80;
@@ -61429,12 +61025,10 @@ void cm848_initialization_step_8(void)
 // Function: fuel_coldStart_phase26_flagUpdate @ 0x005055a0
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void fuel_coldStart_phase26_flagUpdate(void)
 
 {
-  if (((_DAT_003fd5c4 & 0x1000) == 0) || (cold_start_phase_2_6_flag == 0)) {
+  if (((cold_start_feature_enable_flags & 0x1000) == 0) || (cold_start_phase_2_6_flag == 0)) {
     sRam0040a5f4 = 0;
   }
   else {
@@ -61453,8 +61047,6 @@ void fuel_coldStart_phase26_flagUpdate(void)
 // Function: governor_coldStart_fuelModeCounter_update @ 0x00505600
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void governor_coldStart_fuelModeCounter_update(void)
 
 {
@@ -61469,7 +61061,8 @@ void governor_coldStart_fuelModeCounter_update(void)
   else {
     bVar2 = false;
   }
-  if ((((_DAT_003fd5c4 & 0x800) == 0) || (cold_start_phase3_flag == 0)) || (!bVar2)) {
+  if ((((cold_start_feature_enable_flags & 0x800) == 0) || (cold_start_phase3_flag == 0)) ||
+     (!bVar2)) {
     bVar1 = true;
   }
   else {
@@ -61501,8 +61094,6 @@ void governor_coldStart_fuelModeCounter_update(void)
 // Function: fuel_demandBoost_overrideFlag_lookup @ 0x005056f8
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void fuel_demandBoost_overrideFlag_lookup(void)
 
 {
@@ -61514,7 +61105,7 @@ void fuel_demandBoost_overrideFlag_lookup(void)
   else {
     sRam003fbca2 = 1;
   }
-  if (((_DAT_003fd5c4 & 0x200) == 0) || (sRam003fbca2 == 0)) {
+  if (((cold_start_feature_enable_flags & 0x200) == 0) || (sRam003fbca2 == 0)) {
     sRam0040a5fc = 0;
   }
   else {
@@ -61547,12 +61138,10 @@ void cm848_initialization_step_9(void)
 // Function: fuel_injectionTiming_cylinderCheck_update @ 0x005057ec
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void fuel_injectionTiming_cylinderCheck_update(void)
 
 {
-  if ((_DAT_003fd5c4 & 0x400) == 0) {
+  if ((cold_start_feature_enable_flags & 0x400) == 0) {
     uRam0040a600 = 0;
   }
   else {
@@ -61583,8 +61172,6 @@ void fuel_injectionTiming_cylinderCheck_update(void)
 // Function: cm848_mainLoop_step_2 @ 0x005058a8
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_mainLoop_step_2(void)
 
 {
@@ -61613,10 +61200,10 @@ void cm848_mainLoop_step_2(void)
     }
   }
   engine_load_input_value = wVar3;
-  if ((_fuel_demand_mode_state == 2) && (_fuel_demand_state_b == 2)) {
+  if ((fuel_demand_mode_state == 2) && (fuel_demand_state_b == 2)) {
     uRam0040a606 = 2;
   }
-  else if ((_fuel_demand_mode_state == 0) && (_fuel_demand_state_b == 0)) {
+  else if ((fuel_demand_mode_state == 0) && (fuel_demand_state_b == 0)) {
     uRam0040a606 = 0;
   }
   else {
@@ -61631,8 +61218,6 @@ void cm848_mainLoop_step_2(void)
 // Function: cm848_communication_periodic @ 0x005059ec
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_communication_periodic(void)
 
 {
@@ -61645,7 +61230,7 @@ void cm848_communication_periodic(void)
   {
     uVar2 = 0;
   }
-  if (((((_injection_fault_shadow_flags & 0x100) == 0) ||
+  if (((((injection_fault_shadow_flags & 0x100) == 0) ||
        ((*(byte *)(UNK_00059b2a * 3 + 0x3feb92) & 0x10) == 0)) || ((bRam003ff06b >> 5 & 1) == 0)) &&
      ((((j1939_receive_status_flags & 8) == 0 ||
        ((*(byte *)(UNK_00059b00 * 3 + 0x3feb92) & 0x10) == 0)) || ((bRam003ff06b >> 6 & 1) == 0))))
@@ -61658,11 +61243,11 @@ void cm848_communication_periodic(void)
   uRam0040a60c = uVar2 | uVar1;
   if ((uVar2 & 0x22) == 0 && uVar1 == 0) {
     fuel_demand_timing_input = sensor_channel20_raw;
-    _fuel_demand_state_b = 0;
+    fuel_demand_state_b = 0;
   }
   else {
     fuel_demand_timing_input = sensor_channel20_filtered;
-    _fuel_demand_state_b = 2;
+    fuel_demand_state_b = 2;
   }
   return;
 }
@@ -61673,16 +61258,14 @@ void cm848_communication_periodic(void)
 // Function: cm848_initialization_step_10 @ 0x00505b3c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_initialization_step_10(void)
 
 {
   if ((sensor_channel20_fault_status == 0) || (sensor_channel20_fault_status == 1)) {
-    _fuel_demand_state_b = 0;
+    fuel_demand_state_b = 0;
   }
   else if (sensor_channel20_fault_status == 2) {
-    _fuel_demand_state_b = 2;
+    fuel_demand_state_b = 2;
   }
   fuel_demand_timing_input = sensor_channel20_raw;
   return;
@@ -61694,19 +61277,17 @@ void cm848_initialization_step_10(void)
 // Function: cm848_mainLoop_step_3 @ 0x00505b84
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_mainLoop_step_3(void)
 
 {
   uRam0040a620 = uRam0040be28;
   if ((uRam0040be28 & 2) == 0) {
     fuel_demand_boost_input = wRam0040bd88;
-    _boost_correction_inhibit_flag = 0;
+    boost_correction_inhibit_flag = 0;
   }
   else {
     fuel_demand_boost_input = wRam0040bdae;
-    _boost_correction_inhibit_flag = 2;
+    boost_correction_inhibit_flag = 2;
   }
   return;
 }
@@ -61717,16 +61298,14 @@ void cm848_mainLoop_step_3(void)
 // Function: cm848_initialization_step_11 @ 0x00505bd8
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_initialization_step_11(void)
 
 {
   if ((sRam0040be28 == 0) || (sRam0040be28 == 1)) {
-    _boost_correction_inhibit_flag = 0;
+    boost_correction_inhibit_flag = 0;
   }
   else if (sRam0040be28 == 2) {
-    _boost_correction_inhibit_flag = 2;
+    boost_correction_inhibit_flag = 2;
   }
   fuel_demand_boost_input = wRam0040bd88;
   return;
@@ -61864,7 +61443,7 @@ void j1939_dm1_diagnosticMessage_send(void)
       pbVar1[2] = 0xff;
       pbVar1[3] = 0;
       *pbVar1 = *pbVar1 & 0xe3 | 0x18;
-      pbVar1[3] = (byte)j1939_source_address;
+      pbVar1[3] = (byte)j1939_source_address._0_2_;
       puVar2 = *(undefined1 **)(pbVar1 + 6);
       puVar5 = puRam0040c278;
       for (; ((uint)puVar3 & 0xffff) != 0; puVar3 = puVar3 + 0xffff) {
@@ -62037,8 +61616,6 @@ LAB_00506360:
 // Function: cm848_outputs2_periodic @ 0x0050638c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_outputs2_periodic(void)
 
 {
@@ -62056,7 +61633,7 @@ void cm848_outputs2_periodic(void)
   uint uVar9;
   uint uVar10;
   
-  if (((system_feature_config_flags & 8) == 0) || (_cold_start_phase == 1)) {
+  if (((system_feature_config_flags & 8) == 0) || (cold_start_phase == 1)) {
     if (fuel_demand_cmd20_pending_flag != 0) {
       uRam003fde48 = 0;
       uVar9 = 0;
@@ -62074,7 +61651,7 @@ void cm848_outputs2_periodic(void)
   }
   else {
     if (uRam003fde48 == 0) {
-      uRam003fde44 = _protection_timer_config_a;
+      dRam003fde44 = protection_timer_config_a;
     }
     if (engine_rpm_state_t_0040b7ac.current_rpm < UNK_0005c2bc) {
       wVar2 = fuel_demand_load_axis;
@@ -62177,15 +61754,13 @@ void cm848_outputs2_periodic(void)
 // Function: cm848_mainLoop_step_4 @ 0x00506780
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_mainLoop_step_4(void)
 
 {
-  if (_cold_start_phase != 1) {
-    _protection_timer_config_a = _protection_timer_config_a + 1;
+  if (cold_start_phase != 1) {
+    protection_timer_config_a = protection_timer_config_a + 1;
   }
-  _fault_timing_snapshot = _fault_timing_snapshot + 1;
+  fault_timing_snapshot = fault_timing_snapshot + 1;
   return;
 }
 
@@ -62200,8 +61775,8 @@ void cm848_mainLoop_step_4(void)
 void hpcr_exception_process_2(void)
 
 {
-  _fault_timing_snapshot = _DAT_003fd4b2;
-  _protection_timer_config_a = _DAT_003fd4c4;
+  fault_timing_snapshot = _DAT_003fd4b2;
+  protection_timer_config_a = _DAT_003fd4c4;
   return;
 }
 
@@ -62211,13 +61786,11 @@ void hpcr_exception_process_2(void)
 // Function: governor_speedModeB_activeFlag_update @ 0x005067e0
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void governor_speedModeB_activeFlag_update(void)
 
 {
-  if ((((governor_speed_at_target_flag == 0) && (_governor_speed_b_mode_select_flag == 0)) ||
-      (_engine_feature_8_active_flag == 0)) || (sRam003fd7f4 == 0)) {
+  if ((((governor_speed_at_target_flag == 0) && (governor_speed_b_mode_select_flag == 0)) ||
+      (engine_feature_8_active_flag._0_2_ == 0)) || (sRam003fd7f4 == 0)) {
     uRam003fbccc = 0;
   }
   else {
@@ -62257,7 +61830,7 @@ void governor_speedFault_filterProcess_update(void)
   if (sRam003fd7f6 != 0) {
     psVar1 = (short *)0x406756;
   }
-  sRam0040a664 = *psVar1;
+  sensor_channel105_fault_combined._2_2_ = *psVar1;
   sRam0040a666 = governor_speed_input_raw - *psVar1;
   return;
 }
@@ -62268,32 +61841,30 @@ void governor_speedFault_filterProcess_update(void)
 // Function: boost_pressureSource_faultSelect_update @ 0x00506964
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void boost_pressureSource_faultSelect_update(void)
 
 {
-  uRam0040a66e = _sensor_channel7_fault_status;
+  uRam0040a66e = sensor_channel7_fault_status;
   if ((diagnostic_status_bits_b & 0x4000) != 0) {
-    uRam0040a66e = _sensor_channel7_fault_status | 8;
+    uRam0040a66e = sensor_channel7_fault_status | 8;
   }
   if ((diagnostic_status_bits & 0x20) != 0) {
     uRam0040a66e = uRam0040a66e | 0x20;
   }
   if (uRam0040a66e == 0) {
     boost_pressure_filtered = wRam0040a666;
-    _boost_correction_block_flag = 0;
+    boost_correction_block_flag = 0;
   }
   else {
     boost_pressure_filtered = governor_speed_input_filtered;
-    _boost_correction_block_flag = 2;
+    boost_correction_block_flag = 2;
   }
   if (((int)(uint)uRam00406758 < (int)(short)boost_pressure_filtered) &&
      (governor_speed_at_target_flag == 0)) {
-    _boost_fuel_mode_active = 0;
+    boost_fuel_mode_active = 0;
   }
   else {
-    _boost_fuel_mode_active = 1;
+    boost_fuel_mode_active = 1;
   }
   wRam0040babe = boost_pressure_filtered;
   return;
@@ -62320,8 +61891,6 @@ void cm848_phase_commonProcessing_calculation(void)
 // Function: cm848_protection_init_2 @ 0x00506a64
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_protection_init_2(void)
 
 {
@@ -62335,11 +61904,11 @@ void cm848_protection_init_2(void)
   uRam003fbcbe = 0x406752;
   boost_pressure_filtered = governor_speed_input_raw;
   wRam0040babe = governor_speed_input_raw;
-  if ((_sensor_channel7_fault_status == 0) || (_sensor_channel7_fault_status == 1)) {
-    _boost_correction_block_flag = 0;
+  if ((sensor_channel7_fault_status == 0) || (sensor_channel7_fault_status == 1)) {
+    boost_correction_block_flag = 0;
   }
-  if (_sensor_channel7_fault_status == 2) {
-    _boost_correction_block_flag = 2;
+  if (sensor_channel7_fault_status == 2) {
+    boost_correction_block_flag = 2;
   }
   return;
 }
@@ -62349,8 +61918,6 @@ void cm848_protection_init_2(void)
 //
 // Function: cm848_phase_groupA_exponentialAverage @ 0x00506b34
 //
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void cm848_phase_groupA_exponentialAverage(void)
 
@@ -62381,11 +61948,11 @@ void cm848_phase_groupA_exponentialAverage(void)
     uVar1 = 0xffff;
   }
   uRam0040a67c = exponentialMovingAverage(uVar1 & 0xffff,0x3fbce2);
-  if ((((engine_feature_enable_flags & 0x2000) == 0) || (_boost_correction_block_flag == 2)) ||
-     (_fuel_demand_mode_index == 2)) {
+  if ((((engine_feature_enable_flags & 0x2000) == 0) || (boost_correction_block_flag == 2)) ||
+     (fuel_demand_mode_index == 2)) {
     uRam0040a67a = 0x80;
   }
-  else if ((_boost_correction_block_flag == 1) || (_fuel_demand_mode_index == 1)) {
+  else if ((boost_correction_block_flag == 1) || (fuel_demand_mode_index == 1)) {
     uRam0040a67a = 0x40;
   }
   else {
@@ -62464,8 +62031,6 @@ void boost_targetPressure_loadRpm_calc(void)
 // Function: cm848_auxiliaryControl_exponentialAverage @ 0x00506e28
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_auxiliaryControl_exponentialAverage(void)
 
 {
@@ -62478,7 +62043,7 @@ void cm848_auxiliaryControl_exponentialAverage(void)
   else {
     sRam0040a684 = 0;
   }
-  uVar1 = _fuel_demand_boost_offset * 2;
+  uVar1 = (short)fuel_demand_boost_offset * 2;
   iVar2 = ((int)uVar1 >> 6) + (uint)((int)uVar1 < 0 && (uVar1 & 0x3f) != 0);
   if (sRam0040a684 == 0) {
     boost_targetPressure_loadRpm_calc();
@@ -62495,13 +62060,13 @@ void cm848_auxiliaryControl_exponentialAverage(void)
     uVar1 = iVar2 + uVar1;
   }
   boost_fuel_input_value = (word)uVar1;
-  uRam0040a68a = exponentialMovingAverage(uVar1 & 0xffff,0x3fbcea);
-  if ((((boost_pressure_state_t_0040a406.reserved_0a == 0) && (_fuel_demand_mode_index == 0)) &&
-      (_fuel_demand_phase_state == 0)) && (sRam0040a684 == 0)) {
-    _boost_correction_block_mode_flag = 0;
+  boost_correction_block_mode_flag._2_2_ = exponentialMovingAverage(uVar1 & 0xffff,0x3fbcea);
+  if ((((boost_pressure_state_t_0040a406.reserved_0a == 0) && (fuel_demand_mode_index == 0)) &&
+      (fuel_demand_phase_state == 0)) && (sRam0040a684 == 0)) {
+    boost_correction_block_mode_flag._0_2_ = 0;
   }
   else {
-    _boost_correction_block_mode_flag = 1;
+    boost_correction_block_mode_flag._0_2_ = 1;
   }
   wRam0040babc = boost_fuel_input_value;
   return;
@@ -62560,27 +62125,26 @@ void sensor_channel108_filter(void)
 // Function: sensor_throttleTrim_ema_faultProcess @ 0x00507028
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void sensor_throttleTrim_ema_faultProcess(void)
 
 {
   word wVar1;
   undefined2 uVar2;
   
-  wRam0040a690 = sensor_channel108_fault_status;
-  if (_boost_correction_alt_mode_cal == 0) {
-    wRam0040a690 = 0;
+  fuel_demand_mode_index_init_flag._2_2_ = sensor_channel108_fault_status;
+  if (boost_correction_alt_mode_cal == 0) {
+    fuel_demand_mode_index_init_flag._2_2_ = 0;
   }
   uRam003fbcf8 = lookupTableInterpolation(0x3fbcfe,fuel_quantity_ema,0x406778,0x40678c,0);
   wVar1 = sensor_channel108_fault_status;
-  if (((sensor_channel108_fault_status != 0) || (_DAT_003fd7f0 != 0)) ||
-     (uRam0040a696 = uRam003fbcf8, (_DAT_003fd5c4 & 0x8000) == 0)) {
+  if (((sensor_channel108_fault_status != 0) || (cold_start_inhibit_cal != 0)) ||
+     (uRam0040a696 = uRam003fbcf8, (cold_start_feature_enable_flags & 0x8000) == 0)) {
     uRam0040a696 = 0;
   }
   sensor_channel108_filter();
   uVar2 = uRam0040a692;
-  if (((wVar1 == 0) && (_DAT_003fd7f0 == 0)) && ((_DAT_003fd5c4 & 0x8000) != 0)) {
+  if (((wVar1 == 0) && (cold_start_inhibit_cal == 0)) &&
+     ((cold_start_feature_enable_flags & 0x8000) != 0)) {
     uRam003fbcfc = exponentialMovingAverage(uRam0040a692,0x3fbd00);
     uVar2 = exponentialMovingAverage(uRam003fbcfc,0x3fbd08);
   }
@@ -62594,18 +62158,16 @@ void sensor_throttleTrim_ema_faultProcess(void)
 // Function: sensor_throttleTrim_inputSelect @ 0x0050716c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void sensor_throttleTrim_inputSelect(void)
 
 {
-  if ((uRam0040a690 & 2) == 0) {
+  if ((fuel_demand_mode_index_init_flag._2_2_ & 2) == 0) {
     throttle_trim_lookup_input = wRam003fbcf6;
-    _fuel_demand_mode_index_init_flag = 0;
+    fuel_demand_mode_index_init_flag._0_2_ = 0;
   }
   else {
     throttle_trim_lookup_input = sensor_channel108_filtered;
-    _fuel_demand_mode_index_init_flag = 2;
+    fuel_demand_mode_index_init_flag._0_2_ = 2;
   }
   return;
 }
@@ -62645,8 +62207,6 @@ void cm848_initialization_step_14(void)
 // Function: governor_speedRamp_stabilityFlag_calc @ 0x00507214
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void governor_speedRamp_stabilityFlag_calc(void)
 
 {
@@ -62683,9 +62243,9 @@ void governor_speedRamp_stabilityFlag_calc(void)
     sRam0040a6c0 = 1;
   }
   if (((diagnostic_status_bits & 0x20) == 0) &&
-     ((((_governor_operating_mode != 0 || ((diagnostic_status_bits_b & 0x4000) != 0)) ||
-       (_diagnostic_clear_condition_flag == 0)) ||
-      (((_sensor_channel7_fault_status != 0 || ((uint)uRam004067d8 <= (uVar1 & 0xffff))) ||
+     ((((governor_operating_mode != 0 || ((diagnostic_status_bits_b & 0x4000) != 0)) ||
+       (diagnostic_clear_condition_flag == 0)) ||
+      (((sensor_channel7_fault_status != 0 || ((uint)uRam004067d8 <= (uVar1 & 0xffff))) ||
        (sRam0040a6c0 == 0)))))) {
     uRam0040a6b8 = 0;
   }
@@ -62986,8 +62546,6 @@ void engine_protection_derateParam_priorityApply(void)
 // Function: governor_calculateIntegratorRpmOutput @ 0x00507a20
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void governor_calculateIntegratorRpmOutput(void)
 
 {
@@ -62996,7 +62554,7 @@ void governor_calculateIntegratorRpmOutput(void)
   int iVar1;
   undefined *puVar2;
   
-  if (_governor_startup_ready_flag == 1) {
+  if (governor_startup_ready_flag == 1) {
     protection_mode_request_flags = protection_mode_request_flags | uRam003fbd28;
     if ((protection_mode_request_flags & ~uRam003fbd28) <= uRam003fbd28) {
       if (((fault_management_status_flags & 0x40) == 0) ||
@@ -63023,9 +62581,9 @@ void governor_calculateIntegratorRpmOutput(void)
           (torque_limit_arb_t_0040a2f6.source_active == 0xc)))) {
         cm848_signedDivision32
                   ((int)((ulonglong)
-                         ((longlong)(int)((uint)_torque_limit_table_output - (uint)UNK_0005c2f8) *
+                         ((longlong)(int)((uint)torque_limit_table_output - (uint)UNK_0005c2f8) *
                          (longlong)(int)torque_limit_error_integrator._0_2_) >> 0x20),
-                   ((uint)_torque_limit_table_output - (uint)UNK_0005c2f8) *
+                   ((uint)torque_limit_table_output - (uint)UNK_0005c2f8) *
                    (int)torque_limit_error_integrator._0_2_,0,0x1111);
         puVar2 = (undefined *)(extraout_r4_00 + (uint)torque_limit_arb_t_0040a2f6.fuel_minimum);
         if ((int)puVar2 < 0) {
@@ -63071,15 +62629,13 @@ void fault_initBitwiseTimerMask(void)
 // Function: cm848_resetGovernorStartupReadyFlag @ 0x00507c44
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_resetGovernorStartupReadyFlag(void)
 
 {
   if ((governor_feature_config_word & 0x10) == 0) {
     torque_limit_fuel_min_alt = torque_limit_fuel_minimum;
     torque_limit_fuel_upper_cap = timing_limit_lower;
-    _governor_startup_ready_flag = 0;
+    governor_startup_ready_flag = 0;
     uRam0040a786 = 0;
     uRam0040a790 = 3;
   }
@@ -63347,8 +62903,6 @@ LAB_00508108:
 // Function: governor_coldStart_faultDerate_trigger @ 0x00508130
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void governor_coldStart_faultDerate_trigger(void)
 
 {
@@ -63360,7 +62914,7 @@ void governor_coldStart_faultDerate_trigger(void)
   int iVar6;
   ushort *puVar7;
   
-  if (((((_cold_start_phase == 2) && ((governor_feature_config_word & 0x10) != 0)) &&
+  if (((((cold_start_phase == 2) && ((governor_feature_config_word & 0x10) != 0)) &&
        ((governor_feature_config_word & 1) != 0)) &&
       (((governor_feature_config_word & 0x20) != 0 && (uRam003fdfb8 != 0xff)))) &&
      ((uRam003fdfb8 != 4 && (UNK_0005c2f4 <= uRam003fdfba)))) {
@@ -63636,8 +63190,6 @@ void protection_event_timestamp(int param_1,int param_2,int param_3)
 // Function: governor_faultDerate_mainLoop_update @ 0x00508898
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void governor_faultDerate_mainLoop_update(void)
 
 {
@@ -63650,11 +63202,11 @@ void governor_faultDerate_mainLoop_update(void)
   uint uVar7;
   int iVar8;
   
-  if (_cold_start_phase == 1) {
-    sRam003fbd38 = 0;
+  if (cold_start_phase == 1) {
+    wRam003fbd38 = 0;
   }
-  if ((((governor_feature_config_word & 1) == 0) || (_cold_start_phase == 8)) ||
-     (_cold_start_phase == 1)) {
+  if ((((governor_feature_config_word & 1) == 0) || (cold_start_phase == 8)) ||
+     (cold_start_phase == 1)) {
     sRam0040a786 = 0;
     uVar6 = 0;
     do {
@@ -63665,7 +63217,7 @@ void governor_faultDerate_mainLoop_update(void)
     uRam003fbd3e = 0;
     cRam0040a78a = '\0';
   }
-  else if (sRam003fbd38 == 0) {
+  else if (wRam003fbd38 == 0) {
     sRam0040a786 = 0;
     puVar5 = &UNK_000597b2;
     iVar8 = 0x40a734;
@@ -63719,7 +63271,7 @@ LAB_00508a90:
             uRam0040a78c = 0;
           }
           if ((uint)uVar3 + (uint)puVar5[0xf] < (uint)*(ushort *)(iVar8 + 0x1a)) {
-            _engine_start_active_flag = 1;
+            engine_start_active_flag = 1;
             sRam003fdfb8 = (short)uVar7;
           }
         }
@@ -63747,7 +63299,7 @@ LAB_00508b8c:
           uRam0040a78c = 0;
         }
         if ((uint)uVar2 + (uint)puVar5[0xf] < (uint)*(ushort *)(iVar8 + 0x1c)) {
-          _engine_start_active_flag = 1;
+          engine_start_active_flag = 1;
           sRam003fdfb8 = (short)uVar7;
         }
       }
@@ -63761,9 +63313,9 @@ LAB_00508b8c:
       sRam0040a786 = 1;
     }
     if ((sRam0040a772 != 0) || (sRam0040a782 != 0)) {
-      _engine_start_active_flag = 1;
+      engine_start_active_flag = 1;
     }
-    if (_engine_start_active_flag != 0) {
+    if (engine_start_active_flag != 0) {
       if (sRam003fdfbc != 0xff) {
         sRam003fdfbc = sRam003fdfbc + 1;
       }
@@ -63776,10 +63328,10 @@ LAB_00508b8c:
         sRam003fdfba = 1;
       }
     }
-    sRam003fbd38 = _engine_start_active_flag;
+    wRam003fbd38 = engine_start_active_flag;
   }
   else {
-    _engine_start_active_flag = 1;
+    engine_start_active_flag = 1;
   }
   wRam003fbd36 = engine_rpm_state_t_0040b7ac.current_rpm;
   if ((governor_feature_config_word & 1) == 0) {
@@ -63800,8 +63352,6 @@ LAB_00508b8c:
 // Function: cm848_completeEngineStartSequence @ 0x00508de8
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_completeEngineStartSequence(void)
 
 {
@@ -63811,7 +63361,7 @@ void cm848_completeEngineStartSequence(void)
   uRam003fbd38 = 0;
   uRam003fbd36 = 0;
   uRam0040a786 = 0;
-  _engine_start_active_flag = 0;
+  engine_start_active_flag = 0;
   uVar1 = 0;
   do {
     *(undefined2 *)(uVar1 * 0x3e + 0x40a74e) = 0;
@@ -63898,8 +63448,6 @@ undefined4 protection_condition_eval(int param_1,int param_2,uint param_3)
 // Function: fault_snapshot_capture @ 0x00508f64
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void fault_snapshot_capture(int param_1)
 
 {
@@ -63930,7 +63478,7 @@ void fault_snapshot_capture(int param_1)
   uVar9 = (uint)uVar1;
   if (*(short *)(iRam003fbd4a + iVar4) == 0) {
     *(short *)(iRam003fbd4a + iVar4) = 1;
-    *(undefined4 *)(iVar11 + uVar9 * 8) = _fault_timing_snapshot;
+    *(dword *)(iVar11 + uVar9 * 8) = fault_timing_snapshot;
     iVar4 = iVar11 + uVar9 * 8;
     *(undefined2 *)(iVar4 + 6) = 0;
     if ((*puRam003fbd42 & 8) == 0) {
@@ -63972,8 +63520,6 @@ void fault_snapshot_capture(int param_1)
 // Function: fault_event_timing_snapshot @ 0x005090fc
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void fault_event_timing_snapshot(int param_1)
 
 {
@@ -64008,7 +63554,7 @@ void fault_event_timing_snapshot(int param_1)
     if (*psVar6 != 0) {
       *psVar6 = 0;
       *(short *)(iVar7 + (uint)*puVar8 * 8 + 6) =
-           (short)_fault_timing_snapshot - (short)*(undefined4 *)(iVar7 + (uint)*puVar8 * 8);
+           (short)fault_timing_snapshot - (short)*(undefined4 *)(iVar7 + (uint)*puVar8 * 8);
       if (param_1 == 0) {
         iVar2 = 0x2e;
       }
@@ -64033,8 +63579,6 @@ void fault_event_timing_snapshot(int param_1)
 //
 // Function: governor_fault_channelProcess_mainLoop @ 0x00509278
 //
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void governor_fault_channelProcess_mainLoop(void)
 
@@ -64126,7 +63670,7 @@ LAB_0050946c:
         sVar6 = protection_condition_eval((int)sVar2,(int)psRam003fbd4a[4],uVar1);
         if (sVar6 != 0) {
           psVar10[4] = sVar2;
-          *(undefined4 *)(psVar10 + 5) = _fault_timing_snapshot;
+          *(dword *)(psVar10 + 5) = fault_timing_snapshot;
         }
       }
     }
@@ -64160,8 +63704,6 @@ void cm848_enforceFuelLimitProtection(void)
 //
 // Function: engine_torqueLimit_upperCap_calc @ 0x00509540
 //
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void engine_torqueLimit_upperCap_calc(void)
 
@@ -64240,11 +63782,11 @@ void engine_torqueLimit_upperCap_calc(void)
                       (0x3fbd4e,engine_rpm_state_t_0040b7ac.current_rpm,&UNK_000597d6,&UNK_00059808,
                        0);
     uVar3 = (int)(short)(0x100 - sRam0040a792) *
-            (int)(short)(_protection_fuel_limit_cal_active - sVar9);
+            (int)(short)(protection_fuel_limit_cal_active - sVar9);
     wVar4 = sVar9 + (short)(uVar3 >> 8) + (ushort)((int)uVar3 < 0 && (uVar3 & 0xff) != 0);
   }
   torque_limit_fuel_upper_cap = wVar4;
-  _governor_startup_ready_flag = (ushort)(0 < sRam0040a792);
+  governor_startup_ready_flag = (ushort)(0 < sRam0040a792);
   return;
 }
 
@@ -64254,15 +63796,13 @@ void engine_torqueLimit_upperCap_calc(void)
 // Function: engine_protection_torqueLimit_reset @ 0x00509814
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void engine_protection_torqueLimit_reset(void)
 
 {
   uRam0040a792 = 0;
   uRam003fbd4e = 2;
   torque_limit_fuel_upper_cap = timing_limit_lower;
-  _governor_startup_ready_flag = 0;
+  governor_startup_ready_flag = 0;
   return;
 }
 
@@ -64272,12 +63812,10 @@ void engine_protection_torqueLimit_reset(void)
 // Function: phase_group_a_validateEngineSync @ 0x00509848
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void phase_group_a_validateEngineSync(void)
 
 {
-  if (_boost_correction_alt_mode_cal != 0) {
+  if (boost_correction_alt_mode_cal != 0) {
     if ((engine_sync_validation_flags & 0x1000) == 0) {
       uRam0040a7d4 = 0;
     }
@@ -64290,19 +63828,19 @@ void phase_group_a_validateEngineSync(void)
   }
   boost_pressure_current_raw = map_fuel_correction_factor + boost_pressure_correction_raw;
   if ((engine_sync_validation_flags & 0x1000) == 0) {
-    if ((_fuel_demand_mode_index == 2) || (_fuel_demand_enable_state == 2)) {
+    if ((fuel_demand_mode_index == 2) || (fuel_demand_enable_state == 2)) {
       uRam0040a7d4 = 8;
       goto LAB_005098f4;
     }
-    if ((_fuel_demand_mode_index == 1) || (_fuel_demand_enable_state == 1)) {
+    if ((fuel_demand_mode_index == 1) || (fuel_demand_enable_state == 1)) {
       uRam0040a7d4 = 4;
       goto LAB_00509918;
     }
     uRam0040a7d4 = 0;
   }
   else {
-    if ((_fuel_demand_mode_index != 2) && (_fuel_demand_enable_state != 2)) {
-      if ((_fuel_demand_mode_index == 1) || (_fuel_demand_enable_state == 1)) {
+    if ((fuel_demand_mode_index != 2) && (fuel_demand_enable_state != 2)) {
+      if ((fuel_demand_mode_index == 1) || (fuel_demand_enable_state == 1)) {
         uRam0040a7d4 = 0x24;
 LAB_00509918:
         uRam0040a7d4 = uRam0040a67a | uRam0040a7d4;
@@ -64321,18 +63859,18 @@ LAB_00509978:
     if ((short)boost_pressure_current_raw < 0) {
       boost_pressure_current_raw = 0;
     }
-    _fuel_demand_droop_state = 0;
+    fuel_demand_droop_state = 0;
   }
   else if ((uRam0040a7d4 & 0x80) == 0) {
     boost_pressure_current_raw = wRam0040a67c;
-    _fuel_demand_droop_state = 1;
+    fuel_demand_droop_state = 1;
   }
   else {
     boost_pressure_current_raw = sensor_channel109_filtered;
-    _fuel_demand_droop_state = 2;
+    fuel_demand_droop_state = 2;
   }
   if (sRam003fd8ea != 0) {
-    _fuel_demand_droop_state = 0;
+    fuel_demand_droop_state = 0;
     boost_pressure_current_raw = wRam0040a67c;
   }
   wRam0040a672 = sensor_channel109_raw;
@@ -64345,16 +63883,14 @@ LAB_00509978:
 // Function: cm848_initBoostPressureFaultHandling @ 0x00509a2c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_initBoostPressureFaultHandling(void)
 
 {
   if ((sensor_channel109_fault_status == 0) || (sensor_channel109_fault_status == 1)) {
-    _fuel_demand_droop_state = 0;
+    fuel_demand_droop_state = 0;
   }
   else if (sensor_channel109_fault_status == 2) {
-    _fuel_demand_droop_state = 2;
+    fuel_demand_droop_state = 2;
   }
   boost_pressure_current_raw = sensor_channel109_raw;
   wRam0040a672 = sensor_channel109_raw;
@@ -64391,13 +63927,14 @@ void cm848_updateSensorValidationFlags(void)
     uRam003fbd58 = 4;
   }
   if ((_DAT_003fd5c6 & 0x40) == 0) {
-    uRam0040a8a9 = 0;
+    governor_fuel_demand_interp_state_y._2_2_ = 0;
   }
   else {
-    uRam0040a8a9 = uRam003fbd58 | uRam003fbd56 | uRam003fbd54 | uRam003fbd50 | uRam003fbd52;
+    governor_fuel_demand_interp_state_y._2_2_ =
+         uRam003fbd58 | uRam003fbd56 | uRam003fbd54 | uRam003fbd50 | uRam003fbd52;
   }
   uRam0040a8ab = uRam00406fb2;
-  if (uRam0040a8a9 == 0) {
+  if (governor_fuel_demand_interp_state_y._2_2_ == 0) {
     uRam0040a8ab = 0;
   }
   return;
@@ -64423,8 +63960,6 @@ void cm848_initFlowControlStateVariables(void)
 // Function: cm848_copyROMCalibrationToRAM @ 0x00509b74
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_copyROMCalibrationToRAM(void)
 
 {
@@ -64435,11 +63970,11 @@ void cm848_copyROMCalibrationToRAM(void)
   do {
     iVar1 = uVar2 * 2;
     *(undefined2 *)(iVar1 + 0x40ad6c) = *(undefined2 *)(iVar1 + 0x5a476);
-    *(undefined2 *)(iVar1 + 0x40ad76) = *(undefined2 *)(iVar1 + 0x5a47e);
+    *(undefined2 *)((int)&j1939_source_address + iVar1 + 2) = *(undefined2 *)(iVar1 + 0x5a47e);
     uVar2 = uVar2 + 1 & 0xff;
   } while (uVar2 < 4);
-  j1939_source_address = wRam0005a46c;
-  _j1939_source_address = uRam0005a46e;
+  j1939_source_address._0_2_ = uRam0005a46c;
+  j1939_source_address_b = wRam0005a46e;
   return;
 }
 
@@ -64633,8 +64168,6 @@ void fault_reason_set_bitmap(uint param_1)
 // Function: governor_loadPercent_channel5_update @ 0x00509fcc
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void governor_loadPercent_channel5_update(void)
 
 {
@@ -64642,13 +64175,13 @@ void governor_loadPercent_channel5_update(void)
   
   fault_flag_clear_bitmap(5);
   fault_reason_clear_bitmap(5);
-  if ((_DAT_003fd5b6 & 1) == 0) {
+  if ((fault_feature_config_flags & 1) == 0) {
     return;
   }
   if (DAT_0005c340 < bRam0040aac0) {
     return;
   }
-  if (_governor_derivative_active_flag == 0) {
+  if (governor_derivative_active_flag == 0) {
     if (sRam003feaae == 0) {
       if (sRam0040aaca == 0) {
         fault_reason_set_bitmap(5);
@@ -64693,7 +64226,7 @@ void governor_loadPercent_channel0_update(void)
   fault_reason_clear_bitmap(0);
   uVar1 = uRam0040aac4;
   if ((((_DAT_003fd5ce & 0x8000) != 0) && (bRam0040aac1 <= DAT_0005c340)) &&
-     (uVar1 = UNK_0005c344, _governor_derivative_active_flag == 0)) {
+     (uVar1 = UNK_0005c344, governor_derivative_active_flag == 0)) {
     if (sRam003feaa4 == 0) {
       uVar1 = UNK_0005c344;
       if (sRam0040aaca == 0) {
@@ -64874,8 +64407,6 @@ void diag_faultChannel_bitmap_update(uint param_1,uint param_2)
 // Function: diag_faultEntry_channelProcess @ 0x0050a57c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void diag_faultEntry_channelProcess(int param_1)
 
 {
@@ -64905,7 +64436,7 @@ void diag_faultEntry_channelProcess(int param_1)
   if ((ushort)(&fault_confirmation_snapshot_array)[uVar6] < (DAT_0005c340 & 0xff)) {
     (&fault_confirmation_snapshot_array)[uVar6] = (byte)DAT_0005c340;
   }
-  if (_governor_derivative_active_flag == 0) {
+  if (governor_derivative_active_flag == 0) {
     if (*(short *)(iVar5 * 2 + 0x3feaa4) == 0) {
       if (sRam0040aaca == 0) {
         fault_reason_set_bitmap(iVar5);
@@ -64940,8 +64471,6 @@ LAB_0050a6cc:
 // Function: fuel_demandFeature_emission_update @ 0x0050a700
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void fuel_demandFeature_emission_update(void)
 
 {
@@ -64954,7 +64483,7 @@ void fuel_demandFeature_emission_update(void)
     uVar1 = (uint)fuel_demand_feature_threshold._0_1_;
     if (uVar1 <= uVar2) {
       bVar3 = (byte)DAT_0005c340;
-      if (_governor_derivative_active_flag != 0) {
+      if (governor_derivative_active_flag != 0) {
         if ((DAT_0005c340 & 0xff) < uVar1) {
           return;
         }
@@ -65207,17 +64736,15 @@ void cm848_initializeDiagnosticStateCounters(void)
 // Function: governor_resetModeStateOnCondition @ 0x0050aec0
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void governor_resetModeStateOnCondition(void)
 
 {
-  if (((((governor_feature_config_word & 0x1000) != 0) && (_governor_mode_state == 2)) &&
-      (_j1939_source_address_index == 1)) &&
-     (((_DAT_0040adf8 == 1 && (_j1939_governor_source_index == 1)) &&
+  if (((((governor_feature_config_word & 0x1000) != 0) && (governor_mode_state == 2)) &&
+      (j1939_source_address_index == 1)) &&
+     (((j1939_tsc1_override_state == 1 && (j1939_governor_source_index == 1)) &&
       (DAT_0005c36c <= governor_proportional_gain)))) {
-    _governor_mode_state = 0;
-    _j1939_governor_output_percent_tx = 0x7d;
+    governor_mode_state = 0;
+    j1939_governor_output_percent_tx = 0x7d;
     etc1_state_t_0040ae00.mode_timeout = 0;
     etc1_state_t_0040ae00.speed_cmd_timeout = 0;
   }
@@ -65365,8 +64892,6 @@ undefined4 j1939_diagServiceDispatch(int param_1)
 // Function: phase_group_a_updateStartupTimer @ 0x0050bca0
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void phase_group_a_updateStartupTimer(void)
 
 {
@@ -65376,7 +64901,7 @@ void phase_group_a_updateStartupTimer(void)
     if (sRam0040aaa4 != 0) {
       sRam0040aaa4 = sRam0040aaa4 + -1;
     }
-    if (((_cold_start_phase == 3) || (_cold_start_phase == 4)) || (_cold_start_phase == 5)) {
+    if (((cold_start_phase == 3) || (cold_start_phase == 4)) || (cold_start_phase == 5)) {
       if (uRam0040aac8 <= uRam0005c346) {
         uRam0040aac8 = uRam0040aac8 + 1;
       }
@@ -65387,13 +64912,13 @@ void phase_group_a_updateStartupTimer(void)
     if ((protection_enable_t_0040c050.mode_bits & 1) == 0) {
       uRam0040aaca = 1;
     }
-    else if ((_cold_start_phase == 1) || (uRam0005c346 <= uRam0040aac8)) {
+    else if ((cold_start_phase == 1) || (uRam0005c346 <= uRam0040aac8)) {
       uRam0040aaca = 0;
     }
     else {
       uRam0040aaca = 1;
     }
-    if (_governor_derivative_active_flag == 0) {
+    if (governor_derivative_active_flag == 0) {
       psVar1 = (short *)0x3feaa4;
       do {
         if (*psVar1 != 0) {
@@ -65469,39 +64994,37 @@ void governor_calibSnapshot_rollingBuffer_update(int param_1)
 // Function: governor_sourceData_init @ 0x0050beec
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void governor_sourceData_init(int param_1)
 
 {
   if (param_1 == 0) {
     uRam003feb82 = 1;
-    uRam003feb86 = _j1939_governor_source_index;
+    wRam003feb86 = j1939_governor_source_index;
     uRam003feb50 = 0;
     uRam003feb51 = (undefined1)etc1_state_t_0040ae00.config_entry_ptr;
-    uRam003feb52 = _j1939_governor_source_index;
+    wRam003feb52 = j1939_governor_source_index;
     uRam003feb54 = 1;
-    uRam003feb56 = _DAT_0040adf8;
+    wRam003feb56 = j1939_tsc1_override_state;
     uRam003feb5e = 0;
     uRam003feb5c = 0;
     uRam003feb5a = 0;
     uRam003feb58 = 0;
-    uRam003feb60 = _fault_timing_snapshot;
+    dRam003feb60 = fault_timing_snapshot;
     uRam003feb64 = 0;
   }
   else {
     uRam003feb84 = 1;
-    uRam003feb88 = _j1939_source_address_index;
+    wRam003feb88 = j1939_source_address_index;
     uRam003feb6a = 1;
-    uRam003feb6b = (undefined1)_governor_mode_transition_state;
-    uRam003feb6c = _j1939_source_address_index;
+    uRam003feb6b = (undefined1)governor_mode_transition_state;
+    wRam003feb6c = j1939_source_address_index;
     uRam003feb6e = 1;
-    uRam003feb70 = _governor_mode_state;
+    wRam003feb70 = governor_mode_state;
     uRam003feb78 = 0;
     uRam003feb76 = 0;
     uRam003feb74 = 0;
     uRam003feb72 = 0;
-    uRam003feb7a = _fault_timing_snapshot;
+    dRam003feb7a = fault_timing_snapshot;
     uRam003feb7e = 0;
   }
   return;
@@ -65513,116 +65036,113 @@ void governor_sourceData_init(int param_1)
 // Function: phase_group_a_setupETC1Controller @ 0x0050bff4
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void phase_group_a_setupETC1Controller(void)
 
 {
   word *pwVar1;
-  short *psVar2;
-  byte *pbVar3;
+  word *pwVar2;
+  word *pwVar3;
   word *pwVar4;
-  word *pwVar5;
-  char cVar8;
+  char cVar7;
+  undefined1 *puVar5;
   undefined1 *puVar6;
-  undefined1 *puVar7;
-  undefined1 *puVar9;
-  byte *pbVar10;
-  undefined2 *puVar11;
+  undefined1 *puVar8;
+  undefined2 *puVar9;
   
-  cVar8 = (char)etc1_state_t_0040ae00.config_entry_ptr;
+  cVar7 = (char)etc1_state_t_0040ae00.config_entry_ptr;
   if ((governor_feature_config_word & 0x800) == 0) {
     return;
   }
-  psVar2 = (short *)0x3fbd6c;
+  pwVar2 = (word *)0x3fbd6c;
   pwVar1 = (word *)0x3fbd70;
-  pwVar4 = (word *)0x3fbd70;
-  if (((_DAT_0040adf8 != sRam003fbd6c) || (etc1_state_t_0040ae00.active_state != wRam003fbd70)) ||
-     (pwVar5 = pwVar1, cRam003fbd72 != (char)etc1_state_t_0040ae00.config_entry_ptr)) {
-    pwVar5 = pwVar4;
-    if (_DAT_0040adf8 == 0) {
-      if ((sRam003fbd6c != 0) && (wRam003fbd70 == 1)) {
-        iRam003feb64 = _fault_timing_snapshot - iRam003feb60;
+  pwVar3 = (word *)0x3fbd70;
+  if (((j1939_tsc1_override_state != wRam003fbd6c) ||
+      (etc1_state_t_0040ae00.active_state != wRam003fbd70)) ||
+     (pwVar4 = pwVar1, cRam003fbd72 != (char)etc1_state_t_0040ae00.config_entry_ptr)) {
+    pwVar4 = pwVar3;
+    if (j1939_tsc1_override_state == 0) {
+      if ((wRam003fbd6c != 0) && (wRam003fbd70 == 1)) {
+        iRam003feb64 = fault_timing_snapshot - iRam003feb60;
 LAB_0050c1a0:
         sRam003feb82 = 0;
         governor_calibSnapshot_rollingBuffer_update(0);
-        pwVar5 = pwVar1;
+        pwVar4 = pwVar1;
       }
     }
     else if (etc1_state_t_0040ae00.active_state == 1) {
       if (sRam003feb82 == 1) {
         if (cRam003fbd72 == (char)etc1_state_t_0040ae00.config_entry_ptr) {
           if (uRam003feb54 < 5) {
-            *(short *)((uint)uRam003feb54 * 2 + 0x3feb56) = _DAT_0040adf8;
+            *(word *)((uint)uRam003feb54 * 2 + 0x3feb56) = j1939_tsc1_override_state;
             uRam003feb54 = uRam003feb54 + 1;
           }
           else {
-            puVar11 = (undefined2 *)0x3feb56;
+            puVar9 = (undefined2 *)0x3feb56;
             do {
-              *puVar11 = puVar11[1];
-              puVar11 = puVar11 + 1;
-            } while (puVar11 < (undefined2 *)0x3feb5e);
-            sRam003feb5e = _DAT_0040adf8;
+              *puVar9 = puVar9[1];
+              puVar9 = puVar9 + 1;
+            } while (puVar9 < (undefined2 *)0x3feb5e);
+            wRam003feb5e = j1939_tsc1_override_state;
           }
           goto LAB_0050c1a8;
         }
-        iRam003feb64 = _fault_timing_snapshot - iRam003feb60;
+        iRam003feb64 = fault_timing_snapshot - iRam003feb60;
         governor_calibSnapshot_rollingBuffer_update(0);
       }
       governor_sourceData_init(0);
-      pwVar5 = pwVar1;
+      pwVar4 = pwVar1;
     }
     else if (wRam003fbd70 == 1) goto LAB_0050c1a0;
   }
 LAB_0050c1a8:
-  *psVar2 = _DAT_0040adf8;
-  *pwVar5 = etc1_state_t_0040ae00.active_state;
-  psVar2 = (short *)0x3fbd6e;
-  pbVar10 = &governor_mode_transition_state;
-  puVar9 = (undefined1 *)0x3fbd73;
-  puVar6 = (undefined1 *)0x3fbd73;
-  cRam003fbd72 = cVar8;
-  if ((_governor_mode_state != sRam003fbd6e) ||
-     (pbVar3 = pbVar10, puVar7 = puVar9, _governor_mode_transition_state != bRam003fbd73)) {
-    pbVar3 = &governor_mode_transition_state;
-    puVar7 = puVar6;
-    if (_governor_mode_state == 0) {
-      if (sRam003fbd6e != 0) {
+  *pwVar2 = j1939_tsc1_override_state;
+  *pwVar4 = etc1_state_t_0040ae00.active_state;
+  pwVar2 = (word *)0x3fbd6e;
+  pwVar1 = &governor_mode_transition_state;
+  puVar8 = (undefined1 *)0x3fbd73;
+  puVar5 = (undefined1 *)0x3fbd73;
+  cRam003fbd72 = cVar7;
+  if ((governor_mode_state != wRam003fbd6e) ||
+     (pwVar3 = pwVar1, puVar6 = puVar8, governor_mode_transition_state != bRam003fbd73)) {
+    pwVar3 = &governor_mode_transition_state;
+    puVar6 = puVar5;
+    if (governor_mode_state == 0) {
+      if (wRam003fbd6e != 0) {
         sRam003feb84 = 0;
-        iRam003feb7e = _fault_timing_snapshot - iRam003feb7a;
+        iRam003feb7e = fault_timing_snapshot - iRam003feb7a;
         governor_calibSnapshot_rollingBuffer_update(1);
-        pbVar3 = pbVar10;
-        puVar7 = puVar9;
+        pwVar3 = pwVar1;
+        puVar6 = puVar8;
       }
     }
     else {
       if (sRam003feb84 == 1) {
-        if (_governor_mode_transition_state == bRam003fbd73) {
+        if (governor_mode_transition_state == bRam003fbd73) {
           if (uRam003feb6e < 5) {
-            *(short *)((uint)uRam003feb6e * 2 + 0x3feb70) = _governor_mode_state;
+            *(word *)((uint)uRam003feb6e * 2 + 0x3feb70) = governor_mode_state;
             uRam003feb6e = uRam003feb6e + 1;
           }
           else {
-            puVar11 = (undefined2 *)0x3feb70;
+            puVar9 = (undefined2 *)0x3feb70;
             do {
-              *puVar11 = puVar11[1];
-              puVar11 = puVar11 + 1;
-            } while (puVar11 < (undefined2 *)0x3feb78);
-            sRam003feb78 = _governor_mode_state;
+              *puVar9 = puVar9[1];
+              puVar9 = puVar9 + 1;
+            } while (puVar9 < (undefined2 *)0x3feb78);
+            wRam003feb78 = governor_mode_state;
           }
           goto LAB_0050c2f4;
         }
-        iRam003feb7e = _fault_timing_snapshot - iRam003feb7a;
+        iRam003feb7e = fault_timing_snapshot - iRam003feb7a;
         governor_calibSnapshot_rollingBuffer_update(1);
       }
       governor_sourceData_init(1);
-      pbVar3 = pbVar10;
-      puVar7 = puVar9;
+      pwVar3 = pwVar1;
+      puVar6 = puVar8;
     }
   }
 LAB_0050c2f4:
-  *psVar2 = _governor_mode_state;
-  *puVar7 = (char)*(undefined2 *)pbVar3;
+  *pwVar2 = governor_mode_state;
+  *puVar6 = (char)*pwVar3;
   return;
 }
 
@@ -65661,8 +65181,6 @@ void j1939_diag_request_batch_43to48(void)
 //
 // Function: sendJ1939DiagnosticMessage @ 0x0050c8ec
 //
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void sendJ1939DiagnosticMessage(uint *param_1)
 
@@ -65721,11 +65239,11 @@ void sendJ1939DiagnosticMessage(uint *param_1)
     }
   }
   else {
-    if (j1939_source_address == (byte)*param_1) {
+    if (j1939_source_address._0_2_ == (byte)*param_1) {
       pcVar6 = (char *)0x3fbd74;
     }
     else {
-      if (_j1939_source_address != (byte)*param_1) {
+      if (j1939_source_address_b != (byte)*param_1) {
         **(undefined1 **)((int)param_1 + 10) = 3;
         return;
       }
@@ -66040,8 +65558,6 @@ void j1939_pgn_handler_init_ec00eb00(void)
 // Function: uds_validateMemoryRegion @ 0x0050d784
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 undefined1 uds_validateMemoryRegion(uint param_1,int param_2)
 
 {
@@ -66055,7 +65571,7 @@ undefined1 uds_validateMemoryRegion(uint param_1,int param_2)
     bVar3 = 0;
     do {
       if ((*puVar1 <= param_1) && (uVar2 <= puVar1[1])) {
-        if (_j1939_init_pending_flag == 1) {
+        if (j1939_init_pending_flag == 1) {
           return *(undefined1 *)(puVar1 + 2);
         }
         return *(undefined *)((int)puVar1 + 9);
@@ -66073,15 +65589,13 @@ undefined1 uds_validateMemoryRegion(uint param_1,int param_2)
 // Function: cm848_calculateAuxiliaryTorqueLimitFromEngineRPM @ 0x0050d864
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_calculateAuxiliaryTorqueLimitFromEngineRPM(void)
 
 {
   word wVar1;
   uint uVar2;
   
-  if (_engine_operating_mode == 6) {
+  if (engine_operating_mode == 6) {
     uRam0040ae70 = exponentialMovingAverage(engine_rpm_state_t_0040b7ac.target_rpm,0x3fcbdc);
     uVar2 = ((uint)UNK_0005c490 * (uint)uRam0040ae70) / 0x8b21;
     if ((((protection_enable_t_0040c050.system_enable_bits & 8) == 0) &&
@@ -66142,12 +65656,10 @@ void fuel_demand_periodSnapshot_save(void)
 // Function: cm848_transitionEngineOperatingMode @ 0x0050daac
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_transitionEngineOperatingMode(int param_1)
 
 {
-  if ((UNK_0005c49a != 0) && (_engine_operating_mode == 0)) {
+  if ((UNK_0005c49a != 0) && (engine_operating_mode == 0)) {
     if ((fuel_demand_feature_flags & 0x2000) == 0) {
       if (fuel_demand_enable_flag == 0) {
         if (((system_status_flags_t_003fe974.enable_state & 0x400) == 0) &&
@@ -66162,7 +65674,7 @@ void cm848_transitionEngineOperatingMode(int param_1)
     else if ((cRam0040aaa6 == '\0') && (cRam0040aaa8 == '\0')) {
       return;
     }
-    _engine_operating_mode = 6;
+    engine_operating_mode = 6;
     if (param_1 != 6) {
       fuel_demand_periodSnapshot_save();
     }
@@ -66226,16 +65738,14 @@ void governor_computeSpeedTargetWithThermalCorrection(void)
 // Function: cm848_initInterpolationStateCounters @ 0x0050dd10
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_initInterpolationStateCounters(void)
 
 {
   uRam003fcbe8 = 2;
   uRam003fcbea = 2;
-  _coolant_temp_interp_state = 2;
-  _governor_torque_interp_state = 2;
-  uRam0040aefc = 2;
+  coolant_temp_interp_state._0_2_ = 2;
+  governor_torque_interp_state = 2;
+  coolant_temp_interp_state._2_2_ = 2;
   return;
 }
 
@@ -66313,8 +65823,6 @@ void diag_suppress_stateMachine(int param_1)
 // Function: cm848_adjustFuelDemandWithOffset @ 0x0050de54
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_adjustFuelDemandWithOffset(void)
 
 {
@@ -66340,14 +65848,14 @@ void cm848_adjustFuelDemandWithOffset(void)
   }
   protection_channel_load_raw = (word)uVar4;
   if ((uint)torque_limit_error_integrator._2_2_ < (uint)engine_rpm_state_t_0040b7ac.current_rpm) {
-    if (_torque_limit_override_active_flag == 0) {
+    if (torque_limit_override_active_flag == 0) {
       uVar4 = 0;
     }
     else {
       uVar4 = ((uint)engine_rpm_state_t_0040b7ac.current_rpm -
               (uint)torque_limit_error_integrator._2_2_) * 0x1111;
-      if (uVar4 < (uint)_torque_limit_table_output * (int)torque_limit_error_integrator._0_2_) {
-        uVar4 = (uint)_torque_limit_table_output -
+      if (uVar4 < (uint)torque_limit_table_output * (int)torque_limit_error_integrator._0_2_) {
+        uVar4 = (uint)torque_limit_table_output -
                 uVar4 / (uint)(int)torque_limit_error_integrator._0_2_;
         if (0x1700 < (uVar4 & 0xffff)) {
           uVar4 = 0x1700;
@@ -66380,7 +65888,7 @@ void cm848_adjustFuelDemandWithOffset(void)
       fault_status_active = (word)(uVar1 / (uint)(int)sVar3);
     }
   }
-  if (_governor_mode_code == 0xc) {
+  if (governor_mode_code == 0xc) {
     fault_status_active = 0x6400;
   }
   return;
@@ -66422,8 +65930,6 @@ void cm848_validateFuelDemandRelativeToTiming(void)
 //
 // Function: main_loop_resetGovernorDiagnosticFlags @ 0x0050e0a0
 //
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void main_loop_resetGovernorDiagnosticFlags(void)
 
@@ -66486,9 +65992,9 @@ void main_loop_resetGovernorDiagnosticFlags(void)
     }
     if ((sRam0040b5a4 == 0) && ((protection_action_mode_bits._0_1_ & 1) != 0)) {
       if ((j1939_pgn_handler_b_flags & 0x400) == 0) {
-        if ((_protection_enable_shadow_flags & 0x8000) != 0) {
+        if ((protection_enable_shadow_flags & 0x8000) != 0) {
           j1939_receive_status_flags = j1939_receive_status_flags & 0x7fff;
-          _protection_enable_shadow_flags = _protection_enable_shadow_flags & 0x7fff;
+          protection_enable_shadow_flags = protection_enable_shadow_flags & 0x7fff;
         }
         uRam003fcbee = 0;
       }
@@ -66501,7 +66007,7 @@ void main_loop_resetGovernorDiagnosticFlags(void)
         uRam003fcbee = 0;
       }
     }
-    if (_governor_load_cycle_active_flag == 0) {
+    if (governor_load_cycle_active_flag == 0) {
       if ((j1939_pgn_handler_b_flags & 0x800) == 0) {
         if ((j1939_message_state_flags & 8) != 0) {
           protection_monitor_shadow = protection_monitor_shadow & 0xfff7;
@@ -66514,7 +66020,7 @@ void main_loop_resetGovernorDiagnosticFlags(void)
       }
       else {
         protection_monitor_shadow = protection_monitor_shadow | 8;
-        _governor_load_cycle_active_flag = 1;
+        governor_load_cycle_active_flag = 1;
         uRam003fcbf0 = 0;
       }
     }
@@ -66528,15 +66034,13 @@ void main_loop_resetGovernorDiagnosticFlags(void)
 // Function: cm848_synchronizeProtectionEnableShadowFlags @ 0x0050e4c4
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_synchronizeProtectionEnableShadowFlags(void)
 
 {
   if (((system_status_flags_t_003fe974.sensor_diag & 4) == 0) &&
-     ((_protection_enable_shadow_flags & 0x8000) != 0)) {
+     ((protection_enable_shadow_flags & 0x8000) != 0)) {
     j1939_receive_status_flags = j1939_receive_status_flags & 0x7fff;
-    _protection_enable_shadow_flags = _protection_enable_shadow_flags & 0x7fff;
+    protection_enable_shadow_flags = protection_enable_shadow_flags & 0x7fff;
   }
   return;
 }
@@ -66652,8 +66156,6 @@ void cm848_clearEngineProtectionFaultsConditional(void)
 // Function: cm848_blendBoostAndThrottleFuelDemand @ 0x0050e7f4
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_blendBoostAndThrottleFuelDemand(void)
 
 {
@@ -66697,7 +66199,7 @@ void cm848_blendBoostAndThrottleFuelDemand(void)
   uRam0040a72c = lookupTableInterpolation
                            (0x3fcbf8,(uint)map_fuel_correction_factor * (uint)uRam0040af6a >> 8 &
                                      0xffff,0x407238,0x40724e,2);
-  if (((_fuel_demand_mode_index == 0) && (sRam0040a19c == 0)) && (sRam0040a198 == 0)) {
+  if (((fuel_demand_mode_index == 0) && (sRam0040a19c == 0)) && (sRam0040a198 == 0)) {
     uRam0040af72 = 0;
   }
   else {
@@ -66828,8 +66330,6 @@ void governor_smoke_statusFlag_update(void)
 // Function: fuel_demandSource_modeSelect @ 0x0050ecc4
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void fuel_demandSource_modeSelect(void)
 
 {
@@ -66844,7 +66344,7 @@ void fuel_demandSource_modeSelect(void)
     else {
       uVar2 = 0x200;
     }
-    uRam0040afd8 = _governor_correction_mode_flags | uRam0040afe2 | uVar2;
+    uRam0040afd8 = governor_correction_mode_flags | uRam0040afe2 | uVar2;
   }
   uRam0040afe4 = uRam0040afd8 & 0x100;
   uVar2 = uRam0040afd8 & 0x200;
@@ -66858,16 +66358,16 @@ void fuel_demandSource_modeSelect(void)
        (((uVar2 == 0 && ((uRam0040afd8 & 0x100) == 0)) ||
         (((uRam0040afd8 & 0x40) != 0 && (uVar1 != 0)))))) {
       fuel_demand_quantity = governor_speed_reference_raw;
-      _boost_control_mode = 0;
+      boost_control_mode = 0;
     }
     else {
       fuel_demand_quantity = governor_temperature_correction;
-      _boost_control_mode = 1;
+      boost_control_mode = 1;
     }
   }
   else {
     fuel_demand_quantity = wRam0040bdc6;
-    _boost_control_mode = 2;
+    boost_control_mode = 2;
   }
   return;
 }
@@ -66892,16 +66392,14 @@ void phase_group_b_dispatchControlFunctions(void)
 // Function: cm848_initBoostControlModeAndFallback @ 0x0050ee68
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_initBoostControlModeAndFallback(void)
 
 {
   if (sRam0040be36 == 0) {
-    _boost_control_mode = 0;
+    boost_control_mode = 0;
   }
   else {
-    _boost_control_mode = 2;
+    boost_control_mode = 2;
   }
   fuel_demand_quantity = governor_speed_reference_raw;
   uRam0040bdc6 = uRam003ff6fc;
@@ -67194,8 +66692,6 @@ void hpcr_configureTPUTimerInterrupts(void)
 // Function: engine_protection_speedTracking_calc @ 0x0050f834
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void engine_protection_speedTracking_calc(void)
 
 {
@@ -67203,7 +66699,7 @@ void engine_protection_speedTracking_calc(void)
   int iVar2;
   bool bVar3;
   
-  if (((diagnostic_status_flags & 0x80) == 0) && (_governor_fuel_mode_state != 0)) {
+  if (((diagnostic_status_flags & 0x80) == 0) && (governor_fuel_mode_state != 0)) {
     bVar3 = false;
   }
   else {
@@ -67215,7 +66711,7 @@ void engine_protection_speedTracking_calc(void)
   else {
     bVar3 = false;
   }
-  if ((bVar3) && (_protection_confirm_active_b2 != 0)) {
+  if ((bVar3) && (protection_confirm_active_b2 != 0)) {
     bVar3 = true;
   }
   else {
@@ -67335,12 +66831,10 @@ LAB_0050fbb8:
 // Function: phase_group_b_updateGovernorModeDiagnostics @ 0x0050fbf8
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void phase_group_b_updateGovernorModeDiagnostics(void)
 
 {
-  if (_governor_fuel_b_mode_flag != 0) {
+  if (governor_fuel_b_mode_flag != 0) {
     engine_protection_speedTracking_calc();
     engine_protection_speedTracking_rampUpdate();
     if (sRam003fccf4 == 0) {
@@ -67395,7 +66889,7 @@ void boost_demand_diagBit_counter(void)
   uint uVar2;
   uint uVar3;
   
-  if (((short)fuel_demand_boost_input < sRam004077da) && (_boost_correction_inhibit_flag == 0)) {
+  if (((short)fuel_demand_boost_input < sRam004077da) && (boost_correction_inhibit_flag == 0)) {
     bVar1 = false;
   }
   else {
@@ -67414,12 +66908,12 @@ void boost_demand_diagBit_counter(void)
   uRam003fcd28 = (short)uVar3;
   if (((uVar3 & 0xffff) < uVar2) || ((diagnostic_status_flags & 0x400) == 0)) {
     if ((diagnostic_status_flags & 0x400) == 0) {
-      _DAT_003fe9d6 = _DAT_003fe9d6 & 0xfbff;
+      diagnostic_status_flags_b = diagnostic_status_flags_b & 0xfbff;
       _DAT_003fea3a = _DAT_003fea3a & 0xfbff;
     }
   }
   else {
-    _DAT_003fe9d6 = _DAT_003fe9d6 | 0x400;
+    diagnostic_status_flags_b = diagnostic_status_flags_b | 0x400;
   }
   return;
 }
@@ -67430,15 +66924,13 @@ void boost_demand_diagBit_counter(void)
 // Function: phase_group_b_computeGovernorFuelDemandOutput @ 0x0050fe54
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void phase_group_b_computeGovernorFuelDemandOutput(void)
 
 {
   undefined *puVar1;
   uint uVar2;
   
-  if (_governor_fuel_b_mode_flag != 0) {
+  if (governor_fuel_b_mode_flag != 0) {
     uVar2 = ((uint)uRam0040b082 * (uint)uRam004077ce >> 0xb) + (uint)(uRam0040b08a >> 3);
     if (0xffff < uVar2) {
       uVar2 = 0xffff;
@@ -67547,12 +67039,10 @@ LAB_00510114:
 // Function: phase_group_b_filterGovernorRpmSquaredMovingAverage @ 0x0051027c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void phase_group_b_filterGovernorRpmSquaredMovingAverage(void)
 
 {
-  if (_governor_fuel_b_mode_flag != 0) {
+  if (governor_fuel_b_mode_flag != 0) {
     governor_rpm_monitor_calc();
     uRam0040b082 = exponentialMovingAverage
                              ((uint)governor_rpm_monitored * (uint)governor_rpm_monitored >> 0xd &
@@ -67599,8 +67089,6 @@ void fuel_demand_boost_initialize(void)
 // Function: sensor_fault_safety_check @ 0x005103ac
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void sensor_fault_safety_check(void)
 
 {
@@ -67617,7 +67105,7 @@ void sensor_fault_safety_check(void)
            system_status_flags_t_003fe974.safety_bits_1 | 0x100;
       uRam0040b0a8 = 1;
     }
-    if (_cold_start_phase == 1) {
+    if (cold_start_phase == 1) {
       if (uRam0040bb0e <= uRam004077f2) {
         return;
       }
@@ -67648,8 +67136,6 @@ void sensor_fault_safety_check(void)
 // Function: protection_overtemp_monitor @ 0x00510520
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void protection_overtemp_monitor(void)
 
 {
@@ -67674,7 +67160,7 @@ void protection_overtemp_monitor(void)
         fuel_correction_enable_flag = fuel_correction_enable_flag == 0;
         protection_condition_flags_t_0040b0e8.overtemp_flags = bVar2 & 0xfb;
         if (((protection_status_flags_t_0040b0f2.output_flags & 2) == 0) &&
-           (((_protection_derate_level != 3 ||
+           (((protection_derate_level != 3 ||
              ((protection_condition_flags_t_0040b0e8.condition_flags_1 & 4) != 0)) ||
             (protection_overtemp_fuel_check_enable_cal == 0)))) {
           cm848_triggerProtectionEvent(0x12,0);
@@ -67682,7 +67168,7 @@ void protection_overtemp_monitor(void)
       }
     }
     if ((protection_status_flags_t_0040b0f2.output_flags & 4) == 0) {
-      if ((((_fuel_demand_enable_sync_flag != 0) && (_protection_derate_level == 4)) &&
+      if ((((fuel_demand_enable_sync_flag != 0) && (protection_derate_level == 4)) &&
           (((int)(uint)fuel_temp_trim_snapshot <
             (int)((uint)cruise_speed_command - (uint)uRam00407804) &&
            ((engine_load_filtered < protection_load_check_lower_threshold_cal && (sRam0040b0ac == 0)
@@ -67692,17 +67178,17 @@ void protection_overtemp_monitor(void)
         protection_condition_flags_t_0040b0e8.overtemp_flags =
              protection_condition_flags_t_0040b0e8.overtemp_flags | 1;
       }
-      if ((((_protection_derate_level == 3) &&
+      if ((((protection_derate_level == 3) &&
            ((int)((uint)cruise_speed_command - (uint)uRam00407806) <
             (int)(uint)fuel_temp_trim_snapshot)) ||
           (uRam0040780a < engine_rpm_state_t_0040b7ac.current_rpm)) ||
          (((protection_condition_flags_t_0040b0e8.condition_flags_1 & 0x10) == 0 ||
-          (_protection_derate_level == 2)))) {
+          (protection_derate_level == 2)))) {
         protection_condition_flags_t_0040b0e8.overtemp_flags =
              protection_condition_flags_t_0040b0e8.overtemp_flags & 0xfe;
       }
       sVar1 = sRam00407802;
-      if ((_protection_derate_level == 4) &&
+      if ((protection_derate_level == 4) &&
          ((protection_condition_flags_t_0040b0e8.condition_flags_1 & 0x10) != 0)) {
         if (sRam0040b0ac == 0) {
           sVar1 = 0;
@@ -67722,7 +67208,7 @@ void protection_overtemp_monitor(void)
               (((protection_condition_flags_t_0040b0e8.overtemp_flags & 0x40) == 0 &&
                ((protection_condition_flags_t_0040b0e8.overtemp_flags & 0x80) == 0)))))) &&
             (((protection_condition_flags_t_0040b0e8.overtemp_flags & 1) == 0 &&
-             (((2 < _protection_derate_level && (protection_ramp_position != 0x7e)) &&
+             (((2 < protection_derate_level && (protection_ramp_position != 0x7e)) &&
               (protection_ramp_position != 0x7f)))))) &&
            ((protection_action_mode_bits._0_1_ & 2) == 0)) {
           protection_condition_flags_t_0040b0e8.load_condition_flags =
@@ -67735,11 +67221,11 @@ void protection_overtemp_monitor(void)
       else {
         cm848_triggerProtectionEvent(0x12,0);
         cm848_triggerProtectionEvent(0x11,0);
-        if (_fuel_mode_switch_state != 0) {
+        if (fuel_mode_switch_state != 0) {
           protection_condition_state._0_1_ = protection_condition_state._0_1_ | 1;
         }
         protection_lockout_t_0040b11c.rpm_lockout = wRam00408370;
-        if ((_protection_trigger_active_flag == 0) &&
+        if ((protection_trigger_active_flag == 0) &&
            (protection_lockout_t_0040b11c.rpm_lockout = wRam004077f6,
            (protection_condition_flags_t_0040b0e8.overtemp_flags & 0x20) != 0)) {
           protection_lockout_t_0040b11c.rpm_lockout = wRam00407800;
@@ -68260,8 +67746,6 @@ void hpcr_fuel_mode_state_transition(void)
 // Function: fuel_temp_protection_monitor @ 0x0051193c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void fuel_temp_protection_monitor(void)
 
 {
@@ -68312,12 +67796,12 @@ void fuel_temp_protection_monitor(void)
     else {
       bRam0040b0fd = bRam0040b0fd | 2;
     }
-    if (_fuel_temp_trim_active_flag == 2) {
+    if (fuel_temp_trim_active_flag == 2) {
       bRam0040b0fd = bRam0040b0fd & 0xef;
     }
-    else if (_fuel_temp_trim_active_flag == 1) {
+    else if (fuel_temp_trim_active_flag == 1) {
       bRam0040b0fd = bRam0040b0fd & 0xf7 | 0x10;
-      _fuel_temp_trim_active_flag = 2;
+      fuel_temp_trim_active_flag = 2;
     }
   }
   return;
@@ -68342,20 +67826,20 @@ void fuel_demand_timing_control(void)
     if (_DAT_003fdbb6 == 0) {
       if (((protection_ramp_position == 0xff) || (protection_ramp_position == 0xfb)) ||
          (protection_ramp_position == 0x7d)) {
-        _fuel_correction_mode_flag = 1;
+        fuel_correction_mode_flag = 1;
       }
       else {
-        _fuel_correction_mode_flag = 0;
+        fuel_correction_mode_flag = 0;
       }
     }
     else if ((protection_enable_t_0040c050.reserved_02 & 0x10) == 0) {
-      if (_fuel_correction_mode_flag != 0) {
-        _fuel_correction_mode_flag = 0;
+      if (fuel_correction_mode_flag != 0) {
+        fuel_correction_mode_flag = 0;
         goto LAB_00511bf4;
       }
     }
-    else if (_fuel_correction_mode_flag == 0) {
-      _fuel_correction_mode_flag = 1;
+    else if (fuel_correction_mode_flag == 0) {
+      fuel_correction_mode_flag = 1;
 LAB_00511bf4:
       cm848_buildOutputChannelStatusWord();
       governor_speed_setpoint_high = 0x15c;
@@ -68363,12 +67847,12 @@ LAB_00511bf4:
   }
   else if ((etc1_state_t_0040ae00.address_filter == 0xfb) ||
           (etc1_state_t_0040ae00.address_filter == 0x7d)) {
-    _fuel_correction_mode_flag = 1;
+    fuel_correction_mode_flag = 1;
   }
   else {
-    _fuel_correction_mode_flag = 0;
+    fuel_correction_mode_flag = 0;
   }
-  if ((_DAT_0040adf8 == 0) || (etc1_state_t_0040ae00.reserved_1c._2_2_ != 0)) {
+  if ((j1939_tsc1_override_state == 0) || (etc1_state_t_0040ae00.reserved_1c._2_2_ != 0)) {
     if (uRam004086c8 <= uRam003fcd7a) goto LAB_00511cac;
     sVar2 = 1;
   }
@@ -68378,11 +67862,11 @@ LAB_00511bf4:
   }
   uRam003fcd7a = uRam003fcd7a + sVar2;
 LAB_00511cac:
-  if ((uRam003fcd7a == 0) && (_fuel_demand_timing_enable_flag != 0)) {
-    _fuel_demand_timing_enable_flag = 0;
-    _injection_fault_shadow_flags = _injection_fault_shadow_flags & 0xffef;
-    _DAT_003fea04 = _DAT_003fea04 & 0xffef;
-    cm848_removeCoolantCalEntryByParams(1,_j1939_ecu_source_address_cal & 0xff);
+  if ((uRam003fcd7a == 0) && (fuel_demand_timing_enable_flag != 0)) {
+    fuel_demand_timing_enable_flag = 0;
+    injection_fault_shadow_flags = injection_fault_shadow_flags & 0xffef;
+    protection_diag_shadow_flags_b = protection_diag_shadow_flags_b & 0xffef;
+    cm848_removeCoolantCalEntryByParams(1,j1939_ecu_source_address_cal & 0xff);
     cm848_removeCoolantCalEntryByParams(1,DAT_0005a474 & 0xff);
     cm848_removeCoolantCalEntryByParams(1,DAT_0005a472 & 0xff);
     uVar1 = uRam003fd870;
@@ -68403,14 +67887,14 @@ LAB_00511cac:
         return;
       }
     }
-    _injection_fault_shadow_flags = _injection_fault_shadow_flags | 0x10;
-    if (_fuel_demand_timing_enable_flag != 0) {
+    injection_fault_shadow_flags = injection_fault_shadow_flags | 0x10;
+    if (fuel_demand_timing_enable_flag != 0) {
       return;
     }
-    _fuel_demand_timing_enable_flag = 1;
+    fuel_demand_timing_enable_flag = 1;
     bVar3 = 1;
     do {
-      cm848_addCoolantCalEntry(1,_j1939_ecu_source_address_cal & 0xff,bVar3);
+      cm848_addCoolantCalEntry(1,j1939_ecu_source_address_cal & 0xff,bVar3);
       cm848_addCoolantCalEntry(1,DAT_0005a474 & 0xff,bVar3);
       cm848_addCoolantCalEntry(1,DAT_0005a472 & 0xff,bVar3);
       bVar3 = bVar3 + 1;
@@ -68419,9 +67903,9 @@ LAB_00511cac:
     if ((protection_feature_flags & 0x40) == 0) {
       return;
     }
-    uVar1 = _j1939_dm_control_flags & 0xfff3;
+    uVar1 = j1939_dm_control_flags & 0xfff3;
   }
-  _j1939_dm_control_flags = uVar1;
+  j1939_dm_control_flags = uVar1;
   return;
 }
 
@@ -68431,12 +67915,10 @@ LAB_00511cac:
 // Function: fuel_demand_timing_initialize @ 0x00511ea8
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void fuel_demand_timing_initialize(void)
 
 {
-  _fuel_demand_timing_enable_flag = 1;
+  fuel_demand_timing_enable_flag = 1;
   uRam003fcd7a = uRam004086ca;
   uRam003fcd7e = 2;
   return;
@@ -68522,14 +68004,12 @@ void protection_j1939_control_logic(void)
 // Function: protection_enable_state_machine @ 0x00512130
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void protection_enable_state_machine(void)
 
 {
   byte bVar1;
   
-  if ((((operating_mode_flags & 2) == 0) || (_qadc_init_done_flag == 0)) ||
+  if ((((operating_mode_flags & 2) == 0) || (qadc_init_done_flag == 0)) ||
      ((sRam003fdb92 == 0 &&
       (((protection_config_flags_b & 0x10) == 0 || (j1939_cruise_engaged == 0)))))) {
     engine_diag_shadow_flags = engine_diag_shadow_flags & 0xf3ff;
@@ -68618,14 +68098,12 @@ void protection_enable_state_machine(void)
 // Function: governor_fuel_mode_initialization @ 0x00512554
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void governor_fuel_mode_initialization(void)
 
 {
-  _cruise_protection_ok = 0;
+  cruise_protection_ok = 0;
   uRam0040b20c = 1;
-  _governor_fuel_mode_d = 1;
+  governor_fuel_mode_d = 1;
   uRam003fcda8 = 0;
   uRam003fcd94 = 5;
   uRam003fcda4 = 5;
@@ -68648,15 +68126,13 @@ void governor_fuel_mode_initialization(void)
 // Function: governor_cruiseOverride_state2_handler @ 0x005125f4
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 int governor_cruiseOverride_state2_handler(void)
 
 {
   word wVar1;
   
   wVar1 = fuel_demand_speed_error;
-  if (_governor_override_active_flag != 0) {
+  if (governor_override_active_flag != 0) {
     if ((sRam003fcdaa == 2) || (sRam003fcda2 != 2)) {
       if (sRam003fcd92 == 0) {
         wVar1 = 3;
@@ -68679,8 +68155,6 @@ int governor_cruiseOverride_state2_handler(void)
 // Function: protection_control_state_check_1 @ 0x00512678
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 int protection_control_state_check_1(void)
 
 {
@@ -68688,7 +68162,7 @@ int protection_control_state_check_1(void)
   
   if (((((power_state_status_flags & 0x20) == 0) && ((power_state_status_flags & 0x40) == 0)) &&
       ((system_status_flags_t_003fe974.condition_monitor & 0x2000) == 0)) &&
-     ((_cold_start_phase == 3 && (_cold_start_qualifier_flag == 0)))) {
+     ((cold_start_phase == 3 && (cold_start_qualifier_flag == 0)))) {
     if ((sRam003fcdaa == 0) || (sRam003fcda2 != 0)) {
       iVar1 = (int)sRam003fcda8;
     }
@@ -68711,14 +68185,12 @@ int protection_control_state_check_1(void)
 // Function: governor_fuelMode_state_get @ 0x00512724
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 undefined4 governor_fuelMode_state_get(void)
 
 {
   undefined4 uVar1;
   
-  if (_governor_override_active_flag == 0) {
+  if (governor_override_active_flag == 0) {
     if (governor_fuel_enable_state == 0) {
       uVar1 = 0;
     }
@@ -68789,15 +68261,13 @@ void governor_cruise_speedError_integrate(void)
 // Function: governor_cruiseOverride_state4_handler @ 0x00512878
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 int governor_cruiseOverride_state4_handler(void)
 
 {
   word wVar1;
   
   wVar1 = fuel_demand_speed_error;
-  if (_governor_override_active_flag == 0) {
+  if (governor_override_active_flag == 0) {
     if (governor_fuel_enable_state != 0) {
       wVar1 = 2;
       sRam003fcd92 = sRam00408720;
@@ -68824,8 +68294,6 @@ int governor_cruiseOverride_state4_handler(void)
 // Function: governor_cruiseOverride_state3_handler @ 0x0051291c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 int governor_cruiseOverride_state3_handler(void)
 
 {
@@ -68833,7 +68301,7 @@ int governor_cruiseOverride_state3_handler(void)
   
   wVar1 = fuel_demand_speed_error;
   if ((sRam003fcdaa == 3) || (sRam003fcda2 != 3)) {
-    if (_governor_override_active_flag == 1) {
+    if (governor_override_active_flag == 1) {
       if (sRam003fcd92 == 0) {
         wVar1 = 3;
       }
@@ -68893,8 +68361,6 @@ LAB_00512a58:
 // Function: governor_cruise_fuelCorrection_inhibitCheck @ 0x00512a60
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 undefined4 governor_cruise_fuelCorrection_inhibitCheck(void)
 
 {
@@ -68902,21 +68368,21 @@ undefined4 governor_cruise_fuelCorrection_inhibitCheck(void)
   uint uVar2;
   
   if ((((j1939_governor_feature_cal & 0x40) == 0) || (j1939_cruise_engaged == 0)) ||
-     (_cold_start_qualifier_flag != 0)) {
+     (cold_start_qualifier_flag != 0)) {
     uRam0040b20c = 1;
-    if (_governor_override_active_flag != 0) {
-      _governor_fuel_mode_d = 1;
+    if (governor_override_active_flag != 0) {
+      governor_fuel_mode_d = 1;
     }
     uVar1 = 1;
   }
   else if (((power_state_status_flags & 0x20) == 0) && ((power_state_status_flags & 0x40) == 0)) {
     if ((system_status_flags_t_003fe974.condition_monitor & 0x2000) == 0) {
       if ((((engine_diag_shadow_flags & 0x400) == 0) && ((engine_diag_shadow_flags & 0x800) == 0))
-         && ((_governor_cycle_active_flag == 0 || (sRam00408dc4 != 1)))) {
-        if (_cruise_protection_ok == 0) {
+         && ((governor_cycle_active_flag == 0 || (sRam00408dc4 != 1)))) {
+        if (cruise_protection_ok == 0) {
           uRam0040b20c = 5;
-          if (_governor_override_active_flag != 0) {
-            _governor_fuel_mode_d = 5;
+          if (governor_override_active_flag != 0) {
+            governor_fuel_mode_d = 5;
           }
           uVar1 = 1;
         }
@@ -68924,55 +68390,55 @@ undefined4 governor_cruise_fuelCorrection_inhibitCheck(void)
                 ((protection_enable_t_0040c050.mode_bits & 4) == 0)) {
           if (sRam003fcda2 == 1) {
             uRam0040b20c = 7;
-            if (_governor_override_active_flag != 0) {
-              _governor_fuel_mode_d = 7;
+            if (governor_override_active_flag != 0) {
+              governor_fuel_mode_d = 7;
             }
             uVar1 = 1;
           }
           else if (cruise_speed_setpoint_adjusted < DAT_0005c28a) {
             uRam0040b20c = 8;
-            if (_governor_override_active_flag != 0) {
-              _governor_fuel_mode_d = 8;
+            if (governor_override_active_flag != 0) {
+              governor_fuel_mode_d = 8;
             }
             uVar1 = 1;
           }
           else if ((engine_rpm_state_t_0040b7ac.target_rpm < uRam00408730) ||
                   (uRam00408722 < engine_rpm_state_t_0040b7ac.target_rpm)) {
             uRam0040b20c = 9;
-            if (_governor_override_active_flag != 0) {
-              _governor_fuel_mode_d = 9;
+            if (governor_override_active_flag != 0) {
+              governor_fuel_mode_d = 9;
             }
             uVar1 = 1;
           }
-          else if ((_fuel_correction_active_flag < 1) &&
+          else if (((short)fuel_correction_active_flag < 1) &&
                   ((uRam0040872c < uRam0040b206 || (uRam0040b206 < uRam0040872e)))) {
             uRam0040b20c = 10;
-            if (_governor_override_active_flag != 0) {
-              _governor_fuel_mode_d = 10;
+            if (governor_override_active_flag != 0) {
+              governor_fuel_mode_d = 10;
             }
             uVar1 = 1;
           }
           else {
-            if (_fuel_correction_active_flag < 1) {
+            if ((short)fuel_correction_active_flag < 1) {
               uVar2 = (uint)sRam0040b204;
               if ((int)uVar2 < 0) {
                 uVar2 = -uVar2;
               }
               if ((uint)uRam00408728 <= (uVar2 & 0xffff)) {
-                if (_governor_override_active_flag != 0) {
-                  _governor_fuel_mode_d = 0xb;
+                if (governor_override_active_flag != 0) {
+                  governor_fuel_mode_d = 0xb;
                 }
                 uRam0040b20c = 0xb;
                 return 1;
               }
             }
-            if ((_fuel_correction_active_flag < 1) || (_fuel_correction_mode_flag == 0)) {
+            if (((short)fuel_correction_active_flag < 1) || (fuel_correction_mode_flag == 0)) {
               uVar1 = 0;
             }
             else {
               uRam0040b20c = 0xc;
-              if (_governor_override_active_flag != 0) {
-                _governor_fuel_mode_d = 0xc;
+              if (governor_override_active_flag != 0) {
+                governor_fuel_mode_d = 0xc;
               }
               uVar1 = 1;
             }
@@ -68980,32 +68446,32 @@ undefined4 governor_cruise_fuelCorrection_inhibitCheck(void)
         }
         else {
           uRam0040b20c = 6;
-          if (_governor_override_active_flag != 0) {
-            _governor_fuel_mode_d = 6;
+          if (governor_override_active_flag != 0) {
+            governor_fuel_mode_d = 6;
           }
           uVar1 = 1;
         }
       }
       else {
         uRam0040b20c = 4;
-        if (_governor_override_active_flag != 0) {
-          _governor_fuel_mode_d = 4;
+        if (governor_override_active_flag != 0) {
+          governor_fuel_mode_d = 4;
         }
         uVar1 = 1;
       }
     }
     else {
       uRam0040b20c = 3;
-      if (_governor_override_active_flag != 0) {
-        _governor_fuel_mode_d = 3;
+      if (governor_override_active_flag != 0) {
+        governor_fuel_mode_d = 3;
       }
       uVar1 = 1;
     }
   }
   else {
     uRam0040b20c = 2;
-    if (_governor_override_active_flag != 0) {
-      _governor_fuel_mode_d = 2;
+    if (governor_override_active_flag != 0) {
+      governor_fuel_mode_d = 2;
     }
     uVar1 = 1;
   }
@@ -69053,22 +68519,20 @@ undefined4 governor_cruise_engage_check(void)
 // Function: governor_cruise_disengage_check @ 0x00512f18
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 undefined4 governor_cruise_disengage_check(void)
 
 {
   undefined4 uVar1;
   
-  if (((((_cruise_protection_ok == 0) || ((j1939_governor_feature_cal & 0x40) == 0)) ||
+  if (((((cruise_protection_ok == 0) || ((j1939_governor_feature_cal & 0x40) == 0)) ||
        (j1939_cruise_engaged == 0)) ||
-      ((((_cold_start_qualifier_flag != 0 ||
+      ((((cold_start_qualifier_flag != 0 ||
          ((system_status_flags_t_003fe974.condition_monitor & 0x2000) != 0)) ||
         (((power_state_status_flags & 0x20) != 0 ||
          (((power_state_status_flags & 0x40) != 0 || ((engine_diag_shadow_flags & 0x400) != 0))))))
        || ((engine_diag_shadow_flags & 0x800) != 0)))) ||
-     (((_governor_cycle_active_flag != 0 && (sRam00408dc4 == 1)) ||
-      (governor_fuel_enable_state == 0)))) {
+     (((governor_cycle_active_flag != 0 && (sRam00408dc4 == 1)) || (governor_fuel_enable_state == 0)
+      ))) {
     uVar1 = 0;
   }
   else {
@@ -69083,15 +68547,13 @@ undefined4 governor_cruise_disengage_check(void)
 // Function: cm848_periodicProtectionControl @ 0x00512ff4
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_periodicProtectionControl(void)
 
 {
   int iVar1;
   word wVar2;
   short sVar3;
-  short sVar4;
+  word wVar4;
   short sVar5;
   word *pwVar6;
   
@@ -69103,15 +68565,15 @@ void cm848_periodicProtectionControl(void)
   if (iVar1 != 0) {
     j1939_cruise_engaged = 1;
   }
-  _cruise_protection_ok = protection_control_state_check_1();
-  etc1_throttle_active_flag = (word)(_cruise_protection_ok != 0);
+  cruise_protection_ok = protection_control_state_check_1();
+  etc1_throttle_active_flag = (word)(cruise_protection_ok != 0);
   pwVar6 = &fuel_demand_speed_error;
-  sVar4 = _cruise_protection_ok;
+  wVar4 = cruise_protection_ok;
   wVar2 = governor_fuelMode_state_get();
   *pwVar6 = wVar2;
   sVar3 = governor_cruise_fuelCorrection_inhibitCheck();
   if (sVar3 == 0) {
-    if (_governor_override_active_flag == 0) {
+    if (governor_override_active_flag == 0) {
       uRam0040b20c = 0;
     }
     else {
@@ -69139,7 +68601,7 @@ LAB_005130dc:
   case 0:
     break;
   case 1:
-    _j1939_status_field_3bit = 5;
+    j1939_status_field_3bit = 5;
     goto code_r0x00513168;
   case 2:
     goto code_r0x00513154;
@@ -69149,30 +68611,30 @@ LAB_005130dc:
     goto code_r0x0051313c;
   case 5:
 code_r0x00513134:
-    _j1939_status_field_3bit = 3;
+    j1939_status_field_3bit = 3;
     goto code_r0x00513168;
   case 6:
 code_r0x0051313c:
-    _j1939_status_field_3bit = 2;
+    j1939_status_field_3bit = 2;
     goto code_r0x00513168;
   case 7:
-    if (_fuel_demand_enable_sync_flag == 0) {
-      _j1939_status_field_3bit = 1;
+    if (fuel_demand_enable_sync_flag == 0) {
+      j1939_status_field_3bit = 1;
       goto code_r0x00513168;
     }
 code_r0x00513154:
-    _j1939_status_field_3bit = 4;
+    j1939_status_field_3bit = 4;
     goto code_r0x00513168;
   case 8:
   }
-  _j1939_status_field_3bit = 0;
+  j1939_status_field_3bit = 0;
 code_r0x00513168:
-  if (((_j1939_status_field_3bit != 0) && (uRam0040b6c4 < fuel_demand_previous)) &&
-     (_governor_fuel_demand_mode != 9)) {
-    _j1939_status_field_3bit = 6;
+  if (((j1939_status_field_3bit != 0) && (uRam0040b6c4 < fuel_demand_previous)) &&
+     (governor_fuel_demand_mode != 9)) {
+    j1939_status_field_3bit = 6;
   }
   uRam003fcda4 = uRam003fcd94;
-  sRam003fcda8 = sVar4;
+  wRam003fcda8 = wVar4;
   sRam003fcdaa = sVar5;
   wRam003fcdac = engine_rpm_state_t_0040b7ac.current_rpm;
   uRam003fcda6 = uRam0040b206;
@@ -69184,8 +68646,6 @@ code_r0x00513168:
 //
 // Function: protection_fault_latch_update @ 0x00513200
 //
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void protection_fault_latch_update(void)
 
@@ -69201,10 +68661,10 @@ void protection_fault_latch_update(void)
   }
   wRam0040b216 = protection_fault_latch_flag;
   if ((sRam0040b22e == 0) && (sRam0040b532 == 0)) {
-    _protection_sensor_state_b = 0;
+    protection_sensor_state_b = 0;
   }
   else {
-    _protection_sensor_state_b = 1;
+    protection_sensor_state_b = 1;
   }
   if ((sRam0040b230 == 0) || (sRam003fcdb4 != 0)) {
     if ((sRam0040b534 == 0) || (sRam003fcdb6 != 0)) {
@@ -69237,13 +68697,13 @@ void protection_fault_latch_update(void)
     sRam003fcdb0 = (short)((int)((int)sRam00408732 * (uint)uRam00408736 * 5) / 10);
   }
   if (sRam003fcdb0 < 1) {
-    _protection_sensor_state_a = 0;
+    protection_sensor_state_a = 0;
   }
   else if ((short)(((short)uRam00408736 * 0x4fb) / 10) == sRam003fcdb0) {
-    _protection_sensor_state_a = 1;
+    protection_sensor_state_a = 1;
   }
   else {
-    _protection_sensor_state_a = 1;
+    protection_sensor_state_a = 1;
     sRam003fcdb0 = sRam003fcdb0 + -1;
   }
   sRam003fcdb4 = sRam0040b230;
@@ -69260,13 +68720,11 @@ void protection_fault_latch_update(void)
 // Function: protection_sensor_state_initialize @ 0x005134e8
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void protection_sensor_state_initialize(void)
 
 {
-  _protection_sensor_state_a = 0;
-  _protection_sensor_state_b = 0;
+  protection_sensor_state_a = 0;
+  protection_sensor_state_b = 0;
   uRam003fcdb0 = 0;
   return;
 }
@@ -69458,8 +68916,6 @@ void engine_coolantTemp_delta_calc(void)
 // Function: fuel_coldStart_integralCorrection_update @ 0x005139b8
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void fuel_coldStart_integralCorrection_update(void)
 
 {
@@ -69481,9 +68937,9 @@ void fuel_coldStart_integralCorrection_update(void)
       uRam0040b236 = uRam003fcdda;
       uRam003fcddc = (short)uRam003fcdda * 0x2280;
     }
-    if ((int)(uint)_protection_fuel_limit_cal_active < (int)(short)uRam0040b236) {
-      uRam0040b236 = _protection_fuel_limit_cal_active;
-      uRam003fcddc = (short)_protection_fuel_limit_cal_active * 0x2280;
+    if ((int)(uint)protection_fuel_limit_cal_active < (int)(short)uRam0040b236) {
+      uRam0040b236 = protection_fuel_limit_cal_active;
+      uRam003fcddc = (short)protection_fuel_limit_cal_active * 0x2280;
     }
   }
   else {
@@ -69581,8 +69037,6 @@ void fuel_coldStart_demandMin_2dLookup(void)
 // Function: governor_injectionTiming_modeAdj @ 0x00513d08
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void governor_injectionTiming_modeAdj(void)
 
 {
@@ -69590,10 +69044,10 @@ void governor_injectionTiming_modeAdj(void)
   
   wVar1 = lookupTableInterpolation
                     (0x3fcdd2,engine_rpm_state_t_0040b7ac.current_rpm,0x5b096,0x5b0b2,2);
-  if ((sRam003fcdc4 != 0x2e) && (_governor_mode_code == 0x2e)) {
+  if ((sRam003fcdc4 != 0x2e) && (governor_mode_code == 0x2e)) {
     injection_timing_demand_min_working = torque_limit_fault_snapshot;
   }
-  if (_governor_mode_code == 0x2e) {
+  if (governor_mode_code == 0x2e) {
     if ((int)(short)injection_timing_demand_min_working + (int)sRam0040876e < (int)(short)wVar1) {
       wVar1 = injection_timing_demand_min_working + sRam0040876e;
     }
@@ -69675,8 +69129,6 @@ void governor_fuel_limit_initialize(void)
 // Function: governor_fuel_limit_update @ 0x00513f5c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void governor_fuel_limit_update(void)
 
 {
@@ -69702,7 +69154,7 @@ void governor_fuel_limit_update(void)
     uRam003fcdc2 = uRam0040b238;
     uRam003fcdbe = uRam0040b234;
     uRam003fcdc0 = uRam0040b23a;
-    uRam003fcdc4 = _governor_mode_code;
+    wRam003fcdc4 = governor_mode_code;
   }
   return;
 }
@@ -69817,7 +69269,6 @@ void protection_fault_snapshot_initialize(void)
 //
 
 /* WARNING: Removing unreachable block (ram,0x00514b14) */
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void engine_egrFuel_stateMachine_update(void)
 
@@ -69953,7 +69404,7 @@ LAB_005148b8:
   }
   uRam0040b2a2 = (ushort)((uint)engine_rpm_state_t_0040b7ac.current_rpm * (uint)uRam00408842 >> 8);
   uVar7 = uRam0040884e;
-  if (_cold_start_phase == 3) {
+  if (cold_start_phase == 3) {
     sRam0040b2c6 = cm848_signedFirstOrderFilter((int)(short)engine_load_output_value,0x40b2ec);
     iVar8 = (int)sRam0040b2c6;
     if (sRam00408896 != 0) {
@@ -70043,7 +69494,7 @@ LAB_00514b4c:
   uRam0040b296 = uVar7;
   iVar9 = (int)(short)protection_load_input;
   iVar8 = (int)sRam00408878;
-  if ((iVar9 < iVar8) || (_fuel_correction_active_flag == 0)) {
+  if ((iVar9 < iVar8) || (fuel_correction_active_flag == 0)) {
     uVar4 = (uint)uRam00408874;
   }
   else if ((iVar9 < iVar8) || (sRam00408870 <= iVar9)) {
@@ -70243,8 +69694,6 @@ LAB_0051524c:
 // Function: governor_fuel_demand_calc @ 0x00515370
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void governor_fuel_demand_calc(void)
 
 {
@@ -70298,8 +69747,8 @@ void governor_fuel_demand_calc(void)
   }
   iRam003fce14 = extraout_r4_00;
   sRam0040b2ba = cm848_signedFirstOrderFilter((int)(short)iVar4,0x40b2dc);
-  if ((((_governor_fuel_demand_mode != 0xb) && (sRam0040b2a8 == 8)) && (uRam0040b292 < uRam0040b2a4)
-      ) && ((uRam0040b296 < uRam0040b2a4 && (uRam0040b298 < uRam0040b2a4)))) {
+  if ((((governor_fuel_demand_mode != 0xb) && (sRam0040b2a8 == 8)) && (uRam0040b292 < uRam0040b2a4))
+     && ((uRam0040b296 < uRam0040b2a4 && (uRam0040b298 < uRam0040b2a4)))) {
     iRam003fce0c = iRam003fce0c + (int)sRam00408814 * (int)sRam0040b2b8;
     sRam0040b2bc = (short)(iRam003fce0c / 0x5000);
   }
@@ -70336,12 +69785,10 @@ LAB_005155c8:
 // Function: fuel_coldStart_modeCode_select @ 0x00515660
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void fuel_coldStart_modeCode_select(void)
 
 {
-  if ((((_governor_fuel_demand_mode == 0xb) &&
+  if ((((governor_fuel_demand_mode == 0xb) &&
        (fuel_demand_control_t_0040a57a.calculated <= uRam00408846)) &&
       (fuel_temperature_trim <= uRam00408848)) &&
      (engine_rpm_state_t_0040b7ac.current_rpm < uRam00408844)) {
@@ -70357,7 +69804,7 @@ void fuel_coldStart_modeCode_select(void)
     uRam0040b29e = 0;
   }
   if (cRam0040881f == '\0') {
-    if (((_cold_start_phase == 1) || (sRam0040889c == 1)) && (sRam0040b2c2 != 0)) {
+    if (((cold_start_phase == 1) || (sRam0040889c == 1)) && (sRam0040b2c2 != 0)) {
       uRam0040b2c0 = uRam0040889a;
       uRam0040b2a8 = 9;
     }
@@ -70745,7 +70192,7 @@ void cm848_calibBlock1_adaptiveTrim_init(void)
 
 {
   uRam0040b334 = UNK_0005b32e;
-  uRam0040b328 = 1;
+  safety_condition_active_flag._2_2_ = 1;
   uRam0040b32c = 0;
   return;
 }
@@ -70776,8 +70223,8 @@ undefined4 cm848_calibBlock1_trim_eepromWrite(void)
         uVar1 = 1;
         goto LAB_0051656c;
       }
-      if (sRam0040b328 == 1) {
-        sRam0040b328 = 0;
+      if (safety_condition_active_flag._2_2_ == 1) {
+        safety_condition_active_flag._2_2_ = 0;
         uRam0040b32c = 1;
       }
       if ((governor_system_config_flags & 0x20) != 0) {
@@ -70824,7 +70271,8 @@ void cm848_calibBlock1_counters_reset(void)
 void cm848_calibBlock1_inRange_debounce(void)
 
 {
-  if (((sRam0040b328 == 0) && (UNK_0005b328 <= uRam0040b19e)) && (uRam0040b19e <= UNK_0005b32a)) {
+  if (((safety_condition_active_flag._2_2_ == 0) && (UNK_0005b328 <= uRam0040b19e)) &&
+     (uRam0040b19e <= UNK_0005b32a)) {
     uRam0040b32e = 0;
     if (uRam0040b332 < UNK_0005b326) {
       uRam0040b332 = uRam0040b332 + 1;
@@ -70833,7 +70281,8 @@ void cm848_calibBlock1_inRange_debounce(void)
       uRam0040b330 = 1;
     }
   }
-  if ((sRam0040b328 == 0) && ((uRam0040b19e < UNK_0005b328 || (UNK_0005b32a < uRam0040b19e)))) {
+  if ((safety_condition_active_flag._2_2_ == 0) &&
+     ((uRam0040b19e < UNK_0005b328 || (UNK_0005b32a < uRam0040b19e)))) {
     uRam0040b332 = 0;
     if (uRam0040b32e < UNK_0005b322) {
       uRam0040b32e = uRam0040b32e + 1;
@@ -70896,7 +70345,7 @@ void cm848_calibBlock1_adaptiveTrim_update(void)
   uint uVar3;
   int iVar4;
   
-  if (((sRam0040b328 == 0) && (sRam0040b32c == 0)) && (sRam0040b332 == 0)) {
+  if (((safety_condition_active_flag._2_2_ == 0) && (sRam0040b32c == 0)) && (sRam0040b332 == 0)) {
     if (eeprom_header_t_003fee08.calibration_block1[0] == 0) {
       eeprom_header_t_003fee08.calibration_block1[0] = (byte)uRam0040b1a0;
       uRam003fce24 = uRam0040b1a0 << 8;
@@ -70946,7 +70395,7 @@ void cm848_calibBlock1_learnedTrim_update(undefined4 param_1,ushort param_2,usho
     sVar1 = sRam0040b336 + -1;
   }
   sRam0040b336 = sVar1;
-  if ((((sRam0040b328 == 0) && ((power_state_status_flags & 0x2000) == 0)) &&
+  if ((((safety_condition_active_flag._2_2_ == 0) && ((power_state_status_flags & 0x2000) == 0)) &&
       ((power_state_status_flags & 0x4000) == 0)) && (sRam0040b332 == 0)) {
     param_3 = uRam003fce24;
     if (uRam003fce24 < uRam003fce28) {
@@ -70956,7 +70405,7 @@ void cm848_calibBlock1_learnedTrim_update(undefined4 param_1,ushort param_2,usho
       param_2 = uRam003fce24 - uRam003fce28;
     }
   }
-  if (((sRam0040b328 == 0) && ((power_state_status_flags & 0x2000) == 0)) &&
+  if (((safety_condition_active_flag._2_2_ == 0) && ((power_state_status_flags & 0x2000) == 0)) &&
      (((power_state_status_flags & 0x4000) == 0 && (sRam0040b332 == 0)))) {
     if (sRam0040b336 == 0) {
       uVar2 = UNK_0005b332 + 1;
@@ -71021,13 +70470,14 @@ void eeprom_calibration_load_initialize(void)
 void cm848_calibBlock1_warmupFlag_update(void)
 
 {
-  if ((((sRam0040b328 == 0) && (sRam0040b32a == 1)) && ((power_state_status_flags & 0x2000) == 0))
-     && (((power_state_status_flags & 0x4000) == 0 && (sRam0040b330 == 0)))) {
+  if ((((safety_condition_active_flag._2_2_ == 0) && (sRam0040b32a == 1)) &&
+      ((power_state_status_flags & 0x2000) == 0)) &&
+     (((power_state_status_flags & 0x4000) == 0 && (sRam0040b330 == 0)))) {
     eeprom_header_t_003fee08.calibration_block1[1] = eeprom_header_t_003fee08.calibration_block1[0];
     eeprom_header_t_003fee08.calibration_block1[2] = eeprom_header_t_003fee08.calibration_block1[0];
     sRam0040b32a = 0;
   }
-  if ((((sRam0040b328 == 0) && (sRam0040b32a == 0)) &&
+  if ((((safety_condition_active_flag._2_2_ == 0) && (sRam0040b32a == 0)) &&
       ((sRam0040b330 == 1 ||
        (((power_state_status_flags & 0x2000) != 0 || ((power_state_status_flags & 0x4000) != 0))))))
      && ((sRam0040b32a = 1, (power_state_status_flags & 0x2000) != 0 ||
@@ -71069,8 +70519,6 @@ void eeprom_calibration_load_periodic(void)
 // Function: fuel_quantity_demand_monitor @ 0x00516c18
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void fuel_quantity_demand_monitor(void)
 
 {
@@ -71081,17 +70529,18 @@ void fuel_quantity_demand_monitor(void)
   if (fuel_quantity_active != 0) {
     uRam003fce2e = uRam003fce2e + uRam00408952;
   }
-  if (_injection_timing_active_flag != 0) {
+  if (injection_timing_active_flag != 0) {
     uRam003fce2e = uRam003fce2e + uRam00408952;
   }
   uRam003fce30 = lookupTableInterpolation
                            (0x3fce32,sensor_readings_t_0040baf2.coolant_temp,0x408954,0x40895a,1);
-  if ((((((_DAT_0040adf8 == 1) || (_DAT_0040adf8 == 2)) || (_governor_fuel_active_flag != 0)) ||
-       ((_governor_override_active_flag != 0 || ((engine_diag_shadow_flags & 0x10) != 0)))) ||
+  if ((((((j1939_tsc1_override_state == 1) || (j1939_tsc1_override_state == 2)) ||
+        (governor_fuel_active_flag != 0)) ||
+       ((governor_override_active_flag != 0 || ((engine_diag_shadow_flags & 0x10) != 0)))) ||
       ((fuel_demand_control_t_0040a57a.calculated != 0 ||
        ((fuel_demand_control_t_0040a57a.enable_flag != 0 || (speed_setpoint_raw <= uRam00408950)))))
       ) || ((int)(((uint)fuel_quantity_active + (uint)fuel_quantity_trim +
-                  (uint)_injection_timing_active_flag) - (uint)uRam003fce2e) <=
+                  (uint)injection_timing_active_flag) - (uint)uRam003fce2e) <=
             (int)((uint)uRam0040894c + (uint)uRam003fce30))) {
     uRam003fce2c = 0;
   }
@@ -71127,14 +70576,12 @@ void fuel_quantity_demand_initialize(void)
 // Function: battery_voltage_protection_initialize @ 0x00516e5c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void battery_voltage_protection_initialize(void)
 
 {
   battery_voltage_protection_state = 0;
   cm848_triggerProtectionEvent(0x2b,0);
-  if ((_DAT_003fd5dc & 0x10) == 0) {
+  if ((governor_fuel_feature_flags & 0x10) == 0) {
     cm848_triggerProtectionEvent(0x2c,0);
   }
   battery_voltage_status_flags = 1;
@@ -71161,8 +70608,6 @@ void battery_voltage_protection_initialize(void)
 // Function: diag_iat_protectionLimit_calc @ 0x00516f9c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void diag_iat_protectionLimit_calc(void)
 
 {
@@ -71171,7 +70616,7 @@ void diag_iat_protectionLimit_calc(void)
   if (sRam003fce5f == 0) {
     uRam003fce54 = 1;
     cm848_triggerProtectionEvent(0x2b,0);
-    if ((_DAT_003fd5dc & 0x10) == 0) {
+    if ((governor_fuel_feature_flags & 0x10) == 0) {
       cm848_triggerProtectionEvent(0x2c,0);
     }
   }
@@ -71183,7 +70628,7 @@ void diag_iat_protectionLimit_calc(void)
     }
     if (((operating_mode_flags & 0x200) == 0) || (sRam0040b9ec != 0)) {
       cm848_setEngineProtectionFault(0x2b,0);
-      if ((_DAT_003fd5dc & 0x10) == 0) {
+      if ((governor_fuel_feature_flags & 0x10) == 0) {
         cm848_setEngineProtectionFault(0x2c,0);
       }
     }
@@ -71215,7 +70660,7 @@ void diag_iat_protectionLimit_update(void)
     if (((((operating_mode_flags & 0x200) == 0) || (sRam0040b9ec == 4)) || (sRam0040b9ec == 5)) ||
        (sRam0040b9ec == 6)) {
       cm848_triggerProtectionEvent(0x2b,0);
-      if ((_DAT_003fd5dc & 0x10) == 0) {
+      if ((governor_fuel_feature_flags & 0x10) == 0) {
         cm848_triggerProtectionEvent(0x2c,0);
       }
       if (cRam003fce54 == '\0') {
@@ -71224,7 +70669,7 @@ void diag_iat_protectionLimit_update(void)
     }
     else {
       cm848_triggerProtectionEvent(0x2b,0);
-      if ((_DAT_003fd5dc & 0x10) == 0) {
+      if ((governor_fuel_feature_flags & 0x10) == 0) {
         cm848_triggerProtectionEvent(0x2c,0);
       }
     }
@@ -71235,7 +70680,7 @@ void diag_iat_protectionLimit_update(void)
   else {
     if (((operating_mode_flags & 0x200) == 0) || (sRam0040b9ec != 0)) {
       cm848_setEngineProtectionFault(0x2b,0);
-      if ((_DAT_003fd5dc & 0x10) == 0) {
+      if ((governor_fuel_feature_flags & 0x10) == 0) {
         cm848_setEngineProtectionFault(0x2c,0);
       }
       cm848_setEngineProtectionFault(4,2);
@@ -71392,8 +70837,6 @@ void engine_stateMachine_transition_rpm(void)
 // Function: governor_solenoid_check_control @ 0x00517720
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void governor_solenoid_check_control(void)
 
 {
@@ -71461,7 +70904,7 @@ LAB_0051782c:
   if (sRam003fce4d == 0) {
     cm848_triggerProtectionEvent(0x2b,0);
 LAB_00517a0c:
-    if ((_DAT_003fd5dc & 0x10) == 0) {
+    if ((governor_fuel_feature_flags & 0x10) == 0) {
       cm848_triggerProtectionEvent(0x2c,0);
     }
   }
@@ -71476,7 +70919,7 @@ LAB_00517a0c:
       }
       cm848_triggerProtectionEvent(0x2b,0);
     }
-    if ((_DAT_003fd5dc & 0x10) == 0) {
+    if ((governor_fuel_feature_flags & 0x10) == 0) {
       cm848_setEngineProtectionFault(0x2c,0);
     }
   }
@@ -71489,14 +70932,12 @@ LAB_00517a0c:
 // Function: diag_iat_protection_shutdownEvent @ 0x00517a5c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void diag_iat_protection_shutdownEvent(void)
 
 {
   battery_voltage_protection_state = 5;
   cm848_triggerProtectionEvent(0x2b,0);
-  if ((_DAT_003fd5dc & 0x10) == 0) {
+  if ((governor_fuel_feature_flags & 0x10) == 0) {
     cm848_triggerProtectionEvent(0x2c,0);
   }
   cm848_triggerProtectionEvent(4,2);
@@ -71520,8 +70961,6 @@ void diag_iat_protection_shutdownEvent(void)
 //
 // Function: diag_iat_protection_stateMachine_update @ 0x00517b70
 //
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void diag_iat_protection_stateMachine_update(void)
 
@@ -71582,7 +71021,7 @@ LAB_00517e34:
     }
     if (sRam003fce51 != 0) {
       cm848_triggerProtectionEvent(0x2b,0);
-      if ((_DAT_003fd5dc & 0x10) == 0) {
+      if ((governor_fuel_feature_flags & 0x10) == 0) {
         cm848_triggerProtectionEvent(0x2c,0);
         return;
       }
@@ -71628,12 +71067,10 @@ LAB_00517e34:
 // Function: battery_voltage_protection_control @ 0x00517f48
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void battery_voltage_protection_control(void)
 
 {
-  if ((_DAT_003fd5dc & 1) == 0) {
+  if ((governor_fuel_feature_flags & 1) == 0) {
     return;
   }
   if ((UNK_0005c79a < fuel_temperature_trim) && (battery_voltage_protection_state == 4)) {
@@ -71653,7 +71090,7 @@ void battery_voltage_protection_control(void)
       battery_voltage_protection_state = 5;
     }
     else {
-      if (((_cold_start_phase == 8) || (_cold_start_phase == 1)) &&
+      if (((cold_start_phase == 8) || (cold_start_phase == 1)) &&
          ((battery_voltage_protection_state == 4 || (battery_voltage_protection_state == 3)))) {
         uRam003fce4f = uRam003fce4f + 1;
       }
@@ -71671,12 +71108,12 @@ void battery_voltage_protection_control(void)
     else if (battery_voltage_protection_state == 1) {
       battery_voltage_protection_state = 2;
     }
-    else if (((_cold_start_phase == 2) || (_cold_start_phase == 6)) &&
+    else if (((cold_start_phase == 2) || (cold_start_phase == 6)) &&
             (battery_voltage_protection_state == 2)) {
       battery_voltage_protection_state = 3;
     }
-    else if ((((_cold_start_phase == 3) || (_cold_start_phase == 4)) ||
-             ((_cold_start_phase == 7 || (_cold_start_phase == 5)))) &&
+    else if ((((cold_start_phase == 3) || (cold_start_phase == 4)) ||
+             ((cold_start_phase == 7 || (cold_start_phase == 5)))) &&
             ((battery_voltage_protection_state == 2 || (battery_voltage_protection_state == 3)))) {
       battery_voltage_protection_state = 4;
     }
@@ -71701,7 +71138,7 @@ void battery_voltage_protection_control(void)
   if (sRam0040b342 == 1) {
     cm848_setEngineProtectionFault(0x2b,0);
 LAB_00518230:
-    if ((_DAT_003fd5dc & 0x10) == 0) {
+    if ((governor_fuel_feature_flags & 0x10) == 0) {
       cm848_triggerProtectionEvent(0x2c,0);
     }
   }
@@ -71717,7 +71154,7 @@ LAB_00518230:
       }
       cm848_setEngineProtectionFault(0x2b,0);
     }
-    if ((_DAT_003fd5dc & 0x10) == 0) {
+    if ((governor_fuel_feature_flags & 0x10) == 0) {
       cm848_setEngineProtectionFault(0x2c,0);
     }
   }
@@ -71728,7 +71165,7 @@ LAB_00518250:
     }
     if (sRam003fce47 == 0) {
       cm848_triggerProtectionEvent(0x2b,0);
-      if ((_DAT_003fd5dc & 0x10) == 0) {
+      if ((governor_fuel_feature_flags & 0x10) == 0) {
         cm848_triggerProtectionEvent(0x2c,0);
       }
     }
@@ -71760,14 +71197,12 @@ void battery_voltage_monitor_reset(void)
 // Function: sensor_protectionLoad_source_select @ 0x00518334
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void sensor_protectionLoad_source_select(void)
 
 {
   undefined2 *puVar1;
   
-  if ((_sensor_channel10_ram < UNK_0005952c) || (UNK_0005952a < _sensor_channel10_ram)) {
+  if ((sensor_channel10_ram._0_2_ < UNK_0005952c) || (UNK_0005952a < sensor_channel10_ram._0_2_)) {
     if ((UNK_000593e4 <= sRam0040a09e) && (sRam0040a09e <= UNK_000593e2)) {
       uRam0040b34a = uRam0040a0a0;
       return;
@@ -71775,7 +71210,7 @@ void sensor_protectionLoad_source_select(void)
     puVar1 = &UNK_0005c7ac;
   }
   else {
-    puVar1 = (undefined2 *)0x40a0f4;
+    puVar1 = (undefined2 *)((int)&sensor_channel10_ram + 2);
   }
   uRam0040b34a = *puVar1;
   return;
@@ -71786,8 +71221,6 @@ void sensor_protectionLoad_source_select(void)
 //
 // Function: battery_voltage_oil_temp_update @ 0x005183b4
 //
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void battery_voltage_oil_temp_update(void)
 
@@ -71800,7 +71233,7 @@ void battery_voltage_oil_temp_update(void)
   ushort unaff_r31;
   word *pwVar4;
   
-  if ((_DAT_003fd5dc & 1) == 0) {
+  if ((governor_fuel_feature_flags & 1) == 0) {
     return;
   }
   puVar1 = (undefined1 *)0x3fce78;
@@ -71905,7 +71338,6 @@ void protection_diagnostics_periodic(void)
 /* WARNING: Removing unreachable block (ram,0x00518b50) */
 /* WARNING: Removing unreachable block (ram,0x005189e8) */
 /* WARNING: Removing unreachable block (ram,0x005190fc) */
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void j1939_dm_message_processor(void)
 
@@ -72124,11 +71556,11 @@ LAB_00519640:
     goto code_r0x00519654;
   }
   if (DAT_0040b3d6 == 4) {
-    if (_cold_start_phase != 1) {
+    if (cold_start_phase != 1) {
       uRam003fce95 = j1939_msg_slot_a_pgn;
       return;
     }
-    _diagnostic_clear_request_state = _diagnostic_clear_request_state | 1;
+    diagnostic_clear_request_state = diagnostic_clear_request_state | 1;
     DAT_0040b480 = 0x44;
     uRam0040b44f = 2;
     goto LAB_005196c4;
@@ -72465,8 +71897,8 @@ code_r0x00519120:
       bRam0040b482 = bRam003fce97 & 0x7f;
     }
     bRam0040b483 = UNK_0005c7be._0_1_ & 0xf;
-    if ((((protection_enable_t_0040c050.mode_bits & 8) != 0) || (_governor_fuel_active_flag == 1))
-       || ((uRam003fed94 & 0x100) != 0)) {
+    if ((((protection_enable_t_0040c050.mode_bits & 8) != 0) || (governor_fuel_active_flag == 1)) ||
+       ((uRam003fed94 & 0x100) != 0)) {
       bRam0040b483 = bRam0040b483 | 0x10;
     }
     cRam0040b484 = (char)UNK_0005c7be;
@@ -72573,7 +72005,7 @@ code_r0x00518b58:
     break;
   case 0x1e:
     bRam0040b482 = 1U - ((protection_enable_t_0040c050.mode_bits & 8) == 0) |
-                   (byte)_governor_fuel_active_flag;
+                   (byte)governor_fuel_active_flag;
 code_r0x00519654:
     uRam0040b44f = 4;
 LAB_005196c4:
@@ -72620,8 +72052,6 @@ void hpcr_periodicTaskGroup20_empty_stub(void)
 // Function: j1939_dm1_faultList_transmit @ 0x00519730
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void j1939_dm1_faultList_transmit(void)
 
 {
@@ -72632,7 +72062,7 @@ void j1939_dm1_faultList_transmit(void)
   uint auStack_10 [2];
   
   auStack_10[0] = (j1939_msg_slot_p_control & 0xe0) << 0x18;
-  if (((_cold_start_phase == 1) || (_cold_start_phase == 8)) && (sRam003fd93c != 0x13ec)) {
+  if (((cold_start_phase == 1) || (cold_start_phase == 8)) && (sRam003fd93c != 0x13ec)) {
     uVar4 = (uint)uRam003fcea2;
     if (uRam00408964 <= uVar4) {
       if ((uVar4 < uRam00408968) && (iRam003fed94 != iRam0040896a)) {
@@ -72669,28 +72099,28 @@ LAB_00519870:
     j1939_msg_slot_p_timer = 0xb00;
     bRam003fcea1 = bRam003fcea1 & 0xfe;
   }
-  if ((_cold_start_phase != 1) && (_cold_start_phase != 8)) {
-    uRam003fce9e = _DAT_003fdda8 + 1;
+  if ((cold_start_phase != 1) && (cold_start_phase != 8)) {
+    uRam003fce9e = cold_start_crank_counter + 1;
   }
-  if ((_cold_start_phase == 1) && (uRam003fce9e + 2 <= (uint)_DAT_003fdda8)) {
+  if ((cold_start_phase == 1) && (uRam003fce9e + 2 <= (uint)cold_start_crank_counter)) {
     if ((auStack_10[0]._0_1_ >> 6 & 1) != 1) {
       j1939_msg_slot_p_timer = 0xb00;
     }
     auStack_10[0] = auStack_10[0] & 0xbfffffff | 0x40000000;
   }
   else {
-    if (uRam003fce9e < _DAT_003fdda8) {
+    if (uRam003fce9e < cold_start_crank_counter) {
       j1939_msg_slot_p_timer = 0xb00;
       bRam003fcea1 = bRam003fcea1 | 1;
     }
-    if (_cold_start_phase == 8) {
+    if (cold_start_phase == 8) {
       uRam003fcea2 = 1;
     }
     bRam003fcea0 = 0;
     bRam003fcea1 = bRam003fcea1 | 4;
     auStack_10[0] = auStack_10[0] & 0xbfffffff;
-    if ((uRam003fce9e <= _DAT_003fdda8) && (0x19 < uRam003fcea2)) {
-      uRam003fce9e = _DAT_003fdda8 + 1;
+    if ((uRam003fce9e <= cold_start_crank_counter) && (0x19 < uRam003fcea2)) {
+      uRam003fce9e = cold_start_crank_counter + 1;
     }
   }
   uVar4 = (uint)uRam003fcea2;
@@ -72714,7 +72144,7 @@ LAB_00519aec:
   uVar3 = (uint)bRam003fcea0;
   if ((uint)pending_fault_count + (uint)active_fault_count < uVar3) {
     auStack_10[0] = (auStack_10[0]._0_1_ & 0xbf) << 0x18;
-    uRam003fce9e = _DAT_003fdda8 + 1;
+    uRam003fce9e = cold_start_crank_counter + 1;
   }
   else {
     if (uVar3 < pending_fault_count) {
@@ -72751,12 +72181,10 @@ LAB_00519be0:
 // Function: j1939_communication_init @ 0x00519c64
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void j1939_communication_init(void)
 
 {
-  uRam003fce9e = _DAT_003fdda8;
+  wRam003fce9e = cold_start_crank_counter;
   uRam003fcea1 = 0;
   return;
 }
@@ -72782,21 +72210,19 @@ void protection_exception_event_35_init(void)
 // Function: protection_ambient_qualification @ 0x00519cc4
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void protection_ambient_qualification(void)
 
 {
   short sVar1;
   
   if (sRam0040897e == 0) {
-    if ((_cold_start_phase == 3) || (_cold_start_phase == 4)) {
+    if ((cold_start_phase == 3) || (cold_start_phase == 4)) {
       sVar1 = 2;
     }
     else {
-      if (((_cold_start_phase != 2) && (_cold_start_phase != 7)) && (_cold_start_phase != 6)) {
-        if ((_cold_start_phase != 8) && (_cold_start_phase != 5)) {
-          if ((_cold_start_phase == 1) && (uRam003fcea4 != 0xffff)) {
+      if (((cold_start_phase != 2) && (cold_start_phase != 7)) && (cold_start_phase != 6)) {
+        if ((cold_start_phase != 8) && (cold_start_phase != 5)) {
+          if ((cold_start_phase == 1) && (uRam003fcea4 != 0xffff)) {
             uRam003fcea4 = uRam003fcea4 + 1;
           }
           if (((sRam003fcea6 != 1) || (uRam003fcea4 <= uRam0040897a)) &&
@@ -72925,8 +72351,6 @@ void initDiagnosticShadowFlags(void)
 // Function: governorGovernorTempCompute @ 0x0051a0a8
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void governorGovernorTempCompute(void)
 
 {
@@ -73016,11 +72440,11 @@ LAB_0051a478:
   if (((j1939_receive_status_flags & 0x20) != 0) &&
      ((protection_enable_t_0040c050.system_enable_bits & 0x40) != 0)) {
     j1939_receive_status_flags = j1939_receive_status_flags & 0xffdf;
-    _protection_enable_shadow_flags = _protection_enable_shadow_flags & 0xffdf;
+    protection_enable_shadow_flags = protection_enable_shadow_flags & 0xffdf;
     uRam0040b532 = 0;
     uRam0040b534 = 0;
   }
-  if (((j1939_receive_status_flags & 0x20) == 0) || (_cold_start_phase != 3)) {
+  if (((j1939_receive_status_flags & 0x20) == 0) || (cold_start_phase != 3)) {
     uRam003fcebc = 0;
   }
   else {
@@ -73061,16 +72485,14 @@ void initGovernorTempTableParams(void)
 // Function: fuelTempTrimComputation @ 0x0051a648
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void fuelTempTrimComputation(void)
 
 {
   uint uVar1;
   uint uVar2;
   
-  if ((((fuel_feature_control_flags & 0x20) != 0) && (_fuel_correction_active_flag == 0)) &&
-     (_cold_start_phase == 3)) {
+  if ((((fuel_feature_control_flags & 0x20) != 0) && (fuel_correction_active_flag == 0)) &&
+     (cold_start_phase == 3)) {
     uRam0040b548 = exponentialMovingAverage(fuel_temp_trim_raw,0x3fcece);
     if ((uint)uRam00408a54 < (uint)uRam0040b548) {
       uVar2 = ((uint)engine_rpm_state_t_0040b7ac.current_rpm << 8) / (uint)uRam0040b548;
@@ -73129,7 +72551,7 @@ void governorCruiseTimerManagement(void)
   int extraout_r4_00;
   
   if (((fault_management_status_flags & 0x2000) != 0) && ((j1939_governor_feature_byte & 4) != 0)) {
-    if (_cold_start_phase != 1) {
+    if (cold_start_phase != 1) {
       _DAT_003fee3a = sensor_validation_accum - dRam003fee42;
       uRam0040b54a = cm848_dualAxisTableInterpolation
                                (0x3fced8,sensor_readings_t_0040baf2.coolant_temp,0x5c80e,
@@ -73140,23 +72562,24 @@ void governorCruiseTimerManagement(void)
                  (iRam0040b788 - iRam003fcede) * (uint)uRam0040b54a,0,100);
       uRam003fcee2 = uRam003fcee2 + extraout_r4;
       if (0x8809a < uRam003fcee2) {
-        uRam003fee36 = uRam003fee36 + 1;
+        register0x0000002c = ram0x003fee36 + 1;
         uRam003fcee2 = 0;
       }
       if (engine_timing_reference != 0) {
         uVar1 = lookupTableInterpolation(0x3fcedc,governor_cruise_speed_adjusted,0x5c902,0x5c918,1);
         cm848_unsignedDivision32((uVar1 & 0xffff) / 0xc545,(uVar1 & 0xffff) * 0x14c38,0,900000);
-        _sensor_init_retry_timer = _sensor_init_retry_timer + extraout_r4_00;
+        sensor_init_retry_timer = sensor_init_retry_timer + extraout_r4_00;
       }
     }
     if ((system_status_flags_t_003fe974.sensor_diag & 0x200) != 0) {
-      sensor_initialization_sequence_count = sensor_initialization_sequence_count | 4;
+      sensor_initialization_sequence_count._0_2_ = sensor_initialization_sequence_count._0_2_ | 4;
     }
     if ((system_status_flags_t_003fe974.condition_monitor & 0x2000) != 0) {
-      sensor_initialization_sequence_count = sensor_initialization_sequence_count | 0x100;
+      sensor_initialization_sequence_count._0_2_ =
+           sensor_initialization_sequence_count._0_2_ | 0x100;
     }
-    if ((((uRam00408a6a < _DAT_003fee3a) || (uRam00408a66 < uRam003fee36)) ||
-        (uRam00408a6e < _sensor_init_retry_timer)) && (uRam003fd8ec <= _DAT_003fee3a)) {
+    if ((((uRam00408a6a < _DAT_003fee3a) || (uRam00408a66 < ram0x003fee36)) ||
+        (uRam00408a6e < sensor_init_retry_timer)) && (uRam003fd8ec <= _DAT_003fee3a)) {
       uRam0040ae5e = 1;
     }
     else {
@@ -73164,9 +72587,9 @@ void governorCruiseTimerManagement(void)
     }
     if (j1939_feature_enable_cmd_flag != 0) {
       _DAT_003fee3a = 0;
-      uRam003fee36 = 0;
-      _sensor_init_retry_timer = 0;
-      sensor_initialization_sequence_count = 0;
+      ram0x003fee36 = 0;
+      sensor_init_retry_timer = 0;
+      sensor_initialization_sequence_count._0_2_ = 0;
       dRam003fee42 = sensor_validation_accum;
       uRam0040ae5e = 0;
       j1939_feature_enable_cmd_flag = 0;
@@ -73291,8 +72714,6 @@ void initHpcr_FaultCounters(void)
 // Function: protectionColdStartControl @ 0x0051aef8
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void protectionColdStartControl(void)
 
 {
@@ -73310,7 +72731,7 @@ void protectionColdStartControl(void)
           ((((protection_action_mode_bits._0_1_ & 1) != 0 &&
             ((protection_feature_status_flags & 0x20000000) != 0)) &&
            (((uint)fault_management_ring_read_ptr & 0x10000000) == 0)))))) &&
-        ((_cold_start_phase == 3 &&
+        ((cold_start_phase == 3 &&
          ((protection_condition_flags_t_0040b0e8.condition_flags_1 & 4) == 0)))))) {
       if (((((system_status_flags_t_003fe974.pending_faults & 0x800) != 0) ||
            ((((system_status_flags_t_003fe974.pending_faults & 0x1000) != 0 ||
@@ -73436,8 +72857,6 @@ void protectionColdStartControl(void)
 // Function: protectionFuelTempDerate @ 0x0051b56c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void protectionFuelTempDerate(void)
 
 {
@@ -73452,13 +72871,13 @@ void protectionFuelTempDerate(void)
       (((system_status_flags_t_003fe974.sensor_diag & 0x800) == 0 && (sRam0040b570 != 4)))))) {
     if ((sRam003fcef4 == 0) && ((protection_feature_status_flags & 0x4000000) != 0)) {
       sRam0040b570 = 1;
-      if ((_cold_start_phase == 2) &&
+      if ((cold_start_phase == 2) &&
          ((fuel_temperature_trim < uRam00408abc &&
           (uRam0040b574 = uRam0040b574 + 1, (protection_enable_t_0040c050.reserved_02 & 0x10) != 0))
          )) {
         uRam0040b576 = uRam0040b576 + 1;
       }
-      if (_cold_start_phase == 3) {
+      if (cold_start_phase == 3) {
         if (uRam0040b578 < uRam00408aca) {
           uRam0040b578 = uRam0040b578 + 1;
         }
@@ -73627,8 +73046,6 @@ void cm848_pidError_calc(void)
 // Function: protectionOutputAssembly @ 0x0051babc
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void protectionOutputAssembly(void)
 
 {
@@ -73660,12 +73077,12 @@ void protectionOutputAssembly(void)
       ((system_status_flags_t_003fe974.protection_active & 0x400) != 0)) ||
      (((((((system_status_flags_t_003fe974.enable_state & 0x20) != 0 ||
           ((system_status_flags_t_003fe974.emission_faults & 0x1000) != 0)) ||
-         (((_injection_fault_shadow_flags & 0x200) != 0 ||
-          (((_injection_fault_shadow_flags & 0x400) != 0 ||
-           ((_injection_fault_shadow_flags & 0x800) != 0)))))) ||
-        ((_injection_fault_shadow_flags & 0x1000) != 0)) ||
-       ((((((((_injection_fault_shadow_flags & 0x2000) != 0 ||
-             ((_injection_fault_shadow_flags & 0x4000) != 0)) ||
+         (((injection_fault_shadow_flags & 0x200) != 0 ||
+          (((injection_fault_shadow_flags & 0x400) != 0 ||
+           ((injection_fault_shadow_flags & 0x800) != 0)))))) ||
+        ((injection_fault_shadow_flags & 0x1000) != 0)) ||
+       ((((((((injection_fault_shadow_flags & 0x2000) != 0 ||
+             ((injection_fault_shadow_flags & 0x4000) != 0)) ||
             ((power_state_status_flags & 0x80) != 0)) ||
            (((power_state_status_flags & 0x100) != 0 ||
             ((system_status_flags_t_003fe974.sensor_diag & 0x800) != 0)))) ||
@@ -73757,7 +73174,7 @@ void protectionOutputAssembly(void)
     uRam003fcf02 = 0;
     return;
   }
-  if (_protection_trigger_active_flag != 0) {
+  if (protection_trigger_active_flag != 0) {
     sRam003fcf00 = sVar5;
     uRam003fcf02 = 0;
     return;
@@ -73828,7 +73245,7 @@ void protectionOutputAssembly(void)
   uRam0040b588 = engine_targetRpmPerLoad_calc();
   if (bVar4 == 0) {
     if (((uRam0040b588 < uRam00408ada) || (uRam00408ad8 < uRam0040b588)) &&
-       (2 < _protection_derate_level)) goto LAB_0051c168;
+       (2 < protection_derate_level)) goto LAB_0051c168;
     if ((protection_condition_flags_t_0040b0e8.overtemp_flags & 0x20) == 0) {
       cRam0040b58b = '\x01';
       bRam0040b585 = 0;
@@ -73920,8 +73337,6 @@ void cm848_throttlePosition_clamp_update(void)
 // Function: protectionPhaseGroupA_Init @ 0x0051c3d8
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void protectionPhaseGroupA_Init(void)
 
 {
@@ -73937,7 +73352,7 @@ void protectionPhaseGroupA_Init(void)
         bRam0040b0fa = bRam0040b0fa | 1;
       }
       else {
-        if (_cold_start_phase != 3) {
+        if (cold_start_phase != 3) {
           if ((protection_condition_flags_t_0040b0e8.condition_eval & 1) == 0) {
             protection_condition_flags_t_0040b0e8.condition_eval =
                  protection_condition_flags_t_0040b0e8.condition_eval | 1;
@@ -74329,15 +73744,13 @@ void phaseGroupB_ControlDispatchers(void)
 // Function: fuelDemandSerialTx @ 0x0051d86c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void fuelDemandSerialTx(void)
 
 {
   word wVar1;
   
   fuel_demand_queue_write_index = fuel_demand_queue_write_index - 1;
-  _fuel_demand_command_ptr = &fuel_demand_state_queue;
+  fuel_demand_command_ptr = (dword)&fuel_demand_state_queue;
   wVar1 = qsmcm_sccr1.SC1SR;
   qsmcm_sccr1.SC1DR = (ushort)fuel_demand_state_queue;
   fuel_demandQueue_serialMode_enable();
@@ -74383,8 +73796,6 @@ void fuelDemandSerialRx(void)
 // Function: fuelDemandSerialInterruptHandler @ 0x0051d9a0
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void fuelDemandSerialInterruptHandler(void)
 
 {
@@ -74404,8 +73815,8 @@ void fuelDemandSerialInterruptHandler(void)
   }
   else {
     fuel_demand_queue_write_index = fuel_demand_queue_write_index - 1;
-    _fuel_demand_command_ptr = _fuel_demand_command_ptr + 1;
-    qsmcm_sccr1.SC1DR = (ushort)*_fuel_demand_command_ptr;
+    fuel_demand_command_ptr = fuel_demand_command_ptr + 1;
+    qsmcm_sccr1.SC1DR = (ushort)*(byte *)fuel_demand_command_ptr;
   }
   return;
 }
@@ -74416,13 +73827,11 @@ void fuelDemandSerialInterruptHandler(void)
 // Function: fuel_demandQueue_reset @ 0x0051da38
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void fuel_demandQueue_reset(void)
 
 {
   fuel_demand_queue_write_index = 0;
-  _fuel_demand_command_ptr = &fuel_demand_state_queue;
+  fuel_demand_command_ptr = (dword)&fuel_demand_state_queue;
   return;
 }
 
@@ -74432,14 +73841,12 @@ void fuel_demandQueue_reset(void)
 // Function: fuelDemandShutdown @ 0x0051da58
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void fuelDemandShutdown(void)
 
 {
   word wVar1;
   
-  _fuel_demand_callback_mode = 0;
+  fuel_demand_callback_mode = 0;
   fuel_demandQueue_reset();
   uRam0040b5d6 = 0;
   wVar1 = qsmcm_sccr1.SCC1R1;
@@ -74455,14 +73862,12 @@ void fuelDemandShutdown(void)
 // Function: fuel_demandQueue_serialMode_enable @ 0x0051dab0
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void fuel_demandQueue_serialMode_enable(void)
 
 {
   word wVar1;
   
-  _fuel_demand_callback_mode = 1;
+  fuel_demand_callback_mode = 1;
   wVar1 = qsmcm_sccr1.SCC1R1;
   qsmcm_sccr1.SCC1R1 = wVar1 | 0x40;
   return;
@@ -74598,15 +74003,13 @@ void diag_protection_countdown_trigger(short *param_1,int param_2)
 // Function: engine_coldStart_protectionSequence_update @ 0x0051e6e0
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void engine_coldStart_protectionSequence_update(void)
 
 {
   if (cRam003fcf3c == '\0') {
     return;
   }
-  if (_cold_start_phase == 1) {
+  if (cold_start_phase == 1) {
     if (sRam003fcf3e != 0) {
       sRam003fcf3e = sRam003fcf3e + -1;
       return;
@@ -74684,16 +74087,14 @@ void governor_speedLimitFloor_decrement(void)
 // Function: protectionVoltageTimeoutControl @ 0x00521474
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void protectionVoltageTimeoutControl(void)
 
 {
   if ((sRam003fcf74 != 0) && (sRam003fcf74 = sRam003fcf74 + -1, sRam003fcf74 == 0)) {
-    _protection_voltage_active_flag = 0;
+    protection_voltage_active_flag = 0;
   }
   if ((sRam003fcf76 != 0) &&
-     ((sRam003fcf76 = sRam003fcf76 + -1, sRam003fcf76 == 0 || (_cold_start_phase != 1)))) {
+     ((sRam003fcf76 = sRam003fcf76 + -1, sRam003fcf76 == 0 || (cold_start_phase != 1)))) {
     if (cRam0040c0c9 == '\x05') {
       cRam0040c0c9 = '\0';
     }
@@ -75009,8 +74410,6 @@ void diag_faultRing_readPtr_sync(void)
 // Function: governorDataValidation @ 0x00522b64
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void governorDataValidation(void)
 
 {
@@ -75024,7 +74423,7 @@ void governorDataValidation(void)
           ((system_status_flags_t_003fe974.pending_faults & 0x4000) != 0)))) ||
         ((((system_status_flags_t_003fe974.pending_faults & 0x2000) != 0 ||
           (((power_state_status_flags & 0x1000) != 0 || ((power_state_status_flags & 0x800) != 0))))
-         || ((_injection_fault_shadow_flags & 2) != 0)))) ||
+         || ((injection_fault_shadow_flags & 2) != 0)))) ||
        (((((system_status_flags_t_003fe974.reserved_12 & 0x10) != 0 ||
           ((system_status_flags_t_003fe974.protection_active & 0x100) != 0)) ||
          ((system_status_flags_t_003fe974.protection_active & 0x400) != 0)) ||
@@ -75035,7 +74434,7 @@ void governorDataValidation(void)
       return;
     }
     if (cRam003fcfb1 != '\0') {
-      if (_cold_start_phase != 3) {
+      if (cold_start_phase != 3) {
         return;
       }
       if (sRam00408d5c <= (short)wRam003fcfa6) {
@@ -75053,7 +74452,7 @@ void governorDataValidation(void)
       }
       return;
     }
-    if (_cold_start_phase != 3) {
+    if (cold_start_phase != 3) {
       return;
     }
     if (uRam003fcfaf < uRam00408d5a) {
@@ -75262,7 +74661,7 @@ void j1939FuelDemandProcessing(void)
       fuel_demand_cmd21_pending_flag = 0;
     }
     uVar2 = (uint)engine_rpm_state_t_0040b7ac.current_rpm;
-    if (((_governor_fuel_demand_mode == 0xb) &&
+    if (((governor_fuel_demand_mode == 0xb) &&
         ((int)(governor_output_t_0040aec2.integrator._0_2_ - 400) <= (int)uVar2)) &&
        (uVar2 <= governor_output_t_0040aec2.integrator._0_2_ + 400)) {
       sRam0040b644 = 1;
@@ -75351,7 +74750,7 @@ void j1939FuelDemandProcessing(void)
         uRam003fcfc0 = uRam0040b788;
       }
       if ((fuel_temperature_trim != 0) && (uVar2 != 0)) {
-        if ((_injection_timing_done_flag == 0) && (sRam003fcfb4 != 0)) {
+        if ((injection_timing_done_flag == 0) && (wRam003fcfb4 != 0)) {
           uRam0040b646 = (&tpu_b_mcr)[injection_timing_cylinder_index].PARAM1 & 0xff;
         }
         else if (injection_timing_prev_value < uRam003fcfc4) {
@@ -75362,7 +74761,7 @@ void j1939FuelDemandProcessing(void)
         }
         uRam0040b63c = (uint)uRam0040b646;
         uRam003fcfc4 = injection_timing_prev_value;
-        sRam003fcfb4 = _injection_timing_done_flag;
+        wRam003fcfb4 = injection_timing_done_flag;
         if (((system_status_flags_t_003fe974.condition_monitor & 0x2000) == 0) &&
            ((system_status_flags_t_003fe974.condition_monitor & 0x4000) == 0)) {
           uRam003fcfb8 = 0;
@@ -75444,11 +74843,11 @@ void sensorDiagnosticsConfiguration(void)
 void governorSpeedCompensation(void)
 
 {
-  if ((governor_active_flag_b648 != 0) && (_cold_start_phase == 3)) {
+  if ((governor_active_flag_b648 != 0) && (cold_start_phase == 3)) {
     if ((((_DAT_003fd5c6 & 8) == 0) ||
         (((sRam00408d78 < sRam0040b64a ||
           ((system_status_flags_t_003fe974.condition_monitor & 0x2000) != 0)) ||
-         (_fuel_correction_mode_flag == 0)))) ||
+         (fuel_correction_mode_flag == 0)))) ||
        ((uRam00408d7c < fuel_temp_trim_snapshot || (sRam0040b64c == 0)))) {
       governor_active_flag_b648 = 0;
     }
@@ -75489,8 +74888,6 @@ void initGovernorSpeedControl(void)
 // Function: j1939_msgSlotM_switchInputBits_update @ 0x0052390c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void j1939_msgSlotM_switchInputBits_update(void)
 
 {
@@ -75500,8 +74897,8 @@ void j1939_msgSlotM_switchInputBits_update(void)
   byte bVar4;
   
   if ((j1939_msg_slot_m_control & 0x2f) == 0) {
-    if (_cold_start_phase == 1) {
-      _sensor_init_delay_timer = 1;
+    if (cold_start_phase == 1) {
+      sensor_init_delay_timer = 1;
     }
     bVar1 = bRam0040b51a & 0xf7 | 8;
     bVar2 = j1939_msg_slot_m_counter >> 6 & 1;
@@ -75636,8 +75033,6 @@ void sensor_checksum_calculate_composite(void)
 // Function: sensor_checksum_verify_session @ 0x00523c98
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 uint sensor_checksum_verify_session(void)
 
 {
@@ -75645,12 +75040,12 @@ uint sensor_checksum_verify_session(void)
   uint uVar2;
   uint uVar3;
   
-  if ((sRam003fcfcd == 0) || (uVar2 = uRam003fcfd0, _uds_session_active_flag != 0)) {
+  if ((sRam003fcfcd == 0) || (uVar2 = uRam003fcfd0, uds_session_active_flag != 0)) {
     bRam003fcfdb = bRam003fcfdb + 1;
     uVar1 = TBLr;
     uVar3 = (uint)bRam003fcfdb;
     uVar2 = j1939_checksum_xor_calc(uVar1,uVar3);
-    uVar3 = j1939_checksum_xor_calc(_fault_timing_snapshot,uVar3);
+    uVar3 = j1939_checksum_xor_calc(fault_timing_snapshot,uVar3);
     uVar2 = uVar2 ^ uVar3;
   }
   return uVar2;
@@ -75777,16 +75172,16 @@ void governorModeTransitionControl(void)
     }
     else {
       j1939_receive_status_flags = j1939_receive_status_flags & 0xfeff;
-      _protection_enable_shadow_flags = _protection_enable_shadow_flags & 0xfeff;
+      protection_enable_shadow_flags = protection_enable_shadow_flags & 0xfeff;
     }
     if (_DAT_0040b471 == 0) {
       j1939_receive_status_flags = j1939_receive_status_flags | 0x200;
     }
     else {
       j1939_receive_status_flags = j1939_receive_status_flags & 0xfdff;
-      _protection_enable_shadow_flags = _protection_enable_shadow_flags & 0xfdff;
+      protection_enable_shadow_flags = protection_enable_shadow_flags & 0xfdff;
     }
-    if (_sensor_init_delay_timer != 0) {
+    if (sensor_init_delay_timer != 0) {
       bVar1 = true;
       uVar3 = 0;
       do {
@@ -75801,7 +75196,7 @@ void governorModeTransitionControl(void)
       }
       else {
         j1939_receive_status_flags = j1939_receive_status_flags & 0xfbff;
-        _protection_enable_shadow_flags = _protection_enable_shadow_flags & 0xfbff;
+        protection_enable_shadow_flags = protection_enable_shadow_flags & 0xfbff;
       }
     }
   }
@@ -75811,7 +75206,7 @@ void governorModeTransitionControl(void)
     j1939_msgSlotM_switchInputBits_update();
   }
   *pwVar4 = wVar2;
-  if (_sensor_init_delay_timer != 0) {
+  if (sensor_init_delay_timer != 0) {
     wVar2 = MIOS_MCPSMSCR.MIOS1ER;
     if ((wVar2 & 0x8000) == 0) {
       initGovernorModeControl();
@@ -75837,7 +75232,7 @@ void governorModeTransitionControl(void)
         cRam003fee31 = '\0';
       }
     }
-    else if (_cold_start_phase == 3) {
+    else if (cold_start_phase == 3) {
       if (cRam003fee31 == '\0') {
         cRam003fee31 = '\x01';
       }
@@ -75860,8 +75255,6 @@ void governorModeTransitionControl(void)
 //
 // Function: governorSpeedLimitTable @ 0x00524360
 //
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void governorSpeedLimitTable(void)
 
@@ -75922,7 +75315,7 @@ LAB_0052443c:
       uVar3 = (uint)bRam003fcfea;
       *(short *)(uVar3 * 2 + 0x40b66e) = sRam003fcfe4;
       if (*(short *)(uVar3 * 2 + 0x3fd904) != sVar1) {
-        _injection_fault_shadow_flags = _injection_fault_shadow_flags | 0x20;
+        injection_fault_shadow_flags = injection_fault_shadow_flags | 0x20;
       }
       sRam0040b66c = sRam0040b66c + 1;
     }
@@ -75936,15 +75329,13 @@ LAB_0052443c:
 // Function: governorOverrideSpeedControl @ 0x00524594
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void governorOverrideSpeedControl(void)
 
 {
   uint uVar1;
   int iVar2;
   
-  if (((protection_config_flags_b & 0x8000) != 0) && (_governor_override_active_flag != 0)) {
+  if (((protection_config_flags_b & 0x8000) != 0) && (governor_override_active_flag != 0)) {
     uVar1 = exponentialMovingAverage(cruise_speed_setpoint_adjusted,0x40b682);
     iVar2 = (uVar1 & 0xffff) - ((uint)cruise_speed_command + (uint)uRam003fd910);
     if (uRam003fcfee < 100) {
@@ -75972,14 +75363,12 @@ void governorOverrideSpeedControl(void)
 // Function: governorLoadMinimumUpdate @ 0x005246b0
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void governorLoadMinimumUpdate(void)
 
 {
   if (uRam0040b68a < governor_load_percent_min) {
     governor_load_percent_min = uRam0040b68a;
-    _governor_mode_request_code = 2;
+    governor_mode_request_code = 2;
   }
   return;
 }
@@ -76005,8 +75394,6 @@ void initHpcr_ExceptionHandler(void)
 // Function: governor_cruise_setpoint_calc @ 0x0052470c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void governor_cruise_setpoint_calc(int param_1)
 
 {
@@ -76019,10 +75406,10 @@ void governor_cruise_setpoint_calc(int param_1)
   ushort uStack_e;
   
   uRam0040b69e = 0;
-  if ((_governor_fuel_demand_mode == 9) || (_governor_fuel_demand_mode == 10)) {
+  if ((governor_fuel_demand_mode == 9) || (governor_fuel_demand_mode == 10)) {
     uRam0040b6a4 = lookupTableInterpolation(0x3fcffe,fuel_flow_rpm_divisor,0x408e30,0x408e3e,0);
   }
-  if (_governor_fuel_demand_mode == 9) {
+  if (governor_fuel_demand_mode == 9) {
     if ((((fuel_demand_speed_error == 1) || (fuel_demand_speed_error == 3)) ||
         (fuel_demand_speed_error == 2)) || (fuel_demand_speed_error == 4)) {
       sRam0040b696 = 0;
@@ -76040,18 +75427,18 @@ void governor_cruise_setpoint_calc(int param_1)
       }
     }
   }
-  if ((_governor_fuel_demand_mode != 9) && (_governor_fuel_demand_mode != 10)) {
+  if ((governor_fuel_demand_mode != 9) && (governor_fuel_demand_mode != 10)) {
     return;
   }
-  if (((sRam0040b696 == 0) && (_governor_fuel_demand_mode == 9)) ||
-     ((_governor_fuel_demand_mode == 10 &&
+  if (((sRam0040b696 == 0) && (governor_fuel_demand_mode == 9)) ||
+     ((governor_fuel_demand_mode == 10 &&
       (((j1939_governor_feature_cal & 0x100) != 0 && (governor_j1939_bypass_flag != 1)))))) {
 LAB_00524934:
     cruise_speed_setpoint_active = 0;
   }
   else if ((int)(uint)uRam0040b6be < param_1) {
     uVar2 = uRam0040b6bc;
-    if (_governor_fuel_demand_mode == 9) {
+    if (governor_fuel_demand_mode == 9) {
       uVar2 = uRam0040b6b0;
     }
     uStack_e = (ushort)((param_1 - (uint)uRam0040b6be) * (uint)uVar2 >> 10);
@@ -76064,7 +75451,7 @@ LAB_0052492c:
   else {
     if ((int)(uint)uRam00408dfc <= param_1) goto LAB_00524934;
     sVar6 = sRam0040b6b6;
-    if (_governor_fuel_demand_mode == 9) {
+    if (governor_fuel_demand_mode == 9) {
       sVar6 = sRam0040b69c;
     }
     uStack_e = (ushort)(((int)(short)param_1 - (int)(short)uRam00408dfc) * (int)sVar6 >> 10);
@@ -76123,7 +75510,7 @@ LAB_005249d4:
 void governor_cruise_speedReference_update(void)
 
 {
-  if ((_etc1_transmission_mode == 1) && (_DAT_003fd536 == 1)) {
+  if ((etc1_transmission_mode == 1) && (_DAT_003fd536 == 1)) {
     if ((protection_enable_t_0040c050.control_word & 0x80) == 0) {
       wRam0040b6b0 = wRam003fcff0;
       wRam0040b6bc = wRam003fcff4;
@@ -76135,7 +75522,7 @@ void governor_cruise_speedReference_update(void)
   }
   cruise_speed_reference_c = wRam0040b6b6;
   cruise_speed_reference_d = wRam0040b6bc;
-  if ((sRam0040b696 == 1) && (_governor_override_active_flag == 1)) {
+  if ((sRam0040b696 == 1) && (governor_override_active_flag == 1)) {
     cruise_speed_reference_b = wRam0040b6b0;
     cruise_speed_reference_a = wRam0040b69c;
   }
@@ -76166,8 +75553,6 @@ void governor_cruise_speedReference_update(void)
 // Function: governor_cruise_rampRate_calc @ 0x00524c6c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 undefined2 governor_cruise_rampRate_calc(int param_1,int param_2)
 
 {
@@ -76175,7 +75560,7 @@ undefined2 governor_cruise_rampRate_calc(int param_1,int param_2)
   uint uVar2;
   undefined4 uStack_8;
   
-  uVar2 = (((uint)_DAT_003fee7a * (uint)uRam003fd918) / 0x3c & 0xffff) * param_2;
+  uVar2 = (((uint)protection_timing_period_cal * (uint)uRam003fd918) / 0x3c & 0xffff) * param_2;
   uStack_8._0_2_ = (ushort)(uVar2 >> 0x17);
   if (uStack_8._0_2_ == 0) {
     uStack_8 = (uVar2 >> 7 & 0xffff) * param_1;
@@ -76284,15 +75669,15 @@ void governorCruiseStateMachine(void)
   wRam003fcff4 = governor_cruise_tableLimit_calc
                            (sRam003fd916,&uStack_30,uVar2,&governor_fuel_table_xaxis_cal,400,
                             &governor_fuel_table_ystart_cal,&governor_fuel_table_yend_cal,4);
-  if (_etc1_transmission_mode == 1) {
+  if (etc1_transmission_mode == 1) {
     uRam0040b6b0 = uRam003fcff0;
     wRam0040b6bc = wRam003fcff4;
   }
-  uVar2 = governor_cruise_rampRate_calc(sRam00408e12 - sRam003fd912,_DAT_003fd534);
+  uVar2 = governor_cruise_rampRate_calc(sRam00408e12 - sRam003fd912,protection_temp_scale_cal);
   uRam003fcff2 = governor_cruise_tableLimit_calc
                            (sRam003fd912,&uStack_30,uVar2,&governor_fuel_table_xaxis_cal,400,
                             &governor_fuel_table_ystart_cal,&governor_fuel_table_yend_cal,4);
-  uVar2 = governor_cruise_rampRate_calc(sRam00408e12 - sRam003fd916,_DAT_003fd534);
+  uVar2 = governor_cruise_rampRate_calc(sRam00408e12 - sRam003fd916,protection_temp_scale_cal);
   uRam003fcff6 = governor_cruise_tableLimit_calc
                            (sRam003fd916,&uStack_30,uVar2,&governor_fuel_table_xaxis_cal,400,
                             &governor_fuel_table_ystart_cal,&governor_fuel_table_yend_cal,4);
@@ -76328,15 +75713,13 @@ void governorCruiseStateMachine(void)
 // Function: governor_cruise_torqueLimit_calc @ 0x005250c0
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void governor_cruise_torqueLimit_calc(void)
 
 {
   uint uVar1;
   
-  uVar1 = ((((uint)_DAT_003fee7a * (uint)protection_temp_scale_factor) / 0x3c & 0xffff) * 100 >> 7)
-          * (uint)uRam00408e60 >> 10;
+  uVar1 = ((((uint)protection_timing_period_cal * (uint)protection_temp_scale_factor) / 0x3c &
+           0xffff) * 100 >> 7) * (uint)uRam00408e60 >> 10;
   if (uRam00408e6a < uVar1) {
     uVar1 = (uint)uRam00408e6a;
   }
@@ -76387,8 +75770,6 @@ int governor_cruise_speedError_torqueAdj(void)
 // Function: protectionRampRateControl @ 0x005251e4
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void protectionRampRateControl(void)
 
 {
@@ -76405,7 +75786,7 @@ void protectionRampRateControl(void)
   uRam003fd051 = 1;
   governor_cruise_setpoint_calc(uRam003fd008);
   wVar1 = cruise_speed_setpoint_adjusted;
-  iVar5 = (int)_governor_fuel_demand_mode;
+  iVar5 = (int)(short)governor_fuel_demand_mode;
   iVar7 = (int)(short)cruise_speed_setpoint_adjusted;
   pwVar4 = &cruise_confirm_flag_a;
   if (iVar5 == 10) {
@@ -76498,12 +75879,10 @@ LAB_005254b0:
 // Function: protectionOutputActuatorControl @ 0x00525504
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void protectionOutputActuatorControl(void)
 
 {
-  short sVar1;
+  word wVar1;
   ushort uVar2;
   short sVar3;
   uint uVar4;
@@ -76522,7 +75901,7 @@ void protectionOutputActuatorControl(void)
   wRam003fd044 = exponentialMovingAverage(fuel_demand_computed,0x3fd03c);
   sVar3 = sRam003fd006;
   sRam003fd006 = cm848_interpolateTableLinearStep(cruise_speed_setpoint_adjusted,0x3fd022);
-  sVar1 = _governor_fuel_demand_mode;
+  wVar1 = governor_fuel_demand_mode;
   iVar8 = (int)(short)(sRam003fd006 - sVar3);
   if (iVar8 < 0x67) {
     if (iVar8 < -0x66) {
@@ -76563,13 +75942,13 @@ LAB_00525668:
     uRam003fd000 = cruise_speed_setpoint_adjusted + cruise_speed_setpoint_active;
     cruise_confirm_flag_b = 0;
   }
-  if ((_governor_fuel_demand_mode != 9) && (_governor_fuel_demand_mode != 10)) goto LAB_00525db0;
+  if ((governor_fuel_demand_mode != 9) && (governor_fuel_demand_mode != 10)) goto LAB_00525db0;
   if (cruise_confirm_flag_a == 1) {
     protectionRampRateControl();
     goto LAB_00525db0;
   }
   governor_cruise_torqueLimit_calc();
-  if (sVar1 == 9) {
+  if (wVar1 == 9) {
     uVar4 = (uint)cruise_speed_command;
     uRam003fd004 = cruise_speed_command;
     uVar12 = (uint)uRam003fd000;
@@ -76768,7 +76147,7 @@ LAB_00525d1c:
   governor_fuel_demand_value = *puVar5;
   uRam0040b6c4 = governor_fuel_demand_value;
 LAB_00525db0:
-  sRam003fd048 = _governor_fuel_demand_mode;
+  wRam003fd048 = governor_fuel_demand_mode;
   governor_cruise_speedReference_update();
   wRam003fd036 = fuel_demand_speed_error;
   sRam003fd051 = 0;
@@ -76800,75 +76179,73 @@ void initCruiseConfirmFlags(void)
 // Function: protectionTimeoutControl @ 0x00525e54
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void protectionTimeoutControl(void)
 
 {
-  int iVar1;
-  short sVar2;
-  uint uVar3;
+  dword dVar1;
+  int iVar2;
+  short sVar3;
+  uint uVar4;
   uint extraout_r4;
   ushort extraout_r4_00;
-  uint uVar4;
   uint uVar5;
-  ushort uVar6;
+  uint uVar6;
+  ushort uVar7;
   undefined2 auStack_30 [2];
   
-  iVar1 = iRam0040b712;
-  uVar3 = _fuel_temp_correction_factor;
-  if (_etc1_transmission_mode != 0) {
-    if ((fuel_temperature_trim < fuel_temp_trim_upper_limit_default_cal) || (_cold_start_phase == 1)
-       ) {
+  iVar2 = iRam0040b712;
+  dVar1 = fuel_temp_correction_factor;
+  if (etc1_transmission_mode != 0) {
+    if ((fuel_temperature_trim < fuel_temp_trim_upper_limit_default_cal) || (cold_start_phase == 1))
+    {
       uRam0040b6f4 = UNK_0005c936;
       engine_temp_protection_input = UNK_0005c936;
       fuel_flow_rpm_divisor = UNK_0005c936;
       uRam0040b6fe = UNK_0005c936;
-      _fuel_trim_speed_override_flag = 1;
+      fuel_trim_speed_override_flag = 1;
       iRam0040b6ec = (uint)UNK_0005c936 << 0x10;
       iRam0040b712 = 0;
     }
     else {
-      if (_fuel_trim_speed_override_flag == 1) {
+      if (fuel_trim_speed_override_flag == 1) {
         auStack_30[0] = UNK_0005c942;
-        uVar6 = UNK_0005c944;
+        uVar7 = UNK_0005c944;
       }
       else {
         auStack_30[0] = UNK_0005c934;
-        uVar6 = UNK_0005c92e;
+        uVar7 = UNK_0005c92e;
       }
-      if (((_etc1_transmission_mode != 4) && (_etc1_transmission_mode != 5)) && (sRam0040b702 == 1))
-      {
+      if (((etc1_transmission_mode != 4) && (etc1_transmission_mode != 5)) && (sRam0040b702 == 1)) {
         if ((iRam0040b712 == 0) ||
            (cm848_unsignedDivision32
-                      ((int)((ulonglong)_fuel_temp_correction_factor *
+                      ((int)((ulonglong)fuel_temp_correction_factor *
                              (ulonglong)((uint)uRam003fd930 * 0x10) >> 0x20),
-                       _fuel_temp_correction_factor * (uint)uRam003fd930 * 0x10,0,iRam0040b712),
+                       fuel_temp_correction_factor * (uint)uRam003fd930 * 0x10,0,iRam0040b712),
            0x7ffd < extraout_r4)) {
           uRam0040b6f4 = 0x7ffd;
         }
         else {
           cm848_unsignedDivision32
-                    ((int)((ulonglong)uVar3 * (ulonglong)((uint)uRam003fd930 * 0x10) >> 0x20),
-                     uVar3 * (uint)uRam003fd930 * 0x10,0,iVar1);
+                    ((int)((ulonglong)dVar1 * (ulonglong)((uint)uRam003fd930 * 0x10) >> 0x20),
+                     dVar1 * (uint)uRam003fd930 * 0x10,0,iVar2);
           uRam0040b6f4 = extraout_r4_00;
         }
       }
       iRam0040b6ec = (uint)engine_temp_protection_input << 0x10;
       puRam0040b6e8 = auStack_30;
-      uVar3 = exponentialMovingAverage(uRam0040b6f4,0x40b6e8);
-      engine_temp_protection_input = (word)uVar3;
+      uVar4 = exponentialMovingAverage(uRam0040b6f4,0x40b6e8);
+      engine_temp_protection_input = (word)uVar4;
       if ((etc1_state_t_0040ae00.control_active != 1) ||
-         ((_etc1_transmission_mode != 4 && (_etc1_transmission_mode != 5)))) {
-        uVar5 = (uint)uRam0040b6f4;
-        if ((uVar3 & 0xffff) < uVar5) {
-          uVar4 = uVar5 - uVar3;
+         ((etc1_transmission_mode != 4 && (etc1_transmission_mode != 5)))) {
+        uVar6 = (uint)uRam0040b6f4;
+        if ((uVar4 & 0xffff) < uVar6) {
+          uVar5 = uVar6 - uVar4;
         }
         else {
-          uVar4 = uVar3 - uVar5;
+          uVar5 = uVar4 - uVar6;
         }
-        if ((((UNK_0005c930 < uVar5) && (uVar5 < UNK_0005c932)) && ((uVar4 & 0xffff) <= (uint)uVar6)
-            ) && ((((uVar4 & 0xffff) << 0xb) / (uVar3 & 0xffff) & 0xffff) <= (uint)UNK_0005c946)) {
+        if ((((UNK_0005c930 < uVar6) && (uVar6 < UNK_0005c932)) && ((uVar5 & 0xffff) <= (uint)uVar7)
+            ) && ((((uVar5 & 0xffff) << 0xb) / (uVar4 & 0xffff) & 0xffff) <= (uint)UNK_0005c946)) {
           uRam0040b6f8 = 0;
           fuel_flow_rpm_divisor = engine_temp_protection_input;
           if (sRam0040b6fc != 0) {
@@ -76878,57 +76255,57 @@ void protectionTimeoutControl(void)
         else {
           uRam0040b6f8 = 1;
           sRam0040b6fc = UNK_0005c938;
-          uVar6 = UNK_0005c930;
-          if ((uVar5 < UNK_0005c930) || (uVar6 = UNK_0005c932, UNK_0005c932 < uVar5)) {
-            uRam0040b6f4 = uVar6;
+          uVar7 = UNK_0005c930;
+          if ((uVar6 < UNK_0005c930) || (uVar7 = UNK_0005c932, UNK_0005c932 < uVar6)) {
+            uRam0040b6f4 = uVar7;
           }
           engine_temp_protection_input = uRam0040b6f4;
         }
       }
       if ((etc1_state_t_0040ae00.control_active != 1) ||
-         ((_etc1_transmission_mode != 4 && (_etc1_transmission_mode != 5)))) {
+         ((etc1_transmission_mode != 4 && (etc1_transmission_mode != 5)))) {
         if (((8000 < engine_rpm_state_t_0040b7ac.current_rpm) ||
-            (sVar2 = UNK_0005c93a, fuel_temperature_trim <= UNK_0005c93c)) &&
-           (sVar2 = sRam0040b6fa, sRam0040b6fa != 0)) {
-          sVar2 = sRam0040b6fa + -1;
+            (sVar3 = UNK_0005c93a, fuel_temperature_trim <= UNK_0005c93c)) &&
+           (sVar3 = sRam0040b6fa, sRam0040b6fa != 0)) {
+          sVar3 = sRam0040b6fa + -1;
         }
-        sRam0040b6fa = sVar2;
+        sRam0040b6fa = sVar3;
         if (sRam0040b6fc == 1) {
           sRam0040b700 = UNK_0005c940;
         }
         if (sRam0040b700 != 0) {
           sRam0040b700 = sRam0040b700 + -1;
         }
-        if ((((sRam0040b6fc == 0) && (sRam0040b700 == 0)) && (_DAT_0040adfc == 0)) &&
+        if ((((sRam0040b6fc == 0) && (sRam0040b700 == 0)) && (j1939_etc1_torque_limit_flag == 0)) &&
            (sRam0040b6fa == 0)) {
-          _fuel_trim_speed_override_flag = 0;
+          fuel_trim_speed_override_flag = 0;
         }
         else {
-          _fuel_trim_speed_override_flag = 1;
+          fuel_trim_speed_override_flag = 1;
           sRam003fd05a = 1;
         }
       }
-      uVar3 = ((uRam00408b78 + 0x6400) * (uint)uRam003fd918) / 0x6400;
-      uVar5 = (uint)UNK_0005c932;
-      if (uVar5 < uVar3) {
-        uVar3 = uVar5;
+      uVar4 = ((uRam00408b78 + 0x6400) * (uint)uRam003fd918) / 0x6400;
+      uVar6 = (uint)UNK_0005c932;
+      if (uVar6 < uVar4) {
+        uVar4 = uVar6;
       }
-      uRam0040b6f0 = (undefined2)uVar3;
-      uVar4 = ((uRam00408b78 + 0x6400) * (uint)uRam003fd900) / 0x6400;
-      if (uVar5 < uVar4) {
-        uVar4 = uVar5;
+      uRam0040b6f0 = (undefined2)uVar4;
+      uVar5 = ((uRam00408b78 + 0x6400) * (uint)uRam003fd900) / 0x6400;
+      if (uVar6 < uVar5) {
+        uVar5 = uVar6;
       }
-      uRam0040b6f2 = (undefined2)uVar4;
-      if ((uint)engine_temp_protection_input < (uVar3 & 0xffff)) {
+      uRam0040b6f2 = (undefined2)uVar5;
+      if ((uint)engine_temp_protection_input < (uVar4 & 0xffff)) {
         governor_j1939_bypass_flag = 1;
       }
-      else if ((uint)engine_temp_protection_input < (uVar4 & 0xffff)) {
+      else if ((uint)engine_temp_protection_input < (uVar5 & 0xffff)) {
         governor_j1939_bypass_flag = 2;
       }
       else {
         governor_j1939_bypass_flag = 3;
       }
-      if (((wRam003fd05c == fuel_flow_rpm_divisor) && (_fuel_trim_speed_override_flag == 0)) &&
+      if (((wRam003fd05c == fuel_flow_rpm_divisor) && (fuel_trim_speed_override_flag == 0)) &&
          ((sRam003fd05a == 1 && (UNK_0005c93e < fuel_demand_computed)))) {
         uRam0040b6fe = fuel_flow_rpm_divisor;
         sRam003fd05a = 0;
@@ -76945,12 +76322,10 @@ void protectionTimeoutControl(void)
 // Function: initGovernorJ1939Bypass @ 0x005263a8
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void initGovernorJ1939Bypass(void)
 
 {
-  _DAT_0040adfc = 0;
+  j1939_etc1_torque_limit_flag = 0;
   governor_j1939_bypass_flag = 1;
   uRam0040b6f4 = UNK_0005c936;
   engine_temp_protection_input = UNK_0005c936;
@@ -76968,17 +76343,15 @@ void initGovernorJ1939Bypass(void)
 // Function: fuelTempTrimUpperLimitCheck @ 0x00526414
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void fuelTempTrimUpperLimitCheck(void)
 
 {
   uint extraout_r4;
   uint uVar1;
   
-  if ((((fuel_temp_trim_upper_limit_default_cal <= fuel_temperature_trim) &&
-       (_cold_start_phase != 1)) && (etc1_load_timer_active_flag == 1)) &&
-     ((_etc1_transmission_mode == 4 || (_etc1_transmission_mode == 5)))) {
+  if ((((fuel_temp_trim_upper_limit_default_cal <= fuel_temperature_trim) && (cold_start_phase != 1)
+       ) && (etc1_load_timer_active_flag == 1)) &&
+     ((etc1_transmission_mode == 4 || (etc1_transmission_mode == 5)))) {
     cm848_unsignedDivision32(0,(uint)uRam0040a2aa << 0xb,0,1000);
     uVar1 = extraout_r4;
     if (0x7ffd < extraout_r4) {
@@ -76995,19 +76368,17 @@ void fuelTempTrimUpperLimitCheck(void)
 // Function: etcTransmissionModeControl @ 0x005264d4
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void etcTransmissionModeControl(void)
 
 {
-  if ((((fuel_temp_trim_upper_limit_default_cal <= fuel_temperature_trim) &&
-       (_cold_start_phase != 1)) && (etc1_state_t_0040ae00.control_active == 1)) &&
-     ((_etc1_transmission_mode == 4 || (_etc1_transmission_mode == 5)))) {
-    _fuel_trim_speed_override_flag = _DAT_0040adfc;
-    if (_DAT_0040adfc != 0) {
+  if ((((fuel_temp_trim_upper_limit_default_cal <= fuel_temperature_trim) && (cold_start_phase != 1)
+       ) && (etc1_state_t_0040ae00.control_active == 1)) &&
+     ((etc1_transmission_mode == 4 || (etc1_transmission_mode == 5)))) {
+    fuel_trim_speed_override_flag = j1939_etc1_torque_limit_flag;
+    if (j1939_etc1_torque_limit_flag != 0) {
       fuel_flow_rpm_divisor = engine_temp_protection_input;
     }
-    sRam0040b6f8 = _DAT_0040adfc;
+    wRam0040b6f8 = j1939_etc1_torque_limit_flag;
   }
   return;
 }
@@ -77034,13 +76405,13 @@ void cm848_fuel_temperature_trim_calculation(void)
   if (fuel_temperature_trim < fuel_temp_trim_upper_limit_default_cal) {
     return;
   }
-  if (_cold_start_phase == 1) {
+  if (cold_start_phase == 1) {
     return;
   }
   if (etc1_load_timer_active_flag != 0) {
     return;
   }
-  if (_etc1_transmission_mode != 5) {
+  if (etc1_transmission_mode != 5) {
     return;
   }
   uVar3 = (uint)fuel_temp_trim_raw;
@@ -77052,13 +76423,14 @@ void cm848_fuel_temperature_trim_calculation(void)
     }
     else {
       cm848_unsignedDivision32
-                (0,(uint)engine_rpm_state_t_0040b7ac.target_rpm << 0xf,0,(uint)_DAT_003fd534 << 3);
+                (0,(uint)engine_rpm_state_t_0040b7ac.target_rpm << 0xf,0,
+                 (uint)protection_temp_scale_cal << 3);
       uVar2 = extraout_r4;
     }
     uVar1 = (undefined4)((ulonglong)uVar2 * 0x1e000 >> 0x20);
     cm848_unsignedDivision32(uVar1,uVar2 * 0x1e000,0,0xffffffff);
-    if ((extraout_r4_01 <= uVar3 * _DAT_003fee7a) &&
-       (cm848_unsignedDivision32(uVar1,uVar2 * 0x1e000,0,uVar3 * _DAT_003fee7a),
+    if ((extraout_r4_01 <= uVar3 * protection_timing_period_cal) &&
+       (cm848_unsignedDivision32(uVar1,uVar2 * 0x1e000,0,uVar3 * protection_timing_period_cal),
        uVar3 = extraout_r4_02, extraout_r4_02 < 0x7ffe)) goto LAB_005266e0;
   }
   uVar3 = 0x7ffd;
@@ -77073,8 +76445,6 @@ LAB_005266e0:
 // Function: cm848_transmission_phase_group_a_calc @ 0x005266fc
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_transmission_phase_group_a_calc(void)
 
 {
@@ -77083,9 +76453,8 @@ void cm848_transmission_phase_group_a_calc(void)
   uint uVar2;
   
   wVar1 = output_shaft_speed_prev;
-  if ((((fuel_temp_trim_upper_limit_default_cal <= fuel_temperature_trim) &&
-       (_cold_start_phase != 1)) && (etc1_load_timer_active_flag == 0)) &&
-     (_etc1_transmission_mode == 4)) {
+  if ((((fuel_temp_trim_upper_limit_default_cal <= fuel_temperature_trim) && (cold_start_phase != 1)
+       ) && (etc1_load_timer_active_flag == 0)) && (etc1_transmission_mode == 4)) {
     uVar2 = (uint)uRam003fd060 + (uint)output_shaft_speed_prev >> 1;
     uRam003fd05e = (undefined2)uVar2;
     cm848_unsignedDivision32(0,(uint)engine_rpm_state_t_0040b7ac.target_rpm << 0xb,0,uVar2);
@@ -77127,7 +76496,7 @@ void cm848_transmission_monitoring_calc(void)
   uint extraout_r4_00;
   uint uVar2;
   
-  if (_etc1_transmission_mode == 4) {
+  if (etc1_transmission_mode == 4) {
     if ((_DAT_003fd536 == 0) || ((protection_enable_t_0040c050.control_word & 0x80) == 0)) {
       cm848_unsignedDivision32
                 ((int)((ulonglong)(uint)output_shaft_speed_prev * 0x3c000 >> 0x20),
@@ -77160,8 +76529,9 @@ void cm848_transmission_monitoring_calc(void)
 void cm848_boost_range_multiplier_load(void)
 
 {
-  iRam003fd062 = (uint)_DAT_003fd52e * (uint)_DAT_003fee7a;
-  boost_in_range_state_t_003fd064._2_4_ = (uint)_DAT_003fd534 * (uint)_DAT_003fee7a;
+  iRam003fd062 = (uint)_DAT_003fd52e * (uint)protection_timing_period_cal;
+  boost_in_range_state_t_003fd064._2_4_ =
+       (uint)protection_temp_scale_cal * (uint)protection_timing_period_cal;
   return;
 }
 
@@ -77190,8 +76560,6 @@ void diag_fuelTempTrim_overtemp_check(void)
 // Function: diag_boostLoad_overtemp_monitor @ 0x005269c0
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void diag_boostLoad_overtemp_monitor(void)
 
 {
@@ -77207,9 +76575,9 @@ void diag_boostLoad_overtemp_monitor(void)
     }
     else {
       boost_in_range_state_t_003fd064.filter_state_ptr._0_2_ =
-           exponentialMovingAverage(protection_channel_load_raw,&BYTE_003fd070);
-      if (((_cold_start_phase == 3) && (boost_in_range_state_t_003fd064.filter_state_ptr._2_2_ == 0)
-          ) && (fuel_demand_control_t_0040a57a.enable_flag == 1)) {
+           exponentialMovingAverage(protection_channel_load_raw,&protection_ema_output);
+      if (((cold_start_phase == 3) && (boost_in_range_state_t_003fd064.filter_state_ptr._2_2_ == 0))
+         && (fuel_demand_control_t_0040a57a.enable_flag == 1)) {
         uRam003fee80 = uRam003fee80 + 1;
       }
       if (UNK_0005c966 < temperature_differential) {
@@ -77247,18 +76615,16 @@ void diag_boostLoad_overtemp_monitor(void)
 // Function: diag_boostLoad_overtemp_clear @ 0x00526bc8
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void diag_boostLoad_overtemp_clear(void)
 
 {
   if (((((fault_management_status_flags & 0x200) == 0) &&
        ((fault_management_status_flags & 0x100) == 0)) ||
-      ((fuel_temp_trim_raw != 0 && (_cold_start_phase == 3)))) &&
+      ((fuel_temp_trim_raw != 0 && (cold_start_phase == 3)))) &&
      ((system_status_flags_t_003fe974.condition_monitor & 0x2000) != 0)) {
     system_status_flags_t_003fe974.condition_monitor =
          system_status_flags_t_003fe974.condition_monitor & 0xdfff;
-    _engine_timing_shadow_flags = _engine_timing_shadow_flags & 0xdfff;
+    engine_timing_shadow_flags = engine_timing_shadow_flags & 0xdfff;
     uRam003fee80 = 0;
     uRam003fee7e = 0;
     uRam003fd06e = 0;
@@ -77289,13 +76655,11 @@ void cm848_calibration_group30_execute(void)
 // Function: cm848_state_variables_reset @ 0x00526cb8
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_state_variables_reset(void)
 
 {
   uRam003fd074 = 0;
-  _BYTE_003fd070 = &UNK_0005c972;
+  protection_ema_output = (dword)&UNK_0005c972;
   uRam003fd06e = 0;
   return;
 }
@@ -77306,16 +76670,14 @@ void cm848_state_variables_reset(void)
 // Function: cm848_tpu_channel2_fuel_init @ 0x00527050
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_tpu_channel2_fuel_init(void)
 
 {
   word wVar1;
   undefined2 uVar2;
   
-  _fuel_temp_correction_factor = 0x5e7fb044;
-  if (_etc1_transmission_mode == 3) {
+  fuel_temp_correction_factor = 0x5e7fb044;
+  if (etc1_transmission_mode == 3) {
     uRam003fd078 = 0;
     uRam0040b718 = 0;
     uRam0040b71c = 0;
@@ -77388,8 +76750,6 @@ void cm848_protection_threshold_load(void)
 // Function: cm848_fuel_demand_state_capture @ 0x005278ac
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_fuel_demand_state_capture(void)
 
 {
@@ -77399,7 +76759,7 @@ void cm848_fuel_demand_state_capture(void)
   wRam003fd082 = torque_limit_fault_snapshot;
   uRam003fd084 = uRam0040b960;
   uRam003fd086 = uRam0040b830;
-  if ((_cold_start_phase != 3) && (_cold_start_phase != 4)) {
+  if ((cold_start_phase != 3) && (cold_start_phase != 4)) {
     uRam0040b78c = 0xc800;
   }
   return;
@@ -77444,8 +76804,6 @@ void cm848_main_loop_initialization(void)
 //
 // Function: cm848_auxiliary_boundary_condition_eval @ 0x005279d8
 //
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void cm848_auxiliary_boundary_condition_eval(void)
 
@@ -77536,49 +76894,49 @@ void cm848_auxiliary_boundary_condition_eval(void)
   sVar3 = cm848_dualAxisTableInterpolation
                     (0x3fd0a6,engine_rpm_state_t_0040b7ac.current_rpm,0x5dd52,fuel_demand_computed,
                      0x5dd7a,0x5dd9c,4);
-  if (_boost_map_index_current == 1) {
+  if (boost_map_index_current == 1) {
     sVar6 = cm848_dualAxisTableInterpolation
                       (0x3fd0aa,engine_rpm_state_t_0040b7ac.current_rpm,0x5e686,fuel_demand_computed
                        ,0x5e6ae,0x5e6d0,4);
   }
-  else if (_boost_map_index_current == 2) {
+  else if (boost_map_index_current == 2) {
     sVar6 = cm848_dualAxisTableInterpolation
                       (0x3fd0aa,engine_rpm_state_t_0040b7ac.current_rpm,0x5e930,fuel_demand_computed
                        ,0x5e958,0x5e97a,4);
   }
-  else if (_boost_map_index_current == 3) {
+  else if (boost_map_index_current == 3) {
     sVar6 = cm848_dualAxisTableInterpolation
                       (0x3fd0aa,engine_rpm_state_t_0040b7ac.current_rpm,0x5ebda,fuel_demand_computed
                        ,0x5ec02,0x5ec24,4);
   }
-  else if (_boost_map_index_current == 4) {
+  else if (boost_map_index_current == 4) {
     sVar6 = cm848_dualAxisTableInterpolation
                       (0x3fd0aa,engine_rpm_state_t_0040b7ac.current_rpm,0x5ee84,fuel_demand_computed
                        ,0x5eeac,0x5eece,4);
   }
-  if (_boost_map_index_target == 1) {
+  if (boost_map_index_target == 1) {
     sVar7 = cm848_dualAxisTableInterpolation
                       (0x3fd0aa,engine_rpm_state_t_0040b7ac.current_rpm,0x5e686,fuel_demand_computed
                        ,0x5e6ae,0x5e6d0,4);
   }
-  else if (_boost_map_index_target == 2) {
+  else if (boost_map_index_target == 2) {
     sVar7 = cm848_dualAxisTableInterpolation
                       (0x3fd0aa,engine_rpm_state_t_0040b7ac.current_rpm,0x5e930,fuel_demand_computed
                        ,0x5e958,0x5e97a,4);
   }
-  else if (_boost_map_index_target == 3) {
+  else if (boost_map_index_target == 3) {
     sVar7 = cm848_dualAxisTableInterpolation
                       (0x3fd0aa,engine_rpm_state_t_0040b7ac.current_rpm,0x5ebda,fuel_demand_computed
                        ,0x5ec02,0x5ec24,4);
   }
-  else if (_boost_map_index_target == 4) {
+  else if (boost_map_index_target == 4) {
     sVar7 = cm848_dualAxisTableInterpolation
                       (0x3fd0aa,engine_rpm_state_t_0040b7ac.current_rpm,0x5ee84,fuel_demand_computed
                        ,0x5eeac,0x5eece,4);
   }
   sRam0040b838 = cm848_filterInputValue
-                           ((int)sVar6,(int)sVar7,(int)sVar3,_boost_map_index_current,
-                            _boost_map_index_target,fuel_blend_state_t_0040a494.blend_weight,
+                           ((int)sVar6,(int)sVar7,(int)sVar3,boost_map_index_current,
+                            boost_map_index_target,fuel_blend_state_t_0040a494.blend_weight,
                             fuel_blend_state_t_0040a494.blend_mode);
   sRam0040b840 = sRam0040b838;
   if (sRam00409094 == 2) {
@@ -77645,8 +77003,6 @@ void cm848_initialization_auxiliary_state(void)
 // Function: engine_injectionAngle_tpuUpdate @ 0x005280a4
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void engine_injectionAngle_tpuUpdate(void)
 
 {
@@ -77661,7 +77017,7 @@ void engine_injectionAngle_tpuUpdate(void)
   sRam0040b854 = sRam0040b854 +
                  (ushort)((((int)sRam00409098 * (int)(short)cam_sync_position >> 6) +
                           (uint)uRam0040909c) * (uint)speed_setpoint_raw >> 0x16);
-  if (_crank_position_valid_flag != 0) {
+  if (crank_position_valid_flag != 0) {
     sRam0040b854 = sRam0040b854 + sRam0040909a;
   }
   uVar4 = (uint)(ushort)(&UNK_0005fbb2)[cylinder_event_index] + (int)sRam0040b856 +
@@ -77676,16 +77032,16 @@ void engine_injectionAngle_tpuUpdate(void)
     uVar4 = uVar4 & 0xffff;
     uVar2 = (uint)uRam004090f3;
     if (uVar2 < uVar4) {
-      uVar5 = (int)(uint)bRam004090e8 / (int)((_crank_sync_tooth_count_cal & 0xff) - 1) & 0xffff;
+      uVar5 = (int)(uint)bRam004090e8 / (int)((crank_sync_tooth_count_cal & 0xff) - 1) & 0xffff;
       uVar3 = (int)(uVar4 - uVar2) / (int)uVar5;
       uVar6 = (short)((int)uVar3 >> 1) + (ushort)((int)uVar3 < 0 && (uVar3 & 1) != 0) & 0x7f;
       uVar4 = ((int)(uVar4 - uVar2) >> 8) / (int)uVar5 + (uint)bRam004090f5;
-      if ((int)(_crank_sync_tooth_count_cal - 1) < (int)(uVar4 & 0xff)) {
-        uVar4 = uVar4 - (_crank_sync_tooth_count_cal + 0xff);
+      if ((int)(crank_sync_tooth_count_cal - 1) < (int)(uVar4 & 0xff)) {
+        uVar4 = uVar4 - (crank_sync_tooth_count_cal + 0xff);
       }
     }
     else {
-      uVar5 = (int)(uint)bRam004090e8 / (int)((_crank_sync_tooth_count_cal & 0xff) - 1) & 0xffff;
+      uVar5 = (int)(uint)bRam004090e8 / (int)((crank_sync_tooth_count_cal & 0xff) - 1) & 0xffff;
       uVar5 = (int)(uVar5 * 0x100 - (uVar2 - uVar4)) / (int)uVar5;
       uVar6 = (short)((int)uVar5 >> 1) + (ushort)((int)uVar5 < 0 && (uVar5 & 1) != 0);
       uVar4 = bRam004090f5 + 0xff;
@@ -77724,7 +77080,7 @@ LAB_00528260:
     uVar4 = uVar4 + 0xfe;
   }
 LAB_00528338:
-  if (((_DAT_003fd5dc & 2) == 0) ||
+  if (((governor_fuel_feature_flags & 2) == 0) ||
      (uVar2 = (uint)*(byte *)(cylinder_event_index + 0x5f14e), 1 < uVar2)) {
     uVar1 = 10;
   }
@@ -77987,11 +77343,11 @@ void cm848_protection_timer_init(void)
     tpu_channel_control.PARAM0 = wVar3 & 0x7fff;
     cRam003fd0ba = '\0';
   }
-  if (_cold_start_phase == 1) {
+  if (cold_start_phase == 1) {
     sRam003fd0b8 = sRam003fd0b8 + 1;
   }
   else {
-    if ((_cold_start_phase == 3) && (sRam003fd0b8 == -1)) {
+    if ((cold_start_phase == 3) && (sRam003fd0b8 == -1)) {
       cRam003fd0ba = '\x01';
     }
     if (sRam003fd0b8 != -1) {
@@ -78001,7 +77357,7 @@ void cm848_protection_timer_init(void)
       tpu_channel_control.PARAM0 = wVar3 | 0x8000;
     }
     sRam003fd0b8 = -1;
-    if (_cold_start_phase == 8) {
+    if (cold_start_phase == 8) {
       if ((cRam003fd0ba == '\x01') && (protection_fault_eval_input == 0)) {
         uVar1 = uRam0040bcec;
         if ((_DAT_003fdb7e & 0x40) == 0) {
@@ -78056,8 +77412,6 @@ void cm848_protection_timer_init(void)
 // Function: cm848_protection_condition_eval_set1 @ 0x00529994
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_protection_condition_eval_set1(void)
 
 {
@@ -78081,17 +77435,17 @@ void cm848_protection_condition_eval_set1(void)
       uVar1 = (uint)uRam004090f3;
       uVar6 = uRam003fd0bc & 0xffff;
       if (uVar1 < uVar6) {
-        uVar4 = (int)(uint)bRam004090e8 / (int)((_crank_sync_tooth_count_cal & 0xff) - 1) & 0xffff;
+        uVar4 = (int)(uint)bRam004090e8 / (int)((crank_sync_tooth_count_cal & 0xff) - 1) & 0xffff;
         uVar3 = (int)(uVar6 - uVar1) / (int)uVar4;
         bRam0040b876 = (char)((int)uVar3 >> 1) + ((int)uVar3 < 0 && (uVar3 & 1) != 0) & 0x7f;
         uVar6 = ((int)(uVar6 - uVar1) >> 8) / (int)uVar4 + (uint)bRam004090f5;
         cRam0040b875 = (char)uVar6;
-        if ((int)(_crank_sync_tooth_count_cal - 1) < (int)(uVar6 & 0xff)) {
-          cRam0040b875 = cRam0040b875 - ((char)_crank_sync_tooth_count_cal + -1);
+        if ((int)(crank_sync_tooth_count_cal - 1) < (int)(uVar6 & 0xff)) {
+          cRam0040b875 = cRam0040b875 - ((char)crank_sync_tooth_count_cal + -1);
         }
       }
       else {
-        uVar4 = (int)(uint)bRam004090e8 / (int)((_crank_sync_tooth_count_cal & 0xff) - 1) & 0xffff;
+        uVar4 = (int)(uint)bRam004090e8 / (int)((crank_sync_tooth_count_cal & 0xff) - 1) & 0xffff;
         uVar4 = (int)(uVar4 * 0x100 - (uVar1 - uVar6)) / (int)uVar4;
         bRam0040b876 = (char)((int)uVar4 >> 1) + ((int)uVar4 < 0 && (uVar4 & 1) != 0);
         cRam0040b875 = bRam004090f5 - 1;
@@ -78125,17 +77479,17 @@ void cm848_protection_condition_eval_set1(void)
     uVar1 = (uint)bRam0040b86e * 0x100;
     if (uVar6 < uVar1) {
       iVar2 = uVar1 - uVar6;
-      uVar5 = (int)uVar5 / (int)((_crank_sync_tooth_count_cal & 0xff) - 1) & 0xffff;
+      uVar5 = (int)uVar5 / (int)((crank_sync_tooth_count_cal & 0xff) - 1) & 0xffff;
       uVar6 = iVar2 / (int)uVar5;
       bRam0040b86f = (char)((int)uVar6 >> 1) + ((int)uVar6 < 0 && (uVar6 & 1) != 0) & 0x7f;
       uVar5 = (iVar2 >> 8) / (int)uVar5 + (uint)bRam004090f5;
       bRam0040b86e = (byte)uVar5;
-      if ((int)(_crank_sync_tooth_count_cal - 1) < (int)(uVar5 & 0xff)) {
-        bRam0040b86e = bRam0040b86e - ((char)_crank_sync_tooth_count_cal + -1);
+      if ((int)(crank_sync_tooth_count_cal - 1) < (int)(uVar5 & 0xff)) {
+        bRam0040b86e = bRam0040b86e - ((char)crank_sync_tooth_count_cal + -1);
       }
     }
     else {
-      uVar5 = (int)uVar5 / (int)((_crank_sync_tooth_count_cal & 0xff) - 1) & 0xffff;
+      uVar5 = (int)uVar5 / (int)((crank_sync_tooth_count_cal & 0xff) - 1) & 0xffff;
       uVar5 = (int)(uVar5 * 0x100 - (uVar6 + (uint)bRam0040b86e * -0x100)) / (int)uVar5;
       bRam0040b86f = (char)((int)uVar5 >> 1) + ((int)uVar5 < 0 && (uVar5 & 1) != 0);
       bRam0040b86e = bRam004090f5 - 1;
@@ -78242,8 +77596,6 @@ void cm848_sensor_diagnostic_flag_update(void)
 // Function: cm848_sensor_channel_state_load @ 0x00529f58
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_sensor_channel_state_load(void)
 
 {
@@ -78276,7 +77628,7 @@ void cm848_sensor_channel_state_load(void)
     cam_timing_measured = wRam00409a88;
     return;
   }
-  if (_engine_start_active_flag != 0) {
+  if (engine_start_active_flag != 0) {
     cam_timing_measured = 0;
     engine_timing_arb_byte_8_15 = 1;
     return;
@@ -78284,49 +77636,49 @@ void cm848_sensor_channel_state_load(void)
   iVar10 = (int)(short)(sRam00409a78 + cam_timing_measured);
   sVar5 = cm848_dualAxisTableInterpolation
                     (0x3fd0da,speed_setpoint_raw,0x5fc7e,fuel_demand_computed,0x5fca6,0x40980a,4);
-  if (_boost_map_index_current == 1) {
+  if (boost_map_index_current == 1) {
     unaff_r26 = cm848_dualAxisTableInterpolation
                           (0x3fd0ca,speed_setpoint_raw,0x600be,fuel_demand_computed,0x600e6,0x4095aa
                            ,4);
   }
-  else if (_boost_map_index_current == 2) {
+  else if (boost_map_index_current == 2) {
     unaff_r26 = cm848_dualAxisTableInterpolation
                           (0x3fd0ca,speed_setpoint_raw,0x60108,fuel_demand_computed,0x60130,0x60152,
                            4);
   }
-  else if (_boost_map_index_current == 3) {
+  else if (boost_map_index_current == 3) {
     unaff_r26 = cm848_dualAxisTableInterpolation
                           (0x3fd0ca,speed_setpoint_raw,0x603b2,fuel_demand_computed,0x603da,0x603fc,
                            4);
   }
-  else if (_boost_map_index_current == 4) {
+  else if (boost_map_index_current == 4) {
     unaff_r26 = cm848_dualAxisTableInterpolation
                           (0x3fd0ca,speed_setpoint_raw,0x6065c,fuel_demand_computed,0x60684,0x606a6,
                            4);
   }
-  if (_boost_map_index_target == 1) {
+  if (boost_map_index_target == 1) {
     unaff_r21 = cm848_dualAxisTableInterpolation
                           (0x3fd0ca,speed_setpoint_raw,0x600be,fuel_demand_computed,0x600e6,0x4095aa
                            ,4);
   }
-  else if (_boost_map_index_target == 2) {
+  else if (boost_map_index_target == 2) {
     unaff_r21 = cm848_dualAxisTableInterpolation
                           (0x3fd0ca,speed_setpoint_raw,0x60108,fuel_demand_computed,0x60130,0x60152,
                            4);
   }
-  else if (_boost_map_index_target == 3) {
+  else if (boost_map_index_target == 3) {
     unaff_r21 = cm848_dualAxisTableInterpolation
                           (0x3fd0ca,speed_setpoint_raw,0x603b2,fuel_demand_computed,0x603da,0x603fc,
                            4);
   }
-  else if (_boost_map_index_target == 4) {
+  else if (boost_map_index_target == 4) {
     unaff_r21 = cm848_dualAxisTableInterpolation
                           (0x3fd0ca,speed_setpoint_raw,0x6065c,fuel_demand_computed,0x60684,0x606a6,
                            4);
   }
   sVar6 = cm848_filterInputValue
-                    ((int)unaff_r26,(int)unaff_r21,(int)sVar5,_boost_map_index_current,
-                     _boost_map_index_target,fuel_blend_state_t_0040a494.blend_weight,
+                    ((int)unaff_r26,(int)unaff_r21,(int)sVar5,boost_map_index_current,
+                     boost_map_index_target,fuel_blend_state_t_0040a494.blend_weight,
                      fuel_blend_state_t_0040a494.blend_mode);
   iVar13 = (int)sVar6;
   sRam0040b8be = sVar6;
@@ -78369,8 +77721,8 @@ void cm848_sensor_channel_state_load(void)
       engine_timing_arb_byte_8_15 = 4;
     }
   }
-  if ((((_governor_mode_code == 0x10) || (_governor_mode_code == 0x3a)) ||
-      (_governor_mode_code == 0x32)) &&
+  if ((((governor_mode_code == 0x10) || (governor_mode_code == 0x3a)) ||
+      (governor_mode_code == 0x32)) &&
      ((sRam00409a7c < (short)wVar12 && (sRam00409a7e < (short)wVar4)))) {
     if (iRam0040b8c0 < 1) {
       if ((iRam0040b8c0 < iRam003fd0c6) &&
@@ -78436,8 +77788,8 @@ LAB_0052a5b0:
                            (0x3fd0ce,speed_setpoint_raw,0x60044,wVar12,0x60058,0x60064,6);
   iVar10 = (int)sRam0040b8b8;
   if ((protection_feature_flags & 4) == 0) goto LAB_0052a7e4;
-  if ((((_cold_start_phase == 1) || (_cold_start_phase == 2)) || (_cold_start_phase == 6)) ||
-     (_cold_start_phase == 7)) {
+  if ((((cold_start_phase == 1) || (cold_start_phase == 2)) || (cold_start_phase == 6)) ||
+     (cold_start_phase == 7)) {
     sRam0040b8ba = 1;
     engine_timing_arb_byte_8_15 = 6;
     unaff_r28 = iVar10;
@@ -78477,8 +77829,8 @@ LAB_0052a7b8:
     unaff_r28 = (int)(short)cam_timing_measured;
   }
 LAB_0052a7e4:
-  if (((_cold_start_phase == 1) || (_cold_start_phase == 2)) ||
-     ((_cold_start_phase == 6 || (_cold_start_phase == 7)))) {
+  if (((cold_start_phase == 1) || (cold_start_phase == 2)) ||
+     ((cold_start_phase == 6 || (cold_start_phase == 7)))) {
     wVar12 = 0x10;
     cam_timing_measured = wRam00409a86;
   }
@@ -78501,7 +77853,7 @@ LAB_0052a7e4:
   if (cRam00409a6c == '\x02') {
     cam_timing_measured = cam_timing_measured + wRam00409a6d;
   }
-  if (((_cold_start_qualifier_flag & 4) != 0) && ((short)wRam0040953e < (short)cam_timing_measured))
+  if (((cold_start_qualifier_flag & 4) != 0) && ((short)wRam0040953e < (short)cam_timing_measured))
   {
     cam_timing_measured = wRam0040953e;
     engine_timing_arb_byte_8_15 = 0xf;
@@ -78546,8 +77898,6 @@ void hpcr_register_state_save(void)
 // Function: engine_camTiming_speedWindow_update @ 0x0052a9ac
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void engine_camTiming_speedWindow_update(void)
 
 {
@@ -78566,7 +77916,7 @@ void engine_camTiming_speedWindow_update(void)
     else {
       uRam0040b906 = false;
     }
-    if ((((((((bool)uRam0040b906) && (fuel_temp_trim_snapshot == 0)) && (_cold_start_phase == 3)) &&
+    if ((((((((bool)uRam0040b906) && (fuel_temp_trim_snapshot == 0)) && (cold_start_phase == 3)) &&
           ((sRam00409aa4 < (short)cam_timing_reference_b &&
            ((short)sensor_readings_t_0040baf2.coolant_temp <= sRam00409aa8)))) &&
          (sRam00409aa6 <= (short)sensor_readings_t_0040baf2.coolant_temp)) &&
@@ -78625,8 +77975,6 @@ LAB_0052ac8c:
 // Function: engine_camSync_referenceCheck_update @ 0x0052acfc
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void engine_camSync_referenceCheck_update(void)
 
 {
@@ -78639,17 +77987,17 @@ void engine_camSync_referenceCheck_update(void)
   if (((((((uRam00409aae < engine_rpm_state_t_0040b7ac.current_rpm) &&
           ((short)cam_timing_reference_b <= sRam00409ac4)) &&
          (sRam00409aa4 <= (short)cam_timing_reference_b)) &&
-        ((_cold_start_phase == 3 && ((short)sensor_readings_t_0040baf2.coolant_temp <= sRam00409aa8)
-         ))) && ((sRam00409aa6 <= (short)sensor_readings_t_0040baf2.coolant_temp &&
-                 ((engine_position_diag_snapshot == 0 && (engine_sync_speed_fault_flags == 0))))))
-      && ((engine_position_diag_flags == 0 &&
-          (((((protection_fault_status_a == 0 && (protection_fault_status_b == 0)) &&
-             (protection_fault_status_c == 0)) &&
-            (((uRam00409ac6 < 0x44 && ((system_status_flags_t_003fe974.sensor_diag & 0x1000) == 0))
-             && (((system_status_flags_t_003fe974.sensor_diag & 0x2000) == 0 &&
-                 (((system_status_flags_t_003fe974.emission_faults & 0x1000) == 0 &&
-                  ((system_status_flags_t_003fe974.enable_state & 0x20) == 0)))))))) &&
-           ((system_status_flags_t_003fe974.emission_faults & 0x20) == 0)))))) &&
+        ((cold_start_phase == 3 && ((short)sensor_readings_t_0040baf2.coolant_temp <= sRam00409aa8))
+        )) && ((sRam00409aa6 <= (short)sensor_readings_t_0040baf2.coolant_temp &&
+               ((engine_position_diag_snapshot == 0 && (engine_sync_speed_fault_flags == 0)))))) &&
+      ((engine_position_diag_flags == 0 &&
+       (((((protection_fault_status_a == 0 && (protection_fault_status_b == 0)) &&
+          (protection_fault_status_c == 0)) &&
+         (((uRam00409ac6 < 0x44 && ((system_status_flags_t_003fe974.sensor_diag & 0x1000) == 0)) &&
+          (((system_status_flags_t_003fe974.sensor_diag & 0x2000) == 0 &&
+           (((system_status_flags_t_003fe974.emission_faults & 0x1000) == 0 &&
+            ((system_status_flags_t_003fe974.enable_state & 0x20) == 0)))))))) &&
+        ((system_status_flags_t_003fe974.emission_faults & 0x20) == 0)))))) &&
      (((((system_status_flags_t_003fe974.protection_active & 0x8000) == 0 &&
         ((system_status_flags_t_003fe974.comm_faults & 0x200) == 0)) &&
        ((system_status_flags_t_003fe974.comm_faults & 0x100) == 0)) &&
@@ -78756,8 +78104,6 @@ LAB_0052b28c:
 // Function: engine_camTiming_positionCorrection_calc @ 0x0052b32c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void engine_camTiming_positionCorrection_calc(void)
 
 {
@@ -78775,7 +78121,7 @@ void engine_camTiming_positionCorrection_calc(void)
   }
   if (((((((((short)(cam_timing_measured - cam_timing_reference_b) < sRam00409ab6) &&
            (sRam00409ab8 < (short)(cam_timing_measured - cam_timing_reference_b))) &&
-          (_cold_start_phase == 3)) &&
+          (cold_start_phase == 3)) &&
          ((((short)cam_timing_reference_b <= sRam00409ac4 &&
            (sRam00409aa4 <= (short)cam_timing_reference_b)) &&
           (((short)sensor_readings_t_0040baf2.coolant_temp <= sRam00409aa8 &&
@@ -78943,8 +78289,6 @@ void cm848_initialization_group28_state(void)
 // Function: cm848_torque_limit_state_update @ 0x0052ba30
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_torque_limit_state_update(void)
 
 {
@@ -78966,8 +78310,8 @@ void cm848_torque_limit_state_update(void)
   wVar4 = engine_load_output_value;
   wVar3 = sensor_readings_t_0040baf2.intake_air_temp;
   wVar2 = sensor_readings_t_0040baf2.coolant_temp;
-  if (((_crank_position_valid_flag != 0) && (sRam00409e62 != 0)) ||
-     (((_governor_mode_code == 0x2f ||
+  if (((crank_position_valid_flag != 0) && (sRam00409e62 != 0)) ||
+     (((governor_mode_code == 0x2f ||
        ((int)(uint)uRam00409e5a < (int)(short)governor_speed_error_b_filtered)) &&
       (((fuel_temperature_trim < uRam00409e5c &&
         (sRam00409e5e < (short)sensor_readings_t_0040baf2.coolant_temp)) &&
@@ -79002,7 +78346,7 @@ void cm848_torque_limit_state_update(void)
   if ((uint)fuel_demand_computed < (uVar11 & 0x3fff) << 2) {
     wRam0040b942 = fuel_demand_computed;
   }
-  if ((((_cold_start_phase == 2) || (_cold_start_phase == 6)) || (_cold_start_phase == 7)) &&
+  if ((((cold_start_phase == 2) || (cold_start_phase == 6)) || (cold_start_phase == 7)) &&
      (sRam00409e6c == 0)) {
     sRam0040b93c = lookupTableInterpolation
                              (0x3fd10e,sensor_readings_t_0040baf2.coolant_temp,0x61964,0x61970,1);
@@ -79020,45 +78364,45 @@ void cm848_torque_limit_state_update(void)
                            (0x3fd128,sRam0040b944,0x61f94,uVar6,0x61fb0,0x61fc8,4);
   sVar7 = cm848_dualAxisTableInterpolation
                     (0x3fd124,sRam0040b944,0x614c4,wRam0040b942,0x614ec,0x6150e,4);
-  if (_boost_map_index_current == 1) {
+  if (boost_map_index_current == 1) {
     unaff_r25 = cm848_dualAxisTableInterpolation
                           (0x3fd134,sRam0040b944,
                            (int)u_PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP_00061c73 + 0x77,wRam0040b942,
                            0x61d12,0x61d34,4);
   }
-  else if (_boost_map_index_current == 2) {
+  else if (boost_map_index_current == 2) {
     unaff_r25 = cm848_dualAxisTableInterpolation
                           (0x3fd134,sRam0040b944,0x62238,wRam0040b942,0x62260,0x62282,4);
   }
-  else if (_boost_map_index_current == 3) {
+  else if (boost_map_index_current == 3) {
     unaff_r25 = cm848_dualAxisTableInterpolation
                           (0x3fd134,sRam0040b944,0x624e2,wRam0040b942,0x6250a,0x6252c,4);
   }
-  else if (_boost_map_index_current == 4) {
+  else if (boost_map_index_current == 4) {
     unaff_r25 = cm848_dualAxisTableInterpolation
                           (0x3fd134,sRam0040b944,0x6278c,wRam0040b942,0x627b4,0x627d6,4);
   }
-  if (_boost_map_index_target == 1) {
+  if (boost_map_index_target == 1) {
     unaff_r23 = cm848_dualAxisTableInterpolation
                           (0x3fd134,sRam0040b944,
                            (int)u_PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP_00061c73 + 0x77,wRam0040b942,
                            0x61d12,0x61d34,4);
   }
-  else if (_boost_map_index_target == 2) {
+  else if (boost_map_index_target == 2) {
     unaff_r23 = cm848_dualAxisTableInterpolation
                           (0x3fd134,sRam0040b944,0x62238,wRam0040b942,0x62260,0x62282,4);
   }
-  else if (_boost_map_index_target == 3) {
+  else if (boost_map_index_target == 3) {
     unaff_r23 = cm848_dualAxisTableInterpolation
                           (0x3fd134,sRam0040b944,0x624e2,wRam0040b942,0x6250a,0x6252c,4);
   }
-  else if (_boost_map_index_target == 4) {
+  else if (boost_map_index_target == 4) {
     unaff_r23 = cm848_dualAxisTableInterpolation
                           (0x3fd134,sRam0040b944,0x6278c,wRam0040b942,0x627b4,0x627d6,4);
   }
   sRam0040b938 = cm848_filterInputValue
-                           ((int)unaff_r25,(int)unaff_r23,(int)sVar7,_boost_map_index_current,
-                            _boost_map_index_target,fuel_blend_state_t_0040a494.blend_weight,
+                           ((int)unaff_r25,(int)unaff_r23,(int)sVar7,boost_map_index_current,
+                            boost_map_index_target,fuel_blend_state_t_0040a494.blend_weight,
                             fuel_blend_state_t_0040a494.blend_mode);
   sRam0040b940 = cm848_dualAxisTableInterpolation
                            (0x3fd138,sRam0040b944,0x61812,wRam0040b942,0x6182e,0x61846,4);
@@ -79071,7 +78415,8 @@ void cm848_torque_limit_state_update(void)
   sVar8 = cm848_dualAxisTableInterpolation
                     (0x3fd120,sRam0040b944,0x61afa,wRam0040b942,0x61b16,0x61b2e,4);
   uVar11 = (int)sVar8 * (int)sVar5;
-  _DAT_0040b94a = (short)((int)uVar11 >> 0xc) + (ushort)((int)uVar11 < 0 && (uVar11 & 0xfff) != 0);
+  injection_timing_table_output_b =
+       (short)((int)uVar11 >> 0xc) + (ushort)((int)uVar11 < 0 && (uVar11 & 0xfff) != 0);
   sRam0040b948 = sRam0040b946;
   if (sRam0040b946 < sRam0040b93e) {
     sRam0040b948 = sRam0040b93e;
@@ -79093,14 +78438,14 @@ void cm848_torque_limit_state_update(void)
       uRam003fd108 = (uint)sRam0040b948;
       iVar10 = (int)sRam0040b938;
       if (iVar10 < (int)uRam003fd108) {
-        if ((int)uRam003fd108 <= (int)_DAT_0040b94a) {
+        if ((int)uRam003fd108 <= (int)(short)injection_timing_table_output_b) {
 LAB_0052c224:
-          uRam003fd108 = (int)_DAT_0040b94a;
+          uRam003fd108 = (int)(short)injection_timing_table_output_b;
         }
       }
       else {
         uRam003fd108 = iVar10;
-        if (iVar10 <= _DAT_0040b94a) goto LAB_0052c224;
+        if (iVar10 <= (short)injection_timing_table_output_b) goto LAB_0052c224;
       }
       if ((int)uRam003fd108 <= iRam0040b952) {
 LAB_0052c290:
@@ -79111,19 +78456,20 @@ LAB_0052c290:
       uRam003fd108 = (uint)sRam0040b948;
       iVar10 = (int)sRam0040b938;
       if ((int)uRam003fd108 < iVar10) {
-        if ((int)_DAT_0040b94a <= (int)uRam003fd108) {
+        if ((int)(short)injection_timing_table_output_b <= (int)uRam003fd108) {
 LAB_0052c278:
-          uRam003fd108 = (int)_DAT_0040b94a;
+          uRam003fd108 = (int)(short)injection_timing_table_output_b;
         }
       }
       else {
         uRam003fd108 = iVar10;
-        if (_DAT_0040b94a <= iVar10) goto LAB_0052c278;
+        if ((short)injection_timing_table_output_b <= iVar10) goto LAB_0052c278;
       }
       if (iRam0040b952 <= (int)uRam003fd108) goto LAB_0052c290;
     }
     else {
-      uRam003fd108 = (int)sRam0040b948 + (int)sRam0040b938 + (int)_DAT_0040b94a + iRam0040b952;
+      uRam003fd108 = (int)sRam0040b948 + (int)sRam0040b938 +
+                     (int)(short)injection_timing_table_output_b + iRam0040b952;
       engine_timing_arb_byte_16_23 = 0xb;
     }
     if (sRam00409e6a == 0) {
@@ -79141,7 +78487,7 @@ LAB_0052c398:
     }
     sRam0040b95e = cm848_dualAxisTableInterpolation
                              (0x3fd13c,sRam0040b944,0x62c2c,wVar2,0x62c40,0x62c54,6);
-    if ((((_cold_start_phase == 2) || (_cold_start_phase == 6)) || (_cold_start_phase == 7)) &&
+    if ((((cold_start_phase == 2) || (cold_start_phase == 6)) || (cold_start_phase == 7)) &&
        (sVar8 = sRam0040b95e, sRam00409e6c == 1)) goto LAB_0052c41c;
   }
   else {
@@ -79149,7 +78495,7 @@ LAB_0052c41c:
     uRam003fd108 = (uint)sVar8;
   }
   if ((int)sRam0040b93e == uRam003fd108) {
-    if ((((_cold_start_phase == 2) || (_cold_start_phase == 6)) || (_cold_start_phase == 7)) &&
+    if ((((cold_start_phase == 2) || (cold_start_phase == 6)) || (cold_start_phase == 7)) &&
        (sRam00409e6c == 0)) {
       engine_timing_arb_byte_16_23 = 6;
     }
@@ -79166,7 +78512,7 @@ LAB_0052c41c:
   else if ((int)sRam0040b938 == uRam003fd108) {
     engine_timing_arb_byte_16_23 = 1;
   }
-  else if ((int)_DAT_0040b94a == uRam003fd108) {
+  else if ((int)(short)injection_timing_table_output_b == uRam003fd108) {
     engine_timing_arb_byte_16_23 = 4;
   }
   else if (iRam0040b952 == uRam003fd108) {
@@ -79175,7 +78521,7 @@ LAB_0052c41c:
   else if ((int)sRam0040b95a == uRam003fd108) {
     engine_timing_arb_byte_16_23 = 0x11;
   }
-  if ((((_cold_start_phase == 2) || (_cold_start_phase == 6)) || (_cold_start_phase == 7)) &&
+  if ((((cold_start_phase == 2) || (cold_start_phase == 6)) || (cold_start_phase == 7)) &&
      (sRam00409e6c == 1)) {
     engine_timing_arb_byte_16_23 = 0x13;
   }
@@ -79261,8 +78607,6 @@ void cm848_initialization_fault_state(void)
 // Function: engine_injectionTiming_arbitration_calc @ 0x0052c780
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void engine_injectionTiming_arbitration_calc(void)
 
 {
@@ -79280,14 +78624,14 @@ void engine_injectionTiming_arbitration_calc(void)
   wRam003fd16a = sensor_readings_t_0040baf2.coolant_temp;
   wRam003fd16c = engine_load_output_value;
   wRam003fd168 = sensor_readings_t_0040baf2.intake_air_temp;
-  if (((_cold_start_phase == 2) || (_cold_start_phase == 6)) || (_cold_start_phase == 7)) {
+  if (((cold_start_phase == 2) || (cold_start_phase == 6)) || (cold_start_phase == 7)) {
     sRam0040b984 = cm848_dualAxisTableInterpolation
                              (0x3fd160,engine_rpm_state_t_0040b7ac.current_rpm,0x62de6,
                               sensor_readings_t_0040baf2.coolant_temp,0x62dfa,0x62e0e,6);
     engine_timing_arb_byte_24_31 = 10;
     goto LAB_0052d010;
   }
-  if (_governor_mode_code == 0xb) {
+  if (governor_mode_code == 0xb) {
     if (((int)(uint)engine_rpm_state_t_0040b7ac.current_rpm <=
          (int)((uint)governor_output_t_0040aec2.integrator._0_2_ - (uint)uRam00409e78)) ||
        ((uint)governor_output_t_0040aec2.integrator._0_2_ + (uint)uRam00409e78 <=
@@ -79298,7 +78642,7 @@ void engine_injectionTiming_arbitration_calc(void)
   }
   else {
 LAB_0052c8b0:
-    if (_governor_mode_code == 4) {
+    if (governor_mode_code == 4) {
       if (((int)((uint)protection_monitored_rpm - (uint)uRam00409e78) <
            (int)(uint)engine_rpm_state_t_0040b7ac.current_rpm) &&
          ((uint)engine_rpm_state_t_0040b7ac.current_rpm <
@@ -79314,41 +78658,41 @@ LAB_0052c8b0:
 LAB_0052c910:
   sVar1 = cm848_dualAxisTableInterpolation
                     (0x3fd14c,wRam0040b98a,0x62eb0,engine_timing_reference,0x62ed8,0x62efa,4);
-  if (_boost_map_index_current == 1) {
+  if (boost_map_index_current == 1) {
     unaff_r29 = cm848_dualAxisTableInterpolation
                           (0x3fd164,wRam0040b98a,0x637f4,engine_timing_reference,0x6381c,0x6383e,4);
   }
-  else if (_boost_map_index_current == 2) {
+  else if (boost_map_index_current == 2) {
     unaff_r29 = cm848_dualAxisTableInterpolation
                           (0x3fd164,wRam0040b98a,0x63a9e,engine_timing_reference,0x63ac6,0x63ae8,4);
   }
-  else if (_boost_map_index_current == 3) {
+  else if (boost_map_index_current == 3) {
     unaff_r29 = cm848_dualAxisTableInterpolation
                           (0x3fd164,wRam0040b98a,0x63d48,engine_timing_reference,0x63d70,0x63d92,4);
   }
-  else if (_boost_map_index_current == 4) {
+  else if (boost_map_index_current == 4) {
     unaff_r29 = cm848_dualAxisTableInterpolation
                           (0x3fd164,wRam0040b98a,0x63ff2,engine_timing_reference,0x6401a,0x6403c,4);
   }
-  if (_boost_map_index_target == 1) {
+  if (boost_map_index_target == 1) {
     unaff_r27 = cm848_dualAxisTableInterpolation
                           (0x3fd164,wRam0040b98a,0x637f4,engine_timing_reference,0x6381c,0x6383e,4);
   }
-  else if (_boost_map_index_target == 2) {
+  else if (boost_map_index_target == 2) {
     unaff_r27 = cm848_dualAxisTableInterpolation
                           (0x3fd164,wRam0040b98a,0x63a9e,engine_timing_reference,0x63ac6,0x63ae8,4);
   }
-  else if (_boost_map_index_target == 3) {
+  else if (boost_map_index_target == 3) {
     unaff_r27 = cm848_dualAxisTableInterpolation
                           (0x3fd164,wRam0040b98a,0x63d48,engine_timing_reference,0x63d70,0x63d92,4);
   }
-  else if (_boost_map_index_target == 4) {
+  else if (boost_map_index_target == 4) {
     unaff_r27 = cm848_dualAxisTableInterpolation
                           (0x3fd164,wRam0040b98a,0x63ff2,engine_timing_reference,0x6401a,0x6403c,4);
   }
   sRam0040b96e = cm848_filterInputValue
-                           ((int)unaff_r29,(int)unaff_r27,(int)sVar1,_boost_map_index_current,
-                            _boost_map_index_target,fuel_blend_state_t_0040a494.blend_weight,
+                           ((int)unaff_r29,(int)unaff_r27,(int)sVar1,boost_map_index_current,
+                            boost_map_index_target,fuel_blend_state_t_0040a494.blend_weight,
                             fuel_blend_state_t_0040a494.blend_mode);
   sRam0040b974 = cm848_dualAxisTableInterpolation
                            (0x3fd15c,wRam0040b98a,0x6315a,engine_timing_reference,0x63176,0x6318e,4)
@@ -79512,8 +78856,6 @@ LAB_0052d010:
 // Function: cm848_pressure_control_state_load @ 0x0052d140
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_pressure_control_state_load(void)
 
 {
@@ -79535,7 +78877,7 @@ void cm848_pressure_control_state_load(void)
   if (sRam00409e72 == 0) {
     sRam0040b992 = sRam0040b986 + torque_limit_fault_snapshot;
   }
-  if ((_governor_speed_limit_active_flag != 0) &&
+  if ((governor_speed_limit_active_flag != 0) &&
      (injection_timing_demand_lower_limit_cal == torque_limit_fault_snapshot)) {
     sRam0040b992 = sRam00409e76;
     if (sRam00409e72 == 0) {
@@ -79613,8 +78955,6 @@ void cm848_initialization_pressure_state(void)
 // Function: hpcr_calibration_group36_load @ 0x0052d40c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void hpcr_calibration_group36_load(void)
 
 {
@@ -79644,7 +78984,7 @@ LAB_0052d4b0:
   }
   if (iRam003fd16e == 0) {
     j1939_receive_status_flags = j1939_receive_status_flags & 0xffef;
-    _protection_enable_shadow_flags = _protection_enable_shadow_flags & 0xffef;
+    protection_enable_shadow_flags = protection_enable_shadow_flags & 0xffef;
   }
   return;
 }
@@ -79710,8 +79050,6 @@ void diag_faultRing_writePtr_update(void)
 // Function: cm848_calibration_group21_load @ 0x0052d6a8
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_calibration_group21_load(void)
 
 {
@@ -79729,7 +79067,7 @@ void cm848_calibration_group21_load(void)
     uVar5 = (uint)sensor_readings_t_0040baf2.intake_air_temp;
     uVar2 = (uint)sensor_readings_t_0040baf2.oil_pressure;
     if (((system_status_flags_t_003fe974.enable_state & 0x200) == 0) &&
-       (((system_status_flags_t_003fe974.enable_state & 0x100) == 0 && (_cold_start_phase == 1)))) {
+       (((system_status_flags_t_003fe974.enable_state & 0x100) == 0 && (cold_start_phase == 1)))) {
       if (UNK_000642be < uVar2) {
         sRam0040b99e = 1;
         uRam003fd17b = 1;
@@ -79770,7 +79108,7 @@ void cm848_calibration_group21_load(void)
       }
     }
   }
-  if ((((_cold_start_phase == 3) && ((system_status_flags_t_003fe974.enable_state & 0x200) == 0)) &&
+  if ((((cold_start_phase == 3) && ((system_status_flags_t_003fe974.enable_state & 0x200) == 0)) &&
       (((system_status_flags_t_003fe974.enable_state & 0x100) == 0 &&
        (((protection_feature_status_flags & 0x2000) != 0 &&
         (UNK_000642c4 <= engine_rpm_state_t_0040b7ac.target_rpm)))))) &&
@@ -79780,7 +79118,7 @@ void cm848_calibration_group21_load(void)
     }
     if (uRam003fd17d == UNK_000642c2) {
       uVar1 = temperature_differential;
-      if (_DAT_003feff6 == 0) {
+      if (protection_sensor_mode_flag == 0) {
         uVar1 = sensor_readings_t_0040baf2.oil_pressure;
       }
       if (uVar1 < UNK_000642ca) {
@@ -79812,8 +79150,8 @@ LAB_0052d9e8:
     uRam003fd17d = 0;
     uRam003fd17f = 1;
   }
-  if (((((_cold_start_phase != 3) || ((system_status_flags_t_003fe974.enable_state & 0x200) != 0))
-       || ((system_status_flags_t_003fe974.enable_state & 0x100) != 0)) ||
+  if (((((cold_start_phase != 3) || ((system_status_flags_t_003fe974.enable_state & 0x200) != 0)) ||
+       ((system_status_flags_t_003fe974.enable_state & 0x100) != 0)) ||
       (((protection_feature_status_flags & 0x2000) == 0 ||
        ((uint)governor_output_t_0040aec2.integrator._0_2_ + (uint)UNK_000642ba <
         (uint)engine_rpm_state_t_0040b7ac.target_rpm)))) ||
@@ -79827,7 +79165,7 @@ LAB_0052d9e8:
   }
   if (uRam003fd172 == UNK_000642b4) {
     uVar1 = temperature_differential;
-    if (_DAT_003feff6 == 0) {
+    if (protection_sensor_mode_flag == 0) {
       uVar1 = sensor_readings_t_0040baf2.oil_pressure;
     }
     if (UNK_000642bc < uVar1) {
@@ -79934,8 +79272,6 @@ void diag_faultRing_pendingBit_update(void)
 // Function: cm848_calibration_group29_load @ 0x0052de14
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_calibration_group29_load(void)
 
 {
@@ -79954,7 +79290,7 @@ void cm848_calibration_group29_load(void)
       return;
     }
     if (sRam003fd188 != 0) {
-      if (_cold_start_phase != 3) {
+      if (cold_start_phase != 3) {
         return;
       }
       wRam003fd18a = wRam003fd182;
@@ -79966,9 +79302,9 @@ void cm848_calibration_group29_load(void)
     if ((cRam003fd18e == '\0') &&
        ((((cRam003fd18e = '\x01', (system_status_flags_t_003fe974.condition_monitor & 0x10) != 0 ||
           ((system_status_flags_t_003fe974.condition_monitor & 8) != 0)) ||
-         ((_injection_fault_shadow_flags & 4) != 0)) ||
+         ((injection_fault_shadow_flags & 4) != 0)) ||
         ((((power_state_status_flags & 0x800) != 0 || ((power_state_status_flags & 0x1000) != 0)) ||
-         ((_injection_fault_shadow_flags & 2) != 0)))))) goto LAB_0052e210;
+         ((injection_fault_shadow_flags & 2) != 0)))))) goto LAB_0052e210;
     if (uRam003fd190 < UNK_000642e0) {
       uRam003fd190 = uRam003fd190 + 1;
       return;
@@ -80078,8 +79414,6 @@ void cm848_initialization_group29_state(void)
 // Function: cm848_calibration_group22_load @ 0x0052e29c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_calibration_group22_load(void)
 
 {
@@ -80094,7 +79428,7 @@ void cm848_calibration_group22_load(void)
          ((diagnostic_status_bits & 0x20) == 0)))) &&
        (((((engine_sync_validation_flags & 8) == 0 && ((uRam003fe9ca & 8) == 0)) &&
          ((uRam003fe9ca & 4) == 0)) &&
-        ((_cold_start_phase == 1 && ((short)boost_pressure_filtered < sRam00409e90)))))) {
+        ((cold_start_phase == 1 && ((short)boost_pressure_filtered < sRam00409e90)))))) {
       if (uRam003fd19e < uRam00409eaa) {
         uRam003fd19e = uRam003fd19e + 1;
       }
@@ -80136,7 +79470,7 @@ void cm848_calibration_group22_load(void)
         ((engine_sync_validation_flags & 4) == 0)) &&
        (((diagnostic_status_bits & 0x20) == 0 && ((engine_sync_validation_flags & 8) == 0)))) &&
       ((uRam003fe9ca & 8) == 0)) &&
-     ((((uRam003fe9ca & 4) == 0 && (_cold_start_phase != 1)) &&
+     ((((uRam003fe9ca & 4) == 0 && (cold_start_phase != 1)) &&
       ((engine_rpm_state_t_0040b7ac.current_rpm < uRam00409e86 &&
        ((fault_status_active < uRam00409e8a && ((short)boost_pressure_filtered < sRam00409e8c)))))))
      ) {
@@ -80275,8 +79609,6 @@ void cm848_initialization_group22_state_cont(void)
 // Function: cm848_calibration_group21_load_cont @ 0x0052eae8
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_calibration_group21_load_cont(void)
 
 {
@@ -80285,10 +79617,10 @@ void cm848_calibration_group21_load_cont(void)
   if ((fuel_feature_control_flags & 2) == 0) {
     return;
   }
-  if ((_DAT_003fe9d6 & 0x1000) != 0) {
+  if ((diagnostic_status_flags_b & 0x1000) != 0) {
     return;
   }
-  if ((_DAT_003fe9d6 & 0x1000) != 0) {
+  if ((diagnostic_status_flags_b & 0x1000) != 0) {
     return;
   }
   if ((protection_feature_status_flags & 0x800000) == 0) {
@@ -80300,9 +79632,10 @@ void cm848_calibration_group21_load_cont(void)
            ((system_status_flags_t_003fe974.condition_monitor & 2) == 0)) &&
           ((protection_monitor_shadow & 2) == 0)) &&
          ((((power_state_status_flags & 0x800) == 0 && ((power_state_status_flags & 0x1000) == 0))
-          && (((_injection_fault_shadow_flags & 2) == 0 &&
-              (((_DAT_003fe9d6 & 0x1000) == 0 && ((_DAT_003fe9d6 & 0x2000) == 0)))))))) {
-        if ((_cold_start_phase == 1) &&
+          && (((injection_fault_shadow_flags & 2) == 0 &&
+              (((diagnostic_status_flags_b & 0x1000) == 0 &&
+               ((diagnostic_status_flags_b & 0x2000) == 0)))))))) {
+        if ((cold_start_phase == 1) &&
            ((((int)(short)sensor_readings_t_0040baf2.coolant_temp - (int)(short)oil_temp_raw <
               (int)sRam00409eae &&
              ((int)(short)sensor_readings_t_0040baf2.coolant_temp < (int)sRam00409eac)) &&
@@ -80311,7 +79644,7 @@ void cm848_calibration_group21_load_cont(void)
         }
         else {
           engine_sync_validation_flags = engine_sync_validation_flags & 0xfffd;
-          _DAT_003fea18 = _DAT_003fea18 & 0xfffd;
+          j1939_message_state_flags_b = j1939_message_state_flags_b & 0xfffd;
         }
       }
       cRam003fd1aa = '\x01';
@@ -80320,7 +79653,7 @@ void cm848_calibration_group21_load_cont(void)
   else {
     cRam003fd1ab = cRam003fd1ab + -1;
   }
-  if (((_cold_start_phase != 3) || ((diagnostic_status_bits & 0x20) != 0)) ||
+  if (((cold_start_phase != 3) || ((diagnostic_status_bits & 0x20) != 0)) ||
      ((((engine_sync_validation_flags & 4) != 0 ||
        (((engine_sync_validation_flags & 8) != 0 || ((uRam003fe9c4 & 4) != 0)))) ||
       ((uRam003fe9c4 & 8) != 0)))) goto LAB_0052eeac;
@@ -80360,7 +79693,7 @@ LAB_0052ee18:
   }
   if ((uRam00409ebc < uRam003fd1a8) && ((engine_sync_validation_flags & 2) == 0)) {
     engine_sync_validation_flags = engine_sync_validation_flags & 0xfffe;
-    _DAT_003fea18 = _DAT_003fea18 & 0xfffe;
+    j1939_message_state_flags_b = j1939_message_state_flags_b & 0xfffe;
   }
 LAB_0052eeac:
   if ((((fault_management_status_flags & 0x400) != 0) &&
@@ -80614,8 +79947,6 @@ undefined4 engine_camSync_sampleRatio_validate(void)
 // Function: engine_coldStart_batteryVoltage_monitor @ 0x0052f5d4
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 undefined4 engine_coldStart_batteryVoltage_monitor(void)
 
 {
@@ -80627,7 +79958,7 @@ undefined4 engine_coldStart_batteryVoltage_monitor(void)
     uVar1 = 4;
   }
   else {
-    if (_cold_start_phase == 3) {
+    if (cold_start_phase == 3) {
       if (cRam003fd1c6 == '\0') {
         diag_suppress_stateMachine(1);
         cRam003fd1c6 = '\x01';
@@ -80793,8 +80124,6 @@ void fault_event_queue_clear_active(ushort param_1)
 // Function: engine_coldStart_protection_stateMachine @ 0x0052fa34
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 undefined2 engine_coldStart_protection_stateMachine(void)
 
 {
@@ -80809,7 +80138,7 @@ undefined2 engine_coldStart_protection_stateMachine(void)
     sensor_battery_voltage_decrement();
   }
   if (((((bRam003fd942 & 1) == 0) || ((UNK_000642e8 & 1) == 0)) &&
-      (((bRam003fd93f & 8) == 0 || ((bRam003fd93f & 0x10) == 0)))) || (_cold_start_phase != 1)) {
+      (((bRam003fd93f & 8) == 0 || ((bRam003fd93f & 0x10) == 0)))) || (cold_start_phase != 1)) {
     fault_event_queue_clear_active(0x35);
     fault_event_queue_clear_active(4);
     fault_event_queue_clear_active(0x26);
@@ -80817,9 +80146,9 @@ undefined2 engine_coldStart_protection_stateMachine(void)
     fault_event_queue_clear_active(0x2c);
     engine_sync_cold_start_flag = 0;
     uRam0040b2c2 = 0;
-    _protection_voltage_active_flag = 0;
+    protection_voltage_active_flag = 0;
     uRam003fd1b2 = 8;
-    if (_cold_start_phase != 1) {
+    if (cold_start_phase != 1) {
       diag_suppress_stateMachine(2);
     }
     return 3;
@@ -80837,7 +80166,7 @@ undefined2 engine_coldStart_protection_stateMachine(void)
       engine_sync_cold_start_flag = 1;
     }
     if ((UNK_000642e8 & 0x20) != 0) {
-      _protection_voltage_active_flag = 1;
+      protection_voltage_active_flag = 1;
     }
     if ((UNK_000642e8 & 0x80) != 0) {
       uRam0040b2c2 = 1;
@@ -80896,7 +80225,7 @@ undefined2 engine_coldStart_protection_stateMachine(void)
         }
         uRam003fd1b2 = 4;
         sRam003fd1b4 = UNK_000642e6;
-        _protection_voltage_active_flag = 0;
+        protection_voltage_active_flag = 0;
         uRam0040b2c2 = 0;
         engine_sync_cold_start_flag = 0;
         return 1;
@@ -80997,8 +80326,6 @@ code_r0x0052ffc8:
 // Function: hpcr_calibration_group25_load @ 0x0053005c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void hpcr_calibration_group25_load(void)
 
 {
@@ -81006,10 +80333,10 @@ void hpcr_calibration_group25_load(void)
     diag_suppress_stateMachine(0);
   }
   else if (sRam003fd93c == 0x13ec) {
-    if ((cRam003fee9b == '\x01') && (_cold_start_phase == 1)) {
+    if ((cRam003fee9b == '\x01') && (cold_start_phase == 1)) {
       diag_suppress_stateMachine(3);
     }
-    if (_cold_start_phase == 1) {
+    if (cold_start_phase == 1) {
       BYTE_003fd1ac = 0;
       bRam003fd1ad = 0;
       sRam003fd1ae = 0;
@@ -81086,12 +80413,10 @@ void cm848_initialization_group25_state(void)
 // Function: cm848_calibration_group13_load @ 0x00530298
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_calibration_group13_load(void)
 
 {
-  if (_cold_start_phase == 3) {
+  if (cold_start_phase == 3) {
     if ((uRam0040b2f4 < uRam00409ec2) || (uRam00409ec0 < uRam0040b2f4)) {
       uRam0040b9b4 = uRam0040b9b4 + 1;
     }
@@ -81156,8 +80481,6 @@ undefined4 diag_faultRing_protectionMonitor_update(void)
 // Function: cm848_calibration_group37_load @ 0x00530428
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_calibration_group37_load(void)
 
 {
@@ -81176,7 +80499,7 @@ void cm848_calibration_group37_load(void)
           (((protection_monitor_shadow & 0x400) == 0 &&
            (((int)(short)sensor_readings_t_0040baf2.coolant_temp <= (int)UNK_000642fe &&
             ((int)(short)sensor_readings_t_0040baf2.coolant_temp - (int)(short)oil_temp_raw <
-             (int)(uint)UNK_00064300)))))) && (_cold_start_phase == 1)) {
+             (int)(uint)UNK_00064300)))))) && (cold_start_phase == 1)) {
         if (UNK_000642fc < (short)fuel_temp_raw) {
           protection_monitor_shadow = protection_monitor_shadow | 4;
           sRam0040b9b6 = 2;
@@ -81319,8 +80642,6 @@ void cm848_initialization_group13_state_cont(void)
 // Function: engine_protection_faultOverride_check @ 0x005309bc
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void engine_protection_faultOverride_check(void)
 
 {
@@ -81333,17 +80654,17 @@ void engine_protection_faultOverride_check(void)
           (((j1939_receive_status_flags & 0x4000) != 0 ||
            ((j1939_receive_status_flags & 0x2000) != 0)))))) ||
         ((system_status_flags_t_003fe974.protection_active & 0x4000) != 0)) ||
-       ((((((_injection_fault_shadow_flags & 0x200) != 0 ||
-           ((_injection_fault_shadow_flags & 0x400) != 0)) ||
-          ((_injection_fault_shadow_flags & 0x800) != 0)) ||
-         (((_injection_fault_shadow_flags & 0x1000) != 0 ||
-          ((_injection_fault_shadow_flags & 0x2000) != 0)))) ||
-        (((_injection_fault_shadow_flags & 0x4000) != 0 ||
+       ((((((injection_fault_shadow_flags & 0x200) != 0 ||
+           ((injection_fault_shadow_flags & 0x400) != 0)) ||
+          ((injection_fault_shadow_flags & 0x800) != 0)) ||
+         (((injection_fault_shadow_flags & 0x1000) != 0 ||
+          ((injection_fault_shadow_flags & 0x2000) != 0)))) ||
+        (((injection_fault_shadow_flags & 0x4000) != 0 ||
          (((system_status_flags_t_003fe974.protection_active & 0x2000) != 0 ||
           ((engine_diag_shadow_flags & 4) != 0)))))))))) ||
      (((((engine_diag_shadow_flags & 8) != 0 ||
         ((((((j1939_receive_status_flags & 4) != 0 || ((j1939_receive_status_flags & 2) != 0)) ||
-           ((_injection_fault_shadow_flags & 0x8000) != 0)) ||
+           ((injection_fault_shadow_flags & 0x8000) != 0)) ||
           (((system_status_flags_t_003fe974.comm_faults & 0x1000) != 0 ||
            ((system_status_flags_t_003fe974.comm_faults & 0x2000) != 0)))) ||
          ((system_status_flags_t_003fe974.engine_status & 0x100) != 0)))) ||
@@ -81398,8 +80719,6 @@ uint fuel_injector_timing_interpolate(int param_1)
 // Function: engine_protection_fuelCorrection_stateMachine @ 0x00530d08
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void engine_protection_fuelCorrection_stateMachine(void)
 
 {
@@ -81415,8 +80734,8 @@ void engine_protection_fuelCorrection_stateMachine(void)
   
   uVar2 = uRam0040b9c2;
   if ((((((short)sensor_readings_t_0040baf2.coolant_temp < sRam00409ed2) ||
-        ((protection_enable_t_0040c050.mode_bits & 8) != 0)) || (_governor_fuel_active_flag != 0))
-      || (((fuel_demand_config_flags & 8) != 0 || (uRam00409ee0 < fuel_temp_trim_snapshot)))) ||
+        ((protection_enable_t_0040c050.mode_bits & 8) != 0)) || (governor_fuel_active_flag != 0)) ||
+      (((fuel_demand_config_flags & 8) != 0 || (uRam00409ee0 < fuel_temp_trim_snapshot)))) ||
      ((uRam00409eda < fuel_demand_governor_output || ((engine_diag_shadow_flags & 0x2000) != 0)))) {
 LAB_00530e4c:
     if (sRam003fd1d4 == 0) {
@@ -81459,8 +80778,8 @@ LAB_00530e4c:
 LAB_00530f24:
     uRam0040b9ba = (ushort)uVar7;
   }
-  if ((_fuel_correction_active_flag == 0) ||
-     (sRam0040b9be = sRam00409ed8, _fuel_correction_mode_flag != 0)) {
+  if ((fuel_correction_active_flag == 0) ||
+     (sRam0040b9be = sRam00409ed8, fuel_correction_mode_flag != 0)) {
     sRam0040b9be = 0;
   }
   if (uVar4 < uVar6) goto LAB_00531098;
@@ -81561,15 +80880,13 @@ LAB_00531098:
 // Function: cm848_calibration_group26_load @ 0x005311e4
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_calibration_group26_load(void)
 
 {
   bool bVar1;
   bool bVar2;
   
-  if ((((_DAT_003fd5b6 & 0x20) != 0) && (sRam0040b9c0 != 4)) &&
+  if ((((fault_feature_config_flags & 0x20) != 0) && (sRam0040b9c0 != 4)) &&
      (engine_protection_faultOverride_check(), sRam0040b9c0 != 4)) {
     engine_protection_fuelCorrection_stateMachine();
     bVar1 = sRam0040b9c0 == 3;
@@ -81601,8 +80918,6 @@ void cm848_calibration_group26_load(void)
 // Function: hpcr_calibration_group36_load_cont @ 0x00531370
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void hpcr_calibration_group36_load_cont(void)
 
 {
@@ -81626,7 +80941,7 @@ void hpcr_calibration_group36_load_cont(void)
     sRam0040b9c6 = 4;
     return;
   }
-  if (_cold_start_phase == 1) {
+  if (cold_start_phase == 1) {
     uRam003fd1de = uRam003fd1de + 1;
     if (engine_timing_diagnostic_word < uRam00409ef2) {
       uRam003fd1da = uRam003fd1da + 1;
@@ -81636,17 +80951,17 @@ void hpcr_calibration_group36_load_cont(void)
       uRam0040b9c4 = 3;
     }
     if (uRam00409eee < engine_timing_diagnostic_word) {
-      _BYTE_003fd1d8 = _BYTE_003fd1d8 + 1;
+      sensor_scan_cycle_counter = sensor_scan_cycle_counter + 1;
     }
-    else if (_BYTE_003fd1d8 != 0) {
+    else if (sensor_scan_cycle_counter != 0) {
       sRam0040b9c6 = 4;
       uRam0040b9c4 = 4;
     }
     if (uRam003fd1da == 0xffff) {
       uRam003fd1da = 0xfffe;
     }
-    if (_BYTE_003fd1d8 == 0xffff) {
-      _BYTE_003fd1d8 = 0xfffe;
+    if (sensor_scan_cycle_counter == 0xffff) {
+      sensor_scan_cycle_counter = 0xfffe;
     }
     if (uRam003fd1de == 0xffff) {
       uRam003fd1de = 0xfffe;
@@ -81664,7 +80979,7 @@ void hpcr_calibration_group36_load_cont(void)
     uRam003fd1e0 = 1;
     return;
   }
-  if ((uRam003fd1da < uRam00409ef0) && (_BYTE_003fd1d8 < uRam00409eec)) {
+  if ((uRam003fd1da < uRam00409ef0) && (sensor_scan_cycle_counter < uRam00409eec)) {
     protection_monitor_shadow = protection_monitor_shadow & 0xbfff;
     j1939_message_state_flags = j1939_message_state_flags & 0xbfff;
     sRam0040b9c6 = 2;
@@ -81705,12 +81020,10 @@ void cm848_initialization_group26_state(void)
 // Function: hpcr_calibration_group25_load_cont @ 0x005316ac
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void hpcr_calibration_group25_load_cont(void)
 
 {
-  if ((_governor_fuel_active_flag == 1) || ((protection_enable_t_0040c050.mode_bits & 8) != 0)) {
+  if ((governor_fuel_active_flag == 1) || ((protection_enable_t_0040c050.mode_bits & 8) != 0)) {
     uRam0040b9c8 = 0;
     uRam003fd1e2 = 0;
   }
@@ -81720,7 +81033,7 @@ void hpcr_calibration_group25_load_cont(void)
   else {
     uRam003fd1e2 = uRam003fd1e2 + 1;
   }
-  if ((_cold_start_phase == 2) || (_cold_start_phase == 1)) {
+  if ((cold_start_phase == 2) || (cold_start_phase == 1)) {
     sRam0040b9ce = UNK_0006430c;
   }
   else if (sRam0040b9ce == 0) {
@@ -81756,8 +81069,8 @@ void hpcr_calibration_group25_load_cont(void)
   else {
     sRam0040b9ce = sRam0040b9ce + -1;
   }
-  if ((((_cold_start_phase == 3) || (_cold_start_phase == 7)) || (_cold_start_phase == 4)) ||
-     (_cold_start_phase == 5)) {
+  if ((((cold_start_phase == 3) || (cold_start_phase == 7)) || (cold_start_phase == 4)) ||
+     (cold_start_phase == 5)) {
     uRam0040b9cc = 1;
   }
   else {
@@ -81786,8 +81099,6 @@ void cm848_initialization_group25_state_cont(void)
 // Function: cm848_calibration_group27_load @ 0x00531900
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_calibration_group27_load(void)
 
 {
@@ -81800,25 +81111,25 @@ void cm848_calibration_group27_load(void)
   ushort auStack_84 [32];
   ushort auStack_44 [32];
   
-  if ((_governor_fuel_active_flag == 0) && ((protection_enable_t_0040c050.mode_bits & 8) == 0)) {
+  if ((governor_fuel_active_flag == 0) && ((protection_enable_t_0040c050.mode_bits & 8) == 0)) {
     cVar4 = '\0';
   }
   else {
     cVar4 = '\x01';
   }
-  uStack_90 = CONCAT11(_cold_start_phase == 5 |
-                       (_cold_start_phase == 4) << 1 |
-                       (_cold_start_phase == 3) << 2 |
-                       (_cold_start_phase == 2) << 3 |
-                       (_cold_start_phase == 1) << 4 |
+  uStack_90 = CONCAT11(cold_start_phase == 5 |
+                       (cold_start_phase == 4) << 1 |
+                       (cold_start_phase == 3) << 2 |
+                       (cold_start_phase == 2) << 3 |
+                       (cold_start_phase == 1) << 4 |
                        cVar4 << 5 | (sRam0040b9c8 != 0) << 6 | (cRam0040b9ca != '\0') << 7,
                        (sRam0040b9cc != 0) << 1 |
                        (((uint)fault_management_ring_read_ptr & 1) != 0) << 2 |
                        ((uRam003fea08 & 0x2000) != 0) << 3 |
                        ((protection_config_flags & 0x20) != 0) << 4 |
-                       (_cold_start_phase == 8) << 5 |
-                       (_cold_start_phase == 7) << 6 |
-                       (_cold_start_phase == 6) << 7 | (byte)uStack_90 & 1);
+                       (cold_start_phase == 8) << 5 |
+                       (cold_start_phase == 7) << 6 |
+                       (cold_start_phase == 6) << 7 | (byte)uStack_90 & 1);
   uStack_8c = CONCAT11(((uRam003fe9b2 & 0x4000) != 0) << 7 | uStack_8c._0_1_ & 0x7f,
                        (undefined1)uStack_8c);
   uVar3 = 0;
@@ -82270,8 +81581,6 @@ void hpcr_injectPressureTuning(void)
 // Function: engine_sync_state_init @ 0x00532ae4
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void engine_sync_state_init(void)
 
 {
@@ -82288,8 +81597,8 @@ void engine_sync_state_init(void)
   uRam003fd222 = 0;
   j1939_dm1_response_destination = 0;
   uRam003fd209 = 0;
-  _cbd_active_flag = 0;
-  _engine_sync_debounce_flag = 0;
+  cbd_active_flag = 0;
+  engine_sync_debounce_flag = 0;
   uRam003fd21b = 0;
   uVar2 = 0;
   uVar1 = (uint)cylinder_event_count_max;
@@ -82357,13 +81666,13 @@ void engine_cbd_sync_qualification_check(void)
       uVar2 = uVar2 + 1 & 0xff;
     } while (uVar2 < 100);
   }
-  if ((!bVar1) && (_cold_start_phase == 3)) {
+  if ((!bVar1) && (cold_start_phase == 3)) {
     if (((((uint)engine_rpm_state_t_0040b7ac.target_rpm <=
            (uint)governor_output_t_0040aec2.integrator._0_2_ + (uint)ram0x00064461) &&
          (((((uint)engine_rpm_state_t_0040b7ac.target_rpm <= (uint)ram0x00064469 &&
             (fault_status_active <= ram0x00064463)) &&
            (fuel_demand_control_t_0040a57a.calculated < UNK_0006446b)) &&
-          ((_governor_fuel_demand_mode == 0xb &&
+          ((governor_fuel_demand_mode == 0xb &&
            ((uint)uRam003fd213 == (uint)governor_output_t_0040aec2.integrator._0_2_)))))) &&
         ((UNK_0006446f <= (short)sensor_readings_t_0040baf2.coolant_temp ||
          ((sRam003fd93c == 0x13ec && ((ushort)((ushort)bRam003fd947 * 100) < uRam0040ba10)))))) &&
@@ -82414,8 +81723,6 @@ void cylinder_event_counter_check_active(void)
 // Function: engine_cbd_cylinderTiming_update @ 0x00532e78
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void engine_cbd_cylinderTiming_update(void)
 
 {
@@ -82450,8 +81757,8 @@ LAB_00532f3c:
       engine_sync_state_init();
     }
     else {
-      _engine_sync_debounce_flag = 0;
-      _cbd_active_flag = 0;
+      engine_sync_debounce_flag = 0;
+      cbd_active_flag = 0;
       cylinder_event_counter_check_active();
     }
   }
@@ -82501,7 +81808,7 @@ void hpcr_coldBurndownControl(void)
   switch(uRam003fd222) {
   case 0:
     if (sRam003fd93c == 0x13ec) {
-      if (_cold_start_phase == 3) {
+      if (cold_start_phase == 3) {
         if (uRam0040ba10 <= (ushort)((ushort)bRam003fd947 * 100)) {
           uRam0040ba10 = uRam0040ba10 + 1;
         }
@@ -82510,7 +81817,7 @@ void hpcr_coldBurndownControl(void)
         uRam0040ba10 = 0;
       }
     }
-    if (((cRam003fd209 == '\0') && (_cold_start_phase == 3)) &&
+    if (((cRam003fd209 == '\0') && (cold_start_phase == 3)) &&
        (((UNK_0006446f <= (short)sensor_readings_t_0040baf2.coolant_temp &&
          ((protection_feature_status_flags & 0x4000) != 0)) ||
         ((sRam003fd93c == 0x13ec && ((ushort)((ushort)bRam003fd947 * 100) < uRam0040ba10)))))) {
@@ -82522,7 +81829,7 @@ void hpcr_coldBurndownControl(void)
            ((uint)engine_rpm_state_t_0040b7ac.target_rpm <= (uint)ram0x00064469)) &&
           (fault_status_active <= ram0x00064463)) &&
          ((fuel_demand_control_t_0040a57a.calculated < UNK_0006446b &&
-          (_governor_fuel_demand_mode == 0xb)))) {
+          (governor_fuel_demand_mode == 0xb)))) {
         cRam003fd207 = '\0';
         if ((ushort)(uRam003fd20f + 1) < UNK_00064473) {
           cRam003fd207 = 0;
@@ -82557,15 +81864,15 @@ void hpcr_coldBurndownControl(void)
         if (cylinder_event_index != uRam003fd219) {
           cRam003fd209 = 0;
           uRam003fd213 = governor_output_t_0040aec2.integrator._0_2_;
-          _engine_sync_debounce_flag = 1;
-          _cbd_active_flag = 1;
+          engine_sync_debounce_flag = 1;
+          cbd_active_flag = 1;
           return;
         }
         if (sRam003fd21b == 0) {
           cRam003fd209 = 0;
           uRam003fd213 = governor_output_t_0040aec2.integrator._0_2_;
-          _engine_sync_debounce_flag = 1;
-          _cbd_active_flag = 1;
+          engine_sync_debounce_flag = 1;
+          cbd_active_flag = 1;
           return;
         }
         uRam003fd219 = bRam0040ba13 - 1;
@@ -82586,8 +81893,8 @@ void hpcr_coldBurndownControl(void)
           uRam003fd222 = 2;
           j1939_dm1_response_destination = 1;
           cRam0040ba12 = 0;
-          _engine_sync_debounce_flag = 1;
-          _cbd_active_flag = 1;
+          engine_sync_debounce_flag = 1;
+          cbd_active_flag = 1;
           return;
         }
         cRam003fd209 = 0;
@@ -82599,8 +81906,8 @@ void hpcr_coldBurndownControl(void)
         uRam003fd222 = 2;
         j1939_dm1_response_destination = 1;
         cRam0040ba12 = 0;
-        _engine_sync_debounce_flag = 1;
-        _cbd_active_flag = 1;
+        engine_sync_debounce_flag = 1;
+        cbd_active_flag = 1;
         return;
       }
     }
@@ -82699,11 +82006,11 @@ code_r0x00533650:
       } while (uVar1 < cylinder_event_count_max);
     }
     if (bRam003fd1fe < 2) {
-      _injection_fault_shadow_flags = _injection_fault_shadow_flags & 0x7fff;
-      _DAT_003fea04 = _DAT_003fea04 & 0x7fff;
+      injection_fault_shadow_flags = injection_fault_shadow_flags & 0x7fff;
+      protection_diag_shadow_flags_b = protection_diag_shadow_flags_b & 0x7fff;
     }
     else {
-      _injection_fault_shadow_flags = _injection_fault_shadow_flags | 0x8000;
+      injection_fault_shadow_flags = injection_fault_shadow_flags | 0x8000;
     }
     break;
   case 5:
@@ -82722,18 +82029,18 @@ code_r0x00533650:
         uVar1 = uVar1 + 1 & 0xff;
       } while (uVar1 < cylinder_event_count_max);
     }
-    _injection_fault_shadow_flags = _injection_fault_shadow_flags & 0x7fff;
-    _DAT_003fea04 = _DAT_003fea04 & 0x7fff;
+    injection_fault_shadow_flags = injection_fault_shadow_flags & 0x7fff;
+    protection_diag_shadow_flags_b = protection_diag_shadow_flags_b & 0x7fff;
     break;
   case 6:
-    if (((((((_injection_fault_shadow_flags & 0x200) == (uRam003fea68 & 0x200)) &&
-           ((_injection_fault_shadow_flags & 0x400) == (uRam003fea68 & 0x400))) &&
-          ((_injection_fault_shadow_flags & 0x800) == (uRam003fea68 & 0x800))) &&
-         (((_injection_fault_shadow_flags & 0x1000) == (uRam003fea68 & 0x1000) &&
-          ((_injection_fault_shadow_flags & 0x2000) == (uRam003fea68 & 0x2000))))) &&
-        (((_injection_fault_shadow_flags & 0x4000) == (uRam003fea68 & 0x4000) &&
+    if (((((((injection_fault_shadow_flags & 0x200) == (uRam003fea68 & 0x200)) &&
+           ((injection_fault_shadow_flags & 0x400) == (uRam003fea68 & 0x400))) &&
+          ((injection_fault_shadow_flags & 0x800) == (uRam003fea68 & 0x800))) &&
+         (((injection_fault_shadow_flags & 0x1000) == (uRam003fea68 & 0x1000) &&
+          ((injection_fault_shadow_flags & 0x2000) == (uRam003fea68 & 0x2000))))) &&
+        (((injection_fault_shadow_flags & 0x4000) == (uRam003fea68 & 0x4000) &&
          (((uRam003fe9a8 & 1) == (uRam003fea70 & 1) && ((uRam003fe9a8 & 2) == (uRam003fea70 & 2)))))
-        )) && (((_injection_fault_shadow_flags & 0x8000) == (uRam003fea68 & 0x8000) &&
+        )) && (((injection_fault_shadow_flags & 0x8000) == (uRam003fea68 & 0x8000) &&
                ((iRam003fd21e = 2, ((uint)fault_management_ring_read_ptr & 0x100) == 0 &&
                 (fault_management_ring_read_ptr =
                       (undefined *)((uint)fault_management_ring_read_ptr | 0x100),
@@ -83003,8 +82310,6 @@ void diag_resetAllFaults(void)
 // Function: fault_ring_buffer_auto_clear_emission @ 0x00534010
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void fault_ring_buffer_auto_clear_emission(void)
 
 {
@@ -83035,10 +82340,9 @@ void fault_ring_buffer_auto_clear_emission(void)
                  (&active_fault_count)[fault_list_state_t_003fe11a.read_index];
             uVar1 = (uint)fault_list_state_t_003fe11a.read_index;
             fault_list_state_t_003fe11a.read_index = fault_list_state_t_003fe11a.read_index - 1;
-            *(undefined2 *)(&emission_fault_count + uVar2 * 2) =
-                 *(undefined2 *)(&emission_fault_count + uVar1 * 2);
+            (&emission_fault_count)[uVar2] = (&emission_fault_count)[uVar1];
             active_fault_count = active_fault_count - 1;
-            _emission_fault_count = _emission_fault_count + -1;
+            emission_fault_count = emission_fault_count - 1;
             break;
           }
           uVar2 = uVar2 + 1 & 0xff;
@@ -83208,8 +82512,6 @@ void cm848_mainLoopServiceMonitor(void)
 // Function: cm848_auxiliaryControlTask @ 0x00534530
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_auxiliaryControlTask(void)
 
 {
@@ -83219,7 +82521,7 @@ void cm848_auxiliaryControlTask(void)
   
   puVar2 = (undefined1 *)0x40af06;
   if (cRam0040af06 == '\0') {
-    if (((_cold_start_phase == 3) || (_cold_start_phase == 4)) || (_cold_start_phase == 5)) {
+    if (((cold_start_phase == 3) || (cold_start_phase == 4)) || (cold_start_phase == 5)) {
       if (sRam003fd22b == 0) {
         sRam003fd22b = 1;
         diag_protection_history_increment();
@@ -83367,8 +82669,6 @@ LAB_00534838:
 // Function: diag_activeFault_remove @ 0x00534890
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void diag_activeFault_remove(uint param_1)
 
 {
@@ -83389,10 +82689,9 @@ void diag_activeFault_remove(uint param_1)
                (&active_fault_count)[fault_list_state_t_003fe11a.read_index];
           uVar3 = (uint)fault_list_state_t_003fe11a.read_index;
           fault_list_state_t_003fe11a.read_index = fault_list_state_t_003fe11a.read_index - 1;
-          *(undefined2 *)(&emission_fault_count + uVar2 * 2) =
-               *(undefined2 *)(&emission_fault_count + uVar3 * 2);
+          (&emission_fault_count)[uVar2] = (&emission_fault_count)[uVar3];
           active_fault_count = active_fault_count - 1;
-          _emission_fault_count = _emission_fault_count + -1;
+          emission_fault_count = emission_fault_count - 1;
           return;
         }
         uVar2 = uVar2 + 1 & 0xff;
@@ -83750,8 +83049,6 @@ void cm848_initFaultManagement(void)
 // Function: engine_camSync_crossValidation_update @ 0x005353c8
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void engine_camSync_crossValidation_update(void)
 
 {
@@ -83767,7 +83064,7 @@ void engine_camSync_crossValidation_update(void)
   bVar4 = false;
   bVar3 = false;
   bVar2 = false;
-  if (_cold_start_phase != 1) {
+  if (cold_start_phase != 1) {
     bVar4 = true;
     goto LAB_00535828;
   }
@@ -83792,9 +83089,9 @@ void engine_camSync_crossValidation_update(void)
        (((system_status_flags_t_003fe974.condition_monitor & 2) != 0 ||
         ((((system_status_flags_t_003fe974.condition_monitor & 8) != 0 ||
           ((system_status_flags_t_003fe974.condition_monitor & 0x10) != 0)) ||
-         ((_injection_fault_shadow_flags & 4) != 0)))))) ||
+         ((injection_fault_shadow_flags & 4) != 0)))))) ||
       (((power_state_status_flags & 0x800) != 0 || ((power_state_status_flags & 0x1000) != 0)))) ||
-     (((_injection_fault_shadow_flags & 2) != 0 ||
+     (((injection_fault_shadow_flags & 2) != 0 ||
       (((sRam003fdaa0 != 0 &&
         ((((system_status_flags_t_003fe974.reserved_12 & 0x40) != 0 ||
           ((system_status_flags_t_003fe974.reserved_12 & 0x80) != 0)) ||
@@ -83810,16 +83107,16 @@ void engine_camSync_crossValidation_update(void)
       uRam003fd257 = 1;
     }
     else {
-      _injection_fault_shadow_flags = _injection_fault_shadow_flags & 0xffbf;
-      _DAT_003fea04 = _DAT_003fea04 & 0xffbf;
+      injection_fault_shadow_flags = injection_fault_shadow_flags & 0xffbf;
+      protection_diag_shadow_flags_b = protection_diag_shadow_flags_b & 0xffbf;
       uRam0040ba32 = 2;
     }
     if (uRam00409fa4 < uRam0040ba36) {
       uRam003fd258 = 1;
     }
     else {
-      _injection_fault_shadow_flags = _injection_fault_shadow_flags & 0xff7f;
-      _DAT_003fea04 = _DAT_003fea04 & 0xff7f;
+      injection_fault_shadow_flags = injection_fault_shadow_flags & 0xff7f;
+      protection_diag_shadow_flags_b = protection_diag_shadow_flags_b & 0xff7f;
       uRam0040ba30 = 2;
     }
     goto LAB_00535828;
@@ -83900,12 +83197,10 @@ LAB_00535828:
 // Function: engine_camSync_validation_confirm @ 0x00535868
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void engine_camSync_validation_confirm(void)
 
 {
-  if (((cRam003fd257 != '\0') || (cRam003fd258 != '\0')) && (_cold_start_phase == 3)) {
+  if (((cRam003fd257 != '\0') || (cRam003fd258 != '\0')) && (cold_start_phase == 3)) {
     if (uRam0040ba40 < uRam00409fb4) {
       uRam0040ba40 = uRam0040ba40 + 1;
       if (sRam003fd234 < sRam0040ba3e) {
@@ -83914,7 +83209,7 @@ void engine_camSync_validation_confirm(void)
     }
     else if ((int)sRam0040ba3c - (int)sRam0040ba3e < (int)sRam00409faa) {
       if (cRam003fd257 != '\0') {
-        _injection_fault_shadow_flags = _injection_fault_shadow_flags | 0x40;
+        injection_fault_shadow_flags = injection_fault_shadow_flags | 0x40;
         uRam0040ba32 = 3;
       }
     }
@@ -83933,8 +83228,6 @@ void engine_camSync_validation_confirm(void)
 //
 // Function: engine_camSync_fuelTemp_validate @ 0x00535964
 //
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void engine_camSync_fuelTemp_validate(void)
 
@@ -84001,12 +83294,12 @@ LAB_00535aa0:
   }
   if ((uVar1 & 0xffff) <= (uint)uRam003fd24c) {
     if (uRam003fd24e < uVar4) {
-      _injection_fault_shadow_flags = _injection_fault_shadow_flags & 0xff7f;
-      _DAT_003fea04 = _DAT_003fea04 & 0xff7f;
+      injection_fault_shadow_flags = injection_fault_shadow_flags & 0xff7f;
+      protection_diag_shadow_flags_b = protection_diag_shadow_flags_b & 0xff7f;
       sRam0040ba30 = 2;
     }
     else {
-      _injection_fault_shadow_flags = _injection_fault_shadow_flags | 0x80;
+      injection_fault_shadow_flags = injection_fault_shadow_flags | 0x80;
       sRam0040ba30 = 3;
     }
   }
@@ -84018,8 +83311,6 @@ LAB_00535aa0:
 //
 // Function: engine_camSync_oilTemp_validate @ 0x00535b58
 //
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void engine_camSync_oilTemp_validate(void)
 
@@ -84063,8 +83354,8 @@ void engine_camSync_oilTemp_validate(void)
             uVar4 = iVar2 - iVar1;
           }
           if ((uVar4 & 0xffff) <= (uint)uRam00409fa2) {
-            _injection_fault_shadow_flags = _injection_fault_shadow_flags & 0xfeff;
-            _DAT_003fea04 = _DAT_003fea04 & 0xfeff;
+            injection_fault_shadow_flags = injection_fault_shadow_flags & 0xfeff;
+            protection_diag_shadow_flags_b = protection_diag_shadow_flags_b & 0xfeff;
             sRam0040ba34 = 2;
             return;
           }
@@ -84082,7 +83373,7 @@ void engine_camSync_oilTemp_validate(void)
         if ((uint)uRam00409f96 <= (uVar4 & 0xffff)) {
           return;
         }
-        _injection_fault_shadow_flags = _injection_fault_shadow_flags | 0x100;
+        injection_fault_shadow_flags = injection_fault_shadow_flags | 0x100;
         sRam0040ba34 = 3;
         return;
       }
@@ -84241,8 +83532,6 @@ LAB_00536060:
 // Function: hpcr_injectPressureDiagnostic @ 0x0053624c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void hpcr_injectPressureDiagnostic(void)
 
 {
@@ -84254,7 +83543,7 @@ void hpcr_injectPressureDiagnostic(void)
     wRam0040ba46 = sensor_readings_t_0040baf2.coolant_temp;
   }
   if (uRam0040ba42 < uRam00409f92) {
-    if (_cold_start_phase == 1) {
+    if (cold_start_phase == 1) {
       uRam0040ba42 = uRam0040ba42 + 1;
     }
     else {
@@ -84427,8 +83716,6 @@ void diag_faultRing_cssc_update(void)
 // Function: cm848_auxiliarySensorTask @ 0x00536958
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_auxiliarySensorTask(void)
 
 {
@@ -84442,7 +83729,7 @@ void cm848_auxiliarySensorTask(void)
       if (sRam0040ba5c == 0) {
         if (sRam003fd25a < 1) {
           if (sRam003fd25a != 0) {
-            if (_cold_start_phase != 3) {
+            if (cold_start_phase != 3) {
               return;
             }
             if ((((operating_mode_flags & 0x10) != 0) &&
@@ -84499,7 +83786,7 @@ LAB_00536b90:
       sRam0040ba5c = 6;
     }
     else {
-      if ((_governor_mode_code == 0xb) && (fuel_temperature_trim == 0)) {
+      if ((governor_mode_code == 0xb) && (fuel_temperature_trim == 0)) {
         if (uRam0040ba60 != 0xffff) {
           uRam0040ba60 = uRam0040ba60 + 1;
         }
@@ -84565,8 +83852,6 @@ void engine_cssc_counters_reset(void)
 // Function: hpcr_injectSystemDiagnostic @ 0x00536e4c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void hpcr_injectSystemDiagnostic(void)
 
 {
@@ -84593,11 +83878,11 @@ void hpcr_injectSystemDiagnostic(void)
       uRam0040ba62 = 0;
     }
     if (uRam00409fce < uRam0040ba62) {
-      _injection_fault_shadow_flags = _injection_fault_shadow_flags | 1;
+      injection_fault_shadow_flags = injection_fault_shadow_flags | 1;
       uRam0040ba68 = 3;
     }
-    if ((((_injection_fault_shadow_flags & 1) != 0) && ((uRam003fed94 & 0x20) != 0)) &&
-       ((_injection_fault_shadow_flags & 1) == (uRam003fea68 & 1))) {
+    if ((((injection_fault_shadow_flags & 1) != 0) && ((uRam003fed94 & 0x20) != 0)) &&
+       ((injection_fault_shadow_flags & 1) == (uRam003fea68 & 1))) {
       uRam003fed94 = uRam003fed94 & 0xffffffdf;
       fault_management_ring_read_ptr = (undefined *)((uint)fault_management_ring_read_ptr | 0x20);
     }
@@ -84607,8 +83892,8 @@ void hpcr_injectSystemDiagnostic(void)
     else {
       engine_cssc_counters_reset();
       uRam0040ba68 = 2;
-      if (((uRam003fed94 & 0x20) != 0) &&
-         ((_injection_fault_shadow_flags & 1) == (uRam003fea68 & 1))) {
+      if (((uRam003fed94 & 0x20) != 0) && ((injection_fault_shadow_flags & 1) == (uRam003fea68 & 1))
+         ) {
         uRam003fed94 = uRam003fed94 & 0xffffffdf;
         fault_management_ring_read_ptr = (undefined *)((uint)fault_management_ring_read_ptr | 0x20);
       }
@@ -84652,8 +83937,6 @@ void hpcr_injectSystemDiagnostic(void)
 // Function: cm848_initTimerInterrupts @ 0x005371f4
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_initTimerInterrupts(void)
 
 {
@@ -84663,8 +83946,8 @@ void cm848_initTimerInterrupts(void)
     fault_management_ring_read_ptr = (undefined *)((uint)fault_management_ring_read_ptr | 0x20);
   }
   engine_cssc_counters_reset();
-  _injection_fault_shadow_flags = _injection_fault_shadow_flags & 0xfffe;
-  _DAT_003fea04 = _DAT_003fea04 & 0xfffe;
+  injection_fault_shadow_flags = injection_fault_shadow_flags & 0xfffe;
+  protection_diag_shadow_flags_b = protection_diag_shadow_flags_b & 0xfffe;
   uRam003fd264 = 0;
   return;
 }
@@ -84691,8 +83974,6 @@ void cm848_initCommunicationState(void)
 // Function: hpcr_fuelPressureControl @ 0x005372c4
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void hpcr_fuelPressureControl(void)
 
 {
@@ -84704,9 +83985,10 @@ void hpcr_fuelPressureControl(void)
     if ((((system_status_flags_t_003fe974.enable_state & 0x100) == 0) &&
         ((system_status_flags_t_003fe974.enable_state & 0x200) == 0)) &&
        ((system_status_flags_t_003fe974.safety_bits_2 & 1) == 0)) {
-      if ((_governor_mode_code == 0x10) &&
-         ((((_DAT_003feff6 == 0 && (UNK_00064566 < sensor_readings_t_0040baf2.oil_pressure)) ||
-           ((_DAT_003feff6 != 0 && (UNK_00064566 < temperature_differential)))) &&
+      if ((governor_mode_code == 0x10) &&
+         ((((protection_sensor_mode_flag == 0 &&
+            (UNK_00064566 < sensor_readings_t_0040baf2.oil_pressure)) ||
+           ((protection_sensor_mode_flag != 0 && (UNK_00064566 < temperature_differential)))) &&
           (UNK_00064562 < engine_rpm_state_t_0040b7ac.current_rpm)))) {
         if ((uRam003fd268 < UNK_0006456c) &&
            (uVar2 = uRam003fd268 + 1, uVar1 = uRam003fd268 + 1, uRam003fd268 = uVar2,
@@ -84719,9 +84001,10 @@ void hpcr_fuelPressureControl(void)
         j1939_message_state_flags = j1939_message_state_flags & 0x7fff;
       }
       if ((UNK_0006456a < fault_status_active) &&
-         (((((_DAT_003feff6 == 0 && (sensor_readings_t_0040baf2.oil_pressure < UNK_00064564)) &&
+         (((((protection_sensor_mode_flag == 0 &&
+             (sensor_readings_t_0040baf2.oil_pressure < UNK_00064564)) &&
             (UNK_00064568 < sensor_readings_t_0040baf2.oil_pressure)) ||
-           (((_DAT_003feff6 != 0 && (temperature_differential < UNK_00064564)) &&
+           (((protection_sensor_mode_flag != 0 && (temperature_differential < UNK_00064564)) &&
             (UNK_00064568 < temperature_differential)))) &&
           (UNK_00064562 < engine_rpm_state_t_0040b7ac.current_rpm)))) {
         if ((uRam003fd26a < UNK_0006456c) &&
@@ -84789,8 +84072,8 @@ void hpcr_fuelDemandProc(void)
                            (0x3fd275,fuel_pressure_sensor_reference,0x40a012,0x40a01c,0);
   if (((uRam00409fe0 < j1939_calib_handler_param) ||
       (engine_rpm_state_t_0040b7ac.current_rpm < uRam00409fe6)) ||
-     (((_DAT_003feff6 != 0 || (sensor_readings_t_0040baf2.oil_pressure < uRam0040ba6e)) &&
-      ((_DAT_003feff6 == 0 || (temperature_differential < uRam0040ba6e)))))) {
+     (((protection_sensor_mode_flag != 0 || (sensor_readings_t_0040baf2.oil_pressure < uRam0040ba6e)
+       ) && ((protection_sensor_mode_flag == 0 || (temperature_differential < uRam0040ba6e)))))) {
     if (uRam003fd26c == 0) goto LAB_005377b0;
     sVar2 = -1;
   }
@@ -84813,10 +84096,10 @@ LAB_005377b0:
   }
   if (((protection_channel_load_raw < uRam00409fe4) ||
       (engine_rpm_state_t_0040b7ac.current_rpm < uRam00409fe6)) ||
-     (((_DAT_003feff6 != 0 ||
+     (((protection_sensor_mode_flag != 0 ||
        ((uRam0040ba70 < sensor_readings_t_0040baf2.oil_pressure ||
         (sensor_readings_t_0040baf2.oil_pressure < uRam0040ba72)))) &&
-      ((_DAT_003feff6 == 0 ||
+      ((protection_sensor_mode_flag == 0 ||
        ((uRam0040ba70 < temperature_differential || (temperature_differential < uRam0040ba72))))))))
   {
     if (uRam003fd26e != 0) {
@@ -84979,8 +84262,6 @@ undefined4 sensorChannelConditionValidator(int param_1)
 // Function: diag_faultMatch_outputCheck_update @ 0x00537c64
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void diag_faultMatch_outputCheck_update
                (uint param_1,uint param_2,uint param_3,uint param_4,byte *param_5,byte *param_6,
                byte *param_7,byte *param_8,ushort *param_9)
@@ -85026,7 +84307,7 @@ void diag_faultMatch_outputCheck_update
         return;
       }
       if (*param_5 < uRam0040a034) {
-        if ((_governor_cycle_active_flag == 0) && ((protection_action_mode_bits._0_1_ & 0x20) != 0))
+        if ((governor_cycle_active_flag == 0) && ((protection_action_mode_bits._0_1_ & 0x20) != 0))
         {
           *param_5 = *param_5 + 1;
         }
@@ -85034,13 +84315,13 @@ void diag_faultMatch_outputCheck_update
       else {
         uVar2 = *param_9;
         if ((uVar2 < uRam0040a034) && ((protection_action_mode_bits._0_1_ & 0x20) != 0)) {
-          if (_governor_cycle_active_flag == 0) {
+          if (governor_cycle_active_flag == 0) {
             *param_9 = uVar2 + 1;
           }
           cm848_triggerProtectionEvent(param_1 & 0xffff,0);
           *param_5 = 0;
         }
-        else if ((_governor_cycle_active_flag != 0) && (uRam0040a034 <= uVar2)) {
+        else if ((governor_cycle_active_flag != 0) && (uRam0040a034 <= uVar2)) {
           (&system_status_flags_t_003fe974.enable_state)[iVar6] =
                (&system_status_flags_t_003fe974.enable_state)[iVar6] |
                (ushort)(1 << (param_3 & 0xf));
@@ -85062,11 +84343,11 @@ void diag_faultMatch_outputCheck_update
     }
     bVar1 = *param_6;
     if (bVar1 < uRam0040a034) {
-      if ((_governor_cycle_active_flag == 0) && ((protection_action_mode_bits._0_1_ & 0x20) != 0)) {
+      if ((governor_cycle_active_flag == 0) && ((protection_action_mode_bits._0_1_ & 0x20) != 0)) {
         *param_6 = bVar1 + 1;
       }
     }
-    else if ((_governor_cycle_active_flag != 0) && (uRam0040a034 <= bVar1)) {
+    else if ((governor_cycle_active_flag != 0) && (uRam0040a034 <= bVar1)) {
       (&system_status_flags_t_003fe974.enable_state)[iVar5] =
            (&system_status_flags_t_003fe974.enable_state)[iVar5] | (ushort)(1 << (param_4 & 0xf));
     }
@@ -85143,7 +84424,7 @@ void cm848_mainLoopMonitor(void)
 {
   word wVar1;
   
-  if ((uRam003fd293 < _DAT_003fdda8) || (governor_inhibit_flag != 0)) {
+  if ((uRam003fd293 < cold_start_crank_counter) || (governor_inhibit_flag != 0)) {
     wVar1 = MIOS_MCPSMSCR.MIOS1ER;
     if (((wVar1 & 0x8000) != 0) && (_DAT_0040b218 == 0)) {
       if ((protection_enable_byte_35 & 8) != 0) {
@@ -85159,11 +84440,11 @@ void cm848_mainLoopMonitor(void)
         cm848_setEngineProtectionFault(0x35,0);
       }
       bRam003fd27e = 0;
-      uRam003fd293 = _DAT_003fdda8;
+      uRam003fd293 = cold_start_crank_counter;
     }
   }
   else {
-    uRam003fd293 = _DAT_003fdda8;
+    uRam003fd293 = cold_start_crank_counter;
     bRam003fd27e = bRam003fd27e + 1;
     if (((4 < bRam003fd27e) && (bRam003fd27e = 0, (engine_output_state_bits & 1) != 0)) &&
        ((protection_config_flags & 0x40) == 0)) {
@@ -85311,8 +84592,6 @@ void hpcr_exceptionHandler(void)
 // Function: uds_session_state_init @ 0x005389c4
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void uds_session_state_init(void)
 
 {
@@ -85329,7 +84608,7 @@ void uds_session_state_init(void)
   puRam003fd2d8 = &DAT_003feed0;
   puRam003fd2d4 = &DAT_00064aea;
   uRam003fd2dc = 0;
-  _uds_session_active_flag = 1;
+  uds_session_active_flag = 1;
   sensor_validation_result = 1;
   uRam003fd2de = 1;
   return;
@@ -85341,17 +84620,15 @@ void uds_session_state_init(void)
 // Function: cm848_initProtectionModule @ 0x00538a84
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_initProtectionModule(void)
 
 {
   short *psVar1;
   
-  if ((sRam003fd2de == 0) && (_uds_session_active_flag != 0)) {
+  if ((wRam003fd2de == 0) && (uds_session_active_flag != 0)) {
     uds_session_state_init();
   }
-  if (_uds_session_active_flag != 0) {
+  if (uds_session_active_flag != 0) {
     if ((short *)puRam003fd2d0[1] <= psRam003fd2d8) {
       puRam003fd2d0 = puRam003fd2d0 + 3;
       if ((undefined4 *)0x3fd2cf < puRam003fd2d0) {
@@ -85387,12 +84664,12 @@ void cm848_initProtectionModule(void)
       psRam003fd2d4 = psRam003fd2d4 + 1;
     }
   }
-  if ((sRam003fd2de == 0) && (_uds_session_active_flag != 0)) {
+  if ((wRam003fd2de == 0) && (uds_session_active_flag != 0)) {
     system_status_flags_t_003fe974.enable_state =
          system_status_flags_t_003fe974.enable_state & 0xfffe;
     fault_active_status_array = fault_active_status_array & 0xfffe;
   }
-  sRam003fd2de = _uds_session_active_flag;
+  wRam003fd2de = uds_session_active_flag;
   return;
 }
 
@@ -85439,8 +84716,6 @@ diag_record_queue_add_entry
 // Function: cm848_phaseAProcessing @ 0x00538d3c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_phaseAProcessing(void)
 
 {
@@ -85448,7 +84723,7 @@ void cm848_phaseAProcessing(void)
   int iVar2;
   
   if ((uRam003fd5b2 & 8) != 0) {
-    if (((_j1939_dm_control_flags & 4) != 0) && ((governor_derivative_masked & 4) != 0)) {
+    if (((j1939_dm_control_flags & 4) != 0) && ((governor_derivative_masked & 4) != 0)) {
       iVar2 = 0x3fd2e2;
       bVar1 = 0;
       if (bRam003fd40e != 0) {
@@ -85463,7 +84738,7 @@ void cm848_phaseAProcessing(void)
       }
       sRam003fd410 = sRam003fd410 + 1;
     }
-    if (((_j1939_dm_control_flags & 8) != 0) && ((governor_derivative_masked & 8) != 0)) {
+    if (((j1939_dm_control_flags & 8) != 0) && ((governor_derivative_masked & 8) != 0)) {
       iVar2 = 0x3fd3aa;
       bVar1 = 0;
       if (bRam003fd40f != 0) {
@@ -85520,8 +84795,6 @@ bool j1939_handlerInitializer(undefined2 param_1,undefined4 param_2)
 // Function: cm848_phaseACompletion @ 0x00538ef4
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_phaseACompletion(void)
 
 {
@@ -85548,8 +84821,8 @@ void cm848_phaseACompletion(void)
       bVar10 = engine_data_log_read_ptr[1];
       uStack_20 = *(ushort *)(engine_data_log_read_ptr + 1);
       if (bVar10 == 0) {
-        if (((j1939_source_address & 0xff) != (ushort)(byte)engine_data_log_read_ptr[2]) &&
-           ((_j1939_source_address & 0xff) != (ushort)(byte)engine_data_log_read_ptr[2])) {
+        if (((j1939_source_address._0_2_ & 0xff) != (ushort)(byte)engine_data_log_read_ptr[2]) &&
+           ((j1939_source_address_b & 0xff) != (ushort)(byte)engine_data_log_read_ptr[2])) {
 LAB_00539000:
           if ((char)uStack_20 != -1) goto LAB_00539014;
         }
@@ -85560,7 +84833,7 @@ LAB_0053900c:
         if ((bVar10 == 0xdf) && ((j1939_feature_enable_flags & 0x100) != 0)) {
           cm848_resetGovernorControlState();
         }
-        if ((uStack_20 & 0xff) != (j1939_source_address & 0xff)) goto LAB_00539000;
+        if ((uStack_20 & 0xff) != (j1939_source_address._0_2_ & 0xff)) goto LAB_00539000;
         goto LAB_0053900c;
       }
 LAB_00539014:
@@ -85615,8 +84888,6 @@ LAB_00539060:
 // Function: cm848_j1939_system_init @ 0x00539190
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_j1939_system_init(void)
 
 {
@@ -85629,7 +84900,7 @@ void cm848_j1939_system_init(void)
   uint uVar7;
   ushort uVar8;
   
-  _j1939_dm_control_flags = uRam003fd870;
+  j1939_dm_control_flags = wRam003fd870;
   engine_data_log_write_sentinel = (dword)&engine_data_log_buffer;
   engine_data_log_read_ptr = &engine_data_log_buffer;
   engine_data_log_read_ptr = &engine_data_log_buffer;
@@ -85641,7 +84912,7 @@ void cm848_j1939_system_init(void)
     *(undefined1 *)(uVar7 + 0x40ad56) = 0xfe;
     uVar7 = uVar7 + 1 & 0xff;
   } while (uVar7 < 4);
-  _engine_data_log_read_ready_flag = 0;
+  engine_data_log_read_ready_flag = 0;
   system_status_flags_t_003fe974.lamp_status = system_status_flags_t_003fe974.lamp_status & 0x7fff;
   j1939_tsc1_status_shadow = j1939_tsc1_status_shadow & 0x7fff;
   cm848_initJ1939AckBuffer();
@@ -85712,7 +84983,7 @@ void cm848_j1939_system_init(void)
   uVar8 = 0;
   wRam0040adf2 = can_tx_mailbox_end_index;
   if (UNK_00064572 != 0) {
-    uVar5 = (uint)j1939_source_address;
+    uVar5 = (uint)j1939_source_address._0_2_;
     do {
       *(uint *)(puVar6 + 2) = (&UNK_0006457e)[uVar7 & 0xff] | (uVar5 & 0xff) << 9;
       uVar7 = uVar7 + 1;
@@ -85735,7 +85006,7 @@ void cm848_j1939_system_init(void)
   uVar2 = UNK_00064576;
   uVar8 = 0;
   if (UNK_00064576 != 0) {
-    uVar5 = (uint)_j1939_source_address;
+    uVar5 = (uint)j1939_source_address_b;
     do {
       *(uint *)(puVar6 + 2) = (&UNK_0006457e)[uVar7 & 0xff] | (uVar5 & 0xff) << 9;
       uVar7 = uVar7 + 1;
@@ -85857,8 +85128,6 @@ void cm848_initCanHardware(void)
 // Function: engine_protection_timer_sync @ 0x00539938
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void engine_protection_timer_sync(void)
 
 {
@@ -85881,10 +85150,10 @@ void engine_protection_timer_sync(void)
     } while (protection_timer_a != awStack_10[0]);
   }
   awStack_10[0] = protection_timer_a + protection_timer_b;
-  cm848_updateProtectionTimers(&DAT_003fdc88,awStack_10,2);
+  cm848_updateProtectionTimers(&qadc_scan_read_index,awStack_10,2);
   uVar6 = 0;
   do {
-    if (_DAT_003fdc88 == awStack_10[0]) break;
+    if (qadc_scan_read_index == awStack_10[0]) break;
     do {
       uVar3 = TBUr;
       iVar1 = TBLr;
@@ -85986,11 +85255,11 @@ void engine_start_completion_sequence(void)
     } while ((uVar4 < uVar3) || (uVar2 < iVar1 + 0x9c4U));
     uVar8 = uVar8 + 1;
   } while (uVar8 < 1000);
-  if (_DAT_003fdc88 != _DAT_003fdc8a) {
-    cm848_updateProtectionTimers(&DAT_003fdc8a,&DAT_003fdc88,2);
+  if (qadc_scan_read_index != qadc_scan_write_index) {
+    cm848_updateProtectionTimers(&qadc_scan_write_index,&qadc_scan_read_index,2);
     uVar8 = 0;
     do {
-      if (_DAT_003fdc88 == _DAT_003fdc8a) {
+      if (qadc_scan_read_index == qadc_scan_write_index) {
         return;
       }
       do {
@@ -86032,10 +85301,10 @@ void cm848_initProtectionTimers(void)
   ushort uVar8;
   byte bVar9;
   ushort auStack_18 [2];
-  int aiStack_14 [2];
+  dword adStack_14 [2];
   
-  _j1939_init_pending_flag = 0;
-  _uds_session_active_flag = 1;
+  j1939_init_pending_flag = 0;
+  uds_session_active_flag = 1;
   j1939_lamp_status_byte = 0xee;
   uVar8 = 0;
   do {
@@ -86045,11 +85314,11 @@ void cm848_initProtectionTimers(void)
     uVar8 = uVar8 + 1;
   } while (uVar8 < 1000);
   engine_start_completion_sequence();
-  aiStack_14[0] = _fault_timing_snapshot;
-  cm848_updateProtectionTimers(&DAT_003fd4b2,aiStack_14,4);
+  adStack_14[0] = fault_timing_snapshot;
+  cm848_updateProtectionTimers(&DAT_003fd4b2,adStack_14,4);
   uVar8 = 0;
   do {
-    if (_DAT_003fd4b2 == aiStack_14[0]) break;
+    if (_DAT_003fd4b2 == adStack_14[0]) break;
     do {
       uVar6 = TBUr;
       iVar1 = TBLr;
@@ -86064,11 +85333,11 @@ void cm848_initProtectionTimers(void)
     } while ((uVar2 < uVar6) || (uVar5 < iVar1 + 0x9c4U));
     uVar8 = uVar8 + 1;
   } while (uVar8 < 1000);
-  aiStack_14[0] = _protection_timer_config_a;
-  cm848_updateProtectionTimers(&DAT_003fd4c4,aiStack_14,4);
+  adStack_14[0] = protection_timer_config_a;
+  cm848_updateProtectionTimers(&DAT_003fd4c4,adStack_14,4);
   uVar8 = 0;
   do {
-    if (_DAT_003fd4c4 == aiStack_14[0]) break;
+    if (_DAT_003fd4c4 == adStack_14[0]) break;
     do {
       uVar6 = TBUr;
       iVar1 = TBLr;

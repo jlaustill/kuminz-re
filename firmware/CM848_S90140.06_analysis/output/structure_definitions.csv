@@ -212,10 +212,10 @@ throttle_fuel_trim_t,0x0040a3ea,reserved_16,word,2,Gap,,needs_review
 # Used by calculateFuelBlendModeSelection
 # Total size: 12 bytes (0x0040a494-0x0040a49f)
 fuel_blend_state_t,0x0040a494,blend_mode,word,2,Fuel blend mode selector,,verified
-fuel_blend_state_t,0x0040a494,reserved_02,word,2,Gap (0xa496),,needs_review
-fuel_blend_state_t,0x0040a494,reserved_04,word,2,Gap (0xa498),,needs_review
-fuel_blend_state_t,0x0040a494,reserved_06,word,2,Gap (0xa49a),,needs_review
-fuel_blend_state_t,0x0040a494,reserved_08,word,2,Gap (0xa49c),,needs_review
+fuel_blend_state_t,0x0040a494,blend_enable,word,2,enable flag (=fuel_blend_enable_flag); overridden by fuel_blend_mode_override_cal when engine_feature_enable_flags & 0x100,,needs_review
+fuel_blend_state_t,0x0040a494,demand_above_threshold,word,2,1 when fuel_demand_arbitrated_snapshot >= fuel_demand_blend_threshold_cal,,needs_review
+fuel_blend_state_t,0x0040a494,bypass_load_correction,word,2,dual-axis table result added to engine_load_normalized when fuel_blend_bypass_flag active,,needs_review
+fuel_blend_state_t,0x0040a494,fuel_demand_snapshot,word,2,snapshot of fuel_demand_arbitrated_snapshot,,needs_review
 fuel_blend_state_t,0x0040a494,blend_weight,word,2,Fuel blend weight factor (0-100%),,verified
 # Boost Pressure State - turbocharger boost control values
 # Used by boostBasedFuelModifier and calculateBoostPressureOffset
