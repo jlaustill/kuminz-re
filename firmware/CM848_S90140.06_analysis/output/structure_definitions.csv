@@ -1405,4 +1405,12 @@ diag_clear_flags_t,0x003fedfc,diag_response_write_count,byte,1,Diagnostic respon
 diag_clear_flags_t,0x003fedfc,diag_eeprom_work_byte,byte,1,EEPROM channel scratch byte,,best_guess
 diag_clear_flags_t,0x003fedfc,fuel_temp_protection_ratio,word,2,Fuel temperature protection ratio,,best_guess
 # ==============================================================================
+# Dual-axis lookup table dimension descriptor
+# Passed as first arg to cm848_dualAxisTableInterpolation to describe table size
+# row_count = first-axis (RPM) breakpoint count; col_count = second-axis breakpoint count
+# Total size: 4 bytes (2 x word). Initialized to {2, 2} by cm848_initProtectionTableSizes.
+# ==============================================================================
+dual_axis_table_dims_t,0x003fa878,row_count,word,2,Number of first-axis (RPM) breakpoints,,verified
+dual_axis_table_dims_t,0x003fa878,col_count,word,2,Number of second-axis (fuel) breakpoints,,verified
+dual_axis_table_dims_t,0x003fa87c,,,,governor offset table B - second instance,,verified
 # ==============================================================================

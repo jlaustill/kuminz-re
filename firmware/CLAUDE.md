@@ -157,6 +157,7 @@ All firmwares use the same CSV structure in `output/`:
 - **Export overwrites CSVs** - `./analyze.sh export` regenerates CSVs from Ghidra, overwriting local edits. Edit CSVs, run `import`, then `export` only to get updated decompilation.
 - **Verify before commit** - Check decompiled output after applying changes
 - **Decimal in names** - Use decimal, not hex, in variable/function names
+- **Major concept first in names** - prefix with the dominant domain noun first: `rpm_governor_offset_*` not `governor_offset_rpm_*`; `fuel_demand_*` not `demand_fuel_*`
 - **Function must exist in Ghidra** - CSV renames only work for addresses Ghidra recognizes as functions
 
 ### Fixing Underscore-Prefixed Variables
@@ -173,6 +174,20 @@ When `sth` stores a flag value like `0x0001`, naming the two bytes as separate f
 - A struct with `byte flag` at offset 0 and `byte pad` at offset 1 will show `flag = 0` always and `pad = 1` when active — exactly wrong
 
 **Correct fix**: declare the address as a single `word` variable. `sth` storing `0x0001` will decompile cleanly as `var = 1`, and all comparisons read naturally. Do not use two-field byte structs for sth-paired locations.
+
+**Struct candidate signal**: a cluster of consecutive same-width variables all initialized to the same value in one function, AND passed as pointers to the same function at separate call sites, almost always means multiple instances of the same struct type — not a flat array.
+
+### Multiple Instances of the Same Struct Type
+
+`ApplyStructures.java` builds ONE type from ALL rows sharing a struct name. Listing fields for the same struct name at two addresses creates one oversize type with duplicate fields applied only at the first address — the second address falls inside the first's range and is silently swallowed.
+
+**Correct pattern**: define fields once (first instance's address), then add a zero-size instance-marker row for each additional address:
+```
+my_struct_t,0x003fa878,row_count,word,2,First field,,verified
+my_struct_t,0x003fa878,col_count,word,2,Second field,,verified
+my_struct_t,0x003fa87c,,,,second instance - marker only,,verified
+```
+The marker row's empty `field_name`/`type`/`size` registers the address for application without adding duplicate fields to the type.
 
 ### RAM Must Be Loaded for Structure Application
 
