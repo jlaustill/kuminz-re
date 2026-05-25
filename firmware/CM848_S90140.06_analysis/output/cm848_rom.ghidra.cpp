@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon May 25 06:05:54 MDT 2026
+// Generated: Mon May 25 06:43:16 MDT 2026
 
 
 //
@@ -19646,7 +19646,7 @@ DIAG_RESPONSE cm848_activateDiagnosticSession(void)
   if (j1939_standby_flag == STANDING_BY) {
     j1939_standby_flag = SESSION_ACTIVE;
     diagnostic_session_state = ACTIVE;
-    j1939_lamp_status_byte = 0xee;
+    cal_write_mode = 0xee;
     diag_ack_result = DIAG_ACK;
   }
   return diag_ack_result;
@@ -19663,7 +19663,7 @@ undefined4 cm848_resetDiagnosticSession(void)
 {
   diagnostic_session_state = INACTIVE;
   j1939_standby_flag = STANDING_BY;
-  j1939_lamp_status_byte = 0xea;
+  cal_write_mode = 0xea;
   return 0;
 }
 
@@ -19681,8 +19681,8 @@ DIAG_RESPONSE cm848_forceActivateDiagnosticSession(void)
   diag_ack_result = DIAG_NACK_PROTECTED;
   if (protection_mode_select_flag != 1) {
     diagnostic_session_state = ACTIVE;
-    if (j1939_lamp_status_byte == 0xea) {
-      j1939_lamp_status_byte = 0xee;
+    if (cal_write_mode == 0xea) {
+      cal_write_mode = 0xee;
       j1939_standby_flag = SESSION_ACTIVE;
     }
     diag_ack_result = DIAG_ACK;
@@ -54560,7 +54560,7 @@ void hpcr_exceptionHandler(void)
   exception_dar = in_DAR;
   exception_dsisr = in_DSISR;
   cm848_copyRomToRamBuffer();
-  j1939_lamp_status_byte = 0xee;
+  cal_write_mode = 0xee;
   initQadcModule();
   qsmcm_sccr0 = 5;
   QSMCM_IDSPI_1 = 3;
@@ -84545,7 +84545,7 @@ undefined4 uds_conditionEvaluator(uint param_1,uint *param_2)
     else {
       uVar2 = *(uint *)(puVar4 + 1);
       if (((0xffffff < uVar2) && (uVar2 < 0x10008e8)) &&
-         ((j1939_lamp_status_byte != 0xee || (protection_mode_select_flag != 0)))) {
+         ((cal_write_mode != 0xee || (protection_mode_select_flag != 0)))) {
         uVar2 = uVar2 - 0xc02b7e;
       }
       *param_2 = uVar2;
@@ -84773,7 +84773,7 @@ void cm848_initProtectionTimers(void)
   
   j1939_standby_flag = SESSION_ACTIVE;
   diagnostic_session_state = ACTIVE;
-  j1939_lamp_status_byte = 0xee;
+  cal_write_mode = 0xee;
   uVar8 = 0;
   do {
     cVar7 = cm848_protectionEnableCheck();

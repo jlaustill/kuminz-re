@@ -4156,7 +4156,7 @@ address,name,type,comment
 0x0040a334,engine_start_inhibit_flag,word,
 0x0040a336,j1939_broadcast_enable_flag,dword,
 0x0040a33a,fuel_timing_arbitration_output,word,
-0x0040a346,j1939_lamp_status_byte,byte,
+0x0040a346,cal_write_mode,byte,0xea=CAL_VOLATILE (RAM only) 0xee=CAL_PERSISTENT (EEPROM write-through)
 0x0040a34c,fuel_timing_error_scale,word,
 0x0040a34e,turbo_sensor_fault_mode_flag,word,
 0x0040a350,sensor_channel4_fault_snapshot,word,
