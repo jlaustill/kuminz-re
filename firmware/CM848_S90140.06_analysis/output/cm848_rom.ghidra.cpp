@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon May 25 05:58:31 MDT 2026
+// Generated: Mon May 25 06:05:54 MDT 2026
 
 
 //
@@ -1466,8 +1466,8 @@ void mpc555_processDiagnosticAndEepromRequests(void)
   
   func_0x003fc580();
   cm848_processDiagnosticTimeout();
-  if ((diag_request_pending_flag != 1) || ((diag_session_state_t_003fecbe.session_flags & 1) == 0))
-  goto LAB_000020ac;
+  if ((diag_request_pending_flag != '\x01') ||
+     ((diag_session_state_t_003fecbe.session_flags & 1) == 0)) goto LAB_000020ac;
   if (diag_session_protocol_byte == 0x34) {
     bVar1 = qadc_a_result_high_1;
     if ((bVar1 & 0x80) != 0) {
@@ -1503,7 +1503,7 @@ LAB_0000208c:
 LAB_00002098:
     cm848_diagSendResponseCode(uVar3,0x7f);
   }
-  diag_request_pending_flag = 0;
+  diag_request_pending_flag = '\0';
 LAB_000020ac:
   if (eeprom_write_pending_flag == 1) {
     sVar2 = mpc555_initEepromTransfer(3);
@@ -1589,7 +1589,7 @@ void mpc555_initDiagnosticSession(void)
     diag_session_state_t_003fecbe.session_flags = diag_session_state_t_003fecbe.session_flags & 0xfc
     ;
     DAT_003feccc = 0;
-    diagnostic_session_active_flag = 0;
+    diagnostic_session_state = 0;
     eeprom_request_state = 0;
     diag_session_state_t_003fecbe.response_write_index = 0;
     diag_session_state_t_003fecbe._2_4_ = &diag_response_buffer;
@@ -1600,7 +1600,7 @@ void mpc555_initDiagnosticSession(void)
     local_8[0] = 0;
     mpc555_eepromWriteWords(local_8,&eeprom_cal_word4,2);
     diag_session_state_t_003fecbe.session_flags = diag_session_state_t_003fecbe.session_flags | 1;
-    diagnostic_session_active_flag = 1;
+    diagnostic_session_state = 1;
     eeprom_request_state = 2;
     cm848_initDiagnosticCallback();
     diag_session_state_t_003fecbe.response_write_index = 0;
@@ -2115,11 +2115,11 @@ void cm848_handleEepromDiagnosticCallback(void)
 
 {
   cm848_decrementDiagnosticTimeout();
-  if ((diag_request_pending_flag == 1) && ((diag_session_state_t_003fecbe.session_flags & 1) == 0))
-  {
+  if ((diag_request_pending_flag == '\x01') &&
+     ((diag_session_state_t_003fecbe.session_flags & 1) == 0)) {
     cm848_enableDiagnosticTimer();
     (*(code *)diagnostic_callback_ptr)();
-    diag_request_pending_flag = 0;
+    diag_request_pending_flag = '\0';
   }
   else {
     cm848_restoreDiagnosticHandler();
@@ -2393,7 +2393,7 @@ void mpc555_generateSerialChallenge(void)
   byte bVar3;
   dword write_pos;
   
-  if (diagnostic_session_active_flag == 1) {
+  if (diagnostic_session_state == 1) {
     crc16_working_value = 0;
   }
   else {
@@ -2463,12 +2463,12 @@ void cm848_processDiagnosticRequest(void)
   sensor_validation_delta._0_1_ = (byte)uVar1;
   if (2 < (uVar1 & 0xff)) {
     if ((char)((char)sensor_validation_delta + DAT_003fee3c + ',') == DAT_003fee3d) {
-      if (diagnostic_session_active_flag == 1) {
+      if (diagnostic_session_state == 1) {
         (&diag_response_buffer)[diag_session_state_t_003fecbe.response_write_index] = 0;
         diag_session_state_t_003fecbe.response_write_index =
              diag_session_state_t_003fecbe.response_write_index + 1;
       }
-      else if ((diag_keep_alive_counter < 3) && (diagnostic_session_active_flag != 2)) {
+      else if ((diag_keep_alive_counter < 3) && (diagnostic_session_state != 2)) {
         if (diagnostic_cooldown_counter == 0) {
           serial_response_crc_expected = CONCAT11((char)sensor_validation_delta,DAT_003fee3c);
           cm848_verifySerialResponse();
@@ -2482,7 +2482,7 @@ void cm848_processDiagnosticRequest(void)
           else {
             diag_keep_alive_counter = 0;
             diagnostic_cooldown_counter = 0;
-            diagnostic_session_active_flag = 1;
+            diagnostic_session_state = 1;
             (&diag_response_buffer)[diag_session_state_t_003fecbe.response_write_index] = 0;
             diag_session_state_t_003fecbe.response_write_index =
                  diag_session_state_t_003fecbe.response_write_index + 1;
@@ -2495,7 +2495,7 @@ void cm848_processDiagnosticRequest(void)
         }
       }
       else {
-        diagnostic_session_active_flag = 2;
+        diagnostic_session_state = 2;
         (&diag_response_buffer)[diag_session_state_t_003fecbe.response_write_index] = 3;
         diag_session_state_t_003fecbe.response_write_index =
              diag_session_state_t_003fecbe.response_write_index + 1;
@@ -2536,8 +2536,7 @@ void cm848_initDiagnosticSessionHandler(void)
 void cm848_processDiagnosticSessionFlags(void)
 
 {
-  if ((*(char *)diag_session_state_t_003fecbe._2_4_ == '\x01') &&
-     (diagnostic_session_active_flag == 1)) {
+  if ((*(char *)diag_session_state_t_003fecbe._2_4_ == '\x01') && (diagnostic_session_state == 1)) {
     diag_session_state_t_003fecbe.session_flags = diag_session_state_t_003fecbe.session_flags | 3;
     cm848_processTimerInterrupt();
     mpc555_initSchedulerTaskTable();
@@ -4875,7 +4874,7 @@ void mpc555_diagnosticSubcommandDispatcher(void)
   undefined4 uVar2;
   
   mpc555_validateSerialChecksum();
-  if (diag_request_pending_flag != 1) {
+  if (diag_request_pending_flag != '\x01') {
     return;
   }
   if ((diag_session_state_t_003fecbe.session_flags & 1) == 0) {
@@ -6947,7 +6946,7 @@ void main_loop(void)
       psVar4->overrun_count = 0;
       psVar4 = psVar4 + 1;
       scheduler_task_stat_ptr = (undefined *)psVar4;
-    } while (psVar4 < &diagnostic_session_active_flag);
+    } while (psVar4 < &diagnostic_session_state);
   }
   timer_base_snapshot = TBLr;
   scheduler_feature_enabled_flag = (word)((system_feature_config_flags & 0x80) != 0);
@@ -19646,7 +19645,7 @@ DIAG_RESPONSE cm848_activateDiagnosticSession(void)
   diag_ack_result = DIAG_NACK_NOT_READY;
   if (j1939_standby_flag == STANDING_BY) {
     j1939_standby_flag = SESSION_ACTIVE;
-    diagnostic_session_active_flag = 1;
+    diagnostic_session_state = ACTIVE;
     j1939_lamp_status_byte = 0xee;
     diag_ack_result = DIAG_ACK;
   }
@@ -19662,7 +19661,7 @@ DIAG_RESPONSE cm848_activateDiagnosticSession(void)
 undefined4 cm848_resetDiagnosticSession(void)
 
 {
-  diagnostic_session_active_flag = 0;
+  diagnostic_session_state = INACTIVE;
   j1939_standby_flag = STANDING_BY;
   j1939_lamp_status_byte = 0xea;
   return 0;
@@ -19681,7 +19680,7 @@ DIAG_RESPONSE cm848_forceActivateDiagnosticSession(void)
   
   diag_ack_result = DIAG_NACK_PROTECTED;
   if (protection_mode_select_flag != 1) {
-    diagnostic_session_active_flag = 1;
+    diagnostic_session_state = ACTIVE;
     if (j1939_lamp_status_byte == 0xea) {
       j1939_lamp_status_byte = 0xee;
       j1939_standby_flag = SESSION_ACTIVE;
@@ -19726,7 +19725,7 @@ undefined4 mpc555_processJ1939RxQueue(undefined4 param_1,int param_2)
     }
     local_18[0] = fault_timing_snapshot;
     cm848_updateProtectionTimers(&sensor_param_id_working,local_18,4);
-    if (diagnostic_session_active_flag == 0) {
+    if (diagnostic_session_state == INACTIVE) {
       cm848_delayMicroseconds2(9);
     }
     else if (sensor_param_id_working != local_18[0]) {
@@ -19736,7 +19735,7 @@ undefined4 mpc555_processJ1939RxQueue(undefined4 param_1,int param_2)
     }
     local_18[0] = protection_timer_config_a;
     cm848_updateProtectionTimers(&sensor_fault_threshold_working,local_18,4);
-    if (diagnostic_session_active_flag == 0) {
+    if (diagnostic_session_state == INACTIVE) {
       cm848_delayMicroseconds2(9);
     }
     else if (sensor_fault_threshold_working != local_18[0]) {
@@ -34319,7 +34318,7 @@ void cm848_updateJ1939TxTimerCounter(void)
 void cm848_j1939QueueStatusMessage(void)
 
 {
-  if (diagnostic_session_active_flag == 0) {
+  if (diagnostic_session_state == INACTIVE) {
     j1939_msg_payload_snapshot = j1939_message_word_b220;
     cm848_j1939QueueTransmitMessage(&DAT_003fb325,1);
   }
@@ -34391,7 +34390,7 @@ void cm848_processJ1939PeriodicMessages(void)
   }
   diag_sequence_counter_b = diag_sequence_counter_b + 1;
   if (99 < diag_sequence_counter_b) {
-    if (diagnostic_session_active_flag == 0) {
+    if (diagnostic_session_state == INACTIVE) {
       cm848_j1939FormatProprietaryStatus();
     }
     diag_sequence_counter_b = 0;
@@ -37126,16 +37125,16 @@ LAB_0003b37c:
           uds_processing_clear_flag = 0;
         }
         else if (cVar1 == '\x03') {
-          if (((diagnostic_session_active_flag != 0) && (&DAT_003fd480 < uds_write_target_pointer))
+          if (((diagnostic_session_state != INACTIVE) && (&DAT_003fd480 < uds_write_target_pointer))
              && (uds_write_target_pointer < &sensor_channel_ram_start)) goto LAB_0003b608;
           cm848_memcpyBytes(uds_write_target_pointer,uds_data_source_ptr,1);
           uds_processing_clear_flag = 0;
         }
         else if (cVar1 == '\x05') {
-          if ((protection_mode_select_flag == 1) && (diagnostic_session_active_flag != 0)) {
+          if ((protection_mode_select_flag == 1) && (diagnostic_session_state != INACTIVE)) {
             uds_processing_clear_flag = 7;
           }
-          else if (diagnostic_session_active_flag == 1) {
+          else if (diagnostic_session_state == ACTIVE) {
             cVar1 = cm848_validateMemoryBlockChecksum
                               ((uint)(uds_write_target_pointer + -0x1000000) & 0xffff,
                                uds_data_source_ptr,1);
@@ -43029,7 +43028,7 @@ void hpcr_processTimingCalibration(void)
     engine_sync_confirmation_state = 1;
     crank_pattern_sync_flag = 0;
     if ((cylinder_diag_active_flag != 0) && (DAT_003fb596 == '\0')) {
-      diagnostic_session_active_flag = 0;
+      diagnostic_session_state = INACTIVE;
       uVar5 = 0;
       do {
         *(word *)(&DAT_003fb598 + uVar5 * 2) = (&cylinder_diag_accumulator_array)[uVar5];
@@ -43072,7 +43071,7 @@ void hpcr_processTimingCalibration(void)
       (&cylinder_diag_accumulator_array)[uVar5] = *(word *)(&DAT_003fb598 + uVar5 * 2);
       uVar5 = uVar5 + 1 & 0xff;
     } while (uVar5 < 6);
-    diagnostic_session_active_flag = 1;
+    diagnostic_session_state = ACTIVE;
   }
   DAT_003fb596 = bVar1;
   DAT_003fb597 = bVar2;
@@ -48213,7 +48212,7 @@ void cm848_j1939ProtectionDataResponse(void)
   
   wVar2 = protection_condition_reference;
   puVar1 = sensor_cal_table_ptr;
-  if (diagnostic_session_active_flag != 0) {
+  if (diagnostic_session_state != INACTIVE) {
     uVar3 = 2;
     if (protection_condition_mode < protection_condition_reference) {
       do {
@@ -48374,7 +48373,7 @@ void cm848_initSensorValidationSystem(void)
   ushort uVar2;
   word *pwVar3;
   
-  diagnostic_session_active_flag = 1;
+  diagnostic_session_state = ACTIVE;
   protection_condition_mode = 0;
   sensor_validation_state = 0;
   sensor_cal_table_ptr = &sensor_cal_table;
@@ -48423,7 +48422,7 @@ void cm848_configureOutputChannels(void)
   ushort uVar2;
   word *pwVar3;
   
-  diagnostic_session_active_flag = 1;
+  diagnostic_session_state = ACTIVE;
   protection_condition_mode = 0;
   sensor_validation_state = 0;
   sensor_cal_table_ptr = &sensor_cal_table;
@@ -74526,7 +74525,7 @@ uint sensor_checksum_verify_session(void)
   uint uVar2;
   uint uVar3;
   
-  if ((sRam003fcfcd == 0) || (uVar2 = uRam003fcfd0, diagnostic_session_active_flag != 0)) {
+  if ((sRam003fcfcd == 0) || (uVar2 = uRam003fcfd0, diagnostic_session_state != INACTIVE)) {
     bRam003fcfdb = bRam003fcfdb + 1;
     uVar1 = TBLr;
     uVar3 = (uint)bRam003fcfdb;
@@ -84081,7 +84080,7 @@ void uds_session_state_init(void)
   puRam003fd2d8 = &DAT_003feed0;
   puRam003fd2d4 = &DAT_00064aea;
   uRam003fd2dc = 0;
-  diagnostic_session_active_flag = 1;
+  diagnostic_session_state = ACTIVE;
   sensor_validation_result = 1;
   uRam003fd2de = 1;
   return;
@@ -84098,10 +84097,10 @@ void cm848_initProtectionModule(void)
 {
   short *psVar1;
   
-  if ((wRam003fd2de == 0) && (diagnostic_session_active_flag != 0)) {
+  if ((DRam003fd2de == 0) && (diagnostic_session_state != INACTIVE)) {
     uds_session_state_init();
   }
-  if (diagnostic_session_active_flag != 0) {
+  if (diagnostic_session_state != INACTIVE) {
     if ((short *)puRam003fd2d0[1] <= psRam003fd2d8) {
       puRam003fd2d0 = puRam003fd2d0 + 3;
       if ((undefined4 *)0x3fd2cf < puRam003fd2d0) {
@@ -84137,12 +84136,12 @@ void cm848_initProtectionModule(void)
       psRam003fd2d4 = psRam003fd2d4 + 1;
     }
   }
-  if ((wRam003fd2de == 0) && (diagnostic_session_active_flag != 0)) {
+  if ((DRam003fd2de == 0) && (diagnostic_session_state != INACTIVE)) {
     system_status_flags_t_003fe974.enable_state =
          system_status_flags_t_003fe974.enable_state & 0xfffe;
     fault_active_status_array = fault_active_status_array & 0xfffe;
   }
-  wRam003fd2de = diagnostic_session_active_flag;
+  DRam003fd2de = diagnostic_session_state;
   return;
 }
 
@@ -84773,7 +84772,7 @@ void cm848_initProtectionTimers(void)
   dword adStack_14 [2];
   
   j1939_standby_flag = SESSION_ACTIVE;
-  diagnostic_session_active_flag = 1;
+  diagnostic_session_state = ACTIVE;
   j1939_lamp_status_byte = 0xee;
   uVar8 = 0;
   do {

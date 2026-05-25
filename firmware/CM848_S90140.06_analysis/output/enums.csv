@@ -738,6 +738,10 @@ EVENT_TIMER_CHANNEL,0x26,TIMER_CHANNEL_38,Timer channel 38 (DAT_003fcf3a),1
 EVENT_TIMER_CHANNEL,0x2b,TIMER_CHANNEL_43,Timer channel 43 (DAT_003fcf3c),1
 EVENT_TIMER_CHANNEL,0x2c,TIMER_CHANNEL_44,Timer channel 44 (DAT_003fcf3e),1
 EVENT_TIMER_CHANNEL,0x35,TIMER_CHANNEL_53,Timer channel 53 (DAT_003fcf40),1
+# Diagnostic session state machine - three-state, not a boolean flag
+DIAG_SESSION_STATE,0,INACTIVE,No session; J1939 broadcasts running normally,2
+DIAG_SESSION_STATE,1,ACTIVE,Session healthy; broadcasts suppressed; writes permitted,2
+DIAG_SESSION_STATE,2,LOCKED_OUT,Keep-alive auth failed 3 times; session frozen,2
 # J1939 standby state - controls whether ECU is armed for session activation or session is running
 J1939_STANDBY_STATE,0,SESSION_ACTIVE,Diagnostic session running; J1939 broadcasts suppressed,2
 J1939_STANDBY_STATE,1,STANDING_BY,ECU armed and waiting for tool to activate session,2
