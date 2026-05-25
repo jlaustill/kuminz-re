@@ -167,7 +167,12 @@ public class ExportAnalysis extends GhidraScript {
                     }
                 }
 
-                writer.write(address + "," + name + "\n");
+                String plateComment = currentProgram.getListing().getComment(CodeUnit.PLATE_COMMENT, func.getEntryPoint());
+                if (plateComment != null && !plateComment.isEmpty()) {
+                    writer.write(address + "," + name + "," + plateComment + "\n");
+                } else {
+                    writer.write(address + "," + name + "\n");
+                }
             }
 
             // Write any trailing comments
