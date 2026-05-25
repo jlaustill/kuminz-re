@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon May 25 06:43:16 MDT 2026
+// Generated: Mon May 25 06:48:36 MDT 2026
 
 
 //
@@ -19636,6 +19636,8 @@ undefined4 cm848_advanceDiagnosticActionState(void)
 //
 // Function: cm848_activateDiagnosticSession @ 0x00021624
 //
+
+/* jlaustill reviewed - hopefully accurate */
 
 DIAG_RESPONSE cm848_activateDiagnosticSession(void)
 

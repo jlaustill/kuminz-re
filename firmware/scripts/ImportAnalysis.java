@@ -27,6 +27,7 @@ import ghidra.program.model.data.Undefined1DataType;
 import ghidra.program.model.data.Undefined2DataType;
 import ghidra.program.model.data.Undefined4DataType;
 import ghidra.program.model.data.Undefined8DataType;
+import ghidra.program.model.listing.CodeUnit;
 import ghidra.program.model.listing.Data;
 import ghidra.program.model.listing.Function;
 import ghidra.program.model.listing.FunctionManager;
@@ -116,14 +117,15 @@ public class ImportAnalysis extends GhidraScript {
                     continue;
                 }
 
-                // Parse: address,name
-                String[] parts = line.split(",", 2);
+                // Parse: address,name[,comment]
+                String[] parts = line.split(",", 3);
                 if (parts.length < 2) {
                     continue;
                 }
 
                 String addressStr = parts[0].trim();
                 String newName = parts[1].trim();
+                String commentStr = (parts.length > 2) ? parts[2].trim() : "";
 
                 try {
                     long addressValue = parseAddressString(addressStr);
@@ -144,6 +146,9 @@ public class ImportAnalysis extends GhidraScript {
 
                     // Check if name already matches
                     if (func.getName().equals(newName)) {
+                        if (!commentStr.isEmpty()) {
+                            currentProgram.getListing().setComment(address, CodeUnit.PLATE_COMMENT, commentStr);
+                        }
                         skipped++;
                         continue;
                     }
@@ -151,6 +156,11 @@ public class ImportAnalysis extends GhidraScript {
                     // Apply rename
                     func.setName(newName, SourceType.USER_DEFINED);
                     changesApplied++;
+
+                    // Apply plate comment if provided
+                    if (!commentStr.isEmpty()) {
+                        currentProgram.getListing().setComment(address, CodeUnit.PLATE_COMMENT, commentStr);
+                    }
 
                 } catch (NumberFormatException e) {
                     failed++;
