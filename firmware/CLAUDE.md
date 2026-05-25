@@ -161,10 +161,10 @@ All firmwares use the same CSV structure in `output/`:
 
 ### Fixing Underscore-Prefixed Variables
 
-Variables with `_` prefix (e.g., `_speed_error_filtered`) indicate overlapping symbols:
-- **Cause**: Variable typed as `byte` but code accesses as `short` (2 bytes)
-- **Fix**: Change type from `byte` to `short` in global_variables.csv
-- **Batch fix**: Use Python to find all underscore vars and update types
+Variables with `_` prefix (e.g., `_speed_error_filtered`) indicate a wider memory access than the declared type:
+- **Cause (simple)**: Variable declared as `byte`/`word` but Ghidra sees a wider load (`lhz`/`lwz`). Fix by widening the type to match the actual access width.
+- **Cause (persistent — PowerPC bulk-clear)**: `stw r0, offset(r13)` stores 4 bytes in one instruction, zeroing 4 adjacent byte-typed variables at once. Ghidra emits `_` prefix for each because the 4-byte write exceeds every individual byte's declared size. Widening individual types does not fix this.
+- **Fix for bulk-clear pattern**: Define a struct that groups those 4 adjacent bytes in `structure_definitions.csv`. Once Ghidra sees a single 4-byte struct instead of 4 separate bytes, the underscore disappears.
 
 ### RAM Must Be Loaded for Structure Application
 
@@ -180,15 +180,14 @@ Export regenerates CSVs from Ghidra, overwriting manual edits not applied to Ghi
 ```bash
 # 1. Edit CSV files manually
 # 2. Apply to Ghidra:
-./analyze.sh import      # Apply names
-./analyze.sh vartypes    # Apply types (clears stale types first)
+./analyze.sh import      # Apply names + types (vartypes behavior is built into import)
 ./analyze.sh structures  # Apply structures
 # 3. Export (regenerates CSVs + decompilation):
 ./analyze.sh export
 # 4. Commit
 ```
 
-**Warning**: Running `export` before `import`/`vartypes` loses your CSV edits!
+**Warning**: Running `export` before `import` loses your CSV edits!
 
 ### global_variables.csv Maintenance
 
@@ -210,29 +209,12 @@ Use Python CSV module to batch-categorize and clean (see session history for scr
 - Two sensor types: Type A uses `sensorChannelConfigInit`, Type B uses `sensorChannelInit_typeB`
 - Look for similar patterns in CM550 firmware
 
-### CM848 Bank 2 RE Workflow
+### CM848 Bank 2 Status
 
-**Finding high-value naming targets:**
-```bash
-# Most-called unnamed functions (prioritize these)
-grep -o "SUB_005[0-9a-f]*" cm848_rom.ghidra.cpp | sort | uniq -c | sort -rn | head -20
-grep -o "FUN_005[0-9a-f]*" cm848_rom.ghidra.cpp | sort | uniq -c | sort -rn | head -20
-```
+Bank 2 (0x005xxxxx) naming is **complete** as of 2026-05-24 — all 562 functions named across 4 rounds.
+Scripts used: `BatchForceAnalyze.java`, `BatchForceAnalyzeNamed.java`, `ExportBank2Functions.java`.
 
-**FUN_ vs SUB_ distinction:**
-- `SUB_*` - Functions in CSV with placeholder names (imported to Ghidra)
-- `FUN_*` - Ghidra auto-discovered functions not yet in CSV (need to add entries)
-
-**Counting unnamed functions:**
-```bash
-# Total FUN_* not in CSV (high priority - need to add)
-grep -oE "FUN_005[0-9a-f]+" cm848_rom.ghidra.cpp | sort -u | wc -l
-
-# Named vs placeholder in CSV
-grep -v "SUB_\|FUN_" function_renames.csv | grep -v "^address" | wc -l
-```
-
-**Key Bank 2 patterns identified:**
+**Key Bank 2 patterns documented:**
 - Command dispatch table at 0x00539508 (19 entries, 6 bytes each: command + function pointer)
 - State machine: `initiateStateTransition` → `dispatchByCommandCode` → command handlers
 - Utility functions: `addWithMask16` (pointer math), `enqueueDataRecord` (dual-queue)

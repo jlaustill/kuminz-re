@@ -152,12 +152,12 @@ Two firmware versions are actively analyzed with the **same CLI workflow**:
 
 | Firmware | Source | CSV Location | Apply Command |
 |----------|--------|--------------|---------------|
-| J90280.05 | Static binary (reference) | `output/` | `./analyze.sh import && export` |
-| J90350.00 | Live ECU dump | `output/` | `./analyze.sh import && export` |
+| J90350.00 | Live ECU dump (CM550) | `output/` | `./analyze.sh import && export` |
+| S90140.06 | Live ECU dump (CM848) | `output/` | `./analyze.sh import && export` |
 
-**Unified CLI Workflow (Both Firmwares):**
+**Unified CLI Workflow:**
 ```bash
-cd firmware/[J90280.05|J90350.00]_analysis/ghidra
+cd firmware/[J90350.00|CM848_S90140.06]_analysis/ghidra
 # 1. Edit CSV files in ../output/
 ./analyze.sh import      # Apply CSV changes to Ghidra
 ./analyze.sh export      # Regenerate decompilation
@@ -172,8 +172,8 @@ cd firmware/[J90280.05|J90350.00]_analysis/ghidra
 - See `firmware/CLAUDE.md` for detailed workflow and command reference
 
 **CM848 Analysis Notes:**
-- ~180 unnamed subroutines exist in 0x005xxxxx ROM range (see global_variables.csv SUB_* entries)
-- These are valid ROM functions - ROM is 448KB (0x00000000-0x0006FFFF) but addresses may appear relocated
+- Bank 2 (0x005xxxxx) naming is **complete** — all 562 functions named as of 2026-05-24.
+- ROM is 448KB (0x00000000–0x0006FFFF); Bank 2 addresses appear relocated but are valid ROM calls.
 
 ### calterm3/calterm-crc (C++)
 ```bash
@@ -367,4 +367,4 @@ Each firmware analysis directory contains `output/relocation_map.csv` mapping fu
 | `similar` | Function exists but code differs |
 | `not_found` | Function doesn't exist in target |
 
-**Current J90280.05 → J90350.00:** 293 matched, 350 similar, 150 not_found
+Relocation maps are per-firmware in `output/relocation_map.csv`. Currently only CM550 J90350.00 and CM848 S90140.06 are active.

@@ -1395,3 +1395,14 @@ mios1_ext_ctrl_t,0x00306100,ctrl_b,word,2,Control/status word B (startup: 0x2000
 mios1_isr_t,0x00306c00,FLG,word,2,MIOS1 interrupt flag register (bits cleared on service),,verified
 mios1_isr_t,0x00306c00,_pad2,word,2,Reserved,,verified
 mios1_isr_t,0x00306c00,EN,word,2,MIOS1 interrupt enable register (channel mask),,verified
+# ==============================================================================
+# Diagnostic clear state flags - 4 bytes zeroed together by stw r0 in
+# cm848_clearDiagnosticState and cm848_clearAllDiagnosticFaults.
+# Originally one bogus 4-byte pointer (sensor_channel_cmd_address).
+# These bytes serve different roles in different execution contexts (type-punned).
+# ==============================================================================
+diag_clear_flags_t,0x003fedfc,diag_response_write_count,byte,1,Diagnostic response write count pending,,best_guess
+diag_clear_flags_t,0x003fedfc,diag_eeprom_work_byte,byte,1,EEPROM channel scratch byte,,best_guess
+diag_clear_flags_t,0x003fedfc,fuel_temp_protection_ratio,word,2,Fuel temperature protection ratio,,best_guess
+# ==============================================================================
+# ==============================================================================
