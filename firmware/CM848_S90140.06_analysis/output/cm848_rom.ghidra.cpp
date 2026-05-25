@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon May 25 12:27:13 MDT 2026
+// Generated: Mon May 25 12:33:23 MDT 2026
 
 
 //
@@ -19649,6 +19649,8 @@ DIAG_RESPONSE cm848_resetDiagnosticSession(void)
 //
 // Function: cm848_forceActivateDiagnosticSession @ 0x00021694
 //
+
+/* jlaustill reviewed 2026-05-25 - frustrated about != 1 and == 0xea/0xee not working as enums */
 
 DIAG_RESPONSE cm848_forceActivateDiagnosticSession(void)
 
