@@ -159,6 +159,8 @@ All firmwares use the same CSV structure in `output/`:
 - **Decimal in names** - Use decimal, not hex, in variable/function names
 - **Major concept first in names** - prefix with the dominant domain noun first: `rpm_governor_offset_*` not `governor_offset_rpm_*`; `fuel_demand_*` not `demand_fuel_*`
 - **Function must exist in Ghidra** - CSV renames only work for addresses Ghidra recognizes as functions
+- **Type width must match hardware access** - `bool` (1B), `byte` (1B), `word` (2B), `dword` (4B) must match the actual load instruction (`lbz`=1B, `lhz`=2B, `lwz`=4B). Wrong width is silently reverted to `word` on export. This also prevents enum substitution for byte-width variables.
+- **Plate comments round-trip via function_renames.csv** - 3rd column is preserved through import/export since 2026-05-25 fix. If export drops a plate comment, it indicates `ExportAnalysis.java` failed to compile (check for missing imports).
 
 ### CM848 `_DAT_` Naming Campaign — Status
 
