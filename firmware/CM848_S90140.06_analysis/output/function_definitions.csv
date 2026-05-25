@@ -155,8 +155,7 @@ function_address,function_name,param_index,name,type,comment
 0x00500a4c,updateSensorChannelWithConfig,12,param_12,ushort,Configuration parameter
 
 # Sensor Channel 3 (Boost/MAP Pressure) - calls the above with specific calibration
-0x0000cc04,sensorChannel3_boostPressureInit,0,unused,void,Initializes boost sensor with hardcoded config pointers
-0x0000cc90,sensorChannel3_boostPressureProcess,0,unused,void,Processes boost sensor with ADC channels 8/9
+# (sensorChannel3_boostPressureInit + sensorChannel3_boostPressureProcess take no parameters)
 
 # -----------------------------------------------------------------------------
 # Boost Calculation Functions
