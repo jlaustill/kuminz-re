@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon May 25 05:44:36 MDT 2026
+// Generated: Mon May 25 05:58:31 MDT 2026
 
 
 //
@@ -19644,8 +19644,8 @@ DIAG_RESPONSE cm848_activateDiagnosticSession(void)
   DIAG_RESPONSE diag_ack_result;
   
   diag_ack_result = DIAG_NACK_NOT_READY;
-  if (j1939_standby_flag == 1) {
-    j1939_standby_flag = 0;
+  if (j1939_standby_flag == STANDING_BY) {
+    j1939_standby_flag = SESSION_ACTIVE;
     diagnostic_session_active_flag = 1;
     j1939_lamp_status_byte = 0xee;
     diag_ack_result = DIAG_ACK;
@@ -19663,7 +19663,7 @@ undefined4 cm848_resetDiagnosticSession(void)
 
 {
   diagnostic_session_active_flag = 0;
-  j1939_standby_flag = 1;
+  j1939_standby_flag = STANDING_BY;
   j1939_lamp_status_byte = 0xea;
   return 0;
 }
@@ -19684,7 +19684,7 @@ DIAG_RESPONSE cm848_forceActivateDiagnosticSession(void)
     diagnostic_session_active_flag = 1;
     if (j1939_lamp_status_byte == 0xea) {
       j1939_lamp_status_byte = 0xee;
-      j1939_standby_flag = 0;
+      j1939_standby_flag = SESSION_ACTIVE;
     }
     diag_ack_result = DIAG_ACK;
   }
@@ -65065,7 +65065,7 @@ undefined1 uds_validateMemoryRegion(uint param_1,int param_2)
     bVar3 = 0;
     do {
       if ((*puVar1 <= param_1) && (uVar2 <= puVar1[1])) {
-        if (j1939_standby_flag == 1) {
+        if (j1939_standby_flag == STANDING_BY) {
           return *(undefined1 *)(puVar1 + 2);
         }
         return *(undefined *)((int)puVar1 + 9);
@@ -84772,7 +84772,7 @@ void cm848_initProtectionTimers(void)
   word awStack_18 [2];
   dword adStack_14 [2];
   
-  j1939_standby_flag = 0;
+  j1939_standby_flag = SESSION_ACTIVE;
   diagnostic_session_active_flag = 1;
   j1939_lamp_status_byte = 0xee;
   uVar8 = 0;

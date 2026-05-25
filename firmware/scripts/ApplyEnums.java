@@ -210,13 +210,31 @@ public class ApplyEnums extends GhidraScript {
                 if (enumSize <= 0) enumSize = 1;
                 else if (enumSize > 8) enumSize = 8;
 
-                // Check if enum already exists
+                // Update in place if the enum already exists so that Ghidra
+                // preserves all references (local variable types, global types, etc.)
+                // that point at the existing enum object.  Removing and recreating
+                // the enum severs those references, reverting typed variables to
+                // undefined4 on the next export.
                 DataType existing = dtm.getDataType(enumCategory.getCategoryPath(), enumName);
-                if (existing != null) {
-                    dtm.remove(existing, monitor);
+                if (existing instanceof ghidra.program.model.data.Enum) {
+                    ghidra.program.model.data.Enum liveEnum = (ghidra.program.model.data.Enum) existing;
+                    // Clear current members
+                    for (String name : liveEnum.getNames()) {
+                        liveEnum.remove(name);
+                    }
+                    // Repopulate in place
+                    for (EnumMember member : members) {
+                        try {
+                            liveEnum.add(member.name, member.value);
+                        } catch (Exception e) {
+                            println("  Warning: Could not update " + member.name + " in " + enumName + ": " + e.getMessage());
+                        }
+                    }
+                    created++;
+                    continue;
                 }
 
-                // Create the enum
+                // First-time creation
                 EnumDataType enumType = new EnumDataType(enumCategory.getCategoryPath(), enumName, enumSize, dtm);
 
                 // Add members

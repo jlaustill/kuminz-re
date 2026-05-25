@@ -308,6 +308,31 @@ public class ApplyLocalVariables extends GhidraScript {
                     }
 
                     if (!found) {
+                        // Fallback: search by new name. Handles incremental re-runs where the
+                        // variable was already renamed in a prior session (old name is gone) but
+                        // the type needs updating — e.g. after ApplyEnums recreated an enum type.
+                        java.util.Iterator<HighSymbol> fallbackSymbols = localSymbolMap.getSymbols();
+                        while (fallbackSymbols.hasNext()) {
+                            HighSymbol symbol = fallbackSymbols.next();
+                            if (symbol.getName().equals(var.newName)) {
+                                try {
+                                    DataType dataType = getDataType(var.newType);
+                                    if (dataType != null) {
+                                        HighFunctionDBUtil.updateDBVariable(
+                                            symbol, var.newName, dataType, SourceType.USER_DEFINED);
+                                        result.applied++;
+                                        var.wasApplied = true;
+                                        found = true;
+                                    }
+                                } catch (Exception e) {
+                                    // Ignore — best-effort fallback
+                                }
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!found) {
                         println("  Warning: Variable '" + var.oldName + "' not found in " + var.functionName);
                         result.skipped++;
                     }

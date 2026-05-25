@@ -4593,7 +4593,7 @@ address,name,type,comment
 0x0040aa82,pending_fault_added_flag,word,
 0x0040aa84,active_fault_added_flag,dword,
 0x0040aa98,engine_shutdown_active_flag,word,
-0x0040aa9a,j1939_standby_flag,word,
+0x0040aa9a,j1939_standby_flag,J1939_STANDBY_STATE,
 0x0040aaa2,j1939_engine_torque_encoded,word,
 0x0040aac2,governor_load_percent_computed,word,
 0x0040aacc,engine_data_log_buffer,byte,
