@@ -163,8 +163,16 @@ All firmwares use the same CSV structure in `output/`:
 
 Variables with `_` prefix (e.g., `_speed_error_filtered`) indicate a wider memory access than the declared type:
 - **Cause (simple)**: Variable declared as `byte`/`word` but Ghidra sees a wider load (`lhz`/`lwz`). Fix by widening the type to match the actual access width.
-- **Cause (persistent — PowerPC bulk-clear)**: `stw r0, offset(r13)` stores 4 bytes in one instruction, zeroing 4 adjacent byte-typed variables at once. Ghidra emits `_` prefix for each because the 4-byte write exceeds every individual byte's declared size. Widening individual types does not fix this.
-- **Fix for bulk-clear pattern**: Define a struct that groups those 4 adjacent bytes in `structure_definitions.csv`. Once Ghidra sees a single 4-byte struct instead of 4 separate bytes, the underscore disappears.
+- **Cause (persistent — PowerPC pair-clear)**: `sth r0, offset(r13)` stores 2 bytes in one instruction, zeroing 2 adjacent byte-typed variables at once. `stw` does the same for 4 bytes. Ghidra emits `_` prefix for each because the write exceeds every individual byte's declared size. Widening individual types does not fix this.
+- **Fix for pair-clear pattern**: Declare a single `word` variable (or struct) spanning both bytes in `global_variables.csv`. Once Ghidra sees one N-byte type instead of N separate bytes, the underscore disappears.
+
+#### WARNING: Do not use byte-pair structs for sth-paired variables
+
+When `sth` stores a flag value like `0x0001`, naming the two bytes as separate fields will produce **backwards names** due to PowerPC big-endian byte ordering:
+- `sth` with `r = 0x0001` → byte 0 (lower address, MSB) = `0x00`, byte 1 (higher address, LSB) = `0x01`
+- A struct with `byte flag` at offset 0 and `byte pad` at offset 1 will show `flag = 0` always and `pad = 1` when active — exactly wrong
+
+**Correct fix**: declare the address as a single `word` variable. `sth` storing `0x0001` will decompile cleanly as `var = 1`, and all comparisons read naturally. Do not use two-field byte structs for sth-paired locations.
 
 ### RAM Must Be Loaded for Structure Application
 
