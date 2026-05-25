@@ -738,6 +738,11 @@ EVENT_TIMER_CHANNEL,0x26,TIMER_CHANNEL_38,Timer channel 38 (DAT_003fcf3a),1
 EVENT_TIMER_CHANNEL,0x2b,TIMER_CHANNEL_43,Timer channel 43 (DAT_003fcf3c),1
 EVENT_TIMER_CHANNEL,0x2c,TIMER_CHANNEL_44,Timer channel 44 (DAT_003fcf3e),1
 EVENT_TIMER_CHANNEL,0x35,TIMER_CHANNEL_53,Timer channel 53 (DAT_003fcf40),1
+# Prior boot fault state - set at keyoff: 1 if engine didn't complete a normal run cycle
+# (cold_start_phase != 1 at keyoff = crashed or shut down mid cold-start sequence)
+# Blocks diagnostic session access on next boot until the condition is resolved
+PRIOR_BOOT_STATE,0,PRIOR_BOOT_NORMAL,Previous boot completed a normal run cycle; diagnostics permitted,1
+PRIOR_BOOT_STATE,1,PRIOR_BOOT_FAULTED,Previous boot faulted or shut down mid cold-start; diagnostics locked out,1
 # Diagnostic session state machine - three-state, not a boolean flag
 DIAG_SESSION_STATE,0,INACTIVE,No session; J1939 broadcasts running normally,2
 DIAG_SESSION_STATE,1,ACTIVE,Session healthy; broadcasts suppressed; writes permitted,2

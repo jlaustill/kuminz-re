@@ -4156,7 +4156,7 @@ address,name,type,comment
 0x0040a334,engine_start_inhibit_flag,word,
 0x0040a336,j1939_broadcast_enable_flag,dword,
 0x0040a33a,fuel_timing_arbitration_output,word,
-0x0040a346,cal_write_mode,byte,0xea=CAL_VOLATILE (RAM only) 0xee=CAL_PERSISTENT (EEPROM write-through)
+0x0040a346,cal_write_mode,byte,
 0x0040a34c,fuel_timing_error_scale,word,
 0x0040a34e,turbo_sensor_fault_mode_flag,word,
 0x0040a350,sensor_channel4_fault_snapshot,word,
@@ -4809,7 +4809,7 @@ address,name,type,comment
 0x0040af58,governor_idle_transition_flag,word,
 0x0040af5a,governor_pid_t_0040af5a,governor_pid_t,
 0x0040af5c,governor_pid_t_0040af5a.integral_term,,
-0x0040af66,protection_mode_select_flag,byte,
+0x0040af66,prior_boot_faulted,byte,
 0x0040af7c,fuel_timing_blend_factor,word,
 0x0040af7e,governor_speed_error_low,word,
 0x0040af80,governor_speed_error_high,word,

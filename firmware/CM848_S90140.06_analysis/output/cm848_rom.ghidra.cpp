@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon May 25 12:00:19 MDT 2026
+// Generated: Mon May 25 12:21:20 MDT 2026
 
 
 //
@@ -16937,8 +16937,8 @@ void cm848_clearDiagnosticState(void)
   uint uVar1;
   
   if ((((diagnostic_clear_request_state & 7) != 0) ||
-      ((protection_mode_select_flag == 0 && ((protection_enable_t_0040c050.mode_bits & 1) != 0))))
-     || ((protection_mode_select_flag == 1 && ((fault_management_status_flags & 0x400) == 0)))) {
+      ((prior_boot_faulted == 0 && ((protection_enable_t_0040c050.mode_bits & 1) != 0)))) ||
+     ((prior_boot_faulted == 1 && ((fault_management_status_flags & 0x400) == 0)))) {
     if ((fault_management_status_flags & 0x400) != 0) {
       if ((diagnostic_clear_request_state & 2) == 0) {
         diag_resetAllFaults();
@@ -19584,8 +19584,8 @@ DIAG_RESPONSE cm848_advanceDiagnosticActionState(void)
   DIAG_RESPONSE DVar1;
   
   DVar1 = DIAG_NACK_PROTECTED;
-  if (((protection_mode_select_flag == 0) && ((protection_enable_t_0040c050.mode_bits & 1) != 0)) ||
-     ((protection_mode_select_flag == 1 && ((fault_management_status_flags & 0x400) == 0)))) {
+  if (((prior_boot_faulted == 0) && ((protection_enable_t_0040c050.mode_bits & 1) != 0)) ||
+     ((prior_boot_faulted == 1 && ((fault_management_status_flags & 0x400) == 0)))) {
     if (diagnostic_clear_request_state == 0) {
       diagnostic_clear_request_state = 1;
     }
@@ -19656,7 +19656,7 @@ DIAG_RESPONSE cm848_forceActivateDiagnosticSession(void)
   DIAG_RESPONSE diag_ack_result;
   
   diag_ack_result = DIAG_NACK_PROTECTED;
-  if (protection_mode_select_flag != 1) {
+  if (prior_boot_faulted != 1) {
     diagnostic_session_state = ACTIVE;
     if (cal_write_mode == 0xea) {
       cal_write_mode = 0xee;
@@ -19802,7 +19802,7 @@ DIAG_RESPONSE cm848_validateCalibrationMemory(void)
   byte *pbVar6;
   uint uVar7;
   
-  if (protection_mode_select_flag == 1) {
+  if (prior_boot_faulted == 1) {
     DVar5 = DIAG_NACK_PROTECTED;
   }
   else {
@@ -20529,8 +20529,8 @@ void cm848_j1939HandlePgn65228Dm3ClearDiag(undefined4 param_1)
 {
   undefined4 uVar1;
   
-  if (((protection_mode_select_flag == 0) && ((protection_enable_t_0040c050.mode_bits & 1) != 0)) ||
-     ((protection_mode_select_flag == 1 && ((fault_management_status_flags & 0x400) == 0)))) {
+  if (((prior_boot_faulted == 0) && ((protection_enable_t_0040c050.mode_bits & 1) != 0)) ||
+     ((prior_boot_faulted == 1 && ((fault_management_status_flags & 0x400) == 0)))) {
     if (diagnostic_clear_request_state == 0) {
       diagnostic_clear_request_state = 1;
     }
@@ -28430,7 +28430,7 @@ void cm848_initJ1939PtoBuffer(void)
 void cm848_updateFaultOnKeyoff(void)
 
 {
-  protection_mode_select_flag = cold_start_phase != 1;
+  prior_boot_faulted = cold_start_phase != 1;
   return;
 }
 
@@ -37063,7 +37063,7 @@ LAB_0003b37c:
           uds_processing_clear_flag = 0;
         }
         else if (cVar1 == '\x05') {
-          if ((protection_mode_select_flag == 1) && (diagnostic_session_state != INACTIVE)) {
+          if ((prior_boot_faulted == 1) && (diagnostic_session_state != INACTIVE)) {
             uds_processing_clear_flag = 7;
           }
           else if (diagnostic_session_state == ACTIVE) {
@@ -84268,7 +84268,7 @@ undefined4 uds_conditionEvaluator(uint param_1,uint *param_2)
     else {
       uVar2 = *(uint *)(puVar4 + 1);
       if (((0xffffff < uVar2) && (uVar2 < 0x10008e8)) &&
-         ((cal_write_mode != 0xee || (protection_mode_select_flag != 0)))) {
+         ((cal_write_mode != 0xee || (prior_boot_faulted != 0)))) {
         uVar2 = uVar2 - 0xc02b7e;
       }
       *param_2 = uVar2;
