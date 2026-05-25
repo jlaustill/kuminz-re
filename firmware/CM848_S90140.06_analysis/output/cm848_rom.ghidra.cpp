@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon May 25 12:33:23 MDT 2026
+// Generated: Mon May 25 13:13:48 MDT 2026
 
 
 //
@@ -16524,8 +16524,8 @@ LAB_0001c480:
     }
     else {
       wVar2 = MIOS_MCPSMSCR.MIOS1ER;
-      if ((((wVar2 & 0x8000) == 0) && (engine_shutdown_active_flag == 0)) ||
-         (engine_start_active_flag == 1)) {
+      if ((((wVar2 & 0x8000) == 0) && (engine_shutdown_active_flag == 0)) || (engine_starting == 1))
+      {
         cold_start_phase = 8;
       }
     }
@@ -16561,7 +16561,7 @@ LAB_0001c5e0:
     }
     if ((((engine_start_inhibit_flag != 0) || (wVar2 = MIOS_MCPSMSCR.MIOS1ER, (wVar2 & 0x8000) != 0)
          ) || (engine_shutdown_active_flag != 0)) &&
-       ((engine_start_inhibit_flag != 1 && (engine_start_active_flag != 1)))) {
+       ((engine_start_inhibit_flag != 1 && (engine_starting != 1)))) {
       if (cold_start_mode_enabled_flag == 1) {
         cold_start_phase = 5;
       }
@@ -16587,12 +16587,12 @@ LAB_0001c714:
     if (governor_rpm_setpoint_output <= engine_rpm_state_t_0040b7ac.current_rpm) goto LAB_0001c714;
     break;
   case 8:
-    if ((((engine_start_active_flag == 1) && (engine_rpm_state_t_0040b7ac.current_rpm == 0)) ||
-        ((engine_start_active_flag == 0 && (wVar2 = MIOS_MCPSMSCR.MIOS1ER, (wVar2 & 0x8000) != 0))))
-       && (((engine_start_inhibit_flag != 1 &&
-            (cold_start_phase = 1, engine_rpm_state_t_0040b7ac.current_rpm == 0)) &&
-           (engine_start_active_flag == 1)))) {
-      engine_start_active_flag = 0;
+    if ((((engine_starting == 1) && (engine_rpm_state_t_0040b7ac.current_rpm == 0)) ||
+        ((engine_starting == 0 && (wVar2 = MIOS_MCPSMSCR.MIOS1ER, (wVar2 & 0x8000) != 0)))) &&
+       (((engine_start_inhibit_flag != 1 &&
+         (cold_start_phase = 1, engine_rpm_state_t_0040b7ac.current_rpm == 0)) &&
+        (engine_starting == 1)))) {
+      engine_starting = 0;
     }
     if (((engine_rpm_state_t_0040b7ac.current_rpm == 0) &&
         (wVar2 = MIOS_MCPSMSCR.MIOS1ER, (wVar2 & 0x8000) == 0)) &&
@@ -16614,8 +16614,7 @@ LAB_0001c714:
     goto LAB_0001c8b8;
   }
   wVar2 = MIOS_MCPSMSCR.MIOS1ER;
-  if ((((wVar2 & 0x8000) == 0) && (engine_shutdown_active_flag == 0)) ||
-     (engine_start_active_flag == 1)) {
+  if ((((wVar2 & 0x8000) == 0) && (engine_shutdown_active_flag == 0)) || (engine_starting == 1)) {
 LAB_0001c754:
     cold_start_phase = 8;
   }
@@ -19672,15 +19671,15 @@ DIAG_RESPONSE cm848_forceActivateDiagnosticSession(void)
 
 
 //
-// Function: cm848_setColdStartActiveFlag @ 0x000216e8
+// Function: cm848_setEngineStarting @ 0x000216e8
 //
 
 /* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
-DIAG_RESPONSE cm848_setColdStartActiveFlag(void)
+DIAG_RESPONSE cm848_setEngineStarting(void)
 
 {
-  engine_start_active_flag = 1;
+  engine_starting = 1;
   return DIAG_ACK;
 }
 
@@ -19859,7 +19858,7 @@ void cm848_registerJ1939DiagnosticHandlers(void)
   cm848_processJ1939DiagnosticRequest(7,cm848_activateDiagnosticSession);
   cm848_processJ1939DiagnosticRequest(10,cm848_resetDiagnosticSession);
   cm848_processJ1939DiagnosticRequest(0x16,cm848_forceActivateDiagnosticSession);
-  cm848_processJ1939DiagnosticRequest(6,cm848_setColdStartActiveFlag);
+  cm848_processJ1939DiagnosticRequest(6,cm848_setEngineStarting);
   cm848_processJ1939DiagnosticRequest(0xb,cm848_j1939ProcessRxQueueParam);
   cm848_processJ1939DiagnosticRequest(0x18,cm848_setColdStartMode2Flag);
   cm848_processJ1939DiagnosticRequest(0x15,cm848_validateCalibrationMemory);
@@ -62613,7 +62612,7 @@ LAB_00508a90:
             uRam0040a78c = 0;
           }
           if ((uint)uVar3 + (uint)puVar5[0xf] < (uint)*(ushort *)(iVar8 + 0x1a)) {
-            engine_start_active_flag = 1;
+            engine_starting = 1;
             sRam003fdfb8 = (short)uVar7;
           }
         }
@@ -62641,7 +62640,7 @@ LAB_00508b8c:
           uRam0040a78c = 0;
         }
         if ((uint)uVar2 + (uint)puVar5[0xf] < (uint)*(ushort *)(iVar8 + 0x1c)) {
-          engine_start_active_flag = 1;
+          engine_starting = 1;
           sRam003fdfb8 = (short)uVar7;
         }
       }
@@ -62655,9 +62654,9 @@ LAB_00508b8c:
       sRam0040a786 = 1;
     }
     if ((sRam0040a772 != 0) || (sRam0040a782 != 0)) {
-      engine_start_active_flag = 1;
+      engine_starting = 1;
     }
-    if (engine_start_active_flag != 0) {
+    if (engine_starting != 0) {
       if (sRam003fdfbc != 0xff) {
         sRam003fdfbc = sRam003fdfbc + 1;
       }
@@ -62670,10 +62669,10 @@ LAB_00508b8c:
         sRam003fdfba = 1;
       }
     }
-    wRam003fbd38 = engine_start_active_flag;
+    wRam003fbd38 = engine_starting;
   }
   else {
-    engine_start_active_flag = 1;
+    engine_starting = 1;
   }
   wRam003fbd36 = engine_rpm_state_t_0040b7ac.current_rpm;
   if ((governor_feature_config_word & 1) == 0) {
@@ -62703,7 +62702,7 @@ void cm848_completeEngineStartSequence(void)
   uRam003fbd38 = 0;
   uRam003fbd36 = 0;
   uRam0040a786 = 0;
-  engine_start_active_flag = 0;
+  engine_starting = 0;
   uVar1 = 0;
   do {
     *(undefined2 *)(uVar1 * 0x3e + 0x40a74e) = 0;
@@ -76903,7 +76902,7 @@ void cm848_sensor_channel_state_load(void)
     cam_timing_measured = wRam00409a88;
     return;
   }
-  if (engine_start_active_flag != 0) {
+  if (engine_starting != 0) {
     cam_timing_measured = 0;
     engine_timing_arb_byte_8_15 = 1;
     return;

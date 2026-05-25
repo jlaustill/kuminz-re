@@ -4512,7 +4512,7 @@ address,name,type,comment
 0x0040a77c,torque_limit_fuel_upper_cap,word,
 0x0040a77e,governor_startup_ready_flag,word,
 0x0040a780,torque_limit_fuel_min_alt,word,
-0x0040a784,engine_start_active_flag,word,
+0x0040a784,engine_starting,word,
 0x0040a794,protection_timer_config_a,dword,
 0x0040a798,cold_start_advance_counter,word,
 0x0040a79a,cold_start_rpm_adjust_b,word,

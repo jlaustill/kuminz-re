@@ -851,11 +851,11 @@ address,name
 0x0002156c,cm848_initSpeedControlTableDimensions
 # EF00 service handlers (0x01, 0x07): formerly LAB_ labels, now explicit functions
 0x00021584,cm848_advanceDiagnosticActionState
-0x00021624,cm848_activateDiagnosticSession
+0x00021624,cm848_activateDiagnosticSession,jlaustill reviewed - hopefully accurate
 0x00021668,cm848_resetDiagnosticSession,jlaustill review 2026-05-25 - hopefully accurate
 # EF00 service handlers (0x16, 0x06): formerly LAB_ labels
 0x00021694,cm848_forceActivateDiagnosticSession,jlaustill reviewed 2026-05-25 - frustrated about != 1 and == 0xea/0xee not working as enums
-0x000216e8,cm848_setColdStartActiveFlag
+0x000216e8,cm848_setEngineStarting
 0x000216fc,mpc555_processJ1939RxQueue
 0x000218b0,cm848_j1939ProcessRxQueueDefault
 0x000218dc,cm848_j1939ProcessRxQueueParam
