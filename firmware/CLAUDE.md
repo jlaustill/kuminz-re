@@ -160,6 +160,36 @@ All firmwares use the same CSV structure in `output/`:
 - **Major concept first in names** - prefix with the dominant domain noun first: `rpm_governor_offset_*` not `governor_offset_rpm_*`; `fuel_demand_*` not `demand_fuel_*`
 - **Function must exist in Ghidra** - CSV renames only work for addresses Ghidra recognizes as functions
 
+### CM848 `_DAT_` Naming Campaign — Status
+
+All 3+, 2+, and 1-occurrence unnamed `_DAT_003Fxxxx` variables have been named (batches 1-5,
+~1,049 entries added 2026-05-25). 67 WARNINGs remain — all permanently stuck:
+
+| Variable | Why Stuck |
+|----------|-----------|
+| `_governor_mode_state` (12×), `_fuel_temp_trim_scale_cal` (8×), `_engine_sync_prot_gain_b_cal` | `stw` pair-clear: single `stw` writes 4B across two gap=2 `word` vars — cannot widen either individually |
+| `_sensor_validation_delta`, `_fault_counter_slot3_target`, `_fault_counter_slot3_shadow` | gap=1 to next named var — widening would overlap neighbor |
+| `_qadc_channel_control_working`, `_j1939_dm1_cmd_word_a` | gap=2, machine access is `lwz` (4B) — needs gap≥4 to widen |
+| `_param_id_lookup_table` | ROM-to-RAM code region (0x003F9800–0x003FDB30) — Ghidra reverts type on export |
+| `_pad2`, `_pad5`, `_pad16` | Structure padding fields — Ghidra internal, not fixable via CSV |
+
+**Remaining unnamed:** ~5 Bank-2 ROM constants (`_DAT_0005xxxx`, `_DAT_00008104`, `_DAT_00022c86`) with no RAM neighbor context — low value to name.
+
+### Batch `_DAT_` Naming Workflow
+
+To name unnamed `_DAT_` globals in future (e.g., if a new firmware export reveals new ones):
+
+1. **Extract context** to JSON chunks (addr, prev/next named neighbors + byte gap, ≤3 usage snippets with 1 line before/after)
+2. **Dispatch parallel Haiku agents** (~70 entries/chunk, 8 chunks in parallel)
+3. **Validate** before applying — check addr conflicts, name conflicts with existing CSV, intra-batch duplicates, dword proposals with gap<4
+4. **Apply** → `./analyze.sh import` → `./analyze.sh export`
+5. **Check `_` prefix remaining**: `grep -oE '\b_[a-z][a-z0-9_]{3,}\b' cm848_rom.ghidra.cpp | sort | uniq -c | sort -rn`
+6. **Widen types** for new `_` prefix: check gap to next named var in CSV; gap≥2 → widen to `word`, gap≥4 → widen to `dword`
+
+**WARNING semantics:** Each WARNING is function-level — a function gets one WARNING if ANY global in it has `_` prefix. Fixing one variable in a function does NOT clear the WARNING if other `_` vars remain.
+
+**Name conflict resolution (003f vs 0040):** When a new 003f address conflicts with an existing 0040 RAM name, the 003f var is typically the ROM calibration source — append `_cal` (if ROM const), `_b_` (if parallel working copy), or `_prev_` (if snapshot).
+
 ### Fixing Underscore-Prefixed Variables
 
 Variables with `_` prefix (e.g., `_speed_error_filtered`) indicate a wider memory access than the declared type:
