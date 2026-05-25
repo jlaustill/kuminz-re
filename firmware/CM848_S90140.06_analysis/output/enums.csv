@@ -738,3 +738,7 @@ EVENT_TIMER_CHANNEL,0x26,TIMER_CHANNEL_38,Timer channel 38 (DAT_003fcf3a),1
 EVENT_TIMER_CHANNEL,0x2b,TIMER_CHANNEL_43,Timer channel 43 (DAT_003fcf3c),1
 EVENT_TIMER_CHANNEL,0x2c,TIMER_CHANNEL_44,Timer channel 44 (DAT_003fcf3e),1
 EVENT_TIMER_CHANNEL,0x35,TIMER_CHANNEL_53,Timer channel 53 (DAT_003fcf40),1
+# J1939 diagnostic request response codes - returned by handlers and sent back to tool on PGN 0xEF00
+DIAG_RESPONSE,0,DIAG_ACK,Request fulfilled successfully,4
+DIAG_RESPONSE,4,DIAG_NACK_NOT_READY,Rejected: ECU not in standby (j1939_standby_flag was 0),4
+DIAG_RESPONSE,7,DIAG_NACK_PROTECTED,Rejected: protection mode active,4

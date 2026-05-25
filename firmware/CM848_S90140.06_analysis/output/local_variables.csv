@@ -32,3 +32,6 @@ function_address,function_name,old_name,new_name,type,comment
 0x000032dc,mpc555_generateSerialChallenge,seed_value,challenge_value,dword,Copy of serial_challenge_value for byte extraction
 0x000032dc,mpc555_generateSerialChallenge,seed_high_byte,challenge_high_byte,byte,Upper byte of 16-bit challenge (bits 15-8)
 0x000032dc,mpc555_generateSerialChallenge,uVar3,write_pos,uint,Current write position in diag_serial_buffer
+# cm848_activateDiagnosticSession / cm848_forceActivateDiagnosticSession response codes
+0x00021624,cm848_activateDiagnosticSession,uVar1,diag_ack_result,DIAG_RESPONSE,DIAG_RESPONSE: ACK(0) if standby→active transition succeeded NACK_NOT_READY(4) if not in standby
+0x00021694,cm848_forceActivateDiagnosticSession,uVar1,diag_ack_result,DIAG_RESPONSE,DIAG_RESPONSE: ACK(0) if activated NACK_PROTECTED(7) if protection mode blocked

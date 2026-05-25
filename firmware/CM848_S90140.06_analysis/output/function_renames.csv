@@ -851,10 +851,10 @@ address,name
 0x0002156c,cm848_initSpeedControlTableDimensions
 # EF00 service handlers (0x01, 0x07): formerly LAB_ labels, now explicit functions
 0x00021584,cm848_advanceDiagnosticActionState
-0x00021624,cm848_enableJ1939Output
-0x00021668,cm848_initJ1939MessageBuffers
+0x00021624,cm848_activateDiagnosticSession
+0x00021668,cm848_resetDiagnosticSession
 # EF00 service handlers (0x16, 0x06): formerly LAB_ labels
-0x00021694,cm848_enableJ1939OutputDirect
+0x00021694,cm848_forceActivateDiagnosticSession
 0x000216e8,cm848_setColdStartActiveFlag
 0x000216fc,mpc555_processJ1939RxQueue
 0x000218b0,cm848_j1939ProcessRxQueueDefault
