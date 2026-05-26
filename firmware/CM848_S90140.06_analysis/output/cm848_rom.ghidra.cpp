@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Tue May 26 04:24:20 MDT 2026
+// Generated: Tue May 26 04:30:22 MDT 2026
 
 
 //
@@ -20340,7 +20340,7 @@ void cm848_processGovernorSecurityAccessRequest(undefined4 param_1,undefined4 pa
 void cm848_j1939HandlePgn65228Dm3ClearDiag(j1939_rx_msg_t *param_1)
 
 {
-  byte bVar1;
+  J1939_ACK_TYPE JVar1;
   
   if (((prior_boot_faulted == 0) && ((protection_enable_t_0040c050.mode_bits & 1) != 0)) ||
      ((prior_boot_faulted == 1 && ((fault_management_status_flags & 0x400) == 0)))) {
@@ -20357,21 +20357,21 @@ void cm848_j1939HandlePgn65228Dm3ClearDiag(j1939_rx_msg_t *param_1)
       diagnostic_clear_request_state = 3;
     }
     if (j1939_dm1_active_flag == 0) {
-      bVar1 = 0;
+      JVar1 = J1939_ACK;
       goto LAB_0002275c;
     }
-    bVar1 = 0;
+    JVar1 = J1939_ACK;
   }
   else {
     if (j1939_dm1_active_flag == 0) {
-      bVar1 = 1;
+      JVar1 = J1939_NACK;
 LAB_0002275c:
-      cm848_sendJ1939AcknowledgeMessage((j1939_request_msg_t *)param_1,bVar1);
+      cm848_sendJ1939AcknowledgeMessage((j1939_request_msg_t *)param_1,JVar1);
       return;
     }
-    bVar1 = 1;
+    JVar1 = J1939_NACK;
   }
-  cm848_sendJ1939NegativeAck(param_1,bVar1);
+  cm848_sendJ1939NegativeAck(param_1,JVar1);
   j1939_dm1_active_flag = 0;
   return;
 }
@@ -20408,7 +20408,7 @@ void cm848_j1939HandleDm1RequestMessage(j1939_request_msg_t *request_msg)
     cm848_j1939SendDm1ResponseMessage(1,(byte)j1939_dm1_response_destination);
   }
   else if (DAT_003fa97a < 2) {
-    cm848_sendJ1939AcknowledgeMessage(request_msg,1);
+    cm848_sendJ1939AcknowledgeMessage(request_msg,J1939_NACK);
   }
   return;
 }
@@ -20951,7 +20951,7 @@ void cm848_j1939DispatchPgnHandler(j1939_rx_msg_t *msg)
       } while (search_idx < j1939_pgn_handler_count);
     }
     if ((j1939_pgn_handler_count == search_idx) && (msg->dest_address != 0xff)) {
-      cm848_sendJ1939NegativeAck(msg,1);
+      cm848_sendJ1939NegativeAck(msg,J1939_NACK);
     }
   }
   return;
@@ -21010,7 +21010,7 @@ void cm848_j1939HandleProprietaryCommand(j1939_request_msg_t *param_1)
       ascii_zero_detect_flag = 1;
     }
   }
-  cm848_sendJ1939AcknowledgeMessage(param_1,0);
+  cm848_sendJ1939AcknowledgeMessage(param_1,J1939_ACK);
   return;
 }
 
@@ -21476,7 +21476,7 @@ void cm848_initJ1939DmHandlerBuffer(int param_1,int param_2)
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
-void cm848_sendJ1939AcknowledgeMessage(j1939_request_msg_t *request_msg,byte ack_type)
+void cm848_sendJ1939AcknowledgeMessage(j1939_request_msg_t *request_msg,J1939_ACK_TYPE ack_type)
 
 {
   _j1939_dm1_cmd_word_a = CONCAT13(((byte)j1939_source_address_a & 7) << 2,0xe8ff00);
@@ -21498,7 +21498,7 @@ void cm848_sendJ1939AcknowledgeMessage(j1939_request_msg_t *request_msg,byte ack
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
-void cm848_sendJ1939NegativeAck(j1939_rx_msg_t *msg,byte ack_type)
+void cm848_sendJ1939NegativeAck(j1939_rx_msg_t *msg,J1939_ACK_TYPE ack_type)
 
 {
   tsc1_payload_t *ptVar1;

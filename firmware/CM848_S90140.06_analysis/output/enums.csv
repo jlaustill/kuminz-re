@@ -764,3 +764,10 @@ TSC1_OVERRIDE_MODE,0,TSC1_OVERRIDE_OFF,Override disabled; normal engine governor
 TSC1_OVERRIDE_MODE,1,TSC1_SPEED_CONTROL,Speed control; ECU governs to TSC1 requested_speed,1
 TSC1_OVERRIDE_MODE,2,TSC1_TORQUE_CONTROL,Torque control; active during transmission shift-in-progress,1
 TSC1_OVERRIDE_MODE,3,TSC1_SPEED_TORQUE_LIMIT,Speed and torque limit; ECU caps both simultaneously,1
+
+# J1939-21 ACKM control byte (PGN 0xE800 byte 1)
+# Used as j1939_ack_msg_t.control_byte and as ack_type parameter in sendAcknowledgeMessage/sendNegativeAck
+J1939_ACK_TYPE,0,J1939_ACK,Positive acknowledgment - request fulfilled,1
+J1939_ACK_TYPE,1,J1939_NACK,Negative acknowledgment - cannot comply with request,1
+J1939_ACK_TYPE,2,J1939_ACCESS_DENIED,Access denied - not authorized for requested action,1
+J1939_ACK_TYPE,3,J1939_CANNOT_RESPOND,Cannot respond - busy or resource unavailable,1
