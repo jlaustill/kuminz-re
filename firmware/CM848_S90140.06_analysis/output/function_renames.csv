@@ -1678,7 +1678,7 @@ address,name
 0x00053720,mpc555_queueCanReceiveMessage
 0x00053858,mpc555_sendJ1939SingleFrame
 0x00053890,mpc555_enqueueCanTransmitFrame
-0x000539fc,sendJ1939Message
+0x000539fc,sendJ1939Message,jlaustill reviewed 2026-5-26 - reads nicely, hopefully accurate
 0x00053a34,cm848_validateDiagnosticResponseWrapper
 0x00053a4c,cm848_lookupJ1939SourceAddressIndex
 0x00053aa8,cm848_handleCanMailboxTransmitComplete

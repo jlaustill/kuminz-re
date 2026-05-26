@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Tue May 26 07:39:55 MDT 2026
+// Generated: Tue May 26 07:42:11 MDT 2026
 
 
 //
@@ -53114,16 +53114,19 @@ void mpc555_enqueueCanTransmitFrame(uint param_1,uint param_2,int param_3)
 // Function: sendJ1939Message @ 0x000539fc
 //
 
+/* WARNING: Unable to use type for symbol message_data_length */
 /* WARNING: Unknown calling convention -- yet parameter storage is locked */
+/* jlaustill reviewed 2026-5-26 - reads nicely, hopefully accurate */
 
 void sendJ1939Message(j1939_tx_msg_t *msg)
 
 {
-  ushort uVar1;
+  ushort message_data_length;
   
-  uVar1 = (msg->header).data_length;
-  if (uVar1 < 9) {
-    mpc555_sendJ1939SingleFrame((msg->header).can_id,uVar1,msg->data_pointer,msg->data_end_pointer);
+  message_data_length = (msg->header).data_length;
+  if (message_data_length < 9) {
+    mpc555_sendJ1939SingleFrame
+              ((msg->header).can_id,message_data_length,msg->data_pointer,msg->data_end_pointer);
   }
   else {
     initiateJ1939TransportProtocol(msg);

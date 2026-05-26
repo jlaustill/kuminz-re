@@ -2,6 +2,8 @@ function_address,function_name,old_name,new_name,type,comment
 # Format: old_name is the decompiler's generated name (e.g., puVar1)
 # Run ./analyze.sh localvars to apply, then ./analyze.sh export to see changes
 #
+# sendJ1939Message @ 0x000539fc - Dispatches to single-frame or transport protocol by payload size
+0x000539fc,sendJ1939Message,uVar1,message_data_length,ushort,CAN payload byte count; routes single-frame (<9) vs transport protocol (>=9)
 # copyCalibrationToRam @ 0x00000340 - Copies ROM calibration defaults to RAM
 0x00000340,copyCalibrationToRam,puVar1,src_ptr,undefined4 *,Source pointer (ROM calibration data)
 0x00000340,copyCalibrationToRam,puVar2,dest_ptr,undefined4 *,Destination pointer (RAM working copy)
