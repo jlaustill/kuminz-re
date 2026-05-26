@@ -84,7 +84,6 @@ function_address,function_name,param_index,name,type,comment
 # J1939 PGN Dispatch System
 # Core message routing for all J1939 PGN requests
 # -----------------------------------------------------------------------------
-0x000231cc,j1939DispatchPgnHandler,0,request_msg,j1939_request_msg_t*,Pointer to incoming J1939 request message
 
 0x00023188,j1939_register_pgn_handler,0,pgn_byte_0,byte,First PGN byte to register
 0x00023188,j1939_register_pgn_handler,1,pgn_byte_1,byte,Second PGN byte to register
