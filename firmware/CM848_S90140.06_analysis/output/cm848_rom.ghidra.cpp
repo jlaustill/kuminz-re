@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Tue May 26 04:38:48 MDT 2026
+// Generated: Tue May 26 05:08:04 MDT 2026
 
 
 //
@@ -7046,7 +7046,7 @@ void main_loop(void)
   scheduler_feature_enabled_flag = (word)((system_feature_config_flags & 0x80) != 0);
   wVar5 = USIU_PISCR.PISCR;
   USIU_PISCR.PISCR = wVar5;
-  switch(boot_sequence_state) {
+  switch(main_loop_scheduler_phase) {
   case 0:
     cm848_phase_common_processing();
     cm848_phase_group_a_processing();
@@ -7056,7 +7056,7 @@ void main_loop(void)
     hpcr_periodicTaskGroup25_calibration7();
     cm848_mainLoop_step_4();
     scheduler_task_stat_ptr_b = (undefined *)&scheduler_task_stat_t_0040be6a;
-    boot_sequence_state = 1;
+    main_loop_scheduler_phase = 1;
     break;
   case 1:
     cm848_phase_common_processing();
@@ -7066,7 +7066,7 @@ void main_loop(void)
     cm848_periodicTaskGroup13_calibration2();
     cm848_periodicTaskGroup26_calibration8();
     cm848_mainLoopMonitor();
-    boot_sequence_state = 2;
+    main_loop_scheduler_phase = 2;
     break;
   case 2:
     cm848_phase_common_processing();
@@ -7076,7 +7076,7 @@ void main_loop(void)
     cm848_periodicTaskGroup14_calibration3();
     cm848_periodicTaskGroup27_calibration9();
     governorCruiseTimerManagement();
-    boot_sequence_state = 3;
+    main_loop_scheduler_phase = 3;
     break;
   case 3:
     cm848_phase_common_processing();
@@ -7087,7 +7087,7 @@ void main_loop(void)
     cm848_periodicTaskGroup28_calibration10();
     hpcr_cbdCalculateCylinderTrims();
     hpcr_processTimingCalibration();
-    boot_sequence_state = 4;
+    main_loop_scheduler_phase = 4;
     break;
   case 4:
     cm848_phase_common_processing();
@@ -7097,7 +7097,7 @@ void main_loop(void)
     cm848_periodicTaskSet_protection2();
     cm848_periodicTaskGroup29_calibration11();
     hpcr_calculateFuelTrimOutput();
-    boot_sequence_state = 5;
+    main_loop_scheduler_phase = 5;
     break;
   case 5:
     cm848_phase_common_processing();
@@ -7107,7 +7107,7 @@ void main_loop(void)
     cm848_periodicTaskGroup17_calibration5();
     cm848_periodicTaskGroup30_calibration12();
     protection_fault_latch_update();
-    boot_sequence_state = 6;
+    main_loop_scheduler_phase = 6;
     break;
   case 6:
     cm848_phase_common_processing();
@@ -7117,7 +7117,7 @@ void main_loop(void)
     cm848_periodicTaskGroup18_calibration6();
     cm848_periodicTaskGroup31_calibration13();
     cm848_main_loop_protection_eval();
-    boot_sequence_state = 7;
+    main_loop_scheduler_phase = 7;
     break;
   case 7:
     cm848_phase_common_processing();
@@ -7126,7 +7126,7 @@ void main_loop(void)
     cm848_periodicTaskSet_communication();
     cm848_periodicTaskGroup32_calibration14();
     cm848_mainLoop_step_5();
-    boot_sequence_state = 8;
+    main_loop_scheduler_phase = 8;
     break;
   case 8:
     cm848_phase_common_processing();
@@ -7135,7 +7135,7 @@ void main_loop(void)
     cm848_periodicTaskSet_canTx();
     cm848_periodicTaskSet_protection3();
     sensor_fault_safety_check();
-    boot_sequence_state = 9;
+    main_loop_scheduler_phase = 9;
     break;
   case 9:
     cm848_phase_common_processing();
@@ -7144,7 +7144,7 @@ void main_loop(void)
     cm848_periodicTaskSet_diagnostics();
     cm848_periodicTaskSet_auxiliary();
     protectionVoltageTimeoutControl();
-    boot_sequence_state = 10;
+    main_loop_scheduler_phase = 10;
     break;
   case 10:
     cm848_phase_common_processing();
@@ -7154,7 +7154,7 @@ void main_loop(void)
     cm848_periodicTaskGroup12_calibration1();
     periodicTaskSet_fuelDemand();
     main_loop_resetGovernorDiagnosticFlags();
-    boot_sequence_state = 0xb;
+    main_loop_scheduler_phase = 0xb;
     break;
   case 0xb:
     cm848_phase_common_processing();
@@ -7164,7 +7164,7 @@ void main_loop(void)
     cm848_periodicTaskGroup13_calibration2();
     hpcr_periodicTaskGroup36_calibration15();
     cm848_initColdStartTablePointers();
-    boot_sequence_state = 0xc;
+    main_loop_scheduler_phase = 0xc;
     break;
   case 0xc:
     cm848_phase_common_processing();
@@ -7174,7 +7174,7 @@ void main_loop(void)
     cm848_periodicTaskGroup14_calibration3();
     cm848_periodicTaskGroup37_calibration16();
     cm848_processColdStartStateMachine();
-    boot_sequence_state = 0xd;
+    main_loop_scheduler_phase = 0xd;
     break;
   case 0xd:
     cm848_phase_common_processing();
@@ -7184,7 +7184,7 @@ void main_loop(void)
     cm848_periodicTaskGroup15_calibration4();
     cm848_periodicTaskGroup38_calibration17();
     sensorChannelValidationIndex();
-    boot_sequence_state = 0xe;
+    main_loop_scheduler_phase = 0xe;
     break;
   case 0xe:
     cm848_phase_common_processing();
@@ -7194,7 +7194,7 @@ void main_loop(void)
     cm848_periodicTaskSet_protection2();
     cm848_periodicTaskSet_diagnostics2();
     cm848_mainLoopDispatcher();
-    boot_sequence_state = 0xf;
+    main_loop_scheduler_phase = 0xf;
     break;
   case 0xf:
     cm848_phase_common_processing();
@@ -7204,7 +7204,7 @@ void main_loop(void)
     cm848_periodicTaskGroup17_calibration5();
     hpcr_periodicTaskGroup20_calibration();
     bufferManagementWithBounds();
-    boot_sequence_state = 0x10;
+    main_loop_scheduler_phase = 0x10;
     break;
   case 0x10:
     cm848_phase_common_processing();
@@ -7214,7 +7214,7 @@ void main_loop(void)
     cm848_periodicTaskGroup18_calibration6();
     cm848_periodicTaskGroup21_calibration();
     cm848_resetGovernorStartupReadyFlag();
-    boot_sequence_state = 0x11;
+    main_loop_scheduler_phase = 0x11;
     break;
   case 0x11:
     cm848_phase_common_processing();
@@ -7225,7 +7225,7 @@ void main_loop(void)
     sensorChannelTypeB_configInit_axis4();
     eeprom_calibration_load_periodic();
     cm848_main_loop_initialization();
-    boot_sequence_state = 0x12;
+    main_loop_scheduler_phase = 0x12;
     break;
   case 0x12:
     cm848_phase_common_processing();
@@ -7234,7 +7234,7 @@ void main_loop(void)
     cm848_periodicTaskSet_protection();
     hpcr_periodicTaskSet_protection4();
     main_loop_validateDiagnosticChannels();
-    boot_sequence_state = 0x13;
+    main_loop_scheduler_phase = 0x13;
     break;
   case 0x13:
     cm848_phase_common_processing();
@@ -7243,7 +7243,7 @@ void main_loop(void)
     cm848_periodicTaskSet_timing();
     cm848_periodicTaskSet_outputs2();
     cm848_lookupProtectionFuelDemand();
-    boot_sequence_state = 0x14;
+    main_loop_scheduler_phase = 0x14;
     break;
   case 0x14:
     cm848_phase_common_processing();
@@ -7253,7 +7253,7 @@ void main_loop(void)
     cm848_periodicTaskGroup12_calibration1();
     hpcr_periodicTaskGroup25_calibration7();
     governorSpeedCompensation();
-    boot_sequence_state = 0x15;
+    main_loop_scheduler_phase = 0x15;
     break;
   case 0x15:
     cm848_phase_common_processing();
@@ -7263,7 +7263,7 @@ void main_loop(void)
     cm848_periodicTaskGroup13_calibration2();
     cm848_periodicTaskGroup26_calibration8();
     cm848_mainLoop_step();
-    boot_sequence_state = 0x16;
+    main_loop_scheduler_phase = 0x16;
     break;
   case 0x16:
     cm848_phase_common_processing();
@@ -7273,7 +7273,7 @@ void main_loop(void)
     cm848_periodicTaskGroup14_calibration3();
     cm848_periodicTaskGroup27_calibration9();
     cm848_mainLoop_step_3();
-    boot_sequence_state = 0x17;
+    main_loop_scheduler_phase = 0x17;
     break;
   case 0x17:
     cm848_phase_common_processing();
@@ -7283,7 +7283,7 @@ void main_loop(void)
     cm848_periodicTaskGroup15_calibration4();
     cm848_periodicTaskGroup28_calibration10();
     main_loop_callPhaseGroupProcessors();
-    boot_sequence_state = 0x18;
+    main_loop_scheduler_phase = 0x18;
     break;
   case 0x18:
     cm848_phase_common_processing();
@@ -7293,7 +7293,7 @@ void main_loop(void)
     cm848_periodicTaskSet_protection2();
     cm848_periodicTaskGroup29_calibration11();
     cm848_updateSensorValidationFlags();
-    boot_sequence_state = 0x19;
+    main_loop_scheduler_phase = 0x19;
     break;
   case 0x19:
     cm848_phase_common_processing();
@@ -7303,7 +7303,7 @@ void main_loop(void)
     cm848_periodicTaskGroup17_calibration5();
     cm848_periodicTaskGroup30_calibration12();
     cm848_sensorChannel7_init_configBundle();
-    boot_sequence_state = 0x1a;
+    main_loop_scheduler_phase = 0x1a;
     break;
   case 0x1a:
     cm848_phase_common_processing();
@@ -7313,7 +7313,7 @@ void main_loop(void)
     cm848_periodicTaskGroup18_calibration6();
     cm848_periodicTaskGroup31_calibration13();
     cm848_blendBoostAndThrottleFuelDemand();
-    boot_sequence_state = 0x1b;
+    main_loop_scheduler_phase = 0x1b;
     break;
   case 0x1b:
     cm848_phase_common_processing();
@@ -7322,7 +7322,7 @@ void main_loop(void)
     cm848_periodicTaskSet_timing();
     cm848_periodicTaskGroup32_calibration14();
     phase_group_b_computeGovernorFuelDemandOutput();
-    boot_sequence_state = 0x1c;
+    main_loop_scheduler_phase = 0x1c;
     break;
   case 0x1c:
     cm848_phase_common_processing();
@@ -7331,7 +7331,7 @@ void main_loop(void)
     cm848_periodicTaskSet_outputs();
     cm848_periodicTaskSet_protection3();
     sensorChannelTypeB_configInit_axis1();
-    boot_sequence_state = 0x1d;
+    main_loop_scheduler_phase = 0x1d;
     break;
   case 0x1d:
     cm848_phase_common_processing();
@@ -7339,7 +7339,7 @@ void main_loop(void)
     cm848_periodicTaskSet_sensorProcessing();
     cm848_periodicTaskSet_sensors();
     cm848_periodicTaskSet_auxiliary();
-    boot_sequence_state = 0x1e;
+    main_loop_scheduler_phase = 0x1e;
     break;
   case 0x1e:
     cm848_phase_common_processing();
@@ -7349,7 +7349,7 @@ void main_loop(void)
     cm848_periodicTaskGroup12_calibration1();
     periodicTaskSet_fuelDemand();
     cm848_mainLoop_step_2();
-    boot_sequence_state = 0x1f;
+    main_loop_scheduler_phase = 0x1f;
     break;
   case 0x1f:
     cm848_phase_common_processing();
@@ -7359,7 +7359,7 @@ void main_loop(void)
     cm848_periodicTaskGroup13_calibration2();
     hpcr_periodicTaskGroup36_calibration15();
     cm848_updateEngineModeFromSensor();
-    boot_sequence_state = 0x20;
+    main_loop_scheduler_phase = 0x20;
     break;
   case 0x20:
     cm848_phase_common_processing();
@@ -7368,7 +7368,7 @@ void main_loop(void)
     cm848_periodicTaskSet_canTx();
     cm848_periodicTaskGroup14_calibration3();
     cm848_periodicTaskGroup37_calibration16();
-    boot_sequence_state = 0x21;
+    main_loop_scheduler_phase = 0x21;
     break;
   case 0x21:
     cm848_phase_common_processing();
@@ -7377,7 +7377,7 @@ void main_loop(void)
     cm848_periodicTaskSet_diagnostics();
     cm848_periodicTaskGroup15_calibration4();
     cm848_periodicTaskGroup38_calibration17();
-    boot_sequence_state = 0x22;
+    main_loop_scheduler_phase = 0x22;
     break;
   case 0x22:
     cm848_phase_common_processing();
@@ -7386,7 +7386,7 @@ void main_loop(void)
     cm848_periodicTaskSet_protection();
     cm848_periodicTaskSet_protection2();
     cm848_periodicTaskSet_diagnostics2();
-    boot_sequence_state = 0x23;
+    main_loop_scheduler_phase = 0x23;
     break;
   case 0x23:
     cm848_phase_common_processing();
@@ -7395,7 +7395,7 @@ void main_loop(void)
     cm848_periodicTaskSet_timing();
     cm848_periodicTaskGroup17_calibration5();
     hpcr_periodicTaskGroup20_calibration();
-    boot_sequence_state = 0x24;
+    main_loop_scheduler_phase = 0x24;
     break;
   case 0x24:
     cm848_phase_common_processing();
@@ -7405,7 +7405,7 @@ void main_loop(void)
     cm848_periodicTaskGroup18_calibration6();
     cm848_periodicTaskGroup21_calibration();
     cm848_fuelDemandBlendCalculation();
-    boot_sequence_state = 0x25;
+    main_loop_scheduler_phase = 0x25;
     break;
   case 0x25:
     cm848_phase_common_processing();
@@ -7413,7 +7413,7 @@ void main_loop(void)
     cm848_periodicTaskSet_sensorProcessing();
     cm848_periodicTaskSet_sensors();
     cm848_periodicTaskGroup22_calibration();
-    boot_sequence_state = 0x26;
+    main_loop_scheduler_phase = 0x26;
     break;
   case 0x26:
     cm848_phase_common_processing();
@@ -7422,7 +7422,7 @@ void main_loop(void)
     cm848_periodicTaskSet_monitoring();
     hpcr_periodicTaskSet_protection4();
     cm848_mainLoopServiceMonitor();
-    boot_sequence_state = 0x27;
+    main_loop_scheduler_phase = 0x27;
     break;
   case 0x27:
     cm848_phase_common_processing();
@@ -7430,10 +7430,10 @@ void main_loop(void)
     cm848_periodicTaskSet_auxiliaryControl();
     cm848_periodicTaskSet_communication();
     cm848_periodicTaskSet_outputs2();
-    boot_sequence_state = 0;
+    main_loop_scheduler_phase = 0;
     break;
   default:
-    boot_sequence_state = 0;
+    main_loop_scheduler_phase = 0;
   }
   puVar3 = scheduler_task_stat_ptr_b;
   if ((system_feature_config_flags & 0x80) != 0) {

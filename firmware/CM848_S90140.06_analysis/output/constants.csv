@@ -1,3 +1,8 @@
 address,constant_name,value,comment
+# Temperature raw format: Q6 Fahrenheit (raw = °F × 64)
+# Conversion formula used throughout: (raw >> 6) is °F; then Celsius = (°F - 32) × 5/9
+# In code: (((short)raw >> 6) * 5 + -0xa0) / 9  (-0xa0 = -160 = -32 × 5)
+# Variables using this format: j1939_coolant_temp_raw, fuel_temp_raw, sensor_readings_t.coolant_temp
+# J1939 Kelvin encoding: result + 0x111 (* 0x20 for 1/32K units per SAE J1939-71)
 # TSC1 speed cap in torqueControlModeHandler (cmplwi r11, 0x5DC0)
 0x00022FE0,TSC1_SPEED_LIMIT_3000RPM,0x5DC0,24000 counts x 0.125 RPM/bit = 3000 RPM maximum speed target cap for TSC1 speed control mode

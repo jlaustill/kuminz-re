@@ -765,6 +765,22 @@ TSC1_OVERRIDE_MODE,1,TSC1_SPEED_CONTROL,Speed control; ECU governs to TSC1 reque
 TSC1_OVERRIDE_MODE,2,TSC1_TORQUE_CONTROL,Torque control; active during transmission shift-in-progress,1
 TSC1_OVERRIDE_MODE,3,TSC1_SPEED_TORQUE_LIMIT,Speed and torque limit; ECU caps both simultaneously,1
 
+# Cold start state machine (cold_start_phase, word at 0x0040a7c0)
+# Tracks engine warm-up progression from crank to normal governor operation.
+# Transitions: 0→1 always; 1→2 (RPM > trigger); 1→8 (MIOS stopped, not shutdown);
+#   2→3 (RPM ≥ governor setpoint); 2→6 (crank events exceeded threshold);
+#   3→4 (fuel mode switch active); 3→7 (RPM < threshold); 3→5 (shutdown w/ cold mode);
+#   6 and 7 mirror case 2 transitions; 8→1 (crank=1, RPM=0, no inhibit)
+COLD_START_PHASE,0,CSP_INIT,Reset/power-on default; immediately transitions to CRANKING,2
+COLD_START_PHASE,1,CSP_CRANKING,Engine at idle/crank speed; RPM below trigger threshold,2
+COLD_START_PHASE,2,CSP_ABOVE_RPM_TRIGGER,RPM exceeded trigger but below governor setpoint; warming up,2
+COLD_START_PHASE,3,CSP_AT_GOVERNOR_SETPOINT,RPM at or above governor setpoint; cold start governor active,2
+COLD_START_PHASE,4,CSP_FUEL_MODE_SWITCH,Fuel mode switch active; waiting for switch to release,2
+COLD_START_PHASE,5,CSP_SUSPENDED,Cold start suspended due to shutdown inhibit with cold mode enabled,2
+COLD_START_PHASE,6,CSP_ABOVE_RPM_VIA_EVENTS,Same as ABOVE_RPM_TRIGGER but entered via crank event counter overflow,2
+COLD_START_PHASE,7,CSP_SETPOINT_UNDERRUN,Dropped below governor setpoint after reaching it (phase 3 backtrack),2
+COLD_START_PHASE,8,CSP_ENGINE_STANDBY,Engine cranking (RPM=0) or MIOS crank signal stopped; pre/post-run standby,2
+
 # J1939-21 ACKM control byte (PGN 0xE800 byte 1)
 # Used as j1939_ack_msg_t.control_byte and as ack_type parameter in sendAcknowledgeMessage/sendNegativeAck
 J1939_ACK_TYPE,0,J1939_ACK,Positive acknowledgment - request fulfilled,1
