@@ -9,10 +9,10 @@ j1939_rx_msg_t,0x00302016,pgn_pf,byte,1,PDU Format - high byte of PGN (0xEF=EF00
 j1939_rx_msg_t,0x00302016,dest_address,byte,1,Destination address (PDU1) or PGN low byte (PDU2); compared against j1939_source_address to filter incoming messages,,verified
 j1939_rx_msg_t,0x00302016,source_address,byte,1,J1939 source address of sending node,,verified
 j1939_rx_msg_t,0x00302016,data_length,word,2,CAN DLC - payload byte count (handlers expect 8 for TSC1/ETC1),,verified
-j1939_rx_msg_t,0x00302016,data_ptr,tsc1_payload_t*,4,Pointer to inline_data below (always this+10 per processCanReceiveBuffer),,verified
+j1939_rx_msg_t,0x00302016,data_pointer,byte*,4,Pointer to inline_data below (always this+10 per processCanReceiveBuffer),,verified
 j1939_rx_msg_t,0x00302016,inline_data,byte,8,CAN payload bytes copied directly from TouCAN mailbox data registers,,verified
 # TSC1 (Torque/Speed Control 1, PGN 0) payload - SAE J1939-71
-# Pointed to by j1939_rx_msg_t.data_ptr; also lives inline at j1939_rx_msg_t+10
+# Pointed to by j1939_rx_msg_t.data_pointer; also lives inline at j1939_rx_msg_t+10
 # Total size: 8 bytes
 tsc1_payload_t,0x00302020,control_byte,byte,1,Override control mode (bits 0-1) priority (bits 4-5) tx_rate (bits 6-7),,verified
 tsc1_payload_t,0x00302020,requested_speed,word,2,Requested speed/speed limit - little-endian 0.125 rpm/bit,,verified

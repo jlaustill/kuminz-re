@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Tue May 26 07:27:58 MDT 2026
+// Generated: Tue May 26 07:30:13 MDT 2026
 
 
 //
@@ -4508,18 +4508,18 @@ void mpc555_handleJ1939DataRequest(j1939_rx_msg_t *rx_msg)
   word wVar2;
   char cVar3;
   byte bVar4;
-  tsc1_payload_t *ptVar5;
+  byte *pbVar5;
   dword dVar6;
   short local_28;
   undefined2 local_24;
   
-  ptVar5 = rx_msg->data_ptr;
-  local_28 = (ushort)ptVar5->reserved[2] << 8;
+  pbVar5 = rx_msg->data_pointer;
+  local_28 = (ushort)pbVar5[6] << 8;
   bVar1 = rx_msg->source_address;
-  local_24 = CONCAT11((char)ptVar5->requested_speed,*(undefined1 *)&ptVar5->requested_speed);
+  local_24 = CONCAT11(pbVar5[2],pbVar5[1]);
   bVar4 = qadc_a_pause_status;
   if ((((bVar4 == 1) && (bVar4 = j1939_tp_pause_state.pause_data._3_1_, bVar4 != bVar1)) ||
-      (ptVar5->reserved[2] != 0xef)) || (0x410 < local_24)) {
+      (pbVar5[6] != 0xef)) || (0x410 < local_24)) {
     mpc555_processAdcChannelGroup(bVar1,local_28);
   }
   else {
@@ -4530,7 +4530,7 @@ void mpc555_handleJ1939DataRequest(j1939_rx_msg_t *rx_msg)
     dVar6._3_1_ = rx_msg->source_address;
     j1939_tp_pause_state.pause_data = dVar6;
     j1939_tp_pause_state.pause_pgn = 0xef00;
-    bVar4 = ptVar5->requested_torque;
+    bVar4 = pbVar5[3];
     qadc_a_pause_ctrl = bVar4;
     j1939_tp_pause_state.data_count = local_24;
     j1939_tp_pause_state.pause_timer = 0x70;
@@ -4571,18 +4571,18 @@ void mpc555_handleJ1939DataTransfer(j1939_rx_msg_t *rx_msg)
   uint uVar8;
   byte bVar9;
   byte *data_ptr;
-  tsc1_payload_t *ptVar10;
-  uint uVar12;
-  tsc1_payload_t *ptVar13;
-  undefined1 *puVar14;
+  byte *pbVar10;
   word wVar11;
+  uint uVar12;
+  byte *pbVar13;
+  byte *pbVar14;
   
   if (rx_msg->data_length == 8) {
     dest_address = rx_msg->source_address;
     bVar9 = qadc_a_pause_status;
     if ((bVar9 == 1) && (bVar9 = j1939_tp_pause_state.pause_data._3_1_, bVar9 == dest_address)) {
-      ptVar13 = rx_msg->data_ptr;
-      uVar6 = (uint)ptVar13->control_byte;
+      pbVar13 = rx_msg->data_pointer;
+      uVar6 = (uint)*pbVar13;
       bVar9 = j1939_tp_pause_state._pad2._0_1_;
       if (bVar9 == uVar6) {
         bVar9 = qadc_a_pause_ctrl;
@@ -4593,20 +4593,20 @@ void mpc555_handleJ1939DataTransfer(j1939_rx_msg_t *rx_msg)
         else {
           uVar8 = 7;
         }
-        ptVar10 = (tsc1_payload_t *)&ptVar13->requested_speed;
+        pbVar10 = pbVar13 + 1;
         dVar5 = j1939_tp_pause_state.rx_buf_ptr;
         uVar12 = 0;
         if (uVar8 != 0) {
-          puVar14 = (undefined1 *)(dVar5 + uVar6 * 7 + -8);
-          ptVar10 = ptVar13;
+          pbVar14 = (byte *)(dVar5 + uVar6 * 7 + -8);
+          pbVar10 = pbVar13;
           do {
-            ptVar10 = (tsc1_payload_t *)&ptVar10->requested_speed;
-            puVar14 = puVar14 + 1;
-            *puVar14 = *(undefined1 *)ptVar10;
+            pbVar10 = pbVar10 + 1;
+            pbVar14 = pbVar14 + 1;
+            *pbVar14 = *pbVar10;
             uVar12 = uVar12 + 1 & 0xff;
           } while (uVar12 < uVar8);
         }
-        wVar11 = (word)ptVar10;
+        wVar11 = (word)pbVar10;
         cVar7 = j1939_tp_pause_state._pad2._0_1_;
         bVar9 = cVar7 + 1;
         j1939_tp_pause_state._pad2._0_1_ = bVar9;
@@ -4665,7 +4665,7 @@ void mpc555_handleJ1939AbortRequest(j1939_rx_msg_t *rx_msg)
   
   bVar1 = qadc_a_queue_status_1;
   if ((bVar1 == 1) && (bVar1 = qadc_a_active_channel_id, bVar1 == rx_msg->source_address)) {
-    local_10 = (ushort)rx_msg->data_ptr->reserved[2] << 8;
+    local_10 = (ushort)rx_msg->data_pointer[6] << 8;
     wVar2 = j1939_tp_queue_t_00302905.session_pgn;
     if (local_10 == wVar2) {
       puVar3 = (undefined1 *)j1939_tp_queue_t_00302905.state_ptr;
@@ -4723,7 +4723,7 @@ void cm848_j1939DiagMessageDispatcher(j1939_rx_msg_t *rx_msg,byte service_code)
   byte bVar1;
   
   if (rx_msg->data_length == 8) {
-    bVar1 = rx_msg->data_ptr->control_byte;
+    bVar1 = *rx_msg->data_pointer;
     if (bVar1 == 0x10) {
       mpc555_handleJ1939DataRequest(rx_msg);
     }
@@ -20413,7 +20413,7 @@ void cm848_initPgn65228Dm3Handler(undefined4 param_1,undefined4 param_2,void *pa
 void cm848_j1939HandleDm1RequestMessage(j1939_rx_msg_t *request_msg)
 
 {
-  DAT_003fa97a = request_msg->data_ptr->control_byte;
+  DAT_003fa97a = *request_msg->data_pointer;
   if ((DAT_003fa97a == 0) && ((j1939_feature_config_word & 0x100) != 0)) {
     cm848_j1939SendDm1ResponseMessage(0,(byte)j1939_dm1_response_mode);
   }
@@ -20459,7 +20459,7 @@ void cm848_j1939ProcessPgn61442Etc1(j1939_rx_msg_t *rx_msg)
     j1939_tsc1_override_state.etc1_message_timeout = DAT_0005c38a + 1U;
     return;
   }
-  j1939_tsc1_received.byte1_status = rx_msg->data_ptr->control_byte;
+  j1939_tsc1_received.byte1_status = *rx_msg->data_pointer;
   if (0xfa < j1939_tsc1_received.byte1_status) goto LAB_00022a00;
   if ((j1939_tsc1_received.byte1_status & 0xc) == 0) {
     j1939_tsc1_override_state.etc1_spn573_tc_lockup_disengage = 1;
@@ -20494,8 +20494,7 @@ LAB_00022900:
 LAB_00022a00:
   if ((etc1_transmission_mode == 4) &&
      (j1939_tsc1_received.spn191_output_shaft_speed =
-           CONCAT11((char)rx_msg->data_ptr->requested_speed,
-                    *(undefined1 *)&rx_msg->data_ptr->requested_speed),
+           CONCAT11(rx_msg->data_pointer[2],rx_msg->data_pointer[1]),
      j1939_tsc1_received.spn191_output_shaft_speed < 0xfb00)) {
     j1939_tsc1_override_state.etc1_speed_cmd_timeout = DAT_0005c3a2 + 1;
     j1939_tsc1_received.speed_previous = output_shaft_speed_prev;
@@ -20504,7 +20503,7 @@ LAB_00022a00:
          system_status_flags_t_003fe974.condition_monitor & 0xdfff;
     engine_timing_shadow_flags = engine_timing_shadow_flags & 0xdfff;
   }
-  j1939_tsc1_received.byte5_control = rx_msg->data_ptr->reserved[0];
+  j1939_tsc1_received.byte5_control = rx_msg->data_pointer[4];
   if ((j1939_tsc1_received.byte5_control & 3) == 1) {
     if (j1939_tsc1_override_state.etc1_torque_limit_active == 0) {
       if (j1939_tsc1_override_state.etc1_torque_active_timer == 0) {
@@ -20628,13 +20627,11 @@ void torqueControlModeHandler(j1939_rx_msg_t *msg)
   if (msg->data_length != 8) {
     return;
   }
-  j1939_tsc1_received.control_word = msg->data_ptr->control_byte;
+  j1939_tsc1_received.control_word = *msg->data_pointer;
   control_mode = j1939_tsc1_received.control_word & 3;
   priority_bits = j1939_tsc1_received.control_word & 0x30;
-  j1939_tsc1_received.requested_speed =
-       CONCAT11((char)msg->data_ptr->requested_speed,*(undefined1 *)&msg->data_ptr->requested_speed)
-  ;
-  j1939_tsc1_received.requested_torque = msg->data_ptr->requested_torque;
+  j1939_tsc1_received.requested_speed = CONCAT11(msg->data_pointer[2],msg->data_pointer[1]);
+  j1939_tsc1_received.requested_torque = msg->data_pointer[3];
   source_address = msg->source_address;
   if (control_mode == 0) {
     cm848_removeCoolantCalEntryByParams(1,source_address);
@@ -20954,8 +20951,8 @@ void cm848_j1939DispatchPgnHandler(j1939_rx_msg_t *msg)
     search_idx = 0;
     if (j1939_pgn_handler_count != 0) {
       do {
-        if ((entry->pgn_byte_0 == msg->data_ptr->control_byte) &&
-           (entry->pgn_byte_1 == *(byte *)&msg->data_ptr->requested_speed)) {
+        if ((entry->pgn_byte_0 == *msg->data_pointer) && (entry->pgn_byte_1 == msg->data_pointer[1])
+           ) {
           j1939_dm1_active_flag = 1;
           (*(code *)entry->handler_func)(msg);
           break;
@@ -21013,14 +21010,14 @@ void cm848_j1939HandleProprietaryCommand(j1939_rx_msg_t *param_1)
 
 {
   if ((j1939_feature_enable_flags & 0x20) != 0) {
-    DAT_003faa64 = param_1->data_ptr->control_byte;
+    DAT_003faa64 = *param_1->data_pointer;
   }
   if ((j1939_feature_enable_flags & 0x40) != 0) {
-    DAT_003faa65 = *(char *)&param_1->data_ptr->requested_speed;
-    if (DAT_003faa65 == ' ') {
+    DAT_003faa65 = param_1->data_pointer[1];
+    if (DAT_003faa65 == 0x20) {
       j1939_feature_enable_cmd_flag = 1;
     }
-    else if (DAT_003faa65 == '0') {
+    else if (DAT_003faa65 == 0x30) {
       ascii_zero_detect_flag = 1;
     }
   }
@@ -21246,13 +21243,13 @@ void cm848_j1939ProcessGovernorRequest(j1939_rx_msg_t *msg)
   if (msg->data_length != 8) {
     return;
   }
-  tsc1_rx_byte_0 = msg->data_ptr->control_byte;
+  tsc1_rx_byte_0 = *msg->data_pointer;
   if ((tsc1_rx_byte_0 & 3) == 1) {
     return;
   }
   bVar2 = tsc1_rx_byte_0 & 3;
   bVar5 = tsc1_rx_byte_0 & 0x30;
-  tsc1_rx_byte_3 = msg->data_ptr->requested_torque;
+  tsc1_rx_byte_3 = msg->data_pointer[3];
   bVar1 = msg->source_address;
   if (((governor_feature_config_word & 0x1000) == 0) && (bVar1 == j1939_ecu_source_address_cal)) {
     return;
@@ -21513,14 +21510,14 @@ void cm848_sendJ1939AcknowledgeMessage(j1939_rx_msg_t *request_msg,J1939_ACK_TYP
 void cm848_sendJ1939NegativeAck(j1939_rx_msg_t *msg,J1939_ACK_TYPE ack_type)
 
 {
-  tsc1_payload_t *ptVar1;
+  byte *pbVar1;
   
   j1939_ackm_msg.header.can_id = CONCAT13(((byte)j1939_ackm_priority & 7) << 2,0xe8ff00);
   j1939_ackm_msg.header.can_id._2_2_ = CONCAT11(0xff,msg->dest_address);
-  ptVar1 = msg->data_ptr;
-  j1939_ackm_msg.pgn_low = ptVar1->control_byte;
-  j1939_ackm_msg.pgn_mid = *(byte *)&ptVar1->requested_speed;
-  j1939_ackm_msg.pgn_high = (byte)ptVar1->requested_speed;
+  pbVar1 = msg->data_pointer;
+  j1939_ackm_msg.pgn_low = *pbVar1;
+  j1939_ackm_msg.pgn_mid = pbVar1[1];
+  j1939_ackm_msg.pgn_high = pbVar1[2];
   j1939_ackm_msg.control_byte = ack_type;
   sendJ1939MultiFrame(&j1939_ackm_msg);
   return;
