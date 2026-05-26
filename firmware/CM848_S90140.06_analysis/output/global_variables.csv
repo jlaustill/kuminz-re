@@ -129,6 +129,7 @@ address,name,type,comment
 0x000210d8,default,,
 0x00022c86,PTR_DAT_00022c86,pointer,
 0x00022f1c,accept_etc1_command,,
+0x00025050,cm848_initPgn65227Dm2ResponseHandler,,
 0x00025950,switchD,,
 0x00025954,caseD_0,,
 0x00025958,caseD_1,,
@@ -169,6 +170,9 @@ address,name,type,comment
 0x000259e4,caseD_24,,
 0x000259e8,caseD_25,,
 0x00025a24,default,,
+0x00025d88,cm848_j1939SendPgn61443_F003_AcceleratorPedalEec2,,
+0x00025fd8,cm848_initPgn65263FluidLevelPressureHandler,,
+0x0002661c,cm848_initPgn65270InletExhaustHandler,,
 0x00028b8c,cm848_clearGovernorFilterAccumulators,,
 0x0002a2b4,cm848_resetSensorDeviationTracking,,
 0x0002c9bc,mpc555_initFuelControlModeVariables,,
@@ -449,7 +453,16 @@ address,name,type,comment
 0x0005c726,u_HAN#_0005c726,,
 0x0005c738,u_HAN#_0005c738,,
 0x0005c748,u_HAN#_0005c748,,
+0x0005c7b2,j1939_dm_node_id_cal,byte,Source address byte written to slot T DM response buffer[0]
+0x0005c7ba,j1939_dm1_spn_support_bitmask,dword,Bit N set = SPN sub-index N+1 supported for DM1
+0x0005c7be,j1939_dm1_lamp_status_cal,word,Byte0 nibble=J1939 lamp bits; byte1=lamp type byte for DM1 sub-index 1 response
 0x0005c7c0,PTR_PTR_0005c7c0,byte,
+0x0005c7c1,j1939_dm1_spn28_value_cal,byte,DM1 SPN sub-index 0x1c response byte value
+0x0005c7c2,j1939_dm2_spn_support_bitmask,dword,Bit N set = SPN sub-index N+1 supported for DM2
+0x0005c7c6,j1939_dm9_spn_support_bitmask,dword,Bit N set = SPN sub-index N+1 supported for DM9
+0x0005c7ca,j1939_dm9_capability_cal,dword,DM9 capability bytes for sub-index 3 and 5 responses
+0x0005c7cc,j1939_dm9_capability_cal+2,,
+0x0005c7cd,j1939_dm9_capability_cal+3,,
 0x0005c94c,cruise_speed_default_cal,word,
 0x0005c994,boost_in_range_config,boost_in_range_config_t,
 0x0005c996,boost_in_range_config.load_threshold,,
@@ -1528,25 +1541,6 @@ address,name,type,comment
 0x003fafca,governor_pid_interp_state_c,word,
 0x003fafcc,protection_smoothing_state_ptr,pointer,
 0x003fafd0,protection_rpm_filter_working,dword,
-# protection_control_state_flags: 10-channel rolling 2-bit edge-detection register (dword)
-# Updated each call by cm848_processProtectionControlStateMachine (0x0002afd0):
-#   Step 1: (flags & 0x55555) * 2  → shifts current-state even bits → previous-state odd bits
-#   Step 2: OR in new current states at even bit positions
-# Each 2-bit pair [2n+1 : 2n] encodes {previous, current}:
-#   00 = steady inactive | 01 = rising edge (just became active)
-#   10 = falling edge (just became inactive) | 11 = steady active
-# Downstream reader pattern: (flags & 0xc0) == 0x80 → channel D falling edge
-# Bit layout (even=current, odd=previous for each channel):
-#   [1:0]   channel A — protection_enable control_word bit 7 OR governor_speed_request_state==4
-#   [3:2]   channel B — protection_enable control_word bit 7 OR governor_speed_request_state==2
-#   [5:4]   channel C — protection_enable mode_bits bit 3 OR protection_control_state_check_1()==1
-#   [7:6]   channel D — protection_enable control_word bit 7 (non-governor path)
-#   [9:8]   channel E — protection_enable control_word bit 7 OR governor_speed_request_state==3
-#   [11:10] channel F — protection_enable control_word bit 7
-#   [13:12] channel G — protection_enable reserved_02 bit 3
-#   [15:14] channel H — protection_enable system_enable_bits bit 7
-#   [17:16] channel I — protection_enable system_enable_bits bit 3
-#   [19:18] channel J — governor_speed_request_state == 1
 0x003fafd4,protection_control_state_flags,dword,
 0x003fafd8,governor_rpm_transition_flag,word,
 0x003fafda,governor_rpm_reference_integrator,dword,
@@ -2093,6 +2087,20 @@ address,name,type,comment
 0x003fca7c,BYTE_003fca7c,byte,
 0x003fcb24,BYTE_003fcb24,byte,
 0x003fcd9e,cruise_protection_ok,word,
+0x003fce7f,j1939_dm_scratch_byte0,byte,Scratch assembly buffer byte 0; copied to slot T payload before TX
+0x003fce80,j1939_dm_scratch_byte1,byte,
+0x003fce81,j1939_dm_scratch_byte2,byte,
+0x003fce82,j1939_dm_scratch_byte3,byte,
+0x003fce83,j1939_dm_scratch_byte4,byte,
+0x003fce85,j1939_dm7_spn_scratch,word,DM7 freeze frame SPN batch buffer; 3x word at +0 +2 +4
+0x003fce95,j1939_dm_last_pgn_processed,word,PGN dedup guard; updated on every return to prevent reprocessing same request
+0x003fce97,j1939_dm1_active_fault_count,byte,Count of active DTC entries for DM1 sub-index 1 response
+0x003fce98,j1939_dm7_spn_count,byte,Cumulative freeze frame SPN count across multi-call DM7 scans
+0x003fce99,j1939_dm7_scan_iterator,byte,Fault table scan position for freeze frame enumeration (0 to 0xaa)
+0x003fce9a,j1939_dm2_sub_response_state,byte,Multi-call state for DM2/DM9 multi-part responses (cycles 0 to 4)
+0x003fce9b,j1939_dm1_component_id_state,byte,Multi-call state for DM1 component ID string cycling (cycles 0 to 3)
+0x003fce9c,j1939_dm7_has_more_flag,byte,Nonzero if DM7 scan has more faults beyond current batch
+0x003fce9d,j1939_dm7_byte_copy_index,byte,Byte offset into DM7 scratch buffer for payload copy loop
 0x003fd070,protection_ema_output,dword,
 0x003fd1ac,BYTE_003fd1ac,byte,
 0x003fd1d8,sensor_scan_cycle_counter,word,
@@ -5125,6 +5133,8 @@ address,name,type,comment
 0x0040b3be,uds_received_data_buffer,byte,
 0x0040b3d4,j1939_request_state_flags,byte,
 0x0040b3d5,j1939_msg_slot_a_status,byte,
+0x0040b3d6,j1939_dm_slot_a_request_type,byte,DM type selector: 1=DM1 2=DM2 3=DM3/DM7 4=DM4 7=DM7 9=DM9
+0x0040b3d7,j1939_dm_slot_a_spn_index,byte,Sub-index into DM response table for current request
 0x0040b3dd,j1939_msg_slot_a_control,byte,
 0x0040b3de,j1939_msg_slot_a_pgn,word,
 0x0040b3e0,uds_target_service_id,byte,
@@ -5186,6 +5196,7 @@ address,name,type,comment
 0x0040b441,j1939_message_tx_state,byte,
 0x0040b442,can_rx_data_buffer,byte,
 0x0040b44e,uds_sequence_counter,byte,
+0x0040b44f,j1939_dm_response_length,byte,Payload byte count for slot T DM response message (2/4/5/6/7/8)
 0x0040b450,uds_response_type_code,byte,
 0x0040b451,j1939_uds_response_buffer,byte,
 0x0040b456,j1939_msg_slot_o_control,byte,
@@ -5207,6 +5218,14 @@ address,name,type,comment
 0x0040b476,j1939_msg_slot_r_pgn,word,
 0x0040b47c,j1939_msg_slot_s_control,byte,
 0x0040b47d,j1939_msg_slot_s_counter,word,
+0x0040b47f,j1939_dm_slot_t_node_id,byte,Source address byte; written at start of every DM response
+0x0040b480,j1939_dm_response_type,byte,Response type byte: 0x41=DM1 0x42=DM2 0x43=DM3 0x44=DM4 0x47=DM7 0x49=DM9
+0x0040b481,j1939_dm_response_spn_index,byte,Echo of requesting SPN sub-index
+0x0040b482,j1939_dm_response_byte0,byte,
+0x0040b483,j1939_dm_response_byte1,byte,
+0x0040b484,j1939_dm_response_byte2,byte,
+0x0040b485,j1939_dm_response_byte3,byte,
+0x0040b486,j1939_dm_response_byte4,byte,
 0x0040b488,j1939_msg_slot_t_control,byte,
 0x0040b489,j1939_msg_slot_t_counter,word,
 0x0040b48f,j1939_msg_slot_u_control,byte,
@@ -6099,3 +6118,22 @@ address,name,type,comment
 0xb1c28a6d,SUB_b1c28a6d,,
 0xb1da8a6f,SUB_b1da8a6f,,
 0xd2c40006,SUB_d2c40006,,
+# protection_control_state_flags: 10-channel rolling 2-bit edge-detection register (dword)
+# Updated each call by cm848_processProtectionControlStateMachine (0x0002afd0):
+#   Step 1: (flags & 0x55555) * 2  → shifts current-state even bits → previous-state odd bits
+#   Step 2: OR in new current states at even bit positions
+# Each 2-bit pair [2n+1 : 2n] encodes {previous, current}:
+#   00 = steady inactive | 01 = rising edge (just became active)
+#   10 = falling edge (just became inactive) | 11 = steady active
+# Downstream reader pattern: (flags & 0xc0) == 0x80 → channel D falling edge
+# Bit layout (even=current, odd=previous for each channel):
+#   [1:0]   channel A — protection_enable control_word bit 7 OR governor_speed_request_state==4
+#   [3:2]   channel B — protection_enable control_word bit 7 OR governor_speed_request_state==2
+#   [5:4]   channel C — protection_enable mode_bits bit 3 OR protection_control_state_check_1()==1
+#   [7:6]   channel D — protection_enable control_word bit 7 (non-governor path)
+#   [9:8]   channel E — protection_enable control_word bit 7 OR governor_speed_request_state==3
+#   [11:10] channel F — protection_enable control_word bit 7
+#   [13:12] channel G — protection_enable reserved_02 bit 3
+#   [15:14] channel H — protection_enable system_enable_bits bit 7
+#   [17:16] channel I — protection_enable system_enable_bits bit 3
+#   [19:18] channel J — governor_speed_request_state == 1
