@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Tue May 26 05:13:37 MDT 2026
+// Generated: Tue May 26 05:25:11 MDT 2026
 
 
 //
@@ -21492,7 +21492,7 @@ void cm848_initJ1939DmHandlerBuffer(int param_1,int param_2)
 void cm848_sendJ1939AcknowledgeMessage(j1939_rx_msg_t *request_msg,J1939_ACK_TYPE ack_type)
 
 {
-  j1939_ackm_msg.can_id = CONCAT13(((byte)j1939_source_address_a & 7) << 2,0xe8ff00);
+  j1939_ackm_msg.can_id = CONCAT13(((byte)j1939_ackm_priority & 7) << 2,0xe8ff00);
   j1939_ackm_msg.can_id._2_2_ = CONCAT11(0xff,request_msg->dest_address);
   j1939_ackm_msg.pgn_low = 0;
   j1939_ackm_msg.pgn_mid = request_msg->pgn_pf;
@@ -21515,7 +21515,7 @@ void cm848_sendJ1939NegativeAck(j1939_rx_msg_t *msg,J1939_ACK_TYPE ack_type)
 {
   tsc1_payload_t *ptVar1;
   
-  j1939_ackm_msg.can_id = CONCAT13(((byte)j1939_source_address_a & 7) << 2,0xe8ff00);
+  j1939_ackm_msg.can_id = CONCAT13(((byte)j1939_ackm_priority & 7) << 2,0xe8ff00);
   j1939_ackm_msg.can_id._2_2_ = CONCAT11(0xff,msg->dest_address);
   ptVar1 = msg->data_ptr;
   j1939_ackm_msg.pgn_low = ptVar1->control_byte;
@@ -22530,7 +22530,7 @@ LAB_00024648:
 void cm848_initPgn65265CruiseSpeedHandler(undefined4 param_1,undefined4 param_2,void *param_3)
 
 {
-  j1939_pgn65265_tx_header = CONCAT13(((byte)j1939_source_address_c & 7) << 2,0xfef100);
+  j1939_pgn65265_tx_header = CONCAT13(((byte)j1939_cruise_ctrl_priority & 7) << 2,0xfef100);
   j1939_pgn65265_tx_header = CONCAT31(j1939_pgn65265_tx_header._0_3_,(char)j1939_source_address);
   j1939_dm1_tx_length = 8;
   j1939_dm1_status_data_ptr = &j1939_dm1_status_byte;
@@ -22587,7 +22587,7 @@ LAB_000247e0:
 void initPgn65261CruiseControlSetupStruct(void)
 
 {
-  j1939_pgn65261_tx_header = CONCAT13(((byte)j1939_source_address_c & 7) << 2,0xfeed00);
+  j1939_pgn65261_tx_header = CONCAT13(((byte)j1939_cruise_ctrl_priority & 7) << 2,0xfeed00);
   j1939_pgn65261_tx_length = 8;
   j1939_pgn65261_data_ptr = &DAT_003fab0a;
   j1939_pgn65261_end_ptr = &DAT_003fab12;
