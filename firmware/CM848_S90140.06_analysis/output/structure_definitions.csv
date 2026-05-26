@@ -881,7 +881,7 @@ etc1_governor_state_t,0x0040adf8,governor_mode_transition_counter,word,2,Counter
 etc1_governor_state_t,0x0040adf8,_pad,byte,1,Alignment padding,,verified
 etc1_governor_state_t,0x0040adf8,etc1_spn1482_source_address,byte,1,J1939 source address of active ETC1 sender,,verified
 etc1_governor_state_t,0x0040adf8,etc1_config_entry_ptr,pointer,4,short* into etc1 config table at DAT_0005c3b4 (10 entries x 20 bytes),,verified
-etc1_governor_state_t,0x0040adf8,etc1_active_config_ptr,pointer,4,short* to primary config entry (accepts ETC1 with lower priority),,verified
+etc1_governor_state_t,0x0040adf8,etc1_active_config_ptr,etc1_config_entry_t*,4,Pointer to active calibration entry in etc1_config_entry_t table,,verified
 etc1_governor_state_t,0x0040adf8,etc1_secondary_config_ptr,pointer,4,short* to secondary config entry (used for multi-frame response timers),,verified
 etc1_governor_state_t,0x0040adf8,etc1_torque_limit_active,word,2,1=ETC1 torque limit currently limiting fuel,,verified
 etc1_governor_state_t,0x0040adf8,etc1_message_timeout,word,2,Countdown: fires if no ETC1 message received within window,,verified

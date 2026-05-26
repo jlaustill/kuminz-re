@@ -438,7 +438,7 @@ address,name,type,comment
 0x0005c38c,etc1_torque_mode_timeout_cal,word,
 0x0005c398,fault_severity_table_ptr,word,
 0x0005c3b4,etc1_config_entry_t_0005c3b4,etc1_config_entry_t,
-0x0005c3b6,etc1_config_entry_t_0005c3b4.source_address_filter,,
+0x0005c3b6,etc1_config_entry_t.conflict_0005c3b4.source_address_filter,,
 0x0005c47c,j1939_dm_feature_mode,word,
 0x0005c47e,cal_fuel_operation_mode_1_en,word,
 0x0005c556,j1939_fuel_table_xaxis_cal,word,

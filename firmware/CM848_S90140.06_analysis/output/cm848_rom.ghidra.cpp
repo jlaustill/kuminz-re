@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon May 25 17:54:07 MDT 2026
+// Generated: Mon May 25 18:30:40 MDT 2026
 
 
 //
@@ -20616,11 +20616,13 @@ void torqueControlModeHandler(j1939_rx_msg_t *msg)
   if (msg->data_length != 8) {
     return;
   }
-  etc1_message_t_003fa982.control_word = *msg->data_ptr;
+  etc1_message_t_003fa982.control_word = msg->data_ptr->control_byte;
   control_mode = etc1_message_t_003fa982.control_word & 3;
   priority_bits = etc1_message_t_003fa982.control_word & 0x30;
-  etc1_message_t_003fa982.requested_speed = CONCAT11(msg->data_ptr[2],msg->data_ptr[1]);
-  etc1_message_t_003fa982.requested_torque = msg->data_ptr[3];
+  etc1_message_t_003fa982.requested_speed =
+       CONCAT11((char)msg->data_ptr->requested_speed,*(undefined1 *)&msg->data_ptr->requested_speed)
+  ;
+  etc1_message_t_003fa982.requested_torque = msg->data_ptr->requested_torque;
   source_address = msg->source_address;
   if (control_mode == 0) {
     cm848_removeCoolantCalEntryByParams(1,source_address);
@@ -20677,8 +20679,8 @@ void torqueControlModeHandler(j1939_rx_msg_t *msg)
       return;
     }
   }
-  j1939_tsc1_override_state.etc1_active_config_ptr = j1939_tsc1_override_state.etc1_config_entry_ptr
-  ;
+  j1939_tsc1_override_state.etc1_active_config_ptr =
+       (etc1_config_entry_t *)j1939_tsc1_override_state.etc1_config_entry_ptr;
 accept_etc1_command:
   _etc1_control_word_cached = (ushort)etc1_message_t_003fa982.control_word;
   j1939_tsc1_override_state.etc1_active_state = 1;
@@ -20692,7 +20694,7 @@ accept_etc1_command:
   }
   else if (control_mode == 1) {
     j1939_tsc1_override_state.etc1_speed_error_timeout =
-         *(short *)(j1939_tsc1_override_state.etc1_active_config_ptr + 4) + 1;
+         (j1939_tsc1_override_state.etc1_active_config_ptr)->speed_error_timeout_mode1 + 1;
     j1939_tsc1_override_state.governor_mode = 1;
     _j1939_governor_source_index = cm848_lookupJ1939SourceAddressIndex(msg->source_address);
     j1939_tsc1_override_state.etc1_control_flags = 1;
@@ -20706,7 +20708,7 @@ accept_etc1_command:
   }
   else if (control_mode == 2) {
     j1939_tsc1_override_state.etc1_speed_error_timeout =
-         *(short *)(j1939_tsc1_override_state.etc1_active_config_ptr + 8) + 1;
+         (j1939_tsc1_override_state.etc1_active_config_ptr)->speed_error_timeout_mode2 + 1;
     j1939_tsc1_override_state.governor_mode = 2;
     _j1939_governor_source_index = cm848_lookupJ1939SourceAddressIndex(msg->source_address);
     j1939_tsc1_override_state.etc1_control_flags = 0;
@@ -20723,7 +20725,7 @@ accept_etc1_command:
   }
   else if (control_mode == 3) {
     j1939_tsc1_override_state.etc1_speed_error_timeout =
-         *(short *)(j1939_tsc1_override_state.etc1_active_config_ptr + 0xc) + 1;
+         (j1939_tsc1_override_state.etc1_active_config_ptr)->speed_error_timeout_mode3 + 1;
     j1939_tsc1_override_state.governor_mode = 3;
     _j1939_governor_source_index = cm848_lookupJ1939SourceAddressIndex(msg->source_address);
     j1939_tsc1_override_state.etc1_control_flags = 0;
@@ -20790,7 +20792,7 @@ void cm848_processGovernorSpeedControlRequest(void)
       }
     }
     j1939_tsc1_override_state.etc1_active_config_ptr =
-         j1939_tsc1_override_state.etc1_config_entry_ptr;
+         (etc1_config_entry_t *)j1939_tsc1_override_state.etc1_config_entry_ptr;
   }
   _etc1_control_word_cached = (ushort)*unaff_r31;
   etc1_message_t_003fa982.priority_byte = (byte)unaff_r26;
@@ -20804,7 +20806,7 @@ void cm848_processGovernorSpeedControlRequest(void)
   }
   else if (unaff_r28 == 1) {
     j1939_tsc1_override_state.etc1_speed_error_timeout =
-         *(short *)(j1939_tsc1_override_state.etc1_active_config_ptr + 4) + 1;
+         (j1939_tsc1_override_state.etc1_active_config_ptr)->speed_error_timeout_mode1 + 1;
     *unaff_r29 = 1;
     _j1939_governor_source_index =
          cm848_lookupJ1939SourceAddressIndex(*(undefined1 *)(unaff_r30 + 3));
@@ -20818,7 +20820,7 @@ void cm848_processGovernorSpeedControlRequest(void)
   }
   else if (unaff_r28 == 2) {
     j1939_tsc1_override_state.etc1_speed_error_timeout =
-         *(short *)(j1939_tsc1_override_state.etc1_active_config_ptr + 8) + 1;
+         (j1939_tsc1_override_state.etc1_active_config_ptr)->speed_error_timeout_mode2 + 1;
     *unaff_r29 = 2;
     _j1939_governor_source_index =
          cm848_lookupJ1939SourceAddressIndex(*(undefined1 *)(unaff_r30 + 3));
@@ -20836,7 +20838,7 @@ void cm848_processGovernorSpeedControlRequest(void)
   }
   else if (unaff_r28 == 3) {
     j1939_tsc1_override_state.etc1_speed_error_timeout =
-         *(short *)(j1939_tsc1_override_state.etc1_active_config_ptr + 0xc) + 1;
+         (j1939_tsc1_override_state.etc1_active_config_ptr)->speed_error_timeout_mode3 + 1;
     *unaff_r29 = 3;
     _j1939_governor_source_index =
          cm848_lookupJ1939SourceAddressIndex(*(undefined1 *)(unaff_r30 + 3));
@@ -20874,8 +20876,8 @@ void cm848_processGovernorSpeedRequest(void)
   int unaff_r30;
   byte *unaff_r31;
   
-  *(short *)(in_r12 + -0x51de) =
-       *(short *)(j1939_tsc1_override_state.etc1_active_config_ptr + 4) + 1;
+  *(word *)(in_r12 + -0x51de) =
+       (j1939_tsc1_override_state.etc1_active_config_ptr)->speed_error_timeout_mode1 + 1;
   *unaff_r29 = 1;
   _j1939_governor_source_index = cm848_lookupJ1939SourceAddressIndex(*(undefined1 *)(unaff_r30 + 3))
   ;
@@ -20939,7 +20941,8 @@ void cm848_j1939DispatchPgnHandler(j1939_rx_msg_t *msg)
     bVar1 = 0;
     if (engine_state_seq_counter != 0) {
       do {
-        if ((pjVar2->pgn_byte_0 == *msg->data_ptr) && (pjVar2->pgn_byte_1 == msg->data_ptr[1])) {
+        if ((pjVar2->pgn_byte_0 == msg->data_ptr->control_byte) &&
+           (pjVar2->pgn_byte_1 == *(byte *)&msg->data_ptr->requested_speed)) {
           j1939_dm1_active_flag = 1;
           (*(code *)pjVar2->handler_func)(msg);
           break;
@@ -21230,13 +21233,13 @@ void cm848_j1939ProcessGovernorRequest(j1939_rx_msg_t *msg)
   if (msg->data_length != 8) {
     return;
   }
-  tsc1_rx_byte_0 = *msg->data_ptr;
+  tsc1_rx_byte_0 = msg->data_ptr->control_byte;
   if ((tsc1_rx_byte_0 & 3) == 1) {
     return;
   }
   bVar2 = tsc1_rx_byte_0 & 3;
   bVar5 = tsc1_rx_byte_0 & 0x30;
-  tsc1_rx_byte_3 = msg->data_ptr[3];
+  tsc1_rx_byte_3 = msg->data_ptr->requested_torque;
   bVar1 = msg->source_address;
   if (((governor_feature_config_word & 0x1000) == 0) && (bVar1 == j1939_ecu_source_address_cal)) {
     return;
@@ -25477,7 +25480,8 @@ LAB_00027800:
       iVar10 = 10;
     }
     j1939_tsc1_override_state.etc1_activation_confirm_timer =
-         *(short *)(j1939_tsc1_override_state.etc1_active_config_ptr + iVar10) + 1;
+         *(short *)((int)&(j1939_tsc1_override_state.etc1_active_config_ptr)->match_key + iVar10) +
+         1;
     bVar5 = true;
   }
 LAB_00027848:
@@ -25818,7 +25822,8 @@ LAB_00027800:
       iVar4 = 10;
     }
     j1939_tsc1_override_state.etc1_activation_confirm_timer =
-         *(short *)(j1939_tsc1_override_state.etc1_active_config_ptr + iVar4) + 1;
+         *(short *)((int)&(j1939_tsc1_override_state.etc1_active_config_ptr)->match_key + iVar4) + 1
+    ;
     bVar1 = true;
   }
 LAB_00027848:

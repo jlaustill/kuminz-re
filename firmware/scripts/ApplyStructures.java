@@ -25,7 +25,7 @@ public class ApplyStructures extends GhidraScript {
 
     private DataTypeManager dtm;
     private Listing listing;
-    private Map<String, StructureDataType> createdStructures = new HashMap<>();
+    private Map<String, Structure> createdStructures = new HashMap<>();
     private Category structCategory;
 
     // Map CSV type names to Ghidra data types
@@ -197,39 +197,45 @@ public class ApplyStructures extends GhidraScript {
         int txId = dtm.startTransaction("Create Structures");
 
         try {
+            // Pass 1: create empty shells for every struct type so that forward
+            // references (e.g. etc1_governor_state_t has a field typed etc1_config_entry_t*
+            // but etc1_config_entry_t hasn't been processed yet) resolve correctly in Pass 2.
             for (Map.Entry<String, List<FieldDef>> entry : structDefs.entrySet()) {
                 String structName = entry.getKey();
                 List<FieldDef> fields = entry.getValue();
 
-                // Calculate total structure size from fields
-                int totalSize = 0;
-                for (FieldDef field : fields) {
-                    totalSize += field.size;
+                int totalSize = calculateStructureSizeFromFields(fields);
+                if (totalSize <= 0) totalSize = 1;
+
+                // Remove canonical entry and any .conflict leftovers from prior runs
+                DataType existing = dtm.getDataType(structCategory.getCategoryPath(), structName);
+                if (existing != null) dtm.remove(existing, monitor);
+                DataType conflictExisting = dtm.getDataType(structCategory.getCategoryPath(), structName + ".conflict");
+                if (conflictExisting != null) dtm.remove(conflictExisting, monitor);
+
+                StructureDataType shell = new StructureDataType(structCategory.getCategoryPath(),
+                                                                 structName, totalSize, dtm);
+                DataType addedShell = dtm.addDataType(shell, DataTypeConflictHandler.DEFAULT_HANDLER);
+                if (addedShell instanceof Structure) {
+                    createdStructures.put(structName, (Structure) addedShell);
                 }
+            }
 
-                if (totalSize == 0) {
-                    // Try to calculate from largest offset + size
-                    for (FieldDef field : fields) {
-                        if (!field.address.isEmpty()) {
-                            // Has specific address - this is an instance, not contributing to type size
-                            continue;
-                        }
-                    }
-                    // Default minimum size
-                    if (totalSize == 0) {
-                        totalSize = calculateStructureSizeFromFields(fields);
-                    }
-                }
+            // Pass 2: mutate each DTM-managed shell in place via replaceAtOffset.
+            // This preserves the shell's database key so any Pointer32->shell
+            // types built during this pass remain valid even after the shell is
+            // populated with real field types. deleteAll() and addDataType with
+            // REPLACE_HANDLER both change the key (or remove the type entirely),
+            // breaking cross-struct pointer references.
+            for (Map.Entry<String, List<FieldDef>> entry : structDefs.entrySet()) {
+                String structName = entry.getKey();
+                List<FieldDef> fields = entry.getValue();
 
-                if (totalSize <= 0) {
-                    totalSize = 1; // Minimum size
-                }
+                // Use the object stored by Pass 1 (guaranteed to be the DTM-managed
+                // shell, regardless of what name addDataType gave it).
+                Structure struct = createdStructures.get(structName);
+                if (struct == null) continue;
 
-                // Create the structure
-                StructureDataType struct = new StructureDataType(structCategory.getCategoryPath(),
-                                                                  structName, totalSize, dtm);
-
-                // Add fields
                 int offset = 0;
                 for (FieldDef field : fields) {
                     if (field.size <= 0) continue;
@@ -237,10 +243,8 @@ public class ApplyStructures extends GhidraScript {
                     DataType fieldType = getDataType(field.typeName, field.size);
                     if (fieldType != null) {
                         try {
-                            // Clear existing bytes at offset
                             struct.replaceAtOffset(offset, fieldType, field.size, field.name, field.comment);
                         } catch (Exception e) {
-                            // If replace fails, try insert
                             try {
                                 struct.insertAtOffset(offset, fieldType, field.size, field.name, field.comment);
                             } catch (Exception e2) {
@@ -251,13 +255,6 @@ public class ApplyStructures extends GhidraScript {
                     offset += field.size;
                 }
 
-                // Add to data type manager
-                DataType existing = dtm.getDataType(structCategory.getCategoryPath(), structName);
-                if (existing != null) {
-                    dtm.remove(existing, monitor);
-                }
-
-                dtm.addDataType(struct, DataTypeConflictHandler.REPLACE_HANDLER);
                 createdStructures.put(structName, struct);
                 created++;
             }
@@ -373,7 +370,7 @@ public class ApplyStructures extends GhidraScript {
                 String structName = entry.getValue();
 
                 Address addr = toAddr(addrValue);
-                StructureDataType struct = createdStructures.get(structName);
+                Structure struct = createdStructures.get(structName);
 
                 if (struct != null && addr != null) {
                     try {
