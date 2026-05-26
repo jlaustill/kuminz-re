@@ -336,9 +336,12 @@ public class ApplyStructures extends GhidraScript {
 
         // Create array if size is larger than base type
         if (dt != null && size > dt.getLength()) {
-            int count = size / dt.getLength();
+            int count = ScriptUtils.calculateArrayCount(size, dt.getLength());
             if (count > 1) {
                 dt = new ArrayDataType(dt, count, dt.getLength());
+            } else if (count < 0) {
+                // size not evenly divisible — fall back to byte array to avoid silent truncation
+                dt = new ArrayDataType(ByteDataType.dataType, size, 1);
             }
         }
 

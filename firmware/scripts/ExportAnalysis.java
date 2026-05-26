@@ -168,7 +168,7 @@ public class ExportAnalysis extends GhidraScript {
                     String line;
                     while ((line = reader.readLine()) != null) {
                         if (line.startsWith("#")) continue;
-                        String[] parts = line.split(",", 4);
+                        String[] parts = ScriptUtils.parseGlobalVariableLine(line);
                         String addr = parts[0].trim();
                         if (addr.equals("address")) continue;
                         if (parts.length >= 3) existingTypes.put(addr, parts[2].trim());

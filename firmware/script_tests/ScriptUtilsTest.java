@@ -214,6 +214,105 @@ class ScriptUtilsTest {
         assertEquals("J90350.00", ScriptUtils.extractFirmwareName("J90350.00"));
     }
 
+    // ── parseFunctionRenameLine ───────────────────────────────────────────────
+    // Verifies that the 3-field limit keeps unquoted commas in plate comments whole.
+    // Replacing split(",",3) with parseCSVLine would break this — do not "fix" it.
+
+    @Test void parseFunctionRenameLine_twoFields() {
+        String[] r = ScriptUtils.parseFunctionRenameLine("0x00001234,my_func");
+        assertEquals(2, r.length);
+        assertEquals("0x00001234", r[0]);
+        assertEquals("my_func",    r[1]);
+    }
+
+    @Test void parseFunctionRenameLine_threeFields() {
+        String[] r = ScriptUtils.parseFunctionRenameLine("0x00001234,my_func,plate comment");
+        assertEquals(3, r.length);
+        assertEquals("plate comment", r[2]);
+    }
+
+    @Test void parseFunctionRenameLine_commaInPlateComment_preservedWhole() {
+        // If we used line.split(",") without limit, "reads RPM, not torque" would be split.
+        String[] r = ScriptUtils.parseFunctionRenameLine("0x00001234,my_func,reads RPM, not torque");
+        assertEquals(3, r.length);
+        assertEquals("reads RPM, not torque", r[2]);
+    }
+
+    @Test void parseFunctionRenameLine_emptyComment() {
+        String[] r = ScriptUtils.parseFunctionRenameLine("0x00001234,my_func,");
+        assertEquals(3, r.length);
+        assertEquals("", r[2]);
+    }
+
+    // ── parseGlobalVariableLine ───────────────────────────────────────────────
+    // Verifies that the 4-field limit keeps unquoted commas in comments whole,
+    // and that the type field (index 2) is never corrupted by a comma in the comment.
+
+    @Test void parseGlobalVariableLine_twoFields() {
+        String[] r = ScriptUtils.parseGlobalVariableLine("0x0040b7ba,engine_rpm");
+        assertEquals(2, r.length);
+    }
+
+    @Test void parseGlobalVariableLine_threeFields() {
+        String[] r = ScriptUtils.parseGlobalVariableLine("0x0040b7ba,engine_rpm,dword");
+        assertEquals(3, r.length);
+        assertEquals("dword", r[2]);
+    }
+
+    @Test void parseGlobalVariableLine_fourFields() {
+        String[] r = ScriptUtils.parseGlobalVariableLine("0x0040b7ba,engine_rpm,dword,scale factor");
+        assertEquals(4, r.length);
+        assertEquals("dword",        r[2]);
+        assertEquals("scale factor", r[3]);
+    }
+
+    @Test void parseGlobalVariableLine_commaInComment_preservedWhole() {
+        // split(",", -1) (old ImportAnalysis code) would produce 5 parts here; type at [2]
+        // would still be correct but the comment field would be split.
+        String[] r = ScriptUtils.parseGlobalVariableLine("0x0040b7ba,engine_rpm,dword,scale: RPM, not torque");
+        assertEquals(4, r.length);
+        assertEquals("dword",                r[2]);
+        assertEquals("scale: RPM, not torque", r[3]);
+    }
+
+    @Test void parseGlobalVariableLine_typeFieldUnaffectedByCommaInComment() {
+        // Regression guard: the named type must survive even when a comment has commas.
+        // This is the exact scenario from ExportAnalysis's re-read phase.
+        String[] r = ScriptUtils.parseGlobalVariableLine("0x0040b7ba,engine_rpm,J1939_ACK_TYPE,some, comment");
+        assertEquals("J1939_ACK_TYPE", r[2]);
+    }
+
+    // ── calculateArrayCount ───────────────────────────────────────────────────
+    // Bug: old ApplyStructures code used size/dt.getLength() (integer division),
+    // silently truncating the last bytes when size is not evenly divisible.
+
+    @Test void calculateArrayCount_exactDivisible() {
+        assertEquals(3, ScriptUtils.calculateArrayCount(6, 2));
+        assertEquals(4, ScriptUtils.calculateArrayCount(8, 2));
+        assertEquals(2, ScriptUtils.calculateArrayCount(8, 4));
+    }
+
+    @Test void calculateArrayCount_notDivisible_returnsNegOne() {
+        // Old code: 5/2 = 2 (array of 4 bytes), silently dropping 1 byte.
+        assertEquals(-1, ScriptUtils.calculateArrayCount(5, 2));
+        assertEquals(-1, ScriptUtils.calculateArrayCount(7, 4));
+        assertEquals(-1, ScriptUtils.calculateArrayCount(3, 2));
+    }
+
+    @Test void calculateArrayCount_byteBase_alwaysDivisible() {
+        // byte (size 1) divides everything — fallback-to-byte-array path never needed
+        assertEquals(7, ScriptUtils.calculateArrayCount(7, 1));
+        assertEquals(5, ScriptUtils.calculateArrayCount(5, 1));
+    }
+
+    @Test void calculateArrayCount_zeroBaseSize_returnsNegOne() {
+        assertEquals(-1, ScriptUtils.calculateArrayCount(5, 0));
+    }
+
+    @Test void calculateArrayCount_negativeBaseSize_returnsNegOne() {
+        assertEquals(-1, ScriptUtils.calculateArrayCount(5, -1));
+    }
+
     // ── selectEnumSize ────────────────────────────────────────────────────────
     // Bug: comment said "1, 2, 4, or 8 bytes" but clamp allowed 3, 5, 6, 7 through to Ghidra.
 

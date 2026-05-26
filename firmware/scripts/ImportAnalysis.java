@@ -118,7 +118,7 @@ public class ImportAnalysis extends GhidraScript {
                 }
 
                 // Parse: address,name[,comment]
-                String[] parts = line.split(",", 3);
+                String[] parts = ScriptUtils.parseFunctionRenameLine(line);
                 if (parts.length < 2) {
                     continue;
                 }
@@ -208,7 +208,7 @@ public class ImportAnalysis extends GhidraScript {
                 }
 
                 // Parse: address,name,type,comment
-                String[] parts = line.split(",", -1);  // -1 to keep empty trailing fields
+                String[] parts = ScriptUtils.parseGlobalVariableLine(line);
                 if (parts.length < 2) {
                     continue;
                 }

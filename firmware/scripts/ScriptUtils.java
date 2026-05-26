@@ -135,6 +135,41 @@ public class ScriptUtils {
         return 8; // clamp; Ghidra has no enum type larger than 8 bytes
     }
 
+    // ── CSV row parsers ──────────────────────────────────────────────────────
+
+    /**
+     * Splits a function_renames.csv data row into [address, name, plateComment].
+     * plateComment is the 3rd column and may contain unquoted commas — split(",", 3)
+     * absorbs everything from the 3rd delimiter onward into a single field.
+     */
+    public static String[] parseFunctionRenameLine(String line) {
+        return line.split(",", 3);
+    }
+
+    /**
+     * Splits a global_variables.csv data row into [address, name, type, comment].
+     * comment is the 4th column and may contain unquoted commas — split(",", 4)
+     * absorbs everything from the 4th delimiter onward into a single field.
+     */
+    public static String[] parseGlobalVariableLine(String line) {
+        return line.split(",", 4);
+    }
+
+    // ── Array count ──────────────────────────────────────────────────────────
+
+    /**
+     * Returns the element count for an array field, or -1 if {@code fieldSize}
+     * is not evenly divisible by {@code baseTypeSize}.
+     *
+     * Callers should fall back to a byte array when -1 is returned rather than
+     * using integer-truncated division, which silently drops trailing bytes.
+     */
+    public static int calculateArrayCount(int fieldSize, int baseTypeSize) {
+        if (baseTypeSize <= 0) return -1;
+        if (fieldSize % baseTypeSize != 0) return -1;
+        return fieldSize / baseTypeSize;
+    }
+
     // ── Firmware name ────────────────────────────────────────────────────────
 
     /**

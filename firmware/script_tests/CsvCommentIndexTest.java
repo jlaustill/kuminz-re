@@ -124,6 +124,20 @@ class CsvCommentIndexTest {
             () -> idx.getHeaderComments().add("# injected"));
     }
 
+    @Test void rowComment_keyNotCorruptedByCommaInDataRow() {
+        // CsvCommentIndex keys comment blocks by the first CSV field (the address).
+        // A comma inside a later field (e.g. a comment column) must not shift the key.
+        CsvCommentIndex idx = CsvCommentIndex.fromLines(lines(
+            "address,name,type,comment",
+            "# scale: RPM, not torque",
+            "0x0040b7ba,engine_rpm,dword,scale: RPM, not torque"
+        ));
+        assertEquals(
+            List.of("# scale: RPM, not torque"),
+            idx.getCommentsBefore("0x0040b7ba")
+        );
+    }
+
     @Test void trailingComments_returnedListIsUnmodifiable() {
         CsvCommentIndex idx = CsvCommentIndex.fromLines(lines(
             "address,name",
