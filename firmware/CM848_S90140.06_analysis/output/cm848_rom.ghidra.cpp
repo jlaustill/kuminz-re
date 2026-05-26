@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Tue May 26 09:36:25 MDT 2026
+// Generated: Tue May 26 11:41:57 MDT 2026
 
 
 //
@@ -22888,24 +22888,6 @@ void cm848_initPgn65227Dm2Handler(void)
 
 
 //
-// Function: cm848_initPgn65227Dm2ResponseHandler @ 0x00025050
-//
-
-void cm848_initPgn65227Dm2ResponseHandler(int param_1,int param_2)
-
-{
-  int in_r11;
-  
-  *(char *)(param_2 + 3) = (char)*(undefined2 *)(in_r11 + -0x528c);
-  *(undefined1 *)(param_1 + 1) = 0xff;
-  *(byte *)(param_1 + 5) = *(byte *)(param_1 + 5) & 0x7f | 0x80;
-  cm848_j1939RegisterPgnHandler(0xfecb,cm848_j1939HandlePgn65227Dm2PreviousDtc);
-  return;
-}
-
-
-
-//
 // Function: cm848_initPgn65229Dm4Handler @ 0x00025094
 //
 
@@ -23616,28 +23598,6 @@ void cm848_initPgn61443Eec2Handler(void)
 
 
 //
-// Function: cm848_j1939SendPgn61443_F003_AcceleratorPedalEec2 @ 0x00025d88
-//
-
-void cm848_j1939SendPgn61443_F003_AcceleratorPedalEec2(byte *param_1)
-
-{
-  byte in_r10;
-  
-  *param_1 = (in_r10 & 7) << 2 | *param_1 & 0xe3;
-  param_1[3] = (byte)j1939_source_address;
-  param_1[4] = 0;
-  param_1[5] = 5;
-  *(byte **)(param_1 + 6) = &j1939_status_byte_b;
-  *(undefined **)(param_1 + 10) = &DAT_003fadbe;
-  emptyStubFunction3();
-  cm848_j1939RegisterPgnHandler(0xf003,j1939HandlePgn61443Eec2);
-  return;
-}
-
-
-
-//
 // Function: cm848_j1939SendOilPressureStatus @ 0x00025de8
 //
 
@@ -23719,28 +23679,6 @@ void cm848_initJ1939FluidLevelPressureBuffer(void)
   pbRam003fade7 = &j1939_engine_load_byte;
   puRam003fadeb = &DAT_003fadd8;
   j1939_pgn65263_tx_header = CONCAT31(j1939_pgn65263_tx_header._0_3_,(char)j1939_source_address);
-  DAT_003fadda = 0xff;
-  j1939_diag_response_word_b = 0xffff;
-  DAT_003fade0 = 0xff;
-  return;
-}
-
-
-
-//
-// Function: cm848_initPgn65263FluidLevelPressureHandler @ 0x00025fd8
-//
-
-void cm848_initPgn65263FluidLevelPressureHandler(undefined4 param_1,undefined1 *param_2)
-
-{
-  undefined1 in_r0;
-  
-  *param_2 = in_r0;
-  *(undefined2 *)(param_2 + 4) = 8;
-  *(byte **)(param_2 + 6) = &j1939_engine_load_byte;
-  *(undefined **)(param_2 + 10) = &DAT_003fadd8;
-  param_2[3] = (char)j1939_source_address;
   DAT_003fadda = 0xff;
   j1939_diag_response_word_b = 0xffff;
   DAT_003fade0 = 0xff;
@@ -24213,27 +24151,6 @@ void cm848_initJ1939InletExhaustConditionsBuffer(void)
   uRam003fae4a = 0xff;
   uRam003fae4b = 0xffff;
   uRam003fae4d = 0xff;
-  return;
-}
-
-
-
-//
-// Function: cm848_initPgn65270InletExhaustHandler @ 0x0002661c
-//
-
-void cm848_initPgn65270InletExhaustHandler(undefined1 *param_1,int param_2)
-
-{
-  undefined4 in_r11;
-  
-  *(undefined4 *)(param_2 + 10) = in_r11;
-  *(char *)(param_2 + 3) = (char)j1939_source_address;
-  *param_1 = 0xff;
-  param_1[3] = 0xff;
-  param_1[4] = 0xff;
-  *(undefined2 *)(param_1 + 5) = 0xffff;
-  param_1[7] = 0xff;
   return;
 }
 
@@ -33603,6 +33520,23 @@ void cm848_j1939QueueEngineStatus(void)
 
 
 //
+// Function: cm848_txTimerF_updateFaultLampStatus @ 0x000367f0
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+void cm848_txTimerF_updateFaultLampStatus(void)
+
+{
+  fault_report_parameter_byte = (byte)_DAT_003fb31f;
+  j1939_lamp_status_cache._1_1_ = (byte)_DAT_003fb321 & 7 | (byte)(_DAT_003fb321 >> 2) & 0x38;
+  j1939_fault_occurrence_count = (byte)_DAT_003fb323;
+  return;
+}
+
+
+
+//
 // Function: cm848_j1939SetupTransportSession @ 0x0003682c
 //
 
@@ -33624,6 +33558,30 @@ void cm848_j1939QueuePeriodicMessage2(void)
 
 {
   cm848_j1939QueueTransmitMessage(&DAT_003fb2d3,1);
+  return;
+}
+
+
+
+//
+// Function: cm848_txTimerD_checkProtectionInhibit @ 0x00036898
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+void cm848_txTimerD_checkProtectionInhibit(void)
+
+{
+  protection_inhibit_flag = _DAT_003fb2e9 & 2 ^ 2;
+  if (protection_inhibit_flag == 0) {
+    if ((_DAT_003fb341 != 0) && (_DAT_003fb341 = _DAT_003fb341 + -1, _DAT_003fb341 == 0)) {
+      governor_inhibit_flag = 0;
+    }
+  }
+  else {
+    governor_inhibit_flag = 1;
+    _DAT_003fb341 = _DAT_00408744;
+  }
   return;
 }
 
@@ -33733,6 +33691,21 @@ void cm848_j1939QueueStatusMessage(void)
 
 
 //
+// Function: cm848_txTimer1_copyQueueStatus @ 0x00036bc4
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+void cm848_txTimer1_copyQueueStatus(void)
+
+{
+  _DAT_0040b222 = _DAT_003fb33d;
+  return;
+}
+
+
+
+//
 // Function: cm848_j1939QueuePeriodicMessage1 @ 0x00036bd8
 //
 
@@ -33740,6 +33713,21 @@ void cm848_j1939QueuePeriodicMessage1(void)
 
 {
   cm848_j1939QueueTransmitMessage(&DAT_003fb26f,1);
+  return;
+}
+
+
+
+//
+// Function: cm848_txTimerA_updateEngineIdleMode @ 0x00036c04
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+void cm848_txTimerA_updateEngineIdleMode(void)
+
+{
+  engine_idle_mode_flags = _DAT_003fb285 & 0xff;
   return;
 }
 
@@ -33943,7 +33931,7 @@ void cm848_initPeriodicTimerChannel6(void)
   j1939_tx_data_block_d_ptr = &DAT_0005772c;
   j1939_msg_descriptor_d_ptr = &j1939_msg_descriptor_table;
   j1939_tx_frame_d_payload_ptr = &DAT_003fb2e9;
-  j1939_tx_frame_d_handler_ptr = &LAB_00036898;
+  j1939_tx_frame_d_handler_ptr = cm848_txTimerD_checkProtectionInhibit;
   return;
 }
 
@@ -33961,7 +33949,7 @@ void cm848_initPeriodicTimerChannel5(void)
   j1939_tx_data_block_f_ptr = (undefined *)&j1939_tx_frame_g_byte_0;
   j1939_tx_frame_f_payload_ptr = &DAT_003fb31f;
   j1939_msg_descriptor_f_ptr = &j1939_msg_descriptor_table;
-  j1939_tx_frame_f_handler_ptr = &LAB_000367f0;
+  j1939_tx_frame_f_handler_ptr = cm848_txTimerF_updateFaultLampStatus;
   return;
 }
 
@@ -33997,7 +33985,7 @@ void cm848_initPeriodicTimerChannel1(void)
   j1939_msg_data_ptr_b32b = (undefined *)&j1939_msg_payload_snapshot;
   j1939_descriptor_table_ptr = &j1939_msg_descriptor_table;
   j1939_msg_data_ptr_b333 = &DAT_003fb33d;
-  j1939_callback_ptr_b337 = &LAB_00036bc4;
+  j1939_callback_ptr_b337 = cm848_txTimer1_copyQueueStatus;
   j1939_message_word_b220 = 0x2e00;
   return;
 }
@@ -34016,7 +34004,7 @@ void cm848_initPeriodicTimerChannel2(void)
   j1939_tx_data_block_a_ptr = &DAT_0005772a;
   j1939_msg_descriptor_a_ptr = &j1939_msg_descriptor_table;
   j1939_tx_frame_a_payload_ptr = &DAT_003fb285;
-  j1939_tx_frame_a_handler_ptr = &LAB_00036c04;
+  j1939_tx_frame_a_handler_ptr = cm848_txTimerA_updateEngineIdleMode;
   return;
 }
 

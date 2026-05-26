@@ -511,6 +511,21 @@ cmd_help() {
 }
 
 # Dispatch command (called from firmware-specific script)
+cmd_deletefuncs() {
+    if [ $# -eq 0 ]; then
+        print_error "Usage: $0 deletefuncs <addr> [addr ...]"
+        print_error "Removes spurious Ghidra function records at mid-code addresses."
+        exit 1
+    fi
+    print_header "DELETING SPURIOUS FUNCTIONS"
+    check_ghidra
+    check_project
+    echo "Addresses: $*"
+    echo ""
+    run_script DeleteFunctions.java "$@"
+    print_success "Functions deleted — run 'export' to update decompilation."
+}
+
 dispatch_command() {
     local cmd="${1:-help}"
     shift || true
@@ -531,6 +546,7 @@ dispatch_command() {
         arrays)     cmd_arrays ;;
         decompile)      cmd_decompile "$@" ;;
         forceanalyze)   cmd_forceanalyze "$@" ;;
+        deletefuncs)    cmd_deletefuncs "$@" ;;
         status)     cmd_status ;;
         help|--help|-h) cmd_help ;;
         *)
