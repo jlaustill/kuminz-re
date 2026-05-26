@@ -2,7 +2,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SCRIPTS_DIR="$(dirname "$SCRIPT_DIR")"
+SCRIPTS_DIR="$(dirname "$SCRIPT_DIR")/scripts"
 JUNIT_JAR="$SCRIPT_DIR/junit-platform-console-standalone.jar"
 BUILD_DIR="$SCRIPT_DIR/build"
 
