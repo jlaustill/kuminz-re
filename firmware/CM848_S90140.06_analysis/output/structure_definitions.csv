@@ -6,7 +6,7 @@ struct_name,address,field_name,type,size,comment,dependency,Status
 # data_ptr always points to this struct's own inline_data field (self-referential)
 j1939_rx_msg_t,0x00302016,priority_dp_flags,byte,1,J1939 priority/reserved/data-page bits packed from upper CAN ID,,needs_review
 j1939_rx_msg_t,0x00302016,pgn_pf,byte,1,PDU Format - high byte of PGN (0xEF=EF00 0xDF=DF00 0x00=TSC1 etc),,verified
-j1939_rx_msg_t,0x00302016,pgn_ps,byte,1,PDU Specific - destination address (PDU1 PF<0xF0) or PGN low byte (PDU2),,verified
+j1939_rx_msg_t,0x00302016,dest_address,byte,1,Destination address (PDU1) or PGN low byte (PDU2); compared against j1939_source_address to filter incoming messages,,verified
 j1939_rx_msg_t,0x00302016,source_address,byte,1,J1939 source address of sending node,,verified
 j1939_rx_msg_t,0x00302016,data_length,word,2,CAN DLC - payload byte count (handlers expect 8 for TSC1/ETC1),,verified
 j1939_rx_msg_t,0x00302016,data_ptr,tsc1_payload_t*,4,Pointer to inline_data below (always this+10 per processCanReceiveBuffer),,verified

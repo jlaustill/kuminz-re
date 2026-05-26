@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon May 25 19:49:47 MDT 2026
+// Generated: Mon May 25 19:53:38 MDT 2026
 
 
 //
@@ -20936,7 +20936,7 @@ void cm848_j1939DispatchPgnHandler(j1939_rx_msg_t *msg)
   j1939_pgn_handler_entry_t *entry;
   
   entry = &j1939_pgn_dispatch_table;
-  if (((j1939_source_address & 0xff) == (ushort)msg->pgn_ps) || (msg->pgn_ps == 0xff)) {
+  if (((j1939_source_address & 0xff) == (ushort)msg->dest_address) || (msg->dest_address == 0xff)) {
     search_idx = 0;
     if (j1939_pgn_handler_count != 0) {
       do {
@@ -20950,7 +20950,7 @@ void cm848_j1939DispatchPgnHandler(j1939_rx_msg_t *msg)
         search_idx = search_idx + 1;
       } while (search_idx < j1939_pgn_handler_count);
     }
-    if ((j1939_pgn_handler_count == search_idx) && (msg->pgn_ps != 0xff)) {
+    if ((j1939_pgn_handler_count == search_idx) && (msg->dest_address != 0xff)) {
       cm848_sendJ1939NegativeAck(msg,1);
     }
   }
@@ -21381,7 +21381,7 @@ void cm848_j1939DispatchAddressHandler(j1939_rx_msg_t *msg)
 {
   ushort uVar1;
   
-  uVar1 = (ushort)msg->pgn_ps;
+  uVar1 = (ushort)msg->dest_address;
   if (((j1939_source_address & 0xff) == uVar1) || (uVar1 == 0xff)) {
     torqueControlModeHandler(msg);
   }
