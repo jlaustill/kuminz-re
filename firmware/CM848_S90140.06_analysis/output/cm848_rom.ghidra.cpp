@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Tue May 26 07:35:30 MDT 2026
+// Generated: Tue May 26 07:39:55 MDT 2026
 
 
 //
@@ -53126,7 +53126,7 @@ void sendJ1939Message(j1939_tx_msg_t *msg)
     mpc555_sendJ1939SingleFrame((msg->header).can_id,uVar1,msg->data_pointer,msg->data_end_pointer);
   }
   else {
-    sendJ1939DiagnosticMessage(msg);
+    initiateJ1939TransportProtocol(msg);
   }
   return;
 }
@@ -53140,7 +53140,7 @@ void sendJ1939Message(j1939_tx_msg_t *msg)
 void cm848_validateDiagnosticResponseWrapper(void)
 
 {
-  sendJ1939DiagnosticMessage();
+  initiateJ1939TransportProtocol();
   return;
 }
 
@@ -60221,7 +60221,7 @@ void j1939_dm1_diagnosticMessage_send(void)
           puVar5 = puRam0040c270;
         }
       }
-      sendJ1939DiagnosticMessage(pbVar1);
+      initiateJ1939TransportProtocol(pbVar1);
       puVar2 = puRam0040c278;
       if (**(char **)(pbVar1 + 10) == '\x10') {
         do {
@@ -63925,10 +63925,10 @@ void j1939_diag_request_batch_43to48(void)
 
 
 //
-// Function: sendJ1939DiagnosticMessage @ 0x0050c8ec
+// Function: initiateJ1939TransportProtocol @ 0x0050c8ec
 //
 
-void sendJ1939DiagnosticMessage(uint *param_1)
+void initiateJ1939TransportProtocol(uint *param_1)
 
 {
   byte bVar1;
