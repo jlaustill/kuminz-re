@@ -277,14 +277,12 @@ protection_lockout_t,0x0040b11c,timer_expired,word,2,Lockout timer expired flag,
 # These are protocol-level definitions, not tied to specific addresses
 # ============================================================================
 
-# J1939 CAN Message Header - standard format for all J1939 messages
-j1939_header_t,,id,uint32_t,4,CAN identifier containing PGN priority and addressing info,,verified
-j1939_header_t,,length,uint16_t,2,Message data length for single/multi-frame decision,,verified
-
-# Standard CAN Receive Descriptor - generic CAN RX buffer format
-can_std_rx_desc_t,,id,uint32_t,4,11-bit or 29-bit CAN ID stored in 32-bit,,verified
-can_std_rx_desc_t,,length,uint16_t,2,DLC (Data Length Code),,verified
-can_std_rx_desc_t,,data_ptr,dword,4,Pointer to payload bytes,,verified
+# J1939 TX Message Header - first 6 bytes of all outgoing J1939 TX message descriptors
+# Used as the parameter type for transmitCanMessage / multiFrameCanTransmit
+# Note: RX ring buffer (j1939_rx_msg_t) stores the same 6 bytes but decoded as 4 individual
+#       address bytes; TX buffers pack the CAN ID as a single dword via stw.
+j1939_msg_hdr_t,,can_id,dword,4,Packed J1939 29-bit CAN identifier (priority[31:29] DP[28] PGN[27:8] SA[7:0]),,verified
+j1939_msg_hdr_t,,data_length,word,2,CAN DLC - payload byte count for TX message,,verified
 
 # Parameter Response Structure - diagnostic parameter response format
 parameter_response_t,,error_code,byte,1,Error code (0=success non-zero=error),,verified
@@ -335,27 +333,34 @@ j1939_pgn_handler_entry_t,0x003fa9a2,pgn_byte_1,byte,1,First PGN byte for matchi
 j1939_pgn_handler_entry_t,0x003fa9a2,pgn_byte_0,byte,1,Second PGN byte for matching (compared against msg+6+0),,verified
 j1939_pgn_handler_entry_t,0x003fa9a2,handler_func,dword,4,Function pointer to PGN handler callback,,verified
 
-# J1939 Request Message - incoming J1939 diagnostic request structure
-# Passed to j1939DispatchPgnHandler and other request processors
-# Derived from dispatcher code: offset+2=dest_addr, offset+6=pgn_data_ptr
-j1939_request_msg_t,,priority,byte,1,J1939 message priority (0-7),,needs_review
-j1939_request_msg_t,,pgn_pf,byte,1,PDU Format byte of incoming message; used as pgn_mid when building ACK response,,verified
-j1939_request_msg_t,,dest_address,byte,1,PDU Specific byte (destination address for PDU1, PGN low for PDU2); used as pgn_high when building ACK,,verified
-j1939_request_msg_t,,source_address,byte,1,Source address of requester,,needs_review
-j1939_request_msg_t,,reserved_04,word,2,Reserved/message flags,,needs_review
-j1939_request_msg_t,,pgn_data_ptr,dword,4,Pointer to PGN data bytes,,verified
+# J1939 TX Message Descriptor - complete outgoing J1939 message with inline payload
+# Self-referential: data_ptr = &this.control_byte, data_end_ptr = &this.control_byte + 8
+# 22 bytes total (6 hdr + 4 data_ptr + 4 data_end_ptr + 8 payload)
+# Instance at 0x003faa9c: ACKM (J1939-21 Acknowledge, PGN 0xE800) TX buffer
+# j1939_msg_hdr_t* passed to transmitCanMessage / sendJ1939MultiFrame points here
+j1939_tx_msg_t,0x003faa9c,can_id,dword,4,Packed J1939 29-bit CAN identifier; written via stw as CONCAT13(priority_bits priority||PGN||SA),,verified
+j1939_tx_msg_t,0x003faa9c,data_length,word,2,CAN DLC - number of payload bytes to transmit (always 8 for ACKM),,verified
+j1939_tx_msg_t,0x003faa9c,data_ptr,pointer,4,Pointer to payload start (self-ref: = &this.control_byte),,verified
+j1939_tx_msg_t,0x003faa9c,data_end_ptr,pointer,4,Pointer to payload end (self-ref: = &this.control_byte + 8),,verified
+j1939_tx_msg_t,0x003faa9c,control_byte,J1939_ACK_TYPE,1,J1939-21 ACKM control byte (ACK/NACK/ACCESS_DENIED/CANNOT_RESPOND),,verified
+j1939_tx_msg_t,0x003faa9c,group_function,byte,1,Group function value (0xFF = not defined per J1939-21),,verified
+j1939_tx_msg_t,0x003faa9c,reserved_byte2,byte,1,Reserved byte 2 (always 0xFF per J1939-21),,verified
+j1939_tx_msg_t,0x003faa9c,reserved_byte3,byte,1,Reserved byte 3 (always 0xFF per J1939-21),,verified
+j1939_tx_msg_t,0x003faa9c,address_acknowledged,byte,1,Source address of message being acknowledged (0xFF = global),,verified
+j1939_tx_msg_t,0x003faa9c,pgn_low,byte,1,Acknowledged PGN low byte (hardcoded 0 for PDU1 requests),,verified
+j1939_tx_msg_t,0x003faa9c,pgn_mid,byte,1,Acknowledged PGN mid byte (= pgn_pf of request),,verified
+j1939_tx_msg_t,0x003faa9c,pgn_high,byte,1,Acknowledged PGN high byte (= dest_address of request),,verified
 
-# J1939 Acknowledge Message - ACK/NACK response structure (J1939-21 ACKM, PGN 0xE800)
-# 8-byte payload; static fields initialized by cm848_initJ1939AckBuffer, dynamic fields filled per-call
-# Instance at 0x003faaaa (j1939_pgn56360_alt_data_ptr → 0x003faaaa, alt_end_ptr → 0x003faab2)
-j1939_ack_msg_t,0x003faaaa,control_byte,J1939_ACK_TYPE,1,J1939-21 ACKM control byte,,verified
-j1939_ack_msg_t,0x003faaaa,group_function,byte,1,Group function value (0xFF = not defined per J1939-21),,verified
-j1939_ack_msg_t,0x003faaaa,reserved_byte2,byte,1,Reserved byte 2 (always 0xFF per J1939-21),,verified
-j1939_ack_msg_t,0x003faaaa,reserved_byte3,byte,1,Reserved byte 3 (always 0xFF per J1939-21),,verified
-j1939_ack_msg_t,0x003faaaa,address_acknowledged,byte,1,Source address of message being acknowledged (0xFF = global),,verified
-j1939_ack_msg_t,0x003faaaa,pgn_low,byte,1,Acknowledged PGN low byte (hardcoded 0 for PDU1 requests),,verified
-j1939_ack_msg_t,0x003faaaa,pgn_mid,byte,1,Acknowledged PGN mid byte (= PF byte of request; from j1939_request_msg_t.pgn_pf),,verified
-j1939_ack_msg_t,0x003faaaa,pgn_high,byte,1,Acknowledged PGN high byte (= PS/DP byte of request; from j1939_request_msg_t.dest_address),,verified
+# J1939 Acknowledge Message - 8-byte ACKM payload type definition (kept for reference)
+# Absorbed into j1939_tx_msg_t fields above; no standalone instance
+j1939_ack_msg_t,,control_byte,J1939_ACK_TYPE,1,J1939-21 ACKM control byte,,verified
+j1939_ack_msg_t,,group_function,byte,1,Group function value (0xFF = not defined per J1939-21),,verified
+j1939_ack_msg_t,,reserved_byte2,byte,1,Reserved byte 2 (always 0xFF per J1939-21),,verified
+j1939_ack_msg_t,,reserved_byte3,byte,1,Reserved byte 3 (always 0xFF per J1939-21),,verified
+j1939_ack_msg_t,,address_acknowledged,byte,1,Source address of message being acknowledged (0xFF = global),,verified
+j1939_ack_msg_t,,pgn_low,byte,1,Acknowledged PGN low byte (hardcoded 0 for PDU1 requests),,verified
+j1939_ack_msg_t,,pgn_mid,byte,1,Acknowledged PGN mid byte (= PF byte of request),,verified
+j1939_ack_msg_t,,pgn_high,byte,1,Acknowledged PGN high byte (= PS/DP byte of request),,verified
 
 # ============================================================================
 # Additional Generic Structures - Ported from CM550 for analysis reference

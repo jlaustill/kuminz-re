@@ -15,10 +15,10 @@ function_address,function_name,param_index,name,type,comment
 # -----------------------------------------------------------------------------
 # CAN Message Transmission - Adapted from CM550 patterns
 # -----------------------------------------------------------------------------
-0x00003f20,transmitCanMessage,0,msg_header,j1939_header_t*,Pointer to J1939 message header structure
+0x00003f20,transmitCanMessage,0,msg_header,j1939_msg_hdr_t*,Pointer to J1939 TX message header (first 6 bytes of j1939_tx_msg_t)
 0x00003f20,transmitCanMessage,1,data_ptr,byte*,Pointer to message data bytes
 
-0x00005adc,multiFrameCanTransmit,0,msg_header,j1939_header_t*,Pointer to J1939 message header (multi-frame)
+0x00005adc,multiFrameCanTransmit,0,msg_header,j1939_msg_hdr_t*,Pointer to J1939 TX message header (first 6 bytes of j1939_tx_msg_t)
 0x00005adc,multiFrameCanTransmit,1,data_ptr,byte*,Pointer to message payload data
 0x00005adc,multiFrameCanTransmit,2,data_length,ushort,Total length of payload to transmit
 
@@ -33,22 +33,21 @@ function_address,function_name,param_index,name,type,comment
 # J1939 PGN Handlers - Common pattern for diagnostic message handlers
 # Pattern: First param is always a pointer to the received CAN message descriptor
 # -----------------------------------------------------------------------------
-0x00020c64,processJ1939RxMessage,0,rx_msg,can_std_rx_desc_t*,Pointer to received CAN message descriptor
+0x00020c64,processJ1939RxMessage,0,rx_msg,j1939_rx_msg_t*,Pointer to received CAN message descriptor
 
-0x0000628c,j1939DiagMessageDispatcher,0,rx_msg,can_std_rx_desc_t*,Pointer to received diagnostic message
+0x0000628c,j1939DiagMessageDispatcher,0,rx_msg,j1939_rx_msg_t*,Pointer to received diagnostic message
 0x0000628c,j1939DiagMessageDispatcher,1,service_code,byte,Diagnostic service code from message
 
 0x00005c50,handleJ1939QueueRequest,0,request_type,byte,Type of queue request (0x10=start 0x11=continue)
 0x00005c50,handleJ1939QueueRequest,1,connection_id,byte,Transport protocol connection ID
 
-0x00005ecc,handleJ1939DataRequest,0,rx_msg,can_std_rx_desc_t*,Pointer to data request message
-0x00005fe4,handleJ1939DataTransfer,0,rx_msg,can_std_rx_desc_t*,Pointer to data transfer message
-0x00006180,handleJ1939AbortRequest,0,rx_msg,can_std_rx_desc_t*,Pointer to abort request message
+0x00005ecc,handleJ1939DataRequest,0,rx_msg,j1939_rx_msg_t*,Pointer to data request message
+0x00006180,handleJ1939AbortRequest,0,rx_msg,j1939_rx_msg_t*,Pointer to abort request message
 
 # TSC1 (Torque/Speed Control) Message Handlers - PGN 0 (TSC1)
-0x00022d60,processTsc1Command,0,rx_msg,can_std_rx_desc_t*,Pointer to received TSC1 message
-0x00023b38,j1939DispatchAddressHandler,0,rx_msg,can_std_rx_desc_t*,Pointer to received J1939 message for address filtering
-0x00022870,j1939ProcessTorqueSpeedControl,0,rx_msg,can_std_rx_desc_t*,Pointer to received TSC1 message (secondary handler)
+0x00022d60,processTsc1Command,0,rx_msg,j1939_rx_msg_t*,Pointer to received TSC1 message
+0x00023b38,j1939DispatchAddressHandler,0,rx_msg,j1939_rx_msg_t*,Pointer to received J1939 message for address filtering
+0x00022870,j1939ProcessTorqueSpeedControl,0,rx_msg,j1939_rx_msg_t*,Pointer to received TSC1 message (secondary handler)
 
 # -----------------------------------------------------------------------------
 # Diagnostic Service Dispatchers
@@ -89,9 +88,9 @@ function_address,function_name,param_index,name,type,comment
 0x00023188,j1939_register_pgn_handler,1,pgn_byte_1,byte,Second PGN byte to register
 0x00023188,j1939_register_pgn_handler,2,handler_func,void*,Function pointer to PGN handler
 
-0x00022d60,j1939MessageDispatcher,0,rx_msg,can_std_rx_desc_t*,Pointer to received J1939 message
+0x00022d60,j1939MessageDispatcher,0,rx_msg,j1939_rx_msg_t*,Pointer to received J1939 message
 
-0x00023d3c,cm848_sendJ1939AcknowledgeMessage,0,request_msg,j1939_request_msg_t*,Original request to acknowledge
+0x00023d3c,cm848_sendJ1939AcknowledgeMessage,0,request_msg,j1939_rx_msg_t*,Original request to acknowledge
 0x00023d3c,cm848_sendJ1939AcknowledgeMessage,1,ack_type,J1939_ACK_TYPE,J1939-21 ACKM control byte value
 
 0x00023dbc,cm848_sendJ1939NegativeAck,0,msg,j1939_rx_msg_t*,Received message to NACK (accesses dest_address at +2 and data_ptr at +6)
@@ -105,7 +104,7 @@ function_address,function_name,param_index,name,type,comment
 # J1939 DM (Diagnostic Message) Handlers
 # Standard SAE J1939-73 diagnostic message processing
 # -----------------------------------------------------------------------------
-0x000227a0,j1939HandleDm1RequestMessage,0,request_msg,j1939_request_msg_t*,Pointer to DM1 (Active DTC) request
+0x000227a0,j1939HandleDm1RequestMessage,0,request_msg,j1939_rx_msg_t*,Pointer to DM1 (Active DTC) request
 
 0x000255c0,j1939SendDm1ResponseMessage,0,dest_address,byte,Destination address for DM1 response
 0x000255c0,j1939SendDm1ResponseMessage,1,fault_count,byte,Number of active DTCs to report
@@ -117,7 +116,7 @@ function_address,function_name,param_index,name,type,comment
 # J1939 Queue/Transport Protocol
 # Multi-frame message handling (TP.CM/TP.DT)
 # -----------------------------------------------------------------------------
-0x00005fe4,handleJ1939DataTransfer,0,rx_msg,can_std_rx_desc_t*,TP.DT data transfer message
+0x00005fe4,handleJ1939DataTransfer,0,rx_msg,j1939_rx_msg_t*,TP.DT data transfer message
 
 0x000062fc,processJ1939QueueTransmit,0,queue_entry,void*,Pointer to TX queue entry
 0x000064c4,processJ1939QueueStatus,0,connection_id,byte,Transport protocol connection identifier
