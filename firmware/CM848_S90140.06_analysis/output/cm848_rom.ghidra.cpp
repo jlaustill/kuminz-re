@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Tue May 26 04:30:22 MDT 2026
+// Generated: Tue May 26 04:38:48 MDT 2026
 
 
 //
@@ -21473,19 +21473,18 @@ void cm848_initJ1939DmHandlerBuffer(int param_1,int param_2)
 // Function: cm848_sendJ1939AcknowledgeMessage @ 0x00023d3c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 void cm848_sendJ1939AcknowledgeMessage(j1939_request_msg_t *request_msg,J1939_ACK_TYPE ack_type)
 
 {
-  _j1939_dm1_cmd_word_a = CONCAT13(((byte)j1939_source_address_a & 7) << 2,0xe8ff00);
-  j1939_dm1_cmd_word_b = CONCAT11(0xff,request_msg->dest_address);
+  j1939_ackm_tx_header = CONCAT13(((byte)j1939_source_address_a & 7) << 2,0xe8ff00);
+  j1939_ackm_tx_header._2_2_ = CONCAT11(0xff,request_msg->dest_address);
   j1939_ack_payload.pgn_low = 0;
   j1939_ack_payload.pgn_mid = request_msg->pgn_pf;
   j1939_ack_payload.pgn_high = request_msg->dest_address;
   j1939_ack_payload.control_byte = ack_type;
-  sendJ1939MultiFrame(&j1939_dm1_cmd_word_a);
+  sendJ1939MultiFrame(&j1939_ackm_tx_header);
   return;
 }
 
@@ -21495,7 +21494,6 @@ void cm848_sendJ1939AcknowledgeMessage(j1939_request_msg_t *request_msg,J1939_AC
 // Function: cm848_sendJ1939NegativeAck @ 0x00023dbc
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 void cm848_sendJ1939NegativeAck(j1939_rx_msg_t *msg,J1939_ACK_TYPE ack_type)
@@ -21503,14 +21501,14 @@ void cm848_sendJ1939NegativeAck(j1939_rx_msg_t *msg,J1939_ACK_TYPE ack_type)
 {
   tsc1_payload_t *ptVar1;
   
-  _j1939_dm1_cmd_word_a = CONCAT13(((byte)j1939_source_address_a & 7) << 2,0xe8ff00);
-  j1939_dm1_cmd_word_b = CONCAT11(0xff,msg->dest_address);
+  j1939_ackm_tx_header = CONCAT13(((byte)j1939_source_address_a & 7) << 2,0xe8ff00);
+  j1939_ackm_tx_header._2_2_ = CONCAT11(0xff,msg->dest_address);
   ptVar1 = msg->data_ptr;
   j1939_ack_payload.pgn_low = ptVar1->control_byte;
   j1939_ack_payload.pgn_mid = *(byte *)&ptVar1->requested_speed;
   j1939_ack_payload.pgn_high = (byte)ptVar1->requested_speed;
   j1939_ack_payload.control_byte = ack_type;
-  sendJ1939MultiFrame(&j1939_dm1_cmd_word_a);
+  sendJ1939MultiFrame(&j1939_ackm_tx_header);
   return;
 }
 

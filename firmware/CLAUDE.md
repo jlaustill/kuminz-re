@@ -171,7 +171,7 @@ All 3+, 2+, and 1-occurrence unnamed `_DAT_003Fxxxx` variables have been named (
 |----------|-----------|
 | `_governor_mode_state` (12×), `_fuel_temp_trim_scale_cal` (8×), `_engine_sync_prot_gain_b_cal` | `stw` pair-clear: single `stw` writes 4B across two gap=2 `word` vars — cannot widen either individually |
 | `_sensor_validation_delta`, `_fault_counter_slot3_target`, `_fault_counter_slot3_shadow` | gap=1 to next named var — widening would overlap neighbor |
-| `_qadc_channel_control_working`, `_j1939_dm1_cmd_word_a` | gap=2, machine access is `lwz` (4B) — needs gap≥4 to widen |
+| `_qadc_channel_control_working` | gap=2, machine access is `lwz` (4B) — needs gap≥4 to widen |
 | `_param_id_lookup_table` | ROM-to-RAM code region (0x003F9800–0x003FDB30) — Ghidra reverts type on export |
 | `_pad2`, `_pad5`, `_pad16` | Structure padding fields — Ghidra internal, not fixable via CSV |
 
