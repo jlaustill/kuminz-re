@@ -4,5 +4,9 @@ address,constant_name,value,comment
 # In code: (((short)raw >> 6) * 5 + -0xa0) / 9  (-0xa0 = -160 = -32 × 5)
 # Variables using this format: j1939_coolant_temp_raw, fuel_temp_raw, sensor_readings_t.coolant_temp
 # J1939 Kelvin encoding: result + 0x111 (* 0x20 for 1/32K units per SAE J1939-71)
+# Q7 weighted blend: (0x80 - w) * A + w * B >> 7
+# w is a weight in range [0, 0x80] (0=pure A, 128=pure B); divisor 128 = 2^7
+# Appears in: governor speed error high blend, oil pressure fuel limit, fuel timing blend
+# Pattern: (short)(w * X >> 7) + (short)((0x80 - w) * Y >> 7)
 # TSC1 speed cap in torqueControlModeHandler (cmplwi r11, 0x5DC0)
 0x00022FE0,TSC1_SPEED_LIMIT_3000RPM,0x5DC0,24000 counts x 0.125 RPM/bit = 3000 RPM maximum speed target cap for TSC1 speed control mode

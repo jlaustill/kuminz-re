@@ -1526,6 +1526,25 @@ address,name,type,comment
 0x003fafca,governor_pid_interp_state_c,word,
 0x003fafcc,protection_smoothing_state_ptr,pointer,
 0x003fafd0,protection_rpm_filter_working,dword,
+# protection_control_state_flags: 10-channel rolling 2-bit edge-detection register (dword)
+# Updated each call by cm848_processProtectionControlStateMachine (0x0002afd0):
+#   Step 1: (flags & 0x55555) * 2  → shifts current-state even bits → previous-state odd bits
+#   Step 2: OR in new current states at even bit positions
+# Each 2-bit pair [2n+1 : 2n] encodes {previous, current}:
+#   00 = steady inactive | 01 = rising edge (just became active)
+#   10 = falling edge (just became inactive) | 11 = steady active
+# Downstream reader pattern: (flags & 0xc0) == 0x80 → channel D falling edge
+# Bit layout (even=current, odd=previous for each channel):
+#   [1:0]   channel A — protection_enable control_word bit 7 OR governor_speed_request_state==4
+#   [3:2]   channel B — protection_enable control_word bit 7 OR governor_speed_request_state==2
+#   [5:4]   channel C — protection_enable mode_bits bit 3 OR protection_control_state_check_1()==1
+#   [7:6]   channel D — protection_enable control_word bit 7 (non-governor path)
+#   [9:8]   channel E — protection_enable control_word bit 7 OR governor_speed_request_state==3
+#   [11:10] channel F — protection_enable control_word bit 7
+#   [13:12] channel G — protection_enable reserved_02 bit 3
+#   [15:14] channel H — protection_enable system_enable_bits bit 7
+#   [17:16] channel I — protection_enable system_enable_bits bit 3
+#   [19:18] channel J — governor_speed_request_state == 1
 0x003fafd4,protection_control_state_flags,dword,
 0x003fafd8,governor_rpm_transition_flag,word,
 0x003fafda,governor_rpm_reference_integrator,dword,
