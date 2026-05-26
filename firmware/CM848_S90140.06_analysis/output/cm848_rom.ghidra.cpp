@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon May 25 19:35:43 MDT 2026
+// Generated: Mon May 25 19:49:47 MDT 2026
 
 
 //
@@ -20932,25 +20932,25 @@ bool cm848_j1939RegisterPgnHandler(byte pgn_byte_0,byte pgn_byte_1,void *handler
 void cm848_j1939DispatchPgnHandler(j1939_rx_msg_t *msg)
 
 {
-  byte bVar1;
-  j1939_pgn_handler_entry_t *pjVar2;
+  byte search_idx;
+  j1939_pgn_handler_entry_t *entry;
   
-  pjVar2 = &j1939_pgn_dispatch_table;
+  entry = &j1939_pgn_dispatch_table;
   if (((j1939_source_address & 0xff) == (ushort)msg->pgn_ps) || (msg->pgn_ps == 0xff)) {
-    bVar1 = 0;
+    search_idx = 0;
     if (j1939_pgn_handler_count != 0) {
       do {
-        if ((pjVar2->pgn_byte_0 == msg->data_ptr->control_byte) &&
-           (pjVar2->pgn_byte_1 == *(byte *)&msg->data_ptr->requested_speed)) {
+        if ((entry->pgn_byte_0 == msg->data_ptr->control_byte) &&
+           (entry->pgn_byte_1 == *(byte *)&msg->data_ptr->requested_speed)) {
           j1939_dm1_active_flag = 1;
-          (*(code *)pjVar2->handler_func)(msg);
+          (*(code *)entry->handler_func)(msg);
           break;
         }
-        pjVar2 = pjVar2 + 1;
-        bVar1 = bVar1 + 1;
-      } while (bVar1 < j1939_pgn_handler_count);
+        entry = entry + 1;
+        search_idx = search_idx + 1;
+      } while (search_idx < j1939_pgn_handler_count);
     }
-    if ((j1939_pgn_handler_count == bVar1) && (msg->pgn_ps != 0xff)) {
+    if ((j1939_pgn_handler_count == search_idx) && (msg->pgn_ps != 0xff)) {
       cm848_sendJ1939NegativeAck(msg,1);
     }
   }

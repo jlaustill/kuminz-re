@@ -35,3 +35,6 @@ function_address,function_name,old_name,new_name,type,comment
 # cm848_activateDiagnosticSession / cm848_forceActivateDiagnosticSession response codes
 0x00021624,cm848_activateDiagnosticSession,uVar1,diag_ack_result,DIAG_RESPONSE,DIAG_RESPONSE: ACK(0) if standby→active transition succeeded NACK_NOT_READY(4) if not in standby
 0x00021694,cm848_forceActivateDiagnosticSession,uVar1,diag_ack_result,DIAG_RESPONSE,DIAG_RESPONSE: ACK(0) if activated NACK_PROTECTED(7) if protection mode blocked
+# cm848_j1939DispatchPgnHandler @ 0x000231cc - linear search through j1939_pgn_dispatch_table
+0x000231cc,cm848_j1939DispatchPgnHandler,bVar1,search_idx,byte,Index of current entry being tested; equals j1939_pgn_handler_count on exit if no handler matched
+0x000231cc,cm848_j1939DispatchPgnHandler,pjVar2,entry,j1939_pgn_handler_entry_t *,Pointer to current dispatch table entry under test
