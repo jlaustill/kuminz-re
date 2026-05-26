@@ -339,10 +339,10 @@ j1939_pgn_handler_entry_t,0x003fa9a2,handler_func,dword,4,Function pointer to PG
 
 # J1939 TX Message Descriptor - complete outgoing J1939 message with inline payload
 # Self-referential: data_ptr = &this.control_byte, data_end_ptr = &this.control_byte + 8
-# 22 bytes total (6 hdr + 4 data_ptr + 4 data_end_ptr + 8 payload)
+# 22 bytes total (6 header + 4 data_ptr + 4 data_end_ptr + 8 payload)
 # Instance at 0x003faa9c: ACKM (J1939-21 Acknowledge, PGN 0xE800) TX buffer
-# Composition: embeds j1939_msg_hdr_t at offset 0 — callers pass &msg.hdr to TX functions
-j1939_tx_msg_t,0x003faa9c,hdr,j1939_msg_hdr_t,6,J1939 TX message header (can_id + data_length); TX functions receive j1939_msg_hdr_t* pointing here,,verified
+# Composition: embeds j1939_msg_hdr_t at offset 0 — callers pass &msg.header to TX functions
+j1939_tx_msg_t,0x003faa9c,header,j1939_msg_hdr_t,6,J1939 TX message header (can_id + data_length); TX functions receive j1939_msg_hdr_t* pointing here,,verified
 j1939_tx_msg_t,0x003faa9c,data_ptr,pointer,4,Pointer to payload start (self-ref: = &this.control_byte),,verified
 j1939_tx_msg_t,0x003faa9c,data_end_ptr,pointer,4,Pointer to payload end (self-ref: = &this.control_byte + 8),,verified
 j1939_tx_msg_t,0x003faa9c,control_byte,J1939_ACK_TYPE,1,J1939-21 ACKM control byte (ACK/NACK/ACCESS_DENIED/CANNOT_RESPOND),,verified
