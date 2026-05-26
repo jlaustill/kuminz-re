@@ -166,6 +166,18 @@ cmd_export() {
     echo "Exporting to: $OUTPUT_DIR"
     echo ""
 
+    # Re-apply funcdefs and localvars before export: struct rebuilds invalidate
+    # pointer types in function signatures, so these must run after structures.
+    if [ -f "$OUTPUT_DIR/function_definitions.csv" ]; then
+        echo "Re-applying function definitions..."
+        run_script ApplyFunctionDefinitions.java "$OUTPUT_DIR/function_definitions.csv"
+    fi
+
+    if [ -f "$OUTPUT_DIR/local_variables.csv" ]; then
+        echo "Re-applying local variable types..."
+        run_script ApplyLocalVariables.java "$OUTPUT_DIR/local_variables.csv"
+    fi
+
     run_script ExportAnalysis.java "$OUTPUT_DIR"
 
     print_success "Export complete"
