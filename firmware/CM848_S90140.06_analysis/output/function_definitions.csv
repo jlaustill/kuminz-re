@@ -232,3 +232,5 @@ function_address,function_name,param_index,name,type,comment
 # J1939 Send Dispatcher
 # -----------------------------------------------------------------------------
 0x000539fc,sendJ1939Message,0,msg,j1939_tx_msg_t*,TX message descriptor; dispatches to single-frame (<9 bytes) or multi-frame transport protocol
+
+0x00053a4c,cm848_lookupJ1939SourceAddressIndex,0,source_address,uint,J1939 source address byte to look up in the 3-entry SA calibration table

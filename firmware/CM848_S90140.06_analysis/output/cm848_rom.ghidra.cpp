@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Tue May 26 07:42:11 MDT 2026
+// Generated: Tue May 26 07:47:58 MDT 2026
 
 
 //
@@ -20705,7 +20705,7 @@ accept_etc1_command:
     j1939_tsc1_override_state.etc1_speed_error_timeout =
          (j1939_tsc1_override_state.etc1_active_config_ptr)->speed_error_timeout_mode1 + 1;
     j1939_tsc1_override_state.governor_mode = 1;
-    _j1939_governor_source_index = cm848_lookupJ1939SourceAddressIndex(msg->source_address);
+    _j1939_governor_source_index = cm848_lookupJ1939SourceAddressIndex((uint)msg->source_address);
     j1939_tsc1_override_state.etc1_control_flags = 1;
     j1939_tsc1_received.speed_stored = j1939_tsc1_received.requested_speed;
     j1939_tsc1_override_state.etc1_capped_speed_target = j1939_tsc1_received.requested_speed;
@@ -20719,7 +20719,7 @@ accept_etc1_command:
     j1939_tsc1_override_state.etc1_speed_error_timeout =
          (j1939_tsc1_override_state.etc1_active_config_ptr)->speed_error_timeout_mode2 + 1;
     j1939_tsc1_override_state.governor_mode = 2;
-    _j1939_governor_source_index = cm848_lookupJ1939SourceAddressIndex(msg->source_address);
+    _j1939_governor_source_index = cm848_lookupJ1939SourceAddressIndex((uint)msg->source_address);
     j1939_tsc1_override_state.etc1_control_flags = 0;
     j1939_tsc1_received.torque_stored = j1939_tsc1_received.requested_torque;
     j1939_tsc1_override_state.etc1_speed_setpoint =
@@ -20736,7 +20736,7 @@ accept_etc1_command:
     j1939_tsc1_override_state.etc1_speed_error_timeout =
          (j1939_tsc1_override_state.etc1_active_config_ptr)->speed_error_timeout_mode3 + 1;
     j1939_tsc1_override_state.governor_mode = 3;
-    _j1939_governor_source_index = cm848_lookupJ1939SourceAddressIndex(msg->source_address);
+    _j1939_governor_source_index = cm848_lookupJ1939SourceAddressIndex((uint)msg->source_address);
     j1939_tsc1_override_state.etc1_control_flags = 0;
     j1939_tsc1_received.speed_stored = j1939_tsc1_received.requested_speed;
     j1939_tsc1_override_state.etc1_torque_limit_value = j1939_tsc1_received.requested_speed;
@@ -20818,7 +20818,7 @@ void cm848_processGovernorSpeedControlRequest(void)
          (j1939_tsc1_override_state.etc1_active_config_ptr)->speed_error_timeout_mode1 + 1;
     *unaff_r29 = 1;
     _j1939_governor_source_index =
-         cm848_lookupJ1939SourceAddressIndex(*(undefined1 *)(unaff_r30 + 3));
+         cm848_lookupJ1939SourceAddressIndex((uint)*(byte *)(unaff_r30 + 3));
     j1939_tsc1_override_state.etc1_control_flags = 1;
     j1939_tsc1_received.speed_stored = *(word *)(unaff_r31 + 1);
     j1939_tsc1_override_state.etc1_capped_speed_target = j1939_tsc1_received.speed_stored;
@@ -20832,7 +20832,7 @@ void cm848_processGovernorSpeedControlRequest(void)
          (j1939_tsc1_override_state.etc1_active_config_ptr)->speed_error_timeout_mode2 + 1;
     *unaff_r29 = 2;
     _j1939_governor_source_index =
-         cm848_lookupJ1939SourceAddressIndex(*(undefined1 *)(unaff_r30 + 3));
+         cm848_lookupJ1939SourceAddressIndex((uint)*(byte *)(unaff_r30 + 3));
     j1939_tsc1_override_state.etc1_control_flags = 0;
     j1939_tsc1_received.torque_stored = unaff_r31[3];
     j1939_tsc1_override_state.etc1_speed_setpoint =
@@ -20850,7 +20850,7 @@ void cm848_processGovernorSpeedControlRequest(void)
          (j1939_tsc1_override_state.etc1_active_config_ptr)->speed_error_timeout_mode3 + 1;
     *unaff_r29 = 3;
     _j1939_governor_source_index =
-         cm848_lookupJ1939SourceAddressIndex(*(undefined1 *)(unaff_r30 + 3));
+         cm848_lookupJ1939SourceAddressIndex((uint)*(byte *)(unaff_r30 + 3));
     j1939_tsc1_override_state.etc1_control_flags = 0;
     j1939_tsc1_received.speed_stored = *(word *)(unaff_r31 + 1);
     j1939_tsc1_received.torque_stored = unaff_r31[3];
@@ -20888,7 +20888,7 @@ void cm848_processGovernorSpeedRequest(void)
   *(word *)(in_r12 + -0x51de) =
        (j1939_tsc1_override_state.etc1_active_config_ptr)->speed_error_timeout_mode1 + 1;
   *unaff_r29 = 1;
-  _j1939_governor_source_index = cm848_lookupJ1939SourceAddressIndex(*(undefined1 *)(unaff_r30 + 3))
+  _j1939_governor_source_index = cm848_lookupJ1939SourceAddressIndex((uint)*(byte *)(unaff_r30 + 3))
   ;
   j1939_tsc1_override_state.etc1_control_flags = 1;
   j1939_tsc1_override_state.etc1_capped_speed_target = *(word *)(unaff_r31 + 1);
@@ -21323,7 +21323,7 @@ LAB_00023878:
       j1939_tsc1_override_state.etc1_multiframe_timeout =
            *(short *)(j1939_tsc1_override_state.etc1_secondary_config_ptr + 0xe) + 1;
       governor_mode_state = 2;
-      j1939_source_address_index = cm848_lookupJ1939SourceAddressIndex(msg->source_address);
+      j1939_source_address_index = cm848_lookupJ1939SourceAddressIndex((uint)msg->source_address);
       if (j1939_governor_output_percent_cached == 0) {
         j1939_governor_output_percent_tx = 0x7d;
         j1939_tsc1_override_state.etc1_mode_transition_timer =
@@ -21339,7 +21339,7 @@ LAB_00023878:
   }
   if (bVar2 == 3) {
     governor_mode_state = 3;
-    j1939_source_address_index = cm848_lookupJ1939SourceAddressIndex(msg->source_address);
+    j1939_source_address_index = cm848_lookupJ1939SourceAddressIndex((uint)msg->source_address);
     j1939_transfer_frame_count = cm848_j1939SetupMultiFrameTransfer(tsc1_rx_byte_3);
     j1939_tsc1_override_state.etc1_multiframe_timeout =
          *(short *)(j1939_tsc1_override_state.etc1_secondary_config_ptr + 0x12) + 1;
@@ -53153,18 +53153,22 @@ void cm848_validateDiagnosticResponseWrapper(void)
 // Function: cm848_lookupJ1939SourceAddressIndex @ 0x00053a4c
 //
 
-undefined4 cm848_lookupJ1939SourceAddressIndex(uint param_1)
+/* WARNING: Unknown calling convention -- yet parameter storage is locked */
+
+undefined4 cm848_lookupJ1939SourceAddressIndex(dword source_address)
 
 {
+  byte local_r3;
   undefined4 uVar1;
+  byte address_index;
   
-  if ((j1939_ecu_source_address_cal & 0xff) == param_1) {
+  if ((j1939_ecu_source_address_cal & 0xff) == source_address) {
     uVar1 = 1;
   }
-  else if ((DAT_0005a472 & 0xff) == param_1) {
+  else if ((j1939_source_address_2_cal & 0xff) == source_address) {
     uVar1 = 2;
   }
-  else if ((DAT_0005a474 & 0xff) == param_1) {
+  else if ((j1939_source_address_3_cal & 0xff) == source_address) {
     uVar1 = 3;
   }
   else {
@@ -66584,8 +66588,8 @@ LAB_00511cac:
     injection_fault_shadow_flags = injection_fault_shadow_flags & 0xffef;
     protection_diag_shadow_flags_b = protection_diag_shadow_flags_b & 0xffef;
     cm848_removeCoolantCalEntryByParams(1,j1939_ecu_source_address_cal & 0xff);
-    cm848_removeCoolantCalEntryByParams(1,DAT_0005a474 & 0xff);
-    cm848_removeCoolantCalEntryByParams(1,DAT_0005a472 & 0xff);
+    cm848_removeCoolantCalEntryByParams(1,j1939_source_address_3_cal & 0xff);
+    cm848_removeCoolantCalEntryByParams(1,j1939_source_address_2_cal & 0xff);
     uVar1 = uRam003fd870;
     if ((protection_feature_flags & 0x40) == 0) {
       return;
@@ -66612,8 +66616,8 @@ LAB_00511cac:
     bVar3 = 1;
     do {
       cm848_addCoolantCalEntry(1,j1939_ecu_source_address_cal & 0xff,bVar3);
-      cm848_addCoolantCalEntry(1,DAT_0005a474 & 0xff,bVar3);
-      cm848_addCoolantCalEntry(1,DAT_0005a472 & 0xff,bVar3);
+      cm848_addCoolantCalEntry(1,j1939_source_address_3_cal & 0xff,bVar3);
+      cm848_addCoolantCalEntry(1,j1939_source_address_2_cal & 0xff,bVar3);
       bVar3 = bVar3 + 1;
     } while (bVar3 < 4);
     uRam003fcd7a = uRam004086c8;

@@ -412,6 +412,8 @@ address,name,type,comment
 0x0005a150,BYTE_0005a150,byte,
 0x0005a426,governor_load_xaxis_cal,word,
 0x0005a470,j1939_ecu_source_address_cal,word,
+0x0005a472,j1939_source_address_2_cal,word,
+0x0005a474,j1939_source_address_3_cal,word,
 0x0005a494,j1939_feature_config_word,word,
 0x0005a77c,calibration_table_base,byte,
 0x0005a790,calibration_table_offset,byte,
