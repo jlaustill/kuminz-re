@@ -174,27 +174,6 @@ public class ApplyArrays extends GhidraScript {
         }
     }
 
-    private String[] ScriptUtils.parseCSVLine(String line) {
-        // Simple CSV parser that handles commas in quoted fields
-        java.util.List<String> parts = new java.util.ArrayList<>();
-        StringBuilder current = new StringBuilder();
-        boolean inQuotes = false;
-
-        for (char c : line.toCharArray()) {
-            if (c == '"') {
-                inQuotes = !inQuotes;
-            } else if (c == ',' && !inQuotes) {
-                parts.add(current.toString());
-                current = new StringBuilder();
-            } else {
-                current.append(c);
-            }
-        }
-        parts.add(current.toString());
-
-        return parts.toArray(new String[0]);
-    }
-
     // Helper method to convert string type to Ghidra DataType
     private DataType getDataType(String typeString) {
         switch (typeString.toLowerCase()) {

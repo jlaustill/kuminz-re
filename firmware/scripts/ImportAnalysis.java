@@ -373,10 +373,4 @@ public class ImportAnalysis extends GhidraScript {
         return null;
     }
 
-    private long ScriptUtils.parseAddress(String addressStr) {
-        if (addressStr.startsWith("0x") || addressStr.startsWith("0X")) {
-            return Long.parseLong(addressStr.substring(2), 16);
-        }
-        return Long.parseLong(addressStr, 16);
-    }
 }

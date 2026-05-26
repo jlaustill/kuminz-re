@@ -209,26 +209,6 @@ public class ApplyMPC555Registers extends GhidraScript {
         return registers;
     }
 
-    private String[] ScriptUtils.parseCSVLine(String line) {
-        List<String> parts = new ArrayList<>();
-        StringBuilder current = new StringBuilder();
-        boolean inQuotes = false;
-
-        for (char c : line.toCharArray()) {
-            if (c == '"') {
-                inQuotes = !inQuotes;
-            } else if (c == ',' && !inQuotes) {
-                parts.add(current.toString());
-                current = new StringBuilder();
-            } else {
-                current.append(c);
-            }
-        }
-        parts.add(current.toString());
-
-        return parts.toArray(new String[0]);
-    }
-
     private ApplyResult applyRegisterNames(List<RegisterDef> registers) {
         ApplyResult result = new ApplyResult();
         int txId = currentProgram.startTransaction("Apply MPC555 Hardware Register Names");
