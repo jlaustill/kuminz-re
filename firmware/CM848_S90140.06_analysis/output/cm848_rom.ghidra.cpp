@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Tue May 26 08:33:47 MDT 2026
+// Generated: Tue May 26 09:36:25 MDT 2026
 
 
 //
@@ -20326,10 +20326,10 @@ LAB_0002275c:
 // Function: cm848_initPgn65228Dm3Handler @ 0x00022770
 //
 
-void cm848_initPgn65228Dm3Handler(undefined4 param_1,undefined4 param_2,void *param_3)
+void cm848_initPgn65228Dm3Handler(void)
 
 {
-  cm848_j1939RegisterPgnHandler(0xcc,0x74,param_3);
+  cm848_j1939RegisterPgnHandler(0xfecc,cm848_j1939HandlePgn65228Dm3ClearDiag);
   return;
 }
 
@@ -20837,23 +20837,19 @@ void cm848_processGovernorSpeedRequest(void)
 // Function: cm848_j1939RegisterPgnHandler @ 0x00023188
 //
 
-bool cm848_j1939RegisterPgnHandler(byte pgn_byte_0,byte pgn_byte_1,void *handler_func)
+bool cm848_j1939RegisterPgnHandler(dword pgn,void *handler_func)
 
 {
-  undefined3 in_register_0000000c;
-  undefined2 uVar1;
-  undefined3 in_register_00000010;
-  uint uVar2;
+  uint uVar1;
   
-  uVar2 = (uint)j1939_pgn_handler_count;
-  if (uVar2 != 0x20) {
+  uVar1 = (uint)j1939_pgn_handler_count;
+  if (uVar1 != 0x20) {
     j1939_pgn_handler_count = j1939_pgn_handler_count + 1;
-    uVar1 = (undefined2)CONCAT31(in_register_0000000c,pgn_byte_0);
-    (&j1939_pgn_dispatch_table)[uVar2].pgn_byte_1 = (char)((ushort)uVar1 >> 8);
-    (&j1939_pgn_dispatch_table)[uVar2].pgn_byte_0 = (char)uVar1;
-    (&j1939_pgn_dispatch_table)[uVar2].handler_func = CONCAT31(in_register_00000010,pgn_byte_1);
+    (&j1939_pgn_dispatch_table)[uVar1].pgn_byte_1 = (char)((ushort)(short)pgn >> 8);
+    (&j1939_pgn_dispatch_table)[uVar1].pgn_byte_0 = (char)(short)pgn;
+    (&j1939_pgn_dispatch_table)[uVar1].handler_func = (dword)handler_func;
   }
-  return uVar2 == 0x20;
+  return uVar1 == 0x20;
 }
 
 
@@ -20898,7 +20894,7 @@ void cm848_j1939DispatchPgnHandler(j1939_rx_msg_t *msg)
 // Function: cm848_initJ1939ProtocolHandlers @ 0x000232b4
 //
 
-void cm848_initJ1939ProtocolHandlers(undefined4 param_1,undefined4 param_2,void *param_3)
+void cm848_initJ1939ProtocolHandlers(void)
 
 {
   j1939_handlerInitializer(fuelTimingOilPressureModeController,cm848_j1939DispatchPgnHandler);
@@ -20908,13 +20904,13 @@ void cm848_initJ1939ProtocolHandlers(undefined4 param_1,undefined4 param_2,void 
   cm848_initPgn65242SoftwareIdHandler();
   cm848_initPgn65248VehicleDistanceHandler();
   cm848_initPgn65260VehicleIdHandler();
-  cm848_j1939RegisterPgnHandler(0xed,0xfc,param_3);
-  cm848_j1939RegisterPgnHandler(0xef,0xb4,param_3);
-  cm848_j1939RegisterPgnHandler(0xf0,0x58,param_3);
-  cm848_j1939RegisterPgnHandler(0xf5,0x8c,param_3);
-  cm848_j1939RegisterPgnHandler(0xf6,0xd8,param_3);
-  cm848_j1939RegisterPgnHandler(0xf7,0xf0,param_3);
-  cm848_j1939RegisterPgnHandler(0xe0,0xf4,param_3);
+  cm848_j1939RegisterPgnHandler(0xfeed,j1939HandlePgn65261CruiseControlSetup);
+  cm848_j1939RegisterPgnHandler(0xfeef,cm848_j1939HandlePgn65263FluidLevelPressure);
+  cm848_j1939RegisterPgnHandler(0xfef0,cm848_j1939HandlePgn65264Pto);
+  cm848_j1939RegisterPgnHandler(0xfef5,cm848_j1939HandlePgn65269AmbientConditions);
+  cm848_j1939RegisterPgnHandler(0xfef6,cm848_j1939HandlePgn65270InletExhaustConditions);
+  cm848_j1939RegisterPgnHandler(0xfef7,cm848_j1939HandlePgn65271VehicleElectrical);
+  cm848_j1939RegisterPgnHandler(0xffe0,cm848_j1939HandlePgn65504ProprietaryA);
   cm848_initPgn65226Dm1Handler();
   cm848_initPgn65227Dm2Handler();
   cm848_initPgn65228Dm3Handler();
@@ -22443,7 +22439,7 @@ LAB_00024648:
 // Function: cm848_initPgn65265CruiseSpeedHandler @ 0x00024664
 //
 
-void cm848_initPgn65265CruiseSpeedHandler(undefined4 param_1,undefined4 param_2,void *param_3)
+void cm848_initPgn65265CruiseSpeedHandler(void)
 
 {
   j1939_pgn65265_tx_header = CONCAT13(((byte)j1939_cruise_ctrl_priority & 7) << 2,0xfef100);
@@ -22453,7 +22449,7 @@ void cm848_initPgn65265CruiseSpeedHandler(undefined4 param_1,undefined4 param_2,
   j1939_dm1_payload_end_ptr = &DAT_003faafa;
   j1939_dm1_status_byte = 0xf3;
   j1939_status_field_3bit = 7;
-  cm848_j1939RegisterPgnHandler(0xf1,0x78,param_3);
+  cm848_j1939RegisterPgnHandler(0xfef1,j1939HandlePgn65265CruiseVehicleSpeed);
   return;
 }
 
@@ -22584,7 +22580,7 @@ void cm848_appendGovernorDroopDataToMessage(void)
 // Function: cm848_initPgn65259ComponentIdHandler @ 0x00024940
 //
 
-void cm848_initPgn65259ComponentIdHandler(undefined4 param_1,undefined4 param_2,void *param_3)
+void cm848_initPgn65259ComponentIdHandler(void)
 
 {
   j1939_pgn65259_tx_header = CONCAT13(((byte)j1939_pgn65259_priority & 7) << 2,0xfeeb00);
@@ -22592,7 +22588,7 @@ void cm848_initPgn65259ComponentIdHandler(undefined4 param_1,undefined4 param_2,
   j1939_pgn65259_data_ptr = &DAT_003fab22;
   j1939_pgn65259_end_ptr = &DAT_003fab4e;
   j1939_pgn65259_tx_header = CONCAT31(j1939_pgn65259_tx_header._0_3_,(char)j1939_source_address);
-  cm848_j1939RegisterPgnHandler(0xeb,0x70,param_3);
+  cm848_j1939RegisterPgnHandler(0xfeeb,cm848_j1939HandlePgn65259ComponentId);
   return;
 }
 
@@ -22696,7 +22692,7 @@ void cm848_j1939HandlePgn65234Dm11ClearActive(void)
 // Function: cm848_initPgn65234Dm11Handler @ 0x00024b64
 //
 
-void cm848_initPgn65234Dm11Handler(undefined4 param_1,undefined4 param_2,void *param_3)
+void cm848_initPgn65234Dm11Handler(void)
 
 {
   j1939_dm11_tx_header = CONCAT13(((byte)j1939_dm11_priority & 7) << 2,0xfed200);
@@ -22704,7 +22700,7 @@ void cm848_initPgn65234Dm11Handler(undefined4 param_1,undefined4 param_2,void *p
   j1939_dm11_data_ptr = (undefined *)&j1939_dm11_feature_config_word;
   j1939_dm11_end_ptr = &DAT_003fab68;
   j1939_dm11_tx_header = CONCAT31(j1939_dm11_tx_header._0_3_,(char)j1939_source_address);
-  cm848_j1939RegisterPgnHandler(0xd2,0x28,param_3);
+  cm848_j1939RegisterPgnHandler(0xfed2,cm848_j1939HandlePgn65234Dm11ClearActive);
   return;
 }
 
@@ -22790,7 +22786,7 @@ void cm848_processDm1FaultBroadcast(void)
 // Function: cm848_initPgn65226Dm1Handler @ 0x00024dd8
 //
 
-void cm848_initPgn65226Dm1Handler(undefined4 param_1,undefined4 param_2,void *param_3)
+void cm848_initPgn65226Dm1Handler(void)
 
 {
   j1939_dm1_tx_header = CONCAT13(((byte)j1939_dm1_priority & 7) << 2,0xfeca00);
@@ -22800,7 +22796,7 @@ void cm848_initPgn65226Dm1Handler(undefined4 param_1,undefined4 param_2,void *pa
   DAT_003fab79 = 0xff;
   j1939_dm1_dtc_mask_working._3_1_ = (byte)j1939_dm1_dtc_mask_working & 0x7f | 0x80;
   DAT_003fabcb = 0;
-  cm848_j1939RegisterPgnHandler(0xca,0xe8,param_3);
+  cm848_j1939RegisterPgnHandler(0xfeca,j1939HandlePgn65226Dm1ActiveDtc);
   return;
 }
 
@@ -22876,7 +22872,7 @@ void cm848_j1939SendPgn65226_FECA_Dm1ActiveFaults(void)
 // Function: cm848_initPgn65227Dm2Handler @ 0x00025000
 //
 
-void cm848_initPgn65227Dm2Handler(undefined4 param_1,undefined4 param_2,void *param_3)
+void cm848_initPgn65227Dm2Handler(void)
 
 {
   j1939_dm2_tx_header = CONCAT13(((byte)j1939_dm2_priority & 7) << 2,0xfecb00);
@@ -22885,7 +22881,7 @@ void cm848_initPgn65227Dm2Handler(undefined4 param_1,undefined4 param_2,void *pa
   j1939_dm2_tx_header = CONCAT31(j1939_dm2_tx_header._0_3_,(char)j1939_source_address);
   uRam003fabdb = 0xff;
   j1939_dm2_dtc_mask_working._3_1_ = (byte)j1939_dm2_dtc_mask_working & 0x7f | 0x80;
-  cm848_j1939RegisterPgnHandler(0xcb,0x78,param_3);
+  cm848_j1939RegisterPgnHandler(0xfecb,cm848_j1939HandlePgn65227Dm2PreviousDtc);
   return;
 }
 
@@ -22895,7 +22891,7 @@ void cm848_initPgn65227Dm2Handler(undefined4 param_1,undefined4 param_2,void *pa
 // Function: cm848_initPgn65227Dm2ResponseHandler @ 0x00025050
 //
 
-void cm848_initPgn65227Dm2ResponseHandler(int param_1,int param_2,void *param_3)
+void cm848_initPgn65227Dm2ResponseHandler(int param_1,int param_2)
 
 {
   int in_r11;
@@ -22903,7 +22899,7 @@ void cm848_initPgn65227Dm2ResponseHandler(int param_1,int param_2,void *param_3)
   *(char *)(param_2 + 3) = (char)*(undefined2 *)(in_r11 + -0x528c);
   *(undefined1 *)(param_1 + 1) = 0xff;
   *(byte *)(param_1 + 5) = *(byte *)(param_1 + 5) & 0x7f | 0x80;
-  cm848_j1939RegisterPgnHandler(0xcb,0x78,param_3);
+  cm848_j1939RegisterPgnHandler(0xfecb,cm848_j1939HandlePgn65227Dm2PreviousDtc);
   return;
 }
 
@@ -22913,14 +22909,14 @@ void cm848_initPgn65227Dm2ResponseHandler(int param_1,int param_2,void *param_3)
 // Function: cm848_initPgn65229Dm4Handler @ 0x00025094
 //
 
-void cm848_initPgn65229Dm4Handler(undefined4 param_1,undefined4 param_2,void *param_3)
+void cm848_initPgn65229Dm4Handler(void)
 
 {
   j1939_pgn65229_tx_header = CONCAT13(((byte)j1939_pgn65229_priority & 7) << 2,0xfecd00);
   j1939_pgn65229_data_ptr = &DAT_003fac3c;
   j1939_pgn65229_end_ptr = &DAT_003fad46;
   j1939_pgn65229_tx_header = CONCAT31(j1939_pgn65229_tx_header._0_3_,(char)j1939_source_address);
-  cm848_j1939RegisterPgnHandler(0xcd,0x90,param_3);
+  cm848_j1939RegisterPgnHandler(0xfecd,cm848_j1939HandlePgn65229Dm4FreezeFrame);
   return;
 }
 
@@ -23089,7 +23085,7 @@ void cm848_j1939HandlePgn65230Dm5Readiness(void)
 // Function: cm848_initPgn65230Dm5Handler @ 0x0002553c
 //
 
-void cm848_initPgn65230Dm5Handler(undefined4 param_1,undefined4 param_2,void *param_3)
+void cm848_initPgn65230Dm5Handler(void)
 
 {
   j1939_pgn65230_tx_header = CONCAT13(((byte)j1939_pgn65230_priority & 7) << 2,0xfece00);
@@ -23097,7 +23093,7 @@ void cm848_initPgn65230Dm5Handler(undefined4 param_1,undefined4 param_2,void *pa
   j1939_pgn65230_data_ptr = &DAT_003fad56;
   j1939_pgn65230_data2_ptr = &DAT_003fad5e;
   j1939_pgn65230_tx_header = CONCAT31(j1939_pgn65230_tx_header._0_3_,(char)j1939_source_address);
-  cm848_j1939RegisterPgnHandler(0xce,0x58,param_3);
+  cm848_j1939RegisterPgnHandler(0xfece,cm848_j1939HandlePgn65230Dm5Readiness);
   return;
 }
 
@@ -23604,7 +23600,7 @@ void cm848_sendEec2WithDefaultValues(void)
 // Function: cm848_initPgn61443Eec2Handler @ 0x00025d60
 //
 
-void cm848_initPgn61443Eec2Handler(undefined4 param_1,undefined4 param_2,void *param_3)
+void cm848_initPgn61443Eec2Handler(void)
 
 {
   j1939_pgn61443_tx_header = CONCAT13(((byte)j1939_pgn61443_priority & 7) << 2,0xf00300);
@@ -23613,7 +23609,7 @@ void cm848_initPgn61443Eec2Handler(undefined4 param_1,undefined4 param_2,void *p
   pbRam003fadb6 = &j1939_status_byte_b;
   puRam003fadba = &DAT_003fadbe;
   emptyStubFunction3();
-  cm848_j1939RegisterPgnHandler(3,0x10,param_3);
+  cm848_j1939RegisterPgnHandler(0xf003,j1939HandlePgn61443Eec2);
   return;
 }
 
@@ -23623,8 +23619,7 @@ void cm848_initPgn61443Eec2Handler(undefined4 param_1,undefined4 param_2,void *p
 // Function: cm848_j1939SendPgn61443_F003_AcceleratorPedalEec2 @ 0x00025d88
 //
 
-void cm848_j1939SendPgn61443_F003_AcceleratorPedalEec2
-               (byte *param_1,undefined4 param_2,void *param_3)
+void cm848_j1939SendPgn61443_F003_AcceleratorPedalEec2(byte *param_1)
 
 {
   byte in_r10;
@@ -23636,7 +23631,7 @@ void cm848_j1939SendPgn61443_F003_AcceleratorPedalEec2
   *(byte **)(param_1 + 6) = &j1939_status_byte_b;
   *(undefined **)(param_1 + 10) = &DAT_003fadbe;
   emptyStubFunction3();
-  cm848_j1939RegisterPgnHandler(3,0x10,param_3);
+  cm848_j1939RegisterPgnHandler(0xf003,j1939HandlePgn61443Eec2);
   return;
 }
 
@@ -23941,7 +23936,7 @@ void cm848_j1939SendPgn65263_FEEF_FluidLevelPressure(int param_1)
 // Function: cm848_initPgn65262EngineTempHandler @ 0x0002619c
 //
 
-void cm848_initPgn65262EngineTempHandler(undefined4 param_1,undefined4 param_2,void *param_3)
+void cm848_initPgn65262EngineTempHandler(void)
 
 {
   j1939_pgn65262_tx_header = CONCAT13(((byte)j1939_pgn65262_source_address_bits & 7) << 2,0xfeee00);
@@ -23952,7 +23947,7 @@ void cm848_initPgn65262EngineTempHandler(undefined4 param_1,undefined4 param_2,v
   j1939_pgn65262_field1_init_word = 0xffff;
   DAT_003fae04 = 0xff;
   DAT_003fae05 = 0xff;
-  cm848_j1939RegisterPgnHandler(0xee,0x24,param_3);
+  cm848_j1939RegisterPgnHandler(0xfeee,cm848_j1939HandlePgn65262EngineTemp);
   return;
 }
 
@@ -24600,7 +24595,6 @@ void cm848_j1939HandlePgn65242SoftwareId(void)
 void cm848_initPgn65242SoftwareIdHandler(void)
 
 {
-  void *handler_func;
   uint uVar1;
   undefined1 uStack_10;
   undefined1 uStack_f;
@@ -24620,8 +24614,7 @@ void cm848_initPgn65242SoftwareIdHandler(void)
     uVar1 = uVar1 + 1 & 0xff;
   } while (uVar1 < 0xc);
   DAT_003fae9f = 0x2a;
-  handler_func = (void *)0x1;
-  cm848_governorDroopCalculation(&DAT_0000b74a,&DAT_003faea0);
+  cm848_governorDroopCalculation(&DAT_0000b74a,&DAT_003faea0,1);
   DAT_003faea8 = 0x2a;
   uStack_10 = (undefined1)(sensor_channel_index_working >> 8);
   DAT_003faea9 = uStack_10;
@@ -24633,7 +24626,7 @@ void cm848_initPgn65242SoftwareIdHandler(void)
   uStack_f = (undefined1)j1939_pgn_priority_cal;
   DAT_003faead = uStack_f;
   DAT_003faeae = 0x2a;
-  cm848_j1939RegisterPgnHandler(0xda,0x84,handler_func);
+  cm848_j1939RegisterPgnHandler(0xfeda,cm848_j1939HandlePgn65242SoftwareId);
   return;
 }
 
@@ -24647,7 +24640,6 @@ void cm848_j1939SendPgn65249_FEE1(void)
 
 {
   word wVar1;
-  void *handler_func;
   uint in_r11;
   uint *unaff_r30;
   uint uVar2;
@@ -24671,8 +24663,7 @@ void cm848_j1939SendPgn65249_FEE1(void)
     uVar2 = uVar2 + 1 & 0xff;
   } while (uVar2 < 0xc);
   DAT_003fae9f = 0x2a;
-  handler_func = (void *)0x1;
-  cm848_governorDroopCalculation(&DAT_0000b74a,&DAT_003faea0);
+  cm848_governorDroopCalculation(&DAT_0000b74a,&DAT_003faea0,1);
   DAT_003faea8 = 0x2a;
   uStack00000008 = (undefined1)(sensor_channel_index_working >> 8);
   DAT_003faea9 = uStack00000008;
@@ -24687,7 +24678,7 @@ void cm848_j1939SendPgn65249_FEE1(void)
   DAT_003faead = uStack00000009;
   DAT_003faeae = 0x2a;
   _uStack00000008 = wVar1;
-  cm848_j1939RegisterPgnHandler(0xda,0x84,handler_func);
+  cm848_j1939RegisterPgnHandler(0xfeda,cm848_j1939HandlePgn65242SoftwareId);
   return;
 }
 
@@ -24818,7 +24809,7 @@ void cm848_j1939HandlePgn65248VehicleDistance(void)
 // Function: cm848_initPgn65248VehicleDistanceHandler @ 0x00026c6c
 //
 
-void cm848_initPgn65248VehicleDistanceHandler(undefined4 param_1,undefined4 param_2,void *param_3)
+void cm848_initPgn65248VehicleDistanceHandler(void)
 
 {
   j1939_pgn65248_tx_header = CONCAT13(((byte)j1939_pgn65248_source_address_bits & 7) << 2,0xfee000);
@@ -24826,7 +24817,7 @@ void cm848_initPgn65248VehicleDistanceHandler(undefined4 param_1,undefined4 para
   j1939_pgn65248_data_ptr = (undefined *)&j1939_pgn65248_field1_tx_dword;
   j1939_pgn65248_data2_ptr = &DAT_003faede;
   j1939_pgn65248_tx_header = CONCAT31(j1939_pgn65248_tx_header._0_3_,(char)j1939_source_address);
-  cm848_j1939RegisterPgnHandler(0xe0,0xb0,param_3);
+  cm848_j1939RegisterPgnHandler(0xfee0,cm848_j1939HandlePgn65248VehicleDistance);
   return;
 }
 
@@ -24902,20 +24893,20 @@ void cm848_emptyStubFunctionJ1939B(void)
 void cm848_initPgn65260VehicleIdHandler(void)
 
 {
-  void *handler_func;
+  uint uVar1;
   
   j1939_pgn65260_tx_header = CONCAT13(((byte)j1939_pgn65260_source_address_bits & 7) << 2,0xfeec00);
   j1939_pgn65260_tx_byte_count = 0x15;
   j1939_pgn65260_data_ptr = &DAT_003faf07;
   j1939_pgn65260_data2_ptr = &DAT_003faf06;
   j1939_pgn65260_tx_header = CONCAT31(j1939_pgn65260_tx_header._0_3_,(char)j1939_source_address);
-  handler_func = (void *)0x0;
+  uVar1 = 0;
   do {
-    *(undefined1 *)((int)handler_func + 0x3faf07) = *(undefined1 *)((int)handler_func + 0x3fd707);
-    handler_func = (void *)((int)handler_func + 1U & 0xff);
-  } while (handler_func < (void *)0x14);
+    (&DAT_003faf07)[uVar1] = (&j1939_source_address_table)[uVar1];
+    uVar1 = uVar1 + 1 & 0xff;
+  } while (uVar1 < 0x14);
   DAT_003faf1b = 0x2a;
-  cm848_j1939RegisterPgnHandler(0xec,0xb4,handler_func);
+  cm848_j1939RegisterPgnHandler(0xfeec,cm848_j1939HandlePgn65260VehicleId);
   return;
 }
 

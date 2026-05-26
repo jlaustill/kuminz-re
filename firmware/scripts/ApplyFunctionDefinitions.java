@@ -12,7 +12,9 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import ghidra.app.script.GhidraScript;
 import ghidra.program.model.data.*;
@@ -152,68 +154,97 @@ public class ApplyFunctionDefinitions extends GhidraScript {
         ApplyResult result = new ApplyResult();
         int txId = currentProgram.startTransaction("Apply Function Definitions");
 
+        // Group all params by function address so each function gets one updateFunction call.
+        // This ensures the param list is sized to exactly max_index+1, trimming any stale
+        // params that remain from a previous run with more parameters.
+        Map<Long, List<ParamDef>> byFunction = new LinkedHashMap<>();
+        for (ParamDef param : params) {
+            byFunction.computeIfAbsent(param.functionAddress, k -> new ArrayList<>()).add(param);
+        }
+
         try {
-            for (ParamDef param : params) {
-                Address addr = toAddr(param.functionAddress);
+            for (Map.Entry<Long, List<ParamDef>> entry : byFunction.entrySet()) {
+                Address addr = toAddr(entry.getKey());
                 if (addr == null) {
-                    result.failed++;
+                    result.failed += entry.getValue().size();
                     continue;
                 }
 
                 Function function = functionManager.getFunctionAt(addr);
                 if (function == null) {
-                    println("  Warning: No function at 0x" + Long.toHexString(param.functionAddress) +
-                            " (" + param.functionName + ")");
-                    result.failed++;
+                    String name = entry.getValue().get(0).functionName;
+                    println("  Warning: No function at 0x" + Long.toHexString(entry.getKey()) +
+                            " (" + name + ")");
+                    result.failed += entry.getValue().size();
                     continue;
                 }
 
-                if (!function.getName().equals(param.functionName)) {
-                    println("  Warning: Function name mismatch at 0x" + Long.toHexString(param.functionAddress) +
-                            " - expected '" + param.functionName + "', found '" + function.getName() + "'");
+                String firstName = entry.getValue().get(0).functionName;
+                if (!function.getName().equals(firstName)) {
+                    println("  Warning: Function name mismatch at 0x" + Long.toHexString(entry.getKey()) +
+                            " - expected '" + firstName + "', found '" + function.getName() + "'");
                 }
 
-                DataType dataType = getDataType(param.type);
-                if (dataType == null) {
-                    println("  Error: Unknown data type '" + param.type + "' for " + param.functionName);
-                    result.failed++;
-                    continue;
+                // Separate return type entry from positional params
+                ParamDef returnDef = null;
+                int maxIndex = -1;
+                List<ParamDef> positional = new ArrayList<>();
+                for (ParamDef p : entry.getValue()) {
+                    if (p.isReturnType) {
+                        returnDef = p;
+                    } else {
+                        positional.add(p);
+                        if (p.paramIndex > maxIndex) maxIndex = p.paramIndex;
+                    }
                 }
 
                 try {
-                    if (param.isReturnType) {
-                        function.setReturnType(dataType, SourceType.USER_DEFINED);
-                        function.setCallingConvention("__stdcall");
-                    } else {
-                        Parameter[] existingParams = function.getParameters();
-                        Parameter newParam = new ParameterImpl(param.name, dataType, currentProgram);
-                        newParam.setComment(param.comment);
-
-                        List<Parameter> paramList = new java.util.ArrayList<>();
-                        for (Parameter p : existingParams) {
-                            paramList.add(p);
+                    if (returnDef != null) {
+                        DataType dt = getDataType(returnDef.type);
+                        if (dt == null) {
+                            println("  Error: Unknown return type '" + returnDef.type + "' for " + firstName);
+                            result.failed++;
+                        } else {
+                            function.setReturnType(dt, SourceType.USER_DEFINED);
+                            function.setCallingConvention("__stdcall");
+                            result.applied++;
+                            returnDef.wasApplied = true;
                         }
+                    }
 
-                        while (paramList.size() <= param.paramIndex) {
-                            paramList.add(new ParameterImpl("param_" + paramList.size(),
+                    if (maxIndex >= 0) {
+                        // Build param list sized to exactly maxIndex+1 — no stale extra params
+                        List<Parameter> paramList = new ArrayList<>();
+                        for (int i = 0; i <= maxIndex; i++) {
+                            paramList.add(new ParameterImpl("param_" + i,
                                 new Undefined4DataType(), currentProgram));
                         }
-
-                        paramList.set(param.paramIndex, newParam);
+                        for (ParamDef p : positional) {
+                            DataType dt = getDataType(p.type);
+                            if (dt == null) {
+                                println("  Error: Unknown type '" + p.type + "' for " +
+                                        firstName + "[" + p.paramIndex + "]");
+                                result.failed++;
+                                continue;
+                            }
+                            Parameter newParam = new ParameterImpl(p.name, dt, currentProgram);
+                            newParam.setComment(p.comment);
+                            paramList.set(p.paramIndex, newParam);
+                        }
 
                         function.updateFunction("__stdcall", null, paramList,
                                 Function.FunctionUpdateType.DYNAMIC_STORAGE_ALL_PARAMS,
                                 true, SourceType.USER_DEFINED);
+
+                        for (ParamDef p : positional) {
+                            p.wasApplied = true;
+                            result.applied++;
+                        }
                     }
 
-                    result.applied++;
-                    param.wasApplied = true;
-
                 } catch (Exception e) {
-                    String indexLabel = param.isReturnType ? "return" : String.valueOf(param.paramIndex);
-                    println("  Error: Failed to update " + param.functionName +
-                            "[" + indexLabel + "]: " + e.getMessage());
-                    result.failed++;
+                    println("  Error: Failed to update " + firstName + ": " + e.getMessage());
+                    result.failed += entry.getValue().size();
                 }
             }
         } finally {

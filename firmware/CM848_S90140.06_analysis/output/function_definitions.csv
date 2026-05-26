@@ -84,9 +84,8 @@ function_address,function_name,param_index,name,type,comment
 # Core message routing for all J1939 PGN requests
 # -----------------------------------------------------------------------------
 
-0x00023188,j1939_register_pgn_handler,0,pgn_byte_0,byte,First PGN byte to register
-0x00023188,j1939_register_pgn_handler,1,pgn_byte_1,byte,Second PGN byte to register
-0x00023188,j1939_register_pgn_handler,2,handler_func,void*,Function pointer to PGN handler
+0x00023188,cm848_j1939RegisterPgnHandler,0,pgn,uint,Packed 16-bit PGN: low byte=pgn_byte_0 high byte=pgn_byte_1 stored in dispatch table
+0x00023188,cm848_j1939RegisterPgnHandler,1,handler_func,void*,Function pointer called when PGN matches incoming message
 
 0x00022d60,j1939MessageDispatcher,0,rx_msg,j1939_rx_msg_t*,Pointer to received J1939 message
 
