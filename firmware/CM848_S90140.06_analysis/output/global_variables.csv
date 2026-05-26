@@ -2087,11 +2087,8 @@ address,name,type,comment
 0x003fca7c,BYTE_003fca7c,byte,
 0x003fcb24,BYTE_003fcb24,byte,
 0x003fcd9e,cruise_protection_ok,word,
-0x003fce7f,j1939_dm_scratch_byte0,byte,Scratch assembly buffer byte 0; copied to slot T payload before TX
-0x003fce80,j1939_dm_scratch_byte1,byte,
-0x003fce81,j1939_dm_scratch_byte2,byte,
-0x003fce82,j1939_dm_scratch_byte3,byte,
-0x003fce83,j1939_dm_scratch_byte4,byte,
+0x003fce7c,j1939_dm_scratch_buffer,byte[8],
+# j1939_dm_scratch_buffer offsets: [3]=byte0 [4]=byte1 [5]=byte2 [6]=byte3 [7]=byte4
 0x003fce85,j1939_dm7_spn_scratch,word,DM7 freeze frame SPN batch buffer; 3x word at +0 +2 +4
 0x003fce95,j1939_dm_last_pgn_processed,word,PGN dedup guard; updated on every return to prevent reprocessing same request
 0x003fce97,j1939_dm1_active_fault_count,byte,Count of active DTC entries for DM1 sub-index 1 response
@@ -2477,8 +2474,12 @@ address,name,type,comment
 0x003fecc8,crc16_working_value,dword,
 0x003feccd,diag_keep_alive_counter,byte,
 0x003fecce,diagnostic_cooldown_counter,word,
-0x003fecd0,diag_response_buffer,byte,
-0x003fecf0,diag_session_protocol_byte,byte,
+0x003fecd0,diag_serial_buffer,byte[33],
+0x003fecd1,diag_serial_buffer[1],,
+0x003fecd2,diag_serial_buffer[2],,
+0x003fecd3,diag_serial_buffer[3],,
+0x003fecef,diag_serial_buffer[31],,
+0x003fecf0,diag_session_protocol_byte,,
 0x003fecf1,security_access_state,byte,
 0x003fecf2,sensor_fault_mode_active,dword,
 0x003fecf3,sensor_fault_mode_active+1,,

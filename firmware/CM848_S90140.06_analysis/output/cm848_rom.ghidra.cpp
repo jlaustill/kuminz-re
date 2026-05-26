@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Tue May 26 13:25:20 MDT 2026
+// Generated: Tue May 26 13:32:50 MDT 2026
 
 
 //
@@ -1434,26 +1434,26 @@ void mpc555_initDiagResponseHandlers(void)
 // Function: cm848_diagSendResponseCode @ 0x00001ef8
 //
 
-void cm848_diagSendResponseCode(undefined1 param_1,int param_2)
+void cm848_diagSendResponseCode(byte param_1,int param_2)
 
 {
   if (param_2 == 0x51) {
-    diag_response_buffer = 0x51;
-    DAT_003fecd1 = 1;
+    diag_serial_buffer[0] = 0x51;
+    diag_serial_buffer[1] = 1;
   }
   else {
     if (param_2 == 0x74) {
-      diag_response_buffer = 0x74;
+      diag_serial_buffer[0] = 0x74;
     }
     else {
-      diag_response_buffer = 0x7f;
+      diag_serial_buffer[0] = 0x7f;
     }
-    DAT_003fecd1 = (&diag_session_protocol_byte)[param_2 == 0x74];
+    diag_serial_buffer[1] = diag_serial_buffer[(param_2 == 0x74) + 0x20];
   }
-  DAT_003fecd3 = 0;
+  diag_serial_buffer[3] = 0;
   diag_session_state_t_003fecbe.response_write_index = 4;
   diagnostic_callback_ptr = mpc555_processDiagnosticAndEepromRequests;
-  DAT_003fecd2 = param_1;
+  diag_serial_buffer[2] = param_1;
   func_0x003fc62c();
   return;
 }
@@ -1484,7 +1484,7 @@ void mpc555_processDiagnosticAndEepromRequests(void)
   request_ptr = (byte *)uVar4;
   if ((diag_request_pending_flag != '\x01') ||
      ((diag_session_state_t_003fecbe.session_flags & 1) == 0)) goto LAB_000020ac;
-  if (diag_session_protocol_byte == 0x34) {
+  if (diag_serial_buffer[0x20] == 0x34) {
     bVar1 = qadc_a_result_high_1;
     if ((bVar1 & 0x80) != 0) {
       eeprom_xfer_state.transfer_timer = 0x28;
@@ -1615,7 +1615,7 @@ void mpc555_initDiagnosticSession(void)
     diagnostic_session_state = 0;
     eeprom_request_state = 0;
     diag_session_state_t_003fecbe.response_write_index = 0;
-    diag_session_state_t_003fecbe._2_4_ = &diag_response_buffer;
+    diag_session_state_t_003fecbe._2_4_ = diag_serial_buffer;
     qsmcm_sccr1.SCC1R0 = 0xa0;
     qsmcm_sccr1.SCC1R1 = 0x102c;
   }
@@ -1627,7 +1627,7 @@ void mpc555_initDiagnosticSession(void)
     eeprom_request_state = 2;
     cm848_initDiagnosticCallback();
     diag_session_state_t_003fecbe.response_write_index = 0;
-    diag_session_state_t_003fecbe._2_4_ = &diag_response_buffer;
+    diag_session_state_t_003fecbe._2_4_ = diag_serial_buffer;
     qsmcm_sccr1.SCC1R0 = 0x14;
     qsmcm_sccr1.SCC1R1 = 0x102c;
     cm848_setDataTransferMode();
@@ -2206,9 +2206,9 @@ void mpc555_initSchedulerTaskTable(void)
   
   diag_session_state_t_003fecbe.response_write_index =
        diag_session_state_t_003fecbe.response_write_index - 1;
-  diag_session_state_t_003fecbe._2_4_ = &diag_response_buffer;
+  diag_session_state_t_003fecbe._2_4_ = diag_serial_buffer;
   wVar1 = qsmcm_sccr1.SC1SR;
-  qsmcm_sccr1.SC1DR = (ushort)diag_response_buffer;
+  qsmcm_sccr1.SC1DR = (ushort)diag_serial_buffer[0];
   mpc555_enableSpiTransmitInterrupt();
   return;
 }
@@ -2228,7 +2228,7 @@ void mpc555_spiReceiveHandler(void)
   if ((wVar1 & 0x40) != 0) {
     if ((((wVar1 & 4) == 0) && ((wVar1 & 8) == 0)) && ((wVar1 & 2) == 0)) {
       wVar1 = qsmcm_sccr1.SC1DR;
-      (&diag_response_buffer)[diag_session_state_t_003fecbe.response_write_index] = (byte)wVar1;
+      diag_serial_buffer[diag_session_state_t_003fecbe.response_write_index] = (byte)wVar1;
       diag_session_state_t_003fecbe.response_write_index =
            diag_session_state_t_003fecbe.response_write_index + 1;
       diag_request_pending_flag = 1;
@@ -2323,7 +2323,7 @@ void cm848_resetEepromStatusPointer(void)
 
 {
   diag_session_state_t_003fecbe.response_write_index = 0;
-  diag_session_state_t_003fecbe._2_4_ = &diag_response_buffer;
+  diag_session_state_t_003fecbe._2_4_ = diag_serial_buffer;
   return;
 }
 
@@ -2393,7 +2393,7 @@ void cm848_processDiagnosticResponseCallback(void)
   pbVar1 = (byte *)cm848_lookupEepromParameterAddress
                              (*(undefined1 *)diag_session_state_t_003fecbe._2_4_);
   if (pbVar1 != (byte *)0x0) {
-    (&diag_response_buffer)[diag_session_state_t_003fecbe.response_write_index] = *pbVar1;
+    diag_serial_buffer[diag_session_state_t_003fecbe.response_write_index] = *pbVar1;
     diag_session_state_t_003fecbe.response_write_index =
          diag_session_state_t_003fecbe.response_write_index + 1;
   }
@@ -2428,11 +2428,11 @@ void mpc555_generateSerialChallenge(void)
   }
   dVar2 = crc16_working_value;
   bVar3 = (byte)(crc16_working_value >> 8);
-  (&diag_response_buffer)[diag_session_state_t_003fecbe.response_write_index] = bVar3;
+  diag_serial_buffer[diag_session_state_t_003fecbe.response_write_index] = bVar3;
   uVar1 = diag_session_state_t_003fecbe.response_write_index + 1 & 0xff;
-  (&diag_response_buffer)[uVar1] = (byte)dVar2;
+  diag_serial_buffer[uVar1] = (byte)dVar2;
   write_pos = uVar1 + 1;
-  (&diag_response_buffer)[write_pos & 0xff] = bVar3 + 0x2b + (byte)dVar2;
+  diag_serial_buffer[write_pos & 0xff] = bVar3 + 0x2b + (byte)dVar2;
   diag_session_state_t_003fecbe.response_write_index = (char)write_pos + 1;
   diagnostic_callback_ptr = cm848_registerSchedulerTask;
   cm848_processTimerInterrupt();
@@ -2488,7 +2488,7 @@ void cm848_processDiagnosticRequest(void)
   if (2 < (uVar1 & 0xff)) {
     if ((char)((char)sensor_validation_delta + DAT_003fee3c + ',') == DAT_003fee3d) {
       if (diagnostic_session_state == 1) {
-        (&diag_response_buffer)[diag_session_state_t_003fecbe.response_write_index] = 0;
+        diag_serial_buffer[diag_session_state_t_003fecbe.response_write_index] = 0;
         diag_session_state_t_003fecbe.response_write_index =
              diag_session_state_t_003fecbe.response_write_index + 1;
       }
@@ -2499,7 +2499,7 @@ void cm848_processDiagnosticRequest(void)
           if (DAT_003feccc == '\0') {
             diag_keep_alive_counter = diag_keep_alive_counter + 1;
             diagnostic_cooldown_counter = 1000;
-            (&diag_response_buffer)[diag_session_state_t_003fecbe.response_write_index] = 1;
+            diag_serial_buffer[diag_session_state_t_003fecbe.response_write_index] = 1;
             diag_session_state_t_003fecbe.response_write_index =
                  diag_session_state_t_003fecbe.response_write_index + 1;
           }
@@ -2507,26 +2507,26 @@ void cm848_processDiagnosticRequest(void)
             diag_keep_alive_counter = 0;
             diagnostic_cooldown_counter = 0;
             diagnostic_session_state = 1;
-            (&diag_response_buffer)[diag_session_state_t_003fecbe.response_write_index] = 0;
+            diag_serial_buffer[diag_session_state_t_003fecbe.response_write_index] = 0;
             diag_session_state_t_003fecbe.response_write_index =
                  diag_session_state_t_003fecbe.response_write_index + 1;
           }
         }
         else {
-          (&diag_response_buffer)[diag_session_state_t_003fecbe.response_write_index] = 2;
+          diag_serial_buffer[diag_session_state_t_003fecbe.response_write_index] = 2;
           diag_session_state_t_003fecbe.response_write_index =
                diag_session_state_t_003fecbe.response_write_index + 1;
         }
       }
       else {
         diagnostic_session_state = 2;
-        (&diag_response_buffer)[diag_session_state_t_003fecbe.response_write_index] = 3;
+        diag_serial_buffer[diag_session_state_t_003fecbe.response_write_index] = 3;
         diag_session_state_t_003fecbe.response_write_index =
              diag_session_state_t_003fecbe.response_write_index + 1;
       }
     }
     else {
-      (&diag_response_buffer)[diag_session_state_t_003fecbe.response_write_index] = 2;
+      diag_serial_buffer[diag_session_state_t_003fecbe.response_write_index] = 2;
       diag_session_state_t_003fecbe.response_write_index =
            diag_session_state_t_003fecbe.response_write_index + 1;
     }
@@ -2586,7 +2586,7 @@ void cm848_sendDiagnosticResponse(void)
   
   uVar1 = 0;
   do {
-    (&diag_response_buffer)[uVar1] = (&DAT_00007f94)[uVar1];
+    diag_serial_buffer[uVar1] = (&DAT_00007f94)[uVar1];
     uVar1 = uVar1 + 1 & 0xff;
   } while (uVar1 < 6);
   diag_session_state_t_003fecbe.response_write_index = 6;
@@ -4882,26 +4882,26 @@ undefined * mpc555_initDiagnosticBuffers(int param_1)
 // Function: cm848_updateSystemTimers @ 0x00006580
 //
 
-void cm848_updateSystemTimers(undefined1 param_1,int param_2)
+void cm848_updateSystemTimers(byte param_1,int param_2)
 
 {
   if (param_2 == 0x51) {
-    diag_response_buffer = 0x51;
-    DAT_003fecd1 = 1;
+    diag_serial_buffer[0] = 0x51;
+    diag_serial_buffer[1] = 1;
   }
   else {
     if (param_2 == 0x74) {
-      diag_response_buffer = 0x74;
+      diag_serial_buffer[0] = 0x74;
     }
     else {
-      diag_response_buffer = 0x7f;
+      diag_serial_buffer[0] = 0x7f;
     }
-    DAT_003fecd1 = (&diag_session_protocol_byte)[param_2 == 0x74];
+    diag_serial_buffer[1] = diag_serial_buffer[(param_2 == 0x74) + 0x20];
   }
-  DAT_003fecd3 = 0;
+  diag_serial_buffer[3] = 0;
   diag_session_state_t_003fecbe.response_write_index = 4;
   diagnostic_callback_ptr = &DAT_003fc1fc;
-  DAT_003fecd2 = param_1;
+  diag_serial_buffer[2] = param_1;
   mpc555_initSerialTransmit();
   return;
 }
@@ -4926,7 +4926,7 @@ void mpc555_diagnosticSubcommandDispatcher(byte subcommand,byte *data_ptr)
   if ((diag_session_state_t_003fecbe.session_flags & 1) == 0) {
     return;
   }
-  if (diag_session_protocol_byte == 0x34) {
+  if (diag_serial_buffer[0x20] == 0x34) {
     bVar1 = qadc_a_result_high_1;
     if ((bVar1 & 0x80) != 0) {
       eeprom_xfer_state.transfer_timer = 0x28;
@@ -4983,7 +4983,10 @@ void cm848_resetSerialReceiveBuffer(void)
 
 {
   diag_session_state_t_003fecbe.response_write_index = 0;
-  diag_session_state_t_003fecbe._2_4_ = &diag_session_protocol_byte;
+  diag_session_state_t_003fecbe.eeprom_status = 0;
+  diag_session_state_t_003fecbe.reserved_03 = 0x3f;
+  diag_session_state_t_003fecbe.reserved_04 = 0xec;
+  diag_session_state_t_003fecbe.checksum_status = 0xf0;
   return;
 }
 
@@ -5003,8 +5006,7 @@ void mpc555_serialReceiveHandler(void)
   wVar2 = qsmcm_sccr1.SC1DR;
   if ((wVar1 & 0x40) != 0) {
     if (((wVar1 & 0xe) == 0) && (diag_session_state_t_003fecbe.response_write_index < 0xfe)) {
-      (&diag_session_protocol_byte)[diag_session_state_t_003fecbe.response_write_index] =
-           (byte)wVar2;
+      diag_serial_buffer[diag_session_state_t_003fecbe.response_write_index + 0x20] = (byte)wVar2;
       diag_session_state_t_003fecbe.response_write_index =
            diag_session_state_t_003fecbe.response_write_index + 1;
       diag_response_pending_flag = 2;
@@ -5106,8 +5108,8 @@ void mpc555_validateSerialChecksum(void)
      (diag_response_pending_flag = diag_response_pending_flag - 1, diag_response_pending_flag == 0))
   {
     if ((byte)(diag_clear_flags_t_003fedfc.diag_response_write_count -
-              (&DAT_003fecef)[diag_session_state_t_003fecbe.response_write_index]) ==
-        (byte)~(&DAT_003fecef)[diag_session_state_t_003fecbe.response_write_index]) {
+              diag_serial_buffer[diag_session_state_t_003fecbe.response_write_index + 0x1f]) ==
+        (byte)~diag_serial_buffer[diag_session_state_t_003fecbe.response_write_index + 0x1f]) {
       wVar1 = qsmcm_sccr1.SCC1R1;
       qsmcm_sccr1.SCC1R1 = wVar1 & 0xffdf;
       diag_request_pending_flag = 1;
@@ -5133,9 +5135,9 @@ void mpc555_initSerialTransmit(void)
   
   diag_session_state_t_003fecbe.response_write_index =
        diag_session_state_t_003fecbe.response_write_index - 1;
-  diag_session_state_t_003fecbe._2_4_ = &diag_response_buffer;
+  diag_session_state_t_003fecbe._2_4_ = diag_serial_buffer;
   wVar1 = qsmcm_sccr1.SC1SR;
-  qsmcm_sccr1.SC1DR = (ushort)diag_response_buffer;
+  qsmcm_sccr1.SC1DR = (ushort)diag_serial_buffer[0];
   mpc555_enableSerialTransmit();
   return;
 }
@@ -70033,13 +70035,13 @@ LAB_00519128:
     switch(uVar6) {
     case 0:
       j1939_dm_response_byte0 = 1;
-      j1939_dm_scratch_byte1 = (byte)(j1939_dm9_spn_support_bitmask >> 0x18);
-      j1939_dm_scratch_byte2 = (byte)(j1939_dm9_spn_support_bitmask >> 0x10);
-      j1939_dm_scratch_byte3 = (byte)(j1939_dm9_spn_support_bitmask >> 8);
-      j1939_dm_scratch_byte4 = (byte)j1939_dm9_spn_support_bitmask;
+      j1939_dm_scratch_buffer[4] = (byte)(j1939_dm9_spn_support_bitmask >> 0x18);
+      j1939_dm_scratch_buffer[5] = (byte)(j1939_dm9_spn_support_bitmask >> 0x10);
+      j1939_dm_scratch_buffer[6] = (byte)(j1939_dm9_spn_support_bitmask >> 8);
+      j1939_dm_scratch_buffer[7] = (byte)j1939_dm9_spn_support_bitmask;
       uVar6 = 4;
       do {
-        (&j1939_dm_slot_t_node_id)[uVar6] = *(byte *)(uVar6 + 0x3fce7c);
+        (&j1939_dm_slot_t_node_id)[uVar6] = j1939_dm_scratch_buffer[uVar6];
         uVar6 = uVar6 + 1 & 0xff;
       } while (uVar6 < 8);
       goto LAB_00519640;
@@ -70138,13 +70140,13 @@ LAB_00519640:
         return;
       }
       j1939_dm_response_byte0 = 1;
-      j1939_dm_scratch_byte1 = (byte)((ushort)uRam0040b66e >> 8);
-      j1939_dm_scratch_byte2 = (byte)uRam0040b66e;
-      j1939_dm_scratch_byte3 = (byte)((ushort)uRam0040b670 >> 8);
-      j1939_dm_scratch_byte4 = (byte)uRam0040b670;
+      j1939_dm_scratch_buffer[4] = (byte)((ushort)uRam0040b66e >> 8);
+      j1939_dm_scratch_buffer[5] = (byte)uRam0040b66e;
+      j1939_dm_scratch_buffer[6] = (byte)((ushort)uRam0040b670 >> 8);
+      j1939_dm_scratch_buffer[7] = (byte)uRam0040b670;
       uVar6 = 4;
       do {
-        (&j1939_dm_slot_t_node_id)[uVar6] = *(byte *)(uVar6 + 0x3fce7c);
+        (&j1939_dm_slot_t_node_id)[uVar6] = j1939_dm_scratch_buffer[uVar6];
         uVar6 = uVar6 + 1 & 0xff;
       } while (uVar6 < 8);
       j1939_dm_response_length = 8;
@@ -70187,13 +70189,13 @@ LAB_00519640:
     }
     switch(uVar6) {
     case 0:
-      j1939_dm_scratch_byte1 = (byte)(j1939_dm2_spn_support_bitmask >> 0x18);
-      j1939_dm_scratch_byte2 = (byte)(j1939_dm2_spn_support_bitmask >> 0x10);
-      j1939_dm_scratch_byte3 = (byte)(j1939_dm2_spn_support_bitmask >> 8);
-      j1939_dm_scratch_byte4 = (byte)j1939_dm2_spn_support_bitmask;
+      j1939_dm_scratch_buffer[4] = (byte)(j1939_dm2_spn_support_bitmask >> 0x18);
+      j1939_dm_scratch_buffer[5] = (byte)(j1939_dm2_spn_support_bitmask >> 0x10);
+      j1939_dm_scratch_buffer[6] = (byte)(j1939_dm2_spn_support_bitmask >> 8);
+      j1939_dm_scratch_buffer[7] = (byte)j1939_dm2_spn_support_bitmask;
       uVar6 = 4;
       do {
-        (&j1939_dm_slot_t_node_id)[uVar6] = *(byte *)(uVar6 + 0x3fce7c);
+        (&j1939_dm_slot_t_node_id)[uVar6] = j1939_dm_scratch_buffer[uVar6];
         uVar6 = uVar6 + 1 & 0xff;
       } while (uVar6 < 8);
       goto LAB_00519640;
@@ -70219,12 +70221,13 @@ LAB_00519640:
         j1939_dm_response_byte0 = 0;
         return;
       }
-      j1939_dm_scratch_byte1 =
+      j1939_dm_scratch_buffer[4] =
            (byte)((ushort)(&UNK_0005b57c)[(&fault_entry_t_003fe674)[uVar6].fault_code] >> 8);
-      j1939_dm_scratch_byte2 = (byte)(&UNK_0005b57c)[(&fault_entry_t_003fe674)[uVar6].fault_code];
+      j1939_dm_scratch_buffer[5] =
+           (byte)(&UNK_0005b57c)[(&fault_entry_t_003fe674)[uVar6].fault_code];
       uVar6 = 4;
       do {
-        (&j1939_dm_slot_t_node_id)[uVar6] = *(byte *)(uVar6 + 0x3fce7c);
+        (&j1939_dm_slot_t_node_id)[uVar6] = j1939_dm_scratch_buffer[uVar6];
         uVar6 = uVar6 + 1 & 0xff;
       } while (uVar6 < 6);
       goto code_r0x00518f64;
@@ -70346,11 +70349,11 @@ LAB_00519640:
         j1939_dm_response_byte0 = 0;
         return;
       }
-      j1939_dm_scratch_byte1 = (byte)((&fault_entry_t_003fe674)[uVar6].target_rpm >> 9);
-      j1939_dm_scratch_byte2 = (byte)((&fault_entry_t_003fe674)[uVar6].target_rpm >> 1);
+      j1939_dm_scratch_buffer[4] = (byte)((&fault_entry_t_003fe674)[uVar6].target_rpm >> 9);
+      j1939_dm_scratch_buffer[5] = (byte)((&fault_entry_t_003fe674)[uVar6].target_rpm >> 1);
       uVar6 = 4;
       do {
-        (&j1939_dm_slot_t_node_id)[uVar6] = *(byte *)(uVar6 + 0x3fce7c);
+        (&j1939_dm_slot_t_node_id)[uVar6] = j1939_dm_scratch_buffer[uVar6];
         uVar6 = uVar6 + 1 & 0xff;
       } while (uVar6 < 6);
 code_r0x00518f64:
@@ -70463,15 +70466,15 @@ code_r0x00519120:
   }
   switch(uVar6) {
   case 0:
-    j1939_dm_scratch_byte0 = (byte)(j1939_dm1_spn_support_bitmask >> 0x18);
-    j1939_dm_scratch_byte1 = (byte)(j1939_dm1_spn_support_bitmask >> 0x10);
-    j1939_dm_scratch_byte2 = (byte)(j1939_dm1_spn_support_bitmask >> 8);
-    j1939_dm_scratch_byte3 = (byte)j1939_dm1_spn_support_bitmask;
+    j1939_dm_scratch_buffer[3] = (byte)(j1939_dm1_spn_support_bitmask >> 0x18);
+    j1939_dm_scratch_buffer[4] = (byte)(j1939_dm1_spn_support_bitmask >> 0x10);
+    j1939_dm_scratch_buffer[5] = (byte)(j1939_dm1_spn_support_bitmask >> 8);
+    j1939_dm_scratch_buffer[6] = (byte)j1939_dm1_spn_support_bitmask;
     j1939_msg_slot_t_counter = 1;
     j1939_dm_response_length = 7;
     uVar6 = 3;
     do {
-      (&j1939_dm_slot_t_node_id)[uVar6] = *(byte *)(uVar6 + 0x3fce7c);
+      (&j1939_dm_slot_t_node_id)[uVar6] = j1939_dm_scratch_buffer[uVar6];
       uVar6 = uVar6 + 1 & 0xff;
     } while (uVar6 < 7);
     break;
@@ -70541,11 +70544,11 @@ code_r0x00519120:
     uVar6 = extraout_r4;
     goto code_r0x00518b58;
   case 0xc:
-    j1939_dm_scratch_byte0 = (byte)(engine_rpm_state_t_0040b7ac.current_rpm >> 9);
-    j1939_dm_scratch_byte1 = (byte)(engine_rpm_state_t_0040b7ac.current_rpm >> 1);
+    j1939_dm_scratch_buffer[3] = (byte)(engine_rpm_state_t_0040b7ac.current_rpm >> 9);
+    j1939_dm_scratch_buffer[4] = (byte)(engine_rpm_state_t_0040b7ac.current_rpm >> 1);
     uVar6 = 3;
     do {
-      (&j1939_dm_slot_t_node_id)[uVar6] = *(byte *)(uVar6 + 0x3fce7c);
+      (&j1939_dm_slot_t_node_id)[uVar6] = j1939_dm_scratch_buffer[uVar6];
       uVar6 = uVar6 + 1 & 0xff;
     } while (uVar6 < 5);
     goto code_r0x00519120;

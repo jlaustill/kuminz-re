@@ -3,4 +3,9 @@ address,array_name,element_type,element_count,comment
 # Used by security seed response, diagnostic handlers, SCI serial I/O
 # Offsets 0-5 confirmed for transmit; offsets 31-32 for receive validation
 # Next named variable (diag_subcommand_code) starts at 0x003fecf1
+# DM response payload assembly scratch buffer
+# Base address used by copy loops in j1939_dm_message_processor
+# Offsets 0-2 are padding/unused; offsets 3-7 are the 5 writable scratch bytes
+# (j1939_dm_scratch_byte0 through j1939_dm_scratch_byte4 at offsets 3-7)
+0x003fce7c,j1939_dm_scratch_buffer,byte,8,DM response payload assembly buffer; copy loops index from [3] to [7]
 0x003fecd0,diag_serial_buffer,byte,33,Diagnostic serial communication buffer (SCI UART)
