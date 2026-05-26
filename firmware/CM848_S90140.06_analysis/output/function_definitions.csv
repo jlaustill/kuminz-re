@@ -227,3 +227,8 @@ function_address,function_name,param_index,name,type,comment
 0x000236f0,cm848_j1939ProcessGovernorRequest,0,msg,j1939_rx_msg_t*,Incoming J1939 RX message descriptor from CAN ring buffer
 0x000231cc,cm848_j1939DispatchPgnHandler,0,msg,j1939_rx_msg_t*,Incoming J1939 RX message descriptor from CAN ring buffer
 0x00023b38,cm848_j1939DispatchAddressHandler,0,msg,j1939_rx_msg_t*,Incoming J1939 RX message descriptor from CAN ring buffer
+
+# -----------------------------------------------------------------------------
+# J1939 Send Dispatcher
+# -----------------------------------------------------------------------------
+0x000539fc,sendJ1939Message,0,msg,j1939_tx_msg_t*,TX message descriptor; dispatches to single-frame (<9 bytes) or multi-frame transport protocol
