@@ -123,7 +123,7 @@ public class ApplyGlobalVariableTypes extends GhidraScript {
                 }
 
                 try {
-                    long addressValue = parseAddressString(addressStr);
+                    long addressValue = ScriptUtils.parseAddress(addressStr);
                     Address addr = toAddr(addressValue);
 
                     // Get the data type to apply
@@ -189,8 +189,8 @@ public class ApplyGlobalVariableTypes extends GhidraScript {
         }
 
         // Handle pointer-to-named-type: "struct_name *"
-        if (typeName.endsWith(" *")) {
-            String baseName = typeName.substring(0, typeName.length() - 2).trim();
+        if (ScriptUtils.isPointerType(typeName)) {
+            String baseName = ScriptUtils.stripPointer(typeName);
             DataType baseType = getDataType(baseName);
             if (baseType == null) {
                 baseType = findStructureType(baseName);
@@ -256,11 +256,5 @@ public class ApplyGlobalVariableTypes extends GhidraScript {
         return null;
     }
 
-    private long parseAddressString(String addressStr) {
-        addressStr = addressStr.trim();
-        if (addressStr.startsWith("0x") || addressStr.startsWith("0X")) {
-            return Long.parseLong(addressStr.substring(2), 16);
-        }
-        return Long.parseLong(addressStr, 16);
-    }
+
 }

@@ -69,7 +69,7 @@ public class ApplyConstants extends GhidraScript {
                 }
 
                 // Parse CSV: address,constant_name,value,comment
-                String[] parts = parseCSVLine(line);
+                String[] parts = ScriptUtils.parseCSVLine(line);
                 if (parts.length < 4) {
                     skippedCount++;
                     continue;
@@ -157,7 +157,7 @@ public class ApplyConstants extends GhidraScript {
         }
     }
 
-    private String[] parseCSVLine(String line) {
+    private String[] ScriptUtils.parseCSVLine(String line) {
         // Simple CSV parser that handles commas in quoted fields
         java.util.List<String> parts = new java.util.ArrayList<>();
         StringBuilder current = new StringBuilder();

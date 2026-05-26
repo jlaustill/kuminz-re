@@ -161,7 +161,7 @@ public class ApplyHardwareRegisters extends GhidraScript {
                 }
 
                 // Parse CSV: address,name,type,comment,...
-                String[] parts = parseCSVLine(line);
+                String[] parts = ScriptUtils.parseCSVLine(line);
                 if (parts.length < 2) {
                     continue;
                 }
@@ -176,7 +176,7 @@ public class ApplyHardwareRegisters extends GhidraScript {
                 }
 
                 try {
-                    long address = parseAddressString(addressStr);
+                    long address = ScriptUtils.parseAddress(addressStr);
 
                     // Filter for MC68336 peripheral register space (0x00FFxxxx)
                     // Also include 0x00FDxxxx (SIM module)
@@ -199,7 +199,7 @@ public class ApplyHardwareRegisters extends GhidraScript {
         return registers;
     }
 
-    private String[] parseCSVLine(String line) {
+    private String[] ScriptUtils.parseCSVLine(String line) {
         List<String> parts = new ArrayList<>();
         StringBuilder current = new StringBuilder();
         boolean inQuotes = false;
@@ -307,13 +307,7 @@ public class ApplyHardwareRegisters extends GhidraScript {
         }
     }
 
-    private long parseAddressString(String addressStr) {
-        addressStr = addressStr.trim();
-        if (addressStr.startsWith("0x") || addressStr.startsWith("0X")) {
-            return Long.parseLong(addressStr.substring(2), 16);
-        }
-        return Long.parseLong(addressStr, 16);
-    }
+
 
     // Helper class
     private static class RegisterDef {

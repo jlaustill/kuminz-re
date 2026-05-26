@@ -161,6 +161,9 @@ All firmwares use the same CSV structure in `output/`:
 - **Function must exist in Ghidra** - CSV renames only work for addresses Ghidra recognizes as functions
 - **Type width must match hardware access** - `bool` (1B), `byte` (1B), `word` (2B), `dword` (4B) must match the actual load instruction (`lbz`=1B, `lhz`=2B, `lwz`=4B). Wrong width is silently reverted to `word` on export. This also prevents enum substitution for byte-width variables.
 - **Plate comments round-trip via function_renames.csv** - 3rd column is preserved through import/export since 2026-05-25 fix. If export drops a plate comment, it indicates `ExportAnalysis.java` failed to compile (check for missing imports).
+- **Enum round-trip order** — when assigning a new enum type name to variables, run `./analyze.sh enums` BEFORE `./analyze.sh import`. Import silently skips type names not yet in Ghidra's DTM.
+- **Named types preserved through export (since 2026-05-26)** — `ExportAnalysis.java` reads existing CSV before overwriting and applies priority: named Ghidra type > named CSV type > primitive Ghidra type. Enum types set via CSV survive `./analyze.sh export` cycles.
+- **Ghidra masked-comparison limitation** — symbolic enum names appear for `var == ENUM_VALUE` but NOT for `(var & MASK) == VALUE`. Bitfield structs and enum types don't help when all downstream uses are masked comparisons — document with a `#` comment block in `global_variables.csv` instead.
 
 ### CM848 `_DAT_` Naming Campaign — Status
 
@@ -256,6 +259,11 @@ Use Python CSV module to batch-categorize and clean (see session history for scr
 ---
 
 ## Common Code Patterns
+
+### Rolling 2-bit Edge Detector
+- `(flags & 0x55555) * 2` shifts current-state even bits to previous-state odd positions, creating a "previous state" snapshot in one instruction
+- Downstream `(flags & 0xc0) == 0x80` checks are falling-edge detectors (was 1, now 0)
+- `protection_control_state_flags` (0x003fafd4) uses this for 10 channels; look for `& 0x55555` in other status registers
 
 ### Sensor Channel Architecture
 - Sensor channels use paired functions: `sensorChannelN_init()` calls a config init function, `sensorChannelN_process()` calls the update function

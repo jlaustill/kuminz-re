@@ -128,7 +128,7 @@ public class ImportAnalysis extends GhidraScript {
                 String commentStr = (parts.length > 2) ? parts[2].trim() : "";
 
                 try {
-                    long addressValue = parseAddressString(addressStr);
+                    long addressValue = ScriptUtils.parseAddress(addressStr);
                     Address address = toAddr(addressValue);
 
                     Function func = functionManager.getFunctionAt(address);
@@ -218,7 +218,7 @@ public class ImportAnalysis extends GhidraScript {
                 String typeStr = (parts.length > 2) ? parts[2].trim() : "";
 
                 try {
-                    long addressValue = parseAddressString(addressStr);
+                    long addressValue = ScriptUtils.parseAddress(addressStr);
                     Address address = toAddr(addressValue);
 
                     // Apply name if different
@@ -347,8 +347,8 @@ public class ImportAnalysis extends GhidraScript {
         }
 
         // Handle pointer-to-named-type: "struct_name *"
-        if (typeStr.endsWith(" *")) {
-            String baseName = typeStr.substring(0, typeStr.length() - 2).trim();
+        if (ScriptUtils.isPointerType(typeStr)) {
+            String baseName = ScriptUtils.stripPointer(typeStr);
             DataType baseType = mapCsvTypeToDataType(baseName, dtm);
             if (baseType == null && dtm != null) {
                 java.util.List<DataType> baseFound = new java.util.ArrayList<>();
@@ -373,7 +373,7 @@ public class ImportAnalysis extends GhidraScript {
         return null;
     }
 
-    private long parseAddressString(String addressStr) {
+    private long ScriptUtils.parseAddress(String addressStr) {
         if (addressStr.startsWith("0x") || addressStr.startsWith("0X")) {
             return Long.parseLong(addressStr.substring(2), 16);
         }

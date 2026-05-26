@@ -129,8 +129,8 @@ public class ApplyLabels extends GhidraScript {
                 }
 
                 try {
-                    long j90280Addr = parseAddressString(parts[0].trim());
-                    long j90350Addr = parseAddressString(parts[2].trim());
+                    long j90280Addr = ScriptUtils.parseAddress(parts[0].trim());
+                    long j90350Addr = ScriptUtils.parseAddress(parts[2].trim());
 
                     if (j90350Addr > 0) {
                         relocationMap.put(j90280Addr, j90350Addr);
@@ -164,7 +164,7 @@ public class ApplyLabels extends GhidraScript {
                 }
 
                 // Parse: address,label_name,comment
-                String[] parts = parseCSVLine(line);
+                String[] parts = ScriptUtils.parseCSVLine(line);
                 if (parts.length < 2) {
                     continue;
                 }
@@ -178,7 +178,7 @@ public class ApplyLabels extends GhidraScript {
                 }
 
                 try {
-                    long address = parseAddressString(addressStr);
+                    long address = ScriptUtils.parseAddress(addressStr);
 
                     LabelDef label = new LabelDef();
                     label.originalAddress = address;
@@ -195,7 +195,7 @@ public class ApplyLabels extends GhidraScript {
         return labels;
     }
 
-    private String[] parseCSVLine(String line) {
+    private String[] ScriptUtils.parseCSVLine(String line) {
         List<String> parts = new ArrayList<>();
         StringBuilder current = new StringBuilder();
         boolean inQuotes = false;
@@ -278,13 +278,7 @@ public class ApplyLabels extends GhidraScript {
         return result;
     }
 
-    private long parseAddressString(String addressStr) {
-        addressStr = addressStr.trim();
-        if (addressStr.startsWith("0x") || addressStr.startsWith("0X")) {
-            return Long.parseLong(addressStr.substring(2), 16);
-        }
-        return Long.parseLong(addressStr, 16);
-    }
+
 
     // Helper class for label definitions
     private static class LabelDef {

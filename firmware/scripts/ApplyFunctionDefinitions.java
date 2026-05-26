@@ -105,7 +105,7 @@ public class ApplyFunctionDefinitions extends GhidraScript {
                 }
 
                 // CSV: function_address,function_name,param_index,name,type,comment
-                String[] parts = parseCSVLine(line);
+                String[] parts = ScriptUtils.parseCSVLine(line);
                 if (parts.length < 5) {
                     continue;
                 }
@@ -122,7 +122,7 @@ public class ApplyFunctionDefinitions extends GhidraScript {
                 }
 
                 try {
-                    long address = parseAddressString(addressStr);
+                    long address = ScriptUtils.parseAddress(addressStr);
                     ParamDef param = new ParamDef();
                     param.functionAddress = address;
                     param.functionName    = functionName;
@@ -148,7 +148,7 @@ public class ApplyFunctionDefinitions extends GhidraScript {
         return params;
     }
 
-    private String[] parseCSVLine(String line) {
+    private String[] ScriptUtils.parseCSVLine(String line) {
         List<String> parts = new ArrayList<>();
         StringBuilder current = new StringBuilder();
         boolean inQuotes = false;
@@ -243,8 +243,8 @@ public class ApplyFunctionDefinitions extends GhidraScript {
     }
 
     private DataType getDataType(String typeString) {
-        if (typeString.endsWith("*")) {
-            String baseType = typeString.substring(0, typeString.length() - 1).trim();
+        if (ScriptUtils.isPointerType(typeString)) {
+            String baseType = ScriptUtils.stripPointer(typeString);
             DataType baseDataType = getDataType(baseType);
             if (baseDataType == null) {
                 baseDataType = findDataTypeByName(baseType);
@@ -297,13 +297,7 @@ public class ApplyFunctionDefinitions extends GhidraScript {
         return null;
     }
 
-    private long parseAddressString(String addressStr) {
-        addressStr = addressStr.trim();
-        if (addressStr.startsWith("0x") || addressStr.startsWith("0X")) {
-            return Long.parseLong(addressStr.substring(2), 16);
-        }
-        return Long.parseLong(addressStr, 16);
-    }
+
 
     private static class ParamDef {
         long functionAddress;

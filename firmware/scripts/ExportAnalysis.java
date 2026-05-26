@@ -13,13 +13,10 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import ghidra.app.script.GhidraScript;
 import ghidra.app.decompiler.DecompInterface;
@@ -40,23 +37,12 @@ public class ExportAnalysis extends GhidraScript {
 
     private String firmwareName;
 
-    // Ghidra primitive type names — anything NOT in this set is a user-named type
-    // (struct, enum, typedef) that must be preserved through the export cycle.
-    private static final Set<String> PRIMITIVE_TYPES = new HashSet<>(Arrays.asList(
-        "word", "byte", "dword", "qword",
-        "sbyte", "sword", "sdword", "sqword",
-        "pointer", "bool",
-        "short", "int", "long",
-        "ushort", "uint", "ulong",
-        "undefined", "undefined1", "undefined2", "undefined4", "undefined8",
-        "float", "double", "unicode"
-    ));
 
     @Override
     public void run() throws Exception {
         // Get firmware name from program (e.g., "J90280.05.full.bin" -> "J90280.05")
         String programName = currentProgram.getName();
-        firmwareName = programName.replaceAll("\\.full\\.bin$", "").replaceAll("\\.rom\\.bin$", "").replaceAll("\\.bin$", "");
+        firmwareName = ScriptUtils.extractFirmwareName(programName);
 
         println("=".repeat(70));
         println("EXPORT ANALYSIS - " + firmwareName);
@@ -117,37 +103,9 @@ public class ExportAnalysis extends GhidraScript {
     private int exportFunctionNames(String outputDir) throws IOException {
         String outputFile = outputDir + "/function_renames.csv";
 
-        // Preserve comment lines from existing CSV (keyed by following address)
-        Map<String, List<String>> commentsBefore = new HashMap<>();
-        List<String> headerComments = new ArrayList<>();
-        if (new File(outputFile).exists()) {
-            try (BufferedReader reader = new BufferedReader(new FileReader(outputFile))) {
-                String line;
-                List<String> pendingComments = new ArrayList<>();
-                boolean pastHeader = false;
-                while ((line = reader.readLine()) != null) {
-                    if (line.startsWith("#")) {
-                        pendingComments.add(line);
-                    } else {
-                        if (!pendingComments.isEmpty()) {
-                            if (!pastHeader) {
-                                headerComments.addAll(pendingComments);
-                            } else {
-                                // Key comments by the address line that follows them
-                                String addr = line.split(",")[0].trim();
-                                commentsBefore.put(addr, new ArrayList<>(pendingComments));
-                            }
-                            pendingComments.clear();
-                        }
-                        pastHeader = true;
-                    }
-                }
-                // Trailing comments (after last entry) - attach to special key
-                if (!pendingComments.isEmpty()) {
-                    commentsBefore.put("__trailing__", new ArrayList<>(pendingComments));
-                }
-            }
-        }
+        CsvCommentIndex comments = new File(outputFile).exists()
+            ? CsvCommentIndex.read(outputFile)
+            : CsvCommentIndex.fromLines(java.util.Collections.emptyList());
 
         // Get all functions and sort by address
         List<Function> functions = new ArrayList<>();
@@ -159,30 +117,16 @@ public class ExportAnalysis extends GhidraScript {
         Collections.sort(functions, (f1, f2) -> f1.getEntryPoint().compareTo(f2.getEntryPoint()));
 
         try (FileWriter writer = new FileWriter(outputFile)) {
-            // Write header comments (before the CSV header)
-            for (String comment : headerComments) {
-                writer.write(comment + "\n");
-            }
-
-            // Write header
+            for (String c : comments.getHeaderComments()) writer.write(c + "\n");
             writer.write("address,name\n");
 
             for (Function func : functions) {
                 String name = func.getName();
-                // Skip default function names (FUN_xxxxx)
-                if (name.startsWith("FUN_")) {
-                    continue;
-                }
+                if (name.startsWith("FUN_")) continue;
 
                 String address = String.format("0x%08x", func.getEntryPoint().getOffset());
 
-                // Write any comment lines that preceded this address
-                List<String> comments = commentsBefore.get(address);
-                if (comments != null) {
-                    for (String comment : comments) {
-                        writer.write(comment + "\n");
-                    }
-                }
+                for (String c : comments.getCommentsBefore(address)) writer.write(c + "\n");
 
                 String plateComment = currentProgram.getListing().getComment(CodeUnit.PLATE_COMMENT, func.getEntryPoint());
                 if (plateComment != null && !plateComment.isEmpty()) {
@@ -192,13 +136,7 @@ public class ExportAnalysis extends GhidraScript {
                 }
             }
 
-            // Write any trailing comments
-            List<String> trailing = commentsBefore.get("__trailing__");
-            if (trailing != null) {
-                for (String comment : trailing) {
-                    writer.write(comment + "\n");
-                }
-            }
+            for (String c : comments.getTrailingComments()) writer.write(c + "\n");
         }
 
         // Count non-default functions
@@ -220,42 +158,22 @@ public class ExportAnalysis extends GhidraScript {
         // sessions, so the CSV is the authoritative record of user-defined type intent.
         Map<String, String> existingTypes    = new HashMap<>();
         Map<String, String> existingComments = new HashMap<>();
-        Map<String, List<String>> commentsBefore = new HashMap<>();
-        List<String> headerComments = new ArrayList<>();
+        CsvCommentIndex commentIdx = CsvCommentIndex.fromLines(java.util.Collections.emptyList());
 
         if (new File(outputFile).exists()) {
-            try (BufferedReader reader = new BufferedReader(new FileReader(outputFile))) {
-                String line;
-                List<String> pendingComments = new ArrayList<>();
-                boolean pastHeader = false;
-                while ((line = reader.readLine()) != null) {
-                    if (line.startsWith("#")) {
-                        pendingComments.add(line);
-                    } else {
-                        // Split into at most 4 fields: address, name, type, comment
-                        // (4-arg limit keeps commas inside the comment field intact)
+            try {
+                commentIdx = CsvCommentIndex.read(outputFile);
+                // Re-read to collect existing type and inline comment fields
+                try (BufferedReader reader = new BufferedReader(new FileReader(outputFile))) {
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        if (line.startsWith("#")) continue;
                         String[] parts = line.split(",", 4);
                         String addr = parts[0].trim();
-
-                        if (!pendingComments.isEmpty()) {
-                            if (!pastHeader) {
-                                headerComments.addAll(pendingComments);
-                            } else {
-                                commentsBefore.put(addr, new ArrayList<>(pendingComments));
-                            }
-                            pendingComments.clear();
-                        }
-                        pastHeader = true;
-
-                        // Skip the header row itself
                         if (addr.equals("address")) continue;
-
                         if (parts.length >= 3) existingTypes.put(addr, parts[2].trim());
                         if (parts.length >= 4) existingComments.put(addr, parts[3].trim());
                     }
-                }
-                if (!pendingComments.isEmpty()) {
-                    commentsBefore.put("__trailing__", new ArrayList<>(pendingComments));
                 }
             } catch (IOException e) {
                 // First run — no existing CSV; maps stay empty
@@ -283,18 +201,13 @@ public class ExportAnalysis extends GhidraScript {
 
         // Phase C: Write output with merged type selection
         try (FileWriter writer = new FileWriter(outputFile)) {
-            // Preserve # comments that preceded the header
-            for (String comment : headerComments) {
-                writer.write(comment + "\n");
-            }
-
+            for (String c : commentIdx.getHeaderComments()) writer.write(c + "\n");
             writer.write("address,name,type,comment\n");
 
             for (Symbol sym : variables) {
                 String address = String.format("0x%08x", sym.getAddress().getOffset());
                 String name = sym.getName();
 
-                // Get the type Ghidra currently has at this address
                 String ghidraType = "";
                 try {
                     ghidra.program.model.listing.Data data =
@@ -306,58 +219,19 @@ public class ExportAnalysis extends GhidraScript {
                     // Ignore type errors
                 }
 
-                // Type selection: prefer named (user-defined) types over Ghidra primitives.
-                // Priority: named Ghidra type > named CSV type > primitive Ghidra type.
-                String csvType = existingTypes.getOrDefault(address, "");
-                String finalType;
-                if (!isPrimitiveType(ghidraType)) {
-                    // Ghidra has a named type (struct or enum it knows about) — trust it
-                    finalType = ghidraType;
-                } else if (!isPrimitiveType(csvType)) {
-                    // Ghidra reverted to a primitive; CSV has a named type the user set — keep it
-                    finalType = csvType;
-                } else {
-                    // Both primitive — use Ghidra's (may have more accurate width info)
-                    finalType = ghidraType;
-                }
+                String finalType = ScriptUtils.selectType(ghidraType, existingTypes.getOrDefault(address, ""));
+                String comment   = existingComments.getOrDefault(address, "");
 
-                // Preserve the comment from the existing CSV
-                String comment = existingComments.getOrDefault(address, "");
-
-                // Write any # comment lines that preceded this address in the old CSV
-                List<String> priorComments = commentsBefore.get(address);
-                if (priorComments != null) {
-                    for (String c : priorComments) {
-                        writer.write(c + "\n");
-                    }
-                }
-
+                for (String c : commentIdx.getCommentsBefore(address)) writer.write(c + "\n");
                 writer.write(address + "," + name + "," + finalType + "," + comment + "\n");
             }
 
-            // Write any trailing # comments from the old CSV
-            List<String> trailing = commentsBefore.get("__trailing__");
-            if (trailing != null) {
-                for (String comment : trailing) {
-                    writer.write(comment + "\n");
-                }
-            }
+            for (String c : commentIdx.getTrailingComments()) writer.write(c + "\n");
         }
 
         return variables.size();
     }
 
-    // Returns true for Ghidra built-in primitive type names.
-    // Anything NOT in this set is a user-named type (struct, enum, typedef) to preserve.
-    private boolean isPrimitiveType(String typeName) {
-        if (typeName == null || typeName.trim().isEmpty()) return true;
-        String trimmed = typeName.trim().toLowerCase();
-        // "byte *", "word *" → primitive pointer; "my_struct_t *" → named pointer
-        if (trimmed.endsWith(" *")) {
-            return PRIMITIVE_TYPES.contains(trimmed.substring(0, trimmed.length() - 2).trim());
-        }
-        return PRIMITIVE_TYPES.contains(trimmed);
-    }
 
     private int exportDecompilation(String outputDir) throws Exception {
         String outputFile = outputDir + "/" + firmwareName + ".ghidra.cpp";

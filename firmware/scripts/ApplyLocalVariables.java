@@ -136,7 +136,7 @@ public class ApplyLocalVariables extends GhidraScript {
                     continue;
                 }
 
-                String[] parts = parseCSVLine(line);
+                String[] parts = ScriptUtils.parseCSVLine(line);
                 if (parts.length < 5) {
                     continue;
                 }
@@ -153,7 +153,7 @@ public class ApplyLocalVariables extends GhidraScript {
                 }
 
                 try {
-                    long address = parseAddressString(addressStr);
+                    long address = ScriptUtils.parseAddress(addressStr);
 
                     VarDef var = new VarDef();
                     var.functionAddress = address;
@@ -172,7 +172,7 @@ public class ApplyLocalVariables extends GhidraScript {
         return vars;
     }
 
-    private String[] parseCSVLine(String line) {
+    private String[] ScriptUtils.parseCSVLine(String line) {
         List<String> parts = new ArrayList<>();
         StringBuilder current = new StringBuilder();
         boolean inQuotes = false;
@@ -347,8 +347,8 @@ public class ApplyLocalVariables extends GhidraScript {
 
     private DataType getDataType(String typeString) {
         // Handle pointer types
-        if (typeString.endsWith("*")) {
-            String baseType = typeString.substring(0, typeString.length() - 1).trim();
+        if (ScriptUtils.isPointerType(typeString)) {
+            String baseType = ScriptUtils.stripPointer(typeString);
             DataType baseDataType = getDataType(baseType);
 
             if (baseDataType == null) {
@@ -404,13 +404,7 @@ public class ApplyLocalVariables extends GhidraScript {
         return null;
     }
 
-    private long parseAddressString(String addressStr) {
-        addressStr = addressStr.trim();
-        if (addressStr.startsWith("0x") || addressStr.startsWith("0X")) {
-            return Long.parseLong(addressStr.substring(2), 16);
-        }
-        return Long.parseLong(addressStr, 16);
-    }
+
 
     // Helper classes
     private static class VarDef {

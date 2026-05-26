@@ -170,7 +170,7 @@ public class ApplyMPC555Registers extends GhidraScript {
                     continue;
                 }
 
-                String[] parts = parseCSVLine(line);
+                String[] parts = ScriptUtils.parseCSVLine(line);
                 if (parts.length < 2) {
                     continue;
                 }
@@ -185,7 +185,7 @@ public class ApplyMPC555Registers extends GhidraScript {
                 }
 
                 try {
-                    long address = parseAddressString(addressStr);
+                    long address = ScriptUtils.parseAddress(addressStr);
 
                     // Accept MPC555 peripheral addresses:
                     // USIU: 0x002FC000 - 0x002FFFFF
@@ -209,7 +209,7 @@ public class ApplyMPC555Registers extends GhidraScript {
         return registers;
     }
 
-    private String[] parseCSVLine(String line) {
+    private String[] ScriptUtils.parseCSVLine(String line) {
         List<String> parts = new ArrayList<>();
         StringBuilder current = new StringBuilder();
         boolean inQuotes = false;
@@ -323,13 +323,7 @@ public class ApplyMPC555Registers extends GhidraScript {
         }
     }
 
-    private long parseAddressString(String addressStr) {
-        addressStr = addressStr.trim();
-        if (addressStr.startsWith("0x") || addressStr.startsWith("0X")) {
-            return Long.parseLong(addressStr.substring(2), 16);
-        }
-        return Long.parseLong(addressStr, 16);
-    }
+
 
     private static class RegisterDef {
         long address;

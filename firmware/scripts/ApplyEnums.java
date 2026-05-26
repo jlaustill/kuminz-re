@@ -110,7 +110,7 @@ public class ApplyEnums extends GhidraScript {
                 }
 
                 // Parse CSV: enum_name,value,member_name,comment,size
-                String[] parts = parseCSVLine(line);
+                String[] parts = ScriptUtils.parseCSVLine(line);
                 if (parts.length < 3) {
                     continue;
                 }
@@ -133,16 +133,10 @@ public class ApplyEnums extends GhidraScript {
                     continue;
                 }
 
-                // Parse value (supports hex 0x prefix)
                 long value;
                 try {
-                    if (valueStr.startsWith("0x") || valueStr.startsWith("0X")) {
-                        value = Long.parseLong(valueStr.substring(2), 16);
-                    } else {
-                        value = Long.parseLong(valueStr);
-                    }
+                    value = ScriptUtils.parseIntValue(valueStr);
                 } catch (NumberFormatException e) {
-                    // Skip invalid values
                     continue;
                 }
 
@@ -164,26 +158,6 @@ public class ApplyEnums extends GhidraScript {
         return enumDefs;
     }
 
-    private String[] parseCSVLine(String line) {
-        // Simple CSV parser that handles commas in quoted fields
-        List<String> parts = new ArrayList<>();
-        StringBuilder current = new StringBuilder();
-        boolean inQuotes = false;
-
-        for (char c : line.toCharArray()) {
-            if (c == '"') {
-                inQuotes = !inQuotes;
-            } else if (c == ',' && !inQuotes) {
-                parts.add(current.toString());
-                current = new StringBuilder();
-            } else {
-                current.append(c);
-            }
-        }
-        parts.add(current.toString());
-
-        return parts.toArray(new String[0]);
-    }
 
     private int createEnumTypes(Map<String, List<EnumMember>> enumDefs) throws Exception {
         int created = 0;
@@ -198,17 +172,13 @@ public class ApplyEnums extends GhidraScript {
                     continue;
                 }
 
-                // Determine enum size from members (use largest or first defined)
-                int enumSize = members.get(0).size;
+                // Determine enum size from members (use largest), then round up to
+                // the nearest power of 2 that Ghidra accepts (1, 2, 4, or 8 bytes).
+                int rawSize = members.get(0).size;
                 for (EnumMember m : members) {
-                    if (m.size > enumSize) {
-                        enumSize = m.size;
-                    }
+                    if (m.size > rawSize) rawSize = m.size;
                 }
-
-                // Ensure valid size (1, 2, 4, or 8 bytes)
-                if (enumSize <= 0) enumSize = 1;
-                else if (enumSize > 8) enumSize = 8;
+                int enumSize = ScriptUtils.selectEnumSize(rawSize);
 
                 // Update in place if the enum already exists so that Ghidra
                 // preserves all references (local variable types, global types, etc.)
