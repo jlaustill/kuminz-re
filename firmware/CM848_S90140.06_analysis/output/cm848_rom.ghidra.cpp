@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon May 25 19:58:43 MDT 2026
+// Generated: Tue May 26 04:24:20 MDT 2026
 
 
 //
@@ -20337,11 +20337,10 @@ void cm848_processGovernorSecurityAccessRequest(undefined4 param_1,undefined4 pa
 // Function: cm848_j1939HandlePgn65228Dm3ClearDiag @ 0x00022674
 //
 
-void cm848_j1939HandlePgn65228Dm3ClearDiag(j1939_request_msg_t *param_1)
+void cm848_j1939HandlePgn65228Dm3ClearDiag(j1939_rx_msg_t *param_1)
 
 {
-  undefined4 uVar1;
-  byte ack_type;
+  byte bVar1;
   
   if (((prior_boot_faulted == 0) && ((protection_enable_t_0040c050.mode_bits & 1) != 0)) ||
      ((prior_boot_faulted == 1 && ((fault_management_status_flags & 0x400) == 0)))) {
@@ -20358,21 +20357,21 @@ void cm848_j1939HandlePgn65228Dm3ClearDiag(j1939_request_msg_t *param_1)
       diagnostic_clear_request_state = 3;
     }
     if (j1939_dm1_active_flag == 0) {
-      ack_type = 0;
+      bVar1 = 0;
       goto LAB_0002275c;
     }
-    uVar1 = 0;
+    bVar1 = 0;
   }
   else {
     if (j1939_dm1_active_flag == 0) {
-      ack_type = 1;
+      bVar1 = 1;
 LAB_0002275c:
-      cm848_sendJ1939AcknowledgeMessage(param_1,ack_type);
+      cm848_sendJ1939AcknowledgeMessage((j1939_request_msg_t *)param_1,bVar1);
       return;
     }
-    uVar1 = 1;
+    bVar1 = 1;
   }
-  cm848_sendJ1939NegativeAck(param_1,uVar1);
+  cm848_sendJ1939NegativeAck(param_1,bVar1);
   j1939_dm1_active_flag = 0;
   return;
 }
@@ -21482,10 +21481,10 @@ void cm848_sendJ1939AcknowledgeMessage(j1939_request_msg_t *request_msg,byte ack
 {
   _j1939_dm1_cmd_word_a = CONCAT13(((byte)j1939_source_address_a & 7) << 2,0xe8ff00);
   j1939_dm1_cmd_word_b = CONCAT11(0xff,request_msg->dest_address);
-  DAT_003faaaf = 0;
-  DAT_003faab0 = request_msg->reserved_01;
-  DAT_003faab1 = request_msg->dest_address;
-  DAT_003faaaa = ack_type;
+  j1939_ack_payload.pgn_low = 0;
+  j1939_ack_payload.pgn_mid = request_msg->pgn_pf;
+  j1939_ack_payload.pgn_high = request_msg->dest_address;
+  j1939_ack_payload.control_byte = ack_type;
   sendJ1939MultiFrame(&j1939_dm1_cmd_word_a);
   return;
 }
@@ -21497,19 +21496,20 @@ void cm848_sendJ1939AcknowledgeMessage(j1939_request_msg_t *request_msg,byte ack
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
-void cm848_sendJ1939NegativeAck(int param_1,undefined1 param_2)
+void cm848_sendJ1939NegativeAck(j1939_rx_msg_t *msg,byte ack_type)
 
 {
-  undefined1 *puVar1;
+  tsc1_payload_t *ptVar1;
   
   _j1939_dm1_cmd_word_a = CONCAT13(((byte)j1939_source_address_a & 7) << 2,0xe8ff00);
-  j1939_dm1_cmd_word_b = CONCAT11(0xff,*(undefined1 *)(param_1 + 2));
-  puVar1 = *(undefined1 **)(param_1 + 6);
-  DAT_003faaaf = *puVar1;
-  DAT_003faab0 = puVar1[1];
-  DAT_003faab1 = puVar1[2];
-  DAT_003faaaa = param_2;
+  j1939_dm1_cmd_word_b = CONCAT11(0xff,msg->dest_address);
+  ptVar1 = msg->data_ptr;
+  j1939_ack_payload.pgn_low = ptVar1->control_byte;
+  j1939_ack_payload.pgn_mid = *(byte *)&ptVar1->requested_speed;
+  j1939_ack_payload.pgn_high = (byte)ptVar1->requested_speed;
+  j1939_ack_payload.control_byte = ack_type;
   sendJ1939MultiFrame(&j1939_dm1_cmd_word_a);
   return;
 }
@@ -21537,12 +21537,12 @@ void cm848_initJ1939AckBuffer(void)
 
 {
   j1939_pgn56360_alt_tx_length = 8;
-  j1939_pgn56360_alt_data_ptr = &DAT_003faaaa;
+  j1939_pgn56360_alt_data_ptr = &j1939_ack_payload.control_byte;
   j1939_pgn56360_alt_end_ptr = &DAT_003faab2;
-  DAT_003faaab = 0xff;
-  DAT_003faaac = 0xff;
-  DAT_003faaad = 0xff;
-  DAT_003faaae = 0xff;
+  j1939_ack_payload.group_function = 0xff;
+  j1939_ack_payload.reserved_byte2 = 0xff;
+  j1939_ack_payload.reserved_byte3 = 0xff;
+  j1939_ack_payload.address_acknowledged = 0xff;
   j1939_dm1_active_flag = 0;
   return;
 }

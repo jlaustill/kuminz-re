@@ -91,8 +91,11 @@ function_address,function_name,param_index,name,type,comment
 
 0x00022d60,j1939MessageDispatcher,0,rx_msg,can_std_rx_desc_t*,Pointer to received J1939 message
 
-0x00023d3c,sendJ1939AcknowledgeMessage,0,request_msg,j1939_request_msg_t*,Original request to acknowledge
-0x00023d3c,sendJ1939AcknowledgeMessage,1,ack_type,byte,ACK type (0=ACK 1=NACK 2=AccessDenied 3=CannotRespond)
+0x00023d3c,cm848_sendJ1939AcknowledgeMessage,0,request_msg,j1939_request_msg_t*,Original request to acknowledge
+0x00023d3c,cm848_sendJ1939AcknowledgeMessage,1,ack_type,byte,ACK type (0=ACK 1=NACK 2=AccessDenied 3=CannotRespond)
+
+0x00023dbc,cm848_sendJ1939NegativeAck,0,msg,j1939_rx_msg_t*,Received message to NACK (accesses dest_address at +2 and data_ptr at +6)
+0x00023dbc,cm848_sendJ1939NegativeAck,1,ack_type,byte,NACK sub-type (1=NACK 3=CannotRespond)
 
 0x00005d8c,sendJ1939DiagnosticMessage,0,dest_address,byte,Destination address for response
 0x00005d8c,sendJ1939DiagnosticMessage,1,data_ptr,byte*,Pointer to diagnostic response data

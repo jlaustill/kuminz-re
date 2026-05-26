@@ -339,21 +339,23 @@ j1939_pgn_handler_entry_t,0x003fa9a2,handler_func,dword,4,Function pointer to PG
 # Passed to j1939DispatchPgnHandler and other request processors
 # Derived from dispatcher code: offset+2=dest_addr, offset+6=pgn_data_ptr
 j1939_request_msg_t,,priority,byte,1,J1939 message priority (0-7),,needs_review
-j1939_request_msg_t,,reserved_01,byte,1,Reserved/padding byte,,needs_review
-j1939_request_msg_t,,dest_address,byte,1,Destination address (0xFF=broadcast),,verified
+j1939_request_msg_t,,pgn_pf,byte,1,PDU Format byte of incoming message; used as pgn_mid when building ACK response,,verified
+j1939_request_msg_t,,dest_address,byte,1,PDU Specific byte (destination address for PDU1, PGN low for PDU2); used as pgn_high when building ACK,,verified
 j1939_request_msg_t,,source_address,byte,1,Source address of requester,,needs_review
 j1939_request_msg_t,,reserved_04,word,2,Reserved/message flags,,needs_review
 j1939_request_msg_t,,pgn_data_ptr,dword,4,Pointer to PGN data bytes,,verified
 
-# J1939 Acknowledge Message - ACK/NACK response structure
-# Used by sendJ1939AcknowledgeMessage for responding to requests
-j1939_ack_msg_t,,control_byte,byte,1,ACK control byte (0=ACK 1=NACK 2=AccessDenied 3=CannotRespond),,verified
-j1939_ack_msg_t,,group_function,byte,1,Group function value from original request,,needs_review
-j1939_ack_msg_t,,reserved_02,word,2,Reserved bytes 2-3,,needs_review
-j1939_ack_msg_t,,address_acknowledged,byte,1,Address being acknowledged,,needs_review
-j1939_ack_msg_t,,pgn_low,byte,1,Acknowledged PGN low byte,,verified
-j1939_ack_msg_t,,pgn_mid,byte,1,Acknowledged PGN mid byte,,verified
-j1939_ack_msg_t,,pgn_high,byte,1,Acknowledged PGN high byte,,verified
+# J1939 Acknowledge Message - ACK/NACK response structure (J1939-21 ACKM, PGN 0xE800)
+# 8-byte payload; static fields initialized by cm848_initJ1939AckBuffer, dynamic fields filled per-call
+# Instance at 0x003faaaa (j1939_pgn56360_alt_data_ptr → 0x003faaaa, alt_end_ptr → 0x003faab2)
+j1939_ack_msg_t,0x003faaaa,control_byte,byte,1,ACK control byte (0=ACK 1=NACK 2=AccessDenied 3=CannotRespond),,verified
+j1939_ack_msg_t,0x003faaaa,group_function,byte,1,Group function value (0xFF = not defined per J1939-21),,verified
+j1939_ack_msg_t,0x003faaaa,reserved_byte2,byte,1,Reserved byte 2 (always 0xFF per J1939-21),,verified
+j1939_ack_msg_t,0x003faaaa,reserved_byte3,byte,1,Reserved byte 3 (always 0xFF per J1939-21),,verified
+j1939_ack_msg_t,0x003faaaa,address_acknowledged,byte,1,Source address of message being acknowledged (0xFF = global),,verified
+j1939_ack_msg_t,0x003faaaa,pgn_low,byte,1,Acknowledged PGN low byte (hardcoded 0 for PDU1 requests),,verified
+j1939_ack_msg_t,0x003faaaa,pgn_mid,byte,1,Acknowledged PGN mid byte (= PF byte of request; from j1939_request_msg_t.pgn_pf),,verified
+j1939_ack_msg_t,0x003faaaa,pgn_high,byte,1,Acknowledged PGN high byte (= PS/DP byte of request; from j1939_request_msg_t.dest_address),,verified
 
 # ============================================================================
 # Additional Generic Structures - Ported from CM550 for analysis reference
