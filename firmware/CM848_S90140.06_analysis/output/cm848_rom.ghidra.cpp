@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Tue May 26 07:47:58 MDT 2026
+// Generated: Tue May 26 08:10:32 MDT 2026
 
 
 //
@@ -20451,8 +20451,8 @@ void cm848_initJ1939Dm1RequestHandler(void)
 void cm848_j1939ProcessPgn61442Etc1(j1939_rx_msg_t *rx_msg)
 
 {
-  if ((rx_msg->source_address != j1939_ecu_source_address_cal) &&
-     (j1939_ecu_source_address_cal != 0xff)) {
+  if ((rx_msg->source_address != j1939_tsc1_auth_primary_sa) && (j1939_tsc1_auth_primary_sa != 0xff)
+     ) {
     return;
   }
   if (rx_msg->data_length != 8) {
@@ -21251,7 +21251,7 @@ void cm848_j1939ProcessGovernorRequest(j1939_rx_msg_t *msg)
   bVar5 = tsc1_rx_byte_0 & 0x30;
   tsc1_rx_byte_3 = msg->data_pointer[3];
   bVar1 = msg->source_address;
-  if (((governor_feature_config_word & 0x1000) == 0) && (bVar1 == j1939_ecu_source_address_cal)) {
+  if (((governor_feature_config_word & 0x1000) == 0) && (bVar1 == j1939_tsc1_auth_primary_sa)) {
     return;
   }
   if (bVar2 == 0) {
@@ -21312,7 +21312,7 @@ LAB_00023878:
     j1939_transfer_frame_count = wVar4;
     j1939FormatMultiFrameResponse();
     j1939_governor_output_percent_cached = governor_output_percentage;
-    if ((((bVar1 == j1939_ecu_source_address_cal) && (j1939_tsc1_override_state.governor_mode == 1))
+    if ((((bVar1 == j1939_tsc1_auth_primary_sa) && (j1939_tsc1_override_state.governor_mode == 1))
         && (_j1939_governor_source_index == 1)) &&
        ((DAT_0005c36c <= governor_proportional_gain && (wVar4 != 0)))) {
       j1939_tsc1_override_state.etc1_multiframe_timeout = 0;
@@ -53162,13 +53162,13 @@ undefined4 cm848_lookupJ1939SourceAddressIndex(dword source_address)
   undefined4 uVar1;
   byte address_index;
   
-  if ((j1939_ecu_source_address_cal & 0xff) == source_address) {
+  if ((j1939_tsc1_auth_primary_sa & 0xff) == source_address) {
     uVar1 = 1;
   }
-  else if ((j1939_source_address_2_cal & 0xff) == source_address) {
+  else if ((j1939_tsc1_secondary_sa & 0xff) == source_address) {
     uVar1 = 2;
   }
-  else if ((j1939_source_address_3_cal & 0xff) == source_address) {
+  else if ((j1939_tsc1_auth_tertiary_sa & 0xff) == source_address) {
     uVar1 = 3;
   }
   else {
@@ -53434,7 +53434,7 @@ void cm848_processCoolantCalEntries(void)
       wVar1 = pwVar3[-1];
       pwVar3[-1] = wVar1 - 1;
       if ((word)(wVar1 - 1) == 0) {
-        if (((*pwVar6 == 1) && (*(byte *)(pwVar3 + -3) == j1939_ecu_source_address_cal)) &&
+        if (((*pwVar6 == 1) && (*(byte *)(pwVar3 + -3) == j1939_tsc1_auth_primary_sa)) &&
            (pwVar3[-2] == 1)) {
           j1939_tsc1_override_state.torque_limit_mode_select = 0;
           j1939_tsc1_override_state.speed_control_target =
@@ -53464,7 +53464,7 @@ void cm848_processCoolantCalEntries(void)
       sVar2 = *(short *)(pbVar4 + -2);
       *(short *)(pbVar4 + -2) = sVar2 + -1;
       if ((short)(sVar2 + -1) == 0) {
-        if ((*pbVar7 == j1939_ecu_source_address_cal) && (*(short *)(pbVar4 + -4) == 2)) {
+        if ((*pbVar7 == j1939_tsc1_auth_primary_sa) && (*(short *)(pbVar4 + -4) == 2)) {
           j1939_tsc1_override_state.speed_control_target =
                j1939_tsc1_override_state.speed_control_target & 5;
         }
@@ -66587,9 +66587,9 @@ LAB_00511cac:
     fuel_demand_timing_enable_flag = 0;
     injection_fault_shadow_flags = injection_fault_shadow_flags & 0xffef;
     protection_diag_shadow_flags_b = protection_diag_shadow_flags_b & 0xffef;
-    cm848_removeCoolantCalEntryByParams(1,j1939_ecu_source_address_cal & 0xff);
-    cm848_removeCoolantCalEntryByParams(1,j1939_source_address_3_cal & 0xff);
-    cm848_removeCoolantCalEntryByParams(1,j1939_source_address_2_cal & 0xff);
+    cm848_removeCoolantCalEntryByParams(1,j1939_tsc1_auth_primary_sa & 0xff);
+    cm848_removeCoolantCalEntryByParams(1,j1939_tsc1_auth_tertiary_sa & 0xff);
+    cm848_removeCoolantCalEntryByParams(1,j1939_tsc1_secondary_sa & 0xff);
     uVar1 = uRam003fd870;
     if ((protection_feature_flags & 0x40) == 0) {
       return;
@@ -66615,9 +66615,9 @@ LAB_00511cac:
     fuel_demand_timing_enable_flag = 1;
     bVar3 = 1;
     do {
-      cm848_addCoolantCalEntry(1,j1939_ecu_source_address_cal & 0xff,bVar3);
-      cm848_addCoolantCalEntry(1,j1939_source_address_3_cal & 0xff,bVar3);
-      cm848_addCoolantCalEntry(1,j1939_source_address_2_cal & 0xff,bVar3);
+      cm848_addCoolantCalEntry(1,j1939_tsc1_auth_primary_sa & 0xff,bVar3);
+      cm848_addCoolantCalEntry(1,j1939_tsc1_auth_tertiary_sa & 0xff,bVar3);
+      cm848_addCoolantCalEntry(1,j1939_tsc1_secondary_sa & 0xff,bVar3);
       bVar3 = bVar3 + 1;
     } while (bVar3 < 4);
     uRam003fcd7a = uRam004086c8;
