@@ -904,7 +904,7 @@ address,name
 0x00022e3c,cm848_processGovernorSpeedControlRequest
 0x00022f90,cm848_processGovernorSpeedRequest
 0x00023188,cm848_j1939RegisterPgnHandler
-0x000231cc,cm848_j1939DispatchPgnHandler
+0x000231cc,cm848_j1939DispatchPgnHandler,jlaustill reviewed 2026-5-25 - mostly readable, hopefully accurate
 0x000232b4,cm848_initJ1939ProtocolHandlers
 0x000233a0,cm848_j1939HandleProprietaryCommand
 0x0002343c,cm848_initJ1939ProprietaryHandler
