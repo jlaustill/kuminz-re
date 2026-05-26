@@ -758,3 +758,9 @@ DIAG_RESPONSE,7,DIAG_NACK_PROTECTED,Rejected: protection mode active,4
 # Mirrors Cummins CILCALDATASERVERLib.tagCICacheMode: dataVolatile vs readWrite
 CAL_WRITE_MODE,0xea,CAL_VOLATILE,Writes land in RAM only; lost on power cycle,1
 CAL_WRITE_MODE,0xee,CAL_PERSISTENT,Writes go through to EEPROM; survive power cycle,1
+# TSC1 Override Control Mode (J1939 SPN 695) - bits 0-1 of TSC1 byte 1
+# Used as local 'control_mode' in torqueControlModeHandler and stored in governor_mode field
+TSC1_OVERRIDE_MODE,0,TSC1_OVERRIDE_OFF,Override disabled; normal engine governor operation,1
+TSC1_OVERRIDE_MODE,1,TSC1_SPEED_CONTROL,Speed control; ECU governs to TSC1 requested_speed,1
+TSC1_OVERRIDE_MODE,2,TSC1_TORQUE_CONTROL,Torque control; active during transmission shift-in-progress,1
+TSC1_OVERRIDE_MODE,3,TSC1_SPEED_TORQUE_LIMIT,Speed and torque limit; ECU caps both simultaneously,1
