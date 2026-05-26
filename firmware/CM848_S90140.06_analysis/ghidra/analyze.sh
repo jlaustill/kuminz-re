@@ -169,6 +169,20 @@ cmd_bank2export() {
     print_success "Bank 2 export complete: $outfile"
 }
 
+cmd_callingconv() {
+    print_header "FIXING BANK 2 CALLING CONVENTIONS: $FIRMWARE_NAME"
+
+    check_ghidra
+    check_project
+
+    echo "Setting __stdcall on all functions in Bank 2 (0x00500000-0x0053DFFF)..."
+    echo ""
+
+    run_script SetCallingConvention.java "00500000" "0053DFFF"
+
+    print_success "Calling conventions set — run funcdefs + localvars + export to see changes"
+}
+
 cmd_hwregs() {
     print_header "APPLYING MPC555 HARDWARE REGISTERS: $FIRMWARE_NAME"
 
@@ -203,7 +217,8 @@ cmd_help() {
     echo "  vartypes   Apply global variable types (clears stale types first)"
     echo "  constants  Apply constant definitions (magic numbers with names)"
     echo "  arrays     Apply array definitions"
-    echo "  hwregs        Apply MPC555 hardware register names"
+    echo "  callingconv   Set __stdcall calling convention on all Bank 2 functions"
+  echo "  hwregs        Apply MPC555 hardware register names"
     echo "  decompile     Decompile a single function by address or name"
     echo "  forceanalyze  Force disassembly + function creation at an address"
     echo "  full          Run complete pipeline: init -> analyze -> memmap -> import -> export"

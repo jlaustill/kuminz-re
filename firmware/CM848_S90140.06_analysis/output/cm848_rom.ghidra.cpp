@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Tue May 26 08:10:32 MDT 2026
+// Generated: Tue May 26 08:33:47 MDT 2026
 
 
 //
@@ -524,8 +524,6 @@ void cm848_stubFunction1(void)
 //
 // Function: mpc555_eepromWriteWords @ 0x00000bec
 //
-
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 void mpc555_eepromWriteWords(dword dest_address,word *src_ptr,word word_count)
 
@@ -1143,8 +1141,6 @@ void cm848_initService25Handler(void)
 // Function: cm848_registerPgnResponseHandler @ 0x00001948
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 bool cm848_registerPgnResponseHandler(dword pgn,void *handler_func)
 
 {
@@ -1182,8 +1178,6 @@ void cm848_initDataBasedDiagServices(void)
 //
 // Function: cm848_diagService65_handler @ 0x000019e8
 //
-
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 undefined4 cm848_diagService65_handler(dword request_msg)
 
@@ -1263,8 +1257,6 @@ void cm848_registerMemoryReadServices(void)
 // Function: cm848_diagMemoryReadHandler @ 0x00001b48
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 char cm848_diagMemoryReadHandler(dword address,word length,byte *response_ptr)
 
 {
@@ -1343,8 +1335,6 @@ char cm848_diagMemoryReadHandler(dword address,word length,byte *response_ptr)
 // Function: cm848_diagMemoryReadWithBaseOffset @ 0x00001cf8
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 undefined1
 cm848_diagMemoryReadWithBaseOffset(dword request_msg,word param_id,word reserved,dword offset)
 
@@ -1369,8 +1359,6 @@ cm848_diagMemoryReadWithBaseOffset(dword request_msg,word param_id,word reserved
 // Function: cm848_diagService67_memoryReadOffset @ 0x00001d5c
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 undefined1 cm848_diagService67_memoryReadOffset(dword request_msg)
 
 {
@@ -1389,8 +1377,6 @@ undefined1 cm848_diagService67_memoryReadOffset(dword request_msg)
 //
 // Function: cm848_diagService74_memoryRead @ 0x00001dc4
 //
-
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 undefined1 cm848_diagService74_memoryRead(dword request_msg)
 
@@ -1411,8 +1397,6 @@ undefined1 cm848_diagService74_memoryRead(dword request_msg)
 //
 // Function: cm848_diagService76_memoryReadExt @ 0x00001e30
 //
-
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 undefined1 cm848_diagService76_memoryReadExt(dword request_msg)
 
@@ -2081,8 +2065,6 @@ void cm848_softReset(void)
 // Function: cm848_registerDiagnosticService @ 0x00002c94
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 bool cm848_registerDiagnosticService(byte service_id,void *handler_ptr)
 
 {
@@ -2102,8 +2084,6 @@ bool cm848_registerDiagnosticService(byte service_id,void *handler_ptr)
 //
 // Function: cm848_registerPgnEf00Handler @ 0x00002cd8
 //
-
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 void cm848_registerPgnEf00Handler(byte sub_id,void *handler_func)
 
@@ -2703,8 +2683,6 @@ void cm848_updateEepromMagicAndReload(void)
 // Function: cm848_diagRequestTypeDispatcher @ 0x000038f4
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 void cm848_diagRequestTypeDispatcher(byte service_code,byte *request_ptr)
 
 {
@@ -2997,8 +2975,6 @@ void mpc555_canTransmitQueuePush(uint param_1,uint param_2,int param_3,undefined
 // Function: cm848_transmitCanMessage @ 0x00003f20
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 void cm848_transmitCanMessage(j1939_msg_hdr_t *msg_header,byte *data_ptr)
 
 {
@@ -3024,7 +3000,6 @@ void cm848_transmitCanMessage(j1939_msg_hdr_t *msg_header,byte *data_ptr)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 undefined4 cm848_lookupTableEntryByKey(word param_id)
 
@@ -4256,8 +4231,6 @@ LAB_00005a58:
 // Function: mpc555_multiFrameCanTransmit @ 0x00005adc
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 void mpc555_multiFrameCanTransmit(j1939_msg_hdr_t *msg_header,byte *data_ptr,word data_length)
 
 {
@@ -4331,8 +4304,6 @@ void mpc555_multiFrameCanTransmit(j1939_msg_hdr_t *msg_header,byte *data_ptr,wor
 //
 // Function: mpc555_handleJ1939QueueRequest @ 0x00005c50
 //
-
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 void mpc555_handleJ1939QueueRequest(byte request_type,byte connection_id)
 
@@ -4412,8 +4383,6 @@ void mpc555_processAdcChannelGroup(undefined1 param_1,undefined2 param_2)
 //
 // Function: mpc555_sendJ1939DiagnosticMessage @ 0x00005d8c
 //
-
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 void mpc555_sendJ1939DiagnosticMessage(byte dest_address,byte *data_ptr,word data_length)
 
@@ -4499,8 +4468,6 @@ mpc555_sendDiagAcknowledgeFrame
 // Function: mpc555_handleJ1939DataRequest @ 0x00005ecc
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 void mpc555_handleJ1939DataRequest(j1939_rx_msg_t *rx_msg)
 
 {
@@ -4554,8 +4521,6 @@ void mpc555_handleJ1939DataRequest(j1939_rx_msg_t *rx_msg)
 //
 // Function: mpc555_handleJ1939DataTransfer @ 0x00005fe4
 //
-
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 void mpc555_handleJ1939DataTransfer(j1939_rx_msg_t *rx_msg)
 
@@ -4653,8 +4618,6 @@ void mpc555_handleJ1939DataTransfer(j1939_rx_msg_t *rx_msg)
 // Function: mpc555_handleJ1939AbortRequest @ 0x00006180
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 void mpc555_handleJ1939AbortRequest(j1939_rx_msg_t *rx_msg)
 
 {
@@ -4715,8 +4678,6 @@ void mpc555_handleJ1939AbortAcknowledge(int param_1)
 // Function: cm848_j1939DiagMessageDispatcher @ 0x0000628c
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 void cm848_j1939DiagMessageDispatcher(j1939_rx_msg_t *rx_msg,byte service_code)
 
 {
@@ -4745,8 +4706,6 @@ void cm848_j1939DiagMessageDispatcher(j1939_rx_msg_t *rx_msg,byte service_code)
 //
 // Function: mpc555_processJ1939QueueTransmit @ 0x000062fc
 //
-
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 void mpc555_processJ1939QueueTransmit(void *queue_entry)
 
@@ -4867,8 +4826,6 @@ void mpc555_decrementPauseStatusCounter(void)
 // Function: cm848_processJ1939QueueStatus @ 0x000064c4
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 void cm848_processJ1939QueueStatus(byte connection_id)
 
 {
@@ -4954,8 +4911,6 @@ void cm848_updateSystemTimers(undefined1 param_1,int param_2)
 //
 // Function: mpc555_diagnosticSubcommandDispatcher @ 0x0000662c
 //
-
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 void mpc555_diagnosticSubcommandDispatcher(byte subcommand,byte *data_ptr)
 
@@ -5349,8 +5304,6 @@ void cm848_processMainLoop(void)
 //
 // Function: cm848_dispatchDiagnosticService @ 0x00006d24
 //
-
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 void cm848_dispatchDiagnosticService(byte service_code,byte *data_ptr,word data_length)
 
@@ -10818,8 +10771,6 @@ void cm848_initFilterCoefficients(void)
 // Function: cm848_boostBasedFuelModifier @ 0x00012ad4
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 void cm848_boostBasedFuelModifier(word boost_denominator,word base_fueling)
 
 {
@@ -11085,8 +11036,6 @@ void cm848_fuelDemandBlendCalculation(void)
 // Function: cm848_calculateBoostPressureOffset @ 0x000130dc
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 void cm848_calculateBoostPressureOffset(word manifold_pressure,word rpm)
 
 {
@@ -11158,8 +11107,6 @@ void cm848_initFuelFilterDefaults(void)
 //
 // Function: cm848_calculateBoostTorqueOffset @ 0x00013294
 //
-
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 void cm848_calculateBoostTorqueOffset(word boost_input,word rpm)
 
@@ -11356,8 +11303,6 @@ void cm848_processBoostProtectionConditions(void)
 //
 // Function: cm848_selectLoadNormalizer @ 0x0001392c
 //
-
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 void cm848_selectLoadNormalizer
                (word selector,word raw_boost,word computed_boost,word filtered_boost)
@@ -12500,8 +12445,6 @@ uint cm848_fuelDemandFilterUpdate(uint param_1,ushort *param_2,int param_3)
 //
 // Function: cm848_interpolateFuelMapTable @ 0x00015e08
 //
-
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 void cm848_interpolateFuelMapTable(void *table_ptr,word rpm_input,word load_input)
 
@@ -19113,8 +19056,6 @@ void cm848_initProtectionDefaults(void)
 // Function: cm848_processJ1939RxMessage @ 0x00020c64
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 void cm848_processJ1939RxMessage(j1939_rx_msg_t *rx_msg)
 
 {
@@ -19398,8 +19339,6 @@ void cm848_initSpeedControlTableDimensions(void)
 // Function: cm848_advanceDiagnosticActionState @ 0x00021584
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 DIAG_RESPONSE cm848_advanceDiagnosticActionState(void)
 
 {
@@ -19454,7 +19393,6 @@ DIAG_RESPONSE cm848_activateDiagnosticSession(void)
 // Function: cm848_resetDiagnosticSession @ 0x00021668
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 /* jlaustill review 2026-05-25 - hopefully accurate */
 
 DIAG_RESPONSE cm848_resetDiagnosticSession(void)
@@ -19497,7 +19435,6 @@ DIAG_RESPONSE cm848_forceActivateDiagnosticSession(void)
 // Function: cm848_setEngineStarting @ 0x000216e8
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 /* jlaustill reviewed 2026-5-25 - annoyed that = 1 rejects bool = TRUE, but otherwise hoping
    accurate */
 
@@ -19600,8 +19537,6 @@ undefined1 cm848_j1939ProcessRxQueueParam(undefined4 param_1)
 // Function: cm848_setColdStartMode2Flag @ 0x00021904
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 DIAG_RESPONSE cm848_setColdStartMode2Flag(void)
 
 {
@@ -19614,8 +19549,6 @@ DIAG_RESPONSE cm848_setColdStartMode2Flag(void)
 //
 // Function: cm848_validateCalibrationMemory @ 0x00021918
 //
-
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 DIAG_RESPONSE cm848_validateCalibrationMemory(void)
 
@@ -19933,8 +19866,6 @@ void cm848_initJ1939DiagnosticCallback(void)
 //
 // Function: cm848_processJ1939DiagnosticRequest @ 0x000220e4
 //
-
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 bool cm848_processJ1939DiagnosticRequest(byte service_id,void *handler_ptr)
 
@@ -20408,8 +20339,6 @@ void cm848_initPgn65228Dm3Handler(undefined4 param_1,undefined4 param_2,void *pa
 // Function: cm848_j1939HandleDm1RequestMessage @ 0x000227a0
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 void cm848_j1939HandleDm1RequestMessage(j1939_rx_msg_t *request_msg)
 
 {
@@ -20446,7 +20375,6 @@ void cm848_initJ1939Dm1RequestHandler(void)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 void cm848_j1939ProcessPgn61442Etc1(j1939_rx_msg_t *rx_msg)
 
@@ -20613,7 +20541,6 @@ void cm848_initJ1939VehicleSpeedHandler(void)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 void torqueControlModeHandler(j1939_rx_msg_t *msg)
 
@@ -20910,8 +20837,6 @@ void cm848_processGovernorSpeedRequest(void)
 // Function: cm848_j1939RegisterPgnHandler @ 0x00023188
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 bool cm848_j1939RegisterPgnHandler(byte pgn_byte_0,byte pgn_byte_1,void *handler_func)
 
 {
@@ -20937,7 +20862,6 @@ bool cm848_j1939RegisterPgnHandler(byte pgn_byte_0,byte pgn_byte_1,void *handler
 // Function: cm848_j1939DispatchPgnHandler @ 0x000231cc
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 /* jlaustill reviewed 2026-5-25 - mostly readable, hopefully accurate */
 
 void cm848_j1939DispatchPgnHandler(j1939_rx_msg_t *msg)
@@ -21226,7 +21150,6 @@ void cm848_setGovernorHandlerDefault(void)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 void cm848_j1939ProcessGovernorRequest(j1939_rx_msg_t *msg)
 
@@ -21385,8 +21308,6 @@ void cm848_initGovernorProtectionState(void)
 // Function: cm848_j1939DispatchAddressHandler @ 0x00023b38
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 void cm848_j1939DispatchAddressHandler(j1939_rx_msg_t *msg)
 
 {
@@ -21484,8 +21405,6 @@ void cm848_initJ1939DmHandlerBuffer(int param_1,int param_2)
 // Function: cm848_sendJ1939AcknowledgeMessage @ 0x00023d3c
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 void cm848_sendJ1939AcknowledgeMessage(j1939_rx_msg_t *request_msg,J1939_ACK_TYPE ack_type)
 
 {
@@ -21504,8 +21423,6 @@ void cm848_sendJ1939AcknowledgeMessage(j1939_rx_msg_t *request_msg,J1939_ACK_TYP
 //
 // Function: cm848_sendJ1939NegativeAck @ 0x00023dbc
 //
-
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 void cm848_sendJ1939NegativeAck(j1939_rx_msg_t *msg,J1939_ACK_TYPE ack_type)
 
@@ -23190,8 +23107,6 @@ void cm848_initPgn65230Dm5Handler(undefined4 param_1,undefined4 param_2,void *pa
 // Function: cm848_j1939SendDm1ResponseMessage @ 0x000255c0
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 void cm848_j1939SendDm1ResponseMessage(byte dest_address,byte fault_count)
 
 {
@@ -24202,8 +24117,6 @@ void cm848_initJ1939SpeedControlMessage(void)
 //
 // Function: cm848_j1939SendDiagnosticStatusMessage @ 0x0002641c
 //
-
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 void cm848_j1939SendDiagnosticStatusMessage(byte dest_address,byte status_type)
 
@@ -53115,7 +53028,6 @@ void mpc555_enqueueCanTransmitFrame(uint param_1,uint param_2,int param_3)
 //
 
 /* WARNING: Unable to use type for symbol message_data_length */
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 /* jlaustill reviewed 2026-5-26 - reads nicely, hopefully accurate */
 
 void sendJ1939Message(j1939_tx_msg_t *msg)
@@ -53153,28 +53065,25 @@ void cm848_validateDiagnosticResponseWrapper(void)
 // Function: cm848_lookupJ1939SourceAddressIndex @ 0x00053a4c
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
-undefined4 cm848_lookupJ1939SourceAddressIndex(dword source_address)
+word cm848_lookupJ1939SourceAddressIndex(dword source_address)
 
 {
   byte local_r3;
-  undefined4 uVar1;
-  byte address_index;
+  word address_index;
   
   if ((j1939_tsc1_auth_primary_sa & 0xff) == source_address) {
-    uVar1 = 1;
+    address_index = 1;
   }
   else if ((j1939_tsc1_secondary_sa & 0xff) == source_address) {
-    uVar1 = 2;
+    address_index = 2;
   }
   else if ((j1939_tsc1_auth_tertiary_sa & 0xff) == source_address) {
-    uVar1 = 3;
+    address_index = 3;
   }
   else {
-    uVar1 = 4;
+    address_index = 4;
   }
-  return uVar1;
+  return address_index;
 }
 
 
@@ -55114,8 +55023,6 @@ uint cm848_calculateCrc16
 // Function: lookupTableInterpolation @ 0x00055ef4
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 uint lookupTableInterpolation(table_interp_args_t *args)
 
 {
@@ -55753,8 +55660,6 @@ cm848_lookupTableByIndex(undefined4 param_1,int param_2,int param_3,undefined4 p
 //
 // Function: cm848_dualAxisTableInterpolation @ 0x000566cc
 //
-
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 uint cm848_dualAxisTableInterpolation(void *table_descriptor,word x_input,word y_input)
 
@@ -56986,8 +56891,6 @@ void cm848_sensorChannel7_update_configBundle(void)
 // Function: sensorChannelConfigInit @ 0x00500234
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 void sensorChannelConfigInit
                (void *cal_ptr_1,void *cal_ptr_2,void *cal_ptr_3,void *cal_ptr_4,void *ram_buffer_1,
                void *ram_buffer_2,word adc_index_primary,word adc_index_secondary,word *output_raw,
@@ -57241,8 +57144,6 @@ LAB_00500a1c:
 //
 // Function: updateSensorChannelWithConfig @ 0x00500a4c
 //
-
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 void updateSensorChannelWithConfig
                (void *cal_ptr_1,void *cal_ptr_2,void *cal_ptr_3,void *cal_ptr_4,void *ram_buffer_1,

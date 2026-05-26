@@ -183,6 +183,7 @@ public class ApplyFunctionDefinitions extends GhidraScript {
                 try {
                     if (param.isReturnType) {
                         function.setReturnType(dataType, SourceType.USER_DEFINED);
+                        function.setCallingConvention("__stdcall");
                     } else {
                         Parameter[] existingParams = function.getParameters();
                         Parameter newParam = new ParameterImpl(param.name, dataType, currentProgram);
@@ -200,7 +201,7 @@ public class ApplyFunctionDefinitions extends GhidraScript {
 
                         paramList.set(param.paramIndex, newParam);
 
-                        function.updateFunction(null, null, paramList,
+                        function.updateFunction("__stdcall", null, paramList,
                                 Function.FunctionUpdateType.DYNAMIC_STORAGE_ALL_PARAMS,
                                 true, SourceType.USER_DEFINED);
                     }
