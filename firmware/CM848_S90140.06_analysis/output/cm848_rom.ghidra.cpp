@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Tue May 26 05:32:24 MDT 2026
+// Generated: Tue May 26 05:35:23 MDT 2026
 
 
 //
@@ -21492,8 +21492,8 @@ void cm848_initJ1939DmHandlerBuffer(int param_1,int param_2)
 void cm848_sendJ1939AcknowledgeMessage(j1939_rx_msg_t *request_msg,J1939_ACK_TYPE ack_type)
 
 {
-  j1939_ackm_msg.can_id = CONCAT13(((byte)j1939_ackm_priority & 7) << 2,0xe8ff00);
-  j1939_ackm_msg.can_id._2_2_ = CONCAT11(0xff,request_msg->dest_address);
+  j1939_ackm_msg.hdr.can_id = CONCAT13(((byte)j1939_ackm_priority & 7) << 2,0xe8ff00);
+  j1939_ackm_msg.hdr.can_id._2_2_ = CONCAT11(0xff,request_msg->dest_address);
   j1939_ackm_msg.pgn_low = 0;
   j1939_ackm_msg.pgn_mid = request_msg->pgn_pf;
   j1939_ackm_msg.pgn_high = request_msg->dest_address;
@@ -21515,8 +21515,8 @@ void cm848_sendJ1939NegativeAck(j1939_rx_msg_t *msg,J1939_ACK_TYPE ack_type)
 {
   tsc1_payload_t *ptVar1;
   
-  j1939_ackm_msg.can_id = CONCAT13(((byte)j1939_ackm_priority & 7) << 2,0xe8ff00);
-  j1939_ackm_msg.can_id._2_2_ = CONCAT11(0xff,msg->dest_address);
+  j1939_ackm_msg.hdr.can_id = CONCAT13(((byte)j1939_ackm_priority & 7) << 2,0xe8ff00);
+  j1939_ackm_msg.hdr.can_id._2_2_ = CONCAT11(0xff,msg->dest_address);
   ptVar1 = msg->data_ptr;
   j1939_ackm_msg.pgn_low = ptVar1->control_byte;
   j1939_ackm_msg.pgn_mid = *(byte *)&ptVar1->requested_speed;
@@ -21548,7 +21548,7 @@ void cm848_flushJ1939FrameBuffer(void)
 void cm848_initJ1939AckBuffer(void)
 
 {
-  j1939_ackm_msg.data_length = 8;
+  j1939_ackm_msg.hdr.data_length = 8;
   j1939_ackm_msg.data_ptr = &j1939_ackm_msg.control_byte;
   j1939_ackm_msg.data_end_ptr = &DAT_003faab2;
   j1939_ackm_msg.group_function = 0xff;
