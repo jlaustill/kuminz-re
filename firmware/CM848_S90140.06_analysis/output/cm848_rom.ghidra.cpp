@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Tue May 26 07:26:41 MDT 2026
+// Generated: Tue May 26 07:27:58 MDT 2026
 
 
 //
@@ -21549,8 +21549,8 @@ void cm848_initJ1939AckBuffer(void)
 
 {
   j1939_ackm_msg.header.data_length = 8;
-  j1939_ackm_msg.data_ptr = &j1939_ackm_msg.control_byte;
-  j1939_ackm_msg.data_end_ptr = &DAT_003faab2;
+  j1939_ackm_msg.data_pointer = &j1939_ackm_msg.control_byte;
+  j1939_ackm_msg.data_end_pointer = &DAT_003faab2;
   j1939_ackm_msg.group_function = 0xff;
   j1939_ackm_msg.reserved_byte2 = 0xff;
   j1939_ackm_msg.reserved_byte3 = 0xff;
