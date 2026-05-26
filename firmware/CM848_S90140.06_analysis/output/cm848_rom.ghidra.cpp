@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Tue May 26 13:32:50 MDT 2026
+// Generated: Tue May 26 13:56:00 MDT 2026
 
 
 //
@@ -24821,7 +24821,7 @@ void cm848_initPgn65260VehicleIdHandler(void)
   j1939_pgn65260_tx_header = CONCAT31(j1939_pgn65260_tx_header._0_3_,(char)j1939_source_address);
   uVar1 = 0;
   do {
-    (&DAT_003faf07)[uVar1] = (&j1939_source_address_table)[uVar1];
+    (&DAT_003faf07)[uVar1] = vehicle_vin_string[uVar1];
     uVar1 = uVar1 + 1 & 0xff;
   } while (uVar1 < 0x14);
   DAT_003faf1b = 0x2a;
@@ -35782,10 +35782,10 @@ void hpcr_initJ1939MessageTables(void)
   } while (iVar7 < 5);
   j1939_source_addr_byte_a = DAT_0005c7b8;
   j1939_source_addr_byte_b = DAT_0005c7b9;
-  j1939_source_addr_table_start = j1939_source_address_table;
+  vehicle_vin_byte0_copy = vehicle_vin_string[0];
   iVar8 = 0;
   pbVar1 = (byte *)((int)&j1939_msg_slot_dd_timer + 1);
-  pbVar4 = &j1939_source_address_table;
+  pbVar4 = vehicle_vin_string;
   iVar7 = 1;
   do {
     iVar6 = iVar7;
@@ -35797,7 +35797,7 @@ void hpcr_initJ1939MessageTables(void)
   } while (iVar8 < 4);
   iVar8 = 0;
   pbVar1 = (byte *)((int)&j1939_msg_slot_ee_timer + 1);
-  pbVar4 = &j1939_source_address_table + iVar6;
+  pbVar4 = vehicle_vin_string + iVar6;
   do {
     iVar6 = iVar7;
     pbVar4 = pbVar4 + 1;
@@ -35808,7 +35808,7 @@ void hpcr_initJ1939MessageTables(void)
   } while (iVar8 < 4);
   iVar8 = 0;
   pbVar1 = (byte *)((int)&j1939_msg_slot_ff_timer + 1);
-  pbVar4 = &j1939_source_address_table + iVar6;
+  pbVar4 = vehicle_vin_string + iVar6;
   do {
     iVar6 = iVar7;
     pbVar4 = pbVar4 + 1;
@@ -35819,7 +35819,7 @@ void hpcr_initJ1939MessageTables(void)
   } while (iVar8 < 4);
   iVar7 = 0;
   pbVar1 = (byte *)((int)&j1939_msg_slot_gg_timer + 1);
-  pbVar4 = &j1939_source_address_table + iVar6;
+  pbVar4 = vehicle_vin_string + iVar6;
   do {
     pbVar4 = pbVar4 + 1;
     pbVar1 = pbVar1 + 1;
@@ -70052,10 +70052,10 @@ LAB_00519128:
       if (j1939_dm2_sub_response_state < 3) {
         if (j1939_dm2_sub_response_state == 2) {
           j1939_dm_response_byte0 = 3;
-          j1939_dm_response_byte1 = DAT_003fd70c;
-          j1939_dm_response_byte2 = bRam003fd70d;
-          j1939_dm_response_byte3 = bRam003fd70e;
-          j1939_dm_response_byte4 = bRam003fd70f;
+          j1939_dm_response_byte1 = vehicle_vin_string[5];
+          j1939_dm_response_byte2 = vehicle_vin_string[6];
+          j1939_dm_response_byte3 = vehicle_vin_string[7];
+          j1939_dm_response_byte4 = vehicle_vin_string[8];
           j1939_dm2_sub_response_state = 3;
         }
         else if (j1939_dm2_sub_response_state == 0) {
@@ -70063,32 +70063,32 @@ LAB_00519128:
           j1939_dm_response_byte1 = 0;
           j1939_dm_response_byte2 = 0;
           j1939_dm_response_byte3 = 0;
-          j1939_dm_response_byte4 = j1939_source_address_table;
+          j1939_dm_response_byte4 = vehicle_vin_string[0];
           j1939_dm2_sub_response_state = 1;
         }
         else if (j1939_dm2_sub_response_state == 1) {
           j1939_dm_response_byte0 = 2;
-          j1939_dm_response_byte1 = DAT_003fd708;
-          j1939_dm_response_byte2 = DAT_003fd709;
-          j1939_dm_response_byte3 = DAT_003fd70a;
-          j1939_dm_response_byte4 = DAT_003fd70b;
+          j1939_dm_response_byte1 = vehicle_vin_string[1];
+          j1939_dm_response_byte2 = vehicle_vin_string[2];
+          j1939_dm_response_byte3 = vehicle_vin_string[3];
+          j1939_dm_response_byte4 = vehicle_vin_string[4];
           j1939_dm2_sub_response_state = 2;
         }
       }
       else if (j1939_dm2_sub_response_state == 3) {
         j1939_dm_response_byte0 = 4;
-        j1939_dm_response_byte1 = bRam003fd710;
-        j1939_dm_response_byte2 = bRam003fd711;
-        j1939_dm_response_byte3 = bRam003fd712;
-        j1939_dm_response_byte4 = bRam003fd713;
+        j1939_dm_response_byte1 = vehicle_vin_string[9];
+        j1939_dm_response_byte2 = vehicle_vin_string[10];
+        j1939_dm_response_byte3 = vehicle_vin_string[0xb];
+        j1939_dm_response_byte4 = vehicle_vin_string[0xc];
         j1939_dm2_sub_response_state = 4;
       }
       else if (j1939_dm2_sub_response_state == 4) {
         j1939_dm_response_byte0 = 5;
-        j1939_dm_response_byte1 = bRam003fd714;
-        j1939_dm_response_byte2 = bRam003fd715;
-        j1939_dm_response_byte3 = bRam003fd716;
-        j1939_dm_response_byte4 = bRam003fd717;
+        j1939_dm_response_byte1 = vehicle_vin_string[0xd];
+        j1939_dm_response_byte2 = vehicle_vin_string[0xe];
+        j1939_dm_response_byte3 = vehicle_vin_string[0xf];
+        j1939_dm_response_byte4 = vehicle_vin_string[0x10];
         j1939_dm2_sub_response_state = 0;
       }
       goto LAB_00519640;
@@ -73583,7 +73583,7 @@ void initGovernorModeControl(void)
 byte j1939_sourceAddress_lookup(int param_1)
 
 {
-  return (&j1939_source_address_table)[param_1 + 0xffU & 0xff];
+  return vehicle_vin_string[param_1 + 0xffU & 0xff];
 }
 
 
@@ -73765,7 +73765,7 @@ void governorModeTransitionControl(void)
     bVar1 = true;
     uVar3 = 0;
     do {
-      if ((&j1939_source_address_table)[uVar3] != 0xff) {
+      if (vehicle_vin_string[uVar3] != 0xff) {
         bVar1 = false;
         break;
       }

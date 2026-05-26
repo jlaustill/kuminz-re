@@ -7,5 +7,10 @@ address,array_name,element_type,element_count,comment
 # Base address used by copy loops in j1939_dm_message_processor
 # Offsets 0-2 are padding/unused; offsets 3-7 are the 5 writable scratch bytes
 # (j1939_dm_scratch_byte0 through j1939_dm_scratch_byte4 at offsets 3-7)
+# Vehicle VIN string — 17-character ASCII SAE VIN
+# Loaded from EEPROM offset 0x0285 (preceded by 8 zero bytes) at startup
+# Sent via DM9 sub-index 2 in 5 response packets: [0]+[1..4]+[5..8]+[9..12]+[13..16]
+# hpcr_initJ1939MessageTables copies [1..16] into J1939 VIN broadcast slots dd-gg
+0x003fd707,vehicle_vin_string,byte,17,17-char ASCII SAE VIN loaded from EEPROM 0x0285; 3D3MU48C94G228471 at runtime
 0x003fce7c,j1939_dm_scratch_buffer,byte,8,DM response payload assembly buffer; copy loops index from [3] to [7]
 0x003fecd0,diag_serial_buffer,byte,33,Diagnostic serial communication buffer (SCI UART)

@@ -2088,6 +2088,11 @@ address,name,type,comment
 0x003fcb24,BYTE_003fcb24,byte,
 0x003fcd9e,cruise_protection_ok,word,
 0x003fce7c,j1939_dm_scratch_buffer,byte[8],
+0x003fce7f,j1939_dm_scratch_byte0,,
+0x003fce80,j1939_dm_scratch_byte1,,
+0x003fce81,j1939_dm_scratch_byte2,,
+0x003fce82,j1939_dm_scratch_byte3,,
+0x003fce83,j1939_dm_scratch_byte4,,
 # j1939_dm_scratch_buffer offsets: [3]=byte0 [4]=byte1 [5]=byte2 [6]=byte3 [7]=byte4
 0x003fce85,j1939_dm7_spn_scratch,word,DM7 freeze frame SPN batch buffer; 3x word at +0 +2 +4
 0x003fce95,j1939_dm_last_pgn_processed,word,PGN dedup guard; updated on every return to prevent reprocessing same request
@@ -2145,7 +2150,15 @@ address,name,type,comment
 0x003fd5f0,protection_feature_flags,word,
 0x003fd5f2,fuel_feature_control_flags,word,
 0x003fd6d8,BYTE_003fd6d8,byte,
-0x003fd707,j1939_source_address_table,byte,
+0x003fd707,vehicle_vin_string,byte[17],
+0x003fd708,vehicle_vin_string[1],,
+0x003fd709,vehicle_vin_string[2],,
+0x003fd70a,vehicle_vin_string[3],,
+0x003fd70b,vehicle_vin_string[4],,
+0x003fd70c,vehicle_vin_string[5],,
+# 0x003fd707-0x003fd717: vehicle_vin_string[17] — declared as byte[17] array in arrays.csv
+# EEPROM source: offset 0x0285 (8 leading 00 bytes then 17-char ASCII VIN)
+# VIN 3D3MU48C94G228471 = 2004 Dodge Ram 5.9L, Saltillo Mexico, seq 228471
 0x003fd7d6,throttle_rate_override_flag,word,
 0x003fd7d8,throttle_rate_control_inhibit_flag,word,
 0x003fd7da,throttle_fuel_rate_limit_enable_flag,word,
@@ -5265,7 +5278,7 @@ address,name,type,comment
 0x0040b4d1,j1939_source_addr_byte_b,byte,
 0x0040b4d2,j1939_msg_slot_bb_control,byte,
 0x0040b4d3,j1939_msg_slot_cc_timer,word,
-0x0040b4d5,j1939_source_addr_table_start,byte,
+0x0040b4d5,vehicle_vin_byte0_copy,byte,Copy of vehicle_vin_string[0] (VIN char '3') used by J1939 VIN broadcast slots
 0x0040b4d6,j1939_msg_slot_cc_control,byte,
 0x0040b4d7,j1939_msg_slot_dd_timer,word,
 0x0040b4dd,j1939_msg_slot_dd_control,byte,
