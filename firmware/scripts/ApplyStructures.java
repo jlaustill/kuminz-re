@@ -10,7 +10,9 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.File;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +27,8 @@ public class ApplyStructures extends GhidraScript {
 
     private DataTypeManager dtm;
     private Listing listing;
-    private Map<String, Structure> createdStructures = new HashMap<>();
+    private Map<String, DataType> createdStructures = new HashMap<>();
+    private Set<String> unionTypes = new HashSet<>();
     private Category structCategory;
 
     // Map CSV type names to Ghidra data types
@@ -124,7 +127,7 @@ public class ApplyStructures extends GhidraScript {
                 }
 
                 // Parse CSV: struct_name,address,field_name,type,size,comment,dependency,status
-                String[] parts = parseCSVLine(line);
+                String[] parts = ScriptUtils.parseCSVLine(line);
                 if (parts.length < 5) {
                     continue;
                 }
@@ -135,6 +138,10 @@ public class ApplyStructures extends GhidraScript {
                 String typeName = parts[3].trim();
                 String sizeStr = parts[4].trim();
                 String comment = parts.length > 5 ? parts[5].trim() : "";
+                String kind = parts.length > 8 ? parts[8].trim() : "";
+                if ("union".equals(kind)) {
+                    unionTypes.add(structName);
+                }
 
                 // Skip if no struct name
                 if (structName.isEmpty()) {
@@ -171,26 +178,6 @@ public class ApplyStructures extends GhidraScript {
         return structDefs;
     }
 
-    private String[] parseCSVLine(String line) {
-        // Simple CSV parser that handles commas in quoted fields
-        List<String> parts = new ArrayList<>();
-        StringBuilder current = new StringBuilder();
-        boolean inQuotes = false;
-
-        for (char c : line.toCharArray()) {
-            if (c == '"') {
-                inQuotes = !inQuotes;
-            } else if (c == ',' && !inQuotes) {
-                parts.add(current.toString());
-                current = new StringBuilder();
-            } else {
-                current.append(c);
-            }
-        }
-        parts.add(current.toString());
-
-        return parts.toArray(new String[0]);
-    }
 
     private int createStructureTypes(Map<String, List<FieldDef>> structDefs) throws Exception {
         int created = 0;
@@ -213,28 +200,50 @@ public class ApplyStructures extends GhidraScript {
                 DataType conflictExisting = dtm.getDataType(structCategory.getCategoryPath(), structName + ".conflict");
                 if (conflictExisting != null) dtm.remove(conflictExisting, monitor);
 
-                StructureDataType shell = new StructureDataType(structCategory.getCategoryPath(),
-                                                                 structName, totalSize, dtm);
-                DataType addedShell = dtm.addDataType(shell, DataTypeConflictHandler.DEFAULT_HANDLER);
-                if (addedShell instanceof Structure) {
-                    createdStructures.put(structName, (Structure) addedShell);
+                DataType shell;
+                if (unionTypes.contains(structName)) {
+                    shell = new UnionDataType(structCategory.getCategoryPath(), structName, dtm);
+                } else {
+                    shell = new StructureDataType(structCategory.getCategoryPath(), structName, totalSize, dtm);
                 }
+                DataType addedShell = dtm.addDataType(shell, DataTypeConflictHandler.DEFAULT_HANDLER);
+                createdStructures.put(structName, addedShell);
             }
 
-            // Pass 2: mutate each DTM-managed shell in place via replaceAtOffset.
-            // This preserves the shell's database key so any Pointer32->shell
-            // types built during this pass remain valid even after the shell is
-            // populated with real field types. deleteAll() and addDataType with
-            // REPLACE_HANDLER both change the key (or remove the type entirely),
-            // breaking cross-struct pointer references.
+            // Pass 2: mutate each DTM-managed shell in place.
+            // Two sub-passes: unions first so their sizes are finalised before
+            // structs that embed them call replaceAtOffset with the correct length.
+            // Sub-pass A — unions (all members at offset 0, no ordering dependency)
             for (Map.Entry<String, List<FieldDef>> entry : structDefs.entrySet()) {
                 String structName = entry.getKey();
+                if (!unionTypes.contains(structName)) continue;
+                DataType composite = createdStructures.get(structName);
+                if (composite == null) continue;
+                for (FieldDef field : entry.getValue()) {
+                    if (field.size <= 0) continue;
+                    DataType fieldType = getDataType(field.typeName, field.size);
+                    if (fieldType != null) {
+                        String fieldName = field.name.isEmpty() ? null : field.name;
+                        String fieldComment = field.comment.isEmpty() ? null : field.comment;
+                        ((Union) composite).add(fieldType, field.size, fieldName, fieldComment);
+                    }
+                }
+                created++;
+            }
+
+            // Sub-pass B — structs (existing replaceAtOffset logic, offset increments as before).
+            // This preserves the shell's database key so any Pointer32->shell
+            // types built during this pass remain valid even after the shell is
+            // populated with real field types.
+            for (Map.Entry<String, List<FieldDef>> entry : structDefs.entrySet()) {
+                String structName = entry.getKey();
+                if (unionTypes.contains(structName)) continue;
                 List<FieldDef> fields = entry.getValue();
 
                 // Use the object stored by Pass 1 (guaranteed to be the DTM-managed
                 // shell, regardless of what name addDataType gave it).
-                Structure struct = createdStructures.get(structName);
-                if (struct == null) continue;
+                DataType composite = createdStructures.get(structName);
+                if (composite == null) continue;
 
                 int offset = 0;
                 for (FieldDef field : fields) {
@@ -242,6 +251,7 @@ public class ApplyStructures extends GhidraScript {
 
                     DataType fieldType = getDataType(field.typeName, field.size);
                     if (fieldType != null) {
+                        Structure struct = (Structure) composite;
                         try {
                             struct.replaceAtOffset(offset, fieldType, field.size, field.name, field.comment);
                         } catch (Exception e) {
@@ -251,11 +261,9 @@ public class ApplyStructures extends GhidraScript {
                                 // Field addition failed, skip
                             }
                         }
+                        offset += field.size;
                     }
-                    offset += field.size;
                 }
-
-                createdStructures.put(structName, struct);
                 created++;
             }
         } finally {
@@ -274,9 +282,9 @@ public class ApplyStructures extends GhidraScript {
     }
 
     private DataType getDataType(String typeName, int size) {
-        // Handle pointer types (trailing *)
-        if (typeName.endsWith("*")) {
-            String baseTypeName = typeName.substring(0, typeName.length() - 1).trim();
+        // Handle pointer types (trailing * with or without preceding space)
+        if (ScriptUtils.isPointerType(typeName)) {
+            String baseTypeName = ScriptUtils.stripPointer(typeName);
             DataType baseType = getDataType(baseTypeName, 0);
             return dtm.getPointer(baseType != null ? baseType : VoidDataType.dataType, 4);
         }
@@ -350,7 +358,7 @@ public class ApplyStructures extends GhidraScript {
             for (FieldDef field : fields) {
                 if (!field.address.isEmpty()) {
                     try {
-                        long addr = parseAddressString(field.address);
+                        long addr = ScriptUtils.parseAddress(field.address);
                         // Only record if we haven't seen this struct at this address
                         if (!addressToStruct.containsKey(addr)) {
                             addressToStruct.put(addr, structName);
@@ -370,16 +378,16 @@ public class ApplyStructures extends GhidraScript {
                 String structName = entry.getValue();
 
                 Address addr = toAddr(addrValue);
-                Structure struct = createdStructures.get(structName);
+                DataType dataType = createdStructures.get(structName);
 
-                if (struct != null && addr != null) {
+                if (dataType != null && addr != null) {
                     try {
                         // Always clear the full struct range — typed data anywhere within
                         // the range (not just at the base) would block createData otherwise
-                        listing.clearCodeUnits(addr, addr.add(struct.getLength() - 1), false);
+                        listing.clearCodeUnits(addr, addr.add(dataType.getLength() - 1), false);
 
                         // Apply structure
-                        listing.createData(addr, struct);
+                        listing.createData(addr, dataType);
                         applied++;
                     } catch (Exception e) {
                         // Failed to apply at this address - might overlap with code
@@ -394,13 +402,6 @@ public class ApplyStructures extends GhidraScript {
         return applied;
     }
 
-    private long parseAddressString(String addressStr) {
-        addressStr = addressStr.trim();
-        if (addressStr.startsWith("0x") || addressStr.startsWith("0X")) {
-            return Long.parseLong(addressStr.substring(2), 16);
-        }
-        return Long.parseLong(addressStr, 16);
-    }
 
     // Helper class for field definitions
     private static class FieldDef {

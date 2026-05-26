@@ -282,6 +282,9 @@ protection_lockout_t,0x0040b11c,timer_expired,word,2,Lockout timer expired flag,
 # Note: RX ring buffer (j1939_rx_msg_t) stores the same 6 bytes but decoded as 4 individual
 #       address bytes; TX buffers pack the CAN ID as a single dword via stw.
 # Layout: [priority+DP (byte)] [PF (byte)] [PS/dest (byte)] [SA (byte)]
+# Note: can_id uses dword (matches stw). The sth at +2 (PS/SA overlay) produces ._2_2_ in decompiler —
+#       this is Ghidra's best representation; union approach tested but decompiler mixes members at byte
+#       granularity and produces MORE sub-ranges, not fewer.
 j1939_msg_hdr_t,,can_id,dword,4,Packed J1939 29-bit CAN identifier (priority[31:29] DP[28] PGN[27:8] SA[7:0]),,verified
 j1939_msg_hdr_t,,data_length,word,2,CAN DLC - payload byte count for TX message,,verified
 
