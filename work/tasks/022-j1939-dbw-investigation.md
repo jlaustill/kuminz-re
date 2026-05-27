@@ -58,10 +58,10 @@ J1939 TSC1 speed/torque commands from any J1939 device on the bus.
 
 ### Phase 1 — Read the live value (can do now with oct)
 - [ ] Add CLIP read of `0x003fd5a2` (2 bytes) to oct's discovery log or serial command
-- [ ] Read `j1939_governor_config_flags` on live truck to see current value
-- [ ] Also read `ram0x003fee00` (find its address in global_variables.csv)
-- [ ] Read `j1939_governor_feature_byte` address
-- Goal: confirm which bits are currently set; if 0x40 is already set we just need auth
+- [ ] Read `j1939_governor_feature_cal` (= what task originally called `j1939_governor_config_flags`) on live truck
+- [ ] Read `j1939_governor_feature_byte` at `0x003fd902`
+- [ ] Read SA whitelist at `0x0005c3b4` (ROM, 10 entries × ~16 bytes) to see if `0xFF` wildcard is present
+- Goal: confirm 0x40 bit status; if set we skip cal change and go straight to Phase 5
 
 ### Phase 2 — Determine if writable via CLIP
 - [ ] Find the CLIP memory WRITE service number (likely 0x3B or similar)
@@ -69,11 +69,71 @@ J1939 TSC1 speed/torque commands from any J1939 device on the bus.
 - [ ] If writable: add a CLIP write to oct after auth to set `j1939_governor_config_flags |= 0x40`
 - [ ] If ROM-only: identify the corresponding e2m calibration block / Calterm parameter
 
-### Phase 3 — Trace the complete TSC1 receive path
-- [ ] Find where incoming J1939 TSC1 (PGN 0, PDU1) arrives in the message dispatch table
-- [ ] Confirm j1939_msgSlotE = TSC1 handler path
-- [ ] Trace how `j1939_governor_speed_demand` is populated from the TSC1 SPN 898 payload
-- [ ] Identify what conditions allow it to reach the fuel governor output
+### Phase 3 — Trace the complete TSC1 receive path ✓ COMPLETE (2026-05-26)
+- [X] Find where incoming J1939 TSC1 (PGN 0, PDU1) arrives in the message dispatch table
+- [X] Confirm TSC1 handler path (NOT j1939_msgSlotE — see findings below)
+- [X] Trace how requested speed is populated from TSC1 SPN 898 payload
+- [X] Identify what conditions allow it to reach the fuel governor output
+
+**Phase 3 Findings:**
+
+#### Dispatch Path (PGN 0)
+`j1939_handlerInitializer(0, cm848_j1939DispatchAddressHandler)` @ cm848_rom:21333
+→ `torqueControlModeHandler(msg)` if `dest_address == j1939_source_address` (primary ECU SA)
+→ `cm848_j1939ProcessGovernorRequest(msg)` if `dest_address == j1939_source_address_b` (secondary SA)
+
+`j1939_msgSlotE` is NOT the TSC1 path — it handles CLIP 0x16 auth and EEPROM writes only.
+
+#### `torqueControlModeHandler` @ ROM:0x00022d60 (cm848_rom:20547)
+Parses TSC1 frame:
+- `control_mode = byte[0] & 0x03` — 0=disengage, 1=speed ctrl, 2=torque limit, 3=speed+torque
+- `priority_bits = byte[0] & 0x30`
+- `requested_speed = CONCAT11(byte[2], byte[1])` — SPN 898 in 0.125 RPM/bit
+- `requested_torque = byte[3]` — SPN 518
+
+SA whitelist check: `cm848_governorSpeedControl(1, SA)` searches ROM table `etc1_config_entry_t_0005c3b4`
+(up to 10 entries; entry with `source_address_filter = 0xFF` is a wildcard accepting any SA).
+
+For control_mode == 1 (speed control):
+- Sets `j1939_tsc1_override_state.governor_mode = 1`
+- Sets `etc1_capped_speed_target = min(requested_speed, 24000)` — **HARD CAP: 3000 RPM** (24000 × 0.125)
+- Sets `etc1_speed_control_mode = (byte[0] & 0x0c) >> 2`
+- Sets `etc1_active_state = 1`
+
+#### Mode Transition: `cm848_engineMode_reset` @ Bank2:0x00503074 (bank2:58289)
+Condition: `engine_operating_mode == 0 AND governor_mode == 1`
+- `speed_request_filtered = etc1_capped_speed_target`
+- `engine_operating_mode = 2`
+- Loads PID coefficients from ROM table at 0x5c1d6
+
+#### Cruise Engage: `governor_cruise_engage_check` @ Bank2:0x00512e70 (bank2:10730)
+Called from `cm848_periodicProtectionControl`. Returns 1 (engage) only when ALL:
+1. VSS (`uRam0040bcde` or lookup from `DWORD_00057dd2`) is within calibrated window `UNK_0005ab8a < VSS < UNK_0005ab88`
+2. `sRam003fcdaa == 5` (normal cruise state, initialized to 5)
+3. `sRam003fcda2 == 0`
+→ Sets `j1939_cruise_engaged = 1`
+
+**⚠️ CRITICAL**: VSS must be within the speed window — **truck must be moving** to engage.
+Stationary proof-of-concept (Phase 5) will NOT work via this cruise control path.
+
+#### Fuel Correction Gate: `governor_cruise_fuelCorrection_inhibitCheck` @ Bank2:0x00512a60
+Inhibited (returns 1) when ANY:
+- `j1939_governor_feature_cal & 0x40 == 0`
+- `j1939_cruise_engaged == 0` (truck not moving or engage check failed)
+- `cold_start_qualifier_flag != 0`
+- Various power state / diag flags
+
+#### Gate Analysis Summary
+| Gate | Location | Blocks |
+|------|----------|--------|
+| SA whitelist | `cm848_governorSpeedControl`, ROM `0x0005c3b4` | TSC1 parse if SA not in table |
+| `j1939_governor_feature_cal & 0x40` | `governor_cruise_fuelCorrection_inhibitCheck`, CCVS1 tx | Fuel correction output; CCVS1 capability advertising |
+| `j1939_cruise_engaged` | `governor_cruise_fuelCorrection_inhibitCheck` | Requires VSS in calibrated speed window |
+| `governor_fuel_enable_state` | `governor_cruise_disengage_check`, fuel dispatch | Set by fuel correction state machine (case 1 = enabled) |
+
+Key correction vs task doc: `j1939_governor_config_flags` is named `j1939_governor_feature_cal` in global_variables.csv.
+The `& 0x40` gate does NOT block TSC1 parsing — ECU accepts TSC1 and sets `governor_mode` regardless.
+`ram0x003fee00` reference in prior doc was inaccurate — the dual-gate variable is `j1939_cruise_engaged`.
 
 ### Phase 4 — Safety interlocks
 - [ ] Document all inhibit conditions in `governor_cruise_fuelCorrection_inhibitCheck`
@@ -91,7 +151,7 @@ J1939 TSC1 speed/torque commands from any J1939 device on the bus.
 ## Key Addresses
 | Symbol | Address | Type | Notes |
 |--------|---------|------|-------|
-| `j1939_governor_config_flags` | `0x003fd5a2` | word | Config gate — read first; likely ROM cal |
+| `j1939_governor_feature_cal` | `0x003fd5a2` | word | Config gate — read first; ROM cal (0x40 = J1939 governor enable) |
 | `j1939_tsc1_active_flag` (cal) | `0x003fd530` | byte | ROM-side copy |
 | `j1939_tsc1_active_flag` (ram) | `0x0040b558` | word | Runtime copy — written at line 39655/39659 |
 | `j1939_tsc1_override_enable` | `0x0040b51c` | byte | Set by fuel demand cmd 0x13 |
@@ -126,6 +186,34 @@ Since it lives in RAM it may be directly writable via CLIP write.
 CAN ID for TSC1 → ECU: `0x0C000003` (priority 3, PGN 0, dest=ECU addr 0x00, src=0x03)
 
 ## Investigation Log
+
+### 2026-05-26 — Phase 3 complete — full TSC1 dispatch path traced
+
+**Dispatch**: PGN 0 registered via `j1939_handlerInitializer(0, cm848_j1939DispatchAddressHandler)`.
+Two sub-paths based on dest SA: primary SA → `torqueControlModeHandler`, secondary SA → `cm848_j1939ProcessGovernorRequest`.
+`j1939_msgSlotE` is NOT TSC1 — it only handles CLIP 0x16 auth and EEPROM writes.
+
+**Speed parse**: `torqueControlModeHandler` reads SPN 898 from bytes[1-2]. Hard cap at 24000 units = **3000 RPM max** (not configurable).
+
+**`& 0x40` gate location**: in `governor_cruise_fuelCorrection_inhibitCheck` and CCVS1 transmit — NOT in the TSC1 receive path. ECU parses TSC1 and sets `governor_mode = 1` regardless of this bit.
+
+**Critical VSS requirement**: `governor_cruise_engage_check` (bank2:10730) requires VSS in a calibrated speed window to set `j1939_cruise_engaged = 1`. On a stationary truck, this will never pass → fuel correction stays inhibited. Phase 5 proof-of-concept requires the truck to be moving.
+
+**SA whitelist decoded** (ROM `0x0005c3b4`, 10 × 20-byte entries, all with match_key=1):
+
+| Entry | SA (hex) | SA (dec) | Notes |
+|-------|----------|----------|-------|
+| 0 | 0x03 | 3 | Retarder/Allison TCM; activation_confirm_timeout = 0xFFFF (relaxed) |
+| 1 | 0x0B | 11 | Brakes/ABS controller |
+| 2 | 0x21 | 33 | Body Controller (likely OEM cruise module) |
+| 3 | 0x4A | 74 | Unknown |
+| 4 | 0x4F | 79 | Unknown |
+| 5–9 | 0xFE | 254 | Unused slots (J1939 null/unclaimed address, NOT a wildcard) |
+
+No `0xFF` wildcard is present. TSC1 must be sent from **0x03, 0x0B, 0x21, 0x4A, or 0x4F**.
+SA 0x03 matches the already-planned CAN ID `0x0C000003` in Phase 5 — no change needed.
+
+**OCT gateway architecture** (2026-05-26): OCT sits between the public J1939 bus (TCM, ABS, etc.) and a private bus (OCT↔ECU only). Nothing reaches the ECU without going through OCT. SA mismatch is therefore a non-issue — OCT rewrites the CAN ID source address before forwarding if needed. Best case: Allison TCM already sends TSC1 from SA 0x03 (its standard J1939 address) and OCT is a transparent relay. The five whitelisted SAs are almost certainly the exact OEM devices Cummins designed to control the governor.
 
 ### 2026-05-24 — Initial discovery
 - Grepped decompiled firmware; confirmed j1939_tsc1_* variables and TSC1 infrastructure
