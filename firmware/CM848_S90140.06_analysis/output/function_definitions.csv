@@ -234,3 +234,50 @@ function_address,function_name,param_index,name,type,comment
 
 0x00053a4c,cm848_lookupJ1939SourceAddressIndex,return,,ushort,SA table index: 1=primary(auth) 2=secondary 3=tertiary(auth) 4=unknown
 0x00053a4c,cm848_lookupJ1939SourceAddressIndex,0,source_address,uint,J1939 source address byte to look up in the 3-entry SA calibration table
+
+# -----------------------------------------------------------------------------
+# Math Division Runtime Helpers - 64-bit dividend (hi:lo) / 64-bit divisor (hi:lo)
+# Must declare FULL prototype (return + all params): a return-only row commits a
+# zero-param signature and Ghidra drops the call-site arguments.
+# -----------------------------------------------------------------------------
+0x000571b0,cm848_unsignedDivision32,return,,uint,Quotient of 64-bit/32-bit unsigned division
+0x000571b0,cm848_unsignedDivision32,0,dividend_hi,uint,High 32 bits of 64-bit dividend
+0x000571b0,cm848_unsignedDivision32,1,dividend_lo,uint,Low 32 bits of 64-bit dividend
+0x000571b0,cm848_unsignedDivision32,2,divisor_hi,uint,High 32 bits of divisor (usually 0)
+0x000571b0,cm848_unsignedDivision32,3,divisor_lo,uint,Low 32 bits of divisor
+0x000570f0,cm848_signedDivision32,return,,int,Quotient of 64-bit/32-bit signed division
+0x000570f0,cm848_signedDivision32,0,dividend_hi,int,High 32 bits of 64-bit dividend
+0x000570f0,cm848_signedDivision32,1,dividend_lo,uint,Low 32 bits of 64-bit dividend
+0x000570f0,cm848_signedDivision32,2,divisor_hi,int,High 32 bits of divisor (usually sign-extension)
+0x000570f0,cm848_signedDivision32,3,divisor_lo,int,Low 32 bits of divisor
+0x00056e90,cm848_unsignedDivision64by32,return,,uint,Quotient of 64-bit/32-bit unsigned division (worker)
+0x00056e90,cm848_unsignedDivision64by32,0,dividend_hi,uint,High 32 bits of 64-bit dividend
+0x00056e90,cm848_unsignedDivision64by32,1,dividend_lo,uint,Low 32 bits of 64-bit dividend
+0x00056e90,cm848_unsignedDivision64by32,2,divisor_hi,uint,High 32 bits of divisor (usually 0)
+0x00056e90,cm848_unsignedDivision64by32,3,divisor_lo,uint,Low 32 bits of divisor
+0x00057120,cm848_signedDivision64,return,,int,Quotient of 64-bit/32-bit signed division (worker)
+0x00057120,cm848_signedDivision64,0,dividend_hi,int,High 32 bits of 64-bit dividend
+0x00057120,cm848_signedDivision64,1,dividend_lo,uint,Low 32 bits of 64-bit dividend
+0x00057120,cm848_signedDivision64,2,divisor_hi,int,High 32 bits of divisor (usually sign-extension)
+0x00057120,cm848_signedDivision64,3,divisor_lo,int,Low 32 bits of divisor
+
+# -----------------------------------------------------------------------------
+# Multiply-Divide helper - quotient/result returned in r4 (same shape as division)
+# -----------------------------------------------------------------------------
+0x00057498,cm848_conditionalMultiplyDivide,return,,uint,Result returned in r4
+0x00057498,cm848_conditionalMultiplyDivide,0,dividend_hi,uint,High 32 bits of 64-bit dividend
+0x00057498,cm848_conditionalMultiplyDivide,1,dividend_lo,uint,Low 32 bits of 64-bit dividend
+0x00057498,cm848_conditionalMultiplyDivide,2,divisor_hi,uint,High 32 bits of divisor (usually 0)
+0x00057498,cm848_conditionalMultiplyDivide,3,divisor_lo,uint,Low 32 bits of divisor
+
+# -----------------------------------------------------------------------------
+# Diagnostic handlers - r4 carries an updated request-buffer pointer, but unlike the
+# division helpers r4 is NOT a parameter slot, so a declared return cannot be verified
+# against data flow and dropped a potentially-live value. Reverted to void; revisit
+# with explicit custom return storage (r4) if these need cleaning.
+# -----------------------------------------------------------------------------
+0x00003948,mpc555_diagServiceTransferBlock,return,,void,Reverted: r4-return needs custom storage to model safely
+0x00001ef8,cm848_diagSendResponseCode,return,,void,Reverted: r4-return needs custom storage to model safely
+0x00001ef8,cm848_diagSendResponseCode,0,response_code,byte,Response/service code to send
+0x00001ef8,cm848_diagSendResponseCode,1,negative_response_id,int,Negative-response service id (0x7f) or 0
+0x000038f4,diagRequestTypeDispatcher,return,,void,Reverted: r4-return needs custom storage to model safely

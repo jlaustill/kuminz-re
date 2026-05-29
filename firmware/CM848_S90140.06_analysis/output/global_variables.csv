@@ -5586,7 +5586,7 @@ address,name,type,comment
 0x0040bb16,fuel_quantity_mode_raw,word,
 0x0040bb18,j1939_coolant_temp_raw,word,
 0x0040bb3c,governor_integrator_bound_b,word,
-0x0040bb7a,oil_temp_raw,word,
+0x0040bb7a,protection_oilTemp_proxy,word,Coolant-derived oil temp proxy; real AN1 reading when sensor connected; fallback to coolant model when not
 0x0040bb7e,fuel_quantity_stroke_raw,word,
 0x0040bb8a,governor_integrator_bound_a,word,
 0x0040bbb2,cruise_speed_current_a,word,
