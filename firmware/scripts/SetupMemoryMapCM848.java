@@ -23,6 +23,14 @@ public class SetupMemoryMapCM848 extends GhidraScript {
     private static final long FLASH2_BASE  = 0x500000L;   // 245 KB extended flash (utility functions)
     private static final long RAM_BASE     = 0x3FA000L;   // 280 KB RAM
     private static final long EEPROM_BASE  = 0x1000000L;  // 8 KB EEPROM
+    // ROM-to-RAM code mirror low gap: copyCalibrationToRam copies ROM 0x3C30+ to
+    // RAM 0x3F9800, but the RAM dump starts at 0x3FA000, leaving 0x3F9800-0x3F9FFF
+    // unmapped. That 2 KB holds copies of ROM 0x3C30-0x442F, so we mirror it from ROM
+    // (the live RAM bytes there are CAN-overwritten anyway). Lets thunks resolve the
+    // few func_0x003f9xxx calls below RAM_BASE. Map: ROM = 0x3C30 + (RAM - 0x3F9800).
+    private static final long ROMRAM_LOW_BASE = 0x3F9800L;
+    private static final long ROMRAM_LOW_ROM  = 0x3C30L;
+    private static final long ROMRAM_LOW_LEN   = 0x800L;  // 2 KB up to RAM_BASE
     // MPC555 USIU internal peripheral registers — not in any dump file, mapped
     // at MBAR+0x4000. Uninitialized block so ApplyStructures can place USIU
     // struct definitions (usiu_memc_t, usiu_pit_t, usiu_clock_t, etc.).
@@ -73,6 +81,12 @@ public class SetupMemoryMapCM848 extends GhidraScript {
             addMemoryRegion(memory, "RAM", RAM_BASE, ramFile, true, true, true);
         } else {
             println("[2/3] SKIPPED: RAM file not found: " + ramFile);
+        }
+
+        // Add ROM-to-RAM code mirror low gap (0x3F9800-0x3F9FFF), copied from ROM
+        if (memory.getBlock(toAddr(ROMRAM_LOW_BASE)) == null) {
+            println("[2b] Adding ROM-to-RAM low mirror (0x3F9800, copied from ROM 0x3C30)...");
+            addRomMirrorBlock(memory, "ROMRAM_LOW", ROMRAM_LOW_BASE, ROMRAM_LOW_ROM, ROMRAM_LOW_LEN);
         }
 
         // Add EEPROM region (CM848 has 8KB EEPROM)
@@ -146,6 +160,24 @@ public class SetupMemoryMapCM848 extends GhidraScript {
         println("    Address: " + String.format("0x%08x - 0x%08x", baseAddress, baseAddress + data.length - 1));
         println("    Size:    " + data.length + " bytes (" + (data.length / 1024) + " KB)");
         println("    Perms:   " + (read ? "r" : "-") + (write ? "w" : "-") + (execute ? "x" : "-"));
+    }
+
+    /** Creates an initialized, executable block whose bytes are copied from a ROM source range. */
+    private void addRomMirrorBlock(Memory memory, String name, long baseAddress,
+                                   long romSource, long length) throws Exception {
+        Address addr = toAddr(baseAddress);
+        byte[] data = new byte[(int) length];
+        memory.getBytes(toAddr(romSource), data);   // ROM is already loaded at import
+
+        MemoryBlock block = memory.createInitializedBlock(name, addr, length, (byte) 0, monitor, false);
+        block.setRead(true);
+        block.setWrite(true);
+        block.setExecute(true);
+        memory.setBytes(addr, data);
+
+        println("  Created " + name + " block:");
+        println("    Address: " + String.format("0x%08x - 0x%08x", baseAddress, baseAddress + length - 1));
+        println("    Source:  ROM " + String.format("0x%06x", romSource) + " (" + length + " bytes)");
     }
 
     private void addPeripheralRegion(Memory memory, String name, long baseAddress, long length)

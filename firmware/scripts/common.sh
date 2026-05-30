@@ -543,6 +543,22 @@ cmd_resetsig() {
     print_success "Signatures reset — run 'export' to update decompilation."
 }
 
+cmd_romramthunks() {
+    if [ $# -eq 0 ]; then
+        print_error "Usage: $0 romramthunks <ram_addr> [ram_addr ...]"
+        print_error "Creates thunks at ROM-to-RAM code addresses (0x3F9800-0x3FDB30) pointing"
+        print_error "to their ROM source functions, resolving func_0x003fxxxx() calls."
+        exit 1
+    fi
+    print_header "CREATING ROM-TO-RAM THUNKS"
+    check_ghidra
+    check_project
+    echo "RAM addresses: $*"
+    echo ""
+    run_script CreateRomToRamThunks.java "$@"
+    print_success "Thunks created — run 'export' to update decompilation."
+}
+
 dispatch_command() {
     local cmd="${1:-help}"
     shift || true
@@ -565,6 +581,7 @@ dispatch_command() {
         forceanalyze)   cmd_forceanalyze "$@" ;;
         deletefuncs)    cmd_deletefuncs "$@" ;;
         resetsig)       cmd_resetsig "$@" ;;
+        romramthunks)   cmd_romramthunks "$@" ;;
         status)     cmd_status ;;
         help|--help|-h) cmd_help ;;
         *)
