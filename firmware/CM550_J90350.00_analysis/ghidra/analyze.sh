@@ -63,13 +63,15 @@ cmd_hwregs() {
 cmd_full() {
     print_header "FULL ANALYSIS PIPELINE: $FIRMWARE_NAME"
 
-    echo "This will run: init -> analyze -> memmap -> import -> export"
+    echo "This will run: init -> analyze -> memmap -> import -> deletions -> import -> export"
     echo ""
 
     cmd_init
     cmd_analyze
     cmd_memmap
     cmd_import
+    cmd_deletions   # remove spurious auto-analysis functions (the deletion delta)
+    cmd_import      # re-apply names/types — recovers globals at addresses the deletions freed
     cmd_export
 
     print_header "FULL PIPELINE COMPLETE"

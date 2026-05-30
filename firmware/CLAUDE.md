@@ -129,6 +129,12 @@ cd [firmware]_analysis/ghidra
 ./analyze.sh funcdefs   # Apply function definitions (params + return types)
 ./analyze.sh localvars  # Apply local variable types
 ./analyze.sh decompile <addr|name>  # Decompile single function
+./analyze.sh resetsig <addr>...     # Revert a wrong committed prototype to uncommitted/dynamic
+./analyze.sh romramthunks <ram>...  # Thunk ROM-to-RAM calls (func_0x003fxxxx) to their ROM source
+./analyze.sh deletefuncs <addr>...  # Delete spurious function(s); auto-records to deleted_functions.csv
+./analyze.sh deletions  # Apply deleted_functions.csv (the deletion delta; runs after analyze in full)
+./analyze.sh listfuncs <outfile>    # Dump ALL function entry addrs (incl FUN_) for repro/diff checks
+./analyze.sh classifyfuncs <addrs> <out>  # Classify addrs by incoming refs (call-target vs split)
 ./analyze.sh full       # Run complete pipeline
 ./analyze.sh status     # Show project status
 ```
@@ -150,6 +156,7 @@ All firmwares use the same CSV structure in `output/`:
 | `structure_definitions.csv` | C structure definitions |
 | `constants.csv` | Magic number documentation |
 | `arrays.csv` | Array/buffer definitions |
+| `deleted_functions.csv` | Addresses of spurious functions to remove after `analyze` (the deletion delta) |
 | `function_definitions.csv` | Function parameter types and return types |
 | `local_variables.csv` | Local variable names/types |
 
@@ -158,11 +165,16 @@ All firmwares use the same CSV structure in `output/`:
 ## Guidelines
 
 - **CSV is source of truth** - Never edit Ghidra directly
+- **NEVER re-run `memmap` on an analyzed project** — `addMemoryRegion` removes+recreates the FLASH2/RAM/EEPROM blocks, wiping ALL analysis in them (Bank2 functions, RAM var types, thunks). It is one-time setup only (part of `full`). Adding a block later must not touch existing blocks.
 - **Export overwrites CSVs** - `./analyze.sh export` regenerates CSVs from Ghidra, overwriting local edits. Edit CSVs, run `import`, then `export` only to get updated decompilation.
 - **Verify before commit** - Check decompiled output after applying changes
 - **Decimal in names** - Use decimal, not hex, in variable/function names
 - **Major concept first in names** - prefix with the dominant domain noun first: `rpm_governor_offset_*` not `governor_offset_rpm_*`; `fuel_demand_*` not `demand_fuel_*`
 - **Function must exist in Ghidra** - CSV renames only work for addresses Ghidra recognizes as functions
+- **import force-creates functions** — `function_renames.csv` entries at addresses with no function get disassembled + created (not just renamed). This reproduces Bank2 (force-analyzed) functions; their names ARE in `function_renames.csv` (~567 entries), not a side file.
+- **funcdefs / r4-return gotcha** — declare the FULL prototype (return + all param rows); a return-only row is auto-handled (import preserves Ghidra-recovered params, warns on count mismatch) but yields generic `param_N` names. NEVER declare a return for an r4-return function whose r4 is NOT a parameter (no-arg/globals-only helpers like diag handlers) — the decompiler then assumes r4 is preserved and swaps the wrong operand at call sites. Undo a bad prototype with `./analyze.sh resetsig <addr>`.
+- **Reproducibility status** — auto-analysis IS deterministic (same binary → same function set, proven). The function set is now fully reproducible: `deleted_functions.csv` (the deletion delta) is applied after `analyze` in `full`, capturing spurious-split removals that previously lived only in the `.rep`. **Still open:** a fresh rebuild generates ~2965 extra `DAT_` references (none in any CSV) because `analyze` disassembles the *executable RAM region* as code — a region code-vs-data policy that no CSV yet records. Until that is solved, a `full` rebuild does NOT byte-reproduce the committed baseline's globals, so don't re-baseline from a rebuild.
+- **deleted_functions.csv** — vet candidates with `classifyfuncs` before adding: an entry with incoming CALL refs is a REAL function (do NOT delete — add to `function_renames.csv` instead); only no-ref / jump-only entries are true mid-function splits. The bootstrap found 39 "spurious" Bank-2 candidates were actually real functions the campaign missed.
 - **Type width must match hardware access** - `bool` (1B), `byte` (1B), `word` (2B), `dword` (4B) must match the actual load instruction (`lbz`=1B, `lhz`=2B, `lwz`=4B). Wrong width is silently reverted to `word` on export. This also prevents enum substitution for byte-width variables.
 - **Plate comments round-trip via function_renames.csv** - 3rd column is preserved through import/export since 2026-05-25 fix. If export drops a plate comment, it indicates `ExportAnalysis.java` failed to compile (check for missing imports).
 - **Enum round-trip order** — when assigning a new enum type name to variables, run `./analyze.sh enums` BEFORE `./analyze.sh import`. Import silently skips type names not yet in Ghidra's DTM.

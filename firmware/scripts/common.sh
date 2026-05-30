@@ -499,6 +499,8 @@ cmd_help() {
     echo "  arrays     Apply array definitions"
     echo "  decompile     Decompile a single function by address or name"
     echo "  forceanalyze  Force disassembly + function creation at an address"
+    echo "  deletefuncs   Delete spurious function(s) by address (records to deleted_functions.csv)"
+    echo "  deletions     Apply deleted_functions.csv (run after analyze; the deletion delta)"
     echo "  resetsig      Revert a function's prototype to uncommitted/dynamic (undo bad funcdef)"
     echo "  full          Run complete pipeline (firmware-specific)"
     echo "  status     Show project status"
@@ -524,7 +526,36 @@ cmd_deletefuncs() {
     echo "Addresses: $*"
     echo ""
     run_script DeleteFunctions.java "$@"
-    print_success "Functions deleted — run 'export' to update decompilation."
+
+    # Record the deletion as a durable delta so a fresh rebuild reproduces it. Without this
+    # the removal lives only in the .rep and auto-analysis re-creates the function next rebuild.
+    local del_csv="$OUTPUT_DIR/deleted_functions.csv"
+    if [ ! -f "$del_csv" ]; then
+        echo "address,reason" > "$del_csv"
+    fi
+    for a in "$@"; do
+        local canon
+        canon=$(printf '0x%08x' "$((16#${a#0[xX]}))" 2>/dev/null) || continue
+        if ! grep -qi "^${canon}," "$del_csv"; then
+            echo "${canon},deleted via deletefuncs" >> "$del_csv"
+        fi
+    done
+    print_success "Functions deleted + recorded in deleted_functions.csv — run 'export' to update."
+}
+
+cmd_deletions() {
+    print_header "APPLYING FUNCTION DELETIONS: $FIRMWARE_NAME"
+    check_ghidra
+    check_project
+    local del_csv="$OUTPUT_DIR/deleted_functions.csv"
+    if [ ! -f "$del_csv" ]; then
+        print_warning "No deleted_functions.csv — nothing to delete."
+        return 0
+    fi
+    echo "Source: $del_csv"
+    echo ""
+    run_script ApplyFunctionDeletions.java "$del_csv"
+    print_success "Deletions applied — run 'import' (recovers freed globals) then 'export'."
 }
 
 cmd_resetsig() {
@@ -541,6 +572,27 @@ cmd_resetsig() {
     echo ""
     run_script ResetFunctionSignature.java "$@"
     print_success "Signatures reset — run 'export' to update decompilation."
+}
+
+cmd_listfuncs() {
+    local outfile="$1"
+    print_header "LISTING FUNCTION ADDRESSES"
+    check_ghidra
+    check_project
+    run_script ListFunctionAddresses.java "$outfile"
+}
+
+cmd_classifyfuncs() {
+    local addrfile="$1"
+    local outfile="$2"
+    if [ -z "$addrfile" ]; then
+        print_error "Usage: $0 classifyfuncs <addr-file> [out.csv]"
+        exit 1
+    fi
+    print_header "CLASSIFYING FUNCTION CANDIDATES (by incoming refs)"
+    check_ghidra
+    check_project
+    run_script ClassifyFunctionCandidates.java "$addrfile" "$outfile"
 }
 
 cmd_romramthunks() {
@@ -580,8 +632,11 @@ dispatch_command() {
         decompile)      cmd_decompile "$@" ;;
         forceanalyze)   cmd_forceanalyze "$@" ;;
         deletefuncs)    cmd_deletefuncs "$@" ;;
+        deletions)      cmd_deletions ;;
         resetsig)       cmd_resetsig "$@" ;;
         romramthunks)   cmd_romramthunks "$@" ;;
+        listfuncs)      cmd_listfuncs "$@" ;;
+        classifyfuncs)  cmd_classifyfuncs "$@" ;;
         status)     cmd_status ;;
         help|--help|-h) cmd_help ;;
         *)
