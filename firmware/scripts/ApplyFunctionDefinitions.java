@@ -17,18 +17,33 @@ import java.util.List;
 import java.util.Map;
 
 import ghidra.app.script.GhidraScript;
+import ghidra.app.decompiler.DecompInterface;
+import ghidra.app.decompiler.DecompileOptions;
+import ghidra.app.decompiler.DecompileResults;
 import ghidra.program.model.data.*;
 import ghidra.program.model.address.Address;
 import ghidra.program.model.listing.Function;
 import ghidra.program.model.listing.FunctionManager;
 import ghidra.program.model.listing.Parameter;
 import ghidra.program.model.listing.ParameterImpl;
+import ghidra.program.model.pcode.HighFunction;
+import ghidra.program.model.pcode.FunctionPrototype;
+import ghidra.program.model.pcode.HighSymbol;
 import ghidra.program.model.symbol.SourceType;
+import ghidra.util.task.TaskMonitor;
 
 public class ApplyFunctionDefinitions extends GhidraScript {
 
     private FunctionManager functionManager;
     private DataTypeManager dtm;
+    private DecompInterface decompiler;
+
+    /** A parameter as recovered by the decompiler (name + type), captured before we commit a prototype. */
+    private static class RecoveredParam {
+        final String name;
+        final DataType type;
+        RecoveredParam(String name, DataType type) { this.name = name; this.type = type; }
+    }
 
     @Override
     public void run() throws Exception {
@@ -162,6 +177,17 @@ public class ApplyFunctionDefinitions extends GhidraScript {
             byFunction.computeIfAbsent(param.functionAddress, k -> new ArrayList<>()).add(param);
         }
 
+        // Decompiler is used to see what parameters Ghidra currently recovers for each function
+        // BEFORE we commit a prototype (which would turn off that dynamic inference).
+        decompiler = new DecompInterface();
+        decompiler.setOptions(new DecompileOptions());
+        decompiler.toggleSyntaxTree(true);
+        decompiler.setSimplificationStyle("decompile");
+        boolean decompilerReady = decompiler.openProgram(currentProgram);
+        if (!decompilerReady) {
+            println("  Warning: decompiler unavailable — parameter reconciliation disabled for this run");
+        }
+
         try {
             for (Map.Entry<Long, List<ParamDef>> entry : byFunction.entrySet()) {
                 Address addr = toAddr(entry.getKey());
@@ -199,6 +225,14 @@ public class ApplyFunctionDefinitions extends GhidraScript {
                 }
 
                 try {
+                    // See what params Ghidra recovers now, before committing anything.
+                    List<RecoveredParam> detected = decompilerReady ? recoverParams(function)
+                                                                    : new ArrayList<>();
+                    int definedCount = maxIndex + 1;            // 0 when no positional rows
+                    int detectedCount = detected.size();
+                    ScriptUtils.ParamReconciliation decision =
+                            ScriptUtils.reconcileParams(definedCount, detectedCount);
+
                     if (returnDef != null) {
                         DataType dt = getDataType(returnDef.type);
                         if (dt == null) {
@@ -212,34 +246,28 @@ public class ApplyFunctionDefinitions extends GhidraScript {
                         }
                     }
 
-                    if (maxIndex >= 0) {
-                        // Build param list sized to exactly maxIndex+1 — no stale extra params
-                        List<Parameter> paramList = new ArrayList<>();
-                        for (int i = 0; i <= maxIndex; i++) {
-                            paramList.add(new ParameterImpl("param_" + i,
-                                new Undefined4DataType(), currentProgram));
-                        }
-                        for (ParamDef p : positional) {
-                            DataType dt = getDataType(p.type);
-                            if (dt == null) {
-                                println("  Error: Unknown type '" + p.type + "' for " +
-                                        firstName + "[" + p.paramIndex + "]");
-                                result.failed++;
-                                continue;
+                    switch (decision) {
+                        case PRESERVE_DETECTED:
+                            // Return-only row but Ghidra recovered args — committing the return type
+                            // would strip them. Carry the recovered params into the committed signature.
+                            println("  Note: " + firstName + " has a return-only definition but Ghidra " +
+                                    "recovered " + detectedCount + " param(s); preserving them so call " +
+                                    "arguments are not dropped. Add explicit param rows to name/type them.");
+                            applyDetectedParams(function, detected);
+                            break;
+
+                        case WARN_MISMATCH:
+                            println("  Warning: " + firstName + " defines " + definedCount +
+                                    " param row(s) but Ghidra recovered " + detectedCount +
+                                    " — applying the CSV's " + definedCount + " (verify this is intended)");
+                            applyCsvParams(function, positional, maxIndex, firstName, result);
+                            break;
+
+                        case OK:
+                            if (maxIndex >= 0) {
+                                applyCsvParams(function, positional, maxIndex, firstName, result);
                             }
-                            Parameter newParam = new ParameterImpl(p.name, dt, currentProgram);
-                            newParam.setComment(p.comment);
-                            paramList.set(p.paramIndex, newParam);
-                        }
-
-                        function.updateFunction("__stdcall", null, paramList,
-                                Function.FunctionUpdateType.DYNAMIC_STORAGE_ALL_PARAMS,
-                                true, SourceType.USER_DEFINED);
-
-                        for (ParamDef p : positional) {
-                            p.wasApplied = true;
-                            result.applied++;
-                        }
+                            break;
                     }
 
                 } catch (Exception e) {
@@ -249,9 +277,85 @@ public class ApplyFunctionDefinitions extends GhidraScript {
             }
         } finally {
             currentProgram.endTransaction(txId, true);
+            if (decompiler != null) {
+                decompiler.dispose();
+                decompiler = null;
+            }
         }
 
         return result;
+    }
+
+    /**
+     * Returns the parameters the decompiler currently recovers for {@code function}.
+     * Best-effort: returns an empty list if decompilation fails, so reconciliation simply
+     * falls back to the prior behavior rather than erroring.
+     */
+    private List<RecoveredParam> recoverParams(Function function) {
+        List<RecoveredParam> out = new ArrayList<>();
+        try {
+            DecompileResults res = decompiler.decompileFunction(function, 30, TaskMonitor.DUMMY);
+            if (res == null || !res.decompileCompleted()) return out;
+            HighFunction hf = res.getHighFunction();
+            if (hf == null) return out;
+            FunctionPrototype proto = hf.getFunctionPrototype();
+            if (proto == null) return out;
+            int n = proto.getNumParams();
+            for (int i = 0; i < n; i++) {
+                HighSymbol p = proto.getParam(i);
+                if (p == null) continue;
+                out.add(new RecoveredParam(p.getName(), p.getDataType()));
+            }
+        } catch (Exception e) {
+            // best-effort; ignore and behave as if nothing was recovered
+        }
+        return out;
+    }
+
+    /** Commits the decompiler-recovered params verbatim, preserving call-site arguments. */
+    private void applyDetectedParams(Function function, List<RecoveredParam> detected) throws Exception {
+        List<Parameter> paramList = new ArrayList<>();
+        int i = 0;
+        for (RecoveredParam rp : detected) {
+            DataType dt = rp.type != null ? rp.type : new Undefined4DataType();
+            String name = (rp.name != null && !rp.name.isEmpty()) ? rp.name : ("param_" + i);
+            paramList.add(new ParameterImpl(name, dt, currentProgram));
+            i++;
+        }
+        function.updateFunction("__stdcall", null, paramList,
+                Function.FunctionUpdateType.DYNAMIC_STORAGE_ALL_PARAMS,
+                true, SourceType.USER_DEFINED);
+    }
+
+    /** Applies the CSV-declared positional params, sizing the list to exactly maxIndex+1. */
+    private void applyCsvParams(Function function, List<ParamDef> positional, int maxIndex,
+                                String firstName, ApplyResult result) throws Exception {
+        // Build param list sized to exactly maxIndex+1 — no stale extra params
+        List<Parameter> paramList = new ArrayList<>();
+        for (int i = 0; i <= maxIndex; i++) {
+            paramList.add(new ParameterImpl("param_" + i, new Undefined4DataType(), currentProgram));
+        }
+        for (ParamDef p : positional) {
+            DataType dt = getDataType(p.type);
+            if (dt == null) {
+                println("  Error: Unknown type '" + p.type + "' for " +
+                        firstName + "[" + p.paramIndex + "]");
+                result.failed++;
+                continue;
+            }
+            Parameter newParam = new ParameterImpl(p.name, dt, currentProgram);
+            newParam.setComment(p.comment);
+            paramList.set(p.paramIndex, newParam);
+        }
+
+        function.updateFunction("__stdcall", null, paramList,
+                Function.FunctionUpdateType.DYNAMIC_STORAGE_ALL_PARAMS,
+                true, SourceType.USER_DEFINED);
+
+        for (ParamDef p : positional) {
+            p.wasApplied = true;
+            result.applied++;
+        }
     }
 
     private DataType getDataType(String typeString) {

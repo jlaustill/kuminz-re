@@ -135,6 +135,40 @@ public class ScriptUtils {
         return 8; // clamp; Ghidra has no enum type larger than 8 bytes
     }
 
+    // ── Function-definition parameter reconciliation ─────────────────────────
+
+    /** Outcome of comparing CSV-defined params against Ghidra's decompiler-recovered params. */
+    public enum ParamReconciliation {
+        /** Counts agree (or both zero) — apply the definition as written. */
+        OK,
+        /** CSV defines params but the count differs from Ghidra's — may be a legit override; warn and proceed. */
+        WARN_MISMATCH,
+        /**
+         * CSV defines NO params but Ghidra recovered some — committing a return type would
+         * silently strip those arguments. Preserve the recovered params instead.
+         */
+        PRESERVE_DETECTED
+    }
+
+    /**
+     * Decides how to handle a function definition given the number of parameter rows in the
+     * CSV ({@code definedCount}) versus the number the decompiler recovered ({@code detectedCount}).
+     *
+     * Committing any prototype element (return type / calling convention) turns OFF Ghidra's
+     * dynamic parameter inference, so a return-only row (definedCount==0) on a function whose
+     * args were only ever inferred (detectedCount>0) collapses the signature to {@code (void)}
+     * and drops the call-site arguments. PRESERVE_DETECTED flags that case so the caller can
+     * carry the recovered params into the committed signature.
+     */
+    public static ParamReconciliation reconcileParams(int definedCount, int detectedCount) {
+        if (definedCount == 0) {
+            return detectedCount > 0 ? ParamReconciliation.PRESERVE_DETECTED
+                                     : ParamReconciliation.OK;
+        }
+        return definedCount == detectedCount ? ParamReconciliation.OK
+                                             : ParamReconciliation.WARN_MISMATCH;
+    }
+
     // ── CSV row parsers ──────────────────────────────────────────────────────
 
     /**

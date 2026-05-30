@@ -361,4 +361,39 @@ class ScriptUtilsTest {
         assertEquals(8, ScriptUtils.selectEnumSize(9));
         assertEquals(8, ScriptUtils.selectEnumSize(100));
     }
+
+    // ── reconcileParams ──────────────────────────────────────────────────────
+
+    @Test void reconcile_noParamsEitherSide_isOk() {
+        // return-only row on a genuinely void function — nothing to preserve
+        assertEquals(ScriptUtils.ParamReconciliation.OK,
+                ScriptUtils.reconcileParams(0, 0));
+    }
+
+    @Test void reconcile_definedZero_detectedSome_preserves() {
+        // the silent-drop trap: return-only row but Ghidra recovered params
+        assertEquals(ScriptUtils.ParamReconciliation.PRESERVE_DETECTED,
+                ScriptUtils.reconcileParams(0, 4));
+    }
+
+    @Test void reconcile_countsMatch_isOk() {
+        assertEquals(ScriptUtils.ParamReconciliation.OK,
+                ScriptUtils.reconcileParams(4, 4));
+    }
+
+    @Test void reconcile_definedFewerThanDetected_warns() {
+        assertEquals(ScriptUtils.ParamReconciliation.WARN_MISMATCH,
+                ScriptUtils.reconcileParams(2, 4));
+    }
+
+    @Test void reconcile_definedMoreThanDetected_warns() {
+        // legit override (adding params Ghidra missed) — still flag it
+        assertEquals(ScriptUtils.ParamReconciliation.WARN_MISMATCH,
+                ScriptUtils.reconcileParams(4, 2));
+    }
+
+    @Test void reconcile_definedSome_detectedZero_warns() {
+        assertEquals(ScriptUtils.ParamReconciliation.WARN_MISMATCH,
+                ScriptUtils.reconcileParams(3, 0));
+    }
 }
