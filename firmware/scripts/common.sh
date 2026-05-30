@@ -499,6 +499,7 @@ cmd_help() {
     echo "  arrays     Apply array definitions"
     echo "  decompile     Decompile a single function by address or name"
     echo "  forceanalyze  Force disassembly + function creation at an address"
+    echo "  resetsig      Revert a function's prototype to uncommitted/dynamic (undo bad funcdef)"
     echo "  full          Run complete pipeline (firmware-specific)"
     echo "  status     Show project status"
     echo "  help       Show this help message"
@@ -526,6 +527,22 @@ cmd_deletefuncs() {
     print_success "Functions deleted — run 'export' to update decompilation."
 }
 
+cmd_resetsig() {
+    if [ $# -eq 0 ]; then
+        print_error "Usage: $0 resetsig <addr> [addr ...]"
+        print_error "Reverts a function's committed prototype to uncommitted/dynamic so the"
+        print_error "decompiler re-analyzes it. Use to undo a wrong return type/param list."
+        exit 1
+    fi
+    print_header "RESETTING FUNCTION SIGNATURES"
+    check_ghidra
+    check_project
+    echo "Addresses: $*"
+    echo ""
+    run_script ResetFunctionSignature.java "$@"
+    print_success "Signatures reset — run 'export' to update decompilation."
+}
+
 dispatch_command() {
     local cmd="${1:-help}"
     shift || true
@@ -547,6 +564,7 @@ dispatch_command() {
         decompile)      cmd_decompile "$@" ;;
         forceanalyze)   cmd_forceanalyze "$@" ;;
         deletefuncs)    cmd_deletefuncs "$@" ;;
+        resetsig)       cmd_resetsig "$@" ;;
         status)     cmd_status ;;
         help|--help|-h) cmd_help ;;
         *)
