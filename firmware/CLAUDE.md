@@ -94,50 +94,47 @@ Key RAM-executed functions called from `mainLoopIteration`:
 
 ---
 
-## Workflow
+## Workflow — ONE deterministic build, no partials
 
-> **CM848 Pipeline Note:** CM848 has dual-bank Flash (ROM + Flash2). Flash2 must be
-> loaded (`memmap`) and entry points seeded (`import`) *before* Ghidra auto-analysis
-> runs — otherwise cross-bank `bl` calls into Flash2 produce fabricated decompilation.
-> CM848's `analyze.sh full` uses: `init → memmap → import → analyze → export`.
-> CM550's `analyze.sh full` uses: `init → analyze → memmap → import → export`.
+The Ghidra `.rep` is a **disposable build artifact**, rebuilt from scratch every time. The
+CSVs in `output/` (+ the binary/dumps) are the ONLY source of truth. There is exactly one
+way to produce output — `build` — and it always applies *every* CSV. Partial commands
+(`import`/`export`/`analyze`/…) were removed: incrementally mutating a persistent `.rep` is
+what caused drift (a silently-lost-43-functions baseline that couldn't reproduce itself).
 
 ```bash
 cd [firmware]_analysis/ghidra
 
-# Edit CSV files in ../output/
-./analyze.sh import     # Apply CSV changes to Ghidra
-./analyze.sh export     # Regenerate decompilation
+./analyze.sh build      # Edit CSVs in ../output/, then rebuild — always from scratch
+./analyze.sh verify     # Prove the build is a reproducible fixed point (build x2, 0 diff)
 
-# Verify: ../output/[firmware].ghidra.cpp
+# Output: ../output/[firmware].ghidra.cpp  (+ regenerated function_renames.csv, global_variables.csv)
 ```
+
+`build` internally runs, in dependency order (firmware-specific):
+- **CM848:** `init → memmap → enums → import → analyze → deletions → import → callingconv → hwregs → labels → constants → arrays → export`
+- **CM550:** `init → analyze → memmap → enums → import → deletions → import → hwregs → labels → constants → arrays → export`
+
+(`import` = ApplyStructures + ImportAnalysis, which force-creates functions from
+`function_renames.csv`; `export` re-applies funcdefs+localvars then ExportAnalysis. CM848 seeds
+functions before `analyze` so cross-bank Bank-2 `bl` calls resolve.)
 
 ### Available Commands
 
 ```bash
-./analyze.sh init       # Import firmware (no analysis)
-./analyze.sh analyze    # Run Ghidra auto-analysis
-./analyze.sh memmap     # Add RAM/EEPROM regions
-./analyze.sh import     # Apply CSV changes
-./analyze.sh export     # Export CSVs + decompilation
-./analyze.sh structures # Apply structure definitions
-./analyze.sh enums      # Apply enum definitions
-./analyze.sh labels     # Apply code labels
-./analyze.sh constants  # Apply constant definitions
-./analyze.sh arrays     # Apply array definitions
-./analyze.sh hwregs     # Apply hardware register names
-./analyze.sh funcdefs   # Apply function definitions (params + return types)
-./analyze.sh localvars  # Apply local variable types
-./analyze.sh decompile <addr|name>  # Decompile single function
-./analyze.sh resetsig <addr>...     # Revert a wrong committed prototype to uncommitted/dynamic
-./analyze.sh romramthunks <ram>...  # Thunk ROM-to-RAM calls (func_0x003fxxxx) to their ROM source
-./analyze.sh deletefuncs <addr>...  # Delete spurious function(s); auto-records to deleted_functions.csv
-./analyze.sh deletions  # Apply deleted_functions.csv (the deletion delta; runs after analyze in full)
-./analyze.sh listfuncs <outfile>    # Dump ALL function entry addrs (incl FUN_) for repro/diff checks
-./analyze.sh classifyfuncs <addrs> <out>  # Classify addrs by incoming refs (call-target vs split)
-./analyze.sh full       # Run complete pipeline
-./analyze.sh status     # Show project status
+./analyze.sh build      # The one build: fresh binary → apply every CSV → .cpp + CSVs
+./analyze.sh verify     # Build twice, assert byte-identical (determinism contract)
+./analyze.sh deletefuncs <addr>...  # Record spurious-function addr(s) to deleted_functions.csv (CSV-only)
+./analyze.sh status     # Project status (read-only)
+./analyze.sh decompile <addr|name>  # Decompile single function (read-only, against last build)
+./analyze.sh listfuncs <outfile>    # Dump ALL function entry addrs incl FUN_ (read-only, repro diffs)
+./analyze.sh classifyfuncs <addrs> <out>  # Classify addrs by incoming refs: call-target vs split (read-only)
 ```
+
+To name/type/delete: edit the CSV, run `build`. To find spurious splits to record with
+`deletefuncs`: `build`, then `classifyfuncs` on suspects (no incoming call ref = split).
+ROM-to-RAM thunking (`func_0x003fxxxx` → ROM source) is a **deferred** build step (the map is
+`ROM = 0x3C30 + (RAM − 0x3F9800)`; re-add it as a deterministic stage when needed).
 
 ---
 
@@ -165,15 +162,15 @@ All firmwares use the same CSV structure in `output/`:
 ## Guidelines
 
 - **CSV is source of truth** - Never edit Ghidra directly
-- **NEVER re-run `memmap` on an analyzed project** — `addMemoryRegion` removes+recreates the FLASH2/RAM/EEPROM blocks, wiping ALL analysis in them (Bank2 functions, RAM var types, thunks). It is one-time setup only (part of `full`). Adding a block later must not touch existing blocks.
-- **Export overwrites CSVs** - `./analyze.sh export` regenerates CSVs from Ghidra, overwriting local edits. Edit CSVs, run `import`, then `export` only to get updated decompilation.
+- **The `.rep` is disposable; `build` is the only producer** — every `build` starts from a fresh binary (`init -overwrite`) and applies every CSV. There is no persistent state to drift, and no standalone `import`/`export`/`memmap`/`analyze` to half-mutate it. (Historically, re-running `memmap` on a populated `.rep` wiped Bank-2/RAM analysis — that footgun no longer exists.)
+- **`function_renames.csv` + `global_variables.csv` are build OUTPUTS** — `build`'s export regenerates them from the `.rep` each run (reformatting, dropping non-curated `DAT_`/`uRam` names). Edit them to rename/retype, but expect `build` to rewrite them; the other CSVs (enums, structures, labels, constants, arrays, function_definitions, local_variables, deleted_functions) are hand-maintained INPUTS that `build` never overwrites.
 - **Verify before commit** - Check decompiled output after applying changes
 - **Decimal in names** - Use decimal, not hex, in variable/function names
 - **Major concept first in names** - prefix with the dominant domain noun first: `rpm_governor_offset_*` not `governor_offset_rpm_*`; `fuel_demand_*` not `demand_fuel_*`
 - **Function must exist in Ghidra** - CSV renames only work for addresses Ghidra recognizes as functions
 - **import force-creates functions** — `function_renames.csv` entries at addresses with no function get disassembled + created (not just renamed). This reproduces Bank2 (force-analyzed) functions; their names ARE in `function_renames.csv` (~567 entries), not a side file.
-- **funcdefs / r4-return gotcha** — declare the FULL prototype (return + all param rows); a return-only row is auto-handled (import preserves Ghidra-recovered params, warns on count mismatch) but yields generic `param_N` names. NEVER declare a return for an r4-return function whose r4 is NOT a parameter (no-arg/globals-only helpers like diag handlers) — the decompiler then assumes r4 is preserved and swaps the wrong operand at call sites. Undo a bad prototype with `./analyze.sh resetsig <addr>`.
-- **Reproducibility status** — auto-analysis IS deterministic (same binary → same function set, proven). The function set is now fully reproducible: `deleted_functions.csv` (the deletion delta) is applied after `analyze` in `full`, capturing spurious-split removals that previously lived only in the `.rep`. **Still open:** a fresh rebuild generates ~2965 extra `DAT_` references (none in any CSV) because `analyze` disassembles the *executable RAM region* as code — a region code-vs-data policy that no CSV yet records. Until that is solved, a `full` rebuild does NOT byte-reproduce the committed baseline's globals, so don't re-baseline from a rebuild.
+- **funcdefs / r4-return gotcha** — declare the FULL prototype (return + all param rows); a return-only row is auto-handled (import preserves Ghidra-recovered params, warns on count mismatch) but yields generic `param_N` names. NEVER declare a return for an r4-return function whose r4 is NOT a parameter (no-arg/globals-only helpers like diag handlers) — the decompiler then assumes r4 is preserved and swaps the wrong operand at call sites. To undo a bad prototype, fix/remove the row in `function_definitions.csv` and rebuild.
+- **Reproducibility: PROVEN** — `build` is a deterministic fixed point. Two independent `build`s from a fresh binary produce byte-identical `.cpp` + CSVs (`verify` asserts this). Auto-analysis is deterministic; `import` force-creates functions from `function_renames.csv`; `deleted_functions.csv` removes spurious splits; the new baseline preserves all curated names and *surfaces* 90 real functions the old hand-curated baseline was missing (func_0x 75→29). The apparent "~2965 extra DAT_" gap from earlier was a measurement artifact — unnamed RAM vars render `DAT_` (initialized RAM) vs `uRam` (uninitialized); both are default names, no curation lost.
 - **deleted_functions.csv** — vet candidates with `classifyfuncs` before adding: an entry with incoming CALL refs is a REAL function (do NOT delete — add to `function_renames.csv` instead); only no-ref / jump-only entries are true mid-function splits. The bootstrap found 39 "spurious" Bank-2 candidates were actually real functions the campaign missed.
 - **Type width must match hardware access** - `bool` (1B), `byte` (1B), `word` (2B), `dword` (4B) must match the actual load instruction (`lbz`=1B, `lhz`=2B, `lwz`=4B). Wrong width is silently reverted to `word` on export. This also prevents enum substitution for byte-width variables.
 - **Plate comments round-trip via function_renames.csv** - 3rd column is preserved through import/export since 2026-05-25 fix. If export drops a plate comment, it indicates `ExportAnalysis.java` failed to compile (check for missing imports).

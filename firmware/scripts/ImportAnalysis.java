@@ -186,7 +186,6 @@ public class ImportAnalysis extends GhidraScript {
         int typeSkippedNoType = 0;
         int typeSkippedOutOfRange = 0;
         int typeFailed = 0;
-        int codeCleared = 0;
         int skipped = 0;
         int failed = 0;
 
@@ -222,6 +221,15 @@ public class ImportAnalysis extends GhidraScript {
                     long addressValue = ScriptUtils.parseAddress(addressStr);
                     Address address = toAddr(addressValue);
 
+                    // A global must never overwrite a function. Some global_variables.csv rows are
+                    // junk auto-names (BYTE_/DAT_) at addresses that are real functions in
+                    // function_renames.csv; applying them would rename/retype the function away.
+                    // The function is authoritative — skip the row entirely.
+                    if (currentProgram.getFunctionManager().getFunctionAt(address) != null) {
+                        skipped++;
+                        continue;
+                    }
+
                     // Apply name if different
                     Symbol existingSymbol = symbolTable.getPrimarySymbol(address);
                     boolean nameMatches = (existingSymbol != null && existingSymbol.getName().equals(newName));
@@ -256,31 +264,19 @@ public class ImportAnalysis extends GhidraScript {
                         Data existingData = listing.getDataAt(address);
 
                         try {
-                            int clearLen = dataType.getLength();
                             // Clear using max(old size, new size) so replacing e.g. a 4-byte
                             // pointer with a 1-byte flag fully removes the old data object.
+                            // NOTE: only clear existing DATA, never code — typing an address that
+                            // analyze decoded as an instruction fails "in code" and is left alone
+                            // (the var renders DAT_/uRam, which is harmless). Clearing code here
+                            // would corrupt functions whose entry also appears (junk-named) in
+                            // global_variables.csv.
                             if (existingData != null) {
-                                clearLen = Math.max(existingData.getLength(), clearLen);
-                            }
-                            // CSV is the source of truth: this address is data. If `analyze`
-                            // speculatively disassembled it as code (common in the executable
-                            // RAM region, whose data bytes get decoded as instructions), clear
-                            // that instruction too — otherwise createData fails "in code" and
-                            // the global stays _DAT_.
-                            boolean overCode = (existingData == null
-                                    && listing.getInstructionContaining(address) != null);
-                            if (existingData != null || overCode) {
+                                int clearLen = Math.max(existingData.getLength(), dataType.getLength());
                                 listing.clearCodeUnits(address, address.add(clearLen - 1), false);
-                                if (overCode) codeCleared++;
                             }
                             // Re-create with the correct type every time
                             listing.createData(address, dataType);
-                            // Re-assert the name: createData over freshly-cleared code can drop a
-                            // label that was set while the address was mid-instruction.
-                            Symbol primary = symbolTable.getPrimarySymbol(address);
-                            if (primary == null || !primary.getName().equals(newName)) {
-                                symbolTable.createLabel(address, newName, SourceType.USER_DEFINED);
-                            }
                             typeChanges++;
                         } catch (Exception e) {
                             // Type application failed - might conflict with existing code/data
@@ -301,12 +297,11 @@ public class ImportAnalysis extends GhidraScript {
         }
 
         // Debug output for type application
-        if (typeSkippedOutOfRange > 0 || typeFailed > 0 || codeCleared > 0) {
+        if (typeSkippedOutOfRange > 0 || typeFailed > 0) {
             println("  Type stats: " + typeSkippedOutOfRange + " out-of-range, " +
                     typeSkippedMatch + " already match, " +
                     typeSkippedNoType + " unmapped type, " +
-                    typeFailed + " failed (in code), " +
-                    codeCleared + " code cleared for CSV data");
+                    typeFailed + " failed (in code)");
         }
 
         return new int[] { nameChanges, typeChanges };

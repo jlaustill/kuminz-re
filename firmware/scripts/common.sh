@@ -87,6 +87,7 @@ run_script() {
         "$PROJECT_NAME" \
         -process "$PROCESS_FILE" \
         -noanalysis \
+        -max-cpu 1 \
         -scriptPath "$SHARED_SCRIPTS_DIR" \
         -postScript "$script_name" "${script_args[@]}"
 }
@@ -115,6 +116,7 @@ cmd_init() {
         -loader BinaryLoader \
         -loader-baseAddr 0x0 \
         -noanalysis \
+        -max-cpu 1 \
         -overwrite
 
     print_success "Import complete (no analysis yet)"
@@ -136,6 +138,7 @@ cmd_analyze() {
         "$PROJECT_LOCATION" \
         "$PROJECT_NAME" \
         -process "$PROCESS_FILE" \
+        -max-cpu 1 \
         -recursive
 
     print_success "Auto-analysis complete"
@@ -235,8 +238,8 @@ cmd_enums() {
     ENUMS_CSV="$OUTPUT_DIR/enums.csv"
 
     if [ ! -f "$ENUMS_CSV" ]; then
-        print_error "enums.csv not found: $ENUMS_CSV"
-        exit 1
+        print_warning "enums.csv not found — skipping"
+        return 0
     fi
 
     echo "Applying enum definitions..."
@@ -260,8 +263,8 @@ cmd_labels() {
     RELOCATION_MAP="$OUTPUT_DIR/relocation_map.csv"
 
     if [ ! -f "$LABELS_CSV" ]; then
-        print_error "labels.csv not found: $LABELS_CSV"
-        exit 1
+        print_warning "labels.csv not found — skipping"
+        return 0
     fi
 
     echo "Applying code labels..."
@@ -354,8 +357,8 @@ cmd_constants() {
     CONSTANTS_CSV="$OUTPUT_DIR/constants.csv"
 
     if [ ! -f "$CONSTANTS_CSV" ]; then
-        print_error "constants.csv not found: $CONSTANTS_CSV"
-        exit 1
+        print_warning "constants.csv not found — skipping"
+        return 0
     fi
 
     echo "Applying constant definitions..."
@@ -376,8 +379,8 @@ cmd_arrays() {
     ARRAYS_CSV="$OUTPUT_DIR/arrays.csv"
 
     if [ ! -f "$ARRAYS_CSV" ]; then
-        print_error "arrays.csv not found: $ARRAYS_CSV"
-        exit 1
+        print_warning "arrays.csv not found — skipping"
+        return 0
     fi
 
     echo "Applying array definitions..."
@@ -403,39 +406,6 @@ cmd_decompile() {
     check_ghidra
 
     run_script DecompileFunction.java "$target"
-}
-
-cmd_forceanalyze() {
-    local addr="$1"
-    local name="$2"
-
-    if [ -z "$addr" ]; then
-        print_error "Usage: $0 forceanalyze <address> [name]"
-        print_error "Examples:"
-        print_error "  $0 forceanalyze 0x00539190 cm848_initAllJ1939Handlers"
-        print_error "  $0 forceanalyze 0x00539768"
-        print_error ""
-        print_error "Use for functions missed by Ghidra auto-analysis (e.g. indirect-only"
-        print_error "call targets). Removes any stale function, forces disassembly, then"
-        print_error "recreates the function so the decompiler has real code to work with."
-        exit 1
-    fi
-
-    check_ghidra
-    check_project
-
-    print_header "FORCE ANALYZING FUNCTION: $addr"
-
-    if [ -n "$name" ]; then
-        echo "Address: $addr"
-        echo "Name:    $name"
-        run_script ForceAnalyzeFunction.java "$addr" "$name"
-    else
-        echo "Address: $addr"
-        run_script ForceAnalyzeFunction.java "$addr"
-    fi
-
-    print_success "Force analysis complete — run '$0 export' to update decompilation"
 }
 
 cmd_status() {
@@ -483,64 +453,87 @@ cmd_help() {
     echo ""
     echo "Usage: $0 <command> [options]"
     echo ""
-    echo "Commands:"
-    echo "  init       Import firmware into new Ghidra project (no analysis)"
-    echo "  analyze    Run Ghidra auto-analysis on the project"
-    echo "  memmap     Add RAM and EEPROM memory regions from live dumps"
-    echo "  export     Export function names and decompilation to CSV/CPP"
-    echo "  import     Import CSV changes back into Ghidra"
-    echo "  structures Apply structure definitions from structure_definitions.csv"
-    echo "  enums      Apply enum definitions for magic number replacement"
-    echo "  labels     Apply code labels for improved readability"
-    echo "  funcdefs    Apply function definitions (params + return types)"
-    echo "  localvars  Apply local variable types"
-    echo "  vartypes   Apply global variable types (clears stale types first)"
-    echo "  constants  Apply constant definitions (magic numbers with names)"
-    echo "  arrays     Apply array definitions"
-    echo "  decompile     Decompile a single function by address or name"
-    echo "  forceanalyze  Force disassembly + function creation at an address"
-    echo "  deletefuncs   Delete spurious function(s) by address (records to deleted_functions.csv)"
-    echo "  deletions     Apply deleted_functions.csv (run after analyze; the deletion delta)"
-    echo "  resetsig      Revert a function's prototype to uncommitted/dynamic (undo bad funcdef)"
-    echo "  full          Run complete pipeline (firmware-specific)"
-    echo "  status     Show project status"
-    echo "  help       Show this help message"
+    echo "The CSVs in output/ are the ONLY source of truth. The Ghidra .rep is a disposable"
+    echo "build artifact, rebuilt from scratch every time. There is exactly one way to produce"
+    echo "output — 'build' — and it always applies every CSV. No partial commands."
     echo ""
-    echo "Typical workflow:"
-    echo "  1. $0 full                 # Initial setup"
-    echo "  2. Edit output/*.csv"
-    echo "  3. $0 import               # Apply changes"
-    echo "  4. $0 export               # Update decompilation"
+    echo "Commands:"
+    echo "  build          Fresh binary -> apply every CSV -> decompilation + CSVs (the one build)"
+    echo "  verify         Run build twice and assert byte-identical output (determinism check)"
+    echo "  deletefuncs    Record spurious-function address(es) to deleted_functions.csv (applied next build)"
+    echo "  status         Show project status (read-only)"
+    echo "  decompile      Decompile a single function by address or name (read-only)"
+    echo "  listfuncs      Dump all function entry addresses incl FUN_ (read-only, for repro diffs)"
+    echo "  classifyfuncs  Classify addresses by incoming refs: call-target vs split (read-only)"
+    echo "  help           Show this help message"
+    echo ""
+    echo "Workflow:"
+    echo "  1. $0 build                # Produce decompilation from CSVs + binary"
+    echo "  2. Edit output/*.csv       # Rename, type, delete (deletefuncs), etc."
+    echo "  3. $0 build                # Re-derive — always from scratch, fully deterministic"
+    echo "  4. $0 verify               # Prove the build is a reproducible fixed point"
 }
 
-# Dispatch command (called from firmware-specific script)
+# Record a function-deletion delta. CSV-only — no Ghidra. The removal "exists" once the
+# next `build` consumes deleted_functions.csv via its deletions step. (To find spurious
+# splits to record: build, then `classifyfuncs` on suspects.)
 cmd_deletefuncs() {
     if [ $# -eq 0 ]; then
         print_error "Usage: $0 deletefuncs <addr> [addr ...]"
-        print_error "Removes spurious Ghidra function records at mid-code addresses."
+        print_error "Records spurious-function addresses to deleted_functions.csv (applied on next build)."
         exit 1
     fi
-    print_header "DELETING SPURIOUS FUNCTIONS"
-    check_ghidra
-    check_project
-    echo "Addresses: $*"
-    echo ""
-    run_script DeleteFunctions.java "$@"
-
-    # Record the deletion as a durable delta so a fresh rebuild reproduces it. Without this
-    # the removal lives only in the .rep and auto-analysis re-creates the function next rebuild.
     local del_csv="$OUTPUT_DIR/deleted_functions.csv"
     if [ ! -f "$del_csv" ]; then
         echo "address,reason" > "$del_csv"
     fi
+    local added=0
     for a in "$@"; do
         local canon
-        canon=$(printf '0x%08x' "$((16#${a#0[xX]}))" 2>/dev/null) || continue
-        if ! grep -qi "^${canon}," "$del_csv"; then
+        canon=$(printf '0x%08x' "$((16#${a#0[xX]}))" 2>/dev/null) || { print_warning "Bad address: $a"; continue; }
+        if grep -qi "^${canon}," "$del_csv"; then
+            echo "  already recorded: $canon"
+        else
             echo "${canon},deleted via deletefuncs" >> "$del_csv"
+            echo "  recorded: $canon"
+            added=$((added+1))
         fi
     done
-    print_success "Functions deleted + recorded in deleted_functions.csv — run 'export' to update."
+    print_success "Recorded $added deletion(s) in deleted_functions.csv — run '$0 build' to apply."
+}
+
+# Determinism contract: build twice, assert the regenerated artifacts are byte-identical
+# (modulo the // Generated: timestamp). 0 diff == reproducible fixed point.
+cmd_verify() {
+    print_header "VERIFY DETERMINISM: $FIRMWARE_NAME (build x2, assert identical)"
+    local snap
+    snap="$(mktemp -d)"
+
+    echo ">>> build #1"
+    cmd_build
+    local cpp
+    cpp="$(ls "$OUTPUT_DIR"/*.ghidra.cpp 2>/dev/null | head -1)"
+    grep -v '^// Generated:' "$cpp" > "$snap/cpp1"
+    cp "$OUTPUT_DIR/function_renames.csv" "$snap/fr1"
+    cp "$OUTPUT_DIR/global_variables.csv" "$snap/gv1"
+
+    echo ">>> build #2"
+    cmd_build
+    grep -v '^// Generated:' "$cpp" > "$snap/cpp2"
+
+    local d=0
+    diff -q "$snap/cpp1" "$snap/cpp2" >/dev/null || { d=1; echo "DIFF in $(basename "$cpp"):"; diff "$snap/cpp1" "$snap/cpp2" | head -40; }
+    diff -q "$snap/fr1" "$OUTPUT_DIR/function_renames.csv" >/dev/null || { d=1; echo "DIFF in function_renames.csv"; }
+    diff -q "$snap/gv1" "$OUTPUT_DIR/global_variables.csv" >/dev/null || { d=1; echo "DIFF in global_variables.csv"; }
+    rm -rf "$snap"
+
+    echo ""
+    if [ "$d" -eq 0 ]; then
+        print_success "DETERMINISTIC ✓ — two builds produced byte-identical output"
+    else
+        print_error "NON-DETERMINISTIC — builds differ (see above). This is a bug to fix."
+        exit 1
+    fi
 }
 
 cmd_deletions() {
@@ -556,22 +549,6 @@ cmd_deletions() {
     echo ""
     run_script ApplyFunctionDeletions.java "$del_csv"
     print_success "Deletions applied — run 'import' (recovers freed globals) then 'export'."
-}
-
-cmd_resetsig() {
-    if [ $# -eq 0 ]; then
-        print_error "Usage: $0 resetsig <addr> [addr ...]"
-        print_error "Reverts a function's committed prototype to uncommitted/dynamic so the"
-        print_error "decompiler re-analyzes it. Use to undo a wrong return type/param list."
-        exit 1
-    fi
-    print_header "RESETTING FUNCTION SIGNATURES"
-    check_ghidra
-    check_project
-    echo "Addresses: $*"
-    echo ""
-    run_script ResetFunctionSignature.java "$@"
-    print_success "Signatures reset — run 'export' to update decompilation."
 }
 
 cmd_listfuncs() {
@@ -595,60 +572,32 @@ cmd_classifyfuncs() {
     run_script ClassifyFunctionCandidates.java "$addrfile" "$outfile"
 }
 
-cmd_romramthunks() {
-    if [ $# -eq 0 ]; then
-        print_error "Usage: $0 romramthunks <ram_addr> [ram_addr ...]"
-        print_error "Creates thunks at ROM-to-RAM code addresses (0x3F9800-0x3FDB30) pointing"
-        print_error "to their ROM source functions, resolving func_0x003fxxxx() calls."
-        exit 1
-    fi
-    print_header "CREATING ROM-TO-RAM THUNKS"
-    check_ghidra
-    check_project
-    echo "RAM addresses: $*"
-    echo ""
-    run_script CreateRomToRamThunks.java "$@"
-    print_success "Thunks created — run 'export' to update decompilation."
-}
-
 dispatch_command() {
     local cmd="${1:-help}"
     shift || true
 
     case "$cmd" in
-        init)       cmd_init ;;
-        analyze)    cmd_analyze ;;
-        memmap)     cmd_memmap ;;
-        export)     cmd_export ;;
-        import)     cmd_import ;;
-        structures) cmd_structures ;;
-        enums)      cmd_enums ;;
-        labels)     cmd_labels ;;
-        funcdefs)   cmd_funcdefs ;;
-        localvars)  cmd_localvars ;;
-        vartypes)   cmd_vartypes ;;
-        constants)  cmd_constants ;;
-        arrays)     cmd_arrays ;;
-        decompile)      cmd_decompile "$@" ;;
-        forceanalyze)   cmd_forceanalyze "$@" ;;
+        # The ONE artifact producer: fresh binary -> apply every CSV -> .cpp + CSVs.
+        # Deterministic by construction; there is no persistent .rep state to drift.
+        build)          cmd_build ;;
+        # Determinism contract: build twice, assert byte-identical output.
+        verify)         cmd_verify ;;
+        # Record a deletion delta (CSV only, no Ghidra). Takes effect on next build.
         deletefuncs)    cmd_deletefuncs "$@" ;;
-        deletions)      cmd_deletions ;;
-        resetsig)       cmd_resetsig "$@" ;;
-        romramthunks)   cmd_romramthunks "$@" ;;
+        # Read-only diagnostics against the last build's .rep.
+        status)         cmd_status ;;
+        decompile)      cmd_decompile "$@" ;;
         listfuncs)      cmd_listfuncs "$@" ;;
         classifyfuncs)  cmd_classifyfuncs "$@" ;;
-        status)     cmd_status ;;
         help|--help|-h) cmd_help ;;
         *)
-            # Check if firmware-specific handler exists
-            if type "cmd_$cmd" &>/dev/null; then
-                "cmd_$cmd" "$@"
-            else
-                print_error "Unknown command: $cmd"
-                echo ""
-                cmd_help
-                exit 1
-            fi
+            print_error "Unknown command: $cmd"
+            echo ""
+            print_error "Partial commands (import/export/analyze/...) were removed: there is one"
+            print_error "deterministic build. Edit CSVs, then run '$0 build'."
+            echo ""
+            cmd_help
+            exit 1
             ;;
     esac
 }

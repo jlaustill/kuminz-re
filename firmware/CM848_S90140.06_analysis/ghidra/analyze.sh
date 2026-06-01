@@ -54,27 +54,31 @@ cmd_memmap() {
     print_success "Memory map setup complete"
 }
 
-cmd_full() {
-    print_header "FULL ANALYSIS PIPELINE: $FIRMWARE_NAME (PowerPC)"
-
-    echo "This will run: init -> memmap -> import -> analyze -> deletions -> import -> export"
+# The ONE deterministic build: fresh binary -> apply EVERY CSV -> decompilation.
+# Order respects: memmap before analyze (Bank2/RAM loaded); import before analyze
+# (Bank2 entry-point seeding); enums before import (DTM types); deletions after analyze;
+# callingconv/hwregs before export's funcdef/localvar re-apply.
+cmd_build() {
+    print_header "BUILD: $FIRMWARE_NAME (PowerPC) — deterministic, from scratch"
+    echo "Fresh binary -> apply every CSV -> decompilation. The .rep is disposable."
     echo ""
 
-    cmd_init
-    cmd_memmap
-    cmd_import
-    cmd_analyze
-    cmd_deletions   # remove spurious auto-analysis functions (the deletion delta)
-    cmd_import      # re-apply names/types — recovers globals at addresses the deletions freed
-    cmd_export
+    cmd_init         # fresh import (-overwrite); zero history
+    cmd_memmap       # FLASH2 + RAM + EEPROM + peripheral regions
+    cmd_enums        # enum types into DTM (before global typing references them)
+    cmd_import       # ApplyStructures + ImportAnalysis: force-create funcs (Bank2 seed) + names + globals
+    cmd_analyze      # deterministic auto-analysis (cross-bank calls now resolve)
+    cmd_deletions    # remove spurious mid-function splits (deleted_functions.csv delta)
+    cmd_import       # re-assert names/types over analyze; recover globals at freed addresses
+    cmd_callingconv  # Bank2 __stdcall convention
+    cmd_hwregs       # MPC555 hardware register names
+    cmd_labels       # code labels
+    cmd_constants    # magic-number constants
+    cmd_arrays       # array definitions
+    cmd_export       # re-applies funcdefs+localvars, then ExportAnalysis -> .cpp + CSVs
 
-    print_header "FULL PIPELINE COMPLETE"
-    print_success "$FIRMWARE_NAME analysis is ready!"
-    echo ""
-    echo "Output files:"
-    echo "  - $OUTPUT_DIR/function_renames.csv"
-    echo "  - $OUTPUT_DIR/global_variables.csv"
-    echo "  - $OUTPUT_DIR/${FIRMWARE_NAME}.ghidra.cpp"
+    print_header "BUILD COMPLETE"
+    print_success "$FIRMWARE_NAME built deterministically from CSVs"
 }
 
 cmd_status() {
@@ -98,7 +102,7 @@ cmd_status() {
         FUNCS=$(wc -l < "$OUTPUT_DIR/function_renames.csv")
         print_success "Function names ($((FUNCS-1)) functions)"
     else
-        print_warning "Function names not found - run '$0 export'"
+        print_warning "Function names not found - run '$0 build'"
     fi
 
     if [ -f "$OUTPUT_DIR/global_variables.csv" ]; then
@@ -108,11 +112,12 @@ cmd_status() {
         print_warning "Global variables not found"
     fi
 
-    if [ -f "$OUTPUT_DIR/${FIRMWARE_NAME}.ghidra.cpp" ]; then
-        SIZE=$(du -h "$OUTPUT_DIR/${FIRMWARE_NAME}.ghidra.cpp" | cut -f1)
-        print_success "Decompilation exported ($SIZE)"
+    CPP=$(ls "$OUTPUT_DIR"/*.ghidra.cpp 2>/dev/null | head -1)
+    if [ -n "$CPP" ]; then
+        SIZE=$(du -h "$CPP" | cut -f1)
+        print_success "Decompilation built ($SIZE)"
     else
-        print_warning "Decompilation not exported - run '$0 export'"
+        print_warning "Decompilation not built - run '$0 build'"
     fi
 
     # Count optional CSVs
@@ -123,52 +128,6 @@ cmd_status() {
             print_success "${csv}.csv ($((COUNT-1)) entries)"
         fi
     done
-}
-
-cmd_batchforce() {
-    local addrfile="$1"
-    if [ -z "$addrfile" ]; then
-        print_error "Usage: $0 batchforce <address-list-file>"
-        exit 1
-    fi
-    print_header "BATCH FORCE ANALYZE: $FIRMWARE_NAME"
-    check_ghidra
-    check_project
-    echo "Address list: $addrfile"
-    echo ""
-    run_script BatchForceAnalyze.java "$addrfile"
-    print_success "Batch force analyze complete — run './analyze.sh bank2export' next"
-}
-
-cmd_batchforcenamed() {
-    local csvfile="$1"
-    if [ -z "$csvfile" ]; then
-        print_error "Usage: $0 batchforcenamed <address-name-csv>"
-        exit 1
-    fi
-    print_header "BATCH FORCE ANALYZE (NAMED): $FIRMWARE_NAME"
-    check_ghidra
-    check_project
-    echo "CSV: $csvfile"
-    echo ""
-    run_script BatchForceAnalyzeNamed.java "$csvfile"
-    print_success "Named batch force complete — run './analyze.sh export' next"
-}
-
-cmd_bank2export() {
-    local outfile="${1:-$OUTPUT_DIR/bank2_functions.cpp}"
-    print_header "EXPORTING BANK 2 FUNCTIONS: $FIRMWARE_NAME"
-
-    check_ghidra
-    check_project
-
-    echo "Decompiling all functions in 0x00500000-0x0053DFFF..."
-    echo "Output: $outfile"
-    echo ""
-
-    run_script ExportBank2Functions.java "$outfile"
-
-    print_success "Bank 2 export complete: $outfile"
 }
 
 cmd_callingconv() {
@@ -200,45 +159,8 @@ cmd_hwregs() {
     print_success "Hardware register naming complete"
 }
 
-cmd_help() {
-    echo "$FIRMWARE_NAME Ghidra Analysis CLI (PowerPC)"
-    echo ""
-    echo "Usage: $0 <command> [options]"
-    echo ""
-    echo "Commands:"
-    echo "  init       Import firmware into new Ghidra project (no analysis)"
-    echo "  analyze    Run Ghidra auto-analysis on the project"
-    echo "  memmap     Add RAM and EEPROM memory regions"
-    echo "  export     Export function names and decompilation to CSV/CPP"
-    echo "  import     Import CSV changes back into Ghidra"
-    echo "  structures Apply structure definitions"
-    echo "  enums      Apply enum definitions for magic number replacement"
-    echo "  labels     Apply code labels"
-    echo "  funcdefs    Apply function definitions (params + return types)"
-    echo "  localvars  Apply local variable types"
-    echo "  vartypes   Apply global variable types (clears stale types first)"
-    echo "  constants  Apply constant definitions (magic numbers with names)"
-    echo "  arrays     Apply array definitions"
-    echo "  callingconv   Set __stdcall calling convention on all Bank 2 functions"
-  echo "  hwregs        Apply MPC555 hardware register names"
-    echo "  decompile     Decompile a single function by address or name"
-    echo "  forceanalyze  Force disassembly + function creation at an address"
-    echo "  full          Run complete pipeline: init -> analyze -> memmap -> import -> export"
-    echo "  status     Show project status"
-    echo "  help       Show this help message"
-    echo ""
-    echo "Examples:"
-    echo "  $0 full                    # Complete setup from scratch"
-    echo "  $0 decompile 0x1000        # Decompile function at address"
-    echo ""
-    echo "Typical workflow:"
-    echo "  1. $0 full                 # Initial setup"
-    echo "  2. Edit output/*.csv"
-    echo "  3. $0 import               # Apply changes"
-    echo "  4. $0 export               # Update decompilation"
-    echo ""
-    echo "Note: CM848 uses PowerPC processor (unlike CM550 which uses MC68336/68K)"
-}
+# cmd_help, cmd_status: use the shared one-shot-model help from common.sh
+# (cmd_status remains overridden above for CM848-specific output).
 
 # ============================================================================
 # MAIN ENTRY POINT

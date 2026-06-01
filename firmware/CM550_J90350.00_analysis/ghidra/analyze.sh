@@ -60,27 +60,29 @@ cmd_hwregs() {
     echo "  DAT_00fffa27 -> REG_SIM_SWSR (Software Watchdog Service Register)"
 }
 
-cmd_full() {
-    print_header "FULL ANALYSIS PIPELINE: $FIRMWARE_NAME"
-
-    echo "This will run: init -> analyze -> memmap -> import -> deletions -> import -> export"
+# The ONE deterministic build: fresh binary -> apply EVERY CSV -> decompilation.
+# CM550 is single-bank (MC68336), so analyze runs first (no Bank2 seeding needed);
+# memmap loads RAM/EEPROM; enums before import (DTM types); deletions after analyze.
+cmd_build() {
+    print_header "BUILD: $FIRMWARE_NAME — deterministic, from scratch"
+    echo "Fresh binary -> apply every CSV -> decompilation. The .rep is disposable."
     echo ""
 
-    cmd_init
-    cmd_analyze
-    cmd_memmap
-    cmd_import
-    cmd_deletions   # remove spurious auto-analysis functions (the deletion delta)
-    cmd_import      # re-apply names/types — recovers globals at addresses the deletions freed
-    cmd_export
+    cmd_init        # fresh import (-overwrite); zero history
+    cmd_analyze     # deterministic auto-analysis
+    cmd_memmap      # RAM + EEPROM regions (needed before structures)
+    cmd_enums       # enum types into DTM (before global typing)
+    cmd_import      # ApplyStructures + ImportAnalysis: force-create funcs + names + globals
+    cmd_deletions   # remove spurious mid-function splits (deleted_functions.csv delta; no-op if absent)
+    cmd_import      # re-assert names/types over analyze; recover globals at freed addresses
+    cmd_hwregs      # MC68336 hardware register names
+    cmd_labels      # code labels
+    cmd_constants   # magic-number constants
+    cmd_arrays      # array definitions
+    cmd_export      # re-applies funcdefs+localvars, then ExportAnalysis -> .cpp + CSVs
 
-    print_header "FULL PIPELINE COMPLETE"
-    print_success "$FIRMWARE_NAME analysis is ready!"
-    echo ""
-    echo "Output files:"
-    echo "  - $OUTPUT_DIR/function_renames.csv"
-    echo "  - $OUTPUT_DIR/global_variables.csv"
-    echo "  - $OUTPUT_DIR/${FIRMWARE_NAME}.ghidra.cpp"
+    print_header "BUILD COMPLETE"
+    print_success "$FIRMWARE_NAME built deterministically from CSVs"
 }
 
 # Override status
@@ -104,14 +106,14 @@ cmd_status() {
         FUNCS=$(wc -l < "$OUTPUT_DIR/function_renames.csv")
         print_success "Function names exported ($((FUNCS-1)) functions)"
     else
-        print_warning "Function names not exported - run '$0 export'"
+        print_warning "Function names not built - run '$0 build'"
     fi
 
     if [ -f "$OUTPUT_DIR/${FIRMWARE_NAME}.ghidra.cpp" ]; then
         SIZE=$(du -h "$OUTPUT_DIR/${FIRMWARE_NAME}.ghidra.cpp" | cut -f1)
-        print_success "Decompilation exported ($SIZE)"
+        print_success "Decompilation built ($SIZE)"
     else
-        print_warning "Decompilation not exported - run '$0 export'"
+        print_warning "Decompilation not built - run '$0 build'"
     fi
 
     # Count optional CSVs
@@ -125,40 +127,8 @@ cmd_status() {
 }
 
 # Override help
-cmd_help() {
-    echo "$FIRMWARE_NAME Ghidra Analysis CLI"
-    echo ""
-    echo "Usage: $0 <command> [options]"
-    echo ""
-    echo "Commands:"
-    echo "  init       Import firmware into new Ghidra project (no analysis)"
-    echo "  analyze    Run Ghidra auto-analysis on the project"
-    echo "  memmap     Add RAM and EEPROM memory regions from live dumps"
-    echo "  export     Export function names and decompilation to CSV/CPP"
-    echo "  import     Import CSV changes back into Ghidra"
-    echo "  structures Apply structure definitions"
-    echo "  enums      Apply enum definitions for magic number replacement"
-    echo "  hwregs     Apply MC68336 hardware register names"
-    echo "  labels     Apply code labels"
-    echo "  funcdefs    Apply function definitions (params + return types)"
-    echo "  localvars  Apply local variable types"
-    echo "  vartypes   Apply global variable types (clears stale types first)"
-    echo "  decompile  Decompile a single function by address or name"
-    echo "  full       Run complete pipeline: init -> analyze -> memmap -> import -> export"
-    echo "  status     Show project status"
-    echo "  help       Show this help message"
-    echo ""
-    echo "Examples:"
-    echo "  $0 full                    # Complete setup from scratch"
-    echo "  $0 decompile 0x22e5e       # Decompile function at address"
-    echo "  $0 decompile sendJ1939     # Decompile function by name"
-    echo ""
-    echo "Typical workflow:"
-    echo "  1. $0 full                 # Initial setup"
-    echo "  2. Edit output/*.csv"
-    echo "  3. $0 import               # Apply changes"
-    echo "  4. $0 export               # Update decompilation"
-}
+# cmd_help: use the shared one-shot-model help from common.sh.
+# (cmd_status remains overridden above for CM550-specific output.)
 
 # ============================================================================
 # MAIN ENTRY POINT
