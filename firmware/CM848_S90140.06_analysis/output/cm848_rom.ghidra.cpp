@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Jun 01 03:16:56 MDT 2026
+// Generated: Mon Jun 01 03:55:08 MDT 2026
 
 
 //
@@ -37400,11 +37400,11 @@ void cm848_selectProtectionOverrideMode(void)
         protection_ramp_position = 0x81;
       }
     }
-    goto LAB_0003bcac;
+    goto code_r0x0003bcac;
   case 5:
     if ((uds_transmit_status_flags & 1) == 1) {
       if (fuel_correction_active_flag == 1) {
-LAB_0003bca0:
+code_r0x0003bca0:
         protection_ramp_position = 0x81;
       }
       else if ((fuel_correction_active_flag == 2) || (fuel_correction_active_flag == 3)) {
@@ -37415,8 +37415,8 @@ LAB_0003bca0:
       protection_ramp_position = 0x82;
     }
     else if ((fuel_correction_active_flag == 2) || (fuel_correction_active_flag == 3))
-    goto LAB_0003bca0;
-LAB_0003bcac:
+    goto code_r0x0003bca0;
+code_r0x0003bcac:
     if ((fuel_correction_enable_flag != 0) && (fuel_correction_active_flag == 3)) {
       protection_ramp_position = 0x80;
     }
@@ -47483,7 +47483,7 @@ void cm848_processMemoryScanValidation(void)
           bVar2 = false;
         }
       }
-      goto default;
+      goto LAB_0004bcb4;
     }
     uVar8 = CONCAT22(unaff_r29,*puVar4);
     uVar9 = CONCAT22(unaff_r30,*(undefined2 *)(iVar5 + 0x409f06));
@@ -47518,7 +47518,7 @@ LAB_0004bcac:
       if ((int)uVar8 <= (int)uVar9) goto LAB_0004bcac;
     }
     bVar1 = false;
-default:
+LAB_0004bcb4:
     if (!bVar2) {
       uVar6 = uVar6 | *(uint *)(&engine_fault_mask_table + uVar7 * 0xc);
     }
@@ -47608,7 +47608,7 @@ void cm848_evaluateConditionDescriptor(void)
           unaff_r31 = 0;
         }
       }
-      goto default;
+      goto LAB_0004bcb4;
     }
     uVar3 = CONCAT22(unaff_r29,*puVar2);
     uVar4 = CONCAT22(unaff_r30,*(undefined2 *)(unaff_r26 + 10));
@@ -47643,7 +47643,7 @@ LAB_0004bcac:
       if ((int)uVar3 <= (int)uVar4) goto LAB_0004bcac;
     }
     unaff_r24 = 0;
-default:
+LAB_0004bcb4:
     if (unaff_r31 == 0) {
       unaff_r23 = unaff_r23 | *(uint *)(&engine_fault_mask_table + unaff_r25 * 0xc);
     }
@@ -51591,7 +51591,7 @@ LAB_0004f5b4:
     break;
   case 0x7a:
   default:
-default:
+LAB_0004f638:
     if ((int)param_1 < 0x88) {
       param_4 = j1939_protection_config_byte & 3 | ((byte)j1939_lamp_status_cache & 0x3f) << 2;
       j1939_protection_config_byte = (byte)param_4;
@@ -51612,7 +51612,7 @@ LAB_0004f6a0:
     }
     goto LAB_0004f6dc;
   case 0x7b:
-    goto default;
+    goto LAB_0004f638;
   case 0x7c:
     wVar2 = MIOS_MDASM15_AR.SCRD;
     if ((wVar2 & 0x8000) != 0) {
@@ -51780,7 +51780,7 @@ LAB_0004f5b4:
     break;
   case 0x7a:
   default:
-default:
+LAB_0004f638:
     if ((int)param_1 < 0x88) {
       param_4 = j1939_protection_config_byte & 3 | ((byte)j1939_lamp_status_cache & 0x3f) << 2;
       j1939_protection_config_byte = (byte)param_4;
@@ -51798,7 +51798,7 @@ default:
     }
     goto LAB_0004f6dc;
   case 0x7b:
-    goto default;
+    goto LAB_0004f638;
   case 0x7c:
     wVar2 = MIOS_MDASM15_AR.SCRD;
     if ((wVar2 & 0x8000) != 0) {
@@ -52483,7 +52483,7 @@ LAB_00050a2c:
     break;
   case 0x78:
   default:
-default:
+LAB_00050f6c:
     if ((int)param_1 < 0x98) {
       j1939_dm1_fault_inhibit_byte =
            j1939_dm1_fault_inhibit_byte |
@@ -52500,11 +52500,11 @@ default:
     }
     break;
   case 0x79:
-    goto default;
+    goto LAB_00050f6c;
   case 0x7a:
-    goto default;
+    goto LAB_00050f6c;
   case 0x7b:
-    goto default;
+    goto LAB_00050f6c;
   case 0x7c:
     injector_control_t_0040c117.output_ch0 = injector_control_t_0040c117.output_ch0 | 0x10;
     MIOS_MDASM15_AR.SCRD = 0x405;
@@ -52514,13 +52514,13 @@ default:
     mios_mdasm27.SCRD = 0x405;
     break;
   case 0x7e:
-    goto default;
+    goto LAB_00050f6c;
   case 0x7f:
-    goto default;
+    goto LAB_00050f6c;
   case 0x80:
-    goto default;
+    goto LAB_00050f6c;
   case 0x81:
-    goto default;
+    goto LAB_00050f6c;
   case 0x82:
     injector_control_t_0040c117.fault_flags = injector_control_t_0040c117.fault_flags | 4;
     pmVar5 = (mios_mdasm1_t *)&MIOS_MPWMSM0_PERR;
@@ -53193,7 +53193,7 @@ LAB_000523a0:
     break;
   case 0x78:
   default:
-default:
+LAB_000528e4:
     if ((int)param_1 < 0x98) {
       j1939_dm1_fault_inhibit_byte =
            j1939_dm1_fault_inhibit_byte &
@@ -53210,11 +53210,11 @@ default:
     }
     break;
   case 0x79:
-    goto default;
+    goto LAB_000528e4;
   case 0x7a:
-    goto default;
+    goto LAB_000528e4;
   case 0x7b:
-    goto default;
+    goto LAB_000528e4;
   case 0x7c:
     injector_control_t_0040c117.output_ch0 = injector_control_t_0040c117.output_ch0 & 0xef;
     MIOS_MDASM15_AR.SCRD = 0x205;
@@ -53224,13 +53224,13 @@ default:
     mios_mdasm27.SCRD = 0x205;
     break;
   case 0x7e:
-    goto default;
+    goto LAB_000528e4;
   case 0x7f:
-    goto default;
+    goto LAB_000528e4;
   case 0x80:
-    goto default;
+    goto LAB_000528e4;
   case 0x81:
-    goto default;
+    goto LAB_000528e4;
   case 0x82:
     injector_control_t_0040c117.fault_flags = injector_control_t_0040c117.fault_flags & 0xfb;
     pmVar5 = (mios_mdasm1_t *)&MIOS_MPWMSM0_PERR;
@@ -72149,7 +72149,7 @@ LAB_00519640:
       j1939_dm_response_length = 8;
       goto LAB_005196c4;
     default:
-      goto default;
+      goto LAB_005196d8;
     }
     goto LAB_00519654;
   }
@@ -72608,7 +72608,7 @@ LAB_00519654:
 LAB_005196c4:
     j1939_msg_slot_t_counter = 1;
   }
-default:
+LAB_005196d8:
   j1939_dm_last_pgn_processed = wVar4;
   return;
 }

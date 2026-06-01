@@ -7,30 +7,19 @@
 // @menupath
 // @toolbar
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import ghidra.app.script.GhidraScript;
 import ghidra.app.decompiler.DecompInterface;
 import ghidra.app.decompiler.DecompileOptions;
 import ghidra.app.decompiler.DecompileResults;
 import ghidra.program.model.address.Address;
-import ghidra.program.model.data.Enum;
-import ghidra.program.model.listing.CodeUnit;
 import ghidra.program.model.listing.Function;
 import ghidra.program.model.listing.FunctionIterator;
-import ghidra.program.model.symbol.Symbol;
-import ghidra.program.model.symbol.SymbolIterator;
-import ghidra.program.model.symbol.SymbolTable;
-import ghidra.program.model.symbol.SymbolType;
 import ghidra.util.task.TaskMonitor;
 
 public class ExportAnalysis extends GhidraScript {
@@ -70,18 +59,11 @@ public class ExportAnalysis extends GhidraScript {
         println("");
 
         try {
-            // Export 1: Function names
-            println("[1/3] Exporting function names...");
-            int funcCount = exportFunctionNames(outputDir);
-            println("  Exported " + funcCount + " functions to function_renames.csv");
-
-            // Export 2: Global variables/labels
-            println("[2/3] Exporting global variables...");
-            int varCount = exportGlobalVariables(outputDir);
-            println("  Exported " + varCount + " variables to global_variables.csv");
-
-            // Export 3: Decompilation
-            println("[3/3] Exporting decompilation...");
+            // The build writes ONLY the decompilation. The CSVs (function_renames.csv,
+            // global_variables.csv, ...) are hand-authored INPUTS — the source of truth —
+            // and are never overwritten by a build. To name/type something, edit the CSV
+            // (using this .cpp to spot FUN_/DAT_ symbols) and rebuild.
+            println("Exporting decompilation...");
             int decompCount = exportDecompilation(outputDir);
             println("  Exported " + decompCount + " functions to " + firmwareName + ".ghidra.cpp");
 
@@ -89,9 +71,7 @@ public class ExportAnalysis extends GhidraScript {
             println("=".repeat(70));
             println("EXPORT COMPLETE!");
             println("=".repeat(70));
-            println("Files created:");
-            println("  - " + outputDir + "/function_renames.csv");
-            println("  - " + outputDir + "/global_variables.csv");
+            println("File written (the only build output):");
             println("  - " + outputDir + "/" + firmwareName + ".ghidra.cpp");
 
         } catch (Exception e) {
@@ -99,139 +79,6 @@ public class ExportAnalysis extends GhidraScript {
             e.printStackTrace();
         }
     }
-
-    private int exportFunctionNames(String outputDir) throws IOException {
-        String outputFile = outputDir + "/function_renames.csv";
-
-        CsvCommentIndex comments = new File(outputFile).exists()
-            ? CsvCommentIndex.read(outputFile)
-            : CsvCommentIndex.fromLines(java.util.Collections.emptyList());
-
-        // Get all functions and sort by address
-        List<Function> functions = new ArrayList<>();
-        FunctionIterator funcIter = currentProgram.getFunctionManager().getFunctions(true);
-        while (funcIter.hasNext()) {
-            functions.add(funcIter.next());
-        }
-
-        Collections.sort(functions, (f1, f2) -> f1.getEntryPoint().compareTo(f2.getEntryPoint()));
-
-        try (FileWriter writer = new FileWriter(outputFile)) {
-            for (String c : comments.getHeaderComments()) writer.write(c + "\n");
-            writer.write("address,name\n");
-
-            for (Function func : functions) {
-                String name = func.getName();
-                if (name.startsWith("FUN_")) continue;
-
-                String address = String.format("0x%08x", func.getEntryPoint().getOffset());
-
-                for (String c : comments.getCommentsBefore(address)) writer.write(c + "\n");
-
-                String plateComment = currentProgram.getListing().getComment(CodeUnit.PLATE_COMMENT, func.getEntryPoint());
-                if (plateComment != null && !plateComment.isEmpty()) {
-                    writer.write(address + "," + name + "," + plateComment + "\n");
-                } else {
-                    writer.write(address + "," + name + "\n");
-                }
-            }
-
-            for (String c : comments.getTrailingComments()) writer.write(c + "\n");
-        }
-
-        // Count non-default functions
-        int count = 0;
-        for (Function func : functions) {
-            if (!func.getName().startsWith("FUN_")) {
-                count++;
-            }
-        }
-
-        return count;
-    }
-
-    private int exportGlobalVariables(String outputDir) throws IOException {
-        String outputFile = outputDir + "/global_variables.csv";
-
-        // Phase A: Read existing CSV to preserve named type annotations and comments.
-        // Ghidra may revert manually-applied enum/struct types to primitives between
-        // sessions, so the CSV is the authoritative record of user-defined type intent.
-        Map<String, String> existingTypes    = new HashMap<>();
-        Map<String, String> existingComments = new HashMap<>();
-        CsvCommentIndex commentIdx = CsvCommentIndex.fromLines(java.util.Collections.emptyList());
-
-        if (new File(outputFile).exists()) {
-            try {
-                commentIdx = CsvCommentIndex.read(outputFile);
-                // Re-read to collect existing type and inline comment fields
-                try (BufferedReader reader = new BufferedReader(new FileReader(outputFile))) {
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        if (line.startsWith("#")) continue;
-                        String[] parts = ScriptUtils.parseGlobalVariableLine(line);
-                        String addr = parts[0].trim();
-                        if (addr.equals("address")) continue;
-                        if (parts.length >= 3) existingTypes.put(addr, parts[2].trim());
-                        if (parts.length >= 4) existingComments.put(addr, parts[3].trim());
-                    }
-                }
-            } catch (IOException e) {
-                // First run — no existing CSV; maps stay empty
-            }
-        }
-
-        // Phase B: Collect non-function, non-default symbols sorted by address
-        SymbolTable symbolTable = currentProgram.getSymbolTable();
-        List<Symbol> variables = new ArrayList<>();
-
-        SymbolIterator symbols = symbolTable.getAllSymbols(true);
-        while (symbols.hasNext()) {
-            Symbol sym = symbols.next();
-
-            if (sym.getSymbolType() == SymbolType.FUNCTION) continue;
-
-            String name = sym.getName();
-            if (name.startsWith("DAT_") || name.startsWith("LAB_") || name.startsWith("s_")) continue;
-            if (sym.isExternal()) continue;
-
-            variables.add(sym);
-        }
-
-        Collections.sort(variables, (s1, s2) -> s1.getAddress().compareTo(s2.getAddress()));
-
-        // Phase C: Write output with merged type selection
-        try (FileWriter writer = new FileWriter(outputFile)) {
-            for (String c : commentIdx.getHeaderComments()) writer.write(c + "\n");
-            writer.write("address,name,type,comment\n");
-
-            for (Symbol sym : variables) {
-                String address = String.format("0x%08x", sym.getAddress().getOffset());
-                String name = sym.getName();
-
-                String ghidraType = "";
-                try {
-                    ghidra.program.model.listing.Data data =
-                            currentProgram.getListing().getDataAt(sym.getAddress());
-                    if (data != null && data.getDataType() != null) {
-                        ghidraType = data.getDataType().getName();
-                    }
-                } catch (Exception e) {
-                    // Ignore type errors
-                }
-
-                String finalType = ScriptUtils.selectType(ghidraType, existingTypes.getOrDefault(address, ""));
-                String comment   = existingComments.getOrDefault(address, "");
-
-                for (String c : commentIdx.getCommentsBefore(address)) writer.write(c + "\n");
-                writer.write(address + "," + name + "," + finalType + "," + comment + "\n");
-            }
-
-            for (String c : commentIdx.getTrailingComments()) writer.write(c + "\n");
-        }
-
-        return variables.size();
-    }
-
 
     private int exportDecompilation(String outputDir) throws Exception {
         String outputFile = outputDir + "/" + firmwareName + ".ghidra.cpp";

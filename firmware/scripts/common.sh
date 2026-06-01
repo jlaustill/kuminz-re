@@ -183,10 +183,9 @@ cmd_export() {
 
     run_script ExportAnalysis.java "$OUTPUT_DIR"
 
-    print_success "Export complete"
+    print_success "Export complete — wrote decompilation only (CSVs are read-only inputs)"
     echo ""
-    echo "Files created:"
-    ls -la "$OUTPUT_DIR"/*.csv "$OUTPUT_DIR"/*.cpp 2>/dev/null || true
+    ls -la "$OUTPUT_DIR"/*.cpp 2>/dev/null || true
 }
 
 cmd_import() {
@@ -514,17 +513,15 @@ cmd_verify() {
     local cpp
     cpp="$(ls "$OUTPUT_DIR"/*.ghidra.cpp 2>/dev/null | head -1)"
     grep -v '^// Generated:' "$cpp" > "$snap/cpp1"
-    cp "$OUTPUT_DIR/function_renames.csv" "$snap/fr1"
-    cp "$OUTPUT_DIR/global_variables.csv" "$snap/gv1"
 
     echo ">>> build #2"
     cmd_build
     grep -v '^// Generated:' "$cpp" > "$snap/cpp2"
 
+    # The .cpp is the ONLY build output — the CSVs are read-only inputs that build never
+    # writes, so there is nothing else to compare.
     local d=0
     diff -q "$snap/cpp1" "$snap/cpp2" >/dev/null || { d=1; echo "DIFF in $(basename "$cpp"):"; diff "$snap/cpp1" "$snap/cpp2" | head -40; }
-    diff -q "$snap/fr1" "$OUTPUT_DIR/function_renames.csv" >/dev/null || { d=1; echo "DIFF in function_renames.csv"; }
-    diff -q "$snap/gv1" "$OUTPUT_DIR/global_variables.csv" >/dev/null || { d=1; echo "DIFF in global_variables.csv"; }
     rm -rf "$snap"
 
     echo ""

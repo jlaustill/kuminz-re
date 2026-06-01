@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Mon Jun 01 03:20:31 MDT 2026
+// Generated: Mon Jun 01 03:57:18 MDT 2026
 
 
 //
@@ -4209,7 +4209,7 @@ void insiteCommandByteDispatcher(void)
           bVar6 = (byte)((int)(uint)_DAT_00807bf6 >> 7);
           break;
         default:
-          goto switchD_0000f050_caseD_f9;
+          goto switchD_0000f050_default;
         }
         *(byte *)j1708_transmit_buffer_2_32_ddc6.write_ptr =
              j1708_transmit_buffer_2_32_ddc6.reserved_28[3];
@@ -4252,7 +4252,7 @@ void insiteCommandByteDispatcher(void)
         }
         break;
       default:
-        goto switchD_0000f050_caseD_f9;
+        goto switchD_0000f050_default;
       case 0x5b:
         local_6._1_1_ =
              (byte)(((uint)_validated_percent_throttle_commanded_by_driver_0_100 * 0xfa) / 400);
@@ -4394,7 +4394,7 @@ void insiteCommandByteDispatcher(void)
         local_6 = _DAT_00804fb2;
         break;
       default:
-        goto switchD_0000f050_caseD_f9;
+        goto switchD_0000f050_default;
       case 0xbb:
         local_6 = (word)((int)(uint)_DAT_0080dc24 >> 1);
         break;
@@ -4568,7 +4568,7 @@ void insiteCommandByteDispatcher(void)
       local_a = cm550_scaleByRatio(_DAT_00804fa8,10,0x40);
       break;
     default:
-      goto switchD_0000f050_caseD_f9;
+      goto switchD_0000f050_default;
     case 0xf7:
       local_a = _DAT_00804fc0 / 0x708;
       break;
@@ -4611,7 +4611,7 @@ LAB_0000f6f4:
   j1708_transmit_buffer_2_32_ddc6.reserved_48[1] =
        j1708_transmit_buffer_2_32_ddc6.reserved_48[1] -
        j1708_transmit_buffer_2_32_ddc6.reserved_48[2];
-switchD_0000f050_caseD_f9:
+switchD_0000f050_default:
   return;
 }
 
