@@ -1,8 +1,11 @@
 # Deferred: ROM-to-RAM thunking as a deterministic build step
 
-**Status:** designed, not yet implemented. Captured 2026-06-01 so it survives context loss.
-**Goal:** resolve the ~26 remaining `func_0x003fxxxx()` calls in `cm848_rom.ghidra.cpp` into
-readable named calls, as a reproducible step inside `./analyze.sh build`.
+**Status:** IMPLEMENTED 2026-06-01 (`ApplyRomToRamThunks.java`, wired into CM848 `cmd_build`).
+func_0x 26 → 0; deterministic (29 thunks, 0-diff verify); 0 curated names lost. Notes below
+kept for reference. Two refinements vs the original design: (1) only thunk RAM addresses that
+are NOT already curated (preserve `*_ramcopy`/named RAM copies; ROM↔RAM names can disagree, so
+the curated name wins); (2) `ExportAnalysis` skips RAM-region thunks (0x3F9800–0x3FDB30) from
+decompilation — their garbage bytes decompile to noise, and callers already render the ROM name.
 
 ## Background — what these calls are
 

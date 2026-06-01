@@ -112,6 +112,12 @@ public class ExportAnalysis extends GhidraScript {
             writer.write("\n\n");
 
             for (Function function : functions) {
+                // Skip the ROM-to-RAM thunks (RAM region 0x3F9800-0x3FDB30): their bytes are
+                // CAN-overwritten garbage, so decompiling them yields noise. Callers already
+                // render the thunked ROM target's name. Pre-existing thunks elsewhere (reset
+                // vector, etc.) are left intact.
+                long entry = function.getEntryPoint().getOffset();
+                if (function.isThunk() && entry >= 0x3F9800L && entry <= 0x3FDB30L) continue;
                 try {
                     DecompileResults results = decompiler.decompileFunction(function, 30, TaskMonitor.DUMMY);
 

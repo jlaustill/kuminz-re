@@ -70,12 +70,13 @@ cmd_build() {
     cmd_analyze      # deterministic auto-analysis (cross-bank calls now resolve)
     cmd_deletions    # remove spurious mid-function splits (deleted_functions.csv delta)
     cmd_import       # re-assert names/types over analyze; recover globals at freed addresses
+    cmd_romramthunks # resolve func_0x003fxxxx ROM-to-RAM calls -> named ROM functions
     cmd_callingconv  # Bank2 __stdcall convention
     cmd_hwregs       # MPC555 hardware register names
     cmd_labels       # code labels
     cmd_constants    # magic-number constants
     cmd_arrays       # array definitions
-    cmd_export       # re-applies funcdefs+localvars, then ExportAnalysis -> .cpp + CSVs
+    cmd_export       # re-applies funcdefs+localvars, then ExportAnalysis -> .cpp (only)
 
     print_header "BUILD COMPLETE"
     print_success "$FIRMWARE_NAME built deterministically from CSVs"
@@ -142,6 +143,16 @@ cmd_callingconv() {
     run_script SetCallingConvention.java "00500000" "0053DFFF"
 
     print_success "Calling conventions set — run funcdefs + localvars + export to see changes"
+}
+
+# Build-internal: thunk the ROM-to-RAM call targets (func_0x003fxxxx) to their ROM source
+# functions. Auto-discovers from the ROM source range; deterministic + idempotent.
+cmd_romramthunks() {
+    print_header "APPLYING ROM-TO-RAM THUNKS: $FIRMWARE_NAME"
+    check_ghidra
+    check_project
+    run_script ApplyRomToRamThunks.java
+    print_success "ROM-to-RAM thunks applied"
 }
 
 cmd_hwregs() {
