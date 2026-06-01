@@ -190,7 +190,7 @@ address,name
 0x00017120,cm550_FUN_00017120
 0x00017150,cm550_canControllerConfigInit
 0x0001717a,cm550_derateProtectionSlowCycle20Coordinator
-0x000171aa,caseD_3
+0x000171aa,cm550_can1PwmTimerInit
 0x000171be,cm550_fuel_limit_arbitrator
 0x000176de,cm550_engineRpmSourceInit
 0x000177c2,cm550_rpmBasedFuelLimitCalculator

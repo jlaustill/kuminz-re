@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Mon Jun 01 03:57:18 MDT 2026
+// Generated: Mon Jun 01 07:03:12 MDT 2026
 
 
 //
@@ -11546,10 +11546,10 @@ void cm550_derateProtectionSlowCycle20Coordinator(void)
 
 
 //
-// Function: caseD_3 @ 0x000171aa
+// Function: cm550_can1PwmTimerInit @ 0x000171aa
 //
 
-void caseD_3(void)
+void cm550_can1PwmTimerInit(void)
 
 {
   mc68k_can1TimerBufferInitConditional();
