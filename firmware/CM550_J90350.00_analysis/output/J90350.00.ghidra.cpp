@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Tue May 26 07:24:00 MDT 2026
+// Generated: Mon Jun 01 03:20:31 MDT 2026
 
 
 //
@@ -15,7 +15,6 @@ short cm550_huffmanTreeBuilder(int param_1)
   uint uVar4;
   ushort uVar5;
   
-                    /* From J90280.05 @ 0x024d06 (confidence: 94%) */
   *(undefined2 *)(param_1 + 0xc06) = 0xffff;
   for (uVar2 = 0; uVar2 < 0x100; uVar2 = uVar2 + 1) {
     *(ushort *)(param_1 + (uint)uVar2 * 6) = (ushort)*(byte *)((short)uVar2 + 0x12a);
@@ -29,7 +28,9 @@ short cm550_huffmanTreeBuilder(int param_1)
     while( true ) {
       uVar3 = (ushort)uVar1;
       if (uVar2 <= uVar3) break;
+      DAT_00fffa27 = 0x55;
       DAT_00fffa27 = 0xaa;
+      DAT_00ffd00f = 0x55;
       DAT_00ffd00f = 0xaa;
       if (*(short *)(param_1 + uVar1 * 6) != 0) {
         if (*(ushort *)(param_1 + uVar1 * 6) < *(ushort *)(param_1 + (uint)uVar5 * 6)) {
@@ -60,8 +61,6 @@ short cm550_huffmanTreeBuilder(int param_1)
 // Function: cm550_huffmanDecompress @ 0x00003792
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 void cm550_huffmanDecompress(dword tree_buffer,word start_node)
 
 {
@@ -72,13 +71,14 @@ void cm550_huffmanDecompress(dword tree_buffer,word start_node)
   ushort in_stack_00000008;
   undefined *local_8;
   
-                    /* From J90280.05 @ 0x024e58 (confidence: 94%) */
   bVar2 = 0;
   pbVar4 = &DAT_00000229;
   local_8 = &rpm_rate_limit_countdown;
   bVar1 = false;
   while( true ) {
+    DAT_00fffa27 = 0x55;
     DAT_00fffa27 = 0xaa;
+    DAT_00ffd00f = 0x55;
     DAT_00ffd00f = 0xaa;
     uVar3 = in_stack_00000008;
     do {
@@ -118,7 +118,6 @@ void cm550_huffmanDecompressMain(void)
   undefined2 *puVar1;
   undefined2 local_c0a [1539];
   
-                    /* From J90280.05 @ 0x024efc (confidence: 100%) */
   start_node = (word)((uint)unaff_A2 >> 0x10);
   for (puVar1 = local_c0a; puVar1 < &stack0xfffffffc; puVar1 = puVar1 + 3) {
     *puVar1 = 0;
@@ -142,7 +141,6 @@ void cm550_busyWaitDelayLoop(undefined4 param_1)
   ushort uVar1;
   ushort uVar2;
   
-                    /* From J90280.05 @ 0x024f36 (confidence: 100%) */
   for (uVar2 = 0; uVar2 < param_1._0_2_; uVar2 = uVar2 + 1) {
     for (uVar1 = 0; uVar1 < 0x378; uVar1 = uVar1 + 1) {
     }
@@ -156,38 +154,41 @@ void cm550_busyWaitDelayLoop(undefined4 param_1)
 // Function: mc68k_portPinTestSequence2 @ 0x0000388a
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 byte mc68k_portPinTestSequence2(void)
 
 {
   ushort uVar1;
   ushort uVar2;
   ushort uVar3;
-  undefined2 uVar4;
+  ushort uVar4;
   undefined2 uVar5;
+  undefined2 uVar6;
   
-                    /* From J90280.05 @ 0x02504e (confidence: 89%) */
-  _DAT_00fff208 = _DAT_00fff208 | 0x700;
-  _DAT_00fff206 = 0x600;
-  uVar5 = 1;
+  uVar1 = Ram00fff208;
+  Ram00fff208 = uVar1 | 0x700;
+  Ram00fff206 = 0x600;
+  uVar6 = 1;
   cm550_busyWaitDelayLoop();
-  uVar1 = _DAT_00fff206 & 1;
-  _DAT_00fff208 = _DAT_00fff208 | 0x700;
-  _DAT_00fff206 = 0x400;
-  uVar4 = 1;
-  cm550_busyWaitDelayLoop(uVar5);
-  uVar2 = _DAT_00fff206 & 1;
-  _DAT_00fff208 = _DAT_00fff208 | 0x700;
-  _DAT_00fff206 = 0x300;
+  uVar1 = Ram00fff206;
+  uVar2 = Ram00fff208;
+  Ram00fff208 = uVar2 | 0x700;
+  Ram00fff206 = 0x400;
   uVar5 = 1;
-  cm550_busyWaitDelayLoop(uVar4);
-  uVar3 = _DAT_00fff206 & 2;
-  _DAT_00fff208 = _DAT_00fff208 | 0x700;
-  _DAT_00fff206 = 0x200;
+  cm550_busyWaitDelayLoop(uVar6);
+  uVar2 = Ram00fff206;
+  uVar3 = Ram00fff208;
+  Ram00fff208 = uVar3 | 0x700;
+  Ram00fff206 = 0x300;
+  uVar6 = 1;
   cm550_busyWaitDelayLoop(uVar5);
-  return -((_DAT_00fff206 & 1) != 0) & 1U &
-         -(uVar3 != 0) & 1U & -(uVar2 != 0) & 1U & -(uVar1 != 0) & 1U;
+  uVar3 = Ram00fff206;
+  uVar4 = Ram00fff208;
+  Ram00fff208 = uVar4 | 0x700;
+  Ram00fff206 = 0x200;
+  cm550_busyWaitDelayLoop(uVar6);
+  uVar4 = Ram00fff206;
+  return -((uVar4 & 1) != 0) & 1U &
+         -((uVar3 & 2) != 0) & 1U & -((uVar2 & 1) != 0) & 1U & -((uVar1 & 1) != 0) & 1U;
 }
 
 
@@ -200,16 +201,20 @@ void cm550_FUN_0000395a(void)
 
 {
   byte bVar1;
+  byte bVar2;
   
+  DAT_00fffa27 = 0x55;
   DAT_00fffa27 = 0xaa;
+  DAT_00ffd00f = 0x55;
   DAT_00ffd00f = 0xaa;
-  bVar1 = 0;
-  while (bVar1 < 5) {
-    if ((DAT_00ffd000 & 1) == 0) {
-      bVar1 = 0;
+  bVar2 = 0;
+  while (bVar2 < 5) {
+    bVar1 = DAT_00ffd000;
+    if ((bVar1 & 1) == 0) {
+      bVar2 = 0;
     }
     else {
-      bVar1 = bVar1 + 1;
+      bVar2 = bVar2 + 1;
     }
     cm550_busyWaitDelayLoop();
   }
@@ -222,34 +227,48 @@ void cm550_FUN_0000395a(void)
 // Function: mc68k_tpuAndQadcVerification @ 0x000039a8
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 undefined4 mc68k_tpuAndQadcVerification(void)
 
 {
-  byte bVar1;
+  ushort uVar1;
+  ushort uVar2;
+  byte bVar3;
   
-                    /* From J90280.05 @ 0x025108 (confidence: 100%) */
-  _DAT_00fffc18 = 0x8004;
+  Ram00fffc18 = 0x8004;
   DAT_00fffc16 = 0x7b;
   DAT_00fffc17 = 0xfe;
   DAT_00fffc15 = 0xff;
-  _DAT_00fffc1a = _DAT_00fffc1a & 0x8000 | 0x1028;
-  _DAT_00fffc1c = _DAT_00fffc1c & 0xf0ff | 0xf00;
-  _DAT_00fffd20 = 3;
+  uVar1 = Ram00fffc1a;
+  Ram00fffc1a = uVar1 & 0x80ff;
+  uVar1 = Ram00fffc1a;
+  Ram00fffc1a = uVar1 | 0x1000;
+  uVar1 = Ram00fffc1a;
+  Ram00fffc1a = uVar1 & 0xff00;
+  uVar1 = Ram00fffc1a;
+  Ram00fffc1a = uVar1 | 0x28;
+  uVar1 = Ram00fffc1c;
+  Ram00fffc1c = uVar1 & 0xf0ff;
+  uVar1 = Ram00fffc1c;
+  Ram00fffc1c = uVar1 | 0xf00;
+  Ram00fffd20 = 3;
   DAT_00fffd40 = 0xbd;
-  _DAT_00fffd22 = 0;
+  Ram00fffd22 = 0;
   DAT_00fffd41 = 0xfd;
-  for (bVar1 = 2; bVar1 < 0x10; bVar1 = bVar1 + 1) {
-    *(undefined2 *)(&DAT_00fffd20 + (uint)bVar1 * 2) = 0;
-    (&DAT_00fffd40)[bVar1] = 0xbd;
+  for (bVar3 = 2; bVar3 < 0x10; bVar3 = bVar3 + 1) {
+    *(undefined2 *)(&DAT_00fffd20 + (uint)bVar3 * 2) = 0;
+    (&DAT_00fffd40)[bVar3] = 0xbd;
   }
-  _DAT_00fffc1a = _DAT_00fffc1a | 0x8000;
+  uVar1 = Ram00fffc1a;
+  Ram00fffc1a = uVar1 | 0x8000;
   do {
     do {
-    } while ((DAT_00fffc1f & 0x80) == 0);
-  } while ((DAT_00fffc1f & 0xf) != 0xf);
-  if (((uint)_DAT_00fffd06 | (uint)_DAT_00fffd04 << 8) != 0x600d) {
+      bVar3 = DAT_00fffc1f;
+    } while ((bVar3 & 0x80) == 0);
+    bVar3 = DAT_00fffc1f;
+  } while ((bVar3 & 0xf) != 0xf);
+  uVar1 = Ram00fffd04;
+  uVar2 = Ram00fffd06;
+  if (((uint)uVar2 | (uint)uVar1 << 8) != 0x600d) {
     return 1;
   }
   return 0x6000;
@@ -261,65 +280,77 @@ undefined4 mc68k_tpuAndQadcVerification(void)
 // Function: mc68k_hardwareInitAndStartup @ 0x00003a94
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void mc68k_hardwareInitAndStartup(void)
 
 {
-  char cVar1;
-  code *pcVar2;
+  byte bVar1;
+  ushort uVar2;
+  undefined2 uVar3;
+  char cVar4;
+  code *pcVar5;
   
-                    /* From J90280.05 @ 0x0251f4 (confidence: 98%) */
   DAT_00ffd008 = 0x40;
   DAT_00ffd00e = 0x80;
   cm550_FUN_0000395a();
-  DAT_00fffa15 = DAT_00fffa15 | 8;
-  DAT_00fffa11 = DAT_00fffa11 | 8;
-  DAT_00fffc1f = DAT_00fffc1f & 0x7f;
-  _DAT_00fffc1a = _DAT_00fffc1a & 0x7fff;
-  _DAT_00fffc1c = _DAT_00fffc1c & 0x7ff0;
-  _DAT_00fffc0a = 0;
-  _DAT_00fffa22 = 0;
-  _DAT_00fffa24 = 0;
-  _DAT_00fffe0a = 0;
-  _DAT_00fff200 = 0;
-  _DAT_00fff202 = 0;
-  _DAT_00fff204 = 0;
-  _DAT_00fff206 = 0;
-  _DAT_00fff208 = 0;
-  _DAT_00fff20a = 0;
-  _DAT_00fff20c = 0;
-  _DAT_00fff20e = 0;
-  _DAT_00fff210 = 0;
-  _DAT_00fff418 = 0;
-  _DAT_00fff420 = 0;
-  _DAT_00fff428 = 0;
-  _DAT_00fff430 = 0;
-  _DAT_00fff438 = 0;
-  _DAT_00fff440 = 0;
-  _DAT_00fff448 = 0;
-  _DAT_00fff450 = 0;
-  _DAT_00fff400 = 0x1601;
-  _DAT_00fff408 = 8;
-  _DAT_00fff410 = 0;
-  _DAT_00fff458 = 4;
-  _DAT_00fff460 = 0x104;
-  _DAT_00fffc00 = 5;
+  bVar1 = DAT_00fffa15;
+  DAT_00fffa15 = bVar1 | 8;
+  bVar1 = DAT_00fffa11;
+  DAT_00fffa11 = bVar1 | 8;
+  bVar1 = DAT_00fffc1f;
+  DAT_00fffc1f = bVar1 & 0x7f;
+  uVar2 = Ram00fffc1a;
+  Ram00fffc1a = uVar2 & 0x7fff;
+  uVar2 = Ram00fffc1c;
+  Ram00fffc1c = uVar2 & 0x7fff;
+  uVar2 = Ram00fffc1c;
+  Ram00fffc1c = uVar2 & 0xfff0;
+  uVar3 = Ram00fffc1c;
+  DAT_00fffc04 = 0;
+  Ram00fffc0a = 0;
+  Ram00fffa22 = 0;
+  Ram00fffa24 = 0;
+  Ram00fffe0a = 0;
+  Ram00fff200 = 0;
+  Ram00fff202 = 0;
+  Ram00fff204 = 0;
+  Ram00fff206 = 0;
+  Ram00fff208 = 0;
+  Ram00fff20a = 0;
+  Ram00fff20c = 0;
+  Ram00fff20e = 0;
+  Ram00fff210 = 0;
+  Ram00fff400 = 0;
+  Ram00fff410 = 0;
+  Ram00fff418 = 0;
+  Ram00fff420 = 0;
+  Ram00fff428 = 0;
+  Ram00fff430 = 0;
+  Ram00fff438 = 0;
+  Ram00fff440 = 0;
+  Ram00fff448 = 0;
+  Ram00fff450 = 0;
+  Ram00fff458 = 0;
+  Ram00fff400 = 0x1601;
+  Ram00fff408 = 8;
+  Ram00fff410 = 0;
+  Ram00fff458 = 4;
+  Ram00fff460 = 0x104;
+  Ram00fffc00 = 5;
   DAT_00fffc04 = 0x13;
   DAT_00fffc05 = 0x50;
   cm550_ramClearWithWatchdog();
-  cVar1 = mc68k_portPinTestSequence2();
-  if ((cVar1 == '\0') && (cVar1 = mc68k_tpuAndQadcVerification(), cVar1 == '\0')) {
-    pcVar2 = DAT_00008062;
+  cVar4 = mc68k_portPinTestSequence2();
+  if ((cVar4 == '\0') && (cVar4 = mc68k_tpuAndQadcVerification(), cVar4 == '\0')) {
+    pcVar5 = DAT_00008062;
     if ((DAT_00008000 != -0x6789abcd) && (DAT_00008000 != -0x6789abce)) {
-      pcVar2 = (code *)&SUB_343cffff;
+      pcVar5 = (code *)&SUB_343cffff;
     }
   }
   else {
     cm550_huffmanDecompressMain();
-    pcVar2 = (code *)&SUB_0080339e;
+    pcVar5 = (code *)&SUB_0080339e;
   }
-  (*pcVar2)();
+  (*pcVar5)();
   return;
 }
 
@@ -329,59 +360,70 @@ void mc68k_hardwareInitAndStartup(void)
 // Function: mc68k_FUN_00003abe @ 0x00003abe
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void mc68k_FUN_00003abe(void)
 
 {
-  char cVar1;
-  code *pcVar2;
+  ushort uVar1;
+  undefined2 uVar2;
+  byte bVar3;
+  char cVar4;
+  code *pcVar5;
   
-  DAT_00fffc1f = DAT_00fffc1f & 0x7f;
-  _DAT_00fffc1a = _DAT_00fffc1a & 0x7fff;
-  _DAT_00fffc1c = _DAT_00fffc1c & 0x7ff0;
-  _DAT_00fffc0a = 0;
-  _DAT_00fffa22 = 0;
-  _DAT_00fffa24 = 0;
-  _DAT_00fffe0a = 0;
-  _DAT_00fff200 = 0;
-  _DAT_00fff202 = 0;
-  _DAT_00fff204 = 0;
-  _DAT_00fff206 = 0;
-  _DAT_00fff208 = 0;
-  _DAT_00fff20a = 0;
-  _DAT_00fff20c = 0;
-  _DAT_00fff20e = 0;
-  _DAT_00fff210 = 0;
-  _DAT_00fff418 = 0;
-  _DAT_00fff420 = 0;
-  _DAT_00fff428 = 0;
-  _DAT_00fff430 = 0;
-  _DAT_00fff438 = 0;
-  _DAT_00fff440 = 0;
-  _DAT_00fff448 = 0;
-  _DAT_00fff450 = 0;
-  _DAT_00fff400 = 0x1601;
-  _DAT_00fff408 = 8;
-  _DAT_00fff410 = 0;
-  _DAT_00fff458 = 4;
-  _DAT_00fff460 = 0x104;
-  _DAT_00fffc00 = 5;
+  bVar3 = DAT_00fffc1f;
+  DAT_00fffc1f = bVar3 & 0x7f;
+  uVar1 = Ram00fffc1a;
+  Ram00fffc1a = uVar1 & 0x7fff;
+  uVar1 = Ram00fffc1c;
+  Ram00fffc1c = uVar1 & 0x7fff;
+  uVar1 = Ram00fffc1c;
+  Ram00fffc1c = uVar1 & 0xfff0;
+  uVar2 = Ram00fffc1c;
+  DAT_00fffc04 = 0;
+  Ram00fffc0a = 0;
+  Ram00fffa22 = 0;
+  Ram00fffa24 = 0;
+  Ram00fffe0a = 0;
+  Ram00fff200 = 0;
+  Ram00fff202 = 0;
+  Ram00fff204 = 0;
+  Ram00fff206 = 0;
+  Ram00fff208 = 0;
+  Ram00fff20a = 0;
+  Ram00fff20c = 0;
+  Ram00fff20e = 0;
+  Ram00fff210 = 0;
+  Ram00fff400 = 0;
+  Ram00fff410 = 0;
+  Ram00fff418 = 0;
+  Ram00fff420 = 0;
+  Ram00fff428 = 0;
+  Ram00fff430 = 0;
+  Ram00fff438 = 0;
+  Ram00fff440 = 0;
+  Ram00fff448 = 0;
+  Ram00fff450 = 0;
+  Ram00fff458 = 0;
+  Ram00fff400 = 0x1601;
+  Ram00fff408 = 8;
+  Ram00fff410 = 0;
+  Ram00fff458 = 4;
+  Ram00fff460 = 0x104;
+  Ram00fffc00 = 5;
   DAT_00fffc04 = 0x13;
   DAT_00fffc05 = 0x50;
   cm550_ramClearWithWatchdog();
-  cVar1 = mc68k_portPinTestSequence2();
-  if ((cVar1 == '\0') && (cVar1 = mc68k_tpuAndQadcVerification(), cVar1 == '\0')) {
-    pcVar2 = DAT_00008062;
+  cVar4 = mc68k_portPinTestSequence2();
+  if ((cVar4 == '\0') && (cVar4 = mc68k_tpuAndQadcVerification(), cVar4 == '\0')) {
+    pcVar5 = DAT_00008062;
     if ((DAT_00008000 != -0x6789abcd) && (DAT_00008000 != -0x6789abce)) {
-      pcVar2 = (code *)&SUB_343cffff;
+      pcVar5 = (code *)&SUB_343cffff;
     }
   }
   else {
     cm550_huffmanDecompressMain();
-    pcVar2 = (code *)&SUB_0080339e;
+    pcVar5 = (code *)&SUB_0080339e;
   }
-  (*pcVar2)();
+  (*pcVar5)();
   return;
 }
 
@@ -397,7 +439,6 @@ void cm550_ramClearWithWatchdog(void)
   undefined4 *puVar1;
   undefined4 *puVar2;
   
-                    /* From J90280.05 @ 0x025356 (confidence: 88%) */
   puVar2 = (undefined4 *)&rpm_rate_limit_countdown;
   while (puVar2 < &duration_anc_fueling_limit_will_be_disabled_after_a_bare_engine_0_20) {
     puVar1 = puVar2 + 0x40;
@@ -407,7 +448,9 @@ void cm550_ramClearWithWatchdog(void)
     for (; puVar2 < puVar1; puVar2 = puVar2 + 1) {
       *puVar2 = 0;
     }
+    DAT_00fffa27 = 0x55;
     DAT_00fffa27 = 0xaa;
+    DAT_00ffd00f = 0x55;
     DAT_00ffd00f = 0xaa;
   }
   return;
@@ -648,7 +691,6 @@ void cm550_writeHourMeterConversionData(void)
   int *piVar2;
   int *piVar3;
   
-                    /* From J90280.05 @ 0x010c98 (confidence: 75%) */
   if (_short_term_map_1_processing_total_0_500_0 < _rpm_control_timer_2) {
     _duty_cycle_monitor_short_term_map_1_total_time_0_0_500_0 =
          (undefined2)((_short_term_map_1_processing_total_0_500_0 * 0x3c + 18000) / 36000);
@@ -692,7 +734,6 @@ void cm550_outputControlTimingGenerator(void)
   word new_sample;
   word smoothing_factor;
   
-                    /* From J90280.05 @ 0x03068a (confidence: 67%) */
   _DAT_0080a292 = _current_engine_rpm_filtered - _DAT_00800048;
   _DAT_00800048 = _current_engine_rpm_filtered;
   smoothing_factor = 0x66;
@@ -733,7 +774,6 @@ ushort cm550_rpm_system_state_controller(void)
 {
   ushort uVar1;
   
-                    /* From J90280.05 @ 0x00a204 (confidence: 80%) */
   uVar1 = _calibration_feature_enable_flags_word_3 & 0x1000;
   if ((_calibration_feature_enable_flags_word_3 & 0x1000) != 0) {
     if (_engine_acceleration_below_which_anc_may_limit_fueling_2560_2540 <
@@ -802,7 +842,6 @@ ushort cm550_rpm_system_state_controller(void)
 void cm550_shutdownMinimumSelector21(void)
 
 {
-                    /* From J90280.05 @ 0x02de68 (confidence: 73%) */
   if (_anc_fuel_limit_value < j1708_transmit_buffer_2_32_ddc6.base_ptr._2_2_) {
     j1708_transmit_buffer_2_32_ddc6.base_ptr._2_2_ = _anc_fuel_limit_value;
     _indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 = 0x11;
@@ -897,7 +936,6 @@ ushort cm550_FUN_0000b3d0(void)
 void cm550_fuelDemandLimitMinimumUpdater(void)
 
 {
-                    /* From J90280.05 @ 0x02bc06 (confidence: 75%) */
   _timing_advance_limit_as_just_before_modification_by_anc_timing_0_120 = _fuel_timing_advance_value
   ;
   if (_anc_timing_limit_interpolated_value < _fuel_timing_advance_value) {
@@ -920,7 +958,6 @@ ushort cm550_engineStateFuelLimitInterpolator(void)
 {
   ushort uVar1;
   
-                    /* From J90280.05 @ 0x02db10 (confidence: 75%) */
   uVar1 = _calibration_feature_enable_flags_word_3 & 0x4000;
   if ((_calibration_feature_enable_flags_word_3 & 0x4000) != 0) {
     if (_engine_acceleration_below_which_anc_may_limit_engine_spee_2560_2540 <
@@ -994,7 +1031,6 @@ ushort cm550_engineStateFuelLimitInterpolator(void)
 void cm550_dmaControllerSetup1(void)
 
 {
-                    /* From J90280.05 @ 0x00a53e (confidence: 89%) */
   _DAT_0080006a = 0x80000000;
   _timing_table_4_ptr = &engine_acceleration_first_stage_digital_filter_acceleration_time_0_1;
   _diagnostic_timing_increment_reserved = 0x80000000;
@@ -1014,7 +1050,6 @@ void cm550_dmaControllerSetup1(void)
 void cm550_rpmParameterPointerSetup(void)
 
 {
-                    /* From J90280.05 @ 0x00b574 (confidence: 75%) */
   _DAT_0080004a = 2;
   _DAT_0080004c = 0x6009e;
   _timing_table_1_ptr = 0x600b2;
@@ -1033,7 +1068,6 @@ void cm550_rpmParameterPointerSetup(void)
 void cm550_dmaDescriptorSetup2(void)
 
 {
-                    /* From J90280.05 @ 0x00a598 (confidence: 81%) */
   _timing_table_2_base = 2;
   _timing_table_2_ptr = 0x600c6;
   _timing_table_3_ptr = 0x600da;
@@ -1052,7 +1086,6 @@ void cm550_dmaDescriptorSetup2(void)
 void cm550_initFuelSystemOutputDriver(void)
 
 {
-                    /* From J90280.05 @ 0x00a5c0 (confidence: 81%) */
   _application_specific_anc_enable_disable_flag_set_to_false_to_dis_0_1 = 1;
   _anc_speed_limit_ramp_value = _maximum_rated_engine_speed_0_5000;
   return;
@@ -1089,7 +1122,6 @@ undefined1 cm550_FUN_0000b688(undefined4 param_1)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 void cm550_diagnosticMessageQueueWrite(byte response_type)
 
@@ -1100,7 +1132,6 @@ void cm550_diagnosticMessageQueueWrite(byte response_type)
   ushort in_stack_00000004;
   undefined4 local_8;
   
-                    /* From J90280.05 @ 0x00a626 (confidence: 88%) */
   if ((int)_j1708_transmit_buffer_0_2_32 < _j1708_transmit_buffer_2_32_dc9c) {
     iVar2 = (_j1708_transmit_buffer_2_32_dc9c - (int)_j1708_transmit_buffer_0_2_32) + -2;
   }
@@ -1197,7 +1228,7 @@ void validateServiceDataLength(void)
       if ((uVar3 & uVar6) == 0) {
         if ((uVar3 & uVar5) == 0) {
           *(undefined2 *)(puVar8 + 0x10) =
-               *(undefined2 *)((uint)*(ushort *)(puVar7 + 0x10) * 2 + 0xfff2b0);
+               *(undefined2 *)(&UNK_00fff2b0 + (uint)*(ushort *)(puVar7 + 0x10) * 2);
         }
         else {
           *(undefined2 *)(puVar8 + 0x10) = *(undefined2 *)(&DAT_0080a760 + sVar4 * 2);
@@ -1419,7 +1450,6 @@ void cm550_initADCChannelConfiguration(void)
   undefined4 *puVar3;
   undefined *puVar4;
   
-                    /* From J90280.05 @ 0x00ac1c (confidence: 81%) */
   _DAT_0080a79a = 0x806d6e;
   _DAT_0080a794 = &linearization_table_ch15_x_axis;
   _DAT_0080a792 = 2;
@@ -1596,7 +1626,6 @@ uint cm550_fuelTimingTransitionStateMachine(void)
   uint uVar1;
   short sVar2;
   
-                    /* From J90280.05 @ 0x02c252 (confidence: 75%) */
   if ((_calibration_feature_enable_flags_word_9 & 8) == 0) {
     _DAT_008000b0 = _engine_rpm_primary;
     _diagnostic_table_pointer_2 = _boost_pressure_0_100;
@@ -1637,7 +1666,6 @@ uint cm550_fuelTimingTransitionStateMachine(void)
 void cm550_fuelTimingModeInit(void)
 
 {
-                    /* From J90280.05 @ 0x019076 (confidence: 72%) */
   _diagnostic_table_pointer_4 = 0x6010c;
   _target_rpm_rate_limiter_reserved_aa = 2;
   _diagnostic_table_pointer_3 = 0x600ee;
@@ -1664,7 +1692,6 @@ void cm550_diagnosticDataBufferSetup(void)
 {
   int in_A1;
   
-                    /* From J90280.05 @ 0x00d71a (confidence: 72%) */
   _diagnostic_table_pointer_4 = 0x6010c;
   _target_rpm_rate_limiter_reserved_aa = 2;
   _diagnostic_table_pointer_3 = 0x600ee;
@@ -1689,7 +1716,6 @@ void cm550_diagnosticDataBufferSetup(void)
 void cm550_shutdownMinimumSelector16(void)
 
 {
-                    /* From J90280.05 @ 0x00b0b0 (confidence: 81%) */
   if (_afc_derate_fuel_adjustment <
       _smallest_derate_fueling_value_among_group_2_ah_derate_algori_0_100) {
     _smallest_derate_fueling_value_among_group_2_ah_derate_algori_0_100 =
@@ -1710,7 +1736,6 @@ void cm550_shutdownMinimumSelector16(void)
 void cm550_diagnosticTimingIncrementController(void)
 
 {
-                    /* From J90280.05 @ 0x00b0ce (confidence: 86%) */
   if (_fuel_limit_selection_state != 0x10) {
     j1708_transmit_buffer_2_32_ddc6.param_162 = 0;
     _diagnostic_message_alternation_counter = 0;
@@ -1758,7 +1783,6 @@ void cm550_FUN_0000c2ee(void)
 ushort vp44RpmBasedFaultDetector(void)
 
 {
-                    /* From J90280.05 @ 0x035488 (confidence: 64%) */
   if (((_smoke_limiter_output_value == 1) || (_smoke_limiter_output_value == 2)) ||
      (_smoke_limiter_output_value == 6)) {
     _lsg_exit_timer_active_flag = 1;
@@ -1903,7 +1927,6 @@ int cm550_fuelModeTransitionCountdownHandler(void)
   ushort uVar1;
   undefined4 in_D0;
   
-                    /* From J90280.05 @ 0x00b35c (confidence: 75%) */
   uVar1 = (ushort)((uint)in_D0 >> 0x10);
   if ((_semaphore_used_to_latch_afc_events_that_occur_betwe_0_false_1_true == 1) ||
      (_semaphore_used_to_latch_lsg_events_that_occur_betwe_0_false_1_true == 1)) {
@@ -1954,7 +1977,6 @@ uint timingProtectionFlagsOrchestrator(void)
   ushort uVar2;
   uint uVar1;
   
-                    /* From J90280.05 @ 0x00b3ae (confidence: 78%) */
   uVar2 = 0;
   if ((_calibration_feature_enable_flags_word_0 & 0x400) != 0) {
     uVar2 = cm550_FUN_0000c4b2();
@@ -2016,7 +2038,6 @@ uint timingProtectionFlagsOrchestrator(void)
 void cm550_phase2_slot_5_handler(void)
 
 {
-                    /* From J90280.05 @ 0x017266 (confidence: 66%) */
   _semaphore_used_to_latch_afc_events_that_occur_betwe_0_false_1_true = 0;
   _semaphore_used_to_latch_lsg_events_that_occur_betwe_0_false_1_true = 0;
   return;
@@ -2033,7 +2054,6 @@ void cm550_phase2_slot_5_handler(void)
 ushort cm550_rpmHistogramAndProtectionStatisticsAccumulator(void)
 
 {
-                    /* From J90280.05 @ 0x02e84a (confidence: 66%) */
   if (((_calibration_feature_enable_flags_word_1 & 0x20) == 0) || (_smoke_limiter_output_value != 3)
      ) {
     _altitude_derate_fuel_limit_0_100 = _peak_fueling_calibration_value;
@@ -2069,7 +2089,6 @@ ushort cm550_rpmHistogramAndProtectionStatisticsAccumulator(void)
 void cm550_fuelParameterPointerSetup(void)
 
 {
-                    /* From J90280.05 @ 0x00b528 (confidence: 88%) */
   _diagnostic_data_table_1_ptr = 2;
   _DAT_008000dc = 0x60384;
   _diagnostic_data_table_2_ptr = 2;
@@ -2089,7 +2108,6 @@ void cm550_fuelParameterPointerSetup(void)
 void cm550_shutdownMinimumSelector15(void)
 
 {
-                    /* From J90280.05 @ 0x00b556 (confidence: 77%) */
   if (_altitude_derate_fuel_limit_0_100 < j1708_transmit_buffer_2_32_ddc6.base_ptr._2_2_) {
     j1708_transmit_buffer_2_32_ddc6.base_ptr._2_2_ = _altitude_derate_fuel_limit_0_100;
     _indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 = 0xf;
@@ -2108,7 +2126,6 @@ void cm550_shutdownMinimumSelector15(void)
 void mc68k_tpuTimerInitializer(void)
 
 {
-                    /* From J90280.05 @ 0x00c144 (confidence: 92%) */
   _DAT_008000f0 = &DAT_00ffc800;
   _can_1_chip_s_last_message_object_used_0_15 = 6;
   _DAT_00ffc812 = 0x2240;
@@ -2142,7 +2159,6 @@ void mc68k_tpuTimerInitializer(void)
 void cm550_emptyStubFunction1(void)
 
 {
-                    /* From J90280.05 @ 0x00c1f0 (confidence: 91%) */
   return;
 }
 
@@ -2157,7 +2173,6 @@ void cm550_emptyStubFunction1(void)
 void cm550_modeBasedDataDispatcher(undefined4 param_1)
 
 {
-                    /* From J90280.05 @ 0x00c1f2 (confidence: 91%) */
   if (param_1._1_1_ == '\x01') {
     func_0x0004025c();
     func_0x0004057e(_DAT_008000f0 + 0x10);
@@ -2226,7 +2241,6 @@ void cm550_FUN_0000c880(void)
 void cm550_dzgTimingAndPressureControlStateMachine(void)
 
 {
-                    /* From J90280.05 @ 0x032380 (confidence: 64%) */
   if (_DAT_008000fe == 7) {
     _io_control_fuel_table_1_lookup_arg = _retarder_mode_lookup_table_pointer;
   }
@@ -2285,7 +2299,6 @@ void cm550_engine_speed_governor(void)
   short sStack_6;
   
   scaling_factor = (word)((uint)unaff_D3 >> 0x10);
-                    /* From J90280.05 @ 0x00b656 (confidence: 86%) */
   input_value = (word)((uint)unaff_D2 >> 0x10);
   cm550_dualTableLookupSum();
   if ((((_FSDSFLST == 7) || (_FSDSFLST == 3)) || (_FSDSFLST == 2)) || (_FSDSFLST == 0x1e)) {
@@ -2552,7 +2565,6 @@ void cm550_engine_speed_governor(void)
 void cm550_diagnosticDataCopyHandler(void)
 
 {
-                    /* From J90280.05 @ 0x00bdd4 (confidence: 81%) */
   if ((_asg_application_specific_reference_override_mode_true_false != 0) &&
      (_asg_quadratic_integral_adjustment_500_500 == 0)) {
     _asg_quadratic_integral_adjustment_500_500 = 0x1e;
@@ -2587,7 +2599,6 @@ void cm550_diagnosticDataCopyHandler(void)
 void cm550_fuelDeliverySystemInit(void)
 
 {
-                    /* From J90280.05 @ 0x0188f6 (confidence: 63%) */
   _asg_reference_speed_working = _asg_application_specific_reference_speed_0_4500;
   _qpid_adjusted_asg_droop_compensated_error_integral_2000_2000 =
        _asg_application_specific_droop_gain_1_0_2;
@@ -2618,7 +2629,6 @@ void cm550_fuelDeliverySystemInit(void)
 void cm550_diagnosticStatus30Setter(void)
 
 {
-                    /* From J90280.05 @ 0x00be7c (confidence: 81%) */
   if ((_FSDSFLST == 0) && (_asg_quadratic_integral_adjustment_500_500 == 0x1e)) {
     _FSDSFLST = 0x1e;
   }
@@ -2636,7 +2646,6 @@ void cm550_diagnosticStatus30Setter(void)
 void cm550_diagnosticStatus2Initializer(undefined4 param_1)
 
 {
-                    /* From J90280.05 @ 0x00be96 (confidence: 81%) */
   if ((_FSDSFLST == 0) && (_asg_quadratic_integral_adjustment_500_500 == 2)) {
     _FSDSFLST = 2;
     _asg_governor_gains_ptr =
@@ -2665,7 +2674,6 @@ void cm550_diagnosticStatus2Initializer(undefined4 param_1)
 void cm550_diagnosticState2Initializer(void)
 
 {
-                    /* From J90280.05 @ 0x00bf0a (confidence: 81%) */
   if ((_asg_quadratic_integral_adjustment_500_500 == 0) && (_datalink_speed_control_mode == 1)) {
     _asg_quadratic_integral_adjustment_500_500 = 2;
     _asg_reference_speed_working = _datalink_commanded_speed_reference;
@@ -2687,7 +2695,6 @@ void cm550_dualTableLookupSum(void)
   short sVar1;
   short sVar2;
   
-                    /* From J90280.05 @ 0x02f8dc (confidence: 75%) */
   _DAT_0080011e = _asg_reference_speed_working;
   _throttle_validation_state = _filtered_and_linearized_coolant_temperature_50_to_293;
   sVar1 = lookupTableInterpolation((table_interp_args_t *)&io_control_fuel_table_param);
@@ -2707,7 +2714,6 @@ void cm550_dualTableLookupSum(void)
 void cm550_interpolationTableSetup(void)
 
 {
-                    /* From J90280.05 @ 0x02f920 (confidence: 63%) */
   _io_control_fuel_rpm_input = 0x807230;
   _io_control_fuel_table_2_lookup_arg = 0x807242;
   _DAT_00800118 = 2;
@@ -2730,7 +2736,6 @@ void cm550_initAcControlSystem(void)
 {
   int in_A1;
   
-                    /* From J90280.05 @ 0x00ebd2 (confidence: 78%) */
   _io_control_fuel_rpm_input = 0x807230;
   _io_control_fuel_table_2_lookup_arg = 0x807242;
   _DAT_00800118 = 2;
@@ -2751,7 +2756,6 @@ void cm550_initAcControlSystem(void)
 void cm550_acceleratorThrottleFaultDetector(void)
 
 {
-                    /* From J90280.05 @ 0x00c8c2 (confidence: 73%) */
   if (((_default_throttle_source_selector < 2) &&
       ((uint)_current_fuel_demand < (uint)_DAT_00807ac8 + (uint)_frictional_no_load_fueling)) &&
      (_validated_percent_throttle_commanded_by_driver_0_100 == 0)) {
@@ -2817,7 +2821,6 @@ void cm550_FUN_0000d3b2(void)
 void cm550_fuelArbitratorInit(void)
 
 {
-                    /* From J90280.05 @ 0x018b6e (confidence: 63%) */
   _DAT_0080a9b0 = 0x803bbe;
   _DAT_0080a9b4 = 0x803bca;
   _DAT_0080a9b8 = 0x803bcc;
@@ -2836,7 +2839,6 @@ void cm550_fuelArbitratorInit(void)
 void cm550_initDerateSystemPointers(void)
 
 {
-                    /* From J90280.05 @ 0x00bf9c (confidence: 63%) */
   _DAT_0080a9b4 = 0x803bca;
   _DAT_0080a9b8 = 0x803bcc;
   _asg_throttle_source_selector = _default_throttle_source_selector;
@@ -2856,7 +2858,6 @@ void cm550_diagnosticMode10FuelController(void)
 {
   uint uVar1;
   
-                    /* From J90280.05 @ 0x02d210 (confidence: 63%) */
   if (_asg_throttle_source_selector == 1) {
     _derate_target_snapshot = _asg_reference_speed_working;
     _asg_selected_droop_slope_0_30 =
@@ -2937,7 +2938,6 @@ uint cm550_FUN_0000d4ae(undefined4 param_1)
 void cm550_diagnosticState7Setter(void)
 
 {
-                    /* From J90280.05 @ 0x00c0e6 (confidence: 75%) */
   if (_asg_quadratic_integral_adjustment_500_500 == 0) {
     _asg_reference_speed_working =
          _all_speed_governor_reference_speed_based_upon_throttle_positi_0_3000;
@@ -2957,7 +2957,6 @@ void cm550_diagnosticState7Setter(void)
 void cm550_fuelBlendTablePointerSetup(void)
 
 {
-                    /* From J90280.05 @ 0x00dbc2 (confidence: 67%) */
   _DAT_00800136 = 2;
   _throttle_buffer_validation_value = 0x60462;
   _DAT_0080013e = 0x60472;
@@ -2979,7 +2978,6 @@ void cm550_fuelBlendTablePointerSetup(void)
 void cm550_initBoostProtectionSystem(void)
 
 {
-                    /* From J90280.05 @ 0x00c33e (confidence: 69%) */
   _cruise_control_active_flag = 0;
   _DAT_0080a9c6 = 0;
   _sampled_road_speed_after_it_has_been_filtered_0_255_9961 = 0;
@@ -3738,7 +3736,6 @@ void cm550_clearKickdownControlState(void)
 void vp44ControlVariablesReset(void)
 
 {
-                    /* From J90280.05 @ 0x02d688 (confidence: 67%) */
   request_to_strobe_set_0_then_set_1_engine_braker_driver_0_1 = 0;
   request_to_strobe_set_0_then_set_1_cold_start_aid_1_driver_0_1 = 0;
   request_to_strobe_set_0_then_set_1_cold_start_aid_2_driver_0_1 = 0;
@@ -3841,7 +3838,6 @@ void vp44_insiteParameterTableIterator(void)
   byte bVar2;
   byte bVar3;
   
-                    /* From J90280.05 @ 0x00c9f0 (confidence: 73%) */
   j1708_transmit_buffer_2_32_ddc6.end_ptr = (dword)&DAT_000612ee;
   j1708_transmit_buffer_2_32_ddc6.buffer_ptr = 0x80de00;
   j1708_transmit_buffer_2_32_ddc6.next_ptr = _j1708_transmit_buffer_0_2_32;
@@ -3890,7 +3886,6 @@ uint cm550_diagnosticMessageTransmissionManager(void)
   undefined4 in_D0;
   uint uVar4;
   
-                    /* From J90280.05 @ 0x00caa8 (confidence: 88%) */
   uVar3 = (undefined2)((uint)in_D0 >> 0x10);
   if (((_diagnostic_subsystem_enable_flags & 4) != 0) &&
      ((_bit_2_0_15_enables_j1939_71_engine_broadcast_1_on_0_off & 2) != 0)) {
@@ -3930,7 +3925,6 @@ uint cm550_diagnosticMessageTransmissionManager(void)
 void cm550_activeParamReadFunction(void)
 
 {
-                    /* From J90280.05 @ 0x018f82 (confidence: 66%) */
   if (j1708_transmit_buffer_2_32_ddc6.reserved_48[0] == 0) {
     j1708_transmit_buffer_2_32_ddc6.write_ptr =
          CONCAT31(j1708_transmit_buffer_2_32_ddc6.write_ptr._0_3_,
@@ -4002,7 +3996,6 @@ uint cm550_diagnosticCodeTableSearch(undefined4 param_1)
   uint in_D0;
   byte bVar1;
   
-                    /* From J90280.05 @ 0x00cc34 (confidence: 94%) */
   bVar1 = 1;
   while( true ) {
     if (DGAEFUBF < bVar1) {
@@ -4036,7 +4029,6 @@ void insiteCommandByteDispatcher(void)
   undefined4 local_a;
   undefined2 local_6;
   
-                    /* From J90280.05 @ 0x00cc64 (confidence: 81%) */
   uVar1 = _accumulated_amount_of_fuel_used_during_vehicle_operatio_0_0_10000000;
   if (j1708_transmit_buffer_2_32_ddc6.reserved_28[3] < 0x80) {
     if (j1708_transmit_buffer_2_32_ddc6.reserved_28[3] < 0x59) {
@@ -4671,7 +4663,6 @@ void cm550_paramSystemModeController(void)
 {
   ushort uVar1;
   
-                    /* From J90280.05 @ 0x00d57c (confidence: 72%) */
   uVar1 = _DAT_0080d33e;
   if (_DAT_00803bf0 == 1) {
     uVar1 = cm550_FUN_0000f716();
@@ -4744,7 +4735,6 @@ void cm550_paramSystemModeController(void)
 void cm550_param_lookup_1(void)
 
 {
-                    /* From J90280.05 @ 0x00d632 (confidence: 81%) */
   if ((short)(_determined_peak_engine_fueling_0_100 -
              _maximum_fueling_value_that_does_not_inject_fuel_0_100) < 1) {
     _DAT_0080da16 = 0;
@@ -4775,7 +4765,6 @@ void cm550_param_lookup_1(void)
 void cm550_param_lookup_3(void)
 
 {
-                    /* From J90280.05 @ 0x00d756 (confidence: 81%) */
   if ((int)((uint)_current_fuel_demand -
            (uint)_maximum_fueling_value_that_does_not_inject_fuel_0_100) < 1) {
     _jcomm_ind_percent_load_ratio_of_actual_engine_torque_to_max_to_0_125 = 0;
@@ -4852,7 +4841,6 @@ uint vp44State2TransitionHandler(void)
 {
   uint uVar1;
   
-                    /* From J90280.05 @ 0x02fbc8 (confidence: 63%) */
   uVar1 = _calibration_feature_enable_flags_word_9 & 0x40;
   if (((_calibration_feature_enable_flags_word_9 & 0x40) == 0) || (_DAT_0080daf4 == 0)) {
     _torque_curve_speed_at_breakpoint_1_lsg_reference_0_5000 = _lsg_breakpoint_speed;
@@ -4903,7 +4891,6 @@ void vp44_FUN_0000fa68(void)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 void cm550_calculateGovernorDroopSpeed(byte torque_index)
 
@@ -4964,7 +4951,6 @@ void vp44_fuelLimitExceedanceStatisticsAccumulator(void)
   char unaff_D3b;
   ushort uVar5;
   
-                    /* From J90280.05 @ 0x02e7b0 (confidence: 69%) */
   uVar5 = (ushort)((uint)unaff_D2 >> 0x10);
   if (((int)(uint)_lsg_base_reference_speed_calibration <
        (int)((uint)_lsg_breakpoint_speed -
@@ -5188,7 +5174,6 @@ void vp44_fuelSourceOilPressureConditionChecker(void)
   ushort *unaff_A5;
   ushort in_stack_00000000;
   
-                    /* From J90280.05 @ 0x00b2ee (confidence: 70%) */
   if (((_hsg_reference_speed_winning_source_indicator == 4) ||
       (_hsg_reference_speed_winning_source_indicator == 5)) ||
      (_hsg_reference_speed_winning_source_indicator == 1)) {
@@ -5369,7 +5354,6 @@ ushort cm550_FUN_0000ff48(void)
 void cm550_initFuelArbitratorThreshold5(void)
 
 {
-                    /* From J90280.05 @ 0x018f6c (confidence: 64%) */
   _determined_peak_engine_fueling_0_100 =
        _jcomm_peak_fueling_ref_fuel_for_all_indicated_percent_peak_tor_0_100;
   _DAT_0080da34 = _jcomm_reference_engine_torque_reference_engine_torque_that_c_0_64255;
@@ -5390,7 +5374,6 @@ void cm550_ioControlBasedFuelCalculator(void)
   short sVar1;
   short sVar2;
   
-                    /* From J90280.05 @ 0x00dc28 (confidence: 72%) */
   _engine_brake_active_cylinder_count = 0;
   if ((commanded_driver_true_on_0_1 & 1) != 0) {
     _engine_brake_active_cylinder_count =
@@ -5478,7 +5461,6 @@ void cm550_ioControlBasedFuelCalculator(void)
 void cm550_throttleTablePointerSetup(void)
 
 {
-                    /* From J90280.05 @ 0x00dd72 (confidence: 81%) */
   _anc_altitude_table_1_size = 2;
   _anc_duty_cycle_ptr = 0x6052a;
   _anc_min_active_time_ptr = 0x60566;
@@ -5505,7 +5487,6 @@ uint cm550_bufferDecreasingPatternCheck(void)
   uint local_18 [5];
   
   uVar1 = 0;
-                    /* From J90280.05 @ 0x00ddb4 (confidence: 98%) */
   puVar3 = _anc_altitude_table_3_ptr;
   for (puVar2 = local_18; puVar2 < &stack0xfffffffc; puVar2 = puVar2 + 1) {
     if (puVar2 == local_18) {
@@ -5552,7 +5533,6 @@ uint cm550_bufferThresholdValidator(void)
   uint uVar3;
   int iVar4;
   
-                    /* From J90280.05 @ 0x00de50 (confidence: 95%) */
   if (_anc_altitude_table_3_ptr == _cold_start_fuel_control_result) {
     uVar3 = *_DAT_008001b4 >> 2;
     uVar2 = _DAT_008001b4[-1] >> 2;
@@ -5593,7 +5573,6 @@ undefined2 cm550_retarderModeThresholdCalculator(undefined4 param_1)
   undefined2 uVar2;
   uint uVar3;
   
-                    /* From J90280.05 @ 0x0279ee (confidence: 69%) */
   if (_DAT_00803d5c == 0) {
     uVar2 = 0;
   }
@@ -5675,7 +5654,6 @@ undefined2 cm550_retarderModeThresholdCalculator(undefined4 param_1)
 void cm550_canBusTimingInit(void)
 
 {
-                    /* From J90280.05 @ 0x00e02c (confidence: 91%) */
   _anc_altitude_table_3_size =
        _DAT_008001a8 * (uint)_value_used_to_detect_sync_pulse_0_100_7c1e >> 8;
   _anc_altitude_table_2_ptr = _DAT_008001a8 * (uint)_value_used_to_detect_sync_pulse_0_100_7c1e >> 8
@@ -5689,12 +5667,9 @@ void cm550_canBusTimingInit(void)
 // Function: cm550_sendCanMessage @ 0x000104e8
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 void cm550_sendCanMessage(j1939_header_t *msg_header)
 
 {
-                    /* From J90280.05 @ 0x00e180 (confidence: 98%) */
   if (msg_header->length < 9) {
     cm550_sendCanSingleFrame(msg_header->id);
     return;
@@ -5712,7 +5687,6 @@ void cm550_sendCanMessage(j1939_header_t *msg_header)
 void cm550_sendJ1939MultiFrameWrapper(void)
 
 {
-                    /* From J90280.05 @ 0x00e1aa (confidence: 92%) */
   sendJ1939MultiFrame();
   return;
 }
@@ -5723,14 +5697,11 @@ void cm550_sendJ1939MultiFrameWrapper(void)
 // Function: cm550_arrayRangeSum @ 0x00010520
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 short cm550_arrayRangeSum(word *start_ptr,word *end_ptr)
 
 {
   short sVar1;
   
-                    /* From J90280.05 @ 0x00e1b8 (confidence: 94%) */
   sVar1 = 0;
   for (; start_ptr <= end_ptr; start_ptr = start_ptr + 1) {
     sVar1 = *start_ptr + sVar1;
@@ -5749,7 +5720,6 @@ short cm550_arrayRangeSum(word *start_ptr,word *end_ptr)
 void cm550_memoryPatchCountDecrement(void)
 
 {
-                    /* From J90280.05 @ 0x00e1ce (confidence: 88%) */
   if (j1708_transmit_buffer_2_32_ddc6.status_102 != 0) {
     j1708_transmit_buffer_2_32_ddc6.status_102 = j1708_transmit_buffer_2_32_ddc6.status_102 - 1;
     _scratch_pad_write_pointer =
@@ -5775,7 +5745,6 @@ uint vp44_rpmDerateCalculationController(void)
   uint uVar3;
   uint uVar4;
   
-                    /* From J90280.05 @ 0x030d40 (confidence: 75%) */
   if ((_calibration_feature_enable_flags_word_5 & 0x400) == 0) {
     if (_DAT_0080aa9a == 0) {
       _vp44_block_size = _ADSATHFT;
@@ -5908,7 +5877,6 @@ ulonglong vp44_derateThresholdMonitorAndFaultController(void)
   ushort uVar6;
   uint uVar7;
   
-                    /* From J90280.05 @ 0x00e478 (confidence: 80%) */
   uVar5 = _calibration_feature_enable_flags_word_5 & 0x400;
   if ((((_calibration_feature_enable_flags_word_5 & 0x400) != 0) ||
       (uVar5 = _calibration_feature_enable_flags_word_1 & 4,
@@ -6167,7 +6135,6 @@ void cm550_FUN_00010e06(void)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 int cm550_diagnosticMemoryAddressResolver(word param_id)
 
@@ -6175,7 +6142,6 @@ int cm550_diagnosticMemoryAddressResolver(word param_id)
   ushort in_stack_00000004;
   undefined2 in_stack_00000008;
   
-                    /* From J90280.05 @ 0x00eaf0 (confidence: 81%) */
   if ((in_stack_00000004 < 0x8000) || (0x8265 < in_stack_00000004)) {
     if ((in_stack_00000004 < 0x1000) || (0x1478 < in_stack_00000004)) {
       if (0x2e < in_stack_00000004) {
@@ -6216,23 +6182,30 @@ uint cm550_calibrationDataCopyWithChecksum(void)
   undefined4 *puVar2;
   undefined4 *puVar3;
   
-                    /* From J90280.05 @ 0x00ebf2 (confidence: 86%) */
   uVar1 = cm550_arrayRangeSum((word *)&DAT_00004000,(word *)&DAT_000055b2);
   if (((short)uVar1 != _DAT_00803b12) && (DAT_000055b2 != -0x5e5f)) {
     return 1;
   }
+  puVar2 = (undefined4 *)&DAT_00804f96;
   puVar3 = &DAT_00004000;
-  for (puVar2 = (undefined4 *)&DAT_00804f96; puVar2 < (undefined4 *)0x804f98; puVar2 = puVar2 + 1) {
+  while (puVar2 < (undefined4 *)0x804f98) {
     *puVar2 = *puVar3;
+    DAT_00fffa27 = 0x55;
     DAT_00fffa27 = 0xaa;
+    DAT_00ffd00f = 0x55;
     DAT_00ffd00f = 0xaa;
+    puVar2 = puVar2 + 1;
     puVar3 = puVar3 + 1;
   }
+  puVar2 = (undefined4 *)&DAT_00804f9a;
   puVar3 = &DAT_00004004;
-  for (puVar2 = (undefined4 *)&DAT_00804f9a; puVar2 < &DAT_00806548; puVar2 = puVar2 + 1) {
+  while (puVar2 < &DAT_00806548) {
     *puVar2 = *puVar3;
+    DAT_00fffa27 = 0x55;
     DAT_00fffa27 = 0xaa;
+    DAT_00ffd00f = 0x55;
     DAT_00ffd00f = 0xaa;
+    puVar2 = puVar2 + 1;
     puVar3 = puVar3 + 1;
   }
   _calibration_bank_active = 1;
@@ -6254,23 +6227,30 @@ uint cm550_calibrationDataCopySecondary(void)
   undefined4 *puVar2;
   undefined4 *puVar3;
   
-                    /* From J90280.05 @ 0x00eca4 (confidence: 86%) */
   uVar1 = cm550_arrayRangeSum((word *)&DAT_00006000,&DAT_000075b2);
   if ((short)uVar1 != _DAT_00803b14) {
     return 1;
   }
+  puVar2 = (undefined4 *)&DAT_00804f96;
   puVar3 = &DAT_00006000;
-  for (puVar2 = (undefined4 *)&DAT_00804f96; puVar2 < (undefined4 *)0x804f98; puVar2 = puVar2 + 1) {
+  while (puVar2 < (undefined4 *)0x804f98) {
     *puVar2 = *puVar3;
+    DAT_00fffa27 = 0x55;
     DAT_00fffa27 = 0xaa;
+    DAT_00ffd00f = 0x55;
     DAT_00ffd00f = 0xaa;
+    puVar2 = puVar2 + 1;
     puVar3 = puVar3 + 1;
   }
+  puVar2 = (undefined4 *)&DAT_00804f9a;
   puVar3 = &DAT_00006004;
-  for (puVar2 = (undefined4 *)&DAT_00804f9a; puVar2 < &DAT_00806548; puVar2 = puVar2 + 1) {
+  while (puVar2 < &DAT_00806548) {
     *puVar2 = *puVar3;
+    DAT_00fffa27 = 0x55;
     DAT_00fffa27 = 0xaa;
+    DAT_00ffd00f = 0x55;
     DAT_00ffd00f = 0xaa;
+    puVar2 = puVar2 + 1;
     puVar3 = puVar3 + 1;
   }
   _calibration_bank_active = 2;
@@ -6304,7 +6284,6 @@ undefined4 cm550_eepromCalibrationWriteSecondary(void)
   undefined2 uVar7;
   short local_6;
   
-                    /* From J90280.05 @ 0x00ef80 (confidence: 80%) */
   uVar7 = (undefined2)((uint)unaff_D2 >> 0x10);
   if ((_calibration_bank2_write_sequence + _calibration_bank1_write_sequence & 1U) == 0) {
     local_6 = _calibration_bank1_write_sequence + 1;
@@ -6323,19 +6302,27 @@ undefined4 cm550_eepromCalibrationWriteSecondary(void)
   }
   iVar1 = cm550_FUN_0001c484(0x4000,0);
   if (iVar1 == 0) {
+    DAT_00fffa27 = 0x55;
     DAT_00fffa27 = 0xaa;
+    DAT_00ffd00f = 0x55;
     DAT_00ffd00f = 0xaa;
     sVar3 = cm550_flashProgramFromRam(0x4000,0x804f96,CONCAT22(2,uVar7));
     if (sVar3 == 1) {
+      DAT_00fffa27 = 0x55;
       DAT_00fffa27 = 0xaa;
+      DAT_00ffd00f = 0x55;
       DAT_00ffd00f = 0xaa;
       sVar3 = cm550_flashProgramFromRam(0x4004,0x804f9a,CONCAT22(0x15ae,uVar7));
       cVar6 = sVar3 == 0;
       if (sVar3 == 1) {
+        DAT_00fffa27 = 0x55;
         DAT_00fffa27 = 0xaa;
+        DAT_00ffd00f = 0x55;
         DAT_00ffd00f = 0xaa;
         local_6 = cm550_arrayRangeSum((word *)&DAT_00004000,&DAT_000055b2);
+        DAT_00fffa27 = 0x55;
         DAT_00fffa27 = 0xaa;
+        DAT_00ffd00f = 0x55;
         DAT_00ffd00f = 0xaa;
         byte_count = (ushort)(byte)(cVar6 << 4 | 8);
         cm550_parameterCircularBufferWrite(0x803b12,(byte *)&local_6,byte_count);
@@ -6367,7 +6354,9 @@ undefined4 cm550_eepromCalibrationWriteSecondary(void)
   else {
     bVar5 = 0;
     while (bVar5 < 4) {
+      DAT_00fffa27 = 0x55;
       DAT_00fffa27 = 0xaa;
+      DAT_00ffd00f = 0x55;
       DAT_00ffd00f = 0xaa;
       injectorTimingCalculation();
       cm550_watchdogServiceLoop();
@@ -6428,19 +6417,27 @@ undefined4 cm550_FUN_0001125a(void)
   }
   iVar1 = cm550_FUN_0001c484(0x6000,0);
   if (iVar1 == 0) {
+    DAT_00fffa27 = 0x55;
     DAT_00fffa27 = 0xaa;
+    DAT_00ffd00f = 0x55;
     DAT_00ffd00f = 0xaa;
     sVar3 = cm550_flashProgramFromRam(0x6000,0x804f96,CONCAT22(2,uVar7));
     if (sVar3 == 1) {
+      DAT_00fffa27 = 0x55;
       DAT_00fffa27 = 0xaa;
+      DAT_00ffd00f = 0x55;
       DAT_00ffd00f = 0xaa;
       sVar3 = cm550_flashProgramFromRam(0x6004,0x804f9a,CONCAT22(0x15ae,uVar7));
       cVar6 = sVar3 == 0;
       if (sVar3 == 1) {
+        DAT_00fffa27 = 0x55;
         DAT_00fffa27 = 0xaa;
+        DAT_00ffd00f = 0x55;
         DAT_00ffd00f = 0xaa;
         local_6 = cm550_arrayRangeSum((word *)&DAT_00006000,&DAT_000075b2);
+        DAT_00fffa27 = 0x55;
         DAT_00fffa27 = 0xaa;
+        DAT_00ffd00f = 0x55;
         DAT_00ffd00f = 0xaa;
         byte_count = (ushort)(byte)(cVar6 << 4 | 8);
         cm550_parameterCircularBufferWrite(0x803b14,(byte *)&local_6,byte_count);
@@ -6472,7 +6469,9 @@ undefined4 cm550_FUN_0001125a(void)
   else {
     bVar5 = 0;
     while (bVar5 < 4) {
+      DAT_00fffa27 = 0x55;
       DAT_00fffa27 = 0xaa;
+      DAT_00ffd00f = 0x55;
       DAT_00ffd00f = 0xaa;
       injectorTimingCalculation();
       cm550_watchdogServiceLoop();
@@ -6508,7 +6507,6 @@ void vp44_validateRedundantSensors(void)
   bool bVar7;
   ushort uVar8;
   
-                    /* From J90280.05 @ 0x00f1ae (confidence: 83%) */
   _calibration_bank_active = 0;
   if ((DAT_000055b2 == -0x5e5f) && (DAT_000075b2 == -0x5e5f)) {
     cm550_calibrationDataCopyWithChecksum();
@@ -6651,10 +6649,11 @@ void cm550_firmwareDataCopyToWorkingMemory(void)
   undefined4 *puVar1;
   undefined4 *puVar2;
   
-                    /* From J90280.05 @ 0x00f4ea (confidence: 86%) */
   puVar1 = (undefined4 *)&DAT_00061376;
   for (puVar2 = (undefined4 *)&DAT_0080654a; puVar2 < (undefined4 *)0x808acc; puVar2 = puVar2 + 1) {
+    DAT_00fffa27 = 0x55;
     DAT_00fffa27 = 0xaa;
+    DAT_00ffd00f = 0x55;
     DAT_00ffd00f = 0xaa;
     *puVar2 = *puVar1;
     puVar1 = puVar1 + 1;
@@ -6706,7 +6705,6 @@ undefined1 cm550_FUN_0001183e(void)
 undefined1 default(void)
 
 {
-                    /* From J90280.05 @ 0x00f86a (confidence: 63%) */
   return 0;
 }
 
@@ -6723,7 +6721,6 @@ uint cm550_waterInFuelDetectionStateInit(void)
 {
   uint in_D0;
   
-                    /* From J90280.05 @ 0x00f876 (confidence: 81%) */
   if (j1708_transmit_buffer_2_32_ddc6.count_106 == 1) {
     j1708_transmit_buffer_2_32_ddc6.count_106 = 0;
     _calibration_data_valid_flag = 1;
@@ -6744,7 +6741,6 @@ uint cm550_waterInFuelDetectionStateInit(void)
 undefined1 cm550_waterInFuelFaultClear(void)
 
 {
-                    /* From J90280.05 @ 0x00f89c (confidence: 69%) */
   _calibration_data_valid_flag = 0;
   j1708_transmit_buffer_2_32_ddc6.count_106 = 1;
   _water_in_fuel_state_code = 0xeaea;
@@ -6786,7 +6782,6 @@ uint cm550_FUN_000118cc(void)
 undefined1 cm550_activateHighRpmShutdownFlag(void)
 
 {
-                    /* From J90280.05 @ 0x00f8d8 (confidence: 86%) */
   _engine_protection_shutdown_command = 1;
   return 0;
 }
@@ -6800,7 +6795,6 @@ undefined1 cm550_activateHighRpmShutdownFlag(void)
 void cm550_eepromWriteWrapper(undefined4 param_1)
 
 {
-                    /* From J90280.05 @ 0x00f8e4 (confidence: 84%) */
   cm550_FUN_0001192a(param_1);
   return;
 }
@@ -6814,7 +6808,6 @@ void cm550_eepromWriteWrapper(undefined4 param_1)
 void cm550_triggerDiagnosticSystemReset(void)
 
 {
-                    /* From J90280.05 @ 0x00f8f6 (confidence: 66%) */
   cm550_FUN_0001192a(0);
   return;
 }
@@ -6963,7 +6956,6 @@ undefined4 cm550_FUN_00011a74(void)
 void cm550_systemFunction8xMaximum(void)
 
 {
-                    /* From J90280.05 @ 0x00fa40 (confidence: 78%) */
   cm550_coreSystemFunction();
   cm550_coreSystemFunction();
   cm550_coreSystemFunction();
@@ -6988,7 +6980,6 @@ undefined4 cm550_crc16Calculate(byte *param_1,undefined4 param_2)
   undefined4 unaff_D3;
   undefined4 uVar2;
   
-                    /* From J90280.05 @ 0x00fcb0 (confidence: 100%) */
   uVar1 = 0;
   uVar2 = CONCAT22((short)((uint)unaff_D3 >> 0x10),param_2._0_2_);
   while ((char)uVar2 != '\0') {
@@ -7016,7 +7007,6 @@ undefined4 cm550_memoryPatchCrcCalculate(void)
   byte *pbVar4;
   int iVar5;
   
-                    /* From J90280.05 @ 0x00fd02 (confidence: 81%) */
   uVar3 = unaff_D3 & 0xffffff00;
   pbVar4 = &scratch_pad_data_buffer;
   iVar5 = 0x80dd8a;
@@ -7056,7 +7046,6 @@ ushort cm550_coldStartFuelControlSlowCycle40Coordinator(void)
   int iVar8;
   dword divisor;
   
-                    /* From J90280.05 @ 0x00fd68 (confidence: 75%) */
   uVar4 = _calibration_feature_enable_flags_word_3 & 0x800;
   if (((((_calibration_feature_enable_flags_word_3 & 0x800) == 0) ||
        (uVar4 = _alpha_blend_factor,
@@ -7432,7 +7421,6 @@ void cm550_FUN_00012484(void)
 void cm550_initLoadTrendingSystem(void)
 
 {
-                    /* From J90280.05 @ 0x0140ce (confidence: 73%) */
   _engine_rpm_histogram_threshold_select = _engine_rpm_primary;
   _hour_meter_table_3_ptr = 0x60596;
   _hour_meter_table_4_base = 0x605b2;
@@ -7476,7 +7464,8 @@ void mc68k_FUN_0001266e(void)
   
   if (_DAT_008072c0 == 1) {
     if (_engine_speed_source_select == 0) {
-      uVar2 = _DAT_00fffffc & 0xff;
+      uVar2 = Ram00fffffc;
+      uVar2 = uVar2 & 0xff;
       if (flag_indicating_crank_rev_1_or_2_of_cam_rev_0_1 == '\x01') {
         uVar2 = uVar2 + 0x24;
       }
@@ -7548,7 +7537,6 @@ void mc68k_FUN_0001266e(void)
 void cm550_fuelSourceMode11CountdownHandler(void)
 
 {
-                    /* From J90280.05 @ 0x00b314 (confidence: 66%) */
   if (_DAT_008072c0 == 1) {
     _fuel_timing_blend_offset_input_2 =
          _current_fuel_demand +
@@ -8122,7 +8110,6 @@ void cm550_circularBufferWriteWithStatus(void)
   dword dVar1;
   uint *puVar2;
   
-                    /* From J90280.05 @ 0x010466 (confidence: 67%) */
   puVar2 = (uint *)&DAT_00805308;
   do {
     while( true ) {
@@ -8192,7 +8179,6 @@ uint vp44_communication_state_machine(undefined4 param_1)
   uint uVar3;
   int *piVar4;
   
-                    /* From J90280.05 @ 0x010504 (confidence: 75%) */
   piVar4 = (int *)&DAT_00805308;
   uVar3 = _calibration_feature_enable_flags_word_0 & 0xffff0100;
   if ((((_calibration_feature_enable_flags_word_0 & 0x100) != 0) &&
@@ -8336,7 +8322,6 @@ uint vp44_communication_state_machine(undefined4 param_1)
 void vp44_initVp44BufferAddresses(void)
 
 {
-                    /* From J90280.05 @ 0x01078e (confidence: 64%) */
   _actual_starting_ram_address_of_the_data_collector_buffer_none = 0x80aac4;
   logical_address_canter_value_stored_to_the_data_collector_buffer_none._10_4_ = &DAT_00805308;
   return;
@@ -8951,14 +8936,11 @@ void cm550_FUN_00014292(undefined1 *param_1,undefined1 *param_2)
 // Function: cm550_canBusConfigTypeSelector @ 0x000142a8
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 undefined4 cm550_canBusConfigTypeSelector(byte config_type)
 
 {
   char in_stack_00000005;
   
-                    /* From J90280.05 @ 0x010d78 (confidence: 83%) */
   if (in_stack_00000005 == DAT_00060f83) {
     return 1;
   }
@@ -8978,7 +8960,6 @@ undefined4 cm550_canBusConfigTypeSelector(byte config_type)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 void cm550_FUN_000142d4(byte calc_mode)
 
@@ -9043,7 +9024,6 @@ void cm550_FUN_00014348(void)
 void cm550_multiSpeedParameterInterpolation(void)
 
 {
-                    /* From J90280.05 @ 0x010e70 (confidence: 75%) */
   _DAT_0080db34 = _filtered_and_linearized_coolant_temperature_50_to_293;
   _DAT_0080052c = lookupTableInterpolation((table_interp_args_t *)&DAT_0080db2e);
   cm550_FUN_00014348();
@@ -9078,7 +9058,6 @@ void cm550_fuelDemandPercentageCalculator(void)
   division_operand_t divisor;
   word wVar1;
   
-                    /* From J90280.05 @ 0x010f08 (confidence: 69%) */
   _jcomm_no_load_torque_estimated_frictional_no_load_fueling_val_0_100 = _frictional_no_load_fueling
   ;
   _no_load_fueling_curve_rpm_input = _engine_running_timer_threshold;
@@ -9104,7 +9083,6 @@ void cm550_fuelDemandPercentageCalculator(void)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 void cm550_diagnosticCodeDebounceHandler(byte code_index)
 
@@ -9113,7 +9091,6 @@ void cm550_diagnosticCodeDebounceHandler(byte code_index)
   short sVar2;
   byte in_stack_00000005;
   
-                    /* From J90280.05 @ 0x010fee (confidence: 81%) */
   if (((((&diagnostic_fault_status_table)[(short)((ushort)in_stack_00000005 * 5) * 2] & 1) == 0) &&
       (*(char *)((uint)in_stack_00000005 * 6 + 0x8067c9) != '\0')) &&
      ((&diagnostic_fault_occurrence_count)[(short)((ushort)in_stack_00000005 * 5) * 2] != '\0')) {
@@ -9172,7 +9149,6 @@ void cm550_phase2_sensor_data_processor(void)
   short *unaff_A4;
   int *unaff_A5;
   
-                    /* From J90280.05 @ 0x011060 (confidence: 88%) */
   if (((*(int *)((short)((ushort)unaff_D2b * 5) * 2 + 0x805a20) == 0) &&
       (*(uint *)(in_D0w + 0x80654c) <=
        (uint)(*unaff_A5 - *(int *)(&DGFUCUBF + (short)((ushort)unaff_D2b * 5) * 2)))) ||
@@ -9238,7 +9214,6 @@ short cm550_oldestDiagnosticTimestampSearch(undefined4 param_1)
   uint uVar4;
   short sVar5;
   
-                    /* From J90280.05 @ 0x0111de (confidence: 94%) */
   uVar4 = 0xffffffff;
   sVar5 = -1;
   sVar2 = 0;
@@ -9262,8 +9237,6 @@ short cm550_oldestDiagnosticTimestampSearch(undefined4 param_1)
 // Function: cm550_diagnosticCodeRegistrar @ 0x00014720
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 void cm550_diagnosticCodeRegistrar(byte code_index)
 
 {
@@ -9272,7 +9245,6 @@ void cm550_diagnosticCodeRegistrar(byte code_index)
   short sVar3;
   short in_stack_00000004;
   
-                    /* From J90280.05 @ 0x01124a (confidence: 88%) */
   sVar2 = 0;
   sVar3 = 0;
   do {
@@ -9522,7 +9494,6 @@ void cm550_faultFlagScannerAndProcessor(void)
   ushort uVar3;
   ushort *puVar4;
   
-                    /* From J90280.05 @ 0x011a0a (confidence: 81%) */
   for (iVar2 = 0;
       (((*(short *)(&status_32_word_bit_mapped_system_error_status_word_0_0_1 +
                    (short)_fault_status_word_scan_index * 2) == 0 &&
@@ -9616,7 +9587,6 @@ void cm550_insitePidDtcHandler(undefined4 param_1)
   byte bVar3;
   word *pwVar4;
   
-                    /* From J90280.05 @ 0x011ba0 (confidence: 81%) */
   bVar1 = false;
   j1708_transmit_buffer_2_32_ddc6.param_176 = 0;
   pwVar4 = (word *)&DAT_008067c4;
@@ -9645,7 +9615,6 @@ void cm550_initHourMeterSystem(void)
 {
   undefined2 in_stack_00000000;
   
-                    /* From J90280.05 @ 0x011c0c (confidence: 80%) */
   cm550_circularBufferInit((dword *)0x80bc8c,0x80bc9e,CONCAT22(10,in_stack_00000000));
   return;
 }
@@ -9668,19 +9637,21 @@ byte injectorTimingCalculation(void)
   undefined4 local_c;
   undefined4 local_8;
   
-  local_8 = CONCAT13(DAT_00ffd003,CONCAT12(DAT_00ffd002,CONCAT11(DAT_00ffd001,DAT_00ffd000)));
-  local_c._1_3_ = (uint3)CONCAT11(DAT_00ffd007,DAT_00ffd005);
-  local_c = CONCAT13(DAT_00fffa11,local_c._1_3_);
-  local_10 = (uint)DAT_00fffa19;
   DAT_0080bcec = DAT_00ffd000;
   binary_value_of_not_idle_switch_off_on = DAT_00ffd001;
   DAT_0080bcee = DAT_00ffd002;
   DAT_0080bcef = DAT_00ffd003;
+  local_8 = CONCAT13(DAT_0080bcef,
+                     CONCAT12(DAT_0080bcee,
+                              CONCAT11(binary_value_of_not_idle_switch_off_on,DAT_0080bcec)));
   DAT_0080bcf0 = DAT_00ffd005;
   DAT_0080bcf1 = DAT_00ffd007;
-  DAT_0080bcf2 = 0;
   DAT_0080bcf3 = DAT_00fffa11;
+  local_c._1_3_ = (uint3)CONCAT11(DAT_0080bcf1,DAT_0080bcf0);
+  local_c = CONCAT13(DAT_0080bcf3,local_c._1_3_);
   DAT_0080bcf4 = DAT_00fffa19;
+  local_10 = (uint)DAT_0080bcf4;
+  DAT_0080bcf2 = 0;
   *(uint *)(&discrete_input_sample_buffer_0 + (short)(ushort)discrete_input_sample_index * 4) =
        _user_inversion_bit_mask_for_the_user_datalogger_switc_invert_no_invert ^ local_8;
   *(uint *)(&DAT_00800562 + (short)(ushort)discrete_input_sample_index * 4) =
@@ -10132,6 +10103,12 @@ void mc68k_ioDriverStrobeHandler(void)
   uint uVar1;
   uint uVar2;
   uint uVar3;
+  undefined1 uVar4;
+  undefined1 uVar5;
+  undefined1 uVar6;
+  undefined1 uVar7;
+  byte bVar8;
+  ushort uVar9;
   byte bStack_f;
   undefined4 local_e;
   undefined4 local_a;
@@ -10225,17 +10202,27 @@ void mc68k_ioDriverStrobeHandler(void)
   }
   io_driver_port_1_feedback = DAT_00ffd004;
   io_driver_port_2_feedback = DAT_00ffd006;
-  DAT_0080bd0a = DAT_00fffa11 & 0xdf | ~DAT_00fffa11 & 0x20;
-  local_a = CONCAT13(DAT_00ffd003,CONCAT12(DAT_00ffd002,CONCAT11(DAT_00ffd001,DAT_00ffd000)));
-  local_e._1_3_ = (uint3)CONCAT11(DAT_00ffd007,DAT_00ffd005);
-  local_e = CONCAT13(DAT_00fffa11,local_e._1_3_);
+  bVar8 = DAT_00fffa11;
+  DAT_0080bd0a = bVar8 & 0xdf | ~bVar8 & 0x20;
+  uVar4 = DAT_00ffd000;
+  uVar5 = DAT_00ffd001;
+  uVar6 = DAT_00ffd002;
+  uVar7 = DAT_00ffd003;
+  local_a = CONCAT13(uVar7,CONCAT12(uVar6,CONCAT11(uVar5,uVar4)));
+  uVar4 = DAT_00ffd005;
+  uVar5 = DAT_00ffd007;
+  local_e._1_3_ = (uint3)CONCAT11(uVar5,uVar4);
+  local_e = CONCAT13(bVar8,local_e._1_3_);
+  bVar8 = DAT_00fffa19;
   uVar1 = local_a & ~_user_inversion_bit_mask_for_the_user_datalogger_switc_invert_no_invert |
           _user_inversion_bit_mask_for_the_user_datalogger_switc_invert_no_invert & ~local_a;
   uVar3 = ~local_e;
   uVar2 = local_e & ~_engine_overspeed_counter_limit | _engine_overspeed_counter_limit & uVar3;
-  bStack_f = DAT_00fffa19 & ~(byte)_protection_state_config_table |
-             (byte)_protection_state_config_table & ~DAT_00fffa19;
+  bStack_f = bVar8 & ~(byte)_protection_state_config_table |
+             (byte)_protection_state_config_table & ~bVar8;
+  DAT_00fffa27 = 0x55;
   DAT_00fffa27 = 0xaa;
+  DAT_00ffd00f = 0x55;
   DAT_00ffd00f = 0xaa;
   local_a._3_1_ = (byte)uVar1;
   DAT_0080bcfe = (byte)local_a & ~_discrete_input_override_mask_ptr[1] |
@@ -10273,10 +10260,16 @@ void mc68k_ioDriverStrobeHandler(void)
   DAT_0080bd0d = DAT_0080bd18;
   DAT_0080bd18 = fuel_system_output_driver_control;
   if ((~fuel_system_output_driver_control & 0x20) == 0) {
-    _DAT_00fffe18 = _DAT_00fffe18 & 0xf3ff | 0x800;
+    uVar9 = Ram00fffe18;
+    Ram00fffe18 = uVar9 & 0xf3ff;
+    uVar9 = Ram00fffe18;
+    Ram00fffe18 = uVar9 | 0x800;
   }
   else {
-    _DAT_00fffe18 = _DAT_00fffe18 & 0xf3ff | 0x400;
+    uVar9 = Ram00fffe18;
+    Ram00fffe18 = uVar9 & 0xf3ff;
+    uVar9 = Ram00fffe18;
+    Ram00fffe18 = uVar9 | 0x400;
   }
   return;
 }
@@ -10294,7 +10287,6 @@ void vp44_initVP44StatusMonitoring(void)
 {
   byte bVar1;
   
-                    /* From J90280.05 @ 0x012356 (confidence: 81%) */
   _discrete_input_override_mask_ptr = &switch_override_configuration;
   bVar1 = 0;
   do {
@@ -10310,11 +10302,12 @@ void vp44_initVP44StatusMonitoring(void)
 // Function: mc68k_FUN_00015df0 @ 0x00015df0
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void mc68k_FUN_00015df0(void)
 
 {
+  byte bVar1;
+  ushort uVar2;
+  
   if (DAT_0080bd1c == '\0') {
     DAT_0080bd1c = '\0';
     bit_6_which_enables_the_warning_lamp_driver_enable_disable =
@@ -10329,19 +10322,50 @@ void mc68k_FUN_00015df0(void)
     enable_flag_to_allow_boot_block_programming_enable_disable =
          enable_flag_to_allow_boot_block_programming_enable_disable | 0x10;
   }
-  _DAT_00fffe0a = _DAT_00fffe0a & 0xdfff;
-  _DAT_00fffe20 = _DAT_00fffe20 & 0xdfff;
-  _DAT_00fffe0c = _DAT_00fffe0c & 0xff0f | 0xe0;
-  _DAT_00ffffd0 = 0x113;
-  _DAT_00fffe1c = _DAT_00fffe1c & 0xf3ff | 0x400;
+  bVar1 = DAT_00ffd006;
+  DAT_00ffd006 = bVar1 & 0x7f;
+  uVar2 = Ram00fffe1c;
+  Ram00fffe1c = uVar2 & 0xf3ff;
+  uVar2 = Ram00fffe0a;
+  Ram00fffe0a = uVar2 & 0xdfff;
+  uVar2 = Ram00fffe20;
+  Ram00fffe20 = uVar2 & 0xdfff;
+  uVar2 = Ram00fffe0c;
+  Ram00fffe0c = uVar2 & 0xff0f;
+  uVar2 = Ram00fffe0c;
+  Ram00fffe0c = uVar2 | 0xe0;
+  Ram00ffffd0 = 0x113;
+  uVar2 = Ram00fffe18;
+  Ram00fffe18 = uVar2 & 0xf3ff;
+  uVar2 = Ram00fffe18;
+  Ram00fffe18 = uVar2 | 0x800;
+  uVar2 = Ram00fffe1c;
+  Ram00fffe1c = uVar2 & 0xf3ff;
+  uVar2 = Ram00fffe1c;
+  Ram00fffe1c = uVar2 | 0x400;
   do {
-  } while ((_DAT_00ffffd2 & 0x8000) != 0);
+    uVar2 = Ram00ffffd2;
+  } while ((uVar2 & 0x8000) != 0);
+  uVar2 = Ram00fffe18;
+  Ram00fffe18 = uVar2 & 0xf3ff;
+  uVar2 = Ram00fffe18;
+  Ram00fffe18 = uVar2 | 0x400;
   do {
-  } while ((_DAT_00ffffd2 & 0x8000) == 0);
+    uVar2 = Ram00ffffd2;
+  } while ((uVar2 & 0x8000) == 0);
+  uVar2 = Ram00fffe18;
+  Ram00fffe18 = uVar2 & 0xf3ff;
+  uVar2 = Ram00fffe18;
+  Ram00fffe18 = uVar2 | 0x800;
   do {
-  } while ((_DAT_00ffffd2 & 0x8000) != 0);
-  DAT_00ffd006 = DAT_00ffd006 & 0x7f | 0x80;
-  _DAT_00fffe18 = _DAT_00fffe18 & 0xf3ff | 0x400;
+    uVar2 = Ram00ffffd2;
+  } while ((uVar2 & 0x8000) != 0);
+  bVar1 = DAT_00ffd006;
+  DAT_00ffd006 = bVar1 | 0x80;
+  uVar2 = Ram00fffe18;
+  Ram00fffe18 = uVar2 & 0xf3ff;
+  uVar2 = Ram00fffe18;
+  Ram00fffe18 = uVar2 | 0x400;
   if (fso_driver_strobe_state == '\0') {
     fso_driver_strobe_state = '\0';
     bit_6_which_enables_the_warning_lamp_driver_enable_disable =
@@ -10390,17 +10414,16 @@ void mc68k_FUN_00015df0(void)
 // Function: clearModuleSyncFlag @ 0x00015e06
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void clearModuleSyncFlag(void)
 
 {
-  char *pcVar1;
+  byte bVar1;
+  ushort uVar2;
+  char *pcVar3;
   byte *in_A1;
   int unaff_A3;
   int unaff_A4;
   
-                    /* From J90280.05 @ 0x012376 (confidence: 61%) */
   if (*(char *)(unaff_A3 + 2) == '\0') {
     *(char *)(unaff_A3 + 2) = '\0';
     *in_A1 = *in_A1 & 0xfb;
@@ -10413,19 +10436,50 @@ void clearModuleSyncFlag(void)
     *(undefined1 *)(unaff_A3 + 0x14) = 0;
     *(byte *)(unaff_A4 + 2) = *(byte *)(unaff_A4 + 2) | 0x10;
   }
-  _DAT_00fffe0a = _DAT_00fffe0a & 0xdfff;
-  _DAT_00fffe20 = _DAT_00fffe20 & 0xdfff;
-  _DAT_00fffe0c = _DAT_00fffe0c & 0xff0f | 0xe0;
-  _DAT_00ffffd0 = 0x113;
-  _DAT_00fffe1c = _DAT_00fffe1c & 0xf3ff | 0x400;
+  bVar1 = DAT_00ffd006;
+  DAT_00ffd006 = bVar1 & 0x7f;
+  uVar2 = Ram00fffe1c;
+  Ram00fffe1c = uVar2 & 0xf3ff;
+  uVar2 = Ram00fffe0a;
+  Ram00fffe0a = uVar2 & 0xdfff;
+  uVar2 = Ram00fffe20;
+  Ram00fffe20 = uVar2 & 0xdfff;
+  uVar2 = Ram00fffe0c;
+  Ram00fffe0c = uVar2 & 0xff0f;
+  uVar2 = Ram00fffe0c;
+  Ram00fffe0c = uVar2 | 0xe0;
+  Ram00ffffd0 = 0x113;
+  uVar2 = Ram00fffe18;
+  Ram00fffe18 = uVar2 & 0xf3ff;
+  uVar2 = Ram00fffe18;
+  Ram00fffe18 = uVar2 | 0x800;
+  uVar2 = Ram00fffe1c;
+  Ram00fffe1c = uVar2 & 0xf3ff;
+  uVar2 = Ram00fffe1c;
+  Ram00fffe1c = uVar2 | 0x400;
   do {
-  } while ((_DAT_00ffffd2 & 0x8000) != 0);
+    uVar2 = Ram00ffffd2;
+  } while ((uVar2 & 0x8000) != 0);
+  uVar2 = Ram00fffe18;
+  Ram00fffe18 = uVar2 & 0xf3ff;
+  uVar2 = Ram00fffe18;
+  Ram00fffe18 = uVar2 | 0x400;
   do {
-  } while ((_DAT_00ffffd2 & 0x8000) == 0);
+    uVar2 = Ram00ffffd2;
+  } while ((uVar2 & 0x8000) == 0);
+  uVar2 = Ram00fffe18;
+  Ram00fffe18 = uVar2 & 0xf3ff;
+  uVar2 = Ram00fffe18;
+  Ram00fffe18 = uVar2 | 0x800;
   do {
-  } while ((_DAT_00ffffd2 & 0x8000) != 0);
-  DAT_00ffd006 = DAT_00ffd006 & 0x7f | 0x80;
-  _DAT_00fffe18 = _DAT_00fffe18 & 0xf3ff | 0x400;
+    uVar2 = Ram00ffffd2;
+  } while ((uVar2 & 0x8000) != 0);
+  bVar1 = DAT_00ffd006;
+  DAT_00ffd006 = bVar1 | 0x80;
+  uVar2 = Ram00fffe18;
+  Ram00fffe18 = uVar2 & 0xf3ff;
+  uVar2 = Ram00fffe18;
+  Ram00fffe18 = uVar2 | 0x400;
   if (*(char *)(unaff_A3 + 7) == '\0') {
     *(undefined1 *)(unaff_A3 + 7) = 0;
     *in_A1 = *in_A1 | 0x80;
@@ -10442,25 +10496,25 @@ void clearModuleSyncFlag(void)
     *(char *)(unaff_A3 + 8) = '\0';
     *(byte *)(unaff_A4 + 1) = *(byte *)(unaff_A4 + 1) | 1;
   }
-  pcVar1 = (char *)(unaff_A3 + 0x1e);
-  if (*pcVar1 == '\0') {
-    *pcVar1 = '\0';
+  pcVar3 = (char *)(unaff_A3 + 0x1e);
+  if (*pcVar3 == '\0') {
+    *pcVar3 = '\0';
     *(byte *)(unaff_A4 + 3) = *(byte *)(unaff_A4 + 3) | 0x40;
   }
-  if (*pcVar1 == '\0') {
-    *pcVar1 = '\0';
+  if (*pcVar3 == '\0') {
+    *pcVar3 = '\0';
     *(byte *)(unaff_A4 + 3) = *(byte *)(unaff_A4 + 3) | 0x40;
   }
-  if (*pcVar1 == '\0') {
-    *pcVar1 = '\0';
+  if (*pcVar3 == '\0') {
+    *pcVar3 = '\0';
     *(byte *)(unaff_A4 + 3) = *(byte *)(unaff_A4 + 3) | 0x40;
   }
-  if (*pcVar1 == '\0') {
-    *pcVar1 = '\0';
+  if (*pcVar3 == '\0') {
+    *pcVar3 = '\0';
     *(byte *)(unaff_A4 + 3) = *(byte *)(unaff_A4 + 3) | 0x40;
   }
-  if (*pcVar1 == '\0') {
-    *pcVar1 = '\0';
+  if (*pcVar3 == '\0') {
+    *pcVar3 = '\0';
     *(byte *)(unaff_A4 + 3) = *(byte *)(unaff_A4 + 3) | 0x40;
   }
   mc68k_ioDriverStrobeHandler();
@@ -10476,7 +10530,6 @@ void clearModuleSyncFlag(void)
 void emptyStubFunction4(void)
 
 {
-                    /* From J90280.05 @ 0x012482 (confidence: 88%) */
   return;
 }
 
@@ -10494,84 +10547,85 @@ void diagnosticCommandDispatcher(void)
   undefined1 uVar1;
   char cVar2;
   ushort uVar3;
-  char cVar5;
+  ushort uVar4;
   char cVar6;
-  short sVar4;
+  char cVar7;
+  short sVar5;
   undefined4 unaff_D2;
-  byte bVar7;
-  byte *pbVar8;
+  byte bVar8;
+  byte *pbVar9;
   byte service_id;
   undefined2 local_18;
   byte abStack_16 [10];
   undefined4 local_c;
   undefined4 local_8;
   
-                    /* From J90280.05 @ 0x012484 (confidence: 88%) */
-  uVar3 = _DAT_00fff404;
+  uVar3 = Ram00fff404;
   if ((j1708_transmit_buffer_2_32_ddc6.reserved_28[2] != 0) &&
-     (cVar5 = cm550_circularBufferEmptyCheck(), cVar5 != '\0')) {
+     (cVar6 = cm550_circularBufferEmptyCheck(), cVar6 != '\0')) {
     j1708_transmit_buffer_2_32_ddc6.reserved_28[2] = 0;
     cm550_diagnosticMessageQueueWrite((byte)((uint)unaff_D2 >> 0x10));
   }
   do {
-    if ((499 < (int)((uint)_DAT_00fff404 - (uint)uVar3)) ||
+    uVar4 = Ram00fff404;
+    if ((499 < (int)((uint)uVar4 - (uint)uVar3)) ||
        ((_j1708_receive_buffer_pointer_2_32_dca2 == _j1708_receive_buffer_pointer_2_32_dcaa &&
         (j1708_receive_buffer_full_flag_1_true_0_false != '\x01')))) {
       return;
     }
-    cVar5 = *_j1708_receive_buffer_pointer_2_32_dcaa;
+    cVar6 = *_j1708_receive_buffer_pointer_2_32_dcaa;
     local_8._3_1_ = (char)_j1708_receive_buffer_pointer_2_32_dcaa;
-    cVar6 = (char)local_8;
+    cVar7 = (char)local_8;
     local_8._0_3_ = (undefined3)((uint)_j1708_receive_buffer_pointer_2_32_dcaa >> 8);
     local_8 = (byte *)CONCAT31(local_8._0_3_,(char)local_8 + '\x01');
     if (*local_8 < 8) {
       if ((_diagnostic_subsystem_enable_flags & 1) != 0) {
-        bVar7 = (byte)((uint)unaff_D2 >> 0x10);
+        bVar8 = (byte)((uint)unaff_D2 >> 0x10);
         switch(*local_8) {
         case 3:
-          local_8 = (byte *)CONCAT31(local_8._0_3_,cVar6 + '\x02');
-          bVar7 = 0;
-          pbVar8 = abStack_16;
+          local_8 = (byte *)CONCAT31(local_8._0_3_,cVar7 + '\x02');
+          bVar8 = 0;
+          pbVar9 = abStack_16;
           do {
-            *pbVar8 = *local_8;
+            *pbVar9 = *local_8;
             local_8 = (byte *)CONCAT31(local_8._0_3_,(char)local_8 + '\x01');
-            bVar7 = bVar7 + 1;
-            pbVar8 = pbVar8 + 1;
-          } while (bVar7 < 10);
-          cVar6 = sensorRangeValidation(abStack_16);
-          if (cVar6 == '\0') {
+            bVar8 = bVar8 + 1;
+            pbVar9 = pbVar9 + 1;
+          } while (bVar8 < 10);
+          cVar7 = sensorRangeValidation(abStack_16);
+          if (cVar7 == '\0') {
             switch(*local_8) {
             case 0x40:
-              cVar6 = cm550_waterInFuelFaultClear();
+              cVar7 = cm550_waterInFuelFaultClear();
               break;
             case 0x41:
-              cVar6 = cm550_FUN_000118cc();
+              cVar7 = cm550_FUN_000118cc();
               break;
             case 0x42:
-              cVar6 = cm550_activateHighRpmShutdownFlag();
+              cVar7 = cm550_activateHighRpmShutdownFlag();
               break;
             case 0x43:
-              cVar6 = cm550_triggerDiagnosticSystemReset();
+              cVar7 = cm550_triggerDiagnosticSystemReset();
               break;
             default:
-              cVar6 = '\x18';
+              cVar7 = '\x18';
               break;
             case 0x50:
-              cVar6 = '\0';
+              cVar7 = '\0';
               break;
             case 0x51:
-              cVar6 = cm550_memoryPatchingSystem();
+              cVar7 = cm550_memoryPatchingSystem();
               break;
             case 0x52:
-              cVar6 = cm550_FUN_00011a68();
+              cVar7 = cm550_FUN_00011a68();
               break;
             case 0x53:
-              cVar6 = '\x04';
+              cVar7 = '\x04';
               break;
             case 0x54:
-              cVar6 = cm550_FUN_00011a74();
+              cVar7 = cm550_FUN_00011a74();
             }
-            if (cVar6 != -1) {
+            if (cVar7 != -1) {
               cm550_diagnosticMessageQueueWrite((byte)((uint)unaff_D2 >> 0x10));
             }
           }
@@ -10580,7 +10634,7 @@ void diagnosticCommandDispatcher(void)
           }
           break;
         case 4:
-          local_8 = (byte *)CONCAT31(local_8._0_3_,cVar6 + '\x02');
+          local_8 = (byte *)CONCAT31(local_8._0_3_,cVar7 + '\x02');
           switch(*local_8) {
           case 100:
             cm550_systemControl64();
@@ -10591,10 +10645,10 @@ void diagnosticCommandDispatcher(void)
             break;
           case 0x66:
             _bit_2_0_15_enables_j1939_71_engine_broadcast_1_on_0_off = 0;
-            cm550_diagnosticMessageQueueWrite(bVar7);
+            cm550_diagnosticMessageQueueWrite(bVar8);
             break;
           default:
-            cm550_diagnosticMessageQueueWrite(bVar7);
+            cm550_diagnosticMessageQueueWrite(bVar8);
             break;
           case 0x69:
             cm550_waterInFuelDetectionStateInit();
@@ -10603,17 +10657,17 @@ void diagnosticCommandDispatcher(void)
           case 0x70:
           case 0x72:
           case 0x76:
-            cm550_diagnosticMessageQueueWrite(bVar7);
+            cm550_diagnosticMessageQueueWrite(bVar8);
             break;
           case 0x71:
             _bit_2_0_15_enables_j1939_71_engine_broadcast_1_on_0_off =
                  _bit_2_0_15_enables_j1939_71_engine_broadcast_1_on_0_off | 1;
-            cm550_diagnosticMessageQueueWrite(bVar7);
+            cm550_diagnosticMessageQueueWrite(bVar8);
             break;
           case 0x73:
             _bit_2_0_15_enables_j1939_71_engine_broadcast_1_on_0_off =
                  _bit_2_0_15_enables_j1939_71_engine_broadcast_1_on_0_off | 2;
-            cm550_diagnosticMessageQueueWrite(bVar7);
+            cm550_diagnosticMessageQueueWrite(bVar8);
             break;
           case 0x74:
             cm550_systemControl74();
@@ -10623,41 +10677,41 @@ void diagnosticCommandDispatcher(void)
           }
           break;
         case 5:
-          local_8 = (byte *)CONCAT31(local_8._0_3_,cVar6 + '\x02');
+          local_8 = (byte *)CONCAT31(local_8._0_3_,cVar7 + '\x02');
           if (((*local_8 & 0xf) == 0) && ((*local_8 & 0xf0) != 0xf0)) {
-            cVar2 = cVar5 + -1 + cVar6;
+            cVar2 = cVar6 + -1 + cVar7;
             local_c = (undefined1 *)CONCAT31(local_8._0_3_,cVar2);
             uVar1 = *local_c;
             local_c = (undefined1 *)CONCAT31(local_8._0_3_,cVar2 + '\x01');
             local_18 = CONCAT11(*local_c,uVar1);
-            local_c = (undefined1 *)CONCAT31(local_8._0_3_,cVar6 + '\x03');
-            sVar4 = cm550_crc16Calculate((short)local_c);
-            if (sVar4 != local_18) {
+            local_c = (undefined1 *)CONCAT31(local_8._0_3_,cVar7 + '\x03');
+            sVar5 = cm550_crc16Calculate((short)local_c);
+            if (sVar5 != local_18) {
               cm550_diagnosticMessageQueueWrite((byte)((uint)unaff_D2 >> 0x10));
               break;
             }
           }
-          bVar7 = *local_8 & 0xf0;
+          bVar8 = *local_8 & 0xf0;
           service_id = (byte)((uint)unaff_D2 >> 0x10);
-          if (bVar7 == 0x60) {
+          if (bVar8 == 0x60) {
             cm550_diagnosticMemoryReadHandler(service_id);
           }
-          else if (bVar7 == 0xc0) {
+          else if (bVar8 == 0xc0) {
             cm550_diagnosticMemoryReadHandler(service_id);
           }
-          else if (bVar7 == 0x80) {
+          else if (bVar8 == 0x80) {
             cm550_diagnosticMemoryWriteHandler(service_id);
           }
-          else if (bVar7 == 0xe0) {
+          else if (bVar8 == 0xe0) {
             cm550_diagnosticMemoryReadHandler(service_id);
           }
-          else if (bVar7 == 0xa0) {
+          else if (bVar8 == 0xa0) {
             cm550_diagnosticMemoryWriteHandler(service_id);
           }
-          else if (bVar7 == 0xf0) {
+          else if (bVar8 == 0xf0) {
             cm550_multiPacketTransmitHandler();
           }
-          else if (bVar7 == 0xb0) {
+          else if (bVar8 == 0xb0) {
             cm550_multiPacketReceiveHandler();
           }
           else {
@@ -10665,9 +10719,9 @@ void diagnosticCommandDispatcher(void)
           }
           break;
         case 6:
-          local_8 = (byte *)CONCAT31(local_8._0_3_,cVar6 + '\x02');
+          local_8 = (byte *)CONCAT31(local_8._0_3_,cVar7 + '\x02');
           if ((*local_8 == 't') && (j1708_rx_state_t_0080dcaf.buffer_full_flag != 0)) {
-            cm550_diagnosticMessageQueueWrite(bVar7);
+            cm550_diagnosticMessageQueueWrite(bVar8);
             j1708_rx_state_t_0080dcaf.buffer_full_flag =
                  j1708_rx_state_t_0080dcaf.buffer_full_flag - 1;
             j1708_transmit_buffer_2_32_ddc6.reserved_28[0] = 0;
@@ -10701,9 +10755,10 @@ void diagnosticCommandDispatcher(void)
       buildPgn65228Dm3ClearInitMessage();
     }
     _j1708_receive_buffer_pointer_2_32_dcaa =
-         (char *)CONCAT31(_j1708_receive_buffer_pointer_2_32_dcaa,cVar5 + '\x01' + DAT_0080dcad);
+         (char *)CONCAT31(_j1708_receive_buffer_pointer_2_32_dcaa,cVar6 + '\x01' + DAT_0080dcad);
     j1708_receive_buffer_full_flag_1_true_0_false = '\0';
-    _DAT_00fffc0a = _DAT_00fffc0a | 0x20;
+    uVar4 = Ram00fffc0a;
+    Ram00fffc0a = uVar4 | 0x20;
   } while( true );
 }
 
@@ -10713,15 +10768,12 @@ void diagnosticCommandDispatcher(void)
 // Function: cm550_safeDivideWithClamp @ 0x0001645e
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 int cm550_safeDivideWithClamp(dword dividend,division_operand_t divisor)
 
 {
   uint uVar1;
   uint uVar2;
   
-                    /* From J90280.05 @ 0x012966 (confidence: 100%) */
   if ((((int)dividend < 0) || ((int)divisor < 0)) && ((-1 < (int)dividend || (-1 < (int)divisor))))
   {
     if ((short)divisor.value * -0x8000 < 0) {
@@ -10761,8 +10813,6 @@ int cm550_safeDivideWithClamp(dword dividend,division_operand_t divisor)
 // Function: cm550_clampedDivisionCalculator @ 0x0001651e
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 uint cm550_clampedDivisionCalculator
                (dword dividend,division_operand_t divisor,division_operand_t max_result)
 
@@ -10770,7 +10820,6 @@ uint cm550_clampedDivisionCalculator
   uint uVar1;
   uint uVar2;
   
-                    /* From J90280.05 @ 0x012a26 (confidence: 100%) */
   if ((((int)dividend < 0) || ((int)divisor < 0)) && ((-1 < (int)dividend || (-1 < (int)divisor))))
   {
     if (-1 < (int)max_result) {
@@ -10825,7 +10874,6 @@ uint cm550_clampedDivisionCalculator
 uint cm550_param_address_calc(uint param_1,undefined4 param_2)
 
 {
-                    /* From J90280.05 @ 0x012afa (confidence: 100%) */
   if ((uint)param_2._0_2_ * 0xffff <= param_1) {
     return CONCAT22((short)((uint)param_2._0_2_ * 0xffff >> 0x10),0xffff);
   }
@@ -10838,14 +10886,11 @@ uint cm550_param_address_calc(uint param_1,undefined4 param_2)
 // Function: cm550_limitedDivisionCalculator @ 0x00016628
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 uint cm550_limitedDivisionCalculator(dword dividend,dword divisor,dword limit_value)
 
 {
   uint uVar1;
   
-                    /* From J90280.05 @ 0x012b30 (confidence: 100%) */
   uVar1 = (uint)divisor._0_2_ * (divisor & 0xffff);
   if (uVar1 <= dividend) {
     return CONCAT22((short)(uVar1 >> 0x10),divisor._2_2_);
@@ -10882,7 +10927,6 @@ void cm550_multiPacketTransmitHandler(void)
   undefined4 local_c;
   undefined4 local_8;
   
-                    /* From J90280.05 @ 0x012b74 (confidence: 88%) */
   pbVar3 = _j1708_transmit_buffer_0_2_32;
   uVar10 = (undefined1)((uint)unaff_D2 >> 0x18);
   bVar7 = (byte)((uint)unaff_D2 >> 0x10);
@@ -11000,7 +11044,6 @@ void cm550_multiPacketReceiveHandler(void)
   undefined2 local_a;
   undefined4 local_8;
   
-                    /* From J90280.05 @ 0x012d76 (confidence: 88%) */
   uVar9 = (undefined1)((uint)unaff_D2 >> 0x18);
   response_type = (byte)((uint)unaff_D2 >> 0x10);
   local_8._3_1_ = (char)_j1708_receive_buffer_pointer_2_32_dcaa;
@@ -11188,7 +11231,6 @@ uint cm550_circularBufferEmptyCheck(void)
 {
   uint in_D0;
   
-                    /* From J90280.05 @ 0x013134 (confidence: 94%) */
   if (_circular_buffer_byte_count == 0) {
     return 1;
   }
@@ -11202,7 +11244,6 @@ uint cm550_circularBufferEmptyCheck(void)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 uint cm550_parameterCircularBufferWrite(dword dest_address,byte *source_ptr,word byte_count)
 
@@ -11210,7 +11251,6 @@ uint cm550_parameterCircularBufferWrite(dword dest_address,byte *source_ptr,word
   uint uVar1;
   ushort in_stack_0000000c;
   
-                    /* From J90280.05 @ 0x013144 (confidence: 92%) */
   if ((uint)in_stack_0000000c + (uint)_circular_buffer_byte_count < 0x501) {
     _circular_buffer_last_address_offset = (short)(dest_address - 0x803b08) + -2;
     uVar1 = CONCAT22((short)(dest_address - 0x803b08 >> 0x10),_circular_buffer_last_address_offset);
@@ -11241,7 +11281,6 @@ uint cm550_parameterCircularBufferWrite(dword dest_address,byte *source_ptr,word
 void cm550_emptyPlaceholderFunction(void)
 
 {
-                    /* From J90280.05 @ 0x013240 (confidence: 88%) */
   return;
 }
 
@@ -11256,18 +11295,24 @@ void cm550_emptyPlaceholderFunction(void)
 void mc68k_tpuTransmissionTrigger(void)
 
 {
-                    /* From J90280.05 @ 0x013242 (confidence: 88%) */
-  if (((j1708_rx_state_t_0080dcaf.buffer_ptr_1._1_1_ == '\x01') && ((_DAT_00fffc0c & 0x20) == 0)) &&
+  ushort uVar1;
+  
+  if (((j1708_rx_state_t_0080dcaf.buffer_ptr_1._1_1_ == '\x01') &&
+      (uVar1 = Ram00fffc0c, (uVar1 & 0x20) == 0)) &&
      ((char)j1708_rx_state_t_0080dcaf.buffer_ptr_3 == '\0')) {
-    _DAT_00fffc0e = (ushort)*_j1708_transmit_buffer_2_32_dc98;
+    Ram00fffc0e = (ushort)*_j1708_transmit_buffer_2_32_dc98;
     j1708_rx_state_t_0080dcaf.buffer_ptr_3._3_1_ = '\x01';
-    _DAT_00fff45a = 0xfc8a;
-    _DAT_00fff458 = _DAT_00fff458 & 0x7fff | 0x4000;
+    Ram00fff45a = 0xfc8a;
+    uVar1 = Ram00fff458;
+    Ram00fff458 = uVar1 & 0x7fff;
+    uVar1 = Ram00fff458;
+    Ram00fff458 = uVar1 | 0x4000;
     j1708_rx_state_t_0080dcaf.buffer_ptr_1._1_1_ = '\0';
     j1708_rx_state_t_0080dcaf._7_4_ = 0;
     j1708_rx_state_t_0080dcaf.buffer_ptr_1._2_1_ = 1;
     j1708_rx_state_t_0080dcaf.buffer_ptr_2._0_1_ = *_j1708_transmit_buffer_2_32_dc98;
-    _DAT_00fffc0a = _DAT_00fffc0a | 0x20;
+    uVar1 = Ram00fffc0a;
+    Ram00fffc0a = uVar1 | 0x20;
   }
   return;
 }
@@ -11286,7 +11331,6 @@ uint cm550_highRpmEngineProtectionStateMachine(void)
   ushort uVar1;
   uint uVar2;
   
-                    /* From J90280.05 @ 0x018c62 (confidence: 80%) */
   if (((_feature_enable_flags_word & 2) == 0) ||
      (((_high_rpm_fuel_limit_idle != 0 && (_smoke_limiter_output_value != 1)) ||
       (_DAT_0080ccc8 != 0)))) {
@@ -11413,7 +11457,6 @@ uint cm550_highRpmEngineProtectionStateMachine(void)
 ushort cm550_fuelTemperatureLimitingSecondary(void)
 
 {
-                    /* From J90280.05 @ 0x031a76 (confidence: 67%) */
   _DAT_0080ccc8 = 0;
   if ((_feature_enable_flags_word & 2) == 0) {
     _high_rpm_fuel_limit_active = 0;
@@ -11463,7 +11506,6 @@ void cm550_FUN_00017120(void)
 void cm550_canControllerConfigInit(void)
 
 {
-                    /* From J90280.05 @ 0x013890 (confidence: 94%) */
   switch(speed_measurement_mode) {
   case 0:
     mc68k_can1TimerBufferInitDivided();
@@ -11497,7 +11539,6 @@ void cm550_canControllerConfigInit(void)
 void cm550_derateProtectionSlowCycle20Coordinator(void)
 
 {
-                    /* From J90280.05 @ 0x01754c (confidence: 69%) */
   cm550_FUN_00019e8e();
   return;
 }
@@ -11511,7 +11552,6 @@ void cm550_derateProtectionSlowCycle20Coordinator(void)
 void caseD_3(void)
 
 {
-                    /* From J90280.05 @ 0x0175a6 (confidence: 64%) */
   mc68k_can1TimerBufferInitConditional();
   cm550_FUN_0001a89a();
   cm550_FUN_0001a8a2();
@@ -11536,7 +11576,6 @@ uint cm550_fuel_limit_arbitrator(void)
   word scaling_factor;
   
   scaling_factor = (word)((uint)unaff_A2 >> 0x10);
-                    /* From J90280.05 @ 0x01892a (confidence: 72%) */
   input_value = (word)((uint)unaff_D2 >> 0x10);
   if (_main_lost_counter_timeout_counter_for_primary_speed_sensor_0_10000 == 0) {
     if (_DAT_0080cd06 != 0) {
@@ -11777,7 +11816,6 @@ uint cm550_fuel_limit_arbitrator(void)
 void cm550_engineRpmSourceInit(void)
 
 {
-                    /* From J90280.05 @ 0x0137ac (confidence: 63%) */
   _DAT_008005ae = 0;
   _DAT_008005aa = &time_constant_for_the_filter_used_on_the_2_n_pulse_average_0_1;
   _governor_rpm_target_adjusted =
@@ -11798,7 +11836,6 @@ void cm550_engineRpmSourceInit(void)
 void cm550_rpmBasedFuelLimitCalculator(void)
 
 {
-                    /* From J90280.05 @ 0x013930 (confidence: 75%) */
   if (((_smoke_limiter_output_value == 2) || (_smoke_limiter_output_value == 6)) ||
      (_smoke_limiter_output_value == 7)) {
     _crank_adjusted_initial_rpm_0_1000 =
@@ -11846,7 +11883,6 @@ void cm550_governorFuelModeBlendCalculator(void)
   ushort uVar1;
   ushort uVar2;
   
-                    /* From J90280.05 @ 0x01e3dc (confidence: 67%) */
   if (_alpha_blend_factor == 0x4000) {
     _DAT_008005c8 = _crank_fuel_limit_source_selector;
     _DAT_008005d0 = _crank_exit_fuel_adjustment_0_100 + _DAT_00807ef4;
@@ -11896,7 +11932,6 @@ void cm550_governorFuelModeBlendCalculator(void)
 void cm550_rpmBasedFuelTimingInterpolation(void)
 
 {
-                    /* From J90280.05 @ 0x013bd8 (confidence: 73%) */
   if (((_smoke_limiter_output_value == 2) || (_smoke_limiter_output_value == 6)) ||
      (_smoke_limiter_output_value == 7)) {
     cm550_governorFuelModeBlendCalculator();
@@ -11933,7 +11968,6 @@ uint cm550_frictionalLoadTorqueInterpolator(void)
   uint uVar3;
   
   uVar3 = in_D0 & 0xffff0000;
-                    /* From J90280.05 @ 0x013d86 (confidence: 75%) */
   if (((_status_32_word_bit_mapped_system_error_status_word_2_0_1 & 1) == 0) ||
      (uVar3 = CONCAT22((short)(in_D0 >> 0x10),_fault_latch_status_word_2) & 0xffff0001,
      (_fault_latch_status_word_2 & 1) == 0)) {
@@ -11985,7 +12019,6 @@ uint cm550_frictionalLoadTorqueInterpolator(void)
 void cm550_rpmSourceSelectorForFrictionalLoad(void)
 
 {
-                    /* From J90280.05 @ 0x013d66 (confidence: 75%) */
   if (_DAT_00803f8a == 1) {
     _crank_fuel_limit_source_selector =
          _engine_speed_at_which_the_algorithm_stops_commanding_fuel_0_1400;
@@ -12065,7 +12098,6 @@ uint cm550_FUN_00017baa(void)
 void cm550_peakTorqueFuelCorrection(void)
 
 {
-                    /* From J90280.05 @ 0x013e82 (confidence: 75%) */
   if ((_crank_exit_time_0_13107 < _crank_exit_timer_0_13107) && (_DAT_008005b2 == 0)) {
     _fsmxthfl_calc_input =
          _crank_reentry_speed_offset_1000_1000 + _crank_initial_reentry_speed_0_1000;
@@ -12089,7 +12121,6 @@ void cm550_peakTorqueFuelCorrection(void)
 void cm550_engineModeTransitionStateUpdater(void)
 
 {
-                    /* From J90280.05 @ 0x013ecc (confidence: 88%) */
   if (((_smoke_limiter_output_value == 2) || (_smoke_limiter_output_value == 6)) ||
      (_smoke_limiter_output_value == 7)) {
     _timing_command_before_cranking_is_envoked_0_120 = _fuel_timing_advance_value;
@@ -12111,7 +12142,6 @@ void cm550_engineModeTransitionStateUpdater(void)
 void cm550_engineModeTransitionHandler(void)
 
 {
-                    /* From J90280.05 @ 0x013f06 (confidence: 88%) */
   if (((_DAT_008005f0 == 1) && (_smoke_limiter_output_value == 2)) ||
      ((_DAT_008005f0 == 3 && (_smoke_limiter_output_value == 7)))) {
     cm550_frictionalLoadTorqueInterpolator();
@@ -12134,7 +12164,6 @@ void cm550_engineModeTransitionHandler(void)
 void cm550_ioOutputFlagMappingSlowCycle40Coordinator(void)
 
 {
-                    /* From J90280.05 @ 0x026d98 (confidence: 77%) */
   if ((_smoke_limiter_output_value == 6) &&
      (_engine_rpm_primary < _crank_adjusted_initial_rpm_0_1000)) {
     if ((int)(uint)_crank_jumpstart_tvo_ramp_rate_0_100 <
@@ -12177,7 +12206,6 @@ void cm550_ioOutputFlagMappingSlowCycle40Coordinator(void)
 void cm550_frictionalLoadTorqueManagementSlowCycle40Coordinator(void)
 
 {
-                    /* From J90280.05 @ 0x013fe2 (confidence: 75%) */
   if ((((_smoke_limiter_output_value == 2) || (_smoke_limiter_output_value == 6)) &&
       (_crank_exit_fuel_ramp_rpm_0_1000 < _engine_rpm_primary)) &&
      (_crank_exit_fuel_adjustment_0_100 =
@@ -12203,7 +12231,6 @@ void cm550_frictionalLoadTorqueManagementSlowCycle40Coordinator(void)
 void cm550_engineOperatingModeStateTrackingSlowCycle40Coordinator(void)
 
 {
-                    /* From J90280.05 @ 0x01403e (confidence: 75%) */
   if (_smoke_limiter_output_value == 3) {
     _crank_exit_timer_0_13107 = _crank_exit_timer_0_13107 + 1;
   }
@@ -12234,7 +12261,6 @@ void cm550_engineOperatingModeStateTrackingSlowCycle40Coordinator(void)
 void cm550_frictionalLoadTorqueTransitionHandler(void)
 
 {
-                    /* From J90280.05 @ 0x014090 (confidence: 81%) */
   if (((_DAT_008005f8 == 3) && (_smoke_limiter_output_value == 7)) &&
      (_crank_exit_time_0_13107 < _crank_exit_timer_0_13107)) {
     _fueling_val_to_be_added_to_crank_initial_fuel_val_0_100 =
@@ -12257,7 +12283,6 @@ void cm550_frictionalLoadTorqueTransitionHandler(void)
 void vp44_fuelLimitParameterPointerSetup(void)
 
 {
-                    /* From J90280.05 @ 0x018590 (confidence: 63%) */
   _DAT_008005b6 = &vp44_fault_timer_threshold;
   _DAT_008005bc = 0x8071f6;
   _DAT_008005b4 = 2;
@@ -12285,7 +12310,6 @@ void vp44_fuelLimitParameterPointerSetup(void)
 void vp44TimingFaultMonitor(void)
 
 {
-                    /* From J90280.05 @ 0x0344e8 (confidence: 75%) */
   if (vp44_timing_fault_active == '\0') {
     if (_engine_rpm_primary < _intake_manifold_temp_threshold) {
       _vp44_timing_fault_debounce_counter = 0;
@@ -12482,7 +12506,6 @@ void cm550_FUN_00018384(void)
 void cm550_canRpmModeConfigInit(void)
 
 {
-                    /* From J90280.05 @ 0x0138fe (confidence: 88%) */
   if (_determines_how_engine_position_is_sync_d_to_cam_0 == 1) {
     mc68k_dutyCycleMonitorAltCanInit();
     return;
@@ -12653,7 +12676,6 @@ ushort cm550_engineProtectionMultiStateSlowCycle40Coordinator(void)
   ushort uVar1;
   
   uVar1 = _calibration_feature_enable_flags_word_2 & 0x10;
-                    /* From J90280.05 @ 0x014546 (confidence: 88%) */
   if ((_calibration_feature_enable_flags_word_2 & 0x10) == 0) {
     _EPESLM = _maximum_rated_engine_speed_0_5000;
     _engine_protection_fuel_limit = _peak_fueling_calibration_value;
@@ -12703,7 +12725,6 @@ ushort cm550_protectionThresholdCalculationHelper
   ushort uVar3;
   ushort uVar4;
   
-                    /* From J90280.05 @ 0x0145d4 (confidence: 100%) */
   if (param_4._0_2_ == 0) {
     uVar3 = *param_3;
     uVar1 = *(ushort *)(param_2 + 6);
@@ -12743,7 +12764,6 @@ undefined4 cm550_protectionPercentageCalculator(undefined4 param_1,undefined4 pa
   int iVar1;
   short sVar2;
   
-                    /* From J90280.05 @ 0x01462e (confidence: 100%) */
   iVar1 = ((int)(short)(param_1._0_2_ - param_1._2_2_) << 8) /
           (int)(short)(param_2._0_2_ - param_1._2_2_);
   sVar2 = (short)iVar1;
@@ -12769,7 +12789,6 @@ undefined4 cm550_protectionPercentageCalculator(undefined4 param_1,undefined4 pa
 void vp44_engineProtectionSystemInit(void)
 
 {
-                    /* From J90280.05 @ 0x014664 (confidence: 75%) */
   _protection_system_sensor_data_ptr =
        &coolant_level_low_switch_used_as_an_input_source_by_t_1_true_0_false;
   _mask_for_input_of_coolant_level_0_65535 = 1;
@@ -12855,8 +12874,6 @@ void vp44_engineProtectionSystemInit(void)
 // Function: cm550_protectionConditionEvaluator @ 0x00018968
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 uint cm550_protectionConditionEvaluator(word *threshold_ptr,dword *state_ptr,word sensor_value)
 
 {
@@ -12867,7 +12884,6 @@ uint cm550_protectionConditionEvaluator(word *threshold_ptr,dword *state_ptr,wor
   ushort unaff_D3w;
   short in_stack_0000000c;
   
-                    /* From J90280.05 @ 0x0147b6 (confidence: 98%) */
   uVar1 = *threshold_ptr;
   if ((uVar1 & 0x30) == 0) {
     uVar2 = *(ushort *)*state_ptr;
@@ -12925,7 +12941,6 @@ void protectionState0FaultDurationCounter(void)
   word *threshold_ptr;
   
   state_ptr = (dword *)&protection_system_sensor_data_ptr;
-                    /* From J90280.05 @ 0x01485a (confidence: 86%) */
   for (threshold_ptr = (word *)&engine_protection_config_table_base;
       threshold_ptr < &load_breakpoint_table; threshold_ptr = threshold_ptr + 0x12) {
     if (*(short *)((int)state_ptr + 0x16) == 0) {
@@ -12975,7 +12990,6 @@ uint cm550_diagnosticProtectionEvaluator(void)
   uint uVar4;
   word *threshold_ptr;
   
-                    /* From J90280.05 @ 0x0148f8 (confidence: 80%) */
   uVar4 = _calibration_feature_enable_flags_word_2 & 0x10;
   if ((((((_calibration_feature_enable_flags_word_2 & 0x10) != 0) &&
         (uVar4 = _calibration_feature_enable_flags_word_2 & 1,
@@ -13031,8 +13045,6 @@ uint cm550_diagnosticProtectionEvaluator(void)
 // Function: cm550_diagnosticProtectionProcessor @ 0x00018c1c
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 ushort cm550_diagnosticProtectionProcessor
                  (word *config_ptr,dword state_offset,dword threshold_value)
 
@@ -13041,7 +13053,6 @@ ushort cm550_diagnosticProtectionProcessor
   undefined2 uVar2;
   ushort uVar3;
   
-                    /* From J90280.05 @ 0x014a4a (confidence: 100%) */
   uVar3 = *config_ptr;
   if ((uVar3 & 1) != 0) {
     sVar1 = cm550_protectionConditionEvaluator(config_ptr,(dword *)state_offset,0);
@@ -13087,7 +13098,6 @@ ushort cm550_protectionState1DiagnosticValidator(void)
   undefined *state_offset;
   
   uVar1 = _calibration_feature_enable_flags_word_2 & 1;
-                    /* From J90280.05 @ 0x014ae4 (confidence: 88%) */
   if ((((_calibration_feature_enable_flags_word_2 & 1) != 0) &&
       (uVar1 = _calibration_feature_enable_flags_word_2 & 0x20,
       (_calibration_feature_enable_flags_word_2 & 0x20) != 0)) &&
@@ -13198,7 +13208,6 @@ void cm550_FUN_00018e0c(void)
 void cm550_protectionThresholdPointerInit(void)
 
 {
-                    /* From J90280.05 @ 0x014cfc (confidence: 75%) */
   _DAT_00800616 = (uint)_maximum_rated_engine_speed_0_5000 << 0x10;
   _DAT_00800612 = &maximum_rpm_limit_filter_time_constant_0_1_0;
   _EPESLM = _maximum_rated_engine_speed_0_5000;
@@ -13213,14 +13222,12 @@ void cm550_protectionThresholdPointerInit(void)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 void incrementDiagnosticCounters(dword source_ptr,dword dest_ptr,word condition_flag)
 
 {
   short in_stack_0000000c;
   
-                    /* From J90280.05 @ 0x014d24 (confidence: 100%) */
   if (in_stack_0000000c == 0) {
     if (*(short *)(dest_ptr + 0x1a) != -1) {
       *(short *)(dest_ptr + 0x1a) = *(short *)(dest_ptr + 0x1a) + 1;
@@ -13435,7 +13442,6 @@ uint cm550_protectionCalculationHelper(undefined4 param_1,uint param_2)
 {
   uint in_D0;
   
-                    /* From J90280.05 @ 0x015038 (confidence: 100%) */
   if ((param_2 & 0x40000) == 0) {
     if (((param_2 & 0x80000) != 0) && (param_1._0_2_ < param_1._2_2_)) {
       return 1;
@@ -13465,7 +13471,6 @@ ushort protectionStateProcessor(undefined4 param_1)
   short *psVar5;
   int iVar6;
   
-                    /* From J90280.05 @ 0x015078 (confidence: 88%) */
   if (param_1._0_2_ == 0) {
     uVar3 = *(ushort *)(_bit_pattern_index_result + 0x18);
     uVar2 = _protection_config_table_ptr[0xd];
@@ -13529,7 +13534,6 @@ undefined8 protectionStateValidator(undefined4 param_1)
   int iVar6;
   short *psVar7;
   
-                    /* From J90280.05 @ 0x01517c (confidence: 88%) */
   if (param_1._0_2_ == 0) {
     puVar5 = (ushort *)(_bit_pattern_index_result + 0x18);
     uVar4 = *(ushort *)(_protection_config_table_ptr + 0x1a);
@@ -13590,7 +13594,6 @@ void cm550_protectionState3bRpmMonitor(void)
   
   _protection_state_data_ptr = (undefined4 *)&protection_system_sensor_data_ptr;
   _bit_pattern_index_result = (short *)&coolant_level_fueling_severity_index_0_0_1_0;
-                    /* From J90280.05 @ 0x015272 (confidence: 75%) */
   for (_protection_config_table_ptr = (ushort *)&engine_protection_config_table_base;
       _protection_config_table_ptr < &load_breakpoint_table;
       _protection_config_table_ptr = _protection_config_table_ptr + 0x12) {
@@ -13688,7 +13691,6 @@ void cm550_protectionState3bRpmMonitor(void)
 void cm550_shutdownMinimumSelector29(void)
 
 {
-                    /* From J90280.05 @ 0x01542a (confidence: 81%) */
   if (_engine_protection_fuel_limit < j1708_transmit_buffer_2_32_ddc6.base_ptr._2_2_) {
     j1708_transmit_buffer_2_32_ddc6.base_ptr._2_2_ = _engine_protection_fuel_limit;
     _indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 = 0x1d;
@@ -13824,7 +13826,6 @@ void cm550_FUN_00019702(void)
 void cm550_initShutdownLimitVariables(void)
 
 {
-                    /* From J90280.05 @ 0x01562e (confidence: 69%) */
   _oil_pressure_fault_inhibit_timer = 0;
   _engine_protection_fueling_severity_filtered = 0;
   _DAT_00800632 = 2;
@@ -13843,21 +13844,24 @@ void cm550_initShutdownLimitVariables(void)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void mc68k_can1TimerBufferInitDivided(void)
+int mc68k_can1TimerBufferInitDivided(void)
 
 {
-  int *piVar1;
+  ushort uVar1;
+  int *piVar2;
   
-                    /* From J90280.05 @ 0x015fb6 (confidence: 81%) */
-  _DAT_00fffe1c = _DAT_00fffe1c & 0xffcf;
-  _DAT_00fffe0a = _DAT_00fffe0a & 0xfbff;
-  _DAT_00fffe20 = _DAT_00fffe20 & 0xfbff;
+  uVar1 = Ram00fffe1c;
+  Ram00fffe1c = uVar1 & 0xffcf;
+  uVar1 = Ram00fffe0a;
+  Ram00fffe0a = uVar1 & 0xfbff;
+  uVar1 = Ram00fffe20;
+  Ram00fffe20 = uVar1 & 0xfbff;
   _eps_control_mode_param_1 =
        (int *)(&sample_crank_degrees_backup_crank_degrees_between_vss_inter_0_36000 +
               (uint)period_meas_per_cam_number_of_primary_speed_pulse_periods_mea_0_255 * 4);
-  for (piVar1 = (int *)&pulse_period_table_table_containing_main_speed_pulse_per_1000_65535;
-      piVar1 <= _eps_control_mode_param_1; piVar1 = piVar1 + 1) {
-    *piVar1 = _initialization_pulse_period_initial_value_for_pulse_period_table_2_32;
+  for (piVar2 = (int *)&pulse_period_table_table_containing_main_speed_pulse_per_1000_65535;
+      piVar2 <= _eps_control_mode_param_1; piVar2 = piVar2 + 1) {
+    *piVar2 = _initialization_pulse_period_initial_value_for_pulse_period_table_2_32;
   }
   _eps_override_output_state = &pulse_period_table_table_containing_main_speed_pulse_per_1000_65535;
   if (_DAT_00807ec8 < 2) {
@@ -13876,19 +13880,32 @@ void mc68k_can1TimerBufferInitDivided(void)
        _initialization_pulse_period_initial_value_for_pulse_period_table_2_32 *
        (uint)period_meas_per_average_num_of_primary_speed_pulse_periods_mea_0_255;
   _rpm_timer_isr_function_pointer = vp44_rpmTimerInterruptHandler2;
-  _DAT_00fffe0e = _DAT_00fffe0e & 0xf0ff | 0xd00;
-  _DAT_00ffffa2 = (ushort)DAT_00807ecc << 8;
-  _DAT_00ffffa6 = 0;
-  _DAT_00ffffa8 = 0;
-  _DAT_00ffffa0 = 0xb;
-  _DAT_00fffe14 = _DAT_00fffe14 & 0xffcf | 0x30;
-  _DAT_00fffe18 = _DAT_00fffe18 & 0xffcf | 0x30;
-  _DAT_00fffe0a = _DAT_00fffe0a | 0x400;
-  _DAT_00fffe1c = _DAT_00fffe1c & 0xffcf | 0x20;
+  uVar1 = Ram00fffe0e;
+  Ram00fffe0e = uVar1 & 0xf0ff;
+  uVar1 = Ram00fffe0e;
+  Ram00fffe0e = uVar1 | 0xd00;
+  Ram00ffffa2 = (ushort)DAT_00807ecc << 8;
+  Ram00ffffa6 = 0;
+  Ram00ffffa8 = 0;
+  Ram00ffffa0 = 0xb;
+  uVar1 = Ram00fffe14;
+  Ram00fffe14 = uVar1 & 0xffcf;
+  uVar1 = Ram00fffe14;
+  Ram00fffe14 = uVar1 | 0x30;
+  uVar1 = Ram00fffe18;
+  Ram00fffe18 = uVar1 & 0xffcf;
+  uVar1 = Ram00fffe18;
+  Ram00fffe18 = uVar1 | 0x30;
+  uVar1 = Ram00fffe0a;
+  Ram00fffe0a = uVar1 | 0x400;
+  uVar1 = Ram00fffe1c;
+  Ram00fffe1c = uVar1 & 0xffcf;
+  uVar1 = Ram00fffe1c;
+  Ram00fffe1c = uVar1 | 0x20;
   if (speed_measurement_mode == '\0') {
     _speed_measurement_function_pointer = 0x17f74;
   }
-  return;
+  return (uint)DAT_00807ecc << 8;
 }
 
 
@@ -13899,33 +13916,46 @@ void mc68k_can1TimerBufferInitDivided(void)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void mc68k_phase2_slot_0_handler(void)
+int mc68k_phase2_slot_0_handler(void)
 
 {
+  ushort uVar1;
   byte *in_A1;
   int unaff_A3;
   int *unaff_A4;
   
-                    /* From J90280.05 @ 0x0171a6 (confidence: 80%) */
   _next_table_position_pointer_to_next_spot_in_pulse_per_800000_83ffff = unaff_A3 + (uint)*in_A1 * 4
   ;
   _pulse_period_sum_primary =
        *unaff_A4 * (uint)period_meas_per_cam_number_of_primary_speed_pulse_periods_mea_0_255;
   _average_pulse_period_time_period_over_1_cyl_of_primary_s_1000_65535 = *unaff_A4 * (uint)*in_A1;
   _rpm_timer_isr_function_pointer = vp44_rpmTimerInterruptHandler2;
-  _DAT_00fffe0e = _DAT_00fffe0e & 0xf0ff | 0xd00;
-  _DAT_00ffffa2 = (ushort)DAT_00807ecc << 8;
-  _DAT_00ffffa6 = 0;
-  _DAT_00ffffa8 = 0;
-  _DAT_00ffffa0 = 0xb;
-  _DAT_00fffe14 = _DAT_00fffe14 & 0xffcf | 0x30;
-  _DAT_00fffe18 = _DAT_00fffe18 & 0xffcf | 0x30;
-  _DAT_00fffe0a = _DAT_00fffe0a | 0x400;
-  _DAT_00fffe1c = _DAT_00fffe1c & 0xffcf | 0x20;
+  uVar1 = Ram00fffe0e;
+  Ram00fffe0e = uVar1 & 0xf0ff;
+  uVar1 = Ram00fffe0e;
+  Ram00fffe0e = uVar1 | 0xd00;
+  Ram00ffffa2 = (ushort)DAT_00807ecc << 8;
+  Ram00ffffa6 = 0;
+  Ram00ffffa8 = 0;
+  Ram00ffffa0 = 0xb;
+  uVar1 = Ram00fffe14;
+  Ram00fffe14 = uVar1 & 0xffcf;
+  uVar1 = Ram00fffe14;
+  Ram00fffe14 = uVar1 | 0x30;
+  uVar1 = Ram00fffe18;
+  Ram00fffe18 = uVar1 & 0xffcf;
+  uVar1 = Ram00fffe18;
+  Ram00fffe18 = uVar1 | 0x30;
+  uVar1 = Ram00fffe0a;
+  Ram00fffe0a = uVar1 | 0x400;
+  uVar1 = Ram00fffe1c;
+  Ram00fffe1c = uVar1 & 0xffcf;
+  uVar1 = Ram00fffe1c;
+  Ram00fffe1c = uVar1 | 0x20;
   if (speed_measurement_mode == '\0') {
     _speed_measurement_function_pointer = 0x17f74;
   }
-  return;
+  return (uint)DAT_00807ecc << 8;
 }
 
 
@@ -13937,7 +13967,6 @@ void mc68k_phase2_slot_0_handler(void)
 void cm550_delayWithWatchdogServiceWrapper2(void)
 
 {
-                    /* From J90280.05 @ 0x016548 (confidence: 67%) */
   mc68k_pwmTimerMode0Init();
   return;
 }
@@ -13951,7 +13980,6 @@ void cm550_delayWithWatchdogServiceWrapper2(void)
 void cm550_emptyStubFunction7(void)
 
 {
-                    /* From J90280.05 @ 0x016190 (confidence: 75%) */
   return;
 }
 
@@ -13966,18 +13994,18 @@ void cm550_emptyStubFunction7(void)
 undefined8 vp44_rpmTimerInterruptHandler2(void)
 
 {
-  uint uVar1;
+  ushort uVar1;
   undefined4 in_D0;
   undefined4 in_D1;
   
-                    /* From J90280.05 @ 0x016192 (confidence: 75%) */
-  uVar1 = _DAT_00ffffa8;
-  _io_control_handshake_state = _DAT_00ffffa8;
-  _DAT_00ffffa8 = _DAT_00ffffa8 & 0xffff;
+  _io_control_handshake_state = Ram00ffffa8;
+  Ram00ffffa8 = 0;
   _pulse_period_sum_primary =
-       uVar1 + (_pulse_period_sum_primary -
-               *_next_table_position_pointer_to_next_spot_in_pulse_per_800000_83ffff);
-  *_next_table_position_pointer_to_next_spot_in_pulse_per_800000_83ffff = uVar1;
+       _io_control_handshake_state +
+       (_pulse_period_sum_primary -
+       *_next_table_position_pointer_to_next_spot_in_pulse_per_800000_83ffff);
+  *_next_table_position_pointer_to_next_spot_in_pulse_per_800000_83ffff =
+       _io_control_handshake_state;
   if (_next_table_position_pointer_to_next_spot_in_pulse_per_800000_83ffff <
       _eps_control_mode_param_1) {
     _next_table_position_pointer_to_next_spot_in_pulse_per_800000_83ffff =
@@ -14057,7 +14085,8 @@ undefined8 vp44_rpmTimerInterruptHandler2(void)
   vp44_communication_state_machine();
   _unsigned_roll_over_counter_of_ess_main_isr_occurances_0_65535 =
        _unsigned_roll_over_counter_of_ess_main_isr_occurances_0_65535 + 1;
-  _DAT_00fffe20 = _DAT_00fffe20 & 0xfbff;
+  uVar1 = Ram00fffe20;
+  Ram00fffe20 = uVar1 & 0xfbff;
   return CONCAT44(in_D0,in_D1);
 }
 
@@ -14069,20 +14098,24 @@ undefined8 vp44_rpmTimerInterruptHandler2(void)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void mc68k_FUN_00019caa(void)
+int mc68k_FUN_00019caa(void)
 
 {
-  int *piVar1;
+  ushort uVar1;
+  int *piVar2;
   
-  _DAT_00fffe1c = _DAT_00fffe1c & 0xffcf;
-  _DAT_00fffe0a = _DAT_00fffe0a & 0xfbff;
-  _DAT_00fffe20 = _DAT_00fffe20 & 0xfbff;
+  uVar1 = Ram00fffe1c;
+  Ram00fffe1c = uVar1 & 0xffcf;
+  uVar1 = Ram00fffe0a;
+  Ram00fffe0a = uVar1 & 0xfbff;
+  uVar1 = Ram00fffe20;
+  Ram00fffe20 = uVar1 & 0xfbff;
   _eps_control_mode_param_1 =
        (int *)(&sample_crank_degrees_backup_crank_degrees_between_vss_inter_0_36000 +
               (uint)period_meas_per_cam_number_of_primary_speed_pulse_periods_mea_0_255 * 4);
-  for (piVar1 = (int *)&pulse_period_table_table_containing_main_speed_pulse_per_1000_65535;
-      piVar1 <= _eps_control_mode_param_1; piVar1 = piVar1 + 1) {
-    *piVar1 = _initialization_pulse_period_initial_value_for_pulse_period_table_2_32;
+  for (piVar2 = (int *)&pulse_period_table_table_containing_main_speed_pulse_per_1000_65535;
+      piVar2 <= _eps_control_mode_param_1; piVar2 = piVar2 + 1) {
+    *piVar2 = _initialization_pulse_period_initial_value_for_pulse_period_table_2_32;
   }
   _eps_override_output_state = &pulse_period_table_table_containing_main_speed_pulse_per_1000_65535;
   if (_DAT_00807ec8 < 2) {
@@ -14101,19 +14134,32 @@ void mc68k_FUN_00019caa(void)
        _initialization_pulse_period_initial_value_for_pulse_period_table_2_32 *
        (uint)period_meas_per_average_num_of_primary_speed_pulse_periods_mea_0_255;
   _rpm_timer_isr_function_pointer = vp44_FUN_00019e90;
-  _DAT_00fffe0e = _DAT_00fffe0e & 0xf0ff | 0xd00;
-  _DAT_00ffffa2 = (ushort)DAT_00807ecc << 8;
-  _DAT_00ffffa6 = 0;
-  _DAT_00ffffa8 = 0;
-  _DAT_00ffffa0 = 0xb;
-  _DAT_00fffe14 = _DAT_00fffe14 & 0xffcf | 0x30;
-  _DAT_00fffe18 = _DAT_00fffe18 & 0xffcf | 0x30;
-  _DAT_00fffe0a = _DAT_00fffe0a | 0x400;
-  _DAT_00fffe1c = _DAT_00fffe1c & 0xffcf | 0x20;
+  uVar1 = Ram00fffe0e;
+  Ram00fffe0e = uVar1 & 0xf0ff;
+  uVar1 = Ram00fffe0e;
+  Ram00fffe0e = uVar1 | 0xd00;
+  Ram00ffffa2 = (ushort)DAT_00807ecc << 8;
+  Ram00ffffa6 = 0;
+  Ram00ffffa8 = 0;
+  Ram00ffffa0 = 0xb;
+  uVar1 = Ram00fffe14;
+  Ram00fffe14 = uVar1 & 0xffcf;
+  uVar1 = Ram00fffe14;
+  Ram00fffe14 = uVar1 | 0x30;
+  uVar1 = Ram00fffe18;
+  Ram00fffe18 = uVar1 & 0xffcf;
+  uVar1 = Ram00fffe18;
+  Ram00fffe18 = uVar1 | 0x30;
+  uVar1 = Ram00fffe0a;
+  Ram00fffe0a = uVar1 | 0x400;
+  uVar1 = Ram00fffe1c;
+  Ram00fffe1c = uVar1 & 0xffcf;
+  uVar1 = Ram00fffe1c;
+  Ram00fffe1c = uVar1 | 0x20;
   if (speed_measurement_mode == '\0') {
     _speed_measurement_function_pointer = 0x17f74;
   }
-  return;
+  return (uint)DAT_00807ecc << 8;
 }
 
 
@@ -14127,22 +14173,40 @@ void mc68k_FUN_00019caa(void)
 void mc68k_can1MessageTransmitInit2(void)
 
 {
-                    /* From J90280.05 @ 0x0160e2 (confidence: 100%) */
-  _DAT_00fffe20 = _DAT_00fffe20 & 0xfffe;
-  _DAT_00fffe12 = _DAT_00fffe12 & 0xfff0 | 9;
+  ushort uVar1;
+  
+  uVar1 = Ram00fffe1e;
+  Ram00fffe1e = uVar1 & 0xfffc;
+  uVar1 = Ram00fffe0a;
+  Ram00fffe0a = uVar1 & 0xfffe;
+  uVar1 = Ram00fffe20;
+  Ram00fffe20 = uVar1 & 0xfffe;
+  uVar1 = Ram00fffe12;
+  Ram00fffe12 = uVar1 & 0xfff0;
+  uVar1 = Ram00fffe12;
+  Ram00fffe12 = uVar1 | 9;
   _DAT_00808edc = 0x19f82;
-  _DAT_00ffff00 = 7;
-  _DAT_00ffff02 = pmm_num_of_teeth_correct_tooth_count_at_missing_tooth_0_255 | 0x100;
-  _DAT_00ffff04 = 0x100;
-  _DAT_00ffff06 =
-       CONCAT11(pmm_ratio_tooth_spacing_at_which_missing_tooth_is_found_0_1_9921875,
-                tooth_count_at_which_missing_tooth_not_detct_err_0_255);
-  _DAT_00ffff08 = 0;
-  _DAT_00ffff0c = 0;
-  _DAT_00fffe16 = _DAT_00fffe16 & 0xfffc | 3;
-  _DAT_00fffe1a = _DAT_00fffe1a & 0xfffc | 1;
-  _DAT_00fffe0a = _DAT_00fffe0a & 0xfffe | 1;
-  _DAT_00fffe1e = _DAT_00fffe1e & 0xfffc | 1;
+  Ram00ffff00 = 7;
+  Ram00ffff02 = pmm_num_of_teeth_correct_tooth_count_at_missing_tooth_0_255 | 0x100;
+  Ram00ffff04 = 0x100;
+  Ram00ffff06 = CONCAT11(pmm_ratio_tooth_spacing_at_which_missing_tooth_is_found_0_1_9921875,
+                         tooth_count_at_which_missing_tooth_not_detct_err_0_255);
+  Ram00ffff08 = 0;
+  Ram00ffff0c = 0;
+  uVar1 = Ram00fffe16;
+  Ram00fffe16 = uVar1 & 0xfffc;
+  uVar1 = Ram00fffe16;
+  Ram00fffe16 = uVar1 | 3;
+  uVar1 = Ram00fffe1a;
+  Ram00fffe1a = uVar1 & 0xfffc;
+  uVar1 = Ram00fffe1a;
+  Ram00fffe1a = uVar1 | 1;
+  uVar1 = Ram00fffe0a;
+  Ram00fffe0a = uVar1 | 1;
+  uVar1 = Ram00fffe1e;
+  Ram00fffe1e = uVar1 & 0xfffc;
+  uVar1 = Ram00fffe1e;
+  Ram00fffe1e = uVar1 | 1;
   mc68k_pwmTimerMode0Init();
   return;
 }
@@ -14170,17 +14234,18 @@ void cm550_FUN_00019e8e(void)
 undefined8 vp44_FUN_00019e90(void)
 
 {
-  uint uVar1;
+  ushort uVar1;
   undefined4 in_D0;
   undefined4 in_D1;
   
-  uVar1 = _DAT_00ffffa8;
-  _io_control_handshake_state = _DAT_00ffffa8;
-  _DAT_00ffffa8 = _DAT_00ffffa8 & 0xffff;
+  _io_control_handshake_state = Ram00ffffa8;
+  Ram00ffffa8 = 0;
   _pulse_period_sum_primary =
-       uVar1 + (_pulse_period_sum_primary -
-               *_next_table_position_pointer_to_next_spot_in_pulse_per_800000_83ffff);
-  *_next_table_position_pointer_to_next_spot_in_pulse_per_800000_83ffff = uVar1;
+       _io_control_handshake_state +
+       (_pulse_period_sum_primary -
+       *_next_table_position_pointer_to_next_spot_in_pulse_per_800000_83ffff);
+  *_next_table_position_pointer_to_next_spot_in_pulse_per_800000_83ffff =
+       _io_control_handshake_state;
   if (_next_table_position_pointer_to_next_spot_in_pulse_per_800000_83ffff <
       _eps_control_mode_param_1) {
     _next_table_position_pointer_to_next_spot_in_pulse_per_800000_83ffff =
@@ -14221,7 +14286,8 @@ undefined8 vp44_FUN_00019e90(void)
   vp44_communication_state_machine();
   _unsigned_roll_over_counter_of_ess_main_isr_occurances_0_65535 =
        _unsigned_roll_over_counter_of_ess_main_isr_occurances_0_65535 + 1;
-  _DAT_00fffe20 = _DAT_00fffe20 & 0xfbff;
+  uVar1 = Ram00fffe20;
+  Ram00fffe20 = uVar1 & 0xfbff;
   return CONCAT44(in_D0,in_D1);
 }
 
@@ -14236,7 +14302,6 @@ undefined8 vp44_FUN_00019e90(void)
 void cm550_rpmTimingDeltaComparatorWithReturn(void)
 
 {
-                    /* From J90280.05 @ 0x015f26 (confidence: 75%) */
   if (_DAT_0080aa16 == 0) {
     if (_backup_lost_counter_timeout_counter_for_secondary_speed_inp_0_10000 == 0) {
       eps_main_in_phase_if_flase_eps_main_lags_backup_true_false = 1;
@@ -14351,17 +14416,21 @@ void cm550_FUN_0001a298(void)
 void mc68k_FUN_0001a350(void)
 
 {
-  int *piVar1;
+  ushort uVar1;
+  int *piVar2;
   
-  _DAT_00fffe1c = _DAT_00fffe1c & 0xffcf;
-  _DAT_00fffe0a = _DAT_00fffe0a & 0xfbff;
-  _DAT_00fffe20 = _DAT_00fffe20 & 0xfbff;
+  uVar1 = Ram00fffe1c;
+  Ram00fffe1c = uVar1 & 0xffcf;
+  uVar1 = Ram00fffe0a;
+  Ram00fffe0a = uVar1 & 0xfbff;
+  uVar1 = Ram00fffe20;
+  Ram00fffe20 = uVar1 & 0xfbff;
   _eps_control_mode_param_1 =
        (int *)(&sample_crank_degrees_backup_crank_degrees_between_vss_inter_0_36000 +
               (uint)period_meas_per_cam_number_of_primary_speed_pulse_periods_mea_0_255 * 4);
-  for (piVar1 = (int *)&pulse_period_table_table_containing_main_speed_pulse_per_1000_65535;
-      piVar1 <= _eps_control_mode_param_1; piVar1 = piVar1 + 1) {
-    *piVar1 = _initialization_pulse_period_initial_value_for_pulse_period_table_2_32;
+  for (piVar2 = (int *)&pulse_period_table_table_containing_main_speed_pulse_per_1000_65535;
+      piVar2 <= _eps_control_mode_param_1; piVar2 = piVar2 + 1) {
+    *piVar2 = _initialization_pulse_period_initial_value_for_pulse_period_table_2_32;
   }
   _eps_override_output_state = &pulse_period_table_table_containing_main_speed_pulse_per_1000_65535;
   if (_DAT_00807ec8 < 2) {
@@ -14380,16 +14449,29 @@ void mc68k_FUN_0001a350(void)
        _initialization_pulse_period_initial_value_for_pulse_period_table_2_32 *
        (uint)period_meas_per_average_num_of_primary_speed_pulse_periods_mea_0_255;
   _rpm_timer_isr_function_pointer = vp44_FUN_0001a52c;
-  _DAT_00fffe0e = _DAT_00fffe0e & 0xf0ff | 0xd00;
-  _DAT_00ffffa2 =
-       _DAT_00807ec8 / period_meas_per_cam_number_of_primary_speed_pulse_periods_mea_0_255 << 8;
-  _DAT_00ffffa6 = 0;
-  _DAT_00ffffa8 = 0;
-  _DAT_00ffffa0 = 0xb;
-  _DAT_00fffe14 = _DAT_00fffe14 & 0xffcf | 0x30;
-  _DAT_00fffe18 = _DAT_00fffe18 & 0xffcf | 0x30;
-  _DAT_00fffe0a = _DAT_00fffe0a | 0x400;
-  _DAT_00fffe1c = _DAT_00fffe1c & 0xffcf | 0x20;
+  uVar1 = Ram00fffe0e;
+  Ram00fffe0e = uVar1 & 0xf0ff;
+  uVar1 = Ram00fffe0e;
+  Ram00fffe0e = uVar1 | 0xd00;
+  Ram00ffffa2 = _DAT_00807ec8 / period_meas_per_cam_number_of_primary_speed_pulse_periods_mea_0_255
+                << 8;
+  Ram00ffffa6 = 0;
+  Ram00ffffa8 = 0;
+  Ram00ffffa0 = 0xb;
+  uVar1 = Ram00fffe14;
+  Ram00fffe14 = uVar1 & 0xffcf;
+  uVar1 = Ram00fffe14;
+  Ram00fffe14 = uVar1 | 0x30;
+  uVar1 = Ram00fffe18;
+  Ram00fffe18 = uVar1 & 0xffcf;
+  uVar1 = Ram00fffe18;
+  Ram00fffe18 = uVar1 | 0x30;
+  uVar1 = Ram00fffe0a;
+  Ram00fffe0a = uVar1 | 0x400;
+  uVar1 = Ram00fffe1c;
+  Ram00fffe1c = uVar1 & 0xffcf;
+  uVar1 = Ram00fffe1c;
+  Ram00fffe1c = uVar1 | 0x20;
   if (speed_measurement_mode == '\0') {
     _speed_measurement_function_pointer = 0x17f74;
   }
@@ -14407,19 +14489,38 @@ void mc68k_FUN_0001a350(void)
 void mc68k_FUN_0001a47c(void)
 
 {
-  _DAT_00fffe20 = _DAT_00fffe20 & 0xfffe;
-  _DAT_00fffe12 = _DAT_00fffe12 & 0xfff0 | 9;
-  _DAT_00ffff00 = 4;
-  _DAT_00ffff02 = pmm_num_of_teeth_correct_tooth_count_at_missing_tooth_0_255 | 0x100;
-  _DAT_00ffff06 =
-       CONCAT11(pmm_ratio_tooth_spacing_at_which_missing_tooth_is_found_0_1_9921875,
-                tooth_count_at_which_missing_tooth_not_detct_err_0_255);
-  _DAT_00fffffc = 0xc000;
-  _DAT_00fffe16 = _DAT_00fffe16 & 0xfffc | 3;
-  _DAT_00fffe1a = _DAT_00fffe1a & 0xfffc | 1;
-  _DAT_00fffe1e = _DAT_00fffe1e & 0xfffc | 2;
+  ushort uVar1;
+  
+  uVar1 = Ram00fffe1e;
+  Ram00fffe1e = uVar1 & 0xfffc;
+  uVar1 = Ram00fffe0a;
+  Ram00fffe0a = uVar1 & 0xfffe;
+  uVar1 = Ram00fffe20;
+  Ram00fffe20 = uVar1 & 0xfffe;
+  uVar1 = Ram00fffe12;
+  Ram00fffe12 = uVar1 & 0xfff0;
+  uVar1 = Ram00fffe12;
+  Ram00fffe12 = uVar1 | 9;
+  Ram00ffff00 = 4;
+  Ram00ffff02 = pmm_num_of_teeth_correct_tooth_count_at_missing_tooth_0_255 | 0x100;
+  Ram00ffff06 = CONCAT11(pmm_ratio_tooth_spacing_at_which_missing_tooth_is_found_0_1_9921875,
+                         tooth_count_at_which_missing_tooth_not_detct_err_0_255);
+  Ram00fffffc = 0xc000;
+  uVar1 = Ram00fffe16;
+  Ram00fffe16 = uVar1 & 0xfffc;
+  uVar1 = Ram00fffe16;
+  Ram00fffe16 = uVar1 | 3;
+  uVar1 = Ram00fffe1a;
+  Ram00fffe1a = uVar1 & 0xfffc;
+  uVar1 = Ram00fffe1a;
+  Ram00fffe1a = uVar1 | 1;
+  uVar1 = Ram00fffe1e;
+  Ram00fffe1e = uVar1 & 0xfffc;
+  uVar1 = Ram00fffe1e;
+  Ram00fffe1e = uVar1 | 2;
   _DAT_00808edc = mc68k_crankFuelAndTimingBufferStore;
-  _DAT_00fffe0a = _DAT_00fffe0a & 0xfffe | 1;
+  uVar1 = Ram00fffe0a;
+  Ram00fffe0a = uVar1 | 1;
   mc68k_pwmTimerMode0Init();
   return;
 }
@@ -14447,17 +14548,18 @@ void cm550_FUN_0001a52a(void)
 undefined8 vp44_FUN_0001a52c(void)
 
 {
-  uint uVar1;
+  ushort uVar1;
   undefined4 in_D0;
   undefined4 in_D1;
   
-  uVar1 = _DAT_00ffffa8;
-  _io_control_handshake_state = _DAT_00ffffa8;
-  _DAT_00ffffa8 = _DAT_00ffffa8 & 0xffff;
+  _io_control_handshake_state = Ram00ffffa8;
+  Ram00ffffa8 = 0;
   _pulse_period_sum_primary =
-       uVar1 + (_pulse_period_sum_primary -
-               *_next_table_position_pointer_to_next_spot_in_pulse_per_800000_83ffff);
-  *_next_table_position_pointer_to_next_spot_in_pulse_per_800000_83ffff = uVar1;
+       _io_control_handshake_state +
+       (_pulse_period_sum_primary -
+       *_next_table_position_pointer_to_next_spot_in_pulse_per_800000_83ffff);
+  *_next_table_position_pointer_to_next_spot_in_pulse_per_800000_83ffff =
+       _io_control_handshake_state;
   if (_next_table_position_pointer_to_next_spot_in_pulse_per_800000_83ffff <
       _eps_control_mode_param_1) {
     _next_table_position_pointer_to_next_spot_in_pulse_per_800000_83ffff =
@@ -14537,7 +14639,8 @@ undefined8 vp44_FUN_0001a52c(void)
   vp44_communication_state_machine();
   _unsigned_roll_over_counter_of_ess_main_isr_occurances_0_65535 =
        _unsigned_roll_over_counter_of_ess_main_isr_occurances_0_65535 + 1;
-  _DAT_00fffe20 = _DAT_00fffe20 & 0xfbff;
+  uVar1 = Ram00fffe20;
+  Ram00fffe20 = uVar1 & 0xfbff;
   return CONCAT44(in_D0,in_D1);
 }
 
@@ -14547,18 +14650,17 @@ undefined8 vp44_FUN_0001a52c(void)
 // Function: mc68k_crankFuelAndTimingBufferStore @ 0x0001a6e8
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 undefined8 mc68k_crankFuelAndTimingBufferStore(void)
 
 {
+  ushort uVar1;
+  undefined2 uVar2;
   undefined4 in_D0;
   undefined4 in_D1;
   
-                    /* From J90280.05 @ 0x01f2ce (confidence: 63%) */
-  pmm_error_type_signifies_the_type_of_sync_error_found_by_pmma_0_ff =
-       (char)((ushort)_DAT_00fffffc >> 8);
-  tooth_count_at_which_error_was_found_by_pmm_0_255 = DAT_00fffffc_1;
+  uVar2 = Ram00fffffc;
+  pmm_error_type_signifies_the_type_of_sync_error_found_by_pmma_0_ff = (char)((ushort)uVar2 >> 8);
+  tooth_count_at_which_error_was_found_by_pmm_0_255 = DAT_00fffffd;
   if (pmm_error_type_signifies_the_type_of_sync_error_found_by_pmma_0_ff == -0x40) {
     CMSYSS = 0;
     cam_sync_status = 0;
@@ -14568,7 +14670,8 @@ undefined8 mc68k_crankFuelAndTimingBufferStore(void)
     cam_sync_status = 2;
   }
   mc68k_pwmTimerModeDispatcher();
-  _DAT_00fffe20 = _DAT_00fffe20 & 0xfffe;
+  uVar1 = Ram00fffe20;
+  Ram00fffe20 = uVar1 & 0xfffe;
   return CONCAT44(in_D0,in_D1);
 }
 
@@ -14583,21 +14686,24 @@ undefined8 mc68k_crankFuelAndTimingBufferStore(void)
 uint mc68k_can1TimerBufferInitConditional(void)
 
 {
-  uint uVar1;
-  int *piVar2;
+  ushort uVar1;
+  uint uVar2;
+  int *piVar3;
   
-  uVar1 = _ESSXSNEN & 0xffff0001;
-                    /* From J90280.05 @ 0x0163f8 (confidence: 75%) */
+  uVar2 = _ESSXSNEN & 0xffff0001;
   if ((_ESSXSNEN & 1) != 0) {
-    _DAT_00fffe1c = _DAT_00fffe1c & 0xffcf;
-    _DAT_00fffe0a = _DAT_00fffe0a & 0xfbff;
-    _DAT_00fffe20 = _DAT_00fffe20 & 0xfbff;
+    uVar1 = Ram00fffe1c;
+    Ram00fffe1c = uVar1 & 0xffcf;
+    uVar1 = Ram00fffe0a;
+    Ram00fffe0a = uVar1 & 0xfbff;
+    uVar1 = Ram00fffe20;
+    Ram00fffe20 = uVar1 & 0xfbff;
     _eps_control_mode_param_1 =
          (int *)(&sample_crank_degrees_backup_crank_degrees_between_vss_inter_0_36000 +
                 (uint)period_meas_per_cam_number_of_primary_speed_pulse_periods_mea_0_255 * 4);
-    for (piVar2 = (int *)&pulse_period_table_table_containing_main_speed_pulse_per_1000_65535;
-        piVar2 <= _eps_control_mode_param_1; piVar2 = piVar2 + 1) {
-      *piVar2 = _initialization_pulse_period_initial_value_for_pulse_period_table_2_32;
+    for (piVar3 = (int *)&pulse_period_table_table_containing_main_speed_pulse_per_1000_65535;
+        piVar3 <= _eps_control_mode_param_1; piVar3 = piVar3 + 1) {
+      *piVar3 = _initialization_pulse_period_initial_value_for_pulse_period_table_2_32;
     }
     _eps_override_output_state =
          &pulse_period_table_table_containing_main_speed_pulse_per_1000_65535;
@@ -14613,26 +14719,44 @@ uint mc68k_can1TimerBufferInitConditional(void)
     _pulse_period_sum_primary =
          _initialization_pulse_period_initial_value_for_pulse_period_table_2_32 *
          (uint)period_meas_per_cam_number_of_primary_speed_pulse_periods_mea_0_255;
-    uVar1 = _initialization_pulse_period_initial_value_for_pulse_period_table_2_32 *
+    uVar2 = _initialization_pulse_period_initial_value_for_pulse_period_table_2_32 *
             (uint)period_meas_per_average_num_of_primary_speed_pulse_periods_mea_0_255;
     _DAT_00800668 = &pulse_period_table_table_containing_main_speed_pulse_per_1000_65535;
+    Ram00ffffa0 = 0x8080;
+    uVar1 = Ram00fffe18;
+    Ram00fffe18 = uVar1 & 0xffcf;
+    uVar1 = Ram00fffe18;
+    Ram00fffe18 = uVar1 | 0x20;
     _rpm_timer_isr_function_pointer = vp44_FUN_0001a8a4;
-    _DAT_00fffe0e = _DAT_00fffe0e & 0xf0ff | 0xd00;
-    _DAT_00ffffa2 = 0x100;
-    _DAT_00ffffa6 = 0;
-    _DAT_00ffffa8 = 0;
-    _DAT_00ffffa0 = 7;
-    _DAT_00fffe14 = _DAT_00fffe14 & 0xffcf | 0x20;
-    _DAT_00fffe18 = _DAT_00fffe18 & 0xffcf | 0x30;
-    _DAT_00fffe0a = _DAT_00fffe0a | 0x400;
-    _DAT_00fffe1c = _DAT_00fffe1c & 0xffcf | 0x20;
+    uVar1 = Ram00fffe0e;
+    Ram00fffe0e = uVar1 & 0xf0ff;
+    uVar1 = Ram00fffe0e;
+    Ram00fffe0e = uVar1 | 0xd00;
+    Ram00ffffa2 = 0x100;
+    Ram00ffffa6 = 0;
+    Ram00ffffa8 = 0;
+    Ram00ffffa0 = 7;
+    uVar1 = Ram00fffe14;
+    Ram00fffe14 = uVar1 & 0xffcf;
+    uVar1 = Ram00fffe14;
+    Ram00fffe14 = uVar1 | 0x20;
+    uVar1 = Ram00fffe18;
+    Ram00fffe18 = uVar1 & 0xffcf;
+    uVar1 = Ram00fffe18;
+    Ram00fffe18 = uVar1 | 0x30;
+    uVar1 = Ram00fffe0a;
+    Ram00fffe0a = uVar1 | 0x400;
+    uVar1 = Ram00fffe1c;
+    Ram00fffe1c = uVar1 & 0xffcf;
+    uVar1 = Ram00fffe1c;
+    Ram00fffe1c = uVar1 | 0x20;
     _DAT_0080d090 = 0x1ab6a;
-    _average_pulse_period_time_period_over_1_cyl_of_primary_s_1000_65535 = uVar1;
+    _average_pulse_period_time_period_over_1_cyl_of_primary_s_1000_65535 = uVar2;
   }
   if (speed_measurement_mode == '\0') {
     _speed_measurement_function_pointer = 0x17f74;
   }
-  return uVar1;
+  return uVar2;
 }
 
 
@@ -14671,23 +14795,32 @@ void cm550_FUN_0001a8a2(void)
 undefined8 vp44_FUN_0001a8a4(void)
 
 {
-  uint uVar1;
+  ushort uVar1;
+  undefined2 uVar2;
+  undefined4 uVar3;
   undefined4 in_D0;
-  int iVar2;
+  int iVar4;
   undefined4 in_D1;
   
-  uVar1 = _DAT_00ffffa8;
-  _DAT_00ffffa8 = _DAT_00ffffa8 & 0xffff;
-  iVar2 = cm550_throttleTimeAccumulatorProcessor(uVar1);
+  uVar3 = Ram00ffffa8;
+  Ram00ffffa8 = 0;
+  uVar2 = Ram00ffffa4;
+  iVar4 = cm550_throttleTimeAccumulatorProcessor(uVar3);
   if (CMSYSS == '\x01') {
-    if (iVar2 == 0) {
-      _DAT_00ffffa0 = 0xffff;
-      _DAT_00fffe18 = _DAT_00fffe18 & 0xffcf | 0x20;
+    if (iVar4 == 0) {
+      Ram00ffffa0 = 0xffff;
+      uVar1 = Ram00fffe18;
+      Ram00fffe18 = uVar1 & 0xffcf;
+      uVar1 = Ram00fffe18;
+      Ram00fffe18 = uVar1 | 0x20;
     }
   }
   else {
-    _DAT_00ffffa0 = 0x8080;
-    _DAT_00fffe18 = _DAT_00fffe18 & 0xffcf | 0x20;
+    Ram00ffffa0 = 0x8080;
+    uVar1 = Ram00fffe18;
+    Ram00fffe18 = uVar1 & 0xffcf;
+    uVar1 = Ram00fffe18;
+    Ram00fffe18 = uVar1 | 0x20;
   }
   cm550_rpmTimingDeltaComparatorWithReturn();
   cm550_FUN_0000c87c();
@@ -14695,7 +14828,8 @@ undefined8 vp44_FUN_0001a8a4(void)
   vp44_communication_state_machine();
   _unsigned_roll_over_counter_of_ess_main_isr_occurances_0_65535 =
        _unsigned_roll_over_counter_of_ess_main_isr_occurances_0_65535 + 1;
-  _DAT_00fffe20 = _DAT_00fffe20 & 0xfbff;
+  uVar1 = Ram00fffe20;
+  Ram00fffe20 = uVar1 & 0xfbff;
   return CONCAT44(in_D0,in_D1);
 }
 
@@ -14712,7 +14846,6 @@ int cm550_throttleTimeAccumulatorProcessor(uint param_1,undefined4 param_2)
 {
   short sVar1;
   
-                    /* From J90280.05 @ 0x016622 (confidence: 75%) */
   _io_control_handshake_state = param_1;
   _main_signal_edge_time_stamp_0_65535 = param_2._0_2_;
   sVar1 = cm550_retarderModeThresholdCalculator();
@@ -14831,7 +14964,6 @@ int vp44FaultThresholdTablesInit(void)
   short sVar1;
   int unaff_A6;
   
-                    /* From J90280.05 @ 0x02ee28 (confidence: 63%) */
   _io_control_handshake_state = *(uint *)(unaff_A6 + 8);
   _main_signal_edge_time_stamp_0_65535 = *(undefined2 *)(unaff_A6 + 0xc);
   sVar1 = cm550_retarderModeThresholdCalculator();
@@ -15084,7 +15216,6 @@ void cm550_FUN_0001ade8(void)
 void cm550_initOilPressureModeSystem(void)
 
 {
-                    /* From J90280.05 @ 0x016af2 (confidence: 78%) */
   _can_transmit_buffer_ptr = 0;
   _DAT_00800674 = 0x80000000;
   _DAT_00800670 = &filter_constant_in_filtered_engine_decel_rate_calculation_0_1;
@@ -15102,7 +15233,6 @@ void cm550_initOilPressureModeSystem(void)
 void cm550_sensorHistoryTablePointerInit(void)
 
 {
-                    /* From J90280.05 @ 0x032b00 (confidence: 64%) */
   _DAT_00800674 = 0x80000000;
   _DAT_00800670 = &filter_constant_in_filtered_engine_decel_rate_calculation_0_1;
   return;
@@ -15119,20 +15249,23 @@ void cm550_sensorHistoryTablePointerInit(void)
 void mc68k_dutyCycleMonitorAltCanInit(void)
 
 {
-  int *piVar1;
+  ushort uVar1;
+  int *piVar2;
   
-                    /* From J90280.05 @ 0x016f98 (confidence: 81%) */
-  _DAT_00fffe1e = _DAT_00fffe1e & 0xfff3;
-  _DAT_00fffe0a = _DAT_00fffe0a & 0xfffd;
-  _DAT_00fffe20 = _DAT_00fffe20 & 0xfffd;
+  uVar1 = Ram00fffe1e;
+  Ram00fffe1e = uVar1 & 0xfff3;
+  uVar1 = Ram00fffe0a;
+  Ram00fffe0a = uVar1 & 0xfffd;
+  uVar1 = Ram00fffe20;
+  Ram00fffe20 = uVar1 & 0xfffd;
   CMSYSS = 0;
   cam_sync_status = 0;
   _eps_control_mode_param_3 =
        (int *)((uint)period_meas_per_cam_backup_number_of_backup_speed_pulse_perio_0_255 * 4 +
               0x80ceaa);
-  for (piVar1 = (int *)&pulse_period_table_backup_table_containing_main_speed_pulse_peri_2_32;
-      piVar1 <= _eps_control_mode_param_3; piVar1 = piVar1 + 1) {
-    *piVar1 = _initialization_pulse_period_backup_initial_value_for_pulse_perio_2_32;
+  for (piVar2 = (int *)&pulse_period_table_backup_table_containing_main_speed_pulse_peri_2_32;
+      piVar2 <= _eps_control_mode_param_3; piVar2 = piVar2 + 1) {
+    *piVar2 = _initialization_pulse_period_backup_initial_value_for_pulse_perio_2_32;
   }
   _eps_control_mode_init_value_2 =
        &pulse_period_table_backup_table_containing_main_speed_pulse_peri_2_32;
@@ -15152,15 +15285,26 @@ void mc68k_dutyCycleMonitorAltCanInit(void)
        _initialization_pulse_period_backup_initial_value_for_pulse_perio_2_32 *
        (uint)period_meas_per_average_backup_num_of_backup_speed_pulse_perio_0_255;
   _DAT_00808ee0 = mc68k_dutyCycleMonitorIsrHandler;
-  _DAT_00fffe12 = _DAT_00fffe12 & 0xff0f | 0xd0;
-  _DAT_00ffff12 = 0x100;
-  _DAT_00ffff16 = 0;
-  _DAT_00ffff18 = 0;
-  _DAT_00ffff10 = 0x4f;
-  _DAT_00fffe16 = _DAT_00fffe16 & 0xfff3;
-  _DAT_00fffe1a = _DAT_00fffe1a & 0xfff3 | 0xc;
-  _DAT_00fffe0a = _DAT_00fffe0a | 2;
-  _DAT_00fffe1e = _DAT_00fffe1e & 0xfff3 | 8;
+  uVar1 = Ram00fffe12;
+  Ram00fffe12 = uVar1 & 0xff0f;
+  uVar1 = Ram00fffe12;
+  Ram00fffe12 = uVar1 | 0xd0;
+  Ram00ffff12 = 0x100;
+  Ram00ffff16 = 0;
+  Ram00ffff18 = 0;
+  Ram00ffff10 = 0x4f;
+  uVar1 = Ram00fffe16;
+  Ram00fffe16 = uVar1 & 0xfff3;
+  uVar1 = Ram00fffe1a;
+  Ram00fffe1a = uVar1 & 0xfff3;
+  uVar1 = Ram00fffe1a;
+  Ram00fffe1a = uVar1 | 0xc;
+  uVar1 = Ram00fffe0a;
+  Ram00fffe0a = uVar1 | 2;
+  uVar1 = Ram00fffe1e;
+  Ram00fffe1e = uVar1 & 0xfff3;
+  uVar1 = Ram00fffe1e;
+  Ram00fffe1e = uVar1 | 8;
   return;
 }
 
@@ -15175,14 +15319,15 @@ void mc68k_dutyCycleMonitorAltCanInit(void)
 undefined8 mc68k_dutyCycleMonitorIsrHandler(void)
 
 {
+  ushort uVar1;
   undefined4 in_D0;
   undefined4 in_D1;
   
-                    /* From J90280.05 @ 0x016cb4 (confidence: 75%) */
   ci_tooth_count_number_of_eps_teeth_during_ci_pulse_0_24 = DAT_00ffff1b;
-  _DAT_00ffff18 = 0;
+  Ram00ffff18 = 0;
   can_tx_message_type = DAT_00807f9d;
-  if (DAT_00ffff1b == _wide_ci_count_expected_eps_teeth_during_wide_ci_pulse_0_24) {
+  if (ci_tooth_count_number_of_eps_teeth_during_ci_pulse_0_24 ==
+      _wide_ci_count_expected_eps_teeth_during_wide_ci_pulse_0_24) {
     if (ci_tooth_count_error_incremented_when_ci_pulse_width_is_wrong_0_255 == 0) {
       if (((_status_32_word_bit_mapped_system_error_status_word_0_0_1 & 1) != 0) &&
          ((_fault_first_occurrence_flags_word_0 & 1) == 0)) {
@@ -15235,7 +15380,8 @@ undefined8 mc68k_dutyCycleMonitorIsrHandler(void)
       }
     }
   }
-  else if (DAT_00ffff1b == _narrow_ci_count_expected_eps_teeth_during_narrow_ci_pulse_0_24) {
+  else if (ci_tooth_count_number_of_eps_teeth_during_ci_pulse_0_24 ==
+           _narrow_ci_count_expected_eps_teeth_during_narrow_ci_pulse_0_24) {
     if (ci_tooth_count_error_incremented_when_ci_pulse_width_is_wrong_0_255 == 0) {
       if (((_status_32_word_bit_mapped_system_error_status_word_0_0_1 & 1) != 0) &&
          ((_fault_first_occurrence_flags_word_0 & 1) == 0)) {
@@ -15300,7 +15446,8 @@ undefined8 mc68k_dutyCycleMonitorIsrHandler(void)
   }
   mc68k_pwmTimerMode0Reset();
   cm550_FUN_0000c87e();
-  _DAT_00fffe20 = _DAT_00fffe20 & 0xfffd;
+  uVar1 = Ram00fffe20;
+  Ram00fffe20 = uVar1 & 0xfffd;
   return CONCAT44(in_D0,in_D1);
 }
 
@@ -15315,17 +15462,21 @@ undefined8 mc68k_dutyCycleMonitorIsrHandler(void)
 uint mc68k_FUN_0001b1ea(void)
 
 {
-  int *piVar1;
+  ushort uVar1;
+  int *piVar2;
   
-  _DAT_00fffe1e = _DAT_00fffe1e & 0xfff3;
-  _DAT_00fffe0a = _DAT_00fffe0a & 0xfffd;
-  _DAT_00fffe20 = _DAT_00fffe20 & 0xfffd;
+  uVar1 = Ram00fffe1e;
+  Ram00fffe1e = uVar1 & 0xfff3;
+  uVar1 = Ram00fffe0a;
+  Ram00fffe0a = uVar1 & 0xfffd;
+  uVar1 = Ram00fffe20;
+  Ram00fffe20 = uVar1 & 0xfffd;
   _eps_control_mode_param_3 =
        (int *)((uint)period_meas_per_cam_backup_number_of_backup_speed_pulse_perio_0_255 * 4 +
               0x80ceaa);
-  for (piVar1 = (int *)&pulse_period_table_backup_table_containing_main_speed_pulse_peri_2_32;
-      piVar1 <= _eps_control_mode_param_3; piVar1 = piVar1 + 1) {
-    *piVar1 = _initialization_pulse_period_backup_initial_value_for_pulse_perio_2_32;
+  for (piVar2 = (int *)&pulse_period_table_backup_table_containing_main_speed_pulse_peri_2_32;
+      piVar2 <= _eps_control_mode_param_3; piVar2 = piVar2 + 1) {
+    *piVar2 = _initialization_pulse_period_backup_initial_value_for_pulse_perio_2_32;
   }
   _eps_control_mode_init_value_2 =
        &pulse_period_table_backup_table_containing_main_speed_pulse_peri_2_32;
@@ -15346,16 +15497,30 @@ uint mc68k_FUN_0001b1ea(void)
        (uint)period_meas_per_average_backup_num_of_backup_speed_pulse_perio_0_255;
   if ((_ESSXSNEN & 8) != 0) {
     _DAT_00808ee0 = mc68k_FUN_0001b30a;
-    _DAT_00fffe12 = _DAT_00fffe12 & 0xff0f | 0xd0;
-    _DAT_00ffff12 = 0x100;
-    _DAT_00ffff16 = 0;
-    _DAT_00ffff18 = 0;
-    _DAT_00ffff10 = 0xb;
-    _DAT_00fffe16 = _DAT_00fffe16 & 0xfff3 | 0xc;
-    _DAT_00fffe1a = _DAT_00fffe1a & 0xfff3 | 0xc;
-    _DAT_00fffe0a = _DAT_00fffe0a | 2;
-    _DAT_00fffe1e = _DAT_00fffe1e & 0xfff3 | 8;
-    _DAT_00fffe20 = _DAT_00fffe20 & 0xfffd;
+    uVar1 = Ram00fffe12;
+    Ram00fffe12 = uVar1 & 0xff0f;
+    uVar1 = Ram00fffe12;
+    Ram00fffe12 = uVar1 | 0xd0;
+    Ram00ffff12 = 0x100;
+    Ram00ffff16 = 0;
+    Ram00ffff18 = 0;
+    Ram00ffff10 = 0xb;
+    uVar1 = Ram00fffe16;
+    Ram00fffe16 = uVar1 & 0xfff3;
+    uVar1 = Ram00fffe16;
+    Ram00fffe16 = uVar1 | 0xc;
+    uVar1 = Ram00fffe1a;
+    Ram00fffe1a = uVar1 & 0xfff3;
+    uVar1 = Ram00fffe1a;
+    Ram00fffe1a = uVar1 | 0xc;
+    uVar1 = Ram00fffe0a;
+    Ram00fffe0a = uVar1 | 2;
+    uVar1 = Ram00fffe1e;
+    Ram00fffe1e = uVar1 & 0xfff3;
+    uVar1 = Ram00fffe1e;
+    Ram00fffe1e = uVar1 | 8;
+    uVar1 = Ram00fffe20;
+    Ram00fffe20 = uVar1 & 0xfffd;
   }
   return CONCAT22((short)(_initialization_pulse_period_backup_initial_value_for_pulse_perio_2_32 *
                           (uint)period_meas_per_average_backup_num_of_backup_speed_pulse_perio_0_255
@@ -15373,26 +15538,33 @@ uint mc68k_FUN_0001b1ea(void)
 undefined8 mc68k_FUN_0001b30a(void)
 
 {
+  ushort uVar1;
   undefined4 in_D0;
   undefined4 in_D1;
   
-  if ((_ESSXSNEN & 8) != 0) {
+  if ((_ESSXSNEN & 8) == 0) {
+    Ram00ffff18 = 0;
+  }
+  else {
     _backup_lost_counter_timeout_counter_for_secondary_speed_inp_0_10000 =
          _pulse_period_timeout_backup;
-    _eps_period_backup_time_between_the_two_most_recent_eps_200_16777216 = _DAT_00ffff18;
+    _average_pulse_period_backup_time_period_over_1_cyl_of_secondary_2_32 = Ram00ffff18;
+    Ram00ffff18 = 0;
     CMSYRSFG = 1;
+    _pulse_period_table_backup_table_containing_main_speed_pulse_peri_2_32 =
+         _average_pulse_period_backup_time_period_over_1_cyl_of_secondary_2_32;
+    _eps_period_backup_time_between_the_two_most_recent_eps_200_16777216 =
+         _average_pulse_period_backup_time_period_over_1_cyl_of_secondary_2_32;
     if (((_status_32_word_bit_mapped_system_error_status_word_2_0_1 & 0x800) != 0) &&
        ((_fault_first_occurrence_flags_word_2 & 0x800) == 0)) {
       _status_32_word_bit_mapped_system_error_status_word_2_0_1 =
            _status_32_word_bit_mapped_system_error_status_word_2_0_1 & 0xf7ff;
     }
-    _pulse_period_table_backup_table_containing_main_speed_pulse_peri_2_32 = _DAT_00ffff18;
-    _average_pulse_period_backup_time_period_over_1_cyl_of_secondary_2_32 = _DAT_00ffff18;
   }
-  _DAT_00ffff18 = _DAT_00ffff18 & 0xffff;
   mc68k_pwmTimerMode0Reset();
   cm550_FUN_0000c87e();
-  _DAT_00fffe20 = _DAT_00fffe20 & 0xfffd;
+  uVar1 = Ram00fffe20;
+  Ram00fffe20 = uVar1 & 0xfffd;
   return CONCAT44(in_D0,in_D1);
 }
 
@@ -15407,15 +15579,15 @@ undefined8 mc68k_FUN_0001b30a(void)
 void mc68k_dutyCycleMonitorBufferInit(void)
 
 {
-  int *piVar1;
+  ushort uVar1;
+  int *piVar2;
   
-                    /* From J90280.05 @ 0x017164 (confidence: 75%) */
   _eps_control_mode_param_3 =
        (int *)((uint)period_meas_per_cam_backup_number_of_backup_speed_pulse_perio_0_255 * 4 +
               0x80ceaa);
-  for (piVar1 = (int *)&pulse_period_table_backup_table_containing_main_speed_pulse_peri_2_32;
-      piVar1 <= _eps_control_mode_param_3; piVar1 = piVar1 + 1) {
-    *piVar1 = _initialization_pulse_period_backup_initial_value_for_pulse_perio_2_32;
+  for (piVar2 = (int *)&pulse_period_table_backup_table_containing_main_speed_pulse_peri_2_32;
+      piVar2 <= _eps_control_mode_param_3; piVar2 = piVar2 + 1) {
+    *piVar2 = _initialization_pulse_period_backup_initial_value_for_pulse_perio_2_32;
   }
   _eps_control_mode_init_value_2 =
        &pulse_period_table_backup_table_containing_main_speed_pulse_peri_2_32;
@@ -15434,17 +15606,35 @@ void mc68k_dutyCycleMonitorBufferInit(void)
   _average_pulse_period_backup_time_period_over_1_cyl_of_secondary_2_32 =
        _initialization_pulse_period_backup_initial_value_for_pulse_perio_2_32 *
        (uint)period_meas_per_average_backup_num_of_backup_speed_pulse_perio_0_255;
-  _DAT_00fffe20 = _DAT_00fffe20 & 0xfffd;
-  _DAT_00fffe12 = _DAT_00fffe12 & 0xff0f | 0xd0;
-  _DAT_00ffff12 = 0x100;
-  _DAT_00ffff16 = 0;
-  _DAT_00ffff18 = 0;
-  _DAT_00ffff10 = 0xb;
-  _DAT_00fffe16 = _DAT_00fffe16 & 0xfff3 | 0xc;
-  _DAT_00fffe1a = _DAT_00fffe1a & 0xfff3 | 0xc;
-  _DAT_00fffe1e = _DAT_00fffe1e & 0xfff3 | 8;
+  uVar1 = Ram00fffe1e;
+  Ram00fffe1e = uVar1 & 0xfff3;
+  uVar1 = Ram00fffe0a;
+  Ram00fffe0a = uVar1 & 0xfffd;
+  uVar1 = Ram00fffe20;
+  Ram00fffe20 = uVar1 & 0xfffd;
+  uVar1 = Ram00fffe12;
+  Ram00fffe12 = uVar1 & 0xff0f;
+  uVar1 = Ram00fffe12;
+  Ram00fffe12 = uVar1 | 0xd0;
+  Ram00ffff12 = 0x100;
+  Ram00ffff16 = 0;
+  Ram00ffff18 = 0;
+  Ram00ffff10 = 0xb;
+  uVar1 = Ram00fffe16;
+  Ram00fffe16 = uVar1 & 0xfff3;
+  uVar1 = Ram00fffe16;
+  Ram00fffe16 = uVar1 | 0xc;
+  uVar1 = Ram00fffe1a;
+  Ram00fffe1a = uVar1 & 0xfff3;
+  uVar1 = Ram00fffe1a;
+  Ram00fffe1a = uVar1 | 0xc;
+  uVar1 = Ram00fffe1e;
+  Ram00fffe1e = uVar1 & 0xfff3;
+  uVar1 = Ram00fffe1e;
+  Ram00fffe1e = uVar1 | 8;
   _DAT_00808ee0 = mc68k_FUN_0001b4b2;
-  _DAT_00fffe0a = _DAT_00fffe0a & 0xfffd | 2;
+  uVar1 = Ram00fffe0a;
+  Ram00fffe0a = uVar1 | 2;
   eps_pulse_count_since_addtnl_eps_pulse_0_255 = 0;
   _DAT_0080d2d2 = 0;
   return;
@@ -15461,22 +15651,40 @@ void mc68k_dutyCycleMonitorBufferInit(void)
 void mc68k_phase2_slot_1_handler(void)
 
 {
+  ushort uVar1;
   byte *in_A1;
   int *unaff_A4;
   
-                    /* From J90280.05 @ 0x0171d2 (confidence: 91%) */
   _average_pulse_period_backup_time_period_over_1_cyl_of_secondary_2_32 = *unaff_A4 * (uint)*in_A1;
-  _DAT_00fffe20 = _DAT_00fffe20 & 0xfffd;
-  _DAT_00fffe12 = _DAT_00fffe12 & 0xff0f | 0xd0;
-  _DAT_00ffff12 = 0x100;
-  _DAT_00ffff16 = 0;
-  _DAT_00ffff18 = 0;
-  _DAT_00ffff10 = 0xb;
-  _DAT_00fffe16 = _DAT_00fffe16 & 0xfff3 | 0xc;
-  _DAT_00fffe1a = _DAT_00fffe1a & 0xfff3 | 0xc;
-  _DAT_00fffe1e = _DAT_00fffe1e & 0xfff3 | 8;
+  uVar1 = Ram00fffe1e;
+  Ram00fffe1e = uVar1 & 0xfff3;
+  uVar1 = Ram00fffe0a;
+  Ram00fffe0a = uVar1 & 0xfffd;
+  uVar1 = Ram00fffe20;
+  Ram00fffe20 = uVar1 & 0xfffd;
+  uVar1 = Ram00fffe12;
+  Ram00fffe12 = uVar1 & 0xff0f;
+  uVar1 = Ram00fffe12;
+  Ram00fffe12 = uVar1 | 0xd0;
+  Ram00ffff12 = 0x100;
+  Ram00ffff16 = 0;
+  Ram00ffff18 = 0;
+  Ram00ffff10 = 0xb;
+  uVar1 = Ram00fffe16;
+  Ram00fffe16 = uVar1 & 0xfff3;
+  uVar1 = Ram00fffe16;
+  Ram00fffe16 = uVar1 | 0xc;
+  uVar1 = Ram00fffe1a;
+  Ram00fffe1a = uVar1 & 0xfff3;
+  uVar1 = Ram00fffe1a;
+  Ram00fffe1a = uVar1 | 0xc;
+  uVar1 = Ram00fffe1e;
+  Ram00fffe1e = uVar1 & 0xfff3;
+  uVar1 = Ram00fffe1e;
+  Ram00fffe1e = uVar1 | 8;
   _DAT_00808ee0 = mc68k_FUN_0001b4b2;
-  _DAT_00fffe0a = _DAT_00fffe0a & 0xfffd | 2;
+  uVar1 = Ram00fffe0a;
+  Ram00fffe0a = uVar1 | 2;
   eps_pulse_count_since_addtnl_eps_pulse_0_255 = 0;
   _DAT_0080d2d2 = 0;
   return;
@@ -15488,17 +15696,17 @@ void mc68k_phase2_slot_1_handler(void)
 // Function: mc68k_FUN_0001b4b2 @ 0x0001b4b2
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 undefined8 mc68k_FUN_0001b4b2(void)
 
 {
+  ushort uVar1;
   undefined4 in_D0;
   undefined4 in_D1;
   
   mc68k_pwmTimerMode0Reset();
   cm550_FUN_0000c87e();
-  _DAT_00fffe20 = _DAT_00fffe20 & 0xfffd;
+  uVar1 = Ram00fffe20;
+  Ram00fffe20 = uVar1 & 0xfffd;
   return CONCAT44(in_D0,in_D1);
 }
 
@@ -15508,15 +15716,14 @@ undefined8 mc68k_FUN_0001b4b2(void)
 // Function: mc68k_phase2_slot_8_handler @ 0x0001b4c2
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 undefined8 mc68k_phase2_slot_8_handler(void)
 
 {
+  ushort uVar1;
   undefined8 in_stack_00000000;
   
-                    /* From J90280.05 @ 0x0172ae (confidence: 80%) */
-  _DAT_00fffe20 = _DAT_00fffe20 & 0xfffd;
+  uVar1 = Ram00fffe20;
+  Ram00fffe20 = uVar1 & 0xfffd;
   return in_stack_00000000;
 }
 
@@ -15561,7 +15768,6 @@ void vp44_evenPhaseSchedulerTaskSet(void)
 void cm550_diagnosticMonitoringCoordinator(void)
 
 {
-                    /* From J90280.05 @ 0x01746c (confidence: 63%) */
   vp44_messageQueueDispatcher();
   cm550_FUN_00021edc();
   cm550_FUN_00021070();
@@ -15578,7 +15784,6 @@ void cm550_diagnosticMonitoringCoordinator(void)
 void cm550_boostPressureControlInit(void)
 
 {
-                    /* From J90280.05 @ 0x00c264 (confidence: 66%) */
   cm550_FUN_00021070();
   func_0x000420bc();
   return;
@@ -15593,7 +15798,6 @@ void cm550_boostPressureControlInit(void)
 void cm550_oddPhaseSchedulerTaskSet(void)
 
 {
-                    /* From J90280.05 @ 0x0172e4 (confidence: 72%) */
   cm550_FUN_0002142c();
   cm550_engineRunTimeHistogramAccumulator();
   cm550_phase3_countdown_timer_manager();
@@ -15609,7 +15813,6 @@ void cm550_oddPhaseSchedulerTaskSet(void)
 void vp44_engine_management_system(void)
 
 {
-                    /* From J90280.05 @ 0x0172f8 (confidence: 69%) */
   vp44_communication_state_machine();
   func_0x00047850();
   func_0x000473b2();
@@ -15636,7 +15839,6 @@ void vp44_engine_management_system(void)
 void vp44ControlSystemCoordinator(void)
 
 {
-                    /* From J90280.05 @ 0x0174ae (confidence: 64%) */
   cm550_FUN_0002ec50();
   vp44_rpmDerateCalculationController();
   vp44TimingFaultMonitor();
@@ -15653,7 +15855,6 @@ void vp44ControlSystemCoordinator(void)
 void cm550_slowCycle10Coordinator(void)
 
 {
-                    /* From J90280.05 @ 0x017464 (confidence: 66%) */
   cm550_FUN_000269f2();
   return;
 }
@@ -15694,7 +15895,6 @@ void vp44_periodicTaskSet_governorProtection(void)
 void vp44_engine_control_cycle(void)
 
 {
-                    /* From J90280.05 @ 0x017334 (confidence: 69%) */
   cm550_engine_speed_governor();
   cm550_diagnostic_parameter_handler();
   cm550_FUN_0002dbde();
@@ -15720,7 +15920,6 @@ void vp44_engine_control_cycle(void)
 void cm550_slowCycle20ExtendedCoordinator(void)
 
 {
-                    /* From J90280.05 @ 0x017512 (confidence: 64%) */
   selectSensorRawChannels();
   cm550_initDiagnosticProtocol();
   func_0x00042496();
@@ -15737,7 +15936,6 @@ void cm550_slowCycle20ExtendedCoordinator(void)
 void vp44ExtendedFaultDetectionCoordinator(void)
 
 {
-                    /* From J90280.05 @ 0x0174c8 (confidence: 64%) */
   cm550_initDiagnosticProtocol();
   func_0x00042496();
   cm550_FUN_0001cc72();
@@ -15776,7 +15974,6 @@ void cm550_periodicTaskSet_fuelTiming(void)
 void cm550_fuelTimingCoordinator(void)
 
 {
-                    /* From J90280.05 @ 0x017504 (confidence: 70%) */
   func_0x0004094c();
   cm550_fuelSourceMode11CountdownHandler();
   return;
@@ -15791,7 +15988,6 @@ void cm550_fuelTimingCoordinator(void)
 void cm550_diagnosticDataTransmissionSlowCycle10Coordinator(void)
 
 {
-                    /* From J90280.05 @ 0x0174a6 (confidence: 66%) */
   cm550_fuelSourceMode11CountdownHandler();
   return;
 }
@@ -15831,7 +16027,6 @@ void periodicTaskSet_fuelDemand(void)
 void vp44_evenPhaseSchedulerTaskSet(void)
 
 {
-                    /* From J90280.05 @ 0x0172c4 (confidence: 67%) */
   vp44InjectionSystemStateController();
   cm550_emptyPlaceholderFunction();
   func_0x00040988();
@@ -15854,7 +16049,6 @@ void vp44_evenPhaseSchedulerTaskSet(void)
 void emptyStubFunction3(void)
 
 {
-                    /* From J90280.05 @ 0x00c260 (confidence: 69%) */
   return;
 }
 
@@ -15988,7 +16182,6 @@ void cm550_FUN_0001b6b4(void)
 void cm550_rpm_control_system(void)
 
 {
-                    /* From J90280.05 @ 0x017440 (confidence: 72%) */
   func_0x00044980();
   cm550_highRpmEngineProtectionStateMachine();
   return;
@@ -16003,7 +16196,6 @@ void cm550_rpm_control_system(void)
 void cm550_emptySlowCycle8PlaceholderCase7(void)
 
 {
-                    /* From J90280.05 @ 0x01743e (confidence: 72%) */
   return;
 }
 
@@ -16030,7 +16222,6 @@ void cm550_FUN_0001b6c8(void)
 void cm550_slowCycle20Coordinator(void)
 
 {
-                    /* From J90280.05 @ 0x0174fc (confidence: 70%) */
   cm550_FUN_0000b3d0();
   return;
 }
@@ -16044,7 +16235,6 @@ void cm550_slowCycle20Coordinator(void)
 void cm550_empty_debug_hook(void)
 
 {
-                    /* From J90280.05 @ 0x0173f4 (confidence: 70%) */
   return;
 }
 
@@ -16071,7 +16261,6 @@ void cm550_FUN_0001b6d6(void)
 void emptyStubFunction2(void)
 
 {
-                    /* From J90280.05 @ 0x00c262 (confidence: 72%) */
   return;
 }
 
@@ -16114,7 +16303,6 @@ void cm550_FUN_0001b6f2(void)
 void vp44ProtectionSlowCycle20Coordinator(void)
 
 {
-                    /* From J90280.05 @ 0x017554 (confidence: 67%) */
   func_0x00042218();
   func_0x00042276();
   func_0x0004204c();
@@ -16130,7 +16318,6 @@ void vp44ProtectionSlowCycle20Coordinator(void)
 void cm550_engineModeBasedOutputControlSlowCycle20Coordinator(void)
 
 {
-                    /* From J90280.05 @ 0x017590 (confidence: 69%) */
   func_0x00042276();
   func_0x0004204c();
   return;
@@ -16145,7 +16332,6 @@ void cm550_engineModeBasedOutputControlSlowCycle20Coordinator(void)
 void cm550_emptySlowCycle20PlaceholderCase15(void)
 
 {
-                    /* From J90280.05 @ 0x017586 (confidence: 70%) */
   return;
 }
 
@@ -16158,7 +16344,6 @@ void cm550_emptySlowCycle20PlaceholderCase15(void)
 void cm550_dzgTimingAndPressureSlowCycle10Coordinator(void)
 
 {
-                    /* From J90280.05 @ 0x017588 (confidence: 70%) */
   cm550_FUN_000254b6();
   return;
 }
@@ -16172,7 +16357,6 @@ void cm550_dzgTimingAndPressureSlowCycle10Coordinator(void)
 void cm550_rpmBasedFuelLimiterCoordinator(void)
 
 {
-                    /* From J90280.05 @ 0x01744e (confidence: 69%) */
   cm550_FUN_00024804();
   cm550_FUN_00021146();
   return;
@@ -16187,7 +16371,6 @@ void cm550_rpmBasedFuelLimiterCoordinator(void)
 void cm550_sensorStatusHistorySlowCycle20Coordinator(void)
 
 {
-                    /* From J90280.05 @ 0x017534 (confidence: 72%) */
   cm550_FUN_00021146();
   return;
 }
@@ -16201,7 +16384,6 @@ void cm550_sensorStatusHistorySlowCycle20Coordinator(void)
 void cm550_shutdownProtectionSlowCycle10Coordinator(void)
 
 {
-                    /* From J90280.05 @ 0x017496 (confidence: 75%) */
   cm550_rpmHistogramAndProtectionStatisticsAccumulator();
   return;
 }
@@ -16215,7 +16397,6 @@ void cm550_shutdownProtectionSlowCycle10Coordinator(void)
 void cm550_camSyncDiagnosticProcessingSlowCycle20Coordinator(void)
 
 {
-                    /* From J90280.05 @ 0x017544 (confidence: 70%) */
   diagnosticCommandDispatcher();
   return;
 }
@@ -16306,7 +16487,6 @@ void cm550_FUN_0001b788(void)
 void cm550_slowCycle8Coordinator(void)
 
 {
-                    /* From J90280.05 @ 0x017412 (confidence: 67%) */
   cm550_FUN_0000ac3c();
   calculateSpeedRatioComponent();
   cm550_FUN_00026e2c();
@@ -16322,7 +16502,6 @@ void cm550_slowCycle8Coordinator(void)
 void cm550_engineParameterAndBoostControlWrapper(void)
 
 {
-                    /* From J90280.05 @ 0x0173f6 (confidence: 75%) */
   calculateSpeedRatioComponent();
   cm550_FUN_00026e2c();
   return;
@@ -16337,7 +16516,6 @@ void cm550_engineParameterAndBoostControlWrapper(void)
 void cm550_auxiliarySystemControlWrapper(void)
 
 {
-                    /* From J90280.05 @ 0x017404 (confidence: 66%) */
   cm550_timingOffsetCalculatorWrapper();
   cm550_FUN_00026616();
   return;
@@ -16368,7 +16546,6 @@ void cm550_FUN_0001b7b0(void)
 void vp44DiagnosticFaultMonitoringSlowCycle20Coordinator(void)
 
 {
-                    /* From J90280.05 @ 0x017570 (confidence: 61%) */
   cm550_FUN_00026b3a();
   return;
 }
@@ -16396,7 +16573,6 @@ void cm550_FUN_0001b7d2(void)
 void vp44FsoFaultMonitoringSlowCycle20Coordinator(void)
 
 {
-                    /* From J90280.05 @ 0x01757e (confidence: 61%) */
   func_0x00044e48();
   return;
 }
@@ -16547,7 +16723,6 @@ void cm550_FUN_0001b846(void)
 void vp44DiagnosticControlSlowCycle20Coordinator(void)
 
 {
-                    /* From J90280.05 @ 0x01759e (confidence: 70%) */
   func_0x0004dc52();
   return;
 }
@@ -16578,9 +16753,10 @@ void cm550_FUN_0001b862(void)
 undefined8 main_loop(void)
 
 {
+  short sVar1;
   undefined4 in_D0;
   undefined4 in_D1;
-  undefined4 *puVar1;
+  undefined4 *puVar2;
   
   if (_enable_for_the_executive_timing_data_gatherer_enabled_disabled == 0) {
     _DAT_0080068a = 0;
@@ -16588,19 +16764,19 @@ undefined8 main_loop(void)
   else {
     if (_DAT_0080068a == 0) {
       _scheduler_timing_record_ptr = (int *)(&SSECTMDX + _scheduler_phase_index * 0x10);
-      for (puVar1 = (undefined4 *)&SSECTMDX;
-          puVar1 < &fuel_limit_from_pump_analog_error_algorithm_0_to_300; puVar1 = puVar1 + 4) {
-        *puVar1 = 0;
-        *(undefined2 *)(puVar1 + 1) = 0;
-        *(undefined2 *)((int)puVar1 + 6) = 0xffff;
-        *(undefined2 *)(puVar1 + 2) = 0;
-        *(undefined2 *)((int)puVar1 + 10) = 0;
+      for (puVar2 = (undefined4 *)&SSECTMDX;
+          puVar2 < &fuel_limit_from_pump_analog_error_algorithm_0_to_300; puVar2 = puVar2 + 4) {
+        *puVar2 = 0;
+        *(undefined2 *)(puVar2 + 1) = 0;
+        *(undefined2 *)((int)puVar2 + 6) = 0xffff;
+        *(undefined2 *)(puVar2 + 2) = 0;
+        *(undefined2 *)((int)puVar2 + 10) = 0;
       }
       _number_of_times_which_frame_overflow_has_occured_in_executive_0_65535 = 0;
       _DAT_00809ee2 = 0;
       _DAT_0080068a = 1;
     }
-    _DAT_0080068e = _DAT_00fff404;
+    _DAT_0080068e = Ram00fff404;
   }
   switch(_scheduler_phase_index) {
   case 0:
@@ -16988,7 +17164,8 @@ undefined8 main_loop(void)
     _scheduler_phase_index = 0;
   }
   if (_enable_for_the_executive_timing_data_gatherer_enabled_disabled != 0) {
-    _scheduler_phase_elapsed_ticks = _DAT_00fff404 - _DAT_0080068e;
+    sVar1 = Ram00fff404;
+    _scheduler_phase_elapsed_ticks = sVar1 - _DAT_0080068e;
     if (*(ushort *)(_scheduler_timing_record_ptr + 2) < _scheduler_phase_elapsed_ticks) {
       *(ushort *)(_scheduler_timing_record_ptr + 2) = _scheduler_phase_elapsed_ticks;
     }
@@ -17007,7 +17184,9 @@ undefined8 main_loop(void)
     }
     _scheduler_timing_record_ptr = _scheduler_timing_record_ptr + 4;
   }
+  DAT_00fffa27 = 0x55;
   DAT_00fffa27 = 0xaa;
+  DAT_00ffd00f = 0x55;
   DAT_00ffd00f = 0xaa;
   return CONCAT44(in_D0,in_D1);
 }
@@ -17023,7 +17202,6 @@ undefined8 main_loop(void)
 void mc68k_scheduler_init(void)
 
 {
-                    /* From J90280.05 @ 0x017b3a (confidence: 81%) */
   _enable_for_the_executive_timing_data_gatherer_enabled_disabled = 0;
   _SSECTMHE = 5;
   _DAT_00809eec = 200;
@@ -17031,9 +17209,9 @@ void mc68k_scheduler_init(void)
   _DAT_00809ef0 = 500;
   _number_of_loop_delays_cal_0_65535 = 0;
   _DAT_0080068a = 0;
-  _DAT_00fffa22 = 0x152;
+  Ram00fffa22 = 0x152;
   _DAT_00808f24 = main_loop;
-  _DAT_00fffa24 = 0x27;
+  Ram00fffa24 = 0x27;
   return;
 }
 
@@ -17043,14 +17221,11 @@ void mc68k_scheduler_init(void)
 // Function: cm550_circularBufferPush @ 0x0001bfa2
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 uint cm550_circularBufferPush(dword *buffer_ctrl,byte data_byte)
 
 {
   undefined1 in_stack_00000009;
   
-                    /* From J90280.05 @ 0x017ca6 (confidence: 100%) */
   if (*(char *)(buffer_ctrl + 4) == '\0') {
     *(undefined1 *)buffer_ctrl[1] = in_stack_00000009;
     buffer_ctrl[1] = buffer_ctrl[1] + 1;
@@ -17071,14 +17246,11 @@ uint cm550_circularBufferPush(dword *buffer_ctrl,byte data_byte)
 // Function: cm550_circularBufferPop @ 0x0001bfde
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 uint cm550_circularBufferPop(dword *buffer_ctrl,byte *data_out)
 
 {
   uint uVar1;
   
-                    /* From J90280.05 @ 0x017ce2 (confidence: 100%) */
   if ((*buffer_ctrl == buffer_ctrl[1]) && (*(char *)(buffer_ctrl + 4) != '\x01')) {
     return 1;
   }
@@ -17098,12 +17270,9 @@ uint cm550_circularBufferPop(dword *buffer_ctrl,byte *data_out)
 // Function: cm550_circularBufferInit @ 0x0001c016
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 void cm550_circularBufferInit(dword *buffer_ctrl,dword base_address,dword buffer_size)
 
 {
-                    /* From J90280.05 @ 0x017d1a (confidence: 100%) */
   buffer_ctrl[2] = base_address;
   buffer_ctrl[1] = base_address;
   *buffer_ctrl = base_address;
@@ -17123,7 +17292,6 @@ void cm550_circularBufferInit(dword *buffer_ctrl,dword base_address,dword buffer
 void cm550_diagnosticFuelLimitInterpolator(void)
 
 {
-                    /* From J90280.05 @ 0x02da0e (confidence: 75%) */
   if (_indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 == 0xd) {
     _fuel_limit_after_derate_selection =
          _desired_engine_fueling_after_derate_without_air_handl_derate_0_100;
@@ -17201,7 +17369,6 @@ void cm550_FUN_0001c0d4(void)
 void fuelTimingOilPressureModeController(void)
 
 {
-                    /* From J90280.05 @ 0x01685c (confidence: 77%) */
   if ((_calibration_feature_enable_flags_word_1 & 0x10) == 0) {
     cm550_FUN_00030c3c();
     cm550_FUN_0001c0d4();
@@ -17317,60 +17484,67 @@ undefined4 cm550_flashEraseWithWatchdog(void)
 
 {
   ushort uVar1;
-  ushort uVar2;
-  short sVar3;
-  ushort uVar4;
+  byte bVar2;
+  ushort uVar3;
+  short sVar4;
+  ushort uVar5;
   
-                    /* From J90280.05 @ 0x017ed4 (confidence: 89%) */
+  DAT_00fffa27 = 0x55;
   DAT_00fffa27 = 0xaa;
+  DAT_00ffd00f = 0x55;
   DAT_00ffd00f = 0xaa;
-  uVar4 = 0;
+  uVar5 = 0;
   *_flash_target_address_ptr = 0x2020;
   *_flash_target_address_ptr = 0xd0d0;
   _DAT_00000000 = 0;
-  uVar2 = 0;
+  uVar3 = 0;
   do {
-    uVar1 = uVar2 + 1;
-    if (40000 < uVar2) {
+    uVar1 = uVar3 + 1;
+    if (40000 < uVar3) {
       _DAT_00000000 = 0xffff;
       return 1;
     }
-    if (((DAT_00ffd000 & 1) == 0) || (_DAT_008006a6 == 1)) {
-      uVar4 = 0;
+    bVar2 = DAT_00ffd000;
+    if (((bVar2 & 1) == 0) || (_DAT_008006a6 == 1)) {
+      uVar5 = 0;
     }
     else {
-      uVar4 = uVar4 + 1;
-      if (3 < uVar4) {
+      uVar5 = uVar5 + 1;
+      if (3 < uVar5) {
         *_flash_target_address_ptr = 0xb0b0;
-        uVar4 = 0;
-        while ((uVar2 = uVar4 + 1, uVar4 < 40000 && ((_DAT_00000000 & 0x80) != 0x80))) {
-          sVar3 = 0;
+        uVar5 = 0;
+        while ((uVar3 = uVar5 + 1, uVar5 < 40000 && ((_DAT_00000000 & 0x80) != 0x80))) {
+          sVar4 = 0;
           do {
-            uVar4 = 0;
+            uVar5 = 0;
             do {
+              DAT_00fffa27 = 0x55;
               DAT_00fffa27 = 0xaa;
+              DAT_00ffd00f = 0x55;
               DAT_00ffd00f = 0xaa;
-              uVar4 = uVar4 + 1;
-            } while (uVar4 < 0xa0);
-            sVar3 = sVar3 + 1;
-            uVar4 = uVar2;
-          } while (sVar3 == 0);
+              uVar5 = uVar5 + 1;
+            } while (uVar5 < 0xa0);
+            sVar4 = sVar4 + 1;
+            uVar5 = uVar3;
+          } while (sVar4 == 0);
         }
         _DAT_00000000 = 0xffff;
         return 2;
       }
     }
-    sVar3 = 0;
+    sVar4 = 0;
     do {
-      uVar2 = 0;
+      uVar3 = 0;
       do {
+        DAT_00fffa27 = 0x55;
         DAT_00fffa27 = 0xaa;
+        DAT_00ffd00f = 0x55;
         DAT_00ffd00f = 0xaa;
-        uVar2 = uVar2 + 1;
-      } while (uVar2 < 0xa0);
-      sVar3 = sVar3 + 1;
-      uVar2 = uVar1;
-    } while (sVar3 == 0);
+        uVar3 = uVar3 + 1;
+      } while (uVar3 < 0xa0);
+      sVar4 = sVar4 + 1;
+      uVar3 = uVar1;
+    } while (sVar4 == 0);
   } while( true );
 }
 
@@ -17381,7 +17555,6 @@ undefined4 cm550_flashEraseWithWatchdog(void)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 void cm550_FUN_0001c484(dword start_address,dword end_address)
 
@@ -17419,11 +17592,12 @@ undefined4 cm550_flashProgramWordWithWatchdog(void)
   ushort uVar2;
   bool bVar3;
   
-                    /* From J90280.05 @ 0x01805c (confidence: 83%) */
   uVar1 = 0;
+  DAT_00fffa27 = 0x55;
+  DAT_00fffa27 = 0xaa;
+  DAT_00ffd00f = 0x55;
+  DAT_00ffd00f = 0xaa;
   while( true ) {
-    DAT_00fffa27 = 0xaa;
-    DAT_00ffd00f = 0xaa;
     if (_DAT_008006a2 <= _flash_target_address_ptr) {
       _DAT_00000000 = 0xffff;
       return 0;
@@ -17432,13 +17606,19 @@ undefined4 cm550_flashProgramWordWithWatchdog(void)
     *_flash_target_address_ptr = *_DAT_0080069e;
     uVar2 = 0;
     do {
+      DAT_00fffa27 = 0x55;
       DAT_00fffa27 = 0xaa;
+      DAT_00ffd00f = 0x55;
       DAT_00ffd00f = 0xaa;
       bVar3 = uVar2 < 5000;
       uVar2 = uVar2 + 1;
     } while (bVar3);
     if (4 < uVar1) break;
     uVar1 = uVar1 + 1;
+    DAT_00fffa27 = 0x55;
+    DAT_00fffa27 = 0xaa;
+    DAT_00ffd00f = 0x55;
+    DAT_00ffd00f = 0xaa;
   }
   _DAT_00000000 = 0xffff;
   return 0;
@@ -17451,7 +17631,6 @@ undefined4 cm550_flashProgramWordWithWatchdog(void)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 void cm550_flashProgramFromRam(dword dest_address,dword source_ptr,dword byte_count)
 
@@ -17460,7 +17639,6 @@ void cm550_flashProgramFromRam(dword dest_address,dword source_ptr,dword byte_co
   code *pcVar2;
   undefined1 auStack_804 [2048];
   
-                    /* From J90280.05 @ 0x018174 (confidence: 88%) */
   _DAT_0080069e = source_ptr;
   _flash_target_address_ptr = dest_address;
   _DAT_008006a2 = dest_address + (byte_count >> 0x10);
@@ -17485,7 +17663,6 @@ void cm550_flashProgramFromRam(dword dest_address,dword source_ptr,dword byte_co
 void cm550_diagnosticStatusDefaultSetter(void)
 
 {
-                    /* From J90280.05 @ 0x0181bc (confidence: 81%) */
   if (_FSDSFLST == 0) {
     _FSDSFLST = 8;
   }
@@ -17503,7 +17680,6 @@ void cm550_diagnosticStatusDefaultSetter(void)
 void cm550_diagnostic_parameter_handler(void)
 
 {
-                    /* From J90280.05 @ 0x0181cc (confidence: 75%) */
   if (_FSDSFLST == 8) {
     _DAT_0080d33e = cm550_FUN_0001de58();
     _fuel_demand_selected = _DAT_0080d33e;
@@ -17530,7 +17706,6 @@ uint cm550_fuelDemandTableBlendCalculator(void)
   uint uVar1;
   
   uVar2 = (undefined2)((uint)in_D0 >> 0x10);
-                    /* From J90280.05 @ 0x0181ea (confidence: 75%) */
   if ((_DAT_00803c9c & 0x100) == 0) {
     uVar2 = _current_fuel_demand;
     if (_DAT_0080d706 == 1) {
@@ -17726,7 +17901,6 @@ void fuelDemandProportionalCalculationSlowCycle40Coordinator(void)
 {
   uint uVar1;
   
-                    /* From J90280.05 @ 0x0183a6 (confidence: 81%) */
   if (_current_fuel_demand < _conversion_offset_of_line_converting_cubic_millimeter_fuel_to_0_100) {
     _DAT_0080d35a = 0;
     return;
@@ -17760,7 +17934,6 @@ ushort cm550_fuelDemandLimitSelector11(void)
   ushort uVar1;
   
   uVar1 = value_used_for_monitoring_switch_data_0_1_2089_10_24 & 1;
-                    /* From J90280.05 @ 0x030cb0 (confidence: 70%) */
   if (((((value_used_for_monitoring_switch_data_0_1_2089_10_24 & 1) == 0) ||
        (_fso_state_desired_from_fuel_system_specific_algorithms_1_off_on_off != 0)) ||
       ((_DAT_0080a9c8 != 0 &&
@@ -17798,7 +17971,6 @@ ushort vp44_canPinVp44StatusController(void)
   int unaff_A2;
   
   uVar1 = value_used_for_monitoring_switch_data_0_1_2089_10_24 & 1;
-                    /* From J90280.05 @ 0x01842c (confidence: 73%) */
   if (((((value_used_for_monitoring_switch_data_0_1_2089_10_24 & 1) == 0) ||
        (_fso_state_desired_from_fuel_system_specific_algorithms_1_off_on_off != 0)) ||
       ((_DAT_0080a9c8 != 0 &&
@@ -17889,7 +18061,6 @@ void cm550_FUN_0001cb48(void)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 short cm550_calculateBlendedTableValue(word rpm_index)
 
@@ -18069,7 +18240,6 @@ void cm550_initDiagnosticProtocol(void)
   int iVar2;
   dword multiplicand;
   
-                    /* From J90280.05 @ 0x0256a4 (confidence: 63%) */
   _DAT_0080071c = _hsg_filtered_engine_speed_error;
   multiplier = (dword)_DAT_0080803e;
   multiplicand = (uint)_hsg_reference_speed_after_droop - (uint)_DAT_0080d60a;
@@ -18255,7 +18425,6 @@ void cm550_FUN_0001d252(void)
 void cm550_update_engine_protection_thresholds(void)
 
 {
-                    /* From J90280.05 @ 0x02c7e0 (confidence: 69%) */
   _hsg_proportional_gain_base = _DAT_00808036;
   _hsg_integral_gain_base = _DAT_0080803a;
   _hsg_derivative_gain_base = _DAT_00808038;
@@ -18605,7 +18774,6 @@ uint vp44SensorStatusMonitor(void)
   uint uVar2;
   uint uVar3;
   
-                    /* From J90280.05 @ 0x031fb8 (confidence: 61%) */
   sVar1 = _vp44_sensor_monitor_state;
   uVar3 = _calibration_feature_enable_flags_word_3 & 2;
   if (((_calibration_feature_enable_flags_word_3 & 2) != 0) &&
@@ -18750,7 +18918,6 @@ void vp44_FUN_0001db8a(void)
 void vp44_fuelArbitratorVariablesReset(void)
 
 {
-                    /* From J90280.05 @ 0x01cbfe (confidence: 67%) */
   _vp44_sensor_monitor_state = 0;
   _vp44_sensor_warning_active = 0;
   _vp44_sensor_shutdown_lamp_request = 0;
@@ -18786,14 +18953,11 @@ void cm550_FUN_0001dbd8(void)
 // Function: mc68k_main @ 0x0001dbee
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void mc68k_main(void)
 
 {
-                    /* From J90280.05 @ 0x025596 (confidence: 100%) */
-  _DAT_00fffa00 = 0x604f;
-  _DAT_00fffa04 = 0x7f08;
+  Ram00fffa00 = 0x604f;
+  Ram00fffa04 = 0x7f08;
   DAT_00fffa11 = 0xa9;
   DAT_00fffa15 = 0xfe;
   DAT_00fffa17 = 1;
@@ -18801,32 +18965,32 @@ void mc68k_main(void)
   DAT_00fffa1d = 0xc9;
   DAT_00fffa1f = 0x30;
   DAT_00fffa21 = 0x9e;
-  _DAT_00fffa44 = 0x2bbf;
-  _DAT_00fffa46 = 0;
-  _DAT_00fffa48 = 6;
-  _DAT_00fffa4a = 0x6830;
-  _DAT_00fffa4c = 0x8003;
-  _DAT_00fffa4e = 0x5830;
-  _DAT_00fffa50 = 0x8003;
-  _DAT_00fffa52 = 0x3830;
-  _DAT_00fffa54 = 0xffd0;
-  _DAT_00fffa56 = 0x5830;
-  _DAT_00fffa58 = 6;
-  _DAT_00fffa5a = 0x7030;
-  _DAT_00fffa5c = 0xffd8;
-  _DAT_00fffa5e = 0x5bf0;
-  _DAT_00fffa60 = 0xffc8;
-  _DAT_00fffa62 = 0x5bf0;
-  _DAT_00fffa64 = 0;
-  _DAT_00fffa66 = 0;
-  _DAT_00fffa68 = 0xfffb;
-  _DAT_00fffa6a = 0x2801;
-  _DAT_00fffa6c = 0;
-  _DAT_00fffa6e = 0;
-  _DAT_00fffa70 = 0;
-  _DAT_00fffa72 = 0;
-  _DAT_00fffa74 = 0;
-  _DAT_00fffa76 = 0;
+  Ram00fffa44 = 0x2bbf;
+  Ram00fffa46 = 0;
+  Ram00fffa48 = 6;
+  Ram00fffa4a = 0x6830;
+  Ram00fffa4c = 0x8003;
+  Ram00fffa4e = 0x5830;
+  Ram00fffa50 = 0x8003;
+  Ram00fffa52 = 0x3830;
+  Ram00fffa54 = 0xffd0;
+  Ram00fffa56 = 0x5830;
+  Ram00fffa58 = 6;
+  Ram00fffa5a = 0x7030;
+  Ram00fffa5c = 0xffd8;
+  Ram00fffa5e = 0x5bf0;
+  Ram00fffa60 = 0xffc8;
+  Ram00fffa62 = 0x5bf0;
+  Ram00fffa64 = 0;
+  Ram00fffa66 = 0;
+  Ram00fffa68 = 0xfffb;
+  Ram00fffa6a = 0x2801;
+  Ram00fffa6c = 0;
+  Ram00fffa6e = 0;
+  Ram00fffa70 = 0;
+  Ram00fffa72 = 0;
+  Ram00fffa74 = 0;
+  Ram00fffa76 = 0;
   vp44_FUN_000284e8();
   return;
 }
@@ -18842,7 +19006,6 @@ void mc68k_main(void)
 void vp44ControlStructureInit(void)
 
 {
-                    /* From J90280.05 @ 0x018eb4 (confidence: 70%) */
   _DAT_0080a91e = 0;
   _DAT_0080a91a = &time_constant_of_lb_hr_filter_used_in_the_alpha_fuel_rate_calcula_0_1;
   _APAPBA = 0;
@@ -18864,7 +19027,6 @@ void vp44ControlStructureInit(void)
 void cm550_diagnosticBufferPointerInit(void)
 
 {
-                    /* From J90280.05 @ 0x018ee4 (confidence: 92%) */
   _j1708_transmit_buffer_2_32_dc9c = &diagnostic_tx_buffer_base;
   _j1708_transmit_buffer_0_2_32 = &diagnostic_tx_buffer_base;
   _j1708_transmit_buffer_2_32_dc98 = 0x808b01;
@@ -19015,8 +19177,6 @@ undefined4 cm550_FUN_0001de58(void)
 // Function: cm550_subtractAndClampValue @ 0x0001e02a
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 void cm550_subtractAndClampValue(word *fuel_value_ptr)
 
 {
@@ -19057,14 +19217,12 @@ void cm550_FUN_0001e04c(void)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 void cm550_serialNodeAddressChecker(byte node_address)
 
 {
   byte in_stack_00000005;
   
-                    /* From J90280.05 @ 0x0190d8 (confidence: 88%) */
   if (in_stack_00000005 == _can_first_receive_object_index) {
     serialTransmitHandler();
     return;
@@ -19080,7 +19238,6 @@ void cm550_serialNodeAddressChecker(byte node_address)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 void cm550_serialNodeAddressForwarder(byte node_address)
 
@@ -19088,7 +19245,6 @@ void cm550_serialNodeAddressForwarder(byte node_address)
   undefined4 unaff_D2;
   byte in_stack_00000005;
   
-                    /* From J90280.05 @ 0x019108 (confidence: 94%) */
   if ((_can_first_receive_object_index < in_stack_00000005) &&
      (in_stack_00000005 <= _can_last_receive_object_index)) {
     cm550_FUN_0001e5f0((uint)CONCAT12(in_stack_00000005,(short)((uint)unaff_D2 >> 0x10)));
@@ -19105,7 +19261,7 @@ void cm550_serialNodeAddressForwarder(byte node_address)
 undefined8 cm550_FUN_0001e0fa(void)
 
 {
-  byte *pbVar1;
+  byte bVar1;
   undefined4 in_D0;
   undefined4 in_D1;
   undefined1 local_1c;
@@ -19115,24 +19271,28 @@ undefined8 cm550_FUN_0001e0fa(void)
   local_1c = (undefined1)((uint)in_D0 >> 0x18);
   node_address = (byte)((uint)in_D0 >> 0x10);
   uStack_1a = (undefined2)in_D0;
-  while (DAT_00ffd85f != 0) {
-    if ((DAT_00ffd85f < 3) || (0x10 < DAT_00ffd85f)) {
-      if (DAT_00ffd85f == 2) {
+  while (bVar1 = DAT_00ffd85f, bVar1 != 0) {
+    if ((bVar1 < 3) || (0x10 < bVar1)) {
+      if (bVar1 == 2) {
         cm550_serialNodeAddressForwarder(node_address);
       }
       else {
         DAT_0080aa1a = DAT_00ffd801;
-        if ((DAT_00ffd801 & 0x80) != 0) {
+        if ((DAT_0080aa1a & 0x80) != 0) {
+          DAT_00ffd800 = 1;
           do {
-          } while ((DAT_00ffd802 & 0x80) != 0);
-          DAT_00ffd800 = 10;
+            bVar1 = DAT_00ffd802;
+          } while ((bVar1 & 0x80) != 0);
+          bVar1 = DAT_00ffd800;
+          DAT_00ffd800 = bVar1 | 10;
+          bVar1 = DAT_00ffd800;
+          DAT_00ffd800 = bVar1 & 0xfe;
         }
       }
     }
     else {
-      pbVar1 = (byte *)((uint)DAT_00ffd85f * 0x10 + 0xffd7e0);
-      *pbVar1 = 0xfd;
-      if ((*pbVar1 & 0x20) == 0) {
+      (&UNK_00ffd7e0)[(uint)bVar1 * 0x10] = 0xfd;
+      if (((&UNK_00ffd7e0)[(uint)bVar1 * 0x10] & 0x20) == 0) {
         cm550_serialNodeAddressForwarder(node_address);
       }
       else {
@@ -19154,7 +19314,6 @@ undefined8 cm550_FUN_0001e0fa(void)
 void cm550_canMessageInterruptHandlerSetup(void)
 
 {
-                    /* From J90280.05 @ 0x01920a (confidence: 86%) */
   _DAT_00808e4c = cm550_FUN_0001e0fa;
   return;
 }
@@ -19168,7 +19327,6 @@ void cm550_canMessageInterruptHandlerSetup(void)
 void cm550_emptyStubWrapper1(void)
 
 {
-                    /* From J90280.05 @ 0x019216 (confidence: 88%) */
   cm550_emptyStubFunction1();
   return;
 }
@@ -19182,7 +19340,6 @@ void cm550_emptyStubWrapper1(void)
 void cm550_modeBasedDataDispatcherWrapper(void)
 
 {
-                    /* From J90280.05 @ 0x019228 (confidence: 88%) */
   cm550_modeBasedDataDispatcher();
   return;
 }
@@ -19200,7 +19357,6 @@ undefined8 mc68k_serialPort2IsrHandler(void)
   undefined4 in_D0;
   undefined4 in_D1;
   
-                    /* From J90280.05 @ 0x01923a (confidence: 94%) */
   while (DAT_00ffc85f != 0) {
     if ((DAT_00ffc85f < 3) || (0x10 < DAT_00ffc85f)) {
       DAT_0080aa1b = DAT_00ffc801;
@@ -19235,7 +19391,6 @@ undefined8 mc68k_serialPort2IsrHandler(void)
 void cm550_serialCommunicationIsrRegister(void)
 
 {
-                    /* From J90280.05 @ 0x0192c4 (confidence: 86%) */
   _DAT_00808e50 = mc68k_serialPort2IsrHandler;
   return;
 }
@@ -19246,16 +19401,17 @@ void cm550_serialCommunicationIsrRegister(void)
 // Function: mc68k_tpuTimerChannelEnable @ 0x0001e266
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 void mc68k_tpuTimerChannelEnable(word channel_mask)
 
 {
-                    /* From J90280.05 @ 0x0192d0 (confidence: 94%) */
+  ushort uVar1;
+  
   j1708_rx_state_t_0080dcaf.buffer_ptr_3._3_1_ = 1;
-  _DAT_00fff45a = 0xfc8a;
-  _DAT_00fff458 = _DAT_00fff458 & 0x7fff | 0x4000;
+  Ram00fff45a = 0xfc8a;
+  uVar1 = Ram00fff458;
+  Ram00fff458 = uVar1 & 0x7fff;
+  uVar1 = Ram00fff458;
+  Ram00fff458 = uVar1 | 0x4000;
   return;
 }
 
@@ -19270,28 +19426,32 @@ void mc68k_tpuTimerChannelEnable(word channel_mask)
 undefined8 mc68k_epsPositionSensorIsrHandler(void)
 
 {
-  byte *pbVar1;
+  ushort uVar1;
+  undefined2 uVar2;
+  byte *pbVar3;
   undefined4 in_D0;
   undefined4 in_D1;
-  byte bVar2;
+  byte bVar4;
   undefined2 local_24;
   word channel_mask;
   
-  pbVar1 = _j1708_transmit_buffer_2_32_dc98;
-                    /* From J90280.05 @ 0x0192f2 (confidence: 88%) */
+  pbVar3 = _j1708_transmit_buffer_2_32_dc98;
   local_24 = (undefined2)((uint)in_D0 >> 0x10);
   channel_mask = (word)in_D0;
-  if ((_DAT_00fffc0c & 0x40) != 0) {
+  uVar1 = Ram00fffc0c;
+  if ((uVar1 & 0x40) != 0) {
     j1708_rx_state_t_0080dcaf.buffer_ptr_3._3_1_ = 0;
-    _DAT_00fff458 = _DAT_00fff458 & 0x8fff;
-    bVar2 = (byte)_DAT_00fffc0e;
+    uVar1 = Ram00fff458;
+    Ram00fff458 = uVar1 & 0x8fff;
+    uVar2 = Ram00fffc0e;
+    bVar4 = (byte)uVar2;
     if (j1708_rx_state_t_0080dcaf.buffer_ptr_1._1_1_ == '\x01') {
-      *_j1708_receive_buffer_pointer_2_32_dca6 = bVar2;
+      *_j1708_receive_buffer_pointer_2_32_dca6 = bVar4;
       _j1708_receive_buffer_pointer_2_32_dca6 =
            (byte *)CONCAT31(_j1708_receive_buffer_pointer_2_32_dca6,DAT_0080dca9 + '\x01');
       *_j1708_receive_buffer_pointer_2_32_dca2 = *_j1708_receive_buffer_pointer_2_32_dca2 + 1;
       j1708_rx_state_t_0080dcaf.buffer_ptr_2._0_1_ =
-           bVar2 + j1708_rx_state_t_0080dcaf.buffer_ptr_2._0_1_;
+           bVar4 + j1708_rx_state_t_0080dcaf.buffer_ptr_2._0_1_;
       if (_j1708_receive_buffer_pointer_2_32_dcaa == _j1708_receive_buffer_pointer_2_32_dca6) {
         if (_j1708_receive_buffer_pointer_2_32_dca2 == _j1708_receive_buffer_pointer_2_32_dcaa) {
           *_j1708_receive_buffer_pointer_2_32_dca2 = 0;
@@ -19302,7 +19462,8 @@ undefined8 mc68k_epsPositionSensorIsrHandler(void)
         }
         else {
           j1708_receive_buffer_full_flag_1_true_0_false = '\x01';
-          _DAT_00fffc0a = _DAT_00fffc0a & 0xffdf;
+          uVar1 = Ram00fffc0a;
+          Ram00fffc0a = uVar1 & 0xffdf;
           if (_j1708_transmit_buffer_0_2_32 != _j1708_transmit_buffer_2_32_dc9c) {
             mc68k_tpuTimerChannelEnable(channel_mask);
             j1708_rx_state_t_0080dcaf.buffer_ptr_3._3_1_ = 1;
@@ -19316,11 +19477,11 @@ undefined8 mc68k_epsPositionSensorIsrHandler(void)
     else {
       switch(j1708_rx_state_t_0080dcaf._7_4_) {
       case (BADTYPE)0x0:
-        if (bVar2 == *_j1708_transmit_buffer_2_32_dc98) {
+        if (bVar4 == *_j1708_transmit_buffer_2_32_dc98) {
           _j1708_transmit_buffer_2_32_dc98 =
                (byte *)CONCAT31(_j1708_transmit_buffer_2_32_dc98,
                                 j1708_transmit_buffer_index_low + '\x01');
-          _DAT_00fffc0e = (ushort)*_j1708_transmit_buffer_2_32_dc98;
+          Ram00fffc0e = (ushort)*_j1708_transmit_buffer_2_32_dc98;
           mc68k_tpuTimerChannelEnable(channel_mask);
           j1708_rx_state_t_0080dcaf.buffer_ptr_2._0_1_ =
                *_j1708_transmit_buffer_2_32_dc98 + j1708_rx_state_t_0080dcaf.buffer_ptr_2._0_1_;
@@ -19335,14 +19496,15 @@ undefined8 mc68k_epsPositionSensorIsrHandler(void)
         }
         else if (j1708_receive_buffer_full_flag_1_true_0_false == '\0') {
           j1708_rx_state_t_0080dcaf.buffer_ptr_1._1_1_ = '\x01';
-          j1708_rx_state_t_0080dcaf.buffer_ptr_2._0_1_ = bVar2;
-          *_j1708_receive_buffer_pointer_2_32_dca6 = bVar2;
+          j1708_rx_state_t_0080dcaf.buffer_ptr_2._0_1_ = bVar4;
+          *_j1708_receive_buffer_pointer_2_32_dca6 = bVar4;
           _j1708_receive_buffer_pointer_2_32_dca6 =
                (byte *)CONCAT31(_j1708_receive_buffer_pointer_2_32_dca6,DAT_0080dca9 + '\x01');
           *_j1708_receive_buffer_pointer_2_32_dca2 = *_j1708_receive_buffer_pointer_2_32_dca2 + 1;
           if (_j1708_receive_buffer_pointer_2_32_dca6 == _j1708_receive_buffer_pointer_2_32_dcaa) {
             j1708_receive_buffer_full_flag_1_true_0_false = '\x01';
-            _DAT_00fffc0a = _DAT_00fffc0a & 0xffdf;
+            uVar1 = Ram00fffc0a;
+            Ram00fffc0a = uVar1 & 0xffdf;
           }
           else {
             mc68k_tpuTimerChannelEnable(channel_mask);
@@ -19358,7 +19520,7 @@ undefined8 mc68k_epsPositionSensorIsrHandler(void)
         _j1708_transmit_buffer_2_32_dc98 =
              (byte *)CONCAT31(_j1708_transmit_buffer_2_32_dc98,
                               j1708_transmit_buffer_index_low + '\x01');
-        _DAT_00fffc0e = (ushort)*_j1708_transmit_buffer_2_32_dc98;
+        Ram00fffc0e = (ushort)*_j1708_transmit_buffer_2_32_dc98;
         mc68k_tpuTimerChannelEnable(channel_mask);
         j1708_rx_state_t_0080dcaf.buffer_ptr_2._0_1_ =
              *_j1708_transmit_buffer_2_32_dc98 + j1708_rx_state_t_0080dcaf.buffer_ptr_2._0_1_;
@@ -19369,7 +19531,7 @@ undefined8 mc68k_epsPositionSensorIsrHandler(void)
         }
         break;
       case (BADTYPE)0x2:
-        _DAT_00fffc0e = ~(ushort)j1708_rx_state_t_0080dcaf.buffer_ptr_2._0_1_ + 1 & 0xff;
+        Ram00fffc0e = ~(ushort)j1708_rx_state_t_0080dcaf.buffer_ptr_2._0_1_ + 1 & 0xff;
         mc68k_tpuTimerChannelEnable(channel_mask);
         _j1708_transmit_buffer_2_32_dc98 =
              (byte *)CONCAT31(_j1708_transmit_buffer_2_32_dc98,
@@ -19392,15 +19554,18 @@ undefined8 mc68k_epsPositionSensorIsrHandler(void)
         }
         j1708_rx_state_t_0080dcaf.buffer_ptr_1._1_1_ = '\x01';
         if (j1708_receive_buffer_full_flag_1_true_0_false == '\0') {
-          _DAT_00fffc0a = _DAT_00fffc0a | 0x20;
+          uVar1 = Ram00fffc0a;
+          Ram00fffc0a = uVar1 | 0x20;
         }
         else {
-          _DAT_00fffc0a = _DAT_00fffc0a & 0xffdf;
+          uVar1 = Ram00fffc0a;
+          Ram00fffc0a = uVar1 & 0xffdf;
         }
-        if (_j1708_transmit_buffer_0_2_32 != pbVar1) {
+        if (_j1708_transmit_buffer_0_2_32 != pbVar3) {
           j1708_rx_state_t_0080dcaf.buffer_ptr_3._3_1_ = 1;
-          _DAT_00fff458 = _DAT_00fff458 | 0x4000;
-          _DAT_00fff45a = 0xfcbe;
+          uVar1 = Ram00fff458;
+          Ram00fff458 = uVar1 | 0x4000;
+          Ram00fff45a = 0xfcbe;
         }
       }
     }
@@ -19419,7 +19584,6 @@ undefined8 mc68k_epsPositionSensorIsrHandler(void)
 void cm550_tpuChannelIsrRegister(void)
 
 {
-                    /* From J90280.05 @ 0x01958c (confidence: 86%) */
   _DAT_00808f1c = mc68k_epsPositionSensorIsrHandler;
   return;
 }
@@ -19438,7 +19602,6 @@ uint serialTransmitHandler(void)
   undefined2 uVar1;
   uint uVar2;
   
-                    /* From J90280.05 @ 0x019598 (confidence: 81%) */
   _DAT_0080da0c = 1;
   *_can_control_register_pointer = 0xfd;
   uVar2 = _DAT_0080d9ae;
@@ -19476,7 +19639,6 @@ uint serialTransmitHandler(void)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 void cm550_FUN_0001e5f0(dword channel_config)
 
@@ -19484,7 +19646,7 @@ void cm550_FUN_0001e5f0(dword channel_config)
   int iVar1;
   byte bVar3;
   ushort uVar2;
-  undefined1 *puVar4;
+  undefined *puVar4;
   undefined1 *puVar5;
   
   if (can_receive_buffer_overflow_flag == '\0') {
@@ -19497,13 +19659,13 @@ void cm550_FUN_0001e5f0(dword channel_config)
       *(uint *)((int)_can_receive_buffer_write_pointer + 6) =
            (int)_can_receive_buffer_write_pointer + 10;
       uVar2 = 0;
-      puVar4 = (undefined1 *)((int)_can_receive_buffer_write_pointer + 10);
-      puVar5 = (undefined1 *)(iVar1 + 0xffd807);
+      puVar5 = (undefined1 *)((int)_can_receive_buffer_write_pointer + 10);
+      puVar4 = &UNK_00ffd807 + iVar1;
       do {
-        *puVar4 = *puVar5;
+        *puVar5 = *puVar4;
         uVar2 = uVar2 + 1;
-        puVar4 = puVar4 + 1;
         puVar5 = puVar5 + 1;
+        puVar4 = puVar4 + 1;
       } while (uVar2 < 8);
       (&DAT_00ffd800)[iVar1] = 0xfd;
       (&DAT_00ffd801)[iVar1] = 0x7d;
@@ -19517,13 +19679,13 @@ void cm550_FUN_0001e5f0(dword channel_config)
         *(uint *)((int)_can_receive_buffer_write_pointer + 6) =
              (int)_can_receive_buffer_write_pointer + 10;
         uVar2 = 0;
-        puVar4 = (undefined1 *)((int)_can_receive_buffer_write_pointer + 10);
-        puVar5 = (undefined1 *)(iVar1 + 0xffd807);
+        puVar5 = (undefined1 *)((int)_can_receive_buffer_write_pointer + 10);
+        puVar4 = &UNK_00ffd807 + iVar1;
         do {
-          *puVar4 = *puVar5;
+          *puVar5 = *puVar4;
           uVar2 = uVar2 + 1;
-          puVar4 = puVar4 + 1;
           puVar5 = puVar5 + 1;
+          puVar4 = puVar4 + 1;
         } while (uVar2 < 8);
       } while (((&DAT_00ffd801)[iVar1] & 2) != 0);
     }
@@ -19559,7 +19721,6 @@ undefined8 cm550_interruptCounter1Increment(void)
   undefined4 in_D0;
   undefined4 in_D1;
   
-                    /* From J90280.05 @ 0x019738 (confidence: 81%) */
   _DAT_00800758 = _DAT_00800758 + 1;
   return CONCAT44(in_D0,in_D1);
 }
@@ -19578,7 +19739,6 @@ undefined8 cm550_interruptCounter2Increment(void)
   undefined4 in_D0;
   undefined4 in_D1;
   
-                    /* From J90280.05 @ 0x01976e (confidence: 92%) */
   _DAT_0080095a = _DAT_0080095a + 1;
   return CONCAT44(in_D0,in_D1);
 }
@@ -19594,7 +19754,6 @@ void cm550_initVectorTable(void)
 {
   byte *pbVar1;
   
-                    /* From J90280.05 @ 0x01977e (confidence: 92%) */
   for (pbVar1 = diagnostic_rx_buffer_base.rx_buffer_base + 0xdc; pbVar1 < &none_none;
       pbVar1 = pbVar1 + 4) {
     *(code **)pbVar1 = cm550_interruptCounter2Increment;
@@ -19617,7 +19776,6 @@ uint cm550_insiteMultiFrameResponseBuilder(undefined4 param_1)
   uint uVar2;
   char cVar3;
   
-                    /* From J90280.05 @ 0x01984e (confidence: 81%) */
   cVar1 = j1708_transmit_buffer_2_32_ddc6.reserved_48[2] - 2;
   j1708_transmit_buffer_2_32_ddc6.reserved_92[1] = 0;
   DAT_0080095c = (byte)param_1;
@@ -19683,7 +19841,6 @@ uint cm550_insiteMultiFrameResponseBuilder(undefined4 param_1)
 void cm550_insiteMultiFrameContinuation(void)
 
 {
-                    /* From J90280.05 @ 0x019952 (confidence: 75%) */
   *(byte *)j1708_transmit_buffer_2_32_ddc6.next_ptr = j1708_transmit_buffer_2_32_ddc6.reserved_48[0]
   ;
   *(undefined1 *)j1708_transmit_buffer_2_32_ddc6.write_ptr = 0;
@@ -19751,7 +19908,6 @@ void buildPgn65228Dm3ClearInitMessage(void)
   byte bVar7;
   char *pcVar8;
   
-                    /* From J90280.05 @ 0x019a0a (confidence: 75%) */
   j1708_transmit_buffer_2_32_ddc6.segment_ptr = (dword)_j1708_receive_buffer_pointer_2_32_dcaa;
   j1708_transmit_buffer_2_32_ddc6.next_ptr = _j1708_transmit_buffer_0_2_32;
   j1708_transmit_buffer_2_32_ddc6.write_ptr = _j1708_transmit_buffer_0_2_32;
@@ -19885,7 +20041,6 @@ void cm550_responseBufferSpaceCheck(void)
 {
   byte bVar1;
   
-                    /* From J90280.05 @ 0x019c3c (confidence: 75%) */
   bVar1 = (DAT_0080dc9f - DAT_0080dc97) - 2;
   if (bVar1 < 5) {
     j1708_transmit_buffer_2_32_ddc6.reserved_48[1] = 0;
@@ -19913,7 +20068,6 @@ void cm550_responseBufferSpaceCheck(void)
 void cm550_responseBufferFinalize(void)
 
 {
-                    /* From J90280.05 @ 0x019cbc (confidence: 81%) */
   if (1 < j1708_transmit_buffer_2_32_ddc6.reserved_48[0]) {
     *(byte *)j1708_transmit_buffer_2_32_ddc6.next_ptr =
          j1708_transmit_buffer_2_32_ddc6.reserved_48[0];
@@ -19931,7 +20085,6 @@ void cm550_responseBufferFinalize(void)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 void cm550_diagnosticMemoryWriteHandler(byte service_id)
 
@@ -19952,7 +20105,6 @@ void cm550_diagnosticMemoryWriteHandler(byte service_id)
   byte local_9;
   undefined4 local_8;
   
-                    /* From J90280.05 @ 0x019cf0 (confidence: 94%) */
   uVar8 = (undefined1)((uint)unaff_D2 >> 0x18);
   response_type = (byte)((uint)unaff_D2 >> 0x10);
   local_9 = *_j1708_receive_buffer_pointer_2_32_dcaa;
@@ -20059,7 +20211,6 @@ void cm550_diagnosticMemoryWriteHandler(byte service_id)
 /* WARNING: Removing unreachable block (ram,0x0001efc2) */
 /* WARNING: Removing unreachable block (ram,0x0001efd6) */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 void cm550_diagnosticMemoryReadHandler(byte service_id)
 
@@ -20082,7 +20233,6 @@ void cm550_diagnosticMemoryReadHandler(byte service_id)
   undefined4 local_c;
   undefined4 local_8;
   
-                    /* From J90280.05 @ 0x019e62 (confidence: 94%) */
   pbVar3 = _j1708_transmit_buffer_0_2_32;
   puVar10 = &stack0xffffffbc;
   response_type = (byte)((uint)unaff_D2 >> 0x10);
@@ -20183,7 +20333,6 @@ void cm550_diagnosticMessage45Builder(void)
   byte bVar4;
   undefined4 local_8;
   
-                    /* From J90280.05 @ 0x01a192 (confidence: 88%) */
   cm550_fuelDemandPercentageCalculator();
   if ((_reference_speed_before_droop_calculation_1400_4500 != _DAT_0080096a) ||
      (_lsg_breakpoint_speed != _DAT_0080096c)) {
@@ -20297,7 +20446,6 @@ void cm550_diagnosticMessage46Builder(void)
   undefined1 uStack_d;
   undefined4 local_8;
   
-                    /* From J90280.05 @ 0x01a398 (confidence: 94%) */
   puVar2 = _j1708_transmit_buffer_0_2_32;
   if ((int)_j1708_transmit_buffer_0_2_32 < _j1708_transmit_buffer_2_32_dc9c) {
     iVar4 = (_j1708_transmit_buffer_2_32_dc9c - (int)_j1708_transmit_buffer_0_2_32) + -2;
@@ -20586,7 +20734,6 @@ void cm550_fuelDemandScaleFactorCalculator(void)
 {
   undefined4 local_8;
   
-                    /* From J90280.05 @ 0x025fda (confidence: 63%) */
   if (*_j1708_receive_buffer_pointer_2_32_dcaa == '\x02') {
     local_8._3_1_ = (char)_j1708_receive_buffer_pointer_2_32_dcaa;
     local_8 = (byte *)CONCAT31((int3)((uint)_j1708_receive_buffer_pointer_2_32_dcaa >> 8),
@@ -20634,7 +20781,6 @@ uint cm550_engineFluidLevelDataBuilder(void)
   ushort local_a;
   undefined4 local_8;
   
-                    /* From J90280.05 @ 0x02a93a (confidence: 61%) */
   cVar1 = *_j1708_receive_buffer_pointer_2_32_dcaa;
   local_8._3_1_ = (char)_j1708_receive_buffer_pointer_2_32_dcaa;
   cVar4 = (char)local_8;
@@ -20782,7 +20928,6 @@ void cm550_extendedDiagnosticService51(void)
 {
   undefined4 local_8;
   
-                    /* From J90280.05 @ 0x01ac64 (confidence: 94%) */
   if (*_j1708_receive_buffer_pointer_2_32_dcaa == '\x02') {
     local_8._3_1_ = (char)_j1708_receive_buffer_pointer_2_32_dcaa;
     local_8 = (byte *)CONCAT31((int3)((uint)_j1708_receive_buffer_pointer_2_32_dcaa >> 8),
@@ -20814,7 +20959,6 @@ void cm550_diagnosticMessage53Builder(void)
   undefined1 uVar3;
   undefined4 local_8;
   
-                    /* From J90280.05 @ 0x01aca8 (confidence: 88%) */
   if ((int)_j1708_transmit_buffer_0_2_32 < _j1708_transmit_buffer_2_32_dc9c) {
     iVar2 = (_j1708_transmit_buffer_2_32_dc9c - (int)_j1708_transmit_buffer_0_2_32) + -2;
   }
@@ -20862,7 +21006,6 @@ void cm550_diagnosticMessage54Builder(void)
   int iVar2;
   undefined4 local_8;
   
-                    /* From J90280.05 @ 0x01ad50 (confidence: 88%) */
   if ((int)_j1708_transmit_buffer_0_2_32 < _j1708_transmit_buffer_2_32_dc9c) {
     iVar2 = (_j1708_transmit_buffer_2_32_dc9c - (int)_j1708_transmit_buffer_0_2_32) + -2;
   }
@@ -20912,7 +21055,6 @@ uint cm550_j1939TimeoutDataClearHandler(void)
 {
   uint uVar1;
   
-                    /* From J90280.05 @ 0x01ae20 (confidence: 75%) */
   uVar1 = _calibration_feature_enable_flags_word_2 & 0x100;
   if (((_calibration_feature_enable_flags_word_2 & 0x100) != 0) &&
      (uVar1 = _j1922_clear_occurrence_time_time_from_last_j1922_control_befo_0_2_29 +
@@ -20940,7 +21082,6 @@ uint cm550_j1939TimeoutDataClearHandler(void)
 void cm550_crankStateVariablesReset(void)
 
 {
-                    /* From J90280.05 @ 0x01f28c (confidence: 66%) */
   _j1939_message_total_timeout_count = 0;
   _j1939_last_message_hour_meter = 0;
   _DAT_00804170 = 0;
@@ -20965,7 +21106,6 @@ uint cm550_j1939MessageTypeCounter(undefined4 param_1)
 {
   uint uVar1;
   
-                    /* From J90280.05 @ 0x01ae74 (confidence: 88%) */
   uVar1 = _calibration_feature_enable_flags_word_2 & 0xffff0080;
   if ((_calibration_feature_enable_flags_word_2 & 0x80) != 0) {
     if (param_1._0_2_ == 1) {
@@ -21011,7 +21151,6 @@ void cm550_canMessageFilterInit(void)
   undefined2 *puVar4;
   undefined2 *puVar5;
   
-                    /* From J90280.05 @ 0x01aef4 (confidence: 72%) */
   bVar1 = 0;
   puVar2 = (undefined2 *)&DAT_00060f90;
   puVar3 = (undefined2 *)&DAT_0080da02;
@@ -21047,7 +21186,6 @@ ushort cm550_engineRunTimeHistogramAccumulator(void)
   int iVar3;
   
   uVar1 = _diagnostic_subsystem_enable_flags & 8;
-                    /* From J90280.05 @ 0x0107a4 (confidence: 69%) */
   if ((_diagnostic_subsystem_enable_flags & 8) != 0) {
     if ((_bit_2_0_15_enables_j1939_71_engine_broadcast_1_on_0_off & 4) != 0) {
       iVar3 = 0x80096e;
@@ -21086,7 +21224,6 @@ ushort cm550_engineRunTimeHistogramAccumulator(void)
 void cm550_emptyPlaceholderInit(void)
 
 {
-                    /* From J90280.05 @ 0x01b07c (confidence: 94%) */
   return;
 }
 
@@ -21107,7 +21244,6 @@ uint cm550_j1939TorqueControlModeParser(int param_1,undefined4 param_2)
   undefined4 in_D0;
   ushort uVar4;
   
-                    /* From J90280.05 @ 0x01b082 (confidence: 94%) */
   uVar3 = (undefined2)((uint)in_D0 >> 0x10);
   bVar1 = *(byte *)(*(int *)(param_1 + 6) + 1);
   cVar2 = *(char *)(*(int *)(param_1 + 6) + 2);
@@ -21171,7 +21307,6 @@ uint cm550_j1939TorqueControlModeParser(int param_1,undefined4 param_2)
 void cm550_j1939TorqueControlModeClear(undefined4 param_1)
 
 {
-                    /* From J90280.05 @ 0x01b150 (confidence: 100%) */
   cm550_j1939TorqueControlModeParser(param_1);
   return;
 }
@@ -21185,7 +21320,6 @@ void cm550_j1939TorqueControlModeClear(undefined4 param_1)
 void cm550_j1939TorqueControlModeSet(undefined4 param_1)
 
 {
-                    /* From J90280.05 @ 0x01b160 (confidence: 94%) */
   cm550_j1939TorqueControlModeParser(param_1);
   return;
 }
@@ -21203,7 +21337,6 @@ void cm550_systemFunction6xParameterized(void)
   undefined2 uVar2;
   undefined2 uVar3;
   
-                    /* From J90280.05 @ 0x01b762 (confidence: 84%) */
   uVar3 = 0xffd2;
   cm550_coreSystemFunction(1);
   uVar2 = 0xffd2;
@@ -21473,7 +21606,6 @@ uint cm550_outputControlState1Handler(void)
 {
   uint uVar1;
   
-                    /* From J90280.05 @ 0x0301a6 (confidence: 72%) */
   cm550_FUN_000201d6();
   cm550_FUN_0002024a();
   cm550_FUN_00020210();
@@ -21547,8 +21679,8 @@ void cm550_FUN_000205c4(void)
   
   if ((_DAT_00803cc6 & 8) != 0) {
     _takes_raw_throttle_for_mux_limphome_on_a2d_0_1023 =
-         *(ushort *)((uint)_sampled_throttle_channel_address_none * 2 + 0xfff2b0);
-    if (_takes_raw_throttle_for_mux_limphome_on_a2d_0_1023 < 0x169) {
+         *(ushort *)(&UNK_00fff2b0 + (uint)_sampled_throttle_channel_address_none * 2);
+    if (*(ushort *)(&UNK_00fff2b0 + (uint)_sampled_throttle_channel_address_none * 2) < 0x169) {
       DSUSEBSW = DSUSEBSW & 0xfe;
       user_supplied_value_for_ptp_switched_input_input_on_off =
            user_supplied_value_for_ptp_switched_input_input_on_off | 0x80;
@@ -21596,7 +21728,6 @@ void cm550_FUN_000205c4(void)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 uint cm550_FUN_000206a8(dword input_state,dword debounce_mask)
 
@@ -21693,7 +21824,6 @@ uint cm550_FUN_00020784(void)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 uint cm550_FUN_00020890(byte input_index)
 
@@ -22145,53 +22275,56 @@ uint mc68k_FUN_000212b2(void)
 
 {
   char cVar1;
-  bool bVar2;
+  ushort uVar2;
   ushort uVar3;
-  uint uVar4;
-  byte bVar5;
-  char *pcVar6;
-  short *psVar7;
-  undefined1 *puVar8;
+  bool bVar4;
+  uint uVar5;
+  byte bVar6;
+  char *pcVar7;
+  short *psVar8;
+  undefined *puVar9;
   short local_6;
   
-  uVar3 = _DAT_00fff404;
-  uVar4 = _diagnostic_subsystem_enable_flags & 0xffff0008;
+  uVar2 = Ram00fff404;
+  uVar5 = _diagnostic_subsystem_enable_flags & 0xffff0008;
   if ((_diagnostic_subsystem_enable_flags & 8) != 0) {
-    while ((uVar4 = (uint)_DAT_00fff404 - (uint)uVar3,
-           (int)((uint)_DAT_00fff404 - (uint)uVar3) < 0xfa &&
-           ((_can_receive_buffer_write_pointer != _can_receive_buffer_read_pointer ||
-            (uVar4 = _can_receive_buffer_write_pointer, can_receive_buffer_overflow_flag == '\x01'))
-           ))) {
-      bVar5 = *(byte *)(_can_receive_buffer_read_pointer + 1);
+    while( true ) {
+      uVar3 = Ram00fff404;
+      uVar5 = (uint)uVar3 - (uint)uVar2;
+      if ((0xf9 < (int)((uint)uVar3 - (uint)uVar2)) ||
+         ((_can_receive_buffer_write_pointer == _can_receive_buffer_read_pointer &&
+          (uVar5 = _can_receive_buffer_write_pointer, can_receive_buffer_overflow_flag != '\x01'))))
+      break;
+      bVar6 = *(byte *)(_can_receive_buffer_read_pointer + 1);
       cVar1 = *(char *)(_can_receive_buffer_read_pointer + 2);
       local_6 = *(short *)(_can_receive_buffer_read_pointer + 1);
-      if (bVar5 == 0) {
+      if (bVar6 == 0) {
         if (((cVar1 == j1939_engine_node_source_address) ||
             (cVar1 == j1939_retarder_node_source_address)) || (cVar1 == -1)) {
           local_6 = 0;
         }
       }
-      else if ((bVar5 < 0xf0) && ((cVar1 == j1939_engine_node_source_address || (cVar1 == -1)))) {
-        local_6 = (ushort)bVar5 << 8;
+      else if ((bVar6 < 0xf0) && ((cVar1 == j1939_engine_node_source_address || (cVar1 == -1)))) {
+        local_6 = (ushort)bVar6 << 8;
       }
       can_received_source_address = *(char *)(_can_receive_buffer_read_pointer + 3);
-      bVar2 = false;
-      pcVar6 = &DAT_0080d9e0;
+      bVar4 = false;
+      pcVar7 = &DAT_0080d9e0;
       do {
-        if ((*pcVar6 == -2) || ((char *)0x80d9e3 < pcVar6)) goto LAB_0002136c;
-        cVar1 = *pcVar6;
-        pcVar6 = pcVar6 + 1;
+        if ((*pcVar7 == -2) || ((char *)0x80d9e3 < pcVar7)) goto LAB_0002136c;
+        cVar1 = *pcVar7;
+        pcVar7 = pcVar7 + 1;
       } while (can_received_source_address != cVar1);
-      bVar2 = true;
+      bVar4 = true;
 LAB_0002136c:
-      if (!bVar2) {
-        psVar7 = (short *)&DAT_00800ab0;
-        for (bVar5 = 0; bVar5 < DAT_00800b10; bVar5 = bVar5 + 1) {
-          if (*psVar7 == local_6) {
-            (**(code **)(psVar7 + 1))(_can_receive_buffer_read_pointer);
+      if (!bVar4) {
+        psVar8 = (short *)&DAT_00800ab0;
+        for (bVar6 = 0; bVar6 < DAT_00800b10; bVar6 = bVar6 + 1) {
+          if (*psVar8 == local_6) {
+            (**(code **)(psVar8 + 1))(_can_receive_buffer_read_pointer);
             break;
           }
-          psVar7 = psVar7 + 3;
+          psVar8 = psVar8 + 3;
         }
       }
       _can_receive_buffer_read_pointer = _can_receive_buffer_read_pointer + 0x12;
@@ -22200,16 +22333,16 @@ LAB_0002136c:
       }
       if (can_receive_buffer_overflow_flag == '\x01') {
         can_receive_buffer_overflow_flag = '\0';
-        puVar8 = &DAT_00ffd810 + (uint)_can_first_receive_object_index * 0x10;
-        bVar5 = DAT_0080d9f5;
-        while (bVar5 = bVar5 + 1, bVar5 <= _can_last_receive_object_index) {
-          *puVar8 = 0xfb;
-          puVar8 = puVar8 + 0x10;
+        puVar9 = &DAT_00ffd810 + (uint)_can_first_receive_object_index * 0x10;
+        bVar6 = DAT_0080d9f5;
+        while (bVar6 = bVar6 + 1, bVar6 <= _can_last_receive_object_index) {
+          *puVar9 = 0xfb;
+          puVar9 = puVar9 + 0x10;
         }
       }
     }
   }
-  return uVar4;
+  return uVar5;
 }
 
 
@@ -22248,7 +22381,6 @@ ushort cm550_FUN_0002142c(void)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 uint cm550_memoryOperationDispatcher(dword request_ptr,word operation_size,dword operation_flags)
 
@@ -22266,7 +22398,6 @@ uint cm550_memoryOperationDispatcher(dword request_ptr,word operation_size,dword
   undefined2 in_stack_00000008;
   undefined2 uVar9;
   
-                    /* From J90280.05 @ 0x01b37a (confidence: 86%) */
   uVar9 = (undefined2)((uint)unaff_D2 >> 0x10);
   if (0x6e4 < operation_flags) {
     return 2;
@@ -22350,7 +22481,6 @@ void cm550_j1939DataCopyWrapper2Byte(int param_1)
 {
   undefined1 local_6 [2];
   
-                    /* From J90280.05 @ 0x01b5b6 (confidence: 92%) */
   cm550_memcpy(local_6,*(int *)(param_1 + 6) + 1);
   cm550_j1939MemoryDataCopyResolver(param_1);
   return;
@@ -22385,7 +22515,6 @@ void cm550_j1939DataCopyWrapperExtended(int param_1)
 {
   undefined1 local_6 [2];
   
-                    /* From J90280.05 @ 0x01b668 (confidence: 92%) */
   cm550_memcpy(local_6,*(int *)(param_1 + 6) + 1);
   cm550_j1939MemoryDataCopyResolver(param_1);
   return;
@@ -22417,8 +22546,6 @@ void cm550_FUN_00021778(int param_1)
 // Function: cm550_memoryOperationFromMessageExtended @ 0x000217de
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 void cm550_memoryOperationFromMessageExtended(dword msg_ptr)
 
 {
@@ -22426,7 +22553,6 @@ void cm550_memoryOperationFromMessageExtended(dword msg_ptr)
   undefined1 auStack_8 [2];
   word operation_size;
   
-                    /* From J90280.05 @ 0x01b716 (confidence: 92%) */
   cm550_memcpy(auStack_8,*(int *)(msg_ptr + 6) + 1);
   operation_flags = (dword)*(byte *)(*(int *)(msg_ptr + 6) + 5);
   cm550_memoryOperationDispatcher(msg_ptr,operation_size,operation_flags);
@@ -22438,8 +22564,6 @@ void cm550_memoryOperationFromMessageExtended(dword msg_ptr)
 //
 // Function: cm550_FUN_00021826 @ 0x00021826
 //
-
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 void cm550_FUN_00021826(dword msg_ptr)
 
@@ -22485,7 +22609,6 @@ undefined4 byteSwap32(undefined4 *param_1)
   undefined2 uVar2;
   undefined4 local_8;
   
-                    /* From J90280.05 @ 0x01bc1e (confidence: 100%) */
   uVar1 = *param_1;
   local_8._3_1_ = (undefined1)uVar1;
   local_8._0_1_ = (undefined1)((uint)uVar1 >> 0x18);
@@ -22507,7 +22630,6 @@ undefined2 byteSwap16(undefined2 *param_1)
 {
   undefined2 local_6;
   
-                    /* From J90280.05 @ 0x01bc52 (confidence: 100%) */
   local_6._1_1_ = (undefined1)*param_1;
   local_6._0_1_ = (undefined1)((ushort)*param_1 >> 8);
   local_6 = CONCAT11((undefined1)local_6,local_6._0_1_);
@@ -22552,7 +22674,6 @@ uint cm550_addressLookupFunction(undefined4 param_1)
 {
   uint in_D0;
   
-                    /* From J90280.05 @ 0x01b7ca (confidence: 92%) */
   if (0x40 < param_1._1_1_) {
     return (uint)*(byte *)((short)(ushort)param_1._1_1_ + 0x21915);
   }
@@ -22566,7 +22687,6 @@ uint cm550_addressLookupFunction(undefined4 param_1)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 undefined4 cm550_diagnosticServiceSecurityValidator(dword msg_ptr)
 
@@ -22576,7 +22696,6 @@ undefined4 cm550_diagnosticServiceSecurityValidator(dword msg_ptr)
   byte service_id;
   word msg_length;
   
-                    /* From J90280.05 @ 0x01b7e8 (confidence: 84%) */
   service_id = **(byte **)(msg_ptr + 6);
   msg_length = *(word *)(msg_ptr + 4);
   if (0x19 < service_id) {
@@ -22815,7 +22934,6 @@ void cm550_diagnosticGroupPositionBufferStore(undefined4 param_1)
   undefined2 *puVar4;
   undefined2 *puVar5;
   
-                    /* From J90280.05 @ 0x01b8b8 (confidence: 88%) */
   uVar1 = _DAT_00804232 + 1;
   uVar2 = (uint)_DAT_00804232;
   _DAT_00804232 = uVar1;
@@ -22850,7 +22968,6 @@ void cm550_diagnosticGroupPositionBufferStore(undefined4 param_1)
 void cm550_diagnosticGroupSnapshotCapture(undefined4 param_1)
 
 {
-                    /* From J90280.05 @ 0x01b916 (confidence: 75%) */
   if (param_1._1_1_ == '\0') {
     _DAT_0080422a = 1;
     _DAT_0080422e = _source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_da4e;
@@ -22897,7 +23014,6 @@ uint cm550_memoryRegisterController(void)
   uint uVar1;
   undefined2 *puVar2;
   
-                    /* From J90280.05 @ 0x01b9da (confidence: 81%) */
   uVar1 = _calibration_feature_enable_flags_word_2 & 0xffff0800;
   if ((_calibration_feature_enable_flags_word_2 & 0x800) != 0) {
     if (((_datalink_speed_control_mode != _DAT_00800b12) || (_JCEGNETY != _DAT_00800b16)) ||
@@ -23013,7 +23129,6 @@ undefined4 cm550_canDiagnosticResponseSender(undefined1 *param_1)
   undefined2 local_e;
   undefined1 *local_c;
   
-                    /* From J90280.05 @ 0x01bc9c (confidence: 100%) */
   uVar1 = *(undefined1 *)(*(int *)(param_1 + 6) + 1);
   uVar2 = *(undefined1 *)(*(int *)(param_1 + 6) + 2);
   cVar4 = cm550_diagnosticMemoryAddressResolver((word)((uint)&local_1e >> 0x10));
@@ -23047,7 +23162,6 @@ undefined4 cm550_canDiagnosticResponseSender(undefined1 *param_1)
 void cm550_systemFunction1xCaller(void)
 
 {
-                    /* From J90280.05 @ 0x01bd58 (confidence: 86%) */
   cm550_coreSystemFunction();
   return;
 }
@@ -23057,8 +23171,6 @@ void cm550_systemFunction1xCaller(void)
 //
 // Function: cm550_diagMemoryReadResponseBuilder @ 0x0002238e
 //
-
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 undefined4
 cm550_diagMemoryReadResponseBuilder(byte *request_ptr,dword start_address,dword read_length)
@@ -23077,7 +23189,6 @@ cm550_diagMemoryReadResponseBuilder(byte *request_ptr,dword start_address,dword 
   undefined1 *puVar9;
   undefined1 *puVar10;
   
-                    /* From J90280.05 @ 0x01bd76 (confidence: 100%) */
   uVar3 = (undefined2)((uint)unaff_D2 >> 0x10);
   cVar6 = **(char **)(request_ptr + 6);
   if (0x6e4 < read_length) {
@@ -23257,7 +23368,6 @@ void sendJ1939MultiFrame(uint *param_1)
   undefined1 uStack_7;
   char cStack_5;
   
-                    /* From J90280.05 @ 0x01c10e (confidence: 94%) */
   puVar1 = _multiframe_tx_buffer_ptr;
   bVar3 = *(byte *)((int)param_1 + 1);
   uVar4 = *(ushort *)((int)param_1 + 1);
@@ -23362,7 +23472,6 @@ void sendJ1939MultiFrame(uint *param_1)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 void cm550_diagnosticParamRequestHandler(can_std_rx_desc_t *rx_msg)
 
@@ -23371,7 +23480,6 @@ void cm550_diagnosticParamRequestHandler(can_std_rx_desc_t *rx_msg)
   byte bVar2;
   short local_6;
   
-                    /* From J90280.05 @ 0x01c33e (confidence: 94%) */
   bVar1 = rx_msg->data_ptr[2];
   local_6 = (ushort)(byte)rx_msg->data_ptr[6] << 8;
   if ((((j1939_multiframe_tx_active == '\x01') &&
@@ -23411,7 +23519,6 @@ void cm550_messageErrorHandler(undefined4 param_1)
   undefined2 local_e;
   undefined1 *local_c;
   
-                    /* From J90280.05 @ 0x01c3d2 (confidence: 94%) */
   local_12 = CONCAT31(CONCAT21(0x18ec,param_1._1_1_),j1939_engine_node_source_address);
   local_e = 8;
   local_c = &uStack_1c;
@@ -23458,7 +23565,6 @@ void vp44CanFrameBuilder(undefined4 param_1)
   undefined2 local_e;
   undefined1 *local_c;
   
-                    /* From J90280.05 @ 0x01c440 (confidence: 94%) */
   local_12 = CONCAT31(CONCAT21(0x18ec,param_1._1_1_),j1939_engine_node_source_address);
   local_e = 8;
   local_c = &uStack_1c;
@@ -23499,7 +23605,6 @@ undefined1 vp44MessageTransmitter(undefined4 param_1,undefined2 param_2)
   undefined2 local_e;
   undefined1 *local_c;
   
-                    /* From J90280.05 @ 0x01c4c0 (confidence: 94%) */
   local_12 = CONCAT31(CONCAT21(0x18ec,param_1._1_1_),j1939_engine_node_source_address);
   local_e = 8;
   local_c = auStack_1c;
@@ -23522,7 +23627,6 @@ undefined1 vp44MessageTransmitter(undefined4 param_1,undefined2 param_2)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 void vp44FuelTempHandler(can_std_rx_desc_t *rx_msg)
 
@@ -23534,7 +23638,6 @@ void vp44FuelTempHandler(can_std_rx_desc_t *rx_msg)
   undefined2 local_8;
   short local_6;
   
-                    /* From J90280.05 @ 0x01c538 (confidence: 94%) */
   puVar1 = rx_msg->data_ptr;
   local_6 = (ushort)(byte)puVar1[6] << 8;
   cVar3 = (char)rx_msg->id;
@@ -23586,7 +23689,6 @@ void vp44MultiFrameResponseHandler(int param_1)
   undefined1 *puVar7;
   undefined1 *puVar8;
   
-                    /* From J90280.05 @ 0x01c60e (confidence: 94%) */
   if (((*(short *)(param_1 + 4) == 8) &&
       (cVar4 = *(char *)(param_1 + 3), vp44_multiframe_rx_active == '\x01')) &&
      (cVar4 == DAT_008012cf)) {
@@ -23661,14 +23763,12 @@ void vp44MultiFrameResponseHandler(int param_1)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 void cm550_diagnosticStatusRequestHandler(can_std_rx_desc_t *rx_msg)
 
 {
   short local_6;
   
-                    /* From J90280.05 @ 0x01c776 (confidence: 88%) */
   if ((j1939_multiframe_tx_active == '\x01') &&
      (multiframe_tx_destination_address == (char)rx_msg->id)) {
     local_6 = (ushort)(byte)rx_msg->data_ptr[6] << 8;
@@ -23687,7 +23787,6 @@ void cm550_diagnosticStatusRequestHandler(can_std_rx_desc_t *rx_msg)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 void vp44_diagnosticErrorHandler(can_std_rx_desc_t *rx_msg)
 
@@ -23695,7 +23794,6 @@ void vp44_diagnosticErrorHandler(can_std_rx_desc_t *rx_msg)
   char cVar1;
   short local_6;
   
-                    /* From J90280.05 @ 0x01c7ca (confidence: 81%) */
   local_6 = (ushort)(byte)rx_msg->data_ptr[6] << 8;
   cVar1 = (char)rx_msg->id;
   if (((j1939_multiframe_tx_active == '\x01') && (cVar1 == multiframe_tx_destination_address)) &&
@@ -23724,7 +23822,6 @@ void vp44_diagnosticServiceByteHandler(void)
   char cVar1;
   int unaff_A6;
   
-                    /* From J90280.05 @ 0x027342 (confidence: 66%) */
   *(undefined1 *)(unaff_A6 + -2) = *(undefined1 *)(*(int *)(*(int *)(unaff_A6 + 8) + 6) + 6);
   *(undefined1 *)(unaff_A6 + -1) = 0;
   cVar1 = *(char *)(*(int *)(unaff_A6 + 8) + 3);
@@ -23746,14 +23843,11 @@ void vp44_diagnosticServiceByteHandler(void)
 // Function: vp44CanMessageDispatcher @ 0x00022e5e
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 void vp44CanMessageDispatcher(can_std_rx_desc_t *rx_msg)
 
 {
   char cVar1;
   
-                    /* From J90280.05 @ 0x01c846 (confidence: 100%) */
   if (rx_msg->length == 8) {
     cVar1 = *rx_msg->data_ptr;
     if (cVar1 == '\x11') {
@@ -23787,7 +23881,6 @@ void cm550_diagnosticParamRequestHandlerWrapper(void)
 {
   can_std_rx_desc_t *unaff_A2;
   
-                    /* From J90280.05 @ 0x01c87e (confidence: 100%) */
   cm550_diagnosticParamRequestHandler(unaff_A2);
   return;
 }
@@ -23803,7 +23896,6 @@ void vp44FuelTempHandlerWrapper(void)
 {
   can_std_rx_desc_t *unaff_A2;
   
-                    /* From J90280.05 @ 0x01c88c (confidence: 100%) */
   vp44FuelTempHandler(unaff_A2);
   return;
 }
@@ -23819,7 +23911,6 @@ void cm550_diagnosticStatusRequestHandlerWrapper(void)
 {
   can_std_rx_desc_t *unaff_A2;
   
-                    /* From J90280.05 @ 0x01c89a (confidence: 100%) */
   cm550_diagnosticStatusRequestHandler(unaff_A2);
   return;
 }
@@ -23835,7 +23926,6 @@ void cm550_diagnosticErrorHandlerWrapper(void)
 {
   can_std_rx_desc_t *unaff_A2;
   
-                    /* From J90280.05 @ 0x01c8a8 (confidence: 100%) */
   vp44_diagnosticErrorHandler(unaff_A2);
   return;
 }
@@ -23857,7 +23947,6 @@ void cm550_unknownMessageHandler(uint param_1)
   char *pcVar6;
   undefined1 *puVar7;
   
-                    /* From J90280.05 @ 0x01c8b6 (confidence: 94%) */
   iVar3 = (param_1 >> 0x10 & 0xff) * 0x20;
   pcVar6 = &DAT_0080124a + iVar3;
   if (*(short *)(&DAT_0080125a + iVar3) != 0) {
@@ -23919,7 +24008,6 @@ void cm550_diagnosticMessageProcessor(void)
   byte *pbVar8;
   
   bVar6 = multiframe_tx_packets_remaining;
-                    /* From J90280.05 @ 0x01c996 (confidence: 81%) */
   bVar3 = DAT_0080129f;
   if (multiframe_tx_packets_remaining == 0) {
     if (_multiframe_tx_timeout_counter == 0) {
@@ -23982,7 +24070,6 @@ void cm550_diagnosticMessageProcessor(void)
 void vp44ResponseTimeoutHandler(void)
 
 {
-                    /* From J90280.05 @ 0x01cabe (confidence: 81%) */
   if (_multiframe_rx_timeout_counter == 0) {
     vp44_multiframe_rx_active = 0;
     return;
@@ -24000,7 +24087,6 @@ void vp44ResponseTimeoutHandler(void)
 void vp44_messageQueueDispatcher(void)
 
 {
-                    /* From J90280.05 @ 0x01cad6 (confidence: 88%) */
   if (DAT_0080124a == '\x01') {
     cm550_unknownMessageHandler();
   }
@@ -24027,7 +24113,6 @@ void vp44_messageQueueDispatcher(void)
 undefined4 cm550_multiPacketBufferAllocator(undefined4 param_1)
 
 {
-                    /* From J90280.05 @ 0x01cb18 (confidence: 81%) */
   if (param_1._0_2_ < 9) {
     _DAT_00801238 = 0x801242;
     _DAT_00801236 = param_1._0_2_;
@@ -24054,7 +24139,6 @@ undefined4 cm550_multiPacketBufferAllocator(undefined4 param_1)
 void vp44DiagnosticBufferPointersInit(void)
 
 {
-                    /* From J90280.05 @ 0x01cb6e (confidence: 75%) */
   _DAT_00801262 = 0x80128a;
   _DAT_00801282 = 0x801292;
   _multiframe_tx_buffer_ptr = 0x8012bc;
@@ -24075,7 +24159,6 @@ void vp44DiagnosticBufferPointersInit(void)
 void cm550_fuelArbitratorResetHandler(void)
 
 {
-                    /* From J90280.05 @ 0x01cbc2 (confidence: 75%) */
   _DAT_00801982 = _datalink_speed_control_mode;
   _datalink_speed_control_mode = 0;
   _source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_da4e = 0;
@@ -24118,7 +24201,6 @@ void cm550_FUN_00023216(void)
 void cm550_statisticsTrackingFlagsReset(void)
 
 {
-                    /* From J90280.05 @ 0x02ecec (confidence: 66%) */
   _retarder_command_timeout_counter = 0;
   _retarder_command_inactivity_timer = 0;
   _retarder_disengage_hold_timer = 0;
@@ -24148,7 +24230,6 @@ uint cm550_fuelDemandLimitOrchestrator(void)
   bool bVar9;
   bool bVar10;
   
-                    /* From J90280.05 @ 0x0314ee (confidence: 67%) */
   bVar4 = false;
   bVar3 = false;
   bVar2 = false;
@@ -24433,7 +24514,6 @@ uint cm550_diagnosticMessageValidator(undefined4 param_1,undefined4 param_2)
   byte bVar1;
   short *psVar2;
   
-                    /* From J90280.05 @ 0x01d19c (confidence: 88%) */
   psVar2 = (short *)&DAT_00801994;
   bVar1 = 0;
   while( true ) {
@@ -24464,7 +24544,6 @@ uint cm550_ioControlTimeoutTableLookup(undefined4 param_1)
   byte bVar1;
   char *pcVar2;
   
-                    /* From J90280.05 @ 0x01d1ec (confidence: 88%) */
   pcVar2 = &DAT_008019bc;
   bVar1 = 0;
   while( true ) {
@@ -24493,7 +24572,6 @@ void cm550_ioControlEntryAdd(undefined4 param_1,undefined4 param_2)
 {
   int iVar1;
   
-                    /* From J90280.05 @ 0x01d228 (confidence: 88%) */
   if (io_control_entry_count < 5) {
     iVar1 = (uint)io_control_entry_count * 8;
     io_control_entry_count = io_control_entry_count + 1;
@@ -24519,7 +24597,6 @@ void cm550_ioControlTimeoutEntryAdd(undefined4 param_1)
 {
   uint uVar1;
   
-                    /* From J90280.05 @ 0x01d268 (confidence: 88%) */
   if (io_control_timeout_entry_count < 5) {
     uVar1 = (uint)io_control_timeout_entry_count;
     io_control_timeout_entry_count = io_control_timeout_entry_count + 1;
@@ -24546,7 +24623,6 @@ void cm550_phase3_countdown_timer_manager(void)
   undefined2 *puVar5;
   undefined *puVar6;
   
-                    /* From J90280.05 @ 0x01d29c (confidence: 81%) */
   if (io_control_entry_count != 0) {
     puVar5 = (undefined2 *)(&DAT_0080198c + (uint)io_control_entry_count * 8);
     for (bVar4 = io_control_entry_count; bVar4 != 0; bVar4 = bVar4 - 1) {
@@ -24603,7 +24679,6 @@ void cm550_diagnosticStateInitializer(undefined4 param_1)
   byte bVar2;
   short *psVar3;
   
-                    /* From J90280.05 @ 0x01d34e (confidence: 88%) */
   if (io_control_entry_count != 0) {
     psVar3 = (short *)(&DAT_0080198c + (uint)io_control_entry_count * 8);
     for (bVar2 = io_control_entry_count; bVar2 != 0; bVar2 = bVar2 - 1) {
@@ -24639,7 +24714,6 @@ void cm550_ioControlEntryRemove(undefined4 param_1)
   byte bVar2;
   char *pcVar3;
   
-                    /* From J90280.05 @ 0x01d3b8 (confidence: 88%) */
   if (io_control_timeout_entry_count != 0) {
     pcVar3 = &diag_service_pgn_dispatch_ptr + (uint)io_control_timeout_entry_count * 4;
     for (bVar2 = io_control_timeout_entry_count; bVar2 != 0; bVar2 = bVar2 - 1) {
@@ -25239,7 +25313,6 @@ void cm550_iahDisableWaitToStartLamp(void)
 void cm550_initIoControlRegister(void)
 
 {
-                    /* From J90280.05 @ 0x01d7dc (confidence: 75%) */
   bit_6_which_enables_the_warning_lamp_driver_enable_disable =
        bit_6_which_enables_the_warning_lamp_driver_enable_disable & 0xfe;
   _DAT_00801a24 = 0;
@@ -25280,7 +25353,6 @@ void cm550_ioControlMaskStateMachine(void)
   short sVar1;
   ushort *puVar2;
   
-                    /* From J90280.05 @ 0x01d80c (confidence: 78%) */
   if (DAT_008019d3 != '\0') {
     for (puVar2 = (ushort *)&DAT_000611a8; puVar2 < (ushort *)0x611c7; puVar2 = puVar2 + 1) {
       if ((byte)(&priority_of_client_currently_overriding_wait_to_start_lamp_00_ff)[(short)*puVar2]
@@ -25354,7 +25426,6 @@ uint cm550_ioControlToggleCycle(void)
 {
   uint in_D0;
   
-                    /* From J90280.05 @ 0x01d8cc (confidence: 88%) */
   if (_lamp_toggle_cycle_counter == 0) {
     lamp_driver_output_bitmask = lamp_driver_output_bitmask | 1;
   }
@@ -25382,7 +25453,6 @@ undefined1 vp44_ioControlLampStateMachine(void)
 {
   undefined1 uVar1;
   
-                    /* From J90280.05 @ 0x01d904 (confidence: 75%) */
   uVar1 = 1;
   if (_vp44_sensor_warning_active == 0) {
     if (DAT_008019e0 != '\0') {
@@ -25480,7 +25550,6 @@ uint cm550_ioControlDigitDisplaySequencer(undefined4 param_1)
   undefined3 uVar2;
   uint in_D0;
   
-                    /* From J90280.05 @ 0x01d9ea (confidence: 75%) */
   if (_fault_digit_display_phase == 0) {
     lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffe | 2;
     _fault_digit_display_phase = 1;
@@ -25629,7 +25698,6 @@ int cm550_faultCodeDisplayController(void)
   char extraout_D0b_02;
   char cVar2;
   
-                    /* From J90280.05 @ 0x01db66 (confidence: 72%) */
   if (((debounced_switch_value_for_switch_16_on_off & 0x80) != 0) &&
      (_smoke_limiter_output_value == 1)) {
     DAT_008019e8 = 1;
@@ -25743,7 +25811,6 @@ void cm550_activeFaultLampStateMachine(void)
   bool bVar6;
   byte bVar7;
   
-                    /* From J90280.05 @ 0x01dd00 (confidence: 75%) */
   bVar6 = false;
   bVar1 = false;
   bVar3 = false;
@@ -25886,7 +25953,6 @@ void cm550_activeFaultLampStateMachine(void)
 void cm550_faultLampBlinkPatternGenerator(void)
 
 {
-                    /* From J90280.05 @ 0x01dfc2 (confidence: 63%) */
   if (_DAT_00801a16 < 5) {
     _fault_lamp_blink_tick_counter = _fault_lamp_blink_tick_counter + 1;
     if ((_fault_lamp_blink_tick_counter != 0) && (_fault_lamp_blink_tick_counter < 6)) {
@@ -25972,7 +26038,6 @@ void cm550_FUN_000253b0(void)
 void cm550_periodicLampFlashController(void)
 
 {
-                    /* From J90280.05 @ 0x01e0d6 (confidence: 75%) */
   if (DAT_00801a1d == '\0') {
     _periodic_lamp_flash_tick_counter = _periodic_lamp_flash_tick_counter + 1;
     if (36000 < _periodic_lamp_flash_tick_counter) {
@@ -26209,7 +26274,6 @@ void cm550_FUN_000258b0(void)
 void cm550_fuelDemandTablePointerInit(void)
 
 {
-                    /* From J90280.05 @ 0x0260fe (confidence: 75%) */
   _can_transmission_active_count = 0;
   _DAT_00801a32 = 0x80820e;
   return;
@@ -26226,7 +26290,6 @@ void cm550_fuelDemandTablePointerInit(void)
 void cm550_epsTimingCalculationSlowCycle40Coordinator(void)
 
 {
-                    /* From J90280.05 @ 0x01e36a (confidence: 81%) */
   _retarder_mode1_data_ptr = _engine_rpm_primary;
   _low_oil_pressure_limit_as_calculated_for_present_engine_speed_0_100 =
        lookupTableInterpolation((table_interp_args_t *)&DAT_00801a3e);
@@ -26247,7 +26310,6 @@ void cm550_epsTimingCalculationSlowCycle40Coordinator(void)
 void cm550_initLookupTablePointers1(void)
 
 {
-                    /* From J90280.05 @ 0x01e3a8 (confidence: 72%) */
   _DAT_00801a46 = 0x611de;
   _DAT_00801a40 = 0x611d0;
   _DAT_00801a3e = 2;
@@ -26272,7 +26334,6 @@ void cm550_governorFuelPidController(void)
   ushort local_8;
   ushort local_6;
   
-                    /* From J90280.05 @ 0x01e462 (confidence: 73%) */
   if (_timing_alpha_blend_factor != 0) {
     _DAT_0080d378 = _lsg_reference_speed_adjusted_with_throttle_position_300_2000;
     _fuel_table_primary_throttle_input = 400;
@@ -26319,7 +26380,6 @@ void cm550_governorFuelPidController(void)
 void cm550_fuel_delivery_controller(void)
 
 {
-                    /* From J90280.05 @ 0x01863e (confidence: 72%) */
   return;
 }
 
@@ -26389,7 +26449,6 @@ void vp44_fuel_timing_calculation_with_fault_checking(void)
   short sVar5;
   
   scaling_factor = (word)((uint)unaff_D3 >> 0x10);
-                    /* From J90280.05 @ 0x01848e (confidence: 70%) */
   input_value = (word)((uint)unaff_D2 >> 0x10);
   sVar3 = cm550_coreTableInterpolation
                     ((void *)CONCAT22(_DAT_0080825a *
@@ -26594,7 +26653,6 @@ void vp44_fuelRpmDeviationCalculator(void)
 {
   int iVar1;
   
-                    /* From J90280.05 @ 0x01883a (confidence: 75%) */
   iVar1 = (int)((int)_DAT_00808240 *
                (((uint)_lsg_reference_speed_adjusted_with_throttle_position_300_2000 -
                 (uint)_engine_rpm_primary) - (int)_DAT_00808264)) >> 9;
@@ -26643,7 +26701,6 @@ uint cm550_epsAccelerationMonitor(void)
   uint uVar2;
   short sVar3;
   
-                    /* From J90280.05 @ 0x01e92e (confidence: 75%) */
   sVar3 = _lsg_filtered_speed_error;
   if (_lsg_filtered_speed_error < 0) {
     sVar3 = -_lsg_filtered_speed_error;
@@ -26748,7 +26805,6 @@ LAB_0002617e:
 void cm550_epsRpmTrackingInit(void)
 
 {
-                    /* From J90280.05 @ 0x01eade (confidence: 69%) */
   _high_load_idle_cooldown_timer = _engine_rpm_primary;
   _high_speed_idle_cooldown_timer = 0;
   _high_temp_idle_cooldown_timer = 0;
@@ -26766,7 +26822,6 @@ void cm550_epsRpmTrackingInit(void)
 void cm550_epsControlModeReset(void)
 
 {
-                    /* From J90280.05 @ 0x01eaf6 (confidence: 81%) */
   _DAT_00801a76 = 0;
   return;
 }
@@ -26784,7 +26839,6 @@ uint cm550_epsOverrideChecker(undefined4 param_1)
 {
   uint in_D0;
   
-                    /* From J90280.05 @ 0x01eafe (confidence: 75%) */
   if (param_1._0_2_ != 0) {
     return 1;
   }
@@ -26810,7 +26864,6 @@ void cm550_epsControlModeSelector(void)
 {
   short sVar1;
   
-                    /* From J90280.05 @ 0x01eb2a (confidence: 72%) */
   cm550_epsAccelerationMonitor();
   cm550_epsRpmTargetModeChecker();
   sVar1 = cm550_epsOverrideChecker();
@@ -26839,7 +26892,6 @@ void cm550_epsControlModeSelector(void)
 void cm550_epsInitializationWrapper(void)
 
 {
-                    /* From J90280.05 @ 0x01eb86 (confidence: 72%) */
   cm550_epsRpmTrackingInit();
   cm550_initOilPressureMonitoring();
   return;
@@ -26856,7 +26908,6 @@ void cm550_epsInitializationWrapper(void)
 void cm550_epsControlModeInit(void)
 
 {
-                    /* From J90280.05 @ 0x01eb94 (confidence: 73%) */
   cm550_epsControlModeReset();
   _identifies_the_current_lsg_pid_gain_set_0_7 = 0;
   _lsg_p_gain_passed_from_fuel_system_specific_algorithm_0_0_4348_dad0 = _DAT_00808314;
@@ -26878,7 +26929,6 @@ void cm550_epsDiagnosticModeHandler(void)
 {
   short sStack_6;
   
-                    /* From J90280.05 @ 0x01ebcc (confidence: 88%) */
   if ((_indicator_as_to_which_algorithm_is_in_control_of_fueling_after_it_1_12 == 0xb) &&
      (_allow_aggressive_logic_0_inhibit_aggressive_logic_1_0_1 == 1)) {
     if ((_gear_gains_not_used_if_lsfter_this_value_0_3000 < _lsg_filtered_speed_error) ||
@@ -26932,7 +26982,6 @@ void cm550_epsDiagnosticModeHandler(void)
 void cm550_initOilPressureMonitoring(void)
 
 {
-                    /* From J90280.05 @ 0x02621c (confidence: 75%) */
   _engine_mode_previous_state_1a7e = 0;
   _DAT_0080a9f8 = _DAT_00803d40;
   return;
@@ -26949,7 +26998,6 @@ void cm550_initOilPressureMonitoring(void)
 void cm550_engineModeTimingAdjuster(void)
 
 {
-                    /* From J90280.05 @ 0x01ee5c (confidence: 75%) */
   if (((_calibration_feature_enable_flags_word_3 & 8) == 0) ||
      (((_status_32_word_bit_mapped_system_error_status_word_7_0_1 & 2) != 0 &&
       ((_fault_first_occurrence_word_7 & 2) != 0)))) {
@@ -27001,7 +27049,6 @@ void vp44_rpm_derate_monitor(void)
   short *unaff_A2;
   int unaff_A3;
   
-                    /* From J90280.05 @ 0x02bc2a (confidence: 67%) */
   if (((_calibration_feature_enable_flags_word_3 & 8) == 0) ||
      (((_status_32_word_bit_mapped_system_error_status_word_7_0_1 & 2) != 0 &&
       ((_fault_first_occurrence_word_7 & 2) != 0)))) {
@@ -27045,7 +27092,6 @@ void vp44_rpm_derate_monitor(void)
 void cm550_fuelDemandLimitSource2Selector(void)
 
 {
-                    /* From J90280.05 @ 0x03141c (confidence: 61%) */
   if ((_calibration_feature_enable_flags_word_9 & 1) == 0) {
     _rpm_added_to_lsg_reference_300_300 = 0;
   }
@@ -27074,7 +27120,6 @@ void vp44_initVP44StatusFlags(void)
   ushort *in_A1;
   ushort *unaff_A2;
   
-                    /* From J90280.05 @ 0x01ee02 (confidence: 81%) */
   if ((_calibration_feature_enable_flags_word_9 & 1) == 0) {
     _rpm_added_to_lsg_reference_300_300 = 0;
   }
@@ -27104,7 +27149,6 @@ int cm550_epsRpmTargetModeChecker(void)
   undefined4 in_D0;
   
   uVar1 = (ushort)((uint)in_D0 >> 0x10);
-                    /* From J90280.05 @ 0x01ee2c (confidence: 81%) */
   if ((_datalink_speed_control_mode != 0) &&
      (uVar1 = 0, (_calibration_feature_enable_flags_word_1 & 0x8000) != 0)) {
     _indicator_of_the_lsg_gain_set_currently_being_used_0_9 = 4;
@@ -27178,7 +27222,6 @@ void cm550_FUN_00026616(void)
 void cm550_timingOffsetCalculatorWrapper(void)
 
 {
-                    /* From J90280.05 @ 0x01ef18 (confidence: 75%) */
   cm550_engineModeTimingAdjuster();
   return;
 }
@@ -27195,20 +27238,22 @@ uint mc68k_qadcDataCollectionStateMachine(void)
 
 {
   ushort uVar1;
-  uint uVar2;
-  byte bVar3;
-  undefined2 *puVar4;
+  short sVar2;
+  uint uVar3;
+  byte bVar4;
+  undefined2 *puVar5;
   
-                    /* From J90280.05 @ 0x01ef20 (confidence: 83%) */
   if (can_buffer_setup1_size.state == 2) {
-    if (_DAT_00fffd24 == 5) {
-      if ((_DAT_00fffd06 & 1) == 0) {
+    sVar2 = Ram00fffd24;
+    if (sVar2 == 5) {
+      uVar1 = Ram00fffd06;
+      if ((uVar1 & 1) == 0) {
         if (_circular_buffer_byte_count == 0) {
           can_buffer_setup1_size.state = 0;
           _diagnostic_can_response_header = _circular_buffer_last_address_offset;
-          _DAT_00fffd24 = 3;
+          Ram00fffd24 = 3;
           DAT_00fffd42 = 0xbd;
-          _DAT_00fffd26 = _circular_buffer_last_address_offset;
+          Ram00fffd26 = _circular_buffer_last_address_offset;
           DAT_00fffd43 = 0xfd;
         }
         else {
@@ -27217,58 +27262,58 @@ uint mc68k_qadcDataCollectionStateMachine(void)
       }
     }
     else {
-      _DAT_00fffd24 = 5;
+      Ram00fffd24 = 5;
       DAT_00fffd42 = 0xbd;
-      _DAT_00fffd26 = 0;
+      Ram00fffd26 = 0;
       DAT_00fffd43 = 0x3d;
-      _DAT_00fffd28 = 0;
+      Ram00fffd28 = 0;
       DAT_00fffd44 = 0xfd;
-      _DAT_00fffd2a = 0;
+      Ram00fffd2a = 0;
       DAT_00fffd45 = 0xfd;
     }
   }
   else if (can_buffer_setup1_size.state == 0) {
-    puVar4 = (undefined2 *)&DAT_00fffd08;
-    bVar3 = 4;
+    puVar5 = (undefined2 *)&DAT_00fffd08;
+    bVar4 = 4;
     do {
       if (_calibration_data_valid_flag != 0) {
-        *(undefined2 *)(can_buffer_setup1_size.data_ptr + _diagnostic_can_response_header) = *puVar4
+        *(undefined2 *)(can_buffer_setup1_size.data_ptr + _diagnostic_can_response_header) = *puVar5
         ;
       }
       _diagnostic_can_response_header = _diagnostic_can_response_header + 2;
       if (_diag_can_response_pgn <= _diagnostic_can_response_header) {
         _diagnostic_can_response_header = 0;
         can_buffer_setup1_size.unused_ptr._0_1_ = 1;
-        bVar3 = 0x10;
+        bVar4 = 0x10;
       }
-      puVar4 = puVar4 + 1;
-      bVar3 = bVar3 + 1;
-    } while (bVar3 < 0x10);
+      puVar5 = puVar5 + 1;
+      bVar4 = bVar4 + 1;
+    } while (bVar4 < 0x10);
     if (_circular_buffer_byte_count == 0) {
-      _DAT_00fffd26 = _diagnostic_can_response_header;
+      Ram00fffd26 = _diagnostic_can_response_header;
       DAT_00fffd43 = 0xfd;
     }
     else {
       can_buffer_setup1_size.state = 1;
     }
   }
-  uVar2 = 1;
+  uVar3 = 1;
   if (can_buffer_setup1_size.state == 1) {
-    _DAT_00fffd24 = 6;
+    Ram00fffd24 = 6;
     DAT_00fffd42 = 0x3d;
-    _DAT_00fffd26 = 2;
+    Ram00fffd26 = 2;
     DAT_00fffd43 = 0xbd;
-    _DAT_00fffd28 = *(undefined2 *)((short)_DAT_0080cca8 * 2 + 0x80bda8);
+    Ram00fffd28 = *(undefined2 *)((short)_DAT_0080cca8 * 2 + 0x80bda8);
     DAT_00fffd44 = 0xfd;
-    _DAT_00fffd2a = (ushort)*(byte *)((short)_DAT_0080cca8 + 0x80c7a8);
+    Ram00fffd2a = (ushort)*(byte *)((short)_DAT_0080cca8 + 0x80c7a8);
     DAT_00fffd45 = 0x3d;
     can_buffer_setup1_size.state = 2;
     uVar1 = _DAT_0080cca8 + 1;
     _circular_buffer_byte_count = _circular_buffer_byte_count + -1;
     _DAT_0080cca8 = uVar1 % 0x500;
-    uVar2 = uVar1 / 0x500;
+    uVar3 = uVar1 / 0x500;
   }
-  return uVar2;
+  return uVar3;
 }
 
 
@@ -27277,17 +27322,19 @@ uint mc68k_qadcDataCollectionStateMachine(void)
 // Function: mc68k_FUN_00026834 @ 0x00026834
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 undefined8 mc68k_FUN_00026834(void)
 
 {
+  ushort uVar1;
+  byte bVar2;
   undefined4 in_D0;
   undefined4 in_D1;
   
-  DAT_00fffc1f = DAT_00fffc1f & 0x7f;
+  bVar2 = DAT_00fffc1f;
+  DAT_00fffc1f = bVar2 & 0x7f;
   mc68k_qadcDataCollectionStateMachine();
-  _DAT_00fffc1a = _DAT_00fffc1a | 0x8000;
+  uVar1 = Ram00fffc1a;
+  Ram00fffc1a = uVar1 | 0x8000;
   return CONCAT44(in_D0,in_D1);
 }
 
@@ -27309,46 +27356,79 @@ void cm550_FUN_00026852(void)
 // Function: mc68k_FUN_00026854 @ 0x00026854
 //
 
-/* WARNING: Removing unreachable block (ram,0x0002697c) */
-/* WARNING: Removing unreachable block (ram,0x0002698e) */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void mc68k_FUN_00026854(void)
 
 {
-  ushort uVar1;
+  byte bVar1;
+  ushort uVar2;
   
   cm550_FUN_00026852();
   _DAT_00808f20 = mc68k_FUN_00026834;
   DAT_00fffc16 = 0x7b;
   DAT_00fffc17 = 0xfe;
   DAT_00fffc15 = 0xff;
-  _DAT_00fffc18 = 0x8004;
-  _DAT_00fffc1c = _DAT_00fffc1c & 0xf0f0 | 0xf02;
-  _DAT_00fffc1a = _DAT_00fffc1a & 0x8000 | 0x1001;
-  _DAT_00fffd20 = 0;
+  Ram00fffc18 = 0x8004;
+  uVar2 = Ram00fffc1c;
+  Ram00fffc1c = uVar2 & 0xfff0;
+  uVar2 = Ram00fffc1c;
+  Ram00fffc1c = uVar2 | 2;
+  uVar2 = Ram00fffc1c;
+  Ram00fffc1c = uVar2 & 0xf0ff;
+  uVar2 = Ram00fffc1c;
+  Ram00fffc1c = uVar2 | 0xf00;
+  uVar2 = Ram00fffc1a;
+  Ram00fffc1a = uVar2 & 0x80ff;
+  uVar2 = Ram00fffc1a;
+  Ram00fffc1a = uVar2 | 0x1000;
+  uVar2 = Ram00fffc1a;
+  Ram00fffc1a = uVar2 & 0xff00;
+  uVar2 = Ram00fffc1a;
+  Ram00fffc1a = uVar2 | 1;
+  Ram00fffd20 = 0;
   DAT_00fffd40 = 0x7e;
-  _DAT_00fffd22 = 0;
+  Ram00fffd22 = 0;
   DAT_00fffd41 = 0x7e;
-  _DAT_00fffd24 = 3;
+  Ram00fffd24 = 3;
   DAT_00fffd42 = 0xbd;
-  _DAT_00fffd26 = _diagnostic_can_response_header;
+  Ram00fffd26 = _diagnostic_can_response_header;
   DAT_00fffd43 = 0xfd;
-  uVar1 = 4;
+  uVar2 = 4;
   do {
-    *(undefined2 *)(&DAT_00fffd20 + (uint)uVar1 * 2) = 0;
-    (&DAT_00fffd40)[uVar1] = 0xfd;
-    uVar1 = uVar1 + 1;
-  } while (uVar1 < 0x10);
+    *(undefined2 *)(&DAT_00fffd20 + (uint)uVar2 * 2) = 0;
+    (&DAT_00fffd40)[uVar2] = 0xfd;
+    uVar2 = uVar2 + 1;
+  } while (uVar2 < 0x10);
   _calibration_data_valid_flag = 1;
-  can_buffer_setup1_size.data_ptr = (dword)&ecu_identity_marker_1;
   can_buffer_setup1_size.state = 0;
-  if (can_buffer_setup1_size.unused_ptr._0_1_ == '\0') {
+  can_buffer_setup1_size.data_ptr = (dword)&ecu_identity_marker_1;
+  _diag_can_response_pgn = 0x148a;
+  while (can_buffer_setup1_size.unused_ptr._0_1_ == '\0') {
+    bVar1 = DAT_00fffc1f;
+    DAT_00fffc1f = bVar1 & 0x7f;
+    uVar2 = Ram00fffc1a;
+    Ram00fffc1a = uVar2 | 0x8000;
     do {
-    } while( true );
+      do {
+        bVar1 = DAT_00fffc1f;
+      } while ((bVar1 & 0x80) == 0);
+      bVar1 = DAT_00fffc1f;
+    } while ((bVar1 & 0xf) != 0xf);
+    mc68k_qadcDataCollectionStateMachine();
+    DAT_00fffa27 = 0x55;
+    DAT_00fffa27 = 0xaa;
+    DAT_00ffd00f = 0x55;
+    DAT_00ffd00f = 0xaa;
   }
-  _DAT_00fffc1c = _DAT_00fffc1c | 0x8000;
-  _DAT_00fffc1a = _DAT_00fffc1a & 0xff00 | 0x8023;
+  uVar2 = Ram00fffc1a;
+  Ram00fffc1a = uVar2 & 0xff00;
+  uVar2 = Ram00fffc1a;
+  Ram00fffc1a = uVar2 | 0x23;
+  uVar2 = Ram00fffc1c;
+  Ram00fffc1c = uVar2 | 0x8000;
+  uVar2 = Ram00fffc1a;
+  Ram00fffc1a = uVar2 | 0x8000;
   _diag_can_response_pgn = 0x64c;
   return;
 }
@@ -27409,7 +27489,6 @@ void cm550_memcpy(undefined1 *param_1,undefined1 *param_2,undefined4 param_3)
 {
   ushort uVar1;
   
-                    /* From J90280.05 @ 0x01f1e0 (confidence: 86%) */
   for (uVar1 = 0; uVar1 < param_3._0_2_; uVar1 = uVar1 + 1) {
     *param_1 = *param_2;
     param_1 = param_1 + 1;
@@ -27429,7 +27508,6 @@ void cm550_memcpy(undefined1 *param_1,undefined1 *param_2,undefined4 param_3)
 void cm550_fuelDemandTablePointersInit(void)
 
 {
-                    /* From J90280.05 @ 0x030c3e (confidence: 81%) */
   _ambient_conditions_reserved = 2;
   _ambient_conditions_buffer_end = &insite_fuel_timing_display;
   _DAT_00801aaa = 2;
@@ -27453,7 +27531,6 @@ ushort cm550_rpmLoadParameterLookup(void)
 {
   ushort uVar1;
   
-                    /* From J90280.05 @ 0x030c78 (confidence: 81%) */
   uVar1 = _timing_governor_feature_enable_flags & 1;
   if (uVar1 != 0) {
     _engine_air_inlet_temp = _boost_pressure_0_100;
@@ -27506,7 +27583,6 @@ ushort vp44OperatingConditionChecker(void)
   ushort *unaff_A2;
   ushort *unaff_A3;
   
-                    /* From J90280.05 @ 0x02fb28 (confidence: 69%) */
   uVar1 = _timing_governor_feature_enable_flags & 1;
   if (((_timing_governor_feature_enable_flags & 1) != 0) &&
      (_intermediate_timing_state_used_before_final_timing_selction_0_10 == 0)) {
@@ -27630,20 +27706,21 @@ void hpcr_injectorPulseWidthCalc(void)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void mc68k_pwmOutputInit(void)
+ushort mc68k_pwmOutputInit(void)
 
 {
-                    /* From J90280.05 @ 0x01f860 (confidence: 88%) */
-  _DAT_00ffd00c =
-       (consecutive_occurances_of_engine_overspeed_to_cause_a_shutdown_0_7 & 7) << 0xc |
-       (ushort)(30000000 /
-               ((uint)number_of_engine_speed_targets_per_crankshaft_revolution_1_255 *
-               (uint)_engine_speed_above_which_the_overspeed_algorithm_disables_fue_0_4000)) & 0xfff
-  ;
+  ushort uVar1;
+  
+  uVar1 = (ushort)consecutive_occurances_of_engine_overspeed_to_cause_a_shutdown_0_7 << 0xc & 0x7000
+          | (ushort)(30000000 /
+                    ((uint)number_of_engine_speed_targets_per_crankshaft_revolution_1_255 *
+                    (uint)_engine_speed_above_which_the_overspeed_algorithm_disables_fue_0_4000)) &
+            0xfff;
   if (ESASOSTY == '\x01') {
-    _DAT_00ffd00c = _DAT_00ffd00c | 0x8000;
+    uVar1 = uVar1 | 0x8000;
   }
-  return;
+  Ram00ffd00c = uVar1;
+  return (ushort)consecutive_occurances_of_engine_overspeed_to_cause_a_shutdown_0_7 << 0xc & 0x7000;
 }
 
 
@@ -27660,7 +27737,6 @@ void calculateSpeedRatioComponent(void)
   uint uVar1;
   ushort uVar2;
   
-                    /* From J90280.05 @ 0x01f8aa (confidence: 75%) */
   if ((_frictional_no_load_fueling < _current_fuel_demand) &&
      (_frictional_no_load_fueling < _fueling_value_at_100_throttle_0_100)) {
     uVar1 = cm550_scaleByRatio((uint)_current_fuel_demand - (uint)_frictional_no_load_fueling,0x6400
@@ -27812,7 +27888,6 @@ void cm550_insiteActiveFaultListBuilder(void)
   char cVar2;
   byte bVar3;
   
-                    /* From J90280.05 @ 0x01fa00 (confidence: 75%) */
   if (j1708_transmit_buffer_2_32_ddc6.reserved_48[2] < 0x14) {
     *(byte *)j1708_transmit_buffer_2_32_ddc6.write_ptr =
          j1708_transmit_buffer_2_32_ddc6.reserved_28[3];
@@ -27894,7 +27969,6 @@ void cm550_insiteFaultDetailBuilder(void)
   byte *pbVar8;
   byte *pbVar9;
   
-                    /* From J90280.05 @ 0x01fafe (confidence: 70%) */
   if (j1708_transmit_buffer_2_32_ddc6.reserved_48[2] < 0x14) {
     *(byte *)j1708_transmit_buffer_2_32_ddc6.write_ptr =
          j1708_transmit_buffer_2_32_ddc6.reserved_28[3];
@@ -28182,7 +28256,6 @@ void cm550_insiteVersionInfoBuilder(void)
   undefined *puVar4;
   undefined *puVar5;
   
-                    /* From J90280.05 @ 0x02011c (confidence: 80%) */
   if (j1708_transmit_buffer_2_32_ddc6.reserved_48[2] < 0x14) {
     *(byte *)j1708_transmit_buffer_2_32_ddc6.write_ptr =
          j1708_transmit_buffer_2_32_ddc6.reserved_28[3];
@@ -28316,7 +28389,6 @@ void cm550_insiteCapacityResponseBuilder(void)
   byte bVar2;
   undefined *puVar3;
   
-                    /* From J90280.05 @ 0x02003c (confidence: 81%) */
   if (j1708_transmit_buffer_2_32_ddc6.reserved_48[2] < 0x14) {
     *(byte *)j1708_transmit_buffer_2_32_ddc6.write_ptr =
          j1708_transmit_buffer_2_32_ddc6.reserved_28[3];
@@ -28522,7 +28594,6 @@ void vp44_hourMeterEventLogger(void)
   byte *pbVar8;
   byte local_5;
   
-                    /* From J90280.05 @ 0x0202a4 (confidence: 100%) */
   while( true ) {
     cVar5 = cm550_circularBufferPop((dword *)0x80bc8c,&local_5);
     if (cVar5 != '\0') break;
@@ -28593,8 +28664,9 @@ void vp44StatusInitAndWait(void)
   ushort uVar7;
   short local_6;
   
-                    /* From J90280.05 @ 0x020de4 (confidence: 100%) */
+  DAT_00fffa27 = 0x55;
   DAT_00fffa27 = 0xaa;
+  DAT_00ffd00f = 0x55;
   DAT_00ffd00f = 0xaa;
   cVar3 = '\x01';
   cVar4 = '\0';
@@ -28619,7 +28691,9 @@ void vp44StatusInitAndWait(void)
     do {
       uVar7 = 0;
       do {
+        DAT_00fffa27 = 0x55;
         DAT_00fffa27 = 0xaa;
+        DAT_00ffd00f = 0x55;
         DAT_00ffd00f = 0xaa;
         uVar7 = uVar7 + 1;
       } while (uVar7 < 0xa0);
@@ -28627,7 +28701,9 @@ void vp44StatusInitAndWait(void)
     } while (sVar1 == 0);
     uVar2 = uVar2 + 1;
   }
+  DAT_00fffa27 = 0x55;
   DAT_00fffa27 = 0xaa;
+  DAT_00ffd00f = 0x55;
   DAT_00ffd00f = 0xaa;
   cm550_FUN_00028978();
   return;
@@ -28642,36 +28718,38 @@ void vp44StatusInitAndWait(void)
 void vp44_FUN_00027c20(void)
 
 {
-  char cVar1;
+  byte bVar1;
+  char cVar2;
   undefined4 unaff_D2;
-  ushort uVar2;
   ushort uVar3;
+  ushort uVar4;
   ushort unaff_D4w;
   uint source_ptr;
   
-  uVar3 = 0;
+  uVar4 = 0;
   source_ptr = 0x804156;
   while ((source_ptr < 0x804f92 && (unaff_D4w < 2))) {
-    cVar1 = cm550_parameterCircularBufferWrite
+    cVar2 = cm550_parameterCircularBufferWrite
                       (source_ptr,(byte *)source_ptr,(word)((uint)unaff_D2 >> 0x10));
-    if (cVar1 == '\0') {
+    if (cVar2 == '\0') {
       source_ptr = source_ptr + 0x10;
       unaff_D4w = 0;
     }
     else {
       unaff_D4w = unaff_D4w + 1;
     }
-    uVar2 = 0;
-    while ((uVar2 < 16000 && (cVar1 = cm550_circularBufferEmptyCheck(), cVar1 == '\0'))) {
+    uVar3 = 0;
+    while ((uVar3 < 16000 && (cVar2 = cm550_circularBufferEmptyCheck(), cVar2 == '\0'))) {
       cm550_emptyPlaceholderFunction();
       cm550_watchdogServiceLoop();
-      uVar2 = uVar2 + 1;
-      if ((DAT_00ffd000 & 1) == 0) {
-        uVar3 = 0;
+      uVar3 = uVar3 + 1;
+      bVar1 = DAT_00ffd000;
+      if ((bVar1 & 1) == 0) {
+        uVar4 = 0;
       }
       else {
-        uVar3 = uVar3 + 1;
-        if (0x50 < uVar3) {
+        uVar4 = uVar4 + 1;
+        if (0x50 < uVar4) {
           vp44StatusInitAndWait();
         }
       }
@@ -28699,9 +28777,15 @@ void vp44_FUN_00027cd0(undefined4 param_1)
   if (param_1._1_1_ == '\x01') {
     bVar2 = 1;
     do {
+      DAT_00fffa27 = 0x55;
       DAT_00fffa27 = 0xaa;
+      DAT_00ffd00f = 0x55;
       DAT_00ffd00f = 0xaa;
       sVar1 = cm550_eepromCalibrationWriteSecondary();
+      DAT_00fffa27 = 0x55;
+      DAT_00fffa27 = 0xaa;
+      DAT_00ffd00f = 0x55;
+      DAT_00ffd00f = 0xaa;
       if (sVar1 != 2) {
         bVar2 = 3;
       }
@@ -28712,9 +28796,15 @@ void vp44_FUN_00027cd0(undefined4 param_1)
       if (_enable_to_protects_parameter_block_data_at_powerdown_enabled_disabled == 0) {
         bVar2 = 1;
         do {
+          DAT_00fffa27 = 0x55;
           DAT_00fffa27 = 0xaa;
+          DAT_00ffd00f = 0x55;
           DAT_00ffd00f = 0xaa;
           sVar1 = cm550_FUN_0001125a();
+          DAT_00fffa27 = 0x55;
+          DAT_00fffa27 = 0xaa;
+          DAT_00ffd00f = 0x55;
+          DAT_00ffd00f = 0xaa;
           if (sVar1 != 2) {
             bVar2 = 3;
           }
@@ -28729,9 +28819,15 @@ void vp44_FUN_00027cd0(undefined4 param_1)
   else {
     bVar2 = 1;
     do {
+      DAT_00fffa27 = 0x55;
       DAT_00fffa27 = 0xaa;
+      DAT_00ffd00f = 0x55;
       DAT_00ffd00f = 0xaa;
       sVar1 = cm550_FUN_0001125a();
+      DAT_00fffa27 = 0x55;
+      DAT_00fffa27 = 0xaa;
+      DAT_00ffd00f = 0x55;
+      DAT_00ffd00f = 0xaa;
       if (sVar1 != 2) {
         bVar2 = 3;
       }
@@ -28742,9 +28838,15 @@ void vp44_FUN_00027cd0(undefined4 param_1)
       if (_enable_to_protects_parameter_block_data_at_powerdown_enabled_disabled == 0) {
         bVar2 = 1;
         do {
+          DAT_00fffa27 = 0x55;
           DAT_00fffa27 = 0xaa;
+          DAT_00ffd00f = 0x55;
           DAT_00ffd00f = 0xaa;
           sVar1 = cm550_eepromCalibrationWriteSecondary();
+          DAT_00fffa27 = 0x55;
+          DAT_00fffa27 = 0xaa;
+          DAT_00ffd00f = 0x55;
+          DAT_00ffd00f = 0xaa;
           if (sVar1 != 2) {
             bVar2 = 3;
           }
@@ -28756,8 +28858,6 @@ void vp44_FUN_00027cd0(undefined4 param_1)
       _eeprom_calibration_write_success = 0;
     }
   }
-  DAT_00fffa27 = 0xaa;
-  DAT_00ffd00f = 0xaa;
   if (sVar1 == 1) {
     vp44StatusInitAndWait();
   }
@@ -28768,16 +28868,21 @@ void vp44_FUN_00027cd0(undefined4 param_1)
                               ((short)(_DAT_00803fe2 - _DAT_00803fe4) < 0) << 3 |
                               SBORROW2(_DAT_00803fe2,_DAT_00803fe4) << 1 |
                              _DAT_00803fe2 < _DAT_00803fe4));
+    DAT_00fffa27 = 0x55;
+    DAT_00fffa27 = 0xaa;
+    DAT_00ffd00f = 0x55;
+    DAT_00ffd00f = 0xaa;
     uVar4 = 0;
-    while( true ) {
-      DAT_00fffa27 = 0xaa;
-      DAT_00ffd00f = 0xaa;
-      if ((999 < uVar4) || (_DAT_00803fe2 == _DAT_00803fe4)) break;
+    while ((uVar4 < 1000 && (_DAT_00803fe2 != _DAT_00803fe4))) {
       cm550_emptyPlaceholderFunction();
       sVar1 = 0;
       do {
         uVar3 = 0;
         do {
+          DAT_00fffa27 = 0x55;
+          DAT_00fffa27 = 0xaa;
+          DAT_00ffd00f = 0x55;
+          DAT_00ffd00f = 0xaa;
           uVar3 = uVar3 + 1;
         } while (uVar3 < 0xa0);
         sVar1 = sVar1 + 1;
@@ -28787,7 +28892,9 @@ void vp44_FUN_00027cd0(undefined4 param_1)
   }
   bVar2 = 0;
   while (bVar2 < 4) {
+    DAT_00fffa27 = 0x55;
     DAT_00fffa27 = 0xaa;
+    DAT_00ffd00f = 0x55;
     DAT_00ffd00f = 0xaa;
     injectorTimingCalculation();
     cm550_watchdogServiceLoop();
@@ -28810,34 +28917,37 @@ void vp44_FUN_00027cd0(undefined4 param_1)
 void vp44_FUN_00027f9c(void)
 
 {
-  char cVar1;
-  ushort uVar2;
-  short sVar3;
-  ushort uVar4;
-  undefined2 *puVar5;
+  short sVar1;
+  char cVar2;
+  ushort uVar3;
+  short sVar4;
+  ushort uVar5;
   undefined2 *puVar6;
+  undefined2 *puVar7;
   char in_XF;
-  char cVar7;
   char cVar8;
   char cVar9;
-  byte bVar10;
-  ushort uVar11;
-  undefined *puVar12;
+  char cVar10;
+  byte bVar11;
+  ushort uVar12;
+  undefined *puVar13;
   int local_a;
   ushort local_6;
   
   cm550_FUN_00030a5e();
+  DAT_00fffa27 = 0x55;
   DAT_00fffa27 = 0xaa;
+  DAT_00ffd00f = 0x55;
   DAT_00ffd00f = 0xaa;
   j1708_transmit_buffer_2_32_ddc6.count_106 = 0;
   _calibration_data_valid_flag = 1;
   _water_in_fuel_state_code = 0xeeee;
-  uVar11 = (ushort)(byte)(in_XF << 4 | 8);
-  uVar4 = 0;
-  while ((uVar4 < 1000 && (cVar1 = cm550_circularBufferEmptyCheck(), cVar1 == '\0'))) {
+  uVar12 = (ushort)(byte)(in_XF << 4 | 8);
+  uVar5 = 0;
+  while ((uVar5 < 1000 && (cVar2 = cm550_circularBufferEmptyCheck(), cVar2 == '\0'))) {
     cm550_emptyPlaceholderFunction();
-    cm550_watchdogServiceLoop(uVar11);
-    uVar4 = uVar4 + 1;
+    cm550_watchdogServiceLoop(uVar12);
+    uVar5 = uVar5 + 1;
   }
   vp44_FUN_00027c20();
   if (DAT_0080bd2c == '\0') {
@@ -28847,106 +28957,124 @@ void vp44_FUN_00027f9c(void)
   }
   mc68k_ioDriverStrobeHandler();
   if (_calibration_bank_copy_valid != 0) {
-    puVar5 = (undefined2 *)&DAT_00806544;
+    puVar6 = (undefined2 *)&DAT_00806544;
     if (_calibration_bank_active == 2) {
-      puVar6 = &DAT_000075ae;
+      puVar7 = &DAT_000075ae;
     }
     else {
-      puVar6 = (undefined2 *)&DAT_000055ae;
+      puVar7 = (undefined2 *)&DAT_000055ae;
     }
-    for (; puVar5 < (undefined2 *)0x806546; puVar5 = puVar5 + 1) {
-      *puVar5 = *puVar6;
-      puVar6 = puVar6 + 1;
+    for (; puVar6 < (undefined2 *)0x806546; puVar6 = puVar6 + 1) {
+      *puVar6 = *puVar7;
+      puVar7 = puVar7 + 1;
     }
   }
+  DAT_00fffa27 = 0x55;
   DAT_00fffa27 = 0xaa;
+  DAT_00ffd00f = 0x55;
   DAT_00ffd00f = 0xaa;
-  cVar1 = _calibration_bank_active == 0;
+  cVar2 = _calibration_bank_active == 0;
   if (_calibration_bank_active == 1) {
-    cVar7 = '\0';
     cVar8 = '\0';
     cVar9 = '\0';
-    bVar10 = 0;
+    cVar10 = '\0';
+    bVar11 = 0;
     vp44_FUN_00027cd0();
   }
   else {
-    cVar1 = _calibration_bank_active < 2;
+    cVar2 = _calibration_bank_active < 2;
     if (_calibration_bank_active == 2) {
-      cVar7 = '\0';
       cVar8 = '\0';
       cVar9 = '\0';
-      bVar10 = 0;
+      cVar10 = '\0';
+      bVar11 = 0;
       vp44_FUN_00027cd0();
     }
     else {
       vp44_FUN_00027cd0();
-      cVar7 = '\0';
       cVar8 = '\0';
       cVar9 = '\0';
-      bVar10 = 0;
+      cVar10 = '\0';
+      bVar11 = 0;
       vp44_FUN_00027cd0();
     }
   }
-  uVar11 = (ushort)(byte)(cVar1 << 4 | cVar7 << 3 | cVar8 << 2 | cVar9 << 1 | bVar10);
+  uVar12 = (ushort)(byte)(cVar2 << 4 | cVar8 << 3 | cVar9 << 2 | cVar10 << 1 | bVar11);
   local_a = _hour_meter_ecm_run_time_none;
-  puVar12 = &eeprom_hour_meter_buffer;
-  cm550_parameterCircularBufferWrite(0x803b3e,(byte *)&local_a,uVar11);
-  uVar4 = 0;
-  while( true ) {
-    DAT_00fffa27 = 0xaa;
-    DAT_00ffd00f = 0xaa;
-    if ((999 < uVar4) || (_eeprom_hour_meter_buffer == local_a)) break;
+  puVar13 = &eeprom_hour_meter_buffer;
+  cm550_parameterCircularBufferWrite(0x803b3e,(byte *)&local_a,uVar12);
+  DAT_00fffa27 = 0x55;
+  DAT_00fffa27 = 0xaa;
+  DAT_00ffd00f = 0x55;
+  DAT_00ffd00f = 0xaa;
+  uVar5 = 0;
+  while ((uVar5 < 1000 && (_eeprom_hour_meter_buffer != local_a))) {
     cm550_emptyPlaceholderFunction();
-    sVar3 = 0;
+    sVar4 = 0;
     do {
-      uVar2 = 0;
+      uVar3 = 0;
       do {
-        uVar2 = uVar2 + 1;
-      } while (uVar2 < 0xa0);
-      sVar3 = sVar3 + 1;
-    } while (sVar3 == 0);
-    uVar4 = uVar4 + 1;
+        DAT_00fffa27 = 0x55;
+        DAT_00fffa27 = 0xaa;
+        DAT_00ffd00f = 0x55;
+        DAT_00ffd00f = 0xaa;
+        uVar3 = uVar3 + 1;
+      } while (uVar3 < 0xa0);
+      sVar4 = sVar4 + 1;
+    } while (sVar4 == 0);
+    uVar5 = uVar5 + 1;
   }
   local_a = _time_that_the_engine_is_not_in_stop_state_0_2_29;
-  cm550_parameterCircularBufferWrite(0x803b50,(byte *)&local_a,(word)((uint)puVar12 >> 0x10));
-  uVar4 = 0;
-  while( true ) {
-    DAT_00fffa27 = 0xaa;
-    DAT_00ffd00f = 0xaa;
-    if ((999 < uVar4) || (_eeprom_engine_run_time_buffer == local_a)) break;
+  cm550_parameterCircularBufferWrite(0x803b50,(byte *)&local_a,(word)((uint)puVar13 >> 0x10));
+  DAT_00fffa27 = 0x55;
+  DAT_00fffa27 = 0xaa;
+  DAT_00ffd00f = 0x55;
+  DAT_00ffd00f = 0xaa;
+  uVar5 = 0;
+  while ((uVar5 < 1000 && (_eeprom_engine_run_time_buffer != local_a))) {
     cm550_emptyPlaceholderFunction();
-    sVar3 = 0;
+    sVar4 = 0;
     do {
-      uVar2 = 0;
+      uVar3 = 0;
       do {
-        uVar2 = uVar2 + 1;
-      } while (uVar2 < 0xa0);
-      sVar3 = sVar3 + 1;
-    } while (sVar3 == 0);
-    uVar4 = uVar4 + 1;
+        DAT_00fffa27 = 0x55;
+        DAT_00fffa27 = 0xaa;
+        DAT_00ffd00f = 0x55;
+        DAT_00ffd00f = 0xaa;
+        uVar3 = uVar3 + 1;
+      } while (uVar3 < 0xa0);
+      sVar4 = sVar4 + 1;
+    } while (sVar4 == 0);
+    uVar5 = uVar5 + 1;
   }
   local_6 = 0;
   cm550_parameterCircularBufferWrite
             (0x803fda,(byte *)&local_6,
-             (ushort)(byte)(((uVar11 & 0x10) != 0) << 4 | ((uVar11 & 8) != 0) << 3 |
-                            ((uVar11 & 4) != 0) << 2 | ((uVar11 & 2) != 0) << 1 | (uVar11 & 1) != 0)
+             (ushort)(byte)(((uVar12 & 0x10) != 0) << 4 | ((uVar12 & 8) != 0) << 3 |
+                            ((uVar12 & 4) != 0) << 2 | ((uVar12 & 2) != 0) << 1 | (uVar12 & 1) != 0)
             );
-  uVar4 = 0;
-  while ((uVar4 < 1000 && (_eeprom_powerdown_status != local_6))) {
+  uVar5 = 0;
+  while ((uVar5 < 1000 && (_eeprom_powerdown_status != local_6))) {
     cm550_emptyPlaceholderFunction();
-    sVar3 = 0;
+    sVar4 = 0;
     do {
-      uVar11 = 0;
+      uVar12 = 0;
       do {
+        DAT_00fffa27 = 0x55;
         DAT_00fffa27 = 0xaa;
+        DAT_00ffd00f = 0x55;
         DAT_00ffd00f = 0xaa;
-        uVar11 = uVar11 + 1;
-      } while (uVar11 < 0xa0);
-      sVar3 = sVar3 + 1;
-    } while (sVar3 == 0);
-    uVar4 = uVar4 + 1;
+        uVar12 = uVar12 + 1;
+      } while (uVar12 < 0xa0);
+      sVar4 = sVar4 + 1;
+    } while (sVar4 == 0);
+    uVar5 = uVar5 + 1;
   }
   cm550_FUN_0002ce64();
+  DAT_00fffa27 = 0x55;
+  DAT_00fffa27 = 0xaa;
+  DAT_00ffd00f = 0x55;
+  DAT_00ffd00f = 0xaa;
   if (DAT_0080bd2d == '\0') {
     DAT_0080bd2d = '\0';
     enable_flag_to_allow_boot_block_programming_enable_disable =
@@ -28957,14 +29085,18 @@ void vp44_FUN_00027f9c(void)
     enable_flag_to_allow_boot_block_programming_enable_disable =
          enable_flag_to_allow_boot_block_programming_enable_disable & 0xfb;
   }
+  DAT_00fffa27 = 0x55;
   DAT_00fffa27 = 0xaa;
+  DAT_00ffd00f = 0x55;
   DAT_00ffd00f = 0xaa;
   mc68k_ioDriverStrobeHandler();
   local_6 = 0;
-  sVar3 = _DAT_00fff404;
   do {
-    while ((ushort)(_DAT_00fff404 - sVar3) < 500) {
+    sVar4 = Ram00fff404;
+    while (sVar1 = Ram00fff404, (ushort)(sVar1 - sVar4) < 500) {
+      DAT_00fffa27 = 0x55;
       DAT_00fffa27 = 0xaa;
+      DAT_00ffd00f = 0x55;
       DAT_00ffd00f = 0xaa;
       injectorTimingCalculation();
       if ((value_used_for_monitoring_switch_data_0_1_2089_10_24 & 1) != 0) {
@@ -28978,14 +29110,15 @@ void vp44_FUN_00027f9c(void)
           enable_flag_to_allow_boot_block_programming_enable_disable =
                enable_flag_to_allow_boot_block_programming_enable_disable & 0xfb;
         }
+        DAT_00fffa27 = 0x55;
         DAT_00fffa27 = 0xaa;
+        DAT_00ffd00f = 0x55;
         DAT_00ffd00f = 0xaa;
         mc68k_ioDriverStrobeHandler();
         vp44StatusInitAndWait();
       }
     }
     local_6 = local_6 + 1;
-    sVar3 = _DAT_00fff404;
   } while (local_6 < 0x28);
   if (DAT_0080bd2d == '\0') {
     DAT_0080bd2d = '\0';
@@ -28997,46 +29130,54 @@ void vp44_FUN_00027f9c(void)
     enable_flag_to_allow_boot_block_programming_enable_disable =
          enable_flag_to_allow_boot_block_programming_enable_disable & 0xfb;
   }
+  DAT_00fffa27 = 0x55;
   DAT_00fffa27 = 0xaa;
+  DAT_00ffd00f = 0x55;
   DAT_00ffd00f = 0xaa;
   mc68k_ioDriverStrobeHandler();
+  DAT_00fffa27 = 0x55;
   DAT_00fffa27 = 0xaa;
+  DAT_00ffd00f = 0x55;
   DAT_00ffd00f = 0xaa;
-  bVar10 = 0;
+  bVar11 = 0;
   while( true ) {
-    cVar1 = bVar10 < 4;
-    cVar8 = SBORROW1(bVar10,'\x04');
-    cVar7 = (char)(bVar10 - 4) < '\0';
-    if (!(bool)cVar1) break;
+    cVar2 = bVar11 < 4;
+    cVar9 = SBORROW1(bVar11,'\x04');
+    cVar8 = (char)(bVar11 - 4) < '\0';
+    if (!(bool)cVar2) break;
+    DAT_00fffa27 = 0x55;
     DAT_00fffa27 = 0xaa;
+    DAT_00ffd00f = 0x55;
     DAT_00ffd00f = 0xaa;
     injectorTimingCalculation();
     cm550_watchdogServiceLoop();
-    bVar10 = bVar10 + 1;
+    bVar11 = bVar11 + 1;
   }
-  cVar9 = (value_used_for_monitoring_switch_data_0_1_2089_10_24 & 1) == 0;
-  bVar10 = cVar1;
-  if (!(bool)cVar9) {
+  cVar10 = (value_used_for_monitoring_switch_data_0_1_2089_10_24 & 1) == 0;
+  bVar11 = cVar2;
+  if (!(bool)cVar10) {
     vp44StatusInitAndWait();
   }
   local_6 = 1;
   cm550_parameterCircularBufferWrite
             (0x803fda,(byte *)&local_6,
-             (ushort)(byte)(cVar1 << 4 | cVar7 << 3 | cVar9 << 2 | cVar8 << 1 | bVar10));
-  uVar4 = 0;
-  while ((uVar4 < 1000 && (_eeprom_powerdown_status != local_6))) {
+             (ushort)(byte)(cVar2 << 4 | cVar8 << 3 | cVar10 << 2 | cVar9 << 1 | bVar11));
+  uVar5 = 0;
+  while ((uVar5 < 1000 && (_eeprom_powerdown_status != local_6))) {
     cm550_emptyPlaceholderFunction();
-    sVar3 = 0;
+    sVar4 = 0;
     do {
-      uVar11 = 0;
+      uVar12 = 0;
       do {
+        DAT_00fffa27 = 0x55;
         DAT_00fffa27 = 0xaa;
+        DAT_00ffd00f = 0x55;
         DAT_00ffd00f = 0xaa;
-        uVar11 = uVar11 + 1;
-      } while (uVar11 < 0xa0);
-      sVar3 = sVar3 + 1;
-    } while (sVar3 == 0);
-    uVar4 = uVar4 + 1;
+        uVar12 = uVar12 + 1;
+      } while (uVar12 < 0xa0);
+      sVar4 = sVar4 + 1;
+    } while (sVar4 == 0);
+    uVar5 = uVar5 + 1;
   }
   while ((value_used_for_monitoring_switch_data_0_1_2089_10_24 & 1) == 0) {
     injectorTimingCalculation();
@@ -29064,37 +29205,47 @@ void vp44_FUN_000284e8(void)
   char cVar3;
   byte bVar4;
   
-  _DAT_00fffb44 = 0x810000;
-  _DAT_00fffb40 = 0;
+  Ram00fffb44 = 0x810000;
+  Ram00fffb40 = 0;
   DAT_00ffd00e = 0x80;
   DAT_00fffc04 = 0;
-  _DAT_00fffc0a = 0;
-  _DAT_00fffa22 = 0;
-  _DAT_00fffa24 = 0;
-  _DAT_00fffe0a = 0;
-  _DAT_00fff400 = 0x1201;
-  _DAT_00fff408 = 8;
-  _DAT_00fff410 = 0x200;
-  _DAT_00fff458 = 4;
-  _DAT_00fff418 = 8;
-  _DAT_00fff41a = 0;
-  _DAT_00fff41c = 0;
-  _DAT_00fff420 = 1;
-  _DAT_00fff448 = 1;
-  _DAT_00fff450 = 1;
-  _DAT_00fff42a = 0xffff;
-  _DAT_00fff42c = 0;
-  _DAT_00fff428 = 8;
-  _DAT_00fff432 = 0xffff;
-  _DAT_00fff434 = 0;
-  _DAT_00fff430 = 8;
-  _DAT_00fff43a = 0xffff;
-  _DAT_00fff43c = 0;
-  _DAT_00fff438 = 8;
-  _DAT_00fff442 = 0xffff;
-  _DAT_00fff444 = 0;
-  _DAT_00fff440 = 8;
-  _DAT_00fff460 = 0x104;
+  Ram00fffc0a = 0;
+  Ram00fffa22 = 0;
+  Ram00fffa24 = 0;
+  Ram00fffe0a = 0;
+  Ram00fff410 = 0;
+  Ram00fff418 = 0;
+  Ram00fff420 = 0;
+  Ram00fff428 = 0;
+  Ram00fff430 = 0;
+  Ram00fff438 = 0;
+  Ram00fff440 = 0;
+  Ram00fff448 = 0;
+  Ram00fff450 = 0;
+  Ram00fff458 = 0;
+  Ram00fff400 = 0x1201;
+  Ram00fff408 = 8;
+  Ram00fff410 = 0x200;
+  Ram00fff458 = 4;
+  Ram00fff418 = 8;
+  Ram00fff41a = 0;
+  Ram00fff41c = 0;
+  Ram00fff420 = 1;
+  Ram00fff448 = 1;
+  Ram00fff450 = 1;
+  Ram00fff42a = 0xffff;
+  Ram00fff42c = 0;
+  Ram00fff428 = 8;
+  Ram00fff432 = 0xffff;
+  Ram00fff434 = 0;
+  Ram00fff430 = 8;
+  Ram00fff43a = 0xffff;
+  Ram00fff43c = 0;
+  Ram00fff438 = 8;
+  Ram00fff442 = 0xffff;
+  Ram00fff444 = 0;
+  Ram00fff440 = 8;
+  Ram00fff460 = 0x104;
   _DAT_00810ffc = 2;
   _DAT_00810ffe = 0x861c;
   mc68k_initInternalRamAndCAN1();
@@ -29116,7 +29267,7 @@ void vp44_FUN_000284e8(void)
   _DAT_00810ffc = 2;
   _DAT_00810ffe = 0x865c;
   initQadcModule();
-  _DAT_00fffc00 = 5;
+  Ram00fffc00 = 5;
   DAT_00fffc04 = 0x13;
   DAT_00fffc05 = 0x50;
   cVar1 = '\0';
@@ -29507,36 +29658,45 @@ void vp44_mainSystemInitialization(void)
 {
   int unaff_A2;
   
-                    /* From J90280.05 @ 0x020462 (confidence: 84%) */
   DAT_00ffd00e = 0x80;
   DAT_00fffc04 = 0;
-  _DAT_00fffc0a = 0;
-  _DAT_00fffa22 = 0;
-  _DAT_00fffa24 = 0;
-  _DAT_00fffe0a = 0;
-  _DAT_00fff400 = 0x1201;
-  _DAT_00fff408 = 8;
-  _DAT_00fff410 = 0x200;
-  _DAT_00fff458 = 4;
-  _DAT_00fff418 = 8;
-  _DAT_00fff41a = 0;
-  _DAT_00fff41c = 0;
-  _DAT_00fff420 = 1;
-  _DAT_00fff448 = 1;
-  _DAT_00fff450 = 1;
-  _DAT_00fff42a = 0xffff;
-  _DAT_00fff42c = 0;
-  _DAT_00fff428 = 8;
-  _DAT_00fff432 = 0xffff;
-  _DAT_00fff434 = 0;
-  _DAT_00fff430 = 8;
-  _DAT_00fff43a = 0xffff;
-  _DAT_00fff43c = 0;
-  _DAT_00fff438 = 8;
-  _DAT_00fff442 = 0xffff;
-  _DAT_00fff444 = 0;
-  _DAT_00fff440 = 8;
-  _DAT_00fff460 = 0x104;
+  Ram00fffc0a = 0;
+  Ram00fffa22 = 0;
+  Ram00fffa24 = 0;
+  Ram00fffe0a = 0;
+  Ram00fff410 = 0;
+  Ram00fff418 = 0;
+  Ram00fff420 = 0;
+  Ram00fff428 = 0;
+  Ram00fff430 = 0;
+  Ram00fff438 = 0;
+  Ram00fff440 = 0;
+  Ram00fff448 = 0;
+  Ram00fff450 = 0;
+  Ram00fff458 = 0;
+  Ram00fff400 = 0x1201;
+  Ram00fff408 = 8;
+  Ram00fff410 = 0x200;
+  Ram00fff458 = 4;
+  Ram00fff418 = 8;
+  Ram00fff41a = 0;
+  Ram00fff41c = 0;
+  Ram00fff420 = 1;
+  Ram00fff448 = 1;
+  Ram00fff450 = 1;
+  Ram00fff42a = 0xffff;
+  Ram00fff42c = 0;
+  Ram00fff428 = 8;
+  Ram00fff432 = 0xffff;
+  Ram00fff434 = 0;
+  Ram00fff430 = 8;
+  Ram00fff43a = 0xffff;
+  Ram00fff43c = 0;
+  Ram00fff438 = 8;
+  Ram00fff442 = 0xffff;
+  Ram00fff444 = 0;
+  Ram00fff440 = 8;
+  Ram00fff460 = 0x104;
   mc68k_initInternalRamAndCAN1();
   cm550_clearWorkingMemory();
   cm550_firmwareDataCopyToWorkingMemory();
@@ -29548,7 +29708,7 @@ void vp44_mainSystemInitialization(void)
   }
   cm550_initVectorTable();
   initQadcModule();
-  _DAT_00fffc00 = 5;
+  Ram00fffc00 = 5;
   DAT_00fffc04 = 0x13;
   DAT_00fffc05 = 0x50;
   mc68k_FUN_00026854();
@@ -29706,7 +29866,6 @@ void vp44_mainSystemInitialization(void)
 void vp44_slowCycle4Coordinator(void)
 
 {
-                    /* From J90280.05 @ 0x0173b0 (confidence: 67%) */
   cm550_engineRpmSourceInit();
   cm550_canBusTimingInit();
   cm550_FUN_00026e86();
@@ -29828,7 +29987,6 @@ void vp44_slowCycle4Coordinator(void)
 void vp44_engineDiagnosticSystemCoordinator(void)
 
 {
-                    /* From J90280.05 @ 0x017366 (confidence: 69%) */
   cm550_FUN_00013cc8();
   vp44_initVp44BufferAddresses();
   cm550_initHourMeterSystem();
@@ -29938,7 +30096,6 @@ void vp44_engineDiagnosticSystemCoordinator(void)
 void cm550_fuelDemandUpdateOrchestrator(void)
 
 {
-                    /* From J90280.05 @ 0x02f778 (confidence: 72%) */
   cm550_masterSubsystemInit();
   cm550_FUN_0001e04c();
   cm550_FUN_0000af70();
@@ -30026,7 +30183,6 @@ void cm550_fuelDemandUpdateOrchestrator(void)
 void cm550_advancedEngineProtectionCoordinator(void)
 
 {
-                    /* From J90280.05 @ 0x0174dc (confidence: 66%) */
   cm550_canMessageFilterInit();
   cm550_FUN_0002ed62();
   cm550_tpuChannelIsrRegister();
@@ -30111,7 +30267,6 @@ void cm550_advancedEngineProtectionCoordinator(void)
 void cm550_shutdownMinimumSelectorOrchestrator(void)
 
 {
-                    /* From J90280.05 @ 0x02f884 (confidence: 63%) */
   _lsg_breakpoint_speed = _lsg_base_reference_speed_calibration;
   func_0x00049f5e();
   func_0x0004a20a();
@@ -30180,7 +30335,6 @@ void cm550_FUN_00028978(void)
 void cm550_phase4InitSequence(void)
 
 {
-                    /* From J90280.05 @ 0x020780 (confidence: 69%) */
   cm550_iahDisableWaitToStartLamp();
   func_0x000478c6();
   do {
@@ -30204,32 +30358,39 @@ void cm550_phase4InitSequence(void)
 void mc68k_dualCanControllerInit(void)
 
 {
-  byte bVar1;
-  undefined1 *puVar2;
+  undefined1 uVar1;
+  byte bVar2;
+  undefined *puVar3;
+  undefined1 *puVar4;
   
   do {
     DAT_00ffd802 = DAT_008084a3;
-  } while ((DAT_008084a3 & 0x80) != 0);
+    bVar2 = DAT_00ffd802;
+  } while ((bVar2 & 0x80) != 0);
+  DAT_00ffd800 = 0x41;
+  uVar1 = DAT_00ffd801;
   DAT_00ffd808 = the_can_extended_mask_0x0_0xffffffff;
   DAT_00ffd809 = DAT_008084ab;
   DAT_00ffd80a = DAT_008084ac;
   DAT_00ffd80b = DAT_008084ad;
-  _DAT_00ffd806 = _can_global_mask_0_65535;
-  _DAT_00ffd80c = _mask_used_for_can_msg_object_15_0_ffffffff_84b0;
+  Ram00ffd806 = _can_global_mask_0_65535;
+  Ram00ffd80c = _mask_used_for_can_msg_object_15_0_ffffffff_84b0;
   DAT_00ffd82f = DAT_008084a5;
   DAT_00ffd83f = DAT_008084a7;
   DAT_00ffd84f = DAT_008084a9;
   DAT_00ffd81f = 0;
-  DAT_00ffd800 = 0;
-  puVar2 = &DAT_00ffd810;
-  bVar1 = 1;
+  bVar2 = DAT_00ffd800;
+  DAT_00ffd800 = bVar2 & 0xbf;
+  puVar3 = &DAT_00ffd810;
+  bVar2 = 1;
   do {
-    *puVar2 = 0x55;
-    puVar2[1] = 0x55;
-    puVar2 = puVar2 + 0x10;
-    bVar1 = bVar1 + 1;
-  } while (bVar1 < 0x10);
-  DAT_00ffd800 = DAT_00ffd800 & 0xfe;
+    *puVar3 = 0x55;
+    puVar3[1] = 0x55;
+    puVar3 = puVar3 + 0x10;
+    bVar2 = bVar2 + 1;
+  } while (bVar2 < 0x10);
+  bVar2 = DAT_00ffd800;
+  DAT_00ffd800 = bVar2 & 0xfe;
   do {
     DAT_00ffc802 = DAT_00808491;
   } while ((DAT_00808491 & 0x80) != 0);
@@ -30244,13 +30405,13 @@ void mc68k_dualCanControllerInit(void)
   DAT_00ffc84f = DAT_00808497;
   DAT_00ffc81f = 0;
   DAT_00ffc800 = 0;
-  puVar2 = &DAT_00ffc810;
-  bVar1 = 1;
+  puVar4 = &DAT_00ffc810;
+  bVar2 = 1;
   do {
-    *puVar2 = 0x7d;
-    puVar2 = puVar2 + 0x10;
-    bVar1 = bVar1 + 1;
-  } while (bVar1 < 0x10);
+    *puVar4 = 0x7d;
+    puVar4 = puVar4 + 0x10;
+    bVar2 = bVar2 + 1;
+  } while (bVar2 < 0x10);
   DAT_00ffc800 = DAT_00ffc800 & 0xfe;
   mc68k_tpuTimerInitializer();
   initDiagnosticBufferPointers();
@@ -30275,9 +30436,7 @@ void initDiagnosticBufferPointers(void)
   byte bVar5;
   byte bVar6;
   undefined *puVar7;
-  undefined1 *puVar8;
   
-                    /* From J90280.05 @ 0x020918 (confidence: 70%) */
   _can_transmit_buffer_write_pointer = 0x80d896;
   _DAT_0080d9ae = 0x80d896;
   _can_receive_buffer_read_pointer = 0x80d72e;
@@ -30350,7 +30509,7 @@ void initDiagnosticBufferPointers(void)
   _can_control_register_pointer[1] = 0xfb;
   *_can_control_register_pointer = 0xef;
   _can_control_register_pointer[6] = 4;
-  puVar8 = &DAT_00ffd810 + (uint)_can_first_receive_object_index * 0x10;
+  puVar7 = &DAT_00ffd810 + (uint)_can_first_receive_object_index * 0x10;
   uVar2 = (uint)_j1939_network_address_for_ecm_as_engine_node_0_255;
   bVar6 = j1939_engine_node_source_address << 3;
   bVar3 = 0;
@@ -30358,74 +30517,75 @@ void initDiagnosticBufferPointers(void)
   for (bVar4 = 0; bVar4 < _can_number_of_engine_destination_specific_rx_objects_0_14;
       bVar4 = bVar4 + 1) {
     bVar5 = bVar5 + 1;
-    *puVar8 = 0x99;
-    puVar8[6] = 4;
-    puVar8[1] = 0xdf;
-    puVar8[2] = *(undefined1 *)(bVar3 + 0x8084c0);
-    puVar8[3] = (byte)((int)(uVar2 & 0xe0) >> 5) | *(byte *)((byte)(bVar3 + 1) + 0x8084c0) & 0xf8;
+    *puVar7 = 0x99;
+    puVar7[6] = 4;
+    puVar7[1] = 0xdf;
+    puVar7[2] = *(undefined1 *)(bVar3 + 0x8084c0);
+    puVar7[3] = (byte)((int)(uVar2 & 0xe0) >> 5) | *(byte *)((byte)(bVar3 + 1) + 0x8084c0) & 0xf8;
     bVar1 = bVar3 + 3;
-    puVar8[4] = bVar6 | *(byte *)((byte)(bVar3 + 2) + 0x8084c0) & 7;
+    puVar7[4] = bVar6 | *(byte *)((byte)(bVar3 + 2) + 0x8084c0) & 7;
     bVar3 = bVar3 + 4;
-    puVar8[5] = *(undefined1 *)(bVar1 + 0x8084c0);
-    puVar8 = puVar8 + 0x10;
+    puVar7[5] = *(undefined1 *)(bVar1 + 0x8084c0);
+    puVar7 = puVar7 + 0x10;
   }
   for (bVar4 = 0; bVar4 < _can_number_of_engine_destination_non_specific_rx_objects_0_14;
       bVar4 = bVar4 + 1) {
     bVar5 = bVar5 + 1;
-    *puVar8 = 0x99;
-    puVar8[1] = 0xdf;
-    puVar8[6] = 4;
-    puVar8[2] = *(undefined1 *)(bVar3 + 0x8084c0);
-    puVar8[3] = *(undefined1 *)((byte)(bVar3 + 1) + 0x8084c0);
+    *puVar7 = 0x99;
+    puVar7[1] = 0xdf;
+    puVar7[6] = 4;
+    puVar7[2] = *(undefined1 *)(bVar3 + 0x8084c0);
+    puVar7[3] = *(undefined1 *)((byte)(bVar3 + 1) + 0x8084c0);
     bVar6 = bVar3 + 3;
-    puVar8[4] = *(undefined1 *)((byte)(bVar3 + 2) + 0x8084c0);
+    puVar7[4] = *(undefined1 *)((byte)(bVar3 + 2) + 0x8084c0);
     bVar3 = bVar3 + 4;
-    puVar8[5] = *(undefined1 *)(bVar6 + 0x8084c0);
-    puVar8 = puVar8 + 0x10;
+    puVar7[5] = *(undefined1 *)(bVar6 + 0x8084c0);
+    puVar7 = puVar7 + 0x10;
   }
   uVar2 = (uint)_j1939_network_address_for_ecm_as_engine_retarder_node_0_255;
   bVar6 = j1939_retarder_node_source_address << 3;
   for (bVar4 = 0; bVar4 < _can_number_of_retarder_destination_specific_rx_objects_0_14;
       bVar4 = bVar4 + 1) {
     bVar5 = bVar5 + 1;
-    *puVar8 = 0x99;
-    puVar8[1] = 0xdf;
-    puVar8[6] = 4;
-    puVar8[2] = *(undefined1 *)(bVar3 + 0x8084c0);
-    puVar8[3] = (byte)((int)(uVar2 & 0xe0) >> 5) | *(byte *)((byte)(bVar3 + 1) + 0x8084c0) & 0xf8;
+    *puVar7 = 0x99;
+    puVar7[1] = 0xdf;
+    puVar7[6] = 4;
+    puVar7[2] = *(undefined1 *)(bVar3 + 0x8084c0);
+    puVar7[3] = (byte)((int)(uVar2 & 0xe0) >> 5) | *(byte *)((byte)(bVar3 + 1) + 0x8084c0) & 0xf8;
     bVar1 = bVar3 + 3;
-    puVar8[4] = bVar6 | *(byte *)((byte)(bVar3 + 2) + 0x8084c0) & 7;
+    puVar7[4] = bVar6 | *(byte *)((byte)(bVar3 + 2) + 0x8084c0) & 7;
     bVar3 = bVar3 + 4;
-    puVar8[5] = *(undefined1 *)(bVar1 + 0x8084c0);
-    puVar8 = puVar8 + 0x10;
+    puVar7[5] = *(undefined1 *)(bVar1 + 0x8084c0);
+    puVar7 = puVar7 + 0x10;
   }
   for (bVar4 = 0; bVar4 < _can_number_of_retarder_destination_non_specific_rx_objects_0_14;
       bVar4 = bVar4 + 1) {
     bVar5 = bVar5 + 1;
-    *puVar8 = 0x99;
-    puVar8[1] = 0xdf;
-    puVar8[6] = 4;
-    puVar8[2] = *(undefined1 *)(bVar3 + 0x8084c0);
-    puVar8[3] = *(undefined1 *)((byte)(bVar3 + 1) + 0x8084c0);
+    *puVar7 = 0x99;
+    puVar7[1] = 0xdf;
+    puVar7[6] = 4;
+    puVar7[2] = *(undefined1 *)(bVar3 + 0x8084c0);
+    puVar7[3] = *(undefined1 *)((byte)(bVar3 + 1) + 0x8084c0);
     bVar6 = bVar3 + 3;
-    puVar8[4] = *(undefined1 *)((byte)(bVar3 + 2) + 0x8084c0);
+    puVar7[4] = *(undefined1 *)((byte)(bVar3 + 2) + 0x8084c0);
     bVar3 = bVar3 + 4;
-    puVar8[5] = *(undefined1 *)(bVar6 + 0x8084c0);
-    puVar8 = puVar8 + 0x10;
+    puVar7[5] = *(undefined1 *)(bVar6 + 0x8084c0);
+    puVar7 = puVar7 + 0x10;
   }
   for (; bVar5 < 0xe; bVar5 = bVar5 + 1) {
-    *puVar8 = 0x99;
-    puVar8[1] = 0xdf;
-    puVar8[6] = 4;
-    puVar8[2] = *(undefined1 *)(bVar3 + 0x8084c0);
-    puVar8[3] = *(undefined1 *)((byte)(bVar3 + 1) + 0x8084c0);
+    *puVar7 = 0x99;
+    puVar7[1] = 0xdf;
+    puVar7[6] = 4;
+    puVar7[2] = *(undefined1 *)(bVar3 + 0x8084c0);
+    puVar7[3] = *(undefined1 *)((byte)(bVar3 + 1) + 0x8084c0);
     bVar4 = bVar3 + 3;
-    puVar8[4] = *(undefined1 *)((byte)(bVar3 + 2) + 0x8084c0);
+    puVar7[4] = *(undefined1 *)((byte)(bVar3 + 2) + 0x8084c0);
     bVar3 = bVar3 + 4;
-    puVar8[5] = *(undefined1 *)(bVar4 + 0x8084c0);
-    puVar8 = puVar8 + 0x10;
+    puVar7[5] = *(undefined1 *)(bVar4 + 0x8084c0);
+    puVar7 = puVar7 + 0x10;
   }
-  DAT_00ffd800 = DAT_00ffd800 | 10;
+  bVar4 = DAT_00ffd800;
+  DAT_00ffd800 = bVar4 | 10;
   return;
 }
 
@@ -30446,11 +30606,10 @@ void cm550_mainCanTransmissionLoop(void)
   byte bVar4;
   byte bVar5;
   byte bVar6;
-  undefined1 *puVar7;
+  undefined *puVar7;
   int unaff_A3;
   int *unaff_A5;
   
-                    /* From J90280.05 @ 0x020980 (confidence: 70%) */
   cm550_systemControlFunction2();
   cm550_FUN_00021ef6();
   cm550_FUN_000226da();
@@ -30544,7 +30703,8 @@ void cm550_mainCanTransmissionLoop(void)
     puVar7[5] = *(undefined1 *)(unaff_A3 + (uint)bVar4);
     puVar7 = puVar7 + 0x10;
   }
-  DAT_00ffd800 = DAT_00ffd800 | 10;
+  bVar4 = DAT_00ffd800;
+  DAT_00ffd800 = bVar4 | 10;
   return;
 }
 
@@ -30559,7 +30719,8 @@ void cm550_mainCanTransmissionLoop(void)
 undefined2 mc68k_FUN_00029130(void)
 
 {
-  byte bVar1;
+  undefined2 uVar1;
+  byte bVar2;
   
   j1708_transmit_buffer_2_32_ddc6.ctrl_ptr = (dword)&scratch_pad_data_buffer;
   j1708_transmit_buffer_2_32_ddc6.reserved_112[4] = 0;
@@ -30578,17 +30739,18 @@ undefined2 mc68k_FUN_00029130(void)
   _bit_2_0_15_enables_j1939_71_engine_broadcast_1_on_0_off = _DAT_00803f88;
   j1708_transmit_buffer_2_32_ddc6.buffer_ptr = 0x80de00;
   j1708_transmit_buffer_2_32_ddc6.end_ptr = (dword)&DAT_000612ee;
-  for (bVar1 = 0; (*(char *)j1708_transmit_buffer_2_32_ddc6.end_ptr != '\0' && (bVar1 < 0x1e));
-      bVar1 = bVar1 + 1) {
+  for (bVar2 = 0; (*(char *)j1708_transmit_buffer_2_32_ddc6.end_ptr != '\0' && (bVar2 < 0x1e));
+      bVar2 = bVar2 + 1) {
     *(char *)j1708_transmit_buffer_2_32_ddc6.buffer_ptr =
          *(char *)(j1708_transmit_buffer_2_32_ddc6.end_ptr + 2) +
          *(char *)(j1708_transmit_buffer_2_32_ddc6.end_ptr + 1);
     j1708_transmit_buffer_2_32_ddc6.buffer_ptr = j1708_transmit_buffer_2_32_ddc6.buffer_ptr + 1;
     j1708_transmit_buffer_2_32_ddc6.end_ptr = j1708_transmit_buffer_2_32_ddc6.end_ptr + 3;
   }
-  _DAT_00fffc08 = 0x34;
-  _DAT_00fffc0a = 0x102c;
-  return _DAT_00fffc0c;
+  Ram00fffc08 = 0x34;
+  uVar1 = Ram00fffc0c;
+  Ram00fffc0a = 0x102c;
+  return uVar1;
 }
 
 
@@ -30596,8 +30758,6 @@ undefined2 mc68k_FUN_00029130(void)
 //
 // Function: cm550_FUN_0002c834 @ 0x0002c834
 //
-
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 short cm550_FUN_0002c834(dword tree_buffer)
 
@@ -30621,7 +30781,9 @@ short cm550_FUN_0002c834(dword tree_buffer)
     while( true ) {
       uVar3 = (ushort)uVar1;
       if (uVar2 <= uVar3) break;
+      DAT_00fffa27 = 0x55;
       DAT_00fffa27 = 0xaa;
+      DAT_00ffd00f = 0x55;
       DAT_00ffd00f = 0xaa;
       if (*(short *)(tree_buffer + uVar1 * 6) != 0) {
         if (*(ushort *)(tree_buffer + uVar1 * 6) < *(ushort *)(tree_buffer + (uint)uVar5 * 6)) {
@@ -30666,7 +30828,9 @@ void cm550_FUN_0002c986(int param_1,undefined4 param_2)
   local_8 = &rpm_rate_limit_countdown;
   bVar1 = false;
   while( true ) {
+    DAT_00fffa27 = 0x55;
     DAT_00fffa27 = 0xaa;
+    DAT_00ffd00f = 0x55;
     DAT_00ffd00f = 0xaa;
     uVar3 = param_2._0_2_;
     do {
@@ -30720,8 +30884,6 @@ void cm550_FUN_0002ca2a(void)
 // Function: cm550_FUN_0002ca64 @ 0x0002ca64
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 void cm550_FUN_0002ca64(word loop_count)
 
 {
@@ -30742,38 +30904,42 @@ void cm550_FUN_0002ca64(word loop_count)
 // Function: mc68k_FUN_0002ca7e @ 0x0002ca7e
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 byte mc68k_FUN_0002ca7e(void)
 
 {
   ushort uVar1;
   ushort uVar2;
   ushort uVar3;
+  ushort uVar4;
   undefined4 unaff_D2;
   word loop_count;
-  word wVar4;
+  word wVar5;
   
-  _DAT_00fff208 = _DAT_00fff208 | 0x700;
-  _DAT_00fff206 = 0x600;
-  wVar4 = 1;
+  uVar1 = Ram00fff208;
+  Ram00fff208 = uVar1 | 0x700;
+  Ram00fff206 = 0x600;
+  wVar5 = 1;
   cm550_FUN_0002ca64((word)((uint)unaff_D2 >> 0x10));
-  uVar1 = _DAT_00fff206 & 1;
-  _DAT_00fff208 = _DAT_00fff208 | 0x700;
-  _DAT_00fff206 = 0x400;
+  uVar1 = Ram00fff206;
+  uVar2 = Ram00fff208;
+  Ram00fff208 = uVar2 | 0x700;
+  Ram00fff206 = 0x400;
   loop_count = 1;
-  cm550_FUN_0002ca64(wVar4);
-  uVar2 = _DAT_00fff206 & 1;
-  _DAT_00fff208 = _DAT_00fff208 | 0x700;
-  _DAT_00fff206 = 0x300;
-  wVar4 = 1;
+  cm550_FUN_0002ca64(wVar5);
+  uVar2 = Ram00fff206;
+  uVar3 = Ram00fff208;
+  Ram00fff208 = uVar3 | 0x700;
+  Ram00fff206 = 0x300;
+  wVar5 = 1;
   cm550_FUN_0002ca64(loop_count);
-  uVar3 = _DAT_00fff206 & 2;
-  _DAT_00fff208 = _DAT_00fff208 | 0x700;
-  _DAT_00fff206 = 0x200;
-  cm550_FUN_0002ca64(wVar4);
-  return -((_DAT_00fff206 & 1) != 0) & 1U &
-         -(uVar3 != 0) & 1U & -(uVar2 != 0) & 1U & -(uVar1 != 0) & 1U;
+  uVar3 = Ram00fff206;
+  uVar4 = Ram00fff208;
+  Ram00fff208 = uVar4 | 0x700;
+  Ram00fff206 = 0x200;
+  cm550_FUN_0002ca64(wVar5);
+  uVar4 = Ram00fff206;
+  return -((uVar4 & 1) != 0) & 1U &
+         -((uVar3 & 2) != 0) & 1U & -((uVar2 & 1) != 0) & 1U & -((uVar1 & 1) != 0) & 1U;
 }
 
 
@@ -30785,18 +30951,22 @@ byte mc68k_FUN_0002ca7e(void)
 void cm550_FUN_0002cb4e(void)
 
 {
-  undefined4 unaff_D2;
   byte bVar1;
+  undefined4 unaff_D2;
+  byte bVar2;
   
+  DAT_00fffa27 = 0x55;
   DAT_00fffa27 = 0xaa;
+  DAT_00ffd00f = 0x55;
   DAT_00ffd00f = 0xaa;
-  bVar1 = 0;
-  while (bVar1 < 5) {
-    if ((DAT_00ffd000 & 1) == 0) {
-      bVar1 = 0;
+  bVar2 = 0;
+  while (bVar2 < 5) {
+    bVar1 = DAT_00ffd000;
+    if ((bVar1 & 1) == 0) {
+      bVar2 = 0;
     }
     else {
-      bVar1 = bVar1 + 1;
+      bVar2 = bVar2 + 1;
     }
     cm550_FUN_0002ca64((word)((uint)unaff_D2 >> 0x10));
   }
@@ -30809,33 +30979,48 @@ void cm550_FUN_0002cb4e(void)
 // Function: mc68k_FUN_0002cb9c @ 0x0002cb9c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 undefined4 mc68k_FUN_0002cb9c(void)
 
 {
-  byte bVar1;
+  ushort uVar1;
+  ushort uVar2;
+  byte bVar3;
   
-  _DAT_00fffc18 = 0x8004;
+  Ram00fffc18 = 0x8004;
   DAT_00fffc16 = 0x7b;
   DAT_00fffc17 = 0xfe;
   DAT_00fffc15 = 0xff;
-  _DAT_00fffc1a = _DAT_00fffc1a & 0x8000 | 0x1028;
-  _DAT_00fffc1c = _DAT_00fffc1c & 0xf0ff | 0xf00;
-  _DAT_00fffd20 = 3;
+  uVar1 = Ram00fffc1a;
+  Ram00fffc1a = uVar1 & 0x80ff;
+  uVar1 = Ram00fffc1a;
+  Ram00fffc1a = uVar1 | 0x1000;
+  uVar1 = Ram00fffc1a;
+  Ram00fffc1a = uVar1 & 0xff00;
+  uVar1 = Ram00fffc1a;
+  Ram00fffc1a = uVar1 | 0x28;
+  uVar1 = Ram00fffc1c;
+  Ram00fffc1c = uVar1 & 0xf0ff;
+  uVar1 = Ram00fffc1c;
+  Ram00fffc1c = uVar1 | 0xf00;
+  Ram00fffd20 = 3;
   DAT_00fffd40 = 0xbd;
-  _DAT_00fffd22 = 0;
+  Ram00fffd22 = 0;
   DAT_00fffd41 = 0xfd;
-  for (bVar1 = 2; bVar1 < 0x10; bVar1 = bVar1 + 1) {
-    *(undefined2 *)(&DAT_00fffd20 + (uint)bVar1 * 2) = 0;
-    (&DAT_00fffd40)[bVar1] = 0xbd;
+  for (bVar3 = 2; bVar3 < 0x10; bVar3 = bVar3 + 1) {
+    *(undefined2 *)(&DAT_00fffd20 + (uint)bVar3 * 2) = 0;
+    (&DAT_00fffd40)[bVar3] = 0xbd;
   }
-  _DAT_00fffc1a = _DAT_00fffc1a | 0x8000;
+  uVar1 = Ram00fffc1a;
+  Ram00fffc1a = uVar1 | 0x8000;
   do {
     do {
-    } while ((DAT_00fffc1f & 0x80) == 0);
-  } while ((DAT_00fffc1f & 0xf) != 0xf);
-  if (((uint)_DAT_00fffd06 | (uint)_DAT_00fffd04 << 8) != 0x600d) {
+      bVar3 = DAT_00fffc1f;
+    } while ((bVar3 & 0x80) == 0);
+    bVar3 = DAT_00fffc1f;
+  } while ((bVar3 & 0xf) != 0xf);
+  uVar1 = Ram00fffd04;
+  uVar2 = Ram00fffd06;
+  if (((uint)uVar2 | (uint)uVar1 << 8) != 0x600d) {
     return 1;
   }
   return 0x6000;
@@ -30847,64 +31032,77 @@ undefined4 mc68k_FUN_0002cb9c(void)
 // Function: mc68k_FUN_0002cc88 @ 0x0002cc88
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void mc68k_FUN_0002cc88(void)
 
 {
-  char cVar1;
-  code *pcVar2;
+  byte bVar1;
+  ushort uVar2;
+  undefined2 uVar3;
+  char cVar4;
+  code *pcVar5;
   
   DAT_00ffd008 = 0x40;
   DAT_00ffd00e = 0x80;
   cm550_FUN_0002cb4e();
-  DAT_00fffa15 = DAT_00fffa15 | 8;
-  DAT_00fffa11 = DAT_00fffa11 | 8;
-  DAT_00fffc1f = DAT_00fffc1f & 0x7f;
-  _DAT_00fffc1a = _DAT_00fffc1a & 0x7fff;
-  _DAT_00fffc1c = _DAT_00fffc1c & 0x7ff0;
-  _DAT_00fffc0a = 0;
-  _DAT_00fffa22 = 0;
-  _DAT_00fffa24 = 0;
-  _DAT_00fffe0a = 0;
-  _DAT_00fff200 = 0;
-  _DAT_00fff202 = 0;
-  _DAT_00fff204 = 0;
-  _DAT_00fff206 = 0;
-  _DAT_00fff208 = 0;
-  _DAT_00fff20a = 0;
-  _DAT_00fff20c = 0;
-  _DAT_00fff20e = 0;
-  _DAT_00fff210 = 0;
-  _DAT_00fff418 = 0;
-  _DAT_00fff420 = 0;
-  _DAT_00fff428 = 0;
-  _DAT_00fff430 = 0;
-  _DAT_00fff438 = 0;
-  _DAT_00fff440 = 0;
-  _DAT_00fff448 = 0;
-  _DAT_00fff450 = 0;
-  _DAT_00fff400 = 0x1601;
-  _DAT_00fff408 = 8;
-  _DAT_00fff410 = 0;
-  _DAT_00fff458 = 4;
-  _DAT_00fff460 = 0x104;
-  _DAT_00fffc00 = 5;
+  bVar1 = DAT_00fffa15;
+  DAT_00fffa15 = bVar1 | 8;
+  bVar1 = DAT_00fffa11;
+  DAT_00fffa11 = bVar1 | 8;
+  bVar1 = DAT_00fffc1f;
+  DAT_00fffc1f = bVar1 & 0x7f;
+  uVar2 = Ram00fffc1a;
+  Ram00fffc1a = uVar2 & 0x7fff;
+  uVar2 = Ram00fffc1c;
+  Ram00fffc1c = uVar2 & 0x7fff;
+  uVar2 = Ram00fffc1c;
+  Ram00fffc1c = uVar2 & 0xfff0;
+  uVar3 = Ram00fffc1c;
+  DAT_00fffc04 = 0;
+  Ram00fffc0a = 0;
+  Ram00fffa22 = 0;
+  Ram00fffa24 = 0;
+  Ram00fffe0a = 0;
+  Ram00fff200 = 0;
+  Ram00fff202 = 0;
+  Ram00fff204 = 0;
+  Ram00fff206 = 0;
+  Ram00fff208 = 0;
+  Ram00fff20a = 0;
+  Ram00fff20c = 0;
+  Ram00fff20e = 0;
+  Ram00fff210 = 0;
+  Ram00fff400 = 0;
+  Ram00fff410 = 0;
+  Ram00fff418 = 0;
+  Ram00fff420 = 0;
+  Ram00fff428 = 0;
+  Ram00fff430 = 0;
+  Ram00fff438 = 0;
+  Ram00fff440 = 0;
+  Ram00fff448 = 0;
+  Ram00fff450 = 0;
+  Ram00fff458 = 0;
+  Ram00fff400 = 0x1601;
+  Ram00fff408 = 8;
+  Ram00fff410 = 0;
+  Ram00fff458 = 4;
+  Ram00fff460 = 0x104;
+  Ram00fffc00 = 5;
   DAT_00fffc04 = 0x13;
   DAT_00fffc05 = 0x50;
   cm550_FUN_0002ce14();
-  cVar1 = mc68k_FUN_0002ca7e();
-  if ((cVar1 == '\0') && (cVar1 = mc68k_FUN_0002cb9c(), cVar1 == '\0')) {
-    pcVar2 = DAT_00031256;
+  cVar4 = mc68k_FUN_0002ca7e();
+  if ((cVar4 == '\0') && (cVar4 = mc68k_FUN_0002cb9c(), cVar4 == '\0')) {
+    pcVar5 = DAT_00031256;
     if ((DAT_000311f4 != -0x6789abcd) && (DAT_000311f4 != -0x6789abce)) {
-      pcVar2 = (code *)&SUB_343cffff;
+      pcVar5 = (code *)&SUB_343cffff;
     }
   }
   else {
     cm550_FUN_0002ca2a();
-    pcVar2 = (code *)&SUB_0082c592;
+    pcVar5 = (code *)&SUB_0082c592;
   }
-  (*pcVar2)();
+  (*pcVar5)();
   return;
 }
 
@@ -30929,7 +31127,9 @@ void cm550_FUN_0002ce14(void)
     for (; puVar2 < puVar1; puVar2 = puVar2 + 1) {
       *puVar2 = 0;
     }
+    DAT_00fffa27 = 0x55;
     DAT_00fffa27 = 0xaa;
+    DAT_00ffd00f = 0x55;
     DAT_00ffd00f = 0xaa;
   }
   return;
@@ -31107,7 +31307,6 @@ void cm550_systemControl64(void)
   byte bVar6;
   undefined4 local_8;
   
-                    /* From J90280.05 @ 0x025768 (confidence: 88%) */
   if (j1708_transmit_buffer_2_32_ddc6.reserved_28[0] != 0) {
     if (j1708_transmit_buffer_2_32_ddc6.field_24 < 0x10) {
       bVar6 = (byte)j1708_transmit_buffer_2_32_ddc6.field_24 + 4;
@@ -31170,7 +31369,6 @@ void cm550_systemControl64(void)
 void cm550_systemControl74(void)
 
 {
-                    /* From J90280.05 @ 0x02588c (confidence: 80%) */
   if (j1708_transmit_buffer_2_32_ddc6.reserved_28[1] != 0) {
     cm550_memoryPatchCountDecrement();
   }
@@ -31188,7 +31386,6 @@ void cm550_systemControl74(void)
 void cm550_systemControl75(void)
 
 {
-                    /* From J90280.05 @ 0x0258aa (confidence: 80%) */
   if (j1708_transmit_buffer_2_32_ddc6.reserved_28[1] != 0) {
     cm550_memoryPatchCountDecrement();
   }
@@ -31208,7 +31405,6 @@ void cm550_systemControl75(void)
 void cm550_memoryPatchBufferInit(void)
 
 {
-                    /* From J90280.05 @ 0x0258c8 (confidence: 75%) */
   _scratch_pad_write_pointer = &scratch_pad_data_buffer;
   j1708_transmit_buffer_2_32_ddc6.reserved_112[2] = 0;
   j1708_transmit_buffer_2_32_ddc6.reserved_112[3] = 0;
@@ -31241,7 +31437,6 @@ uint cm550_memoryPatchingSystem(void)
   uint *puVar11;
   uint *puVar12;
   
-                    /* From J90280.05 @ 0x0258e0 (confidence: 88%) */
   if (j1708_transmit_buffer_2_32_ddc6.status_102 == 0) {
     return in_D0 & 0xffffff00;
   }
@@ -31533,7 +31728,6 @@ void cm550_fuelDemandProportionalCalculator(void)
   uint uVar1;
   undefined4 local_8;
   
-                    /* From J90280.05 @ 0x025ece (confidence: 86%) */
   _pid_combined_correction_term = 0;
   cm550_rpmSnapshotCapture();
   _DAT_00801c04 = 0x80000000;
@@ -31669,7 +31863,6 @@ void cm550_FUN_0002dbde(void)
 void cm550_rpmSnapshotCapture(void)
 
 {
-                    /* From J90280.05 @ 0x0260ec (confidence: 69%) */
   _closed_loop_rpm_snapshot = _engine_rpm_primary;
   _DAT_00801c4a = 0;
   return;
@@ -31705,7 +31898,6 @@ uint cm550_oil_pressure_shutdown_controller(void)
   uint in_D0;
   uint uVar1;
   
-                    /* From J90280.05 @ 0x026110 (confidence: 75%) */
   if ((((_FSDSFLST == 1) || (_FSDSFLST == 2)) || (_FSDSFLST == 0x1e)) || (_FSDSFLST == 3)) {
     _selected_fueling_state_from_pto_fl_state_and_user_fl_state_1_8 = _FSDSFLST;
     _pto_fuel_demand_snapshot = _fuel_demand_selected;
@@ -31778,15 +31970,12 @@ void cm550_FUN_0002ddbc(void)
 // Function: mc68k_hardwareTimerFlagsInit @ 0x0002ddce
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void mc68k_hardwareTimerFlagsInit(void)
 
 {
-                    /* From J90280.05 @ 0x0265a4 (confidence: 100%) */
-  _DAT_00fff450 = 1;
-  _DAT_00fff448 = 1;
-  _DAT_00fff420 = 1;
+  Ram00fff450 = 1;
+  Ram00fff448 = 1;
+  Ram00fff420 = 1;
   return;
 }
 
@@ -31796,14 +31985,11 @@ void mc68k_hardwareTimerFlagsInit(void)
 // Function: mc68k_initDiagnosticModeSystem @ 0x0002ddd6
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void mc68k_initDiagnosticModeSystem(void)
 
 {
-                    /* From J90280.05 @ 0x02c240 (confidence: 70%) */
-  _DAT_00fff448 = 1;
-  _DAT_00fff420 = 1;
+  Ram00fff448 = 1;
+  Ram00fff420 = 1;
   return;
 }
 
@@ -31818,19 +32004,21 @@ void mc68k_initDiagnosticModeSystem(void)
 uint oilPressureRpmFaultMonitor(void)
 
 {
+  ushort uVar1;
   uint in_D0;
-  uint uVar1;
+  uint uVar2;
   
-                    /* From J90280.05 @ 0x0265be (confidence: 80%) */
   if (_pwm_diagnostic_init_counter < 6) {
     _pwm_diagnostic_init_counter = _pwm_diagnostic_init_counter + 1;
     in_D0 = mc68k_waterInFuelDiagnosticHandler();
   }
   if (_DAT_00808998 != 0) {
-    if ((_DAT_00fff450 & 0x8000) == 0) {
+    uVar1 = Ram00fff450;
+    if ((uVar1 & 0x8000) == 0) {
       if ((_value_which_designates_the_duty_cycle_requested_of_pwm1_0_100 == 0) ||
          ((_commanded_enable_for_pwm5_enable_disable & 1) == 0)) {
-        if ((_DAT_00fff450 & 0x80) == 0) {
+        uVar1 = Ram00fff450;
+        if ((uVar1 & 0x80) == 0) {
           in_D0 = _status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0xffff0010;
           if (((_status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0x10) != 0) &&
              (in_D0 = _fault_first_occurrence_flags_word_7 & 0xffff0010,
@@ -31854,38 +32042,43 @@ uint oilPressureRpmFaultMonitor(void)
         }
       }
       else if (_value_which_designates_the_duty_cycle_requested_of_pwm1_0_100 < 0x6400) {
-        in_D0 = _DAT_00fff428 & 0xffff8000;
-        if ((((_DAT_00fff428 & 0x8000) != 0) &&
+        uVar1 = Ram00fff428;
+        in_D0 = uVar1 & 0xffff8000;
+        if ((((uVar1 & 0x8000) != 0) &&
             (in_D0 = _status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0xffff0010,
             (_status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0x10) != 0)) &&
            (in_D0 = _fault_first_occurrence_flags_word_7 & 0xffff0010,
            (_fault_first_occurrence_flags_word_7 & 0x10) == 0)) {
-          _DAT_00fff428 = _DAT_00fff428 & 0x7fff;
+          uVar1 = Ram00fff428;
+          Ram00fff428 = uVar1 & 0x7fff;
           _pwm1_driver_error_counter = 0;
           _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
                _status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0xffef;
-        }
-      }
-      else if ((_DAT_00fff450 & 0x80) == 0) {
-        in_D0 = (uint)_pwm1_driver_error_counter;
-        if (_pwm1_driver_error_counter <
-            _number_of_errors_to_be_detected_on_pwm1_driver_before_pwm1_error_0_255) {
-          _pwm1_driver_error_counter = _pwm1_driver_error_counter + 1;
-        }
-        else {
-          _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
-               _status_32_word_bit_mapped_system_error_status_word_7_0_1 | 0x10;
-          _fault_first_occurrence_flags_word_7 = _fault_first_occurrence_flags_word_7 | 0x10;
         }
       }
       else {
-        in_D0 = _status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0xffff0010;
-        if (((_status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0x10) != 0) &&
-           (in_D0 = _fault_first_occurrence_flags_word_7 & 0xffff0010,
-           (_fault_first_occurrence_flags_word_7 & 0x10) == 0)) {
-          _pwm1_driver_error_counter = 0;
-          _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
-               _status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0xffef;
+        uVar1 = Ram00fff450;
+        if ((uVar1 & 0x80) == 0) {
+          in_D0 = (uint)_pwm1_driver_error_counter;
+          if (_pwm1_driver_error_counter <
+              _number_of_errors_to_be_detected_on_pwm1_driver_before_pwm1_error_0_255) {
+            _pwm1_driver_error_counter = _pwm1_driver_error_counter + 1;
+          }
+          else {
+            _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+                 _status_32_word_bit_mapped_system_error_status_word_7_0_1 | 0x10;
+            _fault_first_occurrence_flags_word_7 = _fault_first_occurrence_flags_word_7 | 0x10;
+          }
+        }
+        else {
+          in_D0 = _status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0xffff0010;
+          if (((_status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0x10) != 0) &&
+             (in_D0 = _fault_first_occurrence_flags_word_7 & 0xffff0010,
+             (_fault_first_occurrence_flags_word_7 & 0x10) == 0)) {
+            _pwm1_driver_error_counter = 0;
+            _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+                 _status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0xffef;
+          }
         }
       }
     }
@@ -31894,7 +32087,8 @@ uint oilPressureRpmFaultMonitor(void)
       if (((_status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0x10) != 0) &&
          (in_D0 = _fault_first_occurrence_flags_word_7 & 0xffff0010,
          (_fault_first_occurrence_flags_word_7 & 0x10) == 0)) {
-        _DAT_00fff450 = _DAT_00fff450 & 0x7fff;
+        uVar1 = Ram00fff450;
+        Ram00fff450 = uVar1 & 0x7fff;
         _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
              _status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0xffef;
         _pwm1_driver_error_counter = 0;
@@ -31902,10 +32096,12 @@ uint oilPressureRpmFaultMonitor(void)
     }
   }
   if (_DAT_0080899a != 0) {
-    if ((_DAT_00fff448 & 0x8000) == 0) {
+    uVar1 = Ram00fff448;
+    if ((uVar1 & 0x8000) == 0) {
       if ((_value_which_designates_the_duty_cycle_requested_of_pwm2_0_100 == 0) ||
          ((_commanded_enable_for_pwm5_enable_disable & 2) == 0)) {
-        if ((_DAT_00fff448 & 0x80) == 0) {
+        uVar1 = Ram00fff448;
+        if ((uVar1 & 0x80) == 0) {
           in_D0 = _status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0xffff0020;
           if ((_status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0x20) != 0) {
             in_D0 = _fault_first_occurrence_flags_word_7 & 0xffff0020;
@@ -31930,38 +32126,43 @@ uint oilPressureRpmFaultMonitor(void)
         }
       }
       else if (_value_which_designates_the_duty_cycle_requested_of_pwm2_0_100 < 0x6400) {
-        in_D0 = _DAT_00fff430 & 0xffff8000;
-        if ((((_DAT_00fff430 & 0x8000) != 0) &&
+        uVar1 = Ram00fff430;
+        in_D0 = uVar1 & 0xffff8000;
+        if ((((uVar1 & 0x8000) != 0) &&
             (in_D0 = _status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0xffff0020,
             (_status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0x20) != 0)) &&
            (in_D0 = _fault_first_occurrence_flags_word_7 & 0xffff0020,
            (_fault_first_occurrence_flags_word_7 & 0x20) == 0)) {
-          _DAT_00fff430 = _DAT_00fff430 & 0x7fff;
+          uVar1 = Ram00fff430;
+          Ram00fff430 = uVar1 & 0x7fff;
           _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
                _status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0xffdf;
           _pwm2_driver_error_counter = 0;
         }
       }
-      else if ((_DAT_00fff448 & 0x80) == 0) {
-        in_D0 = (uint)_pwm2_driver_error_counter;
-        if (_number_of_errors_to_be_detected_on_pwm2_driver_before_pwm1_error_0_255 <
-            _pwm2_driver_error_counter) {
-          _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
-               _status_32_word_bit_mapped_system_error_status_word_7_0_1 | 0x20;
-          _fault_first_occurrence_flags_word_7 = _fault_first_occurrence_flags_word_7 | 0x20;
+      else {
+        uVar1 = Ram00fff448;
+        if ((uVar1 & 0x80) == 0) {
+          in_D0 = (uint)_pwm2_driver_error_counter;
+          if (_number_of_errors_to_be_detected_on_pwm2_driver_before_pwm1_error_0_255 <
+              _pwm2_driver_error_counter) {
+            _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+                 _status_32_word_bit_mapped_system_error_status_word_7_0_1 | 0x20;
+            _fault_first_occurrence_flags_word_7 = _fault_first_occurrence_flags_word_7 | 0x20;
+          }
+          else {
+            _pwm2_driver_error_counter = _pwm2_driver_error_counter + 1;
+          }
         }
         else {
-          _pwm2_driver_error_counter = _pwm2_driver_error_counter + 1;
-        }
-      }
-      else {
-        in_D0 = _status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0xffff0020;
-        if ((_status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0x20) != 0) {
-          in_D0 = _fault_first_occurrence_flags_word_7 & 0xffff0020;
-          if ((_fault_first_occurrence_flags_word_7 & 0x20) == 0) {
-            _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
-                 _status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0xffdf;
-            _pwm2_driver_error_counter = 0;
+          in_D0 = _status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0xffff0020;
+          if ((_status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0x20) != 0) {
+            in_D0 = _fault_first_occurrence_flags_word_7 & 0xffff0020;
+            if ((_fault_first_occurrence_flags_word_7 & 0x20) == 0) {
+              _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+                   _status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0xffdf;
+              _pwm2_driver_error_counter = 0;
+            }
           }
         }
       }
@@ -31971,7 +32172,8 @@ uint oilPressureRpmFaultMonitor(void)
       if (((_status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0x20) != 0) &&
          (in_D0 = _fault_first_occurrence_flags_word_7 & 0xffff0020,
          (_fault_first_occurrence_flags_word_7 & 0x20) == 0)) {
-        _DAT_00fff448 = _DAT_00fff448 & 0x7fff;
+        uVar1 = Ram00fff448;
+        Ram00fff448 = uVar1 & 0x7fff;
         _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
              _status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0xffdf;
         _pwm2_driver_error_counter = 0;
@@ -31979,20 +32181,22 @@ uint oilPressureRpmFaultMonitor(void)
     }
   }
   if (_DAT_008089a0 != 0) {
-    if ((_DAT_00fff420 & 0x8000) == 0) {
+    uVar1 = Ram00fff420;
+    if ((uVar1 & 0x8000) == 0) {
       if ((_value_which_designates_the_duty_cycle_requested_of_pwm5_0_100 == 0) ||
          ((_commanded_enable_for_pwm5_enable_disable & 0x10) == 0)) {
-        if ((_DAT_00fff420 & 0x80) != 0) {
-          uVar1 = (uint)_pwm5_driver_error_counter;
+        uVar1 = Ram00fff420;
+        if ((uVar1 & 0x80) != 0) {
+          uVar2 = (uint)_pwm5_driver_error_counter;
           if (_number_of_errors_to_be_detected_on_pwm5_driver_before_pwm1_error_0_255 <=
               _pwm5_driver_error_counter) {
             _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
                  _status_32_word_bit_mapped_system_error_status_word_7_0_1 | 0x100;
             _fault_first_occurrence_flags_word_7 = _fault_first_occurrence_flags_word_7 | 0x100;
-            return uVar1;
+            return uVar2;
           }
           _pwm5_driver_error_counter = _pwm5_driver_error_counter + 1;
-          return uVar1;
+          return uVar2;
         }
         in_D0 = _status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0xffff0100;
         if (((_status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0x100) != 0) &&
@@ -32005,13 +32209,15 @@ uint oilPressureRpmFaultMonitor(void)
         }
       }
       else if (_value_which_designates_the_duty_cycle_requested_of_pwm5_0_100 < 0x6400) {
-        in_D0 = _DAT_00fff418 & 0xffff8000;
-        if ((((_DAT_00fff418 & 0x8000) != 0) &&
+        uVar1 = Ram00fff418;
+        in_D0 = uVar1 & 0xffff8000;
+        if ((((uVar1 & 0x8000) != 0) &&
             (in_D0 = _status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0xffff0100,
             (_status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0x100) != 0)) &&
            (in_D0 = _fault_first_occurrence_flags_word_7 & 0xffff0100,
            (_fault_first_occurrence_flags_word_7 & 0x100) == 0)) {
-          _DAT_00fff418 = _DAT_00fff418 & 0x7fff;
+          uVar1 = Ram00fff418;
+          Ram00fff418 = uVar1 & 0x7fff;
           _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
                _status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0xfeff;
           _pwm5_driver_error_counter = 0;
@@ -32019,17 +32225,18 @@ uint oilPressureRpmFaultMonitor(void)
         }
       }
       else {
-        if ((_DAT_00fff420 & 0x80) == 0) {
-          uVar1 = (uint)_pwm5_driver_error_counter;
+        uVar1 = Ram00fff420;
+        if ((uVar1 & 0x80) == 0) {
+          uVar2 = (uint)_pwm5_driver_error_counter;
           if (_number_of_errors_to_be_detected_on_pwm5_driver_before_pwm1_error_0_255 <=
               _pwm5_driver_error_counter) {
             _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
                  _status_32_word_bit_mapped_system_error_status_word_7_0_1 | 0x100;
             _fault_first_occurrence_flags_word_7 = _fault_first_occurrence_flags_word_7 | 0x100;
-            return uVar1;
+            return uVar2;
           }
           _pwm5_driver_error_counter = _pwm5_driver_error_counter + 1;
-          return uVar1;
+          return uVar2;
         }
         in_D0 = _status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0xffff0100;
         if ((_status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0x100) != 0) {
@@ -32048,7 +32255,8 @@ uint oilPressureRpmFaultMonitor(void)
       if (((_status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0x100) != 0) &&
          (in_D0 = _fault_first_occurrence_flags_word_7 & 0xffff0100,
          (_fault_first_occurrence_flags_word_7 & 0x100) == 0)) {
-        _DAT_00fff420 = _DAT_00fff420 & 0x7fff;
+        uVar1 = Ram00fff420;
+        Ram00fff420 = uVar1 & 0x7fff;
         _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
              _status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0xfeff;
         _pwm5_driver_error_counter = 0;
@@ -32066,48 +32274,72 @@ uint oilPressureRpmFaultMonitor(void)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-uint mc68k_waterInFuelDiagnosticHandler(void)
+ulonglong mc68k_waterInFuelDiagnosticHandler(void)
 
 {
-  uint uVar1;
+  ushort uVar1;
+  uint uVar2;
+  byte bVar3;
+  uint uVar4;
+  int iVar5;
+  undefined4 uVar6;
   
-                    /* From J90280.05 @ 0x026aca (confidence: 91%) */
+  uVar6 = 1;
   if (_pwm_diagnostic_init_counter == 1) {
-    uVar1 = 0;
+    uVar4 = 0;
     if ((_commanded_enable_for_pwm5_enable_disable & 4) == 0) {
-      _DAT_00fff43a = _DAT_00fff43a & 0xffff0000;
+      uVar2 = Ram00fff43a;
+      Ram00fff43a = uVar2 & 0xffff0000;
     }
     else {
-      uVar1 = ((((uint)_DAT_0080899c * 0x6400) / 0x6400 & 0xffff) * 8000) / 1000 & 0xffff |
+      uVar6 = 0x10;
+      uVar4 = ((((uint)_DAT_0080899c * 0x6400) / 0x6400 & 0xffff) * 8000) / 1000 & 0xffff |
               ((uint)_DAT_0080899c * 8000) / 1000 << 0x10;
-      _DAT_00fff43a = uVar1;
+      Ram00fff43a = uVar4;
     }
     if ((_commanded_enable_for_pwm5_enable_disable & 8) != 0) {
-      _DAT_00fff442 =
-           ((((uint)_DAT_0080899e * 0x6400) / 0x6400 & 0xffff) * 8000) / 1000 & 0xffff |
-           ((uint)_DAT_0080899e * 8000) / 1000 << 0x10;
-      return _DAT_00fff442;
+      uVar4 = ((((uint)_DAT_0080899e * 0x6400) / 0x6400 & 0xffff) * 8000) / 1000 & 0xffff |
+              ((uint)_DAT_0080899e * 8000) / 1000 << 0x10;
+      Ram00fff442 = uVar4;
+      return CONCAT44(uVar4,0x10);
     }
-    _DAT_00fff442 = _DAT_00fff442 & 0xffff0000;
-    return CONCAT22((short)(uVar1 >> 0x10),_commanded_enable_for_pwm5_enable_disable) & 0xffff0008;
+    uVar2 = Ram00fff442;
+    Ram00fff442 = uVar2 & 0xffff0000;
+    return CONCAT44(CONCAT22((short)(uVar4 >> 0x10),_commanded_enable_for_pwm5_enable_disable),uVar6
+                   ) & 0xffff0008ffffffff;
   }
-  if ((_pwm_diagnostic_init_counter != 3) && (_pwm_diagnostic_init_counter != 5)) {
-    return (uint)_pwm_diagnostic_init_counter;
+  uVar6 = 3;
+  if (_pwm_diagnostic_init_counter != 3) {
+    uVar6 = 5;
+    if (_pwm_diagnostic_init_counter != 5) {
+      return CONCAT44((uint)_pwm_diagnostic_init_counter,5);
+    }
   }
-  if ((((_DAT_00fff438 & 0x80) == 0) || ((DAT_00fffa19 & 2) == 0)) &&
-     (((_DAT_00fff438 & 0x80) != 0 || ((DAT_00fffa19 & 2) != 0)))) {
+  uVar1 = Ram00fff438;
+  if (((uVar1 & 0x80) == 0) || (bVar3 = DAT_00fffa19, (bVar3 & 2) == 0)) {
+    uVar1 = Ram00fff438;
+    if ((uVar1 & 0x80) == 0) {
+      bVar3 = DAT_00fffa19;
+      if ((bVar3 & 2) == 0) goto LAB_0002e46a;
+    }
     _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
          _status_32_word_bit_mapped_system_error_status_word_7_0_1 | 0x40;
     _fault_first_occurrence_flags_word_7 = _fault_first_occurrence_flags_word_7 | 0x40;
   }
-  else if (((_status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0x40) != 0) &&
-          ((_fault_first_occurrence_flags_word_7 & 0x40) == 0)) {
-    _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
-         _status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0xffbf;
+  else {
+LAB_0002e46a:
+    if (((_status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0x40) != 0) &&
+       ((_fault_first_occurrence_flags_word_7 & 0x40) == 0)) {
+      _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+           _status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0xffbf;
+    }
   }
-  if (((_DAT_00fff440 & 0x80) == 0) || ((DAT_00fffa19 & 4) == 0)) {
-    if ((_DAT_00fff440 & 0x80) == 0) {
-      if ((DAT_00fffa19 & 4) == 0) goto LAB_0002e4ee;
+  uVar1 = Ram00fff440;
+  if (((uVar1 & 0x80) == 0) || (bVar3 = DAT_00fffa19, (bVar3 & 4) == 0)) {
+    uVar1 = Ram00fff440;
+    if ((uVar1 & 0x80) == 0) {
+      bVar3 = DAT_00fffa19;
+      if ((bVar3 & 4) == 0) goto LAB_0002e4ee;
     }
     _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
          _status_32_word_bit_mapped_system_error_status_word_7_0_1 | 0x80;
@@ -32121,20 +32353,25 @@ LAB_0002e4ee:
            _status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0xff7f;
     }
   }
-  uVar1 = 0;
+  iVar5 = 0;
   if ((_commanded_enable_for_pwm5_enable_disable & 4) == 0) {
-    _DAT_00fff43a = _DAT_00fff43a & 0xffff0000;
+    uVar4 = Ram00fff43a;
+    Ram00fff43a = uVar4 & 0xffff0000;
   }
   else {
-    uVar1 = ((uint)_DAT_0080899c * 8000) / 1000 << 0x10;
-    _DAT_00fff43a = uVar1;
+    uVar6 = 0x10;
+    iVar5 = ((uint)_DAT_0080899c * 8000) / 1000 << 0x10;
+    Ram00fff43a = iVar5;
   }
   if ((_commanded_enable_for_pwm5_enable_disable & 8) != 0) {
-    _DAT_00fff442 = ((uint)_DAT_0080899e * 8000) / 1000 << 0x10;
-    return _DAT_00fff442;
+    iVar5 = ((uint)_DAT_0080899e * 8000) / 1000 << 0x10;
+    Ram00fff442 = iVar5;
+    return CONCAT44(iVar5,0x10);
   }
-  _DAT_00fff442 = _DAT_00fff442 & 0xffff0000;
-  return CONCAT22((short)(uVar1 >> 0x10),_commanded_enable_for_pwm5_enable_disable) & 0xffff0008;
+  uVar4 = Ram00fff442;
+  Ram00fff442 = uVar4 & 0xffff0000;
+  return CONCAT44(CONCAT22((short)((uint)iVar5 >> 0x10),_commanded_enable_for_pwm5_enable_disable),
+                  uVar6) & 0xffff0008ffffffff;
 }
 
 
@@ -32145,82 +32382,98 @@ LAB_0002e4ee:
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-uint mc68k_pwmFuelDemandOutputCalculator(void)
+undefined8 mc68k_pwmFuelDemandOutputCalculator(void)
 
 {
-  uint uVar1;
+  ushort uVar1;
+  uint uVar2;
+  uint uVar3;
+  uint uVar4;
   
-                    /* From J90280.05 @ 0x00f524 (confidence: 77%) */
-  _DAT_00fff428 = 8;
-  _DAT_00fff430 = 8;
-  _DAT_00fff438 = 8;
-  _DAT_00fff440 = 8;
-  _DAT_00fff414 = -(short)(((uint)_DAT_008089a0 * 8000) / 1000) - 1;
-  _DAT_00fff418 = _DAT_00fff418 & 0xf | 9;
-  uVar1 = 0x7fff0000;
+  Ram00fff428 = 8;
+  Ram00fff430 = 8;
+  Ram00fff438 = 8;
+  Ram00fff440 = 8;
+  uVar1 = -(short)(((uint)_DAT_008089a0 * 8000) / 1000) - 1;
+  uVar4 = (uint)uVar1;
+  Ram00fff414 = uVar1;
+  uVar1 = Ram00fff418;
+  Ram00fff418 = uVar1 & 0xf | 9;
+  uVar1 = Ram00fff414;
+  Ram00fff41a = uVar1 & 0x7fff | 0x7fff0000;
+  uVar3 = 0x7fff0000;
   if ((_commanded_enable_for_pwm5_enable_disable & 1) == 0) {
-    _DAT_00fff42a = _DAT_00fff42a & 0xffff0000;
+    uVar2 = Ram00fff42a;
+    Ram00fff42a = uVar2 & 0xffff0000;
   }
   else {
-    uVar1 = ((((uint)_DAT_00808998 *
-              (uint)_value_which_designates_the_duty_cycle_requested_of_pwm1_0_100) / 0x6400 &
-             0xffff) * 8000) / 1000 & 0xffff | ((uint)_DAT_00808998 * 8000) / 1000 << 0x10;
-    _DAT_00fff42a = uVar1;
+    uVar4 = ((uint)_DAT_00808998 *
+            (uint)_value_which_designates_the_duty_cycle_requested_of_pwm1_0_100) / 0x6400 & 0xffff;
+    uVar3 = (uVar4 * 8000) / 1000 & 0xffff | ((uint)_DAT_00808998 * 8000) / 1000 << 0x10;
+    Ram00fff42a = uVar3;
   }
-  uVar1 = uVar1 & 0xffff0000;
+  uVar3 = uVar3 & 0xffff0000;
   if ((_commanded_enable_for_pwm5_enable_disable & 2) == 0) {
-    _DAT_00fff432 = _DAT_00fff432 & 0xffff0000;
+    uVar2 = Ram00fff432;
+    Ram00fff432 = uVar2 & 0xffff0000;
   }
   else {
-    uVar1 = ((((uint)_DAT_0080899a *
-              (uint)_value_which_designates_the_duty_cycle_requested_of_pwm2_0_100) / 0x6400 &
-             0xffff) * 8000) / 1000 & 0xffff | ((uint)_DAT_0080899a * 8000) / 1000 << 0x10;
-    _DAT_00fff432 = uVar1;
+    uVar4 = ((uint)_DAT_0080899a *
+            (uint)_value_which_designates_the_duty_cycle_requested_of_pwm2_0_100) / 0x6400 & 0xffff;
+    uVar3 = (uVar4 * 8000) / 1000 & 0xffff | ((uint)_DAT_0080899a * 8000) / 1000 << 0x10;
+    Ram00fff432 = uVar3;
   }
   if (5 < _pwm_diagnostic_init_counter) {
-    uVar1 = uVar1 & 0xffff0000;
+    uVar3 = uVar3 & 0xffff0000;
     if ((_commanded_enable_for_pwm5_enable_disable & 4) == 0) {
-      _DAT_00fff43a = _DAT_00fff43a & 0xffff0000;
+      uVar2 = Ram00fff43a;
+      Ram00fff43a = uVar2 & 0xffff0000;
     }
     else {
-      uVar1 = ((((uint)_DAT_0080899c *
-                (uint)_value_which_designates_the_duty_cycle_requested_for_pwm3_0_100) / 0x6400 &
-               0xffff) * 8000) / 1000 & 0xffff | ((uint)_DAT_0080899c * 8000) / 1000 << 0x10;
-      _DAT_00fff43a = uVar1;
+      uVar4 = ((uint)_DAT_0080899c *
+              (uint)_value_which_designates_the_duty_cycle_requested_for_pwm3_0_100) / 0x6400 &
+              0xffff;
+      uVar3 = (uVar4 * 8000) / 1000 & 0xffff | ((uint)_DAT_0080899c * 8000) / 1000 << 0x10;
+      Ram00fff43a = uVar3;
     }
   }
   if (5 < _pwm_diagnostic_init_counter) {
-    uVar1 = uVar1 & 0xffff0000;
+    uVar3 = uVar3 & 0xffff0000;
     if ((_commanded_enable_for_pwm5_enable_disable & 8) == 0) {
-      _DAT_00fff442 = _DAT_00fff442 & 0xffff0000;
+      uVar2 = Ram00fff442;
+      Ram00fff442 = uVar2 & 0xffff0000;
     }
     else {
-      uVar1 = ((((uint)_DAT_0080899e *
-                (uint)_value_which_designates_the_duty_cycle_requested_for_pwm4_0_100) / 0x6400 &
-               0xffff) * 8000) / 1000 & 0xffff | ((uint)_DAT_0080899e * 8000) / 1000 << 0x10;
-      _DAT_00fff442 = uVar1;
+      uVar4 = ((uint)_DAT_0080899e *
+              (uint)_value_which_designates_the_duty_cycle_requested_for_pwm4_0_100) / 0x6400 &
+              0xffff;
+      uVar3 = (uVar4 * 8000) / 1000 & 0xffff | ((uint)_DAT_0080899e * 8000) / 1000 << 0x10;
+      Ram00fff442 = uVar3;
     }
   }
-  uVar1 = CONCAT22((short)(uVar1 >> 0x10),_commanded_enable_for_pwm5_enable_disable) & 0xffff0010;
+  uVar3 = CONCAT22((short)(uVar3 >> 0x10),_commanded_enable_for_pwm5_enable_disable) & 0xffff0010;
   if (((_commanded_enable_for_pwm5_enable_disable & 0x10) == 0) ||
      (_value_which_designates_the_duty_cycle_requested_of_pwm5_0_100 == 0)) {
-    _DAT_00fff41a = 0x7fff;
+    Ram00fff41a = 0x7fff;
   }
   else if (_value_which_designates_the_duty_cycle_requested_of_pwm5_0_100 < 0x6400) {
-    _DAT_00fff414 = -(short)(((uint)_DAT_008089a0 * 8000) / 1000) - 1;
-    uVar1 = (_DAT_00fff414 & 0x7fff) +
-            (((((uint)_DAT_008089a0 *
-               (uint)_value_which_designates_the_duty_cycle_requested_of_pwm5_0_100) / 0x6400 &
-              0xffff) * 8000) / 1000 & 0xffff) | 0x7fff0000;
-    _DAT_00fff41a = uVar1;
+    Ram00fff414 = -1 - (short)(((uint)_DAT_008089a0 * 8000) / 1000);
+    uVar1 = Ram00fff414;
+    uVar4 = uVar1 & 0x7fff;
+    uVar3 = uVar4 + (((((uint)_DAT_008089a0 *
+                       (uint)_value_which_designates_the_duty_cycle_requested_of_pwm5_0_100) /
+                       0x6400 & 0xffff) * 8000) / 1000 & 0xffff) | 0x7fff0000;
+    Ram00fff41a = uVar3;
   }
   else {
-    uVar1 = ((uint)_DAT_008089a0 * 8000) / 1000;
-    _DAT_00fff414 = -(short)uVar1 - 1;
-    _DAT_00fff41a = 0x7fff8000;
+    uVar3 = ((uint)_DAT_008089a0 * 8000) / 1000;
+    uVar1 = -(short)uVar3 - 1;
+    uVar4 = (uint)uVar1;
+    Ram00fff414 = uVar1;
+    Ram00fff41a = 0x7fff8000;
   }
   _commanded_enable_for_pwm5_enable_disable = _commanded_enable_for_pwm5_enable_disable | 0x1f;
-  return uVar1;
+  return CONCAT44(uVar3,uVar4);
 }
 
 
@@ -32229,8 +32482,6 @@ uint mc68k_pwmFuelDemandOutputCalculator(void)
 // Function: initQadcModule @ 0x0002e95e
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void initQadcModule(void)
 
 {
@@ -32238,12 +32489,11 @@ void initQadcModule(void)
   byte *pbVar2;
   ushort *puVar3;
   
-                    /* From J90280.05 @ 0x026e7e (confidence: 100%) */
-  _DAT_00fff200 = 0;
-  _DAT_00fff206 = 0;
-  _DAT_00fff20a = 0x81f7;
-  _DAT_00fff20c = 0;
-  _DAT_00fff20e = 0x1100;
+  Ram00fff200 = 0;
+  Ram00fff206 = 0;
+  Ram00fff20a = 0x81f7;
+  Ram00fff20c = 0;
+  Ram00fff20e = 0x1100;
   bVar1 = 0;
   pbVar2 = &DAT_0002e936;
   puVar3 = (ushort *)&DAT_00fff230;
@@ -32253,7 +32503,7 @@ void initQadcModule(void)
     pbVar2 = pbVar2 + 1;
     puVar3 = puVar3 + 1;
   } while (bVar1 < 0x28);
-  _DAT_00fff204 = 0x54;
+  Ram00fff204 = 0x54;
   return;
 }
 
@@ -32269,7 +32519,6 @@ void cm550_clearWorkingMemory(void)
   undefined4 *puVar1;
   undefined4 *puVar2;
   
-                    /* From J90280.05 @ 0x026ec4 (confidence: 94%) */
   puVar2 = (undefined4 *)&rpm_rate_limit_countdown;
   while (puVar2 < (undefined4 *)0x80def4) {
     puVar1 = puVar2 + 0x40;
@@ -32279,7 +32528,9 @@ void cm550_clearWorkingMemory(void)
     for (; puVar2 <= puVar1; puVar2 = puVar2 + 1) {
       *puVar2 = 0;
     }
+    DAT_00fffa27 = 0x55;
     DAT_00fffa27 = 0xaa;
+    DAT_00ffd00f = 0x55;
     DAT_00ffd00f = 0xaa;
   }
   return;
@@ -32303,7 +32554,6 @@ void cm550_canMemoryPointerTableInit(void)
   int *piVar4;
   int *piVar5;
   
-                    /* From J90280.05 @ 0x026f10 (confidence: 78%) */
   _DAT_00801c4e = &DAT_0080654a;
   _DAT_00801c52 = 0x808acc;
   _DAT_00801c56 = &DAT_00061376;
@@ -32355,7 +32605,6 @@ void cm550_canMessageMemorySyncController(void)
   undefined4 *puVar1;
   short *psVar2;
   
-                    /* From J90280.05 @ 0x026ff4 (confidence: 75%) */
   if ((_DAT_00801c76 == 0) && (_calibration_data_valid_flag != 0)) {
     cm550_canMemoryPointerTableInit();
   }
@@ -32503,7 +32752,6 @@ char cm550_insiteParameterParser(void)
 {
   char cVar1;
   
-                    /* From J90280.05 @ 0x027168 (confidence: 94%) */
   if (j1708_transmit_buffer_2_32_ddc6.reserved_28[3] < 0x80) {
     cVar1 = '\x02';
   }
@@ -32537,7 +32785,6 @@ undefined2 cm550_parameterLookupForInsite(void)
 {
   short sVar1;
   
-                    /* From J90280.05 @ 0x0271b0 (confidence: 94%) */
   if (j1708_transmit_buffer_2_32_ddc6.reserved_28[3] < 0x80) {
     return 2;
   }
@@ -32584,8 +32831,6 @@ undefined2 cm550_parameterLookupForInsite(void)
 // Function: cm550_diagnosticServiceDispatcher @ 0x0002eea2
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 void cm550_diagnosticServiceDispatcher(dword msg_ptr)
 
 {
@@ -32593,7 +32838,6 @@ void cm550_diagnosticServiceDispatcher(dword msg_ptr)
   byte bVar2;
   char *pcVar3;
   
-                    /* From J90280.05 @ 0x02729a (confidence: 88%) */
   pcVar3 = &DAT_00801c7a;
   cVar1 = '\x18';
   bVar2 = 0;
@@ -32626,7 +32870,6 @@ LAB_0002eeee:
 void cm550_systemControlFunction1(void)
 
 {
-                    /* From J90280.05 @ 0x027300 (confidence: 78%) */
   cm550_canTransmissionController();
   return;
 }
@@ -32640,7 +32883,6 @@ void cm550_systemControlFunction1(void)
 void cm550_diagnosticResponseHandler2(undefined4 param_1)
 
 {
-                    /* From J90280.05 @ 0x027314 (confidence: 78%) */
   j1708_transmit_buffer_2_32_ddc6.param_180 = 1;
   cm550_diagnosticCanResponseSender(param_1);
   return;
@@ -32655,7 +32897,6 @@ void cm550_diagnosticResponseHandler2(undefined4 param_1)
 void cm550_canTransmissionTrigger(void)
 
 {
-                    /* From J90280.05 @ 0x02732e (confidence: 86%) */
   FUN_0002f47e();
   return;
 }
@@ -32667,7 +32908,6 @@ void cm550_canTransmissionTrigger(void)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 void cm550_FUN_0002ef4a(dword msg_ptr)
 
@@ -32694,7 +32934,6 @@ void cm550_FUN_0002ef4a(dword msg_ptr)
 void cm550_systemControlFunction2(void)
 
 {
-                    /* From J90280.05 @ 0x0273c0 (confidence: 86%) */
   cm550_canTransmissionController();
   return;
 }
@@ -32712,7 +32951,6 @@ ushort cm550_diagnosticServiceDispatcherByPgn(int param_1)
 {
   ushort uVar1;
   
-                    /* From J90280.05 @ 0x0278be (confidence: 73%) */
   uVar1 = (ushort)*(byte *)(param_1 + 3);
   if (((uVar1 == _DAT_00060f82) || (_DAT_00060f82 == 0xff)) && (*(short *)(param_1 + 4) == 8)) {
     tsc1_message_byte_0 = **(byte **)(param_1 + 6);
@@ -32768,7 +33006,6 @@ ushort cm550_diagnosticServiceDispatcherByPgn(int param_1)
 void cm550_systemControlFunction3(void)
 
 {
-                    /* From J90280.05 @ 0x027514 (confidence: 86%) */
   cm550_canTransmissionController();
   return;
 }
@@ -32795,7 +33032,6 @@ void torqueControlModeHandler(int param_1)
   undefined4 unaff_D2;
   byte config_type;
   
-                    /* From J90280.05 @ 0x027528 (confidence: 81%) */
   config_type = (byte)((uint)unaff_D2 >> 0x10);
   if (*(short *)(param_1 + 4) == 8) {
     torque_control_message_byte_0 = **(byte **)(param_1 + 6);
@@ -32936,8 +33172,6 @@ void torqueControlModeHandler(int param_1)
 // Function: cm550_FUN_0002f4be @ 0x0002f4be
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 void cm550_FUN_0002f4be(byte cmd_index)
 
 {
@@ -32974,7 +33208,6 @@ void cm550_diagnosticDataDump(void)
 {
   word unaff_A2w;
   
-                    /* From J90280.05 @ 0x02793e (confidence: 75%) */
   cm550_canTransmissionController();
   initPgn65261CruiseControlSetupStruct();
   cm550_engineSerialNumberPGN_65259_Builder();
@@ -33133,7 +33366,6 @@ void cm550_retarderControlModeHandler(int param_1)
   undefined4 unaff_D2;
   byte config_type;
   
-                    /* From J90280.05 @ 0x027afa (confidence: 75%) */
   config_type = (byte)((uint)unaff_D2 >> 0x10);
   if ((_total_number_of_engine_brake_output_drivers_at_the_ecm_0_255 != 0) &&
      (*(short *)(param_1 + 4) == 8)) {
@@ -33303,7 +33535,6 @@ void cm550_initOilPressureProtectionPointers(void)
   undefined4 unaff_A2;
   int unaff_A3;
   
-                    /* From J90280.05 @ 0x033254 (confidence: 61%) */
   _retarder_torque_percent = 0x7d;
   _retarder_control_mode = 0;
   _source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_d9e6 = 0;
@@ -33343,7 +33574,6 @@ void cm550_torqueControlAddressDispatcher(int param_1)
 {
   char cVar1;
   
-                    /* From J90280.05 @ 0x027e3e (confidence: 92%) */
   cVar1 = *(char *)(param_1 + 2);
   if ((cVar1 == j1939_engine_node_source_address) || (cVar1 == -1)) {
     torqueControlModeHandler(param_1);
@@ -33372,8 +33602,6 @@ void cm550_FUN_0002fbb2(void)
 //
 // Function: cm550_FUN_0002fbd8 @ 0x0002fbd8
 //
-
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 void cm550_FUN_0002fbd8(byte *input_buffer,byte *output_buffer)
 
@@ -33472,7 +33700,6 @@ void cm550_FUN_0002fbd8(byte *input_buffer,byte *output_buffer)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 byte sensorRangeValidation(byte *auth_payload_ptr)
 
@@ -33504,10 +33731,12 @@ byte sensorRangeValidation(byte *auth_payload_ptr)
       puVar4 = (uint *)((int)puVar4 + 1);
       pbVar5 = pbVar5 + 1;
     } while (bVar2 < 4);
+                    /* Constant: HOUR_METER_TOLERANCE = 0x19 */
     if ((_hour_meter_ecm_run_time_none & 0xffffff00) - (local_12 & 0xffffff00) < 0x1a) {
       bVar1 = true;
       pbVar5 = abStack_e;
       for (cVar3 = '\0'; (bVar1 && (cVar3 < '\x06')); cVar3 = cVar3 + '\x01') {
+                    /* Constant: SECURITY_KEY_LENGTH = 0x06 */
         if ((&ecu_identity_test_pattern)[(short)cVar3] != *pbVar5) {
           bVar1 = false;
         }
@@ -33567,7 +33796,6 @@ void cm550_FUN_0002fd90(undefined4 param_1)
 void cm550_diagnosticTableEntryClear(undefined4 param_1)
 
 {
-                    /* From J90280.05 @ 0x027ef0 (confidence: 94%) */
   param_1._0_2_ = param_1._0_2_ * 10;
   (&diagnostic_fault_occurrence_count)[param_1._0_2_] = 0;
   *(undefined4 *)(&DGFUCUBF + param_1._0_2_) = 0;
@@ -33592,7 +33820,6 @@ void cm550_diagnosticTableSnapshotCapture(undefined4 param_1)
 {
   short sVar1;
   
-                    /* From J90280.05 @ 0x027f4c (confidence: 81%) */
   if ((*(ushort *)(&fault_definition_flags_word + (short)(param_1._2_2_ * 3) * 2) & 0x10) != 0) {
     sVar1 = param_1._0_2_ * 0x30;
     *(short *)(&DAT_0080462e + sVar1) = param_1._2_2_;
@@ -33666,14 +33893,17 @@ void cm550_diagnosticTableSnapshotCapture(undefined4 param_1)
 undefined8 mc68k_tpuChannelStateMachine(void)
 
 {
-  char cVar1;
+  ushort uVar1;
+  char cVar2;
   undefined4 in_D0;
-  int iVar2;
+  int iVar3;
   undefined4 in_D1;
   
-                    /* From J90280.05 @ 0x028220 (confidence: 81%) */
   j1708_rx_state_t_0080dcaf.buffer_ptr_3._3_1_ = 0;
-  _DAT_00fff458 = _DAT_00fff458 & 0xfff;
+  uVar1 = Ram00fff458;
+  Ram00fff458 = uVar1 & 0x8fff;
+  uVar1 = Ram00fff458;
+  Ram00fff458 = uVar1 & 0x7fff;
   if (((j1708_rx_state_t_0080dcaf.buffer_ptr_1._1_1_ == '\x01') &&
       (*_j1708_receive_buffer_pointer_2_32_dca2 != 0)) &&
      (j1708_receive_buffer_full_flag_1_true_0_false == '\0')) {
@@ -33697,14 +33927,14 @@ undefined8 mc68k_tpuChannelStateMachine(void)
       if (*_j1708_receive_buffer_pointer_2_32_dca6 < 7) {
         if ((int)_j1708_receive_buffer_pointer_2_32_dca2 < _j1708_receive_buffer_pointer_2_32_dcaa)
         {
-          iVar2 = (_j1708_receive_buffer_pointer_2_32_dcaa -
+          iVar3 = (_j1708_receive_buffer_pointer_2_32_dcaa -
                   (int)_j1708_receive_buffer_pointer_2_32_dca2) + -2;
         }
         else {
-          iVar2 = (_j1708_receive_buffer_pointer_2_32_dcaa -
+          iVar3 = (_j1708_receive_buffer_pointer_2_32_dcaa -
                   (int)_j1708_receive_buffer_pointer_2_32_dca2) + 0xfe;
         }
-        if (3 < iVar2) {
+        if (3 < iVar3) {
           j1708_rx_state_t_0080dcaf.buffer_full_flag =
                j1708_rx_state_t_0080dcaf.buffer_full_flag + 1;
           *_j1708_receive_buffer_pointer_2_32_dca2 = 2;
@@ -33716,12 +33946,12 @@ undefined8 mc68k_tpuChannelStateMachine(void)
                (byte *)CONCAT31(_j1708_receive_buffer_pointer_2_32_dca2,
                                 j1708_receive_buffer_index_low + '\x01');
           *_j1708_receive_buffer_pointer_2_32_dca2 = 0x74;
-          cVar1 = j1708_receive_buffer_index_low;
+          cVar2 = j1708_receive_buffer_index_low;
           _j1708_receive_buffer_pointer_2_32_dca2 =
                (byte *)CONCAT31(_j1708_receive_buffer_pointer_2_32_dca2,
                                 j1708_receive_buffer_index_low + '\x01');
           _j1708_receive_buffer_pointer_2_32_dca6 =
-               (byte *)CONCAT31(_j1708_receive_buffer_pointer_2_32_dca6,cVar1 + '\x02');
+               (byte *)CONCAT31(_j1708_receive_buffer_pointer_2_32_dca6,cVar2 + '\x02');
         }
       }
       *_j1708_receive_buffer_pointer_2_32_dca2 = 0;
@@ -33736,22 +33966,30 @@ undefined8 mc68k_tpuChannelStateMachine(void)
          (byte *)CONCAT31((int3)((uint)_j1708_transmit_buffer_2_32_dc9c >> 8),
                           j1708_transmit_buffer_index_low + '\x01');
     j1708_rx_state_t_0080dcaf.buffer_ptr_3._3_1_ = 1;
-    _DAT_00fff45a = 0xfcbe;
-    _DAT_00fff458 = _DAT_00fff458 & 0x7fff | 0x4000;
+    Ram00fff45a = 0xfcbe;
+    uVar1 = Ram00fff458;
+    Ram00fff458 = uVar1 & 0x7fff;
+    uVar1 = Ram00fff458;
+    Ram00fff458 = uVar1 | 0x4000;
   }
   else if (_j1708_transmit_buffer_0_2_32 != _j1708_transmit_buffer_2_32_dc9c) {
-    if ((_DAT_00fffc0c & 0x20) == 0) {
-      _DAT_00fffc0e = (ushort)*_j1708_transmit_buffer_2_32_dc98;
+    uVar1 = Ram00fffc0c;
+    if ((uVar1 & 0x20) == 0) {
+      Ram00fffc0e = (ushort)*_j1708_transmit_buffer_2_32_dc98;
       j1708_rx_state_t_0080dcaf.buffer_ptr_1._1_1_ = '\0';
       j1708_rx_state_t_0080dcaf._7_4_ = 0;
       j1708_rx_state_t_0080dcaf.buffer_ptr_1._2_1_ = 1;
       j1708_rx_state_t_0080dcaf.buffer_ptr_2._0_1_ = *_j1708_transmit_buffer_2_32_dc98;
-      _DAT_00fffc0a = _DAT_00fffc0a | 0x20;
+      uVar1 = Ram00fffc0a;
+      Ram00fffc0a = uVar1 | 0x20;
     }
     else {
       j1708_rx_state_t_0080dcaf.buffer_ptr_3._3_1_ = 1;
-      _DAT_00fff45a = 0xfc8a;
-      _DAT_00fff458 = _DAT_00fff458 & 0x7fff | 0x4000;
+      Ram00fff45a = 0xfc8a;
+      uVar1 = Ram00fff458;
+      Ram00fff458 = uVar1 & 0x7fff;
+      uVar1 = Ram00fff458;
+      Ram00fff458 = uVar1 | 0x4000;
     }
   }
   return CONCAT44(in_D0,in_D1);
@@ -33768,9 +34006,13 @@ undefined8 mc68k_tpuChannelStateMachine(void)
 void mc68k_engineSpeedIsrRegister(void)
 
 {
-                    /* From J90280.05 @ 0x0283c0 (confidence: 86%) */
+  ushort uVar1;
+  
   _DAT_00809008 = mc68k_tpuChannelStateMachine;
-  _DAT_00fff458 = _DAT_00fff458 & 0xfff;
+  uVar1 = Ram00fff458;
+  Ram00fff458 = uVar1 & 0x8fff;
+  uVar1 = Ram00fff458;
+  Ram00fff458 = uVar1 & 0x7fff;
   return;
 }
 
@@ -33788,7 +34030,6 @@ void mc68k_engineRpmHardwareTimerSetup(void)
   ushort uVar1;
   undefined4 local_8;
   
-                    /* From J90280.05 @ 0x0283dc (confidence: 92%) */
   uVar1 = _engine_rpm_primary;
   if (j1708_transmit_buffer_2_32_ddc6.reserved_112._8_2_ == 1) {
     uVar1 = j1708_transmit_buffer_2_32_ddc6.reserved_112._6_2_;
@@ -33805,7 +34046,7 @@ void mc68k_engineRpmHardwareTimerSetup(void)
     uVar1 = cm550_scaleByRatio(16000000,j1708_transmit_buffer_2_32_ddc6.state_ptr,32000000);
     local_8 = CONCAT22((short)((int)(uint)uVar1 >> 1),uVar1);
   }
-  _DAT_00ffffc4 = local_8;
+  Ram00ffffc4 = local_8;
   return;
 }
 
@@ -33821,14 +34062,28 @@ void mc68k_engineRpmHardwareTimerSetup(void)
 void mc68k_can1ControllerInit(void)
 
 {
-                    /* From J90280.05 @ 0x0284aa (confidence: 92%) */
-  _DAT_00fffe0a = _DAT_00fffe0a & 0xefff;
-  _DAT_00fffe20 = _DAT_00fffe20 & 0xefff;
-  _DAT_00fffe0c = _DAT_00fffe0c & 0xfff0 | 0xb;
-  _DAT_00ffffc0 = 0x92;
-  _DAT_00ffffc4 = 0xffff;
-  _DAT_00fffe18 = _DAT_00fffe18 & 0xfcff | 0x200;
-  _DAT_00fffe1c = _DAT_00fffe1c & 0xfcff | 0x100;
+  ushort uVar1;
+  
+  uVar1 = Ram00fffe1c;
+  Ram00fffe1c = uVar1 & 0xfcff;
+  uVar1 = Ram00fffe0a;
+  Ram00fffe0a = uVar1 & 0xefff;
+  uVar1 = Ram00fffe20;
+  Ram00fffe20 = uVar1 & 0xefff;
+  uVar1 = Ram00fffe0c;
+  Ram00fffe0c = uVar1 & 0xfff0;
+  uVar1 = Ram00fffe0c;
+  Ram00fffe0c = uVar1 | 0xb;
+  Ram00ffffc0 = 0x92;
+  Ram00ffffc4 = 0xffff;
+  uVar1 = Ram00fffe18;
+  Ram00fffe18 = uVar1 & 0xfcff;
+  uVar1 = Ram00fffe18;
+  Ram00fffe18 = uVar1 | 0x200;
+  uVar1 = Ram00fffe1c;
+  Ram00fffe1c = uVar1 & 0xfcff;
+  uVar1 = Ram00fffe1c;
+  Ram00fffe1c = uVar1 | 0x100;
   _tach_output_minimum_rpm = (ushort)((int)((uint)_DAT_00808a3e * 0x1e84) >> 10);
   if (_tach_output_minimum_rpm < _DAT_00808a40) {
     _tach_output_minimum_rpm = _DAT_00808a40;
@@ -33850,7 +34105,6 @@ void cm550_emptyStubFunction9(void)
   ushort *in_A0;
   ushort *in_A1;
   
-                    /* From J90280.05 @ 0x02853c (confidence: 63%) */
   uVar1 = (ushort)(in_D0 >> 2);
   *in_A1 = uVar1;
   if (uVar1 < *in_A0) {
@@ -33868,7 +34122,6 @@ void cm550_emptyStubFunction9(void)
 void cm550_emptyInitPlaceholder(void)
 
 {
-                    /* From J90280.05 @ 0x028546 (confidence: 94%) */
   return;
 }
 
@@ -33885,7 +34138,6 @@ undefined4 cm550_accumulatorWithOverflowCarry(uint *param_1,uint *param_2)
   uint uVar2;
   ushort uVar3;
   
-                    /* From J90280.05 @ 0x02e6c2 (confidence: 94%) */
   dVar1 = j1708_transmit_buffer_2_32_ddc6.msg_ptr;
   uVar3 = 0;
   *param_1 = j1708_transmit_buffer_2_32_ddc6.msg_ptr + *param_1;
@@ -33910,7 +34162,6 @@ undefined4 cm550_accumulatorWithOverflowCarry(uint *param_1,uint *param_2)
 void cm550_runTimeCountersUpdate(void)
 
 {
-                    /* From J90280.05 @ 0x028588 (confidence: 69%) */
   _DAT_00804fb4 = _DAT_00806152 + 1;
   _DAT_00806156 = _DAT_00806156 + 1;
   _DAT_00806152 = _DAT_00804fb4;
@@ -33933,7 +34184,6 @@ void cm550_runTimeCountersUpdate(void)
 void cm550_runTimeCountersUpdateAlt(void)
 
 {
-                    /* From J90280.05 @ 0x0285c8 (confidence: 69%) */
   _DAT_0080615a = _DAT_0080615a + 1;
   _DAT_00804fbc = _DAT_00806172 + 1;
   _DAT_00806172 = _DAT_00804fbc;
@@ -33988,7 +34238,6 @@ void cm550_rpmHistogramAndAveragingStatistics(void)
 {
   ushort uVar1;
   
-                    /* From J90280.05 @ 0x028638 (confidence: 75%) */
   if (_current_engine_rpm_filtered != 0) {
     if (_DAT_00806198 < _current_engine_rpm_filtered) {
       _DAT_00806198 = _current_engine_rpm_filtered;
@@ -34090,7 +34339,6 @@ uint cm550_fuelLimitRestoreFromCapture(void)
   short *unaff_A3;
   ushort *unaff_A4;
   
-                    /* From J90280.05 @ 0x02d92c (confidence: 61%) */
   _non_idle_run_time_counter = _non_idle_run_time_counter + 1;
   uVar1 = (uint)_DAT_0080a4d8;
   if (_rpm_histogram_temp_threshold < _DAT_0080a4d8) {
@@ -34334,7 +34582,6 @@ ushort cm550_protectionFlagAccumulator(void)
   ushort uVar1;
   ushort *in_A0;
   
-                    /* From J90280.05 @ 0x028b78 (confidence: 80%) */
   uVar1 = _calibration_feature_enable_flags_word_3 & 0x200;
   if (uVar1 != 0) {
     if (_DAT_00803fdc != 0) {
@@ -34382,7 +34629,6 @@ undefined8 cm550_protectionLimitValueInit(void)
   undefined4 in_D0;
   undefined4 in_D1;
   
-                    /* From J90280.05 @ 0x02f748 (confidence: 63%) */
   return CONCAT44(in_D0,in_D1);
 }
 
@@ -34409,7 +34655,6 @@ void cm550_FUN_00030b0e(void)
 void cm550_fuelDemandLimitSelector4(void)
 
 {
-                    /* From J90280.05 @ 0x02f754 (confidence: 88%) */
   if (_fuel_limit_floor_value < _fuel_timing_advance_value) {
     j1708_transmit_buffer_2_32_ddc6.reserved_166._4_2_ = _fuel_timing_advance_value;
     _fuel_timing_advance_value = _fuel_limit_floor_value;
@@ -34451,7 +34696,6 @@ ushort vp44InjectionSystemStateController(void)
 {
   ushort uVar1;
   
-                    /* From J90280.05 @ 0x031768 (confidence: 67%) */
   uVar1 = cm550_FUN_00030b34();
   j1708_transmit_buffer_2_32_ddc6.reserved_166[2] = fuel_timing_advance_value;
   j1708_transmit_buffer_2_32_ddc6.reserved_166[3] = fuel_timing_advance_value_1;
@@ -34504,7 +34748,6 @@ ushort vp44InjectionSystemStateController(void)
 void cm550_shutdownMinimumSelector28(void)
 
 {
-                    /* From J90280.05 @ 0x02f83e (confidence: 81%) */
   if (_fuel_system_specific_fuel_derate_that_is_input_to_the_core_sys_0_100 <
       j1708_transmit_buffer_2_32_ddc6.base_ptr._2_2_) {
     j1708_transmit_buffer_2_32_ddc6.base_ptr._2_2_ =
@@ -34525,7 +34768,6 @@ void cm550_shutdownMinimumSelector28(void)
 void cm550_shutdownMinimumSelector20(void)
 
 {
-                    /* From J90280.05 @ 0x02f85c (confidence: 81%) */
   if ((_datalink_speed_control_mode == 3) &&
      (_jcomm_torque_derate_fueling_maximum_allowed_fuel_as_per_link_u_0_100 <
       j1708_transmit_buffer_2_32_ddc6.base_ptr._2_2_)) {
@@ -34570,7 +34812,6 @@ void cm550_FUN_00030c3c(void)
 void cm550_masterSubsystemInit(void)
 
 {
-                    /* From J90280.05 @ 0x02f8b8 (confidence: 69%) */
   cm550_fuelParameterPointerSetup();
   cm550_fuelTimingModeInit();
   cm550_rpmParameterPointerSetup();
@@ -34586,41 +34827,40 @@ void cm550_masterSubsystemInit(void)
 // Function: mc68k_initInternalRamAndCAN1 @ 0x00031428
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void mc68k_initInternalRamAndCAN1(void)
 
 {
-  undefined4 *puVar1;
+  ushort uVar1;
   undefined4 *puVar2;
   undefined4 *puVar3;
+  undefined4 *puVar4;
   
-                    /* From J90280.05 @ 0x02939c (confidence: 100%) */
-  if ((_DAT_00fffe00 & 0x400) != 0x400) {
-    _DAT_00fffb04 = 0xffe0;
-    puVar1 = &DAT_00030c9c;
-    puVar2 = (undefined4 *)&DAT_00ffe000;
+  uVar1 = Ram00fffe00;
+  if ((uVar1 & 0x400) != 0x400) {
+    Ram00fffb04 = 0xffe0;
+    puVar2 = &DAT_00030c9c;
+    puVar3 = (undefined4 *)&DAT_00ffe000;
     do {
-      puVar3 = puVar2 + 1;
-      *puVar2 = *puVar1;
-      puVar1 = puVar1 + 1;
-      puVar2 = puVar3;
-    } while (puVar3 < (undefined4 *)0xffe68c);
-    do {
-      puVar1 = puVar3 + 1;
-      *puVar3 = 0;
-      puVar3 = puVar1;
-    } while (puVar1 < (undefined4 *)0xffe6ff);
-    puVar2 = &DAT_00031328;
-    do {
-      puVar3 = puVar1 + 1;
-      *puVar1 = *puVar2;
+      puVar4 = puVar3 + 1;
+      *puVar3 = *puVar2;
       puVar2 = puVar2 + 1;
-      puVar1 = puVar3;
-    } while (puVar3 < (undefined4 *)0xffe7ff);
-    _DAT_00fffe00 = 0x407;
-    _DAT_00fffe0a = 0;
-    _DAT_00fffe08 = 0x440;
+      puVar3 = puVar4;
+    } while (puVar4 < &UNK_00ffe68c);
+    do {
+      puVar2 = puVar4 + 1;
+      *puVar4 = 0;
+      puVar4 = puVar2;
+    } while (puVar2 < &UNK_00ffe6ff);
+    puVar3 = &DAT_00031328;
+    do {
+      puVar4 = puVar2 + 1;
+      *puVar2 = *puVar3;
+      puVar3 = puVar3 + 1;
+      puVar2 = puVar4;
+    } while (puVar4 < &UNK_00ffe7ff);
+    Ram00fffe00 = 0x407;
+    Ram00fffe0a = 0;
+    Ram00fffe08 = 0x440;
   }
   return;
 }
@@ -34908,7 +35148,6 @@ uint cm550_diagnosticSessionValidator(undefined4 param_1)
   byte bVar1;
   short *psVar2;
   
-                    /* From J90280.05 @ 0x029422 (confidence: 94%) */
   psVar2 = (short *)&DAT_00808196;
   bVar1 = 0;
   while (((param_1._0_2_ != *psVar2 || ((char)param_1 != *(char *)((int)psVar2 + 3))) &&
@@ -34935,7 +35174,6 @@ uint cm550_diagnosticSessionValidator(undefined4 param_1)
 void cm550_diagnosticCanResponseSender(int param_1,undefined4 param_2)
 
 {
-                    /* From J90280.05 @ 0x029476 (confidence: 88%) */
   _DAT_00801ea4 = CONCAT13((char)((_DAT_00803f4e & 7) << 2),0xe8ff00);
   _DAT_00801ea6 = CONCAT11(*(undefined1 *)(param_1 + 3),*(undefined1 *)(param_1 + 2));
   DAT_00801eb2 = param_2._1_1_;
@@ -34957,7 +35195,6 @@ void cm550_diagnosticCanResponseSender(int param_1,undefined4 param_2)
 void cm550_canBufferSetup1(void)
 
 {
-                    /* From J90280.05 @ 0x0294ea (confidence: 81%) */
   _DAT_00801ea8 = 8;
   _DAT_00801eaa = &DAT_00801eb2;
   _DAT_00801eae = 0x801eba;
@@ -34998,7 +35235,6 @@ void cm550_FUN_00031bce(void)
 void cm550_j1939MessageSetup_PGN_65265(void)
 
 {
-                    /* From J90280.05 @ 0x029796 (confidence: 70%) */
   _DAT_00801ebc = CONCAT13((char)((_DAT_00803f50 & 7) << 2),0xfef500);
   _DAT_00801ec0 = 8;
   _DAT_00801ec2 = &DAT_00801eca;
@@ -35243,7 +35479,6 @@ void cm550_FUN_00032052(void)
 void cm550_engineSerialNumberPGN_65259_Builder(void)
 
 {
-                    /* From J90280.05 @ 0x029868 (confidence: 81%) */
   _DAT_00801f04 = CONCAT13((char)((_DAT_00803f54 & 7) << 2),0xfeeb00);
   _DAT_00801f08 = 0x28;
   _DAT_00801f0a = &DAT_00801f12;
@@ -35270,7 +35505,6 @@ j1939_header_t * cm550_diagnosticMultiPacketResponseBuilder(byte *param_1,undefi
   undefined1 *puVar4;
   undefined1 *puVar5;
   
-                    /* From J90280.05 @ 0x0298d8 (confidence: 94%) */
   uVar1 = (undefined2)CONCAT31((int3)((uint)in_D0 >> 8),**(undefined1 **)(param_1 + 6));
   bVar2 = cm550_FUN_0000b688();
   msg_header = (j1939_header_t *)cm550_multiPacketBufferAllocator(uVar1);
@@ -35315,12 +35549,10 @@ j1939_header_t * cm550_diagnosticMultiPacketResponseBuilder(byte *param_1,undefi
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 void cm550_diagnosticDM11PGN_65234_Builder(word dtc_count)
 
 {
-                    /* From J90280.05 @ 0x02a29c (confidence: 81%) */
   _DAT_00801f3e = CONCAT13((char)((_DAT_00803f60 & 7) << 2),0xfed200);
   _DAT_00801f42 = 2;
   _DAT_00801f44 = &DAT_00801f4c;
@@ -35347,7 +35579,6 @@ byte j1939HandlePgn65226Dm1ActiveDtc(void)
   byte bVar4;
   uint *puVar5;
   
-                    /* From J90280.05 @ 0x029976 (confidence: 88%) */
   _DAT_00801f60 = &DAT_0080265a;
   bVar3 = DAT_0080265a & 0xf0;
   if ((DAT_0080265a & 0xf0) == 0) {
@@ -35396,7 +35627,6 @@ byte j1939HandlePgn65226Dm1ActiveDtc(void)
 void cm550_engineCoolantPGN_65226_Builder(void)
 
 {
-                    /* From J90280.05 @ 0x029a86 (confidence: 75%) */
   _DAT_00801f56 = CONCAT13((char)((_DAT_00803f56 & 7) << 2),0xfeca00);
   _DAT_00801f5c = &DAT_00801f64;
   _DAT_00801f60 = &DAT_0080265a;
@@ -35424,7 +35654,6 @@ byte cm550_previousDtcListBuilder(void)
   byte bVar4;
   uint *puVar5;
   
-                    /* From J90280.05 @ 0x029ae4 (confidence: 88%) */
   bVar3 = DAT_00802d60 & 0xf0;
   if ((DAT_00802d60 & 0xf0) == 0) {
     _dm2_message_byte_count = 2;
@@ -35472,7 +35701,6 @@ byte cm550_previousDtcListBuilder(void)
 void cm550_diagnosticDM2PGN_65227_Builder(void)
 
 {
-                    /* From J90280.05 @ 0x029bf4 (confidence: 75%) */
   _DAT_0080265c = CONCAT13((char)((_DAT_00803f58 & 7) << 2),0xfecb00);
   _DAT_00802662 = &DAT_0080266a;
   _DAT_00802666 = &DAT_00802d60;
@@ -35507,7 +35735,6 @@ byte evaluateTemperatureDiagnosticState(void)
   undefined *puVar11;
   undefined2 local_6;
   
-                    /* From J90280.05 @ 0x029c52 (confidence: 81%) */
   bVar5 = DAT_00803448 & 0xf0;
   if ((DAT_00803448 & 0xf0) == 0) {
     _DAT_00802d66 = 0;
@@ -35638,7 +35865,6 @@ void cm550_diagnosticDM4PGN_65229_Builder(void)
   byte bVar1;
   undefined *puVar2;
   
-                    /* From J90280.05 @ 0x02a090 (confidence: 75%) */
   _DAT_00802d62 = CONCAT13((char)((_DAT_00803f5a & 7) << 2),0xfecd00);
   _DAT_00802d68 = &DAT_00802d70;
   _DAT_00802d6c = &DAT_00803448;
@@ -35668,7 +35894,6 @@ void vp44_diagnosticDM5DataBuilder(void)
 {
   ushort local_6;
   
-                    /* From J90280.05 @ 0x02a100 (confidence: 80%) */
   local_6 = 0;
   DAT_00803458 = DGAEFUBF;
   DAT_00803459 = DGIEFUBF;
@@ -35700,7 +35925,6 @@ void vp44_diagnosticDM5DataBuilder(void)
 void cm550_diagnosticDM5PGN_65230_Builder(void)
 
 {
-                    /* From J90280.05 @ 0x02a1a0 (confidence: 81%) */
   _oil_pressure_table_2_ptr = CONCAT13((char)((_DAT_00803f5c & 7) << 2),0xfece00);
   _oil_pressure_table_3_ptr = 8;
   _DAT_00803450 = &DAT_00803458;
@@ -35717,14 +35941,12 @@ void cm550_diagnosticDM5PGN_65230_Builder(void)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 void vp44_diagnosticByteResponseSender(word response_code)
 
 {
   undefined1 in_stack_00000005;
   
-                    /* From J90280.05 @ 0x02a1f6 (confidence: 80%) */
   DAT_00803470 = in_stack_00000005;
   _lift_pump_table_lookup_arg_3472 = byteSwap16(&response_code);
   cm550_sendCanMessage((j1939_header_t *)&vp44_timing_table_size);
@@ -35742,7 +35964,6 @@ void vp44_diagnosticByteResponseSender(word response_code)
 void vp44_diagnosticDM8PGN_65232_Builder(void)
 
 {
-                    /* From J90280.05 @ 0x02a222 (confidence: 75%) */
   _vp44_timing_table_size = CONCAT13((char)((_DAT_00803f5e & 7) << 2),0xfed000);
   _DAT_00803466 = 8;
   _base_timing_fuel_value_input = &DAT_00803470;
@@ -35897,7 +36118,6 @@ void vp44Message300FaultFlagProcessor(void)
 {
   int unaff_A6;
   
-                    /* From J90280.05 @ 0x0350ae (confidence: 70%) */
   if (_datalink_speed_control_mode == 0) {
     switch(_fuel_limit_selection_state) {
     case 1:
@@ -36002,7 +36222,6 @@ void vp44Message300FaultFlagProcessor(void)
 void vp44Command0x100Builder(void)
 
 {
-                    /* From J90280.05 @ 0x02a418 (confidence: 81%) */
   _vp44_diagnostic_threshold_state = CONCAT13((char)((_DAT_00803f62 & 7) << 2),0xf00400);
   _vp44_diagnostic_threshold_state =
        CONCAT31(_vp44_diagnostic_threshold_state,j1939_engine_node_source_address);
@@ -36118,7 +36337,6 @@ void j1939HandlePgn61443Eec2(void)
 void vp44_cumminsProprietaryDM_983_Builder(void)
 
 {
-                    /* From J90280.05 @ 0x02a51e (confidence: 81%) */
   _fso_fault_latched_value = CONCAT13((char)((_DAT_00803f64 & 7) << 2),0xf00300);
   _fso_fault_latched_value = CONCAT31(_fso_fault_latched_value,j1939_engine_node_source_address);
   _fso_fault_debounce_counter = 5;
@@ -36143,7 +36361,6 @@ void vp44_configParamCanBuilder(void)
   undefined1 local_6;
   undefined1 uStack_5;
   
-                    /* From J90280.05 @ 0x02a57e (confidence: 81%) */
   cm550_FUN_0000f99c();
   fso_range_fault_high_counter =
        (char)((ushort)_jcomm_ind_friction_torque_amount_of_torque_required_by_base_en_0_125 >> 8) +
@@ -36168,7 +36385,6 @@ void vp44_configParamCanBuilder(void)
 void vp44_secondaryParamPGN_65247_Builder(void)
 
 {
-                    /* From J90280.05 @ 0x02a5da (confidence: 81%) */
   _vp44_fso_condition_counter = CONCAT13((char)((_DAT_00803f66 & 7) << 2),0xfedf00);
   _vp44_fso_condition_counter =
        CONCAT31(_vp44_fso_condition_counter,j1939_engine_node_source_address);
@@ -36207,7 +36423,6 @@ void vp44_FUN_00033164(void)
 void vp44_engineFluidLevelPGN_65263_Builder(void)
 
 {
-                    /* From J90280.05 @ 0x02a8da (confidence: 75%) */
   _vp44_fso_multibit_fault_debounce_counter = CONCAT13((char)((_DAT_00803f6a & 7) << 2),0xfeef00);
   _vp44_fso_multibit_fault_accumulator = 8;
   _vp44_fso_multibit_fault_state = &vp44_fso_rpm_fault_counter;
@@ -36629,7 +36844,6 @@ void cm550_FUN_000337c4(void)
 void cm550_engineTemperaturePGN_65262_Builder(void)
 
 {
-                    /* From J90280.05 @ 0x02aa74 (confidence: 75%) */
   _DAT_00803552 = CONCAT13((char)((_DAT_00803f70 & 7) << 2),0xfeee00);
   _DAT_00803556 = 8;
   _DAT_00803558 = &DAT_00803560;
@@ -36653,7 +36867,6 @@ void cm550_engineTemperaturePGN_65262_Builder(void)
 void cm550_dutyCycleMonitorAltIsrHandler(void)
 
 {
-                    /* From J90280.05 @ 0x0170b4 (confidence: 63%) */
   if ((_calibration_feature_enable_flags_word_2 & 0x1000) == 0) {
     retarder_tsc_status_byte = 0;
   }
@@ -36709,7 +36922,6 @@ void cm550_dutyCycleMonitorAltIsrHandler(void)
 void cm550_cumminsProprietaryTSC_PGN_15728640_Builder(void)
 
 {
-                    /* From J90280.05 @ 0x02aba4 (confidence: 81%) */
   _DAT_00803572 = CONCAT13((char)((_DAT_00803f6e & 7) << 2),0xf00000);
   _DAT_00803572 = CONCAT31(_DAT_00803572,j1939_retarder_node_source_address);
   cm550_throttleTablePointerSetup();
@@ -36772,7 +36984,6 @@ void cm550_FUN_00033a62(void)
 void cm550_retarderConfigPGN_65249_Builder(void)
 
 {
-                    /* From J90280.05 @ 0x02b1f6 (confidence: 80%) */
   _DAT_0080359a = CONCAT13((char)((_DAT_00803f72 & 7) << 2),0xfee900);
   _DAT_0080359e = 8;
   _DAT_008035a0 = &DAT_008035a8;
@@ -36799,7 +37010,6 @@ void cm550_fuelEconomyDataBuilder(void)
   undefined1 local_6;
   undefined1 uStack_5;
   
-                    /* From J90280.05 @ 0x02acd0 (confidence: 75%) */
   multiplicand = cm550_scaleByRatio((uint)j1708_transmit_buffer_2_32_ddc6.param_156,0x39c2c3,0x3840e
                                    );
   uVar1 = cm550_scaleByRatio(multiplicand,0xe10,1000000);
@@ -36836,7 +37046,6 @@ void cm550_fuelEconomyDataBuilder(void)
 void cm550_fuelEconomyPGN_65266_Builder(void)
 
 {
-                    /* From J90280.05 @ 0x02ada8 (confidence: 81%) */
   _DAT_008035bc = CONCAT13((char)((_DAT_00803f74 & 7) << 2),0xfef200);
   _DAT_008035bc = CONCAT31(_DAT_008035bc,j1939_engine_node_source_address);
   _DAT_008035c0 = 6;
@@ -36858,7 +37067,6 @@ void cm550_ioControlDataBuilder(void)
 {
   uint local_8;
   
-                    /* From J90280.05 @ 0x02adec (confidence: 94%) */
   local_8 = _accumulated_amount_of_fuel_used_during_vehicle_operatio_0_0_10000000 >> 2;
   local_8 = cm550_scaleByRatio(local_8,0x39c2c3,1000000);
   _DAT_008035de = byteSwap32(&local_8);
@@ -36879,7 +37087,6 @@ void cm550_ioControlDataBuilder(void)
 void vp44_ioControlPGN_65244_Builder(void)
 
 {
-                    /* From J90280.05 @ 0x02ae60 (confidence: 81%) */
   _DAT_008035d0 = CONCAT13((char)((_DAT_00803f76 & 7) << 2),0xfedc00);
   _vp44_status_flags_1 = 8;
   _fuel_demand_control_flags = &DAT_008035de;
@@ -36900,7 +37107,6 @@ void vp44_ioControlPGN_65244_Builder(void)
 void vp44_engineHoursPGN_65252_Builder(void)
 
 {
-                    /* From J90280.05 @ 0x02aee2 (confidence: 75%) */
   _DAT_008035e8 = CONCAT13((char)((_DAT_00803f78 & 7) << 2),0xfee400);
   _vp44_status_flags_2 = 8;
   _DAT_008035ee = &DAT_008035f6;
@@ -36957,7 +37163,6 @@ void cm550_FUN_00033e58(void)
 void cm550_intakeManifoldPGN_65526_Builder(void)
 
 {
-                    /* From J90280.05 @ 0x02afca (confidence: 75%) */
   _DAT_00803600 = CONCAT13((char)((_DAT_00803f7a & 7) << 2),0xfef600);
   _DAT_00803604 = 8;
   _DAT_00803606 = &DAT_0080360e;
@@ -37019,7 +37224,6 @@ void cm550_FUN_00033f5a(void)
 void cm550_cruiseControlPGN_65264_Builder(void)
 
 {
-                    /* From J90280.05 @ 0x02b060 (confidence: 75%) */
   _engine_operating_mode_flags = CONCAT13((char)((_DAT_00803f7e & 7) << 2),0xfef000);
   _DAT_0080361c = 8;
   _DAT_0080361e = &DAT_00803626;
@@ -37050,7 +37254,6 @@ byte vp44CanMessage100ResponseBuilder(void)
   undefined1 uStack_5;
   
   bVar1 = DAT_00803652 & 0xf0;
-                    /* From J90280.05 @ 0x0339c2 (confidence: 81%) */
   if ((DAT_00803652 & 0xf0) == 0) {
     if (_total_number_of_engine_brake_output_drivers_at_the_ecm_0_255 < 2) {
       _total_number_of_engine_brake_output_drivers_at_the_ecm_0_255 = 1;
@@ -37168,7 +37371,6 @@ void cm550_FUN_00034232(void)
 void cm550_vehicleDistancePGN_65248_Builder(void)
 
 {
-                    /* From J90280.05 @ 0x02b29e (confidence: 81%) */
   _DAT_00803654 = CONCAT13((char)((_DAT_00803f82 & 7) << 2),0xfee000);
   _DAT_00803658 = 8;
   _DAT_0080365a = &DAT_00803662;
@@ -37191,7 +37393,6 @@ void cm550_retarderDataBuilder(void)
 {
   undefined2 local_6;
   
-                    /* From J90280.05 @ 0x02b2f4 (confidence: 94%) */
   local_6 = (undefined2)((uint)_filtered_and_linearized_battery_voltage_0_40 * 0x14 >> 3);
   _loop_termination_flag = byteSwap16(&local_6);
   cm550_sendCanMessage((j1939_header_t *)&DAT_0080366c);
@@ -37209,7 +37410,6 @@ void cm550_retarderDataBuilder(void)
 void cm550_electronicBrakePGN_65527_Builder(void)
 
 {
-                    /* From J90280.05 @ 0x02b338 (confidence: 75%) */
   _DAT_0080366c = CONCAT13((char)((_DAT_00803f84 & 7) << 2),0xfef700);
   _DAT_00803670 = 8;
   _DAT_00803672 = &eeprom_calibration_write_state;
@@ -37252,7 +37452,6 @@ void cm550_FUN_00034394(void)
 void vp44_vehicleHoursPGN_65255_Builder(void)
 
 {
-                    /* From J90280.05 @ 0x02b3fc (confidence: 81%) */
   _eeprom_calibration_check_value_3 = CONCAT13((char)((_DAT_00803f86 & 7) << 2),0xfee700);
   _vp44_comm_test_sensor_value = 8;
   _redundant_sensor_param_1 = &protection_flag_source_2;
@@ -37349,7 +37548,6 @@ void cm550_FUN_0003452a(void)
 void cm550_initLoopCounter(void)
 
 {
-                    /* From J90280.05 @ 0x02b46a (confidence: 75%) */
   _time_that_the_engine_is_not_in_stop_state_0_2_29 = _eeprom_engine_run_time_buffer;
   return;
 }
@@ -37365,7 +37563,6 @@ void cm550_initLoopCounter(void)
 void cm550_setDiagnosticSourceFromFuelArbitrator(void)
 
 {
-                    /* From J90280.05 @ 0x02b476 (confidence: 81%) */
   if ((_FSDSFLST == 0) && (_datalink_speed_control_mode == 2)) {
     _FSDSFLST = 1;
     _fuel_demand_selected = _datalink_torque_demand_fueling;
@@ -37384,7 +37581,6 @@ void cm550_setDiagnosticSourceFromFuelArbitrator(void)
 void cm550_setDiagnosticSourceFromEngineFlags(void)
 
 {
-                    /* From J90280.05 @ 0x02b49a (confidence: 88%) */
   if ((_FSDSFLST == 0) && ((_DAT_00803c9c & 1) != 0)) {
     _FSDSFLST = 5;
     _fuel_demand_selected = _DAT_0080404a;
@@ -37405,7 +37601,6 @@ void cm550_engine_protection_coordinator(void)
 {
   undefined2 uVar1;
   
-                    /* From J90280.05 @ 0x02b4c2 (confidence: 75%) */
   uVar1 = _FSDSFLST;
   _FSDSFLST = 0;
   cm550_diagnosticStatus30Setter();
@@ -37427,7 +37622,6 @@ void cm550_engine_protection_coordinator(void)
 void cm550_initMultiSystemParameters(void)
 
 {
-                    /* From J90280.05 @ 0x02b4fe (confidence: 78%) */
   cm550_fuelBlendTablePointerSetup();
   cm550_fuelDemandTablePointerInit();
   cm550_FUN_0002db2a();
@@ -37440,8 +37634,6 @@ void cm550_initMultiSystemParameters(void)
 // Function: cm550_addressRangeValidator @ 0x0003460e
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 undefined4 cm550_addressRangeValidator(dword target_address,dword operation_length)
 
 {
@@ -37451,7 +37643,6 @@ undefined4 cm550_addressRangeValidator(dword target_address,dword operation_leng
   uint uVar4;
   uint *puVar5;
   
-                    /* From J90280.05 @ 0x02b544 (confidence: 100%) */
   uVar2 = operation_length >> 0x10;
   uVar4 = (target_address + uVar2) - 1;
   if (uVar4 < target_address) {
@@ -37482,45 +37673,65 @@ undefined4 cm550_addressRangeValidator(dword target_address,dword operation_leng
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void mc68k_pwmTimerMode0Init(void)
+uint mc68k_pwmTimerMode0Init(void)
 
 {
-  int iVar1;
-  int iVar2;
-  uint uVar3;
-  int *piVar4;
+  ushort uVar1;
+  uint uVar2;
+  int iVar3;
+  int iVar4;
+  int *piVar5;
   
-                    /* From J90280.05 @ 0x02b5aa (confidence: 88%) */
-  if (speed_measurement_mode == '\0') {
+  if (speed_measurement_mode == 0) {
+    uVar1 = Ram00fffe1e;
+    Ram00fffe1e = uVar1 & 0xfffc;
+    uVar1 = Ram00fffe0a;
+    Ram00fffe0a = uVar1 & 0xfffe;
+    uVar1 = Ram00fffe20;
+    Ram00fffe20 = uVar1 & 0xfffe;
     _DAT_00808edc = 0x19c88;
-    _DAT_00fffe12 = _DAT_00fffe12 & 0xfff0 | 0xc;
-    _DAT_00ffff04 = _DAT_00807ec8 / 6;
-    _DAT_00ffff02 = 0xe;
-    _DAT_00ffff00 = 0xb;
-    _DAT_00fffe16 = _DAT_00fffe16 & 0xfffc | 1;
-    _DAT_00fffe1a = _DAT_00fffe1a & 0xfffc | 1;
-    _DAT_00fffe1e = _DAT_00fffe1e & 0xfffc | 2;
-    _DAT_00fffe0a = _DAT_00fffe0a & 0xfffe | 1;
-    _DAT_00fffe20 = _DAT_00fffe20 & 0xfffe;
-    return;
+    uVar1 = Ram00fffe12;
+    Ram00fffe12 = uVar1 & 0xfff0;
+    uVar1 = Ram00fffe12;
+    Ram00fffe12 = uVar1 | 0xc;
+    Ram00ffff04 = (short)(_DAT_00807ec8 / 6);
+    Ram00ffff02 = 0xe;
+    Ram00ffff00 = 0xb;
+    uVar1 = Ram00fffe16;
+    Ram00fffe16 = uVar1 & 0xfffc;
+    uVar1 = Ram00fffe16;
+    Ram00fffe16 = uVar1 | 1;
+    uVar1 = Ram00fffe1a;
+    Ram00fffe1a = uVar1 & 0xfffc;
+    uVar1 = Ram00fffe1a;
+    Ram00fffe1a = uVar1 | 1;
+    uVar1 = Ram00fffe1e;
+    Ram00fffe1e = uVar1 & 0xfffc;
+    uVar1 = Ram00fffe1e;
+    Ram00fffe1e = uVar1 | 2;
+    uVar1 = Ram00fffe0a;
+    Ram00fffe0a = uVar1 | 1;
+    uVar1 = Ram00fffe20;
+    Ram00fffe20 = uVar1 & 0xfffe;
+    return _DAT_00807ec8 / 6;
   }
-  if (speed_measurement_mode != '\x01') {
-    return;
+  if (speed_measurement_mode != 1) {
+    return (uint)speed_measurement_mode;
   }
   current_cylinder_index = index_of_first_tdc_after_missed_pulse_1_6 + -1;
-  iVar1 = 0;
-  iVar2 = 0;
-  uVar3 = (uint)base_number_of_speed_pulses_per_cam_1_254;
-  piVar4 = (int *)&DAT_0080a23a;
+  iVar3 = 0;
+  iVar4 = 0;
+  uVar2 = (uint)base_number_of_speed_pulses_per_cam_1_254;
+  piVar5 = (int *)&DAT_0080a23a;
   do {
-    *piVar4 = iVar2 / 6;
-    iVar2 = uVar3 * 0x10000 + iVar2;
-    iVar1 = iVar1 + 1;
-    piVar4 = piVar4 + 1;
-  } while (iVar1 < 6);
+    *piVar5 = iVar4 / 6;
+    iVar4 = uVar2 * 0x10000 + iVar4;
+    iVar3 = iVar3 + 1;
+    piVar5 = piVar5 + 1;
+  } while (iVar3 < 6);
   _DAT_0080a236 = (uint)base_number_of_speed_pulses_per_cam_1_254 << 0x10;
-  mc68k_pwmTimerMode1Update();
-  return;
+  uVar2 = mc68k_pwmTimerMode1Update();
+  return uVar2;
 }
 
 
@@ -37531,21 +37742,42 @@ void mc68k_pwmTimerMode0Init(void)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void mc68k_timerCaptureHardwareInit(void)
+uint mc68k_timerCaptureHardwareInit(void)
 
 {
-                    /* From J90280.05 @ 0x02ed96 (confidence: 88%) */
+  ushort uVar1;
+  
+  uVar1 = Ram00fffe1e;
+  Ram00fffe1e = uVar1 & 0xfffc;
+  uVar1 = Ram00fffe0a;
+  Ram00fffe0a = uVar1 & 0xfffe;
+  uVar1 = Ram00fffe20;
+  Ram00fffe20 = uVar1 & 0xfffe;
   _DAT_00808edc = 0x19c88;
-  _DAT_00fffe12 = _DAT_00fffe12 & 0xfff0 | 0xc;
-  _DAT_00ffff04 = _DAT_00807ec8 / 6;
-  _DAT_00ffff02 = 0xe;
-  _DAT_00ffff00 = 0xb;
-  _DAT_00fffe16 = _DAT_00fffe16 & 0xfffc | 1;
-  _DAT_00fffe1a = _DAT_00fffe1a & 0xfffc | 1;
-  _DAT_00fffe1e = _DAT_00fffe1e & 0xfffc | 2;
-  _DAT_00fffe0a = _DAT_00fffe0a & 0xfffe | 1;
-  _DAT_00fffe20 = _DAT_00fffe20 & 0xfffe;
-  return;
+  uVar1 = Ram00fffe12;
+  Ram00fffe12 = uVar1 & 0xfff0;
+  uVar1 = Ram00fffe12;
+  Ram00fffe12 = uVar1 | 0xc;
+  Ram00ffff04 = (short)(_DAT_00807ec8 / 6);
+  Ram00ffff02 = 0xe;
+  Ram00ffff00 = 0xb;
+  uVar1 = Ram00fffe16;
+  Ram00fffe16 = uVar1 & 0xfffc;
+  uVar1 = Ram00fffe16;
+  Ram00fffe16 = uVar1 | 1;
+  uVar1 = Ram00fffe1a;
+  Ram00fffe1a = uVar1 & 0xfffc;
+  uVar1 = Ram00fffe1a;
+  Ram00fffe1a = uVar1 | 1;
+  uVar1 = Ram00fffe1e;
+  Ram00fffe1e = uVar1 & 0xfffc;
+  uVar1 = Ram00fffe1e;
+  Ram00fffe1e = uVar1 | 2;
+  uVar1 = Ram00fffe0a;
+  Ram00fffe0a = uVar1 | 1;
+  uVar1 = Ram00fffe20;
+  Ram00fffe20 = uVar1 & 0xfffe;
+  return _DAT_00807ec8 / 6;
 }
 
 
@@ -37554,22 +37786,39 @@ void mc68k_timerCaptureHardwareInit(void)
 // Function: mc68k_pwmTimerMode0Reset @ 0x0003478c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void mc68k_pwmTimerMode0Reset(void)
 
 {
-                    /* From J90280.05 @ 0x02b6c2 (confidence: 94%) */
+  ushort uVar1;
+  
   if (speed_measurement_mode == '\0') {
-    _DAT_00fffe20 = _DAT_00fffe20 & 0xfffe;
-    _DAT_00fffe12 = _DAT_00fffe12 & 0xfff0 | 0xc;
-    _DAT_00ffff04 = 1;
-    _DAT_00ffff02 = 0xe;
-    _DAT_00ffff00 = 0xb;
-    _DAT_00fffe16 = _DAT_00fffe16 & 0xfffc | 1;
-    _DAT_00fffe1a = _DAT_00fffe1a & 0xfffc | 1;
-    _DAT_00fffe0a = _DAT_00fffe0a & 0xfffe | 1;
-    _DAT_00fffe1e = _DAT_00fffe1e & 0xfffc | 2;
+    uVar1 = Ram00fffe1e;
+    Ram00fffe1e = uVar1 & 0xfffc;
+    uVar1 = Ram00fffe0a;
+    Ram00fffe0a = uVar1 & 0xfffe;
+    uVar1 = Ram00fffe20;
+    Ram00fffe20 = uVar1 & 0xfffe;
+    uVar1 = Ram00fffe12;
+    Ram00fffe12 = uVar1 & 0xfff0;
+    uVar1 = Ram00fffe12;
+    Ram00fffe12 = uVar1 | 0xc;
+    Ram00ffff04 = 1;
+    Ram00ffff02 = 0xe;
+    Ram00ffff00 = 0xb;
+    uVar1 = Ram00fffe16;
+    Ram00fffe16 = uVar1 & 0xfffc;
+    uVar1 = Ram00fffe16;
+    Ram00fffe16 = uVar1 | 1;
+    uVar1 = Ram00fffe1a;
+    Ram00fffe1a = uVar1 & 0xfffc;
+    uVar1 = Ram00fffe1a;
+    Ram00fffe1a = uVar1 | 1;
+    uVar1 = Ram00fffe0a;
+    Ram00fffe0a = uVar1 | 1;
+    uVar1 = Ram00fffe1e;
+    Ram00fffe1e = uVar1 & 0xfffc;
+    uVar1 = Ram00fffe1e;
+    Ram00fffe1e = uVar1 | 2;
   }
   return;
 }
@@ -37582,14 +37831,16 @@ void mc68k_pwmTimerMode0Reset(void)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void mc68k_pwmTimerMode1ChannelSetup(void)
+ushort mc68k_pwmTimerMode1ChannelSetup(void)
 
 {
   int iVar1;
   ushort uVar2;
   uint uVar3;
+  ushort uVar4;
+  ushort uVar5;
+  ushort uVar6;
   
-                    /* From J90280.05 @ 0x02b744 (confidence: 81%) */
   current_cylinder_index = index_of_first_tdc_after_missed_pulse_1_6 - 1U;
   iVar1 = _DAT_0080a236 +
           _dzg_angle_after_cyl_tdc_angle_after_cyl_tdc_to_put_dzg_first_60_60 +
@@ -37599,33 +37850,52 @@ void mc68k_pwmTimerMode1ChannelSetup(void)
   ;
   uVar3 = (iVar1 >> 0x10 & 0xffffU) %
           (pmm_num_of_teeth_correct_tooth_count_at_missing_tooth_0_255 + 2);
-  _DAT_00ffff38 = (ushort)uVar3;
-  uVar2 = (ushort)(iVar1 >> 1) & 0x7f00;
+  uVar5 = (ushort)uVar3;
+  uVar6 = (ushort)(iVar1 >> 1) & 0x7f00;
   if (uVar3 == pmm_num_of_teeth_correct_tooth_count_at_missing_tooth_0_255 + 1) {
-    _DAT_00ffff38 = _DAT_00ffff38 - 1 | uVar2 | 0x8000;
+    uVar5 = uVar5 - 1 | uVar6 | 0x8000;
   }
   else {
-    _DAT_00ffff38 = _DAT_00ffff38 | uVar2;
+    uVar5 = uVar5 | uVar6;
   }
   uVar3 = (_dzg_angular_duration_angular_high_duration_of_dzg_pulse_at_tpu_0_60 + iVar1 >> 0x10 &
           0xffffU) % (pmm_num_of_teeth_correct_tooth_count_at_missing_tooth_0_255 + 2);
-  _DAT_00ffff3a = (ushort)uVar3;
-  uVar2 = (ushort)(_dzg_angular_duration_angular_high_duration_of_dzg_pulse_at_tpu_0_60 + iVar1 >> 1
+  uVar4 = (ushort)uVar3;
+  uVar6 = (ushort)(_dzg_angular_duration_angular_high_duration_of_dzg_pulse_at_tpu_0_60 + iVar1 >> 1
                   ) & 0x7f00;
   if (pmm_num_of_teeth_correct_tooth_count_at_missing_tooth_0_255 + 1 == uVar3) {
-    _DAT_00ffff3a = _DAT_00ffff3a - 1 | uVar2 | 0x8000;
+    uVar4 = uVar4 - 1;
+    uVar6 = uVar4 | uVar6 | 0x8000;
   }
   else {
-    _DAT_00ffff3a = _DAT_00ffff3a | uVar2;
+    uVar6 = uVar4 | uVar6;
   }
-  _DAT_00fffe20 = _DAT_00fffe20 & 0xfff7;
-  _DAT_00fffe12 = _DAT_00fffe12 & 0xfff | 0x8000;
-  _DAT_00ffff30 = 0x880;
-  _DAT_00fffe16 = _DAT_00fffe16 & 0xff3f;
-  _DAT_00fffe1a = _DAT_00fffe1a & 0xff3f | 0x80;
-  _DAT_00fffe1e = _DAT_00fffe1e & 0xff3f | 0x80;
-  _DAT_00fffe0a = _DAT_00fffe0a & 0xfff7 | 8;
-  return;
+  uVar2 = Ram00fffe1e;
+  Ram00fffe1e = uVar2 & 0xff3f;
+  uVar2 = Ram00fffe0a;
+  Ram00fffe0a = uVar2 & 0xfff7;
+  uVar2 = Ram00fffe20;
+  Ram00fffe20 = uVar2 & 0xfff7;
+  uVar2 = Ram00fffe12;
+  Ram00fffe12 = uVar2 & 0xfff;
+  uVar2 = Ram00fffe12;
+  Ram00fffe12 = uVar2 | 0x8000;
+  Ram00ffff30 = 0x880;
+  Ram00ffff38 = uVar5;
+  Ram00ffff3a = uVar6;
+  uVar6 = Ram00fffe16;
+  Ram00fffe16 = uVar6 & 0xff3f;
+  uVar6 = Ram00fffe1a;
+  Ram00fffe1a = uVar6 & 0xff3f;
+  uVar6 = Ram00fffe1a;
+  Ram00fffe1a = uVar6 | 0x80;
+  uVar6 = Ram00fffe1e;
+  Ram00fffe1e = uVar6 & 0xff3f;
+  uVar6 = Ram00fffe1e;
+  Ram00fffe1e = uVar6 | 0x80;
+  uVar6 = Ram00fffe0a;
+  Ram00fffe0a = uVar6 | 8;
+  return uVar4;
 }
 
 
@@ -37636,48 +37906,69 @@ void mc68k_pwmTimerMode1ChannelSetup(void)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void mc68k_pwmTimerMode1Update(void)
+ushort mc68k_pwmTimerMode1Update(void)
 
 {
   int iVar1;
   ushort uVar2;
   uint uVar3;
+  ushort uVar4;
+  ushort uVar5;
+  ushort uVar6;
   
-                    /* From J90280.05 @ 0x02b880 (confidence: 81%) */
   iVar1 = _DAT_0080a236 +
           _dzg_angle_after_cyl_tdc_angle_after_cyl_tdc_to_put_dzg_first_60_60 +
           _engine_position_offset_distance_between_tooth_0_and_tdc_1_100_100 +
           *(int *)(&DAT_0080a23a + (short)(ushort)current_cylinder_index * 4) + 0x100;
   uVar3 = (iVar1 >> 0x10 & 0xffffU) %
           (pmm_num_of_teeth_correct_tooth_count_at_missing_tooth_0_255 + 2);
-  _DAT_00ffff38 = (ushort)uVar3;
-  uVar2 = (ushort)(iVar1 >> 1) & 0x7f00;
+  uVar5 = (ushort)uVar3;
+  uVar6 = (ushort)(iVar1 >> 1) & 0x7f00;
   if (uVar3 == pmm_num_of_teeth_correct_tooth_count_at_missing_tooth_0_255 + 1) {
-    _DAT_00ffff38 = _DAT_00ffff38 - 1 | uVar2 | 0x8000;
+    uVar5 = uVar5 - 1 | uVar6 | 0x8000;
   }
   else {
-    _DAT_00ffff38 = _DAT_00ffff38 | uVar2;
+    uVar5 = uVar5 | uVar6;
   }
   uVar3 = (_dzg_angular_duration_angular_high_duration_of_dzg_pulse_at_tpu_0_60 + iVar1 >> 0x10 &
           0xffffU) % (pmm_num_of_teeth_correct_tooth_count_at_missing_tooth_0_255 + 2);
-  _DAT_00ffff3a = (ushort)uVar3;
-  uVar2 = (ushort)(_dzg_angular_duration_angular_high_duration_of_dzg_pulse_at_tpu_0_60 + iVar1 >> 1
+  uVar4 = (ushort)uVar3;
+  uVar6 = (ushort)(_dzg_angular_duration_angular_high_duration_of_dzg_pulse_at_tpu_0_60 + iVar1 >> 1
                   ) & 0x7f00;
   if (pmm_num_of_teeth_correct_tooth_count_at_missing_tooth_0_255 + 1 == uVar3) {
-    _DAT_00ffff3a = _DAT_00ffff3a - 1 | uVar2 | 0x8000;
+    uVar4 = uVar4 - 1;
+    uVar6 = uVar4 | uVar6 | 0x8000;
   }
   else {
-    _DAT_00ffff3a = _DAT_00ffff3a | uVar2;
+    uVar6 = uVar4 | uVar6;
   }
-  _DAT_00fffe20 = _DAT_00fffe20 & 0xfff7;
-  _DAT_00fffe12 = _DAT_00fffe12 & 0xfff | 0x8000;
-  _DAT_00ffff30 = 0x880;
-  _DAT_00fffe16 = _DAT_00fffe16 & 0xff3f;
-  _DAT_00fffe1a = _DAT_00fffe1a & 0xff3f | 0x80;
-  _DAT_00fffe1e = _DAT_00fffe1e & 0xff3f | 0x80;
+  uVar2 = Ram00fffe1e;
+  Ram00fffe1e = uVar2 & 0xff3f;
+  uVar2 = Ram00fffe0a;
+  Ram00fffe0a = uVar2 & 0xfff7;
+  uVar2 = Ram00fffe20;
+  Ram00fffe20 = uVar2 & 0xfff7;
+  uVar2 = Ram00fffe12;
+  Ram00fffe12 = uVar2 & 0xfff;
+  uVar2 = Ram00fffe12;
+  Ram00fffe12 = uVar2 | 0x8000;
+  Ram00ffff30 = 0x880;
+  Ram00ffff38 = uVar5;
+  Ram00ffff3a = uVar6;
+  uVar6 = Ram00fffe16;
+  Ram00fffe16 = uVar6 & 0xff3f;
+  uVar6 = Ram00fffe1a;
+  Ram00fffe1a = uVar6 & 0xff3f;
+  uVar6 = Ram00fffe1a;
+  Ram00fffe1a = uVar6 | 0x80;
+  uVar6 = Ram00fffe1e;
+  Ram00fffe1e = uVar6 & 0xff3f;
+  uVar6 = Ram00fffe1e;
+  Ram00fffe1e = uVar6 | 0x80;
   _DAT_00808ee8 = mc68k_pwmTimerCycleAdvance;
-  _DAT_00fffe0a = _DAT_00fffe0a & 0xfff7 | 8;
-  return;
+  uVar6 = Ram00fffe0a;
+  Ram00fffe0a = uVar6 | 8;
+  return uVar4;
 }
 
 
@@ -37691,18 +37982,33 @@ void mc68k_pwmTimerMode1Update(void)
 void mc68k_pwmTimerModeDispatcher(void)
 
 {
-                    /* From J90280.05 @ 0x02b9b8 (confidence: 88%) */
+  ushort uVar1;
+  
   if (speed_measurement_mode == '\0') {
-    _DAT_00ffff04 = _DAT_00807ec8 / 6;
-    _DAT_00fffe0a = _DAT_00fffe0a & 0xfff7;
-    _DAT_00fffe20 = _DAT_00fffe20 & 0xfff7;
-    _DAT_00fffe12 = _DAT_00fffe12 & 0xfff | 0xa000;
-    _DAT_00ffff34 = 0;
-    _DAT_00ffff38 = 0x19b;
-    _DAT_00ffff30 = 0x8e;
-    _DAT_00fffe16 = _DAT_00fffe16 & 0xff3f;
-    _DAT_00fffe1a = _DAT_00fffe1a & 0xff3f | 0x80;
-    _DAT_00fffe1e = _DAT_00fffe1e & 0xff3f | 0x40;
+    Ram00ffff04 = _DAT_00807ec8 / 6;
+    uVar1 = Ram00fffe1e;
+    Ram00fffe1e = uVar1 & 0xff3f;
+    uVar1 = Ram00fffe0a;
+    Ram00fffe0a = uVar1 & 0xfff7;
+    uVar1 = Ram00fffe20;
+    Ram00fffe20 = uVar1 & 0xfff7;
+    uVar1 = Ram00fffe12;
+    Ram00fffe12 = uVar1 & 0xfff;
+    uVar1 = Ram00fffe12;
+    Ram00fffe12 = uVar1 | 0xa000;
+    Ram00ffff34 = 0;
+    Ram00ffff38 = 0x19b;
+    Ram00ffff30 = 0x8e;
+    uVar1 = Ram00fffe16;
+    Ram00fffe16 = uVar1 & 0xff3f;
+    uVar1 = Ram00fffe1a;
+    Ram00fffe1a = uVar1 & 0xff3f;
+    uVar1 = Ram00fffe1a;
+    Ram00fffe1a = uVar1 | 0x80;
+    uVar1 = Ram00fffe1e;
+    Ram00fffe1e = uVar1 & 0xff3f;
+    uVar1 = Ram00fffe1e;
+    Ram00fffe1e = uVar1 | 0x40;
   }
   if ((pmm_error_type_signifies_the_type_of_sync_error_found_by_pmma_0_ff != '\0') &&
      (speed_measurement_mode == '\x01')) {
@@ -37717,16 +38023,14 @@ void mc68k_pwmTimerModeDispatcher(void)
 // Function: mc68k_pwmTimerCycleAdvance @ 0x00034b20
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 undefined8 mc68k_pwmTimerCycleAdvance(void)
 
 {
+  ushort uVar1;
   undefined4 in_D0;
   undefined4 in_D1;
-  uint uVar1;
+  uint uVar2;
   
-                    /* From J90280.05 @ 0x02ba56 (confidence: 81%) */
   if (CMSYSS == '\x01') {
     switch(current_cylinder_index) {
     case 0:
@@ -37744,13 +38048,14 @@ undefined8 mc68k_pwmTimerCycleAdvance(void)
       }
     }
   }
-  uVar1 = (current_cylinder_index + 1) % 6;
-  current_cylinder_index = (byte)uVar1;
+  uVar2 = (current_cylinder_index + 1) % 6;
+  current_cylinder_index = (byte)uVar2;
   next_injected_cylinder_FLCYCU =
-       (char)((current_cylinder_counter_resets_to_this_when_eps_ref_pulse_occu_0_16 + uVar1) % 6) +
+       (char)((current_cylinder_counter_resets_to_this_when_eps_ref_pulse_occu_0_16 + uVar2) % 6) +
        '\x01';
   mc68k_pwmTimerMode1Update();
-  _DAT_00fffe20 = _DAT_00fffe20 & 0xfff7;
+  uVar1 = Ram00fffe20;
+  Ram00fffe20 = uVar1 & 0xfff7;
   return CONCAT44(in_D0,in_D1);
 }
 
@@ -37760,14 +38065,17 @@ undefined8 mc68k_pwmTimerCycleAdvance(void)
 // Function: cm550_watchdogServiceLoop @ 0x00034bba
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm550_watchdogServiceLoop(undefined4 param_1)
 
 {
-                    /* From J90280.05 @ 0x02bb2e (confidence: 100%) */
-  while (param_1._0_2_ != 0) {
+  short sVar1;
+  short sVar2;
+  
+  sVar1 = Ram00fff404;
+  while (sVar2 = Ram00fff404, (ushort)(sVar2 - sVar1) < param_1._0_2_) {
+    DAT_00fffa27 = 0x55;
     DAT_00fffa27 = 0xaa;
+    DAT_00ffd00f = 0x55;
     DAT_00ffd00f = 0xaa;
   }
   return;
@@ -37779,16 +38087,18 @@ void cm550_watchdogServiceLoop(undefined4 param_1)
 // Function: cm550_FUN_00034bf8 @ 0x00034bf8
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 void cm550_FUN_00034bf8(word timer_ticks)
 
 {
-  short in_stack_00000004;
+  short sVar1;
+  short sVar2;
+  ushort in_stack_00000004;
   
-  while (in_stack_00000004 != 0) {
+  sVar1 = Ram00fff404;
+  while (sVar2 = Ram00fff404, (ushort)(sVar2 - sVar1) < in_stack_00000004) {
+    DAT_00fffa27 = 0x55;
     DAT_00fffa27 = 0xaa;
+    DAT_00ffd00f = 0x55;
     DAT_00ffd00f = 0xaa;
   }
   return;
@@ -37808,7 +38118,6 @@ ushort vp44FaultRegisterBit2Monitor(void)
   word wVar1;
   ushort uVar2;
   
-                    /* From J90280.05 @ 0x031306 (confidence: 80%) */
   wVar1 = lamp_driver_output_bitmask;
   if ((_calibration_feature_enable_flags_word_9 & 4) == 0) {
     _status_32_word_bit_mapped_system_error_status_word_4_0_1 =
@@ -37851,7 +38160,6 @@ void vp44_liftPumpFuelDeliveryController(void)
 {
   ushort uVar1;
   
-                    /* From J90280.05 @ 0x033c84 (confidence: 72%) */
   _DAT_008036c6 = 2;
   _DAT_008036c8 = &vp44_fault_timer_threshold;
   _DAT_008036cc = _filtered_and_linearized_intake_manifold_temperature_50_to_293;
@@ -37925,8 +38233,6 @@ void cm550_FUN_00034dba(void)
 // Function: lookupTableInterpolation @ 0x00034de0
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 short lookupTableInterpolation(table_interp_args_t *args)
 
 {
@@ -37936,7 +38242,6 @@ short lookupTableInterpolation(table_interp_args_t *args)
   ushort *puVar4;
   ushort *puVar5;
   
-                    /* From J90280.05 @ 0x035560 (confidence: 94%) */
   psVar1 = (short *)args->x_axis_ptr;
   puVar5 = (ushort *)((int)psVar1 + (int)(short)args->current_index);
   uVar2 = args->input_value;
@@ -37985,8 +38290,6 @@ LAB_00034e40:
 // Function: exponentialMovingAverage @ 0x00034e9a
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 undefined8 exponentialMovingAverage(word current_avg,word new_sample,word smoothing_factor)
 
 {
@@ -37996,7 +38299,6 @@ undefined8 exponentialMovingAverage(word current_avg,word new_sample,word smooth
   short in_stack_00000004;
   undefined2 in_stack_00000008;
   
-                    /* From J90280.05 @ 0x035608 (confidence: 100%) */
   uVar1 = *(ushort *)*_current_avg;
   if (uVar1 == 0) {
     iVar2 = (uint)(ushort)(in_stack_00000004 + 0x8000) << 0x10;
@@ -38017,8 +38319,6 @@ undefined8 exponentialMovingAverage(word current_avg,word new_sample,word smooth
 // Function: cm550_unsignedLinearInterpolation @ 0x00034f00
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 undefined4
 cm550_unsignedLinearInterpolation(word x_low,word x_high,word y_low,word y_high,word x_input)
 
@@ -38031,7 +38331,6 @@ cm550_unsignedLinearInterpolation(word x_low,word x_high,word y_low,word y_high,
   ushort in_stack_00000004;
   undefined2 in_stack_00000008;
   
-                    /* From J90280.05 @ 0x03574e (confidence: 100%) */
   lVar3 = (longlong)(int)(uint)*(ushort *)*_x_low * (longlong)(int)((uint)in_stack_00000004 << 0x10)
           + (longlong)(int)_x_low[2] *
             (longlong)(int)(((uint)*(ushort *)_x_low[1] - (uint)*(ushort *)*_x_low) + 0xffff);
@@ -38062,8 +38361,6 @@ cm550_unsignedLinearInterpolation(word x_low,word x_high,word y_low,word y_high,
 // Function: cm550_coreTableInterpolation @ 0x00034f8a
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 undefined8 cm550_coreTableInterpolation(void *table_descriptor,word input_value,word scaling_factor)
 
 {
@@ -38073,7 +38370,6 @@ undefined8 cm550_coreTableInterpolation(void *table_descriptor,word input_value,
   undefined4 in_D1;
   undefined2 in_stack_00000008;
   
-                    /* From J90280.05 @ 0x0356f8 (confidence: 100%) */
   puVar2 = (undefined4 *)CONCAT22(table_descriptor._2_2_,in_stack_00000008);
   uVar1 = *(ushort *)*puVar2;
   if (uVar1 == 0) {
@@ -38094,8 +38390,6 @@ undefined8 cm550_coreTableInterpolation(void *table_descriptor,word input_value,
 // Function: cm550_scaleByRatio @ 0x00035064
 //
 
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
-
 undefined4 cm550_scaleByRatio(dword multiplicand,dword multiplier,dword divisor)
 
 {
@@ -38107,8 +38401,6 @@ undefined4 cm550_scaleByRatio(dword multiplicand,dword multiplier,dword divisor)
 //
 // Function: cm550_scaleByRatioSigned @ 0x00035076
 //
-
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 undefined4 cm550_scaleByRatioSigned(dword multiplicand,dword multiplier,dword divisor)
 
@@ -38124,8 +38416,6 @@ undefined4 cm550_scaleByRatioSigned(dword multiplicand,dword multiplier,dword di
 //
 // Function: cm550_tableLookup2D @ 0x00035088
 //
-
-/* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 undefined8 cm550_tableLookup2D(word *table_args)
 

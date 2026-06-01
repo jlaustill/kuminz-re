@@ -1,76 +1,34 @@
 # J90350.00 Firmware Analysis (Live ECU Extraction)
 
-## Quick Workflow Reference
+## Quick Workflow Reference — ONE deterministic build
 
-```bash
-# 1. Edit CSV files in output/
-#    - function_renames.csv, global_variables.csv, enums.csv, etc.
+The Ghidra `.rep` is a disposable build artifact; the CSVs in `output/` are the only source
+of truth. There is one way to produce output — `build` — and it applies every CSV from scratch.
 
-# 2. Apply changes via CLI
-cd ghidra
-./analyze.sh import
-
-# 3. Export updated decompilation
-./analyze.sh export
-
-# 4. Verify output
-#    Check: output/J90350.00.ghidra.cpp
-
-# 5. Commit changes
-```
-
-**CSV Location:** `output/`
-**Ghidra Project:** `ghidra/project/J90350/`
-**Apply Command:** `./analyze.sh import` then `./analyze.sh export`
-
----
-
-## Full Command Reference
-
-The `ghidra/analyze.sh` script provides all analysis commands:
-
-```bash
-./analyze.sh init       # Import firmware (no analysis)
-./analyze.sh analyze    # Run Ghidra auto-analysis
-./analyze.sh memmap     # Add RAM/EEPROM regions from live dumps
-./analyze.sh export     # Export to CSVs + decompiled C
-./analyze.sh import     # Import CSV changes back into Ghidra
-./analyze.sh structures # Apply structure definitions
-./analyze.sh enums      # Apply enum definitions
-./analyze.sh hwregs     # Apply MC68336 hardware register names
-./analyze.sh labels     # Apply code labels
-./analyze.sh funcdefs   # Apply function definitions (params + return types)
-./analyze.sh localvars  # Apply local variable types
-./analyze.sh constants  # Apply constant definitions
-./analyze.sh arrays     # Apply array definitions
-./analyze.sh decompile <addr|name>  # Decompile single function
-./analyze.sh full       # Run complete pipeline from scratch
-./analyze.sh status     # Show project status
-```
-
----
-
-## Typical Workflows
-
-### Initial Setup (from scratch)
 ```bash
 cd ghidra
-./analyze.sh full    # Runs: init -> analyze -> memmap -> import -> export
+# 1. Edit CSV files in ../output/ (function_renames.csv, global_variables.csv, enums.csv, ...)
+./analyze.sh build      # 2. Rebuild from scratch (deterministic, single-threaded)
+./analyze.sh verify     # 3. (optional) prove byte-identical reproducibility
+# 4. Verify output: output/J90350.00.ghidra.cpp ; 5. Commit
 ```
 
-### After Editing CSVs
+**CSV Location:** `output/` · **Ghidra Project:** `ghidra/project/J90350/`
+
+## Command Reference
+
 ```bash
-cd ghidra
-./analyze.sh import  # Apply CSV changes to Ghidra
-./analyze.sh export  # Regenerate decompilation
+./analyze.sh build      # The one build: fresh binary → apply every CSV → .cpp + CSVs
+./analyze.sh verify     # Build twice, assert byte-identical (determinism contract)
+./analyze.sh deletefuncs <addr>...  # Record spurious-function addr(s) to deleted_functions.csv
+./analyze.sh status     # Project status (read-only)
+./analyze.sh decompile <addr|name>  # Decompile single function (read-only)
+./analyze.sh listfuncs <out> / classifyfuncs <addrs> <out>  # Read-only repro diagnostics
 ```
 
-### Quick Decompile (single function)
-```bash
-cd ghidra
-./analyze.sh decompile 0x22e5e           # By address
-./analyze.sh decompile sendJ1939MultiFrame  # By name
-```
+CM550 `build` order (single-bank MC68336): `init → analyze → memmap → enums → import →
+deletions → import → hwregs → labels → constants → arrays → export`. Partials
+(`import`/`export`/`analyze`/…) were removed — edit CSVs and run `build`.
 
 ---
 
