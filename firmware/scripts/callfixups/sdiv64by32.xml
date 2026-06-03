@@ -1,0 +1,16 @@
+<!--
+  Call-fixup for the SIGNED 64-bit / 32-bit division runtime helper(s).
+  Same shape as udiv64by32 but uses SLEIGH signed division (s/). The r3:r4
+  bit-pattern join is interpreted as signed by s/. Writes only r4 (low word).
+  See callfixups/udiv64by32.xml for the register/return rationale.
+-->
+<callfixup name="sdiv64by32">
+  <pcode>
+    <body><![CDATA[
+dvd:8 = (zext(r3) << 32) | zext(r4);
+dvs:8 = (zext(r5) << 32) | zext(r6);
+q:8 = dvd s/ dvs;
+r4 = q:4;
+    ]]></body>
+  </pcode>
+</callfixup>
