@@ -148,7 +148,7 @@ can_rx_state_t,0x0040b34e,dm1_pending,word,2,DM1 diagnostic message pending flag
 protection_enable_t,0x0040c050,mode_bits,byte,1,Protection mode selection bits,,verified
 protection_enable_t,0x0040c050,system_enable_bits,byte,1,Protection subsystem enable flags,,verified
 protection_enable_t,0x0040c050,reserved_02,byte,1,Gap/reserved,,needs_review
-protection_enable_t,0x0040c050,control_word,byte,1,Protection control word,,verified
+protection_enable_t,0x0040c050,protection_active,bitfield:1@7,1,Runtime protection-engaged boolean - bit7 (0x80); 1=limiting active. Ghidra 12.1+ renders the mask away,,verified
 # Fault List Management - DTC list indices and counters
 # Used by fault logging and DM1/DM2 message generation
 # Total size: 8 bytes (0x003fe11a-0x003fe121)
