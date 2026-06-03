@@ -2227,7 +2227,7 @@ address,name
 0x00526560,cm848_fuel_temperature_trim_calculation
 0x005266fc,cm848_transmission_phase_group_a_calc
 0x005267e0,cm848_output_shaft_speed_save
-0x005267f4,cm848_fuelTrimFromOutputShaftSpeed
+0x005267f4,cm848_fuelTrimFromOutputShaftSpeed,jlaustill reviewed 2026-6-2 - reads better than before, but very low confidence
 0x005268e8,cm848_computeProtectionTrimDivisors
 0x00526924,diag_fuelTempTrim_overtemp_check
 0x005269c0,diag_boostLoad_overtemp_monitor
