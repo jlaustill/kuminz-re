@@ -102,7 +102,10 @@ address,name,type,comment
 0x0005b16e,u__0005b16e,,
 0x0005b468,u_dd#2_0005b468,unicode,
 0x0005c294,throttle_fuel_demand_threshold_cal,word,
+0x0005c29a,fuel_demand_rate_limit_debounce_low_cal,word,Debounce count for the fuel-demand rate limiter when fuel_demand_cal_index <= throttle_fuel_demand_adjusted; when the per-mode increment reaches it a protection safety bit latches
 0x0005c29e,fuel_demand_cal_offset,word,
+0x0005c2a0,fuel_demand_smoothing_temp_threshold_cal,word,fuel_temperature_trim must exceed this for the rate-limiter debounce to advance toward latching a protection safety bit (modeled-fuel-temp gate)
+0x0005c2a4,fuel_demand_rate_limit_debounce_cal,word,Default debounce count for the fuel-demand rate limiter; per-mode increment reaching it latches a protection safety bit (safety_bits_1 0x4000/0x8000 or safety_bits_2 0x10)
 0x0005c306,timing_limit_lower,word,
 0x0005c30c,timing_limit_upper,word,
 0x0005c34e,protection_threshold_scale_cal,word,
