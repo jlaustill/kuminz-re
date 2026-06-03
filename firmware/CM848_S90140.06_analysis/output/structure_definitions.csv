@@ -806,10 +806,6 @@ boost_in_range_config_t,0x0005c994,unknown2,word,2,BIR calibration value (gap at
 boost_in_range_config_t,0x0005c994,consecutive_high_threshold,word,2,BIR consecutive high count before deviation increment,,needs_review
 # Boost In Range (BIR) State - RAM working state for BIR diagnostic
 # Total size: 10 bytes (0x003fd064-0x003fd06d)
-boost_in_range_state_t,0x003fd064,filtered_speed_ratio,word,2,BIR filtered alternate speed ratio,,needs_review
-boost_in_range_state_t,0x003fd064,previous_boost_scale,word,2,BIR previous boost_pressure_scale value,,needs_review
-boost_in_range_state_t,0x003fd064,high_boost_counter,word,2,BIR consecutive high boost count,,needs_review
-boost_in_range_state_t,0x003fd064,filter_state_ptr,pointer,4,BIR speed ratio filter state pointer,,needs_review
 # Boost In Range (BIR) Counters - RAM fault accumulation counters
 # Total size: 4 bytes (0x003fee5e-0x003fee61)
 boost_in_range_counters_t,0x003fee5e,deviation_count,word,2,BIR boost deviation event count,,needs_review
