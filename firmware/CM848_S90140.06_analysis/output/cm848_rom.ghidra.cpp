@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Wed Jun 03 07:59:01 MDT 2026
+// Generated: Wed Jun 03 09:56:33 MDT 2026
 
 
 //
@@ -77826,30 +77826,33 @@ void cm848_output_shaft_speed_save(void)
 //
 
 /* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+/* jlaustill reviewed 2026-6-2 - reads better than before, but very low confidence */
 
 void cm848_fuelTrimFromOutputShaftSpeed(void)
 
 {
-  uint uVar1;
-  uint uVar2;
+  dword fuel_temp_trim_result;
+  dword fuel_temp_trim_uncapped;
   
   if (drivetrain_type == DRIVETRAIN_AUTO_J1939_FULL) {
     if ((protection_control_licensed == 0) || (protection_enable_t_0040c050.protection_active == 0))
     {
-      uVar2 = (uint)(CONCAT44((int)((ulonglong)(uint)output_shaft_speed_prev * 0x3c000 >> 0x20),
-                              (uint)output_shaft_speed_prev * 0x3c000) /
-                    (ulonglong)protection_trim_divisor_working);
+      fuel_temp_trim_uncapped =
+           (dword)(CONCAT44((int)((ulonglong)(uint)output_shaft_speed_prev * 0x3c000 >> 0x20),
+                            (uint)output_shaft_speed_prev * 0x3c000) /
+                  (ulonglong)protection_trim_divisor_working);
     }
     else {
-      uVar2 = (uint)(CONCAT44((int)((ulonglong)(uint)output_shaft_speed_prev * 0x3c000 >> 0x20),
-                              (uint)output_shaft_speed_prev * 0x3c000) /
-                    (ulonglong)protection_trim_divisor_cal);
+      fuel_temp_trim_uncapped =
+           (dword)(CONCAT44((int)((ulonglong)(uint)output_shaft_speed_prev * 0x3c000 >> 0x20),
+                            (uint)output_shaft_speed_prev * 0x3c000) /
+                  (ulonglong)protection_trim_divisor_cal);
     }
-    uVar1 = (uint)DAT_00408b5a;
-    if (uVar2 < uVar1) {
-      uVar1 = uVar2;
+    fuel_temp_trim_result = (dword)fuel_temp_cap_from_shaft_speed;
+    if (fuel_temp_trim_uncapped < fuel_temp_trim_result) {
+      fuel_temp_trim_result = fuel_temp_trim_uncapped;
     }
-    fuel_temp_trim_raw = (word)uVar1;
+    fuel_temp_trim_raw = (word)fuel_temp_trim_result;
   }
   return;
 }

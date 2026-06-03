@@ -3407,6 +3407,7 @@ address,name,type,comment
 0x00408ab2,cruise_debounce_fuel_threshold_cal,word,
 0x00408ab4,cruise_fuel_temp_trim_threshold_cal,word,
 0x00408ab6,cruise_debounce_timer_b_init_cal,word,
+0x00408b5a,fuel_temp_cap_from_shaft_speed,word,Fixed max fuel-temp value; caps the shaft-speed-derived estimate (min) before the (word) store in cm848_fuelTrimFromOutputShaftSpeed - prevents 16-bit wrap that would falsely disengage thermal protection
 0x00408b5c,fuel_temp_trim_upper_limit_default_cal,word,
 0x00408b5e,fuel_temp_trim_filter_state_cal,byte,
 0x00408b60,fuel_temp_trim_mode_cal,word,
