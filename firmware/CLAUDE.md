@@ -112,7 +112,7 @@ cd [firmware]_analysis/ghidra
 ```
 
 `build` internally runs, in dependency order (firmware-specific):
-- **CM848:** `init → memmap → enums → import → analyze → deletions → import → callingconv → hwregs → labels → constants → arrays → export`
+- **CM848:** `init → memmap → enums → import → analyze → deletions → import → callingconv → hwregs → labels → constants → arrays → callfixups → export`
 - **CM550:** `init → analyze → memmap → enums → import → deletions → import → hwregs → labels → constants → arrays → export`
 
 (`import` = ApplyStructures + ImportAnalysis, which force-creates functions from
