@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Wed Jun 03 09:56:33 MDT 2026
+// Generated: Wed Jun 03 11:06:32 MDT 2026
 
 
 //
@@ -13582,15 +13582,15 @@ void cm848_fuelDemandSmoothingController(void)
   if (((fuel_demand_cal_index < uVar2) ||
       (uVar2 + throttle_fuel_demand_threshold_cal < (uint)fuel_demand_cal_index)) &&
      (((uint)fuel_demand_cal_index <= uVar2 + throttle_fuel_demand_threshold_cal ||
-      (fuel_temperature_trim <= DAT_0005c2a0)))) {
+      (fuel_temperature_trim <= fuel_demand_smoothing_temp_threshold_cal)))) {
     fuel_demand_cal_increment_a = 0;
     fuel_demand_cal_increment_b = 0;
     uVar1 = 0;
   }
   else {
-    uVar1 = DAT_0005c2a4;
+    uVar1 = fuel_demand_rate_limit_debounce_cal;
     if (fuel_demand_cal_index <= throttle_fuel_demand_adjusted) {
-      uVar1 = DAT_0005c29a;
+      uVar1 = fuel_demand_rate_limit_debounce_low_cal;
     }
     if (fuel_demand_control_t_0040a57a.mode == 4) {
       if (fuel_demand_cal_increment_a < uVar1) {
