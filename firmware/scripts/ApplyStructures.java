@@ -167,6 +167,22 @@ public class ApplyStructures extends GhidraScript {
                 field.comment = comment;
                 field.address = addressStr;
 
+                // Bitfield syntax in the type column: "bitfield:<bitSize>@<bitOffset>"
+                // (bitOffset is from the LSB; e.g. bit 7 = the 0x80 bit of a byte).
+                if (typeName.toLowerCase().startsWith("bitfield:")) {
+                    try {
+                        String spec = typeName.substring("bitfield:".length());
+                        int at = spec.indexOf('@');
+                        field.bitSize = Integer.parseInt(spec.substring(0, at).trim());
+                        field.bitOffset = Integer.parseInt(spec.substring(at + 1).trim());
+                        field.isBitfield = true;
+                    } catch (Exception e) {
+                        println("  WARN: bad bitfield spec '" + typeName + "' for " +
+                                structName + "." + fieldName + " - skipping");
+                        continue;
+                    }
+                }
+
                 // Add to structure
                 if (!structDefs.containsKey(structName)) {
                     structDefs.put(structName, new ArrayList<>());
@@ -246,12 +262,44 @@ public class ApplyStructures extends GhidraScript {
                 if (composite == null) continue;
 
                 int offset = 0;
+                int pendingBfOffset = -1;  // byte offset of the open bitfield storage unit
+                int pendingBfWidth = 0;    // its byte width
+                Structure struct = (Structure) composite;
                 for (FieldDef field : fields) {
+                    if (field.isBitfield) {
+                        // Opener row (size>0) starts a storage unit; continuation rows
+                        // (size==0) pack additional members into that same unit.
+                        if (field.size > 0) {
+                            pendingBfOffset = offset;
+                            pendingBfWidth = field.size;
+                            // Free the placeholder bytes the unit will occupy, then the
+                            // bitfield insert re-adds them as a typed storage unit.
+                            for (int i = 0; i < pendingBfWidth; i++) {
+                                try { struct.deleteAtOffset(pendingBfOffset); } catch (Exception e) {}
+                            }
+                            offset += pendingBfWidth;  // advance past the whole unit once
+                        }
+                        if (pendingBfOffset < 0) {
+                            println("  WARN: continuation bitfield " + structName + "." +
+                                    field.name + " has no opener row - skipping");
+                            continue;
+                        }
+                        String baseName = pendingBfWidth >= 4 ? "dword" : (pendingBfWidth >= 2 ? "word" : "byte");
+                        DataType base = getDataType(baseName, pendingBfWidth);
+                        try {
+                            struct.insertBitFieldAt(pendingBfOffset, pendingBfWidth, field.bitOffset,
+                                    base, field.bitSize, field.name, field.comment);
+                        } catch (Exception e) {
+                            println("  WARN: bitfield insert failed " + structName + "." +
+                                    field.name + ": " + e.getMessage());
+                        }
+                        continue;
+                    }
+
                     if (field.size <= 0) continue;
 
                     DataType fieldType = getDataType(field.typeName, field.size);
                     if (fieldType != null) {
-                        Structure struct = (Structure) composite;
                         try {
                             struct.replaceAtOffset(offset, fieldType, field.size, field.name, field.comment);
                         } catch (Exception e) {
@@ -413,5 +461,11 @@ public class ApplyStructures extends GhidraScript {
         int size;
         String comment;
         String address;
+        // Bitfield support: type column "bitfield:<bitSize>@<bitOffset>".
+        // size column = storage byte-width for the unit-opener row, 0 for a
+        // continuation member that shares the previous opener's storage unit.
+        boolean isBitfield;
+        int bitSize;
+        int bitOffset;
     }
 }

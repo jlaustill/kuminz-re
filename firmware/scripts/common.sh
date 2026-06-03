@@ -17,7 +17,10 @@
 SHARED_SCRIPTS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Find Ghidra installation
-GHIDRA_DIR="${GHIDRA_DIR:-$HOME/code/ghidra}"
+# Default: prebuilt Ghidra 12.1 — its decompiler renders struct bitfields in
+# expressions (issue #647, GP-2493), unlike the from-source 12.0 build.
+# To fall back to the old 12.0 dev build:  GHIDRA_DIR=$HOME/code/ghidra ./analyze.sh ...
+GHIDRA_DIR="${GHIDRA_DIR:-$HOME/code/ghidra-12.1/ghidra_12.1_PUBLIC}"
 
 find_ghidra_headless() {
     if [ -f "$GHIDRA_DIR/build/dist/ghidra_12.0_DEV/support/analyzeHeadless" ]; then
