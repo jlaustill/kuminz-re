@@ -1,0 +1,21 @@
+<!--
+  Call-fixup for the unsigned 64-bit / 32-bit division runtime helper(s).
+  Compiler RTL (MPC555 has no 64-bit hardware divide); folds the opaque call
+  into a real '/' so callers read as (dividend) / (divisor).
+
+  PPC EABI: args r3,r4,r5,r6 = dividend_hi, dividend_lo, divisor_hi, divisor_lo.
+  The helper returns a 64-bit quotient in the r3:r4 pair; callers consume the
+  low word (r4). We write ONLY r4 (the killed-by-call low word, not the EABI
+  return register r3) so leaf callers don't inherit a spurious r3 return.
+  Verified zero semantic drift across all caller sites (2026-06-03).
+-->
+<callfixup name="udiv64by32">
+  <pcode>
+    <body><![CDATA[
+dvd:8 = (zext(r3) << 32) | zext(r4);
+dvs:8 = (zext(r5) << 32) | zext(r6);
+q:8 = dvd / dvs;
+r4 = q:4;
+    ]]></body>
+  </pcode>
+</callfixup>

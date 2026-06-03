@@ -76,6 +76,7 @@ cmd_build() {
     cmd_labels       # code labels
     cmd_constants    # magic-number constants
     cmd_arrays       # array definitions
+    cmd_callfixups   # fold compiler-RTL division helpers into / and s/ operators
     cmd_export       # re-applies funcdefs+localvars, then ExportAnalysis -> .cpp (only)
 
     print_header "BUILD COMPLETE"
@@ -153,6 +154,24 @@ cmd_romramthunks() {
     check_project
     run_script ApplyRomToRamThunks.java
     print_success "ROM-to-RAM thunks applied"
+}
+
+cmd_callfixups() {
+    print_header "APPLYING CALL FIXUPS: $FIRMWARE_NAME"
+
+    check_ghidra
+    check_project
+
+    local csv="$OUTPUT_DIR/call_fixups.csv"
+    if [ -f "$csv" ]; then
+        echo "Folding division runtime helpers into operators..."
+        echo "Input: $csv"
+        echo ""
+        run_script ApplyCallFixups.java "$csv" "$SHARED_SCRIPTS_DIR/callfixups"
+        print_success "Call fixups applied"
+    else
+        echo "No call_fixups.csv — skipping call fixups"
+    fi
 }
 
 cmd_hwregs() {

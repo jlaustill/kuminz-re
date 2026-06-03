@@ -272,10 +272,13 @@ public class ApplyStructures extends GhidraScript {
                         if (field.size > 0) {
                             pendingBfOffset = offset;
                             pendingBfWidth = field.size;
-                            // Free the placeholder bytes the unit will occupy, then the
-                            // bitfield insert re-adds them as a typed storage unit.
+                            // Clear each placeholder byte of the unit in place, then
+                            // insertBitFieldAt fills the cleared range. clearAtOffset (not
+                            // deleteAtOffset) is the API Ghidra documents for non-packed
+                            // structs: it preserves struct length and does NOT shift
+                            // subsequent components, so the offset must increment per byte.
                             for (int i = 0; i < pendingBfWidth; i++) {
-                                try { struct.deleteAtOffset(pendingBfOffset); } catch (Exception e) {}
+                                try { struct.clearAtOffset(pendingBfOffset + i); } catch (Exception e) {}
                             }
                             offset += pendingBfWidth;  // advance past the whole unit once
                         }

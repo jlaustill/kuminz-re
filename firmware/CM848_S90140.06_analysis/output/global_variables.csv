@@ -1895,9 +1895,10 @@ address,name,type,comment
 0x003fd022,PTR_DAT_003fd022,pointer,
 0x003fd026,PTR_DAT_003fd026,pointer,
 0x003fd03c,PTR_DAT_003fd03c,pointer,
-0x003fd066,boost_in_range_state_t_003fd064.previous_boost_scale,,
-0x003fd06a,boost_in_range_state_t_003fd064.filter_state_ptr,,
-0x003fd06c,boost_in_range_state_t_003fd064.filter_state_ptr+2,,
+0x003fd062,protection_trim_divisor_working,dword,= protection_temp_scale_factor_working * protection_timing_period_cal; shaft-speed fuel-trim divisor used when NOT actively limiting (normal path)
+0x003fd066,protection_trim_divisor_cal,dword,= protection_temp_scale_cal * protection_timing_period_cal; shaft-speed fuel-trim divisor used when protection IS active (limiting path)
+0x003fd06a,protection_channel_load_snapshot,word,snapshot of protection_channel_load_raw (was bogus boost_in_range_state_t field)
+0x003fd06c,fuel_demand_enable_snapshot,word,snapshot of fuel_demand_control_t.enable_flag (was bogus boost_in_range_state_t field)
 0x003fd070,protection_ema_output,dword,
 0x003fd1ac,BYTE_003fd1ac,byte,
 0x003fd1d8,sensor_scan_cycle_counter,word,

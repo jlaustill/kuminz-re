@@ -1,0 +1,11 @@
+address,function_name,fixup_name,comment
+# Division runtime helpers folded into real / and s/ operators via call-fixup
+# (Ghidra spec extension). Only PURE division helpers are folded; saturating/
+# clamped/remainder variants are intentionally LEFT as named calls because
+# folding them to a bare operator would hide their extra semantics.
+# fixup p-code defined in firmware/scripts/callfixups/<fixup_name>.xml
+0x000571b0,cm848_unsignedDivision32,udiv64by32,unsigned 64/32 division -> /
+0x00056e90,cm848_unsignedDivision64by32,udiv64by32,unsigned 64/32 worker -> /
+0x000571e0,cm848_unsignedDivision64Wrapper,udiv64by32,unsigned 64/32 wrapper -> /
+0x000570f0,cm848_signedDivision32,sdiv64by32,signed 64/32 division -> s/
+0x00057120,cm848_signedDivision64,sdiv64by32,signed 64/32 worker -> s/
