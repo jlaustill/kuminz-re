@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Jun 04 05:24:49 MDT 2026
+// Generated: Thu Jun 04 08:47:48 MDT 2026
 
 
 //
@@ -72218,7 +72218,7 @@ LAB_00519120:
     }
     j1939_dm_response_byte1 = j1939_dm1_lamp_status_cal._0_1_ & 0xf;
     if ((((protection_enable_t_0040c050.mode_bits & 8) != 0) || (governor_fuel_active_flag == 1)) ||
-       ((DAT_003fed94 & 0x100) != 0)) {
+       ((fault_pending_flags & 0x100) != 0)) {
       j1939_dm_response_byte1 = j1939_dm_response_byte1 | 0x10;
     }
     j1939_dm_response_byte2 = (byte)j1939_dm1_lamp_status_cal;
@@ -72385,7 +72385,7 @@ void j1939_dm1_faultList_transmit(void)
      (DAT_003fd93c != 0x13ec)) {
     uVar4 = (uint)DAT_003fcea2;
     if (DAT_00408964 <= uVar4) {
-      if ((uVar4 < DAT_00408968) && (DAT_003fed94 != DAT_0040896a)) {
+      if ((uVar4 < DAT_00408968) && (fault_pending_flags != DAT_0040896a)) {
         if (uVar4 % 10 < 5) {
           local_10[0] = local_10[0] & 0x7fffffff;
           j1939_msg_slot_p_timer = 0xb00;
@@ -72997,7 +72997,7 @@ void j1939FaultStateUpdate(void)
       }
     }
     DAT_003fcee6 = 1;
-    DAT_003fed94 = DAT_003fed94 & 0xffffefff;
+    fault_pending_flags = fault_pending_flags & 0xffffefff;
     goto LAB_0051ae7c;
   }
   DAT_0040b55b = 0;
@@ -73089,7 +73089,7 @@ void protectionColdStartControl(void)
                   fault_management_ring_read_ptr =
                        (undefined *)((uint)fault_management_ring_read_ptr | 0x10000000);
                   if ((DAT_003fed98 & 0x10000000) == 0) {
-                    DAT_003fed94 = DAT_003fed94 & 0xefffffff;
+                    fault_pending_flags = fault_pending_flags & 0xefffffff;
                   }
                   else {
                     DAT_003fed98 = DAT_003fed98 & 0xefffffff;
@@ -73134,7 +73134,7 @@ void protectionColdStartControl(void)
                   fault_management_ring_read_ptr =
                        (undefined *)((uint)fault_management_ring_read_ptr | 0x10000000);
                   if ((DAT_003fed98 & 0x10000000) == 0) {
-                    DAT_003fed94 = DAT_003fed94 & 0xefffffff;
+                    fault_pending_flags = fault_pending_flags & 0xefffffff;
                   }
                   else {
                     DAT_003fed98 = DAT_003fed98 & 0xefffffff;
@@ -73149,7 +73149,7 @@ void protectionColdStartControl(void)
             DAT_003fea08 = DAT_003fea08 & 0xfeff;
             DAT_0040b566 = 2;
             if ((DAT_003fea6c & 0x100) == 0) {
-              DAT_003fed94 = DAT_003fed94 & 0xefffffff;
+              fault_pending_flags = fault_pending_flags & 0xefffffff;
               fault_management_ring_read_ptr =
                    (undefined *)((uint)fault_management_ring_read_ptr | 0x10000000);
               DAT_003fcef3 = '\x01';
@@ -73256,7 +73256,7 @@ void protectionFuelTempDerate(void)
         }
       }
       fault_management_ring_read_ptr = (undefined *)((uint)fault_management_ring_read_ptr | 0x2000);
-      DAT_003fed94 = DAT_003fed94 & 0xffffdfff;
+      fault_pending_flags = fault_pending_flags & 0xffffdfff;
     }
   }
   else {
@@ -73589,9 +73589,9 @@ LAB_0051c1d8:
     system_status_flags_t_003fe974.reserved_28 = system_status_flags_t_003fe974.reserved_28 | 0x8000
     ;
     DAT_0040b57f = 3;
-    if ((DAT_003fed94 & 0x40000000) != 0) {
+    if ((fault_pending_flags & 0x40000000) != 0) {
       if ((DAT_003fed98 & 0x40000000) == 0) {
-        DAT_003fed94 = DAT_003fed94 & 0xbfffffff;
+        fault_pending_flags = fault_pending_flags & 0xbfffffff;
       }
       else {
         DAT_003fed98 = DAT_003fed98 & 0xbfffffff;
@@ -73602,7 +73602,7 @@ LAB_0051c1d8:
     system_status_flags_t_003fe974.reserved_28 = system_status_flags_t_003fe974.reserved_28 & 0x7fff
     ;
     diagnostic_timer_flags = diagnostic_timer_flags & 0x7fff;
-    DAT_003fed94 = DAT_003fed94 & 0xbfffffff;
+    fault_pending_flags = fault_pending_flags & 0xbfffffff;
     DAT_0040b57f = 2;
     return;
   }
@@ -75736,9 +75736,9 @@ void diag_faultRing_readPtr_sync(void)
   if ((DAT_003fea60 & 0x400) == (system_status_flags_t_003fe974.pending_faults & 0x400)) {
     fault_management_ring_read_ptr =
          (undefined *)((uint)fault_management_ring_read_ptr | 0x80000000);
-    if ((DAT_003fed94 & 0x80000000) != 0) {
+    if ((fault_pending_flags & 0x80000000) != 0) {
       if ((DAT_0040b62a == 5) || ((DAT_003fed98 & 0x80000000) == 0)) {
-        DAT_003fed94 = DAT_003fed94 & 0x7fffffff;
+        fault_pending_flags = fault_pending_flags & 0x7fffffff;
       }
       else {
         DAT_003fed98 = DAT_003fed98 & 0x7fffffff;
@@ -80693,16 +80693,16 @@ void diag_faultRing_writePtr_update(void)
     if ((DAT_003fe9d4 & 0x400) != 0) {
       puVar1 = (undefined *)((uint)fault_management_ring_read_ptr | 0x100001);
       if ((DAT_003fed98 & 0x100000) == 0) {
-        DAT_003fed94 = DAT_003fed94 & 0xffefffff;
+        fault_pending_flags = fault_pending_flags & 0xffefffff;
       }
       else {
         DAT_003fed98 = DAT_003fed98 & 0xffefffff;
       }
     }
     fault_management_ring_read_ptr = puVar1;
-    if ((DAT_003fed94 & 1) != 0) {
+    if ((fault_pending_flags & 1) != 0) {
       if ((DAT_003fd17b == 0) || ((DAT_003fed98 & 1) == 0)) {
-        DAT_003fed94 = DAT_003fed94 & 0xfffffffe;
+        fault_pending_flags = fault_pending_flags & 0xfffffffe;
       }
       else {
         DAT_003fed98 = DAT_003fed98 & 0xfffffffe;
@@ -80768,7 +80768,7 @@ void cm848_calibration_group21_load(void)
           if ((DAT_003fea9c & 0x400) == 0) {
             fault_management_ring_read_ptr =
                  (undefined *)((uint)fault_management_ring_read_ptr | 0x100000);
-            DAT_003fed94 = DAT_003fed94 & 0xffefffff;
+            fault_pending_flags = fault_pending_flags & 0xffefffff;
           }
         }
       }
@@ -80919,9 +80919,9 @@ void diag_faultRing_pendingBit_update(void)
 {
   if ((DAT_003fea6e & 2) == (protection_monitor_shadow & 2)) {
     fault_management_ring_read_ptr = (undefined *)((uint)fault_management_ring_read_ptr | 0x200);
-    if ((DAT_003fed94 & 0x200) != 0) {
+    if ((fault_pending_flags & 0x200) != 0) {
       if ((DAT_0040b9a6 == 2) || ((DAT_003fed98 & 0x200) == 0)) {
-        DAT_003fed94 = DAT_003fed94 & 0xfffffdff;
+        fault_pending_flags = fault_pending_flags & 0xfffffdff;
       }
       else {
         DAT_003fed98 = DAT_003fed98 & 0xfffffdff;
@@ -81249,9 +81249,9 @@ LAB_0052e9c0:
       (((DAT_003fe9d4 & 0x40) == (DAT_003fea9c & 0x40) &&
        (fault_management_ring_read_ptr =
              (undefined *)((uint)fault_management_ring_read_ptr | 0x10000),
-       (DAT_003fed94 & 0x10000) != 0)))))) {
+       (fault_pending_flags & 0x10000) != 0)))))) {
     if (((DAT_003fe9d4 & 0x40) == 0) || ((DAT_003fed98 & 0x10000) == 0)) {
-      DAT_003fed94 = DAT_003fed94 & 0xfffeffff;
+      fault_pending_flags = fault_pending_flags & 0xfffeffff;
     }
     else {
       DAT_003fed98 = DAT_003fed98 & 0xfffeffff;
@@ -81374,9 +81374,9 @@ LAB_0052eeac:
         ((engine_sync_validation_flags & 2) != 0)) &&
        (fault_management_ring_read_ptr =
              (undefined *)((uint)fault_management_ring_read_ptr | 0x800000),
-       (DAT_003fed94 & 0x800000) == 0)))))) {
+       (fault_pending_flags & 0x800000) == 0)))))) {
     if (((engine_sync_validation_flags & 1) == 0) || ((DAT_003fed98 & 0x800000) != 0)) {
-      DAT_003fed94 = DAT_003fed94 | 0x800000;
+      fault_pending_flags = fault_pending_flags | 0x800000;
     }
     else {
       DAT_003fed98 = DAT_003fed98 | 0x800000;
@@ -82133,9 +82133,9 @@ undefined4 diag_faultRing_protectionMonitor_update(void)
   
   if (((DAT_003fea6e & 4) == 0) == ((protection_monitor_shadow & 4) == 0)) {
     fault_management_ring_read_ptr = (undefined *)((uint)fault_management_ring_read_ptr | 0x800);
-    if ((DAT_003fed94 & 0x800) != 0) {
+    if ((fault_pending_flags & 0x800) != 0) {
       if ((DAT_0040b9b6 == 3) || ((DAT_003fed98 & 0x800) == 0)) {
-        DAT_003fed94 = DAT_003fed94 & 0xfffff7ff;
+        fault_pending_flags = fault_pending_flags & 0xfffff7ff;
       }
       else {
         DAT_003fed98 = DAT_003fed98 & 0xfffff7ff;
@@ -82162,7 +82162,7 @@ void cm848_calibration_group37_load(void)
   
   if (DAT_0040b9b6 == 0) {
     if ((operating_mode_flags & 0x100) == 0) {
-      DAT_003fed94 = DAT_003fed94 & 0xfffff7ff;
+      fault_pending_flags = fault_pending_flags & 0xfffff7ff;
     }
     else if ((protection_feature_status_flags & 0x40) != 0) {
       if (((((((system_status_flags_t_003fe974.condition_monitor & 1) == 0) &&
@@ -82572,9 +82572,9 @@ void cm848_calibration_group26_load(void)
     if ((((bVar2) &&
          (fault_management_ring_read_ptr =
                (undefined *)((uint)fault_management_ring_read_ptr | 0x80000), DAT_0040b9c0 == 2)) &&
-        ((DAT_003fed94 & 0x80000) != 0)) ||
+        ((fault_pending_flags & 0x80000) != 0)) ||
        (((bVar2 && (bVar1)) && ((DAT_003fed98 & 0x80000) == 0)))) {
-      DAT_003fed94 = DAT_003fed94 & 0xfff7ffff;
+      fault_pending_flags = fault_pending_flags & 0xfff7ffff;
     }
     if (((bVar2) && (bVar1)) && ((DAT_003fed98 & 0x80000) != 0)) {
       DAT_003fed98 = DAT_003fed98 & 0xfff7ffff;
@@ -82660,12 +82660,12 @@ void hpcr_calibration_group36_load_cont(void)
   else {
     protection_monitor_shadow = protection_monitor_shadow | 0x4000;
     DAT_0040b9c6 = 3;
-    if (((DAT_003fed94 & 0x40) != 0) && ((DAT_003fed98 & 0x40) != 0)) {
+    if (((fault_pending_flags & 0x40) != 0) && ((DAT_003fed98 & 0x40) != 0)) {
       DAT_003fed98 = DAT_003fed98 & 0xffffffbf;
       goto LAB_0053166c;
     }
   }
-  DAT_003fed94 = DAT_003fed94 & 0xffffffbf;
+  fault_pending_flags = fault_pending_flags & 0xffffffbf;
 LAB_0053166c:
   DAT_003fd1e0 = 1;
   fault_management_ring_read_ptr = (undefined *)((uint)fault_management_ring_read_ptr | 0x40);
@@ -82901,18 +82901,18 @@ void hpcr_camTimingMonitor(void)
       protection_monitor_shadow = protection_monitor_shadow | 0x100;
       DAT_0040b9e2 = 3;
     }
-    if ((((protection_monitor_shadow & 0x100) != 0) && ((DAT_003fed94 & 0x80) != 0)) &&
+    if ((((protection_monitor_shadow & 0x100) != 0) && ((fault_pending_flags & 0x80) != 0)) &&
        ((protection_monitor_shadow & 0x100) == (DAT_003fea6e & 0x100))) {
-      DAT_003fed94 = DAT_003fed94 & 0xffffff7f;
+      fault_pending_flags = fault_pending_flags & 0xffffff7f;
       fault_management_ring_read_ptr = (undefined *)((uint)fault_management_ring_read_ptr | 0x80);
     }
     if (DAT_00064412 < DAT_0040b9dc) {
       protection_monitor_shadow = protection_monitor_shadow | 0x200;
       DAT_0040b9e2 = 3;
     }
-    if ((((protection_monitor_shadow & 0x200) != 0) && ((DAT_003fed94 & 0x80) != 0)) &&
+    if ((((protection_monitor_shadow & 0x200) != 0) && ((fault_pending_flags & 0x80) != 0)) &&
        ((protection_monitor_shadow & 0x200) == (DAT_003fea6e & 0x200))) {
-      DAT_003fed94 = DAT_003fed94 & 0xffffff7f;
+      fault_pending_flags = fault_pending_flags & 0xffffff7f;
       fault_management_ring_read_ptr = (undefined *)((uint)fault_management_ring_read_ptr | 0x80);
     }
     if (DAT_003fd1e4 < DAT_00064416) {
@@ -82925,10 +82925,10 @@ void hpcr_camTimingMonitor(void)
         DAT_0040b9e2 = 2;
       }
       engine_protection_counters_reset();
-      if ((((DAT_003fed94 & 0x80) != 0) &&
+      if ((((fault_pending_flags & 0x80) != 0) &&
           ((protection_monitor_shadow & 0x200) == (DAT_003fea6e & 0x200))) &&
          ((protection_monitor_shadow & 0x100) == (DAT_003fea6e & 0x100))) {
-        DAT_003fed94 = DAT_003fed94 & 0xffffff7f;
+        fault_pending_flags = fault_pending_flags & 0xffffff7f;
         fault_management_ring_read_ptr = (undefined *)((uint)fault_management_ring_read_ptr | 0x80);
       }
     }
@@ -82973,7 +82973,7 @@ void hpcr_camTimingReset(void)
 {
   DAT_0040b9e2 = 0;
   if ((protection_feature_flags & 0x4000) == 0) {
-    DAT_003fed94 = DAT_003fed94 & 0xffffff7f;
+    fault_pending_flags = fault_pending_flags & 0xffffff7f;
     fault_management_ring_read_ptr = (undefined *)((uint)fault_management_ring_read_ptr | 0x80);
   }
   engine_protection_counters_reset();
@@ -83709,9 +83709,9 @@ LAB_00533650:
                ((DAT_003fd21e = 2, ((uint)fault_management_ring_read_ptr & 0x100) == 0 &&
                 (fault_management_ring_read_ptr =
                       (undefined *)((uint)fault_management_ring_read_ptr | 0x100),
-                (DAT_003fed94 & 0x100) != 0)))))) {
+                (fault_pending_flags & 0x100) != 0)))))) {
       if ((j1939_dm1_response_destination == 2) || ((DAT_003fed98 & 0x100) == 0)) {
-        DAT_003fed94 = DAT_003fed94 & 0xfffffeff;
+        fault_pending_flags = fault_pending_flags & 0xfffffeff;
       }
       else {
         DAT_003fed98 = DAT_003fed98 & 0xfffffeff;
@@ -83909,7 +83909,7 @@ void diag_resetSingleFault(void)
   fault_management_ring_read_ptr = (undefined *)0x0;
   fault_management_ring_write_ptr = (undefined *)0x0;
   DAT_003fed98 = 0xffffffff;
-  DAT_003fed94 = 0xffffffff;
+  fault_pending_flags = 0xffffffff;
   uVar2 = 0;
   do {
     (&DAT_0040af0c)[uVar2] = 0;
@@ -83959,7 +83959,7 @@ void diag_resetAllFaults(void)
   fault_management_ring_read_ptr = (undefined *)0x0;
   fault_management_ring_write_ptr = (undefined *)0x0;
   DAT_003fed98 = 0xffffffff;
-  DAT_003fed94 = 0xffffffff;
+  fault_pending_flags = 0xffffffff;
   uVar1 = 0;
   do {
     (&DAT_0040af0c)[uVar1] = 0;
@@ -85172,9 +85172,9 @@ LAB_00536060:
   }
   if ((((bVar3) &&
        (fault_management_ring_read_ptr = (undefined *)((uint)fault_management_ring_read_ptr | uVar8)
-       , bVar1)) && ((DAT_003fed94 & uVar8) != 0)) ||
+       , bVar1)) && ((fault_pending_flags & uVar8) != 0)) ||
      (((bVar3 && (bVar2)) && ((DAT_003fed98 & uVar8) == 0)))) {
-    DAT_003fed94 = DAT_003fed94 & ~uVar8;
+    fault_pending_flags = fault_pending_flags & ~uVar8;
   }
   if (((bVar3) && (bVar2)) && ((DAT_003fed98 & uVar8) != 0)) {
     DAT_003fed98 = DAT_003fed98 & ~uVar8;
@@ -85351,9 +85351,9 @@ void diag_faultRing_cssc_update(void)
 {
   if ((protection_monitor_shadow & 1) == (DAT_003fea6e & 1)) {
     fault_management_ring_read_ptr = (undefined *)((uint)fault_management_ring_read_ptr | 0x4000);
-    if ((DAT_003fed94 & 0x4000) != 0) {
+    if ((fault_pending_flags & 0x4000) != 0) {
       if ((DAT_0040ba5c == 2) || ((DAT_003fed98 & 0x4000) == 0)) {
-        DAT_003fed94 = DAT_003fed94 & 0xffffbfff;
+        fault_pending_flags = fault_pending_flags & 0xffffbfff;
       }
       else {
         DAT_003fed98 = DAT_003fed98 & 0xffffbfff;
@@ -85539,9 +85539,9 @@ void hpcr_injectSystemDiagnostic(void)
       injection_fault_shadow_flags = injection_fault_shadow_flags | 1;
       DAT_0040ba68 = 3;
     }
-    if ((((injection_fault_shadow_flags & 1) != 0) && ((DAT_003fed94 & 0x20) != 0)) &&
+    if ((((injection_fault_shadow_flags & 1) != 0) && ((fault_pending_flags & 0x20) != 0)) &&
        ((injection_fault_shadow_flags & 1) == (DAT_003fea68 & 1))) {
-      DAT_003fed94 = DAT_003fed94 & 0xffffffdf;
+      fault_pending_flags = fault_pending_flags & 0xffffffdf;
       fault_management_ring_read_ptr = (undefined *)((uint)fault_management_ring_read_ptr | 0x20);
     }
     if (DAT_003fd266 < DAT_00409fd2) {
@@ -85550,9 +85550,9 @@ void hpcr_injectSystemDiagnostic(void)
     else {
       engine_cssc_counters_reset();
       DAT_0040ba68 = 2;
-      if (((DAT_003fed94 & 0x20) != 0) && ((injection_fault_shadow_flags & 1) == (DAT_003fea68 & 1))
-         ) {
-        DAT_003fed94 = DAT_003fed94 & 0xffffffdf;
+      if (((fault_pending_flags & 0x20) != 0) &&
+         ((injection_fault_shadow_flags & 1) == (DAT_003fea68 & 1))) {
+        fault_pending_flags = fault_pending_flags & 0xffffffdf;
         fault_management_ring_read_ptr = (undefined *)((uint)fault_management_ring_read_ptr | 0x20);
       }
     }
@@ -85600,7 +85600,7 @@ void cm848_initTimerInterrupts(void)
 {
   DAT_0040ba68 = 0;
   if ((protection_feature_flags & 0x8000) == 0) {
-    DAT_003fed94 = DAT_003fed94 & 0xffffffdf;
+    fault_pending_flags = fault_pending_flags & 0xffffffdf;
     fault_management_ring_read_ptr = (undefined *)((uint)fault_management_ring_read_ptr | 0x20);
   }
   engine_cssc_counters_reset();
