@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Jun 04 08:47:48 MDT 2026
+// Generated: Thu Jun 04 09:08:50 MDT 2026
 
 
 //
@@ -20782,8 +20782,8 @@ LAB_00022a00:
            CONCAT11(rx_msg->data_pointer[2],rx_msg->data_pointer[1]),
      j1939_tsc1_received.spn191_output_shaft_speed < 0xfb00)) {
     j1939_tsc1_override_state.etc1_speed_cmd_timeout = DAT_0005c3a2 + 1;
-    j1939_tsc1_received.speed_previous = output_shaft_speed_prev;
-    output_shaft_speed_prev = j1939_tsc1_received.spn191_output_shaft_speed;
+    j1939_tsc1_received.speed_previous = output_shaft_speed_current;
+    output_shaft_speed_current = j1939_tsc1_received.spn191_output_shaft_speed;
     system_status_flags_t_003fe974.condition_monitor =
          system_status_flags_t_003fe974.condition_monitor & 0xdfff;
     engine_timing_shadow_flags = engine_timing_shadow_flags & 0xdfff;
@@ -25567,7 +25567,7 @@ void cm848_processGovernorModeTransition(void)
     if (((j1939_tsc1_override_state.etc1_speed_cmd_timeout == 0) &&
         (j1939_tsc1_override_state.etc1_handler_initialized == 0)) &&
        ((system_status_flags_t_003fe974.condition_monitor & 0x2000) == 0)) {
-      output_shaft_speed_prev = 0;
+      output_shaft_speed_current = 0;
       system_status_flags_t_003fe974.condition_monitor =
            system_status_flags_t_003fe974.condition_monitor | 0x2000;
     }
@@ -25911,7 +25911,7 @@ void cm848_selectTorqueLimitByStateMachine(void)
     if (((j1939_tsc1_override_state.etc1_speed_cmd_timeout == 0) &&
         (j1939_tsc1_override_state.etc1_handler_initialized == 0)) &&
        ((system_status_flags_t_003fe974.condition_monitor & 0x2000) == 0)) {
-      output_shaft_speed_prev = 0;
+      output_shaft_speed_current = 0;
       system_status_flags_t_003fe974.condition_monitor =
            system_status_flags_t_003fe974.condition_monitor | 0x2000;
     }
@@ -77796,7 +77796,7 @@ void cm848_transmission_phase_group_a_calc(void)
   if ((((fuel_temp_trim_upper_limit_default_cal <= fuel_temperature_trim) &&
        (cold_start_phase != CSP_CRANKING)) && (etc1_load_timer_active_flag == 0)) &&
      (drivetrain_type == DRIVETRAIN_AUTO_J1939_FULL)) {
-    uVar1 = (uint)output_shaft_speed_saved + (uint)output_shaft_speed_prev >> 1;
+    uVar1 = (uint)output_shaft_speed_saved + (uint)output_shaft_speed_current >> 1;
     output_shaft_speed_avg = (word)uVar1;
     puVar2 = (undefined *)
              (((ulonglong)engine_rpm_state_t_0040b7ac.target_rpm << 0xb) / (ulonglong)uVar1);
@@ -77804,7 +77804,7 @@ void cm848_transmission_phase_group_a_calc(void)
       puVar2 = &DAT_00007ffd;
     }
     engine_temp_protection_input_raw = (word)puVar2;
-    output_shaft_speed_saved = output_shaft_speed_prev;
+    output_shaft_speed_saved = output_shaft_speed_current;
   }
   return;
 }
@@ -77815,10 +77815,12 @@ void cm848_transmission_phase_group_a_calc(void)
 // Function: cm848_output_shaft_speed_save @ 0x005267e0
 //
 
+/* jlaustill reviewed 2026-6-4 - naming makes since, hopefully accurate */
+
 void cm848_output_shaft_speed_save(void)
 
 {
-  output_shaft_speed_saved = output_shaft_speed_prev;
+  output_shaft_speed_saved = output_shaft_speed_current;
   return;
 }
 
@@ -77841,14 +77843,14 @@ void cm848_fuelTrimFromOutputShaftSpeed(void)
     if ((protection_control_licensed == 0) || (protection_enable_t_0040c050.protection_active == 0))
     {
       fuel_temp_trim_uncapped =
-           (dword)(CONCAT44((int)((ulonglong)(uint)output_shaft_speed_prev * 0x3c000 >> 0x20),
-                            (uint)output_shaft_speed_prev * 0x3c000) /
+           (dword)(CONCAT44((int)((ulonglong)(uint)output_shaft_speed_current * 0x3c000 >> 0x20),
+                            (uint)output_shaft_speed_current * 0x3c000) /
                   (ulonglong)protection_trim_divisor_working);
     }
     else {
       fuel_temp_trim_uncapped =
-           (dword)(CONCAT44((int)((ulonglong)(uint)output_shaft_speed_prev * 0x3c000 >> 0x20),
-                            (uint)output_shaft_speed_prev * 0x3c000) /
+           (dword)(CONCAT44((int)((ulonglong)(uint)output_shaft_speed_current * 0x3c000 >> 0x20),
+                            (uint)output_shaft_speed_current * 0x3c000) /
                   (ulonglong)protection_trim_divisor_cal);
     }
     fuel_temp_trim_result = (dword)fuel_temp_cap_from_shaft_speed;

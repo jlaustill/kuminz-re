@@ -2226,7 +2226,7 @@ address,name
 0x005264d4,etcTransmissionModeControl
 0x00526560,cm848_fuel_temperature_trim_calculation
 0x005266fc,cm848_transmission_phase_group_a_calc
-0x005267e0,cm848_output_shaft_speed_save
+0x005267e0,cm848_output_shaft_speed_save,jlaustill reviewed 2026-6-4 - naming makes since, hopefully accurate
 0x005267f4,cm848_fuelTrimFromOutputShaftSpeed,jlaustill reviewed 2026-6-2 - reads better than before, but very low confidence
 0x005268e8,cm848_computeProtectionTrimDivisors
 0x00526924,diag_fuelTempTrim_overtemp_check
