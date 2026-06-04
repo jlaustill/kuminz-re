@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Wed Jun 03 11:06:32 MDT 2026
+// Generated: Thu Jun 04 05:24:49 MDT 2026
 
 
 //
@@ -77523,7 +77523,7 @@ void initCruiseConfirmFlags(void)
 void protectionTimeoutControl(void)
 
 {
-  short sVar1;
+  word wVar1;
   uint uVar2;
   uint uVar3;
   uint uVar4;
@@ -77533,13 +77533,13 @@ void protectionTimeoutControl(void)
   if (drivetrain_type != DRIVETRAIN_STANDALONE) {
     if ((fuel_temperature_trim < fuel_temp_trim_upper_limit_default_cal) ||
        (cold_start_phase == CSP_CRANKING)) {
-      DAT_0040b6f4 = DAT_0005c936;
+      engine_temp_protection_input_raw = DAT_0005c936;
       engine_temp_protection_input = DAT_0005c936;
       fuel_flow_rpm_divisor = DAT_0005c936;
-      DAT_0040b6fe = DAT_0005c936;
+      fuel_flow_rpm_divisor_saved = DAT_0005c936;
       fuel_trim_speed_override_flag = 1;
-      DAT_0040b6ec = (uint)DAT_0005c936 << 0x10;
-      DAT_0040b712 = 0;
+      engine_temp_protection_input_q16 = (uint)DAT_0005c936 << 0x10;
+      protection_timeout_divisor = 0;
     }
     else {
       if (fuel_trim_speed_override_flag == 1) {
@@ -77551,30 +77551,32 @@ void protectionTimeoutControl(void)
         uVar5 = DAT_0005c92e;
       }
       if (((drivetrain_type != DRIVETRAIN_AUTO_J1939_FULL) &&
-          (drivetrain_type != DRIVETRAIN_AUTO_J1939_ETC1)) && (DAT_0040b702 == 1)) {
-        if ((DAT_0040b712 == 0) ||
+          (drivetrain_type != DRIVETRAIN_AUTO_J1939_ETC1)) && (protection_timeout_enable_flag == 1))
+      {
+        if ((protection_timeout_divisor == 0) ||
            (&DAT_00007ffd <
             (undefined *)
             (CONCAT44((int)((ulonglong)fuel_temp_correction_factor * (ulonglong)DAT_003fd930 * 0x10
                            >> 0x20),fuel_temp_correction_factor * (uint)DAT_003fd930 * 0x10) /
-            (ulonglong)DAT_0040b712))) {
-          DAT_0040b6f4 = 0x7ffd;
+            (ulonglong)protection_timeout_divisor))) {
+          engine_temp_protection_input_raw = 0x7ffd;
         }
         else {
-          DAT_0040b6f4 = (ushort)(CONCAT44((int)((ulonglong)fuel_temp_correction_factor *
-                                                 (ulonglong)DAT_003fd930 * 0x10 >> 0x20),
-                                           fuel_temp_correction_factor * (uint)DAT_003fd930 * 0x10)
-                                 / (ulonglong)DAT_0040b712);
+          engine_temp_protection_input_raw =
+               (word)(CONCAT44((int)((ulonglong)fuel_temp_correction_factor *
+                                     (ulonglong)DAT_003fd930 * 0x10 >> 0x20),
+                               fuel_temp_correction_factor * (uint)DAT_003fd930 * 0x10) /
+                     (ulonglong)protection_timeout_divisor);
         }
       }
-      DAT_0040b6ec = (uint)engine_temp_protection_input << 0x10;
+      engine_temp_protection_input_q16 = (uint)engine_temp_protection_input << 0x10;
       PTR_DAT_0040b6e8 = (undefined *)local_30;
-      uVar2 = exponentialMovingAverage(DAT_0040b6f4,&PTR_DAT_0040b6e8);
+      uVar2 = exponentialMovingAverage(engine_temp_protection_input_raw,&PTR_DAT_0040b6e8);
       engine_temp_protection_input = (word)uVar2;
       if ((j1939_tsc1_override_state.etc1_control_active != 1) ||
          ((drivetrain_type != DRIVETRAIN_AUTO_J1939_FULL &&
           (drivetrain_type != DRIVETRAIN_AUTO_J1939_ETC1)))) {
-        uVar4 = (uint)DAT_0040b6f4;
+        uVar4 = (uint)engine_temp_protection_input_raw;
         if ((uVar2 & 0xffff) < uVar4) {
           uVar3 = uVar4 - uVar2;
         }
@@ -77583,39 +77585,40 @@ void protectionTimeoutControl(void)
         }
         if ((((DAT_0005c930 < uVar4) && (uVar4 < DAT_0005c932)) && ((uVar3 & 0xffff) <= (uint)uVar5)
             ) && ((((uVar3 & 0xffff) << 0xb) / (uVar2 & 0xffff) & 0xffff) <= (uint)DAT_0005c946)) {
-          DAT_0040b6f8 = 0;
+          fuel_flow_divisor_invalid_flag = 0;
           fuel_flow_rpm_divisor = engine_temp_protection_input;
-          if (DAT_0040b6fc != 0) {
-            DAT_0040b6fc = DAT_0040b6fc + -1;
+          if (fuel_flow_divisor_settle_counter != 0) {
+            fuel_flow_divisor_settle_counter = fuel_flow_divisor_settle_counter - 1;
           }
         }
         else {
-          DAT_0040b6f8 = 1;
-          DAT_0040b6fc = DAT_0005c938;
+          fuel_flow_divisor_invalid_flag = 1;
+          fuel_flow_divisor_settle_counter = DAT_0005c938;
           uVar5 = DAT_0005c930;
           if ((uVar4 < DAT_0005c930) || (uVar5 = DAT_0005c932, DAT_0005c932 < uVar4)) {
-            DAT_0040b6f4 = uVar5;
+            engine_temp_protection_input_raw = uVar5;
           }
-          engine_temp_protection_input = DAT_0040b6f4;
+          engine_temp_protection_input = engine_temp_protection_input_raw;
         }
       }
       if ((j1939_tsc1_override_state.etc1_control_active != 1) ||
          ((drivetrain_type != DRIVETRAIN_AUTO_J1939_FULL &&
           (drivetrain_type != DRIVETRAIN_AUTO_J1939_ETC1)))) {
         if (((8000 < engine_rpm_state_t_0040b7ac.current_rpm) ||
-            (sVar1 = DAT_0005c93a, fuel_temperature_trim <= DAT_0005c93c)) &&
-           (sVar1 = DAT_0040b6fa, DAT_0040b6fa != 0)) {
-          sVar1 = DAT_0040b6fa + -1;
+            (wVar1 = DAT_0005c93a, fuel_temperature_trim <= DAT_0005c93c)) &&
+           (wVar1 = fuel_trim_override_hold_counter, fuel_trim_override_hold_counter != 0)) {
+          wVar1 = fuel_trim_override_hold_counter - 1;
         }
-        DAT_0040b6fa = sVar1;
-        if (DAT_0040b6fc == 1) {
-          DAT_0040b700 = DAT_0005c940;
+        fuel_trim_override_hold_counter = wVar1;
+        if (fuel_flow_divisor_settle_counter == 1) {
+          fuel_trim_override_release_timer = DAT_0005c940;
         }
-        if (DAT_0040b700 != 0) {
-          DAT_0040b700 = DAT_0040b700 + -1;
+        if (fuel_trim_override_release_timer != 0) {
+          fuel_trim_override_release_timer = fuel_trim_override_release_timer - 1;
         }
-        if ((((DAT_0040b6fc == 0) && (DAT_0040b700 == 0)) &&
-            (j1939_tsc1_override_state.etc1_disable_control == 0)) && (DAT_0040b6fa == 0)) {
+        if ((((fuel_flow_divisor_settle_counter == 0) && (fuel_trim_override_release_timer == 0)) &&
+            (j1939_tsc1_override_state.etc1_disable_control == 0)) &&
+           (fuel_trim_override_hold_counter == 0)) {
           fuel_trim_speed_override_flag = 0;
         }
         else {
@@ -77628,12 +77631,12 @@ void protectionTimeoutControl(void)
       if (uVar4 < uVar2) {
         uVar2 = uVar4;
       }
-      DAT_0040b6f0 = (undefined2)uVar2;
+      governor_bypass_threshold_low = (word)uVar2;
       uVar3 = ((DAT_00408b78 + 0x6400) * (uint)DAT_003fd900) / 0x6400;
       if (uVar4 < uVar3) {
         uVar3 = uVar4;
       }
-      DAT_0040b6f2 = (undefined2)uVar3;
+      governor_bypass_threshold_high = (word)uVar3;
       if ((uint)engine_temp_protection_input < (uVar2 & 0xffff)) {
         governor_j1939_bypass_flag = 1;
       }
@@ -77645,7 +77648,7 @@ void protectionTimeoutControl(void)
       }
       if (((DAT_003fd05c == fuel_flow_rpm_divisor) && (fuel_trim_speed_override_flag == 0)) &&
          ((DAT_003fd05a == 1 && (DAT_0005c93e < fuel_demand_computed)))) {
-        DAT_0040b6fe = fuel_flow_rpm_divisor;
+        fuel_flow_rpm_divisor_saved = fuel_flow_rpm_divisor;
         DAT_003fd05a = 0;
       }
       DAT_003fd05c = fuel_flow_rpm_divisor;
@@ -77665,13 +77668,13 @@ void initGovernorJ1939Bypass(void)
 {
   j1939_tsc1_override_state.etc1_disable_control = 0;
   governor_j1939_bypass_flag = 1;
-  DAT_0040b6f4 = DAT_0005c936;
+  engine_temp_protection_input_raw = DAT_0005c936;
   engine_temp_protection_input = DAT_0005c936;
   fuel_flow_rpm_divisor = DAT_0005c936;
-  DAT_0040b6ec = (uint)DAT_0005c936 << 0x10;
+  engine_temp_protection_input_q16 = (uint)DAT_0005c936 << 0x10;
   PTR_DAT_0040b6e8 = (undefined *)&DAT_0005c934;
   DAT_003fd05c = DAT_0005c936;
-  DAT_0040b702 = 1;
+  protection_timeout_enable_flag = 1;
   return;
 }
 
@@ -77696,7 +77699,7 @@ void fuelTempTrimUpperLimitCheck(void)
     if (&DAT_00007ffd < puVar1) {
       puVar1 = &DAT_00007ffd;
     }
-    DAT_0040b6f4 = SUB42(puVar1,0);
+    engine_temp_protection_input_raw = (word)puVar1;
   }
   return;
 }
@@ -77718,7 +77721,7 @@ void etcTransmissionModeControl(void)
     if (j1939_tsc1_override_state.etc1_disable_control != 0) {
       fuel_flow_rpm_divisor = engine_temp_protection_input;
     }
-    DAT_0040b6f8 = j1939_tsc1_override_state.etc1_disable_control;
+    fuel_flow_divisor_invalid_flag = j1939_tsc1_override_state.etc1_disable_control;
   }
   return;
 }
@@ -77772,7 +77775,7 @@ void cm848_fuel_temperature_trim_calculation(void)
   }
   puVar4 = &DAT_00007ffd;
 LAB_005266e0:
-  DAT_0040b6f4 = (short)puVar4;
+  engine_temp_protection_input_raw = (word)puVar4;
   return;
 }
 
@@ -77793,15 +77796,15 @@ void cm848_transmission_phase_group_a_calc(void)
   if ((((fuel_temp_trim_upper_limit_default_cal <= fuel_temperature_trim) &&
        (cold_start_phase != CSP_CRANKING)) && (etc1_load_timer_active_flag == 0)) &&
      (drivetrain_type == DRIVETRAIN_AUTO_J1939_FULL)) {
-    uVar1 = (uint)DAT_003fd060 + (uint)output_shaft_speed_prev >> 1;
-    DAT_003fd05e = (undefined2)uVar1;
+    uVar1 = (uint)output_shaft_speed_saved + (uint)output_shaft_speed_prev >> 1;
+    output_shaft_speed_avg = (word)uVar1;
     puVar2 = (undefined *)
              (((ulonglong)engine_rpm_state_t_0040b7ac.target_rpm << 0xb) / (ulonglong)uVar1);
     if ((uVar1 == 0) || ((undefined *)0x7ffc < puVar2)) {
       puVar2 = &DAT_00007ffd;
     }
-    DAT_0040b6f4 = SUB42(puVar2,0);
-    DAT_003fd060 = output_shaft_speed_prev;
+    engine_temp_protection_input_raw = (word)puVar2;
+    output_shaft_speed_saved = output_shaft_speed_prev;
   }
   return;
 }
@@ -77815,7 +77818,7 @@ void cm848_transmission_phase_group_a_calc(void)
 void cm848_output_shaft_speed_save(void)
 
 {
-  DAT_003fd060 = output_shaft_speed_prev;
+  output_shaft_speed_saved = output_shaft_speed_prev;
   return;
 }
 

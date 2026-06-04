@@ -196,7 +196,7 @@ When a new memory address is identified and named, it **must** be updated in bot
 The memory mapping txt files are generated from the Ghidra CSVs plus manually documented fields (EEPROM layout, ROM header). If you name a new variable or function:
 
 1. Add/update the entry in the appropriate Ghidra CSV
-2. Run `./analyze.sh import` then `./analyze.sh export` to apply to Ghidra
+2. Run `./analyze.sh build` to apply all CSVs and regenerate the decompilation
 3. Add the corresponding line to the appropriate memory mapping txt file
 4. Use the decimal offset as the line number and include the name and type
 

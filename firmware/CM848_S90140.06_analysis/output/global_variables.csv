@@ -1898,6 +1898,8 @@ address,name,type,comment
 0x003fd022,PTR_DAT_003fd022,pointer,
 0x003fd026,PTR_DAT_003fd026,pointer,
 0x003fd03c,PTR_DAT_003fd03c,pointer,
+0x003fd05e,output_shaft_speed_avg,word,2-sample moving average of output shaft speed: (output_shaft_speed_saved + output_shaft_speed_prev) >> 1; computed in cm848_transmission_phase_group_a_calc, used as divisor for target_rpm ratio -> engine_temp_protection_input_raw (0x0040b6f4)
+0x003fd060,output_shaft_speed_saved,word,prior-cycle snapshot of output_shaft_speed_prev (0x40a2ae); averaged with current sample for smoothing; seeded at init by cm848_output_shaft_speed_save, refreshed inline by cm848_transmission_phase_group_a_calc
 0x003fd062,protection_trim_divisor_working,dword,= protection_temp_scale_factor_working * protection_timing_period_cal; shaft-speed fuel-trim divisor used when NOT actively limiting (normal path)
 0x003fd066,protection_trim_divisor_cal,dword,= protection_temp_scale_cal * protection_timing_period_cal; shaft-speed fuel-trim divisor used when protection IS active (limiting path)
 0x003fd06a,protection_channel_load_snapshot,word,snapshot of protection_channel_load_raw (was bogus boost_in_range_state_t field)
@@ -5267,13 +5269,24 @@ address,name,type,comment
 0x0040b6e4,cruise_speed_target_working,word,
 0x0040b6e6,governor_fuel_enable_state,word,
 0x0040b6e8,PTR_DAT_0040b6e8,pointer,
+0x0040b6ec,engine_temp_protection_input_q16,dword,Q16 fixed-point (value << 16) of engine_temp_protection_input (or default DAT_0005c936); published in protectionTimeoutControl / initGovernorJ1939Bypass; write-only in ROM (consumed by diagnostics/CLIP)
+0x0040b6f0,governor_bypass_threshold_low,word,per-cycle published threshold = ((DAT_00408b78 + 25600) * DAT_003fd918) / 25600, clamped to DAT_0005c932; in protectionTimeoutControl, engine_temp_protection_input < this -> governor_j1939_bypass_flag = 1 (full bypass)
+0x0040b6f2,governor_bypass_threshold_high,word,per-cycle published threshold = ((DAT_00408b78 + 25600) * DAT_003fd900) / 25600, clamped to DAT_0005c932; engine_temp_protection_input between low and this -> bypass_flag = 2 (partial), above -> 3 (none)
+0x0040b6f4,engine_temp_protection_input_raw,word,raw (pre-EMA) governor speed ratio; clamped to 0x7ffd; computed per drivetrain mode (target_rpm/shaft_speed in J1939/auto-trans paths, temp-correction ratio in standalone); exponentialMovingAverage(this) -> engine_temp_protection_input (0x40a274) -> fuel_flow_rpm_divisor. Writers: initGovernorJ1939Bypass, protectionTimeoutControl, fuelTempTrimUpperLimitCheck, cm848_fuel_temperature_trim_calculation, cm848_transmission_phase_group_a_calc
 0x0040b6f6,fuel_flow_rpm_divisor,word,
+0x0040b6f8,fuel_flow_divisor_invalid_flag,word,0 = smoothed divisor valid/in-window; 1 = out-of-tolerance (protectionTimeoutControl) or = j1939_tsc1_override_state.etc1_disable_control (etcTransmissionModeControl); signals the speed-ratio result should not be trusted this cycle
+0x0040b6fa,fuel_trim_override_hold_counter,word,countdown decremented while (current_rpm > 8000 OR fuel_temperature_trim <= DAT_0005c93c) and != 0; must reach 0 (with settle/release timers) to clear fuel_trim_speed_override_flag in protectionTimeoutControl
+0x0040b6fc,fuel_flow_divisor_settle_counter,word,settle debounce: reloaded to DAT_0005c938 when ratio out-of-window, decremented toward 0 while in-window; at == 1 arms fuel_trim_override_release_timer (DAT_0040b700); == 0 is a release precondition
+0x0040b6fe,fuel_flow_rpm_divisor_saved,word,saved snapshot of fuel_flow_rpm_divisor (committed when stable and fuel_demand_computed high); seeded to default DAT_0005c936 in the bypass path
+0x0040b700,fuel_trim_override_release_timer,word,secondary release timer armed (= DAT_0005c940) when fuel_flow_divisor_settle_counter hits 1, decremented to 0; == 0 is a precondition to clear fuel_trim_speed_override_flag
+0x0040b702,protection_timeout_enable_flag,word,gates the standalone (non-J1939) temp-correction ratio path in protectionTimeoutControl; only ever set = 1 (initGovernorJ1939Bypass) in this calibration - effectively always enabled
 0x0040b704,cruise_speed_rpm_base,word,
 0x0040b706,governor_fuel_rate_tracking,word,
 0x0040b708,cruise_speed_override_flag,word,
 0x0040b70a,cruise_speed_offset_saved,word,
 0x0040b70c,system_speed_limit_working,word,
 0x0040b70e,fuel_temp_correction_factor,dword,
+0x0040b712,protection_timeout_divisor,dword,denominator for the standalone temp-correction ratio (fuel_temp_correction_factor * DAT_003fd930 * 16) / this; only ever set = 0 in this calibration, so that division path is dormant and engine_temp_protection_input_raw takes the 0x7ffd clamp
 0x0040b716,injection_timing_done_flag,word,
 0x0040b71e,injection_timing_prev_value,word,
 0x0040b720,injection_timing_cylinder_index,word,

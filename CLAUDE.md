@@ -152,15 +152,14 @@ Two firmware versions are actively analyzed with the **same CLI workflow**:
 
 | Firmware | Source | CSV Location | Apply Command |
 |----------|--------|--------------|---------------|
-| J90350.00 | Live ECU dump (CM550) | `output/` | `./analyze.sh import && export` |
-| S90140.06 | Live ECU dump (CM848) | `output/` | `./analyze.sh import && export` |
+| J90350.00 | Live ECU dump (CM550) | `output/` | `./analyze.sh build` |
+| S90140.06 | Live ECU dump (CM848) | `output/` | `./analyze.sh build` |
 
 **Unified CLI Workflow:**
 ```bash
-cd firmware/[J90350.00|CM848_S90140.06]_analysis/ghidra
+cd firmware/[CM550_J90350.00|CM848_S90140.06]_analysis/ghidra
 # 1. Edit CSV files in ../output/
-./analyze.sh import      # Apply CSV changes to Ghidra
-./analyze.sh export      # Regenerate decompilation
+./analyze.sh build       # One deterministic build: fresh .rep → apply every CSV → decompilation
 # Verify: ../output/[firmware].ghidra.cpp
 ```
 
@@ -169,6 +168,7 @@ cd firmware/[J90350.00|CM848_S90140.06]_analysis/ghidra
 **Common Rules:**
 - All changes go through CSV files (function_renames.csv, global_variables.csv, enums.csv, etc.)
 - Never modify Ghidra directly - CSV is the source of truth
+- Use the **`editing-firmware-csvs`** skill for the per-type CSV workflow (edit → `build` → verify-in-`.cpp`, plus globals/enums/structs/funcdefs gotchas)
 - See `firmware/CLAUDE.md` for detailed workflow and command reference
 
 **CM848 Analysis Notes:**
@@ -259,7 +259,7 @@ E2M files contain **two sections**:
 - Calterm downloads these blocks to ECU during programming
 
 ### Ghidra CSV Knowledge Database
-For firmware analysis, discoveries are stored in CSV files (e.g., `ghidra/CM550.rep/`):
+For firmware analysis, discoveries are stored in CSV files in each firmware's `output/` directory (the `.rep` is a disposable build artifact, not a source of truth):
 - `function_renames.csv` - Function names by address
 - `global_variables.csv` - Typed global variables
 - `structure_definitions.csv` - C structure definitions

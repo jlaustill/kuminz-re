@@ -88,14 +88,6 @@ Offset 0x100: 48 00 16 DE ...         - Code start
 Offset 0x10C: 31 30 30 39 30 32       - "100902" version/date
 ```
 
-## Analysis Status
-
-- [ ] Load into Ghidra with PowerPC processor
-- [ ] Identify entry points from vector table
-- [ ] Map memory regions
-- [ ] Compare with CM550 for shared protocol code
-- [ ] Identify HPCR fuel control routines
-
 ## Directory Structure
 
 ```
