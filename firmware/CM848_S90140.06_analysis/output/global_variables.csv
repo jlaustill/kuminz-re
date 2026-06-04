@@ -3427,7 +3427,7 @@ address,name,type,comment
 0x00408b72,temperature_protection_trim_threshold_cal,word,
 0x00408b74,torque_limit_fuel_ramp_addend_cal,word,
 0x00408b76,temperature_protection_timer_threshold_cal,word,
-0x00408b7a,cruise_speed_clamp_enable,word,enables the fuel-temp-trim clamp of cruise_speed_high_limit (cm848_calculateTorqueCurveValue:39604); boot-loaded constant - ROM/EEPROM source unconfirmed so _cal dropped (re-add if confirmed EEPROM-backed). Renamed from fuel_pressure_clamp_enable_cal (mislabeled - a speed clamp)
+0x00408b7a,cruise_speed_clamp_enable,word,enables the fuel-temp-trim clamp of cruise_speed_high_limit (cm848_calculateTorqueCurveValue:39604); ROM/flash-sourced constant - CONFIRMED not EEPROM (every boot eepromReadWords targets the 0x3feexx config block; none touch 0x40xxxx; 0x408bxx is never written) so correctly NO _cal. Renamed from fuel_pressure_clamp_enable_cal (mislabeled - a speed clamp)
 0x00408b7c,fuel_temp_trim_slew_lower_limit_cal,word,
 0x00408b7e,fuel_temp_trim_slew_decay_cal,word,
 0x00408ba4,fuel_temp_trim_scale_cal,word,
