@@ -23,7 +23,7 @@ Work in `firmware/<fw>_analysis/`. Output is `output/<fw>.ghidra.cpp` (CM848: `c
 4. **CSV neighbors** — `grep` the address in the relevant CSV; record the entries immediately above/below with their names, types, widths, and byte gaps.
 5. **Assembly width check (MANDATORY)** — disassemble the *referencing code* and read the actual load/store width for the target. This is decisive for typing and must be done every run. Exact invocations + the turnkey grep anchor are in `symbol-evidence-reference.md`. CM848/PowerPC is reliable; CM550/m68k is best-effort — if a specific access genuinely won't decode, fall back to the decompilation's width signal and **say so explicitly**.
    - **You must actually run the disassembler and quote the instruction.** "Width from context / from neighbors / from the decompilation / from the byte gap" is **NOT** the assembly check — if your WIDTH line doesn't quote a real `l{b,h,w}z`/`lha`/`st{b,h,w}` (or m68k `.b/.w/.l`) instruction with its address, you have skipped this step. Go back and run it. The whole point is to catch the cases where the context guess is *wrong*.
-6. **Tunable check** — `grep` the address in `output/e2m_parameters.csv`. Present → Calterm-tunable (a `_cal` candidate). Absent → **not** tunable → do NOT propose `_cal`, regardless of what neighbors are named.
+6. **Tunable check (memory map, NOT e2m)** — classify the address by region: ROM / the ROM→RAM copy window (0x3F9800–0x3FDB30) / Bank2 flash = fixed constant → **no `_cal`**; EEPROM (0x01xxxxxx) or an EEPROM-loaded RAM value = Calterm-tunable → `_cal` candidate; computed/working RAM vars → never `_cal`. Do NOT grep `e2m_parameters.csv` — it uses Calterm *virtual* addresses, so a RAM-address grep is blind. A boot-loaded RAM constant whose source you can't confirm → conservatively no `_cal`.
 7. **Cross-firmware analogue** — check the *other* firmware's `.cpp`/CSVs for the same role or a shared name. Note a match (supports a shared name) or its absence.
 8. **Type-shape detection (always)** — decide what the symbol really is, because it picks the target CSV. Signals in `symbol-evidence-reference.md`. Summary: `== const` against a small set → **enum**; masked `& 0xNN` bit tests → **bitfield**; clustered base+offset, pointer-passed → **struct field**; indexed `base[i]` → **array**; dispatch-table / sibling handlers → **function family**; otherwise → **flat global**.
 
@@ -35,7 +35,7 @@ USAGES: <N reads / M writes>  (or callers/callees for a function) — cited
 WIDTH (asm): <byte/word/dword> — quote the instruction, e.g. `lhz r12,-29832(r12) @ 0x526278`  (or, ONLY for m68k that won't decode: "m68k undecoded; .cpp implies <width> via <cite>")
 CONTEXT: <what it does, 1-3 lines, cited>
 NEIGHBORS: <above/below names · types · gaps>
-TUNABLE: <yes: in e2m_parameters.csv | no>
+TUNABLE: <EEPROM-backed → _cal | ROM/flash/computed → no _cal | source unconfirmed → no>
 CROSS-FW: <analogue in other firmware, or none>
 TYPE-SHAPE: flat global | enum(<which/values>) | struct field(<struct·offset>) | bitfield(<bit>) | array(<elem·count>) | function(<prototype note>)  → target CSV: <which>
 
@@ -49,13 +49,13 @@ Confidence is **low** if the only evidence is neighbor-mimicry, or if key refere
 
 **Before you finalize, two hard gates:**
 - If `WIDTH (asm)` doesn't quote a real instruction (PowerPC) — re-run the disassembler with the correct binary/window; don't ship a context guess labeled "(asm)".
-- If `TUNABLE: no`, the proposed name **must not** end in `_cal` — strip it. (Neighbors having `_cal` is not evidence; the `e2m_parameters.csv` check is.)
+- If the value is ROM/flash-sourced, computed, or its EEPROM source is unconfirmed, the proposed name **must not** end in `_cal` — strip it. (Neighbors having `_cal` is not evidence; the memory-map region is.)
 
 ## Common mistakes (from baseline failures)
 
 - Inferring width "from context" and skipping the disassembly — the asm width check is **mandatory**, not optional.
 - Treating every symbol as a flat global — run the type-shape check; an enum/struct/bitfield routes to a different CSV.
-- Proposing `_cal` because neighbors have it — gate `_cal` on `e2m_parameters.csv`, not vibes.
+- Proposing `_cal` because neighbors have it — gate `_cal` on the memory map (EEPROM = `_cal`; ROM/flash/computed = no), not vibes or e2m (e2m's virtual addresses make a RAM-address grep unreliable).
 - Conflating "not in e2m" with "no cross-firmware analogue" — they're separate steps (6 vs 7).
 - Asserting neighbor names / values from memory — grep them and cite.
 - Editing a CSV or running `build` — out of scope; this skill only recommends.

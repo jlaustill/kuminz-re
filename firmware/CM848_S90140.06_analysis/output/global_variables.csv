@@ -1931,8 +1931,8 @@ address,name,type,comment
 0x003fd516,fuel_blend_coefficient_run_cal,word,
 0x003fd51c,j1939_pgn_priority_cal,word,
 0x003fd526,fuel_timing_blend_counter,word,
-0x003fd52a,fuel_pressure_threshold_b_cal,word,
-0x003fd52c,fuel_pressure_threshold_cal,word,
+0x003fd52a,cruise_speed_high_limit_default,word,ROM default assigned to cruise_speed_high_limit when the temp-trim clamp is inactive (cm848_calculateTorqueCurveValue:39625); ROM-to-RAM region so NOT a _cal. Renamed from fuel_pressure_threshold_b_cal (mislabeled - a speed)
+0x003fd52c,cruise_speed_setpoint_default,word,ROM default cruise speed setpoint/limit; assigned to j1939_cruise_speed_setpoint (39624) and base for cruise_speed_limit_working (clamped by fuel-temp-trim); ROM-to-RAM region so NOT a _cal. Renamed from fuel_pressure_threshold_cal (mislabeled - a speed)
 0x003fd52e,protection_temp_scale_factor_working,word,
 0x003fd530,j1939_tsc1_active_flag,word,
 0x003fd532,protection_system_init_flag,word,
@@ -3427,7 +3427,7 @@ address,name,type,comment
 0x00408b72,temperature_protection_trim_threshold_cal,word,
 0x00408b74,torque_limit_fuel_ramp_addend_cal,word,
 0x00408b76,temperature_protection_timer_threshold_cal,word,
-0x00408b7a,fuel_pressure_clamp_enable_cal,word,
+0x00408b7a,cruise_speed_clamp_enable,word,enables the fuel-temp-trim clamp of cruise_speed_high_limit (cm848_calculateTorqueCurveValue:39604); boot-loaded constant - ROM/EEPROM source unconfirmed so _cal dropped (re-add if confirmed EEPROM-backed). Renamed from fuel_pressure_clamp_enable_cal (mislabeled - a speed clamp)
 0x00408b7c,fuel_temp_trim_slew_lower_limit_cal,word,
 0x00408b7e,fuel_temp_trim_slew_decay_cal,word,
 0x00408ba4,fuel_temp_trim_scale_cal,word,
@@ -5203,8 +5203,8 @@ address,name,type,comment
 0x0040b5b2,fuel_temp_trim_filter_state,dword,
 0x0040b5b6,fuel_temp_trim_init_flag,dword,
 0x0040b5ba,fuel_temp_trim_active_flag,word,
-0x0040b5bc,fuel_pressure_threshold_working,word,
-0x0040b5be,fuel_pressure_threshold_prev,word,
+0x0040b5bc,cruise_speed_limit_working,word,working cruise/governor speed limit = min(cruise_speed_setpoint_default, temp-trim-reduced value); compared with cruise_speed_high_limit/_setpoint_adjusted/_command; feeds governor_override_threshold (77316). Renamed from fuel_pressure_threshold_working (mislabeled - a speed)
+0x0040b5be,cruise_speed_limit_prev,word,prior snapshot of cruise_speed_limit_working (cm848_calculateTorqueCurveValue:39602). Renamed from fuel_pressure_threshold_prev (mislabeled - a speed)
 0x0040b5c2,governor_j1939_bypass_flag,word,
 0x0040b5c4,fuel_temp_trim_slew_limited,word,
 0x0040b5c6,fuel_demand_callback_ptr,pointer,

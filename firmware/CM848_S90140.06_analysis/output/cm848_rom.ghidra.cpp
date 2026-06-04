@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Jun 04 13:18:33 MDT 2026
+// Generated: Thu Jun 04 15:25:59 MDT 2026
 
 
 //
@@ -39583,7 +39583,7 @@ void cm848_calculateTorqueCurveValue(void)
   word wVar2;
   
   if (cold_start_qualifier_flag == 0) {
-    uVar1 = (uint)fuel_pressure_threshold_cal;
+    uVar1 = (uint)cruise_speed_setpoint_default;
   }
   else {
     if (cold_start_qualifier_prev_flag == 0) {
@@ -39595,15 +39595,14 @@ void cm848_calculateTorqueCurveValue(void)
     }
   }
   fuel_temp_trim_slew_limited = (word)uVar1;
-  fuel_pressure_threshold_working = fuel_pressure_threshold_cal;
-  if ((uVar1 & 0xffff) < (uint)fuel_pressure_threshold_cal) {
-    fuel_pressure_threshold_working = (word)uVar1;
+  cruise_speed_limit_working = cruise_speed_setpoint_default;
+  if ((uVar1 & 0xffff) < (uint)cruise_speed_setpoint_default) {
+    cruise_speed_limit_working = (word)uVar1;
   }
-  fuel_pressure_threshold_prev = fuel_pressure_threshold_working;
-  wVar2 = fuel_pressure_threshold_b_cal;
-  if ((fuel_pressure_clamp_enable_cal != 0) &&
-     (fuel_pressure_threshold_working < cruise_speed_high_limit)) {
-    wVar2 = fuel_pressure_threshold_working;
+  cruise_speed_limit_prev = cruise_speed_limit_working;
+  wVar2 = cruise_speed_high_limit_default;
+  if ((cruise_speed_clamp_enable != 0) && (cruise_speed_limit_working < cruise_speed_high_limit)) {
+    wVar2 = cruise_speed_limit_working;
   }
   cruise_speed_high_limit = wVar2;
   cold_start_qualifier_prev_flag = cold_start_qualifier_flag;
@@ -39619,11 +39618,11 @@ void cm848_calculateTorqueCurveValue(void)
 void cm848_initTorqueCurveState(void)
 
 {
-  fuel_pressure_threshold_working = fuel_pressure_threshold_cal;
+  cruise_speed_limit_working = cruise_speed_setpoint_default;
   governor_j1939_bypass_flag = 1;
-  j1939_cruise_speed_setpoint = fuel_pressure_threshold_cal;
-  cruise_speed_high_limit = fuel_pressure_threshold_b_cal;
-  DAT_0040b5c0 = fuel_pressure_threshold_cal;
+  j1939_cruise_speed_setpoint = cruise_speed_setpoint_default;
+  cruise_speed_high_limit = cruise_speed_high_limit_default;
+  DAT_0040b5c0 = cruise_speed_setpoint_default;
   cold_start_qualifier_prev_flag = 0;
   return;
 }
@@ -41554,7 +41553,7 @@ void cm848_processProtectionRampTimer(void)
   }
   if (((j1939_governor_feature_cal & 0x100) == 0) || (governor_j1939_bypass_flag == 1)) {
     uVar1 = (uint)cruise_speed_setpoint_adjusted;
-    uVar2 = (uint)fuel_pressure_threshold_working;
+    uVar2 = (uint)cruise_speed_limit_working;
     if (uVar2 < uVar1) {
       if (cruise_speed_reference_c != 0) {
         cruise_mode_transition_flag = 1;
@@ -41576,7 +41575,7 @@ void cm848_processProtectionRampTimer(void)
     cruise_speed_reference_active = 0;
   }
   else {
-    if (fuel_pressure_threshold_working < cruise_speed_setpoint_adjusted) {
+    if (cruise_speed_limit_working < cruise_speed_setpoint_adjusted) {
       cruise_fuel_demand_setpoint = 0;
     }
     else {
@@ -41642,7 +41641,7 @@ void cm848_calculateProtectionLevelLimit(void)
   if ((((governor_override_active_flag == 0) ||
        ((((uVar1 < governor_pid_t_0040af5a.proportional_gain &&
           (governor_override_fuel_threshold_cal < fuel_demand_control_t_0040a57a.calculated)) &&
-         ((cruise_speed_command != fuel_pressure_threshold_working ||
+         ((cruise_speed_command != cruise_speed_limit_working ||
           (governor_pid_fuel_output != cruise_fuel_demand_setpoint)))) ||
         ((governor_pid_t_0040af5a.integral_term == 2 || (governor_pid_t_0040af5a.integral_term == 1)
          ))))) || (governor_pid_t_0040af5a.integral_term == 0x25)) ||
@@ -77133,7 +77132,7 @@ void protectionRampRateControl(void)
   iVar7 = (int)(short)cruise_speed_setpoint_adjusted;
   pwVar4 = &cruise_confirm_flag_a;
   if (iVar5 == 10) {
-    DAT_0040b6c8 = fuel_pressure_threshold_working - cruise_speed_setpoint_adjusted;
+    DAT_0040b6c8 = cruise_speed_limit_working - cruise_speed_setpoint_adjusted;
     wVar2 = DAT_00408e64;
     if (((short)DAT_00408e64 <= (short)DAT_0040b6c8) ||
        (wVar2 = DAT_00408e66, (short)DAT_0040b6c8 < (short)DAT_00408e66)) goto LAB_005252ec;
@@ -77313,7 +77312,7 @@ LAB_005257a0:
     }
   }
   else {
-    governor_override_threshold = fuel_pressure_threshold_working;
+    governor_override_threshold = cruise_speed_limit_working;
   }
   DAT_0040b6c8 = governor_override_threshold - cruise_speed_setpoint_adjusted;
   sVar3 = DAT_00408e64;
