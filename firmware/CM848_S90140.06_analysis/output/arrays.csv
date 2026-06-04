@@ -14,7 +14,3 @@ address,array_name,element_type,element_count,comment
 0x003fd707,vehicle_vin_string,byte,17,17-char ASCII SAE VIN loaded from EEPROM 0x0285; 3D3MU48C94G228471 at runtime
 0x003fce7c,j1939_dm_scratch_buffer,byte,8,DM response payload assembly buffer; copy loops index from [3] to [7]
 0x003fecd0,diag_serial_buffer,byte,33,Diagnostic serial communication buffer (SCI UART)
-# J1939 PGN 65261 (0xFEED Cruise Control/Vehicle Speed Setup) transmit data buffer
-# 8 bytes; bytes 3-7 init to 0xff (not available) in initPgn65261CruiseControlSetupStruct
-# Pointed at by j1939_pgn65261_data_ptr (=&[0]) and j1939_pgn65261_end_ptr (=&[8]); tx_length=8
-0x003fab0a,j1939_pgn65261_tx_data,byte,8,J1939 PGN 65261 Cruise Control/Vehicle Speed Setup transmit data buffer; bytes 3-7 init 0xff not-available

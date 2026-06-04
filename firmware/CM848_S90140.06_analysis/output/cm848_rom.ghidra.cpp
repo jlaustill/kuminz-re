@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Jun 04 09:44:36 MDT 2026
+// Generated: Thu Jun 04 10:06:28 MDT 2026
 
 
 //
@@ -22815,28 +22815,30 @@ void j1939HandlePgn65261CruiseControlSetup(void)
 {
   if (((j1939_governor_feature_cal & 0x80) == 0) ||
      (&DAT_00009e00 < (undefined *)(uint)j1939_cruise_speed_setpoint)) {
-    j1939_pgn65261_tx_data[0] = 0xff;
+    j1939_ccss_tx_payload_t_003fab0a.max_vehicle_speed_limit = 0xff;
   }
   else {
-    j1939_pgn65261_tx_data[0] =
+    j1939_ccss_tx_payload_t_003fab0a.max_vehicle_speed_limit =
          (byte)((uint)((int)(uint)j1939_cruise_speed_setpoint * 0xa1) / 100 >> 8);
   }
   if ((j1939_governor_feature_cal & 0x40) == 0) {
-    j1939_pgn65261_tx_data[1] = 0xff;
+    j1939_ccss_tx_payload_t_003fab0a.cruise_high_set_limit_speed = 0xff;
   }
   else {
     if (fuel_pressure_raw < 0x9e01) {
-      j1939_pgn65261_tx_data[1] = (byte)(((uint)fuel_pressure_raw * 0xa1) / 100 >> 8);
+      j1939_ccss_tx_payload_t_003fab0a.cruise_high_set_limit_speed =
+           (byte)(((uint)fuel_pressure_raw * 0xa1) / 100 >> 8);
     }
     else {
-      j1939_pgn65261_tx_data[1] = 0xff;
+      j1939_ccss_tx_payload_t_003fab0a.cruise_high_set_limit_speed = 0xff;
     }
     if (DAT_0005c28a < 0x9e01) {
-      j1939_pgn65261_tx_data[2] = (byte)(((uint)DAT_0005c28a * 0xa1) / 100 >> 8);
+      j1939_ccss_tx_payload_t_003fab0a.cruise_low_set_limit_speed =
+           (byte)(((uint)DAT_0005c28a * 0xa1) / 100 >> 8);
       goto LAB_000247e0;
     }
   }
-  j1939_pgn65261_tx_data[2] = 0xff;
+  j1939_ccss_tx_payload_t_003fab0a.cruise_low_set_limit_speed = 0xff;
 LAB_000247e0:
   sendJ1939Message((j1939_tx_msg_t *)j1939_pgn65261_tx_header);
   return;
@@ -22855,14 +22857,14 @@ void initPgn65261CruiseControlSetupStruct(void)
 {
   _j1939_pgn65261_tx_header = CONCAT13(((byte)j1939_cruise_ctrl_priority & 7) << 2,0xfeed00);
   j1939_pgn65261_tx_length = 8;
-  j1939_pgn65261_data_ptr = j1939_pgn65261_tx_data;
+  j1939_pgn65261_data_ptr = &j1939_ccss_tx_payload_t_003fab0a.max_vehicle_speed_limit;
   j1939_pgn65261_end_ptr = &DAT_003fab12;
   _j1939_pgn65261_tx_header = CONCAT31(_j1939_pgn65261_tx_header,(char)j1939_source_address);
-  j1939_pgn65261_tx_data[3] = 0xff;
-  j1939_pgn65261_tx_data[4] = 0xff;
-  j1939_pgn65261_tx_data[5] = 0xff;
-  j1939_pgn65261_tx_data[6] = 0xff;
-  j1939_pgn65261_tx_data[7] = 0xff;
+  j1939_ccss_tx_payload_t_003fab0a.reserved3 = 0xff;
+  j1939_ccss_tx_payload_t_003fab0a.reserved4 = 0xff;
+  j1939_ccss_tx_payload_t_003fab0a.reserved5 = 0xff;
+  j1939_ccss_tx_payload_t_003fab0a.reserved6 = 0xff;
+  j1939_ccss_tx_payload_t_003fab0a.reserved7 = 0xff;
   return;
 }
 
