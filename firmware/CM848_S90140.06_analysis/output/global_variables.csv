@@ -1898,7 +1898,7 @@ address,name,type,comment
 0x003fd022,PTR_DAT_003fd022,pointer,
 0x003fd026,PTR_DAT_003fd026,pointer,
 0x003fd03c,PTR_DAT_003fd03c,pointer,
-0x003fd05e,output_shaft_speed_avg,word,2-sample moving average of output shaft speed: (output_shaft_speed_saved + output_shaft_speed_prev) >> 1; computed in cm848_transmission_phase_group_a_calc, used as divisor for target_rpm ratio -> output_shaft_ratio_0040b6f4
+0x003fd05e,output_shaft_speed_avg,word,2-sample moving average of output shaft speed: (output_shaft_speed_saved + output_shaft_speed_prev) >> 1; computed in cm848_transmission_phase_group_a_calc, used as divisor for target_rpm ratio -> engine_temp_protection_input_raw (0x0040b6f4)
 0x003fd060,output_shaft_speed_saved,word,prior-cycle snapshot of output_shaft_speed_prev (0x40a2ae); averaged with current sample for smoothing; seeded at init by cm848_output_shaft_speed_save, refreshed inline by cm848_transmission_phase_group_a_calc
 0x003fd062,protection_trim_divisor_working,dword,= protection_temp_scale_factor_working * protection_timing_period_cal; shaft-speed fuel-trim divisor used when NOT actively limiting (normal path)
 0x003fd066,protection_trim_divisor_cal,dword,= protection_temp_scale_cal * protection_timing_period_cal; shaft-speed fuel-trim divisor used when protection IS active (limiting path)
