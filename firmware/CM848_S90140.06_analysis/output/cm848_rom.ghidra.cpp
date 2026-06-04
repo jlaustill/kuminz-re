@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Jun 04 10:06:28 MDT 2026
+// Generated: Thu Jun 04 13:18:33 MDT 2026
 
 
 //
@@ -22825,9 +22825,9 @@ void j1939HandlePgn65261CruiseControlSetup(void)
     j1939_ccss_tx_payload_t_003fab0a.cruise_high_set_limit_speed = 0xff;
   }
   else {
-    if (fuel_pressure_raw < 0x9e01) {
+    if (cruise_speed_high_limit < 0x9e01) {
       j1939_ccss_tx_payload_t_003fab0a.cruise_high_set_limit_speed =
-           (byte)(((uint)fuel_pressure_raw * 0xa1) / 100 >> 8);
+           (byte)(((uint)cruise_speed_high_limit * 0xa1) / 100 >> 8);
     }
     else {
       j1939_ccss_tx_payload_t_003fab0a.cruise_high_set_limit_speed = 0xff;
@@ -39601,11 +39601,11 @@ void cm848_calculateTorqueCurveValue(void)
   }
   fuel_pressure_threshold_prev = fuel_pressure_threshold_working;
   wVar2 = fuel_pressure_threshold_b_cal;
-  if ((fuel_pressure_clamp_enable_cal != 0) && (fuel_pressure_threshold_working < fuel_pressure_raw)
-     ) {
+  if ((fuel_pressure_clamp_enable_cal != 0) &&
+     (fuel_pressure_threshold_working < cruise_speed_high_limit)) {
     wVar2 = fuel_pressure_threshold_working;
   }
-  fuel_pressure_raw = wVar2;
+  cruise_speed_high_limit = wVar2;
   cold_start_qualifier_prev_flag = cold_start_qualifier_flag;
   return;
 }
@@ -39622,7 +39622,7 @@ void cm848_initTorqueCurveState(void)
   fuel_pressure_threshold_working = fuel_pressure_threshold_cal;
   governor_j1939_bypass_flag = 1;
   j1939_cruise_speed_setpoint = fuel_pressure_threshold_cal;
-  fuel_pressure_raw = fuel_pressure_threshold_b_cal;
+  cruise_speed_high_limit = fuel_pressure_threshold_b_cal;
   DAT_0040b5c0 = fuel_pressure_threshold_cal;
   cold_start_qualifier_prev_flag = 0;
   return;
@@ -41282,8 +41282,8 @@ void cm848_protectionFuelRateRamp(int param_1)
 {
   word wVar1;
   
-  wVar1 = fuel_pressure_raw;
-  if ((int)(uint)cruise_speed_command < (int)((uint)fuel_pressure_raw - param_1)) {
+  wVar1 = cruise_speed_high_limit;
+  if ((int)(uint)cruise_speed_command < (int)((uint)cruise_speed_high_limit - param_1)) {
     wVar1 = cruise_speed_command + (short)param_1;
   }
   cruise_speed_command = wVar1;
@@ -41315,10 +41315,10 @@ void cm848_processTimingTableLookup(void)
     governor_fuel_enable_state = 0;
     return;
   case 1:
-    pwVar5 = &fuel_pressure_raw;
+    pwVar5 = &cruise_speed_high_limit;
     pwVar4 = &cruise_speed_target_working;
     uVar3 = (uint)cruise_speed_setpoint_adjusted;
-    cruise_speed_command = cm848_calculateProtectionFuelLimit(uVar3,fuel_pressure_raw);
+    cruise_speed_command = cm848_calculateProtectionFuelLimit(uVar3,cruise_speed_high_limit);
     *pwVar4 = cruise_speed_command;
     if ((int)(uint)*pwVar5 < (int)(uVar3 + cruise_speed_margin_cal)) {
       cruise_speed_command = *pwVar5;
@@ -41368,7 +41368,8 @@ void cm848_processTimingTableLookup(void)
        ((cruise_speed_mode_prev == 4 &&
         (wVar2 = cruise_speed_target_working,
         cruise_speed_target_working < cruise_speed_setpoint_adjusted)))) {
-      wVar2 = cm848_calculateProtectionFuelLimit(cruise_speed_setpoint_adjusted,fuel_pressure_raw);
+      wVar2 = cm848_calculateProtectionFuelLimit
+                        (cruise_speed_setpoint_adjusted,cruise_speed_high_limit);
     }
   }
   else {
@@ -41382,11 +41383,11 @@ void cm848_processTimingTableLookup(void)
   }
   cruise_speed_command = wVar2;
   if ((iVar6 == 7) &&
-     (cruise_speed_target_working = cruise_speed_command, fuel_pressure_raw < cruise_speed_command))
-  {
-    cruise_speed_target_working = fuel_pressure_raw;
+     (cruise_speed_target_working = cruise_speed_command,
+     cruise_speed_high_limit < cruise_speed_command)) {
+    cruise_speed_target_working = cruise_speed_high_limit;
   }
-  if ((fuel_pressure_raw < cruise_speed_target_working) ||
+  if ((cruise_speed_high_limit < cruise_speed_target_working) ||
      (cruise_speed_target_working < cruise_speed_min_cal)) {
     governor_fuel_enable_state = 0;
   }
@@ -41428,7 +41429,7 @@ void cm848_validateFuelRateTarget(void)
 {
   cruise_speed_mode_prev = 0;
   if ((cruise_speed_min_cal <= cruise_speed_cmd_working) &&
-     (cruise_speed_cmd_working <= fuel_pressure_raw)) {
+     (cruise_speed_cmd_working <= cruise_speed_high_limit)) {
     governor_fuel_enable_state = 1;
     cruise_speed_command = cruise_speed_cmd_working;
     cruise_speed_target_working = cruise_speed_cmd_working;

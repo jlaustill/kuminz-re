@@ -1443,7 +1443,7 @@ dual_axis_table_dims_t,0x003fa87c,,,,governor offset table B - second instance,,
 # Populated by j1939HandlePgn65261CruiseControlSetup; values scaled to km/h via *0xa1/100>>8; 0xff = not available
 # Byte->SPN map from the j1939 PGN/SPN database (PGN 65261 spns 74/87/88)
 j1939_ccss_tx_payload_t,0x003fab0a,max_vehicle_speed_limit,byte,1,SPN 74 Maximum Vehicle Speed Limit (km/h); from j1939_cruise_speed_setpoint; gate j1939_governor_feature_cal&0x80,,verified
-j1939_ccss_tx_payload_t,0x003fab0a,cruise_high_set_limit_speed,byte,1,SPN 87 Cruise Control High Set Limit Speed (km/h); gate j1939_governor_feature_cal&0x40; fed by fuel_pressure_raw (likely MISNAMED - a speed here),,verified
+j1939_ccss_tx_payload_t,0x003fab0a,cruise_high_set_limit_speed,byte,1,SPN 87 Cruise Control High Set Limit Speed (km/h); gate j1939_governor_feature_cal&0x40; fed by cruise_speed_high_limit,,verified
 j1939_ccss_tx_payload_t,0x003fab0a,cruise_low_set_limit_speed,byte,1,SPN 88 Cruise Control Operator Low Set Limit Speed (km/h); from DAT_0005c28a,,verified
 j1939_ccss_tx_payload_t,0x003fab0a,reserved3,byte,1,reserved - init 0xff (not available),,verified
 j1939_ccss_tx_payload_t,0x003fab0a,reserved4,byte,1,reserved - init 0xff (not available),,verified

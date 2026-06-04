@@ -2173,7 +2173,7 @@ address,name,type,comment
 0x003fdd6e,sensor_validation_accum+2,,
 0x003fdd70,protection_freq_divisor_working,dword,
 0x003fdd7a,cruise_speed_blend_working,word,
-0x003fdd7c,fuel_pressure_raw,word,
+0x003fdd7c,cruise_speed_high_limit,word,cruise/governor speed limit (km/h domain); broadcast as SPN 87 Cruise Control High Set Limit Speed in PGN 65261; assigned to cruise_speed_target_working and clamped by fuel-temp-trim in cm848_calculateTorqueCurveValue / ramped in cm848_protectionFuelRateRamp; width word confirmed lhz r9,0(r4) @ 0x4098c. Renamed from fuel_pressure_raw - it is NOT the fuel pressure sensor (that is e2m Fuel_Press_Sensor at a different address) and is never sensor-fed
 0x003fdd80,governor_prop_status_bits_1,word,
 0x003fdd86,governor_prop_status_byte_b,word,
 0x003fdd8a,governor_prop_status_bits_0,word,
