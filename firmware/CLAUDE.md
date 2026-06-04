@@ -140,6 +140,10 @@ ROM-to-RAM thunking (`func_0x003fxxxx` → ROM source) is the CM848 `romramthunk
 > (which CSV, column formats, the edit → `build` → verify-in-`.cpp` loop, and the type-specific
 > gotchas for globals/enums/structs/funcdefs). It is the authoritative source; this file's notes
 > below are supporting detail.
+>
+> **Naming an unknown symbol?** Use **`investigate-firmware-symbol`** (read-only research → name + type
+> recommendation; includes the mandatory asm width-check — `powerpc-linux-gnu-objdump -D -b binary -m powerpc -EB --adjust-vma=<base>` for CM848 [big-endian!], `llvm-mc-18 --disassemble --triple=m68k` for CM550).
+> For J1939 SPN/PGN meanings use **`j1939-lookup`** (local `mongodb://localhost:27017/j1939`, collection `pgns`, query by `number`).
 
 ---
 
@@ -173,7 +177,7 @@ All firmwares use the same CSV structure in `output/`:
 - **Verify before commit** - Check decompiled output after applying changes
 - **Decimal in names** - Use decimal, not hex, in variable/function names
 - **Major concept first in names** - prefix with the dominant domain noun first: `rpm_governor_offset_*` not `governor_offset_rpm_*`; `fuel_demand_*` not `demand_fuel_*`
-- **`_cal` only for tunable calibrations** - before suffixing `_cal`, confirm the address is a Calterm-tunable parameter (present in `e2m_parameters.csv`). Read-only firmware-internal constants not exposed as parameters should NOT get `_cal` (e.g. `protection_control_licensed`, `fuel_temp_cap_from_shaft_speed`).
+- **`_cal` = EEPROM-backed only, by the MEMORY MAP (not e2m)** - ROM / ROM→RAM copy (0x3F9800–0x3FDB30) / flash = fixed constant → no `_cal`; EEPROM-loaded → `_cal`; computed/working RAM → never. e2m uses Calterm *virtual* addresses, so a RAM-address grep is blind. **CM848: EEPROM only shadows into `0x3feexx`** — `0x40xxxx`/`0x3fxxxx` cals are ROM/flash → no `_cal`. (grep `mpc555_eepromReadWords(` to settle a specific address.)
 - **Name locals via `local_variables.csv`** (`addr,fn,old_name,new_name,type,comment`); don't reuse a global's name for a local — it creates a confusing shadow (used `fuel_temp_trim_uncapped`, not the global `fuel_temp_trim_working`).
 - **Function must exist in Ghidra** - CSV renames only work for addresses Ghidra recognizes as functions
 - **import force-creates functions** — `function_renames.csv` entries at addresses with no function get disassembled + created (not just renamed). This reproduces Bank2 (force-analyzed) functions; their names ARE in `function_renames.csv` (~567 entries), not a side file.
