@@ -112,7 +112,7 @@ cd [firmware]_analysis/ghidra
 ```
 
 `build` internally runs, in dependency order (firmware-specific):
-- **CM848:** `init → memmap → enums → import → analyze → deletions → import → callingconv → hwregs → labels → constants → arrays → callfixups → export`
+- **CM848:** `init → memmap → enums → import → analyze → deletions → import → romramthunks → callingconv → hwregs → labels → constants → arrays → callfixups → export`
 - **CM550:** `init → analyze → memmap → enums → import → deletions → import → hwregs → labels → constants → arrays → export`
 
 (`import` = ApplyStructures + ImportAnalysis, which force-creates functions from
@@ -133,8 +133,13 @@ functions before `analyze` so cross-bank Bank-2 `bl` calls resolve.)
 
 To name/type/delete: edit the CSV, run `build`. To find spurious splits to record with
 `deletefuncs`: `build`, then `classifyfuncs` on suspects (no incoming call ref = split).
-ROM-to-RAM thunking (`func_0x003fxxxx` → ROM source) is a **deferred** build step (the map is
-`ROM = 0x3C30 + (RAM − 0x3F9800)`; re-add it as a deterministic stage when needed).
+ROM-to-RAM thunking (`func_0x003fxxxx` → ROM source) is the CM848 `romramthunks` build stage
+(the map is `ROM = 0x3C30 + (RAM − 0x3F9800)`).
+
+> **Editing CSVs?** Use the **`editing-firmware-csvs`** skill — it has the full per-type workflow
+> (which CSV, column formats, the edit → `build` → verify-in-`.cpp` loop, and the type-specific
+> gotchas for globals/enums/structs/funcdefs). It is the authoritative source; this file's notes
+> below are supporting detail.
 
 ---
 
@@ -142,7 +147,7 @@ ROM-to-RAM thunking (`func_0x003fxxxx` → ROM source) is a **deferred** build s
 
 All firmwares use the same CSV structure in `output/`:
 
-**Comment lines:** Lines starting with `#` are preserved through import/export cycles. Use them to document address mappings, function relationships, or other context.
+**Comment lines:** Lines starting with `#` are preserved through a `build`. Use them to document address mappings, function relationships, or other context.
 
 | File | Purpose |
 |------|---------|
@@ -181,11 +186,11 @@ All firmwares use the same CSV structure in `output/`:
 - **Reproducibility: PROVEN** — `build` is a deterministic fixed point. Two independent `build`s from a fresh binary produce byte-identical `.cpp` + CSVs (`verify` asserts this). Auto-analysis is deterministic; `import` force-creates functions from `function_renames.csv`; `deleted_functions.csv` removes spurious splits; the new baseline preserves all curated names and *surfaces* 90 real functions the old hand-curated baseline was missing (func_0x 75→29). The apparent "~2965 extra DAT_" gap from earlier was a measurement artifact — unnamed RAM vars render `DAT_` (initialized RAM) vs `uRam` (uninitialized); both are default names, no curation lost.
 - **deleted_functions.csv** — vet candidates with `classifyfuncs` before adding: an entry with incoming CALL refs is a REAL function (do NOT delete — add to `function_renames.csv` instead); only no-ref / jump-only entries are true mid-function splits. The bootstrap found 39 "spurious" Bank-2 candidates were actually real functions the campaign missed.
 - **Type width must match hardware access** - `bool` (1B), `byte` (1B), `word` (2B), `dword` (4B) must match the actual load instruction (`lbz`=1B, `lhz`=2B, `lwz`=4B). Wrong width is silently reverted to `word` on export. This also prevents enum substitution for byte-width variables.
-- **Plate comments round-trip via function_renames.csv** - 3rd column is preserved through import/export since 2026-05-25 fix. If export drops a plate comment, it indicates `ExportAnalysis.java` failed to compile (check for missing imports).
+- **Plate comments round-trip via function_renames.csv** - 3rd column is preserved through a `build` cycle since the 2026-05-25 fix. If `build` drops a plate comment, it indicates `ExportAnalysis.java` failed to compile (check for missing imports).
 - **CSV comment commas — which columns are safe** - `function_renames.csv` (`split ,×3`) and `global_variables.csv` (`split ,×4`) absorb commas into the LAST column, so review prose with commas is fine there. `structure_definitions.csv` / `call_fixups.csv` use the quote-aware `parseCSVLine` — keep those comments comma-free or quoted.
 - **A checked bit ≠ a live trigger** - when a gate ORs in flag bits, grep for a SETTER (`| 0xNN`, masked/whole-word assignment, BOTH banks) before treating the condition as reachable. Checked-but-never-set bits are shared-firmware / excluded-feature artifacts (e.g. the protection gate's `safety_bits_1 0x10/0x20`, dormant in this calibration).
-- **Enum round-trip order** — when assigning a new enum type name to variables, run `./analyze.sh enums` BEFORE `./analyze.sh import`. Import silently skips type names not yet in Ghidra's DTM.
-- **Named types preserved through export (since 2026-05-26)** — `ExportAnalysis.java` reads existing CSV before overwriting and applies priority: named Ghidra type > named CSV type > primitive Ghidra type. Enum types set via CSV survive `./analyze.sh export` cycles.
+- **Enum types just need to be in `enums.csv`** — `build` runs the `enums` stage before `import`, so a new enum type is always registered in Ghidra's DTM before globals reference it. (Ordering is automatic; there is no separate `enums`/`import` step to sequence by hand.)
+- **Named types preserved through the export stage (since 2026-05-26)** — `ExportAnalysis.java` reads existing CSV before overwriting and applies priority: named Ghidra type > named CSV type > primitive Ghidra type. Enum types set via CSV survive `build` cycles.
 - **Masked flag access → declare a bitfield (Ghidra 12.1+)** — for a flag tested as `(var & MASK)`, declaring the field as a structure bitfield now renders it symbolically. Verified end-to-end on `protection_enable_t.protection_active` (the bit7 `0x80` boolean) 2026-06-03: reads `... .protection_active & 0x80` became `... .protection_active != 0`, and the set/clear writes `| 0x80` / `& 0x7f` became `protection_active = 1` / `= 0`. **Requires Ghidra ≥ 12.1** ([issue #647](https://github.com/NationalSecurityAgency/ghidra/issues/647) / GP-2493 — *"the Decompiler now recovers and displays the names of bitfield components… when analyzing code that manipulates them"*). On the old from-source **12.0** build the opposite happens — the mask survives **and** the field name is lost (renders raw `struct._N_1_ & MASK`, the closed-as-known [#2462](https://github.com/NationalSecurityAgency/ghidra/issues/2462) on PPC), so this is strictly gated on the toolchain. `scripts/common.sh` now defaults `GHIDRA_DIR` to the prebuilt 12.1 (`$HOME/code/ghidra-12.1/ghidra_12.1_PUBLIC`); fall back with `GHIDRA_DIR=$HOME/code/ghidra`.
   - **CSV syntax** (`structure_definitions.csv`): set the `type` column to `bitfield:<bitSize>@<bitOffset>` (bitOffset is from the LSB; bit7 = the `0x80` bit of a byte) and the `size` column to the storage byte-width. For several flags packed in one byte/word, give the first member the byte-width and each additional member `size=0` (continuation — shares the opener's storage unit). `ApplyStructures.java` places these via `insertBitFieldAt`.
   - **Enum caveat still stands:** symbolic *enum* names appear for `var == ENUM_VALUE` but NOT for `(var & MASK) == VALUE`. Use a bitfield for packed flags; an enum type only for whole-value compares.
@@ -212,7 +217,7 @@ To name unnamed `_DAT_` globals in future (e.g., if a new firmware export reveal
 1. **Extract context** to JSON chunks (addr, prev/next named neighbors + byte gap, ≤3 usage snippets with 1 line before/after)
 2. **Dispatch parallel Haiku agents** (~70 entries/chunk, 8 chunks in parallel)
 3. **Validate** before applying — check addr conflicts, name conflicts with existing CSV, intra-batch duplicates, dword proposals with gap<4
-4. **Apply** → `./analyze.sh import` → `./analyze.sh export`
+4. **Apply** → `./analyze.sh build`
 5. **Check `_` prefix remaining**: `grep -oE '\b_[a-z][a-z0-9_]{3,}\b' cm848_rom.ghidra.cpp | sort | uniq -c | sort -rn`
 6. **Widen types** for new `_` prefix: check gap to next named var in CSV; gap≥2 → widen to `word`, gap≥4 → widen to `dword`
 
@@ -248,29 +253,6 @@ my_struct_t,0x003fa878,col_count,word,2,Second field,,verified
 my_struct_t,0x003fa87c,,,,second instance - marker only,,verified
 ```
 The marker row's empty `field_name`/`type`/`size` registers the address for application without adding duplicate fields to the type.
-
-### RAM Must Be Loaded for Structure Application
-
-Structures at RAM addresses (0x003FAxxxx - 0x0043xxxx) require RAM to be loaded:
-```bash
-./analyze.sh memmap      # Loads RAM dump at 0x003FA000 (279KB)
-./analyze.sh structures  # Now applies 29+ structures instead of 1
-```
-
-### Proper Workflow Order (Critical)
-
-Export regenerates CSVs from Ghidra, overwriting manual edits not applied to Ghidra:
-```bash
-# 1. Edit CSV files manually
-# 2. Apply to Ghidra:
-./analyze.sh import      # Apply names + types (vartypes behavior is built into import)
-./analyze.sh structures  # Apply structures
-# 3. Export (regenerates CSVs + decompilation):
-./analyze.sh export
-# 4. Commit
-```
-
-**Warning**: Running `export` before `import` loses your CSV edits!
 
 ### global_variables.csv Maintenance
 
