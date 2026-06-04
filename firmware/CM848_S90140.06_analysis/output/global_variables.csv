@@ -2326,6 +2326,7 @@ address,name,type,comment
 0x003fecf2,sensor_fault_mode_active,dword,
 0x003fecf3,sensor_fault_mode_active+1,,
 0x003fecf6,eeprom_block_length_cal,word,
+0x003fed94,fault_pending_flags,dword,32-bit fault/diagnostic flags register; bits default SET (init = 0xffffffff) and clear as faults resolve across diag/protection/hpcr routines (confirmed dword via lwz/stw r12,0(r5) @ 0x52d634); >=18 independent bits - strong bitmap32-struct decomposition candidate. Distinct from diagnostic_fault_flags_a/b (0x40a813, unrelated word pair)
 0x003fed9c,PTR_DAT_003fed9c,pointer,
 0x003feda0,PTR_s_x9Md_003feda0,pointer,
 0x003fedde,protection_load_filtered,word,
