@@ -66,7 +66,32 @@ Validated example — `protectionTimeoutControl @ 0x525e54` (Bank2):
 address low half.) Use a `--stop-address` that spans the whole function — accesses can be hundreds
 of bytes past the entry.
 
+**Third addressing form — buffer/struct member off a base pointer.** For a symbol that is one
+member of a buffer/struct, the compiler loads the **base** address once (`lis`+`addi`) and accesses
+each member by a small displacement: `stb rX, <member_offset>(rBase)`. The target address never
+appears whole — only the **base** does (in the `addi`). So: grep for the *base* low-16 (= the
+member's address minus its offset), find `addi rBase,rBase,<lo>`, then read width from the
+`l{b,h,w}z / st{b,h,w} rX, <member_offset>(rBase)`. This is the strongest **array/struct-member**
+type-shape signal — if you see it, the symbol routes to `arrays.csv` / `structure_definitions.csv`,
+not `global_variables.csv`. Validated example — `DAT_003fab0e` (byte 4 of an 8-byte J1939 TX
+buffer) in `initPgn65261CruiseControlSetupStruct @ 0x24800`:
+```
+24830:	3c 60 00 40 	lis   r3,64        ; 0x400000
+24834:	38 63 ab 0a 	addi  r3,r3,-21750 ; r3 = 0x3FAB0A  (buffer base; the member's addr never appears whole)
+2485c:	98 83 00 04 	stb   r4,4(r3)     ; 0x3FAB0A+4 = 0x3FAB0E := 0xff → stb = byte
+```
+
 Width: `lbz/stb` = 1B **byte** · `lhz/lha/sth` = 2B **word** · `lwz/stw` = 4B **dword**.
+
+**Interpreting a leading `_` on the symbol.** A `_`-prefixed global has THREE possible causes — the asm
+width check distinguishes them, so don't assume "too narrow":
+1. **Type too narrow** — the load is wider than the declared type (e.g. `lwz` on a `word`). Recommend widening.
+2. **PowerPC pair-clear** — one `sth`/`stw` writes this var AND its neighbor. Recommend a single wider var/struct.
+3. **ROM-to-RAM aliasing** (addr in 0x3F9800–0x3FDB30) — the data global overlaps the RAM image of a ROM
+   function (`RAM = 0x3F9800 + (ROM − 0x3C30)`; grep `function_renames.csv` for a function mapping here).
+   The `_` is **unavoidable** — report it as aliasing, NOT a width/type defect, and recommend keeping the
+   loose global name (widening or struct-typing can't fix it). Validated: `_j1939_pgn65261_tx_header`
+   @ 0x3faafc aliases `cm848_writeCan2ControllerTxMailbox` @ ROM 0x4f2c.
 
 ### CM550 — m68k, BIG-ENDIAN (best-effort, experimental backend)
 

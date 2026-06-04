@@ -45,12 +45,13 @@ A change is **not applied** when you edit a CSV — it is applied when a fresh `
 
 Detailed examples for the deep types (struct bitfield/multi-instance, enum substitution, r4-return prototypes, troubleshooting matrix) are in **`csv-type-reference.md`** — read it when working those types.
 
-## Underscore prefix `_<name>` (globals) = type too NARROW
+## Underscore prefix `_<name>` (globals)
 
-The access is wider than your declared type. Decide by the byte gap to the next named CSV var:
-- **gap ≥ access width** → widen the type (`word`→`dword`) and rebuild (common case).
+Usually means the declared type is too NARROW — but confirm the cause before "fixing" it (an asm width check distinguishes them):
+- **gap ≥ access width** → type too narrow: widen (`word`→`dword`) and rebuild (common case).
 - **gap < access width** → PowerPC pair-clear (one `sth`/`stw` writes this var AND its neighbor): declare ONE wider var spanning both, or a struct — never two narrow vars.
-- "Accept the underscore" is not a step; a clean render is always achievable.
+- **ROM-to-RAM aliasing (CM848, addr in 0x3F9800–0x3FDB30)** → the data global overlaps the RAM image of a ROM function. Boot copies ROM 0x3C30–0x7F60 into this window (`RAM = 0x3F9800 + (ROM − 0x3C30)`). grep `function_renames.csv` for a function whose ROM address maps here; if found, the `_` is **unavoidable** — widening / struct-typing won't fix it (a struct instance can't be applied at a function entry), and removing the loose global lets the function-image symbol take over. Keep the loose global name as-is. (Validated: `_j1939_pgn65261_tx_header` @ 0x3faafc aliases `cm848_writeCan2ControllerTxMailbox` @ ROM 0x4f2c.)
+- A clean render is achievable for the first two; "accept the underscore" is the correct answer **only** for the aliasing case.
 
 ## Obsolete — do NOT do these (the one-shot-build trap)
 
