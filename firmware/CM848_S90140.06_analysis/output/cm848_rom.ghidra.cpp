@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Jun 04 15:52:28 MDT 2026
+// Generated: Thu Jun 04 22:50:41 MDT 2026
 
 
 //
@@ -6476,7 +6476,7 @@ void cm848_periodicTaskSet_timing(void)
 {
   cm848_calculateTorqueCurveValue();
   cm848_processSensorTemperatureData();
-  cm848_processTimingTableLookup();
+  cm848_cruiseSpeedCommandStateMachine();
   return;
 }
 
@@ -41292,10 +41292,10 @@ void cm848_protectionFuelRateRamp(int param_1)
 
 
 //
-// Function: cm848_processTimingTableLookup @ 0x000409b0
+// Function: cm848_cruiseSpeedCommandStateMachine @ 0x000409b0
 //
 
-void cm848_processTimingTableLookup(void)
+void cm848_cruiseSpeedCommandStateMachine(void)
 
 {
   word wVar1;
