@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Jun 04 15:25:59 MDT 2026
+// Generated: Thu Jun 04 15:52:28 MDT 2026
 
 
 //
@@ -6403,7 +6403,7 @@ void cm848_periodicTaskSet_auxiliaryControl(void)
   cm848_auxiliary_boundary_condition_eval();
   cm848_copyProtectionAccumulator();
   cm848_calculateGovernorOutput();
-  cm848_processEngineRpmTarget();
+  cm848_computeCruiseSpeedSetpoint();
   cm848_torque_limit_state_update();
   cm848_pressure_control_state_load();
   cm848_fuel_demand_state_capture();
@@ -35131,12 +35131,12 @@ void cm848_initProtectionFilterValues(void)
 
 
 //
-// Function: cm848_processEngineRpmTarget @ 0x0003866c
+// Function: cm848_computeCruiseSpeedSetpoint @ 0x0003866c
 //
 
 /* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
 
-void cm848_processEngineRpmTarget(void)
+void cm848_computeCruiseSpeedSetpoint(void)
 
 {
   word wVar1;
