@@ -76,6 +76,8 @@ Bank 2 contains utility functions called from Bank 1 (sensor processing, math ro
 
 Functions at `0x003Fxxxx` in decompilation (e.g. `BYTE_003fae3c()`) are ROM functions running from RAM — Ghidra already has them decompiled at their ROM source addresses. The RAM dump has these regions overwritten by CAN bus data at runtime; use the ROM binary to find the original code.
 
+**Declaring data in this window:** an array/struct's boundary is usually the copy-window EDGE (0x3FDB30), not the next named global — post-copy working RAM (handler tables etc.) begins at 0x3FDB30. Size arrays to 0x3FDB30, not to the next symbol (it may belong to a different structure). Array typing DOES apply over this code-overlap region (verified deterministic via `analyze.sh verify`) — the "types revert on export" caution is about scalar WIDTH, not array creation.
+
 Key RAM-executed functions called from `mainLoopIteration`:
 - `dispatchCanMessageHandlers` (ROM 0x526C → RAM 0x3FAE3C)
 - `processJ1939QueueStatus` (ROM 0x64C4 → RAM 0x3FC094)
@@ -177,6 +179,7 @@ All firmwares use the same CSV structure in `output/`:
 - **Verify before commit** - Check decompiled output after applying changes
 - **Decimal in names** - Use decimal, not hex, in variable/function names
 - **Major concept first in names** - prefix with the dominant domain noun first: `rpm_governor_offset_*` not `governor_offset_rpm_*`; `fuel_demand_*` not `demand_fuel_*`
+- **Verify legacy/auto names against behavior** - generated names often borrow the wrong domain (the data's UNIT, the caller task-set's name, or a sibling channel), not what the code does; confirm against the body's actual writes/consumers + asm width before trusting (one session found 6 symbols misnamed this way)
 - **`_cal` = EEPROM-backed only, by the MEMORY MAP (not e2m)** - ROM / ROM→RAM copy (0x3F9800–0x3FDB30) / flash = fixed constant → no `_cal`; EEPROM-loaded → `_cal`; computed/working RAM → never. e2m uses Calterm *virtual* addresses, so a RAM-address grep is blind. **CM848: EEPROM only shadows into `0x3feexx`** — `0x40xxxx`/`0x3fxxxx` cals are ROM/flash → no `_cal`. (grep `mpc555_eepromReadWords(` to settle a specific address.)
 - **Name locals via `local_variables.csv`** (`addr,fn,old_name,new_name,type,comment`); don't reuse a global's name for a local — it creates a confusing shadow (used `fuel_temp_trim_uncapped`, not the global `fuel_temp_trim_working`).
 - **Function must exist in Ghidra** - CSV renames only work for addresses Ghidra recognizes as functions
@@ -282,6 +285,11 @@ Use Python CSV module to batch-categorize and clean (see session history for scr
 - CM848: `sensorChannelConfigInit` (0x00500234) + `updateSensorChannelWithConfig` (0x00500a4c)
 - Two sensor types: Type A uses `sensorChannelConfigInit`, Type B uses `sensorChannelInit_typeB`
 - Look for similar patterns in CM550 firmware
+
+### QADC Analog Sensor Read (two-table dispatch)
+- Raw analog read = two-table indirection: `idx = qadc_channel_index_table[k]` (0x3fda78, ROM-copied channel-index array, each elem clamped `< 0x81`) → `qadc_channel_dispatch_table[idx]` (0x57dd2, 129×8-byte ptr entries → MPC555 QADC result regs QADC-A 0x304A80.. / QADC-B 0x304E80..) → deref = live 10-bit value. Asm: `lhz <off>(0x3fda78); cmpwi 0x80; slwi r,3; lwzx 0x57dd2; lhz 0(ptr)` (~58 sites)
+- The index picks WHICH sensor and is runtime-populated in the ROM→RAM window (not in the static dump) → the physical sensor per slot is a live-bench-read target, not statically resolvable
+- `lower < value < upper` on this read is a sensor-VALIDITY gate (e.g. 92..976 = 9–95% of 10-bit FS), NOT a speed/RPM window — don't conflate
 
 ### CM848 Bank 2 Status
 
