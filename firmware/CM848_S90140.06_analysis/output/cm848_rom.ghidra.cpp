@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Jun 04 22:55:41 MDT 2026
+// Generated: Fri Jun 05 08:18:16 MDT 2026
 
 
 //
@@ -33760,7 +33760,7 @@ void cm848_processFaultScanLookup(void)
     else {
       uVar8 = 0;
     }
-    uVar11 = *(undefined2 *)(&DWORD_00057dd2)[uVar8 * 2];
+    uVar11 = *(undefined2 *)(&qadc_channel_dispatch_table)[uVar8 * 2];
   }
   else {
     uVar11 = *(undefined2 *)(&cylinder_timing_demand_array + uVar8 * 2);
@@ -40594,7 +40594,7 @@ LAB_0003f598:
       else {
         uVar5 = 0;
       }
-      wVar1 = *(word *)(&DWORD_00057dd2)[uVar5 * 2];
+      wVar1 = *(word *)(&qadc_channel_dispatch_table)[uVar5 * 2];
     }
     if (torque_limit_setpoint_active == wVar1) {
       fuel_flow_rate_counter = fuel_flow_rate_counter + 1;
@@ -40613,7 +40613,7 @@ LAB_0003f598:
         else {
           uVar5 = 0;
         }
-        torque_limit_setpoint_active = *(word *)(&DWORD_00057dd2)[uVar5 * 2];
+        torque_limit_setpoint_active = *(word *)(&qadc_channel_dispatch_table)[uVar5 * 2];
       }
       fuel_flow_rate_counter = 0;
       protection_load_input = protection_load_input_alt;
@@ -46539,7 +46539,7 @@ void cm848_processEnginePositionData(void)
     else {
       uVar2 = 0;
     }
-    wVar1 = *(word *)(&DWORD_00057dd2)[uVar2 * 2];
+    wVar1 = *(word *)(&qadc_channel_dispatch_table)[uVar2 * 2];
   }
   engine_timing_diagnostic_word = wVar1 << 2;
   if (0xffc < engine_timing_diagnostic_word) {
@@ -46770,7 +46770,7 @@ void cm848_updateEnginePosition(void)
       else {
         uVar1 = 0;
       }
-      cam_sync_position = *(word *)(&DWORD_00057dd2)[uVar1 * 2];
+      cam_sync_position = *(word *)(&qadc_channel_dispatch_table)[uVar1 * 2];
     }
     cm848_processEnginePositionData();
   }
@@ -58155,7 +58155,7 @@ void sensorChannelConfigInit
     else {
       uVar3 = 0;
     }
-    uVar5 = *(undefined2 *)(&DWORD_00057dd2)[uVar3 * 2];
+    uVar5 = *(undefined2 *)(&qadc_channel_dispatch_table)[uVar3 * 2];
   }
   else {
     uVar5 = *(undefined2 *)(&cylinder_timing_demand_array + iVar8 * 2);
@@ -58169,7 +58169,7 @@ void sensorChannelConfigInit
       else {
         uVar13 = 0;
       }
-      uVar13 = (uint)*(ushort *)(&DWORD_00057dd2)[uVar13 * 2];
+      uVar13 = (uint)*(ushort *)(&qadc_channel_dispatch_table)[uVar13 * 2];
     }
     else {
       uVar13 = (uint)*(ushort *)(&cylinder_timing_demand_array + iVar8 * 2);
@@ -58183,7 +58183,7 @@ void sensorChannelConfigInit
       else {
         uVar3 = 0;
       }
-      uVar1 = *(ushort *)(&DWORD_00057dd2)[uVar3 * 2];
+      uVar1 = *(ushort *)(&qadc_channel_dispatch_table)[uVar3 * 2];
     }
     else {
       uVar1 = *(ushort *)(&cylinder_timing_demand_array + iVar8 * 2);
@@ -58203,7 +58203,7 @@ void sensorChannelConfigInit
         else {
           uVar13 = 0;
         }
-        uVar1 = *(ushort *)(&DWORD_00057dd2)[uVar13 * 2];
+        uVar1 = *(ushort *)(&qadc_channel_dispatch_table)[uVar13 * 2];
       }
       else {
         uVar1 = *(ushort *)(&cylinder_timing_demand_array + iVar8 * 2);
@@ -58418,7 +58418,7 @@ void updateSensorChannelWithConfig
       else {
         uVar4 = 0;
       }
-      uVar10 = *(undefined2 *)(&DWORD_00057dd2)[uVar4 * 2];
+      uVar10 = *(undefined2 *)(&qadc_channel_dispatch_table)[uVar4 * 2];
     }
     else {
       uVar10 = *(undefined2 *)(&cylinder_timing_demand_array + iVar6 * 2);
@@ -58432,7 +58432,7 @@ void updateSensorChannelWithConfig
         else {
           uVar11 = 0;
         }
-        uVar11 = (uint)*(ushort *)(&DWORD_00057dd2)[uVar11 * 2];
+        uVar11 = (uint)*(ushort *)(&qadc_channel_dispatch_table)[uVar11 * 2];
       }
       else {
         uVar11 = (uint)*(ushort *)(&cylinder_timing_demand_array + iVar6 * 2);
@@ -58446,7 +58446,7 @@ void updateSensorChannelWithConfig
         else {
           uVar4 = 0;
         }
-        uVar1 = *(ushort *)(&DWORD_00057dd2)[uVar4 * 2];
+        uVar1 = *(ushort *)(&qadc_channel_dispatch_table)[uVar4 * 2];
       }
       else {
         uVar1 = *(ushort *)(&cylinder_timing_demand_array + iVar6 * 2);
@@ -58466,7 +58466,7 @@ void updateSensorChannelWithConfig
           else {
             uVar11 = 0;
           }
-          uVar1 = *(ushort *)(&DWORD_00057dd2)[uVar11 * 2];
+          uVar1 = *(ushort *)(&qadc_channel_dispatch_table)[uVar11 * 2];
         }
         else {
           uVar1 = *(ushort *)(&cylinder_timing_demand_array + iVar6 * 2);
@@ -58511,7 +58511,7 @@ void updateSensorChannelWithConfig
       else {
         uVar4 = 0;
       }
-      uVar10 = *(undefined2 *)(&DWORD_00057dd2)[uVar4 * 2];
+      uVar10 = *(undefined2 *)(&qadc_channel_dispatch_table)[uVar4 * 2];
     }
     else {
       uVar10 = *(undefined2 *)(&cylinder_timing_demand_array + iVar6 * 2);
@@ -58525,7 +58525,8 @@ void updateSensorChannelWithConfig
         else {
           uVar11 = 0;
         }
-        *(undefined2 *)((int)cal_ptr_2 + 10) = *(undefined2 *)(&DWORD_00057dd2)[uVar11 * 2];
+        *(undefined2 *)((int)cal_ptr_2 + 10) =
+             *(undefined2 *)(&qadc_channel_dispatch_table)[uVar11 * 2];
       }
       else {
         *(undefined2 *)((int)cal_ptr_2 + 10) =
@@ -58540,7 +58541,7 @@ void updateSensorChannelWithConfig
         else {
           uVar4 = 0;
         }
-        uVar1 = *(ushort *)(&DWORD_00057dd2)[uVar4 * 2];
+        uVar1 = *(ushort *)(&qadc_channel_dispatch_table)[uVar4 * 2];
       }
       else {
         uVar1 = *(ushort *)(&cylinder_timing_demand_array + iVar6 * 2);
@@ -58560,7 +58561,7 @@ void updateSensorChannelWithConfig
           else {
             uVar11 = 0;
           }
-          uVar1 = *(ushort *)(&DWORD_00057dd2)[uVar11 * 2];
+          uVar1 = *(ushort *)(&qadc_channel_dispatch_table)[uVar11 * 2];
         }
         else {
           uVar1 = *(ushort *)(&cylinder_timing_demand_array + iVar6 * 2);
@@ -58693,7 +58694,7 @@ void sensorChannelTypeB_configInit(int param_1,undefined2 *param_2,table_interp_
     else {
       uVar3 = 0;
     }
-    uVar5 = *(undefined2 *)(&DWORD_00057dd2)[uVar3 * 2];
+    uVar5 = *(undefined2 *)(&qadc_channel_dispatch_table)[uVar3 * 2];
   }
   else {
     uVar5 = *(undefined2 *)(&cylinder_timing_demand_array + in_r10 * 2);
@@ -58707,7 +58708,7 @@ void sensorChannelTypeB_configInit(int param_1,undefined2 *param_2,table_interp_
       else {
         uVar10 = 0;
       }
-      uVar10 = (uint)*(ushort *)(&DWORD_00057dd2)[uVar10 * 2];
+      uVar10 = (uint)*(ushort *)(&qadc_channel_dispatch_table)[uVar10 * 2];
     }
     else {
       uVar10 = (uint)*(ushort *)(&cylinder_timing_demand_array + in_r10 * 2);
@@ -58721,7 +58722,7 @@ void sensorChannelTypeB_configInit(int param_1,undefined2 *param_2,table_interp_
       else {
         uVar3 = 0;
       }
-      uVar1 = *(ushort *)(&DWORD_00057dd2)[uVar3 * 2];
+      uVar1 = *(ushort *)(&qadc_channel_dispatch_table)[uVar3 * 2];
     }
     else {
       uVar1 = *(ushort *)(&cylinder_timing_demand_array + in_r10 * 2);
@@ -58741,7 +58742,7 @@ void sensorChannelTypeB_configInit(int param_1,undefined2 *param_2,table_interp_
         else {
           uVar10 = 0;
         }
-        uVar1 = *(ushort *)(&DWORD_00057dd2)[uVar10 * 2];
+        uVar1 = *(ushort *)(&qadc_channel_dispatch_table)[uVar10 * 2];
       }
       else {
         uVar1 = *(ushort *)(&cylinder_timing_demand_array + in_r10 * 2);
@@ -58953,7 +58954,7 @@ void sensorChannelTypeB_update(int param_1,undefined2 *param_2,table_interp_args
       else {
         uVar4 = 0;
       }
-      uVar8 = *(undefined2 *)(&DWORD_00057dd2)[uVar4 * 2];
+      uVar8 = *(undefined2 *)(&qadc_channel_dispatch_table)[uVar4 * 2];
     }
     else {
       uVar8 = *(undefined2 *)(&cylinder_timing_demand_array + in_r10 * 2);
@@ -58967,7 +58968,7 @@ void sensorChannelTypeB_update(int param_1,undefined2 *param_2,table_interp_args
         else {
           uVar9 = 0;
         }
-        uVar9 = (uint)*(ushort *)(&DWORD_00057dd2)[uVar9 * 2];
+        uVar9 = (uint)*(ushort *)(&qadc_channel_dispatch_table)[uVar9 * 2];
       }
       else {
         uVar9 = (uint)*(ushort *)(&cylinder_timing_demand_array + in_r10 * 2);
@@ -58981,7 +58982,7 @@ void sensorChannelTypeB_update(int param_1,undefined2 *param_2,table_interp_args
         else {
           uVar4 = 0;
         }
-        uVar2 = *(ushort *)(&DWORD_00057dd2)[uVar4 * 2];
+        uVar2 = *(ushort *)(&qadc_channel_dispatch_table)[uVar4 * 2];
       }
       else {
         uVar2 = *(ushort *)(&cylinder_timing_demand_array + in_r10 * 2);
@@ -59001,7 +59002,7 @@ void sensorChannelTypeB_update(int param_1,undefined2 *param_2,table_interp_args
           else {
             uVar9 = 0;
           }
-          uVar2 = *(ushort *)(&DWORD_00057dd2)[uVar9 * 2];
+          uVar2 = *(ushort *)(&qadc_channel_dispatch_table)[uVar9 * 2];
         }
         else {
           uVar2 = *(ushort *)(&cylinder_timing_demand_array + in_r10 * 2);
@@ -59046,7 +59047,7 @@ void sensorChannelTypeB_update(int param_1,undefined2 *param_2,table_interp_args
       else {
         uVar4 = 0;
       }
-      uVar8 = *(undefined2 *)(&DWORD_00057dd2)[uVar4 * 2];
+      uVar8 = *(undefined2 *)(&qadc_channel_dispatch_table)[uVar4 * 2];
     }
     else {
       uVar8 = *(undefined2 *)(&cylinder_timing_demand_array + in_r10 * 2);
@@ -59060,7 +59061,7 @@ void sensorChannelTypeB_update(int param_1,undefined2 *param_2,table_interp_args
         else {
           uVar9 = 0;
         }
-        param_2[5] = *(undefined2 *)(&DWORD_00057dd2)[uVar9 * 2];
+        param_2[5] = *(undefined2 *)(&qadc_channel_dispatch_table)[uVar9 * 2];
       }
       else {
         param_2[5] = *(undefined2 *)(&cylinder_timing_demand_array + in_r10 * 2);
@@ -59074,7 +59075,7 @@ void sensorChannelTypeB_update(int param_1,undefined2 *param_2,table_interp_args
         else {
           uVar4 = 0;
         }
-        uVar2 = *(ushort *)(&DWORD_00057dd2)[uVar4 * 2];
+        uVar2 = *(ushort *)(&qadc_channel_dispatch_table)[uVar4 * 2];
       }
       else {
         uVar2 = *(ushort *)(&cylinder_timing_demand_array + in_r10 * 2);
@@ -59094,7 +59095,7 @@ void sensorChannelTypeB_update(int param_1,undefined2 *param_2,table_interp_args
           else {
             uVar9 = 0;
           }
-          uVar2 = *(ushort *)(&DWORD_00057dd2)[uVar9 * 2];
+          uVar2 = *(ushort *)(&qadc_channel_dispatch_table)[uVar9 * 2];
         }
         else {
           uVar2 = *(ushort *)(&cylinder_timing_demand_array + in_r10 * 2);
@@ -64180,7 +64181,7 @@ void fuel_demand_protection_loop(void)
       else {
         uVar3 = 0;
       }
-      DAT_0040aac6 = *(ushort *)(&DWORD_00057dd2)[uVar3 * 2];
+      DAT_0040aac6 = *(ushort *)(&qadc_channel_dispatch_table)[uVar3 * 2];
     }
     bVar1 = 0x168 < DAT_0040aac6;
     if (bVar1) {
@@ -67835,7 +67836,7 @@ void engine_protection_conditionCode_evaluate(void)
     else {
       uVar6 = 0;
     }
-    uVar1 = *(ushort *)(&DWORD_00057dd2)[uVar6 * 2];
+    uVar1 = *(ushort *)(&qadc_channel_dispatch_table)[uVar6 * 2];
   }
   if (((diag_clear_flags_t_003fedfc._0_2_ == 0) && (DAT_004086c2 < uVar1)) && (uVar1 < DAT_004086c0)
      ) {
@@ -68854,10 +68855,10 @@ undefined4 governor_cruise_engage_check(void)
     else {
       uVar2 = 0;
     }
-    uVar1 = *(ushort *)(&DWORD_00057dd2)[uVar2 * 2];
+    uVar1 = *(ushort *)(&qadc_channel_dispatch_table)[uVar2 * 2];
   }
-  if ((((DAT_0005ab8a < uVar1) && (uVar1 < DAT_0005ab88)) && (DAT_003fcda2 == 0)) &&
-     (DAT_003fcdaa == 5)) {
+  if ((((cruise_engage_adc_valid_lower < uVar1) && (uVar1 < cruise_engage_adc_valid_upper)) &&
+      (DAT_003fcda2 == 0)) && (DAT_003fcdaa == 5)) {
     uVar3 = 1;
   }
   else {
@@ -75628,7 +75629,7 @@ void sensorValidationTimeout(void)
         else {
           uVar2 = 0;
         }
-        uVar1 = *(ushort *)(&DWORD_00057dd2)[uVar2 * 2];
+        uVar1 = *(ushort *)(&qadc_channel_dispatch_table)[uVar2 * 2];
       }
       if ((DAT_00408d20 < uVar1) && (uVar1 < DAT_00408d1e)) {
         sensor_validation_ready_flag = 1;
@@ -79012,7 +79013,7 @@ void cm848_protection_timer_init(void)
           else {
             uVar4 = 0;
           }
-          uVar1 = *(ushort *)(&DWORD_00057dd2)[uVar4 * 2];
+          uVar1 = *(ushort *)(&qadc_channel_dispatch_table)[uVar4 * 2];
         }
         uVar2 = DAT_0040bcee;
         if ((diag_cam_sync_fault_config_flags & 0x80) == 0) {
@@ -79022,7 +79023,7 @@ void cm848_protection_timer_init(void)
           else {
             uVar4 = 0;
           }
-          uVar2 = *(ushort *)(&DWORD_00057dd2)[uVar4 * 2];
+          uVar2 = *(ushort *)(&qadc_channel_dispatch_table)[uVar4 * 2];
         }
         if (DAT_004090ca <= uVar1) {
           DAT_003fd0b8 = 0xffff;
@@ -83090,7 +83091,7 @@ void hpcr_injectPressureTuning(void)
             else {
               uVar8 = 0;
             }
-            sVar3 = *(short *)(&DWORD_00057dd2)[uVar8 * 2];
+            sVar3 = *(short *)(&qadc_channel_dispatch_table)[uVar8 * 2];
           }
           DAT_003fd1f4 = DAT_003fd1f4 + sVar3;
           if (2 < DAT_003fd1ea) {
@@ -83150,7 +83151,7 @@ void hpcr_injectPressureTuning(void)
             else {
               uVar8 = 0;
             }
-            sVar3 = *(short *)(&DWORD_00057dd2)[uVar8 * 2];
+            sVar3 = *(short *)(&qadc_channel_dispatch_table)[uVar8 * 2];
           }
           DAT_003fd1f0 = DAT_003fd1f0 + sVar3;
           if (DAT_003fd1ea == 3) {
@@ -83180,7 +83181,7 @@ void hpcr_injectPressureTuning(void)
           else {
             uVar8 = 0;
           }
-          sVar3 = *(short *)(&DWORD_00057dd2)[uVar8 * 2];
+          sVar3 = *(short *)(&qadc_channel_dispatch_table)[uVar8 * 2];
         }
         DAT_003fd1f2 = DAT_003fd1f2 + sVar3;
         if (DAT_003fd1ea == 3) {
@@ -83210,7 +83211,7 @@ void hpcr_injectPressureTuning(void)
           else {
             uVar8 = 0;
           }
-          sVar3 = *(short *)(&DWORD_00057dd2)[uVar8 * 2];
+          sVar3 = *(short *)(&qadc_channel_dispatch_table)[uVar8 * 2];
         }
         uVar8 = (uint)DAT_003fd1ec;
         DAT_003fd1ea = uVar4;
