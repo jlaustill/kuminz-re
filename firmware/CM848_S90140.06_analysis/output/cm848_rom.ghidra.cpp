@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Jun 05 08:18:16 MDT 2026
+// Generated: Fri Jun 05 09:07:08 MDT 2026
 
 
 //
@@ -33754,8 +33754,8 @@ void cm848_processFaultScanLookup(void)
     return;
   }
   if (((&diag_feature_flags)[iVar5] & uVar10) == 0) {
-    if ((ushort)(&DAT_003fda78)[uVar8] < 0x81) {
-      uVar8 = (uint)(ushort)(&DAT_003fda78)[uVar8];
+    if (qadc_channel_index_table[uVar8] < 0x81) {
+      uVar8 = (uint)qadc_channel_index_table[uVar8];
     }
     else {
       uVar8 = 0;
@@ -40588,8 +40588,8 @@ LAB_0003f598:
      (cold_start_phase == CSP_AT_GOVERNOR_SETPOINT)) {
     wVar1 = torque_limit_setpoint_working;
     if ((torque_limit_control_flags & 0x80) == 0) {
-      if (fuel_demand_level_b < 0x81) {
-        uVar5 = (uint)fuel_demand_level_b;
+      if (DAT_003fdb46 < 0x81) {
+        uVar5 = (uint)DAT_003fdb46;
       }
       else {
         uVar5 = 0;
@@ -40607,8 +40607,8 @@ LAB_0003f598:
     else {
       torque_limit_setpoint_active = torque_limit_setpoint_working;
       if ((torque_limit_control_flags & 0x80) == 0) {
-        if (fuel_demand_level_b < 0x81) {
-          uVar5 = (uint)fuel_demand_level_b;
+        if (DAT_003fdb46 < 0x81) {
+          uVar5 = (uint)DAT_003fdb46;
         }
         else {
           uVar5 = 0;
@@ -46533,8 +46533,8 @@ void cm848_processEnginePositionData(void)
   }
   wVar1 = cam_sync_position_calculated;
   if ((diag_cam_sync_config_flags & 4) == 0) {
-    if (fuel_demand_level_a < 0x81) {
-      uVar2 = (uint)fuel_demand_level_a;
+    if (qadc_channel_index_table[0x22] < 0x81) {
+      uVar2 = (uint)qadc_channel_index_table[0x22];
     }
     else {
       uVar2 = 0;
@@ -46764,8 +46764,8 @@ void cm848_updateEnginePosition(void)
      ) {
     cam_sync_position = cam_sync_position_calculated;
     if ((diag_cam_sync_config_flags & 4) == 0) {
-      if (fuel_demand_level_a < 0x81) {
-        uVar1 = (uint)fuel_demand_level_a;
+      if (qadc_channel_index_table[0x22] < 0x81) {
+        uVar1 = (uint)qadc_channel_index_table[0x22];
       }
       else {
         uVar1 = 0;
@@ -58149,8 +58149,8 @@ void sensorChannelConfigInit
     sVar4 = sensorChannelConditionValidator(iVar8);
   }
   if (((&diag_feature_flags)[iVar11] & uVar13) == 0) {
-    if ((ushort)(&DAT_003fda78)[iVar8] < 0x81) {
-      uVar3 = (uint)(ushort)(&DAT_003fda78)[iVar8];
+    if (qadc_channel_index_table[iVar8] < 0x81) {
+      uVar3 = (uint)qadc_channel_index_table[iVar8];
     }
     else {
       uVar3 = 0;
@@ -58163,8 +58163,8 @@ void sensorChannelConfigInit
   *(undefined2 *)cal_ptr_2 = uVar5;
   if (*(short *)(&DAT_003fd948 + iVar8 * 2) == 0) {
     if (((&diag_feature_flags)[iVar11] & uVar13) == 0) {
-      if ((ushort)(&DAT_003fda78)[iVar8] < 0x81) {
-        uVar13 = (uint)(ushort)(&DAT_003fda78)[iVar8];
+      if (qadc_channel_index_table[iVar8] < 0x81) {
+        uVar13 = (uint)qadc_channel_index_table[iVar8];
       }
       else {
         uVar13 = 0;
@@ -58177,8 +58177,8 @@ void sensorChannelConfigInit
   }
   else {
     if (((&diag_feature_flags)[iVar11] & uVar13) == 0) {
-      if ((ushort)(&DAT_003fda78)[iVar8] < 0x81) {
-        uVar3 = (uint)(ushort)(&DAT_003fda78)[iVar8];
+      if (qadc_channel_index_table[iVar8] < 0x81) {
+        uVar3 = (uint)qadc_channel_index_table[iVar8];
       }
       else {
         uVar3 = 0;
@@ -58197,8 +58197,8 @@ void sensorChannelConfigInit
     if ((((uint)uVar1 * (uint)DAT_0040a02a) / (uint)(&per_cylinder_timing_offset_table)[uVar3] &
         0xffff) < 0x3ff) {
       if (((&diag_feature_flags)[iVar11] & uVar13) == 0) {
-        if ((ushort)(&DAT_003fda78)[iVar8] < 0x81) {
-          uVar13 = (uint)(ushort)(&DAT_003fda78)[iVar8];
+        if (qadc_channel_index_table[iVar8] < 0x81) {
+          uVar13 = (uint)qadc_channel_index_table[iVar8];
         }
         else {
           uVar13 = 0;
@@ -58412,8 +58412,8 @@ void updateSensorChannelWithConfig
       sVar2 = sensorChannelConditionValidator(iVar6);
     }
     if (((&diag_feature_flags)[iVar8] & uVar11) == 0) {
-      if ((ushort)(&DAT_003fda78)[iVar6] < 0x81) {
-        uVar4 = (uint)(ushort)(&DAT_003fda78)[iVar6];
+      if (qadc_channel_index_table[iVar6] < 0x81) {
+        uVar4 = (uint)qadc_channel_index_table[iVar6];
       }
       else {
         uVar4 = 0;
@@ -58426,8 +58426,8 @@ void updateSensorChannelWithConfig
     *(undefined2 *)cal_ptr_2 = uVar10;
     if (*(short *)(&DAT_003fd948 + iVar6 * 2) == 0) {
       if (((&diag_feature_flags)[iVar8] & uVar11) == 0) {
-        if ((ushort)(&DAT_003fda78)[iVar6] < 0x81) {
-          uVar11 = (uint)(ushort)(&DAT_003fda78)[iVar6];
+        if (qadc_channel_index_table[iVar6] < 0x81) {
+          uVar11 = (uint)qadc_channel_index_table[iVar6];
         }
         else {
           uVar11 = 0;
@@ -58440,8 +58440,8 @@ void updateSensorChannelWithConfig
     }
     else {
       if (((&diag_feature_flags)[iVar8] & uVar11) == 0) {
-        if ((ushort)(&DAT_003fda78)[iVar6] < 0x81) {
-          uVar4 = (uint)(ushort)(&DAT_003fda78)[iVar6];
+        if (qadc_channel_index_table[iVar6] < 0x81) {
+          uVar4 = (uint)qadc_channel_index_table[iVar6];
         }
         else {
           uVar4 = 0;
@@ -58460,8 +58460,8 @@ void updateSensorChannelWithConfig
       if ((((uint)uVar1 * (uint)DAT_0040a02a) / (uint)(&per_cylinder_timing_offset_table)[uVar4] &
           0xffff) < 0x3ff) {
         if (((&diag_feature_flags)[iVar8] & uVar11) == 0) {
-          if ((ushort)(&DAT_003fda78)[iVar6] < 0x81) {
-            uVar11 = (uint)(ushort)(&DAT_003fda78)[iVar6];
+          if (qadc_channel_index_table[iVar6] < 0x81) {
+            uVar11 = (uint)qadc_channel_index_table[iVar6];
           }
           else {
             uVar11 = 0;
@@ -58505,8 +58505,8 @@ void updateSensorChannelWithConfig
   else {
     *(undefined2 *)((int)cal_ptr_2 + 4) = 0;
     if (((&diag_feature_flags)[iVar8] & uVar11) == 0) {
-      if ((ushort)(&DAT_003fda78)[iVar6] < 0x81) {
-        uVar4 = (uint)(ushort)(&DAT_003fda78)[iVar6];
+      if (qadc_channel_index_table[iVar6] < 0x81) {
+        uVar4 = (uint)qadc_channel_index_table[iVar6];
       }
       else {
         uVar4 = 0;
@@ -58519,8 +58519,8 @@ void updateSensorChannelWithConfig
     *(undefined2 *)cal_ptr_2 = uVar10;
     if (*(short *)(&DAT_003fd948 + iVar6 * 2) == 0) {
       if (((&diag_feature_flags)[iVar8] & uVar11) == 0) {
-        if ((ushort)(&DAT_003fda78)[iVar6] < 0x81) {
-          uVar11 = (uint)(ushort)(&DAT_003fda78)[iVar6];
+        if (qadc_channel_index_table[iVar6] < 0x81) {
+          uVar11 = (uint)qadc_channel_index_table[iVar6];
         }
         else {
           uVar11 = 0;
@@ -58535,8 +58535,8 @@ void updateSensorChannelWithConfig
     }
     else {
       if (((&diag_feature_flags)[iVar8] & uVar11) == 0) {
-        if ((ushort)(&DAT_003fda78)[iVar6] < 0x81) {
-          uVar4 = (uint)(ushort)(&DAT_003fda78)[iVar6];
+        if (qadc_channel_index_table[iVar6] < 0x81) {
+          uVar4 = (uint)qadc_channel_index_table[iVar6];
         }
         else {
           uVar4 = 0;
@@ -58555,8 +58555,8 @@ void updateSensorChannelWithConfig
       if ((((uint)uVar1 * (uint)DAT_0040a02a) / (uint)(&per_cylinder_timing_offset_table)[uVar4] &
           0xffff) < 0x3ff) {
         if (((&diag_feature_flags)[iVar8] & uVar11) == 0) {
-          if ((ushort)(&DAT_003fda78)[iVar6] < 0x81) {
-            uVar11 = (uint)(ushort)(&DAT_003fda78)[iVar6];
+          if (qadc_channel_index_table[iVar6] < 0x81) {
+            uVar11 = (uint)qadc_channel_index_table[iVar6];
           }
           else {
             uVar11 = 0;
@@ -58688,8 +58688,8 @@ void sensorChannelTypeB_configInit(int param_1,undefined2 *param_2,table_interp_
     sVar4 = sensorChannelConditionValidator(in_r10);
   }
   if (((&diag_feature_flags)[iVar9] & uVar10) == 0) {
-    if ((ushort)(&DAT_003fda78)[in_r10] < 0x81) {
-      uVar3 = (uint)(ushort)(&DAT_003fda78)[in_r10];
+    if (qadc_channel_index_table[in_r10] < 0x81) {
+      uVar3 = (uint)qadc_channel_index_table[in_r10];
     }
     else {
       uVar3 = 0;
@@ -58702,8 +58702,8 @@ void sensorChannelTypeB_configInit(int param_1,undefined2 *param_2,table_interp_
   *param_2 = uVar5;
   if (*(short *)(&DAT_003fd948 + in_r10 * 2) == 0) {
     if (((&diag_feature_flags)[iVar9] & uVar10) == 0) {
-      if ((ushort)(&DAT_003fda78)[in_r10] < 0x81) {
-        uVar10 = (uint)(ushort)(&DAT_003fda78)[in_r10];
+      if (qadc_channel_index_table[in_r10] < 0x81) {
+        uVar10 = (uint)qadc_channel_index_table[in_r10];
       }
       else {
         uVar10 = 0;
@@ -58716,8 +58716,8 @@ void sensorChannelTypeB_configInit(int param_1,undefined2 *param_2,table_interp_
   }
   else {
     if (((&diag_feature_flags)[iVar9] & uVar10) == 0) {
-      if ((ushort)(&DAT_003fda78)[in_r10] < 0x81) {
-        uVar3 = (uint)(ushort)(&DAT_003fda78)[in_r10];
+      if (qadc_channel_index_table[in_r10] < 0x81) {
+        uVar3 = (uint)qadc_channel_index_table[in_r10];
       }
       else {
         uVar3 = 0;
@@ -58736,8 +58736,8 @@ void sensorChannelTypeB_configInit(int param_1,undefined2 *param_2,table_interp_
     if ((((uint)uVar1 * (uint)DAT_0040a02a) / (uint)(&per_cylinder_timing_offset_table)[uVar3] &
         0xffff) < 0x3ff) {
       if (((&diag_feature_flags)[iVar9] & uVar10) == 0) {
-        if ((ushort)(&DAT_003fda78)[in_r10] < 0x81) {
-          uVar10 = (uint)(ushort)(&DAT_003fda78)[in_r10];
+        if (qadc_channel_index_table[in_r10] < 0x81) {
+          uVar10 = (uint)qadc_channel_index_table[in_r10];
         }
         else {
           uVar10 = 0;
@@ -58948,8 +58948,8 @@ void sensorChannelTypeB_update(int param_1,undefined2 *param_2,table_interp_args
       sVar1 = sensorChannelConditionValidator(in_r10);
     }
     if (((&diag_feature_flags)[iVar6] & uVar9) == 0) {
-      if ((ushort)(&DAT_003fda78)[in_r10] < 0x81) {
-        uVar4 = (uint)(ushort)(&DAT_003fda78)[in_r10];
+      if (qadc_channel_index_table[in_r10] < 0x81) {
+        uVar4 = (uint)qadc_channel_index_table[in_r10];
       }
       else {
         uVar4 = 0;
@@ -58962,8 +58962,8 @@ void sensorChannelTypeB_update(int param_1,undefined2 *param_2,table_interp_args
     *param_2 = uVar8;
     if (*(short *)(&DAT_003fd948 + in_r10 * 2) == 0) {
       if (((&diag_feature_flags)[iVar6] & uVar9) == 0) {
-        if ((ushort)(&DAT_003fda78)[in_r10] < 0x81) {
-          uVar9 = (uint)(ushort)(&DAT_003fda78)[in_r10];
+        if (qadc_channel_index_table[in_r10] < 0x81) {
+          uVar9 = (uint)qadc_channel_index_table[in_r10];
         }
         else {
           uVar9 = 0;
@@ -58976,8 +58976,8 @@ void sensorChannelTypeB_update(int param_1,undefined2 *param_2,table_interp_args
     }
     else {
       if (((&diag_feature_flags)[iVar6] & uVar9) == 0) {
-        if ((ushort)(&DAT_003fda78)[in_r10] < 0x81) {
-          uVar4 = (uint)(ushort)(&DAT_003fda78)[in_r10];
+        if (qadc_channel_index_table[in_r10] < 0x81) {
+          uVar4 = (uint)qadc_channel_index_table[in_r10];
         }
         else {
           uVar4 = 0;
@@ -58996,8 +58996,8 @@ void sensorChannelTypeB_update(int param_1,undefined2 *param_2,table_interp_args
       if ((((uint)uVar2 * (uint)DAT_0040a02a) / (uint)(&per_cylinder_timing_offset_table)[uVar4] &
           0xffff) < 0x3ff) {
         if (((&diag_feature_flags)[iVar6] & uVar9) == 0) {
-          if ((ushort)(&DAT_003fda78)[in_r10] < 0x81) {
-            uVar9 = (uint)(ushort)(&DAT_003fda78)[in_r10];
+          if (qadc_channel_index_table[in_r10] < 0x81) {
+            uVar9 = (uint)qadc_channel_index_table[in_r10];
           }
           else {
             uVar9 = 0;
@@ -59041,8 +59041,8 @@ void sensorChannelTypeB_update(int param_1,undefined2 *param_2,table_interp_args
   else {
     param_2[2] = 0;
     if (((&diag_feature_flags)[iVar6] & uVar9) == 0) {
-      if ((ushort)(&DAT_003fda78)[in_r10] < 0x81) {
-        uVar4 = (uint)(ushort)(&DAT_003fda78)[in_r10];
+      if (qadc_channel_index_table[in_r10] < 0x81) {
+        uVar4 = (uint)qadc_channel_index_table[in_r10];
       }
       else {
         uVar4 = 0;
@@ -59055,8 +59055,8 @@ void sensorChannelTypeB_update(int param_1,undefined2 *param_2,table_interp_args
     *param_2 = uVar8;
     if (*(short *)(&DAT_003fd948 + in_r10 * 2) == 0) {
       if (((&diag_feature_flags)[iVar6] & uVar9) == 0) {
-        if ((ushort)(&DAT_003fda78)[in_r10] < 0x81) {
-          uVar9 = (uint)(ushort)(&DAT_003fda78)[in_r10];
+        if (qadc_channel_index_table[in_r10] < 0x81) {
+          uVar9 = (uint)qadc_channel_index_table[in_r10];
         }
         else {
           uVar9 = 0;
@@ -59069,8 +59069,8 @@ void sensorChannelTypeB_update(int param_1,undefined2 *param_2,table_interp_args
     }
     else {
       if (((&diag_feature_flags)[iVar6] & uVar9) == 0) {
-        if ((ushort)(&DAT_003fda78)[in_r10] < 0x81) {
-          uVar4 = (uint)(ushort)(&DAT_003fda78)[in_r10];
+        if (qadc_channel_index_table[in_r10] < 0x81) {
+          uVar4 = (uint)qadc_channel_index_table[in_r10];
         }
         else {
           uVar4 = 0;
@@ -59089,8 +59089,8 @@ void sensorChannelTypeB_update(int param_1,undefined2 *param_2,table_interp_args
       if ((((uint)uVar2 * (uint)DAT_0040a02a) / (uint)(&per_cylinder_timing_offset_table)[uVar4] &
           0xffff) < 0x3ff) {
         if (((&diag_feature_flags)[iVar6] & uVar9) == 0) {
-          if ((ushort)(&DAT_003fda78)[in_r10] < 0x81) {
-            uVar9 = (uint)(ushort)(&DAT_003fda78)[in_r10];
+          if (qadc_channel_index_table[in_r10] < 0x81) {
+            uVar9 = (uint)qadc_channel_index_table[in_r10];
           }
           else {
             uVar9 = 0;
@@ -64175,8 +64175,8 @@ void fuel_demand_protection_loop(void)
   else {
     DAT_0040aac6 = DAT_0040bc9a;
     if ((diag_feature_flags & 0x2000) == 0) {
-      if (DAT_003fda92 < 0x81) {
-        uVar3 = (uint)DAT_003fda92;
+      if (qadc_channel_index_table[0xd] < 0x81) {
+        uVar3 = (uint)qadc_channel_index_table[0xd];
       }
       else {
         uVar3 = 0;
@@ -67830,8 +67830,8 @@ void engine_protection_conditionCode_evaluate(void)
   
   uVar1 = DAT_0040bd0e;
   if ((DAT_003fdb80 & 0x80) == 0) {
-    if (DAT_003fdb06 < 0x81) {
-      uVar6 = (uint)DAT_003fdb06;
+    if (qadc_channel_index_table[0x47] < 0x81) {
+      uVar6 = (uint)qadc_channel_index_table[0x47];
     }
     else {
       uVar6 = 0;
@@ -68849,8 +68849,8 @@ undefined4 governor_cruise_engage_check(void)
   
   uVar1 = DAT_0040bcde;
   if ((diag_cam_sync_config_flags & 0x8000) == 0) {
-    if (DAT_003fdad6 < 0x81) {
-      uVar2 = (uint)DAT_003fdad6;
+    if (qadc_channel_index_table[0x2f] < 0x81) {
+      uVar2 = (uint)qadc_channel_index_table[0x2f];
     }
     else {
       uVar2 = 0;
@@ -71562,8 +71562,8 @@ void protection_oilTemp_source_update(void)
     oilTemp_sensorSource_select();
     *puVar1 = 1;
   }
-  if (DAT_003fda86 == 0) {
-    if (DAT_003fdaa0 != 0) {
+  if (qadc_channel_index_table[7] == 0) {
+    if (qadc_channel_index_table[0x14] != 0) {
       iVar2 = 2;
       unaff_r31 = system_status_flags_t_003fe974.reserved_12 & 0x40;
       in_r6 = system_status_flags_t_003fe974.reserved_12 & 0x80;
@@ -75623,8 +75623,8 @@ void sensorValidationTimeout(void)
     else {
       uVar1 = DAT_0040bd18;
       if ((DAT_003fdb80 & 0x1000) == 0) {
-        if (DAT_003fdb10 < 0x81) {
-          uVar2 = (uint)DAT_003fdb10;
+        if (qadc_channel_index_table[0x4c] < 0x81) {
+          uVar2 = (uint)qadc_channel_index_table[0x4c];
         }
         else {
           uVar2 = 0;
@@ -79007,8 +79007,8 @@ void cm848_protection_timer_init(void)
       if ((DAT_003fd0ba == '\x01') && (protection_fault_eval_input == 0)) {
         uVar1 = DAT_0040bcec;
         if ((diag_cam_sync_fault_config_flags & 0x40) == 0) {
-          if (DAT_003fdae4 < 0x81) {
-            uVar4 = (uint)DAT_003fdae4;
+          if (qadc_channel_index_table[0x36] < 0x81) {
+            uVar4 = (uint)qadc_channel_index_table[0x36];
           }
           else {
             uVar4 = 0;
@@ -79017,8 +79017,8 @@ void cm848_protection_timer_init(void)
         }
         uVar2 = DAT_0040bcee;
         if ((diag_cam_sync_fault_config_flags & 0x80) == 0) {
-          if (DAT_003fdae6 < 0x81) {
-            uVar4 = (uint)DAT_003fdae6;
+          if (qadc_channel_index_table[0x37] < 0x81) {
+            uVar4 = (uint)qadc_channel_index_table[0x37];
           }
           else {
             uVar4 = 0;
@@ -83085,8 +83085,8 @@ void hpcr_injectPressureTuning(void)
           DAT_003fd1ea = DAT_003fd1ea + 1;
           sVar3 = DAT_0040bc88;
           if ((diag_feature_flags & 0x10) == 0) {
-            if (DAT_003fda80 < 0x81) {
-              uVar8 = (uint)DAT_003fda80;
+            if (qadc_channel_index_table[4] < 0x81) {
+              uVar8 = (uint)qadc_channel_index_table[4];
             }
             else {
               uVar8 = 0;
@@ -83145,8 +83145,8 @@ void hpcr_injectPressureTuning(void)
           DAT_003fd1ea = DAT_003fd1ea + 1;
           sVar3 = DAT_0040bc88;
           if ((diag_feature_flags & 0x10) == 0) {
-            if (DAT_003fda80 < 0x81) {
-              uVar8 = (uint)DAT_003fda80;
+            if (qadc_channel_index_table[4] < 0x81) {
+              uVar8 = (uint)qadc_channel_index_table[4];
             }
             else {
               uVar8 = 0;
@@ -83175,8 +83175,8 @@ void hpcr_injectPressureTuning(void)
         DAT_003fd1ea = DAT_003fd1ea + 1;
         sVar3 = DAT_0040bc88;
         if ((diag_feature_flags & 0x10) == 0) {
-          if (DAT_003fda80 < 0x81) {
-            uVar8 = (uint)DAT_003fda80;
+          if (qadc_channel_index_table[4] < 0x81) {
+            uVar8 = (uint)qadc_channel_index_table[4];
           }
           else {
             uVar8 = 0;
@@ -83205,8 +83205,8 @@ void hpcr_injectPressureTuning(void)
         DAT_003fd1ec = DAT_003fd1ec + 1;
         sVar3 = DAT_0040bc88;
         if ((diag_feature_flags & 0x10) == 0) {
-          if (DAT_003fda80 < 0x81) {
-            uVar8 = (uint)DAT_003fda80;
+          if (qadc_channel_index_table[4] < 0x81) {
+            uVar8 = (uint)qadc_channel_index_table[4];
           }
           else {
             uVar8 = 0;
@@ -84756,7 +84756,7 @@ void engine_camSync_crossValidation_update(void)
          ((injection_fault_shadow_flags & 4) != 0)))))) ||
       (((power_state_status_flags & 0x800) != 0 || ((power_state_status_flags & 0x1000) != 0)))) ||
      (((injection_fault_shadow_flags & 2) != 0 ||
-      (((DAT_003fdaa0 != 0 &&
+      (((qadc_channel_index_table[0x14] != 0 &&
         ((((system_status_flags_t_003fe974.reserved_12 & 0x40) != 0 ||
           ((system_status_flags_t_003fe974.reserved_12 & 0x80) != 0)) ||
          ((j1939_receive_status_flags & 8) != 0)))) ||

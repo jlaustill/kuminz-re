@@ -14,3 +14,11 @@ address,array_name,element_type,element_count,comment
 0x003fd707,vehicle_vin_string,byte,17,17-char ASCII SAE VIN loaded from EEPROM 0x0285; 3D3MU48C94G228471 at runtime
 0x003fce7c,j1939_dm_scratch_buffer,byte,8,DM response payload assembly buffer; copy loops index from [3] to [7]
 0x003fecd0,diag_serial_buffer,byte,33,Diagnostic serial communication buffer (SCI UART)
+# QADC channel-index table: each word is an index into qadc_channel_dispatch_table (clamped <0x81)
+# selects which QADC channel a sensor reads; ~58 sites use the clamp-then-dispatch idiom
+# e.g. governor_cruise_engage_check[47]; cm848_updateEnginePosition[34] -> cam_sync_position
+# 92 words = the ROM-copied config region 0x3fda78..0x3fdb30 (copy-window end); elements overlap the code image
+# bounded at 0x3fdb30 by post-copy working RAM (diag service handler table written by cm848_registerDiagnosticService)
+# subsumes 2 misnamed slots removed from global_variables: fuel_demand_level_a[34] cam_sync_fault_count[63]
+# NOTE: the 3rd ex-name fuel_demand_level_b @0x3fdb46 is OUTSIDE this array (it aliases the diag handler region) - left as default DAT_
+0x003fda78,qadc_channel_index_table,word,92,QADC channel-index array; each word indexes qadc_channel_dispatch_table (clamped <0x81); 92 words spanning the ROM-copied region 0x3fda78..0x3fdb30; bounded by post-copy working RAM (diag service handler table) at 0x3fdb30
