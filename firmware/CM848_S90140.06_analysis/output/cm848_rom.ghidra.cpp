@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Jun 04 22:50:41 MDT 2026
+// Generated: Thu Jun 04 22:55:41 MDT 2026
 
 
 //
@@ -6249,7 +6249,7 @@ void cm848_phase_group_b_processing(void)
   cm848_processCalibrationTablesMain();
   cm848_processProtectionStateMachine();
   cm848_processEngineLoadCalculation();
-  cm848_calculateThrottleFiltered();
+  cm848_calculatePressureSensorFiltered();
   cm848_phase_groupB_calculation_2();
   phase_group_b_updateBoostBlendingControl();
   phase_group_b_dispatchControlFunctions();
@@ -11583,12 +11583,12 @@ void cm848_initBoostProtectionState(void)
 
 
 //
-// Function: cm848_calculateThrottleDerivative @ 0x00013d14
+// Function: cm848_calculatePressureSensorDerivative @ 0x00013d14
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void cm848_calculateThrottleDerivative(void)
+void cm848_calculatePressureSensorDerivative(void)
 
 {
   int iVar1;
@@ -11621,10 +11621,10 @@ LAB_00013db8:
 
 
 //
-// Function: cm848_calculateThrottleFiltered @ 0x00013dc8
+// Function: cm848_calculatePressureSensorFiltered @ 0x00013dc8
 //
 
-void cm848_calculateThrottleFiltered(void)
+void cm848_calculatePressureSensorFiltered(void)
 
 {
   word wVar1;
@@ -11640,7 +11640,7 @@ void cm848_calculateThrottleFiltered(void)
      (cold_start_feature_enable_flags & 0x4000) == 0)) {
     pressure_correction_scale = 0;
   }
-  cm848_calculateThrottleDerivative();
+  cm848_calculatePressureSensorDerivative();
   wVar1 = pressure_correction_raw;
   if (((iVar2 == 0) && (cold_start_inhibit_cal == 0)) &&
      ((cold_start_feature_enable_flags & 0x4000) != 0)) {
@@ -11686,10 +11686,10 @@ void cm848_calculateThrottleFiltered(void)
 
 
 //
-// Function: mpc555_initThrottleFilterState @ 0x00014080
+// Function: mpc555_initPressureSensorFilterState @ 0x00014080
 //
 
-void mpc555_initThrottleFilterState(void)
+void mpc555_initPressureSensorFilterState(void)
 
 {
   sensor_channel9_pressure_snapshot = sensor_channel9_pressure_raw;
@@ -54834,7 +54834,7 @@ void hpcr_exceptionHandler(void)
   cm848_initialization_step();
   cm848_updateTurboModeState();
   cm848_initBoostProtectionState();
-  mpc555_initThrottleFilterState();
+  mpc555_initPressureSensorFilterState();
   cm848_initialization_step_6();
   cm848_initialization_step_5();
   cm848_initialization_step_8();
@@ -55040,7 +55040,7 @@ void cm848_initializationContinuation(void)
   cm848_initialization_step();
   cm848_updateTurboModeState();
   cm848_initBoostProtectionState();
-  mpc555_initThrottleFilterState();
+  mpc555_initPressureSensorFilterState();
   cm848_initialization_step_6();
   cm848_initialization_step_5();
   cm848_initialization_step_8();
