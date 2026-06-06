@@ -103,6 +103,7 @@ address,name,type,comment
 0x0005acb8,BYTE_0005acb8,byte,
 0x0005b16e,u__0005b16e,,
 0x0005b468,u_dd#2_0005b468,unicode,
+0x0005c28a,cruise_speed_low_limit,word,cruise control low set-limit speed; broadcast as cruise_low_set_limit_speed in PGN 65261 (SPN 88) scaled *161/100/256; gates governor_fuel_mode=8 when cruise_speed_setpoint_adjusted falls below it. Bank1 ROM/flash constant - NOT EEPROM so no _cal
 0x0005c294,throttle_fuel_demand_threshold_cal,word,
 0x0005c29a,fuel_demand_rate_limit_debounce_low_cal,word,Debounce count for the fuel-demand rate limiter when fuel_demand_cal_index <= throttle_fuel_demand_adjusted; when the per-mode increment reaches it a protection safety bit latches
 0x0005c29e,fuel_demand_cal_offset,word,
@@ -1871,6 +1872,7 @@ address,name,type,comment
 0x003fcd56,PTR_DAT_003fcd56,pointer,
 0x003fcd96,PTR_DAT_003fcd96,pointer,
 0x003fcd9e,cruise_protection_ok,word,
+0x003fcda2,governor_speed_request_state_b,word,cruise-fuel-governor working copy of governor_speed_request_state (0x3fafe6); holds protection_control_state_check_2() result (states 0-5); paired with raw DAT_003fcdaa + debounce counter DAT_003fcda0
 0x003fce7c,j1939_dm_scratch_buffer,byte[8],
 0x003fce7f,j1939_dm_scratch_byte0,,
 0x003fce80,j1939_dm_scratch_byte1,,
@@ -3317,6 +3319,13 @@ address,name,type,comment
 0x0040870e,protection_fuel_temp_load_threshold_cal,word,
 0x00408710,per_cylinder_timing_max_cal,word,
 0x00408712,per_cylinder_timing_max_alt_cal,word,
+0x00408722,cruise_target_rpm_max,word,upper bound of the target-rpm window for cruise fuel-correction; target_rpm above this -> governor_fuel_mode=9 inhibit. ROM-initialized cal (RAM 0x40xxxx not EEPROM) so no _cal
+0x00408724,cruise_steady_debounce_count,word,debounce-count limit in governor_cruise_speedError_integrate; when the steady-cycle counter DAT_003fcdae reaches it the speed-error integral resets. ROM-initialized cal so no _cal
+0x00408726,cruise_ratio_steady_threshold,word,steady threshold in governor_cruise_speedError_integrate; |cruise_rpm_ratio_ema change| below this counts as steady. ROM-initialized cal so no _cal
+0x00408728,cruise_speed_error_integral_limit,word,magnitude limit for cruise_speed_error_integral; |integral| >= this -> governor_fuel_mode=0xb inhibit. ROM-initialized cal so no _cal
+0x0040872c,cruise_rpm_ratio_max,word,upper bound of the cruise_rpm_ratio_ema deadband; ratio above this -> governor_fuel_mode=0xa inhibit (max stored at lower addr than min). ROM-initialized cal so no _cal
+0x0040872e,cruise_rpm_ratio_min,word,lower bound of the cruise_rpm_ratio_ema deadband; ratio below this -> governor_fuel_mode=0xa inhibit. ROM-initialized cal so no _cal
+0x00408730,cruise_target_rpm_min,word,lower bound of the target-rpm window for cruise fuel-correction; target_rpm below this -> governor_fuel_mode=9 inhibit. ROM-initialized cal so no _cal
 0x00408740,can_fuel_qty_scale_cal,word,
 0x00408742,j1939_tx_periodic_rate_cal,word,
 0x00408746,j1939_status_flag_a_cal,byte,
@@ -4917,8 +4926,11 @@ address,name,type,comment
 0x0040b1f6,fuel_temp_protection_active_flag,word,
 0x0040b1fa,sensor_filter_update_counter,word,
 0x0040b1fc,injection_check_flags,word,
+0x0040b204,cruise_speed_error_integral,word,accumulator in governor_cruise_speedError_integrate; integrates signed (prev-current) cruise_rpm_ratio_ema change, reset to 0 when steady. Working RAM so never _cal
+0x0040b206,cruise_rpm_ratio_ema,word,EMA output of governor_cruise_rpmRatio_ema = filtered (current_rpm+offset)*128/cruise_speed_setpoint_adjusted (ratio 1.0 ~ 0x80). Working RAM so never _cal
 0x0040b208,etc1_throttle_active_flag,word,
 0x0040b20a,governor_fuel_mode_d,word,
+0x0040b20c,governor_fuel_mode,word,primary cruise/governor fuel-correction state; reason codes 0-0xd (governor_fuel_mode_d is its override shadow). switch-consumed in FUN_0051ef20
 0x0040b210,protection_sensor_state_a,word,
 0x0040b212,protection_sensor_state_b,word,
 0x0040b214,protection_fault_latch_flag,word,
