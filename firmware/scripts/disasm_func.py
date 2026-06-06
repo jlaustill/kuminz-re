@@ -89,7 +89,7 @@ def main():
         return 0 if idx == 0 else regs.get(idx)
 
     regs = {0: 0}
-    hits, off_seen = [], {}
+    hits, member_offsets = [], set()
     for ln in lines:
         m = asm_re.match(ln)
         if not m:
@@ -105,7 +105,10 @@ def main():
                 if b is not None and ((b + disp) & mask32) == data:
                     kind = "store" if mnem.startswith("st") else "load"
                     hits.append((kind, ln.strip(), w))
-                    off_seen[disp] = off_seen.get(disp, 0) + 1
+                    # struct/buffer-member signal: base was built to a NON-64KB-aligned address
+                    # (via addi) and reached with an offset — not the ordinary lis+disp form.
+                    if (b & 0xffff) != 0 and disp != 0:
+                        member_offsets.add(disp)
                 if not mnem.startswith("st"):                  # load writes rD
                     regs.pop(rd, None)
             continue
@@ -133,9 +136,9 @@ def main():
     print(f"\nACCESSES to {hex(data)} ({len(hits)} found):")
     for kind, ln, w in hits:
         print(f"  [{kind:5}] {w:5}  {ln}")
-    if any(k != 0 for k in off_seen):
-        print(f"  (nonzero displacements {sorted(off_seen)}: reached via base+offset — could be a "
-              f"struct/buffer member OR just a shared base register for a nearby global; verify)")
+    if member_offsets:
+        print(f"  (reached as offset {sorted(member_offsets)} off a non-aligned base — could be a "
+              f"struct/buffer member OR a shared base register for a nearby global; verify)")
     print(f"\nWIDTH verdict: {'/'.join(widths)}"
           + ("   <-- MIXED, inspect!" if len(widths) > 1 else ""))
 

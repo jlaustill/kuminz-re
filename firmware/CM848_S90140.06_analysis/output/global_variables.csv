@@ -4514,6 +4514,7 @@ address,name,type,comment
 0x0040aa9a,j1939_standby_flag,J1939_STANDBY_STATE,
 0x0040aaa2,j1939_engine_torque_encoded,word,
 0x0040aac2,governor_load_percent_computed,word,
+0x0040aaca,governor_load_startup_inhibit_flag,word,set in phase_group_a_updateStartupTimer: 1 when load-governor feature disabled (protection_enable.mode_bits&1==0) or still in cold-start startup delay; 0 once enabled+past-cranking+startup-timer DAT_0040aac8 reaches DAT_0005c346. Consumers treat ==0 as active (compute load %, allow fault set), !=0 as inhibited (use default, suppress faults)
 0x0040aacc,engine_data_log_buffer,byte,
 0x0040ac16,PTR_DAT_0040ac16,pointer,
 0x0040ac22,engine_data_log_buffer_limit,byte,

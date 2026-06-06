@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Jun 06 07:44:27 MDT 2026
+// Generated: Sat Jun 06 07:59:20 MDT 2026
 
 
 //
@@ -64022,7 +64022,7 @@ void governor_loadPercent_channel5_update(void)
   }
   if (governor_derivative_active_flag == 0) {
     if (DAT_003feaae == 0) {
-      if (DAT_0040aaca == 0) {
+      if (governor_load_startup_inhibit_flag == 0) {
         fault_reason_set_bitmap(5);
       }
     }
@@ -64034,7 +64034,7 @@ void governor_loadPercent_channel5_update(void)
       }
       if (uVar1 != 0xfe) {
         governor_load_percent_computed = DAT_0005c342;
-        if (DAT_0040aaca != 0) {
+        if (governor_load_startup_inhibit_flag != 0) {
           governor_load_percent_computed = DAT_0005c342;
           return;
         }
@@ -64066,7 +64066,7 @@ void governor_loadPercent_channel0_update(void)
      (uVar1 = DAT_0005c344, governor_derivative_active_flag == 0)) {
     if (DAT_003feaa4 == 0) {
       uVar1 = DAT_0005c344;
-      if (DAT_0040aaca == 0) {
+      if (governor_load_startup_inhibit_flag == 0) {
         fault_reason_set_bitmap(0);
         uVar1 = DAT_0005c344;
       }
@@ -64078,7 +64078,7 @@ void governor_loadPercent_channel0_update(void)
       }
       else {
         uVar1 = DAT_0005c344;
-        if ((uVar2 != 0xfe) && (uVar1 = DAT_0005c344, DAT_0040aaca == 0)) {
+        if ((uVar2 != 0xfe) && (uVar1 = DAT_0005c344, governor_load_startup_inhibit_flag == 0)) {
           fault_flag_set_bitmap(0);
           uVar1 = DAT_0005c344;
         }
@@ -64113,7 +64113,7 @@ void governor_loadPercent_channel6_update(void)
     DAT_0040c05f = (byte)DAT_0005c340;
   }
   if (DAT_003feab0 == 0) {
-    if (DAT_0040aaca != 0) {
+    if (governor_load_startup_inhibit_flag != 0) {
       return;
     }
     fault_reason_set_bitmap(6);
@@ -64121,7 +64121,7 @@ void governor_loadPercent_channel6_update(void)
     return;
   }
   if (DAT_0040aab4 == 3) {
-    if (DAT_0040aaca == 0) {
+    if (governor_load_startup_inhibit_flag == 0) {
       fault_flag_set_bitmap(6);
     }
   }
@@ -64272,14 +64272,14 @@ void diag_faultEntry_channelProcess(int param_1)
   }
   if (governor_derivative_active_flag == 0) {
     if ((&DAT_003feaa4)[iVar4] == 0) {
-      if (DAT_0040aaca == 0) {
+      if (governor_load_startup_inhibit_flag == 0) {
         fault_reason_set_bitmap(iVar4);
       }
     }
     else {
       cVar1 = **(char **)((int)ppuVar3 + param_1);
       if (cVar1 == '\x03') {
-        if (DAT_0040aaca == 0) {
+        if (governor_load_startup_inhibit_flag == 0) {
           fault_flag_set_bitmap(iVar4);
         }
       }
@@ -64326,7 +64326,7 @@ void fuel_demandFeature_emission_update(void)
         return;
       }
       if (DAT_003feab2 == 0) {
-        if (DAT_0040aaca == 0) {
+        if (governor_load_startup_inhibit_flag == 0) {
           fault_reason_set_bitmap(7);
           fault_count_set_bitmap(7);
         }
@@ -64374,7 +64374,7 @@ void fuel_demandFeature_emission_update(void)
           fuel_demand_feature_threshold._0_1_ = bVar3;
         }
         if (uVar2 == 0xfe) {
-          if (DAT_0040aaca == 0) {
+          if (governor_load_startup_inhibit_flag == 0) {
             system_status_flags_t_003fe974.emission_faults =
                  system_status_flags_t_003fe974.emission_faults | 0x8000;
           }
@@ -64385,7 +64385,7 @@ void fuel_demandFeature_emission_update(void)
             return;
           }
         }
-        else if (DAT_0040aaca == 0) {
+        else if (governor_load_startup_inhibit_flag == 0) {
           fault_flag_set_bitmap(7);
         }
       }
@@ -64442,14 +64442,14 @@ void fuel_demandFeature_faultBitmap_update(void)
             cm848_setEngineCycleBitmapBitIfGreater(8,0);
           }
           if (DAT_0040aab4 == 2) {
-            if (DAT_0040aaca == 0) {
+            if (governor_load_startup_inhibit_flag == 0) {
               system_status_flags_t_003fe974.emission_faults =
                    system_status_flags_t_003fe974.emission_faults | 0x8000;
             }
           }
           else {
             DAT_0040aaa7 = 1;
-            if (DAT_0040aaca == 0) {
+            if (governor_load_startup_inhibit_flag == 0) {
               fault_flag_set_bitmap(7);
             }
           }
@@ -64560,7 +64560,7 @@ void cm848_initializeDiagnosticStateCounters(void)
   system_status_flags_t_003fe974.reserved_10 = system_status_flags_t_003fe974.reserved_10 & 0xfffb;
   DAT_003fe9e8 = DAT_003fe9e8 & 0xfffb;
   DAT_0040aaa7 = 0;
-  DAT_0040aaca = 1;
+  governor_load_startup_inhibit_flag = 1;
   return;
 }
 
@@ -64870,13 +64870,13 @@ void phase_group_a_updateStartupTimer(void)
       DAT_0040aac8 = 0;
     }
     if ((protection_enable_t_0040c050.mode_bits & 1) == 0) {
-      DAT_0040aaca = 1;
+      governor_load_startup_inhibit_flag = 1;
     }
     else if ((cold_start_phase == CSP_CRANKING) || (DAT_0005c346 <= DAT_0040aac8)) {
-      DAT_0040aaca = 0;
+      governor_load_startup_inhibit_flag = 0;
     }
     else {
-      DAT_0040aaca = 1;
+      governor_load_startup_inhibit_flag = 1;
     }
     if (governor_derivative_active_flag == 0) {
       psVar1 = &DAT_003feaa4;
