@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Jun 06 07:17:04 MDT 2026
+// Generated: Sat Jun 06 07:27:54 MDT 2026
 
 
 //
@@ -43555,10 +43555,15 @@ void mpc555_initEngineCrankSequence(void)
 
 
 //
-// Function: mpc555_processProtectionConditions @ 0x00044bf4
+// Function: engine_injectionTiming_crankSyncDispatch @ 0x00044bf4
 //
 
-void mpc555_processProtectionConditions(void)
+/* crank-sync injection-timing dispatcher: waits TPU HSRR, reads captured crank tooth from
+   tpu_a_ch0/ch1, computes cylinder_event_index, calls schedule_crankValid/_crankInvalid by
+   crank_position_valid_flag; renamed from mpc555_processProtectionConditions - no protection logic
+    */
+
+void engine_injectionTiming_crankSyncDispatch(void)
 
 {
   word wVar1;
@@ -43570,13 +43575,13 @@ void mpc555_processProtectionConditions(void)
     wVar1 = tpu_a_ch0_param0.PARAM4;
     cylinder_event_index =
          lookupTableInterpolation((table_interp_args_t *)&crank_timing_init_state_a);
-    cm848_protection_condition_eval_set2();
+    engine_injectionAngle_schedule_crankInvalid();
   }
   else if (crank_position_valid_flag == 1) {
     wVar1 = tpu_a_ch1_param2.PARAM4;
     cylinder_event_index =
          lookupTableInterpolation((table_interp_args_t *)&crank_timing_init_state_b);
-    cm848_protection_condition_eval_set1();
+    engine_injectionAngle_schedule_crankValid();
   }
   crank_tooth_count_b = 0;
   return;
@@ -43594,7 +43599,7 @@ void cm848_setEngineCrankState1(void)
   engine_crank_state_t_0040b80a.crank_state = 1;
   if (crank_position_valid_flag == 1) {
     mpc555_evaluateProtectionThresholds();
-    mpc555_processProtectionConditions();
+    engine_injectionTiming_crankSyncDispatch();
   }
   return;
 }
@@ -43611,7 +43616,7 @@ void cm848_setEngineRunState1(void)
   engine_crank_state_t_0040b80a.run_state = 1;
   if ((crank_position_valid_flag == 0) && (engine_crank_state_t_0040b80a.crank_state == 4)) {
     mpc555_initEngineCrankSequence();
-    mpc555_processProtectionConditions();
+    engine_injectionTiming_crankSyncDispatch();
   }
   return;
 }
@@ -43629,7 +43634,7 @@ void cm848_engineRunState4Handler(void)
   
   engine_crank_state_t_0040b80a.run_state = 4;
   mpc555_evaluateProtectionThresholds();
-  mpc555_processProtectionConditions();
+  engine_injectionTiming_crankSyncDispatch();
   if (crank_tooth_period_tbl == 0) {
     iVar1 = TBLr;
     crank_tooth_period_tbl = iVar1 - timebase_previous_capture;
@@ -43653,7 +43658,7 @@ void cm848_engineRunState3Handler(void)
   if (crank_position_valid_flag == 1) {
     mpc555_evaluateProtectionThresholds();
   }
-  mpc555_processProtectionConditions();
+  engine_injectionTiming_crankSyncDispatch();
   return;
 }
 
@@ -43671,7 +43676,7 @@ void cm848_engineRunState4Conditional(void)
   engine_crank_state_t_0040b80a.run_state = 4;
   if (crank_position_valid_flag == 1) {
     mpc555_evaluateProtectionThresholds();
-    mpc555_processProtectionConditions();
+    engine_injectionTiming_crankSyncDispatch();
   }
   if (crank_tooth_period_tbl == 0) {
     iVar1 = TBLr;
@@ -43693,7 +43698,7 @@ void cm848_engineRunState4Handler2(void)
   
   engine_crank_state_t_0040b80a.run_state = 4;
   mpc555_evaluateProtectionThresholds();
-  mpc555_processProtectionConditions();
+  engine_injectionTiming_crankSyncDispatch();
   if (crank_tooth_period_tbl == 0) {
     iVar1 = TBLr;
     crank_tooth_period_tbl = iVar1 - timebase_previous_capture;
@@ -43719,7 +43724,7 @@ void cm848_protectionOverrideEvaluator(void)
   if (crank_position_valid_flag == 1) {
     mpc555_evaluateProtectionThresholds();
   }
-  mpc555_processProtectionConditions();
+  engine_injectionTiming_crankSyncDispatch();
   if (crank_event_timebase_b == 0) {
     iVar1 = TBLr;
     crank_event_timebase_b = iVar1 - timebase_previous_capture;
@@ -43964,7 +43969,7 @@ void mpc555_updateEngineRunState(void)
             timebase_delta_ticks = iVar1 - timebase_previous_capture;
             crank_tbl_event_counter = crank_tbl_event_counter + 1;
             if (crank_position_valid_flag == 0) {
-              mpc555_processProtectionConditions();
+              engine_injectionTiming_crankSyncDispatch();
             }
           }
           engine_event_countdown = engine_event_countdown_cal;
@@ -44106,7 +44111,7 @@ LAB_00045970:
             timebase_delta_ticks = iVar1 - timebase_previous_capture;
             crank_tbl_event_counter = crank_tbl_event_counter + 1;
             if (engine_crank_state_t_0040b80a.run_state == 3) {
-              mpc555_processProtectionConditions();
+              engine_injectionTiming_crankSyncDispatch();
             }
           }
         }
@@ -44146,7 +44151,7 @@ LAB_00045970:
         timebase_delta_ticks = iVar1 - timebase_previous_capture;
         crank_tbl_event_counter = crank_tbl_event_counter + 1;
         if (crank_position_valid_flag == 0) {
-          mpc555_processProtectionConditions();
+          engine_injectionTiming_crankSyncDispatch();
         }
       }
       if ((crank_pattern_valid_flag != 0) &&
@@ -44168,7 +44173,7 @@ LAB_00045970:
       if ((crank_position_valid_flag == 0) &&
          (cranking_flag_threshold_cal < engine_crank_state_t_0040b80a.cranking_flag)) {
         mpc555_initEngineCrankSequence();
-        mpc555_processProtectionConditions();
+        engine_injectionTiming_crankSyncDispatch();
       }
     }
     goto LAB_00045ea0;
@@ -79060,10 +79065,13 @@ void cm848_protection_timer_init(void)
 
 
 //
-// Function: FUN_00529284 @ 0x00529284
+// Function: engine_injectionAngle_computeLoadCh6 @ 0x00529284
 //
 
-void FUN_00529284(void)
+/* computes injection_timing_tooth_b + phase from cam/crank sync and loads TPU-A ch6 param 0x304162;
+   no caller found in decompilation (pointer/tail-call?) */
+
+void engine_injectionAngle_computeLoadCh6(void)
 
 {
   ushort uVar1;
@@ -79166,10 +79174,14 @@ LAB_005295d8:
 
 
 //
-// Function: cm848_protection_condition_eval_set1 @ 0x00529994
+// Function: engine_injectionAngle_schedule_crankValid @ 0x00529994
 //
 
-void cm848_protection_condition_eval_set1(void)
+/* injection-angle TPU-ch6 scheduler state machine (DAT_0040b86c states) for the
+   crank-position-valid path; renamed from cm848_protection_condition_eval_set1 - does TPU injection
+   timing, NOT protection */
+
+void engine_injectionAngle_schedule_crankValid(void)
 
 {
   uint uVar1;
@@ -79268,10 +79280,13 @@ void cm848_protection_condition_eval_set1(void)
 
 
 //
-// Function: cm848_protection_condition_eval_set2 @ 0x00529d1c
+// Function: engine_injectionAngle_schedule_crankInvalid @ 0x00529d1c
 //
 
-void cm848_protection_condition_eval_set2(void)
+/* injection-angle TPU-ch6 load for the crank-position-invalid path; renamed from
+   cm848_protection_condition_eval_set2 - does TPU injection timing, NOT protection */
+
+void engine_injectionAngle_schedule_crankInvalid(void)
 
 {
   byte bVar1;
