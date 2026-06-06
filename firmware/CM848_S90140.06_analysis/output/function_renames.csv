@@ -2243,7 +2243,7 @@ address,name
 0x0052801c,cm848_initialization_auxiliary_state
 0x005280a4,engine_injectionAngle_tpuUpdate
 0x00528474,cm848_tpu_configuration_setup
-0x005289d4,cm848_protection_threshold_calib_check
+0x005289d4,cm848_tpuMiosOutput_loadCalibration,loads TPU-A CH14/CH10 params + MIOS MPWMSM PWM outputs 16-19 from calibration values (no threshold check despite old name); physical actuator per output unknown - see docs/tpu_mios_channel_map.md. Renamed from cm848_protection_threshold_calib_check
 0x00528b90,cm848_tpu_interrupt_flag_init
 0x0052903c,cm848_initialization_calibration_state
 0x00529068,cm848_protection_timer_init

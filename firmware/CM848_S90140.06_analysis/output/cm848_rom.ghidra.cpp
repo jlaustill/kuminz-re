@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Jun 06 07:59:20 MDT 2026
+// Generated: Sat Jun 06 08:14:23 MDT 2026
 
 
 //
@@ -6578,7 +6578,7 @@ void cm848_periodicTaskGroup13_calibration2(void)
 void cm848_periodicTaskGroup14_calibration3(void)
 
 {
-  cm848_protection_threshold_calib_check();
+  cm848_tpuMiosOutput_loadCalibration();
   hpcr_protectionTimerMonitor();
   return;
 }
@@ -78786,10 +78786,14 @@ void FUN_00528978(void)
 
 
 //
-// Function: cm848_protection_threshold_calib_check @ 0x005289d4
+// Function: cm848_tpuMiosOutput_loadCalibration @ 0x005289d4
 //
 
-void cm848_protection_threshold_calib_check(void)
+/* loads TPU-A CH14/CH10 params + MIOS MPWMSM PWM outputs 16-19 from calibration values (no
+   threshold check despite old name); physical actuator per output unknown - see
+   docs/tpu_mios_channel_map.md. Renamed from cm848_protection_threshold_calib_check */
+
+void cm848_tpuMiosOutput_loadCalibration(void)
 
 {
   uint uVar1;
@@ -78836,7 +78840,7 @@ void cm848_tpu_interrupt_flag_init(void)
   word wVar1;
   
   DAT_0040b856 = 0;
-  cm848_protection_threshold_calib_check();
+  cm848_tpuMiosOutput_loadCalibration();
   cm848_protectionFlagManager(0x2f);
   cm848_protectionFlagManager(0x30);
   wVar1 = tpu_a_mcr.CPR1;
