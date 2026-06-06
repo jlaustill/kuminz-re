@@ -14,8 +14,9 @@ The variable itself lives in RAM (no code there). You disassemble the **referenc
 python3 firmware/scripts/disasm_func.py <func_name|0xADDR> 0x<DATA_ADDR>
 ```
 It auto-resolves the window (next `// Function:` = stop addr), picks Bank1/Bank2 binary + VMA by the
-0x500000 split, finds BOTH the displacement form and the `lis;addi;…0(rN)` register-built form, and
-prints a WIDTH verdict (byte/word/dword) to paste into the report. Pass a function NAME or any
+0x500000 split, tracks register contents (lis/addi/ori/li/mr) to catch ALL three addressing forms —
+displacement, `lis;addi;0(rN)` exact, and struct/buffer-member `<offset>(base)` — and prints a WIDTH
+verdict (byte/word/dword) to paste into the report. Pass a function NAME or any
 `0xADDR` inside it (it snaps to the containing function). Omit the data addr to dump the whole
 function. The manual `objdump` recipe below is the fallback / for understanding what it does.
 

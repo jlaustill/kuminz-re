@@ -10,9 +10,11 @@ Usage:
     python3 disasm_func.py <func_name|0xADDR> [0xDATA_ADDR]
 
   - no DATA_ADDR  -> prints the full disassembly of the function.
-  - with DATA_ADDR -> prints ONLY the instructions that reference that address (both the
-    displacement form `lhz rX,<disp>(rY)` and the register-built form `lis;addi rN,..;l/st 0(rN)`),
-    and a WIDTH verdict (byte/word/dword) you can paste into an investigate-firmware-symbol report.
+  - with DATA_ADDR -> tracks register contents through the function (lis/addi/ori/li/mr) and prints
+    every load/store whose base+displacement == DATA_ADDR, with a WIDTH verdict (byte/word/dword) to
+    paste into an investigate-firmware-symbol report. Handles all three addressing forms uniformly:
+    displacement `lhz rX,<disp>(rY)`, register-built exact `lis;addi rN,..;l/st 0(rN)`, and
+    struct/buffer member `<offset>(base)` where base = DATA_ADDR - offset.
 
 Window + binary are resolved from cm848_rom.ghidra.cpp's `// Function: <name> @ 0x<addr>` comments
 (covers FUN_ too) and the Bank1/Bank2 split at 0x500000. CM848 / PowerPC big-endian only.
@@ -76,39 +78,64 @@ def main():
         print("\n".join(lines)); return
 
     data = int(sys.argv[2], 16)
-    lo16 = data & 0xffff
-    bytepat = f"{lo16 >> 8:02x} {lo16 & 0xff:02x}"   # the addr low-16, byte-spaced
-    addi = re.compile(r"\b(addi|addic|ori)\s+r(\d+),r\d+,")
-    regs_built = {}          # reg -> addr-building instruction line
-    hits = []
-    for i, ln in enumerate(lines):
-        has_pat = bytepat in ln
-        m = LDST.search(ln)
-        # displacement form: the load/store itself carries the low-16 in its raw bytes
-        if m and has_pat:
-            hits.append(("disp", ln, WIDTH[m.group(1)]))
-        # register-built form: addi/ori finishes the address in some reg
-        am = addi.search(ln)
-        if am and has_pat:
-            regs_built[am.group(2)] = ln
-            # scan forward for the 0(rN) access before rN is reused
-            zero = re.compile(rf"\b(lbz|lha|lhz|lwz|stb|sth|stw)\s+r\d+,0\(r{am.group(2)}\)")
-            redef = re.compile(rf"\b(addi|addic|ori|lis|li|mr)\s+r{am.group(2)},")
-            for ln2 in lines[i + 1:i + 40]:
-                zm = zero.search(ln2)
-                if zm:
-                    hits.append(("reg", f"{am.group(0).strip()} ; {ln2.strip()}", WIDTH[zm.group(1)]))
-                elif redef.search(ln2):
-                    break
+    # Register-content tracking: follow lis/addi/ori/li/mr to know each GPR's value, then flag any
+    # load/store whose base+displacement == data. Handles all three addressing forms uniformly
+    # (displacement, lis+addi exact, and struct-member <offset>(base) where base = data - offset).
+    asm_re = re.compile(r"^\s*[0-9a-f]+:\t[0-9a-f ]+\t\s*(\S+)\s*(.*)$")
+    ld_st = re.compile(r"^r(\d+),(-?\d+)\(r(\d+)\)$")           # rD,disp(rA)
+    mask32 = 0xffffffff
+
+    def base(idx):                       # r0 reads as literal 0 in addr context
+        return 0 if idx == 0 else regs.get(idx)
+
+    regs = {0: 0}
+    hits, off_seen = [], {}
+    for ln in lines:
+        m = asm_re.match(ln)
+        if not m:
+            continue
+        mnem, ops = m.group(1), m.group(2).replace(" ", "")
+        op = ops.split(",")
+        w = WIDTH.get(mnem)
+        if w:                                                  # a load or store
+            lm = ld_st.match(ops)
+            if lm:
+                rd, disp, ra = int(lm.group(1)), int(lm.group(2)), int(lm.group(3))
+                b = base(ra)
+                if b is not None and ((b + disp) & mask32) == data:
+                    kind = "store" if mnem.startswith("st") else "load"
+                    hits.append((kind, ln.strip(), w))
+                    off_seen[disp] = off_seen.get(disp, 0) + 1
+                if not mnem.startswith("st"):                  # load writes rD
+                    regs.pop(rd, None)
+            continue
+        # address-building ops
+        if mnem == "lis" and len(op) == 2:
+            regs[int(op[0][1:])] = (int(op[1], 0) & 0xffff) << 16
+        elif mnem in ("addi", "addic") and len(op) == 3:
+            b = base(int(op[1][1:]))
+            regs[int(op[0][1:])] = None if b is None else (b + int(op[2])) & mask32
+        elif mnem == "li" and len(op) == 2:
+            regs[int(op[0][1:])] = int(op[1]) & mask32
+        elif mnem == "ori" and len(op) == 3:
+            b = base(int(op[1][1:]))
+            regs[int(op[0][1:])] = None if b is None else (b | (int(op[2], 0) & 0xffff))
+        elif mnem == "mr" and len(op) == 2:
+            regs[int(op[0][1:])] = base(int(op[1][1:]))
+        elif op and re.fullmatch(r"r\d+", op[0]):              # any other op clobbers its dest GPR
+            regs.pop(int(op[0][1:]), None)
 
     if not hits:
-        print(f"\n!! no access to {hex(data)} found (low-16 pattern '{bytepat}'). "
-              f"Check the address is really touched here, or widen the window.")
+        print(f"\n!! no access to {hex(data)} found in this window. Widen with a bigger function, "
+              f"or the address may be reached via a pointer loaded from memory (untrackable).")
         return
     widths = sorted({w for _, _, w in hits})
-    print(f"\nACCESSES to {hex(data)} (low-16 '{bytepat}'):")
+    print(f"\nACCESSES to {hex(data)} ({len(hits)} found):")
     for kind, ln, w in hits:
-        print(f"  [{kind:4}] {w:5}  {ln.strip()}")
+        print(f"  [{kind:5}] {w:5}  {ln}")
+    if any(k != 0 for k in off_seen):
+        print(f"  (nonzero displacements {sorted(off_seen)}: reached via base+offset — could be a "
+              f"struct/buffer member OR just a shared base register for a nearby global; verify)")
     print(f"\nWIDTH verdict: {'/'.join(widths)}"
           + ("   <-- MIXED, inspect!" if len(widths) > 1 else ""))
 
