@@ -9,6 +9,16 @@ The variable itself lives in RAM (no code there). You disassemble the **referenc
 (the function that loads/stores it, found via the `// Function: <name> @ 0x<addr>` comment in the
 `.cpp`) and read the load/store width for the target address.
 
+**CM848 shortcut — use the helper, don't do this by hand:**
+```bash
+python3 firmware/scripts/disasm_func.py <func_name|0xADDR> 0x<DATA_ADDR>
+```
+It auto-resolves the window (next `// Function:` = stop addr), picks Bank1/Bank2 binary + VMA by the
+0x500000 split, finds BOTH the displacement form and the `lis;addi;…0(rN)` register-built form, and
+prints a WIDTH verdict (byte/word/dword) to paste into the report. Pass a function NAME or any
+`0xADDR` inside it (it snaps to the containing function). Omit the data addr to dump the whole
+function. The manual `objdump` recipe below is the fallback / for understanding what it does.
+
 ### CM848 — PowerPC, BIG-ENDIAN (reliable)
 
 Tool: `powerpc-linux-gnu-objdump` (NOT `llvm-objdump` — it has no `-b binary`). `-EB` is required;

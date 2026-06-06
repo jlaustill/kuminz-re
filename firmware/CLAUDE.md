@@ -144,7 +144,11 @@ ROM-to-RAM thunking (`func_0x003fxxxx` → ROM source) is the CM848 `romramthunk
 > below are supporting detail.
 >
 > **Naming an unknown symbol?** Use **`investigate-firmware-symbol`** (read-only research → name + type
-> recommendation; includes the mandatory asm width-check — `powerpc-linux-gnu-objdump -D -b binary -m powerpc -EB --adjust-vma=<base>` for CM848 [big-endian!], `llvm-mc-18 --disassemble --triple=m68k` for CM550).
+> recommendation; includes the mandatory asm width-check). **CM848 width-check shortcut:**
+> `python3 scripts/disasm_func.py <func_name|0xADDR> 0x<DATA_ADDR>` auto-resolves the window/binary and
+> prints a byte/word/dword verdict (handles both displacement and `lis;addi;0(rN)` forms). Manual fallback:
+> `powerpc-linux-gnu-objdump -D -b binary -m powerpc -EB --adjust-vma=<base>` for CM848 [big-endian!],
+> `llvm-mc-18 --disassemble --triple=m68k` for CM550.
 > For J1939 SPN/PGN meanings use **`j1939-lookup`** (local `mongodb://localhost:27017/j1939`, collection `pgns`, query by `number`).
 
 ---
