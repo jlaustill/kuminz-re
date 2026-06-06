@@ -2248,7 +2248,7 @@ address,name
 0x0052903c,cm848_initialization_calibration_state
 0x00529068,cm848_protection_timer_init
 0x00529284,engine_injectionAngle_computeLoadCh6,computes injection_timing_tooth_b + phase from cam/crank sync and loads TPU-A ch6 param 0x304162; no caller found in decompilation (pointer/tail-call?)
-0x00529994,engine_injectionAngle_schedule_crankValid,injection-angle TPU-ch6 scheduler state machine (DAT_0040b86c states) for the crank-position-valid path; renamed from cm848_protection_condition_eval_set1 - does TPU injection timing, NOT protection
+0x00529994,engine_injectionAngle_schedule_crankValid,injection-angle TPU-ch6 scheduler state machine (injection_angle_sequence_state) for the crank-position-valid path; renamed from cm848_protection_condition_eval_set1 - does TPU injection timing, NOT protection
 0x00529d1c,engine_injectionAngle_schedule_crankInvalid,injection-angle TPU-ch6 load for the crank-position-invalid path; renamed from cm848_protection_condition_eval_set2 - does TPU injection timing, NOT protection
 0x00529ea4,cm848_sensor_diagnostic_flag_update
 0x00529f58,cm848_sensor_channel_state_load

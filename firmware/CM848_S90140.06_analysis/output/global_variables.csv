@@ -3896,6 +3896,7 @@ address,name,type,comment
 0x0040a188,fuel_blend_coefficient_calc,word,
 0x0040a18a,fuel_blend_coefficient_offset,word,
 0x0040a18c,fuel_correction_upper_limit,word,
+0x0040a192,fuel_correction_upper_limit_lookup,word,dualAxisTableInterpolation result in cm848_calibrationGroup5_periodic that is copied into fuel_correction_upper_limit across the mode branches
 0x0040a194,governor_adjustment_input,word,
 0x0040a196,fuel_pressure_sensor_reference,word,
 0x0040a19a,boost_fuel_demand_blend_a,word,
@@ -5244,6 +5245,7 @@ address,name,type,comment
 0x0040b61e,torque_limit_active_flag,word,
 0x0040b620,torque_limit_setpoint_active,word,
 0x0040b622,fuel_flow_rate_working,dword,
+0x0040b62a,governor_data_validation_state,word,state (0/1/4/5/6) of governorDataValidation: cold-start governor-setpoint sensor-snapshot qualification; fault flags -> state 4 (disqualified), fault-ring/eeprom confirm -> 5/6, stable capture -> 1; init 0 in initCruiseStateVariables
 0x0040b62c,fuel_flow_rate_divisor,dword,
 0x0040b630,engine_load_raw,word,
 0x0040b632,fuel_consumption_accumulator,dword,
@@ -5404,6 +5406,8 @@ address,name,type,comment
 0x0040b85c,fuel_quantity_active,word,
 0x0040b85e,fuel_quantity_trim,word,
 0x0040b860,injection_timing_active_flag,word,
+0x0040b86c,injection_angle_sequence_state,byte,injection-angle TPU-ch6 scheduler sequence state (values 1/2/4/8) driving engine_injectionAngle_schedule_crankValid; each transition saves prev into injection_angle_sequence_state_prev
+0x0040b86d,injection_angle_sequence_state_prev,byte,previous-value snapshot of injection_angle_sequence_state (DAT_0040b86d = DAT_0040b86c before each transition)
 0x0040b86e,injection_timing_tooth,byte,integer tooth/angle (0-119 over 720 deg, wraps at 60/119) for the TPU-A ch6 injection-timing event; written with phase byte DAT_0040b86f to TPU param 0x304162 via CONCAT11; computed per cylinder_event_index from cam-sync position
 0x0040b86f,injection_timing_tooth_phase,byte,sub-tooth phase/low-byte paired with injection_timing_tooth into the TPU-A ch6 param at 0x304162 (CONCAT11); values 0/0x80/0xff
 0x0040b875,injection_timing_tooth_b,byte,second TPU-A ch6 injection-timing tooth (same wrap logic as injection_timing_tooth) computed in FUN_00529284 + cm848_protection_condition_eval_set1; paired with phase byte DAT_0040b876 into TPU param 0x304162
@@ -5470,6 +5474,7 @@ address,name,type,comment
 0x0040b9cb,fault_enable_override_flag,byte,
 0x0040b9d0,protection_feature_status_flags,dword,
 0x0040b9d4,boost_fuel_bypass_flags,dword,
+0x0040b9ec,iat_protection_state,word,state machine (0/3/4/5/6) of diag_iat_protectionLimit_calc (intake-air-temp protection); gates fuel limiting under operating_mode_flags & 0x200
 0x0040ba16,engine_sync_debounce_flag,word,
 0x0040ba18,cbd_active_flag,word,
 0x0040ba1a,fault_mask_inverted,dword,
