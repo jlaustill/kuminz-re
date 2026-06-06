@@ -4866,6 +4866,7 @@ address,name,type,comment
 0x0040b0f9,protection_status_flags_t_0040b0f2.rate_limit_flags,,
 0x0040b0fb,protection_status_flags_b,byte,
 0x0040b0fc,torque_limit_output_active_flag,byte,
+0x0040b0fd,fuel_temp_protection_state_flags,byte,packed state-flags byte for fuel_temp_protection_monitor: bit0=active(DAT_0040b1f8 timer running -> fuel_temp_protection_active_flag) bit1=debounce-expired gate bit2=armed(load/fuel-demand in window) bit3=transition bit4(0x10) cleared on fuel_temp_trim_active_flag==2. (bitfield - decompose to struct later)
 0x0040b0fe,protection_condition_state,word,
 0x0040b100,protection_timer_state_t_0040b100,protection_timer_state_t,
 0x0040b102,protection_timer_state_t_0040b100.status_code+2,,
@@ -4977,7 +4978,8 @@ address,name,type,comment
 0x0040b28c,governor_speed_error_filtered_b,word,
 0x0040b28e,governor_speed_error_b_filtered,word,
 0x0040b290,governor_speed_error_filtered,word,
-0x0040b294,governor_speed_reference,word,clamped commanded engine speed (governor setpoint); floored/capped by min/max governor-speed cals with limit-source in DAT_0040b2a0; error = this - DAT_0040b2b6 feedback drives the speed PID to fuel demand; indexes dualAxisTableInterpolation speed axis
+0x0040b294,governor_speed_reference,word,clamped commanded engine speed (governor setpoint); floored/capped by min/max governor-speed cals with limit-source in governor_speed_limit_source; error = this - DAT_0040b2b6 feedback drives the speed PID to fuel demand; indexes dualAxisTableInterpolation speed axis
+0x0040b2a0,governor_speed_limit_source,word,limit-source code (0=none,2/3/4/5/6/0xb-0xf) recording which clamp/limit determined governor_speed_reference each cycle in engine_egrFuel_stateMachine_update; read as DAT_003fce0a = (==6)
 0x0040b2d4,PTR_DAT_0040b2d4,pointer,
 0x0040b2dc,PTR_DAT_0040b2dc,pointer,
 0x0040b2e4,PTR_DAT_0040b2e4,pointer,
@@ -5459,8 +5461,10 @@ address,name,type,comment
 0x0040b930,timing_arbitration_status_bits,word,
 0x0040b932,engine_timing_arb_status_packed,dword,
 0x0040b936,injection_timing_demand_cyl5,word,
+0x0040b944,torque_limit_rpm_slewed,word,slew-limited engine speed: tracks current_rpm but capped to +/-DAT_00409e56 step per update in cm848_torque_limit_state_update; used as the rpm axis of the torque-limit dualAxisTableInterpolation lookups
 0x0040b94a,injection_timing_table_output_b,word,
 0x0040b956,engine_timing_arb_byte_16_23,word,
+0x0040b98a,injection_timing_rpm_axis,word,engine speed arbitrated for injection-timing tables (governor integrator / protection_monitored_rpm / current_rpm by mode) in engine_injectionTiming_arbitration_calc; used as the rpm axis of the injection-timing dualAxisTableInterpolation lookups
 0x0040b998,engine_timing_arb_byte_24_31,word,
 0x0040b99c,protection_fuel_limit_working,word,
 0x0040b9cb,fault_enable_override_flag,byte,
@@ -5683,6 +5687,8 @@ address,name,type,comment
 0x0040c25e,engine_rpm_override_value,word,
 0x0040c260,engine_rpm_override_enable,word,
 0x0040c262,protection_timeout_sentinel,dword,
+0x0040c278,diag_dm1_buffer_read_ptr,pointer,read/tail pointer of the DM1 diagnostic ring buffer (storage &DAT_0040c28a, start DAT_0040c270, end DAT_0040c274); advanced/wrapped in diag_dm1Buffer_circularFill, init in hpcr_exception_process
+0x0040c280,diag_dm1_buffer_write_ptr,pointer,write/head pointer of the DM1 diagnostic ring buffer; *ptr=val then ++ with wrap to DAT_0040c270 past DAT_0040c274 in diag_dm1Buffer_circularFill
 0x00500000,flash2_command_register,dword,
 0x00500002,flash2_command_register+2,,
 0x0050c640,BYTE_0050c640,byte,
