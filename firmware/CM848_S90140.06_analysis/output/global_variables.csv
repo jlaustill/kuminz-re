@@ -1093,6 +1093,8 @@ address,name,type,comment
 0x003fab6e,j1939_dtc_byte_offset,word,
 0x003fab70,j1939_dm1_tx_buf_ptr,pointer,
 0x003fab74,j1939_dm1_fault_data_ptr,pointer,
+0x003fab78,j1939_dm1_lamp_status,byte,byte 0 of the DM1 (PGN 65226) TX payload = lamp status (MIL/RSL/AWL/PL); set to j1939_buildLampStatusByte() when faults pending else 0; tx_buf_ptr points here
+0x003fab79,j1939_dm1_flash_lamp_status,byte,byte 1 of the DM1 (PGN 65226) TX payload = flash lamp status; initialized to 0xff (not available) in cm848_initPgn65226Dm1Handler
 0x003fab7a,j1939_dm1_dtc_mask_working,dword,
 0x003fab7d,j1939_dm1_dtc_mask_working+3,,
 0x003fabcc,j1939_dm2_tx_header,dword,
@@ -4975,6 +4977,7 @@ address,name,type,comment
 0x0040b28c,governor_speed_error_filtered_b,word,
 0x0040b28e,governor_speed_error_b_filtered,word,
 0x0040b290,governor_speed_error_filtered,word,
+0x0040b294,governor_speed_reference,word,clamped commanded engine speed (governor setpoint); floored/capped by min/max governor-speed cals with limit-source in DAT_0040b2a0; error = this - DAT_0040b2b6 feedback drives the speed PID to fuel demand; indexes dualAxisTableInterpolation speed axis
 0x0040b2d4,PTR_DAT_0040b2d4,pointer,
 0x0040b2dc,PTR_DAT_0040b2dc,pointer,
 0x0040b2e4,PTR_DAT_0040b2e4,pointer,
@@ -5207,6 +5210,7 @@ address,name,type,comment
 0x0040b56a,cruise_debounce_timer_a,word,
 0x0040b56c,cruise_debounce_timer_b,word,
 0x0040b56e,fuel_state_index,word,
+0x0040b58e,protection_throttle_error,dword,signed error protection_derate_rpm_limit - protection_ramp_position_b; drives protection-phase throttle controller - proportional via squared polynomial in cm848_throttleGain_loadBased_calc, derivative DAT_0040b596, integral DAT_0040b59a
 0x0040b592,protection_ramp_position_b,word,
 0x0040b5a8,fuel_temp_trim_raw,word,
 0x0040b5aa,fuel_temp_trim_numerator,dword,
@@ -5398,6 +5402,10 @@ address,name,type,comment
 0x0040b85c,fuel_quantity_active,word,
 0x0040b85e,fuel_quantity_trim,word,
 0x0040b860,injection_timing_active_flag,word,
+0x0040b86e,injection_timing_tooth,byte,integer tooth/angle (0-119 over 720 deg, wraps at 60/119) for the TPU-A ch6 injection-timing event; written with phase byte DAT_0040b86f to TPU param 0x304162 via CONCAT11; computed per cylinder_event_index from cam-sync position
+0x0040b86f,injection_timing_tooth_phase,byte,sub-tooth phase/low-byte paired with injection_timing_tooth into the TPU-A ch6 param at 0x304162 (CONCAT11); values 0/0x80/0xff
+0x0040b875,injection_timing_tooth_b,byte,second TPU-A ch6 injection-timing tooth (same wrap logic as injection_timing_tooth) computed in FUN_00529284 + cm848_protection_condition_eval_set1; paired with phase byte DAT_0040b876 into TPU param 0x304162
+0x0040b876,injection_timing_tooth_b_phase,byte,sub-tooth phase/low-byte paired with injection_timing_tooth_b into the TPU-A ch6 param at 0x304162 (CONCAT11)
 0x0040b878,cam_sync_position_high_byte,byte,
 0x0040b879,cam_timing_source_1,word,
 0x0040b87b,cam_timing_source_0,word,
@@ -5461,6 +5469,7 @@ address,name,type,comment
 0x0040ba16,engine_sync_debounce_flag,word,
 0x0040ba18,cbd_active_flag,word,
 0x0040ba1a,fault_mask_inverted,dword,
+0x0040ba5c,engine_cssc_oiltemp_state,word,state variable (values 0-8) of the engine_cssc_oilTemp_state_update/_verify + diag_faultRing_cssc_update cluster; gates engine_egrFuel_stateMachine_update on ==0||==1 (cssc acronym not expanded; prefix matches existing function names)
 0x0040bab4,fuel_flow_rate_snapshot,word,
 0x0040bab8,fuel_quantity_ema_filtered,word,
 0x0040baba,fuel_quantity_ema,word,
