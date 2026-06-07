@@ -1,0 +1,125 @@
+address,name,type,comment
+0x003fcd84,protection_enable_modeA_debounce_counter,word,debounce while protection mode A active
+0x003fcd86,protection_enable_modeB_debounce_counter,word,debounce while mode B active
+0x003fcd88,protection_enable_off_debounce_counter,word,debounce while protection inactive
+0x003fcd8a,protection_enable_modeC_debounce_counter,word,debounce while mode C (both bits)
+0x003fcd8c,protection_enable_mode_prev,byte,previous-cycle protection mode 0-3
+0x003fcd8e,protection_j1939_trigger_active,byte,J1939 protection trigger detected
+0x003fcd8f,protection_j1939_trigger_accumulator,byte,accumulator toward J1939 protection threshold
+0x003fcff8,cruise_speed_zone_code,word,cruise speed zone 1/2/3 selecting ramp-rate cal
+0x003fd0aa,aux_boundary_boost_blend_interp_state,word,dualAxis interp state base (aux boundary boost blend)
+0x003fd164,injection_timing_arb_boost_blend_interp_state,word,dualAxis interp state base (injection timing arbitration boost blend)
+0x003fd1a4,cam_sync_balance_hold_counter,word,precondition stability counter before cam-sync balance sampling
+0x003fd1a6,cam_sync_advance_event_count,word,advance/retard event count for cam-sync balance
+0x003fd1a8,cam_sync_balance_accumulator,word,net cam-sync balance accumulator vs limit
+0x003fde48,fuel_demand_histogram_sample_count,dword,total sample count for fuel-demand usage histogram
+0x003fe9b2,hpcr_battery_voltage_flags,word,HPCR battery-voltage protection status bits (system_status_flags+0x3e)
+0x003fb73c,injection_timing_trim_boost_blend_interp_state,word,dualAxis interp state base (injection timing trim boost blend)
+0x003fcda0,governor_speed_request_debounce_count,word,debounce for governor speed-request state machine
+0x003fcdbc,cold_start_fuel_demand_ramp_prev,word,previous-cycle cold-start fuel demand ramp output
+0x003fcdc6,cold_start_coolant_bucket_cycle_count,word,coolant-temp bucket reporting cycle counter
+0x003fcdd8,cold_start_fuel_demand_limit_min,word,min(pi_correction,rpm_fuel_limit) cold-start ceiling
+0x003fcddc,cold_start_fuel_demand_integral_q8_scaled,dword,Q-scaled cold-start overheat integral accumulator (x0x2280)
+0x003fcea4,protection_event35_crank_cycle_count,word,crank cycle counter for protection event 0x35 ambient qualify
+0x003fcea6,protection_event35_qualification_state,word,event 0x35 ambient qualification state 1/2/3
+0x003fd172,protection_group21_pathB_dwell_count,word,group21 path B entry-dwell debounce
+0x003fd174,protection_group21_pathB_vote_count,word,group21 path B oil-pressure vote accumulator
+0x003fd178,protection_group21_pathB_ring_trigger,byte,group21 path B fault-ring notification bits
+0x003fd179,protection_group21_pathA_ring_trigger,byte,group21 path A fault-ring notification bits
+0x003fd17b,protection_group21_fault_pending_flag,word,group21 fault-active routing flag (0 clear/1 pending)
+0x003fd17d,protection_group21_pathA_dwell_count,word,group21 path A entry-dwell debounce
+0x003fd17f,protection_group21_pathA_vote_count,word,group21 path A differential-sensor vote accumulator
+0x003fe9c4,boost_corr_diag_status_flags,word,boost-correction diagnostic status bits
+0x003fe9ca,boost_corr_diag_status_flags_b,word,boost-correction diagnostic status bits (second word)
+0x003fd192,boost_corr_diag_entry_count,word,boost-correction diagnostic entry-dwell counter
+0x003fd194,boost_corr_diag_pos_accumulator,word,boost-correction positive deviation accumulator
+0x003fd196,boost_corr_diag_neg_accumulator,word,boost-correction negative deviation accumulator
+0x003fd198,boost_corr_diag_dwell_count_b,word,boost-correction second-block dwell counter
+0x003fd19a,boost_corr_diag_pos_accumulator_b,word,boost-correction second positive accumulator
+0x003fd19c,boost_corr_diag_neg_accumulator_b,word,boost-correction second negative accumulator
+0x003fd1a0,boost_corr_crank_phase_dwell_b,word,cold-start boost-correction dwell channel B
+0x003fb41c,fuel_demand_rate_table_dims,word,dualAxis table dims base (fuel demand rate)
+0x003fb9fe,boost_corr_eligible_dwell_count,word,dwell confirming boost-correction eligibility stable
+0x003fea6e,protection_monitor_shadow_snapshot,word,snapshot of protection_monitor_shadow for edge detect
+0x003fd1e6,cam_timing_monitor_active_flag,byte,cam-timing measurement active 0/1
+0x003fd19e,boost_corr_crank_phase_dwell_a,word,cold-start boost-correction dwell channel A
+0x003fbc90,fuel_demand_timing_demand_window_sum,dword,150-sample rolling sum of fuel_demand_min_threshold
+0x003fbc94,fuel_demand_timing_correction_window_sum,dword,150-sample rolling sum of fuel_demand_timing_correction
+0x003fbc98,fuel_demand_timing_rolling_avg_index,word,rolling-average ring buffer write index 0-149
+0x003fbc9a,fuel_demand_timing_rolling_avg_full_flag,word,rolling-average buffer full flag
+0x003fbd28,governor_faultDerate_channel_bit,word,single-bit mask for active fault-derate channel
+0x003fbd2a,governor_faultDerate_lookup_interp_state,word,table_interp_args_t base for fault-derate param lookup
+0x003fcd04,governor_b_ema_offset_delta_scaled,dword,clamped scaled derivative of protection EMA offset
+0x003fcd08,governor_b_timing_ema_deviation,dword,abs deviation between timing error and EMA delta
+0x003fcd0c,governor_b_boost_normalization_factor,dword,denominator for governor_rpm_monitored ratio
+0x003fce2e,fuel_quantity_demand_active_correction_sum,word,demand-correction total for fault-trigger compare
+0x003fcfdc,rom_crc_scan_ptr,dword,current scan pointer into ROM CRC region
+0x003fcfe0,rom_crc_descriptor_table_ptr,dword,ptr to current CRC descriptor entry (was PTR_DAT)
+0x003fcfe4,rom_crc_accumulator,word,running CRC16 for current scan pass
+0x003fd06e,diag_boostLoad_overtemp_qualifying_cycle_count,word,boost/load overtemp qualifying cycle counter
+0x003fee7e,diag_boostLoad_overtemp_event_count,word,boost/load overtemp event count
+0x003fee80,diag_boostLoad_overtemp_demand_qualify_count,word,boost/load overtemp demand-qualify cycle count
+0x003fd16e,iat_protection_derate_integrator,dword,IAT derate integrator gating j1939 status bit 0x10
+0x003fd226,fault_service_monitor_subtask_step,byte,subtask step 1-4 in mainLoopServiceMonitor
+0x003fd47c,startup_mios_engine_event_flag,word,set on sustained MIOS engine event at start; triggers timer sync
+0x003fb612,injection_timing_min_fuel_interp_state,word,table_interp_args_t base (min fuel quantity floor)
+0x003fbc9c,cold_start_phase3_fuel_mode_count,word,cold-start phase-3 fuel-mode qualifying event count
+0x003fcbfe,throttle_rate_filter_above_threshold_count,word,cycles fuel demand above threshold before filter reset
+0x003fcdce,sensor_overheat_recovery_count,word,recovery dwell in engine_sensor_check_overheat
+0x003fcdda,cold_start_fuel_demand_min_floor,word,RPM-indexed min fuel demand floor for cold-start integral
+0x003fcee8,j1939_fault_state_cycle_divider,byte,mod-5 rate divider for j1939 fault state eval
+0x003fcf74,protection_voltage_active_timeout_count,word,countdown clearing protection_voltage_active_flag
+0x003fcf76,protection_crank_fault_severity_timeout_count,word,countdown resetting crank fault severity slot
+0x003fcf78,protection_cylinder_diag_timeout_count,word,countdown clearing cylinder_diag_active_flag
+0x003fcf7a,protection_speed_limit_enable_timeout_count,word,countdown clearing governor_speed_limit_enable_flag
+0x003fd22d,fault_service_monitor_startup_delay_count,word,startup hold-off before fault service subtasks
+0x003fcf9c,sensor_validation_unhealthy_persist_count,word,consecutive unhealthy cycles gating sensor-validation fault
+0x003fcf9e,sensor_validation_stable_debounce_count,word,consecutive-stable debounce for sensor validation
+0x003fcfa0,sensor_validation_value_snapshot,word,current-cycle copy of sensor_validation_unsettled_flag
+0x003fd1d6,fuel_correction_direction_latch_flag,byte,one-shot latch in fuel correction state machine
+0x003fd1de,cam_sync_validation_crank_tick_count,word,cranking tick counter for cam-sync validation state 1
+0x003fd232,cam_sync_validation_oil_temp_snapshot,word,oil-temp reference sample for cam-sync cross-checks
+0x003fd234,cam_sync_validation_coolant_temp_snapshot,word,coolant-temp reference sample for cam-sync validation
+0x003fd24c,cam_sync_fueltemp_qualify_dwell_count,word,fuel-temp qualification dwell for cam-sync validation
+0x003fd24e,cam_sync_fueltemp_agreement_count,word,consecutive temp-agreement count for cam-sync validation
+0x003fd257,cam_sync_oil_path_fault_pending_flag,byte,oil-path fault pending in cam-sync cross-validation
+0x003fd258,cam_sync_coolant_path_fault_pending_flag,byte,coolant-path fault pending in cam-sync cross-validation
+0x003fd25a,cssc_oiltemp_init_delay_countdown,word,startup delay countdown for CSSC oil-temp monitor
+0x003fd262,cssc_oiltemp_cooling_rate_fraction,word,sub-unit fractional accumulator for CSSC oil-temp cooldown
+0x003fd27a,hpcr_oil_pressure_crank_angle_fraction,dword,sub-revolution crank-angle accumulator (0.01deg) for HPCR oil pressure
+0x003fee2e,eeprom_config_write_triggered_flag,byte,one-shot guard against duplicate EEPROM config write
+0x003fa0ba,sensor_channel16_interp_state,word,interp current_index for sensor channel 16 config lookup
+0x003fa0bc,sensor_channel16_filter_config_ptr,pointer,config pointer for sensor channel 16 (was PTR_DAT)
+0x003fb0ee,protection_rpm_limit_table_idle_state,word,interp state for protection RPM limit table (idle path)
+0x003fb0f0,protection_rpm_limit_table_derate1_state,word,interp state for protection RPM limit table (derate 1)
+0x003fb341,governor_inhibit_delay_counter,word,countdown clearing governor_inhibit_flag
+0x003fb40c,injection_timing_cycle_counter,byte,cycle counter in protection timing energy calc
+0x003fb4e8,torque_limit_fuel_table_dims,word,dualAxis table dims base (torque limit fuel)
+0x003fbd18,governor_speed_stability_sample_counter,word,sample counter for governor speed sync-stable diag
+0x003fbd5a,fault_flag_bitmap,dword,32-bit fault-active flag bitmap
+0x003fbd5e,fault_reason_bitmap,dword,32-bit fault-reason bitmap
+0x003fbd62,fault_count_bitmap,dword,32-bit fault-count bitmap
+0x003fbd70,etc1_active_state_transition_snapshot,word,snapshot of TSC1 etc1_active_state for transition detect
+0x003feb54,etc1_governor_mode_history_write_index,word,write index for ETC1 governor-mode history ring
+0x003feb6e,governor_mode_history_write_index,word,write index for governor-mode-state history ring
+0x003fbdf7,j1939_multiframe_rx_rts_can_header,dword,CAN header of inbound RTS frame (SA validation)
+0x003fbdfb,j1939_multiframe_rx_total_bytes,word,total message size from inbound RTS frame
+0x003fcbe6,governor_fuel_demand_limit_prev,word,prev-cycle floor for aux torque fuel demand limit
+0x003fcbf2,fuel_demand_rate_limit_active_flag,word,rate-limited demand exceeds governor output 0/1
+0x003fcdc8,coolant_overheat_debounce_count,word,coolant overheat entry debounce (engine_coolant_overheat_check)
+0x003fcdca,coolant_overheat_recovery_count,word,coolant overheat recovery debounce (engine_coolant_overheat_check)
+0x003fce0c,governor_fuel_demand_i_acc,dword,governor PID integral accumulator (/0x5000 -> i_term)
+0x003fce39,iat_protection_action_code_prev,word,prev-cycle iat_protection_fault_action_code
+0x003fce3f,iat_rpmDerate_holdoff_countdown,word,IAT RPM-derate holdoff countdown
+0x003fceea,protection_coldStart_eval_cycle_count,dword,4-tick divide-down for cold-start protection eval
+0x003fcef8,fuel_temp_derate_active_latch,word,fuel-temp derate active latch 0/1
+0x003fcfc8,governor_auth_timeout_counter,word,countdown waiting for J1939 governor auth
+0x003fcfee,governor_override_speed_active_flag,word,governor override speed active (0/100, mirrors override_load_percent)
+0x003fd1cc,protection_eval_subcycle_counter,byte,4-tick subcycle counter for protection eval
+0x003fd1cd,protection_mode_enable_prev,byte,protection-mode eval output flag
+0x003fd1d0,protection_eval_elapsed_count,word,elapsed-eval counter for protection warm-up
+0x003fd264,hpcr_cam_diag_active_flag,byte,HPCR cam-timing diagnostic active 0/1
+0x003fd27e,fault_match_scan_cycle_count,byte,cycles between fault-match scan batches
+0x003fd47a,j1939_data_log_handler_count,byte,registered handler count in secondary J1939 PGN table (ROM-aliased)
+0x003fdfde,cold_start_fault_timing_log,dword,5x8B cold-start fault timing record array base
+0x003feb8a,governor_calib_snapshot_write_index,word,write index for governor calibration snapshot ring
