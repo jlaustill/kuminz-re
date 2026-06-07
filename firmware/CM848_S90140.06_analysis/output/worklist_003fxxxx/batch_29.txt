@@ -1,0 +1,117 @@
+=== VARIABLES TO NAME ===
+0x003fcbf2  (5 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fcbf2
+void fuel_demandRateLimit_outputCheck(void)
+
+{
+  bool bVar1;
+  ushort uVar2;
+  
+  bVar1 = false;
+  if ((fuel_demand_feature_flags & 0x100) == 0) {
+    uVar2 = system_status_flags_t_003fe974.safety_bits_2 & 0x4000;
+joined_r0x0050e584:
+    if (uVar2 == 0) goto LAB_0050e58c;
+  }
+  else if (DAT_0040aaa8 == '\0') {
+    uVar2 = system_status_flags_t_003fe974.reserved_10 & 2;
+    goto joined_r0x0050e584;
+  }
+  bVar1 = true;
+LAB_0050e58c:
+  if (bVar1) {
+    if (fuel_demand_control_t_0040a57a.rate_limited <= governor_torque_output) {
+      DAT_003fcbf2 = 0;
+    }
+  }
+  else if (protection_enable_t_0040c050.protection_active == 0) {
+    if (fuel_demand_control_t_0040a57a.rate_limited <= governor_torque_output) {
+      DAT_003fcbf2 = 0;
+    }
+  }
+  else if (governor_torque_output <= fuel_demand_control_t_0040a57a.rate_limited) {
+    DAT_003fcbf2 = 1;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_periodicControlLoopFaultHandling @ 0x0050e610
+//
+
+// Variables in this function: DAT_003fcbf2
+void cm848_periodicControlLoopFaultHandling(void)
+
+{
+  if ((system_feature_config_flags & 0x1000) != 0) {
+    if ((system_status_flags_t_003fe974.safety_bits_2 & 0x4000) == 0) {
+      system_status_flags_t_003fe974.system_faults =
+           system_status_flags_t_003fe974.system_faults & 0xf7ff;
+      system_faults_shadow_flags = system_faults_shadow_flags & 0xf7ff;
+    }
+    else {
+      system_status_flags_t_003fe974.system_faults =
+           system_status_flags_t_003fe974.system_faults | 0x800;
+    }
+    if ((system_status_flags_t_003fe974.safety_bits_2 & 0x2000) == 0) {
+      system_status_flags_t_003fe974.system_faults =
+           system_status_flags_t_003fe974.system_faults & 0xefff;
+      system_faults_shadow_flags = system_faults_shadow_flags & 0xefff;
+    }
+    else {
+      system_status_flags_t_003fe974.system_faults =
+           system_status_flags_t_003fe974.system_faults | 0x1000;
+    }
+    if ((system_feature_config_flags & 0x2000) == 0) {
+      if (protection_enable_t_0040c050.protection_active == 0) {
+        return;
+      }
+    }
+    else {
+      fuel_demandRateLimit_outputCheck();
+      if (DAT_003fcbf2 != 1) {
+        return;
+      }
+    }
+    if (fuel_demand_control_t_0040a57a.override_active < DAT_004071de) {
+      fuel_demand_control_t_0040a57a.override_active = DAT_004071de;
+      fuel_demand_control_t_0040a57a.override_value = governor_torque_output;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_clearEngineProtectionFaultsConditional @ 0x0050e768
+//
+
+// Variables in this function: DAT_003fcbf2
+void cm848_clearEngineProtectionFaultsConditional(void)
+
+{
+  DAT_003fcbf2 = 0;
+  if ((system_feature_config_flags & 0x1000) == 0) {
+    system_status_flags_t_003fe974.system_faults =
+         system_status_flags_t_003fe974.system_faults & 0xe7ff;
+    system_faults_shadow_flags = system_faults_shadow_flags & 0xe7ff;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_blendBoostAndThrottleFuelDemand @ 0x0050e7f4
+//
+
+/* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+

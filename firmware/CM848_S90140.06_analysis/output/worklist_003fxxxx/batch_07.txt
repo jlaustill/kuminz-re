@@ -1,0 +1,192 @@
+=== VARIABLES TO NAME ===
+0x003fb602  (9 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fb602
+void cm848_calculateGovernorOutput(void)
+
+{
+  longlong lVar1;
+  word x_input;
+  word x_input_00;
+  short sVar2;
+  short sVar3;
+  short sVar4;
+  short sVar5;
+  uint uVar6;
+  int iVar7;
+  word wStack_2e;
+  
+  x_input_00 = engine_load_output_value;
+  x_input = sensor_readings_t_0040baf2.coolant_temp;
+  sVar4 = 0;
+  sVar5 = 0;
+  if ((crank_position_valid_flag != 0) && (engine_sync_force_reset_cal == 1)) {
+    crank_sync_threshold = 0;
+    crank_sync_state_counter = 0xe;
+    return;
+  }
+  if (crank_sync_threshold_override_enable_cal != 0) {
+    crank_sync_threshold = crank_sync_threshold_override_cal;
+    crank_sync_state_counter = 7;
+    return;
+  }
+  cm848_oilPressureDeltaCalculation();
+  injection_timing_factor_cyl6_a = cm848_dualAxisTableInterpolation(&DAT_003fb606,x_input,0xcd72);
+  injection_timing_factor_cyl6_b =
+       cm848_dualAxisTableInterpolation
+                 (&DAT_003fb60e,engine_rpm_state_t_0040b7ac.current_rpm,0xcc20);
+  uVar6 = (int)(short)injection_timing_factor_cyl6_b * (int)(short)injection_timing_factor_cyl6_a;
+  injection_timing_demand_cyl6 =
+       (short)((int)uVar6 >> 0xc) + (ushort)((int)uVar6 < 0 && (uVar6 & 0xfff) != 0);
+  sVar2 = cm848_dualAxisTableInterpolation(&DAT_003fb5f2,x_input_00,0xce16);
+  sVar3 = cm848_dualAxisTableInterpolation
+                    (&DAT_003fb5f6,engine_rpm_state_t_0040b7ac.current_rpm,0xceb4);
+  lVar1 = CONCAT44((int)((ulonglong)((longlong)(int)sVar2 * (longlong)(int)sVar3) >> 0x20),
+                   (int)sVar2 * (int)sVar3) / 0x1000;
+  iVar7 = (int)lVar1;
+  if (iVar7 < 0x1701) {
+    if (iVar7 < 0) {
+      wStack_2e = 0;
+    }
+    else {
+      wStack_2e = (word)lVar1;
+    }
+  }
+  else {
+    wStack_2e = 0x1700;
+  }
+  governor_fuel_demand_limit_lo = wStack_2e;
+  crank_rpm_calc_factor_a =
+       cm848_dualAxisTableInterpolation
+                 (&DAT_003fb5fa,engine_rpm_state_t_0040b7ac.current_rpm,0xd006);
+  crank_rpm_calc_factor_b =
+       cm848_dualAxisTableInterpolation
+                 (&DAT_003fb5fe,engine_rpm_state_t_0040b7ac.current_rpm,0xd158);
+  governor_fuel_demand_limit_hi =
+       (dword)(CONCAT44((int)((ulonglong)
+                              ((longlong)((short)crank_rpm_calc_factor_a * 10) *
+                              (longlong)(int)(uint)crank_rpm_calc_factor_b) >> 0x20),
+                        (short)crank_rpm_calc_factor_a * 10 * (uint)crank_rpm_calc_factor_b) /
+              0x8000);
+  sVar2 = cm848_dualAxisTableInterpolation
+                    (&DAT_003fb5ee,engine_rpm_state_t_0040b7ac.current_rpm,0xc976);
+  if (boost_map_index_current == 1) {
+    sVar4 = cm848_dualAxisTableInterpolation
+                      (&DAT_003fb602,engine_rpm_state_t_0040b7ac.current_rpm,0xd2aa);
+  }
+  else if (boost_map_index_current == 2) {
+    sVar4 = cm848_dualAxisTableInterpolation
+                      (&DAT_003fb602,engine_rpm_state_t_0040b7ac.current_rpm,0xd554);
+  }
+  else if (boost_map_index_current == 3) {
+    sVar4 = cm848_dualAxisTableInterpolation
+                      (&DAT_003fb602,engine_rpm_state_t_0040b7ac.current_rpm,0xd7fe);
+  }
+  else if (boost_map_index_current == 4) {
+    sVar4 = cm848_dualAxisTableInterpolation
+                      (&DAT_003fb602,engine_rpm_state_t_0040b7ac.current_rpm,0xdaa8);
+  }
+  if (boost_map_index_target == 1) {
+    sVar5 = cm848_dualAxisTableInterpolation
+                      (&DAT_003fb602,engine_rpm_state_t_0040b7ac.current_rpm,0xd2aa);
+  }
+  else if (boost_map_index_target == 2) {
+    sVar5 = cm848_dualAxisTableInterpolation
+                      (&DAT_003fb602,engine_rpm_state_t_0040b7ac.current_rpm,0xd554);
+  }
+  else if (boost_map_index_target == 3) {
+    sVar5 = cm848_dualAxisTableInterpolation
+                      (&DAT_003fb602,engine_rpm_state_t_0040b7ac.current_rpm,0xd7fe);
+  }
+  else if (boost_map_index_target == 4) {
+    sVar5 = cm848_dualAxisTableInterpolation
+                      (&DAT_003fb602,engine_rpm_state_t_0040b7ac.current_rpm,0xdaa8);
+  }
+  injection_timing_boost_blend =
+       cm848_filterInputValue
+                 ((int)sVar4,(int)sVar5,(int)sVar2,boost_map_index_current,boost_map_index_target,
+                  fuel_blend_state_t_0040a494.blend_weight,fuel_blend_state_t_0040a494.blend_mode);
+  uVar6 = (uint)injection_timing_boost_blend;
+  iVar7 = 1;
+  if (injection_timing_mode_select_cal == 2) {
+    if ((int)governor_fuel_demand_limit_hi < (int)uVar6) {
+      iVar7 = 5;
+      uVar6 = governor_fuel_demand_limit_hi;
+    }
+    if ((int)(uint)governor_fuel_demand_limit_lo < (int)uVar6) {
+      iVar7 = 4;
+      uVar6 = (uint)governor_fuel_demand_limit_lo;
+    }
+    if ((int)uVar6 <= (int)(short)injection_timing_demand_cyl6) goto LAB_00046c70;
+  }
+  else {
+    if ((int)uVar6 < (int)governor_fuel_demand_limit_hi) {
+      iVar7 = 5;
+      uVar6 = governor_fuel_demand_limit_hi;
+    }
+    if ((int)uVar6 < (int)(uint)governor_fuel_demand_limit_lo) {
+      iVar7 = 4;
+      uVar6 = (uint)governor_fuel_demand_limit_lo;
+    }
+    if ((int)(short)injection_timing_demand_cyl6 <= (int)uVar6) goto LAB_00046c70;
+  }
+  uVar6 = (uint)(short)injection_timing_demand_cyl6;
+  iVar7 = 2;
+LAB_00046c70:
+  if ((int)uVar6 < 0x10000) {
+    if ((int)uVar6 < 0) {
+      uVar6 = 0;
+    }
+  }
+  else {
+    uVar6 = 0xffff;
+  }
+  injection_timing_arb_source_packed =
+       ((int)(short)injection_timing_source_byte_2 & 0xffU) << 0x10 | iVar7 << 8 |
+       (int)(short)governor_mode_code & 0xffU;
+  crank_sync_state_counter = (word)iVar7;
+  crank_sync_threshold = (word)uVar6;
+  return;
+}
+
+
+
+//
+// Function: mpc555_initFuelFilterStates @ 0x00046cf8
+//
+
+// Variables in this function: DAT_003fb602
+void mpc555_initFuelFilterStates(void)
+
+{
+  DAT_003fb5ee = 2;
+  DAT_003fb5f0 = 2;
+  DAT_003fb5f2 = 2;
+  DAT_003fb5f4 = 2;
+  DAT_003fb5f6 = 2;
+  DAT_003fb5f8 = 2;
+  DAT_003fb5fa = 2;
+  DAT_003fb5fc = 2;
+  DAT_003fb5fe = 2;
+  DAT_003fb600 = 2;
+  DAT_003fb602 = 2;
+  DAT_003fb604 = 2;
+  DAT_003fb606 = 2;
+  DAT_003fb608 = 2;
+  DAT_003fb60a = 2;
+  DAT_003fb60c = 2;
+  DAT_003fb60e = 2;
+  DAT_003fb610 = 2;
+  return;
+}
+
+
+
+//
+// Function: cm848_updateEngineStatusTimers @ 0x00046d90
+//
+

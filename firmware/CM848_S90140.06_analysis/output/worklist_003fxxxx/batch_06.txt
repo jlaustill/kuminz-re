@@ -1,0 +1,387 @@
+=== VARIABLES TO NAME ===
+0x003fb4e8  (5 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fb4e8
+void cm848_processSensorInputFiltering(void)
+
+{
+  ulonglong uVar1;
+  uint uVar2;
+  uint uVar3;
+  uint uVar4;
+  short sVar5;
+  
+  if (((protection_feature_flags & 0x20) == 0) || (fuel_correction_active_flag == 0)) {
+    torque_limit_fuel_working = torque_limit_fuel_minimum;
+    return;
+  }
+  if ((engine_load_filtered == 0) || (torque_limit_enable_cal != 1)) {
+    uVar1 = CONCAT44((int)((ulonglong)(uint)fuel_temperature_trim *
+                           (ulonglong)_fuel_temp_trim_scale_cal >> 0x20),
+                     fuel_temperature_trim * _fuel_temp_trim_scale_cal) / 0xf0000;
+    uVar2 = ((int)(uVar1 * (uint)engine_load_scale_factor >> 0x20) << 0x18 |
+            (int)uVar1 * (uint)engine_load_scale_factor >> 8) << 3;
+    if (0xfffe < uVar2) {
+      uVar2 = 0xffff;
+    }
+  }
+  else {
+    uVar2 = (uint)engine_load_filtered * (uint)engine_load_scale_factor >> 8;
+  }
+  torque_limit_base_input = (word)uVar2;
+  torque_limit_fuel_computed =
+       cm848_dualAxisTableInterpolation
+                 (&DAT_003fb4e8,fuel_demand_control_t_0040a57a.calculated,0x8bba);
+  uVar4 = (uint)torque_limit_base_input;
+  uVar2 = (uint)engine_rpm_state_t_0040b7ac.current_rpm;
+  if (uVar4 < uVar2) {
+    uVar3 = uVar2 - uVar4;
+  }
+  else {
+    uVar3 = 0;
+  }
+  uVar4 = (uVar4 * torque_limit_rpm_scale >> 6) + (uint)torque_limit_rpm_offset;
+  if (((uint)torque_limit_rpm_spread_threshold < (uVar3 & 0xffff)) &&
+     (fuel_correction_mode_flag == 0)) {
+    if (uVar4 < 0xffff) {
+      uVar4 = uVar4 & 0xffff;
+    }
+    else {
+      uVar4 = 0xffff;
+    }
+    if (uVar2 <= uVar4) goto LAB_0003ec38;
+    if (torque_fuel_accumulator_limit <= torque_fuel_accumulator) {
+      engine_run_mode_flag = 1;
+      goto LAB_0003ec38;
+    }
+    sVar5 = 1;
+  }
+  else {
+    if (torque_fuel_accumulator == 0) {
+      engine_run_mode_flag = 0;
+      goto LAB_0003ec38;
+    }
+    uVar2 = (uint)torque_limit_cycle_divisor;
+    if ((uVar2 == 0) ||
+       (torque_limit_cycle_counter = torque_limit_cycle_counter + 1,
+       (uint)torque_limit_cycle_counter != (torque_limit_cycle_counter / uVar2) * uVar2))
+    goto LAB_0003ec38;
+    sVar5 = -1;
+  }
+  torque_fuel_accumulator = torque_fuel_accumulator + sVar5;
+  torque_limit_cycle_counter = 0;
+LAB_0003ec38:
+  torque_limit_fuel_working = torque_limit_fuel_computed;
+  if (fuel_correction_mode_flag != 0) {
+    torque_limit_fuel_working = torque_limit_fuel_minimum;
+  }
+  if (torque_limit_fuel_working < torque_limit_arb_t_0040a2f6.fuel_minimum) {
+    torque_limit_arb_t_0040a2f6.source_active = 0xd;
+    torque_limit_arb_t_0040a2f6.fuel_minimum = torque_limit_fuel_working;
+  }
+  torque_limit_rpm_delta = (word)uVar3;
+  return;
+}
+
+
+
+//
+// Function: cm848_calculateTorqueLimitType1 @ 0x0003e974
+//
+
+/* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_003fb4e8
+void cm848_calculateTorqueLimitType1(void)
+
+{
+  ulonglong uVar1;
+  uint uVar2;
+  uint uVar3;
+  uint uVar4;
+  short sVar5;
+  
+  if (((protection_feature_flags & 0x20) == 0) || (fuel_correction_active_flag == 0)) {
+    torque_limit_fuel_working = torque_limit_fuel_minimum;
+    return;
+  }
+  if ((engine_load_filtered == 0) || (torque_limit_enable_cal != 1)) {
+    uVar1 = CONCAT44((int)((ulonglong)(uint)fuel_temperature_trim *
+                           (ulonglong)_fuel_temp_trim_scale_cal >> 0x20),
+                     fuel_temperature_trim * _fuel_temp_trim_scale_cal) / 0xf0000;
+    uVar2 = ((int)(uVar1 * (uint)engine_load_scale_factor >> 0x20) << 0x18 |
+            (int)uVar1 * (uint)engine_load_scale_factor >> 8) << 3;
+    if (0xfffe < uVar2) {
+      uVar2 = 0xffff;
+    }
+  }
+  else {
+    uVar2 = (uint)engine_load_filtered * (uint)engine_load_scale_factor >> 8;
+  }
+  torque_limit_base_input = (word)uVar2;
+  torque_limit_fuel_computed =
+       cm848_dualAxisTableInterpolation
+                 (&DAT_003fb4e8,fuel_demand_control_t_0040a57a.calculated,0x8bba);
+  uVar4 = (uint)torque_limit_base_input;
+  uVar2 = (uint)engine_rpm_state_t_0040b7ac.current_rpm;
+  if (uVar4 < uVar2) {
+    uVar3 = uVar2 - uVar4;
+  }
+  else {
+    uVar3 = 0;
+  }
+  uVar4 = (uVar4 * torque_limit_rpm_scale >> 6) + (uint)torque_limit_rpm_offset;
+  if (((uint)torque_limit_rpm_spread_threshold < (uVar3 & 0xffff)) &&
+     (fuel_correction_mode_flag == 0)) {
+    if (uVar4 < 0xffff) {
+      uVar4 = uVar4 & 0xffff;
+    }
+    else {
+      uVar4 = 0xffff;
+    }
+    if (uVar2 <= uVar4) goto LAB_0003ec38;
+    if (torque_fuel_accumulator_limit <= torque_fuel_accumulator) {
+      engine_run_mode_flag = 1;
+      goto LAB_0003ec38;
+    }
+    sVar5 = 1;
+  }
+  else {
+    if (torque_fuel_accumulator == 0) {
+      engine_run_mode_flag = 0;
+      goto LAB_0003ec38;
+    }
+    uVar2 = (uint)torque_limit_cycle_divisor;
+    if ((uVar2 == 0) ||
+       (torque_limit_cycle_counter = torque_limit_cycle_counter + 1,
+       (uint)torque_limit_cycle_counter != (torque_limit_cycle_counter / uVar2) * uVar2))
+    goto LAB_0003ec38;
+    sVar5 = -1;
+  }
+  torque_fuel_accumulator = torque_fuel_accumulator + sVar5;
+  torque_limit_cycle_counter = 0;
+LAB_0003ec38:
+  torque_limit_fuel_working = torque_limit_fuel_computed;
+  if (fuel_correction_mode_flag != 0) {
+    torque_limit_fuel_working = torque_limit_fuel_minimum;
+  }
+  if (torque_limit_fuel_working < torque_limit_arb_t_0040a2f6.fuel_minimum) {
+    torque_limit_arb_t_0040a2f6.source_active = 0xd;
+    torque_limit_arb_t_0040a2f6.fuel_minimum = torque_limit_fuel_working;
+  }
+  torque_limit_rpm_delta = (word)uVar3;
+  return;
+}
+
+
+
+//
+// Function: cm848_calculateTorqueLimits @ 0x0003e984
+//
+
+/* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_003fb4e8
+void cm848_calculateTorqueLimits(void)
+
+{
+  ulonglong uVar1;
+  uint uVar2;
+  uint uVar3;
+  uint uVar4;
+  short sVar5;
+  int in_r12;
+  
+  if (((*(ushort *)(in_r12 + -0x2a10) & 0x20) == 0) || (fuel_correction_active_flag == 0)) {
+    torque_limit_fuel_working = torque_limit_fuel_minimum;
+    return;
+  }
+  if ((engine_load_filtered == 0) || (torque_limit_enable_cal != 1)) {
+    uVar1 = CONCAT44((int)((ulonglong)(uint)fuel_temperature_trim *
+                           (ulonglong)_fuel_temp_trim_scale_cal >> 0x20),
+                     fuel_temperature_trim * _fuel_temp_trim_scale_cal) / 0xf0000;
+    uVar2 = ((int)(uVar1 * (uint)engine_load_scale_factor >> 0x20) << 0x18 |
+            (int)uVar1 * (uint)engine_load_scale_factor >> 8) << 3;
+    if (0xfffe < uVar2) {
+      uVar2 = 0xffff;
+    }
+  }
+  else {
+    uVar2 = (uint)engine_load_filtered * (uint)engine_load_scale_factor >> 8;
+  }
+  torque_limit_base_input = (word)uVar2;
+  torque_limit_fuel_computed =
+       cm848_dualAxisTableInterpolation
+                 (&DAT_003fb4e8,fuel_demand_control_t_0040a57a.calculated,0x8bba);
+  uVar4 = (uint)torque_limit_base_input;
+  uVar2 = (uint)engine_rpm_state_t_0040b7ac.current_rpm;
+  if (uVar4 < uVar2) {
+    uVar3 = uVar2 - uVar4;
+  }
+  else {
+    uVar3 = 0;
+  }
+  uVar4 = (uVar4 * torque_limit_rpm_scale >> 6) + (uint)torque_limit_rpm_offset;
+  if (((uint)torque_limit_rpm_spread_threshold < (uVar3 & 0xffff)) &&
+     (fuel_correction_mode_flag == 0)) {
+    if (uVar4 < 0xffff) {
+      uVar4 = uVar4 & 0xffff;
+    }
+    else {
+      uVar4 = 0xffff;
+    }
+    if (uVar2 <= uVar4) goto LAB_0003ec38;
+    if (torque_fuel_accumulator_limit <= torque_fuel_accumulator) {
+      engine_run_mode_flag = 1;
+      goto LAB_0003ec38;
+    }
+    sVar5 = 1;
+  }
+  else {
+    if (torque_fuel_accumulator == 0) {
+      engine_run_mode_flag = 0;
+      goto LAB_0003ec38;
+    }
+    uVar2 = (uint)torque_limit_cycle_divisor;
+    if ((uVar2 == 0) ||
+       (torque_limit_cycle_counter = torque_limit_cycle_counter + 1,
+       (uint)torque_limit_cycle_counter != (torque_limit_cycle_counter / uVar2) * uVar2))
+    goto LAB_0003ec38;
+    sVar5 = -1;
+  }
+  torque_fuel_accumulator = torque_fuel_accumulator + sVar5;
+  torque_limit_cycle_counter = 0;
+LAB_0003ec38:
+  torque_limit_fuel_working = torque_limit_fuel_computed;
+  if (fuel_correction_mode_flag != 0) {
+    torque_limit_fuel_working = torque_limit_fuel_minimum;
+  }
+  if (torque_limit_fuel_working < torque_limit_arb_t_0040a2f6.fuel_minimum) {
+    torque_limit_arb_t_0040a2f6.source_active = 0xd;
+    torque_limit_arb_t_0040a2f6.fuel_minimum = torque_limit_fuel_working;
+  }
+  torque_limit_rpm_delta = (word)uVar3;
+  return;
+}
+
+
+
+//
+// Function: cm848_calculateTorqueLimitType2 @ 0x0003e994
+//
+
+/* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_003fb4e8
+void cm848_calculateTorqueLimitType2(void)
+
+{
+  ulonglong uVar1;
+  uint uVar2;
+  uint uVar3;
+  uint uVar4;
+  short sVar5;
+  
+  if (fuel_correction_active_flag == 0) {
+    torque_limit_fuel_working = torque_limit_fuel_minimum;
+    return;
+  }
+  if ((engine_load_filtered == 0) || (torque_limit_enable_cal != 1)) {
+    uVar1 = CONCAT44((int)((ulonglong)(uint)fuel_temperature_trim *
+                           (ulonglong)_fuel_temp_trim_scale_cal >> 0x20),
+                     fuel_temperature_trim * _fuel_temp_trim_scale_cal) / 0xf0000;
+    uVar2 = ((int)(uVar1 * (uint)engine_load_scale_factor >> 0x20) << 0x18 |
+            (int)uVar1 * (uint)engine_load_scale_factor >> 8) << 3;
+    if (0xfffe < uVar2) {
+      uVar2 = 0xffff;
+    }
+  }
+  else {
+    uVar2 = (uint)engine_load_filtered * (uint)engine_load_scale_factor >> 8;
+  }
+  torque_limit_base_input = (word)uVar2;
+  torque_limit_fuel_computed =
+       cm848_dualAxisTableInterpolation
+                 (&DAT_003fb4e8,fuel_demand_control_t_0040a57a.calculated,0x8bba);
+  uVar4 = (uint)torque_limit_base_input;
+  uVar2 = (uint)engine_rpm_state_t_0040b7ac.current_rpm;
+  if (uVar4 < uVar2) {
+    uVar3 = uVar2 - uVar4;
+  }
+  else {
+    uVar3 = 0;
+  }
+  uVar4 = (uVar4 * torque_limit_rpm_scale >> 6) + (uint)torque_limit_rpm_offset;
+  if (((uint)torque_limit_rpm_spread_threshold < (uVar3 & 0xffff)) &&
+     (fuel_correction_mode_flag == 0)) {
+    if (uVar4 < 0xffff) {
+      uVar4 = uVar4 & 0xffff;
+    }
+    else {
+      uVar4 = 0xffff;
+    }
+    if (uVar2 <= uVar4) goto LAB_0003ec38;
+    if (torque_fuel_accumulator_limit <= torque_fuel_accumulator) {
+      engine_run_mode_flag = 1;
+      goto LAB_0003ec38;
+    }
+    sVar5 = 1;
+  }
+  else {
+    if (torque_fuel_accumulator == 0) {
+      engine_run_mode_flag = 0;
+      goto LAB_0003ec38;
+    }
+    uVar2 = (uint)torque_limit_cycle_divisor;
+    if ((uVar2 == 0) ||
+       (torque_limit_cycle_counter = torque_limit_cycle_counter + 1,
+       (uint)torque_limit_cycle_counter != (torque_limit_cycle_counter / uVar2) * uVar2))
+    goto LAB_0003ec38;
+    sVar5 = -1;
+  }
+  torque_fuel_accumulator = torque_fuel_accumulator + sVar5;
+  torque_limit_cycle_counter = 0;
+LAB_0003ec38:
+  torque_limit_fuel_working = torque_limit_fuel_computed;
+  if (fuel_correction_mode_flag != 0) {
+    torque_limit_fuel_working = torque_limit_fuel_minimum;
+  }
+  if (torque_limit_fuel_working < torque_limit_arb_t_0040a2f6.fuel_minimum) {
+    torque_limit_arb_t_0040a2f6.source_active = 0xd;
+    torque_limit_arb_t_0040a2f6.fuel_minimum = torque_limit_fuel_working;
+  }
+  torque_limit_rpm_delta = (word)uVar3;
+  return;
+}
+
+
+
+//
+// Function: mpc555_initThermalProtectionFilters @ 0x0003eca4
+//
+
+// Variables in this function: DAT_003fb4e8
+void mpc555_initThermalProtectionFilters(void)
+
+{
+  DAT_003fb4e8 = 2;
+  DAT_003fb4ea = 2;
+  torque_limit_fuel_working = torque_limit_fuel_minimum;
+  return;
+}
+
+
+
+//
+// Function: cm848_setThermalProtectionMode5 @ 0x0003eccc
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

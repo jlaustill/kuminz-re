@@ -1,0 +1,119 @@
+=== VARIABLES TO NAME ===
+0x0040b22c  (5 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040b22c
+void engine_coolantTemp_delta_calc(void)
+
+{
+  if (DAT_0040b238 == 1) {
+    DAT_0040b22c = DAT_0040b23e - sensor_readings_t_0040baf2.coolant_temp;
+  }
+  else {
+    DAT_0040b22c = 0;
+  }
+  return;
+}
+
+
+
+//
+// Function: fuel_coldStart_integralCorrection_update @ 0x005139b8
+//
+
+// Variables in this function: DAT_0040b22c
+void fuel_coldStart_integralCorrection_update(void)
+
+{
+  int iVar1;
+  
+  if ((DAT_003fcdc2 == 0) && (DAT_0040b238 == 1)) {
+    DAT_003fcddc = (uint)fuel_demand_computed * 0x2280;
+  }
+  if (DAT_0040b238 == 1) {
+    DAT_0040b23c = (short)((int)((int)DAT_0040b22c * (uint)DAT_00408764) / 0x2580);
+  }
+  else {
+    DAT_0040b23c = 0x6400;
+  }
+  if (DAT_0040b238 == 1) {
+    DAT_003fcddc = DAT_003fcddc + DAT_0040875a * DAT_0040b22c;
+    DAT_0040b236 = (ushort)(DAT_003fcddc / 0x2280);
+    if ((int)(short)DAT_0040b236 < (int)(uint)DAT_003fcdda) {
+      DAT_0040b236 = DAT_003fcdda;
+      DAT_003fcddc = (short)DAT_003fcdda * 0x2280;
+    }
+    if ((int)(uint)protection_fuel_limit_cal_active < (int)(short)DAT_0040b236) {
+      DAT_0040b236 = protection_fuel_limit_cal_active;
+      DAT_003fcddc = (short)protection_fuel_limit_cal_active * 0x2280;
+    }
+  }
+  else {
+    DAT_0040b236 = 0x6400;
+  }
+  iVar1 = (int)DAT_0040b23c + (int)(short)DAT_0040b236;
+  if (0x6400 < iVar1) {
+    iVar1 = 0x6400;
+  }
+  if (iVar1 < 0) {
+    iVar1 = 0;
+  }
+  DAT_0040b23a = (short)iVar1;
+  return;
+}
+
+
+
+//
+// Function: fuel_coldStart_rpmLimit_select @ 0x00513af0
+//
+
+// Variables in this function: DAT_0040b22c
+void governor_fuel_limit_initialize(void)
+
+{
+  undefined4 *puVar1;
+  int iVar2;
+  
+  engine_diag_shadow_flags = engine_diag_shadow_flags & 0xff9f;
+  DAT_003fea08 = DAT_003fea08 & 0xff9f;
+  DAT_0040b22e = 0;
+  DAT_0040b230 = 0;
+  DAT_0040b232 = 0x6400;
+  DAT_003fcdbc = 0x6400;
+  DAT_0040b234 = 0x6400;
+  DAT_003fcdbe = 0x6400;
+  DAT_0040b236 = 0x6400;
+  DAT_003fcddc = 0xd7a0000;
+  DAT_0040b23a = 0x6400;
+  DAT_003fcdc0 = 0x6400;
+  DAT_0040b23c = 0x6400;
+  DAT_0040b23e = 0x3fc0;
+  DAT_0040b22c = 0;
+  DAT_0040b238 = 0;
+  DAT_003fcdc2 = 0;
+  injection_timing_demand_min_working = 0xfc00;
+  iVar2 = 0;
+  puVar1 = (undefined4 *)&DAT_0040b23c;
+  do {
+    puVar1 = puVar1 + 1;
+    *puVar1 = 0;
+    iVar2 = iVar2 + 1;
+  } while (iVar2 < 5);
+  DAT_0040b254 = 9;
+  DAT_003fcdd4 = 2;
+  DAT_003fcdd6 = 2;
+  DAT_003fcdd0 = 2;
+  DAT_003fcdd2 = 2;
+  return;
+}
+
+
+
+//
+// Function: governor_fuel_limit_update @ 0x00513f5c
+//
+

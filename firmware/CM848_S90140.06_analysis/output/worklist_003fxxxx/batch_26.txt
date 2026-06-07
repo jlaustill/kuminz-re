@@ -1,0 +1,201 @@
+=== VARIABLES TO NAME ===
+0x003fbdf7  (5 references)
+0x003fbdfb  (5 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fbdfb
+void FUN_0050cd54(undefined1 param_1,undefined2 param_2)
+
+{
+  undefined2 uVar1;
+  undefined1 auStack_28 [4];
+  undefined2 local_24;
+  undefined2 local_20;
+  undefined1 local_1c;
+  undefined1 local_1b;
+  undefined1 local_1a;
+  undefined1 local_19;
+  undefined1 local_18;
+  undefined1 local_17;
+  undefined1 local_16;
+  undefined1 local_15;
+  undefined4 local_14;
+  undefined2 local_10;
+  undefined1 *local_e;
+  
+  local_14 = CONCAT31(CONCAT21(0x18ec,param_1),(char)j1939_source_address);
+  local_10 = 8;
+  local_e = &local_1c;
+  local_24 = DAT_003fbdfb;
+  uVar1 = local_24;
+  local_1c = 0x13;
+  local_24._1_1_ = (undefined1)DAT_003fbdfb;
+  local_1b = (undefined1)local_24;
+  local_24._0_1_ = (undefined1)((ushort)DAT_003fbdfb >> 8);
+  local_1a = local_24._0_1_;
+  local_19 = DAT_003fbdf0;
+  local_18 = 0xff;
+  local_17 = 0;
+  local_20._0_1_ = (undefined1)((ushort)param_2 >> 8);
+  local_16 = local_20._0_1_;
+  local_15 = 0;
+  local_24 = uVar1;
+  local_20 = param_2;
+  mpc555_sendJ1939SingleFrame(local_14,8,local_e,auStack_28);
+  return;
+}
+
+
+
+//
+// Function: FUN_0050cdfc @ 0x0050cdfc
+//
+
+// Variables in this function: DAT_003fbdf7, DAT_003fbdfb
+void FUN_0050ce90(undefined4 *param_1)
+
+{
+  char cVar1;
+  char cVar2;
+  int iVar3;
+  short local_10;
+  undefined2 local_c;
+  
+  iVar3 = *(int *)((int)param_1 + 6);
+  local_10 = (ushort)*(byte *)(iVar3 + 6) << 8;
+  cVar1 = *(char *)((int)param_1 + 3);
+  local_c = CONCAT11(*(undefined1 *)(iVar3 + 2),*(undefined1 *)(iVar3 + 1));
+  if ((((DAT_003fbdef == '\x01') && ((char)DAT_003fbdf7 != cVar1)) || (*(byte *)(iVar3 + 6) != 0xef)
+      ) || (0x6a4 < local_c)) {
+    FUN_0050ccbc(cVar1,local_10);
+  }
+  else {
+    DAT_003fbdef = '\x01';
+    DAT_003fbdf7 = *param_1;
+    DAT_003fbdf1 = local_10;
+    DAT_003fbdf0 = *(byte *)(iVar3 + 3);
+    DAT_003fbdfb = local_c;
+    DAT_003fbdf5 = 0x70;
+    DAT_003fbdf3 = 1;
+    DAT_003fbdf4 = DAT_003fbdf0;
+    if (5 < DAT_003fbdf0) {
+      DAT_003fbdf4 = 5;
+    }
+    cVar2 = FUN_0050cdfc(cVar1,1);
+    if (cVar2 != '\0') {
+      FUN_0050ccbc(cVar1,DAT_003fbdf1);
+      DAT_003fbdef = '\0';
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: FUN_0050cfa8 @ 0x0050cfa8
+//
+
+// Variables in this function: DAT_003fbdf7, DAT_003fbdfb
+void FUN_0050cfa8(int param_1)
+
+{
+  char cVar1;
+  uint uVar2;
+  char cVar3;
+  uint uVar4;
+  uint uVar5;
+  byte *pbVar6;
+  byte *pbVar7;
+  
+  if (*(short *)(param_1 + 4) != 8) {
+    return;
+  }
+  cVar1 = *(char *)(param_1 + 3);
+  if (DAT_003fbdef == '\x01') {
+    if ((char)DAT_003fbdf7 != cVar1) {
+      return;
+    }
+    pbVar6 = *(byte **)(param_1 + 6);
+    uVar2 = (uint)*pbVar6;
+    if (DAT_003fbdf3 == uVar2) {
+      if (DAT_003fbdf0 == uVar2) {
+        uVar4 = (uint)DAT_003fbdfb - (uVar2 * 7 + 0xf9) & 0xff;
+      }
+      else {
+        uVar4 = 7;
+      }
+      uVar5 = 0;
+      if (uVar4 != 0) {
+        pbVar7 = PTR_DAT_003fbdfd + uVar2 * 7 + -8;
+        do {
+          pbVar6 = pbVar6 + 1;
+          pbVar7 = pbVar7 + 1;
+          *pbVar7 = *pbVar6;
+          uVar5 = uVar5 + 1 & 0xff;
+        } while (uVar5 < uVar4);
+      }
+      DAT_003fbdf3 = DAT_003fbdf3 + 1;
+      DAT_003fbdf4 = DAT_003fbdf4 + -1;
+      if (DAT_003fbdf4 != '\0') {
+        DAT_003fbdf5 = 0x19;
+        return;
+      }
+      if (uVar2 == DAT_003fbdf0) {
+        FUN_0050cd54(cVar1,DAT_003fbdf1);
+        DAT_003fbdef = 0;
+        PTR_DAT_003fbdfd = &DAT_003fbe09;
+        cm848_j1939DiagnosticServiceHandler(&DAT_003fbdf7);
+        return;
+      }
+      if ((int)(((uint)DAT_003fbdf0 - (uint)DAT_003fbdf3) + 1) < 6) {
+        DAT_003fbdf4 = (DAT_003fbdf0 - DAT_003fbdf3) + '\x01';
+      }
+      else {
+        DAT_003fbdf4 = '\x05';
+      }
+    }
+    cVar3 = FUN_0050cdfc(cVar1,DAT_003fbdf3,DAT_003fbdf4,DAT_003fbdf1);
+    if (cVar3 != '\0') {
+      FUN_0050ccbc(cVar1,DAT_003fbdf1);
+      DAT_003fbdef = '\0';
+    }
+    return;
+  }
+  return;
+}
+
+
+
+//
+// Function: FUN_0050d144 @ 0x0050d144
+//
+
+// Variables in this function: DAT_003fbdf7
+void FUN_0050d1ac(int param_1)
+
+{
+  undefined2 local_8;
+  
+  local_8 = (ushort)*(byte *)(*(int *)(param_1 + 6) + 6) << 8;
+  if (((DAT_003fbdc5 == '\x01') && (DAT_003fbdc6 == *(char *)(param_1 + 3))) &&
+     (local_8 == DAT_003fbdc7)) {
+    *PTR_DAT_003fbdd3 = 10;
+    DAT_003fbdc5 = '\0';
+  }
+  else if (((DAT_003fbdef == '\x01') && ((char)DAT_003fbdf7 == *(char *)(param_1 + 3))) &&
+          (local_8 == DAT_003fbdf1)) {
+    DAT_003fbdef = '\0';
+  }
+  return;
+}
+
+
+
+//
+// Function: FUN_0050d250 @ 0x0050d250
+//
+

@@ -1,0 +1,78 @@
+=== VARIABLES TO NAME ===
+0x003fcea4  (8 references)
+0x003fcea6  (5 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fcea4, DAT_003fcea6
+void protection_exception_event_35_init(void)
+
+{
+  DAT_003fcea4 = 0;
+  DAT_003fcea6 = 1;
+  cm848_setEngineProtectionFault(0x35,0);
+  return;
+}
+
+
+
+//
+// Function: protection_ambient_qualification @ 0x00519cc4
+//
+
+// Variables in this function: DAT_003fcea4, DAT_003fcea6
+void protection_ambient_qualification(void)
+
+{
+  short sVar1;
+  
+  if (DAT_0040897e == 0) {
+    if ((cold_start_phase == CSP_AT_GOVERNOR_SETPOINT) || (cold_start_phase == CSP_FUEL_MODE_SWITCH)
+       ) {
+      sVar1 = 2;
+    }
+    else {
+      if (((cold_start_phase != CSP_ABOVE_RPM_TRIGGER) &&
+          (cold_start_phase != CSP_SETPOINT_UNDERRUN)) &&
+         (cold_start_phase != CSP_ABOVE_RPM_VIA_EVENTS)) {
+        if ((cold_start_phase != CSP_ENGINE_STANDBY) && (cold_start_phase != CSP_SUSPENDED)) {
+          if ((cold_start_phase == CSP_CRANKING) && (DAT_003fcea4 != 0xffff)) {
+            DAT_003fcea4 = DAT_003fcea4 + 1;
+          }
+          if (((DAT_003fcea6 != 1) || (DAT_003fcea4 <= DAT_0040897a)) &&
+             ((DAT_003fcea6 != 3 || (DAT_003fcea4 <= DAT_00408978)))) {
+            if (DAT_003fcea6 != 2) {
+              return;
+            }
+            if (DAT_003fcea4 <= DAT_0040897c) {
+              return;
+            }
+          }
+        }
+        goto LAB_00519e0c;
+      }
+      sVar1 = 3;
+    }
+    cm848_setEngineProtectionFault(0x35,0);
+    DAT_003fcea4 = 0;
+    DAT_003fcea6 = sVar1;
+  }
+  else {
+    if (DAT_00408976 != 0) {
+      cm848_setEngineProtectionFault(0x35,0);
+      return;
+    }
+LAB_00519e0c:
+    cm848_triggerProtectionEvent(0x35,0);
+  }
+  return;
+}
+
+
+
+//
+// Function: protection_fuel_demand_limiting @ 0x00519e2c
+//
+

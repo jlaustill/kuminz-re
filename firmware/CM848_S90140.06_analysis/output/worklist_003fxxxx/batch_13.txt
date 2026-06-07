@@ -1,0 +1,55 @@
+=== VARIABLES TO NAME ===
+0x003fbc9c  (6 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fbc9c
+void governor_coldStart_fuelModeCounter_update(void)
+
+{
+  bool bVar1;
+  bool bVar2;
+  ushort uVar3;
+  uint uVar4;
+  
+  if ((governor_fuel_mode_snapshot == 0xb) || (governor_fuel_mode_snapshot == 4)) {
+    bVar2 = true;
+  }
+  else {
+    bVar2 = false;
+  }
+  if ((((cold_start_feature_enable_flags & 0x800) == 0) || (cold_start_phase3_flag == 0)) ||
+     (!bVar2)) {
+    bVar1 = true;
+  }
+  else {
+    bVar1 = false;
+  }
+  uVar4 = (uint)DAT_00406570;
+  if (bVar1) {
+    uVar3 = 0;
+  }
+  else {
+    uVar3 = DAT_003fbc9c;
+    if (((bVar2) && (uVar3 = DAT_00406570, 1 < uVar4)) &&
+       (uVar3 = DAT_00406570, (int)(uint)DAT_003fbc9c <= (int)(uVar4 - 2))) {
+      uVar3 = DAT_003fbc9c + 2;
+    }
+  }
+  DAT_003fbc9c = uVar3;
+  DAT_0040a5f8 = (ushort)(uVar4 <= DAT_003fbc9c);
+  DAT_0040a5fa = DAT_0040656e;
+  if (uVar4 > DAT_003fbc9c) {
+    DAT_0040a5fa = 0;
+  }
+  return;
+}
+
+
+
+//
+// Function: fuel_demandBoost_overrideFlag_lookup @ 0x005056f8
+//
+

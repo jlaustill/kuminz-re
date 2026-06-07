@@ -1,0 +1,526 @@
+=== VARIABLES TO NAME ===
+0x0040af06  (5 references)
+0x0040af0c  (15 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040af0c
+void cm848_faultTableEntryProcessor(void)
+
+{
+  ushort uVar1;
+  bool bVar2;
+  uint uVar3;
+  ushort uVar4;
+  uint uVar5;
+  word wVar6;
+  ushort uVar7;
+  int iVar8;
+  uint uVar9;
+  uint uVar10;
+  
+  uVar4 = 0;
+  wVar6 = (&system_status_flags_t_003fe974.enable_state)[fault_scan_index];
+  uVar7 = 1;
+  uVar5 = 0;
+  do {
+    if ((wVar6 & uVar7) == 0) {
+      uVar9 = (uint)fault_scan_index;
+      if ((uVar7 & (&j1939_dm1_spn_array)[uVar9]) != 0) {
+        uVar1 = *(ushort *)(&DAT_0005985a + ((uVar9 * 0x10 + uVar5) * 2 & 0x1fffe));
+        uVar10 = (uint)uVar1;
+        if (((uVar10 < 0xaa) && ((uVar7 & (&DAT_0005a296)[uVar9]) != 0)) &&
+           (*(char *)(uVar10 + 0x3fe124) != '\0')) {
+          if ((uVar7 & (&fault_enable_bitmask_array)[uVar9]) == 0) {
+            *(char *)(uVar10 + 0x3fe124) = *(char *)(uVar10 + 0x3fe124) + -1;
+            if (((fault_management_status_flags & 0x400) != 0) &&
+               (iVar8 = uVar10 * 3, ((&DAT_003feb92)[iVar8] & 0x80) != 0)) {
+              *(ushort *)((int)&DAT_003feb93 + iVar8) =
+                   (ushort)DAT_003fed91._0_1_ << 10 |
+                   *(ushort *)((int)&DAT_003feb93 + iVar8) & 0x3ff;
+            }
+            if (*(char *)(uVar10 + 0x3fe124) == '\0') {
+              (&fault_entry_status_array)[uVar10 * 7] = 2;
+              *(dword *)((int)&fault_timestamp_array + uVar10 * 7) = fault_timing_snapshot;
+              bVar2 = false;
+              uVar9 = 0;
+              do {
+                uVar9 = uVar9 + 1 & 0xff;
+                if ((uint)pending_fault_count == uVar9 - 1) {
+                  bVar2 = true;
+                }
+                else if ((&pending_fault_count)[uVar9] == uVar10) {
+                  bVar2 = true;
+                  if ((*(ushort *)(&fault_definition_table + uVar10 * 6) & 0x40) == 0) {
+                    cm848_ringBufferWriteByte(&fault_spn_ring_buffer,uVar1 & 0xff);
+                  }
+                  if ((*(ushort *)(&fault_definition_table + uVar10 * 6) & 0x2000) == 0) {
+                    fault_list_state_t_003fe11a.emission_count =
+                         fault_list_state_t_003fe11a.emission_count - 1;
+                  }
+                  pending_fault_count = pending_fault_count - 1;
+                  fault_pending_counter_array = fault_pending_counter_array - 1;
+                  (&pending_fault_count)[uVar9] =
+                       (&pending_fault_count)[fault_list_state_t_003fe11a.write_index];
+                  uVar3 = (uint)fault_list_state_t_003fe11a.write_index;
+                  fault_list_state_t_003fe11a.write_index =
+                       fault_list_state_t_003fe11a.write_index - 1;
+                  (&fault_pending_counter_array)[uVar9] = (&fault_pending_counter_array)[uVar3];
+                }
+              } while (!bVar2);
+              if (active_fault_count != 0x1f) {
+                active_fault_added_flag._0_2_ = 1;
+                active_fault_count = active_fault_count + 1;
+                emission_fault_count = emission_fault_count + 1;
+                fault_list_state_t_003fe11a.read_index = fault_list_state_t_003fe11a.read_index + 1;
+                (&active_fault_count)[fault_list_state_t_003fe11a.read_index] = (byte)uVar1;
+                (&emission_fault_count)[fault_list_state_t_003fe11a.read_index] =
+                     *(word *)(&DAT_00059e9a + uVar10 * 6);
+                if ((*(ushort *)(&fault_definition_table + uVar10 * 6) & 0x2000) == 0) {
+                  fault_list_state_t_003fe11a.total_emission_faults =
+                       fault_list_state_t_003fe11a.total_emission_faults + 1;
+                }
+              }
+              fault_list_iteration_counter = fault_list_iteration_counter - 1;
+            }
+          }
+          else {
+            wVar6 = wVar6 | uVar7;
+          }
+        }
+      }
+    }
+    else {
+      uVar10 = (uint)fault_scan_index;
+      uVar1 = *(ushort *)(&DAT_0005985a + ((uVar10 * 0x10 + uVar5) * 2 & 0x1fffe));
+      uVar9 = (uint)uVar1;
+      if (((uVar9 < 0xaa) && ((uVar7 & (&j1939_dm1_spn_array)[uVar10]) == 0)) &&
+         (pending_fault_count != 0x1f)) {
+        if (((uVar7 & (&DAT_0005a296)[uVar10]) == 0) ||
+           ((uVar7 & (&fault_enable_bitmask_array)[uVar10]) != 0)) {
+          if ((uVar7 & (&fault_enable_bitmask_array)[uVar10]) != 0) {
+            wVar6 = wVar6 & ~uVar7;
+          }
+        }
+        else {
+          if ((fault_management_status_flags & 0x400) != 0) {
+            if ((((&fault_entry_flags)[uVar9 * 6] & 1) != 0) &&
+               (((&fault_entry_flags)[uVar9 * 6] & 0x20) == 0)) {
+              fault_tableEntryProcessor(uVar9);
+              (&DAT_0040af0c)[(int)uVar9 >> 3] =
+                   (&DAT_0040af0c)[(int)uVar9 >> 3] | (byte)(1 << (uVar1 & 7));
+            }
+          }
+          iVar8 = uVar9 * 7;
+          if ((&fault_timer_array)[iVar8] != 0xff) {
+            (&fault_timer_array)[iVar8] = (&fault_timer_array)[iVar8] + 1;
+          }
+          if (*(char *)(uVar9 + 0x3fe124) == '\0') {
+            cm848_registerFaultInActiveList(uVar9);
+            (&fault_entry_status_array)[iVar8] = 3;
+            *(dword *)((int)&fault_timestamp_array + iVar8) = fault_timing_snapshot;
+            (&fault_entry_debounce_array)[iVar8] = 0;
+            bVar2 = false;
+            uVar10 = 0;
+            do {
+              uVar10 = uVar10 + 1 & 0xff;
+              if ((uint)active_fault_count == uVar10 - 1) {
+                bVar2 = true;
+              }
+              else if ((&active_fault_count)[uVar10] == uVar9) {
+                bVar2 = true;
+                if ((*(ushort *)(&fault_definition_table + uVar9 * 6) & 0x40) == 0) {
+                  fault_list_state_t_003fe11a.total_emission_faults =
+                       fault_list_state_t_003fe11a.total_emission_faults - 1;
+                }
+                active_fault_count = active_fault_count - 1;
+                emission_fault_count = emission_fault_count - 1;
+                (&active_fault_count)[uVar10] =
+                     (&active_fault_count)[fault_list_state_t_003fe11a.read_index];
+                uVar3 = (uint)fault_list_state_t_003fe11a.read_index;
+                fault_list_state_t_003fe11a.read_index = fault_list_state_t_003fe11a.read_index - 1;
+                (&emission_fault_count)[uVar10] = (&emission_fault_count)[uVar3];
+              }
+            } while (!bVar2);
+            pending_fault_added_flag = 1;
+            pending_fault_count = pending_fault_count + 1;
+            fault_pending_counter_array = fault_pending_counter_array + 1;
+            fault_list_state_t_003fe11a.write_index = fault_list_state_t_003fe11a.write_index + 1;
+            (&pending_fault_count)[fault_list_state_t_003fe11a.write_index] = (byte)uVar1;
+            iVar8 = uVar9 * 6;
+            (&fault_pending_counter_array)[fault_list_state_t_003fe11a.write_index] =
+                 *(word *)(&DAT_00059e9a + iVar8);
+            if ((*(ushort *)(&fault_definition_table + iVar8) & 0x40) == 0) {
+              cm848_ringBufferWriteByte(&fault_spn_ring_buffer,uVar9 & 0xff | 0x80);
+            }
+            if ((*(ushort *)(&fault_definition_table + iVar8) & 0x2000) == 0) {
+              fault_list_state_t_003fe11a.emission_count =
+                   fault_list_state_t_003fe11a.emission_count + 1;
+            }
+            fault_list_iteration_counter = fault_list_iteration_counter + 1;
+          }
+          if (*(char *)(uVar9 + 0x3fe124) != -1) {
+            *(char *)(uVar9 + 0x3fe124) = *(char *)(uVar9 + 0x3fe124) + '\x01';
+          }
+        }
+      }
+      uVar4 = uVar4 | uVar7;
+    }
+    uVar7 = uVar7 * 2;
+    uVar5 = uVar5 + 1 & 0xffff;
+  } while (uVar5 < 0x10);
+  uVar5 = (uint)fault_scan_index;
+  (&j1939_dm1_spn_array)[uVar5] = wVar6;
+  if (uVar4 != 0) {
+    (&fault_active_status_array)[uVar5] = uVar4 | (&fault_active_status_array)[uVar5];
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_buildFaultConditionMask @ 0x0001d8f8
+//
+
+// Variables in this function: DAT_0040af0c
+void diag_resetSingleFault(void)
+
+{
+  int iVar1;
+  uint uVar2;
+  
+  uVar2 = 0;
+  do {
+    iVar1 = uVar2 * 3;
+    *(ushort *)((int)&DAT_003feb93 + iVar1) = *(ushort *)((int)&DAT_003feb93 + iVar1) & 0x3ff;
+    (&DAT_003feb92)[iVar1] = 0;
+    *(ushort *)((int)&DAT_003feb93 + iVar1) = *(ushort *)((int)&DAT_003feb93 + iVar1) & 0xfc07;
+    *(ushort *)((int)&DAT_003feb93 + iVar1) = *(ushort *)((int)&DAT_003feb93 + iVar1) & 0xfff8;
+    uVar2 = uVar2 + 1 & 0xff;
+  } while (uVar2 < 0xaa);
+  fault_management_ring_read_ptr = (undefined *)0x0;
+  fault_management_ring_write_ptr = (undefined *)0x0;
+  DAT_003fed98 = 0xffffffff;
+  fault_pending_flags = 0xffffffff;
+  uVar2 = 0;
+  do {
+    (&DAT_0040af0c)[uVar2] = 0;
+    uVar2 = uVar2 + 1 & 0xff;
+  } while (uVar2 < 0x16);
+  uVar2 = 0;
+  do {
+    (&DAT_003fedbc)[uVar2] = 0;
+    (&DAT_003fedce)[uVar2] = 0;
+    uVar2 = uVar2 + 1 & 0xff;
+  } while (uVar2 < 8);
+  uVar2 = 0;
+  do {
+    (&PTR_DAT_003fed9c)[uVar2] = (undefined *)0x0;
+    uVar2 = uVar2 + 1 & 0xff;
+  } while (uVar2 < 8);
+  DAT_003fed91._1_1_ = 0;
+  return;
+}
+
+
+
+//
+// Function: diag_resetAllFaults @ 0x00533efc
+//
+
+// Variables in this function: DAT_0040af0c
+void diag_resetAllFaults(void)
+
+{
+  uint uVar1;
+  
+  uVar1 = 1;
+  if (active_fault_count != 0) {
+    do {
+      *(ushort *)((int)&DAT_003feb93 + (uint)(&active_fault_count)[uVar1] * 3) =
+           *(ushort *)((int)&DAT_003feb93 + (uint)(&active_fault_count)[uVar1] * 3) & 0x3ff;
+      (&DAT_003feb92)[(uint)(&active_fault_count)[uVar1] * 3] = 0;
+      *(ushort *)((int)&DAT_003feb93 + (uint)(&active_fault_count)[uVar1] * 3) =
+           *(ushort *)((int)&DAT_003feb93 + (uint)(&active_fault_count)[uVar1] * 3) & 0xfff8;
+      *(ushort *)((int)&DAT_003feb93 + (uint)(&active_fault_count)[uVar1] * 3) =
+           *(ushort *)((int)&DAT_003feb93 + (uint)(&active_fault_count)[uVar1] * 3) & 0xfc07;
+      fault_updateActiveCounters((&active_fault_count)[uVar1]);
+      fault_clearFromRing((&active_fault_count)[uVar1]);
+      uVar1 = uVar1 + 1 & 0xff;
+    } while (uVar1 <= active_fault_count);
+  }
+  fault_management_ring_read_ptr = (undefined *)0x0;
+  fault_management_ring_write_ptr = (undefined *)0x0;
+  DAT_003fed98 = 0xffffffff;
+  fault_pending_flags = 0xffffffff;
+  uVar1 = 0;
+  do {
+    (&DAT_0040af0c)[uVar1] = 0;
+    uVar1 = uVar1 + 1 & 0xff;
+  } while (uVar1 < 0x16);
+  return;
+}
+
+
+
+//
+// Function: fault_ring_buffer_auto_clear_emission @ 0x00534010
+//
+
+// Variables in this function: DAT_0040af06, DAT_0040af0c
+void cm848_auxiliaryControlTask(void)
+
+{
+  undefined1 *puVar1;
+  uint uVar2;
+  
+  puVar1 = &DAT_0040af06;
+  if (DAT_0040af06 == '\0') {
+    if (((cold_start_phase == CSP_AT_GOVERNOR_SETPOINT) ||
+        (cold_start_phase == CSP_FUEL_MODE_SWITCH)) || (cold_start_phase == CSP_SUSPENDED)) {
+      if (DAT_003fd22b == 0) {
+        DAT_003fd22b = 1;
+        diag_protection_history_increment();
+      }
+      if (DAT_003fd227 < DAT_0005a9c0) {
+        DAT_003fd227 = DAT_003fd227 + 1;
+      }
+      else {
+        *puVar1 = 1;
+        if (DAT_003fed90 < 0x50) {
+          DAT_003fed90 = DAT_003fed90 + 1;
+        }
+        else {
+          DAT_003fed90 = 0;
+        }
+        uVar2 = 0;
+        do {
+          if ((((&fault_entry_flags)[(uVar2 & 0xff) * 6] & 0x10) == 0) &&
+             (((&fault_entry_status_array)[(uVar2 & 0xff) * 7] & 1) != 0)) {
+            (&DAT_0040af0c)[(uVar2 & 0xff) >> 3] =
+                 (&DAT_0040af0c)[(uVar2 & 0xff) >> 3] | (byte)(1 << (uVar2 & 7));
+          }
+          uVar2 = uVar2 + 1;
+        } while ((uVar2 & 0xff) < 0xaa);
+      }
+    }
+    else {
+      DAT_003fd227 = 0;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: diag_faultRing_tableSearch @ 0x00534684
+//
+
+// Variables in this function: DAT_0040af06, DAT_0040af0c
+void cm848_initJ1939Stack(void)
+
+{
+  byte bVar1;
+  byte bVar2;
+  int iVar3;
+  int iVar4;
+  undefined1 *puVar5;
+  uint uVar6;
+  int iVar7;
+  
+  uVar6 = 0;
+  iVar4 = 1;
+  puVar5 = &DAT_0040af0c;
+  do {
+    if ((((uint)(byte)puVar5[(uVar6 & 0xff) >> 3] & iVar4 << (uVar6 & 7)) == 0) &&
+       (iVar7 = (uVar6 & 0xff) * 3, ((&DAT_003feb92)[iVar7] & 0x10) != 0)) {
+      bVar1 = (&fault_entry_flags)[(uVar6 & 0xff) * 6];
+      if ((bVar1 & 0x10) == 0) {
+        bVar2 = DAT_0040af06;
+        if ((bVar1 & 2) != 0) {
+          if (DAT_0040af06 == 0) goto LAB_00534838;
+LAB_00534820:
+          bVar2 = (&DAT_003feb92)[iVar7] & 1;
+        }
+        if (bVar2 != 0) {
+LAB_00534830:
+          diag_faultState_occurrenceCount_increment(uVar6 & 0xff);
+        }
+      }
+      else if ((bVar1 & 2) == 0) {
+        iVar3 = diag_faultRing_tableSearch(uVar6 & 0xff);
+        if (iVar3 != 0) goto LAB_00534830;
+      }
+      else {
+        iVar3 = diag_faultRing_tableSearch(uVar6 & 0xff);
+        if (iVar3 != 0) goto LAB_00534820;
+      }
+LAB_00534838:
+      if (((&DAT_003feb92)[iVar7] & 0x60) == 0x60) {
+        (&DAT_003feb92)[iVar7] = (&DAT_003feb92)[iVar7] & 0xef;
+        (&DAT_003feb92)[iVar7] = (&DAT_003feb92)[iVar7] & 0x9f;
+      }
+    }
+    uVar6 = uVar6 + 1;
+    if (0xa9 < (uVar6 & 0xff)) {
+      return;
+    }
+  } while( true );
+}
+
+
+
+//
+// Function: diag_activeFault_remove @ 0x00534890
+//
+
+// Variables in this function: DAT_0040af06
+void cm848_initUdsServer(void)
+
+{
+  int iVar1;
+  byte bVar2;
+  
+  bVar2 = 0;
+  do {
+    iVar1 = (uint)bVar2 * 3;
+    if (((*(ushort *)((int)&DAT_003feb93 + iVar1) & 1) != 0) &&
+       ((*(ushort *)((int)&DAT_003feb93 + iVar1) & 2) == 0)) {
+      if (DAT_0040af06 == '\x01') {
+        if (((&fault_entry_flags)[(uint)bVar2 * 6] & 2) == 0) {
+          if (((&fault_entry_flags)[(uint)bVar2 * 6] & 0x10) == 0) {
+LAB_00534a88:
+            diag_activeFault_remove(bVar2);
+          }
+        }
+        else if ((((*(ushort *)((int)&DAT_003feb93 + iVar1) & 4) != 0) ||
+                 ((*(ushort *)((int)&DAT_003feb93 + iVar1) >> 3 & 0x7f) - (uint)DAT_003fed90 == 1))
+                || (((*(ushort *)((int)&DAT_003feb93 + iVar1) >> 3 & 0x7f) == 0 &&
+                    (DAT_003fed90 == 0x50)))) goto LAB_00534a88;
+      }
+      if ((((&fault_entry_flags)[(uint)bVar2 * 6] & 0x10) != 0) &&
+         (iVar1 = diag_faultRing_tableSearch(bVar2), iVar1 != 0)) {
+        diag_activeFault_remove(bVar2);
+      }
+    }
+    bVar2 = bVar2 + 1;
+    if (0xa9 < bVar2) {
+      return;
+    }
+  } while( true );
+}
+
+
+
+//
+// Function: diag_faultState_severity_increment @ 0x00534ae4
+//
+
+// Variables in this function: DAT_0040af0c
+void diag_faultState_severity_increment(uint param_1)
+
+{
+  int iVar1;
+  byte bVar2;
+  
+  iVar1 = param_1 * 3;
+  bVar2 = (byte)(&DAT_003feb92)[iVar1] >> 1 & 7;
+  if (bVar2 < 7) {
+    bVar2 = bVar2 + 1;
+  }
+  (&DAT_003feb92)[iVar1] = (&DAT_003feb92)[iVar1] & 0xf1;
+  (&DAT_003feb92)[iVar1] = (&DAT_003feb92)[iVar1] | bVar2 * '\x02';
+  (&DAT_0040af0c)[(int)param_1 >> 3] =
+       (&DAT_0040af0c)[(int)param_1 >> 3] | (byte)(1 << (param_1 & 7));
+  (&DAT_003feb92)[iVar1] = (&DAT_003feb92)[iVar1] & 0x9f;
+  return;
+}
+
+
+
+//
+// Function: fault_tableEntryProcessor @ 0x00534b68
+//
+
+// Variables in this function: DAT_0040af0c
+void fault_captureDataSnapshot(int param_1,uint param_2)
+
+{
+  ushort *puVar1;
+  int iVar2;
+  
+  iVar2 = param_2 * 3;
+  if ((*(ushort *)((int)&DAT_003feb93 + iVar2) & 1) == 0) {
+    puVar1 = (ushort *)((int)&DAT_003feb93 + iVar2);
+    *puVar1 = *puVar1 & 7 | 2 | *puVar1 & 0xfff8;
+    *puVar1 = *puVar1 & 7 | 1 | *puVar1 & 0xfff8;
+    (&DAT_0040af0c)[(int)param_2 >> 3] =
+         (&DAT_0040af0c)[(int)param_2 >> 3] | (byte)(1 << (param_2 & 7));
+    (&DAT_003feb92)[iVar2] = (&DAT_003feb92)[iVar2] & 0x9f;
+    if (((&fault_entry_flags)[param_2 * 6] & 2) != 0) {
+      *puVar1 = *puVar1 & 7 | 4 | *puVar1 & 0xfff8;
+      *(ushort *)((int)&DAT_003feb93 + iVar2) =
+           (DAT_003fed90 & 0x7f) << 3 | *(ushort *)((int)&DAT_003feb93 + iVar2) & 0xfc07;
+    }
+  }
+  else if ((*(ushort *)((int)&DAT_003feb93 + iVar2) & 2) == 0) {
+    if (((&fault_entry_t_003fe674)[param_1].status_flags & 1) == 0) {
+      (&fault_entry_t_003fe674)[param_1].status_flags =
+           (&fault_entry_t_003fe674)[param_1].status_flags | 1;
+      fault_enqueueRecord();
+    }
+    fault_tableEntryProcessor(param_2);
+    *(ushort *)((int)&DAT_003feb93 + iVar2) = *(ushort *)((int)&DAT_003feb93 + iVar2) & 0xfff8;
+    *(ushort *)((int)&DAT_003feb93 + iVar2) = *(ushort *)((int)&DAT_003feb93 + iVar2) & 0xfc07;
+    (&DAT_0040af0c)[(int)param_2 >> 3] =
+         (&DAT_0040af0c)[(int)param_2 >> 3] | (byte)(1 << (param_2 & 7));
+  }
+  return;
+}
+
+
+
+//
+// Function: diag_mainStateHandler @ 0x0053515c
+//
+
+// Variables in this function: DAT_0040af0c
+void diag_stateTransition(void)
+
+{
+  byte bVar1;
+  undefined *puVar2;
+  uint uVar3;
+  uint uVar4;
+  uint uVar5;
+  
+  puVar2 = fault_management_ring_read_ptr;
+  uVar4 = 1;
+  uVar3 = 0;
+  do {
+    if ((((uint)puVar2 & uVar4) != 0) && (((uint)fault_management_ring_write_ptr & uVar4) == 0)) {
+      uVar5 = 0;
+      do {
+        bVar1 = (&DAT_0005b6e6)[uVar5 + uVar3 * 0x10];
+        if ((bVar1 != 0xaa) && (((&fault_entry_status_array)[(uint)bVar1 * 7] & 1) != 0)) {
+          (&DAT_0040af0c)[bVar1 >> 3] = (&DAT_0040af0c)[bVar1 >> 3] | (byte)(1 << (bVar1 & 7));
+        }
+        uVar5 = uVar5 + 1 & 0xff;
+      } while (uVar5 < 0x10);
+    }
+    uVar4 = uVar4 * 2;
+    uVar3 = uVar3 + 1 & 0xff;
+  } while (uVar3 < 0x20);
+  return;
+}
+
+
+
+//
+// Function: cm848_initFaultManagement @ 0x00535344
+//
+

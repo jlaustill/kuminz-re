@@ -1,0 +1,163 @@
+=== VARIABLES TO NAME ===
+0x0040aaa4  (8 references)
+0x0040aac8  (5 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040aaa4
+void phase_group_a_adjustCalibrationParameters(void)
+
+{
+  short sVar1;
+  int iVar2;
+  
+  if ((DAT_003fd5d4 & 0x400) != 0) {
+    iVar2 = 0;
+    do {
+      diag_faultEntry_channelProcess(iVar2);
+      iVar2 = iVar2 + 1;
+    } while (iVar2 < 0x11);
+    governor_loadPercent_channel0_update();
+    governor_loadPercent_channel5_update();
+    diag_faultChannel_bitmap_update(0x1f,1);
+    diag_faultChannel_bitmap_update(0x1f,0x23);
+    diag_faultChannel_bitmap_update(0x1f,0);
+    diag_faultChannel_bitmap_update(4,4);
+    diag_faultChannel_bitmap_update(0x1f,5);
+    sVar1 = governor_tableA_nonzero_check();
+    if ((sVar1 == 0) || (DAT_0040aaa4 != 0)) {
+      system_status_flags_t_003fe974.reserved_10 =
+           system_status_flags_t_003fe974.reserved_10 & 0xfffb;
+      DAT_003fe9e8 = DAT_003fe9e8 & 0xfffb;
+    }
+    else {
+      system_status_flags_t_003fe974.reserved_10 = system_status_flags_t_003fe974.reserved_10 | 4;
+    }
+    sVar1 = governor_tableC_nonzero_check();
+    if ((sVar1 == 0) || (DAT_0040aaa4 != 0)) {
+      system_status_flags_t_003fe974.reserved_10 =
+           system_status_flags_t_003fe974.reserved_10 & 0xfffe;
+      DAT_003fe9e8 = DAT_003fe9e8 & 0xfffe;
+    }
+    else {
+      system_status_flags_t_003fe974.reserved_10 = system_status_flags_t_003fe974.reserved_10 | 1;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: phase_group_a_performCalibrationUpdate @ 0x0050ad1c
+//
+
+// Variables in this function: DAT_0040aaa4
+void phase_group_a_performCalibrationUpdate(void)
+
+{
+  short sVar1;
+  
+  if ((DAT_003fd5d4 & 0x400) != 0) {
+    governor_loadPercent_channel6_update();
+    fuel_demandFeature_faultBitmap_update();
+    fuel_demandFeature_emission_update();
+    sVar1 = governor_tableA_nonzero_check();
+    if ((sVar1 == 0) || (DAT_0040aaa4 != 0)) {
+      system_status_flags_t_003fe974.reserved_10 =
+           system_status_flags_t_003fe974.reserved_10 & 0xfffb;
+      DAT_003fe9e8 = DAT_003fe9e8 & 0xfffb;
+    }
+    else {
+      system_status_flags_t_003fe974.reserved_10 = system_status_flags_t_003fe974.reserved_10 | 4;
+    }
+    sVar1 = governor_tableC_nonzero_check();
+    if ((sVar1 == 0) || (DAT_0040aaa4 != 0)) {
+      system_status_flags_t_003fe974.reserved_10 =
+           system_status_flags_t_003fe974.reserved_10 & 0xfffe;
+      DAT_003fe9e8 = DAT_003fe9e8 & 0xfffe;
+    }
+    else {
+      system_status_flags_t_003fe974.reserved_10 = system_status_flags_t_003fe974.reserved_10 | 1;
+    }
+    sVar1 = governor_tableB_nonzero_check();
+    DAT_0040aaa8 = sVar1 != 0;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_initializeDiagnosticStateCounters @ 0x0050ae5c
+//
+
+// Variables in this function: DAT_0040aaa4, DAT_0040aac8
+void phase_group_a_updateStartupTimer(void)
+
+{
+  short *psVar1;
+  
+  if ((DAT_003fd5d4 & 0x400) != 0) {
+    if (DAT_0040aaa4 != 0) {
+      DAT_0040aaa4 = DAT_0040aaa4 + -1;
+    }
+    if (((cold_start_phase == CSP_AT_GOVERNOR_SETPOINT) ||
+        (cold_start_phase == CSP_FUEL_MODE_SWITCH)) || (cold_start_phase == CSP_SUSPENDED)) {
+      if (DAT_0040aac8 <= DAT_0005c346) {
+        DAT_0040aac8 = DAT_0040aac8 + 1;
+      }
+    }
+    else {
+      DAT_0040aac8 = 0;
+    }
+    if ((protection_enable_t_0040c050.mode_bits & 1) == 0) {
+      governor_load_startup_inhibit_flag = 1;
+    }
+    else if ((cold_start_phase == CSP_CRANKING) || (DAT_0005c346 <= DAT_0040aac8)) {
+      governor_load_startup_inhibit_flag = 0;
+    }
+    else {
+      governor_load_startup_inhibit_flag = 1;
+    }
+    if (governor_derivative_active_flag == 0) {
+      psVar1 = &DAT_003feaa4;
+      do {
+        if (*psVar1 != 0) {
+          *psVar1 = *psVar1 + -1;
+        }
+        psVar1 = psVar1 + 1;
+      } while (psVar1 < (short *)0x3fead5);
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: j1939_pgn_handler_init_batch @ 0x0050bdcc
+//
+
+// Variables in this function: DAT_0040aaa4
+void j1939_pgn_handler_init_batch(void)
+
+{
+  j1939_handlerInitializer(0xe000,&LAB_0050b734);
+  j1939_handlerInitializer(0xf001,&LAB_0050b77c);
+  j1939_handlerInitializer(0xf003,&LAB_0050b8a4);
+  j1939_handlerInitializer(0xfee4,&LAB_0050b98c);
+  j1939_handlerInitializer(0xfef0,&LAB_0050b9d8);
+  j1939_handlerInitializer(0xfef1,&LAB_0050bacc);
+  DAT_0040aaa4 = 1000;
+  return;
+}
+
+
+
+//
+// Function: governor_calibSnapshot_rollingBuffer_update @ 0x0050be6c
+//
+

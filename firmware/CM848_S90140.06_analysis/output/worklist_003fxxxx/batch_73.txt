@@ -1,0 +1,189 @@
+=== VARIABLES TO NAME ===
+0x003fd0aa  (9 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fd0aa
+void cm848_auxiliary_boundary_condition_eval(void)
+
+{
+  longlong lVar1;
+  word x_input;
+  short sVar3;
+  short sVar4;
+  short sVar5;
+  short sVar6;
+  short sStack_2e;
+  int iVar2;
+  
+  x_input = engine_load_output_value;
+  sVar5 = 0;
+  sVar6 = 0;
+  if (DAT_00409090 != 0) {
+    DAT_0040b842 = DAT_00409092;
+    injection_timing_source_byte_2 = 7;
+    return;
+  }
+  DAT_0040b848 = cm848_dualAxisTableInterpolation
+                           (&DAT_003fd08e,sensor_readings_t_0040baf2.coolant_temp,0xdffc);
+  DAT_0040b84a = cm848_dualAxisTableInterpolation
+                           (&DAT_003fd092,engine_rpm_state_t_0040b7ac.current_rpm,0xe0a0);
+  lVar1 = CONCAT44((int)((ulonglong)((longlong)(int)DAT_0040b84a * (longlong)(int)DAT_0040b848) >>
+                        0x20),(int)DAT_0040b84a * (int)DAT_0040b848) / 0x1000;
+  iVar2 = (int)lVar1;
+  if (iVar2 < 0x401) {
+    if (iVar2 < -0x400) {
+      sStack_2e = -0x400;
+    }
+    else {
+      sStack_2e = (short)lVar1;
+    }
+  }
+  else {
+    sStack_2e = 0x400;
+  }
+  DAT_0040b84c = sStack_2e;
+  sVar3 = cm848_dualAxisTableInterpolation(&DAT_003fd096,x_input,0xe1f2);
+  sVar4 = cm848_dualAxisTableInterpolation
+                    (&DAT_003fd09a,engine_rpm_state_t_0040b7ac.current_rpm,58000);
+  lVar1 = CONCAT44((int)((ulonglong)((longlong)(int)sVar3 * (longlong)(int)sVar4) >> 0x20),
+                   (int)sVar3 * (int)sVar4) / 0x1000;
+  iVar2 = (int)lVar1;
+  if (iVar2 < 0x401) {
+    if (iVar2 < -0x400) {
+      sStack_2e = -0x400;
+    }
+    else {
+      sStack_2e = (short)lVar1;
+    }
+  }
+  else {
+    sStack_2e = 0x400;
+  }
+  DAT_0040b844 = sStack_2e;
+  cm848_oilPressureDeltaCalculation();
+  DAT_0040b84e = cm848_dualAxisTableInterpolation
+                           (&DAT_003fd09e,engine_rpm_state_t_0040b7ac.current_rpm,0xe3e2);
+  DAT_0040b850 = cm848_dualAxisTableInterpolation
+                           (&DAT_003fd0a2,engine_rpm_state_t_0040b7ac.current_rpm,0xe534);
+  lVar1 = CONCAT44((int)((ulonglong)((longlong)(int)DAT_0040b850 * (longlong)(int)DAT_0040b84e) >>
+                        0x20),(int)DAT_0040b850 * (int)DAT_0040b84e) / 0x1000;
+  iVar2 = (int)lVar1;
+  if (iVar2 < 0x401) {
+    if (iVar2 < -0x400) {
+      sStack_2e = -0x400;
+    }
+    else {
+      sStack_2e = (short)lVar1;
+    }
+  }
+  else {
+    sStack_2e = 0x400;
+  }
+  DAT_0040b852 = sStack_2e;
+  sVar3 = cm848_dualAxisTableInterpolation
+                    (&DAT_003fd0a6,engine_rpm_state_t_0040b7ac.current_rpm,0xdd52);
+  if (boost_map_index_current == 1) {
+    sVar5 = cm848_dualAxisTableInterpolation
+                      (&DAT_003fd0aa,engine_rpm_state_t_0040b7ac.current_rpm,0xe686);
+  }
+  else if (boost_map_index_current == 2) {
+    sVar5 = cm848_dualAxisTableInterpolation
+                      (&DAT_003fd0aa,engine_rpm_state_t_0040b7ac.current_rpm,0xe930);
+  }
+  else if (boost_map_index_current == 3) {
+    sVar5 = cm848_dualAxisTableInterpolation
+                      (&DAT_003fd0aa,engine_rpm_state_t_0040b7ac.current_rpm,0xebda);
+  }
+  else if (boost_map_index_current == 4) {
+    sVar5 = cm848_dualAxisTableInterpolation
+                      (&DAT_003fd0aa,engine_rpm_state_t_0040b7ac.current_rpm,0xee84);
+  }
+  if (boost_map_index_target == 1) {
+    sVar6 = cm848_dualAxisTableInterpolation
+                      (&DAT_003fd0aa,engine_rpm_state_t_0040b7ac.current_rpm,0xe686);
+  }
+  else if (boost_map_index_target == 2) {
+    sVar6 = cm848_dualAxisTableInterpolation
+                      (&DAT_003fd0aa,engine_rpm_state_t_0040b7ac.current_rpm,0xe930);
+  }
+  else if (boost_map_index_target == 3) {
+    sVar6 = cm848_dualAxisTableInterpolation
+                      (&DAT_003fd0aa,engine_rpm_state_t_0040b7ac.current_rpm,0xebda);
+  }
+  else if (boost_map_index_target == 4) {
+    sVar6 = cm848_dualAxisTableInterpolation
+                      (&DAT_003fd0aa,engine_rpm_state_t_0040b7ac.current_rpm,0xee84);
+  }
+  DAT_0040b838 = cm848_filterInputValue
+                           ((int)sVar5,(int)sVar6,(int)sVar3,boost_map_index_current,
+                            boost_map_index_target,fuel_blend_state_t_0040a494.blend_weight,
+                            fuel_blend_state_t_0040a494.blend_mode);
+  DAT_0040b840 = DAT_0040b838;
+  if (DAT_00409094 == 2) {
+    if (DAT_0040b852 < DAT_0040b838) {
+      DAT_0040b840 = DAT_0040b852;
+    }
+    if (DAT_0040b844 < DAT_0040b840) {
+      DAT_0040b840 = DAT_0040b844;
+    }
+    if (DAT_0040b840 <= DAT_0040b84c) goto LAB_00527fc4;
+  }
+  else {
+    if (DAT_0040b838 < DAT_0040b852) {
+      DAT_0040b840 = DAT_0040b852;
+    }
+    if (DAT_0040b840 < DAT_0040b844) {
+      DAT_0040b840 = DAT_0040b844;
+    }
+    if (DAT_0040b84c <= DAT_0040b840) goto LAB_00527fc4;
+  }
+  DAT_0040b840 = DAT_0040b84c;
+LAB_00527fc4:
+  DAT_0040b842 = DAT_0040b840;
+  if (DAT_00409096 == 0) {
+    DAT_0040b830 = torque_limit_fault_snapshot - DAT_0040b840;
+  }
+  else {
+    DAT_0040b830 = -(DAT_0005a48a + DAT_0040b840);
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_initialization_auxiliary_state @ 0x0052801c
+//
+
+// Variables in this function: DAT_003fd0aa
+void cm848_initialization_auxiliary_state(void)
+
+{
+  DAT_003fd08e = 2;
+  DAT_003fd090 = 2;
+  DAT_003fd092 = 2;
+  DAT_003fd094 = 2;
+  DAT_003fd096 = 2;
+  DAT_003fd098 = 2;
+  DAT_003fd09a = 2;
+  DAT_003fd09c = 2;
+  DAT_003fd09e = 2;
+  DAT_003fd0a0 = 2;
+  DAT_003fd0a2 = 2;
+  DAT_003fd0a4 = 2;
+  DAT_003fd0a6 = 2;
+  DAT_003fd0a8 = 2;
+  DAT_003fd0aa = 2;
+  DAT_003fd0ac = 2;
+  return;
+}
+
+
+
+//
+// Function: engine_injectionAngle_tpuUpdate @ 0x005280a4
+//
+

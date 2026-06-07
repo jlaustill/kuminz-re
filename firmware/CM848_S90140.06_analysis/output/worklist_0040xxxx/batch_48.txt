@@ -1,0 +1,68 @@
+=== VARIABLES TO NAME ===
+0x0040b540  (5 references)
+0x0040b548  (8 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040b540, DAT_0040b548
+void fuelTempTrimComputation(void)
+
+{
+  uint uVar1;
+  uint uVar2;
+  
+  if ((((fuel_feature_control_flags & 0x20) != 0) && (fuel_correction_active_flag == 0)) &&
+     (cold_start_phase == CSP_AT_GOVERNOR_SETPOINT)) {
+    DAT_0040b548 = exponentialMovingAverage(fuel_temp_trim_raw,&PTR_DAT_003fcece);
+    if ((uint)DAT_00408a54 < (uint)DAT_0040b548) {
+      uVar2 = ((uint)engine_rpm_state_t_0040b7ac.current_rpm << 8) / (uint)DAT_0040b548;
+      DAT_0040b542 = (ushort)uVar2;
+      uVar2 = exponentialMovingAverage(uVar2 & 0xffff,&PTR_DAT_003fcebe);
+      DAT_0040b544 = (ushort)uVar2;
+      uVar1 = (uint)DAT_0040b542;
+      if ((int)((uVar2 & 0xffff) - uVar1) < 0) {
+        uVar1 = uVar1 - uVar2;
+      }
+      else {
+        uVar1 = uVar2 - uVar1;
+      }
+      uVar2 = ((uVar1 & 0xffff) * 0x6400) / (uVar2 & 0xffff);
+      DAT_003fced6 = (undefined2)uVar2;
+      DAT_0040b540 = exponentialMovingAverage(uVar2 & 0xffff,&PTR_DAT_003fcec6);
+    }
+    else {
+      DAT_0040b542 = 0;
+      DAT_0040b544 = 0;
+      DAT_0040b540 = 0;
+    }
+    if ((DAT_0040b548 == 0) || ((DAT_0040b548 < DAT_00408a52 && (DAT_00408a5c < DAT_0040b540)))) {
+      DAT_0040b547 = '\x01';
+      protection_condition_cleared_flag = 0;
+    }
+    else if ((DAT_0040b540 < DAT_00408a5a) || (DAT_00408a52 < DAT_0040b548)) {
+      DAT_0040b547 = '\0';
+    }
+    if (((DAT_0040b548 < DAT_00408a56) && (DAT_0040b540 < DAT_00408a5a)) &&
+       ((DAT_0040b547 == '\0' &&
+        ((DAT_00408a62 < fuel_demand_control_t_0040a57a.calculated && (DAT_00408a60 < DAT_0040b544))
+        )))) {
+      protection_condition_cleared_flag = 1;
+    }
+    if (DAT_00408a56 < DAT_0040b548) {
+      protection_condition_cleared_flag = 0;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: governorCruiseTimerManagement @ 0x0051a878
+//
+
+/* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

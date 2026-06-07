@@ -1,0 +1,66 @@
+=== VARIABLES TO NAME ===
+0x003fce7a  (11 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fce7a
+void protection_diagnostics_periodic(void)
+
+{
+  if ((governor_system_config_flags & 0x40) != 0) {
+    cm848_processProtectionTimingCounter();
+    cm848_applyProtectionSpeedLimitOverride();
+    j1939_dm1_faultList_transmit();
+    hpcr_periodicTaskGroup20_empty_stub();
+    cm848_buildOutputChannelStatusWord();
+    if ((uint)DAT_003fce7a + ((int)(uint)DAT_003fce7a >> 1) * -2 == 0) {
+      cm848_selectProtectionOverrideMode();
+      cm848_emptyStub10();
+      cm848_processProtectionCounters();
+      cm848_updateProtectionOverrideFlags();
+      cm848_validateCalibrationAgainstEeprom();
+    }
+    else {
+      cm848_processProtectionStateChange();
+      cm848_processProtectionFaultFlags();
+      cm848_updateProtectionEnableFromInjectionState();
+      cm848_convertProtectionTemperatureToScale();
+      cm848_emptyStub11();
+      cm848_selectProtectionChannelMode();
+    }
+    if ((uint)DAT_003fce7a + ((int)(uint)DAT_003fce7a >> 2) * -4 == 3) {
+      cm848_checkSpeedDerivativeMode();
+    }
+    if ((uint)DAT_003fce7a % 6 == 1) {
+      hpcr_validateBatteryVoltageInput();
+      cm848_updateCbdThresholdState();
+    }
+    if ((uint)DAT_003fce7a % 0xc == 3) {
+      cm848_captureVehicleDistanceHighByte();
+    }
+    if ((uint)DAT_003fce7a % 0xe == 0) {
+      cm848_calculateProtectionUnitConversion();
+      cm848_buildProtectionStatusByte();
+    }
+    DAT_003fce7a = DAT_003fce7a + 1;
+    if (DAT_003fce7a == 0x3c) {
+      DAT_003fce7a = 0;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: j1939_dm_message_processor @ 0x00518680
+//
+
+/* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+/* WARNING: Removing unreachable block (ram,0x00518b50) */
+/* WARNING: Removing unreachable block (ram,0x005189e8) */
+/* WARNING: Removing unreachable block (ram,0x005190fc) */
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

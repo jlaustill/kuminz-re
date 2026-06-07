@@ -1,0 +1,95 @@
+=== VARIABLES TO NAME ===
+0x0040bb88  (5 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040bb88
+void sensorValidationTimeout(void)
+
+{
+  ushort uVar1;
+  uint uVar2;
+  
+  if (sensor_validation_ready_flag == 0) {
+    if (DAT_003fcf9a < DAT_00408d1c) {
+      DAT_003fcf9a = DAT_003fcf9a + 1;
+    }
+    else {
+      uVar1 = DAT_0040bd18;
+      if ((DAT_003fdb80 & 0x1000) == 0) {
+        if (qadc_channel_index_table[0x4c] < 0x81) {
+          uVar2 = (uint)qadc_channel_index_table[0x4c];
+        }
+        else {
+          uVar2 = 0;
+        }
+        uVar1 = *(ushort *)(&qadc_channel_dispatch_table)[uVar2 * 2];
+      }
+      if ((DAT_00408d20 < uVar1) && (uVar1 < DAT_00408d1e)) {
+        sensor_validation_ready_flag = 1;
+      }
+    }
+  }
+  if (sensor_validation_ready_flag == 0) {
+    DAT_0040bb88 = 1;
+  }
+  else {
+    cm848_processSensorLookupTable0();
+    DAT_003fcfa2 = DAT_003fcfa0;
+    DAT_003fcfa0 = DAT_0040bb88;
+  }
+  if (DAT_003fcfa2 == DAT_003fcfa0) {
+    DAT_003fcf9e = DAT_003fcf9e + 1;
+    if (DAT_00408d24 <= DAT_003fcf9e) {
+      DAT_003fcf9e = DAT_00408d24;
+      DAT_0040b61a = DAT_003fcfa0;
+    }
+  }
+  else {
+    DAT_003fcf9e = 0;
+    DAT_0040bb88 = 0;
+  }
+  if ((DAT_0040bb88 == 0) && (sensor_validation_ready_flag != 0)) {
+    DAT_003fcf9c = DAT_003fcf9c + 1;
+  }
+  else {
+    DAT_003fcf9c = 0;
+  }
+  if (DAT_003fcf9c < DAT_00408d22) {
+    protection_monitor_shadow = protection_monitor_shadow & 0xffbf;
+    j1939_message_state_flags = j1939_message_state_flags & 0xffbf;
+  }
+  else {
+    protection_monitor_shadow = protection_monitor_shadow | 0x40;
+  }
+  return;
+}
+
+
+
+//
+// Function: initSensorValidationTable @ 0x005229c0
+//
+
+// Variables in this function: DAT_0040bb88
+void initSensorValidationTable(void)
+
+{
+  DAT_0040bb88 = 1;
+  DAT_003fcf9a = 0;
+  DAT_003fcf9c = 0;
+  DAT_003fcf9e = 0;
+  DAT_003fcfa0 = 0;
+  DAT_003fcfa2 = 0;
+  DAT_0040b61a = 0;
+  return;
+}
+
+
+
+//
+// Function: initCruiseStateVariables @ 0x00522a04
+//
+

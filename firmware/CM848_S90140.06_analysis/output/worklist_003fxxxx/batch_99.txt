@@ -1,0 +1,242 @@
+=== VARIABLES TO NAME ===
+0x003fd2d4  (6 references)
+0x003fd2d8  (11 references)
+0x003fd40e  (6 references)
+0x003fd40f  (6 references)
+0x003feed0  (5 references)
+
+Total: 5 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003feed0
+void cm848_sensorChannel5_init(void)
+
+{
+  sensorChannelConfigInit
+            ((void *)((int)&DAT_003feed0 + 2),&sensor_channel5_ram,&DAT_003fa04c,&DAT_003feee2,
+             &DAT_003feefa,(void *)0x2,0xa04e,0x69,(word *)0x2b2,(word *)0x2b3,0xbd84,0xbda8,0xbe22)
+  ;
+  return;
+}
+
+
+
+//
+// Function: cm848_sensorChannel5_process @ 0x0000cec0
+//
+
+// Variables in this function: DAT_003feed0
+void cm848_sensorChannel5_process(void)
+
+{
+  updateSensorChannelWithConfig
+            ((void *)((int)&DAT_003feed0 + 2),&sensor_channel5_ram,&DAT_003fa04c,&DAT_003feee2,
+             &DAT_003feefa,(void *)0x2,0xa04e,0x69,(word *)0x2b2,(word *)0x2b3,0xbd84,0xbda8,0xbe22)
+  ;
+  return;
+}
+
+
+
+//
+// Function: cm848_sensorChannel6_init @ 0x0000cf4c
+//
+
+// Variables in this function: DAT_003feed0
+void cm848_copyRomToRamBuffer(void)
+
+{
+  undefined4 *puVar1;
+  byte *pbVar2;
+  
+  pbVar2 = (byte *)&DAT_003feed0;
+  puVar1 = (undefined4 *)0x64ae6;
+  do {
+    puVar1 = puVar1 + 1;
+    *(undefined4 *)pbVar2 = *puVar1;
+    pbVar2 = pbVar2 + 4;
+  } while (pbVar2 < &sensor_channel_ram_start);
+  return;
+}
+
+
+
+//
+// Function: cm848_protectionEnableCheck @ 0x0004bd3c
+//
+
+// Variables in this function: DAT_003fd2d4, DAT_003fd2d8, DAT_003feed0
+void uds_session_state_init(void)
+
+{
+  undefined **ppuVar1;
+  
+  ppuVar1 = &PTR_DAT_003fd2c4;
+  PTR_DAT_003fd2c4 = (undefined *)&DAT_003feed0;
+  PTR_sensor_channel_ram_start_003fd2c8 = &sensor_channel_ram_start;
+  PTR_DAT_003fd2cc = (undefined *)&DAT_00064aea;
+  do {
+    ppuVar1 = ppuVar1 + 3;
+  } while (ppuVar1 < &PTR_PTR_003fd2d0);
+  PTR_PTR_003fd2d0 = (undefined *)&PTR_DAT_003fd2c4;
+  PTR_DAT_003fd2d8 = (undefined *)&DAT_003feed0;
+  PTR_DAT_003fd2d4 = (undefined *)&DAT_00064aea;
+  DAT_003fd2dc = 0;
+  diagnostic_session_state = ACTIVE;
+  sensor_validation_result = 1;
+  DAT_003fd2de = 1;
+  return;
+}
+
+
+
+//
+// Function: cm848_initProtectionModule @ 0x00538a84
+//
+
+// Variables in this function: DAT_003fd2d4, DAT_003fd2d8, DAT_003fd40e, DAT_003fd40f
+void cm848_initProtectionModule(void)
+
+{
+  short *psVar1;
+  
+  if ((DAT_003fd2de == 0) && (diagnostic_session_state != INACTIVE)) {
+    uds_session_state_init();
+  }
+  if (diagnostic_session_state != INACTIVE) {
+    if (*(undefined **)(PTR_PTR_003fd2d0 + 4) <= PTR_DAT_003fd2d8) {
+      PTR_PTR_003fd2d0 = PTR_PTR_003fd2d0 + 0xc;
+      if ((undefined *)((int)&PTR_DAT_003fd2cc + 3U) < PTR_PTR_003fd2d0) {
+        PTR_PTR_003fd2d0 = (undefined *)&PTR_DAT_003fd2c4;
+        if (DAT_003fd2dc == 0) {
+          if ((fault_active_status_array & 1) != 0) {
+            system_status_flags_t_003fe974.enable_state =
+                 system_status_flags_t_003fe974.enable_state & 0xfffe;
+            fault_active_status_array = fault_active_status_array & 0xfffe;
+          }
+        }
+        else {
+          system_status_flags_t_003fe974.enable_state =
+               system_status_flags_t_003fe974.enable_state | 1;
+        }
+        DAT_003fd2dc = 0;
+      }
+      PTR_DAT_003fd2d8 = *(undefined **)PTR_PTR_003fd2d0;
+      PTR_DAT_003fd2d4 = *(undefined **)(PTR_PTR_003fd2d0 + 8);
+    }
+    if (*(undefined **)PTR_PTR_003fd2d0 == PTR_DAT_003fd2d8) {
+      DAT_003fd2e0 = DAT_003fd2e0 + 1;
+    }
+    psVar1 = (short *)(PTR_DAT_003fd2d8 + 100);
+    if (*(short **)(PTR_PTR_003fd2d0 + 4) < PTR_DAT_003fd2d8 + 100) {
+      psVar1 = *(short **)(PTR_PTR_003fd2d0 + 4);
+    }
+    for (; PTR_DAT_003fd2d8 < psVar1; PTR_DAT_003fd2d8 = (undefined *)((int)PTR_DAT_003fd2d8 + 2)) {
+      if (*(short *)PTR_DAT_003fd2d8 != *(short *)PTR_DAT_003fd2d4) {
+        *(short *)PTR_DAT_003fd2d8 = *(short *)PTR_DAT_003fd2d4;
+        DAT_003fd2dc = 1;
+      }
+      PTR_DAT_003fd2d4 = (undefined *)((int)PTR_DAT_003fd2d4 + 2);
+    }
+  }
+  if ((DAT_003fd2de == 0) && (diagnostic_session_state != INACTIVE)) {
+    system_status_flags_t_003fe974.enable_state =
+         system_status_flags_t_003fe974.enable_state & 0xfffe;
+    fault_active_status_array = fault_active_status_array & 0xfffe;
+  }
+  DAT_003fd2de = diagnostic_session_state;
+  return;
+}
+
+
+
+//
+// Function: diag_record_queue_add_entry @ 0x00538c8c
+//
+
+undefined4
+diag_record_queue_add_entry
+          (int param_1,undefined2 param_2,int param_3,int param_4,undefined4 param_5)
+
+{
+  short sVar1;
+  undefined2 *puVar2;
+  
+  if (param_1 == 0) {
+    if (DAT_003fd40e == 0x14) {
+      return 1;
+    }
+    puVar2 = (undefined2 *)((uint)DAT_003fd40e * 10 + 0x3fd2e2);
+    DAT_003fd40e = DAT_003fd40e + 1;
+    sVar1 = DAT_003fd410;
+  }
+  else {
+    if (DAT_003fd40f == 10) {
+      return 1;
+    }
+    puVar2 = (undefined2 *)((uint)DAT_003fd40f * 10 + 0x3fd3aa);
+    DAT_003fd40f = DAT_003fd40f + 1;
+    sVar1 = DAT_003fd412;
+  }
+  *puVar2 = param_2;
+  puVar2[2] = (short)(param_4 / 10) + sVar1;
+  puVar2[1] = (short)(param_3 / 10);
+  *(undefined4 *)(puVar2 + 3) = param_5;
+  return 0;
+}
+
+
+
+//
+// Function: cm848_phaseAProcessing @ 0x00538d3c
+//
+
+// Variables in this function: DAT_003fd40e, DAT_003fd40f
+void cm848_phaseAProcessing(void)
+
+{
+  byte bVar1;
+  int iVar2;
+  
+  if ((DAT_003fd5b2 & 8) != 0) {
+    if (((j1939_dm_control_flags & 4) != 0) && ((governor_derivative_masked & 4) != 0)) {
+      iVar2 = 0x3fd2e2;
+      bVar1 = 0;
+      if (DAT_003fd40e != 0) {
+        do {
+          if (DAT_003fd410 == *(short *)(iVar2 + 4)) {
+            *(short *)(iVar2 + 4) = *(short *)(iVar2 + 4) + *(short *)(iVar2 + 2);
+            (**(code **)(iVar2 + 6))();
+          }
+          iVar2 = iVar2 + 10;
+          bVar1 = bVar1 + 1;
+        } while (bVar1 < DAT_003fd40e);
+      }
+      DAT_003fd410 = DAT_003fd410 + 1;
+    }
+    if (((j1939_dm_control_flags & 8) != 0) && ((governor_derivative_masked & 8) != 0)) {
+      iVar2 = 0x3fd3aa;
+      bVar1 = 0;
+      if (DAT_003fd40f != 0) {
+        do {
+          if (DAT_003fd412 == *(short *)(iVar2 + 4)) {
+            *(short *)(iVar2 + 4) = *(short *)(iVar2 + 4) + *(short *)(iVar2 + 2);
+            (**(code **)(iVar2 + 6))();
+          }
+          iVar2 = iVar2 + 10;
+          bVar1 = bVar1 + 1;
+        } while (bVar1 < DAT_003fd40f);
+      }
+      DAT_003fd412 = DAT_003fd412 + 1;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_exceptionHandler @ 0x00538eac
+//
+

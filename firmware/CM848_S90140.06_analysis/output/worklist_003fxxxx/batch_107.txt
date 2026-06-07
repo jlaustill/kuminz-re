@@ -1,0 +1,48 @@
+=== VARIABLES TO NAME ===
+0x003feb8a  (5 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003feb8a
+void governor_calibSnapshot_rollingBuffer_update(int param_1)
+
+{
+  undefined1 *puVar1;
+  undefined2 *puVar2;
+  uint uVar3;
+  undefined2 *puVar4;
+  byte bVar5;
+  
+  uVar3 = (uint)DAT_003feb8a;
+  DAT_003feb8a = DAT_003feb8a + 1;
+  if (4 < DAT_003feb8a) {
+    DAT_003feb8a = 0;
+  }
+  if (param_1 == 0) {
+    puVar1 = &DAT_003feb50;
+  }
+  else {
+    puVar1 = &DAT_003feb6a;
+  }
+  bVar5 = 0;
+  puVar2 = (undefined2 *)(puVar1 + -2);
+  puVar4 = (undefined2 *)(&DAT_003fead4 + uVar3 * 0x18);
+  do {
+    puVar2 = puVar2 + 1;
+    puVar4 = puVar4 + 1;
+    *puVar4 = *puVar2;
+    bVar5 = bVar5 + 1;
+  } while (bVar5 < 0xc);
+  return;
+}
+
+
+
+//
+// Function: governor_sourceData_init @ 0x0050beec
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

@@ -1,0 +1,52 @@
+=== VARIABLES TO NAME ===
+0x003fbd5e  (5 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fbd5e
+void fault_reason_clear_bitmap(uint param_1)
+
+{
+  (&DAT_003fbd5e)[(int)param_1 >> 5 & 0xffff] =
+       ~(1 << (param_1 + (((int)param_1 >> 5) + (uint)((int)param_1 < 0 && (param_1 & 0x1f) != 0)) *
+                         -0x20 & 0x3f)) & (&DAT_003fbd5e)[(int)param_1 >> 5 & 0xffff];
+  return;
+}
+
+
+
+//
+// Function: governor_tableA_nonzero_check @ 0x00509e58
+//
+
+// Variables in this function: DAT_003fbd5e
+bool governor_tableC_nonzero_check(void)
+
+{
+  return DAT_003fbd5e != 0;
+}
+
+
+
+//
+// Function: fault_flag_set_bitmap @ 0x00509f18
+//
+
+// Variables in this function: DAT_003fbd5e
+void fault_reason_set_bitmap(uint param_1)
+
+{
+  (&DAT_003fbd5e)[(int)param_1 >> 5 & 0xffff] =
+       1 << (param_1 + (((int)param_1 >> 5) + (uint)((int)param_1 < 0 && (param_1 & 0x1f) != 0)) *
+                       -0x20 & 0x3f) | (&DAT_003fbd5e)[(int)param_1 >> 5 & 0xffff];
+  return;
+}
+
+
+
+//
+// Function: governor_loadPercent_channel5_update @ 0x00509fcc
+//
+

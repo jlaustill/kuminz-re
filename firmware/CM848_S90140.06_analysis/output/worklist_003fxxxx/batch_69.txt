@@ -1,0 +1,192 @@
+=== VARIABLES TO NAME ===
+0x003fcff8  (9 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fcff8
+void governor_cruise_setpoint_calc(int param_1)
+
+{
+  uint uVar1;
+  ushort uVar2;
+  short sVar6;
+  uint uVar3;
+  uint uVar4;
+  uint uVar5;
+  ushort uStack_e;
+  
+  DAT_0040b69e = 0;
+  if ((governor_fuel_demand_mode == 9) || (governor_fuel_demand_mode == 10)) {
+    DAT_0040b6a4 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fcffe);
+  }
+  if (governor_fuel_demand_mode == 9) {
+    if ((((fuel_demand_speed_error == 1) || (fuel_demand_speed_error == 3)) ||
+        (fuel_demand_speed_error == 2)) || (fuel_demand_speed_error == 4)) {
+      DAT_0040b696 = 0;
+    }
+    else {
+      if (cruise_speed_command < cruise_speed_setpoint_adjusted) {
+        uVar2 = cruise_speed_setpoint_adjusted - cruise_speed_command;
+      }
+      else {
+        uVar2 = cruise_speed_command - cruise_speed_setpoint_adjusted;
+      }
+      if (((uVar2 < DAT_00408e00) && (param_1 <= (int)(uint)DAT_0040b6be)) &&
+         ((int)(uint)DAT_00408dfc <= param_1)) {
+        DAT_0040b696 = 1;
+      }
+    }
+  }
+  if ((governor_fuel_demand_mode != 9) && (governor_fuel_demand_mode != 10)) {
+    return;
+  }
+  if (((DAT_0040b696 == 0) && (governor_fuel_demand_mode == 9)) ||
+     ((governor_fuel_demand_mode == 10 &&
+      (((j1939_governor_feature_cal & 0x100) != 0 && (governor_j1939_bypass_flag != 1)))))) {
+LAB_00524934:
+    cruise_speed_setpoint_active = 0;
+  }
+  else if ((int)(uint)DAT_0040b6be < param_1) {
+    uVar2 = DAT_0040b6bc;
+    if (governor_fuel_demand_mode == 9) {
+      uVar2 = DAT_0040b6b0;
+    }
+    uStack_e = (ushort)((param_1 - (uint)DAT_0040b6be) * (uint)uVar2 >> 10);
+    cruise_speed_setpoint_active = DAT_00408e14;
+    if ((int)(short)uStack_e <= (int)(uint)DAT_00408e14) {
+LAB_0052492c:
+      cruise_speed_setpoint_active = uStack_e;
+    }
+  }
+  else {
+    if ((int)(uint)DAT_00408dfc <= param_1) goto LAB_00524934;
+    sVar6 = DAT_0040b6b6;
+    if (governor_fuel_demand_mode == 9) {
+      sVar6 = DAT_0040b69c;
+    }
+    uStack_e = (ushort)(((int)(short)param_1 - (int)(short)DAT_00408dfc) * (int)sVar6 >> 10);
+    cruise_speed_setpoint_active = DAT_00408e16;
+    if ((short)DAT_00408e16 <= (short)uStack_e) goto LAB_0052492c;
+  }
+  uVar3 = (uint)DAT_0040b6ca;
+  uVar4 = uVar3;
+  if ((int)uVar3 < 0) {
+    uVar4 = -uVar3;
+  }
+  uVar1 = (uint)fuel_demand_computed;
+  uVar5 = (uint)DAT_00408dfc + (uint)DAT_00408e24;
+  if (uVar1 < uVar5) {
+    if ((int)uVar3 <= (int)((uint)DAT_00408e2e + (uint)DAT_00408e22)) goto LAB_005249d4;
+  }
+  else if ((uVar4 & 0xffff) <= (uint)DAT_00408e20 + (uint)DAT_00408e22) goto LAB_005249d4;
+  DAT_003fcff8 = 2;
+LAB_005249d4:
+  if ((uVar5 <= uVar1) && ((int)(uVar4 & 0xffff) < (int)((uint)DAT_00408e20 - (uint)DAT_00408e22)))
+  {
+    DAT_003fcff8 = 1;
+  }
+  if ((uVar1 <= DAT_00408dfc) && ((int)uVar3 < (int)((uint)DAT_00408e2e - (uint)DAT_00408e22))) {
+    DAT_003fcff8 = 3;
+  }
+  if (DAT_003fcff8 == 1) {
+    DAT_0040b6c0 = &DAT_00408e02;
+  }
+  else if (DAT_003fcff8 == 2) {
+    DAT_0040b6c0 = &DAT_00408e18;
+  }
+  else if (DAT_003fcff8 == 3) {
+    DAT_0040b6c0 = &DAT_00408e26;
+  }
+  if (DAT_003fcffa != DAT_003fcff8) {
+    DAT_0040b69e = 1;
+  }
+  DAT_0040b6aa = *DAT_0040b6c0;
+  DAT_0040b6a8 = DAT_0040b6c0[3];
+  DAT_0040b6a6 = DAT_0040b6c0[1];
+  DAT_0040b6a0 = DAT_0040b6c0[2];
+  DAT_003fcffc = (short)uVar4;
+  DAT_003fcffa = DAT_003fcff8;
+  return;
+}
+
+
+
+//
+// Function: governor_cruise_speedReference_update @ 0x00524aec
+//
+
+// Variables in this function: DAT_003fcff8
+void governorCruiseStateMachine(void)
+
+{
+  ushort uVar1;
+  undefined2 uVar2;
+  int iVar3;
+  uint uVar4;
+  int iVar5;
+  undefined2 local_30;
+  undefined2 local_2e;
+  
+  DAT_003fcffe = 2;
+  DAT_0040b69e = 0;
+  cruise_speed_setpoint_active = 0;
+  DAT_0040b696 = 0;
+  DAT_003fcff8 = 1;
+  local_30 = 2;
+  local_2e = 2;
+  uVar2 = governor_cruise_rampRate_calc
+                    (DAT_00408e12 - DAT_003fd912,protection_temp_scale_factor_working);
+  DAT_003fcff0 = governor_cruise_tableLimit_calc
+                           (DAT_003fd912,&local_30,uVar2,&governor_fuel_table_xaxis_cal,400,
+                            &governor_fuel_table_ystart_cal,&governor_fuel_table_yend_cal,4);
+  uVar2 = governor_cruise_rampRate_calc
+                    (DAT_00408e12 - DAT_003fd916,protection_temp_scale_factor_working);
+  DAT_003fcff4 = governor_cruise_tableLimit_calc
+                           (DAT_003fd916,&local_30,uVar2,&governor_fuel_table_xaxis_cal,400,
+                            &governor_fuel_table_ystart_cal,&governor_fuel_table_yend_cal,4);
+  if (drivetrain_type == DRIVETRAIN_MANUAL_VSS) {
+    DAT_0040b6b0 = DAT_003fcff0;
+    DAT_0040b6bc = DAT_003fcff4;
+  }
+  uVar2 = governor_cruise_rampRate_calc(DAT_00408e12 - DAT_003fd912,protection_temp_scale_cal);
+  DAT_003fcff2 = governor_cruise_tableLimit_calc
+                           (DAT_003fd912,&local_30,uVar2,&governor_fuel_table_xaxis_cal,400,
+                            &governor_fuel_table_ystart_cal,&governor_fuel_table_yend_cal,4);
+  uVar2 = governor_cruise_rampRate_calc(DAT_00408e12 - DAT_003fd916,protection_temp_scale_cal);
+  DAT_003fcff6 = governor_cruise_tableLimit_calc
+                           (DAT_003fd916,&local_30,uVar2,&governor_fuel_table_xaxis_cal,400,
+                            &governor_fuel_table_ystart_cal,&governor_fuel_table_yend_cal,4);
+  uVar1 = DAT_00408dfc;
+  if ((uint)DAT_00408e68 < (uint)DAT_00408dfc) {
+    uVar4 = (uint)DAT_00408dfc - (uint)DAT_00408e68;
+    iVar5 = (uVar4 & 0xffff) * 0x22c8;
+    iVar3 = 0x410000;
+    uVar2 = governor_cruise_rampScale_calc(DAT_003fd910,iVar5,uVar4);
+    *(undefined2 *)(iVar3 + -0x4964) = uVar2;
+    DAT_0040b6b6 = governor_cruise_rampScale_calc(DAT_003fd914,iVar5,uVar4);
+  }
+  else {
+    DAT_0040b69c = 0;
+    DAT_0040b6b6 = 0;
+  }
+  cruise_speed_offset_c = DAT_00408e0c;
+  cruise_speed_offset_b = DAT_00408e0c;
+  cruise_speed_setpoint_c = uVar1;
+  cruise_speed_setpoint_b = uVar1;
+  cruise_speed_reference_b = 0;
+  cruise_speed_reference_a = 0;
+  cruise_speed_reference_c = DAT_0040b6b6;
+  cruise_speed_reference_d = DAT_0040b6bc;
+  DAT_0040b6b0 = DAT_003fcff0;
+  DAT_0040b6bc = DAT_003fcff4;
+  return;
+}
+
+
+
+//
+// Function: governor_cruise_torqueLimit_calc @ 0x005250c0
+//
+

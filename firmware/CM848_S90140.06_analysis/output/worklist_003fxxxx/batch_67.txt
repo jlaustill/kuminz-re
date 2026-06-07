@@ -1,0 +1,81 @@
+=== VARIABLES TO NAME ===
+0x003fcfdc  (7 references)
+0x003fcfe0  (6 references)
+0x003fcfe4  (7 references)
+
+Total: 3 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fcfdc, DAT_003fcfe0, DAT_003fcfe4
+void governorSpeedLimitTable(void)
+
+{
+  short sVar1;
+  undefined *puVar2;
+  uint uVar3;
+  undefined *puVar4;
+  
+  sVar1 = DAT_003fcfe4;
+  if (DAT_0040b66c == 0) {
+    PTR_DAT_003fcfe0 = (undefined *)&DAT_0053ac3c;
+    DAT_003fcfdc = &DAT_003fd59a;
+    DAT_0040b66c = 1;
+    DAT_003fcfe8 = 1;
+    DAT_003fcfea = 0;
+LAB_0052443c:
+    DAT_003fcfe6 = 0;
+    DAT_003fcfe4 = 0;
+    DAT_003fcfeb = 0;
+  }
+  else {
+    if (DAT_0040b66c != 1) {
+      if (DAT_0040b66c == 2) {
+        PTR_DAT_003fcfe0 = (undefined *)&DAT_0053ac2a;
+        DAT_003fcfdc = (undefined *)0x8000;
+        DAT_0040b66c = 3;
+        DAT_003fcfe8 = 2;
+        DAT_003fcfea = 1;
+        goto LAB_0052443c;
+      }
+      if (DAT_0040b66c != 3) {
+        return;
+      }
+    }
+    if (DAT_003fcfe6 < DAT_003fcfe8) {
+      uVar3 = (uint)DAT_00408de0;
+      puVar4 = DAT_003fcfdc + uVar3;
+      DAT_003fcfeb = DAT_003fcfeb + 1;
+      puVar2 = *(undefined **)(PTR_DAT_003fcfe0 + 4);
+      if (puVar4 + -1 < puVar2) {
+        DAT_003fcfe4 = cm848_calculateCrc16Simple(DAT_003fcfe4);
+        DAT_003fcfdc = puVar4;
+      }
+      else {
+        if (puVar2 < puVar4 + -1) {
+          uVar3 = (uint)(puVar2 + (1 - (int)DAT_003fcfdc)) & 0xffff;
+        }
+        DAT_003fcfe4 = cm848_calculateCrc16Simple(DAT_003fcfe4,DAT_003fcfdc,uVar3);
+        DAT_003fcfe6 = DAT_003fcfe6 + 1;
+        PTR_DAT_003fcfe0 = PTR_DAT_003fcfe0 + 8;
+        DAT_003fcfdc = *(undefined **)PTR_DAT_003fcfe0;
+      }
+    }
+    else {
+      uVar3 = (uint)DAT_003fcfea;
+      (&DAT_0040b66e)[uVar3] = DAT_003fcfe4;
+      if (*(short *)(uVar3 * 2 + 0x3fd904) != sVar1) {
+        injection_fault_shadow_flags = injection_fault_shadow_flags | 0x20;
+      }
+      DAT_0040b66c = DAT_0040b66c + 1;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: governorOverrideSpeedControl @ 0x00524594
+//
+

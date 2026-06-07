@@ -1,0 +1,165 @@
+=== VARIABLES TO NAME ===
+0x003fbd70  (5 references)
+0x003feb54  (5 references)
+0x003feb6e  (5 references)
+
+Total: 3 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003feb54, DAT_003feb6e
+void governor_sourceData_init(int param_1)
+
+{
+  if (param_1 == 0) {
+    DAT_003feb82 = 1;
+    DAT_003feb86 = _j1939_governor_source_index;
+    DAT_003feb50 = 0;
+    DAT_003feb51 = j1939_tsc1_override_state.etc1_spn1482_source_address;
+    DAT_003feb52 = _j1939_governor_source_index;
+    DAT_003feb54 = 1;
+    DAT_003feb56 = j1939_tsc1_override_state.governor_mode;
+    DAT_003feb5e = 0;
+    DAT_003feb5c = 0;
+    DAT_003feb5a = 0;
+    DAT_003feb58 = 0;
+    DAT_003feb60 = fault_timing_snapshot;
+    DAT_003feb64 = 0;
+  }
+  else {
+    DAT_003feb84 = 1;
+    DAT_003feb88 = j1939_source_address_index;
+    DAT_003feb6a = 1;
+    DAT_003feb6b = (undefined1)governor_mode_transition_state;
+    DAT_003feb6c = j1939_source_address_index;
+    DAT_003feb6e = 1;
+    DAT_003feb70 = governor_mode_state;
+    DAT_003feb78 = 0;
+    DAT_003feb76 = 0;
+    DAT_003feb74 = 0;
+    DAT_003feb72 = 0;
+    DAT_003feb7a = fault_timing_snapshot;
+    DAT_003feb7e = 0;
+  }
+  return;
+}
+
+
+
+//
+// Function: phase_group_a_setupETC1Controller @ 0x0050bff4
+//
+
+// Variables in this function: DAT_003fbd70, DAT_003feb54, DAT_003feb6e
+void phase_group_a_setupETC1Controller(void)
+
+{
+  word *pwVar1;
+  word *pwVar2;
+  word *pwVar3;
+  byte bVar5;
+  undefined1 *puVar4;
+  undefined1 *puVar6;
+  undefined2 *puVar7;
+  
+  bVar5 = j1939_tsc1_override_state.etc1_spn1482_source_address;
+  if ((governor_feature_config_word & 0x800) == 0) {
+    return;
+  }
+  pwVar2 = &DAT_003fbd6c;
+  pwVar1 = &DAT_003fbd70;
+  if (((j1939_tsc1_override_state.governor_mode != DAT_003fbd6c) ||
+      (j1939_tsc1_override_state.etc1_active_state != DAT_003fbd70)) ||
+     (pwVar3 = pwVar1, DAT_003fbd72 != j1939_tsc1_override_state.etc1_spn1482_source_address)) {
+    pwVar3 = &DAT_003fbd70;
+    if (j1939_tsc1_override_state.governor_mode == 0) {
+      if ((DAT_003fbd6c != 0) && (DAT_003fbd70 == 1)) {
+        DAT_003feb64 = fault_timing_snapshot - DAT_003feb60;
+LAB_0050c1a0:
+        DAT_003feb82 = 0;
+        governor_calibSnapshot_rollingBuffer_update(0);
+        pwVar3 = pwVar1;
+      }
+    }
+    else if (j1939_tsc1_override_state.etc1_active_state == 1) {
+      if (DAT_003feb82 == 1) {
+        if (DAT_003fbd72 == j1939_tsc1_override_state.etc1_spn1482_source_address) {
+          if (DAT_003feb54 < 5) {
+            (&DAT_003feb56)[DAT_003feb54] = j1939_tsc1_override_state.governor_mode;
+            DAT_003feb54 = DAT_003feb54 + 1;
+          }
+          else {
+            puVar7 = &DAT_003feb56;
+            do {
+              *puVar7 = puVar7[1];
+              puVar7 = puVar7 + 1;
+            } while (puVar7 < &DAT_003feb5e);
+            DAT_003feb5e = j1939_tsc1_override_state.governor_mode;
+          }
+          goto LAB_0050c1a8;
+        }
+        DAT_003feb64 = fault_timing_snapshot - DAT_003feb60;
+        governor_calibSnapshot_rollingBuffer_update(0);
+      }
+      governor_sourceData_init(0);
+      pwVar3 = pwVar1;
+    }
+    else if (DAT_003fbd70 == 1) goto LAB_0050c1a0;
+  }
+LAB_0050c1a8:
+  *pwVar2 = j1939_tsc1_override_state.governor_mode;
+  *pwVar3 = j1939_tsc1_override_state.etc1_active_state;
+  pwVar2 = &DAT_003fbd6e;
+  pwVar1 = &governor_mode_transition_state;
+  puVar6 = &DAT_003fbd73;
+  DAT_003fbd72 = bVar5;
+  if ((governor_mode_state != DAT_003fbd6e) ||
+     (pwVar3 = pwVar1, puVar4 = puVar6, governor_mode_transition_state != DAT_003fbd73)) {
+    pwVar3 = &governor_mode_transition_state;
+    puVar4 = &DAT_003fbd73;
+    if (governor_mode_state == 0) {
+      if (DAT_003fbd6e != 0) {
+        DAT_003feb84 = 0;
+        DAT_003feb7e = fault_timing_snapshot - DAT_003feb7a;
+        governor_calibSnapshot_rollingBuffer_update(1);
+        pwVar3 = pwVar1;
+        puVar4 = puVar6;
+      }
+    }
+    else {
+      if (DAT_003feb84 == 1) {
+        if (governor_mode_transition_state == DAT_003fbd73) {
+          if (DAT_003feb6e < 5) {
+            (&DAT_003feb70)[DAT_003feb6e] = governor_mode_state;
+            DAT_003feb6e = DAT_003feb6e + 1;
+          }
+          else {
+            puVar7 = &DAT_003feb70;
+            do {
+              *puVar7 = puVar7[1];
+              puVar7 = puVar7 + 1;
+            } while (puVar7 < &DAT_003feb78);
+            DAT_003feb78 = governor_mode_state;
+          }
+          goto LAB_0050c2f4;
+        }
+        DAT_003feb7e = fault_timing_snapshot - DAT_003feb7a;
+        governor_calibSnapshot_rollingBuffer_update(1);
+      }
+      governor_sourceData_init(1);
+      pwVar3 = pwVar1;
+      puVar4 = puVar6;
+    }
+  }
+LAB_0050c2f4:
+  *pwVar2 = governor_mode_state;
+  *puVar4 = (char)*pwVar3;
+  return;
+}
+
+
+
+//
+// Function: j1939_diag_request_41_handler @ 0x0050c400
+//
+

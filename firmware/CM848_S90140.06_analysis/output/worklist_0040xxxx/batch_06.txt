@@ -1,0 +1,752 @@
+=== VARIABLES TO NAME ===
+0x004090e8  (13 references)
+0x004090f3  (5 references)
+0x004090f5  (10 references)
+0x0040b856  (5 references)
+0x0040b877  (13 references)
+
+Total: 5 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_004090e8, DAT_004090f3, DAT_004090f5, DAT_0040b856, DAT_0040b877
+void engine_injectionAngle_tpuUpdate(void)
+
+{
+  short sVar1;
+  ushort uVar2;
+  uint uVar3;
+  uint uVar4;
+  uint uVar5;
+  uint uVar6;
+  ushort uVar7;
+  
+  sVar1 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fd0ae);
+  DAT_0040b854 = sVar1 + (ushort)((((int)DAT_00409098 * (int)(short)cam_sync_position >> 6) +
+                                  (uint)DAT_0040909c) * (uint)speed_setpoint_raw >> 0x16);
+  if (crank_position_valid_flag != 0) {
+    DAT_0040b854 = DAT_0040b854 + DAT_0040909a;
+  }
+  uVar5 = (uint)(ushort)(&DAT_0005fbb2)[cylinder_event_index] + (int)DAT_0040b856 +
+          (int)DAT_0040b854;
+  if (0x77ff < (int)uVar5) {
+    uVar5 = uVar5 - 0x7800;
+  }
+  if ((int)uVar5 < 0) {
+    uVar5 = uVar5 + 0x7800;
+  }
+  if (DAT_0040b877 != 2) {
+    uVar5 = uVar5 & 0xffff;
+    uVar3 = (uint)DAT_004090f3;
+    if (uVar3 < uVar5) {
+      uVar6 = (int)(uint)DAT_004090e8 / (int)((crank_sync_tooth_count_cal & 0xff) - 1) & 0xffff;
+      uVar4 = (int)(uVar5 - uVar3) / (int)uVar6;
+      uVar7 = (short)((int)uVar4 >> 1) + (ushort)((int)uVar4 < 0 && (uVar4 & 1) != 0) & 0x7f;
+      uVar5 = ((int)(uVar5 - uVar3) >> 8) / (int)uVar6 + (uint)DAT_004090f5;
+      if ((int)(crank_sync_tooth_count_cal - 1) < (int)(uVar5 & 0xff)) {
+        uVar5 = uVar5 - (crank_sync_tooth_count_cal + 0xff);
+      }
+    }
+    else {
+      uVar6 = (int)(uint)DAT_004090e8 / (int)((crank_sync_tooth_count_cal & 0xff) - 1) & 0xffff;
+      uVar6 = (int)(uVar6 * 0x100 - (uVar3 - uVar5)) / (int)uVar6;
+      uVar7 = (short)((int)uVar6 >> 1) + (ushort)((int)uVar6 < 0 && (uVar6 & 1) != 0);
+      uVar5 = DAT_004090f5 + 0xff;
+    }
+    goto LAB_00528338;
+  }
+  uVar3 = (uVar5 & 0xffff) >> 8;
+  uVar6 = (uVar5 & 0xffff) >> 1 & 0x7f;
+  if (((uVar6 < DAT_004090ef) && (uVar3 != 0)) && (uVar3 != 0x3c)) {
+    uVar3 = uVar3 + 0xff;
+    uVar6 = uVar6 + 0x80;
+  }
+  uVar7 = (ushort)uVar6;
+  if (((uVar3 & 0xff) == 0x3a) || ((uVar3 & 0xff) == 0x76)) {
+    uVar5 = uVar3 + 0xff;
+    if (uVar6 < 0x80) {
+      uVar7 = uVar7 + 0x80;
+    }
+    else {
+LAB_00528260:
+      uVar7 = 0xff;
+    }
+  }
+  else if (((uVar3 & 0xff) == 0x3b) || (uVar5 = uVar3, (uVar3 & 0xff) == 0x77)) {
+    if (uVar6 < 0x41) {
+      uVar5 = uVar3 + 0xfe;
+      goto LAB_00528260;
+    }
+    uVar5 = uVar3 + 1;
+    if (0x77 < (uVar5 & 0xff)) {
+      uVar5 = uVar3 + 0x89;
+    }
+    uVar7 = 0;
+  }
+  if (0x39 < (uVar5 & 0xff)) {
+    uVar5 = uVar5 + 0xfe;
+  }
+LAB_00528338:
+  if (((governor_fuel_feature_flags & 2) == 0) || (1 < (byte)(&DAT_0005f14e)[cylinder_event_index]))
+  {
+    uVar2 = 10;
+  }
+  else {
+    uVar2 = (ushort)*(byte *)((int)&DAT_0053ac42 + (byte)(&DAT_0005f14e)[cylinder_event_index] + 2);
+  }
+  TPUA_CH10_PARAM0 = uVar2 << 0xc | (ushort)DAT_0040b877;
+  DAT_003041a2 = (ushort)((uVar5 & 0xff) << 8) | uVar7 & 0xff;
+  DAT_003041a6 = 0;
+  tpu_a_mcr.HSRR0 = 0x30;
+  return;
+}
+
+
+
+//
+// Function: cm848_tpu_configuration_setup @ 0x00528474
+//
+
+// Variables in this function: DAT_0040b877
+void cm848_tpu_configuration_setup(void)
+
+{
+  word wVar1;
+  
+  DAT_003fd0ae = 2;
+  wVar1 = tpu_a_mcr.CPR0;
+  tpu_a_mcr.CPR0 = wVar1 & 0xffcf;
+  wVar1 = tpu_a_mcr.CFSR1;
+  tpu_a_mcr.CFSR1 = wVar1 & 0xf0ff | 0x900;
+  wVar1 = tpu_a_mcr.HSQR0;
+  tpu_a_mcr.HSQR0 = wVar1 & 0xffcf;
+  tpu_a_mcr.HSRR0 = 0x30;
+  wVar1 = tpu_a_mcr.CIER;
+  tpu_a_mcr.CIER = wVar1 | 0x400;
+  TPUA_CH10_PARAM0 = DAT_0040b877 | 0xa000;
+  wVar1 = tpu_a_mcr.CPR0;
+  tpu_a_mcr.CPR0 = wVar1 & 0xffcf | 0x10;
+  return;
+}
+
+
+
+//
+// Function: FUN_00528508 @ 0x00528508
+//
+
+// Variables in this function: DAT_004090e8, DAT_004090f3, DAT_004090f5, DAT_0040b856, DAT_0040b877
+void FUN_00528508(int param_1,int param_2,undefined2 param_3,int param_4)
+
+{
+  uint uVar1;
+  uint uVar2;
+  ushort uVar3;
+  uint uVar4;
+  uint uVar5;
+  
+  uVar1 = (uint)(ushort)(&DAT_0005fbb2)[param_1] + param_2 + (int)DAT_0040b856;
+  if (0x77ff < (int)uVar1) {
+    uVar1 = uVar1 - 0x7800;
+  }
+  if ((int)uVar1 < 0) {
+    uVar1 = uVar1 + 0x7800;
+  }
+  if (DAT_0040b877 != '\x02') {
+    uVar1 = uVar1 & 0xffff;
+    uVar5 = (uint)DAT_004090f3;
+    if (uVar5 < uVar1) {
+      uVar2 = (int)(uint)DAT_004090e8 / (int)((crank_sync_tooth_count_cal & 0xff) - 1) & 0xffff;
+      uVar4 = (int)(uVar1 - uVar5) / (int)uVar2;
+      uVar3 = (short)((int)uVar4 >> 1) + (ushort)((int)uVar4 < 0 && (uVar4 & 1) != 0) & 0x7f;
+      uVar1 = ((int)(uVar1 - uVar5) >> 8) / (int)uVar2 + (uint)DAT_004090f5;
+      if ((int)(crank_sync_tooth_count_cal - 1) < (int)(uVar1 & 0xff)) {
+        uVar1 = uVar1 - (crank_sync_tooth_count_cal + 0xff);
+      }
+    }
+    else {
+      uVar2 = (int)(uint)DAT_004090e8 / (int)((crank_sync_tooth_count_cal & 0xff) - 1) & 0xffff;
+      uVar2 = (int)(uVar2 * 0x100 - (uVar5 - uVar1)) / (int)uVar2;
+      uVar3 = (short)((int)uVar2 >> 1) + (ushort)((int)uVar2 < 0 && (uVar2 & 1) != 0);
+      uVar1 = DAT_004090f5 + 0xff;
+    }
+    goto LAB_005286f0;
+  }
+  uVar5 = (uVar1 & 0xffff) >> 8;
+  uVar2 = (uVar1 & 0xffff) >> 1 & 0x7f;
+  if (((uVar2 < DAT_004090ef) && (uVar5 != 0)) && (uVar5 != 0x3c)) {
+    uVar5 = uVar5 + 0xff;
+    uVar2 = uVar2 + 0x80;
+  }
+  uVar3 = (ushort)uVar2;
+  if (((uVar5 & 0xff) == 0x3a) || ((uVar5 & 0xff) == 0x76)) {
+    uVar1 = uVar5 + 0xff;
+    if (uVar2 < 0x80) {
+      uVar3 = uVar3 + 0x80;
+    }
+    else {
+LAB_00528618:
+      uVar3 = 0xff;
+    }
+  }
+  else if (((uVar5 & 0xff) == 0x3b) || (uVar1 = uVar5, (uVar5 & 0xff) == 0x77)) {
+    if (uVar2 < 0x41) {
+      uVar1 = uVar5 + 0xfe;
+      goto LAB_00528618;
+    }
+    uVar1 = uVar5 + 1;
+    if (0x77 < (uVar1 & 0xff)) {
+      uVar1 = uVar5 + 0x89;
+    }
+    uVar3 = 0;
+  }
+  if (0x39 < (uVar1 & 0xff)) {
+    uVar1 = uVar1 + 0xfe;
+  }
+LAB_005286f0:
+  if ((((protection_enable_t_0040c050.mode_bits & 1) == 0) && (engine_shutdown_active_flag == 0)) ||
+     (engine_starting == 1)) {
+    *(ushort *)((int)&TPUA_CH5_PARAM0 + param_4) = (ushort)((uVar1 & 0xff) << 8) | uVar3 & 0xff;
+    param_3 = 0;
+  }
+  else {
+    *(ushort *)((int)&TPUA_CH5_PARAM0 + param_4) = (ushort)((uVar1 & 0xff) << 8) | uVar3 & 0xff;
+  }
+  *(undefined2 *)((int)&DAT_00304152 + param_4) = param_3;
+  return;
+}
+
+
+
+//
+// Function: FUN_0052877c @ 0x0052877c
+//
+
+// Variables in this function: DAT_0040b877
+void FUN_0052877c(int param_1)
+
+{
+  word wVar1;
+  uint uVar2;
+  uint uVar3;
+  uint uVar4;
+  int iVar5;
+  
+  crank_sync_period_snapshot = engine_timing_reference;
+  engine_load_input_b = engine_timing_reference;
+  uVar3 = 0;
+  if ((&DAT_0005f14e)[param_1] == '\0') {
+    uVar2 = (uint)cylinder_event_count_max;
+    if (((uVar2 == 8) || (uVar2 == 6)) &&
+       ((((int)(uint)protection_fault_status_a >> ((uint)(byte)(&DAT_0005f15e)[param_1] << 1 & 0x3e)
+         & 1U) != 0 ||
+        (((int)(uint)engine_position_diag_flags >>
+          ((uint)(byte)(&DAT_0005f15e)[param_1] << 1 & 0x3e) & 1U) != 0)))) {
+      uVar3 = (uint)DAT_004090c4;
+    }
+    wVar1 = TPUA_CH4_PARAM0;
+    iVar5 = param_1 + (uVar3 & 0xff);
+    TPUA_CH4_PARAM0 =
+         wVar1 & 0x8000 | (ushort)(byte)(&DAT_0005f156)[param_1] << 2 |
+         (ushort)(byte)(&DAT_0005f15e)[iVar5 - (iVar5 / (int)uVar2) * uVar2];
+    wVar1 = TPUA_CH2_PARAM4;
+    TPUA_CH2_PARAM4 = wVar1 & 0x8000 | (ushort)DAT_0040b877;
+    wVar1 = 0x30;
+  }
+  else {
+    if ((&DAT_0005f14e)[param_1] != '\x01') {
+      return;
+    }
+    uVar2 = (uint)cylinder_event_count_max;
+    if (((uVar2 == 8) || (uVar2 == 6)) &&
+       ((uVar4 = (uint)(byte)(&DAT_0005f15e)[param_1] * 2 + 1,
+        ((int)(uint)protection_fault_status_a >> (uVar4 & 0x3f) & 1U) != 0 ||
+        (((int)(uint)engine_position_diag_flags >> (uVar4 & 0x3f) & 1U) != 0)))) {
+      uVar3 = (uint)DAT_004090c4;
+    }
+    wVar1 = tpu_channel_control.PARAM0;
+    iVar5 = param_1 + (uVar3 & 0xff);
+    tpu_channel_control.PARAM0 =
+         wVar1 & 0x8000 | (ushort)(byte)(&DAT_0005f156)[param_1] << 2 |
+         (ushort)(byte)(&DAT_0005f15e)[iVar5 - (iVar5 / (int)uVar2) * uVar2];
+    wVar1 = TPUA_CH7_PARAM4;
+    TPUA_CH7_PARAM4 = wVar1 & 0x8000 | (ushort)DAT_0040b877;
+    wVar1 = 0xc000;
+  }
+  tpu_a_mcr.HSRR1 = wVar1;
+  return;
+}
+
+
+
+//
+// Function: FUN_00528978 @ 0x00528978
+//
+
+// Variables in this function: DAT_0040b856
+void FUN_00528978(void)
+
+{
+  DAT_0040b856 = cm848_dualAxisTableInterpolation(&DAT_003fd0b0,speed_setpoint_raw,0xf166);
+  return;
+}
+
+
+
+//
+// Function: cm848_tpuMiosOutput_loadCalibration @ 0x005289d4
+//
+
+/* loads TPU-A CH14/CH10 params + MIOS MPWMSM PWM outputs 16-19 from calibration values (no
+   threshold check despite old name); physical actuator per output unknown - see
+   docs/tpu_mios_channel_map.md. Renamed from cm848_protection_threshold_calib_check */
+
+// Variables in this function: DAT_0040b856
+void cm848_tpu_interrupt_flag_init(void)
+
+{
+  word wVar1;
+  
+  DAT_0040b856 = 0;
+  cm848_tpuMiosOutput_loadCalibration();
+  cm848_protectionFlagManager(0x2f);
+  cm848_protectionFlagManager(0x30);
+  wVar1 = tpu_a_mcr.CPR1;
+  tpu_a_mcr.CPR1 = wVar1 & 0xf3ff;
+  wVar1 = tpu_a_mcr.CFSR2;
+  tpu_a_mcr.CFSR2 = wVar1 & 0xff0f | 0x90;
+  wVar1 = tpu_a_mcr.HSQR1;
+  tpu_a_mcr.HSQR1 = wVar1 & 0xf3ff;
+  tpu_a_mcr.HSRR1 = 0xc00;
+  TPUA_CH5_PARAM0 = 0x5002;
+  wVar1 = tpu_a_mcr.CPR1;
+  tpu_a_mcr.CPR1 = wVar1 & 0xf3ff | 0xc00;
+  do {
+    wVar1 = tpu_a_mcr.HSRR1;
+  } while ((wVar1 & 0xc00) != 0);
+  wVar1 = tpu_a_mcr.CPR1;
+  tpu_a_mcr.CPR1 = wVar1 & 0xf3ff;
+  wVar1 = tpu_a_mcr.CPR1;
+  tpu_a_mcr.CPR1 = wVar1 & 0xffcf;
+  wVar1 = tpu_a_mcr.CFSR3;
+  tpu_a_mcr.CFSR3 = wVar1 & 0xf0ff | 0xb00;
+  wVar1 = tpu_a_mcr.HSQR1;
+  tpu_a_mcr.HSQR1 = wVar1 & 0xffcf | 0x10;
+  wVar1 = tpu_a_mcr.CIER;
+  tpu_a_mcr.CIER = wVar1 | 4;
+  TPUA_CH2_PARAM3 = 0x28;
+  wVar1 = TPUA_CH2_PARAM4;
+  TPUA_CH2_PARAM4 = wVar1 & 0x7fff;
+  wVar1 = tpu_a_mcr.CPR1;
+  tpu_a_mcr.CPR1 = wVar1 & 0xffcf | 0x20;
+  wVar1 = tpu_a_mcr.CPR1;
+  tpu_a_mcr.CPR1 = wVar1 & 0xff3f;
+  wVar1 = tpu_a_mcr.CFSR3;
+  tpu_a_mcr.CFSR3 = wVar1 & 0xfff | 0xa000;
+  wVar1 = tpu_a_mcr.HSQR1;
+  tpu_a_mcr.HSQR1 = wVar1 & 0xff3f | 0x40;
+  tpu_a_mcr.HSRR1 = 0xc0;
+  wVar1 = tpu_a_mcr.CPR1;
+  tpu_a_mcr.CPR1 = wVar1 & 0xff3f | 0xc0;
+  wVar1 = TPUA_CH4_PARAM0;
+  TPUA_CH4_PARAM0 = wVar1 & 0x7ffc | 0x8000;
+  wVar1 = tpu_a_mcr.CPR1;
+  tpu_a_mcr.CPR1 = wVar1 & 0xfcff;
+  wVar1 = tpu_a_mcr.CFSR2;
+  tpu_a_mcr.CFSR2 = wVar1 & 0xfff0 | 10;
+  wVar1 = tpu_a_mcr.HSQR1;
+  tpu_a_mcr.HSQR1 = wVar1 & 0xfcff;
+  tpu_a_mcr.HSRR1 = 0x300;
+  wVar1 = tpu_a_mcr.CPR1;
+  tpu_a_mcr.CPR1 = wVar1 & 0xfcff | 0x300;
+  wVar1 = tpu_a_mcr.CPR1;
+  tpu_a_mcr.CPR1 = wVar1 & 0x3fff;
+  wVar1 = tpu_a_mcr.CFSR2;
+  tpu_a_mcr.CFSR2 = wVar1 & 0xfff | 0xb000;
+  wVar1 = tpu_a_mcr.HSQR1;
+  tpu_a_mcr.HSQR1 = wVar1 & 0x3fff | 0x4000;
+  wVar1 = tpu_a_mcr.CIER;
+  tpu_a_mcr.CIER = wVar1 | 0x80;
+  TPUA_CH7_PARAM3 = 0x28;
+  wVar1 = TPUA_CH7_PARAM4;
+  TPUA_CH7_PARAM4 = wVar1 & 0x7fff;
+  wVar1 = tpu_a_mcr.CPR1;
+  tpu_a_mcr.CPR1 = wVar1 & 0x3fff | 0x8000;
+  wVar1 = tpu_a_mcr.CPR0;
+  tpu_a_mcr.CPR0 = wVar1 & 0xfffc;
+  wVar1 = tpu_a_mcr.CFSR1;
+  tpu_a_mcr.CFSR1 = wVar1 & 0xfff0 | 10;
+  wVar1 = tpu_a_mcr.HSQR0;
+  tpu_a_mcr.HSQR0 = wVar1 & 0xfffc | 1;
+  tpu_a_mcr.HSRR0 = 3;
+  wVar1 = tpu_a_mcr.CPR0;
+  tpu_a_mcr.CPR0 = wVar1 & 0xfffc | 3;
+  wVar1 = tpu_channel_control.PARAM0;
+  tpu_channel_control.PARAM0 = wVar1 & 0x7ffc | 0x8000;
+  wVar1 = tpu_a_mcr.CPR0;
+  tpu_a_mcr.CPR0 = wVar1 & 0xfff3;
+  wVar1 = tpu_a_mcr.CFSR1;
+  tpu_a_mcr.CFSR1 = wVar1 & 0xff0f | 0xa0;
+  wVar1 = tpu_a_mcr.HSQR0;
+  tpu_a_mcr.HSQR0 = wVar1 & 0xfff3;
+  tpu_a_mcr.HSRR0 = 0xc;
+  wVar1 = tpu_a_mcr.CPR0;
+  tpu_a_mcr.CPR0 = wVar1 & 0xfff3 | 0xc;
+  TPUA_CH5_PARAM0 = 0;
+  DAT_00304152 = 0;
+  DAT_00304154 = 0;
+  DAT_00304156 = 0;
+  DAT_00304158 = 0;
+  DAT_0030415a = 0;
+  DAT_0030415c = 0;
+  DAT_0030415e = 0;
+  wVar1 = tpu_a_mcr.CPR0;
+  tpu_a_mcr.CPR0 = wVar1 & 0xcfff;
+  wVar1 = tpu_a_mcr.CFSR0;
+  tpu_a_mcr.CFSR0 = wVar1 & 0xf0ff | 0x700;
+  wVar1 = tpu_a_mcr.HSQR0;
+  tpu_a_mcr.HSQR0 = wVar1 & 0xcfff;
+  tpu_a_mcr.HSRR0 = 0x3000;
+  TPUA_CH14_PARAM0._0_4_ = (uint)DAT_004090b2;
+  wVar1 = tpu_a_mcr.CPR0;
+  tpu_a_mcr.CPR0 = wVar1 & 0xcfff | 0x1000;
+  cm848_miosTimer16InitPeriod();
+  cm848_miosTimer16SetValue(DAT_004090aa);
+  cm848_miosTimer16ScaleByPercent(DAT_004090ac);
+  cm848_miosTimer17InitPeriod();
+  cm848_miosTimer17SetValue(DAT_004090ae);
+  cm848_miosTimer17ScaleByPercent(DAT_004090b0);
+  cm848_miosTimer18InitPeriod();
+  cm848_miosTimer18SetValue(DAT_004090b8);
+  cm848_miosTimer18ScaleByPercent(DAT_004090b4);
+  cm848_miosTimer19InitPeriod();
+  cm848_miosTimer19SetValue(DAT_004090ba);
+  cm848_miosTimer19ScaleByPercent(DAT_004090b6);
+  DAT_003fd0b0 = 2;
+  DAT_003fd0b2 = 2;
+  DAT_003fd0b4 = 2;
+  DAT_003fd0b6 = 2;
+  DAT_003fd0b8 = 0;
+  DAT_003fd0ba = 1;
+  if ((DAT_004090c8 < DAT_003fee98) && (DAT_004090c8 != 0xffff)) {
+    engine_diag_shadow_flags = engine_diag_shadow_flags | 0x8000;
+  }
+  if (DAT_003fee98 < 0xff) {
+    DAT_003fee98 = DAT_003fee98 + 1;
+  }
+  DAT_003fd0bb = 1;
+  return;
+}
+
+
+
+//
+// Function: cm848_initialization_calibration_state @ 0x0052903c
+//
+
+// Variables in this function: DAT_004090e8, DAT_004090f3, DAT_004090f5, DAT_0040b856, DAT_0040b877
+void engine_injectionAngle_computeLoadCh6(void)
+
+{
+  ushort uVar1;
+  short sVar2;
+  uint uVar3;
+  uint uVar4;
+  uint uVar5;
+  uint uVar6;
+  
+  sVar2 = injection_period_capture_a * -5;
+  DAT_0040b873 = cam_sync_period_reference_a * -5;
+  DAT_0040b871 = sVar2;
+  DAT_0040b87d = cam_sync_period_reference_b * -5;
+  DAT_0040b870 = (char)cylinder_event_index;
+  uVar1 = DAT_004090ed;
+  if (speed_setpoint_raw < DAT_004090e9) {
+    uVar1 = DAT_004090eb;
+  }
+  uVar6 = ((uint)uVar1 * (uint)cam_sync_position_high_byte * 0x100) / crank_period_accumulator &
+          0xffff;
+  if (cam_timing_reference_offset != 0) {
+    sVar2 = cam_sync_period_reference_a * -5;
+  }
+  DAT_003fd0bc = (((uint)(ushort)(&DAT_0005fbb2)[cylinder_event_index] + (int)DAT_0040b856) - uVar6)
+                 + (int)sVar2;
+  DAT_003fd0c0 = DAT_003fd0bc + uVar6;
+  if (0x77ff < DAT_003fd0c0) {
+    DAT_003fd0c0 = DAT_003fd0c0 + -0x7800;
+  }
+  if (DAT_003fd0c0 < 0) {
+    DAT_003fd0c0 = DAT_003fd0c0 + 0x7800;
+  }
+  if (0x3c00 < DAT_003fd0c0) {
+    DAT_003fd0c0 = DAT_003fd0c0 + -0x3c00;
+  }
+  if (DAT_003fd0c0 - 0x3b01U < 0x7f) {
+    DAT_003fd0bc = DAT_003fd0bc + (0x3b00 - DAT_003fd0c0);
+  }
+  if (0x77ff < (int)DAT_003fd0bc) {
+    DAT_003fd0bc = DAT_003fd0bc - 0x7800;
+  }
+  if ((int)DAT_003fd0bc < 0) {
+    DAT_003fd0bc = DAT_003fd0bc + 0x7800;
+  }
+  if (DAT_0040b877 != 2) {
+    uVar3 = (uint)DAT_004090f3;
+    uVar6 = DAT_003fd0bc & 0xffff;
+    if (uVar3 < uVar6) {
+      uVar4 = (int)(uint)DAT_004090e8 / (int)((crank_sync_tooth_count_cal & 0xff) - 1) & 0xffff;
+      uVar5 = (int)(uVar6 - uVar3) / (int)uVar4;
+      injection_timing_tooth_b_phase =
+           (char)((int)uVar5 >> 1) + ((int)uVar5 < 0 && (uVar5 & 1) != 0) & 0x7f;
+      uVar6 = ((int)(uVar6 - uVar3) >> 8) / (int)uVar4 + (uint)DAT_004090f5;
+      injection_timing_tooth_b = (byte)uVar6;
+      if ((int)(crank_sync_tooth_count_cal - 1) < (int)(uVar6 & 0xff)) {
+        injection_timing_tooth_b =
+             injection_timing_tooth_b - ((char)crank_sync_tooth_count_cal + -1);
+      }
+    }
+    else {
+      uVar4 = (int)(uint)DAT_004090e8 / (int)((crank_sync_tooth_count_cal & 0xff) - 1) & 0xffff;
+      uVar4 = (int)(uVar4 * 0x100 - (uVar3 - uVar6)) / (int)uVar4;
+      injection_timing_tooth_b_phase =
+           (char)((int)uVar4 >> 1) + ((int)uVar4 < 0 && (uVar4 & 1) != 0);
+      injection_timing_tooth_b = DAT_004090f5 - 1;
+    }
+    goto LAB_005295d8;
+  }
+  uVar6 = DAT_003fd0bc & 0xffff;
+  injection_timing_tooth_b = (byte)(uVar6 >> 8);
+  uVar3 = uVar6 >> 1 & 0x7f;
+  injection_timing_tooth_b_phase = (byte)uVar3;
+  if (((uVar3 < DAT_004090ef) && (uVar6 >> 8 != 0)) && (uVar6 >> 8 != 0x3c)) {
+    injection_timing_tooth_b = injection_timing_tooth_b - 1;
+    injection_timing_tooth_b_phase = injection_timing_tooth_b_phase + 0x80;
+  }
+  if ((injection_timing_tooth_b == 0x3a) || (injection_timing_tooth_b == 0x76)) {
+    injection_timing_tooth_b = injection_timing_tooth_b - 1;
+    if (0x7f < injection_timing_tooth_b_phase) goto LAB_005294e4;
+    injection_timing_tooth_b_phase = injection_timing_tooth_b_phase + 0x80;
+  }
+  else if ((injection_timing_tooth_b == 0x3b) || (injection_timing_tooth_b == 0x77)) {
+    injection_timing_tooth_b = injection_timing_tooth_b - 2;
+LAB_005294e4:
+    injection_timing_tooth_b_phase = 0xff;
+  }
+  if (0x39 < injection_timing_tooth_b) {
+    injection_timing_tooth_b = injection_timing_tooth_b - 2;
+  }
+LAB_005295d8:
+  TPUA_CH6_PARAM0 = DAT_0040b877 | 0x6000;
+  DAT_00304162 = CONCAT11(injection_timing_tooth_b,injection_timing_tooth_b_phase);
+  DAT_00304166 = 0;
+  tpu_a_mcr.HSRR1 = 0x3000;
+  injection_angle_sequence_state_prev = injection_angle_sequence_state;
+  injection_angle_sequence_state = 2;
+  return;
+}
+
+
+
+//
+// Function: engine_injectionAngle_schedule_crankValid @ 0x00529994
+//
+
+/* injection-angle TPU-ch6 scheduler state machine (injection_angle_sequence_state) for the
+   crank-position-valid path; renamed from cm848_protection_condition_eval_set1 - does TPU injection
+   timing, NOT protection */
+
+// Variables in this function: DAT_004090e8, DAT_004090f3, DAT_004090f5, DAT_0040b877
+void engine_injectionAngle_schedule_crankValid(void)
+
+{
+  uint uVar1;
+  int iVar2;
+  uint uVar3;
+  uint uVar4;
+  uint uVar5;
+  uint uVar6;
+  
+  uVar5 = (uint)cylinder_event_index;
+  DAT_0040b877 = 0x12;
+  if (injection_angle_sequence_state == 2) {
+    engine_injectionAngle_tpuUpdate();
+    if (speed_setpoint_raw < DAT_004090f1) {
+      injection_angle_sequence_state_prev = injection_angle_sequence_state;
+      injection_angle_sequence_state = 4;
+      uVar5 = uVar5 + 1;
+    }
+    else {
+      uVar1 = (uint)DAT_004090f3;
+      uVar6 = DAT_003fd0bc & 0xffff;
+      if (uVar1 < uVar6) {
+        uVar4 = (int)(uint)DAT_004090e8 / (int)((crank_sync_tooth_count_cal & 0xff) - 1) & 0xffff;
+        uVar3 = (int)(uVar6 - uVar1) / (int)uVar4;
+        injection_timing_tooth_b_phase =
+             (char)((int)uVar3 >> 1) + ((int)uVar3 < 0 && (uVar3 & 1) != 0) & 0x7f;
+        uVar6 = ((int)(uVar6 - uVar1) >> 8) / (int)uVar4 + (uint)DAT_004090f5;
+        injection_timing_tooth_b = (byte)uVar6;
+        if ((int)(crank_sync_tooth_count_cal - 1) < (int)(uVar6 & 0xff)) {
+          injection_timing_tooth_b =
+               injection_timing_tooth_b - ((char)crank_sync_tooth_count_cal + -1);
+        }
+      }
+      else {
+        uVar4 = (int)(uint)DAT_004090e8 / (int)((crank_sync_tooth_count_cal & 0xff) - 1) & 0xffff;
+        uVar4 = (int)(uVar4 * 0x100 - (uVar1 - uVar6)) / (int)uVar4;
+        injection_timing_tooth_b_phase =
+             (char)((int)uVar4 >> 1) + ((int)uVar4 < 0 && (uVar4 & 1) != 0);
+        injection_timing_tooth_b = DAT_004090f5 - 1;
+      }
+      TPUA_CH6_PARAM0 = DAT_0040b877 | 0x6000;
+      DAT_00304162 = CONCAT11(injection_timing_tooth_b,injection_timing_tooth_b_phase);
+      DAT_00304166 = 0;
+      tpu_a_mcr.HSRR1 = 0x3000;
+      injection_angle_sequence_state_prev = injection_angle_sequence_state;
+      injection_angle_sequence_state = 4;
+    }
+  }
+  if (injection_angle_sequence_state == 8) {
+    if (speed_setpoint_raw < DAT_004090f1) {
+      injection_angle_sequence_state_prev = injection_angle_sequence_state;
+      injection_angle_sequence_state = 4;
+      uVar5 = uVar5 + 1;
+    }
+    else {
+      engine_injectionAngle_tpuUpdate();
+    }
+  }
+  if ((injection_angle_sequence_state == 1) || (injection_angle_sequence_state == 4)) {
+    uVar6 = (uint)DAT_004090f0 + cam_sync_position_high_byte * uVar5;
+    injection_timing_tooth = (byte)uVar6;
+    uVar5 = (uint)DAT_004090e8;
+    if (uVar5 <= (uVar6 & 0xff)) {
+      injection_timing_tooth = injection_timing_tooth - DAT_004090e8;
+    }
+    uVar6 = (uint)DAT_004090f3;
+    uVar1 = (uint)injection_timing_tooth * 0x100;
+    if (uVar6 < uVar1) {
+      iVar2 = uVar1 - uVar6;
+      uVar5 = (int)uVar5 / (int)((crank_sync_tooth_count_cal & 0xff) - 1) & 0xffff;
+      uVar6 = iVar2 / (int)uVar5;
+      injection_timing_tooth_phase =
+           (char)((int)uVar6 >> 1) + ((int)uVar6 < 0 && (uVar6 & 1) != 0) & 0x7f;
+      uVar5 = (iVar2 >> 8) / (int)uVar5 + (uint)DAT_004090f5;
+      injection_timing_tooth = (byte)uVar5;
+      if ((int)(crank_sync_tooth_count_cal - 1) < (int)(uVar5 & 0xff)) {
+        injection_timing_tooth = injection_timing_tooth - ((char)crank_sync_tooth_count_cal + -1);
+      }
+    }
+    else {
+      uVar5 = (int)uVar5 / (int)((crank_sync_tooth_count_cal & 0xff) - 1) & 0xffff;
+      uVar5 = (int)(uVar5 * 0x100 - (uVar6 + (uint)injection_timing_tooth * -0x100)) / (int)uVar5;
+      injection_timing_tooth_phase = (char)((int)uVar5 >> 1) + ((int)uVar5 < 0 && (uVar5 & 1) != 0);
+      injection_timing_tooth = DAT_004090f5 - 1;
+    }
+    TPUA_CH6_PARAM0 = DAT_0040b877 | 0x6000;
+    DAT_00304162 = CONCAT11(injection_timing_tooth,injection_timing_tooth_phase);
+    DAT_00304166 = 0;
+    tpu_a_mcr.HSRR1 = 0x3000;
+    injection_angle_sequence_state_prev = injection_angle_sequence_state;
+    injection_angle_sequence_state = 4;
+  }
+  return;
+}
+
+
+
+//
+// Function: engine_injectionAngle_schedule_crankInvalid @ 0x00529d1c
+//
+
+/* injection-angle TPU-ch6 load for the crank-position-invalid path; renamed from
+   cm848_protection_condition_eval_set2 - does TPU injection timing, NOT protection */
+
+// Variables in this function: DAT_004090e8, DAT_0040b877
+void engine_injectionAngle_schedule_crankInvalid(void)
+
+{
+  byte bVar1;
+  ushort uVar2;
+  
+  DAT_0040b877 = 2;
+  uVar2 = (ushort)DAT_004090f0 + cam_sync_position_high_byte * cylinder_event_index;
+  injection_timing_tooth = (byte)uVar2;
+  injection_timing_tooth_phase = 0;
+  if ((ushort)DAT_004090e8 <= (uVar2 & 0xff)) {
+    injection_timing_tooth = injection_timing_tooth - DAT_004090e8;
+  }
+  if (((DAT_004090ef != '\0') && (injection_timing_tooth != 0)) && (injection_timing_tooth != 0x3c))
+  {
+    injection_timing_tooth = injection_timing_tooth - 1;
+    injection_timing_tooth_phase = 0x80;
+  }
+  if ((injection_timing_tooth == 0x3a) || (injection_timing_tooth == 0x76)) {
+    injection_timing_tooth = injection_timing_tooth - 1;
+    if (injection_timing_tooth_phase < 0x80) {
+      injection_timing_tooth_phase = injection_timing_tooth_phase + 0x80;
+      goto LAB_00529e34;
+    }
+  }
+  else {
+    if ((injection_timing_tooth != 0x3b) && (injection_timing_tooth != 0x77)) goto LAB_00529e34;
+    if (0x40 < injection_timing_tooth_phase) {
+      bVar1 = injection_timing_tooth + 1;
+      if (0x77 < (byte)(injection_timing_tooth + 1)) {
+        bVar1 = injection_timing_tooth + 0x89;
+      }
+      injection_timing_tooth = bVar1;
+      injection_timing_tooth_phase = 0;
+      goto LAB_00529e34;
+    }
+    injection_timing_tooth = injection_timing_tooth - 2;
+  }
+  injection_timing_tooth_phase = 0xff;
+LAB_00529e34:
+  if (0x39 < injection_timing_tooth) {
+    injection_timing_tooth = injection_timing_tooth - 2;
+  }
+  TPUA_CH6_PARAM0 = 0x6002;
+  DAT_00304162 = CONCAT11(injection_timing_tooth,injection_timing_tooth_phase);
+  DAT_00304166 = 0;
+  tpu_a_mcr.HSRR1 = 0x3000;
+  injection_angle_sequence_state_prev = injection_angle_sequence_state;
+  injection_angle_sequence_state = 1;
+  return;
+}
+
+
+
+//
+// Function: cm848_sensor_diagnostic_flag_update @ 0x00529ea4
+//
+
+// Variables in this function: DAT_004090e8, DAT_0040b877
+void cm848_sensor_diagnostic_flag_update(void)
+
+{
+  word wVar1;
+  
+  injection_angle_sequence_state = 1;
+  DAT_0040b877 = 2;
+  wVar1 = tpu_a_mcr.CPR1;
+  tpu_a_mcr.CPR1 = wVar1 & 0xcfff;
+  wVar1 = tpu_a_mcr.CFSR2;
+  tpu_a_mcr.CFSR2 = wVar1 & 0xf0ff | 0x900;
+  wVar1 = tpu_a_mcr.HSQR1;
+  tpu_a_mcr.HSQR1 = wVar1 & 0xcfff;
+  tpu_a_mcr.HSRR1 = 0x3000;
+  wVar1 = tpu_a_mcr.CIER;
+  tpu_a_mcr.CIER = wVar1 | 0x40;
+  TPUA_CH6_PARAM0 = 0x6002;
+  wVar1 = tpu_a_mcr.CPR1;
+  tpu_a_mcr.CPR1 = wVar1 & 0xcfff | 0x1000;
+  cam_sync_position_high_byte = DAT_004090e8 / cylinder_event_count_max;
+  return;
+}
+
+
+
+//
+// Function: cm848_sensor_channel_state_load @ 0x00529f58
+//
+

@@ -4755,7 +4755,7 @@ address,name,type,comment
 0x0040afd2,governor_speed_temp_corrected,word,
 0x0040afd4,governor_speed_reference_uncorrected,word,
 0x0040afd6,boost_control_mode,word,
-0x0040afd8,PTR_DAT_0040afd8,pointer,
+0x0040afd8,fuel_demand_mode_flags_working,word,governor correction mode flags; bit-tested to dispatch fuel demand source (sth=word; was PTR_DAT)
 0x0040afe6,fuel_demand_quantity,word,
 0x0040affe,governor_proportional_gain,word,
 0x0040b000,engine_operating_mode,word,
@@ -5573,7 +5573,7 @@ address,name,type,comment
 0x0040be2a,sensor_channel69_fault_status,word,
 0x0040be2c,sensor_channel109_fault_status,word,
 0x0040be2e,protection_fault_condition_value,word,
-0x0040be36,PTR_DAT_0040be36,pointer,
+0x0040be36,fuel_smoke_limit_mode,word,smoke limit mode 0/1/2 off/EGR/boost (lha=word; was PTR_DAT)
 0x0040be3a,sensor_channel7_fault_status,word,
 0x0040be3e,sensor_channel71_fault_status,word,
 0x0040be42,sensor_channel8_fault_status,word,
@@ -5765,3 +5765,90 @@ address,name,type,comment
 #   [15:14] channel H — protection_enable system_enable_bits bit 7
 #   [17:16] channel I — protection_enable system_enable_bits bit 3
 #   [19:18] channel J — governor_speed_request_state == 1
+0x0040b2f4,tpu_rpm_ema_filtered,word,EMA-filtered TPU engine RPM; RPM axis into governor/fuel tables
+0x0040b1e7,protection_event26_condition_code,byte,priority condition code 1-15 for protection event 0x26
+0x0040b1e6,protection_event26_condition_code_b,byte,class-B condition code for protection event 0x26 (enable_byte_34 & 0x40 path)
+0x004088de,tpu_rpm_crank_teeth_isb,word,ISB crank teeth count in RPM formula (sync==0x13ec path)
+0x0040b9b4,governor_setpoint_rpm_deviation_count,word,cycles RPM out of bounds at governor setpoint; caps then sets protection bit 0x80
+0x004088d9,tpu_rpm_timer_prescaler,byte,timer prescaler denominator in TPU RPM formula
+0x0040b2f8,tpu_rpm_raw_period,dword,raw 32-bit TPU period teeth*60e6/ticks/prescaler pre-EMA (stw=dword)
+0x0040b9aa,rpm_camSync_window_mid,word,middle sample of 3-sample cam-sync RPM sliding window
+0x0040b2c4,egr_coolant_temp_filtered,word,filtered coolant temp; input to EGR warmup phase thresholds
+0x0040b29a,egr_warmup_phase_state,word,EGR warmup state machine 0-3 (off/ramp/setpoint/override)
+0x0040b2a4,egr_governor_speed_floor,word,EGR-phase speed floor applied to governor_speed_reference
+0x0040b2ae,egr_governor_speed_target,dword,persistent EGR speed PID output clamped to min/max cal (stw=dword)
+0x0040b2aa,egr_governor_speed_integral,dword,EGR speed PID 32-bit integral accumulator (lwz=dword)
+0x0040b292,egr_fuel_demand_speed_floor,word,fuel-quantity-based governor speed floor (limit_source=2)
+0x0040b296,egr_load_speed_floor,word,load-based rate-limited governor speed floor (limit_source=3)
+0x0040b2a2,egr_rpm_proportional_speed_limit,word,RPM-proportional governor speed ceiling (limit_source=7)
+0x0040b29c,cold_start_mode_active_flag,word,cold-start mode active 0/1; gates load-speed-floor and integral reset
+0x0040b2a8,cold_start_fuel_demand_mode_code,word,cold-start fuel demand mode selector 0-11; 8=normal governor PID
+0x0040b2bc,governor_fuel_demand_i_term,word,governor PID integral term (integrator/0x5000) clamped
+0x0040b2c0,cold_start_fuel_demand_output,word,cold-start fuel demand output -> injected demand 003fcdf6
+0x0040b2c2,cold_start_injection_protection_flag,word,cranking injection protection active; gates fuel mode 9
+0x00408862,egr_governor_speed_base,word,EGR base governor speed setpoint (ROM-sourced working RAM)
+0x00408868,egr_governor_speed_ramp_target,word,EGR governor speed ramp upper target (ROM-sourced)
+0x0040af06,fault_aging_triggered_flag,byte,set after dwell at governor setpoint; triggers fault aging/removal (lbz=byte)
+0x0040af0c,fault_ring_handled_bitmap,byte,22-byte fault-handled bitmask 1 bit/fault; lbzx/stb byte array
+0x0040b962,injection_timing_arb_component_4,word,injection timing arb component (winner code 4; rpm*rpm product)
+0x0040b968,injection_timing_arb_component_3,word,injection timing arb component (winner code 3; extended-protection mode)
+0x0040b96e,injection_timing_offset_boost_blended,word,boost-map-blended injection timing offset (winner 1)
+0x0040b970,injection_timing_offset_coolant_trim,word,coolant-temp injection timing correction (winner 2)
+0x0040b97e,injection_timing_arb_component_5,word,injection timing arb component (winner code 5; crank-start mode)
+0x0040b984,injection_timing_offset_arbitrated,word,final arbitrated injection timing offset
+0x0040b696,cruise_deadband_active_flag,word,cruise fuel-demand within deadband 0/1
+0x0040b69e,cruise_zone_transition_flag,word,cruise zone-index changed this frame 0/1
+0x0040b6b0,cruise_ramp_rate_b_working,word,cruise ramp rate B (normal/protection select)
+0x0040b6b6,cruise_ramp_rate_c_working,word,cruise ramp rate C (from rampScale_calc)
+0x0040b6bc,cruise_ramp_rate_d_working,word,cruise ramp rate D (normal/protection select)
+0x0040b6be,cruise_speed_offset_latched,word,latched cruise speed offset; upper deadband bound
+0x0040b6c0,governor_cruise_zone_table_ptr,pointer,ptr to active cruise zone PID coeff block (stw=dword ptr)
+0x0040b6c8,governor_cruise_speed_error_working,word,cruise speed error working value (signed)
+0x0040b6ca,governor_cruise_speed_error_net,word,net cruise speed error clamped +/-0xa00; feeds torque adj
+0x0040b6de,governor_cruise_fuel_demand_delta,word,cruise fuel demand feedforward delta clamped +/-0xb80
+0x00408dfc,governor_cruise_fuel_demand_setpoint,word,cruise fuel-demand deadband center (read-only working RAM)
+0x00408e0c,cruise_speed_offset_default,word,default cruise speed offset (read-only)
+0x00408e68,governor_cruise_fuel_demand_min,word,cruise fuel-demand floor (read-only)
+0x0040afe8,egr_fuel_pressure_ratio,word,EGR/boost pressure ratio; drives integrator direction
+0x0040afea,egr_fuel_pressure_integrator,word,EGR pressure-ratio integrator; drives smoke-limit mode
+0x0040b3fd,j1939_msg_slot_e_command,byte,J1939 slot-E auth/EEPROM-write command byte (0x80/0/1/2)
+0x0040b51a,j1939_governor_auth_status_flags,byte,J1939 governor auth status bit flags (byte)
+0x0040b9a6,engine_cssc_coolant_state,word,CSSC coolant-thermostat diagnostic state 0-6
+0x0040c270,diag_dm1_buffer_start_ptr,pointer,DM1 diagnostic ring buffer start pointer
+0x0040c274,diag_dm1_buffer_end_ptr,pointer,DM1 diagnostic ring buffer end pointer
+0x0040c284,diag_dm1_buffer_fill_state,word,DM1 ring buffer fill state 0/1/2 idle/fill/overflow
+0x004090e8,injection_timing_tooth_count,byte,total tooth count for injection timing modulo-wrap (read-only)
+0x004090f3,injection_timing_angle_threshold,word,lower angular-tick boundary for tooth conversion (read-only)
+0x004090f5,injection_timing_tooth_base_index,byte,base tooth index at injection window start (read-only)
+0x0040b856,injection_timing_table_offset,word,injection timing table offset added to per-cyl base angle
+0x0040b877,injection_tpu_timing_mode,byte,TPU timing mode code ORed into injector channel params (2/0x12)
+0x0040b1a0,calibBlock1_adaptive_trim_working,word,working value of adaptive fuel-trim (calibBlock1)
+0x0040b32c,calibBlock1_eeprom_write_pending_flag,word,calibBlock1 trim EEPROM-write pending 0/1
+0x0040b52e,protection_fuel_demand_limit_ramp,word,protection fuel-demand ramp-down ceiling
+0x0040b530,protection_fuel_demand_debounce_count,word,protection fuel-demand limiting debounce counter
+0x0040b638,fuel_consumption_tick_increment,dword,per-loop overflow count advancing J1939 fuel counters (stw=dword)
+0x0040b63c,injection_timing_period_delta,dword,per-injection timing delta into fuel tracking (stw=dword)
+0x0040b788,crank_period_running_total,dword,free-running crank period accumulator; engine timestamp (lwz=dword)
+0x0040ba48,cssc_elapsed_time_delta,word,CSSC elapsed scaled engine time delta
+0x0040ba52,cssc_coolant_temp_snapshot,word,CSSC coolant temp at monitor start
+0x0040ba56,cssc_oiltemp_baseline,word,CSSC oil-proxy temp baseline at start
+0x0040ba58,cssc_warmup_budget_remaining,word,CSSC warmup quality countdown
+0x0040ba60,cssc_conditioning_cycle_count,word,CSSC warmup cycle count (gov mode 0xb)
+0x0040b840,injection_timing_aux_output,word,final arbitrated aux injection-timing limit
+0x0040ba30,cam_sync_fueltemp_validation_state,word,cam-sync fuel-temp channel validation state 1-4
+0x0040a02a,sensor_channel_ratio_scale,word,sensor-channel normalization scale factor (read-only)
+0x0040b2cc,governor_speed_decel_target,word,governor decel-entry speed setpoint
+0x0040ba34,cam_sync_oiltemp_validation_state,word,cam-sync oil-temp channel validation state 1-4
+0x0040ba32,cam_sync_crossval_b_state,word,cam-sync cross-validation channel 9 state 1-4
+0x0040b2c8,governor_speed_overspeed_ramp_step,word,governor overspeed/decel ramp working register (limit_source=12)
+0x0040ba42,cam_sync_startup_cycle_counter,word,cam-sync cranking-cycle accumulator for startup delay
+0x0040b844,injection_timing_aux_load_limit,word,load*rpm aux injection-timing component clamped +/-0x400
+0x0040b852,injection_timing_aux_rpm_limit,word,oilpressure/rpm aux injection-timing component clamped +/-0x400
+0x00409f96,cam_sync_sensor_mismatch_threshold,word,max allowed cross-validated sensor pair delta (read-only)
+0x0040b2ce,governor_speed_ramp_upper_step,word,governor speed up-ramp working register (limit_source=15)
+0x0040b2ca,governor_speed_ramp_lower_step,word,governor speed down-ramp working register (limit_source=14)
+0x0040b33e,iat_protection_derate_level,word,IAT protection derate level 0-6 from table
+0x0040b340,iat_protection_solenoid_phase,word,IAT protection solenoid alternating phase 1/2
+0x0040b344,iat_protection_shutdown_reason,word,IAT protection shutdown reason code 0-8
+0x0040b34a,iat_protection_oilTemp_input,word,selected oil-temp input for IAT protection calcs
+0x0040b9ea,iat_protection_remaining_derate_steps,word,countdown of remaining IAT fuel-derate steps

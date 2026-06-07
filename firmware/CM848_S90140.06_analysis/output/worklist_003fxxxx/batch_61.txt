@@ -1,0 +1,79 @@
+=== VARIABLES TO NAME ===
+0x003fcf74  (5 references)
+0x003fcf76  (6 references)
+0x003fcf78  (6 references)
+0x003fcf7a  (5 references)
+
+Total: 4 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fcf74, DAT_003fcf76, DAT_003fcf78, DAT_003fcf7a
+void protectionVoltageTimeoutControl(void)
+
+{
+  if ((DAT_003fcf74 != 0) && (DAT_003fcf74 = DAT_003fcf74 + -1, DAT_003fcf74 == 0)) {
+    protection_voltage_active_flag = 0;
+  }
+  if ((DAT_003fcf76 != 0) &&
+     ((DAT_003fcf76 = DAT_003fcf76 + -1, DAT_003fcf76 == 0 || (cold_start_phase != CSP_CRANKING))))
+  {
+    if (DAT_0040c0c9 == '\x05') {
+      DAT_0040c0c9 = '\0';
+    }
+    DAT_003fcf76 = 0;
+  }
+  if ((DAT_003fcf78 != 0) &&
+     ((DAT_003fcf78 = DAT_003fcf78 + -1, DAT_003fcf78 == 0 || (engine_sync_confirmation_state == 2))
+     )) {
+    cylinder_diag_active_flag = 0;
+    DAT_003fcf78 = 0;
+  }
+  if ((DAT_003fcf7a != 0) &&
+     ((DAT_003fcf7a = DAT_003fcf7a + -1, DAT_003fcf7a == 0 || (governor_speed_limit_mode == 2)))) {
+    governor_speed_limit_enable_flag = 0;
+  }
+  if ((DAT_003fcf7c != 0) && (DAT_003fcf7c = DAT_003fcf7c + -1, DAT_003fcf7c == 0)) {
+    protection_status_flags_t_0040b0f2.output_flags =
+         protection_status_flags_t_0040b0f2.output_flags & 0xfe;
+  }
+  if ((DAT_003fcf7e != 0) && (DAT_003fcf7e = DAT_003fcf7e + -1, DAT_003fcf7e == 0)) {
+    protection_status_flags_t_0040b0f2.output_flags =
+         protection_status_flags_t_0040b0f2.output_flags & 0xfc;
+    if (DAT_0040c0a6 == '\x05') {
+      DAT_0040c0a6 = '\0';
+    }
+  }
+  if ((DAT_003fcf80 != 0) && (DAT_003fcf80 = DAT_003fcf80 + -1, DAT_003fcf80 == 0)) {
+    protection_status_flags_t_0040b0f2.output_flags =
+         protection_status_flags_t_0040b0f2.output_flags & 0xfa;
+    if (DAT_0040c0a5 == '\x05') {
+      DAT_0040c0a5 = '\0';
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: initProtectionVoltageTimer @ 0x005216cc
+//
+
+// Variables in this function: DAT_003fcf74, DAT_003fcf76, DAT_003fcf78, DAT_003fcf7a
+void initProtectionVoltageTimer(void)
+
+{
+  DAT_003fcf74 = 0;
+  DAT_003fcf76 = 0;
+  DAT_003fcf78 = 0;
+  DAT_003fcf7a = 0;
+  return;
+}
+
+
+
+//
+// Function: cm848_protection_cooldownTimer_decrement @ 0x00521e40
+//
+

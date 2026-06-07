@@ -1,0 +1,148 @@
+=== VARIABLES TO NAME ===
+0x003fe9b2  (9 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fe9b2
+void hpcr_calibration_group25_load_cont(void)
+
+{
+  if ((governor_fuel_active_flag == 1) || ((protection_enable_t_0040c050.mode_bits & 8) != 0)) {
+    DAT_0040b9c8 = 0;
+    DAT_003fd1e2 = 0;
+  }
+  else if (DAT_00064302 < DAT_003fd1e2) {
+    DAT_0040b9c8 = 1;
+  }
+  else {
+    DAT_003fd1e2 = DAT_003fd1e2 + 1;
+  }
+  if ((cold_start_phase == CSP_ABOVE_RPM_TRIGGER) || (cold_start_phase == CSP_CRANKING)) {
+    DAT_0040b9ce = DAT_0006430c;
+  }
+  else if (DAT_0040b9ce == 0) {
+    if ((DAT_00064304 < sensor_readings_t_0040baf2.battery_voltage) &&
+       (sensor_readings_t_0040baf2.battery_voltage < DAT_00064306)) {
+      DAT_0040b9ca = 1;
+    }
+    else {
+      DAT_0040b9ca = 0;
+    }
+    if ((DAT_00064308 < sensor_readings_t_0040baf2.battery_voltage) &&
+       (sensor_readings_t_0040baf2.battery_voltage < DAT_0006430a)) {
+      fault_enable_override_flag = 1;
+    }
+    else {
+      fault_enable_override_flag = 0;
+    }
+    if (sensor_readings_t_0040baf2.battery_voltage < DAT_00064304) {
+      DAT_003fe9b2 = DAT_003fe9b2 | 0x4000;
+    }
+    else {
+      DAT_003fe9b2 = DAT_003fe9b2 & 0xbfff;
+      DAT_003fea16 = DAT_003fea16 & 0xbfff;
+    }
+    if (sensor_readings_t_0040baf2.battery_voltage < DAT_00064308) {
+      DAT_003fe9b2 = DAT_003fe9b2 | 0x2000;
+    }
+    else {
+      DAT_003fe9b2 = DAT_003fe9b2 & 0xdfff;
+      DAT_003fea16 = DAT_003fea16 & 0xdfff;
+    }
+  }
+  else {
+    DAT_0040b9ce = DAT_0040b9ce + -1;
+  }
+  if ((((cold_start_phase == CSP_AT_GOVERNOR_SETPOINT) ||
+       (cold_start_phase == CSP_SETPOINT_UNDERRUN)) || (cold_start_phase == CSP_FUEL_MODE_SWITCH))
+     || (cold_start_phase == CSP_SUSPENDED)) {
+    DAT_0040b9cc = 1;
+  }
+  else {
+    DAT_0040b9cc = 0;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_initialization_group25_state_cont @ 0x005318e8
+//
+
+// Variables in this function: DAT_003fe9b2
+void cm848_calibration_group27_load(void)
+
+{
+  uint uVar1;
+  char cVar4;
+  ushort uVar3;
+  uint uVar2;
+  undefined2 local_90;
+  ushort local_8c;
+  ushort local_84 [32];
+  ushort local_44 [32];
+  
+  if ((governor_fuel_active_flag == 0) && ((protection_enable_t_0040c050.mode_bits & 8) == 0)) {
+    cVar4 = '\0';
+  }
+  else {
+    cVar4 = '\x01';
+  }
+  local_90 = CONCAT11(cold_start_phase == CSP_SUSPENDED |
+                      (cold_start_phase == CSP_FUEL_MODE_SWITCH) << 1 |
+                      (cold_start_phase == CSP_AT_GOVERNOR_SETPOINT) << 2 |
+                      (cold_start_phase == CSP_ABOVE_RPM_TRIGGER) << 3 |
+                      (cold_start_phase == CSP_CRANKING) << 4 |
+                      cVar4 << 5 | (DAT_0040b9c8 != 0) << 6 | (DAT_0040b9ca != '\0') << 7,
+                      (DAT_0040b9cc != 0) << 1 |
+                      (((uint)fault_management_ring_read_ptr & 1) != 0) << 2 |
+                      ((DAT_003fea08 & 0x2000) != 0) << 3 |
+                      ((protection_config_flags & 0x20) != 0) << 4 |
+                      (cold_start_phase == CSP_ENGINE_STANDBY) << 5 |
+                      (cold_start_phase == CSP_SETPOINT_UNDERRUN) << 6 |
+                      (cold_start_phase == CSP_ABOVE_RPM_VIA_EVENTS) << 7 | (byte)local_90 & 1);
+  local_8c = CONCAT11(((DAT_003fe9b2 & 0x4000) != 0) << 7 | local_8c._0_1_ & 0x7f,
+                      (undefined1)local_8c);
+  uVar3 = 0;
+  do {
+    local_84[uVar3] = local_90 & (&DAT_0006430e)[uVar3];
+    uVar3 = uVar3 + 1;
+  } while (uVar3 < 0x20);
+  uVar3 = 0;
+  do {
+    local_44[uVar3] = ~local_8c & *(ushort *)((uint)uVar3 * 2 + 0x6434e);
+    uVar3 = uVar3 + 1;
+  } while (uVar3 < 0x20);
+  uVar2 = 0;
+  do {
+    uVar1 = 1 << (uVar2 & 0x1f);
+    if (((boost_fuel_bypass_flags & uVar1) == 0) &&
+       (local_44[uVar2 & 0xffff] == (&DAT_000643ce)[uVar2 & 0xffff])) {
+      boost_fuel_bypass_flags = boost_fuel_bypass_flags | uVar1;
+    }
+    uVar2 = uVar2 + 1;
+  } while ((uVar2 & 0xffff) < 0x20);
+  uVar2 = 0;
+  do {
+    if (local_84[uVar2 & 0xffff] == (&DAT_0006438e)[uVar2 & 0xffff]) {
+      protection_feature_status_flags = protection_feature_status_flags | 1 << (uVar2 & 0x1f);
+    }
+    else {
+      protection_feature_status_flags = protection_feature_status_flags & ~(1 << (uVar2 & 0x1f));
+    }
+    uVar2 = uVar2 + 1;
+  } while ((uVar2 & 0xffff) < 0x20);
+  cm848_processMemoryScanValidation();
+  protection_feature_status_flags = protection_feature_status_flags & fault_mask_inverted;
+  return;
+}
+
+
+
+//
+// Function: cm848_clearProtectionFlags @ 0x00531cf8
+//
+

@@ -1,0 +1,67 @@
+=== VARIABLES TO NAME ===
+0x003fcdce  (6 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fcdce
+void engine_sensor_check_overheat(void)
+
+{
+  uint *puVar1;
+  ushort *puVar2;
+  int iVar3;
+  
+  iVar3 = 1;
+  puVar1 = &DAT_0040b240;
+  puVar2 = &DAT_0040877e;
+  do {
+    puVar1 = puVar1 + 1;
+    puVar2 = puVar2 + 1;
+    if ((uint)*puVar2 < *puVar1) {
+      DAT_0040b23e = DAT_00408750;
+      DAT_0040b238 = 1;
+      DAT_0040b22e = 1;
+      engine_diag_shadow_flags = engine_diag_shadow_flags | 0x20;
+      DAT_003fcdcc = DAT_003fcdcc + 1;
+      DAT_0040b254 = 5;
+      break;
+    }
+    iVar3 = iVar3 + 1;
+  } while (iVar3 < 5);
+  if (DAT_00408754 <= DAT_003fcdce) {
+    DAT_0040b238 = 0;
+    DAT_0040b22e = 0;
+    DAT_0040b230 = 0;
+    engine_diag_shadow_flags = engine_diag_shadow_flags & 0xffdf;
+    DAT_003fea08 = DAT_003fea08 & 0xffdf;
+    DAT_003fcdcc = 0;
+    DAT_0040b254 = 6;
+    DAT_003fcdce = DAT_00408754;
+  }
+  if (((engine_diag_shadow_flags & 0x20) != 0) &&
+     ((short)sensor_readings_t_0040baf2.coolant_temp < DAT_00408752)) {
+    DAT_003fcdce = DAT_003fcdce + 1;
+  }
+  if ((DAT_003fcdce != 0) && (DAT_00408752 < (short)sensor_readings_t_0040baf2.coolant_temp)) {
+    DAT_003fcdce = 0;
+  }
+  if (((engine_diag_shadow_flags & 0x20) != 0) &&
+     ((DAT_00408786 < DAT_0040b250 ||
+      ((DAT_0040874e < DAT_003fcdcc &&
+       (DAT_00408750 < (short)sensor_readings_t_0040baf2.coolant_temp)))))) {
+    DAT_0040b230 = 1;
+  }
+  if (DAT_0040b238 == 0) {
+    DAT_0040b23e = 0x3fc0;
+  }
+  return;
+}
+
+
+
+//
+// Function: governor_cruise_dualCalc_dispatch @ 0x0051395c
+//
+

@@ -1,0 +1,48 @@
+=== VARIABLES TO NAME ===
+0x003fcdc8  (5 references)
+0x003fcdca  (5 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fcdc8, DAT_003fcdca
+void engine_coolant_overheat_check(void)
+
+{
+  if (DAT_0040876c < (short)sensor_readings_t_0040baf2.coolant_temp) {
+    DAT_003fcdc8 = DAT_003fcdc8 + 1;
+  }
+  else {
+    DAT_003fcdc8 = 0;
+  }
+  if (DAT_0040875e < DAT_003fcdc8) {
+    DAT_0040b23e = DAT_0040876c;
+    DAT_0040b238 = 1;
+    engine_diag_shadow_flags = engine_diag_shadow_flags | 0x40;
+    DAT_003fcdc8 = DAT_0040875e;
+    DAT_0040b254 = 3;
+  }
+  if (((engine_diag_shadow_flags & 0x40) == 0) ||
+     (DAT_00408756 <= (short)sensor_readings_t_0040baf2.coolant_temp)) {
+    DAT_003fcdca = 0;
+  }
+  else {
+    DAT_003fcdca = DAT_003fcdca + 1;
+  }
+  if (DAT_00408758 < DAT_003fcdca) {
+    DAT_0040b238 = 0;
+    engine_diag_shadow_flags = engine_diag_shadow_flags & 0xffbf;
+    DAT_003fea08 = DAT_003fea08 & 0xffbf;
+    DAT_003fcdca = DAT_00408758;
+    DAT_0040b254 = 4;
+  }
+  return;
+}
+
+
+
+//
+// Function: engine_sensor_check_overheat @ 0x0051375c
+//
+

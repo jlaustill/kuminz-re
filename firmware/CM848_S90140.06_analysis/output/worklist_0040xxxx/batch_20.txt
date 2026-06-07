@@ -1,0 +1,100 @@
+=== VARIABLES TO NAME ===
+0x0040a6b6  (5 references)
+0x0040a6ba  (9 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040a6b6, DAT_0040a6ba
+void governor_speedStability_counter_syncDiag(void)
+
+{
+  bool bVar1;
+  bool bVar2;
+  ushort uVar3;
+  uint uVar4;
+  
+  if (DAT_0040a6b8 == 0) {
+    DAT_003fbd18 = 0;
+LAB_005073d8:
+    DAT_0040a6b6 = 0;
+  }
+  else {
+    if (DAT_004067dc != DAT_003fbd18) {
+      DAT_003fbd18 = DAT_003fbd18 + 1;
+      goto LAB_005073d8;
+    }
+    DAT_0040a6b6 = 1;
+  }
+  if ((DAT_0040a6b6 == 0) || (DAT_0040a6bc == 0)) {
+    bVar2 = false;
+  }
+  else {
+    bVar2 = true;
+  }
+  if ((DAT_0040a6b6 == 0) || (DAT_0040a6bc != 0)) {
+    bVar1 = false;
+  }
+  else {
+    bVar1 = true;
+  }
+  uVar4 = (uint)DAT_004067e4;
+  if (DAT_003fd7fa == 0) {
+    uVar3 = DAT_0040a6ba;
+    if ((!bVar2) && (!bVar1)) goto LAB_005074d0;
+    if (!bVar1) {
+      uVar3 = DAT_004067e4;
+      if ((DAT_004067de <= uVar4) &&
+         (uVar3 = DAT_004067e4, (int)(uint)DAT_0040a6ba <= (int)(uVar4 - DAT_004067de))) {
+        uVar3 = DAT_0040a6ba + DAT_004067de;
+      }
+      goto LAB_005074d0;
+    }
+    if (bVar2) goto LAB_005074d0;
+    if (DAT_004067e0 < DAT_0040a6ba) {
+      uVar3 = DAT_0040a6ba - DAT_004067e0;
+      goto LAB_005074d0;
+    }
+  }
+  uVar3 = 0;
+LAB_005074d0:
+  DAT_0040a6ba = uVar3;
+  if (uVar4 <= DAT_0040a6ba) {
+    diagnostic_status_bits = diagnostic_status_bits | 0x20;
+  }
+  if (DAT_0040a6ba <= DAT_004067e6) {
+    diagnostic_status_bits = diagnostic_status_bits & 0xffdf;
+    sensor_fault_status_flags = sensor_fault_status_flags & 0xffdf;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_calibrationGroup11_periodic @ 0x00507548
+//
+
+// Variables in this function: DAT_0040a6b6, DAT_0040a6ba
+void cm848_initialization_step_15(void)
+
+{
+  DAT_003fbd14 = 0;
+  PTR_DAT_003fbd10 = &DAT_004067e2;
+  DAT_0040a6ba = 0;
+  DAT_0040a6b6 = 0;
+  DAT_0040a6b4 = 0;
+  DAT_0040a6b8 = 0;
+  diagnostic_status_bits = diagnostic_status_bits & 0xffdf;
+  sensor_fault_status_flags = sensor_fault_status_flags & 0xffdf;
+  DAT_003fbd18 = 0;
+  return;
+}
+
+
+
+//
+// Function: cm848_mainLoop_step_5 @ 0x00507644
+//
+

@@ -1,0 +1,119 @@
+=== VARIABLES TO NAME ===
+0x00409ebc  (6 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00409ebc
+void cm848_calibration_group21_load_cont(void)
+
+{
+  short sVar1;
+  
+  if ((fuel_feature_control_flags & 2) == 0) {
+    return;
+  }
+  if ((diagnostic_status_flags_b & 0x1000) != 0) {
+    return;
+  }
+  if ((diagnostic_status_flags_b & 0x1000) != 0) {
+    return;
+  }
+  if ((protection_feature_status_flags & 0x800000) == 0) {
+    return;
+  }
+  if (DAT_003fd1ab == '\0') {
+    if (DAT_003fd1aa == '\0') {
+      if (((((system_status_flags_t_003fe974.condition_monitor & 1) == 0) &&
+           ((system_status_flags_t_003fe974.condition_monitor & 2) == 0)) &&
+          ((protection_monitor_shadow & 2) == 0)) &&
+         ((((power_state_status_flags & 0x800) == 0 && ((power_state_status_flags & 0x1000) == 0))
+          && (((injection_fault_shadow_flags & 2) == 0 &&
+              (((diagnostic_status_flags_b & 0x1000) == 0 &&
+               ((diagnostic_status_flags_b & 0x2000) == 0)))))))) {
+        if ((cold_start_phase == CSP_CRANKING) &&
+           ((((int)(short)sensor_readings_t_0040baf2.coolant_temp -
+              (int)(short)protection_oilTemp_proxy < (int)DAT_00409eae &&
+             ((int)(short)sensor_readings_t_0040baf2.coolant_temp < (int)DAT_00409eac)) &&
+            (DAT_00409eb0 < DAT_0040bbc8)))) {
+          engine_sync_validation_flags = engine_sync_validation_flags | 3;
+        }
+        else {
+          engine_sync_validation_flags = engine_sync_validation_flags & 0xfffd;
+          j1939_message_state_flags_b = j1939_message_state_flags_b & 0xfffd;
+        }
+      }
+      DAT_003fd1aa = '\x01';
+    }
+  }
+  else {
+    DAT_003fd1ab = DAT_003fd1ab + -1;
+  }
+  if (((cold_start_phase != CSP_AT_GOVERNOR_SETPOINT) || ((diagnostic_status_bits & 0x20) != 0)) ||
+     ((((engine_sync_validation_flags & 4) != 0 ||
+       (((engine_sync_validation_flags & 8) != 0 || ((DAT_003fe9c4 & 4) != 0)))) ||
+      ((DAT_003fe9c4 & 8) != 0)))) goto LAB_0052eeac;
+  if (((engine_rpm_state_t_0040b7ac.target_rpm < DAT_00409eb4) ||
+      (fault_status_active < DAT_00409eb6)) || ((short)boost_pressure_filtered < DAT_00409eb8)) {
+    DAT_003fd1a4 = 0;
+    DAT_003fd1a6 = 0;
+    DAT_003fd1a8 = 0;
+    goto LAB_0052eeac;
+  }
+  if (DAT_003fd1a4 < DAT_00409eba) {
+    DAT_003fd1a4 = DAT_003fd1a4 + 1;
+  }
+  if (DAT_00409eba <= DAT_003fd1a4) {
+    if (DAT_00409eb2 < 0x6d) {
+      if (DAT_003fd1a6 != 0) {
+        DAT_003fd1a6 = DAT_003fd1a6 - 1;
+      }
+      if (DAT_003fd1a8 <= DAT_00409ebc) {
+        sVar1 = 1;
+        goto LAB_0052ee18;
+      }
+    }
+    else {
+      if (DAT_003fd1a6 <= DAT_00409ebc) {
+        DAT_003fd1a6 = DAT_003fd1a6 + 1;
+      }
+      if (DAT_003fd1a8 != 0) {
+        sVar1 = -1;
+LAB_0052ee18:
+        DAT_003fd1a8 = DAT_003fd1a8 + sVar1;
+      }
+    }
+  }
+  if (DAT_00409ebc < DAT_003fd1a6) {
+    engine_sync_validation_flags = engine_sync_validation_flags | 1;
+  }
+  if ((DAT_00409ebc < DAT_003fd1a8) && ((engine_sync_validation_flags & 2) == 0)) {
+    engine_sync_validation_flags = engine_sync_validation_flags & 0xfffe;
+    j1939_message_state_flags_b = j1939_message_state_flags_b & 0xfffe;
+  }
+LAB_0052eeac:
+  if ((((fault_management_status_flags & 0x400) != 0) &&
+      (((uint)fault_management_ring_read_ptr & 0x800000) == 0)) &&
+     (((DAT_003fea7c & 1) != 0 &&
+      ((((DAT_00409ebc < DAT_003fd1a6 || (DAT_00409ebc < DAT_003fd1a8)) ||
+        ((engine_sync_validation_flags & 2) != 0)) &&
+       (fault_management_ring_read_ptr =
+             (undefined *)((uint)fault_management_ring_read_ptr | 0x800000),
+       (fault_pending_flags & 0x800000) == 0)))))) {
+    if (((engine_sync_validation_flags & 1) == 0) || ((DAT_003fed98 & 0x800000) != 0)) {
+      fault_pending_flags = fault_pending_flags | 0x800000;
+    }
+    else {
+      DAT_003fed98 = DAT_003fed98 | 0x800000;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_initialization_group21_state_cont @ 0x0052ef90
+//
+

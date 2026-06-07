@@ -1,0 +1,30 @@
+=== VARIABLES TO NAME ===
+0x003fb341  (5 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fb341
+void cm848_txTimerD_checkProtectionInhibit(void)
+
+{
+  protection_inhibit_flag = DAT_003fb2e9 & 2 ^ 2;
+  if (protection_inhibit_flag == 0) {
+    if ((DAT_003fb341 != 0) && (DAT_003fb341 = DAT_003fb341 + -1, DAT_003fb341 == 0)) {
+      governor_inhibit_flag = 0;
+    }
+  }
+  else {
+    governor_inhibit_flag = 1;
+    DAT_003fb341 = DAT_00408744;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_j1939CheckTxTimeouts @ 0x0003691c
+//
+

@@ -1,0 +1,79 @@
+=== VARIABLES TO NAME ===
+0x0040b52e  (13 references)
+0x0040b530  (5 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040b52e, DAT_0040b530
+void protection_fuel_demand_limiting(void)
+
+{
+  ushort uVar1;
+  
+  if ((protection_config_flags_b & 2) == 0) {
+    DAT_0040b52e = 0x1700;
+    DAT_0040b52c = 0;
+    DAT_0040b530 = 0;
+    DAT_003fcea8 = 0;
+  }
+  else {
+    uVar1 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fceaa);
+    if (((DAT_0040b52c == 0) && (uVar1 < fuel_demand_computed)) &&
+       ((int)DAT_00408984 <= (int)(short)cam_timing_measured - (int)(short)cam_sync_position)) {
+      if (DAT_0040b530 < DAT_00408980) {
+        DAT_0040b530 = DAT_0040b530 + 1;
+      }
+      else {
+        DAT_0040b52c = 1;
+        DAT_0040b52e = fuel_demand_load_axis;
+      }
+    }
+    else {
+      DAT_0040b530 = 0;
+    }
+    if (DAT_0040b52c != 0) {
+      DAT_0040b52e = DAT_0040b52e - DAT_00408982;
+      if (((short)uVar1 < (short)DAT_0040b52e) && (DAT_003fcea8 == 0)) {
+        if ((short)DAT_0040b52e < 0) {
+          DAT_0040b52e = 0;
+        }
+        else if (0x1700 < (short)DAT_0040b52e) {
+          DAT_0040b52e = 0x1700;
+        }
+      }
+      else {
+        DAT_003fcea8 = 1;
+        DAT_0040b52e = uVar1;
+      }
+    }
+    if (DAT_0040b52e < protection_fuel_limit_active) {
+      protection_fuel_limit_active = DAT_0040b52e;
+      governor_fuel_mode_command = 0x3d;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: protection_speed_limit_initialize @ 0x00519ffc
+//
+
+// Variables in this function: DAT_0040b52e
+void protection_speed_limit_initialize(void)
+
+{
+  DAT_003fceaa = 2;
+  DAT_0040b52e = 0x1700;
+  return;
+}
+
+
+
+//
+// Function: initDiagnosticShadowFlags @ 0x0051a018
+//
+

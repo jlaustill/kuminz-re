@@ -11,10 +11,11 @@ Usage:
 
   - no DATA_ADDR  -> prints the full disassembly of the function.
   - with DATA_ADDR -> tracks register contents through the function (lis/addi/ori/li/mr) and prints
-    every load/store whose base+displacement == DATA_ADDR, with a WIDTH verdict (byte/word/dword) to
-    paste into an investigate-firmware-symbol report. Handles all three addressing forms uniformly:
-    displacement `lhz rX,<disp>(rY)`, register-built exact `lis;addi rN,..;l/st 0(rN)`, and
-    struct/buffer member `<offset>(base)` where base = DATA_ADDR - offset.
+    every load/store whose effective address == DATA_ADDR, with a WIDTH verdict (byte/word/dword) to
+    paste into an investigate-firmware-symbol report. Handles all four addressing forms uniformly:
+    displacement `lhz rX,<disp>(rY)`, register-built exact `lis;addi rN,..;l/st 0(rN)`,
+    struct/buffer member `<offset>(base)` where base = DATA_ADDR - offset, and
+    indexed `lbzx rD,rBase,rIdx` where rBase holds DATA_ADDR (array access with a dynamic index).
 
 Window + binary are resolved from cm848_rom.ghidra.cpp's `// Function: <name> @ 0x<addr>` comments
 (covers FUN_ too) and the Bank1/Bank2 split at 0x500000. CM848 / PowerPC big-endian only.
@@ -29,8 +30,11 @@ CPP = os.path.join(FW, "output", "cm848_rom.ghidra.cpp")
 ROM = os.path.join(FW, "originals", "cm848_rom.bin")
 FLASH2 = os.path.join(FW, "originals", "cm848_flash2_live.bin")
 WIDTH = {"lbz": "byte", "stb": "byte", "lhz": "word", "lha": "word", "sth": "word",
-         "lwz": "dword", "stw": "dword"}
-LDST = re.compile(r"\b(lbz|lha|lhz|lwz|stb|sth|stw)\b")
+         "lwz": "dword", "stw": "dword",
+         # indexed forms (EA = rA + rB) — e.g. array/buffer access `lbzx rD,rBase,rIdx`
+         "lbzx": "byte", "stbx": "byte", "lhzx": "word", "lhax": "word", "sthx": "word",
+         "lwzx": "dword", "stwx": "dword"}
+LDST = re.compile(r"\b(lbz|lha|lhz|lwz|stb|sth|stw)x?\b")
 
 
 def function_table():
@@ -56,6 +60,12 @@ def resolve(target, funcs):
     sys.exit(f"function not found: {target}")
 
 
+def func_window(start, funcs):
+    """(start, stop) byte range of the function beginning at `start` (stop = next func entry)."""
+    later = [a for a, _ in funcs if a > start]
+    return start, (min(later) if later else start + 0x800)
+
+
 def objdump(start, stop):
     binary, vma = (FLASH2, 0x00500000) if start >= 0x500000 else (ROM, 0x0)
     cmd = ["powerpc-linux-gnu-objdump", "-D", "-b", "binary", "-m", "powerpc", "-EB",
@@ -64,31 +74,22 @@ def objdump(start, stop):
     return subprocess.run(cmd, capture_output=True, text=True).stdout.splitlines(), binary
 
 
-def main():
-    if len(sys.argv) < 2:
-        print(__doc__); sys.exit(0)
-    funcs = function_table()
-    start, name = resolve(sys.argv[1], funcs)
-    later = [a for a, _ in funcs if a > start]
-    stop = min(later) if later else start + 0x800
-    lines, binary = objdump(start, stop)
-    print(f"# {name} @ {hex(start)}..{hex(stop)}  ({os.path.basename(binary)})")
+def find_accesses(lines, data):
+    """Scan disassembled `lines`, tracking GPR contents, and return (hits, member_offsets).
 
-    if len(sys.argv) < 3:
-        print("\n".join(lines)); return
-
-    data = int(sys.argv[2], 16)
-    # Register-content tracking: follow lis/addi/ori/li/mr to know each GPR's value, then flag any
-    # load/store whose base+displacement == data. Handles all three addressing forms uniformly
-    # (displacement, lis+addi exact, and struct-member <offset>(base) where base = data - offset).
+    hits = [(kind, instruction_text, width)] for every load/store whose effective address == data.
+    Handles all four addressing forms: displacement, lis+addi exact, struct-member, and indexed.
+    Importable so callers (e.g. xref_addr.py) reuse the exact width-check logic. CM848/PPC big-endian.
+    """
     asm_re = re.compile(r"^\s*[0-9a-f]+:\t[0-9a-f ]+\t\s*(\S+)\s*(.*)$")
     ld_st = re.compile(r"^r(\d+),(-?\d+)\(r(\d+)\)$")           # rD,disp(rA)
+    ld_x = re.compile(r"^r(\d+),r(\d+),r(\d+)$")                # rD,rA,rB (indexed: EA = rA+rB)
     mask32 = 0xffffffff
+    regs = {0: 0}
 
     def base(idx):                       # r0 reads as literal 0 in addr context
         return 0 if idx == 0 else regs.get(idx)
 
-    regs = {0: 0}
     hits, member_offsets = [], set()
     for ln in lines:
         m = asm_re.match(ln)
@@ -99,7 +100,9 @@ def main():
         w = WIDTH.get(mnem)
         if w:                                                  # a load or store
             lm = ld_st.match(ops)
-            if lm:
+            xm = ld_x.match(ops) if lm is None else None
+            rd = None
+            if lm:                                             # displacement form rD,disp(rA)
                 rd, disp, ra = int(lm.group(1)), int(lm.group(2)), int(lm.group(3))
                 b = base(ra)
                 if b is not None and ((b + disp) & mask32) == data:
@@ -109,8 +112,19 @@ def main():
                     # (via addi) and reached with an offset — not the ordinary lis+disp form.
                     if (b & 0xffff) != 0 and disp != 0:
                         member_offsets.add(disp)
-                if not mnem.startswith("st"):                  # load writes rD
-                    regs.pop(rd, None)
+            elif xm:                                           # indexed form: EA = base(rA)+base(rB)
+                rd, ra, rb = int(xm.group(1)), int(xm.group(2)), int(xm.group(3))
+                va, vb = base(ra), base(rb)
+                how = None
+                if va is not None and vb is not None and ((va + vb) & mask32) == data:
+                    how = "indexed exact"
+                elif va == data or vb == data:                 # one reg holds the array base = target
+                    how = "indexed array-base (dynamic index)"
+                if how:
+                    kind = "store" if mnem.startswith("st") else "load"
+                    hits.append((kind, ln.strip() + f"  [{how}]", w))
+            if rd is not None and not mnem.startswith("st"):   # load writes rD
+                regs.pop(rd, None)
             continue
         # address-building ops
         if mnem == "lis" and len(op) == 2:
@@ -127,6 +141,23 @@ def main():
             regs[int(op[0][1:])] = base(int(op[1][1:]))
         elif op and re.fullmatch(r"r\d+", op[0]):              # any other op clobbers its dest GPR
             regs.pop(int(op[0][1:]), None)
+    return hits, member_offsets
+
+
+def main():
+    if len(sys.argv) < 2:
+        print(__doc__); sys.exit(0)
+    funcs = function_table()
+    start, name = resolve(sys.argv[1], funcs)
+    start, stop = func_window(start, funcs)
+    lines, binary = objdump(start, stop)
+    print(f"# {name} @ {hex(start)}..{hex(stop)}  ({os.path.basename(binary)})")
+
+    if len(sys.argv) < 3:
+        print("\n".join(lines)); return
+
+    data = int(sys.argv[2], 16)
+    hits, member_offsets = find_accesses(lines, data)
 
     if not hits:
         print(f"\n!! no access to {hex(data)} found in this window. Widen with a bigger function, "

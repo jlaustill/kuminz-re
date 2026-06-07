@@ -1,0 +1,71 @@
+=== VARIABLES TO NAME ===
+0x003fb40c  (5 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fb40c
+void cm848_processProtectionTimingCounter(void)
+
+{
+  word wVar1;
+  uint uVar2;
+  byte bStack_20;
+  undefined2 uStack_1f;
+  undefined2 uStack_1d;
+  
+  wVar1 = protection_entry_threshold;
+  DAT_003fb40c = DAT_003fb40c + 1;
+  if (protection_entry_threshold < protection_entry_threshold_working) {
+    if ((injection_timing_done_flag == 0) && (injection_timing_done_snapshot != 0)) {
+      injection_timing_delta = (&tpu_b_mcr)[injection_timing_cylinder_index].PARAM1 & 0xff;
+    }
+    else if (injection_timing_prev_value < injection_timing_capture_prev) {
+      injection_timing_delta = injection_timing_prev_value - injection_timing_capture_prev;
+    }
+    else {
+      injection_timing_delta = injection_timing_prev_value - injection_timing_capture_prev;
+    }
+    bStack_20 = (byte)injection_timing_delta;
+    injection_timing_capture_prev = injection_timing_prev_value;
+    injection_timing_done_snapshot = injection_timing_done_flag;
+    uVar2 = (uint)DAT_003fb40c * (uint)engine_rpm_state_t_0040b7ac.current_rpm * 3;
+    uVar2 = (uint)(CONCAT44((int)((ulonglong)((uint)fuel_quantity_active + (uint)fuel_quantity_trim)
+                                  * (ulonglong)uVar2 >> 0x20),
+                            ((uint)fuel_quantity_active + (uint)fuel_quantity_trim) * uVar2) /
+                  0xbb800);
+    if (0xffff < uVar2) {
+      uVar2 = 0xffff;
+    }
+    uStack_1f = (short)uVar2;
+    uVar2 = (uint)DAT_003fb40c * (uint)engine_rpm_state_t_0040b7ac.current_rpm * 0xc;
+    uVar2 = (uint)(CONCAT44((int)((ulonglong)
+                                  ((uint)fuel_demand_computed * (uint)fuel_demand_scale_factor) *
+                                  (ulonglong)uVar2 >> 0x20),
+                            (uint)fuel_demand_computed * (uint)fuel_demand_scale_factor * uVar2) /
+                  0x10d88000);
+    if (0xffff < uVar2) {
+      uVar2 = 0xffff;
+    }
+    uStack_1d = (short)uVar2;
+    DAT_003fb40c = 0;
+    fuel_temperature_trim_working = fuel_temperature_trim;
+    uVar2 = 0;
+    do {
+      (&j1939_data_buffer_c)[uVar2] = (&bStack_20)[uVar2];
+      uVar2 = uVar2 + 1 & 0xff;
+    } while (uVar2 < 5);
+  }
+  protection_entry_threshold_working = wVar1;
+  return;
+}
+
+
+
+//
+// Function: cm848_evaluateProtectionTimerThreshold @ 0x0003c6ec
+//
+
+/* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+

@@ -1,0 +1,52 @@
+=== VARIABLES TO NAME ===
+0x003fcf96  (11 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fcf96
+void bufferManagementWithBounds(void)
+
+{
+  char *pcVar1;
+  
+  pcVar1 = DAT_003fcf96 + 0x14;
+  if (&LAB_003f9ff8 < DAT_003fcf96 + 0x14) {
+    pcVar1 = &LAB_003f9ff8;
+  }
+  do {
+    if (pcVar1 < DAT_003fcf96) {
+      return;
+    }
+    DAT_003fcf96 = DAT_003fcf96 + 1;
+  } while (*DAT_003fcf96 == '\0');
+  if (DAT_003fcf96 < DAT_0040b608) {
+    DAT_0040b60c = (undefined2)(0x4fb0 / (0x9ff8U - (int)DAT_003fcf96 & 0xffff));
+    DAT_0040b608 = DAT_003fcf96;
+  }
+  DAT_003fcf96 = &DAT_003f9808;
+  return;
+}
+
+
+
+//
+// Function: initMessageBufferPointers @ 0x00522788
+//
+
+// Variables in this function: DAT_003fcf96
+void initMessageBufferPointers(void)
+
+{
+  DAT_003fcf96 = &DAT_003f9808;
+  DAT_0040b608 = &LAB_003f9ff8;
+  return;
+}
+
+
+
+//
+// Function: sensorValidationTimeout @ 0x005227ac
+//
+

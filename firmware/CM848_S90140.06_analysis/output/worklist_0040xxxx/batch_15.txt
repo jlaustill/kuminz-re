@@ -1,0 +1,111 @@
+=== VARIABLES TO NAME ===
+0x0040a5a2  (5 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040a5a2
+void fuel_blendMode_conditionCheck_update(void)
+
+{
+  etc1_threshold_lookup();
+  governor_adjustment_blend_check();
+  governor_adjustment_compare();
+  if ((((DAT_0040a5ac == 0) || (DAT_0040a598 == 0)) || (DAT_0040a5a6 == 0)) ||
+     ((cold_start_feature_enable_flags & 0x100) == 0)) {
+    DAT_0040a59a = 0;
+  }
+  else {
+    DAT_0040a59a = 1;
+  }
+  if ((((cold_start_feature_enable_flags & 0x100) == 0) || (DAT_0040a59c == 0)) ||
+     (DAT_0040a5a6 == 0)) {
+    DAT_0040a59e = 0;
+  }
+  else {
+    DAT_0040a59e = 1;
+  }
+  if ((DAT_0040a59a == 0) && (DAT_0040a59e == 0)) {
+    DAT_0040a5a0 = 0;
+  }
+  else {
+    DAT_0040a5a0 = 1;
+  }
+  DAT_0040a5a2 = fuel_blend_weight_threshold_cal;
+  if ((DAT_0040a59e == 0) && (DAT_0040a5a2 = DAT_00406460, DAT_0040a59a == 0)) {
+    DAT_0040a5a2 = 0;
+  }
+  return;
+}
+
+
+
+//
+// Function: governor_speedRatio_etcFuelCorrection_calc @ 0x00504654
+//
+
+/* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+
+// Variables in this function: DAT_0040a5a2
+void fuel_demandMin_maxSelect_rateLimit(void)
+
+{
+  uint uVar1;
+  uint uVar2;
+  
+  uVar1 = (uint)DAT_0040a5b8;
+  if (uVar1 < DAT_0040a5a2) {
+    uVar1 = (uint)DAT_0040a5a2;
+  }
+  uVar2 = (uint)DAT_003fba26;
+  if (uVar2 < uVar1) {
+    uVar2 = uVar1;
+  }
+  uVar1 = (uint)DAT_0040a5f6;
+  if (uVar1 < uVar2) {
+    uVar1 = uVar2;
+  }
+  uVar2 = (uint)DAT_0040a5fa;
+  if (uVar2 < uVar1) {
+    uVar2 = uVar1;
+  }
+  uVar1 = (uint)DAT_0040a5fe;
+  if (uVar1 < uVar2) {
+    uVar1 = uVar2;
+  }
+  uVar2 = (uint)DAT_0040a8ab;
+  if (uVar2 < uVar1) {
+    uVar2 = uVar1;
+  }
+  uVar1 = (uint)DAT_0040a602;
+  if (uVar1 < uVar2) {
+    uVar1 = uVar2;
+  }
+  uVar2 = (uint)DAT_0040a72e;
+  if (uVar2 < uVar1) {
+    uVar2 = uVar1;
+  }
+  DAT_003fba28 = (short)uVar2;
+  uVar1 = (uint)DAT_003fba2c;
+  if (uVar1 + DAT_0040654a < uVar2) {
+    uVar2 = uVar1 + DAT_0040654a;
+  }
+  else if ((int)uVar2 < (int)(uVar1 - DAT_00406548)) {
+    uVar2 = uVar1 - DAT_00406548;
+  }
+  DAT_003fba2a = (word)uVar2;
+  fuel_demand_min_threshold = DAT_003fba2a;
+  if (DAT_003fd7e8 != 0) {
+    fuel_demand_min_threshold = DAT_0040654c;
+  }
+  DAT_003fba2c = DAT_003fba2a;
+  return;
+}
+
+
+
+//
+// Function: cm848_initialization_step_6 @ 0x00504938
+//
+

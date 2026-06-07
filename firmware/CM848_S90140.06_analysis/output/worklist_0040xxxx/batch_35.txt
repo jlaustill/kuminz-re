@@ -1,0 +1,147 @@
+=== VARIABLES TO NAME ===
+0x0040b1a0  (13 references)
+0x0040b32c  (6 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040b32c
+void cm848_calibBlock1_adaptiveTrim_init(void)
+
+{
+  DAT_0040b334 = DAT_0005b32e;
+  safety_condition_active_flag._2_2_ = 1;
+  DAT_0040b32c = 0;
+  return;
+}
+
+
+
+//
+// Function: cm848_calibBlock1_trim_eepromWrite @ 0x00516454
+//
+
+// Variables in this function: DAT_0040b1a0, DAT_0040b32c
+undefined4 cm848_calibBlock1_trim_eepromWrite(void)
+
+{
+  ushort uVar2;
+  undefined4 uVar1;
+  
+  if ((protection_enable_t_0040c050.mode_bits & 1) != 0) {
+    uVar2 = (ushort)DAT_003fce2a;
+    if ((DAT_0040b1a0 & 0xff) < uVar2) {
+      uVar2 = uVar2 - DAT_0040b1a0;
+    }
+    else {
+      uVar2 = DAT_0040b1a0 - uVar2;
+    }
+    if ((uVar2 & 0xff) <= (ushort)DAT_0005b334) {
+      if (DAT_0040b334 != 0) {
+        DAT_0040b334 = DAT_0040b334 + -1;
+        uVar1 = 1;
+        goto LAB_0051656c;
+      }
+      if (safety_condition_active_flag._2_2_ == 1) {
+        safety_condition_active_flag._2_2_ = 0;
+        DAT_0040b32c = 1;
+      }
+      if ((governor_system_config_flags & 0x20) != 0) {
+        uVar1 = 1;
+        goto LAB_0051656c;
+      }
+      eeprom_header_t_003fee08.calibration_block1[0] = (byte)DAT_0040bb78;
+      DAT_003fce24 = DAT_0040bb78 << 8;
+      DAT_0040b32c = 0;
+      DAT_003fce26 = DAT_003fce24;
+      DAT_003fce28 = DAT_003fce24;
+      eeprom_header_t_003fee08.calibration_block1[1] =
+           eeprom_header_t_003fee08.calibration_block1[0];
+      eeprom_header_t_003fee08.calibration_block1[2] =
+           eeprom_header_t_003fee08.calibration_block1[0];
+    }
+  }
+  uVar1 = 0;
+LAB_0051656c:
+  DAT_003fce2a = (char)DAT_0040b1a0;
+  return uVar1;
+}
+
+
+
+//
+// Function: cm848_calibBlock1_counters_reset @ 0x00516578
+//
+
+// Variables in this function: DAT_0040b1a0, DAT_0040b32c
+void cm848_calibBlock1_trim_commit(void)
+
+{
+  ushort uVar1;
+  
+  if (DAT_0040b32c == 1) {
+    if (DAT_0040b332 == 0) {
+      if ((DAT_0040b1a0 & 0xff) < (ushort)eeprom_header_t_003fee08.calibration_block1[1]) {
+        uVar1 = eeprom_header_t_003fee08.calibration_block1[1] - DAT_0040b1a0;
+      }
+      else {
+        uVar1 = DAT_0040b1a0 - eeprom_header_t_003fee08.calibration_block1[1];
+      }
+      if ((ushort)DAT_0005b325 <= (uVar1 & 0xff)) {
+        eeprom_header_t_003fee08.calibration_block1[0] = (byte)DAT_0040b1a0;
+        DAT_003fce26 = DAT_0040b1a0 << 8;
+        DAT_003fce24 = DAT_0040b1a0 << 8;
+        DAT_003fce28 = DAT_003fce26;
+        eeprom_header_t_003fee08.calibration_block1[1] =
+             eeprom_header_t_003fee08.calibration_block1[0];
+        eeprom_header_t_003fee08.calibration_block1[2] =
+             eeprom_header_t_003fee08.calibration_block1[0];
+      }
+    }
+    DAT_0040b32c = 0;
+    cbd_enable_state = 1;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_calibBlock1_adaptiveTrim_update @ 0x0051674c
+//
+
+/* WARNING: Function: cm848_signedDivision32 replaced with injection: sdiv64by32 */
+
+// Variables in this function: DAT_0040b1a0, DAT_0040b32c
+void cm848_calibBlock1_adaptiveTrim_update(void)
+
+{
+  uint uVar1;
+  uint uVar2;
+  int iVar3;
+  
+  if (((safety_condition_active_flag._2_2_ == 0) && (DAT_0040b32c == 0)) && (DAT_0040b332 == 0)) {
+    if (eeprom_header_t_003fee08.calibration_block1[0] == 0) {
+      eeprom_header_t_003fee08.calibration_block1[0] = (byte)DAT_0040b1a0;
+      DAT_003fce24 = DAT_0040b1a0 << 8;
+    }
+    else {
+      uVar2 = (uint)DAT_0005b320;
+      uVar1 = (uint)DAT_0040b1a0 * 0x100 - (uint)DAT_003fce24;
+      iVar3 = (uint)DAT_003fce24 +
+              (int)(CONCAT44((int)((ulonglong)uVar2 * (ulonglong)uVar1 >> 0x20) +
+                             uVar2 * ((int)uVar1 >> 0x1f),uVar2 * uVar1) / 0x10000);
+      DAT_003fce24 = (ushort)iVar3;
+      eeprom_header_t_003fee08.calibration_block1[0] = (byte)((uint)iVar3 >> 8);
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_calibBlock1_trimTimer_reset @ 0x00516834
+//
+

@@ -1,0 +1,82 @@
+=== VARIABLES TO NAME ===
+0x003fbc90  (7 references)
+0x003fbc94  (6 references)
+0x003fbc98  (7 references)
+0x003fbc9a  (5 references)
+
+Total: 4 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fbc90, DAT_003fbc94, DAT_003fbc98, DAT_003fbc9a
+void fuel_demandTiming_rollingAverage_update(void)
+
+{
+  short sVar1;
+  uint uVar2;
+  uint uVar3;
+  
+  if (DAT_0040a730 == 0) {
+    DAT_0040a5f0 = 0;
+    DAT_0040a5f2 = 0;
+    DAT_003fbc90 = 0;
+    DAT_003fbc94 = 0;
+    DAT_003fbc98 = 0;
+    DAT_003fbc9a = 0;
+  }
+  else {
+    if (0x95 < DAT_003fbc98) {
+      DAT_003fbc98 = 0;
+      DAT_003fbc9a = 1;
+    }
+    sVar1 = DAT_003fbc9a;
+    uVar3 = (uint)DAT_003fbc98;
+    if (DAT_003fbc9a == 0) {
+      DAT_003fbc90 = DAT_003fbc90 + fuel_demand_min_threshold;
+      (&DAT_003fba38)[uVar3] = fuel_demand_min_threshold;
+    }
+    else {
+      DAT_003fbc90 = (DAT_003fbc90 - (ushort)(&DAT_003fba38)[uVar3]) +
+                     (uint)fuel_demand_min_threshold;
+      (&DAT_003fba38)[uVar3] = fuel_demand_min_threshold;
+      DAT_003fbc94 = DAT_003fbc94 - (ushort)(&DAT_003fbb64)[uVar3];
+    }
+    uVar2 = DAT_003fbc94 + fuel_demand_timing_correction;
+    DAT_003fbc94 = uVar2;
+    (&DAT_003fbb64)[uVar3] = fuel_demand_timing_correction;
+    DAT_003fbc98 = DAT_003fbc98 + 1;
+    if (sVar1 == 0) {
+      DAT_0040a5f0 = 0;
+      DAT_0040a5f2 = 0;
+    }
+    else {
+      DAT_0040a5f0 = (undefined2)(DAT_003fbc90 / 0x96);
+      DAT_0040a5f2 = (undefined2)(uVar2 / 0x96);
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_initialization_step_8 @ 0x00505574
+//
+
+// Variables in this function: DAT_003fbc90, DAT_003fbc94, DAT_003fbc98, DAT_003fbc9a
+void cm848_initialization_step_8(void)
+
+{
+  DAT_003fbc98 = 0;
+  DAT_003fbc9a = 0;
+  DAT_003fbc90 = 0;
+  DAT_003fbc94 = 0;
+  return;
+}
+
+
+
+//
+// Function: fuel_coldStart_phase26_flagUpdate @ 0x005055a0
+//
+

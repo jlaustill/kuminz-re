@@ -1,0 +1,162 @@
+=== VARIABLES TO NAME ===
+0x0040a666  (5 references)
+0x0040a66e  (5 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040a666
+void governor_speedFault_filterProcess_update(void)
+
+{
+  short *psVar1;
+  
+  psVar1 = &DAT_003fbcc6;
+  DAT_003fbcc8 = governor_speed_input_raw;
+  DAT_003fbcca = engine_feature_activation_threshold_cal;
+  DAT_003fbcd0 = DAT_0040674e;
+  DAT_003fbcd2 = DAT_00406750;
+  DAT_003fbcd8 = DAT_003fd7f2;
+  DAT_003fbcdc = 5;
+  PTR_PTR_003fbcde = (undefined *)&PTR_DAT_003fbcbe;
+  cm848_processFaultStateWithFilter(&DAT_003fbcc6);
+  if (DAT_003fbcda == 0) {
+    diagnostic_status_bits_b = diagnostic_status_bits_b & 0xbfff;
+    protection_condition_shadow_flags = protection_condition_shadow_flags & 0xbfff;
+  }
+  else {
+    diagnostic_status_bits_b = diagnostic_status_bits_b | 0x4000;
+  }
+  if (DAT_003fd7f6 != 0) {
+    psVar1 = &DAT_00406756;
+  }
+  sensor_channel105_fault_combined._2_2_ = *psVar1;
+  DAT_0040a666 = governor_speed_input_raw - *psVar1;
+  return;
+}
+
+
+
+//
+// Function: boost_pressureSource_faultSelect_update @ 0x00506964
+//
+
+// Variables in this function: DAT_0040a666, DAT_0040a66e
+void boost_pressureSource_faultSelect_update(void)
+
+{
+  DAT_0040a66e = sensor_channel7_fault_status;
+  if ((diagnostic_status_bits_b & 0x4000) != 0) {
+    DAT_0040a66e = sensor_channel7_fault_status | 8;
+  }
+  if ((diagnostic_status_bits & 0x20) != 0) {
+    DAT_0040a66e = DAT_0040a66e | 0x20;
+  }
+  if (DAT_0040a66e == 0) {
+    boost_pressure_filtered = DAT_0040a666;
+    boost_correction_block_flag = 0;
+  }
+  else {
+    boost_pressure_filtered = governor_speed_input_filtered;
+    boost_correction_block_flag = 2;
+  }
+  if (((int)(uint)DAT_00406758 < (int)(short)boost_pressure_filtered) &&
+     (governor_speed_at_target_flag == 0)) {
+    boost_fuel_mode_active = 0;
+  }
+  else {
+    boost_fuel_mode_active = 1;
+  }
+  DAT_0040babe = boost_pressure_filtered;
+  return;
+}
+
+
+
+//
+// Function: cm848_phase_commonProcessing_calculation @ 0x00506a3c
+//
+
+// Variables in this function: DAT_0040a666
+void governor_speedRamp_stabilityFlag_calc(void)
+
+{
+  uint uVar1;
+  uint uVar2;
+  int iVar3;
+  
+  uVar1 = exponentialMovingAverage(governor_speed_ramp_output,&PTR_DAT_003fbd10);
+  DAT_0040a6be = (short)uVar1;
+  uVar2 = (uint)governor_speed_ramp_output;
+  if ((uVar1 & 0xffff) < uVar2) {
+    uVar1 = uVar2 - uVar1;
+  }
+  else {
+    uVar1 = uVar1 - uVar2;
+  }
+  DAT_0040a6b4 = (short)uVar1;
+  if ((int)(uVar2 - (int)DAT_0040a666) < 1) {
+    if ((int)(uVar2 - (int)DAT_0040a666) < 0) {
+      iVar3 = -1;
+    }
+    else {
+      iVar3 = 0;
+    }
+  }
+  else {
+    iVar3 = 1;
+  }
+  if (((short)governor_speed_b_pid_output * iVar3 < (int)(uint)DAT_004067e8) && (DAT_0040a6bc != 0))
+  {
+    DAT_0040a6c0 = 0;
+  }
+  else {
+    DAT_0040a6c0 = 1;
+  }
+  if (((diagnostic_status_bits & 0x20) == 0) &&
+     ((((governor_operating_mode != 0 || ((diagnostic_status_bits_b & 0x4000) != 0)) ||
+       (diagnostic_clear_condition_flag == 0)) ||
+      (((sensor_channel7_fault_status != 0 || ((uint)DAT_004067d8 <= (uVar1 & 0xffff))) ||
+       (DAT_0040a6c0 == 0)))))) {
+    DAT_0040a6b8 = 0;
+  }
+  else {
+    DAT_0040a6b8 = 1;
+  }
+  return;
+}
+
+
+
+//
+// Function: governor_speedStability_counter_syncDiag @ 0x00507394
+//
+
+// Variables in this function: DAT_0040a666
+void cm848_calibrationGroup11_periodic(void)
+
+{
+  int iVar1;
+  uint uVar2;
+  
+  iVar1 = (int)DAT_0040a666;
+  uVar2 = (uint)governor_speed_ramp_output;
+  if (iVar1 < (int)uVar2) {
+    uVar2 = uVar2 - iVar1;
+  }
+  else {
+    uVar2 = iVar1 - uVar2;
+  }
+  DAT_0040a6bc = (ushort)((uint)DAT_004067da < (uVar2 & 0xffff));
+  governor_speedRamp_stabilityFlag_calc();
+  governor_speedStability_counter_syncDiag();
+  return;
+}
+
+
+
+//
+// Function: cm848_initialization_step_15 @ 0x005075b8
+//
+

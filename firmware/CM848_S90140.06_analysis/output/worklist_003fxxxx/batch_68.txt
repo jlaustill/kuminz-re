@@ -1,0 +1,59 @@
+=== VARIABLES TO NAME ===
+0x003fcfee  (5 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fcfee
+void governorOverrideSpeedControl(void)
+
+{
+  uint uVar1;
+  int iVar2;
+  
+  if (((protection_config_flags_b & 0x8000) != 0) && (governor_override_active_flag != 0)) {
+    uVar1 = exponentialMovingAverage(cruise_speed_setpoint_adjusted,&PTR_DAT_0040b682);
+    iVar2 = (uVar1 & 0xffff) - ((uint)cruise_speed_command + (uint)DAT_003fd910);
+    if (DAT_003fcfee < 100) {
+      if ((iVar2 <= (int)(uint)DAT_003fd90c) ||
+         (cruise_speed_setpoint_adjusted <= PTR_DAT_00408de8._0_2_)) {
+        DAT_003fcfee = 0;
+        DAT_0040b68a = 0;
+        return;
+      }
+    }
+    else if ((iVar2 <= (int)((uint)DAT_003fd90c - (uint)DAT_00408dee & 0xffff)) ||
+            (cruise_speed_setpoint_adjusted <= PTR_DAT_00408de8._0_2_)) {
+      DAT_003fcfee = 0;
+      DAT_0040b68a = 0;
+      return;
+    }
+  }
+  DAT_0040b68a = 100;
+  DAT_003fcfee = 100;
+  return;
+}
+
+
+
+//
+// Function: governorLoadMinimumUpdate @ 0x005246b0
+//
+
+// Variables in this function: DAT_003fcfee
+void initHpcr_ExceptionHandler(void)
+
+{
+  DAT_0040b686 = 0;
+  PTR_DAT_0040b682 = &DAT_00408dfa;
+  DAT_003fcfee = 0;
+  return;
+}
+
+
+
+//
+// Function: governor_cruise_setpoint_calc @ 0x0052470c
+//
+

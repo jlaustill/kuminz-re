@@ -1,0 +1,169 @@
+=== VARIABLES TO NAME ===
+0x0040b560  (9 references)
+0x0040b566  (9 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040b560, DAT_0040b566
+void initHpcr_FaultCounters(void)
+
+{
+  DAT_0040b560 = 0;
+  DAT_0040b566 = 0;
+  DAT_003fceee = 0;
+  DAT_003fceea = 0;
+  return;
+}
+
+
+
+//
+// Function: protectionColdStartControl @ 0x0051aef8
+//
+
+// Variables in this function: DAT_0040b560, DAT_0040b566
+void protectionColdStartControl(void)
+
+{
+  if (DAT_003fceea == 4) {
+    DAT_003fceea = 0;
+    if (((((((protection_enable_t_0040c050.reserved_02 & 0x10) == 0) &&
+           ((system_status_flags_t_003fe974.reserved_12 & 0x10) == 0)) &&
+          (fuel_demand_control_t_0040a57a.calculated <= DAT_00408aaa)) &&
+         (((system_status_flags_t_003fe974.enable_state & 0x400) == 0 &&
+          ((system_status_flags_t_003fe974.enable_state & 0x800) == 0)))) &&
+        ((system_status_flags_t_003fe974.safety_bits_1 & 0x4000) == 0)) &&
+       (((((system_status_flags_t_003fe974.safety_bits_1 & 0x8000) == 0 &&
+          ((int)(short)protection_load_input_alt <= (int)(uint)DAT_00408aac)) &&
+         (((int)(uint)DAT_00408aae <= (int)(short)protection_load_input_alt &&
+          ((((protection_action_mode_bits._0_1_ & 1) != 0 &&
+            ((protection_feature_status_flags & 0x20000000) != 0)) &&
+           (((uint)fault_management_ring_read_ptr & 0x10000000) == 0)))))) &&
+        ((cold_start_phase == CSP_AT_GOVERNOR_SETPOINT &&
+         ((protection_condition_flags_t_0040b0e8.condition_flags_1 & 4) == 0)))))) {
+      if (((((system_status_flags_t_003fe974.pending_faults & 0x800) != 0) ||
+           ((((system_status_flags_t_003fe974.pending_faults & 0x1000) != 0 ||
+             ((system_status_flags_t_003fe974.reserved_10 & 0x100) != 0)) ||
+            (((system_status_flags_t_003fe974.reserved_10 & 0x200) != 0 ||
+             ((((system_status_flags_t_003fe974.reserved_12 & 0x20) != 0 ||
+               ((system_status_flags_t_003fe974.enable_state & 0x400) != 0)) ||
+              ((system_status_flags_t_003fe974.enable_state & 0x800) != 0)))))))) ||
+          ((((system_status_flags_t_003fe974.reserved_12 & 0x10) != 0 ||
+            ((system_status_flags_t_003fe974.protection_active & 0x100) != 0)) ||
+           ((system_status_flags_t_003fe974.protection_active & 0x400) != 0)))) ||
+         ((((system_status_flags_t_003fe974.sensor_diag & 0x800) != 0 ||
+           ((system_status_flags_t_003fe974.enable_state & 1) != 0)) ||
+          ((system_status_flags_t_003fe974.condition_monitor & 0x2000) != 0)))) {
+        DAT_0040b560 = 4;
+        DAT_0040b566 = 4;
+      }
+      if ((fuel_temperature_trim != 0) || (DAT_00408a9c < protection_derate_rpm_limit)) {
+        DAT_003fcef2 = '\0';
+      }
+      if ((((fuel_temperature_trim == 0) && (protection_derate_rpm_limit <= DAT_00408a9c)) &&
+          (DAT_003fcef2 == '\0')) &&
+         (((DAT_0040b560 == 0 || (DAT_0040b560 == 1)) || (DAT_0040b560 == 3)))) {
+        DAT_0040b560 = 1;
+        if ((engine_diag_shadow_flags & 0x100) == 0) {
+          if (DAT_00408a9a < protection_ramp_position_b) {
+            DAT_0040b562 = DAT_0040b562 + 1;
+            if (DAT_00408a98 < DAT_0040b562) {
+              DAT_0040b562 = 0;
+              DAT_003fcef2 = '\x01';
+              if (DAT_0040b55e < DAT_00408a96) {
+                DAT_0040b55e = DAT_0040b55e + 1;
+              }
+              else {
+                engine_diag_shadow_flags = engine_diag_shadow_flags | 0x80;
+                DAT_0040b560 = 3;
+                if ((DAT_003fea6c & 0x80) == 0x80) {
+                  fault_management_ring_read_ptr =
+                       (undefined *)((uint)fault_management_ring_read_ptr | 0x10000000);
+                  if ((DAT_003fed98 & 0x10000000) == 0) {
+                    fault_pending_flags = fault_pending_flags & 0xefffffff;
+                  }
+                  else {
+                    DAT_003fed98 = DAT_003fed98 & 0xefffffff;
+                  }
+                }
+              }
+            }
+          }
+          else {
+            DAT_003fcef2 = '\x01';
+            engine_diag_shadow_flags = engine_diag_shadow_flags & 0xff7f;
+            DAT_003fea08 = DAT_003fea08 & 0xff7f;
+            DAT_0040b560 = 2;
+          }
+        }
+        else {
+          DAT_0040b560 = 4;
+        }
+      }
+      if ((DAT_00408aa8 < protection_derate_rpm_limit) ||
+         (protection_derate_rpm_limit < DAT_00408aa4)) {
+        DAT_003fcef3 = '\0';
+      }
+      if ((((protection_derate_rpm_limit <= DAT_00408aa8) &&
+           (DAT_00408aa4 <= protection_derate_rpm_limit)) && (DAT_003fcef3 == '\0')) &&
+         (((DAT_0040b566 == 0 || (DAT_0040b566 == 1)) || (DAT_0040b566 == 3)))) {
+        DAT_0040b566 = 1;
+        if ((engine_diag_shadow_flags & 0x80) == 0) {
+          if ((DAT_00408aa6 < protection_ramp_position_b) ||
+             (protection_ramp_position_b < DAT_00408aa2)) {
+            DAT_0040b568 = DAT_0040b568 + 1;
+            if (DAT_00408aa0 < DAT_0040b568) {
+              DAT_003fcef3 = '\x01';
+              DAT_0040b568 = 0;
+              if (DAT_0040b564 < DAT_00408a9e) {
+                DAT_0040b564 = DAT_0040b564 + 1;
+              }
+              else {
+                engine_diag_shadow_flags = engine_diag_shadow_flags | 0x100;
+                DAT_0040b566 = 3;
+                if ((DAT_003fceee == 0) && ((DAT_003fea6c & 0x100) == 0x100)) {
+                  fault_management_ring_read_ptr =
+                       (undefined *)((uint)fault_management_ring_read_ptr | 0x10000000);
+                  if ((DAT_003fed98 & 0x10000000) == 0) {
+                    fault_pending_flags = fault_pending_flags & 0xefffffff;
+                  }
+                  else {
+                    DAT_003fed98 = DAT_003fed98 & 0xefffffff;
+                  }
+                  DAT_003fceee = 1;
+                }
+              }
+            }
+          }
+          else {
+            engine_diag_shadow_flags = engine_diag_shadow_flags & 0xfeff;
+            DAT_003fea08 = DAT_003fea08 & 0xfeff;
+            DAT_0040b566 = 2;
+            if ((DAT_003fea6c & 0x100) == 0) {
+              fault_pending_flags = fault_pending_flags & 0xefffffff;
+              fault_management_ring_read_ptr =
+                   (undefined *)((uint)fault_management_ring_read_ptr | 0x10000000);
+              DAT_003fcef3 = '\x01';
+            }
+          }
+        }
+        else {
+          DAT_0040b566 = 4;
+        }
+      }
+    }
+  }
+  else {
+    DAT_003fceea = DAT_003fceea + 1;
+  }
+  return;
+}
+
+
+
+//
+// Function: protectionFuelTempDerate @ 0x0051b56c
+//
+

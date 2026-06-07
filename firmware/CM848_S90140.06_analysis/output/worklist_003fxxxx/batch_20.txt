@@ -1,0 +1,52 @@
+=== VARIABLES TO NAME ===
+0x003fbd5a  (5 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fbd5a
+void fault_flag_clear_bitmap(uint param_1)
+
+{
+  (&DAT_003fbd5a)[(int)param_1 >> 5 & 0xffff] =
+       ~(1 << (param_1 + (((int)param_1 >> 5) + (uint)((int)param_1 < 0 && (param_1 & 0x1f) != 0)) *
+                         -0x20 & 0x3f)) & (&DAT_003fbd5a)[(int)param_1 >> 5 & 0xffff];
+  return;
+}
+
+
+
+//
+// Function: fault_count_clear_bitmap @ 0x00509dd8
+//
+
+// Variables in this function: DAT_003fbd5a
+bool governor_tableA_nonzero_check(void)
+
+{
+  return DAT_003fbd5a != 0;
+}
+
+
+
+//
+// Function: governor_tableB_nonzero_check @ 0x00509e98
+//
+
+// Variables in this function: DAT_003fbd5a
+void fault_flag_set_bitmap(uint param_1)
+
+{
+  (&DAT_003fbd5a)[(int)param_1 >> 5 & 0xffff] =
+       1 << (param_1 + (((int)param_1 >> 5) + (uint)((int)param_1 < 0 && (param_1 & 0x1f) != 0)) *
+                       -0x20 & 0x3f) | (&DAT_003fbd5a)[(int)param_1 >> 5 & 0xffff];
+  return;
+}
+
+
+
+//
+// Function: fault_count_set_bitmap @ 0x00509f54
+//
+

@@ -1,0 +1,83 @@
+=== VARIABLES TO NAME ===
+0x003fcd8e  (8 references)
+0x003fcd8f  (9 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fcd8e, DAT_003fcd8f
+void protection_j1939_control_logic(void)
+
+{
+  byte bVar1;
+  uint uVar2;
+  
+  if (((protection_config_flags_b & 0x10) != 0) && (j1939_cruise_engaged != 0)) {
+    if ((protection_enable_t_0040c050.mode_bits & 1) == 0) {
+      DAT_003fcd8e = 0;
+      DAT_003fcd8f = 0;
+    }
+    else {
+      if ((protection_action_mode_bits._0_1_ & 0x20) == 0) {
+        DAT_003fcd8e = (DAT_0040c07b & 0x10) != 0;
+        if (DAT_0040871b != '\0') {
+          if ((bool)DAT_003fcd8e) {
+            DAT_003fcd8e = false;
+          }
+          else {
+            DAT_003fcd8e = true;
+          }
+        }
+      }
+      else {
+        DAT_003fcd8e = false;
+        uVar2 = 0;
+        do {
+          bVar1 = DAT_003fcd8d >> (uVar2 & 0x3f) & 1;
+          if ((((DAT_00408718 >> (uVar2 & 0x3f) & 1) != 0) &&
+              ((DAT_00408719 >> (uVar2 & 0x3f) & 1) == bVar1)) &&
+             ((j1939_periodic_timer_output_byte >> (uVar2 & 0x3f) & 1 ^
+              DAT_0040871a >> (uVar2 & 0x3f) & 1) != bVar1)) {
+            DAT_003fcd8e = true;
+          }
+          uVar2 = uVar2 + 1 & 0xff;
+        } while (uVar2 < 8);
+      }
+      if ((bool)DAT_003fcd8e == false) {
+        if (DAT_003fcd8f == 0) {
+          DAT_0040b202 = '\0';
+        }
+        else {
+          DAT_003fcd8f = DAT_003fcd8f - 1;
+        }
+      }
+      else {
+        if ((uint)DAT_003fcd8f + (uint)DAT_0040871d < 0x100) {
+          DAT_003fcd8f = DAT_003fcd8f + DAT_0040871d;
+        }
+        if (DAT_0040871c <= DAT_003fcd8f) {
+          DAT_003fcd8f = DAT_0040871c;
+          DAT_0040b202 = '\x01';
+        }
+      }
+      DAT_003fcd8d = j1939_dm1_fault_byte_10_prev;
+      if (DAT_003fdb92 == 0) {
+        if (DAT_0040b202 == '\0') {
+          protection_enable_t_0040c050.mode_bits = protection_enable_t_0040c050.mode_bits & 0xfb;
+        }
+        else {
+          protection_enable_t_0040c050.mode_bits = protection_enable_t_0040c050.mode_bits | 4;
+        }
+      }
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: protection_enable_state_machine @ 0x00512130
+//
+

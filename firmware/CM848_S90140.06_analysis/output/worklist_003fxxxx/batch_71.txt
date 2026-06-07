@@ -1,0 +1,105 @@
+=== VARIABLES TO NAME ===
+0x003fd06e  (7 references)
+0x003fee7e  (6 references)
+0x003fee80  (6 references)
+
+Total: 3 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fd06e, DAT_003fee7e, DAT_003fee80
+void diag_boostLoad_overtemp_monitor(void)
+
+{
+  char cVar1;
+  
+  if (((protection_feature_status_flags & 2) != 0) && ((boost_fuel_bypass_flags & 2) == 0)) {
+    if (((fault_management_status_flags & 0x200) == 0) ||
+       (((fuel_temp_trim_raw != 0 || ((system_status_flags_t_003fe974.enable_state & 0x100) != 0))
+        || ((system_status_flags_t_003fe974.enable_state & 0x200) != 0)))) {
+      protection_channel_load_snapshot = protection_channel_load_raw;
+      DAT_003fee80 = 0;
+      DAT_003fee7e = 0;
+    }
+    else {
+      protection_channel_load_snapshot =
+           exponentialMovingAverage(protection_channel_load_raw,protection_ema_output);
+      if (((cold_start_phase == CSP_AT_GOVERNOR_SETPOINT) && (fuel_demand_enable_snapshot == 0)) &&
+         (fuel_demand_control_t_0040a57a.enable_flag == 1)) {
+        DAT_003fee80 = DAT_003fee80 + 1;
+      }
+      if (DAT_0005c966 < temperature_differential) {
+        if (DAT_0005c96e < protection_channel_load_snapshot) {
+          DAT_003fd06e = DAT_003fd06e + 1;
+        }
+      }
+      else {
+        DAT_003fd06e = 0;
+      }
+      if (DAT_0005c974 <= DAT_003fd06e) {
+        DAT_003fee7e = DAT_003fee7e + 1;
+        DAT_003fd06e = 0;
+      }
+      cVar1 = DAT_0005c96a <= DAT_003fee80;
+      if ((bool)cVar1) {
+        DAT_003fee80 = DAT_0005c96a;
+      }
+      if (DAT_0005c964 <= DAT_003fee7e) {
+        DAT_003fee7e = DAT_0005c964;
+        cVar1 = cVar1 + '\x01';
+      }
+      if (cVar1 == '\x02') {
+        system_status_flags_t_003fe974.condition_monitor =
+             system_status_flags_t_003fe974.condition_monitor | 0x2000;
+      }
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: diag_boostLoad_overtemp_clear @ 0x00526bc8
+//
+
+// Variables in this function: DAT_003fd06e, DAT_003fee7e, DAT_003fee80
+void diag_boostLoad_overtemp_clear(void)
+
+{
+  if (((((fault_management_status_flags & 0x200) == 0) &&
+       ((fault_management_status_flags & 0x100) == 0)) ||
+      ((fuel_temp_trim_raw != 0 && (cold_start_phase == CSP_AT_GOVERNOR_SETPOINT)))) &&
+     ((system_status_flags_t_003fe974.condition_monitor & 0x2000) != 0)) {
+    system_status_flags_t_003fe974.condition_monitor =
+         system_status_flags_t_003fe974.condition_monitor & 0xdfff;
+    engine_timing_shadow_flags = engine_timing_shadow_flags & 0xdfff;
+    DAT_003fee80 = 0;
+    DAT_003fee7e = 0;
+    DAT_003fd06e = 0;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_calibration_group30_execute @ 0x00526c80
+//
+
+// Variables in this function: DAT_003fd06e
+void cm848_state_variables_reset(void)
+
+{
+  DAT_003fd074 = 0;
+  _protection_ema_output = &DAT_0005c972;
+  DAT_003fd06e = 0;
+  return;
+}
+
+
+
+//
+// Function: cm848_tpu_channel2_fuel_init @ 0x00527050
+//
+

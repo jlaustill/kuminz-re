@@ -1,0 +1,81 @@
+=== VARIABLES TO NAME ===
+0x003fbd2c  (11 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fbd2c
+void cm848_resetGovernorStartupReadyFlag(void)
+
+{
+  if ((governor_feature_config_word & 0x10) == 0) {
+    torque_limit_fuel_min_alt = torque_limit_fuel_minimum;
+    torque_limit_fuel_upper_cap = timing_limit_lower;
+    governor_startup_ready_flag = 0;
+    DAT_0040a786 = 0;
+    DAT_0040a790 = 3;
+  }
+  else {
+    governor_coldStart_faultDerate_trigger();
+    if (DAT_003fbd2c < 3) {
+      if (DAT_003fbd2c == 2) {
+        engine_torqueLimit_upperCap_calc();
+      }
+      else if (DAT_003fbd2c == 0) {
+        governor_fault_eventCounter_update();
+      }
+      else if (DAT_003fbd2c == 1) {
+        governor_derateTrigger_latch_clear();
+        governor_fault_derateCalc_channelIter();
+      }
+    }
+    else if (DAT_003fbd2c == 3) {
+      engine_torqueLimit_min_emaCalc();
+      governor_fault_channelProcess_mainLoop();
+    }
+    else if (DAT_003fbd2c == 4) {
+      governor_faultDerate_mainLoop_update();
+    }
+    DAT_003fbd2c = DAT_003fbd2c + 1;
+    if (4 < DAT_003fbd2c) {
+      DAT_003fbd2c = 0;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: threshold_adjustment_ramp @ 0x00507d50
+//
+
+// Variables in this function: DAT_003fbd2c
+void hpcr_initFuelTemperatureSensorChannel(void)
+
+{
+  PTR_fuel_temp_raw_0040a734 = (undefined *)&fuel_temp_raw;
+  PTR_DAT_0040a73e = (undefined *)&DAT_000597bc;
+  PTR_DAT_0040a742 = (undefined *)&DAT_000597be;
+  PTR_DAT_0040a746 = &DAT_000597c0;
+  PTR_DAT_0040a75e = &DAT_003fe006;
+  PTR_DAT_0040a75a = &DAT_003fe006;
+  if ((DAT_000597b2 & 0x1000) == 0) {
+    PTR_DAT_0040a75e = &DAT_003fe02e;
+  }
+  engine_torqueLimit_workingState_init();
+  engine_protection_torqueLimit_reset();
+  cm848_completeEngineStartSequence();
+  exception_resetProtectionModeState();
+  cm848_initSensorChannelDataStructures();
+  DAT_003fbd2c = 0;
+  return;
+}
+
+
+
+//
+// Function: protection_threshold_check @ 0x00507ebc
+//
+

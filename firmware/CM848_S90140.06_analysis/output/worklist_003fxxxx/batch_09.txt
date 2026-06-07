@@ -1,0 +1,74 @@
+=== VARIABLES TO NAME ===
+0x003fb73c  (8 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fb73c
+void cm848_calculateFuel2DTableLookup(void)
+
+{
+  if (((injection_timing_enable_flags & 1) != 0) && (engine_operating_mode == 7)) {
+    injection_timing_trim_working =
+         cm848_dualAxisTableInterpolation
+                   (&DAT_003fb738,engine_rpm_state_t_0040b7ac.current_rpm,0x45c4);
+    if (boost_map_index_current == 1) {
+      injection_timing_trim_a =
+           cm848_dualAxisTableInterpolation
+                     (&DAT_003fb73c,engine_rpm_state_t_0040b7ac.current_rpm,0x45c4);
+    }
+    else if (boost_map_index_current == 2) {
+      injection_timing_trim_a =
+           cm848_dualAxisTableInterpolation
+                     (&DAT_003fb73c,engine_rpm_state_t_0040b7ac.current_rpm,0x45c4);
+    }
+    else if (boost_map_index_current == 3) {
+      injection_timing_trim_a =
+           cm848_dualAxisTableInterpolation
+                     (&DAT_003fb73c,engine_rpm_state_t_0040b7ac.current_rpm,0x45c4);
+    }
+    else if (boost_map_index_current == 4) {
+      injection_timing_trim_a =
+           cm848_dualAxisTableInterpolation
+                     (&DAT_003fb73c,engine_rpm_state_t_0040b7ac.current_rpm,0x45c4);
+    }
+    if (boost_map_index_target == 1) {
+      injection_timing_trim_b =
+           cm848_dualAxisTableInterpolation
+                     (&DAT_003fb73c,engine_rpm_state_t_0040b7ac.current_rpm,0x45c4);
+    }
+    else if (boost_map_index_target == 2) {
+      injection_timing_trim_b =
+           cm848_dualAxisTableInterpolation
+                     (&DAT_003fb73c,engine_rpm_state_t_0040b7ac.current_rpm,0x45c4);
+    }
+    else if (boost_map_index_target == 3) {
+      injection_timing_trim_b =
+           cm848_dualAxisTableInterpolation
+                     (&DAT_003fb73c,engine_rpm_state_t_0040b7ac.current_rpm,0x45c4);
+    }
+    else if (boost_map_index_target == 4) {
+      injection_timing_trim_b =
+           cm848_dualAxisTableInterpolation
+                     (&DAT_003fb73c,engine_rpm_state_t_0040b7ac.current_rpm,0x45c4);
+    }
+    protection_fuel_limit_working =
+         cm848_filterInputValue
+                   (injection_timing_trim_a,injection_timing_trim_b,injection_timing_trim_working,
+                    boost_map_index_current,boost_map_index_target,
+                    fuel_blend_state_t_0040a494.blend_weight,fuel_blend_state_t_0040a494.blend_mode)
+    ;
+    if ((protection_feature_flags & 0x100) != 0) {
+      protection_fuel_limit_working = protection_fuel_limit_working + fuel_demand_offset_correction;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_applyProtectionLimit @ 0x0004b9ac
+//
+

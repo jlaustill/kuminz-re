@@ -1,0 +1,20 @@
+# Agent 09 assignment — name 15 unnamed DAT_0040xxxx globals (CM848 working RAM)
+# Context batch files to READ first (then verify independently per the skill):
+#   worklist_0040xxxx/batch_01.txt
+#
+# address,ref_count  (investigate EACH with investigate-firmware-symbol)
+0x0040b238,11
+0x0040b254,11
+0x0040b534,10
+0x0040b232,8
+0x0040b236,8
+0x0040b23a,8
+0x0040b240,8
+0x0040b532,8
+0x0040b234,7
+0x00408736,6
+0x0040b230,6
+0x0040b0a8,5
+0x0040b1e8,5
+0x0040b23c,5
+0x0040b23e,5

@@ -1,0 +1,35 @@
+=== VARIABLES TO NAME ===
+0x003fcbfe  (6 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fcbfe
+void cm848_updateThrottleRateFilterTimer(void)
+
+{
+  if (fuel_demand_quantity < DAT_0040729a) {
+    throttle_rate_filter_reset_flag = 0;
+    DAT_003fcbfe = 0;
+  }
+  else {
+    if (DAT_003fcbfe < 0xffff) {
+      DAT_003fcbfe = DAT_003fcbfe + 1;
+    }
+    else {
+      DAT_003fcbfe = 0xffff;
+    }
+    if (DAT_00407298 <= DAT_003fcbfe) {
+      throttle_rate_filter_reset_flag = 1;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: governor_smoke_statusFlag_update @ 0x0050ec8c
+//
+

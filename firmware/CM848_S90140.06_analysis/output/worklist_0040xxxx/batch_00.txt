@@ -1,0 +1,86 @@
+=== VARIABLES TO NAME ===
+0x0040655c  (5 references)
+0x0040a5c6  (5 references)
+0x0040a5c8  (8 references)
+0x0040a5e0  (7 references)
+
+Total: 4 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040655c, DAT_0040a5c6, DAT_0040a5c8, DAT_0040a5e0
+void fuel_demand_blend_compensate(void)
+
+{
+  int iVar1;
+  short sVar2;
+  bool bVar3;
+  uint uVar4;
+  uint uVar5;
+  
+  DAT_0040a5da = (fuel_demand_blend_filtered - DAT_00406566) - DAT_0040a71a;
+  sVar2 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fba30);
+  DAT_0040a5cc = (DAT_0040af6e >> 2) - sVar2;
+  uVar5 = (uint)DAT_0040a5cc;
+  if ((int)uVar5 < 1) {
+    DAT_0040a5c6 = 0;
+    if ((int)uVar5 < 0) {
+      uVar5 = -uVar5;
+    }
+    uVar4 = (uint)DAT_0040a5d4;
+    DAT_0040a5e0 = (int)(CONCAT44(uVar4 * ((int)uVar5 >> 0x1f) +
+                                  (int)((ulonglong)uVar4 * (ulonglong)uVar5 >> 0x20),uVar4 * uVar5)
+                        / 0x280);
+  }
+  else {
+    DAT_0040a5c6 = 1;
+    DAT_0040a5e0 = (int)(CONCAT44((int)((ulonglong)
+                                        ((longlong)(int)(uint)DAT_0040a5d6 * (longlong)(int)uVar5)
+                                       >> 0x20),DAT_0040a5d6 * uVar5) / 0x280);
+  }
+  if ((DAT_0040a5c6 == 0) || (boost_fuel_blend_weight_b < fuel_demand_band_low_threshold)) {
+    bVar3 = false;
+  }
+  else {
+    bVar3 = true;
+  }
+  if (DAT_0040a5ce != 0) {
+    iVar1 = DAT_0040a5c8;
+    if ((!bVar3) && (DAT_0040a5c6 != 0)) goto LAB_00504cf4;
+    if (DAT_0040a5c6 != 0) {
+      iVar1 = DAT_0040655c;
+      if ((DAT_0040a5e0 <= DAT_0040655c) &&
+         (iVar1 = DAT_0040655c, DAT_0040a5c8 <= DAT_0040655c - DAT_0040a5e0)) {
+        iVar1 = DAT_0040a5c8 + DAT_0040a5e0;
+      }
+      goto LAB_00504cf4;
+    }
+    if (bVar3) goto LAB_00504cf4;
+    if (DAT_0040a5e0 < DAT_0040a5c8) {
+      iVar1 = DAT_0040a5c8 - DAT_0040a5e0;
+      goto LAB_00504cf4;
+    }
+  }
+  iVar1 = 0;
+LAB_00504cf4:
+  DAT_0040a5c8 = iVar1;
+  if (DAT_0040a5c8 < DAT_0040655c) {
+    if (DAT_0040a5c8 == 0) {
+      DAT_0040a5c4 = 0;
+    }
+  }
+  else {
+    DAT_0040a5c4 = 1;
+  }
+  fuel_demand_boost_emaFiltered_compensate();
+  return;
+}
+
+
+
+//
+// Function: fuel_demand_boost_ema_compensate @ 0x00504d38
+//
+
+/* WARNING: Function: cm848_signedDivision32 replaced with injection: sdiv64by32 */
+

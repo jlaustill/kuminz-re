@@ -1,0 +1,95 @@
+=== VARIABLES TO NAME ===
+0x003fccf0  (6 references)
+0x003fccf2  (10 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fccf0, DAT_003fccf2
+void engine_protection_speedTracking_rampUpdate(void)
+
+{
+  bool bVar1;
+  ushort uVar2;
+  uint uVar3;
+  
+  uVar3 = (uint)DAT_00407774;
+  if (DAT_0040b046 == 0) {
+    uVar2 = 0;
+  }
+  else {
+    uVar2 = DAT_003fccf0;
+    if (((DAT_0040b046 != 0) && (uVar2 = DAT_00407774, uVar3 != 0)) &&
+       (uVar2 = DAT_00407774, (int)(uint)DAT_003fccf0 <= (int)(uVar3 - 1))) {
+      uVar2 = DAT_003fccf0 + 1;
+    }
+  }
+  DAT_003fccf0 = uVar2;
+  bVar1 = uVar3 == DAT_003fccf0;
+  DAT_0040b044 = (ushort)bVar1;
+  uVar3 = (uint)DAT_0040777c;
+  if (DAT_003fd8ce == 0) {
+    if (((DAT_0040b04a == 0) || (!bVar1)) && ((uVar2 = DAT_003fccf2, DAT_0040b04a != 0 || (!bVar1)))
+       ) goto LAB_0050fbb8;
+    if ((DAT_0040b04a != 0) || (!bVar1)) {
+      uVar2 = DAT_0040777c;
+      if ((DAT_00407776 <= uVar3) &&
+         (uVar2 = DAT_0040777c, (int)(uint)DAT_003fccf2 <= (int)(uVar3 - DAT_00407776))) {
+        uVar2 = DAT_003fccf2 + DAT_00407776;
+      }
+      goto LAB_0050fbb8;
+    }
+    if (DAT_00407778 < DAT_003fccf2) {
+      uVar2 = DAT_003fccf2 - DAT_00407778;
+      goto LAB_0050fbb8;
+    }
+  }
+  uVar2 = 0;
+LAB_0050fbb8:
+  DAT_003fccf2 = uVar2;
+  DAT_0040b048 = DAT_003fccf2;
+  if (DAT_003fccf2 < uVar3) {
+    if ((uint)DAT_003fccf2 <= (uint)DAT_0040777e) {
+      DAT_003fccf4 = 0;
+    }
+  }
+  else {
+    DAT_003fccf4 = 1;
+  }
+  return;
+}
+
+
+
+//
+// Function: phase_group_b_updateGovernorModeDiagnostics @ 0x0050fbf8
+//
+
+// Variables in this function: DAT_003fccf0, DAT_003fccf2
+void cm848_initializeGovernorFuelDemandArray(void)
+
+{
+  DAT_0040b044 = 0;
+  DAT_0040b046 = 0;
+  DAT_0040b048 = 0;
+  DAT_0040b04a = 0;
+  DAT_0040b04c = 0;
+  DAT_0040b04e = 0;
+  DAT_0040b042 = 0;
+  diagnostic_status_flags = diagnostic_status_flags & 0xff7f;
+  j1939_comm_status_flags = j1939_comm_status_flags & 0xff7f;
+  DAT_003fccf4 = 0;
+  DAT_003fccf0 = 0;
+  DAT_003fccf2 = 0;
+  DAT_003fccec = 0;
+  PTR_DAT_003fcce8 = &DAT_0040777a;
+  return;
+}
+
+
+
+//
+// Function: boost_demand_diagBit_counter @ 0x0050fd40
+//
+

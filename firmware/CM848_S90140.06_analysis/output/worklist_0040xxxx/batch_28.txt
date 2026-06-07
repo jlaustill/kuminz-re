@@ -1,0 +1,57 @@
+=== VARIABLES TO NAME ===
+0x0040afd8  (17 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040afd8
+void fuel_demandSource_modeSelect(void)
+
+{
+  ushort uVar1;
+  ushort uVar2;
+  
+  PTR_DAT_0040afd8._0_2_ = DAT_0040770c;
+  if (DAT_003fd8ac == 0) {
+    if (DAT_003fd8ae == 0) {
+      uVar2 = 0;
+    }
+    else {
+      uVar2 = 0x200;
+    }
+    PTR_DAT_0040afd8._0_2_ = governor_correction_mode_flags | DAT_0040afe2 | uVar2;
+  }
+  DAT_0040afe4 = PTR_DAT_0040afd8._0_2_ & 0x100;
+  uVar2 = PTR_DAT_0040afd8._0_2_ & 0x200;
+  if ((((uVar2 == 0) && ((PTR_DAT_0040afd8._0_2_ & 0x100) == 0)) ||
+      (((PTR_DAT_0040afd8._0_2_ & 0x80) == 0 && ((PTR_DAT_0040afd8._0_2_ & 0x40) == 0)))) &&
+     (((((uVar1 = PTR_DAT_0040afd8._0_2_ & 0x80, uVar1 == 0 &&
+         ((PTR_DAT_0040afd8._0_2_ & 0x40) == 0)) || (uVar2 != 0)) ||
+       ((PTR_DAT_0040afd8._0_2_ & 0x100) != 0)) ||
+      (((PTR_DAT_0040afd8._0_2_ & 0x20) == 0 && ((PTR_DAT_0040afd8._0_2_ & 2) == 0)))))) {
+    if (((((PTR_DAT_0040afd8._0_2_ & 0x20) == 0) && ((PTR_DAT_0040afd8._0_2_ & 2) == 0)) ||
+        (((PTR_DAT_0040afd8._0_2_ & 0x40) != 0 && (uVar1 != 0)))) &&
+       (((uVar2 == 0 && ((PTR_DAT_0040afd8._0_2_ & 0x100) == 0)) ||
+        (((PTR_DAT_0040afd8._0_2_ & 0x40) != 0 && (uVar1 != 0)))))) {
+      fuel_demand_quantity = governor_speed_reference_raw;
+      boost_control_mode = 0;
+    }
+    else {
+      fuel_demand_quantity = governor_temperature_correction;
+      boost_control_mode = 1;
+    }
+  }
+  else {
+    fuel_demand_quantity = DAT_0040bdc6;
+    boost_control_mode = 2;
+  }
+  return;
+}
+
+
+
+//
+// Function: phase_group_b_dispatchControlFunctions @ 0x0050ee44
+//
+

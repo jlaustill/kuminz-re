@@ -1,0 +1,194 @@
+=== VARIABLES TO NAME ===
+0x003fd082  (7 references)
+0x003fd088  (5 references)
+0x003fd089  (6 references)
+0x003fd08b  (11 references)
+
+Total: 4 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fd082, DAT_003fd088, DAT_003fd089, DAT_003fd08b
+void FUN_0052731c(void)
+
+{
+  word wVar1;
+  int iVar2;
+  uint uVar3;
+  uint uVar4;
+  uint uVar5;
+  
+  if (DAT_003fd088 <= DAT_00408f48) {
+    if ((((((protection_fault_status_b & 0x55) != 0) && ((DAT_00408f4c & 1) != 0)) ||
+         (((protection_fault_status_c & 0x55) != 0 && ((DAT_00408f4c & 2) != 0)))) ||
+        (((engine_position_diag_flags & 0x55) != 0 && ((DAT_00408f4c & 4) != 0)))) ||
+       ((injection_check_flags == 1 && ((DAT_00408f4c & 8) != 0)))) {
+      if (DAT_003fd08b == 0) {
+        if (protection_fault_eval_input == 0) {
+          DAT_003fd089 = DAT_00408f46 * (ushort)cylinder_event_count_max;
+        }
+        protection_fault_eval_input = protection_fault_eval_input | 0x55;
+      }
+      else {
+        DAT_003fd08b = DAT_003fd08b - 1;
+      }
+    }
+    if (((((protection_fault_status_b & 0xaa) != 0) && ((DAT_00408f4c & 1) != 0)) ||
+        (((protection_fault_status_c & 0xaa) != 0 && ((DAT_00408f4c & 2) != 0)))) ||
+       ((((engine_position_diag_flags & 0xaa) != 0 && ((DAT_00408f4c & 4) != 0)) ||
+        ((injection_check_flags == 2 && ((DAT_00408f4c & 8) != 0)))))) {
+      if (DAT_003fd08b == 0) {
+        if (protection_fault_eval_input == 0) {
+          DAT_003fd089 = DAT_00408f46 * (ushort)cylinder_event_count_max;
+        }
+        protection_fault_eval_input = protection_fault_eval_input | 0xaa;
+      }
+      else {
+        DAT_003fd08b = DAT_003fd08b - 1;
+      }
+    }
+    if ((injection_check_flags == 0 &&
+         ((engine_position_diag_flags == 0 && protection_fault_status_b == 0) &&
+         protection_fault_status_c == 0)) &&
+       ((uint)DAT_003fd08b < (uint)DAT_00408f49 * (uint)cylinder_event_count_max)) {
+      DAT_003fd08b = DAT_003fd08b + 1;
+    }
+    if (protection_fault_eval_input != 0) {
+      if (DAT_003fd089 == 0) {
+        if ((DAT_00408f48 == 0) || (DAT_003fd088 < DAT_00408f48)) {
+          protection_fault_eval_input = 0;
+        }
+        else {
+          wVar1 = TPUA_CH4_PARAM0;
+          TPUA_CH4_PARAM0 = wVar1 & 0x7fff;
+          wVar1 = tpu_channel_control.PARAM0;
+          tpu_channel_control.PARAM0 = wVar1 & 0x7fff;
+        }
+        if (DAT_00408f48 != 0) {
+          DAT_003fd088 = DAT_003fd088 + 1;
+        }
+        DAT_003fd08b = DAT_00408f49 * cylinder_event_count_max;
+      }
+      else {
+        DAT_003fd089 = DAT_003fd089 + -1;
+      }
+    }
+  }
+  if (((int)(uint)(crank_sync_inhibit_flag | protection_fault_eval_input) >>
+       (cylinder_event_index & 0x3f) & 1U) == 0) {
+    if (crank_position_valid_flag == 0) {
+      uVar3 = 0xc800;
+    }
+    else if ((uint)DAT_00408f50 < (uint)DAT_003fd07c) {
+      uVar3 = (uint)DAT_00408f52 +
+              (((uint)DAT_00408f54 - (uint)DAT_00408f52) * (uint)DAT_00408f50) / (uint)DAT_003fd07c;
+    }
+    else {
+      uVar3 = (uint)DAT_00408f54;
+    }
+    uVar4 = (uint)DAT_0040b78c;
+    uVar5 = (uint)DAT_00408f4e;
+    if ((int)(uVar3 & 0xffff) < (int)(uVar4 - uVar5)) {
+      uVar3 = uVar4 - uVar5;
+    }
+    else if (uVar4 + uVar5 < (uVar3 & 0xffff)) {
+      uVar3 = uVar4 + uVar5;
+    }
+    DAT_0040b78c = (ushort)uVar3;
+    uVar3 = uVar3 & 0xffff;
+    uVar4 = (uVar3 * DAT_003fd07c) / 0xc800 & 0xffff;
+    uVar5 = (uVar3 * DAT_003fd07e) / 0xc800;
+    cam_timing_reference_offset = (word)uVar5;
+    wVar1 = (word)((uVar3 * DAT_003fd080) / 0xc800);
+    iVar2 = uVar4 + (int)*(short *)(&cylinder_diag_output_array + (uint)cylinder_event_index * 2);
+    if (iVar2 < 0) {
+      uVar4 = 0;
+    }
+    else if (iVar2 < 0x1701) {
+      uVar4 = uVar4 + (int)*(short *)(&cylinder_diag_output_array + (uint)cylinder_event_index * 2);
+    }
+    else {
+      uVar4 = 0x1700;
+    }
+    engine_timing_reference = (word)uVar4;
+    if ((uVar4 & 0xffff) < (uVar5 & 0xffff)) {
+      cam_timing_reference_offset = engine_timing_reference;
+    }
+    uVar3 = (int)DAT_0040908c *
+            ((int)(short)engine_timing_reference - (int)(short)cam_timing_reference_offset);
+    engine_timing_delta =
+         (short)((int)uVar3 >> 0xc) + (ushort)((int)uVar3 < 0 && (uVar3 & 0xfff) != 0);
+    if (-1 < (short)wVar1) {
+      if ((short)wVar1 <= (short)engine_timing_delta) {
+        engine_load_normalized_prev = DAT_003fd082;
+        injection_period_capture_a = DAT_003fd082;
+        cam_sync_period_reference_a = DAT_003fd084;
+        engine_timing_delta = wVar1;
+        cam_sync_period_reference_b = DAT_003fd086;
+        return;
+      }
+      engine_load_normalized_prev = DAT_003fd082;
+      injection_period_capture_a = DAT_003fd082;
+      cam_sync_period_reference_a = DAT_003fd084;
+      cam_sync_period_reference_b = DAT_003fd086;
+      return;
+    }
+  }
+  else {
+    engine_timing_reference = 0;
+    cam_timing_reference_offset = 0;
+  }
+  engine_timing_delta = 0;
+  injection_period_capture_a = DAT_003fd082;
+  engine_load_normalized_prev = DAT_003fd082;
+  cam_sync_period_reference_a = DAT_003fd084;
+  cam_sync_period_reference_b = DAT_003fd086;
+  return;
+}
+
+
+
+//
+// Function: cm848_protection_threshold_load @ 0x00527860
+//
+
+// Variables in this function: DAT_003fd088, DAT_003fd089, DAT_003fd08b
+void cm848_protection_threshold_load(void)
+
+{
+  DAT_003fd089 = DAT_00408f46 * (ushort)cylinder_event_count_max;
+  DAT_003fd08b = DAT_00408f49 * (ushort)cylinder_event_count_max;
+  DAT_003fd088 = 0;
+  protection_fault_eval_input = 0;
+  return;
+}
+
+
+
+//
+// Function: cm848_fuel_demand_state_capture @ 0x005278ac
+//
+
+// Variables in this function: DAT_003fd082
+void cm848_fuel_demand_state_capture(void)
+
+{
+  DAT_003fd07c = fuel_demand_computed;
+  DAT_003fd07e = DAT_0040b93a;
+  DAT_003fd080 = crank_sync_threshold;
+  DAT_003fd082 = torque_limit_fault_snapshot;
+  DAT_003fd084 = DAT_0040b960;
+  DAT_003fd086 = DAT_0040b830;
+  if ((cold_start_phase != CSP_AT_GOVERNOR_SETPOINT) && (cold_start_phase != CSP_FUEL_MODE_SWITCH))
+  {
+    DAT_0040b78c = 0xc800;
+  }
+  return;
+}
+
+
+
+//
+// Function: FUN_00527938 @ 0x00527938
+//
+

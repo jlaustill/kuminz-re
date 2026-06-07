@@ -1,0 +1,112 @@
+=== VARIABLES TO NAME ===
+0x0040b9c4  (5 references)
+0x0040b9c6  (9 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040b9c4, DAT_0040b9c6
+void hpcr_calibration_group36_load_cont(void)
+
+{
+  if (DAT_0040b9c6 != 1) {
+    return;
+  }
+  if (DAT_003fd1dc <= DAT_00409ef8) {
+    DAT_003fd1dc = DAT_003fd1dc + 1;
+    return;
+  }
+  if (((eeprom_cal_word2_source < DAT_00409ef6) || ((j1939_msg_slot_n_control & 0x3f) != 0)) ||
+     ((system_status_flags_t_003fe974.reserved_28 & 0x10) != 0)) {
+    DAT_0040b9c6 = 4;
+    DAT_0040b9c4 = 1;
+    return;
+  }
+  if (((system_status_flags_t_003fe974.reserved_28 & 1) != 0) ||
+     ((system_status_flags_t_003fe974.reserved_28 & 2) != 0)) {
+    DAT_003fd1e0 = 1;
+    DAT_0040b9c4 = 2;
+    DAT_0040b9c6 = 4;
+    return;
+  }
+  if (cold_start_phase == CSP_CRANKING) {
+    DAT_003fd1de = DAT_003fd1de + 1;
+    if (engine_timing_diagnostic_word < DAT_00409ef2) {
+      sensor_scan_cycle_counter = sensor_scan_cycle_counter + 1;
+    }
+    else if (sensor_scan_cycle_counter != 0) {
+      DAT_0040b9c6 = 4;
+      DAT_0040b9c4 = 3;
+    }
+    if (DAT_00409eee < engine_timing_diagnostic_word) {
+      _sensor_scan_cycle_counter = _sensor_scan_cycle_counter + 1;
+    }
+    else if (_sensor_scan_cycle_counter != 0) {
+      DAT_0040b9c6 = 4;
+      DAT_0040b9c4 = 4;
+    }
+    if (sensor_scan_cycle_counter == 0xffff) {
+      sensor_scan_cycle_counter = 0xfffe;
+    }
+    if (_sensor_scan_cycle_counter == 0xffff) {
+      _sensor_scan_cycle_counter = 0xfffe;
+    }
+    if (DAT_003fd1de == 0xffff) {
+      DAT_003fd1de = 0xfffe;
+    }
+  }
+  else if (DAT_003fd1de < DAT_00409ef4) {
+    DAT_0040b9c6 = 4;
+    DAT_0040b9c4 = 5;
+  }
+  if (DAT_003fd1de < DAT_00409ef4) {
+    DAT_003fd1e0 = 1;
+    return;
+  }
+  if (DAT_003fd1dc <= DAT_00409ef8) {
+    DAT_003fd1e0 = 1;
+    return;
+  }
+  if ((sensor_scan_cycle_counter < DAT_00409ef0) && (_sensor_scan_cycle_counter < DAT_00409eec)) {
+    protection_monitor_shadow = protection_monitor_shadow & 0xbfff;
+    j1939_message_state_flags = j1939_message_state_flags & 0xbfff;
+    DAT_0040b9c6 = 2;
+  }
+  else {
+    protection_monitor_shadow = protection_monitor_shadow | 0x4000;
+    DAT_0040b9c6 = 3;
+    if (((fault_pending_flags & 0x40) != 0) && ((DAT_003fed98 & 0x40) != 0)) {
+      DAT_003fed98 = DAT_003fed98 & 0xffffffbf;
+      goto LAB_0053166c;
+    }
+  }
+  fault_pending_flags = fault_pending_flags & 0xffffffbf;
+LAB_0053166c:
+  DAT_003fd1e0 = 1;
+  fault_management_ring_read_ptr = (undefined *)((uint)fault_management_ring_read_ptr | 0x40);
+  return;
+}
+
+
+
+//
+// Function: cm848_initialization_group26_state @ 0x0053168c
+//
+
+// Variables in this function: DAT_0040b9c6
+void cm848_initialization_group26_state(void)
+
+{
+  if (DAT_00409efa != 0) {
+    DAT_0040b9c6 = 1;
+  }
+  return;
+}
+
+
+
+//
+// Function: hpcr_calibration_group25_load_cont @ 0x005316ac
+//
+

@@ -1,0 +1,39 @@
+=== VARIABLES TO NAME ===
+0x003fd27a  (6 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fd27a
+void hpcr_oilPressureLimited(void)
+
+{
+  if ((system_status_flags_t_003fe974.safety_bits_1 & 0x80) != 0) {
+    DAT_003fd278 = 0;
+  }
+  if (DAT_003fd278 != 0) {
+    if ((system_status_flags_t_003fe974.safety_bits_1 & 0x100) == 0) {
+      DAT_003feeb8 = 0;
+    }
+    else {
+      DAT_003fd27a = DAT_003fd27a + fuel_temperature_trim;
+      if (35999 < DAT_003fd27a) {
+        DAT_003feeb8 = DAT_003feeb8 + DAT_003fd27a / 36000;
+        DAT_003fd27a = DAT_003fd27a % 36000;
+      }
+    }
+    if (DAT_0040a026 <= DAT_003feeb8) {
+      j1939_receive_status_flags = j1939_receive_status_flags | 1;
+      DAT_003fd278 = 0;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_mainLoopDispatcher @ 0x00537acc
+//
+

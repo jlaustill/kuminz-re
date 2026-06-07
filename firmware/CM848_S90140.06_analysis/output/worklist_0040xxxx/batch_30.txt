@@ -1,0 +1,45 @@
+=== VARIABLES TO NAME ===
+0x0040aff8  (5 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040aff8
+void fuel_smokeLimit_transient_counter(void)
+
+{
+  short sVar1;
+  
+  if ((((DAT_003fe9c0 & 0x20) == 0) && ((DAT_003fe9c0 & 8) == 0)) && (DAT_003ff6f0 < DAT_003fcc1c))
+  {
+    if (((int)(uint)DAT_003ff704 < DAT_003fcc10) || (DAT_003fcc10 < DAT_003ff702)) {
+      sVar1 = 1;
+    }
+    else {
+      if (DAT_0040aff8 == 0) goto LAB_0050f458;
+      sVar1 = -1;
+    }
+    DAT_0040aff8 = DAT_0040aff8 + sVar1;
+  }
+LAB_0050f458:
+  if (DAT_0040aff8 < DAT_003ff6ec) {
+    if (DAT_0040aff8 == 0) {
+      DAT_003fe9c0 = DAT_003fe9c0 & 0xfbff;
+      DAT_003fea24 = DAT_003fea24 & 0xfbff;
+    }
+  }
+  else {
+    DAT_003fe9c0 = DAT_003fe9c0 | 0x400;
+  }
+  return;
+}
+
+
+
+//
+// Function: phase_group_b_updateBoostBlendingControl @ 0x0050f4c0
+//
+
+/* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+

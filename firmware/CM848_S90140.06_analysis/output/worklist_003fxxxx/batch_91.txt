@@ -1,0 +1,100 @@
+=== VARIABLES TO NAME ===
+0x003fd226  (7 references)
+0x003fd22d  (5 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fd226, DAT_003fd22d
+void cm848_mainLoopServiceMonitor(void)
+
+{
+  char cVar1;
+  dword *pdVar2;
+  undefined1 *puVar3;
+  int iVar4;
+  ushort *puVar5;
+  uint uVar6;
+  
+  if (DAT_003fd22d == 0) {
+    DAT_003fd226 = DAT_003fd226 + '\x01';
+    if (DAT_003fd226 == '\x01') {
+      engine_coolantTemp_overheat_monitor();
+    }
+    else if (DAT_003fd226 == '\x02') {
+      uVar6 = 0;
+      pdVar2 = &fault_timestamp_array;
+      do {
+        if ((*(byte *)((int)pdVar2 + uVar6 * 7 + 5) & 1) == 0) {
+          puVar3 = &DAT_003feb92;
+          iVar4 = uVar6 * 3;
+          if ((((((&DAT_003feb92)[iVar4] & 0xe) != 0) &&
+               (((&fault_entry_flags)[uVar6 * 6] & 2) != 0)) && (((&DAT_003feb92)[iVar4] & 1) == 0))
+             && (cVar1 = diag_faultEntry_conditions_validate(uVar6), cVar1 != '\0')) {
+            puVar3[iVar4] = puVar3[iVar4] | 1;
+          }
+        }
+        uVar6 = uVar6 + 1 & 0xff;
+      } while (uVar6 < 0xaa);
+    }
+    else if (DAT_003fd226 == '\x03') {
+      uVar6 = 0;
+      puVar3 = &DAT_003feb92;
+      do {
+        iVar4 = uVar6 * 3;
+        if ((((*(ushort *)(puVar3 + iVar4 + 1) & 1) != 0) &&
+            (((&fault_entry_flags)[uVar6 * 6] & 2) != 0)) &&
+           ((((&fault_entry_flags)[uVar6 * 6] & 0x20) != 0 &&
+            (((*(ushort *)(puVar3 + iVar4 + 1) & 4) == 0 &&
+             (cVar1 = diag_faultEntry_conditions_validate(uVar6), cVar1 != '\0')))))) {
+          puVar5 = (ushort *)(puVar3 + iVar4 + 1);
+          *puVar5 = *puVar5 & 7 | 4 | *puVar5 & 0xfff8;
+        }
+        uVar6 = uVar6 + 1 & 0xff;
+      } while (uVar6 < 0xaa);
+    }
+    else if (DAT_003fd226 != '\x04') {
+      DAT_003fd226 = '\0';
+    }
+  }
+  else {
+    DAT_003fd22d = DAT_003fd22d + -1;
+    if (DAT_003fd22d == 0) {
+      DAT_003fd229 = sensor_readings_t_0040baf2.coolant_temp;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_auxiliaryControlTask @ 0x00534530
+//
+
+// Variables in this function: DAT_003fd22d
+void cm848_initFaultManagement(void)
+
+{
+  uint uVar1;
+  ushort *puVar2;
+  
+  DAT_003fd22d = DAT_0005a9c2;
+  uVar1 = 0;
+  do {
+    puVar2 = (ushort *)((int)&DAT_003feb93 + uVar1 * 3);
+    *puVar2 = *puVar2 & 5 | *puVar2 & 0xfff8;
+    *puVar2 = *puVar2 & 3 | *puVar2 & 0xfff8;
+    (&DAT_003feb92)[uVar1 * 3] = (&DAT_003feb92)[uVar1 * 3] & 0xfe;
+    uVar1 = uVar1 + 1 & 0xff;
+  } while (uVar1 < 0xaa);
+  return;
+}
+
+
+
+//
+// Function: engine_camSync_crossValidation_update @ 0x005353c8
+//
+

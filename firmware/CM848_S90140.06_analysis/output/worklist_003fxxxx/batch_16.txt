@@ -1,0 +1,152 @@
+=== VARIABLES TO NAME ===
+0x003fbd28  (7 references)
+0x003fbd2a  (6 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fbd28, DAT_003fbd2a
+void engine_protection_derateParam_priorityApply(void)
+
+{
+  ushort uVar1;
+  ushort uVar2;
+  ushort uVar3;
+  ushort uVar4;
+  ushort uVar5;
+  ushort uVar6;
+  
+  uVar1 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fbd2a);
+  uVar2 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fbd2a);
+  uVar3 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fbd2a);
+  uVar4 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fbd2a);
+  uVar5 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fbd2a);
+  uVar6 = cm848_getHighestPriorityBit();
+  if ((DAT_0005c304 & uVar6) == 0) {
+    if (DAT_003fbd28 < (protection_mode_request_flags & ~DAT_003fbd28)) {
+      return;
+    }
+  }
+  else {
+    if (uVar1 < protection_cal_level1_working) {
+      protection_cal_level1_working = uVar1;
+    }
+    if (uVar2 < protection_cal_numerator_b) {
+      protection_cal_numerator_b = uVar2;
+    }
+    if (uVar3 < protection_cal_numerator_c) {
+      protection_cal_numerator_c = uVar3;
+    }
+    if (uVar4 < protection_output_cal_working) {
+      protection_output_cal_working = uVar4;
+    }
+    uVar1 = protection_cal_level1_working;
+    uVar2 = protection_cal_numerator_b;
+    uVar3 = protection_cal_numerator_c;
+    uVar4 = protection_output_cal_working;
+    if (protection_derate_numerator_working <= uVar5) {
+      return;
+    }
+  }
+  protection_output_cal_working = uVar4;
+  protection_cal_numerator_c = uVar3;
+  protection_cal_numerator_b = uVar2;
+  protection_cal_level1_working = uVar1;
+  protection_derate_numerator_working = uVar5;
+  return;
+}
+
+
+
+//
+// Function: governor_calculateIntegratorRpmOutput @ 0x00507a20
+//
+
+/* WARNING: Function: cm848_signedDivision32 replaced with injection: sdiv64by32 */
+
+// Variables in this function: DAT_003fbd28
+void governor_calculateIntegratorRpmOutput(void)
+
+{
+  int iVar1;
+  undefined *puVar2;
+  
+  if (governor_startup_ready_flag == 1) {
+    protection_mode_request_flags = protection_mode_request_flags | DAT_003fbd28;
+    if ((protection_mode_request_flags & ~DAT_003fbd28) <= DAT_003fbd28) {
+      if (((fault_management_status_flags & 0x40) == 0) ||
+         (iVar1 = (int)(short)governor_integrator_correction_term, iVar1 == 0)) {
+        puVar2 = (undefined *)(uint)governor_output_t_0040aec2.integrator._0_2_;
+      }
+      else {
+        puVar2 = (undefined *)
+                 ((uint)governor_output_t_0040aec2.integrator._0_2_ -
+                 (int)(CONCAT44((int)((ulonglong)
+                                      ((longlong)iVar1 * (longlong)(int)(uint)DAT_0005c2f6) >> 0x20)
+                                ,iVar1 * (uint)DAT_0005c2f6) / 0xa7));
+        if ((int)puVar2 < 0) {
+          puVar2 = (undefined *)0x0;
+        }
+        else if (40000 < (int)puVar2) {
+          puVar2 = &DAT_00009c40;
+        }
+      }
+      governor_integrator_rpm_output = (word)puVar2;
+      if ((((torque_limit_arb_t_0040a2f6.source_active == 2) ||
+           (torque_limit_arb_t_0040a2f6.source_active == 1)) ||
+          (torque_limit_arb_t_0040a2f6.source_active == 4)) ||
+         ((torque_limit_arb_t_0040a2f6.source_active == 5 ||
+          (torque_limit_arb_t_0040a2f6.source_active == 0xc)))) {
+        puVar2 = (undefined *)
+                 ((int)(CONCAT44((int)((ulonglong)
+                                       ((longlong)
+                                        (int)((uint)torque_limit_table_output - (uint)DAT_0005c2f8)
+                                       * (longlong)(int)torque_limit_error_integrator._0_2_) >> 0x20
+                                      ),((uint)torque_limit_table_output - (uint)DAT_0005c2f8) *
+                                        (int)torque_limit_error_integrator._0_2_) / 0x1111) +
+                 (uint)torque_limit_arb_t_0040a2f6.fuel_minimum);
+        if ((int)puVar2 < 0) {
+          puVar2 = (undefined *)0x0;
+        }
+        else if (40000 < (int)puVar2) {
+          puVar2 = &DAT_00009c40;
+        }
+      }
+      else {
+        puVar2 = (undefined *)(uint)DAT_0005c2fa;
+      }
+      protection_recovery_threshold_cal = (word)puVar2;
+      protection_threshold_lookup_rpm = DAT_0005c2fc;
+      protection_threshold_scale_working = DAT_0005c2fe;
+      protection_base_threshold_working = DAT_0005c300;
+    }
+    engine_protection_derateParam_priorityApply();
+  }
+  else {
+    protection_mode_request_flags = protection_mode_request_flags & ~DAT_003fbd28;
+  }
+  return;
+}
+
+
+
+//
+// Function: fault_initBitwiseTimerMask @ 0x00507c1c
+//
+
+// Variables in this function: DAT_003fbd28, DAT_003fbd2a
+void fault_initBitwiseTimerMask(void)
+
+{
+  DAT_003fbd28 = (short)(1 << (DAT_0005c302 & 0x3f));
+  DAT_003fbd2a = 2;
+  return;
+}
+
+
+
+//
+// Function: cm848_resetGovernorStartupReadyFlag @ 0x00507c44
+//
+

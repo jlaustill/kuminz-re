@@ -1,0 +1,72 @@
+=== VARIABLES TO NAME ===
+0x003fcda0  (8 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fcda0
+void governor_fuel_mode_initialization(void)
+
+{
+  cruise_protection_ok = 0;
+  governor_fuel_mode = 1;
+  governor_fuel_mode_d = 1;
+  DAT_003fcda8 = 0;
+  DAT_003fcd94 = 5;
+  DAT_003fcda4 = 5;
+  governor_speed_request_state_b = 5;
+  DAT_003fcdaa = 5;
+  DAT_003fcda0 = 0;
+  DAT_003fcd9a = 0;
+  PTR_DAT_003fcd96 = &DAT_0040872a;
+  DAT_003fcd90 = 0;
+  DAT_003fcdac = 0;
+  DAT_003fcda6 = 0;
+  cruise_speed_error_integral = 0;
+  DAT_003fcdae = 0;
+  return;
+}
+
+
+
+//
+// Function: governor_cruiseOverride_state2_handler @ 0x005125f4
+//
+
+// Variables in this function: DAT_003fcda0
+int protection_control_state_check_2(void)
+
+{
+  short sVar1;
+  
+  DAT_003fcd94 = DAT_0040bb4e;
+  sVar1 = DAT_0040bb4e;
+  if (1 < DAT_0040871e) {
+    if (DAT_003fcdaa == DAT_0040bb4e) {
+      DAT_003fcda0 = 2;
+      sVar1 = DAT_003fcdaa;
+    }
+    else if (DAT_003fcda4 == DAT_0040bb4e) {
+      if ((int)(uint)DAT_003fcda0 < (int)(DAT_0040871e - 1)) {
+        DAT_003fcda0 = DAT_003fcda0 + 1;
+        return 5;
+      }
+    }
+    else {
+      if (DAT_003fcda0 < 2) {
+        return 5;
+      }
+      DAT_003fcda0 = DAT_003fcda0 - 1;
+      sVar1 = DAT_003fcdaa;
+    }
+  }
+  return (int)sVar1;
+}
+
+
+
+//
+// Function: governor_cruise_fuelCorrection_inhibitCheck @ 0x00512a60
+//
+

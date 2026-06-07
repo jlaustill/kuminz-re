@@ -1,0 +1,232 @@
+=== VARIABLES TO NAME ===
+0x003fce22  (5 references)
+0x003fce24  (13 references)
+0x003fce26  (9 references)
+0x003fce28  (7 references)
+
+Total: 4 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fce24, DAT_003fce26, DAT_003fce28
+undefined4 cm848_calibBlock1_trim_eepromWrite(void)
+
+{
+  ushort uVar2;
+  undefined4 uVar1;
+  
+  if ((protection_enable_t_0040c050.mode_bits & 1) != 0) {
+    uVar2 = (ushort)DAT_003fce2a;
+    if ((DAT_0040b1a0 & 0xff) < uVar2) {
+      uVar2 = uVar2 - DAT_0040b1a0;
+    }
+    else {
+      uVar2 = DAT_0040b1a0 - uVar2;
+    }
+    if ((uVar2 & 0xff) <= (ushort)DAT_0005b334) {
+      if (DAT_0040b334 != 0) {
+        DAT_0040b334 = DAT_0040b334 + -1;
+        uVar1 = 1;
+        goto LAB_0051656c;
+      }
+      if (safety_condition_active_flag._2_2_ == 1) {
+        safety_condition_active_flag._2_2_ = 0;
+        DAT_0040b32c = 1;
+      }
+      if ((governor_system_config_flags & 0x20) != 0) {
+        uVar1 = 1;
+        goto LAB_0051656c;
+      }
+      eeprom_header_t_003fee08.calibration_block1[0] = (byte)DAT_0040bb78;
+      DAT_003fce24 = DAT_0040bb78 << 8;
+      DAT_0040b32c = 0;
+      DAT_003fce26 = DAT_003fce24;
+      DAT_003fce28 = DAT_003fce24;
+      eeprom_header_t_003fee08.calibration_block1[1] =
+           eeprom_header_t_003fee08.calibration_block1[0];
+      eeprom_header_t_003fee08.calibration_block1[2] =
+           eeprom_header_t_003fee08.calibration_block1[0];
+    }
+  }
+  uVar1 = 0;
+LAB_0051656c:
+  DAT_003fce2a = (char)DAT_0040b1a0;
+  return uVar1;
+}
+
+
+
+//
+// Function: cm848_calibBlock1_counters_reset @ 0x00516578
+//
+
+// Variables in this function: DAT_003fce24, DAT_003fce26, DAT_003fce28
+void cm848_calibBlock1_trim_commit(void)
+
+{
+  ushort uVar1;
+  
+  if (DAT_0040b32c == 1) {
+    if (DAT_0040b332 == 0) {
+      if ((DAT_0040b1a0 & 0xff) < (ushort)eeprom_header_t_003fee08.calibration_block1[1]) {
+        uVar1 = eeprom_header_t_003fee08.calibration_block1[1] - DAT_0040b1a0;
+      }
+      else {
+        uVar1 = DAT_0040b1a0 - eeprom_header_t_003fee08.calibration_block1[1];
+      }
+      if ((ushort)DAT_0005b325 <= (uVar1 & 0xff)) {
+        eeprom_header_t_003fee08.calibration_block1[0] = (byte)DAT_0040b1a0;
+        DAT_003fce26 = DAT_0040b1a0 << 8;
+        DAT_003fce24 = DAT_0040b1a0 << 8;
+        DAT_003fce28 = DAT_003fce26;
+        eeprom_header_t_003fee08.calibration_block1[1] =
+             eeprom_header_t_003fee08.calibration_block1[0];
+        eeprom_header_t_003fee08.calibration_block1[2] =
+             eeprom_header_t_003fee08.calibration_block1[0];
+      }
+    }
+    DAT_0040b32c = 0;
+    cbd_enable_state = 1;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_calibBlock1_adaptiveTrim_update @ 0x0051674c
+//
+
+/* WARNING: Function: cm848_signedDivision32 replaced with injection: sdiv64by32 */
+
+// Variables in this function: DAT_003fce24
+void cm848_calibBlock1_adaptiveTrim_update(void)
+
+{
+  uint uVar1;
+  uint uVar2;
+  int iVar3;
+  
+  if (((safety_condition_active_flag._2_2_ == 0) && (DAT_0040b32c == 0)) && (DAT_0040b332 == 0)) {
+    if (eeprom_header_t_003fee08.calibration_block1[0] == 0) {
+      eeprom_header_t_003fee08.calibration_block1[0] = (byte)DAT_0040b1a0;
+      DAT_003fce24 = DAT_0040b1a0 << 8;
+    }
+    else {
+      uVar2 = (uint)DAT_0005b320;
+      uVar1 = (uint)DAT_0040b1a0 * 0x100 - (uint)DAT_003fce24;
+      iVar3 = (uint)DAT_003fce24 +
+              (int)(CONCAT44((int)((ulonglong)uVar2 * (ulonglong)uVar1 >> 0x20) +
+                             uVar2 * ((int)uVar1 >> 0x1f),uVar2 * uVar1) / 0x10000);
+      DAT_003fce24 = (ushort)iVar3;
+      eeprom_header_t_003fee08.calibration_block1[0] = (byte)((uint)iVar3 >> 8);
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_calibBlock1_trimTimer_reset @ 0x00516834
+//
+
+// Variables in this function: DAT_003fce24, DAT_003fce26, DAT_003fce28
+void cm848_calibBlock1_learnedTrim_update(undefined4 param_1,ushort param_2,ushort param_3)
+
+{
+  short sVar1;
+  uint uVar2;
+  
+  sVar1 = DAT_0005b330;
+  if ((fuel_temperature_trim == 0) && (sVar1 = DAT_0040b336, DAT_0040b336 != 0)) {
+    sVar1 = DAT_0040b336 + -1;
+  }
+  DAT_0040b336 = sVar1;
+  if ((((safety_condition_active_flag._2_2_ == 0) && ((power_state_status_flags & 0x2000) == 0)) &&
+      ((power_state_status_flags & 0x4000) == 0)) && (DAT_0040b332 == 0)) {
+    param_3 = DAT_003fce24;
+    if (DAT_003fce24 < DAT_003fce28) {
+      param_2 = DAT_003fce28 - DAT_003fce24;
+    }
+    else {
+      param_2 = DAT_003fce24 - DAT_003fce28;
+    }
+  }
+  if (((safety_condition_active_flag._2_2_ == 0) && ((power_state_status_flags & 0x2000) == 0)) &&
+     (((power_state_status_flags & 0x4000) == 0 && (DAT_0040b332 == 0)))) {
+    if (DAT_0040b336 == 0) {
+      uVar2 = DAT_0005b332 + 1;
+      uVar2 = ((uint)DAT_003fce26 * (uint)DAT_0005b332 + (uint)param_3 + ((int)uVar2 >> 1)) / uVar2;
+      DAT_003fce26 = (ushort)uVar2;
+      eeprom_header_t_003fee08.calibration_block1[1] = (byte)(uVar2 >> 8);
+    }
+    else {
+      if ((ushort)((ushort)DAT_0005b31e << 8) <= param_2) {
+        return;
+      }
+      uVar2 = DAT_0005b32c + 1;
+      uVar2 = ((uint)DAT_003fce26 * (uint)DAT_0005b32c + (uint)param_3 + ((int)uVar2 >> 1)) / uVar2;
+      DAT_003fce26 = (ushort)uVar2;
+      eeprom_header_t_003fee08.calibration_block1[1] = (byte)((uVar2 & 0xffff) + 0x80 >> 8);
+    }
+    DAT_003fce28 = DAT_003fce26;
+    eeprom_header_t_003fee08.calibration_block1[2] = eeprom_header_t_003fee08.calibration_block1[1];
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_calibBlock1_warmupFlag_reset @ 0x00516a10
+//
+
+// Variables in this function: DAT_003fce22, DAT_003fce24, DAT_003fce26, DAT_003fce28
+void eeprom_calibration_load_initialize(void)
+
+{
+  cm848_calibBlock1_adaptiveTrim_init();
+  cm848_calibBlock1_counters_reset();
+  cm848_calibBlock1_trimTimer_reset();
+  cm848_calibBlock1_warmupFlag_reset();
+  DAT_003fce22 = 4;
+  DAT_003fce24 = (ushort)eeprom_header_t_003fee08.calibration_block1[0] << 8;
+  DAT_003fce26 = (ushort)eeprom_header_t_003fee08.calibration_block1[2] << 8;
+  DAT_003fce28 = (ushort)eeprom_header_t_003fee08.calibration_block1[1] << 8;
+  return;
+}
+
+
+
+//
+// Function: cm848_calibBlock1_warmupFlag_update @ 0x00516a94
+//
+
+// Variables in this function: DAT_003fce22
+void eeprom_calibration_load_periodic(void)
+
+{
+  short sVar1;
+  
+  DAT_003fce22 = DAT_003fce22 + 1;
+  if (3 < DAT_003fce22) {
+    DAT_003fce22 = 0;
+    sVar1 = cm848_calibBlock1_trim_eepromWrite();
+    if (sVar1 != 0) {
+      cm848_calibBlock1_inRange_debounce();
+      cm848_calibBlock1_trim_commit();
+      cm848_calibBlock1_adaptiveTrim_update();
+      cm848_calibBlock1_learnedTrim_update();
+      cm848_calibBlock1_warmupFlag_update();
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: fuel_quantity_demand_monitor @ 0x00516c18
+//
+

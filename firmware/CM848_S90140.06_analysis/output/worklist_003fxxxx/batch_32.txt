@@ -1,0 +1,64 @@
+=== VARIABLES TO NAME ===
+0x003fcd04  (7 references)
+0x003fcd08  (5 references)
+0x003fcd0c  (5 references)
+
+Total: 3 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fcd04, DAT_003fcd08, DAT_003fcd0c
+void governor_rpm_monitor_calc(void)
+
+{
+  word wVar1;
+  int iVar2;
+  
+  if (((engine_feature_status_flags_2 & 1) != 0) && ((diagnostic_status_flags & 0x100) == 0)) {
+    wVar1 = governor_fuel_control_limit_active;
+    if ((short)governor_fuel_control_limit_active < 0) {
+      wVar1 = -governor_fuel_control_limit_active;
+    }
+    DAT_003fccfe = DAT_004077c2 + wVar1;
+    if (-1 < DAT_003fccfe) {
+      DAT_003fcd00 = (int)((int)DAT_003fccfe * (uint)fuel_timing_error_scale) >> 7;
+      goto LAB_00510114;
+    }
+  }
+  DAT_003fcd00 = 0;
+LAB_00510114:
+  iVar2 = (int)(short)DAT_003fcd14;
+  DAT_003fcd14 = protection_ema_cal_offset;
+  iVar2 = (int)(((short)protection_ema_cal_offset - iVar2) * (uint)DAT_004077c4) >> 10;
+  DAT_003fcd04 = -64000;
+  if ((-0xfa01 < iVar2) && (DAT_003fcd04 = iVar2, 64000 < iVar2)) {
+    DAT_003fcd04 = 64000;
+  }
+  if (DAT_003fcd16 == 0) {
+    DAT_003fcd04 = -DAT_003fcd04;
+  }
+  DAT_003fcd16 = engine_feature_status_flags & 0x80;
+  DAT_0040b090 = (short)(DAT_003fcd04 >> 1);
+  DAT_003fcd08 = DAT_003fcd00 - DAT_003fcd04;
+  if (DAT_003fcd08 < 0) {
+    DAT_003fcd08 = -DAT_003fcd08;
+  }
+  DAT_003fcd0c = ((uint)DAT_0040b084 * (uint)DAT_004077d2 >> 10) + (uint)DAT_004077d0;
+  if (16000 < DAT_003fcd0c) {
+    DAT_003fcd0c = 16000;
+  }
+  DAT_0040b088 = (short)DAT_003fcd0c;
+  DAT_003fcd10 = (uint)(DAT_003fcd08 << 10) / DAT_003fcd0c;
+  if (DAT_004077c0 < DAT_003fcd10) {
+    DAT_003fcd10 = (uint)DAT_004077c0;
+  }
+  governor_rpm_monitored = (word)DAT_003fcd10;
+  return;
+}
+
+
+
+//
+// Function: phase_group_b_filterGovernorRpmSquaredMovingAverage @ 0x0051027c
+//
+

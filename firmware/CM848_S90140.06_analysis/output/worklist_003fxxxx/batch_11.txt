@@ -1,0 +1,91 @@
+=== VARIABLES TO NAME ===
+0x003fb9fe  (7 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fb9fe
+void governor_adjustment_counter_update(void)
+
+{
+  bool bVar1;
+  bool bVar2;
+  bool bVar3;
+  ushort uVar4;
+  uint uVar5;
+  
+  if (DAT_0040a44e == 0) {
+    DAT_003fb9fe = 0;
+  }
+  else if (DAT_0040a44e != 0) {
+    if (DAT_003fb9fe < 10) {
+      DAT_003fb9fe = DAT_003fb9fe + 1;
+    }
+    else {
+      DAT_003fb9fe = 10;
+    }
+  }
+  if (((cold_start_feature_flags & 0x2000) == 0) || (cold_start_inhibit_cal != 0)) {
+    bVar1 = true;
+  }
+  else {
+    bVar1 = false;
+  }
+  if ((DAT_003fb9fe != 10) || (DAT_0040a44a <= DAT_0040a448)) {
+    bVar3 = false;
+  }
+  else {
+    bVar3 = true;
+  }
+  if ((DAT_003fb9fe != 10) || (DAT_0040a448 < DAT_0040a44a)) {
+    bVar2 = false;
+  }
+  else {
+    bVar2 = true;
+  }
+  uVar5 = (uint)DAT_004051ee;
+  if (bVar1) {
+    uVar4 = 0;
+  }
+  else {
+    uVar4 = DAT_0040a44c;
+    if ((bVar3) || (bVar2)) {
+      if (bVar2) {
+        if (!bVar3) {
+          if (DAT_0040a44c < 2) {
+            uVar4 = 0;
+          }
+          else {
+            uVar4 = DAT_0040a44c - 1;
+          }
+        }
+      }
+      else {
+        uVar4 = DAT_004051ee;
+        if ((uVar5 != 0) && (uVar4 = DAT_004051ee, (int)(uint)DAT_0040a44c <= (int)(uVar5 - 1))) {
+          uVar4 = DAT_0040a44c + 1;
+        }
+      }
+    }
+  }
+  DAT_0040a44c = uVar4;
+  if (DAT_0040a44c < uVar5) {
+    if (DAT_0040a44c == 0) {
+      fuel_blend_correction_inhibit_flag._2_2_ = 0;
+    }
+  }
+  else {
+    fuel_blend_correction_inhibit_flag._2_2_ = 1;
+  }
+  return;
+}
+
+
+
+//
+// Function: fuel_boostCorrection_enableCheck_trimCalc @ 0x005033a0
+//
+
+/* WARNING: Function: cm848_signedDivision32 replaced with injection: sdiv64by32 */
+

@@ -1,0 +1,167 @@
+=== VARIABLES TO NAME ===
+0x003fd47c  (7 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fd47c
+void engine_start_completion_sequence(void)
+
+{
+  int iVar1;
+  uint uVar2;
+  uint uVar3;
+  uint uVar4;
+  uint uVar5;
+  word wVar6;
+  short sVar7;
+  ushort uVar8;
+  word local_10 [2];
+  
+  cm848_initProtectionLimitVariables();
+  uVar8 = 0;
+  DAT_003fd47c._0_2_ = 0;
+  sVar7 = cm848_isSensorValidationComplete();
+  while (sVar7 == 0) {
+    cm848_delayMicroseconds(0x13);
+    wVar6 = MIOS_MCPSMSCR.MIOS1ER;
+    if ((wVar6 & 0x8000) == 0) {
+      uVar8 = 0;
+    }
+    else {
+      uVar8 = uVar8 + 1;
+      if (0x50 < uVar8) {
+        DAT_003fd47c._0_2_ = 1;
+      }
+    }
+    sVar7 = cm848_isSensorValidationComplete();
+  }
+  if (DAT_003fd47c._0_2_ != 0) {
+    engine_protection_timer_sync();
+  }
+  local_10[0] = cm848_getSensorValidationData();
+  if (local_10[0] != 0) {
+    local_10[0] = local_10[0] + DAT_003fdb88;
+    cm848_updateProtectionTimers(&DAT_003fdb88,local_10,2);
+    uVar8 = 0;
+    do {
+      if (DAT_003fdb88 == local_10[0]) break;
+      do {
+        uVar3 = TBUr;
+        iVar1 = TBLr;
+        uVar2 = TBUr;
+      } while (uVar3 != uVar2);
+      do {
+        do {
+          uVar4 = TBUr;
+          uVar2 = TBLr;
+          uVar5 = TBUr;
+        } while (uVar4 != uVar5);
+      } while ((uVar4 < uVar3) || (uVar2 < iVar1 + 0x9c4U));
+      uVar8 = uVar8 + 1;
+    } while (uVar8 < 1000);
+  }
+  local_10[0] = cm848_getSensorSampleBuffer();
+  cm848_updateProtectionTimers(&sensor_validation_sum_expected,local_10,2);
+  uVar8 = 0;
+  do {
+    if (sensor_validation_sum_expected == local_10[0]) break;
+    do {
+      uVar3 = TBUr;
+      iVar1 = TBLr;
+      uVar2 = TBUr;
+    } while (uVar3 != uVar2);
+    do {
+      do {
+        uVar4 = TBUr;
+        uVar2 = TBLr;
+        uVar5 = TBUr;
+      } while (uVar4 != uVar5);
+    } while ((uVar4 < uVar3) || (uVar2 < iVar1 + 0x9c4U));
+    uVar8 = uVar8 + 1;
+  } while (uVar8 < 1000);
+  if (qadc_scan_read_index != qadc_scan_write_index) {
+    cm848_updateProtectionTimers(&qadc_scan_write_index,&qadc_scan_read_index,2);
+    uVar8 = 0;
+    do {
+      if (qadc_scan_read_index == qadc_scan_write_index) {
+        return;
+      }
+      do {
+        uVar3 = TBUr;
+        iVar1 = TBLr;
+        uVar2 = TBUr;
+      } while (uVar3 != uVar2);
+      do {
+        do {
+          uVar4 = TBUr;
+          uVar2 = TBLr;
+          uVar5 = TBUr;
+        } while (uVar4 != uVar5);
+      } while ((uVar4 < uVar3) || (uVar2 < iVar1 + 0x9c4U));
+      uVar8 = uVar8 + 1;
+    } while (uVar8 < 1000);
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_initProtectionTimers @ 0x00539d18
+//
+
+// Variables in this function: DAT_003fd47c
+void hpcr_protectionTimerMonitor(void)
+
+{
+  short sVar1;
+  bool bVar2;
+  int iVar3;
+  word *pwVar4;
+  uint uVar5;
+  
+  uVar5 = 0;
+  pwVar4 = &protection_timer_a;
+  do {
+    pwVar4 = pwVar4 + 1;
+    if ((*pwVar4 != 0) && (*pwVar4 < 0x33)) {
+      bVar2 = true;
+      if (uVar5 == 1) {
+        DAT_003fd47c._2_2_ = DAT_003fd47c._2_2_ + 1;
+        if (DAT_003fd47c._2_2_ < 2) {
+          bVar2 = false;
+        }
+        else {
+          DAT_003fd47c._2_2_ = 0;
+        }
+      }
+      if (bVar2) {
+        sVar1 = (*(code *)(&PTR_LAB_0053ac4a)[(uint)*pwVar4 * 4])();
+        if (sVar1 != -1) {
+          iVar3 = (int)uVar5 >> 4;
+          if (sVar1 == 0) {
+            (&j1939_pgn_handler_b_flags)[iVar3 + (uint)((int)uVar5 < 0 && (uVar5 & 0xf) != 0)] =
+                 (&j1939_pgn_handler_b_flags)[iVar3 + (uint)((int)uVar5 < 0 && (uVar5 & 0xf) != 0)]
+                 & ~(ushort)(1 << (uVar5 + (iVar3 + (uint)((int)uVar5 < 0 && (uVar5 & 0xf) != 0)) *
+                                           -0x10 & 0x3f));
+          }
+          else {
+            (&j1939_pgn_handler_b_flags)[iVar3 + (uint)((int)uVar5 < 0 && (uVar5 & 0xf) != 0)] =
+                 (&j1939_pgn_handler_b_flags)[iVar3 + (uint)((int)uVar5 < 0 && (uVar5 & 0xf) != 0)]
+                 | (ushort)(1 << (uVar5 + (iVar3 + (uint)((int)uVar5 < 0 && (uVar5 & 0xf) != 0)) *
+                                          -0x10 & 0x3f));
+          }
+        }
+      }
+    }
+    uVar5 = uVar5 + 1;
+  } while ((int)uVar5 < 0x30);
+  return;
+}
+
+
+
+// Export complete - 2049 functions processed
+

@@ -1,0 +1,142 @@
+=== VARIABLES TO NAME ===
+0x003fee2e  (6 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fee2e
+void mpc555_keyOnStateMachine(void)
+
+{
+  dword dVar1;
+  word wVar2;
+  
+  dVar1 = ecu_power_state_flags.state;
+  if (dVar1 == 0) {
+    wVar2 = MIOS_MCPSMSCR.MIOS1ER;
+    if ((wVar2 & 0x8000) == 0) {
+      ecu_power_state_flags.state = 1;
+    }
+    else {
+      eeprom_block_tracking.watchdog_counter = 0;
+    }
+  }
+  else if (dVar1 == 1) {
+    wVar2 = MIOS_MCPSMSCR.MIOS1ER;
+    if ((wVar2 & 0x8000) == 0) {
+      wVar2 = eeprom_block_tracking.watchdog_counter;
+      if (0x2903 < wVar2) {
+        if (DAT_003fee2e == '\0') {
+          eeprom_write_buffer = ecu_power_state_flags.eeprom_write_count;
+          DAT_003fee2e = '\x01';
+          mpc555_eepromWriteWords(0x3fee2a,(word *)&eeprom_config_block,4);
+        }
+        if (eeprom_header_t_003fee08.config_dword == eeprom_write_buffer) {
+          dVar1 = ecu_power_state_flags.capability_flags;
+          ecu_power_state_flags.capability_flags = dVar1 & 0xfffffffd;
+        }
+      }
+    }
+    else {
+      ecu_power_state_flags.state = 0;
+      eeprom_block_tracking.watchdog_counter = 0;
+      if (eeprom_header_t_003fee08.magic == 0x600d) {
+        if (DAT_003fee2e == '\0') {
+          eeprom_write_buffer = ecu_power_state_flags.eeprom_write_count;
+          DAT_003fee2e = '\x01';
+          mpc555_eepromWriteWords(0x3fee2a,(word *)&eeprom_config_block,4);
+        }
+        BYTE_003fd994();
+        mpc555_reset_vector();
+        return;
+      }
+      mpc555_initDiagnosticSession();
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_copyCalibrationToRam @ 0x00000340
+//
+
+// Variables in this function: DAT_003fee2e
+void j1939_msgSlotU_eepromPayload_toggle(void)
+
+{
+  if (j1939_msg_slot_u_counter == 0) {
+    if (DAT_003fcfca != '\0') {
+      DAT_0040b48b = 2;
+      DAT_0040b48c = DAT_003fcfcb;
+      DAT_0040b48d = DAT_003fcfcc;
+      DAT_0040b48e = 0;
+      j1939_tsc1_override_enable = 0;
+    }
+    else {
+      DAT_0040b48b = 1;
+      DAT_0040b48c = eeprom_write_buffer._2_1_;
+      DAT_0040b48d = (undefined1)eeprom_write_buffer;
+      DAT_0040b48e = DAT_003fee2e;
+      DAT_003fcfcb = DAT_003fee2f;
+      DAT_003fcfcc = flash2_operation_active_flag._0_1_;
+    }
+    DAT_003fcfca = DAT_003fcfca == '\0';
+    j1939_msg_slot_u_counter = 1;
+  }
+  return;
+}
+
+
+
+//
+// Function: initGovernorModeControl @ 0x00523b5c
+//
+
+// Variables in this function: DAT_003fee2e
+void j1939_msgSlotE_eepromWrite_stage(void)
+
+{
+  int iVar1;
+  uint uVar2;
+  uint uVar3;
+  byte bVar4;
+  
+  iVar1 = 0;
+  if ((DAT_0040b3fd == '\x01') || (DAT_0040b3fd == '\x02')) {
+    if (DAT_0040b3fd == '\x01') {
+      iVar1 = 0;
+    }
+    else if (DAT_0040b3fd == '\x02') {
+      iVar1 = 3;
+    }
+    *(undefined1 *)((int)&eeprom_write_buffer + iVar1 + 2) = DAT_0040b3fe;
+    *(undefined1 *)((int)&eeprom_write_buffer + iVar1 + 3) = DAT_0040b3ff;
+    if (iVar1 == 0) {
+      DAT_003fee2e = DAT_0040b400;
+    }
+    uVar2 = sensor_checksum_verify_session();
+    bVar4 = 0;
+    uVar3 = 3;
+    DAT_0040b50e = uVar2;
+    do {
+      (&DAT_0040b478)[uVar3 & 0xff] = (char)uVar2;
+      uVar2 = uVar2 >> 8;
+      bVar4 = bVar4 + 1;
+      uVar3 = uVar3 + 0xff;
+    } while (bVar4 < 4);
+    j1939_msg_slot_s_counter = 1;
+  }
+  return;
+}
+
+
+
+//
+// Function: governorModeTransitionControl @ 0x00523f60
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

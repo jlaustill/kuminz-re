@@ -1,0 +1,240 @@
+=== VARIABLES TO NAME ===
+0x0040afe8  (8 references)
+0x0040afea  (14 references)
+0x0040be36  (8 references)
+
+Total: 3 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040be36
+void governor_smoke_statusFlag_update(void)
+
+{
+  ushort uVar1;
+  
+  if ((DAT_003fe9c0 & 0x400) == 0) {
+    uVar1 = 0;
+  }
+  else {
+    uVar1 = 0x20;
+  }
+  DAT_0040afe2 = PTR_DAT_0040be36._0_2_ | uVar1;
+  return;
+}
+
+
+
+//
+// Function: fuel_demandSource_modeSelect @ 0x0050ecc4
+//
+
+// Variables in this function: DAT_0040be36
+void cm848_initBoostControlModeAndFallback(void)
+
+{
+  if (PTR_DAT_0040be36._0_2_ == 0) {
+    boost_control_mode = 0;
+  }
+  else {
+    boost_control_mode = 2;
+  }
+  fuel_demand_quantity = governor_speed_reference_raw;
+  DAT_0040bdc6 = DAT_003ff6fc;
+  return;
+}
+
+
+
+//
+// Function: fuel_egrTarget_pressureRatio_calc @ 0x0050eeb0
+//
+
+/* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+
+// Variables in this function: DAT_0040afe8, DAT_0040afea
+void fuel_egrTarget_pressureRatio_calc(void)
+
+{
+  uint uVar1;
+  
+  if (DAT_003ff6fe < DAT_0040afe8) {
+    DAT_0040afea = DAT_0040afea + DAT_003ff6f6;
+  }
+  if ((fuel_pressure_sensor_reference == 0) ||
+     (uVar1 = (uint)(((ulonglong)governor_integrator_bound_a << 8) /
+                    (ulonglong)(uint)fuel_pressure_sensor_reference), 0xffff < uVar1)) {
+    uVar1 = 0xffff;
+  }
+  DAT_003fcc1c = (short)uVar1;
+  if (((DAT_0040afe8 < DAT_003ff700) && ((uint)DAT_003ff6f0 < (uVar1 & 0xffff))) &&
+     (DAT_003ff712 < engine_rpm_state_t_0040b7ac.current_rpm)) {
+    DAT_0040afea = DAT_0040afea + DAT_003ff6f6;
+  }
+  if (DAT_003ff6f8 < DAT_0040afea) {
+    DAT_0040afea = DAT_003ff6f8;
+  }
+  if (((DAT_003ff700 <= DAT_0040afe8) && (DAT_0040afe8 <= DAT_003ff6fe)) && (DAT_0040afea != 0)) {
+    DAT_0040afea = DAT_0040afea - DAT_003ff6f4;
+  }
+  if ((DAT_0040afea < DAT_003ff6f8) || (DAT_0040afe8 <= DAT_003ff6fe)) {
+    if ((DAT_0040afea < DAT_003ff6f8) || (DAT_003ff700 <= DAT_0040afe8)) goto LAB_0050f05c;
+    DAT_003fe9c0 = DAT_003fe9c0 | 0x20;
+  }
+  else {
+    DAT_003fe9c0 = DAT_003fe9c0 | 8;
+  }
+  DAT_0040aff2 = DAT_003ff6fc;
+LAB_0050f05c:
+  if ((DAT_0040afea < DAT_003ff6f2) && ((DAT_003fe9c0 & 0x20) != 0)) {
+    DAT_003fe9c0 = DAT_003fe9c0 & 0xffdf;
+    DAT_003fea24 = DAT_003fea24 & 0xffdf;
+  }
+  else if ((DAT_0040afea < DAT_003ff6f2) && ((DAT_003fe9c0 & 8) != 0)) {
+    DAT_003fe9c0 = DAT_003fe9c0 & 0xfff7;
+    DAT_003fea24 = DAT_003fea24 & 0xfff7;
+  }
+  return;
+}
+
+
+
+//
+// Function: fuel_smokeLimit_modeSelect @ 0x0050f110
+//
+
+// Variables in this function: DAT_0040afea, DAT_0040be36
+void fuel_smokeLimit_modeSelect(void)
+
+{
+  if (DAT_003fd8b2 == 0) {
+    if (((DAT_003fe9c0 & 8) != 0) || ((DAT_003fe9c0 & 0x20) != 0)) {
+      PTR_DAT_0040be36._0_2_ = 2;
+      return;
+    }
+    if (DAT_0040afea != 0) {
+      PTR_DAT_0040be36._0_2_ = 1;
+      return;
+    }
+  }
+  PTR_DAT_0040be36._0_2_ = 0;
+  return;
+}
+
+
+
+//
+// Function: governor_speedReference_ramp_calc @ 0x0050f178
+//
+
+// Variables in this function: DAT_0040be36
+void governor_speedReference_ramp_calc(void)
+
+{
+  uint uVar1;
+  ushort *puVar2;
+  ushort uVar3;
+  uint uVar4;
+  
+  if (((DAT_003fe9c0 & 8) == 0) && ((DAT_003fe9c0 & 0x20) == 0)) {
+    DAT_003fcc04 = DAT_0040aff2;
+    uVar1 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fcc06);
+  }
+  else {
+    uVar1 = (uint)DAT_003ff6fc;
+  }
+  DAT_0040aff2 = (ushort)uVar1;
+  DAT_003fcc10 = (uVar1 & 0xffff) - (uint)DAT_003fcc04;
+  uVar4 = (uint)DAT_0040affc;
+  DAT_003fcc18 = DAT_0040affc;
+  if ((int)(uint)DAT_003ff714 < DAT_003fcc10) {
+    uVar1 = (uint)DAT_003ff716 + (uint)DAT_003fcc04;
+  }
+  DAT_0040affc = (ushort)uVar1;
+  DAT_003fcc14 = (uVar1 & 0xffff) - uVar4;
+  if ((int)(uint)DAT_003ff714 < DAT_003fcc14) {
+    uVar1 = DAT_003ff716 + uVar4;
+  }
+  DAT_0040aff6 = (undefined2)uVar1;
+  DAT_0040aff4 = exponentialMovingAverage(uVar1 & 0xffff,&PTR_DAT_003fcc08);
+  uVar1 = (uint)DAT_003ff718;
+  uVar3 = DAT_0040aff4;
+  if (uVar1 != 0) {
+    for (puVar2 = &DAT_003fcc20; puVar2 < &DAT_003fcc20 + uVar1; puVar2 = puVar2 + 1) {
+      if (uVar3 < *puVar2) {
+        uVar3 = *puVar2;
+      }
+    }
+    (&DAT_003fcc20)[DAT_003fcc1e] = DAT_0040aff4;
+    uVar4 = DAT_003fcc1e + 1;
+    DAT_003fcc1e = (ushort)uVar4;
+    if (uVar1 <= (uVar4 & 0xffff)) {
+      DAT_003fcc1e = 0;
+    }
+  }
+  DAT_0040affa = uVar3;
+  governor_speed_reference_raw = DAT_003fcc1a;
+  if (PTR_DAT_0040be36._0_2_ != 1) {
+    if (DAT_003fd8b2 == 1) {
+      uVar3 = DAT_003fd8b0;
+    }
+    governor_speed_reference_raw = uVar3;
+    if ((uVar3 < DAT_003ff70c) && (PTR_DAT_0040be36._0_2_ != 2)) {
+      governor_speed_reference_raw = 0;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: fuel_smokeLimit_transient_counter @ 0x0050f3b4
+//
+
+// Variables in this function: DAT_0040afe8, DAT_0040be36
+void phase_group_b_updateBoostBlendingControl(void)
+
+{
+  uint uVar1;
+  
+  if (DAT_003ff71a != 0) {
+    if (0 < DAT_0040aff0) {
+      DAT_0040aff0 = DAT_0040aff0 + -1;
+    }
+    if (DAT_0040aff0 < 1) {
+      uVar1 = 0;
+    }
+    else {
+      DAT_0040afec = (undefined4)
+                     (CONCAT44((int)((ulonglong)DAT_003fcc00 * 0x640000 >> 0x20),
+                               DAT_003fcc00 * 0x640000) / 0x4c4b4);
+      if ((DAT_003fcc00 * DAT_003ff708 == 0) ||
+         (uVar1 = (uint)(CONCAT44((int)((ulonglong)(uint)DAT_003ff706 * 0x4c4b4 >> 0x20),
+                                  (uint)DAT_003ff706 * 0x4c4b4) /
+                        (ulonglong)(DAT_003fcc00 * DAT_003ff708)), 0xffff < uVar1)) {
+        uVar1 = 0xffff;
+      }
+    }
+    DAT_0040afe8 = (undefined2)uVar1;
+    fuel_egrTarget_pressureRatio_calc();
+    fuel_smokeLimit_modeSelect();
+    governor_speedReference_ramp_calc();
+    fuel_smokeLimit_transient_counter();
+    DAT_003fcc1a = governor_speed_reference_raw;
+    return;
+  }
+  DAT_003fe9c0 = DAT_003fe9c0 & 0xfbd7;
+  DAT_003fea24 = DAT_003fea24 & 0xfbd7;
+  DAT_0040afe8 = 0;
+  governor_speed_reference_raw = DAT_003ff6fc;
+  PTR_DAT_0040be36._0_2_ = 0x100;
+  return;
+}
+
+
+
+//
+// Function: hpcr_configureTPUTimerInterrupts @ 0x0050f6c4
+//
+
