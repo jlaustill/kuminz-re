@@ -1,0 +1,31 @@
+# Agent 23 — name 16 unnamed DAT_003fxxxx globals (CM848 ROM->RAM shadow region)
+# Context batch files to READ first:
+#   worklist_003fxxxx/batch_00.txt
+#   worklist_003fxxxx/batch_02.txt
+#   worklist_003fxxxx/batch_03.txt
+#   worklist_003fxxxx/batch_04.txt
+#   worklist_003fxxxx/batch_06.txt
+#   worklist_003fxxxx/batch_15.txt
+#   worklist_003fxxxx/batch_20.txt
+#   worklist_003fxxxx/batch_21.txt
+#   worklist_003fxxxx/batch_22.txt
+#   worklist_003fxxxx/batch_24.txt
+#   worklist_003fxxxx/batch_26.txt
+# tier: in_window = 0x3F9800-0x3FDB30 (use type=word, custom widths revert); clean = post-copy (true width)
+# address,ref_count,tier
+0x003fa0ba,5,in_window
+0x003fa0bc,5,in_window
+0x003fb0ee,5,in_window
+0x003fb0f0,5,in_window
+0x003fb341,5,in_window
+0x003fb40c,5,in_window
+0x003fb4e8,5,in_window
+0x003fbd18,5,in_window
+0x003fbd5a,5,in_window
+0x003fbd5e,5,in_window
+0x003fbd62,5,in_window
+0x003fbd70,5,in_window
+0x003feb54,5,clean
+0x003feb6e,5,clean
+0x003fbdf7,5,in_window
+0x003fbdfb,5,in_window

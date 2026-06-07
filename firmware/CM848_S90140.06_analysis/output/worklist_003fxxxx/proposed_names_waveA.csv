@@ -1,0 +1,98 @@
+address,name,type,comment
+0x003feb92,fault_status_array,byte,per-fault record flags byte (170x3B records; array base)
+0x003fed98,fault_pending_flags_b,dword,32-bit fault-pending bitmap init 0xffffffff lockstep with fault_pending_flags
+0x003feb93,fault_status_word_array,word,per-fault record packed word at record+1 (age/epoch/flags; array base)
+0x003fe9d4,diagnostic_status_flags_working,word,fault status bits incl 0x400 sensor mismatch
+0x003fea38,diagnostic_status_flags_snapshot,word,snapshot of diagnostic_status_flags_working
+0x003fed90,fault_aging_generation_counter,byte,wraps 0..0x50 generation stamp for fault aging
+0x003fed91,fault_ring_epoch_counts,word,coolant-overtemp epoch byte + fault-queue count byte
+0x003fed9c,fault_entry_ptr_queue,pointer,8-element ptr queue base into fault_entry_t_003fe674
+0x003fedbc,protection_event_spn_history,word,8-element recent protection SPN history (array base)
+0x003fedce,protection_event_count_history,word,8-element occurrence counts parallel to SPN history (array base)
+0x003fb9ca,fuel_correction_table_dims_a,word,in_window dual_axis_table_dims_t instance (row_count)
+0x003fd1b4,cold_start_protection_timer_countdown,word,countdown gating cold-start protection state transitions
+0x003fea08,engine_diag_shadow_flags_b,word,cleared lockstep with engine_diag_shadow_flags
+0x003fd108,timing_limit_arbitrated_target,word,arbitrated timing-limit target feeding the slew accumulator
+0x003fd104,timing_limit_slew_q16,word,slew-rate-limited Q16 timing-limit accumulator
+0x003fd1b0,cold_start_protection_sub_state,word,inner sub-step of protection_state_machine_step
+0x003fd1b1,cold_start_protection_cycle_counter,word,2-call debounce before advancing cold-start inner state
+0x003fd1b2,cold_start_protection_state,word,cold-start battery voltage fault state machine (cases 0-8)
+0x003fd1c4,protection_state_machine_step,word,outer protection FSM dispatcher (cases 0-7)
+0x003fd134,timing_limit_boost_blend_interp_state,word,dualAxisTableInterpolation state for boost-map timing blend
+0x003fd1c0,cold_start_battery_timer_a,word,battery voltage delta-sample timer A
+0x003fd1c2,cold_start_battery_timer_b,word,battery voltage delta-sample timer B
+0x003fd938,protection_timer_dispatch_config,word,NEVER-WRITTEN ROM cal; bits gate timerBitCheck sub-paths
+0x003fd1b3,cold_start_protection_branch_flag,word,0/1 selects set-fault vs clear-fault path
+0x003fcbee,j1939_protection_receive_delay_counter,word,debounce for j1939 protection-receive; caps then sets status 0x8000
+0x003fcbf0,governor_load_cycle_delay_counter,word,debounce for governor load cycle; caps then sets protection_monitor_shadow 8
+0x003fd948,sensor_channel_type_table,word,NEVER-WRITTEN ROM table; channel->override/QADC type (array base)
+0x003fd942,cam_sync_protection_state_flags,word,cam-sync + cold-start protection state bits
+0x003fcea1,j1939_dm1_tx_control_flags,word,DM1 transmit-trigger + content-mode bits
+0x003fd93c,engine_sync_type_code,word,NEVER-WRITTEN config; ==0x13ec selects ISB sync paths
+0x003fd93f,cold_start_protection_state_flags,word,cold-start voltage/sync state bits
+0x003fd941,battery_voltage_test_state_flags,word,bit0 battery-voltage test result
+0x003fee9b,diag_suppress_request_flag,byte,set=1 by protection FSMs to request diag suppression
+0x003fd940,battery_voltage_protection_state_flags,word,bit5 battery voltage protection active
+0x003fea68,injection_fault_shadow_snapshot,word,snapshot of injection_fault_shadow_flags for change detect
+0x003fee50,sensor_validation_accum_table,word,4-element sensor validation accumulators (array base)
+0x003fce9e,j1939_dm1_crank_counter_prev,word,previous-cycle cold_start_crank_counter for DM1 crank detect
+0x003fcea2,j1939_dm1_cycle_tick,word,running tick for DM1 message scheduling (mod-10)
+0x003fda48,sensor_channel_enable_flags,word,NEVER-WRITTEN ROM; per-group channel enable bits (array base)
+0x003fd947,cbd_warmup_cycle_threshold,word,NEVER-WRITTEN ROM; CBD warmup cycle threshold (x100)
+0x003fe9e8,governor_cal_status_shadow_flags,word,shadow of governor/sensor-cal status bits
+0x003fe9c0,egr_smoke_limit_status_flags,word,EGR overpressure/upper-range/transient bits
+0x003fea24,egr_smoke_limit_status_shadow,word,shadow copy of egr_smoke_limit_status_flags
+0x003fbd66,fuel_demand_protection_hysteresis_counter,word,countdown (init 100, step 50) for fuel-demand protection
+0x003fbd69,fuel_demand_protection_init_flag,word,first-entry sentinel arming the hysteresis counter
+0x003fcfbc,j1939_fuel_demand_tick_remainder,word,fractional crank-period sub-tick accumulator (low 12 bits)
+0x003fee64,j1939_fuel_demand_timing_flags,word,injection-timing quality event bits
+0x003fee66,j1939_fuel_demand_overflow_flags,word,overflow bits for the 4 fuel-demand accumulators
+0x003fee68,j1939_fuel_demand_tick_total,dword,total fuel-demand ticks (ratio divisor)
+0x003fee6c,j1939_fuel_demand_tick_at_target_rpm,dword,fuel-demand ticks while at target RPM
+0x003fee70,j1939_fuel_demand_time_at_target_rpm,dword,engine-on time at target RPM
+0x003fee74,j1939_fuel_demand_engine_on_time,dword,total engine-on time (RPM nonzero)
+0x003fd0c6,cam_timing_advance_slew_working,word,slew filter tracking cam_timing_advance_target (x100)
+0x003fd0c4,cam_timing_demand_rate_limited,word,rate-limited cam timing demand output
+0x003fd0ca,cam_timing_advance_table_interp_states,word,16-element dualAxis interp state block (array base)
+0x003fd21e,cbd_phase_code,word,CBD outer phase (0 off,1 wait,4 active,2/3 fault)
+0x003fd222,cbd_step_code,word,CBD inner step dispatcher (cases 0-6)
+0x003fd213,cbd_governor_integrator_snapshot,word,governor integrator snapshot for CBD settle check
+0x003fd209,cbd_precondition_met_flag,word,CBD precondition-met latch
+0x003fd207,cbd_channel_enabled_flag,word,set when any CBD-monitored status bit active
+0x003fd208,cbd_sync_qualified_flag,word,output of engine_cbd_sync_qualification_check
+0x003fd20f,cbd_stabilization_cycle_counter,word,dwell counter before CBD proceeds
+0x003fd20d,cbd_sync_retry_counter,word,CBD sync-check retry counter
+0x003fd211,cbd_cylinder_event_wait_counter,word,cycles waiting for a cylinder event index
+0x003fd219,cbd_target_cylinder_index,word,cylinder under examination (event_counter-1)
+0x003fd217,cbd_reference_event_target,word,reference cylinder event index target
+0x003fd21b,cbd_cylinder_advance_pending_flag,word,set when cylinder event index advanced past target
+0x003fd1fe,cbd_active_cylinder_count,word,count of active cylinders; >=2 sets fault bit
+0x003fdca8,j1939_pgn_handler_index_hpcr,word,NEVER-WRITTEN ROM; index into j1939_pgn_handler_table (hpcr)
+0x003fd032,cruise_pid_integrator_q16,word,Q16 cruise PID integral accumulator (ROM-aliased _prefix)
+0x003fd038,cruise_speed_upper_limit_ptr,word,ptr to cruise speed upper limit (cal or working) (ROM-aliased)
+0x003fcf12,throttle_setpoint_limit_arg,word,computed ptr arg to cm848_throttleSetpoint_limit (was PTR_DAT)
+0x003fcf0c,throttle_integral_period_counter,word,countdown period for throttle integral accumulation
+0x003fd048,cruise_fuel_demand_mode_prev,word,prev governor_fuel_demand_mode for cruise PID path (ROM-aliased)
+0x003fd053,cruise_speed_rate_term,word,cruise speed rate-of-change term into PID integrator (ROM-aliased)
+0x003fd004,cruise_ramp_target_speed,word,cruise ramp-to target speed (ROM-aliased)
+0x003fd04c,cruise_stable_speed_countdown,word,countdown confirming cruise speed stable (ROM-aliased)
+0x003fd04f,cruise_rate_correction_countdown,word,countdown enabling rate correction (ROM-aliased)
+0x003fd002,cruise_fuel_demand_prev,word,prev fuel_demand_computed for cruise D-term (ROM-aliased)
+0x003fd04a,cruise_rate_correction_holdoff,word,holdoff blocking rate-correction re-entry (ROM-aliased)
+0x003fd1e8,hpcr_pressure_diag_delay_ticks,word,HPCR pressure-diag dwell countdown
+0x003fd1ea,hpcr_pressure_diag_sample_count,word,HPCR pressure-diag sample counter (to 3)
+0x003fd1ec,hpcr_pressure_diag_ring_index,word,HPCR pressure-diag 3-element ring index
+0x003fd1f0,hpcr_pressure_diag_sample_sum_state0,word,HPCR pressure-diag state-0 sample accumulator
+0x003fd1f2,hpcr_pressure_diag_reference_avg,word,HPCR pressure-diag averaged reference pressure
+0x003fce34,iat_solenoid_active_flag,word,IAT solenoid control active 0/1
+0x003fce35,iat_solenoid_target_level,word,desired IAT derate level 0-4
+0x003fce37,iat_solenoid_committed_level,word,last committed IAT derate level
+0x003fce41,iat_rpmDerate_elapsed_ticks,word,cumulative RPM-derate timer
+0x003fce43,iat_rpmDerate_below_threshold_count,word,consecutive cycles RPM below threshold
+0x003fce45,iat_solenoid_derate_elapsed_cycles,word,cumulative active-derate cycle count
+0x003fce49,iat_solenoid_duty_countdown,word,remaining ticks in solenoid duty pulse
+0x003fce4b,iat_solenoid_period_ticks,word,100-tick solenoid PWM period counter
+0x003fce4d,iat_solenoid_on_ticks_remaining,word,solenoid on-ticks within PWM period
+0x003fce51,iat_protection_level6_grace_count,word,grace countdown at derate level 6 before shutdown
+0x003fce55,iat_solenoid_derate_step_table,word,4-element per-level derate step durations (array base)
+0x003fce5f,iat_protection_total_derate_steps,word,total permitted IAT derate steps from table

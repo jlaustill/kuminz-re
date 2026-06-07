@@ -1,0 +1,20 @@
+# Agent 13 — name 15 unnamed DAT_003fxxxx globals (CM848 ROM->RAM shadow region)
+# Context batch files to READ first:
+#   worklist_003fxxxx/batch_25.txt
+# tier: in_window = 0x3F9800-0x3FDB30 (use type=word, custom widths revert); clean = post-copy (true width)
+# address,ref_count,tier
+0x003fbdc5,10,in_window
+0x003fbdef,10,in_window
+0x003fbdcb,9,in_window
+0x003fbdf0,8,in_window
+0x003fbdf4,8,in_window
+0x003fbdd3,7,in_window
+0x003fbddf,7,in_window
+0x003fbdf3,7,in_window
+0x003fbdc4,6,in_window
+0x003fbdc9,6,in_window
+0x003fbdd7,6,in_window
+0x003fbdf1,6,in_window
+0x003fbdcc,5,in_window
+0x003fbdcd,5,in_window
+0x003fbdf5,5,in_window

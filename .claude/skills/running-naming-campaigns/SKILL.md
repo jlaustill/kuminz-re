@@ -20,7 +20,7 @@ Naming a whole range of unnamed firmware globals at once. Per-symbol analysis is
 
 ### 1. Build a ranked, tiered worklist
 - **Rank by reference count** (refs = context = nameability). Floor at **5 refs**; 1–4 ref symbols are low-confidence — skip them.
-- **Tier by region (CM848):** working RAM `0x0040xxxx` + post-copy `0x3F≥DB30` = **CLEAN** (names *and* custom widths stick). The ROM→RAM copy window **`0x3F9800–0x3FDB30` = IN-WINDOW**: names stick but custom scalar **widths revert on export** — name them, but leave width default/`word`; do not chase `byte`/`dword` precision there.
+- **Tier by region (CM848):** working RAM `0x0040xxxx` + post-copy `0x3F≥DB30` = **CLEAN** (names *and* custom widths stick). The ROM→RAM copy window **`0x3F9800–0x3FDB30` = IN-WINDOW**: names stick; a custom *widening* (a `dword` you declared) may revert to `word` on export — accept that. **But still declare the TRUE width — a `byte` stays `byte`.** Do NOT blanket-declare `word`: declaring `word` for a byte var overlaps the adjacent byte and silently suppresses BOTH symbols from the render (verified 2026-06-07 — 8 consecutive byte flags vanished this way until re-typed to `byte`). Arrays/structs stick in-window — use them for indexed access.
 - **Partition batch-coherently:** `extract_variable_context.py <cpp> <prefix> <min_refs> <out>` clusters co-occurring symbols into batches with function-body context. Keep whole batches with one agent so two agents never name the same cluster inconsistently.
 
 ### 2. Dispatch
@@ -50,7 +50,7 @@ Re-grep to confirm. Never report done from the edit alone.
 
 - "I'll re-investigate every proposal to be safe" → doesn't scale, defeats the parallel agents. Trust cited evidence + spot-check + gate.
 - Appending a row for an address **already in the CSV** → duplicate-address row. Edit in place.
-- Naming IN-WINDOW (`0x3F9800–0x3FDB30`) symbols with custom `byte`/`dword` widths → silently revert. Name yes; custom width no.
+- Blanket-declaring `word` for IN-WINDOW (`0x3F9800–0x3FDB30`) symbols → a `word` over a true byte overlaps its neighbor and BOTH names vanish from the render. Use the TRUE width (byte stays `byte`); only a custom `dword` widening may revert to `word`.
 - `_cal` because neighbors have it → gate on the memory map, not vibes.
 - "Names are in the CSV" ≠ done. Only the render check (present + no underscores + count drop) proves it.
 
