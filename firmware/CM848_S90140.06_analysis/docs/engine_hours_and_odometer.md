@@ -30,6 +30,50 @@ be re-verified on the bench before being trusted — see
 
 ---
 
+## Update 2026-06-07 — static re-analysis (post working-RAM naming campaign)
+
+After naming the full `0x0040xxxx` working-RAM ≥5-ref tier and adding
+`scripts/xref_addr.py` (whole-binary access + NEVER-WRITTEN detector), I re-checked
+the open engine-hours question. **Conclusion: bench-blocked, not static-blocked** —
+persistence lives in MPC555-module RAM (`0x003xxxxx`) plus a computed-address EEPROM
+scatter save that fires only on key-off, so more static RE won't pin the address.
+Three concrete results:
+
+### New untested candidate: `Hour_Meter` @ EEPROM `0x01001C00`
+
+`e2m_parameters.csv:5529` — `Hour_Meter,,0x01001C00,4,MIN,0.00333329989,HOUR METER
+(ECM RUN TIME)`: u32, 1/300 min/bit (= 0.2 s/bit, same as `Engine_Run_Time`).
+**Not in the 2026-04-08 results table — never tested.** Worth a bench read because:
+- it sits INSIDE the readable Svc-0x4A EEPROM window (`0x01000000–0x01001FFF`;
+  `0x1C00 < 0x2000`), unlike the unreachable virtual `0x0111BC00` / `0x01140500`;
+- it is the only parameter literally named "HOUR METER (ECM RUN TIME)".
+Caveat: e2m `0x01xxxxxx` addrs are Calterm-virtual and have been wrong before
+(odometer e2m `0x018A1322` ≠ real `0x01000BD8`) — a candidate to test, not confirmed.
+Key-cycle test (EEPROM is write-on-shutdown): `--read-addr 01001C00 2` + `01001C02 2`.
+
+### Firmware-traced `0x01000030` re-confirmed (static)
+
+`mpc555_eepromWriteWords(0x3fee2a,&eeprom_config_block,4)` and `eeprom_config_block`
+is at EEPROM `0x01000030` — consistent with the 2026-04-09 trace of
+`ecm_runtime_accumulator → 0x01000030`. Still bench-unverified.
+
+### Naming conflicts to reconcile on the next bench
+
+The working-RAM campaign assigned asm-cited names that DISAGREE with this doc's
+bench labels. One side is wrong — resolve by reading these live while watching for
+the 1.5 Hz tick:
+
+| Address | Campaign name (asm-derived) | This doc's bench label |
+|---------|------------------------------|------------------------|
+| `0x0040B150` | `protection_fuel_demand_snapshot` (written by sensor-buffer copy) | `session_time_counter` (1.5 Hz) |
+| `0x0040B2C2` | `cold_start_injection_protection_flag` (bit7 protection cfg) | "copy of session_time_counter" |
+| `0x0040BDF6` | `sensor_channel102_raw` | "scatter write pointer" |
+
+If the bench re-confirms a 1.5 Hz tick at `0x0040B150`, the campaign name is wrong
+and the CSV should be corrected; if not, the bench address was approximate.
+
+---
+
 ## J1939 PGN inventory (what this ECU actually speaks)
 
 From `cm848_rom.ghidra.cpp` lines 95932–95951 — the periodic TX registration
