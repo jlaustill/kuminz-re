@@ -1,0 +1,101 @@
+address,name,type,comment
+0x00408f46,protection_cylinder_event_factor,word,ROM x cylinder_event_count_max -> protection countdown
+0x00408f48,protection_shutdown_cycle_limit,byte,ROM cap on protection shutdown cycle count
+0x00408f49,protection_debounce_event_factor,word,ROM x cylinder_event_count_max -> protection debounce
+0x0040b78c,injection_timing_demand_working,word,rate-limited injection timing demand (reset 0xc800)
+0x0040b830,injection_timing_aux_offset,word,aux timing offset (torque snapshot - aux output)
+0x0040b838,injection_timing_aux_boost_blend,word,boost-map-blended aux injection timing
+0x0040b848,injection_timing_aux_coolant_factor,word,coolant-temp table factor for aux timing clamp
+0x0040b84a,injection_timing_aux_rpm_factor,word,RPM table factor for aux timing clamp
+0x0040b84c,injection_timing_aux_combined_clamp,word,(rpm x coolant)/0x1000 clamp on aux timing output
+0x0040b84e,injection_timing_aux_oil_factor_a,word,RPM table factor A for aux oil-pressure timing
+0x0040b850,injection_timing_aux_oil_factor_b,word,RPM table factor B for aux oil-pressure timing
+0x004090a0,tpu_ch3_param_period_ref,word,ROM; TPUA CH3 PARAM4-7 period reference
+0x004090a4,tpu_output_ch_param7_ref,word,ROM; shared PARAM7 ref for TPUA CH2/4/7
+0x004090b2,tpu_ch14_period_base,word,ROM; TPUA CH14 PARAM0 base period (HPCR sync)
+0x004090ef,injection_timing_tooth_phase_threshold,byte,ROM; sub-tooth phase boundary for tooth step
+0x004090f0,injection_timing_tooth_base_offset_mode2,byte,ROM; base tooth offset for mode-2 cam-sync timing
+0x0040b854,injection_timing_cam_angle_correction,word,cam-position-corrected injection angle term
+0x0040b98c,injection_timing_speed_component,word,speed-proportional injection timing component (pressure path)
+0x0040b994,injection_timing_floor_underrun_count,word,count of frames timing demand below arb floor
+0x00409a6c,cam_timing_override_mode,byte,ROM; cam timing override 0=normal 1=force 2=additive
+0x00409a74,cam_timing_advance_slew_step,word,ROM; per-frame step for cam advance slew
+0x00409a76,cam_timing_transition_step,word,ROM; step for cold-start cam timing transition
+0x00409a84,cam_timing_demand_rate_limit,word,ROM; max cam timing demand change per frame
+0x0040b8bc,cam_timing_demand_working,word,rate-limited cam timing demand (pre-transition)
+0x00409aa1,cam_sync_reference_check_a_enable,byte,ROM; enable for cam-sync reference check path A
+0x00409aa2,cam_sync_reference_check_b_enable,byte,ROM; enable for cam-sync reference check path B
+0x00409aa4,cam_timing_reference_b_min,word,ROM; lower bound on cam_timing_reference_b
+0x00409aa6,cam_timing_coolant_temp_min,word,ROM; coolant temp lower bound for cam timing
+0x00409aa8,cam_timing_coolant_temp_max,word,ROM; coolant temp upper bound for cam timing
+0x00409ad2,cam_timing_governor_speed_window_halfwidth,word,ROM; RPM half-window around governor speed limit
+0x0040b8da,cam_timing_correction_base,word,seed/base setpoint for cam correction PI
+0x0040b8e6,cam_timing_position_correction_effective,word,applied cam position correction term
+0x0040b8f4,cam_timing_position_correction_gain,word,table-interpolated cam correction gain
+0x0040b8fe,cam_timing_fault_activation_threshold,word,threshold to ramp cam timing fault counter
+0x0040b905,cam_sync_reference_b_threshold_prev_flag,byte,previous-cycle latch of cam ref B threshold flag
+0x0040b906,cam_timing_speed_window_in_range_flag,byte,speed within cam-timing window 0/1
+0x0040b907,cam_timing_speed_window_enable_flag,byte,cam-timing speed-window enable gate
+0x0040b909,cam_sync_reference_check_enable_flag,byte,cam-sync reference check A enable gate
+0x00409e4e,timing_limit_slew_decrease_step_q16,dword,ROM; Q16 decrement step for timing-limit slew
+0x00409e52,timing_limit_slew_increase_step_q16,dword,ROM; Q16 increment step for timing-limit slew
+0x00409e56,torque_limit_rpm_slew_step,word,ROM; per-update step for torque_limit_rpm_slewed
+0x00409e58,torque_limit_fuel_demand_slew_step,word,ROM; per-update step for torque_limit_fuel_demand_slewed
+0x00409e64,torque_limit_timing_arb_mode,word,ROM; timing arb mode 0=sum 1=max 2=min
+0x00409e6a,torque_limit_boost_load_corr_mode,word,ROM; boost-load correction apply mode 0/1/2
+0x00409e6c,torque_limit_cold_start_table_select,word,ROM; cold-start timing table select 0/1
+0x0040b93c,torque_limit_timing_warmup_correction,word,warmup/cold-start timing correction (pre-RPM-scale)
+0x0040b93e,torque_limit_timing_warmup_rpm_scaled,word,RPM-scaled warmup timing correction
+0x0040b946,torque_limit_timing_fuel_slew_correction,word,fuel-slew timing correction term
+0x0040b94e,torque_limit_timing_load_scale_factor,word,RPM-indexed scale for load timing correction
+0x0040b950,torque_limit_timing_load_base_factor,word,RPM-indexed base for load timing correction
+0x00409e74,injection_timing_arbitration_mode,word,ROM; injection timing arb mode 0-3
+0x00409e78,injection_timing_rpm_snap_tolerance,word,ROM; RPM band to snap injection timing rpm axis
+0x0040b988,injection_timing_rpm_snap_active_flag,word,injection timing rpm axis snapped to target 0/1
+0x00409ed6,fuel_correction_timing_demand_threshold,word,ROM; demand threshold selecting timing-correction zone
+0x0040b9ba,fuel_correction_ramp_demand,word,fuel correction ramp demand (weighted-average)
+0x0040b9be,fuel_correction_timing_base_addend,word,base addend on fuel-correction timing targets
+0x00409ee2,fuel_correction_timing_table,word,ROM; 5-zone injection timing offset target array base
+0x00409f9e,cam_sync_snapshot_mismatch_threshold,word,ROM; max delta for snapshot sensor-pair cross-check
+0x0040ba36,cam_sync_coolant_mismatch_count,word,count of coolant cross-check mismatches
+0x0040ba38,cam_sync_oil_mismatch_count,word,count of oil cross-check mismatches
+0x0040ba3c,cam_sync_crossval_coolant_baseline,word,coolant temp baseline for cam-sync cross-validation
+0x0040ba3e,cam_sync_confirm_coolant_temp_min,word,min coolant temp during confirm dwell
+0x0040ba40,cam_sync_confirm_dwell_count,word,confirm dwell cycle counter
+0x00409fbc,cssc_min_coolant_oil_delta_threshold,word,ROM; min coolant-over-oil delta for CSSC
+0x00409fbe,cssc_min_oiltemp_recovery_delta,word,ROM; min oil-temp recovery delta for CSSC abort
+0x00409fc0,cssc_target_coolant_temp,word,ROM; CSSC target coolant temperature
+0x0040ba54,cssc_coolant_temp_deficit,word,CSSC warmup deficit (target - coolant), clamped >=0
+0x0040ba4a,cssc_start_time_snapshot,word,scaled crank-time at CSSC monitor start
+0x0040ba5e,cssc_initial_warmup_budget,word,initial CSSC warmup budget (denominator)
+0x0040a09e,sensor_channelGeneric_raw,word,generic sensor channel raw ADC value
+0x0040a1a2,boost_fuel_pressure_offset_lookup,word,pressure offset for boost fuel scale divisor
+0x0040a1a4,boost_fuel_timing_target,word,boost fuel timing target (dualAxis lookup)
+0x0040a1a8,boost_fuel_rpm_blend_scale,word,RPM-indexed scale in boost-throttle fuel blend
+0x0040a552,fuel_load_offset_gain_rpm,word,RPM gain mapping load-delta to fuel offset
+0x0040afbe,fuel_demand_rpm_correction_lookup,word,RPM table result for fuel demand correction
+0x0040afc0,fuel_demand_aux_blend_deviation,word,aux blend deviation copy for protection RPM range check
+0x0040a596,fuel_blendMode_condition_a_flag,word,blend condition A active 0/1
+0x0040a598,fuel_blendMode_condition_b_flag,word,blend condition B active 0/1
+0x0040a59a,fuel_blendMode_condition_b_combined_flag,word,combined condition-B enable
+0x0040a59c,fuel_blendMode_no_condition_active_flag,word,neither blend A nor B active 0/1
+0x0040a59e,fuel_blendMode_no_condition_combined_flag,word,combined no-condition enable
+0x0040a5a0,fuel_blendMode_active_flag,word,blend mode active (bit0 of fuel mode status)
+0x0040a5a6,governor_adjustment_any_compare_flag,word,OR of three governor threshold comparisons
+0x0040a5a8,governor_adjustment_fuel_qty_threshold,word,fuel-qty threshold for governor blend compare
+0x0040a5aa,governor_adjustment_boost_threshold,word,boost-EMA threshold for governor blend compare
+0x0040a5b6,fuel_coldStart_compensation_at_limit_flag,word,OR of blend/boost compensation at-limit flags
+0x0040a5b8,fuel_coldStart_compensation_demand_floor,word,fuel demand floor when cold-start compensation saturates
+0x0040a5e4,boost_demand_ema_decay_coeff,word,MAP-table EMA decay coeff for boost demand compensator
+0x0040a5e6,blend_demand_ema_filtered_decay_coeff,word,MAP-table EMA decay coeff for filtered blend compensator
+0x0040a5f6,fuel_coldStart_phase26_demand_floor,word,phase-2.6 fuel demand floor
+0x0040a78e,governor_derate_j1939_trigger_pending,word,edge-trigger latch feeding j1939 derate latch
+0x0040ae6e,aux_torque_fuel_demand_limit,word,RPM-derived fuel demand limit for aux torque mode 6
+0x0040af0b,diag_suppress_active_flag,byte,diagnostic suppression active state 0/1
+0x0040aff0,boost_blend_dwell_countdown,word,boost-blend dwell countdown; 0 forces EGR pressure ratio 0
+0x0040b042,protection_speed_track_criterion_met,word,gates protection speed tracking active 0/1
+0x0040b04c,protection_governor_output_ema,word,EMA of governor output for speed-track stability
+0x0040b04e,protection_governor_output_deviation,word,governor output minus its EMA
+0x0040b0ac,protection_overtemp_dwell_counter,word,overtemp protection dwell countdown (derate level 4)
+0x0040b22e,coolant_bucket_overheat_detected_flag,word,bucket overheat detected; gates protection_sensor_state_b
+0x0040b334,calibBlock1_eeprom_write_dwell_counter,word,dwell countdown before calibBlock1 EEPROM write
