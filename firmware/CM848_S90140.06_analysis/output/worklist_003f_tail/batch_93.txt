@@ -1,0 +1,119 @@
+=== VARIABLES TO NAME ===
+0x003fcfd4  (4 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fcfd4
+void governorModeTransitionControl(void)
+
+{
+  bool bVar1;
+  word wVar2;
+  uint uVar3;
+  word *pwVar4;
+  
+  bVar1 = DAT_003fcfd4 != '\0';
+  DAT_003fcfd4 = DAT_003fcfd4 + '\x01';
+  if (bVar1) {
+    DAT_003fcfd4 = '\0';
+    bVar1 = true;
+    uVar3 = 0;
+    do {
+      if (vehicle_vin_string[uVar3] != 0xff) {
+        bVar1 = false;
+        break;
+      }
+      uVar3 = uVar3 + 1 & 0xff;
+    } while (uVar3 < 0x14);
+    if (bVar1) {
+      j1939_receive_status_flags = j1939_receive_status_flags | 0x100;
+    }
+    else {
+      j1939_receive_status_flags = j1939_receive_status_flags & 0xfeff;
+      protection_enable_shadow_flags = protection_enable_shadow_flags & 0xfeff;
+    }
+    if (_j1939_msg_slot_r_active_flag == 0) {
+      j1939_receive_status_flags = j1939_receive_status_flags | 0x200;
+    }
+    else {
+      j1939_receive_status_flags = j1939_receive_status_flags & 0xfdff;
+      protection_enable_shadow_flags = protection_enable_shadow_flags & 0xfdff;
+    }
+    if (sensor_init_delay_timer != 0) {
+      bVar1 = true;
+      uVar3 = 0;
+      do {
+        if (*(char *)((int)&eeprom_write_buffer + uVar3 + 2) != -1) {
+          bVar1 = false;
+          break;
+        }
+        uVar3 = uVar3 + 1 & 0xff;
+      } while (uVar3 < 5);
+      if (bVar1) {
+        j1939_receive_status_flags = j1939_receive_status_flags | 0x400;
+      }
+      else {
+        j1939_receive_status_flags = j1939_receive_status_flags & 0xfbff;
+        protection_enable_shadow_flags = protection_enable_shadow_flags & 0xfbff;
+      }
+    }
+  }
+  pwVar4 = &DAT_003fcfd7;
+  wVar2 = j1939_msg_slot_m_pgn;
+  if (j1939_msg_slot_m_pgn < DAT_003fcfd7) {
+    j1939_msgSlotM_switchInputBits_update();
+  }
+  *pwVar4 = wVar2;
+  if (sensor_init_delay_timer != 0) {
+    wVar2 = MIOS_MCPSMSCR.MIOS1ER;
+    if ((wVar2 & 0x8000) == 0) {
+      initGovernorModeControl();
+      j1939_governor_auth_status_flags = j1939_governor_auth_status_flags & 0xf0;
+    }
+    if ((j1939_msg_slot_e_pgn < 0x65) && ((j1939_msg_slot_e_control & 0x2f) == 0)) {
+      if ((j1939_msg_slot_e_command == 0x80) || (j1939_msg_slot_e_command == 0)) {
+        j1939_msgSlotE_governorAuth_check();
+      }
+      else if ((j1939_msg_slot_e_command == 1) || (j1939_msg_slot_e_command == 2)) {
+        j1939_msgSlotE_eepromWrite_stage();
+      }
+    }
+    if (governor_auth_timeout_counter < DAT_00408960) {
+      governor_auth_timeout_counter = governor_auth_timeout_counter + 1;
+    }
+    else if (((j1939_governor_auth_granted == 0) && ((char)flash2_operation_active_flag == '\0')) &&
+            (DAT_0040b529 == '\0')) {
+      governor_mode_override_active = 1;
+    }
+    else if ((j1939_msg_slot_m_switch_input_bits >> 1 & 1) == 0) {
+      if ((char)flash2_operation_active_flag == '\x01') {
+        flash2_operation_active_flag._1_1_ = '\0';
+      }
+    }
+    else if (cold_start_phase == CSP_AT_GOVERNOR_SETPOINT) {
+      if ((char)flash2_operation_active_flag == '\0') {
+        flash2_operation_active_flag._1_1_ = '\x01';
+      }
+      DAT_0040b529 = '\x01';
+    }
+    if (((governor_speed_setpoint_high < DAT_003fcfd5) &&
+        ((j1939_governor_auth_status_flags >> 1 & 1) != 0)) &&
+       (j1939_governor_auth_response_received != 0)) {
+      j1939_governor_auth_status_flags = j1939_governor_auth_status_flags & 0xfb | 4;
+    }
+    DAT_003fcfd5 = governor_speed_setpoint_high;
+    if (j1939_tsc1_override_enable != 0) {
+      j1939_msgSlotU_eepromPayload_toggle();
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: governorSpeedLimitTable @ 0x00524360
+//
+

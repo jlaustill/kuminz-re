@@ -1,0 +1,148 @@
+=== VARIABLES TO NAME ===
+0x003fbcb0  (4 references)
+0x003fbcb6  (3 references)
+0x003fbcb8  (3 references)
+
+Total: 3 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fbcb0, DAT_003fbcb6, DAT_003fbcb8
+void cm848_phase_groupB_calculation(int param_1)
+
+{
+  short sVar1;
+  uint uVar2;
+  uint uVar3;
+  int iVar4;
+  dword *pdVar5;
+  
+  pdVar5 = &diag_dm1_fault_source_table;
+  if ((governor_fault_status_flags & 0x100) == 0) {
+    diag_dm1_buffer_fill_phase = 0;
+    return;
+  }
+  if (DAT_003fddb6 != param_1) {
+    return;
+  }
+  if (diag_dm1_fault_source_table == 0) {
+    return;
+  }
+  if (DAT_003fbcb0 != 0) {
+    DAT_003fbcb0 = DAT_003fbcb0 + -1;
+    goto LAB_00506360;
+  }
+  if (DAT_003fddbc != 0) {
+    DAT_003fbcb0 = DAT_003fddbc + -1;
+  }
+  sVar1 = hpcr_protectionWarningHandler(DAT_003fddbe);
+  if (sVar1 == 0) {
+    DAT_003fbcb8 = 0;
+  }
+  else {
+    diag_dm1_protection_warning_active = 1;
+    if (DAT_003fbcb8 == 0) {
+      DAT_003fddc0 = DAT_003fddc0 + 1;
+      DAT_003fbcb8 = 1;
+    }
+  }
+  if (diag_dm1_buffer_fill_phase == 0) {
+    diag_dm1_buffer_fill_state = 1;
+    if (diag_dm1_fault_source_table != 0) {
+      do {
+        diag_dm1_active_fault_entry_count = diag_dm1_active_fault_entry_count + 1;
+        pdVar5 = pdVar5 + 1;
+        if (*pdVar5 == 0) break;
+      } while (pdVar5 < &DAT_003fde44);
+    }
+    uVar3 = (uint)diag_dm1_active_fault_entry_count;
+    uVar2 = 0x8000 / uVar3;
+    iVar4 = 0x8000 - uVar3 * uVar2;
+    diag_dm1_buffer_end_ptr = diag_dm1_buffer_start_ptr + (0x7fff - iVar4);
+    DAT_003fbcb6 = (ushort)uVar2;
+    DAT_003fbcb4 = diag_dm1_active_fault_entry_count * DAT_003fbcb6;
+    diag_dm1_buffer_write_ptr = diag_dm1_buffer_start_ptr;
+    diag_dm1_buffer_read_ptr = diag_dm1_buffer_start_ptr;
+    diag_dm1_buffer_slot_started_flag = 0;
+    diag_dm1_buffer_fill_end_ptr = (dword)(diag_dm1_buffer_start_ptr + (0x8000 - iVar4));
+    if (diag_dm1_protection_warning_active == 0) {
+      diag_dm1_buffer_fill_phase = 1;
+      diag_dm1Buffer_circularFill();
+      goto LAB_00506360;
+    }
+    if (diag_dm1_fill_mode_config == 1) {
+      diag_dm1_buffer_fill_phase = 2;
+      diag_dm1_buffer_fill_end_ptr = (dword)(diag_dm1_buffer_start_ptr + uVar3 * (uVar2 >> 1) + -1);
+      diag_dm1Buffer_circularFill();
+      goto LAB_00506360;
+    }
+    if (diag_dm1_fill_mode_config == 2) {
+      diag_dm1_buffer_fill_phase = 2;
+      diag_dm1_buffer_fill_end_ptr = (dword)diag_dm1_buffer_end_ptr;
+      diag_dm1Buffer_circularFill();
+      goto LAB_00506360;
+    }
+  }
+  else {
+    if (diag_dm1_buffer_fill_phase != 1) {
+      if (diag_dm1_buffer_fill_phase == 2) {
+        diag_dm1Buffer_circularFill();
+      }
+      else if (diag_dm1_buffer_fill_phase == 3) {
+        if (diag_dm1_protection_warning_active == 0) {
+          diag_dm1_buffer_fill_phase = 0;
+        }
+        else {
+          if (diag_dm1_buffer_fill_state != 2) {
+            diag_dm1_buffer_fill_state = 0;
+          }
+          if (diag_dm1_fill_mode_config != 3) {
+            diag_dm1_active_fault_entry_count = 0;
+          }
+        }
+      }
+      goto LAB_00506360;
+    }
+    if (diag_dm1_protection_warning_active == 0) {
+      diag_dm1Buffer_circularFill();
+      goto LAB_00506360;
+    }
+    if (diag_dm1_fill_mode_config == 1) {
+      diag_dm1_buffer_fill_phase = 2;
+      diag_dm1_buffer_phase2_start_ptr = diag_dm1_buffer_write_ptr + 1;
+      if (diag_dm1_buffer_end_ptr < diag_dm1_buffer_phase2_start_ptr) {
+        diag_dm1_buffer_phase2_start_ptr = diag_dm1_buffer_start_ptr;
+      }
+      diag_dm1_buffer_fill_end_ptr =
+           (dword)(diag_dm1_buffer_write_ptr +
+                  (uint)diag_dm1_active_fault_entry_count * (uint)(DAT_003fbcb6 >> 1));
+      if (diag_dm1_buffer_end_ptr < diag_dm1_buffer_fill_end_ptr) {
+        diag_dm1_buffer_fill_end_ptr = diag_dm1_buffer_fill_end_ptr - DAT_003fbcb4;
+      }
+      diag_dm1Buffer_circularFill();
+      goto LAB_00506360;
+    }
+    if (diag_dm1_fill_mode_config == 2) {
+      diag_dm1_buffer_fill_phase = 2;
+      diag_dm1_buffer_fill_end_ptr = (dword)diag_dm1_buffer_end_ptr;
+      diag_dm1_buffer_write_ptr = diag_dm1_buffer_start_ptr;
+      diag_dm1_buffer_read_ptr = diag_dm1_buffer_start_ptr;
+      diag_dm1_buffer_slot_started_flag = 0;
+      diag_dm1Buffer_circularFill();
+      goto LAB_00506360;
+    }
+  }
+  diag_dm1_buffer_fill_phase = 3;
+LAB_00506360:
+  j1939_dm1_diagnosticMessage_send();
+  return;
+}
+
+
+
+//
+// Function: cm848_outputs2_periodic @ 0x0050638c
+//
+
+/* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+

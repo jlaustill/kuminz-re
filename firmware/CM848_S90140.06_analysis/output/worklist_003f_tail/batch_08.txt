@@ -1,0 +1,64 @@
+=== VARIABLES TO NAME ===
+0x003faac2  (3 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003faac2
+void cm848_j1939HandlePgn65269AmbientConditions(void)
+
+{
+  short asStack_8 [2];
+  
+  if (((system_status_flags_t_003fe974.condition_monitor & 0x200) == 0) &&
+     ((system_status_flags_t_003fe974.condition_monitor & 0x400) == 0)) {
+    DAT_003faac2 = (undefined1)
+                   ((((uint)sensor_readings_t_0040baf2.intake_air_temp * 2 & 0xffff) * 0x1afa) /
+                    1000 >> 7);
+  }
+  else {
+    DAT_003faac2 = 0xfe;
+  }
+  if (((j1939_feature_enable_flags & 1) == 0) || ((j1939_feature_enable_flags & 2) == 0)) {
+    uRam003faac5 = 0xffff;
+  }
+  else if (((system_status_flags_t_003fe974.reserved_12 & 0x40) == 0) &&
+          ((system_status_flags_t_003fe974.reserved_12 & 0x80) == 0)) {
+    asStack_8[0] = ((short)((((short)j1939_coolant_temp_raw >> 6) * 5 + -0xa0) / 9) + 0x111) * 0x20;
+    uRam003faac5 = j1939_reverseByteOrder16(asStack_8);
+  }
+  else {
+    uRam003faac5 = 0xfffe;
+  }
+  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65269_tx_header);
+  return;
+}
+
+
+
+//
+// Function: cm848_sendJ1939ErrorFrame @ 0x00023f4c
+//
+
+// Variables in this function: DAT_003faac2
+void cm848_initJ1939AmbientConditionsBuffer(void)
+
+{
+  j1939_pgn65269_tx_header = CONCAT13(((byte)j1939_pgn65269_priority & 7) << 2,0xfef500);
+  j1939_pgn65269_tx_length = 8;
+  j1939_pgn65269_data_ptr = &DAT_003faac2;
+  j1939_pgn65269_end_ptr = &DAT_003faaca;
+  j1939_pgn65269_tx_header = CONCAT31(j1939_pgn65269_tx_header._0_3_,(char)j1939_source_address);
+  j1939_pgn65269_field1_init = 0xffff;
+  DAT_003faac7 = 0xff;
+  j1939_pgn65269_field2_init = 0xffff;
+  return;
+}
+
+
+
+//
+// Function: cm848_j1939BuildEngineStatusByte @ 0x00024028
+//
+

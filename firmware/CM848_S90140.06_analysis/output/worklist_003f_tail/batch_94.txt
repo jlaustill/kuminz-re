@@ -1,0 +1,48 @@
+=== VARIABLES TO NAME ===
+0x003fcfda  (4 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fcfda
+void j1939_msgSlotM_switchInputBits_update(void)
+
+{
+  byte bVar1;
+  byte bVar2;
+  byte bVar3;
+  byte bVar4;
+  
+  if ((j1939_msg_slot_m_control & 0x2f) == 0) {
+    if (cold_start_phase == CSP_CRANKING) {
+      sensor_init_delay_timer = 1;
+    }
+    bVar1 = j1939_governor_auth_status_flags & 0xf7 | 8;
+    bVar2 = j1939_msg_slot_m_counter >> 6 & 1;
+    bVar4 = j1939_msg_slot_m_counter >> 5 & 1;
+    bVar3 = j1939_msg_slot_m_counter >> 4 & 1;
+    j1939_msg_slot_m_switch_input_bits =
+         j1939_msg_slot_m_counter & 1 |
+         (j1939_msg_slot_m_counter >> 1 & 1) << 1 |
+         bVar3 << 4 | bVar4 << 5 | bVar2 << 6 | j1939_msg_slot_m_switch_input_bits & 0x8c;
+    if (((bVar4 != 0) || ((DAT_003fcfda >> 5 & 1) != 0)) &&
+       ((((DAT_003fcfda >> 6 & 1) == 0 && (bVar2 != 0)) ||
+        (((DAT_003fcfda >> 4 & 1) != 0 && (bVar3 == 0)))))) {
+      governor_auth_timeout_counter = 0;
+      governor_mode_override_active = 0;
+      bVar1 = j1939_governor_auth_status_flags & 0xf0 | 8;
+    }
+    j1939_governor_auth_status_flags = bVar1;
+    DAT_003fcfd9 = j1939_governor_auth_status_flags;
+    DAT_003fcfda = j1939_msg_slot_m_switch_input_bits;
+  }
+  return;
+}
+
+
+
+//
+// Function: j1939_msgSlotU_eepromPayload_toggle @ 0x00523a9c
+//
+

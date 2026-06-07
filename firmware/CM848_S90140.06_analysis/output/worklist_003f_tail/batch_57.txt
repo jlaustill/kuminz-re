@@ -1,0 +1,124 @@
+=== VARIABLES TO NAME ===
+0x003fccf4  (4 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fccf4
+void engine_protection_speedTracking_rampUpdate(void)
+
+{
+  bool bVar1;
+  word wVar2;
+  uint uVar3;
+  
+  uVar3 = (uint)protection_speedTracking_ramp_step_count_max;
+  if (protection_speed_track_active_flag == 0) {
+    wVar2 = 0;
+  }
+  else {
+    wVar2 = protection_speedTracking_ramp_step_counter;
+    if (((protection_speed_track_active_flag != 0) &&
+        (wVar2 = protection_speedTracking_ramp_step_count_max, uVar3 != 0)) &&
+       (wVar2 = protection_speedTracking_ramp_step_count_max,
+       (int)(uint)protection_speedTracking_ramp_step_counter <= (int)(uVar3 - 1))) {
+      wVar2 = protection_speedTracking_ramp_step_counter + 1;
+    }
+  }
+  protection_speedTracking_ramp_step_counter = wVar2;
+  bVar1 = uVar3 == protection_speedTracking_ramp_step_counter;
+  DAT_0040b044 = (ushort)bVar1;
+  uVar3 = (uint)protection_speedTracking_speed_error_ramp_max;
+  if (DAT_003fd8ce == 0) {
+    if (((protection_speed_error_over_threshold_flag == 0) || (!bVar1)) &&
+       ((wVar2 = protection_speedTracking_speed_error_ramp,
+        protection_speed_error_over_threshold_flag != 0 || (!bVar1)))) goto LAB_0050fbb8;
+    if ((protection_speed_error_over_threshold_flag != 0) || (!bVar1)) {
+      wVar2 = protection_speedTracking_speed_error_ramp_max;
+      if ((protection_speedTracking_speed_error_ramp_step <= uVar3) &&
+         (wVar2 = protection_speedTracking_speed_error_ramp_max,
+         (int)(uint)protection_speedTracking_speed_error_ramp <=
+         (int)(uVar3 - protection_speedTracking_speed_error_ramp_step))) {
+        wVar2 = protection_speedTracking_speed_error_ramp +
+                protection_speedTracking_speed_error_ramp_step;
+      }
+      goto LAB_0050fbb8;
+    }
+    if (DAT_00407778 < protection_speedTracking_speed_error_ramp) {
+      wVar2 = protection_speedTracking_speed_error_ramp - DAT_00407778;
+      goto LAB_0050fbb8;
+    }
+  }
+  wVar2 = 0;
+LAB_0050fbb8:
+  protection_speedTracking_speed_error_ramp = wVar2;
+  DAT_0040b048 = protection_speedTracking_speed_error_ramp;
+  if (protection_speedTracking_speed_error_ramp < uVar3) {
+    if ((uint)protection_speedTracking_speed_error_ramp <= (uint)DAT_0040777e) {
+      DAT_003fccf4 = 0;
+    }
+  }
+  else {
+    DAT_003fccf4 = 1;
+  }
+  return;
+}
+
+
+
+//
+// Function: phase_group_b_updateGovernorModeDiagnostics @ 0x0050fbf8
+//
+
+// Variables in this function: DAT_003fccf4
+void phase_group_b_updateGovernorModeDiagnostics(void)
+
+{
+  if (governor_fuel_b_mode_flag != 0) {
+    engine_protection_speedTracking_calc();
+    engine_protection_speedTracking_rampUpdate();
+    if (DAT_003fccf4 == 0) {
+      diagnostic_status_flags = diagnostic_status_flags & 0xff7f;
+      j1939_comm_status_flags = j1939_comm_status_flags & 0xff7f;
+    }
+    else {
+      diagnostic_status_flags = diagnostic_status_flags | 0x80;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_initializeGovernorFuelDemandArray @ 0x0050fc8c
+//
+
+// Variables in this function: DAT_003fccf4
+void cm848_initializeGovernorFuelDemandArray(void)
+
+{
+  DAT_0040b044 = 0;
+  protection_speed_track_active_flag = 0;
+  DAT_0040b048 = 0;
+  protection_speed_error_over_threshold_flag = 0;
+  protection_governor_output_ema = 0;
+  protection_governor_output_deviation = 0;
+  protection_speed_track_criterion_met = 0;
+  diagnostic_status_flags = diagnostic_status_flags & 0xff7f;
+  j1939_comm_status_flags = j1939_comm_status_flags & 0xff7f;
+  DAT_003fccf4 = 0;
+  protection_speedTracking_ramp_step_counter = 0;
+  protection_speedTracking_speed_error_ramp = 0;
+  DAT_003fccec = 0;
+  PTR_DAT_003fcce8 = &DAT_0040777a;
+  return;
+}
+
+
+
+//
+// Function: boost_demand_diagBit_counter @ 0x0050fd40
+//
+

@@ -1,0 +1,85 @@
+=== VARIABLES TO NAME ===
+0x003fcfe6  (4 references)
+0x003fcfe8  (3 references)
+0x003fcfea  (3 references)
+0x003fcfeb  (3 references)
+
+Total: 4 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fcfe6, DAT_003fcfe8, DAT_003fcfea, DAT_003fcfeb
+void governorSpeedLimitTable(void)
+
+{
+  word wVar1;
+  uint uVar2;
+  uint uVar3;
+  dword dVar4;
+  uint uVar5;
+  
+  wVar1 = rom_crc_accumulator;
+  if (rom_crc_calc_phase == 0) {
+    rom_crc_descriptor_table_ptr = (dword)&DAT_0053ac3c;
+    rom_crc_scan_ptr = (dword)&DAT_003fd59a;
+    rom_crc_calc_phase = 1;
+    DAT_003fcfe8 = 1;
+    DAT_003fcfea = 0;
+LAB_0052443c:
+    DAT_003fcfe6 = 0;
+    rom_crc_accumulator = 0;
+    DAT_003fcfeb = 0;
+  }
+  else {
+    if (rom_crc_calc_phase != 1) {
+      if (rom_crc_calc_phase == 2) {
+        rom_crc_descriptor_table_ptr = (dword)&DAT_0053ac2a;
+        rom_crc_scan_ptr = 0x8000;
+        rom_crc_calc_phase = 3;
+        DAT_003fcfe8 = 2;
+        DAT_003fcfea = 1;
+        goto LAB_0052443c;
+      }
+      if (rom_crc_calc_phase != 3) {
+        return;
+      }
+    }
+    if (DAT_003fcfe6 < DAT_003fcfe8) {
+      uVar3 = (uint)DAT_00408de0;
+      dVar4 = rom_crc_scan_ptr + uVar3;
+      uVar5 = dVar4 - 1;
+      DAT_003fcfeb = DAT_003fcfeb + 1;
+      uVar2 = *(uint *)(rom_crc_descriptor_table_ptr + 4);
+      if (uVar5 < uVar2) {
+        rom_crc_accumulator = cm848_calculateCrc16Simple(rom_crc_accumulator);
+        rom_crc_scan_ptr = dVar4;
+      }
+      else {
+        if (uVar2 < uVar5) {
+          uVar3 = (uVar2 - rom_crc_scan_ptr) + 1 & 0xffff;
+        }
+        rom_crc_accumulator = cm848_calculateCrc16Simple(rom_crc_accumulator,rom_crc_scan_ptr,uVar3)
+        ;
+        DAT_003fcfe6 = DAT_003fcfe6 + 1;
+        rom_crc_descriptor_table_ptr = rom_crc_descriptor_table_ptr + 8;
+        rom_crc_scan_ptr = *(dword *)rom_crc_descriptor_table_ptr;
+      }
+    }
+    else {
+      uVar3 = (uint)DAT_003fcfea;
+      (&rom_crc_computed_results)[uVar3] = rom_crc_accumulator;
+      if (*(word *)(uVar3 * 2 + 0x3fd904) != wVar1) {
+        injection_fault_shadow_flags = injection_fault_shadow_flags | 0x20;
+      }
+      rom_crc_calc_phase = rom_crc_calc_phase + 1;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: governorOverrideSpeedControl @ 0x00524594
+//
+

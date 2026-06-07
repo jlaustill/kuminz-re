@@ -1,0 +1,137 @@
+=== VARIABLES TO NAME ===
+0x003feccc  (3 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003feccc
+void mpc555_initDiagnosticSession(void)
+
+{
+  word local_8 [4];
+  
+  local_8[0] = qsmcm_sccr1.SC1SR;
+  diag_keep_alive_counter = 0;
+  diagnostic_cooldown_counter = 0;
+  if (eeprom_header_t_003fee08.cal_word4 == 0) {
+    cm848_initSchedulerCallback();
+    diag_session_state_t_003fecbe.session_flags = diag_session_state_t_003fecbe.session_flags & 0xfc
+    ;
+    DAT_003feccc = 0;
+    diagnostic_session_state = 0;
+    eeprom_request_state = 0;
+    diag_session_state_t_003fecbe.response_write_index = 0;
+    diag_session_state_t_003fecbe._2_4_ = diag_serial_buffer;
+    qsmcm_sccr1.SCC1R0 = 0xa0;
+    qsmcm_sccr1.SCC1R1 = 0x102c;
+  }
+  else {
+    local_8[0] = 0;
+    mpc555_eepromWriteWords((dword)local_8,(word *)&eeprom_cal_word4,2);
+    diag_session_state_t_003fecbe.session_flags = diag_session_state_t_003fecbe.session_flags | 1;
+    diagnostic_session_state = 1;
+    eeprom_request_state = 2;
+    cm848_initDiagnosticCallback();
+    diag_session_state_t_003fecbe.response_write_index = 0;
+    diag_session_state_t_003fecbe._2_4_ = diag_serial_buffer;
+    qsmcm_sccr1.SCC1R0 = 0x14;
+    qsmcm_sccr1.SCC1R1 = 0x102c;
+    cm848_setDataTransferMode();
+  }
+  return;
+}
+
+
+
+//
+// Function: mpc555_eepromValidationCycle @ 0x00002310
+//
+
+// Variables in this function: DAT_003feccc
+void cm848_processDiagnosticRequest(void)
+
+{
+  uint uVar1;
+  
+  *(undefined1 *)((int)&sensor_validation_delta + sensor_validation_delta._0_1_ + 1) =
+       *(undefined1 *)diag_session_state_t_003fecbe._2_4_;
+  uVar1 = sensor_validation_delta._0_1_ + 1;
+  sensor_validation_delta._0_1_ = (byte)uVar1;
+  if (2 < (uVar1 & 0xff)) {
+    if ((char)((char)sensor_validation_delta + DAT_003fee3c + ',') == DAT_003fee3d) {
+      if (diagnostic_session_state == 1) {
+        diag_serial_buffer[diag_session_state_t_003fecbe.response_write_index] = 0;
+        diag_session_state_t_003fecbe.response_write_index =
+             diag_session_state_t_003fecbe.response_write_index + 1;
+      }
+      else if ((diag_keep_alive_counter < 3) && (diagnostic_session_state != 2)) {
+        if (diagnostic_cooldown_counter == 0) {
+          serial_response_crc_expected = CONCAT11((char)sensor_validation_delta,DAT_003fee3c);
+          cm848_verifySerialResponse();
+          if (DAT_003feccc == '\0') {
+            diag_keep_alive_counter = diag_keep_alive_counter + 1;
+            diagnostic_cooldown_counter = 1000;
+            diag_serial_buffer[diag_session_state_t_003fecbe.response_write_index] = 1;
+            diag_session_state_t_003fecbe.response_write_index =
+                 diag_session_state_t_003fecbe.response_write_index + 1;
+          }
+          else {
+            diag_keep_alive_counter = 0;
+            diagnostic_cooldown_counter = 0;
+            diagnostic_session_state = 1;
+            diag_serial_buffer[diag_session_state_t_003fecbe.response_write_index] = 0;
+            diag_session_state_t_003fecbe.response_write_index =
+                 diag_session_state_t_003fecbe.response_write_index + 1;
+          }
+        }
+        else {
+          diag_serial_buffer[diag_session_state_t_003fecbe.response_write_index] = 2;
+          diag_session_state_t_003fecbe.response_write_index =
+               diag_session_state_t_003fecbe.response_write_index + 1;
+        }
+      }
+      else {
+        diagnostic_session_state = 2;
+        diag_serial_buffer[diag_session_state_t_003fecbe.response_write_index] = 3;
+        diag_session_state_t_003fecbe.response_write_index =
+             diag_session_state_t_003fecbe.response_write_index + 1;
+      }
+    }
+    else {
+      diag_serial_buffer[diag_session_state_t_003fecbe.response_write_index] = 2;
+      diag_session_state_t_003fecbe.response_write_index =
+           diag_session_state_t_003fecbe.response_write_index + 1;
+    }
+    diagnostic_callback_ptr = cm848_registerSchedulerTask;
+    cm848_processTimerInterrupt();
+  }
+  mpc555_initSchedulerTaskTable();
+  return;
+}
+
+
+
+//
+// Function: cm848_initDiagnosticSessionHandler @ 0x000035e4
+//
+
+// Variables in this function: DAT_003feccc
+void cm848_verifySerialResponse(void)
+
+{
+  DAT_003feccc = ((crc16_working_value ^
+                   *(ushort *)(&DAT_00007f9a + (crc16_working_value >> 0xc & 0xf) * 2) ^
+                   (uint)*(ushort *)(&DAT_00007f9a + (crc16_working_value >> 8 & 0xf) * 2) ^
+                   (uint)*(ushort *)(&DAT_00007f9a + (crc16_working_value >> 4 & 0xf) * 2) ^
+                   (uint)*(ushort *)(&DAT_00007f9a + (crc16_working_value & 0xf) * 2) ^ 0x1911) &
+                 0xffff) == (uint)serial_response_crc_expected;
+  return;
+}
+
+
+
+//
+// Function: cm848_restoreDiagnosticHandler @ 0x00003ad8
+//
+

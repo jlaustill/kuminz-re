@@ -1,0 +1,123 @@
+=== VARIABLES TO NAME ===
+0x003fb446  (3 references)
+0x003fb4cd  (4 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fb446, DAT_003fb4cd
+void mpc555_j1939ConfigureMultiFrame(int param_1,int param_2)
+
+{
+  word wVar1;
+  undefined *puVar2;
+  undefined2 *puVar3;
+  undefined1 *puVar4;
+  undefined2 *puVar5;
+  byte bVar6;
+  int iVar7;
+  undefined4 *puVar8;
+  
+  wVar1 = qsmcm_qspi_spcr0.SPE;
+  if (((wVar1 & 0x8000) == 0) && (DAT_003fb4cd == '\0')) {
+    DAT_003fb4cd = '\x01';
+    iVar7 = param_2 * 0x43;
+    puVar8 = *(undefined4 **)(iVar7 + param_1 * 4 + 0x3fb449);
+    bVar6 = 0;
+    if (*(char *)((int)puVar8 + 5) != '\0') {
+      puVar4 = (undefined1 *)(*(int *)((int)puVar8 + 10) + -1);
+      puVar2 = &UNK_003051bf;
+      puVar5 = (undefined2 *)(*(int *)((int)puVar8 + 6) + -2);
+      puVar3 = (undefined2 *)&UNK_0030517e;
+      do {
+        puVar5 = puVar5 + 1;
+        puVar3 = puVar3 + 1;
+        *puVar3 = *puVar5;
+        puVar4 = puVar4 + 1;
+        puVar2 = puVar2 + 1;
+        *puVar2 = *puVar4;
+        bVar6 = bVar6 + 1;
+      } while (bVar6 < *(byte *)((int)puVar8 + 5));
+    }
+    if (DAT_003fb444 != *(char *)(puVar8 + 1)) {
+      mpc555_j1939InitTransmitBuffer(*(char *)(puVar8 + 1));
+    }
+    fault_occurrence_index = (byte)param_2;
+    (&DAT_003fb446)[iVar7] = (char)param_1;
+    *puVar8 = 2;
+    wVar1 = qsmcm_qspi_spcr0.SPCR2;
+    qsmcm_qspi_spcr0.SPCR2 = wVar1 & 0xffe0;
+    wVar1 = qsmcm_qspi_spcr0.SPCR2;
+    qsmcm_qspi_spcr0.SPCR2 = wVar1;
+    wVar1 = qsmcm_qspi_spcr0.SPCR2;
+    qsmcm_qspi_spcr0.SPCR2 = wVar1 & 0xe0ff;
+    wVar1 = qsmcm_qspi_spcr0.SPCR2;
+    qsmcm_qspi_spcr0.SPCR2 = wVar1 | (ushort)*(byte *)((int)puVar8 + 5) * 0x100 - 0x100 & 0x1f00;
+    wVar1 = qsmcm_qspi_spcr0.SPE;
+    qsmcm_qspi_spcr0.SPE = wVar1 | 0x8000;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_j1939QueueTransmitMessage @ 0x0003da60
+//
+
+// Variables in this function: DAT_003fb446, DAT_003fb4cd
+void cm848_j1939ProcessTransmitQueue(void)
+
+{
+  byte bVar1;
+  uint uVar2;
+  byte bVar3;
+  undefined4 *puVar4;
+  undefined2 *puVar5;
+  undefined2 *puVar6;
+  uint uVar7;
+  
+  puVar4 = *(undefined4 **)
+            ((uint)fault_occurrence_index * 0x43 +
+             (uint)(byte)(&DAT_003fb446)[(uint)fault_occurrence_index * 0x43] * 4 + 0x3fb449);
+  if (*(int *)((int)puVar4 + 0xe) != 0) {
+    bVar3 = 0;
+    bVar1 = *(byte *)((int)puVar4 + 5);
+    if (bVar1 != 0) {
+      puVar5 = (undefined2 *)&UNK_0030513e;
+      puVar6 = (undefined2 *)(*(int *)((int)puVar4 + 0xe) + -2);
+      do {
+        puVar5 = puVar5 + 1;
+        puVar6 = puVar6 + 1;
+        *puVar6 = *puVar5;
+        bVar3 = bVar3 + 1;
+      } while (bVar3 < bVar1);
+    }
+  }
+  *puVar4 = 0;
+  if (*(code **)((int)puVar4 + 0x12) != (code *)0x0) {
+    (**(code **)((int)puVar4 + 0x12))();
+  }
+  (&fault_occurrence_count_array)[(uint)fault_occurrence_index * 0x43] =
+       (&fault_occurrence_count_array)[(uint)fault_occurrence_index * 0x43] - 1;
+  DAT_003fb4cd = 0;
+  uVar7 = 0;
+  do {
+    if ((&fault_occurrence_count_array)[uVar7 * 0x43] != 0) {
+      uVar2 = (byte)(&DAT_003fb446)[uVar7 * 0x43] + 1 & 0xff;
+      mpc555_j1939ConfigureMultiFrame(uVar2 + ((int)uVar2 >> 4) * -0x10 & 0xff,uVar7);
+      return;
+    }
+    uVar7 = uVar7 + 1 & 0xff;
+  } while (uVar7 < 2);
+  DAT_003fb4cd = 0;
+  return;
+}
+
+
+
+//
+// Function: cm848_triggerJ1939TransmitQueueProcess @ 0x0003dcf4
+//
+

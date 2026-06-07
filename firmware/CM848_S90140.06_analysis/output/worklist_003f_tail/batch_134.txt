@@ -1,0 +1,74 @@
+=== VARIABLES TO NAME ===
+0x003ff073  (4 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003ff073
+void cm848_calculatePressureSensorFiltered(void)
+
+{
+  word wVar1;
+  int iVar2;
+  ushort uVar3;
+  ushort uVar4;
+  
+  cold_start_pressure_scale_working = lookupTableInterpolation((table_interp_args_t *)&DAT_003fa618)
+  ;
+  iVar2 = (int)(short)sensor_channel9_fault_status;
+  if (((iVar2 != 0) || (cold_start_inhibit_cal != 0)) ||
+     (pressure_correction_scale = cold_start_pressure_scale_working,
+     (cold_start_feature_enable_flags & 0x4000) == 0)) {
+    pressure_correction_scale = 0;
+  }
+  cm848_calculatePressureSensorDerivative();
+  wVar1 = pressure_correction_raw;
+  if (((iVar2 == 0) && (cold_start_inhibit_cal == 0)) &&
+     ((cold_start_feature_enable_flags & 0x4000) != 0)) {
+    pressure_correction_filter1_working =
+         cm848_signedFirstOrderFilter((int)(short)pressure_correction_raw,&PTR_DAT_003fa624);
+    wVar1 = cm848_signedFirstOrderFilter
+                      ((int)(short)pressure_correction_filter1_working,&PTR_DAT_003fa62c);
+  }
+  condition_monitor_status_working = wVar1;
+  if ((((system_status_flags_t_003fe974.condition_monitor & 8) != 0) && ((DAT_003ff073 & 1) != 0))
+     || ((uVar4 = injection_enable_mode_byte,
+         (system_status_flags_t_003fe974.condition_monitor & 0x10) != 0 &&
+         ((DAT_003ff073 >> 1 & 1) != 0)))) {
+    uVar4 = sensor_channel9_fault_status | injection_enable_mode_byte;
+  }
+  if (((((injection_fault_shadow_flags & 0x40) == 0) ||
+       (((&fault_status_array)[DAT_00059b26 * 3] & 0x10) == 0)) || ((DAT_003ff073 >> 5 & 1) == 0))
+     && ((((injection_fault_shadow_flags & 4) == 0 ||
+          (((&fault_status_array)[DAT_00059b1e * 3] & 0x10) == 0)) || ((DAT_003ff073 >> 6 & 1) == 0)
+         ))) {
+    uVar3 = 0;
+  }
+  else {
+    uVar3 = 0x20;
+  }
+  fuel_demand_phase_status_flags = uVar4 | uVar3;
+  if (((uVar4 & 0x80) == 0) || (((uVar4 & 2) == 0 && ((uVar4 & 0x20) == 0 && uVar3 == 0)))) {
+    if (((uVar4 & 2) == 0) && ((uVar4 & 0x20) == 0 && uVar3 == 0)) {
+      fuel_demand_phase_state = 0;
+      fuel_demand_boost_offset = wVar1;
+    }
+    else {
+      fuel_demand_phase_state = 1;
+      fuel_demand_boost_offset = fuel_demand_boost_offset_filtered;
+    }
+  }
+  else {
+    fuel_demand_boost_offset = sensor_channel9_pressure_filtered;
+    fuel_demand_phase_state = 2;
+  }
+  return;
+}
+
+
+
+//
+// Function: mpc555_initPressureSensorFilterState @ 0x00014080
+//
+

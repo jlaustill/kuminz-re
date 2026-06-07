@@ -1,0 +1,151 @@
+=== VARIABLES TO NAME ===
+0x003fd18a  (4 references)
+0x003fd18c  (4 references)
+0x003fd18e  (3 references)
+0x003fd190  (4 references)
+
+Total: 4 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fd18e, DAT_003fd190
+void cm848_initialization_group22_state(void)
+
+{
+  engine_cssc_coolant_state = 0;
+  protection_group29_startup_timer_count = DAT_000642da;
+  DAT_003fd190 = 0;
+  protection_group29_conditions_met_flag = 0;
+  DAT_003fd18e = 0;
+  return;
+}
+
+
+
+//
+// Function: diag_faultRing_pendingBit_update @ 0x0052dd64
+//
+
+// Variables in this function: DAT_003fd18a, DAT_003fd18c, DAT_003fd18e, DAT_003fd190
+void cm848_calibration_group29_load(void)
+
+{
+  if (engine_cssc_coolant_state == 0) {
+    if ((operating_mode_flags & 0x40) == 0) {
+      return;
+    }
+    if ((system_status_flags_t_003fe974.condition_monitor & 2) != 0) {
+      return;
+    }
+    if ((system_status_flags_t_003fe974.condition_monitor & 1) != 0) {
+      return;
+    }
+    if (0 < (short)protection_group29_startup_timer_count) {
+      protection_group29_startup_timer_count = protection_group29_startup_timer_count - 1;
+      return;
+    }
+    if (protection_group29_startup_timer_count != 0) {
+      if (cold_start_phase != CSP_AT_GOVERNOR_SETPOINT) {
+        return;
+      }
+      DAT_003fd18a = protection_group29_coolant_temp_snapshot;
+      DAT_003fd18c = protection_group29_coolant_temp_snapshot;
+      cssc_coolant_monitoring_cycle_count = 0;
+      engine_cssc_coolant_state = 1;
+      return;
+    }
+    if ((DAT_003fd18e == '\0') &&
+       ((((DAT_003fd18e = '\x01', (system_status_flags_t_003fe974.condition_monitor & 0x10) != 0 ||
+          ((system_status_flags_t_003fe974.condition_monitor & 8) != 0)) ||
+         ((injection_fault_shadow_flags & 4) != 0)) ||
+        ((((power_state_status_flags & 0x800) != 0 || ((power_state_status_flags & 0x1000) != 0)) ||
+         ((injection_fault_shadow_flags & 2) != 0)))))) goto LAB_0052e210;
+    if (DAT_003fd190 < DAT_000642e0) {
+      DAT_003fd190 = DAT_003fd190 + 1;
+      return;
+    }
+    protection_group29_startup_timer_count = 0xffff;
+    protection_group29_coolant_temp_snapshot = sensor_readings_t_0040baf2.coolant_temp;
+    DAT_003fd186 = protection_oilTemp_proxy;
+    DAT_003fd184 = engine_load_output_value;
+    if ((int)(uint)DAT_000642de <=
+        (int)(short)engine_load_output_value - (int)(short)protection_oilTemp_proxy) {
+      protection_group29_startup_timer_count = 0xffff;
+      return;
+    }
+    if ((((j1939_msg_slot_n_eeprom_flag == 0) ||
+         ((system_status_flags_t_003fe974.reserved_28 & 0x10) != 0)) ||
+        (j1939_msg_slot_n_eeprom_data < DAT_000642dc)) &&
+       (((j1939_msg_slot_n_control & 0x3f) == 0 &&
+        ((system_status_flags_t_003fe974.reserved_28 & 0x10) == 0)))) {
+      protection_group29_startup_timer_count = 0xffff;
+      return;
+    }
+    protection_group29_conditions_met_flag = 1;
+    if ((int)DAT_000642ce <= (int)(short)engine_load_output_value) {
+      protection_group29_startup_timer_count = 0xffff;
+      protection_group29_conditions_met_flag = 1;
+      return;
+    }
+    if ((short)sensor_readings_t_0040baf2.coolant_temp <= DAT_000642d0) {
+      protection_group29_startup_timer_count = 0xffff;
+      protection_group29_conditions_met_flag = 1;
+      return;
+    }
+  }
+  else {
+    if (engine_cssc_coolant_state != 1) {
+      if ((engine_cssc_coolant_state != 2) && (engine_cssc_coolant_state != 3)) {
+        return;
+      }
+      diag_faultRing_pendingBit_update();
+      return;
+    }
+    if ((((((protection_feature_status_flags & 0x10) == 0) ||
+          ((short)protection_group29_coolant_temp_snapshot < DAT_000642d2)) ||
+         (DAT_000642d4 < (short)protection_group29_coolant_temp_snapshot)) ||
+        (((system_status_flags_t_003fe974.condition_monitor & 2) != 0 ||
+         ((system_status_flags_t_003fe974.condition_monitor & 1) != 0)))) ||
+       ((protection_monitor_shadow & 1) != 0)) {
+      engine_cssc_coolant_state = 6;
+      return;
+    }
+    if ((short)sensor_readings_t_0040baf2.coolant_temp < (short)DAT_003fd18a) {
+      DAT_003fd18a = sensor_readings_t_0040baf2.coolant_temp;
+    }
+    if ((short)DAT_003fd18c < (short)sensor_readings_t_0040baf2.coolant_temp) {
+      DAT_003fd18c = sensor_readings_t_0040baf2.coolant_temp;
+    }
+    cssc_coolant_temp_span = DAT_003fd18c - DAT_003fd18a;
+    cssc_coolant_monitoring_cycle_count = cssc_coolant_monitoring_cycle_count + 1;
+    if (DAT_000642d6 <= (short)cssc_coolant_temp_span) {
+      protection_monitor_shadow = protection_monitor_shadow & 0xfffd;
+      j1939_message_state_flags = j1939_message_state_flags & 0xfffd;
+      engine_cssc_coolant_state = 2;
+      return;
+    }
+    if (DAT_000642d6 <= (short)cssc_coolant_temp_span) {
+      return;
+    }
+    if (cssc_coolant_monitoring_cycle_count < DAT_000642d8) {
+      return;
+    }
+    if (protection_group29_conditions_met_flag != 1) {
+LAB_0052e210:
+      fault_management_ring_read_ptr =
+           (undefined *)((uint)fault_management_ring_read_ptr & 0xfffffdff);
+      engine_cssc_coolant_state = 6;
+      return;
+    }
+  }
+  protection_monitor_shadow = protection_monitor_shadow | 2;
+  engine_cssc_coolant_state = 3;
+  return;
+}
+
+
+
+//
+// Function: cm848_initialization_group29_state @ 0x0052e24c
+//
+

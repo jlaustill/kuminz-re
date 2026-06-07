@@ -1,0 +1,114 @@
+=== VARIABLES TO NAME ===
+0x003fdb88  (3 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fdb88
+void engine_start_completion_sequence(void)
+
+{
+  int iVar1;
+  uint uVar2;
+  uint uVar3;
+  uint uVar4;
+  uint uVar5;
+  word wVar6;
+  short sVar7;
+  ushort uVar8;
+  word local_10 [2];
+  
+  cm848_initProtectionLimitVariables();
+  uVar8 = 0;
+  startup_mios_engine_event_flag = 0;
+  sVar7 = cm848_isSensorValidationComplete();
+  while (sVar7 == 0) {
+    cm848_delayMicroseconds(0x13);
+    wVar6 = MIOS_MCPSMSCR.MIOS1ER;
+    if ((wVar6 & 0x8000) == 0) {
+      uVar8 = 0;
+    }
+    else {
+      uVar8 = uVar8 + 1;
+      if (0x50 < uVar8) {
+        startup_mios_engine_event_flag = 1;
+      }
+    }
+    sVar7 = cm848_isSensorValidationComplete();
+  }
+  if (startup_mios_engine_event_flag != 0) {
+    engine_protection_timer_sync();
+  }
+  local_10[0] = cm848_getSensorValidationData();
+  if (local_10[0] != 0) {
+    local_10[0] = local_10[0] + DAT_003fdb88;
+    cm848_updateProtectionTimers(&DAT_003fdb88,local_10,2);
+    uVar8 = 0;
+    do {
+      if (DAT_003fdb88 == local_10[0]) break;
+      do {
+        uVar3 = TBUr;
+        iVar1 = TBLr;
+        uVar2 = TBUr;
+      } while (uVar3 != uVar2);
+      do {
+        do {
+          uVar4 = TBUr;
+          uVar2 = TBLr;
+          uVar5 = TBUr;
+        } while (uVar4 != uVar5);
+      } while ((uVar4 < uVar3) || (uVar2 < iVar1 + 0x9c4U));
+      uVar8 = uVar8 + 1;
+    } while (uVar8 < 1000);
+  }
+  local_10[0] = cm848_getSensorSampleBuffer();
+  cm848_updateProtectionTimers(&sensor_validation_sum_expected,local_10,2);
+  uVar8 = 0;
+  do {
+    if (sensor_validation_sum_expected == local_10[0]) break;
+    do {
+      uVar3 = TBUr;
+      iVar1 = TBLr;
+      uVar2 = TBUr;
+    } while (uVar3 != uVar2);
+    do {
+      do {
+        uVar4 = TBUr;
+        uVar2 = TBLr;
+        uVar5 = TBUr;
+      } while (uVar4 != uVar5);
+    } while ((uVar4 < uVar3) || (uVar2 < iVar1 + 0x9c4U));
+    uVar8 = uVar8 + 1;
+  } while (uVar8 < 1000);
+  if (qadc_scan_read_index != qadc_scan_write_index) {
+    cm848_updateProtectionTimers(&qadc_scan_write_index,&qadc_scan_read_index,2);
+    uVar8 = 0;
+    do {
+      if (qadc_scan_read_index == qadc_scan_write_index) {
+        return;
+      }
+      do {
+        uVar3 = TBUr;
+        iVar1 = TBLr;
+        uVar2 = TBUr;
+      } while (uVar3 != uVar2);
+      do {
+        do {
+          uVar4 = TBUr;
+          uVar2 = TBLr;
+          uVar5 = TBUr;
+        } while (uVar4 != uVar5);
+      } while ((uVar4 < uVar3) || (uVar2 < iVar1 + 0x9c4U));
+      uVar8 = uVar8 + 1;
+    } while (uVar8 < 1000);
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_initProtectionTimers @ 0x00539d18
+//
+

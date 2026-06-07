@@ -1,0 +1,274 @@
+=== VARIABLES TO NAME ===
+0x003fd1bc  (4 references)
+0x003fd1be  (4 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fd1bc, DAT_003fd1be
+undefined4 diag_camSync_deviation_check(void)
+
+{
+  uint uVar1;
+  byte local_8 [4];
+  
+  local_8[0] = cam_sync_protection_state_flags;
+  uVar1 = (uint)DAT_003fd1bc;
+  if ((int)uVar1 < 0) {
+    uVar1 = -uVar1;
+  }
+  if ((uint)DAT_000642ec < (uVar1 & 0xffff)) {
+    uVar1 = (uint)DAT_003fd1be;
+    if ((int)uVar1 < 0) {
+      uVar1 = -uVar1;
+    }
+    if ((uint)DAT_000642ec < (uVar1 & 0xffff)) {
+      local_8[0] = cam_sync_protection_state_flags & 0xfd;
+      diag_suppress_stateMachine(2);
+      goto LAB_0052f2f0;
+    }
+  }
+  diag_suppress_stateMachine(3);
+  diag_suppress_request_flag = 1;
+LAB_0052f2f0:
+  local_8[0] = local_8[0] & 0xfe;
+  cm848_updateProtectionTimers(&cam_sync_protection_state_flags,local_8,1);
+  cam_sync_protection_state_flags = local_8[0];
+  return 3;
+}
+
+
+
+//
+// Function: engine_protection_timerState_shiftCheck @ 0x0052f32c
+//
+
+// Variables in this function: DAT_003fd1bc, DAT_003fd1be
+void sensor_battery_voltage_decrement(void)
+
+{
+  if ((cold_start_battery_timer_a != 0xffff) &&
+     (cold_start_battery_timer_a = cold_start_battery_timer_a - 1, cold_start_battery_timer_a == 0))
+  {
+    DAT_003fd1bc = DAT_003fd1bc - sensor_readings_t_0040baf2.battery_voltage;
+  }
+  if ((cold_start_battery_timer_b != 0xffff) &&
+     (cold_start_battery_timer_b = cold_start_battery_timer_b - 1, cold_start_battery_timer_b == 0))
+  {
+    DAT_003fd1be = DAT_003fd1be - sensor_readings_t_0040baf2.battery_voltage;
+  }
+  return;
+}
+
+
+
+//
+// Function: fault_event_check_conflict @ 0x0052f938
+//
+
+// Variables in this function: DAT_003fd1bc, DAT_003fd1be
+undefined2 engine_coldStart_protection_stateMachine(void)
+
+{
+  bool bVar1;
+  byte bVar2;
+  short sVar3;
+  word wVar4;
+  undefined2 uVar5;
+  byte local_18 [8];
+  
+  uVar5 = 1;
+  if (((cam_sync_protection_state_flags & 1) != 0) && ((DAT_000642e8 & 1) != 0)) {
+    sensor_battery_voltage_decrement();
+  }
+  if (((((cam_sync_protection_state_flags & 1) == 0) || ((DAT_000642e8 & 1) == 0)) &&
+      (((cold_start_protection_state_flags & 8) == 0 ||
+       ((cold_start_protection_state_flags & 0x10) == 0)))) || (cold_start_phase != CSP_CRANKING)) {
+    fault_event_queue_clear_active(0x35);
+    fault_event_queue_clear_active(4);
+    fault_event_queue_clear_active(0x26);
+    fault_event_queue_clear_active(0x2b);
+    fault_event_queue_clear_active(0x2c);
+    engine_sync_cold_start_flag = 0;
+    cold_start_injection_protection_flag = 0;
+    protection_voltage_active_flag = 0;
+    cold_start_protection_state = 8;
+    if (cold_start_phase != CSP_CRANKING) {
+      diag_suppress_stateMachine(2);
+    }
+    return 3;
+  }
+  if ((byte)(cold_start_protection_cycle_counter + 1) < 2) {
+    cold_start_protection_cycle_counter = cold_start_protection_cycle_counter + 1;
+    return 1;
+  }
+  cold_start_protection_cycle_counter = 2;
+  switch(cold_start_protection_state) {
+  case 0:
+    break;
+  case 1:
+    if ((DAT_000642e8 & 0x40) != 0) {
+      engine_sync_cold_start_flag = 1;
+    }
+    if ((DAT_000642e8 & 0x20) != 0) {
+      protection_voltage_active_flag = 1;
+    }
+    if ((DAT_000642e8 & 0x80) != 0) {
+      cold_start_injection_protection_flag = 1;
+    }
+    diag_suppress_stateMachine(1);
+    cold_start_protection_state = 2;
+    break;
+  case 2:
+    if ((DAT_000642e8 & 8) == 0) {
+      cold_start_protection_cycle_counter = 2;
+      return 1;
+    }
+    if (cold_start_protection_branch_flag != 0) {
+      if (cold_start_protection_timer_countdown != 0) {
+        cold_start_protection_cycle_counter = 2;
+        cold_start_protection_timer_countdown = cold_start_protection_timer_countdown - 1;
+        return 1;
+      }
+      cold_start_protection_timer_countdown = cold_start_protection_timer_countdown - 1;
+      fault_event_queue_clear_active(0x35);
+      cold_start_protection_timer_countdown = DAT_000642e6;
+      cold_start_protection_branch_flag = 0;
+      cold_start_protection_state = 3;
+      uVar5 = 1;
+      if (((engine_diag_shadow_flags & 4) == 0) && ((engine_diag_shadow_flags & 8) == 0)) {
+        local_18[0] = cold_start_protection_state_flags & 0x5f;
+        cm848_updateProtectionTimers(&cold_start_protection_state_flags,local_18,1);
+        cold_start_protection_state_flags = local_18[0];
+        diag_suppress_stateMachine(2);
+      }
+      else {
+        diag_suppress_stateMachine(3);
+        diag_suppress_request_flag = 1;
+      }
+      goto LAB_0052ffc8;
+    }
+    if (cold_start_protection_timer_countdown != 0) {
+      cold_start_protection_cycle_counter = 2;
+      cold_start_protection_timer_countdown = cold_start_protection_timer_countdown - 1;
+      return 1;
+    }
+    cold_start_protection_timer_countdown = cold_start_protection_timer_countdown - 1;
+    fault_event_queue_set_active(0x35,5);
+    wVar4 = DAT_000642e2;
+    goto LAB_0052fd54;
+  case 3:
+    if (cold_start_protection_branch_flag != 0) {
+      wVar4 = cold_start_protection_timer_countdown - 1;
+      if (cold_start_protection_timer_countdown == 0) {
+        cold_start_protection_timer_countdown = wVar4;
+        if ((DAT_000642e8 & 4) != 0) {
+          fault_event_queue_clear_active(4);
+        }
+        if ((DAT_000642e8 & 0x10) != 0) {
+          fault_event_queue_clear_active(0x26);
+        }
+        cold_start_protection_state = 4;
+        cold_start_protection_timer_countdown = DAT_000642e6;
+        protection_voltage_active_flag = 0;
+        cold_start_injection_protection_flag = 0;
+        engine_sync_cold_start_flag = 0;
+        return 1;
+      }
+      cold_start_protection_cycle_counter = 2;
+      cold_start_protection_timer_countdown = wVar4;
+      return 1;
+    }
+    wVar4 = cold_start_protection_timer_countdown - 1;
+    if (cold_start_protection_timer_countdown != 0) {
+      cold_start_protection_cycle_counter = 2;
+      cold_start_protection_timer_countdown = wVar4;
+      return 1;
+    }
+    cold_start_protection_timer_countdown = wVar4;
+    if ((DAT_000642e8 & 4) != 0) {
+      fault_event_queue_set_active(4,5);
+    }
+    wVar4 = DAT_000642e4;
+    if ((DAT_000642e8 & 0x10) != 0) {
+      fault_event_queue_set_active(0x26,5);
+      wVar4 = DAT_000642e4;
+    }
+LAB_0052fd54:
+    cold_start_protection_branch_flag = 1;
+    cold_start_protection_timer_countdown = wVar4;
+    break;
+  case 4:
+    wVar4 = cold_start_protection_timer_countdown - 1;
+    bVar1 = cold_start_protection_timer_countdown == 0;
+    cold_start_protection_timer_countdown = wVar4;
+    if (bVar1) {
+      DAT_003fd1bc = sensor_readings_t_0040baf2.battery_voltage;
+      cold_start_battery_timer_a = DAT_000642ea;
+      fault_event_queue_set_active(0x2b,5);
+      cold_start_protection_timer_countdown = DAT_000642e4;
+      cold_start_protection_state = 5;
+    }
+    break;
+  case 5:
+    bVar1 = cold_start_protection_timer_countdown == 0;
+    cold_start_protection_timer_countdown = cold_start_protection_timer_countdown - 1;
+    if (bVar1) {
+      cold_start_protection_timer_countdown = DAT_000642e6;
+      fault_event_queue_clear_active(0x2b);
+      cold_start_protection_state = 6;
+    }
+    break;
+  case 6:
+    bVar1 = cold_start_protection_timer_countdown == 0;
+    cold_start_protection_timer_countdown = cold_start_protection_timer_countdown - 1;
+    if (bVar1) {
+      cold_start_protection_timer_countdown = DAT_000642e4;
+      DAT_003fd1be = sensor_readings_t_0040baf2.battery_voltage;
+      fault_event_queue_set_active(0x2c,5);
+      cold_start_battery_timer_b = DAT_000642ea;
+      cold_start_protection_state = 7;
+    }
+    break;
+  case 7:
+    if (cold_start_protection_timer_countdown != 0) {
+      cold_start_protection_cycle_counter = 2;
+      cold_start_protection_timer_countdown = cold_start_protection_timer_countdown - 1;
+      return 1;
+    }
+    cold_start_protection_timer_countdown = cold_start_protection_timer_countdown - 1;
+    fault_event_queue_clear_active(0x2c);
+    bVar2 = cold_start_protection_state_flags;
+    cold_start_protection_state = 8;
+    local_18[0] = cold_start_protection_state_flags;
+    sVar3 = fault_event_check_conflict(0x100);
+    if (sVar3 == 0) {
+      local_18[0] = bVar2 & 0xef;
+      diag_suppress_stateMachine(2);
+    }
+    else {
+      diag_suppress_stateMachine(3);
+      diag_suppress_request_flag = 1;
+    }
+    local_18[0] = local_18[0] & 0xf7;
+    cm848_updateProtectionTimers(&cold_start_protection_state_flags,local_18,1);
+    cold_start_protection_state_flags = local_18[0];
+    if ((cam_sync_protection_state_flags & 1) == 0) {
+      return 3;
+    }
+    uVar5 = 2;
+LAB_0052ffc8:
+    diag_suppress_stateMachine(1);
+    break;
+  case 8:
+  }
+  return uVar5;
+}
+
+
+
+//
+// Function: hpcr_calibration_group25_load @ 0x0053005c
+//
+

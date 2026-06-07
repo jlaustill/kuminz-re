@@ -1,0 +1,48 @@
+=== VARIABLES TO NAME ===
+0x003ff067  (4 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003ff067
+void hpcr_fuelFinal_periodic(void)
+
+{
+  ushort uVar1;
+  ushort uVar2;
+  
+  uVar2 = sensor_channel3_fault_status;
+  if ((((system_status_flags_t_003fe974.condition_monitor & 0x200) == 0) ||
+      ((DAT_003ff067 & 1) == 0)) &&
+     (((system_status_flags_t_003fe974.condition_monitor & 0x400) == 0 ||
+      ((DAT_003ff067 >> 1 & 1) == 0)))) {
+    uVar2 = 0;
+  }
+  if (((((j1939_receive_status_flags & 0x10) == 0) ||
+       (((&fault_status_array)[DAT_00059b02 * 3] & 0x10) == 0)) || ((DAT_003ff067 >> 4 & 1) == 0))
+     && ((((diagnostic_status_flags_working & 0x400) == 0 ||
+          (((&fault_status_array)[DAT_00059e6e * 3] & 0x10) == 0)) || (-1 < (char)DAT_003ff067)))) {
+    uVar1 = 0;
+  }
+  else {
+    uVar1 = 0x20;
+  }
+  DAT_0040a166 = uVar2 | uVar1;
+  if ((uVar2 & 0x22) == 0 && uVar1 == 0) {
+    boost_pressure_fuel_working = sensor_channel3_raw;
+    fuel_boost_mode_state = 0;
+  }
+  else {
+    boost_pressure_fuel_working = sensor_channel3_filtered;
+    fuel_boost_mode_state = 2;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_initialization_step @ 0x0050241c
+//
+

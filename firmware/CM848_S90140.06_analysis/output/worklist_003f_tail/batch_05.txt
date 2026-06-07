@@ -1,0 +1,30 @@
+=== VARIABLES TO NAME ===
+0x003fa97a  (4 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fa97a
+void cm848_j1939HandleDm1RequestMessage(j1939_rx_msg_t *request_msg)
+
+{
+  DAT_003fa97a = *request_msg->data_pointer;
+  if ((DAT_003fa97a == 0) && ((j1939_feature_config_word & 0x100) != 0)) {
+    cm848_j1939SendDm1ResponseMessage(0,(byte)j1939_dm1_response_mode);
+  }
+  else if ((DAT_003fa97a == 1) && ((j1939_feature_config_word & 0x200) != 0)) {
+    cm848_j1939SendDm1ResponseMessage(1,(byte)j1939_dm1_response_destination);
+  }
+  else if (DAT_003fa97a < 2) {
+    cm848_sendJ1939AcknowledgeMessage(request_msg,J1939_NACK);
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_initJ1939Dm1RequestHandler @ 0x00022840
+//
+

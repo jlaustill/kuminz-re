@@ -1,0 +1,158 @@
+=== VARIABLES TO NAME ===
+0x003fb414  (3 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fb414
+void hpcr_validateBatteryVoltageInput(void)
+
+{
+  word *pwVar1;
+  int iVar2;
+  word wVar4;
+  uint uVar3;
+  byte abStack_8 [4];
+  
+  wVar4 = battery_voltage_default_cal;
+  if ((((battery_voltage_status_flags >> 1 & 1) == 0) &&
+      ((battery_voltage_status_flags >> 5 & 1) == 0)) &&
+     (wVar4 = sensor_readings_t_0040baf2.battery_voltage,
+     0xfe < sensor_readings_t_0040baf2.battery_voltage)) {
+    wVar4 = 0xff;
+  }
+  abStack_8[0] = (byte)wVar4;
+  if ((governor_system_config_flags & 4) == 0) {
+    pwVar1 = &fuel_quantity_demand_input;
+  }
+  else {
+    pwVar1 = &j1939_fuel_quantity_input;
+  }
+  uVar3 = ((uint)*pwVar1 * 100) / 0x1d02;
+  if (0xfe < uVar3) {
+    uVar3 = 0xff;
+  }
+  abStack_8[1] = (byte)uVar3;
+  coolant_temp_filtered =
+       cm848_signedFirstOrderFilter((int)(short)protection_coolant_temp_active,&PTR_DAT_003fb414);
+  uVar3 = (uint)(short)((short)(((short)(coolant_temp_filtered - 0x800) * 5) / 9) + 0xa00);
+  iVar2 = ((int)uVar3 >> 6) + (uint)((int)uVar3 < 0 && (uVar3 & 0x3f) != 0);
+  if ((short)iVar2 < 0xff) {
+    if ((short)iVar2 < 1) {
+      iVar2 = 0;
+    }
+  }
+  else {
+    iVar2 = 0xff;
+  }
+  abStack_8[2] = (char)iVar2;
+  uVar3 = (uint)(short)((short)(((short)(protection_oilTemp_proxy - 0x800) * 5) / 9) + 0xa00);
+  iVar2 = ((int)uVar3 >> 6) + (uint)((int)uVar3 < 0 && (uVar3 & 0x3f) != 0);
+  if ((short)iVar2 < 0xff) {
+    if ((short)iVar2 < 1) {
+      iVar2 = 0;
+    }
+  }
+  else {
+    iVar2 = 0xff;
+  }
+  abStack_8[3] = (char)iVar2;
+  uVar3 = 0;
+  do {
+    (&j1939_data_buffer_d)[uVar3] = abStack_8[uVar3];
+    uVar3 = uVar3 + 1 & 0xff;
+  } while (uVar3 < 4);
+  return;
+}
+
+
+
+//
+// Function: hpcr_processVoltageProtectionState @ 0x0003c928
+//
+
+// Variables in this function: DAT_003fb414
+void hpcr_processVoltageProtectionState(int param_1)
+
+{
+  word *pwVar1;
+  int iVar2;
+  ushort uVar4;
+  uint uVar3;
+  int in_r12;
+  int unaff_r31;
+  undefined1 uStack00000008;
+  undefined1 uStack00000009;
+  undefined1 uStack0000000a;
+  undefined1 in_stack_0000000b;
+  
+  uVar4 = battery_voltage_default_cal;
+  if ((in_r12 == 0) && (uVar4 = *(ushort *)(unaff_r31 + 8), 0xfe < *(ushort *)(unaff_r31 + 8))) {
+    uVar4 = 0xff;
+  }
+  uStack00000008 = (undefined1)uVar4;
+  if ((governor_system_config_flags & 4) == 0) {
+    pwVar1 = (word *)(param_1 + 0x14);
+  }
+  else {
+    pwVar1 = &j1939_fuel_quantity_input;
+  }
+  uVar3 = ((uint)*pwVar1 * 100) / 0x1d02;
+  if (0xfe < uVar3) {
+    uVar3 = 0xff;
+  }
+  uStack00000009 = (undefined1)uVar3;
+  coolant_temp_filtered =
+       cm848_signedFirstOrderFilter((int)(short)protection_coolant_temp_active,&PTR_DAT_003fb414);
+  uVar3 = (uint)(short)((short)(((short)(coolant_temp_filtered - 0x800) * 5) / 9) + 0xa00);
+  iVar2 = ((int)uVar3 >> 6) + (uint)((int)uVar3 < 0 && (uVar3 & 0x3f) != 0);
+  if ((short)iVar2 < 0xff) {
+    if ((short)iVar2 < 1) {
+      iVar2 = 0;
+    }
+  }
+  else {
+    iVar2 = 0xff;
+  }
+  uStack0000000a = (char)iVar2;
+  uVar3 = (uint)(short)((short)(((short)(*(short *)(unaff_r31 + 0x8a) + -0x800) * 5) / 9) + 0xa00);
+  iVar2 = ((int)uVar3 >> 6) + (uint)((int)uVar3 < 0 && (uVar3 & 0x3f) != 0);
+  if ((short)iVar2 < 0xff) {
+    if ((short)iVar2 < 1) {
+      iVar2 = 0;
+    }
+  }
+  else {
+    iVar2 = 0xff;
+  }
+  in_stack_0000000b = (char)iVar2;
+  uVar3 = 0;
+  do {
+    (&j1939_data_buffer_d)[uVar3] = (&stack0x00000008)[uVar3];
+    uVar3 = uVar3 + 1 & 0xff;
+  } while (uVar3 < 4);
+  return;
+}
+
+
+
+//
+// Function: mpc555_initFuelDemandFilterPointers @ 0x0003ca90
+//
+
+// Variables in this function: DAT_003fb414
+void mpc555_initFuelDemandFilterPointers(void)
+
+{
+  DAT_003fb418 = 0;
+  PTR_DAT_003fb414 = &DAT_00408972;
+  return;
+}
+
+
+
+//
+// Function: cm848_buildProtectionStatusByte @ 0x0003cab0
+//
+

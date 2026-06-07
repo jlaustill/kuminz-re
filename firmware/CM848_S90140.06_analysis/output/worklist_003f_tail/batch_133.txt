@@ -1,0 +1,117 @@
+=== VARIABLES TO NAME ===
+0x003ff06f  (4 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003ff06f
+void cm848_processBoostProtectionConditions(void)
+
+{
+  bool bVar1;
+  ushort uVar2;
+  ushort uVar3;
+  
+  uVar2 = map_sensor_fault_status;
+  if ((((system_status_flags_t_003fe974.enable_state & 0x100) == 0) || ((DAT_003ff06f & 1) == 0)) &&
+     (((system_status_flags_t_003fe974.enable_state & 0x200) == 0 || ((DAT_003ff06f >> 1 & 1) == 0))
+     )) {
+    uVar2 = 0;
+  }
+  if (((((system_status_flags_t_003fe974.safety_bits_2 & 1) == 0) ||
+       (((&fault_status_array)[DAT_000598da * 3] & 0x10) == 0)) || ((DAT_003ff06f >> 2 & 1) == 0))
+     && ((((diagnostic_status_bits & 0x200) == 0 ||
+          (((&fault_status_array)[DAT_00059e0c * 3] & 0x10) == 0)) || ((DAT_003ff06f >> 3 & 1) == 0)
+         ))) {
+    bVar1 = false;
+  }
+  else {
+    bVar1 = true;
+  }
+  cm848_checkBoostControlCondition();
+  uVar3 = (boost_pressure_target - boost_pressure_sensor_raw) - boost_fuel_threshold_offset;
+  if ((short)uVar3 < 0) {
+    uVar3 = -uVar3;
+  }
+  boost_fuel_below_threshold_flag = (word)(boost_fuel_threshold_limit < uVar3);
+  cm848_processBoostControlState();
+  if ((bVar1) || ((engine_sync_validation_flags & 0x8000) != 0)) {
+    uVar3 = 0x20;
+  }
+  else {
+    uVar3 = 0;
+  }
+  fuel_mode_flags_combined = uVar2 | uVar3;
+  return;
+}
+
+
+
+//
+// Function: cm848_selectLoadNormalizer @ 0x0001392c
+//
+
+void cm848_selectLoadNormalizer
+               (word selector,word raw_boost,word computed_boost,word filtered_boost)
+
+{
+  ushort uVar1;
+  ushort uVar2;
+  
+  fuel_mode_combined_flags = fuel_mode_flags_combined | boost_fuel_weight_snapshot;
+  uVar1 = fuel_mode_combined_flags & 0x80;
+  if (((uVar1 == 0) && ((fuel_mode_combined_flags & 0x40) == 0)) ||
+     (((fuel_mode_combined_flags & 0x20) == 0 && ((fuel_mode_combined_flags & 2) == 0)))) {
+    uVar2 = fuel_mode_combined_flags & 0x20;
+    if (((((uVar2 == 0) && ((fuel_mode_combined_flags & 2) == 0)) || (uVar1 != 0)) ||
+        ((fuel_mode_combined_flags & 0x40) != 0)) &&
+       ((((fuel_mode_combined_flags & 0x40) != 0 || (uVar1 != 0)) ||
+        ((uVar2 != 0 ||
+         (((fuel_mode_combined_flags & 0x10) == 0 || ((fuel_mode_combined_flags & 2) != 0)))))))) {
+      map_fuel_correction_factor = boost_pressure_sensor_raw;
+      fuel_demand_mode_index = 0;
+    }
+    else {
+      fuel_demand_mode_index = 1;
+      if ((((uVar2 == 0) && ((fuel_mode_combined_flags & 2) == 0)) ||
+          ((uVar1 != 0 || ((fuel_mode_combined_flags & 0x40) != 0)))) &&
+         (boost_pressure_sensor_raw <= boost_pressure_target)) {
+        map_fuel_correction_factor = boost_pressure_sensor_raw;
+      }
+      else {
+        map_fuel_correction_factor = boost_pressure_target;
+      }
+    }
+  }
+  else {
+    map_fuel_correction_factor = boost_pressure_sensor_filtered;
+    fuel_demand_mode_index = 2;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_processLoadNormalizerSelection @ 0x00013a80
+//
+
+void cm848_processLoadNormalizerSelection
+               (undefined4 param_1,undefined4 param_2,word param_3,word param_4)
+
+{
+  word selector;
+  word raw_boost;
+  
+  selector = cm848_processBoostProtectionConditions();
+  cm848_selectLoadNormalizer(selector,raw_boost,param_3,param_4);
+  return;
+}
+
+
+
+//
+// Function: cm848_processBoostProtectionMode @ 0x00013aec
+//
+

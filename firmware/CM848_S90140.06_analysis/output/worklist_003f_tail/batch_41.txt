@@ -1,0 +1,40 @@
+=== VARIABLES TO NAME ===
+0x003fbca2  (3 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fbca2
+void fuel_demandBoost_overrideFlag_lookup(void)
+
+{
+  if ((short)fuel_demand_boost_input < DAT_00406574) {
+    if ((short)fuel_demand_boost_input <= DAT_00406572) {
+      DAT_003fbca2 = 0;
+    }
+  }
+  else {
+    DAT_003fbca2 = 1;
+  }
+  if (((cold_start_feature_enable_flags & 0x200) == 0) || (DAT_003fbca2 == 0)) {
+    cold_start_boost_override_active_flag = 0;
+  }
+  else {
+    cold_start_boost_override_active_flag = 1;
+  }
+  cold_start_boost_override_fuel_demand =
+       lookupTableInterpolation((table_interp_args_t *)&DAT_003fbc9e);
+  DAT_003fbca0 = cold_start_boost_override_fuel_demand;
+  if (cold_start_boost_override_active_flag == 0) {
+    cold_start_boost_override_fuel_demand = 0;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_initialization_step_9 @ 0x005057dc
+//
+

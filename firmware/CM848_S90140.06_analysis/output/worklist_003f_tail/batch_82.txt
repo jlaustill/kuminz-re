@@ -1,0 +1,120 @@
+=== VARIABLES TO NAME ===
+0x003fcf16  (3 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fcf16
+undefined * FUN_0051ce14(int param_1,int param_2)
+
+{
+  int iVar1;
+  dword *pdVar2;
+  word *pwVar3;
+  uint uVar4;
+  uint uVar5;
+  
+  if (param_2 == 0) {
+    return (undefined *)0x0;
+  }
+  if (param_1 != 0xfa) {
+    if (param_1 != 0xfc) {
+      return (undefined *)0x0;
+    }
+    if (0x4e < (param_2 + 0xffU & 0xff)) {
+      return (undefined *)0x0;
+    }
+    if (*(undefined **)(&DAT_0053a4b0 + ((param_2 + 0xffU) * 4 & 0x3fc)) == &DAT_003fcf16) {
+      return (undefined *)0x0;
+    }
+    return *(undefined **)(&DAT_0053a4b0 + ((param_2 + 0xffU) * 4 & 0x3fc));
+  }
+  uVar4 = param_2 + 0xff;
+  if (0x27 < (uVar4 & 0xff)) {
+    if (0x2b < (uVar4 & 0xff)) {
+      return (undefined *)0x0;
+    }
+    uVar4 = (param_2 + 0x1d7U & 0xff) >> 1 & 1;
+    if (uVar4 == 0) {
+      pwVar3 = &fault_rpm_log_write_flag;
+    }
+    else {
+      if (uVar4 != 1) {
+        return (undefined *)0x0;
+      }
+      pwVar3 = &fault_rpm_log_index;
+    }
+    return (undefined *)((int)pwVar3 + (param_2 + 0x1d7U & 1));
+  }
+  uVar5 = (uVar4 >> 3 & 0x1f) % 5;
+  if (uVar5 < 3) {
+    if (uVar5 == 2) {
+      iVar1 = 0x10;
+LAB_0051cea0:
+      pdVar2 = (dword *)((int)&cold_start_fault_timing_log + iVar1);
+      goto LAB_0051cec0;
+    }
+    if (uVar5 == 0) {
+      pdVar2 = &cold_start_fault_timing_log;
+      goto LAB_0051cec0;
+    }
+    if (uVar5 != 1) {
+      return (undefined *)0x0;
+    }
+    iVar1 = 8;
+  }
+  else {
+    if (uVar5 == 3) {
+      iVar1 = 0x18;
+      goto LAB_0051cea0;
+    }
+    if (uVar5 != 4) {
+      return (undefined *)0x0;
+    }
+    iVar1 = 0x20;
+  }
+  pdVar2 = (dword *)((int)&cold_start_fault_timing_log + iVar1);
+LAB_0051cec0:
+  return (undefined *)((int)pdVar2 + (uVar4 & 7));
+}
+
+
+
+//
+// Function: FUN_0051cf74 @ 0x0051cf74
+//
+
+// Variables in this function: DAT_003fcf16
+undefined * FUN_0051d638(int param_1,int param_2)
+
+{
+  undefined *puVar1;
+  
+  if (param_2 != 0) {
+    if ((param_1 == 0xfa) || (param_1 == 0xfc)) {
+      puVar1 = (undefined *)FUN_0051ce14(param_1);
+      return puVar1;
+    }
+    if (param_1 == 0xf5) {
+      if (((param_2 + 0xffU & 0xff) < 0x4c) &&
+         (*(undefined **)(&DAT_0053a380 + ((param_2 + 0xffU) * 4 & 0x3fc)) != &DAT_003fcf16)) {
+        return *(undefined **)(&DAT_0053a380 + ((param_2 + 0xffU) * 4 & 0x3fc));
+      }
+    }
+    else if (((param_1 == 0xfd) && ((param_2 + 0xffU & 0xff) < 0xed)) &&
+            (puVar1 = *(undefined **)(&DAT_0053a5ec + ((param_2 + 0xffU) * 4 & 0x3fc)),
+            puVar1 != &DAT_003fcf16)) {
+      DAT_003fcf17 = FUN_0051d5dc();
+      return puVar1;
+    }
+  }
+  return (undefined *)0x0;
+}
+
+
+
+//
+// Function: fuelDemandCallbackDispatcher @ 0x0051d70c
+//
+

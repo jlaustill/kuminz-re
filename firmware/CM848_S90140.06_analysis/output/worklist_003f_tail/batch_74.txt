@@ -1,0 +1,83 @@
+=== VARIABLES TO NAME ===
+0x003fce78  (3 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fce78
+void protection_oilTemp_source_resetInitFlag(void)
+
+{
+  DAT_003fce78 = 0;
+  return;
+}
+
+
+
+//
+// Function: oilTemp_sensorSource_select @ 0x00518334
+//
+
+// Variables in this function: DAT_003fce78
+void protection_oilTemp_source_update(void)
+
+{
+  uint in_r6;
+  undefined1 *puVar1;
+  int iVar2;
+  int in_r8;
+  int iVar3;
+  ushort unaff_r31;
+  word *pwVar4;
+  
+  if ((governor_fuel_feature_flags & 1) == 0) {
+    return;
+  }
+  puVar1 = &DAT_003fce78;
+  if (DAT_003fce78 == '\0') {
+    oilTemp_sensorSource_select();
+    *puVar1 = 1;
+  }
+  if (qadc_channel_index_table[7] == 0) {
+    if (qadc_channel_index_table[0x14] != 0) {
+      iVar2 = 2;
+      unaff_r31 = system_status_flags_t_003fe974.reserved_12 & 0x40;
+      in_r6 = system_status_flags_t_003fe974.reserved_12 & 0x80;
+      iVar3 = 0x28;
+      goto LAB_0051845c;
+    }
+    iVar2 = 0;
+  }
+  else {
+    iVar2 = 1;
+    unaff_r31 = 0;
+    in_r6 = system_status_flags_t_003fe974.safety_bits_1 & 1;
+    iVar3 = 0xe;
+LAB_0051845c:
+    in_r8 = (int)*(short *)((int)&per_cylinder_timing_offset_table + iVar3);
+  }
+  if (((iVar2 == 0) || ((unaff_r31 & 0xff) != 0)) || ((in_r6 & 0xff) != 0)) {
+    if (((power_state_status_flags & 0x1000) == 0) && ((power_state_status_flags & 0x800) == 0)) {
+      in_r8 = (int)(short)protection_oilTemp_proxy;
+      goto LAB_0051851c;
+    }
+    pwVar4 = &iat_protection_oilTemp_input;
+  }
+  else {
+    if ((((power_state_status_flags & 0x1000) != 0) || ((power_state_status_flags & 0x800) != 0)) ||
+       (in_r8 <= (short)protection_oilTemp_proxy)) goto LAB_0051851c;
+    pwVar4 = &protection_oilTemp_proxy;
+  }
+  in_r8 = (int)(short)*pwVar4;
+LAB_0051851c:
+  iat_protection_oilTemp_selected = (word)in_r8;
+  return;
+}
+
+
+
+//
+// Function: protection_diagnostics_periodic @ 0x00518538
+//
+

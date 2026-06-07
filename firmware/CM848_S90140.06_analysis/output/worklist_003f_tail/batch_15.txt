@@ -1,0 +1,67 @@
+=== VARIABLES TO NAME ===
+0x003fae20  (3 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fae20
+void cm848_j1939SendDiagnosticStatusMessage(byte dest_address,byte status_type)
+
+{
+  DAT_003fae20 = (undefined1)((uint)j1939_diag_param_a * 5 >> 9);
+  if (j1939_diag_code._0_2_ < 0x10) {
+    DAT_003fae21 = (byte)j1939_diag_code._0_2_ | 0xf0;
+  }
+  else {
+    DAT_003fae21 = 0xfe;
+  }
+  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65213_tx_header);
+  return;
+}
+
+
+
+//
+// Function: cm848_initJ1939BrakeRetarderBuffer @ 0x00026480
+//
+
+// Variables in this function: DAT_003fae20
+void cm848_initJ1939BrakeRetarderBuffer(void)
+
+{
+  j1939_pgn65213_tx_header = CONCAT13(((byte)j1939_pgn65213_source_address_bits & 7) << 2,0xfebd00);
+  j1939_pgn65213_tx_header = CONCAT31(j1939_pgn65213_tx_header._0_3_,(char)j1939_source_address);
+  uRam003fae2c = 2;
+  puRam003fae2e = &DAT_003fae20;
+  puRam003fae32 = &DAT_003fae36;
+  return;
+}
+
+
+
+//
+// Function: cm848_j1939SendPgn61440_F000 @ 0x000264b0
+//
+
+// Variables in this function: DAT_003fae20
+void cm848_j1939SendPgn61440_F000(int param_1)
+
+{
+  undefined1 in_r9;
+  
+  *(undefined1 *)(param_1 + 3) = in_r9;
+  *(undefined2 *)(param_1 + 4) = 2;
+  *(undefined1 **)(param_1 + 6) = &DAT_003fae20;
+  *(undefined **)(param_1 + 10) = &DAT_003fae36;
+  return;
+}
+
+
+
+//
+// Function: cm848_j1939HandlePgn65270InletExhaustConditions @ 0x000264d8
+//
+
+/* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+

@@ -1,0 +1,68 @@
+=== VARIABLES TO NAME ===
+0x003fcdcc  (4 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fcdcc
+void engine_sensor_check_overheat(void)
+
+{
+  dword *pdVar1;
+  ushort *puVar2;
+  int iVar3;
+  
+  iVar3 = 1;
+  pdVar1 = cold_start_coolant_bucket_counters;
+  puVar2 = &DAT_0040877e;
+  do {
+    pdVar1 = pdVar1 + 1;
+    puVar2 = puVar2 + 1;
+    if ((uint)*puVar2 < *pdVar1) {
+      cold_start_coolant_temp_setpoint = DAT_00408750;
+      cold_start_overheat_active_flag = 1;
+      coolant_bucket_overheat_detected_flag = 1;
+      engine_diag_shadow_flags = engine_diag_shadow_flags | 0x20;
+      DAT_003fcdcc = DAT_003fcdcc + 1;
+      cold_start_fuel_limit_reason_code = 5;
+      break;
+    }
+    iVar3 = iVar3 + 1;
+  } while (iVar3 < 5);
+  if (DAT_00408754 <= sensor_overheat_recovery_count) {
+    cold_start_overheat_active_flag = 0;
+    coolant_bucket_overheat_detected_flag = 0;
+    coolant_bucket_overheat_active_flag = 0;
+    engine_diag_shadow_flags = engine_diag_shadow_flags & 0xffdf;
+    engine_diag_shadow_flags_b = engine_diag_shadow_flags_b & 0xffdf;
+    DAT_003fcdcc = 0;
+    cold_start_fuel_limit_reason_code = 6;
+    sensor_overheat_recovery_count = DAT_00408754;
+  }
+  if (((engine_diag_shadow_flags & 0x20) != 0) &&
+     ((short)sensor_readings_t_0040baf2.coolant_temp < DAT_00408752)) {
+    sensor_overheat_recovery_count = sensor_overheat_recovery_count + 1;
+  }
+  if ((sensor_overheat_recovery_count != 0) &&
+     (DAT_00408752 < (short)sensor_readings_t_0040baf2.coolant_temp)) {
+    sensor_overheat_recovery_count = 0;
+  }
+  if (((engine_diag_shadow_flags & 0x20) != 0) &&
+     ((DAT_00408786 < cold_start_coolant_bucket_counters[4] ||
+      ((DAT_0040874e < DAT_003fcdcc &&
+       ((short)DAT_00408750 < (short)sensor_readings_t_0040baf2.coolant_temp)))))) {
+    coolant_bucket_overheat_active_flag = 1;
+  }
+  if (cold_start_overheat_active_flag == 0) {
+    cold_start_coolant_temp_setpoint = 0x3fc0;
+  }
+  return;
+}
+
+
+
+//
+// Function: governor_cruise_dualCalc_dispatch @ 0x0051395c
+//
+

@@ -1,0 +1,120 @@
+=== VARIABLES TO NAME ===
+0x003fce1e  (3 references)
+0x003fce1f  (3 references)
+0x003fce20  (4 references)
+
+Total: 3 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fce1e, DAT_003fce1f, DAT_003fce20
+void tpu_rpm_measurement_control(void)
+
+{
+  word wVar1;
+  uint uVar2;
+  
+  if (engine_sync_type_code == 0x13ec) {
+    uVar2 = tpu_rpm_crank_teeth_isb & 0xff;
+    if (DAT_003fce1e == '\0') {
+      tpu_rpm_raw_period =
+           (dword)(CONCAT44((int)((ulonglong)((uint)tpu_rpm_crank_teeth_isb * 0x3c) * 1000000 >>
+                                 0x20),(uint)tpu_rpm_crank_teeth_isb * 60000000) /
+                  (ulonglong)tpu_rpm_timer_prescaler);
+      wVar1 = tpu_b_mcr.CIER;
+      tpu_b_mcr.CIER = wVar1 & 0xfdff;
+      wVar1 = tpu_b_mcr.CPR0;
+      tpu_b_mcr.CPR0 = wVar1 & 0xfff3;
+      wVar1 = tpu_b_mcr.CIER;
+      tpu_b_mcr.CIER = wVar1 & 0xfdff;
+      wVar1 = tpu_b_mcr.CISR;
+      tpu_b_mcr.CISR = wVar1 & 0xfdff;
+      wVar1 = tpu_b_mcr.CFSR1;
+      tpu_b_mcr.CFSR1 = wVar1 & 0xff0f | 0xd0;
+      DAT_00304592 = tpu_rpm_crank_teeth_isb << 8;
+      DAT_00304596 = 0;
+      DAT_00304598 = 0;
+      TPUB_CH9_PARAM0 = 0xb;
+      wVar1 = tpu_b_mcr.HSQR0;
+      tpu_b_mcr.HSQR0 = wVar1 & 0xfff3 | 0xc;
+      tpu_b_mcr.HSRR0 = 0xc;
+      wVar1 = tpu_b_mcr.CPR0;
+      tpu_b_mcr.CPR0 = wVar1 & 0xfff3 | 8;
+      wVar1 = tpu_b_mcr.CIER;
+      tpu_b_mcr.CIER = wVar1 | 0x200;
+      DAT_003fce1e = '\x01';
+    }
+    DAT_003fce1f = '\x01';
+  }
+  else {
+    uVar2 = (uint)tpu_rpm_crank_teeth_non_isb;
+    if (DAT_003fce1f != '\0') {
+      tpu_rpm_raw_period =
+           (dword)(CONCAT44((int)((ulonglong)(uVar2 * 0x3c) * 1000000 >> 0x20),uVar2 * 60000000) /
+                  (ulonglong)tpu_rpm_timer_prescaler);
+      wVar1 = tpu_b_mcr.CIER;
+      tpu_b_mcr.CIER = wVar1 & 0xfdff;
+      wVar1 = tpu_b_mcr.CPR0;
+      tpu_b_mcr.CPR0 = wVar1 & 0xfff3;
+      wVar1 = tpu_b_mcr.CIER;
+      tpu_b_mcr.CIER = wVar1 & 0xfdff;
+      wVar1 = tpu_b_mcr.CISR;
+      tpu_b_mcr.CISR = wVar1 & 0xfdff;
+      wVar1 = tpu_b_mcr.CFSR1;
+      tpu_b_mcr.CFSR1 = wVar1 & 0xff0f | 0xd0;
+      DAT_00304592 = (ushort)tpu_rpm_crank_teeth_non_isb << 8;
+      DAT_00304596 = 0;
+      DAT_00304598 = 0;
+      TPUB_CH9_PARAM0 = 0xb;
+      wVar1 = tpu_b_mcr.HSQR0;
+      tpu_b_mcr.HSQR0 = wVar1 & 0xfff3 | 0xc;
+      tpu_b_mcr.HSRR0 = 0xc;
+      wVar1 = tpu_b_mcr.CPR0;
+      tpu_b_mcr.CPR0 = wVar1 & 0xfff3 | 8;
+      wVar1 = tpu_b_mcr.CIER;
+      tpu_b_mcr.CIER = wVar1 | 0x200;
+      DAT_003fce1f = '\0';
+    }
+    DAT_003fce1e = '\0';
+  }
+  if (DAT_003fce20 != 0) {
+    DAT_003fce20 = DAT_003fce20 + -1;
+  }
+  if (DAT_003fce20 == 0) {
+    uVar2 = 0;
+  }
+  else if (tpu_rpm_reference_period < (DAT_004088d2 * uVar2) / (uint)tpu_rpm_timer_prescaler) {
+    uVar2 = (uint)DAT_004088c8;
+  }
+  else if ((DAT_004088ce * uVar2) / (uint)tpu_rpm_timer_prescaler < tpu_rpm_reference_period) {
+    uVar2 = (uint)DAT_004088ca;
+  }
+  else {
+    uVar2 = (uint)(CONCAT44(tpu_rpm_raw_period >> 0x1d,tpu_rpm_raw_period << 3) /
+                  (ulonglong)tpu_rpm_reference_period);
+  }
+  DAT_0040b2f6 = (undefined2)uVar2;
+  tpu_rpm_ema_filtered = exponentialMovingAverage(uVar2 & 0xffff,&PTR_DAT_0040b302);
+  wVar1 = rpm_camSync_window_mid;
+  if (DAT_004088da != 0) {
+    tpu_rpm_ema_filtered = DAT_004088dc;
+  }
+  if ((DAT_0040b300 != '\0') && (engine_sync_type_code == 0x13ec)) {
+    DAT_0040b9ac = rpm_camSync_window_mid;
+    rpm_camSync_window_mid = rpm_camSync_window_latest;
+    rpm_camSync_window_latest = tpu_rpm_ema_filtered;
+    if (wVar1 != 0) {
+      rpm_camSync_new_sample_ready_flag = 1;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: tpu_rpm_measurement_initialize @ 0x005161c0
+//
+
+/* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+

@@ -1,0 +1,58 @@
+=== VARIABLES TO NAME ===
+0x003fbcf8  (3 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fbcf8
+void sensor_throttleTrim_ema_faultProcess(void)
+
+{
+  word wVar1;
+  word wVar2;
+  
+  fuel_demand_mode_index_init_flag._2_2_ = sensor_channel108_fault_status;
+  if (boost_correction_alt_mode_cal == 0) {
+    fuel_demand_mode_index_init_flag._2_2_ = 0;
+  }
+  DAT_003fbcf8 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fbcfe);
+  wVar1 = sensor_channel108_fault_status;
+  if (((sensor_channel108_fault_status != 0) || (cold_start_inhibit_cal != 0)) ||
+     (throttle_trim_predictor_gain = DAT_003fbcf8, (cold_start_feature_enable_flags & 0x8000) == 0))
+  {
+    throttle_trim_predictor_gain = 0;
+  }
+  sensor_channel108_filter();
+  wVar2 = throttle_trim_predictor_output;
+  if (((wVar1 == 0) && (cold_start_inhibit_cal == 0)) &&
+     ((cold_start_feature_enable_flags & 0x8000) != 0)) {
+    DAT_003fbcfc = exponentialMovingAverage(throttle_trim_predictor_output,&PTR_DAT_003fbd00);
+    wVar2 = exponentialMovingAverage(DAT_003fbcfc,&DAT_003fbd08);
+  }
+  DAT_003fbcf6 = wVar2;
+  return;
+}
+
+
+
+//
+// Function: sensor_throttleTrim_inputSelect @ 0x0050716c
+//
+
+// Variables in this function: DAT_003fbcf8
+void cm848_initialization_step_14(void)
+
+{
+  DAT_003fbd04 = 0;
+  PTR_DAT_003fbd00 = (undefined *)&DAT_003fbcf8;
+  throttle_trim_lookup_input = sensor_channel108_raw;
+  return;
+}
+
+
+
+//
+// Function: governor_speedRamp_stabilityFlag_calc @ 0x00507214
+//
+

@@ -1,0 +1,60 @@
+=== VARIABLES TO NAME ===
+0x003fd47e  (4 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fd47e
+void hpcr_protectionTimerMonitor(void)
+
+{
+  short sVar1;
+  bool bVar2;
+  int iVar3;
+  word *pwVar4;
+  uint uVar5;
+  
+  uVar5 = 0;
+  pwVar4 = &protection_timer_a;
+  do {
+    pwVar4 = pwVar4 + 1;
+    if ((*pwVar4 != 0) && (*pwVar4 < 0x33)) {
+      bVar2 = true;
+      if (uVar5 == 1) {
+        DAT_003fd47e = DAT_003fd47e + 1;
+        if (DAT_003fd47e < 2) {
+          bVar2 = false;
+        }
+        else {
+          DAT_003fd47e = 0;
+        }
+      }
+      if (bVar2) {
+        sVar1 = (*(code *)(&PTR_LAB_0053ac4a)[(uint)*pwVar4 * 4])();
+        if (sVar1 != -1) {
+          iVar3 = (int)uVar5 >> 4;
+          if (sVar1 == 0) {
+            (&j1939_pgn_handler_b_flags)[iVar3 + (uint)((int)uVar5 < 0 && (uVar5 & 0xf) != 0)] =
+                 (&j1939_pgn_handler_b_flags)[iVar3 + (uint)((int)uVar5 < 0 && (uVar5 & 0xf) != 0)]
+                 & ~(ushort)(1 << (uVar5 + (iVar3 + (uint)((int)uVar5 < 0 && (uVar5 & 0xf) != 0)) *
+                                           -0x10 & 0x3f));
+          }
+          else {
+            (&j1939_pgn_handler_b_flags)[iVar3 + (uint)((int)uVar5 < 0 && (uVar5 & 0xf) != 0)] =
+                 (&j1939_pgn_handler_b_flags)[iVar3 + (uint)((int)uVar5 < 0 && (uVar5 & 0xf) != 0)]
+                 | (ushort)(1 << (uVar5 + (iVar3 + (uint)((int)uVar5 < 0 && (uVar5 & 0xf) != 0)) *
+                                          -0x10 & 0x3f));
+          }
+        }
+      }
+    }
+    uVar5 = uVar5 + 1;
+  } while ((int)uVar5 < 0x30);
+  return;
+}
+
+
+
+// Export complete - 2049 functions processed
+

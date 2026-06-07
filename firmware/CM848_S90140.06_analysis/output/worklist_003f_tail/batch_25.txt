@@ -1,0 +1,367 @@
+=== VARIABLES TO NAME ===
+0x003fb3eb  (3 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fb3eb
+void cm848_processUdsSecurityService(void)
+
+{
+  char cVar1;
+  byte bVar2;
+  
+  if (fuel_state_countdown_timer != 0) {
+    fuel_state_countdown_timer = fuel_state_countdown_timer - 1;
+  }
+  if (engine_rpm_state_t_0040b7ac.target_rpm != 0) {
+    uds_control_session_flag = 0;
+  }
+  if (uds_request_data_pointer <= uds_security_request_state) {
+    uds_request_data_pointer = uds_security_request_state;
+    return;
+  }
+  if ((_j1939_dm_node_id_cal != uds_target_service_id) && (uds_target_service_id != 0xfe)) {
+    uds_request_data_pointer = uds_security_request_state;
+    return;
+  }
+  bVar2 = (byte)_j1939_dm_node_id_cal;
+  if (uds_service_id_byte < 0x29) {
+    if (uds_service_id_byte == 0x28) {
+      if (uds_control_session_flag != 0) {
+        uds_request_data_pointer = uds_security_request_state;
+        return;
+      }
+      uds_request_data_pointer = uds_security_request_state;
+      uds_control_session_flag = 1;
+      uds_response_type_code = 3;
+      uds_response_t_0040b492.source_address = bVar2;
+      uds_response_t_0040b492.service_id = 0x68;
+      uds_response_t_0040b492.subfunction = uds_subfunction_code;
+      ram0x0040b49c = 1;
+      return;
+    }
+    if (uds_service_id_byte == 0x11) {
+      uds_response_t_0040b492.subfunction = 0x11;
+    }
+    else {
+      if (uds_service_id_byte == 0x20) {
+        uds_request_data_pointer = uds_security_request_state;
+        uds_response_type_code = 2;
+        uds_response_t_0040b492.source_address = bVar2;
+        uds_response_t_0040b492.service_id = 0x60;
+        ram0x0040b49c = 1;
+        return;
+      }
+      if (uds_service_id_byte != 0x22) {
+        if (uds_service_id_byte != 0x27) {
+          uds_request_data_pointer = uds_security_request_state;
+          uds_control_session_flag = 0;
+          uds_response_type_code = 4;
+          uds_response_t_0040b492.source_address = bVar2;
+          uds_response_t_0040b492.service_id = 0x7f;
+          uds_response_t_0040b492.subfunction = uds_service_id_byte;
+          uds_response_t_0040b492.error_code = 0x11;
+          ram0x0040b49c = 1;
+          return;
+        }
+        uds_response_type_code = 5;
+        if ((uds_security_status_flags & 4) == 0) {
+          if ((uds_subfunction_code == 1) || (uds_subfunction_code == 2)) {
+            if (uds_subfunction_code == 2) {
+              uds_response_t_0040b492.service_id = 0x7f;
+              uds_response_t_0040b492.subfunction = 0x27;
+              uds_response_t_0040b492.data_length = 0;
+              uds_response_t_0040b492.source_address = bVar2;
+              if (tsc1_condition_active_flag != 1) {
+                if (fuel_state_countdown_timer != 0) {
+                  uds_request_data_pointer = uds_security_request_state;
+                  uds_response_type_code = 5;
+                  uds_response_t_0040b492.service_id = 0x7f;
+                  uds_response_t_0040b492.subfunction = 0x27;
+                  uds_response_t_0040b492.error_code = 0x37;
+                  uds_response_t_0040b492.data_length = 0;
+                  ram0x0040b49c = 1;
+                  return;
+                }
+                if (uds_upload_active_flag == 0) {
+                  uds_request_data_pointer = uds_security_request_state;
+                  uds_response_type_code = 5;
+                  uds_response_t_0040b492.service_id = 0x7f;
+                  uds_response_t_0040b492.subfunction = 0x27;
+                  uds_response_t_0040b492.error_code = 0xc0;
+                  uds_response_t_0040b492.data_length = 0;
+                  ram0x0040b49c = 1;
+                  return;
+                }
+                uds_security_seed_word =
+                     (ushort)uds_service_parameter_byte +
+                     (ushort)uds_service_subfunction_byte * 0x100;
+                uds_security_checksum_result =
+                     cm848_calculateSecurityChecksum(uds_security_challenge,uds_security_seed_word);
+                if (uds_security_checksum_result == 0) {
+                  if ((ushort)(tsc1_retry_count + 1) < 3) {
+                    uds_request_data_pointer = uds_security_request_state;
+                    uds_response_t_0040b492.error_code = 0x35;
+                    ram0x0040b49c = 1;
+                    tsc1_retry_count = tsc1_retry_count + 1;
+                    return;
+                  }
+                  uds_request_data_pointer = uds_security_request_state;
+                  uds_response_t_0040b492.error_code = 0x36;
+                  ram0x0040b49c = 1;
+                  tsc1_retry_count = 0;
+                  fuel_state_countdown_timer = 0xfa;
+                  uds_upload_active_flag = 0;
+                  return;
+                }
+                tsc1_condition_active_flag = 1;
+                cm848_resetDiagnosticSession();
+                fuel_state_countdown_timer = 0;
+                tsc1_retry_count = 0;
+              }
+              uds_response_t_0040b492.service_id = 0x67;
+              uds_response_t_0040b492.subfunction = 2;
+              uds_response_t_0040b492.error_code = 0;
+            }
+            else {
+              if (fuel_state_countdown_timer != 0) {
+                uds_response_t_0040b492.error_code = 0x37;
+                goto LAB_0003b37c;
+              }
+              if (tsc1_condition_active_flag != 1) {
+                uds_security_challenge = (word)fault_timing_snapshot;
+                if ((fault_timing_snapshot & 0xffff) == 0) {
+                  uds_security_challenge = 1;
+                }
+                uds_request_data_pointer = uds_security_request_state;
+                uds_response_type_code = 5;
+                uds_response_t_0040b492.source_address = bVar2;
+                uds_response_t_0040b492.service_id = 0x67;
+                uds_response_t_0040b492.subfunction = 1;
+                uds_response_t_0040b492.error_code = (byte)(uds_security_challenge >> 8);
+                uds_response_t_0040b492.data_length = (byte)uds_security_challenge;
+                ram0x0040b49c = 1;
+                uds_upload_active_flag = 1;
+                return;
+              }
+              uds_security_challenge = 0;
+              uds_upload_active_flag = 1;
+              uds_response_t_0040b492.service_id = 0x67;
+              uds_response_t_0040b492.subfunction = 1;
+              uds_response_t_0040b492.error_code = 0;
+              uds_response_t_0040b492.source_address = bVar2;
+            }
+          }
+          else {
+            uds_response_t_0040b492.error_code = 0x12;
+LAB_0003b37c:
+            uds_response_t_0040b492.service_id = 0x7f;
+            uds_response_t_0040b492.subfunction = 0x27;
+            uds_response_t_0040b492.source_address = bVar2;
+          }
+        }
+        else {
+          uds_response_t_0040b492.service_id = 0x7f;
+          uds_response_t_0040b492.subfunction = uds_service_id_byte;
+          uds_response_t_0040b492.error_code = 0x12;
+          uds_response_t_0040b492.source_address = bVar2;
+        }
+        goto LAB_0003b680;
+      }
+      uds_response_t_0040b492.subfunction = 0x22;
+    }
+    uds_response_t_0040b492.service_id = 0x7f;
+    uds_response_t_0040b492.error_code = 0x12;
+    uds_response_type_code = 4;
+    uds_response_t_0040b492.source_address = bVar2;
+  }
+  else {
+    if (uds_service_id_byte == 0x29) {
+      uds_request_data_pointer = uds_security_request_state;
+      uds_control_session_flag = 0;
+      uds_response_type_code = 2;
+      uds_response_t_0040b492.source_address = bVar2;
+      uds_response_t_0040b492.service_id = 0x69;
+      ram0x0040b49c = 1;
+      return;
+    }
+    if (uds_service_id_byte != 0xa1) {
+      if (uds_service_id_byte != 0xa4) {
+        uds_request_data_pointer = uds_security_request_state;
+        uds_control_session_flag = 0;
+        uds_response_type_code = 4;
+        uds_response_t_0040b492.source_address = bVar2;
+        uds_response_t_0040b492.service_id = 0x7f;
+        uds_response_t_0040b492.subfunction = uds_service_id_byte;
+        uds_response_t_0040b492.error_code = 0x11;
+        ram0x0040b49c = 1;
+        return;
+      }
+      uds_subfunction_packed_word = CONCAT11(uds_subfunction_code,uds_service_subfunction_byte);
+      uds_address_offset_working = CONCAT11(uds_service_parameter_byte,uds_service_subfunction_byte)
+      ;
+      if ((uds_security_status_flags & 4) == 0) {
+        uds_response_t_0040b492.source_address = bVar2;
+        cVar1 = uds_conditionEvaluator
+                          (CONCAT11(uds_subfunction_code,uds_service_subfunction_byte),
+                           &uds_write_base_address_working);
+        if (cVar1 == '\0') {
+          uds_write_target_pointer =
+               uds_write_base_address_working + (short)uds_address_offset_working;
+          cVar1 = uds_validateMemoryRegion(uds_write_target_pointer,4);
+          if ((cVar1 != '\t') &&
+             (cVar1 = uds_validateMemoryRegion(uds_write_target_pointer + 3,4), cVar1 != '\t')) {
+            uds_write_region_ptr = &DAT_003fb3eb;
+            if ((undefined *)0xffffff < uds_write_target_pointer) {
+              uds_sensor_cal_table_ptr = &sensor_cal_table;
+              uds_write_target_pointer = uds_write_target_pointer + -0xc02b7e;
+            }
+            cm848_memcpyBytes(&DAT_003fb3eb,uds_write_target_pointer,4);
+            uds_request_data_pointer = uds_security_request_state;
+            uds_response_type_code = 6;
+            uds_response_t_0040b492.service_id = 0xe4;
+            uds_response_t_0040b492.subfunction = DAT_003fb3eb;
+            uds_response_t_0040b492.error_code = DAT_003fb3ec;
+            uds_response_t_0040b492.data_length = DAT_003fb3ed;
+            uds_response_t_0040b492.data[0] = DAT_003fb3ee;
+            ram0x0040b49c = 1;
+            return;
+          }
+          uds_response_t_0040b492.subfunction = 0xa4;
+          uds_response_t_0040b492.error_code = 0x52;
+        }
+        else {
+          uds_response_t_0040b492.subfunction = 0xa4;
+          uds_response_t_0040b492.error_code = 0x52;
+        }
+      }
+      else {
+        uds_response_t_0040b492.subfunction = uds_service_id_byte;
+        uds_response_t_0040b492.error_code = 0x12;
+        uds_response_t_0040b492.source_address = bVar2;
+      }
+      uds_request_data_pointer = uds_security_request_state;
+      uds_response_type_code = 5;
+      uds_response_t_0040b492.service_id = 0x7f;
+      uds_response_t_0040b492.data_length = 0;
+      ram0x0040b49c = 1;
+      return;
+    }
+    uds_subfunction_packed_word = CONCAT11(uds_subfunction_code,uds_service_subfunction_byte);
+    uds_address_offset_working = CONCAT11(uds_service_parameter_byte,uds_service_subfunction_byte);
+    if ((tsc1_condition_active_flag == 1) && ((uds_security_status_flags & 4) == 0)) {
+      cVar1 = uds_conditionEvaluator
+                        (CONCAT11(uds_subfunction_code,uds_service_subfunction_byte),
+                         &uds_write_base_address_working);
+      if (cVar1 == '\0') {
+        uds_write_target_pointer =
+             uds_write_base_address_working + (short)uds_address_offset_working;
+        uds_data_source_ptr = &uds_data_buffer_b3e6;
+        uds_processing_clear_flag = 0;
+        cVar1 = uds_validateMemoryRegion(uds_write_target_pointer,1);
+        if (cVar1 == '\0') {
+          cm848_memcpyBytes(uds_write_target_pointer,uds_data_source_ptr,1);
+          uds_processing_clear_flag = 0;
+        }
+        else if (cVar1 == '\x03') {
+          if (((diagnostic_session_state != INACTIVE) && (&DAT_003fd480 < uds_write_target_pointer))
+             && (uds_write_target_pointer < &sensor_channel_ram_start)) goto LAB_0003b608;
+          cm848_memcpyBytes(uds_write_target_pointer,uds_data_source_ptr,1);
+          uds_processing_clear_flag = 0;
+        }
+        else if (cVar1 == '\x05') {
+          if ((prior_boot_faulted == 1) && (diagnostic_session_state != INACTIVE)) {
+            uds_processing_clear_flag = 7;
+          }
+          else if (diagnostic_session_state == ACTIVE) {
+            cVar1 = cm848_validateMemoryBlockChecksum
+                              ((uint)(uds_write_target_pointer + -0x1000000) & 0xffff,
+                               uds_data_source_ptr,1);
+            if (cVar1 == '\x01') {
+              uds_processing_clear_flag = 0xb;
+            }
+          }
+          else {
+            cm848_memcpyBytes(uds_write_target_pointer + -0xc02b7e,uds_data_source_ptr,1);
+          }
+        }
+        else {
+LAB_0003b608:
+          uds_processing_clear_flag = 10;
+        }
+      }
+      else {
+        uds_processing_clear_flag = 9;
+      }
+    }
+    uds_response_type_code = 5;
+    uds_response_t_0040b492.source_address = (byte)_j1939_dm_node_id_cal;
+    if ((uds_security_status_flags & 4) == 0) {
+      if (tsc1_condition_active_flag != 1) {
+        uds_request_data_pointer = uds_security_request_state;
+        uds_response_type_code = 5;
+        uds_response_t_0040b492.service_id = 0x7f;
+        uds_response_t_0040b492.subfunction = 0xa1;
+        uds_response_t_0040b492.error_code = 0x33;
+        uds_response_t_0040b492.data_length = 0;
+        ram0x0040b49c = 1;
+        return;
+      }
+      if (uds_processing_clear_flag == 9) {
+        uds_request_data_pointer = uds_security_request_state;
+        uds_response_type_code = 5;
+        uds_response_t_0040b492.service_id = 0x7f;
+        uds_response_t_0040b492.subfunction = 0xa1;
+        uds_response_t_0040b492.error_code = 0x42;
+        uds_response_t_0040b492.data_length = 0;
+        ram0x0040b49c = 1;
+        return;
+      }
+      if (uds_processing_clear_flag == 7) {
+        uds_request_data_pointer = uds_security_request_state;
+        uds_response_type_code = 5;
+        uds_response_t_0040b492.service_id = 0x7f;
+        uds_response_t_0040b492.subfunction = 0xa1;
+        uds_response_t_0040b492.error_code = 0x90;
+        uds_response_t_0040b492.data_length = 0;
+        ram0x0040b49c = 1;
+        return;
+      }
+      if (uds_processing_clear_flag == 0) {
+        uds_request_data_pointer = uds_security_request_state;
+        uds_response_type_code = 5;
+        uds_response_t_0040b492.service_id = 0xe1;
+        uds_response_t_0040b492.subfunction = uds_data_buffer_b3e6;
+        uds_response_t_0040b492.error_code = 0x62;
+        uds_response_t_0040b492.data_length = 0;
+        ram0x0040b49c = 1;
+        return;
+      }
+      uds_request_data_pointer = uds_security_request_state;
+      uds_response_type_code = 5;
+      uds_response_t_0040b492.service_id = 0x7f;
+      uds_response_t_0040b492.subfunction = 0xa1;
+      uds_response_t_0040b492.error_code = 0x40;
+      uds_response_t_0040b492.data_length = 0;
+      ram0x0040b49c = 1;
+      return;
+    }
+    uds_response_t_0040b492.service_id = 0x7f;
+    uds_response_t_0040b492.subfunction = uds_service_id_byte;
+    uds_response_t_0040b492.error_code = 0x12;
+LAB_0003b680:
+    uds_response_t_0040b492.data_length = 0;
+  }
+  ram0x0040b49c = 1;
+  uds_request_data_pointer = uds_security_request_state;
+  return;
+}
+
+
+
+//
+// Function: cm848_processProtectionCounters @ 0x0003b910
+//
+

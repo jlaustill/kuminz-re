@@ -1,0 +1,148 @@
+=== VARIABLES TO NAME ===
+0x003fce14  (3 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fce14
+void governor_fuel_demand_calc(void)
+
+{
+  uint uVar1;
+  uint uVar2;
+  int iVar3;
+  int iVar4;
+  
+  uVar2 = (uint)DAT_00408858;
+  uVar1 = (uint)tpu_rpm_ema_filtered - (uint)cold_start_mode_entry_rpm_snapshot;
+  iVar4 = (uint)tpu_rpm_ema_filtered +
+          (int)(CONCAT44((int)((ulonglong)uVar2 * (ulonglong)uVar1 >> 0x20) +
+                         uVar2 * ((int)uVar1 >> 0x1f),uVar2 * uVar1) / 0x40);
+  if (iVar4 < -0x8000) {
+    iVar4 = -0x8000;
+  }
+  else if (0x7fff < iVar4) {
+    iVar4 = 0x7fff;
+  }
+  governor_rpm_feedback_filtered = cm848_signedFirstOrderFilter((int)(short)iVar4,&PTR_DAT_0040b2d4)
+  ;
+  iVar4 = (uint)governor_speed_reference - (int)(short)governor_rpm_feedback_filtered;
+  if (iVar4 < -0x8000) {
+    iVar4 = -0x8000;
+  }
+  else if (0x7fff < iVar4) {
+    iVar4 = 0x7fff;
+  }
+  governor_fuel_demand_speed_error = (word)iVar4;
+  uVar2 = (uint)DAT_0040881c;
+  uVar1 = (uint)(short)governor_fuel_demand_speed_error;
+  iVar4 = (int)(CONCAT44((int)((ulonglong)uVar2 * (ulonglong)uVar1 >> 0x20) +
+                         uVar2 * ((int)uVar1 >> 0x1f),uVar2 * uVar1) / 0x20);
+  uVar1 = (uint)DAT_0040885c;
+  uVar2 = iVar4 - DAT_003fce14;
+  uVar1 = iVar4 + (int)(CONCAT44((int)((ulonglong)uVar1 * (ulonglong)uVar2 >> 0x20) +
+                                 uVar1 * ((int)uVar2 >> 0x1f),uVar1 * uVar2) / 0x40);
+  iVar3 = ((int)uVar1 >> 4) + (uint)((int)uVar1 < 0 && (uVar1 & 0xf) != 0);
+  if (iVar3 < -0x8000) {
+    iVar3 = -0x8000;
+  }
+  else if (0x7fff < iVar3) {
+    iVar3 = 0x7fff;
+  }
+  DAT_003fce14 = iVar4;
+  governor_fuel_demand_pd_term = cm848_signedFirstOrderFilter((int)(short)iVar3,&PTR_DAT_0040b2dc);
+  if ((((governor_fuel_demand_mode != 0xb) && (cold_start_fuel_demand_mode_code == 8)) &&
+      (egr_fuel_demand_speed_floor < egr_governor_speed_floor)) &&
+     ((egr_load_speed_floor < egr_governor_speed_floor && (DAT_0040b298 < egr_governor_speed_floor))
+     )) {
+    governor_fuel_demand_i_acc =
+         governor_fuel_demand_i_acc +
+         (int)DAT_00408814 * (int)(short)governor_fuel_demand_speed_error;
+    governor_fuel_demand_i_term = (word)((int)governor_fuel_demand_i_acc / 0x5000);
+  }
+  iVar4 = (int)(short)DAT_0040881a;
+  if ((short)governor_fuel_demand_i_term < iVar4) {
+    governor_fuel_demand_i_term = DAT_0040881a;
+  }
+  else {
+    iVar4 = (int)(short)DAT_00408818;
+    if ((short)governor_fuel_demand_i_term <= iVar4) goto LAB_005155c8;
+    governor_fuel_demand_i_term = DAT_00408818;
+  }
+  governor_fuel_demand_i_acc = iVar4 * 0x5000;
+LAB_005155c8:
+  DAT_0040b2be = cm848_dualAxisTableInterpolation(&DAT_003fcdfb,governor_speed_reference,0xc6f6);
+  iVar4 = (short)governor_fuel_demand_pd_term * 0x10 + (int)(short)governor_fuel_demand_i_term +
+          (uint)DAT_0040b2be;
+  if (iVar4 < 0x6401) {
+    if (iVar4 < 0) {
+      iVar4 = 0;
+    }
+  }
+  else {
+    iVar4 = 0x6400;
+  }
+  cold_start_fuel_demand_output = (word)iVar4;
+  return;
+}
+
+
+
+//
+// Function: fuel_coldStart_modeCode_select @ 0x00515660
+//
+
+// Variables in this function: DAT_003fce14
+void j1939_message_handler_initialize(void)
+
+{
+  egr_governor_integral_reset_flag = 0;
+  egr_governor_pi_active_flag = 0;
+  egr_warmup_phase_state = 0;
+  governor_speed_limit_source = 0;
+  cold_start_fuel_demand_mode_code = 0;
+  cold_start_mode_entry_rpm_snapshot = 0;
+  DAT_003fce14 = 0;
+  governor_fuel_demand_pd_term = 0;
+  governor_rpm_feedback_filtered = 0;
+  governor_fuel_demand_i_term = DAT_00408816;
+  governor_fuel_demand_i_acc = (short)DAT_00408816 * 0x5000;
+  egr_fuel_demand_speed_floor = DAT_00408828;
+  governor_speed_ramp_step_count = 0;
+  governor_speed_decel_ramp_init_flag = 0;
+  governor_speed_accel_ramp_request_flag = 0;
+  governor_overspeed_detect_flag = 0;
+  governor_overspeed_ramp_transition_latch = 0;
+  governor_speed_accel_ramp_at_target_flag = 0;
+  governor_speed_decel_above_floor_flag = 0;
+  governor_speed_up_ramp_active_flag = 0;
+  governor_speed_decel_target_captured_flag = 0;
+  cold_start_fuel_hold_ramp_counter = 0;
+  egr_load_floor_hold_timer = 0;
+  DAT_003fcdfb = 2;
+  DAT_003fcdfd = 2;
+  DAT_0040b2d8 = 0;
+  PTR_DAT_0040b2d4 = &DAT_00408856;
+  DAT_0040b2e0 = 0;
+  PTR_DAT_0040b2dc = &DAT_0040885a;
+  DAT_0040b2e8 = 0;
+  PTR_DAT_0040b2e4 = &DAT_004088ac;
+  DAT_0040b2f0 = 0;
+  PTR_DAT_0040b2ec = &DAT_004088b0;
+  if ((j1939_pgn_handler_index_cold_start_fuel != 0) &&
+     (j1939_pgn_handler_index_cold_start_fuel < 0x33)) {
+    (**(code **)(&j1939_pgn_handler_table + (uint)j1939_pgn_handler_index_cold_start_fuel * 0x10))()
+    ;
+  }
+  return;
+}
+
+
+
+//
+// Function: tpu_rpm_measurement_control @ 0x00515d78
+//
+
+/* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+

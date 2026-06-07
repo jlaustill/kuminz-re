@@ -1,0 +1,103 @@
+=== VARIABLES TO NAME ===
+0x003fdb46  (4 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fdb46
+void cm848_processEngineLoadData(void)
+
+{
+  word wVar1;
+  dword dVar2;
+  word *pwVar3;
+  uint uVar4;
+  uint uVar5;
+  
+  if ((protection_config_flags_b & 4) == 0) {
+    return;
+  }
+  if ((((fuel_flow_rate_working == 0) ||
+       (dVar2 = fuel_flow_rate_protection_cap_cal,
+       (protection_enable_t_0040c050.reserved_02 & 0x10) == 0)) &&
+      (dVar2 = fuel_flow_rate_working, fuel_flow_rate_working != 0)) &&
+     ((cold_start_phase == CSP_AT_GOVERNOR_SETPOINT &&
+      (fuel_temp_flow_rate_threshold_cal < fuel_temperature_trim)))) {
+    dVar2 = fuel_flow_rate_working - 1;
+  }
+  fuel_flow_rate_working = dVar2;
+  if ((((system_status_flags_t_003fe974.pending_faults & 0x2000) == 0) &&
+      ((system_status_flags_t_003fe974.pending_faults & 0x4000) == 0)) &&
+     ((system_status_flags_t_003fe974.pending_faults & 0x400) == 0)) {
+    torque_limit_output_active_flag = false;
+  }
+  else {
+    torque_limit_output_active_flag = true;
+  }
+  if ((bool)torque_limit_output_active_flag) {
+    if ((((system_status_flags_t_003fe974.condition_monitor & 1) == 0) &&
+        ((system_status_flags_t_003fe974.condition_monitor & 2) == 0)) &&
+       ((protection_monitor_shadow & 2) == 0)) {
+      uVar4 = (uint)protection_load_coolant_scale_cal;
+      uVar5 = (uint)(short)sensor_readings_t_0040baf2.coolant_temp;
+      protection_load_input =
+           (short)(CONCAT44((int)((ulonglong)uVar4 * (ulonglong)uVar5 >> 0x20) +
+                            uVar4 * ((int)uVar5 >> 0x1f),uVar4 * uVar5) / 0x8000) +
+           protection_load_coolant_offset_cal;
+      goto LAB_0003f598;
+    }
+    protection_load_input = protection_load_input_static_cal;
+    if (fuel_flow_rate_working != 0) goto LAB_0003f598;
+    pwVar3 = &protection_load_input_default_cal;
+  }
+  else {
+    pwVar3 = &protection_load_input_alt;
+  }
+  protection_load_input = *pwVar3;
+LAB_0003f598:
+  if (((protection_status_flags_t_0040b0f2.rate_limit_flags & 2) == 0) &&
+     (cold_start_phase == CSP_AT_GOVERNOR_SETPOINT)) {
+    wVar1 = torque_limit_setpoint_working;
+    if ((torque_limit_control_flags & 0x80) == 0) {
+      if (DAT_003fdb46 < 0x81) {
+        uVar5 = (uint)DAT_003fdb46;
+      }
+      else {
+        uVar5 = 0;
+      }
+      wVar1 = *(word *)(&qadc_channel_dispatch_table)[uVar5 * 2];
+    }
+    if (torque_limit_setpoint_active == wVar1) {
+      fuel_flow_rate_counter = fuel_flow_rate_counter + 1;
+      if (fuel_flow_rate_counter_threshold_cal <= fuel_flow_rate_counter) {
+        fuel_flow_rate_counter = 0;
+        protection_status_flags_t_0040b0f2.rate_limit_flags =
+             protection_status_flags_t_0040b0f2.rate_limit_flags | 2;
+      }
+    }
+    else {
+      torque_limit_setpoint_active = torque_limit_setpoint_working;
+      if ((torque_limit_control_flags & 0x80) == 0) {
+        if (DAT_003fdb46 < 0x81) {
+          uVar5 = (uint)DAT_003fdb46;
+        }
+        else {
+          uVar5 = 0;
+        }
+        torque_limit_setpoint_active = *(word *)(&qadc_channel_dispatch_table)[uVar5 * 2];
+      }
+      fuel_flow_rate_counter = 0;
+      protection_load_input = protection_load_input_alt;
+    }
+  }
+  protection_status_flags_b = protection_status_flags_b | 1;
+  return;
+}
+
+
+
+//
+// Function: cm848_resetEngineLoadTracker @ 0x0003f6fc
+//
+

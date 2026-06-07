@@ -1,0 +1,135 @@
+=== VARIABLES TO NAME ===
+0x003fcf1b  (3 references)
+0x003fcf1c  (3 references)
+0x003fcf1e  (3 references)
+0x003fcf22  (4 references)
+
+Total: 4 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fcf1b, DAT_003fcf1c, DAT_003fcf1e, DAT_003fcf22
+void FUN_0051dfac(void)
+
+{
+  DAT_003fcf1b = 0;
+  DAT_003fcf1c = 0;
+  DAT_003fcf1e = 0;
+  _DAT_003fcf22 = 0;
+  return;
+}
+
+
+
+//
+// Function: FUN_0051dfdc @ 0x0051dfdc
+//
+
+// Variables in this function: DAT_003fcf1b, DAT_003fcf1c, DAT_003fcf1e, DAT_003fcf22
+void FUN_0051e0c4(uint param_1,uint param_2)
+
+{
+  char cVar1;
+  undefined *puVar2;
+  int iVar3;
+  byte *pbVar4;
+  uint uVar5;
+  byte bVar6;
+  
+  cVar1 = FUN_0051dd6c();
+  if (cVar1 != '\0') {
+    FUN_0051dfac();
+    return;
+  }
+  FUN_0051dfdc();
+  FUN_0051e048();
+  if (param_1 != 0xfb) {
+    pbVar4 = (byte *)FUN_0051d638(param_1,param_2);
+    goto LAB_0051e2bc;
+  }
+  if ((param_2 & 0xff) != 0) {
+    uVar5 = (param_2 & 0xff) + 0xff;
+    if (((uVar5 & 0xff) < 0xf6) &&
+       (puVar2 = *(undefined **)(&DAT_0053aa12 + ((int)(uVar5 & 0xff) >> 1) * 4),
+       puVar2 != &DAT_003fcf24)) {
+      if (puVar2 == (undefined *)0x3fcf30) {
+        if (fuel_demand_enable_flag == 0) {
+          iVar3 = 0x1a;
+LAB_0051e248:
+          pbVar4 = (byte *)((int)&per_cylinder_timing_offset_table + iVar3 + (uVar5 & 1));
+          goto LAB_0051e2bc;
+        }
+      }
+      else if (puVar2 == (undefined *)0x3fcf32) {
+        if (fuel_demand_enable_flag == 0) {
+          pbVar4 = &sensor_channel13_ram + (uVar5 & 1);
+          goto LAB_0051e2bc;
+        }
+      }
+      else if (puVar2 == (undefined *)0x3fcf34) {
+        if (fuel_demand_enable_flag != 0) {
+          pbVar4 = (byte *)((int)&cruise_speed_current_a + (uVar5 & 1));
+          goto LAB_0051e2bc;
+        }
+      }
+      else if (puVar2 == (undefined *)0x3fcf36) {
+        if (fuel_demand_enable_flag != 0) {
+          pbVar4 = &sensor_channel_8_state + (uVar5 & 1);
+          goto LAB_0051e2bc;
+        }
+      }
+      else if (puVar2 == (undefined *)0x3fcf38) {
+        if (fuel_demand_enable_flag != 0) {
+          iVar3 = 0xc4;
+          goto LAB_0051e248;
+        }
+      }
+      else {
+        if (puVar2 != (undefined *)0x3fcf3a) {
+          pbVar4 = puVar2 + (uVar5 & 1);
+          goto LAB_0051e2bc;
+        }
+        if (fuel_demand_enable_flag != 0) {
+          pbVar4 = &sensor_channel_9_state + (uVar5 & 1);
+          goto LAB_0051e2bc;
+        }
+      }
+    }
+  }
+  pbVar4 = (byte *)0x0;
+LAB_0051e2bc:
+  if (pbVar4 == (byte *)0x0) {
+    FUN_0051dfac();
+    fuelDemandShutdown();
+  }
+  else {
+    if ((param_2 & 1) == 0) {
+      if (((DAT_003fcf1b == param_1) && (DAT_003fcf1c + 1 == param_2)) &&
+         (DAT_003fcf1e + 1 == pbVar4)) {
+        bVar6 = DAT_003fcf23;
+      }
+      else {
+        bVar6 = *pbVar4;
+      }
+      FUN_0051dfac();
+    }
+    else {
+      DAT_003fcf1b = (byte)param_1;
+      DAT_003fcf1c = (byte)param_2;
+      DAT_003fcf22 = (byte)((ushort)*(undefined2 *)pbVar4 >> 8);
+      bVar6 = DAT_003fcf22;
+      DAT_003fcf1e = pbVar4;
+      _DAT_003fcf22 = *(undefined2 *)pbVar4;
+    }
+    fuel_demand_state_queue = bVar6;
+    fuelDemandSerialTx();
+  }
+  return;
+}
+
+
+
+//
+// Function: FUN_0051e460 @ 0x0051e460
+//
+

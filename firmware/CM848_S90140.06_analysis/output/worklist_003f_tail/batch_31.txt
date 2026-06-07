@@ -1,0 +1,479 @@
+=== VARIABLES TO NAME ===
+0x003fb614  (3 references)
+0x003fb618  (3 references)
+0x003fb61c  (3 references)
+0x003fb620  (3 references)
+0x003fb624  (3 references)
+0x003fb628  (3 references)
+0x003fb62c  (3 references)
+
+Total: 7 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fb614, DAT_003fb61c, DAT_003fb620
+void cm848_calculateTimingWithTables(void)
+
+{
+  word wVar1;
+  ushort uVar2;
+  short sVar3;
+  short sVar4;
+  ushort uVar5;
+  uint uVar6;
+  
+  wVar1 = cylinder_event_index;
+  uVar2 = lookupTableInterpolation((table_interp_args_t *)&injection_timing_min_fuel_interp_state);
+  uVar5 = injection_timing_override_value_cal;
+  if (injection_timing_override_flag_cal == 0) {
+    uVar5 = engine_timing_reference_high;
+    if ((wVar1 & 1) != 0) {
+      uVar5 = engine_timing_reference_low;
+    }
+    uVar6 = (uint)uVar5;
+    if (fuel_quantity_trim != 0) {
+      sVar3 = cm848_dualAxisTableInterpolation(&DAT_003fb61c,fuel_quantity_axis1_index,0xf69a);
+      sVar4 = cm848_dualAxisTableInterpolation(&DAT_003fb620,uVar5,0xf808);
+      uVar6 = ((int)sVar4 * (int)sVar3 >> 4) + uVar6;
+    }
+    if ((int)uVar6 < 0) {
+      uVar6 = 0;
+    }
+    else if (0x16ff < (int)uVar6) {
+      uVar6 = 0x1700;
+    }
+    uVar5 = cm848_dualAxisTableInterpolation(&DAT_003fb614,(word)uVar6,0xf254);
+  }
+  fuel_quantity_table_result = uVar5;
+  if (fuel_quantity_upper_limit < fuel_quantity_table_result) {
+    fuel_quantity_table_result = fuel_quantity_upper_limit;
+  }
+  fuel_quantity_active = fuel_quantity_table_result;
+  if (fuel_quantity_table_result < uVar2) {
+    fuel_quantity_active = 0;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_interpolateFuelTableValue @ 0x00046fb4
+//
+
+// Variables in this function: DAT_003fb614, DAT_003fb61c, DAT_003fb620
+void cm848_interpolateFuelTableValue(table_interp_args_t *param_1)
+
+{
+  ushort uVar1;
+  short sVar2;
+  short sVar3;
+  ushort uVar4;
+  uint unaff_r30;
+  uint uVar5;
+  
+  uVar1 = lookupTableInterpolation(param_1);
+  uVar4 = injection_timing_override_value_cal;
+  if (injection_timing_override_flag_cal == 0) {
+    uVar4 = engine_timing_reference_high;
+    if ((unaff_r30 & 1) != 0) {
+      uVar4 = engine_timing_reference_low;
+    }
+    uVar5 = (uint)uVar4;
+    if (fuel_quantity_trim != 0) {
+      sVar2 = cm848_dualAxisTableInterpolation(&DAT_003fb61c,fuel_quantity_axis1_index,0xf69a);
+      sVar3 = cm848_dualAxisTableInterpolation(&DAT_003fb620,uVar4,0xf808);
+      uVar5 = ((int)sVar3 * (int)sVar2 >> 4) + uVar5;
+    }
+    if ((int)uVar5 < 0) {
+      uVar5 = 0;
+    }
+    else if (0x16ff < (int)uVar5) {
+      uVar5 = 0x1700;
+    }
+    uVar4 = cm848_dualAxisTableInterpolation(&DAT_003fb614,(word)uVar5,0xf254);
+  }
+  fuel_quantity_table_result = uVar4;
+  if (fuel_quantity_upper_limit < fuel_quantity_table_result) {
+    fuel_quantity_table_result = fuel_quantity_upper_limit;
+  }
+  fuel_quantity_active = fuel_quantity_table_result;
+  if (fuel_quantity_table_result < uVar1) {
+    fuel_quantity_active = 0;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_calculateEngineTimingInterpolation @ 0x00047140
+//
+
+/* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+
+// Variables in this function: DAT_003fb618
+void cm848_calculateEngineTimingInterpolation(void)
+
+{
+  ushort uVar1;
+  ushort uVar2;
+  uint uVar3;
+  dword dVar4;
+  uint uVar5;
+  
+  uVar1 = cylinder_event_index & 1;
+  uVar2 = cylinder_event_index & 1;
+  if (cam_timing_reference_offset != 0) {
+    uVar3 = lookupTableInterpolation((table_interp_args_t *)&injection_timing_min_fuel_interp_state)
+    ;
+    if (injection_timing_override_b_flag_cal == 0) {
+      uVar5 = cm848_dualAxisTableInterpolation(&DAT_003fb618,cam_timing_reference_offset,0xf5a8);
+      uVar5 = uVar5 & 0xffff;
+    }
+    else {
+      uVar5 = (uint)injection_timing_override_b_value_cal;
+    }
+    if (cruise_speed_demand_limit < uVar5) {
+      uVar5 = (uint)cruise_speed_demand_limit;
+    }
+    if ((uVar3 & 0xffff) <= uVar5) {
+      dVar4 = crank_tooth_period_raw;
+      if (engine_event_active_flag == 0) {
+        dVar4 = crank_period_accumulator;
+      }
+      if ((int)(short)(cam_sync_period_reference_a * -5) -
+          (int)(short)(injection_period_capture_a * -5) < 0) {
+        uVar3 = (int)(short)(injection_period_capture_a * -5) -
+                (int)(short)(cam_sync_period_reference_a * -5);
+        uVar3 = (uint)(CONCAT44((int)((ulonglong)dVar4 * (ulonglong)uVar3 >> 0x20),dVar4 * uVar3) /
+                      ((ulonglong)cam_sync_position_high_byte << 8));
+        if (0xffff < uVar3) {
+          uVar3 = 0xffff;
+        }
+        fuel_quantity_axis1_index = (word)((uVar3 & 0xffff) >> 3);
+        if ((uVar3 & 0xffff) <= uVar5) goto LAB_000472d0;
+        uVar3 = uVar3 - uVar5;
+      }
+      else {
+LAB_000472d0:
+        uVar3 = 0;
+      }
+      if ((uint)injection_timing_phase_upper_cal <= (uVar3 & 0xffff)) {
+        fuel_quantity_trim = (word)uVar5;
+        if (uVar1 == 0) {
+          engine_timing_reference_high = engine_timing_reference_high - cam_timing_reference_offset;
+        }
+        else {
+          engine_timing_reference_low = engine_timing_reference_low - cam_timing_reference_offset;
+        }
+        goto LAB_0004733c;
+      }
+    }
+  }
+  fuel_quantity_trim = 0;
+LAB_0004733c:
+  if (uVar2 == 0) {
+    engine_timing_reference_high = engine_timing_reference_high - engine_timing_delta;
+  }
+  else {
+    engine_timing_reference_low = engine_timing_reference_low - engine_timing_delta;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_processDualAxisLookup @ 0x00047178
+//
+
+/* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+
+// Variables in this function: DAT_003fb618
+void cm848_processDualAxisLookup(void)
+
+{
+  uint uVar1;
+  int unaff_r28;
+  word *unaff_r29;
+  dword dVar2;
+  uint uVar3;
+  
+  uVar1 = lookupTableInterpolation((table_interp_args_t *)&injection_timing_min_fuel_interp_state);
+  if (injection_timing_override_b_flag_cal == 0) {
+    uVar3 = cm848_dualAxisTableInterpolation(&DAT_003fb618,*unaff_r29,0xf5a8);
+    uVar3 = uVar3 & 0xffff;
+  }
+  else {
+    uVar3 = (uint)injection_timing_override_b_value_cal;
+  }
+  if (cruise_speed_demand_limit < uVar3) {
+    uVar3 = (uint)cruise_speed_demand_limit;
+  }
+  if ((uVar1 & 0xffff) <= uVar3) {
+    dVar2 = crank_tooth_period_raw;
+    if (engine_event_active_flag == 0) {
+      dVar2 = crank_period_accumulator;
+    }
+    if ((int)(short)(cam_sync_period_reference_a * -5) -
+        (int)(short)(injection_period_capture_a * -5) < 0) {
+      uVar1 = (int)(short)(injection_period_capture_a * -5) -
+              (int)(short)(cam_sync_period_reference_a * -5);
+      uVar1 = (uint)(CONCAT44((int)((ulonglong)dVar2 * (ulonglong)uVar1 >> 0x20),dVar2 * uVar1) /
+                    ((ulonglong)cam_sync_position_high_byte << 8));
+      if (0xffff < uVar1) {
+        uVar1 = 0xffff;
+      }
+      fuel_quantity_axis1_index = (word)((uVar1 & 0xffff) >> 3);
+      if ((uVar1 & 0xffff) <= uVar3) goto LAB_000472d0;
+      uVar1 = uVar1 - uVar3;
+    }
+    else {
+LAB_000472d0:
+      uVar1 = 0;
+    }
+    if ((uint)injection_timing_phase_upper_cal <= (uVar1 & 0xffff)) {
+      fuel_quantity_trim = (word)uVar3;
+      if (unaff_r28 == 0) {
+        engine_timing_reference_high = engine_timing_reference_high - *unaff_r29;
+      }
+      else {
+        engine_timing_reference_low = engine_timing_reference_low - *unaff_r29;
+      }
+      goto LAB_0004733c;
+    }
+  }
+  fuel_quantity_trim = 0;
+LAB_0004733c:
+  if (unaff_r28 == 0) {
+    engine_timing_reference_high = engine_timing_reference_high - engine_timing_delta;
+  }
+  else {
+    engine_timing_reference_low = engine_timing_reference_low - engine_timing_delta;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_calculateEngineFaultTiming @ 0x00047394
+//
+
+/* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+
+// Variables in this function: DAT_003fb624, DAT_003fb628, DAT_003fb62c
+void cm848_calculateEngineFaultTiming(int param_1)
+
+{
+  word wVar1;
+  ushort uVar3;
+  short sVar4;
+  uint uVar2;
+  ushort uVar5;
+  uint uVar6;
+  dword dVar7;
+  
+  wVar1 = cylinder_event_index;
+  if (param_1 == 0) {
+    uVar3 = lookupTableInterpolation((table_interp_args_t *)&injection_timing_min_fuel_interp_state)
+    ;
+    dVar7 = crank_tooth_period_raw;
+    if (engine_event_active_flag == 0) {
+      dVar7 = crank_period_accumulator;
+    }
+    if ((int)(short)(injection_period_capture_a * -5) -
+        (int)(short)(cam_sync_period_reference_b * -5) < 0) {
+      uVar6 = (int)(short)(cam_sync_period_reference_b * -5) -
+              (int)(short)(injection_period_capture_a * -5);
+      uVar6 = (uint)(CONCAT44((int)((ulonglong)dVar7 * (ulonglong)uVar6 >> 0x20),dVar7 * uVar6) /
+                    ((ulonglong)cam_sync_position_high_byte << 8));
+      if (uVar6 < 0x10000) {
+        uVar6 = uVar6 & 0xffff;
+      }
+      else {
+        uVar6 = 0xffff;
+      }
+      fuel_quantity_axis2_index = (word)(uVar6 >> 3);
+    }
+    else {
+      uVar6 = 0;
+    }
+    uVar5 = injection_timing_override_c_value_cal;
+    if (injection_timing_override_c_flag_cal == 0) {
+      if (fuel_quantity_table_result == 0) {
+        uVar2 = (uint)engine_timing_delta;
+      }
+      else {
+        sVar4 = cm848_dualAxisTableInterpolation(&DAT_003fb628,engine_timing_delta,0xfa1a);
+        uVar2 = cm848_dualAxisTableInterpolation(&DAT_003fb624,fuel_quantity_axis2_index,0xf8ac);
+        uVar2 = ((int)((int)sVar4 * (uVar2 & 0xffff)) >> 4) + (uint)engine_timing_delta;
+      }
+      if ((int)uVar2 < 0) {
+        uVar2 = 0;
+      }
+      else if (0x16ff < (int)uVar2) {
+        uVar2 = 0x1700;
+      }
+      uVar5 = cm848_dualAxisTableInterpolation(&DAT_003fb62c,(word)uVar2,0xfabe);
+    }
+    if (uVar5 < uVar3) {
+      uVar5 = 0;
+    }
+    injection_timing_active_flag = uVar5;
+    if (cruise_speed_rate_of_change < uVar5) {
+      injection_timing_active_flag = cruise_speed_rate_of_change;
+    }
+    if (injection_timing_timing_mode_cal == 0) {
+      if ((fuel_quantity_active < uVar6) &&
+         ((int)(uint)fuel_injection_quantity_threshold <= (int)(uVar6 - fuel_quantity_active)))
+      goto LAB_00047628;
+    }
+    else if (fuel_injection_quantity_threshold <= uVar6) goto LAB_00047628;
+  }
+  injection_timing_active_flag = 0;
+LAB_00047628:
+  if ((engine_timing_delta != 0) && (injection_timing_active_flag == 0)) {
+    if ((wVar1 & 1) == 0) {
+      engine_timing_reference_high = engine_timing_reference_high + engine_timing_delta;
+    }
+    else {
+      engine_timing_reference_low = engine_timing_reference_low + engine_timing_delta;
+    }
+    cm848_calculateTimingWithTables();
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_validateSyncCount @ 0x000473cc
+//
+
+/* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+
+// Variables in this function: DAT_003fb624, DAT_003fb628, DAT_003fb62c
+void cm848_validateSyncCount(void)
+
+{
+  word wVar1;
+  ushort uVar3;
+  short sVar4;
+  uint uVar2;
+  ushort uVar5;
+  uint uVar6;
+  uint unaff_r25;
+  dword dVar7;
+  word *unaff_r27;
+  ushort *unaff_r31;
+  
+  uVar3 = lookupTableInterpolation((table_interp_args_t *)&injection_timing_min_fuel_interp_state);
+  dVar7 = crank_tooth_period_raw;
+  if (engine_event_active_flag == 0) {
+    dVar7 = crank_period_accumulator;
+  }
+  if ((int)(short)(injection_period_capture_a * -5) - (int)(short)(cam_sync_period_reference_b * -5)
+      < 0) {
+    uVar6 = (int)(short)(cam_sync_period_reference_b * -5) -
+            (int)(short)(injection_period_capture_a * -5);
+    uVar6 = (uint)(CONCAT44((int)((ulonglong)dVar7 * (ulonglong)uVar6 >> 0x20),dVar7 * uVar6) /
+                  ((ulonglong)cam_sync_position_high_byte << 8));
+    if (uVar6 < 0x10000) {
+      uVar6 = uVar6 & 0xffff;
+    }
+    else {
+      uVar6 = 0xffff;
+    }
+    fuel_quantity_axis2_index = (word)(uVar6 >> 3);
+  }
+  else {
+    uVar6 = 0;
+  }
+  uVar5 = injection_timing_override_c_value_cal;
+  if (injection_timing_override_c_flag_cal == 0) {
+    if (fuel_quantity_table_result == 0) {
+      uVar2 = (uint)*unaff_r31;
+    }
+    else {
+      sVar4 = cm848_dualAxisTableInterpolation(&DAT_003fb628,*unaff_r27,0xfa1a);
+      uVar2 = cm848_dualAxisTableInterpolation(&DAT_003fb624,fuel_quantity_axis2_index,0xf8ac);
+      uVar2 = ((int)((int)sVar4 * (uVar2 & 0xffff)) >> 4) + (uint)*unaff_r27;
+    }
+    if ((int)uVar2 < 0) {
+      uVar2 = 0;
+    }
+    else if (0x16ff < (int)uVar2) {
+      uVar2 = 0x1700;
+    }
+    uVar5 = cm848_dualAxisTableInterpolation(&DAT_003fb62c,(word)uVar2,0xfabe);
+  }
+  if (uVar5 < uVar3) {
+    uVar5 = 0;
+  }
+  injection_timing_active_flag = uVar5;
+  if (cruise_speed_rate_of_change < uVar5) {
+    injection_timing_active_flag = cruise_speed_rate_of_change;
+  }
+  if (injection_timing_timing_mode_cal == 0) {
+    if ((fuel_quantity_active < uVar6) &&
+       ((int)(uint)fuel_injection_quantity_threshold <= (int)(uVar6 - fuel_quantity_active)))
+    goto LAB_00047628;
+  }
+  else if (fuel_injection_quantity_threshold <= uVar6) goto LAB_00047628;
+  injection_timing_active_flag = 0;
+LAB_00047628:
+  wVar1 = *unaff_r27;
+  if ((wVar1 != 0) && (injection_timing_active_flag == 0)) {
+    if ((unaff_r25 & 1) == 0) {
+      engine_timing_reference_high = engine_timing_reference_high + wVar1;
+    }
+    else {
+      engine_timing_reference_low = engine_timing_reference_low + wVar1;
+    }
+    cm848_calculateTimingWithTables();
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_selectGovernorFilterOutput @ 0x0004769c
+//
+
+// Variables in this function: DAT_003fb614, DAT_003fb618, DAT_003fb61c, DAT_003fb620, DAT_003fb624, DAT_003fb628, DAT_003fb62c
+void mpc555_clearTimingDataAndFilters(void)
+
+{
+  fuel_quantity_active = 0;
+  fuel_quantity_trim = 0;
+  engine_timing_reference_low = 0;
+  engine_timing_reference_high = 0;
+  fuel_quantity_upper_limit = 0;
+  cruise_speed_demand_limit = 0;
+  injection_timing_min_fuel_interp_state = 2;
+  DAT_003fb614 = 2;
+  DAT_003fb616 = 2;
+  DAT_003fb618 = 2;
+  DAT_003fb61a = 2;
+  DAT_003fb61c = 2;
+  DAT_003fb61e = 2;
+  DAT_003fb620 = 2;
+  DAT_003fb622 = 2;
+  DAT_003fb624 = 2;
+  DAT_003fb626 = 2;
+  DAT_003fb628 = 2;
+  DAT_003fb62a = 2;
+  DAT_003fb62c = 2;
+  DAT_003fb62e = 2;
+  return;
+}
+
+
+
+//
+// Function: cm848_protectionRecoveryHandler @ 0x00047838
+//
+

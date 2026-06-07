@@ -1,0 +1,72 @@
+=== VARIABLES TO NAME ===
+0x003fa6d6  (3 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fa6d6
+void cm848_calculateFuelInjectionTiming(void)
+
+{
+  uint uVar1;
+  
+  fuel_demand_rate_complement = 0x2000 - fuel_demand_rate_output_b;
+  if ((fuel_rate_rpm_factor < 2) ||
+     (uVar1 = (uint)(CONCAT44((int)((ulonglong)fuel_demand_rate_complement *
+                                    (ulonglong)(uint)fuel_demand_rate_raw >> 0x20),
+                              fuel_demand_rate_complement * fuel_demand_rate_raw) /
+                    ((ulonglong)fuel_rate_rpm_factor << 6)), 0xc7ff < uVar1)) {
+    uVar1 = 0xc800;
+  }
+  else if (uVar1 == 0) {
+    uVar1 = 0;
+  }
+  fuel_injection_divisor_base = (word)uVar1;
+  uVar1 = (uVar1 & 0xffff) + 0x80;
+  if (uVar1 < 2) {
+    uVar1 = 1;
+  }
+  uVar1 = ((uint)fuel_demand_rate_output_b * (injection_timing_period_cal + 0x1d & 0xffff)) / uVar1;
+  if (0xc800 < uVar1) {
+    uVar1 = 0xc800;
+  }
+  fuel_injection_timing_complement = 0x76b - (short)uVar1;
+  fuel_load_correction_from_timing = lookupTableInterpolation((table_interp_args_t *)&DAT_003fa6d6);
+  fuel_load_correction_alt = lookupTableInterpolation((table_interp_args_t *)&DAT_003fa6d6);
+  uVar1 = (uint)fuel_load_correction_from_timing;
+  if (uVar1 < 2) {
+    uVar1 = 1;
+  }
+  uVar1 = ((uint)fuel_load_correction_alt << 0xd) / uVar1;
+  engine_load_correction_blend = (word)uVar1;
+  if (0x2000 < (uVar1 & 0xffff)) {
+    engine_load_correction_blend = 0x2000;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_calculateManifoldPressureOffset @ 0x00016c40
+//
+
+// Variables in this function: DAT_003fa6d6
+void mpc555_initFuelTimingTablePointers(void)
+
+{
+  DAT_003fa6d2 = 2;
+  DAT_003fa6d4 = 2;
+  DAT_003fa6d6 = 2;
+  DAT_003fa6d8 = 2;
+  DAT_003fa6da = 2;
+  return;
+}
+
+
+
+//
+// Function: cm848_fuelDemandBaseCalculation @ 0x0001702c
+//
+

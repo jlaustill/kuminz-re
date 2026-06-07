@@ -1,0 +1,134 @@
+=== VARIABLES TO NAME ===
+0x003fb9d6  (4 references)
+0x003fb9d8  (4 references)
+0x003fb9da  (3 references)
+0x003fb9ea  (3 references)
+0x003fb9f2  (3 references)
+
+Total: 5 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fb9d6, DAT_003fb9d8, DAT_003fb9da, DAT_003fb9ea, DAT_003fb9f2
+void hpcr_fuelFinal_exponentialAverage(void)
+
+{
+  word wVar1;
+  word wVar2;
+  
+  DAT_003fb9d8 = exponentialMovingAverage
+                           (boost_pressure_state_t_0040a406.reserved_0c,&PTR_DAT_003fb9ea);
+  boost_fuel_timing_target = cm848_dualAxisTableInterpolation(&DAT_003fb9de,DAT_003fb9d8,0xf108);
+  if ((fuel_demand_state_b == 2) || (boost_pressure_state_t_0040a406.reserved_0e == 2)) {
+    fuel_demand_timing_mode_state = 2;
+  }
+  else if ((fuel_demand_state_b == 1) || (boost_pressure_state_t_0040a406.reserved_0e == 1)) {
+    fuel_demand_timing_mode_state = 1;
+  }
+  else {
+    fuel_demand_timing_mode_state = 0;
+  }
+  wVar2 = DAT_003ff078;
+  wVar1 = DAT_003fb9d6;
+  if ((DAT_003fd51a == 0) &&
+     (wVar2 = DAT_003ff07c, wVar1 = DAT_003ff07c, fuel_demand_timing_mode_state != 2)) {
+    wVar2 = cm848_signedFirstOrderFilter
+                      ((int)(short)(fuel_demand_timing_input - boost_fuel_timing_target),
+                       &PTR_DAT_003fb9e2);
+    wVar1 = wVar2;
+  }
+  DAT_003fb9d6 = wVar1;
+  boost_fuel_demand_blend_a = wVar2;
+  exponentialMovingAverage(boost_pressure_state_t_0040a406.reserved_0c,&PTR_DAT_003fb9f6);
+  boost_fuel_pressure_offset_lookup = lookupTableInterpolation((table_interp_args_t *)&DAT_003fb9dc)
+  ;
+  if (DAT_003fd518 == 0) {
+    fuel_pressure_sensor_reference = boost_pressure_fuel_working + boost_fuel_pressure_offset_lookup
+    ;
+    boost_fuel_scale_divisor = boost_pressure_fuel_working;
+    if (boost_pressure_fuel_working == 0) {
+      boost_fuel_scale_divisor = 1;
+    }
+    fuel_demand_mode_state = fuel_boost_mode_state;
+    if ((boost_pressure_state_t_0040a406.reserved_0e == 2) || (fuel_boost_mode_state == 2)) {
+      boost_pressure_fuel_mode_state = 2;
+    }
+    else if ((fuel_boost_mode_state == 1) || (boost_pressure_state_t_0040a406.reserved_0e == 1)) {
+      boost_pressure_fuel_mode_state = 1;
+    }
+    else {
+      boost_pressure_fuel_mode_state = 0;
+    }
+  }
+  else {
+    fuel_pressure_sensor_reference = boost_pressure_fuel_working;
+    if ((int)((uint)boost_pressure_fuel_working - (uint)boost_fuel_pressure_offset_lookup) < 1) {
+      boost_fuel_scale_divisor = 1;
+    }
+    else {
+      boost_fuel_scale_divisor = boost_pressure_fuel_working - boost_fuel_pressure_offset_lookup;
+    }
+    boost_pressure_fuel_mode_state = fuel_boost_mode_state;
+    if ((boost_pressure_state_t_0040a406.reserved_0e == 2) || (fuel_boost_mode_state == 2)) {
+      fuel_demand_mode_state = 2;
+    }
+    else if ((fuel_boost_mode_state == 1) || (boost_pressure_state_t_0040a406.reserved_0e == 1)) {
+      fuel_demand_mode_state = 1;
+    }
+    else {
+      fuel_demand_mode_state = 0;
+    }
+  }
+  if (0x75e < fuel_pressure_sensor_reference) {
+    fuel_pressure_sensor_reference = 0x75e;
+  }
+  governor_adjustment_input = lookupTableInterpolation((table_interp_args_t *)&DAT_003fb9da);
+  DAT_0040a1a6 = boost_pressure_fuel_mode_state;
+  boost_fuel_rpm_blend_scale =
+       cm848_dualAxisTableInterpolation
+                 (&DAT_003fb9f2,engine_rpm_state_t_0040b7ac.current_rpm,0xf3dc);
+  return;
+}
+
+
+
+//
+// Function: cm848_initialization_step_3 @ 0x00502eb8
+//
+
+// Variables in this function: DAT_003fb9d6, DAT_003fb9d8, DAT_003fb9da, DAT_003fb9ea, DAT_003fb9f2
+void cm848_initialization_step_3(void)
+
+{
+  DAT_003fb9da = 2;
+  DAT_003fb9dc = 2;
+  DAT_003fb9ee = (uint)boost_pressure_state_t_0040a406.reserved_0c << 0x10;
+  PTR_DAT_003fb9ea = &DAT_003ff07a;
+  DAT_003fb9d8 = exponentialMovingAverage
+                           (boost_pressure_state_t_0040a406.reserved_0c,&PTR_DAT_003fb9ea);
+  boost_fuel_timing_target = cm848_dualAxisTableInterpolation(&DAT_003fb9de,DAT_003fb9d8,0xf108);
+  DAT_003fb9d6 = fuel_demand_timing_input - boost_fuel_timing_target;
+  DAT_003fb9e6 = (int)DAT_003fb9d6 << 0x10;
+  PTR_DAT_003fb9e2 = &DAT_003ff076;
+  boost_fuel_demand_blend_a = fuel_demand_timing_input;
+  fuel_demand_timing_mode_state = fuel_demand_state_b;
+  DAT_0040a1a6 = fuel_boost_mode_state;
+  fuel_pressure_sensor_reference = boost_pressure_fuel_working;
+  boost_fuel_scale_divisor = boost_pressure_fuel_working;
+  DAT_003fb9f2 = 2;
+  DAT_003fb9f4 = 2;
+  boost_fuel_rpm_blend_scale =
+       cm848_dualAxisTableInterpolation
+                 (&DAT_003fb9f2,engine_rpm_state_t_0040b7ac.current_rpm,0xf3dc);
+  governor_adjustment_input = lookupTableInterpolation((table_interp_args_t *)&DAT_003fb9da);
+  DAT_003fb9fa = (uint)boost_pressure_state_t_0040a406.reserved_0c << 0x10;
+  PTR_DAT_003fb9f6 = &DAT_003ff07e;
+  return;
+}
+
+
+
+//
+// Function: cm848_engineMode_reset @ 0x00503074
+//
+

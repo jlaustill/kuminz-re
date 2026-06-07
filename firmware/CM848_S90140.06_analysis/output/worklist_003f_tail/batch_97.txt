@@ -1,0 +1,136 @@
+=== VARIABLES TO NAME ===
+0x003fcff0  (4 references)
+0x003fcff4  (4 references)
+0x003fd912  (4 references)
+0x003fd916  (4 references)
+
+Total: 4 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fcff0, DAT_003fcff4
+void governor_cruise_speedReference_update(void)
+
+{
+  if ((drivetrain_type == DRIVETRAIN_MANUAL_VSS) && (protection_control_licensed == 1)) {
+    if (protection_enable_t_0040c050.protection_active == 0) {
+      cruise_ramp_rate_b_working = DAT_003fcff0;
+      cruise_ramp_rate_d_working = DAT_003fcff4;
+    }
+    else {
+      cruise_ramp_rate_b_working = DAT_003fcff2;
+      cruise_ramp_rate_d_working = DAT_003fcff6;
+    }
+  }
+  cruise_speed_reference_c = cruise_ramp_rate_c_working;
+  cruise_speed_reference_d = cruise_ramp_rate_d_working;
+  if ((cruise_deadband_active_flag == 1) && (governor_override_active_flag == 1)) {
+    cruise_speed_reference_b = cruise_ramp_rate_b_working;
+    cruise_speed_reference_a = cruise_ramp_rate_a_working;
+  }
+  else {
+    cruise_speed_reference_b = 0;
+    cruise_speed_reference_a = 0;
+  }
+  if ((system_feature_config_flags & 0x200) == 0) {
+    cruise_speed_offset_c = cruise_speed_offset_default;
+    if (((cruise_speed_offset_mode != 0) &&
+        (cruise_speed_offset_c = DAT_00408dfe, cruise_speed_offset_mode != 1)) &&
+       (cruise_speed_offset_c = DAT_00408e0e, cruise_speed_offset_mode != 2)) {
+      cruise_speed_offset_b = cruise_speed_offset_latched;
+      cruise_speed_offset_c = cruise_speed_offset_latched;
+      return;
+    }
+  }
+  else {
+    cruise_speed_offset_c = (word)(((uint)cruise_speed_blend_working * (uint)DAT_00408e10) / 0x6400)
+    ;
+  }
+  cruise_speed_offset_latched = cruise_speed_offset_c;
+  cruise_speed_offset_b = cruise_speed_offset_c;
+  return;
+}
+
+
+
+//
+// Function: governor_cruise_rampRate_calc @ 0x00524c6c
+//
+
+// Variables in this function: DAT_003fcff0, DAT_003fcff4, DAT_003fd912, DAT_003fd916
+void governorCruiseStateMachine(void)
+
+{
+  word wVar1;
+  undefined2 uVar2;
+  int iVar3;
+  uint uVar4;
+  int iVar5;
+  undefined2 local_30;
+  undefined2 local_2e;
+  
+  DAT_003fcffe = 2;
+  cruise_zone_transition_flag = 0;
+  cruise_speed_setpoint_active = 0;
+  cruise_deadband_active_flag = 0;
+  cruise_speed_zone_code = 1;
+  local_30 = 2;
+  local_2e = 2;
+  uVar2 = governor_cruise_rampRate_calc
+                    (cruise_fuel_demand_ramp_ceiling - DAT_003fd912,
+                     protection_temp_scale_factor_working);
+  DAT_003fcff0 = governor_cruise_tableLimit_calc
+                           (DAT_003fd912,&local_30,uVar2,&governor_fuel_table_xaxis_cal,400,
+                            &governor_fuel_table_ystart_cal,&governor_fuel_table_yend_cal,4);
+  uVar2 = governor_cruise_rampRate_calc
+                    (cruise_fuel_demand_ramp_ceiling - DAT_003fd916,
+                     protection_temp_scale_factor_working);
+  DAT_003fcff4 = governor_cruise_tableLimit_calc
+                           (DAT_003fd916,&local_30,uVar2,&governor_fuel_table_xaxis_cal,400,
+                            &governor_fuel_table_ystart_cal,&governor_fuel_table_yend_cal,4);
+  if (drivetrain_type == DRIVETRAIN_MANUAL_VSS) {
+    cruise_ramp_rate_b_working = DAT_003fcff0;
+    cruise_ramp_rate_d_working = DAT_003fcff4;
+  }
+  uVar2 = governor_cruise_rampRate_calc
+                    (cruise_fuel_demand_ramp_ceiling - DAT_003fd912,protection_temp_scale_cal);
+  DAT_003fcff2 = governor_cruise_tableLimit_calc
+                           (DAT_003fd912,&local_30,uVar2,&governor_fuel_table_xaxis_cal,400,
+                            &governor_fuel_table_ystart_cal,&governor_fuel_table_yend_cal,4);
+  uVar2 = governor_cruise_rampRate_calc
+                    (cruise_fuel_demand_ramp_ceiling - DAT_003fd916,protection_temp_scale_cal);
+  DAT_003fcff6 = governor_cruise_tableLimit_calc
+                           (DAT_003fd916,&local_30,uVar2,&governor_fuel_table_xaxis_cal,400,
+                            &governor_fuel_table_ystart_cal,&governor_fuel_table_yend_cal,4);
+  wVar1 = governor_cruise_fuel_demand_setpoint;
+  if ((uint)governor_cruise_fuel_demand_min < (uint)governor_cruise_fuel_demand_setpoint) {
+    uVar4 = (uint)governor_cruise_fuel_demand_setpoint - (uint)governor_cruise_fuel_demand_min;
+    iVar5 = (uVar4 & 0xffff) * 0x22c8;
+    iVar3 = 0x410000;
+    uVar2 = governor_cruise_rampScale_calc(DAT_003fd910,iVar5,uVar4);
+    *(undefined2 *)(iVar3 + -0x4964) = uVar2;
+    cruise_ramp_rate_c_working = governor_cruise_rampScale_calc(DAT_003fd914,iVar5,uVar4);
+  }
+  else {
+    cruise_ramp_rate_a_working = 0;
+    cruise_ramp_rate_c_working = 0;
+  }
+  cruise_speed_offset_c = cruise_speed_offset_default;
+  cruise_speed_offset_b = cruise_speed_offset_default;
+  cruise_speed_setpoint_c = wVar1;
+  cruise_speed_setpoint_b = wVar1;
+  cruise_speed_reference_b = 0;
+  cruise_speed_reference_a = 0;
+  cruise_speed_reference_c = cruise_ramp_rate_c_working;
+  cruise_speed_reference_d = cruise_ramp_rate_d_working;
+  cruise_ramp_rate_b_working = DAT_003fcff0;
+  cruise_ramp_rate_d_working = DAT_003fcff4;
+  return;
+}
+
+
+
+//
+// Function: governor_cruise_torqueLimit_calc @ 0x005250c0
+//
+

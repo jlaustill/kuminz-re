@@ -1,0 +1,178 @@
+=== VARIABLES TO NAME ===
+0x003fcdbe  (3 references)
+0x003fcdc0  (3 references)
+0x003fcdc2  (3 references)
+
+Total: 3 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fcdc2
+void fuel_coldStart_integralCorrection_update(void)
+
+{
+  int iVar1;
+  
+  if ((DAT_003fcdc2 == 0) && (cold_start_overheat_active_flag == 1)) {
+    cold_start_fuel_demand_integral_q8_scaled = (uint)fuel_demand_computed * 0x2280;
+  }
+  if (cold_start_overheat_active_flag == 1) {
+    cold_start_fuel_demand_proportional =
+         (word)((int)((int)(short)cold_start_coolant_temp_error * (uint)DAT_00408764) / 0x2580);
+  }
+  else {
+    cold_start_fuel_demand_proportional = 0x6400;
+  }
+  if (cold_start_overheat_active_flag == 1) {
+    cold_start_fuel_demand_integral_q8_scaled =
+         cold_start_fuel_demand_integral_q8_scaled +
+         DAT_0040875a * (short)cold_start_coolant_temp_error;
+    cold_start_fuel_demand_integral = (word)(cold_start_fuel_demand_integral_q8_scaled / 0x2280);
+    if ((int)(short)cold_start_fuel_demand_integral < (int)(uint)cold_start_fuel_demand_min_floor) {
+      cold_start_fuel_demand_integral = cold_start_fuel_demand_min_floor;
+      cold_start_fuel_demand_integral_q8_scaled = (short)cold_start_fuel_demand_min_floor * 0x2280;
+    }
+    if ((int)(uint)protection_fuel_limit_cal_active < (int)(short)cold_start_fuel_demand_integral) {
+      cold_start_fuel_demand_integral = protection_fuel_limit_cal_active;
+      cold_start_fuel_demand_integral_q8_scaled = (short)protection_fuel_limit_cal_active * 0x2280;
+    }
+  }
+  else {
+    cold_start_fuel_demand_integral = 0x6400;
+  }
+  iVar1 = (int)(short)cold_start_fuel_demand_proportional +
+          (int)(short)cold_start_fuel_demand_integral;
+  if (0x6400 < iVar1) {
+    iVar1 = 0x6400;
+  }
+  if (iVar1 < 0) {
+    iVar1 = 0;
+  }
+  cold_start_fuel_demand_pi_correction = (word)iVar1;
+  return;
+}
+
+
+
+//
+// Function: fuel_coldStart_rpmLimit_select @ 0x00513af0
+//
+
+// Variables in this function: DAT_003fcdbe, DAT_003fcdc0
+void fuel_coldStart_demandRamp_rateLimiter(void)
+
+{
+  uint uVar1;
+  
+  uVar1 = (uint)cold_start_fuel_demand_limit_min;
+  if ((((DAT_003fcdbe == 0x6400) && (cold_start_rpm_fuel_limit != 0x6400)) ||
+      ((DAT_003fcdc0 == 0x6400 && (cold_start_fuel_demand_pi_correction != 0x6400)))) &&
+     (cold_start_fuel_demand_ramp_prev = cold_start_fuel_demand_limit_min,
+     uVar1 < fuel_demand_computed)) {
+    cold_start_fuel_demand_ramp_prev = fuel_demand_computed;
+  }
+  if ((uint)DAT_00408762 + (uint)cold_start_fuel_demand_ramp_prev < uVar1) {
+    cold_start_fuel_demand_ramp_output = cold_start_fuel_demand_ramp_prev + DAT_00408762;
+    cold_start_fuel_limit_reason_code = 8;
+  }
+  else if (DAT_00408760 + uVar1 < (uint)cold_start_fuel_demand_ramp_prev) {
+    cold_start_fuel_demand_ramp_output = cold_start_fuel_demand_ramp_prev - DAT_00408760;
+    cold_start_fuel_limit_reason_code = 7;
+  }
+  else {
+    cold_start_fuel_demand_ramp_output = cold_start_fuel_demand_limit_min;
+  }
+  return;
+}
+
+
+
+//
+// Function: fuel_coldStart_demandMin_2dLookup @ 0x00513c80
+//
+
+// Variables in this function: DAT_003fcdbe, DAT_003fcdc0, DAT_003fcdc2
+void governor_fuel_limit_initialize(void)
+
+{
+  word *pwVar1;
+  int iVar2;
+  
+  engine_diag_shadow_flags = engine_diag_shadow_flags & 0xff9f;
+  engine_diag_shadow_flags_b = engine_diag_shadow_flags_b & 0xff9f;
+  coolant_bucket_overheat_detected_flag = 0;
+  coolant_bucket_overheat_active_flag = 0;
+  cold_start_fuel_demand_ramp_output = 0x6400;
+  cold_start_fuel_demand_ramp_prev = 0x6400;
+  cold_start_rpm_fuel_limit = 0x6400;
+  DAT_003fcdbe = 0x6400;
+  cold_start_fuel_demand_integral = 0x6400;
+  cold_start_fuel_demand_integral_q8_scaled = 0xd7a0000;
+  cold_start_fuel_demand_pi_correction = 0x6400;
+  DAT_003fcdc0 = 0x6400;
+  cold_start_fuel_demand_proportional = 0x6400;
+  cold_start_coolant_temp_setpoint = 0x3fc0;
+  cold_start_coolant_temp_error = 0;
+  cold_start_overheat_active_flag = 0;
+  DAT_003fcdc2 = 0;
+  injection_timing_demand_min_working = 0xfc00;
+  iVar2 = 0;
+  pwVar1 = &cold_start_fuel_demand_proportional;
+  do {
+    pwVar1 = pwVar1 + 2;
+    pwVar1[0] = 0;
+    pwVar1[1] = 0;
+    iVar2 = iVar2 + 1;
+  } while (iVar2 < 5);
+  cold_start_fuel_limit_reason_code = 9;
+  DAT_003fcdd4 = 2;
+  DAT_003fcdd6 = 2;
+  DAT_003fcdd0 = 2;
+  DAT_003fcdd2 = 2;
+  return;
+}
+
+
+
+//
+// Function: governor_fuel_limit_update @ 0x00513f5c
+//
+
+// Variables in this function: DAT_003fcdbe, DAT_003fcdc0, DAT_003fcdc2
+void governor_fuel_limit_update(void)
+
+{
+  if ((governor_system_config_flags & 2) == 0) {
+    cold_start_fuel_demand_ramp_output = 0x6400;
+    cold_start_fuel_limit_reason_code = 0;
+  }
+  else {
+    if (((short)sensor_readings_t_0040baf2.coolant_temp < DAT_0040876a) &&
+       (cold_start_coolant_bucket_cycle_count == 0)) {
+      governor_fuel_limit_initialize();
+    }
+    else {
+      engine_coolantTemp_bucket_accumulate();
+      governor_cruise_dualCalc_dispatch();
+      engine_coolantTemp_delta_calc();
+      fuel_coldStart_integralCorrection_update();
+      fuel_coldStart_demandMin_2dLookup();
+      fuel_coldStart_rpmLimit_select();
+      fuel_coldStart_demandRamp_rateLimiter();
+      governor_injectionTiming_modeAdj();
+    }
+    cold_start_fuel_demand_ramp_prev = cold_start_fuel_demand_ramp_output;
+    DAT_003fcdc2 = cold_start_overheat_active_flag;
+    DAT_003fcdbe = cold_start_rpm_fuel_limit;
+    DAT_003fcdc0 = cold_start_fuel_demand_pi_correction;
+    DAT_003fcdc4 = governor_mode_code;
+  }
+  return;
+}
+
+
+
+//
+// Function: protection_accumulator_update @ 0x00514048
+//
+

@@ -1,0 +1,174 @@
+=== VARIABLES TO NAME ===
+0x003fb434  (4 references)
+0x003fb436  (3 references)
+0x003fb445  (3 references)
+
+Total: 3 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fb434, DAT_003fb436
+void mpc555_j1939InitTransmitBuffer(char param_1)
+
+{
+  uint uVar1;
+  byte bVar2;
+  
+  DAT_003fb444 = param_1;
+  uVar1 = (uint)(byte)(param_1 - 1);
+  qsmcm_qspi_spcr0._0_2_ = (&DAT_003fb434)[uVar1 * 2];
+  if ((*(byte *)(&DAT_003fb434 + uVar1 * 2) >> 1 & 1) == 0) {
+    bVar2 = qsmcm_qspi_ddqrs;
+    bVar2 = bVar2 & 0xfb;
+  }
+  else {
+    bVar2 = qsmcm_qspi_ddqrs;
+    bVar2 = bVar2 | 4;
+  }
+  qsmcm_qspi_ddqrs = bVar2;
+  qsmcm_qspi_spcr0.SPE = (&DAT_003fb436)[uVar1 * 2];
+  return;
+}
+
+
+
+//
+// Function: cm848_configurePeriodicTimer @ 0x0003d68c
+//
+
+// Variables in this function: DAT_003fb434, DAT_003fb436, DAT_003fb445
+uint cm848_configurePeriodicTimer(int param_1,int param_2,int param_3,uint param_4)
+
+{
+  bool bVar1;
+  byte bVar2;
+  uint uVar3;
+  uint uVar4;
+  undefined2 local_10;
+  undefined2 local_c;
+  
+  bVar1 = true;
+  local_10._0_1_ = local_10._0_1_ & 3 | 0x80;
+  if (param_1 == 0) {
+    local_10._0_1_ = 0;
+LAB_0003d730:
+    local_10._0_1_ = local_10._0_1_ | 0x80;
+  }
+  else {
+    if (param_1 == 1) {
+      local_10._0_1_ = 1;
+    }
+    else {
+      if (param_1 != 2) {
+        if (param_1 != 3) {
+          bVar1 = false;
+          goto LAB_0003d754;
+        }
+        local_10._0_1_ = 1;
+        goto LAB_0003d730;
+      }
+      local_10._0_1_ = 0;
+    }
+    local_10._0_1_ = local_10._0_1_ | 0x82;
+  }
+LAB_0003d754:
+  if (param_2 - 0x4eU < 0x26c3) {
+    local_10 = CONCAT11(local_10._0_1_,(char)(40000000 / (uint)(param_2 * 2000)));
+  }
+  else {
+    local_10 = CONCAT11(local_10._0_1_,10);
+    bVar1 = false;
+  }
+  if (param_3 - 0x19U < 0xc4f) {
+    bVar2 = (byte)((uint)(param_3 * 0x28) / 1000) & 0x7f;
+  }
+  else {
+    bVar2 = 0;
+    bVar1 = false;
+  }
+  if (((param_4 & 0xffff) < 0xcd) && ((param_4 & 0xffff) != 0)) {
+    local_c = CONCAT11(bVar2,(char)((param_4 & 0xffff) * 0x28 >> 5));
+  }
+  else {
+    local_c = (ushort)bVar2 << 8;
+    bVar1 = false;
+  }
+  uVar4 = 0;
+  uVar3 = (uint)DAT_003fb445;
+  if (uVar3 != 0) {
+    do {
+      if (((&DAT_003fb434)[uVar4 * 2] == local_10) && (local_c == (&DAT_003fb436)[uVar4 * 2]))
+      break;
+      uVar4 = uVar4 + 1 & 0xff;
+    } while (uVar4 < uVar3);
+  }
+  if ((uVar4 < 4) && (bVar1)) {
+    if (uVar3 <= uVar4) {
+      (&DAT_003fb434)[uVar4 * 2] = local_10;
+      (&DAT_003fb436)[uVar4 * 2] = local_c;
+      DAT_003fb445 = (char)uVar4 + 1;
+      if (uVar4 == 0) {
+        mpc555_j1939InitTransmitBuffer(1);
+      }
+    }
+    uVar4 = uVar4 + 1;
+  }
+  else {
+    uVar4 = 0;
+    system_status_flags_t_003fe974.sensor_diag = system_status_flags_t_003fe974.sensor_diag | 2;
+  }
+  return uVar4 & 0xff;
+}
+
+
+
+//
+// Function: mpc555_j1939ConfigureMultiFrame @ 0x0003d904
+//
+
+// Variables in this function: DAT_003fb445
+int cm848_j1939QueueTransmitMessage(undefined4 *param_1,int param_2)
+
+{
+  byte bVar1;
+  uint uVar2;
+  int iVar3;
+  
+  if (1 < param_2) {
+    param_2 = 1;
+  }
+  if (*(byte *)((int)param_1 + 5) < 0x21) {
+    iVar3 = param_2 * 0x43;
+    if (((((&fault_occurrence_count_array)[iVar3] < 0x10) &&
+         (*(byte *)(param_1 + 1) <= DAT_003fb445)) && (*(byte *)(param_1 + 1) != 0)) &&
+       ((*(int *)((int)param_1 + 6) != 0 && (*(int *)((int)param_1 + 10) != 0)))) {
+      bVar1 = *(byte *)(iVar3 + 0x3fb447);
+      *(undefined4 **)(iVar3 + (uint)bVar1 * 4 + 0x3fb449) = param_1;
+      (&fault_occurrence_count_array)[iVar3] = (&fault_occurrence_count_array)[iVar3] + 1;
+      if (*(byte *)(param_2 + 0x3fb4ce) < (&fault_occurrence_count_array)[iVar3]) {
+        *(byte *)(param_2 + 0x3fb4ce) = (&fault_occurrence_count_array)[iVar3];
+      }
+      uVar2 = bVar1 + 1;
+      *(char *)(iVar3 + 0x3fb447) = (char)uVar2 + (char)((int)(uVar2 & 0xff) >> 4) * -0x10;
+      iVar3 = 0;
+      *param_1 = 1;
+      mpc555_j1939ConfigureMultiFrame(bVar1,param_2);
+      goto LAB_0003db78;
+    }
+  }
+  iVar3 = -1;
+  j1939_message_retry_counter = j1939_message_retry_counter + 1;
+LAB_0003db78:
+  if (iVar3 == -1) {
+    system_status_flags_t_003fe974.sensor_diag = system_status_flags_t_003fe974.sensor_diag | 1;
+    sensor_diag_param_working = (undefined *)param_1;
+  }
+  return (int)(short)iVar3;
+}
+
+
+
+//
+// Function: cm848_j1939ProcessTransmitQueue @ 0x0003dbc0
+//
+

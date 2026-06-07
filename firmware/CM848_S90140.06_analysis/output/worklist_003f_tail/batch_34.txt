@@ -1,0 +1,77 @@
+=== VARIABLES TO NAME ===
+0x003fb8f3  (3 references)
+0x003fb8f4  (3 references)
+0x003fb8f5  (3 references)
+
+Total: 3 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fb8f3, DAT_003fb8f4, DAT_003fb8f5
+int cm848_getProtectionSyncState(void)
+
+{
+  short sVar1;
+  uint uVar2;
+  int iVar3;
+  
+  uVar2 = 0;
+  updateEngineSyncStatus(0x2d);
+  sensor_scan_counter_a = 0;
+  if (DAT_003fb8f3 != 0) {
+    sensor_scan_counter_a = 0;
+    do {
+      sensor_scan_counter_a = sensor_scan_counter_a + 1;
+    } while (sensor_scan_counter_a != DAT_003fb8f3);
+  }
+  iVar3 = 0;
+  do {
+    uVar2 = uVar2 * 2;
+    sVar1 = hpcr_protectionWarningHandler(0x30);
+    if (sVar1 != 0) {
+      uVar2 = uVar2 | 1;
+    }
+    clearModuleSyncFlag(0x2c);
+    sensor_scan_counter_b = 0;
+    if (DAT_003fb8f4 != 0) {
+      sensor_scan_counter_b = 0;
+      do {
+        sensor_scan_counter_b = sensor_scan_counter_b + 1;
+      } while (sensor_scan_counter_b != DAT_003fb8f4);
+    }
+    updateEngineSyncStatus(0x2c);
+    sensor_scan_counter_c = 0;
+    if (DAT_003fb8f5 != 0) {
+      sensor_scan_counter_c = 0;
+      do {
+        sensor_scan_counter_c = sensor_scan_counter_c + 1;
+      } while (sensor_scan_counter_c != DAT_003fb8f5);
+    }
+    iVar3 = iVar3 + 1;
+  } while (iVar3 < 0x18);
+  clearModuleSyncFlag(0x2d);
+  return uVar2 << 8;
+}
+
+
+
+//
+// Function: cm848_initSensorRetryCounters @ 0x0004ce78
+//
+
+// Variables in this function: DAT_003fb8f3, DAT_003fb8f4, DAT_003fb8f5
+void cm848_initSensorRetryCounters(void)
+
+{
+  DAT_003fb8f3 = 10;
+  DAT_003fb8f5 = 0;
+  DAT_003fb8f4 = 0;
+  return;
+}
+
+
+
+//
+// Function: cm848_miosChannel11Enable @ 0x0004ce9c
+//
+

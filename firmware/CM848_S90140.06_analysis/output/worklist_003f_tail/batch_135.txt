@@ -1,0 +1,62 @@
+=== VARIABLES TO NAME ===
+0x003ff6f8  (4 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003ff6f8
+void fuel_egrTarget_pressureRatio_calc(void)
+
+{
+  uint uVar1;
+  
+  if (DAT_003ff6fe < egr_fuel_pressure_ratio) {
+    egr_fuel_pressure_integrator = egr_fuel_pressure_integrator + DAT_003ff6f6;
+  }
+  if ((fuel_pressure_sensor_reference == 0) ||
+     (uVar1 = (uint)(((ulonglong)governor_integrator_bound_a << 8) /
+                    (ulonglong)(uint)fuel_pressure_sensor_reference), 0xffff < uVar1)) {
+    uVar1 = 0xffff;
+  }
+  DAT_003fcc1c = (short)uVar1;
+  if (((egr_fuel_pressure_ratio < DAT_003ff700) && ((uint)DAT_003ff6f0 < (uVar1 & 0xffff))) &&
+     (DAT_003ff712 < engine_rpm_state_t_0040b7ac.current_rpm)) {
+    egr_fuel_pressure_integrator = egr_fuel_pressure_integrator + DAT_003ff6f6;
+  }
+  if (DAT_003ff6f8 < egr_fuel_pressure_integrator) {
+    egr_fuel_pressure_integrator = DAT_003ff6f8;
+  }
+  if (((DAT_003ff700 <= egr_fuel_pressure_ratio) && (egr_fuel_pressure_ratio <= DAT_003ff6fe)) &&
+     (egr_fuel_pressure_integrator != 0)) {
+    egr_fuel_pressure_integrator = egr_fuel_pressure_integrator - DAT_003ff6f4;
+  }
+  if ((egr_fuel_pressure_integrator < DAT_003ff6f8) || (egr_fuel_pressure_ratio <= DAT_003ff6fe)) {
+    if ((egr_fuel_pressure_integrator < DAT_003ff6f8) || (DAT_003ff700 <= egr_fuel_pressure_ratio))
+    goto LAB_0050f05c;
+    egr_smoke_limit_status_flags = egr_smoke_limit_status_flags | 0x20;
+  }
+  else {
+    egr_smoke_limit_status_flags = egr_smoke_limit_status_flags | 8;
+  }
+  governor_speed_ramp_target = DAT_003ff6fc;
+LAB_0050f05c:
+  if ((egr_fuel_pressure_integrator < DAT_003ff6f2) && ((egr_smoke_limit_status_flags & 0x20) != 0))
+  {
+    egr_smoke_limit_status_flags = egr_smoke_limit_status_flags & 0xffdf;
+    egr_smoke_limit_status_shadow = egr_smoke_limit_status_shadow & 0xffdf;
+  }
+  else if ((egr_fuel_pressure_integrator < DAT_003ff6f2) &&
+          ((egr_smoke_limit_status_flags & 8) != 0)) {
+    egr_smoke_limit_status_flags = egr_smoke_limit_status_flags & 0xfff7;
+    egr_smoke_limit_status_shadow = egr_smoke_limit_status_shadow & 0xfff7;
+  }
+  return;
+}
+
+
+
+//
+// Function: fuel_smokeLimit_modeSelect @ 0x0050f110
+//
+

@@ -1,0 +1,86 @@
+=== VARIABLES TO NAME ===
+0x003fb00c  (3 references)
+0x003fb00d  (3 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fb00c
+void cm848_trackFuelDemandThreshold(void)
+
+{
+  if (DAT_003fb00c == '\0') {
+    fuel_demand_hysteresis_flag = (dword)(DAT_0005c66c < fuel_demand_control_t_0040a57a.calculated);
+    DAT_003fb00c = '\x01';
+  }
+  else if (fuel_demand_hysteresis_flag == 0) {
+    if (DAT_0005c66c <= fuel_demand_control_t_0040a57a.calculated) {
+      fuel_demand_hysteresis_flag = 1;
+    }
+  }
+  else if (fuel_demand_control_t_0040a57a.calculated <= DAT_0005c66e) {
+    fuel_demand_hysteresis_flag = 0;
+    protection_retry_counter = protection_retry_counter + 1;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_processProtectionLimitActivation @ 0x0002c23c
+//
+
+// Variables in this function: DAT_003fb00c, DAT_003fb00d
+void cm848_processProtectionControlLogic(void)
+
+{
+  byte bVar1;
+  byte extraout_r4;
+  byte bVar2;
+  byte *pbVar3;
+  protection_enable_t *ppVar4;
+  word *pwVar5;
+  
+  if (((cold_start_phase != CSP_CRANKING) ||
+      (ppVar4 = &protection_enable_t_0040c050, (protection_enable_t_0040c050.mode_bits & 1) == 0))
+     || ((j1939_feature_enable_flags & 0x400) == 0)) {
+    DAT_003fb00c = 0;
+    DAT_003fb00d = 0;
+    protection_retry_active_flag = 0;
+    protection_mode_enable_flag = 0;
+    protection_retry_counter = 0;
+    protection_enable_t_0040c050.protection_active = 0;
+    return;
+  }
+  protection_enable_t_0040c050.protection_active = 0;
+  cm848_checkSafetyConditionsForProtection();
+  bVar1 = protection_mode_enable_flag;
+  pbVar3 = (byte *)&DAT_003fb00d;
+  if (protection_mode_enable_flag == 0) {
+    if (DAT_003fb00d == '\0') goto LAB_0002c458;
+    bVar2 = extraout_r4 & 0x7f;
+  }
+  else {
+    bVar2 = extraout_r4 | 0x80;
+  }
+  ppVar4->field_0x3 = bVar2;
+LAB_0002c458:
+  pwVar5 = &protection_retry_counter;
+  if ((ppVar4->protection_active != 0) || (ppVar4->protection_active != 0)) {
+    protection_retry_counter = 0;
+  }
+  cm848_trackFuelDemandThreshold();
+  cm848_processProtectionLimitActivation();
+  protection_retry_active_flag = *pwVar5;
+  *pbVar3 = bVar1;
+  return;
+}
+
+
+
+//
+// Function: cm848_updateRpmProtectionLimits @ 0x0002c4fc
+//
+

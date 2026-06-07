@@ -1,0 +1,701 @@
+=== VARIABLES TO NAME ===
+0x003faf38  (4 references)
+0x003faf3d  (4 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003faf38, DAT_003faf3d
+void cm848_processGovernorModeTransition(void)
+
+{
+  bool bVar1;
+  bool bVar2;
+  bool bVar3;
+  bool bVar4;
+  bool bVar5;
+  bool bVar6;
+  bool bVar7;
+  word wVar8;
+  undefined4 uVar9;
+  int iVar10;
+  
+  wVar8 = j1939_tsc1_override_state.etc1_torque_limit_active;
+  bVar7 = false;
+  bVar6 = false;
+  bVar5 = false;
+  if ((j1939_tsc1_override_snapshot != j1939_tsc1_override_state.torque_limit_mode_select) &&
+     (j1939_tsc1_override_state.torque_limit_mode_select == 1)) {
+    bVar5 = true;
+  }
+  if (j1939_tsc1_override_state.etc1_torque_mode_timer != 0) {
+    j1939_tsc1_override_state.etc1_torque_mode_timer =
+         j1939_tsc1_override_state.etc1_torque_mode_timer - 1;
+    bVar5 = true;
+  }
+  bVar1 = j1939_tsc1_override_state.etc1_torque_mode_timer == 1;
+  if (bVar1) {
+    j1939_tsc1_override_state.torque_limit_mode_select = 0;
+    j1939_tsc1_override_state.etc1_torque_limit_active = 0;
+    j1939_tsc1_override_state.speed_control_target =
+         j1939_tsc1_override_state.speed_control_target & 3;
+    j1939_tsc1_override_state.etc1_torque_mode_timer = 0;
+    j1939_tsc1_override_state.etc1_torque_active_timer = 0;
+  }
+  if (j1939_tsc1_override_state.etc1_torque_active_timer != 0) {
+    j1939_tsc1_override_state.etc1_torque_active_timer =
+         j1939_tsc1_override_state.etc1_torque_active_timer - 1;
+  }
+  if (j1939_tsc1_override_state.etc1_torque_active_timer == 1) {
+    j1939_tsc1_override_state.torque_limit_mode_select = 0;
+    j1939_tsc1_override_state.etc1_torque_limit_active = 1;
+    j1939_tsc1_override_state.speed_control_target =
+         j1939_tsc1_override_state.speed_control_target | 4;
+    j1939_tsc1_override_state.etc1_torque_mode_timer = etc1_torque_mode_timeout_cal + 1;
+  }
+  if (((j1939_tsc1_override_state.etc1_torque_limit_timer != 0) &&
+      (j1939_tsc1_override_state.etc1_torque_limit_timer =
+            j1939_tsc1_override_state.etc1_torque_limit_timer - 1,
+      j1939_etc1_speed_mode_snapshot !=
+      j1939_tsc1_override_state.etc1_spn607_progressive_shift_disable)) &&
+     (j1939_tsc1_override_state.etc1_spn607_progressive_shift_disable == 1)) {
+    bVar5 = true;
+  }
+  bVar2 = j1939_tsc1_override_state.etc1_torque_limit_timer == 1;
+  if (bVar2) {
+    j1939_tsc1_override_state.etc1_spn607_progressive_shift_disable = 0;
+    j1939_tsc1_override_state.etc1_torque_limit_timer = 0;
+  }
+  if (((j1939_tsc1_override_state.etc1_speed_override_timer != 0) &&
+      (j1939_tsc1_override_state.etc1_speed_override_timer =
+            j1939_tsc1_override_state.etc1_speed_override_timer - 1,
+      j1939_etc1_torque_limit_snapshot != j1939_tsc1_override_state.etc1_disable_control)) &&
+     (j1939_tsc1_override_state.etc1_disable_control == 1)) {
+    bVar5 = true;
+  }
+  bVar3 = j1939_tsc1_override_state.etc1_speed_override_timer == 1;
+  if (bVar3) {
+    j1939_tsc1_override_state.etc1_disable_control = 0;
+    j1939_tsc1_override_state.etc1_speed_override_timer = 0;
+  }
+  if (((j1939_tsc1_override_state.etc1_mode_transition_timer != 0) &&
+      (j1939_tsc1_override_state.etc1_mode_transition_timer =
+            j1939_tsc1_override_state.etc1_mode_transition_timer - 1,
+      governor_mode_state_prev != governor_mode_state)) && (governor_mode_state == 0)) {
+    bVar5 = true;
+  }
+  bVar4 = j1939_tsc1_override_state.etc1_mode_transition_timer == 1;
+  if (bVar4) {
+    j1939_tsc1_override_state.etc1_mode_transition_timer = 0;
+  }
+  bVar4 = bVar4 || (bVar3 || (bVar2 || bVar1 && wVar8 == 0));
+  if (j1939_tsc1_override_state.etc1_message_timeout != 0) {
+    j1939_tsc1_override_state.etc1_message_timeout =
+         j1939_tsc1_override_state.etc1_message_timeout - 1;
+  }
+  if (j1939_tsc1_override_state.etc1_message_timeout == 1) {
+    j1939_tsc1_override_state.etc1_message_timeout = 0;
+    j1939_tsc1_override_state.etc1_spn574_shift_in_process = 0;
+  }
+  if (governor_timeout_countdown != 0) {
+    governor_timeout_countdown = governor_timeout_countdown - 1;
+  }
+  if (governor_timeout_countdown == 1) {
+    governor_timeout_countdown = 0;
+    j1939_tsc1_override_state.etc1_address_filter = 0xff;
+  }
+  if (j1939_tsc1_override_state.etc1_override_timeout != 0) {
+    j1939_tsc1_override_state.etc1_override_timeout =
+         j1939_tsc1_override_state.etc1_override_timeout - 1;
+  }
+  if (j1939_tsc1_override_state.etc1_override_timeout == 1) {
+    j1939_tsc1_override_state.etc1_spn573_tc_lockup_disengage = 0;
+    j1939_tsc1_override_state.etc1_override_timeout = 0;
+  }
+  if ((drivetrain_type == DRIVETRAIN_AUTO_J1939_FULL) ||
+     (drivetrain_type == DRIVETRAIN_AUTO_J1939_ETC1)) {
+    if (j1939_tsc1_override_state.etc1_mode_timeout != 0) {
+      j1939_tsc1_override_state.etc1_mode_timeout = j1939_tsc1_override_state.etc1_mode_timeout - 1;
+    }
+    if ((j1939_tsc1_override_state.etc1_mode_timeout == 1) ||
+       (j1939_tsc1_override_state.etc1_message_timeout == 0)) {
+      j1939_tsc1_override_state.etc1_mode_timeout = 0;
+      j1939_tsc1_override_state.etc1_control_active = 0;
+    }
+    if ((governor_load_timer_b != 0) &&
+       (governor_load_timer_b = governor_load_timer_b - 1, governor_load_timer_b == 1)) {
+      etc1_load_timer_active_flag = 0;
+      bVar4 = true;
+    }
+  }
+  if (drivetrain_type == DRIVETRAIN_AUTO_J1939_FULL) {
+    if (((cold_start_phase == CSP_AT_GOVERNOR_SETPOINT) ||
+        (cold_start_phase == CSP_FUEL_MODE_SWITCH)) || (cold_start_phase == CSP_SUSPENDED)) {
+      j1939_tsc1_override_state.governor_mode_transition_counter =
+           j1939_tsc1_override_state.governor_mode_transition_counter + 1;
+    }
+    else {
+      j1939_tsc1_override_state.governor_mode_transition_counter = 0;
+    }
+    if ((protection_enable_t_0040c050.mode_bits & 1) == 0) {
+      j1939_tsc1_override_state.etc1_handler_initialized = 1;
+    }
+    else if ((cold_start_phase == CSP_CRANKING) ||
+            (DAT_0005c3a8 <= j1939_tsc1_override_state.governor_mode_transition_counter)) {
+      j1939_tsc1_override_state.etc1_handler_initialized = 0;
+    }
+    else {
+      j1939_tsc1_override_state.etc1_handler_initialized = 1;
+    }
+    if (j1939_tsc1_override_state.etc1_speed_cmd_timeout != 0) {
+      j1939_tsc1_override_state.etc1_speed_cmd_timeout =
+           j1939_tsc1_override_state.etc1_speed_cmd_timeout - 1;
+    }
+    if (((j1939_tsc1_override_state.etc1_speed_cmd_timeout == 0) &&
+        (j1939_tsc1_override_state.etc1_handler_initialized == 0)) &&
+       ((system_status_flags_t_003fe974.condition_monitor & 0x2000) == 0)) {
+      output_shaft_speed_current = 0;
+      system_status_flags_t_003fe974.condition_monitor =
+           system_status_flags_t_003fe974.condition_monitor | 0x2000;
+    }
+  }
+  if (((governor_mode_snapshot == j1939_tsc1_override_state.governor_mode) &&
+      ((int)(short)etc1_active_state_snapshot ==
+       (int)(short)j1939_tsc1_override_state.etc1_active_state)) &&
+     (DAT_003faf38 == j1939_tsc1_override_state.etc1_spn1482_source_address)) {
+    if (j1939_tsc1_override_state.etc1_speed_error_timeout != 0) {
+      j1939_tsc1_override_state.etc1_speed_error_timeout =
+           j1939_tsc1_override_state.etc1_speed_error_timeout - 1;
+    }
+    if (j1939_tsc1_override_state.etc1_activation_confirm_timer != 0) {
+      j1939_tsc1_override_state.etc1_activation_confirm_timer =
+           j1939_tsc1_override_state.etc1_activation_confirm_timer - 1;
+    }
+    j1939_tsc1_override_state.etc1_speed_error_timeout_flag =
+         (word)(j1939_tsc1_override_state.etc1_speed_error_timeout < 2);
+    if (j1939_tsc1_override_state.governor_mode == 0) {
+      j1939_tsc1_override_state.torque_limit_mode_select = 0;
+      if (j1939_tsc1_override_state.etc1_speed_error_timeout < 2) {
+        cm848_j1939FormatDm1Message();
+      }
+    }
+    else {
+      if (j1939_tsc1_override_state.governor_mode == 1) {
+        if (j1939_tsc1_override_state.etc1_speed_error_timeout != 1) {
+          uVar9 = 1;
+LAB_00027800:
+          if (j1939_tsc1_override_state.etc1_activation_confirm_timer == 1) {
+            cm848_addCoolantCalEntry
+                      ((int)(short)j1939_tsc1_override_state.etc1_active_state,
+                       j1939_tsc1_override_state.etc1_spn1482_source_address,uVar9);
+            j1939_tsc1_override_state.speed_control_target =
+                 j1939_tsc1_override_state.speed_control_target | 1;
+            cm848_j1939FormatDm1Message();
+          }
+          goto LAB_00027848;
+        }
+      }
+      else if (j1939_tsc1_override_state.governor_mode == 2) {
+        j1939_tsc1_override_state.torque_limit_mode_select = 0;
+        if (j1939_tsc1_override_state.etc1_speed_error_timeout != 1) {
+          uVar9 = 2;
+          goto LAB_00027800;
+        }
+      }
+      else if ((j1939_tsc1_override_state.governor_mode != 3) ||
+              (j1939_tsc1_override_state.torque_limit_mode_select = 0,
+              1 < j1939_tsc1_override_state.etc1_speed_error_timeout)) goto LAB_00027848;
+      j1939_tsc1_override_state.torque_limit_mode_select = 0;
+      cm848_j1939FormatDm1Message();
+      bVar4 = true;
+    }
+  }
+  else if (j1939_tsc1_override_state.governor_mode == 0) {
+    j1939_tsc1_override_state.etc1_activation_confirm_timer = 0;
+  }
+  else {
+    if (j1939_tsc1_override_state.governor_mode == 1) {
+      iVar10 = 6;
+    }
+    else {
+      if (j1939_tsc1_override_state.governor_mode != 2) {
+        if (j1939_tsc1_override_state.governor_mode == 3) {
+          j1939_tsc1_override_state.etc1_activation_confirm_timer = 0;
+          bVar5 = true;
+        }
+        goto LAB_00027848;
+      }
+      iVar10 = 10;
+    }
+    j1939_tsc1_override_state.etc1_activation_confirm_timer =
+         *(short *)((int)&(j1939_tsc1_override_state.etc1_active_config_ptr)->match_key + iVar10) +
+         1;
+    bVar5 = true;
+  }
+LAB_00027848:
+  if (bVar4) {
+    if (j1939_tsc1_override_state.etc1_active_state == 1) {
+      bVar7 = true;
+    }
+    else {
+      bVar6 = true;
+    }
+  }
+  else if (bVar5) {
+    if (j1939_tsc1_override_state.etc1_active_state == 1) {
+      cold_start_state_flag_a = 1;
+    }
+    else {
+      cold_start_state_flag_b = 1;
+    }
+  }
+  governor_mode_snapshot = j1939_tsc1_override_state.governor_mode;
+  etc1_active_state_snapshot = j1939_tsc1_override_state.etc1_active_state;
+  DAT_003faf38 = j1939_tsc1_override_state.etc1_spn1482_source_address;
+  j1939_tsc1_override_snapshot = j1939_tsc1_override_state.torque_limit_mode_select;
+  j1939_etc1_speed_mode_snapshot = j1939_tsc1_override_state.etc1_spn607_progressive_shift_disable;
+  j1939_etc1_torque_limit_snapshot = j1939_tsc1_override_state.etc1_disable_control;
+  if ((governor_mode_state_prev == governor_mode_state) &&
+     (DAT_003faf3d == governor_mode_transition_state)) {
+    if (j1939_tsc1_override_state.etc1_multiframe_timeout != 0) {
+      j1939_tsc1_override_state.etc1_multiframe_timeout =
+           j1939_tsc1_override_state.etc1_multiframe_timeout - 1;
+    }
+    if (j1939_tsc1_override_state.etc1_error_fault_timer != 0) {
+      j1939_tsc1_override_state.etc1_error_fault_timer =
+           j1939_tsc1_override_state.etc1_error_fault_timer - 1;
+    }
+    if (governor_mode_state == 2) {
+      if (j1939_tsc1_override_state.etc1_multiframe_timeout == 1) {
+LAB_000279e8:
+        cm848_resetGovernorState();
+        bVar7 = true;
+      }
+      else if (j1939_tsc1_override_state.etc1_error_fault_timer == 1) {
+        cm848_addCoolantCalEntryAlt(governor_mode_transition_state & 0xff,2);
+        j1939_tsc1_override_state.speed_control_target =
+             j1939_tsc1_override_state.speed_control_target | 2;
+        cm848_resetGovernorState();
+      }
+    }
+    else if ((governor_mode_state == 3) && (j1939_tsc1_override_state.etc1_multiframe_timeout == 1))
+    goto LAB_000279e8;
+  }
+  else {
+    if (governor_mode_state == 2) {
+      j1939_tsc1_override_state.etc1_error_fault_timer =
+           *(short *)(j1939_tsc1_override_state.etc1_secondary_config_ptr + 0x10) + 1;
+    }
+    else {
+      j1939_tsc1_override_state.etc1_error_fault_timer = 0;
+      if (governor_mode_state != 3) goto LAB_000279f0;
+    }
+    cold_start_state_flag_a = 1;
+  }
+LAB_000279f0:
+  governor_mode_state_prev = governor_mode_state;
+  DAT_003faf3d = (byte)governor_mode_transition_state;
+  if (bVar6) {
+    if ((int)(uint)etc1_state_timeout_counter < (int)(DAT_0005c39c - 1)) {
+      etc1_state_timeout_counter = etc1_state_timeout_counter + 1;
+    }
+    else {
+      system_status_flags_t_003fe974.lamp_status =
+           system_status_flags_t_003fe974.lamp_status | 0x4000;
+      etc1_state_timeout_counter = 0;
+    }
+  }
+  else {
+    if (cold_start_state_flag_b != 1) goto LAB_00027ae8;
+    if ((system_status_flags_t_003fe974.lamp_status & 0x4000) != 0) {
+      if ((j1939_tsc1_status_shadow & 0x4000) != 0) {
+        system_status_flags_t_003fe974.lamp_status =
+             system_status_flags_t_003fe974.lamp_status & 0xbfff;
+        j1939_tsc1_status_shadow = j1939_tsc1_status_shadow & 0xbfff;
+        cold_start_state_flag_b = 0;
+        etc1_state_timeout_counter = 0;
+      }
+      goto LAB_00027ae8;
+    }
+  }
+  cold_start_state_flag_b = 0;
+LAB_00027ae8:
+  if (bVar7) {
+    if (etc1_state_timer_b < DAT_0005c39c) {
+      etc1_state_timer_b = etc1_state_timer_b + 1;
+    }
+    else {
+      system_status_flags_t_003fe974.emission_faults =
+           system_status_flags_t_003fe974.emission_faults | 1;
+      etc1_state_timer_b = 0;
+    }
+  }
+  else {
+    if (cold_start_state_flag_a != 1) {
+      return;
+    }
+    if ((system_status_flags_t_003fe974.emission_faults & 1) != 0) {
+      if ((emission_faults_shadow_flags & 1) == 0) {
+        return;
+      }
+      system_status_flags_t_003fe974.emission_faults =
+           system_status_flags_t_003fe974.emission_faults & 0xfffe;
+      emission_faults_shadow_flags = emission_faults_shadow_flags & 0xfffe;
+    }
+  }
+  cold_start_state_flag_a = 0;
+  return;
+}
+
+
+
+//
+// Function: cm848_selectTorqueLimitByStateMachine @ 0x00027174
+//
+
+// Variables in this function: DAT_003faf38, DAT_003faf3d
+void cm848_selectTorqueLimitByStateMachine(void)
+
+{
+  bool bVar1;
+  bool bVar2;
+  undefined4 uVar3;
+  int unaff_r18;
+  int unaff_r24;
+  int iVar4;
+  word *pwStack00000008;
+  
+  bVar2 = false;
+  bVar1 = false;
+  if ((j1939_tsc1_override_snapshot != j1939_tsc1_override_state.torque_limit_mode_select) &&
+     (j1939_tsc1_override_state.torque_limit_mode_select == 1)) {
+    bVar1 = true;
+  }
+  if (j1939_tsc1_override_state.etc1_torque_mode_timer != 0) {
+    j1939_tsc1_override_state.etc1_torque_mode_timer =
+         j1939_tsc1_override_state.etc1_torque_mode_timer - 1;
+    bVar1 = true;
+  }
+  if (j1939_tsc1_override_state.etc1_torque_mode_timer == 1) {
+    if (j1939_tsc1_override_state.etc1_torque_limit_active == 0) {
+      unaff_r24 = 1;
+    }
+    j1939_tsc1_override_state.torque_limit_mode_select = 0;
+    j1939_tsc1_override_state.etc1_torque_limit_active = 0;
+    j1939_tsc1_override_state.speed_control_target =
+         j1939_tsc1_override_state.speed_control_target & 3;
+    j1939_tsc1_override_state.etc1_torque_mode_timer = 0;
+    j1939_tsc1_override_state.etc1_torque_active_timer = 0;
+  }
+  if (j1939_tsc1_override_state.etc1_torque_active_timer != 0) {
+    j1939_tsc1_override_state.etc1_torque_active_timer =
+         j1939_tsc1_override_state.etc1_torque_active_timer - 1;
+  }
+  if (j1939_tsc1_override_state.etc1_torque_active_timer == 1) {
+    j1939_tsc1_override_state.torque_limit_mode_select = 0;
+    j1939_tsc1_override_state.etc1_torque_limit_active = 1;
+    j1939_tsc1_override_state.speed_control_target =
+         j1939_tsc1_override_state.speed_control_target | 4;
+    j1939_tsc1_override_state.etc1_torque_mode_timer = etc1_torque_mode_timeout_cal + 1;
+  }
+  if (((j1939_tsc1_override_state.etc1_torque_limit_timer != 0) &&
+      (j1939_tsc1_override_state.etc1_torque_limit_timer =
+            j1939_tsc1_override_state.etc1_torque_limit_timer - 1,
+      j1939_etc1_speed_mode_snapshot !=
+      j1939_tsc1_override_state.etc1_spn607_progressive_shift_disable)) &&
+     (j1939_tsc1_override_state.etc1_spn607_progressive_shift_disable == 1)) {
+    bVar1 = true;
+  }
+  if (j1939_tsc1_override_state.etc1_torque_limit_timer == 1) {
+    j1939_tsc1_override_state.etc1_spn607_progressive_shift_disable = 0;
+    j1939_tsc1_override_state.etc1_torque_limit_timer = 0;
+    unaff_r24 = 1;
+  }
+  pwStack00000008 = &j1939_tsc1_override_state.etc1_disable_control;
+  if (((j1939_tsc1_override_state.etc1_speed_override_timer != 0) &&
+      (j1939_tsc1_override_state.etc1_speed_override_timer =
+            j1939_tsc1_override_state.etc1_speed_override_timer - 1,
+      j1939_etc1_torque_limit_snapshot != j1939_tsc1_override_state.etc1_disable_control)) &&
+     (j1939_tsc1_override_state.etc1_disable_control == 1)) {
+    bVar1 = true;
+  }
+  if (j1939_tsc1_override_state.etc1_speed_override_timer == 1) {
+    j1939_tsc1_override_state.etc1_disable_control = 0;
+    j1939_tsc1_override_state.etc1_speed_override_timer = 0;
+    unaff_r24 = 1;
+  }
+  if (((j1939_tsc1_override_state.etc1_mode_transition_timer != 0) &&
+      (j1939_tsc1_override_state.etc1_mode_transition_timer =
+            j1939_tsc1_override_state.etc1_mode_transition_timer - 1,
+      governor_mode_state_prev != governor_mode_state)) && (governor_mode_state == 0)) {
+    bVar1 = true;
+  }
+  if (j1939_tsc1_override_state.etc1_mode_transition_timer == 1) {
+    j1939_tsc1_override_state.etc1_mode_transition_timer = 0;
+    unaff_r24 = 1;
+  }
+  if (j1939_tsc1_override_state.etc1_message_timeout != 0) {
+    j1939_tsc1_override_state.etc1_message_timeout =
+         j1939_tsc1_override_state.etc1_message_timeout - 1;
+  }
+  if (j1939_tsc1_override_state.etc1_message_timeout == 1) {
+    j1939_tsc1_override_state.etc1_message_timeout = 0;
+    j1939_tsc1_override_state.etc1_spn574_shift_in_process = 0;
+  }
+  if (governor_timeout_countdown != 0) {
+    governor_timeout_countdown = governor_timeout_countdown - 1;
+  }
+  if (governor_timeout_countdown == 1) {
+    governor_timeout_countdown = 0;
+    j1939_tsc1_override_state.etc1_address_filter = 0xff;
+  }
+  if (j1939_tsc1_override_state.etc1_override_timeout != 0) {
+    j1939_tsc1_override_state.etc1_override_timeout =
+         j1939_tsc1_override_state.etc1_override_timeout - 1;
+  }
+  if (j1939_tsc1_override_state.etc1_override_timeout == 1) {
+    j1939_tsc1_override_state.etc1_spn573_tc_lockup_disengage = 0;
+    j1939_tsc1_override_state.etc1_override_timeout = 0;
+  }
+  if ((drivetrain_type == DRIVETRAIN_AUTO_J1939_FULL) ||
+     (drivetrain_type == DRIVETRAIN_AUTO_J1939_ETC1)) {
+    if (j1939_tsc1_override_state.etc1_mode_timeout != 0) {
+      j1939_tsc1_override_state.etc1_mode_timeout = j1939_tsc1_override_state.etc1_mode_timeout - 1;
+    }
+    if ((j1939_tsc1_override_state.etc1_mode_timeout == 1) ||
+       (j1939_tsc1_override_state.etc1_message_timeout == 0)) {
+      j1939_tsc1_override_state.etc1_mode_timeout = 0;
+      j1939_tsc1_override_state.etc1_control_active = 0;
+    }
+    if ((governor_load_timer_b != 0) &&
+       (governor_load_timer_b = governor_load_timer_b - 1, governor_load_timer_b == 1)) {
+      etc1_load_timer_active_flag = 0;
+      unaff_r24 = 1;
+    }
+  }
+  if (drivetrain_type == DRIVETRAIN_AUTO_J1939_FULL) {
+    if (((cold_start_phase == CSP_AT_GOVERNOR_SETPOINT) ||
+        (cold_start_phase == CSP_FUEL_MODE_SWITCH)) || (cold_start_phase == CSP_SUSPENDED)) {
+      j1939_tsc1_override_state.governor_mode_transition_counter =
+           j1939_tsc1_override_state.governor_mode_transition_counter + 1;
+    }
+    else {
+      j1939_tsc1_override_state.governor_mode_transition_counter = 0;
+    }
+    if ((protection_enable_t_0040c050.mode_bits & 1) == 0) {
+      j1939_tsc1_override_state.etc1_handler_initialized = 1;
+    }
+    else if ((cold_start_phase == CSP_CRANKING) ||
+            (DAT_0005c3a8 <= j1939_tsc1_override_state.governor_mode_transition_counter)) {
+      j1939_tsc1_override_state.etc1_handler_initialized = 0;
+    }
+    else {
+      j1939_tsc1_override_state.etc1_handler_initialized = 1;
+    }
+    if (j1939_tsc1_override_state.etc1_speed_cmd_timeout != 0) {
+      j1939_tsc1_override_state.etc1_speed_cmd_timeout =
+           j1939_tsc1_override_state.etc1_speed_cmd_timeout - 1;
+    }
+    if (((j1939_tsc1_override_state.etc1_speed_cmd_timeout == 0) &&
+        (j1939_tsc1_override_state.etc1_handler_initialized == 0)) &&
+       ((system_status_flags_t_003fe974.condition_monitor & 0x2000) == 0)) {
+      output_shaft_speed_current = 0;
+      system_status_flags_t_003fe974.condition_monitor =
+           system_status_flags_t_003fe974.condition_monitor | 0x2000;
+    }
+  }
+  if (((governor_mode_snapshot == j1939_tsc1_override_state.governor_mode) &&
+      ((int)(short)etc1_active_state_snapshot ==
+       (int)(short)j1939_tsc1_override_state.etc1_active_state)) &&
+     (DAT_003faf38 == j1939_tsc1_override_state.etc1_spn1482_source_address)) {
+    if (j1939_tsc1_override_state.etc1_speed_error_timeout != 0) {
+      j1939_tsc1_override_state.etc1_speed_error_timeout =
+           j1939_tsc1_override_state.etc1_speed_error_timeout - 1;
+    }
+    if (j1939_tsc1_override_state.etc1_activation_confirm_timer != 0) {
+      j1939_tsc1_override_state.etc1_activation_confirm_timer =
+           j1939_tsc1_override_state.etc1_activation_confirm_timer - 1;
+    }
+    j1939_tsc1_override_state.etc1_speed_error_timeout_flag =
+         (word)(j1939_tsc1_override_state.etc1_speed_error_timeout < 2);
+    if (j1939_tsc1_override_state.governor_mode == 0) {
+      j1939_tsc1_override_state.torque_limit_mode_select = 0;
+      if (j1939_tsc1_override_state.etc1_speed_error_timeout < 2) {
+        cm848_j1939FormatDm1Message();
+      }
+    }
+    else {
+      if (j1939_tsc1_override_state.governor_mode == 1) {
+        if (j1939_tsc1_override_state.etc1_speed_error_timeout != 1) {
+          uVar3 = 1;
+LAB_00027800:
+          if (j1939_tsc1_override_state.etc1_activation_confirm_timer == 1) {
+            cm848_addCoolantCalEntry
+                      ((int)(short)j1939_tsc1_override_state.etc1_active_state,
+                       j1939_tsc1_override_state.etc1_spn1482_source_address,uVar3);
+            j1939_tsc1_override_state.speed_control_target =
+                 j1939_tsc1_override_state.speed_control_target | 1;
+            cm848_j1939FormatDm1Message();
+          }
+          goto LAB_00027848;
+        }
+      }
+      else if (j1939_tsc1_override_state.governor_mode == 2) {
+        j1939_tsc1_override_state.torque_limit_mode_select = 0;
+        if (j1939_tsc1_override_state.etc1_speed_error_timeout != 1) {
+          uVar3 = 2;
+          goto LAB_00027800;
+        }
+      }
+      else if ((j1939_tsc1_override_state.governor_mode != 3) ||
+              (j1939_tsc1_override_state.torque_limit_mode_select = 0,
+              1 < j1939_tsc1_override_state.etc1_speed_error_timeout)) goto LAB_00027848;
+      j1939_tsc1_override_state.torque_limit_mode_select = 0;
+      cm848_j1939FormatDm1Message();
+      unaff_r24 = 1;
+    }
+  }
+  else if (j1939_tsc1_override_state.governor_mode == 0) {
+    j1939_tsc1_override_state.etc1_activation_confirm_timer = 0;
+  }
+  else {
+    if (j1939_tsc1_override_state.governor_mode == 1) {
+      iVar4 = 6;
+    }
+    else {
+      if (j1939_tsc1_override_state.governor_mode != 2) {
+        if (j1939_tsc1_override_state.governor_mode == 3) {
+          j1939_tsc1_override_state.etc1_activation_confirm_timer = 0;
+          bVar1 = true;
+        }
+        goto LAB_00027848;
+      }
+      iVar4 = 10;
+    }
+    j1939_tsc1_override_state.etc1_activation_confirm_timer =
+         *(short *)((int)&(j1939_tsc1_override_state.etc1_active_config_ptr)->match_key + iVar4) + 1
+    ;
+    bVar1 = true;
+  }
+LAB_00027848:
+  if (unaff_r24 == 1) {
+    if (j1939_tsc1_override_state.etc1_active_state == 1) {
+      unaff_r18 = 1;
+    }
+    else {
+      bVar2 = true;
+    }
+  }
+  else if (bVar1) {
+    if (j1939_tsc1_override_state.etc1_active_state == 1) {
+      cold_start_state_flag_a = 1;
+    }
+    else {
+      cold_start_state_flag_b = 1;
+    }
+  }
+  governor_mode_snapshot = j1939_tsc1_override_state.governor_mode;
+  etc1_active_state_snapshot = j1939_tsc1_override_state.etc1_active_state;
+  DAT_003faf38 = j1939_tsc1_override_state.etc1_spn1482_source_address;
+  j1939_tsc1_override_snapshot = j1939_tsc1_override_state.torque_limit_mode_select;
+  j1939_etc1_speed_mode_snapshot = j1939_tsc1_override_state.etc1_spn607_progressive_shift_disable;
+  j1939_etc1_torque_limit_snapshot = *pwStack00000008;
+  if ((governor_mode_state_prev == governor_mode_state) &&
+     (DAT_003faf3d == governor_mode_transition_state)) {
+    if (j1939_tsc1_override_state.etc1_multiframe_timeout != 0) {
+      j1939_tsc1_override_state.etc1_multiframe_timeout =
+           j1939_tsc1_override_state.etc1_multiframe_timeout - 1;
+    }
+    if (j1939_tsc1_override_state.etc1_error_fault_timer != 0) {
+      j1939_tsc1_override_state.etc1_error_fault_timer =
+           j1939_tsc1_override_state.etc1_error_fault_timer - 1;
+    }
+    if (governor_mode_state == 2) {
+      if (j1939_tsc1_override_state.etc1_multiframe_timeout == 1) {
+LAB_000279e8:
+        cm848_resetGovernorState();
+        unaff_r18 = 1;
+      }
+      else if (j1939_tsc1_override_state.etc1_error_fault_timer == 1) {
+        cm848_addCoolantCalEntryAlt(governor_mode_transition_state & 0xff,2);
+        j1939_tsc1_override_state.speed_control_target =
+             j1939_tsc1_override_state.speed_control_target | 2;
+        cm848_resetGovernorState();
+      }
+    }
+    else if ((governor_mode_state == 3) && (j1939_tsc1_override_state.etc1_multiframe_timeout == 1))
+    goto LAB_000279e8;
+  }
+  else {
+    if (governor_mode_state == 2) {
+      j1939_tsc1_override_state.etc1_error_fault_timer =
+           *(short *)(j1939_tsc1_override_state.etc1_secondary_config_ptr + 0x10) + 1;
+    }
+    else {
+      j1939_tsc1_override_state.etc1_error_fault_timer = 0;
+      if (governor_mode_state != 3) goto LAB_000279f0;
+    }
+    cold_start_state_flag_a = 1;
+  }
+LAB_000279f0:
+  governor_mode_state_prev = governor_mode_state;
+  DAT_003faf3d = (byte)governor_mode_transition_state;
+  if (bVar2) {
+    if ((int)(uint)etc1_state_timeout_counter < (int)(DAT_0005c39c - 1)) {
+      etc1_state_timeout_counter = etc1_state_timeout_counter + 1;
+    }
+    else {
+      system_status_flags_t_003fe974.lamp_status =
+           system_status_flags_t_003fe974.lamp_status | 0x4000;
+      etc1_state_timeout_counter = 0;
+    }
+  }
+  else {
+    if (cold_start_state_flag_b != 1) goto LAB_00027ae8;
+    if ((system_status_flags_t_003fe974.lamp_status & 0x4000) != 0) {
+      if ((j1939_tsc1_status_shadow & 0x4000) != 0) {
+        system_status_flags_t_003fe974.lamp_status =
+             system_status_flags_t_003fe974.lamp_status & 0xbfff;
+        j1939_tsc1_status_shadow = j1939_tsc1_status_shadow & 0xbfff;
+        cold_start_state_flag_b = 0;
+        etc1_state_timeout_counter = 0;
+      }
+      goto LAB_00027ae8;
+    }
+  }
+  cold_start_state_flag_b = 0;
+LAB_00027ae8:
+  if (unaff_r18 == 1) {
+    if (etc1_state_timer_b < DAT_0005c39c) {
+      etc1_state_timer_b = etc1_state_timer_b + 1;
+    }
+    else {
+      system_status_flags_t_003fe974.emission_faults =
+           system_status_flags_t_003fe974.emission_faults | 1;
+      etc1_state_timer_b = 0;
+    }
+  }
+  else {
+    if (cold_start_state_flag_a != 1) {
+      return;
+    }
+    if ((system_status_flags_t_003fe974.emission_faults & 1) != 0) {
+      if ((emission_faults_shadow_flags & 1) == 0) {
+        return;
+      }
+      system_status_flags_t_003fe974.emission_faults =
+           system_status_flags_t_003fe974.emission_faults & 0xfffe;
+      emission_faults_shadow_flags = emission_faults_shadow_flags & 0xfffe;
+    }
+  }
+  cold_start_state_flag_a = 0;
+  return;
+}
+
+
+
+//
+// Function: cm848_governorDroopCalculation @ 0x00027bc4
+//
+

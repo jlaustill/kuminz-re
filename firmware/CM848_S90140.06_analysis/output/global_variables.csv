@@ -1824,7 +1824,7 @@ address,name,type,comment
 0x003fb9ae,PTR_DAT_003fb9ae,pointer,
 0x003fb9c2,PTR_DAT_003fb9c2,pointer,
 0x003fb9e2,PTR_DAT_003fb9e2,pointer,
-0x003fb9ea,PTR_DAT_003fb9ea,pointer,
+0x003fb9ea,boost_pressure_timing_ema_coeff_ptr,pointer,EMA coeff ptr for boost pressure timing filter
 0x003fb9f6,PTR_DAT_003fb9f6,pointer,
 0x003fbcbe,PTR_DAT_003fbcbe,pointer,
 0x003fbcde,PTR_PTR_003fbcde,pointer,
@@ -1837,13 +1837,13 @@ address,name,type,comment
 0x003fbd46,fault_channel_state_ptr,dword,iterating ptr over per-channel fault RAM state (was PTR_DAT)
 0x003fbd4a,PTR_engine_rpm_trigger_ready_flag_003fbd4a,pointer,
 0x003fbd7c,PTR_DAT_003fbd7c,pointer,
-0x003fbd80,PTR_DAT_003fbd80,pointer,
-0x003fbd8c,PTR_DAT_003fbd8c,pointer,
+0x003fbd80,j1939_tp_rx_session_status_ptr,pointer,J1939 TP RX session status byte pointer
+0x003fbd8c,j1939_tp_rx_session_tx_buf_ptr,pointer,J1939 TP RX session response TX buffer pointer
 0x003fbdac,PTR_DAT_003fbdac,pointer,
 0x003fbdcf,PTR_DAT_003fbdcf,pointer,
 0x003fbdd3,j1939_multiframe_tx_status_ptr,dword,ptr to TX session state byte (was PTR_DAT)
 0x003fbddf,j1939_multiframe_tx_buf_ptr,dword,ptr to CAN TX assembly buffer (was PTR_DAT)
-0x003fbdfd,PTR_DAT_003fbdfd,pointer,
+0x003fbdfd,j1939_multiframe_rx_data_buf_ptr,pointer,RX data assembly buffer pointer
 0x003fc094,BYTE_003fc094,byte,
 0x003fc0d8,BYTE_003fc0d8,byte,
 0x003fc380,BYTE_003fc380,byte,
@@ -6564,3 +6564,79 @@ address,name,type,comment
 0x0040ba6a,hpcr_oil_pressure_fault_trigger_count,word,HPCR oil-pressure fault trigger event count
 0x0040ba6c,hpcr_oil_pressure_debounce_saturate_count,word,HPCR oil-pressure debounce-saturation event count
 0x0040c27c,diag_dm1_buffer_phase2_start_ptr,pointer,DM1 buffer phase-2 fill start pointer
+0x003fa97a,j1939_dm1_request_mode_byte,byte,DM1 request mode byte (broadcast vs dest-specific)
+0x003faa66,tsc1_override_mode_bits_prev,byte,cached TSC1 override mode bits (SPN 695)
+0x003fabca,j1939_dm1_fault_data_channel_byte,byte,DM1 fault data region channel/control byte
+0x003fabcb,j1939_dm1_broadcast_pending_flag,byte,DM1 broadcast pending one-shot flag
+0x003fac3c,j1939_dm4_tx_record_size_byte,byte,DM4 (PGN 65229) TX buffer per-record byte count
+0x003fe7f8,fault_freeze_frame_data_buf,byte,8x48B freeze-frame buffer base (parallel to fault_entry_t)
+0x003fadfe,j1939_et1_coolant_temp_byte,byte,ET1 (PGN 65262) coolant temp byte (SPN 110)
+0x003fadff,j1939_et1_fuel_temp_byte,byte,ET1 fuel temp byte (SPN 174)
+0x003fae09,j1939_pgn61440_engine_load_byte,byte,EEC2 engine percent load byte
+0x003fae80,j1939_pgn65242_field_count_byte,byte,SOFT (PGN 65242) software-ID field count (SPN 965)
+0x003faf1c,j1939_pgn65279_safety_status_byte,byte,PGN 65279 proprietary safety status byte
+0x003faf38,j1939_tsc1_spn1482_source_addr_prev,byte,snapshot of TSC1 SPN1482 source address
+0x003faf3d,governor_mode_transition_state_prev,byte,snapshot of governor_mode_transition_state
+0x003fb0da,protection_rpm_limit_table_overload_state,word,interp state for RPM limit table (overload path)
+0x003fb0dc,protection_rpm_limit_table_preentry_state,word,interp state for RPM limit table (pre-entry)
+0x003fb0e4,protection_rpm_limit_table_derate1_active_state,word,interp state for RPM limit table (derate1 active)
+0x003fb0ec,protection_rpm_limit_table_ramp_state,word,interp state for RPM limit table (ramp transition)
+0x003fb0f2,protection_rpm_limit_table_derate2_state,word,interp state for RPM limit table (derate2)
+0x003fb12c,protection_fuel_demand_threshold_derate4_secondary_interp_state,word,fuel-demand threshold interp (derate4 secondary)
+0x003fb12e,protection_fuel_demand_threshold_derate2_interp_state,word,fuel-demand threshold interp (derate2)
+0x003fb130,protection_fuel_demand_threshold_derate3_interp_state,word,fuel-demand threshold interp (derate3)
+0x003fb132,protection_fuel_demand_threshold_derate4_interp_state,word,fuel-demand threshold interp (derate4)
+0x003fb134,protection_fuel_demand_exit_derate3_interp_state,word,fuel-demand exit threshold interp (derate3)
+0x003fb136,protection_fuel_demand_exit_derate4_interp_state,word,fuel-demand exit threshold interp (derate4)
+0x003fb13a,protection_fuel_demand_limit_derate2_interp_state,word,fuel-demand limit interp (derate2)
+0x003fb13c,protection_fuel_demand_limit_derate3_interp_state,word,fuel-demand limit interp (derate3)
+0x003fb13e,protection_fuel_demand_limit_derate4_interp_state,word,fuel-demand limit interp (derate4)
+0x003fb434,qspi_timer_slot_spcr0_table,word,QSPI periodic timer slot config table base
+0x003fb445,qspi_timer_registered_slot_count,byte,count of registered QSPI timer slots (max 4)
+0x003fb446,j1939_tx_queue_write_head_array,byte,per-channel J1939 TX ring write-head array base
+0x003fb4cd,qspi_transfer_active_flag,byte,QSPI transfer in-progress guard
+0x003fb550,fuel_correction_enter_condition_flag,byte,TC-lockup fuel correction enter condition
+0x003fb551,fuel_correction_exit_condition_flag,byte,TC-lockup fuel correction exit condition
+0x003fb552,fuel_demand_idle_validated_flag,byte,fuel demand idle-validated gate
+0x003fb553,fuel_demand_idle_active_flag,byte,fuel demand active (less-strict) gate
+0x003fb6c5,engine_sync_rpm_phase_acquired_flag,byte,one-shot cam-speed-EMA-converged sync trigger
+0x003ff065,fuel_correction_limit_enable_a,byte,ROM enable mask for fuel-correction-limit paths (group a)
+0x003ff069,fuel_correction_limit_enable_b,byte,ROM enable mask for fuel-correction-limit paths (group b)
+0x003ff06d,fuel_correction_limit_enable_c,byte,ROM enable mask for fuel-correction-limit paths (group c)
+0x003ff071,fuel_correction_limit_enable_d,byte,ROM enable mask for fuel-correction-limit paths (group d)
+0x003fb9ce,fuel_correction_temp_band_dims_b,word,dual_axis dims base (IAT->coolant temp band)
+0x003fb9d6,boost_fuel_timing_demand_filter_output,word,boost fuel timing demand filter output
+0x003fb9d8,boost_pressure_timing_ema_filtered,word,EMA-filtered boost pressure driving timing lookup
+0x003fb9da,governor_adjustment_input_table_row_count,word,dims base for governor adjustment 1D table
+0x003fb9f2,boost_fuel_rpm_blend_table_row_count,word,dims base for RPM boost-fuel blend scale table
+0x003fbcb0,diag_dm1_protection_repeat_countdown,word,DM1 protection warning repeat-interval countdown
+0x003fbcb6,diag_dm1_bytes_per_fault_slot,word,DM1 ring bytes-per-fault-slot (0x8000/count)
+0x003fbcb8,diag_dm1_protection_warning_latch,word,DM1 protection warning event-count latch
+0x003fbd36,governor_faultDerate_prev_rpm,word,previous-cycle RPM snapshot (fault derate)
+0x003fbd38,governor_faultDerate_latch,word,derate-active latch persisting across main loop
+0x003fbd3c,governor_faultDerate_engine_start_flag,word,engine-start edge flag for derate timestamp
+0x003fdfbc,governor_faultDerate_total_event_count,word,total fault-derate event count (capped 0xff)
+0x003fbd6c,etc1_governor_mode_transition_snapshot,word,snapshot of ETC1 governor_mode for transition detect
+0x003fbd6e,governor_mode_state_transition_snapshot,word,snapshot of governor_mode_state for transition detect
+0x003fbd72,etc1_source_address_transition_snapshot,byte,snapshot of ETC1 SPN1482 SA for change detect
+0x003fbd73,governor_transition_state_snapshot,byte,snapshot of governor_mode_transition_state
+0x003feb60,etc1_governor_calib_session_start_time,dword,ETC1 calib snapshot session start time
+0x003feb7a,governor_mode_calib_session_start_time,dword,governor-mode calib snapshot session start time
+0x003feb82,etc1_governor_calib_session_active,word,ETC1 calib snapshot session active gate
+0x003feb84,governor_mode_calib_session_active,word,governor-mode calib snapshot session active gate
+0x003fbd74,j1939_tp_rx_session_active,byte,J1939 TP RX session active flag (instance 0)
+0x003fbdc6,j1939_multiframe_tx_destination_address,byte,peer destination SA for bulk TX session
+0x003fbdc7,j1939_multiframe_tx_dest_addr_word,word,destination address as MSB word for frame matching
+0x003fbdca,j1939_multiframe_tx_cts_start_packet,byte,CTS window start packet sequence number
+0x003fbdd9,j1939_multiframe_tx_can_header,dword,CAN header dword for bulk TX (RTS/DT)
+0x003fbddd,j1939_multiframe_tx_frame_len,word,DT frame byte count (1-8) for bulk TX
+0x003fcbec,diag_suppress_saved_flag,byte,saved snapshot of diagnostic_suppress_flag
+0x003fcbfa,protection_rpm_correction_interp_state,word,interp state for protection RPM correction table
+0x003fcc04,governor_speed_ramp_target_prev,word,previous-cycle governor speed ramp target
+0x003fcc10,governor_speed_ramp_target_step_delta,dword,ramp target delta vs prev (transient detect)
+0x003fcc1e,governor_speed_ramp_ema_ring_write_index,word,write index for governor speed ramp EMA ring
+0x003fccf4,protection_speedTracking_ramp_at_max_flag,word,speed-tracking ramp reached max flag
+0x003ff6fc,egr_smoke_limit_default_speed_reference,word,ROM default governor speed ref when blend disabled
+0x003ff6fe,egr_pressure_ratio_upper_threshold,word,ROM upper bound for EGR pressure ratio window
+0x003ff700,egr_pressure_ratio_lower_threshold,word,ROM lower bound for EGR pressure ratio window
+0x003ff706,boost_blend_tpu_period,word,ROM TPUB CH1 timer period for boost blend

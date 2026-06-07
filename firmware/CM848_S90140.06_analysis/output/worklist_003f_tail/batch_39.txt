@@ -1,0 +1,84 @@
+=== VARIABLES TO NAME ===
+0x003fba2a  (3 references)
+0x003fba2c  (3 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fba2a, DAT_003fba2c
+void fuel_demandMin_maxSelect_rateLimit(void)
+
+{
+  uint uVar1;
+  uint uVar2;
+  
+  uVar1 = (uint)fuel_coldStart_compensation_demand_floor;
+  if (uVar1 < fuel_blend_weight_threshold_active) {
+    uVar1 = (uint)fuel_blend_weight_threshold_active;
+  }
+  uVar2 = (uint)DAT_003fba26;
+  if (uVar2 < uVar1) {
+    uVar2 = uVar1;
+  }
+  uVar1 = (uint)fuel_coldStart_phase26_demand_floor;
+  if (uVar1 < uVar2) {
+    uVar1 = uVar2;
+  }
+  uVar2 = (uint)cold_start_phase3_fuel_demand_floor;
+  if (uVar2 < uVar1) {
+    uVar2 = uVar1;
+  }
+  uVar1 = (uint)cold_start_boost_override_fuel_demand;
+  if (uVar1 < uVar2) {
+    uVar1 = uVar2;
+  }
+  uVar2 = (uint)fuel_demand_sensor_validation_floor;
+  if (uVar2 < uVar1) {
+    uVar2 = uVar1;
+  }
+  uVar1 = (uint)fuel_timing_cylinder_check_demand_floor;
+  if (uVar1 < uVar2) {
+    uVar1 = uVar2;
+  }
+  uVar2 = (uint)DAT_0040a72e;
+  if (uVar2 < uVar1) {
+    uVar2 = uVar1;
+  }
+  DAT_003fba28 = (short)uVar2;
+  uVar1 = (uint)DAT_003fba2c;
+  if (uVar1 + DAT_0040654a < uVar2) {
+    uVar2 = uVar1 + DAT_0040654a;
+  }
+  else if ((int)uVar2 < (int)(uVar1 - DAT_00406548)) {
+    uVar2 = uVar1 - DAT_00406548;
+  }
+  DAT_003fba2a = (word)uVar2;
+  fuel_demand_min_threshold = DAT_003fba2a;
+  if (DAT_003fd7e8 != 0) {
+    fuel_demand_min_threshold = DAT_0040654c;
+  }
+  DAT_003fba2c = DAT_003fba2a;
+  return;
+}
+
+
+
+//
+// Function: cm848_initialization_step_6 @ 0x00504938
+//
+
+// Variables in this function: DAT_003fba2c
+void cm848_initialization_step_6(void)
+
+{
+  DAT_003fba2c = 0;
+  return;
+}
+
+
+
+//
+// Function: cm848_mainLoop_step @ 0x00504948
+//
+

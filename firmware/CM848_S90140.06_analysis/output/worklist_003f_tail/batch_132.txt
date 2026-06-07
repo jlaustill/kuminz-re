@@ -1,0 +1,48 @@
+=== VARIABLES TO NAME ===
+0x003ff06b  (4 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003ff06b
+void cm848_communication_periodic(void)
+
+{
+  ushort uVar1;
+  ushort uVar2;
+  
+  uVar2 = sensor_channel20_fault_status;
+  if ((((system_status_flags_t_003fe974.reserved_12 & 0x40) == 0) || ((DAT_003ff06b & 1) == 0)) &&
+     (((system_status_flags_t_003fe974.reserved_12 & 0x80) == 0 || ((DAT_003ff06b >> 1 & 1) == 0))))
+  {
+    uVar2 = 0;
+  }
+  if (((((injection_fault_shadow_flags & 0x100) == 0) ||
+       (((&fault_status_array)[DAT_00059b2a * 3] & 0x10) == 0)) || ((DAT_003ff06b >> 5 & 1) == 0))
+     && ((((j1939_receive_status_flags & 8) == 0 ||
+          (((&fault_status_array)[DAT_00059b00 * 3] & 0x10) == 0)) || ((DAT_003ff06b >> 6 & 1) == 0)
+         ))) {
+    uVar1 = 0;
+  }
+  else {
+    uVar1 = 0x20;
+  }
+  DAT_0040a60c = uVar2 | uVar1;
+  if ((uVar2 & 0x22) == 0 && uVar1 == 0) {
+    fuel_demand_timing_input = sensor_channel20_raw;
+    fuel_demand_state_b = 0;
+  }
+  else {
+    fuel_demand_timing_input = sensor_channel20_filtered;
+    fuel_demand_state_b = 2;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_initialization_step_10 @ 0x00505b3c
+//
+

@@ -1,0 +1,135 @@
+=== VARIABLES TO NAME ===
+0x003fae09  (4 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fae09
+void cm848_j1939BuildVehicleOperatingStatus(void)
+
+{
+  byte bVar1;
+  
+  if ((j1939_dm_control_flags & 8) == 0) {
+    j1939_vehicle_op_status_byte = 0xff;
+    goto LAB_00026340;
+  }
+  if (governor_load_percent_snapshot == 0) {
+    j1939_vehicle_op_status_byte = 0xc0;
+  }
+  else {
+    j1939_vehicle_op_status_byte = 0xd0;
+  }
+  if (((j1939_governor_fuel_input == 0) && (governor_request_processing_state != 4)) &&
+     (governor_request_processing_state != 1)) goto LAB_00026340;
+  if (governor_request_processing_state == 1) {
+LAB_000262e8:
+    if (j1939_build_state_machine == 1) {
+      bVar1 = 6;
+    }
+    else {
+      if (j1939_build_state_machine != 3) {
+        if (j1939_build_state_machine == 2) {
+          bVar1 = 7;
+          goto LAB_00026320;
+        }
+        bVar1 = 0xe;
+        goto LAB_0002632c;
+      }
+      bVar1 = 5;
+    }
+    j1939_vehicle_op_status_byte = j1939_vehicle_op_status_byte | bVar1;
+  }
+  else {
+    if (governor_request_processing_state == 2) {
+      bVar1 = 2;
+LAB_00026320:
+      j1939_vehicle_op_status_byte = j1939_vehicle_op_status_byte | bVar1;
+      goto LAB_00026340;
+    }
+    if (governor_request_processing_state != 3) {
+      if (governor_request_processing_state != 4) goto LAB_00026340;
+      goto LAB_000262e8;
+    }
+    bVar1 = 1;
+LAB_0002632c:
+    j1939_vehicle_op_status_byte = j1939_vehicle_op_status_byte | bVar1;
+  }
+LAB_00026340:
+  if ((j1939_dm_feature_mode == 0) || ((j1939_dm_control_flags & 8) == 0)) {
+    DAT_003fae09 = -1;
+  }
+  else {
+    cm848_calculateSpeedControlError();
+    DAT_003fae09 = '}' - (char)(j1939_engine_torque_encoded >> 8);
+  }
+  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn61440_tx_header);
+  return;
+}
+
+
+
+//
+// Function: cm848_j1939SendPgn65262_FEEE_EngineTemp1 @ 0x0002629c
+//
+
+// Variables in this function: DAT_003fae09
+void cm848_j1939SendPgn65262_FEEE_EngineTemp1(byte param_1,int param_2)
+
+{
+  byte bVar1;
+  byte in_cr0;
+  
+  if ((!(bool)(in_cr0 >> 1 & 1)) && (param_2 != 1)) goto LAB_00026340;
+  if (governor_request_processing_state == 1) {
+LAB_000262e8:
+    if (j1939_build_state_machine == 1) {
+      bVar1 = 6;
+    }
+    else {
+      if (j1939_build_state_machine != 3) {
+        if (j1939_build_state_machine == 2) {
+          bVar1 = 7;
+          goto LAB_00026320;
+        }
+        bVar1 = 0xe;
+        goto LAB_0002632c;
+      }
+      bVar1 = 5;
+    }
+    j1939_vehicle_op_status_byte = param_1 | bVar1;
+  }
+  else {
+    if (governor_request_processing_state == 2) {
+      bVar1 = 2;
+LAB_00026320:
+      j1939_vehicle_op_status_byte = param_1 | bVar1;
+      goto LAB_00026340;
+    }
+    if (governor_request_processing_state != 3) {
+      if (governor_request_processing_state != 4) goto LAB_00026340;
+      goto LAB_000262e8;
+    }
+    bVar1 = 1;
+LAB_0002632c:
+    j1939_vehicle_op_status_byte = param_1 | bVar1;
+  }
+LAB_00026340:
+  if ((j1939_dm_feature_mode == 0) || ((j1939_dm_control_flags & 8) == 0)) {
+    DAT_003fae09 = -1;
+  }
+  else {
+    cm848_calculateSpeedControlError();
+    DAT_003fae09 = '}' - (char)(j1939_engine_torque_encoded >> 8);
+  }
+  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn61440_tx_header);
+  return;
+}
+
+
+
+//
+// Function: cm848_initJ1939SpeedControlMessage @ 0x000263a4
+//
+

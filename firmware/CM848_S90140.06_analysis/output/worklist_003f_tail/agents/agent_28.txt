@@ -1,0 +1,29 @@
+# 003f tail agent 28 — name 14 unnamed DAT_003fxxxx (3-4 ref; LOW context)
+#   worklist_003f_tail/batch_76.txt
+#   worklist_003f_tail/batch_82.txt
+#   worklist_003f_tail/batch_86.txt
+#   worklist_003f_tail/batch_90.txt
+#   worklist_003f_tail/batch_95.txt
+#   worklist_003f_tail/batch_119.txt
+#   worklist_003f_tail/batch_122.txt
+#   worklist_003f_tail/batch_123.txt
+#   worklist_003f_tail/batch_125.txt
+#   worklist_003f_tail/batch_126.txt
+#   worklist_003f_tail/batch_127.txt
+#   worklist_003f_tail/batch_128.txt
+#   worklist_003f_tail/batch_130.txt
+# address,ref_count
+0x003fcea8,3
+0x003fcf16,3
+0x003fcf5e,3
+0x003fcfb2,3
+0x003fcfdb,3
+0x003fd293,3
+0x003fd5d4,3
+0x003feaa4,3
+0x003fd93e,3
+0x003fdb88,3
+0x003fdb92,3
+0x003feccc,3
+0x003fee04,3
+0x003fefca,3

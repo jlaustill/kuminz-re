@@ -1,0 +1,215 @@
+=== VARIABLES TO NAME ===
+0x003fad91  (3 references)
+0x003fad93  (3 references)
+0x003fad94  (3 references)
+
+Total: 3 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fad91, DAT_003fad93, DAT_003fad94
+void j1939GetEngineStateCode(void)
+
+{
+  undefined1 uStack_8;
+  undefined1 uStack_7;
+  
+  if (j1939_tsc1_override_state.governor_mode != 0) {
+    if (((governor_mode_code != 2) && (governor_mode_code != 1)) && (governor_mode_code != 0x14)) {
+      cm848_j1939BuildPgn61441_F001_Etc2(0xfe);
+      return;
+    }
+    if (_j1939_governor_source_index != 1) {
+      if (_j1939_governor_source_index == 2) {
+        cm848_j1939BuildPgn61441_F001_Etc2(0xf7);
+        return;
+      }
+      if (_j1939_governor_source_index == 3) {
+        cm848_j1939BuildPgn61441_F001_Etc2(0xf5);
+        return;
+      }
+      cm848_j1939SendEtc1NotAvailable();
+      return;
+    }
+    j1939_engine_status_byte = 0xf6;
+    goto code_r0x00025a28;
+  }
+  if ((int)(short)governor_fuel_mode_command == (int)(short)governor_mode_code) {
+    cm848_j1939BuildPgn61441_F001_Etc2(0xf8);
+    return;
+  }
+  switch((int)(short)governor_mode_code) {
+  case 0:
+    break;
+  case 1:
+    goto LAB_000259f4;
+  case 2:
+    goto LAB_000259f4;
+  case 3:
+    goto LAB_000259f4;
+  case 4:
+    cm848_j1939BuildPgn61441_F001_Etc2(0xf3);
+    return;
+  case 5:
+    break;
+  case 6:
+    break;
+  case 7:
+    goto LAB_000259f4;
+  case 8:
+    goto LAB_000259f4;
+  case 9:
+    cm848_j1939BuildPgn61441_F001_Etc2(0xf2);
+    return;
+  case 10:
+    cm848_j1939BuildPgn61441_F001_Etc2(0xf4);
+    return;
+  case 0xb:
+    cm848_j1939BuildPgn61441_F001_Etc2(0xf0);
+    return;
+  case 0xc:
+    cm848_j1939BuildPgn61441_F001_Etc2(0xf9);
+    return;
+  case 0xd:
+    break;
+  case 0xe:
+    break;
+  case 0xf:
+    break;
+  case 0x10:
+    break;
+  case 0x11:
+    break;
+  case 0x12:
+    break;
+  case 0x13:
+    break;
+  case 0x14:
+    break;
+  case 0x15:
+    break;
+  case 0x16:
+    break;
+  case 0x17:
+    break;
+  case 0x18:
+    cm848_j1939BuildPgn61441_F001_Etc2(0xfa);
+    return;
+  case 0x19:
+    break;
+  case 0x1a:
+    break;
+  case 0x1b:
+    break;
+  case 0x1c:
+    break;
+  case 0x1d:
+    break;
+  case 0x1e:
+    goto LAB_000259f4;
+  case 0x1f:
+    break;
+  case 0x20:
+    break;
+  case 0x21:
+    break;
+  case 0x22:
+    break;
+  case 0x23:
+    break;
+  case 0x24:
+    break;
+  case 0x25:
+LAB_000259f4:
+    cm848_j1939BuildPgn61441_F001_Etc2(0xf1);
+    return;
+  }
+  j1939_engine_status_byte = 0xfe;
+code_r0x00025a28:
+  cm848_selectTorqueLimitStateMachine();
+  DAT_003fad91 = (char)(j1939_dm1_spn_b_word >> 8) + '}';
+  cm848_calculateLoadRateOfChange();
+  j1939_dm1_spn_fmi_byte = (char)(j1939_dm1_spn_a_word >> 8) + 0x7d;
+  if (j1939_broadcast_enable_flag._0_2_ == 1) {
+    j1939_dm1_spn_fmi_byte = 0xfe;
+  }
+  uStack_7 = (undefined1)engine_rpm_state_t_0040b7ac.current_rpm;
+  DAT_003fad93 = uStack_7;
+  uStack_8 = (undefined1)(engine_rpm_state_t_0040b7ac.current_rpm >> 8);
+  DAT_003fad94 = uStack_8;
+  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn61444_tx_header);
+  return;
+}
+
+
+
+//
+// Function: cm848_j1939BuildPgn61441_F001_Etc2 @ 0x000258f4
+//
+
+// Variables in this function: DAT_003fad91, DAT_003fad93, DAT_003fad94
+void cm848_j1939BuildPgn61441_F001_Etc2(byte param_1)
+
+{
+  word wVar1;
+  undefined1 uStack00000008;
+  undefined1 uStack00000009;
+  
+  j1939_engine_status_byte = param_1;
+  cm848_selectTorqueLimitStateMachine();
+  DAT_003fad91 = (char)(j1939_dm1_spn_b_word >> 8) + '}';
+  cm848_calculateLoadRateOfChange();
+  j1939_dm1_spn_fmi_byte = (char)(j1939_dm1_spn_a_word >> 8) + 0x7d;
+  if (j1939_broadcast_enable_flag._0_2_ == 1) {
+    j1939_dm1_spn_fmi_byte = 0xfe;
+  }
+  _uStack00000008 = engine_rpm_state_t_0040b7ac.current_rpm;
+  wVar1 = _uStack00000008;
+  uStack00000009 = (undefined1)engine_rpm_state_t_0040b7ac.current_rpm;
+  DAT_003fad93 = uStack00000009;
+  uStack00000008 = (undefined1)(engine_rpm_state_t_0040b7ac.current_rpm >> 8);
+  DAT_003fad94 = uStack00000008;
+  _uStack00000008 = wVar1;
+  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn61444_tx_header);
+  return;
+}
+
+
+
+//
+// Function: cm848_j1939SendEtc1NotAvailable @ 0x00025908
+//
+
+// Variables in this function: DAT_003fad91, DAT_003fad93, DAT_003fad94
+void cm848_j1939BuildPgn61441_F001_Etc2(byte param_1)
+
+{
+  word wVar1;
+  undefined1 uStack00000008;
+  undefined1 uStack00000009;
+  
+  j1939_engine_status_byte = param_1;
+  cm848_selectTorqueLimitStateMachine();
+  DAT_003fad91 = (char)(j1939_dm1_spn_b_word >> 8) + '}';
+  cm848_calculateLoadRateOfChange();
+  j1939_dm1_spn_fmi_byte = (char)(j1939_dm1_spn_a_word >> 8) + 0x7d;
+  if (j1939_broadcast_enable_flag._0_2_ == 1) {
+    j1939_dm1_spn_fmi_byte = 0xfe;
+  }
+  _uStack00000008 = engine_rpm_state_t_0040b7ac.current_rpm;
+  wVar1 = _uStack00000008;
+  uStack00000009 = (undefined1)engine_rpm_state_t_0040b7ac.current_rpm;
+  DAT_003fad93 = uStack00000009;
+  uStack00000008 = (undefined1)(engine_rpm_state_t_0040b7ac.current_rpm >> 8);
+  DAT_003fad94 = uStack00000008;
+  _uStack00000008 = wVar1;
+  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn61444_tx_header);
+  return;
+}
+
+
+
+//
+// Function: cm848_transmitEngineStatusMessage @ 0x00025a9c
+//
+

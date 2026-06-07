@@ -1,0 +1,23 @@
+=== VARIABLES TO NAME ===
+0x003fcf5c  (4 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fcf5c
+void cm848_countdown_timer_update(void)
+
+{
+  if ((DAT_003fcf5c != '\0') && (DAT_003fcf5c = DAT_003fcf5c + -1, DAT_003fcf5c == '\0')) {
+    DAT_003fcf5d = 1;
+  }
+  return;
+}
+
+
+
+//
+// Function: governor_speedLimitFloor_decrement @ 0x00520684
+//
+

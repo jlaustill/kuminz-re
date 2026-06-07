@@ -1,0 +1,27 @@
+=== VARIABLES TO NAME ===
+0x003fcf5e  (3 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fcf5e
+void governor_speedLimitFloor_decrement(void)
+
+{
+  if (DAT_003fcf5e == 0) {
+    governor_speed_limit_floor_a = 0;
+    governor_speed_limit_floor_b = 0;
+  }
+  else {
+    DAT_003fcf5e = DAT_003fcf5e + -1;
+  }
+  return;
+}
+
+
+
+//
+// Function: protectionVoltageTimeoutControl @ 0x00521474
+//
+

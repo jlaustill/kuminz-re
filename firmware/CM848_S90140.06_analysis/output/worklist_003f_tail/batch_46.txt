@@ -1,0 +1,38 @@
+=== VARIABLES TO NAME ===
+0x003fbd1a  (3 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fbd1a
+void cm848_mainLoop_step_5(void)
+
+{
+  if ((governor_speed_at_target_flag == 1) && (DAT_003fbd1a == 0)) {
+    DAT_003fdfb4 = DAT_003fdfb4 + 1;
+  }
+  DAT_003fbd1a = governor_speed_at_target_flag;
+  return;
+}
+
+
+
+//
+// Function: cm848_initialization_step_16 @ 0x00507684
+//
+
+// Variables in this function: DAT_003fbd1a
+void cm848_initialization_step_16(void)
+
+{
+  DAT_003fbd1a = 1;
+  return;
+}
+
+
+
+//
+// Function: fuel_demandBlend_weight_calc @ 0x00507694
+//
+

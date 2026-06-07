@@ -1,0 +1,226 @@
+=== VARIABLES TO NAME ===
+0x003fae52  (3 references)
+0x003fae53  (3 references)
+0x003fae54  (3 references)
+0x003fae55  (3 references)
+0x003fae56  (3 references)
+0x003fae57  (3 references)
+0x003fae58  (3 references)
+0x003fae59  (3 references)
+0x003fae5a  (3 references)
+0x003fae5b  (3 references)
+0x003fae5c  (3 references)
+0x003fae5d  (3 references)
+0x003fae5e  (3 references)
+0x003fae5f  (3 references)
+0x003fae60  (3 references)
+
+Total: 15 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fae52, DAT_003fae53, DAT_003fae54, DAT_003fae55, DAT_003fae56, DAT_003fae57, DAT_003fae58, DAT_003fae59, DAT_003fae5a, DAT_003fae5b, DAT_003fae5c, DAT_003fae5d, DAT_003fae5e, DAT_003fae5f, DAT_003fae60
+void cm848_j1939BuildProtocolModeStatus(void)
+
+{
+  undefined1 uStack_8;
+  undefined1 uStack_7;
+  
+  if ((DAT_003fae71 & 0xf0) == 0) {
+    if (1 < j1939_dm_feature_mode) {
+      cm848_j1939BuildPgn65213_FEBD_BrakeJobber(j1939_dm_feature_mode,3);
+      return;
+    }
+    if (j1939_dm_feature_mode == 1) {
+      j1939_pgn_dest_address = 0x14;
+    }
+    else {
+      j1939_pgn_dest_address = 0xff;
+    }
+    if (cal_fuel_operation_mode_1_en == 0) {
+      j1939_pgn65249_byte0 = 0xff;
+    }
+    else if (cal_fuel_operation_mode_1_en == 1) {
+      j1939_pgn65249_byte0 = 6;
+    }
+    else if (cal_fuel_operation_mode_1_en == 2) {
+      j1939_pgn65249_byte0 = 3;
+    }
+    else if (cal_fuel_operation_mode_1_en == 3) {
+      j1939_pgn65249_byte0 = 2;
+    }
+    else if (cal_fuel_operation_mode_1_en == 6) {
+      j1939_pgn65249_byte0 = 1;
+    }
+    uStack_7 = (undefined1)j1939_pgn65249_cal_a;
+    DAT_003fae52 = uStack_7;
+    uStack_8 = (undefined1)(j1939_pgn65249_cal_a >> 8);
+    DAT_003fae53 = uStack_8;
+    DAT_003fae54 = '}' - (char)((ushort)DAT_0005c376 >> 8);
+    uStack_7 = (undefined1)j1939_pgn65249_cal_b;
+    DAT_003fae55 = uStack_7;
+    uStack_8 = (undefined1)(j1939_pgn65249_cal_b >> 8);
+    DAT_003fae56 = uStack_8;
+    DAT_003fae57 = '}' - (char)(j1939_dtc_spn_cal_a >> 8);
+    uStack_7 = (undefined1)j1939_protocol_mode_fuel_cal_c;
+    DAT_003fae58 = uStack_7;
+    uStack_8 = (undefined1)(j1939_protocol_mode_fuel_cal_c >> 8);
+    DAT_003fae59 = uStack_8;
+    DAT_003fae5a = '}' - (char)(j1939_dtc_spn_cal_b >> 8);
+    uStack_7 = (undefined1)j1939_protocol_mode_fuel_cal_d;
+    DAT_003fae5b = uStack_7;
+    uStack_8 = (undefined1)(j1939_protocol_mode_fuel_cal_d >> 8);
+    DAT_003fae5c = uStack_8;
+    DAT_003fae5d = '}' - (char)(j1939_dtc_spn_cal_c >> 8);
+    uStack_7 = (undefined1)j1939_protocol_mode_fuel_cal_b;
+    DAT_003fae5e = uStack_7;
+    uStack_8 = (undefined1)(j1939_protocol_mode_fuel_cal_b >> 8);
+    DAT_003fae5f = uStack_8;
+    uStack_7 = (undefined1)j1939_protocol_mode_speed_cal;
+    DAT_003fae60 = uStack_7;
+    uStack_8 = (undefined1)(j1939_protocol_mode_speed_cal >> 8);
+    DAT_003fae61 = uStack_8;
+    DAT_003fae62 = '}' - (char)(j1939_dtc_spn_cal_d >> 8);
+    sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65249_tx_header);
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_j1939BuildPgn65213_FEBD_BrakeJobber @ 0x00026694
+//
+
+// Variables in this function: DAT_003fae52, DAT_003fae53, DAT_003fae54, DAT_003fae55, DAT_003fae56, DAT_003fae57, DAT_003fae58, DAT_003fae59, DAT_003fae5a, DAT_003fae5b, DAT_003fae5c, DAT_003fae5d, DAT_003fae5e, DAT_003fae5f, DAT_003fae60
+void cm848_j1939BuildPgn65213_FEBD_BrakeJobber(undefined4 param_1,byte param_2)
+
+{
+  word wVar1;
+  undefined1 uStack00000008;
+  undefined1 uStack00000009;
+  
+  if (cal_fuel_operation_mode_1_en == 0) {
+    j1939_pgn65249_byte0 = 0xff;
+  }
+  else if (cal_fuel_operation_mode_1_en == 1) {
+    j1939_pgn65249_byte0 = 6;
+  }
+  else if (cal_fuel_operation_mode_1_en == 2) {
+    j1939_pgn65249_byte0 = 3;
+  }
+  else if (cal_fuel_operation_mode_1_en == 3) {
+    j1939_pgn65249_byte0 = 2;
+  }
+  else if (cal_fuel_operation_mode_1_en == 6) {
+    j1939_pgn65249_byte0 = 1;
+  }
+  uStack00000009 = (undefined1)j1939_pgn65249_cal_a;
+  DAT_003fae52 = uStack00000009;
+  uStack00000008 = (undefined1)(j1939_pgn65249_cal_a >> 8);
+  DAT_003fae53 = uStack00000008;
+  DAT_003fae54 = '}' - (char)((ushort)DAT_0005c376 >> 8);
+  uStack00000009 = (undefined1)j1939_pgn65249_cal_b;
+  DAT_003fae55 = uStack00000009;
+  uStack00000008 = (undefined1)(j1939_pgn65249_cal_b >> 8);
+  DAT_003fae56 = uStack00000008;
+  DAT_003fae57 = '}' - (char)(j1939_dtc_spn_cal_a >> 8);
+  uStack00000009 = (undefined1)j1939_protocol_mode_fuel_cal_c;
+  DAT_003fae58 = uStack00000009;
+  uStack00000008 = (undefined1)(j1939_protocol_mode_fuel_cal_c >> 8);
+  DAT_003fae59 = uStack00000008;
+  DAT_003fae5a = '}' - (char)(j1939_dtc_spn_cal_b >> 8);
+  uStack00000009 = (undefined1)j1939_protocol_mode_fuel_cal_d;
+  DAT_003fae5b = uStack00000009;
+  uStack00000008 = (undefined1)(j1939_protocol_mode_fuel_cal_d >> 8);
+  DAT_003fae5c = uStack00000008;
+  DAT_003fae5d = '}' - (char)(j1939_dtc_spn_cal_c >> 8);
+  uStack00000009 = (undefined1)j1939_protocol_mode_fuel_cal_b;
+  DAT_003fae5e = uStack00000009;
+  uStack00000008 = (undefined1)(j1939_protocol_mode_fuel_cal_b >> 8);
+  DAT_003fae5f = uStack00000008;
+  _uStack00000008 = j1939_protocol_mode_speed_cal;
+  wVar1 = _uStack00000008;
+  uStack00000009 = (undefined1)j1939_protocol_mode_speed_cal;
+  DAT_003fae60 = uStack00000009;
+  uStack00000008 = (undefined1)(j1939_protocol_mode_speed_cal >> 8);
+  DAT_003fae61 = uStack00000008;
+  DAT_003fae62 = '}' - (char)(j1939_dtc_spn_cal_d >> 8);
+  j1939_pgn_dest_address = param_2;
+  _uStack00000008 = wVar1;
+  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65249_tx_header);
+  return;
+}
+
+
+
+//
+// Function: cm848_j1939BuildPgn65213_FEBD_BrakeJobber @ 0x0002669c
+//
+
+// Variables in this function: DAT_003fae52, DAT_003fae53, DAT_003fae54, DAT_003fae55, DAT_003fae56, DAT_003fae57, DAT_003fae58, DAT_003fae59, DAT_003fae5a, DAT_003fae5b, DAT_003fae5c, DAT_003fae5d, DAT_003fae5e, DAT_003fae5f, DAT_003fae60
+void cm848_j1939BuildPgn65213_FEBD_BrakeJobber(undefined4 param_1,byte param_2)
+
+{
+  word wVar1;
+  undefined1 uStack00000008;
+  undefined1 uStack00000009;
+  
+  if (cal_fuel_operation_mode_1_en == 0) {
+    j1939_pgn65249_byte0 = 0xff;
+  }
+  else if (cal_fuel_operation_mode_1_en == 1) {
+    j1939_pgn65249_byte0 = 6;
+  }
+  else if (cal_fuel_operation_mode_1_en == 2) {
+    j1939_pgn65249_byte0 = 3;
+  }
+  else if (cal_fuel_operation_mode_1_en == 3) {
+    j1939_pgn65249_byte0 = 2;
+  }
+  else if (cal_fuel_operation_mode_1_en == 6) {
+    j1939_pgn65249_byte0 = 1;
+  }
+  uStack00000009 = (undefined1)j1939_pgn65249_cal_a;
+  DAT_003fae52 = uStack00000009;
+  uStack00000008 = (undefined1)(j1939_pgn65249_cal_a >> 8);
+  DAT_003fae53 = uStack00000008;
+  DAT_003fae54 = '}' - (char)((ushort)DAT_0005c376 >> 8);
+  uStack00000009 = (undefined1)j1939_pgn65249_cal_b;
+  DAT_003fae55 = uStack00000009;
+  uStack00000008 = (undefined1)(j1939_pgn65249_cal_b >> 8);
+  DAT_003fae56 = uStack00000008;
+  DAT_003fae57 = '}' - (char)(j1939_dtc_spn_cal_a >> 8);
+  uStack00000009 = (undefined1)j1939_protocol_mode_fuel_cal_c;
+  DAT_003fae58 = uStack00000009;
+  uStack00000008 = (undefined1)(j1939_protocol_mode_fuel_cal_c >> 8);
+  DAT_003fae59 = uStack00000008;
+  DAT_003fae5a = '}' - (char)(j1939_dtc_spn_cal_b >> 8);
+  uStack00000009 = (undefined1)j1939_protocol_mode_fuel_cal_d;
+  DAT_003fae5b = uStack00000009;
+  uStack00000008 = (undefined1)(j1939_protocol_mode_fuel_cal_d >> 8);
+  DAT_003fae5c = uStack00000008;
+  DAT_003fae5d = '}' - (char)(j1939_dtc_spn_cal_c >> 8);
+  uStack00000009 = (undefined1)j1939_protocol_mode_fuel_cal_b;
+  DAT_003fae5e = uStack00000009;
+  uStack00000008 = (undefined1)(j1939_protocol_mode_fuel_cal_b >> 8);
+  DAT_003fae5f = uStack00000008;
+  _uStack00000008 = j1939_protocol_mode_speed_cal;
+  wVar1 = _uStack00000008;
+  uStack00000009 = (undefined1)j1939_protocol_mode_speed_cal;
+  DAT_003fae60 = uStack00000009;
+  uStack00000008 = (undefined1)(j1939_protocol_mode_speed_cal >> 8);
+  DAT_003fae61 = uStack00000008;
+  DAT_003fae62 = '}' - (char)(j1939_dtc_spn_cal_d >> 8);
+  j1939_pgn_dest_address = param_2;
+  _uStack00000008 = wVar1;
+  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65249_tx_header);
+  return;
+}
+
+
+
+//
+// Function: cm848_buildProtocolModeStatusMessage @ 0x000266f8
+//
+

@@ -1,0 +1,97 @@
+=== VARIABLES TO NAME ===
+0x003fbd68  (3 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fbd68
+void fuel_demand_protection_loop(void)
+
+{
+  bool bVar1;
+  char cVar2;
+  uint uVar3;
+  
+  if ((governor_mode_config_flags & 8) == 0) {
+    if (fuel_demand_protection_init_flag == 0) {
+      fuel_demand_protection_init_flag = 1;
+      fuel_demand_protection_hysteresis_counter = 100;
+    }
+    cVar2 = cm848_checkProtectionWarningBitState(8);
+    if (DAT_003fbd68 == cVar2) {
+      if ((fuel_demand_protection_hysteresis_counter != 0) &&
+         (fuel_demand_protection_hysteresis_counter =
+               fuel_demand_protection_hysteresis_counter - 0x32,
+         (short)fuel_demand_protection_hysteresis_counter < 1)) {
+        fuel_demand_protection_hysteresis_counter = 0;
+        if (cVar2 == '\0') {
+          cm848_clearEngineCycleBitmapBitIfGreater(8,0);
+          cm848_setEngineCycleBitmapBitIfGreater(7,0);
+          fuel_demand_control_t_0040a57a.enable_flag = 0;
+        }
+        else {
+          cm848_setEngineCycleBitmapBitIfGreater(8,0);
+          cm848_clearEngineCycleBitmapBitIfGreater(7,0);
+          fuel_demand_control_t_0040a57a.enable_flag = 1;
+        }
+      }
+    }
+    else {
+      fuel_demand_protection_hysteresis_counter = 100;
+      DAT_003fbd68 = cVar2;
+    }
+  }
+  else {
+    fuel_demand_protection_pedal_raw = DAT_0040bc9a;
+    if ((diag_feature_flags & 0x2000) == 0) {
+      if (qadc_channel_index_table[0xd] < 0x81) {
+        uVar3 = (uint)qadc_channel_index_table[0xd];
+      }
+      else {
+        uVar3 = 0;
+      }
+      fuel_demand_protection_pedal_raw = *(ushort *)(&qadc_channel_dispatch_table)[uVar3 * 2];
+    }
+    bVar1 = 0x168 < fuel_demand_protection_pedal_raw;
+    if (bVar1) {
+      cm848_setEngineCycleBitmapBitIfGreater(8,0);
+      cm848_clearEngineCycleBitmapBitIfGreater(7,0);
+    }
+    else {
+      cm848_clearEngineCycleBitmapBitIfGreater(8,0);
+      cm848_setEngineCycleBitmapBitIfGreater(7,0);
+    }
+    fuel_demand_control_t_0040a57a.enable_flag = (word)bVar1;
+    fuel_demand_protection_init_flag = 0;
+  }
+  return;
+}
+
+
+
+//
+// Function: diag_faultChannel_bitmap_update @ 0x0050a4a0
+//
+
+// Variables in this function: DAT_003fbd68
+void cm848_initializeDiagnosticStateCounters(void)
+
+{
+  DAT_003fbd68 = 0xff;
+  fuel_demand_protection_hysteresis_counter = 100;
+  system_status_flags_t_003fe974.reserved_10 = system_status_flags_t_003fe974.reserved_10 & 0xfffb;
+  governor_cal_status_shadow_flags = governor_cal_status_shadow_flags & 0xfffb;
+  emission_feature_fault_active_flag = 0;
+  governor_load_startup_inhibit_flag = 1;
+  return;
+}
+
+
+
+//
+// Function: governor_resetModeStateOnCondition @ 0x0050aec0
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

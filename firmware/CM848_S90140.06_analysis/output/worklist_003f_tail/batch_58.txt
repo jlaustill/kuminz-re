@@ -1,0 +1,101 @@
+=== VARIABLES TO NAME ===
+0x003fccfe  (3 references)
+0x003fcd00  (3 references)
+0x003fcd10  (4 references)
+0x003fcd14  (3 references)
+0x003fcd16  (3 references)
+
+Total: 5 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fccfe, DAT_003fcd00, DAT_003fcd10, DAT_003fcd14, DAT_003fcd16
+void governor_rpm_monitor_calc(void)
+
+{
+  dword dVar1;
+  word wVar2;
+  int iVar3;
+  
+  if (((engine_feature_status_flags_2 & 1) != 0) && ((diagnostic_status_flags & 0x100) == 0)) {
+    wVar2 = governor_fuel_control_limit_active;
+    if ((short)governor_fuel_control_limit_active < 0) {
+      wVar2 = -governor_fuel_control_limit_active;
+    }
+    DAT_003fccfe = DAT_004077c2 + wVar2;
+    if (-1 < DAT_003fccfe) {
+      DAT_003fcd00 = (int)((int)DAT_003fccfe * (uint)fuel_timing_error_scale) >> 7;
+      goto LAB_00510114;
+    }
+  }
+  DAT_003fcd00 = 0;
+LAB_00510114:
+  iVar3 = (int)(short)DAT_003fcd14;
+  DAT_003fcd14 = protection_ema_cal_offset;
+  dVar1 = (int)(((short)protection_ema_cal_offset - iVar3) * (uint)DAT_004077c4) >> 10;
+  governor_b_ema_offset_delta_scaled = 0xffff0600;
+  if ((-0xfa01 < (int)dVar1) && (governor_b_ema_offset_delta_scaled = dVar1, 64000 < (int)dVar1)) {
+    governor_b_ema_offset_delta_scaled = 64000;
+  }
+  if (DAT_003fcd16 == 0) {
+    governor_b_ema_offset_delta_scaled = -governor_b_ema_offset_delta_scaled;
+  }
+  DAT_003fcd16 = engine_feature_status_flags & 0x80;
+  DAT_0040b090 = (short)((int)governor_b_ema_offset_delta_scaled >> 1);
+  governor_b_timing_ema_deviation = DAT_003fcd00 - governor_b_ema_offset_delta_scaled;
+  if ((int)governor_b_timing_ema_deviation < 0) {
+    governor_b_timing_ema_deviation = -governor_b_timing_ema_deviation;
+  }
+  governor_b_boost_normalization_factor =
+       ((uint)governor_b_boost_demand_ema_eighth * (uint)DAT_004077d2 >> 10) + (uint)DAT_004077d0;
+  if (16000 < governor_b_boost_normalization_factor) {
+    governor_b_boost_normalization_factor = 16000;
+  }
+  DAT_0040b088 = (short)governor_b_boost_normalization_factor;
+  DAT_003fcd10 = (governor_b_timing_ema_deviation << 10) / governor_b_boost_normalization_factor;
+  if (DAT_004077c0 < DAT_003fcd10) {
+    DAT_003fcd10 = (uint)DAT_004077c0;
+  }
+  governor_rpm_monitored = (word)DAT_003fcd10;
+  return;
+}
+
+
+
+//
+// Function: phase_group_b_filterGovernorRpmSquaredMovingAverage @ 0x0051027c
+//
+
+// Variables in this function: DAT_003fcd14, DAT_003fcd16
+void fuel_demand_boost_initialize(void)
+
+{
+  uint uVar1;
+  uint uVar2;
+  
+  DAT_003fccfa = 0;
+  PTR_DAT_003fccf6 = &DAT_004077ba;
+  DAT_003fcd16 = engine_feature_status_flags & 0x80;
+  DAT_003fcd14 = protection_ema_cal_offset;
+  uVar2 = (uint)(short)fuel_demand_boost_input;
+  if ((int)uVar2 < 0) {
+    uVar2 = 0;
+  }
+  uVar1 = (uVar2 & 0xffff) >> 3;
+  governor_b_boost_demand_ema_eighth = (word)uVar1;
+  DAT_003fcd1c = uVar1 << 0x10;
+  PTR_DAT_003fcd18 = &DAT_004077d4;
+  governor_b_fuel_demand_ema = (word)uVar2;
+  DAT_003fcd24 = uVar2 << 0x10;
+  PTR_DAT_003fcd20 = &DAT_004077d6;
+  diagnostic_status_flags = diagnostic_status_flags & 0xfbff;
+  j1939_comm_status_flags = j1939_comm_status_flags & 0xfbff;
+  return;
+}
+
+
+
+//
+// Function: sensor_fault_safety_check @ 0x005103ac
+//
+

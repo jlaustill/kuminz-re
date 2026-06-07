@@ -1,0 +1,118 @@
+=== VARIABLES TO NAME ===
+0x003fcf3d  (4 references)
+0x003fcf3e  (4 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fcf3d
+void diag_protection_countdown_trigger(short *param_1,int param_2)
+
+{
+  short sVar1;
+  
+  if (*param_1 != 0) {
+    sVar1 = *param_1 + -1;
+    *param_1 = sVar1;
+    if (sVar1 == 0) {
+      cold_start_protection_active_count = cold_start_protection_active_count - 1;
+      cm848_triggerProtectionEvent(param_2,5);
+      if ((&fault_severity_snapshot_array)[param_2] == 5) {
+        (&fault_severity_snapshot_array)[param_2] = 0;
+      }
+    }
+    else if (DAT_003fcf3d == '\0') {
+      cm848_triggerProtectionEvent(param_2,5);
+    }
+    else {
+      cm848_setEngineProtectionFault(param_2,5);
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: engine_coldStart_protectionSequence_update @ 0x0051e6e0
+//
+
+// Variables in this function: DAT_003fcf3d, DAT_003fcf3e
+void engine_coldStart_protectionSequence_update(void)
+
+{
+  if (cold_start_protection_active_count == 0) {
+    return;
+  }
+  if (cold_start_phase == CSP_CRANKING) {
+    if (DAT_003fcf3e != 0) {
+      DAT_003fcf3e = DAT_003fcf3e + -1;
+      return;
+    }
+    DAT_003fcf3e = 0x8c;
+    DAT_003fcf3d = DAT_003fcf3d ^ 1;
+    diag_protection_countdown_trigger(&DAT_003fcf40,0x26);
+    diag_protection_countdown_trigger(&DAT_003fcf42,0x2b);
+    diag_protection_countdown_trigger(&DAT_003fcf44,0x2c);
+    diag_protection_countdown_trigger(&DAT_003fcf46,0x35);
+    diag_protection_countdown_trigger(&DAT_003fcf48,4);
+    diag_protection_countdown_trigger(&DAT_003fcf4a,0xb);
+    diag_protection_countdown_trigger(&DAT_003fcf50,0x12);
+    diag_protection_countdown_trigger(&DAT_003fcf52,0x11);
+    diag_protection_countdown_trigger(&DAT_003fcf54,0x13);
+    diag_protection_countdown_trigger(&DAT_003fcf56,0x14);
+    diag_protection_countdown_trigger(&DAT_003fcf58,0x15);
+    diag_protection_countdown_trigger(&DAT_003fcf5a,0x10);
+    if ((cold_start_sync_protection_countdown != 0) &&
+       (cold_start_sync_protection_countdown = cold_start_sync_protection_countdown - 1,
+       cold_start_sync_protection_countdown == 0)) {
+      cold_start_protection_active_count = cold_start_protection_active_count - 1;
+      engine_sync_cold_start_flag = 0;
+    }
+    if ((cold_start_injection_protection_countdown != 0) &&
+       (cold_start_injection_protection_countdown = cold_start_injection_protection_countdown - 1,
+       cold_start_injection_protection_countdown == 0)) {
+      cold_start_protection_active_count = cold_start_protection_active_count - 1;
+      cold_start_injection_protection_flag = 0;
+    }
+    if (cold_start_protection_active_count != 0) {
+      return;
+    }
+  }
+  else {
+    diag_protection_fault_init_all();
+  }
+  protection_status_flags_t_0040b0f2.flags[2] = protection_status_flags_t_0040b0f2.flags[2] & 0xfe;
+  return;
+}
+
+
+
+//
+// Function: FUN_0051e894 @ 0x0051e894
+//
+
+// Variables in this function: DAT_003fcf3d
+void FUN_0051e894(short *param_1,undefined4 param_2,short param_3)
+
+{
+  if (*param_1 == 0) {
+    cold_start_protection_active_count = cold_start_protection_active_count + 1;
+    if (DAT_003fcf3d == '\0') {
+      cm848_triggerProtectionEvent(param_2,5);
+    }
+    else {
+      cm848_setEngineProtectionFault(param_2,5);
+    }
+  }
+  *param_1 = param_3;
+  return;
+}
+
+
+
+//
+// Function: FUN_0051ef20 @ 0x0051ef20
+//
+

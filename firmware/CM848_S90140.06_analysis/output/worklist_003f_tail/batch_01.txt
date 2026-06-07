@@ -1,0 +1,181 @@
+=== VARIABLES TO NAME ===
+0x003fa6ca  (3 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fa6ca
+void cm848_lookupFuelDemandRpmTables(void)
+
+{
+  uint unaff_r30;
+  uint unaff_r31;
+  
+  if (boost_map_index_current == 1) {
+    fuel_demand_rpm_table_boost1 =
+         lookupTableInterpolation((table_interp_args_t *)&fuel_map_interpolation_state);
+    unaff_r31 = (uint)fuel_demand_rpm_table_boost1;
+  }
+  else if (boost_map_index_current == 2) {
+    fuel_demand_rpm_table_boost2 =
+         lookupTableInterpolation((table_interp_args_t *)&fuel_map_interpolation_state);
+    unaff_r31 = (uint)fuel_demand_rpm_table_boost2;
+  }
+  else if (boost_map_index_current == 3) {
+    fuel_demand_rpm_table_boost3 =
+         lookupTableInterpolation((table_interp_args_t *)&fuel_map_interpolation_state);
+    unaff_r31 = (uint)fuel_demand_rpm_table_boost3;
+  }
+  else if (boost_map_index_current == 4) {
+    fuel_demand_rpm_table_boost4 =
+         lookupTableInterpolation((table_interp_args_t *)&fuel_map_interpolation_state);
+    unaff_r31 = (uint)fuel_demand_rpm_table_boost4;
+  }
+  if (boost_map_index_target == 1) {
+    fuel_demand_rpm_table_boost1 =
+         lookupTableInterpolation((table_interp_args_t *)&fuel_map_interpolation_state);
+    unaff_r30 = (uint)fuel_demand_rpm_table_boost1;
+  }
+  else if (boost_map_index_target == 2) {
+    fuel_demand_rpm_table_boost2 =
+         lookupTableInterpolation((table_interp_args_t *)&fuel_map_interpolation_state);
+    unaff_r30 = (uint)fuel_demand_rpm_table_boost2;
+  }
+  else if (boost_map_index_target == 3) {
+    fuel_demand_rpm_table_boost3 =
+         lookupTableInterpolation((table_interp_args_t *)&fuel_map_interpolation_state);
+    unaff_r30 = (uint)fuel_demand_rpm_table_boost3;
+  }
+  else if (boost_map_index_target == 4) {
+    fuel_demand_rpm_table_boost4 =
+         lookupTableInterpolation((table_interp_args_t *)&fuel_map_interpolation_state);
+    unaff_r30 = (uint)fuel_demand_rpm_table_boost4;
+  }
+  fuel_demand_load_axis_base_lookup = lookupTableInterpolation((table_interp_args_t *)&DAT_003fa6ca)
+  ;
+  fuel_demand_load_axis =
+       cm848_filterInputValue
+                 (unaff_r31,unaff_r30,fuel_demand_load_axis_base_lookup,boost_map_index_current,
+                  boost_map_index_target,fuel_blend_state_t_0040a494.blend_weight,
+                  fuel_blend_state_t_0040a494.blend_mode);
+  return;
+}
+
+
+
+//
+// Function: cm848_calculateFuelLimitSource @ 0x00015a24
+//
+
+// Variables in this function: DAT_003fa6ca
+undefined2 cm848_fuelDemandTableLookup(void)
+
+{
+  undefined2 uVar1;
+  undefined2 unaff_r29;
+  undefined2 unaff_r30;
+  
+  if (boost_map_index_current == 1) {
+    unaff_r30 = lookupTableInterpolation((table_interp_args_t *)&fuel_map_interpolation_state);
+  }
+  else if (boost_map_index_current == 2) {
+    unaff_r30 = lookupTableInterpolation((table_interp_args_t *)&fuel_map_interpolation_state);
+  }
+  else if (boost_map_index_current == 3) {
+    unaff_r30 = lookupTableInterpolation((table_interp_args_t *)&fuel_map_interpolation_state);
+  }
+  else if (boost_map_index_current == 4) {
+    unaff_r30 = lookupTableInterpolation((table_interp_args_t *)&fuel_map_interpolation_state);
+  }
+  if (boost_map_index_target == 1) {
+    unaff_r29 = lookupTableInterpolation((table_interp_args_t *)&fuel_map_interpolation_state);
+  }
+  else if (boost_map_index_target == 2) {
+    unaff_r29 = lookupTableInterpolation((table_interp_args_t *)&fuel_map_interpolation_state);
+  }
+  else if (boost_map_index_target == 3) {
+    unaff_r29 = lookupTableInterpolation((table_interp_args_t *)&fuel_map_interpolation_state);
+  }
+  else if (boost_map_index_target == 4) {
+    unaff_r29 = lookupTableInterpolation((table_interp_args_t *)&fuel_map_interpolation_state);
+  }
+  uVar1 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fa6ca);
+  uVar1 = cm848_filterInputValue
+                    (unaff_r30,unaff_r29,uVar1,boost_map_index_current,boost_map_index_target,
+                     fuel_blend_state_t_0040a494.blend_weight,fuel_blend_state_t_0040a494.blend_mode
+                    );
+  return uVar1;
+}
+
+
+
+//
+// Function: cm848_fuelDemandRpmCorrection @ 0x00016724
+//
+
+// Variables in this function: DAT_003fa6ca
+void mpc555_initFuelDemandTablePointers(void)
+
+{
+  fuel_quantity_table_a_pointer = &DAT_00402f5c;
+  fuel_quantity_table_b_pointer = &DAT_004025dc;
+  fuel_quantity_table_c_pointer = &DAT_0040283c;
+  fuel_quantity_table_d_pointer = &DAT_00402a9c;
+  fuel_demand_mode3_load_axis_offset1 = (dword)&DAT_0040237c;
+  fuel_demand_mode3_load_axis_offset2 = (dword)&DAT_004019fc;
+  fuel_demand_mode3_load_axis_offset3 = (dword)&DAT_00401c5c;
+  fuel_demand_mode3_load_axis_offset4 = (dword)&DAT_00401ebc;
+  fuel_demand_limit_table_a_pointer = &DAT_0040179c;
+  fuel_demand_limit_table_b_pointer = &DAT_00400e1c;
+  fuel_demand_limit_table_c_pointer = &DAT_0040107c;
+  fuel_demand_limit_table_d_pointer = &DAT_004012dc;
+  fuel_demand_mode2_load_axis_offset1 = (dword)&DAT_00403b3c;
+  fuel_demand_mode2_load_axis_offset2 = (dword)&DAT_004031bc;
+  fuel_demand_mode2_load_axis_offset3 = (dword)&DAT_0040341c;
+  fuel_demand_mode2_load_axis_offset4 = (dword)&DAT_0040367c;
+  fuel_demand_mode1_load_axis_offset1 = (dword)&DAT_0040471c;
+  fuel_demand_mode1_load_axis_offset2 = (dword)&DAT_00403d9c;
+  fuel_demand_mode1_load_axis_offset3 = (dword)&DAT_00403ffc;
+  fuel_demand_mode1_load_axis_offset4 = (dword)&DAT_0040425c;
+  fuel_demand_blend_tables_interp_state = 2;
+  DAT_003fa698 = 2;
+  DAT_003fa69a = 2;
+  DAT_003fa69c = 2;
+  fuel_demand_mode3_interp_state = 2;
+  DAT_003fa6a0 = 2;
+  DAT_003fa6a2 = 2;
+  DAT_003fa6a4 = 2;
+  fuel_demand_timing_offset_interp_state = 2;
+  DAT_003fa6a8 = 2;
+  DAT_003fa6aa = 2;
+  DAT_003fa6ac = 2;
+  DAT_003fa6ae = 2;
+  DAT_003fa6b0 = 2;
+  fuel_demand_mode2_interp_state = 2;
+  DAT_003fa6b4 = 2;
+  DAT_003fa6b6 = 2;
+  DAT_003fa6b8 = 2;
+  fuel_demand_mode1_interp_state = 2;
+  DAT_003fa6bc = 2;
+  DAT_003fa6be = 2;
+  DAT_003fa6c0 = 2;
+  DAT_003fa6c2 = 2;
+  DAT_003fa6c4 = 2;
+  DAT_003fa6c6 = 2;
+  DAT_003fa6c8 = 2;
+  DAT_003fa6ca = 2;
+  fuel_map_interpolation_state._0_2_ = 2;
+  fuel_map_interpolation_state._2_2_ = 2;
+  return;
+}
+
+
+
+//
+// Function: cm848_calculateFuelInjectionTiming @ 0x00016a90
+//
+
+/* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+/* WARNING: Removing unreachable block (ram,0x00016c08) */
+

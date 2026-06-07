@@ -1,0 +1,55 @@
+=== VARIABLES TO NAME ===
+0x003faf1c  (4 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003faf1c
+void cm848_j1939SendSafetyStatusMessage(void)
+
+{
+  if ((fault_management_status_flags & 4) == 0) {
+    DAT_003faf1c = 0xff;
+  }
+  else if ((system_status_flags_t_003fe974.safety_bits_1 & 0x100) == 0) {
+    DAT_003faf1c = 0xfc;
+  }
+  else {
+    DAT_003faf1c = 0xfd;
+  }
+  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65279_tx_header);
+  return;
+}
+
+
+
+//
+// Function: cm848_initJ1939SafetyStatusBuffer @ 0x00026efc
+//
+
+// Variables in this function: DAT_003faf1c
+void cm848_initJ1939SafetyStatusBuffer(void)
+
+{
+  j1939_pgn65279_tx_header = CONCAT13(((byte)j1939_pgn65279_source_address_bits & 7) << 2,0xfeff00);
+  j1939_pgn65279_tx_header = CONCAT31(j1939_pgn65279_tx_header._0_3_,(char)j1939_source_address);
+  j1939_pgn65279_tx_byte_count = 1;
+  j1939_pgn65279_data_ptr = &DAT_003faf1c;
+  j1939_pgn65279_data2_ptr = &DAT_003faf32;
+  DAT_003faf1d = 0xff;
+  DAT_003faf1e = 0xff;
+  DAT_003faf1f = 0xff;
+  DAT_003faf20 = 0xff;
+  DAT_003faf21 = 0xff;
+  uRam003faf22 = 0xff;
+  uRam003faf23 = 0xff;
+  return;
+}
+
+
+
+//
+// Function: cm848_j1939SendPgn65271_FEF7_VehicleElectricalPower @ 0x00026f68
+//
+

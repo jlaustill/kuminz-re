@@ -1,0 +1,28 @@
+=== VARIABLES TO NAME ===
+0x003fbccc  (3 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fbccc
+void governor_speedModeB_activeFlag_update(void)
+
+{
+  if ((((governor_speed_at_target_flag == 0) && (governor_speed_b_mode_select_flag == 0)) ||
+      (engine_feature_8_active_flag._0_2_ == 0)) || (DAT_003fd7f4 == 0)) {
+    DAT_003fbccc = 0;
+  }
+  else {
+    DAT_003fbccc = 1;
+  }
+  DAT_0040a670 = DAT_003fbccc;
+  return;
+}
+
+
+
+//
+// Function: governor_speedFault_filterProcess_update @ 0x00506840
+//
+

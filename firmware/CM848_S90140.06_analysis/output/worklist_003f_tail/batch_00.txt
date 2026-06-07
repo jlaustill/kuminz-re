@@ -1,0 +1,54 @@
+=== VARIABLES TO NAME ===
+0x003fa150  (3 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fa150
+void cm848_calculateLoadAdjustmentFactors(void)
+
+{
+  uint uVar1;
+  
+  throttle_load_offset_working = 0xb400 - rpm_load_table_result;
+  throttle_load_gain_positive = lookupTableInterpolation((table_interp_args_t *)&DAT_003fa150);
+  throttle_load_gain_negative = lookupTableInterpolation((table_interp_args_t *)&DAT_003fa150);
+  uVar1 = (uint)throttle_load_gain_positive * (int)(short)throttle_fuel_demand_scaled;
+  throttle_rate_control_input =
+       ((short)((int)uVar1 >> 0xe) + (ushort)((int)uVar1 < 0 && (uVar1 & 0x3fff) != 0)) -
+       (short)((int)((uint)throttle_load_gain_negative * (int)(short)throttle_rate_integral_input) /
+              0x51ec);
+  uVar1 = (uint)throttle_load_gain_negative * (int)(short)throttle_fuel_demand_scaled;
+  throttle_load_gain_neg_scaled =
+       (short)((int)uVar1 >> 0xe) + (ushort)((int)uVar1 < 0 && (uVar1 & 0x3fff) != 0);
+  throttle_load_gain_pos_scaled =
+       (word)((int)((uint)throttle_load_gain_positive * (int)(short)throttle_rate_integral_input) /
+             0x51ec);
+  throttle_rate_filtered_sum = throttle_load_gain_neg_scaled + throttle_load_gain_pos_scaled;
+  return;
+}
+
+
+
+//
+// Function: cm848_processLoadAdjustment @ 0x00011290
+//
+
+// Variables in this function: DAT_003fa150
+void mpc555_initLoadAdjustmentTableSizes(void)
+
+{
+  DAT_003fa150 = 2;
+  DAT_003fa152 = 2;
+  DAT_003fa154 = 2;
+  DAT_003fa156 = 2;
+  return;
+}
+
+
+
+//
+// Function: cm848_calculateLoadGainValues @ 0x0001134c
+//
+

@@ -1,0 +1,70 @@
+=== VARIABLES TO NAME ===
+0x003fcfb2  (3 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fcfb2
+void sensorChannelValidationIndex(void)
+
+{
+  uint uVar1;
+  uint uVar2;
+  
+  if (8000 < sensor_validation_accum) {
+    uVar1 = (uint)DAT_003fcfb2;
+    if ((&sensor_validation_accum_table)[uVar1] < 0xffff) {
+      uVar2 = sensor_validation_accum / 64000;
+      if (0xffff < uVar2) {
+        uVar2 = 0xffff;
+      }
+      if ((&sensor_validation_accum_table)[uVar1] < uVar2) {
+        if (uVar1 < 3) {
+          uVar1 = uVar1 + 1;
+        }
+        else {
+          uVar1 = 0;
+        }
+        DAT_003fcfb2 = (byte)uVar1;
+        (&sensor_validation_accum_table)[uVar1 & 0xff] = (word)uVar2;
+      }
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: initSensorTableIndexing @ 0x005230f4
+//
+
+// Variables in this function: DAT_003fcfb2
+void initSensorTableIndexing(void)
+
+{
+  uint uVar1;
+  uint uVar2;
+  
+  uVar2 = 1;
+  uVar1 = 0;
+  do {
+    if ((&sensor_validation_accum_table)[uVar1] < (&sensor_validation_accum_table)[uVar2]) {
+      uVar1 = uVar2;
+    }
+    uVar2 = uVar2 + 1 & 0xff;
+  } while (uVar2 < 4);
+  DAT_003fcfb2 = (char)uVar1;
+  return;
+}
+
+
+
+//
+// Function: j1939FuelDemandProcessing @ 0x00523148
+//
+
+/* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

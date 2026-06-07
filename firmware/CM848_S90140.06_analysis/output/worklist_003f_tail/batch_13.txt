@@ -1,0 +1,152 @@
+=== VARIABLES TO NAME ===
+0x003fadfe  (4 references)
+0x003fadff  (3 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fadfe, DAT_003fadff
+void cm848_j1939HandlePgn65262EngineTemp(void)
+
+{
+  int iVar1;
+  short asStack_8 [2];
+  
+  if (((system_status_flags_t_003fe974.condition_monitor & 1) == 0) &&
+     ((system_status_flags_t_003fe974.condition_monitor & 2) == 0)) {
+    iVar1 = (((short)sensor_readings_t_0040baf2.coolant_temp >> 6) * 5 + -0xa0) / 9 + 0x28;
+    asStack_8[0] = (short)iVar1;
+    if (asStack_8[0] < 0) {
+      cm848_j1939BuildPgn65247_FEDF_Eec3(&system_status_flags_t_003fe974,0);
+      return;
+    }
+  }
+  else {
+    iVar1 = 0xfe;
+  }
+  DAT_003fadfe = (undefined1)iVar1;
+  if (((system_status_flags_t_003fe974.reserved_04 & 0x8000) == 0) &&
+     ((system_status_flags_t_003fe974.safety_bits_1 & 1) == 0)) {
+    iVar1 = (((short)fuel_temp_raw >> 6) * 5 + -0xa0) / 9 + 0x28;
+    asStack_8[0] = (short)iVar1;
+    if (asStack_8[0] < 0) {
+      iVar1 = 0;
+    }
+  }
+  else {
+    iVar1 = 0xfe;
+  }
+  DAT_003fadff = (undefined1)iVar1;
+  if (((system_status_flags_t_003fe974.condition_monitor & 0x40) == 0) &&
+     ((system_status_flags_t_003fe974.condition_monitor & 0x80) == 0)) {
+    asStack_8[0] = (short)(((short)intercooler_temp_raw * 0xa0 + -0x50000) / 0x240) + 0x2220;
+    j1939_pgn65262_intercooler_temp = j1939_reverseByteOrder16(asStack_8);
+  }
+  else {
+    j1939_pgn65262_intercooler_temp = 0xfefe;
+  }
+  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65262_tx_header);
+  return;
+}
+
+
+
+//
+// Function: cm848_j1939BuildPgn65247_FEDF_Eec3 @ 0x00026060
+//
+
+// Variables in this function: DAT_003fadfe, DAT_003fadff
+void cm848_j1939BuildPgn65247_FEDF_Eec3(int param_1,undefined1 param_2)
+
+{
+  int iVar1;
+  short sStack00000008;
+  
+  if (((*(ushort *)(param_1 + 4) & 0x8000) == 0) && ((*(ushort *)(param_1 + 6) & 1) == 0)) {
+    iVar1 = (((short)fuel_temp_raw >> 6) * 5 + -0xa0) / 9 + 0x28;
+    sStack00000008 = (short)iVar1;
+    if (sStack00000008 < 0) {
+      iVar1 = 0;
+    }
+  }
+  else {
+    iVar1 = 0xfe;
+  }
+  DAT_003fadff = (undefined1)iVar1;
+  DAT_003fadfe = param_2;
+  if (((*(ushort *)(param_1 + 2) & 0x40) == 0) && ((*(ushort *)(param_1 + 2) & 0x80) == 0)) {
+    sStack00000008 = (short)(((short)intercooler_temp_raw * 0xa0 + -0x50000) / 0x240) + 0x2220;
+    j1939_pgn65262_intercooler_temp = j1939_reverseByteOrder16(&stack0x00000008);
+  }
+  else {
+    j1939_pgn65262_intercooler_temp = 0xfefe;
+  }
+  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65262_tx_header);
+  return;
+}
+
+
+
+//
+// Function: cm848_j1939BuildPgn65247_FEDF_Eec3 @ 0x000260a8
+//
+
+// Variables in this function: DAT_003fadfe, DAT_003fadff
+void cm848_j1939BuildPgn65247_FEDF_Eec3(int param_1,undefined1 param_2)
+
+{
+  int iVar1;
+  short sStack00000008;
+  
+  if (((*(ushort *)(param_1 + 4) & 0x8000) == 0) && ((*(ushort *)(param_1 + 6) & 1) == 0)) {
+    iVar1 = (((short)fuel_temp_raw >> 6) * 5 + -0xa0) / 9 + 0x28;
+    sStack00000008 = (short)iVar1;
+    if (sStack00000008 < 0) {
+      iVar1 = 0;
+    }
+  }
+  else {
+    iVar1 = 0xfe;
+  }
+  DAT_003fadff = (undefined1)iVar1;
+  DAT_003fadfe = param_2;
+  if (((*(ushort *)(param_1 + 2) & 0x40) == 0) && ((*(ushort *)(param_1 + 2) & 0x80) == 0)) {
+    sStack00000008 = (short)(((short)intercooler_temp_raw * 0xa0 + -0x50000) / 0x240) + 0x2220;
+    j1939_pgn65262_intercooler_temp = j1939_reverseByteOrder16(&stack0x00000008);
+  }
+  else {
+    j1939_pgn65262_intercooler_temp = 0xfefe;
+  }
+  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65262_tx_header);
+  return;
+}
+
+
+
+//
+// Function: cm848_buildEngineTempWithConditionCheck @ 0x000260d4
+//
+
+// Variables in this function: DAT_003fadfe
+void cm848_initPgn65262EngineTempHandler(void)
+
+{
+  j1939_pgn65262_tx_header = CONCAT13(((byte)j1939_pgn65262_source_address_bits & 7) << 2,0xfeee00);
+  j1939_pgn65262_tx_byte_count = 8;
+  j1939_pgn65262_data_ptr = &DAT_003fadfe;
+  j1939_pgn65262_data2_ptr = &DAT_003fae06;
+  j1939_pgn65262_tx_header = CONCAT31(j1939_pgn65262_tx_header._0_3_,(char)j1939_source_address);
+  j1939_pgn65262_field1_init_word = 0xffff;
+  DAT_003fae04 = 0xff;
+  DAT_003fae05 = 0xff;
+  cm848_j1939RegisterPgnHandler(0xfeee,cm848_j1939HandlePgn65262EngineTemp);
+  return;
+}
+
+
+
+//
+// Function: cm848_emptyStubFunctionJ1939A @ 0x0002622c
+//
+

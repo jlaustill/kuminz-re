@@ -1,0 +1,178 @@
+=== VARIABLES TO NAME ===
+0x003fd05a  (3 references)
+0x003fd05c  (3 references)
+0x003fd930  (4 references)
+
+Total: 3 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fd05a, DAT_003fd05c, DAT_003fd930
+void protectionTimeoutControl(void)
+
+{
+  word wVar1;
+  uint uVar2;
+  uint uVar3;
+  uint uVar4;
+  ushort uVar5;
+  undefined2 local_30 [2];
+  
+  if (drivetrain_type != DRIVETRAIN_STANDALONE) {
+    if ((fuel_temperature_trim < fuel_temp_trim_upper_limit_default_cal) ||
+       (cold_start_phase == CSP_CRANKING)) {
+      engine_temp_protection_input_raw = DAT_0005c936;
+      engine_temp_protection_input = DAT_0005c936;
+      fuel_flow_rpm_divisor = DAT_0005c936;
+      fuel_flow_rpm_divisor_saved = DAT_0005c936;
+      fuel_trim_speed_override_flag = 1;
+      engine_temp_protection_input_q16 = (uint)DAT_0005c936 << 0x10;
+      protection_timeout_divisor = 0;
+    }
+    else {
+      if (fuel_trim_speed_override_flag == 1) {
+        local_30[0] = DAT_0005c942;
+        uVar5 = DAT_0005c944;
+      }
+      else {
+        local_30[0] = DAT_0005c934;
+        uVar5 = DAT_0005c92e;
+      }
+      if (((drivetrain_type != DRIVETRAIN_AUTO_J1939_FULL) &&
+          (drivetrain_type != DRIVETRAIN_AUTO_J1939_ETC1)) && (protection_timeout_enable_flag == 1))
+      {
+        if ((protection_timeout_divisor == 0) ||
+           (&DAT_00007ffd <
+            (undefined *)
+            (CONCAT44((int)((ulonglong)fuel_temp_correction_factor * (ulonglong)DAT_003fd930 * 0x10
+                           >> 0x20),fuel_temp_correction_factor * (uint)DAT_003fd930 * 0x10) /
+            (ulonglong)protection_timeout_divisor))) {
+          engine_temp_protection_input_raw = 0x7ffd;
+        }
+        else {
+          engine_temp_protection_input_raw =
+               (word)(CONCAT44((int)((ulonglong)fuel_temp_correction_factor *
+                                     (ulonglong)DAT_003fd930 * 0x10 >> 0x20),
+                               fuel_temp_correction_factor * (uint)DAT_003fd930 * 0x10) /
+                     (ulonglong)protection_timeout_divisor);
+        }
+      }
+      engine_temp_protection_input_q16 = (uint)engine_temp_protection_input << 0x10;
+      engine_temp_protection_ema_coeff_ptr = (undefined *)local_30;
+      uVar2 = exponentialMovingAverage
+                        (engine_temp_protection_input_raw,&engine_temp_protection_ema_coeff_ptr);
+      engine_temp_protection_input = (word)uVar2;
+      if ((j1939_tsc1_override_state.etc1_control_active != 1) ||
+         ((drivetrain_type != DRIVETRAIN_AUTO_J1939_FULL &&
+          (drivetrain_type != DRIVETRAIN_AUTO_J1939_ETC1)))) {
+        uVar4 = (uint)engine_temp_protection_input_raw;
+        if ((uVar2 & 0xffff) < uVar4) {
+          uVar3 = uVar4 - uVar2;
+        }
+        else {
+          uVar3 = uVar2 - uVar4;
+        }
+        if ((((DAT_0005c930 < uVar4) && (uVar4 < DAT_0005c932)) && ((uVar3 & 0xffff) <= (uint)uVar5)
+            ) && ((((uVar3 & 0xffff) << 0xb) / (uVar2 & 0xffff) & 0xffff) <= (uint)DAT_0005c946)) {
+          fuel_flow_divisor_invalid_flag = 0;
+          fuel_flow_rpm_divisor = engine_temp_protection_input;
+          if (fuel_flow_divisor_settle_counter != 0) {
+            fuel_flow_divisor_settle_counter = fuel_flow_divisor_settle_counter - 1;
+          }
+        }
+        else {
+          fuel_flow_divisor_invalid_flag = 1;
+          fuel_flow_divisor_settle_counter = DAT_0005c938;
+          uVar5 = DAT_0005c930;
+          if ((uVar4 < DAT_0005c930) || (uVar5 = DAT_0005c932, DAT_0005c932 < uVar4)) {
+            engine_temp_protection_input_raw = uVar5;
+          }
+          engine_temp_protection_input = engine_temp_protection_input_raw;
+        }
+      }
+      if ((j1939_tsc1_override_state.etc1_control_active != 1) ||
+         ((drivetrain_type != DRIVETRAIN_AUTO_J1939_FULL &&
+          (drivetrain_type != DRIVETRAIN_AUTO_J1939_ETC1)))) {
+        if (((8000 < engine_rpm_state_t_0040b7ac.current_rpm) ||
+            (wVar1 = DAT_0005c93a, fuel_temperature_trim <= DAT_0005c93c)) &&
+           (wVar1 = fuel_trim_override_hold_counter, fuel_trim_override_hold_counter != 0)) {
+          wVar1 = fuel_trim_override_hold_counter - 1;
+        }
+        fuel_trim_override_hold_counter = wVar1;
+        if (fuel_flow_divisor_settle_counter == 1) {
+          fuel_trim_override_release_timer = DAT_0005c940;
+        }
+        if (fuel_trim_override_release_timer != 0) {
+          fuel_trim_override_release_timer = fuel_trim_override_release_timer - 1;
+        }
+        if ((((fuel_flow_divisor_settle_counter == 0) && (fuel_trim_override_release_timer == 0)) &&
+            (j1939_tsc1_override_state.etc1_disable_control == 0)) &&
+           (fuel_trim_override_hold_counter == 0)) {
+          fuel_trim_speed_override_flag = 0;
+        }
+        else {
+          fuel_trim_speed_override_flag = 1;
+          DAT_003fd05a = 1;
+        }
+      }
+      uVar2 = ((DAT_00408b78 + 0x6400) * (uint)DAT_003fd918) / 0x6400;
+      uVar4 = (uint)DAT_0005c932;
+      if (uVar4 < uVar2) {
+        uVar2 = uVar4;
+      }
+      governor_bypass_threshold_low = (word)uVar2;
+      uVar3 = ((DAT_00408b78 + 0x6400) * (uint)DAT_003fd900) / 0x6400;
+      if (uVar4 < uVar3) {
+        uVar3 = uVar4;
+      }
+      governor_bypass_threshold_high = (word)uVar3;
+      if ((uint)engine_temp_protection_input < (uVar2 & 0xffff)) {
+        governor_j1939_bypass_flag = 1;
+      }
+      else if ((uint)engine_temp_protection_input < (uVar3 & 0xffff)) {
+        governor_j1939_bypass_flag = 2;
+      }
+      else {
+        governor_j1939_bypass_flag = 3;
+      }
+      if (((DAT_003fd05c == fuel_flow_rpm_divisor) && (fuel_trim_speed_override_flag == 0)) &&
+         ((DAT_003fd05a == 1 && (DAT_0005c93e < fuel_demand_computed)))) {
+        fuel_flow_rpm_divisor_saved = fuel_flow_rpm_divisor;
+        DAT_003fd05a = 0;
+      }
+      DAT_003fd05c = fuel_flow_rpm_divisor;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: initGovernorJ1939Bypass @ 0x005263a8
+//
+
+// Variables in this function: DAT_003fd05c
+void initGovernorJ1939Bypass(void)
+
+{
+  j1939_tsc1_override_state.etc1_disable_control = 0;
+  governor_j1939_bypass_flag = 1;
+  engine_temp_protection_input_raw = DAT_0005c936;
+  engine_temp_protection_input = DAT_0005c936;
+  fuel_flow_rpm_divisor = DAT_0005c936;
+  engine_temp_protection_input_q16 = (uint)DAT_0005c936 << 0x10;
+  engine_temp_protection_ema_coeff_ptr = (undefined *)&DAT_0005c934;
+  DAT_003fd05c = DAT_0005c936;
+  protection_timeout_enable_flag = 1;
+  return;
+}
+
+
+
+//
+// Function: fuelTempTrimUpperLimitCheck @ 0x00526414
+//
+
+/* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+

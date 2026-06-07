@@ -1,0 +1,164 @@
+=== VARIABLES TO NAME ===
+0x003fa978  (3 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fa978
+void cm848_processSecurityAccessRequest(int param_1)
+
+{
+  if (DAT_003fa976 == '\0') {
+    (&governor_channel_t_0040addc)[param_1].derivative_term =
+         (&governor_channel_t_0040addc)[param_1].derivative_term & 0xfffe;
+  }
+  if (DAT_003fa977 == '\0') {
+    (&governor_channel_t_0040addc)[param_1].derivative_term =
+         (&governor_channel_t_0040addc)[param_1].derivative_term & 0xfffd;
+  }
+  if (DAT_003fa978 == '\0') {
+    (&governor_channel_t_0040addc)[param_1].derivative_term =
+         (&governor_channel_t_0040addc)[param_1].derivative_term & 0xff73;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_clearGovernorDerivativeMode @ 0x000223a0
+//
+
+// Variables in this function: DAT_003fa978
+void cm848_clearGovernorDerivativeMode(int param_1)
+
+{
+  int in_r12;
+  
+  if (in_r12 == 0) {
+    (&governor_channel_t_0040addc)[param_1].derivative_term =
+         (&governor_channel_t_0040addc)[param_1].derivative_term & 0xfffd;
+  }
+  if (DAT_003fa978 == '\0') {
+    (&governor_channel_t_0040addc)[param_1].derivative_term =
+         (&governor_channel_t_0040addc)[param_1].derivative_term & 0xff73;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_processGovernorControlMessage @ 0x000223f4
+//
+
+// Variables in this function: DAT_003fa978
+void cm848_processGovernorControlMessage(int param_1)
+
+{
+  byte bVar1;
+  byte bVar2;
+  byte bVar3;
+  byte bVar4;
+  byte bVar5;
+  byte bVar6;
+  byte bVar7;
+  bool bVar8;
+  uint uVar9;
+  governor_channel_t *pgVar10;
+  byte *pbVar11;
+  uint uVar12;
+  uint uVar13;
+  
+  if ((j1939_feature_enable_flags & 0x100) != 0) {
+    if ((engine_rpm_state_t_0040b7ac.current_rpm == 0) && (fuel_temperature_trim == 0)) {
+      pbVar11 = *(byte **)(param_1 + 6);
+      j1939_governor_status_byte = *pbVar11;
+      bVar1 = *(byte *)(param_1 + 3);
+      bVar2 = j1939_governor_status_byte & 0x30;
+      bVar6 = j1939_governor_status_byte & 0x30;
+      bVar3 = j1939_governor_status_byte & 0xc;
+      bVar7 = j1939_governor_status_byte & 0xc;
+      bVar4 = j1939_governor_status_byte & 3;
+      bVar5 = j1939_governor_status_byte & 3;
+      uVar12 = 0;
+      DAT_003fa976 = bVar6;
+      DAT_003fa977 = bVar7;
+      DAT_003fa978 = bVar5;
+      do {
+        pgVar10 = &governor_channel_t_0040addc + uVar12;
+        if ((&governor_channel_t_0040addc)[uVar12].channel_identifier == (ushort)bVar1) {
+          if (bVar6 == 0x10) {
+            pgVar10->derivative_term = pgVar10->derivative_term | 1;
+          }
+          if (bVar7 == 4) {
+            pgVar10->derivative_term = pgVar10->derivative_term | 2;
+          }
+          if (bVar5 == 1) {
+            pgVar10->derivative_term = pgVar10->derivative_term | 0x8c;
+          }
+          if ((&governor_channel_t_0040addc)[uVar12].derivative_term == 0xffff) {
+            (&governor_channel_t_0040addc)[uVar12].gain_schedule = 0;
+          }
+        }
+        uVar12 = uVar12 + 1 & 0xff;
+      } while (uVar12 < 3);
+      if (((bVar2 == 0) || (bVar3 == 0)) || (bVar4 == 0)) {
+        uVar9 = 3;
+        bVar8 = false;
+        uVar13 = 0;
+        uVar12 = (uint)bVar1;
+        do {
+          if ((&governor_channel_t_0040addc)[uVar13].channel_identifier == uVar12) {
+            cm848_processSecurityAccessRequest(uVar13);
+            (&governor_channel_t_0040addc)[uVar13].gain_schedule = governor_gain_schedule_cal;
+            bVar8 = true;
+          }
+          if ((&governor_channel_t_0040addc)[uVar13].gain_schedule == 0) {
+            uVar9 = uVar13;
+          }
+          uVar13 = uVar13 + 1 & 0xff;
+        } while (uVar13 < 3);
+        if ((!bVar8) && ((int)uVar9 < 3)) {
+          (&governor_channel_t_0040addc)[uVar9].gain_schedule = governor_gain_schedule_cal;
+          (&governor_channel_t_0040addc)[uVar9].channel_identifier = (ushort)bVar1;
+          cm848_processSecurityAccessRequest(uVar9);
+        }
+      }
+      else {
+        DAT_003fa975 = pbVar11[3];
+        if ((DAT_003fa975 & 0xe0) == 0) {
+          uVar12 = 0;
+          do {
+            if ((&governor_channel_t_0040addc)[uVar12].channel_identifier == (ushort)bVar1) {
+              (&governor_channel_t_0040addc)[uVar12].gain_schedule = governor_gain_schedule_cal;
+            }
+            uVar12 = uVar12 + 1 & 0xff;
+          } while (uVar12 < 3);
+        }
+      }
+      governor_derivative_masked =
+           governor_channel_t_0040addc.derivative_term & governor_derivative_mask_a &
+           governor_derivative_mask_b;
+    }
+    else {
+      uVar12 = 0;
+      do {
+        (&governor_channel_t_0040addc)[uVar12].derivative_term = 0xffff;
+        (&governor_channel_t_0040addc)[uVar12].gain_schedule = 0;
+        uVar12 = uVar12 + 1 & 0xff;
+      } while (uVar12 < 3);
+      engine_state_transition_timer = 0;
+      governor_derivative_active_flag = 0;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_initializeGovernorDerivatives @ 0x00022468
+//
+

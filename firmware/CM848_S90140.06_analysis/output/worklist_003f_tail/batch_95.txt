@@ -1,0 +1,32 @@
+=== VARIABLES TO NAME ===
+0x003fcfdb  (3 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fcfdb
+uint sensor_checksum_verify_session(void)
+
+{
+  undefined4 uVar1;
+  uint uVar2;
+  uint uVar3;
+  
+  if ((DAT_003fcfcd == 0) || (uVar2 = DAT_003fcfd0, diagnostic_session_state != INACTIVE)) {
+    DAT_003fcfdb = DAT_003fcfdb + 1;
+    uVar1 = TBLr;
+    uVar3 = (uint)DAT_003fcfdb;
+    uVar2 = j1939_checksum_xor_calc(uVar1,uVar3);
+    uVar3 = j1939_checksum_xor_calc(fault_timing_snapshot,uVar3);
+    uVar2 = uVar2 ^ uVar3;
+  }
+  return uVar2;
+}
+
+
+
+//
+// Function: j1939_msgSlotE_governorAuth_check @ 0x00523d38
+//
+

@@ -1,0 +1,44 @@
+=== VARIABLES TO NAME ===
+0x003fcbec  (4 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fcbec
+void diag_suppress_stateMachine(int param_1)
+
+{
+  if (param_1 == 0) {
+    DAT_003fcbec = 0;
+  }
+  else {
+    if (param_1 != 1) {
+      if (param_1 == 2) {
+        diagnostic_suppress_flag = DAT_003fcbec;
+        diag_suppress_active_flag = 0;
+        return;
+      }
+      if (param_1 != 3) {
+        return;
+      }
+      DAT_003fcbec = 1;
+      diagnostic_suppress_flag = 1;
+      diag_suppress_active_flag = 0;
+      return;
+    }
+    DAT_003fcbec = diagnostic_suppress_flag;
+    diag_suppress_active_flag = 1;
+  }
+  diagnostic_suppress_flag = 0;
+  return;
+}
+
+
+
+//
+// Function: cm848_adjustFuelDemandWithOffset @ 0x0050de54
+//
+
+/* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+

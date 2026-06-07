@@ -1,0 +1,153 @@
+=== VARIABLES TO NAME ===
+0x003fb2aa  (4 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fb2aa
+void cm848_j1939CheckTxTimeouts(void)
+
+{
+  short sVar1;
+  uint uVar2;
+  
+  uVar2 = (uint)engine_phase_bits_working;
+  can_tx_msg_header_word._0_2_ = *(byte *)(uVar2 + 0x57714) | 0xe000;
+  can_tx_msg_header_word._2_2_ = *(byte *)(uVar2 + 0x57704) | 0xe000;
+  can_tx_msg_slot_b_word = *(byte *)(uVar2 + 0x576f4) | 0xe000;
+  can_tx_msg_slot_c_word = *(byte *)(uVar2 + 0x576e4) | 0xe000;
+  can_tx_msg_slot_d_word = 0xf200;
+  DAT_003fb2aa = 5;
+  sVar1 = cm848_j1939QueueTransmitMessage(&j1939_tx_message_buffer_c,1);
+  if (sVar1 != 0) {
+    cm848_j1939QueueTransmitMessage(&j1939_tx_message_buffer_c,0);
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_j1939UpdateTxTimers @ 0x000369cc
+//
+
+// Variables in this function: DAT_003fb2aa
+void cm848_j1939UpdateTxTimers(void)
+
+{
+  if (j1939_tx_pending_flag == 0) {
+    can_tx_msg_header_word._2_2_ =
+         (ushort)(((uint)can_fuel_qty_scale_cal * 1000) / 0x7a12) & 0xff | 0x1800;
+    can_tx_msg_slot_b_word = 0x2e00;
+    can_tx_msg_slot_c_word = 0x2e00;
+    can_tx_msg_slot_d_word = 0xf200;
+    DAT_003fb2aa = 5;
+    cm848_j1939QueueTransmitMessage(&j1939_tx_message_buffer_c,1);
+    j1939_tx_pending_flag = 1;
+  }
+  else if (engine_phase_sync_enable_flag == 0) {
+    engine_phase_bits_working = engine_sync_phase_byte & 0xf;
+    engine_position_phase_bits = engine_sync_phase_byte >> 4 & 7;
+    if (engine_phase_sync_count < 8) {
+      if (engine_phase_bits_snapshot < engine_position_phase_bits) {
+        if (engine_phase_sync_count < engine_position_phase_bits) {
+          engine_phase_sync_count = engine_position_phase_bits;
+        }
+        if ((4 < engine_position_phase_bits) && (engine_phase_bits_snapshot < 5)) {
+          engine_phase_sync_acquire_count = engine_phase_sync_acquire_count + 1;
+        }
+      }
+    }
+    else if (engine_position_phase_bits == 0) {
+      engine_phase_sync_count = 0;
+    }
+    engine_phase_bits_snapshot = engine_position_phase_bits;
+    cm848_j1939CheckTxTimeouts();
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_updateJ1939TxTimerCounter @ 0x00036b10
+//
+
+// Variables in this function: DAT_003fb2aa
+void cm848_initJ1939StatusMessages(void)
+
+{
+  int iVar1;
+  uint uVar2;
+  uint uVar3;
+  uint uVar4;
+  uint uVar5;
+  short sVar6;
+  byte bVar7;
+  int in_DER;
+  
+  bVar7 = 0;
+  DAT_003fb2a9 = injection_sync_broadcast_byte;
+  can_tx_msg_header_ptr = (undefined *)&can_tx_msg_header_word;
+  j1939_msg_descriptor_c_ptr = &j1939_msg_descriptor_table;
+  j1939_tx_data_block_c_ptr = &DAT_003fb2c7;
+  j1939_tx_frame_c_accum = 0;
+  can_tx_msg_header_word._0_2_ = 0x1400;
+  can_tx_msg_header_word._2_2_ = 0x1801;
+  can_tx_msg_slot_b_word = 0xf200;
+  DAT_003fb2aa = 3;
+  do {
+    sVar6 = cm848_j1939QueueTransmitMessage(&j1939_tx_message_buffer_c,1);
+  } while (sVar6 != 0);
+  do {
+  } while (j1939_tx_message_buffer_c != 0);
+  engine_phase_bits_working = engine_phase_and_position_bits_packed & 0xf;
+  engine_position_phase_bits = engine_phase_and_position_bits_packed >> 4 & 7;
+  if (engine_position_phase_bits != 0) {
+    do {
+      do {
+        uVar3 = TBUr;
+        iVar1 = TBLr;
+        uVar2 = TBUr;
+      } while (uVar3 != uVar2);
+      do {
+        do {
+          uVar4 = TBUr;
+          uVar2 = TBLr;
+          uVar5 = TBUr;
+        } while (uVar4 != uVar5);
+      } while ((uVar4 < uVar3) || (uVar2 < iVar1 + 5000U));
+      cm848_j1939CheckTxTimeouts();
+      do {
+      } while (j1939_tx_message_buffer_c != 0);
+      engine_phase_bits_working = engine_sync_phase_byte & 0xf;
+      engine_position_phase_bits = engine_sync_phase_byte >> 4 & 7;
+      bVar7 = bVar7 + 1;
+    } while ((engine_position_phase_bits != 0) && (bVar7 < 0x14));
+  }
+  if (in_DER == 0x2002000f) {
+    can_tx_msg_header_word._0_2_ = 0x1440;
+  }
+  else {
+    can_tx_msg_header_word._0_2_ = 0x1400;
+  }
+  can_tx_msg_header_word._2_2_ = 0x183f;
+  DAT_003fb2aa = 2;
+  do {
+    sVar6 = cm848_j1939QueueTransmitMessage(&j1939_tx_message_buffer_c,1);
+  } while (sVar6 != 0);
+  do {
+  } while (j1939_tx_message_buffer_c != 0);
+  engine_phase_sync_count = 8;
+  engine_phase_bits_snapshot = engine_position_phase_bits;
+  j1939_tx_pending_flag = 0;
+  return;
+}
+
+
+
+//
+// Function: cm848_initPeriodicTimerChannel6 @ 0x00037130
+//
+

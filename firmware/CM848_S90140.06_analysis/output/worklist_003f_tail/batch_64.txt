@@ -1,0 +1,262 @@
+=== VARIABLES TO NAME ===
+0x003fcd94  (3 references)
+0x003fcda4  (3 references)
+0x003fcda6  (4 references)
+0x003fcda8  (4 references)
+0x003fcdac  (3 references)
+
+Total: 5 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fcd94, DAT_003fcda4, DAT_003fcda6, DAT_003fcda8, DAT_003fcdac
+void governor_fuel_mode_initialization(void)
+
+{
+  cruise_protection_ok = 0;
+  governor_fuel_mode = 1;
+  governor_fuel_mode_d = 1;
+  DAT_003fcda8 = 0;
+  DAT_003fcd94 = 5;
+  DAT_003fcda4 = 5;
+  governor_speed_request_state_b = 5;
+  governor_speed_request_state_prev = 5;
+  governor_speed_request_debounce_count = 0;
+  DAT_003fcd9a = 0;
+  PTR_DAT_003fcd96 = &DAT_0040872a;
+  DAT_003fcd90 = 0;
+  DAT_003fcdac = 0;
+  DAT_003fcda6 = 0;
+  cruise_speed_error_integral = 0;
+  cruise_steady_state_debounce_counter = 0;
+  return;
+}
+
+
+
+//
+// Function: governor_cruiseOverride_state2_handler @ 0x005125f4
+//
+
+// Variables in this function: DAT_003fcda8
+int protection_control_state_check_1(void)
+
+{
+  int iVar1;
+  
+  if (((((power_state_status_flags & 0x20) == 0) && ((power_state_status_flags & 0x40) == 0)) &&
+      ((system_status_flags_t_003fe974.condition_monitor & 0x2000) == 0)) &&
+     ((cold_start_phase == CSP_AT_GOVERNOR_SETPOINT && (cold_start_qualifier_flag == 0)))) {
+    if ((governor_speed_request_state_prev == 0) || (governor_speed_request_state_b != 0)) {
+      iVar1 = (int)DAT_003fcda8;
+    }
+    else if (DAT_003fcda8 == 1) {
+      iVar1 = 0;
+    }
+    else {
+      iVar1 = 1;
+    }
+  }
+  else {
+    iVar1 = 0;
+  }
+  return iVar1;
+}
+
+
+
+//
+// Function: governor_fuelMode_state_get @ 0x00512724
+//
+
+// Variables in this function: DAT_003fcdac
+void governor_cruise_rpmRatio_ema(void)
+
+{
+  uint uVar1;
+  
+  uVar1 = ((uint)engine_rpm_state_t_0040b7ac.current_rpm + (uint)DAT_003fcdac) * 0x80;
+  if ((uint)cruise_speed_setpoint_adjusted * 0xffff < uVar1) {
+    uVar1 = 0xffff;
+  }
+  else {
+    uVar1 = uVar1 / cruise_speed_setpoint_adjusted;
+  }
+  cruise_rpm_ratio_ema = exponentialMovingAverage(uVar1 & 0xffff,&PTR_DAT_003fcd96);
+  return;
+}
+
+
+
+//
+// Function: governor_cruise_speedError_integrate @ 0x005127d8
+//
+
+// Variables in this function: DAT_003fcda6
+void governor_cruise_speedError_integrate(void)
+
+{
+  uint uVar1;
+  
+  uVar1 = (uint)(short)(DAT_003fcda6 - cruise_rpm_ratio_ema);
+  if ((int)uVar1 < 0) {
+    uVar1 = -uVar1;
+  }
+  if ((uVar1 & 0xffff) < (uint)cruise_ratio_steady_threshold) {
+    cruise_steady_state_debounce_counter = cruise_steady_state_debounce_counter + 1;
+    if (cruise_steady_debounce_count <= cruise_steady_state_debounce_counter) {
+      cruise_steady_state_debounce_counter = cruise_steady_debounce_count;
+      cruise_speed_error_integral = 0;
+    }
+  }
+  else {
+    cruise_speed_error_integral =
+         cruise_speed_error_integral + (DAT_003fcda6 - cruise_rpm_ratio_ema);
+    cruise_steady_state_debounce_counter = 0;
+  }
+  return;
+}
+
+
+
+//
+// Function: governor_cruiseOverride_state4_handler @ 0x00512878
+//
+
+// Variables in this function: DAT_003fcd94, DAT_003fcda4
+int protection_control_state_check_2(void)
+
+{
+  word wVar1;
+  
+  DAT_003fcd94 = DAT_0040bb4e;
+  wVar1 = DAT_0040bb4e;
+  if (1 < DAT_0040871e) {
+    if (governor_speed_request_state_prev == DAT_0040bb4e) {
+      governor_speed_request_debounce_count = 2;
+      wVar1 = governor_speed_request_state_prev;
+    }
+    else if (DAT_003fcda4 == DAT_0040bb4e) {
+      if ((int)(uint)governor_speed_request_debounce_count < (int)(DAT_0040871e - 1)) {
+        governor_speed_request_debounce_count = governor_speed_request_debounce_count + 1;
+        return 5;
+      }
+    }
+    else {
+      if (governor_speed_request_debounce_count < 2) {
+        return 5;
+      }
+      governor_speed_request_debounce_count = governor_speed_request_debounce_count - 1;
+      wVar1 = governor_speed_request_state_prev;
+    }
+  }
+  return (int)(short)wVar1;
+}
+
+
+
+//
+// Function: governor_cruise_fuelCorrection_inhibitCheck @ 0x00512a60
+//
+
+// Variables in this function: DAT_003fcd94, DAT_003fcda4, DAT_003fcda6, DAT_003fcda8, DAT_003fcdac
+void cm848_periodicProtectionControl(void)
+
+{
+  int iVar1;
+  word wVar2;
+  short sVar3;
+  word wVar4;
+  word wVar5;
+  word *pwVar6;
+  
+  governor_cruise_rpmRatio_ema();
+  governor_cruise_speedError_integrate();
+  governor_speed_request_state_b = protection_control_state_check_2();
+  wVar5 = governor_speed_request_state_b;
+  iVar1 = governor_cruise_engage_check();
+  if (iVar1 != 0) {
+    j1939_cruise_engaged = 1;
+  }
+  cruise_protection_ok = protection_control_state_check_1();
+  etc1_throttle_active_flag = (word)(cruise_protection_ok != 0);
+  pwVar6 = &fuel_demand_speed_error;
+  wVar4 = cruise_protection_ok;
+  wVar2 = governor_fuelMode_state_get();
+  *pwVar6 = wVar2;
+  sVar3 = governor_cruise_fuelCorrection_inhibitCheck();
+  if (sVar3 == 0) {
+    if (governor_override_active_flag == 0) {
+      governor_fuel_mode = 0;
+    }
+    else {
+      governor_fuel_mode = 0xd;
+    }
+    if (wVar5 == 4) {
+      wVar2 = governor_cruiseOverride_state4_handler();
+      goto LAB_005130dc;
+    }
+    if (wVar5 == 3) {
+      wVar2 = governor_cruiseOverride_state3_handler();
+      goto LAB_005130dc;
+    }
+    if (wVar5 == 2) {
+      wVar2 = governor_cruiseOverride_state2_handler();
+      goto LAB_005130dc;
+    }
+  }
+  else {
+    wVar2 = governor_cruise_disengage_check();
+LAB_005130dc:
+    *pwVar6 = wVar2;
+  }
+  switch(*pwVar6) {
+  case 0:
+    break;
+  case 1:
+    j1939_status_field_3bit = 5;
+    goto LAB_00513168;
+  case 2:
+    goto LAB_00513154;
+  case 3:
+    goto LAB_00513134;
+  case 4:
+    goto LAB_0051313c;
+  case 5:
+LAB_00513134:
+    j1939_status_field_3bit = 3;
+    goto LAB_00513168;
+  case 6:
+LAB_0051313c:
+    j1939_status_field_3bit = 2;
+    goto LAB_00513168;
+  case 7:
+    if (fuel_demand_enable_sync_flag == 0) {
+      j1939_status_field_3bit = 1;
+      goto LAB_00513168;
+    }
+LAB_00513154:
+    j1939_status_field_3bit = 4;
+    goto LAB_00513168;
+  case 8:
+  }
+  j1939_status_field_3bit = 0;
+LAB_00513168:
+  if (((j1939_status_field_3bit != 0) && (cruise_fuel_demand_hold < fuel_demand_previous)) &&
+     (governor_fuel_demand_mode != 9)) {
+    j1939_status_field_3bit = 6;
+  }
+  DAT_003fcda4 = DAT_003fcd94;
+  DAT_003fcda8 = wVar4;
+  governor_speed_request_state_prev = wVar5;
+  DAT_003fcdac = engine_rpm_state_t_0040b7ac.current_rpm;
+  DAT_003fcda6 = cruise_rpm_ratio_ema;
+  return;
+}
+
+
+
+//
+// Function: protection_fault_latch_update @ 0x00513200
+//
+

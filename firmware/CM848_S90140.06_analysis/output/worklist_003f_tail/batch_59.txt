@@ -1,0 +1,50 @@
+=== VARIABLES TO NAME ===
+0x003fcd28  (3 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fcd28
+void boost_demand_diagBit_counter(void)
+
+{
+  bool bVar1;
+  uint uVar2;
+  uint uVar3;
+  
+  if (((short)fuel_demand_boost_input < DAT_004077da) && (boost_correction_inhibit_flag == 0)) {
+    bVar1 = false;
+  }
+  else {
+    bVar1 = true;
+  }
+  uVar2 = (uint)DAT_004077dc;
+  if (bVar1) {
+    uVar3 = 0;
+  }
+  else {
+    uVar3 = uVar2;
+    if ((uVar2 != 0) && ((int)(uint)DAT_003fcd28 <= (int)(uVar2 - 1))) {
+      uVar3 = DAT_003fcd28 + 1;
+    }
+  }
+  DAT_003fcd28 = (short)uVar3;
+  if (((uVar3 & 0xffff) < uVar2) || ((diagnostic_status_flags & 0x400) == 0)) {
+    if ((diagnostic_status_flags & 0x400) == 0) {
+      diagnostic_status_flags_b = diagnostic_status_flags_b & 0xfbff;
+      diagnostic_status_flags_b_shadow = diagnostic_status_flags_b_shadow & 0xfbff;
+    }
+  }
+  else {
+    diagnostic_status_flags_b = diagnostic_status_flags_b | 0x400;
+  }
+  return;
+}
+
+
+
+//
+// Function: phase_group_b_computeGovernorFuelDemandOutput @ 0x0050fe54
+//
+

@@ -1,0 +1,57 @@
+=== VARIABLES TO NAME ===
+0x003fd278  (4 references)
+0x003feeb8  (4 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fd278
+void cm848_initOilPressure(void)
+
+{
+  if ((protection_enable_t_0040c050.mode_bits & 1) != 0) {
+    DAT_003fd278 = 1;
+  }
+  return;
+}
+
+
+
+//
+// Function: hpcr_oilPressureLimited @ 0x005379d8
+//
+
+// Variables in this function: DAT_003fd278, DAT_003feeb8
+void hpcr_oilPressureLimited(void)
+
+{
+  if ((system_status_flags_t_003fe974.safety_bits_1 & 0x80) != 0) {
+    DAT_003fd278 = 0;
+  }
+  if (DAT_003fd278 != 0) {
+    if ((system_status_flags_t_003fe974.safety_bits_1 & 0x100) == 0) {
+      DAT_003feeb8 = 0;
+    }
+    else {
+      hpcr_oil_pressure_crank_angle_fraction =
+           hpcr_oil_pressure_crank_angle_fraction + fuel_temperature_trim;
+      if (35999 < hpcr_oil_pressure_crank_angle_fraction) {
+        DAT_003feeb8 = DAT_003feeb8 + hpcr_oil_pressure_crank_angle_fraction / 36000;
+        hpcr_oil_pressure_crank_angle_fraction = hpcr_oil_pressure_crank_angle_fraction % 36000;
+      }
+    }
+    if (DAT_0040a026 <= DAT_003feeb8) {
+      j1939_receive_status_flags = j1939_receive_status_flags | 1;
+      DAT_003fd278 = 0;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_mainLoopDispatcher @ 0x00537acc
+//
+

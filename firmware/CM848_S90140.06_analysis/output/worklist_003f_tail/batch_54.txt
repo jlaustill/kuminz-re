@@ -1,0 +1,48 @@
+=== VARIABLES TO NAME ===
+0x003fcbfa  (4 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fcbfa
+void cm848_applyProtectionRpmCorrectionFilter(void)
+
+{
+  short sVar1;
+  
+  fuel_demand_rpm_correction_lookup =
+       cm848_dualAxisTableInterpolation
+                 (&DAT_003fcbfa,engine_rpm_state_t_0040b7ac.current_rpm,0x5d52);
+  DAT_0040afb8 = cm848_dualAxisTableInterpolation
+                           (&DAT_003fcbfa,engine_rpm_state_t_0040b7ac.current_rpm,0x5d52);
+  DAT_0040afb6 = fuel_demand_rpm_correction_lookup - DAT_0040afb8;
+  DAT_0040afba = DAT_0040afb6 + fuel_demand_blend_adjusted;
+  fuel_demand_aux_blend_deviation = DAT_0040a54e;
+  sVar1 = cm848_dualAxisTableInterpolation
+                    (&DAT_003fcbfa,engine_rpm_state_t_0040b7ac.current_rpm,0x5d52);
+  DAT_0040afbc = fuel_demand_aux_blend_deviation - sVar1;
+  return;
+}
+
+
+
+//
+// Function: cm848_initThrottleRateFilterState @ 0x0050ebf0
+//
+
+// Variables in this function: DAT_003fcbfa
+void cm848_initThrottleRateFilterState(void)
+
+{
+  DAT_003fcbfa = 2;
+  DAT_003fcbfc = 2;
+  return;
+}
+
+
+
+//
+// Function: cm848_updateThrottleRateFilterTimer @ 0x0050ec08
+//
+

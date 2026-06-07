@@ -1,0 +1,133 @@
+=== VARIABLES TO NAME ===
+0x003fb550  (4 references)
+0x003fb551  (4 references)
+0x003fb552  (3 references)
+0x003fb553  (3 references)
+
+Total: 4 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fb550, DAT_003fb551, DAT_003fb552, DAT_003fb553
+void cm848_processProtectionSystemBit3(void)
+
+{
+  ushort uVar1;
+  
+  if ((protection_enable_t_0040c050.system_enable_bits & 8) == 0) {
+    if (fuel_mode_delay_timer == 0) {
+      engine_idle_validation_flag = 0;
+    }
+    else {
+      fuel_mode_delay_timer = fuel_mode_delay_timer - 1;
+    }
+  }
+  else {
+    engine_idle_validation_flag = 1;
+    fuel_mode_delay_timer = fuel_mode_delay_timer_cal;
+  }
+  governor_j1939_fuel_input_counter = j1939_tsc1_override_state.etc1_spn573_tc_lockup_disengage;
+  if ((protection_config_flags_b & 4) != 0) {
+    governor_j1939_fuel_input_counter = (ushort)((protection_condition_state._0_1_ & 1) != 0);
+  }
+  if ((((((short)intercooler_temp_raw < (short)intercooler_temp_threshold) &&
+        (intercooler_rpm_threshold_low_cal < engine_rpm_state_t_0040b7ac.current_rpm)) ||
+       (((short)intercooler_temp_threshold <= (short)intercooler_temp_raw &&
+        (intercooler_rpm_threshold_high_cal < engine_rpm_state_t_0040b7ac.current_rpm)))) &&
+      (uVar1 = cm848_oilPressureDeltaCalculation(), uVar1 < oil_pressure_delta_tc_threshold_cal)) &&
+     ((((((governor_fuel_demand_mode != 0xb && (governor_fuel_demand_mode != 4)) &&
+         (fuel_demand_computed <= fuel_demand_computed_min_cal)) ||
+        ((governor_fuel_demand_mode == 0xb &&
+         (((uint)fuel_demand_computed <= (uint)fuel_demand_computed_min_cal ||
+          (((uint)fuel_demand_computed <=
+            (uint)fuel_demand_threshold_a_cal + (uint)fuel_demand_offset_correction &&
+           ((int)(short)sensor_readings_t_0040baf2.coolant_temp <
+            (short)coolant_temp_threshold + -0x140)))))))) ||
+       ((governor_fuel_demand_mode == 4 &&
+        ((((uint)fuel_demand_computed <=
+           (uint)fuel_demand_threshold_b_cal + (uint)fuel_demand_offset_correction &&
+          (protection_monitored_rpm <= protection_monitored_rpm_threshold_cal)) &&
+         ((int)(short)sensor_readings_t_0040baf2.coolant_temp <
+          (short)coolant_temp_threshold + -0x140)))))) &&
+      ((governor_j1939_fuel_input_counter == 0 || (fuel_correction_mode_flag != 0)))))) {
+    DAT_003fb550 = true;
+  }
+  else {
+    DAT_003fb550 = false;
+  }
+  if ((((fuel_demand_control_t_0040a57a.calculated == 0) &&
+       ((governor_fuel_active_flag == 0 || ((governor_system_config_flags & 0x8000) == 0)))) &&
+      (((protection_enable_t_0040c050.system_enable_bits & 0x80) == 0 ||
+       ((governor_feature_config_word & 0x40) == 0)))) &&
+     (((engine_idle_validation_flag == 1 || ((system_feature_config_flags & 0x4000) == 0)) ||
+      (governor_mode_request_code == 2)))) {
+    DAT_003fb552 = true;
+  }
+  else {
+    DAT_003fb552 = false;
+  }
+  if ((((((short)intercooler_temp_raw < (short)intercooler_temp_threshold) &&
+        (engine_rpm_state_t_0040b7ac.current_rpm < intercooler_rpm_exit_threshold_cal)) ||
+       (((short)intercooler_temp_threshold <= (short)intercooler_temp_raw &&
+        (engine_rpm_state_t_0040b7ac.current_rpm <= intercooler_rpm_threshold_cal)))) ||
+      (((governor_fuel_demand_mode != 0xb && (governor_fuel_demand_mode != 4)) &&
+       ((fuel_demand_computed_min_cal < governor_fuel_demand_value &&
+        (fuel_temperature_trim <= fuel_temp_trim_threshold)))))) ||
+     (((governor_fuel_demand_mode == 0xb &&
+       (((uint)fuel_demand_threshold_a_cal + (uint)fuel_demand_offset_correction <
+         (uint)fuel_demand_computed ||
+        ((((short)coolant_temp_threshold < (short)sensor_readings_t_0040baf2.coolant_temp &&
+          (fuel_temperature_trim <= fuel_temp_trim_threshold)) &&
+         ((uint)fuel_demand_computed_min_cal < (uint)fuel_demand_computed)))))) ||
+      (((governor_fuel_demand_mode == 4 &&
+        ((((uint)fuel_demand_threshold_b_cal + (uint)fuel_demand_offset_correction <
+           (uint)fuel_demand_computed ||
+          (protection_monitored_rpm_threshold_cal < protection_monitored_rpm)) ||
+         ((short)coolant_temp_threshold < (short)sensor_readings_t_0040baf2.coolant_temp)))) ||
+       ((governor_j1939_fuel_input_counter != 0 && (fuel_correction_mode_flag == 0)))))))) {
+    DAT_003fb551 = true;
+  }
+  else {
+    DAT_003fb551 = false;
+  }
+  if (((fuel_demand_control_t_0040a57a.calculated == 0) &&
+      ((governor_fuel_active_flag == 0 || ((governor_system_config_flags & 0x8000) == 0)))) &&
+     (((protection_enable_t_0040c050.system_enable_bits & 0x80) == 0 ||
+      ((governor_feature_config_word & 0x40) == 0)))) {
+    DAT_003fb553 = false;
+  }
+  else {
+    DAT_003fb553 = true;
+  }
+  if ((governor_speed_limit_active_flag == 0) || ((operating_mode_flags & 1) == 0)) {
+    if (((governor_speed_setpoint == 0) && (!(bool)DAT_003fb550)) ||
+       ((governor_speed_setpoint != 0 && ((bool)DAT_003fb551)))) {
+      fuel_correction_active_flag = 0;
+      goto LAB_000418e0;
+    }
+    if ((((governor_speed_setpoint != 0) || (!(bool)DAT_003fb550)) || (!(bool)DAT_003fb552)) &&
+       (((governor_speed_setpoint == 0 || ((bool)DAT_003fb551)) || ((bool)DAT_003fb553)))) {
+      fuel_correction_active_flag = 1;
+      goto LAB_000418e0;
+    }
+  }
+  fuel_correction_active_flag = 2;
+  governor_load_percent_min = 0x65;
+LAB_000418e0:
+  if ((engine_idle_validation_flag == 1) && ((governor_mode_config_flags & 1) != 0)) {
+    engine_idle_cal_valid_flag._0_2_ = 1;
+  }
+  else {
+    engine_idle_cal_valid_flag._0_2_ = 0;
+  }
+  governor_speed_setpoint_prev_prev = governor_speed_setpoint_prev;
+  governor_speed_setpoint_prev = governor_speed_setpoint;
+  return;
+}
+
+
+
+//
+// Function: cm848_processProtectionSystemBit4 @ 0x00041938
+//
+

@@ -1,0 +1,107 @@
+=== VARIABLES TO NAME ===
+0x003fefbc  (4 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fefbc
+void fuel_demandFeature_emission_update(void)
+
+{
+  uint uVar1;
+  uint uVar2;
+  byte bVar3;
+  
+  if (((fuel_demand_feature_flags & 0x2000) != 0) && ((qadc_control_word_h._0_1_ & 0x80) != 0)) {
+    uVar2 = (uint)DAT_0005c340;
+    uVar1 = (uint)fuel_demand_feature_threshold._0_1_;
+    if (uVar1 <= uVar2) {
+      bVar3 = (byte)DAT_0005c340;
+      if (governor_derivative_active_flag != 0) {
+        if ((DAT_0005c340 & 0xff) < uVar1) {
+          return;
+        }
+        emission_fuel_demand_output = DAT_003fefbc;
+        fuel_demand_feature_threshold._0_1_ = bVar3;
+        return;
+      }
+      if (DAT_003feab2 == 0) {
+        if (governor_load_startup_inhibit_flag == 0) {
+          fault_reason_set_bitmap(7);
+          fault_count_set_bitmap(7);
+        }
+        if ((int)uVar1 <= (int)(uVar2 & 0xff)) {
+          fuel_demand_feature_threshold._0_1_ = (byte)uVar2;
+          emission_fuel_demand_output = DAT_003fefbc;
+        }
+        fuel_demand_protection_loop();
+        return;
+      }
+      fuel_demand_protection_init_flag = 0;
+      uVar2 = (uint)DAT_0040aaae;
+      if (uVar2 < 0xfb) {
+        if (emission_feature_fault_active_flag == 0) {
+          if (uVar1 <= (DAT_0005c340 & 0xff)) {
+            emission_fuel_demand_output = (word)((uVar2 << 4) / 10);
+            fuel_demand_feature_threshold._0_1_ = bVar3;
+          }
+          fuel_demand_control_t_0040a57a.enable_flag = (word)(uVar2 != 0);
+          if ((system_status_flags_t_003fe974.emission_faults & 0x8000) == 0) {
+            fuel_demand_protection_init_flag = 0;
+            return;
+          }
+          if (emission_feature_mode_select == 2) {
+            fuel_demand_protection_init_flag = 0;
+            return;
+          }
+          fuel_demand_protection_init_flag = 0;
+          system_status_flags_t_003fe974.emission_faults =
+               system_status_flags_t_003fe974.emission_faults & 0x7fff;
+          emission_faults_shadow_flags = emission_faults_shadow_flags & 0x7fff;
+          emission_feature_engage_flag = 0;
+          return;
+        }
+        emission_feature_engage_flag = 0;
+        if (uVar1 <= (DAT_0005c340 & 0xff)) {
+          emission_fuel_demand_output = DAT_003fefbc;
+          fuel_demand_feature_threshold._0_1_ = bVar3;
+        }
+      }
+      else {
+        emission_feature_engage_flag = 0;
+        if (uVar1 <= (DAT_0005c340 & 0xff)) {
+          emission_fuel_demand_output = DAT_003fefbc;
+          fuel_demand_feature_threshold._0_1_ = bVar3;
+        }
+        if (uVar2 == 0xfe) {
+          if (governor_load_startup_inhibit_flag == 0) {
+            system_status_flags_t_003fe974.emission_faults =
+                 system_status_flags_t_003fe974.emission_faults | 0x8000;
+          }
+          if ((emission_feature_mode_select < 2) &&
+             (emission_feature_engage_flag = 1, emission_feature_mode_select != 1)) {
+            fuel_demand_protection_init_flag = 0;
+            fuel_demand_control_t_0040a57a.enable_flag = 1;
+            emission_feature_engage_flag = 1;
+            return;
+          }
+        }
+        else if (governor_load_startup_inhibit_flag == 0) {
+          fault_flag_set_bitmap(7);
+        }
+      }
+      fuel_demand_control_t_0040a57a.enable_flag = 0;
+      return;
+    }
+  }
+  fuel_demand_protection_init_flag = 0;
+  return;
+}
+
+
+
+//
+// Function: fuel_demandFeature_faultBitmap_update @ 0x0050a9d4
+//
+
