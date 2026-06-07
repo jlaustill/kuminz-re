@@ -1,0 +1,613 @@
+=== VARIABLES TO NAME ===
+0x00408820  (3 references)
+0x00408822  (4 references)
+0x00408860  (4 references)
+0x0040886a  (3 references)
+0x00408896  (4 references)
+0x004088b4  (4 references)
+0x0040b29e  (3 references)
+0x0040b2a6  (3 references)
+0x0040b2b2  (3 references)
+0x0040b2c6  (4 references)
+
+Total: 10 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00408860, DAT_0040886a, DAT_00408896, DAT_004088b4, DAT_0040b2a6, DAT_0040b2b2, DAT_0040b2c6
+void engine_egrFuel_stateMachine_update(void)
+
+{
+  bool bVar1;
+  ushort uVar2;
+  uint uVar3;
+  uint uVar4;
+  uint uVar5;
+  dword dVar6;
+  word wVar7;
+  int iVar8;
+  int iVar9;
+  
+  if ((((system_status_flags_t_003fe974.condition_monitor & 2) == 0) &&
+      ((system_status_flags_t_003fe974.condition_monitor & 1) == 0)) &&
+     ((protection_monitor_shadow & 2) == 0)) {
+    egr_coolant_temp_filtered =
+         cm848_signedFirstOrderFilter
+                   ((int)(short)sensor_readings_t_0040baf2.coolant_temp,&PTR_DAT_0040b2e4);
+    dVar6 = egr_governor_speed_target;
+    if (egr_governor_pi_active_flag != 0) {
+      DAT_0040b2a6 = egr_coolant_temp_filtered - DAT_0040883a;
+      uVar5 = (uint)DAT_0040883c;
+      uVar4 = (uint)DAT_0040b2a6;
+      DAT_0040b2b2 = (int)(CONCAT44((int)((ulonglong)uVar5 * (ulonglong)uVar4 >> 0x20) +
+                                    uVar5 * ((int)uVar4 >> 0x1f),uVar5 * uVar4) / 0x80);
+      egr_governor_speed_integral =
+           egr_governor_speed_integral + (int)DAT_0040b2a6 * (uint)DAT_00408834;
+      if (egr_governor_integral_reset_flag == 0) {
+        dVar6 = DAT_0040b2b2 +
+                ((int)egr_governor_speed_integral >> 0xc) +
+                (uint)((int)egr_governor_speed_integral < 0 &&
+                      (egr_governor_speed_integral & 0xfff) != 0);
+        egr_governor_speed_target = (dword)DAT_00408838;
+        if (((int)egr_governor_speed_target <= (int)dVar6) &&
+           (egr_governor_speed_target = (dword)DAT_00408836,
+           (int)dVar6 <= (int)egr_governor_speed_target)) goto LAB_00514584;
+      }
+      else {
+        egr_governor_speed_target = (dword)governor_speed_reference;
+        egr_governor_integral_reset_flag = 0;
+      }
+      egr_governor_speed_integral = (egr_governor_speed_target - DAT_0040b2b2) * 0x1000;
+      dVar6 = egr_governor_speed_target;
+    }
+LAB_00514584:
+    egr_governor_speed_target = dVar6;
+    if ((short)egr_coolant_temp_filtered < DAT_00408840) {
+      egr_warmup_phase_state = 0;
+    }
+    else if (DAT_00408832 <= (short)egr_coolant_temp_filtered) goto LAB_005145b0;
+  }
+  else {
+LAB_005145b0:
+    egr_warmup_phase_state = 3;
+  }
+  if (egr_warmup_phase_state == 0) {
+    egr_governor_speed_floor = DAT_00408838;
+    egr_governor_pi_active_flag = 0;
+    if (DAT_00408840 <= (short)egr_coolant_temp_filtered) {
+      egr_warmup_phase_state = 1;
+    }
+  }
+  else if (egr_warmup_phase_state == 1) {
+    uVar4 = ((int)(short)egr_coolant_temp_filtered - (int)DAT_00408840) * (uint)DAT_0040883e;
+    egr_governor_speed_floor =
+         DAT_004088aa + (short)((int)uVar4 >> 7) + (ushort)((int)uVar4 < 0 && (uVar4 & 0x7f) != 0);
+    if ((int)DAT_0040883a <= (int)(short)egr_coolant_temp_filtered) {
+LAB_005146dc:
+      egr_governor_integral_reset_flag = 1;
+      egr_governor_pi_active_flag = 1;
+      egr_warmup_phase_state = 2;
+    }
+  }
+  else if (egr_warmup_phase_state == 2) {
+    egr_governor_speed_floor = (word)egr_governor_speed_target;
+  }
+  else if (egr_warmup_phase_state == 3) {
+    egr_governor_speed_floor = DAT_00408836;
+    if ((((system_status_flags_t_003fe974.condition_monitor & 1) == 0) &&
+        ((system_status_flags_t_003fe974.condition_monitor & 2) == 0)) &&
+       ((protection_monitor_shadow & 2) == 0)) {
+      if ((short)egr_coolant_temp_filtered < DAT_00408830) goto LAB_005146dc;
+    }
+    else {
+      egr_warmup_phase_state = 3;
+    }
+  }
+  else {
+    egr_warmup_phase_state = 0;
+  }
+  if (DAT_00408836 < egr_governor_speed_floor) {
+    egr_governor_speed_floor = DAT_00408836;
+  }
+  uVar4 = (uint)fuel_quantity_stroke_raw;
+  if (DAT_00408898 == 0) {
+    iVar8 = 0x28;
+  }
+  else {
+    iVar8 = 0x8a;
+  }
+  if (uVar4 < DAT_00408824) {
+    if ((uVar4 < DAT_0040882a) && (egr_fuel_demand_high_stroke_flag != 0)) {
+      egr_fuel_demand_high_stroke_flag = 0;
+    }
+  }
+  else {
+    egr_fuel_demand_high_stroke_flag = 1;
+  }
+  if (((protection_enable_t_0040c050.system_enable_bits & 0x20) == 0) ||
+     (wVar7 = DAT_00408826, egr_fuel_demand_high_stroke_flag == 0)) {
+    if (((protection_enable_t_0040c050.system_enable_bits & 0x20) != 0) &&
+       (((DAT_0040882a < uVar4 && (uVar4 < DAT_00408824)) && (DAT_00408881 != '\0')))) {
+      wVar7 = DAT_0040882e + (short)((uVar4 - DAT_0040882a) * (uint)DAT_0040882c >> 8);
+      goto LAB_005148b8;
+    }
+    if ((((((protection_enable_t_0040c050.system_enable_bits & 0x20) != 0) &&
+          (egr_fuel_demand_high_stroke_flag == 0)) &&
+         ((fuel_temperature_trim < DAT_00408884 &&
+          ((DAT_0040887f <= *(short *)((int)&per_cylinder_timing_offset_table + iVar8) &&
+           (wVar7 = DAT_0040882e, DAT_00408881 == '\0')))))) ||
+        (wVar7 = DAT_00408828, (protection_enable_t_0040c050.system_enable_bits & 0x20) == 0)) ||
+       ((egr_fuel_demand_high_stroke_flag == 0 &&
+        ((DAT_00408882 <= fuel_temperature_trim ||
+         (*(short *)((int)&per_cylinder_timing_offset_table + iVar8) < DAT_0040887f))))))
+    goto LAB_005148b8;
+  }
+  else {
+LAB_005148b8:
+    egr_fuel_demand_speed_floor = wVar7;
+  }
+  egr_rpm_proportional_speed_limit =
+       (word)((uint)engine_rpm_state_t_0040b7ac.current_rpm * (uint)DAT_00408842 >> 8);
+  wVar7 = DAT_0040884e;
+  if (cold_start_phase == CSP_AT_GOVERNOR_SETPOINT) {
+    DAT_0040b2c6 = cm848_signedFirstOrderFilter
+                             ((int)(short)engine_load_output_value,&PTR_DAT_0040b2ec);
+    iVar8 = (int)DAT_0040b2c6;
+    if (DAT_00408896 != 0) {
+      if (DAT_00408896 == 1) {
+        iVar8 = 0x8a;
+      }
+      else {
+        iVar8 = 0x28;
+      }
+      iVar8 = (int)(short)(DAT_0040b2c6 - *(short *)((int)&per_cylinder_timing_offset_table + iVar8)
+                          );
+    }
+    if (((DAT_00408896 == 1) && ((short)protection_oilTemp_proxy < DAT_004088a0)) ||
+       ((DAT_00408896 == 2 && ((short)j1939_coolant_temp_raw < DAT_004088a0)))) {
+      if ((int)DAT_0040b2c6 < (int)DAT_004088a2) goto LAB_005149b0;
+LAB_00514a48:
+      uVar4 = (uint)DAT_0040884c;
+    }
+    else {
+      iVar9 = (int)DAT_00408852;
+      if (iVar8 < iVar9) {
+LAB_005149b0:
+        uVar4 = (uint)DAT_0040884e;
+      }
+      else {
+        if ((iVar8 < iVar9) || (DAT_0040884a <= iVar8)) goto LAB_00514a48;
+        uVar5 = (uint)DAT_00408850;
+        uVar4 = iVar8 - iVar9;
+        uVar4 = (uint)DAT_00408854 +
+                (int)(CONCAT44((int)((ulonglong)uVar5 * (ulonglong)uVar4 >> 0x20) +
+                               uVar5 * ((int)uVar4 >> 0x1f),uVar5 * uVar4) / 0x80);
+        if ((int)uVar4 < 0) {
+          uVar4 = 0;
+        }
+        else if ((int)uVar4 < 0xfa01) {
+          uVar4 = uVar4 & 0xffff;
+        }
+        else {
+          uVar4 = 64000;
+        }
+      }
+    }
+    if (egr_load_floor_hold_timer != 0) {
+      egr_load_floor_hold_timer = egr_load_floor_hold_timer - 1;
+    }
+    if (cold_start_mode_active_flag == 0) {
+      wVar7 = egr_load_speed_floor;
+      if (egr_load_floor_hold_timer == 0) {
+        uVar5 = (uint)DAT_00408854;
+        if ((uVar5 <= uVar4) && (egr_load_speed_floor < uVar5)) {
+          egr_load_speed_floor = DAT_00408854;
+        }
+        uVar2 = DAT_004088c4;
+        if ((uVar4 < egr_rpm_proportional_speed_limit) &&
+           (DAT_004088be < engine_rpm_state_t_0040b7ac.current_rpm)) {
+          uVar2 = DAT_004088c2;
+        }
+        uVar3 = (uint)egr_load_speed_floor;
+        if (uVar2 + uVar3 < uVar4) {
+          iVar8 = uVar3 + uVar2;
+LAB_00514b4c:
+          if (iVar8 < 0xfa01) {
+            wVar7 = (word)iVar8;
+          }
+          else {
+            wVar7 = 64000;
+          }
+        }
+        else if ((DAT_004088c0 + uVar4 < uVar3) && (uVar5 < uVar3)) {
+          iVar8 = uVar3 - DAT_004088c0;
+          if (-1 < iVar8) goto LAB_00514b4c;
+          wVar7 = 0;
+        }
+        else {
+          wVar7 = DAT_0040884e;
+          if (uVar5 <= uVar3) {
+            wVar7 = (word)uVar4;
+          }
+        }
+      }
+    }
+    else {
+      egr_load_floor_hold_timer = DAT_004088c6;
+      wVar7 = DAT_0040884e;
+    }
+  }
+  egr_load_speed_floor = wVar7;
+  iVar9 = (int)(short)protection_load_input;
+  iVar8 = (int)DAT_00408878;
+  if ((iVar9 < iVar8) || (fuel_correction_active_flag == 0)) {
+    uVar4 = (uint)DAT_00408874;
+  }
+  else if ((iVar9 < iVar8) || (DAT_00408870 <= iVar9)) {
+    uVar4 = (uint)DAT_00408872;
+  }
+  else {
+    uVar4 = (iVar9 - iVar8) * (uint)DAT_00408876;
+    uVar4 = (uint)DAT_0040887a + ((int)uVar4 >> 7) + (uint)((int)uVar4 < 0 && (uVar4 & 0x7f) != 0);
+  }
+  DAT_0040b298 = (word)uVar4;
+  governor_speed_reference = egr_governor_speed_base;
+  if (egr_governor_speed_base < egr_governor_speed_floor) {
+    governor_speed_reference = egr_governor_speed_floor;
+  }
+  governor_speed_limit_source = (word)(egr_governor_speed_base < egr_governor_speed_floor);
+  if (governor_speed_reference < egr_fuel_demand_speed_floor) {
+    governor_speed_reference = egr_fuel_demand_speed_floor;
+    governor_speed_limit_source = 2;
+  }
+  if (governor_speed_reference < egr_load_speed_floor) {
+    governor_speed_reference = egr_load_speed_floor;
+    governor_speed_limit_source = 3;
+  }
+  if ((uint)governor_speed_reference < (uVar4 & 0xffff)) {
+    governor_speed_limit_source = 4;
+    governor_speed_reference = (word)uVar4;
+  }
+  if (governor_speed_accel_ramp_at_target_flag != 0) {
+    if (governor_speed_ramp_step_count < DAT_004088b8) {
+      governor_speed_ramp_step_count = governor_speed_ramp_step_count + 1;
+      governor_speed_reference = egr_governor_speed_ramp_target;
+      governor_speed_limit_source = 0xd;
+      governor_speed_accel_ramp_step_flag = 0;
+    }
+    else if (DAT_004088ae < engine_rpm_state_t_0040b7ac.current_rpm) {
+      if (governor_speed_reference < DAT_004088b2) {
+        governor_overspeed_ramp_transition_latch = 1;
+        governor_speed_accel_ramp_at_target_flag = 0;
+        governor_speed_ramp_step_count = 0;
+        governor_speed_overspeed_ramp_step = egr_governor_speed_ramp_target;
+      }
+      else {
+        governor_speed_reference = egr_governor_speed_ramp_target;
+        governor_speed_limit_source = 5;
+      }
+    }
+    else {
+      governor_speed_overspeed_ramp_step = egr_governor_speed_ramp_target;
+      governor_overspeed_ramp_transition_latch = 1;
+      governor_overspeed_detect_flag = 0;
+      governor_speed_accel_ramp_at_target_flag = 0;
+    }
+  }
+  if ((((governor_speed_accel_ramp_request_flag != 0) && (governor_overspeed_detect_flag == 0)) ||
+      ((governor_overspeed_ramp_transition_latch != 0 && (governor_overspeed_detect_flag == 0)))) &&
+     (governor_speed_accel_ramp_at_target_flag == 0)) {
+    if (governor_speed_decel_ramp_init_flag == 0) {
+      governor_speed_ramp_lower_step = governor_speed_decel_target;
+      if ((governor_decel_was_overspeed_clamp_flag == 0) &&
+         (governor_decel_was_governor_floor_flag == 0)) {
+        governor_speed_ramp_lower_step = governor_speed_overspeed_ramp_step;
+      }
+      governor_speed_decel_ramp_init_flag = 1;
+    }
+    if (governor_speed_decel_ramp_init_flag != 0) {
+      if (DAT_004088b4 < governor_speed_ramp_lower_step) {
+        governor_speed_ramp_lower_step = governor_speed_ramp_lower_step - DAT_004088b4;
+      }
+      governor_speed_limit_source = 0xe;
+    }
+    if (governor_speed_reference < governor_speed_ramp_lower_step) {
+      governor_speed_reference = governor_speed_ramp_lower_step;
+      governor_decel_was_overspeed_clamp_flag = 0;
+      governor_decel_was_governor_floor_flag = 0;
+    }
+    else {
+      governor_speed_decel_ramp_init_flag = 0;
+      governor_speed_accel_ramp_request_flag = 0;
+      governor_overspeed_ramp_transition_latch = 0;
+      governor_speed_decel_above_floor_flag = 0;
+      governor_speed_up_ramp_active_flag = 0;
+      governor_speed_accel_ramp_at_target_flag = 0;
+      governor_speed_ramp_step_count = 0;
+    }
+  }
+  if ((governor_overspeed_detect_flag == 0) && (governor_speed_accel_ramp_request_flag == 0)) {
+    if ((governor_decel_was_governor_floor_flag != 0) ||
+       (governor_decel_was_overspeed_clamp_flag != 0)) {
+      governor_speed_up_ramp_active_flag = 1;
+      governor_speed_ramp_upper_step = governor_speed_decel_target;
+      governor_decel_was_governor_floor_flag = 0;
+      governor_decel_was_overspeed_clamp_flag = 0;
+    }
+    if (governor_speed_up_ramp_active_flag != 0) {
+      governor_speed_ramp_upper_step = governor_speed_ramp_upper_step + DAT_004088b6;
+      governor_speed_limit_source = 0xf;
+      bVar1 = governor_speed_reference < governor_speed_ramp_upper_step;
+      governor_speed_reference = governor_speed_ramp_upper_step;
+      if (bVar1) goto LAB_00514f98;
+    }
+  }
+  else {
+LAB_00514f98:
+    governor_speed_up_ramp_active_flag = 0;
+  }
+  if ((((DAT_00408864 < governor_speed_reference) &&
+       (DAT_0040885e < engine_rpm_state_t_0040b7ac.current_rpm)) &&
+      (governor_speed_decel_ramp_init_flag == 0)) && (governor_speed_accel_ramp_at_target_flag == 0)
+     ) {
+    governor_overspeed_detect_flag = 1;
+  }
+  if ((governor_overspeed_detect_flag != 0) &&
+     (engine_rpm_state_t_0040b7ac.current_rpm < DAT_004088ae)) {
+    governor_overspeed_detect_flag = 0;
+    governor_speed_decel_target_captured_flag = 0;
+    governor_speed_decel_above_floor_flag = 0;
+    governor_speed_accel_ramp_step_flag = 0;
+  }
+  if ((governor_speed_decel_ramp_init_flag != 0) || (governor_overspeed_detect_flag == 0))
+  goto LAB_0051524c;
+  if (((governor_speed_reference < DAT_00408866) && (governor_speed_accel_ramp_step_flag == 0)) ||
+     ((governor_overspeed_ramp_transition_latch != 0 || (governor_speed_decel_above_floor_flag != 0)
+      ))) {
+    governor_speed_accel_ramp_step_flag = 0;
+    if (governor_overspeed_ramp_transition_latch == 0) {
+      if (governor_speed_decel_target_captured_flag == 0) {
+        governor_speed_decel_target = governor_speed_reference;
+        goto LAB_005150d4;
+      }
+    }
+    else {
+      governor_speed_decel_target = governor_speed_overspeed_ramp_step;
+      governor_overspeed_ramp_transition_latch = 0;
+LAB_005150d4:
+      governor_speed_decel_target_captured_flag = 1;
+    }
+    if (DAT_0040886a < governor_speed_decel_target) {
+      if (DAT_004088b4 < governor_speed_decel_target) {
+        governor_speed_decel_target = governor_speed_decel_target - DAT_004088b4;
+      }
+      governor_speed_limit_source = 0xb;
+    }
+    else {
+      governor_speed_decel_target = DAT_0040886a;
+      governor_speed_limit_source = 6;
+    }
+    governor_speed_decel_above_floor_flag = DAT_0040886a < governor_speed_decel_target;
+    governor_speed_reference = governor_speed_decel_target;
+  }
+  if ((((DAT_00408866 < governor_speed_reference) && (governor_speed_decel_above_floor_flag == 0))
+      && (governor_speed_accel_ramp_at_target_flag == 0)) ||
+     (governor_speed_accel_ramp_step_flag != 0)) {
+    governor_speed_decel_target_captured_flag = 0;
+    if (governor_decel_was_governor_floor_flag != 0) {
+      governor_speed_overspeed_ramp_step = governor_speed_decel_target;
+      governor_speed_accel_ramp_request_flag = 1;
+      governor_decel_was_governor_floor_flag = 0;
+      governor_speed_accel_ramp_step_flag = 1;
+    }
+    if (governor_speed_accel_ramp_step_flag == 0) {
+      governor_speed_overspeed_ramp_step = governor_speed_reference;
+      governor_speed_accel_ramp_request_flag = 1;
+      governor_speed_accel_ramp_step_flag = 1;
+    }
+    if (governor_speed_overspeed_ramp_step < egr_governor_speed_ramp_target) {
+      governor_speed_reference = governor_speed_overspeed_ramp_step + DAT_004088b6;
+      governor_speed_limit_source = 0xc;
+      governor_speed_overspeed_ramp_step = governor_speed_reference;
+    }
+    else {
+      governor_speed_overspeed_ramp_step = egr_governor_speed_ramp_target;
+      governor_speed_reference = egr_governor_speed_ramp_target;
+      governor_speed_accel_ramp_at_target_flag = 1;
+    }
+  }
+LAB_0051524c:
+  if (governor_overspeed_detect_flag != 0) {
+    governor_decel_was_governor_floor_flag = governor_speed_limit_source == 6;
+    governor_decel_was_overspeed_clamp_flag = governor_speed_limit_source == 0xb;
+  }
+  if (((DAT_0040889e != 0) && (governor_speed_reference < DAT_00408860)) &&
+     (egr_rpm_proportional_speed_limit < governor_speed_reference)) {
+    governor_speed_reference = egr_rpm_proportional_speed_limit;
+    governor_speed_limit_source = 7;
+  }
+  if (DAT_00408860 < governor_speed_reference) {
+    governor_speed_reference = DAT_00408860;
+    governor_speed_limit_source = 8;
+  }
+  if (((operating_mode_flags & 0x10) != 0) &&
+     ((engine_cssc_oiltemp_state == 0 || (engine_cssc_oiltemp_state == 1)))) {
+    governor_speed_reference = egr_governor_speed_base;
+    governor_speed_limit_source = 10;
+    if (egr_governor_pi_active_flag != 0) {
+      egr_governor_integral_reset_flag = 1;
+    }
+  }
+  if (DAT_0040887e != '\0') {
+    governor_speed_reference = DAT_0040887c;
+    governor_speed_limit_source = 9;
+  }
+  return;
+}
+
+
+
+//
+// Function: governor_fuel_demand_calc @ 0x00515370
+//
+
+/* WARNING: Function: cm848_signedDivision32 replaced with injection: sdiv64by32 */
+
+// Variables in this function: DAT_00408820, DAT_00408822, DAT_00408860, DAT_0040b29e
+void fuel_coldStart_modeCode_select(void)
+
+{
+  if ((((governor_fuel_demand_mode == 0xb) &&
+       (fuel_demand_control_t_0040a57a.calculated <= DAT_00408846)) &&
+      (fuel_temperature_trim <= DAT_00408848)) &&
+     (engine_rpm_state_t_0040b7ac.current_rpm < DAT_00408844)) {
+    cold_start_mode_active_flag = 1;
+  }
+  else {
+    cold_start_mode_active_flag = 0;
+  }
+  if (tpu_rpm_ema_filtered < egr_rpm_proportional_speed_limit) {
+    DAT_0040b29e = egr_rpm_proportional_speed_limit - tpu_rpm_ema_filtered;
+  }
+  else {
+    DAT_0040b29e = 0;
+  }
+  if (DAT_0040881f == '\0') {
+    if (((cold_start_phase == CSP_CRANKING) || (DAT_0040889c == 1)) &&
+       (cold_start_injection_protection_flag != 0)) {
+      cold_start_fuel_demand_output = DAT_0040889a;
+      cold_start_fuel_demand_mode_code = 9;
+    }
+    else if (engine_rpm_state_t_0040b7ac.current_rpm < DAT_0040888a) {
+      cold_start_fuel_demand_output = DAT_0040886c;
+      cold_start_fuel_demand_mode_code = 2;
+    }
+    else if (((DAT_0040888c < engine_rpm_state_t_0040b7ac.current_rpm) &&
+             (DAT_0040888e < governor_speed_reference)) && (tpu_rpm_ema_filtered < DAT_00408890)) {
+      cold_start_fuel_demand_output = DAT_004088a8;
+      cold_start_fuel_demand_mode_code = 3;
+    }
+    else {
+      if (egr_governor_speed_base == governor_speed_reference) {
+        cold_start_fuel_demand_mode_code = 4;
+      }
+      else {
+        if ((DAT_00408860 == governor_speed_reference) && (cold_start_mode_active_flag == 0)) {
+          cold_start_mode_entry_rpm_snapshot = tpu_rpm_ema_filtered;
+          cold_start_fuel_demand_mode_code = 5;
+          cold_start_fuel_demand_output = DAT_00408820;
+          return;
+        }
+        if (cold_start_mode_active_flag == 0) {
+          governor_fuel_demand_calc();
+          cold_start_mode_entry_rpm_snapshot = tpu_rpm_ema_filtered;
+          cold_start_fuel_demand_mode_code = 8;
+          return;
+        }
+        if (DAT_00408892 < governor_speed_reference) {
+          if (DAT_0040b29e < DAT_00408894) {
+            cold_start_mode_entry_rpm_snapshot = tpu_rpm_ema_filtered;
+            cold_start_fuel_demand_mode_code = 6;
+            cold_start_fuel_demand_output = DAT_00408888;
+            return;
+          }
+          cold_start_mode_entry_rpm_snapshot = tpu_rpm_ema_filtered;
+          cold_start_fuel_demand_mode_code = 7;
+          cold_start_fuel_demand_output = DAT_00408822;
+          return;
+        }
+        cold_start_fuel_demand_mode_code = 7;
+      }
+      cold_start_fuel_demand_output = DAT_00408822;
+    }
+  }
+  else {
+    cold_start_fuel_demand_output = DAT_0040886e;
+    cold_start_fuel_demand_mode_code = 1;
+  }
+  cold_start_mode_entry_rpm_snapshot = tpu_rpm_ema_filtered;
+  return;
+}
+
+
+
+//
+// Function: fuel_coldStart_demandFinal_apply @ 0x005158fc
+//
+
+/* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+
+// Variables in this function: DAT_00408820, DAT_00408822
+void fuel_coldStart_demandFinal_apply(void)
+
+{
+  if (cold_start_fuel_demand_output < DAT_00408822) {
+    cold_start_fuel_demand_final = DAT_00408822;
+    cold_start_fuel_demand_mode_code = 0;
+  }
+  else if (DAT_00408820 < cold_start_fuel_demand_output) {
+    cold_start_fuel_demand_final = DAT_00408820;
+    cold_start_fuel_demand_mode_code = 10;
+  }
+  else {
+    cold_start_fuel_demand_final = cold_start_fuel_demand_output;
+  }
+  if (DAT_0040881e != '\0') {
+    cold_start_fuel_demand_final = 0x6400 - cold_start_fuel_demand_final;
+  }
+  if ((DAT_003fce18 != 0) && (cold_start_mode_active_flag == 0)) {
+    cold_start_fuel_hold_ramp_counter = 0;
+  }
+  DAT_003fce18 = cold_start_mode_active_flag;
+  if (cold_start_fuel_hold_ramp_counter < DAT_004088a4) {
+    cold_start_fuel_hold_ramp_counter = cold_start_fuel_hold_ramp_counter + 1;
+    cold_start_fuel_demand_final = DAT_004088a6;
+    cold_start_fuel_demand_mode_code = 0xb;
+  }
+  if (cold_start_emission_fault_active_flag != 0) {
+    cold_start_emission_fault_restart_counter = cold_start_emission_fault_restart_counter + 1;
+    if ((uint)cold_start_emission_fault_restart_counter < (uint)DAT_004088ba) {
+      cold_start_fuel_demand_final = 0;
+    }
+    else if ((uint)cold_start_emission_fault_restart_counter <
+             (uint)DAT_004088ba + (uint)DAT_004088bc * 2) {
+      cold_start_fuel_demand_final = 0x6400;
+    }
+    else {
+      cold_start_emission_fault_restart_counter = 0;
+      cold_start_emission_fault_active_flag = 0;
+    }
+    if ((j1939_pgn_handler_b_flags & 2) == 0) {
+      cold_start_emission_fault_pgn_cycle_counter = 0;
+    }
+    else if (cold_start_emission_fault_pgn_cycle_counter < DAT_004088bc) {
+      cold_start_emission_fault_pgn_cycle_counter = cold_start_emission_fault_pgn_cycle_counter + 1;
+    }
+    else {
+      cold_start_emission_fault_restart_counter = 0;
+      cold_start_emission_fault_active_flag = 1;
+      cold_start_emission_fault_pgn_cycle_counter = 0;
+    }
+  }
+  if ((j1939_pgn_handler_index_cold_start_fuel != 0) &&
+     (j1939_pgn_handler_index_cold_start_fuel < 0x33)) {
+    DAT_0040c13a = cold_start_fuel_demand_final;
+    (**(code **)(&j1939_pgn_handler_table_func3 +
+                (uint)j1939_pgn_handler_index_cold_start_fuel * 0x10))(cold_start_fuel_demand_final)
+    ;
+  }
+  if ((j1939_pgn_handler_index_cold_start_fuel != 0) &&
+     (j1939_pgn_handler_index_cold_start_fuel < 0x33)) {
+    DAT_0040c19c = 1000000 / DAT_00408886;
+    (**(code **)(&j1939_pgn_handler_table_func2 +
+                (uint)j1939_pgn_handler_index_cold_start_fuel * 0x10))(DAT_0040c19c);
+  }
+  return;
+}
+
+
+
+//
+// Function: j1939_periodic_processing @ 0x00515bac
+//
+

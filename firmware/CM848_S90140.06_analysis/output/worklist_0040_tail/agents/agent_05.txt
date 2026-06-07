@@ -1,0 +1,20 @@
+# Tail agent 05 — name 14 unnamed DAT_0040xxxx (3-4 ref; LOW context)
+#   worklist_0040_tail/batch_08.txt
+#   worklist_0040_tail/batch_09.txt
+#   worklist_0040_tail/batch_10.txt
+#   worklist_0040_tail/batch_12.txt
+# address,ref_count
+0x00408714,4
+0x00408716,4
+0x00408720,4
+0x0040876e,4
+0x00408822,4
+0x00408860,4
+0x00408896,4
+0x004088b4,4
+0x0040b2c6,4
+0x00408820,3
+0x0040886a,3
+0x0040b29e,3
+0x0040b2a6,3
+0x0040b2b2,3

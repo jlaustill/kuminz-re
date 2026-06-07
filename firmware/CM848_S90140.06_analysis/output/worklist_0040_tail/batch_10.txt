@@ -1,0 +1,38 @@
+=== VARIABLES TO NAME ===
+0x0040876e  (4 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040876e
+void governor_injectionTiming_modeAdj(void)
+
+{
+  word wVar1;
+  
+  wVar1 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fcdd2);
+  if ((DAT_003fcdc4 != 0x2e) && (governor_mode_code == 0x2e)) {
+    injection_timing_demand_min_working = torque_limit_fault_snapshot;
+  }
+  if (governor_mode_code == 0x2e) {
+    if ((int)(short)injection_timing_demand_min_working + (int)DAT_0040876e < (int)(short)wVar1) {
+      wVar1 = injection_timing_demand_min_working + DAT_0040876e;
+    }
+  }
+  else if ((int)(short)injection_timing_demand_min_working - (int)DAT_0040876e < -0x3ff) {
+    wVar1 = 0xfc00;
+  }
+  else {
+    wVar1 = injection_timing_demand_min_working - DAT_0040876e;
+  }
+  injection_timing_demand_min_working = wVar1;
+  return;
+}
+
+
+
+//
+// Function: protection_fuel_limit_check @ 0x00513ddc
+//
+

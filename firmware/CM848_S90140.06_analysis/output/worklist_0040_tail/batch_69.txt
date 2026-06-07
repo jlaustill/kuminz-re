@@ -1,0 +1,128 @@
+=== VARIABLES TO NAME ===
+0x0040b572  (4 references)
+0x0040b574  (4 references)
+0x0040b576  (3 references)
+0x0040b578  (4 references)
+
+Total: 4 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040b572, DAT_0040b574, DAT_0040b576, DAT_0040b578
+void protectionFuelTempDerate(void)
+
+{
+  int iVar1;
+  
+  if ((((((system_status_flags_t_003fe974.pending_faults & 0x800) == 0) &&
+        ((system_status_flags_t_003fe974.pending_faults & 0x1000) == 0)) &&
+       ((system_status_flags_t_003fe974.reserved_12 & 0x20) == 0)) &&
+      (((system_status_flags_t_003fe974.condition_monitor & 0x2000) == 0 &&
+       ((system_status_flags_t_003fe974.protection_active & 0x100) == 0)))) &&
+     (((system_status_flags_t_003fe974.protection_active & 0x400) == 0 &&
+      (((system_status_flags_t_003fe974.sensor_diag & 0x800) == 0 && (fuel_temp_derate_state != 4)))
+      ))) {
+    if ((DAT_003fcef4 == 0) && ((protection_feature_status_flags & 0x4000000) != 0)) {
+      fuel_temp_derate_state = 1;
+      if ((cold_start_phase == CSP_ABOVE_RPM_TRIGGER) &&
+         ((fuel_temperature_trim < DAT_00408abc &&
+          (DAT_0040b574 = DAT_0040b574 + 1, (protection_enable_t_0040c050.reserved_02 & 0x10) != 0))
+         )) {
+        DAT_0040b576 = DAT_0040b576 + 1;
+      }
+      if (cold_start_phase == CSP_AT_GOVERNOR_SETPOINT) {
+        if (DAT_0040b578 < DAT_00408aca) {
+          DAT_0040b578 = DAT_0040b578 + 1;
+        }
+        else if ((uint)DAT_0040b574 < (uint)DAT_00408ac6) {
+          DAT_003fcef6 = (ushort)((int)(uint)DAT_00408ac8 <
+                                 (int)((uint)DAT_0040b574 - (uint)DAT_0040b576));
+          DAT_003fcef4 = 1;
+        }
+      }
+    }
+    iVar1 = (uint)protection_ramp_position_b - (uint)protection_derate_rpm_limit;
+    if (((((uint)protection_derate_rpm_limit < (uint)DAT_00408abe) &&
+         (DAT_00408aba < fuel_temperature_trim)) && (DAT_00408ac0 < engine_load_filtered)) &&
+       ((uint)DAT_00408ac4 < (uint)protection_ramp_position_b)) {
+      if (iVar1 < 0) {
+        iVar1 = -iVar1;
+      }
+      if (((iVar1 <= (int)(uint)DAT_00408ac2) && (fuel_temp_derate_active_latch == 0)) &&
+         ((protection_feature_status_flags & 0x4000000) != 0)) {
+        if ((protection_enable_t_0040c050.reserved_02 & 0x10) == 0) {
+          DAT_003fcefa = 0;
+          fuel_temp_derate_active_latch = 1;
+          DAT_0040b572 = 0;
+        }
+        else if (DAT_0040b572 < DAT_00408ab8) {
+          DAT_0040b572 = DAT_0040b572 + 1;
+        }
+        else {
+          DAT_003fcefa = 1;
+          fuel_temp_derate_active_latch = 1;
+        }
+      }
+    }
+    if ((DAT_003fcef4 == 1) || (fuel_temp_derate_active_latch == 1)) {
+      if ((DAT_003fcef6 == 1) || (DAT_003fcefa == 1)) {
+        fuel_temp_derate_state = 3;
+        system_status_flags_t_003fe974.reserved_12 =
+             system_status_flags_t_003fe974.reserved_12 | 0x10;
+        if ((DAT_003fea4e & 0x10) != 0x10) {
+          fuel_temp_derate_state = 3;
+          return;
+        }
+        if ((fault_pending_flags_b & 0x2000) != 0) {
+          fault_pending_flags_b = fault_pending_flags_b & 0xffffdfff;
+          fault_management_ring_read_ptr =
+               (undefined *)((uint)fault_management_ring_read_ptr | 0x2000);
+          fuel_temp_derate_state = 3;
+          return;
+        }
+      }
+      else {
+        fuel_temp_derate_state = 2;
+        system_status_flags_t_003fe974.reserved_12 =
+             system_status_flags_t_003fe974.reserved_12 & 0xffef;
+        DAT_003fe9ea = DAT_003fe9ea & 0xffef;
+        if ((DAT_003fea4e & 0x10) != 0) {
+          fuel_temp_derate_state = 2;
+          return;
+        }
+      }
+      fault_management_ring_read_ptr = (undefined *)((uint)fault_management_ring_read_ptr | 0x2000);
+      fault_pending_flags = fault_pending_flags & 0xffffdfff;
+    }
+  }
+  else {
+    fuel_temp_derate_state = 4;
+  }
+  return;
+}
+
+
+
+//
+// Function: initFuelTempDerateState @ 0x0051b978
+//
+
+// Variables in this function: DAT_0040b578
+void initFuelTempDerateState(void)
+
+{
+  fuel_temp_derate_state = 0;
+  DAT_003fcef4 = 0;
+  fuel_temp_derate_active_latch = 0;
+  DAT_0040b578 = 0;
+  return;
+}
+
+
+
+//
+// Function: engine_targetRpmPerLoad_calc @ 0x0051b9a0
+//
+
+/* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+

@@ -1,0 +1,57 @@
+=== VARIABLES TO NAME ===
+0x0040a78e  (4 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040a78e
+void cm848_updateJ1939ReceptionControlFlag(void)
+
+{
+  if (((((j1939_feature_enable_flags & 0x200) != 0) && (governor_fuel_derate_active != 0)) &&
+      (DAT_003fbd40 == 0)) && (protection_enable_t_0040c050.protection_active != 0)) {
+    DAT_0040a78e = 1;
+  }
+  DAT_003fbd40 = (ushort)(protection_enable_t_0040c050.protection_active != 0);
+  return;
+}
+
+
+
+//
+// Function: governor_derateTrigger_latch_clear @ 0x00508ee0
+//
+
+// Variables in this function: DAT_0040a78e
+void governor_derateTrigger_latch_clear(void)
+
+{
+  if (DAT_0040a78e != 0) {
+    governor_fuel_derate_j1939_latch = 1;
+    DAT_0040a78e = 0;
+  }
+  return;
+}
+
+
+
+//
+// Function: exception_resetProtectionModeState @ 0x00508f0c
+//
+
+// Variables in this function: DAT_0040a78e
+void exception_resetProtectionModeState(void)
+
+{
+  DAT_003fbd40 = 0;
+  DAT_0040a78e = 0;
+  return;
+}
+
+
+
+//
+// Function: protection_condition_eval @ 0x00508f24
+//
+

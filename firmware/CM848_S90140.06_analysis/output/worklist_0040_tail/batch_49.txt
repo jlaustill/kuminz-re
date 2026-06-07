@@ -1,0 +1,76 @@
+=== VARIABLES TO NAME ===
+0x0040aac6  (3 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040aac6
+void fuel_demand_protection_loop(void)
+
+{
+  bool bVar1;
+  char cVar2;
+  uint uVar3;
+  
+  if ((governor_mode_config_flags & 8) == 0) {
+    if (fuel_demand_protection_init_flag == 0) {
+      fuel_demand_protection_init_flag = 1;
+      fuel_demand_protection_hysteresis_counter = 100;
+    }
+    cVar2 = cm848_checkProtectionWarningBitState(8);
+    if (DAT_003fbd68 == cVar2) {
+      if ((fuel_demand_protection_hysteresis_counter != 0) &&
+         (fuel_demand_protection_hysteresis_counter =
+               fuel_demand_protection_hysteresis_counter - 0x32,
+         (short)fuel_demand_protection_hysteresis_counter < 1)) {
+        fuel_demand_protection_hysteresis_counter = 0;
+        if (cVar2 == '\0') {
+          cm848_clearEngineCycleBitmapBitIfGreater(8,0);
+          cm848_setEngineCycleBitmapBitIfGreater(7,0);
+          fuel_demand_control_t_0040a57a.enable_flag = 0;
+        }
+        else {
+          cm848_setEngineCycleBitmapBitIfGreater(8,0);
+          cm848_clearEngineCycleBitmapBitIfGreater(7,0);
+          fuel_demand_control_t_0040a57a.enable_flag = 1;
+        }
+      }
+    }
+    else {
+      fuel_demand_protection_hysteresis_counter = 100;
+      DAT_003fbd68 = cVar2;
+    }
+  }
+  else {
+    DAT_0040aac6 = DAT_0040bc9a;
+    if ((diag_feature_flags & 0x2000) == 0) {
+      if (qadc_channel_index_table[0xd] < 0x81) {
+        uVar3 = (uint)qadc_channel_index_table[0xd];
+      }
+      else {
+        uVar3 = 0;
+      }
+      DAT_0040aac6 = *(ushort *)(&qadc_channel_dispatch_table)[uVar3 * 2];
+    }
+    bVar1 = 0x168 < DAT_0040aac6;
+    if (bVar1) {
+      cm848_setEngineCycleBitmapBitIfGreater(8,0);
+      cm848_clearEngineCycleBitmapBitIfGreater(7,0);
+    }
+    else {
+      cm848_clearEngineCycleBitmapBitIfGreater(8,0);
+      cm848_setEngineCycleBitmapBitIfGreater(7,0);
+    }
+    fuel_demand_control_t_0040a57a.enable_flag = (word)bVar1;
+    fuel_demand_protection_init_flag = 0;
+  }
+  return;
+}
+
+
+
+//
+// Function: diag_faultChannel_bitmap_update @ 0x0050a4a0
+//
+

@@ -1,0 +1,90 @@
+=== VARIABLES TO NAME ===
+0x0040ba6a  (3 references)
+0x0040ba6c  (3 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040ba6a, DAT_0040ba6c
+void cm848_initCommunicationState(void)
+
+{
+  hpcr_oil_pressure_protection_debounce_count = 0;
+  hpcr_oil_pressure_fault_debounce_count = 0;
+  DAT_0040ba6a = 0;
+  DAT_0040ba6c = 0;
+  return;
+}
+
+
+
+//
+// Function: hpcr_fuelPressureControl @ 0x005372c4
+//
+
+// Variables in this function: DAT_0040ba6a, DAT_0040ba6c
+void hpcr_fuelPressureControl(void)
+
+{
+  ushort uVar1;
+  word wVar2;
+  
+  if ((((operating_mode_flags & 0x400) != 0) && ((protection_feature_status_flags & 4) != 0)) &&
+     ((boost_fuel_bypass_flags & 4) == 0)) {
+    if ((((system_status_flags_t_003fe974.enable_state & 0x100) == 0) &&
+        ((system_status_flags_t_003fe974.enable_state & 0x200) == 0)) &&
+       ((system_status_flags_t_003fe974.safety_bits_2 & 1) == 0)) {
+      if ((governor_mode_code == 0x10) &&
+         ((((protection_sensor_mode_flag == 0 &&
+            (DAT_00064566 < sensor_readings_t_0040baf2.oil_pressure)) ||
+           ((protection_sensor_mode_flag != 0 && (DAT_00064566 < temperature_differential)))) &&
+          (DAT_00064562 < engine_rpm_state_t_0040b7ac.current_rpm)))) {
+        if ((hpcr_oil_pressure_protection_debounce_count < DAT_0006456c) &&
+           (wVar2 = hpcr_oil_pressure_protection_debounce_count + 1,
+           uVar1 = hpcr_oil_pressure_protection_debounce_count + 1,
+           hpcr_oil_pressure_protection_debounce_count = wVar2, uVar1 == DAT_0006456c)) {
+          protection_monitor_shadow = protection_monitor_shadow | 0x8000;
+        }
+      }
+      else if ((hpcr_oil_pressure_protection_debounce_count != 0) &&
+              (hpcr_oil_pressure_protection_debounce_count =
+                    hpcr_oil_pressure_protection_debounce_count - 1,
+              hpcr_oil_pressure_protection_debounce_count == 0)) {
+        protection_monitor_shadow = protection_monitor_shadow & 0x7fff;
+        j1939_message_state_flags = j1939_message_state_flags & 0x7fff;
+      }
+      if ((DAT_0006456a < fault_status_active) &&
+         (((((protection_sensor_mode_flag == 0 &&
+             (sensor_readings_t_0040baf2.oil_pressure < DAT_00064564)) &&
+            (DAT_00064568 < sensor_readings_t_0040baf2.oil_pressure)) ||
+           (((protection_sensor_mode_flag != 0 && (temperature_differential < DAT_00064564)) &&
+            (DAT_00064568 < temperature_differential)))) &&
+          (DAT_00064562 < engine_rpm_state_t_0040b7ac.current_rpm)))) {
+        if ((hpcr_oil_pressure_fault_debounce_count < DAT_0006456c) &&
+           (wVar2 = hpcr_oil_pressure_fault_debounce_count + 1,
+           uVar1 = hpcr_oil_pressure_fault_debounce_count + 1,
+           hpcr_oil_pressure_fault_debounce_count = wVar2, uVar1 == DAT_0006456c)) {
+          DAT_0040ba6a = DAT_0040ba6a + 1;
+        }
+      }
+      else {
+        hpcr_oil_pressure_fault_debounce_count = 0;
+      }
+      if (DAT_0006456c <= hpcr_oil_pressure_fault_debounce_count) {
+        DAT_0040ba6c = DAT_0040ba6c + 1;
+      }
+    }
+    else {
+      hpcr_oil_pressure_protection_debounce_count = 0;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: hpcr_fuelDemandProc @ 0x00537584
+//
+

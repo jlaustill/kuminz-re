@@ -1,0 +1,91 @@
+=== VARIABLES TO NAME ===
+0x0040a5f0  (3 references)
+0x0040a5f2  (3 references)
+0x0040a730  (3 references)
+
+Total: 3 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040a5f0, DAT_0040a5f2, DAT_0040a730
+void fuel_demandTiming_rollingAverage_update(void)
+
+{
+  word wVar1;
+  uint uVar2;
+  uint uVar3;
+  
+  if (DAT_0040a730 == 0) {
+    DAT_0040a5f0 = 0;
+    DAT_0040a5f2 = 0;
+    fuel_demand_timing_demand_window_sum = 0;
+    fuel_demand_timing_correction_window_sum = 0;
+    fuel_demand_timing_rolling_avg_index = 0;
+    fuel_demand_timing_rolling_avg_full_flag = 0;
+  }
+  else {
+    if (0x95 < fuel_demand_timing_rolling_avg_index) {
+      fuel_demand_timing_rolling_avg_index = 0;
+      fuel_demand_timing_rolling_avg_full_flag = 1;
+    }
+    wVar1 = fuel_demand_timing_rolling_avg_full_flag;
+    uVar3 = (uint)fuel_demand_timing_rolling_avg_index;
+    if (fuel_demand_timing_rolling_avg_full_flag == 0) {
+      fuel_demand_timing_demand_window_sum =
+           fuel_demand_timing_demand_window_sum + fuel_demand_min_threshold;
+      (&DAT_003fba38)[uVar3] = fuel_demand_min_threshold;
+    }
+    else {
+      fuel_demand_timing_demand_window_sum =
+           (fuel_demand_timing_demand_window_sum - (ushort)(&DAT_003fba38)[uVar3]) +
+           (uint)fuel_demand_min_threshold;
+      (&DAT_003fba38)[uVar3] = fuel_demand_min_threshold;
+      fuel_demand_timing_correction_window_sum =
+           fuel_demand_timing_correction_window_sum - (ushort)(&DAT_003fbb64)[uVar3];
+    }
+    uVar2 = fuel_demand_timing_correction_window_sum + fuel_demand_timing_correction;
+    fuel_demand_timing_correction_window_sum = uVar2;
+    (&DAT_003fbb64)[uVar3] = fuel_demand_timing_correction;
+    fuel_demand_timing_rolling_avg_index = fuel_demand_timing_rolling_avg_index + 1;
+    if (wVar1 == 0) {
+      DAT_0040a5f0 = 0;
+      DAT_0040a5f2 = 0;
+    }
+    else {
+      DAT_0040a5f0 = (undefined2)(fuel_demand_timing_demand_window_sum / 0x96);
+      DAT_0040a5f2 = (undefined2)(uVar2 / 0x96);
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_initialization_step_8 @ 0x00505574
+//
+
+// Variables in this function: DAT_0040a730
+void fuel_demandBlend_rpmRange_check(void)
+
+{
+  short sVar1;
+  short sVar2;
+  
+  sVar1 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fbd24);
+  sVar2 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fbd26);
+  if ((sVar1 < DAT_0040afc0) || (DAT_0040afc0 < sVar2)) {
+    DAT_0040a730 = 0;
+  }
+  else {
+    DAT_0040a730 = 1;
+  }
+  return;
+}
+
+
+
+//
+// Function: main_loop_callPhaseGroupProcessors @ 0x005077fc
+//
+

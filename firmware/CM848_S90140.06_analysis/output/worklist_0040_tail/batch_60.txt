@@ -1,0 +1,197 @@
+=== VARIABLES TO NAME ===
+0x0040b22e  (4 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040b22e
+void protection_fault_latch_update(void)
+
+{
+  if (((((system_status_flags_t_003fe974.safety_bits_1 & 0x200) == 0) &&
+       ((system_status_flags_t_003fe974.safety_bits_1 & 0x400) == 0)) &&
+      ((system_status_flags_t_003fe974.safety_bits_1 & 0x800) == 0)) &&
+     ((system_status_flags_t_003fe974.safety_bits_1 & 0x1000) == 0)) {
+    protection_fault_latch_flag = 0;
+  }
+  else {
+    protection_fault_latch_flag = 1;
+  }
+  DAT_0040b216 = protection_fault_latch_flag;
+  if ((DAT_0040b22e == 0) && (governor_temp_protection_active_flag == 0)) {
+    protection_sensor_state_b = 0;
+  }
+  else {
+    protection_sensor_state_b = 1;
+  }
+  if ((coolant_bucket_overheat_active_flag == 0) || (DAT_003fcdb4 != 0)) {
+    if ((governor_temp_protection_ramp_flag == 0) || (DAT_003fcdb6 != 0)) {
+      if ((protection_coolant_classb_active_flag == 0) || (DAT_003fcdb2 != 0)) {
+        if ((protection_sensor_fault_active_flag == 0) || (DAT_003fcdb8 != 0)) {
+          if ((protection_fault_latch_flag == 0) || (DAT_003fcdba != 0)) {
+            if (((coolant_bucket_overheat_active_flag == 0) &&
+                (((governor_temp_protection_ramp_flag == 0 &&
+                  (protection_coolant_classb_active_flag == 0)) &&
+                 (protection_sensor_fault_active_flag == 0)))) && (protection_fault_latch_flag == 0)
+               ) {
+              protection_ramp_step_current = 0;
+            }
+          }
+          else if (DAT_0040873c != 0) {
+            protection_ramp_step_current =
+                 (word)((int)((int)DAT_0040873c * (uint)protection_ramp_steps_max * 5) / 10);
+          }
+        }
+        else if (DAT_0040873a != 0) {
+          protection_ramp_step_current =
+               (word)((int)((int)DAT_0040873a * (uint)protection_ramp_steps_max * 5) / 10);
+        }
+      }
+      else if (DAT_00408738 != 0) {
+        protection_ramp_step_current =
+             (word)((int)((int)DAT_00408738 * (uint)protection_ramp_steps_max * 5) / 10);
+      }
+    }
+    else if (DAT_00408734 != 0) {
+      protection_ramp_step_current =
+           (word)((int)((int)DAT_00408734 * (uint)protection_ramp_steps_max * 5) / 10);
+    }
+  }
+  else if (DAT_00408732 != 0) {
+    protection_ramp_step_current =
+         (word)((int)((int)DAT_00408732 * (uint)protection_ramp_steps_max * 5) / 10);
+  }
+  if ((short)protection_ramp_step_current < 1) {
+    protection_sensor_state_a = 0;
+  }
+  else if ((word)(((short)protection_ramp_steps_max * 0x4fb) / 10) == protection_ramp_step_current)
+  {
+    protection_sensor_state_a = 1;
+  }
+  else {
+    protection_sensor_state_a = 1;
+    protection_ramp_step_current = protection_ramp_step_current - 1;
+  }
+  DAT_003fcdb4 = coolant_bucket_overheat_active_flag;
+  DAT_003fcdb6 = governor_temp_protection_ramp_flag;
+  DAT_003fcdb2 = protection_coolant_classb_active_flag;
+  DAT_003fcdb8 = protection_sensor_fault_active_flag;
+  DAT_003fcdba = protection_fault_latch_flag;
+  return;
+}
+
+
+
+//
+// Function: protection_sensor_state_initialize @ 0x005134e8
+//
+
+// Variables in this function: DAT_0040b22e
+void engine_sensor_check_overheat(void)
+
+{
+  dword *pdVar1;
+  ushort *puVar2;
+  int iVar3;
+  
+  iVar3 = 1;
+  pdVar1 = cold_start_coolant_bucket_counters;
+  puVar2 = &DAT_0040877e;
+  do {
+    pdVar1 = pdVar1 + 1;
+    puVar2 = puVar2 + 1;
+    if ((uint)*puVar2 < *pdVar1) {
+      cold_start_coolant_temp_setpoint = DAT_00408750;
+      cold_start_overheat_active_flag = 1;
+      DAT_0040b22e = 1;
+      engine_diag_shadow_flags = engine_diag_shadow_flags | 0x20;
+      DAT_003fcdcc = DAT_003fcdcc + 1;
+      cold_start_fuel_limit_reason_code = 5;
+      break;
+    }
+    iVar3 = iVar3 + 1;
+  } while (iVar3 < 5);
+  if (DAT_00408754 <= sensor_overheat_recovery_count) {
+    cold_start_overheat_active_flag = 0;
+    DAT_0040b22e = 0;
+    coolant_bucket_overheat_active_flag = 0;
+    engine_diag_shadow_flags = engine_diag_shadow_flags & 0xffdf;
+    engine_diag_shadow_flags_b = engine_diag_shadow_flags_b & 0xffdf;
+    DAT_003fcdcc = 0;
+    cold_start_fuel_limit_reason_code = 6;
+    sensor_overheat_recovery_count = DAT_00408754;
+  }
+  if (((engine_diag_shadow_flags & 0x20) != 0) &&
+     ((short)sensor_readings_t_0040baf2.coolant_temp < DAT_00408752)) {
+    sensor_overheat_recovery_count = sensor_overheat_recovery_count + 1;
+  }
+  if ((sensor_overheat_recovery_count != 0) &&
+     (DAT_00408752 < (short)sensor_readings_t_0040baf2.coolant_temp)) {
+    sensor_overheat_recovery_count = 0;
+  }
+  if (((engine_diag_shadow_flags & 0x20) != 0) &&
+     ((DAT_00408786 < cold_start_coolant_bucket_counters[4] ||
+      ((DAT_0040874e < DAT_003fcdcc &&
+       ((short)DAT_00408750 < (short)sensor_readings_t_0040baf2.coolant_temp)))))) {
+    coolant_bucket_overheat_active_flag = 1;
+  }
+  if (cold_start_overheat_active_flag == 0) {
+    cold_start_coolant_temp_setpoint = 0x3fc0;
+  }
+  return;
+}
+
+
+
+//
+// Function: governor_cruise_dualCalc_dispatch @ 0x0051395c
+//
+
+// Variables in this function: DAT_0040b22e
+void governor_fuel_limit_initialize(void)
+
+{
+  word *pwVar1;
+  int iVar2;
+  
+  engine_diag_shadow_flags = engine_diag_shadow_flags & 0xff9f;
+  engine_diag_shadow_flags_b = engine_diag_shadow_flags_b & 0xff9f;
+  DAT_0040b22e = 0;
+  coolant_bucket_overheat_active_flag = 0;
+  cold_start_fuel_demand_ramp_output = 0x6400;
+  cold_start_fuel_demand_ramp_prev = 0x6400;
+  cold_start_rpm_fuel_limit = 0x6400;
+  DAT_003fcdbe = 0x6400;
+  cold_start_fuel_demand_integral = 0x6400;
+  cold_start_fuel_demand_integral_q8_scaled = 0xd7a0000;
+  cold_start_fuel_demand_pi_correction = 0x6400;
+  DAT_003fcdc0 = 0x6400;
+  cold_start_fuel_demand_proportional = 0x6400;
+  cold_start_coolant_temp_setpoint = 0x3fc0;
+  cold_start_coolant_temp_error = 0;
+  cold_start_overheat_active_flag = 0;
+  DAT_003fcdc2 = 0;
+  injection_timing_demand_min_working = 0xfc00;
+  iVar2 = 0;
+  pwVar1 = &cold_start_fuel_demand_proportional;
+  do {
+    pwVar1 = pwVar1 + 2;
+    pwVar1[0] = 0;
+    pwVar1[1] = 0;
+    iVar2 = iVar2 + 1;
+  } while (iVar2 < 5);
+  cold_start_fuel_limit_reason_code = 9;
+  DAT_003fcdd4 = 2;
+  DAT_003fcdd6 = 2;
+  DAT_003fcdd0 = 2;
+  DAT_003fcdd2 = 2;
+  return;
+}
+
+
+
+//
+// Function: governor_fuel_limit_update @ 0x00513f5c
+//
+

@@ -1,0 +1,72 @@
+=== VARIABLES TO NAME ===
+0x00407774  (3 references)
+0x00407776  (3 references)
+0x0040777c  (3 references)
+
+Total: 3 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00407774, DAT_00407776, DAT_0040777c
+void engine_protection_speedTracking_rampUpdate(void)
+
+{
+  bool bVar1;
+  word wVar2;
+  uint uVar3;
+  
+  uVar3 = (uint)DAT_00407774;
+  if (protection_speed_track_active_flag == 0) {
+    wVar2 = 0;
+  }
+  else {
+    wVar2 = protection_speedTracking_ramp_step_counter;
+    if (((protection_speed_track_active_flag != 0) && (wVar2 = DAT_00407774, uVar3 != 0)) &&
+       (wVar2 = DAT_00407774,
+       (int)(uint)protection_speedTracking_ramp_step_counter <= (int)(uVar3 - 1))) {
+      wVar2 = protection_speedTracking_ramp_step_counter + 1;
+    }
+  }
+  protection_speedTracking_ramp_step_counter = wVar2;
+  bVar1 = uVar3 == protection_speedTracking_ramp_step_counter;
+  DAT_0040b044 = (ushort)bVar1;
+  uVar3 = (uint)DAT_0040777c;
+  if (DAT_003fd8ce == 0) {
+    if (((protection_speed_error_over_threshold_flag == 0) || (!bVar1)) &&
+       ((wVar2 = protection_speedTracking_speed_error_ramp,
+        protection_speed_error_over_threshold_flag != 0 || (!bVar1)))) goto LAB_0050fbb8;
+    if ((protection_speed_error_over_threshold_flag != 0) || (!bVar1)) {
+      wVar2 = DAT_0040777c;
+      if ((DAT_00407776 <= uVar3) &&
+         (wVar2 = DAT_0040777c,
+         (int)(uint)protection_speedTracking_speed_error_ramp <= (int)(uVar3 - DAT_00407776))) {
+        wVar2 = protection_speedTracking_speed_error_ramp + DAT_00407776;
+      }
+      goto LAB_0050fbb8;
+    }
+    if (DAT_00407778 < protection_speedTracking_speed_error_ramp) {
+      wVar2 = protection_speedTracking_speed_error_ramp - DAT_00407778;
+      goto LAB_0050fbb8;
+    }
+  }
+  wVar2 = 0;
+LAB_0050fbb8:
+  protection_speedTracking_speed_error_ramp = wVar2;
+  DAT_0040b048 = protection_speedTracking_speed_error_ramp;
+  if (protection_speedTracking_speed_error_ramp < uVar3) {
+    if ((uint)protection_speedTracking_speed_error_ramp <= (uint)DAT_0040777e) {
+      DAT_003fccf4 = 0;
+    }
+  }
+  else {
+    DAT_003fccf4 = 1;
+  }
+  return;
+}
+
+
+
+//
+// Function: phase_group_b_updateGovernorModeDiagnostics @ 0x0050fbf8
+//
+

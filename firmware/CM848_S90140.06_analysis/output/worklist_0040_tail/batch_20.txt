@@ -1,0 +1,121 @@
+=== VARIABLES TO NAME ===
+0x00408e22  (4 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00408e22
+void governor_cruise_setpoint_calc(int param_1)
+
+{
+  uint uVar1;
+  ushort uVar2;
+  word wVar6;
+  uint uVar3;
+  uint uVar4;
+  uint uVar5;
+  ushort uStack_e;
+  
+  cruise_zone_transition_flag = 0;
+  if ((governor_fuel_demand_mode == 9) || (governor_fuel_demand_mode == 10)) {
+    DAT_0040b6a4 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fcffe);
+  }
+  if (governor_fuel_demand_mode == 9) {
+    if ((((fuel_demand_speed_error == 1) || (fuel_demand_speed_error == 3)) ||
+        (fuel_demand_speed_error == 2)) || (fuel_demand_speed_error == 4)) {
+      cruise_deadband_active_flag = 0;
+    }
+    else {
+      if (cruise_speed_command < cruise_speed_setpoint_adjusted) {
+        uVar2 = cruise_speed_setpoint_adjusted - cruise_speed_command;
+      }
+      else {
+        uVar2 = cruise_speed_command - cruise_speed_setpoint_adjusted;
+      }
+      if (((uVar2 < DAT_00408e00) && (param_1 <= (int)(uint)cruise_speed_offset_latched)) &&
+         ((int)(uint)governor_cruise_fuel_demand_setpoint <= param_1)) {
+        cruise_deadband_active_flag = 1;
+      }
+    }
+  }
+  if ((governor_fuel_demand_mode != 9) && (governor_fuel_demand_mode != 10)) {
+    return;
+  }
+  if (((cruise_deadband_active_flag == 0) && (governor_fuel_demand_mode == 9)) ||
+     ((governor_fuel_demand_mode == 10 &&
+      (((j1939_governor_feature_cal & 0x100) != 0 && (governor_j1939_bypass_flag != 1)))))) {
+LAB_00524934:
+    cruise_speed_setpoint_active = 0;
+  }
+  else if ((int)(uint)cruise_speed_offset_latched < param_1) {
+    uVar2 = cruise_ramp_rate_d_working;
+    if (governor_fuel_demand_mode == 9) {
+      uVar2 = cruise_ramp_rate_b_working;
+    }
+    uStack_e = (ushort)((param_1 - (uint)cruise_speed_offset_latched) * (uint)uVar2 >> 10);
+    cruise_speed_setpoint_active = DAT_00408e14;
+    if ((int)(short)uStack_e <= (int)(uint)DAT_00408e14) {
+LAB_0052492c:
+      cruise_speed_setpoint_active = uStack_e;
+    }
+  }
+  else {
+    if ((int)(uint)governor_cruise_fuel_demand_setpoint <= param_1) goto LAB_00524934;
+    wVar6 = cruise_ramp_rate_c_working;
+    if (governor_fuel_demand_mode == 9) {
+      wVar6 = DAT_0040b69c;
+    }
+    uStack_e = (ushort)(((int)(short)param_1 - (int)(short)governor_cruise_fuel_demand_setpoint) *
+                        (int)(short)wVar6 >> 10);
+    cruise_speed_setpoint_active = DAT_00408e16;
+    if ((short)DAT_00408e16 <= (short)uStack_e) goto LAB_0052492c;
+  }
+  uVar3 = (uint)(short)governor_cruise_speed_error_net;
+  uVar4 = uVar3;
+  if ((int)uVar3 < 0) {
+    uVar4 = -uVar3;
+  }
+  uVar1 = (uint)fuel_demand_computed;
+  uVar5 = (uint)governor_cruise_fuel_demand_setpoint + (uint)DAT_00408e24;
+  if (uVar1 < uVar5) {
+    if ((int)uVar3 <= (int)((uint)DAT_00408e2e + (uint)DAT_00408e22)) goto LAB_005249d4;
+  }
+  else if ((uVar4 & 0xffff) <= (uint)DAT_00408e20 + (uint)DAT_00408e22) goto LAB_005249d4;
+  cruise_speed_zone_code = 2;
+LAB_005249d4:
+  if ((uVar5 <= uVar1) && ((int)(uVar4 & 0xffff) < (int)((uint)DAT_00408e20 - (uint)DAT_00408e22)))
+  {
+    cruise_speed_zone_code = 1;
+  }
+  if ((uVar1 <= governor_cruise_fuel_demand_setpoint) &&
+     ((int)uVar3 < (int)((uint)DAT_00408e2e - (uint)DAT_00408e22))) {
+    cruise_speed_zone_code = 3;
+  }
+  if (cruise_speed_zone_code == 1) {
+    governor_cruise_zone_table_ptr = (undefined *)&DAT_00408e02;
+  }
+  else if (cruise_speed_zone_code == 2) {
+    governor_cruise_zone_table_ptr = (undefined *)&DAT_00408e18;
+  }
+  else if (cruise_speed_zone_code == 3) {
+    governor_cruise_zone_table_ptr = (undefined *)&DAT_00408e26;
+  }
+  if (DAT_003fcffa != cruise_speed_zone_code) {
+    cruise_zone_transition_flag = 1;
+  }
+  DAT_0040b6aa = *(undefined2 *)governor_cruise_zone_table_ptr;
+  DAT_0040b6a8 = *(undefined2 *)(governor_cruise_zone_table_ptr + 6);
+  DAT_0040b6a6 = *(undefined2 *)(governor_cruise_zone_table_ptr + 2);
+  DAT_0040b6a0 = *(undefined2 *)(governor_cruise_zone_table_ptr + 4);
+  DAT_003fcffc = (short)uVar4;
+  DAT_003fcffa = cruise_speed_zone_code;
+  return;
+}
+
+
+
+//
+// Function: governor_cruise_speedReference_update @ 0x00524aec
+//
+

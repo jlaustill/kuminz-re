@@ -1,0 +1,55 @@
+=== VARIABLES TO NAME ===
+0x0040bb0e  (4 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040bb0e
+void sensor_fault_safety_check(void)
+
+{
+  if ((fault_management_status_flags & 4) == 0) {
+    if ((sensor_status_flags_2 & 0x100) != 0) {
+      system_status_flags_t_003fe974.safety_bits_1 =
+           system_status_flags_t_003fe974.safety_bits_1 & 0xfeff;
+      sensor_status_flags_2 = sensor_status_flags_2 & 0xfeff;
+    }
+  }
+  else {
+    if ((999 < DAT_0040bb0e) && (DAT_0040bb0e <= DAT_004077f4)) {
+      system_status_flags_t_003fe974.safety_bits_1 =
+           system_status_flags_t_003fe974.safety_bits_1 | 0x100;
+      protection_sensor_fault_active_flag = 1;
+    }
+    if (cold_start_phase == CSP_CRANKING) {
+      if (DAT_0040bb0e <= DAT_004077f2) {
+        return;
+      }
+      if ((sensor_status_flags_2 & 0x100) != 0) {
+        system_status_flags_t_003fe974.safety_bits_1 =
+             system_status_flags_t_003fe974.safety_bits_1 & 0xfeff;
+        sensor_status_flags_2 = sensor_status_flags_2 & 0xfeff;
+      }
+    }
+    else {
+      if (DAT_0040bb0e <= DAT_004077f0) {
+        return;
+      }
+      if ((sensor_status_flags_2 & 0x100) != 0) {
+        system_status_flags_t_003fe974.safety_bits_1 =
+             system_status_flags_t_003fe974.safety_bits_1 & 0xfeff;
+        sensor_status_flags_2 = sensor_status_flags_2 & 0xfeff;
+      }
+    }
+    protection_sensor_fault_active_flag = 0;
+  }
+  return;
+}
+
+
+
+//
+// Function: protection_overtemp_monitor @ 0x00510520
+//
+

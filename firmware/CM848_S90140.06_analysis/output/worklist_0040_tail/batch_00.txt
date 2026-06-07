@@ -1,0 +1,176 @@
+=== VARIABLES TO NAME ===
+0x004051ee  (3 references)
+0x0040a448  (3 references)
+0x0040a44a  (3 references)
+
+Total: 3 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_004051ee, DAT_0040a448, DAT_0040a44a
+void governor_adjustment_counter_update(void)
+
+{
+  bool bVar1;
+  bool bVar2;
+  bool bVar3;
+  word wVar4;
+  uint uVar5;
+  
+  if (boost_correction_eligible_flag == 0) {
+    boost_corr_eligible_dwell_count = 0;
+  }
+  else if (boost_correction_eligible_flag != 0) {
+    if (boost_corr_eligible_dwell_count < 10) {
+      boost_corr_eligible_dwell_count = boost_corr_eligible_dwell_count + 1;
+    }
+    else {
+      boost_corr_eligible_dwell_count = 10;
+    }
+  }
+  if (((cold_start_feature_flags & 0x2000) == 0) || (cold_start_inhibit_cal != 0)) {
+    bVar1 = true;
+  }
+  else {
+    bVar1 = false;
+  }
+  if ((boost_corr_eligible_dwell_count != 10) || (DAT_0040a44a <= DAT_0040a448)) {
+    bVar3 = false;
+  }
+  else {
+    bVar3 = true;
+  }
+  if ((boost_corr_eligible_dwell_count != 10) || (DAT_0040a448 < DAT_0040a44a)) {
+    bVar2 = false;
+  }
+  else {
+    bVar2 = true;
+  }
+  uVar5 = (uint)DAT_004051ee;
+  if (bVar1) {
+    wVar4 = 0;
+  }
+  else {
+    wVar4 = boost_correction_step_counter;
+    if ((bVar3) || (bVar2)) {
+      if (bVar2) {
+        if (!bVar3) {
+          if (boost_correction_step_counter < 2) {
+            wVar4 = 0;
+          }
+          else {
+            wVar4 = boost_correction_step_counter - 1;
+          }
+        }
+      }
+      else {
+        wVar4 = DAT_004051ee;
+        if ((uVar5 != 0) &&
+           (wVar4 = DAT_004051ee, (int)(uint)boost_correction_step_counter <= (int)(uVar5 - 1))) {
+          wVar4 = boost_correction_step_counter + 1;
+        }
+      }
+    }
+  }
+  boost_correction_step_counter = wVar4;
+  if (boost_correction_step_counter < uVar5) {
+    if (boost_correction_step_counter == 0) {
+      fuel_blend_correction_inhibit_flag._2_2_ = 0;
+    }
+  }
+  else {
+    fuel_blend_correction_inhibit_flag._2_2_ = 1;
+  }
+  return;
+}
+
+
+
+//
+// Function: fuel_boostCorrection_enableCheck_trimCalc @ 0x005033a0
+//
+
+/* WARNING: Function: cm848_signedDivision32 replaced with injection: sdiv64by32 */
+
+// Variables in this function: DAT_0040a448, DAT_0040a44a
+void fuel_boostCorrection_enableCheck_trimCalc(void)
+
+{
+  uint uVar1;
+  uint uVar2;
+  int iVar3;
+  
+  uVar2 = (uint)fuel_quantity_ema;
+  iVar3 = (int)(short)fuel_demand_boost_input;
+  if ((((boost_correction_alt_mode_cal == 0) || (boost_correction_inhibit_flag != 0)) ||
+      (boost_correction_block_mode_flag._0_2_ != 0)) ||
+     (((fuel_demand_mode_index_init_flag._0_2_ != 0 || (engine_fuel_fault_status != 0)) ||
+      ((uVar2 < DAT_004051f0 || (iVar3 < (int)(uint)DAT_004051ec)))))) {
+    boost_correction_eligible_flag = 0;
+  }
+  else if (((boost_correction_block_flag == 0) && (fuel_demand_enable_state == 0)) &&
+          (((diagnostic_status_bits & 0x20) == 0 &&
+           ((((engine_sync_validation_flags & 8) == 0 &&
+             (DAT_004051f4 <= (short)boost_pressure_filtered)) &&
+            (DAT_004051f2 <= (short)boost_pressure_correction_snapshot)))))) {
+    boost_correction_eligible_flag = 1;
+  }
+  else {
+    boost_correction_eligible_flag = 0;
+  }
+  uVar1 = (uint)boost_fuel_input_value * 0x20;
+  if (iVar3 < (int)uVar1) {
+    if (iVar3 < 1) {
+      if (iVar3 < 0) {
+        iVar3 = -iVar3;
+      }
+      iVar3 = uVar1 + iVar3;
+    }
+    else {
+      iVar3 = uVar1 - iVar3;
+    }
+  }
+  else {
+    iVar3 = 0;
+  }
+  if (iVar3 == 0) {
+    iVar3 = 1;
+  }
+  if (throttle_trim_lookup_input < uVar1) {
+    uVar1 = uVar1 - throttle_trim_lookup_input;
+  }
+  else {
+    uVar1 = 0;
+  }
+  iVar3 = (int)(CONCAT44(((int)uVar1 >> 0x1f) * 10000 + (int)((ulonglong)uVar1 * 10000 >> 0x20),
+                         uVar1 * 10000) / (longlong)iVar3);
+  if (iVar3 < 10000) {
+    if (iVar3 < 1) {
+      iVar3 = 0;
+    }
+  }
+  else {
+    iVar3 = 10000;
+  }
+  DAT_0040a448 = (undefined2)iVar3;
+  iVar3 = (int)(CONCAT44((int)((ulonglong)((longlong)(int)uVar2 * (longlong)(int)DAT_004051e8) >>
+                              0x20),uVar2 * (int)DAT_004051e8) / 0x500) + (uint)DAT_004051ea;
+  if (iVar3 < 0x2711) {
+    if (iVar3 < 0) {
+      iVar3 = 0;
+    }
+  }
+  else {
+    iVar3 = 10000;
+  }
+  DAT_0040a44a = (undefined2)iVar3;
+  governor_adjustment_counter_update();
+  return;
+}
+
+
+
+//
+// Function: cm848_auxiliary_periodic @ 0x00503604
+//
+

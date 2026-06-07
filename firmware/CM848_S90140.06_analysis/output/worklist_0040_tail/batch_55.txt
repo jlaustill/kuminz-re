@@ -1,0 +1,129 @@
+=== VARIABLES TO NAME ===
+0x0040aff2  (3 references)
+0x0040aff4  (3 references)
+0x0040affc  (3 references)
+
+Total: 3 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040aff2
+void fuel_egrTarget_pressureRatio_calc(void)
+
+{
+  uint uVar1;
+  
+  if (DAT_003ff6fe < egr_fuel_pressure_ratio) {
+    egr_fuel_pressure_integrator = egr_fuel_pressure_integrator + DAT_003ff6f6;
+  }
+  if ((fuel_pressure_sensor_reference == 0) ||
+     (uVar1 = (uint)(((ulonglong)governor_integrator_bound_a << 8) /
+                    (ulonglong)(uint)fuel_pressure_sensor_reference), 0xffff < uVar1)) {
+    uVar1 = 0xffff;
+  }
+  DAT_003fcc1c = (short)uVar1;
+  if (((egr_fuel_pressure_ratio < DAT_003ff700) && ((uint)DAT_003ff6f0 < (uVar1 & 0xffff))) &&
+     (DAT_003ff712 < engine_rpm_state_t_0040b7ac.current_rpm)) {
+    egr_fuel_pressure_integrator = egr_fuel_pressure_integrator + DAT_003ff6f6;
+  }
+  if (DAT_003ff6f8 < egr_fuel_pressure_integrator) {
+    egr_fuel_pressure_integrator = DAT_003ff6f8;
+  }
+  if (((DAT_003ff700 <= egr_fuel_pressure_ratio) && (egr_fuel_pressure_ratio <= DAT_003ff6fe)) &&
+     (egr_fuel_pressure_integrator != 0)) {
+    egr_fuel_pressure_integrator = egr_fuel_pressure_integrator - DAT_003ff6f4;
+  }
+  if ((egr_fuel_pressure_integrator < DAT_003ff6f8) || (egr_fuel_pressure_ratio <= DAT_003ff6fe)) {
+    if ((egr_fuel_pressure_integrator < DAT_003ff6f8) || (DAT_003ff700 <= egr_fuel_pressure_ratio))
+    goto LAB_0050f05c;
+    egr_smoke_limit_status_flags = egr_smoke_limit_status_flags | 0x20;
+  }
+  else {
+    egr_smoke_limit_status_flags = egr_smoke_limit_status_flags | 8;
+  }
+  DAT_0040aff2 = DAT_003ff6fc;
+LAB_0050f05c:
+  if ((egr_fuel_pressure_integrator < DAT_003ff6f2) && ((egr_smoke_limit_status_flags & 0x20) != 0))
+  {
+    egr_smoke_limit_status_flags = egr_smoke_limit_status_flags & 0xffdf;
+    egr_smoke_limit_status_shadow = egr_smoke_limit_status_shadow & 0xffdf;
+  }
+  else if ((egr_fuel_pressure_integrator < DAT_003ff6f2) &&
+          ((egr_smoke_limit_status_flags & 8) != 0)) {
+    egr_smoke_limit_status_flags = egr_smoke_limit_status_flags & 0xfff7;
+    egr_smoke_limit_status_shadow = egr_smoke_limit_status_shadow & 0xfff7;
+  }
+  return;
+}
+
+
+
+//
+// Function: fuel_smokeLimit_modeSelect @ 0x0050f110
+//
+
+// Variables in this function: DAT_0040aff2, DAT_0040aff4, DAT_0040affc
+void governor_speedReference_ramp_calc(void)
+
+{
+  uint uVar1;
+  ushort *puVar2;
+  ushort uVar3;
+  uint uVar4;
+  
+  if (((egr_smoke_limit_status_flags & 8) == 0) && ((egr_smoke_limit_status_flags & 0x20) == 0)) {
+    DAT_003fcc04 = DAT_0040aff2;
+    uVar1 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fcc06);
+  }
+  else {
+    uVar1 = (uint)DAT_003ff6fc;
+  }
+  DAT_0040aff2 = (ushort)uVar1;
+  DAT_003fcc10 = (uVar1 & 0xffff) - (uint)DAT_003fcc04;
+  uVar4 = (uint)DAT_0040affc;
+  DAT_003fcc18 = DAT_0040affc;
+  if ((int)(uint)DAT_003ff714 < DAT_003fcc10) {
+    uVar1 = (uint)DAT_003ff716 + (uint)DAT_003fcc04;
+  }
+  DAT_0040affc = (ushort)uVar1;
+  DAT_003fcc14 = (uVar1 & 0xffff) - uVar4;
+  if ((int)(uint)DAT_003ff714 < DAT_003fcc14) {
+    uVar1 = DAT_003ff716 + uVar4;
+  }
+  DAT_0040aff6 = (undefined2)uVar1;
+  DAT_0040aff4 = exponentialMovingAverage(uVar1 & 0xffff,&PTR_DAT_003fcc08);
+  uVar1 = (uint)DAT_003ff718;
+  uVar3 = DAT_0040aff4;
+  if (uVar1 != 0) {
+    for (puVar2 = &DAT_003fcc20; puVar2 < &DAT_003fcc20 + uVar1; puVar2 = puVar2 + 1) {
+      if (uVar3 < *puVar2) {
+        uVar3 = *puVar2;
+      }
+    }
+    (&DAT_003fcc20)[DAT_003fcc1e] = DAT_0040aff4;
+    uVar4 = DAT_003fcc1e + 1;
+    DAT_003fcc1e = (ushort)uVar4;
+    if (uVar1 <= (uVar4 & 0xffff)) {
+      DAT_003fcc1e = 0;
+    }
+  }
+  DAT_0040affa = uVar3;
+  governor_speed_reference_raw = DAT_003fcc1a;
+  if (fuel_smoke_limit_mode != 1) {
+    if (DAT_003fd8b2 == 1) {
+      uVar3 = DAT_003fd8b0;
+    }
+    governor_speed_reference_raw = uVar3;
+    if ((uVar3 < DAT_003ff70c) && (fuel_smoke_limit_mode != 2)) {
+      governor_speed_reference_raw = 0;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: fuel_smokeLimit_transient_counter @ 0x0050f3b4
+//
+

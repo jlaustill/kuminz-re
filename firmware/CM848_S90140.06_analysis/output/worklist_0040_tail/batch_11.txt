@@ -1,0 +1,32 @@
+=== VARIABLES TO NAME ===
+0x00408788  (3 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00408788
+void engine_protection_faultSeverity_manage(int param_1,int param_2,int param_3,int param_4)
+
+{
+  if (param_2 == 0) {
+    if ((param_4 != 0) &&
+       ((ushort)(&fault_severity_snapshot_array)[param_1] == (DAT_00408788 & 0xff))) {
+      (&fault_severity_snapshot_array)[param_1] = 0;
+    }
+  }
+  else if (param_3 == 0) {
+    cm848_triggerProtectionEvent(param_1,DAT_00408788);
+  }
+  else {
+    cm848_setEngineProtectionFault(param_1,DAT_00408788);
+  }
+  return;
+}
+
+
+
+//
+// Function: protection_fault_snapshot_update @ 0x00514108
+//
+

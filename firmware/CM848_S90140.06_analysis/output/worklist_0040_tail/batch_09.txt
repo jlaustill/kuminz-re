@@ -1,0 +1,101 @@
+=== VARIABLES TO NAME ===
+0x00408720  (4 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00408720
+int governor_cruiseOverride_state2_handler(void)
+
+{
+  word wVar1;
+  
+  wVar1 = fuel_demand_speed_error;
+  if (governor_override_active_flag != 0) {
+    if ((governor_speed_request_state_prev == 2) || (governor_speed_request_state_b != 2)) {
+      if (governor_cruiseOverride_holdoff_countdown == 0) {
+        wVar1 = 3;
+      }
+      else {
+        governor_cruiseOverride_holdoff_countdown = governor_cruiseOverride_holdoff_countdown - 1;
+      }
+    }
+    else {
+      governor_cruiseOverride_holdoff_countdown = DAT_00408720;
+      wVar1 = 5;
+    }
+  }
+  return (int)(short)wVar1;
+}
+
+
+
+//
+// Function: protection_control_state_check_1 @ 0x00512678
+//
+
+// Variables in this function: DAT_00408720
+int governor_cruiseOverride_state4_handler(void)
+
+{
+  word wVar1;
+  
+  wVar1 = fuel_demand_speed_error;
+  if (governor_override_active_flag == 0) {
+    if (governor_fuel_enable_state != 0) {
+      wVar1 = 2;
+      governor_cruiseOverride_holdoff_countdown = DAT_00408720;
+    }
+  }
+  else if ((governor_speed_request_state_prev == 4) || (governor_speed_request_state_b != 4)) {
+    if (governor_cruiseOverride_holdoff_countdown == 0) {
+      wVar1 = 4;
+    }
+    else {
+      governor_cruiseOverride_holdoff_countdown = governor_cruiseOverride_holdoff_countdown - 1;
+    }
+  }
+  else {
+    governor_cruiseOverride_holdoff_countdown = DAT_00408720;
+    wVar1 = 6;
+  }
+  return (int)(short)wVar1;
+}
+
+
+
+//
+// Function: governor_cruiseOverride_state3_handler @ 0x0051291c
+//
+
+// Variables in this function: DAT_00408720
+int governor_cruiseOverride_state3_handler(void)
+
+{
+  word wVar1;
+  
+  wVar1 = fuel_demand_speed_error;
+  if ((governor_speed_request_state_prev == 3) || (governor_speed_request_state_b != 3)) {
+    if (governor_override_active_flag == 1) {
+      if (governor_cruiseOverride_holdoff_countdown == 0) {
+        wVar1 = 3;
+      }
+      else {
+        governor_cruiseOverride_holdoff_countdown = governor_cruiseOverride_holdoff_countdown - 1;
+      }
+    }
+  }
+  else if (cruise_speed_min_cal <= cruise_speed_setpoint_adjusted) {
+    wVar1 = 1;
+    governor_cruiseOverride_holdoff_countdown = DAT_00408720;
+  }
+  return (int)(short)wVar1;
+}
+
+
+
+//
+// Function: protection_control_state_check_2 @ 0x005129b0
+//
+

@@ -1,0 +1,71 @@
+=== VARIABLES TO NAME ===
+0x0040b092  (3 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040b092
+void phase_group_b_computeGovernorFuelDemandOutput(void)
+
+{
+  undefined *puVar1;
+  uint uVar2;
+  
+  if (governor_fuel_b_mode_flag != 0) {
+    uVar2 = ((uint)DAT_0040b082 * (uint)DAT_004077ce >> 0xb) +
+            (uint)(governor_b_fuel_demand_ema >> 3);
+    if (0xffff < uVar2) {
+      uVar2 = 0xffff;
+    }
+    DAT_0040b08e = (undefined2)uVar2;
+    governor_b_boost_demand_ema_eighth = exponentialMovingAverage(uVar2 & 0xffff,&PTR_DAT_003fcd18);
+    if (0x12c0 < governor_b_boost_demand_ema_eighth) {
+      governor_b_boost_demand_ema_eighth = 0x12c0;
+    }
+    DAT_0040b092 = fuel_demand_boost_input;
+    if (1 < (short)sensor_generic_fault_status) {
+      DAT_0040b092 = DAT_004077da;
+    }
+    governor_b_boost_demand_floor = DAT_0040b092 + DAT_004077be;
+    if (0x5000 < governor_b_boost_demand_floor) {
+      governor_b_boost_demand_floor = 0x5000;
+    }
+    puVar1 = (undefined *)
+             (((int)(((uint)governor_b_boost_demand_ema_eighth * 8 -
+                     (uint)governor_b_boost_demand_floor) * (uint)DAT_004077d8) >> 10) +
+             (uint)governor_b_boost_demand_floor);
+    if ((int)puVar1 < 0x9601) {
+      if ((int)puVar1 < 0) {
+        puVar1 = (undefined *)0x0;
+      }
+    }
+    else {
+      puVar1 = &DAT_00009600;
+    }
+    DAT_0040b08c = SUB42(puVar1,0);
+    governor_b_fuel_demand_ema = exponentialMovingAverage((uint)puVar1 & 0xffff,&PTR_DAT_003fcd20);
+    if (0x9600 < governor_b_fuel_demand_ema) {
+      governor_b_fuel_demand_ema = 0x9600;
+    }
+    DAT_0040b07e = governor_b_boost_demand_ema_eighth < DAT_004077cc ^ 1;
+    if (governor_b_boost_demand_ema_eighth < DAT_004077c8) {
+      if (governor_b_boost_demand_ema_eighth <= DAT_004077ca) {
+        diagnostic_status_flags = diagnostic_status_flags & 0xfbff;
+        j1939_comm_status_flags = j1939_comm_status_flags & 0xfbff;
+      }
+    }
+    else {
+      diagnostic_status_flags = diagnostic_status_flags | 0x400;
+    }
+    boost_demand_diagBit_counter();
+  }
+  return;
+}
+
+
+
+//
+// Function: governor_rpm_monitor_calc @ 0x0051008c
+//
+

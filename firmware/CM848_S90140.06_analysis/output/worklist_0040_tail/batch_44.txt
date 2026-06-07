@@ -1,0 +1,76 @@
+=== VARIABLES TO NAME ===
+0x0040a692  (3 references)
+0x0040a696  (3 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040a692, DAT_0040a696
+void sensor_channel108_filter(void)
+
+{
+  uint uVar1;
+  uint uVar2;
+  int iVar3;
+  
+  iVar3 = (uint)DAT_0040a696 * ((uint)sensor_channel108_raw - (uint)DAT_003fbcfa);
+  if (iVar3 < 32000) {
+    if (iVar3 < -31999) {
+      iVar3 = -32000;
+    }
+  }
+  else {
+    iVar3 = 32000;
+  }
+  DAT_0040a694 = (short)iVar3;
+  uVar2 = (uint)sensor_channel108_raw + (int)(short)iVar3;
+  uVar1 = (uint)DAT_00406774;
+  if (((int)uVar2 < (int)uVar1) && (uVar1 = uVar2, (int)uVar2 <= (int)(uint)DAT_00406776)) {
+    uVar1 = (uint)DAT_00406776;
+  }
+  DAT_0040a692 = (short)uVar1;
+  DAT_003fbcfa = sensor_channel108_raw;
+  return;
+}
+
+
+
+//
+// Function: sensor_throttleTrim_ema_faultProcess @ 0x00507028
+//
+
+// Variables in this function: DAT_0040a692, DAT_0040a696
+void sensor_throttleTrim_ema_faultProcess(void)
+
+{
+  word wVar1;
+  undefined2 uVar2;
+  
+  fuel_demand_mode_index_init_flag._2_2_ = sensor_channel108_fault_status;
+  if (boost_correction_alt_mode_cal == 0) {
+    fuel_demand_mode_index_init_flag._2_2_ = 0;
+  }
+  DAT_003fbcf8 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fbcfe);
+  wVar1 = sensor_channel108_fault_status;
+  if (((sensor_channel108_fault_status != 0) || (cold_start_inhibit_cal != 0)) ||
+     (DAT_0040a696 = DAT_003fbcf8, (cold_start_feature_enable_flags & 0x8000) == 0)) {
+    DAT_0040a696 = 0;
+  }
+  sensor_channel108_filter();
+  uVar2 = DAT_0040a692;
+  if (((wVar1 == 0) && (cold_start_inhibit_cal == 0)) &&
+     ((cold_start_feature_enable_flags & 0x8000) != 0)) {
+    DAT_003fbcfc = exponentialMovingAverage(DAT_0040a692,&PTR_DAT_003fbd00);
+    uVar2 = exponentialMovingAverage(DAT_003fbcfc,&DAT_003fbd08);
+  }
+  DAT_003fbcf6 = uVar2;
+  return;
+}
+
+
+
+//
+// Function: sensor_throttleTrim_inputSelect @ 0x0050716c
+//
+

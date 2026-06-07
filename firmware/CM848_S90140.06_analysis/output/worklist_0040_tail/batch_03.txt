@@ -1,0 +1,284 @@
+=== VARIABLES TO NAME ===
+0x00406570  (3 references)
+0x0040a5f8  (3 references)
+0x0040a5fa  (3 references)
+0x0040a5fc  (4 references)
+0x0040a5fe  (4 references)
+0x0040a602  (3 references)
+0x0040a8ab  (3 references)
+
+Total: 7 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040a5fa, DAT_0040a5fe, DAT_0040a602, DAT_0040a8ab
+void fuel_demandMin_maxSelect_rateLimit(void)
+
+{
+  uint uVar1;
+  uint uVar2;
+  
+  uVar1 = (uint)DAT_0040a5b8;
+  if (uVar1 < fuel_blend_weight_threshold_active) {
+    uVar1 = (uint)fuel_blend_weight_threshold_active;
+  }
+  uVar2 = (uint)DAT_003fba26;
+  if (uVar2 < uVar1) {
+    uVar2 = uVar1;
+  }
+  uVar1 = (uint)DAT_0040a5f6;
+  if (uVar1 < uVar2) {
+    uVar1 = uVar2;
+  }
+  uVar2 = (uint)DAT_0040a5fa;
+  if (uVar2 < uVar1) {
+    uVar2 = uVar1;
+  }
+  uVar1 = (uint)DAT_0040a5fe;
+  if (uVar1 < uVar2) {
+    uVar1 = uVar2;
+  }
+  uVar2 = (uint)DAT_0040a8ab;
+  if (uVar2 < uVar1) {
+    uVar2 = uVar1;
+  }
+  uVar1 = (uint)DAT_0040a602;
+  if (uVar1 < uVar2) {
+    uVar1 = uVar2;
+  }
+  uVar2 = (uint)DAT_0040a72e;
+  if (uVar2 < uVar1) {
+    uVar2 = uVar1;
+  }
+  DAT_003fba28 = (short)uVar2;
+  uVar1 = (uint)DAT_003fba2c;
+  if (uVar1 + DAT_0040654a < uVar2) {
+    uVar2 = uVar1 + DAT_0040654a;
+  }
+  else if ((int)uVar2 < (int)(uVar1 - DAT_00406548)) {
+    uVar2 = uVar1 - DAT_00406548;
+  }
+  DAT_003fba2a = (word)uVar2;
+  fuel_demand_min_threshold = DAT_003fba2a;
+  if (DAT_003fd7e8 != 0) {
+    fuel_demand_min_threshold = DAT_0040654c;
+  }
+  DAT_003fba2c = DAT_003fba2a;
+  return;
+}
+
+
+
+//
+// Function: cm848_initialization_step_6 @ 0x00504938
+//
+
+// Variables in this function: DAT_0040a5f8, DAT_0040a5fc
+void fuel_modeStatusBits_pack(void)
+
+{
+  DAT_0040a5ec = DAT_0040a5a0 | DAT_0040a5fc * 2 | DAT_0040a5b6 << 2 |
+                 (ushort)(injection_timing_cylinder_check_flags != 0) << 3 | DAT_0040a5f8 << 4 |
+                 cold_start_phase26_fuel_mode_flag << 5 |
+                 (ushort)(governor_fuel_demand_interp_state_y._2_2_ != 0) << 6 | DAT_003fba36 << 7;
+  return;
+}
+
+
+
+//
+// Function: fuel_modeStatusFlags_update @ 0x0050530c
+//
+
+// Variables in this function: DAT_0040a5f8
+void fuel_modeStatusFlags_update(void)
+
+{
+  ushort uVar1;
+  
+  fuel_mode_status_flags = DAT_00406568;
+  if (DAT_003fd7ea == 0) {
+    if (cold_start_phase26_fuel_mode_flag == 0) {
+      uVar1 = governor_fuel_demand_interp_state_y._2_2_ | injection_timing_cylinder_check_flags;
+    }
+    else {
+      uVar1 = governor_fuel_demand_interp_state_y._2_2_ | injection_timing_cylinder_check_flags | 1;
+    }
+    if ((DAT_0040a5f8 != 0) || (DAT_0040a5b6 != 0)) {
+      uVar1 = uVar1 | 0x80;
+    }
+    if ((cold_start_phase_2_6_flag == 0) && (cold_start_phase3_flag == 0)) {
+      uVar1 = uVar1 | 2;
+    }
+    fuel_mode_status_flags = uVar1 | DAT_0040656a;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_initialization_step_7 @ 0x005053d0
+//
+
+// Variables in this function: DAT_00406570, DAT_0040a5f8, DAT_0040a5fa
+void governor_coldStart_fuelModeCounter_update(void)
+
+{
+  bool bVar1;
+  bool bVar2;
+  word wVar3;
+  uint uVar4;
+  
+  if ((governor_fuel_mode_snapshot == 0xb) || (governor_fuel_mode_snapshot == 4)) {
+    bVar2 = true;
+  }
+  else {
+    bVar2 = false;
+  }
+  if ((((cold_start_feature_enable_flags & 0x800) == 0) || (cold_start_phase3_flag == 0)) ||
+     (!bVar2)) {
+    bVar1 = true;
+  }
+  else {
+    bVar1 = false;
+  }
+  uVar4 = (uint)DAT_00406570;
+  if (bVar1) {
+    wVar3 = 0;
+  }
+  else {
+    wVar3 = cold_start_phase3_fuel_mode_count;
+    if (((bVar2) && (wVar3 = DAT_00406570, 1 < uVar4)) &&
+       (wVar3 = DAT_00406570, (int)(uint)cold_start_phase3_fuel_mode_count <= (int)(uVar4 - 2))) {
+      wVar3 = cold_start_phase3_fuel_mode_count + 2;
+    }
+  }
+  cold_start_phase3_fuel_mode_count = wVar3;
+  DAT_0040a5f8 = (ushort)(uVar4 <= cold_start_phase3_fuel_mode_count);
+  DAT_0040a5fa = DAT_0040656e;
+  if (uVar4 > cold_start_phase3_fuel_mode_count) {
+    DAT_0040a5fa = 0;
+  }
+  return;
+}
+
+
+
+//
+// Function: fuel_demandBoost_overrideFlag_lookup @ 0x005056f8
+//
+
+// Variables in this function: DAT_0040a5fc, DAT_0040a5fe
+void fuel_demandBoost_overrideFlag_lookup(void)
+
+{
+  if ((short)fuel_demand_boost_input < DAT_00406574) {
+    if ((short)fuel_demand_boost_input <= DAT_00406572) {
+      DAT_003fbca2 = 0;
+    }
+  }
+  else {
+    DAT_003fbca2 = 1;
+  }
+  if (((cold_start_feature_enable_flags & 0x200) == 0) || (DAT_003fbca2 == 0)) {
+    DAT_0040a5fc = 0;
+  }
+  else {
+    DAT_0040a5fc = 1;
+  }
+  DAT_0040a5fe = lookupTableInterpolation((table_interp_args_t *)&DAT_003fbc9e);
+  DAT_003fbca0 = DAT_0040a5fe;
+  if (DAT_0040a5fc == 0) {
+    DAT_0040a5fe = 0;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_initialization_step_9 @ 0x005057dc
+//
+
+// Variables in this function: DAT_0040a602
+void fuel_injectionTiming_cylinderCheck_update(void)
+
+{
+  ushort uVar1;
+  
+  if ((cold_start_feature_enable_flags & 0x400) == 0) {
+    injection_timing_cylinder_check_flags = 0;
+  }
+  else {
+    if ((short)fuel_demand_timing_filtered < (short)injection_timing_demand_cyl2) {
+      uVar1 = injection_timing_cylinder_check_flags | 0x20;
+    }
+    else {
+      uVar1 = injection_timing_cylinder_check_flags & 0xffdf;
+    }
+    if (((short)fuel_demand_timing_filtered < (short)injection_timing_demand_cyl3) &&
+       ((short)fuel_demand_boost_input <= DAT_004065ba)) {
+      injection_timing_cylinder_check_flags = uVar1 | 0x40;
+    }
+    else {
+      injection_timing_cylinder_check_flags = uVar1 & 0xffbf;
+    }
+  }
+  DAT_0040a602 = DAT_004065bc;
+  if (injection_timing_cylinder_check_flags == 0) {
+    DAT_0040a602 = 0;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_mainLoop_step_2 @ 0x005058a8
+//
+
+/* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+
+// Variables in this function: DAT_0040a8ab
+void cm848_updateSensorValidationFlags(void)
+
+{
+  if (DAT_0040a446 == 0) {
+    DAT_003fbd52 = 0;
+  }
+  else {
+    DAT_003fbd52 = 0x100;
+  }
+  if (DAT_0040a43c == 0) {
+    DAT_003fbd56 = 0;
+  }
+  else {
+    DAT_003fbd56 = 8;
+  }
+  if (DAT_0040a43e == 0) {
+    DAT_003fbd58 = 0;
+  }
+  else {
+    DAT_003fbd58 = 4;
+  }
+  if ((governor_feature_config_flags & 0x40) == 0) {
+    governor_fuel_demand_interp_state_y._2_2_ = 0;
+  }
+  else {
+    governor_fuel_demand_interp_state_y._2_2_ =
+         DAT_003fbd58 | DAT_003fbd56 | DAT_003fbd54 | DAT_003fbd50 | DAT_003fbd52;
+  }
+  DAT_0040a8ab = DAT_00406fb2;
+  if (governor_fuel_demand_interp_state_y._2_2_ == 0) {
+    DAT_0040a8ab = 0;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_initFlowControlStateVariables @ 0x00509b5c
+//
+

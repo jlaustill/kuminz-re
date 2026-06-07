@@ -1,0 +1,85 @@
+=== VARIABLES TO NAME ===
+0x0040b5d5  (3 references)
+0x0040b5d6  (4 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040b5d6
+void fuelDemandCallbackDispatcher(void)
+
+{
+  if ((DAT_0040b5d6 == '\x01') && ((fuel_demand_uart_mode_flags & 1) == 0)) {
+    DAT_0040b5d6 = '\0';
+    cm848_startFuelDemandCountdown();
+    (*(code *)fuel_demand_callback_ptr)();
+  }
+  else {
+    cm848_processFuelDemandTimeout();
+  }
+  return;
+}
+
+
+
+//
+// Function: FUN_0051d780 @ 0x0051d780
+//
+
+// Variables in this function: DAT_0040b5d5, DAT_0040b5d6
+void fuelDemandSerialRx(void)
+
+{
+  word wVar1;
+  
+  wVar1 = qsmcm_sccr1.SC1SR;
+  if ((wVar1 & 4) == 0) {
+    if (((wVar1 & 8) == 0) && ((wVar1 & 2) == 0)) {
+      wVar1 = qsmcm_sccr1.SC1DR;
+      (&fuel_demand_state_queue)[fuel_demand_queue_write_index] = (byte)wVar1;
+      wVar1 = qsmcm_sccr1.SCC1R1;
+      qsmcm_sccr1.SCC1R1 = wVar1 & 0xffdf;
+      fuel_demand_queue_write_index = fuel_demand_queue_write_index + 1;
+      DAT_0040b5d6 = 1;
+      return;
+    }
+    fuel_demand_uart_mode_flags = fuel_demand_uart_mode_flags & 0xfd;
+    qsmcm_sccr1.SCC1R0 = 0xa0;
+    fuel_demand_callback_ptr = FUN_0051d780;
+  }
+  else if (DAT_0040b5d5 != -1) {
+    DAT_0040b5d5 = DAT_0040b5d5 + '\x01';
+  }
+  wVar1 = qsmcm_sccr1.SC1DR;
+  return;
+}
+
+
+
+//
+// Function: fuelDemandSerialInterruptHandler @ 0x0051d9a0
+//
+
+// Variables in this function: DAT_0040b5d6
+void fuelDemandShutdown(void)
+
+{
+  word wVar1;
+  
+  fuel_demand_callback_mode = 0;
+  fuel_demandQueue_reset();
+  DAT_0040b5d6 = 0;
+  wVar1 = qsmcm_sccr1.SCC1R1;
+  qsmcm_sccr1.SCC1R1 = wVar1 & 0xffbf;
+  wVar1 = qsmcm_sccr1.SCC1R1;
+  qsmcm_sccr1.SCC1R1 = wVar1 | 0x20;
+  return;
+}
+
+
+
+//
+// Function: fuel_demandQueue_serialMode_enable @ 0x0051dab0
+//
+

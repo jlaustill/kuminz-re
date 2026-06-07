@@ -1,0 +1,102 @@
+=== VARIABLES TO NAME ===
+0x0040b9e0  (3 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040b9e0
+void hpcr_camTimingMonitor(void)
+
+{
+  if ((protection_enable_t_0040c050.mode_bits & 1) == 0) {
+    cam_timing_monitor_active_flag = 0;
+  }
+  else if ((((protection_feature_status_flags & 0x80) != 0) &&
+           ((protection_feature_flags & 0x4000) != 0)) && (cam_timing_monitor_active_flag == 0)) {
+    cam_timing_monitor_state = 1;
+    cam_timing_monitor_active_flag = 1;
+  }
+  if (cam_timing_monitor_active_flag == 1) {
+    DAT_0040b9e0 = (short)((int)((int)(short)cam_timing_measured - (uint)cam_timing_reference_b_prev
+                                ) / (int)(uint)DAT_00064420);
+    cam_timing_advance_accumulator = cam_timing_advance_accumulator + (int)DAT_0040b9e0;
+    if ((int)cam_timing_advance_accumulator < 0) {
+      cam_timing_advance_accumulator = 0;
+    }
+    cam_timing_retard_accumulator = cam_timing_retard_accumulator - (int)DAT_0040b9e0;
+    if ((int)cam_timing_retard_accumulator < 0) {
+      cam_timing_retard_accumulator = 0;
+    }
+    if (DAT_0006440e < cam_timing_advance_accumulator) {
+      protection_monitor_shadow = protection_monitor_shadow | 0x100;
+      cam_timing_monitor_state = 3;
+    }
+    if ((((protection_monitor_shadow & 0x100) != 0) && ((fault_pending_flags & 0x80) != 0)) &&
+       ((protection_monitor_shadow & 0x100) == (protection_monitor_shadow_snapshot & 0x100))) {
+      fault_pending_flags = fault_pending_flags & 0xffffff7f;
+      fault_management_ring_read_ptr = (undefined *)((uint)fault_management_ring_read_ptr | 0x80);
+    }
+    if (DAT_00064412 < cam_timing_retard_accumulator) {
+      protection_monitor_shadow = protection_monitor_shadow | 0x200;
+      cam_timing_monitor_state = 3;
+    }
+    if ((((protection_monitor_shadow & 0x200) != 0) && ((fault_pending_flags & 0x80) != 0)) &&
+       ((protection_monitor_shadow & 0x200) == (protection_monitor_shadow_snapshot & 0x200))) {
+      fault_pending_flags = fault_pending_flags & 0xffffff7f;
+      fault_management_ring_read_ptr = (undefined *)((uint)fault_management_ring_read_ptr | 0x80);
+    }
+    if (DAT_003fd1e4 < DAT_00064416) {
+      DAT_003fd1e4 = DAT_003fd1e4 + 1;
+    }
+    else {
+      if ((cam_timing_advance_accumulator <= DAT_0006440e) &&
+         (cam_timing_retard_accumulator <= DAT_00064412)) {
+        protection_monitor_shadow = protection_monitor_shadow & 0xfcff;
+        j1939_message_state_flags = j1939_message_state_flags & 0xfcff;
+        cam_timing_monitor_state = 2;
+      }
+      engine_protection_counters_reset();
+      if ((((fault_pending_flags & 0x80) != 0) &&
+          ((protection_monitor_shadow & 0x200) == (protection_monitor_shadow_snapshot & 0x200))) &&
+         ((protection_monitor_shadow & 0x100) == (protection_monitor_shadow_snapshot & 0x100))) {
+        fault_pending_flags = fault_pending_flags & 0xffffff7f;
+        fault_management_ring_read_ptr = (undefined *)((uint)fault_management_ring_read_ptr | 0x80);
+      }
+    }
+    if ((((((system_status_flags_t_003fe974.protection_active & 0x2000) == 0) &&
+          ((system_status_flags_t_003fe974.comm_faults & 0x200) == 0)) &&
+         (((system_status_flags_t_003fe974.comm_faults & 0x100) == 0 &&
+          (((system_status_flags_t_003fe974.reserved_28 & 1) == 0 &&
+           ((system_status_flags_t_003fe974.reserved_28 & 2) == 0)))))) &&
+        ((power_state_status_flags & 0x200) == 0)) &&
+       (((((((power_state_status_flags & 0x400) == 0 &&
+            ((system_status_flags_t_003fe974.pending_faults & 0x8000) == 0)) &&
+           (engine_speed_override_enable_cal == 0)) &&
+          ((cam_sync_disable_cal == 0 &&
+           (DAT_0006441a <= (short)sensor_readings_t_0040baf2.coolant_temp)))) &&
+         (((short)sensor_readings_t_0040baf2.coolant_temp <= DAT_00064418 &&
+          ((DAT_0006441e <= (short)fuel_temp_raw && ((short)fuel_temp_raw <= DAT_0006441c)))))) &&
+        (((protection_feature_status_flags & 0x80) != 0 &&
+         ((governor_inhibit_flag == 0 && (DAT_00064422 <= engine_rpm_state_t_0040b7ac.target_rpm))))
+        )))) {
+      if (DAT_003fd1e7 == '\x01') {
+        cam_timing_monitor_state = 1;
+      }
+      DAT_003fd1e7 = '\0';
+    }
+    else {
+      engine_protection_counters_reset();
+      cam_timing_monitor_state = 0;
+      DAT_003fd1e7 = '\x01';
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: hpcr_camTimingReset @ 0x00532208
+//
+

@@ -1,0 +1,72 @@
+=== VARIABLES TO NAME ===
+0x0040a74c  (3 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040a74c
+void governor_coldStart_faultDerate_trigger(void)
+
+{
+  ushort uVar1;
+  uint uVar2;
+  int iVar3;
+  short sVar4;
+  int iVar5;
+  int iVar6;
+  int iVar7;
+  ushort *puVar8;
+  
+  if (((((cold_start_phase == CSP_ABOVE_RPM_TRIGGER) && ((governor_feature_config_word & 0x10) != 0)
+        ) && ((governor_feature_config_word & 1) != 0)) &&
+      (((governor_feature_config_word & 0x20) != 0 && (governor_faultDerate_active_channel != 0xff))
+      )) && ((governor_faultDerate_active_channel != 4 &&
+             (DAT_0005c2f4 <= governor_faultDerate_consecutive_count)))) {
+    puVar8 = &DAT_000597b2 + (short)governor_faultDerate_active_channel * 0x12;
+    iVar5 = (int)(short)governor_faultDerate_active_channel;
+    iVar7 = (int)&PTR_fuel_temp_raw_0040a734 + iVar5 * 0x3e;
+    uVar2 = (uint)governor_faultDerate_active_channel * 4 + 0x80 & 0xffff;
+    iVar3 = uVar2 + 2;
+    iVar6 = iVar3 >> 4;
+    if ((((uint)(&governor_fault_status_flags)[iVar6] & 1 << (iVar3 + iVar6 * -0x10 & 0x3fU)) != 0)
+       && (iVar3 = uVar2 + 3, iVar6 = iVar3 >> 4,
+          ((uint)(&governor_fault_status_flags)[iVar6] & 1 << (iVar3 + iVar6 * -0x10 & 0x3fU)) != 0)
+       ) {
+      uVar1 = *puVar8;
+      if (((uVar1 & 1) != 0) && (sVar4 = protection_threshold_check(puVar8,iVar7,0,0), sVar4 != 0))
+      {
+        (&DAT_0040a74c)[iVar5 * 0x1f] = 1;
+        governor_fuel_derate_threshold_exceeded = 1;
+      }
+      if (((uVar1 & 2) != 0) && (sVar4 = protection_threshold_check(puVar8,iVar7,1,0), sVar4 != 0))
+      {
+        (&DAT_0040a74c)[iVar5 * 0x1f] = 1;
+        governor_fuel_derate_threshold_exceeded = 1;
+      }
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_initSensorChannelDataStructures @ 0x005082f0
+//
+
+// Variables in this function: DAT_0040a74c
+void cm848_initSensorChannelDataStructures(void)
+
+{
+  governor_fuel_derate_threshold_exceeded = 0;
+  DAT_0040a74c = 0;
+  return;
+}
+
+
+
+//
+// Function: protection_threshold_update @ 0x0050832c
+//
+

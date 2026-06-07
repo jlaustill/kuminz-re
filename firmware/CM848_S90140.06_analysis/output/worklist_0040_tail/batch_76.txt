@@ -1,0 +1,57 @@
+=== VARIABLES TO NAME ===
+0x0040b64c  (4 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040b64c
+void governorSpeedCompensation(void)
+
+{
+  if ((governor_active_flag_b648 != 0) && (cold_start_phase == CSP_AT_GOVERNOR_SETPOINT)) {
+    if ((((governor_feature_config_flags & 8) == 0) ||
+        (((DAT_00408d78 < DAT_0040b64a ||
+          ((system_status_flags_t_003fe974.condition_monitor & 0x2000) != 0)) ||
+         (fuel_correction_mode_flag == 0)))) ||
+       ((DAT_00408d7c < fuel_temp_trim_snapshot || (DAT_0040b64c == 0)))) {
+      governor_active_flag_b648 = 0;
+    }
+    else {
+      DAT_0040b64c = DAT_0040b64c + -1;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: initGovernorSpeedControl @ 0x00523858
+//
+
+// Variables in this function: DAT_0040b64c
+void initGovernorSpeedControl(void)
+
+{
+  undefined2 uVar1;
+  
+  DAT_0040b64a = DAT_0040a0a0;
+  governor_active_flag_b648 = 1;
+  DAT_003fcfc6 = 2;
+  uVar1 = DAT_00408d7a;
+  if ((((system_status_flags_t_003fe974.condition_monitor & 1) == 0) &&
+      ((system_status_flags_t_003fe974.condition_monitor & 2) == 0)) &&
+     ((protection_monitor_shadow & 2) == 0)) {
+    uVar1 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fcfc6);
+  }
+  DAT_0040b64c = uVar1;
+  return;
+}
+
+
+
+//
+// Function: j1939_msgSlotM_switchInputBits_update @ 0x0052390c
+//
+

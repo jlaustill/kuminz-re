@@ -1,0 +1,65 @@
+=== VARIABLES TO NAME ===
+0x0040a09e  (4 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040a09e
+void cm848_sensorChannelGeneric_init_configBundle(void)
+
+{
+  sensorChannelConfigInit
+            (&DAT_000593de,&DAT_0040a09e,&DAT_003fb9ac,&DAT_000593ee,&DAT_0005941a,(void *)0x2,
+             0xb9ae,2,(word *)0x10,(word *)0x11,0xbd88,0xbdae,0xbe28);
+  return;
+}
+
+
+
+//
+// Function: cm848_sensorChannelGeneric_update_configBundle @ 0x00500090
+//
+
+// Variables in this function: DAT_0040a09e
+void cm848_sensorChannelGeneric_update_configBundle(void)
+
+{
+  updateSensorChannelWithConfig
+            (&DAT_000593de,&DAT_0040a09e,&DAT_003fb9ac,&DAT_000593ee,&DAT_0005941a,(void *)0x2,
+             0xb9ae,2,(word *)0x10,(word *)0x11,0xbd88,0xbdae,0xbe28);
+  return;
+}
+
+
+
+//
+// Function: cm848_sensorChannel7_init_configBundle @ 0x0050011c
+//
+
+// Variables in this function: DAT_0040a09e
+void oilTemp_sensorSource_select(void)
+
+{
+  word *pwVar1;
+  
+  if ((sensor_channel10_ram._0_2_ < DAT_0005952c) || (DAT_0005952a < sensor_channel10_ram._0_2_)) {
+    if ((DAT_000593e4 <= DAT_0040a09e) && (DAT_0040a09e <= DAT_000593e2)) {
+      iat_protection_oilTemp_input = DAT_0040a0a0;
+      return;
+    }
+    pwVar1 = &DAT_0005c7ac;
+  }
+  else {
+    pwVar1 = (word *)((int)&sensor_channel10_ram + 2);
+  }
+  iat_protection_oilTemp_input = *pwVar1;
+  return;
+}
+
+
+
+//
+// Function: protection_oilTemp_source_update @ 0x005183b4
+//
+

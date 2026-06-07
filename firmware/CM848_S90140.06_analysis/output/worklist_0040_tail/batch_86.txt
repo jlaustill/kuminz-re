@@ -1,0 +1,43 @@
+=== VARIABLES TO NAME ===
+0x0040bb4e  (4 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040bb4e
+int protection_control_state_check_2(void)
+
+{
+  word wVar1;
+  
+  DAT_003fcd94 = DAT_0040bb4e;
+  wVar1 = DAT_0040bb4e;
+  if (1 < DAT_0040871e) {
+    if (governor_speed_request_state_prev == DAT_0040bb4e) {
+      governor_speed_request_debounce_count = 2;
+      wVar1 = governor_speed_request_state_prev;
+    }
+    else if (DAT_003fcda4 == DAT_0040bb4e) {
+      if ((int)(uint)governor_speed_request_debounce_count < (int)(DAT_0040871e - 1)) {
+        governor_speed_request_debounce_count = governor_speed_request_debounce_count + 1;
+        return 5;
+      }
+    }
+    else {
+      if (governor_speed_request_debounce_count < 2) {
+        return 5;
+      }
+      governor_speed_request_debounce_count = governor_speed_request_debounce_count - 1;
+      wVar1 = governor_speed_request_state_prev;
+    }
+  }
+  return (int)(short)wVar1;
+}
+
+
+
+//
+// Function: governor_cruise_fuelCorrection_inhibitCheck @ 0x00512a60
+//
+

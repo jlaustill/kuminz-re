@@ -1,0 +1,58 @@
+=== VARIABLES TO NAME ===
+0x0040a5e6  (4 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040a5e6
+void fuel_demand_boost_emaFiltered_compensate(void)
+
+{
+  int iVar1;
+  short sVar3;
+  uint uVar2;
+  
+  DAT_0040a5e6 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fba32);
+  iVar1 = (int)(short)(map_fuel_correction_factor * 8 - DAT_0040a5e6);
+  if (iVar1 == 0) {
+    if (DAT_0040a5e6 == 0) {
+      iVar1 = 0;
+      goto LAB_00504a4c;
+    }
+  }
+  else {
+    iVar1 = (int)((longlong)((ulonglong)DAT_0040a5e6 << 0xd) / (longlong)iVar1);
+    if (iVar1 < -0x8000) {
+      iVar1 = -0x8000;
+      goto LAB_00504a4c;
+    }
+    if (iVar1 < 0x8000) goto LAB_00504a4c;
+  }
+  iVar1 = 0x7fff;
+LAB_00504a4c:
+  sVar3 = (short)(DAT_0040af68 - iVar1);
+  if (sVar3 < 0) {
+    uVar2 = 0;
+  }
+  else if ((int)sVar3 * (uint)fuel_quantity_ema_filtered < 0xaa3eab9) {
+    uVar2 = ((DAT_0040af68 - iVar1 & 0xffffU) * (uint)fuel_quantity_ema_filtered) / 0xaa4;
+  }
+  else {
+    uVar2 = 0xfffe;
+  }
+  DAT_0040a5ea = (short)uVar2;
+  if ((cold_start_phase3_flag != 0) && (boost_fuel_mode_active == 0)) {
+    DAT_003fddb2 = DAT_003fddb2 + (uVar2 & 0xffff) / 5;
+  }
+  return;
+}
+
+
+
+//
+// Function: fuel_demand_blend_compensate @ 0x00504b0c
+//
+
+/* WARNING: Function: cm848_signedDivision32 replaced with injection: sdiv64by32 */
+

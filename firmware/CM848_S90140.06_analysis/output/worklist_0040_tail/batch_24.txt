@@ -1,0 +1,580 @@
+=== VARIABLES TO NAME ===
+0x004090ef  (4 references)
+0x004090f0  (3 references)
+0x0040b854  (4 references)
+0x0040b98c  (3 references)
+0x0040b994  (4 references)
+
+Total: 5 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_004090ef, DAT_0040b854
+void engine_injectionAngle_tpuUpdate(void)
+
+{
+  short sVar1;
+  ushort uVar2;
+  uint uVar3;
+  uint uVar4;
+  uint uVar5;
+  uint uVar6;
+  ushort uVar7;
+  
+  sVar1 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fd0ae);
+  DAT_0040b854 = sVar1 + (ushort)((((int)DAT_00409098 * (int)(short)cam_sync_position >> 6) +
+                                  (uint)DAT_0040909c) * (uint)speed_setpoint_raw >> 0x16);
+  if (crank_position_valid_flag != 0) {
+    DAT_0040b854 = DAT_0040b854 + DAT_0040909a;
+  }
+  uVar5 = (uint)(ushort)(&DAT_0005fbb2)[cylinder_event_index] +
+          (int)(short)injection_timing_table_offset + (int)DAT_0040b854;
+  if (0x77ff < (int)uVar5) {
+    uVar5 = uVar5 - 0x7800;
+  }
+  if ((int)uVar5 < 0) {
+    uVar5 = uVar5 + 0x7800;
+  }
+  if (injection_tpu_timing_mode != 2) {
+    uVar5 = uVar5 & 0xffff;
+    uVar3 = (uint)injection_timing_angle_threshold;
+    if (uVar3 < uVar5) {
+      uVar6 = (int)(uint)injection_timing_tooth_count /
+              (int)((crank_sync_tooth_count_cal & 0xff) - 1) & 0xffff;
+      uVar4 = (int)(uVar5 - uVar3) / (int)uVar6;
+      uVar7 = (short)((int)uVar4 >> 1) + (ushort)((int)uVar4 < 0 && (uVar4 & 1) != 0) & 0x7f;
+      uVar5 = ((int)(uVar5 - uVar3) >> 8) / (int)uVar6 + (uint)injection_timing_tooth_base_index;
+      if ((int)(crank_sync_tooth_count_cal - 1) < (int)(uVar5 & 0xff)) {
+        uVar5 = uVar5 - (crank_sync_tooth_count_cal + 0xff);
+      }
+    }
+    else {
+      uVar6 = (int)(uint)injection_timing_tooth_count /
+              (int)((crank_sync_tooth_count_cal & 0xff) - 1) & 0xffff;
+      uVar6 = (int)(uVar6 * 0x100 - (uVar3 - uVar5)) / (int)uVar6;
+      uVar7 = (short)((int)uVar6 >> 1) + (ushort)((int)uVar6 < 0 && (uVar6 & 1) != 0);
+      uVar5 = injection_timing_tooth_base_index + 0xff;
+    }
+    goto LAB_00528338;
+  }
+  uVar3 = (uVar5 & 0xffff) >> 8;
+  uVar6 = (uVar5 & 0xffff) >> 1 & 0x7f;
+  if (((uVar6 < DAT_004090ef) && (uVar3 != 0)) && (uVar3 != 0x3c)) {
+    uVar3 = uVar3 + 0xff;
+    uVar6 = uVar6 + 0x80;
+  }
+  uVar7 = (ushort)uVar6;
+  if (((uVar3 & 0xff) == 0x3a) || ((uVar3 & 0xff) == 0x76)) {
+    uVar5 = uVar3 + 0xff;
+    if (uVar6 < 0x80) {
+      uVar7 = uVar7 + 0x80;
+    }
+    else {
+LAB_00528260:
+      uVar7 = 0xff;
+    }
+  }
+  else if (((uVar3 & 0xff) == 0x3b) || (uVar5 = uVar3, (uVar3 & 0xff) == 0x77)) {
+    if (uVar6 < 0x41) {
+      uVar5 = uVar3 + 0xfe;
+      goto LAB_00528260;
+    }
+    uVar5 = uVar3 + 1;
+    if (0x77 < (uVar5 & 0xff)) {
+      uVar5 = uVar3 + 0x89;
+    }
+    uVar7 = 0;
+  }
+  if (0x39 < (uVar5 & 0xff)) {
+    uVar5 = uVar5 + 0xfe;
+  }
+LAB_00528338:
+  if (((governor_fuel_feature_flags & 2) == 0) || (1 < (byte)(&DAT_0005f14e)[cylinder_event_index]))
+  {
+    uVar2 = 10;
+  }
+  else {
+    uVar2 = (ushort)*(byte *)((int)&DAT_0053ac42 + (byte)(&DAT_0005f14e)[cylinder_event_index] + 2);
+  }
+  TPUA_CH10_PARAM0 = uVar2 << 0xc | (ushort)injection_tpu_timing_mode;
+  DAT_003041a2 = (ushort)((uVar5 & 0xff) << 8) | uVar7 & 0xff;
+  DAT_003041a6 = 0;
+  tpu_a_mcr.HSRR0 = 0x30;
+  return;
+}
+
+
+
+//
+// Function: cm848_tpu_configuration_setup @ 0x00528474
+//
+
+// Variables in this function: DAT_004090ef
+void FUN_00528508(int param_1,int param_2,undefined2 param_3,int param_4)
+
+{
+  uint uVar1;
+  uint uVar2;
+  ushort uVar3;
+  uint uVar4;
+  uint uVar5;
+  
+  uVar1 = (uint)(ushort)(&DAT_0005fbb2)[param_1] + param_2 +
+          (int)(short)injection_timing_table_offset;
+  if (0x77ff < (int)uVar1) {
+    uVar1 = uVar1 - 0x7800;
+  }
+  if ((int)uVar1 < 0) {
+    uVar1 = uVar1 + 0x7800;
+  }
+  if (injection_tpu_timing_mode != 2) {
+    uVar1 = uVar1 & 0xffff;
+    uVar5 = (uint)injection_timing_angle_threshold;
+    if (uVar5 < uVar1) {
+      uVar2 = (int)(uint)injection_timing_tooth_count /
+              (int)((crank_sync_tooth_count_cal & 0xff) - 1) & 0xffff;
+      uVar4 = (int)(uVar1 - uVar5) / (int)uVar2;
+      uVar3 = (short)((int)uVar4 >> 1) + (ushort)((int)uVar4 < 0 && (uVar4 & 1) != 0) & 0x7f;
+      uVar1 = ((int)(uVar1 - uVar5) >> 8) / (int)uVar2 + (uint)injection_timing_tooth_base_index;
+      if ((int)(crank_sync_tooth_count_cal - 1) < (int)(uVar1 & 0xff)) {
+        uVar1 = uVar1 - (crank_sync_tooth_count_cal + 0xff);
+      }
+    }
+    else {
+      uVar2 = (int)(uint)injection_timing_tooth_count /
+              (int)((crank_sync_tooth_count_cal & 0xff) - 1) & 0xffff;
+      uVar2 = (int)(uVar2 * 0x100 - (uVar5 - uVar1)) / (int)uVar2;
+      uVar3 = (short)((int)uVar2 >> 1) + (ushort)((int)uVar2 < 0 && (uVar2 & 1) != 0);
+      uVar1 = injection_timing_tooth_base_index + 0xff;
+    }
+    goto LAB_005286f0;
+  }
+  uVar5 = (uVar1 & 0xffff) >> 8;
+  uVar2 = (uVar1 & 0xffff) >> 1 & 0x7f;
+  if (((uVar2 < DAT_004090ef) && (uVar5 != 0)) && (uVar5 != 0x3c)) {
+    uVar5 = uVar5 + 0xff;
+    uVar2 = uVar2 + 0x80;
+  }
+  uVar3 = (ushort)uVar2;
+  if (((uVar5 & 0xff) == 0x3a) || ((uVar5 & 0xff) == 0x76)) {
+    uVar1 = uVar5 + 0xff;
+    if (uVar2 < 0x80) {
+      uVar3 = uVar3 + 0x80;
+    }
+    else {
+LAB_00528618:
+      uVar3 = 0xff;
+    }
+  }
+  else if (((uVar5 & 0xff) == 0x3b) || (uVar1 = uVar5, (uVar5 & 0xff) == 0x77)) {
+    if (uVar2 < 0x41) {
+      uVar1 = uVar5 + 0xfe;
+      goto LAB_00528618;
+    }
+    uVar1 = uVar5 + 1;
+    if (0x77 < (uVar1 & 0xff)) {
+      uVar1 = uVar5 + 0x89;
+    }
+    uVar3 = 0;
+  }
+  if (0x39 < (uVar1 & 0xff)) {
+    uVar1 = uVar1 + 0xfe;
+  }
+LAB_005286f0:
+  if ((((protection_enable_t_0040c050.mode_bits & 1) == 0) && (engine_shutdown_active_flag == 0)) ||
+     (engine_starting == 1)) {
+    *(ushort *)((int)&TPUA_CH5_PARAM0 + param_4) = (ushort)((uVar1 & 0xff) << 8) | uVar3 & 0xff;
+    param_3 = 0;
+  }
+  else {
+    *(ushort *)((int)&TPUA_CH5_PARAM0 + param_4) = (ushort)((uVar1 & 0xff) << 8) | uVar3 & 0xff;
+  }
+  *(undefined2 *)((int)&DAT_00304152 + param_4) = param_3;
+  return;
+}
+
+
+
+//
+// Function: FUN_0052877c @ 0x0052877c
+//
+
+// Variables in this function: DAT_004090ef
+void engine_injectionAngle_computeLoadCh6(void)
+
+{
+  ushort uVar1;
+  short sVar2;
+  uint uVar3;
+  uint uVar4;
+  uint uVar5;
+  uint uVar6;
+  
+  sVar2 = injection_period_capture_a * -5;
+  DAT_0040b873 = cam_sync_period_reference_a * -5;
+  DAT_0040b871 = sVar2;
+  DAT_0040b87d = cam_sync_period_reference_b * -5;
+  DAT_0040b870 = (char)cylinder_event_index;
+  uVar1 = DAT_004090ed;
+  if (speed_setpoint_raw < DAT_004090e9) {
+    uVar1 = DAT_004090eb;
+  }
+  uVar6 = ((uint)uVar1 * (uint)cam_sync_position_high_byte * 0x100) / crank_period_accumulator &
+          0xffff;
+  if (cam_timing_reference_offset != 0) {
+    sVar2 = cam_sync_period_reference_a * -5;
+  }
+  injection_angle_ch6_crank_position =
+       (((uint)(ushort)(&DAT_0005fbb2)[cylinder_event_index] +
+        (int)(short)injection_timing_table_offset) - uVar6) + (int)sVar2;
+  injection_angle_ch6_normalized = injection_angle_ch6_crank_position + uVar6;
+  if (0x77ff < (int)injection_angle_ch6_normalized) {
+    injection_angle_ch6_normalized = injection_angle_ch6_normalized - 0x7800;
+  }
+  if ((int)injection_angle_ch6_normalized < 0) {
+    injection_angle_ch6_normalized = injection_angle_ch6_normalized + 0x7800;
+  }
+  if (0x3c00 < (int)injection_angle_ch6_normalized) {
+    injection_angle_ch6_normalized = injection_angle_ch6_normalized - 0x3c00;
+  }
+  if (injection_angle_ch6_normalized - 0x3b01 < 0x7f) {
+    injection_angle_ch6_crank_position =
+         injection_angle_ch6_crank_position + (0x3b00 - injection_angle_ch6_normalized);
+  }
+  if (0x77ff < (int)injection_angle_ch6_crank_position) {
+    injection_angle_ch6_crank_position = injection_angle_ch6_crank_position - 0x7800;
+  }
+  if ((int)injection_angle_ch6_crank_position < 0) {
+    injection_angle_ch6_crank_position = injection_angle_ch6_crank_position + 0x7800;
+  }
+  if (injection_tpu_timing_mode != 2) {
+    uVar3 = (uint)injection_timing_angle_threshold;
+    uVar6 = injection_angle_ch6_crank_position & 0xffff;
+    if (uVar3 < uVar6) {
+      uVar4 = (int)(uint)injection_timing_tooth_count /
+              (int)((crank_sync_tooth_count_cal & 0xff) - 1) & 0xffff;
+      uVar5 = (int)(uVar6 - uVar3) / (int)uVar4;
+      injection_timing_tooth_b_phase =
+           (char)((int)uVar5 >> 1) + ((int)uVar5 < 0 && (uVar5 & 1) != 0) & 0x7f;
+      uVar6 = ((int)(uVar6 - uVar3) >> 8) / (int)uVar4 + (uint)injection_timing_tooth_base_index;
+      injection_timing_tooth_b = (byte)uVar6;
+      if ((int)(crank_sync_tooth_count_cal - 1) < (int)(uVar6 & 0xff)) {
+        injection_timing_tooth_b =
+             injection_timing_tooth_b - ((char)crank_sync_tooth_count_cal + -1);
+      }
+    }
+    else {
+      uVar4 = (int)(uint)injection_timing_tooth_count /
+              (int)((crank_sync_tooth_count_cal & 0xff) - 1) & 0xffff;
+      uVar4 = (int)(uVar4 * 0x100 - (uVar3 - uVar6)) / (int)uVar4;
+      injection_timing_tooth_b_phase =
+           (char)((int)uVar4 >> 1) + ((int)uVar4 < 0 && (uVar4 & 1) != 0);
+      injection_timing_tooth_b = injection_timing_tooth_base_index - 1;
+    }
+    goto LAB_005295d8;
+  }
+  uVar6 = injection_angle_ch6_crank_position & 0xffff;
+  injection_timing_tooth_b = (byte)(uVar6 >> 8);
+  uVar3 = uVar6 >> 1 & 0x7f;
+  injection_timing_tooth_b_phase = (byte)uVar3;
+  if (((uVar3 < DAT_004090ef) && (uVar6 >> 8 != 0)) && (uVar6 >> 8 != 0x3c)) {
+    injection_timing_tooth_b = injection_timing_tooth_b - 1;
+    injection_timing_tooth_b_phase = injection_timing_tooth_b_phase + 0x80;
+  }
+  if ((injection_timing_tooth_b == 0x3a) || (injection_timing_tooth_b == 0x76)) {
+    injection_timing_tooth_b = injection_timing_tooth_b - 1;
+    if (0x7f < injection_timing_tooth_b_phase) goto LAB_005294e4;
+    injection_timing_tooth_b_phase = injection_timing_tooth_b_phase + 0x80;
+  }
+  else if ((injection_timing_tooth_b == 0x3b) || (injection_timing_tooth_b == 0x77)) {
+    injection_timing_tooth_b = injection_timing_tooth_b - 2;
+LAB_005294e4:
+    injection_timing_tooth_b_phase = 0xff;
+  }
+  if (0x39 < injection_timing_tooth_b) {
+    injection_timing_tooth_b = injection_timing_tooth_b - 2;
+  }
+LAB_005295d8:
+  TPUA_CH6_PARAM0 = injection_tpu_timing_mode | 0x6000;
+  DAT_00304162 = CONCAT11(injection_timing_tooth_b,injection_timing_tooth_b_phase);
+  DAT_00304166 = 0;
+  tpu_a_mcr.HSRR1 = 0x3000;
+  injection_angle_sequence_state_prev = injection_angle_sequence_state;
+  injection_angle_sequence_state = 2;
+  return;
+}
+
+
+
+//
+// Function: engine_injectionAngle_schedule_crankValid @ 0x00529994
+//
+
+/* injection-angle TPU-ch6 scheduler state machine (injection_angle_sequence_state) for the
+   crank-position-valid path; renamed from cm848_protection_condition_eval_set1 - does TPU injection
+   timing, NOT protection */
+
+// Variables in this function: DAT_004090f0
+void engine_injectionAngle_schedule_crankValid(void)
+
+{
+  uint uVar1;
+  int iVar2;
+  uint uVar3;
+  uint uVar4;
+  uint uVar5;
+  uint uVar6;
+  
+  uVar5 = (uint)cylinder_event_index;
+  injection_tpu_timing_mode = 0x12;
+  if (injection_angle_sequence_state == 2) {
+    engine_injectionAngle_tpuUpdate();
+    if (speed_setpoint_raw < DAT_004090f1) {
+      injection_angle_sequence_state_prev = injection_angle_sequence_state;
+      injection_angle_sequence_state = 4;
+      uVar5 = uVar5 + 1;
+    }
+    else {
+      uVar1 = (uint)injection_timing_angle_threshold;
+      uVar6 = injection_angle_ch6_crank_position & 0xffff;
+      if (uVar1 < uVar6) {
+        uVar4 = (int)(uint)injection_timing_tooth_count /
+                (int)((crank_sync_tooth_count_cal & 0xff) - 1) & 0xffff;
+        uVar3 = (int)(uVar6 - uVar1) / (int)uVar4;
+        injection_timing_tooth_b_phase =
+             (char)((int)uVar3 >> 1) + ((int)uVar3 < 0 && (uVar3 & 1) != 0) & 0x7f;
+        uVar6 = ((int)(uVar6 - uVar1) >> 8) / (int)uVar4 + (uint)injection_timing_tooth_base_index;
+        injection_timing_tooth_b = (byte)uVar6;
+        if ((int)(crank_sync_tooth_count_cal - 1) < (int)(uVar6 & 0xff)) {
+          injection_timing_tooth_b =
+               injection_timing_tooth_b - ((char)crank_sync_tooth_count_cal + -1);
+        }
+      }
+      else {
+        uVar4 = (int)(uint)injection_timing_tooth_count /
+                (int)((crank_sync_tooth_count_cal & 0xff) - 1) & 0xffff;
+        uVar4 = (int)(uVar4 * 0x100 - (uVar1 - uVar6)) / (int)uVar4;
+        injection_timing_tooth_b_phase =
+             (char)((int)uVar4 >> 1) + ((int)uVar4 < 0 && (uVar4 & 1) != 0);
+        injection_timing_tooth_b = injection_timing_tooth_base_index - 1;
+      }
+      TPUA_CH6_PARAM0 = injection_tpu_timing_mode | 0x6000;
+      DAT_00304162 = CONCAT11(injection_timing_tooth_b,injection_timing_tooth_b_phase);
+      DAT_00304166 = 0;
+      tpu_a_mcr.HSRR1 = 0x3000;
+      injection_angle_sequence_state_prev = injection_angle_sequence_state;
+      injection_angle_sequence_state = 4;
+    }
+  }
+  if (injection_angle_sequence_state == 8) {
+    if (speed_setpoint_raw < DAT_004090f1) {
+      injection_angle_sequence_state_prev = injection_angle_sequence_state;
+      injection_angle_sequence_state = 4;
+      uVar5 = uVar5 + 1;
+    }
+    else {
+      engine_injectionAngle_tpuUpdate();
+    }
+  }
+  if ((injection_angle_sequence_state == 1) || (injection_angle_sequence_state == 4)) {
+    uVar6 = (uint)DAT_004090f0 + cam_sync_position_high_byte * uVar5;
+    injection_timing_tooth = (byte)uVar6;
+    uVar5 = (uint)injection_timing_tooth_count;
+    if (uVar5 <= (uVar6 & 0xff)) {
+      injection_timing_tooth = injection_timing_tooth - injection_timing_tooth_count;
+    }
+    uVar6 = (uint)injection_timing_angle_threshold;
+    uVar1 = (uint)injection_timing_tooth * 0x100;
+    if (uVar6 < uVar1) {
+      iVar2 = uVar1 - uVar6;
+      uVar5 = (int)uVar5 / (int)((crank_sync_tooth_count_cal & 0xff) - 1) & 0xffff;
+      uVar6 = iVar2 / (int)uVar5;
+      injection_timing_tooth_phase =
+           (char)((int)uVar6 >> 1) + ((int)uVar6 < 0 && (uVar6 & 1) != 0) & 0x7f;
+      uVar5 = (iVar2 >> 8) / (int)uVar5 + (uint)injection_timing_tooth_base_index;
+      injection_timing_tooth = (byte)uVar5;
+      if ((int)(crank_sync_tooth_count_cal - 1) < (int)(uVar5 & 0xff)) {
+        injection_timing_tooth = injection_timing_tooth - ((char)crank_sync_tooth_count_cal + -1);
+      }
+    }
+    else {
+      uVar5 = (int)uVar5 / (int)((crank_sync_tooth_count_cal & 0xff) - 1) & 0xffff;
+      uVar5 = (int)(uVar5 * 0x100 - (uVar6 + (uint)injection_timing_tooth * -0x100)) / (int)uVar5;
+      injection_timing_tooth_phase = (char)((int)uVar5 >> 1) + ((int)uVar5 < 0 && (uVar5 & 1) != 0);
+      injection_timing_tooth = injection_timing_tooth_base_index - 1;
+    }
+    TPUA_CH6_PARAM0 = injection_tpu_timing_mode | 0x6000;
+    DAT_00304162 = CONCAT11(injection_timing_tooth,injection_timing_tooth_phase);
+    DAT_00304166 = 0;
+    tpu_a_mcr.HSRR1 = 0x3000;
+    injection_angle_sequence_state_prev = injection_angle_sequence_state;
+    injection_angle_sequence_state = 4;
+  }
+  return;
+}
+
+
+
+//
+// Function: engine_injectionAngle_schedule_crankInvalid @ 0x00529d1c
+//
+
+/* injection-angle TPU-ch6 load for the crank-position-invalid path; renamed from
+   cm848_protection_condition_eval_set2 - does TPU injection timing, NOT protection */
+
+// Variables in this function: DAT_004090ef, DAT_004090f0
+void engine_injectionAngle_schedule_crankInvalid(void)
+
+{
+  byte bVar1;
+  ushort uVar2;
+  
+  injection_tpu_timing_mode = 2;
+  uVar2 = (ushort)DAT_004090f0 + cam_sync_position_high_byte * cylinder_event_index;
+  injection_timing_tooth = (byte)uVar2;
+  injection_timing_tooth_phase = 0;
+  if ((ushort)injection_timing_tooth_count <= (uVar2 & 0xff)) {
+    injection_timing_tooth = injection_timing_tooth - injection_timing_tooth_count;
+  }
+  if (((DAT_004090ef != '\0') && (injection_timing_tooth != 0)) && (injection_timing_tooth != 0x3c))
+  {
+    injection_timing_tooth = injection_timing_tooth - 1;
+    injection_timing_tooth_phase = 0x80;
+  }
+  if ((injection_timing_tooth == 0x3a) || (injection_timing_tooth == 0x76)) {
+    injection_timing_tooth = injection_timing_tooth - 1;
+    if (injection_timing_tooth_phase < 0x80) {
+      injection_timing_tooth_phase = injection_timing_tooth_phase + 0x80;
+      goto LAB_00529e34;
+    }
+  }
+  else {
+    if ((injection_timing_tooth != 0x3b) && (injection_timing_tooth != 0x77)) goto LAB_00529e34;
+    if (0x40 < injection_timing_tooth_phase) {
+      bVar1 = injection_timing_tooth + 1;
+      if (0x77 < (byte)(injection_timing_tooth + 1)) {
+        bVar1 = injection_timing_tooth + 0x89;
+      }
+      injection_timing_tooth = bVar1;
+      injection_timing_tooth_phase = 0;
+      goto LAB_00529e34;
+    }
+    injection_timing_tooth = injection_timing_tooth - 2;
+  }
+  injection_timing_tooth_phase = 0xff;
+LAB_00529e34:
+  if (0x39 < injection_timing_tooth) {
+    injection_timing_tooth = injection_timing_tooth - 2;
+  }
+  TPUA_CH6_PARAM0 = 0x6002;
+  DAT_00304162 = CONCAT11(injection_timing_tooth,injection_timing_tooth_phase);
+  DAT_00304166 = 0;
+  tpu_a_mcr.HSRR1 = 0x3000;
+  injection_angle_sequence_state_prev = injection_angle_sequence_state;
+  injection_angle_sequence_state = 1;
+  return;
+}
+
+
+
+//
+// Function: cm848_sensor_diagnostic_flag_update @ 0x00529ea4
+//
+
+// Variables in this function: DAT_004090f0, DAT_0040b98c, DAT_0040b994
+void cm848_pressure_control_state_load(void)
+
+{
+  ushort uVar1;
+  ulonglong uVar2;
+  
+  engine_timing_arb_byte_24_31 = 0;
+  if (DAT_00409e6e == 0) {
+    engine_injectionTiming_arbitration_calc();
+  }
+  else {
+    injection_timing_offset_rpm_corrected = DAT_00409e70;
+    engine_timing_arb_byte_24_31 = 7;
+  }
+  injection_timing_offset_arb_lower_limit = injection_timing_offset_rpm_corrected;
+  if (DAT_00409e72 == 0) {
+    injection_timing_offset_arb_lower_limit =
+         injection_timing_offset_rpm_corrected + torque_limit_fault_snapshot;
+  }
+  if ((governor_speed_limit_active_flag != 0) &&
+     (injection_timing_demand_lower_limit_cal == torque_limit_fault_snapshot)) {
+    injection_timing_offset_arb_lower_limit = DAT_00409e76;
+    if (DAT_00409e72 == 0) {
+      injection_timing_offset_arb_lower_limit = DAT_00409e76 + torque_limit_fault_snapshot;
+    }
+    engine_timing_arb_byte_24_31 = 8;
+  }
+  uVar1 = DAT_004090ed;
+  if ((uint)engine_rpm_state_t_0040b7ac.current_rpm < (uint)DAT_004090e9) {
+    uVar1 = DAT_004090eb;
+  }
+  DAT_0040b996 = DAT_0005fbb2 / 5 - (short)(((uint)DAT_004090f0 * 0x600) / 0x1e);
+  uVar2 = CONCAT44((int)((ulonglong)((uint)uVar1 * 6) *
+                         (ulonglong)engine_rpm_state_t_0040b7ac.current_rpm * 0x100 >> 0x20),
+                   (uint)uVar1 * 6 * (uint)engine_rpm_state_t_0040b7ac.current_rpm * 0x100) /
+          600000000;
+  DAT_0040b98c = (short)uVar2;
+  if (0x7ffe < (uint)uVar2) {
+    DAT_0040b98c = 0x7fff;
+  }
+  DAT_0040b990 = DAT_0040b996 - DAT_0040b98c;
+  injection_timing_demand_pressure_calc = DAT_0040b990 - DAT_00409e7a;
+  DAT_0040b98e = injection_timing_demand_pressure_calc;
+  if ((short)injection_timing_demand_pressure_calc < (short)injection_timing_offset_arb_lower_limit)
+  {
+    engine_timing_arb_byte_24_31 = 9;
+    if (DAT_0040b994 != -1) {
+      DAT_0040b994 = DAT_0040b994 + 1;
+    }
+  }
+  else {
+    injection_timing_demand_pressure_calc = injection_timing_offset_arb_lower_limit;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_initialization_pressure_state @ 0x0052d358
+//
+
+// Variables in this function: DAT_0040b994
+void cm848_initialization_pressure_state(void)
+
+{
+  DAT_0040b994 = 0;
+  DAT_003fd140 = 2;
+  DAT_003fd142 = 2;
+  DAT_003fd144 = 2;
+  DAT_003fd146 = 2;
+  DAT_003fd148 = 2;
+  DAT_003fd14a = 2;
+  DAT_003fd14c = 2;
+  DAT_003fd14e = 2;
+  DAT_003fd150 = 2;
+  DAT_003fd152 = 2;
+  DAT_003fd154 = 2;
+  DAT_003fd156 = 2;
+  DAT_003fd158 = 2;
+  DAT_003fd15a = 2;
+  DAT_003fd15c = 2;
+  DAT_003fd15e = 2;
+  DAT_003fd160 = 2;
+  DAT_003fd162 = 2;
+  injection_timing_arb_boost_blend_interp_state = 2;
+  DAT_003fd166 = 2;
+  return;
+}
+
+
+
+//
+// Function: hpcr_calibration_group36_load @ 0x0052d40c
+//
+

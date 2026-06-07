@@ -6304,3 +6304,83 @@ address,name,type,comment
 0x003fd47a,j1939_data_log_handler_count,byte,registered handler count in secondary J1939 PGN table (ROM-aliased)
 0x003fdfde,cold_start_fault_timing_log,dword,5x8B cold-start fault timing record array base
 0x003feb8a,governor_calib_snapshot_write_index,word,write index for governor calibration snapshot ring
+0x0040aaa7,emission_feature_fault_active_flag,byte,emission feature mode-3 fault flag; suppresses demand output
+0x0040aaa8,fuel_demand_fault_count_nonzero_flag,byte,set when fault_count_bitmap nonzero; gates fuel demand
+0x0040a546,fuel_qty_ema_filtered_rpm_normalized,word,fuel_quantity_ema_filtered normalized by rpm factor (<<7)
+0x0040a56c,fuel_demand_qty_boost_corrected,word,combined fuel demand qty with efficiency+boost corrections
+0x0040a56e,fuel_demand_qty_load_cap,word,engine-load-derived cap on fuel_demand_qty_boost_corrected
+0x0040a574,fuel_demand_rpm_limit_output,word,RPM-axis table output for fuel demand limit
+0x0040a576,boost_pressure_ratio_clamped,word,boost actual/target ratio clamped to cal bounds
+0x0040a684,boost_target_calc_inhibit_flag,word,set when rpm<8 or fuel-qty-normalized<1.0; blocks boost target calc
+0x0040af68,fuel_demand_blend_weight_ema_filtered,word,blend-weight coeff for EMA-filtered demand compensator
+0x0040af6a,fuel_demand_blend_weight_ema,word,blend-weight coeff for EMA demand compensator
+0x0040af72,fuel_demand_mode_active_flag,word,1 when any fuel demand mode active (3-mode OR)
+0x00406552,fuel_demand_boost_compensation_limit,dword,read-only ROM upper clamp for boost compensation accumulator
+0x0040a5ba,fuel_demand_boost_compensation_at_limit_flag,word,boost compensation accumulator hit limit 0/1
+0x0040a5bc,fuel_demand_boost_compensation_direction_flag,word,boost compensation error direction 0/1
+0x0040a5c4,fuel_demand_blend_compensation_at_limit_flag,word,blend compensation integrator hit limit 0/1
+0x0040a5ce,fuel_cold_start_phase3_compensation_enable_flag,word,cold-start phase-3 compensation enable gate
+0x0040a5d0,fuel_demand_boost_compensation_step_rate_negative,word,boost compensation step rate (negative-error branch)
+0x0040a5d2,fuel_demand_boost_compensation_step_rate_positive,word,boost compensation step rate (positive-error branch)
+0x0040a5d4,fuel_demand_blend_compensation_step_rate_negative,word,blend compensation step rate (negative-error branch)
+0x0040a5d6,fuel_demand_blend_compensation_step_rate_positive,word,blend compensation step rate (positive-error branch)
+0x0040a5f8,cold_start_phase3_fuel_mode_count_met_flag,word,cold-start phase-3 count reached threshold 0/1
+0x0040a5fa,cold_start_phase3_fuel_demand_floor,word,cold-start phase-3 fuel demand floor when count at max
+0x0040a5fc,cold_start_boost_override_active_flag,word,cold-start boost override active 0/1
+0x0040a5fe,cold_start_boost_override_fuel_demand,word,interpolated boost-override fuel demand floor
+0x0040a602,fuel_timing_cylinder_check_demand_floor,word,per-cylinder injection-timing shortfall demand floor
+0x0040a8ab,fuel_demand_sensor_validation_floor,word,fuel demand floor when sensor-validation flags active
+0x00406570,cold_start_phase3_fuel_mode_count_max,word,read-only ROM ceiling for phase-3 fuel mode count
+0x0040a6b8,governor_speed_stability_conditions_flag,word,all-conditions-met flag for governor speed-stability diag
+0x0040a6bc,governor_speed_deviation_exceeds_threshold_flag,word,governor speed deviation > threshold 0/1
+0x0040a6c0,governor_speed_ramp_pid_stable_gate,word,PID-vs-deviation gate within stability check
+0x004067de,governor_speed_stability_diag_count_increment,word,read-only ROM step added to stability diag counter
+0x004067e4,governor_speed_stability_diag_trip_count,word,read-only ROM fault-trip threshold for stability diag counter
+0x004086be,protection_event26_fuel_temp_event_count_max,word,read-only ROM cap/seed for event-26 fuel-temp event count
+0x00408714,protection_mode_enable_event_count_max,word,read-only ROM cap for protection-mode enable event counters
+0x00408716,protection_mode_enable_debounce_threshold,word,read-only ROM debounce for protection-mode transitions
+0x00408720,governor_cruiseOverride_holdoff_reload,word,read-only ROM reload for cruise-override holdoff countdown
+0x0040876e,injection_timing_demand_step_rate,word,read-only ROM per-cycle slew step for injection timing demand
+0x00408820,cold_start_fuel_demand_max,word,read-only ROM ceiling for cold-start fuel demand
+0x00408822,cold_start_fuel_demand_min,word,read-only ROM floor for cold-start fuel demand
+0x00408860,egr_governor_speed_ceiling,word,read-only ROM hard ceiling on governor_speed_reference (EGR)
+0x0040886a,egr_governor_decel_speed_floor,word,read-only ROM min floor for governor_speed_decel_target
+0x00408896,egr_load_floor_temp_source_select,word,read-only ROM source select 0/1/2 for EGR load-floor temp
+0x004088b4,egr_governor_speed_decel_step,word,read-only ROM per-cycle decel speed step
+0x0040b29e,egr_rpm_headroom_below_speed_limit,word,egr_rpm_proportional_speed_limit - current rpm
+0x0040b2a6,egr_governor_temp_error,word,EGR PI error: filtered coolant temp - setpoint
+0x0040b2b2,egr_governor_speed_p_term,dword,EGR governor speed PI proportional term
+0x0040b2c6,egr_load_filtered,word,first-order filtered engine load for EGR load floor
+0x0040882a,egr_fuel_demand_stroke_low_threshold,word,read-only ROM lower fuel-stroke boundary for EGR fuel demand
+0x00408836,egr_governor_speed_target_max,word,read-only ROM upper clamp for egr_governor_speed_target (PI)
+0x00408840,egr_warmup_start_coolant_temp,word,read-only ROM coolant temp at which EGR warmup ramp begins
+0x0040884e,egr_load_speed_floor_min,word,read-only ROM min/fallback for egr_load_speed_floor
+0x00408854,egr_load_speed_floor_base,word,read-only ROM base of EGR load-speed-floor interpolation
+0x004088d8,tpu_rpm_crank_teeth_non_isb,byte,read-only ROM crank teeth count (non-ISB sync path)
+0x0040b2fc,tpu_rpm_reference_period,dword,expected TPU period (ticks) for RPM range check + divisor
+0x0040b9a8,rpm_camSync_window_latest,word,newest sample of 3-sample cam-sync RPM window
+0x0040b9ae,rpm_camSync_new_sample_ready_flag,word,producer/consumer handshake for new cam-sync sample
+0x0040b9b0,rpm_camSync_valid_sample_count,word,count of in-window cam-sync samples
+0x0040b9b2,rpm_camSync_invalid_sample_count,word,count of out-of-window cam-sync samples
+0x00408ad5,protection_pid_step_count_threshold,byte,read-only ROM threshold on protection_pid_step_counter
+0x00408ad6,protection_output_stability_threshold,word,read-only ROM threshold on protection_output_stability_counter
+0x0040b581,protection_pid_rpm_setpoint,word,protection PID rpm setpoint (error reference)
+0x0040b588,protection_rpm_sample,word,per-cycle rpm sample for protection derate deadband
+0x00408b81,calibration_id_byte0,byte,EEPROM-loaded calibration ID byte 0 (J1939 component ID)
+0x00408b82,calibration_id_byte1,byte,EEPROM-loaded calibration ID byte 1
+0x00408b83,calibration_id_byte2,byte,EEPROM-loaded calibration ID byte 2
+0x00408b84,calibration_id_byte3,byte,EEPROM-loaded calibration ID byte 3
+0x00408b97,calibration_id_byte4,byte,EEPROM-loaded calibration ID byte 4
+0x0040b66e,rom_crc_computed_results,word,ROM CRC results array base (2 words, by phase)
+0x00408e12,cruise_fuel_demand_ramp_ceiling,word,read-only ROM cruise fuel-demand ceiling (ramp base)
+0x00408e22,cruise_zone_boundary_hysteresis,word,read-only ROM cruise speed-zone boundary deadband
+0x00408e5e,cruise_fuel_demand_floor,word,read-only ROM hard floor for cruise fuel demand output
+0x00408e64,cruise_speed_error_clamp_max,word,read-only ROM upper clamp on cruise speed error
+0x00408e66,cruise_speed_error_clamp_min,word,read-only ROM lower clamp on cruise speed error
+0x0040b69c,cruise_ramp_rate_a_working,word,cruise ramp rate A (rampScale_calc output)
+0x0040b6a4,cruise_pid_rate_gain_working,word,cruise PID rate/feedforward gain (table lookup)
+0x0040b6aa,cruise_pid_kp_working,word,cruise PID proportional gain (zone table offset 0)
+0x0040b6c4,cruise_fuel_demand_hold,word,last-cycle cruise fuel demand output for zone-change delta
+0x0040b6d2,cruise_pid_p_term_working,word,cruise PID proportional term (saturated +/-0x7fff)
+0x0040b6d6,cruise_torque_limit_scale,word,cruise torque-limit scaling factor
+0x0040b6dc,cruise_fuel_demand_stable_ref,word,stable/current cruise fuel demand reference for ramp ctrl

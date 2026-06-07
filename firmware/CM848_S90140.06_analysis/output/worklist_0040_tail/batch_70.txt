@@ -1,0 +1,230 @@
+=== VARIABLES TO NAME ===
+0x0040b596  (3 references)
+0x0040bbbc  (4 references)
+0x0040c14c  (4 references)
+0x0040c1c0  (4 references)
+
+Total: 4 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040bbbc, DAT_0040c14c
+void cm848_throttlePosition_clamp_update(void)
+
+{
+  word wVar1;
+  
+  protection_throttle_position_measured = DAT_00408aec;
+  if ((DAT_00408aec < DAT_0040bbbc) ||
+     (protection_throttle_position_measured = DAT_00408b28, DAT_0040bbbc < DAT_00408b28)) {
+    protection_throttle_clamp_eval_flags = protection_throttle_clamp_eval_flags | 3;
+  }
+  else {
+    protection_throttle_position_measured = DAT_0040bbbc;
+    protection_throttle_clamp_eval_flags = protection_throttle_clamp_eval_flags & 0xfd | 1;
+  }
+  wVar1 = protection_throttle_setpoint;
+  if (DAT_00408b27 == '\x01') {
+    wVar1 = 0x6400 - protection_throttle_setpoint;
+  }
+  if ((j1939_pgn_handler_index_hpcr != 0) && (j1939_pgn_handler_index_hpcr < 0x33)) {
+    DAT_0040c14c = wVar1;
+    (**(code **)(&j1939_pgn_handler_table_func3 + (uint)j1939_pgn_handler_index_hpcr * 0x10))(wVar1)
+    ;
+  }
+  return;
+}
+
+
+
+//
+// Function: protectionPhaseGroupA_Init @ 0x0051c3d8
+//
+
+/* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+
+// Variables in this function: DAT_0040c14c, DAT_0040c1c0
+void protectionPhaseGroupA_Init(void)
+
+{
+  byte bVar1;
+  byte bVar2;
+  
+  if (((protection_config_flags_b & 4) != 0) &&
+     ((protection_status_flags_t_0040b0f2.output_flags & 1) == 0)) {
+    if ((protection_status_flags_t_0040b0f2.rate_limit_flags & 1) == 0) {
+      if (DAT_00408b26 == '\x01') {
+        protection_throttle_position_measured = sensor_readings_t_0040baf2.intake_air_temp;
+        protection_throttle_clamp_eval_flags = protection_throttle_clamp_eval_flags | 1;
+      }
+      else {
+        if (cold_start_phase != CSP_AT_GOVERNOR_SETPOINT) {
+          if ((protection_condition_flags_t_0040b0e8.condition_eval & 1) == 0) {
+            protection_condition_flags_t_0040b0e8.condition_eval =
+                 protection_condition_flags_t_0040b0e8.condition_eval | 1;
+            protection_timer_e = DAT_00408aea;
+          }
+          else if ((protection_timer_e == 0) &&
+                  ((protection_condition_flags_t_0040b0e8.condition_flags_1 & 0x40) == 0)) {
+            protection_condition_flags_t_0040b0e8.condition_flags_1 =
+                 protection_condition_flags_t_0040b0e8.condition_flags_1 | 0x40;
+            cm848_throttlePosition_clamp_update();
+          }
+        }
+        if ((protection_condition_flags_t_0040b0e8.condition_eval & 0x10) == 0) {
+          if (fuel_demand_control_t_0040a57a.calculated < DAT_00408b24) {
+            if ((engine_load_filtered < DAT_00408af8) && (fuel_temperature_trim < DAT_00408af6)) {
+              if (protection_timer_b == 0) {
+                protection_condition_flags_t_0040b0e8.condition_eval =
+                     protection_condition_flags_t_0040b0e8.condition_eval | 0x10;
+                protection_timer_c = DAT_00408ae6;
+                protection_timer_b = DAT_00408ae0;
+              }
+            }
+            else {
+              protection_timer_b = 0;
+              protection_condition_flags_t_0040b0e8.condition_eval =
+                   protection_condition_flags_t_0040b0e8.condition_eval & 0xef;
+            }
+          }
+        }
+        else if ((((protection_timer_c == 0) &&
+                  (bVar2 = protection_condition_flags_t_0040b0e8.condition_eval & 0xef,
+                  bVar1 = protection_condition_flags_t_0040b0e8.condition_eval & 8,
+                  protection_condition_flags_t_0040b0e8.condition_eval = bVar2, bVar1 != 0)) &&
+                 (DAT_00408ae4 < engine_rpm_state_t_0040b7ac.current_rpm)) &&
+                ((protection_action_mode_bits._0_1_ & 1) != 0)) {
+          cm848_throttlePosition_clamp_update();
+        }
+      }
+    }
+    else {
+      if ((j1939_pgn_handler_index_hpcr != 0) && (j1939_pgn_handler_index_hpcr < 0x33)) {
+        DAT_0040c14c = 0;
+        (**(code **)(&j1939_pgn_handler_table_func3 + (uint)j1939_pgn_handler_index_hpcr * 0x10))(0)
+        ;
+      }
+      if ((j1939_pgn_handler_index_hpcr != 0) && (j1939_pgn_handler_index_hpcr < 0x33)) {
+        DAT_0040c1c0 = 1000000 / DAT_00408b2a;
+        (**(code **)(&j1939_pgn_handler_table_func2 + (uint)j1939_pgn_handler_index_hpcr * 0x10))
+                  (DAT_0040c1c0);
+      }
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_throttleSetpoint_limit @ 0x0051c68c
+//
+
+// Variables in this function: DAT_0040b596
+void cm848_throttleGain_velocityBased_calc(void)
+
+{
+  int iVar1;
+  
+  iVar1 = (int)(CONCAT44((int)((ulonglong)
+                               ((longlong)DAT_0040b596 * (longlong)(int)((uint)DAT_00408af0 * 0x100)
+                               ) >> 0x20),DAT_0040b596 * (uint)DAT_00408af0 * 0x100) /
+               (longlong)((ulonglong)DAT_00408aee << 7));
+  if (iVar1 < 0x6401) {
+    if (iVar1 < -0x6400) {
+      iVar1 = -0x6400;
+    }
+  }
+  else {
+    iVar1 = 0x6400;
+  }
+  DAT_0040b58c = (short)iVar1;
+  _throttle_setpoint_limit_arg = (uint)protection_throttle_setpoint + (int)DAT_0040b58c;
+  cm848_throttleSetpoint_limit(_throttle_setpoint_limit_arg);
+  return;
+}
+
+
+
+//
+// Function: cm848_throttleGain_timedAccumulate_update @ 0x0051c9f0
+//
+
+/* WARNING: Function: cm848_signedDivision32 replaced with injection: sdiv64by32 */
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0040b596, DAT_0040bbbc, DAT_0040c14c, DAT_0040c1c0
+void protectionPhaseGroupA_Control(void)
+
+{
+  uint uVar1;
+  uint uVar2;
+  word wVar3;
+  
+  if ((((protection_config_flags_b & 4) != 0) &&
+      ((protection_status_flags_t_0040b0f2.output_flags & 1) == 0)) &&
+     ((protection_status_flags_t_0040b0f2.rate_limit_flags & 1) == 0)) {
+    if ((protection_condition_flags_t_0040b0e8.condition_eval & 0x10) == 0) {
+      uVar2 = (uint)DAT_0040bbbc - (uint)protection_throttle_position_measured;
+      if ((int)uVar2 < 1) {
+        uVar2 = 0;
+      }
+      else {
+        uVar1 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fcf0a);
+        uVar1 = uVar1 & 0xffff;
+        uVar2 = (uint)(CONCAT44((int)((ulonglong)uVar1 * (ulonglong)uVar2 >> 0x20) +
+                                uVar1 * ((int)uVar2 >> 0x1f),uVar1 * uVar2) / 100);
+        if ((int)uVar2 < 0xfa01) {
+          if ((int)uVar2 < 0) {
+            uVar2 = 0;
+          }
+        }
+        else {
+          uVar2 = 64000;
+        }
+      }
+      protection_ramp_position_b = (word)uVar2;
+      protection_throttle_error = (uint)protection_derate_rpm_limit - (uVar2 & 0xffff);
+      if ((DAT_00408af2 < (int)protection_throttle_error) && (protection_derate_rpm_limit == 0)) {
+        if (DAT_00408b1e < DAT_0040c14c) {
+          _throttle_setpoint_limit_arg = (uint)protection_throttle_setpoint + (uint)DAT_00408b20;
+          cm848_throttleSetpoint_limit(_throttle_setpoint_limit_arg);
+        }
+      }
+      else {
+        DAT_0040b596 = protection_throttle_error - DAT_003fcf0e;
+        protection_throttle_integral_accumulator =
+             protection_throttle_integral_accumulator + protection_throttle_error;
+        DAT_003fcf0e = protection_throttle_error;
+        cm848_throttleGain_loadBased_calc();
+        cm848_throttleGain_velocityBased_calc();
+        cm848_throttleGain_timedAccumulate_update();
+      }
+      wVar3 = protection_throttle_setpoint;
+      if (DAT_00408b27 == '\x01') {
+        wVar3 = 0x6400 - protection_throttle_setpoint;
+      }
+    }
+    else {
+      wVar3 = 0x5f00;
+    }
+    if ((j1939_pgn_handler_index_hpcr != 0) && (j1939_pgn_handler_index_hpcr < 0x33)) {
+      DAT_0040c14c = wVar3;
+      (**(code **)(&j1939_pgn_handler_table_func3 + (uint)j1939_pgn_handler_index_hpcr * 0x10))
+                (wVar3);
+    }
+    if ((j1939_pgn_handler_index_hpcr != 0) && (j1939_pgn_handler_index_hpcr < 0x33)) {
+      DAT_0040c1c0 = 1000000 / DAT_00408b2a;
+      (**(code **)(&j1939_pgn_handler_table_func2 + (uint)j1939_pgn_handler_index_hpcr * 0x10))
+                (DAT_0040c1c0);
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: initHpcr_HandlerRoutines @ 0x0051cd88
+//
+
