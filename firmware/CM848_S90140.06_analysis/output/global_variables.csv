@@ -1833,16 +1833,16 @@ address,name,type,comment
 0x003fbd00,PTR_DAT_003fbd00,pointer,
 0x003fbd10,PTR_DAT_003fbd10,pointer,
 0x003fbd2e,PTR_DAT_003fbd2e,pointer,
-0x003fbd42,PTR_DAT_003fbd42,pointer,
-0x003fbd46,PTR_DAT_003fbd46,pointer,
+0x003fbd42,fault_channel_config_ptr,dword,iterating ptr over fault-channel config array (was PTR_DAT)
+0x003fbd46,fault_channel_state_ptr,dword,iterating ptr over per-channel fault RAM state (was PTR_DAT)
 0x003fbd4a,PTR_engine_rpm_trigger_ready_flag_003fbd4a,pointer,
 0x003fbd7c,PTR_DAT_003fbd7c,pointer,
 0x003fbd80,PTR_DAT_003fbd80,pointer,
 0x003fbd8c,PTR_DAT_003fbd8c,pointer,
 0x003fbdac,PTR_DAT_003fbdac,pointer,
 0x003fbdcf,PTR_DAT_003fbdcf,pointer,
-0x003fbdd3,PTR_DAT_003fbdd3,pointer,
-0x003fbddf,PTR_DAT_003fbddf,pointer,
+0x003fbdd3,j1939_multiframe_tx_status_ptr,dword,ptr to TX session state byte (was PTR_DAT)
+0x003fbddf,j1939_multiframe_tx_buf_ptr,dword,ptr to CAN TX assembly buffer (was PTR_DAT)
 0x003fbdfd,PTR_DAT_003fbdfd,pointer,
 0x003fc094,BYTE_003fc094,byte,
 0x003fc0d8,BYTE_003fc0d8,byte,
@@ -1919,8 +1919,8 @@ address,name,type,comment
 0x003fd2c8,PTR_sensor_channel_ram_start_003fd2c8,pointer,
 0x003fd2cc,PTR_DAT_003fd2cc,pointer,
 0x003fd2d0,PTR_PTR_003fd2d0,pointer,
-0x003fd2d4,PTR_DAT_003fd2d4,pointer,
-0x003fd2d8,PTR_DAT_003fd2d8,pointer,
+0x003fd2d4,sensor_cal_rom_read_ptr,pointer,ROM source cursor for sensor cal ROM->RAM copy (was PTR_DAT)
+0x003fd2d8,sensor_cal_ram_write_ptr,pointer,RAM dest cursor for sensor cal ROM->RAM copy (was PTR_DAT)
 0x003fd2e8,PTR_j1939HandlePgn65265CruiseVehicleSpeed_003fd2e8,pointer,
 0x003fd2f2,PTR_j1939GetEngineStateCode_003fd2f2,pointer,
 0x003fd3b0,PTR_cm848_j1939BuildVehicleOperatingStatus_003fd3b0,pointer,
@@ -6080,3 +6080,105 @@ address,name,type,comment
 0x003fce51,iat_protection_level6_grace_count,word,grace countdown at derate level 6 before shutdown
 0x003fce55,iat_solenoid_derate_step_table,word,4-element per-level derate step durations (array base)
 0x003fce5f,iat_protection_total_derate_steps,word,total permitted IAT derate steps from table
+0x003fbca6,diag_dm1_buffer_fill_end_ptr,dword,DM1 ring-buffer fill endpoint ptr (ROM-aliased)
+0x003fbcaa,diag_dm1_buffer_fill_phase,dword,DM1 fill state 0/1/2/3 (ROM-aliased)
+0x003fbcae,diag_dm1_buffer_slot_started_flag,word,DM1 buffer slot write started 0/1
+0x003fbcb2,diag_dm1_active_fault_entry_count,word,count of active fault entries to fill into DM1
+0x003fcefc,protection_output_phase_entry_flag,word,protection output controller entered active-limit phase
+0x003fcf00,protection_fuel_demand_prev,word,previous-cycle fuel demand snapshot in protectionOutputAssembly
+0x003fcf02,protection_output_rate_counter,word,rate-divide counter 0-4 for protectionOutputAssembly
+0x003fcf3c,cold_start_protection_active_count,byte,count of active cold-start protection channels
+0x003fcf4c,cold_start_sync_protection_countdown,word,per-crank countdown for engine_sync cold-start protection
+0x003fcf4e,cold_start_injection_protection_countdown,word,per-crank countdown for cold-start injection protection
+0x003fddb8,diag_dm1_protection_warning_active,word,set when protection warning active; selects DM1 fill mode
+0x003fddba,diag_dm1_fill_mode_config,word,NEVER-WRITTEN ROM; DM1 fill mode selector 1/2/3
+0x003fddc4,diag_dm1_fault_source_table,dword,32-entry DM1 fault data-source ptr array base
+0x003fbd2c,governor_faultDerate_task_index,word,round-robin scheduler index 0-4 for fault-derate subtasks
+0x003fbd3e,governor_faultDerate_peak_value,word,running max of per-channel derate fuel-limit values
+0x003fcd92,governor_cruiseOverride_holdoff_countdown,word,holdoff before accepting a new override transition
+0x003fcdaa,governor_speed_request_state_prev,word,previous-cycle snapshot of governor_speed_request_state_b
+0x003fcdae,cruise_steady_state_debounce_counter,word,debounce for cruise steady-state detection
+0x003fce22,calibBlock1_update_phase_counter,word,mod-4 phase counter dividing calibBlock1 EEPROM writes
+0x003fce24,calibBlock1_adaptiveTrim_ema_q8,word,Q8 EMA accumulator for calibBlock1 adaptive trim
+0x003fce26,calibBlock1_learnedTrim_ema_q8,word,Q8 long-term learned-trim EMA
+0x003fce28,calibBlock1_guardTrim_q8,word,guard/snapshot of learnedTrim EMA for drift detect
+0x003fd0bc,injection_angle_ch6_crank_position,dword,signed crank position for TPU ch6 injection angle
+0x003fd0c0,injection_angle_ch6_normalized,dword,normalized/wrapped ch6 injection angle
+0x003fdfb8,governor_faultDerate_active_channel,word,active fault-derate channel index (0xff=none)
+0x003fdfba,governor_faultDerate_consecutive_count,word,consecutive same-channel derate event count
+0x003fdfbe,governor_faultDerate_channel_state,word,2x30B protection-channel working-state array base
+0x003fcd5e,protection_event26_tsc1_shift_debounce_count,word,cycles while TSC1 shift in process (event 0x26)
+0x003fcd60,protection_event26_sensor_threshold_count,word,cycles QADC ch0x47 in-range (event 0x26)
+0x003fcd62,protection_event26_fuel_temp_condition_flag,word,fuel-temp protection condition active 0/1
+0x003fcd64,protection_event26_fuel_temp_event_count,word,completed fuel-temp protection events count
+0x003fcd68,protection_event26_rpm_high_debounce_count,word,cycles RPM above high threshold
+0x003fcd6c,protection_event26_post_fault_holdoff_count_a,word,post-fault holdoff debounce A (cond code 0xc)
+0x003fcd6e,protection_event26_post_fault_holdoff_count_b,word,post-fault holdoff debounce B (cond code 0xd)
+0x003fcdb0,protection_ramp_step_current,word,current protection ramp step (counts down while active)
+0x003fce7a,protection_diagnostics_periodic_tick,byte,scheduler tick 0-59 for protection diagnostics subtasks
+0x003fceac,governor_temp_diag_debounce_count,word,debounce for governor over-fuel temperature diagnostic
+0x003fceb2,governor_temp_diag_zero_rpm_count,word,cycles RPM==0 with protection enable clear
+0x003fcebc,governor_temp_diag_cold_start_j1939_count,word,cold-start governor setpoint J1939 active duration
+0x003fcf96,message_buffer_scan_cursor,dword,scan cursor into message buffer 0x3f9808..0x3f9ff8
+0x003fd082,injection_load_snapshot,word,torque-limit snapshot for injection angle calc
+0x003fd088,protection_shutdown_cycle_count,byte,count of protection shutdown cycles issued
+0x003fd089,protection_cylinder_event_countdown,word,cylinder-event countdown driving protection response
+0x003fd08b,protection_fault_debounce_counter,word,debounce before protection fires; recovers on clear
+0x003fd0b8,protection_crank_event_counter,word,crank-event count to trigger TPU protection enable
+0x003fd40e,j1939_periodic_queue0_count,byte,entry count for J1939 periodic diag queue 0 (max 20)
+0x003fd40f,j1939_periodic_queue1_count,byte,entry count for J1939 periodic diag queue 1 (max 10)
+0x003fee98,tpu_init_retry_count,word,TPU init retry count; gates diag fault flag
+0x003feed0,sensor_channel_cal_block_start,dword,base of sensor channel cal block (ROM->RAM copy dest)
+0x003fbdc4,j1939_tp_bam_session_active,byte,J1939 BAM broadcast condition flag (DA=SA=0xFF)
+0x003fbdc5,j1939_multiframe_tx_active,byte,bulk multi-frame TX session active
+0x003fbdc9,j1939_multiframe_tx_total_packets,byte,total packet count for bulk TX
+0x003fbdcb,j1939_multiframe_tx_packets_remaining,byte,remaining packet grant from CTS
+0x003fbdcc,j1939_multiframe_tx_send_result,byte,CAN-layer TX result slot (0=ok)
+0x003fbdcd,j1939_multiframe_tx_total_bytes,word,total data bytes for bulk TX session
+0x003fbdd7,j1939_multiframe_tx_cts_timeout,word,CTS-wait timeout counter (init 0x37)
+0x003fbdef,j1939_multiframe_rx_active,byte,inbound multi-frame RX session active
+0x003fbdf0,j1939_multiframe_rx_total_packets,byte,total DT packet count from RTS
+0x003fbdf1,j1939_multiframe_rx_pgn,word,session PGN from inbound RTS frame
+0x003fbdf3,j1939_multiframe_rx_next_sequence,byte,expected next DT sequence number
+0x003fbdf4,j1939_multiframe_rx_packets_in_window,byte,CTS window remaining count
+0x003fbdf5,j1939_multiframe_rx_timeout,word,RX session timeout counter (init 0x70)
+0x003fccf0,protection_speedTracking_ramp_step_counter,word,ramp step counter for protection speed tracking
+0x003fccf2,protection_speedTracking_speed_error_ramp,word,accumulated speed-error ramp value
+0x003fcd7a,j1939_tsc1_active_duration_counter,word,TSC1 active/timeout duration counter
+0x003fcdf6,cold_start_fuel_demand_final,word,clamped final cold-start fuel demand output
+0x003fdc96,j1939_pgn_handler_index_cold_start_fuel,word,NEVER-WRITTEN ROM; PGN handler index for cold-start fuel
+0x003fce12,cold_start_mode_entry_rpm_snapshot,word,RPM snapshot at cold-start mode entry
+0x003fce10,cold_start_fuel_hold_ramp_counter,word,timed hold-off counter after cold-start exit
+0x003fce1a,cold_start_emission_fault_pgn_cycle_counter,word,PGN-handler cycle count during emission-fault restart
+0x003fce1c,egr_load_floor_hold_timer,word,hold timer gating EGR load speed-floor ramp
+0x003fcdf8,egr_governor_integral_reset_flag,byte,EGR governor PI integral-reset pending
+0x003fcdf9,egr_governor_pi_active_flag,byte,EGR governor PI computation enable
+0x003fcdfa,egr_fuel_demand_high_stroke_flag,byte,set when fuel stroke above high threshold
+0x003fcdff,governor_speed_ramp_step_count,word,overspeed-approach ramp step counter
+0x003fce01,governor_speed_decel_ramp_init_flag,byte,decel-ramp initialized flag
+0x003fce02,governor_speed_accel_ramp_request_flag,byte,accel-ramp begin flag
+0x003fce03,governor_overspeed_detect_flag,byte,overspeed detected flag
+0x003fce04,governor_overspeed_ramp_transition_latch,byte,overspeed ramp transition latch
+0x003fce05,governor_speed_accel_ramp_at_target_flag,byte,accel ramp reached target flag
+0x003fce06,governor_speed_decel_above_floor_flag,byte,decel target above idle floor flag
+0x003fce07,governor_speed_up_ramp_active_flag,byte,up-ramp active (drives upper step accum)
+0x003fce08,governor_speed_decel_target_captured_flag,byte,decel target captured flag
+0x003fce09,governor_decel_was_overspeed_clamp_flag,byte,prev decel was at overspeed clamp (limit_source 0xb)
+0x003fce0a,governor_decel_was_governor_floor_flag,byte,prev decel was at governor floor (limit_source 6)
+0x003fce0b,governor_speed_accel_ramp_step_flag,byte,accel-ramp step active flag
+0x003fcfa6,governor_datavalid_load_snapshot,word,load snapshot during governor data validation
+0x003fcfae,governor_datavalid_conditions_met_flag,byte,governor data-validation conditions met 0/1
+0x003fcfb1,governor_datavalid_snapshot_ready_flag,byte,governor data-validation snapshot-ready gate
+0x003fd182,protection_group29_coolant_temp_snapshot,word,coolant temp snapshot for group29 protection
+0x003fd188,protection_group29_startup_timer_count,word,group29 startup countdown timer
+0x003fd18f,protection_group29_conditions_met_flag,byte,group29 conditions met 0/1
+0x003fd268,hpcr_oil_pressure_protection_debounce_count,word,HPCR oil-pressure protection debounce
+0x003fd26a,hpcr_oil_pressure_fault_debounce_count,word,HPCR oil-pressure fault debounce
+0x003fd26c,hpcr_fuel_demand_protection_debounce_count,word,HPCR fuel-demand protection debounce
+0x003fd26e,hpcr_fuel_demand_fault_debounce_count,word,HPCR fuel-demand fault debounce
+0x003fa696,fuel_demand_blend_tables_interp_state,word,dualAxis interp state base (fuel demand blend tables)
+0x003fa69e,fuel_demand_mode3_interp_state,word,dualAxis interp state base (fuel demand mode 3)
+0x003fa6a6,fuel_demand_timing_offset_interp_state,word,dualAxis interp state base (timing offset)
+0x003fa6b2,fuel_demand_mode2_interp_state,word,dualAxis interp state base (fuel demand mode 2)
+0x003fa6ba,fuel_demand_mode1_interp_state,word,dualAxis interp state base (fuel demand mode 1)
+0x003fb602,injection_timing_boost_blend_interp_state,word,dualAxis interp state base (injection timing boost blend)
