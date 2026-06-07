@@ -5289,7 +5289,7 @@ address,name,type,comment
 0x0040b6e2,fuel_flow_rpm_numerator,word,
 0x0040b6e4,cruise_speed_target_working,word,
 0x0040b6e6,governor_fuel_enable_state,word,
-0x0040b6e8,PTR_DAT_0040b6e8,pointer,
+0x0040b6e8,engine_temp_protection_ema_coeff_ptr,pointer,EMA coeff pointer for engine temp protection input
 0x0040b6ec,engine_temp_protection_input_q16,dword,Q16 fixed-point (value << 16) of engine_temp_protection_input (or default DAT_0005c936); published in protectionTimeoutControl / initGovernorJ1939Bypass; write-only in ROM (consumed by diagnostics/CLIP)
 0x0040b6f0,governor_bypass_threshold_low,word,per-cycle published threshold = ((DAT_00408b78 + 25600) * DAT_003fd918) / 25600, clamped to DAT_0005c932; in protectionTimeoutControl, engine_temp_protection_input < this -> governor_j1939_bypass_flag = 1 (full bypass)
 0x0040b6f2,governor_bypass_threshold_high,word,per-cycle published threshold = ((DAT_00408b78 + 25600) * DAT_003fd900) / 25600, clamped to DAT_0005c932; engine_temp_protection_input between low and this -> bypass_flag = 2 (partial), above -> 3 (none)
@@ -6484,3 +6484,83 @@ address,name,type,comment
 0x0040b0ac,protection_overtemp_dwell_counter,word,overtemp protection dwell countdown (derate level 4)
 0x0040b22e,coolant_bucket_overheat_detected_flag,word,bucket overheat detected; gates protection_sensor_state_b
 0x0040b334,calibBlock1_eeprom_write_dwell_counter,word,dwell countdown before calibBlock1 EEPROM write
+0x0040b3fe,j1939_msg_slot_e_data_byte1,byte,J1939 slot-E payload byte 1 (auth MSB)
+0x0040b3ff,j1939_msg_slot_e_data_byte2,byte,J1939 slot-E payload byte 2 (auth mid)
+0x0040b400,j1939_msg_slot_e_data_byte3,byte,J1939 slot-E payload byte 3 (auth LSB)
+0x0040b506,j1939_governor_auth_checksum_expected,dword,expected 24-bit governor auth checksum
+0x0040b50a,j1939_governor_auth_response_received,dword,received 24-bit governor auth response
+0x0040b50e,j1939_governor_auth_session_seed,dword,per-message governor auth session seed
+0x0040b51b,j1939_msg_slot_m_switch_input_bits,byte,decoded switch-input bits from slot-M
+0x0040b52c,protection_fuel_demand_active_flag,word,fuel-demand protection active; drives ramp-down
+0x0040b55a,j1939_fault_load_protection_trip_count,byte,outer escalation count
+0x0040b55b,j1939_fault_load_protection_debounce_count,byte,inner debounce count
+0x0040b55e,protection_coldStart_channelA_trip_count,word,cold-start protection channel A trip count
+0x0040b562,protection_coldStart_channelA_debounce_count,word,cold-start protection channel A debounce
+0x0040b564,protection_coldStart_channelB_trip_count,word,cold-start protection channel B trip count
+0x0040b568,protection_coldStart_channelB_debounce_count,word,cold-start protection channel B debounce
+0x0040b572,fuel_temp_derate_entry_counter,word,debounce before fuel_temp_derate_active_latch
+0x0040b574,fuel_temp_derate_cycles_below_threshold,word,cycles fuel temp below threshold (cold start)
+0x0040b576,fuel_temp_derate_cycles_protected,word,subset of below-threshold cycles with protection bit
+0x0040b578,fuel_temp_derate_cycles_at_setpoint,word,cycles at governor setpoint below fuel-temp threshold
+0x0040b596,protection_throttle_error_delta,dword,D-term of protection throttle error
+0x0040bbbc,protection_throttle_position_received,word,raw received HPCR throttle position pre-clamp
+0x0040c14c,protection_throttle_hpcr_setpoint,word,adjusted throttle setpoint for HPCR dispatch
+0x0040c1c0,protection_throttle_hpcr_period,dword,1000000/period_cal HPCR rate for J1939 dispatch
+0x0040b5d5,fuel_demand_uart_error_count,byte,UART framing/overrun/parity error count
+0x0040b5d6,fuel_demand_uart_byte_pending,byte,UART byte-received pending flag
+0x0040b644,j1939_fuel_demand_at_target_rpm_flag,word,RPM within +/-400 of governor demand 0/1
+0x0040b646,injection_timing_period_delta_raw,word,staging word for injection timing period delta
+0x0040b64c,governor_speed_compensation_steps,word,countdown steps for governor speed compensation
+0x0040b90a,cam_timing_correction_enable_flag,byte,cam timing position correction enable gate
+0x0040b9a2,cssc_coolant_monitoring_cycle_count,word,CSSC coolant thermostat monitoring cycle count
+0x0040b9a4,cssc_coolant_temp_span,word,coolant temp max-min span for CSSC thermostat diag
+0x0040b9c8,hpcr_battery_dwell_timeout_flag,word,HPCR battery dwell-timeout flag (status bit 6)
+0x0040b9ca,hpcr_battery_voltage_normal_flag,byte,HPCR battery voltage in-range flag (status bit 7)
+0x0040b9cc,hpcr_governor_phase_active_flag,word,HPCR governor-phase active flag (status bit 1)
+0x0040b9ce,hpcr_battery_monitor_lockout_count,word,battery monitor lockout countdown (crank phases)
+0x0040ba6e,hpcr_fuel_demand_protection_threshold,word,HPCR fuel-demand protection lower limit
+0x0040ba70,hpcr_fuel_demand_fault_upper_limit,word,HPCR fuel-demand fault upper bound
+0x0040ba72,hpcr_fuel_demand_fault_lower_limit,word,HPCR fuel-demand fault lower bound
+0x0040ba74,hpcr_fuel_demand_fault_qualified_event_count,word,count of qualified HPCR fuel-demand fault events
+0x0040ba76,hpcr_fuel_demand_fault_count,word,accumulated HPCR fuel-demand fault-active cycles
+0x004051ee,boost_correction_step_count_max,word,ROM cap for boost_correction_step_counter
+0x0040a448,boost_correction_throttle_trim_ratio,word,0-10000 throttle trim ratio (boost correction)
+0x0040a44a,boost_correction_fuel_ema_ratio,word,0-10000 fuel EMA ratio (boost correction)
+0x00407774,protection_speedTracking_ramp_step_count_max,word,ROM cap for speed-tracking ramp step counter
+0x00407776,protection_speedTracking_speed_error_ramp_step,word,ROM increment for speed-error ramp
+0x0040777c,protection_speedTracking_speed_error_ramp_max,word,ROM ceiling for speed-error ramp
+0x004086c8,j1939_tsc1_active_duration_reload,word,ROM reload/max for TSC1 active duration counter
+0x00408788,protection_fault_severity_code,word,ROM severity/event code for protection faults
+0x00408952,fuel_demand_active_correction_increment,word,ROM per-mode increment for active correction sum
+0x0040898c,governor_temp_protection_fuel_qty_min,word,ROM fuel-qty min below which gov temp protection fires
+0x00409e9a,boost_corr_crank_dwell_b_limit,word,ROM limit for boost_corr_crank_phase_dwell_b
+0x00409e9c,boost_corr_diag_neg_accum_limit,word,ROM limit for boost_corr_diag_neg_accumulator
+0x00409ea6,boost_corr_diag_neg_accum_b_limit,word,ROM limit for boost_corr_diag_neg_accumulator_b
+0x0040a2c6,cruise_speed_offset_mode,word,cruise speed offset mode selector 0/1/2
+0x0040a446,fuel_demand_active_state_flag,word,fuel demand non-idle state flag; sets sensor-valid bit 0x100
+0x0040a730,fuel_demand_blend_rpm_in_range_flag,word,RPM in-range gate for rolling-average update
+0x0040a67c,boost_pressure_synthetic_ema,word,EMA synthetic boost-pressure fallback (degraded sensor)
+0x0040a692,throttle_trim_predictor_output,word,predictor-corrected throttle trim raw
+0x0040a696,throttle_trim_predictor_gain,word,gain coefficient for throttle trim predictor
+0x0040a74c,governor_faultDerate_ch0_threshold_exceeded,word,channel-0 fault-derate threshold-exceeded flag
+0x0040aac6,fuel_demand_protection_pedal_raw,word,raw QADC pedal in alternate fuel-demand protection mode
+0x0040adf2,can_j1939_tx_mailbox_alloc_index,word,running CAN TX mailbox slot allocation index
+0x0040aff2,governor_speed_ramp_target,word,raw speed-reference target before rate-limiting
+0x0040aff4,governor_speed_ramp_ema,word,EMA of step-rate-limited speed reference
+0x0040affc,governor_speed_ramp_working,word,step-rate-limited intermediate speed reference
+0x0040b092,governor_b_boost_demand_input,word,fault-substituted boost demand input (governor B floor)
+0x0040b202,protection_j1939_trigger_confirmed,byte,debounced J1939 protection trigger; gates mode_bits 0x04
+0x0040b2b6,governor_rpm_feedback_filtered,word,filtered RPM feedback into governor speed PID
+0x0040b2b8,governor_fuel_demand_speed_error,word,per-cycle governor speed error driving integrator
+0x0040b2ba,governor_fuel_demand_pd_term,word,filtered P+D output of governor fuel demand PID
+0x0040b34c,iat_protection_oilTemp_selected,word,selected oil-temp source for IAT protection derate
+0x0040b542,fuel_temp_trim_rpm_ratio_raw,word,raw (rpm<<8)/trim_ema ratio for fuel temp trim
+0x0040b544,fuel_temp_trim_rpm_ratio_ema,word,EMA of fuel temp trim rpm ratio
+0x0040b547,fuel_temp_trim_quality_fault_flag,byte,fuel temp trim quality degraded flag
+0x0040b5e0,protection_cooldown_timer,word,protection cooldown countdown (reloads 1000)
+0x0040b608,message_buffer_scan_low_watermark,pointer,lowest scan-cursor address reached in message buffer
+0x0040b628,governor_datavalid_load_range,word,load max-min range during governor data validation
+0x0040b9e0,cam_timing_delta_per_cycle,word,per-cycle cam timing delta (advance/retard accum)
+0x0040ba6a,hpcr_oil_pressure_fault_trigger_count,word,HPCR oil-pressure fault trigger event count
+0x0040ba6c,hpcr_oil_pressure_debounce_saturate_count,word,HPCR oil-pressure debounce-saturation event count
+0x0040c27c,diag_dm1_buffer_phase2_start_ptr,pointer,DM1 buffer phase-2 fill start pointer
