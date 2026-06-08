@@ -1547,7 +1547,7 @@ address,name,type,comment
 0x003fb40d,fuel_temperature_trim_working,word,
 0x003fb40f,protection_entry_threshold_working,word,
 0x003fb412,cbd_enable_state_prev,word,
-0x003fb414,PTR_DAT_003fb414,pointer,
+0x003fb414,coolant_temp_filter_state_ptr,pointer,IIR filter state ptr for coolant temp
 0x003fb420,fuel_demand_rate_limiter_state,word,
 0x003fb422,fuel_demand_rate_lookup_a,word,
 0x003fb424,fuel_demand_rate_lookup_b,word,
@@ -6737,3 +6737,74 @@ address,name,type,comment
 0x003fd176,protection_group21_qualifying_event_count,word,group21 qualifying event count
 0x003fd17a,protection_group21_qualifying_epoch_count,byte,group21 qualifying epoch count (max 4)
 0x003fea9c,diagnostic_status_flags_ring_snapshot,word,fault-ring shadow of diagnostic_status_flags_working
+0x003fd18a,cssc_coolant_temp_min,word,running min coolant temp (CSSC thermostat)
+0x003fd18c,cssc_coolant_temp_max,word,running max coolant temp (CSSC thermostat)
+0x003fd18e,cssc_coolant_snapshot_taken_flag,byte,one-shot coolant snapshot guard
+0x003fd190,cssc_coolant_precheck_dwell_count,word,dwell before CSSC coolant snapshot
+0x003fd1a2,boost_corr_crank_diag_done_flag,word,one-shot boost-correction crank-phase diag guard
+0x003fd1aa,cam_sync_startup_eval_done_flag,byte,one-shot cam-sync startup eval guard
+0x003fd1ab,cam_sync_startup_delay_count,byte,pre-delay countdown before cam-sync startup eval
+0x003fd1bc,cold_start_battery_voltage_baseline_a,word,battery voltage baseline at cold-start state 4
+0x003fd1be,cold_start_battery_voltage_baseline_b,word,battery voltage baseline at cold-start state 6
+0x003fd1c6,cold_start_battery_diag_suppress_done_flag,byte,one-shot battery diag-suppress guard
+0x003fd1c7,cam_sync_sample_ratio_dwell_count,word,dwell before cam-sync sample-ratio eval
+0x003fd1c9,cold_start_battery_voltage_snapshot,word,battery voltage baseline for cold-start delta test
+0x003fd1ce,protection_eval_mode_active_prev,byte,prev protection mode bit (edge detect)
+0x003fd1cf,protection_eval_elapsed_done_flag,byte,protection eval elapsed-count done flag
+0x003fd1d4,fuel_correction_ramp_locked_flag,word,fuel-correction ramp direction locked
+0x003fd1dc,cam_sync_validation_dwell_counter,word,cam-sync validation state-1 dwell
+0x003fd1e2,hpcr_battery_dwell_counter,word,battery dwell counter (timeout->flag)
+0x003fd1e4,cam_timing_monitor_eval_cycle_count,word,cam-timing monitor eval cycle counter
+0x003fd1e7,cam_timing_monitor_inhibit_flag,byte,cam-timing monitor was-inhibited latch
+0x003fd1f4,hpcr_pressure_diag_sample_sum_state3,word,HPCR pressure diag state-3 sample sum
+0x003fd1ff,cbd_cylinder_injection_enable_array,byte,per-cylinder CBD injection enable array base
+0x003fee9c,protection_fuel_temp_integration_active_flag,word,fuel-temp integration active gate
+0x003fee9e,protection_fuel_temp_integration_accumulator,dword,fuel-temp protection integration accumulator
+0x003fd20b,cbd_cylinder_timing_accept_threshold,word,CBD cylinder timing acceptance threshold
+0x003fd227,fault_aging_governor_dwell_count,word,dwell before fault aging triggers
+0x003fd230,cam_sync_validation_j1939_coolant_snapshot,word,J1939 coolant snapshot for cam-sync cross-validation
+0x003fd244,cam_sync_oiltemp_agree_count,word,cam-sync oil-temp agreement count
+0x003fd246,cam_sync_oiltemp_qualify_dwell_count,word,cam-sync oil-temp qualify dwell
+0x003fd248,cam_sync_fault_detection_enable_flag,word,cam-sync per-cylinder fault detection enable
+0x003fd266,cssc_injection_diag_cycle_count,word,CSSC injection diagnostic cycle count
+0x003fd278,hpcr_oil_pressure_monitoring_active_flag,word,HPCR oil-pressure monitoring active gate
+0x003feeb8,hpcr_oil_pressure_revolution_count,dword,HPCR oil-pressure revolution accumulator
+0x003fd2dc,sensor_cal_write_dirty_flag,word,sensor cal RAM dirty flag (copy mismatch)
+0x003fd2de,sensor_cal_session_state_prev,word,prev diagnostic session state (protection module)
+0x003fd410,j1939_periodic_queue0_current_tick,word,current tick for J1939 diag queue 0
+0x003fd412,j1939_periodic_queue1_current_tick,word,current tick for J1939 diag queue 1
+0x003fd47e,protection_timer_b_tick_divider,word,divide-by-2 tick for protection timer b
+0x003fdb46,torque_limit_setpoint_qadc_channel_index,word,ROM QADC channel index for torque-limit setpoint
+0x003fefbc,emission_fuel_demand_default_output,word,ROM fallback emission fuel demand output
+0x003ff067,fuel_boost_final_fault_gate_enable,byte,ROM fault-gate bitmask (fuel boost final)
+0x003ff06b,fuel_timing_demand_fault_gate_enable,byte,ROM fault-gate bitmask (fuel timing demand)
+0x003ff06f,fuel_boost_protect_fault_gate_enable,byte,ROM fault-gate bitmask (boost protection)
+0x003ff073,fuel_pressure_phase_fault_gate_enable,byte,ROM fault-gate bitmask (fuel pressure phase)
+0x003ff6f8,egr_pressure_integrator_upper_limit,word,ROM upper clamp for EGR pressure integrator
+0x003fa150,throttle_load_gain_interp_state,word,interp state base (throttle load gain)
+0x003fa6ca,fuel_demand_load_axis_base_interp_state,word,interp state base (fuel demand load axis)
+0x003fa6d6,fuel_load_correction_timing_interp_state,word,interp state base (fuel load correction timing)
+0x003fa978,j1939_governor_speed_override_bits,byte,J1939 governor speed override mode bits
+0x003faa65,j1939_proprietary_cmd_byte1,byte,proprietary J1939 command byte 1
+0x003faac2,j1939_pgn65269_tx_iat_byte,byte,PGN 65269 ambient conditions IAT byte
+0x003fad91,j1939_eec1_driver_demand_torque_byte,byte,EEC1 driver demand torque byte (SPN 512)
+0x003fad93,j1939_eec1_engine_speed_low_byte,byte,EEC1 engine speed LSB (SPN 190)
+0x003fad94,j1939_eec1_engine_speed_high_byte,byte,EEC1 engine speed MSB (SPN 190)
+0x003fada9,j1939_eec2_accel_pedal_byte,byte,EEC2 accel pedal position byte (SPN 91)
+0x003fadab,j1939_eec2_remote_accel_pedal_byte,byte,EEC2 remote accel pedal byte (SPN 974)
+0x003fae20,j1939_pgn65213_diag_param_byte,byte,PGN 65213 scaled diagnostic parameter byte
+0x003fb00c,fuel_demand_hysteresis_init_flag,byte,one-shot fuel-demand hysteresis init flag
+0x003fb00d,protection_mode_enable_flag_prev,byte,prev protection_mode_enable_flag (edge detect)
+0x003fb3eb,uds_svc_a4_read_response_byte0,byte,UDS service 0xA4 read response buffer byte 0
+0x003fb614,injection_timing_fuel_table_interp_state,word,interp state base (fuel quantity table)
+0x003fb618,injection_timing_cam_offset_interp_state,word,interp state base (cam timing offset)
+0x003fb61c,injection_timing_trim_axis1_interp_state,word,interp state base (timing trim axis 1)
+0x003fb620,injection_timing_trim_axis2_interp_state,word,interp state base (timing trim axis 2)
+0x003fb624,injection_fault_timing_axis2_interp_state,word,interp state base (fault timing axis 2)
+0x003fb628,injection_fault_timing_scale_interp_state,word,interp state base (fault timing scale)
+0x003fb62c,injection_fault_timing_output_interp_state,word,interp state base (fault timing output)
+0x003fb8f3,sensor_scan_count_a_limit,byte,spin-delay limit for sensor_scan_counter_a
+0x003fb8f4,sensor_scan_count_b_limit,byte,spin-delay limit for sensor_scan_counter_b
+0x003fb8f5,sensor_scan_count_c_limit,byte,spin-delay limit for sensor_scan_counter_c
+0x003fb900,engine_output_state_phase_buffer,byte,4-phase x 4-byte engine output state buffer base
+0x003fdb8e,engine_output_channel_protection_table,word,32-entry output-channel protection config base
