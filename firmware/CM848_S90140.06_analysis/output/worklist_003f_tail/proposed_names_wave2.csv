@@ -1,0 +1,98 @@
+address,name,type,comment
+0x003fccfe,governor_b_fuel_limit_biased,word,abs fuel control limit + offset (governor B)
+0x003fcd00,governor_b_timing_error_scaled,dword,fuel-limit-derived timing error contribution
+0x003fcd10,governor_b_timing_deviation_normalized,dword,boost-normalized timing deviation ratio
+0x003fcd14,governor_b_ema_offset_prev,word,previous-cycle protection_ema_cal_offset
+0x003fcd16,governor_b_engine_flag_80_prev,word,previous engine_feature_status_flags&0x80
+0x003fcd2a,protection_overtemp_entry_debounce_count,word,overtemp entry debounce accumulator
+0x003fcd66,protection_event26_classb_enable_prev,word,prev class-B enable bit (event 26)
+0x003fcd6a,protection_event26_fuel_temp_debounce_count,word,fuel-temp event-26 trigger debounce
+0x003fcd70,protection_event26_fuel_qty_gate_flag,word,event-26 fuel-qty window hysteresis gate (cond 4)
+0x003fcd72,protection_event26_fuel_qty_high_gate_flag,word,event-26 fuel-qty window-2 gate (cond 5)
+0x003fcd74,protection_event26_rpm_low_gate_flag,word,event-26 RPM low-side gate (cond 6)
+0x003fcd76,protection_event26_rpm_high_gate_flag,word,event-26 RPM high-side gate (cond 7)
+0x003fcd78,protection_event26_coolant_gate_flag,word,event-26 coolant window gate (cond 8)
+0x003fcd80,fuel_temp_protection_warmup_cycle_count,dword,post-startup fuel-temp inhibit dwell counter
+0x003fcd94,governor_speed_request_raw_sample,word,current-cycle raw J1939 governor state input
+0x003fcda4,governor_speed_request_raw_prev,word,previous-cycle raw governor state sample
+0x003fcda6,cruise_rpm_ratio_ema_prev,word,previous cruise RPM ratio EMA
+0x003fcda8,cruise_protection_ok_prev,word,previous cruise_protection_ok (edge detect)
+0x003fcdac,cruise_rpm_prev_sample,word,previous-cycle RPM for cruise ratio smoothing
+0x003fcdcc,cold_start_coolant_overheat_event_count,word,coolant bucket overheat event count
+0x003fce1e,tpu_rpm_isb_setup_done_flag,byte,one-time ISB TPU-B CH9 setup-done flag
+0x003fce1f,tpu_rpm_isb_was_active_flag,byte,ISB-active-last-cycle flag for mode switch
+0x003fce20,tpu_rpm_startup_blank_countdown,word,startup RPM blanking countdown
+0x003fce2c,fuel_quantity_demand_excess_fault_count,word,excess fuel-demand fault debounce (event 0x36)
+0x003fce3b,iat_protection_state_prev,word,previous battery_voltage_protection_state
+0x003fce3d,iat_solenoid_active_cycle_count,word,IAT solenoid active cycle counter
+0x003fce47,iat_protection_action_onset_countdown,word,IAT protection action onset countdown
+0x003fce4f,iat_protection_crank_standby_cycle_count,word,IAT protection crank/standby cycle count
+0x003fce64,iat_solenoid_active_duration_ticks,word,IAT solenoid PWM active-pulse duration
+0x003fcea0,j1939_dm1_fault_list_index,byte,DM1 fault list transmit index
+0x003fce66,iat_protection_oilTemp_derate_input,word,selected oil-temp input for IAT derate level
+0x003fce6a,iat_solenoid_derate_active_flag,word,IAT solenoid derate active gate
+0x003fce61,iat_solenoid_duty_percent,word,IAT solenoid duty percent (lookup output)
+0x003fce63,iat_solenoid_update_pending_flag,byte,IAT solenoid level-update pending flag
+0x003fcede,governor_cruise_crank_period_snapshot,dword,prev crank-period total for delta
+0x003fcee2,governor_cruise_period_accum,dword,scaled engine operating time accumulator
+0x003fcee6,j1939_load_protection_fault_reported_flag,word,J1939 load-protection fault dedup latch
+0x003fceee,protection_coldStart_channelB_fault_reported_flag,word,cold-start channelB fault reported latch
+0x003fcef2,protection_coldStart_channelA_window_active_flag,byte,cold-start channelA trip window open
+0x003fcef3,protection_coldStart_channelB_window_active_flag,byte,cold-start channelB trip window open
+0x003fcef4,fuel_temp_derate_cycles_gate_flag,word,fuel-temp derate cycles-threshold gate
+0x003fcefa,fuel_temp_derate_entry_threshold_flag,word,fuel-temp derate entry-threshold latch
+0x003fcefe,protection_pid_rpm_setpoint_prev,word,previous-cycle protection PID rpm setpoint
+0x003fcf04,protection_fuel_demand_tick_snapshot,word,current fuel demand snapshot (feeds prev next tick)
+0x003fcf06,protection_action_mode_b2_snapshot,word,prev protection_action_mode bit1 (change detect)
+0x003fe9ea,protection_derate_status_shadow_flags,word,shadow of reserved_12 in diag shadow block
+0x003fea4e,protection_derate_status_snapshot,word,snapshot of reserved_12 derate bits (edge detect)
+0x003fea6c,protection_coldStart_fault_enable_bits,word,cold-start protection fault permission bits
+0x003fcf1b,fuel_demand_serial_last_sa,byte,last SA for serial fuel-demand continuity
+0x003fcf1c,fuel_demand_serial_last_seq,byte,last sequence byte for serial continuity
+0x003fcf1e,fuel_demand_serial_last_data_ptr,dword,last data pointer for serial continuity
+0x003fcf22,fuel_demand_serial_cached_word,word,cached 2-byte serial fuel-demand value
+0x003fcf3d,cold_start_protection_phase_toggle,byte,phase toggle every 0x8C crank events
+0x003fcf3e,cold_start_protection_crank_period_counter,word,crank-period countdown for phase toggle
+0x003fcf7c,protection_throttle_output_timeout_count,word,countdown clearing throttle output bit0
+0x003fcf7e,protection_load_derate_output_timeout_count,word,countdown clearing load-derate output bits 0+1
+0x003fcf80,protection_engine_protection_output_timeout_count,word,countdown clearing engine-protection output bits 0+2
+0x003fcf9a,sensor_validation_warmup_accumulator,word,sensor validation warmup count-up
+0x003fcfa2,sensor_validation_prev_snapshot,word,prev sensor validation value for stability detect
+0x003fcfaa,governor_datavalid_load_min,word,running min load during governor data validation
+0x003fcfac,governor_datavalid_load_max,word,running max load during governor data validation
+0x003fcfaf,governor_datavalid_wait_count,word,governor data-validation dwell count
+0x003fee4c,governor_datavalid_load_overload_flag,byte,load exceeds cal limit during validation
+0x003fee4d,governor_datavalid_range_pass_flag,byte,load range passed validation
+0x003fcfb8,j1939_fuel_demand_timing_fault_count,word,injection timing quality fault debounce
+0x003fcfc0,j1939_fuel_demand_crank_period_prev,dword,prev crank-period total for tick delta
+0x003fcfc4,j1939_fuel_demand_injection_timing_prev,word,prev injection timing for period delta
+0x003fdd76,j1939_fuel_demand_tick_at_target_rpm_b,dword,secondary at-target-RPM tick accumulator
+0x003fee58,j1939_fuel_demand_tick_total_b,dword,secondary total fuel-demand tick accumulator
+0x003fcfca,j1939_msg_slot_u_payload_toggle,byte,slot-U EEPROM payload buffer toggle
+0x003fcfd4,governor_mode_transition_period_counter,byte,periodic re-check counter (governor mode transition)
+0x003fcfda,j1939_msg_slot_m_switch_bits_prev,byte,prev slot-M switch input bits (edge detect)
+0x003fcfe6,rom_crc_segment_index,word,ROM CRC current segment index
+0x003fcfe8,rom_crc_segment_count,word,ROM CRC segment count per phase
+0x003fcfea,rom_crc_result_index,byte,ROM CRC result slot index (0/1)
+0x003fcfeb,rom_crc_iteration_count,word,ROM CRC iteration cycle counter
+0x003fcff0,cruise_ramp_rate_b_computed,word,computed cruise ramp rate B (normal path)
+0x003fcff4,cruise_ramp_rate_d_computed,word,computed cruise ramp rate D (normal path)
+0x003fd912,cruise_ramp_zone_b_fuel_demand_threshold,word,ROM cruise ramp zone B fuel-demand threshold
+0x003fd916,cruise_ramp_zone_d_fuel_demand_threshold,word,ROM cruise ramp zone D fuel-demand threshold
+0x003fd000,cruise_ramp_target_prev,word,previous cruise ramp target speed
+0x003fd006,cruise_setpoint_interp_prev,word,prev interpolated cruise speed setpoint
+0x003fd008,cruise_fuel_demand_ema,word,EMA fuel demand for cruise governor setpoint
+0x003fd036,fuel_demand_speed_error_prev,word,prev fuel_demand_speed_error (edge detect)
+0x003fd051,cruise_ramp_rate_control_called_flag,word,ramp-rate-control-ran-this-cycle flag
+0x003fd055,cruise_rate_correction_trigger_flag,word,cruise speed rate-correction trigger
+0x003fd930,fuel_temp_correction_scale_factor,word,ROM scale for engine temp protection input
+0x003fd05a,fuel_trim_override_latch_flag,word,fuel trim speed-override one-shot latch
+0x003fd05c,fuel_flow_rpm_divisor_prev,word,prev fuel_flow_rpm_divisor (no-change detect)
+0x003fd07c,fuel_demand_computed_snapshot,word,fuel_demand_computed snapshot for injection ratio
+0x003fd084,injection_timing_pressure_snapshot,word,injection timing pressure snapshot (cam ref a)
+0x003fd086,injection_timing_aux_offset_snapshot,word,injection timing aux offset snapshot (cam ref b)
+0x003fd0ba,tpu_protection_enable_flag,byte,TPU protection enable / restart gate
+0x003fd0bb,tpu_init_restart_pending_flag,byte,TPU one-shot restart token
+0x003fd176,protection_group21_qualifying_event_count,word,group21 qualifying event count
+0x003fd17a,protection_group21_qualifying_epoch_count,byte,group21 qualifying epoch count (max 4)
+0x003fea9c,diagnostic_status_flags_ring_snapshot,word,fault-ring shadow of diagnostic_status_flags_working
