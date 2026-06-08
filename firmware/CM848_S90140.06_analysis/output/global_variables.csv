@@ -6808,3 +6808,40 @@ address,name,type,comment
 0x003fb8f5,sensor_scan_count_c_limit,byte,spin-delay limit for sensor_scan_counter_c
 0x003fb900,engine_output_state_phase_buffer,byte,4-phase x 4-byte engine output state buffer base
 0x003fdb8e,engine_output_channel_protection_table,word,32-entry output-channel protection config base
+0x003fba2a,fuel_demand_min_rate_limited,word,rate-limited output of fuel demand max-select chain
+0x003fba2c,fuel_demand_min_rate_limiter_prev,word,prev-cycle state for fuel demand rate limiter
+0x003fba38,fuel_demand_timing_demand_ring_buf,word,150-element ring buffer base (fuel demand timing window)
+0x003fbca2,cold_start_boost_demand_above_threshold_flag,word,cold-start boost demand hysteresis comparator
+0x003fbccc,governor_speed_mode_b_active_flag,word,governor speed mode B active flag
+0x003fbcf8,throttle_trim_predictor_gain_lookup,word,throttle trim predictor gain (table lookup)
+0x003fbd1a,governor_speed_at_target_prev_flag,word,prev governor_speed_at_target_flag (edge detect)
+0x003fbd40,governor_derate_j1939_protection_active_prev,word,prev protection_active for j1939 derate edge
+0x003fbd68,fuel_demand_protection_prev_warning_state,byte,prev protection warning bit 8 (hysteresis)
+0x003fcd28,boost_demand_diag_debounce_count,word,boost demand diagnostic entry debounce
+0x003fcd7c,j1939_tsc1_timing_fault_cycle_count,word,TSC1 timing fault cycle count
+0x003fcdbe,cold_start_rpm_fuel_limit_prev,word,prev cold_start_rpm_fuel_limit (edge detect)
+0x003fcdc0,cold_start_fuel_demand_pi_correction_prev,word,prev cold_start_fuel_demand_pi_correction (edge detect)
+0x003fcdc2,cold_start_overheat_active_prev,word,prev cold_start_overheat_active_flag (edge detect)
+0x003fcde0,protection_fault_prevEnable_event43,word,prev-cycle enable byte for protection event 43
+0x003fcde2,protection_fault_prevEnable_event44,word,prev-cycle enable byte for protection event 44
+0x003fcde4,protection_fault_prevEnable_event11,word,prev-cycle enable byte for protection event 11
+0x003fcde6,protection_fault_prevEnable_event38,word,prev-cycle enable byte for protection event 38
+0x003fcde8,protection_fault_prevEnable_event53,word,prev-cycle enable byte for protection event 53
+0x003fcdea,protection_fault_prevEnable_event21,word,prev-cycle enable byte for protection event 21
+0x003fcdec,protection_fault_prevEnable_event20,word,prev-cycle enable byte for protection event 20
+0x003fcdee,protection_fault_prevEnable_event19,word,prev-cycle enable byte for protection event 19
+0x003fcdf0,protection_fault_prevEnable_event17,word,prev-cycle enable byte for protection event 17
+0x003fcdf2,protection_fault_prevEnable_event18,word,prev-cycle enable byte for protection event 18
+0x003fcdf4,protection_fault_prevEnable_event16,word,prev-cycle enable byte for protection event 16
+0x003fce14,governor_fuel_demand_p_term_prev,dword,prev P-term for governor fuel demand D-term
+0x003fce54,iat_protection_derate_steps_zero_flag,byte,set when IAT derate steps table returns 0
+0x003fce78,protection_oilTemp_source_init_done_flag,byte,one-shot oil-temp source select guard
+0x003fcea8,protection_fuel_demand_ramp_locked_flag,word,protection fuel demand ramp converged/locked
+0x003fcf5e,governor_speed_limit_floor_countdown,word,countdown clearing governor speed limit floors
+0x003fcfb2,sensor_validation_accum_table_index,byte,index into sensor validation accum table (0-3)
+0x003fcfdb,sensor_checksum_session_counter,byte,nonce counter for sensor checksum session
+0x003fd293,crank_counter_mainloop_prev,word,prev cold_start_crank_counter (mainloop change detect)
+0x003fd5d4,governor_calibration_phase_config_flags,word,ROM flags; bit 0x400 gates phase-group-A calibration
+0x003fdb88,sensor_validation_startup_accumulator,word,sensor validation accumulator during engine start
+0x003fdb92,protection_j1939_mode_enable_flag,word,ROM flag gating J1939-triggered protection mode bit 2
+0x003feccc,diag_serial_crc_match_flag,byte,serial response CRC16 match result
