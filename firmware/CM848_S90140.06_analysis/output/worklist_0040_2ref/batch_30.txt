@@ -1,0 +1,49 @@
+=== VARIABLES TO NAME ===
+0x00408758  (2 references)
+0x0040875e  (2 references)
+0x0040876c  (2 references)
+
+Total: 3 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00408758, DAT_0040875e, DAT_0040876c
+void engine_coolant_overheat_check(void)
+
+{
+  if ((short)DAT_0040876c < (short)sensor_readings_t_0040baf2.coolant_temp) {
+    coolant_overheat_debounce_count = coolant_overheat_debounce_count + 1;
+  }
+  else {
+    coolant_overheat_debounce_count = 0;
+  }
+  if (DAT_0040875e < coolant_overheat_debounce_count) {
+    cold_start_coolant_temp_setpoint = DAT_0040876c;
+    cold_start_overheat_active_flag = 1;
+    engine_diag_shadow_flags = engine_diag_shadow_flags | 0x40;
+    coolant_overheat_debounce_count = DAT_0040875e;
+    cold_start_fuel_limit_reason_code = 3;
+  }
+  if (((engine_diag_shadow_flags & 0x40) == 0) ||
+     (DAT_00408756 <= (short)sensor_readings_t_0040baf2.coolant_temp)) {
+    coolant_overheat_recovery_count = 0;
+  }
+  else {
+    coolant_overheat_recovery_count = coolant_overheat_recovery_count + 1;
+  }
+  if (DAT_00408758 < coolant_overheat_recovery_count) {
+    cold_start_overheat_active_flag = 0;
+    engine_diag_shadow_flags = engine_diag_shadow_flags & 0xffbf;
+    engine_diag_shadow_flags_b = engine_diag_shadow_flags_b & 0xffbf;
+    coolant_overheat_recovery_count = DAT_00408758;
+    cold_start_fuel_limit_reason_code = 4;
+  }
+  return;
+}
+
+
+
+//
+// Function: engine_sensor_check_overheat @ 0x0051375c
+//
+

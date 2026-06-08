@@ -1,0 +1,55 @@
+=== VARIABLES TO NAME ===
+0x0040675e  (2 references)
+0x00406760  (2 references)
+0x00406762  (2 references)
+
+Total: 3 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040675e, DAT_00406760, DAT_00406762
+void cm848_phase_groupA_exponentialAverage(void)
+
+{
+  uint uVar1;
+  
+  uVar1 = (int)(CONCAT44((int)((ulonglong)
+                               ((longlong)(int)DAT_00406760 *
+                               (longlong)(int)(uint)engine_rpm_state_t_0040b7ac.current_rpm) >> 0x20
+                              ),(int)DAT_00406760 * (uint)engine_rpm_state_t_0040b7ac.current_rpm) /
+               0x400) +
+          (int)(CONCAT44((int)((ulonglong)
+                               ((longlong)(int)DAT_0040675e *
+                               (longlong)(int)(short)boost_pressure_filtered) >> 0x20),
+                         (int)DAT_0040675e * (int)(short)boost_pressure_filtered) / 0x1000) +
+          (int)(CONCAT44((int)((ulonglong)
+                               ((longlong)(int)DAT_00406762 *
+                               (longlong)(int)(uint)map_fuel_correction_factor) >> 0x20),
+                         (int)DAT_00406762 * (uint)map_fuel_correction_factor) / 0x1000) +
+          (int)DAT_0040675c;
+  if ((int)uVar1 < 0) {
+    uVar1 = 0;
+  }
+  else if (0xffff < (int)uVar1) {
+    uVar1 = 0xffff;
+  }
+  boost_pressure_synthetic_ema = exponentialMovingAverage(uVar1 & 0xffff,&PTR_DAT_003fbce2);
+  if ((((engine_feature_enable_flags & 0x2000) == 0) || (boost_correction_block_flag == 2)) ||
+     (fuel_demand_mode_index == 2)) {
+    boost_correction_mode_flags = 0x80;
+  }
+  else if ((boost_correction_block_flag == 1) || (fuel_demand_mode_index == 1)) {
+    boost_correction_mode_flags = 0x40;
+  }
+  else {
+    boost_correction_mode_flags = 0;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_initialization_step_12 @ 0x00506c94
+//
+

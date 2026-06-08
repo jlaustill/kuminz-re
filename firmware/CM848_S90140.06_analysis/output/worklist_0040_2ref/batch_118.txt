@@ -1,0 +1,39 @@
+=== VARIABLES TO NAME ===
+0x0040bbf0  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040bbf0
+void cm848_mainLoopDispatcher(void)
+
+{
+  ushort *puVar1;
+  ushort uVar2;
+  uint uVar3;
+  
+  uVar3 = 0;
+  puVar1 = (ushort *)0x3fda76;
+  do {
+    puVar1 = puVar1 + 1;
+    if (*(&PTR_DAT_00057dd6)[(uint)*puVar1 * 2] == '\0') {
+      uVar2 = 0;
+    }
+    else {
+      uVar2 = (ushort)(1 << (uVar3 + (((int)uVar3 >> 4) +
+                                     (uint)((int)uVar3 < 0 && (uVar3 & 0xf) != 0)) * -0x10 & 0x3f));
+    }
+    (&DAT_0040bbf0)[((int)uVar3 >> 4) + (uint)((int)uVar3 < 0 && (uVar3 & 0xf) != 0)] =
+         uVar2 | (&DAT_0040bbf0)[((int)uVar3 >> 4) + (uint)((int)uVar3 < 0 && (uVar3 & 0xf) != 0)];
+    uVar3 = uVar3 + 1;
+  } while ((int)uVar3 < 0x80);
+  return;
+}
+
+
+
+//
+// Function: sensorChannelConditionValidator @ 0x00537b50
+//
+

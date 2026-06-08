@@ -1,0 +1,84 @@
+=== VARIABLES TO NAME ===
+0x00409ec6  (2 references)
+0x00409ecc  (2 references)
+0x00409ed0  (2 references)
+
+Total: 3 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00409ec6, DAT_00409ecc, DAT_00409ed0
+void cm848_main_loop_protection_eval(void)
+
+{
+  bool bVar1;
+  bool bVar2;
+  
+  protection_eval_subcycle_counter = protection_eval_subcycle_counter + 1;
+  if (3 < protection_eval_subcycle_counter) {
+    protection_eval_subcycle_counter = 0;
+    bVar2 = (protection_enable_t_0040c050.mode_bits & 1) != 0;
+    if ((protection_eval_mode_active_prev == 0) && (bVar2)) {
+      protection_mode_enable_prev = 0;
+      protection_eval_elapsed_count = 0;
+    }
+    if (bVar2) {
+      bVar1 = DAT_00409ed0 <= protection_eval_elapsed_count;
+      protection_eval_elapsed_count = protection_eval_elapsed_count + 1;
+      if (bVar1) {
+        protection_eval_elapsed_count = DAT_00409ed0;
+        protection_eval_elapsed_done_flag = 1;
+      }
+    }
+    else {
+      protection_mode_enable_prev = 1;
+      protection_eval_elapsed_done_flag = 0;
+    }
+    protection_eval_mode_active_prev = bVar2;
+    if (protection_eval_elapsed_done_flag != 0) {
+      if (((engine_diag_shadow_flags & 0x4000) != 0) &&
+         (DAT_00409ec6 < eeprom_header_t_003fee08.calibration_block1[1])) {
+        protection_fuel_temp_integration_active_flag = 1;
+        engine_diag_shadow_flags = engine_diag_shadow_flags & 0xbfff;
+        engine_diag_shadow_flags_b = engine_diag_shadow_flags_b & 0xbfff;
+      }
+      if (calibBlock1_warmup_pending_flag == 1) {
+        protection_mode_enable_prev = 1;
+      }
+      if ((((protection_mode_enable_prev == 0) && (calibBlock1_warmup_pending_flag == 0)) &&
+          (protection_fuel_temp_integration_active_flag == 1)) &&
+         (((protection_feature_status_flags & 0x20) != 0 && ((operating_mode_flags & 4) != 0)))) {
+        if (eeprom_header_t_003fee08.calibration_block1[1] < DAT_00409ec6) {
+          engine_diag_shadow_flags = engine_diag_shadow_flags | 0x2000;
+          protection_fuel_temp_integration_accumulator =
+               protection_fuel_temp_integration_accumulator +
+               ((int)((ulonglong)(uint)fuel_temperature_trim * (ulonglong)DAT_00409ecc >> 0x20) <<
+                0x1c | fuel_temperature_trim * DAT_00409ecc >> 4);
+        }
+        else {
+          protection_fuel_temp_integration_accumulator = 0;
+          engine_diag_shadow_flags = engine_diag_shadow_flags & 0xdfff;
+          engine_diag_shadow_flags_b = engine_diag_shadow_flags_b & 0xdfff;
+        }
+        if (DAT_00409ec8 < protection_fuel_temp_integration_accumulator) {
+          engine_diag_shadow_flags = engine_diag_shadow_flags & 0xdfff | 0x4000;
+          engine_diag_shadow_flags_b = engine_diag_shadow_flags_b & 0xdfff;
+          protection_fuel_temp_integration_active_flag = 0;
+        }
+      }
+      if ((((power_state_status_flags & 0x2000) != 0) || ((power_state_status_flags & 0x4000) != 0))
+         && ((engine_diag_shadow_flags & 0x2000) != 0)) {
+        engine_diag_shadow_flags = engine_diag_shadow_flags & 0xdfff;
+        engine_diag_shadow_flags_b = engine_diag_shadow_flags_b & 0xdfff;
+      }
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_initialization_group13_state_cont @ 0x00530968
+//
+

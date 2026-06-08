@@ -1,0 +1,82 @@
+=== VARIABLES TO NAME ===
+0x004067e0  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_004067e0
+void governor_speedStability_counter_syncDiag(void)
+
+{
+  bool bVar1;
+  bool bVar2;
+  word wVar3;
+  uint uVar4;
+  
+  if (governor_speed_stability_conditions_flag == 0) {
+    governor_speed_stability_sample_counter = 0;
+LAB_005073d8:
+    governor_speed_sync_stable_flag = 0;
+  }
+  else {
+    if (DAT_004067dc != governor_speed_stability_sample_counter) {
+      governor_speed_stability_sample_counter = governor_speed_stability_sample_counter + 1;
+      goto LAB_005073d8;
+    }
+    governor_speed_sync_stable_flag = 1;
+  }
+  if ((governor_speed_sync_stable_flag == 0) ||
+     (governor_speed_deviation_exceeds_threshold_flag == 0)) {
+    bVar2 = false;
+  }
+  else {
+    bVar2 = true;
+  }
+  if ((governor_speed_sync_stable_flag == 0) ||
+     (governor_speed_deviation_exceeds_threshold_flag != 0)) {
+    bVar1 = false;
+  }
+  else {
+    bVar1 = true;
+  }
+  uVar4 = (uint)governor_speed_stability_diag_trip_count;
+  if (DAT_003fd7fa == 0) {
+    wVar3 = governor_speed_stability_diag_counter;
+    if ((!bVar2) && (!bVar1)) goto LAB_005074d0;
+    if (!bVar1) {
+      wVar3 = governor_speed_stability_diag_trip_count;
+      if ((governor_speed_stability_diag_count_increment <= uVar4) &&
+         (wVar3 = governor_speed_stability_diag_trip_count,
+         (int)(uint)governor_speed_stability_diag_counter <=
+         (int)(uVar4 - governor_speed_stability_diag_count_increment))) {
+        wVar3 = governor_speed_stability_diag_counter +
+                governor_speed_stability_diag_count_increment;
+      }
+      goto LAB_005074d0;
+    }
+    if (bVar2) goto LAB_005074d0;
+    if (DAT_004067e0 < governor_speed_stability_diag_counter) {
+      wVar3 = governor_speed_stability_diag_counter - DAT_004067e0;
+      goto LAB_005074d0;
+    }
+  }
+  wVar3 = 0;
+LAB_005074d0:
+  governor_speed_stability_diag_counter = wVar3;
+  if (uVar4 <= governor_speed_stability_diag_counter) {
+    diagnostic_status_bits = diagnostic_status_bits | 0x20;
+  }
+  if (governor_speed_stability_diag_counter <= DAT_004067e6) {
+    diagnostic_status_bits = diagnostic_status_bits & 0xffdf;
+    sensor_fault_status_flags = sensor_fault_status_flags & 0xffdf;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_calibrationGroup11_periodic @ 0x00507548
+//
+

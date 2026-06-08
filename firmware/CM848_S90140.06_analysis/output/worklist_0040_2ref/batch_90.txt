@@ -1,0 +1,35 @@
+=== VARIABLES TO NAME ===
+0x0040a75e  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040a75e
+void hpcr_initFuelTemperatureSensorChannel(void)
+
+{
+  PTR_fuel_temp_raw_0040a734 = (undefined *)&fuel_temp_raw;
+  PTR_DAT_0040a73e = (undefined *)&DAT_000597bc;
+  PTR_DAT_0040a742 = (undefined *)&DAT_000597be;
+  PTR_DAT_0040a746 = &DAT_000597c0;
+  PTR_DAT_0040a75e = &DAT_003fe006;
+  PTR_DAT_0040a75a = &DAT_003fe006;
+  if ((DAT_000597b2 & 0x1000) == 0) {
+    PTR_DAT_0040a75e = &DAT_003fe02e;
+  }
+  engine_torqueLimit_workingState_init();
+  engine_protection_torqueLimit_reset();
+  cm848_completeEngineStartSequence();
+  exception_resetProtectionModeState();
+  cm848_initSensorChannelDataStructures();
+  governor_faultDerate_task_index = 0;
+  return;
+}
+
+
+
+//
+// Function: protection_threshold_check @ 0x00507ebc
+//
+

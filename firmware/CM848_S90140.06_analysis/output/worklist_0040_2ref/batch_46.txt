@@ -1,0 +1,30 @@
+=== VARIABLES TO NAME ===
+0x00408b2c  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00408b2c
+void cm848_throttleSetpoint_limit(uint param_1)
+
+{
+  uint uVar1;
+  
+  uVar1 = (uint)DAT_00408b2e;
+  if (((int)uVar1 <= (int)param_1) && (uVar1 = param_1, (int)(uint)DAT_00408b2c < (int)param_1)) {
+    uVar1 = (uint)DAT_00408b2c;
+  }
+  protection_throttle_setpoint = (word)uVar1;
+  return;
+}
+
+
+
+//
+// Function: cm848_throttleGain_loadBased_calc @ 0x0051c6c8
+//
+
+/* WARNING: Function: cm848_signedDivision32 replaced with injection: sdiv64by32 */
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

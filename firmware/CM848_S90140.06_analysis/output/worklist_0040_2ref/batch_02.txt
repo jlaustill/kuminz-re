@@ -1,0 +1,78 @@
+=== VARIABLES TO NAME ===
+0x004059f4  (2 references)
+0x00405a9e  (2 references)
+0x0040a54e  (2 references)
+0x0040a558  (2 references)
+0x0040afb6  (2 references)
+0x0040afb8  (2 references)
+
+Total: 6 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_004059f4, DAT_00405a9e, DAT_0040a54e, DAT_0040a558
+void cm848_auxiliaryControl_tableInterpolation(void)
+
+{
+  int iVar1;
+  int iVar2;
+  
+  fuel_load_offset_gain_rpm =
+       cm848_dualAxisTableInterpolation
+                 (&DAT_003fba08,engine_rpm_state_t_0040b7ac.current_rpm,0x5aa0);
+  iVar2 = (short)(engine_load_normalized_prev - fuel_demand_calc_c) * 10;
+  iVar2 = (int)(CONCAT44((int)((ulonglong)
+                               ((longlong)(int)(short)fuel_load_offset_gain_rpm * (longlong)iVar2)
+                              >> 0x20),(short)fuel_load_offset_gain_rpm * iVar2) / 0x173);
+  iVar1 = (int)DAT_00405a9c;
+  if ((iVar1 <= iVar2) && (iVar1 = iVar2, DAT_00405a9e < iVar2)) {
+    iVar1 = (int)DAT_00405a9e;
+  }
+  fuel_demand_offset_correction = (word)iVar1;
+  DAT_0040a556 = fuel_demand_offset_correction + engine_load_input_b;
+  DAT_0040a558 = cm848_dualAxisTableInterpolation
+                           (&DAT_003fba0c,engine_rpm_state_t_0040b7ac.current_rpm,0x5d52);
+  DAT_003fba10 = (short)(CONCAT44((int)((ulonglong)
+                                        ((longlong)(int)(short)fuel_demand_rpm_correction_lookup *
+                                        (longlong)(int)DAT_004059f4) >> 0x20),
+                                  (int)(short)fuel_demand_rpm_correction_lookup * (int)DAT_004059f4)
+                        / 0x800);
+  DAT_0040a54e = (DAT_0040a558 - fuel_demand_blend_adjusted) - DAT_003fba10;
+  return;
+}
+
+
+
+//
+// Function: fuel_boostTrim_ramVars_init @ 0x00503b2c
+//
+
+// Variables in this function: DAT_0040a54e, DAT_0040afb6, DAT_0040afb8
+void cm848_applyProtectionRpmCorrectionFilter(void)
+
+{
+  short sVar1;
+  
+  fuel_demand_rpm_correction_lookup =
+       cm848_dualAxisTableInterpolation
+                 (&protection_rpm_correction_interp_state,engine_rpm_state_t_0040b7ac.current_rpm,
+                  0x5d52);
+  DAT_0040afb8 = cm848_dualAxisTableInterpolation
+                           (&protection_rpm_correction_interp_state,
+                            engine_rpm_state_t_0040b7ac.current_rpm,0x5d52);
+  DAT_0040afb6 = fuel_demand_rpm_correction_lookup - DAT_0040afb8;
+  DAT_0040afba = DAT_0040afb6 + fuel_demand_blend_adjusted;
+  fuel_demand_aux_blend_deviation = DAT_0040a54e;
+  sVar1 = cm848_dualAxisTableInterpolation
+                    (&protection_rpm_correction_interp_state,engine_rpm_state_t_0040b7ac.current_rpm
+                     ,0x5d52);
+  DAT_0040afbc = fuel_demand_aux_blend_deviation - sVar1;
+  return;
+}
+
+
+
+//
+// Function: cm848_initThrottleRateFilterState @ 0x0050ebf0
+//
+

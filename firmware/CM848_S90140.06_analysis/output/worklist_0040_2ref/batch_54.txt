@@ -1,0 +1,28 @@
+=== VARIABLES TO NAME ===
+0x00408e6a  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00408e6a
+void governor_cruise_torqueLimit_calc(void)
+
+{
+  uint uVar1;
+  
+  uVar1 = ((((uint)protection_timing_period_cal * (uint)protection_temp_scale_factor) / 0x3c &
+           0xffff) * 100 >> 7) * (uint)DAT_00408e60 >> 10;
+  if (DAT_00408e6a < uVar1) {
+    uVar1 = (uint)DAT_00408e6a;
+  }
+  cruise_torque_limit_scale = (word)uVar1;
+  return;
+}
+
+
+
+//
+// Function: governor_cruise_speedError_torqueAdj @ 0x00525134
+//
+

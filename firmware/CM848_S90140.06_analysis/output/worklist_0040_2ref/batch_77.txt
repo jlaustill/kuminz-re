@@ -1,0 +1,85 @@
+=== VARIABLES TO NAME ===
+0x0040a0a0  (2 references)
+0x0040b64a  (2 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040a0a0
+void oilTemp_sensorSource_select(void)
+
+{
+  word *pwVar1;
+  
+  if ((sensor_channel10_ram._0_2_ < DAT_0005952c) || (DAT_0005952a < sensor_channel10_ram._0_2_)) {
+    if ((DAT_000593e4 <= (short)sensor_channelGeneric_raw) &&
+       ((short)sensor_channelGeneric_raw <= DAT_000593e2)) {
+      iat_protection_oilTemp_input = DAT_0040a0a0;
+      return;
+    }
+    pwVar1 = &DAT_0005c7ac;
+  }
+  else {
+    pwVar1 = (word *)((int)&sensor_channel10_ram + 2);
+  }
+  iat_protection_oilTemp_input = *pwVar1;
+  return;
+}
+
+
+
+//
+// Function: protection_oilTemp_source_update @ 0x005183b4
+//
+
+// Variables in this function: DAT_0040b64a
+void governorSpeedCompensation(void)
+
+{
+  if ((governor_active_flag_b648 != 0) && (cold_start_phase == CSP_AT_GOVERNOR_SETPOINT)) {
+    if ((((governor_feature_config_flags & 8) == 0) ||
+        (((DAT_00408d78 < DAT_0040b64a ||
+          ((system_status_flags_t_003fe974.condition_monitor & 0x2000) != 0)) ||
+         (fuel_correction_mode_flag == 0)))) ||
+       ((DAT_00408d7c < fuel_temp_trim_snapshot || (governor_speed_compensation_steps == 0)))) {
+      governor_active_flag_b648 = 0;
+    }
+    else {
+      governor_speed_compensation_steps = governor_speed_compensation_steps - 1;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: initGovernorSpeedControl @ 0x00523858
+//
+
+// Variables in this function: DAT_0040a0a0, DAT_0040b64a
+void initGovernorSpeedControl(void)
+
+{
+  word wVar1;
+  
+  DAT_0040b64a = DAT_0040a0a0;
+  governor_active_flag_b648 = 1;
+  DAT_003fcfc6 = 2;
+  wVar1 = DAT_00408d7a;
+  if ((((system_status_flags_t_003fe974.condition_monitor & 1) == 0) &&
+      ((system_status_flags_t_003fe974.condition_monitor & 2) == 0)) &&
+     ((protection_monitor_shadow & 2) == 0)) {
+    wVar1 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fcfc6);
+  }
+  governor_speed_compensation_steps = wVar1;
+  return;
+}
+
+
+
+//
+// Function: j1939_msgSlotM_switchInputBits_update @ 0x0052390c
+//
+

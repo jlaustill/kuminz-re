@@ -1,0 +1,67 @@
+=== VARIABLES TO NAME ===
+0x004077c0  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_004077c0
+void governor_rpm_monitor_calc(void)
+
+{
+  dword dVar1;
+  word wVar2;
+  int iVar3;
+  
+  if (((engine_feature_status_flags_2 & 1) != 0) && ((diagnostic_status_flags & 0x100) == 0)) {
+    wVar2 = governor_fuel_control_limit_active;
+    if ((short)governor_fuel_control_limit_active < 0) {
+      wVar2 = -governor_fuel_control_limit_active;
+    }
+    governor_b_fuel_limit_biased = DAT_004077c2 + wVar2;
+    if (-1 < (short)governor_b_fuel_limit_biased) {
+      governor_b_timing_error_scaled =
+           (int)((int)(short)governor_b_fuel_limit_biased * (uint)fuel_timing_error_scale) >> 7;
+      goto LAB_00510114;
+    }
+  }
+  governor_b_timing_error_scaled = 0;
+LAB_00510114:
+  iVar3 = (int)(short)governor_b_ema_offset_prev;
+  governor_b_ema_offset_prev = protection_ema_cal_offset;
+  dVar1 = (int)(((short)protection_ema_cal_offset - iVar3) * (uint)DAT_004077c4) >> 10;
+  governor_b_ema_offset_delta_scaled = 0xffff0600;
+  if ((-0xfa01 < (int)dVar1) && (governor_b_ema_offset_delta_scaled = dVar1, 64000 < (int)dVar1)) {
+    governor_b_ema_offset_delta_scaled = 64000;
+  }
+  if (governor_b_engine_flag_80_prev == 0) {
+    governor_b_ema_offset_delta_scaled = -governor_b_ema_offset_delta_scaled;
+  }
+  governor_b_engine_flag_80_prev = engine_feature_status_flags & 0x80;
+  DAT_0040b090 = (short)((int)governor_b_ema_offset_delta_scaled >> 1);
+  governor_b_timing_ema_deviation =
+       governor_b_timing_error_scaled - governor_b_ema_offset_delta_scaled;
+  if ((int)governor_b_timing_ema_deviation < 0) {
+    governor_b_timing_ema_deviation = -governor_b_timing_ema_deviation;
+  }
+  governor_b_boost_normalization_factor =
+       ((uint)governor_b_boost_demand_ema_eighth * (uint)DAT_004077d2 >> 10) + (uint)DAT_004077d0;
+  if (16000 < governor_b_boost_normalization_factor) {
+    governor_b_boost_normalization_factor = 16000;
+  }
+  DAT_0040b088 = (short)governor_b_boost_normalization_factor;
+  governor_b_timing_deviation_normalized =
+       (governor_b_timing_ema_deviation << 10) / governor_b_boost_normalization_factor;
+  if (DAT_004077c0 < governor_b_timing_deviation_normalized) {
+    governor_b_timing_deviation_normalized = (uint)DAT_004077c0;
+  }
+  governor_rpm_monitored = (word)governor_b_timing_deviation_normalized;
+  return;
+}
+
+
+
+//
+// Function: phase_group_b_filterGovernorRpmSquaredMovingAverage @ 0x0051027c
+//
+

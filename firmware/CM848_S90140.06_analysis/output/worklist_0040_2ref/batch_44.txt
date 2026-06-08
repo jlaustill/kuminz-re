@@ -1,0 +1,109 @@
+=== VARIABLES TO NAME ===
+0x00408afc  (2 references)
+0x00408b02  (2 references)
+0x00408b08  (2 references)
+0x00408b0c  (2 references)
+0x00408b12  (2 references)
+0x00408b18  (2 references)
+0x0040b59e  (2 references)
+
+Total: 7 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00408afc, DAT_00408b02, DAT_00408b08, DAT_00408b0c, DAT_00408b12, DAT_00408b18, DAT_0040b59e
+void cm848_throttleGain_loadBased_calc(void)
+
+{
+  uint uVar1;
+  int iVar2;
+  
+  if ((short)protection_load_input < DAT_00408b22) {
+    uVar1 = protection_throttle_error;
+    if ((int)protection_throttle_error < 0) {
+      uVar1 = -protection_throttle_error;
+    }
+    if ((uint)DAT_00408b14 < (uVar1 & 0xffff)) {
+      iVar2 = (int)(CONCAT44((int)((ulonglong)
+                                   ((longlong)(int)protection_throttle_error *
+                                   (longlong)(int)((uint)DAT_00408b18 * 0x100)) >> 0x20),
+                             protection_throttle_error * (uint)DAT_00408b18 * 0x100) /
+                   (longlong)((ulonglong)DAT_00408b16 << 7));
+    }
+    else {
+      uVar1 = protection_throttle_error;
+      if ((int)protection_throttle_error < 0) {
+        uVar1 = -protection_throttle_error;
+      }
+      if ((uint)DAT_00408b0e < (uVar1 & 0xffff)) {
+        iVar2 = (int)(CONCAT44((int)((ulonglong)
+                                     ((longlong)(int)protection_throttle_error *
+                                     (longlong)(int)((uint)DAT_00408b12 * 0x100)) >> 0x20),
+                               protection_throttle_error * (uint)DAT_00408b12 * 0x100) /
+                     (longlong)((ulonglong)DAT_00408b10 << 7));
+      }
+      else {
+        iVar2 = (int)(CONCAT44((int)((ulonglong)
+                                     ((longlong)(int)protection_throttle_error *
+                                     (longlong)(int)((uint)DAT_00408b0c * 0x100)) >> 0x20),
+                               protection_throttle_error * (uint)DAT_00408b0c * 0x100) /
+                     (longlong)((ulonglong)DAT_00408b0a << 7));
+      }
+    }
+  }
+  else {
+    uVar1 = protection_throttle_error;
+    if ((int)protection_throttle_error < 0) {
+      uVar1 = -protection_throttle_error;
+    }
+    if ((uint)DAT_00408b04 < (uVar1 & 0xffff)) {
+      iVar2 = (int)(CONCAT44((int)((ulonglong)
+                                   ((longlong)(int)protection_throttle_error *
+                                   (longlong)(int)((uint)DAT_00408b08 * 0x100)) >> 0x20),
+                             protection_throttle_error * (uint)DAT_00408b08 * 0x100) /
+                   (longlong)((ulonglong)DAT_00408b06 << 7));
+    }
+    else {
+      uVar1 = protection_throttle_error;
+      if ((int)protection_throttle_error < 0) {
+        uVar1 = -protection_throttle_error;
+      }
+      if ((uint)DAT_00408afe < (uVar1 & 0xffff)) {
+        iVar2 = (int)(CONCAT44((int)((ulonglong)
+                                     ((longlong)(int)protection_throttle_error *
+                                     (longlong)(int)((uint)DAT_00408b02 * 0x100)) >> 0x20),
+                               protection_throttle_error * (uint)DAT_00408b02 * 0x100) /
+                     (longlong)((ulonglong)DAT_00408b00 << 7));
+      }
+      else {
+        iVar2 = (int)(CONCAT44((int)((ulonglong)
+                                     ((longlong)(int)protection_throttle_error *
+                                     (longlong)(int)((uint)DAT_00408afc * 0x100)) >> 0x20),
+                               protection_throttle_error * (uint)DAT_00408afc * 0x100) /
+                     (longlong)((ulonglong)DAT_00408afa << 7));
+      }
+    }
+  }
+  if (iVar2 < 0x6401) {
+    if (iVar2 < -0x6400) {
+      iVar2 = -0x6400;
+    }
+  }
+  else {
+    iVar2 = 0x6400;
+  }
+  DAT_0040b59e = (short)iVar2;
+  _throttle_setpoint_limit_arg = (uint)protection_throttle_setpoint + (int)DAT_0040b59e;
+  cm848_throttleSetpoint_limit(_throttle_setpoint_limit_arg);
+  return;
+}
+
+
+
+//
+// Function: cm848_throttleGain_velocityBased_calc @ 0x0051c948
+//
+
+/* WARNING: Function: cm848_signedDivision32 replaced with injection: sdiv64by32 */
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

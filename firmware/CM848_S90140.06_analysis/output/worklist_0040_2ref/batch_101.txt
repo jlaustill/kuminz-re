@@ -1,0 +1,202 @@
+=== VARIABLES TO NAME ===
+0x0040b300  (2 references)
+0x0040b302  (2 references)
+0x0040b9ac  (2 references)
+
+Total: 3 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040b300, DAT_0040b302, DAT_0040b9ac
+void tpu_rpm_measurement_control(void)
+
+{
+  word wVar1;
+  uint uVar2;
+  
+  if (engine_sync_type_code == 0x13ec) {
+    uVar2 = tpu_rpm_crank_teeth_isb & 0xff;
+    if (tpu_rpm_isb_setup_done_flag == 0) {
+      tpu_rpm_raw_period =
+           (dword)(CONCAT44((int)((ulonglong)((uint)tpu_rpm_crank_teeth_isb * 0x3c) * 1000000 >>
+                                 0x20),(uint)tpu_rpm_crank_teeth_isb * 60000000) /
+                  (ulonglong)tpu_rpm_timer_prescaler);
+      wVar1 = tpu_b_mcr.CIER;
+      tpu_b_mcr.CIER = wVar1 & 0xfdff;
+      wVar1 = tpu_b_mcr.CPR0;
+      tpu_b_mcr.CPR0 = wVar1 & 0xfff3;
+      wVar1 = tpu_b_mcr.CIER;
+      tpu_b_mcr.CIER = wVar1 & 0xfdff;
+      wVar1 = tpu_b_mcr.CISR;
+      tpu_b_mcr.CISR = wVar1 & 0xfdff;
+      wVar1 = tpu_b_mcr.CFSR1;
+      tpu_b_mcr.CFSR1 = wVar1 & 0xff0f | 0xd0;
+      DAT_00304592 = tpu_rpm_crank_teeth_isb << 8;
+      DAT_00304596 = 0;
+      DAT_00304598 = 0;
+      TPUB_CH9_PARAM0 = 0xb;
+      wVar1 = tpu_b_mcr.HSQR0;
+      tpu_b_mcr.HSQR0 = wVar1 & 0xfff3 | 0xc;
+      tpu_b_mcr.HSRR0 = 0xc;
+      wVar1 = tpu_b_mcr.CPR0;
+      tpu_b_mcr.CPR0 = wVar1 & 0xfff3 | 8;
+      wVar1 = tpu_b_mcr.CIER;
+      tpu_b_mcr.CIER = wVar1 | 0x200;
+      tpu_rpm_isb_setup_done_flag = 1;
+    }
+    tpu_rpm_isb_was_active_flag = 1;
+  }
+  else {
+    uVar2 = (uint)tpu_rpm_crank_teeth_non_isb;
+    if (tpu_rpm_isb_was_active_flag != 0) {
+      tpu_rpm_raw_period =
+           (dword)(CONCAT44((int)((ulonglong)(uVar2 * 0x3c) * 1000000 >> 0x20),uVar2 * 60000000) /
+                  (ulonglong)tpu_rpm_timer_prescaler);
+      wVar1 = tpu_b_mcr.CIER;
+      tpu_b_mcr.CIER = wVar1 & 0xfdff;
+      wVar1 = tpu_b_mcr.CPR0;
+      tpu_b_mcr.CPR0 = wVar1 & 0xfff3;
+      wVar1 = tpu_b_mcr.CIER;
+      tpu_b_mcr.CIER = wVar1 & 0xfdff;
+      wVar1 = tpu_b_mcr.CISR;
+      tpu_b_mcr.CISR = wVar1 & 0xfdff;
+      wVar1 = tpu_b_mcr.CFSR1;
+      tpu_b_mcr.CFSR1 = wVar1 & 0xff0f | 0xd0;
+      DAT_00304592 = (ushort)tpu_rpm_crank_teeth_non_isb << 8;
+      DAT_00304596 = 0;
+      DAT_00304598 = 0;
+      TPUB_CH9_PARAM0 = 0xb;
+      wVar1 = tpu_b_mcr.HSQR0;
+      tpu_b_mcr.HSQR0 = wVar1 & 0xfff3 | 0xc;
+      tpu_b_mcr.HSRR0 = 0xc;
+      wVar1 = tpu_b_mcr.CPR0;
+      tpu_b_mcr.CPR0 = wVar1 & 0xfff3 | 8;
+      wVar1 = tpu_b_mcr.CIER;
+      tpu_b_mcr.CIER = wVar1 | 0x200;
+      tpu_rpm_isb_was_active_flag = 0;
+    }
+    tpu_rpm_isb_setup_done_flag = 0;
+  }
+  if (tpu_rpm_startup_blank_countdown != 0) {
+    tpu_rpm_startup_blank_countdown = tpu_rpm_startup_blank_countdown - 1;
+  }
+  if (tpu_rpm_startup_blank_countdown == 0) {
+    uVar2 = 0;
+  }
+  else if (tpu_rpm_reference_period < (DAT_004088d2 * uVar2) / (uint)tpu_rpm_timer_prescaler) {
+    uVar2 = (uint)DAT_004088c8;
+  }
+  else if ((DAT_004088ce * uVar2) / (uint)tpu_rpm_timer_prescaler < tpu_rpm_reference_period) {
+    uVar2 = (uint)DAT_004088ca;
+  }
+  else {
+    uVar2 = (uint)(CONCAT44(tpu_rpm_raw_period >> 0x1d,tpu_rpm_raw_period << 3) /
+                  (ulonglong)tpu_rpm_reference_period);
+  }
+  DAT_0040b2f6 = (undefined2)uVar2;
+  tpu_rpm_ema_filtered = exponentialMovingAverage(uVar2 & 0xffff,&PTR_DAT_0040b302);
+  wVar1 = rpm_camSync_window_mid;
+  if (DAT_004088da != 0) {
+    tpu_rpm_ema_filtered = DAT_004088dc;
+  }
+  if ((DAT_0040b300 != '\0') && (engine_sync_type_code == 0x13ec)) {
+    DAT_0040b9ac = rpm_camSync_window_mid;
+    rpm_camSync_window_mid = rpm_camSync_window_latest;
+    rpm_camSync_window_latest = tpu_rpm_ema_filtered;
+    if (wVar1 != 0) {
+      rpm_camSync_new_sample_ready_flag = 1;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: tpu_rpm_measurement_initialize @ 0x005161c0
+//
+
+/* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+
+// Variables in this function: DAT_0040b300, DAT_0040b302
+void tpu_rpm_measurement_initialize(void)
+
+{
+  uint uVar1;
+  
+  DAT_0040b300 = 1;
+  DAT_0040b306 = 0;
+  PTR_DAT_0040b302 = &DAT_004088cc;
+  if (engine_sync_type_code == 0x13ec) {
+    uVar1 = (uint)tpu_rpm_crank_teeth_isb;
+  }
+  else {
+    uVar1 = (uint)tpu_rpm_crank_teeth_non_isb;
+  }
+  tpu_rpm_raw_period =
+       (dword)(CONCAT44((int)((ulonglong)(uVar1 * 0x3c) * 1000000 >> 0x20),uVar1 * 60000000) /
+              (ulonglong)tpu_rpm_timer_prescaler);
+  return;
+}
+
+
+
+//
+// Function: tpu_rpm_timer_setup @ 0x005162ec
+//
+
+// Variables in this function: DAT_0040b9ac
+undefined4 engine_camSync_sampleRatio_validate(void)
+
+{
+  undefined4 uVar1;
+  int iVar2;
+  byte local_8 [4];
+  
+  if ((cam_sync_protection_state_flags & 0xc0) == 0) {
+    uVar1 = 5;
+  }
+  else {
+    cam_sync_sample_ratio_dwell_count = cam_sync_sample_ratio_dwell_count + 1;
+    if (rpm_camSync_new_sample_ready_flag != 0) {
+      iVar2 = (int)((uint)rpm_camSync_window_latest + (uint)DAT_0040b9ac) >> 1;
+      if (((int)(uint)DAT_000642f4 < (int)((uint)rpm_camSync_window_mid - iVar2)) ||
+         ((int)(uint)DAT_000642f6 < (int)(iVar2 - (uint)rpm_camSync_window_mid))) {
+        rpm_camSync_invalid_sample_count = rpm_camSync_invalid_sample_count + 1;
+      }
+      else {
+        rpm_camSync_valid_sample_count = rpm_camSync_valid_sample_count + 1;
+      }
+      rpm_camSync_new_sample_ready_flag = 0;
+    }
+    if (DAT_000642f8 < cam_sync_sample_ratio_dwell_count) {
+      if ((uint)DAT_000642fa <
+          (((uint)rpm_camSync_valid_sample_count * 0x6400) /
+           ((uint)rpm_camSync_valid_sample_count + (uint)rpm_camSync_invalid_sample_count) & 0xffff)
+         ) {
+        local_8[0] = 0x3f;
+      }
+      else {
+        diag_suppress_request_flag = 1;
+        local_8[0] = 0xbf;
+      }
+      local_8[0] = cam_sync_protection_state_flags & local_8[0];
+      cm848_updateProtectionTimers(&cam_sync_protection_state_flags,local_8,1);
+      cam_sync_protection_state_flags = local_8[0];
+      uVar1 = 5;
+    }
+    else {
+      uVar1 = 4;
+    }
+  }
+  return uVar1;
+}
+
+
+
+//
+// Function: engine_coldStart_batteryVoltage_monitor @ 0x0052f5d4
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

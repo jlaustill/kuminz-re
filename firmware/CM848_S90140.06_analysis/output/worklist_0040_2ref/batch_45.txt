@@ -1,0 +1,67 @@
+=== VARIABLES TO NAME ===
+0x00408b1c  (2 references)
+0x0040b594  (2 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00408b1c, DAT_0040b594
+void cm848_throttleGain_timedAccumulate_update(void)
+
+{
+  int iVar1;
+  
+  throttle_integral_period_counter = throttle_integral_period_counter - 1;
+  if (throttle_integral_period_counter == 0) {
+    iVar1 = (int)(CONCAT44(protection_throttle_integral_accumulator >> 0x18 |
+                           ((int)protection_throttle_integral_accumulator >> 0x1f) << 8,
+                           protection_throttle_integral_accumulator << 8) /
+                 (longlong)((ulonglong)DAT_00408b1a << 7));
+    if (iVar1 < 0x6401) {
+      if (iVar1 < -0x6400) {
+        iVar1 = -0x6400;
+      }
+    }
+    else {
+      iVar1 = 0x6400;
+    }
+    DAT_0040b594 = (short)iVar1;
+    _throttle_setpoint_limit_arg = (uint)protection_throttle_setpoint + (int)DAT_0040b594;
+    cm848_throttleSetpoint_limit(_throttle_setpoint_limit_arg);
+    protection_throttle_integral_accumulator = 0;
+    throttle_integral_period_counter = DAT_00408b1c;
+  }
+  return;
+}
+
+
+
+//
+// Function: protectionPhaseGroupA_Control @ 0x0051cad4
+//
+
+/* WARNING: Function: cm848_signedDivision32 replaced with injection: sdiv64by32 */
+/* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_00408b1c
+void initHpcr_HandlerRoutines(void)
+
+{
+  DAT_003fcf08 = 2;
+  DAT_003fcf0a = 2;
+  if ((j1939_pgn_handler_index_hpcr != 0) && (j1939_pgn_handler_index_hpcr < 0x33)) {
+    (**(code **)(&j1939_pgn_handler_table + (uint)j1939_pgn_handler_index_hpcr * 0x10))();
+  }
+  throttle_integral_period_counter = DAT_00408b1c;
+  protection_throttle_setpoint = DAT_00408b34;
+  return;
+}
+
+
+
+//
+// Function: FUN_0051ce14 @ 0x0051ce14
+//
+

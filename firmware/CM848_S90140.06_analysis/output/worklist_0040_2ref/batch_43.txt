@@ -1,0 +1,42 @@
+=== VARIABLES TO NAME ===
+0x00408af0  (2 references)
+0x0040b58c  (2 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00408af0, DAT_0040b58c
+void cm848_throttleGain_velocityBased_calc(void)
+
+{
+  int iVar1;
+  
+  iVar1 = (int)(CONCAT44((int)((ulonglong)
+                               ((longlong)(int)protection_throttle_error_delta *
+                               (longlong)(int)((uint)DAT_00408af0 * 0x100)) >> 0x20),
+                         protection_throttle_error_delta * (uint)DAT_00408af0 * 0x100) /
+               (longlong)((ulonglong)DAT_00408aee << 7));
+  if (iVar1 < 0x6401) {
+    if (iVar1 < -0x6400) {
+      iVar1 = -0x6400;
+    }
+  }
+  else {
+    iVar1 = 0x6400;
+  }
+  DAT_0040b58c = (short)iVar1;
+  _throttle_setpoint_limit_arg = (uint)protection_throttle_setpoint + (int)DAT_0040b58c;
+  cm848_throttleSetpoint_limit(_throttle_setpoint_limit_arg);
+  return;
+}
+
+
+
+//
+// Function: cm848_throttleGain_timedAccumulate_update @ 0x0051c9f0
+//
+
+/* WARNING: Function: cm848_signedDivision32 replaced with injection: sdiv64by32 */
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

@@ -1,0 +1,86 @@
+=== VARIABLES TO NAME ===
+0x0040a788  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040a788
+void engine_torqueLimit_min_emaCalc(void)
+
+{
+  ushort uVar1;
+  int iVar2;
+  undefined **ppuVar3;
+  ushort uVar4;
+  word *pwVar5;
+  uint uVar6;
+  ushort *puVar7;
+  uint uVar8;
+  
+  puVar7 = &DAT_000597b2;
+  ppuVar3 = &PTR_fuel_temp_raw_0040a734;
+  pwVar5 = &governor_faultDerate_channel_state;
+  uVar6 = 0x81;
+  uVar8 = 0x1a4;
+  uVar4 = 0;
+  do {
+    if ((*puVar7 & 2) != 0) {
+      iVar2 = (int)uVar8 >> 4;
+      if ((((uint)(&governor_fault_status_flags)[(int)uVar6 >> 4] &
+           1 << (uVar6 + ((int)uVar6 >> 4) * -0x10 & 0x3f)) == 0) &&
+         (((uint)(&governor_fault_status_flags)[iVar2] & 1 << (uVar8 + iVar2 * -0x10 & 0x3f)) == 0))
+      {
+        uVar1 = 0;
+      }
+      else {
+        uVar1 = threshold_adjustment_ramp(puVar7,ppuVar3,pwVar5,1);
+        if ((uVar1 < pwVar5[3]) &&
+           (((uint)(&governor_fault_status_flags)[iVar2] & 1 << (uVar8 + iVar2 * -0x10 & 0x3f)) == 0
+           )) {
+          uVar1 = pwVar5[3];
+        }
+      }
+      pwVar5[1] = uVar1;
+      if ((uVar4 < uVar1) &&
+         (((uint)(&governor_fault_status_flags)[iVar2] & 1 << (uVar8 + iVar2 * -0x10 & 0x3f)) == 0))
+      {
+        uVar4 = uVar1;
+      }
+    }
+    puVar7 = puVar7 + 0x12;
+    ppuVar3 = (undefined **)((int)ppuVar3 + 0x3e);
+    pwVar5 = pwVar5 + 0xf;
+    uVar6 = uVar6 + 4 & 0xffff;
+    uVar8 = uVar8 + 1 & 0xffff;
+  } while (puVar7 < &DAT_000597d6);
+  torque_limit_fuel_min_alt =
+       exponentialMovingAverage
+                 ((uint)torque_limit_fuel_minimum - ((uint)uVar4 * (uint)DAT_0040a788 >> 8) & 0xffff
+                  ,&PTR_DAT_003fbd2e);
+  return;
+}
+
+
+
+//
+// Function: engine_torqueLimit_workingState_init @ 0x005087e4
+//
+
+// Variables in this function: DAT_0040a788
+void engine_torqueLimit_workingState_init(void)
+
+{
+  DAT_003fbd32 = (uint)torque_limit_fuel_minimum << 0x10;
+  PTR_DAT_003fbd2e = &DAT_0005c2f2;
+  torque_limit_fuel_min_alt = torque_limit_fuel_minimum;
+  DAT_0040a788 = torque_limit_fuel_minimum - DAT_0005c2f0;
+  return;
+}
+
+
+
+//
+// Function: protection_event_timestamp @ 0x00508834
+//
+

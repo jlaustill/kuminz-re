@@ -1,0 +1,26 @@
+# 0040 2-ref agent 23 — name 16 unnamed DAT_0040xxxx (2 ref; VERY low context)
+#   worklist_0040_2ref/batch_99.txt
+#   worklist_0040_2ref/batch_100.txt
+#   worklist_0040_2ref/batch_101.txt
+#   worklist_0040_2ref/batch_102.txt
+#   worklist_0040_2ref/batch_103.txt
+#   worklist_0040_2ref/batch_104.txt
+#   worklist_0040_2ref/batch_105.txt
+#   worklist_0040_2ref/batch_106.txt
+# address,ref_count
+0x0040b192,2
+0x0040bdd8,2
+0x0040bdda,2
+0x0040be40,2
+0x0040b1da,2
+0x0040b300,2
+0x0040b302,2
+0x0040b9ac,2
+0x0040b348,2
+0x0040b478,2
+0x0040b48b,2
+0x0040b48c,2
+0x0040b48d,2
+0x0040b48e,2
+0x0040b529,2
+0x0040b57d,2

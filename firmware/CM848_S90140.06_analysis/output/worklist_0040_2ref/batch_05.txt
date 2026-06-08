@@ -1,0 +1,34 @@
+=== VARIABLES TO NAME ===
+0x004062d2  (2 references)
+0x004062d4  (2 references)
+0x0040a578  (2 references)
+
+Total: 3 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_004062d2, DAT_004062d4, DAT_0040a578
+void cm848_sensorProcessing_periodic(void)
+
+{
+  uint uVar1;
+  
+  uVar1 = ((uint)boost_fuel_input_value * 0x215e + 0x77e9d0) / 1000;
+  DAT_003fba18 = (short)uVar1;
+  uVar1 = ((uint)DAT_004062d6 * (uint)boost_pressure_current_raw) / (uVar1 & 0xffff);
+  DAT_0040a578 = (ushort)uVar1;
+  uVar1 = uVar1 & 0xffff;
+  boost_pressure_ratio_clamped = DAT_004062d2;
+  if ((uVar1 <= DAT_004062d2) && (boost_pressure_ratio_clamped = DAT_0040a578, uVar1 < DAT_004062d4)
+     ) {
+    boost_pressure_ratio_clamped = DAT_004062d4;
+  }
+  return;
+}
+
+
+
+//
+// Function: etc1_threshold_lookup @ 0x005041bc
+//
+

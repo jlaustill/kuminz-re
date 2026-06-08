@@ -1,0 +1,103 @@
+=== VARIABLES TO NAME ===
+0x0040a672  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040a672
+void phase_group_a_validateEngineSync(void)
+
+{
+  ushort uVar1;
+  
+  if (boost_correction_alt_mode_cal != 0) {
+    if ((engine_sync_validation_flags & 0x1000) == 0) {
+      uVar1 = 0;
+    }
+    else {
+      uVar1 = 0x20;
+    }
+    boost_pressure_source_flags =
+         boost_correction_mode_flags | sensor_channel109_fault_status | uVar1;
+    boost_pressure_current_raw = sensor_channel109_raw;
+    goto LAB_00509978;
+  }
+  boost_pressure_current_raw = map_fuel_correction_factor + boost_pressure_correction_raw;
+  if ((engine_sync_validation_flags & 0x1000) == 0) {
+    if ((fuel_demand_mode_index == 2) || (fuel_demand_enable_state == 2)) {
+      uVar1 = 8;
+      goto LAB_005098f4;
+    }
+    if ((fuel_demand_mode_index == 1) || (fuel_demand_enable_state == 1)) {
+      uVar1 = 4;
+      goto LAB_00509918;
+    }
+    uVar1 = 0;
+  }
+  else {
+    if ((fuel_demand_mode_index != 2) && (fuel_demand_enable_state != 2)) {
+      if ((fuel_demand_mode_index == 1) || (fuel_demand_enable_state == 1)) {
+        uVar1 = 0x24;
+LAB_00509918:
+        boost_pressure_source_flags = boost_correction_mode_flags | uVar1;
+        goto LAB_00509978;
+      }
+      uVar1 = 0x20;
+LAB_005098f4:
+      boost_pressure_source_flags = boost_correction_mode_flags | uVar1;
+      goto LAB_00509978;
+    }
+    uVar1 = 0x28;
+  }
+  boost_pressure_source_flags = boost_correction_mode_flags | uVar1;
+LAB_00509978:
+  if ((boost_pressure_source_flags & 0x2a) == 0) {
+    if ((short)boost_pressure_current_raw < 0) {
+      boost_pressure_current_raw = 0;
+    }
+    fuel_demand_droop_state = 0;
+  }
+  else if ((boost_pressure_source_flags & 0x80) == 0) {
+    boost_pressure_current_raw = boost_pressure_synthetic_ema;
+    fuel_demand_droop_state = 1;
+  }
+  else {
+    boost_pressure_current_raw = sensor_channel109_filtered;
+    fuel_demand_droop_state = 2;
+  }
+  if (DAT_003fd8ea != 0) {
+    fuel_demand_droop_state = 0;
+    boost_pressure_current_raw = boost_pressure_synthetic_ema;
+  }
+  DAT_0040a672 = sensor_channel109_raw;
+  return;
+}
+
+
+
+//
+// Function: cm848_initBoostPressureFaultHandling @ 0x00509a2c
+//
+
+// Variables in this function: DAT_0040a672
+void cm848_initBoostPressureFaultHandling(void)
+
+{
+  if ((sensor_channel109_fault_status == 0) || (sensor_channel109_fault_status == 1)) {
+    fuel_demand_droop_state = 0;
+  }
+  else if (sensor_channel109_fault_status == 2) {
+    fuel_demand_droop_state = 2;
+  }
+  boost_pressure_current_raw = sensor_channel109_raw;
+  DAT_0040a672 = sensor_channel109_raw;
+  return;
+}
+
+
+
+//
+// Function: cm848_updateSensorValidationFlags @ 0x00509a7c
+//
+

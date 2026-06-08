@@ -1,0 +1,67 @@
+=== VARIABLES TO NAME ===
+0x00406556  (2 references)
+0x00406558  (2 references)
+0x00406560  (2 references)
+0x00406562  (2 references)
+
+Total: 4 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00406556, DAT_00406558, DAT_00406560, DAT_00406562
+void fuel_coldStart_quantityScale_update(void)
+
+{
+  uint uVar1;
+  
+  if (((cold_start_feature_flags & 0x200) == 0) || (cold_start_phase3_flag != 1)) {
+    fuel_cold_start_phase3_compensation_enable_flag = 0;
+  }
+  else {
+    fuel_cold_start_phase3_compensation_enable_flag = 1;
+  }
+  uVar1 = (uint)fuel_quantity_ema_filtered;
+  if (uVar1 * DAT_00406556 < 0x3fc001) {
+    fuel_demand_boost_compensation_step_rate_negative = (word)(uVar1 * DAT_00406556 >> 7);
+  }
+  else {
+    fuel_demand_boost_compensation_step_rate_negative = 0x7f80;
+  }
+  if (uVar1 * DAT_00406558 < 0x3fc001) {
+    fuel_demand_boost_compensation_step_rate_positive = (word)(uVar1 * DAT_00406558 >> 7);
+  }
+  else {
+    fuel_demand_boost_compensation_step_rate_positive = 0x7f80;
+  }
+  if (uVar1 * DAT_00406560 < 0x3fc001) {
+    fuel_demand_blend_compensation_step_rate_negative = (word)(uVar1 * DAT_00406560 >> 7);
+  }
+  else {
+    fuel_demand_blend_compensation_step_rate_negative = 0x7f80;
+  }
+  if (uVar1 * DAT_00406562 < 0x3fc001) {
+    fuel_demand_blend_compensation_step_rate_positive = (word)(uVar1 * DAT_00406562 >> 7);
+  }
+  else {
+    fuel_demand_blend_compensation_step_rate_positive = 0x7f80;
+  }
+  fuel_demand_blend_compensate();
+  fuel_demand_boost_compensate();
+  if ((fuel_demand_blend_compensation_at_limit_flag == 1) ||
+     (fuel_demand_boost_compensation_at_limit_flag == 1)) {
+    fuel_coldStart_compensation_at_limit_flag = 1;
+    fuel_coldStart_compensation_demand_floor = DAT_0040654e;
+  }
+  else {
+    fuel_coldStart_compensation_at_limit_flag = 0;
+    fuel_coldStart_compensation_demand_floor = 0;
+  }
+  return;
+}
+
+
+
+//
+// Function: fuel_modeStatusBits_pack @ 0x00505260
+//
+

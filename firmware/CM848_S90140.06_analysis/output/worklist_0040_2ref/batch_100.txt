@@ -1,0 +1,39 @@
+=== VARIABLES TO NAME ===
+0x0040b1da  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040b1da
+void sensorChannelTypeA_configInit_axis5(void)
+
+{
+  sensorChannelConfigInit
+            (&DAT_0005adf8,&DAT_0040b1da,&DAT_003fcd54,&DAT_0005ae08,&DAT_0005ae30,(void *)0x2,
+             0xcd56,0x67,(word *)0x12d,(word *)0x12e,0xbdf8,0xbdfa,0xbe50);
+  return;
+}
+
+
+
+//
+// Function: sensorChannelTypeA_update_axis5 @ 0x00510ea8
+//
+
+// Variables in this function: DAT_0040b1da
+void sensorChannelTypeA_update_axis5(void)
+
+{
+  updateSensorChannelWithConfig
+            (&DAT_0005adf8,&DAT_0040b1da,&DAT_003fcd54,&DAT_0005ae08,&DAT_0005ae30,(void *)0x2,
+             0xcd56,0x67,(word *)0x12d,(word *)0x12e,0xbdf8,0xbdfa,0xbe50);
+  return;
+}
+
+
+
+//
+// Function: protection_exception_event_26_init @ 0x00510f34
+//
+

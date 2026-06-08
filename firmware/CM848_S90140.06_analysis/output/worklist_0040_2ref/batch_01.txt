@@ -1,0 +1,33 @@
+=== VARIABLES TO NAME ===
+0x00405206  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00405206
+void mpc555_initPressureSensorFilterState(void)
+
+{
+  sensor_channel9_pressure_snapshot = sensor_channel9_pressure_raw;
+  fuel_demand_boost_offset = sensor_channel9_pressure_raw;
+  DAT_003fa618 = 2;
+  DAT_003fa628 = (int)(short)sensor_channel9_pressure_raw << 0x10;
+  PTR_DAT_003fa624 = &DAT_00405206;
+  DAT_003fa630 = (int)(short)sensor_channel9_pressure_raw << 0x10;
+  PTR_DAT_003fa62c = &DAT_00405206;
+  if ((sensor_channel9_fault_status == 0) || (sensor_channel9_fault_status == 1)) {
+    fuel_demand_phase_state = 0;
+  }
+  else if (sensor_channel9_fault_status == 2) {
+    fuel_demand_phase_state = 2;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_calculateRpmLoadTables @ 0x0001410c
+//
+

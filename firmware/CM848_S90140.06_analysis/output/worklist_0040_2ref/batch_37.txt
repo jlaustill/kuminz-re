@@ -1,0 +1,126 @@
+=== VARIABLES TO NAME ===
+0x00408986  (2 references)
+0x00408988  (2 references)
+0x00408990  (2 references)
+0x0040b53a  (2 references)
+
+Total: 4 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00408986, DAT_00408988, DAT_00408990, DAT_0040b53a
+void governorGovernorTempCompute(void)
+
+{
+  uint uVar1;
+  
+  if ((governor_system_config_flags & 4) == 0) {
+    return;
+  }
+  governor_temp_diag_debounce_limit = DAT_0005b4d4;
+  uVar1 = 4;
+  do {
+    if ((short)sensor_readings_t_0040baf2.coolant_temp < *(short *)(uVar1 * 2 + 0x5b4be)) {
+      governor_temp_diag_debounce_limit = *(word *)(uVar1 * 2 + 0x5b4ca);
+    }
+    uVar1 = uVar1 + 0xffff & 0xffff;
+  } while (uVar1 != 0);
+  if (DAT_003fd8e8 == 0) {
+    if (fuel_quantity_demand_input < sensor_readings_t_0040baf2.intake_air_temp) {
+      j1939_fuel_quantity_input = 0;
+    }
+    else {
+      j1939_fuel_quantity_input =
+           fuel_quantity_demand_input - sensor_readings_t_0040baf2.intake_air_temp;
+    }
+    if (((((system_status_flags_t_003fe974.enable_state & 0x2000) == 0) &&
+         ((system_status_flags_t_003fe974.enable_state & 0x1000) == 0)) &&
+        ((system_status_flags_t_003fe974.condition_monitor & 0x400) == 0)) &&
+       (((system_status_flags_t_003fe974.condition_monitor & 0x200) == 0 &&
+        (DAT_00408986 < engine_rpm_state_t_0040b7ac.current_rpm)))) {
+      if ((j1939_fuel_quantity_input < governor_temp_protection_fuel_qty_min) &&
+         (governor_temp_diag_debounce_count < governor_temp_diag_debounce_limit)) {
+        governor_temp_diag_debounce_count = governor_temp_diag_debounce_count + 1;
+      }
+      if ((j1939_fuel_quantity_input < governor_temp_protection_fuel_qty_min) &&
+         (governor_temp_diag_debounce_limit <= governor_temp_diag_debounce_count)) {
+        engine_diag_shadow_flags = engine_diag_shadow_flags | 0x200;
+        governor_temp_protection_active_flag = 1;
+        governor_temp_protection_ramp_flag = 1;
+      }
+      if (j1939_fuel_quantity_input < governor_temp_protection_fuel_qty_min) {
+        return;
+      }
+    }
+    engine_diag_shadow_flags_b = engine_diag_shadow_flags_b & 0xfdff;
+    engine_diag_shadow_flags = engine_diag_shadow_flags & 0xfdff;
+    governor_temp_diag_debounce_count = 0;
+    governor_temp_protection_active_flag = 0;
+    governor_temp_protection_ramp_flag = 0;
+    return;
+  }
+  DAT_0040b53a = cm848_dualAxisTableInterpolation
+                           (&DAT_003fceae,engine_rpm_state_t_0040b7ac.current_rpm,0xb474);
+  j1939_fuel_quantity_input = exponentialMovingAverage(DAT_0040b53a,&PTR_DAT_003fceb4);
+  if (DAT_00408986 < engine_rpm_state_t_0040b7ac.current_rpm) {
+    if (((protection_enable_t_0040c050.system_enable_bits & 0x40) != 0) &&
+       (governor_temp_diag_debounce_count < governor_temp_diag_debounce_limit)) {
+      governor_temp_diag_debounce_count = governor_temp_diag_debounce_count + 1;
+    }
+    if (((protection_enable_t_0040c050.system_enable_bits & 0x40) != 0) &&
+       (governor_temp_diag_debounce_limit <= governor_temp_diag_debounce_count)) {
+      engine_diag_shadow_flags = engine_diag_shadow_flags | 0x200;
+      governor_temp_protection_active_flag = 1;
+      governor_temp_protection_ramp_flag = 1;
+      j1939_fuel_quantity_input = 0;
+    }
+    if ((protection_enable_t_0040c050.system_enable_bits & 0x40) != 0) goto LAB_0051a478;
+  }
+  engine_diag_shadow_flags_b = engine_diag_shadow_flags_b & 0xfdff;
+  engine_diag_shadow_flags = engine_diag_shadow_flags & 0xfdff;
+  governor_temp_protection_active_flag = 0;
+  governor_temp_protection_ramp_flag = 0;
+  governor_temp_diag_debounce_count = 0;
+LAB_0051a478:
+  if ((engine_rpm_state_t_0040b7ac.current_rpm == 0) &&
+     ((protection_enable_t_0040c050.system_enable_bits & 0x40) == 0)) {
+    governor_temp_diag_zero_rpm_count = governor_temp_diag_zero_rpm_count + 1;
+  }
+  else {
+    governor_temp_diag_zero_rpm_count = 0;
+  }
+  if (DAT_00408988 <= governor_temp_diag_zero_rpm_count) {
+    j1939_receive_status_flags = j1939_receive_status_flags | 0x20;
+    governor_temp_diag_zero_rpm_count = DAT_00408988;
+  }
+  if (((j1939_receive_status_flags & 0x20) != 0) &&
+     ((protection_enable_t_0040c050.system_enable_bits & 0x40) != 0)) {
+    j1939_receive_status_flags = j1939_receive_status_flags & 0xffdf;
+    protection_enable_shadow_flags = protection_enable_shadow_flags & 0xffdf;
+    governor_temp_protection_active_flag = 0;
+    governor_temp_protection_ramp_flag = 0;
+  }
+  if (((j1939_receive_status_flags & 0x20) == 0) || (cold_start_phase != CSP_AT_GOVERNOR_SETPOINT))
+  {
+    governor_temp_diag_cold_start_j1939_count = 0;
+  }
+  else {
+    governor_temp_diag_cold_start_j1939_count = governor_temp_diag_cold_start_j1939_count + 1;
+  }
+  if (DAT_00408990 <= governor_temp_diag_cold_start_j1939_count) {
+    j1939_fuel_quantity_input = DAT_00408992;
+    governor_temp_diag_cold_start_j1939_count = DAT_00408990;
+    if (DAT_0040898e != 0) {
+      governor_temp_protection_active_flag = 1;
+      governor_temp_protection_ramp_flag = 1;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: initGovernorTempTableParams @ 0x0051a5f8
+//
+

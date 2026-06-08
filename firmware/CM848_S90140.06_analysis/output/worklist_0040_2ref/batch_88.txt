@@ -1,0 +1,84 @@
+=== VARIABLES TO NAME ===
+0x0040a6b4  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040a6b4
+void governor_speedRamp_stabilityFlag_calc(void)
+
+{
+  uint uVar1;
+  uint uVar2;
+  int iVar3;
+  
+  uVar1 = exponentialMovingAverage(governor_speed_ramp_output,&PTR_DAT_003fbd10);
+  DAT_0040a6be = (short)uVar1;
+  uVar2 = (uint)governor_speed_ramp_output;
+  if ((uVar1 & 0xffff) < uVar2) {
+    uVar1 = uVar2 - uVar1;
+  }
+  else {
+    uVar1 = uVar1 - uVar2;
+  }
+  DAT_0040a6b4 = (short)uVar1;
+  if ((int)(uVar2 - (int)(short)governor_speed_deviation_from_filter) < 1) {
+    if ((int)(uVar2 - (int)(short)governor_speed_deviation_from_filter) < 0) {
+      iVar3 = -1;
+    }
+    else {
+      iVar3 = 0;
+    }
+  }
+  else {
+    iVar3 = 1;
+  }
+  if (((short)governor_speed_b_pid_output * iVar3 < (int)(uint)DAT_004067e8) &&
+     (governor_speed_deviation_exceeds_threshold_flag != 0)) {
+    governor_speed_ramp_pid_stable_gate = 0;
+  }
+  else {
+    governor_speed_ramp_pid_stable_gate = 1;
+  }
+  if (((diagnostic_status_bits & 0x20) == 0) &&
+     ((((governor_operating_mode != 0 || ((diagnostic_status_bits_b & 0x4000) != 0)) ||
+       (diagnostic_clear_condition_flag == 0)) ||
+      (((sensor_channel7_fault_status != 0 || ((uint)DAT_004067d8 <= (uVar1 & 0xffff))) ||
+       (governor_speed_ramp_pid_stable_gate == 0)))))) {
+    governor_speed_stability_conditions_flag = 0;
+  }
+  else {
+    governor_speed_stability_conditions_flag = 1;
+  }
+  return;
+}
+
+
+
+//
+// Function: governor_speedStability_counter_syncDiag @ 0x00507394
+//
+
+// Variables in this function: DAT_0040a6b4
+void cm848_initialization_step_15(void)
+
+{
+  DAT_003fbd14 = 0;
+  PTR_DAT_003fbd10 = &DAT_004067e2;
+  governor_speed_stability_diag_counter = 0;
+  governor_speed_sync_stable_flag = 0;
+  DAT_0040a6b4 = 0;
+  governor_speed_stability_conditions_flag = 0;
+  diagnostic_status_bits = diagnostic_status_bits & 0xffdf;
+  sensor_fault_status_flags = sensor_fault_status_flags & 0xffdf;
+  governor_speed_stability_sample_counter = 0;
+  return;
+}
+
+
+
+//
+// Function: cm848_mainLoop_step_5 @ 0x00507644
+//
+

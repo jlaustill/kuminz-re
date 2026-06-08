@@ -1,0 +1,41 @@
+=== VARIABLES TO NAME ===
+0x00406776  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00406776
+void sensor_channel108_filter(void)
+
+{
+  uint uVar1;
+  uint uVar2;
+  int iVar3;
+  
+  iVar3 = (uint)throttle_trim_predictor_gain * ((uint)sensor_channel108_raw - (uint)DAT_003fbcfa);
+  if (iVar3 < 32000) {
+    if (iVar3 < -31999) {
+      iVar3 = -32000;
+    }
+  }
+  else {
+    iVar3 = 32000;
+  }
+  DAT_0040a694 = (short)iVar3;
+  uVar2 = (uint)sensor_channel108_raw + (int)(short)iVar3;
+  uVar1 = (uint)DAT_00406774;
+  if (((int)uVar2 < (int)uVar1) && (uVar1 = uVar2, (int)uVar2 <= (int)(uint)DAT_00406776)) {
+    uVar1 = (uint)DAT_00406776;
+  }
+  throttle_trim_predictor_output = (word)uVar1;
+  DAT_003fbcfa = sensor_channel108_raw;
+  return;
+}
+
+
+
+//
+// Function: sensor_throttleTrim_ema_faultProcess @ 0x00507028
+//
+

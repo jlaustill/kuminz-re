@@ -1,0 +1,49 @@
+=== VARIABLES TO NAME ===
+0x0040bd88  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040bd88
+void cm848_mainLoop_step_3(void)
+
+{
+  DAT_0040a620 = sensor_generic_fault_status;
+  if ((sensor_generic_fault_status & 2) == 0) {
+    fuel_demand_boost_input = DAT_0040bd88;
+    boost_correction_inhibit_flag = 0;
+  }
+  else {
+    fuel_demand_boost_input = DAT_0040bdae;
+    boost_correction_inhibit_flag = 2;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_initialization_step_11 @ 0x00505bd8
+//
+
+// Variables in this function: DAT_0040bd88
+void cm848_initialization_step_11(void)
+
+{
+  if ((sensor_generic_fault_status == 0) || (sensor_generic_fault_status == 1)) {
+    boost_correction_inhibit_flag = 0;
+  }
+  else if (sensor_generic_fault_status == 2) {
+    boost_correction_inhibit_flag = 2;
+  }
+  fuel_demand_boost_input = DAT_0040bd88;
+  return;
+}
+
+
+
+//
+// Function: diag_dm1Buffer_circularFill @ 0x00505c20
+//
+

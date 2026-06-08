@@ -1,0 +1,240 @@
+=== VARIABLES TO NAME ===
+0x00409fa4  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00409fa4
+void engine_camSync_crossValidation_update(void)
+
+{
+  ushort uVar1;
+  bool bVar2;
+  bool bVar3;
+  bool bVar4;
+  int iVar5;
+  uint uVar6;
+  int iVar7;
+  int iVar8;
+  
+  bVar4 = false;
+  bVar3 = false;
+  bVar2 = false;
+  if (cold_start_phase != CSP_CRANKING) {
+    bVar4 = true;
+    goto LAB_00535828;
+  }
+  if (((((j1939_msg_slot_n_control & 0x3f) != 0) ||
+       ((system_status_flags_t_003fe974.reserved_28 & 0x10) != 0)) ||
+      (j1939_msg_slot_n_eeprom_data < DAT_00409f94)) ||
+     ((iVar5 = (int)(short)cam_sync_validation_coolant_temp_snapshot,
+      DAT_003feeb6 - iVar5 <= (int)DAT_00409fac || (DAT_00409fb6 <= iVar5)))) {
+    bVar2 = true;
+    goto LAB_00535828;
+  }
+  cam_sync_crossval_b_state = 1;
+  cam_sync_fueltemp_validation_state = 1;
+  cam_sync_oiltemp_validation_state = 1;
+  if (DAT_003fd256 == '\0') {
+    cam_sync_crossval_coolant_baseline = cam_sync_validation_coolant_temp_snapshot;
+    DAT_0040ba3a = cam_sync_validation_oil_temp_snapshot;
+    DAT_003fd256 = '\x01';
+  }
+  if ((((((protection_monitor_shadow & 2) != 0) ||
+        ((system_status_flags_t_003fe974.condition_monitor & 1) != 0)) ||
+       (((system_status_flags_t_003fe974.condition_monitor & 2) != 0 ||
+        ((((system_status_flags_t_003fe974.condition_monitor & 8) != 0 ||
+          ((system_status_flags_t_003fe974.condition_monitor & 0x10) != 0)) ||
+         ((injection_fault_shadow_flags & 4) != 0)))))) ||
+      (((power_state_status_flags & 0x800) != 0 || ((power_state_status_flags & 0x1000) != 0)))) ||
+     (((injection_fault_shadow_flags & 2) != 0 ||
+      (((qadc_channel_index_table[0x14] != 0 &&
+        ((((system_status_flags_t_003fe974.reserved_12 & 0x40) != 0 ||
+          ((system_status_flags_t_003fe974.reserved_12 & 0x80) != 0)) ||
+         ((j1939_receive_status_flags & 8) != 0)))) ||
+       (((system_status_flags_t_003fe974.pending_faults & 0x80) != 0 ||
+        ((system_status_flags_t_003fe974.pending_faults & 0x40) != 0)))))))) {
+    bVar3 = true;
+    goto LAB_00535828;
+  }
+  if (DAT_00409fb2 <= cam_sync_startup_cycle_counter) {
+    DAT_0040ba44 = 1;
+    if (DAT_00409fb0 < cam_sync_oil_mismatch_count) {
+      cam_sync_oil_path_fault_pending_flag = 1;
+    }
+    else {
+      injection_fault_shadow_flags = injection_fault_shadow_flags & 0xffbf;
+      protection_diag_shadow_flags_b = protection_diag_shadow_flags_b & 0xffbf;
+      cam_sync_crossval_b_state = 2;
+    }
+    if (DAT_00409fa4 < cam_sync_coolant_mismatch_count) {
+      cam_sync_coolant_path_fault_pending_flag = 1;
+    }
+    else {
+      injection_fault_shadow_flags = injection_fault_shadow_flags & 0xff7f;
+      protection_diag_shadow_flags_b = protection_diag_shadow_flags_b & 0xff7f;
+      cam_sync_fueltemp_validation_state = 2;
+    }
+    goto LAB_00535828;
+  }
+  cam_sync_startup_cycle_counter = cam_sync_startup_cycle_counter + 1;
+  uVar1 = DAT_00409fa0;
+  if ((battery_voltage_status_flags & 1) == 0) {
+    uVar1 = DAT_00409fae;
+  }
+  iVar8 = (int)DAT_003fd236;
+  if (iVar8 - iVar5 < 0) {
+    uVar6 = iVar5 - iVar8;
+  }
+  else {
+    uVar6 = iVar8 - iVar5;
+  }
+  iVar7 = (int)(short)cam_sync_validation_oil_temp_snapshot;
+  if ((uint)uVar1 < (uVar6 & 0xffff)) {
+    if (iVar8 - iVar7 < 0) {
+      uVar6 = iVar7 - iVar8;
+    }
+    else {
+      uVar6 = iVar8 - iVar7;
+    }
+    if ((uVar6 & 0xffff) <= (uint)uVar1) goto LAB_005356a4;
+    if (iVar5 - iVar7 < 0) {
+      uVar6 = iVar7 - iVar5;
+    }
+    else {
+      uVar6 = iVar5 - iVar7;
+    }
+    if ((uint)cam_sync_sensor_mismatch_threshold <= (uVar6 & 0xffff)) goto LAB_005356a4;
+    cam_sync_oil_mismatch_count = cam_sync_oil_mismatch_count + 1;
+  }
+  else {
+LAB_005356a4:
+    cam_sync_oil_mismatch_count = 0;
+  }
+  if (iVar7 - iVar5 < 0) {
+    uVar6 = iVar5 - iVar7;
+  }
+  else {
+    uVar6 = iVar7 - iVar5;
+  }
+  if ((uint)cam_sync_snapshot_mismatch_threshold < (uVar6 & 0xffff)) {
+    if (iVar7 - iVar8 < 0) {
+      uVar6 = iVar8 - iVar7;
+    }
+    else {
+      uVar6 = iVar7 - iVar8;
+    }
+    if ((uint)cam_sync_snapshot_mismatch_threshold < (uVar6 & 0xffff)) {
+      if (iVar5 - iVar8 < 0) {
+        uVar6 = iVar8 - iVar5;
+      }
+      else {
+        uVar6 = iVar5 - iVar8;
+      }
+      if ((uVar6 & 0xffff) < (uint)cam_sync_sensor_mismatch_threshold) {
+        cam_sync_coolant_mismatch_count = cam_sync_coolant_mismatch_count + 1;
+        goto LAB_00535828;
+      }
+    }
+  }
+  cam_sync_coolant_mismatch_count = 0;
+LAB_00535828:
+  if (((bVar2) || (bVar3)) || (bVar4)) {
+    cam_sync_crossval_b_state = 4;
+    cam_sync_fueltemp_validation_state = 4;
+    cam_sync_oiltemp_validation_state = 4;
+  }
+  return;
+}
+
+
+
+//
+// Function: engine_camSync_validation_confirm @ 0x00535868
+//
+
+// Variables in this function: DAT_00409fa4
+void engine_camSync_fuelTemp_validate(void)
+
+{
+  uint uVar1;
+  int iVar2;
+  int iVar3;
+  uint uVar4;
+  int iVar5;
+  
+  if (cam_sync_fueltemp_validation_state != 1) {
+    return;
+  }
+  if (cam_sync_coolant_path_fault_pending_flag == 0) {
+    return;
+  }
+  uVar1 = (uint)DAT_00409fa8;
+  if (fuel_temperature_trim < DAT_00409fa6) {
+    cam_sync_fueltemp_qualify_dwell_count = 0;
+    cam_sync_fueltemp_agreement_count = 0;
+  }
+  else {
+    cam_sync_fueltemp_qualify_dwell_count = cam_sync_fueltemp_qualify_dwell_count + 1;
+    if (uVar1 <= cam_sync_fueltemp_qualify_dwell_count) {
+      iVar2 = (int)(short)cam_sync_validation_oil_temp_snapshot;
+      iVar5 = (int)(short)cam_sync_crossval_coolant_baseline;
+      if (iVar2 - iVar5 < 0) {
+        uVar4 = iVar5 - iVar2;
+      }
+      else {
+        uVar4 = iVar2 - iVar5;
+      }
+      if ((uint)cam_sync_snapshot_mismatch_threshold < (uVar4 & 0xffff)) {
+        iVar3 = (int)(short)cam_sync_validation_j1939_coolant_snapshot;
+        if (iVar2 - iVar3 < 0) {
+          uVar4 = iVar3 - iVar2;
+        }
+        else {
+          uVar4 = iVar2 - iVar3;
+        }
+        if ((uint)cam_sync_snapshot_mismatch_threshold < (uVar4 & 0xffff)) {
+          if (iVar5 - iVar3 < 0) {
+            uVar4 = iVar3 - iVar5;
+          }
+          else {
+            uVar4 = iVar5 - iVar3;
+          }
+          if ((uVar4 & 0xffff) < (uint)cam_sync_sensor_mismatch_threshold) {
+            cam_sync_fueltemp_agreement_count = cam_sync_fueltemp_agreement_count + 1;
+            goto LAB_00535aa0;
+          }
+        }
+      }
+    }
+    cam_sync_fueltemp_agreement_count = 0;
+  }
+LAB_00535aa0:
+  uVar4 = (uint)DAT_00409fa4;
+  if (uVar4 + uVar1 < 0xffff) {
+    uVar1 = uVar4 + uVar1;
+  }
+  else {
+    uVar1 = 0xffff;
+  }
+  if ((uVar1 & 0xffff) <= (uint)cam_sync_fueltemp_qualify_dwell_count) {
+    if (cam_sync_fueltemp_agreement_count < uVar4) {
+      injection_fault_shadow_flags = injection_fault_shadow_flags & 0xff7f;
+      protection_diag_shadow_flags_b = protection_diag_shadow_flags_b & 0xff7f;
+      cam_sync_fueltemp_validation_state = 2;
+    }
+    else {
+      injection_fault_shadow_flags = injection_fault_shadow_flags | 0x80;
+      cam_sync_fueltemp_validation_state = 3;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: engine_camSync_oilTemp_validate @ 0x00535b58
+//
+

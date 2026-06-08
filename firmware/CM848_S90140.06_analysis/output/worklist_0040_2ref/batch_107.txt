@@ -1,0 +1,111 @@
+=== VARIABLES TO NAME ===
+0x0040b5a4  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040b5a4
+void main_loop_resetGovernorDiagnosticFlags(void)
+
+{
+  if (((protection_config_flags & 0x40) == 0) && (governor_inhibit_flag == 0)) {
+    if (battery_voltage_sampling_active_flag == 0) {
+      if ((j1939_pgn_handler_f_flags & 0x800) == 0) {
+        if ((engine_diag_shadow_flags_b & 0x1000) != 0) {
+          engine_diag_shadow_flags = engine_diag_shadow_flags & 0xefff;
+          engine_diag_shadow_flags_b = engine_diag_shadow_flags_b & 0xefff;
+        }
+        governor_pid_t_0040af5a.reserved_04 = 0;
+      }
+      else if (governor_pid_t_0040af5a.reserved_04 < DAT_0005c660) {
+        governor_pid_t_0040af5a.reserved_04 = governor_pid_t_0040af5a.reserved_04 + 1;
+      }
+      else {
+        engine_diag_shadow_flags = engine_diag_shadow_flags | 0x1000;
+        battery_voltage_sampling_active_flag = 1;
+        governor_pid_t_0040af5a.reserved_04 = 0;
+      }
+    }
+    if (cold_start_emission_fault_active_flag == 0) {
+      if ((j1939_pgn_handler_b_flags & 2) == 0) {
+        if ((emission_faults_shadow_flags & 0x200) != 0) {
+          system_status_flags_t_003fe974.emission_faults =
+               system_status_flags_t_003fe974.emission_faults & 0xfdff;
+          emission_faults_shadow_flags = emission_faults_shadow_flags & 0xfdff;
+        }
+        governor_pid_t_0040af5a.reserved_06 = 0;
+      }
+      else if (governor_pid_t_0040af5a.reserved_06 < DAT_0005c662) {
+        governor_pid_t_0040af5a.reserved_06 = governor_pid_t_0040af5a.reserved_06 + 1;
+      }
+      else {
+        system_status_flags_t_003fe974.emission_faults =
+             system_status_flags_t_003fe974.emission_faults | 0x200;
+        cold_start_emission_fault_active_flag = 1;
+        governor_pid_t_0040af5a.reserved_06 = 0;
+      }
+    }
+    if (engine_sync_protection_active_flag == 0) {
+      if ((j1939_pgn_handler_f_flags & 0x10) == 0) {
+        if ((crank_sync_status_flags & 0x2000) != 0) {
+          system_status_flags_t_003fe974.protection_active =
+               system_status_flags_t_003fe974.protection_active & 0xdfff;
+          crank_sync_status_flags = crank_sync_status_flags & 0xdfff;
+        }
+        governor_pid_t_0040af5a.reserved_08 = 0;
+      }
+      else if (governor_pid_t_0040af5a.reserved_08 < DAT_0005c664) {
+        governor_pid_t_0040af5a.reserved_08 = governor_pid_t_0040af5a.reserved_08 + 1;
+      }
+      else {
+        system_status_flags_t_003fe974.protection_active =
+             system_status_flags_t_003fe974.protection_active | 0x2000;
+        engine_sync_protection_active_flag = 1;
+        governor_pid_t_0040af5a.reserved_08 = 0;
+      }
+    }
+    if ((DAT_0040b5a4 == 0) && ((protection_action_mode_bits._0_1_ & 1) != 0)) {
+      if ((j1939_pgn_handler_b_flags & 0x400) == 0) {
+        if ((protection_enable_shadow_flags & 0x8000) != 0) {
+          j1939_receive_status_flags = j1939_receive_status_flags & 0x7fff;
+          protection_enable_shadow_flags = protection_enable_shadow_flags & 0x7fff;
+        }
+        j1939_protection_receive_delay_counter = 0;
+      }
+      else if (j1939_protection_receive_delay_counter < DAT_0005c666) {
+        j1939_protection_receive_delay_counter = j1939_protection_receive_delay_counter + 1;
+      }
+      else {
+        j1939_receive_status_flags = j1939_receive_status_flags | 0x8000;
+        DAT_0040b5a4 = 1;
+        j1939_protection_receive_delay_counter = 0;
+      }
+    }
+    if (governor_load_cycle_active_flag == 0) {
+      if ((j1939_pgn_handler_b_flags & 0x800) == 0) {
+        if ((j1939_message_state_flags & 8) != 0) {
+          protection_monitor_shadow = protection_monitor_shadow & 0xfff7;
+          j1939_message_state_flags = j1939_message_state_flags & 0xfff7;
+        }
+        governor_load_cycle_delay_counter = 0;
+      }
+      else if (governor_load_cycle_delay_counter < DAT_0005c668) {
+        governor_load_cycle_delay_counter = governor_load_cycle_delay_counter + 1;
+      }
+      else {
+        protection_monitor_shadow = protection_monitor_shadow | 8;
+        governor_load_cycle_active_flag = 1;
+        governor_load_cycle_delay_counter = 0;
+      }
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_synchronizeProtectionEnableShadowFlags @ 0x0050e4c4
+//
+

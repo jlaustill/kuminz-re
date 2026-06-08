@@ -1,0 +1,43 @@
+=== VARIABLES TO NAME ===
+0x004067cc  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_004067cc
+void mpc555_processSensorValidation(void)
+
+{
+  diagnostic_status_bits = diagnostic_status_bits & 0xfeff;
+  sensor_fault_status_flags = sensor_fault_status_flags & 0xfeff;
+  DAT_003fa75c = 0;
+  PTR_DAT_003fa758 = &DAT_004067b2;
+  DAT_003fa754 = (int)(short)boost_fuel_correction << 0x10;
+  PTR_DAT_003fa750 = &DAT_004067cc;
+  if ((short)fuel_demand_boost_input < 1) {
+    engine_boost_load_ema = 0;
+    governor_ema_filtered_value = 0;
+    DAT_003fa764 = 0;
+    DAT_003fa76c = 0;
+  }
+  else {
+    engine_boost_load_ema = (word)((int)(short)fuel_demand_boost_input >> 3);
+    governor_ema_filtered_value = fuel_demand_boost_input;
+    DAT_003fa764 = ((int)(short)fuel_demand_boost_input >> 3) << 0x10;
+    DAT_003fa76c = (int)(short)fuel_demand_boost_input << 0x10;
+  }
+  PTR_DAT_003fa760 = &DAT_004067cc;
+  PTR_DAT_003fa768 = &DAT_004067ce;
+  governor_speed_input_snapshot = governor_speed_input_raw;
+  engine_polarity_bit4_flag = engine_feature_status_flags & 0x10;
+  fuel_timing_error_working = fuel_timing_error_stored;
+  return;
+}
+
+
+
+//
+// Function: cm848_checkSensorRangeConditions @ 0x000196a4
+//
+

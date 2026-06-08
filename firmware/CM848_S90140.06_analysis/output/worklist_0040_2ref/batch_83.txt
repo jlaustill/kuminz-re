@@ -1,0 +1,39 @@
+=== VARIABLES TO NAME ===
+0x0040a5a4  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040a5a4
+void governor_adjustment_compare(void)
+
+{
+  bool bVar1;
+  
+  governor_adjustment_fuel_qty_threshold =
+       lookupTableInterpolation((table_interp_args_t *)&DAT_003fba1c);
+  DAT_0040a5a4 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fba1e);
+  governor_adjustment_boost_threshold =
+       lookupTableInterpolation((table_interp_args_t *)&DAT_003fba20);
+  DAT_0040a5b0 = (ushort)(governor_adjustment_fuel_qty_threshold <= fuel_demand_quantity);
+  bVar1 = (int)DAT_0040a5a4 <= (int)((uint)fuel_flow_rate << 1);
+  DAT_0040a5ae = (ushort)bVar1;
+  DAT_0040a5b2 = (ushort)(governor_adjustment_boost_threshold <=
+                         boost_correction_block_mode_flag._2_2_);
+  if (((governor_adjustment_fuel_qty_threshold <= fuel_demand_quantity) || (bVar1)) ||
+     (governor_adjustment_boost_threshold <= boost_correction_block_mode_flag._2_2_)) {
+    governor_adjustment_any_compare_flag = 1;
+  }
+  else {
+    governor_adjustment_any_compare_flag = 0;
+  }
+  return;
+}
+
+
+
+//
+// Function: fuel_blendMode_conditionCheck_update @ 0x00504528
+//
+

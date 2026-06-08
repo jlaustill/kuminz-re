@@ -1,0 +1,50 @@
+=== VARIABLES TO NAME ===
+0x0040aac4  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040aac4
+void governor_loadPercent_channel0_update(void)
+
+{
+  undefined2 uVar1;
+  uint uVar2;
+  
+  fault_flag_clear_bitmap(0);
+  fault_reason_clear_bitmap(0);
+  uVar1 = DAT_0040aac4;
+  if ((((governor_mode_config_flags & 0x8000) != 0) && (DAT_0040aac1 <= DAT_0005c340)) &&
+     (uVar1 = DAT_0005c344, governor_derivative_active_flag == 0)) {
+    if (DAT_003feaa4 == 0) {
+      uVar1 = DAT_0005c344;
+      if (governor_load_startup_inhibit_flag == 0) {
+        fault_reason_set_bitmap(0);
+        uVar1 = DAT_0005c344;
+      }
+    }
+    else {
+      uVar2 = (uint)DAT_0040aab6;
+      if (uVar2 < 0xfb) {
+        uVar1 = (short)((uVar2 << 4) / 10);
+      }
+      else {
+        uVar1 = DAT_0005c344;
+        if ((uVar2 != 0xfe) && (uVar1 = DAT_0005c344, governor_load_startup_inhibit_flag == 0)) {
+          fault_flag_set_bitmap(0);
+          uVar1 = DAT_0005c344;
+        }
+      }
+    }
+  }
+  DAT_0040aac4 = uVar1;
+  return;
+}
+
+
+
+//
+// Function: governor_loadPercent_channel6_update @ 0x0050a1b4
+//
+

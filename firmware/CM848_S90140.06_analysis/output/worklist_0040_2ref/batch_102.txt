@@ -1,0 +1,107 @@
+=== VARIABLES TO NAME ===
+0x0040b348  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040b348
+void diag_iat_protectionLimit_calc(void)
+
+{
+  iat_protection_total_derate_steps =
+       cm848_dualAxisTableInterpolation(&DAT_003fce6e,iat_protection_oilTemp_input,0xb3be);
+  if (iat_protection_total_derate_steps == 0) {
+    iat_protection_derate_steps_zero_flag = 1;
+    cm848_triggerProtectionEvent(0x2b,0);
+    if ((governor_fuel_feature_flags & 0x10) == 0) {
+      cm848_triggerProtectionEvent(0x2c,0);
+    }
+  }
+  else {
+    iat_protection_remaining_derate_steps = iat_protection_total_derate_steps;
+    if (((eeprom_header_t_003fee08.cal_word1 == 1) || (DAT_0040b348 == 1)) && (DAT_003fce53 == '\0')
+       ) {
+      iat_protection_remaining_derate_steps = DAT_0005c7a0;
+    }
+    if (((operating_mode_flags & 0x200) == 0) || (iat_protection_state != 0)) {
+      cm848_setEngineProtectionFault(0x2b,0);
+      if ((governor_fuel_feature_flags & 0x10) == 0) {
+        cm848_setEngineProtectionFault(0x2c,0);
+      }
+    }
+    cm848_setEngineProtectionFault(4,2);
+    battery_voltage_status_flags = battery_voltage_status_flags & 0xfc | 2;
+    iat_protection_derate_steps_zero_flag = 0;
+  }
+  return;
+}
+
+
+
+//
+// Function: diag_iat_protectionLimit_update @ 0x00517120
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_0040b348
+void diag_iat_protectionLimit_update(void)
+
+{
+  if ((battery_voltage_status_flags >> 4 & 1) != 0) {
+    battery_voltage_status_flags = battery_voltage_status_flags & 0xaf | 0x40;
+  }
+  if ((battery_voltage_status_flags >> 5 & 1) != 0) {
+    battery_voltage_status_flags = battery_voltage_status_flags & 0x9f | 0x40;
+  }
+  if (iat_protection_remaining_derate_steps == 0) {
+    if (((((operating_mode_flags & 0x200) == 0) || (iat_protection_state == 4)) ||
+        (iat_protection_state == 5)) || (iat_protection_state == 6)) {
+      cm848_triggerProtectionEvent(0x2b,0);
+      if ((governor_fuel_feature_flags & 0x10) == 0) {
+        cm848_triggerProtectionEvent(0x2c,0);
+      }
+      if (iat_protection_derate_steps_zero_flag == 0) {
+        cm848_triggerProtectionEvent(4,2);
+      }
+    }
+    else {
+      cm848_triggerProtectionEvent(0x2b,0);
+      if ((governor_fuel_feature_flags & 0x10) == 0) {
+        cm848_triggerProtectionEvent(0x2c,0);
+      }
+    }
+    if (iat_protection_total_derate_steps != 0) {
+      battery_voltage_status_flags = battery_voltage_status_flags & 0xf5 | 8;
+    }
+  }
+  else {
+    if (((operating_mode_flags & 0x200) == 0) || (iat_protection_state != 0)) {
+      cm848_setEngineProtectionFault(0x2b,0);
+      if ((governor_fuel_feature_flags & 0x10) == 0) {
+        cm848_setEngineProtectionFault(0x2c,0);
+      }
+      cm848_setEngineProtectionFault(4,2);
+      iat_protection_remaining_derate_steps = iat_protection_remaining_derate_steps - 1;
+    }
+    else {
+      cm848_setEngineProtectionFault(4,2);
+    }
+    if ((int)(uint)iat_protection_remaining_derate_steps <
+        (int)((uint)iat_protection_total_derate_steps - (uint)DAT_0005c7a0)) {
+      DAT_0040b348 = 1;
+      eeprom_header_t_003fee08.cal_word1 = 1;
+    }
+  }
+  iat_rpmDerate_holdoff_countdown = ram0x0005c788;
+  iat_protection_level6_grace_count = 100;
+  return;
+}
+
+
+
+//
+// Function: diag_iat_protection_rpmDerate_update @ 0x0051736c
+//
+

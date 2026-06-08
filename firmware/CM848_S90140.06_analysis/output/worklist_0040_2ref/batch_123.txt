@@ -1,0 +1,28 @@
+=== VARIABLES TO NAME ===
+0x0040c28a  (3 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040c28a
+void hpcr_exception_process(void)
+
+{
+  diag_dm1_buffer_fill_state = 0;
+  diag_dm1_protection_warning_active = 0;
+  diag_dm1_buffer_start_ptr = &DAT_0040c28a;
+  diag_dm1_buffer_write_ptr = &DAT_0040c28a;
+  diag_dm1_buffer_read_ptr = &DAT_0040c28a;
+  DAT_0040c286 = &diag_dm1_fault_source_table;
+  diag_dm1_buffer_fill_phase = 0;
+  diag_dm1_active_fault_entry_count = 0;
+  return;
+}
+
+
+
+//
+// Function: j1939_dm1_diagnosticMessage_send @ 0x00505df0
+//
+

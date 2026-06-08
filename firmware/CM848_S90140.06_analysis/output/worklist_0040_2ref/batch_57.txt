@@ -1,0 +1,68 @@
+=== VARIABLES TO NAME ===
+0x004090c4  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_004090c4
+void FUN_0052877c(int param_1)
+
+{
+  word wVar1;
+  uint uVar2;
+  uint uVar3;
+  uint uVar4;
+  int iVar5;
+  
+  crank_sync_period_snapshot = engine_timing_reference;
+  engine_load_input_b = engine_timing_reference;
+  uVar3 = 0;
+  if ((&DAT_0005f14e)[param_1] == '\0') {
+    uVar2 = (uint)cylinder_event_count_max;
+    if (((uVar2 == 8) || (uVar2 == 6)) &&
+       ((((int)(uint)protection_fault_status_a >> ((uint)(byte)(&DAT_0005f15e)[param_1] << 1 & 0x3e)
+         & 1U) != 0 ||
+        (((int)(uint)engine_position_diag_flags >>
+          ((uint)(byte)(&DAT_0005f15e)[param_1] << 1 & 0x3e) & 1U) != 0)))) {
+      uVar3 = (uint)DAT_004090c4;
+    }
+    wVar1 = TPUA_CH4_PARAM0;
+    iVar5 = param_1 + (uVar3 & 0xff);
+    TPUA_CH4_PARAM0 =
+         wVar1 & 0x8000 | (ushort)(byte)(&DAT_0005f156)[param_1] << 2 |
+         (ushort)(byte)(&DAT_0005f15e)[iVar5 - (iVar5 / (int)uVar2) * uVar2];
+    wVar1 = TPUA_CH2_PARAM4;
+    TPUA_CH2_PARAM4 = wVar1 & 0x8000 | (ushort)injection_tpu_timing_mode;
+    wVar1 = 0x30;
+  }
+  else {
+    if ((&DAT_0005f14e)[param_1] != '\x01') {
+      return;
+    }
+    uVar2 = (uint)cylinder_event_count_max;
+    if (((uVar2 == 8) || (uVar2 == 6)) &&
+       ((uVar4 = (uint)(byte)(&DAT_0005f15e)[param_1] * 2 + 1,
+        ((int)(uint)protection_fault_status_a >> (uVar4 & 0x3f) & 1U) != 0 ||
+        (((int)(uint)engine_position_diag_flags >> (uVar4 & 0x3f) & 1U) != 0)))) {
+      uVar3 = (uint)DAT_004090c4;
+    }
+    wVar1 = tpu_channel_control.PARAM0;
+    iVar5 = param_1 + (uVar3 & 0xff);
+    tpu_channel_control.PARAM0 =
+         wVar1 & 0x8000 | (ushort)(byte)(&DAT_0005f156)[param_1] << 2 |
+         (ushort)(byte)(&DAT_0005f15e)[iVar5 - (iVar5 / (int)uVar2) * uVar2];
+    wVar1 = TPUA_CH7_PARAM4;
+    TPUA_CH7_PARAM4 = wVar1 & 0x8000 | (ushort)injection_tpu_timing_mode;
+    wVar1 = 0xc000;
+  }
+  tpu_a_mcr.HSRR1 = wVar1;
+  return;
+}
+
+
+
+//
+// Function: FUN_00528978 @ 0x00528978
+//
+

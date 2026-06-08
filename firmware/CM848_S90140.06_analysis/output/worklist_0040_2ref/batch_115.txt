@@ -1,0 +1,74 @@
+=== VARIABLES TO NAME ===
+0x0040babe  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040babe
+void boost_pressureSource_faultSelect_update(void)
+
+{
+  boost_pressure_fault_status = sensor_channel7_fault_status;
+  if ((diagnostic_status_bits_b & 0x4000) != 0) {
+    boost_pressure_fault_status = sensor_channel7_fault_status | 8;
+  }
+  if ((diagnostic_status_bits & 0x20) != 0) {
+    boost_pressure_fault_status = boost_pressure_fault_status | 0x20;
+  }
+  if (boost_pressure_fault_status == 0) {
+    boost_pressure_filtered = governor_speed_deviation_from_filter;
+    boost_correction_block_flag = 0;
+  }
+  else {
+    boost_pressure_filtered = governor_speed_input_filtered;
+    boost_correction_block_flag = 2;
+  }
+  if (((int)(uint)DAT_00406758 < (int)(short)boost_pressure_filtered) &&
+     (governor_speed_at_target_flag == 0)) {
+    boost_fuel_mode_active = 0;
+  }
+  else {
+    boost_fuel_mode_active = 1;
+  }
+  DAT_0040babe = boost_pressure_filtered;
+  return;
+}
+
+
+
+//
+// Function: cm848_phase_commonProcessing_calculation @ 0x00506a3c
+//
+
+// Variables in this function: DAT_0040babe
+void cm848_protection_init_2(void)
+
+{
+  DAT_003fbcce = 0;
+  DAT_003fbcd4 = 0;
+  DAT_003fbcd6 = 0;
+  DAT_003fbcda = 0;
+  diagnostic_status_bits_b = diagnostic_status_bits_b & 0xbfff;
+  protection_condition_shadow_flags = protection_condition_shadow_flags & 0xbfff;
+  DAT_003fbcc2 = (int)(short)governor_speed_input_raw << 0x10;
+  PTR_DAT_003fbcbe = &DAT_00406752;
+  boost_pressure_filtered = governor_speed_input_raw;
+  DAT_0040babe = governor_speed_input_raw;
+  if ((sensor_channel7_fault_status == 0) || (sensor_channel7_fault_status == 1)) {
+    boost_correction_block_flag = 0;
+  }
+  if (sensor_channel7_fault_status == 2) {
+    boost_correction_block_flag = 2;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_phase_groupA_exponentialAverage @ 0x00506b34
+//
+
+/* WARNING: Function: cm848_signedDivision32 replaced with injection: sdiv64by32 */
+

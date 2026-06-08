@@ -1,0 +1,89 @@
+=== VARIABLES TO NAME ===
+0x004051e8  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_004051e8
+void fuel_boostCorrection_enableCheck_trimCalc(void)
+
+{
+  uint uVar1;
+  uint uVar2;
+  int iVar3;
+  
+  uVar2 = (uint)fuel_quantity_ema;
+  iVar3 = (int)(short)fuel_demand_boost_input;
+  if ((((boost_correction_alt_mode_cal == 0) || (boost_correction_inhibit_flag != 0)) ||
+      (boost_correction_block_mode_flag._0_2_ != 0)) ||
+     (((fuel_demand_mode_index_init_flag._0_2_ != 0 || (engine_fuel_fault_status != 0)) ||
+      ((uVar2 < DAT_004051f0 || (iVar3 < (int)(uint)DAT_004051ec)))))) {
+    boost_correction_eligible_flag = 0;
+  }
+  else if (((boost_correction_block_flag == 0) && (fuel_demand_enable_state == 0)) &&
+          (((diagnostic_status_bits & 0x20) == 0 &&
+           ((((engine_sync_validation_flags & 8) == 0 &&
+             (DAT_004051f4 <= (short)boost_pressure_filtered)) &&
+            (DAT_004051f2 <= (short)boost_pressure_correction_snapshot)))))) {
+    boost_correction_eligible_flag = 1;
+  }
+  else {
+    boost_correction_eligible_flag = 0;
+  }
+  uVar1 = (uint)boost_fuel_input_value * 0x20;
+  if (iVar3 < (int)uVar1) {
+    if (iVar3 < 1) {
+      if (iVar3 < 0) {
+        iVar3 = -iVar3;
+      }
+      iVar3 = uVar1 + iVar3;
+    }
+    else {
+      iVar3 = uVar1 - iVar3;
+    }
+  }
+  else {
+    iVar3 = 0;
+  }
+  if (iVar3 == 0) {
+    iVar3 = 1;
+  }
+  if (throttle_trim_lookup_input < uVar1) {
+    uVar1 = uVar1 - throttle_trim_lookup_input;
+  }
+  else {
+    uVar1 = 0;
+  }
+  iVar3 = (int)(CONCAT44(((int)uVar1 >> 0x1f) * 10000 + (int)((ulonglong)uVar1 * 10000 >> 0x20),
+                         uVar1 * 10000) / (longlong)iVar3);
+  if (iVar3 < 10000) {
+    if (iVar3 < 1) {
+      iVar3 = 0;
+    }
+  }
+  else {
+    iVar3 = 10000;
+  }
+  boost_correction_throttle_trim_ratio = (word)iVar3;
+  iVar3 = (int)(CONCAT44((int)((ulonglong)((longlong)(int)uVar2 * (longlong)(int)DAT_004051e8) >>
+                              0x20),uVar2 * (int)DAT_004051e8) / 0x500) + (uint)DAT_004051ea;
+  if (iVar3 < 0x2711) {
+    if (iVar3 < 0) {
+      iVar3 = 0;
+    }
+  }
+  else {
+    iVar3 = 10000;
+  }
+  boost_correction_fuel_ema_ratio = (word)iVar3;
+  governor_adjustment_counter_update();
+  return;
+}
+
+
+
+//
+// Function: cm848_auxiliary_periodic @ 0x00503604
+//
+

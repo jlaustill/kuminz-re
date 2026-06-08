@@ -1,0 +1,78 @@
+address,name,type,comment
+0x0040bc88,hpcr_pressure_diag_forced_reading,word,forced pressure value when diag bypass flag set
+0x0040ba12,cbd_phase_advance_flag,byte,CBD phase-advance gate (0=hold)
+0x0040a772,governor_faultDerate_engine_sync_trigger,word,fault-derate engine-sync trigger flag
+0x0040a774,governor_faultDerate_channel_active_latch,word,fault-derate channel-active latch
+0x0040871e,governor_speed_request_debounce_count_max,word,ROM debounce depth for speed-request FSM
+0x0040b9e4,hpcr_pressure_diag_lookup_ref,word,HPCR pressure diag reference (table lookup)
+0x0040b9e8,hpcr_pressure_diag_delta_state1,word,HPCR pressure diag state-1 delta
+0x0040a566,fuel_demand_blend_divisor_ref,word,governor blend window normalization divisor
+0x0040a682,boost_target_load_rpm_output,word,boost target from load/rpm/map calc
+0x0040a71a,fuel_blend_compensation_target,word,blend compensation error zero-crossing target
+0x0040a72c,fuel_boost_compensation_target,word,boost compensation error zero-crossing target
+0x0040af6e,fuel_blend_map_correction_weighted,word,MAP correction x filtered blend EMA weight
+0x0040af70,fuel_boost_map_correction_weighted,word,MAP correction x blend EMA weight
+0x004065be,engine_load_ramp_rate_lower,word,ROM negative rate limit for engine_load_input_value
+0x004065c0,engine_load_ramp_rate_upper,word,ROM positive rate limit for engine_load_input_value
+0x00409aac,cam_timing_speed_window_debounce_max,word,ROM cap for cam-timing speed-window debounce
+0x00409ad0,cam_timing_speed_window_reference_count_threshold,word,ROM reference-count threshold for speed window
+0x0040b8e0,cam_timing_refB_sync_latch,word,latched cam_timing_reference_b at sync-B event
+0x0040b8e8,cam_timing_position_correction_scaled,word,gain-scaled clamped cam position correction
+0x0040b8ee,cam_sync_refA_required_count,word,table-derived required reference count (ref-A check)
+0x0040b8f0,cam_timing_correction_step,word,correction step subtracted from base
+0x0040b8f2,cam_timing_correction_time_constant,word,correction P-controller time constant
+0x0040b8f6,cam_timing_correction_coolant_offset,word,coolant-temp reference-count offset
+0x0040b8f8,cam_timing_correction_coolant_component,word,coolant-temp additive correction component
+0x0040b8fa,cam_timing_correction_rpm_offset,word,RPM reference-count offset
+0x0040b8fc,cam_timing_correction_rpm_component,word,RPM additive correction component
+0x0040b903,cam_sync_refA_count_above_target_flag,byte,ref-A count above target boolean
+0x0040b90b,cam_timing_correction_speed_gate_flag,byte,cam correction speed-window precondition gate
+0x0040b54a,governor_cruise_period_scale_factor,word,coolant-indexed scale for cruise period accumulator
+0x004051e8,boost_correction_fuel_ema_scale,word,ROM scale for fuel-EMA boost correction ratio
+0x004059f4,fuel_demand_rpm_correction_scale,word,ROM scale for RPM correction in aux blend deviation
+0x00405a9e,fuel_demand_offset_correction_upper_limit,word,ROM ceiling for fuel_demand_offset_correction
+0x0040a54e,fuel_demand_blend_deviation_working,word,cross-task staging for aux blend deviation
+0x00406008,fuel_demand_limit_input_upper_limit,word,ROM upper clamp for fuel_demand_limit_input
+0x0040600a,fuel_demand_limit_input_lower_limit,word,ROM lower clamp for fuel_demand_limit_input
+0x004062d2,boost_pressure_ratio_upper_limit,word,ROM ceiling for boost_pressure_ratio_clamped
+0x004062d4,boost_pressure_ratio_lower_limit,word,ROM floor for boost_pressure_ratio_clamped
+0x00406464,fuel_blendMode_condition_a_slope,word,ROM slope for blend condition A threshold
+0x00406466,fuel_blendMode_condition_b_slope,word,ROM slope for blend condition B threshold
+0x00406548,fuel_demand_min_rate_limit_decrease,word,ROM negative slew step for fuel_demand_min
+0x0040654a,fuel_demand_min_rate_limit_increase,word,ROM positive slew step for fuel_demand_min
+0x0040a72e,fuel_demand_blend_weight,word,blend weight (dualAxis product) floor input
+0x00406556,fuel_boost_comp_negative_step_scale,word,ROM Q7 scale for boost comp negative step
+0x00406558,fuel_boost_comp_positive_step_scale,word,ROM Q7 scale for boost comp positive step
+0x00406560,fuel_blend_comp_negative_step_scale,word,ROM Q7 scale for blend comp negative step
+0x00406562,fuel_blend_comp_positive_step_scale,word,ROM Q7 scale for blend comp positive step
+0x00406566,fuel_demand_compensation_base_setpoint,word,ROM shared setpoint for blend+boost comp error
+0x0040675e,boost_synthetic_ema_boost_pressure_coef,word,ROM boost-pressure coef in synthetic boost EMA
+0x00406760,boost_synthetic_ema_rpm_coef,word,ROM RPM coef in synthetic boost EMA
+0x00406762,boost_synthetic_ema_map_coef,word,ROM MAP coef in synthetic boost EMA
+0x0040676c,boost_target_load_gain,word,ROM load gain in boost target pressure polynomial
+0x0040a67e,boost_target_fuel_normalized_ratio,word,boost target normalized by fuel qty
+0x00406776,throttle_trim_predictor_output_min,word,ROM lower clamp for throttle trim predictor output
+0x004067e0,governor_speed_stability_diag_count_decrement,word,ROM decay step for stability diag counter
+0x004071de,fuel_demand_override_active_min,word,ROM minimum override trigger count
+0x00407772,protection_speedTracking_speed_error_threshold,word,ROM threshold for speed-error-over flag
+0x00407778,protection_speedTracking_speed_error_ramp_decay,word,ROM decay step for speed-error ramp
+0x0040b044,protection_speedTracking_ramp_step_max_reached_flag,word,speed-tracking ramp step max-reached flag
+0x004077c0,governor_b_timing_deviation_max,word,ROM ceiling for governor_b_timing_deviation_normalized
+0x004077da,governor_b_boost_demand_minimum,word,ROM floor/fallback for governor-B boost demand
+0x0040b082,governor_b_rpm_squared_ema,word,EMA of governor RPM-squared weighting
+0x004077fe,protection_overtemp_entry_debounce_count_max,word,ROM cap for overtemp entry debounce
+0x0040869e,hpcr_protection_eval_mode,word,ROM selector for protection eval path 0/1
+0x004086a0,protection_event26_holdoff_limit_b,word,ROM limit for event-26 holdoff counter B
+0x004086a2,protection_event26_holdoff_limit_a,word,ROM limit for event-26 holdoff counter A
+0x004086a8,protection_event26_fuel_qty_gate_upper,word,ROM upper bound for event-26 fuel-qty gate
+0x004086b4,protection_event26_rpm_high_gate_lower,word,ROM lower bound for event-26 rpm-high gate
+0x004086b8,protection_event26_rpm_high_debounce_limit,word,ROM cap for event-26 rpm-high debounce
+0x004086cc,j1939_tsc1_timing_fault_counter_threshold,word,ROM threshold for TSC1 timing-fault path
+0x004086da,fuel_temp_protection_warmup_cycle_limit,dword,ROM cap for fuel-temp protection warmup cycles
+0x0040871c,protection_j1939_trigger_accumulator_limit,byte,ROM ceiling for J1939 protection trigger accumulator
+0x0040871d,protection_j1939_trigger_accumulator_step,byte,ROM per-cycle step for trigger accumulator
+0x00408732,protection_ramp_fraction_coolant_overheat,word,ROM ramp fraction (coolant overheat)
+0x00408734,protection_ramp_fraction_temp_ramp,word,ROM ramp fraction (governor temp ramp)
+0x00408738,protection_ramp_fraction_coolant_classb,word,ROM ramp fraction (coolant class-B)
+0x0040873a,protection_ramp_fraction_sensor_fault,word,ROM ramp fraction (sensor fault)
+0x0040873c,protection_ramp_fraction_fault_latch,word,ROM ramp fraction (fault latch)

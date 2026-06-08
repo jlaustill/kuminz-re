@@ -1,0 +1,31 @@
+=== VARIABLES TO NAME ===
+0x0040a450  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040a450
+void cm848_fuelDemand_periodic(void)
+
+{
+  if ((((governor_speed_tracking_mode == 0) && ((diagnostic_status_flags & 0x400) == 0)) &&
+      ((diagnostic_status_flags & 0x200) == 0)) &&
+     ((((diagnostic_status_flags & 0x100) == 0 && ((governor_status_flags & 0x8000) == 0)) &&
+      ((governor_status_flags & 0x4000) == 0)))) {
+    DAT_0040a450 = 0;
+  }
+  else {
+    DAT_0040a450 = 1;
+  }
+  return;
+}
+
+
+
+//
+// Function: fuel_loadCorrection_rpmNormalized_calc @ 0x00503790
+//
+
+/* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+

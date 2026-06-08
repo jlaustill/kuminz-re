@@ -1,0 +1,99 @@
+=== VARIABLES TO NAME ===
+0x0040afec  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040afec
+void phase_group_b_updateBoostBlendingControl(void)
+
+{
+  uint uVar1;
+  
+  if (DAT_003ff71a != 0) {
+    if (0 < (short)boost_blend_dwell_countdown) {
+      boost_blend_dwell_countdown = boost_blend_dwell_countdown - 1;
+    }
+    if ((short)boost_blend_dwell_countdown < 1) {
+      uVar1 = 0;
+    }
+    else {
+      DAT_0040afec = (undefined4)
+                     (CONCAT44((int)((ulonglong)DAT_003fcc00 * 0x640000 >> 0x20),
+                               DAT_003fcc00 * 0x640000) / 0x4c4b4);
+      if ((DAT_003fcc00 * DAT_003ff708 == 0) ||
+         (uVar1 = (uint)(CONCAT44((int)((ulonglong)(uint)boost_blend_tpu_period * 0x4c4b4 >> 0x20),
+                                  (uint)boost_blend_tpu_period * 0x4c4b4) /
+                        (ulonglong)(DAT_003fcc00 * DAT_003ff708)), 0xffff < uVar1)) {
+        uVar1 = 0xffff;
+      }
+    }
+    egr_fuel_pressure_ratio = (word)uVar1;
+    fuel_egrTarget_pressureRatio_calc();
+    fuel_smokeLimit_modeSelect();
+    governor_speedReference_ramp_calc();
+    fuel_smokeLimit_transient_counter();
+    DAT_003fcc1a = governor_speed_reference_raw;
+    return;
+  }
+  egr_smoke_limit_status_flags = egr_smoke_limit_status_flags & 0xfbd7;
+  egr_smoke_limit_status_shadow = egr_smoke_limit_status_shadow & 0xfbd7;
+  egr_fuel_pressure_ratio = 0;
+  governor_speed_reference_raw = egr_smoke_limit_default_speed_reference;
+  fuel_smoke_limit_mode = 0x100;
+  return;
+}
+
+
+
+//
+// Function: hpcr_configureTPUTimerInterrupts @ 0x0050f6c4
+//
+
+// Variables in this function: DAT_0040afec
+void hpcr_configureTPUTimerInterrupts(void)
+
+{
+  word wVar1;
+  
+  wVar1 = tpu_b_mcr.CPR1;
+  tpu_b_mcr.CPR1 = wVar1 & 0xfff3;
+  wVar1 = tpu_b_mcr.CIER;
+  tpu_b_mcr.CIER = wVar1 & 0xfffd;
+  wVar1 = tpu_b_mcr.CISR;
+  tpu_b_mcr.CISR = wVar1 & 0xfffd;
+  wVar1 = tpu_b_mcr.CFSR3;
+  tpu_b_mcr.CFSR3 = wVar1 & 0xff0f | 0xd0;
+  DAT_00304512 = boost_blend_tpu_period << 8;
+  DAT_00304516 = 0;
+  DAT_00304518 = 0;
+  TPUB_CH1_PARAM0 = 7;
+  wVar1 = tpu_b_mcr.HSQR1;
+  tpu_b_mcr.HSQR1 = wVar1 & 0xfff3 | 8;
+  tpu_b_mcr.HSRR1 = 0xc;
+  wVar1 = tpu_b_mcr.CPR1;
+  tpu_b_mcr.CPR1 = wVar1 & 0xfff3 | 8;
+  wVar1 = tpu_b_mcr.CIER;
+  tpu_b_mcr.CIER = wVar1 | 2;
+  if (DAT_003ff70e == 0) {
+    j1939_dm1_fault_byte_5 = j1939_dm1_fault_byte_5 & 0xfd;
+  }
+  else {
+    j1939_dm1_fault_byte_5 = j1939_dm1_fault_byte_5 | 2;
+  }
+  DAT_0040afec = 0xffffffff;
+  egr_smoke_limit_status_flags = egr_smoke_limit_status_flags & 0xfbff;
+  egr_smoke_limit_status_shadow = egr_smoke_limit_status_shadow & 0xfbff;
+  DAT_003fcc0c = (uint)fuel_demand_quantity << 0x10;
+  PTR_DAT_003fcc08 = &DAT_003ff6fa;
+  DAT_003fcc06 = 2;
+  return;
+}
+
+
+
+//
+// Function: engine_protection_speedTracking_calc @ 0x0050f834
+//
+

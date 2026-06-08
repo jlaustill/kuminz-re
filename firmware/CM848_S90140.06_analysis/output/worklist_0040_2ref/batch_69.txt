@@ -1,0 +1,34 @@
+=== VARIABLES TO NAME ===
+0x00409ec4  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00409ec4
+void cm848_calibration_group13_load(void)
+
+{
+  if (cold_start_phase == CSP_AT_GOVERNOR_SETPOINT) {
+    if ((tpu_rpm_ema_filtered < DAT_00409ec2) || (DAT_00409ec0 < tpu_rpm_ema_filtered)) {
+      governor_setpoint_rpm_deviation_count = governor_setpoint_rpm_deviation_count + 1;
+    }
+    else {
+      protection_monitor_shadow = protection_monitor_shadow & 0xff7f;
+      j1939_message_state_flags = j1939_message_state_flags & 0xff7f;
+      governor_setpoint_rpm_deviation_count = 0;
+    }
+    if (DAT_00409ec4 <= governor_setpoint_rpm_deviation_count) {
+      governor_setpoint_rpm_deviation_count = DAT_00409ec4;
+      protection_monitor_shadow = protection_monitor_shadow | 0x80;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_initialization_group13_state @ 0x00530364
+//
+

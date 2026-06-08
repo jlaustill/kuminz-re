@@ -1,0 +1,63 @@
+=== VARIABLES TO NAME ===
+0x0040878a  (2 references)
+0x0040878c  (2 references)
+0x0040878e  (2 references)
+0x00408790  (2 references)
+0x00408792  (2 references)
+0x00408794  (2 references)
+0x00408796  (2 references)
+0x00408798  (2 references)
+0x0040879a  (2 references)
+0x0040879c  (2 references)
+0x0040879e  (2 references)
+
+Total: 11 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040878a, DAT_0040878c, DAT_0040878e, DAT_00408790, DAT_00408792, DAT_00408794, DAT_00408796, DAT_00408798, DAT_0040879a, DAT_0040879c, DAT_0040879e
+void protection_fault_snapshot_update(void)
+
+{
+  engine_protection_faultSeverity_manage
+            (0xb,DAT_0040878a,DAT_0040878b,protection_fault_prevEnable_event11);
+  engine_protection_faultSeverity_manage
+            (0x26,DAT_0040878c,DAT_0040878d,protection_fault_prevEnable_event38);
+  engine_protection_faultSeverity_manage
+            (0x2b,DAT_0040878e,DAT_0040878f,protection_fault_prevEnable_event43);
+  engine_protection_faultSeverity_manage
+            (0x2c,DAT_00408790,DAT_00408791,protection_fault_prevEnable_event44);
+  engine_protection_faultSeverity_manage
+            (0x35,DAT_00408792,DAT_00408793,protection_fault_prevEnable_event53);
+  engine_protection_faultSeverity_manage
+            (0x15,DAT_00408794,DAT_00408795,protection_fault_prevEnable_event21);
+  engine_protection_faultSeverity_manage
+            (0x14,DAT_00408796,DAT_00408797,protection_fault_prevEnable_event20);
+  engine_protection_faultSeverity_manage
+            (0x13,DAT_00408798,DAT_00408799,protection_fault_prevEnable_event19);
+  engine_protection_faultSeverity_manage
+            (0x11,DAT_0040879a,DAT_0040879b,protection_fault_prevEnable_event17);
+  engine_protection_faultSeverity_manage
+            (0x12,DAT_0040879c,DAT_0040879d,protection_fault_prevEnable_event18);
+  engine_protection_faultSeverity_manage
+            (0x10,DAT_0040879e,DAT_0040879f,protection_fault_prevEnable_event16);
+  protection_fault_prevEnable_event11 = (ushort)DAT_0040878a;
+  protection_fault_prevEnable_event38 = (ushort)DAT_0040878c;
+  protection_fault_prevEnable_event43 = (ushort)DAT_0040878e;
+  protection_fault_prevEnable_event44 = (ushort)DAT_00408790;
+  protection_fault_prevEnable_event53 = (ushort)DAT_00408792;
+  protection_fault_prevEnable_event21 = (ushort)DAT_00408794;
+  protection_fault_prevEnable_event20 = (ushort)DAT_00408796;
+  protection_fault_prevEnable_event19 = (ushort)DAT_00408798;
+  protection_fault_prevEnable_event17 = (ushort)DAT_0040879a;
+  protection_fault_prevEnable_event18 = (ushort)DAT_0040879c;
+  protection_fault_prevEnable_event16 = (ushort)DAT_0040879e;
+  return;
+}
+
+
+
+//
+// Function: protection_fault_snapshot_initialize @ 0x00514394
+//
+

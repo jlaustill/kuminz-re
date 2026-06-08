@@ -1,0 +1,26 @@
+=== VARIABLES TO NAME ===
+0x0040869e  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040869e
+void hpcr_fuel_mode_state_transition(void)
+
+{
+  if (DAT_0040869e == 0) {
+    engine_protection_fuelMass_rpmCheck();
+  }
+  else if (DAT_0040869e == 1) {
+    engine_protection_conditionCode_evaluate();
+  }
+  return;
+}
+
+
+
+//
+// Function: fuel_temp_protection_monitor @ 0x0051193c
+//
+

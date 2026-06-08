@@ -1,0 +1,102 @@
+=== VARIABLES TO NAME ===
+0x0040b478  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040b478
+void j1939_msgSlotE_governorAuth_check(void)
+
+{
+  uint uVar1;
+  uint uVar2;
+  byte bVar3;
+  
+  if (j1939_msg_slot_e_pgn < 0x65) {
+    if (j1939_msg_slot_e_command == 0x80) {
+      if (((j1939_msg_slot_e_data_byte1 == 0) && (j1939_msg_slot_e_data_byte2 == 0)) &&
+         (j1939_msg_slot_e_data_byte3 == 0)) {
+        uVar1 = sensor_checksum_verify_session();
+        j1939_governor_auth_status_flags = j1939_governor_auth_status_flags & 0xfe | 1;
+        bVar3 = 0;
+        uVar2 = 3;
+        j1939_governor_auth_session_seed = uVar1;
+        do {
+          (&DAT_0040b478)[uVar2 & 0xff] = (char)uVar1;
+          uVar1 = uVar1 >> 8;
+          bVar3 = bVar3 + 1;
+          uVar2 = uVar2 + 0xff;
+        } while (bVar3 < 4);
+        j1939_msg_slot_s_counter = 1;
+        j1939_governor_auth_status_flags = j1939_governor_auth_status_flags & 0xfd | 2;
+        sensor_checksum_calculate_composite();
+      }
+    }
+    else if (j1939_msg_slot_e_command == 0) {
+      j1939_governor_auth_response_received =
+           (uint)j1939_msg_slot_e_data_byte3 + (uint)j1939_msg_slot_e_data_byte2 * 0x100 +
+           (uint)j1939_msg_slot_e_data_byte1 * 0x10000;
+      if ((j1939_governor_auth_response_received == j1939_governor_auth_checksum_expected) &&
+         ((j1939_governor_auth_status_flags >> 1 & 1) != 0)) {
+        j1939_governor_auth_granted = 1;
+      }
+      else {
+        j1939_governor_auth_granted = 0;
+      }
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: j1939_msgSlotE_eepromWrite_stage @ 0x00523e88
+//
+
+// Variables in this function: DAT_0040b478
+void j1939_msgSlotE_eepromWrite_stage(void)
+
+{
+  int iVar1;
+  uint uVar2;
+  uint uVar3;
+  byte bVar4;
+  
+  iVar1 = 0;
+  if ((j1939_msg_slot_e_command == 1) || (j1939_msg_slot_e_command == 2)) {
+    if (j1939_msg_slot_e_command == 1) {
+      iVar1 = 0;
+    }
+    else if (j1939_msg_slot_e_command == 2) {
+      iVar1 = 3;
+    }
+    *(byte *)((int)&eeprom_write_buffer + iVar1 + 2) = j1939_msg_slot_e_data_byte1;
+    *(byte *)((int)&eeprom_write_buffer + iVar1 + 3) = j1939_msg_slot_e_data_byte2;
+    if (iVar1 == 0) {
+      eeprom_config_write_triggered_flag = j1939_msg_slot_e_data_byte3;
+    }
+    uVar2 = sensor_checksum_verify_session();
+    bVar4 = 0;
+    uVar3 = 3;
+    j1939_governor_auth_session_seed = uVar2;
+    do {
+      (&DAT_0040b478)[uVar3 & 0xff] = (char)uVar2;
+      uVar2 = uVar2 >> 8;
+      bVar4 = bVar4 + 1;
+      uVar3 = uVar3 + 0xff;
+    } while (bVar4 < 4);
+    j1939_msg_slot_s_counter = 1;
+  }
+  return;
+}
+
+
+
+//
+// Function: governorModeTransitionControl @ 0x00523f60
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

@@ -1,0 +1,42 @@
+=== VARIABLES TO NAME ===
+0x00408760  (2 references)
+0x00408762  (2 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00408760, DAT_00408762
+void fuel_coldStart_demandRamp_rateLimiter(void)
+
+{
+  uint uVar1;
+  
+  uVar1 = (uint)cold_start_fuel_demand_limit_min;
+  if ((((cold_start_rpm_fuel_limit_prev == 0x6400) && (cold_start_rpm_fuel_limit != 0x6400)) ||
+      ((cold_start_fuel_demand_pi_correction_prev == 0x6400 &&
+       (cold_start_fuel_demand_pi_correction != 0x6400)))) &&
+     (cold_start_fuel_demand_ramp_prev = cold_start_fuel_demand_limit_min,
+     uVar1 < fuel_demand_computed)) {
+    cold_start_fuel_demand_ramp_prev = fuel_demand_computed;
+  }
+  if ((uint)DAT_00408762 + (uint)cold_start_fuel_demand_ramp_prev < uVar1) {
+    cold_start_fuel_demand_ramp_output = cold_start_fuel_demand_ramp_prev + DAT_00408762;
+    cold_start_fuel_limit_reason_code = 8;
+  }
+  else if (DAT_00408760 + uVar1 < (uint)cold_start_fuel_demand_ramp_prev) {
+    cold_start_fuel_demand_ramp_output = cold_start_fuel_demand_ramp_prev - DAT_00408760;
+    cold_start_fuel_limit_reason_code = 7;
+  }
+  else {
+    cold_start_fuel_demand_ramp_output = cold_start_fuel_demand_limit_min;
+  }
+  return;
+}
+
+
+
+//
+// Function: fuel_coldStart_demandMin_2dLookup @ 0x00513c80
+//
+

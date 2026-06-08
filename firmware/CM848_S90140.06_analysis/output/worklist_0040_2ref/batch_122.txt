@@ -1,0 +1,72 @@
+=== VARIABLES TO NAME ===
+0x0040c0a5  (2 references)
+0x0040c0a6  (2 references)
+0x0040c0c9  (2 references)
+
+Total: 3 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040c0a5, DAT_0040c0a6, DAT_0040c0c9
+void protectionVoltageTimeoutControl(void)
+
+{
+  if ((protection_voltage_active_timeout_count != 0) &&
+     (protection_voltage_active_timeout_count = protection_voltage_active_timeout_count - 1,
+     protection_voltage_active_timeout_count == 0)) {
+    protection_voltage_active_flag = 0;
+  }
+  if ((protection_crank_fault_severity_timeout_count != 0) &&
+     ((protection_crank_fault_severity_timeout_count =
+            protection_crank_fault_severity_timeout_count - 1,
+      protection_crank_fault_severity_timeout_count == 0 || (cold_start_phase != CSP_CRANKING)))) {
+    if (DAT_0040c0c9 == '\x05') {
+      DAT_0040c0c9 = '\0';
+    }
+    protection_crank_fault_severity_timeout_count = 0;
+  }
+  if ((protection_cylinder_diag_timeout_count != 0) &&
+     ((protection_cylinder_diag_timeout_count = protection_cylinder_diag_timeout_count - 1,
+      protection_cylinder_diag_timeout_count == 0 || (engine_sync_confirmation_state == 2)))) {
+    cylinder_diag_active_flag = 0;
+    protection_cylinder_diag_timeout_count = 0;
+  }
+  if ((protection_speed_limit_enable_timeout_count != 0) &&
+     ((protection_speed_limit_enable_timeout_count = protection_speed_limit_enable_timeout_count - 1
+      , protection_speed_limit_enable_timeout_count == 0 || (governor_speed_limit_mode == 2)))) {
+    governor_speed_limit_enable_flag = 0;
+  }
+  if ((protection_throttle_output_timeout_count != 0) &&
+     (protection_throttle_output_timeout_count = protection_throttle_output_timeout_count - 1,
+     protection_throttle_output_timeout_count == 0)) {
+    protection_status_flags_t_0040b0f2.output_flags =
+         protection_status_flags_t_0040b0f2.output_flags & 0xfe;
+  }
+  if ((protection_load_derate_output_timeout_count != 0) &&
+     (protection_load_derate_output_timeout_count = protection_load_derate_output_timeout_count - 1,
+     protection_load_derate_output_timeout_count == 0)) {
+    protection_status_flags_t_0040b0f2.output_flags =
+         protection_status_flags_t_0040b0f2.output_flags & 0xfc;
+    if (DAT_0040c0a6 == '\x05') {
+      DAT_0040c0a6 = '\0';
+    }
+  }
+  if ((protection_engine_protection_output_timeout_count != 0) &&
+     (protection_engine_protection_output_timeout_count =
+           protection_engine_protection_output_timeout_count - 1,
+     protection_engine_protection_output_timeout_count == 0)) {
+    protection_status_flags_t_0040b0f2.output_flags =
+         protection_status_flags_t_0040b0f2.output_flags & 0xfa;
+    if (DAT_0040c0a5 == '\x05') {
+      DAT_0040c0a5 = '\0';
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: initProtectionVoltageTimer @ 0x005216cc
+//
+

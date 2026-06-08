@@ -1,0 +1,180 @@
+=== VARIABLES TO NAME ===
+0x0040b842  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040b842
+void cm848_auxiliary_boundary_condition_eval(void)
+
+{
+  longlong lVar1;
+  word x_input;
+  short sVar3;
+  short sVar4;
+  short sVar5;
+  short sVar6;
+  word wStack_2e;
+  int iVar2;
+  
+  x_input = engine_load_output_value;
+  sVar5 = 0;
+  sVar6 = 0;
+  if (DAT_00409090 != 0) {
+    DAT_0040b842 = DAT_00409092;
+    injection_timing_source_byte_2 = 7;
+    return;
+  }
+  injection_timing_aux_coolant_factor =
+       cm848_dualAxisTableInterpolation
+                 (&DAT_003fd08e,sensor_readings_t_0040baf2.coolant_temp,0xdffc);
+  injection_timing_aux_rpm_factor =
+       cm848_dualAxisTableInterpolation
+                 (&DAT_003fd092,engine_rpm_state_t_0040b7ac.current_rpm,0xe0a0);
+  lVar1 = CONCAT44((int)((ulonglong)
+                         ((longlong)(int)(short)injection_timing_aux_rpm_factor *
+                         (longlong)(int)(short)injection_timing_aux_coolant_factor) >> 0x20),
+                   (int)(short)injection_timing_aux_rpm_factor *
+                   (int)(short)injection_timing_aux_coolant_factor) / 0x1000;
+  iVar2 = (int)lVar1;
+  if (iVar2 < 0x401) {
+    if (iVar2 < -0x400) {
+      wStack_2e = 0xfc00;
+    }
+    else {
+      wStack_2e = (word)lVar1;
+    }
+  }
+  else {
+    wStack_2e = 0x400;
+  }
+  injection_timing_aux_combined_clamp = wStack_2e;
+  sVar3 = cm848_dualAxisTableInterpolation(&DAT_003fd096,x_input,0xe1f2);
+  sVar4 = cm848_dualAxisTableInterpolation
+                    (&DAT_003fd09a,engine_rpm_state_t_0040b7ac.current_rpm,58000);
+  lVar1 = CONCAT44((int)((ulonglong)((longlong)(int)sVar3 * (longlong)(int)sVar4) >> 0x20),
+                   (int)sVar3 * (int)sVar4) / 0x1000;
+  iVar2 = (int)lVar1;
+  if (iVar2 < 0x401) {
+    if (iVar2 < -0x400) {
+      wStack_2e = 0xfc00;
+    }
+    else {
+      wStack_2e = (word)lVar1;
+    }
+  }
+  else {
+    wStack_2e = 0x400;
+  }
+  injection_timing_aux_load_limit = wStack_2e;
+  cm848_oilPressureDeltaCalculation();
+  injection_timing_aux_oil_factor_a =
+       cm848_dualAxisTableInterpolation
+                 (&DAT_003fd09e,engine_rpm_state_t_0040b7ac.current_rpm,0xe3e2);
+  injection_timing_aux_oil_factor_b =
+       cm848_dualAxisTableInterpolation
+                 (&DAT_003fd0a2,engine_rpm_state_t_0040b7ac.current_rpm,0xe534);
+  lVar1 = CONCAT44((int)((ulonglong)
+                         ((longlong)(int)(short)injection_timing_aux_oil_factor_b *
+                         (longlong)(int)(short)injection_timing_aux_oil_factor_a) >> 0x20),
+                   (int)(short)injection_timing_aux_oil_factor_b *
+                   (int)(short)injection_timing_aux_oil_factor_a) / 0x1000;
+  iVar2 = (int)lVar1;
+  if (iVar2 < 0x401) {
+    if (iVar2 < -0x400) {
+      wStack_2e = 0xfc00;
+    }
+    else {
+      wStack_2e = (word)lVar1;
+    }
+  }
+  else {
+    wStack_2e = 0x400;
+  }
+  injection_timing_aux_rpm_limit = wStack_2e;
+  sVar3 = cm848_dualAxisTableInterpolation
+                    (&DAT_003fd0a6,engine_rpm_state_t_0040b7ac.current_rpm,0xdd52);
+  if (boost_map_index_current == 1) {
+    sVar5 = cm848_dualAxisTableInterpolation
+                      (&aux_boundary_boost_blend_interp_state,
+                       engine_rpm_state_t_0040b7ac.current_rpm,0xe686);
+  }
+  else if (boost_map_index_current == 2) {
+    sVar5 = cm848_dualAxisTableInterpolation
+                      (&aux_boundary_boost_blend_interp_state,
+                       engine_rpm_state_t_0040b7ac.current_rpm,0xe930);
+  }
+  else if (boost_map_index_current == 3) {
+    sVar5 = cm848_dualAxisTableInterpolation
+                      (&aux_boundary_boost_blend_interp_state,
+                       engine_rpm_state_t_0040b7ac.current_rpm,0xebda);
+  }
+  else if (boost_map_index_current == 4) {
+    sVar5 = cm848_dualAxisTableInterpolation
+                      (&aux_boundary_boost_blend_interp_state,
+                       engine_rpm_state_t_0040b7ac.current_rpm,0xee84);
+  }
+  if (boost_map_index_target == 1) {
+    sVar6 = cm848_dualAxisTableInterpolation
+                      (&aux_boundary_boost_blend_interp_state,
+                       engine_rpm_state_t_0040b7ac.current_rpm,0xe686);
+  }
+  else if (boost_map_index_target == 2) {
+    sVar6 = cm848_dualAxisTableInterpolation
+                      (&aux_boundary_boost_blend_interp_state,
+                       engine_rpm_state_t_0040b7ac.current_rpm,0xe930);
+  }
+  else if (boost_map_index_target == 3) {
+    sVar6 = cm848_dualAxisTableInterpolation
+                      (&aux_boundary_boost_blend_interp_state,
+                       engine_rpm_state_t_0040b7ac.current_rpm,0xebda);
+  }
+  else if (boost_map_index_target == 4) {
+    sVar6 = cm848_dualAxisTableInterpolation
+                      (&aux_boundary_boost_blend_interp_state,
+                       engine_rpm_state_t_0040b7ac.current_rpm,0xee84);
+  }
+  injection_timing_aux_boost_blend =
+       cm848_filterInputValue
+                 ((int)sVar5,(int)sVar6,(int)sVar3,boost_map_index_current,boost_map_index_target,
+                  fuel_blend_state_t_0040a494.blend_weight,fuel_blend_state_t_0040a494.blend_mode);
+  injection_timing_aux_output = injection_timing_aux_boost_blend;
+  if (DAT_00409094 == 2) {
+    if ((short)injection_timing_aux_rpm_limit < (short)injection_timing_aux_boost_blend) {
+      injection_timing_aux_output = injection_timing_aux_rpm_limit;
+    }
+    if ((short)injection_timing_aux_load_limit < (short)injection_timing_aux_output) {
+      injection_timing_aux_output = injection_timing_aux_load_limit;
+    }
+    if ((short)injection_timing_aux_output <= (short)injection_timing_aux_combined_clamp)
+    goto LAB_00527fc4;
+  }
+  else {
+    if ((short)injection_timing_aux_boost_blend < (short)injection_timing_aux_rpm_limit) {
+      injection_timing_aux_output = injection_timing_aux_rpm_limit;
+    }
+    if ((short)injection_timing_aux_output < (short)injection_timing_aux_load_limit) {
+      injection_timing_aux_output = injection_timing_aux_load_limit;
+    }
+    if ((short)injection_timing_aux_combined_clamp <= (short)injection_timing_aux_output)
+    goto LAB_00527fc4;
+  }
+  injection_timing_aux_output = injection_timing_aux_combined_clamp;
+LAB_00527fc4:
+  DAT_0040b842 = injection_timing_aux_output;
+  if (DAT_00409096 == 0) {
+    injection_timing_aux_offset = torque_limit_fault_snapshot - injection_timing_aux_output;
+  }
+  else {
+    injection_timing_aux_offset = -(DAT_0005a48a + injection_timing_aux_output);
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_initialization_auxiliary_state @ 0x0052801c
+//
+

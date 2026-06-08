@@ -1,0 +1,74 @@
+=== VARIABLES TO NAME ===
+0x0040a5ac  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040a5ac
+void etc1_threshold_lookup(void)
+
+{
+  short sVar1;
+  
+  sVar1 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fba1a);
+  DAT_0040a5ac = (ushort)((int)sVar1 < (short)j1939_tsc1_override_state.proprietary_offset_value * 2
+                         );
+  return;
+}
+
+
+
+//
+// Function: governor_adjustment_blend_check @ 0x0050422c
+//
+
+/* WARNING: Function: cm848_signedDivision32 replaced with injection: sdiv64by32 */
+
+// Variables in this function: DAT_0040a5ac
+void fuel_blendMode_conditionCheck_update(void)
+
+{
+  etc1_threshold_lookup();
+  governor_adjustment_blend_check();
+  governor_adjustment_compare();
+  if ((((DAT_0040a5ac == 0) || (fuel_blendMode_condition_b_flag == 0)) ||
+      (governor_adjustment_any_compare_flag == 0)) ||
+     ((cold_start_feature_enable_flags & 0x100) == 0)) {
+    fuel_blendMode_condition_b_combined_flag = 0;
+  }
+  else {
+    fuel_blendMode_condition_b_combined_flag = 1;
+  }
+  if ((((cold_start_feature_enable_flags & 0x100) == 0) ||
+      (fuel_blendMode_no_condition_active_flag == 0)) || (governor_adjustment_any_compare_flag == 0)
+     ) {
+    fuel_blendMode_no_condition_combined_flag = 0;
+  }
+  else {
+    fuel_blendMode_no_condition_combined_flag = 1;
+  }
+  if ((fuel_blendMode_condition_b_combined_flag == 0) &&
+     (fuel_blendMode_no_condition_combined_flag == 0)) {
+    fuel_blendMode_active_flag = 0;
+  }
+  else {
+    fuel_blendMode_active_flag = 1;
+  }
+  fuel_blend_weight_threshold_active = fuel_blend_weight_threshold_cal;
+  if ((fuel_blendMode_no_condition_combined_flag == 0) &&
+     (fuel_blend_weight_threshold_active = DAT_00406460,
+     fuel_blendMode_condition_b_combined_flag == 0)) {
+    fuel_blend_weight_threshold_active = 0;
+  }
+  return;
+}
+
+
+
+//
+// Function: governor_speedRatio_etcFuelCorrection_calc @ 0x00504654
+//
+
+/* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+

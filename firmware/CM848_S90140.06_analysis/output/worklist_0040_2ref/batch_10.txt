@@ -1,0 +1,53 @@
+=== VARIABLES TO NAME ===
+0x004065be  (2 references)
+0x004065c0  (2 references)
+0x0040a606  (3 references)
+
+Total: 3 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_004065be, DAT_004065c0, DAT_0040a606
+void cm848_mainLoop_step_2(void)
+
+{
+  int iVar1;
+  uint uVar2;
+  word wVar3;
+  short *psVar4;
+  
+  uVar2 = (uint)(CONCAT44(boost_fuel_scale_divisor / 0x5d8,(uint)boost_fuel_scale_divisor * 0x2bcec0
+                         ) / (ulonglong)((fuel_demand_timing_input + 0x7300) * 0x80 & 0x7fff80));
+  if (0xffff < uVar2) {
+    uVar2 = 0xffff;
+  }
+  wVar3 = (word)uVar2;
+  if (DAT_003fbca4 == 0) {
+    DAT_003fbca4 = 1;
+  }
+  else {
+    iVar1 = (uVar2 & 0xffff) - (uint)engine_load_input_value;
+    psVar4 = (short *)&DAT_004065c0;
+    if (((int)(uint)DAT_004065c0 < iVar1) || (psVar4 = &DAT_004065be, iVar1 < DAT_004065be)) {
+      wVar3 = engine_load_input_value + *psVar4;
+    }
+  }
+  engine_load_input_value = wVar3;
+  if ((fuel_demand_mode_state == 2) && (fuel_demand_state_b == 2)) {
+    DAT_0040a606 = 2;
+  }
+  else if ((fuel_demand_mode_state == 0) && (fuel_demand_state_b == 0)) {
+    DAT_0040a606 = 0;
+  }
+  else {
+    DAT_0040a606 = 1;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_communication_periodic @ 0x005059ec
+//
+

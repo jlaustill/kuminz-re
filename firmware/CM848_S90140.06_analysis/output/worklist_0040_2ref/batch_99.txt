@@ -1,0 +1,42 @@
+=== VARIABLES TO NAME ===
+0x0040b192  (2 references)
+0x0040bdd8  (2 references)
+0x0040bdda  (2 references)
+0x0040be40  (2 references)
+
+Total: 4 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040b192, DAT_0040bdd8, DAT_0040bdda, DAT_0040be40
+void sensorChannelTypeB_configInit_axis3(void)
+
+{
+  sensorChannelTypeB_configInit
+            (&DAT_0005ac78,&DAT_0040b192,&DAT_003fcd40,&DAT_0005ac88,&DAT_0005ac96,0,
+             &PTR_DAT_003fcd42,0x1d,0x177,0x178,&DAT_0040bdd8,&DAT_0040bdda,&DAT_0040be40);
+  return;
+}
+
+
+
+//
+// Function: sensorChannelTypeB_update_axis3 @ 0x00510c78
+//
+
+// Variables in this function: DAT_0040b192, DAT_0040bdd8, DAT_0040bdda, DAT_0040be40
+void sensorChannelTypeB_update_axis3(void)
+
+{
+  sensorChannelTypeB_update
+            (&DAT_0005ac78,&DAT_0040b192,&DAT_003fcd40,&DAT_0005ac88,&DAT_0005ac96,0,
+             &PTR_DAT_003fcd42,0x1d,0x177,0x178,&DAT_0040bdd8,&DAT_0040bdda,&DAT_0040be40);
+  return;
+}
+
+
+
+//
+// Function: sensorChannelTypeB_configInit_axis4 @ 0x00510d04
+//
+

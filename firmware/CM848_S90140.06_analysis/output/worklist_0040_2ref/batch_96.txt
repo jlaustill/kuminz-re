@@ -1,0 +1,106 @@
+=== VARIABLES TO NAME ===
+0x0040afe2  (2 references)
+0x0040bdc6  (2 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040afe2
+void governor_smoke_statusFlag_update(void)
+
+{
+  ushort uVar1;
+  
+  if ((egr_smoke_limit_status_flags & 0x400) == 0) {
+    uVar1 = 0;
+  }
+  else {
+    uVar1 = 0x20;
+  }
+  DAT_0040afe2 = fuel_smoke_limit_mode | uVar1;
+  return;
+}
+
+
+
+//
+// Function: fuel_demandSource_modeSelect @ 0x0050ecc4
+//
+
+// Variables in this function: DAT_0040afe2, DAT_0040bdc6
+void fuel_demandSource_modeSelect(void)
+
+{
+  ushort uVar1;
+  ushort uVar2;
+  
+  fuel_demand_mode_flags_working = DAT_0040770c;
+  if (DAT_003fd8ac == 0) {
+    if (DAT_003fd8ae == 0) {
+      uVar2 = 0;
+    }
+    else {
+      uVar2 = 0x200;
+    }
+    fuel_demand_mode_flags_working = governor_correction_mode_flags | DAT_0040afe2 | uVar2;
+  }
+  DAT_0040afe4 = fuel_demand_mode_flags_working & 0x100;
+  uVar2 = fuel_demand_mode_flags_working & 0x200;
+  if ((((uVar2 == 0) && ((fuel_demand_mode_flags_working & 0x100) == 0)) ||
+      (((fuel_demand_mode_flags_working & 0x80) == 0 &&
+       ((fuel_demand_mode_flags_working & 0x40) == 0)))) &&
+     (((((uVar1 = fuel_demand_mode_flags_working & 0x80, uVar1 == 0 &&
+         ((fuel_demand_mode_flags_working & 0x40) == 0)) || (uVar2 != 0)) ||
+       ((fuel_demand_mode_flags_working & 0x100) != 0)) ||
+      (((fuel_demand_mode_flags_working & 0x20) == 0 && ((fuel_demand_mode_flags_working & 2) == 0))
+      )))) {
+    if (((((fuel_demand_mode_flags_working & 0x20) == 0) &&
+         ((fuel_demand_mode_flags_working & 2) == 0)) ||
+        (((fuel_demand_mode_flags_working & 0x40) != 0 && (uVar1 != 0)))) &&
+       (((uVar2 == 0 && ((fuel_demand_mode_flags_working & 0x100) == 0)) ||
+        (((fuel_demand_mode_flags_working & 0x40) != 0 && (uVar1 != 0)))))) {
+      fuel_demand_quantity = governor_speed_reference_raw;
+      boost_control_mode = 0;
+    }
+    else {
+      fuel_demand_quantity = governor_temperature_correction;
+      boost_control_mode = 1;
+    }
+  }
+  else {
+    fuel_demand_quantity = DAT_0040bdc6;
+    boost_control_mode = 2;
+  }
+  return;
+}
+
+
+
+//
+// Function: phase_group_b_dispatchControlFunctions @ 0x0050ee44
+//
+
+// Variables in this function: DAT_0040bdc6
+void cm848_initBoostControlModeAndFallback(void)
+
+{
+  if (fuel_smoke_limit_mode == 0) {
+    boost_control_mode = 0;
+  }
+  else {
+    boost_control_mode = 2;
+  }
+  fuel_demand_quantity = governor_speed_reference_raw;
+  DAT_0040bdc6 = egr_smoke_limit_default_speed_reference;
+  return;
+}
+
+
+
+//
+// Function: fuel_egrTarget_pressureRatio_calc @ 0x0050eeb0
+//
+
+/* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+

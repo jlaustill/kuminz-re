@@ -1,0 +1,96 @@
+=== VARIABLES TO NAME ===
+0x00408d24  (2 references)
+0x0040b61a  (2 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00408d24, DAT_0040b61a
+void sensorValidationTimeout(void)
+
+{
+  ushort uVar1;
+  uint uVar2;
+  
+  if (sensor_validation_ready_flag == 0) {
+    if (sensor_validation_warmup_accumulator < DAT_00408d1c) {
+      sensor_validation_warmup_accumulator = sensor_validation_warmup_accumulator + 1;
+    }
+    else {
+      uVar1 = DAT_0040bd18;
+      if ((DAT_003fdb80 & 0x1000) == 0) {
+        if (qadc_channel_index_table[0x4c] < 0x81) {
+          uVar2 = (uint)qadc_channel_index_table[0x4c];
+        }
+        else {
+          uVar2 = 0;
+        }
+        uVar1 = *(ushort *)(&qadc_channel_dispatch_table)[uVar2 * 2];
+      }
+      if ((DAT_00408d20 < uVar1) && (uVar1 < DAT_00408d1e)) {
+        sensor_validation_ready_flag = 1;
+      }
+    }
+  }
+  if (sensor_validation_ready_flag == 0) {
+    sensor_validation_unsettled_flag = 1;
+  }
+  else {
+    cm848_processSensorLookupTable0();
+    sensor_validation_prev_snapshot = sensor_validation_value_snapshot;
+    sensor_validation_value_snapshot = sensor_validation_unsettled_flag;
+  }
+  if (sensor_validation_prev_snapshot == sensor_validation_value_snapshot) {
+    sensor_validation_stable_debounce_count = sensor_validation_stable_debounce_count + 1;
+    if (DAT_00408d24 <= sensor_validation_stable_debounce_count) {
+      sensor_validation_stable_debounce_count = DAT_00408d24;
+      DAT_0040b61a = sensor_validation_value_snapshot;
+    }
+  }
+  else {
+    sensor_validation_stable_debounce_count = 0;
+    sensor_validation_unsettled_flag = 0;
+  }
+  if ((sensor_validation_unsettled_flag == 0) && (sensor_validation_ready_flag != 0)) {
+    sensor_validation_unhealthy_persist_count = sensor_validation_unhealthy_persist_count + 1;
+  }
+  else {
+    sensor_validation_unhealthy_persist_count = 0;
+  }
+  if (sensor_validation_unhealthy_persist_count < DAT_00408d22) {
+    protection_monitor_shadow = protection_monitor_shadow & 0xffbf;
+    j1939_message_state_flags = j1939_message_state_flags & 0xffbf;
+  }
+  else {
+    protection_monitor_shadow = protection_monitor_shadow | 0x40;
+  }
+  return;
+}
+
+
+
+//
+// Function: initSensorValidationTable @ 0x005229c0
+//
+
+// Variables in this function: DAT_0040b61a
+void initSensorValidationTable(void)
+
+{
+  sensor_validation_unsettled_flag = 1;
+  sensor_validation_warmup_accumulator = 0;
+  sensor_validation_unhealthy_persist_count = 0;
+  sensor_validation_stable_debounce_count = 0;
+  sensor_validation_value_snapshot = 0;
+  sensor_validation_prev_snapshot = 0;
+  DAT_0040b61a = 0;
+  return;
+}
+
+
+
+//
+// Function: initCruiseStateVariables @ 0x00522a04
+//
+

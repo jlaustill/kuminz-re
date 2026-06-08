@@ -1,0 +1,65 @@
+=== VARIABLES TO NAME ===
+0x0040b57d  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_0040b57d
+void cm848_pidIntegrator_accumulate(void)
+
+{
+  int iVar1;
+  undefined2 uStack_6;
+  
+  iVar1 = (int)(short)protection_pid_integrator + (int)DAT_0040b57d;
+  if (iVar1 < 0x8000) {
+    if (iVar1 < -0x8000) {
+      uStack_6 = 0x8000;
+    }
+    else {
+      uStack_6 = (word)iVar1;
+    }
+  }
+  else {
+    uStack_6 = 0x7fff;
+  }
+  protection_pid_integrator = uStack_6;
+  return;
+}
+
+
+
+//
+// Function: cm848_pidError_calc @ 0x0051ba6c
+//
+
+// Variables in this function: DAT_0040b57d
+void cm848_pidError_calc(void)
+
+{
+  int iVar1;
+  undefined2 uStack_6;
+  
+  iVar1 = (uint)protection_pid_rpm_setpoint_prev - (uint)protection_pid_rpm_setpoint;
+  if (iVar1 < 0x8000) {
+    if (iVar1 < -0x8000) {
+      uStack_6 = 0x8000;
+    }
+    else {
+      uStack_6 = (undefined2)iVar1;
+    }
+  }
+  else {
+    uStack_6 = 0x7fff;
+  }
+  DAT_0040b57d = uStack_6;
+  return;
+}
+
+
+
+//
+// Function: protectionOutputAssembly @ 0x0051babc
+//
+

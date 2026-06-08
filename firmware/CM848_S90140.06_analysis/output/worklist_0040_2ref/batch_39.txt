@@ -1,0 +1,22 @@
+=== VARIABLES TO NAME ===
+0x00408a78  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00408a78
+void cm848_initFuelDemandLimits(void)
+
+{
+  cruise_speed_setpoint_a = DAT_00408a78;
+  cruise_speed_setpoint_b = DAT_00408a78;
+  return;
+}
+
+
+
+//
+// Function: mpc555_j1939InitTransmitBuffer @ 0x0003d618
+//
+

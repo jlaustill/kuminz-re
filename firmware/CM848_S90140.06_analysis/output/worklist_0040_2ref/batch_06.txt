@@ -1,0 +1,62 @@
+=== VARIABLES TO NAME ===
+0x00406464  (2 references)
+0x00406466  (2 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_00406464, DAT_00406466
+void governor_adjustment_blend_check(void)
+
+{
+  int iVar1;
+  int iVar2;
+  
+  iVar1 = (int)(short)governor_adjustment_input;
+  iVar2 = (int)(CONCAT44((int)((ulonglong)((longlong)iVar1 * (longlong)(int)DAT_00406464) >> 0x20),
+                         iVar1 * DAT_00406464) / 0x10) + (int)DAT_0040646c;
+  if (iVar2 < -0x8000) {
+    iVar2 = -0x8000;
+  }
+  else if (0x7fff < iVar2) {
+    iVar2 = 0x7fff;
+  }
+  DAT_003fba22 = (short)iVar2;
+  if ((DAT_00406468 < iVar1) || ((short)iVar2 < (short)boost_fuel_demand_blend_a)) {
+    fuel_blendMode_condition_a_flag = 0;
+  }
+  else {
+    fuel_blendMode_condition_a_flag = 1;
+  }
+  iVar2 = (int)(CONCAT44((int)((ulonglong)((longlong)iVar1 * (longlong)(int)DAT_00406466) >> 0x20),
+                         iVar1 * DAT_00406466) / 0x10) + (int)DAT_0040646e;
+  if (iVar2 < -0x8000) {
+    iVar2 = -0x8000;
+  }
+  else if (0x7fff < iVar2) {
+    iVar2 = 0x7fff;
+  }
+  DAT_003fba24 = (short)iVar2;
+  if (((DAT_0040646a < iVar1) || ((short)iVar2 < (short)boost_fuel_demand_blend_a)) ||
+     (fuel_blendMode_condition_a_flag != 0)) {
+    fuel_blendMode_condition_b_flag = 0;
+  }
+  else {
+    fuel_blendMode_condition_b_flag = 1;
+  }
+  if ((fuel_blendMode_condition_a_flag == 0) && (fuel_blendMode_condition_b_flag == 0)) {
+    fuel_blendMode_no_condition_active_flag = 1;
+  }
+  else {
+    fuel_blendMode_no_condition_active_flag = 0;
+  }
+  return;
+}
+
+
+
+//
+// Function: governor_adjustment_compare @ 0x005043b4
+//
+
