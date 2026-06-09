@@ -78,6 +78,8 @@ Functions at `0x003Fxxxx` in decompilation (e.g. `BYTE_003fae3c()`) are ROM func
 
 **Declaring data in this window:** an array/struct's boundary is usually the copy-window EDGE (0x3FDB30), not the next named global — post-copy working RAM (handler tables etc.) begins at 0x3FDB30. Size arrays to 0x3FDB30, not to the next symbol (it may belong to a different structure). Array typing DOES apply over this code-overlap region (verified deterministic via `analyze.sh verify`) — the "types revert on export" caution is about scalar WIDTH, not array creation.
 
+**Flat globals alias function bodies here:** a flat global declared in the slice overlapping a RAM-executed function gets a permanent `_` prefix (the function-image symbol wins) — declare it via `arrays.csv`/`structure_definitions.csv`, which survive. Hottest zone: `dispatchCanMessageHandlers` at RAM **0x3FAE3C–0x3FAFD0** (e.g. the PGN-65249 TX payload 0x3FAE51–0x3FAE62 must be an array, not 18 flat bytes).
+
 Key RAM-executed functions called from `mainLoopIteration`:
 - `dispatchCanMessageHandlers` (ROM 0x526C → RAM 0x3FAE3C)
 - `processJ1939QueueStatus` (ROM 0x64C4 → RAM 0x3FC094)
@@ -194,6 +196,7 @@ All firmwares use the same CSV structure in `output/`:
 - **`.cpp` has a wall-clock `Generated:` header timestamp** — every rebuild yields a 1-line diff on that line even when the decompilation is identical; `verify` normalizes it (the body is the deterministic part). Don't commit timestamp-only churn — `git checkout` the file.
 - **Shared-script edits affect BOTH firmwares** — after changing `firmware/scripts/*.java`, rebuild CM848 *and* CM550; a CM848-only change should leave CM550's `.cpp` byte-identical except the timestamp (e.g. the bitfield/`clearAtOffset` change never touched CM550, which has zero bitfield rows).
 - **Decompiler wraps long lines** — `grep 'name('` undercounts call sites (the `(` wraps to the next line). Count refs with name-only `grep -c 'name'` minus the definition / `// Function:` / injection-comment lines (a `name(` grep once showed 44 division calls; the true count was 115 across 77 functions).
+- **`.cpp`-text ref counts OVER-count data globals** — one asm access can render as 2+ `.cpp` lines (CONCAT44 64-bit-multiply, register-reuse without reload, a conditional split across lines), inflating a 1-ref var into the "2-ref" tier. Trust `xref_addr.py`'s access count, not `.cpp` grep, when tiering symbols for a naming pass.
 - **Reproducibility: PROVEN** — `build` is a deterministic fixed point. Two independent `build`s from a fresh binary produce byte-identical `.cpp` + CSVs (`verify` asserts this). Auto-analysis is deterministic; `import` force-creates functions from `function_renames.csv`; `deleted_functions.csv` removes spurious splits; the new baseline preserves all curated names and *surfaces* 90 real functions the old hand-curated baseline was missing (func_0x 75→29). The apparent "~2965 extra DAT_" gap from earlier was a measurement artifact — unnamed RAM vars render `DAT_` (initialized RAM) vs `uRam` (uninitialized); both are default names, no curation lost.
 - **deleted_functions.csv** — vet candidates with `classifyfuncs` before adding: an entry with incoming CALL refs is a REAL function (do NOT delete — add to `function_renames.csv` instead); only no-ref / jump-only entries are true mid-function splits. The bootstrap found 39 "spurious" Bank-2 candidates were actually real functions the campaign missed.
 - **Type width must match hardware access** - `bool` (1B), `byte` (1B), `word` (2B), `dword` (4B) must match the actual load instruction (`lbz`=1B, `lhz`=2B, `lwz`=4B). Wrong width is silently reverted to `word` on export. This also prevents enum substitution for byte-width variables.
@@ -231,6 +234,8 @@ To name unnamed `_DAT_` globals in future (e.g., if a new firmware export reveal
 4. **Apply** → `./analyze.sh build`
 5. **Check `_` prefix remaining**: `grep -oE '\b_[a-z][a-z0-9_]{3,}\b' cm848_rom.ghidra.cpp | sort | uniq -c | sort -rn`
 6. **Widen types** for new `_` prefix: check gap to next named var in CSV; gap≥2 → widen to `word`, gap≥4 → widen to `dword`
+
+**Yield is range-dependent — measure one wave before committing a whole tier.** Working-RAM `0x0040xxxx` is mostly flat scalars (2-ref ≈ 63% nameable). ROM-shadow `0x003fxxxx` low-ref is dominated by `table_interp_args_t` interp-states (pointer-passed), J1939 struct buffers, and sensor-channel config bases (2-ref ≈ 14%) → route to `structure_definitions.csv`/`arrays.csv`, not flat globals. INSUFFICIENT clusters as: pointer-passed (address-taken, never directly loaded) · write-only (no real reader) · array element / struct member · single-real-access.
 
 **WARNING semantics:** Each WARNING is function-level — a function gets one WARNING if ANY global in it has `_` prefix. Fixing one variable in a function does NOT clear the WARNING if other `_` vars remain.
 
