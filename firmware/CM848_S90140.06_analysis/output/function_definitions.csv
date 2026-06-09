@@ -29,6 +29,10 @@ function_address,function_name,param_index,name,type,comment
 0x00000bec,eepromWriteWords,1,src_ptr,word*,Pointer to source data words
 0x00000bec,eepromWriteWords,2,word_count,ushort,Number of words to write
 
+0x000036f8,cm848_resetEepromCalibrationState,return,,void,Clears eeprom_calibration_pending_flag and diag_session_state_byte
+
+0x000038f4,cm848_dispatchEepromWriteRequest,return,,void,Dispatches EEPROM write by request type - takes no params (reads global directly)
+
 # -----------------------------------------------------------------------------
 # J1939 PGN Handlers - Common pattern for diagnostic message handlers
 # Pattern: First param is always a pointer to the received CAN message descriptor

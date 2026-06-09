@@ -2326,8 +2326,7 @@ address,name,type,comment
 0x003fecef,diag_serial_buffer[31],,
 0x003fecf0,diag_session_protocol_byte,,
 0x003fecf1,security_access_state,byte,
-0x003fecf2,sensor_fault_mode_active,dword,
-0x003fecf3,sensor_fault_mode_active+1,,
+0x003fecf2,eeprom_write_request_type,byte,EEPROM write operation type: 1=begin cal write 2=update magic
 0x003fecf6,eeprom_block_length_cal,word,
 0x003fed94,fault_pending_flags,dword,32-bit fault/diagnostic flags register; bits default SET (init = 0xffffffff) and clear as faults resolve across diag/protection/hpcr routines (confirmed dword via lwz/stw r12,0(r5) @ 0x52d634); >=18 independent bits - strong bitmap32-struct decomposition candidate. Distinct from diagnostic_fault_flags_a/b (0x40a813, unrelated word pair)
 0x003fed9c,fault_entry_ptr_queue,pointer,8-element ptr queue base into fault_entry_t_003fe674
@@ -2338,7 +2337,7 @@ address,name,type,comment
 0x003fedef,diag_session_state_byte,byte,
 0x003fedf0,diagnostic_callback_init_ptr,dword,
 0x003fedf4,eeprom_write_pending_flag,word,
-0x003fedf6,sensor_fault_mode_pending,word,
+0x003fedf6,eeprom_write_request_pending,word,staged EEPROM write request type awaiting dispatch
 0x003fedf8,mios_cnt_snapshot,word,
 0x003fedfa,diag_response_pending_flag,byte,
 0x003fedfb,diag_response_checksum,byte,
