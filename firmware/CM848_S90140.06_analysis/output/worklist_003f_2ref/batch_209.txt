@@ -1,0 +1,43 @@
+=== VARIABLES TO NAME ===
+0x003fedd0  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fedd0
+void FUN_0051e048(void)
+
+{
+  DAT_003fcf28 = protection_event_count_history << 8 | DAT_003fedd0 & 0xff;
+  DAT_003fcf2a = DAT_003fedd2 << 8 | DAT_003fedd4 & 0xff;
+  DAT_003fcf2c = DAT_003fedd6 << 8 | DAT_003fedd8 & 0xff;
+  DAT_003fcf2e = DAT_003fedda << 8 | DAT_003feddc & 0xff;
+  return;
+}
+
+
+
+//
+// Function: FUN_0051e0c4 @ 0x0051e0c4
+//
+
+// Variables in this function: DAT_003fedd0
+void diag_protection_history_shiftIn(uint param_1)
+
+{
+  if ((int)param_1 < 7) {
+    do {
+      (&protection_event_count_history)[param_1] = (&DAT_003fedd0)[param_1];
+      param_1 = param_1 + 1 & 0xff;
+    } while (param_1 < 7);
+  }
+  return;
+}
+
+
+
+//
+// Function: diag_protection_history_shift @ 0x00533b94
+//
+

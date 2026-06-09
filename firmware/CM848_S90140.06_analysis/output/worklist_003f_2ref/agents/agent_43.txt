@@ -1,0 +1,13 @@
+# 003f 2-ref agent 43 — name 6 unnamed DAT_003fxxxx (2 ref; VERY low context, ROM-shadow)
+#   worklist_003f_2ref/batch_199.txt
+#   worklist_003f_2ref/batch_200.txt
+#   worklist_003f_2ref/batch_201.txt
+#   worklist_003f_2ref/batch_202.txt
+#   worklist_003f_2ref/batch_203.txt
+# address,ref_count
+0x003fddae,2
+0x003fddb2,2
+0x003fdfb4,2
+0x003fdfe2,2
+0x003fdfe4,2
+0x003fe006,2

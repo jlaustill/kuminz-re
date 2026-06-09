@@ -1,0 +1,24 @@
+=== VARIABLES TO NAME ===
+0x003fdfb4  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fdfb4
+void cm848_mainLoop_step_5(void)
+
+{
+  if ((governor_speed_at_target_flag == 1) && (governor_speed_at_target_prev_flag == 0)) {
+    DAT_003fdfb4 = DAT_003fdfb4 + 1;
+  }
+  governor_speed_at_target_prev_flag = governor_speed_at_target_flag;
+  return;
+}
+
+
+
+//
+// Function: cm848_initialization_step_16 @ 0x00507684
+//
+

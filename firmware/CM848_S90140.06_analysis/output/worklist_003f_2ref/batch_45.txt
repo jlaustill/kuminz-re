@@ -1,0 +1,88 @@
+=== VARIABLES TO NAME ===
+0x003fadaa  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fadaa
+void j1939HandlePgn61443Eec2(void)
+
+{
+  byte bVar1;
+  
+  if (((((system_status_flags_t_003fe974.safety_bits_1 & 0x8000) == 0) &&
+       ((system_status_flags_t_003fe974.safety_bits_2 & 0x10) == 0)) &&
+      ((system_status_flags_t_003fe974.enable_state & 0x400) == 0)) &&
+     ((system_status_flags_t_003fe974.enable_state & 0x800) == 0)) {
+    if (DAT_0005c392 < fuel_demand_governor_output) {
+      j1939_status_byte_b = 0xf4;
+    }
+    else {
+      j1939_status_byte_b = 0xf0;
+    }
+  }
+  else {
+    j1939_status_byte_b = 0xf8;
+  }
+  if ((qadc_control_word_h._0_1_ & 0x80) == 0) {
+    if (((system_status_flags_t_003fe974.safety_bits_2 & 0x10) != 0) ||
+       ((system_status_flags_t_003fe974.safety_bits_1 & 0x4000) != 0)) {
+      j1939_status_byte_b = j1939_status_byte_b | 2;
+      goto LAB_00025c0c;
+    }
+    if (fuel_demand_control_t_0040a57a.enable_flag != 0) goto LAB_00025c0c;
+    bVar1 = 1;
+  }
+  else {
+    bVar1 = 3;
+  }
+  j1939_status_byte_b = j1939_status_byte_b | bVar1;
+LAB_00025c0c:
+  if ((((system_status_flags_t_003fe974.safety_bits_1 & 0x8000) == 0) &&
+      ((system_status_flags_t_003fe974.safety_bits_2 & 0x10) == 0)) &&
+     (((system_status_flags_t_003fe974.enable_state & 0x400) == 0 &&
+      ((system_status_flags_t_003fe974.enable_state & 0x800) == 0)))) {
+    if ((fuel_demand_feature_flags & 0x2000) == 0) {
+      j1939_eec2_accel_pedal_byte =
+           (char)((int)(uint)fuel_demand_governor_output >> 1) +
+           (char)((int)(uint)fuel_demand_governor_output >> 3);
+    }
+    else {
+      j1939_eec2_accel_pedal_byte = 0xff;
+    }
+  }
+  else {
+    j1939_eec2_accel_pedal_byte = 0xfe;
+  }
+  cm848_calculateLoadToFuelRatio();
+  DAT_003fadaa = (undefined1)(j1939_engine_torque_output_a >> 8);
+  if (j1939_broadcast_enable_flag._0_2_ == 1) {
+    DAT_003fadaa = 0xfe;
+  }
+  if (((system_feature_config_flags & 0x1000) == 0) || ((fuel_demand_feature_flags & 0x100) != 0)) {
+    j1939_eec2_remote_accel_pedal_byte = 0xff;
+  }
+  else if (((system_status_flags_t_003fe974.safety_bits_2 & 0x2000) == 0) &&
+          ((system_status_flags_t_003fe974.safety_bits_2 & 0x4000) == 0)) {
+    j1939_eec2_remote_accel_pedal_byte =
+         (char)((int)(uint)governor_torque_output >> 1) +
+         (char)((int)(uint)governor_torque_output >> 3);
+  }
+  else {
+    j1939_eec2_remote_accel_pedal_byte = 0xfe;
+  }
+  DAT_003fadac = 0xff;
+  uRam003fadad = 0xff;
+  uRam003fadae = 0xff;
+  uRam003fadaf = 0xff;
+  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn61443_tx_header);
+  return;
+}
+
+
+
+//
+// Function: cm848_sendEec2WithDefaultValues @ 0x00025d30
+//
+

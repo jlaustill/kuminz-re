@@ -1,0 +1,58 @@
+=== VARIABLES TO NAME ===
+0x003fad56  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fad56
+void cm848_j1939HandlePgn65230Dm5Readiness(void)
+
+{
+  ushort local_10 [4];
+  
+  local_10[0] = 0;
+  DAT_003fad56 = pending_fault_count;
+  DAT_003fad57 = active_fault_count;
+  DAT_003fad58 = (undefined1)DAT_0005a490;
+  DAT_003fad59 = (undefined1)DAT_0005a492;
+  j1939_feature_config_tx_word = j1939_reverseByteOrder16(&j1939_feature_config_word);
+  if (j1939_dm1_response_mode == 1) {
+    local_10[0] = 0x1000;
+  }
+  else if ((j1939_feature_config_word & 0x100) == 0) {
+    local_10[0] = 0x1000;
+  }
+  else if ((j1939_dm1_response_mode == 0) && ((j1939_feature_config_word & 0x100) != 0)) {
+    local_10[0] = local_10[0] & 0xfeff;
+  }
+  j1939_dm1_active_faults_tx_word = j1939_reverseByteOrder16(local_10);
+  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65230_tx_header);
+  return;
+}
+
+
+
+//
+// Function: cm848_initPgn65230Dm5Handler @ 0x0002553c
+//
+
+// Variables in this function: DAT_003fad56
+void cm848_initPgn65230Dm5Handler(void)
+
+{
+  j1939_pgn65230_tx_header = CONCAT13(((byte)j1939_pgn65230_priority & 7) << 2,0xfece00);
+  j1939_pgn65230_tx_byte_count = 8;
+  j1939_pgn65230_data_ptr = &DAT_003fad56;
+  j1939_pgn65230_data2_ptr = &DAT_003fad5e;
+  j1939_pgn65230_tx_header = CONCAT31(j1939_pgn65230_tx_header._0_3_,(char)j1939_source_address);
+  cm848_j1939RegisterPgnHandler(0xfece,cm848_j1939HandlePgn65230Dm5Readiness);
+  return;
+}
+
+
+
+//
+// Function: cm848_j1939SendDm1ResponseMessage @ 0x000255c0
+//
+

@@ -1,0 +1,39 @@
+=== VARIABLES TO NAME ===
+0x003fb9ac  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fb9ac
+void cm848_sensorChannelGeneric_init_configBundle(void)
+
+{
+  sensorChannelConfigInit
+            (&DAT_000593de,&sensor_channelGeneric_raw,&DAT_003fb9ac,&DAT_000593ee,&DAT_0005941a,
+             (void *)0x2,0xb9ae,2,(word *)0x10,(word *)0x11,0xbd88,0xbdae,0xbe28);
+  return;
+}
+
+
+
+//
+// Function: cm848_sensorChannelGeneric_update_configBundle @ 0x00500090
+//
+
+// Variables in this function: DAT_003fb9ac
+void cm848_sensorChannelGeneric_update_configBundle(void)
+
+{
+  updateSensorChannelWithConfig
+            (&DAT_000593de,&sensor_channelGeneric_raw,&DAT_003fb9ac,&DAT_000593ee,&DAT_0005941a,
+             (void *)0x2,0xb9ae,2,(word *)0x10,(word *)0x11,0xbd88,0xbdae,0xbe28);
+  return;
+}
+
+
+
+//
+// Function: cm848_sensorChannel7_init_configBundle @ 0x0050011c
+//
+

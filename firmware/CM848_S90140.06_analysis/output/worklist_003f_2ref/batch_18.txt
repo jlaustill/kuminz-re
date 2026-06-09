@@ -1,0 +1,175 @@
+=== VARIABLES TO NAME ===
+0x003fa130  (2 references)
+0x003fa132  (2 references)
+0x003fa134  (2 references)
+0x003fa136  (2 references)
+0x003fa138  (2 references)
+0x003fa140  (2 references)
+0x003fa148  (2 references)
+
+Total: 7 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fa134, DAT_003fa140
+void cm848_calculateTurboRatioA(void)
+
+{
+  short sVar1;
+  word wVar2;
+  word wVar3;
+  uint uVar4;
+  uint uVar5;
+  
+  if ((fuel_flow_rate_reference == 0) ||
+     (uVar5 = (uint)(((ulonglong)fuel_flow_rate << 0xf) / (ulonglong)fuel_flow_rate_reference),
+     0xfffe < uVar5)) {
+    uVar5 = 0xffff;
+  }
+  else {
+    uVar5 = uVar5 & 0xffff;
+  }
+  sVar1 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fa134);
+  uVar4 = (int)sVar1 * (int)(short)lookup_table_scale_factor_a_cal;
+  wVar2 = (short)((int)uVar4 >> 0xe) + (ushort)((int)uVar4 < 0 && (uVar4 & 0x3fff) != 0);
+  wVar3 = fuel_demand_clamp_upper3_cal;
+  if ((short)wVar2 < (short)fuel_demand_clamp_upper3_cal) {
+    wVar3 = wVar2;
+  }
+  throttle_rate_filter_output_c = cm848_signedFirstOrderFilter((int)(short)wVar3,&PTR_DAT_003fa140);
+  if (uVar5 < throttle_rate_threshold_c_cal) {
+    throttle_rate_filter_output_c = 0xe700;
+  }
+  throttle_rate_threshold_a_flag = (ushort)(uVar5 >= throttle_rate_threshold_c_cal);
+  return;
+}
+
+
+
+//
+// Function: cm848_calculateTurboRatioB @ 0x000109c8
+//
+
+/* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+
+// Variables in this function: DAT_003fa136, DAT_003fa148
+void cm848_calculateTurboRatioB(void)
+
+{
+  short sVar1;
+  word wVar2;
+  word wVar3;
+  uint uVar4;
+  uint uVar5;
+  
+  uVar5 = (uint)(short)boost_fuel_correction;
+  if ((int)uVar5 < 0) {
+    uVar5 = 0;
+  }
+  if ((throttle_rate_divisor_cal == 0) ||
+     (uVar5 = ((uVar5 & 0xffff) << 0xf) / (uint)throttle_rate_divisor_cal, 0xfffe < uVar5)) {
+    uVar5 = 0xffff;
+  }
+  else {
+    uVar5 = uVar5 & 0xffff;
+  }
+  sVar1 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fa136);
+  uVar4 = (int)sVar1 * (int)(short)lookup_table_scale_factor_b_cal;
+  wVar2 = (short)((int)uVar4 >> 0xe) + (ushort)((int)uVar4 < 0 && (uVar4 & 0x3fff) != 0);
+  wVar3 = fuel_demand_clamp_upper2_cal;
+  if ((short)wVar2 < (short)fuel_demand_clamp_upper2_cal) {
+    wVar3 = wVar2;
+  }
+  throttle_rate_filter_output_b = cm848_signedFirstOrderFilter((int)(short)wVar3,&PTR_DAT_003fa148);
+  if (uVar5 < throttle_rate_threshold_b_cal) {
+    throttle_rate_filter_output_b = 0xe700;
+  }
+  throttle_rate_threshold_b_flag = (ushort)(uVar5 >= throttle_rate_threshold_b_cal);
+  return;
+}
+
+
+
+//
+// Function: cm848_calculateTurboRatios @ 0x00010b04
+//
+
+// Variables in this function: DAT_003fa130, DAT_003fa132, DAT_003fa138
+void cm848_calculateTurboRatioWithMode(void)
+
+{
+  ushort uVar1;
+  uint uVar2;
+  short sVar3;
+  word wVar4;
+  word wVar5;
+  uint uVar6;
+  
+  uVar1 = boost_control_default_cal;
+  if (boost_control_mode == 1) {
+    uVar1 = boost_control_mode1_cal;
+  }
+  uVar2 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fa130);
+  fuel_pressure_demand_reference = (word)((uint)uVar1 * (uVar2 & 0xffff) >> 0xf);
+  if ((uVar1 == 0) ||
+     (uVar2 = (uint)(((ulonglong)fuel_demand_quantity << 0xf) / (ulonglong)uVar1), 0xfffe < uVar2))
+  {
+    uVar2 = 0xffff;
+  }
+  else {
+    uVar2 = uVar2 & 0xffff;
+  }
+  sVar3 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fa132);
+  uVar6 = (int)sVar3 * (int)(short)lookup_table_scale_factor_c_cal;
+  wVar4 = (short)((int)uVar6 >> 0xe) + (ushort)((int)uVar6 < 0 && (uVar6 & 0x3fff) != 0);
+  wVar5 = fuel_demand_clamp_upper_cal;
+  if ((short)wVar4 < (short)fuel_demand_clamp_upper_cal) {
+    wVar5 = wVar4;
+  }
+  throttle_rate_filter_output_a = cm848_signedFirstOrderFilter((int)(short)wVar5,&PTR_DAT_003fa138);
+  if (uVar2 < throttle_rate_threshold_a_cal) {
+    throttle_rate_filter_output_a = 0xe700;
+  }
+  throttle_rate_threshold_c_flag = (word)(uVar2 >= throttle_rate_threshold_a_cal);
+  if (throttle_rate_filter_reset_flag != 0) {
+    throttle_rate_filter_output_a = 0;
+  }
+  cm848_calculateTurboBlendOutput();
+  return;
+}
+
+
+
+//
+// Function: cm848_initTurboRatioVariables @ 0x00010ed0
+//
+
+// Variables in this function: DAT_003fa130, DAT_003fa132, DAT_003fa134, DAT_003fa136, DAT_003fa138, DAT_003fa140, DAT_003fa148
+void cm848_initTurboRatioVariables(void)
+
+{
+  throttle_rate_filter_output_c = 0;
+  throttle_rate_filter_output_a = 0;
+  throttle_rate_filter_output_b = 0;
+  fuel_demand_high_limit_exceeded_flag = 0;
+  DAT_003fa130 = 2;
+  DAT_003fa132 = 2;
+  DAT_003fa134 = 2;
+  DAT_003fa136 = 2;
+  DAT_003fa13c = 0;
+  PTR_DAT_003fa138 = &DAT_003ff72c;
+  DAT_003fa144 = 0;
+  PTR_DAT_003fa140 = &DAT_003ff71c;
+  DAT_003fa14c = 0;
+  PTR_DAT_003fa148 = &DAT_003ff724;
+  return;
+}
+
+
+
+//
+// Function: cm848_calculateLoadBasedAdjustment @ 0x00010f68
+//
+
+/* WARNING: Function: cm848_signedDivision32 replaced with injection: sdiv64by32 */
+

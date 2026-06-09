@@ -1,0 +1,76 @@
+=== VARIABLES TO NAME ===
+0x003fbcbe  (2 references)
+0x003fbcc6  (2 references)
+0x003fbcda  (2 references)
+
+Total: 3 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fbcbe, DAT_003fbcc6, DAT_003fbcda
+void governor_speedFault_filterProcess_update(void)
+
+{
+  short *psVar1;
+  
+  psVar1 = &DAT_003fbcc6;
+  DAT_003fbcc8 = governor_speed_input_raw;
+  DAT_003fbcca = engine_feature_activation_threshold_cal;
+  DAT_003fbcd0 = DAT_0040674e;
+  DAT_003fbcd2 = DAT_00406750;
+  DAT_003fbcd8 = DAT_003fd7f2;
+  DAT_003fbcdc = 5;
+  PTR_PTR_003fbcde = (undefined *)&PTR_DAT_003fbcbe;
+  cm848_processFaultStateWithFilter(&DAT_003fbcc6);
+  if (DAT_003fbcda == 0) {
+    diagnostic_status_bits_b = diagnostic_status_bits_b & 0xbfff;
+    protection_condition_shadow_flags = protection_condition_shadow_flags & 0xbfff;
+  }
+  else {
+    diagnostic_status_bits_b = diagnostic_status_bits_b | 0x4000;
+  }
+  if (DAT_003fd7f6 != 0) {
+    psVar1 = &DAT_00406756;
+  }
+  sensor_channel105_fault_combined._2_2_ = *psVar1;
+  governor_speed_deviation_from_filter = governor_speed_input_raw - *psVar1;
+  return;
+}
+
+
+
+//
+// Function: boost_pressureSource_faultSelect_update @ 0x00506964
+//
+
+// Variables in this function: DAT_003fbcbe, DAT_003fbcda
+void cm848_protection_init_2(void)
+
+{
+  DAT_003fbcce = 0;
+  DAT_003fbcd4 = 0;
+  DAT_003fbcd6 = 0;
+  DAT_003fbcda = 0;
+  diagnostic_status_bits_b = diagnostic_status_bits_b & 0xbfff;
+  protection_condition_shadow_flags = protection_condition_shadow_flags & 0xbfff;
+  DAT_003fbcc2 = (int)(short)governor_speed_input_raw << 0x10;
+  PTR_DAT_003fbcbe = &DAT_00406752;
+  boost_pressure_filtered = governor_speed_input_raw;
+  DAT_0040babe = governor_speed_input_raw;
+  if ((sensor_channel7_fault_status == 0) || (sensor_channel7_fault_status == 1)) {
+    boost_correction_block_flag = 0;
+  }
+  if (sensor_channel7_fault_status == 2) {
+    boost_correction_block_flag = 2;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_phase_groupA_exponentialAverage @ 0x00506b34
+//
+
+/* WARNING: Function: cm848_signedDivision32 replaced with injection: sdiv64by32 */
+

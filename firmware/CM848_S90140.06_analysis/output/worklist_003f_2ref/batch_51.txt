@@ -1,0 +1,39 @@
+=== VARIABLES TO NAME ===
+0x003fae47  (2 references)
+0x003fae48  (2 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fae47, DAT_003fae48
+void cm848_j1939HandlePgn65270InletExhaustConditions(void)
+
+{
+  if (((system_status_flags_t_003fe974.enable_state & 0x100) == 0) &&
+     ((system_status_flags_t_003fe974.enable_state & 0x200) == 0)) {
+    DAT_003fae47 = (undefined1)
+                   (((uint)sensor_readings_t_0040baf2.oil_pressure * 0x1afa) / 0x1f400 >> 1);
+  }
+  else {
+    DAT_003fae47 = 0xfe;
+  }
+  if (((system_status_flags_t_003fe974.condition_monitor & 8) == 0) &&
+     ((system_status_flags_t_003fe974.condition_monitor & 0x10) == 0)) {
+    DAT_003fae48 = (char)((((short)engine_load_output_value >> 6) * 5 + -0xa0) / 9) + '(';
+  }
+  else {
+    DAT_003fae48 = -2;
+  }
+  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65270_tx_header);
+  return;
+}
+
+
+
+//
+// Function: cm848_initJ1939InletExhaustConditionsBuffer @ 0x000265d8
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

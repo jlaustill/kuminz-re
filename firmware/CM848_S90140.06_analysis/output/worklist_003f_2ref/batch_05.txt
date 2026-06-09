@@ -1,0 +1,43 @@
+=== VARIABLES TO NAME ===
+0x003fa03c  (2 references)
+0x003fa03e  (2 references)
+0x003fa046  (2 references)
+0x003fa048  (2 references)
+0x003fa04a  (2 references)
+
+Total: 5 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fa03c, DAT_003fa03e, DAT_003fa046, DAT_003fa048, DAT_003fa04a
+void cm848_sensorChannel4_init(void)
+
+{
+  sensorChannelTypeB_configInit
+            (&DAT_0005939e,&sensor_channel4_ram,&DAT_003fa03c,&DAT_000593ae,&DAT_000593c6,0,
+             &PTR_DAT_003fa03e,0x4d,0x288,0x289,&DAT_003fa046,&DAT_003fa048,&DAT_003fa04a);
+  return;
+}
+
+
+
+//
+// Function: cm848_sensorChannel4_process @ 0x0000cda8
+//
+
+// Variables in this function: DAT_003fa03c, DAT_003fa03e, DAT_003fa046, DAT_003fa048, DAT_003fa04a
+void cm848_sensorChannel4_process(void)
+
+{
+  sensorChannelTypeB_update
+            (&DAT_0005939e,&sensor_channel4_ram,&DAT_003fa03c,&DAT_000593ae,&DAT_000593c6,0,
+             &PTR_DAT_003fa03e,0x4d,0x288,0x289,&DAT_003fa046,&DAT_003fa048,&DAT_003fa04a);
+  return;
+}
+
+
+
+//
+// Function: cm848_sensorChannel5_init @ 0x0000ce34
+//
+

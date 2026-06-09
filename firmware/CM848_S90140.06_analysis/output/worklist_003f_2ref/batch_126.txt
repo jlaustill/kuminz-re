@@ -1,0 +1,78 @@
+=== VARIABLES TO NAME ===
+0x003fcbf4  (2 references)
+0x003fcbf6  (2 references)
+0x003fcbf8  (2 references)
+
+Total: 3 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fcbf4, DAT_003fcbf6, DAT_003fcbf8
+void cm848_blendBoostAndThrottleFuelDemand(void)
+
+{
+  uint uVar1;
+  uint uVar2;
+  uint uVar3;
+  
+  uVar2 = (uint)boost_fuel_blend_weight_b;
+  if ((uint)boost_fuel_blend_weight_b < (uint)throttle_fuel_trim_t_0040a3ea.fuel_demand_final) {
+    uVar2 = (uint)throttle_fuel_trim_t_0040a3ea.fuel_demand_final;
+  }
+  uVar1 = ((uint)DAT_0040a54a * 0x793b) / 100000;
+  DAT_0040af76 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fcbf4);
+  uVar3 = (uint)fuel_pressure_sensor_reference;
+  if (uVar3 == 0) {
+    uVar3 = 1;
+  }
+  DAT_0040af78 = (uint)DAT_0040af76 * (uint)boost_fuel_rpm_blend_scale >> 10;
+  uVar3 = (DAT_0040af78 << 10) / uVar3;
+  if (0xfff < uVar3) {
+    uVar3 = 0x1000;
+  }
+  DAT_0040af6c = (undefined2)uVar3;
+  uVar3 = (uVar3 & 0xffff) * 0x98a3 >> 0xd;
+  uVar2 = uVar2 * uVar1 >> 0xd;
+  uVar2 = ((uVar2 * 2 + uVar3) * 0x2000 & 0x1fffe000) / (uVar2 + uVar3 + 0x98a3 & 0xffff);
+  fuel_demand_blend_weight_ema_filtered = (word)uVar2;
+  fuel_demand_blend_weight_ema =
+       (word)(((uVar1 * 2 + uVar3) * 0x2000 & 0x1fffe000) / (uVar1 + uVar3 + 0x98a3 & 0xffff));
+  fuel_blend_map_correction_weighted =
+       (word)((uint)map_fuel_correction_factor * (uVar2 & 0xffff) >> 8);
+  fuel_blend_compensation_target = lookupTableInterpolation((table_interp_args_t *)&DAT_003fcbf6);
+  fuel_boost_map_correction_weighted =
+       (word)((uint)map_fuel_correction_factor * (uint)fuel_demand_blend_weight_ema >> 8);
+  fuel_boost_compensation_target = lookupTableInterpolation((table_interp_args_t *)&DAT_003fcbf8);
+  if (((fuel_demand_mode_index == 0) && (fuel_demand_timing_mode_state == 0)) &&
+     (boost_pressure_fuel_mode_state == 0)) {
+    fuel_demand_mode_active_flag = 0;
+  }
+  else {
+    fuel_demand_mode_active_flag = 1;
+  }
+  DAT_0040af74 = fuel_demand_mode_active_flag;
+  return;
+}
+
+
+
+//
+// Function: cm848_initBoostControlInterpolationState @ 0x0050ea88
+//
+
+// Variables in this function: DAT_003fcbf4, DAT_003fcbf6, DAT_003fcbf8
+void cm848_initBoostControlInterpolationState(void)
+
+{
+  DAT_003fcbf4 = 2;
+  DAT_003fcbf6 = 2;
+  DAT_003fcbf8 = 2;
+  return;
+}
+
+
+
+//
+// Function: cm848_applyProtectionRpmCorrectionFilter @ 0x0050eaa8
+//
+

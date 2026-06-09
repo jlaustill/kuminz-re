@@ -1,0 +1,216 @@
+=== VARIABLES TO NAME ===
+0x003fe818  (2 references)
+0x003fe81a  (2 references)
+0x003fe81b  (2 references)
+0x003fe81c  (2 references)
+0x003fe81e  (2 references)
+0x003fe820  (2 references)
+
+Total: 6 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fe818, DAT_003fe81a, DAT_003fe81b, DAT_003fe81c, DAT_003fe81e, DAT_003fe820
+void hpcr_setFaultActiveStatus(int param_1,uint param_2)
+
+{
+  bool bVar1;
+  int iVar2;
+  
+  iVar2 = param_1 * 0x30;
+  if ((*(ushort *)(&fault_definition_table + param_2 * 6) & 0x10) != 0) {
+    (&fault_freeze_frame_data_buf)[iVar2] = (byte)param_2;
+    *(word *)(&DAT_003fe7ff + iVar2) = fault_status_active;
+    *(word *)(&DAT_003fe7f9 + iVar2) = fuel_temperature_trim;
+    *(word *)(&DAT_003fe7fb + iVar2) = engine_rpm_state_t_0040b7ac.target_rpm;
+    *(word *)(&DAT_003fe801 + iVar2) = protection_fuel_demand_snapshot;
+    *(word *)(&DAT_003fe803 + iVar2) = protection_fuel_low_snapshot;
+    *(dword *)(&DAT_003fe7f4 + iVar2) = fault_timing_snapshot;
+    *(word *)(&DAT_003fe805 + iVar2) = protection_coolant_temp_active;
+    *(word *)(&DAT_003fe807 + iVar2) = fault_timing_snapshot;
+    *(word *)(&DAT_003fe809 + iVar2) = fuel_quantity_demand_input;
+    *(word *)(&DAT_003fe7fd + iVar2) = diagnostic_fault_flags_a;
+    *(word *)(&DAT_003fe80b + iVar2) = diagnostic_fault_flags_b;
+    (&DAT_003fe811)[iVar2] = (char)governor_mode_code;
+    *(word *)(&DAT_003fe812 + iVar2) = sensor_readings_t_0040baf2.battery_voltage;
+    *(word *)(&DAT_003fe814 + iVar2) = fuel_demand_computed;
+    *(word *)(&DAT_003fe816 + iVar2) = torque_limit_fault_snapshot;
+    *(word *)(&DAT_003fe818 + iVar2) = fault_diagnostic_word_1;
+    (&DAT_003fe81a)[iVar2] = engine_sync_speed_fault_flags;
+    (&DAT_003fe81b)[iVar2] = engine_position_diag_snapshot;
+    *(word *)(&DAT_003fe81c + iVar2) = engine_timing_diagnostic_word;
+    *(word *)(&DAT_003fe81e + iVar2) = cam_timing_measured;
+    *(word *)(&DAT_003fe820 + iVar2) = fuel_temp_raw;
+  }
+  bVar1 = (&fault_entry_t_003fe674)[param_1].fault_code != param_2;
+  if (bVar1) {
+    (&fault_entry_t_003fe674)[param_1].fault_code = (byte)param_2;
+    (&fault_entry_t_003fe674)[param_1].fault_status = fault_status_active;
+    (&fault_entry_t_003fe674)[param_1].temperature_trim = fuel_temperature_trim;
+    (&fault_entry_t_003fe674)[param_1].target_rpm = engine_rpm_state_t_0040b7ac.target_rpm;
+    (&fault_entry_t_003fe674)[param_1].protection_high = protection_fuel_demand_snapshot;
+    (&fault_entry_t_003fe674)[param_1].protection_low = protection_fuel_low_snapshot;
+    (&fault_entry_t_003fe674)[param_1].timing_snapshot = fault_timing_snapshot;
+    (&fault_entry_t_003fe674)[param_1].timing_param_1 = protection_coolant_temp_active;
+    (&fault_entry_t_003fe674)[param_1].timing_param_2 = fault_timing_snapshot;
+    (&fault_entry_t_003fe674)[param_1].timing_param_3 = fuel_quantity_demand_input;
+    (&fault_entry_t_003fe674)[param_1].sensor_scale_1 = diagnostic_fault_flags_a;
+    (&fault_entry_t_003fe674)[param_1].sensor_scale_2 = diagnostic_fault_flags_b;
+    (&fault_entry_t_003fe674)[param_1].pressure_adj = (byte)governor_mode_code;
+    (&fault_entry_t_003fe674)[param_1].battery_voltage = sensor_readings_t_0040baf2.battery_voltage;
+    (&fault_entry_t_003fe674)[param_1].load_throttle = fuel_demand_computed;
+    (&fault_entry_t_003fe674)[param_1].torque_limit = torque_limit_fault_snapshot;
+    (&fault_entry_t_003fe674)[param_1].diagnostic_word_1 = fault_diagnostic_word_1;
+    (&fault_entry_t_003fe674)[param_1].diagnostic_byte_3 = engine_sync_speed_fault_flags;
+    (&fault_entry_t_003fe674)[param_1].diagnostic_byte_4 = engine_position_diag_snapshot;
+    (&fault_entry_t_003fe674)[param_1].diagnostic_word_2 = engine_timing_diagnostic_word;
+    (&fault_entry_t_003fe674)[param_1].diagnostic_word_3 = cam_timing_measured;
+    (&fault_entry_t_003fe674)[param_1].coolant_temp_raw = fuel_temp_raw;
+  }
+  if ((fault_management_status_flags & 0x400) != 0) {
+    if (((&fault_entry_flags)[param_2 * 6] & 1) != 0) {
+      if (((&fault_entry_flags)[param_2 * 6] & 0x20) == 0) {
+        if (bVar1) {
+          (&fault_entry_t_003fe674)[param_1].status_flags =
+               (&fault_entry_t_003fe674)[param_1].status_flags | 1;
+          fault_enqueueRecord();
+        }
+      }
+      else {
+        fault_captureDataSnapshot();
+      }
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: hpcr_captureFreezeFrameData @ 0x0001df88
+//
+
+// Variables in this function: DAT_003fe818, DAT_003fe81a, DAT_003fe81b, DAT_003fe81c, DAT_003fe81e, DAT_003fe820
+void hpcr_captureFreezeFrameData(int param_1,uint param_2,int param_3)
+
+{
+  byte bVar1;
+  int in_r10;
+  int in_r11;
+  int iVar2;
+  
+  iVar2 = param_1 * 0x30;
+  if ((*(ushort *)(in_r11 + in_r10 + 2) & 0x10) != 0) {
+    (&fault_freeze_frame_data_buf)[iVar2] = (byte)param_2;
+    *(word *)(&DAT_003fe7ff + iVar2) = fault_status_active;
+    *(word *)(&DAT_003fe7f9 + iVar2) = fuel_temperature_trim;
+    *(word *)(&DAT_003fe7fb + iVar2) = engine_rpm_state_t_0040b7ac.target_rpm;
+    *(word *)(&DAT_003fe801 + iVar2) = protection_fuel_demand_snapshot;
+    *(word *)(&DAT_003fe803 + iVar2) = protection_fuel_low_snapshot;
+    *(dword *)(&DAT_003fe7f4 + iVar2) = fault_timing_snapshot;
+    *(word *)(&DAT_003fe805 + iVar2) = protection_coolant_temp_active;
+    *(word *)(&DAT_003fe807 + iVar2) = fault_timing_snapshot;
+    *(word *)(&DAT_003fe809 + iVar2) = fuel_quantity_demand_input;
+    *(word *)(&DAT_003fe7fd + iVar2) = diagnostic_fault_flags_a;
+    *(word *)(&DAT_003fe80b + iVar2) = diagnostic_fault_flags_b;
+    (&DAT_003fe811)[iVar2] = (char)governor_mode_code;
+    *(word *)(&DAT_003fe812 + iVar2) = sensor_readings_t_0040baf2.battery_voltage;
+    *(word *)(&DAT_003fe814 + iVar2) = fuel_demand_computed;
+    *(word *)(&DAT_003fe816 + iVar2) = torque_limit_fault_snapshot;
+    *(word *)(&DAT_003fe818 + iVar2) = fault_diagnostic_word_1;
+    (&DAT_003fe81a)[iVar2] = engine_sync_speed_fault_flags;
+    (&DAT_003fe81b)[iVar2] = engine_position_diag_snapshot;
+    *(word *)(&DAT_003fe81c + iVar2) = engine_timing_diagnostic_word;
+    *(word *)(&DAT_003fe81e + iVar2) = cam_timing_measured;
+    *(word *)(&DAT_003fe820 + iVar2) = fuel_temp_raw;
+  }
+  if ((&fault_entry_t_003fe674)[param_1].fault_code != param_2) {
+    param_3 = 1;
+    (&fault_entry_t_003fe674)[param_1].fault_code = (byte)param_2;
+    (&fault_entry_t_003fe674)[param_1].fault_status = fault_status_active;
+    (&fault_entry_t_003fe674)[param_1].temperature_trim = fuel_temperature_trim;
+    (&fault_entry_t_003fe674)[param_1].target_rpm = engine_rpm_state_t_0040b7ac.target_rpm;
+    (&fault_entry_t_003fe674)[param_1].protection_high = protection_fuel_demand_snapshot;
+    (&fault_entry_t_003fe674)[param_1].protection_low = protection_fuel_low_snapshot;
+    (&fault_entry_t_003fe674)[param_1].timing_snapshot = fault_timing_snapshot;
+    (&fault_entry_t_003fe674)[param_1].timing_param_1 = protection_coolant_temp_active;
+    (&fault_entry_t_003fe674)[param_1].timing_param_2 = fault_timing_snapshot;
+    (&fault_entry_t_003fe674)[param_1].timing_param_3 = fuel_quantity_demand_input;
+    (&fault_entry_t_003fe674)[param_1].sensor_scale_1 = diagnostic_fault_flags_a;
+    (&fault_entry_t_003fe674)[param_1].sensor_scale_2 = diagnostic_fault_flags_b;
+    (&fault_entry_t_003fe674)[param_1].pressure_adj = (byte)governor_mode_code;
+    (&fault_entry_t_003fe674)[param_1].battery_voltage = sensor_readings_t_0040baf2.battery_voltage;
+    (&fault_entry_t_003fe674)[param_1].load_throttle = fuel_demand_computed;
+    (&fault_entry_t_003fe674)[param_1].torque_limit = torque_limit_fault_snapshot;
+    (&fault_entry_t_003fe674)[param_1].diagnostic_word_1 = fault_diagnostic_word_1;
+    (&fault_entry_t_003fe674)[param_1].diagnostic_byte_3 = engine_sync_speed_fault_flags;
+    (&fault_entry_t_003fe674)[param_1].diagnostic_byte_4 = engine_position_diag_snapshot;
+    (&fault_entry_t_003fe674)[param_1].diagnostic_word_2 = engine_timing_diagnostic_word;
+    (&fault_entry_t_003fe674)[param_1].diagnostic_word_3 = cam_timing_measured;
+    (&fault_entry_t_003fe674)[param_1].coolant_temp_raw = fuel_temp_raw;
+  }
+  if ((fault_management_status_flags & 0x400) != 0) {
+    bVar1 = *(byte *)(in_r11 + in_r10 + 4);
+    if ((bVar1 & 1) != 0) {
+      if ((bVar1 & 0x20) == 0) {
+        if (param_3 == 1) {
+          (&fault_entry_t_003fe674)[param_1].status_flags =
+               (&fault_entry_t_003fe674)[param_1].status_flags | 1;
+          fault_enqueueRecord();
+        }
+      }
+      else {
+        fault_captureDataSnapshot();
+      }
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: hpcr_processDiagnosticFrame @ 0x0001e158
+//
+
+void hpcr_processDiagnosticFrame
+               (undefined4 param_1,undefined4 param_2,int param_3,int param_4,int param_5,
+               int param_6)
+
+{
+  int unaff_r30;
+  ushort *puVar1;
+  int unaff_r31;
+  
+  *(undefined2 *)(unaff_r31 + 0x1e) = *(undefined2 *)(param_6 + 8);
+  *(word *)(unaff_r31 + 0x20) = fuel_demand_computed;
+  *(word *)(unaff_r31 + 0x22) = torque_limit_fault_snapshot;
+  *(word *)(unaff_r31 + 0x24) = fault_diagnostic_word_1;
+  *(byte *)(unaff_r31 + 0x26) = engine_sync_speed_fault_flags;
+  *(byte *)(unaff_r31 + 0x27) = engine_position_diag_snapshot;
+  *(word *)(unaff_r31 + 0x28) = engine_timing_diagnostic_word;
+  *(word *)(unaff_r31 + 0x2a) = cam_timing_measured;
+  *(undefined2 *)(unaff_r31 + 0x2c) = *(undefined2 *)(param_6 + 0xe);
+  if ((fault_management_status_flags & 0x400) != 0) {
+    if ((*(byte *)(param_4 + 4) & 1) != 0) {
+      if ((*(byte *)(param_4 + 4) & 0x20) == 0) {
+        if (param_3 == 1) {
+          puVar1 = (ushort *)(param_5 + unaff_r30 + 0x2e);
+          *puVar1 = *puVar1 | 1;
+          fault_enqueueRecord();
+        }
+      }
+      else {
+        fault_captureDataSnapshot();
+      }
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_selectFuelDemandSource @ 0x0001e22c
+//
+

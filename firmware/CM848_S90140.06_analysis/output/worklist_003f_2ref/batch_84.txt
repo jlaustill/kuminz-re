@@ -1,0 +1,50 @@
+=== VARIABLES TO NAME ===
+0x003fb57c  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fb57c
+void hpcr_cbdFillAccelerationBuffers(void)
+
+{
+  byte bVar1;
+  word wVar2;
+  int iVar3;
+  
+  if ((cbd_enable_flag == 1) || (cbd_active_flag == 1)) {
+    if (engine_crank_state_t_0040b80a.run_state == 4) {
+      bVar1 = cbd_sync_byte_a_cal;
+      if (cbd_active_flag == 1) {
+        bVar1 = DAT_00064479;
+      }
+      wVar2 = tpu_a_ch0_param0.PARAM4;
+      if (((wVar2 & 0xff) == (ushort)bVar1) && (cylinder_event_seq_counter == 0xff)) {
+        wVar2 = TPUA_CH12_PARAM0.PARAM7;
+        DAT_003fb57c = (byte)wVar2;
+        cylinder_timing_tpu_capture_snapshot = TPUA_CH14_PARAM0._6_4_;
+        cylinder_event_seq_counter = 0;
+      }
+      else if (((uint)cylinder_event_seq_counter < (uint)cylinder_event_count_max) &&
+              (wVar2 = TPUA_CH12_PARAM0.PARAM7, (wVar2 & 0xff) == (ushort)DAT_003fb57c)) {
+        iVar3 = TPUA_CH14_PARAM0._6_4_;
+        (&cylinder1_timing_offset)[cylinder_event_seq_counter] =
+             (word)(iVar3 - cylinder_timing_tpu_capture_snapshot >> 2);
+        cylinder_timing_tpu_capture_snapshot = TPUA_CH14_PARAM0._6_4_;
+        cylinder_event_seq_counter = cylinder_event_seq_counter + 1;
+      }
+    }
+    else {
+      cylinder_event_seq_counter = 0xff;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: hpcr_processLoadThrottle @ 0x00042cfc
+//
+

@@ -1,0 +1,92 @@
+=== VARIABLES TO NAME ===
+0x003fb596  (2 references)
+0x003fb597  (2 references)
+0x003fb598  (2 references)
+
+Total: 3 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fb596, DAT_003fb597, DAT_003fb598
+void hpcr_processTimingCalibration(void)
+
+{
+  byte bVar1;
+  byte bVar2;
+  uint uVar3;
+  short sVar4;
+  uint uVar5;
+  
+  bVar1 = cylinder_diag_active_flag;
+  if (cylinder_diag_active_flag == 0) {
+    engine_sync_confirmation_state = 0;
+  }
+  else if (((((cylinder_sync_state == 0) || (cylinder_sync_valid_flag != 0)) ||
+            (fuel_temperature_trim != 0)) ||
+           (((short)sensor_readings_t_0040baf2.coolant_temp <=
+             (short)engine_sync_coolant_lower_threshold_cal ||
+            ((short)engine_sync_coolant_upper_threshold_cal <=
+             (short)sensor_readings_t_0040baf2.coolant_temp)))) ||
+          ((engine_sync_debounce_flag != 0 || (crank_sync_inhibit_flag != 0)))) {
+    engine_sync_confirmation_state = 2;
+  }
+  else {
+    engine_sync_confirmation_state = 1;
+    crank_pattern_sync_flag = 0;
+    if ((cylinder_diag_active_flag != 0) && (DAT_003fb596 == '\0')) {
+      diagnostic_session_state = INACTIVE;
+      uVar5 = 0;
+      do {
+        (&DAT_003fb598)[uVar5] = (&cylinder_diag_accumulator_array)[uVar5];
+        uVar5 = uVar5 + 1 & 0xff;
+      } while (uVar5 < 6);
+      cylinder_diag_low_threshold_snapshot = cylinder_diag_low_threshold;
+      cylinder_diag_low_threshold = cylinder_diag_low_threshold_cal;
+      cylinder_diag_high_threshold_snapshot = cylinder_diag_high_threshold;
+      cylinder_diag_high_threshold = cylinder_diag_high_threshold_cal;
+    }
+    uVar5 = 0;
+    uVar3 = (uint)cylinder_diag_scale_factor_cal;
+    do {
+      sVar4 = 100 - (short)((int)((int)(short)(&cylinder_diag_accumulator_array)[uVar5] * uVar3 * 4)
+                           / 0x1d7);
+      if (sVar4 < 0xc9) {
+        if (sVar4 < 0) {
+          sVar4 = 0;
+        }
+      }
+      else {
+        sVar4 = 200;
+      }
+      (&cylinder_diag_pct_1)[uVar5] = (byte)sVar4;
+      uVar5 = uVar5 + 1 & 0xff;
+    } while (uVar5 < 6);
+    cylinder_diag_pct_avg_odd =
+         (byte)(((uint)cylinder_diag_pct_1 + (uint)cylinder_diag_pct_3 + (uint)cylinder_diag_pct_5)
+               / 3);
+    cylinder_diag_pct_avg_even =
+         (byte)(((uint)cylinder_diag_pct_2 + (uint)cylinder_diag_pct_4 + (uint)cylinder_diag_pct_6)
+               / 3);
+  }
+  bVar2 = engine_sync_confirmation_state;
+  if ((engine_sync_confirmation_state != 1) && (DAT_003fb597 == '\x01')) {
+    cylinder_diag_low_threshold = cylinder_diag_low_threshold_snapshot;
+    cylinder_diag_high_threshold = cylinder_diag_high_threshold_snapshot;
+    uVar5 = 0;
+    do {
+      (&cylinder_diag_accumulator_array)[uVar5] = (&DAT_003fb598)[uVar5];
+      uVar5 = uVar5 + 1 & 0xff;
+    } while (uVar5 < 6);
+    diagnostic_session_state = ACTIVE;
+  }
+  DAT_003fb596 = bVar1;
+  DAT_003fb597 = bVar2;
+  return;
+}
+
+
+
+//
+// Function: hpcr_clearTimingCalibrationData @ 0x00043d68
+//
+

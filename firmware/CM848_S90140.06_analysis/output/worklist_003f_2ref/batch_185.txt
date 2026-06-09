@@ -1,0 +1,93 @@
+=== VARIABLES TO NAME ===
+0x003fd265  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fd265
+void hpcr_injectSystemDiagnostic(void)
+
+{
+  undefined1 *puVar1;
+  undefined1 *extraout_r4;
+  undefined1 uVar2;
+  
+  if ((protection_enable_t_0040c050.mode_bits & 1) == 0) {
+    hpcr_cam_diag_active_flag = 0;
+  }
+  else if ((((protection_feature_flags & 0x8000) != 0) &&
+           ((protection_feature_status_flags & 0x80) != 0)) && (hpcr_cam_diag_active_flag == 0)) {
+    cssc_injection_diag_state = 1;
+    hpcr_cam_diag_active_flag = 1;
+  }
+  if (hpcr_cam_diag_active_flag == 1) {
+    DAT_0040ba66 = (short)((int)((int)(short)cam_timing_measured - (uint)cam_timing_reference_b_prev
+                                ) / (int)(uint)DAT_00409fdc);
+    cssc_injection_timing_accumulator = cssc_injection_timing_accumulator + (int)DAT_0040ba66;
+    if ((int)cssc_injection_timing_accumulator < 0) {
+      cssc_injection_timing_accumulator = 0;
+    }
+    if ((int)(short)cam_timing_measured <= (int)(short)cam_sync_position) {
+      cssc_injection_timing_accumulator = 0;
+    }
+    if (DAT_00409fce < cssc_injection_timing_accumulator) {
+      injection_fault_shadow_flags = injection_fault_shadow_flags | 1;
+      cssc_injection_diag_state = 3;
+    }
+    if ((((injection_fault_shadow_flags & 1) != 0) && ((fault_pending_flags & 0x20) != 0)) &&
+       ((injection_fault_shadow_flags & 1) == (injection_fault_shadow_snapshot & 1))) {
+      fault_pending_flags = fault_pending_flags & 0xffffffdf;
+      fault_management_ring_read_ptr = (undefined *)((uint)fault_management_ring_read_ptr | 0x20);
+    }
+    if (cssc_injection_diag_cycle_count < DAT_00409fd2) {
+      cssc_injection_diag_cycle_count = cssc_injection_diag_cycle_count + 1;
+    }
+    else {
+      engine_cssc_counters_reset();
+      cssc_injection_diag_state = 2;
+      if (((fault_pending_flags & 0x20) != 0) &&
+         ((injection_fault_shadow_flags & 1) == (injection_fault_shadow_snapshot & 1))) {
+        fault_pending_flags = fault_pending_flags & 0xffffffdf;
+        fault_management_ring_read_ptr = (undefined *)((uint)fault_management_ring_read_ptr | 0x20);
+      }
+    }
+    puVar1 = &DAT_003fd265;
+    if (((((((system_status_flags_t_003fe974.protection_active & 0x2000) == 0) &&
+           ((system_status_flags_t_003fe974.comm_faults & 0x200) == 0)) &&
+          ((system_status_flags_t_003fe974.comm_faults & 0x100) == 0)) &&
+         (((system_status_flags_t_003fe974.reserved_28 & 1) == 0 &&
+          ((system_status_flags_t_003fe974.reserved_28 & 2) == 0)))) &&
+        (((power_state_status_flags & 0x200) == 0 &&
+         (((power_state_status_flags & 0x400) == 0 &&
+          ((system_status_flags_t_003fe974.pending_faults & 0x8000) == 0)))))) &&
+       ((engine_speed_override_enable_cal == 0 &&
+        (((((cam_sync_disable_cal == 0 &&
+            (DAT_00409fd6 <= (short)sensor_readings_t_0040baf2.coolant_temp)) &&
+           ((short)sensor_readings_t_0040baf2.coolant_temp <= DAT_00409fd4)) &&
+          ((DAT_00409fda <= (short)fuel_temp_raw && ((short)fuel_temp_raw <= DAT_00409fd8)))) &&
+         (((protection_feature_status_flags & 0x80) != 0 &&
+          ((DAT_00409fde <= engine_rpm_state_t_0040b7ac.target_rpm && (governor_inhibit_flag == 0)))
+          ))))))) {
+      if (DAT_003fd265 == '\x01') {
+        cssc_injection_diag_state = 1;
+      }
+      uVar2 = 0;
+    }
+    else {
+      engine_cssc_counters_reset();
+      cssc_injection_diag_state = 0;
+      uVar2 = 1;
+      puVar1 = extraout_r4;
+    }
+    *puVar1 = uVar2;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_initTimerInterrupts @ 0x005371f4
+//
+

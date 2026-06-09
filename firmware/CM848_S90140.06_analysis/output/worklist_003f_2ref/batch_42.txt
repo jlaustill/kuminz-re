@@ -1,0 +1,48 @@
+=== VARIABLES TO NAME ===
+0x003fad6e  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fad6e
+void cm848_j1939SendDm1ResponseMessage(byte dest_address,byte fault_count)
+
+{
+  undefined1 in_register_00000012;
+  undefined2 local_6;
+  
+  local_6 = CONCAT11(in_register_00000012,fault_count);
+  DAT_003fad6e = dest_address;
+  j1939_pgn65232_param_tx_word = j1939_reverseByteOrder16(&local_6);
+  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65232_tx_header);
+  return;
+}
+
+
+
+//
+// Function: cm848_initJ1939EngineControlBuffer @ 0x0002560c
+//
+
+// Variables in this function: DAT_003fad6e
+void cm848_initJ1939EngineControlBuffer(void)
+
+{
+  j1939_pgn65232_tx_header = CONCAT13(((byte)j1939_pgn65232_priority & 7) << 2,0xfed000);
+  j1939_pgn65232_tx_byte_count = 8;
+  j1939_pgn65232_data_ptr = &DAT_003fad6e;
+  j1939_pgn65232_data2_ptr = &DAT_003fad76;
+  j1939_pgn65232_tx_header = CONCAT31(j1939_pgn65232_tx_header._0_3_,(char)j1939_source_address);
+  DAT_003fad6f = 0xff;
+  j1939_pgn65232_field1_init_word = 0xffff;
+  j1939_pgn65232_field2_init_word = 0xffff;
+  return;
+}
+
+
+
+//
+// Function: cm848_j1939BuildEngineControlByte @ 0x0002567c
+//
+

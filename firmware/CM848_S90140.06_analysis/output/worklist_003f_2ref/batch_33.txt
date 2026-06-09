@@ -1,0 +1,50 @@
+=== VARIABLES TO NAME ===
+0x003fa83e  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fa83e
+void cm848_sendFaultTimerMessage(void)
+
+{
+  if ((DAT_003fa83e & 0xf0) == 0) {
+    faultTimerHandler(&fault_timer_state_base);
+    sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65251_tx_header);
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_processFaultMessageTiming @ 0x0001b778
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_003fa83e
+void initFaultTimerMessage(void)
+
+{
+  j1939_pgn65251_tx_header = CONCAT13(((byte)j1939_pgn65251_priority & 7) << 2,0xfee300);
+  j1939_pgn65251_tx_header = CONCAT31(j1939_pgn65251_tx_header._0_3_,(char)j1939_source_address);
+  j1939_pgn65251_tx_length = 0x1c;
+  j1939_pgn65251_data_ptr = (undefined *)&fault_timer_state_base;
+  j1939_pgn65251_end_ptr = &DAT_003fa83e;
+  ram0x003fa809 = 0xffff;
+  ram0x003fa825 = 0xffff;
+  fault_counter_slot7_target._2_1_ = 0x7d;
+  fault_counter_slot7_shadow._2_1_ = 0x7d;
+  fault_initBitwiseTimerMask();
+  cm848_initProtectionDelayDefaults();
+  return;
+}
+
+
+
+//
+// Function: cm848_calculateColdStartFuelAdjust @ 0x0001b99c
+//
+

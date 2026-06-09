@@ -1,0 +1,100 @@
+=== VARIABLES TO NAME ===
+0x003fb01a  (2 references)
+0x003fb01e  (2 references)
+0x003fb026  (2 references)
+
+Total: 3 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fb01a, DAT_003fb01e, DAT_003fb026
+void cm848_processProtectionEntry(void)
+
+{
+  int iVar1;
+  uint uVar2;
+  short sVar3;
+  
+  iVar1 = (int)(CONCAT44((int)((ulonglong)
+                               ((longlong)(int)((uint)boost_fuel_correction_gain_cal * 0x7d) *
+                               (longlong)
+                               (int)((uint)map_fuel_correction_factor -
+                                    (uint)map_fuel_correction_prev_snapshot)) >> 0x20),
+                         (uint)boost_fuel_correction_gain_cal * 0x7d *
+                         ((uint)map_fuel_correction_factor - (uint)map_fuel_correction_prev_snapshot
+                         )) / 0x3200);
+  map_fuel_correction_prev_snapshot = map_fuel_correction_factor;
+  if (iVar1 < -25000) {
+    iVar1 = -25000;
+  }
+  else if (25000 < iVar1) {
+    iVar1 = 25000;
+  }
+  governor_temp_correction_unfiltered = (word)iVar1;
+  governor_temp_correction_filtered =
+       cm848_signedFirstOrderFilter
+                 ((int)(short)governor_temp_correction_unfiltered,&PTR_DAT_003fb01e);
+  if ((boost_fuel_scale_divisor == 0) ||
+     (uVar2 = (uint)(((ulonglong)map_fuel_correction_factor << 0xc) /
+                    (ulonglong)(uint)boost_fuel_scale_divisor), 0xfffe < uVar2)) {
+    uVar2 = 0xffff;
+  }
+  engine_rpm_ema_filtered =
+       exponentialMovingAverage(engine_rpm_state_t_0040b7ac.current_rpm,&PTR_DAT_003fb026);
+  injection_timing_temp_correction_raw =
+       cm848_dualAxisTableInterpolation(&DAT_003fb01a,(word)uVar2,0x72a2);
+  uVar2 = ((uint)fuel_timing_correction_factor_b * (uint)injection_timing_temp_correction_raw) /
+          0x855;
+  sVar3 = (short)uVar2;
+  if (24999 < (uVar2 & 0xffff)) {
+    sVar3 = 25000;
+  }
+  if ((int)sVar3 + (int)(short)governor_temp_correction_filtered < 0) {
+    governor_temperature_correction = 0;
+  }
+  else {
+    governor_temperature_correction = sVar3 + governor_temp_correction_filtered;
+  }
+  governor_speed_temp_corrected = governor_speed_reference_raw - governor_temperature_correction;
+  governor_speed_reference_uncorrected = governor_speed_reference_raw;
+  if (((((protection_config_flags_b & 1) == 0) || (fuel_demand_mode_index == 2)) ||
+      (fuel_demand_mode_state == 2)) ||
+     ((fuel_demand_state_b == 2 || (fuel_demand_phase_state == 2)))) {
+    governor_correction_mode_flags = 0x80;
+  }
+  else if (((fuel_demand_mode_index == 1) || (fuel_demand_mode_state == 1)) ||
+          ((fuel_demand_state_b == 1 || (fuel_demand_phase_state == 1)))) {
+    governor_correction_mode_flags = 0x40;
+  }
+  else {
+    governor_correction_mode_flags = 0;
+  }
+  return;
+}
+
+
+
+//
+// Function: mpc555_initFuelControlModeVariables @ 0x0002c9bc
+//
+
+// Variables in this function: DAT_003fb01a, DAT_003fb01e, DAT_003fb026
+void mpc555_initFuelControlModeVariables(void)
+
+{
+  map_fuel_correction_prev_snapshot = 0;
+  DAT_003fb01a = 2;
+  DAT_003fb01c = 2;
+  DAT_003fb022 = 0;
+  PTR_DAT_003fb01e = &DAT_0040729e;
+  DAT_003fb02a = 0;
+  PTR_DAT_003fb026 = &DAT_004072a0;
+  return;
+}
+
+
+
+//
+// Function: cm848_calculateSpeedControlLimit @ 0x0002ca14
+//
+

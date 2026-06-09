@@ -1,0 +1,55 @@
+=== VARIABLES TO NAME ===
+0x003fcbe8  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fcbe8
+void governor_computeSpeedTargetWithThermalCorrection(void)
+
+{
+  governor_speed_target_base =
+       lookupTableInterpolation((table_interp_args_t *)&coolant_temp_interp_state);
+  if ((((protection_enable_byte_34 & 0x40) == 0) || ((power_state_status_flags & 8) != 0)) ||
+     ((power_state_status_flags & 0x10) != 0)) {
+    governor_integral_component_a = 0;
+  }
+  else {
+    governor_integral_component_a =
+         lookupTableInterpolation((table_interp_args_t *)((int)&coolant_temp_interp_state + 2));
+  }
+  governor_integral_component_b =
+       cm848_dualAxisTableInterpolation(&DAT_003fcbe8,tpu_rpm_ema_filtered,43000);
+  governor_speed_load_reference_offset =
+       lookupTableInterpolation((table_interp_args_t *)&governor_torque_interp_state);
+  fuel_demand_base_offset =
+       governor_speed_load_reference_offset + governor_speed_target_base +
+       governor_integral_component_a + governor_integral_component_b;
+  return;
+}
+
+
+
+//
+// Function: cm848_initInterpolationStateCounters @ 0x0050dd10
+//
+
+// Variables in this function: DAT_003fcbe8
+void cm848_initInterpolationStateCounters(void)
+
+{
+  DAT_003fcbe8 = 2;
+  DAT_003fcbea = 2;
+  coolant_temp_interp_state._0_2_ = 2;
+  governor_torque_interp_state = 2;
+  coolant_temp_interp_state._2_2_ = 2;
+  return;
+}
+
+
+
+//
+// Function: main_loop_validateDiagnosticChannels @ 0x0050dd40
+//
+

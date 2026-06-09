@@ -1,0 +1,106 @@
+=== VARIABLES TO NAME ===
+0x003fa152  (2 references)
+0x003fa154  (2 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fa152
+void cm848_calculateLoadBasedAdjustment(void)
+
+{
+  uint uVar1;
+  int iVar2;
+  
+  uVar1 = (uint)fuel_blend_load_ratio_cached;
+  if (uVar1 < fuel_blend_load_upper_threshold) {
+    if (uVar1 <= fuel_blend_load_lower_threshold) {
+      speed_threshold_exceeded_flag = 0;
+    }
+  }
+  else {
+    speed_threshold_exceeded_flag = 1;
+  }
+  if (speed_threshold_exceeded_flag == 1) {
+    uVar1 = speed_threshold_scale_cal * uVar1 >> 0xd;
+    if (0xffae < uVar1) {
+      uVar1 = 0xffae;
+    }
+  }
+  else {
+    if (speed_threshold_exceeded_flag != 0) goto LAB_0001101c;
+    uVar1 = 0;
+  }
+  throttle_position_increment = (word)uVar1;
+LAB_0001101c:
+  throttle_position_accumulator = lookupTableInterpolation((table_interp_args_t *)&DAT_003fa152);
+  iVar2 = (int)(CONCAT44((int)((ulonglong)
+                               ((longlong)
+                                (int)((uint)throttle_position_accumulator +
+                                     (uint)throttle_position_increment) *
+                               (longlong)(int)(short)throttle_position_scaled) >> 0x20),
+                         ((uint)throttle_position_accumulator + (uint)throttle_position_increment) *
+                         (int)(short)throttle_position_scaled) / 0x2000);
+  if (iVar2 < 0x6401) {
+    if (iVar2 < -0x6400) {
+      iVar2 = -0x6400;
+    }
+  }
+  else {
+    iVar2 = 0x6400;
+  }
+  throttle_fuel_demand_scaled = (word)iVar2;
+  return;
+}
+
+
+
+//
+// Function: cm848_lookupRpmLoadTable @ 0x000110bc
+//
+
+// Variables in this function: DAT_003fa154
+word cm848_lookupRpmLoadTable(void)
+
+{
+  word wVar1;
+  word wVar2;
+  
+  wVar1 = cm848_dualAxisTableInterpolation
+                    (&DAT_003fa154,engine_rpm_state_t_0040b7ac.current_rpm,0xf862);
+  throttle_rate_lookup_raw = wVar1;
+  if (throttle_rate_override_flag == 1) {
+    wVar1 = fuel_demand_mode_select_cal;
+  }
+  wVar2 = throttle_output_clamp_lower_cal;
+  if ((throttle_output_clamp_lower_cal <= wVar1) &&
+     (wVar2 = wVar1, throttle_output_clamp_upper_cal < wVar1)) {
+    wVar2 = throttle_output_clamp_upper_cal;
+  }
+  return wVar2;
+}
+
+
+
+//
+// Function: cm848_calculateLoadAdjustmentFactors @ 0x00011170
+//
+
+// Variables in this function: DAT_003fa152, DAT_003fa154
+void mpc555_initLoadAdjustmentTableSizes(void)
+
+{
+  throttle_load_gain_interp_state = 2;
+  DAT_003fa152 = 2;
+  DAT_003fa154 = 2;
+  DAT_003fa156 = 2;
+  return;
+}
+
+
+
+//
+// Function: cm848_calculateLoadGainValues @ 0x0001134c
+//
+

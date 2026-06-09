@@ -1,0 +1,29 @@
+=== VARIABLES TO NAME ===
+0x003faeee  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003faeee
+void cm848_initJ1939VehicleElectricalBuffer(void)
+
+{
+  j1939_pgn65271_tx_header = CONCAT13(((byte)j1939_pgn65271_source_address_bits & 7) << 2,0xfef700);
+  j1939_pgn65271_tx_byte_count = 8;
+  j1939_pgn65271_data_ptr = &DAT_003faeee;
+  j1939_pgn65271_data2_ptr = &DAT_003faef6;
+  j1939_pgn65271_tx_header = CONCAT31(j1939_pgn65271_tx_header._0_3_,(char)j1939_source_address);
+  DAT_003faeee = 0xff;
+  DAT_003faeef = 0xff;
+  j1939_pgn65271_field1_init_word = 0xffff;
+  j1939_pgn65271_field2_init_word = 0xffff;
+  return;
+}
+
+
+
+//
+// Function: cm848_j1939HandlePgn65260VehicleId @ 0x00026db4
+//
+

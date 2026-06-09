@@ -1,0 +1,309 @@
+=== VARIABLES TO NAME ===
+0x003fd0ce  (2 references)
+0x003fd0d2  (2 references)
+0x003fd0d6  (2 references)
+0x003fd0da  (2 references)
+0x003fd0de  (2 references)
+0x003fd0e2  (2 references)
+0x003fd0e6  (2 references)
+
+Total: 7 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fd0ce, DAT_003fd0d2, DAT_003fd0d6, DAT_003fd0da, DAT_003fd0de, DAT_003fd0e2, DAT_003fd0e6
+void cm848_sensor_channel_state_load(void)
+
+{
+  bool bVar1;
+  int iVar2;
+  word x_input;
+  short sVar3;
+  short sVar4;
+  short sVar5;
+  short sVar6;
+  uint uVar7;
+  int iVar8;
+  int iVar9;
+  short unaff_r21;
+  word wVar10;
+  short unaff_r26;
+  int iVar11;
+  int unaff_r28;
+  
+  x_input = engine_load_output_value;
+  wVar10 = sensor_readings_t_0040baf2.coolant_temp;
+  if (cam_timing_override_mode == 1) {
+    cam_timing_measured = cam_timing_override_value;
+    engine_timing_arb_byte_8_15 = 5;
+    return;
+  }
+  if (governor_speed_limit_mode == 1) {
+    cam_timing_measured = DAT_00409a88;
+    return;
+  }
+  if (engine_starting != 0) {
+    cam_timing_measured = 0;
+    engine_timing_arb_byte_8_15 = 1;
+    return;
+  }
+  iVar8 = (int)(short)(DAT_00409a78 + cam_timing_measured);
+  sVar3 = cm848_dualAxisTableInterpolation(&DAT_003fd0da,speed_setpoint_raw,0xfc7e);
+  if (boost_map_index_current == 1) {
+    unaff_r26 = cm848_dualAxisTableInterpolation
+                          (&cam_timing_advance_table_interp_states,speed_setpoint_raw,0xbe);
+  }
+  else if (boost_map_index_current == 2) {
+    unaff_r26 = cm848_dualAxisTableInterpolation
+                          (&cam_timing_advance_table_interp_states,speed_setpoint_raw,0x108);
+  }
+  else if (boost_map_index_current == 3) {
+    unaff_r26 = cm848_dualAxisTableInterpolation
+                          (&cam_timing_advance_table_interp_states,speed_setpoint_raw,0x3b2);
+  }
+  else if (boost_map_index_current == 4) {
+    unaff_r26 = cm848_dualAxisTableInterpolation
+                          (&cam_timing_advance_table_interp_states,speed_setpoint_raw,0x65c);
+  }
+  if (boost_map_index_target == 1) {
+    unaff_r21 = cm848_dualAxisTableInterpolation
+                          (&cam_timing_advance_table_interp_states,speed_setpoint_raw,0xbe);
+  }
+  else if (boost_map_index_target == 2) {
+    unaff_r21 = cm848_dualAxisTableInterpolation
+                          (&cam_timing_advance_table_interp_states,speed_setpoint_raw,0x108);
+  }
+  else if (boost_map_index_target == 3) {
+    unaff_r21 = cm848_dualAxisTableInterpolation
+                          (&cam_timing_advance_table_interp_states,speed_setpoint_raw,0x3b2);
+  }
+  else if (boost_map_index_target == 4) {
+    unaff_r21 = cm848_dualAxisTableInterpolation
+                          (&cam_timing_advance_table_interp_states,speed_setpoint_raw,0x65c);
+  }
+  sVar4 = cm848_filterInputValue
+                    ((int)unaff_r26,(int)unaff_r21,(int)sVar3,boost_map_index_current,
+                     boost_map_index_target,fuel_blend_state_t_0040a494.blend_weight,
+                     fuel_blend_state_t_0040a494.blend_mode);
+  iVar11 = (int)sVar4;
+  DAT_0040b8be = sVar4;
+  sVar3 = cm848_dualAxisTableInterpolation(&DAT_003fd0de,speed_setpoint_raw,0xfcc8);
+  sVar5 = cm848_dualAxisTableInterpolation(&DAT_003fd0e2,wVar10,0xfbda);
+  uVar7 = (int)sVar3 * (int)sVar5;
+  sVar3 = (short)((int)uVar7 >> 0xc) + (ushort)((int)uVar7 < 0 && (uVar7 & 0xfff) != 0);
+  iVar9 = (int)sVar3;
+  sVar5 = cm848_dualAxisTableInterpolation(&DAT_003fd0d6,speed_setpoint_raw,0xfe88);
+  sVar6 = cm848_dualAxisTableInterpolation(&DAT_003fd0d2,x_input,0xfe02);
+  uVar7 = (int)sVar5 * (int)sVar6;
+  sVar6 = (short)((int)uVar7 >> 0xc) + (ushort)((int)uVar7 < 0 && (uVar7 & 0xfff) != 0);
+  sVar5 = cm848_dualAxisTableInterpolation(&DAT_003fd0e6,speed_setpoint_raw,0x906);
+  cam_timing_advance_target = sVar5 * 100;
+  sVar5 = (short)((int)_cam_timing_advance_slew_working / 100);
+  if (DAT_00409a71 == '\0') {
+    unaff_r28 = (int)(short)(sVar4 + sVar3 + sVar6 + sVar5);
+    engine_timing_arb_byte_8_15 = 7;
+  }
+  if (DAT_00409a71 == '\x01') {
+    iVar2 = iVar9;
+    if (iVar11 < iVar9) {
+      sVar3 = sVar4;
+      iVar2 = iVar11;
+    }
+    if (sVar6 <= iVar2) {
+      sVar3 = sVar6;
+    }
+    unaff_r28 = (int)(short)(sVar3 + sVar5);
+    if (iVar11 == unaff_r28 - sVar5) {
+      engine_timing_arb_byte_8_15 = 2;
+    }
+    else if (iVar9 == unaff_r28 - sVar5) {
+      engine_timing_arb_byte_8_15 = 3;
+    }
+    else {
+      engine_timing_arb_byte_8_15 = 4;
+    }
+  }
+  if ((((governor_mode_code == 0x10) || (governor_mode_code == 0x3a)) ||
+      (governor_mode_code == 0x32)) &&
+     ((DAT_00409a7c < (short)wVar10 && (DAT_00409a7e < (short)x_input)))) {
+    if ((int)cam_timing_advance_target < 1) {
+      if (((int)cam_timing_advance_target < (int)_cam_timing_advance_slew_working) &&
+         (_cam_timing_advance_slew_working =
+               _cam_timing_advance_slew_working - cam_timing_advance_slew_step,
+         (int)_cam_timing_advance_slew_working < (int)cam_timing_advance_target)) goto LAB_0052a500;
+    }
+    else if (((int)_cam_timing_advance_slew_working < (int)cam_timing_advance_target) &&
+            (_cam_timing_advance_slew_working =
+                  _cam_timing_advance_slew_working + cam_timing_advance_slew_step,
+            (int)cam_timing_advance_target < (int)_cam_timing_advance_slew_working)) {
+LAB_0052a500:
+      _cam_timing_advance_slew_working = cam_timing_advance_target;
+    }
+    if (_cam_timing_advance_slew_working != 0) {
+      if (engine_timing_arb_byte_8_15 == 2) {
+        engine_timing_arb_byte_8_15 = 8;
+      }
+      if (engine_timing_arb_byte_8_15 == 3) {
+        engine_timing_arb_byte_8_15 = 9;
+      }
+      if (engine_timing_arb_byte_8_15 == 4) {
+        engine_timing_arb_byte_8_15 = 10;
+      }
+      if (engine_timing_arb_byte_8_15 == 7) {
+        engine_timing_arb_byte_8_15 = 0xb;
+      }
+    }
+  }
+  else if (_cam_timing_advance_slew_working != 0) {
+    if ((int)cam_timing_advance_target < 1) {
+      _cam_timing_advance_slew_working =
+           _cam_timing_advance_slew_working + cam_timing_advance_slew_step;
+      if (0 < (int)_cam_timing_advance_slew_working) goto LAB_0052a5b0;
+    }
+    else {
+      _cam_timing_advance_slew_working =
+           _cam_timing_advance_slew_working - cam_timing_advance_slew_step;
+      if ((int)_cam_timing_advance_slew_working < 0) {
+LAB_0052a5b0:
+        _cam_timing_advance_slew_working = 0;
+      }
+    }
+  }
+  wVar10 = (word)unaff_r28;
+  sVar3 = wVar10 - cam_timing_demand_rate_limited;
+  if ((int)(short)cam_timing_demand_rate_limit < (int)sVar3) {
+    cam_timing_demand_rate_limited = wVar10 - cam_timing_demand_rate_limit;
+  }
+  if ((int)sVar3 < -(int)(short)cam_timing_demand_rate_limit) {
+    cam_timing_demand_rate_limited = wVar10 + cam_timing_demand_rate_limit;
+  }
+  if ((speed_setpoint_raw < DAT_00409a82) && (fuel_demand_computed < DAT_00409a80)) {
+    unaff_r28 = (int)(short)cam_timing_demand_rate_limited;
+    DAT_0040b8c4 = 1;
+  }
+  else {
+    DAT_0040b8c4 = 0;
+    cam_timing_demand_rate_limited = wVar10;
+  }
+  bVar1 = iVar8 < unaff_r28;
+  if (bVar1) {
+    unaff_r28 = iVar8;
+  }
+  DAT_0040b8c6 = (ushort)bVar1;
+  cam_timing_demand_working = (word)unaff_r28;
+  DAT_0040b8b8 = cm848_dualAxisTableInterpolation(&DAT_003fd0ce,speed_setpoint_raw,0x44);
+  iVar8 = (int)DAT_0040b8b8;
+  if ((protection_feature_flags & 4) == 0) goto LAB_0052a7e4;
+  if ((((cold_start_phase == CSP_CRANKING) || (cold_start_phase == CSP_ABOVE_RPM_TRIGGER)) ||
+      (cold_start_phase == CSP_ABOVE_RPM_VIA_EVENTS)) || (cold_start_phase == CSP_SETPOINT_UNDERRUN)
+     ) {
+    cam_timing_transition_state = 1;
+    engine_timing_arb_byte_8_15 = 6;
+    unaff_r28 = iVar8;
+    goto LAB_0052a7e4;
+  }
+  if (cam_timing_transition_state == 1) {
+    if (((short)cam_timing_demand_working != iVar8) && (cam_timing_transition_step != 0)) {
+      if ((short)cam_timing_demand_working < iVar8) {
+        cam_timing_transition_state = 8;
+        engine_timing_arb_byte_8_15 = 0xd;
+        unaff_r28 = iVar8;
+      }
+      else {
+        cam_timing_transition_state = 4;
+        engine_timing_arb_byte_8_15 = 0xc;
+        unaff_r28 = iVar8;
+      }
+      goto LAB_0052a7e4;
+    }
+LAB_0052a7b8:
+    cam_timing_transition_state = 2;
+  }
+  else {
+    if (cam_timing_transition_state == 2) {
+      unaff_r28 = (int)(short)cam_timing_demand_working;
+      goto LAB_0052a7e4;
+    }
+    if (cam_timing_transition_state == 4) {
+      cam_timing_measured = cam_timing_measured + cam_timing_transition_step;
+      if (unaff_r28 <= (short)cam_timing_measured) goto LAB_0052a7b8;
+    }
+    else {
+      if (cam_timing_transition_state != 8) goto LAB_0052a7e4;
+      cam_timing_measured = cam_timing_measured - cam_timing_transition_step;
+      if ((short)cam_timing_measured <= unaff_r28) goto LAB_0052a7b8;
+    }
+    unaff_r28 = (int)(short)cam_timing_measured;
+  }
+LAB_0052a7e4:
+  if (((cold_start_phase == CSP_CRANKING) || (cold_start_phase == CSP_ABOVE_RPM_TRIGGER)) ||
+     ((cold_start_phase == CSP_ABOVE_RPM_VIA_EVENTS || (cold_start_phase == CSP_SETPOINT_UNDERRUN)))
+     ) {
+    wVar10 = 0x10;
+    cam_timing_measured = DAT_00409a86;
+  }
+  else {
+    wVar10 = 0x11;
+    cam_timing_measured = DAT_00409a6a;
+  }
+  if ((short)cam_timing_measured <= unaff_r28) {
+    if ((short)DAT_00409a7a < unaff_r28) {
+      cam_timing_measured = DAT_00409a7a;
+      engine_timing_arb_byte_8_15 = 0xe;
+      wVar10 = engine_timing_arb_byte_8_15;
+    }
+    else {
+      cam_timing_measured = (word)unaff_r28;
+      wVar10 = engine_timing_arb_byte_8_15;
+    }
+  }
+  engine_timing_arb_byte_8_15 = wVar10;
+  if (cam_timing_override_mode == 2) {
+    cam_timing_measured = cam_timing_measured + cam_timing_override_value;
+  }
+  if (((cold_start_qualifier_flag & 4) != 0) && ((short)DAT_0040953e < (short)cam_timing_measured))
+  {
+    cam_timing_measured = DAT_0040953e;
+    engine_timing_arb_byte_8_15 = 0xf;
+  }
+  DAT_0040b8c8 = (ushort)(cam_timing_override_mode == 2);
+  return;
+}
+
+
+
+//
+// Function: hpcr_register_state_save @ 0x0052a910
+//
+
+// Variables in this function: DAT_003fd0ce, DAT_003fd0d2, DAT_003fd0d6, DAT_003fd0da, DAT_003fd0de, DAT_003fd0e2, DAT_003fd0e6
+void hpcr_register_state_save(void)
+
+{
+  cam_timing_transition_state = 1;
+  engine_timing_arb_byte_8_15 = 1;
+  cam_timing_advance_table_interp_states = 2;
+  DAT_003fd0cc = 2;
+  DAT_003fd0ce = 2;
+  DAT_003fd0d0 = 2;
+  DAT_003fd0d2 = 2;
+  DAT_003fd0d4 = 2;
+  DAT_003fd0d6 = 2;
+  DAT_003fd0d8 = 2;
+  DAT_003fd0da = 2;
+  DAT_003fd0dc = 2;
+  DAT_003fd0de = 2;
+  DAT_003fd0e0 = 2;
+  DAT_003fd0e2 = 2;
+  DAT_003fd0e4 = 2;
+  DAT_003fd0e6 = 2;
+  DAT_003fd0e8 = 2;
+  return;
+}
+
+
+
+//
+// Function: engine_camTiming_speedWindow_update @ 0x0052a9ac
+//
+

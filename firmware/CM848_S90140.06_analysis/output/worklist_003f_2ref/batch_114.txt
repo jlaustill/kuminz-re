@@ -1,0 +1,74 @@
+=== VARIABLES TO NAME ===
+0x003fbd1c  (2 references)
+0x003fbd20  (2 references)
+0x003fbd24  (2 references)
+0x003fbd26  (2 references)
+
+Total: 4 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fbd1c, DAT_003fbd20
+void fuel_demandBlend_weight_calc(void)
+
+{
+  uint uVar1;
+  uint uVar2;
+  
+  uVar1 = cm848_dualAxisTableInterpolation(&DAT_003fbd1c,governor_adjustment_input,0x62d8);
+  uVar2 = cm848_dualAxisTableInterpolation
+                    (&DAT_003fbd20,engine_rpm_state_t_0040b7ac.current_rpm,0x637c);
+  fuel_demand_blend_weight = (word)((uVar1 & 0xffff) * (uVar2 & 0xffff) >> 10);
+  return;
+}
+
+
+
+//
+// Function: fuel_demandBlend_rpmRange_check @ 0x00507748
+//
+
+// Variables in this function: DAT_003fbd24, DAT_003fbd26
+void fuel_demandBlend_rpmRange_check(void)
+
+{
+  short sVar1;
+  short sVar2;
+  
+  sVar1 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fbd24);
+  sVar2 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fbd26);
+  if ((sVar1 < (short)fuel_demand_aux_blend_deviation) ||
+     ((short)fuel_demand_aux_blend_deviation < sVar2)) {
+    fuel_demand_blend_rpm_in_range_flag = 0;
+  }
+  else {
+    fuel_demand_blend_rpm_in_range_flag = 1;
+  }
+  return;
+}
+
+
+
+//
+// Function: main_loop_callPhaseGroupProcessors @ 0x005077fc
+//
+
+// Variables in this function: DAT_003fbd1c, DAT_003fbd20, DAT_003fbd24, DAT_003fbd26
+void hpcr_initializeTimerRegisters(void)
+
+{
+  DAT_003fbd1c = 2;
+  DAT_003fbd1e = 2;
+  DAT_003fbd20 = 2;
+  DAT_003fbd22 = 2;
+  DAT_003fbd24 = 2;
+  DAT_003fbd26 = 2;
+  return;
+}
+
+
+
+//
+// Function: engine_protection_derateParam_priorityApply @ 0x00507858
+//
+

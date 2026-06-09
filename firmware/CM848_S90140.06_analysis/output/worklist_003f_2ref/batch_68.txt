@@ -1,0 +1,42 @@
+=== VARIABLES TO NAME ===
+0x003fb1fc  (2 references)
+0x003fb1fe  (2 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fb1fc, DAT_003fb1fe
+void cm848_processSensorLookupTable3(void)
+
+{
+  sensorChannelTypeB_configInit
+            (&DAT_0005acd8,&sensor_channel_8_state,&DAT_003fb1fc,&DAT_0005ace8,&DAT_0005acfa,0,
+             &PTR_DAT_003fb1fe,0x61,0x15c,0x15b,&sensor_channel97_raw,&sensor_channel97_filtered,
+             &sensor_channel97_fault_status);
+  return;
+}
+
+
+
+//
+// Function: cm848_initSensorLookupTable3 @ 0x0003592c
+//
+
+// Variables in this function: DAT_003fb1fc, DAT_003fb1fe
+void cm848_initSensorLookupTable3(void)
+
+{
+  sensorChannelTypeB_update
+            (&DAT_0005acd8,&sensor_channel_8_state,&DAT_003fb1fc,&DAT_0005ace8,&DAT_0005acfa,0,
+             &PTR_DAT_003fb1fe,0x61,0x15c,0x15b,&sensor_channel97_raw,&sensor_channel97_filtered,
+             &sensor_channel97_fault_status);
+  return;
+}
+
+
+
+//
+// Function: cm848_processSensorLookupTable2 @ 0x000359b8
+//
+

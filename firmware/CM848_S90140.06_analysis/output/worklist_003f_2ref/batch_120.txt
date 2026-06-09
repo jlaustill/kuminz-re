@@ -1,0 +1,253 @@
+=== VARIABLES TO NAME ===
+0x003fbd94  (2 references)
+0x003fbdcf  (2 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fbd94, DAT_003fbdcf
+void initiateJ1939TransportProtocol(uint *param_1)
+
+{
+  byte bVar1;
+  byte bVar2;
+  ushort uVar3;
+  word wVar4;
+  dword dVar5;
+  undefined2 uVar7;
+  undefined1 *puVar6;
+  byte *pbVar8;
+  undefined1 local_18;
+  undefined1 local_14;
+  undefined1 uStack_13;
+  
+  dVar5 = j1939_multiframe_tx_buf_ptr;
+  bVar1 = *(byte *)((int)param_1 + 1);
+  bVar2 = *(byte *)((int)param_1 + 2);
+  uVar3 = *(ushort *)((int)param_1 + 1);
+  local_18 = (undefined1)(uVar3 >> 8);
+  if ((bVar1 < 0xf0) && (bVar2 != 0xff)) {
+    if (j1939_multiframe_tx_active == 0) {
+      j1939_multiframe_tx_active = 1;
+      j1939_multiframe_tx_dest_addr_word = uVar3 & 0xff00;
+      j1939_multiframe_tx_total_bytes = *(word *)(param_1 + 1);
+      j1939_multiframe_tx_total_packets = (char)((int)(j1939_multiframe_tx_total_bytes - 1) / 7) + 1
+      ;
+      j1939_multiframe_tx_packets_remaining = 0;
+      PTR_DAT_003fbdcf = *(undefined **)((int)param_1 + 6);
+      j1939_multiframe_tx_can_header = *param_1 & 0xff00ffff | 0xec0000;
+      j1939_multiframe_tx_frame_len = 8;
+      j1939_multiframe_tx_cts_timeout = 0x37;
+      j1939_multiframe_tx_status_ptr = *(dword *)((int)param_1 + 10);
+      j1939_multiframe_tx_destination_address = bVar2;
+      *(undefined1 *)j1939_multiframe_tx_buf_ptr = 0x10;
+      wVar4 = j1939_multiframe_tx_total_bytes;
+      uStack_13 = (undefined1)j1939_multiframe_tx_total_bytes;
+      *(undefined1 *)(dVar5 + 1) = uStack_13;
+      local_14 = (undefined1)(wVar4 >> 8);
+      *(undefined1 *)(dVar5 + 2) = local_14;
+      *(byte *)(dVar5 + 3) = j1939_multiframe_tx_total_packets;
+      *(undefined1 *)(dVar5 + 4) = 0xff;
+      *(undefined1 *)(dVar5 + 5) = 0;
+      *(undefined1 *)(dVar5 + 6) = local_18;
+      *(undefined1 *)(dVar5 + 7) = 0;
+      mpc555_sendJ1939SingleFrame
+                (j1939_multiframe_tx_can_header,j1939_multiframe_tx_frame_len,
+                 j1939_multiframe_tx_buf_ptr,&j1939_multiframe_tx_send_result);
+      if (j1939_multiframe_tx_send_result == 0) {
+        *(undefined1 *)j1939_multiframe_tx_status_ptr = 0x12;
+        j1939_multiframe_tx_can_header = *param_1 & 0xff00ffff | 0xeb0000;
+      }
+      else {
+        *(byte *)j1939_multiframe_tx_status_ptr = j1939_multiframe_tx_send_result;
+        j1939_multiframe_tx_active = 0;
+      }
+    }
+    else {
+      **(undefined1 **)((int)param_1 + 10) = 8;
+    }
+  }
+  else {
+    if (j1939_source_address == (byte)*param_1) {
+      pbVar8 = &j1939_tp_rx_session_active;
+    }
+    else {
+      if (j1939_source_address_b != (byte)*param_1) {
+        **(undefined1 **)((int)param_1 + 10) = 3;
+        return;
+      }
+      pbVar8 = &DAT_003fbd94;
+    }
+    if (*pbVar8 == 1) {
+      **(undefined1 **)((int)param_1 + 10) = 2;
+    }
+    else {
+      if ((bVar1 == 0xff) && (bVar2 == 0xff)) {
+        j1939_tp_bam_session_active = 1;
+      }
+      *pbVar8 = 1;
+      uVar3 = *(ushort *)(param_1 + 1);
+      *(ushort *)(pbVar8 + 2) = uVar3;
+      pbVar8[1] = (char)((int)(uVar3 - 1) / 7) + 1;
+      pbVar8[6] = 1;
+      pbVar8[4] = 0;
+      pbVar8[5] = 1;
+      *(undefined4 *)(pbVar8 + 8) = *(undefined4 *)((int)param_1 + 6);
+      *(uint *)(pbVar8 + 0x12) = *param_1 & 0xff0000ff | 0xecff00;
+      pbVar8[0x16] = 0;
+      pbVar8[0x17] = 8;
+      if (j1939_tp_bam_session_active == 0) {
+        uVar7 = 5;
+      }
+      else {
+        uVar7 = 0;
+      }
+      *(undefined2 *)(pbVar8 + 0x10) = uVar7;
+      *(undefined4 *)(pbVar8 + 0xc) = *(undefined4 *)((int)param_1 + 10);
+      puVar6 = *(undefined1 **)(pbVar8 + 0x18);
+      *puVar6 = 0x20;
+      uVar7 = *(undefined2 *)(pbVar8 + 2);
+      uStack_13 = (undefined1)uVar7;
+      puVar6[1] = uStack_13;
+      local_14 = (undefined1)((ushort)uVar7 >> 8);
+      puVar6[2] = local_14;
+      puVar6[3] = pbVar8[1];
+      puVar6[4] = 0xff;
+      puVar6[5] = bVar2;
+      puVar6[6] = local_18;
+      puVar6[7] = 0;
+      mpc555_sendJ1939SingleFrame
+                (*(undefined4 *)(pbVar8 + 0x12),*(undefined2 *)(pbVar8 + 0x16),
+                 *(undefined4 *)(pbVar8 + 0x18),pbVar8 + 7);
+      if (pbVar8[7] == 0) {
+        **(undefined1 **)(pbVar8 + 0xc) = 0x10;
+        *(uint *)(pbVar8 + 0x12) = *param_1 & 0xff0000ff | 0xebff00;
+      }
+      else {
+        **(byte **)(pbVar8 + 0xc) = pbVar8[7];
+        *pbVar8 = 0;
+        j1939_tp_bam_session_active = 0;
+      }
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: FUN_0050cc18 @ 0x0050cc18
+//
+
+// Variables in this function: DAT_003fbdcf
+void j1939_transport_dataFrame_bulkSend(void)
+
+{
+  undefined1 *puVar1;
+  undefined1 *puVar2;
+  uint uVar3;
+  uint uVar4;
+  uint uVar5;
+  int iVar6;
+  byte bVar7;
+  byte bVar8;
+  undefined1 uVar9;
+  undefined1 *puVar10;
+  
+  bVar7 = j1939_multiframe_tx_packets_remaining;
+  if (j1939_multiframe_tx_packets_remaining == 0) {
+    if (j1939_multiframe_tx_cts_timeout == 0) {
+      uVar9 = 6;
+LAB_0050d5a0:
+      *(undefined1 *)j1939_multiframe_tx_status_ptr = uVar9;
+      j1939_multiframe_tx_active = 0;
+    }
+    else {
+      j1939_multiframe_tx_cts_timeout = j1939_multiframe_tx_cts_timeout - 1;
+    }
+  }
+  else {
+    uVar3 = (uint)j1939_multiframe_tx_cts_start_packet;
+    if (j1939_multiframe_tx_packets_remaining < 0xb) {
+      j1939_multiframe_tx_packets_remaining = 0;
+      j1939_multiframe_tx_cts_timeout = 0x70;
+    }
+    else {
+      bVar7 = 10;
+      j1939_multiframe_tx_cts_start_packet = j1939_multiframe_tx_cts_start_packet + 10;
+      j1939_multiframe_tx_packets_remaining = j1939_multiframe_tx_packets_remaining - 10;
+    }
+    puVar10 = PTR_DAT_003fbdcf + uVar3 * 7 + -7;
+    bVar8 = 0;
+    if (bVar7 != 0) {
+      do {
+        puVar2 = (undefined1 *)j1939_multiframe_tx_buf_ptr;
+        if (j1939_multiframe_tx_total_packets == uVar3) {
+          uVar5 = ((uint)j1939_multiframe_tx_total_bytes - (uVar3 * 7 + 0xf9)) + 1;
+          j1939_multiframe_tx_frame_len = (ushort)uVar5 & 0xff;
+        }
+        else {
+          uVar5 = 8;
+        }
+        *(char *)j1939_multiframe_tx_buf_ptr = (char)uVar3;
+        uVar3 = uVar3 + 1 & 0xff;
+        uVar4 = 0;
+        iVar6 = (uVar5 & 0xff) - 1;
+        if (0 < iVar6) {
+          puVar1 = puVar10 + -1;
+          do {
+            puVar10 = puVar1;
+            puVar1 = puVar10 + 1;
+            puVar2 = puVar2 + 1;
+            *puVar2 = *puVar1;
+            uVar4 = uVar4 + 1 & 0xff;
+          } while ((int)uVar4 < iVar6);
+          puVar10 = puVar10 + 2;
+        }
+        mpc555_sendJ1939SingleFrame
+                  (j1939_multiframe_tx_can_header,j1939_multiframe_tx_frame_len,
+                   j1939_multiframe_tx_buf_ptr,&j1939_multiframe_tx_send_result);
+        if (j1939_multiframe_tx_send_result != 0) {
+          uVar9 = 7;
+          goto LAB_0050d5a0;
+        }
+        *(undefined1 *)j1939_multiframe_tx_status_ptr = 0x13;
+        bVar8 = bVar8 + 1;
+      } while (bVar8 < bVar7);
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: j1939_transport_timeout_decrement @ 0x0050d5d8
+//
+
+// Variables in this function: DAT_003fbd94
+void phase_group_a_triggerControllerUpdates(void)
+
+{
+  if (j1939_tp_rx_session_active == 1) {
+    j1939_transport_singleFrame_send(0);
+  }
+  if (DAT_003fbd94 == '\x01') {
+    j1939_transport_singleFrame_send(1);
+  }
+  if (j1939_multiframe_tx_active == 1) {
+    j1939_transport_dataFrame_bulkSend();
+  }
+  if (j1939_multiframe_rx_active == 1) {
+    j1939_transport_timeout_decrement();
+  }
+  return;
+}
+
+
+
+//
+// Function: j1939_selectResponseBuffer @ 0x0050d688
+//
+

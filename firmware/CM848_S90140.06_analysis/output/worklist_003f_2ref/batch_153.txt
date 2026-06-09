@@ -1,0 +1,89 @@
+=== VARIABLES TO NAME ===
+0x003fced8  (2 references)
+0x003fcedc  (2 references)
+0x003fee42  (2 references)
+
+Total: 3 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fced8, DAT_003fcedc, DAT_003fee42
+void governorCruiseTimerManagement(void)
+
+{
+  uint uVar1;
+  
+  if (((fault_management_status_flags & 0x2000) != 0) && ((j1939_governor_feature_byte & 4) != 0)) {
+    if (cold_start_phase != CSP_CRANKING) {
+      _sensor_validation_delta = sensor_validation_accum - DAT_003fee42;
+      governor_cruise_period_scale_factor =
+           cm848_dualAxisTableInterpolation
+                     (&DAT_003fced8,sensor_readings_t_0040baf2.coolant_temp,0xc80e);
+      governor_cruise_period_accum =
+           governor_cruise_period_accum +
+           (int)(CONCAT44((int)((ulonglong)
+                                (crank_period_running_total - governor_cruise_crank_period_snapshot)
+                                * (ulonglong)(uint)governor_cruise_period_scale_factor >> 0x20),
+                          (crank_period_running_total - governor_cruise_crank_period_snapshot) *
+                          (uint)governor_cruise_period_scale_factor) / 100);
+      if (0x8809a < governor_cruise_period_accum) {
+        register0x0000002c = ram0x003fee36 + 1;
+        governor_cruise_period_accum = 0;
+      }
+      if (engine_timing_reference != 0) {
+        uVar1 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fcedc);
+        sensor_init_retry_timer =
+             sensor_init_retry_timer +
+             (int)(CONCAT44((uVar1 & 0xffff) / 0xc545,(uVar1 & 0xffff) * 0x14c38) / 900000);
+      }
+    }
+    if ((system_status_flags_t_003fe974.sensor_diag & 0x200) != 0) {
+      sensor_initialization_sequence_count._0_2_ = sensor_initialization_sequence_count._0_2_ | 4;
+    }
+    if ((system_status_flags_t_003fe974.condition_monitor & 0x2000) != 0) {
+      sensor_initialization_sequence_count._0_2_ =
+           sensor_initialization_sequence_count._0_2_ | 0x100;
+    }
+    if ((((DAT_00408a6a < _sensor_validation_delta) || (DAT_00408a66 < ram0x003fee36)) ||
+        (DAT_00408a6e < sensor_init_retry_timer)) && (DAT_003fd8ec <= _sensor_validation_delta)) {
+      DAT_0040ae5e = 1;
+    }
+    else {
+      DAT_0040ae5e = 0;
+    }
+    if (j1939_feature_enable_cmd_flag != 0) {
+      _sensor_validation_delta = 0;
+      ram0x003fee36 = 0;
+      sensor_init_retry_timer = 0;
+      sensor_initialization_sequence_count._0_2_ = 0;
+      DAT_003fee42 = sensor_validation_accum;
+      DAT_0040ae5e = 0;
+      j1939_feature_enable_cmd_flag = 0;
+    }
+  }
+  governor_cruise_crank_period_snapshot = crank_period_running_total;
+  return;
+}
+
+
+
+//
+// Function: initFuelCorrectionTableParams @ 0x0051ab50
+//
+
+// Variables in this function: DAT_003fced8, DAT_003fcedc
+void initFuelCorrectionTableParams(void)
+
+{
+  DAT_003fced8 = 2;
+  DAT_003fceda = 2;
+  DAT_003fcedc = 2;
+  return;
+}
+
+
+
+//
+// Function: j1939FaultStateUpdate @ 0x0051ab70
+//
+

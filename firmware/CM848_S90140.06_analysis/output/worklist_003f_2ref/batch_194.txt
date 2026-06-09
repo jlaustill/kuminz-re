@@ -1,0 +1,44 @@
+=== VARIABLES TO NAME ===
+0x003fd90c  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fd90c
+void governorOverrideSpeedControl(void)
+
+{
+  uint uVar1;
+  int iVar2;
+  
+  if (((protection_config_flags_b & 0x8000) != 0) && (governor_override_active_flag != 0)) {
+    uVar1 = exponentialMovingAverage
+                      (cruise_speed_setpoint_adjusted,&governor_override_speed_ema_coeff_ptr);
+    iVar2 = (uVar1 & 0xffff) - ((uint)cruise_speed_command + (uint)DAT_003fd910);
+    if (governor_override_speed_active_flag < 100) {
+      if ((iVar2 <= (int)(uint)DAT_003fd90c) ||
+         (cruise_speed_setpoint_adjusted <= cruise_speed_min_threshold)) {
+        governor_override_speed_active_flag = 0;
+        governor_override_load_percent = 0;
+        return;
+      }
+    }
+    else if ((iVar2 <= (int)((uint)DAT_003fd90c - (uint)DAT_00408dee & 0xffff)) ||
+            (cruise_speed_setpoint_adjusted <= cruise_speed_min_threshold)) {
+      governor_override_speed_active_flag = 0;
+      governor_override_load_percent = 0;
+      return;
+    }
+  }
+  governor_override_load_percent = 100;
+  governor_override_speed_active_flag = 100;
+  return;
+}
+
+
+
+//
+// Function: governorLoadMinimumUpdate @ 0x005246b0
+//
+

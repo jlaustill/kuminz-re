@@ -1,0 +1,97 @@
+=== VARIABLES TO NAME ===
+0x003fa634  (2 references)
+0x003fa638  (2 references)
+0x003fa63e  (2 references)
+
+Total: 3 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fa634, DAT_003fa638
+void cm848_calculateRpmLoadTables(void)
+
+{
+  fuel_demand_rpm_load_lookup =
+       cm848_dualAxisTableInterpolation
+                 (&DAT_003fa634,engine_rpm_state_t_0040b7ac.current_rpm,0x523e);
+  injection_timing_advance_calc =
+       cm848_dualAxisTableInterpolation
+                 (&DAT_003fa638,engine_rpm_state_t_0040b7ac.current_rpm,0x54e8);
+  injection_timing_advance_snapshot = injection_timing_advance_calc;
+  if ((engine_feature_enable_flags & 8) == 0) {
+    fuel_correction_output_working = fuel_correction_output_snapshot;
+    fuel_demand_mode_enable_flag = 0;
+  }
+  else {
+    fuel_demand_mode_enable_flag = (word)(fuel_demand_mode_offset_cal != 0);
+    fuel_correction_output_working = fuel_correction_output_snapshot + fuel_demand_mode_offset_cal;
+  }
+  fuel_demand_mode_code_snapshot = fuel_demand_mode_code;
+  if ((short)fuel_demand_rpm_load_lookup < (short)fuel_correction_output_working) {
+    fuel_demand_lookup_working = fuel_correction_output_working;
+  }
+  else {
+    fuel_demand_lookup_working = fuel_demand_rpm_load_lookup;
+    fuel_demand_mode_code = 0x1c;
+  }
+  fuel_demand_mode_code_prev_snapshot = fuel_demand_mode_code;
+  if ((short)fuel_demand_lookup_working < (short)injection_timing_advance_calc) {
+    injection_timing_advance_calc = fuel_demand_lookup_working;
+  }
+  else {
+    fuel_demand_mode_code = 0x1b;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_selectFuelDemandOverride @ 0x0001429c
+//
+
+// Variables in this function: DAT_003fa63e
+void cm848_calculateRpmLoadLimit(void)
+
+{
+  fuel_demand_load_rate_cap =
+       cm848_dualAxisTableInterpolation
+                 (&DAT_003fa63e,engine_rpm_state_t_0040b7ac.current_rpm,0x5792);
+  fuel_demand_load_rate_cap_snapshot = fuel_demand_load_rate_cap;
+  if (boost_fuel_mode_active == 0) {
+    fuel_demand_load_rate_cap = fuel_demand_rate_output;
+    if (0xc7ff < fuel_demand_rate_output) {
+      fuel_demand_load_rate_cap = 0xc800;
+    }
+  }
+  else if (fuel_demand_rate_output < fuel_demand_load_rate_cap) {
+    fuel_demand_load_rate_cap = fuel_demand_rate_output;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_selectFinalLoadLimit @ 0x00014430
+//
+
+// Variables in this function: DAT_003fa634, DAT_003fa638, DAT_003fa63e
+void mpc555_initFuelLimitTableSizes(void)
+
+{
+  DAT_003fa634 = 2;
+  DAT_003fa636 = 2;
+  DAT_003fa638 = 2;
+  DAT_003fa63a = 2;
+  DAT_003fa63e = 2;
+  DAT_003fa640 = 2;
+  return;
+}
+
+
+
+//
+// Function: cm848_compareForFuelMapSelection @ 0x00014508
+//
+

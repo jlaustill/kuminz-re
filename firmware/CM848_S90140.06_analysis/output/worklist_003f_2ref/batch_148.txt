@@ -1,0 +1,172 @@
+=== VARIABLES TO NAME ===
+0x003fce57  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fce57
+void engine_stateMachine_transition_rpm(void)
+
+{
+  if ((iat_solenoid_committed_level == 0) && (iat_solenoid_active_flag == 0)) {
+    if (DAT_0005c794 < engine_rpm_state_t_0040b7ac.current_rpm) {
+      iat_solenoid_target_level = 1;
+      return;
+    }
+  }
+  else {
+    if (iat_solenoid_committed_level != 1) {
+      if (iat_solenoid_committed_level == 2) {
+        if (iat_solenoid_active_flag != 0) {
+          if ((uint)engine_rpm_state_t_0040b7ac.current_rpm <=
+              (uint)DAT_0005c794 + (uint)DAT_0005c796) {
+            return;
+          }
+          if ((int)(short)iat_solenoid_derate_step_table + (int)DAT_003fce57 <=
+              (int)(short)iat_solenoid_derate_elapsed_cycles) {
+            iat_solenoid_target_level = 3;
+            return;
+          }
+          iat_solenoid_target_level = 1;
+          return;
+        }
+      }
+      else {
+        if (iat_solenoid_committed_level != 3) {
+          return;
+        }
+        if (iat_solenoid_active_flag != 0) {
+          if ((int)(uint)engine_rpm_state_t_0040b7ac.current_rpm <
+              (int)((uint)DAT_0005c794 - (uint)DAT_0005c796)) {
+            iat_solenoid_target_level = 2;
+            return;
+          }
+          return;
+        }
+      }
+      iat_solenoid_target_level = 4;
+      return;
+    }
+    if (iat_solenoid_active_flag == 0) {
+      iat_solenoid_target_level = 3;
+      return;
+    }
+    if ((int)((uint)DAT_0005c794 - (uint)DAT_0005c796) <=
+        (int)(uint)engine_rpm_state_t_0040b7ac.current_rpm) {
+      return;
+    }
+  }
+  iat_solenoid_target_level = 2;
+  return;
+}
+
+
+
+//
+// Function: governor_solenoid_check_control @ 0x00517720
+//
+
+// Variables in this function: DAT_003fce57
+void governor_solenoid_check_control(void)
+
+{
+  int iVar1;
+  
+  iVar1 = (int)(short)iat_solenoid_target_level;
+  if ((short)iat_solenoid_committed_level == iVar1) {
+    iat_solenoid_update_pending_flag = 0;
+  }
+  else {
+    if ((((iat_protection_derate_level == 0) || (iat_protection_derate_level == 1)) ||
+        (iat_protection_derate_level == 2)) || (iVar1 == 0)) {
+      iat_solenoid_active_duration_ticks = (&iat_solenoid_derate_step_table)[iVar1];
+    }
+    else if (((iat_protection_derate_level == 3) || (iat_protection_derate_level == 4)) ||
+            (iat_protection_derate_level == 5)) {
+      if (iVar1 == 1) {
+        iVar1 = 2;
+      }
+      else {
+        if (iVar1 != 2) {
+          if (iVar1 == 3) {
+            iat_solenoid_active_duration_ticks =
+                 (iat_solenoid_derate_step_table + DAT_003fce57 + DAT_003fce5b) -
+                 iat_solenoid_derate_elapsed_cycles;
+          }
+          goto LAB_0051782c;
+        }
+        iVar1 = 4;
+      }
+      iat_solenoid_active_duration_ticks =
+           (iat_solenoid_derate_step_table +
+           *(short *)((int)&iat_solenoid_derate_step_table + iVar1)) -
+           iat_solenoid_derate_elapsed_cycles;
+    }
+LAB_0051782c:
+    iat_solenoid_duty_percent = lookupTableInterpolation((table_interp_args_t *)&DAT_003fce72);
+    iat_solenoid_update_pending_flag = 1;
+    iat_solenoid_active_flag = 1;
+  }
+  if (iat_solenoid_update_pending_flag != 0) {
+    iat_solenoid_duty_countdown = iat_solenoid_active_duration_ticks;
+    iat_solenoid_period_ticks = 0x65;
+    iat_solenoid_on_ticks_remaining = (short)(((uint)iat_solenoid_duty_percent * 100) / 100) + 1;
+    if (iat_protection_solenoid_phase == 1) {
+      iat_protection_solenoid_phase = 2;
+    }
+    else {
+      iat_protection_solenoid_phase = 1;
+    }
+  }
+  if ((short)iat_solenoid_duty_countdown < 1) {
+    iat_solenoid_active_flag = 0;
+    iat_solenoid_duty_countdown = 0;
+    return;
+  }
+  iat_solenoid_duty_countdown = iat_solenoid_duty_countdown - 1;
+  if (iat_solenoid_on_ticks_remaining != 0) {
+    iat_solenoid_on_ticks_remaining = iat_solenoid_on_ticks_remaining - 1;
+  }
+  iat_solenoid_period_ticks = iat_solenoid_period_ticks - 1;
+  if (iat_solenoid_period_ticks == 0) {
+    iat_solenoid_period_ticks = 100;
+    iat_solenoid_on_ticks_remaining = (word)(((uint)iat_solenoid_duty_percent * 100) / 100);
+    if (iat_protection_solenoid_phase == 1) {
+      iat_protection_solenoid_phase = 2;
+    }
+    else {
+      iat_protection_solenoid_phase = 1;
+    }
+  }
+  if (iat_solenoid_on_ticks_remaining == 0) {
+    cm848_triggerProtectionEvent(0x2b,0);
+LAB_00517a0c:
+    if ((governor_fuel_feature_flags & 0x10) == 0) {
+      cm848_triggerProtectionEvent(0x2c,0);
+    }
+  }
+  else {
+    if (iat_solenoid_target_level == 0) {
+      cm848_setEngineProtectionFault(0x2b,0);
+    }
+    else {
+      if (iat_protection_solenoid_phase == 1) {
+        cm848_setEngineProtectionFault(0x2b,0);
+        goto LAB_00517a0c;
+      }
+      cm848_triggerProtectionEvent(0x2b,0);
+    }
+    if ((governor_fuel_feature_flags & 0x10) == 0) {
+      cm848_setEngineProtectionFault(0x2c,0);
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: diag_iat_protection_shutdownEvent @ 0x00517a5c
+//
+

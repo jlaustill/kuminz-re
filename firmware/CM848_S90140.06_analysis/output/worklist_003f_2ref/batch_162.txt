@@ -1,0 +1,32 @@
+=== VARIABLES TO NAME ===
+0x003fcfc6  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fcfc6
+void initGovernorSpeedControl(void)
+
+{
+  word wVar1;
+  
+  governor_speed_compensation_initial_ref = sensor_channelGeneric_filtered;
+  governor_active_flag_b648 = 1;
+  DAT_003fcfc6 = 2;
+  wVar1 = DAT_00408d7a;
+  if ((((system_status_flags_t_003fe974.condition_monitor & 1) == 0) &&
+      ((system_status_flags_t_003fe974.condition_monitor & 2) == 0)) &&
+     ((protection_monitor_shadow & 2) == 0)) {
+    wVar1 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fcfc6);
+  }
+  governor_speed_compensation_steps = wVar1;
+  return;
+}
+
+
+
+//
+// Function: j1939_msgSlotM_switchInputBits_update @ 0x0052390c
+//
+

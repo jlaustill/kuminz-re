@@ -1,0 +1,114 @@
+=== VARIABLES TO NAME ===
+0x003fb904  (2 references)
+0x003fb908  (2 references)
+0x003fb90c  (2 references)
+0x003fdb8a  (2 references)
+
+Total: 4 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fdb8a
+byte cm848_checkProtectionWarningBitState(uint param_1)
+
+{
+  byte bVar1;
+  
+  bVar1 = hpcr_protectionWarningHandler((&engine_output_channel_protection_table)[param_1]);
+  return bVar1 ^ ((uint)(byte)(&DAT_003fdb8a)[(int)param_1 >> 3] & 1 << (param_1 & 7)) != 0;
+}
+
+
+
+//
+// Function: cm848_checkProtectionBitWarningState @ 0x0004eb00
+//
+
+// Variables in this function: DAT_003fb904, DAT_003fb908, DAT_003fb90c, DAT_003fdb8a
+void mpc555_updateEngineCycleOutputs(void)
+
+{
+  ushort uVar1;
+  byte bVar2;
+  word wVar3;
+  int iVar4;
+  uint uVar5;
+  uint uVar6;
+  
+  uVar6 = 0;
+  do {
+    iVar4 = (int)uVar6 >> 3;
+    if (((uint)*(byte *)((int)&qadc_control_word_h + iVar4) & 1 << (uVar6 + iVar4 * -8 & 0x3f)) == 0
+       ) {
+      uVar1 = (&engine_output_channel_protection_table)[uVar6];
+      if (uVar1 == 0) {
+        uVar5 = uVar6 & 7;
+        if (((uint)(&protection_enable_t_0040c050.mode_bits)[iVar4] & 1 << uVar5) == 0) {
+          (&engine_output_state_bits)[iVar4] =
+               (&engine_output_state_bits)[iVar4] & ~(byte)(1 << uVar5);
+        }
+        else {
+          (&engine_output_state_bits)[iVar4] =
+               (&engine_output_state_bits)[iVar4] | (byte)(1 << uVar5);
+        }
+      }
+      else {
+        bVar2 = (byte)(1 << (uVar6 & 7));
+        if ((((uint)*(byte *)(((int)(uint)uVar1 >> 3) + 0x40c0f8) & 1 << (uVar1 & 7)) != 0) ==
+            (((uint)(byte)(&DAT_003fdb8a)[iVar4] & 1 << (uVar6 & 7)) != 0)) {
+          (&engine_output_state_bits)[iVar4] = (&engine_output_state_bits)[iVar4] & ~bVar2;
+        }
+        else {
+          (&engine_output_state_bits)[iVar4] = (&engine_output_state_bits)[iVar4] | bVar2;
+        }
+        (&protection_output_state_bits)[iVar4] = (&protection_output_state_bits)[iVar4] | bVar2;
+      }
+    }
+    else {
+      uVar5 = uVar6 & 7;
+      if (((uint)(&j1939_fault_bit_array)[iVar4] & 1 << uVar5) == 0) {
+        bVar2 = ~(byte)(1 << uVar5);
+        (&engine_output_state_bits)[iVar4] = (&engine_output_state_bits)[iVar4] & bVar2;
+        (&protection_enable_t_0040c050.mode_bits)[iVar4] =
+             (&protection_enable_t_0040c050.mode_bits)[iVar4] & bVar2;
+      }
+      else {
+        bVar2 = (byte)(1 << uVar5);
+        (&engine_output_state_bits)[iVar4] = (&engine_output_state_bits)[iVar4] | bVar2;
+        (&protection_enable_t_0040c050.mode_bits)[iVar4] =
+             (&protection_enable_t_0040c050.mode_bits)[iVar4] | bVar2;
+      }
+    }
+    uVar6 = uVar6 + 1 & 0xffff;
+  } while (uVar6 < 0x20);
+  uVar6 = 0;
+  uVar5 = (uint)fault_scan_phase_counter;
+  do {
+    (&engine_output_state_phase_buffer)[uVar6 + uVar5 * 4] = (&engine_output_state_bits)[uVar6];
+    (&protection_enable_t_0040c050.mode_bits)[uVar6] =
+         (&engine_output_state_phase_buffer)[uVar6] & (&DAT_003fb904)[uVar6] &
+         (&DAT_003fb908)[uVar6] & (&DAT_003fb90c)[uVar6] |
+         ((&engine_output_state_phase_buffer)[uVar6] | (&DAT_003fb904)[uVar6] |
+          (&DAT_003fb908)[uVar6] | (&DAT_003fb90c)[uVar6]) &
+         (&protection_enable_t_0040c050.mode_bits)[uVar6];
+    uVar6 = uVar6 + 1 & 0xffff;
+  } while (uVar6 < 4);
+  fault_scan_phase_counter = fault_scan_phase_counter + 1;
+  if (3 < fault_scan_phase_counter) {
+    fault_scan_phase_counter = 0;
+  }
+  wVar3 = MIOS_MCPSMSCR.MIOS1ER;
+  uVar6 = (uint)((wVar3 & 0x8000) != 0);
+  if ((crank_high_bit_prev_flag != 0) && (uVar6 == 0)) {
+    cold_start_crank_counter = cold_start_crank_counter + 1;
+  }
+  crank_high_bit_prev_flag = uVar6;
+  return;
+}
+
+
+
+//
+// Function: hpcr_initProtectionAndOutputCycle @ 0x0004eeb8
+//
+

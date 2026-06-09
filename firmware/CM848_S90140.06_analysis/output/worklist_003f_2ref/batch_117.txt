@@ -1,0 +1,114 @@
+=== VARIABLES TO NAME ===
+0x003fbd4e  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fbd4e
+void engine_torqueLimit_upperCap_calc(void)
+
+{
+  uint uVar1;
+  short sVar2;
+  int iVar3;
+  uint uVar4;
+  word *pwVar5;
+  uint uVar6;
+  ushort *puVar7;
+  undefined **ppuVar8;
+  word wVar9;
+  uint uVar10;
+  
+  puVar7 = &DAT_000597b2;
+  ppuVar8 = &PTR_fuel_temp_raw_0040a734;
+  pwVar5 = &governor_faultDerate_channel_state;
+  uVar6 = 0x80;
+  uVar10 = 0x1a4;
+  uVar4 = 0;
+  do {
+    if ((*puVar7 & 1) != 0) {
+      iVar3 = (int)uVar10 >> 4;
+      if ((((uint)(&governor_fault_status_flags)[(int)uVar6 >> 4] &
+           1 << (uVar6 + ((int)uVar6 >> 4) * -0x10 & 0x3f)) == 0) &&
+         (((uint)(&governor_fault_status_flags)[iVar3] & 1 << (uVar10 + iVar3 * -0x10 & 0x3f)) == 0)
+         ) {
+        uVar1 = 0;
+      }
+      else {
+        if ((*puVar7 & 0x40) == 0) {
+          if (puVar7[1] < *(ushort *)((int)ppuVar8 + 6)) {
+            uVar1 = threshold_value_interpolate
+                              ((int)*(short *)*ppuVar8,(int)**(short **)((int)ppuVar8 + 10),
+                               (int)**(short **)((int)ppuVar8 + 0xe));
+          }
+          else {
+            uVar1 = 0;
+          }
+        }
+        else {
+          uVar1 = threshold_adjustment_ramp(puVar7,ppuVar8,pwVar5,0);
+        }
+        if (((uVar1 & 0xffff) < (uint)pwVar5[2]) &&
+           (((uint)(&governor_fault_status_flags)[iVar3] & 1 << (uVar10 + iVar3 * -0x10 & 0x3f)) ==
+            0)) {
+          uVar1 = (uint)pwVar5[2];
+        }
+      }
+      *pwVar5 = (word)uVar1;
+      if ((uVar4 < (uVar1 & 0xffff)) &&
+         (((uint)(&governor_fault_status_flags)[iVar3] & 1 << (uVar10 + iVar3 * -0x10 & 0x3f)) == 0)
+         ) {
+        uVar4 = uVar1 & 0xffff;
+      }
+    }
+    puVar7 = puVar7 + 0x12;
+    ppuVar8 = (undefined **)((int)ppuVar8 + 0x3e);
+    pwVar5 = pwVar5 + 0xf;
+    uVar6 = uVar6 + 4 & 0xffff;
+    uVar10 = uVar10 + 1 & 0xffff;
+  } while (puVar7 < &DAT_000597d6);
+  wVar9 = protection_torque_derate_ramp + DAT_0005c2ec;
+  if (((int)uVar4 <= (int)(short)wVar9) &&
+     (wVar9 = protection_torque_derate_ramp - DAT_0005c2ec, (int)(short)wVar9 <= (int)uVar4)) {
+    wVar9 = (word)uVar4;
+  }
+  protection_torque_derate_ramp = wVar9;
+  if (0x100 < (short)wVar9) {
+    protection_torque_derate_ramp = 0x100;
+  }
+  wVar9 = timing_limit_lower;
+  if (protection_torque_derate_ramp != 0) {
+    sVar2 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fbd4e);
+    uVar4 = (int)(short)(0x100 - protection_torque_derate_ramp) *
+            (int)(short)(protection_fuel_limit_cal_active - sVar2);
+    wVar9 = sVar2 + (short)(uVar4 >> 8) + (ushort)((int)uVar4 < 0 && (uVar4 & 0xff) != 0);
+  }
+  torque_limit_fuel_upper_cap = wVar9;
+  governor_startup_ready_flag = (ushort)(0 < (short)protection_torque_derate_ramp);
+  return;
+}
+
+
+
+//
+// Function: engine_protection_torqueLimit_reset @ 0x00509814
+//
+
+// Variables in this function: DAT_003fbd4e
+void engine_protection_torqueLimit_reset(void)
+
+{
+  protection_torque_derate_ramp = 0;
+  DAT_003fbd4e = 2;
+  torque_limit_fuel_upper_cap = timing_limit_lower;
+  governor_startup_ready_flag = 0;
+  return;
+}
+
+
+
+//
+// Function: phase_group_a_validateEngineSync @ 0x00509848
+//
+

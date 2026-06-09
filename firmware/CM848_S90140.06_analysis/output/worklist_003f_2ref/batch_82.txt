@@ -1,0 +1,42 @@
+=== VARIABLES TO NAME ===
+0x003fb564  (2 references)
+0x003fb566  (2 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fb564, DAT_003fb566
+void cm848_initProtectionParameter1(void)
+
+{
+  sensorChannelTypeB_configInit
+            (&DAT_0005b55c,&protection_param_1_channel_state,&DAT_003fb564,&DAT_0006429c,
+             &DAT_000642a2,0,&DAT_003fb566,0x36,0x148,0x149,&sensor_channel54_raw,
+             &sensor_channel54_filtered,&sensor_channel54_fault_status);
+  return;
+}
+
+
+
+//
+// Function: cm848_processProtectionParameter1 @ 0x00042a2c
+//
+
+// Variables in this function: DAT_003fb564, DAT_003fb566
+void cm848_processProtectionParameter1(void)
+
+{
+  sensorChannelTypeB_update
+            (&DAT_0005b55c,&protection_param_1_channel_state,&DAT_003fb564,&DAT_0006429c,
+             &DAT_000642a2,0,&DAT_003fb566,0x36,0x148,0x149,&sensor_channel54_raw,
+             &sensor_channel54_filtered,&sensor_channel54_fault_status);
+  return;
+}
+
+
+
+//
+// Function: cm848_initProtectionParameter2 @ 0x00042ab8
+//
+

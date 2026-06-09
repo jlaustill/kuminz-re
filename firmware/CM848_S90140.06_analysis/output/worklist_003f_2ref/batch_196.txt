@@ -1,0 +1,80 @@
+=== VARIABLES TO NAME ===
+0x003fdb30  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fdb30
+bool cm848_registerDiagnosticService(byte service_id,void *handler_ptr)
+
+{
+  uint uVar1;
+  
+  uVar1 = (uint)diag_scan_step_counter;
+  if (uVar1 != 0x14) {
+    diag_scan_step_counter = diag_scan_step_counter + 1;
+    (&DAT_003fdb30)[uVar1 * 5] = service_id;
+    *(void **)((int)&DAT_003fdb31 + uVar1 * 5) = handler_ptr;
+  }
+  return uVar1 == 0x14;
+}
+
+
+
+//
+// Function: cm848_registerPgnEf00Handler @ 0x00002cd8
+//
+
+// Variables in this function: DAT_003fdb30
+void cm848_dispatchDiagnosticService(byte service_code,byte *data_ptr,word data_length)
+
+{
+  char cVar1;
+  undefined3 in_register_0000000c;
+  int iVar2;
+  char cVar3;
+  byte bVar4;
+  char *pcVar5;
+  
+  iVar2 = CONCAT31(in_register_0000000c,service_code);
+  pcVar5 = &DAT_003fdb30;
+  cVar1 = **(char **)(iVar2 + 6);
+  cVar3 = '\x05';
+  if ((cVar1 == '\f') || (cVar1 == '\r')) {
+    cVar3 = -1;
+  }
+  else {
+    bVar4 = 0;
+    if (diag_scan_step_counter != 0) {
+      do {
+        if (*pcVar5 == cVar1) {
+          cVar3 = validateServiceDataLength(iVar2);
+          if (cVar3 == -1) {
+            bVar4 = qadc_a_result_high_1;
+            if (((bVar4 & 0xf) == 0) || (0x6fffe < *(uint *)(pcVar5 + 1))) {
+              cVar3 = (**(code **)(pcVar5 + 1))(iVar2);
+            }
+            else {
+              cVar3 = '\n';
+            }
+          }
+          break;
+        }
+        pcVar5 = pcVar5 + 5;
+        bVar4 = bVar4 + 1;
+      } while (bVar4 < diag_scan_step_counter);
+    }
+  }
+  if (cVar3 != -1) {
+    cm848_processSensorFilterChain(iVar2,cVar3);
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_sendEepromVersionResponse @ 0x00006e1c
+//
+

@@ -1,0 +1,142 @@
+=== VARIABLES TO NAME ===
+0x003faa67  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003faa67
+void cm848_j1939ProcessGovernorRequest(j1939_rx_msg_t *msg)
+
+{
+  byte bVar1;
+  byte bVar2;
+  short sVar3;
+  word wVar4;
+  byte bVar5;
+  
+  if (j1939_dm_feature_mode == 0) {
+    return;
+  }
+  if (msg->data_length != 8) {
+    return;
+  }
+  tsc1_rx_byte_0 = *msg->data_pointer;
+  if ((tsc1_rx_byte_0 & 3) == 1) {
+    return;
+  }
+  bVar2 = tsc1_rx_byte_0 & 3;
+  bVar5 = tsc1_rx_byte_0 & 0x30;
+  tsc1_rx_byte_3 = msg->data_pointer[3];
+  bVar1 = msg->source_address;
+  if (((governor_feature_config_word & 0x1000) == 0) && (bVar1 == j1939_tsc1_auth_primary_sa)) {
+    return;
+  }
+  if (bVar2 == 0) {
+    cm848_removeCoolantCalEntry(bVar1);
+    j1939_tsc1_override_state.speed_control_target =
+         j1939_tsc1_override_state.speed_control_target & 5;
+  }
+  else {
+    sVar3 = cm848_addCoolantCalEntry(bVar1,bVar2);
+    if (sVar3 != 0) {
+      return;
+    }
+  }
+  if (governor_mode_state == 0) {
+    sVar3 = cm848_governorSpeedControl(1,bVar1);
+    if (sVar3 != 0) {
+      return;
+    }
+  }
+  else {
+    if (bVar1 == governor_mode_transition_state) goto LAB_00023878;
+    if (bVar2 == 0) {
+      return;
+    }
+    sVar3 = cm848_governorSpeedControl(1,bVar1);
+    if (sVar3 != 0) {
+      return;
+    }
+    if (tsc1_override_mode_bits_prev < bVar5) {
+      return;
+    }
+    if (bVar5 == tsc1_override_mode_bits_prev) {
+      if (governor_mode_state == 2) {
+        return;
+      }
+      if ((bVar2 == 3) && (tsc1_rx_byte_3 <= DAT_003faa67)) {
+        return;
+      }
+    }
+  }
+  j1939_tsc1_override_state.etc1_secondary_config_ptr =
+       j1939_tsc1_override_state.etc1_config_entry_ptr;
+LAB_00023878:
+  DAT_003faa67 = tsc1_rx_byte_3;
+  governor_mode_transition_state = (word)bVar1;
+  tsc1_rx_byte0_cached = (word)tsc1_rx_byte_0;
+  if (bVar2 == 0) {
+    tsc1_override_mode_bits_prev = bVar5;
+    governor_mode_state = 0;
+    j1939_source_address_index = 0;
+    j1939_governor_output_percent_tx = 0x7d;
+    j1939_tsc1_override_state.etc1_multiframe_timeout = 0;
+    return;
+  }
+  tsc1_override_mode_bits_prev = bVar5;
+  if (bVar2 == 2) {
+    wVar4 = cm848_j1939SetupMultiFrameTransfer(tsc1_rx_byte_3);
+    j1939_transfer_frame_count = wVar4;
+    j1939FormatMultiFrameResponse();
+    j1939_governor_output_percent_cached = governor_output_percentage;
+    if ((((bVar1 == j1939_tsc1_auth_primary_sa) && (j1939_tsc1_override_state.governor_mode == 1))
+        && (_j1939_governor_source_index == 1)) &&
+       ((DAT_0005c36c <= governor_proportional_gain && (wVar4 != 0)))) {
+      j1939_tsc1_override_state.etc1_multiframe_timeout = 0;
+      governor_mode_state = 0;
+      j1939_source_address_index = 0;
+    }
+    else {
+      j1939_tsc1_override_state.etc1_multiframe_timeout =
+           *(short *)(j1939_tsc1_override_state.etc1_secondary_config_ptr + 0xe) + 1;
+      governor_mode_state = 2;
+      j1939_source_address_index = cm848_lookupJ1939SourceAddressIndex((uint)msg->source_address);
+      if (j1939_governor_output_percent_cached == 0) {
+        j1939_governor_output_percent_tx = 0x7d;
+        j1939_tsc1_override_state.etc1_mode_transition_timer =
+             *(short *)(j1939_tsc1_override_state.etc1_secondary_config_ptr + 0xe) + 1;
+        j1939_tsc1_override_state.etc1_speed_mode_flag = 0;
+        return;
+      }
+    }
+    j1939_tsc1_override_state.etc1_speed_mode_flag = 0;
+    j1939_tsc1_override_state.etc1_mode_transition_timer = 0;
+    j1939_governor_output_percent_tx = 0x7d;
+    return;
+  }
+  if (bVar2 == 3) {
+    governor_mode_state = 3;
+    j1939_source_address_index = cm848_lookupJ1939SourceAddressIndex((uint)msg->source_address);
+    j1939_transfer_frame_count = cm848_j1939SetupMultiFrameTransfer(tsc1_rx_byte_3);
+    j1939_tsc1_override_state.etc1_multiframe_timeout =
+         *(short *)(j1939_tsc1_override_state.etc1_secondary_config_ptr + 0x12) + 1;
+    j1939_tsc1_override_state.etc1_mode_transition_timer =
+         j1939_tsc1_override_state.etc1_multiframe_timeout;
+    if (j1939_governor_output_percent_tx != 0) {
+      j1939_tsc1_override_state.etc1_mode_transition_timer = 0;
+    }
+    j1939_tsc1_override_state.etc1_speed_mode_flag = 0;
+    j1939FormatMultiFrameResponse();
+    j1939_governor_output_percent_tx = governor_output_percentage;
+    return;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_initGovernorProtectionState @ 0x00023a9c
+//
+

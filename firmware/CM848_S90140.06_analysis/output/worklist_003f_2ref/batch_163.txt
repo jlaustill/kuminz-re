@@ -1,0 +1,40 @@
+=== VARIABLES TO NAME ===
+0x003fcfcb  (2 references)
+0x003fcfcc  (2 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fcfcb, DAT_003fcfcc
+void j1939_msgSlotU_eepromPayload_toggle(void)
+
+{
+  if (j1939_msg_slot_u_counter == 0) {
+    if (j1939_msg_slot_u_payload_toggle != 0) {
+      j1939_msg_slot_u_eeprom_cmd = 2;
+      j1939_msg_slot_u_eeprom_data0 = DAT_003fcfcb;
+      j1939_msg_slot_u_eeprom_data1 = DAT_003fcfcc;
+      j1939_msg_slot_u_eeprom_data2 = 0;
+      j1939_tsc1_override_enable = 0;
+    }
+    else {
+      j1939_msg_slot_u_eeprom_cmd = 1;
+      j1939_msg_slot_u_eeprom_data0 = eeprom_write_buffer._2_1_;
+      j1939_msg_slot_u_eeprom_data1 = (byte)eeprom_write_buffer;
+      j1939_msg_slot_u_eeprom_data2 = eeprom_config_write_triggered_flag;
+      DAT_003fcfcb = DAT_003fee2f;
+      DAT_003fcfcc = flash2_operation_active_flag._0_1_;
+    }
+    j1939_msg_slot_u_payload_toggle = j1939_msg_slot_u_payload_toggle == 0;
+    j1939_msg_slot_u_counter = 1;
+  }
+  return;
+}
+
+
+
+//
+// Function: initGovernorModeControl @ 0x00523b5c
+//
+

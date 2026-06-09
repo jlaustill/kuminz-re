@@ -1,0 +1,30 @@
+=== VARIABLES TO NAME ===
+0x003fae46  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fae46
+void cm848_initJ1939InletExhaustConditionsBuffer(void)
+
+{
+  j1939_pgn65270_tx_header = CONCAT13(((byte)j1939_pgn65270_source_address_bits & 7) << 2,0xfef600);
+  _BYTE_003fae3c = 8;
+  puRam003fae3e = &DAT_003fae46;
+  PTR_DAT_003fae42 = &DAT_003fae4e;
+  j1939_pgn65270_tx_header = CONCAT31(j1939_pgn65270_tx_header._0_3_,(char)j1939_source_address);
+  DAT_003fae46 = 0xff;
+  DAT_003fae49 = 0xff;
+  DAT_003fae4a = 0xff;
+  DAT_003fae4b = 0xffff;
+  DAT_003fae4d = 0xff;
+  return;
+}
+
+
+
+//
+// Function: cm848_j1939BuildProtocolModeStatus @ 0x00026650
+//
+

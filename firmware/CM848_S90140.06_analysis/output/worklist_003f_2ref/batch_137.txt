@@ -1,0 +1,91 @@
+=== VARIABLES TO NAME ===
+0x003fcd7e  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fcd7e
+void fuel_temp_protection_monitor(void)
+
+{
+  byte bVar1;
+  
+  if (fuel_temp_protection_warmup_cycle_count <= fuel_temp_protection_warmup_cycle_limit) {
+    fuel_temp_protection_warmup_cycle_count = fuel_temp_protection_warmup_cycle_count + 1;
+  }
+  if ((fuel_feature_control_flags & 8) != 0) {
+    bVar1 = fuel_temp_protection_state_flags;
+    if ((fuel_temp_protection_state_flags & 2) == 0) {
+      if ((protection_enable_t_0040c050.reserved_02 & 0x10) == 0) {
+        if ((fuel_temp_protection_state_flags & 4) != 0) {
+          if (fuel_temp_protection_timeout_counter == 0) {
+            bVar1 = fuel_temp_protection_state_flags & 0xfb;
+            if ((fuel_temp_protection_state_flags & 1) != 0) {
+              fuel_temp_protection_active_flag = 0;
+              bVar1 = fuel_temp_protection_state_flags & 0xfa | 8;
+            }
+          }
+          else {
+            fuel_temp_protection_active_flag = 1;
+            fuel_temp_protection_timeout_counter = fuel_temp_protection_timeout_counter - 1;
+            bVar1 = fuel_temp_protection_state_flags | 1;
+          }
+        }
+      }
+      else {
+        fuel_temp_protection_active_flag = 0;
+        if ((((fuel_demand_control_t_0040a57a.calculated < DAT_004086d2) ||
+             (DAT_004086d4 < fuel_demand_control_t_0040a57a.calculated)) ||
+            (engine_load_filtered < DAT_004086d6)) || (DAT_004086d8 < engine_load_filtered)) {
+          fuel_temp_protection_timeout_counter = 0;
+          bVar1 = fuel_temp_protection_state_flags & 0xfa;
+        }
+        else {
+          fuel_temp_protection_state_flags = fuel_temp_protection_state_flags & 0xfe | 4;
+          fuel_temp_protection_timeout_counter =
+               lookupTableInterpolation((table_interp_args_t *)&DAT_003fcd7e);
+          bVar1 = fuel_temp_protection_state_flags;
+        }
+      }
+    }
+    fuel_temp_protection_state_flags = bVar1;
+    if (fuel_temp_protection_warmup_cycle_limit < fuel_temp_protection_warmup_cycle_count) {
+      fuel_temp_protection_state_flags = fuel_temp_protection_state_flags & 0xfd;
+    }
+    else {
+      fuel_temp_protection_state_flags = fuel_temp_protection_state_flags | 2;
+    }
+    if (fuel_temp_trim_active_flag == 2) {
+      fuel_temp_protection_state_flags = fuel_temp_protection_state_flags & 0xef;
+    }
+    else if (fuel_temp_trim_active_flag == 1) {
+      fuel_temp_protection_state_flags = fuel_temp_protection_state_flags & 0xf7 | 0x10;
+      fuel_temp_trim_active_flag = 2;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: fuel_demand_timing_control @ 0x00511b64
+//
+
+// Variables in this function: DAT_003fcd7e
+void fuel_demand_timing_initialize(void)
+
+{
+  fuel_demand_timing_enable_flag = 1;
+  j1939_tsc1_active_duration_counter = DAT_004086ca;
+  DAT_003fcd7e = 2;
+  return;
+}
+
+
+
+//
+// Function: protection_j1939_control_logic @ 0x00511ed4
+//
+

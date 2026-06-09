@@ -1,0 +1,42 @@
+=== VARIABLES TO NAME ===
+0x003fb285  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fb285
+void cm848_txTimerA_updateEngineIdleMode(void)
+
+{
+  engine_idle_mode_flags = DAT_003fb285 & 0xff;
+  return;
+}
+
+
+
+//
+// Function: cm848_j1939FormatProprietaryStatus @ 0x00036c1c
+//
+
+// Variables in this function: DAT_003fb285
+void cm848_initPeriodicTimerChannel2(void)
+
+{
+  DAT_003fb273 = injection_sync_broadcast_byte;
+  DAT_003fb274 = 1;
+  j1939_tx_data_block_a_ptr = &DAT_0005772a;
+  j1939_msg_descriptor_a_ptr = &j1939_msg_descriptor_table;
+  j1939_tx_frame_a_payload_ptr = (undefined *)&DAT_003fb285;
+  j1939_tx_frame_a_handler_ptr = cm848_txTimerA_updateEngineIdleMode;
+  return;
+}
+
+
+
+//
+// Function: cm848_initPeriodicTimerChannel3 @ 0x000372c0
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

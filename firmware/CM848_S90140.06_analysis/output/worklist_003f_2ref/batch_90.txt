@@ -1,0 +1,94 @@
+=== VARIABLES TO NAME ===
+0x003fb6fc  (2 references)
+0x003fb6fe  (2 references)
+0x003fb700  (2 references)
+0x003fb702  (2 references)
+
+Total: 4 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fb6fc, DAT_003fb6fe, DAT_003fb700, DAT_003fb702
+void mpc555_evaluateProtectionSyncFaults(void)
+
+{
+  word wVar1;
+  dword dVar2;
+  ushort uVar3;
+  ushort uVar4;
+  
+  wVar1 = MIOS_MCPSMSCR.MIOS1ER;
+  if ((((wVar1 & 0x8000) != 0) && ((protection_config_flags & 0x40) == 0)) &&
+     (governor_inhibit_flag == 0)) {
+    dVar2 = cm848_getProtectionSyncState();
+    uVar3 = 1;
+    uVar4 = (ushort)cylinder_event_count_max;
+    cylinder_period_working = dVar2;
+    if (uVar4 != 0) {
+      do {
+        cm848_updateProtectionBitFlags(dVar2,uVar3);
+        uVar3 = uVar3 + 1;
+      } while (uVar3 <= uVar4);
+    }
+    cm848_protectionFaultEvaluator
+              (protection_fault_status_a,&DAT_003fb6fc,prot_fault_status_a_threshold_cal,2,0);
+    cm848_protectionFaultEvaluator
+              (protection_fault_status_c,&DAT_003fb6fe,prot_fault_status_c_threshold_cal,4,
+               protection_fault_eval_input);
+    cm848_protectionFaultEvaluator
+              (protection_fault_status_b,&DAT_003fb700,prot_fault_status_b_threshold_cal,6,
+               protection_fault_eval_input);
+    cm848_protectionFaultEvaluator
+              (engine_position_diag_flags,&DAT_003fb702,engine_pos_fault_eval_threshold_cal,8,
+               protection_fault_eval_input);
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_evaluateProtectionSyncStateConditional @ 0x0004ac74
+//
+
+// Variables in this function: DAT_003fb6fc, DAT_003fb6fe, DAT_003fb700, DAT_003fb702
+void cm848_evaluateProtectionSyncStateConditional(void)
+
+{
+  dword dVar1;
+  int in_r12;
+  ushort uVar2;
+  ushort uVar3;
+  
+  if ((in_r12 == 0) && (governor_inhibit_flag == 0)) {
+    dVar1 = cm848_getProtectionSyncState();
+    uVar2 = 1;
+    uVar3 = (ushort)cylinder_event_count_max;
+    cylinder_period_working = dVar1;
+    if (uVar3 != 0) {
+      do {
+        cm848_updateProtectionBitFlags(dVar1,uVar2);
+        uVar2 = uVar2 + 1;
+      } while (uVar2 <= uVar3);
+    }
+    cm848_protectionFaultEvaluator
+              (protection_fault_status_a,&DAT_003fb6fc,prot_fault_status_a_threshold_cal,2,0);
+    cm848_protectionFaultEvaluator
+              (protection_fault_status_c,&DAT_003fb6fe,prot_fault_status_c_threshold_cal,4,
+               protection_fault_eval_input);
+    cm848_protectionFaultEvaluator
+              (protection_fault_status_b,&DAT_003fb700,prot_fault_status_b_threshold_cal,6,
+               protection_fault_eval_input);
+    cm848_protectionFaultEvaluator
+              (engine_position_diag_flags,&DAT_003fb702,engine_pos_fault_eval_threshold_cal,8,
+               protection_fault_eval_input);
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_initTimingFilterStates @ 0x0004ad8c
+//
+

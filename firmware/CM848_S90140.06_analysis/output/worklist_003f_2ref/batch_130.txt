@@ -1,0 +1,119 @@
+=== VARIABLES TO NAME ===
+0x003fcce8  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fcce8
+void engine_protection_speedTracking_calc(void)
+
+{
+  word wVar1;
+  int iVar2;
+  bool bVar3;
+  
+  if (((diagnostic_status_flags & 0x80) == 0) && (governor_fuel_mode_state != 0)) {
+    bVar3 = false;
+  }
+  else {
+    bVar3 = true;
+  }
+  if ((bVar3) && ((governor_status_flags & 0x8000) == 0)) {
+    bVar3 = true;
+  }
+  else {
+    bVar3 = false;
+  }
+  if ((bVar3) && (protection_confirm_active_b2 != 0)) {
+    bVar3 = true;
+  }
+  else {
+    bVar3 = false;
+  }
+  if ((bVar3) && ((short)protection_fault_condition_value < 1)) {
+    protection_speed_track_active_flag = 1;
+  }
+  else {
+    protection_speed_track_active_flag = 0;
+  }
+  protection_governor_output_ema =
+       exponentialMovingAverage(governor_output_prev_snapshot,&PTR_DAT_003fcce8);
+  protection_governor_output_deviation =
+       governor_output_prev_snapshot - protection_governor_output_ema;
+  iVar2 = (int)(short)protection_governor_output_deviation;
+  if (iVar2 < 0) {
+    iVar2 = (int)(short)-protection_governor_output_deviation;
+  }
+  if ((protection_speed_track_active_flag == 0) || ((int)(uint)DAT_00407770 <= iVar2)) {
+    bVar3 = false;
+  }
+  else {
+    bVar3 = true;
+  }
+  iVar2 = (int)(short)(governor_output_prev_snapshot - protection_speed_tracking_target);
+  wVar1 = governor_fuel_output_a_working;
+  if (iVar2 < 1) {
+    if (iVar2 == 0) {
+      wVar1 = 0;
+    }
+    else {
+      wVar1 = -governor_fuel_output_a_working;
+    }
+  }
+  if (iVar2 < 0) {
+    iVar2 = (int)(short)-(governor_output_prev_snapshot - protection_speed_tracking_target);
+  }
+  protection_speed_error_over_threshold_flag =
+       (ushort)((int)(uint)protection_speedTracking_speed_error_threshold < iVar2);
+  if (((short)wVar1 < DAT_00407780) &&
+     ((int)(uint)protection_speedTracking_speed_error_threshold < iVar2)) {
+    protection_speed_track_criterion_met = 0;
+  }
+  else {
+    protection_speed_track_criterion_met = 1;
+  }
+  if ((bVar3) && (protection_speed_track_criterion_met != 0)) {
+    protection_speed_track_active_flag = 1;
+  }
+  else {
+    protection_speed_track_active_flag = 0;
+  }
+  return;
+}
+
+
+
+//
+// Function: engine_protection_speedTracking_rampUpdate @ 0x0050fa7c
+//
+
+/* WARNING: Removing unreachable block (ram,0x0050fb8c) */
+
+// Variables in this function: DAT_003fcce8
+void cm848_initializeGovernorFuelDemandArray(void)
+
+{
+  protection_speedTracking_ramp_step_max_reached_flag = 0;
+  protection_speed_track_active_flag = 0;
+  DAT_0040b048 = 0;
+  protection_speed_error_over_threshold_flag = 0;
+  protection_governor_output_ema = 0;
+  protection_governor_output_deviation = 0;
+  protection_speed_track_criterion_met = 0;
+  diagnostic_status_flags = diagnostic_status_flags & 0xff7f;
+  j1939_comm_status_flags = j1939_comm_status_flags & 0xff7f;
+  protection_speedTracking_ramp_at_max_flag = 0;
+  protection_speedTracking_ramp_step_counter = 0;
+  protection_speedTracking_speed_error_ramp = 0;
+  DAT_003fccec = 0;
+  PTR_DAT_003fcce8 = &DAT_0040777a;
+  return;
+}
+
+
+
+//
+// Function: boost_demand_diagBit_counter @ 0x0050fd40
+//
+

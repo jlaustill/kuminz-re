@@ -1,0 +1,44 @@
+=== VARIABLES TO NAME ===
+0x003fb365  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fb365
+void cm848_initJ1939PeriodicConfig(void)
+
+{
+  DAT_003fb364 = cm848_configurePeriodicTimer(3,2000,0x352,0x28);
+  DAT_003fb365 = 1;
+  j1939_periodic_filter_ptr = &j1939_periodic_filter_state;
+  j1939_periodic_data_ptr = &DAT_0005772e;
+  j1939_periodic_output_ptr = &j1939_periodic_timer_state;
+  j1939_periodic_timer_callback_ptr = cm848_j1939PeriodicTimerCallback;
+  j1939_dm1_fault_byte_10 = 0xff;
+  return;
+}
+
+
+
+//
+// Function: cm848_j1939SendPeriodicMessage @ 0x00037580
+//
+
+// Variables in this function: DAT_003fb365
+void cm848_j1939SendPeriodicMessage(void)
+
+{
+  if (DAT_003fb365 == '\0') {
+    cm848_initJ1939PeriodicConfig();
+  }
+  cm848_j1939QueueTransmitMessage(&DAT_003fb360,1);
+  return;
+}
+
+
+
+//
+// Function: cm848_processProtectionCoolantLookup @ 0x000375c8
+//
+

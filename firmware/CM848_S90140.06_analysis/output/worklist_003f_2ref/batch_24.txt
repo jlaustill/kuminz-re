@@ -1,0 +1,98 @@
+=== VARIABLES TO NAME ===
+0x003fa60e  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fa60e
+void cm848_processBoostProtectionMode(undefined4 param_1,int param_2)
+
+{
+  int unaff_r31;
+  int iVar1;
+  
+  if ((fuel_demand_state_b == 2) || ((engine_feature_enable_flags & 0x4000) == 0)) {
+    injection_enable_mode_byte = 0x80;
+  }
+  else if (fuel_demand_state_b == 1) {
+    injection_enable_mode_byte = 0x40;
+  }
+  else {
+    injection_enable_mode_byte = 0;
+  }
+  if (boost_map_index_current == 1) {
+    unaff_r31 = (int)(short)injection_timing_offset_boost1_cal;
+  }
+  else if (boost_map_index_current == 2) {
+    unaff_r31 = (int)(short)injection_timing_offset_boost2_cal;
+  }
+  else if (boost_map_index_current == 3) {
+    unaff_r31 = (int)(short)injection_timing_offset_boost3_cal;
+  }
+  else if (boost_map_index_current == 4) {
+    unaff_r31 = (int)(short)injection_timing_offset_boost4_cal;
+  }
+  if (boost_map_index_target == 1) {
+    param_2 = (int)(short)injection_timing_offset_boost1_cal;
+  }
+  else if (boost_map_index_target == 2) {
+    param_2 = (int)(short)injection_timing_offset_boost2_cal;
+  }
+  else if (boost_map_index_target == 3) {
+    param_2 = (int)(short)injection_timing_offset_boost3_cal;
+  }
+  else if (boost_map_index_target == 4) {
+    param_2 = (int)(short)injection_timing_offset_boost4_cal;
+  }
+  injection_timing_offset_filtered =
+       cm848_filterInputValue
+                 (unaff_r31,param_2,(int)(short)injection_timing_filter_coeff_cal,
+                  boost_map_index_current,boost_map_index_target,
+                  fuel_blend_state_t_0040a494.blend_weight,fuel_blend_state_t_0040a494.blend_mode);
+  iVar1 = ((int)(short)(fuel_demand_timing_input - injection_timing_offset_filtered) *
+           (int)(short)fuel_demand_timing_scale_cal >> 0xb) +
+          (int)(short)fuel_demand_timing_offset_cal + (int)(short)fuel_demand_mode2_filtered;
+  if (iVar1 < -0xc80) {
+    iVar1 = -0xc80;
+  }
+  else if (0x5780 < iVar1) {
+    iVar1 = 0x5780;
+  }
+  fuel_demand_boost_offset_filtered =
+       cm848_signedFirstOrderFilter((int)(short)iVar1,&PTR_DAT_003fa60e);
+  return;
+}
+
+
+
+//
+// Function: cm848_initBoostProtectionState @ 0x00013ca4
+//
+
+// Variables in this function: DAT_003fa60e
+void cm848_initBoostProtectionState(void)
+
+{
+  DAT_003fa612 = (int)(short)sensor_channel9_pressure_raw << 0x10;
+  PTR_DAT_003fa60e = &DAT_00405200;
+  if ((fuel_demand_state_b == 2) || ((engine_feature_enable_flags & 0x4000) == 0)) {
+    injection_enable_mode_byte = 0x80;
+  }
+  else if (fuel_demand_state_b == 1) {
+    injection_enable_mode_byte = 0x40;
+  }
+  else {
+    injection_enable_mode_byte = 0;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_calculatePressureSensorDerivative @ 0x00013d14
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

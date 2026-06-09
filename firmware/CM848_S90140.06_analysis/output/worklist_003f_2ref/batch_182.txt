@@ -1,0 +1,57 @@
+=== VARIABLES TO NAME ===
+0x003fd22b  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fd22b
+void cm848_auxiliaryControlTask(void)
+
+{
+  byte *pbVar1;
+  uint uVar2;
+  
+  pbVar1 = &fault_aging_triggered_flag;
+  if (fault_aging_triggered_flag == 0) {
+    if (((cold_start_phase == CSP_AT_GOVERNOR_SETPOINT) ||
+        (cold_start_phase == CSP_FUEL_MODE_SWITCH)) || (cold_start_phase == CSP_SUSPENDED)) {
+      if (DAT_003fd22b == 0) {
+        DAT_003fd22b = 1;
+        diag_protection_history_increment();
+      }
+      if (fault_aging_governor_dwell_count < DAT_0005a9c0) {
+        fault_aging_governor_dwell_count = fault_aging_governor_dwell_count + 1;
+      }
+      else {
+        *pbVar1 = 1;
+        if (fault_aging_generation_counter < 0x50) {
+          fault_aging_generation_counter = fault_aging_generation_counter + 1;
+        }
+        else {
+          fault_aging_generation_counter = 0;
+        }
+        uVar2 = 0;
+        do {
+          if ((((&fault_entry_flags)[(uVar2 & 0xff) * 6] & 0x10) == 0) &&
+             (((&fault_entry_status_array)[(uVar2 & 0xff) * 7] & 1) != 0)) {
+            (&fault_ring_handled_bitmap)[(uVar2 & 0xff) >> 3] =
+                 (&fault_ring_handled_bitmap)[(uVar2 & 0xff) >> 3] | (byte)(1 << (uVar2 & 7));
+          }
+          uVar2 = uVar2 + 1;
+        } while ((uVar2 & 0xff) < 0xaa);
+      }
+    }
+    else {
+      fault_aging_governor_dwell_count = 0;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: diag_faultRing_tableSearch @ 0x00534684
+//
+

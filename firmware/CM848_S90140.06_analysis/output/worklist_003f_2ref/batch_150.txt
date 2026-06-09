@@ -1,0 +1,79 @@
+=== VARIABLES TO NAME ===
+0x003fceaa  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fceaa
+void protection_fuel_demand_limiting(void)
+
+{
+  ushort uVar1;
+  
+  if ((protection_config_flags_b & 2) == 0) {
+    protection_fuel_demand_limit_ramp = 0x1700;
+    protection_fuel_demand_active_flag = 0;
+    protection_fuel_demand_debounce_count = 0;
+    protection_fuel_demand_ramp_locked_flag = 0;
+  }
+  else {
+    uVar1 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fceaa);
+    if (((protection_fuel_demand_active_flag == 0) && (uVar1 < fuel_demand_computed)) &&
+       ((int)DAT_00408984 <= (int)(short)cam_timing_measured - (int)(short)cam_sync_position)) {
+      if (protection_fuel_demand_debounce_count < DAT_00408980) {
+        protection_fuel_demand_debounce_count = protection_fuel_demand_debounce_count + 1;
+      }
+      else {
+        protection_fuel_demand_active_flag = 1;
+        protection_fuel_demand_limit_ramp = fuel_demand_load_axis;
+      }
+    }
+    else {
+      protection_fuel_demand_debounce_count = 0;
+    }
+    if (protection_fuel_demand_active_flag != 0) {
+      protection_fuel_demand_limit_ramp = protection_fuel_demand_limit_ramp - DAT_00408982;
+      if (((short)uVar1 < (short)protection_fuel_demand_limit_ramp) &&
+         (protection_fuel_demand_ramp_locked_flag == 0)) {
+        if ((short)protection_fuel_demand_limit_ramp < 0) {
+          protection_fuel_demand_limit_ramp = 0;
+        }
+        else if (0x1700 < (short)protection_fuel_demand_limit_ramp) {
+          protection_fuel_demand_limit_ramp = 0x1700;
+        }
+      }
+      else {
+        protection_fuel_demand_ramp_locked_flag = 1;
+        protection_fuel_demand_limit_ramp = uVar1;
+      }
+    }
+    if (protection_fuel_demand_limit_ramp < protection_fuel_limit_active) {
+      protection_fuel_limit_active = protection_fuel_demand_limit_ramp;
+      governor_fuel_mode_command = 0x3d;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: protection_speed_limit_initialize @ 0x00519ffc
+//
+
+// Variables in this function: DAT_003fceaa
+void protection_speed_limit_initialize(void)
+
+{
+  DAT_003fceaa = 2;
+  protection_fuel_demand_limit_ramp = 0x1700;
+  return;
+}
+
+
+
+//
+// Function: initDiagnosticShadowFlags @ 0x0051a018
+//
+

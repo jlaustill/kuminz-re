@@ -1,0 +1,107 @@
+=== VARIABLES TO NAME ===
+0x003fcc1c  (2 references)
+0x003ff6f0  (2 references)
+0x003ff6f2  (2 references)
+0x003ff6f6  (2 references)
+
+Total: 4 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fcc1c, DAT_003ff6f0, DAT_003ff6f2, DAT_003ff6f6
+void fuel_egrTarget_pressureRatio_calc(void)
+
+{
+  uint uVar1;
+  
+  if (egr_pressure_ratio_upper_threshold < egr_fuel_pressure_ratio) {
+    egr_fuel_pressure_integrator = egr_fuel_pressure_integrator + DAT_003ff6f6;
+  }
+  if ((fuel_pressure_sensor_reference == 0) ||
+     (uVar1 = (uint)(((ulonglong)governor_integrator_bound_a << 8) /
+                    (ulonglong)(uint)fuel_pressure_sensor_reference), 0xffff < uVar1)) {
+    uVar1 = 0xffff;
+  }
+  DAT_003fcc1c = (short)uVar1;
+  if (((egr_fuel_pressure_ratio < egr_pressure_ratio_lower_threshold) &&
+      ((uint)DAT_003ff6f0 < (uVar1 & 0xffff))) &&
+     (DAT_003ff712 < engine_rpm_state_t_0040b7ac.current_rpm)) {
+    egr_fuel_pressure_integrator = egr_fuel_pressure_integrator + DAT_003ff6f6;
+  }
+  if (egr_pressure_integrator_upper_limit < egr_fuel_pressure_integrator) {
+    egr_fuel_pressure_integrator = egr_pressure_integrator_upper_limit;
+  }
+  if (((egr_pressure_ratio_lower_threshold <= egr_fuel_pressure_ratio) &&
+      (egr_fuel_pressure_ratio <= egr_pressure_ratio_upper_threshold)) &&
+     (egr_fuel_pressure_integrator != 0)) {
+    egr_fuel_pressure_integrator = egr_fuel_pressure_integrator - DAT_003ff6f4;
+  }
+  if ((egr_fuel_pressure_integrator < egr_pressure_integrator_upper_limit) ||
+     (egr_fuel_pressure_ratio <= egr_pressure_ratio_upper_threshold)) {
+    if ((egr_fuel_pressure_integrator < egr_pressure_integrator_upper_limit) ||
+       (egr_pressure_ratio_lower_threshold <= egr_fuel_pressure_ratio)) goto LAB_0050f05c;
+    egr_smoke_limit_status_flags = egr_smoke_limit_status_flags | 0x20;
+  }
+  else {
+    egr_smoke_limit_status_flags = egr_smoke_limit_status_flags | 8;
+  }
+  governor_speed_ramp_target = egr_smoke_limit_default_speed_reference;
+LAB_0050f05c:
+  if ((egr_fuel_pressure_integrator < DAT_003ff6f2) && ((egr_smoke_limit_status_flags & 0x20) != 0))
+  {
+    egr_smoke_limit_status_flags = egr_smoke_limit_status_flags & 0xffdf;
+    egr_smoke_limit_status_shadow = egr_smoke_limit_status_shadow & 0xffdf;
+  }
+  else if ((egr_fuel_pressure_integrator < DAT_003ff6f2) &&
+          ((egr_smoke_limit_status_flags & 8) != 0)) {
+    egr_smoke_limit_status_flags = egr_smoke_limit_status_flags & 0xfff7;
+    egr_smoke_limit_status_shadow = egr_smoke_limit_status_shadow & 0xfff7;
+  }
+  return;
+}
+
+
+
+//
+// Function: fuel_smokeLimit_modeSelect @ 0x0050f110
+//
+
+// Variables in this function: DAT_003fcc1c, DAT_003ff6f0
+void fuel_smokeLimit_transient_counter(void)
+
+{
+  short sVar1;
+  
+  if ((((egr_smoke_limit_status_flags & 0x20) == 0) && ((egr_smoke_limit_status_flags & 8) == 0)) &&
+     (DAT_003ff6f0 < DAT_003fcc1c)) {
+    if (((int)(uint)DAT_003ff704 < (int)governor_speed_ramp_target_step_delta) ||
+       ((int)governor_speed_ramp_target_step_delta < (int)DAT_003ff702)) {
+      sVar1 = 1;
+    }
+    else {
+      if (smoke_limit_transient_counter == 0) goto LAB_0050f458;
+      sVar1 = -1;
+    }
+    smoke_limit_transient_counter = smoke_limit_transient_counter + sVar1;
+  }
+LAB_0050f458:
+  if (smoke_limit_transient_counter < DAT_003ff6ec) {
+    if (smoke_limit_transient_counter == 0) {
+      egr_smoke_limit_status_flags = egr_smoke_limit_status_flags & 0xfbff;
+      egr_smoke_limit_status_shadow = egr_smoke_limit_status_shadow & 0xfbff;
+    }
+  }
+  else {
+    egr_smoke_limit_status_flags = egr_smoke_limit_status_flags | 0x400;
+  }
+  return;
+}
+
+
+
+//
+// Function: phase_group_b_updateBoostBlendingControl @ 0x0050f4c0
+//
+
+/* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+

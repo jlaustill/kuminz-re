@@ -1,0 +1,91 @@
+=== VARIABLES TO NAME ===
+0x003fbd78  (3 references)
+0x003fbd7a  (2 references)
+0x003fbd7b  (3 references)
+0x003fbd7c  (2 references)
+0x003fbd84  (4 references)
+0x003fbd8a  (3 references)
+
+Total: 6 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fbd78, DAT_003fbd7a, DAT_003fbd7b, DAT_003fbd7c, DAT_003fbd84, DAT_003fbd8a
+void j1939_transport_singleFrame_send(int param_1)
+
+{
+  char cVar1;
+  int iVar2;
+  uint uVar3;
+  int iVar4;
+  char *pcVar5;
+  uint uVar6;
+  undefined2 uVar8;
+  char *pcVar7;
+  byte *pbVar9;
+  
+  iVar2 = param_1 * 0x20;
+  pbVar9 = &j1939_tp_rx_session_active + iVar2;
+  if ((&DAT_003fbd84)[param_1 * 0x10] == 0) {
+    cVar1 = (&DAT_003fbd7a)[iVar2];
+    if ((&DAT_003fbd75)[iVar2] == cVar1) {
+      uVar3 = ((uint)(ushort)(&DAT_003fbd76)[param_1 * 0x10] -
+              (uint)(ushort)(&DAT_003fbd78)[param_1 * 0x10]) + 2;
+      (&DAT_003fbd8a)[param_1 * 0x10] = (ushort)uVar3 & 0xff;
+      *pbVar9 = 0;
+      j1939_tp_bam_session_active = 0;
+    }
+    else {
+      uVar3 = 8;
+      (&DAT_003fbd8a)[param_1 * 0x10] = 8;
+      (&DAT_003fbd78)[param_1 * 0x10] = (&DAT_003fbd78)[param_1 * 0x10] + 7;
+      if (j1939_tp_bam_session_active == 0) {
+        uVar8 = 5;
+      }
+      else {
+        uVar8 = 0;
+      }
+      (&DAT_003fbd84)[param_1 * 0x10] = uVar8;
+    }
+    pcVar7 = (&j1939_tp_rx_session_tx_buf_ptr)[param_1 * 8];
+    *pcVar7 = cVar1;
+    (&DAT_003fbd7a)[iVar2] = cVar1 + '\x01';
+    uVar6 = 0;
+    iVar4 = (uVar3 & 0xff) - 1;
+    if (0 < iVar4) {
+      do {
+        pcVar5 = (&PTR_DAT_003fbd7c)[param_1 * 8];
+        pcVar7 = pcVar7 + 1;
+        *pcVar7 = *pcVar5;
+        (&PTR_DAT_003fbd7c)[param_1 * 8] = pcVar5 + 1;
+        uVar6 = uVar6 + 1 & 0xff;
+      } while ((int)uVar6 < iVar4);
+    }
+    mpc555_sendJ1939SingleFrame
+              ((&DAT_003fbd86)[param_1 * 8],(&DAT_003fbd8a)[param_1 * 0x10],
+               (&j1939_tp_rx_session_tx_buf_ptr)[param_1 * 8],&DAT_003fbd7b + iVar2);
+    if ((&DAT_003fbd7b)[iVar2] == '\0') {
+      if (*pbVar9 == 1) {
+        *(&j1939_tp_rx_session_status_ptr)[param_1 * 8] = 0x11;
+        return;
+      }
+      *(&j1939_tp_rx_session_status_ptr)[param_1 * 8] = 5;
+    }
+    else {
+      *(&j1939_tp_rx_session_status_ptr)[param_1 * 8] = (&DAT_003fbd7b)[iVar2];
+      *pbVar9 = 0;
+    }
+    j1939_tp_bam_session_active = 0;
+  }
+  else {
+    (&DAT_003fbd84)[param_1 * 0x10] = (&DAT_003fbd84)[param_1 * 0x10] + -1;
+  }
+  return;
+}
+
+
+
+//
+// Function: j1939_transport_dataFrame_bulkSend @ 0x0050d444
+//
+

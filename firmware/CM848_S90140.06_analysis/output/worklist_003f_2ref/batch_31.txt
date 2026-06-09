@@ -1,0 +1,170 @@
+=== VARIABLES TO NAME ===
+0x003fa750  (2 references)
+0x003fa758  (2 references)
+0x003fa760  (2 references)
+0x003fa764  (2 references)
+0x003fa768  (2 references)
+0x003fa76c  (2 references)
+
+Total: 6 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fa758
+void mpc555_updateSensorDiagnosticFlags(void)
+
+{
+  cm848_calculateSensorDiagnosticValue();
+  boost_fuel_correction_squared_ema =
+       exponentialMovingAverage
+                 ((uint)boost_fuel_correction_input * (uint)boost_fuel_correction_input >> 0xd &
+                  0xffff,&PTR_DAT_003fa758);
+  return;
+}
+
+
+
+//
+// Function: cm848_processSensorMonitoringLogic @ 0x000191e8
+//
+
+// Variables in this function: DAT_003fa750
+void cm848_processSensorMonitoringLogic(void)
+
+{
+  short sVar1;
+  uint uVar2;
+  uint uVar3;
+  
+  boost_fuel_input_limit_exceeded_flag =
+       (word)((short)boost_fuel_input_limit_cal <= (short)fuel_demand_boost_input);
+  sVar1 = cm848_signedFirstOrderFilter((int)(short)boost_fuel_correction,&PTR_DAT_003fa750);
+  boost_correction_threshold_exceeded_flag =
+       (ushort)((short)boost_correction_threshold_cal <= sVar1);
+  if ((boost_correction_inhibit_flag == 0) && (boost_fuel_correction_state == 0)) {
+    boost_fuel_correction_active_flag = 0;
+  }
+  else {
+    boost_fuel_correction_active_flag = 1;
+  }
+  uVar2 = (uint)boost_fuel_correction_limit_cal;
+  if (((boost_fuel_input_limit_exceeded_flag != 0) ||
+      ((short)boost_correction_threshold_cal <= sVar1)) || (boost_fuel_correction_active_flag != 0))
+  {
+    uVar3 = 0;
+  }
+  else {
+    uVar3 = uVar2;
+    if ((199 < uVar2) && ((int)(uint)governor_speed_ramp_limit_working <= (int)(uVar2 - 200))) {
+      uVar3 = governor_speed_ramp_limit_working + 200;
+    }
+  }
+  governor_speed_ramp_limit_working = (word)uVar3;
+  if ((uVar2 <= (uVar3 & 0xffff)) && ((diagnostic_status_bits & 0x100) != 0)) {
+    diagnostic_status_flags_b = diagnostic_status_flags_b | 0x800;
+  }
+  if ((diagnostic_status_bits & 0x100) != 1) {
+    diagnostic_status_flags_b = diagnostic_status_flags_b & 0xf7ff;
+    diagnostic_status_flags_b_shadow = diagnostic_status_flags_b_shadow & 0xf7ff;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_updateEngineModeFromSensor @ 0x00019390
+//
+
+/* WARNING: Function: cm848_signedDivision32 replaced with injection: sdiv64by32 */
+
+// Variables in this function: DAT_003fa760, DAT_003fa768
+void cm848_updateEngineModeFromSensor(void)
+
+{
+  uint uVar1;
+  uint uVar2;
+  
+  uVar2 = ((uint)boost_fuel_correction_squared_ema * (uint)boost_correction_ema_scale_cal) / 0x800;
+  uVar1 = uVar2 + ((int)(uint)governor_ema_filtered_value >> 3);
+  if (uVar1 < 0xffff) {
+    if (uVar1 == 0) {
+      uVar2 = 0;
+    }
+    else {
+      uVar2 = uVar2 + (governor_ema_filtered_value >> 3);
+    }
+  }
+  else {
+    uVar2 = 0xffff;
+  }
+  engine_boost_load_raw = (word)uVar2;
+  engine_boost_load_ema = exponentialMovingAverage(uVar2 & 0xffff,&PTR_DAT_003fa760);
+  fuel_demand_boost_input_limited = fuel_demand_boost_input;
+  if (boost_correction_inhibit_flag != 0) {
+    fuel_demand_boost_input_limited = boost_fuel_input_limit_cal;
+  }
+  boost_fuel_demand_with_offset =
+       (word)((int)(short)fuel_demand_boost_input_limited + (uint)boost_fuel_input_offset_cal);
+  uVar2 = (int)(short)(engine_boost_load_ema * 8 - boost_fuel_demand_with_offset) *
+          (int)(short)boost_fuel_demand_gain_cal;
+  uVar2 = (int)(short)fuel_demand_boost_input_limited + (uint)boost_fuel_input_offset_cal +
+          ((int)uVar2 >> 10) + (uint)((int)uVar2 < 0 && (uVar2 & 0x3ff) != 0);
+  boost_fuel_demand_adjusted = (word)uVar2;
+  governor_ema_filtered_value = exponentialMovingAverage(uVar2 & 0xffff,&PTR_DAT_003fa768);
+  engine_boost_load_threshold_flag = (word)(boost_load_flag_threshold_cal <= engine_boost_load_ema);
+  if (engine_boost_load_ema < boost_load_upper_threshold_cal) {
+    if (engine_boost_load_ema <= boost_load_lower_threshold_cal) {
+      diagnostic_status_bits = diagnostic_status_bits & 0xfeff;
+      sensor_fault_status_flags = sensor_fault_status_flags & 0xfeff;
+    }
+  }
+  else {
+    diagnostic_status_bits = diagnostic_status_bits | 0x100;
+  }
+  cm848_processSensorMonitoringLogic();
+  return;
+}
+
+
+
+//
+// Function: mpc555_processSensorValidation @ 0x0001956c
+//
+
+// Variables in this function: DAT_003fa750, DAT_003fa758, DAT_003fa760, DAT_003fa764, DAT_003fa768, DAT_003fa76c
+void mpc555_processSensorValidation(void)
+
+{
+  diagnostic_status_bits = diagnostic_status_bits & 0xfeff;
+  sensor_fault_status_flags = sensor_fault_status_flags & 0xfeff;
+  DAT_003fa75c = 0;
+  PTR_DAT_003fa758 = &DAT_004067b2;
+  DAT_003fa754 = (int)(short)boost_fuel_correction << 0x10;
+  PTR_DAT_003fa750 = &DAT_004067cc;
+  if ((short)fuel_demand_boost_input < 1) {
+    engine_boost_load_ema = 0;
+    governor_ema_filtered_value = 0;
+    DAT_003fa764 = 0;
+    DAT_003fa76c = 0;
+  }
+  else {
+    engine_boost_load_ema = (word)((int)(short)fuel_demand_boost_input >> 3);
+    governor_ema_filtered_value = fuel_demand_boost_input;
+    DAT_003fa764 = ((int)(short)fuel_demand_boost_input >> 3) << 0x10;
+    DAT_003fa76c = (int)(short)fuel_demand_boost_input << 0x10;
+  }
+  PTR_DAT_003fa760 = &DAT_004067cc;
+  PTR_DAT_003fa768 = &DAT_004067ce;
+  governor_speed_input_snapshot = governor_speed_input_raw;
+  engine_polarity_bit4_flag = engine_feature_status_flags & 0x10;
+  fuel_timing_error_working = fuel_timing_error_stored;
+  return;
+}
+
+
+
+//
+// Function: cm848_checkSensorRangeConditions @ 0x000196a4
+//
+

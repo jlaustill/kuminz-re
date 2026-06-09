@@ -1,0 +1,81 @@
+=== VARIABLES TO NAME ===
+0x003fefca  (3 references)
+0x003fefda  (2 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fefca, DAT_003fefda
+void cm848_sensorChannel16_init(void)
+
+{
+  if ((j1939_governor_feature_byte & 0x10) == 0) {
+    sensorChannelTypeB_configInit
+              (&DAT_003fefca,&fuel_demand_table_xaxis_base,&sensor_channel16_interp_state,
+               &DAT_000596d2,&DAT_000596fe,0,&sensor_channel16_filter_config_ptr,0xf,0x36,0x37,
+               &sensor_channel15_raw,&sensor_channel15_filtered,&sensor_channel15_fault_status);
+  }
+  else {
+    sensorChannelTypeB_configInit
+              (&DAT_003fefda,&fuel_demand_table_xaxis_base,&sensor_channel16_interp_state,
+               &DAT_000596e8,&DAT_00059714,0,&sensor_channel16_filter_config_ptr,0xf,0x36,0x37,
+               &sensor_channel15_raw,&sensor_channel15_filtered,&sensor_channel15_fault_status);
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_sensorChannel16_process @ 0x0000db50
+//
+
+// Variables in this function: DAT_003fefca, DAT_003fefda
+void cm848_sensorChannel16_process(void)
+
+{
+  if ((j1939_governor_feature_byte & 0x10) == 0) {
+    sensorChannelTypeB_update
+              (&DAT_003fefca,&fuel_demand_table_xaxis_base,&sensor_channel16_interp_state,
+               &DAT_000596d2,&DAT_000596fe,0,&sensor_channel16_filter_config_ptr,0xf,0x36,0x37,
+               &sensor_channel15_raw,&sensor_channel15_filtered,&sensor_channel15_fault_status);
+  }
+  else {
+    sensorChannelTypeB_update
+              (&DAT_003fefda,&fuel_demand_table_xaxis_base,&sensor_channel16_interp_state,
+               &DAT_000596e8,&DAT_00059714,0,&sensor_channel16_filter_config_ptr,0xf,0x36,0x37,
+               &sensor_channel15_raw,&sensor_channel15_filtered,&sensor_channel15_fault_status);
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_sensorChannel16BProcessOilPressure @ 0x0000db88
+//
+
+// Variables in this function: DAT_003fefca
+void cm848_sensorChannel16BProcessOilPressure(void)
+
+{
+  undefined4 uStack00000008;
+  undefined4 uStack0000000c;
+  byte *pbStack00000018;
+  
+  pbStack00000018 = &sensor_channel15_fault_status;
+  uStack00000008 = 0x36;
+  uStack0000000c = 0x37;
+  sensorChannelTypeB_update
+            (&DAT_003fefca,&fuel_demand_table_xaxis_base,&sensor_channel16_interp_state,
+             &DAT_000596d2,&DAT_000596fe,0,&sensor_channel16_filter_config_ptr,0xf);
+  return;
+}
+
+
+
+//
+// Function: cm848_oilPressureDeltaCalculation @ 0x0000dc64
+//
+

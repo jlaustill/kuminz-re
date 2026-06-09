@@ -1,0 +1,54 @@
+=== VARIABLES TO NAME ===
+0x003faeb4  (2 references)
+0x003faeb6  (2 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003faeb4, DAT_003faeb6
+void cm848_j1939HandlePgn65504ProprietaryA(void)
+
+{
+  uint uVar1;
+  uint uVar2;
+  undefined1 local_18;
+  undefined1 local_12;
+  
+  if (engine_rpm_state_t_0040b7ac.current_rpm == 0) {
+    j1939_rpm_tx_word = 0;
+    j1939_etc1_speed_offset_tx_word = 0;
+    DAT_003faeb4 = 0;
+    bRam003faeb5 = 0;
+    DAT_003faeb6 = 0;
+    bRam003faeb7 = 0;
+  }
+  else {
+    local_18 = (undefined1)(engine_rpm_state_t_0040b7ac.current_rpm >> 8);
+    j1939_rpm_tx_word = CONCAT11((char)engine_rpm_state_t_0040b7ac.current_rpm,local_18);
+    local_12 = (undefined1)
+               ((ushort)(j1939_tsc1_override_state.proprietary_offset_value + 0x7d7f) >> 8);
+    j1939_etc1_speed_offset_tx_word =
+         CONCAT11((char)(j1939_tsc1_override_state.proprietary_offset_value + 0x7d7f),local_12);
+    uVar1 = TBLr;
+    uVar2 = uVar1 >> 7 & 0xffff;
+    DAT_003faeb6 = (undefined1)uVar2;
+    uVar2 = ((uint)(((int)(short)torque_limit_fault_snapshot + (int)DAT_0005a48a) * 0x78) >> 10) +
+            0x7d ^ uVar2;
+    uVar1 = TBLr;
+    DAT_003faeb4 = (byte)(uVar2 >> 1) & 0x52 | (byte)(uVar1 >> 7) & 0xad;
+    uVar1 = TBLr;
+    bRam003faeb5 = (byte)uVar2 & 0x41 | (byte)(uVar1 >> 7) & 0xbe;
+    uVar1 = TBLr;
+    bRam003faeb7 = (byte)((uVar2 & 0x1a) << 3) | (byte)(uVar1 >> 7) & 0x2f;
+  }
+  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn57344_tx_header);
+  return;
+}
+
+
+
+//
+// Function: cm848_buildVehicleMaintenanceStatusBits @ 0x00026aa4
+//
+

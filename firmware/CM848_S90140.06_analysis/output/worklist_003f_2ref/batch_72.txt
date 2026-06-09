@@ -1,0 +1,272 @@
+=== VARIABLES TO NAME ===
+0x003fb228  (2 references)
+0x003fb234  (2 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fb228, DAT_003fb234
+void mpc555_initSensorCalibrationTables(void)
+
+{
+  undefined2 *puVar1;
+  undefined2 *puVar2;
+  undefined2 *puVar3;
+  uint uVar4;
+  int iVar5;
+  
+  iVar5 = 0;
+  uVar4 = (uint)cylinder_event_count_max;
+  if (uVar4 != 0) {
+    puVar3 = &DAT_003fb234;
+    puVar2 = (undefined2 *)0x3fb244;
+    puVar1 = (undefined2 *)0x3fb254;
+    do {
+      puVar3 = puVar3 + 1;
+      *puVar3 = 0;
+      puVar2 = puVar2 + 1;
+      *puVar2 = 0;
+      puVar1 = puVar1 + 1;
+      *puVar1 = 0;
+      iVar5 = iVar5 + 1;
+    } while (iVar5 < (int)uVar4);
+  }
+  DAT_003fb22a = 0;
+  DAT_003fb22e = 0;
+  DAT_003fb22c = 0;
+  DAT_003fb230 = 0;
+  DAT_003fb232 = 0;
+  DAT_003fb234 = 0;
+  injection_check_flags = 0;
+  DAT_003fb228 = 2;
+  return;
+}
+
+
+
+//
+// Function: cm848_processFaultScanLookup @ 0x00035fa8
+//
+
+// Variables in this function: DAT_003fb228
+void cm848_processFaultScanLookup(void)
+
+{
+  bool bVar1;
+  word wVar2;
+  uint uVar3;
+  int iVar4;
+  int iVar5;
+  uint uVar6;
+  int iVar7;
+  uint uVar8;
+  ushort *puVar9;
+  uint uVar10;
+  undefined2 uVar11;
+  
+  uVar3 = (uint)cylinder_event_index;
+  iVar4 = uVar3 * 10;
+  uVar6 = (uint)(&calibration_constant_1)[uVar3 * 5];
+  iVar7 = uVar6 * 0x34;
+  puVar9 = (ushort *)(&DAT_0005762c + iVar7);
+  uVar8 = (uint)*puVar9;
+  iVar5 = (int)uVar8 >> 4;
+  uVar10 = 1 << (uVar8 + iVar5 * -0x10 & 0x3f);
+  if (((&sensor_channel_enable_flags)[iVar5] & uVar10) != 0) {
+    return;
+  }
+  if (((&diag_feature_flags)[iVar5] & uVar10) == 0) {
+    if (qadc_channel_index_table[uVar8] < 0x81) {
+      uVar8 = (uint)qadc_channel_index_table[uVar8];
+    }
+    else {
+      uVar8 = 0;
+    }
+    uVar11 = *(undefined2 *)(&qadc_channel_dispatch_table)[uVar8 * 2];
+  }
+  else {
+    uVar11 = *(undefined2 *)(&cylinder_timing_demand_array + uVar8 * 2);
+  }
+  **(undefined2 **)(&BYTE_0005763e + iVar7) = uVar11;
+  iVar5 = (int)(uint)*puVar9 >> 4;
+  if (((uint)(&fuel_demand_feature_flags)[iVar5] & 1 << ((uint)*puVar9 + iVar5 * -0x10 & 0x3f)) == 0
+     ) {
+    wVar2 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fb228);
+  }
+  else {
+    wVar2 = **(word **)(&BYTE_00057646 + iVar7);
+  }
+  (&per_cylinder_timing_offset_table)[*puVar9] = wVar2;
+  **(word **)(&BYTE_00057642 + iVar7) = wVar2;
+  if (((((cold_start_phase == CSP_AT_GOVERNOR_SETPOINT) &&
+        (((uint)(&system_status_flags_t_003fe974.enable_state)
+                [(int)(uint)*(ushort *)(&DAT_00057696 + iVar4) >> 4] &
+         1 << (*(ushort *)(&DAT_00057696 + iVar4) & 0xf)) == 0)) &&
+       (((uint)(&system_status_flags_t_003fe974.enable_state)
+               [(int)(uint)*(ushort *)(&DAT_00057698 + iVar4) >> 4] &
+        1 << (*(ushort *)(&DAT_00057698 + iVar4) & 0xf)) == 0)) &&
+      ((((uint)(&system_status_flags_t_003fe974.enable_state)
+               [(int)(uint)*(ushort *)(&DAT_0005769a + iVar4) >> 4] &
+        1 << (*(ushort *)(&DAT_0005769a + iVar4) & 0xf)) == 0 &&
+       (((uint)(&system_status_flags_t_003fe974.enable_state)
+               [(int)(uint)*(ushort *)(&DAT_0005769c + iVar4) >> 4] &
+        1 << (*(ushort *)(&DAT_0005769c + iVar4) & 0xf)) == 0)))) &&
+     (((protection_config_flags & 0x40) == 0 &&
+      ((0x3a < fuel_demand_computed && (governor_inhibit_flag == 0)))))) {
+    if (*(ushort *)(&PTR_DAT_0005762e)[uVar6 * 0xd] < **(ushort **)(&BYTE_0005763e + iVar7)) {
+      if (*(ushort *)(&per_cylinder_timing_array + (uint)cylinder_event_index * 2) <
+          *(ushort *)(&PTR_DAT_0005763a)[uVar6 * 0xd]) {
+        **(short **)
+          (&BYTE_00057652 + (uint)(&calibration_constant_1)[(uint)cylinder_event_index * 5] * 0x34)
+             = **(short **)
+                 (&BYTE_00057652 +
+                 (uint)(&calibration_constant_1)[(uint)cylinder_event_index * 5] * 0x34) + 1;
+        *(short *)(&per_cylinder_timing_array + (uint)cylinder_event_index * 2) =
+             *(short *)(&per_cylinder_timing_array + (uint)cylinder_event_index * 2) + 1;
+      }
+      else {
+        (&system_status_flags_t_003fe974.enable_state)
+        [*(ushort *)(&j1939_pgn_lookup_ptr + iVar7) >> 4] =
+             (&system_status_flags_t_003fe974.enable_state)
+             [*(ushort *)(&j1939_pgn_lookup_ptr + iVar7) >> 4] |
+             (ushort)(1 << (*(ushort *)(&j1939_pgn_lookup_ptr + iVar7) & 0xf));
+      }
+    }
+    else if (*(short *)(&per_cylinder_timing_array + (uint)cylinder_event_index * 2) == 0) {
+      if ((**(short **)(&BYTE_00057652 + iVar7) == 0) &&
+         (((uint)(&system_status_flags_t_003fe974.enable_state)
+                 [(int)(uint)*(ushort *)(&j1939_pgn_lookup_ptr + iVar7) >> 4] &
+          1 << (*(ushort *)(&j1939_pgn_lookup_ptr + iVar7) & 0xf)) != 0)) {
+        (&system_status_flags_t_003fe974.enable_state)
+        [*(ushort *)(&j1939_pgn_lookup_ptr + iVar7) >> 4] =
+             (&system_status_flags_t_003fe974.enable_state)
+             [*(ushort *)(&j1939_pgn_lookup_ptr + iVar7) >> 4] &
+             ~(ushort)(1 << (*(ushort *)(&j1939_pgn_lookup_ptr + iVar7) & 0xf));
+        (&fault_active_status_array)[*(ushort *)(&j1939_pgn_lookup_ptr + iVar7) >> 4] =
+             (&fault_active_status_array)[*(ushort *)(&j1939_pgn_lookup_ptr + iVar7) >> 4] &
+             ~(ushort)(1 << (*(ushort *)(&j1939_pgn_lookup_ptr + iVar7) & 0xf));
+      }
+    }
+    else {
+      **(short **)
+        (&BYTE_00057652 + (uint)(&calibration_constant_1)[(uint)cylinder_event_index * 5] * 0x34) =
+           **(short **)
+             (&BYTE_00057652 +
+             (uint)(&calibration_constant_1)[(uint)cylinder_event_index * 5] * 0x34) + -1;
+      *(short *)(&per_cylinder_timing_array + (uint)cylinder_event_index * 2) =
+           *(short *)(&per_cylinder_timing_array + (uint)cylinder_event_index * 2) + -1;
+    }
+    if (**(ushort **)(&BYTE_0005763e + iVar7) < *(ushort *)(&PTR_DAT_00057632)[uVar6 * 0xd]) {
+      if ((&per_cylinder_sync_counter)[cylinder_event_index] <
+          *(ushort *)(&PTR_DAT_0005763a)[uVar6 * 0xd]) {
+        **(short **)
+          (&BYTE_00057656 + (uint)(&calibration_constant_1)[(uint)cylinder_event_index * 5] * 0x34)
+             = **(short **)
+                 (&BYTE_00057656 +
+                 (uint)(&calibration_constant_1)[(uint)cylinder_event_index * 5] * 0x34) + 1;
+        (&per_cylinder_sync_counter)[cylinder_event_index] =
+             (&per_cylinder_sync_counter)[cylinder_event_index] + 1;
+      }
+      else {
+        (&system_status_flags_t_003fe974.enable_state)
+        [*(ushort *)(&j1939_message_def_ptr + iVar7) >> 4] =
+             (&system_status_flags_t_003fe974.enable_state)
+             [*(ushort *)(&j1939_message_def_ptr + iVar7) >> 4] |
+             (ushort)(1 << (*(ushort *)(&j1939_message_def_ptr + iVar7) & 0xf));
+      }
+    }
+    else if ((&per_cylinder_sync_counter)[cylinder_event_index] == 0) {
+      if ((**(short **)(&BYTE_00057656 + iVar7) == 0) &&
+         (((uint)(&system_status_flags_t_003fe974.enable_state)
+                 [(int)(uint)*(ushort *)(&j1939_message_def_ptr + iVar7) >> 4] &
+          1 << (*(ushort *)(&j1939_message_def_ptr + iVar7) & 0xf)) != 0)) {
+        (&system_status_flags_t_003fe974.enable_state)
+        [*(ushort *)(&j1939_message_def_ptr + iVar7) >> 4] =
+             (&system_status_flags_t_003fe974.enable_state)
+             [*(ushort *)(&j1939_message_def_ptr + iVar7) >> 4] &
+             ~(ushort)(1 << (*(ushort *)(&j1939_message_def_ptr + iVar7) & 0xf));
+        (&fault_active_status_array)[*(ushort *)(&j1939_message_def_ptr + iVar7) >> 4] =
+             (&fault_active_status_array)[*(ushort *)(&j1939_message_def_ptr + iVar7) >> 4] &
+             ~(ushort)(1 << (*(ushort *)(&j1939_message_def_ptr + iVar7) & 0xf));
+      }
+    }
+    else {
+      **(short **)
+        (&BYTE_00057656 + (uint)(&calibration_constant_1)[(uint)cylinder_event_index * 5] * 0x34) =
+           **(short **)
+             (&BYTE_00057656 +
+             (uint)(&calibration_constant_1)[(uint)cylinder_event_index * 5] * 0x34) + -1;
+      (&per_cylinder_sync_counter)[cylinder_event_index] =
+           (&per_cylinder_sync_counter)[cylinder_event_index] - 1;
+    }
+  }
+  else if ((&per_cylinder_sync_counter)[cylinder_event_index] != 0) {
+    **(short **)
+      (&BYTE_00057656 + (uint)(&calibration_constant_1)[(uint)cylinder_event_index * 5] * 0x34) =
+         **(short **)
+           (&BYTE_00057656 + (uint)(&calibration_constant_1)[(uint)cylinder_event_index * 5] * 0x34)
+         + -1;
+    (&per_cylinder_sync_counter)[cylinder_event_index] =
+         (&per_cylinder_sync_counter)[cylinder_event_index] - 1;
+  }
+  wVar2 = per_cylinder_timing_max_cal;
+  if (cold_start_phase != CSP_AT_GOVERNOR_SETPOINT) {
+    return;
+  }
+  if ((protection_config_flags & 0x40) != 0) {
+    return;
+  }
+  if (governor_inhibit_flag != 0) {
+    return;
+  }
+  if ((per_cylinder_timing_max_cal == 0) ||
+     (per_cylinder_timing_max_alt_cal < **(ushort **)(&BYTE_0005763e + iVar7))) {
+    if (protection_fault_eval_input != 0) goto LAB_0003670c;
+    if (fuel_demand_computed < 0x3b) {
+      if ((&per_cylinder_timing_counter)[cylinder_event_index] != 0) {
+        (&per_cylinder_timing_counter)[cylinder_event_index] =
+             (&per_cylinder_timing_counter)[cylinder_event_index] - 1;
+      }
+      goto LAB_0003670c;
+    }
+  }
+  else {
+    if ((injection_check_flags == 0) && (protection_fault_eval_input == 0)) {
+      uVar6 = (uint)cylinder_event_index;
+      if ((&per_cylinder_timing_counter)[uVar6] < per_cylinder_timing_max_cal) {
+        (&per_cylinder_timing_counter)[uVar6] = (&per_cylinder_timing_counter)[uVar6] + 1;
+      }
+      if (wVar2 <= (&per_cylinder_timing_counter)[uVar6]) {
+        injection_check_flags = *(word *)(iVar7 + 0x5765e);
+      }
+      goto LAB_0003670c;
+    }
+    if (*(word *)(iVar7 + 0x5765e) == injection_check_flags) goto LAB_0003670c;
+  }
+  (&per_cylinder_timing_counter)[cylinder_event_index] = 0;
+LAB_0003670c:
+  bVar1 = false;
+  uVar6 = 0;
+  if (cylinder_event_count_max != 0) {
+    do {
+      if (((&calibration_constant_1)[uVar6 * 5] == (&calibration_constant_1)[uVar3 * 5]) &&
+         ((&per_cylinder_timing_counter)[uVar6] != 0)) {
+        bVar1 = true;
+        break;
+      }
+      uVar6 = uVar6 + 1 & 0xffff;
+    } while (uVar6 < cylinder_event_count_max);
+  }
+  if (!bVar1) {
+    injection_check_flags = injection_check_flags & ~*(ushort *)(iVar7 + 0x5765e);
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_processMultiAxisInterpolation @ 0x00036220
+//
+

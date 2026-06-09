@@ -1,0 +1,16 @@
+address,name,type,comment
+0x003fbcba,fuel_demand_histogram_load_ratio,word,10000-scale fuel demand load-axis ratio for histogram bin
+0x003fbcbc,fuel_demand_histogram_axis_endpoint,word,fuel demand histogram load-axis range endpoint
+0x003fcc00,boost_blend_tpu_ch1_period_working,dword,TPU-B CH1 period working value (boost blend freq calc)
+0x003fcc1a,governor_speed_reference_raw_prev,word,previous-cycle governor_speed_reference_raw
+0x003fd8b2,egr_smoke_limit_speed_ref_select,word,ROM selector for EGR smoke-limit alt speed reference
+0x003ff716,governor_speed_ramp_step_size,word,ROM per-cycle step under governor speed ramp rate limit
+0x003fcfb4,j1939_fuel_demand_injection_timing_done_prev,word,previous injection_timing_done_flag (edge detect)
+0x003fcfb6,j1939_fuel_demand_protection_threshold_prev,word,previous protection_entry_threshold (decrease detect)
+0x003fd1b6,protection_active_fault_severity_snapshot,word,saved severity of active fault for clear-path
+0x003fd1b8,protection_active_fault_severity_param,word,severity param stored at fault activation
+0x003fd2e0,sensor_cal_ring_cycle_count,word,count of complete passes over sensor cal ring
+0x003fea16,hpcr_battery_status_shadow_flags,word,shadow of hpcr_battery_voltage_flags
+0x003fb444,qspi_tx_configured_slot,byte,currently configured QSPI transmit slot ID
+0x003fbd52,fuel_demand_active_sensor_valid_bits,word,fuel-demand-active condition bit (0x100) for sensor validation
+0x003feaa4,governor_load_channel_fault_confirm_timers,word,25-word per-channel governor load fault-confirm timers (base)

@@ -1,0 +1,73 @@
+=== VARIABLES TO NAME ===
+0x003fa5ea  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fa5ea
+void cm848_fuelDemandBlendCalculation(void)
+
+{
+  uint uVar1;
+  uint uVar2;
+  uint uVar3;
+  int iVar4;
+  word wVar5;
+  
+  wVar5 = fuel_demand_boost_offset;
+  if (boost_fuel_mode_active != 0) {
+    uVar2 = (int)(short)fuel_demand_boost_offset * (int)(short)(0x2000 - boost_fuel_blend_weight_b);
+    uVar1 = (int)(short)fuel_demand_boost_input * (int)(short)boost_fuel_blend_weight_a_cal;
+    uVar3 = (int)(short)boost_fuel_demand_blend_a * (int)(short)boost_fuel_blend_weight_b_cal;
+    iVar4 = (int)(CONCAT44((int)((ulonglong)
+                                 ((longlong)(int)(uint)boost_fuel_input_value *
+                                 (longlong)(int)(0x2000 - (uint)boost_fuel_blend_weight_a_cal)) >>
+                                0x20),
+                           (uint)boost_fuel_input_value *
+                           (0x2000 - (uint)boost_fuel_blend_weight_a_cal)) / 0x100) +
+            (int)(short)((short)((int)uVar1 >> 0xd) +
+                        (ushort)((int)uVar1 < 0 && (uVar1 & 0x1fff) != 0));
+    iVar4 = (int)(CONCAT44((int)((ulonglong)
+                                 ((longlong)(int)(0x2000 - (uint)boost_fuel_blend_weight_b_cal) *
+                                 (longlong)iVar4) >> 0x20),
+                           (0x2000 - (uint)boost_fuel_blend_weight_b_cal) * iVar4) / 0x2000) +
+            (int)(short)((short)((int)uVar3 >> 0xd) +
+                        (ushort)((int)uVar3 < 0 && (uVar3 & 0x1fff) != 0));
+    iVar4 = (int)(CONCAT44((int)((ulonglong)
+                                 ((longlong)(int)(uint)boost_fuel_blend_weight_b * (longlong)iVar4)
+                                >> 0x20),(uint)boost_fuel_blend_weight_b * iVar4) / 0x2000);
+    if (0x7ffe < iVar4) {
+      iVar4 = 0x7fff;
+    }
+    wVar5 = (short)((int)uVar2 >> 0xd) + (ushort)((int)uVar2 < 0 && (uVar2 & 0x1fff) != 0) +
+            (short)iVar4;
+  }
+  fuel_demand_blend_filtered = cm848_signedFirstOrderFilter((int)(short)wVar5,&PTR_DAT_003fa5ea);
+  return;
+}
+
+
+
+//
+// Function: mpc555_initManifoldPressureFilter @ 0x000130ac
+//
+
+// Variables in this function: DAT_003fa5ea
+void mpc555_initManifoldPressureFilter(void)
+
+{
+  fuel_demand_blend_filtered = fuel_demand_boost_offset;
+  DAT_003fa5ee = (int)(short)fuel_demand_boost_offset << 0x10;
+  PTR_DAT_003fa5ea = &DAT_004009d6;
+  return;
+}
+
+
+
+//
+// Function: cm848_calculateBoostPressureOffset @ 0x000130dc
+//
+
+/* WARNING: Function: cm848_signedDivision32 replaced with injection: sdiv64by32 */
+

@@ -1,0 +1,82 @@
+=== VARIABLES TO NAME ===
+0x003fbcf6  (2 references)
+0x003fbcfc  (2 references)
+0x003fbd00  (2 references)
+
+Total: 3 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fbcf6, DAT_003fbcfc, DAT_003fbd00
+void sensor_throttleTrim_ema_faultProcess(void)
+
+{
+  word wVar1;
+  word wVar2;
+  
+  fuel_demand_mode_index_init_flag._2_2_ = sensor_channel108_fault_status;
+  if (boost_correction_alt_mode_cal == 0) {
+    fuel_demand_mode_index_init_flag._2_2_ = 0;
+  }
+  throttle_trim_predictor_gain_lookup =
+       lookupTableInterpolation((table_interp_args_t *)&DAT_003fbcfe);
+  wVar1 = sensor_channel108_fault_status;
+  if (((sensor_channel108_fault_status != 0) || (cold_start_inhibit_cal != 0)) ||
+     (throttle_trim_predictor_gain = throttle_trim_predictor_gain_lookup,
+     (cold_start_feature_enable_flags & 0x8000) == 0)) {
+    throttle_trim_predictor_gain = 0;
+  }
+  sensor_channel108_filter();
+  wVar2 = throttle_trim_predictor_output;
+  if (((wVar1 == 0) && (cold_start_inhibit_cal == 0)) &&
+     ((cold_start_feature_enable_flags & 0x8000) != 0)) {
+    DAT_003fbcfc = exponentialMovingAverage(throttle_trim_predictor_output,&PTR_DAT_003fbd00);
+    wVar2 = exponentialMovingAverage(DAT_003fbcfc,&DAT_003fbd08);
+  }
+  DAT_003fbcf6 = wVar2;
+  return;
+}
+
+
+
+//
+// Function: sensor_throttleTrim_inputSelect @ 0x0050716c
+//
+
+// Variables in this function: DAT_003fbcf6
+void sensor_throttleTrim_inputSelect(void)
+
+{
+  if ((fuel_demand_mode_index_init_flag._2_2_ & 2) == 0) {
+    throttle_trim_lookup_input = DAT_003fbcf6;
+    fuel_demand_mode_index_init_flag._0_2_ = 0;
+  }
+  else {
+    throttle_trim_lookup_input = sensor_channel108_filtered;
+    fuel_demand_mode_index_init_flag._0_2_ = 2;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_phase_groupB_calculation_2 @ 0x005071b8
+//
+
+// Variables in this function: DAT_003fbd00
+void cm848_initialization_step_14(void)
+
+{
+  DAT_003fbd04 = 0;
+  PTR_DAT_003fbd00 = (undefined *)&throttle_trim_predictor_gain_lookup;
+  throttle_trim_lookup_input = sensor_channel108_raw;
+  return;
+}
+
+
+
+//
+// Function: governor_speedRamp_stabilityFlag_calc @ 0x00507214
+//
+

@@ -1,0 +1,66 @@
+=== VARIABLES TO NAME ===
+0x003fba12  (2 references)
+0x003fba16  (2 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fba12, DAT_003fba16
+void fuel_demandLimit_rpmLoad_calc(void)
+
+{
+  uint uVar1;
+  word wVar2;
+  
+  fuel_demand_rpm_limit_output =
+       cm848_dualAxisTableInterpolation
+                 (&DAT_003fba12,engine_rpm_state_t_0040b7ac.current_rpm,0x600c);
+  if ((engine_feature_enable_flags & 0x800) != 0) {
+    fuel_demand_rpm_limit_output = DAT_00406002;
+  }
+  uVar1 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fba16);
+  uVar1 = ((uint)DAT_00406006 * (uVar1 & 0xffff) >> 0xb & 0xffff) *
+          (uint)fuel_demand_rpm_limit_output;
+  uVar1 = (uint)(CONCAT44((int)((ulonglong)uVar1 * (ulonglong)fuel_demand_qty_boost_corrected * 2 >>
+                               0x20),uVar1 * (uint)fuel_demand_qty_boost_corrected * 2) /
+                ((ulonglong)injection_timing_period_cal << 0xb));
+  if (0x16ff < uVar1) {
+    uVar1 = 0x1700;
+  }
+  fuel_demand_limit_input = (word)uVar1;
+  if ((engine_feature_enable_flags & 0x1000) != 0) {
+    fuel_demand_limit_input = DAT_00406000;
+  }
+  wVar2 = fuel_demand_limit_input_upper_limit;
+  if ((fuel_demand_limit_input < fuel_demand_limit_input_upper_limit) &&
+     (wVar2 = fuel_demand_limit_input,
+     fuel_demand_limit_input <= fuel_demand_limit_input_lower_limit)) {
+    wVar2 = fuel_demand_limit_input_lower_limit;
+  }
+  fuel_demand_limit_input = wVar2;
+  return;
+}
+
+
+
+//
+// Function: fuel_demandLimit_calPtrs_init @ 0x00504110
+//
+
+// Variables in this function: DAT_003fba12, DAT_003fba16
+void fuel_demandLimit_calPtrs_init(void)
+
+{
+  DAT_003fba12 = 2;
+  DAT_003fba14 = 2;
+  DAT_003fba16 = 2;
+  return;
+}
+
+
+
+//
+// Function: cm848_sensorProcessing_periodic @ 0x00504130
+//
+

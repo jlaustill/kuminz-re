@@ -1,0 +1,126 @@
+=== VARIABLES TO NAME ===
+0x003fd270  (2 references)
+0x003fd271  (2 references)
+0x003fd273  (2 references)
+0x003fd275  (2 references)
+
+Total: 4 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fd270, DAT_003fd271, DAT_003fd273, DAT_003fd275
+void hpcr_fuelDemandProc(void)
+
+{
+  word wVar1;
+  short sVar2;
+  word wVar3;
+  
+  if ((cold_start_feature_flags & 8) == 0) {
+    return;
+  }
+  if ((protection_feature_status_flags & 0x1000000) == 0) {
+    return;
+  }
+  if ((boost_fuel_bypass_flags & 0x1000000) != 0) {
+    return;
+  }
+  if (DAT_003fd270 == '\0') {
+    return;
+  }
+  if ((((((system_status_flags_t_003fe974.enable_state & 0x100) != 0) ||
+        ((system_status_flags_t_003fe974.enable_state & 0x200) != 0)) ||
+       ((system_status_flags_t_003fe974.safety_bits_2 & 1) != 0)) ||
+      (((system_status_flags_t_003fe974.condition_monitor & 0x200) != 0 ||
+       ((system_status_flags_t_003fe974.condition_monitor & 0x400) != 0)))) ||
+     (((j1939_receive_status_flags & 0x10) != 0 || ((protection_monitor_shadow & 8) != 0)))) {
+    hpcr_fuel_demand_protection_debounce_count = 0;
+    hpcr_fuel_demand_fault_debounce_count = 0;
+    return;
+  }
+  hpcr_fuel_demand_protection_threshold =
+       lookupTableInterpolation((table_interp_args_t *)&DAT_003fd271);
+  hpcr_fuel_demand_fault_upper_limit =
+       lookupTableInterpolation((table_interp_args_t *)&DAT_003fd273);
+  hpcr_fuel_demand_fault_lower_limit =
+       lookupTableInterpolation((table_interp_args_t *)&DAT_003fd275);
+  if (((DAT_00409fe0 < j1939_calib_handler_param) ||
+      (engine_rpm_state_t_0040b7ac.current_rpm < hpcr_fuel_demand_rpm_threshold)) ||
+     (((protection_sensor_mode_flag != 0 ||
+       (sensor_readings_t_0040baf2.oil_pressure < hpcr_fuel_demand_protection_threshold)) &&
+      ((protection_sensor_mode_flag == 0 ||
+       (temperature_differential < hpcr_fuel_demand_protection_threshold)))))) {
+    if (hpcr_fuel_demand_protection_debounce_count == 0) goto LAB_005377b0;
+    sVar2 = -1;
+  }
+  else {
+    if (hpcr_protection_debounce_count_threshold <= hpcr_fuel_demand_protection_debounce_count)
+    goto LAB_005377b0;
+    sVar2 = 1;
+  }
+  hpcr_fuel_demand_protection_debounce_count = hpcr_fuel_demand_protection_debounce_count + sVar2;
+LAB_005377b0:
+  if (hpcr_fuel_demand_protection_debounce_count < hpcr_protection_debounce_count_threshold) {
+    if (hpcr_fuel_demand_protection_debounce_count == 0) {
+      system_status_flags_t_003fe974.protection_active =
+           system_status_flags_t_003fe974.protection_active & 0xefff;
+      crank_sync_status_flags = crank_sync_status_flags & 0xefff;
+    }
+  }
+  else {
+    system_status_flags_t_003fe974.protection_active =
+         system_status_flags_t_003fe974.protection_active | 0x1000;
+  }
+  if (((protection_channel_load_raw < DAT_00409fe4) ||
+      (engine_rpm_state_t_0040b7ac.current_rpm < hpcr_fuel_demand_rpm_threshold)) ||
+     (((protection_sensor_mode_flag != 0 ||
+       ((hpcr_fuel_demand_fault_upper_limit < sensor_readings_t_0040baf2.oil_pressure ||
+        (sensor_readings_t_0040baf2.oil_pressure < hpcr_fuel_demand_fault_lower_limit)))) &&
+      ((protection_sensor_mode_flag == 0 ||
+       ((hpcr_fuel_demand_fault_upper_limit < temperature_differential ||
+        (temperature_differential < hpcr_fuel_demand_fault_lower_limit)))))))) {
+    if (hpcr_fuel_demand_fault_debounce_count != 0) {
+      hpcr_fuel_demand_fault_debounce_count = hpcr_fuel_demand_fault_debounce_count - 1;
+    }
+  }
+  else if ((hpcr_fuel_demand_fault_debounce_count < hpcr_protection_debounce_count_threshold) &&
+          (wVar3 = hpcr_fuel_demand_fault_debounce_count + 1,
+          wVar1 = hpcr_fuel_demand_fault_debounce_count + 1,
+          hpcr_fuel_demand_fault_debounce_count = wVar3,
+          wVar1 == hpcr_protection_debounce_count_threshold)) {
+    hpcr_fuel_demand_fault_qualified_event_count = hpcr_fuel_demand_fault_qualified_event_count + 1;
+  }
+  if ((hpcr_protection_debounce_count_threshold <= hpcr_fuel_demand_fault_debounce_count) &&
+     (hpcr_fuel_demand_fault_count != 0xffff)) {
+    hpcr_fuel_demand_fault_count = hpcr_fuel_demand_fault_count + 1;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_initAdaptiveControl @ 0x00537944
+//
+
+// Variables in this function: DAT_003fd270, DAT_003fd271, DAT_003fd273, DAT_003fd275
+void cm848_initAdaptiveControl(void)
+
+{
+  DAT_003fd271 = 2;
+  DAT_003fd273 = 2;
+  DAT_003fd275 = 2;
+  hpcr_fuel_demand_protection_debounce_count = 0;
+  hpcr_fuel_demand_fault_debounce_count = 0;
+  hpcr_fuel_demand_fault_qualified_event_count = 0;
+  hpcr_fuel_demand_fault_count = 0;
+  DAT_003fd270 = DAT_00409fe8 <= (short)protection_oilTemp_proxy;
+  return;
+}
+
+
+
+//
+// Function: cm848_initOilPressure @ 0x005379b4
+//
+

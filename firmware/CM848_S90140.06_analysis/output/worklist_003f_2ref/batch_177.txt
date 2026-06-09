@@ -1,0 +1,148 @@
+=== VARIABLES TO NAME ===
+0x003fd1b6  (2 references)
+0x003fd1b8  (2 references)
+0x003fd1ba  (4 references)
+
+Total: 3 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fd1ba
+void cm848_initialization_group21_state_cont(void)
+
+{
+  BYTE_003fd1ac = (code)0x0;
+  uRam003fd1ad = 0;
+  if (diag_suppress_request_flag == 1) {
+    diag_suppress_stateMachine(3);
+  }
+  DAT_003fd1ba = 0x50;
+  protection_state_machine_step = 0;
+  cold_start_protection_state = 1;
+  cold_start_protection_branch_flag = 0;
+  cold_start_protection_cycle_counter = 0;
+  cold_start_protection_sub_state = 0;
+  cold_start_battery_timer_a = 0xffff;
+  cold_start_battery_timer_b = 0xffff;
+  return;
+}
+
+
+
+//
+// Function: engine_protection_timerStateMachine_init @ 0x0052f030
+//
+
+// Variables in this function: DAT_003fd1b6, DAT_003fd1b8, DAT_003fd1ba
+void fault_event_queue_set_active(int param_1,undefined2 param_2)
+
+{
+  DAT_003fd1b6 = (ushort)(&fault_severity_snapshot_array)[param_1];
+  DAT_003fd1ba = (undefined2)param_1;
+  DAT_003fd1b8 = param_2;
+  cm848_setEngineProtectionFault();
+  return;
+}
+
+
+
+//
+// Function: fault_event_queue_clear_active @ 0x0052f9d8
+//
+
+// Variables in this function: DAT_003fd1b6, DAT_003fd1b8, DAT_003fd1ba
+void fault_event_queue_clear_active(ushort param_1)
+
+{
+  uint uVar1;
+  
+  uVar1 = (uint)param_1;
+  DAT_003fd1ba = param_1;
+  if ((ushort)(&fault_severity_snapshot_array)[uVar1] == (DAT_003fd1b8 & 0xff)) {
+    (&fault_severity_snapshot_array)[uVar1] = 0;
+  }
+  cm848_triggerProtectionEvent(uVar1,DAT_003fd1b6);
+  return;
+}
+
+
+
+//
+// Function: engine_coldStart_protection_stateMachine @ 0x0052fa34
+//
+
+// Variables in this function: DAT_003fd1ba
+void hpcr_calibration_group25_load(void)
+
+{
+  if ((uint)sensor_validation_timeout_cal._0_1_ * 8000 < sensor_validation_accum) {
+    diag_suppress_stateMachine(0);
+  }
+  else if (engine_sync_type_code == 0x13ec) {
+    if ((diag_suppress_request_flag == 1) && (cold_start_phase == CSP_CRANKING)) {
+      diag_suppress_stateMachine(3);
+    }
+    if (cold_start_phase == CSP_CRANKING) {
+      BYTE_003fd1ac = (code)0x0;
+      bRam003fd1ad = 0;
+      sRam003fd1ae = 0;
+    }
+    else {
+      bRam003fd1ad = bRam003fd1ad + 1;
+      sRam003fd1ae = sRam003fd1ae + 1;
+      if (9 < bRam003fd1ad) {
+        bRam003fd1ad = 0;
+        BYTE_003fd1ac = (code)((char)BYTE_003fd1ac + '\x01');
+      }
+    }
+    switch(protection_state_machine_step) {
+    case 0:
+      protection_state_machine_step = engine_protection_timerStateMachine_init();
+      break;
+    case 1:
+      protection_state_machine_step = engine_coldStart_protection_stateMachine();
+      break;
+    case 2:
+      protection_state_machine_step = diag_camSync_deviation_check();
+      break;
+    case 3:
+      protection_state_machine_step = engine_coldStart_batteryVoltage_monitor();
+      break;
+    case 4:
+      protection_state_machine_step = engine_camSync_sampleRatio_validate();
+      break;
+    case 5:
+      protection_state_machine_step = engine_protection_timerState_shiftCheck();
+      break;
+    case 6:
+      protection_state_machine_step = engine_protection_timerBitCheck_dispatch();
+      break;
+    case 7:
+    }
+  }
+  else {
+    protection_state_machine_step = 0;
+    diag_suppress_stateMachine(0);
+    diag_suppress_request_flag = 0;
+    BYTE_003fd1ac = (code)0x0;
+    bRam003fd1ad = 0;
+    DAT_003fd1ba = 0x50;
+    cold_start_protection_state = 1;
+    cold_start_protection_branch_flag = 0;
+    cold_start_protection_timer_countdown = 0;
+    cold_start_protection_cycle_counter = 0;
+    cold_start_protection_sub_state = 0;
+    cold_start_battery_timer_a = 0xffff;
+    cold_start_battery_timer_b = 0xffff;
+    cold_start_battery_diag_suppress_done_flag = 0;
+    cam_sync_sample_ratio_dwell_count = 0;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_initialization_group25_state @ 0x00530288
+//
+

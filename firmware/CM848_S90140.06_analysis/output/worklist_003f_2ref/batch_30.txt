@@ -1,0 +1,74 @@
+=== VARIABLES TO NAME ===
+0x003fa716  (2 references)
+0x003fa72e  (2 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fa716
+void cm848_updateFaultStatusRegisters(void)
+
+{
+  boost_sensor_raw_input = sensor_channel105_raw;
+  boost_fault_filter_param_b_working = boost_fault_filter_param_b_cal;
+  boost_decel_active_working = boost_decel_active_flag._0_2_;
+  boost_fault_filter_threshold_working = boost_fault_filter_threshold_cal;
+  boost_fault_filter_hysteresis_working = boost_fault_filter_hysteresis_cal;
+  cold_start_inhibit_working = cold_start_inhibit_cal;
+  boost_fault_filter_count_cal = 10;
+  boost_fault_filter_state_pointer = (undefined *)&PTR_DAT_003fa716;
+  cm848_processFaultStateWithFilter(&boost_pressure_fault_filter_state);
+  boost_pressure_correction_working = boost_pressure_fault_filter_state;
+  if ((fuel_enable_fault_status_flags & 1) != 0) {
+    boost_pressure_correction_working = boost_fault_correction_override_cal;
+  }
+  if (boost_pressure_fault_status_flag == 0) {
+    diagnostic_status_bits_b = diagnostic_status_bits_b & 0x7fff;
+    protection_condition_shadow_flags = protection_condition_shadow_flags & 0x7fff;
+  }
+  else {
+    diagnostic_status_bits_b = diagnostic_status_bits_b | 0x8000;
+  }
+  sensor_channel105_pressure_diff = sensor_channel105_raw - boost_pressure_correction_working;
+  governor_speed_output_limit = sensor_channel105_fault_status | boost_pressure_fault_status_flag;
+  return;
+}
+
+
+
+//
+// Function: cm848_selectFaultProtectionValue @ 0x00018a50
+//
+
+// Variables in this function: DAT_003fa716, DAT_003fa72e
+void mpc555_initFaultProtectionVariables(void)
+
+{
+  fuel_enable_fault_count_working = 0;
+  DAT_003fa728 = 0;
+  DAT_003fa730 = 0;
+  boost_pressure_fault_status_flag = 0;
+  DAT_003fa72e = boost_fault_filter_hysteresis_cal;
+  if ((diagnostic_status_bits_b & 0x8000) == 0) {
+    DAT_003fa72e = 0;
+  }
+  DAT_003fa71a = (int)(short)boost_pressure_correction_working << 0x10;
+  PTR_DAT_003fa716 = &DAT_00406742;
+  boost_pressure_correction_raw = sensor_channel105_raw;
+  boost_pressure_correction_snapshot = sensor_channel105_raw;
+  if ((sensor_channel105_fault_status == 0) || (sensor_channel105_fault_status == 1)) {
+    fuel_demand_enable_state = 0;
+  }
+  if (sensor_channel105_fault_status == 2) {
+    fuel_demand_enable_state = 2;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_processSensorProtectionRamp @ 0x00018bc0
+//
+

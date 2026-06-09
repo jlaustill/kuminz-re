@@ -1,0 +1,105 @@
+=== VARIABLES TO NAME ===
+0x003fd229  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fd229
+void engine_coolantTemp_overheat_monitor(void)
+
+{
+  if (coolant_overheat_condition_flags != 3) {
+    if (0x9ff < (int)(short)sensor_readings_t_0040baf2.coolant_temp - (int)DAT_003fd229) {
+      coolant_overheat_condition_flags = coolant_overheat_condition_flags | 1;
+    }
+    if ((int)DAT_0005a9be < (int)(short)sensor_readings_t_0040baf2.coolant_temp) {
+      coolant_overheat_condition_flags = coolant_overheat_condition_flags | 2;
+    }
+    if (coolant_overheat_condition_flags == 3) {
+      if (fault_ring_epoch_counts._0_1_ < 0x27) {
+        fault_ring_epoch_counts._0_1_ = fault_ring_epoch_counts._0_1_ + 1;
+      }
+      else {
+        fault_ring_epoch_counts._0_1_ = 0;
+      }
+      fault_ring_buffer_auto_clear_emission();
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: diag_faultEntry_conditions_validate @ 0x00534250
+//
+
+// Variables in this function: DAT_003fd229
+void cm848_mainLoopServiceMonitor(void)
+
+{
+  char cVar1;
+  dword *pdVar2;
+  byte *pbVar3;
+  int iVar4;
+  ushort *puVar5;
+  uint uVar6;
+  
+  if (fault_service_monitor_startup_delay_count == 0) {
+    fault_service_monitor_subtask_step = fault_service_monitor_subtask_step + 1;
+    if (fault_service_monitor_subtask_step == 1) {
+      engine_coolantTemp_overheat_monitor();
+    }
+    else if (fault_service_monitor_subtask_step == 2) {
+      uVar6 = 0;
+      pdVar2 = &fault_timestamp_array;
+      do {
+        if ((*(byte *)((int)pdVar2 + uVar6 * 7 + 5) & 1) == 0) {
+          pbVar3 = &fault_status_array;
+          iVar4 = uVar6 * 3;
+          if ((((((&fault_status_array)[iVar4] & 0xe) != 0) &&
+               (((&fault_entry_flags)[uVar6 * 6] & 2) != 0)) &&
+              (((&fault_status_array)[iVar4] & 1) == 0)) &&
+             (cVar1 = diag_faultEntry_conditions_validate(uVar6), cVar1 != '\0')) {
+            pbVar3[iVar4] = pbVar3[iVar4] | 1;
+          }
+        }
+        uVar6 = uVar6 + 1 & 0xff;
+      } while (uVar6 < 0xaa);
+    }
+    else if (fault_service_monitor_subtask_step == 3) {
+      uVar6 = 0;
+      pbVar3 = &fault_status_array;
+      do {
+        iVar4 = uVar6 * 3;
+        if ((((*(ushort *)(pbVar3 + iVar4 + 1) & 1) != 0) &&
+            (((&fault_entry_flags)[uVar6 * 6] & 2) != 0)) &&
+           ((((&fault_entry_flags)[uVar6 * 6] & 0x20) != 0 &&
+            (((*(ushort *)(pbVar3 + iVar4 + 1) & 4) == 0 &&
+             (cVar1 = diag_faultEntry_conditions_validate(uVar6), cVar1 != '\0')))))) {
+          puVar5 = (ushort *)(pbVar3 + iVar4 + 1);
+          *puVar5 = *puVar5 & 7 | 4 | *puVar5 & 0xfff8;
+        }
+        uVar6 = uVar6 + 1 & 0xff;
+      } while (uVar6 < 0xaa);
+    }
+    else if (fault_service_monitor_subtask_step != 4) {
+      fault_service_monitor_subtask_step = 0;
+    }
+  }
+  else {
+    fault_service_monitor_startup_delay_count = fault_service_monitor_startup_delay_count - 1;
+    if (fault_service_monitor_startup_delay_count == 0) {
+      DAT_003fd229 = sensor_readings_t_0040baf2.coolant_temp;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_auxiliaryControlTask @ 0x00534530
+//
+

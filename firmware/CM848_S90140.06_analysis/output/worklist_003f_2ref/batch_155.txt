@@ -1,0 +1,104 @@
+=== VARIABLES TO NAME ===
+0x003fcf0a  (2 references)
+0x003fcf0e  (2 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fcf0a, DAT_003fcf0e
+void protectionPhaseGroupA_Control(void)
+
+{
+  uint uVar1;
+  uint uVar2;
+  word wVar3;
+  
+  if ((((protection_config_flags_b & 4) != 0) &&
+      ((protection_status_flags_t_0040b0f2.output_flags & 1) == 0)) &&
+     ((protection_status_flags_t_0040b0f2.rate_limit_flags & 1) == 0)) {
+    if ((protection_condition_flags_t_0040b0e8.condition_eval & 0x10) == 0) {
+      uVar2 = (uint)protection_throttle_position_received -
+              (uint)protection_throttle_position_measured;
+      if ((int)uVar2 < 1) {
+        uVar2 = 0;
+      }
+      else {
+        uVar1 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fcf0a);
+        uVar1 = uVar1 & 0xffff;
+        uVar2 = (uint)(CONCAT44((int)((ulonglong)uVar1 * (ulonglong)uVar2 >> 0x20) +
+                                uVar1 * ((int)uVar2 >> 0x1f),uVar1 * uVar2) / 100);
+        if ((int)uVar2 < 0xfa01) {
+          if ((int)uVar2 < 0) {
+            uVar2 = 0;
+          }
+        }
+        else {
+          uVar2 = 64000;
+        }
+      }
+      protection_ramp_position_b = (word)uVar2;
+      protection_throttle_error = (uint)protection_derate_rpm_limit - (uVar2 & 0xffff);
+      if ((DAT_00408af2 < (int)protection_throttle_error) && (protection_derate_rpm_limit == 0)) {
+        if (DAT_00408b1e < protection_throttle_hpcr_setpoint) {
+          _throttle_setpoint_limit_arg = (uint)protection_throttle_setpoint + (uint)DAT_00408b20;
+          cm848_throttleSetpoint_limit(_throttle_setpoint_limit_arg);
+        }
+      }
+      else {
+        protection_throttle_error_delta = protection_throttle_error - DAT_003fcf0e;
+        protection_throttle_integral_accumulator =
+             protection_throttle_integral_accumulator + protection_throttle_error;
+        DAT_003fcf0e = protection_throttle_error;
+        cm848_throttleGain_loadBased_calc();
+        cm848_throttleGain_velocityBased_calc();
+        cm848_throttleGain_timedAccumulate_update();
+      }
+      wVar3 = protection_throttle_setpoint;
+      if (protection_throttle_invert_flag == 1) {
+        wVar3 = 0x6400 - protection_throttle_setpoint;
+      }
+    }
+    else {
+      wVar3 = 0x5f00;
+    }
+    if ((j1939_pgn_handler_index_hpcr != 0) && (j1939_pgn_handler_index_hpcr < 0x33)) {
+      protection_throttle_hpcr_setpoint = wVar3;
+      (**(code **)(&j1939_pgn_handler_table_func3 + (uint)j1939_pgn_handler_index_hpcr * 0x10))
+                (wVar3);
+    }
+    if ((j1939_pgn_handler_index_hpcr != 0) && (j1939_pgn_handler_index_hpcr < 0x33)) {
+      protection_throttle_hpcr_period = 1000000 / protection_throttle_hpcr_frequency;
+      (**(code **)(&j1939_pgn_handler_table_func2 + (uint)j1939_pgn_handler_index_hpcr * 0x10))
+                (protection_throttle_hpcr_period);
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: initHpcr_HandlerRoutines @ 0x0051cd88
+//
+
+// Variables in this function: DAT_003fcf0a
+void initHpcr_HandlerRoutines(void)
+
+{
+  DAT_003fcf08 = 2;
+  DAT_003fcf0a = 2;
+  if ((j1939_pgn_handler_index_hpcr != 0) && (j1939_pgn_handler_index_hpcr < 0x33)) {
+    (**(code **)(&j1939_pgn_handler_table + (uint)j1939_pgn_handler_index_hpcr * 0x10))();
+  }
+  throttle_integral_period_counter = protection_throttle_integral_period;
+  protection_throttle_setpoint = DAT_00408b34;
+  return;
+}
+
+
+
+//
+// Function: FUN_0051ce14 @ 0x0051ce14
+//
+

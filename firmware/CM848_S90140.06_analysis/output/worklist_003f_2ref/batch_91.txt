@@ -1,0 +1,192 @@
+=== VARIABLES TO NAME ===
+0x003fb878  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fb878
+void cm848_sensorCalibrationCheck(void)
+
+{
+  short sVar1;
+  
+  if ((engine_position_event_counter != 0) && (engine_position_init_done_flag == 0)) {
+    engine_position_init_done_flag = 3;
+    sensor_validation_trigger_flag = 0;
+    sensor_validation_period_array = 6;
+    sensor_validation_phase_array = 0x1e;
+    protection_condition_snapshot = 2;
+    j1939_protection_status_byte = 0x9e;
+    sensor_validation_result_working._0_2_ =
+         (&sensor_validation_result_array)[sensor_validation_array_index];
+    DAT_003fb878 = 0xce;
+    sensor_validation_result_working._2_2_ =
+         (ushort)(&sensor_validation_result_buffer)[sensor_validation_array_index];
+    DAT_003fb879 = 0xe;
+    engine_sync_diagnostic_code = 4;
+    j1939_protection_response_callback = cm848_protectionConfigSelector;
+    sVar1 = cm848_j1939QueueTransmitMessage(&j1939_tx_message_buffer_b,1);
+    if (sVar1 == 0) {
+      engine_position_event_counter = engine_position_event_counter - 1;
+      sensor_validation_array_index =
+           sensor_validation_array_index + 1 +
+           (short)((int)(uint)(ushort)(sensor_validation_array_index + 1) >> 6) * -0x40;
+    }
+    else {
+      engine_position_init_done_flag = 0;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_validateMemoryBlockChecksum @ 0x0004bf90
+//
+
+// Variables in this function: DAT_003fb878
+void cm848_protectionLimitCalculator(void)
+
+{
+  bool bVar1;
+  uint uVar2;
+  word wVar3;
+  word *pwVar4;
+  uint uVar5;
+  short sVar6;
+  int iVar7;
+  word *pwVar8;
+  ushort uVar9;
+  ushort uVar10;
+  uint uVar11;
+  uint uVar12;
+  byte bVar13;
+  
+  wVar3 = sensor_validation_entry_count;
+  if (engine_position_init_done_flag == 0) {
+    engine_position_init_done_flag = 4;
+    uVar9 = 0;
+    if (sensor_validation_state == 1) {
+      uVar12 = (uint)(short)sensor_validation_period_remaining;
+      if (0x20 < (int)uVar12) {
+        if ((sensor_validation_sample_base & 0x1f) == 0) {
+          uVar12 = 0x20;
+        }
+        else {
+          uVar12 = 0x20 - (sensor_validation_sample_base & 0x1f);
+        }
+      }
+      sensor_validation_step_size = (word)uVar12;
+      uVar5 = uVar12 >> 1 & 0x7fff;
+      sensor_validation_entry_count = (word)uVar5;
+      sensor_validation_period_array = 6;
+      sensor_validation_phase_array = 0xe;
+      protection_condition_snapshot = 2;
+      j1939_protection_status_byte = 0x8e;
+      sensor_validation_result_working._0_2_ = sensor_validation_sample_base;
+      bVar13 = 3;
+      DAT_003fb878 = 0xce;
+      uVar12 = 3;
+      uVar11 = 0;
+      iVar7 = uVar5 - 1;
+      pwVar8 = (word *)sensor_validation_table_ptr;
+      if (0 < iVar7) {
+        pwVar4 = (word *)(sensor_validation_table_ptr + -2);
+        do {
+          pwVar8 = pwVar4;
+          pwVar4 = pwVar8 + 1;
+          (&sensor_validation_period_array)[bVar13] = *pwVar4;
+          bVar13 = bVar13 + 1;
+          (&sensor_validation_phase_array)[uVar12] = 0xce;
+          uVar12 = uVar12 + 1 & 0xff;
+          uVar11 = uVar11 + 1 & 0xff;
+        } while ((int)uVar11 < iVar7);
+        pwVar8 = pwVar8 + 2;
+      }
+      (&sensor_validation_period_array)[bVar13] = *pwVar8;
+      engine_sync_diagnostic_code = bVar13 + 1;
+      (&sensor_validation_phase_array)[uVar12] = 0x4e;
+      sensor_validation_state = 3;
+      sensor_validation_trigger_flag = 0;
+      j1939_protection_response_callback = cm848_protectionConfigSelector;
+      sVar6 = cm848_j1939QueueTransmitMessage(&j1939_tx_message_buffer_b,1);
+      if (sVar6 != 0) {
+        uVar10 = 1;
+        do {
+          do {
+            uVar12 = TBUr;
+            iVar7 = TBLr;
+            uVar11 = TBUr;
+          } while (uVar12 != uVar11);
+          do {
+            do {
+              uVar5 = TBUr;
+              uVar11 = TBLr;
+              uVar2 = TBUr;
+            } while (uVar5 != uVar2);
+          } while ((uVar5 < uVar12) || (uVar11 < iVar7 + 0x14U));
+          sVar6 = cm848_j1939QueueTransmitMessage(&j1939_tx_message_buffer_b,1);
+          uVar9 = uVar10;
+        } while ((sVar6 != 0) && (uVar9 = uVar10 + 1, bVar1 = uVar10 < 0x20, uVar10 = uVar9, bVar1))
+        ;
+      }
+    }
+    else {
+      if (sensor_validation_state != 3) {
+        engine_position_init_done_flag = 4;
+        return;
+      }
+      engine_position_init_done_flag = 4;
+      sensor_validation_period_array = 3;
+      sensor_validation_phase_array = 0x8e;
+      protection_condition_snapshot = sensor_validation_sample_base;
+      engine_sync_diagnostic_code = 2;
+      j1939_protection_status_byte = 0xce;
+      uVar12 = 2;
+      uVar10 = 0;
+      do {
+        (&sensor_validation_period_array)[engine_sync_diagnostic_code] = 0;
+        engine_sync_diagnostic_code = engine_sync_diagnostic_code + 1;
+        (&sensor_validation_phase_array)[uVar12] = 0xce;
+        uVar12 = uVar12 + 1 & 0xff;
+        uVar10 = uVar10 + 1 & 0xff;
+      } while (uVar10 <= wVar3);
+      sensor_validation_state = 2;
+      j1939_protection_response_callback = cm848_validateSensorData;
+      sVar6 = cm848_j1939QueueTransmitMessage(&j1939_tx_message_buffer_b,1);
+      if (sVar6 != 0) {
+        uVar9 = 1;
+        do {
+          do {
+            uVar12 = TBUr;
+            iVar7 = TBLr;
+            uVar11 = TBUr;
+          } while (uVar12 != uVar11);
+          do {
+            do {
+              uVar5 = TBUr;
+              uVar11 = TBLr;
+              uVar2 = TBUr;
+            } while (uVar5 != uVar2);
+          } while ((uVar5 < uVar12) || (uVar11 < iVar7 + 0x14U));
+          sVar6 = cm848_j1939QueueTransmitMessage(&j1939_tx_message_buffer_b,1);
+        } while ((sVar6 != 0) && (uVar10 = uVar9 + 1, bVar1 = uVar9 < 0x20, uVar9 = uVar10, bVar1));
+      }
+    }
+    if (0x1f < uVar9) {
+      system_status_flags_t_003fe974.system_faults =
+           system_status_flags_t_003fe974.system_faults | 0x20;
+      engine_position_init_done_flag = 0;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_initProtectionLimitVariables @ 0x0004c69c
+//
+

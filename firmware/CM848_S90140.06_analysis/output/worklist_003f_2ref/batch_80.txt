@@ -1,0 +1,77 @@
+=== VARIABLES TO NAME ===
+0x003fb3c2  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fb3c2
+void cm848_processSafetyConditionProtection(void)
+
+{
+  uint uVar1;
+  
+  if (safety_system_enable_cal == 0) {
+    return;
+  }
+  if (((((system_status_flags_t_003fe974.safety_bits_1 & 0x200) == 0) &&
+       ((system_status_flags_t_003fe974.safety_bits_1 & 0x400) == 0)) &&
+      ((system_status_flags_t_003fe974.safety_bits_1 & 0x800) == 0)) &&
+     ((system_status_flags_t_003fe974.safety_bits_1 & 0x1000) == 0)) {
+    safety_condition_active_flag._0_2_ = 0;
+    if (safety_fuel_blend_fraction == 0) {
+      uVar1 = (uint)fuel_demand_load_axis;
+      goto LAB_00038a4c;
+    }
+    safety_fuel_blend_fraction = safety_fuel_blend_fraction - safety_fuel_blend_decrement_cal;
+  }
+  else {
+    safety_condition_active_flag._0_2_ = 1;
+    safety_fuel_limit_lookup = lookupTableInterpolation((table_interp_args_t *)&DAT_003fb3c2);
+    if (((safety_condition_prev_flag == 0) && (safety_condition_active_flag._0_2_ != 0)) &&
+       (safety_fuel_limit_lookup < fuel_demand_computed)) {
+      safety_blend_fuel_demand_prev = fuel_demand_load_axis;
+    }
+    if ((safety_fuel_limit_lookup < safety_blend_fuel_demand_prev) &&
+       (safety_fuel_blend_fraction = safety_fuel_blend_fraction + safety_fuel_blend_increment_cal,
+       0x6400 < safety_fuel_blend_fraction)) {
+      safety_fuel_blend_fraction = 0x6400;
+    }
+  }
+  uVar1 = ((uint)safety_blend_fuel_demand_prev * (0x6400 - (uint)safety_fuel_blend_fraction)) /
+          0x6400 + ((uint)safety_fuel_limit_lookup * (uint)safety_fuel_blend_fraction) / 0x6400;
+LAB_00038a4c:
+  if ((uVar1 & 0xffff) < (uint)protection_fuel_limit_active) {
+    governor_fuel_mode_command = 0x3e;
+    protection_fuel_limit_active = (word)uVar1;
+  }
+  safety_fuel_blend_output = (word)uVar1;
+  safety_condition_prev_flag = safety_condition_active_flag._0_2_;
+  return;
+}
+
+
+
+//
+// Function: cm848_initProtectionFilterLimits @ 0x00038a98
+//
+
+// Variables in this function: DAT_003fb3c2
+void cm848_initProtectionFilterLimits(void)
+
+{
+  DAT_003fb3c2 = 2;
+  safety_fuel_blend_output = 0x1700;
+  safety_blend_fuel_demand_prev = 0x1700;
+  safety_fuel_blend_fraction = 0;
+  return;
+}
+
+
+
+//
+// Function: cm848_processJ1939DiagnosticMessages @ 0x00038ac8
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

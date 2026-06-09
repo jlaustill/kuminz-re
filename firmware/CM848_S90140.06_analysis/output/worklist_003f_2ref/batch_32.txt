@@ -1,0 +1,82 @@
+=== VARIABLES TO NAME ===
+0x003fa7fc  (2 references)
+0x003fa7fd  (2 references)
+0x003fa806  (2 references)
+0x003fa807  (2 references)
+0x003fa816  (2 references)
+0x003fa817  (4 references)
+0x003fa819  (2 references)
+0x003fa822  (2 references)
+0x003fa823  (2 references)
+
+Total: 9 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fa7fc, DAT_003fa7fd, DAT_003fa806, DAT_003fa807, DAT_003fa816, DAT_003fa817, DAT_003fa819, DAT_003fa822, DAT_003fa823
+void cm848_processFaultMessageTiming(void)
+
+{
+  char cVar1;
+  
+  fault_timer_state_prev_snapshot = fault_timer_state_base._0_2_;
+  DAT_003fa816 = fault_timer_state_base._2_1_;
+  DAT_003fa817._0_1_ = (undefined1)fault_timer_state_base;
+  DAT_003fa817._1_1_ = DAT_003fa7fc;
+  DAT_003fa819 = DAT_003fa7fd;
+  fault_counter_slot2_shadow = fault_counter_slot2_target;
+  _fault_counter_slot3_shadow = _fault_counter_slot3_target;
+  fault_counter_slot4_shadow = fault_counter_slot4_target;
+  DAT_003fa822 = DAT_003fa806;
+  DAT_003fa823 = DAT_003fa807;
+  _fault_slot_data_shadow_a = _fault_slot_data_copy_a;
+  _fault_slot_data_shadow_b = _fault_slot_data_copy_b;
+  fault_counter_slot7_shadow = fault_counter_slot7_target;
+  faultTimerHandler(&fault_timer_state_base);
+  cVar1 = cm848_faultCounterDecrement(fault_timer_state_prev_snapshot,fault_timer_state_base._0_2_);
+  if ((((cVar1 != '\x01') &&
+       (cVar1 = cm848_faultCounterIncrement(DAT_003fa816,fault_timer_state_base._2_1_),
+       cVar1 != '\x01')) &&
+      (cVar1 = cm848_faultCounterDecrement
+                         (CONCAT11(DAT_003fa817._0_1_,(undefined1)DAT_003fa817),
+                          CONCAT11((undefined1)fault_timer_state_base,DAT_003fa7fc)),
+      cVar1 != '\x01')) &&
+     ((cVar1 = cm848_faultCounterIncrement(DAT_003fa819,DAT_003fa7fd), cVar1 != '\x01' &&
+      (cVar1 = cm848_faultCounterDecrement(fault_counter_slot2_shadow,fault_counter_slot2_target),
+      cVar1 != '\x01')))) {
+    cVar1 = cm848_faultCounterIncrement
+                      (fault_counter_slot3_shadow._0_1_,fault_counter_slot3_target._0_1_);
+    if (cVar1 != '\x01') {
+      cVar1 = cm848_faultCounterDecrement(ram0x003fa81d,ram0x003fa801);
+      if (((cVar1 != '\x01') &&
+          (cVar1 = cm848_faultCounterIncrement
+                             (_fault_counter_slot3_shadow & 0xff,_fault_counter_slot3_target & 0xff)
+          , cVar1 != '\x01')) &&
+         ((cVar1 = cm848_faultCounterDecrement
+                             (fault_counter_slot4_shadow,fault_counter_slot4_target),
+          cVar1 != '\x01' &&
+          (cVar1 = cm848_faultCounterIncrement(DAT_003fa822,DAT_003fa806), cVar1 != '\x01')))) {
+        cVar1 = cm848_faultCounterDecrement
+                          (CONCAT11(DAT_003fa823,fault_slot_data_shadow_a._0_1_),
+                           CONCAT11(DAT_003fa807,fault_slot_data_copy_a._0_1_));
+        if ((cVar1 != '\x01') &&
+           (cVar1 = cm848_faultCounterIncrement
+                              (fault_counter_slot7_shadow & 0xff,fault_counter_slot7_target & 0xff),
+           cVar1 != '\x01')) {
+          return;
+        }
+      }
+    }
+  }
+  cm848_sendFaultTimerMessage();
+  return;
+}
+
+
+
+//
+// Function: initFaultTimerMessage @ 0x0001b900
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

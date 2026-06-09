@@ -1,0 +1,28 @@
+=== VARIABLES TO NAME ===
+0x003fad78  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fad78
+void cm848_initJ1939Etc1ControlBuffer(void)
+
+{
+  j1939_pgn61441_tx_header = CONCAT13(((byte)j1939_pgn61441_source_address_bits & 7) << 2,0xf00100);
+  j1939_pgn61441_tx_header = CONCAT31(j1939_pgn61441_tx_header._0_3_,(char)j1939_source_address);
+  j1939_pgn61441_tx_byte_count = 5;
+  DAT_003fad78 = 0xff;
+  DAT_003fad7a = 0xff;
+  DAT_003fad79 = 0xff;
+  j1939_pgn61441_data_ptr = &DAT_003fad78;
+  uRam003fad8a = 0x3fad8e;
+  return;
+}
+
+
+
+//
+// Function: cm848_setEngineControllerStateCode @ 0x00025884
+//
+

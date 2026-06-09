@@ -1,0 +1,98 @@
+=== VARIABLES TO NAME ===
+0x003fcdb2  (2 references)
+0x003fcdb4  (2 references)
+0x003fcdb6  (2 references)
+0x003fcdb8  (2 references)
+0x003fcdba  (2 references)
+
+Total: 5 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fcdb2, DAT_003fcdb4, DAT_003fcdb6, DAT_003fcdb8, DAT_003fcdba
+void protection_fault_latch_update(void)
+
+{
+  if (((((system_status_flags_t_003fe974.safety_bits_1 & 0x200) == 0) &&
+       ((system_status_flags_t_003fe974.safety_bits_1 & 0x400) == 0)) &&
+      ((system_status_flags_t_003fe974.safety_bits_1 & 0x800) == 0)) &&
+     ((system_status_flags_t_003fe974.safety_bits_1 & 0x1000) == 0)) {
+    protection_fault_latch_flag = 0;
+  }
+  else {
+    protection_fault_latch_flag = 1;
+  }
+  DAT_0040b216 = protection_fault_latch_flag;
+  if ((coolant_bucket_overheat_detected_flag == 0) && (governor_temp_protection_active_flag == 0)) {
+    protection_sensor_state_b = 0;
+  }
+  else {
+    protection_sensor_state_b = 1;
+  }
+  if ((coolant_bucket_overheat_active_flag == 0) || (DAT_003fcdb4 != 0)) {
+    if ((governor_temp_protection_ramp_flag == 0) || (DAT_003fcdb6 != 0)) {
+      if ((protection_coolant_classb_active_flag == 0) || (DAT_003fcdb2 != 0)) {
+        if ((protection_sensor_fault_active_flag == 0) || (DAT_003fcdb8 != 0)) {
+          if ((protection_fault_latch_flag == 0) || (DAT_003fcdba != 0)) {
+            if (((coolant_bucket_overheat_active_flag == 0) &&
+                (((governor_temp_protection_ramp_flag == 0 &&
+                  (protection_coolant_classb_active_flag == 0)) &&
+                 (protection_sensor_fault_active_flag == 0)))) && (protection_fault_latch_flag == 0)
+               ) {
+              protection_ramp_step_current = 0;
+            }
+          }
+          else if (protection_ramp_fraction_fault_latch != 0) {
+            protection_ramp_step_current =
+                 (word)((int)((int)(short)protection_ramp_fraction_fault_latch *
+                              (uint)protection_ramp_steps_max * 5) / 10);
+          }
+        }
+        else if (protection_ramp_fraction_sensor_fault != 0) {
+          protection_ramp_step_current =
+               (word)((int)((int)(short)protection_ramp_fraction_sensor_fault *
+                            (uint)protection_ramp_steps_max * 5) / 10);
+        }
+      }
+      else if (protection_ramp_fraction_coolant_classb != 0) {
+        protection_ramp_step_current =
+             (word)((int)((int)(short)protection_ramp_fraction_coolant_classb *
+                          (uint)protection_ramp_steps_max * 5) / 10);
+      }
+    }
+    else if (protection_ramp_fraction_temp_ramp != 0) {
+      protection_ramp_step_current =
+           (word)((int)((int)(short)protection_ramp_fraction_temp_ramp *
+                        (uint)protection_ramp_steps_max * 5) / 10);
+    }
+  }
+  else if (protection_ramp_fraction_coolant_overheat != 0) {
+    protection_ramp_step_current =
+         (word)((int)((int)(short)protection_ramp_fraction_coolant_overheat *
+                      (uint)protection_ramp_steps_max * 5) / 10);
+  }
+  if ((short)protection_ramp_step_current < 1) {
+    protection_sensor_state_a = 0;
+  }
+  else if ((word)(((short)protection_ramp_steps_max * 0x4fb) / 10) == protection_ramp_step_current)
+  {
+    protection_sensor_state_a = 1;
+  }
+  else {
+    protection_sensor_state_a = 1;
+    protection_ramp_step_current = protection_ramp_step_current - 1;
+  }
+  DAT_003fcdb4 = coolant_bucket_overheat_active_flag;
+  DAT_003fcdb6 = governor_temp_protection_ramp_flag;
+  DAT_003fcdb2 = protection_coolant_classb_active_flag;
+  DAT_003fcdb8 = protection_sensor_fault_active_flag;
+  DAT_003fcdba = protection_fault_latch_flag;
+  return;
+}
+
+
+
+//
+// Function: protection_sensor_state_initialize @ 0x005134e8
+//
+

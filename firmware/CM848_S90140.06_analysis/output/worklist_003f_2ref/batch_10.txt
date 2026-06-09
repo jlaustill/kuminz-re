@@ -1,0 +1,39 @@
+=== VARIABLES TO NAME ===
+0x003fa074  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fa074
+void cm848_sensorChannel9_init(void)
+
+{
+  sensorChannelConfigInit
+            (&DAT_000594be,&sensor_channel9_ram,&DAT_003fa074,&DAT_000594ce,&DAT_000594fa,
+             (void *)0x2,0xa076,7,(word *)0x2f,(word *)0x30,0xbdd0,0xbdd2,0xbe3a);
+  return;
+}
+
+
+
+//
+// Function: cm848_sensorChannel9_process @ 0x0000d320
+//
+
+// Variables in this function: DAT_003fa074
+void cm848_sensorChannel9_process(void)
+
+{
+  updateSensorChannelWithConfig
+            (&DAT_000594be,&sensor_channel9_ram,&DAT_003fa074,&DAT_000594ce,&DAT_000594fa,
+             (void *)0x2,0xa076,7,(word *)0x2f,(word *)0x30,0xbdd0,0xbdd2,0xbe3a);
+  return;
+}
+
+
+
+//
+// Function: cm848_sensorChannel10_oilTempInit @ 0x0000d3ac
+//
+

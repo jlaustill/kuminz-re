@@ -1,0 +1,609 @@
+=== VARIABLES TO NAME ===
+0x003fa69a  (2 references)
+0x003fa6a2  (2 references)
+0x003fa6aa  (2 references)
+0x003fa6ae  (2 references)
+0x003fa6b6  (2 references)
+0x003fa6be  (2 references)
+0x003fa6c2  (2 references)
+0x003fa6c6  (2 references)
+
+Total: 8 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fa6be
+void cm848_calculateFuelDemandMode1(void)
+
+{
+  uint unaff_r30;
+  uint unaff_r31;
+  
+  if (boost_map_index_current == 1) {
+    fuel_demand_mode1_boost_map1 =
+         cm848_dualAxisTableInterpolation
+                   (&fuel_demand_mode1_interp_state,engine_rpm_state_t_0040b7ac.current_rpm,0x49e8);
+    unaff_r31 = (uint)fuel_demand_mode1_boost_map1;
+  }
+  else if (boost_map_index_current == 2) {
+    fuel_demand_mode1_boost_map2 =
+         cm848_dualAxisTableInterpolation
+                   (&fuel_demand_mode1_interp_state,engine_rpm_state_t_0040b7ac.current_rpm,0x4a32);
+    unaff_r31 = (uint)fuel_demand_mode1_boost_map2;
+  }
+  else if (boost_map_index_current == 3) {
+    fuel_demand_mode1_boost_map3 =
+         cm848_dualAxisTableInterpolation
+                   (&fuel_demand_mode1_interp_state,engine_rpm_state_t_0040b7ac.current_rpm,0x4a7c);
+    unaff_r31 = (uint)fuel_demand_mode1_boost_map3;
+  }
+  else if (boost_map_index_current == 4) {
+    fuel_demand_mode1_boost_map4 =
+         cm848_dualAxisTableInterpolation
+                   (&fuel_demand_mode1_interp_state,engine_rpm_state_t_0040b7ac.current_rpm,0x4ac6);
+    unaff_r31 = (uint)fuel_demand_mode1_boost_map4;
+  }
+  if (boost_map_index_target == 1) {
+    fuel_demand_mode1_boost_map1 =
+         cm848_dualAxisTableInterpolation
+                   (&fuel_demand_mode1_interp_state,engine_rpm_state_t_0040b7ac.current_rpm,0x49e8);
+    unaff_r30 = (uint)fuel_demand_mode1_boost_map1;
+  }
+  else if (boost_map_index_target == 2) {
+    fuel_demand_mode1_boost_map2 =
+         cm848_dualAxisTableInterpolation
+                   (&fuel_demand_mode1_interp_state,engine_rpm_state_t_0040b7ac.current_rpm,0x4a32);
+    unaff_r30 = (uint)fuel_demand_mode1_boost_map2;
+  }
+  else if (boost_map_index_target == 3) {
+    fuel_demand_mode1_boost_map3 =
+         cm848_dualAxisTableInterpolation
+                   (&fuel_demand_mode1_interp_state,engine_rpm_state_t_0040b7ac.current_rpm,0x4a7c);
+    unaff_r30 = (uint)fuel_demand_mode1_boost_map3;
+  }
+  else if (boost_map_index_target == 4) {
+    fuel_demand_mode1_boost_map4 =
+         cm848_dualAxisTableInterpolation
+                   (&fuel_demand_mode1_interp_state,engine_rpm_state_t_0040b7ac.current_rpm,0x4ac6);
+    unaff_r30 = (uint)fuel_demand_mode1_boost_map4;
+  }
+  fuel_demand_mode1_boost5_lookup =
+       cm848_dualAxisTableInterpolation
+                 (&DAT_003fa6be,engine_rpm_state_t_0040b7ac.current_rpm,0x499e);
+  fuel_demand_mode1_filtered =
+       cm848_filterInputValue
+                 (unaff_r31,unaff_r30,fuel_demand_mode1_boost5_lookup,boost_map_index_current,
+                  boost_map_index_target,fuel_blend_state_t_0040a494.blend_weight,
+                  fuel_blend_state_t_0040a494.blend_mode);
+  return;
+}
+
+
+
+//
+// Function: cm848_calculateFuelDemandMode2 @ 0x000149a4
+//
+
+// Variables in this function: DAT_003fa6b6
+void cm848_calculateFuelDemandMode2(void)
+
+{
+  int unaff_r30;
+  int unaff_r31;
+  
+  if (boost_map_index_current == 1) {
+    fuel_demand_mode2_boost_map1 =
+         cm848_dualAxisTableInterpolation
+                   (&fuel_demand_mode2_interp_state,engine_rpm_state_t_0040b7ac.current_rpm,0x49e8);
+    unaff_r31 = (int)(short)fuel_demand_mode2_boost_map1;
+  }
+  else if (boost_map_index_current == 2) {
+    fuel_demand_mode2_boost_map2 =
+         cm848_dualAxisTableInterpolation
+                   (&fuel_demand_mode2_interp_state,engine_rpm_state_t_0040b7ac.current_rpm,0x4a32);
+    unaff_r31 = (int)(short)fuel_demand_mode2_boost_map2;
+  }
+  else if (boost_map_index_current == 3) {
+    fuel_demand_mode2_boost_map3 =
+         cm848_dualAxisTableInterpolation
+                   (&fuel_demand_mode2_interp_state,engine_rpm_state_t_0040b7ac.current_rpm,0x4a7c);
+    unaff_r31 = (int)(short)fuel_demand_mode2_boost_map3;
+  }
+  else if (boost_map_index_current == 4) {
+    fuel_demand_mode2_boost_map4 =
+         cm848_dualAxisTableInterpolation
+                   (&fuel_demand_mode2_interp_state,engine_rpm_state_t_0040b7ac.current_rpm,0x4ac6);
+    unaff_r31 = (int)(short)fuel_demand_mode2_boost_map4;
+  }
+  if (boost_map_index_target == 1) {
+    fuel_demand_mode2_boost_map1 =
+         cm848_dualAxisTableInterpolation
+                   (&fuel_demand_mode2_interp_state,engine_rpm_state_t_0040b7ac.current_rpm,0x49e8);
+    unaff_r30 = (int)(short)fuel_demand_mode2_boost_map1;
+  }
+  else if (boost_map_index_target == 2) {
+    fuel_demand_mode2_boost_map2 =
+         cm848_dualAxisTableInterpolation
+                   (&fuel_demand_mode2_interp_state,engine_rpm_state_t_0040b7ac.current_rpm,0x4a32);
+    unaff_r30 = (int)(short)fuel_demand_mode2_boost_map2;
+  }
+  else if (boost_map_index_target == 3) {
+    fuel_demand_mode2_boost_map3 =
+         cm848_dualAxisTableInterpolation
+                   (&fuel_demand_mode2_interp_state,engine_rpm_state_t_0040b7ac.current_rpm,0x4a7c);
+    unaff_r30 = (int)(short)fuel_demand_mode2_boost_map3;
+  }
+  else if (boost_map_index_target == 4) {
+    fuel_demand_mode2_boost_map4 =
+         cm848_dualAxisTableInterpolation
+                   (&fuel_demand_mode2_interp_state,engine_rpm_state_t_0040b7ac.current_rpm,0x4ac6);
+    unaff_r30 = (int)(short)fuel_demand_mode2_boost_map4;
+  }
+  fuel_demand_mode2_map5_lookup =
+       cm848_dualAxisTableInterpolation
+                 (&DAT_003fa6b6,engine_rpm_state_t_0040b7ac.current_rpm,0x499e);
+  fuel_demand_mode2_filtered =
+       cm848_filterInputValue
+                 (unaff_r31,unaff_r30,(int)(short)fuel_demand_mode2_map5_lookup,
+                  boost_map_index_current,boost_map_index_target,
+                  fuel_blend_state_t_0040a494.blend_weight,fuel_blend_state_t_0040a494.blend_mode);
+  return;
+}
+
+
+
+//
+// Function: cm848_calculateFuelDemandTimingOffset @ 0x00014d38
+//
+
+// Variables in this function: DAT_003fa6aa, DAT_003fa6ae
+void cm848_calculateFuelDemandTimingOffset(void)
+
+{
+  word wVar1;
+  word wVar2;
+  int unaff_r20;
+  int unaff_r21;
+  int iVar3;
+  int unaff_r22;
+  int iVar4;
+  int iVar5;
+  int unaff_r27;
+  int iVar6;
+  
+  fuel_demand_calc_c =
+       cm848_dualAxisTableInterpolation
+                 (&fuel_demand_timing_offset_interp_state,engine_rpm_state_t_0040b7ac.current_rpm,
+                  0x49e8);
+  fuel_demand_calc_b =
+       cm848_dualAxisTableInterpolation
+                 (&fuel_demand_timing_offset_interp_state,engine_rpm_state_t_0040b7ac.current_rpm,
+                  0x4a32);
+  fuel_demand_calc_a =
+       cm848_dualAxisTableInterpolation
+                 (&fuel_demand_timing_offset_interp_state,engine_rpm_state_t_0040b7ac.current_rpm,
+                  0x4a7c);
+  fuel_demand_calc_boost5_lookup =
+       cm848_dualAxisTableInterpolation
+                 (&fuel_demand_timing_offset_interp_state,engine_rpm_state_t_0040b7ac.current_rpm,
+                  0x4ac6);
+  iVar5 = (int)(short)fuel_demand_calc_boost5_lookup;
+  if (boost_map_index_current == 1) {
+    iVar6 = (int)(short)fuel_demand_calc_c;
+  }
+  else if (boost_map_index_current == 2) {
+    iVar6 = (int)(short)fuel_demand_calc_b;
+  }
+  else if (boost_map_index_current == 3) {
+    iVar6 = (int)(short)fuel_demand_calc_a;
+  }
+  else {
+    iVar6 = iVar5;
+    if (boost_map_index_current != 4) {
+      iVar6 = unaff_r27;
+    }
+  }
+  if (boost_map_index_target == 1) {
+    iVar4 = (int)(short)fuel_demand_calc_c;
+  }
+  else if (boost_map_index_target == 2) {
+    iVar4 = (int)(short)fuel_demand_calc_b;
+  }
+  else if (boost_map_index_target == 3) {
+    iVar4 = (int)(short)fuel_demand_calc_a;
+  }
+  else {
+    iVar4 = iVar5;
+    if (boost_map_index_target != 4) {
+      iVar4 = unaff_r22;
+    }
+  }
+  if (sensor_filter_state_a == 1) {
+    iVar3 = (int)(short)fuel_demand_calc_c;
+  }
+  else if (sensor_filter_state_a == 2) {
+    iVar3 = (int)(short)fuel_demand_calc_b;
+  }
+  else if (sensor_filter_state_a == 3) {
+    iVar3 = (int)(short)fuel_demand_calc_a;
+  }
+  else {
+    iVar3 = iVar5;
+    if (sensor_filter_state_a != 4) {
+      iVar3 = unaff_r21;
+    }
+  }
+  if (sensor_filter_state_b == 1) {
+    iVar5 = (int)(short)fuel_demand_calc_c;
+  }
+  else if (sensor_filter_state_b == 2) {
+    iVar5 = (int)(short)fuel_demand_calc_b;
+  }
+  else if (sensor_filter_state_b == 3) {
+    iVar5 = (int)(short)fuel_demand_calc_a;
+  }
+  else if (sensor_filter_state_b != 4) {
+    iVar5 = unaff_r20;
+  }
+  fuel_demand_timing_lookup =
+       cm848_dualAxisTableInterpolation
+                 (&DAT_003fa6aa,engine_rpm_state_t_0040b7ac.current_rpm,0x499e);
+  wVar1 = fuel_blend_state_t_0040a494.blend_mode;
+  wVar2 = cm848_filterInputValue
+                    (iVar6,iVar4,(int)(short)fuel_demand_timing_lookup,boost_map_index_current,
+                     boost_map_index_target,fuel_blend_state_t_0040a494.blend_weight,
+                     fuel_blend_state_t_0040a494.blend_mode);
+  if ((wVar1 == 0) && (fuel_blend_bypass_flag != 0)) {
+    fuel_blend_state_t_0040a494.bypass_load_correction =
+         cm848_dualAxisTableInterpolation
+                   (&DAT_003fa6ae,engine_rpm_state_t_0040b7ac.current_rpm,0x9da);
+    boost_fuel_blend_active_flag = 1;
+    engine_load_normalized = wVar2 + fuel_blend_state_t_0040a494.bypass_load_correction;
+  }
+  else {
+    boost_fuel_blend_active_flag = 0;
+    engine_load_normalized = wVar2;
+  }
+  fuel_demand_mode_flags = 0;
+  fuel_demand_timing_filtered =
+       cm848_filterInputValue
+                 (iVar3,iVar5,(int)(short)fuel_demand_timing_lookup,sensor_filter_state_a,
+                  sensor_filter_state_b,fuel_blend_scale_factor,100);
+  return;
+}
+
+
+
+//
+// Function: cm848_calculateFuelDemandMode3 @ 0x000150b0
+//
+
+// Variables in this function: DAT_003fa6a2
+void cm848_calculateFuelDemandMode3(void)
+
+{
+  uint unaff_r30;
+  uint unaff_r31;
+  
+  if (boost_map_index_current == 1) {
+    fuel_demand_mode3_boost_map1 =
+         cm848_dualAxisTableInterpolation
+                   (&fuel_demand_mode3_interp_state,engine_rpm_state_t_0040b7ac.current_rpm,0x49e8);
+    unaff_r31 = (uint)fuel_demand_mode3_boost_map1;
+  }
+  else if (boost_map_index_current == 2) {
+    fuel_demand_mode3_boost_map2 =
+         cm848_dualAxisTableInterpolation
+                   (&fuel_demand_mode3_interp_state,engine_rpm_state_t_0040b7ac.current_rpm,0x4a32);
+    unaff_r31 = (uint)fuel_demand_mode3_boost_map2;
+  }
+  else if (boost_map_index_current == 3) {
+    fuel_demand_mode3_boost_map3 =
+         cm848_dualAxisTableInterpolation
+                   (&fuel_demand_mode3_interp_state,engine_rpm_state_t_0040b7ac.current_rpm,0x4a7c);
+    unaff_r31 = (uint)fuel_demand_mode3_boost_map3;
+  }
+  else if (boost_map_index_current == 4) {
+    fuel_demand_mode3_boost_map4 =
+         cm848_dualAxisTableInterpolation
+                   (&fuel_demand_mode3_interp_state,engine_rpm_state_t_0040b7ac.current_rpm,0x4ac6);
+    unaff_r31 = (uint)fuel_demand_mode3_boost_map4;
+  }
+  if (boost_map_index_target == 1) {
+    fuel_demand_mode3_boost_map1 =
+         cm848_dualAxisTableInterpolation
+                   (&fuel_demand_mode3_interp_state,engine_rpm_state_t_0040b7ac.current_rpm,0x49e8);
+    unaff_r30 = (uint)fuel_demand_mode3_boost_map1;
+  }
+  else if (boost_map_index_target == 2) {
+    fuel_demand_mode3_boost_map2 =
+         cm848_dualAxisTableInterpolation
+                   (&fuel_demand_mode3_interp_state,engine_rpm_state_t_0040b7ac.current_rpm,0x4a32);
+    unaff_r30 = (uint)fuel_demand_mode3_boost_map2;
+  }
+  else if (boost_map_index_target == 3) {
+    fuel_demand_mode3_boost_map3 =
+         cm848_dualAxisTableInterpolation
+                   (&fuel_demand_mode3_interp_state,engine_rpm_state_t_0040b7ac.current_rpm,0x4a7c);
+    unaff_r30 = (uint)fuel_demand_mode3_boost_map3;
+  }
+  else if (boost_map_index_target == 4) {
+    fuel_demand_mode3_boost_map4 =
+         cm848_dualAxisTableInterpolation
+                   (&fuel_demand_mode3_interp_state,engine_rpm_state_t_0040b7ac.current_rpm,0x4ac6);
+    unaff_r30 = (uint)fuel_demand_mode3_boost_map4;
+  }
+  fuel_demand_rate_map5_lookup =
+       cm848_dualAxisTableInterpolation
+                 (&DAT_003fa6a2,engine_rpm_state_t_0040b7ac.current_rpm,0x499e);
+  fuel_demand_rate_raw =
+       cm848_filterInputValue
+                 (unaff_r31,unaff_r30,fuel_demand_rate_map5_lookup,boost_map_index_current,
+                  boost_map_index_target,fuel_blend_state_t_0040a494.blend_weight,
+                  fuel_blend_state_t_0040a494.blend_mode);
+  return;
+}
+
+
+
+//
+// Function: cm848_calculateFuelDemandBlendTables @ 0x00015444
+//
+
+// Variables in this function: DAT_003fa69a
+void cm848_calculateFuelDemandBlendTables(void)
+
+{
+  word wVar1;
+  uint unaff_r20;
+  uint uVar2;
+  uint unaff_r21;
+  uint uVar3;
+  uint unaff_r22;
+  uint uVar4;
+  uint unaff_r30;
+  uint uVar5;
+  
+  fuel_quantity_channel_a =
+       cm848_dualAxisTableInterpolation
+                 (&fuel_demand_blend_tables_interp_state,engine_rpm_state_t_0040b7ac.current_rpm,
+                  0x49e8);
+  fuel_quantity_channel_b =
+       cm848_dualAxisTableInterpolation
+                 (&fuel_demand_blend_tables_interp_state,engine_rpm_state_t_0040b7ac.current_rpm,
+                  0x4a32);
+  fuel_quantity_channel_c =
+       cm848_dualAxisTableInterpolation
+                 (&fuel_demand_blend_tables_interp_state,engine_rpm_state_t_0040b7ac.current_rpm,
+                  0x4a7c);
+  fuel_quantity_channel_boost5_lookup =
+       cm848_dualAxisTableInterpolation
+                 (&fuel_demand_blend_tables_interp_state,engine_rpm_state_t_0040b7ac.current_rpm,
+                  0x4ac6);
+  uVar2 = (uint)fuel_quantity_channel_boost5_lookup;
+  if (boost_map_index_current == 1) {
+    uVar5 = (uint)fuel_quantity_channel_a;
+  }
+  else if (boost_map_index_current == 2) {
+    uVar5 = (uint)fuel_quantity_channel_b;
+  }
+  else if (boost_map_index_current == 3) {
+    uVar5 = (uint)fuel_quantity_channel_c;
+  }
+  else {
+    uVar5 = uVar2;
+    if (boost_map_index_current != 4) {
+      uVar5 = unaff_r30;
+    }
+  }
+  if (boost_map_index_target == 1) {
+    uVar4 = (uint)fuel_quantity_channel_a;
+  }
+  else if (boost_map_index_target == 2) {
+    uVar4 = (uint)fuel_quantity_channel_b;
+  }
+  else if (boost_map_index_target == 3) {
+    uVar4 = (uint)fuel_quantity_channel_c;
+  }
+  else {
+    uVar4 = uVar2;
+    if (boost_map_index_target != 4) {
+      uVar4 = unaff_r22;
+    }
+  }
+  if (sensor_filter_state_a == 1) {
+    uVar3 = (uint)fuel_quantity_channel_a;
+  }
+  else if (sensor_filter_state_a == 2) {
+    uVar3 = (uint)fuel_quantity_channel_b;
+  }
+  else if (sensor_filter_state_a == 3) {
+    uVar3 = (uint)fuel_quantity_channel_c;
+  }
+  else {
+    uVar3 = uVar2;
+    if (sensor_filter_state_a != 4) {
+      uVar3 = unaff_r21;
+    }
+  }
+  if (sensor_filter_state_b == 1) {
+    uVar2 = (uint)fuel_quantity_channel_a;
+  }
+  else if (sensor_filter_state_b == 2) {
+    uVar2 = (uint)fuel_quantity_channel_b;
+  }
+  else if (sensor_filter_state_b == 3) {
+    uVar2 = (uint)fuel_quantity_channel_c;
+  }
+  else if (sensor_filter_state_b != 4) {
+    uVar2 = unaff_r20;
+  }
+  wVar1 = cm848_dualAxisTableInterpolation
+                    (&DAT_003fa69a,engine_rpm_state_t_0040b7ac.current_rpm,0x499e);
+  fuel_demand_rate_b_base_lookup = wVar1;
+  if ((fuel_blend_bypass_flag == 0) && (fuel_blend_state_t_0040a494.blend_enable == 0)) {
+    fuel_demand_rate_output_b =
+         cm848_filterInputValue
+                   (uVar5,uVar4,wVar1,boost_map_index_current,boost_map_index_target,
+                    fuel_blend_state_t_0040a494.blend_weight,fuel_blend_state_t_0040a494.blend_mode)
+    ;
+  }
+  else {
+    fuel_demand_rate_output_b = 0;
+  }
+  boost_fuel_blend_weight_b =
+       cm848_filterInputValue
+                 (uVar3,uVar2,wVar1,sensor_filter_state_a,sensor_filter_state_b,
+                  fuel_blend_scale_factor,100);
+  return;
+}
+
+
+
+//
+// Function: cm848_lookupFuelDemandRpmTables @ 0x00015760
+//
+
+// Variables in this function: DAT_003fa6c2
+void cm848_calculateFuelLimitSource(void)
+
+{
+  bool bVar1;
+  uint uVar2;
+  word wVar3;
+  word wVar4;
+  
+  fuel_demand_load_table_result =
+       cm848_dualAxisTableInterpolation
+                 (&DAT_003fa6c2,engine_rpm_state_t_0040b7ac.current_rpm,0x4bf6);
+  wVar3 = fuel_demand_load_table_result;
+  if ((fuel_feature_control_flags & 0x80) != 0) {
+    wVar3 = fuel_demand_load_table_result + fuel_demand_offset_correction;
+  }
+  cm848_lookupFuelDemandRpmTables();
+  fuel_table_load_working = fuel_demand_load_axis;
+  if ((fuel_feature_control_flags & 0x40) != 0) {
+    fuel_table_load_working = fuel_demand_load_axis + fuel_demand_offset_correction;
+  }
+  if (fuel_table_load_working < wVar3) {
+    wVar4 = 0x35;
+  }
+  else {
+    wVar4 = 0x34;
+    fuel_table_load_working = wVar3;
+  }
+  uVar2 = (uint)(short)fuel_demand_arbitrated_snapshot;
+  fuel_blend_state_t_0040a494.fuel_demand_snapshot = fuel_demand_arbitrated_snapshot;
+  bVar1 = (int)(short)fuel_demand_blend_threshold_cal <= (int)uVar2;
+  if (bVar1) {
+    uVar2 = uVar2 - (int)(short)fuel_demand_offset_correction;
+  }
+  fuel_blend_state_t_0040a494.demand_above_threshold = (word)bVar1;
+  if ((engine_feature_enable_flags & 0x400) == 0) {
+    governor_fuel_mode_working = governor_fuel_mode_snapshot;
+    if ((int)uVar2 < 0) {
+      uVar2 = 0;
+    }
+    else if (0x1700 < (int)uVar2) {
+      uVar2 = 0x1700;
+    }
+  }
+  else {
+    uVar2 = (uint)fuel_demand_mode_0x37_val_cal;
+    governor_fuel_mode_working = 0x37;
+  }
+  fuel_table_load_axis = (word)uVar2;
+  if ((uint)fuel_table_load_working < (uVar2 & 0xffff)) {
+    fuel_table_load_axis = fuel_table_load_working;
+    governor_fuel_mode_working = wVar4;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_selectFuelLimitWithFiltering @ 0x00015bd8
+//
+
+// Variables in this function: DAT_003fa6c6
+int cm848_fuelDemandRpmCorrection(undefined4 param_1,word param_2)
+
+{
+  short sVar1;
+  
+  sVar1 = cm848_dualAxisTableInterpolation(&DAT_003fa6c6,param_2,0x5d52);
+  return (int)sVar1;
+}
+
+
+
+//
+// Function: cm848_lookupProtectionFuelDemand @ 0x00016774
+//
+
+// Variables in this function: DAT_003fa69a, DAT_003fa6a2, DAT_003fa6aa, DAT_003fa6ae, DAT_003fa6b6, DAT_003fa6be, DAT_003fa6c2, DAT_003fa6c6
+void mpc555_initFuelDemandTablePointers(void)
+
+{
+  fuel_quantity_table_a_pointer = &DAT_00402f5c;
+  fuel_quantity_table_b_pointer = &DAT_004025dc;
+  fuel_quantity_table_c_pointer = &DAT_0040283c;
+  fuel_quantity_table_d_pointer = &DAT_00402a9c;
+  fuel_demand_mode3_load_axis_offset1 = (dword)&DAT_0040237c;
+  fuel_demand_mode3_load_axis_offset2 = (dword)&DAT_004019fc;
+  fuel_demand_mode3_load_axis_offset3 = (dword)&DAT_00401c5c;
+  fuel_demand_mode3_load_axis_offset4 = (dword)&DAT_00401ebc;
+  fuel_demand_limit_table_a_pointer = &DAT_0040179c;
+  fuel_demand_limit_table_b_pointer = &DAT_00400e1c;
+  fuel_demand_limit_table_c_pointer = &DAT_0040107c;
+  fuel_demand_limit_table_d_pointer = &DAT_004012dc;
+  fuel_demand_mode2_load_axis_offset1 = (dword)&DAT_00403b3c;
+  fuel_demand_mode2_load_axis_offset2 = (dword)&DAT_004031bc;
+  fuel_demand_mode2_load_axis_offset3 = (dword)&DAT_0040341c;
+  fuel_demand_mode2_load_axis_offset4 = (dword)&DAT_0040367c;
+  fuel_demand_mode1_load_axis_offset1 = (dword)&DAT_0040471c;
+  fuel_demand_mode1_load_axis_offset2 = (dword)&DAT_00403d9c;
+  fuel_demand_mode1_load_axis_offset3 = (dword)&DAT_00403ffc;
+  fuel_demand_mode1_load_axis_offset4 = (dword)&DAT_0040425c;
+  fuel_demand_blend_tables_interp_state = 2;
+  DAT_003fa698 = 2;
+  DAT_003fa69a = 2;
+  DAT_003fa69c = 2;
+  fuel_demand_mode3_interp_state = 2;
+  DAT_003fa6a0 = 2;
+  DAT_003fa6a2 = 2;
+  DAT_003fa6a4 = 2;
+  fuel_demand_timing_offset_interp_state = 2;
+  DAT_003fa6a8 = 2;
+  DAT_003fa6aa = 2;
+  DAT_003fa6ac = 2;
+  DAT_003fa6ae = 2;
+  DAT_003fa6b0 = 2;
+  fuel_demand_mode2_interp_state = 2;
+  DAT_003fa6b4 = 2;
+  DAT_003fa6b6 = 2;
+  DAT_003fa6b8 = 2;
+  fuel_demand_mode1_interp_state = 2;
+  DAT_003fa6bc = 2;
+  DAT_003fa6be = 2;
+  DAT_003fa6c0 = 2;
+  DAT_003fa6c2 = 2;
+  DAT_003fa6c4 = 2;
+  DAT_003fa6c6 = 2;
+  DAT_003fa6c8 = 2;
+  fuel_demand_load_axis_base_interp_state = 2;
+  fuel_map_interpolation_state._0_2_ = 2;
+  fuel_map_interpolation_state._2_2_ = 2;
+  return;
+}
+
+
+
+//
+// Function: cm848_calculateFuelInjectionTiming @ 0x00016a90
+//
+
+/* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+/* WARNING: Removing unreachable block (ram,0x00016c08) */
+

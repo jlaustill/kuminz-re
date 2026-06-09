@@ -1,0 +1,123 @@
+=== VARIABLES TO NAME ===
+0x003fdc3a  (2 references)
+0x003fec3a  (2 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fdc3a
+undefined4
+cm848_dataTransferBufferWrite(int param_1,dword param_2,uint param_3,int param_4,byte param_5)
+
+{
+  byte bVar1;
+  undefined4 uVar2;
+  uint uVar3;
+  undefined1 *puVar4;
+  
+  if (data_transfer_state_t_003fec82.reserved_02 == 0) {
+    data_transfer_buffer_status = 0;
+    uVar2 = 1;
+  }
+  else {
+    if (data_transfer_target_address == 0) {
+      data_transfer_target_address = param_2;
+    }
+    bVar1 = qadc_a_result_high_1;
+    qadc_a_result_high_1 = bVar1 | param_5;
+    if ((int)(uint)data_transfer_state_t_003fec82.reserved_04 < (int)param_3) {
+      data_transfer_state_t_003fec82.reserved_04 = (word)param_3;
+    }
+    uVar3 = (uint)data_transfer_state_t_003fec82.byte_count;
+    data_transfer_state_t_003fec82.byte_count = (word)(uVar3 + param_3);
+    if (((uVar3 + param_3 & 0xffff) < 0x1001) &&
+       (mpc555_systemWatchdogReset(), (param_3 & 0xffff) != 0)) {
+      puVar4 = (undefined1 *)(param_1 + -1);
+      do {
+        puVar4 = puVar4 + 1;
+        (&DAT_003fdc3a)[data_transfer_write_index] = *puVar4;
+        uVar3 = data_transfer_write_index + 1;
+        data_transfer_write_index = (short)uVar3 + (short)((int)(uVar3 & 0xffff) >> 0xc) * -0x1000;
+        param_3 = param_3 + 0xffff;
+      } while ((param_3 & 0xffff) != 0);
+    }
+    if (data_transfer_state_t_003fec82.byte_count < 0x1001) {
+      if (param_4 == 0) {
+        if ((uint)data_transfer_state_t_003fec82.byte_count +
+            (uint)data_transfer_state_t_003fec82.reserved_04 < 0x1001) {
+          data_transfer_buffer_status = 1;
+          uVar2 = 0;
+        }
+        else {
+          data_transfer_buffer_status = 2;
+          uVar2 = 2;
+          data_transfer_state_t_003fec82.state._0_1_ = param_5;
+        }
+      }
+      else {
+        data_transfer_buffer_status = 3;
+        uVar2 = 2;
+        data_transfer_active_flag = 1;
+        data_transfer_state_t_003fec82.state._0_1_ = param_5;
+      }
+    }
+    else {
+      data_transfer_buffer_status = 5;
+      data_transfer_state_t_003fec82.byte_count = 0x1000;
+      uVar2 = 1;
+    }
+  }
+  return uVar2;
+}
+
+
+
+//
+// Function: cm848_prepareDataTransferBuffer @ 0x00004194
+//
+
+// Variables in this function: DAT_003fdc3a, DAT_003fec3a
+void cm848_prepareDataTransferBuffer(void)
+
+{
+  uint uVar1;
+  uint uVar2;
+  uint uVar3;
+  uint uVar4;
+  
+  uVar1 = data_transfer_target_address & 0x3f;
+  data_transfer_current_ptr = (undefined *)(data_transfer_target_address - uVar1);
+  if (data_transfer_state_t_003fec82.byte_count < 0x40) {
+    uVar3 = data_transfer_state_t_003fec82.byte_count & 0xff;
+  }
+  else {
+    uVar3 = 0x40;
+  }
+  uVar2 = uVar3 - uVar1;
+  if ((uVar2 & 0xff) != 0x40) {
+    uVar4 = 0;
+    do {
+      (&DAT_003fec3a)[uVar4] = 0xff;
+      mpc555_sensorFaultDetection();
+      uVar4 = uVar4 + 1 & 0xff;
+    } while (uVar4 < 0x40);
+  }
+  for (; uVar1 < uVar3; uVar1 = uVar1 + 1 & 0xff) {
+    (&DAT_003fec3a)[uVar1] = (&DAT_003fdc3a)[data_transfer_read_index];
+    uVar4 = data_transfer_read_index + 1;
+    data_transfer_read_index = (short)uVar4 + (short)((int)(uVar4 & 0xffff) >> 0xc) * -0x1000;
+    mpc555_sensorFaultDetection();
+  }
+  data_transfer_state_t_003fec82.byte_count =
+       data_transfer_state_t_003fec82.byte_count - ((ushort)uVar2 & 0xff);
+  data_transfer_target_address = data_transfer_target_address + (uVar2 & 0xff);
+  return;
+}
+
+
+
+//
+// Function: mpc555_initAdcChannelConfig @ 0x000042b0
+//
+

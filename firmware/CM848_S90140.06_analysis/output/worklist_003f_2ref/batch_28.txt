@@ -1,0 +1,116 @@
+=== VARIABLES TO NAME ===
+0x003fa6d2  (2 references)
+0x003fa6d8  (2 references)
+0x003fa6da  (2 references)
+
+Total: 3 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fa6d2
+void cm848_calculateManifoldPressureOffset(void)
+
+{
+  int iVar1;
+  int iVar2;
+  
+  iVar2 = (int)(short)fuel_demand_mode2_filtered - (int)(short)fuel_demand_boost_offset;
+  iVar1 = (int)(short)fuel_demand_mode2_upper_limit_cal;
+  if ((iVar2 < iVar1) && (iVar1 = iVar2, iVar2 <= (short)fuel_demand_blend_lower_cal)) {
+    iVar1 = (int)(short)fuel_demand_blend_lower_cal;
+  }
+  fuel_demand_mode2_adjusted = (word)iVar1;
+  fuel_demand_mode2_correction_lookup =
+       lookupTableInterpolation((table_interp_args_t *)&DAT_003fa6d2);
+  return;
+}
+
+
+
+//
+// Function: cm848_calculateFuelDemandDelta @ 0x00016cd4
+//
+
+// Variables in this function: DAT_003fa6d8
+void cm848_calculateFuelDemandDelta(void)
+
+{
+  engine_load_delta_clamped = engine_load_correction_upper_cal;
+  if (((int)(short)engine_load_normalized - (int)(short)engine_load_normalized_prev <
+       (int)(short)engine_load_correction_upper_cal) &&
+     (engine_load_delta_clamped = engine_load_correction_lower_cal,
+     (int)(short)engine_load_correction_lower_cal <
+     (int)(short)engine_load_normalized - (int)(short)engine_load_normalized_prev)) {
+    engine_load_delta_clamped = engine_load_normalized - engine_load_normalized_prev;
+  }
+  fuel_demand_correction_scale = lookupTableInterpolation((table_interp_args_t *)&DAT_003fa6d8);
+  return;
+}
+
+
+
+//
+// Function: cm848_applyFuelDemandOffset @ 0x00016d6c
+//
+
+// Variables in this function: DAT_003fa6da
+void cm848_applyFuelDemandOffset(void)
+
+{
+  int iVar1;
+  
+  engine_load_correction_factor = lookupTableInterpolation((table_interp_args_t *)&DAT_003fa6da);
+  engine_load_correction_active_flag = (ushort)((short)engine_load_correction_factor != 0);
+  iVar1 = (int)(short)engine_load_normalized + (int)(short)engine_load_correction_factor;
+  if (iVar1 < 0x400) {
+    if (iVar1 < -0x3ff) {
+      fuel_correction_output = 0xfc00;
+    }
+    else {
+      fuel_correction_output = engine_load_normalized + engine_load_correction_factor;
+    }
+  }
+  else {
+    fuel_correction_output = 0x400;
+  }
+  fuel_correction_output_prev_snapshot = fuel_correction_output;
+  if ((((fuel_blend_correction_inhibit_flag._0_2_ == 0) &&
+       (fuel_blend_state_t_0040a494.blend_enable == 0)) &&
+      (fuel_blend_state_t_0040a494.blend_mode != 0)) &&
+     ((uint)fuel_blend_state_t_0040a494.blend_weight << 10 <
+      (uint)fuel_blend_weight_threshold_cal * 100)) {
+    engine_load_correction_mode_flag = 0;
+  }
+  else {
+    engine_load_correction_mode_flag = 1;
+    fuel_correction_output = engine_load_normalized;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_processFuelTimingCalculations @ 0x00016e90
+//
+
+/* WARNING: Function: cm848_signedDivision32 replaced with injection: sdiv64by32 */
+
+// Variables in this function: DAT_003fa6d2, DAT_003fa6d8, DAT_003fa6da
+void mpc555_initFuelTimingTablePointers(void)
+
+{
+  DAT_003fa6d2 = 2;
+  DAT_003fa6d4 = 2;
+  fuel_load_correction_timing_interp_state = 2;
+  DAT_003fa6d8 = 2;
+  DAT_003fa6da = 2;
+  return;
+}
+
+
+
+//
+// Function: cm848_fuelDemandBaseCalculation @ 0x0001702c
+//
+

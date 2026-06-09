@@ -1,0 +1,42 @@
+=== VARIABLES TO NAME ===
+0x003fb56e  (2 references)
+0x003fb570  (2 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fb56e, DAT_003fb570
+void cm848_initProtectionParameter2(void)
+
+{
+  sensorChannelTypeB_configInit
+            (&DAT_0005b56c,&protection_param_2_channel_state,&DAT_003fb56e,&DAT_000642a8,
+             &DAT_000642ae,0,&DAT_003fb570,0x37,0x14a,0x14b,&sensor_channel55_raw,
+             &sensor_channel55_filtered,&sensor_channel55_fault_status);
+  return;
+}
+
+
+
+//
+// Function: cm848_processProtectionParameter2 @ 0x00042b44
+//
+
+// Variables in this function: DAT_003fb56e, DAT_003fb570
+void cm848_processProtectionParameter2(void)
+
+{
+  sensorChannelTypeB_update
+            (&DAT_0005b56c,&protection_param_2_channel_state,&DAT_003fb56e,&DAT_000642a8,
+             &DAT_000642ae,0,&DAT_003fb570,0x37,0x14a,0x14b,&sensor_channel55_raw,
+             &sensor_channel55_filtered,&sensor_channel55_fault_status);
+  return;
+}
+
+
+
+//
+// Function: hpcr_cbdFillAccelerationBuffers @ 0x00042bd0
+//
+

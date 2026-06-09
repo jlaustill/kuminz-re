@@ -1,0 +1,213 @@
+=== VARIABLES TO NAME ===
+0x003fd0b0  (2 references)
+0x003fd0b4  (2 references)
+0x003fd0b6  (2 references)
+
+Total: 3 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fd0b0
+void FUN_00528978(void)
+
+{
+  injection_timing_table_offset =
+       cm848_dualAxisTableInterpolation(&DAT_003fd0b0,speed_setpoint_raw,0xf166);
+  return;
+}
+
+
+
+//
+// Function: cm848_tpuMiosOutput_loadCalibration @ 0x005289d4
+//
+
+/* loads TPU-A CH14/CH10 params + MIOS MPWMSM PWM outputs 16-19 from calibration values (no
+   threshold check despite old name); physical actuator per output unknown - see
+   docs/tpu_mios_channel_map.md. Renamed from cm848_protection_threshold_calib_check */
+
+// Variables in this function: DAT_003fd0b4, DAT_003fd0b6
+void cm848_tpuMiosOutput_loadCalibration(void)
+
+{
+  uint uVar1;
+  undefined4 uVar2;
+  
+  DAT_00304138 = tpu_ch3_param_period_ref;
+  DAT_0030413a = tpu_ch3_param_period_ref;
+  DAT_0030413c = tpu_ch3_param_period_ref;
+  DAT_0030413e = tpu_ch3_param_period_ref;
+  uVar1 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fd0b6);
+  uVar2 = DAT_004090c0;
+  if (protection_fault_eval_input == 0) {
+    uVar2 = DAT_004090bc;
+  }
+  DAT_00304146 = uVar2;
+  DAT_0030414a = DAT_004090a2;
+  DAT_0030414c = (short)(((uint)DAT_004090a6 * (uVar1 & 0xffff)) / 0xfff);
+  DAT_0030414e = tpu_output_ch_param7_ref;
+  DAT_0030412e = tpu_output_ch_param7_ref;
+  DAT_0030417e = tpu_output_ch_param7_ref;
+  cm848_miosTimer16SetValue(mios_timer16_set_value_ref);
+  cm848_miosTimer16ScaleByPercent(mios_timer16_scale_percent_ref);
+  cm848_miosTimer17SetValue(mios_timer17_set_value_ref);
+  cm848_miosTimer17ScaleByPercent(mios_timer17_scale_percent_ref);
+  cm848_miosTimer18SetValue(mios_timer18_set_value_ref);
+  cm848_miosTimer18ScaleByPercent(mios_timer18_scale_percent_ref);
+  cm848_miosTimer19SetValue(mios_timer19_set_value_ref);
+  cm848_miosTimer19ScaleByPercent(mios_timer19_scale_percent_ref);
+  uVar1 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fd0b4);
+  TPUA_CH14_PARAM0._0_4_ =
+       ((uint)tpu_ch14_period_base * (uVar1 & 0xffff)) / 0xfff << 0x10 | (uint)tpu_ch14_period_base;
+  return;
+}
+
+
+
+//
+// Function: cm848_tpu_interrupt_flag_init @ 0x00528b90
+//
+
+// Variables in this function: DAT_003fd0b0, DAT_003fd0b4, DAT_003fd0b6
+void cm848_tpu_interrupt_flag_init(void)
+
+{
+  word wVar1;
+  
+  injection_timing_table_offset = 0;
+  cm848_tpuMiosOutput_loadCalibration();
+  cm848_protectionFlagManager(0x2f);
+  cm848_protectionFlagManager(0x30);
+  wVar1 = tpu_a_mcr.CPR1;
+  tpu_a_mcr.CPR1 = wVar1 & 0xf3ff;
+  wVar1 = tpu_a_mcr.CFSR2;
+  tpu_a_mcr.CFSR2 = wVar1 & 0xff0f | 0x90;
+  wVar1 = tpu_a_mcr.HSQR1;
+  tpu_a_mcr.HSQR1 = wVar1 & 0xf3ff;
+  tpu_a_mcr.HSRR1 = 0xc00;
+  TPUA_CH5_PARAM0 = 0x5002;
+  wVar1 = tpu_a_mcr.CPR1;
+  tpu_a_mcr.CPR1 = wVar1 & 0xf3ff | 0xc00;
+  do {
+    wVar1 = tpu_a_mcr.HSRR1;
+  } while ((wVar1 & 0xc00) != 0);
+  wVar1 = tpu_a_mcr.CPR1;
+  tpu_a_mcr.CPR1 = wVar1 & 0xf3ff;
+  wVar1 = tpu_a_mcr.CPR1;
+  tpu_a_mcr.CPR1 = wVar1 & 0xffcf;
+  wVar1 = tpu_a_mcr.CFSR3;
+  tpu_a_mcr.CFSR3 = wVar1 & 0xf0ff | 0xb00;
+  wVar1 = tpu_a_mcr.HSQR1;
+  tpu_a_mcr.HSQR1 = wVar1 & 0xffcf | 0x10;
+  wVar1 = tpu_a_mcr.CIER;
+  tpu_a_mcr.CIER = wVar1 | 4;
+  TPUA_CH2_PARAM3 = 0x28;
+  wVar1 = TPUA_CH2_PARAM4;
+  TPUA_CH2_PARAM4 = wVar1 & 0x7fff;
+  wVar1 = tpu_a_mcr.CPR1;
+  tpu_a_mcr.CPR1 = wVar1 & 0xffcf | 0x20;
+  wVar1 = tpu_a_mcr.CPR1;
+  tpu_a_mcr.CPR1 = wVar1 & 0xff3f;
+  wVar1 = tpu_a_mcr.CFSR3;
+  tpu_a_mcr.CFSR3 = wVar1 & 0xfff | 0xa000;
+  wVar1 = tpu_a_mcr.HSQR1;
+  tpu_a_mcr.HSQR1 = wVar1 & 0xff3f | 0x40;
+  tpu_a_mcr.HSRR1 = 0xc0;
+  wVar1 = tpu_a_mcr.CPR1;
+  tpu_a_mcr.CPR1 = wVar1 & 0xff3f | 0xc0;
+  wVar1 = TPUA_CH4_PARAM0;
+  TPUA_CH4_PARAM0 = wVar1 & 0x7ffc | 0x8000;
+  wVar1 = tpu_a_mcr.CPR1;
+  tpu_a_mcr.CPR1 = wVar1 & 0xfcff;
+  wVar1 = tpu_a_mcr.CFSR2;
+  tpu_a_mcr.CFSR2 = wVar1 & 0xfff0 | 10;
+  wVar1 = tpu_a_mcr.HSQR1;
+  tpu_a_mcr.HSQR1 = wVar1 & 0xfcff;
+  tpu_a_mcr.HSRR1 = 0x300;
+  wVar1 = tpu_a_mcr.CPR1;
+  tpu_a_mcr.CPR1 = wVar1 & 0xfcff | 0x300;
+  wVar1 = tpu_a_mcr.CPR1;
+  tpu_a_mcr.CPR1 = wVar1 & 0x3fff;
+  wVar1 = tpu_a_mcr.CFSR2;
+  tpu_a_mcr.CFSR2 = wVar1 & 0xfff | 0xb000;
+  wVar1 = tpu_a_mcr.HSQR1;
+  tpu_a_mcr.HSQR1 = wVar1 & 0x3fff | 0x4000;
+  wVar1 = tpu_a_mcr.CIER;
+  tpu_a_mcr.CIER = wVar1 | 0x80;
+  TPUA_CH7_PARAM3 = 0x28;
+  wVar1 = TPUA_CH7_PARAM4;
+  TPUA_CH7_PARAM4 = wVar1 & 0x7fff;
+  wVar1 = tpu_a_mcr.CPR1;
+  tpu_a_mcr.CPR1 = wVar1 & 0x3fff | 0x8000;
+  wVar1 = tpu_a_mcr.CPR0;
+  tpu_a_mcr.CPR0 = wVar1 & 0xfffc;
+  wVar1 = tpu_a_mcr.CFSR1;
+  tpu_a_mcr.CFSR1 = wVar1 & 0xfff0 | 10;
+  wVar1 = tpu_a_mcr.HSQR0;
+  tpu_a_mcr.HSQR0 = wVar1 & 0xfffc | 1;
+  tpu_a_mcr.HSRR0 = 3;
+  wVar1 = tpu_a_mcr.CPR0;
+  tpu_a_mcr.CPR0 = wVar1 & 0xfffc | 3;
+  wVar1 = tpu_channel_control.PARAM0;
+  tpu_channel_control.PARAM0 = wVar1 & 0x7ffc | 0x8000;
+  wVar1 = tpu_a_mcr.CPR0;
+  tpu_a_mcr.CPR0 = wVar1 & 0xfff3;
+  wVar1 = tpu_a_mcr.CFSR1;
+  tpu_a_mcr.CFSR1 = wVar1 & 0xff0f | 0xa0;
+  wVar1 = tpu_a_mcr.HSQR0;
+  tpu_a_mcr.HSQR0 = wVar1 & 0xfff3;
+  tpu_a_mcr.HSRR0 = 0xc;
+  wVar1 = tpu_a_mcr.CPR0;
+  tpu_a_mcr.CPR0 = wVar1 & 0xfff3 | 0xc;
+  TPUA_CH5_PARAM0 = 0;
+  DAT_00304152 = 0;
+  DAT_00304154 = 0;
+  DAT_00304156 = 0;
+  DAT_00304158 = 0;
+  DAT_0030415a = 0;
+  DAT_0030415c = 0;
+  DAT_0030415e = 0;
+  wVar1 = tpu_a_mcr.CPR0;
+  tpu_a_mcr.CPR0 = wVar1 & 0xcfff;
+  wVar1 = tpu_a_mcr.CFSR0;
+  tpu_a_mcr.CFSR0 = wVar1 & 0xf0ff | 0x700;
+  wVar1 = tpu_a_mcr.HSQR0;
+  tpu_a_mcr.HSQR0 = wVar1 & 0xcfff;
+  tpu_a_mcr.HSRR0 = 0x3000;
+  TPUA_CH14_PARAM0._0_4_ = (uint)tpu_ch14_period_base;
+  wVar1 = tpu_a_mcr.CPR0;
+  tpu_a_mcr.CPR0 = wVar1 & 0xcfff | 0x1000;
+  cm848_miosTimer16InitPeriod();
+  cm848_miosTimer16SetValue(mios_timer16_set_value_ref);
+  cm848_miosTimer16ScaleByPercent(mios_timer16_scale_percent_ref);
+  cm848_miosTimer17InitPeriod();
+  cm848_miosTimer17SetValue(mios_timer17_set_value_ref);
+  cm848_miosTimer17ScaleByPercent(mios_timer17_scale_percent_ref);
+  cm848_miosTimer18InitPeriod();
+  cm848_miosTimer18SetValue(mios_timer18_set_value_ref);
+  cm848_miosTimer18ScaleByPercent(mios_timer18_scale_percent_ref);
+  cm848_miosTimer19InitPeriod();
+  cm848_miosTimer19SetValue(mios_timer19_set_value_ref);
+  cm848_miosTimer19ScaleByPercent(mios_timer19_scale_percent_ref);
+  DAT_003fd0b0 = 2;
+  DAT_003fd0b2 = 2;
+  DAT_003fd0b4 = 2;
+  DAT_003fd0b6 = 2;
+  protection_crank_event_counter = 0;
+  tpu_protection_enable_flag = 1;
+  if ((DAT_004090c8 < tpu_init_retry_count) && (DAT_004090c8 != 0xffff)) {
+    engine_diag_shadow_flags = engine_diag_shadow_flags | 0x8000;
+  }
+  if (tpu_init_retry_count < 0xff) {
+    tpu_init_retry_count = tpu_init_retry_count + 1;
+  }
+  tpu_init_restart_pending_flag = 1;
+  return;
+}
+
+
+
+//
+// Function: cm848_initialization_calibration_state @ 0x0052903c
+//
+

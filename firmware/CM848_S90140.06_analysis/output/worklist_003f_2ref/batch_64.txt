@@ -1,0 +1,55 @@
+=== VARIABLES TO NAME ===
+0x003fb192  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fb192
+void cm848_filterProtectionLoadValue(void)
+
+{
+  word wVar1;
+  int iVar2;
+  uint uVar3;
+  undefined2 uStack_6;
+  
+  wVar1 = engine_load_filtered;
+  if (protection_monitor_enable_cal == 0) {
+    protection_monitor_scan_counter = protection_monitor_scan_counter + 1;
+    if (protection_monitor_scan_period_cal <= protection_monitor_scan_counter) {
+      protection_monitor_scan_counter = 0;
+      iVar2 = (uint)engine_load_filtered - (uint)engine_load_filtered_prev;
+      if (iVar2 < 0x8000) {
+        if (iVar2 < -0x8000) {
+          uStack_6 = 0x8000;
+        }
+        else {
+          uStack_6 = (undefined2)iVar2;
+        }
+      }
+      else {
+        uStack_6 = 0x7fff;
+      }
+      engine_load_filtered_prev = engine_load_filtered;
+      protection_rate_integrator._0_2_ = uStack_6;
+    }
+  }
+  else {
+    (&DAT_003fb192)[protection_load_history_index] = engine_load_filtered;
+    uVar3 = (protection_load_history_index + 1) % 0x1b;
+    protection_load_rate_delta = wVar1 - (&DAT_003fb192)[uVar3];
+    protection_load_history_index = (word)uVar3;
+    protection_rate_integrator._0_2_ =
+         cm848_signedFirstOrderFilter
+                   ((int)(short)protection_load_rate_delta,&protection_load_filter_state_b_ptr);
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_evaluateProtectionFaultCondition @ 0x00034a30
+//
+

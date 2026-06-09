@@ -1,0 +1,39 @@
+=== VARIABLES TO NAME ===
+0x003fb9c0  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fb9c0
+void cm848_protection_init_configBundle(void)
+
+{
+  sensorChannelConfigInit
+            (&DAT_00059656,&DAT_0040a12e,&DAT_003fb9c0,&DAT_00059666,&DAT_0005967c,(void *)0x2,
+             0xb9c2,0x65,(word *)0x2aa,(word *)0x2ab,0xbdb6,0xbdb4,0xbe2e);
+  return;
+}
+
+
+
+//
+// Function: cm848_protection_update_configBundle @ 0x00501250
+//
+
+// Variables in this function: DAT_003fb9c0
+void cm848_protection_update_configBundle(void)
+
+{
+  updateSensorChannelWithConfig
+            (&DAT_00059656,&DAT_0040a12e,&DAT_003fb9c0,&DAT_00059666,&DAT_0005967c,(void *)0x2,
+             0xb9c2,0x65,(word *)0x2aa,(word *)0x2ab,0xbdb6,0xbdb4,0xbe2e);
+  return;
+}
+
+
+
+//
+// Function: sensorChannelTypeB_configInit @ 0x005012dc
+//
+

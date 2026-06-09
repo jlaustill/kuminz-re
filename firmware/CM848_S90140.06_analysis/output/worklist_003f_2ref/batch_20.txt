@@ -1,0 +1,96 @@
+=== VARIABLES TO NAME ===
+0x003fa164  (2 references)
+0x003fa166  (2 references)
+0x003fa168  (2 references)
+
+Total: 3 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fa164, DAT_003fa166
+void cm848_calculateLoadGainValues(void)
+
+{
+  uint uVar1;
+  
+  uVar1 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fa164);
+  uVar1 = (int)((uVar1 & 0xffff) * (uint)throttle_position_scale_cal) >> 0xc;
+  if (0x7fff < uVar1) {
+    uVar1 = 0x7fff;
+  }
+  throttle_rate_d_gain = (word)uVar1;
+  uVar1 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fa166);
+  uVar1 = (int)((uVar1 & 0xffff) * (uint)throttle_rate_control_scale_cal) >> 0xc;
+  if (0x7fff < uVar1) {
+    uVar1 = 0x7fff;
+  }
+  throttle_rate_p_gain = (word)uVar1;
+  return;
+}
+
+
+
+//
+// Function: cm848_selectLoadAdjustmentLimits @ 0x00011410
+//
+
+// Variables in this function: DAT_003fa168
+void cm848_calculateLoadCompensation(void)
+
+{
+  uint uVar1;
+  uint uVar2;
+  
+  if (throttle_fuel_rate_limit_active != 0) {
+    throttle_fuel_rate_factor =
+         cm848_dualAxisTableInterpolation
+                   (&DAT_003fa168,
+                    (word)((uint)fuel_demand_rate_limiter * (uint)fuel_quantity_ema_filtered >> 0xd)
+                    ,0xfb46);
+  }
+  uVar1 = (int)((uint)throttle_fuel_rate_factor * (uint)throttle_fuel_rate_factor_gain_cal) >> 0xc;
+  uVar2 = (uint)throttle_fuel_rate_cal;
+  if (uVar2 < uVar1) {
+    uVar1 = 0;
+  }
+  else {
+    uVar1 = uVar2 - uVar1 & 0xffff;
+  }
+  throttle_fuel_rate_working = throttle_fuel_rate_base;
+  if ((throttle_fuel_rate_base <= uVar1) &&
+     (throttle_fuel_rate_working = (word)uVar1, uVar2 < uVar1)) {
+    throttle_fuel_rate_working = throttle_fuel_rate_cal;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_calculateLoadIntegral @ 0x000115cc
+//
+
+// Variables in this function: DAT_003fa164, DAT_003fa166, DAT_003fa168
+void mpc555_initLoadGainVariables(void)
+
+{
+  throttle_fuel_rate_reference = 0;
+  throttle_fuel_demand_limit = 0;
+  throttle_fuel_rate_factor = 0;
+  throttle_fuel_rate_b._0_2_ = 0;
+  throttle_fuel_rate_b._2_2_ = 0;
+  throttle_position_integral = 0;
+  throttle_fuel_rate_limit_exceeded_flag = 0;
+  DAT_003fa164 = 2;
+  DAT_003fa166 = 2;
+  DAT_003fa168 = 2;
+  DAT_003fa16a = 2;
+  return;
+}
+
+
+
+//
+// Function: cm848_calculateRateLimitedValue @ 0x0001198c
+//
+

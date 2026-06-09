@@ -1,0 +1,57 @@
+=== VARIABLES TO NAME ===
+0x003fcf1a  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fcf1a
+undefined4 FUN_0051dd6c(void)
+
+{
+  cm848_cancelFuelDemandCountdown();
+  switch(fuel_demand_state_queue) {
+  case 0xf5:
+    fuel_demand_callback_ptr = &LAB_0051e384;
+    break;
+  case 0xf6:
+    return 0;
+  case 0xf7:
+    return 0;
+  case 0xf8:
+    DAT_003fcf1a = 0;
+    goto LAB_0051ddf4;
+  case 0xf9:
+    DAT_003fcf1a = 4;
+LAB_0051ddf4:
+    fuel_demand_callback_ptr = &LAB_0051dea8;
+    break;
+  case 0xfa:
+    fuel_demand_callback_ptr = &LAB_0051e3b0;
+    break;
+  case 0xfb:
+    fuel_demand_callback_ptr = &LAB_0051e3dc;
+    break;
+  case 0xfc:
+    fuel_demand_callback_ptr = &LAB_0051e408;
+    break;
+  case 0xfd:
+    fuel_demand_callback_ptr = &LAB_0051e434;
+    break;
+  case 0xfe:
+    fuel_demand_uart_mode_flags = fuel_demand_uart_mode_flags & 0xfd;
+    fuel_demand_callback_ptr = FUN_0051d780;
+    break;
+  default:
+    return 0;
+  }
+  fuelDemandSerialTx();
+  return 1;
+}
+
+
+
+//
+// Function: FUN_0051dfac @ 0x0051dfac
+//
+

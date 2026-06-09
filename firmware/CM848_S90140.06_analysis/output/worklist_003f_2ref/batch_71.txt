@@ -1,0 +1,42 @@
+=== VARIABLES TO NAME ===
+0x003fb21a  (2 references)
+0x003fb21c  (2 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fb21a, DAT_003fb21c
+void cm848_processSensorLookupTable1(void)
+
+{
+  sensorChannelTypeB_configInit
+            (&DAT_0005adbc,&sensor_channel_11_state,&DAT_003fb21a,&DAT_0005adcc,&DAT_0005ade2,0,
+             &PTR_DAT_003fb21c,0x66,299,300,&sensor_channel102_raw,&sensor_channel102_filtered,
+             &sensor_channel102_fault_status);
+  return;
+}
+
+
+
+//
+// Function: cm848_initSensorLookupTableInit1 @ 0x00035c74
+//
+
+// Variables in this function: DAT_003fb21a, DAT_003fb21c
+void cm848_initSensorLookupTableInit1(void)
+
+{
+  sensorChannelTypeB_update
+            (&DAT_0005adbc,&sensor_channel_11_state,&DAT_003fb21a,&DAT_0005adcc,&DAT_0005ade2,0,
+             &PTR_DAT_003fb21c,0x66,299,300,&sensor_channel102_raw,&sensor_channel102_filtered,
+             &sensor_channel102_fault_status);
+  return;
+}
+
+
+
+//
+// Function: cm848_processSensorTemperatureData @ 0x00035d00
+//
+

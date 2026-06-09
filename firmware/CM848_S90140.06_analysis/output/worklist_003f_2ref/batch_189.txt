@@ -1,0 +1,136 @@
+=== VARIABLES TO NAME ===
+0x003fd2c4  (4 references)
+0x003fd2cc  (2 references)
+0x003fd2e0  (2 references)
+
+Total: 3 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fd2c4, DAT_003fd2cc
+void uds_session_state_init(void)
+
+{
+  undefined **ppuVar1;
+  
+  ppuVar1 = &PTR_DAT_003fd2c4;
+  PTR_DAT_003fd2c4 = (undefined *)&sensor_channel_cal_block_start;
+  PTR_sensor_channel_ram_start_003fd2c8 = &sensor_channel_ram_start;
+  PTR_DAT_003fd2cc = (undefined *)&DAT_00064aea;
+  do {
+    ppuVar1 = ppuVar1 + 3;
+  } while (ppuVar1 < &PTR_PTR_003fd2d0);
+  PTR_PTR_003fd2d0 = (undefined *)&PTR_DAT_003fd2c4;
+  sensor_cal_ram_write_ptr = (undefined *)&sensor_channel_cal_block_start;
+  sensor_cal_rom_read_ptr = (undefined *)&DAT_00064aea;
+  sensor_cal_write_dirty_flag = 0;
+  diagnostic_session_state = ACTIVE;
+  sensor_validation_result = 1;
+  sensor_cal_session_state_prev = 1;
+  return;
+}
+
+
+
+//
+// Function: cm848_initProtectionModule @ 0x00538a84
+//
+
+// Variables in this function: DAT_003fd2c4, DAT_003fd2cc, DAT_003fd2e0
+void cm848_initProtectionModule(void)
+
+{
+  short *psVar1;
+  
+  if ((sensor_cal_session_state_prev == 0) && (diagnostic_session_state != INACTIVE)) {
+    uds_session_state_init();
+  }
+  if (diagnostic_session_state != INACTIVE) {
+    if (*(undefined **)(PTR_PTR_003fd2d0 + 4) <= sensor_cal_ram_write_ptr) {
+      PTR_PTR_003fd2d0 = PTR_PTR_003fd2d0 + 0xc;
+      if ((undefined *)((int)&PTR_DAT_003fd2cc + 3U) < PTR_PTR_003fd2d0) {
+        PTR_PTR_003fd2d0 = (undefined *)&PTR_DAT_003fd2c4;
+        if (sensor_cal_write_dirty_flag == 0) {
+          if ((fault_active_status_array & 1) != 0) {
+            system_status_flags_t_003fe974.enable_state =
+                 system_status_flags_t_003fe974.enable_state & 0xfffe;
+            fault_active_status_array = fault_active_status_array & 0xfffe;
+          }
+        }
+        else {
+          system_status_flags_t_003fe974.enable_state =
+               system_status_flags_t_003fe974.enable_state | 1;
+        }
+        sensor_cal_write_dirty_flag = 0;
+      }
+      sensor_cal_ram_write_ptr = *(undefined **)PTR_PTR_003fd2d0;
+      sensor_cal_rom_read_ptr = *(undefined **)(PTR_PTR_003fd2d0 + 8);
+    }
+    if (*(undefined **)PTR_PTR_003fd2d0 == sensor_cal_ram_write_ptr) {
+      DAT_003fd2e0 = DAT_003fd2e0 + 1;
+    }
+    psVar1 = (short *)(sensor_cal_ram_write_ptr + 100);
+    if (*(short **)(PTR_PTR_003fd2d0 + 4) < sensor_cal_ram_write_ptr + 100) {
+      psVar1 = *(short **)(PTR_PTR_003fd2d0 + 4);
+    }
+    for (; sensor_cal_ram_write_ptr < psVar1;
+        sensor_cal_ram_write_ptr = (undefined *)((int)sensor_cal_ram_write_ptr + 2)) {
+      if (*(short *)sensor_cal_ram_write_ptr != *(short *)sensor_cal_rom_read_ptr) {
+        *(short *)sensor_cal_ram_write_ptr = *(short *)sensor_cal_rom_read_ptr;
+        sensor_cal_write_dirty_flag = 1;
+      }
+      sensor_cal_rom_read_ptr = (undefined *)((int)sensor_cal_rom_read_ptr + 2);
+    }
+  }
+  if ((sensor_cal_session_state_prev == 0) && (diagnostic_session_state != INACTIVE)) {
+    system_status_flags_t_003fe974.enable_state =
+         system_status_flags_t_003fe974.enable_state & 0xfffe;
+    fault_active_status_array = fault_active_status_array & 0xfffe;
+  }
+  sensor_cal_session_state_prev = diagnostic_session_state;
+  return;
+}
+
+
+
+//
+// Function: diag_record_queue_add_entry @ 0x00538c8c
+//
+
+undefined4
+diag_record_queue_add_entry
+          (int param_1,undefined2 param_2,int param_3,int param_4,undefined4 param_5)
+
+{
+  word wVar1;
+  undefined2 *puVar2;
+  
+  if (param_1 == 0) {
+    if (j1939_periodic_queue0_count == 0x14) {
+      return 1;
+    }
+    puVar2 = (undefined2 *)((uint)j1939_periodic_queue0_count * 10 + 0x3fd2e2);
+    j1939_periodic_queue0_count = j1939_periodic_queue0_count + 1;
+    wVar1 = j1939_periodic_queue0_current_tick;
+  }
+  else {
+    if (j1939_periodic_queue1_count == 10) {
+      return 1;
+    }
+    puVar2 = (undefined2 *)((uint)j1939_periodic_queue1_count * 10 + 0x3fd3aa);
+    j1939_periodic_queue1_count = j1939_periodic_queue1_count + 1;
+    wVar1 = j1939_periodic_queue1_current_tick;
+  }
+  *puVar2 = param_2;
+  puVar2[2] = (short)(param_4 / 10) + wVar1;
+  puVar2[1] = (short)(param_3 / 10);
+  *(undefined4 *)(puVar2 + 3) = param_5;
+  return 0;
+}
+
+
+
+//
+// Function: cm848_phaseAProcessing @ 0x00538d3c
+//
+

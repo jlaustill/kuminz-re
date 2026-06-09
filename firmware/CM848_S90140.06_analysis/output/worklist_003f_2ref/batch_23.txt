@@ -1,0 +1,85 @@
+=== VARIABLES TO NAME ===
+0x003fa5f6  (2 references)
+0x003fa5f8  (2 references)
+0x003fa5fa  (2 references)
+0x003fa5fc  (2 references)
+0x003fa5fe  (2 references)
+
+Total: 5 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fa5f6, DAT_003fa5f8, DAT_003fa5fa, DAT_003fa5fc, DAT_003fa5fe
+void cm848_calculateBoostTorqueOffset(word boost_input,word rpm)
+
+{
+  uint uVar1;
+  uint uVar2;
+  
+  boost_fuel_threshold_offset = lookupTableInterpolation((table_interp_args_t *)&DAT_003fa5f6);
+  boost_fuel_threshold_limit = lookupTableInterpolation((table_interp_args_t *)&DAT_003fa5f8);
+  fuel_demand_base_quantity = lookupTableInterpolation((table_interp_args_t *)&DAT_003fa5fa);
+  fuel_demand_rpm_factor = lookupTableInterpolation((table_interp_args_t *)&DAT_003fa5fc);
+  uVar2 = (uint)fuel_demand_base_quantity * (uint)fuel_demand_rpm_factor;
+  uVar1 = (uint)boost_fuel_scale_divisor;
+  fuel_demand_computed =
+       (int)(CONCAT44((int)((ulonglong)uVar1 * (ulonglong)uVar2 >> 0x20) +
+                      uVar1 * ((int)uVar2 >> 0x1f),uVar1 * uVar2) / 0xfa000) -
+       (uint)fuel_demand_correction_offset_cal;
+  if ((int)fuel_demand_computed < 0) {
+    uVar1 = 0;
+  }
+  else {
+    uVar1 = fuel_demand_computed;
+    if (0x3200 < (int)fuel_demand_computed) {
+      uVar1 = 0x3200;
+    }
+  }
+  boost_pressure_target_filtered = exponentialMovingAverage(uVar1 & 0xffff,&PTR_DAT_003fa5fe);
+  if ((((((engine_feature_enable_flags & 0x8000) == 0) || (boost_control_mode == 2)) ||
+       (fuel_demand_quantity < boost_control_fuel_lower_threshold_cal)) ||
+      (((boost_control_fuel_upper_threshold_cal < fuel_demand_quantity ||
+        (fuel_demand_phase_state == 2)) ||
+       ((fuel_demand_state_b == 2 ||
+        ((fuel_boost_mode_state == 2 || ((protection_feature_status_flags & 0x8000) == 0)))))))) ||
+     ((boost_fuel_bypass_flags & 0x8000) != 0)) {
+    boost_fuel_weight_factor = 0x80;
+  }
+  else if ((((fuel_demand_phase_state == 1) || (fuel_demand_state_b == 1)) ||
+           (fuel_boost_mode_state == 1)) || (boost_control_mode == 1)) {
+    boost_fuel_weight_factor = 0x40;
+  }
+  else {
+    boost_fuel_weight_factor = 0;
+  }
+  boost_pressure_target = boost_pressure_target_filtered;
+  boost_fuel_weight_snapshot = boost_fuel_weight_factor;
+  return;
+}
+
+
+
+//
+// Function: cm848_initFuelDemandFilterState @ 0x0001350c
+//
+
+// Variables in this function: DAT_003fa5f6, DAT_003fa5f8, DAT_003fa5fa, DAT_003fa5fc, DAT_003fa5fe
+void cm848_initFuelDemandFilterState(void)
+
+{
+  DAT_003fa5f6 = 2;
+  DAT_003fa5f8 = 2;
+  DAT_003fa5fa = 2;
+  DAT_003fa5fc = 2;
+  DAT_003fa602 = (uint)boost_fuel_scale_divisor << 0x10;
+  PTR_DAT_003fa5fe = &DAT_00405112;
+  boost_fuel_weight_snapshot = 0;
+  return;
+}
+
+
+
+//
+// Function: cm848_checkBoostControlCondition @ 0x00013564
+//
+

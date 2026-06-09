@@ -1,0 +1,62 @@
+=== VARIABLES TO NAME ===
+0x003fab22  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fab22
+void cm848_j1939HandlePgn65259ComponentId(void)
+
+{
+  uint uVar1;
+  
+  uVar1 = 0;
+  do {
+    (&DAT_003fab22)[uVar1] = s__CMMNS00000000000000000_003fd653[uVar1 + 1];
+    uVar1 = uVar1 + 1 & 0xff;
+  } while (uVar1 < 5);
+  DAT_003fab27 = 0x2a;
+  uVar1 = 0;
+  do {
+    (&DAT_003fab28)[uVar1] = s__CMMNS00000000000000000_003fd653[uVar1 + 6];
+    uVar1 = uVar1 + 1 & 0xff;
+  } while (uVar1 < 0x11);
+  uRam003fab39 = 0x2a;
+  cm848_governorDroopCalculation(s__CMMNS00000000000000000_003fd653 + 0x17,0x3fab3a,8);
+  uRam003fab42 = 0x2a;
+  uVar1 = 0;
+  do {
+    *(char *)(uVar1 + 0x3fab43) = s_00000000000000000000000000000000_003fd71b[uVar1 + 0x28];
+    uVar1 = uVar1 + 1 & 0xff;
+  } while (uVar1 < 10);
+  uRam003fab4d = 0x2a;
+  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65259_tx_header);
+  return;
+}
+
+
+
+//
+// Function: cm848_appendGovernorDroopDataToMessage @ 0x000248dc
+//
+
+// Variables in this function: DAT_003fab22
+void cm848_initPgn65259ComponentIdHandler(void)
+
+{
+  j1939_pgn65259_tx_header = CONCAT13(((byte)j1939_pgn65259_priority & 7) << 2,0xfeeb00);
+  j1939_pgn65259_tx_length = 0x2c;
+  j1939_pgn65259_data_ptr = &DAT_003fab22;
+  j1939_pgn65259_end_ptr = &LAB_003fab4c_2;
+  j1939_pgn65259_tx_header = CONCAT31(j1939_pgn65259_tx_header._0_3_,(char)j1939_source_address);
+  cm848_j1939RegisterPgnHandler(0xfeeb,cm848_j1939HandlePgn65259ComponentId);
+  return;
+}
+
+
+
+//
+// Function: cm848_sendJ1939ResponseFrame @ 0x000249c4
+//
+

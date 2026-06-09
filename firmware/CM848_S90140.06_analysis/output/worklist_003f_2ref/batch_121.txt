@@ -1,0 +1,104 @@
+=== VARIABLES TO NAME ===
+0x003fbe09  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fbe09
+void FUN_0050cfa8(int param_1)
+
+{
+  char cVar1;
+  uint uVar2;
+  char cVar3;
+  uint uVar4;
+  uint uVar5;
+  byte *pbVar6;
+  byte *pbVar7;
+  
+  if (*(short *)(param_1 + 4) != 8) {
+    return;
+  }
+  cVar1 = *(char *)(param_1 + 3);
+  if (j1939_multiframe_rx_active == 1) {
+    if ((char)j1939_multiframe_rx_rts_can_header != cVar1) {
+      return;
+    }
+    pbVar6 = *(byte **)(param_1 + 6);
+    uVar2 = (uint)*pbVar6;
+    if (j1939_multiframe_rx_next_sequence == uVar2) {
+      if (j1939_multiframe_rx_total_packets == uVar2) {
+        uVar4 = (uint)j1939_multiframe_rx_total_bytes - (uVar2 * 7 + 0xf9) & 0xff;
+      }
+      else {
+        uVar4 = 7;
+      }
+      uVar5 = 0;
+      if (uVar4 != 0) {
+        pbVar7 = j1939_multiframe_rx_data_buf_ptr + uVar2 * 7 + -8;
+        do {
+          pbVar6 = pbVar6 + 1;
+          pbVar7 = pbVar7 + 1;
+          *pbVar7 = *pbVar6;
+          uVar5 = uVar5 + 1 & 0xff;
+        } while (uVar5 < uVar4);
+      }
+      j1939_multiframe_rx_next_sequence = j1939_multiframe_rx_next_sequence + 1;
+      j1939_multiframe_rx_packets_in_window = j1939_multiframe_rx_packets_in_window - 1;
+      if (j1939_multiframe_rx_packets_in_window != 0) {
+        j1939_multiframe_rx_timeout = 0x19;
+        return;
+      }
+      if (uVar2 == j1939_multiframe_rx_total_packets) {
+        FUN_0050cd54(cVar1,j1939_multiframe_rx_pgn);
+        j1939_multiframe_rx_active = 0;
+        j1939_multiframe_rx_data_buf_ptr = &DAT_003fbe09;
+        cm848_j1939DiagnosticServiceHandler(&j1939_multiframe_rx_rts_can_header);
+        return;
+      }
+      if ((int)(((uint)j1939_multiframe_rx_total_packets - (uint)j1939_multiframe_rx_next_sequence)
+               + 1) < 6) {
+        j1939_multiframe_rx_packets_in_window =
+             (j1939_multiframe_rx_total_packets - j1939_multiframe_rx_next_sequence) + 1;
+      }
+      else {
+        j1939_multiframe_rx_packets_in_window = 5;
+      }
+    }
+    cVar3 = FUN_0050cdfc(cVar1,j1939_multiframe_rx_next_sequence,
+                         j1939_multiframe_rx_packets_in_window,j1939_multiframe_rx_pgn);
+    if (cVar3 != '\0') {
+      FUN_0050ccbc(cVar1,j1939_multiframe_rx_pgn);
+      j1939_multiframe_rx_active = 0;
+    }
+    return;
+  }
+  return;
+}
+
+
+
+//
+// Function: FUN_0050d144 @ 0x0050d144
+//
+
+// Variables in this function: DAT_003fbe09
+void j1939_pgn_handler_init_ec00eb00(void)
+
+{
+  j1939_tp_rx_session_tx_buf_ptr = &DAT_003fbdb4;
+  PTR_DAT_003fbdac = &DAT_003fbdbc;
+  j1939_multiframe_tx_buf_ptr = (dword)&DAT_003fbde7;
+  j1939_multiframe_rx_data_buf_ptr = &DAT_003fbe09;
+  j1939_handlerInitializer(0xec00,FUN_0050d250);
+  j1939_handlerInitializer(0xeb00,FUN_0050cfa8);
+  return;
+}
+
+
+
+//
+// Function: uds_validateMemoryRegion @ 0x0050d784
+//
+

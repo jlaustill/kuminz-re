@@ -1,0 +1,28 @@
+=== VARIABLES TO NAME ===
+0x003fb002  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fb002
+void cm848_initJ1939PtoBuffer(void)
+
+{
+  j1939_msg_header_working = CONCAT13(((byte)j1939_pgn65264_source_address_bits & 7) << 2,0xfef000);
+  j1939_msg_byte_count_working = 8;
+  j1939_msg_data_ptr = &DAT_003fb002;
+  j1939_msg_data_end_ptr = &DAT_003fb00a;
+  j1939_msg_header_working = CONCAT31(j1939_msg_header_working._0_3_,(char)j1939_source_address);
+  DAT_003fb002 = 0xff;
+  j1939_msg_payload_init_word = 0xffff;
+  DAT_003fb009 = 0xff;
+  return;
+}
+
+
+
+//
+// Function: cm848_updateFaultOnKeyoff @ 0x0002bf44
+//
+

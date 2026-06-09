@@ -1,0 +1,34 @@
+=== VARIABLES TO NAME ===
+0x003faf07  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003faf07
+void cm848_initPgn65260VehicleIdHandler(void)
+
+{
+  uint uVar1;
+  
+  j1939_pgn65260_tx_header = CONCAT13(((byte)j1939_pgn65260_source_address_bits & 7) << 2,0xfeec00);
+  j1939_pgn65260_tx_byte_count = 0x15;
+  j1939_pgn65260_data_ptr = &DAT_003faf07;
+  j1939_pgn65260_data2_ptr = &DAT_003faf06;
+  j1939_pgn65260_tx_header = CONCAT31(j1939_pgn65260_tx_header._0_3_,(char)j1939_source_address);
+  uVar1 = 0;
+  do {
+    (&DAT_003faf07)[uVar1] = vehicle_vin_string[uVar1];
+    uVar1 = uVar1 + 1 & 0xff;
+  } while (uVar1 < 0x14);
+  DAT_003faf1b = 0x2a;
+  cm848_j1939RegisterPgnHandler(0xfeec,cm848_j1939HandlePgn65260VehicleId);
+  return;
+}
+
+
+
+//
+// Function: cm848_j1939SendSafetyStatusMessage @ 0x00026e90
+//
+

@@ -1,0 +1,43 @@
+=== VARIABLES TO NAME ===
+0x003fb31f  (2 references)
+0x003fb321  (2 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fb31f, DAT_003fb321
+void cm848_txTimerF_updateFaultLampStatus(void)
+
+{
+  fault_report_parameter_byte = (byte)DAT_003fb31f;
+  j1939_lamp_status_cache._1_1_ = (byte)DAT_003fb321 & 7 | (byte)(DAT_003fb321 >> 2) & 0x38;
+  j1939_fault_occurrence_count = (byte)DAT_003fb323;
+  return;
+}
+
+
+
+//
+// Function: cm848_j1939SetupTransportSession @ 0x0003682c
+//
+
+// Variables in this function: DAT_003fb31f
+void cm848_initPeriodicTimerChannel5(void)
+
+{
+  DAT_003fb305 = injection_sync_broadcast_byte;
+  DAT_003fb306 = 3;
+  j1939_tx_data_block_f_ptr = (undefined *)&j1939_tx_frame_g_byte_0;
+  j1939_tx_frame_f_payload_ptr = (undefined *)&DAT_003fb31f;
+  j1939_msg_descriptor_f_ptr = &j1939_msg_descriptor_table;
+  j1939_tx_frame_f_handler_ptr = cm848_txTimerF_updateFaultLampStatus;
+  return;
+}
+
+
+
+//
+// Function: cm848_initPeriodicTimerChannel4 @ 0x000371d0
+//
+

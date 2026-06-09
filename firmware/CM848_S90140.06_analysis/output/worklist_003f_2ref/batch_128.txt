@@ -1,0 +1,120 @@
+=== VARIABLES TO NAME ===
+0x003fcc06  (2 references)
+0x003fcc08  (2 references)
+0x003fcc14  (2 references)
+
+Total: 3 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fcc06, DAT_003fcc08, DAT_003fcc14
+void governor_speedReference_ramp_calc(void)
+
+{
+  uint uVar1;
+  ushort *puVar2;
+  ushort uVar3;
+  uint uVar4;
+  
+  if (((egr_smoke_limit_status_flags & 8) == 0) && ((egr_smoke_limit_status_flags & 0x20) == 0)) {
+    governor_speed_ramp_target_prev = governor_speed_ramp_target;
+    uVar1 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fcc06);
+  }
+  else {
+    uVar1 = (uint)egr_smoke_limit_default_speed_reference;
+  }
+  governor_speed_ramp_target = (word)uVar1;
+  governor_speed_ramp_target_step_delta = (uVar1 & 0xffff) - (uint)governor_speed_ramp_target_prev;
+  uVar4 = (uint)governor_speed_ramp_working;
+  DAT_003fcc18 = governor_speed_ramp_working;
+  if ((int)(uint)DAT_003ff714 < (int)governor_speed_ramp_target_step_delta) {
+    uVar1 = (uint)DAT_003ff716 + (uint)governor_speed_ramp_target_prev;
+  }
+  governor_speed_ramp_working = (word)uVar1;
+  DAT_003fcc14 = (uVar1 & 0xffff) - uVar4;
+  if ((int)(uint)DAT_003ff714 < DAT_003fcc14) {
+    uVar1 = DAT_003ff716 + uVar4;
+  }
+  DAT_0040aff6 = (undefined2)uVar1;
+  governor_speed_ramp_ema = exponentialMovingAverage(uVar1 & 0xffff,&PTR_DAT_003fcc08);
+  uVar1 = (uint)DAT_003ff718;
+  uVar3 = governor_speed_ramp_ema;
+  if (uVar1 != 0) {
+    for (puVar2 = &DAT_003fcc20; puVar2 < &DAT_003fcc20 + uVar1; puVar2 = puVar2 + 1) {
+      if (uVar3 < *puVar2) {
+        uVar3 = *puVar2;
+      }
+    }
+    (&DAT_003fcc20)[governor_speed_ramp_ema_ring_write_index] = governor_speed_ramp_ema;
+    uVar4 = governor_speed_ramp_ema_ring_write_index + 1;
+    governor_speed_ramp_ema_ring_write_index = (word)uVar4;
+    if (uVar1 <= (uVar4 & 0xffff)) {
+      governor_speed_ramp_ema_ring_write_index = 0;
+    }
+  }
+  DAT_0040affa = uVar3;
+  governor_speed_reference_raw = DAT_003fcc1a;
+  if (fuel_smoke_limit_mode != 1) {
+    if (DAT_003fd8b2 == 1) {
+      uVar3 = DAT_003fd8b0;
+    }
+    governor_speed_reference_raw = uVar3;
+    if ((uVar3 < DAT_003ff70c) && (fuel_smoke_limit_mode != 2)) {
+      governor_speed_reference_raw = 0;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: fuel_smokeLimit_transient_counter @ 0x0050f3b4
+//
+
+// Variables in this function: DAT_003fcc06, DAT_003fcc08
+void hpcr_configureTPUTimerInterrupts(void)
+
+{
+  word wVar1;
+  
+  wVar1 = tpu_b_mcr.CPR1;
+  tpu_b_mcr.CPR1 = wVar1 & 0xfff3;
+  wVar1 = tpu_b_mcr.CIER;
+  tpu_b_mcr.CIER = wVar1 & 0xfffd;
+  wVar1 = tpu_b_mcr.CISR;
+  tpu_b_mcr.CISR = wVar1 & 0xfffd;
+  wVar1 = tpu_b_mcr.CFSR3;
+  tpu_b_mcr.CFSR3 = wVar1 & 0xff0f | 0xd0;
+  DAT_00304512 = boost_blend_tpu_period << 8;
+  DAT_00304516 = 0;
+  DAT_00304518 = 0;
+  TPUB_CH1_PARAM0 = 7;
+  wVar1 = tpu_b_mcr.HSQR1;
+  tpu_b_mcr.HSQR1 = wVar1 & 0xfff3 | 8;
+  tpu_b_mcr.HSRR1 = 0xc;
+  wVar1 = tpu_b_mcr.CPR1;
+  tpu_b_mcr.CPR1 = wVar1 & 0xfff3 | 8;
+  wVar1 = tpu_b_mcr.CIER;
+  tpu_b_mcr.CIER = wVar1 | 2;
+  if (DAT_003ff70e == 0) {
+    j1939_dm1_fault_byte_5 = j1939_dm1_fault_byte_5 & 0xfd;
+  }
+  else {
+    j1939_dm1_fault_byte_5 = j1939_dm1_fault_byte_5 | 2;
+  }
+  DAT_0040afec = 0xffffffff;
+  egr_smoke_limit_status_flags = egr_smoke_limit_status_flags & 0xfbff;
+  egr_smoke_limit_status_shadow = egr_smoke_limit_status_shadow & 0xfbff;
+  DAT_003fcc0c = (uint)fuel_demand_quantity << 0x10;
+  PTR_DAT_003fcc08 = &DAT_003ff6fa;
+  DAT_003fcc06 = 2;
+  return;
+}
+
+
+
+//
+// Function: engine_protection_speedTracking_calc @ 0x0050f834
+//
+

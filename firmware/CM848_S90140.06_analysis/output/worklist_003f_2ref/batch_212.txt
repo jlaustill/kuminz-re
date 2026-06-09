@@ -1,0 +1,45 @@
+=== VARIABLES TO NAME ===
+0x003fee38  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fee38
+undefined * cm848_lookupEepromParameterAddress(byte param_1)
+
+{
+  int iVar1;
+  undefined *puVar2;
+  
+  puVar2 = &DAT_003fee38;
+  if (param_1 - 1 < 4) {
+    puVar2 = (undefined *)(param_1 + 0x3fee17);
+  }
+  else if (param_1 == 0x17) {
+    puVar2 = (undefined *)0x3fee1c;
+  }
+  else if (param_1 == 0x18) {
+    puVar2 = (undefined *)0x3fee1d;
+  }
+  else {
+    if (param_1 - 10 < 3) {
+      iVar1 = 6;
+    }
+    else {
+      if (1 < param_1 - 0xf) {
+        return (undefined *)0x0;
+      }
+      iVar1 = 4;
+    }
+    mpc555_eepromReadWords(param_1 + 0x1000010 + iVar1,&DAT_003fee38,2);
+  }
+  return puVar2;
+}
+
+
+
+//
+// Function: cm848_handleEepromDiagnosticCallback @ 0x00002de4
+//
+

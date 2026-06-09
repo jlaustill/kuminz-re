@@ -1,0 +1,79 @@
+=== VARIABLES TO NAME ===
+0x003fee04  (3 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fee04
+void engine_coolantTemp_bucket_accumulate(void)
+
+{
+  bool bVar1;
+  ushort uVar2;
+  ushort *puVar3;
+  int iVar4;
+  int iVar5;
+  
+  uVar2 = DAT_00408768;
+  iVar4 = (int)(short)sensor_readings_t_0040baf2.coolant_temp;
+  iVar5 = 0;
+  bVar1 = false;
+  puVar3 = (ushort *)0x408770;
+  do {
+    puVar3 = puVar3 + 1;
+    if ((int)(uint)*puVar3 < iVar4) {
+      cold_start_coolant_bucket_counters[iVar5] = cold_start_coolant_bucket_counters[iVar5] + 1;
+    }
+    if ((bVar1) || ((cold_start_coolant_bucket_counters[iVar5] != 0 && (iVar4 < DAT_00408766)))) {
+      bVar1 = true;
+    }
+    else {
+      bVar1 = false;
+    }
+    if (uVar2 < cold_start_coolant_bucket_cycle_count) {
+      *(dword *)(&DAT_003fee04 + iVar5 * 4) =
+           *(int *)(&DAT_003fee04 + iVar5 * 4) + cold_start_coolant_bucket_counters[iVar5];
+      cold_start_coolant_bucket_counters[iVar5] = 0;
+      cold_start_coolant_bucket_cycle_count = uVar2 + 1;
+    }
+    iVar5 = iVar5 + 1;
+  } while (iVar5 < 5);
+  if (bVar1) {
+    cold_start_coolant_bucket_cycle_count = cold_start_coolant_bucket_cycle_count + 1;
+  }
+  else {
+    cold_start_coolant_bucket_cycle_count = 0;
+  }
+  return;
+}
+
+
+
+//
+// Function: engine_coolant_overheat_check @ 0x0051361c
+//
+
+// Variables in this function: DAT_003fee04
+void protection_accumulator_update(void)
+
+{
+  dword *pdVar1;
+  int *piVar2;
+  
+  piVar2 = (int *)&DAT_003fee04;
+  pdVar1 = cold_start_coolant_bucket_counters;
+  do {
+    *piVar2 = *piVar2 + *pdVar1;
+    piVar2 = piVar2 + 1;
+    pdVar1 = pdVar1 + 1;
+  } while (pdVar1 < &cold_start_fuel_limit_reason_code);
+  return;
+}
+
+
+
+//
+// Function: engine_protection_faultSeverity_manage @ 0x0051408c
+//
+

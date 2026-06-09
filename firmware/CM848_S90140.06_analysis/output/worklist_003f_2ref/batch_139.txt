@@ -1,0 +1,59 @@
+=== VARIABLES TO NAME ===
+0x003fcd96  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fcd96
+void governor_fuel_mode_initialization(void)
+
+{
+  cruise_protection_ok = 0;
+  governor_fuel_mode = 1;
+  governor_fuel_mode_d = 1;
+  cruise_protection_ok_prev = 0;
+  governor_speed_request_raw_sample = 5;
+  governor_speed_request_raw_prev = 5;
+  governor_speed_request_state_b = 5;
+  governor_speed_request_state_prev = 5;
+  governor_speed_request_debounce_count = 0;
+  DAT_003fcd9a = 0;
+  PTR_DAT_003fcd96 = &DAT_0040872a;
+  DAT_003fcd90 = 0;
+  cruise_rpm_prev_sample = 0;
+  cruise_rpm_ratio_ema_prev = 0;
+  cruise_speed_error_integral = 0;
+  cruise_steady_state_debounce_counter = 0;
+  return;
+}
+
+
+
+//
+// Function: governor_cruiseOverride_state2_handler @ 0x005125f4
+//
+
+// Variables in this function: DAT_003fcd96
+void governor_cruise_rpmRatio_ema(void)
+
+{
+  uint uVar1;
+  
+  uVar1 = ((uint)engine_rpm_state_t_0040b7ac.current_rpm + (uint)cruise_rpm_prev_sample) * 0x80;
+  if ((uint)cruise_speed_setpoint_adjusted * 0xffff < uVar1) {
+    uVar1 = 0xffff;
+  }
+  else {
+    uVar1 = uVar1 / cruise_speed_setpoint_adjusted;
+  }
+  cruise_rpm_ratio_ema = exponentialMovingAverage(uVar1 & 0xffff,&PTR_DAT_003fcd96);
+  return;
+}
+
+
+
+//
+// Function: governor_cruise_speedError_integrate @ 0x005127d8
+//
+

@@ -1,0 +1,38 @@
+=== VARIABLES TO NAME ===
+0x003faddf  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003faddf
+void cm848_j1939HandlePgn65263FluidLevelPressure(void)
+
+{
+  if ((j1939_feature_enable_flags & 0x1000) == 0) {
+    j1939_engine_load_byte = 0xff;
+  }
+  else if (((system_status_flags_t_003fe974.reserved_16 & 0x10) == 0) &&
+          ((system_status_flags_t_003fe974.reserved_16 & 8) == 0)) {
+    j1939_engine_load_byte = (byte)(((uint)(engine_load_demand_raw >> 7) * 0x1afa) / 1000 >> 2);
+  }
+  else {
+    j1939_engine_load_byte = 0xfe;
+  }
+  DAT_003faddc = (undefined1)(((uint)(fuel_quantity_demand_input >> 7) * 0x1afa) / 1000 >> 2);
+  if ((j1939_output_config_bits & 8) == 0) {
+    DAT_003faddf = 0xff;
+  }
+  else {
+    DAT_003faddf = (undefined1)(((uint)(fuel_quantity_mode_raw >> 7) * 0x1afa) / 1000 >> 1);
+  }
+  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65263_tx_header);
+  return;
+}
+
+
+
+//
+// Function: cm848_initJ1939FluidLevelPressureBuffer @ 0x00025fb4
+//
+

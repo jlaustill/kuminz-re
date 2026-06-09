@@ -1,0 +1,161 @@
+=== VARIABLES TO NAME ===
+0x003feaa4  (3 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003feaa4
+void governor_loadPercent_channel0_update(void)
+
+{
+  undefined2 uVar1;
+  uint uVar2;
+  
+  fault_flag_clear_bitmap(0);
+  fault_reason_clear_bitmap(0);
+  uVar1 = DAT_0040aac4;
+  if ((((governor_mode_config_flags & 0x8000) != 0) && (DAT_0040aac1 <= DAT_0005c340)) &&
+     (uVar1 = DAT_0005c344, governor_derivative_active_flag == 0)) {
+    if (DAT_003feaa4 == 0) {
+      uVar1 = DAT_0005c344;
+      if (governor_load_startup_inhibit_flag == 0) {
+        fault_reason_set_bitmap(0);
+        uVar1 = DAT_0005c344;
+      }
+    }
+    else {
+      uVar2 = (uint)DAT_0040aab6;
+      if (uVar2 < 0xfb) {
+        uVar1 = (short)((uVar2 << 4) / 10);
+      }
+      else {
+        uVar1 = DAT_0005c344;
+        if ((uVar2 != 0xfe) && (uVar1 = DAT_0005c344, governor_load_startup_inhibit_flag == 0)) {
+          fault_flag_set_bitmap(0);
+          uVar1 = DAT_0005c344;
+        }
+      }
+    }
+  }
+  DAT_0040aac4 = uVar1;
+  return;
+}
+
+
+
+//
+// Function: governor_loadPercent_channel6_update @ 0x0050a1b4
+//
+
+// Variables in this function: DAT_003feaa4
+void diag_faultEntry_channelProcess(int param_1)
+
+{
+  char cVar1;
+  int iVar2;
+  undefined **ppuVar3;
+  int iVar4;
+  uint uVar5;
+  
+  ppuVar3 = &PTR_DAT_0053a278;
+  param_1 = param_1 * 10;
+  iVar2 = (int)&PTR_DAT_0053a278 + param_1;
+  iVar4 = (int)(char)(&DAT_0053a27c)[param_1];
+  fault_reason_clear_bitmap(iVar4);
+  fault_flag_clear_bitmap(iVar4);
+  uVar5 = *(uint *)(iVar2 + 6);
+  iVar2 = ((int)uVar5 >> 3) + (uint)((int)uVar5 < 0 && (uVar5 & 7) != 0);
+  if (((uint)*(byte *)((int)&qadc_control_word_h + iVar2) &
+      1 << (uVar5 + (((int)uVar5 >> 3) + (uint)((int)uVar5 < 0 && (uVar5 & 7) != 0)) * -8 & 0x3f))
+      == 0) {
+    return;
+  }
+  if (DAT_0005c340 < (&fault_confirmation_snapshot_array)[uVar5]) {
+    return;
+  }
+  if ((ushort)(&fault_confirmation_snapshot_array)[uVar5] < (DAT_0005c340 & 0xff)) {
+    (&fault_confirmation_snapshot_array)[uVar5] = (byte)DAT_0005c340;
+  }
+  if (governor_derivative_active_flag == 0) {
+    if ((&DAT_003feaa4)[iVar4] == 0) {
+      if (governor_load_startup_inhibit_flag == 0) {
+        fault_reason_set_bitmap(iVar4);
+      }
+    }
+    else {
+      cVar1 = **(char **)((int)ppuVar3 + param_1);
+      if (cVar1 == '\x03') {
+        if (governor_load_startup_inhibit_flag == 0) {
+          fault_flag_set_bitmap(iVar4);
+        }
+      }
+      else if (cVar1 != '\x02') {
+        if (cVar1 == '\0') goto LAB_0050a6dc;
+        goto LAB_0050a6cc;
+      }
+    }
+  }
+  if (((uint)(byte)(&DAT_0006456e)[iVar2] & 1 << (uVar5 & 7)) == 0) {
+LAB_0050a6dc:
+    cm848_clearEngineCycleBitmapBitIfGreater(uVar5 & 0xffff,0);
+    return;
+  }
+LAB_0050a6cc:
+  cm848_setEngineCycleBitmapBitIfGreater(uVar5 & 0xffff,0);
+  return;
+}
+
+
+
+//
+// Function: fuel_demandFeature_emission_update @ 0x0050a700
+//
+
+// Variables in this function: DAT_003feaa4
+void phase_group_a_updateStartupTimer(void)
+
+{
+  short *psVar1;
+  
+  if ((governor_calibration_phase_config_flags & 0x400) != 0) {
+    if (governor_table_check_startup_delay != 0) {
+      governor_table_check_startup_delay = governor_table_check_startup_delay - 1;
+    }
+    if (((cold_start_phase == CSP_AT_GOVERNOR_SETPOINT) ||
+        (cold_start_phase == CSP_FUEL_MODE_SWITCH)) || (cold_start_phase == CSP_SUSPENDED)) {
+      if (governor_load_startup_timer <= DAT_0005c346) {
+        governor_load_startup_timer = governor_load_startup_timer + 1;
+      }
+    }
+    else {
+      governor_load_startup_timer = 0;
+    }
+    if ((protection_enable_t_0040c050.mode_bits & 1) == 0) {
+      governor_load_startup_inhibit_flag = 1;
+    }
+    else if ((cold_start_phase == CSP_CRANKING) || (DAT_0005c346 <= governor_load_startup_timer)) {
+      governor_load_startup_inhibit_flag = 0;
+    }
+    else {
+      governor_load_startup_inhibit_flag = 1;
+    }
+    if (governor_derivative_active_flag == 0) {
+      psVar1 = &DAT_003feaa4;
+      do {
+        if (*psVar1 != 0) {
+          *psVar1 = *psVar1 + -1;
+        }
+        psVar1 = psVar1 + 1;
+      } while (psVar1 < (short *)0x3fead5);
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: j1939_pgn_handler_init_batch @ 0x0050bdcc
+//
+

@@ -1,0 +1,53 @@
+=== VARIABLES TO NAME ===
+0x003fa0de  (2 references)
+0x003fa0e0  (2 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fa0de, DAT_003fa0e0
+void cm848_temperatureBasedFuelTrim(void)
+
+{
+  if (((governor_feature_flags & 1) == 0) && (iat_fuel_trim_enable_flag != 0)) {
+    iat_fuel_trim_lookup_result = lookupTableInterpolation((table_interp_args_t *)&DAT_003fa0de);
+    coolant_fuel_trim_lookup_result = lookupTableInterpolation((table_interp_args_t *)&DAT_003fa0e0)
+    ;
+    fuel_blend_coefficient_calc = coolant_fuel_trim_lookup_result;
+    if (coolant_fuel_trim_lookup_result < iat_fuel_trim_lookup_result) {
+      fuel_blend_coefficient_calc = iat_fuel_trim_lookup_result;
+    }
+    if (fuel_blend_coefficient_calc < 0x4001) {
+      fuel_blend_coefficient_offset = 0;
+      fuel_blend_coefficient = fuel_blend_coefficient_calc;
+    }
+    else {
+      fuel_blend_coefficient = 0x4000;
+      fuel_blend_coefficient_offset = fuel_blend_coefficient_calc + 0xc000;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_initTemperatureTrimTableSizes @ 0x0000e8ac
+//
+
+// Variables in this function: DAT_003fa0de, DAT_003fa0e0
+void cm848_initTemperatureTrimTableSizes(void)
+
+{
+  DAT_003fa0de = 2;
+  DAT_003fa0e0 = 2;
+  return;
+}
+
+
+
+//
+// Function: cm848_initTemperatureTrimCoeff @ 0x0000e8cc
+//
+

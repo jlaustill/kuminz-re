@@ -1,0 +1,148 @@
+=== VARIABLES TO NAME ===
+0x003fcdc4  (2 references)
+0x003fcdd2  (2 references)
+0x003fcdd4  (2 references)
+
+Total: 3 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fcdd4
+void fuel_coldStart_demandMin_2dLookup(void)
+
+{
+  cold_start_fuel_demand_min_floor =
+       cm848_dualAxisTableInterpolation
+                 (&DAT_003fcdd4,engine_rpm_state_t_0040b7ac.current_rpm,0xaeb0);
+  if ((int)(short)cold_start_fuel_demand_pi_correction < (int)(uint)cold_start_fuel_demand_min_floor
+     ) {
+    cold_start_fuel_limit_reason_code = 2;
+    cold_start_fuel_demand_pi_correction = cold_start_fuel_demand_min_floor;
+  }
+  return;
+}
+
+
+
+//
+// Function: governor_injectionTiming_modeAdj @ 0x00513d08
+//
+
+// Variables in this function: DAT_003fcdc4, DAT_003fcdd2
+void governor_injectionTiming_modeAdj(void)
+
+{
+  word wVar1;
+  
+  wVar1 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fcdd2);
+  if ((DAT_003fcdc4 != 0x2e) && (governor_mode_code == 0x2e)) {
+    injection_timing_demand_min_working = torque_limit_fault_snapshot;
+  }
+  if (governor_mode_code == 0x2e) {
+    if ((int)(short)injection_timing_demand_min_working +
+        (int)(short)injection_timing_demand_step_rate < (int)(short)wVar1) {
+      wVar1 = injection_timing_demand_min_working + injection_timing_demand_step_rate;
+    }
+  }
+  else if ((int)(short)injection_timing_demand_min_working -
+           (int)(short)injection_timing_demand_step_rate < -0x3ff) {
+    wVar1 = 0xfc00;
+  }
+  else {
+    wVar1 = injection_timing_demand_min_working - injection_timing_demand_step_rate;
+  }
+  injection_timing_demand_min_working = wVar1;
+  return;
+}
+
+
+
+//
+// Function: protection_fuel_limit_check @ 0x00513ddc
+//
+
+// Variables in this function: DAT_003fcdd2, DAT_003fcdd4
+void governor_fuel_limit_initialize(void)
+
+{
+  word *pwVar1;
+  int iVar2;
+  
+  engine_diag_shadow_flags = engine_diag_shadow_flags & 0xff9f;
+  engine_diag_shadow_flags_b = engine_diag_shadow_flags_b & 0xff9f;
+  coolant_bucket_overheat_detected_flag = 0;
+  coolant_bucket_overheat_active_flag = 0;
+  cold_start_fuel_demand_ramp_output = 0x6400;
+  cold_start_fuel_demand_ramp_prev = 0x6400;
+  cold_start_rpm_fuel_limit = 0x6400;
+  cold_start_rpm_fuel_limit_prev = 0x6400;
+  cold_start_fuel_demand_integral = 0x6400;
+  cold_start_fuel_demand_integral_q8_scaled = 0xd7a0000;
+  cold_start_fuel_demand_pi_correction = 0x6400;
+  cold_start_fuel_demand_pi_correction_prev = 0x6400;
+  cold_start_fuel_demand_proportional = 0x6400;
+  cold_start_coolant_temp_setpoint = 0x3fc0;
+  cold_start_coolant_temp_error = 0;
+  cold_start_overheat_active_flag = 0;
+  cold_start_overheat_active_prev = 0;
+  injection_timing_demand_min_working = 0xfc00;
+  iVar2 = 0;
+  pwVar1 = &cold_start_fuel_demand_proportional;
+  do {
+    pwVar1 = pwVar1 + 2;
+    pwVar1[0] = 0;
+    pwVar1[1] = 0;
+    iVar2 = iVar2 + 1;
+  } while (iVar2 < 5);
+  cold_start_fuel_limit_reason_code = 9;
+  DAT_003fcdd4 = 2;
+  DAT_003fcdd6 = 2;
+  DAT_003fcdd0 = 2;
+  DAT_003fcdd2 = 2;
+  return;
+}
+
+
+
+//
+// Function: governor_fuel_limit_update @ 0x00513f5c
+//
+
+// Variables in this function: DAT_003fcdc4
+void governor_fuel_limit_update(void)
+
+{
+  if ((governor_system_config_flags & 2) == 0) {
+    cold_start_fuel_demand_ramp_output = 0x6400;
+    cold_start_fuel_limit_reason_code = 0;
+  }
+  else {
+    if (((short)sensor_readings_t_0040baf2.coolant_temp < DAT_0040876a) &&
+       (cold_start_coolant_bucket_cycle_count == 0)) {
+      governor_fuel_limit_initialize();
+    }
+    else {
+      engine_coolantTemp_bucket_accumulate();
+      governor_cruise_dualCalc_dispatch();
+      engine_coolantTemp_delta_calc();
+      fuel_coldStart_integralCorrection_update();
+      fuel_coldStart_demandMin_2dLookup();
+      fuel_coldStart_rpmLimit_select();
+      fuel_coldStart_demandRamp_rateLimiter();
+      governor_injectionTiming_modeAdj();
+    }
+    cold_start_fuel_demand_ramp_prev = cold_start_fuel_demand_ramp_output;
+    cold_start_overheat_active_prev = cold_start_overheat_active_flag;
+    cold_start_rpm_fuel_limit_prev = cold_start_rpm_fuel_limit;
+    cold_start_fuel_demand_pi_correction_prev = cold_start_fuel_demand_pi_correction;
+    DAT_003fcdc4 = governor_mode_code;
+  }
+  return;
+}
+
+
+
+//
+// Function: protection_accumulator_update @ 0x00514048
+//
+

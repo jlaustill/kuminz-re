@@ -1,0 +1,137 @@
+=== VARIABLES TO NAME ===
+0x003fd0ae  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fd0ae
+void engine_injectionAngle_tpuUpdate(void)
+
+{
+  short sVar1;
+  ushort uVar2;
+  uint uVar3;
+  uint uVar4;
+  uint uVar5;
+  uint uVar6;
+  ushort uVar7;
+  
+  sVar1 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fd0ae);
+  injection_timing_cam_angle_correction =
+       sVar1 + (ushort)((((int)DAT_00409098 * (int)(short)cam_sync_position >> 6) +
+                        (uint)DAT_0040909c) * (uint)speed_setpoint_raw >> 0x16);
+  if (crank_position_valid_flag != 0) {
+    injection_timing_cam_angle_correction = injection_timing_cam_angle_correction + DAT_0040909a;
+  }
+  uVar5 = (uint)(ushort)(&DAT_0005fbb2)[cylinder_event_index] +
+          (int)(short)injection_timing_table_offset +
+          (int)(short)injection_timing_cam_angle_correction;
+  if (0x77ff < (int)uVar5) {
+    uVar5 = uVar5 - 0x7800;
+  }
+  if ((int)uVar5 < 0) {
+    uVar5 = uVar5 + 0x7800;
+  }
+  if (injection_tpu_timing_mode != 2) {
+    uVar5 = uVar5 & 0xffff;
+    uVar3 = (uint)injection_timing_angle_threshold;
+    if (uVar3 < uVar5) {
+      uVar6 = (int)(uint)injection_timing_tooth_count /
+              (int)((crank_sync_tooth_count_cal & 0xff) - 1) & 0xffff;
+      uVar4 = (int)(uVar5 - uVar3) / (int)uVar6;
+      uVar7 = (short)((int)uVar4 >> 1) + (ushort)((int)uVar4 < 0 && (uVar4 & 1) != 0) & 0x7f;
+      uVar5 = ((int)(uVar5 - uVar3) >> 8) / (int)uVar6 + (uint)injection_timing_tooth_base_index;
+      if ((int)(crank_sync_tooth_count_cal - 1) < (int)(uVar5 & 0xff)) {
+        uVar5 = uVar5 - (crank_sync_tooth_count_cal + 0xff);
+      }
+    }
+    else {
+      uVar6 = (int)(uint)injection_timing_tooth_count /
+              (int)((crank_sync_tooth_count_cal & 0xff) - 1) & 0xffff;
+      uVar6 = (int)(uVar6 * 0x100 - (uVar3 - uVar5)) / (int)uVar6;
+      uVar7 = (short)((int)uVar6 >> 1) + (ushort)((int)uVar6 < 0 && (uVar6 & 1) != 0);
+      uVar5 = injection_timing_tooth_base_index + 0xff;
+    }
+    goto LAB_00528338;
+  }
+  uVar3 = (uVar5 & 0xffff) >> 8;
+  uVar6 = (uVar5 & 0xffff) >> 1 & 0x7f;
+  if (((uVar6 < injection_timing_tooth_phase_threshold) && (uVar3 != 0)) && (uVar3 != 0x3c)) {
+    uVar3 = uVar3 + 0xff;
+    uVar6 = uVar6 + 0x80;
+  }
+  uVar7 = (ushort)uVar6;
+  if (((uVar3 & 0xff) == 0x3a) || ((uVar3 & 0xff) == 0x76)) {
+    uVar5 = uVar3 + 0xff;
+    if (uVar6 < 0x80) {
+      uVar7 = uVar7 + 0x80;
+    }
+    else {
+LAB_00528260:
+      uVar7 = 0xff;
+    }
+  }
+  else if (((uVar3 & 0xff) == 0x3b) || (uVar5 = uVar3, (uVar3 & 0xff) == 0x77)) {
+    if (uVar6 < 0x41) {
+      uVar5 = uVar3 + 0xfe;
+      goto LAB_00528260;
+    }
+    uVar5 = uVar3 + 1;
+    if (0x77 < (uVar5 & 0xff)) {
+      uVar5 = uVar3 + 0x89;
+    }
+    uVar7 = 0;
+  }
+  if (0x39 < (uVar5 & 0xff)) {
+    uVar5 = uVar5 + 0xfe;
+  }
+LAB_00528338:
+  if (((governor_fuel_feature_flags & 2) == 0) || (1 < (byte)(&DAT_0005f14e)[cylinder_event_index]))
+  {
+    uVar2 = 10;
+  }
+  else {
+    uVar2 = (ushort)*(byte *)((int)&DAT_0053ac42 + (byte)(&DAT_0005f14e)[cylinder_event_index] + 2);
+  }
+  TPUA_CH10_PARAM0 = uVar2 << 0xc | (ushort)injection_tpu_timing_mode;
+  DAT_003041a2 = (ushort)((uVar5 & 0xff) << 8) | uVar7 & 0xff;
+  DAT_003041a6 = 0;
+  tpu_a_mcr.HSRR0 = 0x30;
+  return;
+}
+
+
+
+//
+// Function: cm848_tpu_configuration_setup @ 0x00528474
+//
+
+// Variables in this function: DAT_003fd0ae
+void cm848_tpu_configuration_setup(void)
+
+{
+  word wVar1;
+  
+  DAT_003fd0ae = 2;
+  wVar1 = tpu_a_mcr.CPR0;
+  tpu_a_mcr.CPR0 = wVar1 & 0xffcf;
+  wVar1 = tpu_a_mcr.CFSR1;
+  tpu_a_mcr.CFSR1 = wVar1 & 0xf0ff | 0x900;
+  wVar1 = tpu_a_mcr.HSQR0;
+  tpu_a_mcr.HSQR0 = wVar1 & 0xffcf;
+  tpu_a_mcr.HSRR0 = 0x30;
+  wVar1 = tpu_a_mcr.CIER;
+  tpu_a_mcr.CIER = wVar1 | 0x400;
+  TPUA_CH10_PARAM0 = injection_tpu_timing_mode | 0xa000;
+  wVar1 = tpu_a_mcr.CPR0;
+  tpu_a_mcr.CPR0 = wVar1 & 0xffcf | 0x10;
+  return;
+}
+
+
+
+//
+// Function: FUN_00528508 @ 0x00528508
+//
+

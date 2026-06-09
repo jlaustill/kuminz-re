@@ -1,0 +1,106 @@
+=== VARIABLES TO NAME ===
+0x003fc1fc  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fc1fc
+void cm848_updateSystemTimers(byte param_1,int param_2)
+
+{
+  if (param_2 == 0x51) {
+    diag_serial_buffer[0] = 0x51;
+    diag_serial_buffer[1] = 1;
+  }
+  else {
+    if (param_2 == 0x74) {
+      diag_serial_buffer[0] = 0x74;
+    }
+    else {
+      diag_serial_buffer[0] = 0x7f;
+    }
+    diag_serial_buffer[1] = diag_serial_buffer[(param_2 == 0x74) + 0x20];
+  }
+  diag_serial_buffer[3] = 0;
+  diag_session_state_t_003fecbe.response_write_index = 4;
+  diagnostic_callback_ptr = &DAT_003fc1fc;
+  diag_serial_buffer[2] = param_1;
+  mpc555_initSerialTransmit();
+  return;
+}
+
+
+
+//
+// Function: mpc555_diagnosticSubcommandDispatcher @ 0x0000662c
+//
+
+// Variables in this function: DAT_003fc1fc
+void mpc555_diagnosticSubcommandDispatcher(byte subcommand,byte *data_ptr)
+
+{
+  byte bVar1;
+  undefined3 in_register_0000000c;
+  undefined4 uVar2;
+  
+  mpc555_validateSerialChecksum(CONCAT31(in_register_0000000c,subcommand));
+  if (diag_request_pending_flag != '\x01') {
+    return;
+  }
+  if ((diag_session_state_t_003fecbe.session_flags & 1) == 0) {
+    return;
+  }
+  if (diag_serial_buffer[0x20] == 0x34) {
+    bVar1 = qadc_a_result_high_1;
+    if ((bVar1 & 0x80) != 0) {
+      eeprom_xfer_state.transfer_timer = 0x28;
+    }
+    if (security_access_state == 3) {
+      mpc555_handleEepromDiagnosticResponse();
+      diag_request_pending_flag = 0;
+      return;
+    }
+    if (security_access_state == 0x10) {
+      mpc555_processEepromDataTransfer();
+      diag_request_pending_flag = 0;
+      return;
+    }
+    if (security_access_state == 0x11) {
+      cm848_sendEepromVersionResponse();
+      diagnostic_callback_ptr = &DAT_003fc1fc;
+      diag_request_pending_flag = 0;
+      return;
+    }
+    if (security_access_state != 0x20) {
+      cm848_updateSystemTimers(0x12,0x7f);
+      diag_request_pending_flag = 0;
+      return;
+    }
+    if ((sensor_fault_mode_active._0_1_ == 1) || (sensor_fault_mode_active._0_1_ == 2)) {
+      sensor_fault_mode_pending = (word)sensor_fault_mode_active._0_1_;
+      if ((bVar1 & 0xf) == 0) {
+        diag_request_pending_flag = 0;
+        return;
+      }
+      data_transfer_state_t_003fec82.state._1_1_ = 1;
+      cm848_initCanMailboxFilters();
+      diag_request_pending_flag = 0;
+      return;
+    }
+    uVar2 = 0x12;
+  }
+  else {
+    uVar2 = 0x11;
+  }
+  cm848_updateSystemTimers(uVar2,0x7f);
+  diag_request_pending_flag = 0;
+  return;
+}
+
+
+
+//
+// Function: cm848_resetSerialReceiveBuffer @ 0x00006770
+//
+

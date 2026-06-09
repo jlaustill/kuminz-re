@@ -1,0 +1,72 @@
+=== VARIABLES TO NAME ===
+0x003fbcea  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fbcea
+void cm848_auxiliaryControl_exponentialAverage(void)
+
+{
+  uint uVar1;
+  int iVar2;
+  
+  if ((engine_rpm_state_t_0040b7ac.current_rpm < 8) || (fuel_qty_ema_filtered_rpm_normalized < 0x80)
+     ) {
+    boost_target_calc_inhibit_flag = 1;
+  }
+  else {
+    boost_target_calc_inhibit_flag = 0;
+  }
+  uVar1 = (short)fuel_demand_boost_offset * 2;
+  iVar2 = ((int)uVar1 >> 6) + (uint)((int)uVar1 < 0 && (uVar1 & 0x3f) != 0);
+  if (boost_target_calc_inhibit_flag == 0) {
+    boost_targetPressure_loadRpm_calc();
+    uVar1 = (uint)boost_target_fuel_normalized_ratio;
+  }
+  else {
+    uVar1 = 0;
+  }
+  DAT_0040a680 = (short)uVar1;
+  if ((int)(short)iVar2 + (int)DAT_0040a680 < 0) {
+    uVar1 = 0;
+  }
+  else {
+    uVar1 = iVar2 + uVar1;
+  }
+  boost_fuel_input_value = (word)uVar1;
+  boost_correction_block_mode_flag._2_2_ =
+       exponentialMovingAverage(uVar1 & 0xffff,&PTR_DAT_003fbcea);
+  if ((((boost_pressure_state_t_0040a406.reserved_0a == 0) && (fuel_demand_mode_index == 0)) &&
+      (fuel_demand_phase_state == 0)) && (boost_target_calc_inhibit_flag == 0)) {
+    boost_correction_block_mode_flag._0_2_ = 0;
+  }
+  else {
+    boost_correction_block_mode_flag._0_2_ = 1;
+  }
+  DAT_0040babc = boost_fuel_input_value;
+  return;
+}
+
+
+
+//
+// Function: cm848_initialization_step_13 @ 0x00506f68
+//
+
+// Variables in this function: DAT_003fbcea
+void cm848_initialization_step_13(void)
+
+{
+  DAT_003fbcee = 0;
+  PTR_DAT_003fbcea = &DAT_00406770;
+  return;
+}
+
+
+
+//
+// Function: sensor_channel108_filter @ 0x00506f88
+//
+

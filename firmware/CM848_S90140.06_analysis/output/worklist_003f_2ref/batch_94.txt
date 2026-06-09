@@ -1,0 +1,255 @@
+=== VARIABLES TO NAME ===
+0x003fb918  (3 references)
+0x003fb91a  (3 references)
+0x003fb91c  (3 references)
+0x003fb968  (3 references)
+0x003fb96a  (3 references)
+
+Total: 5 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fb918, DAT_003fb91a, DAT_003fb91c
+void cm848_addCoolantCalEntry(word param_1,undefined1 param_2,undefined2 param_3)
+
+{
+  uint uVar1;
+  
+  uVar1 = (uint)coolant_cal_entry_count_a;
+  if (uVar1 < 10) {
+    coolant_cal_entry_count_a = coolant_cal_entry_count_a + 1;
+    (&fault_severity_data_array)[uVar1 * 4] = param_1;
+    (&DAT_003fb918)[uVar1 * 8] = param_2;
+    (&DAT_003fb91a)[uVar1 * 4] = param_3;
+    (&DAT_003fb91c)[uVar1 * 4] = etc1_torque_mode_timeout_cal;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_setDefaultCalibrationValue @ 0x00053d74
+//
+
+// Variables in this function: DAT_003fb968, DAT_003fb96a
+void cm848_addCoolantCalEntryAlt(byte param_1,undefined2 param_2)
+
+{
+  uint uVar1;
+  
+  uVar1 = (uint)coolant_cal_entry_count_b;
+  if (uVar1 < 10) {
+    coolant_cal_entry_count_b = coolant_cal_entry_count_b + 1;
+    (&fault_entry_data_array)[uVar1 * 6] = param_1;
+    (&DAT_003fb968)[uVar1 * 3] = param_2;
+    (&DAT_003fb96a)[uVar1 * 3] = etc1_torque_mode_timeout_cal;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_processCoolantCalEntries @ 0x00053dc8
+//
+
+// Variables in this function: DAT_003fb918, DAT_003fb91a, DAT_003fb91c, DAT_003fb968, DAT_003fb96a
+void cm848_processCoolantCalEntries(void)
+
+{
+  word wVar1;
+  short sVar2;
+  word *pwVar3;
+  byte *pbVar4;
+  uint uVar5;
+  word *pwVar6;
+  byte *pbVar7;
+  int iVar8;
+  uint uVar9;
+  
+  uVar5 = (uint)coolant_cal_entry_count_a;
+  if (uVar5 != 0) {
+    pwVar3 = &fault_severity_data_array + uVar5 * 4;
+    for (; uVar5 != 0; uVar5 = uVar5 + 0xff & 0xff) {
+      pwVar6 = pwVar3 + -4;
+      wVar1 = pwVar3[-1];
+      pwVar3[-1] = wVar1 - 1;
+      if ((word)(wVar1 - 1) == 0) {
+        if (((*pwVar6 == 1) && (*(byte *)(pwVar3 + -3) == j1939_tsc1_auth_primary_sa)) &&
+           (pwVar3[-2] == 1)) {
+          j1939_tsc1_override_state.torque_limit_mode_select = 0;
+          j1939_tsc1_override_state.speed_control_target =
+               j1939_tsc1_override_state.speed_control_target & 6;
+        }
+        if (coolant_cal_entry_count_a == uVar5) {
+          coolant_cal_entry_count_a = coolant_cal_entry_count_a - 1;
+        }
+        else {
+          iVar8 = coolant_cal_entry_count_a + 0xff;
+          coolant_cal_entry_count_a = (byte)iVar8;
+          uVar9 = iVar8 * 8 & 0x7f8;
+          *pwVar6 = *(word *)((int)&fault_severity_data_array + uVar9);
+          *(undefined1 *)(pwVar3 + -3) = (&DAT_003fb918)[uVar9];
+          pwVar3[-2] = *(word *)((int)&DAT_003fb91a + uVar9);
+          pwVar3[-1] = *(word *)((int)&DAT_003fb91c + uVar9);
+        }
+      }
+      pwVar3 = pwVar6;
+    }
+  }
+  uVar5 = (uint)coolant_cal_entry_count_b;
+  if (uVar5 != 0) {
+    pbVar4 = &fault_entry_data_array + uVar5 * 6;
+    for (; uVar5 != 0; uVar5 = uVar5 + 0xff & 0xff) {
+      pbVar7 = pbVar4 + -6;
+      sVar2 = *(short *)(pbVar4 + -2);
+      *(short *)(pbVar4 + -2) = sVar2 + -1;
+      if ((short)(sVar2 + -1) == 0) {
+        if ((*pbVar7 == j1939_tsc1_auth_primary_sa) && (*(short *)(pbVar4 + -4) == 2)) {
+          j1939_tsc1_override_state.speed_control_target =
+               j1939_tsc1_override_state.speed_control_target & 5;
+        }
+        if (coolant_cal_entry_count_b == uVar5) {
+          coolant_cal_entry_count_b = coolant_cal_entry_count_b - 1;
+        }
+        else {
+          uVar9 = coolant_cal_entry_count_b + 0xff;
+          coolant_cal_entry_count_b = (byte)uVar9;
+          uVar9 = uVar9 & 0xff;
+          *pbVar7 = (&fault_entry_data_array)[uVar9 * 6];
+          *(undefined2 *)(pbVar4 + -4) = (&DAT_003fb968)[uVar9 * 3];
+          *(undefined2 *)(pbVar4 + -2) = (&DAT_003fb96a)[uVar9 * 3];
+        }
+      }
+      pbVar4 = pbVar7;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_removeCoolantCalEntryByParams @ 0x00053fa8
+//
+
+// Variables in this function: DAT_003fb918, DAT_003fb91a, DAT_003fb91c
+void cm848_removeCoolantCalEntryByParams(int param_1,uint param_2)
+
+{
+  word *pwVar1;
+  word *pwVar2;
+  uint uVar3;
+  uint uVar4;
+  int iVar5;
+  
+  uVar4 = (uint)coolant_cal_entry_count_a;
+  if (uVar4 != 0) {
+    pwVar1 = &fault_severity_data_array + uVar4 * 4;
+    for (; uVar4 != 0; uVar4 = uVar4 + 0xff & 0xff) {
+      pwVar2 = pwVar1 + -4;
+      if (((short)*pwVar2 == param_1) && (*(byte *)(pwVar1 + -3) == param_2)) {
+        if (coolant_cal_entry_count_a == uVar4) {
+          coolant_cal_entry_count_a = coolant_cal_entry_count_a - 1;
+        }
+        else {
+          iVar5 = coolant_cal_entry_count_a + 0xff;
+          coolant_cal_entry_count_a = (byte)iVar5;
+          uVar3 = iVar5 * 8 & 0x7f8;
+          *pwVar2 = *(word *)((int)&fault_severity_data_array + uVar3);
+          *(undefined1 *)(pwVar1 + -3) = (&DAT_003fb918)[uVar3];
+          pwVar1[-2] = *(word *)((int)&DAT_003fb91a + uVar3);
+          pwVar1[-1] = *(word *)((int)&DAT_003fb91c + uVar3);
+        }
+      }
+      pwVar1 = pwVar2;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_removeCalibrationListEntry @ 0x00053fe0
+//
+
+void cm848_removeCalibrationListEntry
+               (int param_1,uint param_2,int param_3,byte *param_4,uint param_5,short *param_6)
+
+{
+  byte bVar1;
+  int iVar2;
+  short *psVar3;
+  byte in_cr0;
+  
+  if ((bool)(in_cr0 >> 2 & 1)) {
+    do {
+      if ((*param_6 == param_1) && (*(byte *)(param_6 + 1) == param_2)) {
+        bVar1 = *param_4;
+        if (bVar1 == param_5) {
+          *param_4 = bVar1 - 1;
+        }
+        else {
+          iVar2 = bVar1 + 0xff;
+          *param_4 = (byte)iVar2;
+          psVar3 = (short *)(param_3 + (iVar2 * 8 & 0x7f8U));
+          *param_6 = *psVar3;
+          *(undefined1 *)(param_6 + 1) = *(undefined1 *)(psVar3 + 1);
+          param_6[2] = psVar3[2];
+          param_6[3] = psVar3[3];
+        }
+      }
+      param_6 = param_6 + -4;
+      param_5 = param_5 + 0xff & 0xff;
+    } while (param_5 != 0);
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_removeCoolantCalEntry @ 0x00054064
+//
+
+// Variables in this function: DAT_003fb968, DAT_003fb96a
+void cm848_removeCoolantCalEntry(uint param_1)
+
+{
+  byte *pbVar1;
+  byte *pbVar2;
+  uint uVar3;
+  uint uVar4;
+  
+  uVar3 = (uint)coolant_cal_entry_count_b;
+  if (uVar3 != 0) {
+    pbVar1 = &fault_entry_data_array + uVar3 * 6;
+    for (; uVar3 != 0; uVar3 = uVar3 + 0xff & 0xff) {
+      pbVar2 = pbVar1 + -6;
+      if (*pbVar2 == param_1) {
+        if (coolant_cal_entry_count_b == uVar3) {
+          coolant_cal_entry_count_b = coolant_cal_entry_count_b - 1;
+        }
+        else {
+          uVar4 = coolant_cal_entry_count_b + 0xff;
+          coolant_cal_entry_count_b = (byte)uVar4;
+          uVar4 = uVar4 & 0xff;
+          *pbVar2 = (&fault_entry_data_array)[uVar4 * 6];
+          *(undefined2 *)(pbVar1 + -4) = (&DAT_003fb968)[uVar4 * 3];
+          *(undefined2 *)(pbVar1 + -2) = (&DAT_003fb96a)[uVar4 * 3];
+        }
+      }
+      pbVar1 = pbVar2;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: mpc555_miosInterruptDispatcher @ 0x00054100
+//
+

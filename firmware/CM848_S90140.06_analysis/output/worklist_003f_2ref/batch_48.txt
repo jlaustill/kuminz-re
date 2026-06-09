@@ -1,0 +1,28 @@
+=== VARIABLES TO NAME ===
+0x003fae21  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fae21
+void cm848_j1939SendDiagnosticStatusMessage(byte dest_address,byte status_type)
+
+{
+  j1939_pgn65213_diag_param_byte = (byte)((uint)j1939_diag_param_a * 5 >> 9);
+  if (j1939_diag_code._0_2_ < 0x10) {
+    DAT_003fae21 = (byte)j1939_diag_code._0_2_ | 0xf0;
+  }
+  else {
+    DAT_003fae21 = 0xfe;
+  }
+  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65213_tx_header);
+  return;
+}
+
+
+
+//
+// Function: cm848_initJ1939BrakeRetarderBuffer @ 0x00026480
+//
+

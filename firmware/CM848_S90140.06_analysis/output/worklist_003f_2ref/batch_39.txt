@@ -1,0 +1,83 @@
+=== VARIABLES TO NAME ===
+0x003fabda  (2 references)
+0x003fac2c  (2 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fabda, DAT_003fac2c
+void cm848_j1939HandlePgn65227Dm2PreviousDtc(void)
+
+{
+  uint uVar1;
+  int iVar2;
+  uint uVar3;
+  uint uVar4;
+  undefined1 local_c;
+  undefined1 uStack_a;
+  
+  if ((DAT_003fac2c & 0xf0) == 0) {
+    j1939_dtc_data_offset = 2;
+    DAT_003fabda = j1939_buildLampStatusByte();
+    if (active_fault_count == 0) {
+      j1939_dm2_dtc_mask_working = 0xffffffff;
+      j1939_dtc_data_offset = j1939_dtc_data_offset + 4;
+    }
+    else {
+      uVar4 = 1;
+      if (active_fault_count != 0) {
+        do {
+          if ((*(ushort *)(&fault_definition_table + (uint)(&active_fault_count)[uVar4] * 6) &
+              0x4000) == 0) {
+            iVar2 = (uint)(&active_fault_count)[uVar4] * 7;
+            if ((&fault_timer_array)[iVar2] < 0x80) {
+              uVar3 = (uint)(&fault_timer_array)[iVar2];
+            }
+            else {
+              uVar3 = 0x7f;
+            }
+            iVar2 = (uint)(&active_fault_count)[uVar4] * 4;
+            uVar1 = *(uint *)(&DAT_0005a4aa + iVar2) & 0xffffe000;
+            local_c = (undefined1)(uVar1 >> 0x18);
+            uStack_a = (undefined1)(uVar1 >> 8);
+            *(uint *)((int)&j1939_dm2_end_ptr + uVar4 * 4 + 2) =
+                 ((uint)CONCAT21(CONCAT11((char)(uVar1 >> 0x10),local_c),uStack_a) |
+                 (byte)(&DAT_0005a4ac)[iVar2] & 0x1f) << 8 | uVar3 | 0x80;
+            j1939_dtc_data_offset = j1939_dtc_data_offset + 4;
+          }
+          uVar4 = uVar4 + 1 & 0xff;
+        } while ((uVar4 <= active_fault_count) && (uVar4 < 0x15));
+      }
+    }
+    sendJ1939Message((j1939_tx_msg_t *)&j1939_dm2_tx_header);
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_j1939SendPgn65226_FECA_Dm1ActiveFaults @ 0x00024ff0
+//
+
+// Variables in this function: DAT_003fabda, DAT_003fac2c
+void cm848_initPgn65227Dm2Handler(void)
+
+{
+  j1939_dm2_tx_header = CONCAT13(((byte)j1939_dm2_priority & 7) << 2,0xfecb00);
+  j1939_dm2_data_ptr = &DAT_003fabda;
+  j1939_dm2_end_ptr = &DAT_003fac2c;
+  j1939_dm2_tx_header = CONCAT31(j1939_dm2_tx_header._0_3_,(char)j1939_source_address);
+  DAT_003fabdb = 0xff;
+  j1939_dm2_dtc_mask_working._3_1_ = (byte)j1939_dm2_dtc_mask_working & 0x7f | 0x80;
+  cm848_j1939RegisterPgnHandler(0xfecb,cm848_j1939HandlePgn65227Dm2PreviousDtc);
+  return;
+}
+
+
+
+//
+// Function: cm848_initPgn65229Dm4Handler @ 0x00025094
+//
+

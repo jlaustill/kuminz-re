@@ -1,0 +1,270 @@
+=== VARIABLES TO NAME ===
+0x003fce68  (2 references)
+0x003fce6c  (2 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fce68, DAT_003fce6c
+void protection_iat_oilTemp_initialize(void)
+
+{
+  battery_voltage_protection_state = 0;
+  cm848_triggerProtectionEvent(0x2b,0);
+  if ((governor_fuel_feature_flags & 0x10) == 0) {
+    cm848_triggerProtectionEvent(0x2c,0);
+  }
+  battery_voltage_status_flags = 1;
+  iat_protection_fault_action_code = 0;
+  iat_protection_shutdown_reason = 0;
+  iat_protection_action_code_prev = 0;
+  iat_protection_state_prev = 0;
+  DAT_003fce68 = 10;
+  iat_solenoid_derate_active_flag = 0;
+  DAT_003fce6c = 2;
+  DAT_003fce6e = 2;
+  DAT_003fce70 = 2;
+  DAT_003fce72 = 2;
+  DAT_003fce74 = 2;
+  DAT_003fce76 = 2;
+  iat_rpmDerate_elapsed_ticks = 0;
+  iat_rpmDerate_below_threshold_count = 0;
+  return;
+}
+
+
+
+//
+// Function: diag_iat_protectionLimit_calc @ 0x00516f9c
+//
+
+// Variables in this function: DAT_003fce6c
+void diag_iat_protection_stateMachine_update(void)
+
+{
+  bool bVar1;
+  word wVar2;
+  byte bVar3;
+  
+  if ((iat_protection_state_prev != 4) &&
+     (cm848_triggerProtectionEvent(4,2), eeprom_header_t_003fee08.calibration_block1._4_2_ != 0)) {
+    iat_protection_shutdown_reason = 7;
+    eeprom_header_t_003fee08.calibration_block1._4_2_ =
+         eeprom_header_t_003fee08.calibration_block1._4_2_ + -1;
+    diag_iat_protection_shutdownEvent();
+    return;
+  }
+  if (iat_solenoid_derate_active_flag != 0) {
+    iat_solenoid_derate_elapsed_cycles = iat_solenoid_derate_elapsed_cycles + 1;
+LAB_00517e34:
+    battery_voltage_status_flags = battery_voltage_status_flags & 0xce | 0x20;
+    if (DAT_0005c78a <= fuel_demand_computed) {
+      iat_solenoid_active_cycle_count = iat_solenoid_active_cycle_count + 1;
+    }
+    if (iat_solenoid_active_cycle_count < DAT_0005c78c) {
+      if (((iat_protection_derate_level == 0) || (iat_protection_derate_level == 1)) ||
+         (iat_protection_derate_level == 2)) {
+        engine_stateMachine_setLevel_init();
+      }
+      else {
+        engine_stateMachine_transition_rpm();
+      }
+      if (iat_solenoid_target_level != 4) {
+        governor_solenoid_check_control();
+        iat_solenoid_committed_level = iat_solenoid_target_level;
+        return;
+      }
+      battery_voltage_status_flags = battery_voltage_status_flags & 0x5f | 0x80;
+    }
+    else {
+      iat_protection_shutdown_reason = 8;
+    }
+    diag_iat_protection_shutdownEvent();
+    iat_solenoid_committed_level = iat_solenoid_target_level;
+    return;
+  }
+  bVar1 = (int)(short)iat_protection_oilTemp_input <=
+          (int)((int)(short)iat_protection_oilTemp_selected + (uint)DAT_0005c798);
+  if (bVar1) {
+    iat_protection_oilTemp_derate_input = iat_protection_oilTemp_input;
+  }
+  else {
+    iat_protection_oilTemp_derate_input = iat_protection_oilTemp_selected;
+  }
+  DAT_0040b346 = (ushort)!bVar1;
+  iat_protection_derate_level = lookupTableInterpolation((table_interp_args_t *)&DAT_003fce6c);
+  if (iat_protection_derate_level == 6) {
+    if (iat_protection_level6_grace_count != 0) {
+      iat_protection_level6_grace_count = iat_protection_level6_grace_count - 1;
+    }
+    if (iat_protection_level6_grace_count != 0) {
+      cm848_triggerProtectionEvent(0x2b,0);
+      if ((governor_fuel_feature_flags & 0x10) == 0) {
+        cm848_triggerProtectionEvent(0x2c,0);
+        return;
+      }
+      return;
+    }
+    iat_protection_shutdown_reason = 5;
+  }
+  else {
+    if (((short)sensor_readings_t_0040baf2.coolant_temp <= DAT_0005c79c) ||
+       ((short)iat_protection_oilTemp_derate_input <= DAT_0005c79e)) {
+      bVar3 = 0;
+      do {
+        wVar2 = cm848_dualAxisTableInterpolation(&DAT_003fce74,iat_protection_derate_level,0xb36c);
+        (&iat_solenoid_derate_step_table)[bVar3] = wVar2;
+        if ((DAT_0005c7a2 == 1) && (bVar3 == 0)) {
+          iat_solenoid_derate_step_table =
+               iat_solenoid_derate_step_table - iat_rpmDerate_elapsed_ticks;
+        }
+        if ((short)(&iat_solenoid_derate_step_table)[bVar3] < 0) {
+          (&iat_solenoid_derate_step_table)[bVar3] = 0;
+        }
+        bVar3 = bVar3 + 1;
+      } while (bVar3 < 4);
+      iat_solenoid_committed_level = 6;
+      iat_solenoid_target_level = 0;
+      iat_solenoid_active_flag = 1;
+      iat_solenoid_derate_elapsed_cycles = 0;
+      iat_solenoid_active_cycle_count = 0;
+      iat_protection_solenoid_phase = 2;
+      iat_solenoid_derate_active_flag = 1;
+      goto LAB_00517e34;
+    }
+    iat_protection_shutdown_reason = 6;
+  }
+  diag_iat_protection_shutdownEvent();
+  return;
+}
+
+
+
+//
+// Function: battery_voltage_protection_control @ 0x00517f48
+//
+
+// Variables in this function: DAT_003fce68
+void battery_voltage_protection_control(void)
+
+{
+  if ((governor_fuel_feature_flags & 1) == 0) {
+    return;
+  }
+  if ((DAT_0005c79a < fuel_temperature_trim) && (battery_voltage_protection_state == 4)) {
+    iat_protection_shutdown_reason = 2;
+    battery_voltage_protection_state = 5;
+  }
+  else {
+    if ((((system_status_flags_t_003fe974.safety_bits_2 & 4) == 0) &&
+        ((((system_status_flags_t_003fe974.safety_bits_2 & 8) == 0 &&
+          (DAT_0005c790 < sensor_readings_t_0040baf2.battery_voltage)) &&
+         (battery_voltage_protection_state != 0)))) && (battery_voltage_protection_state != 3)) {
+      iat_protection_shutdown_reason = 3;
+      battery_voltage_protection_state = 5;
+    }
+    if ((iat_rpmDerate_holdoff_countdown == 0) && (battery_voltage_protection_state == 3)) {
+      iat_protection_shutdown_reason = 4;
+      battery_voltage_protection_state = 5;
+    }
+    else {
+      if (((cold_start_phase == CSP_ENGINE_STANDBY) || (cold_start_phase == CSP_CRANKING)) &&
+         ((battery_voltage_protection_state == 4 || (battery_voltage_protection_state == 3)))) {
+        iat_protection_crank_standby_cycle_count = iat_protection_crank_standby_cycle_count + 1;
+      }
+      else {
+        iat_protection_crank_standby_cycle_count = 0;
+      }
+      if ((DAT_003fce68 <= iat_protection_crank_standby_cycle_count) &&
+         ((battery_voltage_protection_state == 3 || (battery_voltage_protection_state == 4)))) {
+        battery_voltage_protection_state = 2;
+      }
+    }
+    if (battery_voltage_protection_state == 0) {
+      battery_voltage_protection_state = 1;
+    }
+    else if (battery_voltage_protection_state == 1) {
+      battery_voltage_protection_state = 2;
+    }
+    else if (((cold_start_phase == CSP_ABOVE_RPM_TRIGGER) ||
+             (cold_start_phase == CSP_ABOVE_RPM_VIA_EVENTS)) &&
+            (battery_voltage_protection_state == 2)) {
+      battery_voltage_protection_state = 3;
+    }
+    else if ((((cold_start_phase == CSP_AT_GOVERNOR_SETPOINT) ||
+              (cold_start_phase == CSP_FUEL_MODE_SWITCH)) ||
+             ((cold_start_phase == CSP_SETPOINT_UNDERRUN || (cold_start_phase == CSP_SUSPENDED))))
+            && ((battery_voltage_protection_state == 2 || (battery_voltage_protection_state == 3))))
+    {
+      battery_voltage_protection_state = 4;
+    }
+  }
+  if ((short)battery_voltage_protection_state < 4) {
+    if (battery_voltage_protection_state == 3) {
+      diag_iat_protection_rpmDerate_update();
+    }
+    else if (battery_voltage_protection_state == 1) {
+      diag_iat_protectionLimit_calc();
+    }
+    else if (battery_voltage_protection_state == 2) {
+      diag_iat_protectionLimit_update();
+    }
+  }
+  else if (battery_voltage_protection_state == 4) {
+    diag_iat_protection_stateMachine_update();
+  }
+  else if (battery_voltage_protection_state == 5) {
+    diag_iat_protection_shutdownEvent();
+  }
+  if (iat_protection_fault_action_code == 1) {
+    cm848_setEngineProtectionFault(0x2b,0);
+LAB_00518230:
+    if ((governor_fuel_feature_flags & 0x10) == 0) {
+      cm848_triggerProtectionEvent(0x2c,0);
+    }
+  }
+  else {
+    if (iat_protection_fault_action_code == 2) {
+      cm848_triggerProtectionEvent(0x2b,0);
+    }
+    else {
+      if (iat_protection_fault_action_code != 3) {
+        if (iat_protection_fault_action_code != 4) goto LAB_00518250;
+        cm848_triggerProtectionEvent(0x2b,0);
+        goto LAB_00518230;
+      }
+      cm848_setEngineProtectionFault(0x2b,0);
+    }
+    if ((governor_fuel_feature_flags & 0x10) == 0) {
+      cm848_setEngineProtectionFault(0x2c,0);
+    }
+  }
+LAB_00518250:
+  if (((iat_protection_fault_action_code == 1) || (iat_protection_fault_action_code == 2)) ||
+     (iat_protection_fault_action_code == 3)) {
+    if (((iat_protection_action_code_prev != 1) && (iat_protection_action_code_prev != 2)) &&
+       (iat_protection_action_code_prev != 3)) {
+      iat_protection_action_onset_countdown = DAT_0005c78e;
+    }
+    if (iat_protection_action_onset_countdown == 0) {
+      cm848_triggerProtectionEvent(0x2b,0);
+      if ((governor_fuel_feature_flags & 0x10) == 0) {
+        cm848_triggerProtectionEvent(0x2c,0);
+      }
+    }
+    else {
+      iat_protection_action_onset_countdown = iat_protection_action_onset_countdown - 1;
+    }
+  }
+  iat_protection_state_prev = battery_voltage_protection_state;
+  iat_protection_action_code_prev = iat_protection_fault_action_code;
+  return;
+}
+
+
+
+//
+// Function: protection_oilTemp_source_resetInitFlag @ 0x00518324
+//
+

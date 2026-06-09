@@ -1,0 +1,41 @@
+=== VARIABLES TO NAME ===
+0x003fb33d  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fb33d
+void cm848_txTimer1_copyQueueStatus(void)
+
+{
+  DAT_0040b222 = DAT_003fb33d;
+  return;
+}
+
+
+
+//
+// Function: cm848_j1939QueuePeriodicMessage1 @ 0x00036bd8
+//
+
+// Variables in this function: DAT_003fb33d
+void cm848_initPeriodicTimerChannel1(void)
+
+{
+  DAT_003fb329 = injection_sync_broadcast_byte;
+  DAT_003fb32a = 1;
+  j1939_msg_data_ptr_b32b = (undefined *)&j1939_msg_payload_snapshot;
+  j1939_descriptor_table_ptr = &j1939_msg_descriptor_table;
+  j1939_msg_data_ptr_b333 = (undefined *)&DAT_003fb33d;
+  j1939_callback_ptr_b337 = cm848_txTimer1_copyQueueStatus;
+  j1939_message_word_b220 = 0x2e00;
+  return;
+}
+
+
+
+//
+// Function: cm848_initPeriodicTimerChannel2 @ 0x00037270
+//
+

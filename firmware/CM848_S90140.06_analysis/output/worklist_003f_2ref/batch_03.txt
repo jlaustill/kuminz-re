@@ -1,0 +1,42 @@
+=== VARIABLES TO NAME ===
+0x003fa028  (2 references)
+0x003fa02a  (2 references)
+
+Total: 2 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fa028, DAT_003fa02a
+void cm848_sensorChannel2_init(void)
+
+{
+  sensorChannelTypeB_configInit
+            (&DAT_00059336,&sensor_channel2_ram,&DAT_003fa028,&DAT_00059346,&DAT_00059358,0,
+             &PTR_DAT_003fa02a,4,0x43,0x42,&fuel_timing_sensor_raw,&fuel_timing_sensor_filtered,
+             &sensor_channel4_fault_status);
+  return;
+}
+
+
+
+//
+// Function: cm848_sensorChannel2_process @ 0x0000cb78
+//
+
+// Variables in this function: DAT_003fa028, DAT_003fa02a
+void cm848_sensorChannel2_process(void)
+
+{
+  sensorChannelTypeB_update
+            (&DAT_00059336,&sensor_channel2_ram,&DAT_003fa028,&DAT_00059346,&DAT_00059358,0,
+             &PTR_DAT_003fa02a,4,0x43,0x42,&fuel_timing_sensor_raw,&fuel_timing_sensor_filtered,
+             &sensor_channel4_fault_status);
+  return;
+}
+
+
+
+//
+// Function: cm848_sensorChannel3_boostPressureInit @ 0x0000cc04
+//
+

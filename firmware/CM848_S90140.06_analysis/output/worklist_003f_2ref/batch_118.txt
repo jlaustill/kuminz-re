@@ -1,0 +1,68 @@
+=== VARIABLES TO NAME ===
+0x003fbd50  (2 references)
+0x003fbd52  (3 references)
+0x003fbd54  (2 references)
+0x003fbd56  (3 references)
+0x003fbd58  (3 references)
+
+Total: 5 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fbd50, DAT_003fbd52, DAT_003fbd54, DAT_003fbd56, DAT_003fbd58
+void cm848_updateSensorValidationFlags(void)
+
+{
+  if (fuel_demand_active_state_flag == 0) {
+    DAT_003fbd52 = 0;
+  }
+  else {
+    DAT_003fbd52 = 0x100;
+  }
+  if (DAT_0040a43c == 0) {
+    DAT_003fbd56 = 0;
+  }
+  else {
+    DAT_003fbd56 = 8;
+  }
+  if (DAT_0040a43e == 0) {
+    DAT_003fbd58 = 0;
+  }
+  else {
+    DAT_003fbd58 = 4;
+  }
+  if ((governor_feature_config_flags & 0x40) == 0) {
+    governor_fuel_demand_interp_state_y._2_2_ = 0;
+  }
+  else {
+    governor_fuel_demand_interp_state_y._2_2_ =
+         DAT_003fbd58 | DAT_003fbd56 | DAT_003fbd54 | DAT_003fbd50 | DAT_003fbd52;
+  }
+  fuel_demand_sensor_validation_floor = DAT_00406fb2;
+  if (governor_fuel_demand_interp_state_y._2_2_ == 0) {
+    fuel_demand_sensor_validation_floor = 0;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_initFlowControlStateVariables @ 0x00509b5c
+//
+
+// Variables in this function: DAT_003fbd50, DAT_003fbd54
+void cm848_initFlowControlStateVariables(void)
+
+{
+  DAT_003fbd50 = 0;
+  DAT_003fbd54 = 0;
+  return;
+}
+
+
+
+//
+// Function: cm848_copyROMCalibrationToRAM @ 0x00509b74
+//
+

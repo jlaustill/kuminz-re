@@ -1,0 +1,303 @@
+=== VARIABLES TO NAME ===
+0x003fa17e  (2 references)
+0x003fa180  (2 references)
+0x003fa186  (2 references)
+0x003fa188  (2 references)
+0x003fa18a  (2 references)
+0x003fa18c  (2 references)
+0x003fa18e  (2 references)
+0x003fa194  (2 references)
+0x003fa198  (2 references)
+0x003fa19c  (2 references)
+
+Total: 10 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fa17e, DAT_003fa180, DAT_003fa186, DAT_003fa188, DAT_003fa18a, DAT_003fa18c, DAT_003fa18e, DAT_003fa194, DAT_003fa198, DAT_003fa19c
+void cm848_boostCompensatedRpmGovernor(void)
+
+{
+  longlong lVar1;
+  undefined4 uVar2;
+  uint uVar3;
+  uint uVar4;
+  int iVar5;
+  int iVar6;
+  word wVar7;
+  word local_28;
+  word wStack_26;
+  
+  iVar5 = (uint)fuel_pressure_demand_reference - (uint)fuel_demand_quantity;
+  if (iVar5 < -0x8000) {
+    iVar5 = -0x8000;
+  }
+  else if (iVar5 < 0x8000) {
+    iVar5 = (int)(short)iVar5;
+  }
+  else {
+    iVar5 = 0x7fff;
+  }
+  rpm_governor_state_t_0040a3ca.reserved_06 =
+       lookupTableInterpolation((table_interp_args_t *)&DAT_003fa18a);
+  fuel_demand_delta_working = (uint)fuel_demand_quantity - (uint)fuel_demand_quantity_snapshot;
+  fuel_demand_quantity_snapshot = fuel_demand_quantity;
+  iVar6 = (int)(CONCAT44((int)((ulonglong)
+                               ((longlong)(int)((uint)fuel_demand_delta_scale_cal * 0x20) *
+                               (longlong)(int)fuel_demand_delta_working) >> 0x20),
+                         (uint)fuel_demand_delta_scale_cal * 0x20 * fuel_demand_delta_working) /
+               320000);
+  if (iVar6 < -0x6400) {
+    iVar6 = -0x6400;
+  }
+  else if (0x6400 < iVar6) {
+    iVar6 = 0x6400;
+  }
+  governor_pid_adjustment_output = (word)iVar6;
+  iVar5 = (int)(CONCAT44((int)((ulonglong)
+                               ((longlong)(iVar5 * (short)rpm_governor_state_t_0040a3ca.reserved_06)
+                               * (longlong)(int)throttle_rate_pid_gain_cal._0_2_) >> 0x20),
+                         iVar5 * (short)rpm_governor_state_t_0040a3ca.reserved_06 *
+                         (int)throttle_rate_pid_gain_cal._0_2_) / 64000) -
+          (int)(short)governor_pid_adjustment_output;
+  if (iVar5 < -0x6400) {
+    iVar5 = -0x6400;
+  }
+  else if (0x6400 < iVar5) {
+    iVar5 = 0x6400;
+  }
+  rpm_governor_state_t_0040a3ca.reserved_04 = (word)iVar5;
+  rpm_governor_state_t_0040a3ca.reserved_02 = throttle_rate_filtered_sum;
+  if ((throttle_rate_filter_active_flag != 0) &&
+     ((short)rpm_governor_state_t_0040a3ca.reserved_04 <= (short)throttle_rate_filtered_sum)) {
+    rpm_governor_state_t_0040a3ca.reserved_02 = rpm_governor_state_t_0040a3ca.reserved_04;
+  }
+  iVar5 = (uint)fuel_flow_rate_reference - (uint)fuel_flow_rate;
+  if (iVar5 < -0x8000) {
+    iVar5 = -0x8000;
+  }
+  else if (iVar5 < 0x8000) {
+    iVar5 = (int)(short)iVar5;
+  }
+  else {
+    iVar5 = 0x7fff;
+  }
+  governor_trim_lookup_result = lookupTableInterpolation((table_interp_args_t *)&DAT_003fa18e);
+  if (governor_first_iteration_flag == 0) {
+    governor_first_iteration_flag = 1;
+  }
+  else {
+    uVar4 = (uint)fuel_flow_rate - (uint)fuel_flow_rate_prev_snapshot;
+    fuel_flow_rate_prev_snapshot = fuel_flow_rate;
+    uVar3 = (uint)fuel_flow_rate_divisor_cal;
+    lVar1 = CONCAT44((int)((ulonglong)uVar3 * (ulonglong)uVar4 >> 0x20) +
+                     uVar3 * ((int)uVar4 >> 0x1f),uVar3 * uVar4) / 0x294;
+    iVar6 = (int)lVar1;
+    if (iVar6 < -0x6400) {
+      governor_rpm_correction_term = 0x9c00;
+    }
+    else if (iVar6 < 0x6401) {
+      governor_rpm_correction_term = (word)lVar1;
+    }
+    else {
+      governor_rpm_correction_term = 0x6400;
+    }
+    governor_first_iteration_flag = 0;
+  }
+  uVar4 = iVar5 * (uint)governor_trim_lookup_result;
+  uVar3 = (uint)fuel_flow_rate_gain_cal;
+  iVar5 = (int)(CONCAT44((int)((ulonglong)uVar3 * (ulonglong)uVar4 >> 0x20) +
+                         uVar3 * ((int)uVar4 >> 0x1f),uVar3 * uVar4) / 0x4000) -
+          (int)(short)governor_rpm_correction_term;
+  if (iVar5 < -0x6400) {
+    iVar5 = -0x6400;
+  }
+  else if (0x6400 < iVar5) {
+    iVar5 = 0x6400;
+  }
+  governor_rpm_state_output = (word)iVar5;
+  wVar7 = rpm_governor_state_t_0040a3ca.reserved_02;
+  if ((governor_rpm_output_enable_flag != 0) &&
+     (wVar7 = governor_rpm_state_output,
+     (short)rpm_governor_state_t_0040a3ca.reserved_02 < (short)governor_rpm_state_output)) {
+    wVar7 = rpm_governor_state_t_0040a3ca.reserved_02;
+  }
+  rpm_governor_state_t_0040a3ca.reserved_02 = wVar7;
+  rpm_governor_state_t_0040a3ca.reserved_0c =
+       cm848_dualAxisTableInterpolation
+                 (&DAT_003fa198,engine_rpm_state_t_0040b7ac.current_rpm,0xfcde);
+  rpm_governor_state_t_0040a3ca.reserved_0e =
+       cm848_dualAxisTableInterpolation
+                 (&DAT_003fa194,engine_rpm_state_t_0040b7ac.current_rpm,0xffac);
+  rpm_governor_state_t_0040a3ca.adjustment_delta =
+       lookupTableInterpolation((table_interp_args_t *)&DAT_003fa18c);
+  rpm_governor_state_t_0040a3ca.limit_adjustment =
+       lookupTableInterpolation((table_interp_args_t *)&DAT_003fa188);
+  exponentialMovingAverage(sensor_readings_t_0040baf2.battery_voltage,&PTR_DAT_003fa19c);
+  if (battery_voltage_gain_init_flag == 0) {
+    battery_voltage_gain_lookup = lookupTableInterpolation((table_interp_args_t *)&DAT_003fa17e);
+    uVar3 = ((uint)battery_voltage_correction_cal * (uint)battery_voltage_gain_lookup) / 0x1000;
+  }
+  else {
+    uVar3 = (uint)(short)rpm_governor_state_t_0040a3ca.reserved_0c;
+  }
+  if (fuel_quantity_override_flag == 0) {
+    uVar4 = (uint)throttle_fuel_demand_alt_cal;
+  }
+  else {
+    uVar4 = (uint)(short)rpm_governor_state_t_0040a3ca.reserved_0e;
+  }
+  rpm_governor_state_t_0040a3ca.base_rpm_lookup =
+       lookupTableInterpolation((table_interp_args_t *)&DAT_003fa186);
+  if (fuel_mode_switch_state == 0) {
+    if (rpm_governor_fuel_mode_init_flag == 0) {
+      rpm_governor_state_t_0040a3ca.desired_rpm = (word)uVar3;
+    }
+    else {
+      iVar5 = uVar3 + (int)(short)rpm_governor_state_t_0040a3ca.adjustment_delta;
+      if (iVar5 < 0) {
+        rpm_governor_state_t_0040a3ca.desired_rpm = 0;
+      }
+      else if (iVar5 < 0x3201) {
+        rpm_governor_state_t_0040a3ca.desired_rpm = (word)iVar5;
+      }
+      else {
+        rpm_governor_state_t_0040a3ca.desired_rpm = 0x3200;
+      }
+      uVar4 = uVar4 + (int)(short)rpm_governor_state_t_0040a3ca.limit_adjustment;
+      if ((int)uVar4 < 0) {
+        uVar4 = 0;
+      }
+      else if (0x3200 < (int)uVar4) {
+        uVar4 = 0x3200;
+      }
+    }
+  }
+  else {
+    uVar4 = (uint)throttle_rate_pid_gain_cal._2_2_;
+    rpm_governor_state_t_0040a3ca.desired_rpm = rpm_governor_state_t_0040a3ca.base_rpm_lookup;
+  }
+  rpm_governor_state_t_0040a3ca.lower_rpm_limit = (word)uVar4;
+  throttle_rate_integrator_cal_snapshot = throttle_rate_integrator_cal;
+  if ((short)(rpm_governor_state_t_0040a3ca.desired_rpm -
+             rpm_governor_state_t_0040a3ca.lower_rpm_limit) < 0) {
+    governor_rpm_band_rate_target = 0;
+  }
+  else {
+    uVar3 = ((int)(short)rpm_governor_state_t_0040a3ca.desired_rpm - uVar4 & 0xffff) *
+            (uint)governor_rpm_error_gain_cal;
+    governor_rpm_band_rate_target = ((int)uVar3 >> 3) + (uint)((int)uVar3 < 0 && (uVar3 & 7) != 0);
+  }
+  uVar2 = cm848_calculateRateLimitedValue
+                    (governor_rpm_band_rate_current_cal,governor_rpm_band_rate_working,
+                     governor_rpm_band_rate_target,
+                     (int)(short)rpm_governor_state_t_0040a3ca.reserved_02,100);
+  local_28 = (word)((uint)uVar2 >> 0x10);
+  governor_rpm_band_rate_working = local_28;
+  wStack_26 = (word)uVar2;
+  throttle_rate_integrator_prev = wStack_26;
+  uVar3 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fa180);
+  if ((int)((uVar3 & 0xffff) * (uint)throttle_rate_scale_factor_cal) < 0x10000001) {
+    uVar3 = (uVar3 & 0xffff) * (uint)throttle_rate_scale_factor_cal >> 0xc;
+  }
+  else {
+    uVar3 = 0;
+  }
+  governor_adjustment_gain = (word)uVar3;
+  iVar5 = (int)(short)rpm_governor_state_t_0040a3ca.reserved_02 * (uVar3 & 0xffff);
+  if (iVar5 < 0x1fffc01) {
+    if (iVar5 < -0x2000000) {
+      wVar7 = 0x8000;
+    }
+    else {
+      uVar3 = (int)(short)rpm_governor_state_t_0040a3ca.reserved_02 *
+              (int)(short)governor_adjustment_gain;
+      wVar7 = (short)((int)uVar3 >> 10) + (ushort)((int)uVar3 < 0 && (uVar3 & 0x3ff) != 0);
+    }
+  }
+  else {
+    wVar7 = 0x7fff;
+  }
+  governor_speed_error_working = wVar7;
+  cm848_checkSpeedBandCondition();
+  if (throttle_rate_integrator_reset_flag != 0) {
+    throttle_rate_integrator = (short)throttle_rate_integrator_prev * -0x10000;
+  }
+  if (throttle_acceleration_active_flag != 0) {
+    uVar3 = (uint)(short)wVar7;
+    throttle_rate_integrator =
+         throttle_rate_integrator +
+         (int)(CONCAT44(uVar3 >> 0x10 | ((int)uVar3 >> 0x1f) << 0x10,uVar3 << 0x10) / 100);
+  }
+  if ((int)(short)throttle_rate_integrator_upper_cal << 0x10 <= (int)throttle_rate_integrator) {
+    throttle_rate_integrator = (int)(short)throttle_rate_integrator_upper_cal << 0x10;
+  }
+  if ((int)throttle_rate_integrator <= (int)(short)throttle_rate_integrator_lower_cal << 0x10) {
+    throttle_rate_integrator = (int)(short)throttle_rate_integrator_lower_cal << 0x10;
+  }
+  throttle_rate_integrator_hi = (word)(throttle_rate_integrator >> 0x10);
+  iVar5 = (int)(short)throttle_rate_integrator_cal_snapshot;
+  if (throttle_rate_integrator_reset_flag != 1) {
+    if (iVar5 + (short)throttle_rate_integrator_prev < -0x8000) {
+      iVar5 = -0x8000;
+    }
+    else {
+      iVar5 = (int)(short)(throttle_rate_integrator_cal_snapshot + throttle_rate_integrator_prev);
+    }
+    if (iVar5 + (short)throttle_rate_integrator_hi < 0x8000) {
+      if (iVar5 + (short)throttle_rate_integrator_hi < -0x8000) {
+        iVar5 = -0x8000;
+      }
+      else {
+        iVar5 = (int)(short)((short)iVar5 + throttle_rate_integrator_hi);
+      }
+    }
+    else {
+      iVar5 = 0x7fff;
+    }
+  }
+  rpm_governor_state_t_0040a3ca.commanded_rpm = rpm_governor_state_t_0040a3ca.desired_rpm;
+  if ((iVar5 < (short)rpm_governor_state_t_0040a3ca.desired_rpm) &&
+     (rpm_governor_state_t_0040a3ca.commanded_rpm = rpm_governor_state_t_0040a3ca.lower_rpm_limit,
+     (short)rpm_governor_state_t_0040a3ca.lower_rpm_limit < iVar5)) {
+    rpm_governor_state_t_0040a3ca.commanded_rpm = (word)iVar5;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_turboCompensationWrapper @ 0x0001231c
+//
+
+// Variables in this function: DAT_003fa17e, DAT_003fa180, DAT_003fa186, DAT_003fa188, DAT_003fa18a, DAT_003fa18c, DAT_003fa18e, DAT_003fa194, DAT_003fa198, DAT_003fa19c
+void mpc555_initTurboCompensationVariables(void)
+
+{
+  throttle_rate_integrator = 0;
+  governor_rpm_band_rate_working = 0;
+  rpm_governor_state_t_0040a3ca.commanded_rpm = 0;
+  DAT_003fa1a0 = 0;
+  PTR_DAT_003fa19c = &DAT_003ffcb4;
+  DAT_003fa17e = 2;
+  DAT_003fa180 = 2;
+  DAT_003fa186 = 2;
+  DAT_003fa188 = 2;
+  DAT_003fa18a = 2;
+  DAT_003fa18c = 2;
+  DAT_003fa18e = 2;
+  DAT_003fa192 = 2;
+  DAT_003fa194 = 2;
+  DAT_003fa196 = 2;
+  DAT_003fa198 = 2;
+  DAT_003fa19a = 2;
+  return;
+}
+
+
+
+//
+// Function: cm848_circularBufferWriteUnsigned @ 0x000123dc
+//
+

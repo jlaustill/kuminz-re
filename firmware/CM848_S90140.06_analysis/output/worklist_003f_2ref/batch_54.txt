@@ -1,0 +1,119 @@
+=== VARIABLES TO NAME ===
+0x003fae81  (2 references)
+0x003fae89  (2 references)
+0x003fae8a  (2 references)
+0x003fae92  (2 references)
+0x003fae93  (2 references)
+0x003fae9f  (2 references)
+0x003faea0  (2 references)
+0x003faea8  (2 references)
+0x003faea9  (2 references)
+0x003faeaa  (2 references)
+0x003faeab  (2 references)
+0x003faeac  (2 references)
+0x003faead  (2 references)
+0x003faeae  (2 references)
+0x003faeaf  (2 references)
+
+Total: 15 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fae81, DAT_003fae89, DAT_003fae8a, DAT_003fae92, DAT_003fae93, DAT_003fae9f, DAT_003faea0, DAT_003faea8, DAT_003faea9, DAT_003faeaa, DAT_003faeab, DAT_003faeac, DAT_003faead, DAT_003faeae, DAT_003faeaf
+void cm848_initPgn65242SoftwareIdHandler(void)
+
+{
+  uint uVar1;
+  undefined1 uStack_10;
+  undefined1 uStack_f;
+  
+  uRam003fae76 = 0x2f;
+  pbRam003fae78 = &j1939_pgn65242_field_count_byte;
+  puRam003fae7c = &DAT_003faeaf;
+  j1939_pgn65242_can_header = CONCAT31(0x18feda,(char)j1939_source_address);
+  j1939_pgn65242_field_count_byte = 6;
+  cm848_governorDroopCalculation(&DAT_003fd69b,&DAT_003fae81,8);
+  DAT_003fae89 = 0x2a;
+  cm848_governorDroopCalculation(&DAT_003fd69f,&DAT_003fae8a,8);
+  DAT_003fae92 = 0x2a;
+  uVar1 = 0;
+  do {
+    (&DAT_003fae93)[uVar1] = s_0000000000000000000000_003fd6a5[uVar1 + 10];
+    uVar1 = uVar1 + 1 & 0xff;
+  } while (uVar1 < 0xc);
+  DAT_003fae9f = 0x2a;
+  cm848_governorDroopCalculation(&DAT_0000b74a,&DAT_003faea0,1);
+  DAT_003faea8 = 0x2a;
+  uStack_10 = (undefined1)(sensor_channel_index_working >> 8);
+  DAT_003faea9 = uStack_10;
+  uStack_f = (undefined1)sensor_channel_index_working;
+  DAT_003faeaa = uStack_f;
+  DAT_003faeab = 0x2a;
+  uStack_10 = (undefined1)(j1939_pgn_priority_cal >> 8);
+  DAT_003faeac = uStack_10;
+  uStack_f = (undefined1)j1939_pgn_priority_cal;
+  DAT_003faead = uStack_f;
+  DAT_003faeae = 0x2a;
+  cm848_j1939RegisterPgnHandler(0xfeda,cm848_j1939HandlePgn65242SoftwareId);
+  return;
+}
+
+
+
+//
+// Function: cm848_j1939SendPgn65249_FEE1 @ 0x000268c8
+//
+
+// Variables in this function: DAT_003fae81, DAT_003fae89, DAT_003fae8a, DAT_003fae92, DAT_003fae93, DAT_003fae9f, DAT_003faea0, DAT_003faea8, DAT_003faea9, DAT_003faeaa, DAT_003faeab, DAT_003faeac, DAT_003faead, DAT_003faeae, DAT_003faeaf
+void cm848_j1939SendPgn65249_FEE1(void)
+
+{
+  word wVar1;
+  uint in_r11;
+  uint *unaff_r30;
+  uint uVar2;
+  undefined1 uStack00000008;
+  undefined1 uStack00000009;
+  
+  *unaff_r30 = in_r11 | 0xda00;
+  *(byte *)unaff_r30 = *(byte *)unaff_r30 & 0xe3 | 0x18;
+  *(undefined2 *)(unaff_r30 + 1) = 0x2f;
+  *(byte **)((int)unaff_r30 + 6) = &j1939_pgn65242_field_count_byte;
+  *(undefined **)((int)unaff_r30 + 10) = &DAT_003faeaf;
+  *(byte *)((int)unaff_r30 + 3) = (byte)j1939_source_address;
+  j1939_pgn65242_field_count_byte = 6;
+  cm848_governorDroopCalculation(&DAT_003fd69b,&DAT_003fae81,8);
+  DAT_003fae89 = 0x2a;
+  cm848_governorDroopCalculation(&DAT_003fd69f,&DAT_003fae8a,8);
+  DAT_003fae92 = 0x2a;
+  uVar2 = 0;
+  do {
+    (&DAT_003fae93)[uVar2] = s_0000000000000000000000_003fd6a5[uVar2 + 10];
+    uVar2 = uVar2 + 1 & 0xff;
+  } while (uVar2 < 0xc);
+  DAT_003fae9f = 0x2a;
+  cm848_governorDroopCalculation(&DAT_0000b74a,&DAT_003faea0,1);
+  DAT_003faea8 = 0x2a;
+  uStack00000008 = (undefined1)(sensor_channel_index_working >> 8);
+  DAT_003faea9 = uStack00000008;
+  uStack00000009 = (undefined1)sensor_channel_index_working;
+  DAT_003faeaa = uStack00000009;
+  DAT_003faeab = 0x2a;
+  _uStack00000008 = j1939_pgn_priority_cal;
+  wVar1 = _uStack00000008;
+  uStack00000008 = (undefined1)(j1939_pgn_priority_cal >> 8);
+  DAT_003faeac = uStack00000008;
+  uStack00000009 = (undefined1)j1939_pgn_priority_cal;
+  DAT_003faead = uStack00000009;
+  DAT_003faeae = 0x2a;
+  _uStack00000008 = wVar1;
+  cm848_j1939RegisterPgnHandler(0xfeda,cm848_j1939HandlePgn65242SoftwareId);
+  return;
+}
+
+
+
+//
+// Function: cm848_j1939HandlePgn65504ProprietaryA @ 0x000269f4
+//
+

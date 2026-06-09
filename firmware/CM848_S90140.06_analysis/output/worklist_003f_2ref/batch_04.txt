@@ -1,0 +1,43 @@
+=== VARIABLES TO NAME ===
+0x003fa032  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fa032
+void cm848_sensorChannel3_boostPressureInit(void)
+
+{
+  sensorChannelTypeB_configInit
+            (&boost_pressure_sensor_config,&sensor_channel3_ram,&DAT_003fa032,
+             &boost_pressure_linearization_x_axis,&boost_pressure_linearization_y_axis,0,
+             &PTR_boost_pressure_sensor_config_003fa034,1,8,9,&boost_pressure_sensor_raw,
+             &boost_pressure_sensor_filtered,&map_sensor_fault_status);
+  return;
+}
+
+
+
+//
+// Function: cm848_sensorChannel3_boostPressureProcess @ 0x0000cc90
+//
+
+// Variables in this function: DAT_003fa032
+void cm848_sensorChannel3_boostPressureProcess(void)
+
+{
+  sensorChannelTypeB_update
+            (&boost_pressure_sensor_config,&sensor_channel3_ram,&DAT_003fa032,
+             &boost_pressure_linearization_x_axis,&boost_pressure_linearization_y_axis,0,
+             &PTR_boost_pressure_sensor_config_003fa034,1,8,9,&boost_pressure_sensor_raw,
+             &boost_pressure_sensor_filtered,&map_sensor_fault_status);
+  return;
+}
+
+
+
+//
+// Function: cm848_sensorChannel4_init @ 0x0000cd1c
+//
+

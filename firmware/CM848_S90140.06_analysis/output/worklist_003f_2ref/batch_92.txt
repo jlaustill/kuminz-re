@@ -1,0 +1,206 @@
+=== VARIABLES TO NAME ===
+0x003fb8da  (4 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fb8da
+void cm848_initSensorValidationSystem(void)
+
+{
+  word *pwVar1;
+  ushort uVar2;
+  word *pwVar3;
+  
+  diagnostic_session_state = ACTIVE;
+  protection_condition_mode = 0;
+  sensor_validation_state = 0;
+  sensor_cal_table_ptr = &sensor_cal_table;
+  protection_condition_reference = 0x1a40;
+  DAT_003fb8da = cm848_configurePeriodicTimer(0,2000,0x352,0x28);
+  sensor_validation_period_array_ptr = (undefined *)&sensor_validation_period_array;
+  sensor_validation_phase_array_ptr = &sensor_validation_phase_array;
+  sensor_validation_reference_array_ptr = (undefined *)&sensor_validation_reference_array;
+  sensor_validation_trigger_flag = 0;
+  while (sensor_measurement_ready_flag == 0) {
+    cm848_protectionConditionMonitor();
+  }
+  protection_condition_reference = 0x8e8;
+  sensor_validation_entry_count = 0x8aa;
+  uVar2 = 0;
+  pwVar1 = &sensor_validation_array;
+  do {
+    pwVar3 = pwVar1;
+    pwVar1 = pwVar3 + 1;
+    sensor_validation_accumulator = sensor_validation_accumulator + *pwVar1;
+    uVar2 = uVar2 + 1;
+  } while (uVar2 < 0x8aa);
+  sensor_validation_table_ptr = (undefined *)(pwVar3 + 2);
+  if (sensor_validation_accumulator == sensor_validation_sum_expected) {
+    system_status_flags_t_003fe974.system_faults =
+         system_status_flags_t_003fe974.system_faults & 0xffbf;
+    system_faults_shadow_flags = system_faults_shadow_flags & 0xffbf;
+  }
+  else {
+    system_status_flags_t_003fe974.system_faults =
+         system_status_flags_t_003fe974.system_faults | 0x40;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_configureOutputChannels @ 0x0004cb6c
+//
+
+// Variables in this function: DAT_003fb8da
+void cm848_configureOutputChannels(void)
+
+{
+  word *pwVar1;
+  ushort uVar2;
+  word *pwVar3;
+  
+  diagnostic_session_state = ACTIVE;
+  protection_condition_mode = 0;
+  sensor_validation_state = 0;
+  sensor_cal_table_ptr = &sensor_cal_table;
+  protection_condition_reference = 0x1a40;
+  DAT_003fb8da = cm848_configurePeriodicTimer(0,2000,0x352,0x28);
+  sensor_validation_period_array_ptr = (undefined *)&sensor_validation_period_array;
+  sensor_validation_phase_array_ptr = &sensor_validation_phase_array;
+  sensor_validation_reference_array_ptr = (undefined *)&sensor_validation_reference_array;
+  sensor_validation_trigger_flag = 0;
+  while (sensor_measurement_ready_flag == 0) {
+    cm848_protectionConditionMonitor();
+  }
+  protection_condition_reference = 0x8e8;
+  sensor_validation_entry_count = 0x8aa;
+  uVar2 = 0;
+  pwVar1 = &sensor_validation_array;
+  do {
+    pwVar3 = pwVar1;
+    pwVar1 = pwVar3 + 1;
+    sensor_validation_accumulator = sensor_validation_accumulator + *pwVar1;
+    uVar2 = uVar2 + 1;
+  } while (uVar2 < 0x8aa);
+  sensor_validation_table_ptr = (undefined *)(pwVar3 + 2);
+  if (sensor_validation_accumulator == sensor_validation_sum_expected) {
+    system_status_flags_t_003fe974.system_faults =
+         system_status_flags_t_003fe974.system_faults & 0xffbf;
+    system_faults_shadow_flags = system_faults_shadow_flags & 0xffbf;
+  }
+  else {
+    system_status_flags_t_003fe974.system_faults =
+         system_status_flags_t_003fe974.system_faults | 0x40;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_configureOutputChannelsStateParam @ 0x0004cb84
+//
+
+// Variables in this function: DAT_003fb8da
+void cm848_configureOutputChannelsStateParam(void)
+
+{
+  word *pwVar1;
+  int in_r10;
+  ushort uVar2;
+  word *pwVar3;
+  
+  *(undefined2 *)(in_r10 + -0x47ec) = 0;
+  sensor_validation_state = 0;
+  sensor_cal_table_ptr = &sensor_cal_table;
+  protection_condition_reference = 0x1a40;
+  DAT_003fb8da = cm848_configurePeriodicTimer(0,2000,0x352,0x28);
+  sensor_validation_period_array_ptr = (undefined *)&sensor_validation_period_array;
+  sensor_validation_phase_array_ptr = &sensor_validation_phase_array;
+  sensor_validation_reference_array_ptr = (undefined *)&sensor_validation_reference_array;
+  sensor_validation_trigger_flag = 0;
+  while (sensor_measurement_ready_flag == 0) {
+    cm848_protectionConditionMonitor();
+  }
+  protection_condition_reference = 0x8e8;
+  sensor_validation_entry_count = 0x8aa;
+  uVar2 = 0;
+  pwVar1 = &sensor_validation_array;
+  do {
+    pwVar3 = pwVar1;
+    pwVar1 = pwVar3 + 1;
+    sensor_validation_accumulator = sensor_validation_accumulator + *pwVar1;
+    uVar2 = uVar2 + 1;
+  } while (uVar2 < 0x8aa);
+  sensor_validation_table_ptr = (undefined *)(pwVar3 + 2);
+  if (sensor_validation_accumulator == sensor_validation_sum_expected) {
+    system_status_flags_t_003fe974.system_faults =
+         system_status_flags_t_003fe974.system_faults & 0xffbf;
+    system_faults_shadow_flags = system_faults_shadow_flags & 0xffbf;
+  }
+  else {
+    system_status_flags_t_003fe974.system_faults =
+         system_status_flags_t_003fe974.system_faults | 0x40;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_configureOutputChannelsAltState @ 0x0004cb90
+//
+
+// Variables in this function: DAT_003fb8da
+void cm848_configureOutputChannelsAltState(void)
+
+{
+  word *pwVar1;
+  ushort uVar2;
+  int in_r12;
+  word *pwVar3;
+  
+  *(undefined4 *)(in_r12 + -0x47ce) = 0;
+  sensor_cal_table_ptr = &sensor_cal_table;
+  protection_condition_reference = 0x1a40;
+  DAT_003fb8da = cm848_configurePeriodicTimer(0,2000,0x352,0x28);
+  sensor_validation_period_array_ptr = (undefined *)&sensor_validation_period_array;
+  sensor_validation_phase_array_ptr = &sensor_validation_phase_array;
+  sensor_validation_reference_array_ptr = (undefined *)&sensor_validation_reference_array;
+  sensor_validation_trigger_flag = 0;
+  while (sensor_measurement_ready_flag == 0) {
+    cm848_protectionConditionMonitor();
+  }
+  protection_condition_reference = 0x8e8;
+  sensor_validation_entry_count = 0x8aa;
+  uVar2 = 0;
+  pwVar1 = &sensor_validation_array;
+  do {
+    pwVar3 = pwVar1;
+    pwVar1 = pwVar3 + 1;
+    sensor_validation_accumulator = sensor_validation_accumulator + *pwVar1;
+    uVar2 = uVar2 + 1;
+  } while (uVar2 < 0x8aa);
+  sensor_validation_table_ptr = (undefined *)(pwVar3 + 2);
+  if (sensor_validation_accumulator == sensor_validation_sum_expected) {
+    system_status_flags_t_003fe974.system_faults =
+         system_status_flags_t_003fe974.system_faults & 0xffbf;
+    system_faults_shadow_flags = system_faults_shadow_flags & 0xffbf;
+  }
+  else {
+    system_status_flags_t_003fe974.system_faults =
+         system_status_flags_t_003fe974.system_faults | 0x40;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_getProtectionSyncState @ 0x0004cd50
+//
+

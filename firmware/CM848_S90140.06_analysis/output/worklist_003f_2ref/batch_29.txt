@@ -1,0 +1,80 @@
+=== VARIABLES TO NAME ===
+0x003fa704  (2 references)
+0x003fa706  (2 references)
+0x003fa70a  (2 references)
+0x003fa70e  (2 references)
+
+Total: 4 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fa704, DAT_003fa706, DAT_003fa70a
+undefined2 cm848_calculateFuelFlowRate(void)
+
+{
+  undefined2 uVar1;
+  uint uVar2;
+  
+  uVar2 = (uint)boost_fuel_scale_divisor;
+  if (boost_fuel_scale_divisor == 0) {
+    uVar2 = 0xc;
+  }
+  fuel_timing_correction_factor_b = lookupTableInterpolation((table_interp_args_t *)&DAT_003fa704);
+  uVar2 = ((((uint)boost_pressure_state_t_0040a406.reserved_0c *
+            (uint)fuel_timing_correction_factor_b) / 40000 & 0xffff) * 0x2ad5) / uVar2;
+  if (0xffff < uVar2) {
+    uVar2 = 0xffff;
+  }
+  boost_pressure_normalized = (word)uVar2;
+  uVar2 = ((((uint)fuel_demand_quantity * 0x106) / 10000) * 0x28b0b) /
+          (uint)fuel_timing_correction_factor_b;
+  if (0xffff < uVar2) {
+    uVar2 = 0xffff;
+  }
+  fuel_timing_lookup_input = (word)uVar2;
+  fuel_timing_boost_scale_lookup =
+       cm848_dualAxisTableInterpolation(&DAT_003fa706,boost_pressure_normalized,0x66b8);
+  uVar2 = (uint)fuel_timing_boost_scale_lookup * (fuel_demand_timing_input + 0x7300 & 0xffff) >> 0xc
+  ;
+  if ((uVar2 & 0xffff) < 0x3981) {
+    uVar2 = 0;
+  }
+  else {
+    uVar2 = uVar2 + 0xc680;
+  }
+  uVar1 = exponentialMovingAverage(uVar2 & 0xffff,&PTR_DAT_003fa70a);
+  return uVar1;
+}
+
+
+
+//
+// Function: cm848_selectFuelFlowMode @ 0x00017d54
+//
+
+// Variables in this function: DAT_003fa704, DAT_003fa706, DAT_003fa70a, DAT_003fa70e
+void mpc555_initFuelFlowRateVariables(void)
+
+{
+  DAT_003fa704 = 2;
+  DAT_003fa706 = 2;
+  DAT_003fa708 = 2;
+  if ((short)sensor_channel20_raw < 1) {
+    DAT_003fa70e = 0;
+  }
+  else {
+    DAT_003fa70e = (int)(short)sensor_channel20_raw << 0x10;
+  }
+  PTR_DAT_003fa70a = &DAT_004065c2;
+  fuel_timing_state_code = 0;
+  return;
+}
+
+
+
+//
+// Function: cm848_calculateOilPressureProtection @ 0x00017eb8
+//
+
+/* WARNING: Function: cm848_signedDivision32 replaced with injection: sdiv64by32 */
+

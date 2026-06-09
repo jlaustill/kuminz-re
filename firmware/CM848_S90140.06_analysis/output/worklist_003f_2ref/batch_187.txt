@@ -1,0 +1,183 @@
+=== VARIABLES TO NAME ===
+0x003fd27f  (2 references)
+0x003fd280  (2 references)
+0x003fd281  (2 references)
+0x003fd282  (2 references)
+0x003fd283  (2 references)
+0x003fd288  (2 references)
+0x003fd289  (2 references)
+0x003fd28a  (2 references)
+0x003fd28b  (2 references)
+0x003fd28c  (2 references)
+0x003fd28d  (2 references)
+0x003fd28e  (2 references)
+0x003fd28f  (2 references)
+0x003fd290  (2 references)
+0x003fd291  (2 references)
+
+Total: 15 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fd27f, DAT_003fd280, DAT_003fd281, DAT_003fd282, DAT_003fd283, DAT_003fd288, DAT_003fd289, DAT_003fd28a, DAT_003fd28b, DAT_003fd28c, DAT_003fd28d, DAT_003fd28e, DAT_003fd28f, DAT_003fd290, DAT_003fd291
+void cm848_mainLoopMonitor(void)
+
+{
+  word wVar1;
+  
+  if ((crank_counter_mainloop_prev < cold_start_crank_counter) || (governor_inhibit_flag != 0)) {
+    wVar1 = MIOS_MCPSMSCR.MIOS1ER;
+    if (((wVar1 & 0x8000) != 0) && (protection_inhibit_flag == 0)) {
+      if ((protection_enable_byte_35 & 8) != 0) {
+        cm848_protectionFlagManager(0x2b);
+        cm848_setEngineProtectionFault(0x2b,0);
+      }
+      if ((protection_enable_byte_35 & 0x10) != 0) {
+        cm848_protectionFlagManager(0x2c);
+        cm848_setEngineProtectionFault(0x2c,0);
+      }
+      if ((protection_config_flags & 0x20) != 0) {
+        cm848_protectionFlagManager(0x35);
+        cm848_setEngineProtectionFault(0x35,0);
+      }
+      fault_match_scan_cycle_count = 0;
+      crank_counter_mainloop_prev = cold_start_crank_counter;
+    }
+  }
+  else {
+    crank_counter_mainloop_prev = cold_start_crank_counter;
+    fault_match_scan_cycle_count = fault_match_scan_cycle_count + 1;
+    if (((4 < fault_match_scan_cycle_count) &&
+        (fault_match_scan_cycle_count = 0, (engine_output_state_bits & 1) != 0)) &&
+       ((protection_config_flags & 0x40) == 0)) {
+      if (diag_clear_flags_t_003fedfc._0_2_ != 0) {
+        diag_faultMatch_outputCheck_update
+                  (0x26,6,0x173,0x174,&DAT_003fd27f,&DAT_003fd280,&DAT_003fd281,&DAT_003fd282,
+                   &DAT_003fd295);
+      }
+      if ((protection_enable_t_0040c050.system_enable_bits & 0x10) != 0) {
+        protection_b_fault_active_flag = 1;
+      }
+      if (protection_b_fault_active_flag != 0) {
+        diag_faultMatch_outputCheck_update
+                  (0xb,5,0x29,0x2a,&DAT_003fd283,BYTE_003fd284,0x3fd285,0x3fd286,&DAT_003fd297);
+      }
+      diag_faultMatch_outputCheck_update
+                (0x2b,9,0x127,0x126,0x3fd287,&DAT_003fd288,&DAT_003fd289,&DAT_003fd28a,0x3fd299);
+      diag_faultMatch_outputCheck_update
+                (0x2c,10,0x129,0x128,&DAT_003fd28b,&DAT_003fd28c,&DAT_003fd28d,&DAT_003fd28e,
+                 0x3fd29b);
+      diag_faultMatch_outputCheck_update
+                (0x35,1,0x182,0x183,&DAT_003fd28f,&DAT_003fd290,&DAT_003fd291,&DAT_003fd292,
+                 &DAT_003fd29d);
+      diag_faultMatch_outputCheck_update
+                (0x10,0x16,0x88,0x89,&DAT_003fd29f,&DAT_003fd2a0,&DAT_003fd2a1,&DAT_003fd2a2,
+                 &DAT_003fd2a3);
+      if ((protection_action_mode_bits._0_1_ & 1) != 0) {
+        diag_faultMatch_outputCheck_update
+                  (0x11,0x17,0x8a,0x8b,&DAT_003fd2a5,&DAT_003fd2a6,&DAT_003fd2a7,&DAT_003fd2a8,
+                   &DAT_003fd2a9);
+      }
+      if ((protection_action_mode_bits._0_1_ & 1) != 0) {
+        diag_faultMatch_outputCheck_update
+                  (0x12,0x18,0x8c,0x8d,&DAT_003fd2ab,&DAT_003fd2ac,&DAT_003fd2ad,&DAT_003fd2ae,
+                   &DAT_003fd2af);
+      }
+      if (((protection_enable_t_0040c050.system_enable_bits & 8) == 0) &&
+         (j1939_cruise_engaged != 0)) {
+        diag_faultMatch_outputCheck_update
+                  (0x15,0x1c,0x92,0x93,&DAT_003fd2bd,&DAT_003fd2be,&DAT_003fd2bf,&DAT_003fd2c0,
+                   &DAT_003fd2c1);
+      }
+      if (((protection_enable_t_0040c050.system_enable_bits & 8) == 0) &&
+         (j1939_cruise_engaged != 0)) {
+        diag_faultMatch_outputCheck_update
+                  (0x13,0x19,0x8e,0x8f,&DAT_003fd2b1,&DAT_003fd2b2,&DAT_003fd2b3,&DAT_003fd2b4,
+                   &DAT_003fd2b5);
+        diag_faultMatch_outputCheck_update
+                  (0x14,0x1b,0x90,0x91,&DAT_003fd2b7,&DAT_003fd2b8,&DAT_003fd2b9,&DAT_003fd2ba,
+                   &DAT_003fd2bb);
+      }
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_initSensorCalibration @ 0x00538748
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+// Variables in this function: DAT_003fd27f, DAT_003fd280, DAT_003fd281, DAT_003fd282, DAT_003fd283, DAT_003fd288, DAT_003fd289, DAT_003fd28a, DAT_003fd28b, DAT_003fd28c, DAT_003fd28d, DAT_003fd28e, DAT_003fd28f, DAT_003fd290, DAT_003fd291
+void cm848_initSensorCalibration(void)
+
+{
+  DAT_003fd280 = 0;
+  DAT_003fd27f = 0;
+  DAT_003fd282 = 0;
+  DAT_003fd281 = 0;
+  DAT_003fd295 = 0;
+  DAT_003fd283 = 0;
+  BYTE_003fd284 = (code)0x0;
+  uRam003fd285 = 0;
+  uRam003fd286 = 0;
+  _DAT_003fd297 = 0;
+  uRam003fd287 = 0;
+  DAT_003fd288 = 0;
+  DAT_003fd289 = 0;
+  DAT_003fd28a = 0;
+  BYTE_003fd298 = 0;
+  DAT_003fd28b = 0;
+  DAT_003fd28c = 0;
+  DAT_003fd28d = 0;
+  DAT_003fd28e = 0;
+  uRam003fd29b = 0;
+  DAT_003fd28f = 0;
+  DAT_003fd290 = 0;
+  DAT_003fd291 = 0;
+  DAT_003fd292 = 0;
+  DAT_003fd29d = 0;
+  if ((system_status_flags_t_003fe974.sensor_diag & 4) == 0) {
+    if ((governor_cal_status_shadow_flags & 0x200) != 0) {
+      system_status_flags_t_003fe974.reserved_10 =
+           system_status_flags_t_003fe974.reserved_10 & 0xfdff;
+      governor_cal_status_shadow_flags = governor_cal_status_shadow_flags & 0xfdff;
+    }
+    if ((governor_cal_status_shadow_flags & 0x100) != 0) {
+      system_status_flags_t_003fe974.reserved_10 =
+           system_status_flags_t_003fe974.reserved_10 & 0xfeff;
+      governor_cal_status_shadow_flags = governor_cal_status_shadow_flags & 0xfeff;
+    }
+    if ((governor_cal_status_shadow_flags & 0x800) != 0) {
+      system_status_flags_t_003fe974.reserved_10 =
+           system_status_flags_t_003fe974.reserved_10 & 0xf7ff;
+      governor_cal_status_shadow_flags = governor_cal_status_shadow_flags & 0xf7ff;
+    }
+    if ((governor_cal_status_shadow_flags & 0x400) != 0) {
+      system_status_flags_t_003fe974.reserved_10 =
+           system_status_flags_t_003fe974.reserved_10 & 0xfbff;
+      governor_cal_status_shadow_flags = governor_cal_status_shadow_flags & 0xfbff;
+    }
+    if ((governor_cal_status_shadow_flags & 0x2000) != 0) {
+      system_status_flags_t_003fe974.reserved_10 =
+           system_status_flags_t_003fe974.reserved_10 & 0xdfff;
+      governor_cal_status_shadow_flags = governor_cal_status_shadow_flags & 0xdfff;
+    }
+    if ((governor_cal_status_shadow_flags & 0x1000) != 0) {
+      system_status_flags_t_003fe974.reserved_10 =
+           system_status_flags_t_003fe974.reserved_10 & 0xefff;
+      governor_cal_status_shadow_flags = governor_cal_status_shadow_flags & 0xefff;
+    }
+  }
+  return;
+}
+
+
+
+//
+// Function: hpcr_exceptionHandler @ 0x00538974
+//
+

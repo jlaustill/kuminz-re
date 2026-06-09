@@ -1,0 +1,71 @@
+=== VARIABLES TO NAME ===
+0x003fa8b2  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fa8b2
+bool cm848_processJ1939DiagnosticRequest(byte service_id,void *handler_ptr)
+
+{
+  uint uVar1;
+  
+  uVar1 = (uint)engine_state_scan_counter;
+  if (uVar1 != 0x20) {
+    engine_state_scan_counter = engine_state_scan_counter + 1;
+    (&DAT_003fa8b2)[uVar1 * 6] = service_id;
+    *(void **)((int)&PTR_BYTE_0050c640_003fa8b4 + uVar1 * 6) = handler_ptr;
+  }
+  return uVar1 == 0x20;
+}
+
+
+
+//
+// Function: cm848_j1939DiagnosticServiceHandler @ 0x00022128
+//
+
+// Variables in this function: DAT_003fa8b2
+void cm848_j1939DiagnosticServiceHandler(int param_1)
+
+{
+  char cVar1;
+  char cVar2;
+  byte bVar3;
+  char *pcVar4;
+  
+  pcVar4 = &DAT_003fa8b2;
+  cVar1 = **(char **)(param_1 + 6);
+  cVar2 = '\x18';
+  if ((cVar1 == '\f') || (cVar1 == '\r')) {
+    cVar2 = -1;
+  }
+  else {
+    bVar3 = 0;
+    if (engine_state_scan_counter != 0) {
+      do {
+        if (*pcVar4 == cVar1) {
+          cVar2 = j1939_diagServiceDispatch(param_1);
+          if (cVar2 == -1) {
+            cVar2 = (**(code **)(pcVar4 + 2))(param_1);
+          }
+          break;
+        }
+        pcVar4 = pcVar4 + 6;
+        bVar3 = bVar3 + 1;
+      } while (bVar3 < engine_state_scan_counter);
+    }
+  }
+  if (cVar2 != -1) {
+    cm848_sendJ1939ResponseFrame(param_1,cVar2);
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_initJ1939DiagnosticServiceHandler @ 0x000221f0
+//
+

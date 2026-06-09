@@ -1,0 +1,49 @@
+=== VARIABLES TO NAME ===
+0x003fadc0  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fadc0
+void cm848_j1939SendOilPressureStatus(void)
+
+{
+  undefined1 local_8;
+  undefined1 uStack_7;
+  
+  cm848_calculateOilPressureRateOfChange();
+  DAT_003fadc0 = (char)(j1939_engine_torque_output_b >> 8) + '}';
+  uStack_7 = (undefined1)DAT_0005c382;
+  DAT_003fadc1 = uStack_7;
+  local_8 = (undefined1)((ushort)DAT_0005c382 >> 8);
+  DAT_003fadc2 = local_8;
+  DAT_003fadc3 = (undefined1)DAT_0005c384;
+  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65247_tx_header);
+  return;
+}
+
+
+
+//
+// Function: cm848_initJ1939OilPressureBuffer @ 0x00025e5c
+//
+
+// Variables in this function: DAT_003fadc0
+void cm848_initJ1939OilPressureBuffer(void)
+
+{
+  j1939_pgn65247_tx_header = CONCAT13(((byte)j1939_pgn65247_priority & 7) << 2,0xfedf00);
+  j1939_pgn65247_tx_header = CONCAT31(j1939_pgn65247_tx_header._0_3_,(char)j1939_source_address);
+  j1939_pgn65247_tx_byte_count = 4;
+  j1939_pgn65247_data_ptr = &DAT_003fadc0;
+  j1939_pgn65247_data2_ptr = &DAT_003fadd6;
+  return;
+}
+
+
+
+//
+// Function: cm848_j1939HandlePgn65263FluidLevelPressure @ 0x00025eb4
+//
+

@@ -1,0 +1,95 @@
+=== VARIABLES TO NAME ===
+0x003fcbdc  (2 references)
+0x003fcbe0  (2 references)
+0x003fcbe4  (2 references)
+
+Total: 3 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fcbdc, DAT_003fcbe4
+void cm848_calculateAuxiliaryTorqueLimitFromEngineRPM(void)
+
+{
+  word wVar1;
+  uint uVar2;
+  
+  if (engine_operating_mode == 6) {
+    DAT_0040ae70 = exponentialMovingAverage
+                             (engine_rpm_state_t_0040b7ac.target_rpm,&PTR_DAT_003fcbdc);
+    uVar2 = ((uint)DAT_0005c490 * (uint)DAT_0040ae70) / 0x8b21;
+    if ((((protection_enable_t_0040c050.system_enable_bits & 8) == 0) &&
+        ((protection_enable_t_0040c050.mode_bits & 4) == 0)) &&
+       ((engine_diag_shadow_flags & 0x800) == 0)) {
+      torque_limit_fuel_min_working = torque_limit_fuel_minimum;
+      aux_torque_fuel_demand_limit = DAT_0005c496;
+      if ((uVar2 & 0xffff) + (uint)DAT_0005c496 <= (uint)DAT_0005c492) {
+        aux_torque_fuel_demand_limit = DAT_0005c492 - (short)uVar2;
+      }
+    }
+    else {
+      aux_torque_fuel_demand_limit = DAT_0005c4a4;
+      torque_limit_fuel_min_working = DAT_0005c4a0;
+    }
+    if ((DAT_0005c4a2 < fuel_temperature_trim) && (DAT_0005c49e < torque_limit_fuel_min_working)) {
+      torque_limit_fuel_min_working = DAT_0005c49e;
+    }
+    uVar2 = (uint)aux_torque_fuel_demand_limit;
+    if (uVar2 + DAT_0005c49c < (uint)governor_fuel_demand_limit_prev) {
+      uVar2 = (uint)governor_fuel_demand_limit_prev - (uint)DAT_0005c49c;
+    }
+    governor_fuel_demand_limit_prev = (word)uVar2;
+    wVar1 = timing_limit_upper;
+    if (((fuel_demand_control_t_0040a57a.enable_flag != 1) ||
+        (wVar1 = DAT_0005c498, DAT_003fcbe4 != 1)) ||
+       (aux_torque_fuel_demand_ramp = aux_torque_fuel_demand_ramp + DAT_0005c494,
+       wVar1 = governor_fuel_demand_limit_prev, (uVar2 & 0xffff) < (uint)aux_torque_fuel_demand_ramp
+       )) {
+      aux_torque_fuel_demand_ramp = wVar1;
+    }
+    governor_proportional_gain = aux_torque_fuel_demand_ramp;
+  }
+  else {
+    torque_limit_fuel_min_working = torque_limit_fuel_minimum;
+  }
+  DAT_003fcbe4 = fuel_demand_control_t_0040a57a.enable_flag;
+  return;
+}
+
+
+
+//
+// Function: fuel_demand_periodSnapshot_save @ 0x0050da7c
+//
+
+// Variables in this function: DAT_003fcbe0
+void fuel_demand_periodSnapshot_save(void)
+
+{
+  aux_torque_fuel_demand_ramp = fuel_demand_computed;
+  governor_fuel_demand_limit_prev = fuel_demand_computed;
+  DAT_003fcbe0 = (uint)engine_rpm_state_t_0040b7ac.target_rpm << 0x10;
+  return;
+}
+
+
+
+//
+// Function: cm848_transitionEngineOperatingMode @ 0x0050daac
+//
+
+// Variables in this function: DAT_003fcbdc, DAT_003fcbe0
+void cm848_initDroopModeStateVariables(void)
+
+{
+  DAT_003fcbe0 = 0;
+  PTR_DAT_003fcbdc = &DAT_0005c48e;
+  return;
+}
+
+
+
+//
+// Function: governor_computeSpeedTargetWithThermalCorrection @ 0x0050dba8
+//
+

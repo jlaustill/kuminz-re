@@ -1,0 +1,47 @@
+=== VARIABLES TO NAME ===
+0x003fb35c  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fb35c
+void cm848_calculateFuelDemandOffsetTrim(void)
+
+{
+  if ((((system_status_flags_t_003fe974.condition_monitor & 1) == 0) &&
+      ((system_status_flags_t_003fe974.condition_monitor & 2) == 0)) &&
+     ((protection_monitor_shadow & 2) == 0)) {
+    fuel_demand_offset_correction =
+         cm848_dualAxisTableInterpolation
+                   (&DAT_003fb35c,sensor_readings_t_0040baf2.coolant_temp,0xc67c);
+  }
+  else {
+    fuel_demand_offset_correction = 0;
+  }
+  return;
+}
+
+
+
+//
+// Function: mpc555_initFuelDemandOffsetFilter @ 0x0003744c
+//
+
+// Variables in this function: DAT_003fb35c
+void mpc555_initFuelDemandOffsetFilter(void)
+
+{
+  DAT_003fb35c = 2;
+  DAT_003fb35e = 2;
+  return;
+}
+
+
+
+//
+// Function: cm848_j1939PeriodicTimerCallback @ 0x00037464
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+

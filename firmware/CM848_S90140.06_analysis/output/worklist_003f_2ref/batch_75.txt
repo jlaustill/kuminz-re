@@ -1,0 +1,51 @@
+=== VARIABLES TO NAME ===
+0x003fb2e9  (2 references)
+
+Total: 1 variables
+
+=== FUNCTION BODIES (deduplicated) ===
+
+// Variables in this function: DAT_003fb2e9
+void cm848_txTimerD_checkProtectionInhibit(void)
+
+{
+  protection_inhibit_flag = DAT_003fb2e9 & 2 ^ 2;
+  if (protection_inhibit_flag == 0) {
+    if ((governor_inhibit_delay_counter != 0) &&
+       (governor_inhibit_delay_counter = governor_inhibit_delay_counter - 1,
+       governor_inhibit_delay_counter == 0)) {
+      governor_inhibit_flag = 0;
+    }
+  }
+  else {
+    governor_inhibit_flag = 1;
+    governor_inhibit_delay_counter = DAT_00408744;
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_j1939CheckTxTimeouts @ 0x0003691c
+//
+
+// Variables in this function: DAT_003fb2e9
+void cm848_initPeriodicTimerChannel6(void)
+
+{
+  DAT_003fb2d7 = injection_sync_broadcast_byte;
+  DAT_003fb2d8 = 1;
+  j1939_tx_data_block_d_ptr = &DAT_0005772c;
+  j1939_msg_descriptor_d_ptr = &j1939_msg_descriptor_table;
+  j1939_tx_frame_d_payload_ptr = (undefined *)&DAT_003fb2e9;
+  j1939_tx_frame_d_handler_ptr = cm848_txTimerD_checkProtectionInhibit;
+  return;
+}
+
+
+
+//
+// Function: cm848_initPeriodicTimerChannel5 @ 0x00037180
+//
+
