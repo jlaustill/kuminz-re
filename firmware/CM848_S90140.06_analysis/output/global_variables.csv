@@ -6922,3 +6922,38 @@ address,name,type,comment
 0x00408738,protection_ramp_fraction_coolant_classb,word,ROM ramp fraction (coolant class-B)
 0x0040873a,protection_ramp_fraction_sensor_fault,word,ROM ramp fraction (sensor fault)
 0x0040873c,protection_ramp_fraction_fault_latch,word,ROM ramp fraction (fault latch)
+0x00408750,cold_start_coolant_bucket_overheat_setpoint,word,ROM coolant setpoint latched on bucket overheat
+0x00408752,cold_start_coolant_bucket_recovery_temp_threshold,word,ROM coolant hysteresis temp for bucket recovery
+0x00408754,cold_start_coolant_bucket_recovery_count_limit,word,ROM recovery cycle count to clear bucket overheat
+0x0040877e,cold_start_coolant_bucket_thresholds,word,ROM 5-element per-bucket coolant count thresholds (base)
+0x00408758,coolant_overheat_recovery_count_limit,word,ROM recovery count for direct coolant overheat
+0x0040875e,coolant_overheat_debounce_count_limit,word,ROM debounce count for coolant overheat trip
+0x0040876c,coolant_overheat_temp_threshold,word,ROM trip temp for direct coolant overheat
+0x00408760,cold_start_fuel_demand_ramp_decrease_step,word,ROM ramp-down step for cold-start fuel demand
+0x00408762,cold_start_fuel_demand_ramp_increase_step,word,ROM ramp-up step for cold-start fuel demand
+0x0040878a,protection_fault_enable_event11,byte,current-cycle enable byte for protection event 11
+0x0040878c,protection_fault_enable_event38,byte,current-cycle enable byte for protection event 38
+0x0040878e,protection_fault_enable_event43,byte,current-cycle enable byte for protection event 43
+0x00408790,protection_fault_enable_event44,byte,current-cycle enable byte for protection event 44
+0x00408792,protection_fault_enable_event53,byte,current-cycle enable byte for protection event 53
+0x00408794,protection_fault_enable_event21,byte,current-cycle enable byte for protection event 21
+0x00408796,protection_fault_enable_event20,byte,current-cycle enable byte for protection event 20
+0x00408798,protection_fault_enable_event19,byte,current-cycle enable byte for protection event 19
+0x0040879a,protection_fault_enable_event17,byte,current-cycle enable byte for protection event 17
+0x0040879c,protection_fault_enable_event18,byte,current-cycle enable byte for protection event 18
+0x0040879e,protection_fault_enable_event16,byte,current-cycle enable byte for protection event 16
+0x00408a78,cruise_speed_setpoint_init,word,ROM initializer for cruise_speed_setpoint_a/b
+0x00408a9c,protection_coldStart_channelA_rpm_min_threshold,word,ROM RPM min for cold-start protection channel A
+0x00408aa4,protection_coldStart_channelB_rpm_lower_threshold,word,ROM RPM lower bound for channel B window
+0x00408aa8,protection_coldStart_channelB_rpm_upper_threshold,word,ROM RPM upper bound for channel B window
+0x00408aac,protection_load_upper_threshold,word,ROM upper bound on protection_load_input_alt
+0x00408aae,protection_load_lower_threshold,word,ROM lower bound on protection_load_input_alt
+0x00408ad2,protection_fuel_derate_increment_counter_max,byte,ROM cap for fuel derate increment counter
+0x00408ad3,protection_pid_integrator_threshold,word,ROM signed threshold on protection PID integrator
+0x00408ade,protection_pid_step_count_threshold_b,byte,ROM secondary step-count gate for protection PID
+0x00408aec,protection_throttle_position_clamp_low,word,ROM lower clamp for throttle position
+0x00408b27,protection_throttle_invert_flag,byte,ROM throttle direction invert flag
+0x00408b28,protection_throttle_position_clamp_high,word,ROM upper clamp for throttle position
+0x00408b2a,protection_throttle_hpcr_frequency,word,ROM HPCR output frequency (Hz, 1e6/this = period)
+0x00408af0,protection_throttle_velocity_gain,word,ROM derivative gain for throttle PID
+0x0040b58c,protection_throttle_velocity_term,word,velocity (D) contribution to throttle output
