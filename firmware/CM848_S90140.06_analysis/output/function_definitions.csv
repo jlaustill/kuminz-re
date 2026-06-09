@@ -56,9 +56,6 @@ function_address,function_name,param_index,name,type,comment
 # -----------------------------------------------------------------------------
 # Diagnostic Service Dispatchers
 # -----------------------------------------------------------------------------
-0x000038f4,diagRequestTypeDispatcher,0,service_code,byte,UDS/J1939 diagnostic service code
-0x000038f4,diagRequestTypeDispatcher,1,request_ptr,byte*,Pointer to request data buffer
-
 0x00006d24,dispatchDiagnosticService,0,service_code,byte,Service code (e.g. 0x22=ReadDataByID 0x2E=WriteDataByID)
 0x00006d24,dispatchDiagnosticService,1,data_ptr,byte*,Pointer to service data
 0x00006d24,dispatchDiagnosticService,2,data_length,ushort,Length of service data
@@ -284,4 +281,3 @@ function_address,function_name,param_index,name,type,comment
 0x00001ef8,cm848_diagSendResponseCode,return,,void,Reverted: r4-return needs custom storage to model safely
 0x00001ef8,cm848_diagSendResponseCode,0,response_code,byte,Response/service code to send
 0x00001ef8,cm848_diagSendResponseCode,1,negative_response_id,int,Negative-response service id (0x7f) or 0
-0x000038f4,diagRequestTypeDispatcher,return,,void,Reverted: r4-return needs custom storage to model safely

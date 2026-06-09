@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Tue Jun 09 07:00:22 MDT 2026
+// Generated: Tue Jun 09 07:16:55 MDT 2026
 
 
 //
@@ -1469,38 +1469,29 @@ void cm848_diagSendResponseCode(byte response_code,dword negative_response_id)
 void mpc555_processDiagnosticAndEepromRequests(void)
 
 {
-  byte *extraout_r4;
-  byte *extraout_r4_00;
-  byte *extraout_r4_01;
-  byte *request_ptr;
-  byte bVar1;
-  ulonglong uVar2;
-  undefined5 uVar3;
+  short sVar1;
+  byte bVar2;
   
   BYTE_003fc580();
-  uVar3 = cm848_processDiagnosticTimeout();
-  request_ptr = (byte *)uVar3;
+  cm848_processDiagnosticTimeout();
   if ((diag_request_pending_flag != '\x01') ||
      ((diag_session_state_t_003fecbe.session_flags & 1) == 0)) goto LAB_000020ac;
   if (diag_serial_buffer[0x20] == 0x34) {
-    bVar1 = qadc_a_result_high_1;
-    if ((bVar1 & 0x80) != 0) {
+    bVar2 = qadc_a_result_high_1;
+    if ((bVar2 & 0x80) != 0) {
       eeprom_xfer_state.transfer_timer = 0x28;
     }
     if (security_access_state < 0x12) {
       if (security_access_state == 0x11) {
         BYTE_003fc9ec();
         diagnostic_callback_ptr = mpc555_processDiagnosticAndEepromRequests;
-        request_ptr = extraout_r4_01;
       }
       else if (security_access_state == 3) {
         BYTE_003fca7c();
-        request_ptr = extraout_r4;
       }
       else {
         if (security_access_state != 0x10) goto LAB_0000208c;
         BYTE_003fcb24();
-        request_ptr = extraout_r4_00;
       }
     }
     else if (security_access_state == 0x12) {
@@ -1509,24 +1500,22 @@ void mpc555_processDiagnosticAndEepromRequests(void)
     else {
       if (security_access_state != 0x20) {
 LAB_0000208c:
-        bVar1 = 0x12;
+        bVar2 = 0x12;
         goto LAB_00002098;
       }
-      cm848_dispatchEepromWriteRequest((byte)((uint5)uVar3 >> 0x20),request_ptr);
+      cm848_dispatchEepromWriteRequest();
     }
   }
   else {
-    bVar1 = 0x11;
+    bVar2 = 0x11;
 LAB_00002098:
-    request_ptr = (byte *)0x7f;
-    cm848_diagSendResponseCode(bVar1,0x7f);
+    cm848_diagSendResponseCode(bVar2,0x7f);
   }
   diag_request_pending_flag = '\0';
 LAB_000020ac:
   if (eeprom_write_pending_flag == 1) {
-    uVar2 = mpc555_initEepromTransfer(3);
-    request_ptr = (byte *)uVar2;
-    if ((uVar2 & 0xffff00000000) == 0) {
+    sVar1 = mpc555_initEepromTransfer(3);
+    if (sVar1 == 0) {
       diag_session_state_byte = 0x22;
     }
     else {
@@ -1538,7 +1527,7 @@ LAB_000020ac:
   if (eeprom_write_request_pending != 0) {
     security_access_state = 0x20;
     eeprom_write_request_type = (byte)eeprom_write_request_pending;
-    cm848_dispatchEepromWriteRequest(0xf0,request_ptr);
+    cm848_dispatchEepromWriteRequest();
     eeprom_write_request_pending = 0;
   }
   return;
@@ -2680,7 +2669,7 @@ void cm848_updateEepromMagicAndReload(void)
 
 /* dispatches EEPROM write by request type: 1=begin cal write 2=update magic */
 
-void cm848_dispatchEepromWriteRequest(byte service_code,byte *request_ptr)
+void cm848_dispatchEepromWriteRequest(void)
 
 {
   cm848_resetEepromCalibrationState();
