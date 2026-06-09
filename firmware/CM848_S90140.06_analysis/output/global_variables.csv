@@ -6957,3 +6957,45 @@ address,name,type,comment
 0x00408b2a,protection_throttle_hpcr_frequency,word,ROM HPCR output frequency (Hz, 1e6/this = period)
 0x00408af0,protection_throttle_velocity_gain,word,ROM derivative gain for throttle PID
 0x0040b58c,protection_throttle_velocity_term,word,velocity (D) contribution to throttle output
+0x00408816,governor_fuel_demand_i_term_init_val,word,ROM init value for governor PID i-term + accumulator
+0x00408828,egr_fuel_demand_speed_floor_disabled,word,ROM EGR fuel demand speed floor when EGR disabled
+0x0040882e,egr_fuel_demand_speed_floor_base,word,ROM base of EGR fuel demand speed floor calc
+0x00408838,egr_governor_speed_target_min,word,ROM minimum clamp for EGR governor speed target
+0x0040883a,egr_governor_pi_temp_setpoint,word,ROM temperature setpoint for EGR governor PI
+0x00408866,egr_governor_overspeed_hysteresis_floor,word,ROM decel/accel crossover speed during overspeed
+0x0040887f,egr_fuel_demand_timing_offset_threshold,word,ROM cylinder timing offset threshold for EGR floor
+0x00408881,egr_fuel_demand_stroke_ramp_enable,byte,ROM flag: interpolated vs flat EGR fuel demand floor
+0x004088a0,egr_load_floor_cold_temp_threshold,word,ROM cold-temp threshold for EGR load floor mode
+0x004088ae,egr_governor_overspeed_rpm_threshold,word,ROM RPM boundary for EGR overspeed detection
+0x004088b6,egr_governor_speed_accel_ramp_step,word,ROM per-cycle up-ramp step for governor speed
+0x004088c0,egr_load_speed_floor_decel_step,word,ROM rate-limit step for decreasing egr_load_speed_floor
+0x0040b298,egr_governor_protection_load_speed_floor,word,protection-load-derived governor speed floor
+0x0040b2be,governor_fuel_demand_speed_table_result,word,speed-axis table feedforward for governor fuel demand
+0x00408818,governor_fuel_demand_i_term_max,word,ROM upper clamp for governor PID i-term
+0x0040881a,governor_fuel_demand_i_term_min,word,ROM lower clamp for governor PID i-term
+0x00408824,egr_fuel_demand_stroke_high_threshold,word,ROM upper fuel-stroke bound for EGR high-stroke flag
+0x004088ba,cold_start_emission_fault_off_dwell_count,word,ROM off-period dwell for emission-fault restart cycle
+0x004088bc,cold_start_emission_fault_pgn_cycle_count_max,word,ROM on-period/cap for emission-fault restart cycle
+0x0040c19c,cold_start_fuel_handler_period_us,dword,1e6/freq period for cold-start fuel J1939 handler
+0x00408986,governor_temp_diag_rpm_enable_threshold,word,ROM RPM above which gov-temp diag activates
+0x00408988,governor_temp_diag_zero_rpm_count_max,word,ROM cap for gov-temp zero-RPM counter
+0x00408990,governor_temp_diag_cold_start_j1939_count_max,word,ROM cap for gov-temp cold-start J1939 counter
+0x0040b53a,governor_temp_fuel_qty_table_raw,word,raw 2D-table gov-temp fuel qty (pre-EMA)
+0x00408a52,fuel_temp_trim_comp_ema_fault_threshold,word,ROM lower EMA bound for fuel-temp-trim fault
+0x00408a56,fuel_temp_trim_comp_ema_clear_threshold,word,ROM upper EMA bound for fuel-temp-trim clear
+0x00408a5a,fuel_temp_trim_deviation_ema_clear_threshold,word,ROM deviation threshold for fuel-temp-trim clear
+0x00408b1c,protection_throttle_integral_period,word,ROM reload for throttle integral period counter
+0x00408b98,calibration_id_byte5,byte,EEPROM-loaded calibration ID byte 5 (J1939 component ID)
+0x00408d4a,governor_datavalid_load_overload_limit,word,ROM load limit for datavalid overload flag
+0x00408d52,governor_datavalid_load_range_max,word,ROM max load swing for datavalid range pass
+0x00408d5e,governor_datavalid_fuel_temp_trim_threshold,word,ROM min fuel-temp-trim to run datavalid
+0x00408dc4,governor_cruise_cycle_inhibit_enable,word,ROM enable for cycle-based cruise inhibit/disengage
+0x00408e14,cruise_speed_setpoint_active_max,word,ROM ceiling for cruise_speed_setpoint_active
+0x00408e16,cruise_speed_setpoint_active_min,word,ROM floor for cruise_speed_setpoint_active
+0x00408e20,cruise_zone_speed_error_abs_limit,word,ROM abs speed-error threshold for cruise zone 1/2
+0x00408e2e,cruise_zone_speed_error_neg_limit,word,ROM signed speed-error threshold for cruise zone 2/3
+0x0040b6a0,cruise_pid_kd_working,word,cruise PID derivative gain (zone table offset 4)
+0x0040b6a6,cruise_pid_ki_working,word,cruise PID integral gain (zone table offset 2)
+0x0040b6a8,cruise_pid_rate_integral_gain_working,word,cruise PID rate-to-integrator gain (zone table offset 6)
+0x00408e74,cruise_stable_speed_countdown_initial,word,ROM reload for cruise stable-speed countdown
+0x00408e78,cruise_rate_correction_holdoff_initial,word,ROM reload for cruise rate-correction holdoff
