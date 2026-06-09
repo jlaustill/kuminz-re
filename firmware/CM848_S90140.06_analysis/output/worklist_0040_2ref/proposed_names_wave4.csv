@@ -1,0 +1,77 @@
+address,name,type,comment
+0x004090aa,mios_timer16_set_value_ref,word,ROM MIOS MDASM0 set-value calibration
+0x004090ac,mios_timer16_scale_percent_ref,word,ROM MIOS MDASM0 scale-percent calibration
+0x004090ae,mios_timer17_set_value_ref,word,ROM MIOS MDASM1 set-value calibration
+0x004090b0,mios_timer17_scale_percent_ref,word,ROM MIOS MDASM1 scale-percent calibration
+0x004090b4,mios_timer18_scale_percent_ref,word,ROM MIOS MDASM2 scale-percent calibration
+0x004090b6,mios_timer19_scale_percent_ref,word,ROM MIOS MDASM3 scale-percent calibration
+0x004090b8,mios_timer18_set_value_ref,word,ROM MIOS MDASM2 set-value calibration
+0x004090ba,mios_timer19_set_value_ref,word,ROM MIOS MDASM3 set-value calibration
+0x004090c4,injection_cylinder_fault_index_offset,word,ROM fallback cylinder-index offset on injection fault
+0x004090e9,injection_timing_speed_breakpoint,word,ROM speed breakpoint selecting injection timing period
+0x004090f1,injection_timing_sequence_speed_threshold,word,ROM speed threshold for injection sequence advance
+0x00409e76,injection_timing_offset_governor_limit_floor,word,ROM timing offset floor when governor speed limit active
+0x00409a6d,cam_timing_override_value,word,ROM cam timing force/additive override value
+0x00409ab0,cam_sync_reference_b_debounce_threshold,word,ROM debounce threshold for cam-sync reference check B
+0x00409ab2,cam_sync_reference_a_debounce_threshold,word,ROM debounce threshold for cam-sync reference check A
+0x00409ab4,cam_timing_correction_convergence_threshold,word,ROM convergence count cap for cam timing correction
+0x00409abe,cam_timing_fault_activation_threshold_count,word,ROM fault-activation counter cap (cam timing)
+0x00409ac0,cam_sync_reference_check_timing_min,word,ROM min engine timing ref to enable cam-sync check
+0x00409ac2,cam_sync_reference_check_enable_count_threshold,word,ROM enable-count threshold for cam-sync reference check
+0x00409ac4,cam_timing_reference_b_max,word,ROM upper bound on cam_timing_reference_b for check
+0x00409e68,torque_limit_timing_sync_fault_target,word,ROM timing target when engine sync fault active
+0x0040b93a,torque_limit_demand_output,word,torque-limit-bounded timing demand output
+0x0040b958,torque_limit_timing_boost_load_factor_by_load,word,load-indexed factor for boost-load timing correction
+0x00409e82,iat_protection_derate_integrator_max,word,ROM saturation max for IAT derate integrator
+0x00409e96,boost_corr_diag_pos_accum_limit,word,ROM cap for boost_corr_diag_pos_accumulator
+0x00409e98,boost_corr_diag_pos_accum_b_limit,word,ROM cap for boost_corr_diag_pos_accumulator_b
+0x00409eaa,boost_corr_crank_dwell_a_limit,word,ROM cap for boost_corr_crank_phase_dwell_a
+0x00409eba,cam_sync_balance_hold_limit,word,ROM cap for cam_sync_balance_hold_counter
+0x00409ec4,governor_setpoint_rpm_deviation_limit,word,ROM cap for governor_setpoint_rpm_deviation_count
+0x00409ec6,protection_fueltemp_integration_threshold,word,ROM threshold to gate fuel-temp integration
+0x00409ecc,protection_fueltemp_integration_scale,dword,ROM Q-format scale for fuel-temp integration accumulator
+0x00409ed0,protection_eval_elapsed_count_limit,word,ROM cap for protection_eval_elapsed_count
+0x00409ed4,fuel_correction_direction_stable_count_limit,byte,ROM stable-count limit before fuel correction direction latch
+0x00409ef4,cam_sync_validation_crank_tick_min,word,ROM min crank ticks for cam-sync validation
+0x00409ef8,cam_sync_validation_dwell_limit,word,ROM dwell cap for cam-sync validation
+0x00409fa2,cam_sync_oiltemp_j1939_agree_threshold,word,ROM delta tolerance for oiltemp/j1939 agreement
+0x0040ba3a,cam_sync_crossval_oil_baseline,word,oil-temp baseline for cam-sync cross-validation
+0x0040ba44,cam_sync_crossval_startup_done_flag,word,cam-sync cross-validation startup-complete flag
+0x0040ba46,cam_sync_coolant_temp_init_snapshot,word,coolant temp snapshot for cam-sync cross-validation
+0x00409fe6,hpcr_fuel_demand_rpm_threshold,word,ROM RPM threshold for HPCR fuel-demand protection
+0x0040a02c,fault_match_debounce_threshold_std,word,ROM fault-match debounce threshold (standard channels)
+0x0040a02e,fault_active_recovery_threshold_std,word,ROM fault-active recovery threshold (standard channels)
+0x0040a036,fault_active_recovery_threshold_ch19_20,word,ROM fault-active recovery threshold (channels 19/20)
+0x0040a0a0,sensor_channelGeneric_filtered,word,generic sensor channel filtered output
+0x0040b64a,governor_speed_compensation_initial_ref,word,governor speed compensation initial reference
+0x0040a18e,fuel_correction_temp_band_lower,word,lower temp band for fuel correction blend
+0x0040a190,fuel_correction_temp_band_upper,word,upper temp band for fuel correction blend
+0x0040a5a4,governor_adjustment_flow_rate_threshold,word,flow-rate threshold for governor blend compare
+0x0040a5ac,etc1_speed_below_threshold_flag,word,ETC1 speed-below-threshold flag for blend gate
+0x0040a788,torque_limit_fuel_derate_span,word,torque-limit fuel derate span (proportional scale)
+0x0040ad56,j1939_data_log_sa_whitelist,byte,J1939 data-log SA whitelist array base (4 bytes)
+0x0040afe2,smoke_limit_mode_egr_status_combined,word,smoke limit mode combined with EGR smoke active bit
+0x0040bdc6,egr_smoke_speed_demand_working,word,EGR smoke-limit fallback speed demand
+0x0040bdc0,sensor_channel28_raw,word,sensor channel 28 raw value
+0x0040bdc2,sensor_channel28_filtered,word,sensor channel 28 filtered value
+0x0040be34,sensor_channel28_fault_status,word,sensor channel 28 fault status
+0x0040b300,tpu_rpm_cam_sync_update_enable,byte,enable for cam-sync RPM window update (set by init)
+0x0040b302,tpu_rpm_ema_coeff_ptr,pointer,EMA coeff pointer for TPU RPM filter
+0x0040b9ac,rpm_camSync_window_oldest,word,oldest sample of 3-sample cam-sync RPM window
+0x0040b348,iat_protection_derate_steps_depleted_flag,word,IAT derate steps depleted latch
+0x0040b478,j1939_governor_auth_seed_bytes,byte,J1939 governor auth session seed byte array base (4)
+0x0040b48b,j1939_msg_slot_u_eeprom_cmd,byte,J1939 slot-U EEPROM payload command byte
+0x0040b48c,j1939_msg_slot_u_eeprom_data0,byte,J1939 slot-U EEPROM payload data byte 0
+0x0040b48d,j1939_msg_slot_u_eeprom_data1,byte,J1939 slot-U EEPROM payload data byte 1
+0x0040b48e,j1939_msg_slot_u_eeprom_data2,byte,J1939 slot-U EEPROM payload data byte 2
+0x0040b529,governor_cal_write_active_flag,byte,governor cal write session active flag
+0x0040b57d,protection_pid_error_term,word,protection PID error term (delta setpoint)
+0x0040b5a4,j1939_protection_receive_active_flag,word,J1939 protection receive active flag
+0x0040b682,governor_override_speed_ema_coeff_ptr,pointer,EMA coeff pointer for governor override speed
+0x0040b966,injection_timing_arb_comp4_rpm_factor,word,RPM factor for injection timing arb component 4
+0x0040b96c,injection_timing_arb_comp3_rpm_factor,word,RPM factor for injection timing arb component 3
+0x0040b974,injection_timing_coolant_trim_rpm_factor,word,RPM factor for injection timing coolant trim
+0x0040b982,injection_timing_arb_comp5_rpm_factor_a,word,RPM factor A for injection timing arb component 5
+0x0040ba4e,cssc_oiltemp_verify_time_threshold,word,CSSC oiltemp verify-state elapsed-time window
+0x0040ba50,cssc_oiltemp_state_update_time_threshold,word,CSSC oiltemp state-update elapsed-time threshold
+0x0040bbf0,sensor_channel_handler_active_bitmask,word,8-word bitmask of active dispatch-table handlers (base)
