@@ -114,7 +114,7 @@ eeprom_header_t,0x003fee08,header_block,byte,6,EEPROM header data block,,verifie
 eeprom_header_t,0x003fee08,config_dword,dword,4,EEPROM configuration dword,,verified
 eeprom_header_t,0x003fee08,config_word,word,2,EEPROM configuration word,,verified
 eeprom_header_t,0x003fee08,calibration_block1,byte,6,Calibration data block 1,,verified
-eeprom_header_t,0x003fee08,cal_word1,word,2,Calibration parameter word 1,,verified
+eeprom_header_t,0x003fee08,eeprom_status_flags,word,2,Bit0=IAT derate history | Bit3=calibration validated,,verified
 eeprom_header_t,0x003fee08,cal_word2,word,2,Calibration parameter word 2,,verified
 eeprom_header_t,0x003fee08,cal_word3,word,2,Calibration parameter word 3,,verified
 eeprom_header_t,0x003fee08,cal_word4,word,2,Calibration parameter word 4,,verified

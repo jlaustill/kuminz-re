@@ -479,7 +479,7 @@ address,name
 0x00006974,mpc555_enableSerialTransmit
 0x000069b0,mpc555_validateSerialChecksum
 0x00006a5c,mpc555_initSerialTransmit
-0x00006ab8,mpc555_sensorFaultDetection
+0x00006ab8,mpc555_pollSerialDuringEeprom
 0x00006b24,mpc555_updateSensorDiagnostics
 0x00006bac,cm848_sensorInputProcessing
 0x00006bdc,mpc555_processScheduledTasks
