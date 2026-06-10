@@ -65,10 +65,31 @@ Edit the appropriate CSVs (see `editing-firmware-csvs` skill for column formats)
 | Change Type | CSV File |
 |-------------|----------|
 | Global variable rename/retype | `global_variables.csv` |
-| Function rename | `function_renames.csv` |
+| Function rename + **review comment** | `function_renames.csv` |
 | Function prototype (fix decompiler artifacts) | `function_definitions.csv` |
 | Local variable rename | `local_variables.csv` |
 | Magic numbers | `enums.csv` |
+
+**REQUIRED: Add review plate comment to the function**
+
+Every function reviewed by this skill MUST have a plate comment added to `function_renames.csv` (3rd column):
+
+```
+review-function-readability reviewed YYYY-MM-DD - Readability [Low|Medium|High] Accuracy Confidence [Low|Medium|High]
+```
+
+**Rating criteria:**
+
+| Rating | Readability | Accuracy Confidence |
+|--------|-------------|---------------------|
+| **High** | Function reads like documentation; all symbols have clear, accurate names | Strong evidence: multiple usages, clear context, asm-verified types |
+| **Medium** | Function is understandable; most symbols named well, some uncertainty | Moderate evidence: some context gaps, neighbor-based inferences |
+| **Low** | Function improved but still has unclear sections or generic names | Weak evidence: single usage, unnamed neighbors, context-based guesses |
+
+Example entry in `function_renames.csv`:
+```
+0x000038f4,cm848_dispatchEepromWriteRequest,review-function-readability reviewed 2026-06-09 - Readability High Accuracy Confidence High
+```
 
 **Decompiler artifact fixes:**
 - `CONCAT31(in_register_*, param)` → add void prototype to clear phantom params
@@ -177,6 +198,11 @@ void cm848_dispatchEepromWriteRequest(byte service_code, byte *request_ptr)
 - `sensor_fault_mode_pending` → `eeprom_write_request_pending`
 - `cm848_diagRequestTypeDispatcher` → `cm848_dispatchEepromWriteRequest`
 - Added void prototypes to eliminate CONCAT31 artifact
+
+**Review comment added to function_renames.csv:**
+```
+0x000038f4,cm848_dispatchEepromWriteRequest,review-function-readability reviewed 2026-06-09 - Readability High Accuracy Confidence High
+```
 
 ## When NOT to use this skill
 

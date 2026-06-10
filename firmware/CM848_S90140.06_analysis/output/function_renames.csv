@@ -418,7 +418,7 @@ address,name
 0x000036f8,cm848_resetEepromCalibrationState
 0x00003710,cm848_beginEepromCalibrationWrite
 0x000037e0,cm848_updateEepromMagicAndReload
-0x000038f4,cm848_dispatchEepromWriteRequest,dispatches EEPROM write by request type: 1=begin cal write 2=update magic
+0x000038f4,cm848_dispatchEepromWriteRequest,dispatches EEPROM write by request type: 1=begin cal write 2=update magic | review-function-readability reviewed 2026-06-09 - Readability High Accuracy Confidence High
 0x00003948,mpc555_diagServiceTransferBlock
 0x00003a5c,cm848_verifySerialResponse
 0x00003ad8,cm848_restoreDiagnosticHandler

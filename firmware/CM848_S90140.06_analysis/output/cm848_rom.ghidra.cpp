@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Tue Jun 09 07:16:55 MDT 2026
+// Generated: Wed Jun 10 07:57:50 MDT 2026
 
 
 //
@@ -2667,7 +2667,8 @@ void cm848_updateEepromMagicAndReload(void)
 // Function: cm848_dispatchEepromWriteRequest @ 0x000038f4
 //
 
-/* dispatches EEPROM write by request type: 1=begin cal write 2=update magic */
+/* dispatches EEPROM write by request type: 1=begin cal write 2=update magic |
+   review-function-readability reviewed 2026-06-09 - Readability High Accuracy Confidence High */
 
 void cm848_dispatchEepromWriteRequest(void)
 
