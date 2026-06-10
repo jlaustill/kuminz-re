@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Wed Jun 10 07:57:50 MDT 2026
+// Generated: Wed Jun 10 08:18:00 MDT 2026
 
 
 //
@@ -181,8 +181,8 @@ void mpc555_loadEepromCalibration(undefined4 param_1,int param_2)
   ushort local_38 [2];
   dword local_34 [2];
   
-  bVar3 = qadc_a_result_high_1;
-  qadc_a_result_high_1 = bVar3 & 0x7f;
+  bVar3 = eeprom_diag_flags;
+  eeprom_diag_flags = bVar3 & 0x7f;
   eeprom_xfer_state.transfer_timer = 0;
   mpc555_eepromReadWords(0x1000000,0x3fee0a,2);
   if (eeprom_shadow_header.magic == 0x600d) {
@@ -390,8 +390,8 @@ short mpc555_initEepromTransfer(int param_1)
     mpc555_eepromWriteWords((dword)local_10,(word *)&DAT_01000000,2);
   }
   if (param_1 == 3) {
-    bVar2 = qadc_a_result_high_1;
-    qadc_a_result_high_1 = bVar2 | 0x80;
+    bVar2 = eeprom_diag_flags;
+    eeprom_diag_flags = bVar2 | 0x80;
   }
   sVar3 = BYTE_003fa5a0(0x7ffc);
   if (sVar3 != 0) {
@@ -409,8 +409,8 @@ short mpc555_initEepromTransfer(int param_1)
   }
   eeprom_xfer_state.bytes_transferred = 0;
   eeprom_block_tracking.block_count = 0;
-  bVar2 = qadc_a_result_high_1;
-  qadc_a_result_high_1 = bVar2 | 0x80;
+  bVar2 = eeprom_diag_flags;
+  eeprom_diag_flags = bVar2 | 0x80;
   return sVar3;
 }
 
@@ -1466,56 +1466,59 @@ void cm848_diagSendResponseCode(byte response_code,dword negative_response_id)
 // Function: mpc555_processDiagnosticAndEepromRequests @ 0x00001fa4
 //
 
+/* review-function-readability reviewed 2026-06-10 - Readability Medium Accuracy Confidence High */
+
 void mpc555_processDiagnosticAndEepromRequests(void)
 
 {
-  short sVar1;
-  byte bVar2;
+  byte bVar1;
+  word eeprom_init_result;
+  byte diag_response_code;
   
   BYTE_003fc580();
   cm848_processDiagnosticTimeout();
   if ((diag_request_pending_flag != '\x01') ||
      ((diag_session_state_t_003fecbe.session_flags & 1) == 0)) goto LAB_000020ac;
   if (diag_serial_buffer[0x20] == 0x34) {
-    bVar2 = qadc_a_result_high_1;
-    if ((bVar2 & 0x80) != 0) {
+    bVar1 = eeprom_diag_flags;
+    if ((bVar1 & 0x80) != 0) {
       eeprom_xfer_state.transfer_timer = 0x28;
     }
-    if (security_access_state < 0x12) {
-      if (security_access_state == 0x11) {
+    if (eeprom_diag_state < EEPROM_DIAG_TRANSFER_BLOCK) {
+      if (eeprom_diag_state == EEPROM_DIAG_SEND_VERSION) {
         BYTE_003fc9ec();
         diagnostic_callback_ptr = mpc555_processDiagnosticAndEepromRequests;
       }
-      else if (security_access_state == 3) {
+      else if (eeprom_diag_state == EEPROM_DIAG_HANDLE_RESPONSE) {
         BYTE_003fca7c();
       }
       else {
-        if (security_access_state != 0x10) goto LAB_0000208c;
+        if (eeprom_diag_state != EEPROM_DIAG_DATA_TRANSFER) goto LAB_0000208c;
         BYTE_003fcb24();
       }
     }
-    else if (security_access_state == 0x12) {
+    else if (eeprom_diag_state == EEPROM_DIAG_TRANSFER_BLOCK) {
       mpc555_diagServiceTransferBlock();
     }
     else {
-      if (security_access_state != 0x20) {
+      if (eeprom_diag_state != EEPROM_DIAG_WRITE_DISPATCH) {
 LAB_0000208c:
-        bVar2 = 0x12;
+        diag_response_code = 0x12;
         goto LAB_00002098;
       }
       cm848_dispatchEepromWriteRequest();
     }
   }
   else {
-    bVar2 = 0x11;
+    diag_response_code = 0x11;
 LAB_00002098:
-    cm848_diagSendResponseCode(bVar2,0x7f);
+    cm848_diagSendResponseCode(diag_response_code,0x7f);
   }
   diag_request_pending_flag = '\0';
 LAB_000020ac:
   if (eeprom_write_pending_flag == 1) {
-    sVar1 = mpc555_initEepromTransfer(3);
-    if (sVar1 == 0) {
+    eeprom_init_result = mpc555_initEepromTransfer(3);
+    if (eeprom_init_result == 0) {
       diag_session_state_byte = 0x22;
     }
     else {
@@ -1525,7 +1528,7 @@ LAB_000020ac:
     eeprom_calibration_pending_flag = 0;
   }
   if (eeprom_write_request_pending != 0) {
-    security_access_state = 0x20;
+    eeprom_diag_state = EEPROM_DIAG_WRITE_DISPATCH;
     eeprom_write_request_type = (byte)eeprom_write_request_pending;
     cm848_dispatchEepromWriteRequest();
     eeprom_write_request_pending = 0;
@@ -1557,9 +1560,9 @@ void cm848_initDiagnosticCallback(void)
 void cm848_processDiagnosticTimeout(void)
 
 {
-  if ((sensor_init_delay_timer._0_1_ != '\0') &&
-     (sensor_init_delay_timer._0_1_ = sensor_init_delay_timer._0_1_ + -1,
-     sensor_init_delay_timer._0_1_ == '\0')) {
+  if ((diag_response_timeout_counter._0_1_ != '\0') &&
+     (diag_response_timeout_counter._0_1_ = diag_response_timeout_counter._0_1_ + -1,
+     diag_response_timeout_counter._0_1_ == '\0')) {
     cm848_diagSendResponseCode(2,0x51);
   }
   return;
@@ -1574,7 +1577,7 @@ void cm848_processDiagnosticTimeout(void)
 void cm848_setDataTransferMode(void)
 
 {
-  sensor_init_delay_timer._0_1_ = 2;
+  diag_response_timeout_counter._0_1_ = 2;
   return;
 }
 
@@ -1795,7 +1798,7 @@ void mpc555_systemInitialization(void)
   do {
     mpc555_dispatchSpiHandlerByState();
     BYTE_003fa2f0();
-    bVar2 = qadc_a_result_high_1;
+    bVar2 = eeprom_diag_flags;
     if (((bVar2 & 0xf) != 0) && (eeprom_shadow_header.magic == 0x1d0a)) {
       BYTE_003fc874();
       mpc555_initHardwareConfig();
@@ -3032,8 +3035,8 @@ cm848_dataTransferBufferWrite(int param_1,dword param_2,uint param_3,int param_4
     if (data_transfer_target_address == 0) {
       data_transfer_target_address = param_2;
     }
-    bVar1 = qadc_a_result_high_1;
-    qadc_a_result_high_1 = bVar1 | param_5;
+    bVar1 = eeprom_diag_flags;
+    eeprom_diag_flags = bVar1 | param_5;
     if ((int)(uint)data_transfer_state_t_003fec82.reserved_04 < (int)param_3) {
       data_transfer_state_t_003fec82.reserved_04 = (word)param_3;
     }
@@ -3410,8 +3413,8 @@ LAB_00004928:
       mpc555_initAdcChannelConfig();
 LAB_0000497c:
       data_transfer_state_t_003fec82.status._0_1_ = '\x02';
-      bVar1 = qadc_a_result_high_1;
-      qadc_a_result_high_1 = bVar1 & 0xf0;
+      bVar1 = eeprom_diag_flags;
+      eeprom_diag_flags = bVar1 & 0xf0;
       goto LAB_000049a0;
     }
   }
@@ -4911,27 +4914,27 @@ void mpc555_diagnosticSubcommandDispatcher(byte subcommand,byte *data_ptr)
     return;
   }
   if (diag_serial_buffer[0x20] == 0x34) {
-    bVar1 = qadc_a_result_high_1;
+    bVar1 = eeprom_diag_flags;
     if ((bVar1 & 0x80) != 0) {
       eeprom_xfer_state.transfer_timer = 0x28;
     }
-    if (security_access_state == 3) {
+    if (eeprom_diag_state == EEPROM_DIAG_HANDLE_RESPONSE) {
       mpc555_handleEepromDiagnosticResponse();
       diag_request_pending_flag = 0;
       return;
     }
-    if (security_access_state == 0x10) {
+    if (eeprom_diag_state == EEPROM_DIAG_DATA_TRANSFER) {
       mpc555_processEepromDataTransfer();
       diag_request_pending_flag = 0;
       return;
     }
-    if (security_access_state == 0x11) {
+    if (eeprom_diag_state == EEPROM_DIAG_SEND_VERSION) {
       cm848_sendEepromVersionResponse();
       diagnostic_callback_ptr = &DAT_003fc1fc;
       diag_request_pending_flag = 0;
       return;
     }
-    if (security_access_state != 0x20) {
+    if (eeprom_diag_state != EEPROM_DIAG_WRITE_DISPATCH) {
       cm848_updateSystemTimers(0x12,0x7f);
       diag_request_pending_flag = 0;
       return;
@@ -5226,7 +5229,7 @@ void mpc555_processScheduledTasks(void)
   wVar1 = boot_state_machine.boot_phase;
   if (wVar1 == 0) {
 LAB_00006c44:
-    bVar2 = qadc_a_result_high_1;
+    bVar2 = eeprom_diag_flags;
     if (bVar2 == 0x81) {
       bVar2 = mpc555_dispatchCanMessageHandlers();
       cm848_processJ1939QueueStatus(bVar2);
@@ -5237,7 +5240,7 @@ LAB_00006c44:
       if (wVar1 == 2) goto LAB_00006c44;
       if (wVar1 != 3) goto LAB_00006c74;
     }
-    bVar2 = qadc_a_result_high_1;
+    bVar2 = eeprom_diag_flags;
     if (bVar2 == 0x82) {
       mpc555_diagnosticSubcommandDispatcher((byte)((uint5)uVar3 >> 0x20),(byte *)uVar3);
     }
@@ -5265,22 +5268,22 @@ void cm848_processMainLoop(void)
 {
   byte bVar1;
   
-  bVar1 = qadc_a_result_high_1;
+  bVar1 = eeprom_diag_flags;
   while ((bVar1 & 0xf) != 0) {
-    bVar1 = qadc_a_result_high_1;
+    bVar1 = eeprom_diag_flags;
     if (bVar1 == 0x82) {
       cm848_initCanMailboxFilters();
       mpc555_pollSerialDuringEeprom();
     }
     mpc555_systemWatchdogReset();
-    bVar1 = qadc_a_result_high_1;
+    bVar1 = eeprom_diag_flags;
     if (bVar1 == 0x81) {
       cm848_initCanMailboxFilters();
       mpc555_can2TransmitInterruptHandler();
     }
     cm848_initCanMailboxFilters();
     mpc555_processScheduledTasks();
-    bVar1 = qadc_a_result_high_1;
+    bVar1 = eeprom_diag_flags;
   }
   return;
 }
@@ -5315,7 +5318,7 @@ void cm848_dispatchDiagnosticService(byte service_code,byte *data_ptr,word data_
         if (*pcVar5 == cVar1) {
           cVar3 = validateServiceDataLength(iVar2);
           if (cVar3 == -1) {
-            bVar4 = qadc_a_result_high_1;
+            bVar4 = eeprom_diag_flags;
             if (((bVar4 & 0xf) == 0) || (0x6fffe < *(uint *)(pcVar5 + 1))) {
               cVar3 = (**(code **)(pcVar5 + 1))(iVar2);
             }
@@ -5733,9 +5736,9 @@ void mpc555_watchdogTimerTick(void)
 
 {
   word wVar1;
+  word counter_value;
   byte prescaler_count;
   dword runtime_value;
-  word counter_value;
   
   prescaler_count = watchdog_tick_prescaler;
   if (prescaler_count < 0x28) {
@@ -76770,7 +76773,7 @@ void j1939_msgSlotM_switchInputBits_update(void)
   
   if ((j1939_msg_slot_m_control & 0x2f) == 0) {
     if (cold_start_phase == CSP_CRANKING) {
-      sensor_init_delay_timer = 1;
+      diag_response_timeout_counter = 1;
     }
     bVar4 = j1939_governor_auth_status_flags & 0xf7 | 8;
     bVar1 = (byte)((j1939_msg_slot_m_counter >> 6 & 1) << 6);
@@ -77059,7 +77062,7 @@ void governorModeTransitionControl(void)
       j1939_receive_status_flags = j1939_receive_status_flags & 0xfdff;
       protection_enable_shadow_flags = protection_enable_shadow_flags & 0xfdff;
     }
-    if (sensor_init_delay_timer != 0) {
+    if (diag_response_timeout_counter != 0) {
       bVar1 = true;
       uVar3 = 0;
       do {
@@ -77084,7 +77087,7 @@ void governorModeTransitionControl(void)
     j1939_msgSlotM_switchInputBits_update();
   }
   *pwVar4 = wVar2;
-  if (sensor_init_delay_timer != 0) {
+  if (diag_response_timeout_counter != 0) {
     wVar2 = MIOS_MCPSMSCR.MIOS1ER;
     if ((wVar2 & 0x8000) == 0) {
       initGovernorModeControl();
