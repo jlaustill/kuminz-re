@@ -1185,8 +1185,8 @@ address,name
 0x000355e4,cm848_initSensorLookupTable5
 0x00035670,cm848_calculateSensorLookupValue
 0x000356fc,cm848_updateSensorLookupTable
-0x00035788,cm848_processSensorLookupTable4
-0x00035814,cm848_initSensorLookupTable4
+0x00035788,cm848_processCruiseSwitchChannel,review-function-readability reviewed 2026-06-11 - Readability High Accuracy Confidence High - QADC channel 0x2f(47); sole reader governor_cruise_engage_check; config struct 0x5ab84 holds cruise_engage_adc_valid_lower/upper
+0x00035814,cm848_initCruiseSwitchChannel,review-function-readability reviewed 2026-06-11 - Readability High Accuracy Confidence High - boot-time init sibling of cm848_processCruiseSwitchChannel (same channel 47 / config 0x5ab84)
 0x000358a0,cm848_processSensorLookupTable3
 0x0003592c,cm848_initSensorLookupTable3
 0x000359b8,cm848_processSensorLookupTable2

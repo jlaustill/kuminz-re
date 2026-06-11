@@ -98,6 +98,7 @@ address,name,type,comment
 0x0005a494,j1939_feature_config_word,word,
 0x0005a77c,calibration_table_base,byte,
 0x0005a790,calibration_table_offset,byte,
+0x0005ab84,cruise_switch_sensor_config,word,Base of the cruise-control switch QADC channel (0x2f/47) config struct; param_1 of cm848_processCruiseSwitchChannel/init; field +2 read as ushort in sensorChannelTypeB_configInit, fields +4/+6 are cruise_engage_adc_valid_upper/lower; Bank2 ROM-sourced so NO _cal
 0x0005ab88,cruise_engage_adc_valid_upper,word,ROM const =976 (0x3d0); upper open/short validity bound for the analog QADC channel checked by governor_cruise_engage_check (asm lhz 4(r4) @0x512edc); ~95% of 10-bit FS; field +4 of sensor-config struct @0x5ab84; ROM-sourced so NO _cal
 0x0005ab8a,cruise_engage_adc_valid_lower,word,ROM const =92 (0x5c); lower open/short validity bound (asm lhz 6(r4) @0x512ed0); ~9% of 10-bit FS; field +6 of sensor-config struct @0x5ab84; ROM-sourced so NO _cal
 0x0005acb8,BYTE_0005acb8,byte,
@@ -4915,7 +4916,7 @@ address,name,type,comment
 0x0040b154,fault_timing_snapshot,word,
 0x0040b156,sensor_channel_5_state,byte,
 0x0040b162,sensor_channel_6_state,byte,
-0x0040b16e,sensor_channel_7_state,byte,
+0x0040b16e,cruise_switch_channel_state,byte,Per-channel state byte for the cruise-control switch QADC channel (0x2f/47); param_2 of cm848_processCruiseSwitchChannel / cm848_initCruiseSwitchChannel; working RAM so no _cal
 0x0040b17a,PTR_SUB_03ffe880_0040b17a,pointer,
 0x0040b1aa,sensor_channel_8_state,byte,
 0x0040b1b6,sensor_channel_9_state,byte,
@@ -5554,8 +5555,8 @@ address,name,type,comment
 0x0040be02,sensor_channel55_filtered,word,
 0x0040be04,sensor_channel76_raw,word,
 0x0040be06,sensor_channel76_filtered,word,
-0x0040be08,sensor_channel47_raw,word,
-0x0040be0a,sensor_channel47_filtered,word,
+0x0040be08,cruise_switch_adc_raw,word,Raw QADC reading of the cruise-control switch input (channel 0x2f/47; resistor-ladder steering-wheel switches); written by cm848_processCruiseSwitchChannel; working RAM so no _cal
+0x0040be0a,cruise_switch_adc_filtered,word,EMA-filtered cruise-control switch ADC value (channel 0x2f/47); written by cm848_processCruiseSwitchChannel; working RAM so no _cal
 0x0040be0c,sensor_channel97_raw,word,
 0x0040be0e,sensor_channel97_filtered,word,
 0x0040be10,sensor_channel98_raw,word,
@@ -5584,7 +5585,7 @@ address,name,type,comment
 0x0040be52,sensor_channel54_fault_status,word,
 0x0040be54,sensor_channel55_fault_status,word,
 0x0040be56,sensor_channel76_fault_status,word,
-0x0040be58,sensor_channel47_fault_status,word,
+0x0040be58,cruise_switch_fault_status,word,Open/short fault status for the cruise-control switch input (channel 0x2f/47); fault bit indices 0x175/0x176; written by cm848_processCruiseSwitchChannel; working RAM so no _cal
 0x0040be5a,sensor_channel97_fault_status,word,
 0x0040be5c,sensor_channel98_fault_status,word,
 0x0040be5e,sensor_diag_default_a,word,
