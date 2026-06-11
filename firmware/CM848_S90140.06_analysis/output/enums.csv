@@ -754,6 +754,13 @@ J1939_STANDBY_STATE,1,STANDING_BY,ECU armed and waiting for tool to activate ses
 DIAG_RESPONSE,0,DIAG_ACK,Request fulfilled successfully,4
 DIAG_RESPONSE,4,DIAG_NACK_NOT_READY,Rejected: ECU not in standby (j1939_standby_flag was 0),4
 DIAG_RESPONSE,7,DIAG_NACK_PROTECTED,Rejected: protection mode active,4
+# EEPROM diagnostic handler state machine (eeprom_diag_state at 0x003fecf1)
+# Dispatches diagnostic requests during EEPROM operations in mpc555_processDiagnosticAndEepromRequests
+EEPROM_DIAG_STATE,0x03,EEPROM_DIAG_HANDLE_RESPONSE,Handle EEPROM diagnostic response,1
+EEPROM_DIAG_STATE,0x10,EEPROM_DIAG_DATA_TRANSFER,Process EEPROM data transfer,1
+EEPROM_DIAG_STATE,0x11,EEPROM_DIAG_SEND_VERSION,Send EEPROM version response,1
+EEPROM_DIAG_STATE,0x12,EEPROM_DIAG_TRANSFER_BLOCK,Transfer data block service,1
+EEPROM_DIAG_STATE,0x20,EEPROM_DIAG_WRITE_DISPATCH,Dispatch EEPROM write request,1
 # Calibration write mode - gates whether parameter writes go to volatile RAM or persistent EEPROM
 # Mirrors Cummins CILCALDATASERVERLib.tagCICacheMode: dataVolatile vs readWrite
 CAL_WRITE_MODE,0xea,CAL_VOLATILE,Writes land in RAM only; lost on power cycle,1

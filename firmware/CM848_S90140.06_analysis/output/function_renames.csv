@@ -378,7 +378,7 @@ address,name
 0x00001e30,cm848_diagService76_memoryReadExt
 0x00001e94,mpc555_initDiagResponseHandlers
 0x00001ef8,cm848_diagSendResponseCode
-0x00001fa4,mpc555_processDiagnosticAndEepromRequests
+0x00001fa4,mpc555_processDiagnosticAndEepromRequests,review-function-readability reviewed 2026-06-10 - Readability Medium Accuracy Confidence High
 0x00002148,cm848_initDiagnosticCallback
 0x00002170,cm848_processDiagnosticTimeout
 0x000021c0,cm848_setDataTransferMode

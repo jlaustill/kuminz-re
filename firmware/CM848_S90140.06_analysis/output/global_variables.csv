@@ -288,7 +288,7 @@ address,name,type,comment
 0x00302731,qadc_a_result_low,byte,
 0x00302736,sys_init_flags_t_00302736,sys_init_flags_t,
 0x00302738,sys_init_flags_t_00302736.init_counter,,
-0x00302877,qadc_a_result_high_1,byte,
+0x00302877,eeprom_service_mode_flags,byte,EEPROM-programming service-mode flags byte. High bit 0x80 = in EEPROM mode; low nibble (& 0xf) gates special main-loop processing; whole-byte 0x81 routes main-loop dispatch to CAN handlers and 0x82 to the diagnostic handler (mpc555_processScheduledTasks/cm848_processMainLoop/cm848_dispatchDiagnosticService) - name covers the dispatch role not just diag. Renamed from qadc_a_result_high_1 (legacy mislabel - not analog data; real QADC-A results are at 0x304A80+). Peripheral/RAM region 0x302xxx so no _cal
 0x00302878,eeprom_xfer_state,eeprom_xfer_state_t,
 0x0030287c,qadc_a_result_ch4,,
 0x00302882,qadc_a_result_high_2.write_callback_ptr,,
@@ -2326,7 +2326,7 @@ address,name,type,comment
 0x003fecd3,diag_serial_buffer[3],,
 0x003fecef,diag_serial_buffer[31],,
 0x003fecf0,diag_session_protocol_byte,,
-0x003fecf1,security_access_state,byte,
+0x003fecf1,eeprom_diag_state,EEPROM_DIAG_STATE,EEPROM diagnostic handler state machine
 0x003fecf2,eeprom_write_request_type,byte,EEPROM write operation type: 1=begin cal write 2=update magic
 0x003fecf6,eeprom_block_length_cal,word,
 0x003fed94,fault_pending_flags,dword,32-bit fault/diagnostic flags register; bits default SET (init = 0xffffffff) and clear as faults resolve across diag/protection/hpcr routines (confirmed dword via lwz/stw r12,0(r5) @ 0x52d634); >=18 independent bits - strong bitmap32-struct decomposition candidate. Distinct from diagnostic_fault_flags_a/b (0x40a813, unrelated word pair)
@@ -2371,7 +2371,7 @@ address,name,type,comment
 0x003fee2d,eeprom_write_buffer+3,,
 0x003fee30,flash2_operation_active_flag,word,
 0x003fee31,flash2_operation_active_flag+1,,
-0x003fee32,sensor_init_delay_timer,word,
+0x003fee32,system_init_delay_timer,word,Shared transient/not-ready countdown - neutral name because it spans 3 domains: diag path uses the LOW BYTE (cm848_processDiagnosticTimeout decrements it and emits diagSendResponseCode(2,0x51) on expiry; cm848_setDataTransferMode sets it=2) while governorModeTransitionControl reads the FULL WORD (!=0 gates governor-mode init) and j1939_msgSlotM_switchInputBits_update writes the full word=1 during CSP_CRANKING. Word width = widest access. Renamed from diag_response_timeout_counter (too narrow - misses the governor/cranking sites) and earlier sensor_init_delay_timer (no sensor code touches it)
 0x003fee34,sensor_initialization_sequence_count,dword,
 0x003fee36,sensor_initialization_sequence_count+2,,
 0x003fee3a,sensor_validation_delta,word,
