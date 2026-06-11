@@ -44,3 +44,6 @@ function_address,function_name,old_name,new_name,type,comment
 0x000231cc,cm848_j1939DispatchPgnHandler,pjVar2,entry,j1939_pgn_handler_entry_t *,Pointer to current dispatch table entry under test
 0x005267f4,cm848_fuelTrimFromOutputShaftSpeed,uVar2,fuel_temp_trim_uncapped,uint,Shaft-speed-derived fuel-temp estimate before capping - named _uncapped not _working to avoid collision with global fuel_temp_trim_working at 0x003fb4d8
 0x005267f4,cm848_fuelTrimFromOutputShaftSpeed,uVar1,fuel_temp_trim_result,uint,Final capped result stored to fuel_temp_trim_raw - the lesser of the uncapped estimate and fuel_temp_cap_from_shaft_speed
+# mpc555_processDiagnosticAndEepromRequests @ 0x00001fa4 - Main diagnostic/EEPROM request dispatcher
+0x00001fa4,mpc555_processDiagnosticAndEepromRequests,sVar1,eeprom_init_result,short,Return value from mpc555_initEepromTransfer - 0=success
+0x00001fa4,mpc555_processDiagnosticAndEepromRequests,bVar2,diag_response_code,byte,Diagnostic response code to send (0x11=invalid service 0x12=invalid state)
