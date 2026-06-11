@@ -47,3 +47,7 @@ function_address,function_name,old_name,new_name,type,comment
 # mpc555_processDiagnosticAndEepromRequests @ 0x00001fa4 - Main diagnostic/EEPROM request dispatcher
 0x00001fa4,mpc555_processDiagnosticAndEepromRequests,sVar1,eeprom_init_result,short,Return value from mpc555_initEepromTransfer - 0=success
 0x00001fa4,mpc555_processDiagnosticAndEepromRequests,bVar2,diag_response_code,byte,Diagnostic response code to send (0x11=invalid service 0x12=invalid state)
+# governor_cruise_engage_check @ 0x00512e70 - cruise-engage gate (reviewed via review-function-readability)
+0x00512e70,governor_cruise_engage_check,uVar1,cruise_switch_adc_value,ushort,Live or overridden cruise-switch ADC reading compared against the valid window (ushort emits a benign Unable-to-use-type warning, same as message_data_length on main)
+0x00512e70,governor_cruise_engage_check,uVar2,qadc_dispatch_index,uint,Clamped index into qadc_channel_dispatch_table for cruise-switch channel 0x2f
+0x00512e70,governor_cruise_engage_check,uVar3,engage_allowed,undefined4,Return flag - 1 when cruise may engage this cycle

@@ -6450,7 +6450,7 @@ void cm848_periodicTaskSet_diagnostics(void)
 
 {
   cm848_sensorChannel1_init();
-  cm848_processSensorLookupTable4();
+  cm848_processCruiseSwitchChannel();
   cm848_calculateSensorLookupValue();
   return;
 }
@@ -33518,32 +33518,39 @@ void cm848_updateSensorLookupTable(void)
 
 
 //
-// Function: cm848_processSensorLookupTable4 @ 0x00035788
+// Function: cm848_processCruiseSwitchChannel @ 0x00035788
 //
 
-void cm848_processSensorLookupTable4(void)
+/* review-function-readability reviewed 2026-06-11 - Readability High Accuracy Confidence High -
+   QADC channel 0x2f(47); sole reader governor_cruise_engage_check; config struct 0x5ab84 holds
+   cruise_engage_adc_valid_lower/upper */
+
+void cm848_processCruiseSwitchChannel(void)
 
 {
   sensorChannelTypeB_configInit
-            (&DAT_0005ab84,&sensor_channel_7_state,&DAT_003fb1f2,&DAT_0005ab94,&DAT_0005abbe,0,
-             &PTR_DAT_003fb1f4,0x2f,0x175,0x176,&sensor_channel47_raw,&sensor_channel47_filtered,
-             &sensor_channel47_fault_status);
+            (&cruise_switch_sensor_config,&cruise_switch_channel_state,&DAT_003fb1f2,&DAT_0005ab94,&DAT_0005abbe,0,
+             &PTR_DAT_003fb1f4,0x2f,0x175,0x176,&cruise_switch_adc_raw,&cruise_switch_adc_filtered,
+             &cruise_switch_fault_status);
   return;
 }
 
 
 
 //
-// Function: cm848_initSensorLookupTable4 @ 0x00035814
+// Function: cm848_initCruiseSwitchChannel @ 0x00035814
 //
 
-void cm848_initSensorLookupTable4(void)
+/* review-function-readability reviewed 2026-06-11 - Readability High Accuracy Confidence High -
+   boot-time init sibling of cm848_processCruiseSwitchChannel (same channel 47 / config 0x5ab84) */
+
+void cm848_initCruiseSwitchChannel(void)
 
 {
   sensorChannelTypeB_update
-            (&DAT_0005ab84,&sensor_channel_7_state,&DAT_003fb1f2,&DAT_0005ab94,&DAT_0005abbe,0,
-             &PTR_DAT_003fb1f4,0x2f,0x175,0x176,&sensor_channel47_raw,&sensor_channel47_filtered,
-             &sensor_channel47_fault_status);
+            (&cruise_switch_sensor_config,&cruise_switch_channel_state,&DAT_003fb1f2,&DAT_0005ab94,&DAT_0005abbe,0,
+             &PTR_DAT_003fb1f4,0x2f,0x175,0x176,&cruise_switch_adc_raw,&cruise_switch_adc_filtered,
+             &cruise_switch_fault_status);
   return;
 }
 
@@ -54867,7 +54874,7 @@ void hpcr_exceptionHandler(void)
   hpcr_cbdInitFilterState();
   hpcr_initFuelTemperatureSensorChannel();
   protection_exception_event_26_init();
-  cm848_initSensorLookupTable4();
+  cm848_initCruiseSwitchChannel();
   eeprom_calibration_load_initialize();
   cm848_initJ1939CommunicationSystem();
   mpc555_enableSchedulerMiosOutput();
@@ -69278,31 +69285,36 @@ undefined4 governor_cruise_fuelCorrection_inhibitCheck(void)
 // Function: governor_cruise_engage_check @ 0x00512e70
 //
 
+/* review-function-readability reviewed 2026-06-11 - Readability High Accuracy Confidence High -
+   returns 1 when cruise may engage: cruise-switch ADC (chan 0x2f/47, or override) inside valid
+   window AND governor_speed_request_state_b==0 AND _prev==5; caller sets j1939_cruise_engaged */
+
 undefined4 governor_cruise_engage_check(void)
 
 {
-  ushort uVar1;
-  uint uVar2;
-  undefined4 uVar3;
-  
-  uVar1 = DAT_0040bcde;
+  ushort cruise_switch_adc_value;
+  uint qadc_dispatch_index;
+  undefined4 engage_allowed;
+
+  cruise_switch_adc_value = cruise_switch_adc_override;
   if ((diag_cam_sync_config_flags & 0x8000) == 0) {
     if (qadc_channel_index_table[0x2f] < 0x81) {
-      uVar2 = (uint)qadc_channel_index_table[0x2f];
+      qadc_dispatch_index = (uint)qadc_channel_index_table[0x2f];
     }
     else {
-      uVar2 = 0;
+      qadc_dispatch_index = 0;
     }
-    uVar1 = *(ushort *)(&qadc_channel_dispatch_table)[uVar2 * 2];
+    cruise_switch_adc_value = *(ushort *)(&qadc_channel_dispatch_table)[qadc_dispatch_index * 2];
   }
-  if ((((cruise_engage_adc_valid_lower < uVar1) && (uVar1 < cruise_engage_adc_valid_upper)) &&
+  if ((((cruise_engage_adc_valid_lower < cruise_switch_adc_value) &&
+       (cruise_switch_adc_value < cruise_engage_adc_valid_upper)) &&
       (governor_speed_request_state_b == 0)) && (governor_speed_request_state_prev == 5)) {
-    uVar3 = 1;
+    engage_allowed = 1;
   }
   else {
-    uVar3 = 0;
+    engage_allowed = 0;
   }
-  return uVar3;
+  return engage_allowed;
 }
 
 
