@@ -5506,6 +5506,7 @@ address,name,type,comment
 0x0040bbbe,protection_load_input_alt,word,
 0x0040bc80,cylinder_timing_demand_array,byte,
 0x0040bcc4,cam_sync_position_calculated,word,
+0x0040bcde,cruise_switch_adc_override,word,Substitute cruise-switch ADC value (chan 0x2f/47) used by governor_cruise_engage_check when diag_cam_sync_config_flags & 0x8000 (diagnostic input-override bit) is set instead of the live QADC read (asm lhz @0x512e8c); working RAM so no _cal
 0x0040bcfe,cam_sync_position_fault_input,word,
 0x0040bd4e,torque_limit_setpoint_working,word,
 0x0040bd82,sensor_channel3_raw,word,

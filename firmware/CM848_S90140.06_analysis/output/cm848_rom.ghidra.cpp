@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Jun 11 16:24:16 MDT 2026
+// Generated: Thu Jun 11 16:38:47 MDT 2026
 
 
 //
@@ -69202,31 +69202,37 @@ undefined4 governor_cruise_fuelCorrection_inhibitCheck(void)
 // Function: governor_cruise_engage_check @ 0x00512e70
 //
 
+/* WARNING: Unable to use type for symbol cruise_switch_adc_value */
+/* review-function-readability reviewed 2026-06-11 - Readability High Accuracy Confidence High -
+   returns 1 when cruise may engage: cruise-switch ADC (chan 0x2f/47, or override) inside valid
+   window AND governor_speed_request_state_b==0 AND _prev==5; caller sets j1939_cruise_engaged */
+
 undefined4 governor_cruise_engage_check(void)
 
 {
-  ushort uVar1;
-  uint uVar2;
-  undefined4 uVar3;
+  dword qadc_dispatch_index;
+  undefined4 engage_allowed;
+  ushort cruise_switch_adc_value;
   
-  uVar1 = DAT_0040bcde;
+  cruise_switch_adc_value = cruise_switch_adc_override;
   if ((diag_cam_sync_config_flags & 0x8000) == 0) {
     if (qadc_channel_index_table[0x2f] < 0x81) {
-      uVar2 = (uint)qadc_channel_index_table[0x2f];
+      qadc_dispatch_index = (dword)qadc_channel_index_table[0x2f];
     }
     else {
-      uVar2 = 0;
+      qadc_dispatch_index = 0;
     }
-    uVar1 = *(ushort *)(&qadc_channel_dispatch_table)[uVar2 * 2];
+    cruise_switch_adc_value = *(ushort *)(&qadc_channel_dispatch_table)[qadc_dispatch_index * 2];
   }
-  if ((((cruise_engage_adc_valid_lower < uVar1) && (uVar1 < cruise_engage_adc_valid_upper)) &&
+  if ((((cruise_engage_adc_valid_lower < cruise_switch_adc_value) &&
+       (cruise_switch_adc_value < cruise_engage_adc_valid_upper)) &&
       (governor_speed_request_state_b == 0)) && (governor_speed_request_state_prev == 5)) {
-    uVar3 = 1;
+    engage_allowed = 1;
   }
   else {
-    uVar3 = 0;
+    engage_allowed = 0;
   }
-  return uVar3;
+  return engage_allowed;
 }
 
 

@@ -2066,7 +2066,7 @@ address,name
 0x0051291c,governor_cruiseOverride_state3_handler
 0x005129b0,protection_control_state_check_2
 0x00512a60,governor_cruise_fuelCorrection_inhibitCheck
-0x00512e70,governor_cruise_engage_check
+0x00512e70,governor_cruise_engage_check,review-function-readability reviewed 2026-06-11 - Readability High Accuracy Confidence High - returns 1 when cruise may engage: cruise-switch ADC (chan 0x2f/47, or override) inside valid window AND governor_speed_request_state_b==0 AND _prev==5; caller sets j1939_cruise_engaged
 0x00512f18,governor_cruise_disengage_check
 0x00512ff4,cm848_periodicProtectionControl
 0x00513200,protection_fault_latch_update
