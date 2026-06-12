@@ -30,7 +30,13 @@ to run against any other (`check_ghidra` in `scripts/common.sh` validates `appli
   a moving branch, so two checkouts both report `12.0` yet decompile differently (newer builds
   recover more, e.g. masked-flag expressions the older committed baseline rendered as `0`). Until
   the 68k support merges to a release, a CM550 `.cpp` is only reproducible against the *exact* Ghidra
-  commit it was built from. (Watch the Ghidra changelog/PRs for 68k/CM550 CPU support landing.)
+  commit it was built from.
+  - **Status (checked 2026-06-12):** CPU32 / 683xx support (the MC68336 family CM550 uses) was
+    **merged to Ghidra `master` ~2026-06-10** — issue [#1244](https://github.com/NationalSecurityAgency/ghidra/issues/1244)
+    closed as completed (impl via PR #9084; the old 2021 PR #2617 was superseded/closed unmerged).
+    It is **not yet in a tagged release** (latest is 12.1.2, 2026-06-05, before the merge). When the
+    next release ships it, CM550 can move off the from-source DEV build to a **pinned PUBLIC release**
+    (like CM848) and become reproducible — at which point bump CM550's `REQUIRED_GHIDRA_VERSION`.
 
 ---
 
