@@ -1829,8 +1829,8 @@ address,name
 0x00500a4c,updateSensorChannelWithConfig
 0x005011c4,cm848_protection_init_configBundle
 0x00501250,cm848_protection_update_configBundle
-0x005012dc,sensorChannelTypeB_configInit
-0x00501b4c,sensorChannelTypeB_update
+0x005012dc,sensorChannelTypeB_configInit,review-function-readability reviewed 2026-06-12 - Readability MEDIUM (irreducible converging-epilogue gotos + 3 split-remnant scratch temps Ghidra will not let CSV name) Accuracy Confidence High. config_ptr typed as sensor_channel_config_t* (7 default/threshold/debounce fields render); DAT_003fd8e8 -> governor_temp_protection_disable; 11 locals named; 2 array globals renamed. 13-param PowerPC prototype; params 4-6 passed but unused.
+0x00501b4c,sensorChannelTypeB_update,review-function-readability reviewed 2026-06-12 - Readability MEDIUM (irreducible converging-epilogue gotos + split-remnant scratch temps) Accuracy Confidence High. Boot-time twin of configInit; same config_ptr struct typing, named global, and named locals; 13-param prototype.
 0x005022cc,hpcr_fuelFinal_periodic
 0x0050241c,cm848_initialization_step
 0x00502464,cm848_calibrationGroup5_periodic

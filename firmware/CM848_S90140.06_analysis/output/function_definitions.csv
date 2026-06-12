@@ -281,3 +281,34 @@ function_address,function_name,param_index,name,type,comment
 0x00001ef8,cm848_diagSendResponseCode,return,,void,Reverted: r4-return needs custom storage to model safely
 0x00001ef8,cm848_diagSendResponseCode,0,response_code,byte,Response/service code to send
 0x00001ef8,cm848_diagSendResponseCode,1,negative_response_id,int,Negative-response service id (0x7f) or 0
+
+# -----------------------------------------------------------------------------
+# Sensor Channel Type B - Config Init (13 params via PowerPC ABI: r3-r10 + 5 stack)
+# Params 4-6 (r6-r8) are passed by callers but NOT USED by function body
+# -----------------------------------------------------------------------------
+0x005012dc,sensorChannelTypeB_configInit,0,config_ptr,sensor_channel_config_t*,Per-channel ROM calibration config (default/thresholds/debounce fields)
+0x005012dc,sensorChannelTypeB_configInit,1,state_ptr,word*,RAM state buffer (stores ADC raw + debounce counter + filtered value)
+0x005012dc,sensorChannelTypeB_configInit,2,interp_args_ptr,table_interp_args_t*,Table interpolation arguments structure
+0x005012dc,sensorChannelTypeB_configInit,3,table_ptr,void*,ROM calibration table data (UNUSED by function body)
+0x005012dc,sensorChannelTypeB_configInit,4,axes_ptr,void*,ROM calibration axes (UNUSED by function body)
+0x005012dc,sensorChannelTypeB_configInit,5,mode_flag,int,Mode flag - always 0 in calls (UNUSED by function body)
+0x005012dc,sensorChannelTypeB_configInit,6,ema_state_ptr,int*,EMA filter state pointer (written at offset +4 with shifted value)
+0x005012dc,sensorChannelTypeB_configInit,7,channel_index,uint,Sensor channel number (0x1c=28 0x1d=29 etc) indexes sensor_channel_filtered_output
+0x005012dc,sensorChannelTypeB_configInit,8,high_fault_bit,uint,High fault status bit index (0x179=377 etc) for fault_active_status_array
+0x005012dc,sensorChannelTypeB_configInit,9,low_fault_bit,uint,Low fault status bit index (0x17a=378 etc) for fault_active_status_array
+0x005012dc,sensorChannelTypeB_configInit,10,raw_output_ptr,word*,Output: raw sensor ADC value (e.g. sensor_channel28_raw)
+0x005012dc,sensorChannelTypeB_configInit,11,filtered_output_ptr,word*,Output: EMA-filtered sensor value (e.g. sensor_channel28_filtered)
+0x005012dc,sensorChannelTypeB_configInit,12,fault_output_ptr,word*,Output: fault status word (e.g. sensor_channel28_fault_status)
+0x00501b4c,sensorChannelTypeB_update,0,config_ptr,sensor_channel_config_t*,Per-channel ROM calibration config (default/thresholds/debounce fields)
+0x00501b4c,sensorChannelTypeB_update,1,state_ptr,word*,RAM state buffer (stores ADC raw + debounce counter + filtered value)
+0x00501b4c,sensorChannelTypeB_update,2,interp_args_ptr,table_interp_args_t*,Table interpolation arguments structure
+0x00501b4c,sensorChannelTypeB_update,3,table_ptr,void*,ROM calibration table data (UNUSED by function body)
+0x00501b4c,sensorChannelTypeB_update,4,axes_ptr,void*,ROM calibration axes (UNUSED by function body)
+0x00501b4c,sensorChannelTypeB_update,5,mode_flag,int,Mode flag - always 0 in calls (UNUSED by function body)
+0x00501b4c,sensorChannelTypeB_update,6,ema_state_ptr,int*,EMA filter state pointer (written at offset +4 with shifted value)
+0x00501b4c,sensorChannelTypeB_update,7,channel_index,uint,Sensor channel number (0x1c=28 0x1d=29 etc) indexes sensor_channel_filtered_output
+0x00501b4c,sensorChannelTypeB_update,8,high_fault_bit,uint,High fault status bit index (0x179=377 etc) for fault_active_status_array
+0x00501b4c,sensorChannelTypeB_update,9,low_fault_bit,uint,Low fault status bit index (0x17a=378 etc) for fault_active_status_array
+0x00501b4c,sensorChannelTypeB_update,10,raw_output_ptr,word*,Output: raw sensor ADC value (e.g. sensor_channel28_raw)
+0x00501b4c,sensorChannelTypeB_update,11,filtered_output_ptr,word*,Output: EMA-filtered sensor value (e.g. sensor_channel28_filtered)
+0x00501b4c,sensorChannelTypeB_update,12,fault_output_ptr,word*,Output: fault status word (e.g. sensor_channel28_fault_status)

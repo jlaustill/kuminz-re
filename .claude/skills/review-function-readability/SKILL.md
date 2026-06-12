@@ -86,6 +86,18 @@ review-function-readability reviewed YYYY-MM-DD - Readability [Low|Medium|High] 
 | **Medium** | Function is understandable; most symbols named well, some uncertainty | Moderate evidence: some context gaps, neighbor-based inferences |
 | **Low** | Function improved but still has unclear sections or generic names | Weak evidence: single usage, unnamed neighbors, context-based guesses |
 
+**HIGH readability is a HARD bar — ALL of these must hold, with NO exceptions:**
+
+1. **EVERY symbol investigated** — every global, called function, local, parameter, and magic number in the body has been looked at and understood. Not "most" — *every*.
+2. **Properly typed with HIGH confidence** — each symbol's type is asm-verified (width matches the load/store) and structs/enums are applied where the access pattern demands them. No medium/low-confidence guesses.
+3. **ZERO Ghidra-generated names** — no `DAT_`, `FUN_`, `uVar`, `iVar`, `sVar`, `wVar`, `uStack`, `unaff_`, `in_register_`, `extraout_`, `_<name>` underscore-prefix, `param_N`, or any other decompiler placeholder remains anywhere in the function.
+4. **ZERO gotos** — a `goto`/`LAB_` in the body disqualifies HIGH. A goto means the control flow did not structure cleanly; it does not read like a book. (Often irreducible — converging early-exit epilogues, shared blocks — in which case the honest rating is **MEDIUM at best**, no matter how well everything else is named.)
+5. **ZERO unclear-purpose names** — no name whose meaning you are not 100% sure of. A plausible-but-unverified name is a MEDIUM signal, not HIGH. If you cannot defend a name from the code's behavior, it is not HIGH.
+
+If any one of the five fails, the function is **MEDIUM at best**. Do not round up. Over-claiming HIGH when gotos or `uVar` temps remain is the most common failure of this skill — be honest; a truthful MEDIUM is worth more than an inflated HIGH.
+
+> **Register-reuse caveat:** the compiler often reuses one register (`uVar1`, `uVar10`…) for several unrelated values across a function. This does NOT cap the function — **name it as a temp** (`scratch`, `workValue`, `tmp`, etc.). A scratch register's purpose *is* to be scratch, so a scratch name is honest and clears the `uVar1` placeholder (satisfying rule 3 and rule 5). Prefer eliminating the temp where you can — e.g. typing a pointer param as a struct so `*(config+4)` becomes `config->high_threshold` removes the temp entirely and reads better — but a clearly-named scratch is a valid HIGH-quality outcome on its own.
+
 Example entry in `function_renames.csv`:
 ```
 0x000038f4,cm848_dispatchEepromWriteRequest,review-function-readability reviewed 2026-06-09 - Readability High Accuracy Confidence High

@@ -2069,6 +2069,7 @@ address,name,type,comment
 0x003fd8d8,protection_load_override_enable_flag,word,
 0x003fd8da,protection_confirm_mode_flag,word,
 0x003fd8dc,protection_ema_override_enable_flag,word,
+0x003fd8e8,governor_temp_protection_disable,word,Nonzero disables governor temperature protection - bypasses channel-10 threshold processing in sensorChannelTypeB_configInit and the temp-derate computation in governorGovernorTempCompute (read-only ROM-copy constant; lhz word access verified)
 0x003fd8f0,fuel_temp_trim_shift_cal,word,
 0x003fd8f4,fuel_temp_trim_denominator,word,
 0x003fd8f6,fuel_temp_trim_lower_threshold_a,word,
@@ -5488,7 +5489,7 @@ address,name,type,comment
 0x0040bab4,fuel_flow_rate_snapshot,word,
 0x0040bab8,fuel_quantity_ema_filtered,word,
 0x0040baba,fuel_quantity_ema,word,
-0x0040baf0,per_cylinder_timing_offset_table,word,
+0x0040baf0,sensor_channel_filtered_output,word,Per-sensor-channel EMA-filtered output array (128 entries); written by exponentialMovingAverage result in sensorChannelTypeB_configInit/update; indexed by channel number (e.g. 0x1c=28 for sensor channel 28); 43 refs across sensor processing functions
 0x0040baf2,sensor_readings_t_0040baf2,sensor_readings_t,
 0x0040baf4,sensor_readings_t_0040baf2.coolant_temp,,
 0x0040baf6,sensor_readings_t_0040baf2.intake_air_temp,,
@@ -5509,7 +5510,7 @@ address,name,type,comment
 0x0040bbb2,cruise_speed_current_a,word,
 0x0040bbb4,cruise_speed_current_b,word,
 0x0040bbbe,protection_load_input_alt,word,
-0x0040bc80,cylinder_timing_demand_array,byte,
+0x0040bc80,sensor_channel_diag_override,word,Per-sensor-channel diagnostic override value array; used when (diag_feature_flags & channel_bit) is set; asm is lhzx (word load); 25 refs in sensor processing
 0x0040bcc4,cam_sync_position_calculated,word,
 0x0040bcde,cruise_switch_adc_override,word,Substitute cruise-switch ADC value (chan 0x2f/47) used by governor_cruise_engage_check when diag_cam_sync_config_flags & 0x8000 (diagnostic input-override bit) is set instead of the live QADC read (asm lhz @0x512e8c); working RAM so no _cal
 0x0040bcfe,cam_sync_position_fault_input,word,
