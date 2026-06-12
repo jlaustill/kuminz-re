@@ -669,7 +669,10 @@ address,name,type,comment
 0x003fa008,main_loop_scheduler_phase,dword,
 0x003fa00c,scheduler_task_stat_ptr_b,pointer,
 0x003fa010,scheduler_task_stat_ptr,pointer,
-0x003fa020,PTR_DAT_003fa020,pointer,
+0x003fa014,sensor_channel0_interp_state,word,interp current_index for sensor channel 0 config lookup
+0x003fa016,sensor_channel0_filter_config_ptr,pointer,config pointer for sensor channel 0 (was DAT)
+0x003fa01e,sensor_channel1_interp_state,word,interp current_index for sensor channel 1 config lookup
+0x003fa020,sensor_channel1_filter_config_ptr,pointer,config pointer for sensor channel 1 (was PTR_DAT)
 0x003fa02a,PTR_DAT_003fa02a,pointer,
 0x003fa034,PTR_boost_pressure_sensor_config_003fa034,pointer,
 0x003fa03e,PTR_DAT_003fa03e,pointer,

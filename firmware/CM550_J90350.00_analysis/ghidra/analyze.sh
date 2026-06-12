@@ -24,6 +24,11 @@ PROJECT_LOCATION="$SCRIPT_DIR/project"
 OUTPUT_DIR="$PROJECT_DIR/output"
 FIRMWARE_DIR="$PROJECT_DIR/firmware"
 
+# Pin the Ghidra version: the MC68336 / 68k CPU support CM550 needs lives in the
+# from-source 12.0 DEV build (unmerged Ghidra branch, not in any release).
+# See common.sh.
+REQUIRED_GHIDRA_VERSION="12.0"
+
 # ============================================================================
 # SOURCE SHARED INFRASTRUCTURE
 # ============================================================================

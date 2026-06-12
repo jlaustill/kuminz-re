@@ -16,23 +16,54 @@
 # Find shared scripts directory (relative to this file)
 SHARED_SCRIPTS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Find Ghidra installation
-# Default: prebuilt Ghidra 12.1 — its decompiler renders struct bitfields in
-# expressions (issue #647, GP-2493), unlike the from-source 12.0 build.
-# To fall back to the old 12.0 dev build:  GHIDRA_DIR=$HOME/code/ghidra ./analyze.sh ...
-GHIDRA_DIR="${GHIDRA_DIR:-$HOME/code/ghidra-12.1/ghidra_12.1_PUBLIC}"
+# ---------------------------------------------------------------------------
+# Ghidra version pinning (per-firmware)
+#
+# The decompiler's output is VERSION-SPECIFIC: the same binary + CSVs analyzed
+# with a different Ghidra version produces thousands of lines of spurious diff
+# (placeholder-local renaming, cast/loop rendering, `undefined` vs `undefined1`).
+# So each firmware is pinned to exactly one version and the build refuses to run
+# against any other.
+#
+#   CM848 (MPC555 / PowerPC) -> 12.1  mainline; renders struct bitfields (GP-2493)
+#   CM550 (MC68336 / 68k)    -> 12.0  from-source DEV — the 68k/CM550 CPU support
+#                                     lives on an unmerged Ghidra branch, not in
+#                                     any public release.
+#
+# The firmware wrapper sets REQUIRED_GHIDRA_VERSION before sourcing this file.
+# GHIDRA_DIR may be set to override the install location, but its version must
+# still match REQUIRED_GHIDRA_VERSION (the build validates it below).
+# ---------------------------------------------------------------------------
+REQUIRED_GHIDRA_VERSION="${REQUIRED_GHIDRA_VERSION:-12.1}"
+
+# Default install location for a given pinned version (override with GHIDRA_DIR).
+ghidra_dir_for_version() {
+    case "$1" in
+        12.1) echo "$HOME/code/ghidra-12.1/ghidra_12.1_PUBLIC" ;;
+        12.0) echo "$HOME/code/ghidra" ;;
+        *)    echo "" ;;  # unknown version — caller must handle empty result
+    esac
+}
+
+if [ -z "${GHIDRA_DIR:-}" ]; then
+    GHIDRA_DIR="$(ghidra_dir_for_version "$REQUIRED_GHIDRA_VERSION")"
+fi
 
 find_ghidra_headless() {
-    if [ -f "$GHIDRA_DIR/build/dist/ghidra_12.0_DEV/support/analyzeHeadless" ]; then
-        echo "$GHIDRA_DIR/build/dist/ghidra_12.0_DEV/support/analyzeHeadless"
-    elif [ -f "$GHIDRA_DIR/support/analyzeHeadless" ]; then
-        echo "$GHIDRA_DIR/support/analyzeHeadless"
+    if [ -f "$GHIDRA_DIR/support/analyzeHeadless" ]; then
+        echo "$GHIDRA_DIR/support/analyzeHeadless"          # release / prebuilt layout
     else
-        echo "$GHIDRA_DIR/Ghidra/RuntimeScripts/Linux/support/analyzeHeadless"
+        echo "$GHIDRA_DIR/Ghidra/RuntimeScripts/Linux/support/analyzeHeadless"  # from-source layout
     fi
 }
 
 GHIDRA_HEADLESS="$(find_ghidra_headless)"
+
+# Read application.version from an install (works for both layouts; the root's
+# Ghidra/application.properties carries the version in each).
+ghidra_installed_version() {
+    grep -h '^application.version=' "$GHIDRA_DIR/Ghidra/application.properties" 2>/dev/null | cut -d= -f2
+}
 
 # Processor configuration (can be overridden by firmware-specific wrapper)
 # Default: MC68336 for CM550 ECUs; CM848 uses PowerPC
@@ -65,9 +96,34 @@ print_warning() {
 }
 
 check_ghidra() {
+    if [ -z "$GHIDRA_DIR" ]; then
+        print_error "No known Ghidra install for required version $REQUIRED_GHIDRA_VERSION."
+        print_error "Set GHIDRA_DIR to a Ghidra $REQUIRED_GHIDRA_VERSION installation."
+        exit 1
+    fi
     if [ ! -f "$GHIDRA_HEADLESS" ]; then
-        print_error "Ghidra headless analyzer not found at: $GHIDRA_HEADLESS"
-        print_error "Please set GHIDRA_DIR or install Ghidra to ~/code/ghidra"
+        print_error "Ghidra $REQUIRED_GHIDRA_VERSION headless analyzer not found at:"
+        print_error "    $GHIDRA_HEADLESS"
+        print_error "$FIRMWARE_NAME must be analyzed with Ghidra $REQUIRED_GHIDRA_VERSION."
+        if [ "$REQUIRED_GHIDRA_VERSION" = "12.0" ]; then
+            print_error "CM550 (MC68336 / 68k) needs the from-source 12.0 DEV build — the"
+            print_error "68k/CM550 CPU support is on an unmerged Ghidra branch, not in any"
+            print_error "release. Build it from source at \$HOME/code/ghidra, or set GHIDRA_DIR."
+        else
+            print_error "Install Ghidra $REQUIRED_GHIDRA_VERSION (PUBLIC release) at"
+            print_error "\$HOME/code/ghidra-$REQUIRED_GHIDRA_VERSION, or set GHIDRA_DIR."
+        fi
+        exit 1
+    fi
+    local actual
+    actual="$(ghidra_installed_version)"
+    if [ -n "$actual" ] && [ "$actual" != "$REQUIRED_GHIDRA_VERSION" ]; then
+        print_error "Ghidra version mismatch for $FIRMWARE_NAME:"
+        print_error "    required: $REQUIRED_GHIDRA_VERSION"
+        print_error "    found:    $actual   (at $GHIDRA_DIR)"
+        print_error "Decompiler output is version-specific; building with the wrong version"
+        print_error "produces thousands of lines of spurious churn. Point GHIDRA_DIR at a"
+        print_error "Ghidra $REQUIRED_GHIDRA_VERSION install (or unset it to use the default)."
         exit 1
     fi
 }
