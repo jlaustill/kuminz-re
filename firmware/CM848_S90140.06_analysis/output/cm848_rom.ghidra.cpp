@@ -6443,15 +6443,22 @@ void cm848_periodicTaskSet_canTx(void)
 
 
 //
-// Function: cm848_periodicTaskSet_diagnostics @ 0x0000bb40
+// Function: cm848_periodicTaskSet_sensors2 @ 0x0000bb40
 //
 
-void cm848_periodicTaskSet_diagnostics(void)
+/* review-function-readability reviewed 2026-06-12 - Readability High Accuracy Confidence High -
+   periodic sensor-channel acquisition slot (NOT diagnostics; the real diagnostics bundle is
+   periodicTaskSet_diagnostics2). Runs every scheduler sweep (mainLoopIteration phases
+   1/9/0x11/0x19/0x21); samples sensorChannel1 (ADC 0x14) + cruise switch (ADC 0x2f/47) +
+   sensorChannel69 (ADC 0x45). NOTE: the configInit-family wrappers it calls run PERIODICALLY; their
+   update-family siblings run once at boot in the hpcr_exceptionHandler reset path */
+
+void cm848_periodicTaskSet_sensors2(void)
 
 {
   cm848_sensorChannel1_init();
   cm848_processCruiseSwitchChannel();
-  cm848_calculateSensorLookupValue();
+  cm848_sensorChannel69_init();
   return;
 }
 
@@ -7012,7 +7019,7 @@ void main_loop(void)
     cm848_phase_common_processing();
     cm848_phase_group_b_processing();
     cm848_periodicTaskSet_sensorProcessing();
-    cm848_periodicTaskSet_diagnostics();
+    cm848_periodicTaskSet_sensors2();
     cm848_periodicTaskGroup13_calibration2();
     cm848_periodicTaskGroup26_calibration8();
     cm848_mainLoopMonitor();
@@ -7091,7 +7098,7 @@ void main_loop(void)
     cm848_phase_common_processing();
     cm848_phase_group_b_processing();
     cm848_periodicTaskSet_sensorProcessing();
-    cm848_periodicTaskSet_diagnostics();
+    cm848_periodicTaskSet_sensors2();
     cm848_periodicTaskSet_auxiliary();
     protectionVoltageTimeoutControl();
     main_loop_scheduler_phase = 10;
@@ -7170,7 +7177,7 @@ void main_loop(void)
     cm848_phase_common_processing();
     cm848_phase_group_b_processing();
     cm848_periodicTaskSet_sensorProcessing();
-    cm848_periodicTaskSet_diagnostics();
+    cm848_periodicTaskSet_sensors2();
     cm848_periodicTaskGroup22_calibration();
     sensorChannelTypeB_configInit_axis4();
     eeprom_calibration_load_periodic();
@@ -7249,7 +7256,7 @@ void main_loop(void)
     cm848_phase_common_processing();
     cm848_phase_group_b_processing();
     cm848_periodicTaskSet_sensorProcessing();
-    cm848_periodicTaskSet_diagnostics();
+    cm848_periodicTaskSet_sensors2();
     cm848_periodicTaskGroup17_calibration5();
     cm848_periodicTaskGroup30_calibration12();
     cm848_sensorChannel7_init_configBundle();
@@ -7324,7 +7331,7 @@ void main_loop(void)
     cm848_phase_common_processing();
     cm848_phase_group_b_processing();
     cm848_periodicTaskSet_sensorProcessing();
-    cm848_periodicTaskSet_diagnostics();
+    cm848_periodicTaskSet_sensors2();
     cm848_periodicTaskGroup15_calibration4();
     cm848_periodicTaskGroup38_calibration17();
     main_loop_scheduler_phase = 0x22;
@@ -33488,10 +33495,17 @@ void cm848_initSensorLookupTable5(void)
 
 
 //
-// Function: cm848_calculateSensorLookupValue @ 0x00035670
+// Function: cm848_sensorChannel69_init @ 0x00035670
 //
 
-void cm848_calculateSensorLookupValue(void)
+/* review-function-readability reviewed 2026-06-12 - Readability High Accuracy Confidence High -
+   Type A sensor channel on ADC index 0x45(69) via sensorChannelConfigInit. Was misnamed
+   calculateSensorLookupValue (no calc/lookup - it is sensor acquisition). Despite the _init suffix
+   this is the PERIODIC sampler (called from periodicTaskSet_sensors2); _init follows the
+   sensorChannelN family convention where the configInit wrapper is _init and the boot-time update
+   sibling is _process */
+
+void cm848_sensorChannel69_init(void)
 
 {
   sensorChannelConfigInit
@@ -33503,10 +33517,15 @@ void cm848_calculateSensorLookupValue(void)
 
 
 //
-// Function: cm848_updateSensorLookupTable @ 0x000356fc
+// Function: cm848_sensorChannel69_process @ 0x000356fc
 //
 
-void cm848_updateSensorLookupTable(void)
+/* review-function-readability reviewed 2026-06-12 - Readability High Accuracy Confidence High -
+   boot-init update sibling of cm848_sensorChannel69_init (ADC 0x45/69) via
+   updateSensorChannelWithConfig; called once from the hpcr_exceptionHandler reset path. Was
+   misnamed updateSensorLookupTable */
+
+void cm848_sensorChannel69_process(void)
 
 {
   updateSensorChannelWithConfig
@@ -54868,7 +54887,7 @@ void hpcr_exceptionHandler(void)
   cm848_stubFunction3();
   cm848_initSensorRawChannels();
   cm848_initTorqueLimitDefaults();
-  cm848_updateSensorLookupTable();
+  cm848_sensorChannel69_process();
   sensorChannelTypeB_update_axis4();
   governor_fuel_mode_initialization();
   hpcr_cbdInitFilterState();

@@ -510,7 +510,7 @@ address,name
 0x0000ba08,cm848_periodicTaskSet_controlLoop
 0x0000ba90,cm848_periodicTaskSet_auxiliaryControl
 0x0000bb18,cm848_periodicTaskSet_canTx
-0x0000bb40,cm848_periodicTaskSet_diagnostics
+0x0000bb40,cm848_periodicTaskSet_sensors2,review-function-readability reviewed 2026-06-12 - Readability High Accuracy Confidence High - periodic sensor-channel acquisition slot (NOT diagnostics; the real diagnostics bundle is periodicTaskSet_diagnostics2). Runs every scheduler sweep (mainLoopIteration phases 1/9/0x11/0x19/0x21); samples sensorChannel1 (ADC 0x14) + cruise switch (ADC 0x2f/47) + sensorChannel69 (ADC 0x45). NOTE: the configInit-family wrappers it calls run PERIODICALLY; their update-family siblings run once at boot in the hpcr_exceptionHandler reset path
 0x0000bb68,cm848_periodicTaskSet_protection
 0x0000bb90,cm848_periodicTaskSet_timing
 0x0000bbb8,cm848_periodicTaskSet_outputs
@@ -1183,8 +1183,8 @@ address,name
 0x00035518,cm848_copySensorValuesToBuffer
 0x00035558,cm848_processSensorLookupTable5
 0x000355e4,cm848_initSensorLookupTable5
-0x00035670,cm848_calculateSensorLookupValue
-0x000356fc,cm848_updateSensorLookupTable
+0x00035670,cm848_sensorChannel69_init,review-function-readability reviewed 2026-06-12 - Readability High Accuracy Confidence High - Type A sensor channel on ADC index 0x45(69) via sensorChannelConfigInit. Was misnamed calculateSensorLookupValue (no calc/lookup - it is sensor acquisition). Despite the _init suffix this is the PERIODIC sampler (called from periodicTaskSet_sensors2); _init follows the sensorChannelN family convention where the configInit wrapper is _init and the boot-time update sibling is _process
+0x000356fc,cm848_sensorChannel69_process,review-function-readability reviewed 2026-06-12 - Readability High Accuracy Confidence High - boot-init update sibling of cm848_sensorChannel69_init (ADC 0x45/69) via updateSensorChannelWithConfig; called once from the hpcr_exceptionHandler reset path. Was misnamed updateSensorLookupTable
 0x00035788,cm848_processCruiseSwitchChannel,review-function-readability reviewed 2026-06-11 - Readability High Accuracy Confidence High - QADC channel 0x2f(47); sole reader governor_cruise_engage_check; config struct 0x5ab84 holds cruise_engage_adc_valid_lower/upper
 0x00035814,cm848_initCruiseSwitchChannel,review-function-readability reviewed 2026-06-11 - Readability High Accuracy Confidence High - boot-time init sibling of cm848_processCruiseSwitchChannel (same channel 47 / config 0x5ab84)
 0x000358a0,cm848_processSensorLookupTable3
