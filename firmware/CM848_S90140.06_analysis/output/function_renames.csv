@@ -919,7 +919,7 @@ address,name
 0x00022870,cm848_j1939ProcessPgn61442Etc1
 0x00022ab8,cm848_selectTorqueLimitMode
 0x00022bc4,cm848_initJ1939Pgn61442Etc1Handler
-0x00022d18,cm848_initJ1939VehicleSpeedHandler
+0x00022d18,cm848_initEtc2Handler,Registers the J1939 ETC2 (PGN 61445 / 0xf005) receive handler (DAT_00022c5c) and primes transmission RX state (clears tsc1_received.auxiliary_state, sets etc1_address_filter=0xff). NOT vehicle speed - prior name cm848_initJ1939VehicleSpeedHandler was wrong; ETC2 carries gear/range, and the MANUAL_VSS cal has no J1939 speed-in path.
 0x00022d60,torqueControlModeHandler
 0x00022e3c,cm848_processGovernorSpeedControlRequest
 0x00022f90,cm848_processGovernorSpeedRequest

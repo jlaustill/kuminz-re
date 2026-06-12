@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Jun 12 09:39:09 MDT 2026
+// Generated: Fri Jun 12 12:39:04 MDT 2026
 
 
 //
@@ -20920,10 +20920,15 @@ void cm848_initJ1939Pgn61442Etc1Handler(void)
 
 
 //
-// Function: cm848_initJ1939VehicleSpeedHandler @ 0x00022d18
+// Function: cm848_initEtc2Handler @ 0x00022d18
 //
 
-void cm848_initJ1939VehicleSpeedHandler(void)
+/* Registers the J1939 ETC2 (PGN 61445 / 0xf005) receive handler (DAT_00022c5c) and primes
+   transmission RX state (clears tsc1_received.auxiliary_state, sets etc1_address_filter=0xff). NOT
+   vehicle speed - prior name cm848_initJ1939VehicleSpeedHandler was wrong; ETC2 carries gear/range,
+   and the MANUAL_VSS cal has no J1939 speed-in path. */
+
+void cm848_initEtc2Handler(void)
 
 {
   j1939_tsc1_received.auxiliary_state = 0;
@@ -87560,7 +87565,7 @@ void cm848_j1939_system_init(void)
   cm848_initJ1939DiagnosticServiceHandler();
   cm848_initJ1939AddressDispatcher();
   cm848_initJ1939Pgn61442Etc1Handler();
-  cm848_initJ1939VehicleSpeedHandler();
+  cm848_initEtc2Handler();
   cm848_initJ1939ProtocolHandlers();
   cm848_initJ1939ProprietaryHandler();
   cm848_initGovernorDerivativeTerms();
