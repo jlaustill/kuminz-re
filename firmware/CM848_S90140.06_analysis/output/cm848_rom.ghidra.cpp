@@ -33529,8 +33529,8 @@ void cm848_processCruiseSwitchChannel(void)
 
 {
   sensorChannelTypeB_configInit
-            (&cruise_switch_sensor_config,&cruise_switch_channel_state,&DAT_003fb1f2,&DAT_0005ab94,&DAT_0005abbe,0,
-             &PTR_DAT_003fb1f4,0x2f,0x175,0x176,&cruise_switch_adc_raw,&cruise_switch_adc_filtered,
+            (&cruise_switch_sensor_config,&cruise_switch_channel_state,&cruise_switch_interp_index,&DAT_0005ab94,&DAT_0005abbe,0,
+             &cruise_switch_filter_coeff_ptr,0x2f,0x175,0x176,&cruise_switch_adc_raw,&cruise_switch_adc_filtered,
              &cruise_switch_fault_status);
   return;
 }
@@ -33548,8 +33548,8 @@ void cm848_initCruiseSwitchChannel(void)
 
 {
   sensorChannelTypeB_update
-            (&cruise_switch_sensor_config,&cruise_switch_channel_state,&DAT_003fb1f2,&DAT_0005ab94,&DAT_0005abbe,0,
-             &PTR_DAT_003fb1f4,0x2f,0x175,0x176,&cruise_switch_adc_raw,&cruise_switch_adc_filtered,
+            (&cruise_switch_sensor_config,&cruise_switch_channel_state,&cruise_switch_interp_index,&DAT_0005ab94,&DAT_0005abbe,0,
+             &cruise_switch_filter_coeff_ptr,0x2f,0x175,0x176,&cruise_switch_adc_raw,&cruise_switch_adc_filtered,
              &cruise_switch_fault_status);
   return;
 }

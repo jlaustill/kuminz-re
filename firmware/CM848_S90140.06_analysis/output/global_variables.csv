@@ -1409,7 +1409,9 @@ address,name,type,comment
 0x003fb1da,protection_load_scaled_filter_accum,dword,
 0x003fb1e0,PTR_DAT_003fb1e0,pointer,
 0x003fb1ea,PTR_DAT_003fb1ea,pointer,
-0x003fb1f4,PTR_DAT_003fb1f4,pointer,
+0x003fb1f2,cruise_switch_interp_index,word,Interpolation cursor for the cruise-switch resistor-ladder lookup (table_interp_args_t.current_index field); param_3 of cm848_process/initCruiseSwitchChannel; written sth r,0(r5) @0x501be0 (update resets =2) and read/written as args->current_index inside lookupTableInterpolation (0x55ef4). NOT a full table_interp_args_t - lookupTableInterpolation takes the X/Y tables + input value as separate regs r4-r7, only current_index comes from this struct. Working RAM (ROM->RAM window) so no _cal
+0x003fb1f4,cruise_switch_filter_coeff_ptr,pointer,EMA smoothing-coefficient pointer for the cruise-switch ADC filter; param_7 of cm848_process/initCruiseSwitchChannel and param_2[0] of exponentialMovingAverage (0x56594) where *(short*)*ptr is the alpha coefficient; +0 of the channel's 8-byte EMA state. Renamed from PTR_DAT_003fb1f4 (type pointer was already correct)
+0x003fb1f8,cruise_switch_filter_accum,dword,EMA accumulator (running filtered value in <<16 fixed-point) for the cruise-switch ADC filter; param_2[1] of exponentialMovingAverage, written *(uint*)(state+4) @ sensorChannelTypeB_configInit; +4 of the channel's EMA state. Working RAM (ROM->RAM window) so no _cal
 0x003fb1fe,PTR_DAT_003fb1fe,pointer,
 0x003fb208,PTR_DAT_003fb208,pointer,
 0x003fb212,PTR_DAT_003fb212,pointer,
