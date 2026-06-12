@@ -1287,7 +1287,7 @@ address,name,type,comment
 0x003fafe0,protection_eval_step_index,word,
 0x003fafe2,protection_eval_frame_counter,word,
 0x003fafe4,protection_eval_sub_counter,word,
-0x003fafe6,governor_speed_request_state,word,
+0x003fafe6,governor_speed_request_state,CRUISE_SWITCH_REQUEST,
 0x003fafe8,protection_rpm_reference_snapshot,word,
 0x003fafea,governor_rpm_reference_snapshot_a,word,
 0x003fafec,governor_rpm_ref_target_0_snapshot,word,
@@ -1880,7 +1880,7 @@ address,name,type,comment
 0x003fcd56,PTR_DAT_003fcd56,pointer,
 0x003fcd96,PTR_DAT_003fcd96,pointer,
 0x003fcd9e,cruise_protection_ok,word,
-0x003fcda2,governor_speed_request_state_b,word,cruise-fuel-governor working copy of governor_speed_request_state (0x3fafe6); holds protection_control_state_check_2() result (states 0-5); paired with raw DAT_003fcdaa + debounce counter DAT_003fcda0
+0x003fcda2,governor_speed_request_state_b,CRUISE_SWITCH_REQUEST,cruise-fuel-governor working copy of governor_speed_request_state (0x3fafe6); holds protection_control_state_check_2() result (states 0-5); paired with raw DAT_003fcdaa + debounce counter DAT_003fcda0
 0x003fce7c,j1939_dm_scratch_buffer,byte[8],
 0x003fce7f,j1939_dm_scratch_byte0,,
 0x003fce80,j1939_dm_scratch_byte1,,
@@ -6103,7 +6103,7 @@ address,name,type,comment
 0x003fbd2c,governor_faultDerate_task_index,word,round-robin scheduler index 0-4 for fault-derate subtasks
 0x003fbd3e,governor_faultDerate_peak_value,word,running max of per-channel derate fuel-limit values
 0x003fcd92,governor_cruiseOverride_holdoff_countdown,word,holdoff before accepting a new override transition
-0x003fcdaa,governor_speed_request_state_prev,word,previous-cycle snapshot of governor_speed_request_state_b
+0x003fcdaa,governor_speed_request_state_prev,CRUISE_SWITCH_REQUEST,previous-cycle snapshot of governor_speed_request_state_b
 0x003fcdae,cruise_steady_state_debounce_counter,word,debounce for cruise steady-state detection
 0x003fce22,calibBlock1_update_phase_counter,word,mod-4 phase counter dividing calibBlock1 EEPROM writes
 0x003fce24,calibBlock1_adaptiveTrim_ema_q8,word,Q8 EMA accumulator for calibBlock1 adaptive trim

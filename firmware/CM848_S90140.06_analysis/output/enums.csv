@@ -804,3 +804,7 @@ CRUISE_CONTROL_STATE,5,CCS_DECEL_B,Decelerate alternate fuel-rate step (J1939 DE
 CRUISE_CONTROL_STATE,6,CCS_ACCEL_B,Accelerate alternate fuel-rate ramp (J1939 ACCELERATE),2
 CRUISE_CONTROL_STATE,7,CCS_ACTIVE_HOLD,Override active - holding setpoint (J1939 HOLD),2
 CRUISE_CONTROL_STATE,8,CCS_STANDBY,Armed/enabled - driver in control not overriding,2
+# Cruise switch request state (governor_speed_request_state @ 0x003fafe6 + _b/_prev) - which cruise switch action is requested. Values 3/4/5 PROVEN via the override-handler dispatch in cm848_periodicProtectionControl; 0/1/2 still need the cruise_switch button-code table decode.
+CRUISE_SWITCH_REQUEST,3,CSR_SET,SET/COAST button - rising edge latches setpoint (CCS_SET) - held coasts (CCS_DECEL),2
+CRUISE_SWITCH_REQUEST,4,CSR_RESUME,RESUME/ACCEL button - returns CCS_RESUME - held accelerates (CCS_ACCEL),2
+CRUISE_SWITCH_REQUEST,5,CSR_IDLE,No active request / debounce-settling value,2

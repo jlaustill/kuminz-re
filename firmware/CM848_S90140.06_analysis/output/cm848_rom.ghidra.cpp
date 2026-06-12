@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Jun 12 15:20:27 MDT 2026
+// Generated: Fri Jun 12 15:31:22 MDT 2026
 
 
 //
@@ -28059,13 +28059,13 @@ void cm848_processProtectionControlStateMachine(void)
   }
   else {
     governor_speed_request_state = protection_control_state_check_2();
-    if (governor_speed_request_state == 4) {
+    if (governor_speed_request_state == CSR_RESUME) {
       protection_control_state_flags = protection_control_state_flags | 1;
     }
     if (governor_speed_request_state == 2) {
       protection_control_state_flags = protection_control_state_flags | 4;
     }
-    if (governor_speed_request_state == 3) {
+    if (governor_speed_request_state == CSR_SET) {
       protection_control_state_flags = protection_control_state_flags | 0x100;
     }
     sVar1 = protection_control_state_check_1();
@@ -68934,8 +68934,8 @@ void governor_fuel_mode_initialization(void)
   cruise_protection_ok_prev = 0;
   governor_speed_request_raw_sample = 5;
   governor_speed_request_raw_prev = 5;
-  governor_speed_request_state_b = 5;
-  governor_speed_request_state_prev = 5;
+  governor_speed_request_state_b = CSR_IDLE;
+  governor_speed_request_state_prev = CSR_IDLE;
   governor_speed_request_debounce_count = 0;
   DAT_003fcd9a = 0;
   PTR_DAT_003fcd96 = &DAT_0040872a;
@@ -69114,7 +69114,8 @@ int governor_cruise_resumeButton_handler(void)
       governor_cruiseOverride_holdoff_countdown = governor_cruiseOverride_holdoff_reload;
     }
   }
-  else if ((governor_speed_request_state_prev == 4) || (governor_speed_request_state_b != 4)) {
+  else if ((governor_speed_request_state_prev == CSR_RESUME) ||
+          (governor_speed_request_state_b != CSR_RESUME)) {
     if (governor_cruiseOverride_holdoff_countdown == 0) {
       CVar1 = CCS_ACCEL;
     }
@@ -69146,7 +69147,8 @@ int governor_cruise_setButton_handler(void)
   CRUISE_CONTROL_STATE CVar1;
   
   CVar1 = cruise_control_state;
-  if ((governor_speed_request_state_prev == 3) || (governor_speed_request_state_b != 3)) {
+  if ((governor_speed_request_state_prev == CSR_SET) || (governor_speed_request_state_b != CSR_SET))
+  {
     if (governor_override_active_flag == 1) {
       if (governor_cruiseOverride_holdoff_countdown == 0) {
         CVar1 = CCS_DECEL;
@@ -69172,14 +69174,14 @@ int governor_cruise_setButton_handler(void)
 int protection_control_state_check_2(void)
 
 {
-  word wVar1;
+  CRUISE_SWITCH_REQUEST CVar1;
   
   governor_speed_request_raw_sample = DAT_0040bb4e;
-  wVar1 = DAT_0040bb4e;
+  CVar1 = DAT_0040bb4e;
   if (1 < governor_speed_request_debounce_count_max) {
     if (governor_speed_request_state_prev == DAT_0040bb4e) {
       governor_speed_request_debounce_count = 2;
-      wVar1 = governor_speed_request_state_prev;
+      CVar1 = governor_speed_request_state_prev;
     }
     else if (governor_speed_request_raw_prev == DAT_0040bb4e) {
       if ((int)(uint)governor_speed_request_debounce_count <
@@ -69193,10 +69195,10 @@ int protection_control_state_check_2(void)
         return 5;
       }
       governor_speed_request_debounce_count = governor_speed_request_debounce_count - 1;
-      wVar1 = governor_speed_request_state_prev;
+      CVar1 = governor_speed_request_state_prev;
     }
   }
-  return (int)(short)wVar1;
+  return (int)(short)CVar1;
 }
 
 
@@ -69353,7 +69355,7 @@ undefined4 governor_cruise_engage_check(void)
   }
   if ((((cruise_engage_adc_valid_lower < cruise_switch_adc_value) &&
        (cruise_switch_adc_value < cruise_engage_adc_valid_upper)) &&
-      (governor_speed_request_state_b == 0)) && (governor_speed_request_state_prev == 5)) {
+      (governor_speed_request_state_b == 0)) && (governor_speed_request_state_prev == CSR_IDLE)) {
     engage_allowed = 1;
   }
   else {
@@ -69407,13 +69409,13 @@ void cm848_periodicProtectionControl(void)
   CRUISE_CONTROL_STATE CVar2;
   short sVar3;
   word wVar4;
-  word wVar5;
+  CRUISE_SWITCH_REQUEST CVar5;
   CRUISE_CONTROL_STATE *pCVar6;
   
   governor_cruise_rpmRatio_ema();
   governor_cruise_speedError_integrate();
   governor_speed_request_state_b = protection_control_state_check_2();
-  wVar5 = governor_speed_request_state_b;
+  CVar5 = governor_speed_request_state_b;
   iVar1 = governor_cruise_engage_check();
   if (iVar1 != 0) {
     j1939_cruise_engaged = 1;
@@ -69432,15 +69434,15 @@ void cm848_periodicProtectionControl(void)
     else {
       governor_fuel_mode = 0xd;
     }
-    if (wVar5 == 4) {
+    if (CVar5 == CSR_RESUME) {
       CVar2 = governor_cruise_resumeButton_handler();
       goto LAB_005130dc;
     }
-    if (wVar5 == 3) {
+    if (CVar5 == CSR_SET) {
       CVar2 = governor_cruise_setButton_handler();
       goto LAB_005130dc;
     }
-    if (wVar5 == 2) {
+    if (CVar5 == 2) {
       CVar2 = governor_cruiseOverride_state2_handler();
       goto LAB_005130dc;
     }
@@ -69488,7 +69490,7 @@ LAB_00513168:
   }
   governor_speed_request_raw_prev = governor_speed_request_raw_sample;
   cruise_protection_ok_prev = wVar4;
-  governor_speed_request_state_prev = wVar5;
+  governor_speed_request_state_prev = CVar5;
   cruise_rpm_prev_sample = engine_rpm_state_t_0040b7ac.current_rpm;
   cruise_rpm_ratio_ema_prev = cruise_rpm_ratio_ema;
   return;
