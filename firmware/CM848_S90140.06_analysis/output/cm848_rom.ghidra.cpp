@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Jun 12 16:00:11 MDT 2026
+// Generated: Fri Jun 12 16:44:58 MDT 2026
 
 
 //
@@ -28062,7 +28062,7 @@ void cm848_processProtectionControlStateMachine(void)
     if (governor_speed_request_state == CRUISE_SWITCH_RESUME) {
       protection_control_state_flags = protection_control_state_flags | 1;
     }
-    if (governor_speed_request_state == 2) {
+    if (governor_speed_request_state == CRUISE_SWITCH_COAST) {
       protection_control_state_flags = protection_control_state_flags | 4;
     }
     if (governor_speed_request_state == CRUISE_SWITCH_SET) {
@@ -28087,7 +28087,7 @@ LAB_0002b0f0:
   if ((protection_enable_t_0040c050.system_enable_bits & 0x80) != 0) {
     protection_control_state_flags = protection_control_state_flags | 0x4000;
   }
-  if (governor_speed_request_state == 1) {
+  if (governor_speed_request_state == CRUISE_SWITCH_CANCEL) {
     protection_control_state_flags = protection_control_state_flags | 0x40000;
   }
   if (protection_eval_state == 0) {
@@ -68950,21 +68950,22 @@ void governor_fuel_mode_initialization(void)
 
 
 //
-// Function: governor_cruiseOverride_state2_handler @ 0x005125f4
+// Function: governor_cruise_coastButton_handler @ 0x005125f4
 //
 
-/* Cruise switch-request state 2 handler -> CRUISE_CONTROL_STATE: produces
-   CRUISE_DECELERATE(3)/CRUISE_DECELERATE_2(5) via the holdoff countdown. Switch-position-2 meaning
-   not yet pinned (needs the cruise_switch_button_code_table decode). */
+/* Cruise switch-request state 2 (COAST button - confirmed live 2026-06-12) -> CRUISE_CONTROL_STATE:
+   returns CRUISE_DECELERATE(3)/CRUISE_DECELERATE_2(5) via the holdoff countdown. Was
+   governor_cruiseOverride_state2_handler. */
 
-int governor_cruiseOverride_state2_handler(void)
+int governor_cruise_coastButton_handler(void)
 
 {
   CRUISE_CONTROL_STATE CVar1;
   
   CVar1 = cruise_control_state;
   if (governor_override_active_flag != 0) {
-    if ((governor_speed_request_state_prev == 2) || (governor_speed_request_state_b != 2)) {
+    if ((governor_speed_request_state_prev == CRUISE_SWITCH_COAST) ||
+       (governor_speed_request_state_b != CRUISE_SWITCH_COAST)) {
       if (governor_cruiseOverride_holdoff_countdown == 0) {
         CVar1 = CRUISE_DECELERATE;
       }
@@ -68994,7 +68995,8 @@ int protection_control_state_check_1(void)
   if (((((power_state_status_flags & 0x20) == 0) && ((power_state_status_flags & 0x40) == 0)) &&
       ((system_status_flags_t_003fe974.condition_monitor & 0x2000) == 0)) &&
      ((cold_start_phase == CSP_AT_GOVERNOR_SETPOINT && (cold_start_qualifier_flag == 0)))) {
-    if ((governor_speed_request_state_prev == 0) || (governor_speed_request_state_b != 0)) {
+    if ((governor_speed_request_state_prev == CRUISE_SWITCH_ON_OFF) ||
+       (governor_speed_request_state_b != CRUISE_SWITCH_ON_OFF)) {
       iVar1 = (int)(short)cruise_protection_ok_prev;
     }
     else if (cruise_protection_ok_prev == 1) {
@@ -69235,7 +69237,7 @@ undefined4 governor_cruise_fuelCorrection_inhibitCheck(void)
         }
         else if (((protection_enable_t_0040c050.system_enable_bits & 8) == 0) &&
                 ((protection_enable_t_0040c050.mode_bits & 4) == 0)) {
-          if (governor_speed_request_state_b == 1) {
+          if (governor_speed_request_state_b == CRUISE_SWITCH_CANCEL) {
             governor_fuel_mode = 7;
             if (governor_override_active_flag != 0) {
               governor_fuel_mode_d = 7;
@@ -69356,7 +69358,7 @@ undefined4 governor_cruise_engage_check(void)
   }
   if ((((cruise_engage_adc_valid_lower < cruise_switch_adc_value) &&
        (cruise_switch_adc_value < cruise_engage_adc_valid_upper)) &&
-      (governor_speed_request_state_b == 0)) &&
+      (governor_speed_request_state_b == CRUISE_SWITCH_ON_OFF)) &&
      (governor_speed_request_state_prev == CRUISE_SWITCH_IDLE)) {
     engage_allowed = 1;
   }
@@ -69445,8 +69447,8 @@ void cm848_periodicProtectionControl(void)
       CVar2 = governor_cruise_setButton_handler();
       goto LAB_005130dc;
     }
-    if (CVar5 == 2) {
-      CVar2 = governor_cruiseOverride_state2_handler();
+    if (CVar5 == CRUISE_SWITCH_COAST) {
+      CVar2 = governor_cruise_coastButton_handler();
       goto LAB_005130dc;
     }
   }

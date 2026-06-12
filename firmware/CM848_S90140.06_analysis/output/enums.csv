@@ -805,6 +805,9 @@ CRUISE_CONTROL_STATE,6,CRUISE_ACCELERATE_2,Accelerate alternate fuel-rate ramp (
 CRUISE_CONTROL_STATE,7,CRUISE_ACTIVE_HOLD,Override active - holding setpoint (J1939 HOLD),2
 CRUISE_CONTROL_STATE,8,CRUISE_STANDBY,Armed/enabled - driver in control not overriding,2
 # Cruise switch request state (governor_speed_request_state @ 0x003fafe6 + _b/_prev) - which cruise switch action is requested. Values 3/4/5 PROVEN via the override-handler dispatch in cm848_periodicProtectionControl; 0/1/2 still need the cruise_switch button-code table decode.
-CRUISE_SWITCH_REQUEST,3,CRUISE_SWITCH_SET,SET/COAST button - rising edge latches setpoint (CRUISE_SET) - held coasts (CRUISE_DECELERATE),2
-CRUISE_SWITCH_REQUEST,4,CRUISE_SWITCH_RESUME,RESUME/ACCEL button - returns CRUISE_RESUME - held accelerates (CRUISE_ACCELERATE),2
-CRUISE_SWITCH_REQUEST,5,CRUISE_SWITCH_IDLE,No active request / debounce-settling value,2
+CRUISE_SWITCH_REQUEST,0,CRUISE_SWITCH_ON_OFF,ON/OFF master button - arms cruise (engage check wants state_b 0 with prev 5). Confirmed live 2026-06-12,2
+CRUISE_SWITCH_REQUEST,1,CRUISE_SWITCH_CANCEL,CANCEL button. Confirmed live 2026-06-12,2
+CRUISE_SWITCH_REQUEST,2,CRUISE_SWITCH_COAST,COAST button - decelerate (governor_cruise_coastButton_handler returns CRUISE_DECELERATE). Confirmed live 2026-06-12,2
+CRUISE_SWITCH_REQUEST,3,CRUISE_SWITCH_SET,SET button - rising edge latches setpoint (CRUISE_SET). Confirmed live 2026-06-12,2
+CRUISE_SWITCH_REQUEST,4,CRUISE_SWITCH_RESUME,RESUME/ACCEL button - tap returns CRUISE_RESUME - held accelerates (CRUISE_ACCELERATE). Confirmed live 2026-06-12,2
+CRUISE_SWITCH_REQUEST,5,CRUISE_SWITCH_IDLE,No button pressed / debounce-settling value,2

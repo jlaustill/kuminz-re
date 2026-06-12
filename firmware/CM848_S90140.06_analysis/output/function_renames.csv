@@ -2057,7 +2057,7 @@ address,name
 0x00511ed4,protection_j1939_control_logic
 0x00512130,protection_enable_state_machine
 0x00512554,governor_fuel_mode_initialization
-0x005125f4,governor_cruiseOverride_state2_handler,Cruise switch-request state 2 handler -> CRUISE_CONTROL_STATE: produces CRUISE_DECELERATE(3)/CRUISE_DECELERATE_2(5) via the holdoff countdown. Switch-position-2 meaning not yet pinned (needs the cruise_switch_button_code_table decode).
+0x005125f4,governor_cruise_coastButton_handler,Cruise switch-request state 2 (COAST button - confirmed live 2026-06-12) -> CRUISE_CONTROL_STATE: returns CRUISE_DECELERATE(3)/CRUISE_DECELERATE_2(5) via the holdoff countdown. Was governor_cruiseOverride_state2_handler.
 0x00512678,protection_control_state_check_1
 0x00512724,governor_cruise_baseState_get,Base CRUISE_CONTROL_STATE from override/enable flags: CRUISE_ACTIVE_HOLD(7) if override active; else CRUISE_STANDBY(8) if governor_fuel_enable_state set; else CRUISE_OFF(0). This is the FIRST write to cruise_control_state each cycle in cm848_periodicProtectionControl before the button handlers may overwrite it. Was governor_fuelMode_state_get.
 0x0051275c,governor_cruise_rpmRatio_ema
