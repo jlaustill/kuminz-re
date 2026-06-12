@@ -41,7 +41,7 @@ ghidra_dir_for_version() {
     case "$1" in
         12.1) echo "$HOME/code/ghidra-12.1/ghidra_12.1_PUBLIC" ;;
         12.0) echo "$HOME/code/ghidra" ;;
-        *)    echo "" ;;
+        *)    echo "" ;;  # unknown version — caller must handle empty result
     esac
 }
 
