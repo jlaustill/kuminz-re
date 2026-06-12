@@ -1829,7 +1829,7 @@ address,name
 0x00500a4c,updateSensorChannelWithConfig
 0x005011c4,cm848_protection_init_configBundle
 0x00501250,cm848_protection_update_configBundle
-0x005012dc,sensorChannelTypeB_configInit
+0x005012dc,sensorChannelTypeB_configInit,review-function-readability reviewed 2026-06-12 - Readability Medium Accuracy Confidence High. Renamed 2 misleading globals: per_cylinder_timing_offset_table→sensor_channel_filtered_output (43 refs) and cylinder_timing_demand_array→sensor_channel_diag_override (25 refs + fixed byte→word type). Function has phantom register params (in_r9 through in_stack_*) - needs prototype but is complex (13 params via PowerPC ABI).
 0x00501b4c,sensorChannelTypeB_update
 0x005022cc,hpcr_fuelFinal_periodic
 0x0050241c,cm848_initialization_step
