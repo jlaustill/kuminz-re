@@ -28,6 +28,10 @@ FIRMWARE_DIR="$PROJECT_DIR/originals"
 # Override processor for PowerPC (CM848 uses MPC5xx series)
 PROCESSOR="PowerPC:BE:32:default"
 
+# Pin the Ghidra version: MPC555 is supported by mainline; 12.1 also renders
+# struct bitfields in decompiled expressions (GP-2493). See common.sh.
+REQUIRED_GHIDRA_VERSION="12.1"
+
 # ============================================================================
 # SOURCE SHARED INFRASTRUCTURE
 # ============================================================================

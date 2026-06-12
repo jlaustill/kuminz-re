@@ -11,6 +11,29 @@ This directory contains reverse-engineered Cummins ECU firmware from different g
 
 ---
 
+## Ghidra version pinning (per-firmware — DO NOT mix)
+
+The decompiler's output is **version-specific**: the same binary + CSVs analyzed with a
+different Ghidra version produces thousands of lines of spurious diff (placeholder-local
+renaming, cast/loop rendering, `undefined`↔`undefined1`). Each firmware is therefore pinned to
+exactly one version, set as `REQUIRED_GHIDRA_VERSION` in its `analyze.sh`, and the build refuses
+to run against any other (`check_ghidra` in `scripts/common.sh` validates `application.version`).
+
+| Firmware | CPU | Required Ghidra | Install | Why |
+|----------|-----|-----------------|---------|-----|
+| CM848 | MPC555 / PowerPC | **12.1** PUBLIC | `$HOME/code/ghidra-12.1/ghidra_12.1_PUBLIC` | mainline supports MPC555; 12.1 also renders struct bitfields (GP-2493) |
+| CM550 | MC68336 / 68k | **12.0** DEV (from source) | `$HOME/code/ghidra` | the 68k/CM550 CPU support is on an **unmerged** Ghidra branch, not in any release |
+
+- Override the install path with `GHIDRA_DIR=...`, but its `application.version` must still match
+  the firmware's pin or the build fails gracefully (telling you which version is needed and where).
+- **CM550 reproducibility caveat:** "12.0 DEV" is *not* a precise pin — the from-source build tracks
+  a moving branch, so two checkouts both report `12.0` yet decompile differently (newer builds
+  recover more, e.g. masked-flag expressions the older committed baseline rendered as `0`). Until
+  the 68k support merges to a release, a CM550 `.cpp` is only reproducible against the *exact* Ghidra
+  commit it was built from. (Watch the Ghidra changelog/PRs for 68k/CM550 CPU support landing.)
+
+---
+
 ## Shared Scripts Infrastructure
 
 All Ghidra analysis scripts are shared in `firmware/scripts/`:
@@ -205,7 +228,7 @@ All firmwares use the same CSV structure in `output/`:
 - **A checked bit ≠ a live trigger** - when a gate ORs in flag bits, grep for a SETTER (`| 0xNN`, masked/whole-word assignment, BOTH banks) before treating the condition as reachable. Checked-but-never-set bits are shared-firmware / excluded-feature artifacts (e.g. the protection gate's `safety_bits_1 0x10/0x20`, dormant in this calibration).
 - **Enum types just need to be in `enums.csv`** — `build` runs the `enums` stage before `import`, so a new enum type is always registered in Ghidra's DTM before globals reference it. (Ordering is automatic; there is no separate `enums`/`import` step to sequence by hand.)
 - **Named types preserved through the export stage (since 2026-05-26)** — `ExportAnalysis.java` reads existing CSV before overwriting and applies priority: named Ghidra type > named CSV type > primitive Ghidra type. Enum types set via CSV survive `build` cycles.
-- **Masked flag access → declare a bitfield (Ghidra 12.1+)** — for a flag tested as `(var & MASK)`, declaring the field as a structure bitfield now renders it symbolically. Verified end-to-end on `protection_enable_t.protection_active` (the bit7 `0x80` boolean) 2026-06-03: reads `... .protection_active & 0x80` became `... .protection_active != 0`, and the set/clear writes `| 0x80` / `& 0x7f` became `protection_active = 1` / `= 0`. **Requires Ghidra ≥ 12.1** ([issue #647](https://github.com/NationalSecurityAgency/ghidra/issues/647) / GP-2493 — *"the Decompiler now recovers and displays the names of bitfield components… when analyzing code that manipulates them"*). On the old from-source **12.0** build the opposite happens — the mask survives **and** the field name is lost (renders raw `struct._N_1_ & MASK`, the closed-as-known [#2462](https://github.com/NationalSecurityAgency/ghidra/issues/2462) on PPC), so this is strictly gated on the toolchain. `scripts/common.sh` now defaults `GHIDRA_DIR` to the prebuilt 12.1 (`$HOME/code/ghidra-12.1/ghidra_12.1_PUBLIC`); fall back with `GHIDRA_DIR=$HOME/code/ghidra`.
+- **Masked flag access → declare a bitfield (Ghidra 12.1+)** — for a flag tested as `(var & MASK)`, declaring the field as a structure bitfield now renders it symbolically. Verified end-to-end on `protection_enable_t.protection_active` (the bit7 `0x80` boolean) 2026-06-03: reads `... .protection_active & 0x80` became `... .protection_active != 0`, and the set/clear writes `| 0x80` / `& 0x7f` became `protection_active = 1` / `= 0`. **Requires Ghidra ≥ 12.1** ([issue #647](https://github.com/NationalSecurityAgency/ghidra/issues/647) / GP-2493 — *"the Decompiler now recovers and displays the names of bitfield components… when analyzing code that manipulates them"*). On the old from-source **12.0** build the opposite happens — the mask survives **and** the field name is lost (renders raw `struct._N_1_ & MASK`, the closed-as-known [#2462](https://github.com/NationalSecurityAgency/ghidra/issues/2462) on PPC), so this is strictly gated on the toolchain. CM848 is pinned to 12.1 (which has this fix); see the **Ghidra version pinning** section above for how each firmware's version is enforced.
   - **CSV syntax** (`structure_definitions.csv`): set the `type` column to `bitfield:<bitSize>@<bitOffset>` (bitOffset is from the LSB; bit7 = the `0x80` bit of a byte) and the `size` column to the storage byte-width. For several flags packed in one byte/word, give the first member the byte-width and each additional member `size=0` (continuation — shares the opener's storage unit). `ApplyStructures.java` places these via `insertBitFieldAt`.
   - **Enum caveat still stands:** symbolic *enum* names appear for `var == ENUM_VALUE` but NOT for `(var & MASK) == VALUE`. Use a bitfield for packed flags; an enum type only for whole-value compares.
 
