@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Jun 12 12:39:04 MDT 2026
+// Generated: Fri Jun 12 15:20:27 MDT 2026
 
 
 //
@@ -41448,18 +41448,23 @@ void cm848_protectionFuelRateRamp(int param_1)
 // Function: cm848_cruiseSpeedCommandStateMachine @ 0x000409b0
 //
 
+/* Applies the CRUISE_CONTROL_STATE (cruise_control_state) to cruise_speed_command: CCS_SET(1)=latch
+   setpoint+override; CCS_RESUME(2)=restore target; CCS_DECEL/ACCEL(3-6)=fuel-rate step/ramp;
+   CCS_ACTIVE_HOLD(7); CCS_STANDBY(8)/CCS_OFF(0)=clear override. State values map to SAE J1939
+   SPN527. */
+
 void cm848_cruiseSpeedCommandStateMachine(void)
 
 {
-  word wVar1;
+  CRUISE_CONTROL_STATE CVar1;
   word wVar2;
   uint uVar3;
   word *pwVar4;
   word *pwVar5;
   int iVar6;
   
-  wVar1 = fuel_demand_speed_error;
-  iVar6 = (int)(short)fuel_demand_speed_error;
+  CVar1 = cruise_control_state;
+  iVar6 = (int)(short)cruise_control_state;
   switch(iVar6) {
   case 0:
     governor_override_active_flag = 0;
@@ -41515,9 +41520,9 @@ void cm848_cruiseSpeedCommandStateMachine(void)
     return;
   }
   wVar2 = cruise_speed_command;
-  if ((iVar6 == 3) || (cruise_speed_mode_prev != 3)) {
+  if ((iVar6 == 3) || (cruise_speed_mode_prev != CCS_DECEL)) {
     if ((iVar6 != 4) &&
-       ((cruise_speed_mode_prev == 4 &&
+       ((cruise_speed_mode_prev == CCS_ACCEL &&
         (wVar2 = cruise_speed_target_working,
         cruise_speed_target_working < cruise_speed_setpoint_adjusted)))) {
       wVar2 = cm848_calculateProtectionFuelLimit
@@ -41550,7 +41555,7 @@ void cm848_cruiseSpeedCommandStateMachine(void)
      (((iVar6 != 2 && (iVar6 != 7)) || (cruise_speed_command <= cruise_speed_setpoint_adjusted)))) {
     fuel_demand_enable_sync_flag = 0;
   }
-  cruise_speed_mode_prev = wVar1;
+  cruise_speed_mode_prev = CVar1;
   return;
 }
 
@@ -41579,7 +41584,7 @@ void cm848_initFuelRateFromCapability(void)
 void cm848_validateFuelRateTarget(void)
 
 {
-  cruise_speed_mode_prev = 0;
+  cruise_speed_mode_prev = CCS_OFF;
   if ((cruise_speed_min_cal <= cruise_speed_cmd_working) &&
      (cruise_speed_cmd_working <= cruise_speed_high_limit)) {
     governor_fuel_enable_state = 1;
@@ -68948,16 +68953,20 @@ void governor_fuel_mode_initialization(void)
 // Function: governor_cruiseOverride_state2_handler @ 0x005125f4
 //
 
+/* Cruise switch-request state 2 handler -> CRUISE_CONTROL_STATE: produces
+   CCS_DECEL(3)/CCS_DECEL_B(5) via the holdoff countdown. Switch-position-2 meaning not yet pinned
+   (needs the cruise_switch_button_code_table decode). */
+
 int governor_cruiseOverride_state2_handler(void)
 
 {
-  word wVar1;
+  CRUISE_CONTROL_STATE CVar1;
   
-  wVar1 = fuel_demand_speed_error;
+  CVar1 = cruise_control_state;
   if (governor_override_active_flag != 0) {
     if ((governor_speed_request_state_prev == 2) || (governor_speed_request_state_b != 2)) {
       if (governor_cruiseOverride_holdoff_countdown == 0) {
-        wVar1 = 3;
+        CVar1 = CCS_DECEL;
       }
       else {
         governor_cruiseOverride_holdoff_countdown = governor_cruiseOverride_holdoff_countdown - 1;
@@ -68965,10 +68974,10 @@ int governor_cruiseOverride_state2_handler(void)
     }
     else {
       governor_cruiseOverride_holdoff_countdown = governor_cruiseOverride_holdoff_reload;
-      wVar1 = 5;
+      CVar1 = CCS_DECEL_B;
     }
   }
-  return (int)(short)wVar1;
+  return (int)(short)CVar1;
 }
 
 
@@ -69004,10 +69013,15 @@ int protection_control_state_check_1(void)
 
 
 //
-// Function: governor_fuelMode_state_get @ 0x00512724
+// Function: governor_cruise_baseState_get @ 0x00512724
 //
 
-undefined4 governor_fuelMode_state_get(void)
+/* Base CRUISE_CONTROL_STATE from override/enable flags: CCS_ACTIVE_HOLD(7) if override active; else
+   CCS_STANDBY(8) if governor_fuel_enable_state set; else CCS_OFF(0). This is the FIRST write to
+   cruise_control_state each cycle in cm848_periodicProtectionControl before the button handlers may
+   overwrite it. Was governor_fuelMode_state_get. */
+
+undefined4 governor_cruise_baseState_get(void)
 
 {
   undefined4 uVar1;
@@ -69081,24 +69095,28 @@ void governor_cruise_speedError_integrate(void)
 
 
 //
-// Function: governor_cruiseOverride_state4_handler @ 0x00512878
+// Function: governor_cruise_resumeButton_handler @ 0x00512878
 //
 
-int governor_cruiseOverride_state4_handler(void)
+/* Cruise switch-request state 4 (RESUME/ACCEL button) -> CRUISE_CONTROL_STATE: override-off with
+   fuel-enable set returns CCS_RESUME(2); held returns CCS_ACCEL(4)/CCS_ACCEL_B(6). Was
+   governor_cruiseOverride_state4_handler. */
+
+int governor_cruise_resumeButton_handler(void)
 
 {
-  word wVar1;
+  CRUISE_CONTROL_STATE CVar1;
   
-  wVar1 = fuel_demand_speed_error;
+  CVar1 = cruise_control_state;
   if (governor_override_active_flag == 0) {
     if (governor_fuel_enable_state != 0) {
-      wVar1 = 2;
+      CVar1 = CCS_RESUME;
       governor_cruiseOverride_holdoff_countdown = governor_cruiseOverride_holdoff_reload;
     }
   }
   else if ((governor_speed_request_state_prev == 4) || (governor_speed_request_state_b != 4)) {
     if (governor_cruiseOverride_holdoff_countdown == 0) {
-      wVar1 = 4;
+      CVar1 = CCS_ACCEL;
     }
     else {
       governor_cruiseOverride_holdoff_countdown = governor_cruiseOverride_holdoff_countdown - 1;
@@ -69106,27 +69124,32 @@ int governor_cruiseOverride_state4_handler(void)
   }
   else {
     governor_cruiseOverride_holdoff_countdown = governor_cruiseOverride_holdoff_reload;
-    wVar1 = 6;
+    CVar1 = CCS_ACCEL_B;
   }
-  return (int)(short)wVar1;
+  return (int)(short)CVar1;
 }
 
 
 
 //
-// Function: governor_cruiseOverride_state3_handler @ 0x0051291c
+// Function: governor_cruise_setButton_handler @ 0x0051291c
 //
 
-int governor_cruiseOverride_state3_handler(void)
+/* Cruise switch-request state 3 (SET/COAST button) -> CRUISE_CONTROL_STATE: rising edge (state_b==3
+   && prev!=3) with cruise_speed_setpoint_adjusted>=cruise_speed_min_cal returns CCS_SET(1) to LATCH
+   the setpoint; held returns CCS_DECEL(3). Was governor_cruiseOverride_state3_handler. NOTE the SET
+   capture only runs when governor_cruise_fuelCorrection_inhibitCheck()==0. */
+
+int governor_cruise_setButton_handler(void)
 
 {
-  word wVar1;
+  CRUISE_CONTROL_STATE CVar1;
   
-  wVar1 = fuel_demand_speed_error;
+  CVar1 = cruise_control_state;
   if ((governor_speed_request_state_prev == 3) || (governor_speed_request_state_b != 3)) {
     if (governor_override_active_flag == 1) {
       if (governor_cruiseOverride_holdoff_countdown == 0) {
-        wVar1 = 3;
+        CVar1 = CCS_DECEL;
       }
       else {
         governor_cruiseOverride_holdoff_countdown = governor_cruiseOverride_holdoff_countdown - 1;
@@ -69134,10 +69157,10 @@ int governor_cruiseOverride_state3_handler(void)
     }
   }
   else if (cruise_speed_min_cal <= cruise_speed_setpoint_adjusted) {
-    wVar1 = 1;
+    CVar1 = CCS_SET;
     governor_cruiseOverride_holdoff_countdown = governor_cruiseOverride_holdoff_reload;
   }
-  return (int)(short)wVar1;
+  return (int)(short)CVar1;
 }
 
 
@@ -69342,10 +69365,14 @@ undefined4 governor_cruise_engage_check(void)
 
 
 //
-// Function: governor_cruise_disengage_check @ 0x00512f18
+// Function: governor_cruise_standbyState_get @ 0x00512f18
 //
 
-undefined4 governor_cruise_disengage_check(void)
+/* Returns the CRUISE_CONTROL_STATE used when the button-override path is inhibited: CCS_STANDBY(8)
+   if all engage conditions hold AND governor_fuel_enable_state!=0 else CCS_OFF(0). Legacy name
+   governor_cruise_disengage_check was misleading - it is a state getter not a boolean check. */
+
+undefined4 governor_cruise_standbyState_get(void)
 
 {
   undefined4 uVar1;
@@ -69377,11 +69404,11 @@ void cm848_periodicProtectionControl(void)
 
 {
   int iVar1;
-  word wVar2;
+  CRUISE_CONTROL_STATE CVar2;
   short sVar3;
   word wVar4;
   word wVar5;
-  word *pwVar6;
+  CRUISE_CONTROL_STATE *pCVar6;
   
   governor_cruise_rpmRatio_ema();
   governor_cruise_speedError_integrate();
@@ -69393,10 +69420,10 @@ void cm848_periodicProtectionControl(void)
   }
   cruise_protection_ok = protection_control_state_check_1();
   etc1_throttle_active_flag = (word)(cruise_protection_ok != 0);
-  pwVar6 = &fuel_demand_speed_error;
+  pCVar6 = &cruise_control_state;
   wVar4 = cruise_protection_ok;
-  wVar2 = governor_fuelMode_state_get();
-  *pwVar6 = wVar2;
+  CVar2 = governor_cruise_baseState_get();
+  *pCVar6 = CVar2;
   sVar3 = governor_cruise_fuelCorrection_inhibitCheck();
   if (sVar3 == 0) {
     if (governor_override_active_flag == 0) {
@@ -69406,44 +69433,44 @@ void cm848_periodicProtectionControl(void)
       governor_fuel_mode = 0xd;
     }
     if (wVar5 == 4) {
-      wVar2 = governor_cruiseOverride_state4_handler();
+      CVar2 = governor_cruise_resumeButton_handler();
       goto LAB_005130dc;
     }
     if (wVar5 == 3) {
-      wVar2 = governor_cruiseOverride_state3_handler();
+      CVar2 = governor_cruise_setButton_handler();
       goto LAB_005130dc;
     }
     if (wVar5 == 2) {
-      wVar2 = governor_cruiseOverride_state2_handler();
+      CVar2 = governor_cruiseOverride_state2_handler();
       goto LAB_005130dc;
     }
   }
   else {
-    wVar2 = governor_cruise_disengage_check();
+    CVar2 = governor_cruise_standbyState_get();
 LAB_005130dc:
-    *pwVar6 = wVar2;
+    *pCVar6 = CVar2;
   }
-  switch(*pwVar6) {
-  case 0:
+  switch(*pCVar6) {
+  case CCS_OFF:
     break;
-  case 1:
+  case CCS_SET:
     j1939_status_field_3bit = 5;
     goto LAB_00513168;
-  case 2:
+  case CCS_RESUME:
     goto LAB_00513154;
-  case 3:
+  case CCS_DECEL:
     goto LAB_00513134;
-  case 4:
+  case CCS_ACCEL:
     goto LAB_0051313c;
-  case 5:
+  case CCS_DECEL_B:
 LAB_00513134:
     j1939_status_field_3bit = 3;
     goto LAB_00513168;
-  case 6:
+  case CCS_ACCEL_B:
 LAB_0051313c:
     j1939_status_field_3bit = 2;
     goto LAB_00513168;
-  case 7:
+  case CCS_ACTIVE_HOLD:
     if (fuel_demand_enable_sync_flag == 0) {
       j1939_status_field_3bit = 1;
       goto LAB_00513168;
@@ -69451,7 +69478,7 @@ LAB_0051313c:
 LAB_00513154:
     j1939_status_field_3bit = 4;
     goto LAB_00513168;
-  case 8:
+  case CCS_STANDBY:
   }
   j1939_status_field_3bit = 0;
 LAB_00513168:
@@ -75814,13 +75841,13 @@ int FUN_0051ef20(void)
   case 0xc:
     iVar1 = 4;
   }
-  if (fuel_demand_speed_error == 3) {
+  if (cruise_control_state == CCS_DECEL) {
     iVar1 = 0xb;
   }
-  else if (fuel_demand_speed_error == 4) {
+  else if (cruise_control_state == CCS_ACCEL) {
     iVar1 = 10;
   }
-  else if (fuel_demand_speed_error == 7) {
+  else if (cruise_control_state == CCS_ACTIVE_HOLD) {
     iVar1 = 9;
   }
   switch(governor_fuel_mode_d) {
@@ -77325,8 +77352,8 @@ void governor_cruise_setpoint_calc(int param_1)
     cruise_pid_rate_gain_working = lookupTableInterpolation((table_interp_args_t *)&DAT_003fcffe);
   }
   if (governor_fuel_demand_mode == 9) {
-    if ((((fuel_demand_speed_error == 1) || (fuel_demand_speed_error == 3)) ||
-        (fuel_demand_speed_error == 2)) || (fuel_demand_speed_error == 4)) {
+    if ((((cruise_control_state == CCS_SET) || (cruise_control_state == CCS_DECEL)) ||
+        (cruise_control_state == CCS_RESUME)) || (cruise_control_state == CCS_ACCEL)) {
       cruise_deadband_active_flag = 0;
     }
     else {
@@ -77733,8 +77760,8 @@ void protectionRampRateControl(void)
     goto LAB_005252ec;
   }
   else {
-    if ((fuel_demand_speed_error == 2) || (wVar1 = cruise_speed_command, cruise_confirm_flag_a != 0)
-       ) {
+    if ((cruise_control_state == CCS_RESUME) ||
+       (wVar1 = cruise_speed_command, cruise_confirm_flag_a != 0)) {
       wVar1 = cruise_speed_setpoint_adjusted;
     }
     cruise_ramp_target_speed = wVar1 + cruise_speed_setpoint_active;
@@ -77911,8 +77938,8 @@ LAB_005257a0:
       goto LAB_005257a0;
     }
     governor_override_threshold = cruise_ramp_target_speed;
-    if (((fuel_demand_speed_error_prev == 4) && (fuel_demand_speed_error != 4)) ||
-       ((fuel_demand_speed_error_prev == 3 && (fuel_demand_speed_error != 3)))) {
+    if (((cruise_control_state_prev == CCS_ACCEL) && (cruise_control_state != CCS_ACCEL)) ||
+       ((cruise_control_state_prev == CCS_DECEL && (cruise_control_state != CCS_DECEL)))) {
       protectionRampRateControl();
     }
   }
@@ -78111,7 +78138,7 @@ LAB_00525d1c:
 LAB_00525db0:
   cruise_fuel_demand_mode_prev = governor_fuel_demand_mode;
   governor_cruise_speedReference_update();
-  fuel_demand_speed_error_prev = fuel_demand_speed_error;
+  cruise_control_state_prev = cruise_control_state;
   cruise_ramp_rate_control_called_flag = 0;
   return;
 }

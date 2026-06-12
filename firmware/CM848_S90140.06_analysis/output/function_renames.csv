@@ -1380,7 +1380,7 @@ address,name
 0x0004091c,cm848_calculateProtectionFuelLimit
 0x00040938,cm848_protectionFuelRateStep
 0x00040978,cm848_protectionFuelRateRamp
-0x000409b0,cm848_cruiseSpeedCommandStateMachine
+0x000409b0,cm848_cruiseSpeedCommandStateMachine,Applies the CRUISE_CONTROL_STATE (cruise_control_state) to cruise_speed_command: CCS_SET(1)=latch setpoint+override; CCS_RESUME(2)=restore target; CCS_DECEL/ACCEL(3-6)=fuel-rate step/ramp; CCS_ACTIVE_HOLD(7); CCS_STANDBY(8)/CCS_OFF(0)=clear override. State values map to SAE J1939 SPN527.
 0x00040d40,cm848_initFuelRateFromCapability
 0x00040d74,cm848_validateFuelRateTarget
 0x00040dd4,cm848_copyProtectionRampValue
@@ -2057,17 +2057,17 @@ address,name
 0x00511ed4,protection_j1939_control_logic
 0x00512130,protection_enable_state_machine
 0x00512554,governor_fuel_mode_initialization
-0x005125f4,governor_cruiseOverride_state2_handler
+0x005125f4,governor_cruiseOverride_state2_handler,Cruise switch-request state 2 handler -> CRUISE_CONTROL_STATE: produces CCS_DECEL(3)/CCS_DECEL_B(5) via the holdoff countdown. Switch-position-2 meaning not yet pinned (needs the cruise_switch_button_code_table decode).
 0x00512678,protection_control_state_check_1
-0x00512724,governor_fuelMode_state_get
+0x00512724,governor_cruise_baseState_get,Base CRUISE_CONTROL_STATE from override/enable flags: CCS_ACTIVE_HOLD(7) if override active; else CCS_STANDBY(8) if governor_fuel_enable_state set; else CCS_OFF(0). This is the FIRST write to cruise_control_state each cycle in cm848_periodicProtectionControl before the button handlers may overwrite it. Was governor_fuelMode_state_get.
 0x0051275c,governor_cruise_rpmRatio_ema
 0x005127d8,governor_cruise_speedError_integrate
-0x00512878,governor_cruiseOverride_state4_handler
-0x0051291c,governor_cruiseOverride_state3_handler
+0x00512878,governor_cruise_resumeButton_handler,Cruise switch-request state 4 (RESUME/ACCEL button) -> CRUISE_CONTROL_STATE: override-off with fuel-enable set returns CCS_RESUME(2); held returns CCS_ACCEL(4)/CCS_ACCEL_B(6). Was governor_cruiseOverride_state4_handler.
+0x0051291c,governor_cruise_setButton_handler,Cruise switch-request state 3 (SET/COAST button) -> CRUISE_CONTROL_STATE: rising edge (state_b==3 && prev!=3) with cruise_speed_setpoint_adjusted>=cruise_speed_min_cal returns CCS_SET(1) to LATCH the setpoint; held returns CCS_DECEL(3). Was governor_cruiseOverride_state3_handler. NOTE the SET capture only runs when governor_cruise_fuelCorrection_inhibitCheck()==0.
 0x005129b0,protection_control_state_check_2
 0x00512a60,governor_cruise_fuelCorrection_inhibitCheck
 0x00512e70,governor_cruise_engage_check,review-function-readability reviewed 2026-06-11 - Readability High Accuracy Confidence High - returns 1 when cruise may engage: cruise-switch ADC (chan 0x2f/47, or override) inside valid window AND governor_speed_request_state_b==0 AND _prev==5; caller sets j1939_cruise_engaged
-0x00512f18,governor_cruise_disengage_check
+0x00512f18,governor_cruise_standbyState_get,Returns the CRUISE_CONTROL_STATE used when the button-override path is inhibited: CCS_STANDBY(8) if all engage conditions hold AND governor_fuel_enable_state!=0 else CCS_OFF(0). Legacy name governor_cruise_disengage_check was misleading - it is a state getter not a boolean check.
 0x00512ff4,cm848_periodicProtectionControl
 0x00513200,protection_fault_latch_update
 0x005134e8,protection_sensor_state_initialize

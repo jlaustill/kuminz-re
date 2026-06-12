@@ -1605,7 +1605,7 @@ address,name,type,comment
 0x003fb528,fuel_demand_enable_sync_flag_shadow,,
 0x003fb52a,fuel_demand_enable_sync_flag_shadow+2,undefined2,
 0x003fb52c,cruise_speed_setpoint_prev,word,
-0x003fb52e,cruise_speed_mode_prev,word,
+0x003fb52e,cruise_speed_mode_prev,CRUISE_CONTROL_STATE,prior cruise_control_state used by cm848_cruiseSpeedCommandStateMachine for transition logic (compared ==3/==4)
 0x003fb530,governor_override_active_prev_flag,dword,
 0x003fb534,cruise_speed_deviation,dword,
 0x003fb538,cruise_mode_transition_flag,word,
@@ -5278,7 +5278,7 @@ address,name,type,comment
 0x0040b67a,governor_fuel_demand_upper,word,
 0x0040b67c,governor_pid_integral_snapshot,word,
 0x0040b682,governor_override_speed_ema_coeff_ptr,pointer,EMA coeff pointer for governor override speed
-0x0040b68e,fuel_demand_speed_error,word,
+0x0040b68e,cruise_control_state,CRUISE_CONTROL_STATE,cruise control action/state (was fuel_demand_speed_error - NOT a speed error; it is the CRUISE_CONTROL_STATE selector for cm848_cruiseSpeedCommandStateMachine). Written each cycle in cm848_periodicProtectionControl
 0x0040b698,cruise_speed_reference_a,word,
 0x0040b69a,cruise_speed_setpoint_b,word,
 0x0040b6a2,cruise_speed_setpoint_active,word,
@@ -6730,7 +6730,7 @@ address,name,type,comment
 0x003fd000,cruise_ramp_target_prev,word,previous cruise ramp target speed
 0x003fd006,cruise_setpoint_interp_prev,word,prev interpolated cruise speed setpoint
 0x003fd008,cruise_fuel_demand_ema,word,EMA fuel demand for cruise governor setpoint
-0x003fd036,fuel_demand_speed_error_prev,word,prev fuel_demand_speed_error (edge detect)
+0x003fd036,cruise_control_state_prev,CRUISE_CONTROL_STATE,previous-cycle cruise_control_state (edge detect); was fuel_demand_speed_error_prev
 0x003fd051,cruise_ramp_rate_control_called_flag,word,ramp-rate-control-ran-this-cycle flag
 0x003fd055,cruise_rate_correction_trigger_flag,word,cruise speed rate-correction trigger
 0x003fd930,fuel_temp_correction_scale_factor,word,ROM scale for engine temp protection input
