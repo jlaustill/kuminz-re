@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Jun 12 08:48:19 MDT 2026
+// Generated: Fri Jun 12 09:39:09 MDT 2026
 
 
 //
@@ -7429,7 +7429,7 @@ void cm848_sensorChannel0_init(void)
 
 {
   sensorChannelTypeB_configInit
-            (0x592a2,(word *)&sensor_channel0_ram,
+            ((sensor_channel_config_t *)&DAT_000592a2,(word *)&sensor_channel0_ram,
              (table_interp_args_t *)&sensor_channel0_interp_state,&DAT_000592b2,&DAT_000592c4,0,
              (dword *)&sensor_channel0_filter_config_ptr,3,0x19,0x1a,&sensor_channel3_raw,
              &sensor_channel3_filtered,&sensor_channel3_fault_status);
@@ -7446,7 +7446,7 @@ void cm848_sensorChannel0_process(void)
 
 {
   sensorChannelTypeB_update
-            (0x592a2,(word *)&sensor_channel0_ram,
+            ((sensor_channel_config_t *)&DAT_000592a2,(word *)&sensor_channel0_ram,
              (table_interp_args_t *)&sensor_channel0_interp_state,&DAT_000592b2,&DAT_000592c4,0,
              (dword *)&sensor_channel0_filter_config_ptr,3,0x19,0x1a,&sensor_channel3_raw,
              &sensor_channel3_filtered,&sensor_channel3_fault_status);
@@ -7493,8 +7493,9 @@ void cm848_sensorChannel2_init(void)
 
 {
   sensorChannelTypeB_configInit
-            (0x59336,(word *)&sensor_channel2_ram,(table_interp_args_t *)&DAT_003fa028,&DAT_00059346
-             ,&DAT_00059358,0,(dword *)&PTR_DAT_003fa02a,4,0x43,0x42,&fuel_timing_sensor_raw,
+            ((sensor_channel_config_t *)&DAT_00059336,(word *)&sensor_channel2_ram,
+             (table_interp_args_t *)&DAT_003fa028,&DAT_00059346,&DAT_00059358,0,
+             (dword *)&PTR_DAT_003fa02a,4,0x43,0x42,&fuel_timing_sensor_raw,
              &fuel_timing_sensor_filtered,(word *)&sensor_channel4_fault_status);
   return;
 }
@@ -7509,8 +7510,9 @@ void cm848_sensorChannel2_process(void)
 
 {
   sensorChannelTypeB_update
-            (0x59336,(word *)&sensor_channel2_ram,(table_interp_args_t *)&DAT_003fa028,&DAT_00059346
-             ,&DAT_00059358,0,(dword *)&PTR_DAT_003fa02a,4,0x43,0x42,&fuel_timing_sensor_raw,
+            ((sensor_channel_config_t *)&DAT_00059336,(word *)&sensor_channel2_ram,
+             (table_interp_args_t *)&DAT_003fa028,&DAT_00059346,&DAT_00059358,0,
+             (dword *)&PTR_DAT_003fa02a,4,0x43,0x42,&fuel_timing_sensor_raw,
              &fuel_timing_sensor_filtered,(word *)&sensor_channel4_fault_status);
   return;
 }
@@ -7525,8 +7527,9 @@ void cm848_sensorChannel3_boostPressureInit(void)
 
 {
   sensorChannelTypeB_configInit
-            (0x5936a,(word *)&sensor_channel3_ram,(table_interp_args_t *)&DAT_003fa032,
-             &boost_pressure_linearization_x_axis,&boost_pressure_linearization_y_axis,0,
+            ((sensor_channel_config_t *)&boost_pressure_sensor_config,(word *)&sensor_channel3_ram,
+             (table_interp_args_t *)&DAT_003fa032,&boost_pressure_linearization_x_axis,
+             &boost_pressure_linearization_y_axis,0,
              (dword *)&PTR_boost_pressure_sensor_config_003fa034,1,8,9,&boost_pressure_sensor_raw,
              &boost_pressure_sensor_filtered,&map_sensor_fault_status);
   return;
@@ -7542,8 +7545,9 @@ void cm848_sensorChannel3_boostPressureProcess(void)
 
 {
   sensorChannelTypeB_update
-            (0x5936a,(word *)&sensor_channel3_ram,(table_interp_args_t *)&DAT_003fa032,
-             &boost_pressure_linearization_x_axis,&boost_pressure_linearization_y_axis,0,
+            ((sensor_channel_config_t *)&boost_pressure_sensor_config,(word *)&sensor_channel3_ram,
+             (table_interp_args_t *)&DAT_003fa032,&boost_pressure_linearization_x_axis,
+             &boost_pressure_linearization_y_axis,0,
              (dword *)&PTR_boost_pressure_sensor_config_003fa034,1,8,9,&boost_pressure_sensor_raw,
              &boost_pressure_sensor_filtered,&map_sensor_fault_status);
   return;
@@ -7559,9 +7563,10 @@ void cm848_sensorChannel4_init(void)
 
 {
   sensorChannelTypeB_configInit
-            (0x5939e,(word *)&sensor_channel4_ram,(table_interp_args_t *)&DAT_003fa03c,&DAT_000593ae
-             ,&DAT_000593c6,0,(dword *)&PTR_DAT_003fa03e,0x4d,0x288,0x289,(word *)&DAT_003fa046,
-             (word *)&DAT_003fa048,(word *)&DAT_003fa04a);
+            ((sensor_channel_config_t *)&DAT_0005939e,(word *)&sensor_channel4_ram,
+             (table_interp_args_t *)&DAT_003fa03c,&DAT_000593ae,&DAT_000593c6,0,
+             (dword *)&PTR_DAT_003fa03e,0x4d,0x288,0x289,(word *)&DAT_003fa046,(word *)&DAT_003fa048
+             ,(word *)&DAT_003fa04a);
   return;
 }
 
@@ -7575,9 +7580,10 @@ void cm848_sensorChannel4_process(void)
 
 {
   sensorChannelTypeB_update
-            (0x5939e,(word *)&sensor_channel4_ram,(table_interp_args_t *)&DAT_003fa03c,&DAT_000593ae
-             ,&DAT_000593c6,0,(dword *)&PTR_DAT_003fa03e,0x4d,0x288,0x289,(word *)&DAT_003fa046,
-             (word *)&DAT_003fa048,(word *)&DAT_003fa04a);
+            ((sensor_channel_config_t *)&DAT_0005939e,(word *)&sensor_channel4_ram,
+             (table_interp_args_t *)&DAT_003fa03c,&DAT_000593ae,&DAT_000593c6,0,
+             (dword *)&PTR_DAT_003fa03e,0x4d,0x288,0x289,(word *)&DAT_003fa046,(word *)&DAT_003fa048
+             ,(word *)&DAT_003fa04a);
   return;
 }
 
@@ -7623,9 +7629,10 @@ void cm848_sensorChannel6_init(void)
 
 {
   sensorChannelTypeB_configInit
-            (0x3fef12,(word *)&sensor_channel6_ram,(table_interp_args_t *)&DAT_003fa056,
-             &DAT_003fef22,&DAT_003fef4e,0,(dword *)&PTR_DAT_003fa058,0x6c,0x31c,0x31d,
-             &sensor_channel108_raw,&sensor_channel108_filtered,&sensor_channel108_fault_status);
+            ((sensor_channel_config_t *)&DAT_003fef12,(word *)&sensor_channel6_ram,
+             (table_interp_args_t *)&DAT_003fa056,&DAT_003fef22,&DAT_003fef4e,0,
+             (dword *)&PTR_DAT_003fa058,0x6c,0x31c,0x31d,&sensor_channel108_raw,
+             &sensor_channel108_filtered,&sensor_channel108_fault_status);
   return;
 }
 
@@ -7639,9 +7646,10 @@ void cm848_sensorChannel6_process(void)
 
 {
   sensorChannelTypeB_update
-            (0x3fef12,(word *)&sensor_channel6_ram,(table_interp_args_t *)&DAT_003fa056,
-             &DAT_003fef22,&DAT_003fef4e,0,(dword *)&PTR_DAT_003fa058,0x6c,0x31c,0x31d,
-             &sensor_channel108_raw,&sensor_channel108_filtered,&sensor_channel108_fault_status);
+            ((sensor_channel_config_t *)&DAT_003fef12,(word *)&sensor_channel6_ram,
+             (table_interp_args_t *)&DAT_003fa056,&DAT_003fef22,&DAT_003fef4e,0,
+             (dword *)&PTR_DAT_003fa058,0x6c,0x31c,0x31d,&sensor_channel108_raw,
+             &sensor_channel108_filtered,&sensor_channel108_fault_status);
   return;
 }
 
@@ -7685,9 +7693,10 @@ void cm848_sensorChannel8_init(void)
 
 {
   sensorChannelTypeB_configInit
-            (0x3fef7a,(word *)&sensor_channel8_ram,(table_interp_args_t *)&DAT_003fa06a,
-             &DAT_003fef8a,&DAT_003fefa2,0,(dword *)&PTR_DAT_003fa06c,0x6d,0x2a0,0x2a1,
-             &sensor_channel109_raw,&sensor_channel109_filtered,&sensor_channel109_fault_status);
+            ((sensor_channel_config_t *)&DAT_003fef7a,(word *)&sensor_channel8_ram,
+             (table_interp_args_t *)&DAT_003fa06a,&DAT_003fef8a,&DAT_003fefa2,0,
+             (dword *)&PTR_DAT_003fa06c,0x6d,0x2a0,0x2a1,&sensor_channel109_raw,
+             &sensor_channel109_filtered,&sensor_channel109_fault_status);
   return;
 }
 
@@ -7701,9 +7710,10 @@ void cm848_sensorChannel8_process(void)
 
 {
   sensorChannelTypeB_update
-            (0x3fef7a,(word *)&sensor_channel8_ram,(table_interp_args_t *)&DAT_003fa06a,
-             &DAT_003fef8a,&DAT_003fefa2,0,(dword *)&PTR_DAT_003fa06c,0x6d,0x2a0,0x2a1,
-             &sensor_channel109_raw,&sensor_channel109_filtered,&sensor_channel109_fault_status);
+            ((sensor_channel_config_t *)&DAT_003fef7a,(word *)&sensor_channel8_ram,
+             (table_interp_args_t *)&DAT_003fa06a,&DAT_003fef8a,&DAT_003fefa2,0,
+             (dword *)&PTR_DAT_003fa06c,0x6d,0x2a0,0x2a1,&sensor_channel109_raw,
+             &sensor_channel109_filtered,&sensor_channel109_fault_status);
   return;
 }
 
@@ -7777,9 +7787,10 @@ void cm848_sensorChannel11_init(void)
 
 {
   sensorChannelTypeB_configInit
-            (0x59596,(word *)&sensor_channel11_ram,(table_interp_args_t *)&DAT_003fa088,
-             &DAT_000595a6,&DAT_000595b8,0,(dword *)&PTR_DAT_003fa08a,10,0xc,0xd,
-             &sensor_channel10_raw,&sensor_channel10_filtered,&sensor_channel10_fault_status);
+            ((sensor_channel_config_t *)&DAT_00059596,(word *)&sensor_channel11_ram,
+             (table_interp_args_t *)&DAT_003fa088,&DAT_000595a6,&DAT_000595b8,0,
+             (dword *)&PTR_DAT_003fa08a,10,0xc,0xd,&sensor_channel10_raw,&sensor_channel10_filtered,
+             &sensor_channel10_fault_status);
   return;
 }
 
@@ -7793,9 +7804,10 @@ void cm848_sensorChannel11_process(void)
 
 {
   sensorChannelTypeB_update
-            (0x59596,(word *)&sensor_channel11_ram,(table_interp_args_t *)&DAT_003fa088,
-             &DAT_000595a6,&DAT_000595b8,0,(dword *)&PTR_DAT_003fa08a,10,0xc,0xd,
-             &sensor_channel10_raw,&sensor_channel10_filtered,&sensor_channel10_fault_status);
+            ((sensor_channel_config_t *)&DAT_00059596,(word *)&sensor_channel11_ram,
+             (table_interp_args_t *)&DAT_003fa088,&DAT_000595a6,&DAT_000595b8,0,
+             (dword *)&PTR_DAT_003fa08a,10,0xc,0xd,&sensor_channel10_raw,&sensor_channel10_filtered,
+             &sensor_channel10_fault_status);
   return;
 }
 
@@ -7809,9 +7821,10 @@ void cm848_sensorChannel12_init(void)
 
 {
   sensorChannelTypeB_configInit
-            (0x595ca,(word *)&sensor_channel12_ram,(table_interp_args_t *)&DAT_003fa092,
-             &DAT_000595da,&DAT_000595ec,0,(dword *)&PTR_DAT_003fa094,8,0x4d,0x4e,
-             &sensor_channel8_raw,&sensor_channel8_filtered,&sensor_channel8_fault_status);
+            ((sensor_channel_config_t *)&DAT_000595ca,(word *)&sensor_channel12_ram,
+             (table_interp_args_t *)&DAT_003fa092,&DAT_000595da,&DAT_000595ec,0,
+             (dword *)&PTR_DAT_003fa094,8,0x4d,0x4e,&sensor_channel8_raw,&sensor_channel8_filtered,
+             &sensor_channel8_fault_status);
   return;
 }
 
@@ -7825,9 +7838,10 @@ void cm848_sensorChannel12_process(void)
 
 {
   sensorChannelTypeB_update
-            (0x595ca,(word *)&sensor_channel12_ram,(table_interp_args_t *)&DAT_003fa092,
-             &DAT_000595da,&DAT_000595ec,0,(dword *)&PTR_DAT_003fa094,8,0x4d,0x4e,
-             &sensor_channel8_raw,&sensor_channel8_filtered,&sensor_channel8_fault_status);
+            ((sensor_channel_config_t *)&DAT_000595ca,(word *)&sensor_channel12_ram,
+             (table_interp_args_t *)&DAT_003fa092,&DAT_000595da,&DAT_000595ec,0,
+             (dword *)&PTR_DAT_003fa094,8,0x4d,0x4e,&sensor_channel8_raw,&sensor_channel8_filtered,
+             &sensor_channel8_fault_status);
   return;
 }
 
@@ -7841,9 +7855,10 @@ void cm848_sensorChannel13_init(void)
 
 {
   sensorChannelTypeB_configInit
-            (0x3fefba,(word *)&sensor_channel13_ram,(table_interp_args_t *)&DAT_003fa09c,
-             &DAT_000595fe,&DAT_00059610,0,(dword *)&PTR_DAT_003fa09e,0xd,10,0xb,
-             &sensor_channel13_raw,&sensor_channel13_filtered,&sensor_channel13_fault_status);
+            ((sensor_channel_config_t *)&DAT_003fefba,(word *)&sensor_channel13_ram,
+             (table_interp_args_t *)&DAT_003fa09c,&DAT_000595fe,&DAT_00059610,0,
+             (dword *)&PTR_DAT_003fa09e,0xd,10,0xb,&sensor_channel13_raw,&sensor_channel13_filtered,
+             &sensor_channel13_fault_status);
   return;
 }
 
@@ -7857,9 +7872,10 @@ void cm848_sensorChannel13_process(void)
 
 {
   sensorChannelTypeB_update
-            (0x3fefba,(word *)&sensor_channel13_ram,(table_interp_args_t *)&DAT_003fa09c,
-             &DAT_000595fe,&DAT_00059610,0,(dword *)&PTR_DAT_003fa09e,0xd,10,0xb,
-             &sensor_channel13_raw,&sensor_channel13_filtered,&sensor_channel13_fault_status);
+            ((sensor_channel_config_t *)&DAT_003fefba,(word *)&sensor_channel13_ram,
+             (table_interp_args_t *)&DAT_003fa09c,&DAT_000595fe,&DAT_00059610,0,
+             (dword *)&PTR_DAT_003fa09e,0xd,10,0xb,&sensor_channel13_raw,&sensor_channel13_filtered,
+             &sensor_channel13_fault_status);
   return;
 }
 
@@ -7873,9 +7889,10 @@ void cm848_sensorChannel14_init(void)
 
 {
   sensorChannelTypeB_configInit
-            (0x59622,(word *)&sensor_channel14_ram,(table_interp_args_t *)&DAT_003fa0a6,
-             &DAT_00059632,&DAT_00059644,0,(dword *)&PTR_DAT_003fa0a8,0x2a,0x152,0x151,
-             &sensor_channel42_raw,&sensor_channel42_filtered,&sensor_channel42_fault_status);
+            ((sensor_channel_config_t *)&DAT_00059622,(word *)&sensor_channel14_ram,
+             (table_interp_args_t *)&DAT_003fa0a6,&DAT_00059632,&DAT_00059644,0,
+             (dword *)&PTR_DAT_003fa0a8,0x2a,0x152,0x151,&sensor_channel42_raw,
+             &sensor_channel42_filtered,&sensor_channel42_fault_status);
   return;
 }
 
@@ -7889,9 +7906,10 @@ void cm848_sensorChannel14_process(void)
 
 {
   sensorChannelTypeB_update
-            (0x59622,(word *)&sensor_channel14_ram,(table_interp_args_t *)&DAT_003fa0a6,
-             &DAT_00059632,&DAT_00059644,0,(dword *)&PTR_DAT_003fa0a8,0x2a,0x152,0x151,
-             &sensor_channel42_raw,&sensor_channel42_filtered,&sensor_channel42_fault_status);
+            ((sensor_channel_config_t *)&DAT_00059622,(word *)&sensor_channel14_ram,
+             (table_interp_args_t *)&DAT_003fa0a6,&DAT_00059632,&DAT_00059644,0,
+             (dword *)&PTR_DAT_003fa0a8,0x2a,0x152,0x151,&sensor_channel42_raw,
+             &sensor_channel42_filtered,&sensor_channel42_fault_status);
   return;
 }
 
@@ -7905,9 +7923,10 @@ void cm848_sensorChannel15_init(void)
 
 {
   sensorChannelTypeB_configInit
-            (0x59692,(word *)&sensor_channel15_ram,(table_interp_args_t *)&DAT_003fa0b0,
-             &DAT_000596a2,&DAT_000596ba,0,(dword *)&PTR_DAT_003fa0b2,0x15,0xc4,0xc5,
-             &sensor_channel21_raw,&sensor_channel21_filtered,&sensor_channel21_fault_status);
+            ((sensor_channel_config_t *)&DAT_00059692,(word *)&sensor_channel15_ram,
+             (table_interp_args_t *)&DAT_003fa0b0,&DAT_000596a2,&DAT_000596ba,0,
+             (dword *)&PTR_DAT_003fa0b2,0x15,0xc4,0xc5,&sensor_channel21_raw,
+             &sensor_channel21_filtered,&sensor_channel21_fault_status);
   return;
 }
 
@@ -7921,9 +7940,10 @@ void cm848_sensorChannel15_process(void)
 
 {
   sensorChannelTypeB_update
-            (0x59692,(word *)&sensor_channel15_ram,(table_interp_args_t *)&DAT_003fa0b0,
-             &DAT_000596a2,&DAT_000596ba,0,(dword *)&PTR_DAT_003fa0b2,0x15,0xc4,0xc5,
-             &sensor_channel21_raw,&sensor_channel21_filtered,&sensor_channel21_fault_status);
+            ((sensor_channel_config_t *)&DAT_00059692,(word *)&sensor_channel15_ram,
+             (table_interp_args_t *)&DAT_003fa0b0,&DAT_000596a2,&DAT_000596ba,0,
+             (dword *)&PTR_DAT_003fa0b2,0x15,0xc4,0xc5,&sensor_channel21_raw,
+             &sensor_channel21_filtered,&sensor_channel21_fault_status);
   return;
 }
 
@@ -7938,14 +7958,14 @@ void cm848_sensorChannel16_init(void)
 {
   if ((j1939_governor_feature_byte & 0x10) == 0) {
     sensorChannelTypeB_configInit
-              (0x3fefca,&fuel_demand_table_xaxis_base,
+              ((sensor_channel_config_t *)&DAT_003fefca,&fuel_demand_table_xaxis_base,
                (table_interp_args_t *)&sensor_channel16_interp_state,&DAT_000596d2,&DAT_000596fe,0,
                (dword *)&sensor_channel16_filter_config_ptr,0xf,0x36,0x37,&sensor_channel15_raw,
                &sensor_channel15_filtered,(word *)&sensor_channel15_fault_status);
   }
   else {
     sensorChannelTypeB_configInit
-              (0x3fefda,&fuel_demand_table_xaxis_base,
+              ((sensor_channel_config_t *)&DAT_003fefda,&fuel_demand_table_xaxis_base,
                (table_interp_args_t *)&sensor_channel16_interp_state,&DAT_000596e8,&DAT_00059714,0,
                (dword *)&sensor_channel16_filter_config_ptr,0xf,0x36,0x37,&sensor_channel15_raw,
                &sensor_channel15_filtered,(word *)&sensor_channel15_fault_status);
@@ -7964,14 +7984,14 @@ void cm848_sensorChannel16_process(void)
 {
   if ((j1939_governor_feature_byte & 0x10) == 0) {
     sensorChannelTypeB_update
-              (0x3fefca,&fuel_demand_table_xaxis_base,
+              ((sensor_channel_config_t *)&DAT_003fefca,&fuel_demand_table_xaxis_base,
                (table_interp_args_t *)&sensor_channel16_interp_state,&DAT_000596d2,&DAT_000596fe,0,
                (dword *)&sensor_channel16_filter_config_ptr,0xf,0x36,0x37,&sensor_channel15_raw,
                &sensor_channel15_filtered,(word *)&sensor_channel15_fault_status);
   }
   else {
     sensorChannelTypeB_update
-              (0x3fefda,&fuel_demand_table_xaxis_base,
+              ((sensor_channel_config_t *)&DAT_003fefda,&fuel_demand_table_xaxis_base,
                (table_interp_args_t *)&sensor_channel16_interp_state,&DAT_000596e8,&DAT_00059714,0,
                (dword *)&sensor_channel16_filter_config_ptr,0xf,0x36,0x37,&sensor_channel15_raw,
                &sensor_channel15_filtered,(word *)&sensor_channel15_fault_status);
@@ -7992,7 +8012,7 @@ void cm848_sensorChannel16BProcessOilPressure(void)
   word *in_stack_00000014;
   
   sensorChannelTypeB_update
-            (0x3fefca,&fuel_demand_table_xaxis_base,
+            ((sensor_channel_config_t *)&DAT_003fefca,&fuel_demand_table_xaxis_base,
              (table_interp_args_t *)&sensor_channel16_interp_state,&DAT_000596d2,&DAT_000596fe,0,
              (dword *)&sensor_channel16_filter_config_ptr,0xf,0x36,0x37,in_stack_00000010,
              in_stack_00000014,(word *)&sensor_channel15_fault_status);
@@ -33446,9 +33466,10 @@ void cm848_processSensorLookupTable5(void)
 
 {
   sensorChannelTypeB_configInit
-            (0x5aaf0,(word *)&sensor_channel_5_state,(table_interp_args_t *)&DAT_003fb1de,
-             &DAT_0005ab00,&DAT_0005ab12,0,(dword *)&PTR_DAT_003fb1e0,0x47,0x180,0x181,
-             &sensor_channel71_raw,&sensor_channel71_filtered,&sensor_channel71_fault_status);
+            ((sensor_channel_config_t *)&DAT_0005aaf0,(word *)&sensor_channel_5_state,
+             (table_interp_args_t *)&DAT_003fb1de,&DAT_0005ab00,&DAT_0005ab12,0,
+             (dword *)&PTR_DAT_003fb1e0,0x47,0x180,0x181,&sensor_channel71_raw,
+             &sensor_channel71_filtered,&sensor_channel71_fault_status);
   return;
 }
 
@@ -33462,9 +33483,10 @@ void cm848_initSensorLookupTable5(void)
 
 {
   sensorChannelTypeB_update
-            (0x5aaf0,(word *)&sensor_channel_5_state,(table_interp_args_t *)&DAT_003fb1de,
-             &DAT_0005ab00,&DAT_0005ab12,0,(dword *)&PTR_DAT_003fb1e0,0x47,0x180,0x181,
-             &sensor_channel71_raw,&sensor_channel71_filtered,&sensor_channel71_fault_status);
+            ((sensor_channel_config_t *)&DAT_0005aaf0,(word *)&sensor_channel_5_state,
+             (table_interp_args_t *)&DAT_003fb1de,&DAT_0005ab00,&DAT_0005ab12,0,
+             (dword *)&PTR_DAT_003fb1e0,0x47,0x180,0x181,&sensor_channel71_raw,
+             &sensor_channel71_filtered,&sensor_channel71_fault_status);
   return;
 }
 
@@ -33524,10 +33546,11 @@ void cm848_processCruiseSwitchChannel(void)
 
 {
   sensorChannelTypeB_configInit
-            (0x5ab84,(word *)&cruise_switch_channel_state,
-             (table_interp_args_t *)&cruise_switch_interp_index,cruise_switch_adc_band_table_x,
-             cruise_switch_button_code_table_y,0,(dword *)&cruise_switch_filter_coeff_ptr,0x2f,0x175
-             ,0x176,&cruise_switch_adc_raw,&cruise_switch_adc_filtered,&cruise_switch_fault_status);
+            ((sensor_channel_config_t *)&cruise_switch_sensor_config,
+             (word *)&cruise_switch_channel_state,(table_interp_args_t *)&cruise_switch_interp_index
+             ,cruise_switch_adc_band_table_x,cruise_switch_button_code_table_y,0,
+             (dword *)&cruise_switch_filter_coeff_ptr,0x2f,0x175,0x176,&cruise_switch_adc_raw,
+             &cruise_switch_adc_filtered,&cruise_switch_fault_status);
   return;
 }
 
@@ -33544,10 +33567,11 @@ void cm848_initCruiseSwitchChannel(void)
 
 {
   sensorChannelTypeB_update
-            (0x5ab84,(word *)&cruise_switch_channel_state,
-             (table_interp_args_t *)&cruise_switch_interp_index,cruise_switch_adc_band_table_x,
-             cruise_switch_button_code_table_y,0,(dword *)&cruise_switch_filter_coeff_ptr,0x2f,0x175
-             ,0x176,&cruise_switch_adc_raw,&cruise_switch_adc_filtered,&cruise_switch_fault_status);
+            ((sensor_channel_config_t *)&cruise_switch_sensor_config,
+             (word *)&cruise_switch_channel_state,(table_interp_args_t *)&cruise_switch_interp_index
+             ,cruise_switch_adc_band_table_x,cruise_switch_button_code_table_y,0,
+             (dword *)&cruise_switch_filter_coeff_ptr,0x2f,0x175,0x176,&cruise_switch_adc_raw,
+             &cruise_switch_adc_filtered,&cruise_switch_fault_status);
   return;
 }
 
@@ -33561,9 +33585,10 @@ void cm848_processSensorLookupTable3(void)
 
 {
   sensorChannelTypeB_configInit
-            (0x5acd8,(word *)&sensor_channel_8_state,(table_interp_args_t *)&DAT_003fb1fc,
-             &DAT_0005ace8,&DAT_0005acfa,0,(dword *)&PTR_DAT_003fb1fe,0x61,0x15c,0x15b,
-             &sensor_channel97_raw,&sensor_channel97_filtered,&sensor_channel97_fault_status);
+            ((sensor_channel_config_t *)&DAT_0005acd8,(word *)&sensor_channel_8_state,
+             (table_interp_args_t *)&DAT_003fb1fc,&DAT_0005ace8,&DAT_0005acfa,0,
+             (dword *)&PTR_DAT_003fb1fe,0x61,0x15c,0x15b,&sensor_channel97_raw,
+             &sensor_channel97_filtered,&sensor_channel97_fault_status);
   return;
 }
 
@@ -33577,9 +33602,10 @@ void cm848_initSensorLookupTable3(void)
 
 {
   sensorChannelTypeB_update
-            (0x5acd8,(word *)&sensor_channel_8_state,(table_interp_args_t *)&DAT_003fb1fc,
-             &DAT_0005ace8,&DAT_0005acfa,0,(dword *)&PTR_DAT_003fb1fe,0x61,0x15c,0x15b,
-             &sensor_channel97_raw,&sensor_channel97_filtered,&sensor_channel97_fault_status);
+            ((sensor_channel_config_t *)&DAT_0005acd8,(word *)&sensor_channel_8_state,
+             (table_interp_args_t *)&DAT_003fb1fc,&DAT_0005ace8,&DAT_0005acfa,0,
+             (dword *)&PTR_DAT_003fb1fe,0x61,0x15c,0x15b,&sensor_channel97_raw,
+             &sensor_channel97_filtered,&sensor_channel97_fault_status);
   return;
 }
 
@@ -33593,9 +33619,10 @@ void cm848_processSensorLookupTable2(void)
 
 {
   sensorChannelTypeB_configInit
-            (0x5ad0c,(word *)&sensor_channel_9_state,(table_interp_args_t *)&DAT_003fb206,
-             &DAT_0005ad1c,&DAT_0005ad2e,0,(dword *)&PTR_DAT_003fb208,0x62,0x15e,0x15d,
-             &sensor_channel98_raw,&sensor_channel98_filtered,&sensor_channel98_fault_status);
+            ((sensor_channel_config_t *)&DAT_0005ad0c,(word *)&sensor_channel_9_state,
+             (table_interp_args_t *)&DAT_003fb206,&DAT_0005ad1c,&DAT_0005ad2e,0,
+             (dword *)&PTR_DAT_003fb208,0x62,0x15e,0x15d,&sensor_channel98_raw,
+             &sensor_channel98_filtered,&sensor_channel98_fault_status);
   return;
 }
 
@@ -33609,9 +33636,10 @@ void cm848_initSensorLookupTable2(void)
 
 {
   sensorChannelTypeB_update
-            (0x5ad0c,(word *)&sensor_channel_9_state,(table_interp_args_t *)&DAT_003fb206,
-             &DAT_0005ad1c,&DAT_0005ad2e,0,(dword *)&PTR_DAT_003fb208,0x62,0x15e,0x15d,
-             &sensor_channel98_raw,&sensor_channel98_filtered,&sensor_channel98_fault_status);
+            ((sensor_channel_config_t *)&DAT_0005ad0c,(word *)&sensor_channel_9_state,
+             (table_interp_args_t *)&DAT_003fb206,&DAT_0005ad1c,&DAT_0005ad2e,0,
+             (dword *)&PTR_DAT_003fb208,0x62,0x15e,0x15d,&sensor_channel98_raw,
+             &sensor_channel98_filtered,&sensor_channel98_fault_status);
   return;
 }
 
@@ -33625,9 +33653,10 @@ void cm848_processSensorLookupTable0(void)
 
 {
   sensorChannelTypeB_configInit
-            (0x5ad40,(word *)&sensor_channel_10_state,(table_interp_args_t *)&DAT_003fb210,
-             &DAT_0005ad50,&DAT_0005ad86,0,(dword *)&PTR_DAT_003fb212,0x4c,0x19c,0x19d,
-             &sensor_channel76_raw,&sensor_channel76_filtered,&sensor_channel76_fault_status);
+            ((sensor_channel_config_t *)&DAT_0005ad40,(word *)&sensor_channel_10_state,
+             (table_interp_args_t *)&DAT_003fb210,&DAT_0005ad50,&DAT_0005ad86,0,
+             (dword *)&PTR_DAT_003fb212,0x4c,0x19c,0x19d,&sensor_channel76_raw,
+             &sensor_channel76_filtered,&sensor_channel76_fault_status);
   return;
 }
 
@@ -33641,9 +33670,10 @@ void cm848_initSensorLookupTable1(void)
 
 {
   sensorChannelTypeB_update
-            (0x5ad40,(word *)&sensor_channel_10_state,(table_interp_args_t *)&DAT_003fb210,
-             &DAT_0005ad50,&DAT_0005ad86,0,(dword *)&PTR_DAT_003fb212,0x4c,0x19c,0x19d,
-             &sensor_channel76_raw,&sensor_channel76_filtered,&sensor_channel76_fault_status);
+            ((sensor_channel_config_t *)&DAT_0005ad40,(word *)&sensor_channel_10_state,
+             (table_interp_args_t *)&DAT_003fb210,&DAT_0005ad50,&DAT_0005ad86,0,
+             (dword *)&PTR_DAT_003fb212,0x4c,0x19c,0x19d,&sensor_channel76_raw,
+             &sensor_channel76_filtered,&sensor_channel76_fault_status);
   return;
 }
 
@@ -33657,9 +33687,10 @@ void cm848_processSensorLookupTable1(void)
 
 {
   sensorChannelTypeB_configInit
-            (0x5adbc,(word *)&sensor_channel_11_state,(table_interp_args_t *)&DAT_003fb21a,
-             &DAT_0005adcc,&DAT_0005ade2,0,(dword *)&PTR_DAT_003fb21c,0x66,299,300,
-             &sensor_channel102_raw,&sensor_channel102_filtered,&sensor_channel102_fault_status);
+            ((sensor_channel_config_t *)&DAT_0005adbc,(word *)&sensor_channel_11_state,
+             (table_interp_args_t *)&DAT_003fb21a,&DAT_0005adcc,&DAT_0005ade2,0,
+             (dword *)&PTR_DAT_003fb21c,0x66,299,300,&sensor_channel102_raw,
+             &sensor_channel102_filtered,&sensor_channel102_fault_status);
   return;
 }
 
@@ -33673,9 +33704,10 @@ void cm848_initSensorLookupTableInit1(void)
 
 {
   sensorChannelTypeB_update
-            (0x5adbc,(word *)&sensor_channel_11_state,(table_interp_args_t *)&DAT_003fb21a,
-             &DAT_0005adcc,&DAT_0005ade2,0,(dword *)&PTR_DAT_003fb21c,0x66,299,300,
-             &sensor_channel102_raw,&sensor_channel102_filtered,&sensor_channel102_fault_status);
+            ((sensor_channel_config_t *)&DAT_0005adbc,(word *)&sensor_channel_11_state,
+             (table_interp_args_t *)&DAT_003fb21a,&DAT_0005adcc,&DAT_0005ade2,0,
+             (dword *)&PTR_DAT_003fb21c,0x66,299,300,&sensor_channel102_raw,
+             &sensor_channel102_filtered,&sensor_channel102_fault_status);
   return;
 }
 
@@ -42612,9 +42644,10 @@ void cm848_initProtectionParameter1(void)
 
 {
   sensorChannelTypeB_configInit
-            (0x5b55c,(word *)&protection_param_1_channel_state,(table_interp_args_t *)&DAT_003fb564,
-             &DAT_0006429c,&DAT_000642a2,0,(dword *)&DAT_003fb566,0x36,0x148,0x149,
-             &sensor_channel54_raw,&sensor_channel54_filtered,&sensor_channel54_fault_status);
+            ((sensor_channel_config_t *)&DAT_0005b55c,(word *)&protection_param_1_channel_state,
+             (table_interp_args_t *)&DAT_003fb564,&DAT_0006429c,&DAT_000642a2,0,
+             (dword *)&DAT_003fb566,0x36,0x148,0x149,&sensor_channel54_raw,
+             &sensor_channel54_filtered,&sensor_channel54_fault_status);
   return;
 }
 
@@ -42628,9 +42661,10 @@ void cm848_processProtectionParameter1(void)
 
 {
   sensorChannelTypeB_update
-            (0x5b55c,(word *)&protection_param_1_channel_state,(table_interp_args_t *)&DAT_003fb564,
-             &DAT_0006429c,&DAT_000642a2,0,(dword *)&DAT_003fb566,0x36,0x148,0x149,
-             &sensor_channel54_raw,&sensor_channel54_filtered,&sensor_channel54_fault_status);
+            ((sensor_channel_config_t *)&DAT_0005b55c,(word *)&protection_param_1_channel_state,
+             (table_interp_args_t *)&DAT_003fb564,&DAT_0006429c,&DAT_000642a2,0,
+             (dword *)&DAT_003fb566,0x36,0x148,0x149,&sensor_channel54_raw,
+             &sensor_channel54_filtered,&sensor_channel54_fault_status);
   return;
 }
 
@@ -42644,9 +42678,10 @@ void cm848_initProtectionParameter2(void)
 
 {
   sensorChannelTypeB_configInit
-            (0x5b56c,(word *)&protection_param_2_channel_state,(table_interp_args_t *)&DAT_003fb56e,
-             &DAT_000642a8,&DAT_000642ae,0,(dword *)&DAT_003fb570,0x37,0x14a,0x14b,
-             &sensor_channel55_raw,&sensor_channel55_filtered,&sensor_channel55_fault_status);
+            ((sensor_channel_config_t *)&DAT_0005b56c,(word *)&protection_param_2_channel_state,
+             (table_interp_args_t *)&DAT_003fb56e,&DAT_000642a8,&DAT_000642ae,0,
+             (dword *)&DAT_003fb570,0x37,0x14a,0x14b,&sensor_channel55_raw,
+             &sensor_channel55_filtered,&sensor_channel55_fault_status);
   return;
 }
 
@@ -42660,9 +42695,10 @@ void cm848_processProtectionParameter2(void)
 
 {
   sensorChannelTypeB_update
-            (0x5b56c,(word *)&protection_param_2_channel_state,(table_interp_args_t *)&DAT_003fb56e,
-             &DAT_000642a8,&DAT_000642ae,0,(dword *)&DAT_003fb570,0x37,0x14a,0x14b,
-             &sensor_channel55_raw,&sensor_channel55_filtered,&sensor_channel55_fault_status);
+            ((sensor_channel_config_t *)&DAT_0005b56c,(word *)&protection_param_2_channel_state,
+             (table_interp_args_t *)&DAT_003fb56e,&DAT_000642a8,&DAT_000642ae,0,
+             (dword *)&DAT_003fb570,0x37,0x14a,0x14b,&sensor_channel55_raw,
+             &sensor_channel55_filtered,&sensor_channel55_fault_status);
   return;
 }
 
@@ -58789,98 +58825,104 @@ void cm848_protection_update_configBundle(void)
 // Function: sensorChannelTypeB_configInit @ 0x005012dc
 //
 
-/* review-function-readability reviewed 2026-06-12 - Readability High Accuracy Confidence High.
-   Renamed 2 globals: per_cylinder_timing_offset_table→sensor_channel_filtered_output (43 refs)
-   and cylinder_timing_demand_array→sensor_channel_diag_override (25 refs + type fix). Added
-   13-param PowerPC prototype; params 4-6 passed but unused. */
+/* WARNING: Unable to use type for symbol recovery_decrement */
+/* review-function-readability reviewed 2026-06-12 - Readability MEDIUM (irreducible
+   converging-epilogue gotos + 3 split-remnant scratch temps Ghidra will not let CSV name) Accuracy
+   Confidence High. config_ptr typed as sensor_channel_config_t* (7 default/threshold/debounce
+   fields render); DAT_003fd8e8 -> governor_temp_protection_disable; 11 locals named; 2 array
+   globals renamed. 13-param PowerPC prototype; params 4-6 passed but unused. */
 
 void sensorChannelTypeB_configInit
-               (dword config_ptr,word *state_ptr,table_interp_args_t *interp_args_ptr,
-               void *table_ptr,void *axes_ptr,dword mode_flag,dword *ema_state_ptr,
-               dword channel_index,dword high_fault_bit,dword low_fault_bit,word *raw_output_ptr,
-               word *filtered_output_ptr,word *fault_output_ptr)
+               (sensor_channel_config_t *config_ptr,word *state_ptr,
+               table_interp_args_t *interp_args_ptr,void *table_ptr,void *axes_ptr,dword mode_flag,
+               dword *ema_state_ptr,dword channel_index,dword high_fault_bit,dword low_fault_bit,
+               word *raw_output_ptr,word *filtered_output_ptr,word *fault_output_ptr)
 
 {
   ushort uVar1;
-  ushort uVar2;
-  short sVar4;
+  word validation_state;
+  dword dispatch_index;
+  word sensor_raw;
+  word ema_result;
+  word wVar2;
+  dword low_fault_word_index;
+  dword high_fault_word_index;
+  dword channel_word_index;
+  dword debounce_transition_state;
+  dword sensor_value;
   uint uVar3;
-  word wVar5;
-  word wVar6;
-  int iVar7;
-  int iVar8;
-  int iVar9;
-  uint unaff_r29;
-  uint uVar10;
+  word scratch16;
+  ushort recovery_decrement;
   
-  iVar9 = (int)channel_index >> 4;
-  uVar10 = 1 << (channel_index +
-                 (iVar9 + (uint)((int)channel_index < 0 && (channel_index & 0xf) != 0)) * -0x10 &
-                0x3f);
-  iVar8 = (int)high_fault_bit >> 4;
-  iVar7 = (int)low_fault_bit >> 4;
-  if (((&sensor_channel_enable_flags)[iVar9] & uVar10) == 0) {
-    uVar1 = *(ushort *)(config_ptr + 2);
+  channel_word_index = (int)channel_index >> 4;
+  sensor_value = 1 << (channel_index +
+                       (channel_word_index + ((int)channel_index < 0 && (channel_index & 0xf) != 0))
+                       * -0x10 & 0x3f);
+  high_fault_word_index = (int)high_fault_bit >> 4;
+  low_fault_word_index = (int)low_fault_bit >> 4;
+  if (((&sensor_channel_enable_flags)[channel_word_index] & sensor_value) == 0) {
+    uVar1 = config_ptr->default_value;
     state_ptr[1] = uVar1;
     ema_state_ptr[1] = (uint)uVar1 << 0x10;
-    wVar5 = exponentialMovingAverage(uVar1,ema_state_ptr);
-    (&sensor_channel_filtered_output)[channel_index] = wVar5;
+    wVar2 = exponentialMovingAverage(uVar1,ema_state_ptr);
+    (&sensor_channel_filtered_output)[channel_index] = wVar2;
     *fault_output_ptr = 0x100;
-    (&system_status_flags_t_003fe974.enable_state)[iVar8] =
-         (&system_status_flags_t_003fe974.enable_state)[iVar8] &
+    (&system_status_flags_t_003fe974.enable_state)[high_fault_word_index] =
+         (&system_status_flags_t_003fe974.enable_state)[high_fault_word_index] &
          ~(ushort)(1 << (high_fault_bit & 0xf));
-    (&fault_active_status_array)[iVar8] =
-         (&fault_active_status_array)[iVar8] & ~(ushort)(1 << (high_fault_bit & 0xf));
-    (&system_status_flags_t_003fe974.enable_state)[iVar7] =
-         (&system_status_flags_t_003fe974.enable_state)[iVar7] &
+    (&fault_active_status_array)[high_fault_word_index] =
+         (&fault_active_status_array)[high_fault_word_index] &
+         ~(ushort)(1 << (high_fault_bit & 0xf));
+    (&system_status_flags_t_003fe974.enable_state)[low_fault_word_index] =
+         (&system_status_flags_t_003fe974.enable_state)[low_fault_word_index] &
          ~(ushort)(1 << (low_fault_bit & 0xf));
-    (&fault_active_status_array)[iVar7] =
-         (&fault_active_status_array)[iVar7] & ~(ushort)(1 << (low_fault_bit & 0xf));
+    (&fault_active_status_array)[low_fault_word_index] =
+         (&fault_active_status_array)[low_fault_word_index] & ~(ushort)(1 << (low_fault_bit & 0xf));
     goto LAB_00501b1c;
   }
-  if (((&fuel_demand_feature_flags)[iVar9] & uVar10) != 0) {
-    uVar1 = state_ptr[3];
-    ema_state_ptr[1] = (uint)uVar1 << 0x10;
-    (&sensor_channel_filtered_output)[channel_index] = uVar1;
+  if (((&fuel_demand_feature_flags)[channel_word_index] & sensor_value) != 0) {
+    scratch16 = state_ptr[3];
+    ema_state_ptr[1] = (uint)scratch16 << 0x10;
+    (&sensor_channel_filtered_output)[channel_index] = scratch16;
     *fault_output_ptr = 0;
     goto LAB_00501b1c;
   }
   if ((((channel_index == 0x15) || (channel_index == 0x2a)) || (channel_index == 0x2b)) ||
      (channel_index == 0x1c)) {
-    sVar4 = 0;
+    validation_state = 0;
   }
   else {
-    sVar4 = sensorChannelConditionValidator(channel_index);
+    validation_state = sensorChannelConditionValidator(channel_index);
   }
-  if (((&diag_feature_flags)[iVar9] & uVar10) == 0) {
+  if (((&diag_feature_flags)[channel_word_index] & sensor_value) == 0) {
     if (qadc_channel_index_table[channel_index] < 0x81) {
       uVar3 = (uint)qadc_channel_index_table[channel_index];
     }
     else {
       uVar3 = 0;
     }
-    wVar5 = *(word *)(&qadc_channel_dispatch_table)[uVar3 * 2];
+    wVar2 = *(word *)(&qadc_channel_dispatch_table)[uVar3 * 2];
   }
   else {
-    wVar5 = (&sensor_channel_diag_override)[channel_index];
+    wVar2 = (&sensor_channel_diag_override)[channel_index];
   }
-  *state_ptr = wVar5;
+  *state_ptr = wVar2;
   if ((&sensor_channel_type_table)[channel_index] == 0) {
-    if (((&diag_feature_flags)[iVar9] & uVar10) == 0) {
+    if (((&diag_feature_flags)[channel_word_index] & sensor_value) == 0) {
       if (qadc_channel_index_table[channel_index] < 0x81) {
-        uVar10 = (uint)qadc_channel_index_table[channel_index];
+        uVar3 = (uint)qadc_channel_index_table[channel_index];
       }
       else {
-        uVar10 = 0;
+        uVar3 = 0;
       }
-      uVar10 = (uint)*(ushort *)(&qadc_channel_dispatch_table)[uVar10 * 2];
+      uVar3 = (uint)*(ushort *)(&qadc_channel_dispatch_table)[uVar3 * 2];
     }
     else {
-      uVar10 = (uint)(&sensor_channel_diag_override)[channel_index];
+      uVar3 = (uint)(&sensor_channel_diag_override)[channel_index];
     }
   }
   else {
-    if (((&diag_feature_flags)[iVar9] & uVar10) == 0) {
+    if (((&diag_feature_flags)[channel_word_index] & sensor_value) == 0) {
       if (qadc_channel_index_table[channel_index] < 0x81) {
         uVar3 = (uint)qadc_channel_index_table[channel_index];
       }
@@ -58893,149 +58935,155 @@ void sensorChannelTypeB_configInit
       uVar1 = (&sensor_channel_diag_override)[channel_index];
     }
     if ((&sensor_channel_type_table)[channel_index] < 0x81) {
-      uVar3 = (uint)(&sensor_channel_type_table)[channel_index];
+      dispatch_index = (dword)(&sensor_channel_type_table)[channel_index];
     }
     else {
-      uVar3 = 0;
+      dispatch_index = 0;
     }
     if ((((uint)uVar1 * (uint)sensor_channel_ratio_scale) /
-         (uint)(&sensor_channel_filtered_output)[uVar3] & 0xffff) < 0x3ff) {
-      if (((&diag_feature_flags)[iVar9] & uVar10) == 0) {
+         (uint)(&sensor_channel_filtered_output)[dispatch_index] & 0xffff) < 0x3ff) {
+      if (((&diag_feature_flags)[channel_word_index] & sensor_value) == 0) {
         if (qadc_channel_index_table[channel_index] < 0x81) {
-          uVar10 = (uint)qadc_channel_index_table[channel_index];
+          uVar3 = (uint)qadc_channel_index_table[channel_index];
         }
         else {
-          uVar10 = 0;
+          uVar3 = 0;
         }
-        uVar1 = *(ushort *)(&qadc_channel_dispatch_table)[uVar10 * 2];
+        uVar1 = *(ushort *)(&qadc_channel_dispatch_table)[uVar3 * 2];
       }
       else {
         uVar1 = (&sensor_channel_diag_override)[channel_index];
       }
       if ((&sensor_channel_type_table)[channel_index] < 0x81) {
-        uVar10 = (uint)(&sensor_channel_type_table)[channel_index];
+        uVar3 = (uint)(&sensor_channel_type_table)[channel_index];
       }
       else {
-        uVar10 = 0;
+        uVar3 = 0;
       }
-      uVar10 = ((uint)uVar1 * (uint)sensor_channel_ratio_scale) /
-               (uint)(&sensor_channel_filtered_output)[uVar10];
+      uVar3 = ((uint)uVar1 * (uint)sensor_channel_ratio_scale) /
+              (uint)(&sensor_channel_filtered_output)[uVar3];
     }
     else {
-      uVar10 = 0x3ff;
+      uVar3 = 0x3ff;
     }
   }
-  state_ptr[5] = (word)uVar10;
+  state_ptr[5] = (word)uVar3;
   if ((((channel_index != 0x2f) || (j1939_cruise_engaged != 0)) &&
       ((channel_index != 0x47 || (diag_clear_flags_t_003fedfc._0_2_ != 0)))) &&
-     ((channel_index != 10 || (DAT_003fd8e8 == 0)))) {
-    if ((uint)*(ushort *)(config_ptr + 4) < (uVar10 & 0xffff)) {
-      uVar1 = *(ushort *)(config_ptr + 0xc);
+     ((channel_index != 10 || (governor_temp_protection_disable == 0)))) {
+    if ((uint)config_ptr->high_threshold < (uVar3 & 0xffff)) {
+      uVar1 = config_ptr->debounce_limit;
       if ((uint)state_ptr[2] < (uint)uVar1) {
-        if ((int)(uint)*(ushort *)(config_ptr + 8) < (int)((uint)uVar1 - (uint)state_ptr[2])) {
+        if ((int)(uint)config_ptr->debounce_step < (int)((uint)uVar1 - (uint)state_ptr[2])) {
 LAB_005017a8:
-          state_ptr[2] = state_ptr[2] + *(short *)(config_ptr + 8);
-          unaff_r29 = 1;
+          state_ptr[2] = state_ptr[2] + config_ptr->debounce_step;
+          debounce_transition_state = 1;
         }
         else {
           state_ptr[2] = uVar1;
-          (&system_status_flags_t_003fe974.enable_state)[iVar8] =
-               (&system_status_flags_t_003fe974.enable_state)[iVar8] |
+          (&system_status_flags_t_003fe974.enable_state)[high_fault_word_index] =
+               (&system_status_flags_t_003fe974.enable_state)[high_fault_word_index] |
                (ushort)(1 << (high_fault_bit & 0xf));
-          (&system_status_flags_t_003fe974.enable_state)[iVar7] =
-               (&system_status_flags_t_003fe974.enable_state)[iVar7] &
+          (&system_status_flags_t_003fe974.enable_state)[low_fault_word_index] =
+               (&system_status_flags_t_003fe974.enable_state)[low_fault_word_index] &
                ~(ushort)(1 << (low_fault_bit & 0xf));
-          (&fault_active_status_array)[iVar7] =
-               (&fault_active_status_array)[iVar7] & ~(ushort)(1 << (low_fault_bit & 0xf));
-          unaff_r29 = 2;
+          (&fault_active_status_array)[low_fault_word_index] =
+               (&fault_active_status_array)[low_fault_word_index] &
+               ~(ushort)(1 << (low_fault_bit & 0xf));
+          debounce_transition_state = 2;
         }
       }
       else {
-        (&system_status_flags_t_003fe974.enable_state)[iVar8] =
-             (&system_status_flags_t_003fe974.enable_state)[iVar8] |
+        (&system_status_flags_t_003fe974.enable_state)[high_fault_word_index] =
+             (&system_status_flags_t_003fe974.enable_state)[high_fault_word_index] |
              (ushort)(1 << (high_fault_bit & 0xf));
-        (&system_status_flags_t_003fe974.enable_state)[iVar7] =
-             (&system_status_flags_t_003fe974.enable_state)[iVar7] &
+        (&system_status_flags_t_003fe974.enable_state)[low_fault_word_index] =
+             (&system_status_flags_t_003fe974.enable_state)[low_fault_word_index] &
              ~(ushort)(1 << (low_fault_bit & 0xf));
-        (&fault_active_status_array)[iVar7] =
-             (&fault_active_status_array)[iVar7] & ~(ushort)(1 << (low_fault_bit & 0xf));
-        unaff_r29 = 2;
+        (&fault_active_status_array)[low_fault_word_index] =
+             (&fault_active_status_array)[low_fault_word_index] &
+             ~(ushort)(1 << (low_fault_bit & 0xf));
+        debounce_transition_state = 2;
       }
     }
-    else if ((uVar10 & 0xffff) < (uint)*(ushort *)(config_ptr + 6)) {
-      uVar1 = *(ushort *)(config_ptr + 0xc);
+    else if ((uVar3 & 0xffff) < (uint)config_ptr->low_threshold) {
+      uVar1 = config_ptr->debounce_limit;
       if ((uint)state_ptr[2] < (uint)uVar1) {
-        if ((int)(uint)*(ushort *)(config_ptr + 8) < (int)((uint)uVar1 - (uint)state_ptr[2]))
+        if ((int)(uint)config_ptr->debounce_step < (int)((uint)uVar1 - (uint)state_ptr[2]))
         goto LAB_005017a8;
         state_ptr[2] = uVar1;
-        (&system_status_flags_t_003fe974.enable_state)[iVar7] =
-             (&system_status_flags_t_003fe974.enable_state)[iVar7] |
+        (&system_status_flags_t_003fe974.enable_state)[low_fault_word_index] =
+             (&system_status_flags_t_003fe974.enable_state)[low_fault_word_index] |
              (ushort)(1 << (low_fault_bit & 0xf));
-        (&system_status_flags_t_003fe974.enable_state)[iVar8] =
-             (&system_status_flags_t_003fe974.enable_state)[iVar8] &
+        (&system_status_flags_t_003fe974.enable_state)[high_fault_word_index] =
+             (&system_status_flags_t_003fe974.enable_state)[high_fault_word_index] &
              ~(ushort)(1 << (high_fault_bit & 0xf));
-        (&fault_active_status_array)[iVar8] =
-             (&fault_active_status_array)[iVar8] & ~(ushort)(1 << (high_fault_bit & 0xf));
-        unaff_r29 = 2;
+        (&fault_active_status_array)[high_fault_word_index] =
+             (&fault_active_status_array)[high_fault_word_index] &
+             ~(ushort)(1 << (high_fault_bit & 0xf));
+        debounce_transition_state = 2;
       }
       else {
-        (&system_status_flags_t_003fe974.enable_state)[iVar7] =
-             (&system_status_flags_t_003fe974.enable_state)[iVar7] |
+        (&system_status_flags_t_003fe974.enable_state)[low_fault_word_index] =
+             (&system_status_flags_t_003fe974.enable_state)[low_fault_word_index] |
              (ushort)(1 << (low_fault_bit & 0xf));
-        (&system_status_flags_t_003fe974.enable_state)[iVar8] =
-             (&system_status_flags_t_003fe974.enable_state)[iVar8] &
+        (&system_status_flags_t_003fe974.enable_state)[high_fault_word_index] =
+             (&system_status_flags_t_003fe974.enable_state)[high_fault_word_index] &
              ~(ushort)(1 << (high_fault_bit & 0xf));
-        (&fault_active_status_array)[iVar8] =
-             (&fault_active_status_array)[iVar8] & ~(ushort)(1 << (high_fault_bit & 0xf));
-        unaff_r29 = 2;
+        (&fault_active_status_array)[high_fault_word_index] =
+             (&fault_active_status_array)[high_fault_word_index] &
+             ~(ushort)(1 << (high_fault_bit & 0xf));
+        debounce_transition_state = 2;
       }
     }
     else {
       uVar1 = state_ptr[2];
-      uVar2 = *(ushort *)(config_ptr + 10);
-      if (uVar1 <= uVar2) {
+      recovery_decrement = config_ptr->recovery_decrement;
+      if (uVar1 <= recovery_decrement) {
         state_ptr[2] = 0;
       }
       else {
-        state_ptr[2] = uVar1 - uVar2;
+        state_ptr[2] = uVar1 - recovery_decrement;
       }
-      unaff_r29 = (uint)(uVar1 > uVar2);
-      if (state_ptr[2] <= *(ushort *)(config_ptr + 0xe)) {
-        (&system_status_flags_t_003fe974.enable_state)[iVar8] =
-             (&system_status_flags_t_003fe974.enable_state)[iVar8] &
+      debounce_transition_state = (dword)(uVar1 > recovery_decrement);
+      if (state_ptr[2] <= config_ptr->debounce_clear_threshold) {
+        (&system_status_flags_t_003fe974.enable_state)[high_fault_word_index] =
+             (&system_status_flags_t_003fe974.enable_state)[high_fault_word_index] &
              ~(ushort)(1 << (high_fault_bit & 0xf));
-        (&fault_active_status_array)[iVar8] =
-             (&fault_active_status_array)[iVar8] & ~(ushort)(1 << (high_fault_bit & 0xf));
-        (&system_status_flags_t_003fe974.enable_state)[iVar7] =
-             (&system_status_flags_t_003fe974.enable_state)[iVar7] &
+        (&fault_active_status_array)[high_fault_word_index] =
+             (&fault_active_status_array)[high_fault_word_index] &
+             ~(ushort)(1 << (high_fault_bit & 0xf));
+        (&system_status_flags_t_003fe974.enable_state)[low_fault_word_index] =
+             (&system_status_flags_t_003fe974.enable_state)[low_fault_word_index] &
              ~(ushort)(1 << (low_fault_bit & 0xf));
-        (&fault_active_status_array)[iVar7] =
-             (&fault_active_status_array)[iVar7] & ~(ushort)(1 << (low_fault_bit & 0xf));
+        (&fault_active_status_array)[low_fault_word_index] =
+             (&fault_active_status_array)[low_fault_word_index] &
+             ~(ushort)(1 << (low_fault_bit & 0xf));
       }
     }
   }
-  if (((((uint)(&system_status_flags_t_003fe974.enable_state)[iVar8] & 1 << (high_fault_bit & 0xf))
-        == 0) &&
-      (((uint)(&system_status_flags_t_003fe974.enable_state)[iVar7] & 1 << (low_fault_bit & 0xf)) ==
-       0)) && (sVar4 != 2)) {
-    if ((unaff_r29 == 1) || (sVar4 == 1)) {
+  if (((((uint)(&system_status_flags_t_003fe974.enable_state)[high_fault_word_index] &
+        1 << (high_fault_bit & 0xf)) == 0) &&
+      (((uint)(&system_status_flags_t_003fe974.enable_state)[low_fault_word_index] &
+       1 << (low_fault_bit & 0xf)) == 0)) && (validation_state != 2)) {
+    if ((debounce_transition_state == 1) || (validation_state == 1)) {
       *fault_output_ptr = 1;
       goto LAB_00501b1c;
     }
-    wVar5 = lookupTableInterpolation(interp_args_ptr);
-    state_ptr[1] = wVar5;
-    wVar5 = 0;
+    sensor_raw = lookupTableInterpolation(interp_args_ptr);
+    state_ptr[1] = sensor_raw;
+    wVar2 = 0;
   }
   else {
-    state_ptr[1] = *(word *)(config_ptr + 2);
-    wVar5 = 2;
+    state_ptr[1] = config_ptr->default_value;
+    wVar2 = 2;
   }
-  wVar6 = exponentialMovingAverage(state_ptr[1],ema_state_ptr);
-  (&sensor_channel_filtered_output)[channel_index] = wVar6;
-  *fault_output_ptr = wVar5;
+  ema_result = exponentialMovingAverage(state_ptr[1],ema_state_ptr);
+  (&sensor_channel_filtered_output)[channel_index] = ema_result;
+  *fault_output_ptr = wVar2;
 LAB_00501b1c:
   *raw_output_ptr = (&sensor_channel_filtered_output)[channel_index];
-  *filtered_output_ptr = *(word *)(config_ptr + 2);
+  *filtered_output_ptr = config_ptr->default_value;
   return;
 }
 
@@ -59045,252 +59093,257 @@ LAB_00501b1c:
 // Function: sensorChannelTypeB_update @ 0x00501b4c
 //
 
-/* review-function-readability reviewed 2026-06-12 - Readability High Accuracy Confidence High.
-   Paired update function for sensorChannelTypeB_configInit; added 13-param PowerPC prototype (same
-   signature). */
+/* review-function-readability reviewed 2026-06-12 - Readability MEDIUM (irreducible
+   converging-epilogue gotos + split-remnant scratch temps) Accuracy Confidence High. Boot-time twin
+   of configInit; same config_ptr struct typing, named global, and named locals; 13-param prototype.
+    */
 
 void sensorChannelTypeB_update
-               (dword config_ptr,word *state_ptr,table_interp_args_t *interp_args_ptr,
-               void *table_ptr,void *axes_ptr,dword mode_flag,dword *ema_state_ptr,
-               dword channel_index,dword high_fault_bit,dword low_fault_bit,word *raw_output_ptr,
-               word *filtered_output_ptr,word *fault_output_ptr)
+               (sensor_channel_config_t *config_ptr,word *state_ptr,
+               table_interp_args_t *interp_args_ptr,void *table_ptr,void *axes_ptr,dword mode_flag,
+               dword *ema_state_ptr,dword channel_index,dword high_fault_bit,dword low_fault_bit,
+               word *raw_output_ptr,word *filtered_output_ptr,word *fault_output_ptr)
 
 {
-  short sVar1;
-  ushort uVar2;
+  ushort uVar1;
+  word validation_state;
+  word scratch16;
+  word sensor_scratch;
+  dword dispatch_index;
+  dword low_fault_word_index;
+  dword channel_word_index;
+  dword high_fault_word_index;
   word wVar3;
-  uint uVar4;
-  int iVar5;
-  int iVar6;
-  int iVar7;
-  uint uVar8;
+  uint uVar2;
+  dword sensor_value;
   
-  state_ptr[3] = *(word *)(config_ptr + 2);
-  iVar6 = (int)channel_index >> 4;
-  uVar8 = 1 << (channel_index +
-                (iVar6 + (uint)((int)channel_index < 0 && (channel_index & 0xf) != 0)) * -0x10 &
-               0x3f);
-  iVar7 = (int)high_fault_bit >> 4;
-  iVar5 = (int)low_fault_bit >> 4;
-  if (((&sensor_channel_enable_flags)[iVar6] & uVar8) == 0) {
-    uVar2 = *(ushort *)(config_ptr + 2);
-    state_ptr[1] = uVar2;
-    ema_state_ptr[1] = (uint)uVar2 << 0x10;
-    wVar3 = exponentialMovingAverage(uVar2,ema_state_ptr);
-    (&sensor_channel_filtered_output)[channel_index] = wVar3;
+  state_ptr[3] = config_ptr->default_value;
+  channel_word_index = (int)channel_index >> 4;
+  sensor_value = 1 << (channel_index +
+                       (channel_word_index + ((int)channel_index < 0 && (channel_index & 0xf) != 0))
+                       * -0x10 & 0x3f);
+  high_fault_word_index = (int)high_fault_bit >> 4;
+  low_fault_word_index = (int)low_fault_bit >> 4;
+  if (((&sensor_channel_enable_flags)[channel_word_index] & sensor_value) == 0) {
+    uVar1 = config_ptr->default_value;
+    state_ptr[1] = uVar1;
+    ema_state_ptr[1] = (uint)uVar1 << 0x10;
+    sensor_scratch = exponentialMovingAverage(uVar1,ema_state_ptr);
+    (&sensor_channel_filtered_output)[channel_index] = sensor_scratch;
     *fault_output_ptr = 0x100;
-    (&system_status_flags_t_003fe974.enable_state)[iVar7] =
-         (&system_status_flags_t_003fe974.enable_state)[iVar7] &
+    (&system_status_flags_t_003fe974.enable_state)[high_fault_word_index] =
+         (&system_status_flags_t_003fe974.enable_state)[high_fault_word_index] &
          ~(ushort)(1 << (high_fault_bit & 0xf));
-    (&fault_active_status_array)[iVar7] =
-         (&fault_active_status_array)[iVar7] & ~(ushort)(1 << (high_fault_bit & 0xf));
-    (&system_status_flags_t_003fe974.enable_state)[iVar5] =
-         (&system_status_flags_t_003fe974.enable_state)[iVar5] &
+    (&fault_active_status_array)[high_fault_word_index] =
+         (&fault_active_status_array)[high_fault_word_index] &
+         ~(ushort)(1 << (high_fault_bit & 0xf));
+    (&system_status_flags_t_003fe974.enable_state)[low_fault_word_index] =
+         (&system_status_flags_t_003fe974.enable_state)[low_fault_word_index] &
          ~(ushort)(1 << (low_fault_bit & 0xf));
-    (&fault_active_status_array)[iVar5] =
-         (&fault_active_status_array)[iVar5] & ~(ushort)(1 << (low_fault_bit & 0xf));
+    (&fault_active_status_array)[low_fault_word_index] =
+         (&fault_active_status_array)[low_fault_word_index] & ~(ushort)(1 << (low_fault_bit & 0xf));
     goto LAB_005022a4;
   }
   interp_args_ptr->current_index = 2;
-  *ema_state_ptr = config_ptr;
-  if (((&fuel_demand_feature_flags)[iVar6] & uVar8) != 0) {
-    uVar2 = state_ptr[3];
-    ema_state_ptr[1] = (uint)uVar2 << 0x10;
-    (&sensor_channel_filtered_output)[channel_index] = uVar2;
+  *ema_state_ptr = (dword)config_ptr;
+  if (((&fuel_demand_feature_flags)[channel_word_index] & sensor_value) != 0) {
+    uVar1 = state_ptr[3];
+    ema_state_ptr[1] = (uint)uVar1 << 0x10;
+    (&sensor_channel_filtered_output)[channel_index] = uVar1;
     state_ptr[2] = 0;
     *fault_output_ptr = 0;
     goto LAB_005022a4;
   }
-  if (((&diag_feature_flags)[iVar6] & uVar8) == 0) {
-    if ((*(ushort *)(&DAT_003fda58 + iVar6 * 2) & uVar8) != 0) {
-      uVar2 = *(ushort *)(config_ptr + 2);
-      ema_state_ptr[1] = (uint)uVar2 << 0x10;
-      (&sensor_channel_filtered_output)[channel_index] = uVar2;
+  if (((&diag_feature_flags)[channel_word_index] & sensor_value) == 0) {
+    if ((*(ushort *)(&DAT_003fda58 + channel_word_index * 2) & sensor_value) != 0) {
+      uVar1 = config_ptr->default_value;
+      ema_state_ptr[1] = (uint)uVar1 << 0x10;
+      (&sensor_channel_filtered_output)[channel_index] = uVar1;
       goto LAB_005022a4;
     }
     if ((((channel_index == 0x15) || (channel_index == 0x2a)) || (channel_index == 0x2b)) ||
        (channel_index == 0x1c)) {
-      sVar1 = 0;
+      validation_state = 0;
     }
     else {
-      sVar1 = sensorChannelConditionValidator(channel_index);
+      validation_state = sensorChannelConditionValidator(channel_index);
     }
-    if (((&diag_feature_flags)[iVar6] & uVar8) == 0) {
+    if (((&diag_feature_flags)[channel_word_index] & sensor_value) == 0) {
       if (qadc_channel_index_table[channel_index] < 0x81) {
-        uVar4 = (uint)qadc_channel_index_table[channel_index];
+        uVar2 = (uint)qadc_channel_index_table[channel_index];
       }
       else {
-        uVar4 = 0;
+        uVar2 = 0;
       }
-      wVar3 = *(word *)(&qadc_channel_dispatch_table)[uVar4 * 2];
+      wVar3 = *(word *)(&qadc_channel_dispatch_table)[uVar2 * 2];
     }
     else {
       wVar3 = (&sensor_channel_diag_override)[channel_index];
     }
     *state_ptr = wVar3;
     if ((&sensor_channel_type_table)[channel_index] == 0) {
-      if (((&diag_feature_flags)[iVar6] & uVar8) == 0) {
+      if (((&diag_feature_flags)[channel_word_index] & sensor_value) == 0) {
         if (qadc_channel_index_table[channel_index] < 0x81) {
-          uVar8 = (uint)qadc_channel_index_table[channel_index];
+          uVar2 = (uint)qadc_channel_index_table[channel_index];
         }
         else {
-          uVar8 = 0;
+          uVar2 = 0;
         }
-        uVar8 = (uint)*(ushort *)(&qadc_channel_dispatch_table)[uVar8 * 2];
+        uVar2 = (uint)*(ushort *)(&qadc_channel_dispatch_table)[uVar2 * 2];
       }
       else {
-        uVar8 = (uint)(&sensor_channel_diag_override)[channel_index];
+        uVar2 = (uint)(&sensor_channel_diag_override)[channel_index];
       }
     }
     else {
-      if (((&diag_feature_flags)[iVar6] & uVar8) == 0) {
+      if (((&diag_feature_flags)[channel_word_index] & sensor_value) == 0) {
         if (qadc_channel_index_table[channel_index] < 0x81) {
-          uVar4 = (uint)qadc_channel_index_table[channel_index];
+          uVar2 = (uint)qadc_channel_index_table[channel_index];
         }
         else {
-          uVar4 = 0;
+          uVar2 = 0;
         }
-        uVar2 = *(ushort *)(&qadc_channel_dispatch_table)[uVar4 * 2];
+        uVar1 = *(ushort *)(&qadc_channel_dispatch_table)[uVar2 * 2];
       }
       else {
-        uVar2 = (&sensor_channel_diag_override)[channel_index];
+        uVar1 = (&sensor_channel_diag_override)[channel_index];
       }
       if ((&sensor_channel_type_table)[channel_index] < 0x81) {
-        uVar4 = (uint)(&sensor_channel_type_table)[channel_index];
+        uVar2 = (uint)(&sensor_channel_type_table)[channel_index];
       }
       else {
-        uVar4 = 0;
+        uVar2 = 0;
       }
-      if ((((uint)uVar2 * (uint)sensor_channel_ratio_scale) /
-           (uint)(&sensor_channel_filtered_output)[uVar4] & 0xffff) < 0x3ff) {
-        if (((&diag_feature_flags)[iVar6] & uVar8) == 0) {
+      if ((((uint)uVar1 * (uint)sensor_channel_ratio_scale) /
+           (uint)(&sensor_channel_filtered_output)[uVar2] & 0xffff) < 0x3ff) {
+        if (((&diag_feature_flags)[channel_word_index] & sensor_value) == 0) {
           if (qadc_channel_index_table[channel_index] < 0x81) {
-            uVar8 = (uint)qadc_channel_index_table[channel_index];
+            uVar2 = (uint)qadc_channel_index_table[channel_index];
           }
           else {
-            uVar8 = 0;
+            uVar2 = 0;
           }
-          uVar2 = *(ushort *)(&qadc_channel_dispatch_table)[uVar8 * 2];
+          uVar1 = *(ushort *)(&qadc_channel_dispatch_table)[uVar2 * 2];
         }
         else {
-          uVar2 = (&sensor_channel_diag_override)[channel_index];
+          uVar1 = (&sensor_channel_diag_override)[channel_index];
         }
         if ((&sensor_channel_type_table)[channel_index] < 0x81) {
-          uVar8 = (uint)(&sensor_channel_type_table)[channel_index];
+          uVar2 = (uint)(&sensor_channel_type_table)[channel_index];
         }
         else {
-          uVar8 = 0;
+          uVar2 = 0;
         }
-        uVar8 = ((uint)uVar2 * (uint)sensor_channel_ratio_scale) /
-                (uint)(&sensor_channel_filtered_output)[uVar8];
+        uVar2 = ((uint)uVar1 * (uint)sensor_channel_ratio_scale) /
+                (uint)(&sensor_channel_filtered_output)[uVar2];
       }
       else {
-        uVar8 = 0x3ff;
+        uVar2 = 0x3ff;
       }
     }
-    state_ptr[5] = (word)uVar8;
-    if (((((uint)(&system_status_flags_t_003fe974.enable_state)[iVar7] & 1 << (high_fault_bit & 0xf)
-          ) == 0) &&
-        (((uint)(&system_status_flags_t_003fe974.enable_state)[iVar5] & 1 << (low_fault_bit & 0xf))
-         == 0)) && (sVar1 != 2)) {
-      if (((uVar8 & 0xffff) <= (uint)*(ushort *)(config_ptr + 4)) &&
-         ((uint)*(ushort *)(config_ptr + 6) <= (uVar8 & 0xffff))) goto LAB_005021a8;
+    state_ptr[5] = (word)uVar2;
+    if (((((uint)(&system_status_flags_t_003fe974.enable_state)[high_fault_word_index] &
+          1 << (high_fault_bit & 0xf)) == 0) &&
+        (((uint)(&system_status_flags_t_003fe974.enable_state)[low_fault_word_index] &
+         1 << (low_fault_bit & 0xf)) == 0)) && (validation_state != 2)) {
+      if (((uVar2 & 0xffff) <= (uint)config_ptr->high_threshold) &&
+         ((uint)config_ptr->low_threshold <= (uVar2 & 0xffff))) goto LAB_005021a8;
       wVar3 = 1;
     }
     else {
-      state_ptr[2] = *(word *)(config_ptr + 0xc);
+      state_ptr[2] = config_ptr->debounce_limit;
       wVar3 = 2;
     }
-    uVar2 = *(ushort *)(config_ptr + 2);
-    ema_state_ptr[1] = (uint)uVar2 << 0x10;
-    (&sensor_channel_filtered_output)[channel_index] = uVar2;
+    uVar1 = config_ptr->default_value;
+    ema_state_ptr[1] = (uint)uVar1 << 0x10;
+    (&sensor_channel_filtered_output)[channel_index] = uVar1;
     *fault_output_ptr = wVar3;
   }
   else {
     state_ptr[2] = 0;
-    if (((&diag_feature_flags)[iVar6] & uVar8) == 0) {
+    if (((&diag_feature_flags)[channel_word_index] & sensor_value) == 0) {
       if (qadc_channel_index_table[channel_index] < 0x81) {
-        uVar4 = (uint)qadc_channel_index_table[channel_index];
+        uVar2 = (uint)qadc_channel_index_table[channel_index];
       }
       else {
-        uVar4 = 0;
+        uVar2 = 0;
       }
-      wVar3 = *(word *)(&qadc_channel_dispatch_table)[uVar4 * 2];
+      wVar3 = *(word *)(&qadc_channel_dispatch_table)[uVar2 * 2];
     }
     else {
       wVar3 = (&sensor_channel_diag_override)[channel_index];
     }
     *state_ptr = wVar3;
     if ((&sensor_channel_type_table)[channel_index] == 0) {
-      if (((&diag_feature_flags)[iVar6] & uVar8) == 0) {
+      if (((&diag_feature_flags)[channel_word_index] & sensor_value) == 0) {
         if (qadc_channel_index_table[channel_index] < 0x81) {
-          uVar8 = (uint)qadc_channel_index_table[channel_index];
+          uVar2 = (uint)qadc_channel_index_table[channel_index];
         }
         else {
-          uVar8 = 0;
+          uVar2 = 0;
         }
-        state_ptr[5] = *(word *)(&qadc_channel_dispatch_table)[uVar8 * 2];
+        state_ptr[5] = *(word *)(&qadc_channel_dispatch_table)[uVar2 * 2];
       }
       else {
         state_ptr[5] = (&sensor_channel_diag_override)[channel_index];
       }
     }
     else {
-      if (((&diag_feature_flags)[iVar6] & uVar8) == 0) {
+      if (((&diag_feature_flags)[channel_word_index] & sensor_value) == 0) {
         if (qadc_channel_index_table[channel_index] < 0x81) {
-          uVar4 = (uint)qadc_channel_index_table[channel_index];
+          uVar2 = (uint)qadc_channel_index_table[channel_index];
         }
         else {
-          uVar4 = 0;
+          uVar2 = 0;
         }
-        uVar2 = *(ushort *)(&qadc_channel_dispatch_table)[uVar4 * 2];
+        uVar1 = *(ushort *)(&qadc_channel_dispatch_table)[uVar2 * 2];
       }
       else {
-        uVar2 = (&sensor_channel_diag_override)[channel_index];
+        uVar1 = (&sensor_channel_diag_override)[channel_index];
       }
       if ((&sensor_channel_type_table)[channel_index] < 0x81) {
-        uVar4 = (uint)(&sensor_channel_type_table)[channel_index];
+        dispatch_index = (dword)(&sensor_channel_type_table)[channel_index];
       }
       else {
-        uVar4 = 0;
+        dispatch_index = 0;
       }
-      if ((((uint)uVar2 * (uint)sensor_channel_ratio_scale) /
-           (uint)(&sensor_channel_filtered_output)[uVar4] & 0xffff) < 0x3ff) {
-        if (((&diag_feature_flags)[iVar6] & uVar8) == 0) {
+      if ((((uint)uVar1 * (uint)sensor_channel_ratio_scale) /
+           (uint)(&sensor_channel_filtered_output)[dispatch_index] & 0xffff) < 0x3ff) {
+        if (((&diag_feature_flags)[channel_word_index] & sensor_value) == 0) {
           if (qadc_channel_index_table[channel_index] < 0x81) {
-            uVar8 = (uint)qadc_channel_index_table[channel_index];
+            uVar2 = (uint)qadc_channel_index_table[channel_index];
           }
           else {
-            uVar8 = 0;
+            uVar2 = 0;
           }
-          uVar2 = *(ushort *)(&qadc_channel_dispatch_table)[uVar8 * 2];
+          uVar1 = *(ushort *)(&qadc_channel_dispatch_table)[uVar2 * 2];
         }
         else {
-          uVar2 = (&sensor_channel_diag_override)[channel_index];
+          uVar1 = (&sensor_channel_diag_override)[channel_index];
         }
         if ((&sensor_channel_type_table)[channel_index] < 0x81) {
-          uVar8 = (uint)(&sensor_channel_type_table)[channel_index];
+          uVar2 = (uint)(&sensor_channel_type_table)[channel_index];
         }
         else {
-          uVar8 = 0;
+          uVar2 = 0;
         }
-        state_ptr[5] = (word)(((uint)uVar2 * (uint)sensor_channel_ratio_scale) /
-                             (uint)(&sensor_channel_filtered_output)[uVar8]);
+        state_ptr[5] = (word)(((uint)uVar1 * (uint)sensor_channel_ratio_scale) /
+                             (uint)(&sensor_channel_filtered_output)[uVar2]);
       }
       else {
         state_ptr[5] = 0x3ff;
       }
     }
 LAB_005021a8:
-    uVar2 = lookupTableInterpolation(interp_args_ptr);
-    state_ptr[1] = uVar2;
-    ema_state_ptr[1] = (uint)uVar2 << 0x10;
-    (&sensor_channel_filtered_output)[channel_index] = uVar2;
+    scratch16 = lookupTableInterpolation(interp_args_ptr);
+    state_ptr[1] = scratch16;
+    ema_state_ptr[1] = (uint)scratch16 << 0x10;
+    (&sensor_channel_filtered_output)[channel_index] = scratch16;
     *fault_output_ptr = 0;
   }
 LAB_005022a4:
   *raw_output_ptr = (&sensor_channel_filtered_output)[channel_index];
-  *filtered_output_ptr = *(word *)(config_ptr + 2);
+  *filtered_output_ptr = config_ptr->default_value;
   return;
 }
 
@@ -68035,8 +68088,9 @@ void sensorChannelTypeB_configInit_axis2(void)
 
 {
   sensorChannelTypeB_configInit
-            (0x5ac4c,(word *)&DAT_0040b186,(table_interp_args_t *)&DAT_003fcd36,&DAT_0005ac5c,
-             &DAT_0005ac6a,0,(dword *)&PTR_DAT_003fcd38,0x1c,0x179,0x17a,&sensor_channel28_raw,
+            ((sensor_channel_config_t *)&DAT_0005ac4c,(word *)&DAT_0040b186,
+             (table_interp_args_t *)&DAT_003fcd36,&DAT_0005ac5c,&DAT_0005ac6a,0,
+             (dword *)&PTR_DAT_003fcd38,0x1c,0x179,0x17a,&sensor_channel28_raw,
              &sensor_channel28_filtered,&sensor_channel28_fault_status);
   return;
 }
@@ -68051,8 +68105,9 @@ void sensorChannelTypeB_update_axis2(void)
 
 {
   sensorChannelTypeB_update
-            (0x5ac4c,(word *)&DAT_0040b186,(table_interp_args_t *)&DAT_003fcd36,&DAT_0005ac5c,
-             &DAT_0005ac6a,0,(dword *)&PTR_DAT_003fcd38,0x1c,0x179,0x17a,&sensor_channel28_raw,
+            ((sensor_channel_config_t *)&DAT_0005ac4c,(word *)&DAT_0040b186,
+             (table_interp_args_t *)&DAT_003fcd36,&DAT_0005ac5c,&DAT_0005ac6a,0,
+             (dword *)&PTR_DAT_003fcd38,0x1c,0x179,0x17a,&sensor_channel28_raw,
              &sensor_channel28_filtered,&sensor_channel28_fault_status);
   return;
 }
@@ -68067,9 +68122,10 @@ void sensorChannelTypeB_configInit_axis3(void)
 
 {
   sensorChannelTypeB_configInit
-            (0x5ac78,(word *)&DAT_0040b192,(table_interp_args_t *)&DAT_003fcd40,&DAT_0005ac88,
-             &DAT_0005ac96,0,(dword *)&PTR_DAT_003fcd42,0x1d,0x177,0x178,(word *)&DAT_0040bdd8,
-             (word *)&DAT_0040bdda,(word *)&DAT_0040be40);
+            ((sensor_channel_config_t *)&DAT_0005ac78,(word *)&DAT_0040b192,
+             (table_interp_args_t *)&DAT_003fcd40,&DAT_0005ac88,&DAT_0005ac96,0,
+             (dword *)&PTR_DAT_003fcd42,0x1d,0x177,0x178,(word *)&DAT_0040bdd8,(word *)&DAT_0040bdda
+             ,(word *)&DAT_0040be40);
   return;
 }
 
@@ -68083,9 +68139,10 @@ void sensorChannelTypeB_update_axis3(void)
 
 {
   sensorChannelTypeB_update
-            (0x5ac78,(word *)&DAT_0040b192,(table_interp_args_t *)&DAT_003fcd40,&DAT_0005ac88,
-             &DAT_0005ac96,0,(dword *)&PTR_DAT_003fcd42,0x1d,0x177,0x178,(word *)&DAT_0040bdd8,
-             (word *)&DAT_0040bdda,(word *)&DAT_0040be40);
+            ((sensor_channel_config_t *)&DAT_0005ac78,(word *)&DAT_0040b192,
+             (table_interp_args_t *)&DAT_003fcd40,&DAT_0005ac88,&DAT_0005ac96,0,
+             (dword *)&PTR_DAT_003fcd42,0x1d,0x177,0x178,(word *)&DAT_0040bdd8,(word *)&DAT_0040bdda
+             ,(word *)&DAT_0040be40);
   return;
 }
 
@@ -68099,9 +68156,10 @@ void sensorChannelTypeB_configInit_axis4(void)
 
 {
   sensorChannelTypeB_configInit
-            (0x5aca4,&calibBlock1_sensor_value,(table_interp_args_t *)&DAT_003fcd4a,&DAT_0005acb4,
-             &DAT_0005acc6,0,(dword *)&PTR_DAT_003fcd4c,0x44,0x17d,0x17e,(word *)&DAT_0040bdb8,
-             (word *)&DAT_0040bdba,(word *)&DAT_0040be30);
+            ((sensor_channel_config_t *)&DAT_0005aca4,&calibBlock1_sensor_value,
+             (table_interp_args_t *)&DAT_003fcd4a,&DAT_0005acb4,&DAT_0005acc6,0,
+             (dword *)&PTR_DAT_003fcd4c,0x44,0x17d,0x17e,(word *)&DAT_0040bdb8,(word *)&DAT_0040bdba
+             ,(word *)&DAT_0040be30);
   return;
 }
 
@@ -68115,9 +68173,10 @@ void sensorChannelTypeB_update_axis4(void)
 
 {
   sensorChannelTypeB_update
-            (0x5aca4,&calibBlock1_sensor_value,(table_interp_args_t *)&DAT_003fcd4a,&DAT_0005acb4,
-             &DAT_0005acc6,0,(dword *)&PTR_DAT_003fcd4c,0x44,0x17d,0x17e,(word *)&DAT_0040bdb8,
-             (word *)&DAT_0040bdba,(word *)&DAT_0040be30);
+            ((sensor_channel_config_t *)&DAT_0005aca4,&calibBlock1_sensor_value,
+             (table_interp_args_t *)&DAT_003fcd4a,&DAT_0005acb4,&DAT_0005acc6,0,
+             (dword *)&PTR_DAT_003fcd4c,0x44,0x17d,0x17e,(word *)&DAT_0040bdb8,(word *)&DAT_0040bdba
+             ,(word *)&DAT_0040be30);
   return;
 }
 
@@ -73108,7 +73167,7 @@ void governorGovernorTempCompute(void)
     }
     uVar1 = uVar1 + 0xffff & 0xffff;
   } while (uVar1 != 0);
-  if (DAT_003fd8e8 == 0) {
+  if (governor_temp_protection_disable == 0) {
     if (fuel_quantity_demand_input < sensor_readings_t_0040baf2.intake_air_temp) {
       j1939_fuel_quantity_input = 0;
     }

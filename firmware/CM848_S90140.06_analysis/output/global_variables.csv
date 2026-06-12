@@ -2069,6 +2069,7 @@ address,name,type,comment
 0x003fd8d8,protection_load_override_enable_flag,word,
 0x003fd8da,protection_confirm_mode_flag,word,
 0x003fd8dc,protection_ema_override_enable_flag,word,
+0x003fd8e8,governor_temp_protection_disable,word,Nonzero disables governor temperature protection - bypasses channel-10 threshold processing in sensorChannelTypeB_configInit and the temp-derate computation in governorGovernorTempCompute (read-only ROM-copy constant; lhz word access verified)
 0x003fd8f0,fuel_temp_trim_shift_cal,word,
 0x003fd8f4,fuel_temp_trim_denominator,word,
 0x003fd8f6,fuel_temp_trim_lower_threshold_a,word,

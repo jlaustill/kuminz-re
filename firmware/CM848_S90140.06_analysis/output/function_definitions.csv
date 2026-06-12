@@ -286,7 +286,7 @@ function_address,function_name,param_index,name,type,comment
 # Sensor Channel Type B - Config Init (13 params via PowerPC ABI: r3-r10 + 5 stack)
 # Params 4-6 (r6-r8) are passed by callers but NOT USED by function body
 # -----------------------------------------------------------------------------
-0x005012dc,sensorChannelTypeB_configInit,0,config_ptr,int,ROM config struct ptr (+2=default +4/+6=thresholds +8/+10/+12/+14=rates)
+0x005012dc,sensorChannelTypeB_configInit,0,config_ptr,sensor_channel_config_t*,Per-channel ROM calibration config (default/thresholds/debounce fields)
 0x005012dc,sensorChannelTypeB_configInit,1,state_ptr,word*,RAM state buffer (stores ADC raw + debounce counter + filtered value)
 0x005012dc,sensorChannelTypeB_configInit,2,interp_args_ptr,table_interp_args_t*,Table interpolation arguments structure
 0x005012dc,sensorChannelTypeB_configInit,3,table_ptr,void*,ROM calibration table data (UNUSED by function body)
@@ -299,7 +299,7 @@ function_address,function_name,param_index,name,type,comment
 0x005012dc,sensorChannelTypeB_configInit,10,raw_output_ptr,word*,Output: raw sensor ADC value (e.g. sensor_channel28_raw)
 0x005012dc,sensorChannelTypeB_configInit,11,filtered_output_ptr,word*,Output: EMA-filtered sensor value (e.g. sensor_channel28_filtered)
 0x005012dc,sensorChannelTypeB_configInit,12,fault_output_ptr,word*,Output: fault status word (e.g. sensor_channel28_fault_status)
-0x00501b4c,sensorChannelTypeB_update,0,config_ptr,int,ROM config struct ptr (+2=default +4/+6=thresholds +8/+10/+12/+14=rates)
+0x00501b4c,sensorChannelTypeB_update,0,config_ptr,sensor_channel_config_t*,Per-channel ROM calibration config (default/thresholds/debounce fields)
 0x00501b4c,sensorChannelTypeB_update,1,state_ptr,word*,RAM state buffer (stores ADC raw + debounce counter + filtered value)
 0x00501b4c,sensorChannelTypeB_update,2,interp_args_ptr,table_interp_args_t*,Table interpolation arguments structure
 0x00501b4c,sensorChannelTypeB_update,3,table_ptr,void*,ROM calibration table data (UNUSED by function body)

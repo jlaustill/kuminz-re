@@ -51,3 +51,24 @@ function_address,function_name,old_name,new_name,type,comment
 0x00512e70,governor_cruise_engage_check,uVar1,cruise_switch_adc_value,ushort,Live or overridden cruise-switch ADC reading compared against the valid window (ushort emits a benign Unable-to-use-type warning, same as message_data_length on main)
 0x00512e70,governor_cruise_engage_check,uVar2,qadc_dispatch_index,uint,Clamped index into qadc_channel_dispatch_table for cruise-switch channel 0x2f
 0x00512e70,governor_cruise_engage_check,uVar3,engage_allowed,undefined4,Return flag - 1 when cruise may engage this cycle
+# sensorChannelTypeB_configInit @ 0x005012dc - per-channel sensor read/validate/debounce (reviewed via review-function-readability)
+0x005012dc,sensorChannelTypeB_configInit,iVar9,channel_word_index,int,channel_index >> 4 - word index into the per-channel flag arrays
+0x005012dc,sensorChannelTypeB_configInit,iVar8,high_fault_word_index,int,high_fault_bit >> 4 - word index into the fault-status arrays
+0x005012dc,sensorChannelTypeB_configInit,iVar7,low_fault_word_index,int,low_fault_bit >> 4 - word index into the fault-status arrays
+0x005012dc,sensorChannelTypeB_configInit,sVar4,validation_state,short,sensorChannelConditionValidator result - 0=ok 1=force-fault 2=force-skip
+0x005012dc,sensorChannelTypeB_configInit,uVar10,sensor_value,uint,Processed sensor value compared against thresholds and written to state_ptr[5] (also holds the channel-enable bitmask early in the body)
+0x005012dc,sensorChannelTypeB_configInit,uVar3,dispatch_index,uint,Clamped index into qadc_channel_dispatch_table / sensor_channel_type_table
+0x005012dc,sensorChannelTypeB_configInit,wVar5,sensor_raw,word,Raw sensor reading (QADC dispatch result or diag override) written to *state_ptr
+0x005012dc,sensorChannelTypeB_configInit,wVar6,ema_result,word,Final exponentialMovingAverage output written to sensor_channel_filtered_output
+0x005012dc,sensorChannelTypeB_configInit,uVar1,scratch16,ushort,Reused 16-bit scratch (default value / state field / debounce target depending on path)
+0x005012dc,sensorChannelTypeB_configInit,uVar2,recovery_decrement,ushort,config_ptr->recovery_decrement copy used in the in-range recovery path
+0x005012dc,sensorChannelTypeB_configInit,unaff_r29,debounce_transition_state,uint,Debounce step outcome - 0=none 1=ramping 2=limit reached (uninitialized when no threshold path runs)
+# sensorChannelTypeB_update @ 0x00501b4c - boot-time twin of configInit (same shape, fewer temps)
+0x00501b4c,sensorChannelTypeB_update,iVar6,channel_word_index,int,channel_index >> 4 - word index into the per-channel flag arrays
+0x00501b4c,sensorChannelTypeB_update,iVar7,high_fault_word_index,int,high_fault_bit >> 4 - word index into the fault-status arrays
+0x00501b4c,sensorChannelTypeB_update,iVar5,low_fault_word_index,int,low_fault_bit >> 4 - word index into the fault-status arrays
+0x00501b4c,sensorChannelTypeB_update,sVar1,validation_state,short,sensorChannelConditionValidator result - 0=ok 1=force-fault 2=force-skip
+0x00501b4c,sensorChannelTypeB_update,uVar8,sensor_value,uint,Processed sensor value compared against thresholds (also holds the channel-enable bitmask early in the body)
+0x00501b4c,sensorChannelTypeB_update,uVar4,dispatch_index,uint,Clamped index into qadc_channel_dispatch_table / sensor_channel_type_table
+0x00501b4c,sensorChannelTypeB_update,uVar2,scratch16,ushort,Reused 16-bit scratch (default value / state field / debounce target depending on path)
+0x00501b4c,sensorChannelTypeB_update,wVar3,sensor_scratch,word,Raw sensor reading / EMA result reused across paths and written to *state_ptr

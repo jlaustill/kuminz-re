@@ -312,6 +312,15 @@ table_interp_args_t,,current_index,word,2,Current interpolation index into table
 table_interp_args_t,,x_axis_ptr,dword,4,Pointer to X-axis table (input values),,verified
 table_interp_args_t,,input_value,word,2,Input value for table lookup,,verified
 table_interp_args_t,,y_axis_ptr,dword,4,Pointer to Y-axis table (output values),,verified
+# Per-sensor-channel calibration config (ROM). Pointer-passed to sensorChannelTypeB_configInit/_update; field offsets verified from the threshold/debounce logic at 0x005012dc
+sensor_channel_config_t,,config_word0,word,2,Offset 0 - not accessed by sensorChannelTypeB; purpose unconfirmed,,review
+sensor_channel_config_t,,default_value,word,2,Nominal/fault fallback value (written to filtered output and state_ptr[1]),,verified
+sensor_channel_config_t,,high_threshold,word,2,Upper limit - sensor value above this trips the high fault path,,verified
+sensor_channel_config_t,,low_threshold,word,2,Lower limit - sensor value below this trips the low fault path,,verified
+sensor_channel_config_t,,debounce_step,word,2,Per-cycle increment added to the debounce counter while ramping toward the limit,,verified
+sensor_channel_config_t,,recovery_decrement,word,2,Per-cycle decrement applied to the debounce counter when back in range,,verified
+sensor_channel_config_t,,debounce_limit,word,2,Debounce counter target - reached = fault confirmed,,verified
+sensor_channel_config_t,,debounce_clear_threshold,word,2,Counter at or below this clears the confirmed-fault flags,,verified
 
 # Q16.16 Fixed Point Structure - 32-bit with 16-bit integer and fractional parts
 # Used for PID controllers and accumulators needing fractional precision
