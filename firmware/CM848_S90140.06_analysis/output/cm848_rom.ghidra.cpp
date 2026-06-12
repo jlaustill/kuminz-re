@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Jun 12 07:52:21 MDT 2026
+// Generated: Fri Jun 12 08:19:30 MDT 2026
 
 
 //
@@ -7429,9 +7429,9 @@ void cm848_sensorChannel0_init(void)
 
 {
   sensorChannelTypeB_configInit
-            (&DAT_000592a2,&sensor_channel0_ram,&DAT_003fa014,&DAT_000592b2,&DAT_000592c4,0,0x3fa016
-             ,3,0x19,0x1a,&sensor_channel3_raw,&sensor_channel3_filtered,
-             &sensor_channel3_fault_status);
+            (&DAT_000592a2,&sensor_channel0_ram,&sensor_channel0_interp_state,&DAT_000592b2,
+             &DAT_000592c4,0,&sensor_channel0_filter_config_ptr,3,0x19,0x1a,&sensor_channel3_raw,
+             &sensor_channel3_filtered,&sensor_channel3_fault_status);
   return;
 }
 
@@ -7445,9 +7445,9 @@ void cm848_sensorChannel0_process(void)
 
 {
   sensorChannelTypeB_update
-            (&DAT_000592a2,&sensor_channel0_ram,&DAT_003fa014,&DAT_000592b2,&DAT_000592c4,0,0x3fa016
-             ,3,0x19,0x1a,&sensor_channel3_raw,&sensor_channel3_filtered,
-             &sensor_channel3_fault_status);
+            (&DAT_000592a2,&sensor_channel0_ram,&sensor_channel0_interp_state,&DAT_000592b2,
+             &DAT_000592c4,0,&sensor_channel0_filter_config_ptr,3,0x19,0x1a,&sensor_channel3_raw,
+             &sensor_channel3_filtered,&sensor_channel3_fault_status);
   return;
 }
 
@@ -7461,7 +7461,7 @@ void cm848_sensorChannel1_init(void)
 
 {
   sensorChannelConfigInit
-            (&DAT_000592d6,&sensor_channel1_ram,(void *)((int)&DAT_003fa01c + 2),&DAT_000592e6,
+            (&DAT_000592d6,&sensor_channel1_ram,&sensor_channel1_interp_state,&DAT_000592e6,
              &DAT_0005930e,(void *)0x2,0xa020,0x14,(word *)0x96,(word *)0x97,0xbd90,0xbd9c,0xbe16);
   return;
 }
@@ -7476,7 +7476,7 @@ void cm848_sensorChannel1_process(void)
 
 {
   updateSensorChannelWithConfig
-            (&DAT_000592d6,&sensor_channel1_ram,(void *)((int)&DAT_003fa01c + 2),&DAT_000592e6,
+            (&DAT_000592d6,&sensor_channel1_ram,&sensor_channel1_interp_state,&DAT_000592e6,
              &DAT_0005930e,(void *)0x2,0xa020,0x14,(word *)0x96,(word *)0x97,0xbd90,0xbd9c,0xbe16);
   return;
 }

@@ -139,6 +139,21 @@ A symbol can show more than one signal — report what you see and let the revie
 doubt between flat-global and a richer shape, name the shape as a *possibility* with its evidence
 rather than forcing a call.
 
+**Any shape except flat-global escalates the scope to the container.** Once you detect struct /
+array / enum, the recommendation is about the *container*, not the lone address — the symbol is
+located inside it (`<struct>.<field>@+<off>`, `<array>[<index>]`, member of `<enum>`):
+- **struct field** — recover the field layout from how the consuming fn dereferences `+offset`, **or**
+  confirm the struct type already exists in `structure_definitions.csv` and the target is one of its
+  fields. A pointer cast at a call site (`(some_struct_t *)p`) names the type for you. The
+  per-instance address pattern (`&sym`, `&sym + stride`, …) gives the array-of-struct layout; use the
+  marker-row pattern for the extra instances.
+- **array** — derive element stride + count from the sibling references; a `&sym + k` in the
+  decompile is the compiler indexing a neighbor, i.e. proof `sym` is one element, not a scalar. Mind
+  the copy-window edge when sizing (size to `0x3FDB30`, not to the next named symbol).
+- **discrepancy honesty** — if the recovered/known element size doesn't divide the observed stride
+  (e.g. a 12-byte `verified` struct at a 10-byte stride ⇒ overlapping entries), report it and tell
+  the applier to verify each instance address rather than blind-tile a `T[N]`.
+
 ## Function targets (when the symbol is a FUN_/function)
 
 Evidence set differs from a variable:
