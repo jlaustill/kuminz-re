@@ -400,12 +400,12 @@ address,name
 0x00002e58,cm848_registerSchedulerTask
 0x00002ee8,cm848_initSchedulerCallback
 0x00002f18,mpc555_initSchedulerTaskTable
-0x00002f74,mpc555_spiReceiveHandler
-0x00003008,mpc555_spiTransmitCompleteHandler
-0x000030ec,mpc555_dispatchSpiHandlerByState
+0x00002f74,mpc555_sciReceiveRequestByte
+0x00003008,mpc555_sciTransmitResponseByte
+0x000030ec,mpc555_sciDispatchByTransferPhase
 0x000031a0,cm848_resetEepromStatusPointer
-0x000031c0,mpc555_enableSystemInterrupts
-0x00003218,mpc555_enableSpiTransmitInterrupt
+0x000031c0,mpc555_sciResetToReceiveRequest
+0x00003218,mpc555_sciEnableTransmitInterrupt
 0x0000323c,cm848_initDiagnosticResponseCallback
 0x0000326c,cm848_processDiagnosticResponseCallback
 0x000032dc,mpc555_generateSerialChallenge
@@ -473,13 +473,13 @@ address,name
 0x00006580,cm848_updateSystemTimers
 0x0000662c,mpc555_diagnosticSubcommandDispatcher
 0x00006770,cm848_resetSerialReceiveBuffer
-0x000067b0,mpc555_serialReceiveHandler
-0x0000685c,mpc555_resetSerialCommunication
-0x000068b4,serialTransmitHandler
-0x00006974,mpc555_enableSerialTransmit
-0x000069b0,mpc555_validateSerialChecksum
-0x00006a5c,mpc555_initSerialTransmit
-0x00006ab8,mpc555_pollSerialDuringEeprom
+0x000067b0,mpc555_sciReceiveDataByte
+0x0000685c,mpc555_sciResetToReceiveData
+0x000068b4,mpc555_sciTransmitChecksummedByte
+0x00006974,mpc555_sciEnableChecksummedTransmit
+0x000069b0,mpc555_sciValidateChecksum
+0x00006a5c,mpc555_sciStartResponseTransmit
+0x00006ab8,mpc555_sciPollDuringEepromWrite
 0x00006b24,mpc555_updateSensorDiagnostics
 0x00006bac,cm848_sensorInputProcessing
 0x00006bdc,mpc555_processScheduledTasks
@@ -2161,9 +2161,10 @@ address,name
 0x0051d70c,fuelDemandCallbackDispatcher
 0x0051d810,initFuelDemandCallback
 0x0051d840,phaseGroupB_ControlDispatchers
-0x0051d86c,fuelDemandSerialTx
-0x0051d8c8,fuelDemandSerialRx
-0x0051d9a0,fuelDemandSerialInterruptHandler
+0x0051d86c,fuelDemandSerialStartTransmit
+0x0051d780,cm848_dispatchFuelDemandSerialCommand
+0x0051d8c8,fuelDemandSerialReceiveHandler
+0x0051d9a0,fuelDemandSerialTransmitHandler
 0x0051da38,fuel_demandQueue_reset
 0x0051da58,fuelDemandShutdown
 0x0051dab0,fuel_demandQueue_serialMode_enable
@@ -2385,3 +2386,21 @@ address,name
 0x00539a78,engine_start_completion_sequence
 0x00539d18,cm848_initProtectionTimers
 0x0053a110,hpcr_protectionTimerMonitor
+# fuelDemand SCI command handlers — dispatch table @ 0x53a9a0 (FUN_0051d780). Name uses DECIMAL command code (convention); hex in comment.
+0x0051dbd4,cm848_fuelDemandCommand18Handler,fuelDemand SCI command 0x12 - sets UART mode bit1 + cancels countdown + acks
+0x0051e460,cm848_fuelDemandCommand19Handler,fuelDemand SCI command 0x13 handler (dispatch table 0x53a9a0)
+0x0051eef0,cm848_fuelDemandCommand20Handler,fuelDemand SCI command 0x14 handler (dispatch table 0x53a9a0)
+0x005204f8,cm848_fuelDemandCommand23Handler,fuelDemand SCI command 0x17 handler (dispatch table 0x53a9a0)
+0x00520654,cm848_fuelDemandCommand25Handler,fuelDemand SCI command 0x19 handler (dispatch table 0x53a9a0)
+0x0052072c,cm848_fuelDemandCommand26Handler,fuelDemand SCI command 0x1a handler (dispatch table 0x53a9a0)
+0x00520ad8,cm848_fuelDemandCommand37Handler,fuelDemand SCI command 0x25 handler (dispatch table 0x53a9a0)
+0x005216f4,cm848_fuelDemandCommand39Handler,fuelDemand SCI command 0x27 handler (dispatch table 0x53a9a0)
+0x00521908,cm848_fuelDemandCommand40Handler,fuelDemand SCI command 0x28 handler (dispatch table 0x53a9a0)
+0x00521a60,cm848_fuelDemandCommand41Handler,fuelDemand SCI command 0x29 handler (dispatch table 0x53a9a0)
+0x00521b6c,cm848_fuelDemandCommand42Handler,fuelDemand SCI command 0x2a handler (dispatch table 0x53a9a0)
+0x00521d3c,cm848_fuelDemandCommand43Handler,fuelDemand SCI command 0x2b handler (dispatch table 0x53a9a0)
+0x00521e04,cm848_fuelDemandCommand44Handler,fuelDemand SCI command 0x2c handler (dispatch table 0x53a9a0)
+0x00522044,cm848_fuelDemandCommand49Handler,fuelDemand SCI command 0x31 handler (dispatch table 0x53a9a0)
+0x00522224,cm848_fuelDemandCommand50Handler,fuelDemand SCI command 0x32 handler (dispatch table 0x53a9a0)
+0x00522314,cm848_fuelDemandCommand51Handler,fuelDemand SCI command 0x33 handler (dispatch table 0x53a9a0)
+0x0052242c,cm848_fuelDemandCommand52Handler,fuelDemand SCI command 0x34 handler (dispatch table 0x53a9a0)

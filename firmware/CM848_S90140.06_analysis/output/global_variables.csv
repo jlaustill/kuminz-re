@@ -2316,7 +2316,7 @@ address,name,type,comment
 0x003fecb2,qadc_active_port_ptr,pointer,
 0x003fecb5,qadc_active_port_ptr+3,,
 0x003fecb6,diagnostic_callback_ptr,pointer,
-0x003fecba,eeprom_request_state,dword,
+0x003fecba,diag_serial_transfer_phase,dword,
 0x003fecbe,diag_session_state_t_003fecbe,diag_session_state_t,
 0x003fecbf,diag_session_state_t_003fecbe.response_write_index,,
 0x003fecc0,diag_session_state_t_003fecbe.eeprom_status,,

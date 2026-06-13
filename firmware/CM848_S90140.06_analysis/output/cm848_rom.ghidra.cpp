@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Jun 12 16:44:58 MDT 2026
+// Generated: Sat Jun 13 09:28:43 MDT 2026
 
 
 //
@@ -191,7 +191,7 @@ void mpc555_loadEepromCalibration(undefined4 param_1,int param_2)
       uVar7 = 0;
       do {
         while (sVar5 = BYTE_003fc6f4(), sVar5 == 0) {
-          mpc555_pollSerialDuringEeprom();
+          mpc555_sciPollDuringEepromWrite();
           mpc555_systemWatchdogReset();
         }
         uVar7 = uVar7 + 1;
@@ -234,7 +234,7 @@ void mpc555_loadEepromCalibration(undefined4 param_1,int param_2)
             do {
               local_38[0] = local_38[0] + *psVar13;
               psVar13 = psVar13 + 1;
-              mpc555_pollSerialDuringEeprom();
+              mpc555_sciPollDuringEepromWrite();
               uVar6 = uVar6 + 1;
               if (psVar12 < psVar13) break;
             } while (uVar6 < 0x200);
@@ -280,7 +280,7 @@ void mpc555_loadEepromCalibration(undefined4 param_1,int param_2)
         uVar7 = 0;
         do {
           while (sVar5 = BYTE_003fc6f4(), sVar5 == 0) {
-            mpc555_pollSerialDuringEeprom();
+            mpc555_sciPollDuringEepromWrite();
             mpc555_systemWatchdogReset();
           }
           uVar7 = uVar7 + 1;
@@ -308,7 +308,7 @@ void mpc555_loadEepromCalibration(undefined4 param_1,int param_2)
         uVar7 = 0;
         do {
           while (sVar5 = BYTE_003fc6f4(), sVar5 == 0) {
-            mpc555_pollSerialDuringEeprom();
+            mpc555_sciPollDuringEepromWrite();
             mpc555_systemWatchdogReset();
           }
           uVar7 = uVar7 + 1;
@@ -562,7 +562,7 @@ void mpc555_eepromWriteWords(dword dest_address,word *src_ptr,word word_count)
       bVar2 = qadc_queue_status;
       qadc_queue_status = bVar2 & 0x7f;
       wVar1 = qsmcm_recram_t_00305140.RX1;
-      mpc555_pollSerialDuringEeprom();
+      mpc555_sciPollDuringEepromWrite();
       BYTE_003fc6f4();
       mpc555_systemWatchdogReset();
     } while ((wVar1 & 1) != 0);
@@ -607,7 +607,7 @@ void mpc555_eepromReadWords(word param_1,word *param_2,uint param_3)
     wVar1 = qsmcm_recram_t_00305140.RX2;
     *param_2 = wVar1;
     param_2 = param_2 + 1;
-    mpc555_dispatchSpiHandlerByState();
+    mpc555_sciDispatchByTransferPhase();
   } while ((uVar3 & 0xffff) != 0);
   return;
 }
@@ -625,7 +625,7 @@ void cm848_mainLoopIteration(void)
   
   connection_id = BYTE_003fae3c();
   BYTE_003fc094(connection_id);
-  mpc555_dispatchSpiHandlerByState();
+  mpc555_sciDispatchByTransferPhase();
   cm848_handleEepromDiagnosticCallback();
   mpc555_processDiagnosticAndEepromRequests();
   return;
@@ -759,7 +759,7 @@ bool cm848_flashPollUntilReady(uint param_1,ushort *param_2,uint param_3)
   uVar2 = 0;
   bVar1 = false;
   do {
-    mpc555_pollSerialDuringEeprom();
+    mpc555_sciPollDuringEepromWrite();
     BYTE_003fc6f4();
     mpc555_systemWatchdogReset();
     if (*param_2 == param_1) {
@@ -1592,7 +1592,7 @@ void mpc555_initDiagnosticSession(void)
     ;
     diag_serial_crc_match_flag = 0;
     diagnostic_session_state = 0;
-    eeprom_request_state = 0;
+    diag_serial_transfer_phase = 0;
     diag_session_state_t_003fecbe.response_write_index = 0;
     diag_session_state_t_003fecbe._2_4_ = diag_serial_buffer;
     qsmcm_sccr1.SCC1R0 = 0xa0;
@@ -1603,7 +1603,7 @@ void mpc555_initDiagnosticSession(void)
     mpc555_eepromWriteWords((dword)local_8,(word *)&eeprom_cal_word4,2);
     diag_session_state_t_003fecbe.session_flags = diag_session_state_t_003fecbe.session_flags | 1;
     diagnostic_session_state = 1;
-    eeprom_request_state = 2;
+    diag_serial_transfer_phase = 2;
     cm848_initDiagnosticCallback();
     diag_session_state_t_003fecbe.response_write_index = 0;
     diag_session_state_t_003fecbe._2_4_ = diag_serial_buffer;
@@ -1787,7 +1787,7 @@ void mpc555_systemInitialization(void)
   mpc555_initDiagnosticSession();
   mpc555_initHardwareConfig();
   do {
-    mpc555_dispatchSpiHandlerByState();
+    mpc555_sciDispatchByTransferPhase();
     BYTE_003fa2f0();
     bVar2 = eeprom_service_mode_flags;
     if (((bVar2 & 0xf) != 0) && (eeprom_shadow_header.magic == 0x1d0a)) {
@@ -1796,7 +1796,7 @@ void mpc555_systemInitialization(void)
     }
     mpc555_systemWatchdogReset();
     BYTE_003fab3c();
-    mpc555_dispatchSpiHandlerByState();
+    mpc555_sciDispatchByTransferPhase();
     mpc555_bootStateMachine();
   } while( true );
 }
@@ -2151,7 +2151,7 @@ void cm848_registerSchedulerTask(void)
     uVar2 = uVar2 + 1 & 0xff;
   } while ((uVar2 < 5) && (!bVar1));
   if (!bVar1) {
-    mpc555_enableSystemInterrupts();
+    mpc555_sciResetToReceiveRequest();
     cm848_processTimerInterrupt();
   }
   return;
@@ -2187,17 +2187,17 @@ void mpc555_initSchedulerTaskTable(void)
   diag_session_state_t_003fecbe._2_4_ = diag_serial_buffer;
   wVar1 = qsmcm_sccr1.SC1SR;
   qsmcm_sccr1.SC1DR = (ushort)diag_serial_buffer[0];
-  mpc555_enableSpiTransmitInterrupt();
+  mpc555_sciEnableTransmitInterrupt();
   return;
 }
 
 
 
 //
-// Function: mpc555_spiReceiveHandler @ 0x00002f74
+// Function: mpc555_sciReceiveRequestByte @ 0x00002f74
 //
 
-void mpc555_spiReceiveHandler(void)
+void mpc555_sciReceiveRequestByte(void)
 
 {
   word wVar1;
@@ -2223,10 +2223,10 @@ void mpc555_spiReceiveHandler(void)
 
 
 //
-// Function: mpc555_spiTransmitCompleteHandler @ 0x00003008
+// Function: mpc555_sciTransmitResponseByte @ 0x00003008
 //
 
-void mpc555_spiTransmitCompleteHandler(void)
+void mpc555_sciTransmitResponseByte(void)
 
 {
   word wVar1;
@@ -2244,7 +2244,7 @@ void mpc555_spiTransmitCompleteHandler(void)
       if ((diag_session_state_t_003fecbe.session_flags & 1) != 0) {
         cm848_setDataTransferMode();
       }
-      mpc555_enableSystemInterrupts();
+      mpc555_sciResetToReceiveRequest();
     }
     else {
       diag_session_state_t_003fecbe.response_write_index =
@@ -2259,33 +2259,33 @@ void mpc555_spiTransmitCompleteHandler(void)
 
 
 //
-// Function: mpc555_dispatchSpiHandlerByState @ 0x000030ec
+// Function: mpc555_sciDispatchByTransferPhase @ 0x000030ec
 //
 
-void mpc555_dispatchSpiHandlerByState(void)
+void mpc555_sciDispatchByTransferPhase(void)
 
 {
   word wVar1;
   
-  if (eeprom_request_state == 0) {
+  if (diag_serial_transfer_phase == 0) {
     wVar1 = qsmcm_sccr1.SCC1R1;
     if ((wVar1 & 0x20) != 0) {
-      mpc555_spiReceiveHandler();
+      mpc555_sciReceiveRequestByte();
     }
   }
-  else if (eeprom_request_state == 1) {
+  else if (diag_serial_transfer_phase == 1) {
     wVar1 = qsmcm_sccr1.SCC1R1;
     if ((wVar1 & 0x40) != 0) {
-      mpc555_spiTransmitCompleteHandler();
+      mpc555_sciTransmitResponseByte();
     }
   }
-  else if (eeprom_request_state == 2) {
+  else if (diag_serial_transfer_phase == 2) {
     wVar1 = qsmcm_sccr1.SCC1R1;
     if ((wVar1 & 0x20) != 0) {
       BYTE_003fc380();
     }
   }
-  else if ((eeprom_request_state == 3) && (wVar1 = qsmcm_sccr1.SCC1R1, (wVar1 & 0x40) != 0)) {
+  else if ((diag_serial_transfer_phase == 3) && (wVar1 = qsmcm_sccr1.SCC1R1, (wVar1 & 0x40) != 0)) {
     BYTE_003fc484();
   }
   return;
@@ -2308,15 +2308,15 @@ void cm848_resetEepromStatusPointer(void)
 
 
 //
-// Function: mpc555_enableSystemInterrupts @ 0x000031c0
+// Function: mpc555_sciResetToReceiveRequest @ 0x000031c0
 //
 
-void mpc555_enableSystemInterrupts(void)
+void mpc555_sciResetToReceiveRequest(void)
 
 {
   word wVar1;
   
-  eeprom_request_state = 0;
+  diag_serial_transfer_phase = 0;
   cm848_resetEepromStatusPointer();
   diag_request_pending_flag = 0;
   wVar1 = qsmcm_sccr1.SCC1R1;
@@ -2329,15 +2329,15 @@ void mpc555_enableSystemInterrupts(void)
 
 
 //
-// Function: mpc555_enableSpiTransmitInterrupt @ 0x00003218
+// Function: mpc555_sciEnableTransmitInterrupt @ 0x00003218
 //
 
-void mpc555_enableSpiTransmitInterrupt(void)
+void mpc555_sciEnableTransmitInterrupt(void)
 
 {
   word wVar1;
   
-  eeprom_request_state = 1;
+  diag_serial_transfer_phase = 1;
   wVar1 = qsmcm_sccr1.SCC1R1;
   qsmcm_sccr1.SCC1R1 = wVar1 | 0x40;
   return;
@@ -2546,7 +2546,7 @@ void cm848_processDiagnosticSessionFlags(void)
   else {
     diagnostic_callback_ptr = cm848_registerSchedulerTask;
     cm848_processTimerInterrupt();
-    mpc555_enableSystemInterrupts();
+    mpc555_sciResetToReceiveRequest();
   }
   return;
 }
@@ -2601,8 +2601,8 @@ void cm848_beginEepromCalibrationWrite(void)
   
   eeprom_calibration_pending_flag = 1;
   cm848_diagSendResponseCode(0x78,0x74);
-  while (eeprom_request_state == 3) {
-    mpc555_pollSerialDuringEeprom();
+  while (diag_serial_transfer_phase == 3) {
+    mpc555_sciPollDuringEepromWrite();
     mpc555_systemWatchdogReset();
   }
   diag_session_state_byte = 0x78;
@@ -2632,8 +2632,8 @@ void cm848_updateEepromMagicAndReload(void)
   eeprom_calibration_pending_flag = 1;
   if (eeprom_shadow_header.magic == 0x1d0a) {
     cm848_diagSendResponseCode(0x78,0x74);
-    while (eeprom_request_state == 3) {
-      mpc555_pollSerialDuringEeprom();
+    while (diag_serial_transfer_phase == 3) {
+      mpc555_sciPollDuringEepromWrite();
       mpc555_systemWatchdogReset();
     }
     diag_request_pending_flag = 0;
@@ -2641,7 +2641,7 @@ void cm848_updateEepromMagicAndReload(void)
     mpc555_eepromWriteWords((dword)local_10,(word *)&DAT_01000000,2);
     while ((uVar2 < 400 || (eeprom_shadow_header.magic != local_10[0]))) {
       while (sVar1 = BYTE_003fc6f4(), sVar1 == 0) {
-        mpc555_pollSerialDuringEeprom();
+        mpc555_sciPollDuringEepromWrite();
         mpc555_systemWatchdogReset();
       }
       mpc555_eepromReadWords(0x1000000,0x3fee0a,2);
@@ -2764,7 +2764,7 @@ void cm848_restoreDiagnosticHandler(void)
      (cVar2 = sensor_init_retry_timer._0_1_ + -1, bVar1 = sensor_init_retry_timer._0_1_ == '\x01',
      sensor_init_retry_timer._0_1_ = cVar2, bVar1)) {
     diagnostic_callback_ptr = (undefined *)diagnostic_callback_init_ptr;
-    mpc555_enableSystemInterrupts();
+    mpc555_sciResetToReceiveRequest();
   }
   return;
 }
@@ -3100,7 +3100,7 @@ void cm848_prepareDataTransferBuffer(void)
     uVar4 = 0;
     do {
       (&DAT_003fec3a)[uVar4] = 0xff;
-      mpc555_pollSerialDuringEeprom();
+      mpc555_sciPollDuringEepromWrite();
       uVar4 = uVar4 + 1 & 0xff;
     } while (uVar4 < 0x40);
   }
@@ -3108,7 +3108,7 @@ void cm848_prepareDataTransferBuffer(void)
     (&DAT_003fec3a)[uVar1] = (&DAT_003fdc3a)[data_transfer_read_index];
     uVar4 = data_transfer_read_index + 1;
     data_transfer_read_index = (short)uVar4 + (short)((int)(uVar4 & 0xffff) >> 0xc) * -0x1000;
-    mpc555_pollSerialDuringEeprom();
+    mpc555_sciPollDuringEepromWrite();
   }
   data_transfer_state_t_003fec82.byte_count =
        data_transfer_state_t_003fec82.byte_count - ((ushort)uVar2 & 0xff);
@@ -3510,7 +3510,7 @@ bool mpc555_initFlashMemoryConfig(uint param_1)
               dVar3 = mbar_qadc64a_ccw;
               while ((dVar3 & 0x80000000) != 0) {
                 mpc555_systemWatchdogReset();
-                mpc555_pollSerialDuringEeprom();
+                mpc555_sciPollDuringEepromWrite();
                 mpc555_updateSensorDiagnostics();
                 dVar3 = mbar_qadc64a_ccw;
               }
@@ -3521,7 +3521,7 @@ bool mpc555_initFlashMemoryConfig(uint param_1)
               dVar3 = mbar_qadc64b_ccw;
               while ((dVar3 & 0x80000000) != 0) {
                 mpc555_systemWatchdogReset();
-                mpc555_pollSerialDuringEeprom();
+                mpc555_sciPollDuringEepromWrite();
                 mpc555_updateSensorDiagnostics();
                 dVar3 = mbar_qadc64b_ccw;
               }
@@ -3550,7 +3550,7 @@ bool mpc555_initFlashMemoryConfig(uint param_1)
         memory_scan_pointer = (undefined *)((uint)(memory_scan_pointer + 0x8000) & 0xffff8000);
       }
       mpc555_systemWatchdogReset();
-      mpc555_pollSerialDuringEeprom();
+      mpc555_sciPollDuringEepromWrite();
       mpc555_updateSensorDiagnostics();
     }
   } while (iVar7 != 0);
@@ -4875,7 +4875,7 @@ void cm848_updateSystemTimers(byte param_1,int param_2)
   diag_session_state_t_003fecbe.response_write_index = 4;
   diagnostic_callback_ptr = &DAT_003fc1fc;
   diag_serial_buffer[2] = param_1;
-  mpc555_initSerialTransmit();
+  mpc555_sciStartResponseTransmit();
   return;
 }
 
@@ -4892,7 +4892,7 @@ void mpc555_diagnosticSubcommandDispatcher(byte subcommand,byte *data_ptr)
   undefined3 in_register_0000000c;
   undefined4 uVar2;
   
-  mpc555_validateSerialChecksum(CONCAT31(in_register_0000000c,subcommand));
+  mpc555_sciValidateChecksum(CONCAT31(in_register_0000000c,subcommand));
   if (diag_request_pending_flag != '\x01') {
     return;
   }
@@ -4966,10 +4966,10 @@ void cm848_resetSerialReceiveBuffer(void)
 
 
 //
-// Function: mpc555_serialReceiveHandler @ 0x000067b0
+// Function: mpc555_sciReceiveDataByte @ 0x000067b0
 //
 
-void mpc555_serialReceiveHandler(void)
+void mpc555_sciReceiveDataByte(void)
 
 {
   word wVar1;
@@ -4997,16 +4997,16 @@ void mpc555_serialReceiveHandler(void)
 
 
 //
-// Function: mpc555_resetSerialCommunication @ 0x0000685c
+// Function: mpc555_sciResetToReceiveData @ 0x0000685c
 //
 
-void mpc555_resetSerialCommunication(void)
+void mpc555_sciResetToReceiveData(void)
 
 {
   word wVar1;
   
   cm848_resetSerialReceiveBuffer();
-  eeprom_request_state = 2;
+  diag_serial_transfer_phase = 2;
   diag_clear_flags_t_003fedfc.diag_response_write_count = 0;
   wVar1 = qsmcm_sccr1.SCC1R1;
   qsmcm_sccr1.SCC1R1 = wVar1 & 0xffbf;
@@ -5018,10 +5018,10 @@ void mpc555_resetSerialCommunication(void)
 
 
 //
-// Function: serialTransmitHandler @ 0x000068b4
+// Function: mpc555_sciTransmitChecksummedByte @ 0x000068b4
 //
 
-void serialTransmitHandler(void)
+void mpc555_sciTransmitChecksummedByte(void)
 
 {
   word wVar1;
@@ -5034,7 +5034,7 @@ void serialTransmitHandler(void)
       qsmcm_sccr1.SCC1R1 = wVar1 & 0xffbf;
       qsmcm_sccr1.SC1DR = ~(ushort)diag_response_checksum & 0x1ff;
       diag_response_checksum = 0;
-      mpc555_resetSerialCommunication();
+      mpc555_sciResetToReceiveData();
     }
     else {
       diag_session_state_t_003fecbe.response_write_index =
@@ -5049,15 +5049,15 @@ void serialTransmitHandler(void)
 
 
 //
-// Function: mpc555_enableSerialTransmit @ 0x00006974
+// Function: mpc555_sciEnableChecksummedTransmit @ 0x00006974
 //
 
-void mpc555_enableSerialTransmit(void)
+void mpc555_sciEnableChecksummedTransmit(void)
 
 {
   word wVar1;
   
-  eeprom_request_state = 3;
+  diag_serial_transfer_phase = 3;
   diag_response_checksum = 0;
   wVar1 = qsmcm_sccr1.SCC1R1;
   qsmcm_sccr1.SCC1R1 = wVar1 & 0xffdf;
@@ -5069,10 +5069,10 @@ void mpc555_enableSerialTransmit(void)
 
 
 //
-// Function: mpc555_validateSerialChecksum @ 0x000069b0
+// Function: mpc555_sciValidateChecksum @ 0x000069b0
 //
 
-void mpc555_validateSerialChecksum(void)
+void mpc555_sciValidateChecksum(void)
 
 {
   word wVar1;
@@ -5089,7 +5089,7 @@ void mpc555_validateSerialChecksum(void)
       diag_clear_flags_t_003fedfc.diag_response_write_count = 0;
     }
     else {
-      mpc555_resetSerialCommunication();
+      mpc555_sciResetToReceiveData();
     }
   }
   return;
@@ -5098,10 +5098,10 @@ void mpc555_validateSerialChecksum(void)
 
 
 //
-// Function: mpc555_initSerialTransmit @ 0x00006a5c
+// Function: mpc555_sciStartResponseTransmit @ 0x00006a5c
 //
 
-void mpc555_initSerialTransmit(void)
+void mpc555_sciStartResponseTransmit(void)
 
 {
   word wVar1;
@@ -5111,29 +5111,29 @@ void mpc555_initSerialTransmit(void)
   diag_session_state_t_003fecbe._2_4_ = diag_serial_buffer;
   wVar1 = qsmcm_sccr1.SC1SR;
   qsmcm_sccr1.SC1DR = (ushort)diag_serial_buffer[0];
-  mpc555_enableSerialTransmit();
+  mpc555_sciEnableChecksummedTransmit();
   return;
 }
 
 
 
 //
-// Function: mpc555_pollSerialDuringEeprom @ 0x00006ab8
+// Function: mpc555_sciPollDuringEepromWrite @ 0x00006ab8
 //
 
-void mpc555_pollSerialDuringEeprom(void)
+void mpc555_sciPollDuringEepromWrite(void)
 
 {
   word wVar1;
   
-  if (eeprom_request_state == 2) {
+  if (diag_serial_transfer_phase == 2) {
     wVar1 = qsmcm_sccr1.SCC1R1;
     if ((wVar1 & 0x20) != 0) {
-      mpc555_serialReceiveHandler();
+      mpc555_sciReceiveDataByte();
     }
   }
-  else if ((eeprom_request_state == 3) && (wVar1 = qsmcm_sccr1.SCC1R1, (wVar1 & 0x40) != 0)) {
-    serialTransmitHandler();
+  else if ((diag_serial_transfer_phase == 3) && (wVar1 = qsmcm_sccr1.SCC1R1, (wVar1 & 0x40) != 0)) {
+    mpc555_sciTransmitChecksummedByte();
   }
   return;
 }
@@ -5259,7 +5259,7 @@ void cm848_processMainLoop(void)
     bVar1 = eeprom_service_mode_flags;
     if (bVar1 == 0x82) {
       cm848_initCanMailboxFilters();
-      mpc555_pollSerialDuringEeprom();
+      mpc555_sciPollDuringEepromWrite();
     }
     mpc555_systemWatchdogReset();
     bVar1 = eeprom_service_mode_flags;
@@ -5453,8 +5453,8 @@ LAB_00007110:
         eeprom_calibration_pending_flag = 1;
         DAT_003fee06 = 1;
         cm848_updateSystemTimers(0x78,0x74);
-        while (eeprom_request_state == 3) {
-          mpc555_pollSerialDuringEeprom();
+        while (diag_serial_transfer_phase == 3) {
+          mpc555_sciPollDuringEepromWrite();
         }
         diag_request_pending_flag = 0;
         pcVar3 = (code *)eeprom_xfer_state.write_callback_ptr;
@@ -39805,10 +39805,10 @@ void cm848_dispatchFuelDemandCallback(void)
 
 {
   if (fuel_demand_callback_mode == 0) {
-    fuelDemandSerialRx();
+    fuelDemandSerialReceiveHandler();
   }
   else if (fuel_demand_callback_mode == 1) {
-    fuelDemandSerialInterruptHandler();
+    fuelDemandSerialTransmitHandler();
   }
   return;
 }
@@ -39823,7 +39823,7 @@ void cm848_registerFuelDemandCallback(void)
 
 {
   fuel_demand_callback_ptr = cm848_processFuelDemandCallback;
-  fuelDemandSerialTx();
+  fuelDemandSerialStartTransmit();
   return;
 }
 
@@ -39877,8 +39877,8 @@ void cm848_processFuelDemandCallback(void)
     (&fuel_demand_state_queue)[fuel_demand_queue_write_index] = 0;
     fuel_demand_queue_write_index = fuel_demand_queue_write_index + 1;
   }
-  fuel_demand_callback_ptr = FUN_0051d780;
-  fuelDemandSerialTx();
+  fuel_demand_callback_ptr = cm848_dispatchFuelDemandSerialCommand;
+  fuelDemandSerialStartTransmit();
   return;
 }
 
@@ -39892,7 +39892,7 @@ void cm848_registerFuelDemandCallback2(void)
 
 {
   fuel_demand_callback_ptr = cm848_processFuelDemandCallback2;
-  fuelDemandSerialTx();
+  fuelDemandSerialStartTransmit();
   return;
 }
 
@@ -39931,8 +39931,8 @@ void cm848_processFuelDemandCallback2(void)
   uVar4 = uVar4 + 1;
   (&fuel_demand_state_queue)[uVar4 & 0xff] = cVar1 + '5' + bVar3 + (byte)dVar2;
   fuel_demand_queue_write_index = (char)uVar4 + 1;
-  fuel_demand_callback_ptr = FUN_0051d780;
-  fuelDemandSerialTx();
+  fuel_demand_callback_ptr = cm848_dispatchFuelDemandSerialCommand;
+  fuelDemandSerialStartTransmit();
   return;
 }
 
@@ -40006,7 +40006,7 @@ void cm848_cancelFuelDemandCountdown(void)
 void cm848_initFuelDemandDispatchCallback(void)
 
 {
-  fuel_demand_func_ptr = FUN_0051d780;
+  fuel_demand_func_ptr = cm848_dispatchFuelDemandSerialCommand;
   return;
 }
 
@@ -75158,10 +75158,10 @@ void fuelDemandCallbackDispatcher(void)
 
 
 //
-// Function: FUN_0051d780 @ 0x0051d780
+// Function: cm848_dispatchFuelDemandSerialCommand @ 0x0051d780
 //
 
-void FUN_0051d780(void)
+void cm848_dispatchFuelDemandSerialCommand(void)
 
 {
   bool bVar1;
@@ -75192,7 +75192,7 @@ void FUN_0051d780(void)
 void initFuelDemandCallback(void)
 
 {
-  fuel_demand_callback_ptr = FUN_0051d780;
+  fuel_demand_callback_ptr = cm848_dispatchFuelDemandSerialCommand;
   cm848_initFuelDemandDispatchCallback();
   return;
 }
@@ -75216,10 +75216,10 @@ void phaseGroupB_ControlDispatchers(void)
 
 
 //
-// Function: fuelDemandSerialTx @ 0x0051d86c
+// Function: fuelDemandSerialStartTransmit @ 0x0051d86c
 //
 
-void fuelDemandSerialTx(void)
+void fuelDemandSerialStartTransmit(void)
 
 {
   word wVar1;
@@ -75235,10 +75235,10 @@ void fuelDemandSerialTx(void)
 
 
 //
-// Function: fuelDemandSerialRx @ 0x0051d8c8
+// Function: fuelDemandSerialReceiveHandler @ 0x0051d8c8
 //
 
-void fuelDemandSerialRx(void)
+void fuelDemandSerialReceiveHandler(void)
 
 {
   word wVar1;
@@ -75256,7 +75256,7 @@ void fuelDemandSerialRx(void)
     }
     fuel_demand_uart_mode_flags = fuel_demand_uart_mode_flags & 0xfd;
     qsmcm_sccr1.SCC1R0 = 0xa0;
-    fuel_demand_callback_ptr = FUN_0051d780;
+    fuel_demand_callback_ptr = cm848_dispatchFuelDemandSerialCommand;
   }
   else if (fuel_demand_uart_error_count != 0xff) {
     fuel_demand_uart_error_count = fuel_demand_uart_error_count + 1;
@@ -75268,10 +75268,10 @@ void fuelDemandSerialRx(void)
 
 
 //
-// Function: fuelDemandSerialInterruptHandler @ 0x0051d9a0
+// Function: fuelDemandSerialTransmitHandler @ 0x0051d9a0
 //
 
-void fuelDemandSerialInterruptHandler(void)
+void fuelDemandSerialTransmitHandler(void)
 
 {
   word wVar1;
@@ -75390,16 +75390,18 @@ void configurationValidationCheck(void)
 
 
 //
-// Function: FUN_0051dbd4 @ 0x0051dbd4
+// Function: cm848_fuelDemandCommand18Handler @ 0x0051dbd4
 //
 
-void FUN_0051dbd4(void)
+/* fuelDemand SCI command 0x12 - sets UART mode bit1 + cancels countdown + acks */
+
+void cm848_fuelDemandCommand18Handler(void)
 
 {
   fuel_demand_callback_ptr = &LAB_0051dc1c;
   fuel_demand_uart_mode_flags = fuel_demand_uart_mode_flags | 2;
   cm848_cancelFuelDemandCountdown();
-  fuelDemandSerialTx();
+  fuelDemandSerialStartTransmit();
   return;
 }
 
@@ -75443,12 +75445,12 @@ LAB_0051ddf4:
     break;
   case 0xfe:
     fuel_demand_uart_mode_flags = fuel_demand_uart_mode_flags & 0xfd;
-    fuel_demand_callback_ptr = FUN_0051d780;
+    fuel_demand_callback_ptr = cm848_dispatchFuelDemandSerialCommand;
     break;
   default:
     return 0;
   }
-  fuelDemandSerialTx();
+  fuelDemandSerialStartTransmit();
   return 1;
 }
 
@@ -75621,7 +75623,7 @@ LAB_0051e2bc:
       fuel_demand_serial_cached_word = *pwVar4;
     }
     fuel_demand_state_queue = bVar6;
-    fuelDemandSerialTx();
+    fuelDemandSerialStartTransmit();
   }
   return;
 }
@@ -75629,14 +75631,16 @@ LAB_0051e2bc:
 
 
 //
-// Function: FUN_0051e460 @ 0x0051e460
+// Function: cm848_fuelDemandCommand19Handler @ 0x0051e460
 //
 
-void FUN_0051e460(void)
+/* fuelDemand SCI command 0x13 handler (dispatch table 0x53a9a0) */
+
+void cm848_fuelDemandCommand19Handler(void)
 
 {
   fuel_demand_callback_ptr = &LAB_0051e914;
-  fuelDemandSerialTx();
+  fuelDemandSerialStartTransmit();
   return;
 }
 
@@ -75804,6 +75808,20 @@ void FUN_0051e894(short *param_1,undefined4 param_2,short param_3)
 
 
 //
+// Function: cm848_fuelDemandCommand20Handler @ 0x0051eef0
+//
+
+void cm848_fuelDemandCommand20Handler(void)
+
+{
+  fuel_demand_callback_ptr = &LAB_0051f0b8;
+  fuelDemandSerialStartTransmit();
+  return;
+}
+
+
+
+//
 // Function: FUN_0051ef20 @ 0x0051ef20
 //
 
@@ -75898,6 +75916,52 @@ int FUN_0051ef20(void)
 
 
 //
+// Function: cm848_fuelDemandCommand23Handler @ 0x005204f8
+//
+
+void cm848_fuelDemandCommand23Handler(void)
+
+{
+  uint uVar1;
+  uint uVar2;
+  uint uVar3;
+  
+  if (DAT_003fcf5d == '\x01') {
+    uVar1 = (uint)fuel_demand_queue_write_index;
+    uVar3 = (uint)fuel_demand_queue_write_index;
+    if (uVar3 < uVar1 + 3) {
+      uVar2 = uVar1 + 3;
+      do {
+        (&fuel_demand_state_queue)[uVar3] = 0xe0;
+        uVar1 = uVar1 + 1;
+        uVar3 = uVar3 + 1 & 0xff;
+      } while (uVar3 < uVar2);
+      fuel_demand_queue_write_index = (byte)uVar1;
+    }
+    DAT_003fcf5d = '\0';
+  }
+  else {
+    if (cold_start_phase == CSP_CRANKING) {
+      if (DAT_003fcf5c == '\0') {
+        diagnostic_clear_request_state = 3;
+        DAT_003fcf5c = '\x04';
+      }
+      (&fuel_demand_state_queue)[fuel_demand_queue_write_index] = 0xff;
+    }
+    else {
+      (&fuel_demand_state_queue)[fuel_demand_queue_write_index] = 0;
+    }
+    fuel_demand_queue_write_index = fuel_demand_queue_write_index + 1;
+  }
+  fuel_demand_callback_ptr = cm848_dispatchFuelDemandSerialCommand;
+  cm848_cancelFuelDemandCountdown();
+  fuelDemandSerialStartTransmit();
+  return;
+}
+
+
+
+//
 // Function: cm848_countdown_timer_update @ 0x0052061c
 //
 
@@ -75907,6 +75971,20 @@ void cm848_countdown_timer_update(void)
   if ((DAT_003fcf5c != '\0') && (DAT_003fcf5c = DAT_003fcf5c + -1, DAT_003fcf5c == '\0')) {
     DAT_003fcf5d = 1;
   }
+  return;
+}
+
+
+
+//
+// Function: cm848_fuelDemandCommand25Handler @ 0x00520654
+//
+
+void cm848_fuelDemandCommand25Handler(void)
+
+{
+  fuel_demand_callback_ptr = &LAB_005206c4;
+  fuelDemandSerialStartTransmit();
   return;
 }
 
@@ -75926,6 +76004,35 @@ void governor_speedLimitFloor_decrement(void)
   else {
     governor_speed_limit_floor_countdown = governor_speed_limit_floor_countdown - 1;
   }
+  return;
+}
+
+
+
+//
+// Function: cm848_fuelDemandCommand26Handler @ 0x0052072c
+//
+
+void cm848_fuelDemandCommand26Handler(void)
+
+{
+  fuel_demand_callback_ptr = &LAB_0052075c;
+  fuelDemandSerialStartTransmit();
+  return;
+}
+
+
+
+//
+// Function: cm848_fuelDemandCommand37Handler @ 0x00520ad8
+//
+
+void cm848_fuelDemandCommand37Handler(void)
+
+{
+  DAT_003fcf60 = 0;
+  fuel_demand_callback_ptr = &LAB_00520b14;
+  fuelDemandSerialStartTransmit();
   return;
 }
 
@@ -76010,6 +76117,116 @@ void initProtectionVoltageTimer(void)
 
 
 //
+// Function: cm848_fuelDemandCommand39Handler @ 0x005216f4
+//
+
+void cm848_fuelDemandCommand39Handler(void)
+
+{
+  DAT_003fcf82 = 0;
+  fuel_demand_callback_ptr = &LAB_00521730;
+  fuelDemandSerialStartTransmit();
+  return;
+}
+
+
+
+//
+// Function: cm848_fuelDemandCommand40Handler @ 0x00521908
+//
+
+void cm848_fuelDemandCommand40Handler(void)
+
+{
+  DAT_003fcf86 = 0;
+  fuel_demand_callback_ptr = &LAB_00521944;
+  fuelDemandSerialStartTransmit();
+  return;
+}
+
+
+
+//
+// Function: cm848_fuelDemandCommand41Handler @ 0x00521a60
+//
+
+void cm848_fuelDemandCommand41Handler(void)
+
+{
+  DAT_003fcf8a = 0;
+  fuel_demand_callback_ptr = &LAB_00521a9c;
+  fuelDemandSerialStartTransmit();
+  return;
+}
+
+
+
+//
+// Function: cm848_fuelDemandCommand42Handler @ 0x00521b6c
+//
+
+void cm848_fuelDemandCommand42Handler(void)
+
+{
+  fuel_demand_callback_ptr = &LAB_00521b9c;
+  fuelDemandSerialStartTransmit();
+  return;
+}
+
+
+
+//
+// Function: cm848_fuelDemandCommand43Handler @ 0x00521d3c
+//
+
+void cm848_fuelDemandCommand43Handler(void)
+
+{
+  dword dVar1;
+  byte bVar2;
+  uint uVar3;
+  
+  if (fault_timing_reset_flag == 1) {
+    fault_timing_counter_snapshot = 0;
+  }
+  else {
+    fault_timing_counter_snapshot = fault_timing_snapshot;
+    if ((fault_timing_snapshot & 0xffff) == 0) {
+      fault_timing_counter_snapshot = fault_timing_snapshot + 1;
+    }
+  }
+  dVar1 = fault_timing_counter_snapshot;
+  bVar2 = (byte)(fault_timing_counter_snapshot >> 8);
+  (&fuel_demand_state_queue)[fuel_demand_queue_write_index] = bVar2;
+  uVar3 = fuel_demand_queue_write_index + 1 & 0xff;
+  (&fuel_demand_state_queue)[uVar3] = (byte)dVar1;
+  uVar3 = uVar3 + 1;
+  (&fuel_demand_state_queue)[uVar3 & 0xff] = bVar2 + 0x2b + (byte)dVar1;
+  fuel_demand_queue_write_index = (char)uVar3 + 1;
+  fuel_demand_callback_ptr = cm848_dispatchFuelDemandSerialCommand;
+  cm848_cancelFuelDemandCountdown();
+  fuelDemandSerialStartTransmit();
+  return;
+}
+
+
+
+//
+// Function: cm848_fuelDemandCommand44Handler @ 0x00521e04
+//
+
+void cm848_fuelDemandCommand44Handler(void)
+
+{
+  DAT_003fcf8e = 0;
+  fuel_demand_callback_ptr = &LAB_00521e68;
+  fuelDemandSerialStartTransmit();
+  return;
+}
+
+
+
+//
 // Function: cm848_protection_cooldownTimer_decrement @ 0x00521e40
 //
 
@@ -76025,6 +76242,20 @@ void cm848_protection_cooldownTimer_decrement(void)
 
 
 //
+// Function: cm848_fuelDemandCommand49Handler @ 0x00522044
+//
+
+void cm848_fuelDemandCommand49Handler(void)
+
+{
+  fuel_demand_callback_ptr = &LAB_00522158;
+  fuelDemandSerialStartTransmit();
+  return;
+}
+
+
+
+//
 // Function: j1939InitiateFuelDemand @ 0x00522074
 //
 
@@ -76033,7 +76264,7 @@ void j1939InitiateFuelDemand(void)
 {
   fuel_demand_state_queue = 1;
   fuel_demand_queue_write_index = 1;
-  fuelDemandSerialTx();
+  fuelDemandSerialStartTransmit();
   return;
 }
 
@@ -76065,6 +76296,111 @@ undefined1 cm848_memoryBlock_checksum_validate(uint param_1,undefined4 param_2,i
     uVar2 = cm848_validateMemoryBlockChecksum(param_1 & 0xffff,param_2,param_3);
   }
   return uVar2;
+}
+
+
+
+//
+// Function: cm848_fuelDemandCommand50Handler @ 0x00522224
+//
+
+void cm848_fuelDemandCommand50Handler(void)
+
+{
+  ushort uVar1;
+  word wVar2;
+  char cVar4;
+  short sVar3;
+  uint uVar5;
+  uint uVar6;
+  
+  sVar3 = 0x32;
+  uVar6 = 0;
+  do {
+    cVar4 = (char)sVar3;
+    if (((&protection_event_spn_history)[uVar6] == 0) ||
+       (uVar5 = (uint)fuel_demand_queue_write_index, 0x1f < uVar5 + 5)) break;
+    uVar1 = (&protection_event_spn_history)[uVar6];
+    (&fuel_demand_state_queue)[uVar5] = (byte)(uVar1 >> 8);
+    wVar2 = (&protection_event_spn_history)[uVar6];
+    (&fuel_demand_state_queue)[uVar5 + 1 & 0xff] = (byte)wVar2;
+    sVar3 = sVar3 + (uVar1 >> 8) + wVar2;
+    cVar4 = (char)sVar3;
+    fuel_demand_queue_write_index = (char)(uVar5 + 1) + 1;
+    uVar6 = uVar6 + 1 & 0xffff;
+  } while (uVar6 < 8);
+  (&fuel_demand_state_queue)[fuel_demand_queue_write_index] = 0xfe;
+  uVar6 = fuel_demand_queue_write_index + 1 & 0xff;
+  (&fuel_demand_state_queue)[uVar6] = 0xfe;
+  uVar6 = uVar6 + 1;
+  (&fuel_demand_state_queue)[uVar6 & 0xff] = cVar4 - 4;
+  fuel_demand_queue_write_index = (char)uVar6 + 1;
+  fuel_demand_callback_ptr = cm848_dispatchFuelDemandSerialCommand;
+  cm848_cancelFuelDemandCountdown();
+  fuelDemandSerialStartTransmit();
+  return;
+}
+
+
+
+//
+// Function: cm848_fuelDemandCommand51Handler @ 0x00522314
+//
+
+void cm848_fuelDemandCommand51Handler(void)
+
+{
+  ushort uVar1;
+  int iVar2;
+  char cVar3;
+  uint uVar4;
+  uint uVar5;
+  uint uVar6;
+  
+  iVar2 = 0x33;
+  uVar4 = 0;
+  do {
+    cVar3 = (char)iVar2;
+    if ((*(ushort *)((int)&fault_status_word_array + uVar4 * 3) & 1) != 0) {
+      uVar1 = (&DAT_0005b57c)[uVar4];
+      uVar5 = (uint)uVar1;
+      if (uVar5 != 0) {
+        uVar6 = (uint)fuel_demand_queue_write_index;
+        if (0x1f < uVar6 + 5) break;
+        (&fuel_demand_state_queue)[uVar6] = (byte)(uVar1 >> 8);
+        (&fuel_demand_state_queue)[uVar6 + 1 & 0xff] = (byte)uVar1;
+        iVar2 = iVar2 + ((int)uVar5 >> 8) + uVar5;
+        fuel_demand_queue_write_index = (char)(uVar6 + 1) + 1;
+      }
+    }
+    cVar3 = (char)iVar2;
+    uVar4 = uVar4 + 1 & 0xffff;
+  } while (uVar4 < 0xaa);
+  (&fuel_demand_state_queue)[fuel_demand_queue_write_index] = 0xfe;
+  uVar4 = fuel_demand_queue_write_index + 1 & 0xff;
+  (&fuel_demand_state_queue)[uVar4] = 0xfe;
+  uVar4 = uVar4 + 1;
+  (&fuel_demand_state_queue)[uVar4 & 0xff] = cVar3 - 4;
+  fuel_demand_queue_write_index = (char)uVar4 + 1;
+  fuel_demand_callback_ptr = cm848_dispatchFuelDemandSerialCommand;
+  cm848_cancelFuelDemandCountdown();
+  fuelDemandSerialStartTransmit();
+  return;
+}
+
+
+
+//
+// Function: cm848_fuelDemandCommand52Handler @ 0x0052242c
+//
+
+void cm848_fuelDemandCommand52Handler(void)
+
+{
+  DAT_003fcf92 = 0;
+  fuel_demand_callback_ptr = &LAB_0052252c;
+  fuelDemandSerialStartTransmit();
+  return;
 }
 
 
@@ -88118,4 +88454,4 @@ void hpcr_protectionTimerMonitor(void)
 
 
 
-// Export complete - 2049 functions processed
+// Export complete - 2064 functions processed
