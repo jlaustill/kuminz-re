@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Jun 13 09:28:43 MDT 2026
+// Generated: Sat Jun 13 09:39:40 MDT 2026
 
 
 //
@@ -75822,10 +75822,13 @@ void cm848_fuelDemandCommand20Handler(void)
 
 
 //
-// Function: FUN_0051ef20 @ 0x0051ef20
+// Function: cm848_encodeGovernorFuelModeStatus @ 0x0051ef20
 //
 
-int FUN_0051ef20(void)
+/* encodes governor_fuel_mode + cruise_control_state + governor_fuel_mode_d into the fuelDemand SCI
+   status byte */
+
+int cm848_encodeGovernorFuelModeStatus(void)
 
 {
   int iVar1;
@@ -75916,10 +75919,10 @@ int FUN_0051ef20(void)
 
 
 //
-// Function: cm848_fuelDemandCommand23Handler @ 0x005204f8
+// Function: cm848_fuelDemandClearDiagnostics @ 0x005204f8
 //
 
-void cm848_fuelDemandCommand23Handler(void)
+void cm848_fuelDemandClearDiagnostics(void)
 
 {
   uint uVar1;
@@ -76176,10 +76179,10 @@ void cm848_fuelDemandCommand42Handler(void)
 
 
 //
-// Function: cm848_fuelDemandCommand43Handler @ 0x00521d3c
+// Function: cm848_fuelDemandReportFaultTiming @ 0x00521d3c
 //
 
-void cm848_fuelDemandCommand43Handler(void)
+void cm848_fuelDemandReportFaultTiming(void)
 
 {
   dword dVar1;
@@ -76301,10 +76304,10 @@ undefined1 cm848_memoryBlock_checksum_validate(uint param_1,undefined4 param_2,i
 
 
 //
-// Function: cm848_fuelDemandCommand50Handler @ 0x00522224
+// Function: cm848_fuelDemandReportProtectionEventSpns @ 0x00522224
 //
 
-void cm848_fuelDemandCommand50Handler(void)
+void cm848_fuelDemandReportProtectionEventSpns(void)
 
 {
   ushort uVar1;
@@ -76344,10 +76347,10 @@ void cm848_fuelDemandCommand50Handler(void)
 
 
 //
-// Function: cm848_fuelDemandCommand51Handler @ 0x00522314
+// Function: cm848_fuelDemandReportActiveFaultSpns @ 0x00522314
 //
 
-void cm848_fuelDemandCommand51Handler(void)
+void cm848_fuelDemandReportActiveFaultSpns(void)
 
 {
   ushort uVar1;
@@ -76406,10 +76409,12 @@ void cm848_fuelDemandCommand52Handler(void)
 
 
 //
-// Function: FUN_00522468 @ 0x00522468
+// Function: cm848_lookupFaultSpnIndex @ 0x00522468
 //
 
-undefined4 FUN_00522468(undefined2 *param_1,uint param_2)
+/* searches the SPN table DAT_0005b57c for a matching SPN and returns its table index */
+
+undefined4 cm848_lookupFaultSpnIndex(undefined2 *param_1,uint param_2)
 
 {
   uint uVar1;

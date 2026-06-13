@@ -2390,7 +2390,7 @@ address,name
 0x0051dbd4,cm848_fuelDemandCommand18Handler,fuelDemand SCI command 0x12 - sets UART mode bit1 + cancels countdown + acks
 0x0051e460,cm848_fuelDemandCommand19Handler,fuelDemand SCI command 0x13 handler (dispatch table 0x53a9a0)
 0x0051eef0,cm848_fuelDemandCommand20Handler,fuelDemand SCI command 0x14 handler (dispatch table 0x53a9a0)
-0x005204f8,cm848_fuelDemandCommand23Handler,fuelDemand SCI command 0x17 handler (dispatch table 0x53a9a0)
+0x005204f8,cm848_fuelDemandClearDiagnostics,fuelDemand SCI command 0x17 - requests DTC clear (diagnostic_clear_request_state=3) during cranking
 0x00520654,cm848_fuelDemandCommand25Handler,fuelDemand SCI command 0x19 handler (dispatch table 0x53a9a0)
 0x0052072c,cm848_fuelDemandCommand26Handler,fuelDemand SCI command 0x1a handler (dispatch table 0x53a9a0)
 0x00520ad8,cm848_fuelDemandCommand37Handler,fuelDemand SCI command 0x25 handler (dispatch table 0x53a9a0)
@@ -2398,9 +2398,11 @@ address,name
 0x00521908,cm848_fuelDemandCommand40Handler,fuelDemand SCI command 0x28 handler (dispatch table 0x53a9a0)
 0x00521a60,cm848_fuelDemandCommand41Handler,fuelDemand SCI command 0x29 handler (dispatch table 0x53a9a0)
 0x00521b6c,cm848_fuelDemandCommand42Handler,fuelDemand SCI command 0x2a handler (dispatch table 0x53a9a0)
-0x00521d3c,cm848_fuelDemandCommand43Handler,fuelDemand SCI command 0x2b handler (dispatch table 0x53a9a0)
+0x00521d3c,cm848_fuelDemandReportFaultTiming,fuelDemand SCI command 0x2b - reports fault_timing_snapshot (2 bytes + checksum)
 0x00521e04,cm848_fuelDemandCommand44Handler,fuelDemand SCI command 0x2c handler (dispatch table 0x53a9a0)
 0x00522044,cm848_fuelDemandCommand49Handler,fuelDemand SCI command 0x31 handler (dispatch table 0x53a9a0)
-0x00522224,cm848_fuelDemandCommand50Handler,fuelDemand SCI command 0x32 handler (dispatch table 0x53a9a0)
-0x00522314,cm848_fuelDemandCommand51Handler,fuelDemand SCI command 0x33 handler (dispatch table 0x53a9a0)
+0x00522224,cm848_fuelDemandReportProtectionEventSpns,fuelDemand SCI command 0x32 - reports protection_event_spn_history (up to 8 SPNs + checksum)
+0x00522314,cm848_fuelDemandReportActiveFaultSpns,fuelDemand SCI command 0x33 - reports active fault SPNs from fault_status_word_array (+ checksum)
 0x0052242c,cm848_fuelDemandCommand52Handler,fuelDemand SCI command 0x34 handler (dispatch table 0x53a9a0)
+0x0051ef20,cm848_encodeGovernorFuelModeStatus,encodes governor_fuel_mode + cruise_control_state + governor_fuel_mode_d into the fuelDemand SCI status byte
+0x00522468,cm848_lookupFaultSpnIndex,searches the SPN table DAT_0005b57c for a matching SPN and returns its table index
