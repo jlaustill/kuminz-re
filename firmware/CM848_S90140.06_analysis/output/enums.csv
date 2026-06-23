@@ -811,3 +811,5 @@ CRUISE_SWITCH_REQUEST,2,CRUISE_SWITCH_COAST,COAST button - decelerate (governor_
 CRUISE_SWITCH_REQUEST,3,CRUISE_SWITCH_SET,SET button - rising edge latches setpoint (CRUISE_SET). Confirmed live 2026-06-12,2
 CRUISE_SWITCH_REQUEST,4,CRUISE_SWITCH_RESUME,RESUME/ACCEL button - tap returns CRUISE_RESUME - held accelerates (CRUISE_ACCELERATE). Confirmed live 2026-06-12,2
 CRUISE_SWITCH_REQUEST,5,CRUISE_SWITCH_IDLE,No button pressed / debounce-settling value,2
+ENGINE_LOAD_PROTECTION_STATE,0,INACTIVE,engine-load protection not derating,2
+ENGINE_LOAD_PROTECTION_STATE,8,ACTIVE,engine-load protection actively derating - bit3 (0x08) of the protection status word mirrors governor_status_flags confirm-B (0x8000),2

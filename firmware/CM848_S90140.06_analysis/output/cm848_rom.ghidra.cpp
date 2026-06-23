@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Jun 13 09:39:40 MDT 2026
+// Generated: Tue Jun 23 15:06:07 MDT 2026
 
 
 //
@@ -30722,20 +30722,45 @@ void cm848_calculateFaultRateValue(void)
 // Function: cm848_processFaultStatusMain @ 0x0002f5a4
 //
 
+/* review-function-readability reviewed 2026-06-23 - Readability Medium Accuracy Confidence Medium -
+   orchestrates the engine-PROTECTION derate-speed path (NOT DTC handling): runs the two
+   protection-condition state machines then builds the protection status word
+   (protection_diagnostic_status_intermediate = protection_fault_condition_value | confirm-B bit3)
+   and computes the derate speed target via cm848_calculateFaultRateValue. Outputs converge on
+   governor_speed_tracking (live PID error term cpp:29251); real J1939 DM2 fault path is a sibling
+   (cm848_setEngineProtectionFault). Renamed
+   protection_fault_severity->protection_diagnostic_status_intermediate (magnitude-implying name
+   colliding with protection_fault_severity_code @0x408788) and uVar1->engineLoadProtection (enum
+   ENGINE_LOAD_PROTECTION_STATE INACTIVE=0/ACTIVE=0x08). confirm-B (governor_status_flags 0x8000) =
+   engine-LOAD protection actively derating: the monitored quantity is fuel-demand-derived engine
+   load (protection_channel_load_raw, computed in cm848_adjustFuelDemandWithOffset, EMA-filtered
+   into protection_ema_output), NOT a temperature/pressure sensor. The whole cluster is a
+   fuel-mode-B (governor_fuel_b_mode_flag) protection governor: load-EMA deviation is the TRIP;
+   confirm-A is fuel-low-armed (protection_confirm_enable_a) and confirm-B is
+   throttle-rate/overspeed-armed (protection_confirm_enable_b from
+   governor_overspeed_threshold_flag); it derates governor speed and raises protection event SPN
+   0x48 via cm848_setEngineProtectionFault. confirm-A/B are two arming stages of this one
+   load-deviation protection. Capped at MEDIUM: the whole *Fault* family (callees
+   cm848_processFaultConditionMain/processFaultStatusWord2/calculateFaultRateValue + caller
+   processFaultStatusFlags + governor_status_flags) shares a Fault->protection-derate-governor
+   domain mismatch needing a cluster-scope rename; and protection_fault_condition_value's writer is
+   an indexed sthx (pointer-arg inference not instruction-proven) */
+
 void cm848_processFaultStatusMain(void)
 
 {
-  ushort uVar1;
+  ENGINE_LOAD_PROTECTION_STATE engineLoadProtection;
   
   cm848_processFaultConditionMain();
   cm848_processFaultStatusWord2();
   if ((governor_status_flags & 0x8000) == 0) {
-    uVar1 = 0;
+    engineLoadProtection = INACTIVE;
   }
   else {
-    uVar1 = 8;
+    engineLoadProtection = ACTIVE;
   }
-  protection_fault_severity = protection_fault_condition_value | uVar1;
+  protection_diagnostic_status_intermediate =
+       protection_fault_condition_value | engineLoadProtection;
   cm848_calculateFaultRateValue();
   return;
 }
@@ -30758,7 +30783,7 @@ void cm848_calculateDiagnosticStatusBits(void)
   else {
     uVar1 = 0x20;
   }
-  if ((uVar1 | protection_fault_severity) == 0) {
+  if ((uVar1 | protection_diagnostic_status_intermediate) == 0) {
     governor_speed_tracking = protection_speed_tracking_target;
     governor_speed_tracking_mode = 0;
   }
@@ -30772,7 +30797,7 @@ void cm848_calculateDiagnosticStatusBits(void)
   else {
     uVar2 = 8;
   }
-  protection_diagnostic_status = uVar1 | protection_fault_severity | uVar2;
+  protection_diagnostic_status = uVar1 | protection_diagnostic_status_intermediate | uVar2;
   return;
 }
 

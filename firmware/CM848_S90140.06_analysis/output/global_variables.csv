@@ -1364,7 +1364,7 @@ address,name,type,comment
 0x003fb09e,governor_demand_rate_a,word,
 0x003fb0a0,governor_demand_rate_minimum,word,
 0x003fb0a2,governor_demand_rate_b,word,
-0x003fb0a4,protection_fault_severity,word,
+0x003fb0a4,protection_diagnostic_status_intermediate,word,intermediate protection status = protection_fault_condition_value | confirm-B bit3; zero-tested to pick the derate speed target and OR-folded into protection_diagnostic_status (cm848_calculateDiagnosticStatusBits). NOT a magnitude - was misnamed protection_fault_severity which collided with protection_fault_severity_code @0x408788
 0x003fb0a6,protection_confirm_counter_c,word,
 0x003fb0a8,protection_confirm_counter_a,word,
 0x003fb0aa,protection_condition_active_flag,word,
@@ -2257,7 +2257,7 @@ address,name,type,comment
 0x003fe9a6,protection_monitor_shadow,word,
 0x003fe9b4,engine_sync_validation_flags,word,
 0x003fe9be,iat_sensor_deviation_flags,word,
-0x003fe9c6,governor_status_flags,word,
+0x003fe9c6,governor_status_flags,word,engine-load (fuel-demand-derived) protection confirm bits (trip = load-EMA deviation): 0x4000=confirm-A (fuel-low-armed steady stage - clamps EMA/load) 0x8000=confirm-B (throttle-rate/overspeed-armed live stage - drives the speed derate); only these 2 bits used; shadow @0x3fea2a; the sibling governor_status_overspeed_flag_snapshot is a wrong write-only name
 0x003fe9c8,governor_diag_status_bits_b,word,
 0x003fe9cc,diagnostic_status_bits_b,word,
 0x003fe9ce,diagnostic_status_bits,word,
@@ -5579,7 +5579,7 @@ address,name,type,comment
 0x0040be26,sensor_channel108_fault_status,word,
 0x0040be2a,sensor_channel69_fault_status,word,
 0x0040be2c,sensor_channel109_fault_status,word,
-0x0040be2e,protection_fault_condition_value,word,
+0x0040be2e,protection_fault_condition_value,word,signed 0/1/2 fault-condition code for one engine-protection channel; written via updateSensorChannelWithConfig (indexed sthx - not instruction-proven); base of protection_diagnostic_status_intermediate
 0x0040be36,fuel_smoke_limit_mode,word,smoke limit mode 0/1/2 off/EGR/boost (lha=word; was PTR_DAT)
 0x0040be3a,sensor_channel7_fault_status,word,
 0x0040be3e,sensor_channel71_fault_status,word,

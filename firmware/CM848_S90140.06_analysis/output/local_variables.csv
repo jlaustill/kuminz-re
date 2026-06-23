@@ -72,3 +72,4 @@ function_address,function_name,old_name,new_name,type,comment
 0x00501b4c,sensorChannelTypeB_update,uVar4,dispatch_index,uint,Clamped index into qadc_channel_dispatch_table / sensor_channel_type_table
 0x00501b4c,sensorChannelTypeB_update,uVar2,scratch16,ushort,Reused 16-bit scratch (default value / state field / debounce target depending on path)
 0x00501b4c,sensorChannelTypeB_update,wVar3,sensor_scratch,word,Raw sensor reading / EMA result reused across paths and written to *state_ptr
+0x0002f5a4,cm848_processFaultStatusMain,uVar1,engineLoadProtection,ENGINE_LOAD_PROTECTION_STATE,ACTIVE(0x08)/INACTIVE(0) - engine-load (fuel-demand-derived) protection derate; mirrors governor_status_flags confirm-B (0x8000); OR-ed into the protection status word
