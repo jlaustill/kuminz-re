@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Jun 27 12:54:09 MDT 2026
+// Generated: Sat Jun 27 13:23:36 MDT 2026
 
 
 //
@@ -29972,7 +29972,7 @@ void cm848_evaluateLoadProtectionFuelLowStage(void)
     uVar3 = 0;
   }
   protection_confirm_startup_counter = (word)uVar3;
-  uVar4 = (uint)(short)(protection_ema_cal_offset + 0xce00);
+  uVar4 = (uint)(short)(protection_channel_filtered_output + 0xce00);
   if (((int)uVar4 < 1) && ((int)uVar4 < 0)) {
     uVar4 = -uVar4;
   }
@@ -30032,7 +30032,8 @@ void cm848_calculateLoadProtectionDeviationFlag(void)
 {
   int iVar1;
   
-  iVar1 = ((int)(short)protection_ema_output - (int)(short)protection_ema_cal_offset) + -0x3200;
+  iVar1 = ((int)(short)protection_ema_output - (int)(short)protection_channel_filtered_output) +
+          -0x3200;
   if (iVar1 < 0) {
     iVar1 = -iVar1;
   }
@@ -30220,7 +30221,7 @@ void cm848_updateLoadProtectionArming(void)
     }
     protection_fault_condition_flag._2_2_ = governor_status_flags & 0x8000;
     uVar2 = governor_status_flags & 0x4000;
-    governor_status_overspeed_flag_snapshot = governor_status_flags & 0x4000;
+    load_protection_confirm_a_snapshot = governor_status_flags & 0x4000;
     cm848_evaluateLoadProtectionOverspeedStage();
     if (((bVar1 == 0) || (uVar2 != 0)) ||
        ((protection_confirm_enable_b == 0 || (protection_confirm_active_b2 == 0)))) {
@@ -30246,7 +30247,7 @@ void cm848_clearLoadProtectionConfirmState(void)
   fault_threshold_active_flag = 0;
   protection_fault_condition_flag._0_2_ = 0;
   protection_fault_condition_flag._2_2_ = 0;
-  governor_status_overspeed_flag_snapshot = 0;
+  load_protection_confirm_a_snapshot = 0;
   protection_fault_sign_flag = 0;
   fault_threshold_prev_flag = 0;
   protection_confirm_startup_counter = 0;
@@ -30463,7 +30464,7 @@ void cm848_updateLoadProtectionEmaOutput(void)
 {
   word wVar1;
   
-  wVar1 = protection_ema_cal_offset;
+  wVar1 = protection_channel_filtered_output;
   if (protection_ema_condition_flag == 0) {
     wVar1 = protection_ema_output_prev;
   }
@@ -30492,7 +30493,7 @@ void cm848_evaluateLoadProtectionSteadyStage(void)
   uint uVar1;
   short sVar2;
   
-  sVar2 = 0x3200 - protection_ema_cal_offset;
+  sVar2 = 0x3200 - protection_channel_filtered_output;
   if (sVar2 < 0) {
     sVar2 = -sVar2;
   }
@@ -30644,7 +30645,7 @@ void cm848_evaluateLoadProtectionLiveStage(void)
   uint uVar1;
   short sVar2;
   
-  protection_ema_delta_working = protection_ema_output - protection_ema_cal_offset;
+  protection_ema_delta_working = protection_ema_output - protection_channel_filtered_output;
   sVar2 = protection_ema_delta_working + 0xce00;
   if (sVar2 < 0) {
     sVar2 = -sVar2;
@@ -30702,8 +30703,8 @@ void cm848_calculateLoadProtectionDerateTarget(void)
   if (iVar3 == 0) {
     iVar3 = 1;
   }
-  iVar3 = (int)((((int)(short)protection_ema_cal_offset - (int)(short)protection_ema_output) + uVar1
-                ) * 0x3200) / iVar3;
+  iVar3 = (int)((((int)(short)protection_channel_filtered_output - (int)(short)protection_ema_output
+                 ) + uVar1) * 0x3200) / iVar3;
   if (iVar3 < -0x3200) {
     iVar3 = -0x3200;
   }
@@ -30786,7 +30787,7 @@ void cm848_calculateDiagnosticStatusBits(void)
     governor_speed_tracking_mode = 0;
   }
   else {
-    governor_speed_tracking = governor_speed_fault_target;
+    governor_speed_tracking = protection_derate_fallback_speed;
     governor_speed_tracking_mode = 2;
   }
   if ((governor_status_flags & 0x4000) == 0) {
@@ -67826,8 +67827,8 @@ void governor_rpm_monitor_calc(void)
   governor_b_timing_error_scaled = 0;
 LAB_00510114:
   iVar3 = (int)(short)governor_b_ema_offset_prev;
-  governor_b_ema_offset_prev = protection_ema_cal_offset;
-  dVar1 = (int)(((short)protection_ema_cal_offset - iVar3) * (uint)DAT_004077c4) >> 10;
+  governor_b_ema_offset_prev = protection_channel_filtered_output;
+  dVar1 = (int)(((short)protection_channel_filtered_output - iVar3) * (uint)DAT_004077c4) >> 10;
   governor_b_ema_offset_delta_scaled = 0xffff0600;
   if ((-0xfa01 < (int)dVar1) && (governor_b_ema_offset_delta_scaled = dVar1, 64000 < (int)dVar1)) {
     governor_b_ema_offset_delta_scaled = 64000;
@@ -67891,7 +67892,7 @@ void fuel_demand_boost_initialize(void)
   DAT_003fccfa = 0;
   PTR_DAT_003fccf6 = &DAT_004077ba;
   governor_b_engine_flag_80_prev = engine_feature_status_flags & 0x80;
-  governor_b_ema_offset_prev = protection_ema_cal_offset;
+  governor_b_ema_offset_prev = protection_channel_filtered_output;
   uVar2 = (uint)(short)fuel_demand_boost_input;
   if ((int)uVar2 < 0) {
     uVar2 = 0;

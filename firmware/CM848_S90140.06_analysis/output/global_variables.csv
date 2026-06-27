@@ -1342,7 +1342,7 @@ address,name,type,comment
 0x003fb072,fault_threshold_active_flag,word,
 0x003fb074,protection_fault_condition_flag,dword,
 0x003fb076,protection_fault_condition_flag+2,,
-0x003fb078,governor_status_overspeed_flag_snapshot,word,
+0x003fb078,load_protection_confirm_a_snapshot,word,write-only/dead snapshot of governor_status_flags confirm-A bit (0x4000) - set in cm848_updateLoadProtectionArming cleared in cm848_clearLoadProtectionConfirmState never read; was misnamed governor_status_overspeed_flag_snapshot (NOT overspeed)
 0x003fb07a,protection_fault_sign_flag,word,
 0x003fb07c,protection_governor_active_flag,dword,
 0x003fb07e,protection_governor_active_flag+2,,
@@ -5537,8 +5537,8 @@ address,name,type,comment
 0x0040bdac,sensor_channel108_filtered,word,
 0x0040bdb0,sensor_channel109_filtered,word,
 0x0040bdb2,sensor_channel69_filtered,word,
-0x0040bdb4,governor_speed_fault_target,word,
-0x0040bdb6,protection_ema_cal_offset,word,
+0x0040bdb4,protection_derate_fallback_speed,word,fixed fallback governor speed target the load-protection derate forces governor_speed_tracking to when active (RAM copy of ROM cal DAT_00059656+2 = 0x2400 ~1152 RPM); read only in cm848_calculateDiagnosticStatusBits - was misnamed governor_speed_fault_target
+0x0040bdb6,protection_channel_filtered_output,word,live filtered output of protection sensor channel 0x65 (mirror of sensor_channel_filtered_output[0x65] at 0x40baf0 written each cycle by cm848_protection_update_configBundle); the load-deviation reference for the load-protection cluster - NOT a cal/offset
 0x0040bdc4,governor_speed_reference_raw,word,
 0x0040bdd0,sensor_channel7_raw,word,
 0x0040bdd2,sensor_channel7_filtered,word,
