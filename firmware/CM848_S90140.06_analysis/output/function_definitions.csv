@@ -312,3 +312,4 @@ function_address,function_name,param_index,name,type,comment
 0x00501b4c,sensorChannelTypeB_update,10,raw_output_ptr,word*,Output: raw sensor ADC value (e.g. sensor_channel28_raw)
 0x00501b4c,sensorChannelTypeB_update,11,filtered_output_ptr,word*,Output: EMA-filtered sensor value (e.g. sensor_channel28_filtered)
 0x00501b4c,sensorChannelTypeB_update,12,fault_output_ptr,word*,Output: fault status word (e.g. sensor_channel28_fault_status)
+0x0002e488,cm848_calculateLoadProtectionDeviationFlag,return,,void,explicit void(void) - writes only protection_rpm_below_confirm_flag - clears phantom args at the 0x2e4cc call site

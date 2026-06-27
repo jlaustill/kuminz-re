@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Jun 27 12:43:52 MDT 2026
+// Generated: Sat Jun 27 12:54:09 MDT 2026
 
 
 //
@@ -30057,7 +30057,6 @@ void cm848_evaluateLoadProtectionOverspeedStage(void)
   word wVar5;
   word *pwVar6;
   uint uVar7;
-  uint uVar8;
   
   if ((protection_fault_condition_flag._0_2_ == 0) && (protection_fault_condition_flag._2_2_ == 0))
   {
@@ -30089,33 +30088,32 @@ void cm848_evaluateLoadProtectionOverspeedStage(void)
     bVar1 = false;
   }
   if ((protection_fault_condition_flag._0_2_ == 0) && (fault_threshold_condition_flag == 0)) {
-    uVar8 = 0;
+    uVar7 = 0;
   }
   else {
-    uVar8 = 1;
+    uVar7 = 1;
   }
-  uVar7 = (uint)protection_confirm_limit_cal;
   pwVar3 = &protection_confirm_counter_a;
   if (bVar1) {
     wVar5 = 0;
   }
   else {
     wVar5 = protection_confirm_counter_a;
-    if (((!bVar1) && (wVar5 = protection_confirm_limit_cal, uVar7 != 0)) &&
+    if (((!bVar1) && (wVar5 = protection_confirm_limit_cal, protection_confirm_limit_cal != 0)) &&
        (wVar5 = protection_confirm_limit_cal,
-       (int)(uint)protection_confirm_counter_a <= (int)(uVar7 - 1))) {
+       (int)(uint)protection_confirm_counter_a <= (int)(protection_confirm_limit_cal - 1))) {
       wVar5 = protection_confirm_counter_a + 1;
     }
   }
   protection_confirm_counter_a = wVar5;
-  cm848_calculateLoadProtectionDeviationFlag(&protection_confirm_counter_a,uVar7);
+  cm848_calculateLoadProtectionDeviationFlag();
   if (((int)(uint)*pwVar3 < extraout_r4) && (protection_rpm_below_confirm_flag == 0)) {
     bVar2 = false;
   }
   else {
     bVar2 = true;
   }
-  if ((uVar8 & 0xffff) == 0) {
+  if ((uVar7 & 0xffff) == 0) {
     if (bVar2) {
       governor_overspeed_threshold_flag = 1;
     }
