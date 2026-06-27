@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Tue Jun 23 15:06:07 MDT 2026
+// Generated: Sat Jun 27 12:43:52 MDT 2026
 
 
 //
@@ -6155,8 +6155,8 @@ void cm848_phase_common_processing(void)
   cm848_processFaultAndFuelDemand();
   fuelDemandCallbackDispatcher();
   cm848_initProtectionModeDefaults();
-  cm848_processFaultConditionFlags();
-  cm848_processFaultStatusFlags();
+  cm848_updateLoadProtectionArming();
+  cm848_updateLoadProtectionStatusAndDerate();
   cm848_phase_commonProcessing_calculation();
   return;
 }
@@ -6198,7 +6198,7 @@ void cm848_phase_group_a_processing(void)
   cm848_selectTurboModeParameters();
   cm848_calculateFuelFlowWithMode();
   phase_group_a_validateEngineSync();
-  cm848_processFaultStatusCalculation();
+  cm848_updateGovernorDemandRateProtection();
   cm848_phase_groupA_exponentialAverage();
   cm848_calculateTurboRatioWithMode();
   cm848_processLoadAdjustment();
@@ -29881,10 +29881,10 @@ void cm848_clearDiagnosticConditionFlags(void)
 
 
 //
-// Function: cm848_processFaultCounterTimeout @ 0x0002e17c
+// Function: cm848_updateLoadProtectionStartupCounter @ 0x0002e17c
 //
 
-void cm848_processFaultCounterTimeout(void)
+void cm848_updateLoadProtectionStartupCounter(void)
 
 {
   if (protection_governor_active_flag._0_2_ == 0) {
@@ -29910,10 +29910,10 @@ void cm848_processFaultCounterTimeout(void)
 
 
 //
-// Function: cm848_incrementFaultTimeoutCounter @ 0x0002e1f0
+// Function: cm848_updateLoadProtectionWarmupTrigger @ 0x0002e1f0
 //
 
-void cm848_incrementFaultTimeoutCounter(void)
+void cm848_updateLoadProtectionWarmupTrigger(void)
 
 {
   if (governor_startup_warmup_timer < 0x3c) {
@@ -29935,10 +29935,10 @@ void cm848_incrementFaultTimeoutCounter(void)
 
 
 //
-// Function: cm848_processFaultConditionLogic @ 0x0002e250
+// Function: cm848_evaluateLoadProtectionFuelLowStage @ 0x0002e250
 //
 
-void cm848_processFaultConditionLogic(void)
+void cm848_evaluateLoadProtectionFuelLowStage(void)
 
 {
   bool bVar1;
@@ -29946,7 +29946,7 @@ void cm848_processFaultConditionLogic(void)
   uint uVar3;
   uint uVar4;
   
-  cm848_incrementFaultTimeoutCounter();
+  cm848_updateLoadProtectionWarmupTrigger();
   if ((fault_threshold_prev_flag == 0) || (fault_threshold_active_flag != 0)) {
     protection_threshold_exceeded_flag = 0;
   }
@@ -30024,10 +30024,10 @@ void cm848_processFaultConditionLogic(void)
 
 
 //
-// Function: cm848_calculateFaultThresholdDelta @ 0x0002e488
+// Function: cm848_calculateLoadProtectionDeviationFlag @ 0x0002e488
 //
 
-void cm848_calculateFaultThresholdDelta(void)
+void cm848_calculateLoadProtectionDeviationFlag(void)
 
 {
   int iVar1;
@@ -30043,10 +30043,10 @@ void cm848_calculateFaultThresholdDelta(void)
 
 
 //
-// Function: cm848_processFaultThresholdCondition @ 0x0002e4cc
+// Function: cm848_evaluateLoadProtectionOverspeedStage @ 0x0002e4cc
 //
 
-void cm848_processFaultThresholdCondition(void)
+void cm848_evaluateLoadProtectionOverspeedStage(void)
 
 {
   bool bVar1;
@@ -30108,7 +30108,7 @@ void cm848_processFaultThresholdCondition(void)
     }
   }
   protection_confirm_counter_a = wVar5;
-  cm848_calculateFaultThresholdDelta(&protection_confirm_counter_a,uVar7);
+  cm848_calculateLoadProtectionDeviationFlag(&protection_confirm_counter_a,uVar7);
   if (((int)(uint)*pwVar3 < extraout_r4) && (protection_rpm_below_confirm_flag == 0)) {
     bVar2 = false;
   }
@@ -30157,10 +30157,10 @@ void cm848_processFaultThresholdCondition(void)
 
 
 //
-// Function: cm848_processFaultConditionFlags @ 0x0002e74c
+// Function: cm848_updateLoadProtectionArming @ 0x0002e74c
 //
 
-void cm848_processFaultConditionFlags(void)
+void cm848_updateLoadProtectionArming(void)
 
 {
   byte bVar1;
@@ -30203,7 +30203,7 @@ void cm848_processFaultConditionFlags(void)
     else {
       protection_governor_active_flag._0_2_ = 1;
     }
-    cm848_processFaultCounterTimeout();
+    cm848_updateLoadProtectionStartupCounter();
     if ((sVar3 == 0) && (protection_governor_active_flag._2_2_ != 0)) {
       cm848_setEngineProtectionFault(0x48,0);
     }
@@ -30211,7 +30211,7 @@ void cm848_processFaultConditionFlags(void)
       cm848_triggerProtectionEvent(0x48,0);
     }
     fault_threshold_active_flag = (word)(-(uint)engine_rpm_state_t_0040b7ac.current_rpm >> 0x1f);
-    cm848_processFaultConditionLogic();
+    cm848_evaluateLoadProtectionFuelLowStage();
     bVar1 = engine_feature_status_flags_2 & 1;
     if ((((engine_feature_status_flags_2 & 1) == 0) || (protection_fault_sign_flag != 0)) ||
        (protection_confirm_enable_a == 0)) {
@@ -30223,7 +30223,7 @@ void cm848_processFaultConditionFlags(void)
     protection_fault_condition_flag._2_2_ = governor_status_flags & 0x8000;
     uVar2 = governor_status_flags & 0x4000;
     governor_status_overspeed_flag_snapshot = governor_status_flags & 0x4000;
-    cm848_processFaultThresholdCondition();
+    cm848_evaluateLoadProtectionOverspeedStage();
     if (((bVar1 == 0) || (uVar2 != 0)) ||
        ((protection_confirm_enable_b == 0 || (protection_confirm_active_b2 == 0)))) {
       throttle_rate_active_flag = 0;
@@ -30238,10 +30238,10 @@ void cm848_processFaultConditionFlags(void)
 
 
 //
-// Function: cm848_clearFaultStatusCounters @ 0x0002e9c8
+// Function: cm848_clearLoadProtectionConfirmState @ 0x0002e9c8
 //
 
-void cm848_clearFaultStatusCounters(void)
+void cm848_clearLoadProtectionConfirmState(void)
 
 {
   protection_diagnostic_fault_flag = 0;
@@ -30267,10 +30267,10 @@ void cm848_clearFaultStatusCounters(void)
 
 
 //
-// Function: cm848_processFaultStatusCalculation @ 0x0002ea58
+// Function: cm848_updateGovernorDemandRateProtection @ 0x0002ea58
 //
 
-void cm848_processFaultStatusCalculation(void)
+void cm848_updateGovernorDemandRateProtection(void)
 
 {
   word wVar1;
@@ -30365,10 +30365,10 @@ void cm848_processFaultStatusCalculation(void)
 
 
 //
-// Function: cm848_clearFaultStatusValues @ 0x0002ed30
+// Function: cm848_clearGovernorDemandRateProtectionState @ 0x0002ed30
 //
 
-void cm848_clearFaultStatusValues(void)
+void cm848_clearGovernorDemandRateProtectionState(void)
 
 {
   governor_demand_rate_a = 0;
@@ -30388,12 +30388,12 @@ void cm848_clearFaultStatusValues(void)
 
 
 //
-// Function: cm848_processFaultCondition1 @ 0x0002edc0
+// Function: cm848_updateLoadProtectionConfirmCounterA @ 0x0002edc0
 //
 
 /* WARNING: Removing unreachable block (ram,0x0002eed0) */
 
-void cm848_processFaultCondition1(void)
+void cm848_updateLoadProtectionConfirmCounterA(void)
 
 {
   bool bVar1;
@@ -30457,10 +30457,10 @@ void cm848_processFaultCondition1(void)
 
 
 //
-// Function: cm848_calculateFaultStatusValue @ 0x0002ef34
+// Function: cm848_updateLoadProtectionEmaOutput @ 0x0002ef34
 //
 
-void cm848_calculateFaultStatusValue(void)
+void cm848_updateLoadProtectionEmaOutput(void)
 
 {
   word wVar1;
@@ -30485,10 +30485,10 @@ void cm848_calculateFaultStatusValue(void)
 
 
 //
-// Function: cm848_processFaultConditionMain @ 0x0002efe4
+// Function: cm848_evaluateLoadProtectionSteadyStage @ 0x0002efe4
 //
 
-void cm848_processFaultConditionMain(void)
+void cm848_evaluateLoadProtectionSteadyStage(void)
 
 {
   uint uVar1;
@@ -30500,7 +30500,7 @@ void cm848_processFaultConditionMain(void)
   }
   uVar1 = (uint)fuel_control_setpoint_cal;
   fuel_control_setpoint_exceeded_flag = (word)((int)uVar1 <= (int)sVar2);
-  cm848_processFaultCondition1();
+  cm848_updateLoadProtectionConfirmCounterA();
   if (((int)uVar1 <= (int)sVar2) || (protection_confirm_counter_b_match_flag == 0)) {
     protection_ema_condition_flag = 0;
   }
@@ -30528,19 +30528,19 @@ void cm848_processFaultConditionMain(void)
   else {
     governor_status_flags = governor_status_flags | 0x4000;
   }
-  cm848_calculateFaultStatusValue();
+  cm848_updateLoadProtectionEmaOutput();
   return;
 }
 
 
 
 //
-// Function: cm848_processFaultCondition2 @ 0x0002f154
+// Function: cm848_updateLoadProtectionConfirmCounterB @ 0x0002f154
 //
 
 /* WARNING: Removing unreachable block (ram,0x0002f264) */
 
-void cm848_processFaultCondition2(void)
+void cm848_updateLoadProtectionConfirmCounterB(void)
 
 {
   bool bVar1;
@@ -30603,10 +30603,10 @@ void cm848_processFaultCondition2(void)
 
 
 //
-// Function: cm848_calculateFaultStatusOffset @ 0x0002f2c8
+// Function: cm848_updateLoadProtectionLoadFilter @ 0x0002f2c8
 //
 
-void cm848_calculateFaultStatusOffset(void)
+void cm848_updateLoadProtectionLoadFilter(void)
 
 {
   word wVar1;
@@ -30637,10 +30637,10 @@ void cm848_calculateFaultStatusOffset(void)
 
 
 //
-// Function: cm848_processFaultStatusWord2 @ 0x0002f3a0
+// Function: cm848_evaluateLoadProtectionLiveStage @ 0x0002f3a0
 //
 
-void cm848_processFaultStatusWord2(void)
+void cm848_evaluateLoadProtectionLiveStage(void)
 
 {
   uint uVar1;
@@ -30660,7 +30660,7 @@ void cm848_processFaultStatusWord2(void)
   else {
     protection_confirm_active_b = 1;
   }
-  cm848_processFaultCondition2();
+  cm848_updateLoadProtectionConfirmCounterB();
   if (protection_confirm_active_b_flag == 0) {
     governor_status_flags = governor_status_flags & 0x7fff;
     governor_status_flags_shadow = governor_status_flags_shadow & 0x7fff;
@@ -30674,7 +30674,7 @@ void cm848_processFaultStatusWord2(void)
   else {
     protection_ema_exceeded_flag = 1;
   }
-  cm848_calculateFaultStatusOffset();
+  cm848_updateLoadProtectionLoadFilter();
   protection_load_filtered_working = protection_load_filtered;
   if (protection_load_override_enable_flag != 0) {
     protection_load_filtered_working = protection_load_filtered_override_cal;
@@ -30685,10 +30685,10 @@ void cm848_processFaultStatusWord2(void)
 
 
 //
-// Function: cm848_calculateFaultRateValue @ 0x0002f524
+// Function: cm848_calculateLoadProtectionDerateTarget @ 0x0002f524
 //
 
-void cm848_calculateFaultRateValue(void)
+void cm848_calculateLoadProtectionDerateTarget(void)
 
 {
   uint uVar1;
@@ -30719,16 +30719,16 @@ void cm848_calculateFaultRateValue(void)
 
 
 //
-// Function: cm848_processFaultStatusMain @ 0x0002f5a4
+// Function: cm848_processLoadProtectionStatus @ 0x0002f5a4
 //
 
-/* review-function-readability reviewed 2026-06-23 - Readability Medium Accuracy Confidence Medium -
-   orchestrates the engine-PROTECTION derate-speed path (NOT DTC handling): runs the two
-   protection-condition state machines then builds the protection status word
-   (protection_diagnostic_status_intermediate = protection_fault_condition_value | confirm-B bit3)
-   and computes the derate speed target via cm848_calculateFaultRateValue. Outputs converge on
-   governor_speed_tracking (live PID error term cpp:29251); real J1939 DM2 fault path is a sibling
-   (cm848_setEngineProtectionFault). Renamed
+/* review-function-readability reviewed 2026-06-23 (cluster re-domained 2026-06-27) - Readability
+   High Accuracy Confidence High - orchestrates the engine-load-PROTECTION derate-speed path (NOT
+   DTC handling): runs the two protection-condition state machines then builds the protection status
+   word (protection_diagnostic_status_intermediate = protection_fault_condition_value | confirm-B
+   bit3) and computes the derate speed target via cm848_calculateLoadProtectionDerateTarget. Outputs
+   converge on governor_speed_tracking (live PID error term cpp:29251); real J1939 DM2 fault path is
+   a sibling (cm848_setEngineProtectionFault). Renamed
    protection_fault_severity->protection_diagnostic_status_intermediate (magnitude-implying name
    colliding with protection_fault_severity_code @0x408788) and uVar1->engineLoadProtection (enum
    ENGINE_LOAD_PROTECTION_STATE INACTIVE=0/ACTIVE=0x08). confirm-B (governor_status_flags 0x8000) =
@@ -30740,19 +30740,19 @@ void cm848_calculateFaultRateValue(void)
    throttle-rate/overspeed-armed (protection_confirm_enable_b from
    governor_overspeed_threshold_flag); it derates governor speed and raises protection event SPN
    0x48 via cm848_setEngineProtectionFault. confirm-A/B are two arming stages of this one
-   load-deviation protection. Capped at MEDIUM: the whole *Fault* family (callees
-   cm848_processFaultConditionMain/processFaultStatusWord2/calculateFaultRateValue + caller
-   processFaultStatusFlags + governor_status_flags) shares a Fault->protection-derate-governor
-   domain mismatch needing a cluster-scope rename; and protection_fault_condition_value's writer is
-   an indexed sthx (pointer-arg inference not instruction-proven) */
+   load-deviation protection. Cluster re-domained: this fn calls evaluateLoadProtectionSteadyStage
+   (confirm-A) + evaluateLoadProtectionLiveStage (confirm-B) + calculateLoadProtectionDerateTarget;
+   caller is updateLoadProtectionStatusAndDerate - body now reads like a book.
+   (protection_fault_condition_value's writer is an indexed sthx - pointer-arg inference not
+   instruction-proven - but its 0/1/2 fault-code name is accurate.) */
 
-void cm848_processFaultStatusMain(void)
+void cm848_processLoadProtectionStatus(void)
 
 {
   ENGINE_LOAD_PROTECTION_STATE engineLoadProtection;
   
-  cm848_processFaultConditionMain();
-  cm848_processFaultStatusWord2();
+  cm848_evaluateLoadProtectionSteadyStage();
+  cm848_evaluateLoadProtectionLiveStage();
   if ((governor_status_flags & 0x8000) == 0) {
     engineLoadProtection = INACTIVE;
   }
@@ -30761,7 +30761,7 @@ void cm848_processFaultStatusMain(void)
   }
   protection_diagnostic_status_intermediate =
        protection_fault_condition_value | engineLoadProtection;
-  cm848_calculateFaultRateValue();
+  cm848_calculateLoadProtectionDerateTarget();
   return;
 }
 
@@ -30804,10 +30804,10 @@ void cm848_calculateDiagnosticStatusBits(void)
 
 
 //
-// Function: cm848_processFaultStatusFlags @ 0x0002f6a0
+// Function: cm848_updateLoadProtectionStatusAndDerate @ 0x0002f6a0
 //
 
-void cm848_processFaultStatusFlags(void)
+void cm848_updateLoadProtectionStatusAndDerate(void)
 
 {
   if (governor_fuel_b_mode_flag != 0) {
@@ -30825,7 +30825,7 @@ void cm848_processFaultStatusFlags(void)
     else {
       diagnostic_status_bits_b = diagnostic_status_bits_b | 0x40;
     }
-    cm848_processFaultStatusMain();
+    cm848_processLoadProtectionStatus();
     cm848_calculateDiagnosticStatusBits();
   }
   return;
@@ -55084,8 +55084,8 @@ void hpcr_exceptionHandler(void)
   cm848_initFuelControlStateVariables();
   cm848_initializeGovernorFuelDemandArray();
   cm848_clearDiagnosticConditionFlags();
-  cm848_clearFaultStatusCounters();
-  cm848_clearFaultStatusValues();
+  cm848_clearLoadProtectionConfirmState();
+  cm848_clearGovernorDemandRateProtectionState();
   fuel_demand_boost_initialize();
   cm848_initFaultStatusFilterState();
   initHpcr_FaultCounters();
@@ -55290,8 +55290,8 @@ void cm848_initializationContinuation(void)
   cm848_initFuelControlStateVariables();
   cm848_initializeGovernorFuelDemandArray();
   cm848_clearDiagnosticConditionFlags();
-  cm848_clearFaultStatusCounters();
-  cm848_clearFaultStatusValues();
+  cm848_clearLoadProtectionConfirmState();
+  cm848_clearGovernorDemandRateProtectionState();
   fuel_demand_boost_initialize();
   cm848_initFaultStatusFilterState();
   initHpcr_FaultCounters();
