@@ -1287,7 +1287,7 @@ address,name,type,comment
 0x003fafe0,protection_eval_step_index,word,
 0x003fafe2,protection_eval_frame_counter,word,
 0x003fafe4,protection_eval_sub_counter,word,
-0x003fafe6,governor_speed_request_state,word,
+0x003fafe6,governor_speed_request_state,CRUISE_SWITCH_REQUEST,
 0x003fafe8,protection_rpm_reference_snapshot,word,
 0x003fafea,governor_rpm_reference_snapshot_a,word,
 0x003fafec,governor_rpm_ref_target_0_snapshot,word,
@@ -1342,7 +1342,7 @@ address,name,type,comment
 0x003fb072,fault_threshold_active_flag,word,
 0x003fb074,protection_fault_condition_flag,dword,
 0x003fb076,protection_fault_condition_flag+2,,
-0x003fb078,governor_status_overspeed_flag_snapshot,word,
+0x003fb078,load_protection_confirm_a_snapshot,word,write-only/dead snapshot of governor_status_flags confirm-A bit (0x4000) - set in cm848_updateLoadProtectionArming cleared in cm848_clearLoadProtectionConfirmState never read; was misnamed governor_status_overspeed_flag_snapshot (NOT overspeed)
 0x003fb07a,protection_fault_sign_flag,word,
 0x003fb07c,protection_governor_active_flag,dword,
 0x003fb07e,protection_governor_active_flag+2,,
@@ -1364,7 +1364,7 @@ address,name,type,comment
 0x003fb09e,governor_demand_rate_a,word,
 0x003fb0a0,governor_demand_rate_minimum,word,
 0x003fb0a2,governor_demand_rate_b,word,
-0x003fb0a4,protection_fault_severity,word,
+0x003fb0a4,protection_diagnostic_status_intermediate,word,intermediate protection status = protection_fault_condition_value | confirm-B bit3; zero-tested to pick the derate speed target and OR-folded into protection_diagnostic_status (cm848_calculateDiagnosticStatusBits). NOT a magnitude - was misnamed protection_fault_severity which collided with protection_fault_severity_code @0x408788
 0x003fb0a6,protection_confirm_counter_c,word,
 0x003fb0a8,protection_confirm_counter_a,word,
 0x003fb0aa,protection_condition_active_flag,word,
@@ -1605,7 +1605,7 @@ address,name,type,comment
 0x003fb528,fuel_demand_enable_sync_flag_shadow,,
 0x003fb52a,fuel_demand_enable_sync_flag_shadow+2,undefined2,
 0x003fb52c,cruise_speed_setpoint_prev,word,
-0x003fb52e,cruise_speed_mode_prev,word,
+0x003fb52e,cruise_speed_mode_prev,CRUISE_CONTROL_STATE,prior cruise_control_state used by cm848_cruiseSpeedCommandStateMachine for transition logic (compared ==3/==4)
 0x003fb530,governor_override_active_prev_flag,dword,
 0x003fb534,cruise_speed_deviation,dword,
 0x003fb538,cruise_mode_transition_flag,word,
@@ -1880,7 +1880,7 @@ address,name,type,comment
 0x003fcd56,PTR_DAT_003fcd56,pointer,
 0x003fcd96,PTR_DAT_003fcd96,pointer,
 0x003fcd9e,cruise_protection_ok,word,
-0x003fcda2,governor_speed_request_state_b,word,cruise-fuel-governor working copy of governor_speed_request_state (0x3fafe6); holds protection_control_state_check_2() result (states 0-5); paired with raw DAT_003fcdaa + debounce counter DAT_003fcda0
+0x003fcda2,governor_speed_request_state_b,CRUISE_SWITCH_REQUEST,cruise-fuel-governor working copy of governor_speed_request_state (0x3fafe6); holds protection_control_state_check_2() result (states 0-5); paired with raw DAT_003fcdaa + debounce counter DAT_003fcda0
 0x003fce7c,j1939_dm_scratch_buffer,byte[8],
 0x003fce7f,j1939_dm_scratch_byte0,,
 0x003fce80,j1939_dm_scratch_byte1,,
@@ -2257,7 +2257,7 @@ address,name,type,comment
 0x003fe9a6,protection_monitor_shadow,word,
 0x003fe9b4,engine_sync_validation_flags,word,
 0x003fe9be,iat_sensor_deviation_flags,word,
-0x003fe9c6,governor_status_flags,word,
+0x003fe9c6,governor_status_flags,word,engine-load (fuel-demand-derived) protection confirm bits (trip = load-EMA deviation): 0x4000=confirm-A (fuel-low-armed steady stage - clamps EMA/load) 0x8000=confirm-B (throttle-rate/overspeed-armed live stage - drives the speed derate); only these 2 bits used; shadow @0x3fea2a; the sibling governor_status_overspeed_flag_snapshot is a wrong write-only name
 0x003fe9c8,governor_diag_status_bits_b,word,
 0x003fe9cc,diagnostic_status_bits_b,word,
 0x003fe9ce,diagnostic_status_bits,word,
@@ -2316,7 +2316,7 @@ address,name,type,comment
 0x003fecb2,qadc_active_port_ptr,pointer,
 0x003fecb5,qadc_active_port_ptr+3,,
 0x003fecb6,diagnostic_callback_ptr,pointer,
-0x003fecba,eeprom_request_state,dword,
+0x003fecba,diag_serial_transfer_phase,dword,
 0x003fecbe,diag_session_state_t_003fecbe,diag_session_state_t,
 0x003fecbf,diag_session_state_t_003fecbe.response_write_index,,
 0x003fecc0,diag_session_state_t_003fecbe.eeprom_status,,
@@ -5278,7 +5278,7 @@ address,name,type,comment
 0x0040b67a,governor_fuel_demand_upper,word,
 0x0040b67c,governor_pid_integral_snapshot,word,
 0x0040b682,governor_override_speed_ema_coeff_ptr,pointer,EMA coeff pointer for governor override speed
-0x0040b68e,fuel_demand_speed_error,word,
+0x0040b68e,cruise_control_state,CRUISE_CONTROL_STATE,cruise control action/state (was fuel_demand_speed_error - NOT a speed error; it is the CRUISE_CONTROL_STATE selector for cm848_cruiseSpeedCommandStateMachine). Written each cycle in cm848_periodicProtectionControl
 0x0040b698,cruise_speed_reference_a,word,
 0x0040b69a,cruise_speed_setpoint_b,word,
 0x0040b6a2,cruise_speed_setpoint_active,word,
@@ -5537,8 +5537,8 @@ address,name,type,comment
 0x0040bdac,sensor_channel108_filtered,word,
 0x0040bdb0,sensor_channel109_filtered,word,
 0x0040bdb2,sensor_channel69_filtered,word,
-0x0040bdb4,governor_speed_fault_target,word,
-0x0040bdb6,protection_ema_cal_offset,word,
+0x0040bdb4,protection_derate_fallback_speed,word,fixed fallback governor speed target the load-protection derate forces governor_speed_tracking to when active (RAM copy of ROM cal DAT_00059656+2 = 0x2400 ~1152 RPM); read only in cm848_calculateDiagnosticStatusBits - was misnamed governor_speed_fault_target
+0x0040bdb6,protection_channel_filtered_output,word,live filtered output of protection sensor channel 0x65 (mirror of sensor_channel_filtered_output[0x65] at 0x40baf0 written each cycle by cm848_protection_update_configBundle); the load-deviation reference for the load-protection cluster - NOT a cal/offset
 0x0040bdc4,governor_speed_reference_raw,word,
 0x0040bdd0,sensor_channel7_raw,word,
 0x0040bdd2,sensor_channel7_filtered,word,
@@ -5579,7 +5579,7 @@ address,name,type,comment
 0x0040be26,sensor_channel108_fault_status,word,
 0x0040be2a,sensor_channel69_fault_status,word,
 0x0040be2c,sensor_channel109_fault_status,word,
-0x0040be2e,protection_fault_condition_value,word,
+0x0040be2e,protection_fault_condition_value,word,signed 0/1/2 fault-condition code for one engine-protection channel; written via updateSensorChannelWithConfig (indexed sthx - not instruction-proven); base of protection_diagnostic_status_intermediate
 0x0040be36,fuel_smoke_limit_mode,word,smoke limit mode 0/1/2 off/EGR/boost (lha=word; was PTR_DAT)
 0x0040be3a,sensor_channel7_fault_status,word,
 0x0040be3e,sensor_channel71_fault_status,word,
@@ -6103,7 +6103,7 @@ address,name,type,comment
 0x003fbd2c,governor_faultDerate_task_index,word,round-robin scheduler index 0-4 for fault-derate subtasks
 0x003fbd3e,governor_faultDerate_peak_value,word,running max of per-channel derate fuel-limit values
 0x003fcd92,governor_cruiseOverride_holdoff_countdown,word,holdoff before accepting a new override transition
-0x003fcdaa,governor_speed_request_state_prev,word,previous-cycle snapshot of governor_speed_request_state_b
+0x003fcdaa,governor_speed_request_state_prev,CRUISE_SWITCH_REQUEST,previous-cycle snapshot of governor_speed_request_state_b
 0x003fcdae,cruise_steady_state_debounce_counter,word,debounce for cruise steady-state detection
 0x003fce22,calibBlock1_update_phase_counter,word,mod-4 phase counter dividing calibBlock1 EEPROM writes
 0x003fce24,calibBlock1_adaptiveTrim_ema_q8,word,Q8 EMA accumulator for calibBlock1 adaptive trim
@@ -6730,7 +6730,7 @@ address,name,type,comment
 0x003fd000,cruise_ramp_target_prev,word,previous cruise ramp target speed
 0x003fd006,cruise_setpoint_interp_prev,word,prev interpolated cruise speed setpoint
 0x003fd008,cruise_fuel_demand_ema,word,EMA fuel demand for cruise governor setpoint
-0x003fd036,fuel_demand_speed_error_prev,word,prev fuel_demand_speed_error (edge detect)
+0x003fd036,cruise_control_state_prev,CRUISE_CONTROL_STATE,previous-cycle cruise_control_state (edge detect); was fuel_demand_speed_error_prev
 0x003fd051,cruise_ramp_rate_control_called_flag,word,ramp-rate-control-ran-this-cycle flag
 0x003fd055,cruise_rate_correction_trigger_flag,word,cruise speed rate-correction trigger
 0x003fd930,fuel_temp_correction_scale_factor,word,ROM scale for engine temp protection input

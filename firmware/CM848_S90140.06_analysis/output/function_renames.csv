@@ -400,12 +400,12 @@ address,name
 0x00002e58,cm848_registerSchedulerTask
 0x00002ee8,cm848_initSchedulerCallback
 0x00002f18,mpc555_initSchedulerTaskTable
-0x00002f74,mpc555_spiReceiveHandler
-0x00003008,mpc555_spiTransmitCompleteHandler
-0x000030ec,mpc555_dispatchSpiHandlerByState
+0x00002f74,mpc555_sciReceiveRequestByte
+0x00003008,mpc555_sciTransmitResponseByte
+0x000030ec,mpc555_sciDispatchByTransferPhase
 0x000031a0,cm848_resetEepromStatusPointer
-0x000031c0,mpc555_enableSystemInterrupts
-0x00003218,mpc555_enableSpiTransmitInterrupt
+0x000031c0,mpc555_sciResetToReceiveRequest
+0x00003218,mpc555_sciEnableTransmitInterrupt
 0x0000323c,cm848_initDiagnosticResponseCallback
 0x0000326c,cm848_processDiagnosticResponseCallback
 0x000032dc,mpc555_generateSerialChallenge
@@ -473,13 +473,13 @@ address,name
 0x00006580,cm848_updateSystemTimers
 0x0000662c,mpc555_diagnosticSubcommandDispatcher
 0x00006770,cm848_resetSerialReceiveBuffer
-0x000067b0,mpc555_serialReceiveHandler
-0x0000685c,mpc555_resetSerialCommunication
-0x000068b4,serialTransmitHandler
-0x00006974,mpc555_enableSerialTransmit
-0x000069b0,mpc555_validateSerialChecksum
-0x00006a5c,mpc555_initSerialTransmit
-0x00006ab8,mpc555_pollSerialDuringEeprom
+0x000067b0,mpc555_sciReceiveDataByte
+0x0000685c,mpc555_sciResetToReceiveData
+0x000068b4,mpc555_sciTransmitChecksummedByte
+0x00006974,mpc555_sciEnableChecksummedTransmit
+0x000069b0,mpc555_sciValidateChecksum
+0x00006a5c,mpc555_sciStartResponseTransmit
+0x00006ab8,mpc555_sciPollDuringEepromWrite
 0x00006b24,mpc555_updateSensorDiagnostics
 0x00006bac,cm848_sensorInputProcessing
 0x00006bdc,mpc555_processScheduledTasks
@@ -919,7 +919,7 @@ address,name
 0x00022870,cm848_j1939ProcessPgn61442Etc1
 0x00022ab8,cm848_selectTorqueLimitMode
 0x00022bc4,cm848_initJ1939Pgn61442Etc1Handler
-0x00022d18,cm848_initJ1939VehicleSpeedHandler
+0x00022d18,cm848_initEtc2Handler,Registers the J1939 ETC2 (PGN 61445 / 0xf005) receive handler (DAT_00022c5c) and primes transmission RX state (clears tsc1_received.auxiliary_state, sets etc1_address_filter=0xff). NOT vehicle speed - prior name cm848_initJ1939VehicleSpeedHandler was wrong; ETC2 carries gear/range, and the MANUAL_VSS cal has no J1939 speed-in path.
 0x00022d60,torqueControlModeHandler
 0x00022e3c,cm848_processGovernorSpeedControlRequest
 0x00022f90,cm848_processGovernorSpeedRequest
@@ -1129,25 +1129,25 @@ address,name
 0x0002dadc,cm848_processSpeedControlFilter2
 0x0002dc40,cm848_initProtectionControlState
 0x0002e02c,cm848_clearDiagnosticConditionFlags
-0x0002e17c,cm848_processFaultCounterTimeout
-0x0002e1f0,cm848_incrementFaultTimeoutCounter
-0x0002e250,cm848_processFaultConditionLogic
-0x0002e488,cm848_calculateFaultThresholdDelta
-0x0002e4cc,cm848_processFaultThresholdCondition
-0x0002e74c,cm848_processFaultConditionFlags
-0x0002e9c8,cm848_clearFaultStatusCounters
-0x0002ea58,cm848_processFaultStatusCalculation
-0x0002ed30,cm848_clearFaultStatusValues
-0x0002edc0,cm848_processFaultCondition1
-0x0002ef34,cm848_calculateFaultStatusValue
-0x0002efe4,cm848_processFaultConditionMain
-0x0002f154,cm848_processFaultCondition2
-0x0002f2c8,cm848_calculateFaultStatusOffset
-0x0002f3a0,cm848_processFaultStatusWord2
-0x0002f524,cm848_calculateFaultRateValue
-0x0002f5a4,cm848_processFaultStatusMain
+0x0002e17c,cm848_updateLoadProtectionStartupCounter
+0x0002e1f0,cm848_updateLoadProtectionWarmupTrigger
+0x0002e250,cm848_evaluateLoadProtectionFuelLowStage
+0x0002e488,cm848_calculateLoadProtectionDeviationFlag
+0x0002e4cc,cm848_evaluateLoadProtectionOverspeedStage
+0x0002e74c,cm848_updateLoadProtectionArming
+0x0002e9c8,cm848_clearLoadProtectionConfirmState
+0x0002ea58,cm848_updateGovernorDemandRateProtection
+0x0002ed30,cm848_clearGovernorDemandRateProtectionState
+0x0002edc0,cm848_updateLoadProtectionConfirmCounterA
+0x0002ef34,cm848_updateLoadProtectionEmaOutput
+0x0002efe4,cm848_evaluateLoadProtectionSteadyStage
+0x0002f154,cm848_updateLoadProtectionConfirmCounterB
+0x0002f2c8,cm848_updateLoadProtectionLoadFilter
+0x0002f3a0,cm848_evaluateLoadProtectionLiveStage
+0x0002f524,cm848_calculateLoadProtectionDerateTarget
+0x0002f5a4,cm848_processLoadProtectionStatus,review-function-readability reviewed 2026-06-23 (cluster re-domained 2026-06-27) - Readability High Accuracy Confidence High - orchestrates the engine-load-PROTECTION derate-speed path (NOT DTC handling): runs the two protection-condition state machines then builds the protection status word (protection_diagnostic_status_intermediate = protection_fault_condition_value | confirm-B bit3) and computes the derate speed target via cm848_calculateLoadProtectionDerateTarget. Outputs converge on governor_speed_tracking (live PID error term cpp:29251); real J1939 DM2 fault path is a sibling (cm848_setEngineProtectionFault). Renamed protection_fault_severity->protection_diagnostic_status_intermediate (magnitude-implying name colliding with protection_fault_severity_code @0x408788) and uVar1->engineLoadProtection (enum ENGINE_LOAD_PROTECTION_STATE INACTIVE=0/ACTIVE=0x08). confirm-B (governor_status_flags 0x8000) = engine-LOAD protection actively derating: the monitored quantity is fuel-demand-derived engine load (protection_channel_load_raw, computed in cm848_adjustFuelDemandWithOffset, EMA-filtered into protection_ema_output), NOT a temperature/pressure sensor. The whole cluster is a fuel-mode-B (governor_fuel_b_mode_flag) protection governor: load-EMA deviation is the TRIP; confirm-A is fuel-low-armed (protection_confirm_enable_a) and confirm-B is throttle-rate/overspeed-armed (protection_confirm_enable_b from governor_overspeed_threshold_flag); it derates governor speed and raises protection event SPN 0x48 via cm848_setEngineProtectionFault. confirm-A/B are two arming stages of this one load-deviation protection. Cluster re-domained: this fn calls evaluateLoadProtectionSteadyStage (confirm-A) + evaluateLoadProtectionLiveStage (confirm-B) + calculateLoadProtectionDerateTarget; caller is updateLoadProtectionStatusAndDerate - body now reads like a book. (protection_fault_condition_value's writer is an indexed sthx - pointer-arg inference not instruction-proven - but its 0/1/2 fault-code name is accurate.)
 0x0002f604,cm848_calculateDiagnosticStatusBits
-0x0002f6a0,cm848_processFaultStatusFlags
+0x0002f6a0,cm848_updateLoadProtectionStatusAndDerate
 0x0002f784,cm848_initFaultStatusFilterState
 0x0002f860,cm848_protectionNormalHandler
 0x0002f920,cm848_protectionOverloadHandler
@@ -1380,7 +1380,7 @@ address,name
 0x0004091c,cm848_calculateProtectionFuelLimit
 0x00040938,cm848_protectionFuelRateStep
 0x00040978,cm848_protectionFuelRateRamp
-0x000409b0,cm848_cruiseSpeedCommandStateMachine
+0x000409b0,cm848_cruiseSpeedCommandStateMachine,Applies the CRUISE_CONTROL_STATE (cruise_control_state) to cruise_speed_command: CRUISE_SET(1)=latch setpoint+override; CRUISE_RESUME(2)=restore target; CRUISE_DECELERATE/ACCEL(3-6)=fuel-rate step/ramp; CRUISE_ACTIVE_HOLD(7); CRUISE_STANDBY(8)/CRUISE_OFF(0)=clear override. State values map to SAE J1939 SPN527.
 0x00040d40,cm848_initFuelRateFromCapability
 0x00040d74,cm848_validateFuelRateTarget
 0x00040dd4,cm848_copyProtectionRampValue
@@ -2057,17 +2057,17 @@ address,name
 0x00511ed4,protection_j1939_control_logic
 0x00512130,protection_enable_state_machine
 0x00512554,governor_fuel_mode_initialization
-0x005125f4,governor_cruiseOverride_state2_handler
+0x005125f4,governor_cruise_coastButton_handler,Cruise switch-request state 2 (COAST button - confirmed live 2026-06-12) -> CRUISE_CONTROL_STATE: returns CRUISE_DECELERATE(3)/CRUISE_DECELERATE_2(5) via the holdoff countdown. Was governor_cruiseOverride_state2_handler.
 0x00512678,protection_control_state_check_1
-0x00512724,governor_fuelMode_state_get
+0x00512724,governor_cruise_baseState_get,Base CRUISE_CONTROL_STATE from override/enable flags: CRUISE_ACTIVE_HOLD(7) if override active; else CRUISE_STANDBY(8) if governor_fuel_enable_state set; else CRUISE_OFF(0). This is the FIRST write to cruise_control_state each cycle in cm848_periodicProtectionControl before the button handlers may overwrite it. Was governor_fuelMode_state_get.
 0x0051275c,governor_cruise_rpmRatio_ema
 0x005127d8,governor_cruise_speedError_integrate
-0x00512878,governor_cruiseOverride_state4_handler
-0x0051291c,governor_cruiseOverride_state3_handler
+0x00512878,governor_cruise_resumeButton_handler,Cruise switch-request state 4 (RESUME/ACCEL button) -> CRUISE_CONTROL_STATE: override-off with fuel-enable set returns CRUISE_RESUME(2); held returns CRUISE_ACCELERATE(4)/CRUISE_ACCELERATE_2(6). Was governor_cruiseOverride_state4_handler.
+0x0051291c,governor_cruise_setButton_handler,Cruise switch-request state 3 (SET/COAST button) -> CRUISE_CONTROL_STATE: rising edge (state_b==3 && prev!=3) with cruise_speed_setpoint_adjusted>=cruise_speed_min_cal returns CRUISE_SET(1) to LATCH the setpoint; held returns CRUISE_DECELERATE(3). Was governor_cruiseOverride_state3_handler. NOTE the SET capture only runs when governor_cruise_fuelCorrection_inhibitCheck()==0.
 0x005129b0,protection_control_state_check_2
 0x00512a60,governor_cruise_fuelCorrection_inhibitCheck
 0x00512e70,governor_cruise_engage_check,review-function-readability reviewed 2026-06-11 - Readability High Accuracy Confidence High - returns 1 when cruise may engage: cruise-switch ADC (chan 0x2f/47, or override) inside valid window AND governor_speed_request_state_b==0 AND _prev==5; caller sets j1939_cruise_engaged
-0x00512f18,governor_cruise_disengage_check
+0x00512f18,governor_cruise_standbyState_get,Returns the CRUISE_CONTROL_STATE used when the button-override path is inhibited: CRUISE_STANDBY(8) if all engage conditions hold AND governor_fuel_enable_state!=0 else CRUISE_OFF(0). Legacy name governor_cruise_disengage_check was misleading - it is a state getter not a boolean check.
 0x00512ff4,cm848_periodicProtectionControl
 0x00513200,protection_fault_latch_update
 0x005134e8,protection_sensor_state_initialize
@@ -2161,9 +2161,10 @@ address,name
 0x0051d70c,fuelDemandCallbackDispatcher
 0x0051d810,initFuelDemandCallback
 0x0051d840,phaseGroupB_ControlDispatchers
-0x0051d86c,fuelDemandSerialTx
-0x0051d8c8,fuelDemandSerialRx
-0x0051d9a0,fuelDemandSerialInterruptHandler
+0x0051d86c,fuelDemandSerialStartTransmit
+0x0051d780,cm848_dispatchFuelDemandSerialCommand
+0x0051d8c8,fuelDemandSerialReceiveHandler
+0x0051d9a0,fuelDemandSerialTransmitHandler
 0x0051da38,fuel_demandQueue_reset
 0x0051da58,fuelDemandShutdown
 0x0051dab0,fuel_demandQueue_serialMode_enable
@@ -2385,3 +2386,23 @@ address,name
 0x00539a78,engine_start_completion_sequence
 0x00539d18,cm848_initProtectionTimers
 0x0053a110,hpcr_protectionTimerMonitor
+# fuelDemand SCI command handlers — dispatch table @ 0x53a9a0 (FUN_0051d780). Name uses DECIMAL command code (convention); hex in comment.
+0x0051dbd4,cm848_fuelDemandCommand18Handler,fuelDemand SCI command 0x12 - sets UART mode bit1 + cancels countdown + acks
+0x0051e460,cm848_fuelDemandCommand19Handler,fuelDemand SCI command 0x13 handler (dispatch table 0x53a9a0)
+0x0051eef0,cm848_fuelDemandCommand20Handler,fuelDemand SCI command 0x14 handler (dispatch table 0x53a9a0)
+0x005204f8,cm848_fuelDemandClearDiagnostics,fuelDemand SCI command 0x17 - requests DTC clear (diagnostic_clear_request_state=3) during cranking
+0x00520654,cm848_fuelDemandCommand25Handler,fuelDemand SCI command 0x19 handler (dispatch table 0x53a9a0)
+0x0052072c,cm848_fuelDemandCommand26Handler,fuelDemand SCI command 0x1a handler (dispatch table 0x53a9a0)
+0x00520ad8,cm848_fuelDemandCommand37Handler,fuelDemand SCI command 0x25 handler (dispatch table 0x53a9a0)
+0x005216f4,cm848_fuelDemandCommand39Handler,fuelDemand SCI command 0x27 handler (dispatch table 0x53a9a0)
+0x00521908,cm848_fuelDemandCommand40Handler,fuelDemand SCI command 0x28 handler (dispatch table 0x53a9a0)
+0x00521a60,cm848_fuelDemandCommand41Handler,fuelDemand SCI command 0x29 handler (dispatch table 0x53a9a0)
+0x00521b6c,cm848_fuelDemandCommand42Handler,fuelDemand SCI command 0x2a handler (dispatch table 0x53a9a0)
+0x00521d3c,cm848_fuelDemandReportFaultTiming,fuelDemand SCI command 0x2b - reports fault_timing_snapshot (2 bytes + checksum)
+0x00521e04,cm848_fuelDemandCommand44Handler,fuelDemand SCI command 0x2c handler (dispatch table 0x53a9a0)
+0x00522044,cm848_fuelDemandCommand49Handler,fuelDemand SCI command 0x31 handler (dispatch table 0x53a9a0)
+0x00522224,cm848_fuelDemandReportProtectionEventSpns,fuelDemand SCI command 0x32 - reports protection_event_spn_history (up to 8 SPNs + checksum)
+0x00522314,cm848_fuelDemandReportActiveFaultSpns,fuelDemand SCI command 0x33 - reports active fault SPNs from fault_status_word_array (+ checksum)
+0x0052242c,cm848_fuelDemandCommand52Handler,fuelDemand SCI command 0x34 handler (dispatch table 0x53a9a0)
+0x0051ef20,cm848_encodeGovernorFuelModeStatus,encodes governor_fuel_mode + cruise_control_state + governor_fuel_mode_d into the fuelDemand SCI status byte
+0x00522468,cm848_lookupFaultSpnIndex,searches the SPN table DAT_0005b57c for a matching SPN and returns its table index

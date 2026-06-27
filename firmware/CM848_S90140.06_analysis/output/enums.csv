@@ -794,3 +794,22 @@ J1939_ACK_TYPE,0,J1939_ACK,Positive acknowledgment - request fulfilled,1
 J1939_ACK_TYPE,1,J1939_NACK,Negative acknowledgment - cannot comply with request,1
 J1939_ACK_TYPE,2,J1939_ACCESS_DENIED,Access denied - not authorized for requested action,1
 J1939_ACK_TYPE,3,J1939_CANNOT_RESPOND,Cannot respond - busy or resource unavailable,1
+# Cruise control action state (cruise_control_state @ 0x0040b68e) - selects action in cm848_cruiseSpeedCommandStateMachine; maps to SAE J1939 SPN527 cruise states
+CRUISE_CONTROL_STATE,0,CRUISE_OFF,Cruise off/disabled - clears override and fuel-enable,2
+CRUISE_CONTROL_STATE,1,CRUISE_SET,SET pressed - latch current speed as cruise_speed_command (J1939 SET),2
+CRUISE_CONTROL_STATE,2,CRUISE_RESUME,RESUME - restore cruise_speed_target_working (J1939 RESUME),2
+CRUISE_CONTROL_STATE,3,CRUISE_DECELERATE,Decelerate/coast via fuel-rate step (J1939 DECELERATE),2
+CRUISE_CONTROL_STATE,4,CRUISE_ACCELERATE,Accelerate via fuel-rate ramp (J1939 ACCELERATE),2
+CRUISE_CONTROL_STATE,5,CRUISE_DECELERATE_2,Decelerate alternate fuel-rate step (J1939 DECELERATE),2
+CRUISE_CONTROL_STATE,6,CRUISE_ACCELERATE_2,Accelerate alternate fuel-rate ramp (J1939 ACCELERATE),2
+CRUISE_CONTROL_STATE,7,CRUISE_ACTIVE_HOLD,Override active - holding setpoint (J1939 HOLD),2
+CRUISE_CONTROL_STATE,8,CRUISE_STANDBY,Armed/enabled - driver in control not overriding,2
+# Cruise switch request state (governor_speed_request_state @ 0x003fafe6 + _b/_prev) - which cruise switch action is requested. Values 3/4/5 PROVEN via the override-handler dispatch in cm848_periodicProtectionControl; 0/1/2 still need the cruise_switch button-code table decode.
+CRUISE_SWITCH_REQUEST,0,CRUISE_SWITCH_ON_OFF,ON/OFF master button - arms cruise (engage check wants state_b 0 with prev 5). Confirmed live 2026-06-12,2
+CRUISE_SWITCH_REQUEST,1,CRUISE_SWITCH_CANCEL,CANCEL button. Confirmed live 2026-06-12,2
+CRUISE_SWITCH_REQUEST,2,CRUISE_SWITCH_COAST,COAST button - decelerate (governor_cruise_coastButton_handler returns CRUISE_DECELERATE). Confirmed live 2026-06-12,2
+CRUISE_SWITCH_REQUEST,3,CRUISE_SWITCH_SET,SET button - rising edge latches setpoint (CRUISE_SET). Confirmed live 2026-06-12,2
+CRUISE_SWITCH_REQUEST,4,CRUISE_SWITCH_RESUME,RESUME/ACCEL button - tap returns CRUISE_RESUME - held accelerates (CRUISE_ACCELERATE). Confirmed live 2026-06-12,2
+CRUISE_SWITCH_REQUEST,5,CRUISE_SWITCH_IDLE,No button pressed / debounce-settling value,2
+ENGINE_LOAD_PROTECTION_STATE,0,INACTIVE,engine-load protection not derating,2
+ENGINE_LOAD_PROTECTION_STATE,8,ACTIVE,engine-load protection actively derating - bit3 (0x08) of the protection status word mirrors governor_status_flags confirm-B (0x8000),2
