@@ -4,7 +4,7 @@
 # These ~50 functions execute from RAM for MPC555 performance (RAM faster than flash).
 # mainLoopIteration calls two of these RAM functions directly via bl:
 #   bl 0x3FAE3C -> dispatchCanMessageHandlers (ROM 0x526C) - CAN receive dispatcher
-#   bl 0x3FC094 -> processJ1939QueueStatus   (ROM 0x64C4) - J1939 TP queue manager
+#   bl 0x3FC094 -> mpc555_serviceJ1939TransportSessions   (ROM 0x64C4) - J1939 TP queue manager
 #
 # Cross-Firmware Scheduler Mapping (CM848D ↔ CM550)
 # Both use identical 40-phase cooperative scheduler. Task groups map by position:
@@ -22,10 +22,10 @@
 # See docs/cross-firmware-analysis.md for complete mapping table.
 #
 # RAM copy: ROM 0x526C -> RAM 0x3FAE3C (called from mainLoopIteration via bl)
-# RAM copy: ROM 0x62FC -> RAM 0x3FBECC (called from processJ1939QueueStatus)
-# RAM copy: ROM 0x6490 -> RAM 0x3FC060 (called from processJ1939QueueStatus)
+# RAM copy: ROM 0x62FC -> RAM 0x3FBECC (called from mpc555_serviceJ1939TransportSessions)
+# RAM copy: ROM 0x6490 -> RAM 0x3FC060 (called from mpc555_serviceJ1939TransportSessions)
 # RAM copy: ROM 0x64C4 -> RAM 0x3FC094 (called from mainLoopIteration via bl)
-# Mid-function entry point into watchdogTimerTick (0x7608+0xAC=0x76b4)
+# Mid-function entry point into mpc555_tickTransferTimeoutAndRuntimeCounter (0x7608+0xAC=0x76b4)
 # Called via computed jump from initCanController during boot
 # HPCR (High Pressure Common Rail) specific - per-cylinder fuel trim output
 # HPCR specific - direct injector pulse width calculation
@@ -345,7 +345,7 @@ address,name
 0x000008fc,mpc555_initEepromTransfer
 0x000009e4,mpc555_diagServiceInitEepromTransfer
 0x00000a40,cm848_computeCrcCcitt
-0x00000b44,mpc555_updateCapabilityFlags
+0x00000b44,mpc555_updatePowerStateOutputs,Boot ROM (from mpc555_bootStateMachine): copies the MIOS1ER bit 15 input into ecu_power_state_flags.capability_flags bit 0 then drives SIU_SGPIODT1 bit 0x400 from flag bit 1 and the MIOS port bit 0x2000 from flag bit 4 (likely power-hold style outputs; exact pins unconfirmed) - was mpc555_updateCapabilityFlags | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
 0x00000be8,cm848_stubFunction1
 0x00000bec,mpc555_eepromWriteWords
 0x00000d88,mpc555_eepromReadWords
@@ -426,12 +426,12 @@ address,name
 0x00003b48,cm848_processTimerInterrupt
 0x00003b58,cm848_saveSchedulerCallbackPointer
 0x00003b6c,mpc555_initQspiRegisters
-0x00003d54,cm848_getDiagnosticServicePriority
+0x00003d54,cm848_getDiagnosticResponseEchoLength,Boot reflash kernel: number of request bytes cm848_sendDiagServiceResponse echoes back: services 4/5 -> 3 / 25 -> 5 / 65..78 -> table at ROM 0x3c30 / else 1 (was getDiagnosticServicePriority) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
 0x00003dac,mpc555_canTransmitQueuePush
 0x00003f20,cm848_transmitCanMessage
 0x00003f70,cm848_lookupTableEntryByKey
 0x00003fcc,cm848_dataTransferBufferWrite
-0x00004194,cm848_prepareDataTransferBuffer
+0x00004194,cm848_fillFlashProgramPageBuffer,Boot reflash kernel: aligns the target down to 64 bytes / pre-fills the 64-byte page buffer at 0x3fec3a with 0xFF / copies queued download bytes in (servicing the SCI port) and advances the target + remaining count; feeds mpc555_cmfLoadProgramPage | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
 0x000042b0,cm848_completePendingDiagWrite,Boot reflash kernel: when the pending flash/EEPROM write finishes (data_transfer_state 1) sends the deferred positive response for diag_write_request_state.pending_request; state 2 clears eeprom_calibration_pending_flag | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
 0x00004320,mpc555_cmfRestoreNormalMode,Boot reflash kernel: returns both CMF flash modules to normal mode: CMFCTL = block select only (or CMFTST = step value when the CMF test-step count at 0x3fdba4 is nonzero) then CMFMCR_A / CMFMCR_B = 0x85000000 | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
 0x000043a4,mpc555_cmfSelectBlockAndStartSequence,Boot reflash kernel: selects flash block N (0-7 = module A at 0x2fc800 / 8+ = module B at 0x2fc840) via CMFCTL BLOCK bit 0x8000 >> N then sets SES (|2) to start a program/erase sequence | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
@@ -439,7 +439,7 @@ address,name
 0x00004570,mpc555_cmfApplyHighVoltagePulse,Boot reflash kernel: one high-voltage pulse: writes the step's CMFTST value and CMFCTL (SES|EHV); after cmf_pulses_per_step pulses advances to the next step; returns 0 when every step is done | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
 0x00004654,mpc555_cmfScanRangeForNonzeroWords,Boot reflash kernel: returns 2 if any 16-bit word from the current pointer up to the target address is nonzero (post program/erase check) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
 0x000046dc,mpc555_cmfEndHighVoltagePulse,Boot reflash kernel: clears EHV (CMFCTL = block select only) and the CMFTST step value | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
-0x00004720,cm848_initCanMailboxFilters
+0x00004720,cm848_runFlashProgramStateMachine,Boot reflash kernel: flash program/erase state machine on data_transfer_state.status: 1 wait HVS + verify (re-pulse on failure) / 2 restore normal mode / 3 fill page / 4 select block + load page + pulse / 5 finish then cm848_completePendingDiagWrite. Never touches CAN (was initCanMailboxFilters) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
 0x000049d0,mpc555_cmfEraseBlocks,Boot reflash kernel: erases the flash blocks in the mask (high byte = module A blocks 0-7 at 0x0-0x38000 / low byte = module B blocks at 0x40000-0x68000): CMFCTL PE then PE|SES / 0xFFFFFFFF interlock write to each 32 KB block / EHV pulses polled on HVS (servicing watchdog + SCI meanwhile) up to the pulse limit / then verifies every word reads 0xFFFFFFFF; returns 1 on success | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
 0x00004eec,cm848_can2MailboxTransmitCompleteWrapper
 0x00004f0c,cm848_can2MailboxTransmitRangeWrapper
@@ -455,21 +455,21 @@ address,name
 0x00005870,cm848_diagService75_memoryWrite,Boot reflash kernel (runs only from its RAM copy; never called by the application): diagnostic service 0x4B - request = 4-byte address + 1-byte length + data (addressing mode 1); write counterpart of service 74 | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
 0x000058e8,cm848_diagService77_memoryWriteExt,Boot reflash kernel (runs only from its RAM copy; never called by the application): diagnostic service 0x4D - request = 4-byte address + 4-byte length + data; write counterpart of service 76 | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
 0x00005958,cm848_getServiceDataOffset
-0x0000597c,validateServiceDataLength
-0x00005adc,mpc555_multiFrameCanTransmit
-0x00005c50,mpc555_handleJ1939QueueRequest
+0x0000597c,cm848_validateDiagnosticRequestLengthAndAuthorization,Boot reflash kernel: per-service length + auth-token check: services 2/11/16/24 need length 11 + token at offset 1 / 25 needs 15 + token at 5 / 7/15 need 11 or 8; token checked by cm848_validateWriteAuth unless the EEPROM is blank; returns 0xff ok / 2 bad length / 3 auth failed / 26 token missing | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+0x00005adc,mpc555_sendJ1939TransportRequestToSend,Boot reflash kernel: opens an outbound J1939 transport session (destination-specific only): sends TP.CM 0x10 request-to-send on PGN 60416 then switches to PGN 60160 data transfer | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+0x00005c50,mpc555_handleJ1939TransportClearToSend,Boot reflash kernel: TP.CM control byte 0x11: validates the session / source / PGN and records the granted packet window (0 = hold) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
 0x00005cf4,mpc555_sendJ1939TransportAbort,Boot reflash kernel: sends a J1939 TP.CM connection abort (CAN ID 0x18EC + destination; data FF FF FF FF FF + PGN) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
-0x00005d8c,mpc555_sendJ1939DiagnosticMessage
-0x00005e38,mpc555_sendDiagAcknowledgeFrame
-0x00005ecc,mpc555_handleJ1939DataRequest
-0x00005fe4,mpc555_handleJ1939DataTransfer
-0x00006180,mpc555_handleJ1939AbortRequest
-0x000061e8,mpc555_handleJ1939AbortAcknowledge
-0x0000628c,cm848_j1939DiagMessageDispatcher
-0x000062fc,mpc555_processJ1939QueueTransmit
-0x00006490,mpc555_decrementPauseStatusCounter
-0x000064c4,cm848_processJ1939QueueStatus
-0x00006508,mpc555_initDiagnosticBuffers
+0x00005d8c,mpc555_sendJ1939TransportEndOfMessageAcknowledge,Boot reflash kernel: sends TP.CM 0x13 end-of-message acknowledge (size / packets / PGN) when the last inbound packet arrives | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+0x00005e38,mpc555_sendJ1939TransportClearToSend,Boot reflash kernel: sends TP.CM 0x11 clear-to-send (packets allowed / next packet / PGN); up to 25 packets per window | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+0x00005ecc,mpc555_handleJ1939TransportRequestToSend,Boot reflash kernel: TP.CM control byte 0x10 (inbound request-to-send) handler; dispatched by mpc555_dispatchJ1939TransportConnectionManagement | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+0x00005fe4,mpc555_handleJ1939TransportDataPacket,Boot reflash kernel: inbound TP.DT data packet: stores the packet / sends the next clear-to-send or the end-of-message acknowledge then runs cm848_dispatchDiagnosticService | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
+0x00006180,mpc555_handleJ1939TransportEndOfMessageAcknowledge,Boot reflash kernel: TP.CM control byte 0x13 handler (was handleJ1939AbortRequest - one role off) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+0x000061e8,mpc555_handleJ1939TransportAbort,Boot reflash kernel: TP.CM control byte 0xFF (connection abort) handler (was handleJ1939AbortAcknowledge) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+0x0000628c,mpc555_dispatchJ1939TransportConnectionManagement,Boot reflash kernel: 8-byte TP.CM frames: 0x10 request-to-send / 0x11 clear-to-send / 0x13 end-of-message acknowledge / 0xFF abort (was j1939DiagMessageDispatcher) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+0x000062fc,mpc555_sendJ1939TransportDataPackets,Boot reflash kernel: sends up to 15 TP.DT frames of the granted window per call; with no window counts the retry timer down (0 -> status 6 timeout) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+0x00006490,mpc555_ageJ1939TransportReceiveTimeout,Boot reflash kernel: counts the inbound session timer down (112 after request-to-send / 25 between packets); at 0 drops the session | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+0x000064c4,mpc555_serviceJ1939TransportSessions,Boot reflash kernel: runs the outbound sender and the inbound timeout for whichever transport sessions are active | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+0x00006508,cm848_allocateDiagnosticResponseBuffer,Boot reflash kernel: returns the single-frame response buffer for replies under 9 bytes / else the multi-frame transport buffer when no transport is in progress / else NULL | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
 0x00006580,mpc555_sciSendServiceResponse,Boot reflash kernel: serial diagnostic response: 0x51 (ECUReset positive) / 0x74 (RequestDownload positive) / otherwise 0x7F negative + service + code | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
 0x0000662c,mpc555_diagnosticSubcommandDispatcher
 0x00006770,cm848_resetSerialReceiveBuffer
@@ -480,27 +480,27 @@ address,name
 0x000069b0,mpc555_sciValidateChecksum
 0x00006a5c,mpc555_sciStartResponseTransmit
 0x00006ab8,mpc555_sciPollDuringEepromWrite
-0x00006b24,mpc555_updateSensorDiagnostics
+0x00006b24,mpc555_runPacedSerialService,Boot reflash kernel: when the MIOS counter has advanced more than 102 since the last run calls the serial service dispatcher and returns 1 (boot code also uses it as a paced wait) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
 0x00006bac,cm848_copyBytes,Byte copy (destination / source / count) - a plain memcpy used throughout the boot reflash kernel | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
-0x00006bdc,mpc555_processScheduledTasks
-0x00006ca4,cm848_processMainLoop
+0x00006bdc,mpc555_runPeriodicInterruptTimerTick,Boot reflash kernel: on each PIT tick (PISCR flag): mpc555_tickTransferTimeoutAndRuntimeCounter then a 4-slot rotation - CAN slots run the CAN dispatcher + transport sessions (mode 0x81) / serial slots run the serial dispatcher (mode 0x82) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+0x00006ca4,cm848_runBootKernelLoop,Boot reflash kernel: main loop entered from the boot loop when a reflash mode is set (0x81 CAN / 0x82 serial) and the EEPROM magic is 0x1d0a: flash state machine + serial poll + external watchdog + CAN transmit + PIT tick | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
 0x00006d24,cm848_dispatchDiagnosticService
-0x00006e1c,cm848_sendEepromVersionResponse
-0x00006eac,mpc555_handleEepromDiagnosticResponse
-0x00006f54,mpc555_processEepromDataTransfer
+0x00006e1c,cm848_sendSerialDownloadStatusResponse,Boot reflash kernel: serial service 0x34 subfunction 0x11: reports download status (positive 0x74 with 0x78 pending or the latched status / else negative 0x7F) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
+0x00006eac,mpc555_sciHandleDownloadStart,Boot reflash kernel: serial service 0x34 subfunction 0x03: needs EEPROM magic 0x1d0a / latches start address + block length / checks the region (positive 0x73 or negative 0x74 illegal address) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
+0x00006f54,mpc555_sciHandleDownloadDataBlock,Boot reflash kernel: serial service 0x34 subfunction 0x10: writes a data block at start + bytes transferred by region (2 Bank-2 flash / 4 main flash via cm848_dataTransferBufferWrite mode 2 / 5 EEPROM) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
 0x000071f8,cm848_descrambleAuthToken
 0x00007370,cm848_validateWriteAuth
 0x000074a0,cm848_sendDiagServiceResponse,Boot reflash kernel: sends the J1939 PGN 61184 diagnostic response to the requester: result 0 -> 0x0C positive / 0xFE -> 0x0E pending + wait time / else 0x0D + code; echoes the request service bytes | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
 0x000075dc,cm848_sendDiagResponsePending,Boot reflash kernel: stores the wait time and sends a 0x0E response-pending for the request | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
-0x00007608,mpc555_watchdogTimerTick
-0x000076b4,mpc555_watchdogTimerTick_midEntry
+0x00007608,mpc555_tickTransferTimeoutAndRuntimeCounter,Boot reflash kernel: every 41 PIT ticks: counts eeprom_xfer_state.transfer_timer down (0 -> cm848_forceExternalWatchdogReset + reset vector) and adds 1 to the runtime counter ecu_power_state_flags.runtime_counter (~0.205 s per count if the PIT runs at 1 MHz) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+0x000076b4,mpc555_loadRuntimeCounterFromEepromShadow,Boot: copies the EEPROM-loaded runtime counter (EEPROM 0x1000030 via 0x3fee12) into ecu_power_state_flags.runtime_counter; a separate function (0x7608 ends at 0x76b0) - was watchdogTimerTick_midEntry | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
 0x000076c8,cm848_lookupMemoryRegionType,Boot reflash kernel: finds the memory_region_table entry (6 x {start / end / type}) that wholly contains address..address+length-1; returns its type (0 RAM / 2 Bank-2 flash only when flash2_writes_enabled / 3 registers / 4 main flash / 5 EEPROM) or 9 when not writable | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
 0x00007740,cm848_trackDownloadBlock,Boot reflash kernel: download block bookkeeping: rejects out-of-sequence addresses (9) / skips a repeated write (0xff) / counts bytes against block_length and feeds the data to cm848_updateDownloadCrc | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
 0x00007840,cm848_finishDownloadBlock,Boot reflash kernel: at block end compares the trailing CRC with the running CRC (0x14 = mismatch) and records the block start/end in a 10-entry list (0x15 = full) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
 0x000078d0,cm848_updateDownloadCrc,Boot reflash kernel: table-driven CRC16 over downloaded bytes into ecu_power_state_flags.transfer_crc; finishes the block when bytes_transferred wraps to 0 | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
-0x00007974,mpc555_systemWatchdogReset
-0x00007b08,mpc555_initQspiHardware
-0x00007dc4,mpc555_systemHaltLoop
+0x00007974,cm848_serviceExternalWatchdog,Boot reflash kernel: question/answer external watchdog over QSPI (every 546 MIOS counts): answers the current question from four 16-entry tables at ROM 0x3c9c-0x3ccc (0xE0xx words) + status reads 0xF200/0xF400; reply word 4 = next question + error counter (was systemWatchdogReset) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+0x00007b08,cm848_initExternalWatchdog,Boot reflash kernel: first call after the kernel copy: configures the external watchdog over QSPI and answers questions until its error counter is 0; arms it (0x1440) only when no debugger is attached (DER at reset value) (was initQspiHardware) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+0x00007dc4,cm848_forceExternalWatchdogReset,Boot reflash kernel: deliberately answers the external watchdog wrongly (16 rounds of zero answers) so it resets the ECU; every caller then jumps to the reset vector (was systemHaltLoop) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
 0x0000b44c,cm848_keyOnStatusMonitor
 0x0000b76c,cm848_phase_common_processing
 0x0000b7b4,cm848_phase_group_a_processing
@@ -1256,9 +1256,9 @@ address,name
 0x00039f54,cm848_onPciControllerReceiveWord,Completion callback of pci_controller_receive_job: splits pci_controller_receive_word into pci_receive_word / pci_receive_status (bit 0x800 -> link_event_code 1) and dispatches end-of-frame words to cm848_completePciFrame and data bytes to cm848_matchPciReceiveHeader; then services the transmit side and re-queues the receive job
 0x0003a058,cm848_resetPciReceiveState,Clears the receive byte count / both header match indexes and pci_frame_match_flags (link-event action bit 0x02)
 0x0003a080,cm848_resetPciTransmitState,Clears tx_match_index and pci_transmit_frame_buffer and returns pci_transmit_state to idle (link-event action bit 0x04)
-0x0003a0cc,cm848_cyclePciControllerLine124,Calls updateEngineSyncStatus(124) twice then clearModuleSyncFlag(124) - the same sequence the PCI init runs first; line 124 is most likely the external J1850 controller's reset or enable line (link-event action bit 0x08). Purpose of the line not yet confirmed
+0x0003a0cc,cm848_pulsePciControllerLine124,Drives output line 124 low (twice) then high via mpc555_driveOutputLineLow / mpc555_driveOutputLineHigh - the same pulse the PCI init starts with; line 124 is most likely the external J1850 controller's reset (link-event action bit 0x08). Purpose of the line not yet confirmed
 0x0003a100,hpcr_initPciMessageTimers,Initializes every PCI message timer: RX timers to 0xff37 (never received) and TX timers to staggered start values so the broadcasts do not all fire together; also arms the 0x26 diagnostic response (timer 1) (link-event action bit 0x10)
-0x0003a290,cm848_handlePciLinkEvent,Maps link_event_code 1..7 to pci_link_event_action_mask_cal and performs the recovery actions (count toward pci_link_error_limit -> power_state_status_flags 0x8000 + updateEngineSyncStatus(124) / reset receive state / reset transmit state / cycle controller line 124 / re-init message timers); returns 1 when the mask asks for a controller resend (bit 0x20) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
+0x0003a290,cm848_handlePciLinkEvent,Maps link_event_code 1..7 to pci_link_event_action_mask_cal and performs the recovery actions (count toward pci_link_error_limit -> power_state_status_flags 0x8000 + mpc555_driveOutputLineLow(124) / reset receive state / reset transmit state / pulse controller line 124 / re-init message timers); returns 1 when the mask asks for a controller resend (bit 0x20) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
 0x0003a450,hpcr_initJ1939MessageTables
 0x0003a9a4,hpcr_initJ1939BufferValues
 0x0003aaf0,cm848_initJ1939BufferParams
@@ -1713,8 +1713,8 @@ address,name
 0x0004f2b0,cm848_processProtectionFaultsAndTiming
 0x0004f2ec,hpcr_protectionWarningHandler
 0x0004f324,hpcr_evaluateHardwareTimerState
-0x0004f6f0,clearModuleSyncFlag
-0x00051038,updateEngineSyncStatus
+0x0004f6f0,mpc555_driveOutputLineHigh,Sets output line N (8+) high: ORs bit N into the shadow byte output_lines_<range>_state and the owning port register (MIOS port / SIU_SGPIODT1 / SIU_SGPIODT2 ...); lines below 8 are ignored. Was clearModuleSyncFlag (nothing to do with sync) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+0x00051038,mpc555_driveOutputLineLow,Sets output line N (8+) low: clears bit N in the shadow byte and the owning port register; counterpart of mpc555_driveOutputLineHigh. Was updateEngineSyncStatus (nothing to do with engine sync) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
 0x000529b8,injectorTimingCalculation
 0x000533e0,hpcr_injectorPulseWidthCalc
 0x000535e8,mpc555_processJ1939TxBufferSend

@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Wed Nov 11 14:50:28 MST 2026
+// Generated: Wed Nov 11 15:10:36 MST 2026
 
 
 //
@@ -72,7 +72,7 @@ void mpc555_keyOnStateMachine(void)
       wVar2 = eeprom_block_tracking.watchdog_counter;
       if (0x2903 < wVar2) {
         if (eeprom_config_write_triggered_flag == 0) {
-          eeprom_write_buffer = ecu_power_state_flags.eeprom_write_count;
+          eeprom_write_buffer = ecu_power_state_flags.runtime_counter;
           eeprom_config_write_triggered_flag = 1;
           mpc555_eepromWriteWords(0x3fee2a,(word *)&eeprom_config_block,4);
         }
@@ -87,7 +87,7 @@ void mpc555_keyOnStateMachine(void)
       eeprom_block_tracking.watchdog_counter = 0;
       if (eeprom_shadow_header.magic == 0x600d) {
         if (eeprom_config_write_triggered_flag == 0) {
-          eeprom_write_buffer = ecu_power_state_flags.eeprom_write_count;
+          eeprom_write_buffer = ecu_power_state_flags.runtime_counter;
           eeprom_config_write_triggered_flag = 1;
           mpc555_eepromWriteWords(0x3fee2a,(word *)&eeprom_config_block,4);
         }
@@ -195,7 +195,7 @@ void mpc555_loadEepromCalibration(undefined4 param_1,int param_2)
       do {
         while (sVar5 = BYTE_003fc6f4(), sVar5 == 0) {
           mpc555_sciPollDuringEepromWrite();
-          mpc555_systemWatchdogReset();
+          cm848_serviceExternalWatchdog();
         }
         uVar7 = uVar7 + 1;
       } while (uVar7 < 5);
@@ -210,7 +210,7 @@ void mpc555_loadEepromCalibration(undefined4 param_1,int param_2)
         do {
           uVar8 = uVar8 + 1;
         } while (uVar8 < 400);
-        mpc555_systemWatchdogReset();
+        cm848_serviceExternalWatchdog();
         uVar7 = uVar7 + 1;
       } while (uVar7 < 0x32);
     }
@@ -242,7 +242,7 @@ void mpc555_loadEepromCalibration(undefined4 param_1,int param_2)
               if (psVar12 < psVar13) break;
             } while (uVar6 < 0x200);
           }
-          mpc555_systemWatchdogReset();
+          cm848_serviceExternalWatchdog();
           BYTE_003fc6f4();
         }
         if (local_38[0] != *puVar10) {
@@ -284,7 +284,7 @@ void mpc555_loadEepromCalibration(undefined4 param_1,int param_2)
         do {
           while (sVar5 = BYTE_003fc6f4(), sVar5 == 0) {
             mpc555_sciPollDuringEepromWrite();
-            mpc555_systemWatchdogReset();
+            cm848_serviceExternalWatchdog();
           }
           uVar7 = uVar7 + 1;
         } while (uVar7 < 100);
@@ -305,14 +305,14 @@ void mpc555_loadEepromCalibration(undefined4 param_1,int param_2)
         diag_session_state_byte = 0x61;
         BYTE_003fc6f4();
       }
-      local_34[0] = ecu_power_state_flags.eeprom_write_count;
+      local_34[0] = ecu_power_state_flags.runtime_counter;
       mpc555_eepromWriteWords((dword)local_34,(word *)&eeprom_config_block,4);
       if (param_2 == 3) {
         uVar7 = 0;
         do {
           while (sVar5 = BYTE_003fc6f4(), sVar5 == 0) {
             mpc555_sciPollDuringEepromWrite();
-            mpc555_systemWatchdogReset();
+            cm848_serviceExternalWatchdog();
           }
           uVar7 = uVar7 + 1;
         } while (uVar7 < 100);
@@ -330,7 +330,7 @@ void mpc555_loadEepromCalibration(undefined4 param_1,int param_2)
             do {
               uVar6 = uVar6 + 1;
             } while (uVar6 < 400);
-            mpc555_systemWatchdogReset();
+            cm848_serviceExternalWatchdog();
             uVar8 = uVar8 + 1;
           } while (uVar8 < 10);
           uVar7 = uVar7 + 1;
@@ -458,10 +458,16 @@ uint cm848_computeCrcCcitt(undefined4 *param_1,uint param_2)
 
 
 //
-// Function: mpc555_updateCapabilityFlags @ 0x00000b44
+// Function: mpc555_updatePowerStateOutputs @ 0x00000b44
 //
 
-void mpc555_updateCapabilityFlags(void)
+/* Boot ROM (from mpc555_bootStateMachine): copies the MIOS1ER bit 15 input into
+   ecu_power_state_flags.capability_flags bit 0 then drives SIU_SGPIODT1 bit 0x400 from flag bit 1
+   and the MIOS port bit 0x2000 from flag bit 4 (likely power-hold style outputs; exact pins
+   unconfirmed) - was mpc555_updateCapabilityFlags | review-function-readability reviewed 2026-11-11
+   - Readability Medium Accuracy Confidence Medium */
+
+void mpc555_updatePowerStateOutputs(void)
 
 {
   dword dVar1;
@@ -480,14 +486,14 @@ void mpc555_updateCapabilityFlags(void)
   }
   ecu_power_state_flags.capability_flags = uVar4;
   if ((uVar4 & 2) == 0) {
-    dVar1 = system_capability_flags;
+    dVar1 = SIU_SGPIODT1;
     uVar4 = dVar1 & 0xfffffbff;
   }
   else {
-    dVar1 = system_capability_flags;
+    dVar1 = SIU_SGPIODT1;
     uVar4 = dVar1 | 0x400;
   }
-  system_capability_flags = uVar4;
+  SIU_SGPIODT1 = uVar4;
   dVar1 = ecu_power_state_flags.capability_flags;
   if ((dVar1 & 0x10) == 0) {
     wVar2 = mios1_ext_ctrl.ctrl_a;
@@ -567,7 +573,7 @@ void mpc555_eepromWriteWords(dword dest_address,word *src_ptr,word word_count)
       wVar1 = qsmcm_recram_t_00305140.RX1;
       mpc555_sciPollDuringEepromWrite();
       BYTE_003fc6f4();
-      mpc555_systemWatchdogReset();
+      cm848_serviceExternalWatchdog();
     } while ((wVar1 & 1) != 0);
   } while ((uVar3 & 0xffff) != 0);
   return;
@@ -689,7 +695,7 @@ void mpc555_bootStateMachine(void)
   wVar1 = USIU_PISCR.PISCR;
   USIU_PISCR.PISCR = wVar1 | 0x80;
   sensor_scan_cycle_counter();
-  mpc555_updateCapabilityFlags();
+  mpc555_updatePowerStateOutputs();
   wVar1 = boot_state_machine.boot_phase;
   if (wVar1 == 0) {
     cm848_loadCalibrationFromEeprom();
@@ -764,7 +770,7 @@ bool cm848_flashPollUntilReady(uint param_1,ushort *param_2,uint param_3)
   do {
     mpc555_sciPollDuringEepromWrite();
     BYTE_003fc6f4();
-    mpc555_systemWatchdogReset();
+    cm848_serviceExternalWatchdog();
     if (*param_2 == param_1) {
       iVar3 = 1;
     }
@@ -920,7 +926,7 @@ void mpc555_initHardwareConfig(void)
     _qadc_control_word_f = 0x520;
     _qadc_control_word_g = 0x620;
     _qadc_control_word_h = 0x720;
-    qadc_fault_bit_array._0_2_ = 1;
+    protection_event_output_polarity_bits_cal._0_2_ = 1;
     qadc_init_done_flag._1_1_ = 8;
     qadc_accumulate_count_cal = 100;
     cmf_control_base = 0x28000000;
@@ -948,7 +954,7 @@ void mpc555_initHardwareConfig(void)
     qadc_prescale_count_f = 0x14;
     qadc_prescale_count_g = 0x14;
     qadc_sample_rate_cal = 48000;
-    qadc_fault_bit_array._2_2_ = 8;
+    protection_event_output_polarity_bits_cal._2_2_ = 8;
   }
   if ((char)data_transfer_state_t_003fec82.status == '\0') {
     data_transfer_state_t_003fec82.status._1_1_ = '\x01';
@@ -1802,7 +1808,7 @@ void mpc555_systemInitialization(void)
       BYTE_003fc874();
       mpc555_initHardwareConfig();
     }
-    mpc555_systemWatchdogReset();
+    cm848_serviceExternalWatchdog();
     BYTE_003fab3c();
     mpc555_sciDispatchByTransferPhase();
     mpc555_bootStateMachine();
@@ -2407,7 +2413,7 @@ void mpc555_generateSerialChallenge(void)
     crc16_working_value = 0;
   }
   else {
-    crc16_working_value = ecu_power_state_flags.eeprom_write_count;
+    crc16_working_value = ecu_power_state_flags.runtime_counter;
     if ((crc16_working_value & 0xffff) == 0) {
       crc16_working_value = crc16_working_value + 1;
     }
@@ -2611,7 +2617,7 @@ void cm848_beginEepromCalibrationWrite(void)
   cm848_diagSendResponseCode(0x78,0x74);
   while (diag_serial_transfer_phase == 3) {
     mpc555_sciPollDuringEepromWrite();
-    mpc555_systemWatchdogReset();
+    cm848_serviceExternalWatchdog();
   }
   diag_session_state_byte = 0x78;
   diag_request_pending_flag = 0;
@@ -2642,7 +2648,7 @@ void cm848_updateEepromMagicAndReload(void)
     cm848_diagSendResponseCode(0x78,0x74);
     while (diag_serial_transfer_phase == 3) {
       mpc555_sciPollDuringEepromWrite();
-      mpc555_systemWatchdogReset();
+      cm848_serviceExternalWatchdog();
     }
     diag_request_pending_flag = 0;
     local_10[0] = 0x2b16;
@@ -2650,7 +2656,7 @@ void cm848_updateEepromMagicAndReload(void)
     while ((uVar2 < 400 || (eeprom_shadow_header.magic != local_10[0]))) {
       while (sVar1 = BYTE_003fc6f4(), sVar1 == 0) {
         mpc555_sciPollDuringEepromWrite();
-        mpc555_systemWatchdogReset();
+        cm848_serviceExternalWatchdog();
       }
       mpc555_eepromReadWords(0x1000000,0x3fee0a,2);
       uVar2 = uVar2 + 1;
@@ -2847,10 +2853,14 @@ void mpc555_initQspiRegisters(void)
 
 
 //
-// Function: cm848_getDiagnosticServicePriority @ 0x00003d54
+// Function: cm848_getDiagnosticResponseEchoLength @ 0x00003d54
 //
 
-undefined1 cm848_getDiagnosticServicePriority(int param_1)
+/* Boot reflash kernel: number of request bytes cm848_sendDiagServiceResponse echoes back: services
+   4/5 -> 3 / 25 -> 5 / 65..78 -> table at ROM 0x3c30 / else 1 (was getDiagnosticServicePriority) |
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+
+undefined1 cm848_getDiagnosticResponseEchoLength(int param_1)
 
 {
   if (param_1 < 0x41) {
@@ -2977,7 +2987,7 @@ void cm848_transmitCanMessage(j1939_msg_hdr_t *msg_header,byte *data_ptr)
                *(undefined4 *)&msg_header[1].data_length);
   }
   else {
-    mpc555_multiFrameCanTransmit(msg_header,data_ptr_00,in_r5);
+    mpc555_sendJ1939TransportRequestToSend(msg_header,data_ptr_00,in_r5);
   }
   return;
 }
@@ -3042,7 +3052,7 @@ cm848_dataTransferBufferWrite(int param_1,dword param_2,uint param_3,int param_4
     uVar3 = (uint)data_transfer_state_t_003fec82.byte_count;
     data_transfer_state_t_003fec82.byte_count = (word)(uVar3 + param_3);
     if (((uVar3 + param_3 & 0xffff) < 0x1001) &&
-       (mpc555_systemWatchdogReset(), (param_3 & 0xffff) != 0)) {
+       (cm848_serviceExternalWatchdog(), (param_3 & 0xffff) != 0)) {
       puVar4 = (undefined1 *)(param_1 + -1);
       do {
         puVar4 = puVar4 + 1;
@@ -3084,10 +3094,15 @@ cm848_dataTransferBufferWrite(int param_1,dword param_2,uint param_3,int param_4
 
 
 //
-// Function: cm848_prepareDataTransferBuffer @ 0x00004194
+// Function: cm848_fillFlashProgramPageBuffer @ 0x00004194
 //
 
-void cm848_prepareDataTransferBuffer(void)
+/* Boot reflash kernel: aligns the target down to 64 bytes / pre-fills the 64-byte page buffer at
+   0x3fec3a with 0xFF / copies queued download bytes in (servicing the SCI port) and advances the
+   target + remaining count; feeds mpc555_cmfLoadProgramPage | review-function-readability reviewed
+   2026-11-11 - Readability Medium Accuracy Confidence High */
+
+void cm848_fillFlashProgramPageBuffer(void)
 
 {
   uint uVar1;
@@ -3284,7 +3299,7 @@ undefined4 mpc555_cmfApplyHighVoltagePulse(void)
   bVar1 = (&cmf_pulses_per_step)[uVar3] <= cmf_pulse_count;
   cmf_pulse_count = wVar4;
   if (bVar1) {
-    if ((int)(qadc_fault_bit_array._2_2_ - 1) <= (int)uVar3) {
+    if ((int)(protection_event_output_polarity_bits_cal._2_2_ - 1) <= (int)uVar3) {
       return 0;
     }
     cmf_pulse_step_index = bVar2 + 1;
@@ -3350,10 +3365,16 @@ void mpc555_cmfEndHighVoltagePulse(void)
 
 
 //
-// Function: cm848_initCanMailboxFilters @ 0x00004720
+// Function: cm848_runFlashProgramStateMachine @ 0x00004720
 //
 
-void cm848_initCanMailboxFilters(void)
+/* Boot reflash kernel: flash program/erase state machine on data_transfer_state.status: 1 wait HVS
+   + verify (re-pulse on failure) / 2 restore normal mode / 3 fill page / 4 select block + load page
+   + pulse / 5 finish then cm848_completePendingDiagWrite. Never touches CAN (was
+   initCanMailboxFilters) | review-function-readability reviewed 2026-11-11 - Readability Medium
+   Accuracy Confidence High */
+
+void cm848_runFlashProgramStateMachine(void)
 
 {
   byte bVar1;
@@ -3367,7 +3388,7 @@ void cm848_initCanMailboxFilters(void)
         if ((0x40 < data_transfer_state_t_003fec82.byte_count) ||
            ((data_transfer_state_t_003fec82.byte_count != 0 &&
             ((data_transfer_buffer_status == 3 || (data_transfer_buffer_status == 4)))))) {
-          cm848_prepareDataTransferBuffer();
+          cm848_fillFlashProgramPageBuffer();
           data_transfer_state_t_003fec82.status._0_1_ = '\x04';
           goto LAB_000049a0;
         }
@@ -3545,15 +3566,15 @@ bool mpc555_cmfEraseBlocks(uint param_1)
           }
         }
         uVar10 = 0;
-        if ((iVar7 != 0) && (uVar5 = 0, qadc_fault_bit_array._0_2_ != 0)) {
+        if ((iVar7 != 0) && (uVar5 = 0, protection_event_output_polarity_bits_cal._0_2_ != 0)) {
           while (uVar10 = uVar5, cmf_erase_pulse_total < qadc_accumulate_count_cal) {
             if (bVar1) {
               CMFCTL_A = uVar8 | cmf_erase_control_bits | 7;
               dVar3 = CMFCTL_A;
               while ((dVar3 & 0x80000000) != 0) {
-                mpc555_systemWatchdogReset();
+                cm848_serviceExternalWatchdog();
                 mpc555_sciPollDuringEepromWrite();
-                mpc555_updateSensorDiagnostics();
+                mpc555_runPacedSerialService();
                 dVar3 = CMFCTL_A;
               }
               CMFCTL_A = uVar8 | cmf_erase_control_bits | 6;
@@ -3562,15 +3583,16 @@ bool mpc555_cmfEraseBlocks(uint param_1)
               CMFCTL_B = uVar9 | cmf_erase_control_bits | 7;
               dVar3 = CMFCTL_B;
               while ((dVar3 & 0x80000000) != 0) {
-                mpc555_systemWatchdogReset();
+                cm848_serviceExternalWatchdog();
                 mpc555_sciPollDuringEepromWrite();
-                mpc555_updateSensorDiagnostics();
+                mpc555_runPacedSerialService();
                 dVar3 = CMFCTL_B;
               }
               CMFCTL_B = uVar9 | cmf_erase_control_bits | 6;
             }
             uVar10 = uVar10 + 1;
-            if ((iVar7 == 0) || (uVar5 = uVar10, qadc_fault_bit_array._0_2_ <= (uVar10 & 0xff)))
+            if ((iVar7 == 0) ||
+               (uVar5 = uVar10, protection_event_output_polarity_bits_cal._0_2_ <= (uVar10 & 0xff)))
             break;
           }
         }
@@ -3591,9 +3613,9 @@ bool mpc555_cmfEraseBlocks(uint param_1)
         }
         memory_scan_pointer = (undefined *)((uint)(memory_scan_pointer + 0x8000) & 0xffff8000);
       }
-      mpc555_systemWatchdogReset();
+      cm848_serviceExternalWatchdog();
       mpc555_sciPollDuringEepromWrite();
-      mpc555_updateSensorDiagnostics();
+      mpc555_runPacedSerialService();
     }
   } while (iVar7 != 0);
   if (qadc_init_done_flag._0_1_ != '\0') {
@@ -4176,10 +4198,16 @@ undefined1 cm848_getServiceDataOffset(int param_1)
 
 
 //
-// Function: validateServiceDataLength @ 0x0000597c
+// Function: cm848_validateDiagnosticRequestLengthAndAuthorization @ 0x0000597c
 //
 
-undefined4 validateServiceDataLength(int param_1)
+/* Boot reflash kernel: per-service length + auth-token check: services 2/11/16/24 need length 11 +
+   token at offset 1 / 25 needs 15 + token at 5 / 7/15 need 11 or 8; token checked by
+   cm848_validateWriteAuth unless the EEPROM is blank; returns 0xff ok / 2 bad length / 3 auth
+   failed / 26 token missing | review-function-readability reviewed 2026-11-11 - Readability Medium
+   Accuracy Confidence High */
+
+undefined4 cm848_validateDiagnosticRequestLengthAndAuthorization(int param_1)
 
 {
   bool bVar1;
@@ -4274,10 +4302,15 @@ LAB_00005a58:
 
 
 //
-// Function: mpc555_multiFrameCanTransmit @ 0x00005adc
+// Function: mpc555_sendJ1939TransportRequestToSend @ 0x00005adc
 //
 
-void mpc555_multiFrameCanTransmit(j1939_msg_hdr_t *msg_header,byte *data_ptr,word data_length)
+/* Boot reflash kernel: opens an outbound J1939 transport session (destination-specific only): sends
+   TP.CM 0x10 request-to-send on PGN 60416 then switches to PGN 60160 data transfer |
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+
+void mpc555_sendJ1939TransportRequestToSend
+               (j1939_msg_hdr_t *msg_header,byte *data_ptr,word data_length)
 
 {
   ushort *puVar1;
@@ -4348,10 +4381,14 @@ void mpc555_multiFrameCanTransmit(j1939_msg_hdr_t *msg_header,byte *data_ptr,wor
 
 
 //
-// Function: mpc555_handleJ1939QueueRequest @ 0x00005c50
+// Function: mpc555_handleJ1939TransportClearToSend @ 0x00005c50
 //
 
-void mpc555_handleJ1939QueueRequest(byte request_type,byte connection_id)
+/* Boot reflash kernel: TP.CM control byte 0x11: validates the session / source / PGN and records
+   the granted packet window (0 = hold) | review-function-readability reviewed 2026-11-11 -
+   Readability Medium Accuracy Confidence High */
+
+void mpc555_handleJ1939TransportClearToSend(byte request_type,byte connection_id)
 
 {
   byte bVar1;
@@ -4431,10 +4468,15 @@ void mpc555_sendJ1939TransportAbort(undefined1 param_1,undefined2 param_2)
 
 
 //
-// Function: mpc555_sendJ1939DiagnosticMessage @ 0x00005d8c
+// Function: mpc555_sendJ1939TransportEndOfMessageAcknowledge @ 0x00005d8c
 //
 
-void mpc555_sendJ1939DiagnosticMessage(byte dest_address,byte *data_ptr,word data_length)
+/* Boot reflash kernel: sends TP.CM 0x13 end-of-message acknowledge (size / packets / PGN) when the
+   last inbound packet arrives | review-function-readability reviewed 2026-11-11 - Readability
+   Medium Accuracy Confidence High */
+
+void mpc555_sendJ1939TransportEndOfMessageAcknowledge
+               (byte dest_address,byte *data_ptr,word data_length)
 
 {
   can_rx_channel_t cVar1;
@@ -4475,11 +4517,15 @@ void mpc555_sendJ1939DiagnosticMessage(byte dest_address,byte *data_ptr,word dat
 
 
 //
-// Function: mpc555_sendDiagAcknowledgeFrame @ 0x00005e38
+// Function: mpc555_sendJ1939TransportClearToSend @ 0x00005e38
 //
 
+/* Boot reflash kernel: sends TP.CM 0x11 clear-to-send (packets allowed / next packet / PGN); up to
+   25 packets per window | review-function-readability reviewed 2026-11-11 - Readability Medium
+   Accuracy Confidence High */
+
 undefined1
-mpc555_sendDiagAcknowledgeFrame
+mpc555_sendJ1939TransportClearToSend
           (undefined1 param_1,undefined1 param_2,undefined1 param_3,undefined2 param_4)
 
 {
@@ -4515,10 +4561,14 @@ mpc555_sendDiagAcknowledgeFrame
 
 
 //
-// Function: mpc555_handleJ1939DataRequest @ 0x00005ecc
+// Function: mpc555_handleJ1939TransportRequestToSend @ 0x00005ecc
 //
 
-void mpc555_handleJ1939DataRequest(j1939_rx_msg_t *rx_msg)
+/* Boot reflash kernel: TP.CM control byte 0x10 (inbound request-to-send) handler; dispatched by
+   mpc555_dispatchJ1939TransportConnectionManagement | review-function-readability reviewed
+   2026-11-11 - Readability Medium Accuracy Confidence High */
+
+void mpc555_handleJ1939TransportRequestToSend(j1939_rx_msg_t *rx_msg)
 
 {
   byte bVar1;
@@ -4556,7 +4606,7 @@ void mpc555_handleJ1939DataRequest(j1939_rx_msg_t *rx_msg)
       bVar4 = 0x19;
     }
     j1939_tp_pause_state._pad2._1_1_ = bVar4;
-    cVar3 = mpc555_sendDiagAcknowledgeFrame(bVar1,1);
+    cVar3 = mpc555_sendJ1939TransportClearToSend(bVar1,1);
     if (cVar3 != '\0') {
       wVar2 = j1939_tp_pause_state.pause_pgn;
       mpc555_sendJ1939TransportAbort(bVar1,wVar2);
@@ -4569,10 +4619,15 @@ void mpc555_handleJ1939DataRequest(j1939_rx_msg_t *rx_msg)
 
 
 //
-// Function: mpc555_handleJ1939DataTransfer @ 0x00005fe4
+// Function: mpc555_handleJ1939TransportDataPacket @ 0x00005fe4
 //
 
-void mpc555_handleJ1939DataTransfer(j1939_rx_msg_t *rx_msg)
+/* Boot reflash kernel: inbound TP.DT data packet: stores the packet / sends the next clear-to-send
+   or the end-of-message acknowledge then runs cm848_dispatchDiagnosticService |
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
+    */
+
+void mpc555_handleJ1939TransportDataPacket(j1939_rx_msg_t *rx_msg)
 
 {
   byte dest_address;
@@ -4634,7 +4689,7 @@ void mpc555_handleJ1939DataTransfer(j1939_rx_msg_t *rx_msg)
         bVar1 = qadc_a_pause_ctrl;
         if (uVar6 == bVar1) {
           wVar2 = j1939_tp_pause_state.pause_pgn;
-          mpc555_sendJ1939DiagnosticMessage(dest_address,(byte *)(uint)wVar2,wVar11);
+          mpc555_sendJ1939TransportEndOfMessageAcknowledge(dest_address,(byte *)(uint)wVar2,wVar11);
           qadc_a_pause_status = 0;
           j1939_tp_pause_state.rx_buf_ptr = 0x303075;
           cm848_dispatchDiagnosticService(0x2d,data_ptr,wVar11);
@@ -4651,7 +4706,7 @@ void mpc555_handleJ1939DataTransfer(j1939_rx_msg_t *rx_msg)
       uVar3 = j1939_tp_pause_state._pad2._0_1_;
       uVar4 = j1939_tp_pause_state._pad2._1_1_;
       wVar11 = j1939_tp_pause_state.pause_pgn;
-      cVar7 = mpc555_sendDiagAcknowledgeFrame(dest_address,uVar3,uVar4,wVar11);
+      cVar7 = mpc555_sendJ1939TransportClearToSend(dest_address,uVar3,uVar4,wVar11);
       if (cVar7 != '\0') {
         wVar11 = j1939_tp_pause_state.pause_pgn;
         mpc555_sendJ1939TransportAbort(dest_address,wVar11);
@@ -4665,10 +4720,14 @@ void mpc555_handleJ1939DataTransfer(j1939_rx_msg_t *rx_msg)
 
 
 //
-// Function: mpc555_handleJ1939AbortRequest @ 0x00006180
+// Function: mpc555_handleJ1939TransportEndOfMessageAcknowledge @ 0x00006180
 //
 
-void mpc555_handleJ1939AbortRequest(j1939_rx_msg_t *rx_msg)
+/* Boot reflash kernel: TP.CM control byte 0x13 handler (was handleJ1939AbortRequest - one role off)
+   | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+    */
+
+void mpc555_handleJ1939TransportEndOfMessageAcknowledge(j1939_rx_msg_t *rx_msg)
 
 {
   byte bVar1;
@@ -4692,10 +4751,14 @@ void mpc555_handleJ1939AbortRequest(j1939_rx_msg_t *rx_msg)
 
 
 //
-// Function: mpc555_handleJ1939AbortAcknowledge @ 0x000061e8
+// Function: mpc555_handleJ1939TransportAbort @ 0x000061e8
 //
 
-void mpc555_handleJ1939AbortAcknowledge(int param_1)
+/* Boot reflash kernel: TP.CM control byte 0xFF (connection abort) handler (was
+   handleJ1939AbortAcknowledge) | review-function-readability reviewed 2026-11-11 - Readability
+   Medium Accuracy Confidence High */
+
+void mpc555_handleJ1939TransportAbort(int param_1)
 
 {
   byte bVar1;
@@ -4725,10 +4788,14 @@ void mpc555_handleJ1939AbortAcknowledge(int param_1)
 
 
 //
-// Function: cm848_j1939DiagMessageDispatcher @ 0x0000628c
+// Function: mpc555_dispatchJ1939TransportConnectionManagement @ 0x0000628c
 //
 
-void cm848_j1939DiagMessageDispatcher(j1939_rx_msg_t *rx_msg,byte service_code)
+/* Boot reflash kernel: 8-byte TP.CM frames: 0x10 request-to-send / 0x11 clear-to-send / 0x13
+   end-of-message acknowledge / 0xFF abort (was j1939DiagMessageDispatcher) |
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+
+void mpc555_dispatchJ1939TransportConnectionManagement(j1939_rx_msg_t *rx_msg,byte service_code)
 
 {
   byte bVar1;
@@ -4736,16 +4803,16 @@ void cm848_j1939DiagMessageDispatcher(j1939_rx_msg_t *rx_msg,byte service_code)
   if (rx_msg->data_length == 8) {
     bVar1 = *rx_msg->data_pointer;
     if (bVar1 == 0x10) {
-      mpc555_handleJ1939DataRequest(rx_msg);
+      mpc555_handleJ1939TransportRequestToSend(rx_msg);
     }
     else if (bVar1 == 0x11) {
-      mpc555_handleJ1939QueueRequest((byte)rx_msg,0x11);
+      mpc555_handleJ1939TransportClearToSend((byte)rx_msg,0x11);
     }
     else if (bVar1 == 0x13) {
-      mpc555_handleJ1939AbortRequest(rx_msg);
+      mpc555_handleJ1939TransportEndOfMessageAcknowledge(rx_msg);
     }
     else if (bVar1 == 0xff) {
-      mpc555_handleJ1939AbortAcknowledge();
+      mpc555_handleJ1939TransportAbort();
     }
   }
   return;
@@ -4754,10 +4821,14 @@ void cm848_j1939DiagMessageDispatcher(j1939_rx_msg_t *rx_msg,byte service_code)
 
 
 //
-// Function: mpc555_processJ1939QueueTransmit @ 0x000062fc
+// Function: mpc555_sendJ1939TransportDataPackets @ 0x000062fc
 //
 
-void mpc555_processJ1939QueueTransmit(void *queue_entry)
+/* Boot reflash kernel: sends up to 15 TP.DT frames of the granted window per call; with no window
+   counts the retry timer down (0 -> status 6 timeout) | review-function-readability reviewed
+   2026-11-11 - Readability Medium Accuracy Confidence High */
+
+void mpc555_sendJ1939TransportDataPackets(void *queue_entry)
 
 {
   undefined1 *puVar1;
@@ -4852,10 +4923,14 @@ LAB_00006458:
 
 
 //
-// Function: mpc555_decrementPauseStatusCounter @ 0x00006490
+// Function: mpc555_ageJ1939TransportReceiveTimeout @ 0x00006490
 //
 
-void mpc555_decrementPauseStatusCounter(void)
+/* Boot reflash kernel: counts the inbound session timer down (112 after request-to-send / 25
+   between packets); at 0 drops the session | review-function-readability reviewed 2026-11-11 -
+   Readability Medium Accuracy Confidence High */
+
+void mpc555_ageJ1939TransportReceiveTimeout(void)
 
 {
   word wVar1;
@@ -4873,10 +4948,14 @@ void mpc555_decrementPauseStatusCounter(void)
 
 
 //
-// Function: cm848_processJ1939QueueStatus @ 0x000064c4
+// Function: mpc555_serviceJ1939TransportSessions @ 0x000064c4
 //
 
-void cm848_processJ1939QueueStatus(byte connection_id)
+/* Boot reflash kernel: runs the outbound sender and the inbound timeout for whichever transport
+   sessions are active | review-function-readability reviewed 2026-11-11 - Readability Medium
+   Accuracy Confidence High */
+
+void mpc555_serviceJ1939TransportSessions(byte connection_id)
 
 {
   byte bVar1;
@@ -4884,11 +4963,11 @@ void cm848_processJ1939QueueStatus(byte connection_id)
   
   bVar1 = qadc_a_queue_status_1;
   if (bVar1 == 1) {
-    mpc555_processJ1939QueueTransmit((void *)CONCAT31(in_register_0000000c,connection_id));
+    mpc555_sendJ1939TransportDataPackets((void *)CONCAT31(in_register_0000000c,connection_id));
   }
   bVar1 = qadc_a_pause_status;
   if (bVar1 == 1) {
-    mpc555_decrementPauseStatusCounter();
+    mpc555_ageJ1939TransportReceiveTimeout();
   }
   return;
 }
@@ -4896,10 +4975,14 @@ void cm848_processJ1939QueueStatus(byte connection_id)
 
 
 //
-// Function: mpc555_initDiagnosticBuffers @ 0x00006508
+// Function: cm848_allocateDiagnosticResponseBuffer @ 0x00006508
 //
 
-undefined * mpc555_initDiagnosticBuffers(int param_1)
+/* Boot reflash kernel: returns the single-frame response buffer for replies under 9 bytes / else
+   the multi-frame transport buffer when no transport is in progress / else NULL |
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+
+undefined * cm848_allocateDiagnosticResponseBuffer(int param_1)
 
 {
   byte bVar1;
@@ -4986,17 +5069,17 @@ void mpc555_diagnosticSubcommandDispatcher(byte subcommand,byte *data_ptr)
       eeprom_xfer_state.transfer_timer = 0x28;
     }
     if (eeprom_diag_state == EEPROM_DIAG_HANDLE_RESPONSE) {
-      mpc555_handleEepromDiagnosticResponse();
+      mpc555_sciHandleDownloadStart();
       diag_request_pending_flag = 0;
       return;
     }
     if (eeprom_diag_state == EEPROM_DIAG_DATA_TRANSFER) {
-      mpc555_processEepromDataTransfer();
+      mpc555_sciHandleDownloadDataBlock();
       diag_request_pending_flag = 0;
       return;
     }
     if (eeprom_diag_state == EEPROM_DIAG_SEND_VERSION) {
-      cm848_sendEepromVersionResponse();
+      cm848_sendSerialDownloadStatusResponse();
       diagnostic_callback_ptr = &DAT_003fc1fc;
       diag_request_pending_flag = 0;
       return;
@@ -5013,7 +5096,7 @@ void mpc555_diagnosticSubcommandDispatcher(byte subcommand,byte *data_ptr)
         return;
       }
       data_transfer_state_t_003fec82.state._1_1_ = 1;
-      cm848_initCanMailboxFilters();
+      cm848_runFlashProgramStateMachine();
       diag_request_pending_flag = 0;
       return;
     }
@@ -5222,10 +5305,15 @@ void mpc555_sciPollDuringEepromWrite(void)
 
 
 //
-// Function: mpc555_updateSensorDiagnostics @ 0x00006b24
+// Function: mpc555_runPacedSerialService @ 0x00006b24
 //
 
-undefined4 mpc555_updateSensorDiagnostics(void)
+/* Boot reflash kernel: when the MIOS counter has advanced more than 102 since the last run calls
+   the serial service dispatcher and returns 1 (boot code also uses it as a paced wait) |
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
+    */
+
+undefined4 mpc555_runPacedSerialService(void)
 
 {
   word wVar1;
@@ -5280,10 +5368,15 @@ void cm848_copyBytes(int param_1,int param_2,int param_3)
 
 
 //
-// Function: mpc555_processScheduledTasks @ 0x00006bdc
+// Function: mpc555_runPeriodicInterruptTimerTick @ 0x00006bdc
 //
 
-void mpc555_processScheduledTasks(void)
+/* Boot reflash kernel: on each PIT tick (PISCR flag): mpc555_tickTransferTimeoutAndRuntimeCounter
+   then a 4-slot rotation - CAN slots run the CAN dispatcher + transport sessions (mode 0x81) /
+   serial slots run the serial dispatcher (mode 0x82) | review-function-readability reviewed
+   2026-11-11 - Readability Medium Accuracy Confidence High */
+
+void mpc555_runPeriodicInterruptTimerTick(void)
 
 {
   byte bVar2;
@@ -5296,14 +5389,14 @@ void mpc555_processScheduledTasks(void)
   }
   wVar1 = USIU_PISCR.PISCR;
   USIU_PISCR.PISCR = wVar1 | 0x80;
-  uVar3 = mpc555_watchdogTimerTick();
+  uVar3 = mpc555_tickTransferTimeoutAndRuntimeCounter();
   wVar1 = boot_state_machine.boot_phase;
   if (wVar1 == 0) {
 LAB_00006c44:
     bVar2 = eeprom_service_mode_flags;
     if (bVar2 == 0x81) {
       bVar2 = mpc555_dispatchCanMessageHandlers();
-      cm848_processJ1939QueueStatus(bVar2);
+      mpc555_serviceJ1939TransportSessions(bVar2);
     }
   }
   else {
@@ -5331,10 +5424,15 @@ LAB_00006c74:
 
 
 //
-// Function: cm848_processMainLoop @ 0x00006ca4
+// Function: cm848_runBootKernelLoop @ 0x00006ca4
 //
 
-void cm848_processMainLoop(void)
+/* Boot reflash kernel: main loop entered from the boot loop when a reflash mode is set (0x81 CAN /
+   0x82 serial) and the EEPROM magic is 0x1d0a: flash state machine + serial poll + external
+   watchdog + CAN transmit + PIT tick | review-function-readability reviewed 2026-11-11 -
+   Readability Medium Accuracy Confidence High */
+
+void cm848_runBootKernelLoop(void)
 
 {
   byte bVar1;
@@ -5343,17 +5441,17 @@ void cm848_processMainLoop(void)
   while ((bVar1 & 0xf) != 0) {
     bVar1 = eeprom_service_mode_flags;
     if (bVar1 == 0x82) {
-      cm848_initCanMailboxFilters();
+      cm848_runFlashProgramStateMachine();
       mpc555_sciPollDuringEepromWrite();
     }
-    mpc555_systemWatchdogReset();
+    cm848_serviceExternalWatchdog();
     bVar1 = eeprom_service_mode_flags;
     if (bVar1 == 0x81) {
-      cm848_initCanMailboxFilters();
+      cm848_runFlashProgramStateMachine();
       mpc555_can2TransmitInterruptHandler();
     }
-    cm848_initCanMailboxFilters();
-    mpc555_processScheduledTasks();
+    cm848_runFlashProgramStateMachine();
+    mpc555_runPeriodicInterruptTimerTick();
     bVar1 = eeprom_service_mode_flags;
   }
   return;
@@ -5387,7 +5485,7 @@ void cm848_dispatchDiagnosticService(byte service_code,byte *data_ptr,word data_
     if (diag_scan_step_counter != 0) {
       do {
         if (*pcVar5 == cVar1) {
-          cVar3 = validateServiceDataLength(iVar2);
+          cVar3 = cm848_validateDiagnosticRequestLengthAndAuthorization(iVar2);
           if (cVar3 == -1) {
             bVar4 = eeprom_service_mode_flags;
             if (((bVar4 & 0xf) == 0) || (0x6fffe < *(uint *)(pcVar5 + 1))) {
@@ -5413,10 +5511,14 @@ void cm848_dispatchDiagnosticService(byte service_code,byte *data_ptr,word data_
 
 
 //
-// Function: cm848_sendEepromVersionResponse @ 0x00006e1c
+// Function: cm848_sendSerialDownloadStatusResponse @ 0x00006e1c
 //
 
-void cm848_sendEepromVersionResponse(void)
+/* Boot reflash kernel: serial service 0x34 subfunction 0x11: reports download status (positive 0x74
+   with 0x78 pending or the latched status / else negative 0x7F) | review-function-readability
+   reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium */
+
+void cm848_sendSerialDownloadStatusResponse(void)
 
 {
   if (eeprom_calibration_pending_flag == 1) {
@@ -5436,12 +5538,16 @@ void cm848_sendEepromVersionResponse(void)
 
 
 //
-// Function: mpc555_handleEepromDiagnosticResponse @ 0x00006eac
+// Function: mpc555_sciHandleDownloadStart @ 0x00006eac
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Boot reflash kernel: serial service 0x34 subfunction 0x03: needs EEPROM magic 0x1d0a / latches
+   start address + block length / checks the region (positive 0x73 or negative 0x74 illegal address)
+   | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
+    */
 
-void mpc555_handleEepromDiagnosticResponse(void)
+void mpc555_sciHandleDownloadStart(void)
 
 {
   undefined4 uVar1;
@@ -5475,12 +5581,16 @@ LAB_00006f3c:
 
 
 //
-// Function: mpc555_processEepromDataTransfer @ 0x00006f54
+// Function: mpc555_sciHandleDownloadDataBlock @ 0x00006f54
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Boot reflash kernel: serial service 0x34 subfunction 0x10: writes a data block at start + bytes
+   transferred by region (2 Bank-2 flash / 4 main flash via cm848_dataTransferBufferWrite mode 2 / 5
+   EEPROM) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy
+   Confidence High */
 
-void mpc555_processEepromDataTransfer(void)
+void mpc555_sciHandleDownloadDataBlock(void)
 
 {
   dword dVar1;
@@ -5690,7 +5800,7 @@ undefined4 cm848_validateWriteAuth(undefined4 scrambled_token)
         copy_count = copy_count + 1;
       } while (copy_count < 4);
       local_24[0] = local_24[0] & 0xffffff00;
-      current_runtime = ecu_power_state_flags.eeprom_write_count;
+      current_runtime = ecu_power_state_flags.runtime_counter;
       if ((current_runtime & 0xffffff00) - local_24[0] < 0x1a) {
         key_matches = 1;
         compare_index = 0;
@@ -5735,7 +5845,7 @@ void cm848_sendDiagServiceResponse(byte *param_1,uint param_2)
   byte bVar4;
   byte *pbVar5;
   
-  bVar1 = cm848_getDiagnosticServicePriority(**(undefined1 **)(param_1 + 6));
+  bVar1 = cm848_getDiagnosticResponseEchoLength(**(undefined1 **)(param_1 + 6));
   if (param_2 == 0) {
     iVar2 = 1;
   }
@@ -5748,7 +5858,7 @@ void cm848_sendDiagServiceResponse(byte *param_1,uint param_2)
   }
   iVar2 = (uint)bVar1 + iVar2;
 LAB_000074f8:
-  msg_header = (j1939_msg_hdr_t *)mpc555_initDiagnosticBuffers(iVar2);
+  msg_header = (j1939_msg_hdr_t *)cm848_allocateDiagnosticResponseBuffer(iVar2);
   if (msg_header != (j1939_msg_hdr_t *)0x0) {
     msg_header->can_id = 0xefff00;
     *(byte *)&msg_header->can_id = (*param_1 >> 2 & 7) << 2 | *(byte *)&msg_header->can_id & 0xe3;
@@ -5808,10 +5918,15 @@ void cm848_sendDiagResponsePending(undefined4 param_1,word param_2)
 
 
 //
-// Function: mpc555_watchdogTimerTick @ 0x00007608
+// Function: mpc555_tickTransferTimeoutAndRuntimeCounter @ 0x00007608
 //
 
-void mpc555_watchdogTimerTick(void)
+/* Boot reflash kernel: every 41 PIT ticks: counts eeprom_xfer_state.transfer_timer down (0 ->
+   cm848_forceExternalWatchdogReset + reset vector) and adds 1 to the runtime counter
+   ecu_power_state_flags.runtime_counter (~0.205 s per count if the PIT runs at 1 MHz) |
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+
+void mpc555_tickTransferTimeoutAndRuntimeCounter(void)
 
 {
   word wVar1;
@@ -5828,14 +5943,14 @@ void mpc555_watchdogTimerTick(void)
     if (counter_value != 0) {
       eeprom_xfer_state.transfer_timer = counter_value - 1;
       if ((word)(counter_value - 1) == 0) {
-        mpc555_systemHaltLoop();
+        cm848_forceExternalWatchdogReset();
         mpc555_reset_vector();
         return;
       }
     }
     watchdog_tick_prescaler = 0;
-    runtime_value = ecu_power_state_flags.eeprom_write_count;
-    ecu_power_state_flags.eeprom_write_count = runtime_value + 1;
+    runtime_value = ecu_power_state_flags.runtime_counter;
+    ecu_power_state_flags.runtime_counter = runtime_value + 1;
     wVar1 = eeprom_block_tracking.watchdog_counter;
     eeprom_block_tracking.watchdog_counter = wVar1 + 1;
   }
@@ -5845,13 +5960,18 @@ void mpc555_watchdogTimerTick(void)
 
 
 //
-// Function: mpc555_watchdogTimerTick_midEntry @ 0x000076b4
+// Function: mpc555_loadRuntimeCounterFromEepromShadow @ 0x000076b4
 //
 
-void mpc555_watchdogTimerTick_midEntry(void)
+/* Boot: copies the EEPROM-loaded runtime counter (EEPROM 0x1000030 via 0x3fee12) into
+   ecu_power_state_flags.runtime_counter; a separate function (0x7608 ends at 0x76b0) - was
+   watchdogTimerTick_midEntry | review-function-readability reviewed 2026-11-11 - Readability Medium
+   Accuracy Confidence High */
+
+void mpc555_loadRuntimeCounterFromEepromShadow(void)
 
 {
-  ecu_power_state_flags.eeprom_write_count = eeprom_shadow_header.config_dword;
+  ecu_power_state_flags.runtime_counter = eeprom_shadow_header.config_dword;
   return;
 }
 
@@ -6042,10 +6162,15 @@ undefined1 cm848_updateDownloadCrc(byte *param_1,uint param_2,int param_3)
 
 
 //
-// Function: mpc555_systemWatchdogReset @ 0x00007974
+// Function: cm848_serviceExternalWatchdog @ 0x00007974
 //
 
-void mpc555_systemWatchdogReset(void)
+/* Boot reflash kernel: question/answer external watchdog over QSPI (every 546 MIOS counts): answers
+   the current question from four 16-entry tables at ROM 0x3c9c-0x3ccc (0xE0xx words) + status reads
+   0xF200/0xF400; reply word 4 = next question + error counter (was systemWatchdogReset) |
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+
+void cm848_serviceExternalWatchdog(void)
 
 {
   word wVar1;
@@ -6089,10 +6214,15 @@ void mpc555_systemWatchdogReset(void)
 
 
 //
-// Function: mpc555_initQspiHardware @ 0x00007b08
+// Function: cm848_initExternalWatchdog @ 0x00007b08
 //
 
-void mpc555_initQspiHardware(void)
+/* Boot reflash kernel: first call after the kernel copy: configures the external watchdog over QSPI
+   and answers questions until its error counter is 0; arms it (0x1440) only when no debugger is
+   attached (DER at reset value) (was initQspiHardware) | review-function-readability reviewed
+   2026-11-11 - Readability Medium Accuracy Confidence High */
+
+void cm848_initExternalWatchdog(void)
 
 {
   ushort uVar1;
@@ -6140,7 +6270,8 @@ void mpc555_initQspiHardware(void)
     tpu3_channel_status_count = wVar4 >> 4 & 7;
     if (tpu3_channel_status_count != 0) {
       wVar4 = mios_mmcsm_cnt.CNT;
-      while ((wVar4 <= uVar1 && (mpc555_systemWatchdogReset(), tpu3_channel_status_count != 0))) {
+      while ((wVar4 <= uVar1 && (cm848_serviceExternalWatchdog(), tpu3_channel_status_count != 0)))
+      {
         wVar4 = mios_mmcsm_cnt.CNT;
       }
     }
@@ -6177,10 +6308,15 @@ void mpc555_initQspiHardware(void)
 
 
 //
-// Function: mpc555_systemHaltLoop @ 0x00007dc4
+// Function: cm848_forceExternalWatchdogReset @ 0x00007dc4
 //
 
-void mpc555_systemHaltLoop(void)
+/* Boot reflash kernel: deliberately answers the external watchdog wrongly (16 rounds of zero
+   answers) so it resets the ECU; every caller then jumps to the reset vector (was systemHaltLoop) |
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
+    */
+
+void cm848_forceExternalWatchdogReset(void)
 
 {
   word wVar1;
@@ -34953,7 +35089,7 @@ void cm848_initJ1939PeriodicConfig(void)
   j1939_periodic_data_ptr = &DAT_0005772e;
   j1939_periodic_output_ptr = &j1939_periodic_timer_state;
   j1939_periodic_timer_callback_ptr = cm848_j1939PeriodicTimerCallback;
-  j1939_dm1_fault_byte_10 = 0xff;
+  output_lines_152_to_159_state = 0xff;
   return;
 }
 
@@ -36379,19 +36515,20 @@ void cm848_resetPciTransmitState(void)
 
 
 //
-// Function: cm848_cyclePciControllerLine124 @ 0x0003a0cc
+// Function: cm848_pulsePciControllerLine124 @ 0x0003a0cc
 //
 
-/* Calls updateEngineSyncStatus(124) twice then clearModuleSyncFlag(124) - the same sequence the PCI
-   init runs first; line 124 is most likely the external J1850 controller's reset or enable line
-   (link-event action bit 0x08). Purpose of the line not yet confirmed */
+/* Drives output line 124 low (twice) then high via mpc555_driveOutputLineLow /
+   mpc555_driveOutputLineHigh - the same pulse the PCI init starts with; line 124 is most likely the
+   external J1850 controller's reset (link-event action bit 0x08). Purpose of the line not yet
+   confirmed */
 
-void cm848_cyclePciControllerLine124(void)
+void cm848_pulsePciControllerLine124(void)
 
 {
-  updateEngineSyncStatus(0x7c);
-  updateEngineSyncStatus(0x7c);
-  clearModuleSyncFlag(0x7c);
+  mpc555_driveOutputLineLow(0x7c);
+  mpc555_driveOutputLineLow(0x7c);
+  mpc555_driveOutputLineHigh(0x7c);
   return;
 }
 
@@ -36459,10 +36596,10 @@ void hpcr_initPciMessageTimers(void)
 
 /* Maps link_event_code 1..7 to pci_link_event_action_mask_cal and performs the recovery actions
    (count toward pci_link_error_limit -> power_state_status_flags 0x8000 +
-   updateEngineSyncStatus(124) / reset receive state / reset transmit state / cycle controller line
-   124 / re-init message timers); returns 1 when the mask asks for a controller resend (bit 0x20) |
-   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
-    */
+   mpc555_driveOutputLineLow(124) / reset receive state / reset transmit state / pulse controller
+   line 124 / re-init message timers); returns 1 when the mask asks for a controller resend (bit
+   0x20) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence
+   Medium */
 
 undefined4 cm848_handlePciLinkEvent(void)
 
@@ -36501,7 +36638,7 @@ undefined4 cm848_handlePciLinkEvent(void)
       }
       if (pci_link_error_count == pci_link_error_limit) {
         power_state_status_flags = power_state_status_flags | 0x8000;
-        updateEngineSyncStatus(0x7c);
+        mpc555_driveOutputLineLow(0x7c);
         pci_link_error_count = 0;
         return 0;
       }
@@ -36516,7 +36653,7 @@ undefined4 cm848_handlePciLinkEvent(void)
       cm848_resetPciTransmitState();
     }
     if ((action_mask & 8) != 0) {
-      cm848_cyclePciControllerLine124();
+      cm848_pulsePciControllerLine124();
       action_mask = action_mask | 0x20;
     }
     if ((action_mask & 0x10) != 0) {
@@ -36933,9 +37070,9 @@ void mpc555_initJ1939TransmitSchedule(void)
 {
   ushort uVar1;
   
-  updateEngineSyncStatus(0x7c);
-  updateEngineSyncStatus(0x7c);
-  clearModuleSyncFlag(0x7c);
+  mpc555_driveOutputLineLow(0x7c);
+  mpc555_driveOutputLineLow(0x7c);
+  mpc555_driveOutputLineHigh(0x7c);
   pci_qspi_command_byte = 0x57;
   pci_controller_qspi_slot = cm848_registerQspiDeviceSlot(0,2000,0x352,0x28);
   pci_controller_command_job.word_count = 1;
@@ -46437,7 +46574,7 @@ void cm848_resetEngineSyncState(void)
   _cam_sync_fuel_filter_accum = 0;
   cam_sync_fuel_filter_state_pointer = &cam_sync_fuel_filter_state_cal;
   _cam_sync_rate_filter_accum = 0;
-  mpc555_multiFrameCanTransmit = &cam_sync_rate_filter_state_cal;
+  mpc555_sendJ1939TransportRequestToSend = &cam_sync_rate_filter_state_cal;
   _cam_sync_rpm_ema_accum = 0;
   cam_sync_rpm_ema_state_pointer = &cam_sync_rpm_ema_state_cal;
   cam_speed_rate = 0;
@@ -48916,7 +49053,7 @@ int cm848_getProtectionSyncState(void)
   int iVar3;
   
   uVar2 = 0;
-  updateEngineSyncStatus(0x2d);
+  mpc555_driveOutputLineLow(0x2d);
   sensor_scan_counter_a = 0;
   if (sensor_scan_count_a_limit != 0) {
     sensor_scan_counter_a = 0;
@@ -48931,7 +49068,7 @@ int cm848_getProtectionSyncState(void)
     if (sVar1 != 0) {
       uVar2 = uVar2 | 1;
     }
-    clearModuleSyncFlag(0x2c);
+    mpc555_driveOutputLineHigh(0x2c);
     sensor_scan_counter_b = 0;
     if (sensor_scan_count_b_limit != 0) {
       sensor_scan_counter_b = 0;
@@ -48939,7 +49076,7 @@ int cm848_getProtectionSyncState(void)
         sensor_scan_counter_b = sensor_scan_counter_b + 1;
       } while (sensor_scan_counter_b != sensor_scan_count_b_limit);
     }
-    updateEngineSyncStatus(0x2c);
+    mpc555_driveOutputLineLow(0x2c);
     sensor_scan_counter_c = 0;
     if (sensor_scan_count_c_limit != 0) {
       sensor_scan_counter_c = 0;
@@ -48949,7 +49086,7 @@ int cm848_getProtectionSyncState(void)
     }
     iVar3 = iVar3 + 1;
   } while (iVar3 < 0x18);
-  clearModuleSyncFlag(0x2d);
+  mpc555_driveOutputLineHigh(0x2d);
   return uVar2 << 8;
 }
 
@@ -51570,16 +51707,16 @@ void cm848_clearProtectionFault(uint param_1)
 {
   uint uVar1;
   
-  uVar1 = (uint)(&qadc_result_array)[param_1];
+  uVar1 = (uint)(&protection_event_output_line_cal)[param_1];
   cm848_setEngineProtectionFault(param_1,0);
   if (uVar1 != 0) {
-    if (((uint)*(byte *)((int)&qadc_fault_bit_array + ((int)param_1 >> 3)) &
+    if (((uint)*(byte *)((int)&protection_event_output_polarity_bits_cal + ((int)param_1 >> 3)) &
         1 << (param_1 + (((int)param_1 >> 3) + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8
              & 0x3f)) == 0) {
-      clearModuleSyncFlag(uVar1);
+      mpc555_driveOutputLineHigh(uVar1);
     }
     else {
-      updateEngineSyncStatus(uVar1);
+      mpc555_driveOutputLineLow(uVar1);
     }
   }
   return;
@@ -51601,10 +51738,10 @@ void cm848_dispatchSyncUpdateByFlag(void)
   if (((uint)*(byte *)(in_r12 + -0x242e + ((int)in_r7 >> 3)) &
       1 << (in_r7 + (((int)in_r7 >> 3) + (uint)((int)in_r7 < 0 && (in_r7 & 7) != 0)) * -8 & 0x3f))
       == 0) {
-    clearModuleSyncFlag(in_r6);
+    mpc555_driveOutputLineHigh(in_r6);
   }
   else {
-    updateEngineSyncStatus(in_r6);
+    mpc555_driveOutputLineLow(in_r6);
   }
   return;
 }
@@ -51655,16 +51792,16 @@ void cm848_protectionFlagManager(uint param_1)
 {
   uint uVar1;
   
-  uVar1 = (uint)(&qadc_result_array)[param_1];
+  uVar1 = (uint)(&protection_event_output_line_cal)[param_1];
   cm848_triggerProtectionEvent(param_1,0);
   if (uVar1 != 0) {
-    if (((uint)*(byte *)((int)&qadc_fault_bit_array + ((int)param_1 >> 3)) &
+    if (((uint)*(byte *)((int)&protection_event_output_polarity_bits_cal + ((int)param_1 >> 3)) &
         1 << (param_1 + (((int)param_1 >> 3) + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8
              & 0x3f)) == 0) {
-      updateEngineSyncStatus(uVar1);
+      mpc555_driveOutputLineLow(uVar1);
     }
     else {
-      clearModuleSyncFlag(uVar1);
+      mpc555_driveOutputLineHigh(uVar1);
     }
   }
   return;
@@ -51686,10 +51823,10 @@ void cm848_conditionalSyncFlagUpdate(void)
   if (((uint)*(byte *)(in_r12 + -0x242e + ((int)in_r7 >> 3)) &
       1 << (in_r7 + (((int)in_r7 >> 3) + (uint)((int)in_r7 < 0 && (in_r7 & 7) != 0)) * -8 & 0x3f))
       == 0) {
-    updateEngineSyncStatus(in_r6);
+    mpc555_driveOutputLineLow(in_r6);
   }
   else {
-    clearModuleSyncFlag(in_r6);
+    mpc555_driveOutputLineHigh(in_r6);
   }
   return;
 }
@@ -51705,7 +51842,7 @@ void cm848_checkProtectionModeFlags(void)
 {
   word *pwVar1;
   
-  pwVar1 = &qadc_result_array;
+  pwVar1 = &protection_event_output_line_cal;
   if ((qadc_queue_timing_config._0_2_ != 0) && (qadc_adc_enable_flag != 0)) {
     if ((protection_action_mode_bits._0_1_ & 2) == 0) {
       cm848_triggerProtectionEvent(0x3e,0);
@@ -51748,12 +51885,12 @@ void cm848_protectionAlarmHandler(void)
   } while (uVar5 < 10);
   uVar5 = 0;
   do {
-    uVar1 = (&qadc_result_array)[uVar5];
+    uVar1 = (&protection_event_output_line_cal)[uVar5];
     if (uVar1 != 0) {
       iVar2 = (int)uVar5 >> 3;
       uVar3 = 1 << (uVar5 + iVar2 * -8 & 0x3f);
       uVar4 = (&protection_fault_status_bits)[iVar2] & uVar3;
-      uVar3 = *(byte *)((int)&qadc_fault_bit_array + iVar2) & uVar3;
+      uVar3 = *(byte *)((int)&protection_event_output_polarity_bits_cal + iVar2) & uVar3;
       iVar2 = (int)(uint)uVar1 >> 3;
       if ((uVar3 & ~uVar4) == 0 && (uVar4 & ~uVar3) == 0) {
         (&j1939_dm2_fault_bit_array)[iVar2] =
@@ -51818,7 +51955,7 @@ hpcr_protectionWarningHandler(uint param_1,undefined4 param_2,undefined4 param_3
     goto LAB_0004f6ac;
   }
   if ((int)param_1 < 0x20) {
-    dVar1 = system_capability_flags;
+    dVar1 = SIU_SGPIODT1;
     uStack_4._0_1_ = (byte)(dVar1 >> 0x18);
     iVar4 = 3;
 LAB_0004f3cc:
@@ -51827,7 +51964,7 @@ LAB_0004f3cc:
     goto LAB_0004f6ac;
   }
   if ((int)param_1 < 0x28) {
-    dVar1 = system_capability_flags;
+    dVar1 = SIU_SGPIODT1;
     uStack_4._1_1_ = (byte)(dVar1 >> 0x10);
     iVar4 = 4;
 LAB_0004f3f8:
@@ -51836,7 +51973,7 @@ LAB_0004f3f8:
     goto LAB_0004f6ac;
   }
   if ((int)param_1 < 0x30) {
-    dVar1 = system_capability_flags;
+    dVar1 = SIU_SGPIODT1;
     uStack_4._2_1_ = (byte)(dVar1 >> 8);
     iVar4 = 5;
 LAB_0004f424:
@@ -51845,7 +51982,7 @@ LAB_0004f424:
     goto LAB_0004f6ac;
   }
   if ((int)param_1 < 0x38) {
-    uStack_4 = system_capability_flags;
+    uStack_4 = SIU_SGPIODT1;
     iVar4 = 6;
 LAB_0004f450:
     param_4 = uStack_4 & 0xff;
@@ -51853,25 +51990,25 @@ LAB_0004f450:
     goto LAB_0004f6ac;
   }
   if ((int)param_1 < 0x40) {
-    dVar1 = calibration_config_word;
+    dVar1 = SIU_SGPIODT2;
     uStack_4._0_1_ = (byte)(dVar1 >> 0x18);
     iVar4 = 7;
     goto LAB_0004f3cc;
   }
   if ((int)param_1 < 0x48) {
-    dVar1 = calibration_config_word;
+    dVar1 = SIU_SGPIODT2;
     uStack_4._1_1_ = (byte)(dVar1 >> 0x10);
     iVar4 = 8;
     goto LAB_0004f3f8;
   }
   if ((int)param_1 < 0x50) {
-    dVar1 = calibration_config_word;
+    dVar1 = SIU_SGPIODT2;
     uStack_4._2_1_ = (byte)(dVar1 >> 8);
     iVar4 = 9;
     goto LAB_0004f424;
   }
   if ((int)param_1 < 0x58) {
-    uStack_4 = calibration_config_word;
+    uStack_4 = SIU_SGPIODT2;
     iVar4 = 10;
     goto LAB_0004f450;
   }
@@ -52007,7 +52144,7 @@ hpcr_evaluateHardwareTimerState(uint param_1,undefined4 param_2,undefined4 param
     goto LAB_0004f6ac;
   }
   if ((int)param_1 < 0x20) {
-    dVar1 = system_capability_flags;
+    dVar1 = SIU_SGPIODT1;
     bStack0000000c = (byte)(dVar1 >> 0x18);
     iVar4 = 3;
 LAB_0004f3cc:
@@ -52016,7 +52153,7 @@ LAB_0004f3cc:
     goto LAB_0004f6ac;
   }
   if ((int)param_1 < 0x28) {
-    dVar1 = system_capability_flags;
+    dVar1 = SIU_SGPIODT1;
     bStack0000000d = (byte)(dVar1 >> 0x10);
     iVar4 = 4;
 LAB_0004f3f8:
@@ -52025,7 +52162,7 @@ LAB_0004f3f8:
     goto LAB_0004f6ac;
   }
   if ((int)param_1 < 0x30) {
-    dVar1 = system_capability_flags;
+    dVar1 = SIU_SGPIODT1;
     bStack0000000e = (byte)(dVar1 >> 8);
     iVar4 = 5;
 LAB_0004f424:
@@ -52034,7 +52171,7 @@ LAB_0004f424:
     goto LAB_0004f6ac;
   }
   if ((int)param_1 < 0x38) {
-    _bStack0000000c = system_capability_flags;
+    _bStack0000000c = SIU_SGPIODT1;
     iVar4 = 6;
 LAB_0004f450:
     param_4 = _bStack0000000c & 0xff;
@@ -52042,25 +52179,25 @@ LAB_0004f450:
     goto LAB_0004f6ac;
   }
   if ((int)param_1 < 0x40) {
-    dVar1 = calibration_config_word;
+    dVar1 = SIU_SGPIODT2;
     bStack0000000c = (byte)(dVar1 >> 0x18);
     iVar4 = 7;
     goto LAB_0004f3cc;
   }
   if ((int)param_1 < 0x48) {
-    dVar1 = calibration_config_word;
+    dVar1 = SIU_SGPIODT2;
     bStack0000000d = (byte)(dVar1 >> 0x10);
     iVar4 = 8;
     goto LAB_0004f3f8;
   }
   if ((int)param_1 < 0x50) {
-    dVar1 = calibration_config_word;
+    dVar1 = SIU_SGPIODT2;
     bStack0000000e = (byte)(dVar1 >> 8);
     iVar4 = 9;
     goto LAB_0004f424;
   }
   if ((int)param_1 < 0x58) {
-    _bStack0000000c = calibration_config_word;
+    _bStack0000000c = SIU_SGPIODT2;
     iVar4 = 10;
     goto LAB_0004f450;
   }
@@ -52167,10 +52304,15 @@ LAB_0004f6dc:
 
 
 //
-// Function: clearModuleSyncFlag @ 0x0004f6f0
+// Function: mpc555_driveOutputLineHigh @ 0x0004f6f0
 //
 
-void clearModuleSyncFlag(uint param_1)
+/* Sets output line N (8+) high: ORs bit N into the shadow byte output_lines_<range>_state and the
+   owning port register (MIOS port / SIU_SGPIODT1 / SIU_SGPIODT2 ...); lines below 8 are ignored.
+   Was clearModuleSyncFlag (nothing to do with sync) | review-function-readability reviewed
+   2026-11-11 - Readability Medium Accuracy Confidence High */
+
+void mpc555_driveOutputLineHigh(uint param_1)
 
 {
   dword dVar1;
@@ -52190,8 +52332,8 @@ void clearModuleSyncFlag(uint param_1)
   }
   iVar6 = (int)param_1 >> 3;
   if ((int)param_1 < 0x10) {
-    j1939_dm1_fault_byte_0 =
-         j1939_dm1_fault_byte_0 |
+    output_lines_8_to_15_state =
+         output_lines_8_to_15_state |
          (byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 & 0x3f
                      ));
     pmVar8 = &mios1_ext_ctrl;
@@ -52204,8 +52346,8 @@ LAB_00050f60:
     return;
   }
   if ((int)param_1 < 0x18) {
-    j1939_dm1_fault_byte_1 =
-         j1939_dm1_fault_byte_1 |
+    output_lines_16_to_23_state =
+         output_lines_16_to_23_state |
          (byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 & 0x3f
                      ));
     pmVar8 = &mios1_ext_ctrl;
@@ -52220,9 +52362,9 @@ LAB_00050f24:
   if ((int)param_1 < 0x20) {
     bVar9 = (byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                         0x3f));
-    j1939_dm1_fault_byte_2 = j1939_dm1_fault_byte_2 | bVar9;
-    pdVar7 = &system_capability_flags;
-    dVar1 = system_capability_flags;
+    output_lines_24_to_31_state = output_lines_24_to_31_state | bVar9;
+    pdVar7 = &SIU_SGPIODT1;
+    dVar1 = SIU_SGPIODT1;
     local_4._0_1_ = (byte)(dVar1 >> 0x18);
     local_4._1_3_ = (undefined3)dVar1;
     local_4 = CONCAT13(local_4._0_1_ | bVar9,local_4._1_3_);
@@ -52233,9 +52375,9 @@ LAB_0004fab0:
   if ((int)param_1 < 0x28) {
     bVar9 = (byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                         0x3f));
-    j1939_dm1_fault_byte_3 = j1939_dm1_fault_byte_3 | bVar9;
-    pdVar7 = &system_capability_flags;
-    dVar1 = system_capability_flags;
+    output_lines_32_to_39_state = output_lines_32_to_39_state | bVar9;
+    pdVar7 = &SIU_SGPIODT1;
+    dVar1 = SIU_SGPIODT1;
     local_4._1_1_ = (byte)(dVar1 >> 0x10);
     local_4._0_1_ = (byte)(dVar1 >> 0x18);
     local_4._2_2_ = (undefined2)dVar1;
@@ -52247,9 +52389,9 @@ LAB_0004fa50:
   if ((int)param_1 < 0x30) {
     bVar9 = (byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                         0x3f));
-    j1939_dm1_fault_byte_4 = j1939_dm1_fault_byte_4 | bVar9;
-    pdVar7 = &system_capability_flags;
-    dVar1 = system_capability_flags;
+    output_lines_40_to_47_state = output_lines_40_to_47_state | bVar9;
+    pdVar7 = &SIU_SGPIODT1;
+    dVar1 = SIU_SGPIODT1;
     local_4._2_1_ = (byte)(dVar1 >> 8);
     local_4._0_2_ = (undefined2)(dVar1 >> 0x10);
     local_4._3_1_ = (byte)dVar1;
@@ -52261,9 +52403,9 @@ LAB_0004f9f0:
   if ((int)param_1 < 0x38) {
     bVar9 = (byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                         0x3f));
-    j1939_dm1_fault_byte_5 = j1939_dm1_fault_byte_5 | bVar9;
-    pdVar7 = &system_capability_flags;
-    dVar1 = system_capability_flags;
+    output_lines_48_to_55_state = output_lines_48_to_55_state | bVar9;
+    pdVar7 = &SIU_SGPIODT1;
+    dVar1 = SIU_SGPIODT1;
     local_4._3_1_ = (byte)dVar1;
     local_4._0_3_ = (undefined3)(dVar1 >> 8);
     local_4 = CONCAT31(local_4._0_3_,(byte)local_4 | bVar9);
@@ -52274,47 +52416,47 @@ LAB_0004f990:
   if ((int)param_1 < 0x40) {
     bVar9 = (byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                         0x3f));
-    j1939_dm1_fault_byte_6 = j1939_dm1_fault_byte_6 | bVar9;
-    dVar1 = calibration_config_word;
+    output_lines_56_to_63_state = output_lines_56_to_63_state | bVar9;
+    dVar1 = SIU_SGPIODT2;
     local_4._0_1_ = (byte)(dVar1 >> 0x18);
     local_4._1_3_ = (undefined3)dVar1;
     local_4 = CONCAT13(local_4._0_1_ | bVar9,local_4._1_3_);
-    pdVar7 = &calibration_config_word;
+    pdVar7 = &SIU_SGPIODT2;
     goto LAB_0004f990;
   }
   if ((int)param_1 < 0x48) {
     bVar9 = (byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                         0x3f));
-    j1939_dm1_fault_byte_7 = j1939_dm1_fault_byte_7 | bVar9;
-    dVar1 = calibration_config_word;
+    output_lines_64_to_71_state = output_lines_64_to_71_state | bVar9;
+    dVar1 = SIU_SGPIODT2;
     local_4._1_1_ = (byte)(dVar1 >> 0x10);
     local_4._0_1_ = (byte)(dVar1 >> 0x18);
     local_4._2_2_ = (undefined2)dVar1;
     local_4._1_3_ = CONCAT12(local_4._1_1_ | bVar9,local_4._2_2_);
-    pdVar7 = &calibration_config_word;
+    pdVar7 = &SIU_SGPIODT2;
     goto LAB_0004f9f0;
   }
   if ((int)param_1 < 0x50) {
     bVar9 = (byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                         0x3f));
-    j1939_dm1_fault_byte_8 = j1939_dm1_fault_byte_8 | bVar9;
-    dVar1 = calibration_config_word;
+    output_lines_72_to_79_state = output_lines_72_to_79_state | bVar9;
+    dVar1 = SIU_SGPIODT2;
     local_4._2_1_ = (byte)(dVar1 >> 8);
     local_4._0_2_ = (undefined2)(dVar1 >> 0x10);
     local_4._3_1_ = (byte)dVar1;
     local_4._2_2_ = CONCAT11(local_4._2_1_ | bVar9,(byte)local_4);
-    pdVar7 = &calibration_config_word;
+    pdVar7 = &SIU_SGPIODT2;
     goto LAB_0004fa50;
   }
   if ((int)param_1 < 0x58) {
     bVar9 = (byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                         0x3f));
-    j1939_dm1_fault_byte_9 = j1939_dm1_fault_byte_9 | bVar9;
-    dVar1 = calibration_config_word;
+    output_lines_80_to_87_state = output_lines_80_to_87_state | bVar9;
+    dVar1 = SIU_SGPIODT2;
     local_4._3_1_ = (byte)dVar1;
     local_4._0_3_ = (undefined3)(dVar1 >> 8);
     local_4 = CONCAT31(local_4._0_3_,(byte)local_4 | bVar9);
-    pdVar7 = &calibration_config_word;
+    pdVar7 = &SIU_SGPIODT2;
     goto LAB_0004fab0;
   }
   switch(param_1) {
@@ -52799,8 +52941,8 @@ LAB_00050f6c:
       cm848_j1939SetupTransportSession();
     }
     else if ((int)param_1 < 0xa0) {
-      j1939_dm1_fault_byte_10 =
-           j1939_dm1_fault_byte_10 |
+      output_lines_152_to_159_state =
+           output_lines_152_to_159_state |
            (byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                        0x3f));
       cm848_j1939SendPeriodicMessage();
@@ -52877,10 +53019,15 @@ LAB_00050ed8:
 
 
 //
-// Function: updateEngineSyncStatus @ 0x00051038
+// Function: mpc555_driveOutputLineLow @ 0x00051038
 //
 
-void updateEngineSyncStatus(uint param_1)
+/* Sets output line N (8+) low: clears bit N in the shadow byte and the owning port register;
+   counterpart of mpc555_driveOutputLineHigh. Was updateEngineSyncStatus (nothing to do with engine
+   sync) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence
+   High */
+
+void mpc555_driveOutputLineLow(uint param_1)
 
 {
   dword dVar1;
@@ -52900,8 +53047,8 @@ void updateEngineSyncStatus(uint param_1)
   }
   iVar6 = (int)param_1 >> 3;
   if ((int)param_1 < 0x10) {
-    j1939_dm1_fault_byte_0 =
-         j1939_dm1_fault_byte_0 &
+    output_lines_8_to_15_state =
+         output_lines_8_to_15_state &
          ~(byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                       0x3f));
     pmVar8 = &mios1_ext_ctrl;
@@ -52914,8 +53061,8 @@ LAB_000528d8:
     return;
   }
   if ((int)param_1 < 0x18) {
-    j1939_dm1_fault_byte_1 =
-         j1939_dm1_fault_byte_1 &
+    output_lines_16_to_23_state =
+         output_lines_16_to_23_state &
          ~(byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                       0x3f));
     pmVar8 = &mios1_ext_ctrl;
@@ -52930,9 +53077,9 @@ LAB_0005289c:
   if ((int)param_1 < 0x20) {
     bVar9 = ~(byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                          0x3f));
-    j1939_dm1_fault_byte_2 = j1939_dm1_fault_byte_2 & bVar9;
-    pdVar7 = &system_capability_flags;
-    dVar1 = system_capability_flags;
+    output_lines_24_to_31_state = output_lines_24_to_31_state & bVar9;
+    pdVar7 = &SIU_SGPIODT1;
+    dVar1 = SIU_SGPIODT1;
     local_4._0_1_ = (byte)(dVar1 >> 0x18);
     local_4._1_3_ = (undefined3)dVar1;
     local_4 = CONCAT13(local_4._0_1_ & bVar9,local_4._1_3_);
@@ -52943,9 +53090,9 @@ LAB_00051418:
   if ((int)param_1 < 0x28) {
     bVar9 = ~(byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                          0x3f));
-    j1939_dm1_fault_byte_3 = j1939_dm1_fault_byte_3 & bVar9;
-    pdVar7 = &system_capability_flags;
-    dVar1 = system_capability_flags;
+    output_lines_32_to_39_state = output_lines_32_to_39_state & bVar9;
+    pdVar7 = &SIU_SGPIODT1;
+    dVar1 = SIU_SGPIODT1;
     local_4._1_1_ = (byte)(dVar1 >> 0x10);
     local_4._0_1_ = (byte)(dVar1 >> 0x18);
     local_4._2_2_ = (undefined2)dVar1;
@@ -52957,9 +53104,9 @@ LAB_000513b4:
   if ((int)param_1 < 0x30) {
     bVar9 = ~(byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                          0x3f));
-    j1939_dm1_fault_byte_4 = j1939_dm1_fault_byte_4 & bVar9;
-    pdVar7 = &system_capability_flags;
-    dVar1 = system_capability_flags;
+    output_lines_40_to_47_state = output_lines_40_to_47_state & bVar9;
+    pdVar7 = &SIU_SGPIODT1;
+    dVar1 = SIU_SGPIODT1;
     local_4._2_1_ = (byte)(dVar1 >> 8);
     local_4._0_2_ = (undefined2)(dVar1 >> 0x10);
     local_4._3_1_ = (byte)dVar1;
@@ -52971,9 +53118,9 @@ LAB_00051350:
   if ((int)param_1 < 0x38) {
     bVar9 = ~(byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                          0x3f));
-    j1939_dm1_fault_byte_5 = j1939_dm1_fault_byte_5 & bVar9;
-    pdVar7 = &system_capability_flags;
-    dVar1 = system_capability_flags;
+    output_lines_48_to_55_state = output_lines_48_to_55_state & bVar9;
+    pdVar7 = &SIU_SGPIODT1;
+    dVar1 = SIU_SGPIODT1;
     local_4._3_1_ = (byte)dVar1;
     local_4._0_3_ = (undefined3)(dVar1 >> 8);
     local_4 = CONCAT31(local_4._0_3_,(byte)local_4 & bVar9);
@@ -52984,47 +53131,47 @@ LAB_000512ec:
   if ((int)param_1 < 0x40) {
     bVar9 = ~(byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                          0x3f));
-    j1939_dm1_fault_byte_6 = j1939_dm1_fault_byte_6 & bVar9;
-    dVar1 = calibration_config_word;
+    output_lines_56_to_63_state = output_lines_56_to_63_state & bVar9;
+    dVar1 = SIU_SGPIODT2;
     local_4._0_1_ = (byte)(dVar1 >> 0x18);
     local_4._1_3_ = (undefined3)dVar1;
     local_4 = CONCAT13(local_4._0_1_ & bVar9,local_4._1_3_);
-    pdVar7 = &calibration_config_word;
+    pdVar7 = &SIU_SGPIODT2;
     goto LAB_000512ec;
   }
   if ((int)param_1 < 0x48) {
     bVar9 = ~(byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                          0x3f));
-    j1939_dm1_fault_byte_7 = j1939_dm1_fault_byte_7 & bVar9;
-    dVar1 = calibration_config_word;
+    output_lines_64_to_71_state = output_lines_64_to_71_state & bVar9;
+    dVar1 = SIU_SGPIODT2;
     local_4._1_1_ = (byte)(dVar1 >> 0x10);
     local_4._0_1_ = (byte)(dVar1 >> 0x18);
     local_4._2_2_ = (undefined2)dVar1;
     local_4._1_3_ = CONCAT12(local_4._1_1_ & bVar9,local_4._2_2_);
-    pdVar7 = &calibration_config_word;
+    pdVar7 = &SIU_SGPIODT2;
     goto LAB_00051350;
   }
   if ((int)param_1 < 0x50) {
     bVar9 = ~(byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                          0x3f));
-    j1939_dm1_fault_byte_8 = j1939_dm1_fault_byte_8 & bVar9;
-    dVar1 = calibration_config_word;
+    output_lines_72_to_79_state = output_lines_72_to_79_state & bVar9;
+    dVar1 = SIU_SGPIODT2;
     local_4._2_1_ = (byte)(dVar1 >> 8);
     local_4._0_2_ = (undefined2)(dVar1 >> 0x10);
     local_4._3_1_ = (byte)dVar1;
     local_4._2_2_ = CONCAT11(local_4._2_1_ & bVar9,(byte)local_4);
-    pdVar7 = &calibration_config_word;
+    pdVar7 = &SIU_SGPIODT2;
     goto LAB_000513b4;
   }
   if ((int)param_1 < 0x58) {
     bVar9 = ~(byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                          0x3f));
-    j1939_dm1_fault_byte_9 = j1939_dm1_fault_byte_9 & bVar9;
-    dVar1 = calibration_config_word;
+    output_lines_80_to_87_state = output_lines_80_to_87_state & bVar9;
+    dVar1 = SIU_SGPIODT2;
     local_4._3_1_ = (byte)dVar1;
     local_4._0_3_ = (undefined3)(dVar1 >> 8);
     local_4 = CONCAT31(local_4._0_3_,(byte)local_4 & bVar9);
-    pdVar7 = &calibration_config_word;
+    pdVar7 = &SIU_SGPIODT2;
     goto LAB_00051418;
   }
   switch(param_1) {
@@ -53509,8 +53656,8 @@ LAB_000528e4:
       cm848_j1939SetupTransportSession();
     }
     else if ((int)param_1 < 0xa0) {
-      j1939_dm1_fault_byte_10 =
-           j1939_dm1_fault_byte_10 &
+      output_lines_152_to_159_state =
+           output_lines_152_to_159_state &
            ~(byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                         0x3f));
       cm848_j1939SendPeriodicMessage();
@@ -53614,7 +53761,7 @@ void injectorTimingCalculation(void)
   undefined4 local_2c;
   
   bVar2 = false;
-  dVar4 = system_capability_flags;
+  dVar4 = SIU_SGPIODT1;
   local_2c._0_1_ = (byte)(dVar4 >> 0x18);
   j1939_dm1_prev_b2 = local_2c._0_1_;
   local_2c._1_1_ = (byte)(dVar4 >> 0x10);
@@ -53623,7 +53770,7 @@ void injectorTimingCalculation(void)
   j1939_dm1_prev_b4 = local_2c._2_1_;
   local_2c._3_1_ = (byte)dVar4;
   j1939_dm1_prev_b5 = (byte)local_2c;
-  dVar4 = calibration_config_word;
+  dVar4 = SIU_SGPIODT2;
   local_2c._0_1_ = (byte)(dVar4 >> 0x18);
   j1939_dm1_prev_b6 = local_2c._0_1_;
   local_2c._1_1_ = (byte)(dVar4 >> 0x10);
@@ -53632,18 +53779,18 @@ void injectorTimingCalculation(void)
   j1939_dm1_prev_b8 = local_2c._2_1_;
   local_2c._3_1_ = (byte)dVar4;
   j1939_dm1_prev_b9 = (byte)local_2c;
-  local_2c = CONCAT31(CONCAT21(CONCAT11(j1939_dm1_fault_byte_2,j1939_dm1_fault_byte_3),
-                               j1939_dm1_fault_byte_4),j1939_dm1_fault_byte_5);
-  system_capability_flags = local_2c;
-  local_2c = CONCAT31(CONCAT21(CONCAT11(j1939_dm1_fault_byte_6,j1939_dm1_fault_byte_7),
-                               j1939_dm1_fault_byte_8),j1939_dm1_fault_byte_9);
-  calibration_config_word = local_2c;
+  local_2c = CONCAT31(CONCAT21(CONCAT11(output_lines_24_to_31_state,output_lines_32_to_39_state),
+                               output_lines_40_to_47_state),output_lines_48_to_55_state);
+  SIU_SGPIODT1 = local_2c;
+  local_2c = CONCAT31(CONCAT21(CONCAT11(output_lines_56_to_63_state,output_lines_64_to_71_state),
+                               output_lines_72_to_79_state),output_lines_80_to_87_state);
+  SIU_SGPIODT2 = local_2c;
   wVar9 = mios1_ext_ctrl.ctrl_a;
   local_30._1_1_ = (byte)wVar9;
   j1939_dm1_prev_b0 = (byte)local_30;
   local_30._0_1_ = (byte)(wVar9 >> 8);
   j1939_dm1_prev_b1 = local_30._0_1_;
-  local_30 = CONCAT11(j1939_dm1_fault_byte_1,j1939_dm1_fault_byte_0);
+  local_30 = CONCAT11(output_lines_16_to_23_state,output_lines_8_to_15_state);
   mios1_ext_ctrl.ctrl_a = local_30;
   j1939_lamp_status_prev = j1939_lamp_status_cache._0_1_;
   j1939_lamp_status_cache._0_1_ = j1939_dm1_fault_inhibit_byte;
@@ -53806,7 +53953,7 @@ void injectorTimingCalculation(void)
   MIOS_MDASM3_AR.SCRD = uVar12;
   uVar8 = 0;
   do {
-    uVar12 = (&qadc_result_array)[uVar8];
+    uVar12 = (&protection_event_output_line_cal)[uVar8];
     if (uVar12 - 0x58 < 0x10) {
       uVar11 = uVar12 + 0xffa8;
       uVar3 = uVar11 & 0xffff;
@@ -53900,7 +54047,7 @@ void injectorTimingCalculation(void)
   } while (uVar8 < 0x50);
   if (bVar2) {
     j1939_dm1_prev_b10 = j1939_dm1_fault_byte_10_prev;
-    j1939_dm1_fault_byte_10_prev = j1939_dm1_fault_byte_10;
+    j1939_dm1_fault_byte_10_prev = output_lines_152_to_159_state;
     cm848_j1939SendPeriodicMessage();
   }
   return;
@@ -53979,7 +54126,7 @@ void hpcr_injectorPulseWidthCalc(void)
   else {
     bVar3 = j1939_protection_config_byte | 1;
   }
-  dVar1 = system_capability_flags;
+  dVar1 = SIU_SGPIODT1;
   local_4 = (byte)(dVar1 >> 0x18);
   j1939_dm1_tx_b2 = local_4;
   uStack_3 = (byte)(dVar1 >> 0x10);
@@ -53988,7 +54135,7 @@ void hpcr_injectorPulseWidthCalc(void)
   j1939_dm1_tx_b4 = uStack_2;
   uStack_1 = (byte)dVar1;
   j1939_dm1_tx_b5 = uStack_1;
-  dVar1 = calibration_config_word;
+  dVar1 = SIU_SGPIODT2;
   local_4 = (byte)(dVar1 >> 0x18);
   j1939_dm1_tx_b6 = local_4;
   uStack_3 = (byte)(dVar1 >> 0x10);
@@ -58406,7 +58553,7 @@ void enqueueJ1939Response(j1939_msg_hdr_t *param_1,undefined4 param_2,word param
                      *(undefined4 *)&param_1[1].data_length);
   }
   else {
-    mpc555_multiFrameCanTransmit(param_1,data_ptr,param_3);
+    mpc555_sendJ1939TransportRequestToSend(param_1,data_ptr,param_3);
   }
   return;
 }
@@ -67667,10 +67814,10 @@ void hpcr_configureTPUTimerInterrupts(void)
   wVar1 = tpu_b_mcr.CIER;
   tpu_b_mcr.CIER = wVar1 | 2;
   if (DAT_003ff70e == 0) {
-    j1939_dm1_fault_byte_5 = j1939_dm1_fault_byte_5 & 0xfd;
+    output_lines_48_to_55_state = output_lines_48_to_55_state & 0xfd;
   }
   else {
-    j1939_dm1_fault_byte_5 = j1939_dm1_fault_byte_5 | 2;
+    output_lines_48_to_55_state = output_lines_48_to_55_state | 2;
   }
   DAT_0040afec = 0xffffffff;
   egr_smoke_limit_status_flags = egr_smoke_limit_status_flags & 0xfbff;
@@ -87455,8 +87602,8 @@ void diag_faultMatch_outputCheck_update
   int iVar5;
   int iVar6;
   
-  if ((&engine_output_channel_protection_table)[param_2] == 0 || (&qadc_result_array)[param_1] == 0)
-  {
+  if ((&engine_output_channel_protection_table)[param_2] == 0 ||
+      (&protection_event_output_line_cal)[param_1] == 0) {
     return;
   }
   uVar4 = (uint)(&engine_output_state_bits)

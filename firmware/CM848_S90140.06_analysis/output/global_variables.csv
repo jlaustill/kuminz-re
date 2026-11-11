@@ -172,8 +172,8 @@ address,name,type,comment
 0x002fc018,scheduler_task_pending_flags,dword,
 0x002fc01c,USIU_SIVEC,dword,
 0x002fc020,USIU_TESR,dword,
-0x002fc024,system_capability_flags,dword,
-0x002fc028,calibration_config_word,dword,
+0x002fc024,SIU_SGPIODT1,dword,MPC555 SIU general-purpose I/O data register 1 - output lines are driven here (was system_capability_flags)
+0x002fc028,SIU_SGPIODT2,dword,MPC555 SIU general-purpose I/O data register 2 (was calibration_config_word)
 0x002fc02c,USIU_INITCFG,dword,
 0x002fc030,USIU_SGPIODT1,byte,
 0x002fc034,USIU_SGPIODT2,byte,
@@ -281,7 +281,7 @@ address,name,type,comment
 0x00302731,flash2_writes_enabled,byte,Nonzero allows diagnostic writes to Bank-2 flash 0x500000-0x5fffff (memory region type 2); otherwise those addresses report 9 = not writable
 0x00302736,sys_init_flags_t_00302736,sys_init_flags_t,
 0x00302738,sys_init_flags_t_00302736.init_counter,,
-0x00302877,eeprom_service_mode_flags,byte,EEPROM-programming service-mode flags byte. High bit 0x80 = in EEPROM mode; low nibble (& 0xf) gates special main-loop processing; whole-byte 0x81 routes main-loop dispatch to CAN handlers and 0x82 to the diagnostic handler (mpc555_processScheduledTasks/cm848_processMainLoop/cm848_dispatchDiagnosticService) - name covers the dispatch role not just diag. Renamed from qadc_a_result_high_1 (legacy mislabel - not analog data; real QADC-A results are at 0x304A80+). Peripheral/RAM region 0x302xxx so no _cal
+0x00302877,eeprom_service_mode_flags,byte,EEPROM-programming service-mode flags byte. High bit 0x80 = in EEPROM mode; low nibble (& 0xf) gates special main-loop processing; whole-byte 0x81 routes main-loop dispatch to CAN handlers and 0x82 to the diagnostic handler (mpc555_runPeriodicInterruptTimerTick/cm848_runBootKernelLoop/cm848_dispatchDiagnosticService) - name covers the dispatch role not just diag. Renamed from qadc_a_result_high_1 (legacy mislabel - not analog data; real QADC-A results are at 0x304A80+). Peripheral/RAM region 0x302xxx so no _cal
 0x00302878,eeprom_xfer_state,eeprom_xfer_state_t,
 0x0030287c,qadc_a_result_ch4,,
 0x00302882,qadc_a_result_high_2.write_callback_ptr,,
@@ -1520,7 +1520,7 @@ address,name,type,comment
 0x003fb3ca,pci_qspi_queue_result,word,Return value of the last cm848_queueQspiJob call for a PCI controller job (-1 = queue full / bad job)
 0x003fb3cc,pci_in_frame_response_length,byte,Number of in-frame response bytes being sent (length of the matched RX entry in_frame_response_bytes); 0 = not sending
 0x003fb3ce,j1939_queue_tx_return_a,word,
-0x003fb3d0,pci_link_error_count,word,Counts link events whose action mask has bit 0x01; at pci_link_error_limit sets power_state_status_flags 0x8000 and calls updateEngineSyncStatus(124) (I/O line 124)
+0x003fb3d0,pci_link_error_count,word,Counts link events whose action mask has bit 0x01; at pci_link_error_limit sets power_state_status_flags 0x8000 and calls mpc555_driveOutputLineLow(124) (output line 124)
 0x003fb3d2,pci_in_frame_response_wait_count,dword,Scheduler passes spent waiting for the in-frame response to our own TX frame (pci_frame_match_flags 0x08); past pci_in_frame_response_wait_limit -> cm848_handlePciInFrameResponseTimeout
 0x003fb3d6,uds_write_base_address_working,pointer,
 0x003fb3d8,uds_write_base_address_working+2,,
@@ -1938,7 +1938,7 @@ address,name,type,comment
 0x003fd534,protection_temp_scale_cal,word,
 0x003fd536,protection_control_licensed,word,Firmware-baked feature license (ROM src 0x7966 read-only). 1=protection-control limiting permitted; gates whether runtime protection-active state modulates timing/fuel/cruise. Not a tunable calibration.
 0x003fd53e,cold_start_fuel_mode_ready_flag,word,
-# 0x003fd544 removed - is function mpc555_systemWatchdogReset (ROM 0x7974) not a variable
+# 0x003fd544 removed - is function cm848_serviceExternalWatchdog (ROM 0x7974) not a variable
 0x003fd59c,governor_fault_status_flags,word,
 0x003fd59e,governor_feature_flags,word,
 0x003fd5a0,governor_feature_config_word,word,
@@ -2100,11 +2100,11 @@ address,name,type,comment
 0x003fdbce,qadc_control_word_h,word,
 0x003fdbcf,qadc_control_word_h+1,,
 0x003fdbd1,protection_override_flags,byte,
-0x003fdbd2,qadc_fault_bit_array,dword,TIME-SHARED RAM: during boot/reflash the CMF flash driver uses this as the high-voltage pulse step count (low half); the running application later reads it (cm848_protectionAlarmHandler / cm848_clearProtectionFault / cm848_protectionFlagManager) - application meaning not yet reviewed, so the original name is kept
-0x003fdbd4,qadc_fault_bit_array+2,,
+0x003fdbd2,protection_event_output_polarity_bits_cal,dword,Application: bit N = output polarity for protection event N (selects mpc555_driveOutputLineLow vs mpc555_driveOutputLineHigh on protection_event_output_line_cal[N]); read-only in the app and inside the EEPROM image range (0x3fd482+; unconfirmed). TIME-SHARED: the boot reflash kernel uses the low half as its CMF high-voltage pulse step count (was qadc_fault_bit_array)
+0x003fdbd4,protection_event_output_polarity_bits_cal+2,,
 0x003fdbd6,cmf_control_base,dword,CMFCTL base value (timing bits) for flash program/erase
-0x003fdbda,cmf_control_pulse_value,word,CMFCTL value for the next pulse (block select | step bits | SES|EHV); written as a dword so it renders with _ (see qadc_result_array)
-0x003fdbdc,qadc_result_array,word,
+0x003fdbda,cmf_control_pulse_value,word,CMFCTL value for the next pulse (block select | step bits | SES|EHV); written as a dword so it renders with _ (it overlaps protection_event_output_line_cal at 0x3fdbdc)
+0x003fdbdc,protection_event_output_line_cal,word,Application: word table indexed by protection event N = output line driven for that event (0 = none); read by cm848_protectionFlagManager / cm848_clearProtectionFault / cm848_protectionAlarmHandler / cm848_checkProtectionModeFlags / injectorTimingCalculation; read-only in the app (EEPROM image range; unconfirmed). TIME-SHARED: the boot reflash kernel's CMF parameters at 0x3fdbde-0x3fdc2b sit inside it (was qadc_result_array)
 0x003fdbde,cmf_control_step_bits,dword,Per-step CMFCTL bits (indexed by cmf_pulse_step_index)
 0x003fdbe2,qadc_channel_config_mask_c,dword,
 0x003fdbe6,qadc_channel_config_mask_d,dword,
@@ -5629,16 +5629,16 @@ address,name,type,comment
 0x0040c10a,j1939_fault_occurrence_prev,byte,
 0x0040c10b,j1939_periodic_timer_prev,byte,
 0x0040c10c,j1939_dm2_fault_bit_array,byte,
-0x0040c10d,j1939_dm1_fault_byte_0,byte,
-0x0040c10e,j1939_dm1_fault_byte_1,byte,
-0x0040c10f,j1939_dm1_fault_byte_2,byte,
-0x0040c110,j1939_dm1_fault_byte_3,byte,
-0x0040c111,j1939_dm1_fault_byte_4,byte,
-0x0040c112,j1939_dm1_fault_byte_5,byte,
-0x0040c113,j1939_dm1_fault_byte_6,byte,
-0x0040c114,j1939_dm1_fault_byte_7,byte,
-0x0040c115,j1939_dm1_fault_byte_8,byte,
-0x0040c116,j1939_dm1_fault_byte_9,byte,
+0x0040c10d,output_lines_8_to_15_state,byte,Shadow of output lines 8-15 (bit = line - 8); kept by mpc555_driveOutputLineHigh / mpc555_driveOutputLineLow and read by other code to see the current output state (was j1939_dm1_fault_byte_0)
+0x0040c10e,output_lines_16_to_23_state,byte,Shadow of output lines 16-23 (bit = line - 16); kept by mpc555_driveOutputLineHigh / mpc555_driveOutputLineLow and read by other code to see the current output state (was j1939_dm1_fault_byte_1)
+0x0040c10f,output_lines_24_to_31_state,byte,Shadow of output lines 24-31 (bit = line - 24); kept by mpc555_driveOutputLineHigh / mpc555_driveOutputLineLow and read by other code to see the current output state (was j1939_dm1_fault_byte_2)
+0x0040c110,output_lines_32_to_39_state,byte,Shadow of output lines 32-39 (bit = line - 32); kept by mpc555_driveOutputLineHigh / mpc555_driveOutputLineLow and read by other code to see the current output state (was j1939_dm1_fault_byte_3)
+0x0040c111,output_lines_40_to_47_state,byte,Shadow of output lines 40-47 (bit = line - 40); kept by mpc555_driveOutputLineHigh / mpc555_driveOutputLineLow and read by other code to see the current output state (was j1939_dm1_fault_byte_4)
+0x0040c112,output_lines_48_to_55_state,byte,Shadow of output lines 48-55 (bit = line - 48); kept by mpc555_driveOutputLineHigh / mpc555_driveOutputLineLow and read by other code to see the current output state (was j1939_dm1_fault_byte_5)
+0x0040c113,output_lines_56_to_63_state,byte,Shadow of output lines 56-63 (bit = line - 56); kept by mpc555_driveOutputLineHigh / mpc555_driveOutputLineLow and read by other code to see the current output state (was j1939_dm1_fault_byte_6)
+0x0040c114,output_lines_64_to_71_state,byte,Shadow of output lines 64-71 (bit = line - 64); kept by mpc555_driveOutputLineHigh / mpc555_driveOutputLineLow and read by other code to see the current output state (was j1939_dm1_fault_byte_7)
+0x0040c115,output_lines_72_to_79_state,byte,Shadow of output lines 72-79 (bit = line - 72); kept by mpc555_driveOutputLineHigh / mpc555_driveOutputLineLow and read by other code to see the current output state (was j1939_dm1_fault_byte_8)
+0x0040c116,output_lines_80_to_87_state,byte,Shadow of output lines 80-87 (bit = line - 80); kept by mpc555_driveOutputLineHigh / mpc555_driveOutputLineLow and read by other code to see the current output state (was j1939_dm1_fault_byte_9)
 0x0040c117,injector_control_t_0040c117,injector_control_t,
 0x0040c118,injector_control_t_0040c117.enable_ch8_15,,
 0x0040c119,injector_control_t_0040c117.channel_status,,
@@ -5647,7 +5647,7 @@ address,name,type,comment
 0x0040c11c,injector_control_t_0040c117.fault_flags,,
 0x0040c11d,injector_control_t_0040c117.output_ch1,,
 0x0040c11e,j1939_dm1_fault_inhibit_byte,byte,
-0x0040c11f,j1939_dm1_fault_byte_10,byte,
+0x0040c11f,output_lines_152_to_159_state,byte,Shadow of output lines 152-159 (bit = line - 152); kept by mpc555_driveOutputLineHigh / mpc555_driveOutputLineLow and read by other code to see the current output state (was j1939_dm1_fault_byte_10)
 0x0040c120,exception_reset_status,word,
 0x0040c122,exception_sprg0,dword,
 0x0040c126,exception_sprg1,word,

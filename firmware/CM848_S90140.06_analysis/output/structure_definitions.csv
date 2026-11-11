@@ -279,7 +279,7 @@ protection_lockout_t,0x0040b11c,timer_expired,word,2,Lockout timer expired flag,
 # ============================================================================
 
 # J1939 TX Message Header - first 6 bytes of all outgoing J1939 TX message descriptors
-# Used as the parameter type for transmitCanMessage / multiFrameCanTransmit
+# Used as the parameter type for cm848_transmitCanMessage / mpc555_sendJ1939TransportRequestToSend
 # Note: RX ring buffer (j1939_rx_msg_t) stores the same 6 bytes but decoded as 4 individual
 #       address bytes; TX buffers pack the CAN ID as a single dword via stw.
 # Layout: [priority+DP (byte)] [PF (byte)] [PS/dest (byte)] [SA (byte)]
@@ -1251,7 +1251,7 @@ qsmcm_txram_t,0x00305180,TX5,word,2,QSPI Transmit RAM entry 5,,verified
 # capability_flags: bit0=MIOS_ER_active bit1=key_on_allowed bit4=IMB3_config
 # mailbox_index: CAN mailbox slot index incremented by initDiagnosticSubsystem
 # transfer_crc: CRC-CCITT running value used in processTransferCrc
-# eeprom_write_count: incremented each key-on cycle, saved to EEPROM config_dword
+# runtime_counter (+0x10 = RAM 0x302012): ECU runtime counter - +1 every 41 PIT ticks by mpc555_tickTransferTimeoutAndRuntimeCounter, loaded from / saved to EEPROM 0x1000030 (was mislabeled eeprom_write_count "per key-on")
 # =============================================================================
 keyon_flags_t,0x00302002,capability_flags,dword,4,ECU capability bitmask (bit0=MIOS_ER bit1=key_on bit4=IMB3),,verified
 keyon_flags_t,0x00302002,state,dword,4,Key-on state machine state (0=idle 1=active),,verified
@@ -1259,7 +1259,7 @@ keyon_flags_t,0x00302002,transfer_crc,word,2,CRC-CCITT block transfer running ac
 keyon_flags_t,0x00302002,_pad10,word,2,Reserved,,verified
 keyon_flags_t,0x00302002,mailbox_index,word,2,CAN mailbox slot index for channel assignment,,verified
 keyon_flags_t,0x00302002,_pad14,word,2,Reserved,,verified
-keyon_flags_t,0x00302002,eeprom_write_count,dword,4,EEPROM config counter incremented per key-on cycle,,verified
+keyon_flags_t,0x00302002,runtime_counter,dword,4,ECU runtime counter (RAM 0x302012): loaded from EEPROM 0x1000030 at boot / +1 every 41 PIT ticks (~0.205 s per count if the PIT runs at 1 MHz) / written back at key-off; also the auth-token freshness clock (was eeprom_write_count),,verified
 # =============================================================================
 # CAN transmit/receive ring buffer pointers @ 0x3024c6
 # j1939_tx: J1939 message queue ring buffer (12-byte records, base 0x3022e6)
@@ -1332,7 +1332,7 @@ eeprom_block_tracking_t,0x003028a6,block_start_addr,dword,4,Start address of cur
 eeprom_block_tracking_t,0x003028a6,block_count,word,2,Completed transfer block count (max 9),,verified
 # =============================================================================
 # J1939 Transport Protocol queue/RTS-CTS state machine @ 0x302905
-# Used by mpc555_handleJ1939DataRequest / mpc555_processJ1939QueueTransmit
+# Used by mpc555_handleJ1939TransportRequestToSend / mpc555_sendJ1939TransportDataPackets
 # session_pgn: PGN for active queue TP session (top byte 0xEF)
 # total_bytes: total data bytes for TP session (from CTS request)
 # data_buf_ptr: pointer to source data buffer for multi-packet transmission
@@ -1356,7 +1356,7 @@ j1939_tp_queue_t,0x00302905,packet_size,word,2,Bytes in current CTS packet grant
 j1939_tp_queue_t,0x00302905,tx_buf_ptr,dword,4,Pointer to CAN TX assembly buffer (0x30306D),,verified
 # =============================================================================
 # J1939 Transport Protocol pause/DataRequest state @ 0x302927
-# Used by mpc555_handleJ1939DataRequest / mpc555_handleJ1939DataTransfer
+# Used by mpc555_handleJ1939TransportRequestToSend / mpc555_handleJ1939TransportDataPacket
 # pause_pgn: PGN for pause session (0xEF00 = ECU diagnostic response)
 # pause_timer: pause session countdown (0x70 init, 0x19 per packet)
 # pause_data: copy of first dword from DataRequest CAN frame
@@ -1397,7 +1397,7 @@ diag_buf_a_ctrl_t,0x0030305a,end_ptr,dword,4,Pointer to end of buffer A data are
 # phase 0: loadCalibrationFromEeprom
 # phase 1/2: mainLoopIteration
 # phase 3: loadVersionConfigFromEeprom
-# boot_param: parameter value set during mpc555_processScheduledTasks
+# boot_param: parameter value set during mpc555_runPeriodicInterruptTimerTick
 # boot_phase: current phase counter (0-3)
 # =============================================================================
 boot_state_t,0x003034a0,boot_param,word,2,Boot state machine initialization parameter,,verified

@@ -4,30 +4,30 @@ function_address,function_name,param_index,name,type,comment
 # -----------------------------------------------------------------------------
 0x00055ef4,lookupTableInterpolation,0,args,table_interp_args_t*,Pointer to table interpolation arguments structure
 
-0x000566cc,dualAxisTableInterpolation,0,table_descriptor,void*,Pointer to 2D table descriptor
-0x000566cc,dualAxisTableInterpolation,1,x_input,ushort,X-axis input value
-0x000566cc,dualAxisTableInterpolation,2,y_input,ushort,Y-axis input value
+0x000566cc,cm848_dualAxisTableInterpolation,0,table_descriptor,void*,Pointer to 2D table descriptor
+0x000566cc,cm848_dualAxisTableInterpolation,1,x_input,ushort,X-axis input value
+0x000566cc,cm848_dualAxisTableInterpolation,2,y_input,ushort,Y-axis input value
 
-0x00015e08,interpolateFuelMapTable,0,table_ptr,void*,Pointer to fuel map table
-0x00015e08,interpolateFuelMapTable,1,rpm_input,ushort,Engine RPM value for lookup
-0x00015e08,interpolateFuelMapTable,2,load_input,ushort,Engine load value for lookup
+0x00015e08,cm848_interpolateFuelMapTable,0,table_ptr,void*,Pointer to fuel map table
+0x00015e08,cm848_interpolateFuelMapTable,1,rpm_input,ushort,Engine RPM value for lookup
+0x00015e08,cm848_interpolateFuelMapTable,2,load_input,ushort,Engine load value for lookup
 
 # -----------------------------------------------------------------------------
 # CAN Message Transmission - Adapted from CM550 patterns
 # -----------------------------------------------------------------------------
-0x00003f20,transmitCanMessage,0,msg_header,j1939_msg_hdr_t*,Pointer to J1939 TX message header (first 6 bytes of j1939_tx_msg_t)
-0x00003f20,transmitCanMessage,1,data_ptr,byte*,Pointer to message data bytes
+0x00003f20,cm848_transmitCanMessage,0,msg_header,j1939_msg_hdr_t*,Pointer to J1939 TX message header (first 6 bytes of j1939_tx_msg_t)
+0x00003f20,cm848_transmitCanMessage,1,data_ptr,byte*,Pointer to message data bytes
 
-0x00005adc,multiFrameCanTransmit,0,msg_header,j1939_msg_hdr_t*,Pointer to J1939 TX message header (first 6 bytes of j1939_tx_msg_t)
-0x00005adc,multiFrameCanTransmit,1,data_ptr,byte*,Pointer to message payload data
-0x00005adc,multiFrameCanTransmit,2,data_length,ushort,Total length of payload to transmit
+0x00005adc,mpc555_sendJ1939TransportRequestToSend,0,msg_header,j1939_msg_hdr_t*,Pointer to J1939 TX message header (first 6 bytes of j1939_tx_msg_t)
+0x00005adc,mpc555_sendJ1939TransportRequestToSend,1,data_ptr,byte*,Pointer to message payload data
+0x00005adc,mpc555_sendJ1939TransportRequestToSend,2,data_length,ushort,Total length of payload to transmit
 
 # -----------------------------------------------------------------------------
 # EEPROM Operations
 # -----------------------------------------------------------------------------
-0x00000bec,eepromWriteWords,0,dest_address,uint,EEPROM destination address
-0x00000bec,eepromWriteWords,1,src_ptr,word*,Pointer to source data words
-0x00000bec,eepromWriteWords,2,word_count,ushort,Number of words to write
+0x00000bec,mpc555_eepromWriteWords,0,dest_address,uint,EEPROM destination address
+0x00000bec,mpc555_eepromWriteWords,1,src_ptr,word*,Pointer to source data words
+0x00000bec,mpc555_eepromWriteWords,2,word_count,ushort,Number of words to write
 
 0x000036f8,cm848_resetEepromCalibrationState,return,,void,Clears eeprom_calibration_pending_flag and diag_session_state_byte
 
@@ -37,48 +37,48 @@ function_address,function_name,param_index,name,type,comment
 # J1939 PGN Handlers - Common pattern for diagnostic message handlers
 # Pattern: First param is always a pointer to the received CAN message descriptor
 # -----------------------------------------------------------------------------
-0x00020c64,processJ1939RxMessage,0,rx_msg,j1939_rx_msg_t*,Pointer to received CAN message descriptor
+0x00020c64,cm848_processJ1939RxMessage,0,rx_msg,j1939_rx_msg_t*,Pointer to received CAN message descriptor
 
-0x0000628c,j1939DiagMessageDispatcher,0,rx_msg,j1939_rx_msg_t*,Pointer to received diagnostic message
-0x0000628c,j1939DiagMessageDispatcher,1,service_code,byte,Diagnostic service code from message
+0x0000628c,mpc555_dispatchJ1939TransportConnectionManagement,0,rx_msg,j1939_rx_msg_t*,Pointer to received diagnostic message
+0x0000628c,mpc555_dispatchJ1939TransportConnectionManagement,1,service_code,byte,Diagnostic service code from message
 
-0x00005c50,handleJ1939QueueRequest,0,request_type,byte,Type of queue request (0x10=start 0x11=continue)
-0x00005c50,handleJ1939QueueRequest,1,connection_id,byte,Transport protocol connection ID
+0x00005c50,mpc555_handleJ1939TransportClearToSend,0,request_type,byte,Type of queue request (0x10=start 0x11=continue)
+0x00005c50,mpc555_handleJ1939TransportClearToSend,1,connection_id,byte,Transport protocol connection ID
 
-0x00005ecc,handleJ1939DataRequest,0,rx_msg,j1939_rx_msg_t*,Pointer to data request message
-0x00006180,handleJ1939AbortRequest,0,rx_msg,j1939_rx_msg_t*,Pointer to abort request message
+0x00005ecc,mpc555_handleJ1939TransportRequestToSend,0,rx_msg,j1939_rx_msg_t*,Pointer to data request message
+0x00006180,mpc555_handleJ1939TransportEndOfMessageAcknowledge,0,rx_msg,j1939_rx_msg_t*,Pointer to abort request message
 
 # TSC1 (Torque/Speed Control) Message Handlers - PGN 0 (TSC1)
-0x00022d60,processTsc1Command,0,rx_msg,j1939_rx_msg_t*,Pointer to received TSC1 message
-0x00023b38,j1939DispatchAddressHandler,0,rx_msg,j1939_rx_msg_t*,Pointer to received J1939 message for address filtering
-0x00022870,j1939ProcessTorqueSpeedControl,0,rx_msg,j1939_rx_msg_t*,Pointer to received TSC1 message (secondary handler)
+0x00022d60,torqueControlModeHandler,0,rx_msg,j1939_rx_msg_t*,Pointer to received TSC1 message
+0x00023b38,cm848_j1939DispatchAddressHandler,0,rx_msg,j1939_rx_msg_t*,Pointer to received J1939 message for address filtering
+0x00022870,cm848_j1939ProcessPgn61442Etc1,0,rx_msg,j1939_rx_msg_t*,Pointer to received TSC1 message (secondary handler)
 
 # -----------------------------------------------------------------------------
 # Diagnostic Service Dispatchers
 # -----------------------------------------------------------------------------
-0x00006d24,dispatchDiagnosticService,0,service_code,byte,Service code (e.g. 0x22=ReadDataByID 0x2E=WriteDataByID)
-0x00006d24,dispatchDiagnosticService,1,data_ptr,byte*,Pointer to service data
-0x00006d24,dispatchDiagnosticService,2,data_length,ushort,Length of service data
+0x00006d24,cm848_dispatchDiagnosticService,0,service_code,byte,Service code (e.g. 0x22=ReadDataByID 0x2E=WriteDataByID)
+0x00006d24,cm848_dispatchDiagnosticService,1,data_ptr,byte*,Pointer to service data
+0x00006d24,cm848_dispatchDiagnosticService,2,data_length,ushort,Length of service data
 
-0x0000662c,diagnosticSubcommandDispatcher,0,subcommand,byte,Diagnostic subcommand code
-0x0000662c,diagnosticSubcommandDispatcher,1,data_ptr,byte*,Pointer to subcommand data
+0x0000662c,mpc555_diagnosticSubcommandDispatcher,0,subcommand,byte,Diagnostic subcommand code
+0x0000662c,mpc555_diagnosticSubcommandDispatcher,1,data_ptr,byte*,Pointer to subcommand data
 
 # -----------------------------------------------------------------------------
 # Memory Read Handlers (Diagnostic Services 0x43-0x4A)
 # Pattern: Returns response data via pointer, returns length
 # -----------------------------------------------------------------------------
-0x00001b48,diagMemoryReadHandler,0,address,uint,Memory address to read from
-0x00001b48,diagMemoryReadHandler,1,length,ushort,Number of bytes to read
-0x00001b48,diagMemoryReadHandler,2,response_ptr,byte*,Pointer to response buffer
+0x00001b48,cm848_diagMemoryReadHandler,0,address,uint,Memory address to read from
+0x00001b48,cm848_diagMemoryReadHandler,1,length,ushort,Number of bytes to read
+0x00001b48,cm848_diagMemoryReadHandler,2,response_ptr,byte*,Pointer to response buffer
 
 # -----------------------------------------------------------------------------
 # Handler Registration Functions
 # -----------------------------------------------------------------------------
-0x00001948,registerPgnResponseHandler,0,pgn,uint,PGN to register handler for (24-bit)
-0x00001948,registerPgnResponseHandler,1,handler_func,void*,Function pointer for handler callback
+0x00001948,cm848_registerPgnResponseHandler,0,pgn,uint,PGN to register handler for (24-bit)
+0x00001948,cm848_registerPgnResponseHandler,1,handler_func,void*,Function pointer for handler callback
 
-0x00002cd8,registerPgnEf00Handler,0,sub_id,byte,Sub-identifier for PGN 0xEF00 filtering
-0x00002cd8,registerPgnEf00Handler,1,handler_func,void*,Function pointer for handler callback
+0x00002cd8,cm848_registerPgnEf00Handler,0,sub_id,byte,Sub-identifier for PGN 0xEF00 filtering
+0x00002cd8,cm848_registerPgnEf00Handler,1,handler_func,void*,Function pointer for handler callback
 
 # -----------------------------------------------------------------------------
 # J1939 PGN Dispatch System
@@ -88,7 +88,7 @@ function_address,function_name,param_index,name,type,comment
 0x00023188,cm848_j1939RegisterPgnHandler,0,pgn,uint,Packed 16-bit PGN: low byte=pgn_byte_0 high byte=pgn_byte_1 stored in dispatch table
 0x00023188,cm848_j1939RegisterPgnHandler,1,handler_func,void*,Function pointer called when PGN matches incoming message
 
-0x00022d60,j1939MessageDispatcher,0,rx_msg,j1939_rx_msg_t*,Pointer to received J1939 message
+0x00022d60,torqueControlModeHandler,0,rx_msg,j1939_rx_msg_t*,Pointer to received J1939 message
 
 0x00023d3c,cm848_sendJ1939AcknowledgeMessage,0,request_msg,j1939_rx_msg_t*,Original request to acknowledge
 0x00023d3c,cm848_sendJ1939AcknowledgeMessage,1,ack_type,J1939_ACK_TYPE,J1939-21 ACKM control byte value
@@ -96,30 +96,30 @@ function_address,function_name,param_index,name,type,comment
 0x00023dbc,cm848_sendJ1939NegativeAck,0,msg,j1939_rx_msg_t*,Received message to NACK (accesses dest_address at +2 and data_ptr at +6)
 0x00023dbc,cm848_sendJ1939NegativeAck,1,ack_type,J1939_ACK_TYPE,J1939-21 ACKM control byte value
 
-0x00005d8c,sendJ1939DiagnosticMessage,0,dest_address,byte,Destination address for response
-0x00005d8c,sendJ1939DiagnosticMessage,1,data_ptr,byte*,Pointer to diagnostic response data
-0x00005d8c,sendJ1939DiagnosticMessage,2,data_length,ushort,Length of response data
+0x00005d8c,mpc555_sendJ1939TransportEndOfMessageAcknowledge,0,dest_address,byte,Destination address for response
+0x00005d8c,mpc555_sendJ1939TransportEndOfMessageAcknowledge,1,data_ptr,byte*,Pointer to diagnostic response data
+0x00005d8c,mpc555_sendJ1939TransportEndOfMessageAcknowledge,2,data_length,ushort,Length of response data
 
 # -----------------------------------------------------------------------------
 # J1939 DM (Diagnostic Message) Handlers
 # Standard SAE J1939-73 diagnostic message processing
 # -----------------------------------------------------------------------------
-0x000227a0,j1939HandleDm1RequestMessage,0,request_msg,j1939_rx_msg_t*,Pointer to DM1 (Active DTC) request
+0x000227a0,cm848_j1939HandleDm1RequestMessage,0,request_msg,j1939_rx_msg_t*,Pointer to DM1 (Active DTC) request
 
-0x000255c0,j1939SendDm1ResponseMessage,0,dest_address,byte,Destination address for DM1 response
-0x000255c0,j1939SendDm1ResponseMessage,1,fault_count,byte,Number of active DTCs to report
+0x000255c0,cm848_j1939SendDm1ResponseMessage,0,dest_address,byte,Destination address for DM1 response
+0x000255c0,cm848_j1939SendDm1ResponseMessage,1,fault_count,byte,Number of active DTCs to report
 
-0x0002641c,j1939SendDiagnosticStatusMessage,0,dest_address,byte,Destination address for status response
-0x0002641c,j1939SendDiagnosticStatusMessage,1,status_type,byte,Type of diagnostic status to send
+0x0002641c,cm848_j1939SendDiagnosticStatusMessage,0,dest_address,byte,Destination address for status response
+0x0002641c,cm848_j1939SendDiagnosticStatusMessage,1,status_type,byte,Type of diagnostic status to send
 
 # -----------------------------------------------------------------------------
 # J1939 Queue/Transport Protocol
 # Multi-frame message handling (TP.CM/TP.DT)
 # -----------------------------------------------------------------------------
-0x00005fe4,handleJ1939DataTransfer,0,rx_msg,j1939_rx_msg_t*,TP.DT data transfer message
+0x00005fe4,mpc555_handleJ1939TransportDataPacket,0,rx_msg,j1939_rx_msg_t*,TP.DT data transfer message
 
-0x000062fc,processJ1939QueueTransmit,0,queue_entry,void*,Pointer to TX queue entry
-0x000064c4,processJ1939QueueStatus,0,connection_id,byte,Transport protocol connection identifier
+0x000062fc,mpc555_sendJ1939TransportDataPackets,0,queue_entry,void*,Pointer to TX queue entry
+0x000064c4,mpc555_serviceJ1939TransportSessions,0,connection_id,byte,Transport protocol connection identifier
 
 # -----------------------------------------------------------------------------
 # Sensor Channel Processing Functions
@@ -162,52 +162,52 @@ function_address,function_name,param_index,name,type,comment
 # Boost Calculation Functions
 # Core algorithms for computing boost-based fuel compensation
 # -----------------------------------------------------------------------------
-0x0001392c,selectLoadNormalizer,0,selector,ushort,Source selector (0=raw 1=computed 2=filtered)
-0x0001392c,selectLoadNormalizer,1,raw_boost,ushort,Raw boost pressure from sensor
-0x0001392c,selectLoadNormalizer,2,computed_boost,ushort,Computed boost value
-0x0001392c,selectLoadNormalizer,3,filtered_boost,ushort,Filtered boost pressure
+0x0001392c,cm848_selectLoadNormalizer,0,selector,ushort,Source selector (0=raw 1=computed 2=filtered)
+0x0001392c,cm848_selectLoadNormalizer,1,raw_boost,ushort,Raw boost pressure from sensor
+0x0001392c,cm848_selectLoadNormalizer,2,computed_boost,ushort,Computed boost value
+0x0001392c,cm848_selectLoadNormalizer,3,filtered_boost,ushort,Filtered boost pressure
 
-0x000130dc,calculateBoostPressureOffset,0,manifold_pressure,ushort,Filtered manifold pressure input
-0x000130dc,calculateBoostPressureOffset,1,rpm,ushort,Engine RPM for table lookup
+0x000130dc,cm848_calculateBoostPressureOffset,0,manifold_pressure,ushort,Filtered manifold pressure input
+0x000130dc,cm848_calculateBoostPressureOffset,1,rpm,ushort,Engine RPM for table lookup
 
-0x00013294,calculateBoostTorqueOffset,0,boost_input,ushort,Boost pressure input
-0x00013294,calculateBoostTorqueOffset,1,rpm,ushort,Engine RPM for calculation
+0x00013294,cm848_calculateBoostTorqueOffset,0,boost_input,ushort,Boost pressure input
+0x00013294,cm848_calculateBoostTorqueOffset,1,rpm,ushort,Engine RPM for calculation
 
-0x00012ad4,boostBasedFuelModifier,0,boost_denominator,ushort,Boost denominator (min 128) for fuel calc
-0x00012ad4,boostBasedFuelModifier,1,base_fueling,ushort,Base fueling command to modify
+0x00012ad4,cm848_boostBasedFuelModifier,0,boost_denominator,ushort,Boost denominator (min 128) for fuel calc
+0x00012ad4,cm848_boostBasedFuelModifier,1,base_fueling,ushort,Base fueling command to modify
 
 # -----------------------------------------------------------------------------
 # Parameter-by-ID Lookup System - CM848 diagnostic parameter resolution
 # Resolves firmware parameter IDs (0x0000-0x12A9) to memory addresses
 # Table at ROM 0x3CDC copied to RAM 0x3F98AC (20 entries x 6 bytes)
 # -----------------------------------------------------------------------------
-0x00003f70,lookupTableEntryByKey,0,param_id,ushort,16-bit parameter ID to resolve
+0x00003f70,cm848_lookupTableEntryByKey,0,param_id,ushort,16-bit parameter ID to resolve
 
-0x000019e8,diagService65_handler,0,request_msg,int,Pointer to EF00 request message (service 0x41)
+0x000019e8,cm848_diagService65_handler,0,request_msg,int,Pointer to EF00 request message (service 0x41)
 
-0x00001cf8,diagMemoryReadWithBaseOffset,0,request_msg,dword,Pointer to request message
-0x00001cf8,diagMemoryReadWithBaseOffset,1,param_id,ushort,Parameter ID to resolve
-0x00001cf8,diagMemoryReadWithBaseOffset,2,reserved,short,Reserved (always 0)
-0x00001cf8,diagMemoryReadWithBaseOffset,3,offset,dword,Offset to add to resolved address
+0x00001cf8,cm848_diagMemoryReadWithBaseOffset,0,request_msg,dword,Pointer to request message
+0x00001cf8,cm848_diagMemoryReadWithBaseOffset,1,param_id,ushort,Parameter ID to resolve
+0x00001cf8,cm848_diagMemoryReadWithBaseOffset,2,reserved,short,Reserved (always 0)
+0x00001cf8,cm848_diagMemoryReadWithBaseOffset,3,offset,dword,Offset to add to resolved address
 
-0x00001d5c,diagService67_memoryReadOffset,0,request_msg,int,Pointer to EF00 request message (service 0x43)
+0x00001d5c,cm848_diagService67_memoryReadOffset,0,request_msg,int,Pointer to EF00 request message (service 0x43)
 
-0x00001dc4,diagService74_memoryRead,0,request_msg,dword,Pointer to EF00 request message (service 0x4A)
+0x00001dc4,cm848_diagService74_memoryRead,0,request_msg,dword,Pointer to EF00 request message (service 0x4A)
 
-0x00001e30,diagService76_memoryReadExt,0,request_msg,dword,Pointer to EF00 request message (service 0x4C)
+0x00001e30,cm848_diagService76_memoryReadExt,0,request_msg,dword,Pointer to EF00 request message (service 0x4C)
 
 # -----------------------------------------------------------------------------
 # EF00 Service Dispatch System - J1939 PGN 0xEF00 handler registration
 # Two dispatch tables: ef00_service_dispatch_table (0x3FA8B2) and diag_service_dispatch_table (0x3FDB30)
 # -----------------------------------------------------------------------------
-0x000220e4,processJ1939DiagnosticRequest,0,service_id,byte,EF00 service ID to register
-0x000220e4,processJ1939DiagnosticRequest,1,handler_ptr,void*,Function pointer for service handler
+0x000220e4,cm848_processJ1939DiagnosticRequest,0,service_id,byte,EF00 service ID to register
+0x000220e4,cm848_processJ1939DiagnosticRequest,1,handler_ptr,void*,Function pointer for service handler
 
-0x00002c94,registerDiagnosticService,0,service_id,byte,Diagnostic service ID (0x43/0x4A/0x4C)
-0x00002c94,registerDiagnosticService,1,handler_ptr,void*,Function pointer for service handler
+0x00002c94,cm848_registerDiagnosticService,0,service_id,byte,Diagnostic service ID (0x43/0x4A/0x4C)
+0x00002c94,cm848_registerDiagnosticService,1,handler_ptr,void*,Function pointer for service handler
 
-0x00002cd8,registerPgnEf00Handler,0,sub_id,byte,Sub-identifier for PGN 0xEF00 filtering
-0x00002cd8,registerPgnEf00Handler,1,handler_func,void*,Function pointer for handler callback
+0x00002cd8,cm848_registerPgnEf00Handler,0,sub_id,byte,Sub-identifier for PGN 0xEF00 filtering
+0x00002cd8,cm848_registerPgnEf00Handler,1,handler_func,void*,Function pointer for handler callback
 
 # -----------------------------------------------------------------------------
 # J1939 Diagnostic Handler Return Types
@@ -216,7 +216,7 @@ function_address,function_name,param_index,name,type,comment
 # -----------------------------------------------------------------------------
 0x00021584,cm848_advanceDiagnosticActionState,return,,DIAG_RESPONSE,Returns DIAG_ACK(0) or DIAG_NACK_PROTECTED(7)
 0x00021668,cm848_resetDiagnosticSession,return,,DIAG_RESPONSE,Always DIAG_ACK - unconditional state clear
-0x000216e8,cm848_setColdStartActiveFlag,return,,DIAG_RESPONSE,Always DIAG_ACK - unconditional flag set
+0x000216e8,cm848_setEngineStarting,return,,DIAG_RESPONSE,Always DIAG_ACK - unconditional flag set
 0x00021904,cm848_setColdStartMode2Flag,return,,DIAG_RESPONSE,Always DIAG_ACK - unconditional flag set
 0x00021918,cm848_validateCalibrationMemory,return,,DIAG_RESPONSE,Returns DIAG_ACK(0) or DIAG_NACK_PROTECTED(7)
 

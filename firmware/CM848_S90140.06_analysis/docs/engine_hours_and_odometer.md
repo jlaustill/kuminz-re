@@ -195,7 +195,7 @@ S90140.06. Add a `tools/read_odometer.sh` that only does the read.
 
 **Firmware-traced path (2026-04-09):**
 
-`mpc555_watchdogTimerTick` @ 0x7608 runs periodically. Every 40 ticks
+`mpc555_tickTransferTimeoutAndRuntimeCounter` @ 0x7608 runs periodically. Every 40 ticks
 (`watchdog_tick_prescaler` reaches 0x28), it increments both:
 - `ecm_runtime_accumulator` @ 0x00302012 (lifetime counter)
 - `keyon_duration_counter` @ 0x003028a6 (session counter)
@@ -209,7 +209,7 @@ Save path: `ecm_runtime_accumulator` → `eeprom_runtime_write_staging`
 (0x003fee2a) → `mpc555_eepromWriteWords(0x3fee2a, &DAT_01000030, 4)`
 → **EEPROM 0x01000030**.
 
-On boot, `mpc555_watchdogTimerTick_midEntry` @ 0x76B4 reloads
+On boot, `mpc555_loadRuntimeCounterFromEepromShadow` @ 0x76B4 reloads
 `ecm_runtime_accumulator` from `eeprom_version_marker.config_dword`,
 which is read from EEPROM 0x01000034 (line 669).
 
