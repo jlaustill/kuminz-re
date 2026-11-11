@@ -337,7 +337,7 @@
 address,name
 0x00000100,mpc555_reset_vector
 0x00000184,mpc555_keyOnStateMachine
-0x00000340,cm848_copyCalibrationToRam
+0x00000340,cm848_copyBootKernelToRam,Boot ROM: copies the boot reflash kernel (ROM 0x3c30-0x7f60) to RAM 0x3f9800-0x3fdb30 so it can run while flash is programmed
 0x0000037c,cm848_registerStandardDiagServices
 0x000003ec,cm848_eepromProgressNotify
 0x00000428,mpc555_loadEepromCalibration
@@ -432,15 +432,15 @@ address,name
 0x00003f70,cm848_lookupTableEntryByKey
 0x00003fcc,cm848_dataTransferBufferWrite
 0x00004194,cm848_prepareDataTransferBuffer
-0x000042b0,mpc555_initAdcChannelConfig
-0x00004320,mpc555_configureAdcConversionRegs
-0x000043a4,mpc555_configureAdcChannelRange
-0x00004500,cm848_initDataTransferCopyBuffer
-0x00004570,cm848_advanceAdcChannelQueue
-0x00004654,cm848_checkDataTransferBufferStatus
-0x000046dc,cm848_startAdcConversion
+0x000042b0,cm848_completePendingDiagWrite,Boot reflash kernel: when the pending flash/EEPROM write finishes (data_transfer_state 1) sends the deferred positive response for diag_write_request_state.pending_request; state 2 clears eeprom_calibration_pending_flag | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
+0x00004320,mpc555_cmfRestoreNormalMode,Boot reflash kernel: returns both CMF flash modules to normal mode: CMFCTL = block select only (or CMFTST = step value when the CMF test-step count at 0x3fdba4 is nonzero) then CMFMCR_A / CMFMCR_B = 0x85000000 | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+0x000043a4,mpc555_cmfSelectBlockAndStartSequence,Boot reflash kernel: selects flash block N (0-7 = module A at 0x2fc800 / 8+ = module B at 0x2fc840) via CMFCTL BLOCK bit 0x8000 >> N then sets SES (|2) to start a program/erase sequence | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+0x00004500,mpc555_cmfLoadProgramPage,Boot reflash kernel: copies 32 words from RAM 0x3fec3a into the target flash page (program interlock writes) and arms the first high-voltage step (CMFCTL SES|EHV) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+0x00004570,mpc555_cmfApplyHighVoltagePulse,Boot reflash kernel: one high-voltage pulse: writes the step's CMFTST value and CMFCTL (SES|EHV); after cmf_pulses_per_step pulses advances to the next step; returns 0 when every step is done | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+0x00004654,mpc555_cmfScanRangeForNonzeroWords,Boot reflash kernel: returns 2 if any 16-bit word from the current pointer up to the target address is nonzero (post program/erase check) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
+0x000046dc,mpc555_cmfEndHighVoltagePulse,Boot reflash kernel: clears EHV (CMFCTL = block select only) and the CMFTST step value | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
 0x00004720,cm848_initCanMailboxFilters
-0x000049d0,mpc555_initFlashMemoryConfig
+0x000049d0,mpc555_cmfEraseBlocks,Boot reflash kernel: erases the flash blocks in the mask (high byte = module A blocks 0-7 at 0x0-0x38000 / low byte = module B blocks at 0x40000-0x68000): CMFCTL PE then PE|SES / 0xFFFFFFFF interlock write to each 32 KB block / EHV pulses polled on HVS (servicing watchdog + SCI meanwhile) up to the pulse limit / then verifies every word reads 0xFFFFFFFF; returns 1 on success | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
 0x00004eec,cm848_can2MailboxTransmitCompleteWrapper
 0x00004f0c,cm848_can2MailboxTransmitRangeWrapper
 0x00004f2c,cm848_writeCan2ControllerTxMailbox
@@ -448,7 +448,7 @@ address,name
 0x00005064,mpc555_manageCan1TransmitBuffer
 0x00005134,mpc555_processCanReceiveBuffer
 0x0000526c,mpc555_dispatchCanMessageHandlers
-0x00005400,mpc555_processAdcConversionResult
+0x00005400,cm848_writeDiagMemory,Boot reflash kernel: shared worker for memory-write services 68/69/75/77: caps length at 1764 / accepts an optional 10-byte auth trailer / cm848_lookupMemoryRegionType then writes by region: 0 RAM copy / 2 Bank-2 flash via flash2_write_callback / 3 registers (auth then copy) / 4 main flash via cm848_dataTransferBufferWrite / 5 EEPROM (auth unless blank then eeprom_write_callback) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
 0x00005728,cm848_memoryWriteByParameterId,Boot reflash kernel (runs only from its RAM copy; never called by the application): resolves a 2-byte parameter ID via cm848_lookupTableEntryByKey (returns 8 when unknown) then hands address + offset + length to the shared memory-write worker at 0x5400 with addressing mode 0 (parameter ID) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
 0x00005798,cm848_diagService68_memoryWriteByParameterId,Boot reflash kernel (runs only from its RAM copy; never called by the application): diagnostic service 0x44 (registered by cm848_initDataBasedDiagServices) - request = 2-byte parameter ID + 1-byte length + data; write counterpart of service 67 | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
 0x00005808,cm848_diagService69_memoryWriteByParameterIdExt,Boot reflash kernel (runs only from its RAM copy; never called by the application): diagnostic service 0x45 - request = 2-byte parameter ID + 4-byte length + data | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
@@ -458,7 +458,7 @@ address,name
 0x0000597c,validateServiceDataLength
 0x00005adc,mpc555_multiFrameCanTransmit
 0x00005c50,mpc555_handleJ1939QueueRequest
-0x00005cf4,mpc555_processAdcChannelGroup
+0x00005cf4,mpc555_sendJ1939TransportAbort,Boot reflash kernel: sends a J1939 TP.CM connection abort (CAN ID 0x18EC + destination; data FF FF FF FF FF + PGN) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
 0x00005d8c,mpc555_sendJ1939DiagnosticMessage
 0x00005e38,mpc555_sendDiagAcknowledgeFrame
 0x00005ecc,mpc555_handleJ1939DataRequest
@@ -470,7 +470,7 @@ address,name
 0x00006490,mpc555_decrementPauseStatusCounter
 0x000064c4,cm848_processJ1939QueueStatus
 0x00006508,mpc555_initDiagnosticBuffers
-0x00006580,cm848_updateSystemTimers
+0x00006580,mpc555_sciSendServiceResponse,Boot reflash kernel: serial diagnostic response: 0x51 (ECUReset positive) / 0x74 (RequestDownload positive) / otherwise 0x7F negative + service + code | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
 0x0000662c,mpc555_diagnosticSubcommandDispatcher
 0x00006770,cm848_resetSerialReceiveBuffer
 0x000067b0,mpc555_sciReceiveDataByte
@@ -481,7 +481,7 @@ address,name
 0x00006a5c,mpc555_sciStartResponseTransmit
 0x00006ab8,mpc555_sciPollDuringEepromWrite
 0x00006b24,mpc555_updateSensorDiagnostics
-0x00006bac,cm848_sensorInputProcessing
+0x00006bac,cm848_copyBytes,Byte copy (destination / source / count) - a plain memcpy used throughout the boot reflash kernel | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
 0x00006bdc,mpc555_processScheduledTasks
 0x00006ca4,cm848_processMainLoop
 0x00006d24,cm848_dispatchDiagnosticService
@@ -490,14 +490,14 @@ address,name
 0x00006f54,mpc555_processEepromDataTransfer
 0x000071f8,cm848_descrambleAuthToken
 0x00007370,cm848_validateWriteAuth
-0x000074a0,cm848_processSensorFilterChain
-0x000075dc,mpc555_processSensorWithOverride
+0x000074a0,cm848_sendDiagServiceResponse,Boot reflash kernel: sends the J1939 PGN 61184 diagnostic response to the requester: result 0 -> 0x0C positive / 0xFE -> 0x0E pending + wait time / else 0x0D + code; echoes the request service bytes | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+0x000075dc,cm848_sendDiagResponsePending,Boot reflash kernel: stores the wait time and sends a 0x0E response-pending for the request | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
 0x00007608,mpc555_watchdogTimerTick
 0x000076b4,mpc555_watchdogTimerTick_midEntry
-0x000076c8,cm848_sensorFaultThresholdCheck
-0x00007740,mpc555_sensorAcquisitionCycle
-0x00007840,mpc555_validateTransferBlockParams
-0x000078d0,mpc555_processTransferCrc
+0x000076c8,cm848_lookupMemoryRegionType,Boot reflash kernel: finds the memory_region_table entry (6 x {start / end / type}) that wholly contains address..address+length-1; returns its type (0 RAM / 2 Bank-2 flash only when flash2_writes_enabled / 3 registers / 4 main flash / 5 EEPROM) or 9 when not writable | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+0x00007740,cm848_trackDownloadBlock,Boot reflash kernel: download block bookkeeping: rejects out-of-sequence addresses (9) / skips a repeated write (0xff) / counts bytes against block_length and feeds the data to cm848_updateDownloadCrc | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
+0x00007840,cm848_finishDownloadBlock,Boot reflash kernel: at block end compares the trailing CRC with the running CRC (0x14 = mismatch) and records the block start/end in a 10-entry list (0x15 = full) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
+0x000078d0,cm848_updateDownloadCrc,Boot reflash kernel: table-driven CRC16 over downloaded bytes into ecu_power_state_flags.transfer_crc; finishes the block when bytes_transferred wraps to 0 | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
 0x00007974,mpc555_systemWatchdogReset
 0x00007b08,mpc555_initQspiHardware
 0x00007dc4,mpc555_systemHaltLoop

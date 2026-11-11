@@ -1277,9 +1277,8 @@ can_tx_ring_t,0x003024c6,toucan_mb_ptr,dword,4,Active TouCAN mailbox base pointe
 # sensor_param_ptr: pointer to active sensor parameter block (set in ADC init)
 # adc_scan_active: flag indicating ADC sensor scan is in progress (0/1)
 # =============================================================================
-adc_trigger_t,0x003024f4,sensor_param_ptr,dword,4,Pointer to active ADC sensor parameter block,,verified
-adc_trigger_t,0x003024f4,adc_scan_active,word,2,ADC scan active flag (0=idle 1=scanning),,verified
-adc_trigger_t,0x003024f4,_pad6,word,2,Reserved,,verified
+diag_write_request_state_t,0x003024f4,pending_request,dword,4,Boot reflash kernel: request whose positive response is deferred until the flash write completes (was adc_trigger_t.sensor_param_ptr),,verified
+diag_write_request_state_t,0x003024f4,address_mode,dword,4,0 = parameter-ID addressing (services 68/69) / 1 = absolute address (75/77); stored as a dword (was adc_scan_active word + _pad6),,verified
 # =============================================================================
 # CAN mailbox slot assignment range @ 0x302510
 # Configured in mpc555_initDiagnosticSubsystem to (mailbox_index, mailbox_index+4)
@@ -1315,8 +1314,8 @@ sys_init_flags_t,0x00302736,init_counter,word,2,System initialization counter (z
 eeprom_xfer_state_t,0x00302878,bytes_transferred,dword,4,Current byte offset progress in EEPROM transfer block,,verified
 eeprom_xfer_state_t,0x00302878,block_length,dword,4,Total bytes in current EEPROM transfer block,,verified
 eeprom_xfer_state_t,0x00302878,_pad8,word,2,Reserved,,verified
-eeprom_xfer_state_t,0x00302878,write_callback_ptr,dword,4,Function pointer for calibration block write operation,,verified
-eeprom_xfer_state_t,0x00302878,read_callback_ptr,dword,4,Function pointer for calibration block read/verify operation,,verified
+eeprom_xfer_state_t,0x00302878,eeprom_write_callback,dword,4,Writer for memory region type 5 (EEPROM) called by cm848_writeDiagMemory (was write_callback_ptr),,verified
+eeprom_xfer_state_t,0x00302878,flash2_write_callback,dword,4,Writer for memory region type 2 (Bank-2 flash) called by cm848_writeDiagMemory (was read_callback_ptr - it writes),,verified
 eeprom_xfer_state_t,0x00302878,transfer_timer,word,2,Transfer timeout countdown (0x28 or 0x4B ticks init),,verified
 # =============================================================================
 # EEPROM block range tracking @ 0x3028a6
@@ -1540,3 +1539,14 @@ qspi_job_queue_t,0x003fb446,write_index,byte,1,jobs[] index the next queued job 
 qspi_job_queue_t,0x003fb446,pending_count,byte,1,Jobs queued and not yet completed (max 16),,verified
 qspi_job_queue_t,0x003fb446,jobs,qspi_job_t*,64,Ring of 16 queued job pointers,,verified
 qspi_job_queue_t,0x003fb489,,,,job queue 1 - marker,,verified
+
+# --- memory_region_t: boot reflash kernel write-permission map (6 x 10 bytes @ RAM 0x3f9830 = ROM 0x3c60) ---
+memory_region_t,0x003f9830,start_address,dword,4,First address of the region,,verified
+memory_region_t,0x003f9830,end_address,dword,4,Last address of the region,,verified
+memory_region_t,0x003f9830,region_type,byte,1,0 RAM / 2 Bank-2 flash / 3 registers / 4 main flash / 5 EEPROM (9 = not found),,verified
+memory_region_t,0x003f9830,region_type_copy,byte,1,Same value as region_type in every entry,,verified
+memory_region_t,0x003f983a,,,,region 1 0x500000-0x5fffff Bank-2 flash - marker,,verified
+memory_region_t,0x003f9844,,,,region 2 0x3f9800 type 3 (end 0x302000 is below start so never matches) - marker,,verified
+memory_region_t,0x003f984e,,,,region 3 0x302000-0x3fffff RAM - marker,,verified
+memory_region_t,0x003f9858,,,,region 4 0x1000000-0x1003fff EEPROM - marker,,verified
+memory_region_t,0x003f9862,,,,region 5 0x2fc000-0x307fff internal registers - marker,,verified

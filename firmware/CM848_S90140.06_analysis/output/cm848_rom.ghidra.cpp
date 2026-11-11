@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Wed Nov 11 14:35:06 MST 2026
+// Generated: Wed Nov 11 14:50:28 MST 2026
 
 
 //
@@ -104,22 +104,25 @@ void mpc555_keyOnStateMachine(void)
 
 
 //
-// Function: cm848_copyCalibrationToRam @ 0x00000340
+// Function: cm848_copyBootKernelToRam @ 0x00000340
 //
 
-void cm848_copyCalibrationToRam(void)
+/* Boot ROM: copies the boot reflash kernel (ROM 0x3c30-0x7f60) to RAM 0x3f9800-0x3fdb30 so it can
+   run while flash is programmed */
+
+void cm848_copyBootKernelToRam(void)
 
 {
   dword *pdVar1;
   dword *pdVar2;
   
-  pdVar1 = &calibration_rom_start;
+  pdVar1 = &boot_kernel_rom_start;
   pdVar2 = (dword *)0x3f97fc;
   do {
     pdVar2 = pdVar2 + 1;
     *pdVar2 = *pdVar1;
     pdVar1 = pdVar1 + 1;
-  } while (pdVar1 < &calibration_rom_end);
+  } while (pdVar1 < &boot_kernel_rom_end);
   return;
 }
 
@@ -530,14 +533,14 @@ void mpc555_eepromWriteWords(dword dest_address,word *src_ptr,word word_count)
   }
   do {
     qsmcm_qspi.SPCR2 = 0x300;
-    eeprom_command_register.TX0 = 6;
-    eeprom_timing_reg_0 = 0x1e;
-    eeprom_command_register.TX1 = 2;
-    eeprom_timing_reg_1 = 0x9e;
-    eeprom_command_register.TX2 = (word)src_ptr;
-    eeprom_timing_reg_2 = 0xce;
-    eeprom_command_register.TX3 = *(word *)dest_address;
-    eeprom_timing_reg_3 = 0x4e;
+    qsmcm_tranram.TX0 = 6;
+    qsmcm_comdram_0 = 0x1e;
+    qsmcm_tranram.TX1 = 2;
+    qsmcm_comdram_1 = 0x9e;
+    qsmcm_tranram.TX2 = (word)src_ptr;
+    qsmcm_comdram_2 = 0xce;
+    qsmcm_tranram.TX3 = *(word *)dest_address;
+    qsmcm_comdram_3 = 0x4e;
     wVar1 = qsmcm_qspi.SPCR1;
     qsmcm_qspi.SPCR1 = wVar1 | 0x8000;
     dest_address = dest_address + 2;
@@ -550,10 +553,10 @@ void mpc555_eepromWriteWords(dword dest_address,word *src_ptr,word word_count)
     qsmcm_qspi.SPSR = bVar2 & 0x7f;
     do {
       qsmcm_qspi.SPCR2 = 0x100;
-      eeprom_command_register.TX0 = 5;
-      eeprom_timing_reg_0 = 0x9e;
-      eeprom_command_register.TX1 = 0;
-      eeprom_timing_reg_1 = 0xe;
+      qsmcm_tranram.TX0 = 5;
+      qsmcm_comdram_0 = 0x9e;
+      qsmcm_tranram.TX1 = 0;
+      qsmcm_comdram_1 = 0xe;
       wVar1 = qsmcm_qspi.SPCR1;
       qsmcm_qspi.SPCR1 = wVar1 | 0x8000;
       do {
@@ -589,12 +592,12 @@ void mpc555_eepromReadWords(word param_1,word *param_2,uint param_3)
   }
   do {
     qsmcm_qspi.SPCR2 = 0x200;
-    eeprom_command_register.TX0 = 3;
-    eeprom_timing_reg_0 = 0x9e;
-    eeprom_command_register.TX1 = param_1;
-    eeprom_timing_reg_1 = 0xce;
-    eeprom_command_register.TX2 = 0;
-    eeprom_timing_reg_2 = 0x4e;
+    qsmcm_tranram.TX0 = 3;
+    qsmcm_comdram_0 = 0x9e;
+    qsmcm_tranram.TX1 = param_1;
+    qsmcm_comdram_1 = 0xce;
+    qsmcm_tranram.TX2 = 0;
+    qsmcm_comdram_2 = 0x4e;
     wVar1 = qsmcm_qspi.SPCR1;
     qsmcm_qspi.SPCR1 = wVar1 | 0x8000;
     param_1 = param_1 + 2;
@@ -792,7 +795,7 @@ short cm848_flashEraseChip(void)
   short sVar3;
   ushort unaff_r21;
   
-  bVar2 = qadc_a_result_low;
+  bVar2 = flash2_writes_enabled;
   if ((bVar2 == 0) || ((char)data_transfer_state_t_003fec82.status == '\x03')) {
     sVar3 = 1;
   }
@@ -858,7 +861,7 @@ undefined4 cm848_flashWriteBlock(int param_1,int param_2,uint param_3)
   ushort uVar3;
   uint uVar4;
   
-  bVar1 = qadc_a_result_low;
+  bVar1 = flash2_writes_enabled;
   if (bVar1 != 0) {
     data_transfer_state_t_003fec82.status._1_1_ = 1;
     uVar4 = (int)param_3 >> 1;
@@ -907,8 +910,8 @@ void mpc555_initHardwareConfig(void)
   
   if (0x302f < in_IMMR >> 0x10) {
     qadc_init_done_flag._0_1_ = 1;
-    qadc_mode_register_base = 0x28000000;
-    qadc_channel_config_mask = 0x1e0000;
+    cmf_erase_control_base = 0x28000000;
+    cmf_erase_control_bits = 0x1e0000;
     qadc_control_word_cal = 0xc20;
     qadc_control_word_b = 0xd20;
     _qadc_control_word_c = 0xe20;
@@ -920,8 +923,8 @@ void mpc555_initHardwareConfig(void)
     qadc_fault_bit_array._0_2_ = 1;
     qadc_init_done_flag._1_1_ = 8;
     qadc_accumulate_count_cal = 100;
-    qadc_channel_config_base = 0x28000000;
-    qadc_channel_config_mask_b = 0x4f0000;
+    cmf_control_base = 0x28000000;
+    cmf_control_step_bits = 0x4f0000;
     qadc_channel_config_mask_c = 0x4f0000;
     qadc_channel_config_mask_d = 0x4f0000;
     qadc_channel_config_mask_e = 0x4f0000;
@@ -937,7 +940,7 @@ void mpc555_initHardwareConfig(void)
     qadc_queue_timing_config_f = 0x520;
     qadc_queue_timing_config_g = 0x620;
     qadc_queue_timing_config_h = 0x720;
-    qadc_prescale_count_a = 4;
+    cmf_pulses_per_step = 4;
     qadc_prescale_count_b = 4;
     qadc_prescale_count_c = 4;
     qadc_prescale_count_d = 4;
@@ -951,7 +954,7 @@ void mpc555_initHardwareConfig(void)
     data_transfer_state_t_003fec82.status._1_1_ = '\x01';
   }
   memory_scan_pointer = (undefined *)0x0;
-  qadc_data_accumulate_count = 0;
+  cmf_erase_pulse_total = 0;
   flash_poll_timeout_cycles = 9800000;
   flash_poll_timeout_cal = 200;
   flash_poll_retry_limit_cal = 3;
@@ -967,7 +970,7 @@ void mpc555_initHardwareConfig(void)
   }
   data_transfer_state_t_003fec82.state._0_1_ = 0;
   data_transfer_state_t_003fec82.state._1_1_ = 0;
-  eeprom_xfer_state.read_callback_ptr = 0x1338;
+  eeprom_xfer_state.flash2_write_callback = 0x1338;
   wVar1 = mios1_ext_ctrl.ctrl_a;
   mios1_ext_ctrl.ctrl_a = wVar1 & 0xfdff;
   wVar1 = mios1_ext_ctrl.ctrl_b;
@@ -1285,7 +1288,7 @@ char cm848_diagMemoryReadHandler(dword address,word length,byte *response_ptr)
           *(undefined1 *)(*(int *)(address + 6) + 3) = *(undefined1 *)(*(int *)(address + 6) + 6);
         }
         else {
-          bVar9 = (&calibration_rom_end)[(byte)(cVar6 + 0xbd)];
+          bVar9 = (&boot_kernel_rom_end)[(byte)(cVar6 + 0xbd)];
         }
         cVar6 = fuel_demand_enable_sync_flag_shadow(bVar9);
         bVar10 = cVar6 - 1;
@@ -1767,7 +1770,7 @@ void mpc555_systemInitialization(void)
   
   dVar1 = USIU_SIUMCR;
   USIU_SIUMCR = dVar1 | 0x10000;
-  cm848_copyCalibrationToRam(in_BAR | 7);
+  cm848_copyBootKernelToRam(in_BAR | 7);
   BYTE_003fd6d8();
   cm848_stubFunction1();
   dVar1 = ecu_power_state_flags.capability_flags;
@@ -1787,7 +1790,7 @@ void mpc555_systemInitialization(void)
   BYTE_003fd284();
   mpc555_eepromReadWords(&eeprom_serial_number,0x3fee16,2);
   mpc555_eepromWriteWords(0x3fee16,(word *)&eeprom_version_marker,2);
-  eeprom_xfer_state.write_callback_ptr = 0xbec;
+  eeprom_xfer_state.eeprom_write_callback = 0xbec;
   mpc555_eepromReadWords(&eeprom_cal_word4,0x3fee24,2);
   mpc555_initDiagnosticSession();
   mpc555_initHardwareConfig();
@@ -1881,7 +1884,7 @@ void mpc555_hardwareInitialization(void)
                     /* WARNING: Read-only address (ram,0x00500aaa) is written */
   uRam00500aaa = 0x90;
   if (flash2_command_register._0_2_ == 1) {
-    qadc_a_result_low = 1;
+    flash2_writes_enabled = 1;
     flash2_command_register._0_2_ = 0xf0;
     if (flash2_command_register._2_2_ != 0x2203) {
       if (flash2_command_register._2_2_ == 0x2281) goto LAB_0000291c;
@@ -1892,7 +1895,7 @@ void mpc555_hardwareInitialization(void)
   }
   else {
 LAB_00002900:
-    qadc_a_result_low = 0;
+    flash2_writes_enabled = 0;
     USIU_BR0.BR0 = 0;
     uVar5 = 0;
   }
@@ -3124,10 +3127,15 @@ void cm848_prepareDataTransferBuffer(void)
 
 
 //
-// Function: mpc555_initAdcChannelConfig @ 0x000042b0
+// Function: cm848_completePendingDiagWrite @ 0x000042b0
 //
 
-void mpc555_initAdcChannelConfig(void)
+/* Boot reflash kernel: when the pending flash/EEPROM write finishes (data_transfer_state 1) sends
+   the deferred positive response for diag_write_request_state.pending_request; state 2 clears
+   eeprom_calibration_pending_flag | review-function-readability reviewed 2026-11-11 - Readability
+   Medium Accuracy Confidence Medium */
+
+void cm848_completePendingDiagWrite(void)
 
 {
   dword dVar1;
@@ -3136,8 +3144,8 @@ void mpc555_initAdcChannelConfig(void)
     eeprom_calibration_pending_flag = 0;
   }
   else if ((data_transfer_state_t_003fec82.state._0_1_ == '\x01') &&
-          (dVar1 = adc_trigger_t_003024f4.sensor_param_ptr, dVar1 != 0)) {
-    cm848_processSensorFilterChain(dVar1,0);
+          (dVar1 = diag_write_request_state.pending_request, dVar1 != 0)) {
+    cm848_sendDiagServiceResponse(dVar1,0);
   }
   data_transfer_state_t_003fec82.state._0_1_ = 0;
   return;
@@ -3146,73 +3154,85 @@ void mpc555_initAdcChannelConfig(void)
 
 
 //
-// Function: mpc555_configureAdcConversionRegs @ 0x00004320
+// Function: mpc555_cmfRestoreNormalMode @ 0x00004320
 //
 
-void mpc555_configureAdcConversionRegs(void)
+/* Boot reflash kernel: returns both CMF flash modules to normal mode: CMFCTL = block select only
+   (or CMFTST = step value when the CMF test-step count at 0x3fdba4 is nonzero) then CMFMCR_A /
+   CMFMCR_B = 0x85000000 | review-function-readability reviewed 2026-11-11 - Readability Medium
+   Accuracy Confidence High */
+
+void mpc555_cmfRestoreNormalMode(void)
 
 {
   if (qadc_init_done_flag._0_1_ == '\0') {
-    mbar_qadc64a_ccw = qadc_channel_config_base | qadc_channel_config_mask_b;
-    mbar_qadc64b_ccw = qadc_channel_config_base | qadc_channel_config_mask_b;
+    CMFCTL_A = cmf_control_base | cmf_control_step_bits;
+    CMFCTL_B = cmf_control_base | cmf_control_step_bits;
   }
   else {
-    mbar_qadc64a_port = qadc_queue_timing_config;
-    mbar_qadc64b_port = qadc_queue_timing_config;
+    CMFTST_A = qadc_queue_timing_config;
+    CMFTST_B = qadc_queue_timing_config;
   }
-  mbar_qadc64a_mcr = 0x85000000;
-  mbar_qadc64b_mcr = 0x85000000;
+  CMFMCR_A = 0x85000000;
+  CMFMCR_B = 0x85000000;
   return;
 }
 
 
 
 //
-// Function: mpc555_configureAdcChannelRange @ 0x000043a4
+// Function: mpc555_cmfSelectBlockAndStartSequence @ 0x000043a4
 //
 
-void mpc555_configureAdcChannelRange(uint param_1)
+/* Boot reflash kernel: selects flash block N (0-7 = module A at 0x2fc800 / 8+ = module B at
+   0x2fc840) via CMFCTL BLOCK bit 0x8000 >> N then sets SES (|2) to start a program/erase sequence |
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+
+void mpc555_cmfSelectBlockAndStartSequence(uint param_1)
 
 {
   undefined *puVar1;
   dword *pdVar2;
   
   if (qadc_init_done_flag._0_1_ == '\0') {
-    mbar_qadc64a_ccw = qadc_channel_config_base | qadc_channel_config_mask_b;
-    mbar_qadc64b_ccw = qadc_channel_config_base | qadc_channel_config_mask_b;
+    CMFCTL_A = cmf_control_base | cmf_control_step_bits;
+    CMFCTL_B = cmf_control_base | cmf_control_step_bits;
   }
   else {
-    mbar_qadc64a_port = qadc_queue_timing_config;
-    mbar_qadc64b_port = qadc_queue_timing_config;
+    CMFTST_A = qadc_queue_timing_config;
+    CMFTST_B = qadc_queue_timing_config;
   }
   if ((int)param_1 < 8) {
-    qadc_active_register_ptr = (undefined *)&mbar_qadc64a_ccw;
-    qadc_active_port_ptr = (undefined *)&mbar_qadc64a_port;
-    pdVar2 = &mbar_qadc64b_ccw;
+    cmf_active_control_register = (undefined *)&CMFCTL_A;
+    cmf_active_test_register = (undefined *)&CMFTST_A;
+    pdVar2 = &CMFCTL_B;
   }
   else {
     param_1 = param_1 - 8;
-    qadc_active_register_ptr = (undefined *)&mbar_qadc64b_ccw;
-    qadc_active_port_ptr = (undefined *)&mbar_qadc64b_port;
-    pdVar2 = &mbar_qadc64a_ccw;
+    cmf_active_control_register = (undefined *)&CMFCTL_B;
+    cmf_active_test_register = (undefined *)&CMFTST_B;
+    pdVar2 = &CMFCTL_A;
   }
-  qadc_channel_select_value = qadc_channel_config_base | 0x8000 >> (param_1 & 0x3f);
-  *pdVar2 = qadc_channel_config_base | qadc_channel_config_mask_b;
-  puVar1 = qadc_active_register_ptr;
-  *(dword *)qadc_active_register_ptr = qadc_channel_select_value | qadc_channel_config_mask_b;
-  *(dword *)puVar1 = qadc_channel_select_value | qadc_channel_config_mask_b | 2;
+  cmf_control_block_select = cmf_control_base | 0x8000 >> (param_1 & 0x3f);
+  *pdVar2 = cmf_control_base | cmf_control_step_bits;
+  puVar1 = cmf_active_control_register;
+  *(dword *)cmf_active_control_register = cmf_control_block_select | cmf_control_step_bits;
+  *(dword *)puVar1 = cmf_control_block_select | cmf_control_step_bits | 2;
   return;
 }
 
 
 
 //
-// Function: cm848_initDataTransferCopyBuffer @ 0x00004500
+// Function: mpc555_cmfLoadProgramPage @ 0x00004500
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Boot reflash kernel: copies 32 words from RAM 0x3fec3a into the target flash page (program
+   interlock writes) and arms the first high-voltage step (CMFCTL SES|EHV) |
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
 
-void cm848_initDataTransferCopyBuffer(undefined *param_1)
+void mpc555_cmfLoadProgramPage(undefined *param_1)
 
 {
   undefined2 *puVar1;
@@ -3229,21 +3249,24 @@ void cm848_initDataTransferCopyBuffer(undefined *param_1)
     uVar3 = uVar3 + 1;
   } while (uVar3 < 0x20);
   data_transfer_scan_ptr = param_1;
-  qadc_channel_index = 0;
-  _qadc_channel_control_working = qadc_channel_select_value | qadc_channel_config_mask_b | 3;
-  qadc_scan_step_counter = 0;
+  cmf_pulse_step_index = 0;
+  _cmf_control_pulse_value = cmf_control_block_select | cmf_control_step_bits | 3;
+  cmf_pulse_count = 0;
   return;
 }
 
 
 
 //
-// Function: cm848_advanceAdcChannelQueue @ 0x00004570
+// Function: mpc555_cmfApplyHighVoltagePulse @ 0x00004570
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Boot reflash kernel: one high-voltage pulse: writes the step's CMFTST value and CMFCTL (SES|EHV);
+   after cmf_pulses_per_step pulses advances to the next step; returns 0 when every step is done |
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
 
-undefined4 cm848_advanceAdcChannelQueue(void)
+undefined4 mpc555_cmfApplyHighVoltagePulse(void)
 
 {
   bool bVar1;
@@ -3251,34 +3274,38 @@ undefined4 cm848_advanceAdcChannelQueue(void)
   uint uVar3;
   word wVar4;
   
-  bVar2 = qadc_channel_index;
-  uVar3 = (uint)qadc_channel_index;
+  bVar2 = cmf_pulse_step_index;
+  uVar3 = (uint)cmf_pulse_step_index;
   if (qadc_init_done_flag._0_1_ != '\0') {
-    *(dword *)qadc_active_port_ptr = (&qadc_queue_timing_config)[uVar3];
+    *(dword *)cmf_active_test_register = (&qadc_queue_timing_config)[uVar3];
   }
-  *(uint *)qadc_active_register_ptr = _qadc_channel_control_working;
-  wVar4 = qadc_scan_step_counter + 1;
-  bVar1 = (&qadc_prescale_count_a)[uVar3] <= qadc_scan_step_counter;
-  qadc_scan_step_counter = wVar4;
+  *(uint *)cmf_active_control_register = _cmf_control_pulse_value;
+  wVar4 = cmf_pulse_count + 1;
+  bVar1 = (&cmf_pulses_per_step)[uVar3] <= cmf_pulse_count;
+  cmf_pulse_count = wVar4;
   if (bVar1) {
     if ((int)(qadc_fault_bit_array._2_2_ - 1) <= (int)uVar3) {
       return 0;
     }
-    qadc_channel_index = bVar2 + 1;
-    qadc_scan_step_counter = 0;
+    cmf_pulse_step_index = bVar2 + 1;
+    cmf_pulse_count = 0;
   }
-  _qadc_channel_control_working =
-       qadc_channel_select_value | (&qadc_channel_config_mask_b)[qadc_channel_index] | 3;
+  _cmf_control_pulse_value =
+       cmf_control_block_select | (&cmf_control_step_bits)[cmf_pulse_step_index] | 3;
   return 1;
 }
 
 
 
 //
-// Function: cm848_checkDataTransferBufferStatus @ 0x00004654
+// Function: mpc555_cmfScanRangeForNonzeroWords @ 0x00004654
 //
 
-int cm848_checkDataTransferBufferStatus(void)
+/* Boot reflash kernel: returns 2 if any 16-bit word from the current pointer up to the target
+   address is nonzero (post program/erase check) | review-function-readability reviewed 2026-11-11 -
+   Readability Medium Accuracy Confidence Medium */
+
+int mpc555_cmfScanRangeForNonzeroWords(void)
 
 {
   int iVar1;
@@ -3304,15 +3331,18 @@ int cm848_checkDataTransferBufferStatus(void)
 
 
 //
-// Function: cm848_startAdcConversion @ 0x000046dc
+// Function: mpc555_cmfEndHighVoltagePulse @ 0x000046dc
 //
 
-void cm848_startAdcConversion(void)
+/* Boot reflash kernel: clears EHV (CMFCTL = block select only) and the CMFTST step value |
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+
+void mpc555_cmfEndHighVoltagePulse(void)
 
 {
-  *(dword *)qadc_active_register_ptr = qadc_channel_select_value | qadc_channel_config_mask_b;
+  *(dword *)cmf_active_control_register = cmf_control_block_select | cmf_control_step_bits;
   if (qadc_init_done_flag._0_1_ != '\0') {
-    *(undefined4 *)qadc_active_port_ptr = 0;
+    *(undefined4 *)cmf_active_test_register = 0;
   }
   return;
 }
@@ -3346,26 +3376,26 @@ void cm848_initCanMailboxFilters(void)
       }
     }
     else if (data_transfer_state_t_003fec82.status._0_1_ == '\x01') {
-      if ((*(uint *)qadc_active_register_ptr & 0x80000000) != 0) {
+      if ((*(uint *)cmf_active_control_register & 0x80000000) != 0) {
         return;
       }
-      *(uint *)qadc_active_register_ptr = *(uint *)qadc_active_register_ptr & 0xfffffffe;
-      sVar3 = cm848_checkDataTransferBufferStatus();
+      *(uint *)cmf_active_control_register = *(uint *)cmf_active_control_register & 0xfffffffe;
+      sVar3 = mpc555_cmfScanRangeForNonzeroWords();
       if (sVar3 != 2) {
-        cm848_startAdcConversion();
+        mpc555_cmfEndHighVoltagePulse();
         if ((data_transfer_active_flag != 0) && (data_transfer_state_t_003fec82.byte_count == 0)) {
           if (data_transfer_state_t_003fec82.state._0_1_ != '\0') {
-            mpc555_initAdcChannelConfig();
+            cm848_completePendingDiagWrite();
             data_transfer_buffer_status = 0;
           }
-          cm848_startAdcConversion();
+          mpc555_cmfEndHighVoltagePulse();
           data_transfer_state_t_003fec82.reserved_02 = 1;
           data_transfer_active_flag = 0;
           goto LAB_0000497c;
         }
         goto LAB_00004854;
       }
-      sVar3 = cm848_advanceAdcChannelQueue();
+      sVar3 = mpc555_cmfApplyHighVoltagePulse();
       if (sVar3 != 0) {
         data_transfer_state_t_003fec82.status._0_1_ = '\x01';
         goto LAB_000049a0;
@@ -3374,7 +3404,7 @@ void cm848_initCanMailboxFilters(void)
     else if (data_transfer_state_t_003fec82.status._0_1_ == '\x02') {
       if ((data_transfer_buffer_status == 0) || (data_transfer_buffer_status == 5))
       goto LAB_000049a0;
-      mpc555_configureAdcConversionRegs();
+      mpc555_cmfRestoreNormalMode();
 LAB_00004854:
       data_transfer_state_t_003fec82.status._0_1_ = '\x03';
       goto LAB_000049a0;
@@ -3382,25 +3412,25 @@ LAB_00004854:
   }
   else {
     if (data_transfer_state_t_003fec82.status._0_1_ == '\x04') {
-      mpc555_configureAdcChannelRange((uint)data_transfer_current_ptr >> 0xf & 0xffff);
-      cm848_initDataTransferCopyBuffer(puVar2);
-      cm848_advanceAdcChannelQueue();
+      mpc555_cmfSelectBlockAndStartSequence((uint)data_transfer_current_ptr >> 0xf & 0xffff);
+      mpc555_cmfLoadProgramPage(puVar2);
+      mpc555_cmfApplyHighVoltagePulse();
       data_transfer_state_t_003fec82.status._0_1_ = '\x01';
       if (((data_transfer_state_t_003fec82.state._0_1_ == '\0') ||
           (data_transfer_buffer_status != 2)) ||
          (data_transfer_state_t_003fec82.reserved_04 < data_transfer_state_t_003fec82.byte_count))
       goto LAB_000049a0;
 LAB_00004928:
-      mpc555_initAdcChannelConfig();
+      cm848_completePendingDiagWrite();
       data_transfer_buffer_status = 1;
       goto LAB_000049a0;
     }
     if (data_transfer_state_t_003fec82.status._0_1_ == '\x05') {
-      if ((*(uint *)qadc_active_register_ptr & 0x80000000) != 0) goto LAB_000049a0;
-      *(uint *)qadc_active_register_ptr = *(uint *)qadc_active_register_ptr & 0xfffffffe;
-      cm848_startAdcConversion();
+      if ((*(uint *)cmf_active_control_register & 0x80000000) != 0) goto LAB_000049a0;
+      *(uint *)cmf_active_control_register = *(uint *)cmf_active_control_register & 0xfffffffe;
+      mpc555_cmfEndHighVoltagePulse();
       data_transfer_state_t_003fec82.reserved_02 = 0;
-      mpc555_initAdcChannelConfig();
+      cm848_completePendingDiagWrite();
 LAB_0000497c:
       data_transfer_state_t_003fec82.status._0_1_ = '\x02';
       bVar1 = eeprom_service_mode_flags;
@@ -3419,10 +3449,17 @@ LAB_000049a0:
 
 
 //
-// Function: mpc555_initFlashMemoryConfig @ 0x000049d0
+// Function: mpc555_cmfEraseBlocks @ 0x000049d0
 //
 
-bool mpc555_initFlashMemoryConfig(uint param_1)
+/* Boot reflash kernel: erases the flash blocks in the mask (high byte = module A blocks 0-7 at
+   0x0-0x38000 / low byte = module B blocks at 0x40000-0x68000): CMFCTL PE then PE|SES / 0xFFFFFFFF
+   interlock write to each 32 KB block / EHV pulses polled on HVS (servicing watchdog + SCI
+   meanwhile) up to the pulse limit / then verifies every word reads 0xFFFFFFFF; returns 1 on
+   success | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy
+   Confidence High */
+
+bool mpc555_cmfEraseBlocks(uint param_1)
 
 {
   bool bVar1;
@@ -3441,20 +3478,20 @@ bool mpc555_initFlashMemoryConfig(uint param_1)
   mios1_ext_ctrl.ctrl_a = wVar4 & 0xfdff | 0x8000;
   wVar4 = mios1_ext_ctrl.ctrl_b;
   mios1_ext_ctrl.ctrl_b = wVar4 | 0x8200;
-  qadc_data_accumulate_count = 0;
-  mbar_qadc64a_ccw = qadc_mode_register_base | qadc_channel_config_mask;
-  mbar_qadc64b_ccw = qadc_mode_register_base | qadc_channel_config_mask;
-  uVar8 = qadc_mode_register_base | param_1 & 0xff00;
-  uVar9 = qadc_mode_register_base | (param_1 & 0xff) << 8;
+  cmf_erase_pulse_total = 0;
+  CMFCTL_A = cmf_erase_control_base | cmf_erase_control_bits;
+  CMFCTL_B = cmf_erase_control_base | cmf_erase_control_bits;
+  uVar8 = cmf_erase_control_base | param_1 & 0xff00;
+  uVar9 = cmf_erase_control_base | (param_1 & 0xff) << 8;
   bVar1 = false;
   if ((param_1 & 0xff00) != 0) {
     bVar1 = true;
-    mbar_qadc64a_mcr = 0x85000000;
+    CMFMCR_A = 0x85000000;
     if (qadc_init_done_flag._0_1_ != '\0') {
-      mbar_qadc64a_port = qadc_control_word_cal;
+      CMFTST_A = qadc_control_word_cal;
     }
-    mbar_qadc64a_ccw = uVar8 | qadc_channel_config_mask | 4;
-    mbar_qadc64a_ccw = uVar8 | qadc_channel_config_mask | 6;
+    CMFCTL_A = uVar8 | cmf_erase_control_bits | 4;
+    CMFCTL_A = uVar8 | cmf_erase_control_bits | 6;
     DAT_00008000 = 0xffffffff;
                     /* WARNING: Read-only address (ram,0x00010000) is written */
     uRam00010000 = 0xffffffff;
@@ -3472,12 +3509,12 @@ bool mpc555_initFlashMemoryConfig(uint param_1)
   bVar2 = false;
   if ((param_1 & 0xff) != 0) {
     bVar2 = true;
-    mbar_qadc64b_mcr = 0x85000000;
+    CMFMCR_B = 0x85000000;
     if (qadc_init_done_flag._0_1_ != '\0') {
-      mbar_qadc64b_port = qadc_control_word_cal;
+      CMFTST_B = qadc_control_word_cal;
     }
-    mbar_qadc64b_ccw = uVar9 | qadc_channel_config_mask | 4;
-    mbar_qadc64b_ccw = uVar9 | qadc_channel_config_mask | 6;
+    CMFCTL_B = uVar9 | cmf_erase_control_bits | 4;
+    CMFCTL_B = uVar9 | cmf_erase_control_bits | 6;
                     /* WARNING: Read-only address (ram,0x00040000) is written */
     uRam00040000 = 0xffffffff;
                     /* WARNING: Read-only address (ram,0x00048000) is written */
@@ -3490,7 +3527,7 @@ bool mpc555_initFlashMemoryConfig(uint param_1)
   }
   iVar7 = 1;
   do {
-    if (qadc_accumulate_count_cal <= qadc_data_accumulate_count) break;
+    if (qadc_accumulate_count_cal <= cmf_erase_pulse_total) break;
     if (iVar7 == 1) {
       uVar6 = 0;
     }
@@ -3498,39 +3535,39 @@ bool mpc555_initFlashMemoryConfig(uint param_1)
       uVar6 = (byte)qadc_init_done_flag + 0xff & 0xff;
     }
     if ((iVar7 != 0) && (uVar6 < (byte)qadc_init_done_flag)) {
-      while (qadc_data_accumulate_count < qadc_accumulate_count_cal) {
+      while (cmf_erase_pulse_total < qadc_accumulate_count_cal) {
         if ((qadc_init_done_flag._0_1_ != '\0') && (uVar6 != 0)) {
           if (bVar1) {
-            mbar_qadc64a_port = (&qadc_control_word_cal)[uVar6];
+            CMFTST_A = (&qadc_control_word_cal)[uVar6];
           }
           if (bVar2) {
-            mbar_qadc64b_port = (&qadc_control_word_cal)[uVar6];
+            CMFTST_B = (&qadc_control_word_cal)[uVar6];
           }
         }
         uVar10 = 0;
         if ((iVar7 != 0) && (uVar5 = 0, qadc_fault_bit_array._0_2_ != 0)) {
-          while (uVar10 = uVar5, qadc_data_accumulate_count < qadc_accumulate_count_cal) {
+          while (uVar10 = uVar5, cmf_erase_pulse_total < qadc_accumulate_count_cal) {
             if (bVar1) {
-              mbar_qadc64a_ccw = uVar8 | qadc_channel_config_mask | 7;
-              dVar3 = mbar_qadc64a_ccw;
+              CMFCTL_A = uVar8 | cmf_erase_control_bits | 7;
+              dVar3 = CMFCTL_A;
               while ((dVar3 & 0x80000000) != 0) {
                 mpc555_systemWatchdogReset();
                 mpc555_sciPollDuringEepromWrite();
                 mpc555_updateSensorDiagnostics();
-                dVar3 = mbar_qadc64a_ccw;
+                dVar3 = CMFCTL_A;
               }
-              mbar_qadc64a_ccw = uVar8 | qadc_channel_config_mask | 6;
+              CMFCTL_A = uVar8 | cmf_erase_control_bits | 6;
             }
             if (bVar2) {
-              mbar_qadc64b_ccw = uVar9 | qadc_channel_config_mask | 7;
-              dVar3 = mbar_qadc64b_ccw;
+              CMFCTL_B = uVar9 | cmf_erase_control_bits | 7;
+              dVar3 = CMFCTL_B;
               while ((dVar3 & 0x80000000) != 0) {
                 mpc555_systemWatchdogReset();
                 mpc555_sciPollDuringEepromWrite();
                 mpc555_updateSensorDiagnostics();
-                dVar3 = mbar_qadc64b_ccw;
+                dVar3 = CMFCTL_B;
               }
-              mbar_qadc64b_ccw = uVar9 | qadc_channel_config_mask | 6;
+              CMFCTL_B = uVar9 | cmf_erase_control_bits | 6;
             }
             uVar10 = uVar10 + 1;
             if ((iVar7 == 0) || (uVar5 = uVar10, qadc_fault_bit_array._0_2_ <= (uVar10 & 0xff)))
@@ -3538,7 +3575,7 @@ bool mpc555_initFlashMemoryConfig(uint param_1)
           }
         }
         uVar6 = uVar6 + 1 & 0xff;
-        qadc_data_accumulate_count = qadc_data_accumulate_count + (uVar10 & 0xff);
+        cmf_erase_pulse_total = cmf_erase_pulse_total + (uVar10 & 0xff);
         if ((iVar7 == 0) || ((byte)qadc_init_done_flag <= uVar6)) break;
       }
     }
@@ -3561,17 +3598,17 @@ bool mpc555_initFlashMemoryConfig(uint param_1)
   } while (iVar7 != 0);
   if (qadc_init_done_flag._0_1_ != '\0') {
     if (bVar1) {
-      mbar_qadc64a_port = 0;
+      CMFTST_A = 0;
     }
     if (bVar2) {
-      mbar_qadc64b_port = 0;
+      CMFTST_B = 0;
     }
   }
   if (bVar1) {
-    mbar_qadc64a_ccw = uVar8 | qadc_channel_config_mask | 4;
+    CMFCTL_A = uVar8 | cmf_erase_control_bits | 4;
   }
   if (bVar2) {
-    mbar_qadc64b_ccw = uVar9 | qadc_channel_config_mask | 4;
+    CMFCTL_B = uVar9 | cmf_erase_control_bits | 4;
   }
   return iVar7 == 0;
 }
@@ -3869,23 +3906,29 @@ void mpc555_dispatchCanMessageHandlers(void)
 
 
 //
-// Function: mpc555_processAdcConversionResult @ 0x00005400
+// Function: cm848_writeDiagMemory @ 0x00005400
 //
 
-byte mpc555_processAdcConversionResult(dword param_1,uint param_2,uint param_3)
+/* Boot reflash kernel: shared worker for memory-write services 68/69/75/77: caps length at 1764 /
+   accepts an optional 10-byte auth trailer / cm848_lookupMemoryRegionType then writes by region: 0
+   RAM copy / 2 Bank-2 flash via flash2_write_callback / 3 registers (auth then copy) / 4 main flash
+   via cm848_dataTransferBufferWrite / 5 EEPROM (auth unless blank then eeprom_write_callback) |
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
+    */
+
+byte cm848_writeDiagMemory(dword param_1,uint param_2,uint param_3)
 
 {
   bool bVar1;
   uint uVar2;
-  int iVar3;
-  dword dVar4;
-  code *pcVar5;
-  uint uVar6;
-  byte bVar8;
-  char cVar9;
-  short sVar7;
-  uint uVar10;
-  int iVar11;
+  dword dVar3;
+  code *pcVar4;
+  uint uVar5;
+  byte bVar7;
+  char cVar8;
+  short sVar6;
+  uint uVar9;
+  int iVar10;
   ushort local_20 [4];
   
   eeprom_xfer_state.transfer_timer = 0x4b;
@@ -3893,93 +3936,93 @@ byte mpc555_processAdcConversionResult(dword param_1,uint param_2,uint param_3)
     return 2;
   }
   local_20[0] = (ushort)param_3;
-  uVar6 = cm848_getServiceDataOffset(**(undefined1 **)(param_1 + 6));
-  uVar2 = (uVar6 & 0xff) + (uint)local_20[0] & 0xffff;
-  uVar10 = (uint)*(ushort *)(param_1 + 4);
-  if ((uVar10 == 8) || (uVar10 == uVar2)) {
+  uVar5 = cm848_getServiceDataOffset(**(undefined1 **)(param_1 + 6));
+  uVar2 = (uVar5 & 0xff) + (uint)local_20[0] & 0xffff;
+  uVar9 = (uint)*(ushort *)(param_1 + 4);
+  if ((uVar9 == 8) || (uVar9 == uVar2)) {
     bVar1 = false;
   }
   else {
-    if (uVar2 + 10 != uVar10) {
+    if (uVar2 + 10 != uVar9) {
       return 2;
     }
     bVar1 = true;
   }
-  iVar11 = *(int *)(param_1 + 6) + (uVar6 & 0xff);
-  bVar8 = cm848_sensorFaultThresholdCheck(param_2,(uint)local_20[0]);
-  if (3 < bVar8) {
-    if (bVar8 != 4) {
-      if (bVar8 != 5) {
-        return bVar8;
+  iVar10 = *(int *)(param_1 + 6) + (uVar5 & 0xff);
+  bVar7 = cm848_lookupMemoryRegionType(param_2,(uint)local_20[0]);
+  if (3 < bVar7) {
+    if (bVar7 != 4) {
+      if (bVar7 != 5) {
+        return bVar7;
       }
       if (eeprom_shadow_header.version_marker != 0xff) {
         if (!bVar1) {
           return 0x1a;
         }
-        cVar9 = cm848_validateWriteAuth(*(int *)(param_1 + 6) + (uVar6 & 0xff) + (uint)local_20[0]);
-        if (cVar9 != '\0') {
+        cVar8 = cm848_validateWriteAuth(*(int *)(param_1 + 6) + (uVar5 & 0xff) + (uint)local_20[0]);
+        if (cVar8 != '\0') {
           return 3;
         }
       }
-      iVar3 = adc_trigger_t_003024f4._4_4_;
-      if ((iVar3 == 1) &&
-         (bVar8 = mpc555_sensorAcquisitionCycle(iVar11,param_2,local_20,2), bVar8 != 0xff)) {
-        return bVar8;
+      dVar3 = diag_write_request_state.address_mode;
+      if ((dVar3 == 1) &&
+         (bVar7 = cm848_trackDownloadBlock(iVar10,param_2,local_20,2), bVar7 != 0xff)) {
+        return bVar7;
       }
-      mpc555_processSensorWithOverride(param_1,10);
-      pcVar5 = (code *)eeprom_xfer_state.write_callback_ptr;
-      (*pcVar5)(iVar11,param_2,local_20[0]);
+      cm848_sendDiagResponsePending(param_1,10);
+      pcVar4 = (code *)eeprom_xfer_state.eeprom_write_callback;
+      (*pcVar4)(iVar10,param_2,local_20[0]);
       return 0;
     }
-    bVar8 = mpc555_sensorAcquisitionCycle(iVar11,param_2,local_20,2);
-    if (bVar8 != 0xff) {
-      return bVar8;
+    bVar7 = cm848_trackDownloadBlock(iVar10,param_2,local_20,2);
+    if (bVar7 != 0xff) {
+      return bVar7;
     }
     if ((param_2 & 1) != 0) {
       return 0x11;
     }
-    dVar4 = eeprom_xfer_state.bytes_transferred;
-    cVar9 = cm848_dataTransferBufferWrite(iVar11,param_2,local_20[0],dVar4 == 0,1);
-    if (cVar9 == '\x01') {
+    dVar3 = eeprom_xfer_state.bytes_transferred;
+    cVar8 = cm848_dataTransferBufferWrite(iVar10,param_2,local_20[0],dVar3 == 0,1);
+    if (cVar8 == '\x01') {
       return 0x11;
     }
-    if (cVar9 == '\0') {
+    if (cVar8 == '\0') {
       return 0;
     }
-    mpc555_processSensorWithOverride(param_1,10);
-    adc_trigger_t_003024f4.sensor_param_ptr = param_1;
+    cm848_sendDiagResponsePending(param_1,10);
+    diag_write_request_state.pending_request = param_1;
     return 0xff;
   }
-  if (bVar8 == 3) {
+  if (bVar7 == 3) {
     if (eeprom_shadow_header.version_marker != 0xff) {
       if (!bVar1) {
         return 3;
       }
-      cVar9 = cm848_validateWriteAuth(*(int *)(param_1 + 6) + (uVar6 & 0xff) + (uint)local_20[0]);
-      if (cVar9 != '\0') {
+      cVar8 = cm848_validateWriteAuth(*(int *)(param_1 + 6) + (uVar5 & 0xff) + (uint)local_20[0]);
+      if (cVar8 != '\0') {
         return 3;
       }
     }
   }
-  else if (bVar8 != 0) {
-    if (bVar8 != 2) {
-      return bVar8;
+  else if (bVar7 != 0) {
+    if (bVar7 != 2) {
+      return bVar7;
     }
-    bVar8 = mpc555_sensorAcquisitionCycle(iVar11,param_2,local_20,2);
-    if (bVar8 != 0xff) {
-      return bVar8;
+    bVar7 = cm848_trackDownloadBlock(iVar10,param_2,local_20,2);
+    if (bVar7 != 0xff) {
+      return bVar7;
     }
     if ((param_2 & 1) != 0) {
       return 0x11;
     }
-    pcVar5 = (code *)eeprom_xfer_state.read_callback_ptr;
-    sVar7 = (*pcVar5)(iVar11,param_2,local_20[0]);
-    if (sVar7 == 0) {
+    pcVar4 = (code *)eeprom_xfer_state.flash2_write_callback;
+    sVar6 = (*pcVar4)(iVar10,param_2,local_20[0]);
+    if (sVar6 == 0) {
       return 0x11;
     }
     return 0;
   }
-  cm848_sensorInputProcessing(param_2,iVar11,local_20[0]);
+  cm848_copyBytes(param_2,iVar10,local_20[0]);
   return 0;
 }
 
@@ -4007,8 +4050,8 @@ cm848_memoryWriteByParameterId(undefined4 param_1,word param_2,int param_3,undef
     uVar2 = 8;
   }
   else {
-    adc_trigger_t_003024f4._4_4_ = 0;
-    uVar2 = mpc555_processAdcConversionResult(param_1,iVar1 + param_3,param_4);
+    diag_write_request_state.address_mode = 0;
+    uVar2 = cm848_writeDiagMemory(param_1,iVar1 + param_3,param_4);
   }
   return uVar2;
 }
@@ -4031,7 +4074,7 @@ undefined1 cm848_diagService68_memoryWriteByParameterId(int param_1)
   undefined2 local_10 [2];
   uint local_c;
   
-  cm848_sensorInputProcessing(local_10,*(int *)(param_1 + 6) + 1,2);
+  cm848_copyBytes(local_10,*(int *)(param_1 + 6) + 1,2);
   local_c = (uint)*(byte *)(*(int *)(param_1 + 6) + 3);
   uVar1 = cm848_memoryWriteByParameterId(param_1,local_10[0],0,local_c);
   return uVar1;
@@ -4054,8 +4097,8 @@ undefined1 cm848_diagService69_memoryWriteByParameterIdExt(int param_1)
   undefined2 local_10 [2];
   undefined4 local_c [2];
   
-  cm848_sensorInputProcessing(local_10,*(int *)(param_1 + 6) + 1,2);
-  cm848_sensorInputProcessing(local_c,*(int *)(param_1 + 6) + 3,4);
+  cm848_copyBytes(local_10,*(int *)(param_1 + 6) + 1,2);
+  cm848_copyBytes(local_c,*(int *)(param_1 + 6) + 3,4);
   uVar1 = cm848_memoryWriteByParameterId(param_1,local_10[0],0,local_c[0]);
   return uVar1;
 }
@@ -4078,10 +4121,10 @@ undefined1 cm848_diagService75_memoryWrite(int param_1)
   undefined4 local_10;
   uint local_c;
   
-  cm848_sensorInputProcessing(&local_10,*(int *)(param_1 + 6) + 1,4);
+  cm848_copyBytes(&local_10,*(int *)(param_1 + 6) + 1,4);
   local_c = (uint)*(byte *)(*(int *)(param_1 + 6) + 5);
-  adc_trigger_t_003024f4._4_4_ = 1;
-  uVar1 = mpc555_processAdcConversionResult(param_1,local_10,local_c);
+  diag_write_request_state.address_mode = 1;
+  uVar1 = cm848_writeDiagMemory(param_1,local_10,local_c);
   return uVar1;
 }
 
@@ -4103,10 +4146,10 @@ undefined1 cm848_diagService77_memoryWriteExt(int param_1)
   undefined4 local_10;
   undefined4 local_c [2];
   
-  cm848_sensorInputProcessing(&local_10,*(int *)(param_1 + 6) + 1,4);
-  cm848_sensorInputProcessing(local_c,*(int *)(param_1 + 6) + 5,4);
-  adc_trigger_t_003024f4._4_4_ = 1;
-  uVar1 = mpc555_processAdcConversionResult(param_1,local_10,local_c[0]);
+  cm848_copyBytes(&local_10,*(int *)(param_1 + 6) + 1,4);
+  cm848_copyBytes(local_c,*(int *)(param_1 + 6) + 5,4);
+  diag_write_request_state.address_mode = 1;
+  uVar1 = cm848_writeDiagMemory(param_1,local_10,local_c[0]);
   return uVar1;
 }
 
@@ -4346,10 +4389,14 @@ void mpc555_handleJ1939QueueRequest(byte request_type,byte connection_id)
 
 
 //
-// Function: mpc555_processAdcChannelGroup @ 0x00005cf4
+// Function: mpc555_sendJ1939TransportAbort @ 0x00005cf4
 //
 
-void mpc555_processAdcChannelGroup(undefined1 param_1,undefined2 param_2)
+/* Boot reflash kernel: sends a J1939 TP.CM connection abort (CAN ID 0x18EC + destination; data FF
+   FF FF FF FF + PGN) | review-function-readability reviewed 2026-11-11 - Readability Medium
+   Accuracy Confidence Medium */
+
+void mpc555_sendJ1939TransportAbort(undefined1 param_1,undefined2 param_2)
 
 {
   can_rx_channel_t cVar1;
@@ -4490,7 +4537,7 @@ void mpc555_handleJ1939DataRequest(j1939_rx_msg_t *rx_msg)
   bVar4 = qadc_a_pause_status;
   if ((((bVar4 == 1) && (bVar4 = j1939_tp_pause_state.pause_data._3_1_, bVar4 != bVar1)) ||
       (pbVar5[6] != 0xef)) || (0x410 < local_24)) {
-    mpc555_processAdcChannelGroup(bVar1,local_28);
+    mpc555_sendJ1939TransportAbort(bVar1,local_28);
   }
   else {
     qadc_a_pause_status = 1;
@@ -4512,7 +4559,7 @@ void mpc555_handleJ1939DataRequest(j1939_rx_msg_t *rx_msg)
     cVar3 = mpc555_sendDiagAcknowledgeFrame(bVar1,1);
     if (cVar3 != '\0') {
       wVar2 = j1939_tp_pause_state.pause_pgn;
-      mpc555_processAdcChannelGroup(bVar1,wVar2);
+      mpc555_sendJ1939TransportAbort(bVar1,wVar2);
       qadc_a_pause_status = 0;
     }
   }
@@ -4607,7 +4654,7 @@ void mpc555_handleJ1939DataTransfer(j1939_rx_msg_t *rx_msg)
       cVar7 = mpc555_sendDiagAcknowledgeFrame(dest_address,uVar3,uVar4,wVar11);
       if (cVar7 != '\0') {
         wVar11 = j1939_tp_pause_state.pause_pgn;
-        mpc555_processAdcChannelGroup(dest_address,wVar11);
+        mpc555_sendJ1939TransportAbort(dest_address,wVar11);
         qadc_a_pause_status = 0;
       }
     }
@@ -4882,10 +4929,14 @@ undefined * mpc555_initDiagnosticBuffers(int param_1)
 
 
 //
-// Function: cm848_updateSystemTimers @ 0x00006580
+// Function: mpc555_sciSendServiceResponse @ 0x00006580
 //
 
-void cm848_updateSystemTimers(byte param_1,int param_2)
+/* Boot reflash kernel: serial diagnostic response: 0x51 (ECUReset positive) / 0x74 (RequestDownload
+   positive) / otherwise 0x7F negative + service + code | review-function-readability reviewed
+   2026-11-11 - Readability Medium Accuracy Confidence Medium */
+
+void mpc555_sciSendServiceResponse(byte param_1,int param_2)
 
 {
   if (param_2 == 0x51) {
@@ -4951,7 +5002,7 @@ void mpc555_diagnosticSubcommandDispatcher(byte subcommand,byte *data_ptr)
       return;
     }
     if (eeprom_diag_state != EEPROM_DIAG_WRITE_DISPATCH) {
-      cm848_updateSystemTimers(0x12,0x7f);
+      mpc555_sciSendServiceResponse(0x12,0x7f);
       diag_request_pending_flag = 0;
       return;
     }
@@ -4971,7 +5022,7 @@ void mpc555_diagnosticSubcommandDispatcher(byte subcommand,byte *data_ptr)
   else {
     uVar2 = 0x11;
   }
-  cm848_updateSystemTimers(uVar2,0x7f);
+  mpc555_sciSendServiceResponse(uVar2,0x7f);
   diag_request_pending_flag = 0;
   return;
 }
@@ -5198,10 +5249,14 @@ undefined4 mpc555_updateSensorDiagnostics(void)
 
 
 //
-// Function: cm848_sensorInputProcessing @ 0x00006bac
+// Function: cm848_copyBytes @ 0x00006bac
 //
 
-void cm848_sensorInputProcessing(int param_1,int param_2,int param_3)
+/* Byte copy (destination / source / count) - a plain memcpy used throughout the boot reflash kernel
+   | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+    */
+
+void cm848_copyBytes(int param_1,int param_2,int param_3)
 
 {
   undefined1 *puVar1;
@@ -5350,7 +5405,7 @@ void cm848_dispatchDiagnosticService(byte service_code,byte *data_ptr,word data_
     }
   }
   if (cVar3 != -1) {
-    cm848_processSensorFilterChain(iVar2,cVar3);
+    cm848_sendDiagServiceResponse(iVar2,cVar3);
   }
   return;
 }
@@ -5365,14 +5420,14 @@ void cm848_sendEepromVersionResponse(void)
 
 {
   if (eeprom_calibration_pending_flag == 1) {
-    cm848_updateSystemTimers(0x78,0x74);
+    mpc555_sciSendServiceResponse(0x78,0x74);
   }
   else if ((((diag_session_state_byte == 2) || (diag_session_state_byte == 0x61)) ||
            (diag_session_state_byte == 0x73)) || (diag_session_state_byte == 0x78)) {
-    cm848_updateSystemTimers(diag_session_state_byte,0x74);
+    mpc555_sciSendServiceResponse(diag_session_state_byte,0x74);
   }
   else {
-    cm848_updateSystemTimers(diag_session_state_byte,0x7f);
+    mpc555_sciSendServiceResponse(diag_session_state_byte,0x7f);
     diag_session_state_byte = 0x73;
   }
   return;
@@ -5397,7 +5452,7 @@ void mpc555_handleEepromDiagnosticResponse(void)
       ram0x003fedfd = 0;
       ram0x003fee01 = _eeprom_write_request_type;
       eeprom_xfer_state.block_length = _eeprom_block_length_cal;
-      cVar2 = cm848_sensorFaultThresholdCheck(_eeprom_write_request_type,1);
+      cVar2 = cm848_lookupMemoryRegionType(_eeprom_write_request_type,1);
       if (cVar2 != '\t') {
         uVar1 = 0x73;
         goto LAB_00006f3c;
@@ -5407,12 +5462,12 @@ void mpc555_handleEepromDiagnosticResponse(void)
     else {
       uVar1 = 0x22;
     }
-    cm848_updateSystemTimers(uVar1,0x7f);
+    mpc555_sciSendServiceResponse(uVar1,0x7f);
   }
   else {
     uVar1 = 0x78;
 LAB_00006f3c:
-    cm848_updateSystemTimers(uVar1,0x74);
+    mpc555_sciSendServiceResponse(uVar1,0x74);
   }
   return;
 }
@@ -5438,7 +5493,7 @@ void mpc555_processEepromDataTransfer(void)
   
   local_30[0] = 0;
   if (eeprom_calibration_pending_flag != 0) {
-    cm848_updateSystemTimers(0x78,0x74);
+    mpc555_sciSendServiceResponse(0x78,0x74);
     return;
   }
   local_30[0] = (ushort)eeprom_write_request_type;
@@ -5447,8 +5502,8 @@ void mpc555_processEepromDataTransfer(void)
   if ((eeprom_write_request_type < 0xfb) && ((register0x00000010 & 1) == 0)) {
     dVar2 = eeprom_xfer_state.block_length;
     if (dVar1 <= dVar2) {
-      cVar5 = mpc555_sensorAcquisitionCycle(&DAT_003fecf3,register0x00000010,local_30,3);
-      sensor_fault_threshold_state = cm848_sensorFaultThresholdCheck(ram0x003fee01,local_30[0]);
+      cVar5 = cm848_trackDownloadBlock(&DAT_003fecf3,register0x00000010,local_30,3);
+      sensor_fault_threshold_state = cm848_lookupMemoryRegionType(ram0x003fee01,local_30[0]);
       if (cVar5 != -1) {
         uVar6 = 0x74;
         goto LAB_000071c8;
@@ -5456,16 +5511,16 @@ void mpc555_processEepromDataTransfer(void)
       if ((sensor_fault_threshold_state == 2) || (sensor_fault_threshold_state == 4)) {
         diag_request_pending_flag = 0;
         if (sensor_fault_threshold_state != 4) {
-          pcVar3 = (code *)eeprom_xfer_state.read_callback_ptr;
+          pcVar3 = (code *)eeprom_xfer_state.flash2_write_callback;
           sVar4 = (*pcVar3)(&DAT_003fecf3,ram0x003fedfd,local_30[0]);
           if (sVar4 == 0) {
             eeprom_calibration_pending_flag = 0;
-            cm848_updateSystemTimers(0x40,0x7f);
+            mpc555_sciSendServiceResponse(0x40,0x7f);
             diag_session_state_byte = 0x40;
             return;
           }
 LAB_00007110:
-          cm848_updateSystemTimers(0x78,0x74);
+          mpc555_sciSendServiceResponse(0x78,0x74);
           diag_session_state_byte = 0x73;
           return;
         }
@@ -5482,12 +5537,12 @@ LAB_00007110:
       else if (sensor_fault_threshold_state == 5) {
         eeprom_calibration_pending_flag = 1;
         DAT_003fee06 = 1;
-        cm848_updateSystemTimers(0x78,0x74);
+        mpc555_sciSendServiceResponse(0x78,0x74);
         while (diag_serial_transfer_phase == 3) {
           mpc555_sciPollDuringEepromWrite();
         }
         diag_request_pending_flag = 0;
-        pcVar3 = (code *)eeprom_xfer_state.write_callback_ptr;
+        pcVar3 = (code *)eeprom_xfer_state.eeprom_write_callback;
         (*pcVar3)(&DAT_003fecf3,unique0x10000152 - 0x1000000,local_30[0]);
         eeprom_calibration_pending_flag = 0;
         diag_session_state_byte = 0x73;
@@ -5495,12 +5550,12 @@ LAB_00007110:
         return;
       }
     }
-    cm848_updateSystemTimers(0x40,0x7f);
+    mpc555_sciSendServiceResponse(0x40,0x7f);
   }
   else {
     uVar6 = 0x79;
 LAB_000071c8:
-    cm848_updateSystemTimers(uVar6,0x7f);
+    mpc555_sciSendServiceResponse(uVar6,0x7f);
   }
   return;
 }
@@ -5661,10 +5716,15 @@ undefined4 cm848_validateWriteAuth(undefined4 scrambled_token)
 
 
 //
-// Function: cm848_processSensorFilterChain @ 0x000074a0
+// Function: cm848_sendDiagServiceResponse @ 0x000074a0
 //
 
-void cm848_processSensorFilterChain(byte *param_1,uint param_2)
+/* Boot reflash kernel: sends the J1939 PGN 61184 diagnostic response to the requester: result 0 ->
+   0x0C positive / 0xFE -> 0x0E pending + wait time / else 0x0D + code; echoes the request service
+   bytes | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence
+   High */
+
+void cm848_sendDiagServiceResponse(byte *param_1,uint param_2)
 
 {
   byte bVar1;
@@ -5731,14 +5791,17 @@ LAB_000074f8:
 
 
 //
-// Function: mpc555_processSensorWithOverride @ 0x000075dc
+// Function: cm848_sendDiagResponsePending @ 0x000075dc
 //
 
-void mpc555_processSensorWithOverride(undefined4 param_1,word param_2)
+/* Boot reflash kernel: stores the wait time and sends a 0x0E response-pending for the request |
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+
+void cm848_sendDiagResponsePending(undefined4 param_1,word param_2)
 
 {
   boot_state_machine.boot_param = param_2;
-  cm848_processSensorFilterChain(param_1,0xfe);
+  cm848_sendDiagServiceResponse(param_1,0xfe);
   return;
 }
 
@@ -5795,46 +5858,55 @@ void mpc555_watchdogTimerTick_midEntry(void)
 
 
 //
-// Function: cm848_sensorFaultThresholdCheck @ 0x000076c8
+// Function: cm848_lookupMemoryRegionType @ 0x000076c8
 //
 
-char cm848_sensorFaultThresholdCheck(uint param_1,int param_2)
+/* Boot reflash kernel: finds the memory_region_table entry (6 x {start / end / type}) that wholly
+   contains address..address+length-1; returns its type (0 RAM / 2 Bank-2 flash only when
+   flash2_writes_enabled / 3 registers / 4 main flash / 5 EEPROM) or 9 when not writable |
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+
+byte cm848_lookupMemoryRegionType(uint param_1,int param_2)
 
 {
   uint uVar1;
-  uint *puVar2;
+  memory_region_t *pmVar2;
   byte bVar3;
   
   uVar1 = (param_1 + param_2) - 1;
   if (param_1 <= uVar1) {
-    puVar2 = &DAT_003f9830;
+    pmVar2 = &memory_region_table;
     bVar3 = 0;
     do {
-      if ((*puVar2 <= param_1) && (uVar1 <= puVar2[1])) {
-        if (*(char *)(puVar2 + 2) != '\x02') {
-          return *(char *)(puVar2 + 2);
+      if ((pmVar2->start_address <= param_1) && (uVar1 <= pmVar2->end_address)) {
+        if (pmVar2->region_type != 2) {
+          return pmVar2->region_type;
         }
-        bVar3 = qadc_a_result_low;
+        bVar3 = flash2_writes_enabled;
         if (bVar3 == 0) {
-          return '\t';
+          return 9;
         }
-        return '\x02';
+        return 2;
       }
-      puVar2 = (uint *)((int)puVar2 + 10);
+      pmVar2 = pmVar2 + 1;
       bVar3 = bVar3 + 1;
     } while (bVar3 < 6);
   }
-  return '\t';
+  return 9;
 }
 
 
 
 //
-// Function: mpc555_sensorAcquisitionCycle @ 0x00007740
+// Function: cm848_trackDownloadBlock @ 0x00007740
 //
 
-undefined1
-mpc555_sensorAcquisitionCycle(undefined4 param_1,dword param_2,ushort *param_3,int param_4)
+/* Boot reflash kernel: download block bookkeeping: rejects out-of-sequence addresses (9) / skips a
+   repeated write (0xff) / counts bytes against block_length and feeds the data to
+   cm848_updateDownloadCrc | review-function-readability reviewed 2026-11-11 - Readability Medium
+   Accuracy Confidence Medium */
+
+undefined1 cm848_trackDownloadBlock(undefined4 param_1,dword param_2,ushort *param_3,int param_4)
 
 {
   dword dVar1;
@@ -5879,7 +5951,7 @@ mpc555_sensorAcquisitionCycle(undefined4 param_1,dword param_2,ushort *param_3,i
           return 9;
         }
       }
-      uVar4 = mpc555_processTransferCrc(param_1,*param_3,param_4);
+      uVar4 = cm848_updateDownloadCrc(param_1,*param_3,param_4);
     }
   }
   return uVar4;
@@ -5888,10 +5960,15 @@ mpc555_sensorAcquisitionCycle(undefined4 param_1,dword param_2,ushort *param_3,i
 
 
 //
-// Function: mpc555_validateTransferBlockParams @ 0x00007840
+// Function: cm848_finishDownloadBlock @ 0x00007840
 //
 
-undefined4 mpc555_validateTransferBlockParams(word *param_1)
+/* Boot reflash kernel: at block end compares the trailing CRC with the running CRC (0x14 =
+   mismatch) and records the block start/end in a 10-entry list (0x15 = full) |
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
+    */
+
+undefined4 cm848_finishDownloadBlock(word *param_1)
 
 {
   word wVar1;
@@ -5925,10 +6002,14 @@ undefined4 mpc555_validateTransferBlockParams(word *param_1)
 
 
 //
-// Function: mpc555_processTransferCrc @ 0x000078d0
+// Function: cm848_updateDownloadCrc @ 0x000078d0
 //
 
-undefined1 mpc555_processTransferCrc(byte *param_1,uint param_2,int param_3)
+/* Boot reflash kernel: table-driven CRC16 over downloaded bytes into
+   ecu_power_state_flags.transfer_crc; finishes the block when bytes_transferred wraps to 0 |
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+
+undefined1 cm848_updateDownloadCrc(byte *param_1,uint param_2,int param_3)
 
 {
   byte *pbVar1;
@@ -5950,7 +6031,7 @@ undefined1 mpc555_processTransferCrc(byte *param_1,uint param_2,int param_3)
   }
   dVar3 = eeprom_xfer_state.bytes_transferred;
   if ((dVar3 == 0) && (param_3 != 3)) {
-    uVar4 = mpc555_validateTransferBlockParams(param_1);
+    uVar4 = cm848_finishDownloadBlock(param_1);
   }
   else {
     uVar4 = 0xff;
@@ -5973,18 +6054,18 @@ void mpc555_systemWatchdogReset(void)
   wVar1 = mios_mmcsm_cnt.CNT;
   if (0x222 < (ushort)(wVar1 - tpu3_timer_capture_value)) {
     qsmcm_qspi.SPCR2 = 0x500;
-    eeprom_command_register.TX0 = (byte)(&DAT_003f989c)[injector_sequence_index] | 0xe000;
-    eeprom_timing_reg_0 = 0x5d;
-    eeprom_command_register.TX1 = (byte)(&DAT_003f988c)[injector_sequence_index] | 0xe000;
-    eeprom_timing_reg_1 = 0x5d;
-    eeprom_command_register.TX2 = (byte)(&DAT_003f987c)[injector_sequence_index] | 0xe000;
-    eeprom_timing_reg_2 = 0x5d;
-    eeprom_command_register.TX3 = (byte)(&DAT_003f986c)[injector_sequence_index] | 0xe000;
-    eeprom_timing_reg_3 = 0x5d;
-    eeprom_command_register.TX4 = 0xf200;
-    eeprom_timing_reg_4 = 0x5d;
-    eeprom_command_register.TX5 = 0xf400;
-    eeprom_timing_reg_5 = 0x5d;
+    qsmcm_tranram.TX0 = (byte)(&DAT_003f989c)[injector_sequence_index] | 0xe000;
+    qsmcm_comdram_0 = 0x5d;
+    qsmcm_tranram.TX1 = (byte)(&DAT_003f988c)[injector_sequence_index] | 0xe000;
+    qsmcm_comdram_1 = 0x5d;
+    qsmcm_tranram.TX2 = (byte)(&DAT_003f987c)[injector_sequence_index] | 0xe000;
+    qsmcm_comdram_2 = 0x5d;
+    qsmcm_tranram.TX3 = (byte)(&DAT_003f986c)[injector_sequence_index] | 0xe000;
+    qsmcm_comdram_3 = 0x5d;
+    qsmcm_tranram.TX4 = 0xf200;
+    qsmcm_comdram_4 = 0x5d;
+    qsmcm_tranram.TX5 = 0xf400;
+    qsmcm_comdram_5 = 0x5d;
     wVar1 = qsmcm_qspi.SPCR1;
     qsmcm_qspi.SPCR1 = wVar1 | 0x8000;
     do {
@@ -6029,16 +6110,16 @@ void mpc555_initQspiHardware(void)
   qsmcm_qspi.SPCR2 = 0x400;
   wVar4 = mios_mmcsm_cnt.CNT;
   do {
-    eeprom_command_register.TX0 = 0x1400;
-    eeprom_timing_reg_0 = 0x5d;
-    eeprom_command_register.TX1 = 0x181e;
-    eeprom_timing_reg_1 = 0x5d;
-    eeprom_command_register.TX2 = 0xf200;
-    eeprom_timing_reg_2 = 0x5d;
-    eeprom_command_register.TX3 = 0xc214;
-    eeprom_timing_reg_3 = 0x5d;
-    eeprom_command_register.TX4 = 0x4200;
-    eeprom_timing_reg_4 = 0x5d;
+    qsmcm_tranram.TX0 = 0x1400;
+    qsmcm_comdram_0 = 0x5d;
+    qsmcm_tranram.TX1 = 0x181e;
+    qsmcm_comdram_1 = 0x5d;
+    qsmcm_tranram.TX2 = 0xf200;
+    qsmcm_comdram_2 = 0x5d;
+    qsmcm_tranram.TX3 = 0xc214;
+    qsmcm_comdram_3 = 0x5d;
+    qsmcm_tranram.TX4 = 0x4200;
+    qsmcm_comdram_4 = 0x5d;
     wVar3 = qsmcm_qspi.SPCR1;
     qsmcm_qspi.SPCR1 = wVar3 | 0x8000;
     do {
@@ -6067,16 +6148,16 @@ void mpc555_initQspiHardware(void)
     *pwVar6 = 0x100;
     if (((in_DER == 0x2002000f) && (bus_hardware_status_byte._0_2_ == 0)) &&
        (tpu3_channel_status_count == 0)) {
-      eeprom_command_register.TX0 = 0x1440;
+      qsmcm_tranram.TX0 = 0x1440;
       bus_hardware_status_byte._2_2_ = 0;
     }
     else {
-      eeprom_command_register.TX0 = 0x1400;
+      qsmcm_tranram.TX0 = 0x1400;
       bus_hardware_status_byte._2_2_ = 1;
     }
-    eeprom_timing_reg_0 = 0x5d;
-    eeprom_command_register.TX1 = 0xf200;
-    eeprom_timing_reg_1 = 0x5d;
+    qsmcm_comdram_0 = 0x5d;
+    qsmcm_tranram.TX1 = 0xf200;
+    qsmcm_comdram_1 = 0x5d;
     wVar4 = qsmcm_qspi.SPCR1;
     qsmcm_qspi.SPCR1 = wVar4 | 0x8000;
     do {
@@ -6111,10 +6192,10 @@ void mpc555_systemHaltLoop(void)
   qsmcm_qspi.SPCR0 = 0x800a;
   qsmcm_portqs_low = 0x7b;
   qsmcm_qspi.SPCR2 = 0x100;
-  eeprom_command_register.TX0 = 0x1440;
-  eeprom_timing_reg_0 = 0x5d;
-  eeprom_command_register.TX1 = 0x1801;
-  eeprom_timing_reg_1 = 0x5d;
+  qsmcm_tranram.TX0 = 0x1440;
+  qsmcm_comdram_0 = 0x5d;
+  qsmcm_tranram.TX1 = 0x1801;
+  qsmcm_comdram_1 = 0x5d;
   wVar2 = qsmcm_qspi.SPCR1;
   qsmcm_qspi.SPCR1 = wVar2 | 0x8000;
   do {
@@ -6126,16 +6207,16 @@ void mpc555_systemHaltLoop(void)
   qsmcm_qspi.SPCR2 = 0x400;
   do {
     uVar4 = uVar4 + 1;
-    eeprom_command_register.TX0 = 0xe000;
-    eeprom_timing_reg_0 = 0x5d;
-    eeprom_command_register.TX1 = 0xe000;
-    eeprom_timing_reg_1 = 0x5d;
-    eeprom_command_register.TX2 = 0xe000;
-    eeprom_timing_reg_2 = 0x5d;
-    eeprom_command_register.TX3 = 0xe000;
-    eeprom_timing_reg_3 = 0x5d;
-    eeprom_command_register.TX4 = 0xf200;
-    eeprom_timing_reg_4 = 0x5d;
+    qsmcm_tranram.TX0 = 0xe000;
+    qsmcm_comdram_0 = 0x5d;
+    qsmcm_tranram.TX1 = 0xe000;
+    qsmcm_comdram_1 = 0x5d;
+    qsmcm_tranram.TX2 = 0xe000;
+    qsmcm_comdram_2 = 0x5d;
+    qsmcm_tranram.TX3 = 0xe000;
+    qsmcm_comdram_3 = 0x5d;
+    qsmcm_tranram.TX4 = 0xf200;
+    qsmcm_comdram_4 = 0x5d;
     wVar2 = qsmcm_qspi.SPCR1;
     qsmcm_qspi.SPCR1 = wVar2 | 0x8000;
     do {

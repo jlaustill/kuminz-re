@@ -1,7 +1,7 @@
 address,name,type,comment
-0x00003c30,calibration_rom_start,dword,
+0x00003c30,boot_kernel_rom_start,dword,Start of the boot reflash kernel image copied to RAM 0x3f9800
 0x000059b4,switchD,,
-0x00007f60,calibration_rom_end,byte,
+0x00007f60,boot_kernel_rom_end,byte,End of the boot reflash kernel image
 0x00007f7b,eepromStatusHandler_ptr0,pointer,
 0x00007f80,PTR_FUN_00007f80,byte,
 0x00008104,PTR_DAT_00008104,pointer,
@@ -222,12 +222,12 @@ address,name,type,comment
 0x002fc384,USIU_PLPRCK,byte,
 0x002fc388,USIU_RSRK,byte,
 0x002fc38c,USIU_RTCAL,byte,
-0x002fc800,mbar_qadc64a_mcr,dword,
-0x002fc804,mbar_qadc64a_port,dword,
-0x002fc808,mbar_qadc64a_ccw,dword,
-0x002fc840,mbar_qadc64b_mcr,dword,
-0x002fc844,mbar_qadc64b_port,dword,
-0x002fc848,mbar_qadc64b_ccw,dword,
+0x002fc800,CMFMCR_A,dword,MPC555 CMF flash module A module configuration register (was mislabeled QADC64)
+0x002fc804,CMFTST_A,dword,MPC555 CMF flash module A test register (was mislabeled QADC64)
+0x002fc808,CMFCTL_A,dword,MPC555 CMF flash module A high-voltage control register (BLOCK / PE / SES / EHV) (was mislabeled QADC64)
+0x002fc840,CMFMCR_B,dword,MPC555 CMF flash module B module configuration register (was mislabeled QADC64)
+0x002fc844,CMFTST_B,dword,MPC555 CMF flash module B test register (was mislabeled QADC64)
+0x002fc848,CMFCTL_B,dword,MPC555 CMF flash module B high-voltage control register (was mislabeled QADC64)
 0x00300004,usiu_ext_004,,
 0x00302000,TPU3_TPUMCR,byte,
 0x00302002,ecu_power_state_flags,keyon_flags_t,
@@ -270,7 +270,7 @@ address,name,type,comment
 0x003024d6,qadc_a_queue1_wrap_flag,,
 0x003024d7,qadc_a_queue2_wrap_flag,,
 0x003024da,qadc_a_ccw_0.toucan_mb_ptr,,
-0x003024f4,adc_trigger_t_003024f4,adc_trigger_t,
+0x003024f4,diag_write_request_state,diag_write_request_state_t,
 0x003024f8,adc_trigger_t_003024f4.adc_scan_active,,
 0x00302510,can_mailbox_counter,can_slot_range_t,
 0x00302512,can_mailbox_counter.slot_end,,
@@ -278,7 +278,7 @@ address,name,type,comment
 0x0030252a,eeprom_diag_callback,eeprom_param_t,
 0x00302530,eeprom_diag_callback.default_value,,
 0x00302532,can_tx_status.callback_param,,
-0x00302731,qadc_a_result_low,byte,
+0x00302731,flash2_writes_enabled,byte,Nonzero allows diagnostic writes to Bank-2 flash 0x500000-0x5fffff (memory region type 2); otherwise those addresses report 9 = not writable
 0x00302736,sys_init_flags_t_00302736,sys_init_flags_t,
 0x00302738,sys_init_flags_t_00302736.init_counter,,
 0x00302877,eeprom_service_mode_flags,byte,EEPROM-programming service-mode flags byte. High bit 0x80 = in EEPROM mode; low nibble (& 0xf) gates special main-loop processing; whole-byte 0x81 routes main-loop dispatch to CAN handlers and 0x82 to the diagnostic handler (mpc555_processScheduledTasks/cm848_processMainLoop/cm848_dispatchDiagnosticService) - name covers the dispatch role not just diag. Renamed from qadc_a_result_high_1 (legacy mislabel - not analog data; real QADC-A results are at 0x304A80+). Peripheral/RAM region 0x302xxx so no _cal
@@ -504,18 +504,18 @@ address,name,type,comment
 0x00305144,qsmcm_recram_t_00305140.RX2,,
 0x00305148,qsmcm_recram_t_00305140.RX4,,
 0x0030514a,qsmcm_recram_t_00305140.RX5,,
-0x00305180,eeprom_command_register,qsmcm_txram_t,
+0x00305180,qsmcm_tranram,qsmcm_txram_t,QSPI transmit RAM (was eeprom_command_register)
 0x00305182,eeprom_address_register,,
 0x00305184,eeprom_data_register,,
 0x00305186,eeprom_command_register.TX3,,
 0x00305188,eeprom_command_register.TX4,,
 0x0030518a,eeprom_command_register.TX5,,
-0x003051c0,eeprom_timing_reg_0,byte,
-0x003051c1,eeprom_timing_reg_1,byte,
-0x003051c2,eeprom_timing_reg_2,byte,
-0x003051c3,eeprom_timing_reg_3,byte,
-0x003051c4,eeprom_timing_reg_4,byte,
-0x003051c5,eeprom_timing_reg_5,byte,
+0x003051c0,qsmcm_comdram_0,byte,QSPI command RAM entry 0 (was eeprom_timing_reg_0)
+0x003051c1,qsmcm_comdram_1,byte,QSPI command RAM entry 1 (was eeprom_timing_reg_1)
+0x003051c2,qsmcm_comdram_2,byte,QSPI command RAM entry 2 (was eeprom_timing_reg_2)
+0x003051c3,qsmcm_comdram_3,byte,QSPI command RAM entry 3 (was eeprom_timing_reg_3)
+0x003051c4,qsmcm_comdram_4,byte,QSPI command RAM entry 4 (was eeprom_timing_reg_4)
+0x003051c5,qsmcm_comdram_5,byte,QSPI command RAM entry 5 (was eeprom_timing_reg_5)
 0x00306000,MIOS_MPWMSM0_PERR,mios_mpwmsm_t,
 0x00306002,MIOS_MPWMSM0_PULR,,
 0x00306004,MIOS_MPWMSM0_CNTR,,
@@ -649,8 +649,7 @@ address,name,type,comment
 0x00307424,TOUCAN_B_IFLAG,byte,
 0x00307f80,toucan_can_ext_ctrl,word,
 0x003f9800,calibration_ram_start,undefined4,
-0x003f9834,PTR_DAT_003f9834,pointer,
-0x003f983a,PTR_flash2_command_register_003f983a,pointer,
+0x003f9830,memory_region_table,memory_region_t,Boot reflash kernel write-permission map (6 regions) - region 0 = main flash 0x0-0x6ffff type 4
 0x003f98ac,param_id_lookup_table,undefined2,
 0x003f98ae,PTR_DAT_003f98ae,pointer,
 0x003f98ba,PTR_s_060410_003f98ba,pointer,
@@ -2084,13 +2083,13 @@ address,name,type,comment
 0x003fdb9e,bus_hardware_status_byte+2,,
 0x003fdba0,tpu3_channel_status_snapshot,word,
 0x003fdba2,tpu3_rx5_capture_snapshot,word,
-0x003fdba4,qadc_init_done_flag,word,
+0x003fdba4,qadc_init_done_flag,word,TIME-SHARED RAM: during boot/reflash the CMF flash driver uses this as cmf test-step count (0 = CMFTST unused); the running application later reads it (protection_enable_state_machine / cm848_j1939BuildEngineStatusByte) - application meaning not yet reviewed, so the original name is kept
 0x003fdba5,qadc_init_done_flag+1,,
-0x003fdba6,qadc_data_accumulate_count,word,
-0x003fdba8,qadc_accumulate_count_cal,word,
-0x003fdbaa,qadc_mode_register_base,dword,
-0x003fdbae,qadc_channel_config_mask,dword,
-0x003fdbb2,qadc_control_word_cal,dword,
+0x003fdba6,cmf_erase_pulse_total,word,Boot reflash kernel: high-voltage pulses applied so far by mpc555_cmfEraseBlocks
+0x003fdba8,qadc_accumulate_count_cal,word,TIME-SHARED RAM: during boot/reflash the CMF erase routine uses this as the maximum erase pulse total; the running application later reads it (cm848_updateProtectionEnableFromInjectionState) - application meaning not yet reviewed, so the original name is kept
+0x003fdbaa,cmf_erase_control_base,dword,Boot reflash kernel: CMFCTL timing base for erase
+0x003fdbae,cmf_erase_control_bits,dword,Boot reflash kernel: extra CMFCTL bits ORed into every erase control write
+0x003fdbb2,qadc_control_word_cal,dword,TIME-SHARED RAM: during boot/reflash the CMF erase routine uses this as the per-step erase CMFTST value array; the running application later reads it (cm848_j1939BuildEngineStatusByte) - application meaning not yet reviewed, so the original name is kept
 0x003fdbb4,qadc_control_word_cal+2,,
 0x003fdbb6,qadc_control_word_b,dword,
 0x003fdbba,qadc_control_word_c,word,
@@ -2101,12 +2100,12 @@ address,name,type,comment
 0x003fdbce,qadc_control_word_h,word,
 0x003fdbcf,qadc_control_word_h+1,,
 0x003fdbd1,protection_override_flags,byte,
-0x003fdbd2,qadc_fault_bit_array,dword,
+0x003fdbd2,qadc_fault_bit_array,dword,TIME-SHARED RAM: during boot/reflash the CMF flash driver uses this as the high-voltage pulse step count (low half); the running application later reads it (cm848_protectionAlarmHandler / cm848_clearProtectionFault / cm848_protectionFlagManager) - application meaning not yet reviewed, so the original name is kept
 0x003fdbd4,qadc_fault_bit_array+2,,
-0x003fdbd6,qadc_channel_config_base,dword,
-0x003fdbda,qadc_channel_control_working,word,
+0x003fdbd6,cmf_control_base,dword,CMFCTL base value (timing bits) for flash program/erase
+0x003fdbda,cmf_control_pulse_value,word,CMFCTL value for the next pulse (block select | step bits | SES|EHV); written as a dword so it renders with _ (see qadc_result_array)
 0x003fdbdc,qadc_result_array,word,
-0x003fdbde,qadc_channel_config_mask_b,dword,
+0x003fdbde,cmf_control_step_bits,dword,Per-step CMFCTL bits (indexed by cmf_pulse_step_index)
 0x003fdbe2,qadc_channel_config_mask_c,dword,
 0x003fdbe6,qadc_channel_config_mask_d,dword,
 0x003fdbea,qadc_channel_config_mask_e,dword,
@@ -2114,7 +2113,7 @@ address,name,type,comment
 0x003fdbf2,qadc_channel_config_mask_g,dword,
 0x003fdbf6,qadc_channel_config_mask_h,dword,
 0x003fdbfa,qadc_channel_config_mask_i,dword,
-0x003fdbfe,qadc_queue_timing_config,dword,
+0x003fdbfe,qadc_queue_timing_config,dword,TIME-SHARED RAM: during boot/reflash the CMF flash driver uses this as the per-step CMFTST value array; the running application later reads it (cm848_checkProtectionModeFlags) - application meaning not yet reviewed, so the original name is kept
 0x003fdc00,qadc_queue_timing_config+2,,
 0x003fdc02,qadc_queue_timing_config_b,dword,
 0x003fdc06,qadc_queue_timing_config_c,dword,
@@ -2123,7 +2122,7 @@ address,name,type,comment
 0x003fdc12,qadc_queue_timing_config_f,dword,
 0x003fdc16,qadc_queue_timing_config_g,dword,
 0x003fdc1a,qadc_queue_timing_config_h,dword,
-0x003fdc1e,qadc_prescale_count_a,word,
+0x003fdc1e,cmf_pulses_per_step,word,Per-step high-voltage pulse count
 0x003fdc20,qadc_prescale_count_b,word,
 0x003fdc22,qadc_prescale_count_c,word,
 0x003fdc24,qadc_prescale_count_d,word,
@@ -2293,15 +2292,15 @@ address,name,type,comment
 0x003fec8c,data_transfer_state_t_003fec82.status,,
 0x003fec8d,data_transfer_state_t_003fec82.status+1,,
 0x003fec8e,data_transfer_buffer_status,byte,
-0x003fec8f,qadc_channel_index,byte,
-0x003fec90,qadc_channel_select_value,dword,
-0x003fec98,qadc_scan_step_counter,word,
+0x003fec8f,cmf_pulse_step_index,byte,
+0x003fec90,cmf_control_block_select,dword,CMFCTL base | 0x8000 >> block
+0x003fec98,cmf_pulse_count,word,Pulses applied in the current step
 0x003fec9a,data_transfer_active_flag,word,
 0x003fec9e,memory_scan_pointer,pointer,
 0x003feca6,data_transfer_current_ptr,pointer,
 0x003fecaa,data_transfer_scan_ptr,pointer,
-0x003fecae,qadc_active_register_ptr,pointer,
-0x003fecb2,qadc_active_port_ptr,pointer,
+0x003fecae,cmf_active_control_register,pointer,CMFCTL_A or CMFCTL_B for the selected block
+0x003fecb2,cmf_active_test_register,pointer,CMFTST_A or CMFTST_B for the selected block
 0x003fecb5,qadc_active_port_ptr+3,,
 0x003fecb6,diagnostic_callback_ptr,pointer,
 0x003fecba,diag_serial_transfer_phase,dword,
