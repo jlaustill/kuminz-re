@@ -1239,7 +1239,7 @@ address,name
 0x00037f28,cm848_checkProtectionOutputConditions
 0x00038120,cm848_processProtectionMode2
 0x000384d0,cm848_initProtectionFilterValues
-0x0003866c,cm848_computeCruiseSpeedSetpoint
+0x0003866c,cm848_computeFuelRpmCompensatedOffset,out = governor_rpm_offset_cached - ((fuel_quantity_active + addend) * (engine_rpm_measured * 6) / 1e6 * 256 / 600) clamped to lower..upper; default when fuel or RPM is 0 | renamed 2026-11-11 from cm848_computeCruiseSpeedSetpoint: limits are -171..512 in RAM dump (not a speed) and the base falls back to injection_timing_offset_cal - does NOT cut fuel and is not protection | output 0x40b28a has no direct reader anywhere in ROM (only the sth at 0x38748) | asm clrlwi truncates rpm*6 to 16 bits so it wraps above raw 10922 (~1365 RPM)
 0x00038760,cm848_processEngineRpmDerivative
 0x00038824,cm848_initEngineRpmFilterPointers
 0x00038868,cm848_setEngineRpmFromCalibration

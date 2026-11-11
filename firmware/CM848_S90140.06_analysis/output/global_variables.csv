@@ -1626,7 +1626,7 @@ address,name,type,comment
 0x003fb594,cylinder_event_init_state_b,word,
 0x003fb5a4,cylinder_diag_low_threshold_snapshot,word,
 0x003fb5a6,cylinder_diag_high_threshold_snapshot,word,
-0x003fb5a8,speed_setpoint_raw_snapshot,word,
+0x003fb5a8,engine_rpm_measured_snapshot,word,Previous-cycle copy of engine_rpm_measured (used to detect the engine stopping: now 0 and previous non-zero)
 0x003fb5aa,crank_period_prev_snapshot,dword,
 0x003fb5ae,crank_sync_period_captured,dword,
 0x003fb5b0,crank_tooth_event_count,,
@@ -5343,7 +5343,7 @@ address,name,type,comment
 0x0040b780,protection_fault_eval_input,word,
 0x0040b784,engine_timing_delta,word,
 0x0040b786,cam_sync_period_reference_b,word,
-0x0040b78e,speed_setpoint_raw,word,
+0x0040b78e,engine_rpm_measured,word,Live measured engine RPM (0.125 RPM/count) - NOT a setpoint; written by mpc555_updateSensorDiagnosticFlags from crank_tooth_rpm or crank_derived_rpm; EMA-filtered into engine_rpm_state_t.current_rpm (0x40b7ba; x0.125 verified live 2026-01-31)
 0x0040b790,crank_period_accumulator,dword,
 0x0040b794,crank_tooth_period_raw,dword,
 0x0040b798,engine_sync_startup_countdown,word,
