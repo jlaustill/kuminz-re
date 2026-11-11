@@ -137,11 +137,12 @@ injector_control_t,0x0040c117,fault_flags,byte,1,Injector fault detection flags,
 injector_control_t,0x0040c117,output_ch1,byte,1,Channel 1 output state,,verified
 # CAN Receive State - J1939/CAN message reception tracking
 # Used by j1939ProcessReceivedMessages and CAN interrupt handlers
-# Total size: 6 bytes (0x0040b34e-0x0040b353)
+# Total size: 8 bytes (0x0040b34e-0x0040b355)
+# NOTE 2026-11-11: this is the J1850 PCI link state (indexes pci_receive_message_table / pci_transmit_message_table) - not J1939/CAN; struct and first 3 field names not yet re-reviewed
 can_rx_state_t,0x0040b34e,message_index,byte,1,Current message buffer index,,verified
 can_rx_state_t,0x0040b34e,message_buffer,byte,1,Message buffer selector,,verified
 can_rx_state_t,0x0040b34e,message_counter,word,2,Received message counter,,verified
-can_rx_state_t,0x0040b34e,dm1_pending,word,2,DM1 diagnostic message pending flag,,verified
+can_rx_state_t,0x0040b34e,link_event_code,dword,4,PCI link event 1..7 (all stw/lwz); cm848_processJ1939DM1Pending maps each to a recovery-action mask at 0x3fd8e0..0x3fd8e7; 7 = every scheduled PCI transmit overdue (set by cm848_checkPciMessageTimeouts); was dm1_pending (word),,verified
 # Protection System Enable - master protection control bits
 # Used by protectionEnableCheck and protection initialization
 # Total size: 4 bytes (0x0040c050-0x0040c053)
@@ -1459,3 +1460,58 @@ j1939_ccss_tx_payload_t,0x003fab0a,reserved4,byte,1,reserved - init 0xff (not av
 j1939_ccss_tx_payload_t,0x003fab0a,reserved5,byte,1,reserved - init 0xff (not available),,verified
 j1939_ccss_tx_payload_t,0x003fab0a,reserved6,byte,1,reserved - init 0xff (not available),,verified
 j1939_ccss_tx_payload_t,0x003fab0a,reserved7,byte,1,reserved - init 0xff (not available),,verified
+# --- pci_message_descriptor_t: CM848 J1850 VPW (Chrysler PCI) message descriptor - 28 bytes ---
+# Two contiguous ROM tables: RX at 0x5774b (15 entries) then TX at 0x578ef (25 entries); counts at 0x57bab / 0x57bad
+# Evidence: headers 68 6A / 48 6B = SAE J1850 OBD-II request (RX) / response (TX); 0x10 / 0xC0 / D1 03 / F0 xx VIN match mydb PCI broadcasts; RX has 0x37 (48RE shift lever)
+# Walked by cm848_checkPciMessageTimeouts (0x38ac8) and the PCI TX scheduler / RX matcher at 0x38cf0 / 0x39004 / 0x3adcc
+pci_message_descriptor_t,0x0005774b,header_byte_0,byte,1,J1850 message header byte 1 (message ID - e.g. 0x10 engine data / 0x37 shift lever / 0x68 OBD-II request),,verified
+pci_message_descriptor_t,0x0005774b,header_byte_1,byte,1,Header byte 2 - 0 terminates a 1-byte header (e.g. 0x6A in 68 6A / 0x03 in D1 03),,verified
+pci_message_descriptor_t,0x0005774b,header_byte_2,byte,1,Header byte 3 - 0 terminates,,verified
+pci_message_descriptor_t,0x0005774b,header_byte_3,byte,1,Header terminator (always 0 in ROM),,verified
+pci_message_descriptor_t,0x0005774b,data_buffer,byte*,4,RAM payload buffer: TX copies it after the header / RX stores received bytes into it,,verified
+pci_message_descriptor_t,0x0005774b,data_length,byte*,4,Pointer to the payload length byte (ROM 0x57741..0x57748 or RAM),,verified
+pci_message_descriptor_t,0x0005774b,interval,word,2,TX: send when *timer exceeds this / RX: receive timeout; 0 = event-driven (armed by writing 1 to *timer) and not timeout-checked; same units as *timer (+10 per monitor pass),,verified
+pci_message_descriptor_t,0x0005774b,timer,word*,4,RAM age timer: +10 per pass saturating at 0xff00; TX reset on own-message echo and RX reset on reception; RX starts at 0xff37 = never received,,verified
+pci_message_descriptor_t,0x0005774b,option_flag,byte,1,Purpose unconfirmed: on an RX/TX header match a nonzero value sets extra j1939_request_state_flags bits (0x4 / 0x8),,verified
+pci_message_descriptor_t,0x0005774b,reserved_19,byte,1,Unused padding,,verified
+pci_message_descriptor_t,0x0005774b,expected_trailing_bytes,byte*,4,Zero-terminated byte string (up to 12) that the RX handler compares backwards against the tail of a received frame (own TX echo); mismatch sets status bit 0x8; ROM 0x57740 (empty) in all but TX 0xB0 (RAM 0x40b4fd),,verified
+pci_message_descriptor_t,0x0005774b,status,byte*,4,RAM status byte: bit 0x10 = message timed out (latched; RX handler keeps it via &= 0x90) / bit 0x80 meaning unconfirmed,,verified
+pci_message_descriptor_t,0x00057767,,,,RX[1] header 24 interval 0,,verified
+pci_message_descriptor_t,0x00057783,,,,RX[2] header 0E interval 448,,verified
+pci_message_descriptor_t,0x0005779f,,,,RX[3] header 1A interval 348,,verified
+pci_message_descriptor_t,0x000577bb,,,,RX[4] header 2D interval 2778,,verified
+pci_message_descriptor_t,0x000577d7,,,,RX[5] header 37 interval 896,,verified
+pci_message_descriptor_t,0x000577f3,,,,RX[6] header 4F C0 interval 0,,verified
+pci_message_descriptor_t,0x0005780f,,,,RX[7] header 63 interval 1000,,verified
+pci_message_descriptor_t,0x0005782b,,,,RX[8] header 6C interval 3584,,verified
+pci_message_descriptor_t,0x00057847,,,,RX[9] header B5 interval 500,,verified
+pci_message_descriptor_t,0x00057863,,,,RX[10] header 52 interval 4000,,verified
+pci_message_descriptor_t,0x0005787f,,,,RX[11] header 72 interval 0,,verified
+pci_message_descriptor_t,0x0005789b,,,,RX[12] header B1 interval 500,,verified
+pci_message_descriptor_t,0x000578b7,,,,RX[13] header 92 interval 2000,,verified
+pci_message_descriptor_t,0x000578d3,,,,RX[14] header 42 interval 2000,,verified
+pci_message_descriptor_t,0x000578ef,,,,TX[0] header 10 interval 87,,verified
+pci_message_descriptor_t,0x0005790b,,,,TX[1] header 1E interval 352,,verified
+pci_message_descriptor_t,0x00057927,,,,TX[2] header 35 interval 348,,verified
+pci_message_descriptor_t,0x00057943,,,,TX[3] header B0 interval 2816,,verified
+pci_message_descriptor_t,0x0005795f,,,,TX[4] header D1 03 interval 340,,verified
+pci_message_descriptor_t,0x0005797b,,,,TX[5] header 53 interval 1000,,verified
+pci_message_descriptor_t,0x00057997,,,,TX[6] header 3A interval 896,,verified
+pci_message_descriptor_t,0x000579b3,,,,TX[7] header 3F interval 0,,verified
+pci_message_descriptor_t,0x000579cf,,,,TX[8] header 48 6B interval 0,,verified
+pci_message_descriptor_t,0x000579eb,,,,TX[9] header 4F 10 interval 0,,verified
+pci_message_descriptor_t,0x00057a07,,,,TX[10] header 26 interval 0,,verified
+pci_message_descriptor_t,0x00057a23,,,,TX[11] header 5D interval 348,,verified
+pci_message_descriptor_t,0x00057a3f,,,,TX[12] header 98 interval 2816,,verified
+pci_message_descriptor_t,0x00057a5b,,,,TX[13] header A4 interval 1204,,verified
+pci_message_descriptor_t,0x00057a77,,,,TX[14] header C0 interval 1392,,verified
+pci_message_descriptor_t,0x00057a93,,,,TX[15] header DF interval 2784,,verified
+pci_message_descriptor_t,0x00057aaf,,,,TX[16] header D2 interval 2784,,verified
+pci_message_descriptor_t,0x00057acb,,,,TX[17] header D1 01 interval 2784,,verified
+pci_message_descriptor_t,0x00057ae7,,,,TX[18] header EA interval 3584,,verified
+pci_message_descriptor_t,0x00057b03,,,,TX[19] header ED interval 2784,,verified
+pci_message_descriptor_t,0x00057b1f,,,,TX[20] header F0 01 interval 2784,,verified
+pci_message_descriptor_t,0x00057b3b,,,,TX[21] header F0 02 interval 2784,,verified
+pci_message_descriptor_t,0x00057b57,,,,TX[22] header F0 06 interval 2784,,verified
+pci_message_descriptor_t,0x00057b73,,,,TX[23] header F0 0A interval 2784,,verified
+pci_message_descriptor_t,0x00057b8f,,,,TX[24] header F0 0E interval 2784,,verified

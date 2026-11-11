@@ -1245,7 +1245,7 @@ address,name
 0x00038868,cm848_setEngineRpmFromCalibration
 0x0003889c,cm848_processSafetyConditionProtection
 0x00038a98,cm848_initProtectionFilterLimits
-0x00038ac8,cm848_processJ1939DiagnosticMessages
+0x00038ac8,cm848_checkPciMessageTimeouts,J1850 PCI message-timeout monitor (not J1939): gated on governor_system_config_flags bit 0x40; ages every pci_transmit_message_table / pci_receive_message_table timer by 10 (interrupts masked via EID/EIE around each entry) and sets status bit 0x10 once timer exceeds interval + pci_message_timeout_grace; if every timed TX entry is overdue it raises link_event_code 7 | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
 0x00038c90,mpc555_triggerJ1939TransmitMessage
 0x00038cf0,cm848_j1939ProcessPeriodicTx
 0x00039004,cm848_processCalibrationChecksumResponse
