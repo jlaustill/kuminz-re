@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Wed Nov 11 13:32:34 MST 2026
+// Generated: Wed Nov 11 13:50:22 MST 2026
 
 
 //
@@ -5722,9 +5722,9 @@ void mpc555_watchdogTimerTick(void)
 
 {
   word wVar1;
-  byte prescaler_count;
   dword runtime_value;
   word counter_value;
+  byte prescaler_count;
   
   prescaler_count = watchdog_tick_prescaler;
   if (prescaler_count < 0x28) {
@@ -6224,7 +6224,7 @@ void cm848_phase_group_b_processing(void)
   mpc555_calculateTpuTimingPeriod();
   mpc555_updateSensorDiagnosticFlags();
   cm848_checkPciMessageTimeouts();
-  cm848_processJ1939ReceivedMessages();
+  cm848_schedulePciTransmit();
   cm848_processCoolantCalEntries();
   hpcr_coldBurndownControl();
   cm848_sensorChannel2_init();
@@ -35519,7 +35519,7 @@ void cm848_checkPciMessageTimeouts(void)
         } while (message_index < pci_transmit_message_count);
       }
       if ((bool)all_transmits_overdue) {
-        can_rx_state_t_0040b34e.link_event_code = 7;
+        pci_link_state.link_event_code = 7;
       }
     }
     if ((pci_receive_processing_disabled == 0) && (uVar1 = 0, pci_receive_message_count != 0)) {
@@ -35557,8 +35557,8 @@ void mpc555_triggerJ1939TransmitMessage(void)
   uVar1 = USIU_SIPEND._0_2_;
   USIU_SIPEND._0_2_ = uVar1 | 0x200;
   if ((governor_system_config_flags & 0x40) != 0) {
-    j1939_queue_result_working =
-         cm848_j1939QueueTransmitMessage(&j1939_tx_message_buffer_slot,j1939_tx_priority_flag);
+    pci_qspi_queue_result =
+         cm848_j1939QueueTransmitMessage(&pci_controller_receive_job,pci_qspi_queue_priority);
   }
   return;
 }
@@ -35566,10 +35566,16 @@ void mpc555_triggerJ1939TransmitMessage(void)
 
 
 //
-// Function: cm848_j1939ProcessPeriodicTx @ 0x00038cf0
+// Function: cm848_matchPciReceiveHeader @ 0x00038cf0
 //
 
-void cm848_j1939ProcessPeriodicTx(void)
+/* Per received J1850 byte: appends pci_receive_word to pci_receive_frame_buffer then narrows the
+   header match against pci_receive_message_table (RX) and pci_transmit_message_table (own echo)
+   setting pci_frame_match_flags; a non-data status raises link_event_code 3 and an echo that
+   differs from pci_transmit_frame_buffer raises 2 | review-function-readability reviewed 2026-11-11
+   - Readability Medium Accuracy Confidence Medium */
+
+void cm848_matchPciReceiveHeader(void)
 
 {
   byte bVar1;
@@ -35578,29 +35584,27 @@ void cm848_j1939ProcessPeriodicTx(void)
   uint uVar3;
   uint uVar4;
   
-  if (((uds_security_service_status == 0x20) || (uds_security_service_status == 0x80)) ||
-     (uds_security_service_status == 0x40)) {
-    if (0x14 < can_rx_state_t_0040b34e.message_counter._0_1_) {
-      can_rx_state_t_0040b34e.message_counter._0_1_ = 0x14;
+  if (((pci_receive_status == 0x20) || (pci_receive_status == 0x80)) || (pci_receive_status == 0x40)
+     ) {
+    if (0x14 < pci_link_state.receive_byte_count) {
+      pci_link_state.receive_byte_count = 0x14;
     }
-    (&uds_received_data_buffer)[can_rx_state_t_0040b34e.message_counter._0_1_] =
-         (byte)uds_session_status_byte;
-    uVar3 = can_rx_state_t_0040b34e.message_counter._0_1_ + 1;
+    (&pci_receive_frame_buffer)[pci_link_state.receive_byte_count] = (byte)pci_receive_word;
+    uVar3 = pci_link_state.receive_byte_count + 1;
     uVar2 = uVar3 & 0xff;
-    can_rx_state_t_0040b34e.message_counter._0_1_ = (byte)uVar3;
-    if ((j1939_request_state_flags & 0xf) == 0) {
-      for (uVar3 = (uint)can_rx_state_t_0040b34e.message_index; uVar3 < 0xf;
-          uVar3 = uVar3 + 1 & 0xff) {
+    pci_link_state.receive_byte_count = (byte)uVar3;
+    if ((pci_frame_match_flags & 0xf) == 0) {
+      for (uVar3 = (uint)pci_link_state.rx_match_index; uVar3 < 0xf; uVar3 = uVar3 + 1 & 0xff) {
         uVar4 = 0;
         while( true ) {
           if ((uVar2 <= uVar4) && ((&(&pci_receive_message_table)[uVar3].header_byte_0)[uVar4] != 0)
              ) goto LAB_00038e0c;
           if ((&(&pci_receive_message_table)[uVar3].header_byte_0)[uVar4] !=
-              (&uds_received_data_buffer)[uVar4]) {
+              (&pci_receive_frame_buffer)[uVar4]) {
             in_r9 = 0;
             goto LAB_00038e0c;
           }
-          can_rx_state_t_0040b34e.message_index = (byte)uVar3;
+          pci_link_state.rx_match_index = (byte)uVar3;
           in_r9 = 1;
           if (((&(&pci_receive_message_table)[uVar3].header_byte_1)[uVar4] == 0) || (2 < uVar4 + 1))
           break;
@@ -35610,25 +35614,25 @@ void cm848_j1939ProcessPeriodicTx(void)
 LAB_00038e0c:
         if (in_r9 != 0) break;
       }
-      bVar1 = j1939_request_state_flags;
+      bVar1 = pci_frame_match_flags;
       if ((in_r9 == 2) &&
-         (bVar1 = j1939_request_state_flags | 1,
-         (&pci_receive_message_table)[can_rx_state_t_0040b34e.message_index].option_flag != 0)) {
-        bVar1 = j1939_request_state_flags | 5;
+         (bVar1 = pci_frame_match_flags | 1,
+         (&pci_receive_message_table)[pci_link_state.rx_match_index].in_frame_response_enabled != 0)
+         ) {
+        bVar1 = pci_frame_match_flags | 5;
       }
-      j1939_request_state_flags = bVar1;
-      for (uVar3 = (uint)can_rx_state_t_0040b34e.message_buffer; uVar3 < 0x19;
-          uVar3 = uVar3 + 1 & 0xff) {
+      pci_frame_match_flags = bVar1;
+      for (uVar3 = (uint)pci_link_state.tx_match_index; uVar3 < 0x19; uVar3 = uVar3 + 1 & 0xff) {
         uVar4 = 0;
         while( true ) {
           if ((uVar2 <= uVar4) &&
              ((&(&pci_transmit_message_table)[uVar3].header_byte_0)[uVar4] != 0)) goto LAB_00038ef0;
           if ((&(&pci_transmit_message_table)[uVar3].header_byte_0)[uVar4] !=
-              (&uds_received_data_buffer)[uVar4]) {
+              (&pci_receive_frame_buffer)[uVar4]) {
             in_r9 = 0;
             goto LAB_00038ef0;
           }
-          can_rx_state_t_0040b34e.message_buffer = (byte)uVar3;
+          pci_link_state.tx_match_index = (byte)uVar3;
           in_r9 = 1;
           if (((&(&pci_transmit_message_table)[uVar3].header_byte_1)[uVar4] == 0) || (2 < uVar4 + 1)
              ) break;
@@ -35639,23 +35643,23 @@ LAB_00038ef0:
         if (in_r9 != 0) break;
       }
       if (in_r9 == 2) {
-        uVar2 = (uint)can_rx_state_t_0040b34e.message_buffer;
-        bVar1 = j1939_request_state_flags | 2;
-        if ((&pci_transmit_message_table)[uVar2].option_flag != 0) {
-          bVar1 = j1939_request_state_flags | 10;
+        uVar2 = (uint)pci_link_state.tx_match_index;
+        bVar1 = pci_frame_match_flags | 2;
+        if ((&pci_transmit_message_table)[uVar2].in_frame_response_enabled != 0) {
+          bVar1 = pci_frame_match_flags | 10;
         }
-        j1939_request_state_flags = bVar1;
+        pci_frame_match_flags = bVar1;
         uVar3 = 0;
         if ((&pci_transmit_message_table)[uVar2].header_byte_0 != 0) {
           do {
-            if (((&can_rx_data_buffer)[uVar3] !=
+            if (((&pci_transmit_frame_buffer)[uVar3] !=
                  (&(&pci_transmit_message_table)[uVar2].header_byte_0)[uVar3]) ||
-               (uds_sequence_counter <= uVar3)) {
+               (pci_transmit_frame_length <= uVar3)) {
               if ((&pci_transmit_message_table)[uVar2].interval < 2) {
-                j1939_request_state_flags = 0;
+                pci_frame_match_flags = 0;
               }
               else {
-                can_rx_state_t_0040b34e.link_event_code = 2;
+                pci_link_state.link_event_code = 2;
               }
             }
             uVar3 = uVar3 + 1 & 0xff;
@@ -35663,16 +35667,16 @@ LAB_00038ef0:
                   (uVar3 < 3));
         }
       }
-      if ((j1939_request_state_flags & 0xf) == 0) {
-        j1939_request_state_flags = j1939_request_state_flags | 0x10;
+      if ((pci_frame_match_flags & 0xf) == 0) {
+        pci_frame_match_flags = pci_frame_match_flags | 0x10;
       }
       else {
-        j1939_request_state_flags = j1939_request_state_flags & 0xef;
+        pci_frame_match_flags = pci_frame_match_flags & 0xef;
       }
     }
   }
   else {
-    can_rx_state_t_0040b34e.link_event_code = 3;
+    pci_link_state.link_event_code = 3;
   }
   return;
 }
@@ -35680,10 +35684,17 @@ LAB_00038ef0:
 
 
 //
-// Function: cm848_processCalibrationChecksumResponse @ 0x00039004
+// Function: cm848_completePciFrame @ 0x00039004
 //
 
-void cm848_processCalibrationChecksumResponse(void)
+/* End of J1850 frame: for the matched TX echo or RX entry checks the completion status and any
+   in-frame response bytes - clean = status cleared and timer reset (RX payload copied to
+   data_buffer) / error = status bits ORed into pci_message_error_flags and frame copied to
+   pci_error_frame_capture; unmatched frames go to pci_unmatched_frame_error_flags; raises
+   link_event_code 4 / 5 / 6 | review-function-readability reviewed 2026-11-11 - Readability Medium
+   Accuracy Confidence Medium */
+
+void cm848_completePciFrame(void)
 
 {
   byte bVar1;
@@ -35693,79 +35704,77 @@ void cm848_processCalibrationChecksumResponse(void)
   uint uVar5;
   uint uVar6;
   
-  bVar2 = (byte)uds_session_status_byte;
-  (&uds_received_data_buffer)[can_rx_state_t_0040b34e.message_counter._0_1_] =
-       (byte)uds_session_status_byte;
-  can_rx_state_t_0040b34e.message_counter._0_1_ = can_rx_state_t_0040b34e.message_counter._0_1_ + 1;
-  if ((j1939_request_state_flags & 0x1f) == 0) {
-    can_rx_state_t_0040b34e.message_index = 0;
-    can_rx_state_t_0040b34e.message_buffer = 0;
-    can_rx_state_t_0040b34e.message_counter._0_1_ = 0;
-    j1939_request_state_flags = 0;
+  bVar2 = (byte)pci_receive_word;
+  (&pci_receive_frame_buffer)[pci_link_state.receive_byte_count] = (byte)pci_receive_word;
+  pci_link_state.receive_byte_count = pci_link_state.receive_byte_count + 1;
+  if ((pci_frame_match_flags & 0x1f) == 0) {
+    pci_link_state.rx_match_index = 0;
+    pci_link_state.tx_match_index = 0;
+    pci_link_state.receive_byte_count = 0;
+    pci_frame_match_flags = 0;
     return;
   }
-  if ((j1939_request_state_flags & 2) == 0) {
-    if ((j1939_request_state_flags & 8) == 0) goto LAB_000395dc;
+  if ((pci_frame_match_flags & 2) == 0) {
+    if ((pci_frame_match_flags & 8) == 0) goto LAB_000395dc;
     if ((bVar2 & 0x80) != 0) {
-      *(&pci_transmit_message_table)[can_rx_state_t_0040b34e.message_buffer].status =
-           *(&pci_transmit_message_table)[can_rx_state_t_0040b34e.message_buffer].status | 8;
+      *(&pci_transmit_message_table)[pci_link_state.tx_match_index].status =
+           *(&pci_transmit_message_table)[pci_link_state.tx_match_index].status | 8;
     }
     if ((bVar2 & 0xc) != 8) {
-      *(&pci_transmit_message_table)[can_rx_state_t_0040b34e.message_buffer].status =
-           *(&pci_transmit_message_table)[can_rx_state_t_0040b34e.message_buffer].status | 4;
+      *(&pci_transmit_message_table)[pci_link_state.tx_match_index].status =
+           *(&pci_transmit_message_table)[pci_link_state.tx_match_index].status | 4;
     }
     if ((bVar2 & 8) != 0) {
       if ((bVar2 & 0xc) == 8) {
         for (uVar4 = 0;
-            ((&pci_transmit_message_table)[can_rx_state_t_0040b34e.message_buffer].
-             expected_trailing_bytes[uVar4] != 0 || (uVar4 == 0xc)); uVar4 = uVar4 + 1 & 0xff) {
+            ((&pci_transmit_message_table)[pci_link_state.tx_match_index].in_frame_response_bytes
+             [uVar4] != 0 || (uVar4 == 0xc)); uVar4 = uVar4 + 1 & 0xff) {
         }
-        uVar6 = can_rx_state_t_0040b34e.message_counter._0_1_ + 0xfd;
+        uVar6 = pci_link_state.receive_byte_count + 0xfd;
         for (; uVar4 != 0; uVar4 = uVar4 + 0xff & 0xff) {
-          if ((&pci_transmit_message_table)[can_rx_state_t_0040b34e.message_buffer].
-              expected_trailing_bytes[uVar4 - 1] != (&uds_received_data_buffer)[uVar6 & 0xff]) {
-            *(&pci_transmit_message_table)[can_rx_state_t_0040b34e.message_buffer].status =
-                 *(&pci_transmit_message_table)[can_rx_state_t_0040b34e.message_buffer].status | 8;
+          if ((&pci_transmit_message_table)[pci_link_state.tx_match_index].in_frame_response_bytes
+              [uVar4 - 1] != (&pci_receive_frame_buffer)[uVar6 & 0xff]) {
+            *(&pci_transmit_message_table)[pci_link_state.tx_match_index].status =
+                 *(&pci_transmit_message_table)[pci_link_state.tx_match_index].status | 8;
           }
           uVar6 = (uVar6 & 0xff) + 0xff;
         }
       }
       else if ((((bVar2 & 0x80) != 0) && ((bVar2 & 0xc) != 0)) && ((bVar2 & 3) == 0)) {
-        *(&pci_transmit_message_table)[can_rx_state_t_0040b34e.message_buffer].status =
-             *(&pci_transmit_message_table)[can_rx_state_t_0040b34e.message_buffer].status & 0xf7;
-        *(&pci_transmit_message_table)[can_rx_state_t_0040b34e.message_buffer].status =
-             *(&pci_transmit_message_table)[can_rx_state_t_0040b34e.message_buffer].status & 0xfb;
+        *(&pci_transmit_message_table)[pci_link_state.tx_match_index].status =
+             *(&pci_transmit_message_table)[pci_link_state.tx_match_index].status & 0xf7;
+        *(&pci_transmit_message_table)[pci_link_state.tx_match_index].status =
+             *(&pci_transmit_message_table)[pci_link_state.tx_match_index].status & 0xfb;
       }
-      bVar1 = *(&pci_transmit_message_table)[can_rx_state_t_0040b34e.message_buffer].status;
+      bVar1 = *(&pci_transmit_message_table)[pci_link_state.tx_match_index].status;
       if ((bVar1 & 0x6f) == 0) {
-        *(&pci_transmit_message_table)[can_rx_state_t_0040b34e.message_buffer].status = bVar1 & 0x80
-        ;
-        *(&pci_transmit_message_table)[can_rx_state_t_0040b34e.message_buffer].timer = 0;
+        *(&pci_transmit_message_table)[pci_link_state.tx_match_index].status = bVar1 & 0x80;
+        *(&pci_transmit_message_table)[pci_link_state.tx_match_index].timer = 0;
       }
       else if ((bVar1 & 0x80) != 0) {
-        j1939_condition_output_flags = j1939_condition_output_flags | bVar1;
+        pci_message_error_flags = pci_message_error_flags | bVar1;
         uVar4 = 0;
-        if (can_rx_state_t_0040b34e.message_counter._0_1_ != 0) {
+        if (pci_link_state.receive_byte_count != 0) {
           do {
-            (&uds_data_receive_buffer)[uVar4] = (&uds_received_data_buffer)[uVar4];
+            (&pci_error_frame_capture)[uVar4] = (&pci_receive_frame_buffer)[uVar4];
             uVar4 = uVar4 + 1 & 0xff;
             if (0x15 < uVar4) break;
-          } while (uVar4 < can_rx_state_t_0040b34e.message_counter._0_1_);
+          } while (uVar4 < pci_link_state.receive_byte_count);
         }
       }
-      if (j1939_message_tx_state != 2) {
-        j1939_message_tx_state = 4;
-        uds_sequence_counter = 0;
+      if (pci_transmit_state != 2) {
+        pci_transmit_state = 4;
+        pci_transmit_frame_length = 0;
       }
-      j1939_request_state_flags = j1939_request_state_flags & 0xf7;
-      can_rx_state_t_0040b34e.message_counter._0_1_ = 0;
-      can_rx_state_t_0040b34e.message_buffer = 0;
+      pci_frame_match_flags = pci_frame_match_flags & 0xf7;
+      pci_link_state.receive_byte_count = 0;
+      pci_link_state.tx_match_index = 0;
       goto LAB_000395dc;
     }
-    *(&pci_transmit_message_table)[can_rx_state_t_0040b34e.message_buffer].status =
-         *(&pci_transmit_message_table)[can_rx_state_t_0040b34e.message_buffer].status | 8;
+    *(&pci_transmit_message_table)[pci_link_state.tx_match_index].status =
+         *(&pci_transmit_message_table)[pci_link_state.tx_match_index].status | 8;
     uVar4 = 0;
-    uVar6 = (uint)can_rx_state_t_0040b34e.message_buffer;
+    uVar6 = (uint)pci_link_state.tx_match_index;
     if ((&pci_transmit_message_table)[uVar6].header_byte_0 != 0) {
       do {
         uVar4 = uVar4 + 1 & 0xff;
@@ -35774,227 +35783,223 @@ void cm848_processCalibrationChecksumResponse(void)
     }
     uVar4 = uVar4 + *(&pci_transmit_message_table)[uVar6].data_length;
     uVar6 = 0;
-    while (uVar4 = uVar4 + 1 & 0xff,
-          (int)uVar4 < (int)(can_rx_state_t_0040b34e.message_counter._0_1_ - 2)) {
-      (&uds_received_data_buffer)[uVar6] = (&uds_received_data_buffer)[uVar4];
+    while (uVar4 = uVar4 + 1 & 0xff, (int)uVar4 < (int)(pci_link_state.receive_byte_count - 2)) {
+      (&pci_receive_frame_buffer)[uVar6] = (&pci_receive_frame_buffer)[uVar4];
       uVar6 = uVar6 + 1 & 0xff;
     }
-    uds_session_status_byte._1_1_ = (&uds_received_data_buffer)[uVar4];
-    can_rx_state_t_0040b34e.message_counter._0_1_ = (byte)uVar6;
-    uds_security_service_status = 0x80;
-    j1939_request_state_flags = j1939_request_state_flags & 0xe0;
-    can_rx_state_t_0040b34e.message_index = 0;
-    can_rx_state_t_0040b34e.message_buffer = 0;
-    cm848_j1939ProcessPeriodicTx();
-    (&uds_received_data_buffer)[can_rx_state_t_0040b34e.message_counter._0_1_] = bVar2;
-    can_rx_state_t_0040b34e.message_counter._0_1_ =
-         can_rx_state_t_0040b34e.message_counter._0_1_ + 1;
+    pci_receive_word._1_1_ = (&pci_receive_frame_buffer)[uVar4];
+    pci_link_state.receive_byte_count = (byte)uVar6;
+    pci_receive_status = 0x80;
+    pci_frame_match_flags = pci_frame_match_flags & 0xe0;
+    pci_link_state.rx_match_index = 0;
+    pci_link_state.tx_match_index = 0;
+    cm848_matchPciReceiveHeader();
+    (&pci_receive_frame_buffer)[pci_link_state.receive_byte_count] = bVar2;
+    pci_link_state.receive_byte_count = pci_link_state.receive_byte_count + 1;
   }
   else {
     if ((bVar2 & 0xc) != 0) {
-      can_rx_state_t_0040b34e.link_event_code = 4;
+      pci_link_state.link_event_code = 4;
       return;
     }
-    *(&pci_transmit_message_table)[can_rx_state_t_0040b34e.message_buffer].status =
-         *(&pci_transmit_message_table)[can_rx_state_t_0040b34e.message_buffer].status & 0x90;
+    *(&pci_transmit_message_table)[pci_link_state.tx_match_index].status =
+         *(&pci_transmit_message_table)[pci_link_state.tx_match_index].status & 0x90;
     if ((bVar2 & 0x80) != 0) {
-      *(&pci_transmit_message_table)[can_rx_state_t_0040b34e.message_buffer].status =
-           *(&pci_transmit_message_table)[can_rx_state_t_0040b34e.message_buffer].status | 4;
+      *(&pci_transmit_message_table)[pci_link_state.tx_match_index].status =
+           *(&pci_transmit_message_table)[pci_link_state.tx_match_index].status | 4;
     }
     if ((bVar2 & 0x81) != 0) {
-      *(&pci_transmit_message_table)[can_rx_state_t_0040b34e.message_buffer].status =
-           *(&pci_transmit_message_table)[can_rx_state_t_0040b34e.message_buffer].status | 2;
+      *(&pci_transmit_message_table)[pci_link_state.tx_match_index].status =
+           *(&pci_transmit_message_table)[pci_link_state.tx_match_index].status | 2;
     }
     if ((bVar2 & 0x83) != 0) {
-      *(&pci_transmit_message_table)[can_rx_state_t_0040b34e.message_buffer].status =
-           *(&pci_transmit_message_table)[can_rx_state_t_0040b34e.message_buffer].status | 1;
+      *(&pci_transmit_message_table)[pci_link_state.tx_match_index].status =
+           *(&pci_transmit_message_table)[pci_link_state.tx_match_index].status | 1;
     }
     if ((bVar2 & 0x82) != 0) {
-      *(&pci_transmit_message_table)[can_rx_state_t_0040b34e.message_buffer].status =
-           *(&pci_transmit_message_table)[can_rx_state_t_0040b34e.message_buffer].status | 0x40;
+      *(&pci_transmit_message_table)[pci_link_state.tx_match_index].status =
+           *(&pci_transmit_message_table)[pci_link_state.tx_match_index].status | 0x40;
     }
-    j1939_request_state_flags = j1939_request_state_flags & 0xfd;
-    bVar1 = *(&pci_transmit_message_table)[can_rx_state_t_0040b34e.message_buffer].status;
+    pci_frame_match_flags = pci_frame_match_flags & 0xfd;
+    bVar1 = *(&pci_transmit_message_table)[pci_link_state.tx_match_index].status;
     if ((bVar1 & 0x6f) == 0) {
-      *(&pci_transmit_message_table)[can_rx_state_t_0040b34e.message_buffer].status = bVar1 & 0x80;
+      *(&pci_transmit_message_table)[pci_link_state.tx_match_index].status = bVar1 & 0x80;
     }
     else if ((bVar1 & 0x80) != 0) {
-      j1939_condition_output_flags = j1939_condition_output_flags | bVar1;
+      pci_message_error_flags = pci_message_error_flags | bVar1;
       uVar4 = 0;
-      uVar6 = (uint)can_rx_state_t_0040b34e.message_counter._0_1_;
+      uVar6 = (uint)pci_link_state.receive_byte_count;
       if (uVar6 != 0) {
         do {
-          (&uds_data_receive_buffer)[uVar4] = (&uds_received_data_buffer)[uVar4];
+          (&pci_error_frame_capture)[uVar4] = (&pci_receive_frame_buffer)[uVar4];
           uVar4 = uVar4 + 1 & 0xff;
           if (0x15 < uVar4) break;
         } while (uVar4 < uVar6);
       }
     }
-    *(&pci_transmit_message_table)[can_rx_state_t_0040b34e.message_buffer].timer = 0;
-    if ((j1939_request_state_flags & 8) != 0) goto LAB_000395dc;
-    can_rx_state_t_0040b34e.message_counter._0_1_ = 0;
-    can_rx_state_t_0040b34e.message_buffer = 0;
+    *(&pci_transmit_message_table)[pci_link_state.tx_match_index].timer = 0;
+    if ((pci_frame_match_flags & 8) != 0) goto LAB_000395dc;
+    pci_link_state.receive_byte_count = 0;
+    pci_link_state.tx_match_index = 0;
   }
-  if (j1939_message_tx_state != 2) {
-    j1939_message_tx_state = 4;
-    uds_sequence_counter = 0;
+  if (pci_transmit_state != 2) {
+    pci_transmit_state = 4;
+    pci_transmit_frame_length = 0;
   }
 LAB_000395dc:
-  if ((j1939_request_state_flags & 1) == 0) {
-    if ((j1939_request_state_flags & 4) == 0) {
-      if ((j1939_request_state_flags & 0x10) == 0) {
+  if ((pci_frame_match_flags & 1) == 0) {
+    if ((pci_frame_match_flags & 4) == 0) {
+      if ((pci_frame_match_flags & 0x10) == 0) {
         return;
       }
-      uds_security_service_status = 0;
+      pci_receive_status = 0;
       if ((bVar2 & 0x80) != 0) {
-        uds_security_service_status = 4;
+        pci_receive_status = 4;
       }
       if ((bVar2 & 0x81) != 0) {
-        uds_security_service_status = uds_security_service_status | 2;
+        pci_receive_status = pci_receive_status | 2;
       }
       if ((bVar2 & 0x83) != 0) {
-        uds_security_service_status = uds_security_service_status | 1;
+        pci_receive_status = pci_receive_status | 1;
       }
       if ((bVar2 & 0x82) != 0) {
-        uds_security_service_status = uds_security_service_status | 0x40;
+        pci_receive_status = pci_receive_status | 0x40;
       }
-      if (uds_security_service_status != 0) {
-        uds_security_combine_flags = uds_security_combine_flags | uds_security_service_status;
+      if (pci_receive_status != 0) {
+        pci_unmatched_frame_error_flags = pci_unmatched_frame_error_flags | pci_receive_status;
         uVar4 = 0;
-        if (can_rx_state_t_0040b34e.message_counter._0_1_ != 0) {
+        if (pci_link_state.receive_byte_count != 0) {
           do {
-            (&uds_received_data_buffer_b)[uVar4] = (&uds_received_data_buffer)[uVar4];
+            (&pci_unmatched_error_frame_capture)[uVar4] = (&pci_receive_frame_buffer)[uVar4];
             uVar4 = uVar4 + 1 & 0xff;
             if (0x15 < uVar4) break;
-          } while (uVar4 < can_rx_state_t_0040b34e.message_counter._0_1_);
+          } while (uVar4 < pci_link_state.receive_byte_count);
         }
       }
-      j1939_request_state_flags = j1939_request_state_flags & 0xef;
+      pci_frame_match_flags = pci_frame_match_flags & 0xef;
     }
     else {
       if ((bVar2 & 0x80) != 0) {
-        *(&pci_receive_message_table)[can_rx_state_t_0040b34e.message_index].status =
-             *(&pci_receive_message_table)[can_rx_state_t_0040b34e.message_index].status | 8;
+        *(&pci_receive_message_table)[pci_link_state.rx_match_index].status =
+             *(&pci_receive_message_table)[pci_link_state.rx_match_index].status | 8;
       }
       if ((bVar2 & 0xc) != 8) {
-        *(&pci_receive_message_table)[can_rx_state_t_0040b34e.message_index].status =
-             *(&pci_receive_message_table)[can_rx_state_t_0040b34e.message_index].status | 4;
+        *(&pci_receive_message_table)[pci_link_state.rx_match_index].status =
+             *(&pci_receive_message_table)[pci_link_state.rx_match_index].status | 4;
       }
       if ((bVar2 & 0xc) == 0) {
-        *(&pci_receive_message_table)[can_rx_state_t_0040b34e.message_index].status =
-             *(&pci_receive_message_table)[can_rx_state_t_0040b34e.message_index].status | 8;
-        can_rx_state_t_0040b34e.link_event_code = 5;
+        *(&pci_receive_message_table)[pci_link_state.rx_match_index].status =
+             *(&pci_receive_message_table)[pci_link_state.rx_match_index].status | 8;
+        pci_link_state.link_event_code = 5;
         return;
       }
       uVar4 = 0;
-      bVar2 = *(&pci_receive_message_table)[can_rx_state_t_0040b34e.message_index].
-               expected_trailing_bytes;
+      bVar2 = *(&pci_receive_message_table)[pci_link_state.rx_match_index].in_frame_response_bytes;
       while (bVar2 != 0) {
         uVar4 = uVar4 + 1 & 0xff;
-        bVar2 = (&pci_receive_message_table)[can_rx_state_t_0040b34e.message_index].
-                expected_trailing_bytes[uVar4];
+        bVar2 = (&pci_receive_message_table)[pci_link_state.rx_match_index].in_frame_response_bytes
+                [uVar4];
       }
-      uVar6 = can_rx_state_t_0040b34e.message_counter._0_1_ + 0xfe;
+      uVar6 = pci_link_state.receive_byte_count + 0xfe;
       while (uVar4 == 0) {
-        if ((&pci_receive_message_table)[can_rx_state_t_0040b34e.message_index].
-            expected_trailing_bytes[-1] != (&uds_received_data_buffer)[uVar6 & 0xff]) {
-          *(&pci_receive_message_table)[can_rx_state_t_0040b34e.message_index].status =
-               *(&pci_receive_message_table)[can_rx_state_t_0040b34e.message_index].status | 8;
+        if ((&pci_receive_message_table)[pci_link_state.rx_match_index].in_frame_response_bytes[-1]
+            != (&pci_receive_frame_buffer)[uVar6 & 0xff]) {
+          *(&pci_receive_message_table)[pci_link_state.rx_match_index].status =
+               *(&pci_receive_message_table)[pci_link_state.rx_match_index].status | 8;
         }
         uVar6 = (uVar6 & 0xff) + 0xff;
         uVar4 = 0xff;
       }
-      bVar2 = *(&pci_receive_message_table)[can_rx_state_t_0040b34e.message_index].status;
+      bVar2 = *(&pci_receive_message_table)[pci_link_state.rx_match_index].status;
       if ((bVar2 & 0x6f) == 0) {
-        *(&pci_receive_message_table)[can_rx_state_t_0040b34e.message_index].status = bVar2 & 0x80;
-        *(&pci_receive_message_table)[can_rx_state_t_0040b34e.message_index].timer = 0;
+        *(&pci_receive_message_table)[pci_link_state.rx_match_index].status = bVar2 & 0x80;
+        *(&pci_receive_message_table)[pci_link_state.rx_match_index].timer = 0;
       }
       else if ((bVar2 & 0x80) != 0) {
-        j1939_condition_output_flags = j1939_condition_output_flags | bVar2;
+        pci_message_error_flags = pci_message_error_flags | bVar2;
         uVar4 = 0;
-        if (can_rx_state_t_0040b34e.message_counter._0_1_ != 0) {
+        if (pci_link_state.receive_byte_count != 0) {
           do {
-            (&uds_data_receive_buffer)[uVar4] = (&uds_received_data_buffer)[uVar4];
+            (&pci_error_frame_capture)[uVar4] = (&pci_receive_frame_buffer)[uVar4];
             uVar4 = uVar4 + 1 & 0xff;
             if (0x15 < uVar4) break;
-          } while (uVar4 < can_rx_state_t_0040b34e.message_counter._0_1_);
+          } while (uVar4 < pci_link_state.receive_byte_count);
         }
       }
-      j1939_request_state_flags = j1939_request_state_flags & 0xfb;
+      pci_frame_match_flags = pci_frame_match_flags & 0xfb;
     }
-    can_rx_state_t_0040b34e.message_buffer = 0;
-    can_rx_state_t_0040b34e.message_index = 0;
-    can_rx_state_t_0040b34e.message_counter._0_1_ = 0;
+    pci_link_state.tx_match_index = 0;
+    pci_link_state.rx_match_index = 0;
+    pci_link_state.receive_byte_count = 0;
   }
   else if ((bVar2 & 0xc) == 0) {
-    *(&pci_receive_message_table)[can_rx_state_t_0040b34e.message_index].status =
-         *(&pci_receive_message_table)[can_rx_state_t_0040b34e.message_index].status & 0x90;
+    *(&pci_receive_message_table)[pci_link_state.rx_match_index].status =
+         *(&pci_receive_message_table)[pci_link_state.rx_match_index].status & 0x90;
     if (pci_receive_processing_disabled == 0) {
       uVar6 = 0;
       uVar4 = 0;
-      uVar3 = can_rx_state_t_0040b34e.message_counter._0_1_ - 1;
+      uVar3 = pci_link_state.receive_byte_count - 1;
       if (0 < (int)uVar3) {
-        uVar5 = (uint)can_rx_state_t_0040b34e.message_index;
+        uVar5 = (uint)pci_link_state.rx_match_index;
         do {
           if (*(&pci_receive_message_table)[uVar5].data_length <= uVar4) break;
           if (((uVar4 != 0) || ((&(&pci_receive_message_table)[uVar5].header_byte_0)[uVar6] == 0))
              || (uVar6 == 3)) {
             (&pci_receive_message_table)[uVar5].data_buffer[uVar4] =
-                 (&uds_received_data_buffer)[uVar6];
+                 (&pci_receive_frame_buffer)[uVar6];
             uVar4 = uVar4 + 1 & 0xff;
           }
           uVar6 = uVar6 + 1 & 0xff;
         } while ((int)uVar6 < (int)uVar3);
       }
       if ((uVar6 != uVar3) ||
-         (*(&pci_receive_message_table)[can_rx_state_t_0040b34e.message_index].data_length != uVar4)
-         ) {
-        *(&pci_receive_message_table)[can_rx_state_t_0040b34e.message_index].status =
-             *(&pci_receive_message_table)[can_rx_state_t_0040b34e.message_index].status | 0x20;
+         (*(&pci_receive_message_table)[pci_link_state.rx_match_index].data_length != uVar4)) {
+        *(&pci_receive_message_table)[pci_link_state.rx_match_index].status =
+             *(&pci_receive_message_table)[pci_link_state.rx_match_index].status | 0x20;
       }
-      *(&pci_receive_message_table)[can_rx_state_t_0040b34e.message_index].timer = 0;
+      *(&pci_receive_message_table)[pci_link_state.rx_match_index].timer = 0;
     }
     if ((bVar2 & 0x80) != 0) {
-      *(&pci_receive_message_table)[can_rx_state_t_0040b34e.message_index].status =
-           *(&pci_receive_message_table)[can_rx_state_t_0040b34e.message_index].status | 4;
+      *(&pci_receive_message_table)[pci_link_state.rx_match_index].status =
+           *(&pci_receive_message_table)[pci_link_state.rx_match_index].status | 4;
     }
     if ((bVar2 & 0x81) != 0) {
-      *(&pci_receive_message_table)[can_rx_state_t_0040b34e.message_index].status =
-           *(&pci_receive_message_table)[can_rx_state_t_0040b34e.message_index].status | 2;
+      *(&pci_receive_message_table)[pci_link_state.rx_match_index].status =
+           *(&pci_receive_message_table)[pci_link_state.rx_match_index].status | 2;
     }
     if ((bVar2 & 0x83) != 0) {
-      *(&pci_receive_message_table)[can_rx_state_t_0040b34e.message_index].status =
-           *(&pci_receive_message_table)[can_rx_state_t_0040b34e.message_index].status | 1;
+      *(&pci_receive_message_table)[pci_link_state.rx_match_index].status =
+           *(&pci_receive_message_table)[pci_link_state.rx_match_index].status | 1;
     }
     if ((bVar2 & 0x82) != 0) {
-      *(&pci_receive_message_table)[can_rx_state_t_0040b34e.message_index].status =
-           *(&pci_receive_message_table)[can_rx_state_t_0040b34e.message_index].status | 0x40;
+      *(&pci_receive_message_table)[pci_link_state.rx_match_index].status =
+           *(&pci_receive_message_table)[pci_link_state.rx_match_index].status | 0x40;
     }
-    j1939_request_state_flags = j1939_request_state_flags & 0xfe;
-    bVar2 = *(&pci_receive_message_table)[can_rx_state_t_0040b34e.message_index].status;
+    pci_frame_match_flags = pci_frame_match_flags & 0xfe;
+    bVar2 = *(&pci_receive_message_table)[pci_link_state.rx_match_index].status;
     if ((bVar2 & 0x6f) == 0) {
-      *(&pci_receive_message_table)[can_rx_state_t_0040b34e.message_index].status = bVar2 & 0x80;
+      *(&pci_receive_message_table)[pci_link_state.rx_match_index].status = bVar2 & 0x80;
     }
     else if ((bVar2 & 0x80) != 0) {
-      j1939_condition_output_flags = j1939_condition_output_flags | bVar2;
+      pci_message_error_flags = pci_message_error_flags | bVar2;
       uVar4 = 0;
-      uVar6 = (uint)can_rx_state_t_0040b34e.message_counter._0_1_;
+      uVar6 = (uint)pci_link_state.receive_byte_count;
       if (uVar6 != 0) {
         do {
-          (&uds_data_receive_buffer)[uVar4] = (&uds_received_data_buffer)[uVar4];
+          (&pci_error_frame_capture)[uVar4] = (&pci_receive_frame_buffer)[uVar4];
           uVar4 = uVar4 + 1 & 0xff;
           if (0x15 < uVar4) break;
         } while (uVar4 < uVar6);
       }
     }
-    if ((j1939_request_state_flags & 4) == 0) {
-      can_rx_state_t_0040b34e.message_counter._0_1_ = 0;
-      can_rx_state_t_0040b34e.message_index = 0;
-      can_rx_state_t_0040b34e.message_buffer = 0;
+    if ((pci_frame_match_flags & 4) == 0) {
+      pci_link_state.receive_byte_count = 0;
+      pci_link_state.rx_match_index = 0;
+      pci_link_state.tx_match_index = 0;
     }
   }
   else {
-    can_rx_state_t_0040b34e.link_event_code = 6;
+    pci_link_state.link_event_code = 6;
   }
   return;
 }
@@ -36002,21 +36007,24 @@ LAB_000395dc:
 
 
 //
-// Function: cm848_handleJ1939MessageTimeout @ 0x00039bc0
+// Function: cm848_handlePciInFrameResponseTimeout @ 0x00039bc0
 //
 
-void cm848_handleJ1939MessageTimeout(void)
+/* Own TX frame never got its expected in-frame response: sets status bit 0x08 on the TX entry and
+   resets the frame match state */
+
+void cm848_handlePciInFrameResponseTimeout(void)
 
 {
-  *(&pci_transmit_message_table)[can_rx_state_t_0040b34e.message_buffer].status =
-       *(&pci_transmit_message_table)[can_rx_state_t_0040b34e.message_buffer].status | 8;
-  j1939_request_state_flags = j1939_request_state_flags & 0xe0;
-  can_rx_state_t_0040b34e.message_index = 0;
-  can_rx_state_t_0040b34e.message_buffer = 0;
-  can_rx_state_t_0040b34e.message_counter._0_1_ = 0;
-  if (j1939_message_tx_state != 2) {
-    j1939_message_tx_state = 4;
-    uds_sequence_counter = 0;
+  *(&pci_transmit_message_table)[pci_link_state.tx_match_index].status =
+       *(&pci_transmit_message_table)[pci_link_state.tx_match_index].status | 8;
+  pci_frame_match_flags = pci_frame_match_flags & 0xe0;
+  pci_link_state.rx_match_index = 0;
+  pci_link_state.tx_match_index = 0;
+  pci_link_state.receive_byte_count = 0;
+  if (pci_transmit_state != 2) {
+    pci_transmit_state = 4;
+    pci_transmit_frame_length = 0;
   }
   return;
 }
@@ -36033,80 +36041,84 @@ void cm848_processUdsTransmitBuffer(void)
   uint uVar1;
   byte local_8;
   
-  local_8 = (byte)(j1939_diagnostic_state_word >> 8);
+  local_8 = (byte)(pci_controller_command_reply_word >> 8);
   if ((local_8 & 3) == 3) {
-    uds_response_pgn_word._1_1_ = 0;
+    pci_controller_command_word._1_1_ = 0;
   }
   else {
-    uds_response_pgn_word._0_1_ = (&can_rx_data_buffer)[can_rx_handler_step_index];
-    uVar1 = can_rx_handler_step_index + 1;
-    can_rx_handler_step_index = (byte)uVar1;
+    pci_controller_command_word._0_1_ = (&pci_transmit_frame_buffer)[pci_in_frame_response_index];
+    uVar1 = pci_in_frame_response_index + 1;
+    pci_in_frame_response_index = (byte)uVar1;
     uVar1 = uVar1 & 0xff;
     if (uVar1 == 1) {
-      if (1 < uds_sequence_counter) {
-        uds_response_pgn_word._1_1_ = 0x14;
+      if (1 < pci_transmit_frame_length) {
+        pci_controller_command_word._1_1_ = 0x14;
         return;
       }
-      uds_response_pgn_word._1_1_ = 0x1c;
+      pci_controller_command_word._1_1_ = 0x1c;
     }
     else {
-      if (uVar1 < uds_sequence_counter) {
-        uds_response_pgn_word._1_1_ = 4;
+      if (uVar1 < pci_transmit_frame_length) {
+        pci_controller_command_word._1_1_ = 4;
         return;
       }
-      uds_response_pgn_word._1_1_ = 0xc;
+      pci_controller_command_word._1_1_ = 0xc;
     }
-    j1939_message_tx_state = 1;
+    pci_transmit_state = 1;
   }
-  can_rx_handler_step_index = 0;
+  pci_in_frame_response_index = 0;
   return;
 }
 
 
 
 //
-// Function: cm848_processCanMessageIndex @ 0x00039d18
+// Function: cm848_sendPciInFrameResponseByte @ 0x00039d18
 //
 
-void cm848_processCanMessageIndex(void)
+/* Loads the next in_frame_response_bytes byte of the matched RX entry into
+   pci_controller_command_word (command 0xbc / 0xb4 first then 0x04 then 0x0c last); sets
+   pci_transmit_state bit 0x10 when done */
+
+void cm848_sendPciInFrameResponseByte(void)
 
 {
   uint uVar1;
   
-  if (can_rx_step_count == 0) {
-    can_rx_handler_step_index = 0;
+  if (pci_in_frame_response_length == 0) {
+    pci_in_frame_response_index = 0;
     for (uVar1 = 0;
-        ((&pci_receive_message_table)[can_rx_state_t_0040b34e.message_index].expected_trailing_bytes
-         [uVar1] != 0 || (uVar1 == 0xc)); uVar1 = uVar1 + 1 & 0xff) {
+        ((&pci_receive_message_table)[pci_link_state.rx_match_index].in_frame_response_bytes[uVar1]
+         != 0 || (uVar1 == 0xc)); uVar1 = uVar1 + 1 & 0xff) {
     }
-    can_rx_step_count = (byte)uVar1;
+    pci_in_frame_response_length = (byte)uVar1;
     if (uVar1 < 2) {
-      uds_response_pgn_word._1_1_ = 0xbc;
+      pci_controller_command_word._1_1_ = 0xbc;
     }
     else {
-      uds_response_pgn_word._1_1_ = 0xb4;
+      pci_controller_command_word._1_1_ = 0xb4;
     }
   }
-  else if (can_rx_handler_step_index + 1 < (uint)can_rx_step_count) {
-    uds_response_pgn_word._1_1_ = 4;
+  else if (pci_in_frame_response_index + 1 < (uint)pci_in_frame_response_length) {
+    pci_controller_command_word._1_1_ = 4;
   }
   else {
-    uds_response_pgn_word._1_1_ = 0xc;
+    pci_controller_command_word._1_1_ = 0xc;
   }
-  uds_response_pgn_word._0_1_ =
-       (&pci_receive_message_table)[can_rx_state_t_0040b34e.message_index].expected_trailing_bytes
-       [can_rx_handler_step_index];
-  uVar1 = can_rx_handler_step_index + 1;
-  can_rx_handler_step_index = (byte)uVar1;
-  if ((uVar1 & 0xff) == (uint)can_rx_step_count) {
-    can_rx_step_count = 0;
-    if (j1939_message_tx_state == 1) {
-      j1939_message_tx_state = 0x12;
+  pci_controller_command_word._0_1_ =
+       (&pci_receive_message_table)[pci_link_state.rx_match_index].in_frame_response_bytes
+       [pci_in_frame_response_index];
+  uVar1 = pci_in_frame_response_index + 1;
+  pci_in_frame_response_index = (byte)uVar1;
+  if ((uVar1 & 0xff) == (uint)pci_in_frame_response_length) {
+    pci_in_frame_response_length = 0;
+    if (pci_transmit_state == 1) {
+      pci_transmit_state = 0x12;
     }
     else {
-      j1939_message_tx_state = 0x10;
+      pci_transmit_state = 0x10;
     }
-    can_rx_handler_step_index = 0;
+    pci_in_frame_response_index = 0;
   }
   return;
 }
@@ -36114,44 +36126,49 @@ void cm848_processCanMessageIndex(void)
 
 
 //
-// Function: cm848_j1939TransmitDiagnosticResponse @ 0x00039e30
+// Function: cm848_servicePciTransmit @ 0x00039e30
 //
 
-void cm848_j1939TransmitDiagnosticResponse(void)
+/* Completion callback of pci_controller_command_job: runs cm848_handlePciLinkEvent for a pending
+   link_event_code then queues the next controller command (in-frame response byte / frame byte via
+   cm848_processUdsTransmitBuffer / 0xaf8 after a link event) */
+
+void cm848_servicePciTransmit(void)
 
 {
-  byte bVar1;
-  char cVar2;
+  byte resend_requested;
+  byte queue_priority;
   
-  cVar2 = '\0';
+  resend_requested = 0;
   if ((governor_system_config_flags & 0x40) != 0) {
-    if (can_rx_state_t_0040b34e.link_event_code != 0) {
-      cVar2 = cm848_processJ1939DM1Pending();
-      can_rx_state_t_0040b34e.link_event_code = 0;
+    if (pci_link_state.link_event_code != 0) {
+      resend_requested = cm848_handlePciLinkEvent();
+      pci_link_state.link_event_code = 0;
     }
-    if (cVar2 == '\0') {
-      if (((j1939_request_state_flags & 4) == 0) || ((j1939_message_tx_state & 0x10) != 0)) {
-        if ((j1939_message_tx_state & 2) == 0) {
+    if (resend_requested == 0) {
+      if (((pci_frame_match_flags & 4) == 0) || ((pci_transmit_state & 0x10) != 0)) {
+        if ((pci_transmit_state & 2) == 0) {
           return;
         }
-        if (uds_sequence_counter == 0) {
+        if (pci_transmit_frame_length == 0) {
           return;
         }
         cm848_processUdsTransmitBuffer();
-        bVar1 = j1939_tx_priority_flag;
+        queue_priority = pci_qspi_queue_priority;
       }
       else {
-        cm848_processCanMessageIndex();
-        bVar1 = j1939_message_response_pending_flag;
+        cm848_sendPciInFrameResponseByte();
+        queue_priority = pci_in_frame_response_queue_priority;
       }
     }
     else {
-      uds_response_pgn_word = 0xaf8;
-      bVar1 = j1939_tx_priority_flag;
+      pci_controller_command_word = 0xaf8;
+      queue_priority = pci_qspi_queue_priority;
     }
-    uds_response_code = uds_response_pgn_word;
-    j1939_transmit_callback_ptr = cm848_j1939TransmitDiagnosticResponse;
-    j1939_queue_result_working = cm848_j1939QueueTransmitMessage(0x40b357,bVar1);
+    pci_controller_transmit_word = pci_controller_command_word;
+    pci_controller_command_job.completion_callback = cm848_servicePciTransmit;
+    pci_qspi_queue_result =
+         cm848_j1939QueueTransmitMessage(&pci_controller_command_job,queue_priority);
   }
   return;
 }
@@ -36159,45 +36176,48 @@ void cm848_j1939TransmitDiagnosticResponse(void)
 
 
 //
-// Function: cm848_j1939MessageResponseCallback @ 0x00039f54
+// Function: cm848_onPciControllerReceiveWord @ 0x00039f54
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Completion callback of pci_controller_receive_job: splits pci_controller_receive_word into
+   pci_receive_word / pci_receive_status (bit 0x800 -> link_event_code 1) and dispatches
+   end-of-frame words to cm848_completePciFrame and data bytes to cm848_matchPciReceiveHeader; then
+   services the transmit side and re-queues the receive job */
 
-void cm848_j1939MessageResponseCallback(void)
+void cm848_onPciControllerReceiveWord(void)
 
 {
-  word wVar1;
-  bool bVar2;
+  byte is_end_of_frame;
+  word saved_receive_word;
   
-  uds_session_status_byte = uds_session_control_word;
-  wVar1 = uds_session_status_byte;
-  uds_session_status_byte._0_1_ = (byte)(uds_session_control_word >> 8);
-  if ((uds_session_control_word & 0x800) != 0) {
-    can_rx_state_t_0040b34e.link_event_code = 1;
+  pci_receive_word = pci_controller_receive_word;
+  saved_receive_word = pci_receive_word;
+  pci_receive_word._0_1_ = (byte)(pci_controller_receive_word >> 8);
+  if ((pci_controller_receive_word & 0x800) != 0) {
+    pci_link_state.link_event_code = 1;
   }
-  uds_security_service_status = uds_session_status_byte._0_1_ & 0xe0;
-  uds_session_status_byte = wVar1;
-  if ((uds_session_control_word & 0xe000) != 0) {
-    if (((uds_security_service_status == 0xe0) || (uds_security_service_status == 0xc0)) ||
-       (uds_security_service_status == 0xa0)) {
-      bVar2 = true;
+  pci_receive_status = pci_receive_word._0_1_ & 0xe0;
+  pci_receive_word = saved_receive_word;
+  if ((pci_controller_receive_word & 0xe000) != 0) {
+    if (((pci_receive_status == 0xe0) || (pci_receive_status == 0xc0)) ||
+       (pci_receive_status == 0xa0)) {
+      is_end_of_frame = 1;
     }
     else {
-      bVar2 = false;
+      is_end_of_frame = 0;
     }
-    if (bVar2) {
-      cm848_processCalibrationChecksumResponse();
+    if ((bool)is_end_of_frame) {
+      cm848_completePciFrame();
     }
     else {
-      cm848_j1939ProcessPeriodicTx();
+      cm848_matchPciReceiveHeader();
     }
-    if (((((j1939_request_state_flags & 4) != 0) && ((j1939_message_tx_state & 0x10) == 0)) ||
-        (can_rx_state_t_0040b34e.link_event_code != 0)) && (ram0x0040b357 == 0)) {
-      cm848_j1939TransmitDiagnosticResponse();
+    if (((((pci_frame_match_flags & 4) != 0) && ((pci_transmit_state & 0x10) == 0)) ||
+        (pci_link_state.link_event_code != 0)) && (pci_controller_command_job.busy_state == 0)) {
+      cm848_servicePciTransmit();
     }
-    j1939_queue_result_working =
-         cm848_j1939QueueTransmitMessage(&j1939_tx_message_buffer_slot,j1939_tx_priority_flag);
+    pci_qspi_queue_result =
+         cm848_j1939QueueTransmitMessage(&pci_controller_receive_job,pci_qspi_queue_priority);
   }
   return;
 }
@@ -36211,10 +36231,10 @@ void cm848_j1939MessageResponseCallback(void)
 void cm848_clearCanMessageState(void)
 
 {
-  can_rx_state_t_0040b34e.message_counter._0_1_ = 0;
-  can_rx_state_t_0040b34e.message_index = 0;
-  can_rx_state_t_0040b34e.message_buffer = 0;
-  j1939_request_state_flags = 0;
+  pci_link_state.receive_byte_count = 0;
+  pci_link_state.rx_match_index = 0;
+  pci_link_state.tx_match_index = 0;
+  pci_frame_match_flags = 0;
   return;
 }
 
@@ -36229,14 +36249,14 @@ void cm848_resetUdsSessionState(void)
 {
   uint uVar1;
   
-  can_rx_state_t_0040b34e.message_buffer = 0;
-  j1939_message_tx_state = 4;
+  pci_link_state.tx_match_index = 0;
+  pci_transmit_state = 4;
   uVar1 = 0;
   do {
-    (&can_rx_data_buffer)[uVar1] = 0;
+    (&pci_transmit_frame_buffer)[uVar1] = 0;
     uVar1 = uVar1 + 1 & 0xff;
   } while (uVar1 < 0xc);
-  uds_sequence_counter = 0;
+  pci_transmit_frame_length = 0;
   return;
 }
 
@@ -36261,13 +36281,11 @@ void cm848_clearJ1939SyncFlags(void)
 // Function: hpcr_initUdsResponseBuffer @ 0x0003a100
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void hpcr_initUdsResponseBuffer(void)
 
 {
   j1939_msg_slot_t_counter = 0;
-  ram0x0040b49c = 1;
+  uds_response_t_0040b492.transmit_timer = 1;
   uds_timeout_count_cal = 0x50;
   governor_speed_setpoint_high = 200;
   j1939_msg_slot_p_timer = 0xb00;
@@ -36312,68 +36330,74 @@ void hpcr_initUdsResponseBuffer(void)
 
 
 //
-// Function: cm848_processJ1939DM1Pending @ 0x0003a290
+// Function: cm848_handlePciLinkEvent @ 0x0003a290
 //
 
-undefined4 cm848_processJ1939DM1Pending(void)
+/* Maps link_event_code 1..7 to pci_link_event_action_mask_cal and performs the recovery actions
+   (count toward pci_link_error_limit -> power_state_status_flags 0x8000 + fault 0x7c / clear link
+   state / reset session / clear sync / init response buffer); returns 1 when the mask asks for a
+   controller resend (bit 0x20) | review-function-readability reviewed 2026-11-11 - Readability
+   Medium Accuracy Confidence Medium */
+
+undefined4 cm848_handlePciLinkEvent(void)
 
 {
-  byte bVar1;
+  byte action_mask;
   
-  bVar1 = DAT_003fd8e7;
-  switch(can_rx_state_t_0040b34e.link_event_code) {
+  action_mask = pci_link_event_action_mask_cal[7];
+  switch(pci_link_state.link_event_code) {
   case 0:
     return 0;
   case 1:
-    bVar1 = DAT_003fd8e1;
+    action_mask = pci_link_event_action_mask_cal[1];
     break;
   case 2:
-    bVar1 = DAT_003fd8e2;
+    action_mask = pci_link_event_action_mask_cal[2];
     break;
   case 3:
-    bVar1 = DAT_003fd8e3;
+    action_mask = pci_link_event_action_mask_cal[3];
     break;
   case 4:
-    bVar1 = DAT_003fd8e4;
+    action_mask = pci_link_event_action_mask_cal[4];
     break;
   case 5:
-    bVar1 = DAT_003fd8e5;
+    action_mask = pci_link_event_action_mask_cal[5];
     break;
   case 6:
-    bVar1 = DAT_003fd8e6;
+    action_mask = pci_link_event_action_mask_cal[6];
     break;
   case 7:
-    bVar1 = DAT_003fd8e0;
+    action_mask = pci_link_event_action_mask_cal[0];
   }
   if ((power_state_status_flags & 0x8000) == 0) {
-    if ((bVar1 & 1) != 0) {
-      if (can_message_sequence_counter != 0xffff) {
-        can_message_sequence_counter = can_message_sequence_counter + 1;
+    if ((action_mask & 1) != 0) {
+      if (pci_link_error_count != 0xffff) {
+        pci_link_error_count = pci_link_error_count + 1;
       }
-      if (can_message_sequence_counter == DAT_0005c7b0) {
+      if (pci_link_error_count == pci_link_error_limit) {
         power_state_status_flags = power_state_status_flags | 0x8000;
         updateEngineSyncStatus(0x7c);
-        can_message_sequence_counter = 0;
+        pci_link_error_count = 0;
         return 0;
       }
     }
-    if ((bVar1 & 0x40) != 0) {
-      j1939_request_state_flags = 0x10;
+    if ((action_mask & 0x40) != 0) {
+      pci_frame_match_flags = 0x10;
     }
-    if ((bVar1 & 2) != 0) {
+    if ((action_mask & 2) != 0) {
       cm848_clearCanMessageState();
     }
-    if ((bVar1 & 4) != 0) {
+    if ((action_mask & 4) != 0) {
       cm848_resetUdsSessionState();
     }
-    if ((bVar1 & 8) != 0) {
+    if ((action_mask & 8) != 0) {
       cm848_clearJ1939SyncFlags();
-      bVar1 = bVar1 | 0x20;
+      action_mask = action_mask | 0x20;
     }
-    if ((bVar1 & 0x10) != 0) {
+    if ((action_mask & 0x10) != 0) {
       hpcr_initUdsResponseBuffer();
     }
-    if ((bVar1 & 0x20) != 0) {
+    if ((action_mask & 0x20) != 0) {
       return 1;
     }
   }
@@ -36479,7 +36503,7 @@ void hpcr_initJ1939MessageTables(void)
     iVar7 = iVar7 + 1;
   } while (iVar7 < 4);
   iVar7 = 0;
-  puVar3 = (undefined1 *)0x40b49d;
+  puVar3 = (undefined1 *)((int)&uds_response_t_0040b492.transmit_timer + 1);
   do {
     puVar3 = puVar3 + 1;
     *puVar3 = 0;
@@ -36571,7 +36595,7 @@ void hpcr_initJ1939MessageTables(void)
     iVar7 = iVar7 + 1;
   } while (iVar7 < 4);
   iVar7 = 0;
-  pbVar4 = &j1939_request_state_flags;
+  pbVar4 = &pci_frame_match_flags;
   do {
     pbVar4 = pbVar4 + 1;
     *pbVar4 = 0;
@@ -36748,12 +36772,12 @@ void cm848_clearCanMessageBuffers(void)
   byte *pbVar1;
   int iVar2;
   
-  can_rx_state_t_0040b34e.message_index = 0;
-  can_rx_state_t_0040b34e.message_buffer = 0;
-  can_rx_state_t_0040b34e.message_counter._0_1_ = 0;
-  j1939_request_state_flags = 0;
-  pci_normal_transmit_disabled = DAT_003fd8de;
-  pci_receive_processing_disabled = DAT_003fd8df;
+  pci_link_state.rx_match_index = 0;
+  pci_link_state.tx_match_index = 0;
+  pci_link_state.receive_byte_count = 0;
+  pci_frame_match_flags = 0;
+  pci_normal_transmit_disabled = pci_normal_transmit_disabled_initial_cal;
+  pci_receive_processing_disabled = pci_receive_processing_disabled_initial_cal;
   iVar2 = 0;
   pbVar1 = &pci_receive_processing_disabled;
   do {
@@ -36761,15 +36785,15 @@ void cm848_clearCanMessageBuffers(void)
     *pbVar1 = 0;
     iVar2 = iVar2 + 1;
   } while (iVar2 < 0x16);
-  j1939_message_tx_state = 4;
+  pci_transmit_state = 4;
   iVar2 = 0;
-  pbVar1 = &j1939_message_tx_state;
+  pbVar1 = &pci_transmit_state;
   do {
     pbVar1 = pbVar1 + 1;
     *pbVar1 = 0;
     iVar2 = iVar2 + 1;
   } while (iVar2 < 0xc);
-  uds_sequence_counter = 0;
+  pci_transmit_frame_length = 0;
   return;
 }
 
@@ -36787,25 +36811,25 @@ void mpc555_initJ1939TransmitSchedule(void)
   updateEngineSyncStatus(0x7c);
   updateEngineSyncStatus(0x7c);
   clearModuleSyncFlag(0x7c);
-  j1939_diagnostic_state_byte = 0x57;
-  j1939_periodic_timer_handle._0_1_ = cm848_configurePeriodicTimer(0,2000,0x352,0x28);
-  j1939_response_session_active = 1;
-  j1939_response_code_ptr = (dword)&uds_response_code;
-  j1939_diagnostic_state_ptr_a = (dword)&j1939_diagnostic_state_byte;
-  j1939_diagnostic_data_ptr = (dword)&j1939_diagnostic_state_word;
-  j1939_response_mode_active = 1;
-  j1939_response_state_ptr = (dword)&j1939_response_state;
-  j1939_diagnostic_state_ptr_b = (dword)&j1939_diagnostic_state_byte;
-  j1939_session_control_ptr = (dword)&uds_session_control_word;
-  j1939_response_state = 2;
-  j1939_message_response_callback = (dword)cm848_j1939MessageResponseCallback;
-  j1939_tx_priority_flag = 1;
-  j1939_message_response_pending_flag = 0;
-  j1939_transmit_callback_ptr = cm848_j1939TransmitScheduleCallback;
-  uds_response_code = 0xe0;
-  j1939_response_timer_handle_a = j1939_periodic_timer_handle._0_1_;
-  j1939_response_timer_handle_b = j1939_periodic_timer_handle._0_1_;
-  j1939_queue_tx_return_a = cm848_j1939QueueTransmitMessage(0x40b357,1);
+  pci_qspi_command_byte = 0x57;
+  pci_controller_qspi_slot = cm848_configurePeriodicTimer(0,2000,0x352,0x28);
+  pci_controller_command_job.word_count = 1;
+  pci_controller_command_job.transmit_words = &pci_controller_transmit_word;
+  pci_controller_command_job.command_bytes = &pci_qspi_command_byte;
+  pci_controller_command_job.receive_words = &pci_controller_command_reply_word;
+  pci_controller_receive_job.word_count = 1;
+  pci_controller_receive_job.transmit_words = &pci_controller_status_request_word;
+  pci_controller_receive_job.command_bytes = &pci_qspi_command_byte;
+  pci_controller_receive_job.receive_words = &pci_controller_receive_word;
+  pci_controller_status_request_word = 2;
+  pci_controller_receive_job.completion_callback = cm848_onPciControllerReceiveWord;
+  pci_qspi_queue_priority = 1;
+  pci_in_frame_response_queue_priority = 0;
+  pci_controller_command_job.completion_callback = cm848_j1939TransmitScheduleCallback;
+  pci_controller_transmit_word = 0xe0;
+  pci_controller_command_job.device_slot = pci_controller_qspi_slot;
+  pci_controller_receive_job.device_slot = pci_controller_qspi_slot;
+  j1939_queue_tx_return_a = cm848_j1939QueueTransmitMessage(&pci_controller_command_job,1);
   uVar1 = scheduler_task_enable_flags._0_2_;
   scheduler_task_enable_flags._0_2_ = uVar1 | 0x200;
   uVar1 = scheduler_task_pending_flags._0_2_;
@@ -36833,7 +36857,7 @@ void cm848_initJ1939CommunicationSystem(void)
   power_state_status_flags = power_state_status_flags & 0x7fff;
   battery_diag_shadow_flags = battery_diag_shadow_flags & 0x7fff;
   mpc555_initJ1939TransmitSchedule();
-  can_rx_state_t_0040b34e.message_counter._1_1_ = 1;
+  pci_link_state.init_complete_marker = 1;
   return;
 }
 
@@ -36846,72 +36870,77 @@ void cm848_initJ1939CommunicationSystem(void)
 void cm848_j1939TransmitScheduleCallback(void)
 
 {
-  j1939_transmit_callback_ptr = (undefined *)0x0;
-  uds_response_code = 0xa18;
-  j1939_queue_tx_return_a = cm848_j1939QueueTransmitMessage(0x40b357,j1939_tx_priority_flag);
+  pci_controller_command_job.completion_callback = (undefined *)0x0;
+  pci_controller_transmit_word = 0xa18;
+  j1939_queue_tx_return_a =
+       cm848_j1939QueueTransmitMessage(&pci_controller_command_job,pci_qspi_queue_priority);
   return;
 }
 
 
 
 //
-// Function: cm848_processJ1939ReceivedMessages @ 0x0003adcc
+// Function: cm848_schedulePciTransmit @ 0x0003adcc
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* When pci_transmit_state is idle builds the first overdue pci_transmit_message_table entry (header
+   + payload) into pci_transmit_frame_buffer; counts passes waiting for an expected in-frame
+   response (timeout -> cm848_handlePciInFrameResponseTimeout); starts transmission via
+   cm848_servicePciTransmit | review-function-readability reviewed 2026-11-11 - Readability High
+   Accuracy Confidence Medium */
 
-void cm848_processJ1939ReceivedMessages(void)
+void cm848_schedulePciTransmit(void)
 
 {
-  byte *pbVar1;
-  byte *pbVar2;
-  uint uVar3;
-  uint uVar4;
-  uint uVar5;
+  byte *payload_length;
+  byte *payload;
+  dword transmit_index;
+  dword payload_index;
+  dword frame_index;
   
-  if (((j1939_message_tx_state == 4) && ((governor_system_config_flags & 0x40) != 0)) &&
+  if (((pci_transmit_state == 4) && ((governor_system_config_flags & 0x40) != 0)) &&
      (pci_normal_transmit_disabled == 0)) {
-    uVar3 = 0;
+    transmit_index = 0;
     if (pci_transmit_message_count != 0) {
       do {
-        if ((&pci_transmit_message_table)[uVar3].interval <
-            *(&pci_transmit_message_table)[uVar3].timer) {
-          for (uVar5 = 0;
-              ((&(&pci_transmit_message_table)[uVar3].header_byte_0)[uVar5] != 0 || (uVar5 == 3));
-              uVar5 = uVar5 + 1 & 0xff) {
-            (&can_rx_data_buffer)[uVar5] =
-                 (&(&pci_transmit_message_table)[uVar3].header_byte_0)[uVar5];
+        if ((&pci_transmit_message_table)[transmit_index].interval <
+            *(&pci_transmit_message_table)[transmit_index].timer) {
+          for (frame_index = 0;
+              ((&(&pci_transmit_message_table)[transmit_index].header_byte_0)[frame_index] != 0 ||
+              (frame_index == 3)); frame_index = frame_index + 1 & 0xff) {
+            (&pci_transmit_frame_buffer)[frame_index] =
+                 (&(&pci_transmit_message_table)[transmit_index].header_byte_0)[frame_index];
           }
-          uVar4 = 0;
-          pbVar1 = (&pci_transmit_message_table)[uVar3].data_length;
-          if (*pbVar1 != 0) {
-            pbVar2 = (&pci_transmit_message_table)[uVar3].data_buffer;
+          payload_index = 0;
+          payload_length = (&pci_transmit_message_table)[transmit_index].data_length;
+          if (*payload_length != 0) {
+            payload = (&pci_transmit_message_table)[transmit_index].data_buffer;
             do {
-              (&can_rx_data_buffer)[uVar5] = pbVar2[uVar4];
-              uVar5 = uVar5 + 1 & 0xff;
-              uVar4 = uVar4 + 1 & 0xff;
-            } while (uVar4 < *pbVar1);
+              (&pci_transmit_frame_buffer)[frame_index] = payload[payload_index];
+              frame_index = frame_index + 1 & 0xff;
+              payload_index = payload_index + 1 & 0xff;
+            } while (payload_index < *payload_length);
           }
-          j1939_message_tx_state = 2;
-          uds_sequence_counter = (byte)uVar5;
+          pci_transmit_state = 2;
+          pci_transmit_frame_length = (byte)frame_index;
           break;
         }
-        uVar3 = uVar3 + 1 & 0xff;
-      } while (uVar3 < pci_transmit_message_count);
+        transmit_index = transmit_index + 1 & 0xff;
+      } while (transmit_index < pci_transmit_message_count);
     }
   }
-  if ((j1939_request_state_flags & 8) == 0) {
-    j1939_message_timeout_counter = 0;
+  if ((pci_frame_match_flags & 8) == 0) {
+    pci_in_frame_response_wait_count = 0;
   }
   else {
-    j1939_message_timeout_counter = j1939_message_timeout_counter + 1;
-    if ((int)(uint)DAT_0005c7ce < (int)j1939_message_timeout_counter) {
-      cm848_handleJ1939MessageTimeout();
+    pci_in_frame_response_wait_count = pci_in_frame_response_wait_count + 1;
+    if ((int)(uint)pci_in_frame_response_wait_limit < (int)pci_in_frame_response_wait_count) {
+      cm848_handlePciInFrameResponseTimeout();
     }
   }
-  if ((j1939_message_tx_state == 2) ||
-     ((can_rx_state_t_0040b34e.link_event_code != 0 && (ram0x0040b357 == 0)))) {
-    cm848_j1939TransmitDiagnosticResponse();
+  if ((pci_transmit_state == 2) ||
+     ((pci_link_state.link_event_code != 0 && (pci_controller_command_job.busy_state == 0)))) {
+    cm848_servicePciTransmit();
   }
   return;
 }
@@ -37022,7 +37051,7 @@ void cm848_processUdsSecurityService(void)
       uds_response_t_0040b492.source_address = bVar2;
       uds_response_t_0040b492.service_id = 0x68;
       uds_response_t_0040b492.subfunction = uds_subfunction_code;
-      ram0x0040b49c = 1;
+      uds_response_t_0040b492.transmit_timer = 1;
       return;
     }
     if (uds_service_id_byte == 0x11) {
@@ -37034,7 +37063,7 @@ void cm848_processUdsSecurityService(void)
         uds_response_type_code = 2;
         uds_response_t_0040b492.source_address = bVar2;
         uds_response_t_0040b492.service_id = 0x60;
-        ram0x0040b49c = 1;
+        uds_response_t_0040b492.transmit_timer = 1;
         return;
       }
       if (uds_service_id_byte != 0x22) {
@@ -37046,7 +37075,7 @@ void cm848_processUdsSecurityService(void)
           uds_response_t_0040b492.service_id = 0x7f;
           uds_response_t_0040b492.subfunction = uds_service_id_byte;
           uds_response_t_0040b492.error_code = 0x11;
-          ram0x0040b49c = 1;
+          uds_response_t_0040b492.transmit_timer = 1;
           return;
         }
         uds_response_type_code = 5;
@@ -37065,7 +37094,7 @@ void cm848_processUdsSecurityService(void)
                   uds_response_t_0040b492.subfunction = 0x27;
                   uds_response_t_0040b492.error_code = 0x37;
                   uds_response_t_0040b492.data_length = 0;
-                  ram0x0040b49c = 1;
+                  uds_response_t_0040b492.transmit_timer = 1;
                   return;
                 }
                 if (uds_upload_active_flag == 0) {
@@ -37075,7 +37104,7 @@ void cm848_processUdsSecurityService(void)
                   uds_response_t_0040b492.subfunction = 0x27;
                   uds_response_t_0040b492.error_code = 0xc0;
                   uds_response_t_0040b492.data_length = 0;
-                  ram0x0040b49c = 1;
+                  uds_response_t_0040b492.transmit_timer = 1;
                   return;
                 }
                 uds_security_seed_word =
@@ -37087,13 +37116,13 @@ void cm848_processUdsSecurityService(void)
                   if ((ushort)(tsc1_retry_count + 1) < 3) {
                     uds_request_data_pointer = uds_security_request_state;
                     uds_response_t_0040b492.error_code = 0x35;
-                    ram0x0040b49c = 1;
+                    uds_response_t_0040b492.transmit_timer = 1;
                     tsc1_retry_count = tsc1_retry_count + 1;
                     return;
                   }
                   uds_request_data_pointer = uds_security_request_state;
                   uds_response_t_0040b492.error_code = 0x36;
-                  ram0x0040b49c = 1;
+                  uds_response_t_0040b492.transmit_timer = 1;
                   tsc1_retry_count = 0;
                   fuel_state_countdown_timer = 0xfa;
                   uds_upload_active_flag = 0;
@@ -37125,7 +37154,7 @@ void cm848_processUdsSecurityService(void)
                 uds_response_t_0040b492.subfunction = 1;
                 uds_response_t_0040b492.error_code = (byte)(uds_security_challenge >> 8);
                 uds_response_t_0040b492.data_length = (byte)uds_security_challenge;
-                ram0x0040b49c = 1;
+                uds_response_t_0040b492.transmit_timer = 1;
                 uds_upload_active_flag = 1;
                 return;
               }
@@ -37167,7 +37196,7 @@ LAB_0003b37c:
       uds_response_type_code = 2;
       uds_response_t_0040b492.source_address = bVar2;
       uds_response_t_0040b492.service_id = 0x69;
-      ram0x0040b49c = 1;
+      uds_response_t_0040b492.transmit_timer = 1;
       return;
     }
     if (uds_service_id_byte != 0xa1) {
@@ -37179,7 +37208,7 @@ LAB_0003b37c:
         uds_response_t_0040b492.service_id = 0x7f;
         uds_response_t_0040b492.subfunction = uds_service_id_byte;
         uds_response_t_0040b492.error_code = 0x11;
-        ram0x0040b49c = 1;
+        uds_response_t_0040b492.transmit_timer = 1;
         return;
       }
       uds_subfunction_packed_word = CONCAT11(uds_subfunction_code,uds_service_subfunction_byte);
@@ -37209,7 +37238,7 @@ LAB_0003b37c:
             uds_response_t_0040b492.error_code = DAT_003fb3ec;
             uds_response_t_0040b492.data_length = DAT_003fb3ed;
             uds_response_t_0040b492.data[0] = DAT_003fb3ee;
-            ram0x0040b49c = 1;
+            uds_response_t_0040b492.transmit_timer = 1;
             return;
           }
           uds_response_t_0040b492.subfunction = 0xa4;
@@ -37229,7 +37258,7 @@ LAB_0003b37c:
       uds_response_type_code = 5;
       uds_response_t_0040b492.service_id = 0x7f;
       uds_response_t_0040b492.data_length = 0;
-      ram0x0040b49c = 1;
+      uds_response_t_0040b492.transmit_timer = 1;
       return;
     }
     uds_subfunction_packed_word = CONCAT11(uds_subfunction_code,uds_service_subfunction_byte);
@@ -37289,7 +37318,7 @@ LAB_0003b608:
         uds_response_t_0040b492.subfunction = 0xa1;
         uds_response_t_0040b492.error_code = 0x33;
         uds_response_t_0040b492.data_length = 0;
-        ram0x0040b49c = 1;
+        uds_response_t_0040b492.transmit_timer = 1;
         return;
       }
       if (uds_processing_clear_flag == 9) {
@@ -37299,7 +37328,7 @@ LAB_0003b608:
         uds_response_t_0040b492.subfunction = 0xa1;
         uds_response_t_0040b492.error_code = 0x42;
         uds_response_t_0040b492.data_length = 0;
-        ram0x0040b49c = 1;
+        uds_response_t_0040b492.transmit_timer = 1;
         return;
       }
       if (uds_processing_clear_flag == 7) {
@@ -37309,7 +37338,7 @@ LAB_0003b608:
         uds_response_t_0040b492.subfunction = 0xa1;
         uds_response_t_0040b492.error_code = 0x90;
         uds_response_t_0040b492.data_length = 0;
-        ram0x0040b49c = 1;
+        uds_response_t_0040b492.transmit_timer = 1;
         return;
       }
       if (uds_processing_clear_flag == 0) {
@@ -37319,7 +37348,7 @@ LAB_0003b608:
         uds_response_t_0040b492.subfunction = uds_data_buffer_b3e6;
         uds_response_t_0040b492.error_code = 0x62;
         uds_response_t_0040b492.data_length = 0;
-        ram0x0040b49c = 1;
+        uds_response_t_0040b492.transmit_timer = 1;
         return;
       }
       uds_request_data_pointer = uds_security_request_state;
@@ -37328,7 +37357,7 @@ LAB_0003b608:
       uds_response_t_0040b492.subfunction = 0xa1;
       uds_response_t_0040b492.error_code = 0x40;
       uds_response_t_0040b492.data_length = 0;
-      ram0x0040b49c = 1;
+      uds_response_t_0040b492.transmit_timer = 1;
       return;
     }
     uds_response_t_0040b492.service_id = 0x7f;
@@ -37337,7 +37366,7 @@ LAB_0003b608:
 LAB_0003b680:
     uds_response_t_0040b492.data_length = 0;
   }
-  ram0x0040b49c = 1;
+  uds_response_t_0040b492.transmit_timer = 1;
   uds_request_data_pointer = uds_security_request_state;
   return;
 }
@@ -58894,8 +58923,8 @@ void sensorChannelTypeB_configInit
   dword debounce_transition_state;
   dword sensor_value;
   uint uVar3;
-  word scratch16;
   ushort recovery_decrement;
+  word scratch16;
   
   channel_word_index = (int)channel_index >> 4;
   sensor_value = 1 << (channel_index +

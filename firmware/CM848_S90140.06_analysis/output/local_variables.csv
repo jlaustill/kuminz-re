@@ -77,3 +77,13 @@ function_address,function_name,old_name,new_name,type,comment
 0x00038ac8,cm848_checkPciMessageTimeouts,uVar4,message_index,uint,Entry index into pci_transmit_message_table then pci_receive_message_table (masked to 8 bits)
 0x00038ac8,cm848_checkPciMessageTimeouts,puVar3,transmit_timer,ushort *,Cached pci_transmit_message_table[message_index].timer
 0x00038ac8,cm848_checkPciMessageTimeouts,uVar1,receive_interval,word,Cached pci_receive_message_table[message_index].interval (receive timeout)
+0x0003adcc,cm848_schedulePciTransmit,pbVar1,payload_length,byte *,data_length pointer of the overdue TX entry
+0x0003adcc,cm848_schedulePciTransmit,pbVar2,payload,byte *,data_buffer pointer of the overdue TX entry
+0x0003adcc,cm848_schedulePciTransmit,uVar3,transmit_index,uint,pci_transmit_message_table entry being checked
+0x0003adcc,cm848_schedulePciTransmit,uVar4,payload_index,uint,Byte index into payload
+0x0003adcc,cm848_schedulePciTransmit,uVar5,frame_index,uint,Next write position in pci_transmit_frame_buffer (header then payload) - becomes pci_transmit_frame_length
+0x0003a290,cm848_handlePciLinkEvent,bVar1,action_mask,byte,pci_link_event_action_mask_cal entry for the current link_event_code
+0x00039f54,cm848_onPciControllerReceiveWord,wVar1,saved_receive_word,word,pci_receive_word before its high byte is split out
+0x00039f54,cm848_onPciControllerReceiveWord,bVar2,is_end_of_frame,byte,1 when pci_receive_status is 0xa0 / 0xc0 / 0xe0 (end of frame)
+0x00039e30,cm848_servicePciTransmit,bVar1,queue_priority,byte,QSPI queue priority for the next controller command
+0x00039e30,cm848_servicePciTransmit,cVar2,resend_requested,char,Return of cm848_handlePciLinkEvent (1 = send the 0xaf8 controller command)

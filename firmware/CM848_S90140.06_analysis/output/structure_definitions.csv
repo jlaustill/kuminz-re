@@ -27,7 +27,7 @@ uds_response_t,0x0040b492,subfunction,byte,1,UDS subfunction code for service ro
 uds_response_t,0x0040b492,error_code,byte,1,Negative response error code (0x11=serviceNotSupported 0x37=requiredTimeDelayNotExpired),,verified
 uds_response_t,0x0040b492,data_length,byte,1,Length of data payload in response,,verified
 uds_response_t,0x0040b492,data,byte,5,Variable response payload (security seeds etc),DAT_0040b497-0x49b,verified
-uds_response_t,0x0040b492,response_pending,byte,1,Flag to trigger transmission (1=send response),,verified
+uds_response_t,0x0040b492,transmit_timer,word,2,This buffer is pci_transmit_message_table[10] (header 0x26 diagnostic response) and this word is its timer (sth): writing 1 queues the response on the PCI bus (was response_pending byte),,verified
 # Fuel Demand Control State - fuel demand calculation and rate limiting
 # Used by calculateFuelDemandValue and related fuel control functions
 # Total size: 28 bytes (0x0040a57a-0x0040a594)
@@ -135,14 +135,14 @@ injector_control_t,0x0040c117,timing_mode,byte,1,Injector timing mode selector,,
 injector_control_t,0x0040c117,output_ch0,byte,1,Channel 0 output state,,verified
 injector_control_t,0x0040c117,fault_flags,byte,1,Injector fault detection flags,,verified
 injector_control_t,0x0040c117,output_ch1,byte,1,Channel 1 output state,,verified
-# CAN Receive State - J1939/CAN message reception tracking
-# Used by j1939ProcessReceivedMessages and CAN interrupt handlers
-# Total size: 8 bytes (0x0040b34e-0x0040b355)
-# NOTE 2026-11-11: this is the J1850 PCI link state (indexes pci_receive_message_table / pci_transmit_message_table) - not J1939/CAN; struct and first 3 field names not yet re-reviewed
-can_rx_state_t,0x0040b34e,message_index,byte,1,Current message buffer index,,verified
-can_rx_state_t,0x0040b34e,message_buffer,byte,1,Message buffer selector,,verified
-can_rx_state_t,0x0040b34e,message_counter,word,2,Received message counter,,verified
-can_rx_state_t,0x0040b34e,link_event_code,dword,4,PCI link event 1..7 (all stw/lwz); cm848_processJ1939DM1Pending maps each to a recovery-action mask at 0x3fd8e0..0x3fd8e7; 7 = every scheduled PCI transmit overdue (set by cm848_checkPciMessageTimeouts); was dm1_pending (word),,verified
+# J1850 PCI link state (was can_rx_state_t - not J1939/CAN) - reviewed 2026-11-11
+# Indexes into pci_receive_message_table / pci_transmit_message_table for the frame being received
+# Total size: 8 bytes (0x0040b34e-0x0040b355); all four leading fields are byte-accessed (lbz/stb)
+pci_link_state_t,0x0040b34e,rx_match_index,byte,1,pci_receive_message_table entry whose header matches the frame being received (search resumes here per byte),,verified
+pci_link_state_t,0x0040b34e,tx_match_index,byte,1,pci_transmit_message_table entry whose header matches (own transmission echoed back),,verified
+pci_link_state_t,0x0040b34e,receive_byte_count,byte,1,Bytes stored in pci_receive_frame_buffer for the current frame,,verified
+pci_link_state_t,0x0040b34e,init_complete_marker,byte,1,Set to 1 at the end of cm848_initJ1939CommunicationSystem; no reader found,,verified
+pci_link_state_t,0x0040b34e,link_event_code,dword,4,PCI link event 1..7 (all stw/lwz); cm848_handlePciLinkEvent maps each to a recovery-action mask at 0x3fd8e0..0x3fd8e7; 7 = every scheduled PCI transmit overdue (set by cm848_checkPciMessageTimeouts); was dm1_pending (word),,verified
 # Protection System Enable - master protection control bits
 # Used by protectionEnableCheck and protection initialization
 # Total size: 4 bytes (0x0040c050-0x0040c053)
@@ -1472,9 +1472,9 @@ pci_message_descriptor_t,0x0005774b,data_buffer,byte*,4,RAM payload buffer: TX c
 pci_message_descriptor_t,0x0005774b,data_length,byte*,4,Pointer to the payload length byte (ROM 0x57741..0x57748 or RAM),,verified
 pci_message_descriptor_t,0x0005774b,interval,word,2,TX: send when *timer exceeds this / RX: receive timeout; 0 = event-driven (armed by writing 1 to *timer) and not timeout-checked; same units as *timer (+10 per monitor pass),,verified
 pci_message_descriptor_t,0x0005774b,timer,word*,4,RAM age timer: +10 per pass saturating at 0xff00; TX reset on own-message echo and RX reset on reception; RX starts at 0xff37 = never received,,verified
-pci_message_descriptor_t,0x0005774b,option_flag,byte,1,Purpose unconfirmed: on an RX/TX header match a nonzero value sets extra j1939_request_state_flags bits (0x4 / 0x8),,verified
+pci_message_descriptor_t,0x0005774b,in_frame_response_enabled,byte,1,Nonzero = J1850 in-frame response: RX entry -> ECM sends in_frame_response_bytes inside the frame (pci_frame_match_flags 0x04); TX entry -> ECM expects them back (0x08). Only TX 0xB0 sets it in this ROM (RX path inactive under this cal),,verified
 pci_message_descriptor_t,0x0005774b,reserved_19,byte,1,Unused padding,,verified
-pci_message_descriptor_t,0x0005774b,expected_trailing_bytes,byte*,4,Zero-terminated byte string (up to 12) that the RX handler compares backwards against the tail of a received frame (own TX echo); mismatch sets status bit 0x8; ROM 0x57740 (empty) in all but TX 0xB0 (RAM 0x40b4fd),,verified
+pci_message_descriptor_t,0x0005774b,in_frame_response_bytes,byte*,4,Zero-terminated in-frame response bytes (up to 12): RX entry = bytes the ECM sends (cm848_sendPciInFrameResponseByte) / TX entry = bytes expected back and compared against the frame tail (mismatch sets status bit 0x08); ROM 0x57740 (empty) except TX 0xB0 (RAM 0x40b4fd),,verified
 pci_message_descriptor_t,0x0005774b,status,byte*,4,RAM status byte: bit 0x10 = message timed out (latched; RX handler keeps it via &= 0x90) / bit 0x80 meaning unconfirmed,,verified
 pci_message_descriptor_t,0x00057767,,,,RX[1] header 24 interval 0,,verified
 pci_message_descriptor_t,0x00057783,,,,RX[2] header 0E interval 448,,verified
@@ -1515,3 +1515,15 @@ pci_message_descriptor_t,0x00057b3b,,,,TX[21] header F0 02 interval 2784,,verifi
 pci_message_descriptor_t,0x00057b57,,,,TX[22] header F0 06 interval 2784,,verified
 pci_message_descriptor_t,0x00057b73,,,,TX[23] header F0 0A interval 2784,,verified
 pci_message_descriptor_t,0x00057b8f,,,,TX[24] header F0 0E interval 2784,,verified
+
+# --- qspi_job_t: one queued QSPI transfer (22 bytes) - reviewed 2026-11-11 ---
+# Queued by cm848_j1939QueueTransmitMessage (generic QSPI job queue: 29 call sites); started by mpc555_j1939ConfigureMultiFrame
+# which copies word_count entries of transmit_words into QSPI transmit RAM (0x305180) and of command_bytes into command RAM (0x3051c0)
+qspi_job_t,0x0040b357,busy_state,dword,4,0 = idle / 1 = queued / 2 = transfer started,,verified
+qspi_job_t,0x0040b357,device_slot,byte,1,QSPI device slot (bus reconfigured via mpc555_j1939InitTransmitBuffer when it changes),,verified
+qspi_job_t,0x0040b357,word_count,byte,1,Number of QSPI words to transfer (must be under 0x21),,verified
+qspi_job_t,0x0040b357,transmit_words,word*,4,Words copied into QSPI transmit RAM (must be non-null),,verified
+qspi_job_t,0x0040b357,command_bytes,byte*,4,Bytes copied into QSPI command RAM (must be non-null),,verified
+qspi_job_t,0x0040b357,receive_words,word*,4,Where the received QSPI words are stored,,verified
+qspi_job_t,0x0040b357,completion_callback,pointer,4,Function called when the transfer completes,,verified
+qspi_job_t,0x0040b36d,,,,pci_controller_receive_job - second instance,,verified
