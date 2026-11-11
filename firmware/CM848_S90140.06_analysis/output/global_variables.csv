@@ -130,6 +130,7 @@ address,name,type,comment
 0x0005c748,u_HAN#_0005c748,,
 0x0005c788,u__0005c788,,
 0x0005c7ae,pci_message_timeout_grace,word,ROM constant 50 (lhz) - a PCI message is flagged timed out once its timer exceeds interval by more than this
+0x0005c7b0,pci_link_error_limit,word,ROM constant 255 (lhz) - pci_link_error_count value that latches the PCI link failure
 0x0005c7b2,j1939_dm_node_id_cal,byte,Source address byte written to slot T DM response buffer[0]
 0x0005c7ba,j1939_dm1_spn_support_bitmask,dword,Bit N set = SPN sub-index N+1 supported for DM1
 0x0005c7be,j1939_dm1_lamp_status_cal,word,Byte0 nibble=J1939 lamp bits; byte1=lamp type byte for DM1 sub-index 1 response
@@ -142,6 +143,7 @@ address,name,type,comment
 0x0005c7cb,j1939_dm9_capability_cal+1,,
 0x0005c7cc,j1939_dm9_capability_cal+2,,
 0x0005c7cd,j1939_dm9_capability_cal+3,,
+0x0005c7ce,pci_in_frame_response_wait_limit,word,ROM constant 3 (lhz) - scheduler passes to wait for the in-frame response to our own TX frame
 0x0005c94c,cruise_speed_default_cal,word,
 0x0005c994,boost_in_range_config,boost_in_range_config_t,
 0x0005c996,boost_in_range_config.load_threshold,,
@@ -1511,17 +1513,17 @@ address,name,type,comment
 0x003fb3b8,cruise_filter_state_b_ptr,pointer,
 0x003fb3bc,cruise_filter_accumulator_init,dword,
 0x003fb3c0,safety_condition_prev_flag,word,
-0x003fb3c4,can_rx_handler_step_index,byte,
-0x003fb3c5,uds_security_service_status,byte,
-0x003fb3c6,uds_session_status_byte,word,
+0x003fb3c4,pci_in_frame_response_index,byte,Index of the next in-frame response byte to send
+0x003fb3c5,pci_receive_status,byte,Top 3 bits of the current pci_receive_word (0x20/0x40/0x80 = data byte; 0xa0/0xc0/0xe0 = end of frame); reused by cm848_completePciFrame as the error bits of an unmatched frame
+0x003fb3c6,pci_receive_word,word,Copy of pci_controller_receive_word for the current byte: high byte = controller status / low byte = data byte (or completion status on end of frame)
 0x003fb3c7,uds_session_status_byte+1,,
-0x003fb3c8,uds_response_pgn_word,word,
+0x003fb3c8,pci_controller_command_word,word,Next command word for the J1850 controller (one byte is a command code e.g. 0xbc / 0xb4 / 0x04 / 0x0c and the other a data byte); copied to pci_controller_transmit_word before queuing
 0x003fb3c9,can_rx_message_type_code,,
-0x003fb3ca,j1939_queue_result_working,word,
-0x003fb3cc,can_rx_step_count,byte,
+0x003fb3ca,pci_qspi_queue_result,word,Return value of the last cm848_j1939QueueTransmitMessage call for a PCI controller job (-1 = queue full / bad job)
+0x003fb3cc,pci_in_frame_response_length,byte,Number of in-frame response bytes being sent (length of the matched RX entry in_frame_response_bytes); 0 = not sending
 0x003fb3ce,j1939_queue_tx_return_a,word,
-0x003fb3d0,can_message_sequence_counter,word,
-0x003fb3d2,j1939_message_timeout_counter,dword,
+0x003fb3d0,pci_link_error_count,word,Counts link events whose action mask has bit 0x01; at pci_link_error_limit sets power_state_status_flags 0x8000 and fault 0x7c
+0x003fb3d2,pci_in_frame_response_wait_count,dword,Scheduler passes spent waiting for the in-frame response to our own TX frame (pci_frame_match_flags 0x08); past pci_in_frame_response_wait_limit -> cm848_handlePciInFrameResponseTimeout
 0x003fb3d6,uds_write_base_address_working,pointer,
 0x003fb3d8,uds_write_base_address_working+2,,
 0x003fb3de,uds_subfunction_packed_word,word,
@@ -4995,41 +4997,27 @@ address,name,type,comment
 0x0040b338,cbd_enable_state,word,
 0x0040b33b,battery_voltage_status_flags,byte,
 0x0040b33c,battery_voltage_protection_state,word,
-0x0040b34e,can_rx_state_t_0040b34e,can_rx_state_t,
-0x0040b34f,can_rx_state_t_0040b34e.message_buffer,,
-0x0040b350,can_rx_state_t_0040b34e.message_counter,,
-0x0040b351,can_rx_state_t_0040b34e.message_counter+1,,
-0x0040b352,can_rx_state_t_0040b34e.link_event_code,,
-0x0040b356,j1939_periodic_timer_handle,word,
-0x0040b357,j1939_tx_msg_descriptor_b357,,
-0x0040b35b,j1939_response_timer_handle_a,byte,
-0x0040b35c,j1939_response_session_active,byte,
-0x0040b35d,j1939_response_code_ptr,dword,
-0x0040b361,j1939_diagnostic_state_ptr_a,dword,
-0x0040b365,j1939_diagnostic_data_ptr,dword,
-0x0040b369,j1939_transmit_callback_ptr,pointer,
-0x0040b36d,j1939_tx_message_buffer_slot,byte,
-0x0040b371,j1939_response_timer_handle_b,byte,
-0x0040b372,j1939_response_mode_active,byte,
-0x0040b373,j1939_response_state_ptr,dword,
-0x0040b377,j1939_diagnostic_state_ptr_b,dword,
-0x0040b37b,j1939_session_control_ptr,dword,
-0x0040b37f,j1939_message_response_callback,dword,
-0x0040b383,j1939_tx_priority_flag,byte,
-0x0040b384,j1939_message_response_pending_flag,byte,
-0x0040b385,j1939_diagnostic_state_byte,byte,
-0x0040b386,uds_response_code,word,
-0x0040b388,j1939_diagnostic_state_word,word,
-0x0040b38a,j1939_response_state,word,
-0x0040b38c,uds_session_control_word,word,
-0x0040b38e,j1939_condition_output_flags,byte,
-0x0040b38f,uds_data_receive_buffer,byte,
-0x0040b3a5,uds_security_combine_flags,byte,
-0x0040b3a6,uds_received_data_buffer_b,byte,
+0x0040b34e,pci_link_state,pci_link_state_t,J1850 PCI link state (was can_rx_state_t)
+0x0040b34f,pci_link_state.tx_match_index,,
+0x0040b350,pci_link_state.receive_byte_count,,
+0x0040b351,pci_link_state.init_complete_marker,,
+0x0040b352,pci_link_state.link_event_code,,
+0x0040b356,pci_controller_qspi_slot,byte,QSPI device-slot handle returned by cm848_configurePeriodicTimer(0 2000 0x352 0x28) at PCI init and copied into both PCI controller jobs device_slot (stb only; was a word that overlapped pci_controller_command_job)
+0x0040b383,pci_qspi_queue_priority,byte,QSPI queue priority used for PCI controller jobs (init 1)
+0x0040b384,pci_in_frame_response_queue_priority,byte,QSPI queue priority used when queuing an in-frame response byte (init 0)
+0x0040b385,pci_qspi_command_byte,byte,QSPI command-RAM byte for both PCI controller jobs (init 0x57)
+0x0040b386,pci_controller_transmit_word,word,QSPI transmit word of pci_controller_command_job (init 0xe0; 0xa18 / 0xaf8 written by the PCI transmit path)
+0x0040b388,pci_controller_command_reply_word,word,QSPI receive word of pci_controller_command_job
+0x0040b38a,pci_controller_status_request_word,word,QSPI transmit word of pci_controller_receive_job (init 2)
+0x0040b38c,pci_controller_receive_word,word,QSPI receive landing word of pci_controller_receive_job (J1850 controller status + byte); bit 0x800 raises link_event_code 1
+0x0040b38e,pci_message_error_flags,byte,Accumulated (OR) status error bits of known TX/RX messages that completed with an error
+0x0040b38f,pci_error_frame_capture,byte,Copy (up to 22 bytes) of the last frame for a known message that completed with error status bits
+0x0040b3a5,pci_unmatched_frame_error_flags,byte,Accumulated (OR) error bits from frames whose header matched no table entry
+0x0040b3a6,pci_unmatched_error_frame_capture,byte,Copy (up to 22 bytes) of the last unmatched-header frame that completed with error status bits
 0x0040b3bc,pci_normal_transmit_disabled,byte,Set by KWP2000 service 0x28 DisableNormalMessageTransmission (positive response 0x68) and cleared when the engine turns; skips the PCI transmit-timeout check and the PCI TX scheduler; init from 0x3fd8de (0 in RAM dump)
 0x0040b3bd,pci_receive_processing_disabled,byte,Gates storing received PCI payloads into pci_receive_message_table buffers and the PCI receive-timeout check; only written at init from 0x3fd8df (0 in RAM dump)
-0x0040b3be,uds_received_data_buffer,byte,
-0x0040b3d4,j1939_request_state_flags,byte,
+0x0040b3be,pci_receive_frame_buffer,byte,Bytes of the J1850 frame being received (clamped at 20); index = pci_link_state.receive_byte_count
+0x0040b3d4,pci_frame_match_flags,byte,Per-frame match state: 0x01 RX header matched / 0x02 own TX echo matched / 0x04 matched RX entry wants an in-frame response sent / 0x08 matched TX entry expects an in-frame response back / 0x10 header matched no table entry
 0x0040b3d5,j1939_msg_slot_a_status,byte,
 0x0040b3d6,j1939_dm_slot_a_request_type,byte,DM type selector: 1=DM1 2=DM2 3=DM3/DM7 4=DM4 7=DM7 9=DM9
 0x0040b3d7,j1939_dm_slot_a_spn_index,byte,Sub-index into DM response table for current request
@@ -5091,9 +5079,9 @@ address,name,type,comment
 0x0040b43b,j1939_msg_slot_n_pgn,word,
 0x0040b43d,j1939_msg_slot_n_eeprom_flag,byte,
 0x0040b43e,j1939_msg_slot_n_eeprom_data,word,
-0x0040b441,j1939_message_tx_state,byte,
-0x0040b442,can_rx_data_buffer,byte,
-0x0040b44e,uds_sequence_counter,byte,
+0x0040b441,pci_transmit_state,byte,PCI transmit state: 4 = idle (scheduler may build a frame) / 2 = frame built and queued / 1 then 0x10 or 0x12 around in-frame response bytes (bit 0x10 = in-frame response sent)
+0x0040b442,pci_transmit_frame_buffer,byte,Outgoing J1850 frame built by cm848_schedulePciTransmit: header bytes then payload; also compared against the own-message echo
+0x0040b44e,pci_transmit_frame_length,byte,Byte count of pci_transmit_frame_buffer (0 = nothing to send)
 0x0040b44f,j1939_dm_response_length,byte,Payload byte count for slot T DM response message (2/4/5/6/7/8)
 0x0040b450,uds_response_type_code,byte,
 0x0040b451,j1939_uds_response_buffer,byte,
@@ -5135,7 +5123,7 @@ address,name,type,comment
 0x0040b496,uds_response_t_0040b492.data_length,,
 0x0040b497,uds_response_t_0040b492.data[0],,
 0x0040b49b,uds_response_t_0040b492.data[4],,
-0x0040b49c,uds_response_t_0040b492.response_pending,,
+0x0040b49c,uds_response_t_0040b492.transmit_timer,,
 0x0040b49e,j1939_data_buffer_c,byte,
 0x0040b4a3,j1939_msg_slot_v_control,byte,
 0x0040b4a4,protection_entry_threshold,word,
@@ -7085,4 +7073,8 @@ address,name,type,comment
 0x003fea16,hpcr_battery_status_shadow_flags,word,shadow of hpcr_battery_voltage_flags
 0x003fb444,qspi_tx_configured_slot,byte,currently configured QSPI transmit slot ID
 0x003fbd52,fuel_demand_active_sensor_valid_bits,word,fuel-demand-active condition bit (0x100) for sensor validation
+0x003fd8de,pci_normal_transmit_disabled_initial_cal,byte,EEPROM-shadowed (EEPROM offset 0x45c; 0 in dump) - boot value of pci_normal_transmit_disabled
+0x003fd8df,pci_receive_processing_disabled_initial_cal,byte,EEPROM-shadowed (EEPROM offset 0x45d; 0 in dump) - boot value of pci_receive_processing_disabled
 0x003feaa4,governor_load_channel_fault_confirm_timers,word,25-word per-channel governor load fault-confirm timers (base)
+0x0040b357,pci_controller_command_job,qspi_job_t,QSPI job that sends pci_controller_transmit_word to the external J1850 controller; completion_callback = the PCI transmit path
+0x0040b36d,pci_controller_receive_job,qspi_job_t,QSPI job that reads pci_controller_receive_word; completion_callback = cm848_onPciControllerReceiveWord
