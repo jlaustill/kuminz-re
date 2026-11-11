@@ -313,3 +313,15 @@ function_address,function_name,param_index,name,type,comment
 0x00501b4c,sensorChannelTypeB_update,11,filtered_output_ptr,word*,Output: EMA-filtered sensor value (e.g. sensor_channel28_filtered)
 0x00501b4c,sensorChannelTypeB_update,12,fault_output_ptr,word*,Output: fault status word (e.g. sensor_channel28_fault_status)
 0x0002e488,cm848_calculateLoadProtectionDeviationFlag,return,,void,explicit void(void) - writes only protection_rpm_below_confirm_flag - clears phantom args at the 0x2e4cc call site
+# -----------------------------------------------------------------------------
+# QSPI job driver (reviewed 2026-11-11)
+# -----------------------------------------------------------------------------
+0x0003d618,mpc555_qspiApplyDeviceSlotTiming,0,device_slot,byte,1-based slot from cm848_registerQspiDeviceSlot
+0x0003d68c,cm848_registerQspiDeviceSlot,0,spi_mode,int,0..3 = clock polarity / phase (3 = invalid otherwise)
+0x0003d68c,cm848_registerQspiDeviceSlot,1,clock_khz,int,SCK frequency in kHz (baud = 40 MHz / (2 x clock))
+0x0003d68c,cm848_registerQspiDeviceSlot,2,clock_delay_ns,int,PCS-to-SCK delay in ns (DSCKL)
+0x0003d68c,cm848_registerQspiDeviceSlot,3,transfer_delay,uint,Delay after transfer (DTL units; 1..204)
+0x0003d904,mpc555_qspiStartJob,0,job_index,uint,Index into queue jobs[]
+0x0003d904,mpc555_qspiStartJob,1,queue_index,int,0 = serviced first / 1
+0x0003da60,cm848_queueQspiJob,0,job,qspi_job_t*,Job to queue
+0x0003da60,cm848_queueQspiJob,1,queue_index,int,0 = serviced first / 1 (clamped)

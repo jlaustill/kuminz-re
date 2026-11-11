@@ -1217,10 +1217,11 @@ mios1_global_regs_t,0x003060f0,MIOS1LVL,word,2,MIOS1 Interrupt Level Register,,v
 # Note: SPCR0-3 in mpc555_registers.csv at 0x305010-0x305016 are MC68336 offsets;
 #       MPC555 QSMCM actually uses these registers at 0x30501a/0x30501c
 # =============================================================================
-qsmcm_qspi_ctrl_t,0x00305018,PORTQS,byte,1,Port QS Data Register (pin state),,verified
-qsmcm_qspi_ctrl_t,0x00305018,_pad,byte,1,Reserved,,verified
-qsmcm_qspi_ctrl_t,0x00305018,SPE,word,2,QSPI start/enable register (bit 15 = start transfer),,verified
-qsmcm_qspi_ctrl_t,0x00305018,SPCR2,word,2,QSPI queue pointer control (ENDQP bits11-8 NEWQP bits3-0),,verified
+qsmcm_qspi_ctrl_t,0x00305018,SPCR0,word,2,QSPI control 0: MSTR / bit size / CPOL / CPHA / baud (sth),,verified
+qsmcm_qspi_ctrl_t,0x00305018,SPCR1,word,2,QSPI control 1: bit 15 = SPE (start) / DSCKL / DTL delays (sth),,verified
+qsmcm_qspi_ctrl_t,0x00305018,SPCR2,word,2,QSPI queue pointers (ENDQP bits 12-8 / NEWQP bits 4-0),,verified
+qsmcm_qspi_ctrl_t,0x00305018,SPCR3,byte,1,QSPI control 3,,verified
+qsmcm_qspi_ctrl_t,0x00305018,SPSR,byte,1,QSPI status: bit 0x80 = SPIF (queue finished; cleared by cm848_onQspiFinished),,verified
 # =============================================================================
 # QSMCM QSPI RAM — MPC555 places these at base+0x140/+0x180 NOT base+0x040/+0x060
 # RECRAM (receive): 0x305140 — firmware reads back SPI EEPROM response here
@@ -1517,7 +1518,7 @@ pci_message_descriptor_t,0x00057b73,,,,TX[23] header F0 0A interval 2784,,verifi
 pci_message_descriptor_t,0x00057b8f,,,,TX[24] header F0 0E interval 2784,,verified
 
 # --- qspi_job_t: one queued QSPI transfer (22 bytes) - reviewed 2026-11-11 ---
-# Queued by cm848_j1939QueueTransmitMessage (generic QSPI job queue: 29 call sites); started by mpc555_j1939ConfigureMultiFrame
+# Queued by cm848_queueQspiJob (generic QSPI job queue: 29 call sites); started by mpc555_qspiStartJob and finished by cm848_completeQspiJob
 # which copies word_count entries of transmit_words into QSPI transmit RAM (0x305180) and of command_bytes into command RAM (0x3051c0)
 qspi_job_t,0x0040b357,busy_state,dword,4,0 = idle / 1 = queued / 2 = transfer started,,verified
 qspi_job_t,0x0040b357,device_slot,byte,1,QSPI device slot (bus reconfigured via mpc555_j1939InitTransmitBuffer when it changes),,verified
@@ -1527,3 +1528,15 @@ qspi_job_t,0x0040b357,command_bytes,byte*,4,Bytes copied into QSPI command RAM (
 qspi_job_t,0x0040b357,receive_words,word*,4,Where the received QSPI words are stored,,verified
 qspi_job_t,0x0040b357,completion_callback,pointer,4,Function called when the transfer completes,,verified
 qspi_job_t,0x0040b36d,,,,pci_controller_receive_job - second instance,,verified
+
+# --- QSPI job driver data (reviewed 2026-11-11) ---
+qspi_device_slot_t,0x003fb434,spcr0,word,2,SPCR0 value for this device (mode + baud),,verified
+qspi_device_slot_t,0x003fb434,spcr1,word,2,SPCR1 value for this device (delays),,verified
+qspi_device_slot_t,0x003fb438,,,,device slot 2 - marker,,verified
+qspi_device_slot_t,0x003fb43c,,,,device slot 3 - marker,,verified
+qspi_device_slot_t,0x003fb440,,,,device slot 4 - marker,,verified
+qspi_job_queue_t,0x003fb446,active_index,byte,1,jobs[] index of the job being transferred,,verified
+qspi_job_queue_t,0x003fb446,write_index,byte,1,jobs[] index the next queued job is stored at (wraps at 16),,verified
+qspi_job_queue_t,0x003fb446,pending_count,byte,1,Jobs queued and not yet completed (max 16),,verified
+qspi_job_queue_t,0x003fb446,jobs,qspi_job_t*,64,Ring of 16 queued job pointers,,verified
+qspi_job_queue_t,0x003fb489,,,,job queue 1 - marker,,verified

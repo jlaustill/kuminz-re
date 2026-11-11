@@ -1250,15 +1250,15 @@ address,name
 0x00038cf0,cm848_matchPciReceiveHeader,Per received J1850 byte: appends pci_receive_word to pci_receive_frame_buffer then narrows the header match against pci_receive_message_table (RX) and pci_transmit_message_table (own echo) setting pci_frame_match_flags; a non-data status raises link_event_code 3 and an echo that differs from pci_transmit_frame_buffer raises 2 | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
 0x00039004,cm848_completePciFrame,End of J1850 frame: for the matched TX echo or RX entry checks the completion status and any in-frame response bytes - clean = status cleared and timer reset (RX payload copied to data_buffer) / error = status bits ORed into pci_message_error_flags and frame copied to pci_error_frame_capture; unmatched frames go to pci_unmatched_frame_error_flags; raises link_event_code 4 / 5 / 6 | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
 0x00039bc0,cm848_handlePciInFrameResponseTimeout,Own TX frame never got its expected in-frame response: sets status bit 0x08 on the TX entry and resets the frame match state
-0x00039c44,cm848_processUdsTransmitBuffer
+0x00039c44,cm848_sendPciFrameByte,Loads the next pci_transmit_frame_buffer byte into pci_controller_command_word for the J1850 controller (command 0x14 first / 0x1c only byte / 0x04 middle / 0x0c last) and sets pci_transmit_state 1 after the last byte; sends command 0 instead when the controller reply status has bits 0x03 set | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
 0x00039d18,cm848_sendPciInFrameResponseByte,Loads the next in_frame_response_bytes byte of the matched RX entry into pci_controller_command_word (command 0xbc / 0xb4 first then 0x04 then 0x0c last); sets pci_transmit_state bit 0x10 when done
-0x00039e30,cm848_servicePciTransmit,Completion callback of pci_controller_command_job: runs cm848_handlePciLinkEvent for a pending link_event_code then queues the next controller command (in-frame response byte / frame byte via cm848_processUdsTransmitBuffer / 0xaf8 after a link event)
+0x00039e30,cm848_servicePciTransmit,Completion callback of pci_controller_command_job: runs cm848_handlePciLinkEvent for a pending link_event_code then queues the next controller command (in-frame response byte / frame byte via cm848_sendPciFrameByte / 0xaf8 after a link event)
 0x00039f54,cm848_onPciControllerReceiveWord,Completion callback of pci_controller_receive_job: splits pci_controller_receive_word into pci_receive_word / pci_receive_status (bit 0x800 -> link_event_code 1) and dispatches end-of-frame words to cm848_completePciFrame and data bytes to cm848_matchPciReceiveHeader; then services the transmit side and re-queues the receive job
-0x0003a058,cm848_clearCanMessageState
-0x0003a080,cm848_resetUdsSessionState
-0x0003a0cc,cm848_clearJ1939SyncFlags
-0x0003a100,hpcr_initUdsResponseBuffer
-0x0003a290,cm848_handlePciLinkEvent,Maps link_event_code 1..7 to pci_link_event_action_mask_cal and performs the recovery actions (count toward pci_link_error_limit -> power_state_status_flags 0x8000 + fault 0x7c / clear link state / reset session / clear sync / init response buffer); returns 1 when the mask asks for a controller resend (bit 0x20) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
+0x0003a058,cm848_resetPciReceiveState,Clears the receive byte count / both header match indexes and pci_frame_match_flags (link-event action bit 0x02)
+0x0003a080,cm848_resetPciTransmitState,Clears tx_match_index and pci_transmit_frame_buffer and returns pci_transmit_state to idle (link-event action bit 0x04)
+0x0003a0cc,cm848_cyclePciControllerLine124,Calls updateEngineSyncStatus(124) twice then clearModuleSyncFlag(124) - the same sequence the PCI init runs first; line 124 is most likely the external J1850 controller's reset or enable line (link-event action bit 0x08). Purpose of the line not yet confirmed
+0x0003a100,hpcr_initPciMessageTimers,Initializes every PCI message timer: RX timers to 0xff37 (never received) and TX timers to staggered start values so the broadcasts do not all fire together; also arms the 0x26 diagnostic response (timer 1) (link-event action bit 0x10)
+0x0003a290,cm848_handlePciLinkEvent,Maps link_event_code 1..7 to pci_link_event_action_mask_cal and performs the recovery actions (count toward pci_link_error_limit -> power_state_status_flags 0x8000 + updateEngineSyncStatus(124) / reset receive state / reset transmit state / cycle controller line 124 / re-init message timers); returns 1 when the mask asks for a controller resend (bit 0x20) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
 0x0003a450,hpcr_initJ1939MessageTables
 0x0003a9a4,hpcr_initJ1939BufferValues
 0x0003aaf0,cm848_initJ1939BufferParams
@@ -1320,12 +1320,12 @@ address,name
 0x0003d204,cm848_processFuelDemandEnableFlag
 0x0003d3b8,cm848_processCalibration12FuelDemand
 0x0003d5fc,cm848_initFuelDemandLimits
-0x0003d618,mpc555_j1939InitTransmitBuffer
-0x0003d68c,cm848_configurePeriodicTimer
-0x0003d904,mpc555_j1939ConfigureMultiFrame
-0x0003da60,cm848_j1939QueueTransmitMessage
-0x0003dbc0,cm848_j1939ProcessTransmitQueue
-0x0003dcf4,cm848_triggerJ1939TransmitQueueProcess
+0x0003d618,mpc555_qspiApplyDeviceSlotTiming,Loads a registered device slot's SPCR0 (mode + baud) and SPCR1 (delays) into the QSMCM and sets PORTQS bit 0x04 (SCK idle level) to match the slot's clock polarity | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+0x0003d68c,cm848_registerQspiDeviceSlot,Registers (or reuses) one of 4 QSPI device slots from SPI mode 0..3 / clock in kHz (78..9999) / clock delay in ns / transfer delay; returns the 1-based slot or 0 (and sets system_status_flags sensor_diag bit 0x02) when invalid or full. PCI registers mode 0 at 2000 kHz | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+0x0003d904,mpc555_qspiStartJob,If the QSPI is idle starts job queue[queue_index].jobs[job_index]: copies word_count transmit_words into QSPI transmit RAM 0x305180 and command_bytes into command RAM 0x3051c0 / selects the device slot / sets ENDQP and SPE; marks the job busy_state 2 | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+0x0003da60,cm848_queueQspiJob,Appends a qspi_job_t to job queue 0 (serviced first) or 1 (queue_index clamped to 1); rejects bad jobs (word_count over 32 / unregistered slot / null buffers) or a full queue (16) by returning -1 and counting qspi_job_rejected_count; otherwise sets busy_state 1 and tries to start it. 29 callers across all QSPI devices | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+0x0003dbc0,cm848_completeQspiJob,QSPI transfer finished: copies the received words from QSPI receive RAM 0x305140 into receive_words / clears busy_state / calls completion_callback / then starts the next pending job (queue 0 before queue 1) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+0x0003dcf4,cm848_onQspiFinished,QSPI-finished handler: clears SPIF (qsmcm_qspi.SPSR bit 0x80) then runs cm848_completeQspiJob
 0x0003dd28,mpc555_initQsmcmQspiModule
 0x0003dd88,cm848_clearEngineConditionCounter
 0x0003dd98,cm848_processEngineConditionFlags
