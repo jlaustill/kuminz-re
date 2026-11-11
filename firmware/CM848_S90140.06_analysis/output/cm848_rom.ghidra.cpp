@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Wed Nov 11 15:10:36 MST 2026
+// Generated: Wed Nov 11 16:08:57 MST 2026
 
 
 //
@@ -195,7 +195,7 @@ void mpc555_loadEepromCalibration(undefined4 param_1,int param_2)
       do {
         while (sVar5 = BYTE_003fc6f4(), sVar5 == 0) {
           mpc555_sciPollDuringEepromWrite();
-          cm848_serviceExternalWatchdog();
+          cm848_serviceSupervisorWatchdog();
         }
         uVar7 = uVar7 + 1;
       } while (uVar7 < 5);
@@ -210,7 +210,7 @@ void mpc555_loadEepromCalibration(undefined4 param_1,int param_2)
         do {
           uVar8 = uVar8 + 1;
         } while (uVar8 < 400);
-        cm848_serviceExternalWatchdog();
+        cm848_serviceSupervisorWatchdog();
         uVar7 = uVar7 + 1;
       } while (uVar7 < 0x32);
     }
@@ -242,7 +242,7 @@ void mpc555_loadEepromCalibration(undefined4 param_1,int param_2)
               if (psVar12 < psVar13) break;
             } while (uVar6 < 0x200);
           }
-          cm848_serviceExternalWatchdog();
+          cm848_serviceSupervisorWatchdog();
           BYTE_003fc6f4();
         }
         if (local_38[0] != *puVar10) {
@@ -284,7 +284,7 @@ void mpc555_loadEepromCalibration(undefined4 param_1,int param_2)
         do {
           while (sVar5 = BYTE_003fc6f4(), sVar5 == 0) {
             mpc555_sciPollDuringEepromWrite();
-            cm848_serviceExternalWatchdog();
+            cm848_serviceSupervisorWatchdog();
           }
           uVar7 = uVar7 + 1;
         } while (uVar7 < 100);
@@ -312,7 +312,7 @@ void mpc555_loadEepromCalibration(undefined4 param_1,int param_2)
         do {
           while (sVar5 = BYTE_003fc6f4(), sVar5 == 0) {
             mpc555_sciPollDuringEepromWrite();
-            cm848_serviceExternalWatchdog();
+            cm848_serviceSupervisorWatchdog();
           }
           uVar7 = uVar7 + 1;
         } while (uVar7 < 100);
@@ -330,7 +330,7 @@ void mpc555_loadEepromCalibration(undefined4 param_1,int param_2)
             do {
               uVar6 = uVar6 + 1;
             } while (uVar6 < 400);
-            cm848_serviceExternalWatchdog();
+            cm848_serviceSupervisorWatchdog();
             uVar8 = uVar8 + 1;
           } while (uVar8 < 10);
           uVar7 = uVar7 + 1;
@@ -573,7 +573,7 @@ void mpc555_eepromWriteWords(dword dest_address,word *src_ptr,word word_count)
       wVar1 = qsmcm_recram_t_00305140.RX1;
       mpc555_sciPollDuringEepromWrite();
       BYTE_003fc6f4();
-      cm848_serviceExternalWatchdog();
+      cm848_serviceSupervisorWatchdog();
     } while ((wVar1 & 1) != 0);
   } while ((uVar3 & 0xffff) != 0);
   return;
@@ -770,7 +770,7 @@ bool cm848_flashPollUntilReady(uint param_1,ushort *param_2,uint param_3)
   do {
     mpc555_sciPollDuringEepromWrite();
     BYTE_003fc6f4();
-    cm848_serviceExternalWatchdog();
+    cm848_serviceSupervisorWatchdog();
     if (*param_2 == param_1) {
       iVar3 = 1;
     }
@@ -1173,7 +1173,8 @@ bool cm848_registerPgnResponseHandler(dword pgn,void *handler_func)
 void cm848_initDataBasedDiagServices(void)
 
 {
-  cm848_registerDiagnosticService(0x44,(void *)((int)&j1939_periodic_filter_ptr + 2));
+  cm848_registerDiagnosticService(0x44,(void *)((int)&spi_mode3_device_read_job.transmit_words + 2))
+  ;
   cm848_registerDiagnosticService(0x45,(void *)((int)&uds_write_base_address_working + 2));
   cm848_registerDiagnosticService(0x4b,&qspi_device_slot_t_003fb440);
   cm848_registerDiagnosticService(0x4d,&qspi_job_queue_t_003fb489.field_0x2f);
@@ -1808,7 +1809,7 @@ void mpc555_systemInitialization(void)
       BYTE_003fc874();
       mpc555_initHardwareConfig();
     }
-    cm848_serviceExternalWatchdog();
+    cm848_serviceSupervisorWatchdog();
     BYTE_003fab3c();
     mpc555_sciDispatchByTransferPhase();
     mpc555_bootStateMachine();
@@ -2617,7 +2618,7 @@ void cm848_beginEepromCalibrationWrite(void)
   cm848_diagSendResponseCode(0x78,0x74);
   while (diag_serial_transfer_phase == 3) {
     mpc555_sciPollDuringEepromWrite();
-    cm848_serviceExternalWatchdog();
+    cm848_serviceSupervisorWatchdog();
   }
   diag_session_state_byte = 0x78;
   diag_request_pending_flag = 0;
@@ -2648,7 +2649,7 @@ void cm848_updateEepromMagicAndReload(void)
     cm848_diagSendResponseCode(0x78,0x74);
     while (diag_serial_transfer_phase == 3) {
       mpc555_sciPollDuringEepromWrite();
-      cm848_serviceExternalWatchdog();
+      cm848_serviceSupervisorWatchdog();
     }
     diag_request_pending_flag = 0;
     local_10[0] = 0x2b16;
@@ -2656,7 +2657,7 @@ void cm848_updateEepromMagicAndReload(void)
     while ((uVar2 < 400 || (eeprom_shadow_header.magic != local_10[0]))) {
       while (sVar1 = BYTE_003fc6f4(), sVar1 == 0) {
         mpc555_sciPollDuringEepromWrite();
-        cm848_serviceExternalWatchdog();
+        cm848_serviceSupervisorWatchdog();
       }
       mpc555_eepromReadWords(0x1000000,0x3fee0a,2);
       uVar2 = uVar2 + 1;
@@ -3052,7 +3053,7 @@ cm848_dataTransferBufferWrite(int param_1,dword param_2,uint param_3,int param_4
     uVar3 = (uint)data_transfer_state_t_003fec82.byte_count;
     data_transfer_state_t_003fec82.byte_count = (word)(uVar3 + param_3);
     if (((uVar3 + param_3 & 0xffff) < 0x1001) &&
-       (cm848_serviceExternalWatchdog(), (param_3 & 0xffff) != 0)) {
+       (cm848_serviceSupervisorWatchdog(), (param_3 & 0xffff) != 0)) {
       puVar4 = (undefined1 *)(param_1 + -1);
       do {
         puVar4 = puVar4 + 1;
@@ -3572,7 +3573,7 @@ bool mpc555_cmfEraseBlocks(uint param_1)
               CMFCTL_A = uVar8 | cmf_erase_control_bits | 7;
               dVar3 = CMFCTL_A;
               while ((dVar3 & 0x80000000) != 0) {
-                cm848_serviceExternalWatchdog();
+                cm848_serviceSupervisorWatchdog();
                 mpc555_sciPollDuringEepromWrite();
                 mpc555_runPacedSerialService();
                 dVar3 = CMFCTL_A;
@@ -3583,7 +3584,7 @@ bool mpc555_cmfEraseBlocks(uint param_1)
               CMFCTL_B = uVar9 | cmf_erase_control_bits | 7;
               dVar3 = CMFCTL_B;
               while ((dVar3 & 0x80000000) != 0) {
-                cm848_serviceExternalWatchdog();
+                cm848_serviceSupervisorWatchdog();
                 mpc555_sciPollDuringEepromWrite();
                 mpc555_runPacedSerialService();
                 dVar3 = CMFCTL_B;
@@ -3613,7 +3614,7 @@ bool mpc555_cmfEraseBlocks(uint param_1)
         }
         memory_scan_pointer = (undefined *)((uint)(memory_scan_pointer + 0x8000) & 0xffff8000);
       }
-      cm848_serviceExternalWatchdog();
+      cm848_serviceSupervisorWatchdog();
       mpc555_sciPollDuringEepromWrite();
       mpc555_runPacedSerialService();
     }
@@ -5444,7 +5445,7 @@ void cm848_runBootKernelLoop(void)
       cm848_runFlashProgramStateMachine();
       mpc555_sciPollDuringEepromWrite();
     }
-    cm848_serviceExternalWatchdog();
+    cm848_serviceSupervisorWatchdog();
     bVar1 = eeprom_service_mode_flags;
     if (bVar1 == 0x81) {
       cm848_runFlashProgramStateMachine();
@@ -5922,7 +5923,7 @@ void cm848_sendDiagResponsePending(undefined4 param_1,word param_2)
 //
 
 /* Boot reflash kernel: every 41 PIT ticks: counts eeprom_xfer_state.transfer_timer down (0 ->
-   cm848_forceExternalWatchdogReset + reset vector) and adds 1 to the runtime counter
+   cm848_forceSupervisorWatchdogReset + reset vector) and adds 1 to the runtime counter
    ecu_power_state_flags.runtime_counter (~0.205 s per count if the PIT runs at 1 MHz) |
    review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
 
@@ -5943,7 +5944,7 @@ void mpc555_tickTransferTimeoutAndRuntimeCounter(void)
     if (counter_value != 0) {
       eeprom_xfer_state.transfer_timer = counter_value - 1;
       if ((word)(counter_value - 1) == 0) {
-        cm848_forceExternalWatchdogReset();
+        cm848_forceSupervisorWatchdogReset();
         mpc555_reset_vector();
         return;
       }
@@ -6162,30 +6163,35 @@ undefined1 cm848_updateDownloadCrc(byte *param_1,uint param_2,int param_3)
 
 
 //
-// Function: cm848_serviceExternalWatchdog @ 0x00007974
+// Function: cm848_serviceSupervisorWatchdog @ 0x00007974
 //
 
-/* Boot reflash kernel: question/answer external watchdog over QSPI (every 546 MIOS counts): answers
-   the current question from four 16-entry tables at ROM 0x3c9c-0x3ccc (0xE0xx words) + status reads
-   0xF200/0xF400; reply word 4 = next question + error counter (was systemWatchdogReset) |
-   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+/* Boot reflash kernel: question/answer supervisor-chip watchdog over QSPI (every 546 MIOS counts):
+   answers the current question from four 16-entry tables at ROM 0x3c9c-0x3ccc (0xE0xx words) +
+   status reads 0xF200/0xF400; reply word 4 = next question + error counter (was
+   systemWatchdogReset) | review-function-readability reviewed 2026-11-11 - Readability Medium
+   Accuracy Confidence High */
 
-void cm848_serviceExternalWatchdog(void)
+void cm848_serviceSupervisorWatchdog(void)
 
 {
   word wVar1;
   byte bVar2;
   
   wVar1 = mios_mmcsm_cnt.CNT;
-  if (0x222 < (ushort)(wVar1 - tpu3_timer_capture_value)) {
+  if (0x222 < (ushort)(wVar1 - kernel_watchdog_last_service_time)) {
     qsmcm_qspi.SPCR2 = 0x500;
-    qsmcm_tranram.TX0 = (byte)(&DAT_003f989c)[injector_sequence_index] | 0xe000;
+    qsmcm_tranram.TX0 = supervisor_watchdog_kernel_answer_0_table[kernel_watchdog_question] | 0xe000
+    ;
     qsmcm_comdram_0 = 0x5d;
-    qsmcm_tranram.TX1 = (byte)(&DAT_003f988c)[injector_sequence_index] | 0xe000;
+    qsmcm_tranram.TX1 = supervisor_watchdog_kernel_answer_1_table[kernel_watchdog_question] | 0xe000
+    ;
     qsmcm_comdram_1 = 0x5d;
-    qsmcm_tranram.TX2 = (byte)(&DAT_003f987c)[injector_sequence_index] | 0xe000;
+    qsmcm_tranram.TX2 = supervisor_watchdog_kernel_answer_2_table[kernel_watchdog_question] | 0xe000
+    ;
     qsmcm_comdram_2 = 0x5d;
-    qsmcm_tranram.TX3 = (byte)(&DAT_003f986c)[injector_sequence_index] | 0xe000;
+    qsmcm_tranram.TX3 = supervisor_watchdog_kernel_answer_3_table[kernel_watchdog_question] | 0xe000
+    ;
     qsmcm_comdram_3 = 0x5d;
     qsmcm_tranram.TX4 = 0xf200;
     qsmcm_comdram_4 = 0x5d;
@@ -6199,14 +6205,14 @@ void cm848_serviceExternalWatchdog(void)
     bVar2 = qsmcm_qspi.SPSR;
     qsmcm_qspi.SPSR = bVar2 & 0x7f;
     wVar1 = qsmcm_recram_t_00305140.RX4;
-    injector_sequence_index = wVar1 & 0xf;
+    kernel_watchdog_question = wVar1 & 0xf;
     wVar1 = qsmcm_recram_t_00305140.RX4;
-    tpu3_channel_status_count = wVar1 >> 4 & 7;
-    if (tpu3_channel_status_snapshot < tpu3_channel_status_count) {
-      tpu3_rx5_capture_snapshot = qsmcm_recram_t_00305140.RX5;
-      tpu3_channel_status_snapshot = tpu3_channel_status_count;
+    kernel_watchdog_error_count = wVar1 >> 4 & 7;
+    if (kernel_watchdog_error_count_peak < kernel_watchdog_error_count) {
+      kernel_watchdog_status_at_peak = qsmcm_recram_t_00305140.RX5;
+      kernel_watchdog_error_count_peak = kernel_watchdog_error_count;
     }
-    tpu3_timer_capture_value = mios_mmcsm_cnt.CNT;
+    kernel_watchdog_last_service_time = mios_mmcsm_cnt.CNT;
   }
   return;
 }
@@ -6214,15 +6220,15 @@ void cm848_serviceExternalWatchdog(void)
 
 
 //
-// Function: cm848_initExternalWatchdog @ 0x00007b08
+// Function: cm848_initSupervisorWatchdog @ 0x00007b08
 //
 
-/* Boot reflash kernel: first call after the kernel copy: configures the external watchdog over QSPI
-   and answers questions until its error counter is 0; arms it (0x1440) only when no debugger is
-   attached (DER at reset value) (was initQspiHardware) | review-function-readability reviewed
+/* Boot reflash kernel: first call after the kernel copy: configures the supervisor watchdog over
+   QSPI and answers questions until its error counter is 0; arms it (0x1440) only when no debugger
+   is attached (DER at reset value) (was initQspiHardware) | review-function-readability reviewed
    2026-11-11 - Readability Medium Accuracy Confidence High */
 
-void cm848_initExternalWatchdog(void)
+void cm848_initSupervisorWatchdog(void)
 
 {
   ushort uVar1;
@@ -6262,23 +6268,23 @@ void cm848_initExternalWatchdog(void)
           (wVar3 = qsmcm_recram_t_00305140.RX4, (wVar3 & 0xff) != 0x14));
   wVar4 = qsmcm_recram_t_00305140.RX4;
   if ((wVar4 & 0xff) == 0x14) {
-    tpu3_timer_capture_value = mios_mmcsm_cnt.CNT;
-    uVar1 = tpu3_timer_capture_value + 0x7990;
+    kernel_watchdog_last_service_time = mios_mmcsm_cnt.CNT;
+    uVar1 = kernel_watchdog_last_service_time + 0x7990;
     wVar4 = qsmcm_recram_t_00305140.RX2;
-    injector_sequence_index = wVar4 & 0xf;
+    kernel_watchdog_question = wVar4 & 0xf;
     wVar4 = qsmcm_recram_t_00305140.RX2;
-    tpu3_channel_status_count = wVar4 >> 4 & 7;
-    if (tpu3_channel_status_count != 0) {
+    kernel_watchdog_error_count = wVar4 >> 4 & 7;
+    if (kernel_watchdog_error_count != 0) {
       wVar4 = mios_mmcsm_cnt.CNT;
-      while ((wVar4 <= uVar1 && (cm848_serviceExternalWatchdog(), tpu3_channel_status_count != 0)))
-      {
+      while ((wVar4 <= uVar1 &&
+             (cm848_serviceSupervisorWatchdog(), kernel_watchdog_error_count != 0))) {
         wVar4 = mios_mmcsm_cnt.CNT;
       }
     }
-    tpu3_channel_status_snapshot = 0;
+    kernel_watchdog_error_count_peak = 0;
     *pwVar6 = 0x100;
     if (((in_DER == 0x2002000f) && (bus_hardware_status_byte._0_2_ == 0)) &&
-       (tpu3_channel_status_count == 0)) {
+       (kernel_watchdog_error_count == 0)) {
       qsmcm_tranram.TX0 = 0x1440;
       bus_hardware_status_byte._2_2_ = 0;
     }
@@ -6297,8 +6303,8 @@ void cm848_initExternalWatchdog(void)
     bVar5 = qsmcm_qspi.SPSR;
     qsmcm_qspi.SPSR = bVar5 & 0x7f;
     wVar4 = qsmcm_recram_t_00305140.RX1;
-    injector_sequence_index = wVar4 & 0xf;
-    tpu3_timer_capture_value = mios_mmcsm_cnt.CNT;
+    kernel_watchdog_question = wVar4 & 0xf;
+    kernel_watchdog_last_service_time = mios_mmcsm_cnt.CNT;
   }
   qsmcm_qspi.SPCR0 = wVar2;
   qsmcm_portqs_low = 0x7b;
@@ -6308,15 +6314,15 @@ void cm848_initExternalWatchdog(void)
 
 
 //
-// Function: cm848_forceExternalWatchdogReset @ 0x00007dc4
+// Function: cm848_forceSupervisorWatchdogReset @ 0x00007dc4
 //
 
-/* Boot reflash kernel: deliberately answers the external watchdog wrongly (16 rounds of zero
+/* Boot reflash kernel: deliberately answers the supervisor watchdog wrongly (16 rounds of zero
    answers) so it resets the ECU; every caller then jumps to the reset vector (was systemHaltLoop) |
    review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
     */
 
-void cm848_forceExternalWatchdogReset(void)
+void cm848_forceSupervisorWatchdogReset(void)
 
 {
   word wVar1;
@@ -6361,9 +6367,9 @@ void cm848_forceExternalWatchdogReset(void)
     bVar3 = qsmcm_qspi.SPSR;
     qsmcm_qspi.SPSR = bVar3 & 0x7f;
     wVar2 = qsmcm_recram_t_00305140.RX4;
-    injector_sequence_index = wVar2 & 0xf;
+    kernel_watchdog_question = wVar2 & 0xf;
     wVar2 = qsmcm_recram_t_00305140.RX4;
-    tpu3_channel_status_count = wVar2 >> 4 & 7;
+    kernel_watchdog_error_count = wVar2 >> 4 & 7;
   } while (uVar4 < 0x10);
   qsmcm_qspi.SPCR0 = wVar1;
   qsmcm_portqs_low = 0x7b;
@@ -6394,7 +6400,7 @@ void cm848_keyOnStatusMonitor(void)
 void cm848_phase_common_processing(void)
 
 {
-  cm848_processJ1939PeriodicMessages();
+  cm848_runSupervisorChipSchedule();
   cm848_protectionAlarmHandler();
   injectorTimingCalculation();
   cm848_sensorChannel7_init();
@@ -34477,26 +34483,37 @@ LAB_0003670c:
 
 
 //
-// Function: cm848_j1939QueueEngineStatus @ 0x000367a4
+// Function: cm848_queueSupervisorStatusRead @ 0x000367a4
 //
 
-void cm848_j1939QueueEngineStatus(void)
+/* Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status
+   registers; command byte 0x5D): queues reads of registers 0x4E / 0x5A / 0x5C (3 words) |
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
+    */
+
+void cm848_queueSupervisorStatusRead(void)
 
 {
   j1939_tx_frame_g_byte_0 = 0x4e00;
   j1939_msg_field_word_b31b = 0x5a00;
   j1939_msg_field_word_b31d = 0x5c00;
-  cm848_queueQspiJob((qspi_job_t *)&DAT_003fb301,1);
+  cm848_queueQspiJob(&supervisor_status_read_job,1);
   return;
 }
 
 
 
 //
-// Function: cm848_txTimerF_updateFaultLampStatus @ 0x000367f0
+// Function: cm848_onSupervisorStatusRead @ 0x000367f0
 //
 
-void cm848_txTimerF_updateFaultLampStatus(void)
+/* Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status
+   registers; command byte 0x5D): completion of the 0x4E/0x5A/0x5C read: stores the replies in
+   fault_report_parameter_byte / j1939_lamp_status_cache bits / j1939_fault_occurrence_count
+   (application meaning of those globals not reviewed) | review-function-readability reviewed
+   2026-11-11 - Readability Medium Accuracy Confidence Medium */
+
+void cm848_onSupervisorStatusRead(void)
 
 {
   fault_report_parameter_byte = (byte)DAT_003fb31f;
@@ -34508,37 +34525,51 @@ void cm848_txTimerF_updateFaultLampStatus(void)
 
 
 //
-// Function: cm848_j1939SetupTransportSession @ 0x0003682c
+// Function: cm848_queueSupervisorOutputWrite @ 0x0003682c
 //
 
-void cm848_j1939SetupTransportSession(void)
+/* Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status
+   registers; command byte 0x5D): writes register 0x92 with the low byte of j1939_lamp_status_cache
+   (output control) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy
+   Confidence Medium */
+
+void cm848_queueSupervisorOutputWrite(void)
 
 {
   j1939_lamp_status_tx_word = j1939_lamp_status_cache._0_1_ | 0x9200;
-  cm848_queueQspiJob((qspi_job_t *)&DAT_003fb2eb,1);
+  cm848_queueQspiJob(&supervisor_output_write_job,1);
   return;
 }
 
 
 
 //
-// Function: cm848_j1939QueuePeriodicMessage2 @ 0x0003686c
+// Function: cm848_queueSupervisorRegister36Read @ 0x0003686c
 //
 
-void cm848_j1939QueuePeriodicMessage2(void)
+/* Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status
+   registers; command byte 0x5D): queues a read of register 0x24 (36) | review-function-readability
+   reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium */
+
+void cm848_queueSupervisorRegister36Read(void)
 
 {
-  cm848_queueQspiJob((qspi_job_t *)&DAT_003fb2d3,1);
+  cm848_queueQspiJob(&supervisor_register_36_read_job,1);
   return;
 }
 
 
 
 //
-// Function: cm848_txTimerD_checkProtectionInhibit @ 0x00036898
+// Function: cm848_onSupervisorRegister36Read @ 0x00036898
 //
 
-void cm848_txTimerD_checkProtectionInhibit(void)
+/* Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status
+   registers; command byte 0x5D): completion of the register 0x24 read: inverted bit 1 ->
+   protection_inhibit_flag and the delayed governor_inhibit_flag | review-function-readability
+   reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium */
+
+void cm848_onSupervisorRegister36Read(void)
 
 {
   protection_inhibit_flag = DAT_003fb2e9 & 2 ^ 2;
@@ -34559,25 +34590,31 @@ void cm848_txTimerD_checkProtectionInhibit(void)
 
 
 //
-// Function: cm848_j1939CheckTxTimeouts @ 0x0003691c
+// Function: cm848_answerSupervisorWatchdog @ 0x0003691c
 //
 
-void cm848_j1939CheckTxTimeouts(void)
+/* Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status
+   registers; command byte 0x5D): answers the watchdog's current question with four 0xE0xx words
+   from the answer tables at ROM 0x576e4-0x57714 (same tables as the boot kernel) + a 0xF200 status
+   read; retries on the high-priority queue if the queue is full (was j1939CheckTxTimeouts) |
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+
+void cm848_answerSupervisorWatchdog(void)
 
 {
   short sVar1;
   uint uVar2;
   
-  uVar2 = (uint)engine_phase_bits_working;
-  can_tx_msg_header_word._0_2_ = *(byte *)(uVar2 + 0x57714) | 0xe000;
-  can_tx_msg_header_word._2_2_ = *(byte *)(uVar2 + 0x57704) | 0xe000;
-  can_tx_msg_slot_b_word = *(byte *)(uVar2 + 0x576f4) | 0xe000;
-  can_tx_msg_slot_c_word = *(byte *)(uVar2 + 0x576e4) | 0xe000;
-  can_tx_msg_slot_d_word = 0xf200;
-  DAT_003fb2aa = 5;
-  sVar1 = cm848_queueQspiJob((qspi_job_t *)&j1939_tx_message_buffer_c,1);
+  uVar2 = (uint)supervisor_watchdog_question;
+  supervisor_watchdog_transmit_words[0] = supervisor_watchdog_answer_0_table[uVar2] | 0xe000;
+  supervisor_watchdog_transmit_words[1] = supervisor_watchdog_answer_1_table[uVar2] | 0xe000;
+  supervisor_watchdog_transmit_words[2] = supervisor_watchdog_answer_2_table[uVar2] | 0xe000;
+  supervisor_watchdog_transmit_words[3] = supervisor_watchdog_answer_3_table[uVar2] | 0xe000;
+  supervisor_watchdog_transmit_words[4] = 0xf200;
+  supervisor_watchdog_job.word_count = 5;
+  sVar1 = cm848_queueQspiJob(&supervisor_watchdog_job,1);
   if (sVar1 != 0) {
-    cm848_queueQspiJob((qspi_job_t *)&j1939_tx_message_buffer_c,0);
+    cm848_queueQspiJob(&supervisor_watchdog_job,0);
   }
   return;
 }
@@ -34585,40 +34622,47 @@ void cm848_j1939CheckTxTimeouts(void)
 
 
 //
-// Function: cm848_j1939UpdateTxTimers @ 0x000369cc
+// Function: cm848_runSupervisorWatchdogCycle @ 0x000369cc
 //
 
-void cm848_j1939UpdateTxTimers(void)
+/* Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status
+   registers; command byte 0x5D): first call sends the 0x18xx window setting + 0x2E00 reads;
+   afterwards parses the reply (supervisor_watchdog_question / supervisor_watchdog_error_count) /
+   tracks the peak and serious-error count / then answers (was j1939UpdateTxTimers) |
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+
+void cm848_runSupervisorWatchdogCycle(void)
 
 {
   if (j1939_tx_pending_flag == 0) {
-    can_tx_msg_header_word._2_2_ =
+    supervisor_watchdog_transmit_words[1] =
          (ushort)(((uint)can_fuel_qty_scale_cal * 1000) / 0x7a12) & 0xff | 0x1800;
-    can_tx_msg_slot_b_word = 0x2e00;
-    can_tx_msg_slot_c_word = 0x2e00;
-    can_tx_msg_slot_d_word = 0xf200;
-    DAT_003fb2aa = 5;
-    cm848_queueQspiJob((qspi_job_t *)&j1939_tx_message_buffer_c,1);
+    supervisor_watchdog_transmit_words[2] = 0x2e00;
+    supervisor_watchdog_transmit_words[3] = 0x2e00;
+    supervisor_watchdog_transmit_words[4] = 0xf200;
+    supervisor_watchdog_job.word_count = 5;
+    cm848_queueQspiJob(&supervisor_watchdog_job,1);
     j1939_tx_pending_flag = 1;
   }
-  else if (engine_phase_sync_enable_flag == 0) {
-    engine_phase_bits_working = engine_sync_phase_byte & 0xf;
-    engine_position_phase_bits = engine_sync_phase_byte >> 4 & 7;
-    if (engine_phase_sync_count < 8) {
-      if (engine_phase_bits_snapshot < engine_position_phase_bits) {
-        if (engine_phase_sync_count < engine_position_phase_bits) {
-          engine_phase_sync_count = engine_position_phase_bits;
+  else if (supervisor_watchdog_cycle_inhibit == 0) {
+    supervisor_watchdog_question = supervisor_watchdog_reply & 0xf;
+    supervisor_watchdog_error_count = supervisor_watchdog_reply >> 4 & 7;
+    if (supervisor_watchdog_error_count_peak < 8) {
+      if (supervisor_watchdog_error_count_previous < supervisor_watchdog_error_count) {
+        if (supervisor_watchdog_error_count_peak < supervisor_watchdog_error_count) {
+          supervisor_watchdog_error_count_peak = supervisor_watchdog_error_count;
         }
-        if ((4 < engine_position_phase_bits) && (engine_phase_bits_snapshot < 5)) {
-          engine_phase_sync_acquire_count = engine_phase_sync_acquire_count + 1;
+        if ((4 < supervisor_watchdog_error_count) && (supervisor_watchdog_error_count_previous < 5))
+        {
+          supervisor_watchdog_serious_error_events = supervisor_watchdog_serious_error_events + 1;
         }
       }
     }
-    else if (engine_position_phase_bits == 0) {
-      engine_phase_sync_count = 0;
+    else if (supervisor_watchdog_error_count == 0) {
+      supervisor_watchdog_error_count_peak = 0;
     }
-    engine_phase_bits_snapshot = engine_position_phase_bits;
-    cm848_j1939CheckTxTimeouts();
+    supervisor_watchdog_error_count_previous = supervisor_watchdog_error_count;
+    cm848_answerSupervisorWatchdog();
   }
   return;
 }
@@ -34626,15 +34670,20 @@ void cm848_j1939UpdateTxTimers(void)
 
 
 //
-// Function: cm848_updateJ1939TxTimerCounter @ 0x00036b10
+// Function: cm848_paceSupervisorWatchdogCycle @ 0x00036b10
 //
 
-void cm848_updateJ1939TxTimerCounter(void)
+/* Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status
+   registers; command byte 0x5D): runs cm848_runSupervisorWatchdogCycle every
+   j1939_tx_periodic_rate_cal calls | review-function-readability reviewed 2026-11-11 - Readability
+   Medium Accuracy Confidence High */
+
+void cm848_paceSupervisorWatchdogCycle(void)
 
 {
   j1939_tx_periodic_counter._0_1_ = j1939_tx_periodic_counter._0_1_ + 1;
   if (j1939_tx_periodic_rate_cal <= j1939_tx_periodic_counter._0_1_) {
-    cm848_j1939UpdateTxTimers();
+    cm848_runSupervisorWatchdogCycle();
     j1939_tx_periodic_counter._0_1_ = 0;
   }
   return;
@@ -34643,15 +34692,20 @@ void cm848_updateJ1939TxTimerCounter(void)
 
 
 //
-// Function: cm848_j1939QueueStatusMessage @ 0x00036b68
+// Function: cm848_queueSupervisorRegister46Read @ 0x00036b68
 //
 
-void cm848_j1939QueueStatusMessage(void)
+/* Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status
+   registers; command byte 0x5D): queues a 0x2E (46) access with j1939_message_word_b220 when no
+   diagnostic session is active | review-function-readability reviewed 2026-11-11 - Readability
+   Medium Accuracy Confidence Medium */
+
+void cm848_queueSupervisorRegister46Read(void)
 
 {
   if (diagnostic_session_state == INACTIVE) {
     j1939_msg_payload_snapshot = j1939_message_word_b220;
-    cm848_queueQspiJob((qspi_job_t *)&DAT_003fb325,1);
+    cm848_queueQspiJob(&supervisor_register_46_read_job,1);
   }
   else {
     j1939_message_word_b220 = 0x2e00;
@@ -34662,10 +34716,15 @@ void cm848_j1939QueueStatusMessage(void)
 
 
 //
-// Function: cm848_txTimer1_copyQueueStatus @ 0x00036bc4
+// Function: cm848_onSupervisorRegister46Read @ 0x00036bc4
 //
 
-void cm848_txTimer1_copyQueueStatus(void)
+/* Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status
+   registers; command byte 0x5D): completion of the register 0x2E read: copies the reply to 0x40b222
+   | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
+    */
+
+void cm848_onSupervisorRegister46Read(void)
 
 {
   DAT_0040b222 = DAT_003fb33d;
@@ -34675,23 +34734,32 @@ void cm848_txTimer1_copyQueueStatus(void)
 
 
 //
-// Function: cm848_j1939QueuePeriodicMessage1 @ 0x00036bd8
+// Function: cm848_queueSupervisorRegister162Read @ 0x00036bd8
 //
 
-void cm848_j1939QueuePeriodicMessage1(void)
+/* Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status
+   registers; command byte 0x5D): queues a read of register 0xA2 (162) | review-function-readability
+   reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium */
+
+void cm848_queueSupervisorRegister162Read(void)
 
 {
-  cm848_queueQspiJob((qspi_job_t *)&DAT_003fb26f,1);
+  cm848_queueQspiJob(&supervisor_register_162_read_job,1);
   return;
 }
 
 
 
 //
-// Function: cm848_txTimerA_updateEngineIdleMode @ 0x00036c04
+// Function: cm848_onSupervisorRegister162Read @ 0x00036c04
 //
 
-void cm848_txTimerA_updateEngineIdleMode(void)
+/* Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status
+   registers; command byte 0x5D): completion of the register 0xA2 read: low byte ->
+   engine_idle_mode_flags (that global's name is unverified) | review-function-readability reviewed
+   2026-11-11 - Readability Medium Accuracy Confidence Medium */
+
+void cm848_onSupervisorRegister162Read(void)
 
 {
   engine_idle_mode_flags = DAT_003fb285 & 0xff;
@@ -34701,10 +34769,15 @@ void cm848_txTimerA_updateEngineIdleMode(void)
 
 
 //
-// Function: cm848_j1939FormatProprietaryStatus @ 0x00036c1c
+// Function: cm848_writeSupervisorConfiguration @ 0x00036c1c
 //
 
-void cm848_j1939FormatProprietaryStatus(void)
+/* Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status
+   registers; command byte 0x5D): writes configuration registers 0x94 / 0x98 / 0x9E / 0xA4 from the
+   j1939_status_*_cal calibrations (names of those cals unverified) | review-function-readability
+   reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium */
+
+void cm848_writeSupervisorConfiguration(void)
 
 {
   j1939_proprietary_status_byte_0 =
@@ -34715,40 +34788,46 @@ void cm848_j1939FormatProprietaryStatus(void)
        (ushort)(j1939_status_flag_b_cal != 0) * 4 | 0x9800;
   j1939_proprietary_status_byte_2 = j1939_status_byte_b_cal + 0xe0 & 0xff | 0x9e00;
   j1939_proprietary_status_byte_3 = j1939_status_byte_a_cal | 0xa400;
-  cm848_queueQspiJob((qspi_job_t *)&j1939_tx_frame_a_busy_flag,1);
+  cm848_queueQspiJob(&supervisor_configuration_write_job,1);
   return;
 }
 
 
 
 //
-// Function: cm848_processJ1939PeriodicMessages @ 0x00036cec
+// Function: cm848_runSupervisorChipSchedule @ 0x00036cec
 //
 
-void cm848_processJ1939PeriodicMessages(void)
+/* Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status
+   registers; command byte 0x5D): periodic schedule: status read + register 0x24 read every call /
+   watchdog cycle every j1939_tx_periodic_rate_cal / 0x2E every 100 / 0xA2 every 20 / configuration
+   rewrite every 100 when no diagnostic session | review-function-readability reviewed 2026-11-11 -
+   Readability Medium Accuracy Confidence High */
+
+void cm848_runSupervisorChipSchedule(void)
 
 {
-  cm848_j1939QueueEngineStatus();
-  cm848_j1939QueuePeriodicMessage2();
+  cm848_queueSupervisorStatusRead();
+  cm848_queueSupervisorRegister36Read();
   j1939_tx_periodic_counter._0_1_ = j1939_tx_periodic_counter._0_1_ + 1;
   if (j1939_tx_periodic_rate_cal <= j1939_tx_periodic_counter._0_1_) {
-    cm848_j1939UpdateTxTimers();
+    cm848_runSupervisorWatchdogCycle();
     j1939_tx_periodic_counter._0_1_ = 0;
   }
   j1939_tx_periodic_counter._1_1_ = (byte)j1939_tx_periodic_counter + 1;
   if (99 < (byte)j1939_tx_periodic_counter) {
-    cm848_j1939QueueStatusMessage();
+    cm848_queueSupervisorRegister46Read();
     j1939_tx_periodic_counter._1_1_ = 0;
   }
   diag_sequence_counter_a = diag_sequence_counter_a + 1;
   if (0x13 < diag_sequence_counter_a) {
-    cm848_j1939QueuePeriodicMessage1();
+    cm848_queueSupervisorRegister162Read();
     diag_sequence_counter_a = 0;
   }
   diag_sequence_counter_b = diag_sequence_counter_b + 1;
   if (99 < diag_sequence_counter_b) {
     if (diagnostic_session_state == INACTIVE) {
-      cm848_j1939FormatProprietaryStatus();
+      cm848_writeSupervisorConfiguration();
     }
     diag_sequence_counter_b = 0;
   }
@@ -34758,21 +34837,26 @@ void cm848_processJ1939PeriodicMessages(void)
 
 
 //
-// Function: cm848_initJ1939TimerBuffers @ 0x00036de0
+// Function: cm848_configureSupervisorChip @ 0x00036de0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status
+   registers; command byte 0x5D): start-up configuration: repeats 0x8C02 / 0x0C00 / 0xC2xx / 0xC4xx
+   / 0xC8xx until the chip reports state 2 then writes 0xDA / 0xDC / 0xD0 / 0xD6 (period = 30000000
+   / (factor a x factor b)); uses a stack qspi_job_t | review-function-readability reviewed
+   2026-11-11 - Readability Medium Accuracy Confidence Medium */
 
-void cm848_initJ1939TimerBuffers(void)
+void cm848_configureSupervisorChip(void)
 
 {
   ushort uVar1;
   uint uVar2;
   qspi_job_t local_28;
   
-  local_28.device_slot = injection_sync_broadcast_byte;
+  local_28.device_slot = supervisor_qspi_slot;
   local_28.transmit_words = &j1939_can_frame_word_a;
-  local_28.command_bytes = &j1939_msg_descriptor_table;
+  local_28.command_bytes = &supervisor_qspi_command_bytes;
   local_28.receive_words = (word *)&DAT_003fb34f;
   do {
     j1939_can_frame_word_a = 0x8c02;
@@ -34805,10 +34889,16 @@ void cm848_initJ1939TimerBuffers(void)
 
 
 //
-// Function: cm848_initJ1939StatusMessages @ 0x00036f48
+// Function: cm848_startSupervisorWatchdog @ 0x00036f48
 //
 
-void cm848_initJ1939StatusMessages(void)
+/* Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status
+   registers; command byte 0x5D): application-side watchdog start: 0x1400 / 0x1801 / 0xF200 then
+   answers questions every 5000 time-base ticks until the error count is 0 (up to 20 rounds); arms
+   with 0x1440 only when DER is at its reset value (no debugger) (was initJ1939StatusMessages) |
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+
+void cm848_startSupervisorWatchdog(void)
 
 {
   int iVar1;
@@ -34821,23 +34911,23 @@ void cm848_initJ1939StatusMessages(void)
   int in_DER;
   
   bVar7 = 0;
-  DAT_003fb2a9 = injection_sync_broadcast_byte;
-  can_tx_msg_header_ptr = (undefined *)&can_tx_msg_header_word;
-  j1939_msg_descriptor_c_ptr = &j1939_msg_descriptor_table;
-  j1939_tx_data_block_c_ptr = &DAT_003fb2c7;
-  j1939_tx_frame_c_accum = 0;
-  can_tx_msg_header_word._0_2_ = 0x1400;
-  can_tx_msg_header_word._2_2_ = 0x1801;
-  can_tx_msg_slot_b_word = 0xf200;
-  DAT_003fb2aa = 3;
+  supervisor_watchdog_job.device_slot = supervisor_qspi_slot;
+  supervisor_watchdog_job.transmit_words = supervisor_watchdog_transmit_words;
+  supervisor_watchdog_job.command_bytes = &supervisor_qspi_command_bytes;
+  supervisor_watchdog_job.receive_words = (word *)&DAT_003fb2c7;
+  supervisor_watchdog_job.completion_callback = (undefined *)0x0;
+  supervisor_watchdog_transmit_words[0] = 0x1400;
+  supervisor_watchdog_transmit_words[1] = 0x1801;
+  supervisor_watchdog_transmit_words[2] = 0xf200;
+  supervisor_watchdog_job.word_count = 3;
   do {
-    sVar6 = cm848_queueQspiJob((qspi_job_t *)&j1939_tx_message_buffer_c,1);
+    sVar6 = cm848_queueQspiJob(&supervisor_watchdog_job,1);
   } while (sVar6 != 0);
   do {
-  } while (j1939_tx_message_buffer_c != 0);
-  engine_phase_bits_working = engine_phase_and_position_bits_packed & 0xf;
-  engine_position_phase_bits = engine_phase_and_position_bits_packed >> 4 & 7;
-  if (engine_position_phase_bits != 0) {
+  } while (supervisor_watchdog_job.busy_state != 0);
+  supervisor_watchdog_question = supervisor_watchdog_start_reply & 0xf;
+  supervisor_watchdog_error_count = supervisor_watchdog_start_reply >> 4 & 7;
+  if (supervisor_watchdog_error_count != 0) {
     do {
       do {
         uVar3 = TBUr;
@@ -34851,29 +34941,29 @@ void cm848_initJ1939StatusMessages(void)
           uVar5 = TBUr;
         } while (uVar4 != uVar5);
       } while ((uVar4 < uVar3) || (uVar2 < iVar1 + 5000U));
-      cm848_j1939CheckTxTimeouts();
+      cm848_answerSupervisorWatchdog();
       do {
-      } while (j1939_tx_message_buffer_c != 0);
-      engine_phase_bits_working = engine_sync_phase_byte & 0xf;
-      engine_position_phase_bits = engine_sync_phase_byte >> 4 & 7;
+      } while (supervisor_watchdog_job.busy_state != 0);
+      supervisor_watchdog_question = supervisor_watchdog_reply & 0xf;
+      supervisor_watchdog_error_count = supervisor_watchdog_reply >> 4 & 7;
       bVar7 = bVar7 + 1;
-    } while ((engine_position_phase_bits != 0) && (bVar7 < 0x14));
+    } while ((supervisor_watchdog_error_count != 0) && (bVar7 < 0x14));
   }
   if (in_DER == 0x2002000f) {
-    can_tx_msg_header_word._0_2_ = 0x1440;
+    supervisor_watchdog_transmit_words[0] = 0x1440;
   }
   else {
-    can_tx_msg_header_word._0_2_ = 0x1400;
+    supervisor_watchdog_transmit_words[0] = 0x1400;
   }
-  can_tx_msg_header_word._2_2_ = 0x183f;
-  DAT_003fb2aa = 2;
+  supervisor_watchdog_transmit_words[1] = 0x183f;
+  supervisor_watchdog_job.word_count = 2;
   do {
-    sVar6 = cm848_queueQspiJob((qspi_job_t *)&j1939_tx_message_buffer_c,1);
+    sVar6 = cm848_queueQspiJob(&supervisor_watchdog_job,1);
   } while (sVar6 != 0);
   do {
-  } while (j1939_tx_message_buffer_c != 0);
-  engine_phase_sync_count = 8;
-  engine_phase_bits_snapshot = engine_position_phase_bits;
+  } while (supervisor_watchdog_job.busy_state != 0);
+  supervisor_watchdog_error_count_peak = 8;
+  supervisor_watchdog_error_count_previous = supervisor_watchdog_error_count;
   j1939_tx_pending_flag = 0;
   return;
 }
@@ -34881,72 +34971,88 @@ void cm848_initJ1939StatusMessages(void)
 
 
 //
-// Function: cm848_initPeriodicTimerChannel6 @ 0x00037130
+// Function: cm848_initSupervisorRegister36ReadJob @ 0x00037130
 //
 
-void cm848_initPeriodicTimerChannel6(void)
+/* Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status
+   registers; command byte 0x5D): sets up supervisor_register_36_read_job |
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+
+void cm848_initSupervisorRegister36ReadJob(void)
 
 {
-  DAT_003fb2d7 = injection_sync_broadcast_byte;
-  DAT_003fb2d8 = 1;
-  j1939_tx_data_block_d_ptr = &DAT_0005772c;
-  j1939_msg_descriptor_d_ptr = &j1939_msg_descriptor_table;
-  j1939_tx_frame_d_payload_ptr = (undefined *)&DAT_003fb2e9;
-  j1939_tx_frame_d_handler_ptr = cm848_txTimerD_checkProtectionInhibit;
+  supervisor_register_36_read_job.device_slot = supervisor_qspi_slot;
+  supervisor_register_36_read_job.word_count = 1;
+  supervisor_register_36_read_job.transmit_words = (word *)&DAT_0005772c;
+  supervisor_register_36_read_job.command_bytes = &supervisor_qspi_command_bytes;
+  supervisor_register_36_read_job.receive_words = &DAT_003fb2e9;
+  supervisor_register_36_read_job.completion_callback = cm848_onSupervisorRegister36Read;
   return;
 }
 
 
 
 //
-// Function: cm848_initPeriodicTimerChannel5 @ 0x00037180
+// Function: cm848_initSupervisorStatusReadJob @ 0x00037180
 //
 
-void cm848_initPeriodicTimerChannel5(void)
+/* Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status
+   registers; command byte 0x5D): sets up supervisor_status_read_job (3 words) |
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+
+void cm848_initSupervisorStatusReadJob(void)
 
 {
-  DAT_003fb305 = injection_sync_broadcast_byte;
-  DAT_003fb306 = 3;
-  j1939_tx_data_block_f_ptr = (undefined *)&j1939_tx_frame_g_byte_0;
-  j1939_tx_frame_f_payload_ptr = (undefined *)&DAT_003fb31f;
-  j1939_msg_descriptor_f_ptr = &j1939_msg_descriptor_table;
-  j1939_tx_frame_f_handler_ptr = cm848_txTimerF_updateFaultLampStatus;
+  supervisor_status_read_job.device_slot = supervisor_qspi_slot;
+  supervisor_status_read_job.word_count = 3;
+  supervisor_status_read_job.transmit_words = &j1939_tx_frame_g_byte_0;
+  supervisor_status_read_job.receive_words = &DAT_003fb31f;
+  supervisor_status_read_job.command_bytes = &supervisor_qspi_command_bytes;
+  supervisor_status_read_job.completion_callback = cm848_onSupervisorStatusRead;
   return;
 }
 
 
 
 //
-// Function: cm848_initPeriodicTimerChannel4 @ 0x000371d0
+// Function: cm848_initSupervisorOutputWriteJob @ 0x000371d0
 //
 
-void cm848_initPeriodicTimerChannel4(void)
+/* Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status
+   registers; command byte 0x5D): sets up supervisor_output_write_job | review-function-readability
+   reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+
+void cm848_initSupervisorOutputWriteJob(void)
 
 {
-  DAT_003fb2ef = injection_sync_broadcast_byte;
-  DAT_003fb2f0 = 1;
-  j1939_tx_data_block_e_ptr = (undefined *)&j1939_lamp_status_tx_word;
-  j1939_msg_descriptor_e_ptr = &j1939_msg_descriptor_table;
-  j1939_tx_frame_e_accum_a = 0;
-  j1939_tx_frame_e_accum_b = 0;
+  supervisor_output_write_job.device_slot = supervisor_qspi_slot;
+  supervisor_output_write_job.word_count = 1;
+  supervisor_output_write_job.transmit_words = &j1939_lamp_status_tx_word;
+  supervisor_output_write_job.command_bytes = &supervisor_qspi_command_bytes;
+  supervisor_output_write_job.receive_words = (word *)0x0;
+  supervisor_output_write_job.completion_callback = (undefined *)0x0;
   return;
 }
 
 
 
 //
-// Function: cm848_initPeriodicTimerChannel1 @ 0x00037214
+// Function: cm848_initSupervisorRegister46ReadJob @ 0x00037214
 //
 
-void cm848_initPeriodicTimerChannel1(void)
+/* Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status
+   registers; command byte 0x5D): sets up supervisor_register_46_read_job |
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+
+void cm848_initSupervisorRegister46ReadJob(void)
 
 {
-  DAT_003fb329 = injection_sync_broadcast_byte;
-  DAT_003fb32a = 1;
-  j1939_msg_data_ptr_b32b = (undefined *)&j1939_msg_payload_snapshot;
-  j1939_descriptor_table_ptr = &j1939_msg_descriptor_table;
-  j1939_msg_data_ptr_b333 = (undefined *)&DAT_003fb33d;
-  j1939_callback_ptr_b337 = cm848_txTimer1_copyQueueStatus;
+  supervisor_register_46_read_job.device_slot = supervisor_qspi_slot;
+  supervisor_register_46_read_job.word_count = 1;
+  supervisor_register_46_read_job.transmit_words = &j1939_msg_payload_snapshot;
+  supervisor_register_46_read_job.command_bytes = &supervisor_qspi_command_bytes;
+  supervisor_register_46_read_job.receive_words = &DAT_003fb33d;
+  supervisor_register_46_read_job.completion_callback = cm848_onSupervisorRegister46Read;
   j1939_message_word_b220 = 0x2e00;
   return;
 }
@@ -34954,63 +35060,76 @@ void cm848_initPeriodicTimerChannel1(void)
 
 
 //
-// Function: cm848_initPeriodicTimerChannel2 @ 0x00037270
+// Function: cm848_initSupervisorRegister162ReadJob @ 0x00037270
 //
 
-void cm848_initPeriodicTimerChannel2(void)
+/* Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status
+   registers; command byte 0x5D): sets up supervisor_register_162_read_job |
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+
+void cm848_initSupervisorRegister162ReadJob(void)
 
 {
-  DAT_003fb273 = injection_sync_broadcast_byte;
-  DAT_003fb274 = 1;
-  j1939_tx_data_block_a_ptr = &DAT_0005772a;
-  j1939_msg_descriptor_a_ptr = &j1939_msg_descriptor_table;
-  j1939_tx_frame_a_payload_ptr = (undefined *)&DAT_003fb285;
-  j1939_tx_frame_a_handler_ptr = cm848_txTimerA_updateEngineIdleMode;
+  supervisor_register_162_read_job.device_slot = supervisor_qspi_slot;
+  supervisor_register_162_read_job.word_count = 1;
+  supervisor_register_162_read_job.transmit_words = (word *)&DAT_0005772a;
+  supervisor_register_162_read_job.command_bytes = &supervisor_qspi_command_bytes;
+  supervisor_register_162_read_job.receive_words = &DAT_003fb285;
+  supervisor_register_162_read_job.completion_callback = cm848_onSupervisorRegister162Read;
   return;
 }
 
 
 
 //
-// Function: cm848_initPeriodicTimerChannel3 @ 0x000372c0
+// Function: cm848_initSupervisorConfigurationWriteJob @ 0x000372c0
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status
+   registers; command byte 0x5D): sets up supervisor_configuration_write_job then writes the
+   configuration and waits for it | review-function-readability reviewed 2026-11-11 - Readability
+   Medium Accuracy Confidence High */
 
-void cm848_initPeriodicTimerChannel3(void)
+void cm848_initSupervisorConfigurationWriteJob(void)
 
 {
-  DAT_003fb28b = injection_sync_broadcast_byte;
-  DAT_003fb28c = 4;
-  j1939_tx_data_block_b_ptr = (undefined *)&j1939_proprietary_status_byte_0;
-  j1939_msg_descriptor_b_ptr = &j1939_msg_descriptor_table;
-  j1939_tx_frame_b_accum_a = 0;
-  j1939_tx_frame_b_accum_b = 0;
-  cm848_j1939FormatProprietaryStatus();
+  supervisor_configuration_write_job.device_slot = supervisor_qspi_slot;
+  supervisor_configuration_write_job.word_count = 4;
+  supervisor_configuration_write_job.transmit_words = &j1939_proprietary_status_byte_0;
+  supervisor_configuration_write_job.command_bytes = &supervisor_qspi_command_bytes;
+  supervisor_configuration_write_job.receive_words = (word *)0x0;
+  supervisor_configuration_write_job.completion_callback = (undefined *)0x0;
+  cm848_writeSupervisorConfiguration();
   do {
-  } while (_j1939_tx_frame_a_busy_flag != 0);
+  } while (supervisor_configuration_write_job.busy_state != 0);
   return;
 }
 
 
 
 //
-// Function: cm848_initPeriodicTimerSystem @ 0x00037334
+// Function: cm848_initSupervisorChip @ 0x00037334
 //
 
-void cm848_initPeriodicTimerSystem(void)
+/* Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status
+   registers; command byte 0x5D): registers the QSPI device slot (mode 0 / 2000 kHz - shared with
+   the PCI controller timing) then configures the chip / starts its watchdog / sets up every job
+   (was initPeriodicTimerSystem) | review-function-readability reviewed 2026-11-11 - Readability
+   Medium Accuracy Confidence High */
+
+void cm848_initSupervisorChip(void)
 
 {
-  injection_sync_broadcast_byte = cm848_registerQspiDeviceSlot(0,2000,0x352,0x28);
-  cm848_initJ1939TimerBuffers();
-  cm848_initJ1939StatusMessages();
-  cm848_initPeriodicTimerChannel6();
-  cm848_initPeriodicTimerChannel5();
-  cm848_initPeriodicTimerChannel4();
-  cm848_initPeriodicTimerChannel1();
+  supervisor_qspi_slot = cm848_registerQspiDeviceSlot(0,2000,0x352,0x28);
+  cm848_configureSupervisorChip();
+  cm848_startSupervisorWatchdog();
+  cm848_initSupervisorRegister36ReadJob();
+  cm848_initSupervisorStatusReadJob();
+  cm848_initSupervisorOutputWriteJob();
+  cm848_initSupervisorRegister46ReadJob();
   j1939_tx_periodic_counter._1_1_ = 1;
-  cm848_initPeriodicTimerChannel2();
-  cm848_initPeriodicTimerChannel3();
+  cm848_initSupervisorRegister162ReadJob();
+  cm848_initSupervisorConfigurationWriteJob();
   diag_sequence_counter_b = 2;
   diag_sequence_counter_a = 3;
   return;
@@ -35055,12 +35174,16 @@ void mpc555_initFuelDemandOffsetFilter(void)
 
 
 //
-// Function: cm848_j1939PeriodicTimerCallback @ 0x00037464
+// Function: cm848_onSpiMode3DeviceRead @ 0x00037464
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Second QSPI device (SPI mode 3 slot): completion callback - when completions are more than 625
+   time-base ticks apart copies the reply into j1939_periodic_timer_output_byte (device and meaning
+   unidentified) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy
+   Confidence Low */
 
-void cm848_j1939PeriodicTimerCallback(void)
+void cm848_onSpiMode3DeviceRead(void)
 
 {
   dword dVar1;
@@ -35077,18 +35200,22 @@ void cm848_j1939PeriodicTimerCallback(void)
 
 
 //
-// Function: cm848_initJ1939PeriodicConfig @ 0x000374b8
+// Function: cm848_initSpiMode3DeviceJob @ 0x000374b8
 //
 
-void cm848_initJ1939PeriodicConfig(void)
+/* Second QSPI device: registers an SPI mode 3 / 2000 kHz slot and sets up spi_mode3_device_read_job
+   (sends 0x1B00); also presets output_lines_152_to_159_state to 0xff | review-function-readability
+   reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium */
+
+void cm848_initSpiMode3DeviceJob(void)
 
 {
-  DAT_003fb364 = cm848_registerQspiDeviceSlot(3,2000,0x352,0x28);
-  DAT_003fb365 = 1;
-  j1939_periodic_filter_ptr = &j1939_periodic_filter_state;
-  j1939_periodic_data_ptr = &DAT_0005772e;
-  j1939_periodic_output_ptr = &j1939_periodic_timer_state;
-  j1939_periodic_timer_callback_ptr = cm848_j1939PeriodicTimerCallback;
+  spi_mode3_device_read_job.device_slot = cm848_registerQspiDeviceSlot(3,2000,0x352,0x28);
+  spi_mode3_device_read_job.word_count = 1;
+  spi_mode3_device_read_job.transmit_words = (word *)&j1939_periodic_filter_state;
+  spi_mode3_device_read_job.command_bytes = &DAT_0005772e;
+  spi_mode3_device_read_job.receive_words = (word *)&j1939_periodic_timer_state;
+  spi_mode3_device_read_job.completion_callback = cm848_onSpiMode3DeviceRead;
   output_lines_152_to_159_state = 0xff;
   return;
 }
@@ -35096,16 +35223,20 @@ void cm848_initJ1939PeriodicConfig(void)
 
 
 //
-// Function: cm848_j1939SendPeriodicMessage @ 0x00037580
+// Function: cm848_queueSpiMode3DeviceRead @ 0x00037580
 //
 
-void cm848_j1939SendPeriodicMessage(void)
+/* Second QSPI device: queues spi_mode3_device_read_job (initialising it on first use) |
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
+    */
+
+void cm848_queueSpiMode3DeviceRead(void)
 
 {
-  if (DAT_003fb365 == '\0') {
-    cm848_initJ1939PeriodicConfig();
+  if (spi_mode3_device_read_job.word_count == 0) {
+    cm848_initSpiMode3DeviceJob();
   }
-  cm848_queueQspiJob((qspi_job_t *)&DAT_003fb360,1);
+  cm848_queueQspiJob(&spi_mode3_device_read_job,1);
   return;
 }
 
@@ -52938,14 +53069,14 @@ LAB_00050f6c:
            j1939_dm1_fault_inhibit_byte |
            (byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                        0x3f));
-      cm848_j1939SetupTransportSession();
+      cm848_queueSupervisorOutputWrite();
     }
     else if ((int)param_1 < 0xa0) {
       output_lines_152_to_159_state =
            output_lines_152_to_159_state |
            (byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                        0x3f));
-      cm848_j1939SendPeriodicMessage();
+      cm848_queueSpiMode3DeviceRead();
     }
     break;
   case 0x79:
@@ -53653,14 +53784,14 @@ LAB_000528e4:
            j1939_dm1_fault_inhibit_byte &
            ~(byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                         0x3f));
-      cm848_j1939SetupTransportSession();
+      cm848_queueSupervisorOutputWrite();
     }
     else if ((int)param_1 < 0xa0) {
       output_lines_152_to_159_state =
            output_lines_152_to_159_state &
            ~(byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                         0x3f));
-      cm848_j1939SendPeriodicMessage();
+      cm848_queueSpiMode3DeviceRead();
     }
     break;
   case 0x79:
@@ -53794,7 +53925,7 @@ void injectorTimingCalculation(void)
   mios1_ext_ctrl.ctrl_a = local_30;
   j1939_lamp_status_prev = j1939_lamp_status_cache._0_1_;
   j1939_lamp_status_cache._0_1_ = j1939_dm1_fault_inhibit_byte;
-  cm848_j1939SetupTransportSession();
+  cm848_queueSupervisorOutputWrite();
   wVar9 = MIOS_MDASM15_AR.SCRD;
   if ((wVar9 & 0x8000) == 0) {
     bVar7 = j1939_lamp_status_byte_a & 0xef;
@@ -54048,7 +54179,7 @@ void injectorTimingCalculation(void)
   if (bVar2) {
     j1939_dm1_prev_b10 = j1939_dm1_fault_byte_10_prev;
     j1939_dm1_fault_byte_10_prev = output_lines_152_to_159_state;
-    cm848_j1939SendPeriodicMessage();
+    cm848_queueSpiMode3DeviceRead();
   }
   return;
 }
@@ -55106,7 +55237,7 @@ void hpcr_exceptionHandler(void)
   QSMCM_IDSPI_1 = 3;
   mpc555_initQsmcmQspiModule();
   cm848_initSensorValidationSystem();
-  cm848_initPeriodicTimerSystem();
+  cm848_initSupervisorChip();
   cm848_clearProtectionFault(0x1b);
   if (qadc_scan_read_index == qadc_scan_write_index) {
     system_status_flags_t_003fe974.sensor_diag = system_status_flags_t_003fe974.sensor_diag & 0xfffb

@@ -75,8 +75,8 @@ to the function there. Snapshot of the current set (RAM,ROM,ROM-function-name):
 0x003fd1d8,0x007608,mpc555_tickTransferTimeoutAndRuntimeCounter
 0x003fd284,0x0076b4,mpc555_loadRuntimeCounterFromEepromShadow
 0x003fd298,0x0076c8,cm848_sensorFaultThresholdCheck
-0x003fd544,0x007974,cm848_serviceExternalWatchdog
-0x003fd994,0x007dc4,cm848_forceExternalWatchdogReset
+0x003fd544,0x007974,cm848_serviceSupervisorWatchdog
+0x003fd994,0x007dc4,cm848_forceSupervisorWatchdogReset
 ```
 
 ## How to make it a build step (the deferred work)

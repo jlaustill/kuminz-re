@@ -51,7 +51,7 @@ address,name,type,comment
 0x00057652,BYTE_00057652,byte,
 0x00057656,BYTE_00057656,byte,
 0x00057694,calibration_constant_1,word,
-0x00057724,j1939_msg_descriptor_table,byte,
+0x00057724,supervisor_qspi_command_bytes,byte,ROM: QSPI command-RAM bytes for supervisor-chip jobs (0x5D = PCS1 chip select) (was j1939_msg_descriptor_table)
 0x00057730,PTR_LAB_00057730,byte *,
 0x0005774b,pci_receive_message_table,pci_message_descriptor_t,15 J1850 PCI messages the ECM receives (OBD-II 68 6A request / 0x24 / 0x37 shift lever / ...); count at 0x57bab
 0x000578ef,pci_transmit_message_table,pci_message_descriptor_t,25 J1850 PCI messages the ECM transmits (0x10 engine data / 48 6B OBD-II response / D1 03 / F0 xx VIN / ...); count at 0x57bad
@@ -1415,71 +1415,31 @@ address,name,type,comment
 0x003fb236,per_cylinder_timing_array,byte,
 0x003fb246,per_cylinder_sync_counter,word,
 0x003fb256,per_cylinder_timing_counter,word,
-0x003fb266,engine_phase_bits_working,word,
-0x003fb268,injection_sync_broadcast_byte,byte,
+0x003fb266,supervisor_watchdog_question,word,Current watchdog question (reply low 4 bits) - selects the answer table row (was engine_phase_bits_working)
+0x003fb268,supervisor_qspi_slot,byte,QSPI device slot for the supervisor chip (mode 0 / 2000 kHz) (was injection_sync_broadcast_byte)
 0x003fb269,j1939_tx_periodic_counter,word,
 0x003fb26a,j1939_tx_periodic_counter+1,,
 0x003fb26b,j1939_tx_pending_flag,word,
 0x003fb26d,diag_sequence_counter_a,byte,
 0x003fb26e,diag_sequence_counter_b,byte,
-0x003fb275,j1939_tx_data_block_a_ptr,pointer,
-0x003fb279,j1939_msg_descriptor_a_ptr,pointer,
-0x003fb27d,j1939_tx_frame_a_payload_ptr,pointer,
-0x003fb281,j1939_tx_frame_a_handler_ptr,pointer,
-0x003fb287,j1939_tx_frame_a_busy_flag,byte,
-0x003fb28d,j1939_tx_data_block_b_ptr,pointer,
-0x003fb291,j1939_msg_descriptor_b_ptr,pointer,
-0x003fb295,j1939_tx_frame_b_accum_a,dword,
-0x003fb299,j1939_tx_frame_b_accum_b,dword,
 0x003fb29d,j1939_proprietary_status_byte_0,word,
 0x003fb29f,j1939_proprietary_status_byte_1,word,
 0x003fb2a1,j1939_proprietary_status_byte_2,word,
 0x003fb2a3,j1939_proprietary_status_byte_3,word,
-0x003fb2a5,j1939_tx_message_buffer_c,dword,
-0x003fb2ab,can_tx_msg_header_ptr,pointer,
-0x003fb2af,j1939_msg_descriptor_c_ptr,pointer,
-0x003fb2b3,j1939_tx_data_block_c_ptr,pointer,
-0x003fb2b7,j1939_tx_frame_c_accum,dword,
-0x003fb2bb,can_tx_msg_header_word,dword,
-0x003fb2bd,can_tx_msg_header_word+2,,
-0x003fb2bf,can_tx_msg_slot_b_word,word,
-0x003fb2c1,can_tx_msg_slot_c_word,word,
-0x003fb2c3,can_tx_msg_slot_d_word,word,
-0x003fb2cb,engine_phase_and_position_bits_packed,word,
-0x003fb2cf,engine_sync_phase_byte,word,
-0x003fb2d9,j1939_tx_data_block_d_ptr,pointer,
-0x003fb2dd,j1939_msg_descriptor_d_ptr,pointer,
-0x003fb2e1,j1939_tx_frame_d_payload_ptr,pointer,
-0x003fb2e5,j1939_tx_frame_d_handler_ptr,pointer,
-0x003fb2f1,j1939_tx_data_block_e_ptr,pointer,
-0x003fb2f5,j1939_msg_descriptor_e_ptr,pointer,
-0x003fb2f9,j1939_tx_frame_e_accum_a,dword,
-0x003fb2fd,j1939_tx_frame_e_accum_b,dword,
-0x003fb307,j1939_tx_data_block_f_ptr,pointer,
-0x003fb30b,j1939_msg_descriptor_f_ptr,pointer,
-0x003fb30f,j1939_tx_frame_f_payload_ptr,pointer,
-0x003fb313,j1939_tx_frame_f_handler_ptr,pointer,
+0x003fb2cb,supervisor_watchdog_start_reply,word,Watchdog status reply during start-up: question + error count (was engine_phase_and_position_bits_packed)
+0x003fb2cf,supervisor_watchdog_reply,word,Watchdog status reply: low 4 bits next question / bits 4-6 error count (was engine_sync_phase_byte)
 0x003fb317,j1939_lamp_status_tx_word,word,
 0x003fb319,j1939_tx_frame_g_byte_0,word,
 0x003fb31b,j1939_msg_field_word_b31b,word,
 0x003fb31d,j1939_msg_field_word_b31d,word,
-0x003fb32b,j1939_msg_data_ptr_b32b,pointer,
-0x003fb32f,j1939_descriptor_table_ptr,pointer,
-0x003fb333,j1939_msg_data_ptr_b333,pointer,
-0x003fb337,j1939_callback_ptr_b337,pointer,
 0x003fb33b,j1939_msg_payload_snapshot,word,
-0x003fb33f,engine_phase_bits_snapshot,word,
+0x003fb33f,supervisor_watchdog_error_count_previous,word,Watchdog error count from the previous cycle (was engine_phase_bits_snapshot)
 0x003fb343,j1939_can_frame_word_a,word,
 0x003fb345,j1939_can_frame_word_b,word,
 0x003fb347,j1939_can_frame_word_c,word,
 0x003fb349,j1939_can_frame_word_d,word,
 0x003fb34b,j1939_pgn_source_byte,dword,
 0x003fb351,j1939_session_state,byte,
-0x003fb366,j1939_periodic_filter_ptr,pointer,
-0x003fb368,j1939_periodic_filter_ptr+2,,
-0x003fb36a,j1939_periodic_data_ptr,pointer,
-0x003fb36e,j1939_periodic_output_ptr,pointer,
-0x003fb372,j1939_periodic_timer_callback_ptr,pointer,
 0x003fb376,j1939_periodic_timer_state,byte,
 0x003fb378,j1939_periodic_timer_snapshot,dword,
 0x003fb37c,battery_voltage_fault_snapshot,word,
@@ -1938,7 +1898,7 @@ address,name,type,comment
 0x003fd534,protection_temp_scale_cal,word,
 0x003fd536,protection_control_licensed,word,Firmware-baked feature license (ROM src 0x7966 read-only). 1=protection-control limiting permitted; gates whether runtime protection-active state modulates timing/fuel/cruise. Not a tunable calibration.
 0x003fd53e,cold_start_fuel_mode_ready_flag,word,
-# 0x003fd544 removed - is function cm848_serviceExternalWatchdog (ROM 0x7974) not a variable
+# 0x003fd544 removed - is function cm848_serviceSupervisorWatchdog (ROM 0x7974) not a variable
 0x003fd59c,governor_fault_status_flags,word,
 0x003fd59e,governor_feature_flags,word,
 0x003fd5a0,governor_feature_config_word,word,
@@ -2076,13 +2036,13 @@ address,name,type,comment
 0x003fdb7e,diag_cam_sync_fault_config_flags,word,
 0x003fdb84,torque_limit_control_flags,word,
 0x003fdb94,diag_scan_step_counter,byte,
-0x003fdb96,injector_sequence_index,word,
-0x003fdb98,tpu3_timer_capture_value,word,
-0x003fdb9a,tpu3_channel_status_count,word,
+0x003fdb96,kernel_watchdog_question,word,Boot reflash kernel: current supervisor-watchdog question (reply word 4 low 4 bits) (was injector_sequence_index)
+0x003fdb98,kernel_watchdog_last_service_time,word,Boot reflash kernel: MIOS counter value at the last watchdog answer (was tpu3_timer_capture_value)
+0x003fdb9a,kernel_watchdog_error_count,word,Boot reflash kernel: supervisor-watchdog error counter (reply word 4 bits 4-6) (was tpu3_channel_status_count)
 0x003fdb9c,bus_hardware_status_byte,dword,
 0x003fdb9e,bus_hardware_status_byte+2,,
-0x003fdba0,tpu3_channel_status_snapshot,word,
-0x003fdba2,tpu3_rx5_capture_snapshot,word,
+0x003fdba0,kernel_watchdog_error_count_peak,word,Boot reflash kernel: highest watchdog error count seen (was tpu3_channel_status_snapshot)
+0x003fdba2,kernel_watchdog_status_at_peak,word,Boot reflash kernel: reply word 5 captured when the error count rose (was tpu3_rx5_capture_snapshot)
 0x003fdba4,qadc_init_done_flag,word,TIME-SHARED RAM: during boot/reflash the CMF flash driver uses this as cmf test-step count (0 = CMFTST unused); the running application later reads it (protection_enable_state_machine / cm848_j1939BuildEngineStatusByte) - application meaning not yet reviewed, so the original name is kept
 0x003fdba5,qadc_init_done_flag+1,,
 0x003fdba6,cmf_erase_pulse_total,word,Boot reflash kernel: high-voltage pulses applied so far by mpc555_cmfEraseBlocks
@@ -2340,7 +2300,7 @@ address,name,type,comment
 0x003fedfe,diag_clear_flags_t_003fedfc.fuel_temp_protection_ratio,,
 0x003fee00,j1939_cruise_engaged,word,
 0x003fee01,j1939_cruise_engaged+1,,
-0x003fee02,engine_phase_sync_acquire_count,word,
+0x003fee02,supervisor_watchdog_serious_error_events,word,Times the watchdog error count rose past 4 (was engine_phase_sync_acquire_count)
 0x003fee03,j1939_cruise_state_t_003fee00.cruise_state_pad_03,,
 0x003fee05,sensor_fault_threshold_state,byte,
 0x003fee08,eeprom_shadow_header,eeprom_header_t,RAM shadow of EEPROM header loaded at boot
@@ -4933,10 +4893,10 @@ address,name,type,comment
 0x0040b212,protection_sensor_state_b,word,
 0x0040b214,protection_fault_latch_flag,word,
 0x0040b218,protection_inhibit_flag,word,
-0x0040b21a,engine_phase_sync_enable_flag,byte,
+0x0040b21a,supervisor_watchdog_cycle_inhibit,byte,Never written by code: nonzero skips the watchdog parse/answer step in cm848_runSupervisorWatchdogCycle (was engine_phase_sync_enable_flag)
 0x0040b21b,governor_inhibit_flag,byte,
-0x0040b21c,engine_position_phase_bits,word,
-0x0040b21e,engine_phase_sync_count,word,
+0x0040b21c,supervisor_watchdog_error_count,word,Watchdog error counter (reply bits 4-6) (was engine_position_phase_bits)
+0x0040b21e,supervisor_watchdog_error_count_peak,word,Highest watchdog error count seen; 8 after start-up until the count returns to 0 (was engine_phase_sync_count)
 0x0040b220,j1939_message_word_b220,word,
 0x0040b224,engine_idle_mode_flags,word,
 0x0040b226,j1939_lamp_status_cache,word,
@@ -6774,6 +6734,14 @@ address,name,type,comment
 0x003fae20,j1939_pgn65213_diag_param_byte,byte,PGN 65213 scaled diagnostic parameter byte
 0x003fb00c,fuel_demand_hysteresis_init_flag,byte,one-shot fuel-demand hysteresis init flag
 0x003fb00d,protection_mode_enable_flag_prev,byte,prev protection_mode_enable_flag (edge detect)
+0x003fb26f,supervisor_register_162_read_job,qspi_job_t,Supervisor chip job: read register 0xA2
+0x003fb287,supervisor_configuration_write_job,qspi_job_t,Supervisor chip job: write configuration registers 0x94 / 0x98 / 0x9E / 0xA4 (4 words)
+0x003fb2a5,supervisor_watchdog_job,qspi_job_t,Supervisor chip job: watchdog answers / status / window setting (word count set per use)
+0x003fb2d3,supervisor_register_36_read_job,qspi_job_t,Supervisor chip job: read register 0x24
+0x003fb2eb,supervisor_output_write_job,qspi_job_t,Supervisor chip job: write output register 0x92
+0x003fb301,supervisor_status_read_job,qspi_job_t,Supervisor chip job: read registers 0x4E / 0x5A / 0x5C (3 words)
+0x003fb325,supervisor_register_46_read_job,qspi_job_t,Supervisor chip job: register 0x2E access
+0x003fb360,spi_mode3_device_read_job,qspi_job_t,Second QSPI device (SPI mode 3 slot) job: sends 0x1B00
 0x003fb3eb,uds_svc_a4_read_response_byte0,byte,UDS service 0xA4 read response buffer byte 0
 0x003fb614,injection_timing_fuel_table_interp_state,word,interp state base (fuel quantity table)
 0x003fb618,injection_timing_cam_offset_interp_state,word,interp state base (cam timing offset)

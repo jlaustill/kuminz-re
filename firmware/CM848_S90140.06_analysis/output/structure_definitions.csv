@@ -1527,6 +1527,14 @@ qspi_job_t,0x0040b357,command_bytes,byte*,4,Bytes copied into QSPI command RAM (
 qspi_job_t,0x0040b357,receive_words,word*,4,Where the received QSPI words are stored,,verified
 qspi_job_t,0x0040b357,completion_callback,pointer,4,Function called when the transfer completes,,verified
 qspi_job_t,0x0040b36d,,,,pci_controller_receive_job - second instance,,verified
+qspi_job_t,0x003fb26f,,,,supervisor_register_162_read_job - instance,,verified
+qspi_job_t,0x003fb287,,,,supervisor_configuration_write_job - instance,,verified
+qspi_job_t,0x003fb2a5,,,,supervisor_watchdog_job - instance,,verified
+qspi_job_t,0x003fb2d3,,,,supervisor_register_36_read_job - instance,,verified
+qspi_job_t,0x003fb2eb,,,,supervisor_output_write_job - instance,,verified
+qspi_job_t,0x003fb301,,,,supervisor_status_read_job - instance,,verified
+qspi_job_t,0x003fb325,,,,supervisor_register_46_read_job - instance,,verified
+qspi_job_t,0x003fb360,,,,spi_mode3_device_read_job - instance,,verified
 
 # --- QSPI job driver data (reviewed 2026-11-11) ---
 qspi_device_slot_t,0x003fb434,spcr0,word,2,SPCR0 value for this device (mode + baud),,verified
