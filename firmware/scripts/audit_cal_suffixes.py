@@ -4,7 +4,7 @@
 The project rule (firmware/CLAUDE.md, investigate-firmware-symbol skill):
     `_cal` = EEPROM-backed (Calterm-tunable WITHOUT a reflash) ONLY.
     ROM / Bank2 flash / the ROM->RAM copy window / computed working RAM are NOT `_cal`.
-    On CM848, EEPROM only shadows into the 0x3FEExx RAM block.
+    On CM848 the application loads a RAM mirror of the serial EEPROM at 0x3FD482-0x3FEEC1 (RAM = 0x3FD482 + EEPROM offset; cm848_initEepromDriverAndLoadMirror, verified 2026-11-11).
 
 This script does the MECHANICAL half: classify each address by region and report names
 whose `_cal` presence/absence contradicts the region. It does NOT edit anything and it
@@ -28,8 +28,8 @@ import sys
 # CM848 (PowerPC MPC555). CM550 (m68k) differs; see --firmware below.
 CM848_REGIONS = [
     # name,            lo,           hi,           cal_ok,  kind
-    ("EEPROM",        0x01000000,   0x01001000,   True,    "eeprom"),       # direct EEPROM
-    ("EEPROM_SHADOW", 0x003FEE00,   0x003FEF00,   True,    "eeprom"),       # RAM block EEPROM shadows into
+    ("EEPROM",        0x01000000,   0x01004000,   True,    "eeprom"),       # direct EEPROM (16 KB per the boot kernel region map)
+    ("EEPROM_SHADOW", 0x003FD482,   0x003FEEC2,   True,    "eeprom"),       # RAM mirror of EEPROM 0x0-0x1a3f
     ("ROM_TO_RAM",    0x003F9800,   0x003FDB30,   False,   "code_image"),   # boot-copied ROM code/data image
     ("HW_REG",        0x00300000,   0x00310000,   False,   "hw"),           # QADC / MPC555 peripheral regs
     ("BANK1_ROM",     0x00000000,   0x00070000,   False,   "rom"),          # Bank1 flash (incl. cal constants)

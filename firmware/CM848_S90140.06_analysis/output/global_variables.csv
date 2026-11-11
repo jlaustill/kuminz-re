@@ -1720,43 +1720,29 @@ address,name,type,comment
 0x003fb740,injection_timing_trim_working,word,
 0x003fb742,injection_timing_trim_a,word,
 0x003fb744,injection_timing_trim_b,word,
-0x003fb748,sensor_validation_result_array,word,
-0x003fb7c8,sensor_validation_result_buffer,byte,
-0x003fb808,sensor_validation_array_index,word,
-0x003fb80a,sensor_validation_event_count,word,
-0x003fb80c,engine_position_event_counter,word,
-0x003fb80e,protection_condition_calculated,word,
-0x003fb810,engine_position_init_done_flag,dword,
-0x003fb814,protection_condition_mode,word,
-0x003fb816,sensor_cal_table_ptr,pointer,
-0x003fb81a,protection_condition_reference,word,
-0x003fb81c,sensor_measurement_ready_flag,word,
-0x003fb81e,sensor_validation_period_remaining,word,
-0x003fb820,sensor_validation_sample_base,word,
-0x003fb822,sensor_validation_table_ptr,pointer,
-0x003fb826,sensor_validation_entry_count,word,
-0x003fb828,sensor_validation_step_size,word,
-0x003fb82a,sensor_validation_fault_inhibit_flag,word,
-0x003fb82c,sensor_validation_retry_counter,word,
-0x003fb82e,sensor_validation_attempt_counter,word,
-0x003fb830,sensor_validation_accumulator,word,
-0x003fb832,sensor_validation_state,dword,
-0x003fb836,sensor_validation_period_array,word,
-0x003fb838,protection_condition_snapshot,word,
-0x003fb83a,sensor_validation_result_working,dword,
-0x003fb83c,sensor_validation_result_working+2,,
-0x003fb876,sensor_validation_phase_array,byte,
-0x003fb877,j1939_protection_status_byte,byte,
-0x003fb896,sensor_validation_reference_array,word,
-0x003fb898,protection_config_init_flags,byte,
-0x003fb8d6,j1939_tx_message_buffer_b,byte,
-0x003fb8db,engine_sync_diagnostic_code,byte,
-0x003fb8dc,sensor_validation_period_array_ptr,pointer,
-0x003fb8e0,sensor_validation_phase_array_ptr,pointer,
-0x003fb8e4,sensor_validation_reference_array_ptr,pointer,
-0x003fb8e8,j1939_protection_response_callback,pointer,
-0x003fb8ec,sensor_validation_trigger_flag,byte,
-0x003fb8ed,j1939_tx_queue_error_code,word,
+0x003fb748,eeprom_write_queue_addresses,word,64-entry ring of EEPROM addresses waiting to be written
+0x003fb7c8,eeprom_write_queue_bytes,byte,64-entry ring of data bytes waiting to be written
+0x003fb808,eeprom_write_queue_read_index,word,Next queue slot to write (wraps at 64)
+0x003fb80a,eeprom_write_queue_write_index,word,Next free queue slot (wraps at 64)
+0x003fb80c,eeprom_write_queue_count,word,Queued EEPROM byte writes (max 64)
+0x003fb80e,eeprom_last_offset_queue_address,word,Last address queued by cm848_queueEepromByteWritesAtOffset11134 (offset + 0x2b7e)
+0x003fb810,eeprom_driver_operation,dword,SPI EEPROM driver operation in progress: 0 idle / 1 block read / 3 byte write / 4 page write
+0x003fb814,eeprom_mirror_load_offset,word,Next EEPROM offset to read into the RAM mirror
+0x003fb816,eeprom_mirror_base_pointer,pointer,RAM mirror base (= eeprom_mirror at 0x3fd482)
+0x003fb81a,eeprom_mirror_load_length,word,Bytes to load into the mirror (0x1a40 at init)
+0x003fb81c,eeprom_mirror_loaded_flag,word,Set when the RAM mirror has been fully read from EEPROM
+0x003fb81e,eeprom_page_write_remaining_bytes,word,Bytes still to write in the current mirror save
+0x003fb820,eeprom_page_write_address,word,EEPROM address of the next page write
+0x003fb822,eeprom_page_write_source_pointer,pointer,RAM source of the next page write
+0x003fb826,eeprom_page_write_chunk_words,word,Words in the current page write (also the checksum word count at init)
+0x003fb828,eeprom_page_write_chunk_bytes,word,Bytes in the current page write (max 32 / page aligned)
+0x003fb82a,eeprom_verify_failed_flag,word,Set when a page still mismatches after 3 retries
+0x003fb82c,eeprom_verify_retry_count,word,Retries of the current page
+0x003fb82e,eeprom_verify_retry_total,word,Total page-verify retries
+0x003fb830,eeprom_mirror_checksum,word,16-bit sum of the checksummed EEPROM block
+0x003fb832,eeprom_page_write_state,dword,Mirror save state: 0 idle / 1 write next page / 2 verify / 3 read back
+0x003fb8ec,eeprom_block_read_template_ready,byte,Set once eeprom_transmit_words / eeprom_command_bytes hold the block-read template
+0x003fb8ed,eeprom_status_poll_queue_result,word,cm848_queueQspiJob result for the status poll (0xffff = not queued yet)
 0x003fb8f0,sensor_scan_counter_a,byte,
 0x003fb8f1,sensor_scan_counter_b,byte,
 0x003fb8f2,sensor_scan_counter_c,byte,
@@ -1880,11 +1866,11 @@ address,name,type,comment
 0x003fd3ba,PTR_cm848_j1939BuildProtocolModeStatus_003fd3ba,pointer,
 0x003fd416,PTR_FUN_003fd416,pointer,
 0x003fd41c,PTR_FUN_003fd41c,pointer,
-0x003fd482,sensor_cal_table,byte,
+0x003fd482,eeprom_mirror,byte,RAM mirror of the serial EEPROM: RAM = 0x3fd482 + EEPROM offset (0x0-0x1a3f) - loaded by cm848_initEepromDriverAndLoadMirror (was sensor_cal_table)
 0x003fd4b2,sensor_param_id_working,dword,
 0x003fd4b8,sensor_channel_index_working,word,
 0x003fd4c4,sensor_fault_threshold_working,dword,
-0x003fd4de,sensor_validation_sum_expected,word,
+0x003fd4de,eeprom_block_checksum_expected_cal,word,EEPROM offset 0x5c: expected 16-bit sum of the checksummed block EEPROM 0x8ea-0x1a3d (was sensor_validation_sum_expected)
 0x003fd510,checksum_validation_step_counter,word,
 0x003fd514,fuel_blend_coefficient_startup_cal,word,
 0x003fd516,fuel_blend_coefficient_run_cal,word,
@@ -2125,8 +2111,8 @@ address,name,type,comment
 0x003fdd42,governor_protection_mode_flag,word,
 0x003fdd50,protection_rpm_reference_a,word,
 0x003fdd54,protection_rpm_reference_b,word,
-0x003fdd6a,sensor_validation_array,word,
-0x003fdd6c,sensor_validation_accum,dword,
+0x003fdd6a,eeprom_checksummed_block_start,word,EEPROM offset 0x8e8 in the mirror; the checksummed / saved block follows (was sensor_validation_array)
+0x003fdd6c,eeprom_saved_block,dword,EEPROM offset 0x8ea in the mirror: start of the 0x1154-byte block cm848_startEepromMirrorSave writes back (was sensor_validation_accum)
 0x003fdd6e,sensor_validation_accum+2,,
 0x003fdd70,protection_freq_divisor_working,dword,
 0x003fdd7a,cruise_speed_blend_working,word,
@@ -7033,6 +7019,7 @@ address,name,type,comment
 0x003fd2e0,sensor_cal_ring_cycle_count,word,count of complete passes over sensor cal ring
 0x003fea16,hpcr_battery_status_shadow_flags,word,shadow of hpcr_battery_voltage_flags
 0x003fb444,qspi_active_device_slot,byte,Device slot whose timing is currently loaded in the QSMCM
+0x003fb8d6,eeprom_job,qspi_job_t,SPI serial EEPROM QSPI job (word count and completion callback set per operation)
 0x003fbd52,fuel_demand_active_sensor_valid_bits,word,fuel-demand-active condition bit (0x100) for sensor validation
 0x003fd8de,pci_normal_transmit_disabled_initial_cal,byte,EEPROM-shadowed (EEPROM offset 0x45c; 0 in dump) - boot value of pci_normal_transmit_disabled
 0x003fd8df,pci_receive_processing_disabled_initial_cal,byte,EEPROM-shadowed (EEPROM offset 0x45d; 0 in dump) - boot value of pci_receive_processing_disabled

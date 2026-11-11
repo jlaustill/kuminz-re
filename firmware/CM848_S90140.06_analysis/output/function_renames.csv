@@ -1489,28 +1489,21 @@ address,name
 0x0004ba48,cm848_processMemoryScanValidation
 0x0004ba80,cm848_evaluateConditionDescriptor
 0x0004bd00,cm848_copyRomToRamBuffer
-0x0004bd3c,cm848_protectionEnableCheck
-0x0004bd5c,cm848_protectionConditionMonitor
-0x0004bd74,cm848_initOutputChannels
-0x0004be4c,cm848_sensorCalibrationCheck
-0x0004bf90,cm848_validateMemoryBlockChecksum
-0x0004bfc8,cm848_validateEepromAddress
-0x0004c070,cm848_updateProtectionTimers
-0x0004c0a8,cm848_enqueueToCircularBuffer
-0x0004c188,cm848_protectionConfigSelector
-0x0004c2d4,cm848_protectionLimitCalculator
-0x0004c69c,cm848_initProtectionLimitVariables
-0x0004c6d4,cm848_initProtectionLimitStateVariant
-0x0004c734,cm848_j1939ProtectionConfigResponse
-0x0004c7ec,cm848_j1939ProtectionDataResponse
-0x0004c8d8,cm848_validateSensorData
-0x0004cb34,cm848_isSensorValidationComplete
-0x0004cb4c,cm848_getSensorValidationData
-0x0004cb58,cm848_getSensorSampleBuffer
-0x0004cb64,cm848_initSensorValidationSystem
-0x0004cb6c,cm848_configureOutputChannels
-0x0004cb84,cm848_configureOutputChannelsStateParam
-0x0004cb90,cm848_configureOutputChannelsAltState
+0x0004bd3c,cm848_isEepromWriteQueueEmpty,SPI serial EEPROM driver (QSPI PCS0; 25xx opcodes 3 READ / 2 WRITE / 6 write-enable / 5 read-status): true when no byte writes are queued | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+0x0004bd5c,cm848_startEepromBlockRead,SPI serial EEPROM driver (QSPI PCS0; 25xx opcodes 3 READ / 2 WRITE / 6 write-enable / 5 read-status): READ (3) of 30 words at eeprom_mirror_load_offset into eeprom_receive_words; completion -> cm848_onEepromBlockRead | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+0x0004be4c,cm848_writeNextQueuedEepromByte,SPI serial EEPROM driver (QSPI PCS0; 25xx opcodes 3 READ / 2 WRITE / 6 write-enable / 5 read-status): write-enable (6) then WRITE (2) of the next queued address/byte; completion -> cm848_pollEepromStatus | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+0x0004bf90,cm848_queueEepromByteWrites,SPI serial EEPROM driver (QSPI PCS0; 25xx opcodes 3 READ / 2 WRITE / 6 write-enable / 5 read-status): appends address + byte pairs to the 64-entry write queue (fails when it would overflow) then starts writing; the tail at 0x4bfc8 was a spurious split | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+0x0004c070,cm848_queueEepromByteWritesAtOffset11134,SPI serial EEPROM driver (QSPI PCS0; 25xx opcodes 3 READ / 2 WRITE / 6 write-enable / 5 read-status): same as cm848_queueEepromByteWrites with EEPROM address = offset + 0x2b7e; the tail at 0x4c0a8 was a spurious split | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+0x0004c188,cm848_pollEepromStatus,SPI serial EEPROM driver (QSPI PCS0; 25xx opcodes 3 READ / 2 WRITE / 6 write-enable / 5 read-status): read-status (5) to check write-in-progress; retries up to 32 times 20 time-base ticks apart and sets system_faults 0x20 (EEPROM write fault) if the job cannot be queued | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+0x0004c2d4,cm848_runEepromPageWrite,SPI serial EEPROM driver (QSPI PCS0; 25xx opcodes 3 READ / 2 WRITE / 6 write-enable / 5 read-status): page write state machine: state 1 -> write-enable + WRITE of up to 32 bytes at eeprom_page_write_address from eeprom_page_write_source_pointer / state 3 -> READ back for verify (cm848_verifyEepromPageWrite) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+0x0004c69c,cm848_startEepromMirrorSave,SPI serial EEPROM driver (QSPI PCS0; 25xx opcodes 3 READ / 2 WRITE / 6 write-enable / 5 read-status): saves the checksummed EEPROM block back from the RAM mirror: page writes of 0x1154 bytes at EEPROM 0x8ea from eeprom_saved_block; the entry at 0x4c6d4 was a spurious split | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+0x0004c734,cm848_onEepromStatusRead,SPI serial EEPROM driver (QSPI PCS0; 25xx opcodes 3 READ / 2 WRITE / 6 write-enable / 5 read-status): completion of the status read: write-in-progress (receive word bit 0x1) -> poll again; otherwise next queued byte / page write / mirror block read | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+0x0004c7ec,cm848_onEepromBlockRead,SPI serial EEPROM driver (QSPI PCS0; 25xx opcodes 3 READ / 2 WRITE / 6 write-enable / 5 read-status): completion of a block read: copies the words into the RAM mirror (eeprom_mirror_base_pointer + offset) until eeprom_mirror_load_length then sets eeprom_mirror_loaded_flag | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+0x0004c8d8,cm848_verifyEepromPageWrite,SPI serial EEPROM driver (QSPI PCS0; 25xx opcodes 3 READ / 2 WRITE / 6 write-enable / 5 read-status): compares the read-back page with the source (3 retries then eeprom_verify_failed_flag); advances the page write and on completion sets or clears system_faults 0x20 | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+0x0004cb34,cm848_isEepromMirrorSaveIdle,SPI serial EEPROM driver (QSPI PCS0; 25xx opcodes 3 READ / 2 WRITE / 6 write-enable / 5 read-status): true when no page write (mirror save) is running | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+0x0004cb4c,cm848_getEepromVerifyRetryTotal,SPI serial EEPROM driver (QSPI PCS0; 25xx opcodes 3 READ / 2 WRITE / 6 write-enable / 5 read-status): returns eeprom_verify_retry_total | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+0x0004cb58,cm848_getEepromMirrorChecksum,SPI serial EEPROM driver (QSPI PCS0; 25xx opcodes 3 READ / 2 WRITE / 6 write-enable / 5 read-status): returns eeprom_mirror_checksum | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+0x0004cb64,cm848_initEepromDriverAndLoadMirror,SPI serial EEPROM driver (QSPI PCS0; 25xx opcodes 3 READ / 2 WRITE / 6 write-enable / 5 read-status): registers the QSPI slot / sets up eeprom_job / reads EEPROM 0x0-0x1a3f into the RAM mirror at 0x3fd482 (RAM = 0x3fd482 + EEPROM offset) / sums 0x8aa words of the checksummed block (EEPROM 0x8ea-0x1a3d) against eeprom_block_checksum_expected_cal and sets or clears system_faults 0x40; the entries at 0x4cb6c / 0x4cb84 / 0x4cb90 were spurious splits | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
 0x0004cd50,cm848_getProtectionSyncState
 0x0004ce78,cm848_initSensorRetryCounters
 0x0004ce9c,cm848_miosChannel11Enable

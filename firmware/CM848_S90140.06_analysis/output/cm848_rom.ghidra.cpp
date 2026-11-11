@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Wed Nov 11 16:08:57 MST 2026
+// Generated: Wed Nov 11 16:17:33 MST 2026
 
 
 //
@@ -6856,7 +6856,7 @@ void cm848_periodicTaskGroup15_calibration4(void)
 void cm848_periodicTaskSet_protection2(void)
 
 {
-  cm848_protectionConditionMonitor();
+  cm848_startEepromBlockRead();
   return;
 }
 
@@ -17443,7 +17443,7 @@ void cm848_clearDiagnosticState(void)
     fault_list_state_t_003fe11a.read_index = 0;
     fault_list_state_t_003fe11a.total_emission_faults = 0;
     emission_fault_overflow_flag = 0;
-    if (sensor_validation_accum <= (uint)sensor_validation_timeout_cal._0_1_ * 8000) {
+    if (eeprom_saved_block <= (uint)sensor_validation_timeout_cal._0_1_ * 8000) {
       diag_clear_flags_t_003fedfc.diag_response_write_count = 0;
       diag_clear_flags_t_003fedfc.diag_eeprom_work_byte = 0;
       protection_b_fault_active_flag = 0;
@@ -17495,7 +17495,7 @@ void cm848_clearAllDiagnosticFaults(void)
   fault_list_state_t_003fe11a.read_index = 0;
   fault_list_state_t_003fe11a.total_emission_faults = 0;
   emission_fault_overflow_flag = 0;
-  if (sensor_validation_accum <= (uint)sensor_validation_timeout_cal._0_1_ * 8000) {
+  if (eeprom_saved_block <= (uint)sensor_validation_timeout_cal._0_1_ * 8000) {
     diag_clear_flags_t_003fedfc.diag_response_write_count = 0;
     diag_clear_flags_t_003fedfc.diag_eeprom_work_byte = 0;
     protection_b_fault_active_flag = 0;
@@ -20112,11 +20112,11 @@ undefined4 mpc555_processJ1939RxQueue(undefined4 param_1,int param_2)
   
   uVar2 = 7;
   if (cold_start_phase == CSP_CRANKING) {
-    while (cVar1 = cm848_protectionEnableCheck(), cVar1 == '\0') {
+    while (cVar1 = cm848_isEepromWriteQueueEmpty(), cVar1 == '\0') {
       cm848_delayMicroseconds2(0x13);
     }
     local_18[0] = fault_timing_snapshot;
-    cm848_updateProtectionTimers(&sensor_param_id_working,local_18,4);
+    cm848_queueEepromByteWritesAtOffset11134(&sensor_param_id_working,local_18,4);
     if (diagnostic_session_state == INACTIVE) {
       cm848_delayMicroseconds2(9);
     }
@@ -20126,7 +20126,7 @@ undefined4 mpc555_processJ1939RxQueue(undefined4 param_1,int param_2)
       } while (sensor_param_id_working != local_18[0]);
     }
     local_18[0] = protection_timer_config_a;
-    cm848_updateProtectionTimers(&sensor_fault_threshold_working,local_18,4);
+    cm848_queueEepromByteWritesAtOffset11134(&sensor_fault_threshold_working,local_18,4);
     if (diagnostic_session_state == INACTIVE) {
       cm848_delayMicroseconds2(9);
     }
@@ -20217,15 +20217,15 @@ DIAG_RESPONSE cm848_validateCalibrationMemory(void)
   else {
     uVar3 = 0;
     uVar4 = 0;
-    pbVar6 = &sensor_cal_table;
+    pbVar6 = &eeprom_mirror;
     do {
       if ((word *)((int)pbVar6 + 0x10) < (word *)0x3fdd6b) {
         uVar7 = 0x10;
       }
       else {
-        uVar7 = (int)&sensor_validation_array - (int)pbVar6 & 0xffff;
+        uVar7 = (int)&eeprom_checksummed_block_start - (int)pbVar6 & 0xffff;
       }
-      cVar1 = cm848_validateMemoryBlockChecksum(uVar4 & 0xffff,pbVar6,uVar7);
+      cVar1 = cm848_queueEepromByteWrites(uVar4 & 0xffff,pbVar6,uVar7);
       if (cVar1 == '\0') {
         uVar4 = uVar4 + uVar7;
         pbVar6 = (byte *)((int)pbVar6 + uVar7);
@@ -20236,13 +20236,13 @@ DIAG_RESPONSE cm848_validateCalibrationMemory(void)
       }
       uVar2 = 0;
       do {
-        cVar1 = cm848_protectionEnableCheck();
+        cVar1 = cm848_isEepromWriteQueueEmpty();
         if (cVar1 != '\0') break;
         cm848_delayMicroseconds(0x13);
         uVar2 = uVar2 + 1;
       } while (uVar2 < 16000);
-    } while ((pbVar6 < &sensor_validation_array) && (uVar3 < 2));
-    if ((word *)pbVar6 == &sensor_validation_array) {
+    } while ((pbVar6 < &eeprom_checksummed_block_start) && (uVar3 < 2));
+    if ((word *)pbVar6 == &eeprom_checksummed_block_start) {
       sensor_validation_result = 0;
       DVar5 = DIAG_ACK;
     }
@@ -25368,8 +25368,8 @@ void cm848_j1939HandlePgn65248VehicleDistance(void)
                        protection_freq_divisor_working * 0xc47400) / 64000000);
   j1939_pgn65248_field1_tx_dword = j1939_reverseByteOrder32(&local_10);
   local_10 = (undefined4)
-             (CONCAT44((int)((ulonglong)sensor_validation_accum * 0xc47400 >> 0x20),
-                       sensor_validation_accum * 0xc47400) / 0xdcd65000);
+             (CONCAT44((int)((ulonglong)eeprom_saved_block * 0xc47400 >> 0x20),
+                       eeprom_saved_block * 0xc47400) / 0xdcd65000);
   j1939_pgn65248_field2_tx_dword = j1939_reverseByteOrder32(&local_10);
   sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65248_tx_header);
   return;
@@ -37620,7 +37620,7 @@ LAB_0003b37c:
              (cVar1 = uds_validateMemoryRegion(uds_write_target_pointer + 3,4), cVar1 != '\t')) {
             uds_write_region_ptr = &uds_svc_a4_read_response_byte0;
             if ((undefined *)0xffffff < uds_write_target_pointer) {
-              uds_sensor_cal_table_ptr = &sensor_cal_table;
+              uds_sensor_cal_table_ptr = &eeprom_mirror;
               uds_write_target_pointer = uds_write_target_pointer + -0xc02b7e;
             }
             cm848_memcpyBytes(&uds_svc_a4_read_response_byte0,uds_write_target_pointer,4);
@@ -37681,7 +37681,7 @@ LAB_0003b37c:
             uds_processing_clear_flag = 7;
           }
           else if (diagnostic_session_state == ACTIVE) {
-            cVar1 = cm848_validateMemoryBlockChecksum
+            cVar1 = cm848_queueEepromByteWrites
                               ((uint)(uds_write_target_pointer + -0x1000000) & 0xffff,
                                uds_data_source_ptr,1);
             if (cVar1 == '\x01') {
@@ -39218,7 +39218,7 @@ void cm848_storePressureConversionResult(void)
 void cm848_captureVehicleDistanceHighByte(void)
 
 {
-  j1939_msg_slot_x_status = (byte)((sensor_validation_accum >> 6) >> 0x10);
+  j1939_msg_slot_x_status = (byte)((eeprom_saved_block >> 6) >> 0x10);
   return;
 }
 
@@ -40341,7 +40341,7 @@ void cm848_processFuelDemandCallback(void)
         }
         (&fuel_demand_state_queue)[fuel_demand_queue_write_index] = 0xf0;
         fuel_demand_queue_write_index = fuel_demand_queue_write_index + 1;
-        cVar1 = cm848_protectionEnableCheck();
+        cVar1 = cm848_isEepromWriteQueueEmpty();
         if (cVar1 == '\0') {
           (&fuel_demand_state_queue)[fuel_demand_queue_write_index] = 2;
           fuel_demand_queue_write_index = fuel_demand_queue_write_index + 1;
@@ -48260,47 +48260,56 @@ void cm848_copyRomToRamBuffer(void)
 
 
 //
-// Function: cm848_protectionEnableCheck @ 0x0004bd3c
+// Function: cm848_isEepromWriteQueueEmpty @ 0x0004bd3c
 //
 
-bool cm848_protectionEnableCheck(void)
+/* SPI serial EEPROM driver (QSPI PCS0; 25xx opcodes 3 READ / 2 WRITE / 6 write-enable / 5
+   read-status): true when no byte writes are queued | review-function-readability reviewed
+   2026-11-11 - Readability Medium Accuracy Confidence High */
+
+bool cm848_isEepromWriteQueueEmpty(void)
 
 {
-  return engine_position_event_counter == 0;
+  return eeprom_write_queue_count == 0;
 }
 
 
 
 //
-// Function: cm848_protectionConditionMonitor @ 0x0004bd5c
+// Function: cm848_startEepromBlockRead @ 0x0004bd5c
 //
 
-void cm848_protectionConditionMonitor(void)
+/* SPI serial EEPROM driver (QSPI PCS0; 25xx opcodes 3 READ / 2 WRITE / 6 write-enable / 5
+   read-status): READ (3) of 30 words at eeprom_mirror_load_offset into eeprom_receive_words;
+   completion -> cm848_onEepromBlockRead | review-function-readability reviewed 2026-11-11 -
+   Readability Medium Accuracy Confidence High */
+
+void cm848_startEepromBlockRead(void)
 
 {
   uint uVar1;
   short sVar2;
   
-  if (engine_position_init_done_flag == 0) {
-    engine_position_init_done_flag = 1;
-    sensor_validation_period_array = 3;
-    sensor_validation_phase_array = 0x9e;
-    protection_condition_snapshot = protection_condition_mode;
-    j1939_protection_status_byte = 0xce;
+  if (eeprom_driver_operation == 0) {
+    eeprom_driver_operation = 1;
+    eeprom_transmit_words[0] = 3;
+    eeprom_command_bytes[0] = 0x9e;
+    eeprom_transmit_words[1] = eeprom_mirror_load_offset;
+    eeprom_command_bytes[1] = 0xce;
     uVar1 = 2;
-    if (sensor_validation_trigger_flag == 0) {
+    if (eeprom_block_read_template_ready == 0) {
       do {
-        (&sensor_validation_period_array)[uVar1] = 0;
-        (&sensor_validation_phase_array)[uVar1] = 0xce;
+        eeprom_transmit_words[uVar1] = 0;
+        eeprom_command_bytes[uVar1] = 0xce;
         uVar1 = uVar1 + 1 & 0xff;
       } while (uVar1 < 0x20);
-      sensor_validation_trigger_flag = 1;
+      eeprom_block_read_template_ready = 1;
     }
-    engine_sync_diagnostic_code = 0x20;
-    j1939_protection_response_callback = cm848_j1939ProtectionDataResponse;
-    sVar2 = cm848_queueQspiJob((qspi_job_t *)&j1939_tx_message_buffer_b,1);
+    eeprom_job.word_count = 0x20;
+    eeprom_job.completion_callback = cm848_onEepromBlockRead;
+    sVar2 = cm848_queueQspiJob(&eeprom_job,1);
     if (sVar2 != 0) {
-      engine_position_init_done_flag = 0;
+      eeprom_driver_operation = 0;
     }
   }
   return;
@@ -48309,76 +48318,41 @@ void cm848_protectionConditionMonitor(void)
 
 
 //
-// Function: cm848_initOutputChannels @ 0x0004bd74
+// Function: cm848_writeNextQueuedEepromByte @ 0x0004be4c
 //
 
-void cm848_initOutputChannels(void)
+/* SPI serial EEPROM driver (QSPI PCS0; 25xx opcodes 3 READ / 2 WRITE / 6 write-enable / 5
+   read-status): write-enable (6) then WRITE (2) of the next queued address/byte; completion ->
+   cm848_pollEepromStatus | review-function-readability reviewed 2026-11-11 - Readability Medium
+   Accuracy Confidence High */
 
-{
-  uint uVar1;
-  short sVar2;
-  int *unaff_r31;
-  
-  if (*unaff_r31 == 0) {
-    *unaff_r31 = 1;
-    sensor_validation_period_array = 3;
-    sensor_validation_phase_array = 0x9e;
-    protection_condition_snapshot = protection_condition_mode;
-    j1939_protection_status_byte = 0xce;
-    uVar1 = 2;
-    if (sensor_validation_trigger_flag == 0) {
-      do {
-        (&sensor_validation_period_array)[uVar1] = 0;
-        (&sensor_validation_phase_array)[uVar1] = 0xce;
-        uVar1 = uVar1 + 1 & 0xff;
-      } while (uVar1 < 0x20);
-      sensor_validation_trigger_flag = 1;
-    }
-    engine_sync_diagnostic_code = 0x20;
-    j1939_protection_response_callback = cm848_j1939ProtectionDataResponse;
-    sVar2 = cm848_queueQspiJob((qspi_job_t *)&j1939_tx_message_buffer_b,1);
-    if (sVar2 != 0) {
-      *unaff_r31 = 0;
-    }
-  }
-  return;
-}
-
-
-
-//
-// Function: cm848_sensorCalibrationCheck @ 0x0004be4c
-//
-
-void cm848_sensorCalibrationCheck(void)
+void cm848_writeNextQueuedEepromByte(void)
 
 {
   short sVar1;
   
-  if ((engine_position_event_counter != 0) && (engine_position_init_done_flag == 0)) {
-    engine_position_init_done_flag = 3;
-    sensor_validation_trigger_flag = 0;
-    sensor_validation_period_array = 6;
-    sensor_validation_phase_array = 0x1e;
-    protection_condition_snapshot = 2;
-    j1939_protection_status_byte = 0x9e;
-    sensor_validation_result_working._0_2_ =
-         (&sensor_validation_result_array)[sensor_validation_array_index];
-    DAT_003fb878 = 0xce;
-    sensor_validation_result_working._2_2_ =
-         (ushort)(&sensor_validation_result_buffer)[sensor_validation_array_index];
-    DAT_003fb879 = 0xe;
-    engine_sync_diagnostic_code = 4;
-    j1939_protection_response_callback = cm848_protectionConfigSelector;
-    sVar1 = cm848_queueQspiJob((qspi_job_t *)&j1939_tx_message_buffer_b,1);
+  if ((eeprom_write_queue_count != 0) && (eeprom_driver_operation == 0)) {
+    eeprom_driver_operation = 3;
+    eeprom_block_read_template_ready = 0;
+    eeprom_transmit_words[0] = 6;
+    eeprom_command_bytes[0] = 0x1e;
+    eeprom_transmit_words[1] = 2;
+    eeprom_command_bytes[1] = 0x9e;
+    eeprom_transmit_words[2] = (&eeprom_write_queue_addresses)[eeprom_write_queue_read_index];
+    eeprom_command_bytes[2] = 0xce;
+    eeprom_transmit_words[3] = (word)(&eeprom_write_queue_bytes)[eeprom_write_queue_read_index];
+    eeprom_command_bytes[3] = 0xe;
+    eeprom_job.word_count = 4;
+    eeprom_job.completion_callback = cm848_pollEepromStatus;
+    sVar1 = cm848_queueQspiJob(&eeprom_job,1);
     if (sVar1 == 0) {
-      engine_position_event_counter = engine_position_event_counter - 1;
-      sensor_validation_array_index =
-           sensor_validation_array_index + 1 +
-           (short)((int)(uint)(ushort)(sensor_validation_array_index + 1) >> 6) * -0x40;
+      eeprom_write_queue_count = eeprom_write_queue_count - 1;
+      eeprom_write_queue_read_index =
+           eeprom_write_queue_read_index + 1 +
+           (short)((int)(uint)(ushort)(eeprom_write_queue_read_index + 1) >> 6) * -0x40;
     }
     else {
-      engine_position_init_done_flag = 0;
+      eeprom_driver_operation = 0;
     }
   }
   return;
@@ -48387,10 +48361,15 @@ void cm848_sensorCalibrationCheck(void)
 
 
 //
-// Function: cm848_validateMemoryBlockChecksum @ 0x0004bf90
+// Function: cm848_queueEepromByteWrites @ 0x0004bf90
 //
 
-undefined4 cm848_validateMemoryBlockChecksum(word param_1,int param_2,uint param_3)
+/* SPI serial EEPROM driver (QSPI PCS0; 25xx opcodes 3 READ / 2 WRITE / 6 write-enable / 5
+   read-status): appends address + byte pairs to the 64-entry write queue (fails when it would
+   overflow) then starts writing; the tail at 0x4bfc8 was a spurious split |
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+
+undefined4 cm848_queueEepromByteWrites(word param_1,int param_2,uint param_3)
 
 {
   byte *pbVar1;
@@ -48398,77 +48377,40 @@ undefined4 cm848_validateMemoryBlockChecksum(word param_1,int param_2,uint param
   uint uVar3;
   
   uVar2 = 1;
-  if ((int)(engine_position_event_counter + param_3) < 0x41) {
+  if ((int)(eeprom_write_queue_count + param_3) < 0x41) {
     if (param_3 != 0) {
-      uVar3 = (uint)sensor_validation_event_count;
+      uVar3 = (uint)eeprom_write_queue_write_index;
       pbVar1 = (byte *)(param_2 + -1);
       do {
         pbVar1 = pbVar1 + 1;
-        (&sensor_validation_result_buffer)[uVar3 & 0xffff] = *pbVar1;
-        (&sensor_validation_result_array)[uVar3 & 0xffff] = param_1;
+        (&eeprom_write_queue_bytes)[uVar3 & 0xffff] = *pbVar1;
+        (&eeprom_write_queue_addresses)[uVar3 & 0xffff] = param_1;
         param_1 = param_1 + 1;
         uVar3 = uVar3 + 1 & 0xffff;
         uVar3 = uVar3 + ((int)uVar3 >> 6) * -0x40;
-        engine_position_event_counter = engine_position_event_counter + 1;
+        eeprom_write_queue_count = eeprom_write_queue_count + 1;
         param_3 = param_3 + 0xffff & 0xffff;
       } while (param_3 != 0);
-      sensor_validation_event_count = (word)uVar3;
+      eeprom_write_queue_write_index = (word)uVar3;
     }
     uVar2 = 0;
   }
-  cm848_sensorCalibrationCheck();
+  cm848_writeNextQueuedEepromByte();
   return uVar2;
 }
 
 
 
 //
-// Function: cm848_validateEepromAddress @ 0x0004bfc8
+// Function: cm848_queueEepromByteWritesAtOffset11134 @ 0x0004c070
 //
 
-undefined1 cm848_validateEepromAddress(short *param_1)
+/* SPI serial EEPROM driver (QSPI PCS0; 25xx opcodes 3 READ / 2 WRITE / 6 write-enable / 5
+   read-status): same as cm848_queueEepromByteWrites with EEPROM address = offset + 0x2b7e; the tail
+   at 0x4c0a8 was a spurious split | review-function-readability reviewed 2026-11-11 - Readability
+   Medium Accuracy Confidence High */
 
-{
-  short sVar1;
-  int unaff_r28;
-  byte *pbVar2;
-  word unaff_r29;
-  uint unaff_r30;
-  undefined1 unaff_r31;
-  uint uVar3;
-  byte in_cr0;
-  
-  if (!(bool)(in_cr0 >> 2 & 1)) {
-    if (unaff_r30 != 0) {
-      sVar1 = *param_1;
-      uVar3 = (uint)sensor_validation_event_count;
-      pbVar2 = (byte *)(unaff_r28 + -1);
-      do {
-        pbVar2 = pbVar2 + 1;
-        (&sensor_validation_result_buffer)[uVar3 & 0xffff] = *pbVar2;
-        (&sensor_validation_result_array)[uVar3 & 0xffff] = unaff_r29;
-        unaff_r29 = unaff_r29 + 1;
-        uVar3 = uVar3 + 1 & 0xffff;
-        uVar3 = uVar3 + ((int)uVar3 >> 6) * -0x40;
-        sVar1 = sVar1 + 1;
-        unaff_r30 = unaff_r30 + 0xffff & 0xffff;
-      } while (unaff_r30 != 0);
-      *param_1 = sVar1;
-      sensor_validation_event_count = (word)uVar3;
-    }
-    unaff_r31 = 0;
-  }
-  cm848_sensorCalibrationCheck();
-  return unaff_r31;
-}
-
-
-
-//
-// Function: cm848_updateProtectionTimers @ 0x0004c070
-//
-
-undefined4 cm848_updateProtectionTimers(short param_1,int param_2,uint param_3)
+undefined4 cm848_queueEepromByteWritesAtOffset11134(short param_1,int param_2,uint param_3)
 
 {
   undefined4 uVar1;
@@ -48476,81 +48418,42 @@ undefined4 cm848_updateProtectionTimers(short param_1,int param_2,uint param_3)
   uint uVar3;
   
   uVar1 = 1;
-  if ((int)(engine_position_event_counter + param_3) < 0x41) {
-    uVar3 = (uint)sensor_validation_event_count;
-    protection_condition_calculated = param_1 + 0x2b7e;
-    (&sensor_validation_result_array)[uVar3] = protection_condition_calculated;
+  if ((int)(eeprom_write_queue_count + param_3) < 0x41) {
+    uVar3 = (uint)eeprom_write_queue_write_index;
+    eeprom_last_offset_queue_address = param_1 + 0x2b7e;
+    (&eeprom_write_queue_addresses)[uVar3] = eeprom_last_offset_queue_address;
     if (param_3 != 0) {
       pbVar2 = (byte *)(param_2 + -1);
       do {
         pbVar2 = pbVar2 + 1;
-        (&sensor_validation_result_buffer)[uVar3 & 0xffff] = *pbVar2;
-        (&sensor_validation_result_array)[uVar3 & 0xffff] = param_1 + 0x2b7e;
+        (&eeprom_write_queue_bytes)[uVar3 & 0xffff] = *pbVar2;
+        (&eeprom_write_queue_addresses)[uVar3 & 0xffff] = param_1 + 0x2b7e;
         param_1 = param_1 + 1;
         uVar3 = uVar3 + 1 & 0xffff;
         uVar3 = uVar3 + ((int)uVar3 >> 6) * -0x40;
-        engine_position_event_counter = engine_position_event_counter + 1;
+        eeprom_write_queue_count = eeprom_write_queue_count + 1;
         param_3 = param_3 + 0xffff & 0xffff;
       } while (param_3 != 0);
-      sensor_validation_event_count = (word)uVar3;
+      eeprom_write_queue_write_index = (word)uVar3;
     }
     uVar1 = 0;
   }
-  cm848_sensorCalibrationCheck();
+  cm848_writeNextQueuedEepromByte();
   return uVar1;
 }
 
 
 
 //
-// Function: cm848_enqueueToCircularBuffer @ 0x0004c0a8
+// Function: cm848_pollEepromStatus @ 0x0004c188
 //
 
-undefined1 cm848_enqueueToCircularBuffer(undefined4 param_1,short *param_2)
+/* SPI serial EEPROM driver (QSPI PCS0; 25xx opcodes 3 READ / 2 WRITE / 6 write-enable / 5
+   read-status): read-status (5) to check write-in-progress; retries up to 32 times 20 time-base
+   ticks apart and sets system_faults 0x20 (EEPROM write fault) if the job cannot be queued |
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
 
-{
-  undefined1 unaff_r26;
-  short unaff_r27;
-  int unaff_r28;
-  byte *pbVar1;
-  short sVar2;
-  uint unaff_r30;
-  uint uVar3;
-  byte in_cr0;
-  
-  if (!(bool)(in_cr0 >> 2 & 1)) {
-    uVar3 = (uint)sensor_validation_event_count;
-    protection_condition_calculated = unaff_r27 + 0x2b7e;
-    (&sensor_validation_result_array)[uVar3] = protection_condition_calculated;
-    if (unaff_r30 != 0) {
-      sVar2 = *param_2;
-      pbVar1 = (byte *)(unaff_r28 + -1);
-      do {
-        pbVar1 = pbVar1 + 1;
-        (&sensor_validation_result_buffer)[uVar3 & 0xffff] = *pbVar1;
-        (&sensor_validation_result_array)[uVar3 & 0xffff] = unaff_r27 + 0x2b7e;
-        unaff_r27 = unaff_r27 + 1;
-        uVar3 = uVar3 + 1 & 0xffff;
-        uVar3 = uVar3 + ((int)uVar3 >> 6) * -0x40;
-        sVar2 = sVar2 + 1;
-        unaff_r30 = unaff_r30 + 0xffff & 0xffff;
-      } while (unaff_r30 != 0);
-      *param_2 = sVar2;
-      sensor_validation_event_count = (word)uVar3;
-    }
-    unaff_r26 = 0;
-  }
-  cm848_sensorCalibrationCheck();
-  return unaff_r26;
-}
-
-
-
-//
-// Function: cm848_protectionConfigSelector @ 0x0004c188
-//
-
-void cm848_protectionConfigSelector(void)
+void cm848_pollEepromStatus(void)
 
 {
   bool bVar1;
@@ -48561,15 +48464,15 @@ void cm848_protectionConfigSelector(void)
   uint uVar6;
   ushort uVar7;
   
-  j1939_tx_queue_error_code = 0xffff;
-  sensor_validation_period_array = 5;
-  sensor_validation_phase_array = 0x9e;
-  protection_condition_snapshot = 0;
-  j1939_protection_status_byte = 0xe;
-  engine_sync_diagnostic_code = 2;
-  j1939_protection_response_callback = cm848_j1939ProtectionConfigResponse;
-  j1939_tx_queue_error_code = cm848_queueQspiJob((qspi_job_t *)&j1939_tx_message_buffer_b,1);
-  if (j1939_tx_queue_error_code != 0) {
+  eeprom_status_poll_queue_result = 0xffff;
+  eeprom_transmit_words[0] = 5;
+  eeprom_command_bytes[0] = 0x9e;
+  eeprom_transmit_words[1] = 0;
+  eeprom_command_bytes[1] = 0xe;
+  eeprom_job.word_count = 2;
+  eeprom_job.completion_callback = cm848_onEepromStatusRead;
+  eeprom_status_poll_queue_result = cm848_queueQspiJob(&eeprom_job,1);
+  if (eeprom_status_poll_queue_result != 0) {
     uVar7 = 1;
     do {
       do {
@@ -48584,13 +48487,14 @@ void cm848_protectionConfigSelector(void)
           uVar6 = TBUr;
         } while (uVar5 != uVar6);
       } while ((uVar5 < uVar4) || (uVar3 < iVar2 + 0x14U));
-      j1939_tx_queue_error_code = cm848_queueQspiJob((qspi_job_t *)&j1939_tx_message_buffer_b,1);
-    } while ((j1939_tx_queue_error_code != 0) && (bVar1 = uVar7 < 0x20, uVar7 = uVar7 + 1, bVar1));
+      eeprom_status_poll_queue_result = cm848_queueQspiJob(&eeprom_job,1);
+    } while ((eeprom_status_poll_queue_result != 0) &&
+            (bVar1 = uVar7 < 0x20, uVar7 = uVar7 + 1, bVar1));
   }
-  if (j1939_tx_queue_error_code != 0) {
+  if (eeprom_status_poll_queue_result != 0) {
     system_status_flags_t_003fe974.system_faults =
          system_status_flags_t_003fe974.system_faults | 0x20;
-    engine_position_init_done_flag = 0;
+    eeprom_driver_operation = 0;
   }
   return;
 }
@@ -48598,10 +48502,16 @@ void cm848_protectionConfigSelector(void)
 
 
 //
-// Function: cm848_protectionLimitCalculator @ 0x0004c2d4
+// Function: cm848_runEepromPageWrite @ 0x0004c2d4
 //
 
-void cm848_protectionLimitCalculator(void)
+/* SPI serial EEPROM driver (QSPI PCS0; 25xx opcodes 3 READ / 2 WRITE / 6 write-enable / 5
+   read-status): page write state machine: state 1 -> write-enable + WRITE of up to 32 bytes at
+   eeprom_page_write_address from eeprom_page_write_source_pointer / state 3 -> READ back for verify
+   (cm848_verifyEepromPageWrite) | review-function-readability reviewed 2026-11-11 - Readability
+   Medium Accuracy Confidence High */
+
+void cm848_runEepromPageWrite(void)
 
 {
   bool bVar1;
@@ -48618,54 +48528,54 @@ void cm848_protectionLimitCalculator(void)
   uint uVar12;
   byte bVar13;
   
-  wVar3 = sensor_validation_entry_count;
-  if (engine_position_init_done_flag == 0) {
-    engine_position_init_done_flag = 4;
+  wVar3 = eeprom_page_write_chunk_words;
+  if (eeprom_driver_operation == 0) {
+    eeprom_driver_operation = 4;
     uVar9 = 0;
-    if (sensor_validation_state == 1) {
-      uVar12 = (uint)(short)sensor_validation_period_remaining;
+    if (eeprom_page_write_state == 1) {
+      uVar12 = (uint)(short)eeprom_page_write_remaining_bytes;
       if (0x20 < (int)uVar12) {
-        if ((sensor_validation_sample_base & 0x1f) == 0) {
+        if ((eeprom_page_write_address & 0x1f) == 0) {
           uVar12 = 0x20;
         }
         else {
-          uVar12 = 0x20 - (sensor_validation_sample_base & 0x1f);
+          uVar12 = 0x20 - (eeprom_page_write_address & 0x1f);
         }
       }
-      sensor_validation_step_size = (word)uVar12;
+      eeprom_page_write_chunk_bytes = (word)uVar12;
       uVar5 = uVar12 >> 1 & 0x7fff;
-      sensor_validation_entry_count = (word)uVar5;
-      sensor_validation_period_array = 6;
-      sensor_validation_phase_array = 0xe;
-      protection_condition_snapshot = 2;
-      j1939_protection_status_byte = 0x8e;
-      sensor_validation_result_working._0_2_ = sensor_validation_sample_base;
+      eeprom_page_write_chunk_words = (word)uVar5;
+      eeprom_transmit_words[0] = 6;
+      eeprom_command_bytes[0] = 0xe;
+      eeprom_transmit_words[1] = 2;
+      eeprom_command_bytes[1] = 0x8e;
+      eeprom_transmit_words[2] = eeprom_page_write_address;
       bVar13 = 3;
-      DAT_003fb878 = 0xce;
+      eeprom_command_bytes[2] = 0xce;
       uVar12 = 3;
       uVar11 = 0;
       iVar7 = uVar5 - 1;
-      pwVar8 = (word *)sensor_validation_table_ptr;
+      pwVar8 = (word *)eeprom_page_write_source_pointer;
       if (0 < iVar7) {
-        pwVar4 = (word *)(sensor_validation_table_ptr + -2);
+        pwVar4 = (word *)(eeprom_page_write_source_pointer + -2);
         do {
           pwVar8 = pwVar4;
           pwVar4 = pwVar8 + 1;
-          (&sensor_validation_period_array)[bVar13] = *pwVar4;
+          eeprom_transmit_words[bVar13] = *pwVar4;
           bVar13 = bVar13 + 1;
-          (&sensor_validation_phase_array)[uVar12] = 0xce;
+          eeprom_command_bytes[uVar12] = 0xce;
           uVar12 = uVar12 + 1 & 0xff;
           uVar11 = uVar11 + 1 & 0xff;
         } while ((int)uVar11 < iVar7);
         pwVar8 = pwVar8 + 2;
       }
-      (&sensor_validation_period_array)[bVar13] = *pwVar8;
-      engine_sync_diagnostic_code = bVar13 + 1;
-      (&sensor_validation_phase_array)[uVar12] = 0x4e;
-      sensor_validation_state = 3;
-      sensor_validation_trigger_flag = 0;
-      j1939_protection_response_callback = cm848_protectionConfigSelector;
-      sVar6 = cm848_queueQspiJob((qspi_job_t *)&j1939_tx_message_buffer_b,1);
+      eeprom_transmit_words[bVar13] = *pwVar8;
+      eeprom_job.word_count = bVar13 + 1;
+      eeprom_command_bytes[uVar12] = 0x4e;
+      eeprom_page_write_state = 3;
+      eeprom_block_read_template_ready = 0;
+      eeprom_job.completion_callback = cm848_pollEepromStatus;
+      sVar6 = cm848_queueQspiJob(&eeprom_job,1);
       if (sVar6 != 0) {
         uVar10 = 1;
         do {
@@ -48681,35 +48591,35 @@ void cm848_protectionLimitCalculator(void)
               uVar2 = TBUr;
             } while (uVar5 != uVar2);
           } while ((uVar5 < uVar12) || (uVar11 < iVar7 + 0x14U));
-          sVar6 = cm848_queueQspiJob((qspi_job_t *)&j1939_tx_message_buffer_b,1);
+          sVar6 = cm848_queueQspiJob(&eeprom_job,1);
           uVar9 = uVar10;
         } while ((sVar6 != 0) && (uVar9 = uVar10 + 1, bVar1 = uVar10 < 0x20, uVar10 = uVar9, bVar1))
         ;
       }
     }
     else {
-      if (sensor_validation_state != 3) {
-        engine_position_init_done_flag = 4;
+      if (eeprom_page_write_state != 3) {
+        eeprom_driver_operation = 4;
         return;
       }
-      engine_position_init_done_flag = 4;
-      sensor_validation_period_array = 3;
-      sensor_validation_phase_array = 0x8e;
-      protection_condition_snapshot = sensor_validation_sample_base;
-      engine_sync_diagnostic_code = 2;
-      j1939_protection_status_byte = 0xce;
+      eeprom_driver_operation = 4;
+      eeprom_transmit_words[0] = 3;
+      eeprom_command_bytes[0] = 0x8e;
+      eeprom_transmit_words[1] = eeprom_page_write_address;
+      eeprom_job.word_count = 2;
+      eeprom_command_bytes[1] = 0xce;
       uVar12 = 2;
       uVar10 = 0;
       do {
-        (&sensor_validation_period_array)[engine_sync_diagnostic_code] = 0;
-        engine_sync_diagnostic_code = engine_sync_diagnostic_code + 1;
-        (&sensor_validation_phase_array)[uVar12] = 0xce;
+        eeprom_transmit_words[eeprom_job.word_count] = 0;
+        eeprom_job.word_count = eeprom_job.word_count + 1;
+        eeprom_command_bytes[uVar12] = 0xce;
         uVar12 = uVar12 + 1 & 0xff;
         uVar10 = uVar10 + 1 & 0xff;
       } while (uVar10 <= wVar3);
-      sensor_validation_state = 2;
-      j1939_protection_response_callback = cm848_validateSensorData;
-      sVar6 = cm848_queueQspiJob((qspi_job_t *)&j1939_tx_message_buffer_b,1);
+      eeprom_page_write_state = 2;
+      eeprom_job.completion_callback = cm848_verifyEepromPageWrite;
+      sVar6 = cm848_queueQspiJob(&eeprom_job,1);
       if (sVar6 != 0) {
         uVar9 = 1;
         do {
@@ -48725,14 +48635,14 @@ void cm848_protectionLimitCalculator(void)
               uVar2 = TBUr;
             } while (uVar5 != uVar2);
           } while ((uVar5 < uVar12) || (uVar11 < iVar7 + 0x14U));
-          sVar6 = cm848_queueQspiJob((qspi_job_t *)&j1939_tx_message_buffer_b,1);
+          sVar6 = cm848_queueQspiJob(&eeprom_job,1);
         } while ((sVar6 != 0) && (uVar10 = uVar9 + 1, bVar1 = uVar9 < 0x20, uVar9 = uVar10, bVar1));
       }
     }
     if (0x1f < uVar9) {
       system_status_flags_t_003fe974.system_faults =
            system_status_flags_t_003fe974.system_faults | 0x20;
-      engine_position_init_done_flag = 0;
+      eeprom_driver_operation = 0;
     }
   }
   return;
@@ -48741,74 +48651,63 @@ void cm848_protectionLimitCalculator(void)
 
 
 //
-// Function: cm848_initProtectionLimitVariables @ 0x0004c69c
+// Function: cm848_startEepromMirrorSave @ 0x0004c69c
 //
 
-void cm848_initProtectionLimitVariables(void)
+/* SPI serial EEPROM driver (QSPI PCS0; 25xx opcodes 3 READ / 2 WRITE / 6 write-enable / 5
+   read-status): saves the checksummed EEPROM block back from the RAM mirror: page writes of 0x1154
+   bytes at EEPROM 0x8ea from eeprom_saved_block; the entry at 0x4c6d4 was a spurious split |
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+
+void cm848_startEepromMirrorSave(void)
 
 {
-  sensor_validation_state = 1;
-  sensor_validation_fault_inhibit_flag = 0;
-  sensor_validation_retry_counter = 0;
-  sensor_validation_attempt_counter = 0;
-  sensor_validation_accumulator = 0;
-  sensor_validation_sample_base = 0x8ea;
-  sensor_validation_period_remaining = 0x1154;
-  sensor_validation_table_ptr = (undefined *)&sensor_validation_accum;
-  cm848_protectionLimitCalculator();
+  eeprom_page_write_state = 1;
+  eeprom_verify_failed_flag = 0;
+  eeprom_verify_retry_count = 0;
+  eeprom_verify_retry_total = 0;
+  eeprom_mirror_checksum = 0;
+  eeprom_page_write_address = 0x8ea;
+  eeprom_page_write_remaining_bytes = 0x1154;
+  eeprom_page_write_source_pointer = (undefined *)&eeprom_saved_block;
+  cm848_runEepromPageWrite();
   return;
 }
 
 
 
 //
-// Function: cm848_initProtectionLimitStateVariant @ 0x0004c6d4
+// Function: cm848_onEepromStatusRead @ 0x0004c734
 //
 
-void cm848_initProtectionLimitStateVariant(undefined2 param_1)
+/* SPI serial EEPROM driver (QSPI PCS0; 25xx opcodes 3 READ / 2 WRITE / 6 write-enable / 5
+   read-status): completion of the status read: write-in-progress (receive word bit 0x1) -> poll
+   again; otherwise next queued byte / page write / mirror block read | review-function-readability
+   reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
 
-{
-  int in_r10;
-  
-  *(undefined2 *)(in_r10 + -0x47d0) = param_1;
-  sensor_validation_sample_base = 0x8ea;
-  sensor_validation_period_remaining = 0x1154;
-  sensor_validation_table_ptr = (undefined *)&sensor_validation_accum;
-  cm848_protectionLimitCalculator();
-  return;
-}
-
-
-
-//
-// Function: cm848_j1939ProtectionConfigResponse @ 0x0004c734
-//
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
-void cm848_j1939ProtectionConfigResponse(void)
+void cm848_onEepromStatusRead(void)
 
 {
   dword dVar1;
   
-  j1939_tx_queue_error_code = 0xffff;
-  if ((_protection_config_init_flags & 1) != 0) {
-    cm848_protectionConfigSelector();
+  eeprom_status_poll_queue_result = 0xffff;
+  if ((eeprom_receive_words[1] & 1) != 0) {
+    cm848_pollEepromStatus();
   }
-  dVar1 = engine_position_init_done_flag;
-  if (j1939_tx_queue_error_code == 0xffff) {
-    engine_position_init_done_flag = 0;
-    if (engine_position_event_counter == 0) {
-      if ((sensor_validation_state == 0) || (dVar1 == 3)) {
-        protection_condition_mode = protection_condition_calculated;
-        cm848_protectionConditionMonitor();
+  dVar1 = eeprom_driver_operation;
+  if (eeprom_status_poll_queue_result == 0xffff) {
+    eeprom_driver_operation = 0;
+    if (eeprom_write_queue_count == 0) {
+      if ((eeprom_page_write_state == 0) || (dVar1 == 3)) {
+        eeprom_mirror_load_offset = eeprom_last_offset_queue_address;
+        cm848_startEepromBlockRead();
       }
       else {
-        cm848_protectionLimitCalculator();
+        cm848_runEepromPageWrite();
       }
     }
     else {
-      cm848_sensorCalibrationCheck();
+      cm848_writeNextQueuedEepromByte();
     }
   }
   return;
@@ -48817,39 +48716,45 @@ void cm848_j1939ProtectionConfigResponse(void)
 
 
 //
-// Function: cm848_j1939ProtectionDataResponse @ 0x0004c7ec
+// Function: cm848_onEepromBlockRead @ 0x0004c7ec
 //
 
-void cm848_j1939ProtectionDataResponse(void)
+/* SPI serial EEPROM driver (QSPI PCS0; 25xx opcodes 3 READ / 2 WRITE / 6 write-enable / 5
+   read-status): completion of a block read: copies the words into the RAM mirror
+   (eeprom_mirror_base_pointer + offset) until eeprom_mirror_load_length then sets
+   eeprom_mirror_loaded_flag | review-function-readability reviewed 2026-11-11 - Readability Medium
+   Accuracy Confidence High */
+
+void cm848_onEepromBlockRead(void)
 
 {
   undefined *puVar1;
   word wVar2;
   uint uVar3;
   
-  wVar2 = protection_condition_reference;
-  puVar1 = sensor_cal_table_ptr;
+  wVar2 = eeprom_mirror_load_length;
+  puVar1 = eeprom_mirror_base_pointer;
   if (diagnostic_session_state != INACTIVE) {
     uVar3 = 2;
     do {
-      if (wVar2 <= protection_condition_mode) break;
-      *(word *)(puVar1 + protection_condition_mode) = (&sensor_validation_reference_array)[uVar3];
+      if (wVar2 <= eeprom_mirror_load_offset) break;
+      *(word *)(puVar1 + eeprom_mirror_load_offset) = eeprom_receive_words[uVar3];
       uVar3 = uVar3 + 1 & 0xff;
-      protection_condition_mode = protection_condition_mode + 2;
+      eeprom_mirror_load_offset = eeprom_mirror_load_offset + 2;
     } while (uVar3 < 0x20);
-    if (wVar2 <= protection_condition_mode) {
-      protection_condition_mode = 0;
-      sensor_measurement_ready_flag = 1;
+    if (wVar2 <= eeprom_mirror_load_offset) {
+      eeprom_mirror_load_offset = 0;
+      eeprom_mirror_loaded_flag = 1;
     }
   }
-  engine_position_init_done_flag = 0;
-  if (engine_position_event_counter == 0) {
-    if (sensor_validation_state != 0) {
-      cm848_protectionLimitCalculator();
+  eeprom_driver_operation = 0;
+  if (eeprom_write_queue_count == 0) {
+    if (eeprom_page_write_state != 0) {
+      cm848_runEepromPageWrite();
     }
   }
   else {
-    cm848_sensorCalibrationCheck();
+    cm848_writeNextQueuedEepromByte();
   }
   return;
 }
@@ -48857,10 +48762,16 @@ void cm848_j1939ProtectionDataResponse(void)
 
 
 //
-// Function: cm848_validateSensorData @ 0x0004c8d8
+// Function: cm848_verifyEepromPageWrite @ 0x0004c8d8
 //
 
-void cm848_validateSensorData(void)
+/* SPI serial EEPROM driver (QSPI PCS0; 25xx opcodes 3 READ / 2 WRITE / 6 write-enable / 5
+   read-status): compares the read-back page with the source (3 retries then
+   eeprom_verify_failed_flag); advances the page write and on completion sets or clears
+   system_faults 0x20 | review-function-readability reviewed 2026-11-11 - Readability Medium
+   Accuracy Confidence High */
+
+void cm848_verifyEepromPageWrite(void)
 
 {
   short *psVar1;
@@ -48870,46 +48781,46 @@ void cm848_validateSensorData(void)
   ushort uVar5;
   
   uVar3 = 2;
-  if ((sensor_validation_state == 2) &&
-     (uVar5 = 0, pwVar2 = (word *)sensor_validation_table_ptr, sensor_validation_entry_count != 0))
-  {
+  if ((eeprom_page_write_state == 2) &&
+     (uVar5 = 0, pwVar2 = (word *)eeprom_page_write_source_pointer,
+     eeprom_page_write_chunk_words != 0)) {
     do {
-      if (*pwVar2 != (&sensor_validation_reference_array)[uVar3 & 0xff]) {
-        sensor_validation_retry_counter = sensor_validation_retry_counter + 1;
-        if (sensor_validation_retry_counter < 3) {
-          sensor_validation_attempt_counter = sensor_validation_attempt_counter + 1;
-          sensor_validation_state = 1;
-          engine_position_init_done_flag = 0;
-          cm848_protectionLimitCalculator();
+      if (*pwVar2 != eeprom_receive_words[uVar3 & 0xff]) {
+        eeprom_verify_retry_count = eeprom_verify_retry_count + 1;
+        if (eeprom_verify_retry_count < 3) {
+          eeprom_verify_retry_total = eeprom_verify_retry_total + 1;
+          eeprom_page_write_state = 1;
+          eeprom_driver_operation = 0;
+          cm848_runEepromPageWrite();
         }
         else {
-          sensor_validation_fault_inhibit_flag = 1;
+          eeprom_verify_failed_flag = 1;
         }
         break;
       }
       uVar5 = uVar5 + 1;
       pwVar2 = pwVar2 + 1;
       uVar3 = uVar3 + 1;
-    } while (uVar5 < sensor_validation_entry_count);
+    } while (uVar5 < eeprom_page_write_chunk_words);
   }
-  if (sensor_validation_state == 2) {
+  if (eeprom_page_write_state == 2) {
     uVar5 = 0;
-    if (sensor_validation_entry_count != 0) {
-      psVar1 = (short *)(sensor_validation_table_ptr + -2);
+    if (eeprom_page_write_chunk_words != 0) {
+      psVar1 = (short *)(eeprom_page_write_source_pointer + -2);
       do {
         psVar4 = psVar1;
         psVar1 = psVar4 + 1;
-        sensor_validation_accumulator = sensor_validation_accumulator + *psVar1;
+        eeprom_mirror_checksum = eeprom_mirror_checksum + *psVar1;
         uVar5 = uVar5 + 1;
-      } while (uVar5 < sensor_validation_entry_count);
-      sensor_validation_table_ptr = (undefined *)(psVar4 + 2);
+      } while (uVar5 < eeprom_page_write_chunk_words);
+      eeprom_page_write_source_pointer = (undefined *)(psVar4 + 2);
     }
-    sensor_validation_period_remaining =
-         sensor_validation_period_remaining - sensor_validation_step_size;
-    sensor_validation_sample_base = sensor_validation_sample_base + sensor_validation_step_size;
-    sensor_validation_retry_counter = 0;
-    if ((short)sensor_validation_period_remaining < 1) {
-      if (sensor_validation_fault_inhibit_flag == 0) {
+    eeprom_page_write_remaining_bytes =
+         eeprom_page_write_remaining_bytes - eeprom_page_write_chunk_bytes;
+    eeprom_page_write_address = eeprom_page_write_address + eeprom_page_write_chunk_bytes;
+    eeprom_verify_retry_count = 0;
+    if ((short)eeprom_page_write_remaining_bytes < 1) {
+      if (eeprom_verify_failed_flag == 0) {
         system_status_flags_t_003fe974.system_faults =
              system_status_flags_t_003fe974.system_faults & 0xffdf;
         system_faults_shadow_flags = system_faults_shadow_flags & 0xffdf;
@@ -48918,21 +48829,21 @@ void cm848_validateSensorData(void)
         system_status_flags_t_003fe974.system_faults =
              system_status_flags_t_003fe974.system_faults | 0x20;
       }
-      engine_position_init_done_flag = 0;
-      sensor_validation_state = 0;
-      if (engine_position_event_counter != 0) {
-        cm848_sensorCalibrationCheck();
+      eeprom_driver_operation = 0;
+      eeprom_page_write_state = 0;
+      if (eeprom_write_queue_count != 0) {
+        cm848_writeNextQueuedEepromByte();
       }
-      sensor_validation_trigger_flag = 0;
+      eeprom_block_read_template_ready = 0;
     }
     else {
-      sensor_validation_state = 1;
-      engine_position_init_done_flag = 0;
-      if (engine_position_event_counter == 0) {
-        cm848_protectionLimitCalculator();
+      eeprom_page_write_state = 1;
+      eeprom_driver_operation = 0;
+      if (eeprom_write_queue_count == 0) {
+        cm848_runEepromPageWrite();
       }
       else {
-        cm848_sensorCalibrationCheck();
+        cm848_writeNextQueuedEepromByte();
       }
     }
   }
@@ -48942,46 +48853,65 @@ void cm848_validateSensorData(void)
 
 
 //
-// Function: cm848_isSensorValidationComplete @ 0x0004cb34
+// Function: cm848_isEepromMirrorSaveIdle @ 0x0004cb34
 //
 
-bool cm848_isSensorValidationComplete(void)
+/* SPI serial EEPROM driver (QSPI PCS0; 25xx opcodes 3 READ / 2 WRITE / 6 write-enable / 5
+   read-status): true when no page write (mirror save) is running | review-function-readability
+   reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+
+bool cm848_isEepromMirrorSaveIdle(void)
 
 {
-  return sensor_validation_state == 0;
+  return eeprom_page_write_state == 0;
 }
 
 
 
 //
-// Function: cm848_getSensorValidationData @ 0x0004cb4c
+// Function: cm848_getEepromVerifyRetryTotal @ 0x0004cb4c
 //
 
-word cm848_getSensorValidationData(void)
+/* SPI serial EEPROM driver (QSPI PCS0; 25xx opcodes 3 READ / 2 WRITE / 6 write-enable / 5
+   read-status): returns eeprom_verify_retry_total | review-function-readability reviewed 2026-11-11
+   - Readability Medium Accuracy Confidence High */
+
+word cm848_getEepromVerifyRetryTotal(void)
 
 {
-  return sensor_validation_attempt_counter;
+  return eeprom_verify_retry_total;
 }
 
 
 
 //
-// Function: cm848_getSensorSampleBuffer @ 0x0004cb58
+// Function: cm848_getEepromMirrorChecksum @ 0x0004cb58
 //
 
-word cm848_getSensorSampleBuffer(void)
+/* SPI serial EEPROM driver (QSPI PCS0; 25xx opcodes 3 READ / 2 WRITE / 6 write-enable / 5
+   read-status): returns eeprom_mirror_checksum | review-function-readability reviewed 2026-11-11 -
+   Readability Medium Accuracy Confidence High */
+
+word cm848_getEepromMirrorChecksum(void)
 
 {
-  return sensor_validation_accumulator;
+  return eeprom_mirror_checksum;
 }
 
 
 
 //
-// Function: cm848_initSensorValidationSystem @ 0x0004cb64
+// Function: cm848_initEepromDriverAndLoadMirror @ 0x0004cb64
 //
 
-void cm848_initSensorValidationSystem(void)
+/* SPI serial EEPROM driver (QSPI PCS0; 25xx opcodes 3 READ / 2 WRITE / 6 write-enable / 5
+   read-status): registers the QSPI slot / sets up eeprom_job / reads EEPROM 0x0-0x1a3f into the RAM
+   mirror at 0x3fd482 (RAM = 0x3fd482 + EEPROM offset) / sums 0x8aa words of the checksummed block
+   (EEPROM 0x8ea-0x1a3d) against eeprom_block_checksum_expected_cal and sets or clears system_faults
+   0x40; the entries at 0x4cb6c / 0x4cb84 / 0x4cb90 were spurious splits |
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+
+void cm848_initEepromDriverAndLoadMirror(void)
 
 {
   word *pwVar1;
@@ -48989,176 +48919,30 @@ void cm848_initSensorValidationSystem(void)
   word *pwVar3;
   
   diagnostic_session_state = ACTIVE;
-  protection_condition_mode = 0;
-  sensor_validation_state = 0;
-  sensor_cal_table_ptr = &sensor_cal_table;
-  protection_condition_reference = 0x1a40;
-  DAT_003fb8da = cm848_registerQspiDeviceSlot(0,2000,0x352,0x28);
-  sensor_validation_period_array_ptr = (undefined *)&sensor_validation_period_array;
-  sensor_validation_phase_array_ptr = &sensor_validation_phase_array;
-  sensor_validation_reference_array_ptr = (undefined *)&sensor_validation_reference_array;
-  sensor_validation_trigger_flag = 0;
-  while (sensor_measurement_ready_flag == 0) {
-    cm848_protectionConditionMonitor();
+  eeprom_mirror_load_offset = 0;
+  eeprom_page_write_state = 0;
+  eeprom_mirror_base_pointer = &eeprom_mirror;
+  eeprom_mirror_load_length = 0x1a40;
+  eeprom_job.device_slot = cm848_registerQspiDeviceSlot(0,2000,0x352,0x28);
+  eeprom_job.transmit_words = eeprom_transmit_words;
+  eeprom_job.command_bytes = eeprom_command_bytes;
+  eeprom_job.receive_words = eeprom_receive_words;
+  eeprom_block_read_template_ready = 0;
+  while (eeprom_mirror_loaded_flag == 0) {
+    cm848_startEepromBlockRead();
   }
-  protection_condition_reference = 0x8e8;
-  sensor_validation_entry_count = 0x8aa;
+  eeprom_mirror_load_length = 0x8e8;
+  eeprom_page_write_chunk_words = 0x8aa;
   uVar2 = 0;
-  pwVar1 = &sensor_validation_array;
+  pwVar1 = &eeprom_checksummed_block_start;
   do {
     pwVar3 = pwVar1;
     pwVar1 = pwVar3 + 1;
-    sensor_validation_accumulator = sensor_validation_accumulator + *pwVar1;
+    eeprom_mirror_checksum = eeprom_mirror_checksum + *pwVar1;
     uVar2 = uVar2 + 1;
   } while (uVar2 < 0x8aa);
-  sensor_validation_table_ptr = (undefined *)(pwVar3 + 2);
-  if (sensor_validation_accumulator == sensor_validation_sum_expected) {
-    system_status_flags_t_003fe974.system_faults =
-         system_status_flags_t_003fe974.system_faults & 0xffbf;
-    system_faults_shadow_flags = system_faults_shadow_flags & 0xffbf;
-  }
-  else {
-    system_status_flags_t_003fe974.system_faults =
-         system_status_flags_t_003fe974.system_faults | 0x40;
-  }
-  return;
-}
-
-
-
-//
-// Function: cm848_configureOutputChannels @ 0x0004cb6c
-//
-
-void cm848_configureOutputChannels(void)
-
-{
-  word *pwVar1;
-  ushort uVar2;
-  word *pwVar3;
-  
-  diagnostic_session_state = ACTIVE;
-  protection_condition_mode = 0;
-  sensor_validation_state = 0;
-  sensor_cal_table_ptr = &sensor_cal_table;
-  protection_condition_reference = 0x1a40;
-  DAT_003fb8da = cm848_registerQspiDeviceSlot(0,2000,0x352,0x28);
-  sensor_validation_period_array_ptr = (undefined *)&sensor_validation_period_array;
-  sensor_validation_phase_array_ptr = &sensor_validation_phase_array;
-  sensor_validation_reference_array_ptr = (undefined *)&sensor_validation_reference_array;
-  sensor_validation_trigger_flag = 0;
-  while (sensor_measurement_ready_flag == 0) {
-    cm848_protectionConditionMonitor();
-  }
-  protection_condition_reference = 0x8e8;
-  sensor_validation_entry_count = 0x8aa;
-  uVar2 = 0;
-  pwVar1 = &sensor_validation_array;
-  do {
-    pwVar3 = pwVar1;
-    pwVar1 = pwVar3 + 1;
-    sensor_validation_accumulator = sensor_validation_accumulator + *pwVar1;
-    uVar2 = uVar2 + 1;
-  } while (uVar2 < 0x8aa);
-  sensor_validation_table_ptr = (undefined *)(pwVar3 + 2);
-  if (sensor_validation_accumulator == sensor_validation_sum_expected) {
-    system_status_flags_t_003fe974.system_faults =
-         system_status_flags_t_003fe974.system_faults & 0xffbf;
-    system_faults_shadow_flags = system_faults_shadow_flags & 0xffbf;
-  }
-  else {
-    system_status_flags_t_003fe974.system_faults =
-         system_status_flags_t_003fe974.system_faults | 0x40;
-  }
-  return;
-}
-
-
-
-//
-// Function: cm848_configureOutputChannelsStateParam @ 0x0004cb84
-//
-
-void cm848_configureOutputChannelsStateParam(void)
-
-{
-  word *pwVar1;
-  int in_r10;
-  ushort uVar2;
-  word *pwVar3;
-  
-  *(undefined2 *)(in_r10 + -0x47ec) = 0;
-  sensor_validation_state = 0;
-  sensor_cal_table_ptr = &sensor_cal_table;
-  protection_condition_reference = 0x1a40;
-  DAT_003fb8da = cm848_registerQspiDeviceSlot(0,2000,0x352,0x28);
-  sensor_validation_period_array_ptr = (undefined *)&sensor_validation_period_array;
-  sensor_validation_phase_array_ptr = &sensor_validation_phase_array;
-  sensor_validation_reference_array_ptr = (undefined *)&sensor_validation_reference_array;
-  sensor_validation_trigger_flag = 0;
-  while (sensor_measurement_ready_flag == 0) {
-    cm848_protectionConditionMonitor();
-  }
-  protection_condition_reference = 0x8e8;
-  sensor_validation_entry_count = 0x8aa;
-  uVar2 = 0;
-  pwVar1 = &sensor_validation_array;
-  do {
-    pwVar3 = pwVar1;
-    pwVar1 = pwVar3 + 1;
-    sensor_validation_accumulator = sensor_validation_accumulator + *pwVar1;
-    uVar2 = uVar2 + 1;
-  } while (uVar2 < 0x8aa);
-  sensor_validation_table_ptr = (undefined *)(pwVar3 + 2);
-  if (sensor_validation_accumulator == sensor_validation_sum_expected) {
-    system_status_flags_t_003fe974.system_faults =
-         system_status_flags_t_003fe974.system_faults & 0xffbf;
-    system_faults_shadow_flags = system_faults_shadow_flags & 0xffbf;
-  }
-  else {
-    system_status_flags_t_003fe974.system_faults =
-         system_status_flags_t_003fe974.system_faults | 0x40;
-  }
-  return;
-}
-
-
-
-//
-// Function: cm848_configureOutputChannelsAltState @ 0x0004cb90
-//
-
-void cm848_configureOutputChannelsAltState(void)
-
-{
-  word *pwVar1;
-  ushort uVar2;
-  int in_r12;
-  word *pwVar3;
-  
-  *(undefined4 *)(in_r12 + -0x47ce) = 0;
-  sensor_cal_table_ptr = &sensor_cal_table;
-  protection_condition_reference = 0x1a40;
-  DAT_003fb8da = cm848_registerQspiDeviceSlot(0,2000,0x352,0x28);
-  sensor_validation_period_array_ptr = (undefined *)&sensor_validation_period_array;
-  sensor_validation_phase_array_ptr = &sensor_validation_phase_array;
-  sensor_validation_reference_array_ptr = (undefined *)&sensor_validation_reference_array;
-  sensor_validation_trigger_flag = 0;
-  while (sensor_measurement_ready_flag == 0) {
-    cm848_protectionConditionMonitor();
-  }
-  protection_condition_reference = 0x8e8;
-  sensor_validation_entry_count = 0x8aa;
-  uVar2 = 0;
-  pwVar1 = &sensor_validation_array;
-  do {
-    pwVar3 = pwVar1;
-    pwVar1 = pwVar3 + 1;
-    sensor_validation_accumulator = sensor_validation_accumulator + *pwVar1;
-    uVar2 = uVar2 + 1;
-  } while (uVar2 < 0x8aa);
-  sensor_validation_table_ptr = (undefined *)(pwVar3 + 2);
-  if (sensor_validation_accumulator == sensor_validation_sum_expected) {
+  eeprom_page_write_source_pointer = (undefined *)(pwVar3 + 2);
+  if (eeprom_mirror_checksum == eeprom_block_checksum_expected_cal) {
     system_status_flags_t_003fe974.system_faults =
          system_status_flags_t_003fe974.system_faults & 0xffbf;
     system_faults_shadow_flags = system_faults_shadow_flags & 0xffbf;
@@ -55236,7 +55020,7 @@ void hpcr_exceptionHandler(void)
   qsmcm_sccr0 = 5;
   QSMCM_IDSPI_1 = 3;
   mpc555_initQsmcmQspiModule();
-  cm848_initSensorValidationSystem();
+  cm848_initEepromDriverAndLoadMirror();
   cm848_initSupervisorChip();
   cm848_clearProtectionFault(0x1b);
   if (qadc_scan_read_index == qadc_scan_write_index) {
@@ -55244,7 +55028,7 @@ void hpcr_exceptionHandler(void)
     ;
     sensor_diag_shadow_flags = sensor_diag_shadow_flags & 0xfffb;
     local_20[0] = 0;
-    cm848_updateProtectionTimers(&sensor_diag_timeout_counter,local_20,2);
+    cm848_queueEepromByteWritesAtOffset11134(&sensor_diag_timeout_counter,local_20,2);
     uVar2 = 0;
     if (sensor_diag_timeout_counter != local_20[0]) {
       do {
@@ -55254,7 +55038,7 @@ void hpcr_exceptionHandler(void)
       } while (sensor_diag_timeout_counter != local_20[0]);
     }
     local_20[0] = protection_timer_a + 1;
-    cm848_updateProtectionTimers(&protection_timer_a,local_20,2);
+    cm848_queueEepromByteWritesAtOffset11134(&protection_timer_a,local_20,2);
     uVar2 = 0;
     if (protection_timer_a != local_20[0]) {
       do {
@@ -55270,7 +55054,7 @@ void hpcr_exceptionHandler(void)
   else {
     system_status_flags_t_003fe974.sensor_diag = system_status_flags_t_003fe974.sensor_diag | 4;
     local_20[0] = sensor_diag_timeout_counter + 1;
-    cm848_updateProtectionTimers(&sensor_diag_timeout_counter,local_20,2);
+    cm848_queueEepromByteWritesAtOffset11134(&sensor_diag_timeout_counter,local_20,2);
     uVar2 = 0;
     if (sensor_diag_timeout_counter != local_20[0]) {
       do {
@@ -55280,7 +55064,7 @@ void hpcr_exceptionHandler(void)
       } while (sensor_diag_timeout_counter != local_20[0]);
     }
     local_20[0] = protection_timer_b + 1;
-    cm848_updateProtectionTimers(&protection_timer_b,local_20,2);
+    cm848_queueEepromByteWritesAtOffset11134(&protection_timer_b,local_20,2);
     uVar2 = 0;
     if (protection_timer_b != local_20[0]) {
       do {
@@ -55301,7 +55085,7 @@ void hpcr_exceptionHandler(void)
     }
   }
   local_20[0] = protection_timer_a + protection_timer_b;
-  cm848_updateProtectionTimers(&qadc_scan_read_index,local_20,2);
+  cm848_queueEepromByteWritesAtOffset11134(&qadc_scan_read_index,local_20,2);
   uVar2 = 0;
   if (qadc_scan_read_index != local_20[0]) {
     do {
@@ -65504,9 +65288,8 @@ char FUN_0050af58(int param_1,byte *param_2,uint param_3)
         }
       }
       if ((diagnostic_session_state == ACTIVE) &&
-         (cVar4 = cm848_validateMemoryBlockChecksum
-                            ((uint)(param_2 + -0x1000000) & 0xffff,iVar6,param_3), cVar4 == '\x01'))
-      {
+         (cVar4 = cm848_queueEepromByteWrites((uint)(param_2 + -0x1000000) & 0xffff,iVar6,param_3),
+         cVar4 == '\x01')) {
         return '\v';
       }
       cm848_memcpyBytes(param_2 + -0xc02b7e,iVar6,param_3);
@@ -73886,7 +73669,7 @@ void governorCruiseTimerManagement(void)
   
   if (((fault_management_status_flags & 0x2000) != 0) && ((j1939_governor_feature_byte & 4) != 0)) {
     if (cold_start_phase != CSP_CRANKING) {
-      _sensor_validation_delta = sensor_validation_accum - DAT_003fee42;
+      _sensor_validation_delta = eeprom_saved_block - DAT_003fee42;
       governor_cruise_period_scale_factor =
            cm848_dualAxisTableInterpolation
                      (&DAT_003fced8,sensor_readings_t_0040baf2.coolant_temp,0xc80e);
@@ -73927,7 +73710,7 @@ void governorCruiseTimerManagement(void)
       ram0x003fee36 = 0;
       sensor_init_retry_timer = 0;
       sensor_initialization_sequence_count._0_2_ = 0;
-      DAT_003fee42 = sensor_validation_accum;
+      DAT_003fee42 = eeprom_saved_block;
       DAT_0040ae5e = 0;
       j1939_feature_enable_cmd_flag = 0;
     }
@@ -76780,14 +76563,14 @@ undefined1 cm848_memoryBlock_checksum_validate(uint param_1,undefined4 param_2,i
   }
   else {
     sVar3 = 0;
-    while (cVar1 = cm848_protectionEnableCheck(), cVar1 == '\0') {
+    while (cVar1 = cm848_isEepromWriteQueueEmpty(), cVar1 == '\0') {
       if (sVar3 == 100) {
         return 1;
       }
       cm848_delayMicroseconds2(0x13);
       sVar3 = sVar3 + 1;
     }
-    uVar2 = cm848_validateMemoryBlockChecksum(param_1 & 0xffff,param_2,param_3);
+    uVar2 = cm848_queueEepromByteWrites(param_1 & 0xffff,param_2,param_3);
   }
   return uVar2;
 }
@@ -77351,10 +77134,10 @@ void sensorChannelValidationIndex(void)
   uint uVar1;
   uint uVar2;
   
-  if (8000 < sensor_validation_accum) {
+  if (8000 < eeprom_saved_block) {
     uVar1 = (uint)sensor_validation_accum_table_index;
     if ((&sensor_validation_accum_table)[uVar1] < 0xffff) {
-      uVar2 = sensor_validation_accum / 64000;
+      uVar2 = eeprom_saved_block / 64000;
       if (0xffff < uVar2) {
         uVar2 = 0xffff;
       }
@@ -77555,12 +77338,12 @@ void j1939FuelDemandProcessing(void)
           j1939_fuel_demand_timing_flags = j1939_fuel_demand_timing_flags | 0x20;
           register0x00000074 = 0;
         }
-        if (sensor_validation_accum < -injection_timing_period_delta - 1) {
-          sensor_validation_accum = sensor_validation_accum + injection_timing_period_delta;
+        if (eeprom_saved_block < -injection_timing_period_delta - 1) {
+          eeprom_saved_block = eeprom_saved_block + injection_timing_period_delta;
         }
         else {
           j1939_fuel_demand_timing_flags = j1939_fuel_demand_timing_flags | 4;
-          sensor_validation_accum = 0;
+          eeprom_saved_block = 0;
         }
       }
     }
@@ -83122,35 +82905,35 @@ undefined4 engine_protection_timerStateMachine_init(void)
   byte local_18 [4];
   
   local_18[0] = 0;
-  cm848_updateProtectionTimers(&DAT_003fd93e,local_18,1);
+  cm848_queueEepromByteWritesAtOffset11134(&DAT_003fd93e,local_18,1);
   DAT_003fd93e = 0;
   local_18[0] = battery_voltage_protection_state_flags & 0x20;
-  cm848_updateProtectionTimers(&battery_voltage_protection_state_flags,local_18,1);
+  cm848_queueEepromByteWritesAtOffset11134(&battery_voltage_protection_state_flags,local_18,1);
   battery_voltage_protection_state_flags = local_18[0];
   local_18[0] = cold_start_protection_state_flags & 0xb8;
-  cm848_updateProtectionTimers(&cold_start_protection_state_flags,local_18,1);
+  cm848_queueEepromByteWritesAtOffset11134(&cold_start_protection_state_flags,local_18,1);
   cold_start_protection_state_flags = local_18[0];
   local_18[0] = battery_voltage_test_state_flags & 1;
-  cm848_updateProtectionTimers(&battery_voltage_test_state_flags,local_18,1);
+  cm848_queueEepromByteWritesAtOffset11134(&battery_voltage_test_state_flags,local_18,1);
   battery_voltage_test_state_flags = local_18[0];
   local_18[0] = cam_sync_protection_state_flags & 0xf3;
-  cm848_updateProtectionTimers(&cam_sync_protection_state_flags,local_18,1);
+  cm848_queueEepromByteWritesAtOffset11134(&cam_sync_protection_state_flags,local_18,1);
   cam_sync_protection_state_flags = local_18[0];
   eeprom_shadow_header.calibration_block1[4] = 0;
   eeprom_shadow_header.calibration_block1[5] = 0x19;
   if ((DAT_000642e8 & 1) == 0) {
     local_18[0] = local_18[0] & 0xfc;
-    cm848_updateProtectionTimers(&cam_sync_protection_state_flags,local_18,1);
+    cm848_queueEepromByteWritesAtOffset11134(&cam_sync_protection_state_flags,local_18,1);
     cam_sync_protection_state_flags = local_18[0];
   }
   if ((DAT_000642e8 & 0x20) == 0) {
     local_18[0] = battery_voltage_test_state_flags & 0xfe;
-    cm848_updateProtectionTimers(&battery_voltage_test_state_flags,local_18,1);
+    cm848_queueEepromByteWritesAtOffset11134(&battery_voltage_test_state_flags,local_18,1);
     battery_voltage_test_state_flags = local_18[0];
   }
   if ((DAT_000642e8 & 2) == 0) {
     local_18[0] = cam_sync_protection_state_flags & 0xcf;
-    cm848_updateProtectionTimers(&cam_sync_protection_state_flags,local_18,1);
+    cm848_queueEepromByteWritesAtOffset11134(&cam_sync_protection_state_flags,local_18,1);
     cam_sync_protection_state_flags = local_18[0];
   }
   if (((cold_start_protection_state_flags & 8) == 0) && ((cam_sync_protection_state_flags & 1) == 0)
@@ -83210,7 +82993,7 @@ undefined4 diag_camSync_deviation_check(void)
   diag_suppress_request_flag = 1;
 LAB_0052f2f0:
   local_8[0] = local_8[0] & 0xfe;
-  cm848_updateProtectionTimers(&cam_sync_protection_state_flags,local_8,1);
+  cm848_queueEepromByteWritesAtOffset11134(&cam_sync_protection_state_flags,local_8,1);
   cam_sync_protection_state_flags = local_8[0];
   return 3;
 }
@@ -83253,7 +83036,7 @@ LAB_0052f410:
         else {
           diag_suppress_request_flag = 1;
         }
-        cm848_updateProtectionTimers(&cam_sync_protection_state_flags,local_8,1);
+        cm848_queueEepromByteWritesAtOffset11134(&cam_sync_protection_state_flags,local_8,1);
         cam_sync_protection_state_flags = local_8[0];
         goto LAB_0052f410;
       }
@@ -83304,7 +83087,7 @@ undefined4 engine_camSync_sampleRatio_validate(void)
         local_8[0] = 0xbf;
       }
       local_8[0] = cam_sync_protection_state_flags & local_8[0];
-      cm848_updateProtectionTimers(&cam_sync_protection_state_flags,local_8,1);
+      cm848_queueEepromByteWritesAtOffset11134(&cam_sync_protection_state_flags,local_8,1);
       cam_sync_protection_state_flags = local_8[0];
       uVar1 = 5;
     }
@@ -83359,10 +83142,11 @@ undefined4 engine_coldStart_batteryVoltage_monitor(void)
           else {
             diag_suppress_request_flag = 1;
           }
-          cm848_updateProtectionTimers(&battery_voltage_test_state_flags,local_10,1);
+          cm848_queueEepromByteWritesAtOffset11134(&battery_voltage_test_state_flags,local_10,1);
           battery_voltage_test_state_flags = local_10[0];
           local_10[0] = battery_voltage_protection_state_flags & 0xdf;
-          cm848_updateProtectionTimers(&battery_voltage_protection_state_flags,local_10,1);
+          cm848_queueEepromByteWritesAtOffset11134
+                    (&battery_voltage_protection_state_flags,local_10,1);
           battery_voltage_protection_state_flags = local_10[0];
           if ((cam_sync_protection_state_flags & 0x10) != 0) {
             diag_suppress_stateMachine(1);
@@ -83581,7 +83365,7 @@ undefined2 engine_coldStart_protection_stateMachine(void)
       uVar5 = 1;
       if (((engine_diag_shadow_flags & 4) == 0) && ((engine_diag_shadow_flags & 8) == 0)) {
         local_18[0] = cold_start_protection_state_flags & 0x5f;
-        cm848_updateProtectionTimers(&cold_start_protection_state_flags,local_18,1);
+        cm848_queueEepromByteWritesAtOffset11134(&cold_start_protection_state_flags,local_18,1);
         cold_start_protection_state_flags = local_18[0];
         diag_suppress_stateMachine(2);
       }
@@ -83694,7 +83478,7 @@ LAB_0052fd54:
       diag_suppress_request_flag = 1;
     }
     local_18[0] = local_18[0] & 0xf7;
-    cm848_updateProtectionTimers(&cold_start_protection_state_flags,local_18,1);
+    cm848_queueEepromByteWritesAtOffset11134(&cold_start_protection_state_flags,local_18,1);
     cold_start_protection_state_flags = local_18[0];
     if ((cam_sync_protection_state_flags & 1) == 0) {
       return 3;
@@ -83717,7 +83501,7 @@ LAB_0052ffc8:
 void hpcr_calibration_group25_load(void)
 
 {
-  if ((uint)sensor_validation_timeout_cal._0_1_ * 8000 < sensor_validation_accum) {
+  if ((uint)sensor_validation_timeout_cal._0_1_ * 8000 < eeprom_saved_block) {
     diag_suppress_stateMachine(0);
   }
   else if (engine_sync_type_code == 0x13ec) {
@@ -88614,7 +88398,7 @@ void engine_protection_timer_sync(void)
   word local_10 [4];
   
   local_10[0] = protection_timer_a + 1;
-  cm848_updateProtectionTimers(&protection_timer_a,local_10,2);
+  cm848_queueEepromByteWritesAtOffset11134(&protection_timer_a,local_10,2);
   uVar6 = 0;
   if (protection_timer_a != local_10[0]) {
     do {
@@ -88624,7 +88408,7 @@ void engine_protection_timer_sync(void)
     } while (protection_timer_a != local_10[0]);
   }
   local_10[0] = protection_timer_a + protection_timer_b;
-  cm848_updateProtectionTimers(&qadc_scan_read_index,local_10,2);
+  cm848_queueEepromByteWritesAtOffset11134(&qadc_scan_read_index,local_10,2);
   uVar6 = 0;
   do {
     if (qadc_scan_read_index == local_10[0]) break;
@@ -88665,10 +88449,10 @@ void engine_start_completion_sequence(void)
   ushort uVar8;
   word local_10 [2];
   
-  cm848_initProtectionLimitVariables();
+  cm848_startEepromMirrorSave();
   uVar8 = 0;
   startup_mios_engine_event_flag = 0;
-  sVar7 = cm848_isSensorValidationComplete();
+  sVar7 = cm848_isEepromMirrorSaveIdle();
   while (sVar7 == 0) {
     cm848_delayMicroseconds(0x13);
     wVar6 = MIOS_MCPSMSCR.MIOS1ER;
@@ -88681,15 +88465,15 @@ void engine_start_completion_sequence(void)
         startup_mios_engine_event_flag = 1;
       }
     }
-    sVar7 = cm848_isSensorValidationComplete();
+    sVar7 = cm848_isEepromMirrorSaveIdle();
   }
   if (startup_mios_engine_event_flag != 0) {
     engine_protection_timer_sync();
   }
-  local_10[0] = cm848_getSensorValidationData();
+  local_10[0] = cm848_getEepromVerifyRetryTotal();
   if (local_10[0] != 0) {
     local_10[0] = local_10[0] + sensor_validation_startup_accumulator;
-    cm848_updateProtectionTimers(&sensor_validation_startup_accumulator,local_10,2);
+    cm848_queueEepromByteWritesAtOffset11134(&sensor_validation_startup_accumulator,local_10,2);
     uVar8 = 0;
     do {
       if (sensor_validation_startup_accumulator == local_10[0]) break;
@@ -88708,11 +88492,11 @@ void engine_start_completion_sequence(void)
       uVar8 = uVar8 + 1;
     } while (uVar8 < 1000);
   }
-  local_10[0] = cm848_getSensorSampleBuffer();
-  cm848_updateProtectionTimers(&sensor_validation_sum_expected,local_10,2);
+  local_10[0] = cm848_getEepromMirrorChecksum();
+  cm848_queueEepromByteWritesAtOffset11134(&eeprom_block_checksum_expected_cal,local_10,2);
   uVar8 = 0;
   do {
-    if (sensor_validation_sum_expected == local_10[0]) break;
+    if (eeprom_block_checksum_expected_cal == local_10[0]) break;
     do {
       uVar3 = TBUr;
       iVar1 = TBLr;
@@ -88728,7 +88512,7 @@ void engine_start_completion_sequence(void)
     uVar8 = uVar8 + 1;
   } while (uVar8 < 1000);
   if (qadc_scan_read_index != qadc_scan_write_index) {
-    cm848_updateProtectionTimers(&qadc_scan_write_index,&qadc_scan_read_index,2);
+    cm848_queueEepromByteWritesAtOffset11134(&qadc_scan_write_index,&qadc_scan_read_index,2);
     uVar8 = 0;
     do {
       if (qadc_scan_read_index == qadc_scan_write_index) {
@@ -88778,14 +88562,14 @@ void cm848_initProtectionTimers(void)
   cal_write_mode = 0xee;
   uVar8 = 0;
   do {
-    cVar7 = cm848_protectionEnableCheck();
+    cVar7 = cm848_isEepromWriteQueueEmpty();
     if (cVar7 != '\0') break;
     cm848_delayMicroseconds(0x13);
     uVar8 = uVar8 + 1;
   } while (uVar8 < 1000);
   engine_start_completion_sequence();
   local_14[0] = fault_timing_snapshot;
-  cm848_updateProtectionTimers(&sensor_param_id_working,local_14,4);
+  cm848_queueEepromByteWritesAtOffset11134(&sensor_param_id_working,local_14,4);
   uVar8 = 0;
   do {
     if (sensor_param_id_working == local_14[0]) break;
@@ -88804,7 +88588,7 @@ void cm848_initProtectionTimers(void)
     uVar8 = uVar8 + 1;
   } while (uVar8 < 1000);
   local_14[0] = protection_timer_config_a;
-  cm848_updateProtectionTimers(&sensor_fault_threshold_working,local_14,4);
+  cm848_queueEepromByteWritesAtOffset11134(&sensor_fault_threshold_working,local_14,4);
   uVar8 = 0;
   do {
     if (sensor_fault_threshold_working == local_14[0]) break;
@@ -88823,7 +88607,7 @@ void cm848_initProtectionTimers(void)
     uVar8 = uVar8 + 1;
   } while (uVar8 < 1000);
   local_18[0] = 0;
-  cm848_updateProtectionTimers(&sensor_diag_channel_select,local_18,2);
+  cm848_queueEepromByteWritesAtOffset11134(&sensor_diag_channel_select,local_18,2);
   uVar8 = 0;
   do {
     if (sensor_diag_channel_select == local_18[0]) break;
@@ -88869,7 +88653,7 @@ void cm848_initProtectionTimers(void)
     engine_protection_timer_sync();
   }
   local_18[0] = 1;
-  cm848_updateProtectionTimers(&sensor_diag_channel_select,local_18,2);
+  cm848_queueEepromByteWritesAtOffset11134(&sensor_diag_channel_select,local_18,2);
   uVar8 = 0;
   do {
     if (sensor_diag_channel_select == local_18[0]) break;
@@ -88950,4 +88734,4 @@ void hpcr_protectionTimerMonitor(void)
 
 
 
-// Export complete - 2064 functions processed
+// Export complete - 2057 functions processed

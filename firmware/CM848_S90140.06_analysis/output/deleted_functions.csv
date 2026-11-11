@@ -58,3 +58,11 @@ address,reason
 0x00526ce4,spurious mid-function split (Bank2, no incoming refs)
 0x005283d0,spurious mid-function split (Bank2, no incoming refs)
 0x00529640,spurious mid-function split (Bank2, no incoming refs)
+# 2026-11-11 (PR #46): spurious fall-through splits inside the SPI EEPROM driver (classifyfuncs: 0 call / 0 jump refs); their function_renames rows were removed so import does not recreate them
+0x0004cb6c,spurious split inside SPI EEPROM driver
+0x0004cb84,spurious split inside SPI EEPROM driver
+0x0004cb90,spurious split inside SPI EEPROM driver
+0x0004c6d4,spurious split inside SPI EEPROM driver
+0x0004bd74,spurious split inside SPI EEPROM driver
+0x0004bfc8,spurious split inside SPI EEPROM driver
+0x0004c0a8,spurious split inside SPI EEPROM driver

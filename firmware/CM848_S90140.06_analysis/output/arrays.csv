@@ -39,3 +39,6 @@ address,array_name,element_type,element_count,comment
 0x003f987c,supervisor_watchdog_kernel_answer_2_table,byte,16,Boot reflash kernel (RAM copy of ROM 0x3cac): answer byte 2 for each of the 16 watchdog questions
 0x000576e4,supervisor_watchdog_answer_3_table,byte,16,Application: answer byte 3 for each of the 16 watchdog questions (identical to the boot kernel table at RAM 0x3f986c)
 0x003f986c,supervisor_watchdog_kernel_answer_3_table,byte,16,Boot reflash kernel (RAM copy of ROM 0x3c9c): answer byte 3 for each of the 16 watchdog questions
+0x003fb836,eeprom_transmit_words,word,32,SPI EEPROM transmit words: opcode / address / data or dummy words (were sensor_validation_period_array + aliases)
+0x003fb876,eeprom_command_bytes,byte,32,QSPI command bytes per word (0x9E/0xCE/0x8E/0x4E/0x0E - chip select PCS0 held between words) (was sensor_validation_phase_array)
+0x003fb896,eeprom_receive_words,word,32,SPI EEPROM receive words (status register / read data) (was sensor_validation_reference_array)
