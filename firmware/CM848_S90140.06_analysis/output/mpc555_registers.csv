@@ -311,11 +311,14 @@ address,name,type,comment
 0x00305026,QSMCM_SC2DR,u16,SCI2 Data Register
 
 # QSPI (Queued SPI)
-0x00305010,QSMCM_SPCR0,u16,QSPI Control Register 0
-0x00305012,QSMCM_SPCR1,u16,QSPI Control Register 1
-0x00305014,QSMCM_SPCR2,u16,QSPI Control Register 2
-0x00305016,QSMCM_SPCR3,u8,QSPI Control Register 3
-0x00305017,QSMCM_SPSR,u8,QSPI Status Register
+0x00305014,QSMCM_PORTQS,u16,Port QS Data Register (low byte bit 0x04 = PQS2/SCK)
+0x00305016,QSMCM_PQSPAR,u8,Port QS Pin Assignment Register
+0x00305017,QSMCM_DDRQS,u8,Port QS Data Direction Register
+0x00305018,QSMCM_SPCR0,u16,QSPI Control Register 0 (mode / bits / CPOL / CPHA / baud)
+0x0030501a,QSMCM_SPCR1,u16,QSPI Control Register 1 (bit 15 = SPE / DSCKL / DTL)
+0x0030501c,QSMCM_SPCR2,u16,QSPI Control Register 2 (ENDQP / NEWQP)
+0x0030501e,QSMCM_SPCR3,u8,QSPI Control Register 3
+0x0030501f,QSMCM_SPSR,u8,QSPI Status Register (bit 0x80 = SPIF)
 
 # QSPI Command and Receive RAM
 0x00305030,QSMCM_COMD0,u8,QSPI Command RAM 0
@@ -323,9 +326,6 @@ address,name,type,comment
 0x00305060,QSMCM_TRANRAM0,u16,QSPI Transmit RAM 0
 
 # Port QS
-0x00305014,QSMCM_PQSPAR,u8,Port QS Pin Assignment Register
-0x00305016,QSMCM_DDRQS,u8,Port QS Data Direction Register
-0x00305018,QSMCM_PORTQS,u8,Port QS Data Register
 
 # =============================================================================
 # MIOS14 - Modular I/O Subsystem (0x306000 - 0x306FFF)

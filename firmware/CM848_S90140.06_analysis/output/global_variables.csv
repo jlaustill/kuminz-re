@@ -486,13 +486,12 @@ address,name,type,comment
 0x00305010,QSMCM_SPCR0,byte,
 0x00305012,QSMCM_SPCR1,byte,
 0x00305014,QSMCM_SPCR2,byte,
-0x00305015,qsmcm_qspi_ddqrs,byte,
-0x00305016,QSMCM_SPCR3,byte,
-0x00305017,QSMCM_SPSR,byte,
-0x00305018,qsmcm_qspi_spcr0,qsmcm_qspi_ctrl_t,
+0x00305015,qsmcm_portqs_low,byte,PORTQS low byte (port QS pin levels); init 0x7f; bit 0x04 = PQS2/SCK idle level set per slot clock polarity
+0x00305016,QSMCM_PQSPAR,byte,Port QS pin assignment (init 0x7b)
+0x00305017,QSMCM_DDRQS,byte,Port QS data direction (init 0x7e)
+0x00305018,qsmcm_qspi,qsmcm_qspi_ctrl_t,QSPI control/status registers SPCR0..SPSR (0x305018-0x30501f)
 0x0030501a,_qspi_spcr1,,
 0x0030501c,eeprom_status_register,,
-0x0030501f,qadc_queue_status,byte,
 0x00305020,QSMCM_SCC2R0,byte,
 0x00305022,QSMCM_SCC2R1,byte,
 0x00305024,QSMCM_SC2SR,byte,
@@ -1513,16 +1512,16 @@ address,name,type,comment
 0x003fb3b8,cruise_filter_state_b_ptr,pointer,
 0x003fb3bc,cruise_filter_accumulator_init,dword,
 0x003fb3c0,safety_condition_prev_flag,word,
-0x003fb3c4,pci_in_frame_response_index,byte,Index of the next in-frame response byte to send
+0x003fb3c4,pci_controller_byte_index,byte,Index of the next byte handed to the J1850 controller - shared by frame bytes (cm848_sendPciFrameByte) and in-frame response bytes
 0x003fb3c5,pci_receive_status,byte,Top 3 bits of the current pci_receive_word (0x20/0x40/0x80 = data byte; 0xa0/0xc0/0xe0 = end of frame); reused by cm848_completePciFrame as the error bits of an unmatched frame
 0x003fb3c6,pci_receive_word,word,Copy of pci_controller_receive_word for the current byte: high byte = controller status / low byte = data byte (or completion status on end of frame)
 0x003fb3c7,uds_session_status_byte+1,,
 0x003fb3c8,pci_controller_command_word,word,Next command word for the J1850 controller (one byte is a command code e.g. 0xbc / 0xb4 / 0x04 / 0x0c and the other a data byte); copied to pci_controller_transmit_word before queuing
 0x003fb3c9,can_rx_message_type_code,,
-0x003fb3ca,pci_qspi_queue_result,word,Return value of the last cm848_j1939QueueTransmitMessage call for a PCI controller job (-1 = queue full / bad job)
+0x003fb3ca,pci_qspi_queue_result,word,Return value of the last cm848_queueQspiJob call for a PCI controller job (-1 = queue full / bad job)
 0x003fb3cc,pci_in_frame_response_length,byte,Number of in-frame response bytes being sent (length of the matched RX entry in_frame_response_bytes); 0 = not sending
 0x003fb3ce,j1939_queue_tx_return_a,word,
-0x003fb3d0,pci_link_error_count,word,Counts link events whose action mask has bit 0x01; at pci_link_error_limit sets power_state_status_flags 0x8000 and fault 0x7c
+0x003fb3d0,pci_link_error_count,word,Counts link events whose action mask has bit 0x01; at pci_link_error_limit sets power_state_status_flags 0x8000 and calls updateEngineSyncStatus(124) (I/O line 124)
 0x003fb3d2,pci_in_frame_response_wait_count,dword,Scheduler passes spent waiting for the in-frame response to our own TX frame (pci_frame_match_flags 0x08); past pci_in_frame_response_wait_limit -> cm848_handlePciInFrameResponseTimeout
 0x003fb3d6,uds_write_base_address_working,pointer,
 0x003fb3d8,uds_write_base_address_working+2,,
@@ -1544,7 +1543,7 @@ address,name,type,comment
 0x003fb408,injection_timing_done_snapshot,word,
 0x003fb40a,injection_timing_capture_prev,word,
 0x003fb40d,fuel_temperature_trim_working,word,
-0x003fb40f,protection_entry_threshold_working,word,
+0x003fb40f,pci_transmit_message_11_timer_previous,word,Last seen pci_transmit_message_11_timer (header 5D); a drop means the message was just sent - used by cm848_processProtectionTimingCounter
 0x003fb412,cbd_enable_state_prev,word,
 0x003fb414,coolant_temp_filter_state_ptr,pointer,IIR filter state ptr for coolant temp
 0x003fb420,fuel_demand_rate_limiter_state,word,
@@ -1557,13 +1556,9 @@ address,name,type,comment
 0x003fb42e,cruise_resume_debounce_counter,word,
 0x003fb430,cruise_speed_settle_counter_a,word,
 0x003fb432,cruise_speed_settle_counter_b,word,
-0x003fb448,fault_occurrence_count_array,byte,
-0x003fb4b8,PTR_DAT_003fb4b8,undefined *,
-0x003fb4c4,PTR_DAT_003fb4c4,pointer,
-0x003fb4c8,PTR_j1939_tx_message_buffer_slot_003fb4c8,pointer,
-0x003fb4cc,fault_occurrence_index,byte,
-0x003fb4d0,j1939_message_retry_counter,dword,
-0x003fb4d4,sensor_diag_param_working,pointer,
+0x003fb4cc,qspi_active_queue_index,byte,Queue (0 or 1) whose job the QSPI is running
+0x003fb4d0,qspi_job_rejected_count,dword,Jobs rejected by cm848_queueQspiJob (bad job or full queue)
+0x003fb4d4,qspi_last_rejected_job,pointer,Last job rejected by cm848_queueQspiJob
 0x003fb4d8,fuel_temp_trim_working,word,
 0x003fb4da,fuel_temp_trim_scaled_snapshot,dword,
 0x003fb4de,fault_trigger_count,word,
@@ -5021,8 +5016,8 @@ address,name,type,comment
 0x0040b3d5,j1939_msg_slot_a_status,byte,
 0x0040b3d6,j1939_dm_slot_a_request_type,byte,DM type selector: 1=DM1 2=DM2 3=DM3/DM7 4=DM4 7=DM7 9=DM9
 0x0040b3d7,j1939_dm_slot_a_spn_index,byte,Sub-index into DM response table for current request
-0x0040b3dd,j1939_msg_slot_a_control,byte,
-0x0040b3de,j1939_msg_slot_a_pgn,word,
+0x0040b3dd,pci_receive_message_0_status,byte,PCI RX[0] header 68 6A status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
+0x0040b3de,pci_receive_message_0_timer,word,PCI RX[0] header 68 6A age timer (event-driven (armed by writing 1)); 0xff37 = never received; reset to 0 on reception
 0x0040b3e0,uds_target_service_id,byte,
 0x0040b3e1,uds_service_id_byte,byte,
 0x0040b3e2,uds_subfunction_code,byte,
@@ -5030,80 +5025,79 @@ address,name,type,comment
 0x0040b3e4,uds_service_parameter_byte,byte,
 0x0040b3e5,uds_service_subfunction_byte,byte,
 0x0040b3e6,uds_data_buffer_b3e6,byte,
-0x0040b3e7,uds_security_status_flags,byte,
-0x0040b3e8,uds_security_request_state,word,
+0x0040b3e7,pci_receive_message_1_status,byte,PCI RX[1] header 24 status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
+0x0040b3e8,pci_receive_message_1_timer,word,PCI RX[1] header 24 age timer (event-driven (armed by writing 1)); 0xff37 = never received; reset to 0 on reception
 0x0040b3ea,j1939_speed_limit_override_control,byte,
-0x0040b3ec,j1939_msg_slot_b_control,byte,
-0x0040b3ed,j1939_msg_slot_b_pgn,word,
+0x0040b3ec,pci_receive_message_2_status,byte,PCI RX[2] header 0E status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
+0x0040b3ed,pci_receive_message_2_timer,word,PCI RX[2] header 0E age timer (receive timeout 448); 0xff37 = never received; reset to 0 on reception
 0x0040b3ef,j1939_msg_slot_b_status,byte,
-0x0040b3f0,uds_service_flags,word,
-0x0040b3f1,uds_service_flags+1,,
-0x0040b3f2,j1939_msg_slot_c_pgn,word,
+0x0040b3f0,uds_service_flags,byte,
+0x0040b3f2,pci_receive_message_4_timer,word,PCI RX[4] header 2D age timer (receive timeout 2778); 0xff37 = never received; reset to 0 on reception
 0x0040b3f4,j1939_msg_slot_c_status,byte,
-0x0040b3f6,j1939_msg_slot_c_control,byte,
-0x0040b3f7,j1939_msg_slot_c_pgn_b,word,
+0x0040b3f6,pci_receive_message_5_status,byte,PCI RX[5] header 37 status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
+0x0040b3f7,pci_receive_message_5_timer,word,PCI RX[5] header 37 age timer (receive timeout 896); 0xff37 = never received; reset to 0 on reception
 0x0040b3f9,j1939_msg_slot_c_counter,byte,
-0x0040b3fa,j1939_msg_slot_d_control,byte,
-0x0040b3fb,j1939_msg_slot_d_counter,word,
-0x0040b401,j1939_msg_slot_e_control,byte,
-0x0040b402,j1939_msg_slot_e_pgn,word,
-0x0040b406,j1939_msg_slot_f_control,byte,
-0x0040b407,j1939_msg_slot_f_pgn,word,
+0x0040b3fa,pci_transmit_message_6_status,byte,PCI TX[6] header 3A status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
+0x0040b3fb,pci_transmit_message_6_timer,word,PCI TX[6] header 3A age timer (send interval 896); other modules write interval+10 to force an immediate send
+0x0040b401,pci_receive_message_6_status,byte,PCI RX[6] header 4F C0 status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
+0x0040b402,pci_receive_message_6_timer,word,PCI RX[6] header 4F C0 age timer (event-driven (armed by writing 1)); 0xff37 = never received; reset to 0 on reception
+0x0040b406,pci_receive_message_7_status,byte,PCI RX[7] header 63 status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
+0x0040b407,pci_receive_message_7_timer,word,PCI RX[7] header 63 age timer (receive timeout 1000); 0xff37 = never received; reset to 0 on reception
 0x0040b409,uds_transmit_status_flags,byte,
-0x0040b40c,j1939_msg_slot_g_control,byte,
-0x0040b40d,governor_speed_demand_set,word,
+0x0040b40c,pci_transmit_message_12_status,byte,PCI TX[12] header 98 status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
+0x0040b40d,pci_transmit_message_12_timer,word,PCI TX[12] header 98 age timer (send interval 2816); other modules write interval+10 to force an immediate send
 0x0040b410,j1939_msg_slot_g_status_a,byte,
 0x0040b412,j1939_msg_slot_g_status_b,byte,
-0x0040b414,j1939_msg_slot_g_control_b,byte,
-0x0040b415,j1939_msg_slot_g_pgn,word,
+0x0040b414,pci_receive_message_8_status,byte,PCI RX[8] header 6C status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
+0x0040b415,pci_receive_message_8_timer,word,PCI RX[8] header 6C age timer (receive timeout 3584); 0xff37 = never received; reset to 0 on reception
 0x0040b417,j1939_msg_slot_h_counter,byte,
-0x0040b418,j1939_msg_slot_h_control,byte,
-0x0040b419,j1939_msg_slot_h_pgn,word,
+0x0040b418,pci_receive_message_9_status,byte,PCI RX[9] header B5 status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
+0x0040b419,pci_receive_message_9_timer,word,PCI RX[9] header B5 age timer (receive timeout 500); 0xff37 = never received; reset to 0 on reception
 0x0040b41b,j1939_msg_slot_i_counter,byte,
-0x0040b41c,j1939_msg_slot_i_control,byte,
-0x0040b41d,j1939_msg_slot_i_timer,word,
+0x0040b41c,pci_transmit_message_18_status,byte,PCI TX[18] header EA status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
+0x0040b41d,pci_transmit_message_18_timer,word,PCI TX[18] header EA age timer (send interval 3584); other modules write interval+10 to force an immediate send
 0x0040b41f,j1939_msg_slot_j_counter,byte,
-0x0040b420,j1939_msg_slot_j_control,byte,
-0x0040b421,j1939_msg_slot_j_pgn,word,
-0x0040b423,j1939_msg_slot_k_control,byte,
-0x0040b424,j1939_msg_slot_k_counter,word,
+0x0040b420,pci_receive_message_10_status,byte,PCI RX[10] header 52 status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
+0x0040b421,pci_receive_message_10_timer,word,PCI RX[10] header 52 age timer (receive timeout 4000); 0xff37 = never received; reset to 0 on reception
+0x0040b423,pci_transmit_message_1_status,byte,PCI TX[1] header 1E status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
+0x0040b424,pci_transmit_message_1_timer,word,PCI TX[1] header 1E age timer (send interval 352); other modules write interval+10 to force an immediate send
 0x0040b42f,etc1_status_byte,byte,
-0x0040b431,j1939_msg_slot_l_control,byte,
-0x0040b432,j1939_msg_slot_l_pgn,word,
+0x0040b431,pci_receive_message_3_status,byte,PCI RX[3] header 1A status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
+0x0040b432,pci_receive_message_3_timer,word,PCI RX[3] header 1A age timer (receive timeout 348); 0xff37 = never received; reset to 0 on reception
 0x0040b434,j1939_msg_slot_m_counter,byte,
-0x0040b435,j1939_msg_slot_m_control,byte,
-0x0040b436,j1939_msg_slot_m_pgn,word,
+0x0040b435,pci_receive_message_12_status,byte,PCI RX[12] header B1 status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
+0x0040b436,pci_receive_message_12_timer,word,PCI RX[12] header B1 age timer (receive timeout 500); 0xff37 = never received; reset to 0 on reception
 0x0040b438,eeprom_cal_word2_source,word,
 0x0040b439,eeprom_cal_word2_source+1,,
-0x0040b43a,j1939_msg_slot_n_control,byte,
-0x0040b43b,j1939_msg_slot_n_pgn,word,
+0x0040b43a,pci_receive_message_14_status,byte,PCI RX[14] header 42 status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
+0x0040b43b,pci_receive_message_14_timer,word,PCI RX[14] header 42 age timer (receive timeout 2000); 0xff37 = never received; reset to 0 on reception
 0x0040b43d,j1939_msg_slot_n_eeprom_flag,byte,
 0x0040b43e,j1939_msg_slot_n_eeprom_data,word,
-0x0040b441,pci_transmit_state,byte,PCI transmit state: 4 = idle (scheduler may build a frame) / 2 = frame built and queued / 1 then 0x10 or 0x12 around in-frame response bytes (bit 0x10 = in-frame response sent)
+0x0040b441,pci_transmit_state,byte,PCI transmit state: 4 = idle / 2 = frame built / 1 = every frame byte handed to the controller / 0x10 or 0x12 = in-frame response bytes sent (0x12 when it was 1)
 0x0040b442,pci_transmit_frame_buffer,byte,Outgoing J1850 frame built by cm848_schedulePciTransmit: header bytes then payload; also compared against the own-message echo
 0x0040b44e,pci_transmit_frame_length,byte,Byte count of pci_transmit_frame_buffer (0 = nothing to send)
 0x0040b44f,j1939_dm_response_length,byte,Payload byte count for slot T DM response message (2/4/5/6/7/8)
 0x0040b450,uds_response_type_code,byte,
 0x0040b451,j1939_uds_response_buffer,byte,
-0x0040b456,j1939_msg_slot_o_control,byte,
-0x0040b457,uds_timeout_count_cal,word,
+0x0040b456,pci_transmit_message_0_status,byte,PCI TX[0] header 10 status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
+0x0040b457,pci_transmit_message_0_timer,word,PCI TX[0] header 10 age timer (send interval 87); other modules write interval+10 to force an immediate send
 0x0040b459,fuel_quantity_demand_byte,byte,
 0x0040b45a,protection_status_bitmask,byte,
-0x0040b45d,j1939_msg_slot_o_timer,word,
+0x0040b45d,pci_transmit_message_4_timer,word,PCI TX[4] header D1 03 age timer (send interval 340); other modules write interval+10 to force an immediate send
 0x0040b45f,j1939_uds_data_buffer_b,byte,
-0x0040b464,governor_speed_setpoint_low,word,
+0x0040b464,pci_transmit_message_5_timer,word,PCI TX[5] header 53 age timer (send interval 1000); other modules write interval+10 to force an immediate send
 0x0040b466,j1939_engine_status_buffer,byte,
-0x0040b468,j1939_msg_slot_ii_control,byte,
-0x0040b469,governor_speed_setpoint_high,word,
+0x0040b468,pci_transmit_message_2_status,byte,PCI TX[2] header 35 status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
+0x0040b469,pci_transmit_message_2_timer,word,PCI TX[2] header 35 age timer (send interval 348); other modules write interval+10 to force an immediate send
 0x0040b46b,j1939_msg_slot_p_control,byte,
-0x0040b46e,j1939_msg_slot_q_control,byte,
-0x0040b46f,j1939_msg_slot_p_timer,word,
+0x0040b46e,pci_transmit_message_3_status,byte,PCI TX[3] header B0 status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
+0x0040b46f,pci_transmit_message_3_timer,word,PCI TX[3] header B0 age timer (send interval 2816); other modules write interval+10 to force an immediate send
 0x0040b471,j1939_msg_slot_r_active_flag,word,
 0x0040b472,j1939_msg_slot_r_active_flag+1,,
-0x0040b475,j1939_msg_slot_r_control,byte,
-0x0040b476,j1939_msg_slot_r_pgn,word,
-0x0040b47c,j1939_msg_slot_s_control,byte,
-0x0040b47d,j1939_msg_slot_s_counter,word,
+0x0040b475,pci_receive_message_11_status,byte,PCI RX[11] header 72 status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
+0x0040b476,pci_receive_message_11_timer,word,PCI RX[11] header 72 age timer (event-driven (armed by writing 1)); 0xff37 = never received; reset to 0 on reception
+0x0040b47c,pci_transmit_message_7_status,byte,PCI TX[7] header 3F status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
+0x0040b47d,pci_transmit_message_7_timer,word,PCI TX[7] header 3F age timer (event-driven (armed by writing 1)); other modules write interval+10 to force an immediate send
 0x0040b47f,j1939_dm_slot_t_node_id,byte,Source address byte; written at start of every DM response
 0x0040b480,j1939_dm_response_type,byte,Response type byte: 0x41=DM1 0x42=DM2 0x43=DM3 0x44=DM4 0x47=DM7 0x49=DM9
 0x0040b481,j1939_dm_response_spn_index,byte,Echo of requesting SPN sub-index
@@ -5112,10 +5106,10 @@ address,name,type,comment
 0x0040b484,j1939_dm_response_byte2,byte,
 0x0040b485,j1939_dm_response_byte3,byte,
 0x0040b486,j1939_dm_response_byte4,byte,
-0x0040b488,j1939_msg_slot_t_control,byte,
-0x0040b489,j1939_msg_slot_t_counter,word,
-0x0040b48f,j1939_msg_slot_u_control,byte,
-0x0040b490,j1939_msg_slot_u_counter,word,
+0x0040b488,pci_transmit_message_8_status,byte,PCI TX[8] header 48 6B status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
+0x0040b489,pci_transmit_message_8_timer,word,PCI TX[8] header 48 6B age timer (event-driven (armed by writing 1)); other modules write interval+10 to force an immediate send
+0x0040b48f,pci_transmit_message_9_status,byte,PCI TX[9] header 4F 10 status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
+0x0040b490,pci_transmit_message_9_timer,word,PCI TX[9] header 4F 10 age timer (event-driven (armed by writing 1)); other modules write interval+10 to force an immediate send
 0x0040b492,uds_response_t_0040b492,uds_response_t,
 0x0040b493,uds_response_t_0040b492.service_id,,
 0x0040b494,uds_response_t_0040b492.subfunction,,
@@ -5125,42 +5119,42 @@ address,name,type,comment
 0x0040b49b,uds_response_t_0040b492.data[4],,
 0x0040b49c,uds_response_t_0040b492.transmit_timer,,
 0x0040b49e,j1939_data_buffer_c,byte,
-0x0040b4a3,j1939_msg_slot_v_control,byte,
-0x0040b4a4,protection_entry_threshold,word,
+0x0040b4a3,pci_transmit_message_11_status,byte,PCI TX[11] header 5D status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
+0x0040b4a4,pci_transmit_message_11_timer,word,PCI TX[11] header 5D age timer (send interval 348); other modules write interval+10 to force an immediate send
 0x0040b4a6,j1939_msg_slot_v_status,byte,
-0x0040b4a9,j1939_msg_slot_v_counter,word,
+0x0040b4a9,pci_receive_message_13_timer,word,PCI RX[13] header 92 age timer (receive timeout 2000); 0xff37 = never received; reset to 0 on reception
 0x0040b4ab,eeprom_cal_byte_b4ab,byte,
-0x0040b4ac,j1939_msg_slot_w_control,byte,
-0x0040b4ad,j1939_timeout_counter,word,
+0x0040b4ac,pci_transmit_message_13_status,byte,PCI TX[13] header A4 status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
+0x0040b4ad,pci_transmit_message_13_timer,word,PCI TX[13] header A4 age timer (send interval 1204); other modules write interval+10 to force an immediate send
 0x0040b4af,j1939_data_buffer_d,byte,
-0x0040b4b3,j1939_msg_slot_x_control,byte,
-0x0040b4b4,j1939_msg_slot_x_timer,word,
+0x0040b4b3,pci_transmit_message_14_status,byte,PCI TX[14] header C0 status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
+0x0040b4b4,pci_transmit_message_14_timer,word,PCI TX[14] header C0 age timer (send interval 1392); other modules write interval+10 to force an immediate send
 0x0040b4bb,j1939_msg_slot_x_status,byte,
-0x0040b4bc,j1939_msg_slot_y_control,byte,
-0x0040b4bd,j1939_msg_slot_y_timer,word,
+0x0040b4bc,pci_transmit_message_15_status,byte,PCI TX[15] header DF status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
+0x0040b4bd,pci_transmit_message_15_timer,word,PCI TX[15] header DF age timer (send interval 2784); other modules write interval+10 to force an immediate send
 0x0040b4bf,j1939_address_filter_byte_a,byte,
 0x0040b4c0,j1939_address_filter_byte_b,byte,
 0x0040b4c2,j1939_address_filter_byte_c,byte,
-0x0040b4c3,j1939_msg_slot_z_control,byte,
-0x0040b4c4,j1939_msg_slot_z_timer,word,
+0x0040b4c3,pci_transmit_message_16_status,byte,PCI TX[16] header D2 status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
+0x0040b4c4,pci_transmit_message_16_timer,word,PCI TX[16] header D2 age timer (send interval 2784); other modules write interval+10 to force an immediate send
 0x0040b4c7,protection_status_output_byte,byte,
-0x0040b4ca,j1939_msg_slot_aa_control,byte,
-0x0040b4cb,j1939_msg_slot_aa_timer,word,
+0x0040b4ca,pci_transmit_message_17_status,byte,PCI TX[17] header D1 01 status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
+0x0040b4cb,pci_transmit_message_17_timer,word,PCI TX[17] header D1 01 age timer (send interval 2784); other modules write interval+10 to force an immediate send
 0x0040b4d0,j1939_source_addr_byte_a,byte,
 0x0040b4d1,j1939_source_addr_byte_b,byte,
-0x0040b4d2,j1939_msg_slot_bb_control,byte,
-0x0040b4d3,j1939_msg_slot_cc_timer,word,
+0x0040b4d2,pci_transmit_message_19_status,byte,PCI TX[19] header ED status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
+0x0040b4d3,pci_transmit_message_19_timer,word,PCI TX[19] header ED age timer (send interval 2784); other modules write interval+10 to force an immediate send
 0x0040b4d5,vehicle_vin_byte0_copy,byte,Copy of vehicle_vin_string[0] (VIN char '3') used by J1939 VIN broadcast slots
-0x0040b4d6,j1939_msg_slot_cc_control,byte,
-0x0040b4d7,j1939_msg_slot_dd_timer,word,
-0x0040b4dd,j1939_msg_slot_dd_control,byte,
-0x0040b4de,j1939_msg_slot_ee_timer,word,
-0x0040b4e4,j1939_msg_slot_ee_control,byte,
-0x0040b4e5,j1939_msg_slot_ff_timer,word,
-0x0040b4eb,j1939_msg_slot_ff_control,byte,
-0x0040b4ec,j1939_msg_slot_gg_timer,word,
-0x0040b4f2,j1939_msg_slot_gg_control,byte,
-0x0040b4f3,j1939_msg_slot_hh_timer,word,
+0x0040b4d6,pci_transmit_message_20_status,byte,PCI TX[20] header F0 01 status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
+0x0040b4d7,pci_transmit_message_20_timer,word,PCI TX[20] header F0 01 age timer (send interval 2784); other modules write interval+10 to force an immediate send
+0x0040b4dd,pci_transmit_message_21_status,byte,PCI TX[21] header F0 02 status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
+0x0040b4de,pci_transmit_message_21_timer,word,PCI TX[21] header F0 02 age timer (send interval 2784); other modules write interval+10 to force an immediate send
+0x0040b4e4,pci_transmit_message_22_status,byte,PCI TX[22] header F0 06 status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
+0x0040b4e5,pci_transmit_message_22_timer,word,PCI TX[22] header F0 06 age timer (send interval 2784); other modules write interval+10 to force an immediate send
+0x0040b4eb,pci_transmit_message_23_status,byte,PCI TX[23] header F0 0A status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
+0x0040b4ec,pci_transmit_message_23_timer,word,PCI TX[23] header F0 0A age timer (send interval 2784); other modules write interval+10 to force an immediate send
+0x0040b4f2,pci_transmit_message_24_status,byte,PCI TX[24] header F0 0E status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
+0x0040b4f3,pci_transmit_message_24_timer,word,PCI TX[24] header F0 0E age timer (send interval 2784); other modules write interval+10 to force an immediate send
 0x0040b4f8,j1939_msg_slot_hh_control,byte,
 0x0040b4fb,j1939_buffer_param_a,byte,
 0x0040b4fc,j1939_buffer_param_b,byte,
@@ -6577,9 +6571,9 @@ address,name,type,comment
 0x003fb13a,protection_fuel_demand_limit_derate2_interp_state,word,fuel-demand limit interp (derate2)
 0x003fb13c,protection_fuel_demand_limit_derate3_interp_state,word,fuel-demand limit interp (derate3)
 0x003fb13e,protection_fuel_demand_limit_derate4_interp_state,word,fuel-demand limit interp (derate4)
-0x003fb434,qspi_timer_slot_spcr0_table,word,QSPI periodic timer slot config table base
-0x003fb445,qspi_timer_registered_slot_count,byte,count of registered QSPI timer slots (max 4)
-0x003fb446,j1939_tx_queue_write_head_array,byte,per-channel J1939 TX ring write-head array base
+0x003fb434,qspi_device_slot_table,qspi_device_slot_t,4 registered QSPI device slots (SPCR0 + SPCR1 timing each)
+0x003fb445,qspi_device_slot_count,byte,Number of registered QSPI device slots (max 4)
+0x003fb446,qspi_job_queues,qspi_job_queue_t,QSPI job queue 0 (serviced first) at 0x3fb446 and queue 1 at 0x3fb489
 0x003fb4cd,qspi_transfer_active_flag,byte,QSPI transfer in-progress guard
 0x003fb550,fuel_correction_enter_condition_flag,byte,TC-lockup fuel correction enter condition
 0x003fb551,fuel_correction_exit_condition_flag,byte,TC-lockup fuel correction exit condition
@@ -7066,15 +7060,19 @@ address,name,type,comment
 0x003fd8b2,egr_smoke_limit_speed_ref_select,word,ROM selector for EGR smoke-limit alt speed reference
 0x003ff716,governor_speed_ramp_step_size,word,ROM per-cycle step under governor speed ramp rate limit
 0x003fcfb4,j1939_fuel_demand_injection_timing_done_prev,word,previous injection_timing_done_flag (edge detect)
-0x003fcfb6,j1939_fuel_demand_protection_threshold_prev,word,previous protection_entry_threshold (decrease detect)
+0x003fcfb6,pci_transmit_message_11_timer_previous_b,word,Second last-seen copy of pci_transmit_message_11_timer (header 5D) kept by j1939FuelDemandProcessing; a drop means the message was just sent
 0x003fd1b6,protection_active_fault_severity_snapshot,word,saved severity of active fault for clear-path
 0x003fd1b8,protection_active_fault_severity_param,word,severity param stored at fault activation
 0x003fd2e0,sensor_cal_ring_cycle_count,word,count of complete passes over sensor cal ring
 0x003fea16,hpcr_battery_status_shadow_flags,word,shadow of hpcr_battery_voltage_flags
-0x003fb444,qspi_tx_configured_slot,byte,currently configured QSPI transmit slot ID
+0x003fb444,qspi_active_device_slot,byte,Device slot whose timing is currently loaded in the QSMCM
 0x003fbd52,fuel_demand_active_sensor_valid_bits,word,fuel-demand-active condition bit (0x100) for sensor validation
 0x003fd8de,pci_normal_transmit_disabled_initial_cal,byte,EEPROM-shadowed (EEPROM offset 0x45c; 0 in dump) - boot value of pci_normal_transmit_disabled
 0x003fd8df,pci_receive_processing_disabled_initial_cal,byte,EEPROM-shadowed (EEPROM offset 0x45d; 0 in dump) - boot value of pci_receive_processing_disabled
 0x003feaa4,governor_load_channel_fault_confirm_timers,word,25-word per-channel governor load fault-confirm timers (base)
 0x0040b357,pci_controller_command_job,qspi_job_t,QSPI job that sends pci_controller_transmit_word to the external J1850 controller; completion_callback = the PCI transmit path
 0x0040b36d,pci_controller_receive_job,qspi_job_t,QSPI job that reads pci_controller_receive_word; completion_callback = cm848_onPciControllerReceiveWord
+0x0040b3f1,pci_receive_message_4_status,byte,PCI RX[4] header 2D status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
+0x0040b45c,pci_transmit_message_4_status,byte,PCI TX[4] header D1 03 status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
+0x0040b463,pci_transmit_message_5_status,byte,PCI TX[5] header 53 status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
+0x0040b4a8,pci_receive_message_13_status,byte,PCI RX[13] header 92 status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
