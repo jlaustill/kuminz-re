@@ -53,20 +53,10 @@ address,name,type,comment
 0x00057694,calibration_constant_1,word,
 0x00057724,j1939_msg_descriptor_table,byte,
 0x00057730,PTR_LAB_00057730,byte *,
-0x0005774f,BYTE_0005774f,byte,
-0x00057753,PTR_DAT_00057753,pointer,
-0x00057759,DWORD_00057759,dword,
-0x0005775f,can_rx_handler_ptr_table,pointer,
-0x00057763,j1939_pgn_table_ptr,dword,
-0x00057775,DWORD_00057775,dword,
-0x000578ef,calibration_byte_param,byte,
-0x000578f3,DWORD_000578f3,dword,
-0x000578f7,PTR_DAT_000578f7,pointer,
-0x000578fb,can_rx_message_descriptor_table,byte,
-0x000578fd,DWORD_000578fd,dword,
-0x00057903,PTR_DAT_00057903,pointer,
-0x00057907,fault_code_table_ptr,dword,
-0x00057919,DWORD_00057919,dword,
+0x0005774b,pci_receive_message_table,pci_message_descriptor_t,15 J1850 PCI messages the ECM receives (OBD-II 68 6A request / 0x24 / 0x37 shift lever / ...); count at 0x57bab
+0x000578ef,pci_transmit_message_table,pci_message_descriptor_t,25 J1850 PCI messages the ECM transmits (0x10 engine data / 48 6B OBD-II response / D1 03 / F0 xx VIN / ...); count at 0x57bad
+0x00057bab,pci_receive_message_count,word,ROM constant 15 (lhz) - entries in pci_receive_message_table
+0x00057bad,pci_transmit_message_count,word,ROM constant 25 (lhz) - entries in pci_transmit_message_table
 0x00057d76,calibration_table_ptr_3,byte,
 0x00057dd2,qadc_channel_dispatch_table,dword,129-entry x 8-byte table: channel index -> (QADC result-reg pointer + shared 0x57dd0); read via base[i*2] by governor_cruise_engage_check + ~38 sensor sites; verified ptrs 0x304a80.. = MPC555 QADC right-justified result regs; double-indirection asm slwi r,3/lwzx/lhz @0x512ebc
 0x00057dd6,PTR_DAT_00057dd6,pointer,
@@ -139,6 +129,7 @@ address,name,type,comment
 0x0005c738,u_HAN#_0005c738,,
 0x0005c748,u_HAN#_0005c748,,
 0x0005c788,u__0005c788,,
+0x0005c7ae,pci_message_timeout_grace,word,ROM constant 50 (lhz) - a PCI message is flagged timed out once its timer exceeds interval by more than this
 0x0005c7b2,j1939_dm_node_id_cal,byte,Source address byte written to slot T DM response buffer[0]
 0x0005c7ba,j1939_dm1_spn_support_bitmask,dword,Bit N set = SPN sub-index N+1 supported for DM1
 0x0005c7be,j1939_dm1_lamp_status_cal,word,Byte0 nibble=J1939 lamp bits; byte1=lamp type byte for DM1 sub-index 1 response
@@ -5008,7 +4999,7 @@ address,name,type,comment
 0x0040b34f,can_rx_state_t_0040b34e.message_buffer,,
 0x0040b350,can_rx_state_t_0040b34e.message_counter,,
 0x0040b351,can_rx_state_t_0040b34e.message_counter+1,,
-0x0040b352,can_rx_state_t_0040b34e.dm1_pending,,
+0x0040b352,can_rx_state_t_0040b34e.link_event_code,,
 0x0040b356,j1939_periodic_timer_handle,word,
 0x0040b357,j1939_tx_msg_descriptor_b357,,
 0x0040b35b,j1939_response_timer_handle_a,byte,
@@ -5035,8 +5026,8 @@ address,name,type,comment
 0x0040b38f,uds_data_receive_buffer,byte,
 0x0040b3a5,uds_security_combine_flags,byte,
 0x0040b3a6,uds_received_data_buffer_b,byte,
-0x0040b3bc,uds_control_session_flag,byte,
-0x0040b3bd,calibration_access_flag,byte,
+0x0040b3bc,pci_normal_transmit_disabled,byte,Set by KWP2000 service 0x28 DisableNormalMessageTransmission (positive response 0x68) and cleared when the engine turns; skips the PCI transmit-timeout check and the PCI TX scheduler; init from 0x3fd8de (0 in RAM dump)
+0x0040b3bd,pci_receive_processing_disabled,byte,Gates storing received PCI payloads into pci_receive_message_table buffers and the PCI receive-timeout check; only written at init from 0x3fd8df (0 in RAM dump)
 0x0040b3be,uds_received_data_buffer,byte,
 0x0040b3d4,j1939_request_state_flags,byte,
 0x0040b3d5,j1939_msg_slot_a_status,byte,
