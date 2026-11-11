@@ -367,7 +367,7 @@ address,name
 0x00001840,mpc555_diagService25_executeFunction
 0x0000191c,cm848_initService25Handler
 0x00001948,cm848_registerPgnResponseHandler
-0x0000198c,cm848_initDataBasedDiagServices
+0x0000198c,cm848_initDataBasedDiagServices,Boot path (reset -> mpc555_initDiagnosticSubsystem): registers boot reflash kernel memory-write services 0x44 / 0x45 / 0x4B / 0x4D with handlers at their RAM-copy addresses 0x3fb368 / 0x3fb3d8 / 0x3fb440 / 0x3fb4b8 (= ROM 0x5798 / 0x5808 / 0x5870 / 0x58e8). The arguments render as application variables because the running app reuses that RAM
 0x000019e8,cm848_diagService65_handler
 0x00001ad0,cm848_registerService65Handler
 0x00001afc,cm848_registerMemoryReadServices
@@ -449,11 +449,11 @@ address,name
 0x00005134,mpc555_processCanReceiveBuffer
 0x0000526c,mpc555_dispatchCanMessageHandlers
 0x00005400,mpc555_processAdcConversionResult
-0x00005728,mpc555_processAdcWithOffset
-0x00005798,cm848_processAdcSensorByte
-0x00005808,cm848_processAdcSensorDword
-0x00005870,mpc555_processAdcSensorDwordExt
-0x000058e8,mpc555_processAdcSensorDualDword
+0x00005728,cm848_memoryWriteByParameterId,Boot reflash kernel (runs only from its RAM copy; never called by the application): resolves a 2-byte parameter ID via cm848_lookupTableEntryByKey (returns 8 when unknown) then hands address + offset + length to the shared memory-write worker at 0x5400 with addressing mode 0 (parameter ID) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
+0x00005798,cm848_diagService68_memoryWriteByParameterId,Boot reflash kernel (runs only from its RAM copy; never called by the application): diagnostic service 0x44 (registered by cm848_initDataBasedDiagServices) - request = 2-byte parameter ID + 1-byte length + data; write counterpart of service 67 | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
+0x00005808,cm848_diagService69_memoryWriteByParameterIdExt,Boot reflash kernel (runs only from its RAM copy; never called by the application): diagnostic service 0x45 - request = 2-byte parameter ID + 4-byte length + data | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
+0x00005870,cm848_diagService75_memoryWrite,Boot reflash kernel (runs only from its RAM copy; never called by the application): diagnostic service 0x4B - request = 4-byte address + 1-byte length + data (addressing mode 1); write counterpart of service 74 | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
+0x000058e8,cm848_diagService77_memoryWriteExt,Boot reflash kernel (runs only from its RAM copy; never called by the application): diagnostic service 0x4D - request = 4-byte address + 4-byte length + data; write counterpart of service 76 | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
 0x00005958,cm848_getServiceDataOffset
 0x0000597c,validateServiceDataLength
 0x00005adc,mpc555_multiFrameCanTransmit

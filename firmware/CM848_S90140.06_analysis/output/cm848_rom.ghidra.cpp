@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Wed Nov 11 14:15:00 MST 2026
+// Generated: Wed Nov 11 14:35:06 MST 2026
 
 
 //
@@ -1155,6 +1155,11 @@ bool cm848_registerPgnResponseHandler(dword pgn,void *handler_func)
 //
 // Function: cm848_initDataBasedDiagServices @ 0x0000198c
 //
+
+/* Boot path (reset -> mpc555_initDiagnosticSubsystem): registers boot reflash kernel memory-write
+   services 0x44 / 0x45 / 0x4B / 0x4D with handlers at their RAM-copy addresses 0x3fb368 / 0x3fb3d8
+   / 0x3fb440 / 0x3fb4b8 (= ROM 0x5798 / 0x5808 / 0x5870 / 0x58e8). The arguments render as
+   application variables because the running app reuses that RAM */
 
 void cm848_initDataBasedDiagServices(void)
 
@@ -3981,11 +3986,17 @@ byte mpc555_processAdcConversionResult(dword param_1,uint param_2,uint param_3)
 
 
 //
-// Function: mpc555_processAdcWithOffset @ 0x00005728
+// Function: cm848_memoryWriteByParameterId @ 0x00005728
 //
 
+/* Boot reflash kernel (runs only from its RAM copy; never called by the application): resolves a
+   2-byte parameter ID via cm848_lookupTableEntryByKey (returns 8 when unknown) then hands address +
+   offset + length to the shared memory-write worker at 0x5400 with addressing mode 0 (parameter ID)
+   | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
+    */
+
 undefined1
-mpc555_processAdcWithOffset(undefined4 param_1,word param_2,int param_3,undefined4 param_4)
+cm848_memoryWriteByParameterId(undefined4 param_1,word param_2,int param_3,undefined4 param_4)
 
 {
   int iVar1;
@@ -4005,10 +4016,15 @@ mpc555_processAdcWithOffset(undefined4 param_1,word param_2,int param_3,undefine
 
 
 //
-// Function: cm848_processAdcSensorByte @ 0x00005798
+// Function: cm848_diagService68_memoryWriteByParameterId @ 0x00005798
 //
 
-undefined1 cm848_processAdcSensorByte(int param_1)
+/* Boot reflash kernel (runs only from its RAM copy; never called by the application): diagnostic
+   service 0x44 (registered by cm848_initDataBasedDiagServices) - request = 2-byte parameter ID +
+   1-byte length + data; write counterpart of service 67 | review-function-readability reviewed
+   2026-11-11 - Readability Medium Accuracy Confidence Medium */
+
+undefined1 cm848_diagService68_memoryWriteByParameterId(int param_1)
 
 {
   undefined1 uVar1;
@@ -4017,17 +4033,21 @@ undefined1 cm848_processAdcSensorByte(int param_1)
   
   cm848_sensorInputProcessing(local_10,*(int *)(param_1 + 6) + 1,2);
   local_c = (uint)*(byte *)(*(int *)(param_1 + 6) + 3);
-  uVar1 = mpc555_processAdcWithOffset(param_1,local_10[0],0,local_c);
+  uVar1 = cm848_memoryWriteByParameterId(param_1,local_10[0],0,local_c);
   return uVar1;
 }
 
 
 
 //
-// Function: cm848_processAdcSensorDword @ 0x00005808
+// Function: cm848_diagService69_memoryWriteByParameterIdExt @ 0x00005808
 //
 
-undefined1 cm848_processAdcSensorDword(int param_1)
+/* Boot reflash kernel (runs only from its RAM copy; never called by the application): diagnostic
+   service 0x45 - request = 2-byte parameter ID + 4-byte length + data | review-function-readability
+   reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium */
+
+undefined1 cm848_diagService69_memoryWriteByParameterIdExt(int param_1)
 
 {
   undefined1 uVar1;
@@ -4036,17 +4056,22 @@ undefined1 cm848_processAdcSensorDword(int param_1)
   
   cm848_sensorInputProcessing(local_10,*(int *)(param_1 + 6) + 1,2);
   cm848_sensorInputProcessing(local_c,*(int *)(param_1 + 6) + 3,4);
-  uVar1 = mpc555_processAdcWithOffset(param_1,local_10[0],0,local_c[0]);
+  uVar1 = cm848_memoryWriteByParameterId(param_1,local_10[0],0,local_c[0]);
   return uVar1;
 }
 
 
 
 //
-// Function: mpc555_processAdcSensorDwordExt @ 0x00005870
+// Function: cm848_diagService75_memoryWrite @ 0x00005870
 //
 
-undefined1 mpc555_processAdcSensorDwordExt(int param_1)
+/* Boot reflash kernel (runs only from its RAM copy; never called by the application): diagnostic
+   service 0x4B - request = 4-byte address + 1-byte length + data (addressing mode 1); write
+   counterpart of service 74 | review-function-readability reviewed 2026-11-11 - Readability Medium
+   Accuracy Confidence Medium */
+
+undefined1 cm848_diagService75_memoryWrite(int param_1)
 
 {
   undefined1 uVar1;
@@ -4063,10 +4088,15 @@ undefined1 mpc555_processAdcSensorDwordExt(int param_1)
 
 
 //
-// Function: mpc555_processAdcSensorDualDword @ 0x000058e8
+// Function: cm848_diagService77_memoryWriteExt @ 0x000058e8
 //
 
-undefined1 mpc555_processAdcSensorDualDword(int param_1)
+/* Boot reflash kernel (runs only from its RAM copy; never called by the application): diagnostic
+   service 0x4D - request = 4-byte address + 4-byte length + data; write counterpart of service 76 |
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
+    */
+
+undefined1 cm848_diagService77_memoryWriteExt(int param_1)
 
 {
   undefined1 uVar1;

@@ -101,9 +101,12 @@ Bank 2 contains utility functions called from Bank 1 (sensor processing, math ro
 
 ### ROM-to-RAM Code Execution (CM848)
 
-`copyCalibrationToRam()` copies ROM 0x3C30-0x7F60 (17KB) to RAM 0x3F9800-0x3FDB30 at boot. ~50 functions execute from RAM for MPC555 performance. Formula: `ROM_addr = 0x3C30 + (RAM_addr - 0x3F9800)`.
+`copyCalibrationToRam()` copies ROM 0x3C30-0x7F60 (17KB) to RAM 0x3F9800-0x3FDB30 at boot. Formula: `ROM_addr = 0x3C30 + (RAM_addr - 0x3F9800)`.
 
-Functions at `0x003Fxxxx` in decompilation (e.g. `BYTE_003fae3c()`) are ROM functions running from RAM — Ghidra already has them decompiled at their ROM source addresses. The RAM dump has these regions overwritten by CAN bus data at runtime; use the ROM binary to find the original code.
+**That image is the BOOT REFLASH KERNEL, not application code (verified 2026-11-11, PR #46).** It runs from RAM so flash can be erased/programmed underneath it — not "for performance". Evidence: (1) all 75 branches into the RAM window come from the low boot ROM 0x0-0x3C2F (reset / key-on / EEPROM calibration load+download / flash init); ZERO from application ROM (>= 0x7F60); (2) in the runtime RAM dump NONE of the 67 dump-covered image functions is intact (4-28% byte match = chance), because the running application reuses that RAM for its own variables (PCI timers, QSPI job queues, ...). Contents: its own CAN driver, J1939 transport (RTS/CTS/abort), diagnostic dispatcher with memory-WRITE services 68/69/75/77 (0x44/0x45/0x4B/0x4D), EEPROM/flash transfer, auth-token descramble + write-auth check, transfer CRC, SCI driver, watchdog and its own main loop.
+- Consequences: (a) a global in 0x3F9800-0x3FDB30 and the image function at the same address are BOTH real — they just live at different times (boot vs running app); (b) the runtime RAM dump is useless for reading image code — use the ROM; (c) many image function names were guessed from app-like patterns (`processAdc*`, `processSensor*`, `sensorFaultThresholdCheck`) and are suspect — e.g. 0x5728-0x58e8 were "ADC sensor" names but are the kernel's memory-write services.
+
+Functions at `0x003Fxxxx` in decompilation (e.g. `BYTE_003fae3c()`) are calls from the boot ROM into the kernel's RAM copy — Ghidra already has them decompiled at their ROM source addresses.
 
 **Declaring data in this window:** an array/struct's boundary is usually the copy-window EDGE (0x3FDB30), not the next named global — post-copy working RAM (handler tables etc.) begins at 0x3FDB30. Size arrays to 0x3FDB30, not to the next symbol (it may belong to a different structure). Array typing DOES apply over this code-overlap region (verified deterministic via `analyze.sh verify`) — the "types revert on export" caution is about scalar WIDTH, not array creation.
 

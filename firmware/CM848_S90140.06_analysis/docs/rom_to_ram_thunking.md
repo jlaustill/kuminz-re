@@ -10,13 +10,16 @@ decompilation — their garbage bytes decompile to noise, and callers already re
 ## Background — what these calls are
 
 At boot, `copyCalibrationToRam()` copies ROM `0x3C30–0x7F60` (~17 KB) into RAM
-`0x3F9800–0x3FDB30` and the MPC555 runs that code from RAM (faster than flash). So each of
-~50 functions exists twice: the original in ROM, and a live copy in RAM.
+`0x3F9800–0x3FDB30` and the boot ROM runs that code from RAM. **Correction 2026-11-11:** the image is the
+boot reflash kernel (it must run from RAM while flash is reprogrammed); only the low boot ROM
+(0x0–0x3C2F) ever branches into it and the running application reuses the RAM for its own data — see
+`firmware/CLAUDE.md` "ROM-to-RAM Code Execution". So each of ~50 functions exists twice: the original
+in ROM, and a copy in RAM that is live only during boot / reflash.
 
 When other code calls into the RAM copy (`bl 0x3Fxxxx`), Ghidra has no function at the RAM
 address (it only analyzed the ROM original), so the decompiler emits `func_0x003fae3c()`
-instead of the real name. The live RAM dump bytes there are CAN-overwritten garbage, so we
-must NOT disassemble them — we point at the ROM source instead.
+instead of the real name. The live RAM dump bytes there are the running application's variables (not code, and not
+"CAN garbage"), so we must NOT disassemble them — we point at the ROM source instead.
 
 ## The map (verified)
 
