@@ -1535,7 +1535,7 @@ qspi_job_t,0x003fb2d3,,,,supervisor_register_36_read_job - instance,,verified
 qspi_job_t,0x003fb2eb,,,,supervisor_output_write_job - instance,,verified
 qspi_job_t,0x003fb301,,,,supervisor_status_read_job - instance,,verified
 qspi_job_t,0x003fb325,,,,supervisor_register_46_read_job - instance,,verified
-qspi_job_t,0x003fb360,,,,spi_mode3_device_read_job - instance,,verified
+qspi_job_t,0x003fb360,,,,serial_output_driver_job - instance,,verified
 
 # --- QSPI job driver data (reviewed 2026-11-11) ---
 qspi_device_slot_t,0x003fb434,spcr0,word,2,SPCR0 value for this device (mode + baud),,verified

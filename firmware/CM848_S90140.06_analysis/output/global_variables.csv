@@ -1435,8 +1435,8 @@ address,name,type,comment
 0x003fb349,j1939_can_frame_word_d,word,
 0x003fb34b,j1939_pgn_source_byte,dword,
 0x003fb351,j1939_session_state,byte,
-0x003fb376,j1939_periodic_timer_state,byte,
-0x003fb378,j1939_periodic_timer_snapshot,dword,
+0x003fb376,serial_output_driver_reply,word,Raw QSPI reply from the serial output driver (was j1939_periodic_timer_state)
+0x003fb378,serial_output_driver_last_reply_time,dword,Time base (TBL) of the previous serial output driver reply (was j1939_periodic_timer_snapshot)
 0x003fb37c,battery_voltage_fault_snapshot,word,
 0x003fb37e,battery_voltage_sample_count,word,
 0x003fb380,cruise_enable_sample_count,word,
@@ -4886,9 +4886,9 @@ address,name,type,comment
 0x0040b229,fault_report_parameter_byte,byte,
 0x0040b22a,fuel_demand_offset_correction,word,
 0x0040b256,injection_timing_demand_min_working,word,
-0x0040b258,j1939_periodic_filter_state,byte,
-0x0040b259,j1939_dm1_fault_byte_10_prev,byte,
-0x0040b25b,j1939_periodic_timer_output_byte,byte,
+0x0040b258,serial_output_driver_transmit_word,byte,High byte of the serial output driver transmit word (the job sends this word; low byte follows) (was j1939_periodic_filter_state)
+0x0040b259,serial_output_driver_transmit_byte,byte,Output lines 152-159 byte sent to the serial output driver (copied from output_lines_152_to_159_state by cm848_refreshOutputPortsAndReadback) (was j1939_dm1_fault_byte_10_prev)
+0x0040b25b,serial_output_driver_status_byte,byte,Accepted serial output driver reply (status / fault byte) - read by protection_j1939_control_logic / hpcr_injectorPulseWidthCalc (was j1939_periodic_timer_output_byte)
 0x0040b25c,cold_start_fuel_ema,word,
 0x0040b25e,battery_voltage_filtered,word,
 0x0040b260,battery_voltage_delta_filtered,word,
@@ -6722,7 +6722,7 @@ address,name,type,comment
 0x003fb2eb,supervisor_output_write_job,qspi_job_t,Supervisor chip job: write output register 0x92
 0x003fb301,supervisor_status_read_job,qspi_job_t,Supervisor chip job: read registers 0x4E / 0x5A / 0x5C (3 words)
 0x003fb325,supervisor_register_46_read_job,qspi_job_t,Supervisor chip job: register 0x2E access
-0x003fb360,spi_mode3_device_read_job,qspi_job_t,Second QSPI device (SPI mode 3 slot) job: sends 0x1B00
+0x003fb360,serial_output_driver_job,qspi_job_t,Serial output driver QSPI job (PCS2 / SPI mode 3 / 1 word): sends output lines 152-159
 0x003fb3eb,uds_svc_a4_read_response_byte0,byte,UDS service 0xA4 read response buffer byte 0
 0x003fb614,injection_timing_fuel_table_interp_state,word,interp state base (fuel quantity table)
 0x003fb618,injection_timing_cam_offset_interp_state,word,interp state base (cam timing offset)

@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Wed Nov 11 19:39:17 MST 2026
+// Generated: Wed Nov 11 20:14:09 MST 2026
 
 
 //
@@ -1173,8 +1173,7 @@ bool cm848_registerPgnResponseHandler(dword pgn,void *handler_func)
 void cm848_initDataBasedDiagServices(void)
 
 {
-  cm848_registerDiagnosticService(0x44,(void *)((int)&spi_mode3_device_read_job.transmit_words + 2))
-  ;
+  cm848_registerDiagnosticService(0x44,(void *)((int)&serial_output_driver_job.transmit_words + 2));
   cm848_registerDiagnosticService(0x45,(void *)((int)&uds_write_base_address_working + 2));
   cm848_registerDiagnosticService(0x4b,&qspi_device_slot_t_003fb440);
   cm848_registerDiagnosticService(0x4d,&qspi_job_queue_t_003fb489.field_0x2f);
@@ -6402,7 +6401,7 @@ void cm848_phase_common_processing(void)
 {
   cm848_runSupervisorChipSchedule();
   cm848_protectionAlarmHandler();
-  injectorTimingCalculation();
+  cm848_refreshOutputPortsAndReadback();
   cm848_sensorChannel7_init();
   cm848_protection_init_configBundle();
   cm848_processFaultAndFuelDemand();
@@ -35174,48 +35173,48 @@ void mpc555_initFuelDemandOffsetFilter(void)
 
 
 //
-// Function: cm848_onSpiMode3DeviceRead @ 0x00037464
+// Function: cm848_onSerialOutputDriverReply @ 0x00037464
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* Second QSPI device (SPI mode 3 slot): completion callback - when completions are more than 625
-   time-base ticks apart copies the reply into j1939_periodic_timer_output_byte (device and meaning
-   unidentified) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy
-   Confidence Low */
+/* Serial output driver completion: when transfers are more than 625 time-base ticks apart copies
+   the reply into serial_output_driver_status_byte (read by protection_j1939_control_logic /
+   hpcr_injectorPulseWidthCalc) | review-function-readability reviewed 2026-11-11 - Readability
+   Medium Accuracy Confidence Medium */
 
-void cm848_onSpiMode3DeviceRead(void)
+void cm848_onSerialOutputDriverReply(void)
 
 {
   dword dVar1;
   
   dVar1 = TBLr;
-  if ((j1939_periodic_timer_snapshot != 0) && (0x271 < (int)(dVar1 - j1939_periodic_timer_snapshot))
-     ) {
-    j1939_periodic_timer_output_byte = (byte)_j1939_periodic_timer_state;
+  if ((serial_output_driver_last_reply_time != 0) &&
+     (0x271 < (int)(dVar1 - serial_output_driver_last_reply_time))) {
+    serial_output_driver_status_byte = (byte)serial_output_driver_reply;
   }
-  j1939_periodic_timer_snapshot = dVar1;
+  serial_output_driver_last_reply_time = dVar1;
   return;
 }
 
 
 
 //
-// Function: cm848_initSpiMode3DeviceJob @ 0x000374b8
+// Function: cm848_initSerialOutputDriverJob @ 0x000374b8
 //
 
-/* Second QSPI device: registers an SPI mode 3 / 2000 kHz slot and sets up spi_mode3_device_read_job
-   (sends 0x1B00); also presets output_lines_152_to_159_state to 0xff | review-function-readability
-   reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium */
+/* Serial output driver (QSPI PCS2 / SPI mode 3 / 8-bit / 2000 kHz): registers its QSPI slot and
+   sets up serial_output_driver_job (transmit = output lines 152-159 byte / receive = status reply);
+   presets output_lines_152_to_159_state to 0xff | review-function-readability reviewed 2026-11-11 -
+   Readability Medium Accuracy Confidence Medium */
 
-void cm848_initSpiMode3DeviceJob(void)
+void cm848_initSerialOutputDriverJob(void)
 
 {
-  spi_mode3_device_read_job.device_slot = cm848_registerQspiDeviceSlot(3,2000,0x352,0x28);
-  spi_mode3_device_read_job.word_count = 1;
-  spi_mode3_device_read_job.transmit_words = (word *)&j1939_periodic_filter_state;
-  spi_mode3_device_read_job.command_bytes = &DAT_0005772e;
-  spi_mode3_device_read_job.receive_words = (word *)&j1939_periodic_timer_state;
-  spi_mode3_device_read_job.completion_callback = cm848_onSpiMode3DeviceRead;
+  serial_output_driver_job.device_slot = cm848_registerQspiDeviceSlot(3,2000,0x352,0x28);
+  serial_output_driver_job.word_count = 1;
+  serial_output_driver_job.transmit_words = (word *)&serial_output_driver_transmit_word;
+  serial_output_driver_job.command_bytes = &DAT_0005772e;
+  serial_output_driver_job.receive_words = &serial_output_driver_reply;
+  serial_output_driver_job.completion_callback = cm848_onSerialOutputDriverReply;
   output_lines_152_to_159_state = 0xff;
   return;
 }
@@ -35223,20 +35222,21 @@ void cm848_initSpiMode3DeviceJob(void)
 
 
 //
-// Function: cm848_queueSpiMode3DeviceRead @ 0x00037580
+// Function: cm848_queueSerialOutputDriverWrite @ 0x00037580
 //
 
-/* Second QSPI device: queues spi_mode3_device_read_job (initialising it on first use) |
-   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
-    */
+/* Serial output driver: queues serial_output_driver_job (sends the output lines 152-159 byte) -
+   called by mpc555_driveOutputLineHigh/Low for lines 152-159 and by
+   cm848_refreshOutputPortsAndReadback | review-function-readability reviewed 2026-11-11 -
+   Readability Medium Accuracy Confidence Medium */
 
-void cm848_queueSpiMode3DeviceRead(void)
+void cm848_queueSerialOutputDriverWrite(void)
 
 {
-  if (spi_mode3_device_read_job.word_count == 0) {
-    cm848_initSpiMode3DeviceJob();
+  if (serial_output_driver_job.word_count == 0) {
+    cm848_initSerialOutputDriverJob();
   }
-  cm848_queueQspiJob(&spi_mode3_device_read_job,1);
+  cm848_queueQspiJob(&serial_output_driver_job,1);
   return;
 }
 
@@ -51833,7 +51833,7 @@ void cm848_processProtectionFaultsAndTiming(void)
   cm848_setEngineProtectionFault(0x1c,0);
   cm848_setEngineProtectionFault(0x1e,0);
   cm848_protectionAlarmHandler();
-  injectorTimingCalculation();
+  cm848_refreshOutputPortsAndReadback();
   return;
 }
 
@@ -52860,7 +52860,7 @@ LAB_00050f6c:
            output_lines_152_to_159_state |
            (byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                        0x3f));
-      cm848_queueSpiMode3DeviceRead();
+      cm848_queueSerialOutputDriverWrite();
     }
     break;
   case 0x79:
@@ -53575,7 +53575,7 @@ LAB_000528e4:
            output_lines_152_to_159_state &
            ~(byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                         0x3f));
-      cm848_queueSpiMode3DeviceRead();
+      cm848_queueSerialOutputDriverWrite();
     }
     break;
   case 0x79:
@@ -53649,10 +53649,18 @@ LAB_00052850:
 
 
 //
-// Function: injectorTimingCalculation @ 0x000529b8
+// Function: cm848_refreshOutputPortsAndReadback @ 0x000529b8
 //
 
-void injectorTimingCalculation(void)
+/* Periodic output refresh: snapshots every output port (j1939_dm1_prev_b0..b10 = previous port
+   states) / reads back MIOS PWM + DASM pin states into j1939_lamp_status_byte_a..c / forces the
+   DASM outputs from injector_control_t.output_ch0 / applies the 80 protection-event outputs / then
+   rewrites SIU_SGPIODT1/2 + the MIOS port + the supervisor output register + the serial output
+   driver (lines 152-159) from their output_lines_*_state shadows. Not injector timing (was
+   injectorTimingCalculation) | review-function-readability reviewed 2026-11-11 - Readability Medium
+   Accuracy Confidence Medium */
+
+void cm848_refreshOutputPortsAndReadback(void)
 
 {
   uint uVar1;
@@ -53961,9 +53969,9 @@ void injectorTimingCalculation(void)
     uVar8 = uVar8 + 1 & 0xffff;
   } while (uVar8 < 0x50);
   if (bVar2) {
-    j1939_dm1_prev_b10 = j1939_dm1_fault_byte_10_prev;
-    j1939_dm1_fault_byte_10_prev = output_lines_152_to_159_state;
-    cm848_queueSpiMode3DeviceRead();
+    j1939_dm1_prev_b10 = serial_output_driver_transmit_byte;
+    serial_output_driver_transmit_byte = output_lines_152_to_159_state;
+    cm848_queueSerialOutputDriverWrite();
   }
   return;
 }
@@ -54062,7 +54070,7 @@ void hpcr_injectorPulseWidthCalc(void)
   j1939_protection_config_byte = bVar3 & 3 | (char)j1939_lamp_status_cache << 2;
   j1939_dm1_parameter_byte = fault_report_parameter_byte;
   j1939_fault_occurrence_prev = j1939_fault_occurrence_count;
-  j1939_periodic_timer_prev = j1939_periodic_timer_output_byte;
+  j1939_periodic_timer_prev = serial_output_driver_status_byte;
   return;
 }
 
@@ -64443,10 +64451,16 @@ void cm848_copyROMCalibrationToRAM(void)
 
 
 //
-// Function: FUN_00509be8 @ 0x00509be8
+// Function: cm848_updateJ1939BroadcastEnableMask @ 0x00509be8
 //
 
-undefined4 FUN_00509be8(int param_1,int param_2)
+/* Application CLIP diagnostic stack (PGN 61184): service 4 (disable) / 5 (enable) handler body:
+   request byte 1 = item / byte 2 = target (FE/FE = all); sets or clears bits 0x0C / 0x80 / 0x01 /
+   0x02 / 0x8C in 0x40adee which gates the J1939 periodic broadcast queues |
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
+    */
+
+undefined4 cm848_updateJ1939BroadcastEnableMask(int param_1,int param_2)
 
 {
   char cVar1;
@@ -65236,10 +65250,16 @@ void governor_resetModeStateOnCondition(void)
 
 
 //
-// Function: FUN_0050af58 @ 0x0050af58
+// Function: j1939_writeDiagMemory @ 0x0050af58
 //
 
-char FUN_0050af58(int param_1,byte *param_2,uint param_3)
+/* Application CLIP diagnostic stack (PGN 61184): memory write worker (twin of boot
+   cm848_writeDiagMemory): length cap 1764 / optional 10-byte auth trailer / region by
+   uds_validateMemoryRegion - EEPROM (type 5) via cm848_queueEepromByteWrites or the RAM mirror /
+   RAM (type 3) with the 0x3fd480 window protected | review-function-readability reviewed 2026-11-11
+   - Readability Medium Accuracy Confidence High */
+
+char j1939_writeDiagMemory(int param_1,byte *param_2,uint param_3)
 
 {
   bool bVar1;
@@ -65253,7 +65273,7 @@ char FUN_0050af58(int param_1,byte *param_2,uint param_3)
     return '\x02';
   }
   param_3 = param_3 & 0xffff;
-  uVar3 = FUN_0050b610(**(undefined1 **)(param_1 + 6));
+  uVar3 = j1939_getDiagServiceDataOffset(**(undefined1 **)(param_1 + 6));
   uVar2 = (uVar3 & 0xff) + param_3 & 0xffff;
   uVar5 = (uint)*(ushort *)(param_1 + 4);
   if ((uVar5 == 8) || (uVar5 == uVar2)) {
@@ -65317,10 +65337,17 @@ char FUN_0050af58(int param_1,byte *param_2,uint param_3)
 
 
 //
-// Function: FUN_0050b1b8 @ 0x0050b1b8
+// Function: j1939_writeDiagMemoryByParameterId @ 0x0050b1b8
 //
 
-undefined1 FUN_0050b1b8(undefined4 param_1,undefined4 param_2,int param_3,undefined4 param_4)
+/* Application CLIP diagnostic stack (PGN 61184): services 0x44 / 0x45 / 0x47 / 0x49 (via undefined
+   stubs): resolves the parameter ID (0x539768; 8 = unknown) then j1939_writeDiagMemory at base +
+   offset; twin of boot cm848_memoryWriteByParameterId | review-function-readability reviewed
+   2026-11-11 - Readability Medium Accuracy Confidence High */
+
+undefined1
+j1939_writeDiagMemoryByParameterId
+          (undefined4 param_1,undefined4 param_2,int param_3,undefined4 param_4)
 
 {
   char cVar1;
@@ -65329,7 +65356,7 @@ undefined1 FUN_0050b1b8(undefined4 param_1,undefined4 param_2,int param_3,undefi
   
   cVar1 = uds_conditionEvaluator(param_2,&local_10);
   if (cVar1 == '\0') {
-    uVar2 = FUN_0050af58(param_1,local_10 + param_3,param_4);
+    uVar2 = j1939_writeDiagMemory(param_1,local_10 + param_3,param_4);
   }
   else {
     uVar2 = 8;
@@ -65425,10 +65452,15 @@ uint j1939_buildLampStatusByte(void)
 
 
 //
-// Function: FUN_0050b610 @ 0x0050b610
+// Function: j1939_getDiagServiceDataOffset @ 0x0050b610
 //
 
-undefined1 FUN_0050b610(int param_1)
+/* Application CLIP diagnostic stack (PGN 61184): request header length before the data: 0 for
+   service below 0x41 else the byte at 0x53a2e1 + service (twin of boot cm848_getServiceDataOffset)
+   | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+    */
+
+undefined1 j1939_getDiagServiceDataOffset(int param_1)
 
 {
   undefined1 uVar1;
@@ -65771,10 +65803,16 @@ void j1939_diag_request_41_handler(void)
 
 
 //
-// Function: FUN_0050c42c @ 0x0050c42c
+// Function: j1939_readDiagMemoryAndRespond @ 0x0050c42c
 //
 
-char FUN_0050c42c(byte *param_1,uint param_2,uint param_3)
+/* Application CLIP diagnostic stack (PGN 61184): memory read + response (twin of boot
+   cm848_diagMemoryReadHandler): response service from 0x53a330 (0x43->0x45 or 0x44 / 0x46->0x47 /
+   0x48->0x49 / 0x4A->0x4B / 0x4C->0x4D) on CAN ID 0xEF0000 to the requester; also called directly
+   by the 0x4A / 0x4C stubs | review-function-readability reviewed 2026-11-11 - Readability Medium
+   Accuracy Confidence High */
+
+char j1939_readDiagMemoryAndRespond(byte *param_1,uint param_2,uint param_3)
 
 {
   ushort uVar1;
@@ -65790,7 +65828,7 @@ char FUN_0050c42c(byte *param_1,uint param_2,uint param_3)
   
   cVar5 = **(char **)(param_1 + 6);
   if (param_3 < 0x6e5) {
-    uVar3 = FUN_0050b610(cVar5);
+    uVar3 = j1939_getDiagServiceDataOffset(cVar5);
     uVar1 = *(ushort *)(param_1 + 4);
     if (((uVar1 == 8) || (uVar1 == (uVar3 & 0xff))) || ((ushort)((uVar3 & 0xff) + 10) == uVar1)) {
       uVar2 = param_3 & 0xffff;
@@ -65803,7 +65841,7 @@ char FUN_0050c42c(byte *param_1,uint param_2,uint param_3)
         else {
           uVar7 = (&DAT_0053a330)[(byte)(cVar5 + 0xbd)];
         }
-        cVar5 = FUN_0050b610(uVar7);
+        cVar5 = j1939_getDiagServiceDataOffset(uVar7);
         bVar8 = cVar5 - 1;
         msg = (j1939_tx_msg_t *)j1939_selectResponseBuffer(bVar8 + param_3 + 1 & 0xffff);
         if (msg == (j1939_tx_msg_t *)0x0) {
@@ -65842,10 +65880,16 @@ char FUN_0050c42c(byte *param_1,uint param_2,uint param_3)
 
 
 //
-// Function: FUN_0050c5d0 @ 0x0050c5d0
+// Function: j1939_readDiagMemoryByParameterId @ 0x0050c5d0
 //
 
-undefined1 FUN_0050c5d0(undefined4 param_1,undefined4 param_2,int param_3,undefined4 param_4)
+/* Application CLIP diagnostic stack (PGN 61184): services 0x43 / 0x46 / 0x48 (via undefined stubs):
+   resolves the parameter ID then j1939_readDiagMemoryAndRespond | review-function-readability
+   reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+
+undefined1
+j1939_readDiagMemoryByParameterId
+          (undefined4 param_1,undefined4 param_2,int param_3,undefined4 param_4)
 
 {
   char cVar1;
@@ -65854,7 +65898,7 @@ undefined1 FUN_0050c5d0(undefined4 param_1,undefined4 param_2,int param_3,undefi
   
   cVar1 = uds_conditionEvaluator(param_2,&local_10);
   if (cVar1 == '\0') {
-    uVar2 = FUN_0050c42c(param_1,local_10 + param_3,param_4);
+    uVar2 = j1939_readDiagMemoryAndRespond(param_1,local_10 + param_3,param_4);
   }
   else {
     uVar2 = 8;
@@ -66015,10 +66059,14 @@ void initiateJ1939TransportProtocol(uint *param_1)
 
 
 //
-// Function: FUN_0050cc18 @ 0x0050cc18
+// Function: j1939_transport_handleClearToSend @ 0x0050cc18
 //
 
-void FUN_0050cc18(int param_1)
+/* Application J1939 transport: matches the transmit session's destination + PGN; 0 packets = hold
+   (timer 55) else sets the window | review-function-readability reviewed 2026-11-11 - Readability
+   Medium Accuracy Confidence High */
+
+void j1939_transport_handleClearToSend(int param_1)
 
 {
   byte bVar1;
@@ -66049,10 +66097,14 @@ void FUN_0050cc18(int param_1)
 
 
 //
-// Function: FUN_0050ccbc @ 0x0050ccbc
+// Function: j1939_transport_sendAbort @ 0x0050ccbc
 //
 
-void FUN_0050ccbc(undefined1 param_1,undefined2 param_2)
+/* Application J1939 transport: sends TP.CM abort 0x18EC<destination><source> FF FF FF FF FF 00 PGN
+   | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+    */
+
+void j1939_transport_sendAbort(undefined1 param_1,undefined2 param_2)
 
 {
   undefined1 *puVar1;
@@ -66090,10 +66142,13 @@ void FUN_0050ccbc(undefined1 param_1,undefined2 param_2)
 
 
 //
-// Function: FUN_0050cd54 @ 0x0050cd54
+// Function: j1939_transport_sendEndOfMessageAcknowledge @ 0x0050cd54
 //
 
-void FUN_0050cd54(undefined1 param_1,undefined2 param_2)
+/* Application J1939 transport: sends TP.CM 0x13 (total bytes / packets / FF / PGN) |
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+
+void j1939_transport_sendEndOfMessageAcknowledge(undefined1 param_1,undefined2 param_2)
 
 {
   word wVar1;
@@ -66137,10 +66192,15 @@ void FUN_0050cd54(undefined1 param_1,undefined2 param_2)
 
 
 //
-// Function: FUN_0050cdfc @ 0x0050cdfc
+// Function: j1939_transport_sendClearToSend @ 0x0050cdfc
 //
 
-undefined1 FUN_0050cdfc(undefined1 param_1,undefined1 param_2,undefined1 param_3,undefined2 param_4)
+/* Application J1939 transport: sends TP.CM 0x11 (packets allowed / next packet / FF FF / PGN) |
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+
+undefined1
+j1939_transport_sendClearToSend
+          (undefined1 param_1,undefined1 param_2,undefined1 param_3,undefined2 param_4)
 
 {
   undefined1 local_20 [4];
@@ -66177,10 +66237,14 @@ undefined1 FUN_0050cdfc(undefined1 param_1,undefined1 param_2,undefined1 param_3
 
 
 //
-// Function: FUN_0050ce90 @ 0x0050ce90
+// Function: j1939_transport_handleRequestToSend @ 0x0050ce90
 //
 
-void FUN_0050ce90(dword *param_1)
+/* Application J1939 transport: accepts only PGN 61184 / up to 1700 bytes / window of 5 or fewer
+   (timer 112); otherwise aborts | review-function-readability reviewed 2026-11-11 - Readability
+   Medium Accuracy Confidence High */
+
+void j1939_transport_handleRequestToSend(dword *param_1)
 
 {
   char cVar1;
@@ -66195,7 +66259,7 @@ void FUN_0050ce90(dword *param_1)
   local_c = CONCAT11(*(undefined1 *)(iVar3 + 2),*(undefined1 *)(iVar3 + 1));
   if ((((j1939_multiframe_rx_active == 1) && ((char)j1939_multiframe_rx_rts_can_header != cVar1)) ||
       (*(byte *)(iVar3 + 6) != 0xef)) || (0x6a4 < local_c)) {
-    FUN_0050ccbc(cVar1,local_10);
+    j1939_transport_sendAbort(cVar1,local_10);
   }
   else {
     j1939_multiframe_rx_active = 1;
@@ -66209,9 +66273,9 @@ void FUN_0050ce90(dword *param_1)
     if (5 < j1939_multiframe_rx_total_packets) {
       j1939_multiframe_rx_packets_in_window = 5;
     }
-    cVar2 = FUN_0050cdfc(cVar1,1);
+    cVar2 = j1939_transport_sendClearToSend(cVar1,1);
     if (cVar2 != '\0') {
-      FUN_0050ccbc(cVar1,j1939_multiframe_rx_pgn);
+      j1939_transport_sendAbort(cVar1,j1939_multiframe_rx_pgn);
       j1939_multiframe_rx_active = 0;
     }
   }
@@ -66221,10 +66285,15 @@ void FUN_0050ce90(dword *param_1)
 
 
 //
-// Function: FUN_0050cfa8 @ 0x0050cfa8
+// Function: j1939_transport_handleDataPacket @ 0x0050cfa8
 //
 
-void FUN_0050cfa8(int param_1)
+/* Application J1939 transport: registered for PGN 60160 (TP.DT): checks the sequence / copies 7
+   bytes / restarts the 25-tick timer / sends the next clear-to-send or the end-of-message
+   acknowledge and hands the message to cm848_j1939DiagnosticServiceHandler |
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+
+void j1939_transport_handleDataPacket(int param_1)
 
 {
   char cVar1;
@@ -66269,7 +66338,7 @@ void FUN_0050cfa8(int param_1)
         return;
       }
       if (uVar2 == j1939_multiframe_rx_total_packets) {
-        FUN_0050cd54(cVar1,j1939_multiframe_rx_pgn);
+        j1939_transport_sendEndOfMessageAcknowledge(cVar1,j1939_multiframe_rx_pgn);
         j1939_multiframe_rx_active = 0;
         j1939_multiframe_rx_data_buf_ptr = &DAT_003fbe09;
         cm848_j1939DiagnosticServiceHandler(&j1939_multiframe_rx_rts_can_header);
@@ -66284,10 +66353,11 @@ void FUN_0050cfa8(int param_1)
         j1939_multiframe_rx_packets_in_window = 5;
       }
     }
-    cVar3 = FUN_0050cdfc(cVar1,j1939_multiframe_rx_next_sequence,
-                         j1939_multiframe_rx_packets_in_window,j1939_multiframe_rx_pgn);
+    cVar3 = j1939_transport_sendClearToSend
+                      (cVar1,j1939_multiframe_rx_next_sequence,j1939_multiframe_rx_packets_in_window
+                       ,j1939_multiframe_rx_pgn);
     if (cVar3 != '\0') {
-      FUN_0050ccbc(cVar1,j1939_multiframe_rx_pgn);
+      j1939_transport_sendAbort(cVar1,j1939_multiframe_rx_pgn);
       j1939_multiframe_rx_active = 0;
     }
     return;
@@ -66298,10 +66368,13 @@ void FUN_0050cfa8(int param_1)
 
 
 //
-// Function: FUN_0050d144 @ 0x0050d144
+// Function: j1939_transport_handleEndOfMessageAcknowledge @ 0x0050d144
 //
 
-void FUN_0050d144(int param_1)
+/* Application J1939 transport: closes the matching transmit session with status 9 |
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+
+void j1939_transport_handleEndOfMessageAcknowledge(int param_1)
 
 {
   undefined2 local_8;
@@ -66320,10 +66393,14 @@ void FUN_0050d144(int param_1)
 
 
 //
-// Function: FUN_0050d1ac @ 0x0050d1ac
+// Function: j1939_transport_handleAbort @ 0x0050d1ac
 //
 
-void FUN_0050d1ac(int param_1)
+/* Application J1939 transport: closes the transmit session with status 10 or drops the matching
+   receive session | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy
+   Confidence High */
+
+void j1939_transport_handleAbort(int param_1)
 
 {
   undefined2 local_8;
@@ -66346,10 +66423,14 @@ void FUN_0050d1ac(int param_1)
 
 
 //
-// Function: FUN_0050d250 @ 0x0050d250
+// Function: j1939_transport_dispatchConnectionManagement @ 0x0050d250
 //
 
-void FUN_0050d250(int param_1)
+/* Application J1939 transport: registered for PGN 60416 (TP.CM): 8-byte frames 0x10 request-to-send
+   / 0x11 clear-to-send / 0x13 end-of-message acknowledge / 0xFF abort | review-function-readability
+   reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+
+void j1939_transport_dispatchConnectionManagement(int param_1)
 
 {
   char cVar1;
@@ -66357,16 +66438,16 @@ void FUN_0050d250(int param_1)
   if (*(short *)(param_1 + 4) == 8) {
     cVar1 = **(char **)(param_1 + 6);
     if (cVar1 == '\x10') {
-      FUN_0050ce90();
+      j1939_transport_handleRequestToSend();
     }
     else if (cVar1 == '\x11') {
-      FUN_0050cc18();
+      j1939_transport_handleClearToSend();
     }
     else if (cVar1 == '\x13') {
-      FUN_0050d144();
+      j1939_transport_handleEndOfMessageAcknowledge();
     }
     else if (cVar1 == -1) {
-      FUN_0050d1ac();
+      j1939_transport_handleAbort();
     }
   }
   return;
@@ -66619,8 +66700,8 @@ void j1939_pgn_handler_init_ec00eb00(void)
   PTR_DAT_003fbdac = &DAT_003fbdbc;
   j1939_multiframe_tx_buf_ptr = (dword)&DAT_003fbde7;
   j1939_multiframe_rx_data_buf_ptr = &DAT_003fbe09;
-  j1939_handlerInitializer(0xec00,FUN_0050d250);
-  j1939_handlerInitializer(0xeb00,FUN_0050cfa8);
+  j1939_handlerInitializer(0xec00,j1939_transport_dispatchConnectionManagement);
+  j1939_handlerInitializer(0xeb00,j1939_transport_handleDataPacket);
   return;
 }
 
@@ -69080,7 +69161,7 @@ void protection_j1939_control_logic(void)
           bVar1 = DAT_003fcd8d >> (uVar2 & 0x3f) & 1;
           if ((((DAT_00408718 >> (uVar2 & 0x3f) & 1) != 0) &&
               ((DAT_00408719 >> (uVar2 & 0x3f) & 1) == bVar1)) &&
-             ((j1939_periodic_timer_output_byte >> (uVar2 & 0x3f) & 1 ^
+             ((serial_output_driver_status_byte >> (uVar2 & 0x3f) & 1 ^
               DAT_0040871a >> (uVar2 & 0x3f) & 1) != bVar1)) {
             protection_j1939_trigger_active = 1;
           }
@@ -69106,7 +69187,7 @@ void protection_j1939_control_logic(void)
           protection_j1939_trigger_confirmed = 1;
         }
       }
-      DAT_003fcd8d = j1939_dm1_fault_byte_10_prev;
+      DAT_003fcd8d = serial_output_driver_transmit_byte;
       if (protection_j1939_mode_enable_flag == 0) {
         if (protection_j1939_trigger_confirmed == 0) {
           protection_enable_t_0040c050.mode_bits = protection_enable_t_0040c050.mode_bits & 0xfb;
@@ -74896,10 +74977,15 @@ void initHpcr_HandlerRoutines(void)
 
 
 //
-// Function: FUN_0051ce14 @ 0x0051ce14
+// Function: cm848_sciLookupTable250Or252Address @ 0x0051ce14
 //
 
-undefined * FUN_0051ce14(int param_1,int param_2)
+/* SCI diagnostic link (the fuelDemand* family on QSMCM SCI1): table 250 (computed: cold-start fault
+   timing log + fault RPM log) / table 252 (0x53a4b0); also used by the SCI 0x29 write path |
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
+    */
+
+undefined * cm848_sciLookupTable250Or252Address(int param_1,int param_2)
 
 {
   int iVar1;
@@ -74975,10 +75061,15 @@ LAB_0051cec0:
 
 
 //
-// Function: FUN_0051cf74 @ 0x0051cf74
+// Function: cm848_sciLookupEepromSettingAddress @ 0x0051cf74
 //
 
-byte * FUN_0051cf74(int param_1,uint param_2)
+/* SCI diagnostic link (the fuelDemand* family on QSMCM SCI1): (page 0/1/2 + ID) -> byte pointer
+   inside eeprom_mirror (VIN / CMMNS string / settings; page 2 bit-addressed); also used by the SCI
+   0x27 write path (requires the unlocked security state) | review-function-readability reviewed
+   2026-11-11 - Readability Medium Accuracy Confidence Medium */
+
+byte * cm848_sciLookupEepromSettingAddress(int param_1,uint param_2)
 
 {
   byte *pbVar1;
@@ -75388,23 +75479,33 @@ LAB_0051d5a4:
 
 
 //
-// Function: FUN_0051d5bc @ 0x0051d5bc
+// Function: cm848_sciLookupEepromSettingAddressForRead @ 0x0051d5bc
 //
 
-void FUN_0051d5bc(void)
+/* SCI diagnostic link (the fuelDemand* family on QSMCM SCI1): pass-through to
+   cm848_sciLookupEepromSettingAddress for SCI command 0x28 (read setting) |
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
+    */
+
+void cm848_sciLookupEepromSettingAddressForRead(void)
 
 {
-  FUN_0051cf74();
+  cm848_sciLookupEepromSettingAddress();
   return;
 }
 
 
 
 //
-// Function: FUN_0051d5dc @ 0x0051d5dc
+// Function: cm848_sciBuildStatusFlagsByte @ 0x0051d5dc
 //
 
-uint FUN_0051d5dc(void)
+/* SCI diagnostic link (the fuelDemand* family on QSMCM SCI1): packs 0x40edfc / 0x40ee00 / 0x40ee4a
+   / 0x40eebc into bits 0x80 / 0x40 / 0x20 / 0x10 of 0x3fcf17 (table 253 entry 152 and the SCI 0x14
+   response); bit meanings unknown | review-function-readability reviewed 2026-11-11 - Readability
+   Medium Accuracy Confidence Low */
+
+uint cm848_sciBuildStatusFlagsByte(void)
 
 {
   uint uVar1;
@@ -75428,17 +75529,22 @@ uint FUN_0051d5dc(void)
 
 
 //
-// Function: FUN_0051d638 @ 0x0051d638
+// Function: cm848_sciHighSpeedLookupTableAddress @ 0x0051d638
 //
 
-undefined * FUN_0051d638(int param_1,int param_2)
+/* SCI diagnostic link (the fuelDemand* family on QSMCM SCI1): table + offset -> address (245 via
+   0x53a380 / 253 via 0x53a5ec after refreshing the status byte / 250 and 252 via
+   cm848_sciLookupTable250Or252Address; 0x3fcf16 = unsupported) | review-function-readability
+   reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+
+undefined * cm848_sciHighSpeedLookupTableAddress(int param_1,int param_2)
 
 {
   undefined *puVar1;
   
   if (param_2 != 0) {
     if ((param_1 == 0xfa) || (param_1 == 0xfc)) {
-      puVar1 = (undefined *)FUN_0051ce14(param_1);
+      puVar1 = (undefined *)cm848_sciLookupTable250Or252Address(param_1);
       return puVar1;
     }
     if (param_1 == 0xf5) {
@@ -75450,7 +75556,7 @@ undefined * FUN_0051d638(int param_1,int param_2)
     else if (((param_1 == 0xfd) && ((param_2 + 0xffU & 0xff) < 0xed)) &&
             (puVar1 = *(undefined **)(&DAT_0053a5ec + ((param_2 + 0xffU) * 4 & 0x3fc)),
             puVar1 != &DAT_003fcf16)) {
-      DAT_003fcf17 = FUN_0051d5dc();
+      DAT_003fcf17 = cm848_sciBuildStatusFlagsByte();
       return puVar1;
     }
   }
@@ -75730,10 +75836,14 @@ void cm848_fuelDemandCommand18Handler(void)
 
 
 //
-// Function: FUN_0051dd6c @ 0x0051dd6c
+// Function: cm848_sciHighSpeedHandleTableSelect @ 0x0051dd6c
 //
 
-undefined4 FUN_0051dd6c(void)
+/* SCI diagnostic link (the fuelDemand* family on QSMCM SCI1): received 0xF5 / 0xF8 / 0xF9 /
+   0xFA-0xFD selects a table callback; 0xFE leaves high-speed mode | review-function-readability
+   reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+
+undefined4 cm848_sciHighSpeedHandleTableSelect(void)
 
 {
   cm848_cancelFuelDemandCountdown();
@@ -75779,10 +75889,14 @@ LAB_0051ddf4:
 
 
 //
-// Function: FUN_0051dfac @ 0x0051dfac
+// Function: cm848_sciHighSpeedClearWordLatch @ 0x0051dfac
 //
 
-void FUN_0051dfac(void)
+/* SCI diagnostic link (the fuelDemand* family on QSMCM SCI1): clears the last table / offset /
+   address / cached word latch | review-function-readability reviewed 2026-11-11 - Readability
+   Medium Accuracy Confidence High */
+
+void cm848_sciHighSpeedClearWordLatch(void)
 
 {
   fuel_demand_serial_last_sa = 0;
@@ -75830,10 +75944,14 @@ void FUN_0051dfdc(void)
 
 
 //
-// Function: FUN_0051e048 @ 0x0051e048
+// Function: cm848_sciPackEventHistoryWords @ 0x0051e048
 //
 
-void FUN_0051e048(void)
+/* SCI diagnostic link (the fuelDemand* family on QSMCM SCI1): packs 8 protection event history
+   bytes into words 0x3fcf28-0x3fcf2e (table 251 entries 93-96) | review-function-readability
+   reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium */
+
+void cm848_sciPackEventHistoryWords(void)
 
 {
   DAT_003fcf28 = protection_event_count_history << 8 | DAT_003fedd0 & 0xff;
@@ -75846,10 +75964,15 @@ void FUN_0051e048(void)
 
 
 //
-// Function: FUN_0051e0c4 @ 0x0051e0c4
+// Function: cm848_sciHighSpeedReadTableByte @ 0x0051e0c4
 //
 
-void FUN_0051e0c4(uint param_1,uint param_2)
+/* SCI diagnostic link (the fuelDemand* family on QSMCM SCI1): high-speed mode read of table 245 /
+   250 / 251 / 252 / 253 at the received offset (table 251 = word pointer table 0x53aa12 - entry 0
+   is engine RPM 0x40b7ba); latches 16-bit words so both halves come from one sample |
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+
+void cm848_sciHighSpeedReadTableByte(uint param_1,uint param_2)
 
 {
   char cVar1;
@@ -75859,15 +75982,15 @@ void FUN_0051e0c4(uint param_1,uint param_2)
   uint uVar5;
   byte bVar6;
   
-  cVar1 = FUN_0051dd6c();
+  cVar1 = cm848_sciHighSpeedHandleTableSelect();
   if (cVar1 != '\0') {
-    FUN_0051dfac();
+    cm848_sciHighSpeedClearWordLatch();
     return;
   }
   FUN_0051dfdc();
-  FUN_0051e048();
+  cm848_sciPackEventHistoryWords();
   if (param_1 != 0xfb) {
-    pwVar4 = (word *)FUN_0051d638(param_1,param_2);
+    pwVar4 = (word *)cm848_sciHighSpeedLookupTableAddress(param_1,param_2);
     goto LAB_0051e2bc;
   }
   if ((param_2 & 0xff) != 0) {
@@ -75922,7 +76045,7 @@ LAB_0051e248:
   pwVar4 = (word *)0x0;
 LAB_0051e2bc:
   if (pwVar4 == (word *)0x0) {
-    FUN_0051dfac();
+    cm848_sciHighSpeedClearWordLatch();
     fuelDemandShutdown();
   }
   else {
@@ -75934,7 +76057,7 @@ LAB_0051e2bc:
       else {
         bVar6 = *(byte *)pwVar4;
       }
-      FUN_0051dfac();
+      cm848_sciHighSpeedClearWordLatch();
     }
     else {
       fuel_demand_serial_last_sa = (byte)param_1;
@@ -76108,10 +76231,16 @@ void engine_coldStart_protectionSequence_update(void)
 
 
 //
-// Function: FUN_0051e894 @ 0x0051e894
+// Function: cm848_sciStartTimedOutputTest @ 0x0051e894
 //
 
-void FUN_0051e894(short *param_1,undefined4 param_2,short param_3)
+/* SCI diagnostic link (the fuelDemand* family on QSMCM SCI1): SCI 0x13 output test (only while
+   cranking): arms a protection event at priority 5 for a duration so its output line
+   (protection_event_output_line_cal) is driven; code 0 stops all tests |
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
+    */
+
+void cm848_sciStartTimedOutputTest(short *param_1,undefined4 param_2,short param_3)
 
 {
   if (*param_1 == 0) {
@@ -76789,10 +76918,14 @@ undefined4 cm848_lookupFaultSpnIndex(undefined2 *param_1,uint param_2)
 
 
 //
-// Function: FUN_005224b0 @ 0x005224b0
+// Function: cm848_isFaultGroupStatusBitSet @ 0x005224b0
 //
 
-bool FUN_005224b0(uint param_1)
+/* SCI diagnostic link (the fuelDemand* family on QSMCM SCI1): for SCI 0x34: finds the fault index
+   row in ROM table 0x5b6e6 and returns that bit of the 32-bit word at 0x40aefe |
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Low */
+
+bool cm848_isFaultGroupStatusBitSet(uint param_1)
 
 {
   uint uVar1;
@@ -76815,10 +76948,15 @@ bool FUN_005224b0(uint param_1)
 
 
 //
-// Function: FUN_00522674 @ 0x00522674
+// Function: cm848_sciValidateSecurityKey @ 0x00522674
 //
 
-void FUN_00522674(void)
+/* SCI diagnostic link (the fuelDemand* family on QSMCM SCI1): SCI 0x2C key check: expected = seed
+   XOR the 0x53abfe nibble-table entries for all 4 seed nibbles XOR 0x1911; match (or
+   checksum_validation_step_counter 0xff) sets the key-ok flag | review-function-readability
+   reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+
+void cm848_sciValidateSecurityKey(void)
 
 {
   if ((((fault_timing_counter_snapshot ^
