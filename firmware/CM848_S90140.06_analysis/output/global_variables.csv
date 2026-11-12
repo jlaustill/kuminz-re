@@ -1518,7 +1518,7 @@ address,name,type,comment
 0x003fb4de,fault_trigger_count,word,
 0x003fb4e0,temperature_protection_timer,word,
 0x003fb4e2,cold_start_qualifier_prev_flag,word,
-0x003fb4e4,fault_retry_countdown,byte,
+0x003fb4e4,sci_callback_timeout_countdown,byte,SCI link: per-command callback timeout (17 ticks) - expiry restores the default handler (was fault_retry_countdown)
 0x003fb4e6,torque_limit_cycle_counter,word,
 0x003fb4ec,protection_limit_init_state_a,word,
 0x003fb4ee,protection_limit_init_state_b,word,
@@ -5145,16 +5145,16 @@ address,name,type,comment
 0x0040b5be,cruise_speed_limit_prev,word,prior snapshot of cruise_speed_limit_working (cm848_calculateTorqueCurveValue:39602). Renamed from fuel_pressure_threshold_prev (mislabeled - a speed)
 0x0040b5c2,governor_j1939_bypass_flag,word,
 0x0040b5c4,fuel_temp_trim_slew_limited,word,
-0x0040b5c6,fuel_demand_callback_ptr,pointer,
-0x0040b5ca,fuel_demand_callback_mode,dword,
-0x0040b5cf,fuel_demand_queue_write_index,byte,
-0x0040b5d0,fuel_demand_command_ptr,dword,
-0x0040b5d4,fault_timing_reset_flag,byte,
-0x0040b5da,fault_timing_counter_snapshot,dword,
-0x0040b5de,fuel_demand_state_gate_flag,byte,
-0x0040b5e2,fuel_demand_state_queue,byte,
-0x0040b602,fuel_demand_receive_flag,word,
-0x0040b604,fuel_demand_func_ptr,pointer,
+0x0040b5c6,sci_next_byte_handler,pointer,SCI link: handler for the next received byte (command dispatcher or a per-command callback) (was fuel_demand_callback_ptr)
+0x0040b5ca,sci_transfer_direction,dword,SCI link: 0 = receiving / 1 = transmitting (was fuel_demand_callback_mode)
+0x0040b5cf,sci_transmit_byte_count,byte,SCI link: bytes of sci_buffer to transmit (was fuel_demand_queue_write_index)
+0x0040b5d0,sci_buffer_cursor,dword,SCI link: current position in sci_buffer (was fuel_demand_command_ptr)
+0x0040b5d4,sci_security_state,byte,SCI security: 1 = unlocked / 2 = locked out after 3 failed keys (was fault_timing_reset_flag)
+0x0040b5da,sci_security_seed,dword,SCI security: seed sent by command 43 (was fault_timing_counter_snapshot)
+0x0040b5de,sci_security_key_matched_flag,byte,SCI link: set by cm848_sciValidateSecurityKey when the key matches (was fuel_demand_state_gate_flag)
+0x0040b5e2,sci_buffer,byte,SCI link: transmit / receive byte buffer (was fuel_demand_state_queue)
+0x0040b602,sci_receive_flag,word,SCI link: receive flag (was fuel_demand_receive_flag)
+0x0040b604,sci_default_command_handler,pointer,SCI link: default next-byte handler (cm848_dispatchSciCommand) (was fuel_demand_func_ptr)
 0x0040b60e,torque_limit_fuel_working,word,
 0x0040b610,torque_limit_base_input,word,
 0x0040b612,torque_fuel_accumulator,word,
@@ -5799,7 +5799,7 @@ address,name,type,comment
 0x0040b58b,protection_fuel_derate_active_flag,byte,set when fuel temp derate confirmed; gates PID run
 0x0040b9c0,fuel_correction_ramp_state,word,state machine for fuel timing correction ramp
 0x0040b5a2,protection_throttle_setpoint,word,clamped throttle setpoint for protection phase group A
-0x0040b5ce,fuel_demand_uart_mode_flags,byte,fuel-demand UART serial bits bit0 callback bit1 transmit
+0x0040b5ce,sci_mode_flags,byte,SCI link mode: bit 0x02 = high-speed (SCC1R0 0x14) / bit 0x01 cleared by cm848_sciResetReceiveState (was fuel_demand_uart_mode_flags)
 0x0040b9b6,protection_cssc_oilDelta_state,word,cold-start oil/coolant temp differential monitor state
 0x0040aab4,emission_feature_mode_select,byte,med read-only; selects engine-cycle bitmap channel routing
 0x0040b9b8,fuel_correction_above_target_count,byte,consecutive cycles fuel timing actual>=target
@@ -6426,8 +6426,8 @@ address,name,type,comment
 0x0040bbbc,protection_throttle_position_received,word,raw received HPCR throttle position pre-clamp
 0x0040c14c,protection_throttle_hpcr_setpoint,word,adjusted throttle setpoint for HPCR dispatch
 0x0040c1c0,protection_throttle_hpcr_period,dword,1000000/period_cal HPCR rate for J1939 dispatch
-0x0040b5d5,fuel_demand_uart_error_count,byte,UART framing/overrun/parity error count
-0x0040b5d6,fuel_demand_uart_byte_pending,byte,UART byte-received pending flag
+0x0040b5d5,sci_receive_error_count,byte,SCI link: receive error count (was fuel_demand_uart_error_count)
+0x0040b5d6,sci_byte_pending,byte,SCI link: byte pending flag (was fuel_demand_uart_byte_pending)
 0x0040b644,j1939_fuel_demand_at_target_rpm_flag,word,RPM within +/-400 of governor demand 0/1
 0x0040b646,injection_timing_period_delta_raw,word,staging word for injection timing period delta
 0x0040b64c,governor_speed_compensation_steps,word,countdown steps for governor speed compensation
@@ -6477,7 +6477,7 @@ address,name,type,comment
 0x0040b542,fuel_temp_trim_rpm_ratio_raw,word,raw (rpm<<8)/trim_ema ratio for fuel temp trim
 0x0040b544,fuel_temp_trim_rpm_ratio_ema,word,EMA of fuel temp trim rpm ratio
 0x0040b547,fuel_temp_trim_quality_fault_flag,byte,fuel temp trim quality degraded flag
-0x0040b5e0,protection_cooldown_timer,word,protection cooldown countdown (reloads 1000)
+0x0040b5e0,sci_key_retry_delay,word,SCI security: delay after a wrong key (was protection_cooldown_timer)
 0x0040b608,message_buffer_scan_low_watermark,pointer,lowest scan-cursor address reached in message buffer
 0x0040b628,governor_datavalid_load_range,word,load max-min range during governor data validation
 0x0040b9e0,cam_timing_delta_per_cycle,word,per-cycle cam timing delta (advance/retard accum)
@@ -6608,10 +6608,10 @@ address,name,type,comment
 0x003fe9ea,protection_derate_status_shadow_flags,word,shadow of reserved_12 in diag shadow block
 0x003fea4e,protection_derate_status_snapshot,word,snapshot of reserved_12 derate bits (edge detect)
 0x003fea6c,protection_coldStart_fault_enable_bits,word,cold-start protection fault permission bits
-0x003fcf1b,fuel_demand_serial_last_sa,byte,last SA for serial fuel-demand continuity
-0x003fcf1c,fuel_demand_serial_last_seq,byte,last sequence byte for serial continuity
-0x003fcf1e,fuel_demand_serial_last_data_ptr,dword,last data pointer for serial continuity
-0x003fcf22,fuel_demand_serial_cached_word,word,cached 2-byte serial fuel-demand value
+0x003fcf1b,sci_high_speed_last_table,byte,SCI high-speed read: last table number (was fuel_demand_serial_last_sa)
+0x003fcf1c,sci_high_speed_last_offset,byte,SCI high-speed read: last offset (was fuel_demand_serial_last_seq)
+0x003fcf1e,sci_high_speed_last_address,dword,SCI high-speed read: last address (was fuel_demand_serial_last_data_ptr)
+0x003fcf22,sci_high_speed_cached_word,word,SCI high-speed read: latched 16-bit word (both halves from one sample) (was fuel_demand_serial_cached_word)
 0x003fcf3d,cold_start_protection_phase_toggle,byte,phase toggle every 0x8C crank events
 0x003fcf3e,cold_start_protection_crank_period_counter,word,crank-period countdown for phase toggle
 0x003fcf7c,protection_throttle_output_timeout_count,word,countdown clearing throttle output bit0

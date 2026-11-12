@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Wed Nov 11 20:14:09 MST 2026
+// Generated: Thu Nov 12 08:37:51 MST 2026
 
 
 //
@@ -6405,7 +6405,7 @@ void cm848_phase_common_processing(void)
   cm848_sensorChannel7_init();
   cm848_protection_init_configBundle();
   cm848_processFaultAndFuelDemand();
-  fuelDemandCallbackDispatcher();
+  cm848_sciCallbackDispatcher();
   cm848_initProtectionModeDefaults();
   cm848_updateLoadProtectionArming();
   cm848_updateLoadProtectionStatusAndDerate();
@@ -20138,7 +20138,7 @@ undefined4 mpc555_processJ1939RxQueue(undefined4 param_1,int param_2)
       cm848_sendJ1939ResponseFrame(param_1,0);
     }
     else if ((param_2 != 1) && (param_2 == 2)) {
-      j1939InitiateFuelDemand();
+      cm848_sciTransmitSingleByteOne();
     }
     cm848_delayMicroseconds2(0x7a1);
     USIU_BR0.BR0 = 0x500803;
@@ -40263,32 +40263,41 @@ void cm848_initTorqueCurveState(void)
 
 
 //
-// Function: cm848_clearFuelDemandState @ 0x0003e578
+// Function: cm848_sciResetReceiveState @ 0x0003e578
 //
 
-void cm848_clearFuelDemandState(void)
+/* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
+   resets the SCI buffer cursor + direction and clears mode bit 0x01 | review-function-readability
+   reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium */
+
+void cm848_sciResetReceiveState(void)
 
 {
-  fuel_demand_callback_mode = 0;
-  fuel_demand_command_ptr = (dword)&fuel_demand_state_queue;
-  fuel_demand_uart_mode_flags = fuel_demand_uart_mode_flags & 0xfe;
+  sci_transfer_direction = 0;
+  sci_buffer_cursor = (dword)&sci_buffer;
+  sci_mode_flags = sci_mode_flags & 0xfe;
   return;
 }
 
 
 
 //
-// Function: cm848_dispatchFuelDemandCallback @ 0x0003e5ac
+// Function: cm848_dispatchSciInterrupt @ 0x0003e5ac
 //
 
-void cm848_dispatchFuelDemandCallback(void)
+/* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
+   routes the SCI1 interrupt to cm848_sciReceiveHandler (direction 0) or cm848_sciTransmitHandler
+   (direction 1) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy
+   Confidence High */
+
+void cm848_dispatchSciInterrupt(void)
 
 {
-  if (fuel_demand_callback_mode == 0) {
-    fuelDemandSerialReceiveHandler();
+  if (sci_transfer_direction == 0) {
+    cm848_sciReceiveHandler();
   }
-  else if (fuel_demand_callback_mode == 1) {
-    fuelDemandSerialTransmitHandler();
+  else if (sci_transfer_direction == 1) {
+    cm848_sciTransmitHandler();
   }
   return;
 }
@@ -40296,40 +40305,49 @@ void cm848_dispatchFuelDemandCallback(void)
 
 
 //
-// Function: cm848_registerFuelDemandCallback @ 0x0003e5f0
+// Function: cm848_sciCommand35Handler @ 0x0003e5f0
 //
 
-void cm848_registerFuelDemandCallback(void)
+/* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
+   command 0x23 (35) handler from the 0x53a9a0 table: installs cm848_sciCommand35Callback |
+   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
+    */
+
+void cm848_sciCommand35Handler(void)
 
 {
-  fuel_demand_callback_ptr = cm848_processFuelDemandCallback;
-  fuelDemandSerialStartTransmit();
+  sci_next_byte_handler = cm848_sciCommand35Callback;
+  cm848_sciStartTransmit();
   return;
 }
 
 
 
 //
-// Function: cm848_processFuelDemandCallback @ 0x0003e620
+// Function: cm848_sciCommand35Callback @ 0x0003e620
 //
 
-void cm848_processFuelDemandCallback(void)
+/* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
+   next-byte callback for command 0x23 (35) | review-function-readability reviewed 2026-11-12 -
+   Readability Medium Accuracy Confidence Low */
+
+void cm848_sciCommand35Callback(void)
 
 {
   char cVar1;
   
   if (cold_start_phase == CSP_CRANKING) {
-    cVar1 = *(char *)fuel_demand_command_ptr;
+    cVar1 = *(char *)sci_buffer_cursor;
     if (((cVar1 == '\x13') || (cVar1 == '\x14')) || (cVar1 == '\x15')) {
       if (cVar1 == '\x13') {
-        if ((fuel_demand_state_gate_flag == 0) || (fuel_demand_receive_flag == 0)) {
-          (&fuel_demand_state_queue)[fuel_demand_queue_write_index] = 3;
-          fuel_demand_queue_write_index = fuel_demand_queue_write_index + 1;
+        if ((sci_security_key_matched_flag == 0) || (sci_receive_flag == 0)) {
+          (&sci_buffer)[sci_transmit_byte_count] = 3;
+          sci_transmit_byte_count = sci_transmit_byte_count + 1;
         }
         else {
           j1939_tsc1_override_enable = 1;
-          (&fuel_demand_state_queue)[fuel_demand_queue_write_index] = 0xf0;
-          fuel_demand_queue_write_index = fuel_demand_queue_write_index + 1;
+          (&sci_buffer)[sci_transmit_byte_count] = 0xf0;
+          sci_transmit_byte_count = sci_transmit_byte_count + 1;
         }
       }
       else {
@@ -40339,50 +40357,59 @@ void cm848_processFuelDemandCallback(void)
         else if (cVar1 == '\x15') {
           fuel_demand_cmd21_pending_flag = 1;
         }
-        (&fuel_demand_state_queue)[fuel_demand_queue_write_index] = 0xf0;
-        fuel_demand_queue_write_index = fuel_demand_queue_write_index + 1;
+        (&sci_buffer)[sci_transmit_byte_count] = 0xf0;
+        sci_transmit_byte_count = sci_transmit_byte_count + 1;
         cVar1 = cm848_isEepromWriteQueueEmpty();
         if (cVar1 == '\0') {
-          (&fuel_demand_state_queue)[fuel_demand_queue_write_index] = 2;
-          fuel_demand_queue_write_index = fuel_demand_queue_write_index + 1;
+          (&sci_buffer)[sci_transmit_byte_count] = 2;
+          sci_transmit_byte_count = sci_transmit_byte_count + 1;
         }
       }
     }
     else {
-      (&fuel_demand_state_queue)[fuel_demand_queue_write_index] = 1;
-      fuel_demand_queue_write_index = fuel_demand_queue_write_index + 1;
+      (&sci_buffer)[sci_transmit_byte_count] = 1;
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
     }
   }
   else {
-    (&fuel_demand_state_queue)[fuel_demand_queue_write_index] = 0;
-    fuel_demand_queue_write_index = fuel_demand_queue_write_index + 1;
+    (&sci_buffer)[sci_transmit_byte_count] = 0;
+    sci_transmit_byte_count = sci_transmit_byte_count + 1;
   }
-  fuel_demand_callback_ptr = cm848_dispatchFuelDemandSerialCommand;
-  fuelDemandSerialStartTransmit();
+  sci_next_byte_handler = cm848_dispatchSciCommand;
+  cm848_sciStartTransmit();
   return;
 }
 
 
 
 //
-// Function: cm848_registerFuelDemandCallback2 @ 0x0003e7c0
+// Function: cm848_sciCommand53Handler @ 0x0003e7c0
 //
 
-void cm848_registerFuelDemandCallback2(void)
+/* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
+   command 0x35 (53) handler from the 0x53a9a0 table: installs cm848_sciCommand53Callback |
+   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
+    */
+
+void cm848_sciCommand53Handler(void)
 
 {
-  fuel_demand_callback_ptr = cm848_processFuelDemandCallback2;
-  fuelDemandSerialStartTransmit();
+  sci_next_byte_handler = cm848_sciCommand53Callback;
+  cm848_sciStartTransmit();
   return;
 }
 
 
 
 //
-// Function: cm848_processFuelDemandCallback2 @ 0x0003e7f0
+// Function: cm848_sciCommand53Callback @ 0x0003e7f0
 //
 
-void cm848_processFuelDemandCallback2(void)
+/* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
+   next-byte callback for command 0x35 (53) | review-function-readability reviewed 2026-11-12 -
+   Readability Medium Accuracy Confidence Low */
+
+void cm848_sciCommand53Callback(void)
 
 {
   char cVar1;
@@ -40390,49 +40417,54 @@ void cm848_processFuelDemandCallback2(void)
   byte bVar3;
   uint uVar4;
   
-  cVar1 = *(char *)fuel_demand_command_ptr;
+  cVar1 = *(char *)sci_buffer_cursor;
   if (cVar1 == '\x02') {
-    fuel_demand_receive_flag = 1;
+    sci_receive_flag = 1;
   }
-  if (fault_timing_reset_flag == 1) {
-    fault_timing_counter_snapshot = 0;
+  if (sci_security_state == 1) {
+    sci_security_seed = 0;
   }
   else {
-    fault_timing_counter_snapshot = fault_timing_snapshot;
+    sci_security_seed = fault_timing_snapshot;
     if ((fault_timing_snapshot & 0xffff) == 0) {
-      fault_timing_counter_snapshot = fault_timing_snapshot + 1;
+      sci_security_seed = fault_timing_snapshot + 1;
     }
   }
-  dVar2 = fault_timing_counter_snapshot;
-  bVar3 = (byte)(fault_timing_counter_snapshot >> 8);
-  (&fuel_demand_state_queue)[fuel_demand_queue_write_index] = bVar3;
-  uVar4 = fuel_demand_queue_write_index + 1 & 0xff;
-  (&fuel_demand_state_queue)[uVar4] = (byte)dVar2;
+  dVar2 = sci_security_seed;
+  bVar3 = (byte)(sci_security_seed >> 8);
+  (&sci_buffer)[sci_transmit_byte_count] = bVar3;
+  uVar4 = sci_transmit_byte_count + 1 & 0xff;
+  (&sci_buffer)[uVar4] = (byte)dVar2;
   uVar4 = uVar4 + 1;
-  (&fuel_demand_state_queue)[uVar4 & 0xff] = cVar1 + '5' + bVar3 + (byte)dVar2;
-  fuel_demand_queue_write_index = (char)uVar4 + 1;
-  fuel_demand_callback_ptr = cm848_dispatchFuelDemandSerialCommand;
-  fuelDemandSerialStartTransmit();
+  (&sci_buffer)[uVar4 & 0xff] = cVar1 + '5' + bVar3 + (byte)dVar2;
+  sci_transmit_byte_count = (char)uVar4 + 1;
+  sci_next_byte_handler = cm848_dispatchSciCommand;
+  cm848_sciStartTransmit();
   return;
 }
 
 
 
 //
-// Function: cm848_processFuelDemandTimeout @ 0x0003e8d8
+// Function: cm848_sciCallbackTimeout @ 0x0003e8d8
 //
 
-void cm848_processFuelDemandTimeout(void)
+/* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
+   when sci_callback_timeout_countdown expires restores the default command handler and ends the
+   transfer | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy
+   Confidence High */
+
+void cm848_sciCallbackTimeout(void)
 
 {
   bool bVar1;
   byte bVar2;
   
-  if ((fault_retry_countdown != 0) &&
-     (bVar2 = fault_retry_countdown - 1, bVar1 = fault_retry_countdown == 1,
-     fault_retry_countdown = bVar2, bVar1)) {
-    fuel_demand_callback_ptr = fuel_demand_func_ptr;
-    fuelDemandShutdown();
+  if ((sci_callback_timeout_countdown != 0) &&
+     (bVar2 = sci_callback_timeout_countdown - 1, bVar1 = sci_callback_timeout_countdown == 1,
+     sci_callback_timeout_countdown = bVar2, bVar1)) {
+    sci_next_byte_handler = sci_default_command_handler;
+    cm848_sciEndTransfer();
   }
   return;
 }
@@ -40440,53 +40472,69 @@ void cm848_processFuelDemandTimeout(void)
 
 
 //
-// Function: cm848_transitionFuelDemandStateImmediate @ 0x0003e914
+// Function: cm848_sciRestoreDefaultCallback @ 0x0003e914
 //
 
-void cm848_transitionFuelDemandStateImmediate(void)
+/* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
+   sci_next_byte_handler = sci_default_command_handler then ends the transfer |
+   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High */
+
+void cm848_sciRestoreDefaultCallback(void)
 
 {
-  fuel_demand_callback_ptr = fuel_demand_func_ptr;
-  fuelDemandShutdown();
+  sci_next_byte_handler = sci_default_command_handler;
+  cm848_sciEndTransfer();
   return;
 }
 
 
 
 //
-// Function: cm848_startFuelDemandCountdown @ 0x0003e938
+// Function: cm848_sciStartCallbackTimeout @ 0x0003e938
 //
 
-void cm848_startFuelDemandCountdown(void)
+/* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
+   sci_callback_timeout_countdown = 17 | review-function-readability reviewed 2026-11-12 -
+   Readability Medium Accuracy Confidence High */
+
+void cm848_sciStartCallbackTimeout(void)
 
 {
-  fault_retry_countdown = 0x11;
+  sci_callback_timeout_countdown = 0x11;
   return;
 }
 
 
 
 //
-// Function: cm848_cancelFuelDemandCountdown @ 0x0003e948
+// Function: cm848_sciCancelCallbackTimeout @ 0x0003e948
 //
 
-void cm848_cancelFuelDemandCountdown(void)
+/* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
+   sci_callback_timeout_countdown = 0 | review-function-readability reviewed 2026-11-12 -
+   Readability Medium Accuracy Confidence High */
+
+void cm848_sciCancelCallbackTimeout(void)
 
 {
-  fault_retry_countdown = 0;
+  sci_callback_timeout_countdown = 0;
   return;
 }
 
 
 
 //
-// Function: cm848_initFuelDemandDispatchCallback @ 0x0003e958
+// Function: cm848_sciInitDefaultCallback @ 0x0003e958
 //
 
-void cm848_initFuelDemandDispatchCallback(void)
+/* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
+   sci_default_command_handler = cm848_dispatchSciCommand | review-function-readability reviewed
+   2026-11-12 - Readability Medium Accuracy Confidence High */
+
+void cm848_sciInitDefaultCallback(void)
 
 {
-  fuel_demand_func_ptr = cm848_dispatchFuelDemandSerialCommand;
+  sci_default_command_handler = cm848_dispatchSciCommand;
   return;
 }
 
@@ -55236,8 +55284,8 @@ void hpcr_exceptionHandler(void)
   cm848_initFuelDemandFilterState();
   cm848_initialization_group21_state_cont();
   cm848_initGovernor();
-  initFuelDemandCallback();
-  initSerialPort1_FuelDemand();
+  cm848_sciInitCommandCallback();
+  cm848_sciInitPort1();
   cm848_initSensorLookupTable1();
   initSensorValidationTable();
   mpc555_initSensorCalibrationTables();
@@ -55266,7 +55314,7 @@ void hpcr_exceptionHandler(void)
   cm848_initFaultTimingVariables();
   cm848_resetSensorDeviationTracking();
   hpcr_configureTPUTimerInterrupts();
-  cm848_clearFuelDemandState();
+  cm848_sciResetReceiveState();
   cm848_initTemperatureTrimTableSizes();
   mpc555_initThermalProtectionFilters();
   cm848_tpu_channel2_fuel_init();
@@ -55442,8 +55490,8 @@ void cm848_initializationContinuation(void)
   cm848_initFuelDemandFilterState();
   cm848_initialization_group21_state_cont();
   cm848_initGovernor();
-  initFuelDemandCallback();
-  initSerialPort1_FuelDemand();
+  cm848_sciInitCommandCallback();
+  cm848_sciInitPort1();
   cm848_initSensorLookupTable1();
   initSensorValidationTable();
   mpc555_initSensorCalibrationTables();
@@ -55472,7 +55520,7 @@ void cm848_initializationContinuation(void)
   cm848_initFaultTimingVariables();
   cm848_resetSensorDeviationTracking();
   hpcr_configureTPUTimerInterrupts();
-  cm848_clearFuelDemandState();
+  cm848_sciResetReceiveState();
   cm848_initTemperatureTrimTableSizes();
   mpc555_initThermalProtectionFilters();
   cm848_tpu_channel2_fuel_init();
@@ -75566,19 +75614,24 @@ undefined * cm848_sciHighSpeedLookupTableAddress(int param_1,int param_2)
 
 
 //
-// Function: fuelDemandCallbackDispatcher @ 0x0051d70c
+// Function: cm848_sciCallbackDispatcher @ 0x0051d70c
 //
 
-void fuelDemandCallbackDispatcher(void)
+/* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
+   runs the current next-byte handler / callback timeout for the SCI link |
+   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
+    */
+
+void cm848_sciCallbackDispatcher(void)
 
 {
-  if ((fuel_demand_uart_byte_pending == 1) && ((fuel_demand_uart_mode_flags & 1) == 0)) {
-    fuel_demand_uart_byte_pending = 0;
-    cm848_startFuelDemandCountdown();
-    (*(code *)fuel_demand_callback_ptr)();
+  if ((sci_byte_pending == 1) && ((sci_mode_flags & 1) == 0)) {
+    sci_byte_pending = 0;
+    cm848_sciStartCallbackTimeout();
+    (*(code *)sci_next_byte_handler)();
   }
   else {
-    cm848_processFuelDemandTimeout();
+    cm848_sciCallbackTimeout();
   }
   return;
 }
@@ -75586,10 +75639,14 @@ void fuelDemandCallbackDispatcher(void)
 
 
 //
-// Function: cm848_dispatchFuelDemandSerialCommand @ 0x0051d780
+// Function: cm848_dispatchSciCommand @ 0x0051d780
 //
 
-void cm848_dispatchFuelDemandSerialCommand(void)
+/* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
+   looks the received command byte up in the 19-entry table at 0x53a9a0 and runs its handler |
+   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High */
+
+void cm848_dispatchSciCommand(void)
 
 {
   bool bVar1;
@@ -75598,15 +75655,15 @@ void cm848_dispatchFuelDemandSerialCommand(void)
   bVar1 = false;
   uVar2 = 0;
   do {
-    if (*(char *)fuel_demand_command_ptr == (&DAT_0053a9a0)[uVar2 * 6]) {
+    if (*(char *)sci_buffer_cursor == (&DAT_0053a9a0)[uVar2 * 6]) {
       (**(code **)((int)&PTR_FUN_0053a9a2 + uVar2 * 6))();
       bVar1 = true;
     }
     uVar2 = uVar2 + 1 & 0xff;
   } while ((uVar2 < 0x13) && (!bVar1));
   if (!bVar1) {
-    fuelDemandShutdown();
-    cm848_cancelFuelDemandCountdown();
+    cm848_sciEndTransfer();
+    cm848_sciCancelCallbackTimeout();
   }
   return;
 }
@@ -75614,14 +75671,18 @@ void cm848_dispatchFuelDemandSerialCommand(void)
 
 
 //
-// Function: initFuelDemandCallback @ 0x0051d810
+// Function: cm848_sciInitCommandCallback @ 0x0051d810
 //
 
-void initFuelDemandCallback(void)
+/* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
+   installs the default SCI command callback | review-function-readability reviewed 2026-11-12 -
+   Readability Medium Accuracy Confidence Medium */
+
+void cm848_sciInitCommandCallback(void)
 
 {
-  fuel_demand_callback_ptr = cm848_dispatchFuelDemandSerialCommand;
-  cm848_initFuelDemandDispatchCallback();
+  sci_next_byte_handler = cm848_dispatchSciCommand;
+  cm848_sciInitDefaultCallback();
   return;
 }
 
@@ -75637,36 +75698,44 @@ void phaseGroupB_ControlDispatchers(void)
   engine_coldStart_protectionSequence_update();
   cm848_countdown_timer_update();
   governor_speedLimitFloor_decrement();
-  cm848_protection_cooldownTimer_decrement();
+  cm848_sciDecrementKeyRetryDelay();
   return;
 }
 
 
 
 //
-// Function: fuelDemandSerialStartTransmit @ 0x0051d86c
+// Function: cm848_sciStartTransmit @ 0x0051d86c
 //
 
-void fuelDemandSerialStartTransmit(void)
+/* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
+   starts transmitting sci_buffer (sci_transmit_byte_count bytes) | review-function-readability
+   reviewed 2026-11-12 - Readability Medium Accuracy Confidence High */
+
+void cm848_sciStartTransmit(void)
 
 {
   word wVar1;
   
-  fuel_demand_queue_write_index = fuel_demand_queue_write_index - 1;
-  fuel_demand_command_ptr = (dword)&fuel_demand_state_queue;
+  sci_transmit_byte_count = sci_transmit_byte_count - 1;
+  sci_buffer_cursor = (dword)&sci_buffer;
   wVar1 = qsmcm_sccr1.SC1SR;
-  qsmcm_sccr1.SC1DR = (ushort)fuel_demand_state_queue;
-  fuel_demandQueue_serialMode_enable();
+  qsmcm_sccr1.SC1DR = (ushort)sci_buffer;
+  cm848_sciEnableSerialMode();
   return;
 }
 
 
 
 //
-// Function: fuelDemandSerialReceiveHandler @ 0x0051d8c8
+// Function: cm848_sciReceiveHandler @ 0x0051d8c8
 //
 
-void fuelDemandSerialReceiveHandler(void)
+/* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
+   SCI1 receive interrupt: stores the byte / counts errors / runs sci_next_byte_handler |
+   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High */
+
+void cm848_sciReceiveHandler(void)
 
 {
   word wVar1;
@@ -75675,19 +75744,19 @@ void fuelDemandSerialReceiveHandler(void)
   if ((wVar1 & 4) == 0) {
     if (((wVar1 & 8) == 0) && ((wVar1 & 2) == 0)) {
       wVar1 = qsmcm_sccr1.SC1DR;
-      (&fuel_demand_state_queue)[fuel_demand_queue_write_index] = (byte)wVar1;
+      (&sci_buffer)[sci_transmit_byte_count] = (byte)wVar1;
       wVar1 = qsmcm_sccr1.SCC1R1;
       qsmcm_sccr1.SCC1R1 = wVar1 & 0xffdf;
-      fuel_demand_queue_write_index = fuel_demand_queue_write_index + 1;
-      fuel_demand_uart_byte_pending = 1;
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+      sci_byte_pending = 1;
       return;
     }
-    fuel_demand_uart_mode_flags = fuel_demand_uart_mode_flags & 0xfd;
+    sci_mode_flags = sci_mode_flags & 0xfd;
     qsmcm_sccr1.SCC1R0 = 0xa0;
-    fuel_demand_callback_ptr = cm848_dispatchFuelDemandSerialCommand;
+    sci_next_byte_handler = cm848_dispatchSciCommand;
   }
-  else if (fuel_demand_uart_error_count != 0xff) {
-    fuel_demand_uart_error_count = fuel_demand_uart_error_count + 1;
+  else if (sci_receive_error_count != 0xff) {
+    sci_receive_error_count = sci_receive_error_count + 1;
   }
   wVar1 = qsmcm_sccr1.SC1DR;
   return;
@@ -75696,30 +75765,35 @@ void fuelDemandSerialReceiveHandler(void)
 
 
 //
-// Function: fuelDemandSerialTransmitHandler @ 0x0051d9a0
+// Function: cm848_sciTransmitHandler @ 0x0051d9a0
 //
 
-void fuelDemandSerialTransmitHandler(void)
+/* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
+   SCI1 transmit interrupt: sends the next byte; when done sets SCC1R0 to 0x14 (high-speed) or 0xa0
+   (normal) by sci_mode_flags bit 0x02 | review-function-readability reviewed 2026-11-12 -
+   Readability Medium Accuracy Confidence High */
+
+void cm848_sciTransmitHandler(void)
 
 {
   word wVar1;
   
   wVar1 = qsmcm_sccr1.SC1SR;
-  if (fuel_demand_queue_write_index == 0) {
-    if ((fuel_demand_uart_mode_flags & 2) == 0) {
+  if (sci_transmit_byte_count == 0) {
+    if ((sci_mode_flags & 2) == 0) {
       wVar1 = 0xa0;
     }
     else {
       wVar1 = 0x14;
     }
     qsmcm_sccr1.SCC1R0 = wVar1;
-    fuelDemandShutdown();
-    fuelDemandShutdown();
+    cm848_sciEndTransfer();
+    cm848_sciEndTransfer();
   }
   else {
-    fuel_demand_queue_write_index = fuel_demand_queue_write_index - 1;
-    fuel_demand_command_ptr = fuel_demand_command_ptr + 1;
-    qsmcm_sccr1.SC1DR = (ushort)*(byte *)fuel_demand_command_ptr;
+    sci_transmit_byte_count = sci_transmit_byte_count - 1;
+    sci_buffer_cursor = sci_buffer_cursor + 1;
+    qsmcm_sccr1.SC1DR = (ushort)*(byte *)sci_buffer_cursor;
   }
   return;
 }
@@ -75727,31 +75801,39 @@ void fuelDemandSerialTransmitHandler(void)
 
 
 //
-// Function: fuel_demandQueue_reset @ 0x0051da38
+// Function: cm848_sciResetBuffer @ 0x0051da38
 //
 
-void fuel_demandQueue_reset(void)
+/* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
+   resets the SCI buffer state | review-function-readability reviewed 2026-11-12 - Readability
+   Medium Accuracy Confidence Medium */
+
+void cm848_sciResetBuffer(void)
 
 {
-  fuel_demand_queue_write_index = 0;
-  fuel_demand_command_ptr = (dword)&fuel_demand_state_queue;
+  sci_transmit_byte_count = 0;
+  sci_buffer_cursor = (dword)&sci_buffer;
   return;
 }
 
 
 
 //
-// Function: fuelDemandShutdown @ 0x0051da58
+// Function: cm848_sciEndTransfer @ 0x0051da58
 //
 
-void fuelDemandShutdown(void)
+/* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
+   ends the current SCI transfer and returns to receive | review-function-readability reviewed
+   2026-11-12 - Readability Medium Accuracy Confidence Medium */
+
+void cm848_sciEndTransfer(void)
 
 {
   word wVar1;
   
-  fuel_demand_callback_mode = 0;
-  fuel_demandQueue_reset();
-  fuel_demand_uart_byte_pending = 0;
+  sci_transfer_direction = 0;
+  cm848_sciResetBuffer();
+  sci_byte_pending = 0;
   wVar1 = qsmcm_sccr1.SCC1R1;
   qsmcm_sccr1.SCC1R1 = wVar1 & 0xffbf;
   wVar1 = qsmcm_sccr1.SCC1R1;
@@ -75762,15 +75844,19 @@ void fuelDemandShutdown(void)
 
 
 //
-// Function: fuel_demandQueue_serialMode_enable @ 0x0051dab0
+// Function: cm848_sciEnableSerialMode @ 0x0051dab0
 //
 
-void fuel_demandQueue_serialMode_enable(void)
+/* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
+   sets the SCI serial mode bit | review-function-readability reviewed 2026-11-12 - Readability
+   Medium Accuracy Confidence Low */
+
+void cm848_sciEnableSerialMode(void)
 
 {
   word wVar1;
   
-  fuel_demand_callback_mode = 1;
+  sci_transfer_direction = 1;
   wVar1 = qsmcm_sccr1.SCC1R1;
   qsmcm_sccr1.SCC1R1 = wVar1 | 0x40;
   return;
@@ -75779,10 +75865,14 @@ void fuel_demandQueue_serialMode_enable(void)
 
 
 //
-// Function: initSerialPort1_FuelDemand @ 0x0051dad4
+// Function: cm848_sciInitPort1 @ 0x0051dad4
 //
 
-void initSerialPort1_FuelDemand(void)
+/* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
+   configures QSMCM SCI1 (SCC1R0 = 0xa0 normal speed) for the SCI link | review-function-readability
+   reviewed 2026-11-12 - Readability Medium Accuracy Confidence High */
+
+void cm848_sciInitPort1(void)
 
 {
   ushort uVar1;
@@ -75818,18 +75908,21 @@ void configurationValidationCheck(void)
 
 
 //
-// Function: cm848_fuelDemandCommand18Handler @ 0x0051dbd4
+// Function: cm848_sciCommand18EnterHighSpeedMode @ 0x0051dbd4
 //
 
-/* fuelDemand SCI command 0x12 - sets UART mode bit1 + cancels countdown + acks */
+/* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
+   command 0x12 (18): sets sci_mode_flags bit 0x02 (SCI1 switches to the 8x faster SCC1R0 = 0x14)
+   and installs the table-select callback (0xF5-0xFD select tables / 0xFE exits) |
+   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High */
 
-void cm848_fuelDemandCommand18Handler(void)
+void cm848_sciCommand18EnterHighSpeedMode(void)
 
 {
-  fuel_demand_callback_ptr = &LAB_0051dc1c;
-  fuel_demand_uart_mode_flags = fuel_demand_uart_mode_flags | 2;
-  cm848_cancelFuelDemandCountdown();
-  fuelDemandSerialStartTransmit();
+  sci_next_byte_handler = &LAB_0051dc1c;
+  sci_mode_flags = sci_mode_flags | 2;
+  cm848_sciCancelCallbackTimeout();
+  cm848_sciStartTransmit();
   return;
 }
 
@@ -75846,10 +75939,10 @@ void cm848_fuelDemandCommand18Handler(void)
 undefined4 cm848_sciHighSpeedHandleTableSelect(void)
 
 {
-  cm848_cancelFuelDemandCountdown();
-  switch(fuel_demand_state_queue) {
+  cm848_sciCancelCallbackTimeout();
+  switch(sci_buffer) {
   case 0xf5:
-    fuel_demand_callback_ptr = &LAB_0051e384;
+    sci_next_byte_handler = &LAB_0051e384;
     break;
   case 0xf6:
     return 0;
@@ -75861,28 +75954,28 @@ undefined4 cm848_sciHighSpeedHandleTableSelect(void)
   case 0xf9:
     DAT_003fcf1a = 4;
 LAB_0051ddf4:
-    fuel_demand_callback_ptr = &LAB_0051dea8;
+    sci_next_byte_handler = &LAB_0051dea8;
     break;
   case 0xfa:
-    fuel_demand_callback_ptr = &LAB_0051e3b0;
+    sci_next_byte_handler = &LAB_0051e3b0;
     break;
   case 0xfb:
-    fuel_demand_callback_ptr = &LAB_0051e3dc;
+    sci_next_byte_handler = &LAB_0051e3dc;
     break;
   case 0xfc:
-    fuel_demand_callback_ptr = &LAB_0051e408;
+    sci_next_byte_handler = &LAB_0051e408;
     break;
   case 0xfd:
-    fuel_demand_callback_ptr = &LAB_0051e434;
+    sci_next_byte_handler = &LAB_0051e434;
     break;
   case 0xfe:
-    fuel_demand_uart_mode_flags = fuel_demand_uart_mode_flags & 0xfd;
-    fuel_demand_callback_ptr = cm848_dispatchFuelDemandSerialCommand;
+    sci_mode_flags = sci_mode_flags & 0xfd;
+    sci_next_byte_handler = cm848_dispatchSciCommand;
     break;
   default:
     return 0;
   }
-  fuelDemandSerialStartTransmit();
+  cm848_sciStartTransmit();
   return 1;
 }
 
@@ -75899,10 +75992,10 @@ LAB_0051ddf4:
 void cm848_sciHighSpeedClearWordLatch(void)
 
 {
-  fuel_demand_serial_last_sa = 0;
-  fuel_demand_serial_last_seq = 0;
-  fuel_demand_serial_last_data_ptr = 0;
-  fuel_demand_serial_cached_word = 0;
+  sci_high_speed_last_table = 0;
+  sci_high_speed_last_offset = 0;
+  sci_high_speed_last_address = 0;
+  sci_high_speed_cached_word = 0;
   return;
 }
 
@@ -76046,13 +76139,13 @@ LAB_0051e248:
 LAB_0051e2bc:
   if (pwVar4 == (word *)0x0) {
     cm848_sciHighSpeedClearWordLatch();
-    fuelDemandShutdown();
+    cm848_sciEndTransfer();
   }
   else {
     if ((param_2 & 1) == 0) {
-      if (((fuel_demand_serial_last_sa == param_1) && (fuel_demand_serial_last_seq + 1 == param_2))
-         && ((word *)(fuel_demand_serial_last_data_ptr + 1) == pwVar4)) {
-        bVar6 = (byte)fuel_demand_serial_cached_word;
+      if (((sci_high_speed_last_table == param_1) && (sci_high_speed_last_offset + 1 == param_2)) &&
+         ((word *)(sci_high_speed_last_address + 1) == pwVar4)) {
+        bVar6 = (byte)sci_high_speed_cached_word;
       }
       else {
         bVar6 = *(byte *)pwVar4;
@@ -76060,15 +76153,15 @@ LAB_0051e2bc:
       cm848_sciHighSpeedClearWordLatch();
     }
     else {
-      fuel_demand_serial_last_sa = (byte)param_1;
-      fuel_demand_serial_last_seq = (byte)param_2;
-      fuel_demand_serial_cached_word._0_1_ = (byte)(*pwVar4 >> 8);
-      bVar6 = fuel_demand_serial_cached_word._0_1_;
-      fuel_demand_serial_last_data_ptr = (dword)pwVar4;
-      fuel_demand_serial_cached_word = *pwVar4;
+      sci_high_speed_last_table = (byte)param_1;
+      sci_high_speed_last_offset = (byte)param_2;
+      sci_high_speed_cached_word._0_1_ = (byte)(*pwVar4 >> 8);
+      bVar6 = sci_high_speed_cached_word._0_1_;
+      sci_high_speed_last_address = (dword)pwVar4;
+      sci_high_speed_cached_word = *pwVar4;
     }
-    fuel_demand_state_queue = bVar6;
-    fuelDemandSerialStartTransmit();
+    sci_buffer = bVar6;
+    cm848_sciStartTransmit();
   }
   return;
 }
@@ -76076,16 +76169,19 @@ LAB_0051e2bc:
 
 
 //
-// Function: cm848_fuelDemandCommand19Handler @ 0x0051e460
+// Function: cm848_sciCommand19StartOutputTest @ 0x0051e460
 //
 
-/* fuelDemand SCI command 0x13 handler (dispatch table 0x53a9a0) */
+/* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
+   command 0x13 (19): installs the timed output-test callback (cm848_sciStartTimedOutputTest) |
+   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
+    */
 
-void cm848_fuelDemandCommand19Handler(void)
+void cm848_sciCommand19StartOutputTest(void)
 
 {
-  fuel_demand_callback_ptr = &LAB_0051e914;
-  fuelDemandSerialStartTransmit();
+  sci_next_byte_handler = &LAB_0051e914;
+  cm848_sciStartTransmit();
   return;
 }
 
@@ -76259,16 +76355,18 @@ void cm848_sciStartTimedOutputTest(short *param_1,undefined4 param_2,short param
 
 
 //
-// Function: cm848_fuelDemandCommand20Handler @ 0x0051eef0
+// Function: cm848_sciCommand20Handler @ 0x0051eef0
 //
 
-/* fuelDemand SCI command 0x14 handler (dispatch table 0x53a9a0) */
+/* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
+   command 0x14 (20) handler | review-function-readability reviewed 2026-11-12 - Readability Medium
+   Accuracy Confidence Low */
 
-void cm848_fuelDemandCommand20Handler(void)
+void cm848_sciCommand20Handler(void)
 
 {
-  fuel_demand_callback_ptr = &LAB_0051f0b8;
-  fuelDemandSerialStartTransmit();
+  sci_next_byte_handler = &LAB_0051f0b8;
+  cm848_sciStartTransmit();
   return;
 }
 
@@ -76372,13 +76470,15 @@ int cm848_encodeGovernorFuelModeStatus(void)
 
 
 //
-// Function: cm848_fuelDemandClearDiagnostics @ 0x005204f8
+// Function: cm848_sciCommand23ClearDiagnostics @ 0x005204f8
 //
 
-/* fuelDemand SCI command 0x17 - requests DTC clear (diagnostic_clear_request_state=3) during
-   cranking */
+/* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
+   command 0x17 (23): clears diagnostic / fault records (was cm848_fuelDemandClearDiagnostics) |
+   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
+    */
 
-void cm848_fuelDemandClearDiagnostics(void)
+void cm848_sciCommand23ClearDiagnostics(void)
 
 {
   uint uVar1;
@@ -76386,16 +76486,16 @@ void cm848_fuelDemandClearDiagnostics(void)
   uint uVar3;
   
   if (DAT_003fcf5d == '\x01') {
-    uVar1 = (uint)fuel_demand_queue_write_index;
-    uVar3 = (uint)fuel_demand_queue_write_index;
+    uVar1 = (uint)sci_transmit_byte_count;
+    uVar3 = (uint)sci_transmit_byte_count;
     if (uVar3 < uVar1 + 3) {
       uVar2 = uVar1 + 3;
       do {
-        (&fuel_demand_state_queue)[uVar3] = 0xe0;
+        (&sci_buffer)[uVar3] = 0xe0;
         uVar1 = uVar1 + 1;
         uVar3 = uVar3 + 1 & 0xff;
       } while (uVar3 < uVar2);
-      fuel_demand_queue_write_index = (byte)uVar1;
+      sci_transmit_byte_count = (byte)uVar1;
     }
     DAT_003fcf5d = '\0';
   }
@@ -76405,16 +76505,16 @@ void cm848_fuelDemandClearDiagnostics(void)
         diagnostic_clear_request_state = 3;
         DAT_003fcf5c = '\x04';
       }
-      (&fuel_demand_state_queue)[fuel_demand_queue_write_index] = 0xff;
+      (&sci_buffer)[sci_transmit_byte_count] = 0xff;
     }
     else {
-      (&fuel_demand_state_queue)[fuel_demand_queue_write_index] = 0;
+      (&sci_buffer)[sci_transmit_byte_count] = 0;
     }
-    fuel_demand_queue_write_index = fuel_demand_queue_write_index + 1;
+    sci_transmit_byte_count = sci_transmit_byte_count + 1;
   }
-  fuel_demand_callback_ptr = cm848_dispatchFuelDemandSerialCommand;
-  cm848_cancelFuelDemandCountdown();
-  fuelDemandSerialStartTransmit();
+  sci_next_byte_handler = cm848_dispatchSciCommand;
+  cm848_sciCancelCallbackTimeout();
+  cm848_sciStartTransmit();
   return;
 }
 
@@ -76436,16 +76536,18 @@ void cm848_countdown_timer_update(void)
 
 
 //
-// Function: cm848_fuelDemandCommand25Handler @ 0x00520654
+// Function: cm848_sciCommand25Handler @ 0x00520654
 //
 
-/* fuelDemand SCI command 0x19 handler (dispatch table 0x53a9a0) */
+/* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
+   command 0x19 (25) handler | review-function-readability reviewed 2026-11-12 - Readability Medium
+   Accuracy Confidence Low */
 
-void cm848_fuelDemandCommand25Handler(void)
+void cm848_sciCommand25Handler(void)
 
 {
-  fuel_demand_callback_ptr = &LAB_005206c4;
-  fuelDemandSerialStartTransmit();
+  sci_next_byte_handler = &LAB_005206c4;
+  cm848_sciStartTransmit();
   return;
 }
 
@@ -76471,33 +76573,37 @@ void governor_speedLimitFloor_decrement(void)
 
 
 //
-// Function: cm848_fuelDemandCommand26Handler @ 0x0052072c
+// Function: cm848_sciCommand26Handler @ 0x0052072c
 //
 
-/* fuelDemand SCI command 0x1a handler (dispatch table 0x53a9a0) */
+/* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
+   command 0x1a (26) handler | review-function-readability reviewed 2026-11-12 - Readability Medium
+   Accuracy Confidence Low */
 
-void cm848_fuelDemandCommand26Handler(void)
+void cm848_sciCommand26Handler(void)
 
 {
-  fuel_demand_callback_ptr = &LAB_0052075c;
-  fuelDemandSerialStartTransmit();
+  sci_next_byte_handler = &LAB_0052075c;
+  cm848_sciStartTransmit();
   return;
 }
 
 
 
 //
-// Function: cm848_fuelDemandCommand37Handler @ 0x00520ad8
+// Function: cm848_sciCommand37Handler @ 0x00520ad8
 //
 
-/* fuelDemand SCI command 0x25 handler (dispatch table 0x53a9a0) */
+/* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
+   command 0x25 (37) handler | review-function-readability reviewed 2026-11-12 - Readability Medium
+   Accuracy Confidence Low */
 
-void cm848_fuelDemandCommand37Handler(void)
+void cm848_sciCommand37Handler(void)
 
 {
   DAT_003fcf60 = 0;
-  fuel_demand_callback_ptr = &LAB_00520b14;
-  fuelDemandSerialStartTransmit();
+  sci_next_byte_handler = &LAB_00520b14;
+  cm848_sciStartTransmit();
   return;
 }
 
@@ -76582,136 +76688,155 @@ void initProtectionVoltageTimer(void)
 
 
 //
-// Function: cm848_fuelDemandCommand39Handler @ 0x005216f4
+// Function: cm848_sciCommand39WriteEepromSetting @ 0x005216f4
 //
 
-/* fuelDemand SCI command 0x27 handler (dispatch table 0x53a9a0) */
+/* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
+   command 0x27 (39): installs the EEPROM setting write callback (requires the unlocked security
+   state) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence
+   Medium */
 
-void cm848_fuelDemandCommand39Handler(void)
+void cm848_sciCommand39WriteEepromSetting(void)
 
 {
   DAT_003fcf82 = 0;
-  fuel_demand_callback_ptr = &LAB_00521730;
-  fuelDemandSerialStartTransmit();
+  sci_next_byte_handler = &LAB_00521730;
+  cm848_sciStartTransmit();
   return;
 }
 
 
 
 //
-// Function: cm848_fuelDemandCommand40Handler @ 0x00521908
+// Function: cm848_sciCommand40ReadEepromSetting @ 0x00521908
 //
 
-/* fuelDemand SCI command 0x28 handler (dispatch table 0x53a9a0) */
+/* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
+   command 0x28 (40): installs the EEPROM setting read callback
+   (cm848_sciLookupEepromSettingAddressForRead) | review-function-readability reviewed 2026-11-12 -
+   Readability Medium Accuracy Confidence Medium */
 
-void cm848_fuelDemandCommand40Handler(void)
+void cm848_sciCommand40ReadEepromSetting(void)
 
 {
   DAT_003fcf86 = 0;
-  fuel_demand_callback_ptr = &LAB_00521944;
-  fuelDemandSerialStartTransmit();
+  sci_next_byte_handler = &LAB_00521944;
+  cm848_sciStartTransmit();
   return;
 }
 
 
 
 //
-// Function: cm848_fuelDemandCommand41Handler @ 0x00521a60
+// Function: cm848_sciCommand41WriteTableValue @ 0x00521a60
 //
 
-/* fuelDemand SCI command 0x29 handler (dispatch table 0x53a9a0) */
+/* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
+   command 0x29 (41): installs the table 250/252 write callback | review-function-readability
+   reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium */
 
-void cm848_fuelDemandCommand41Handler(void)
+void cm848_sciCommand41WriteTableValue(void)
 
 {
   DAT_003fcf8a = 0;
-  fuel_demand_callback_ptr = &LAB_00521a9c;
-  fuelDemandSerialStartTransmit();
+  sci_next_byte_handler = &LAB_00521a9c;
+  cm848_sciStartTransmit();
   return;
 }
 
 
 
 //
-// Function: cm848_fuelDemandCommand42Handler @ 0x00521b6c
+// Function: cm848_sciCommand42Handler @ 0x00521b6c
 //
 
-/* fuelDemand SCI command 0x2a handler (dispatch table 0x53a9a0) */
+/* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
+   command 0x2a (42) handler | review-function-readability reviewed 2026-11-12 - Readability Medium
+   Accuracy Confidence Low */
 
-void cm848_fuelDemandCommand42Handler(void)
+void cm848_sciCommand42Handler(void)
 
 {
-  fuel_demand_callback_ptr = &LAB_00521b9c;
-  fuelDemandSerialStartTransmit();
+  sci_next_byte_handler = &LAB_00521b9c;
+  cm848_sciStartTransmit();
   return;
 }
 
 
 
 //
-// Function: cm848_fuelDemandReportFaultTiming @ 0x00521d3c
+// Function: cm848_sciCommand43RequestSecuritySeed @ 0x00521d3c
 //
 
-/* fuelDemand SCI command 0x2b - reports fault_timing_snapshot (2 bytes + checksum) */
+/* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
+   command 0x2b (43): returns the security seed (sci_security_seed) (was
+   cm848_fuelDemandReportFaultTiming) | review-function-readability reviewed 2026-11-12 -
+   Readability Medium Accuracy Confidence High */
 
-void cm848_fuelDemandReportFaultTiming(void)
+void cm848_sciCommand43RequestSecuritySeed(void)
 
 {
   dword dVar1;
   byte bVar2;
   uint uVar3;
   
-  if (fault_timing_reset_flag == 1) {
-    fault_timing_counter_snapshot = 0;
+  if (sci_security_state == 1) {
+    sci_security_seed = 0;
   }
   else {
-    fault_timing_counter_snapshot = fault_timing_snapshot;
+    sci_security_seed = fault_timing_snapshot;
     if ((fault_timing_snapshot & 0xffff) == 0) {
-      fault_timing_counter_snapshot = fault_timing_snapshot + 1;
+      sci_security_seed = fault_timing_snapshot + 1;
     }
   }
-  dVar1 = fault_timing_counter_snapshot;
-  bVar2 = (byte)(fault_timing_counter_snapshot >> 8);
-  (&fuel_demand_state_queue)[fuel_demand_queue_write_index] = bVar2;
-  uVar3 = fuel_demand_queue_write_index + 1 & 0xff;
-  (&fuel_demand_state_queue)[uVar3] = (byte)dVar1;
+  dVar1 = sci_security_seed;
+  bVar2 = (byte)(sci_security_seed >> 8);
+  (&sci_buffer)[sci_transmit_byte_count] = bVar2;
+  uVar3 = sci_transmit_byte_count + 1 & 0xff;
+  (&sci_buffer)[uVar3] = (byte)dVar1;
   uVar3 = uVar3 + 1;
-  (&fuel_demand_state_queue)[uVar3 & 0xff] = bVar2 + 0x2b + (byte)dVar1;
-  fuel_demand_queue_write_index = (char)uVar3 + 1;
-  fuel_demand_callback_ptr = cm848_dispatchFuelDemandSerialCommand;
-  cm848_cancelFuelDemandCountdown();
-  fuelDemandSerialStartTransmit();
+  (&sci_buffer)[uVar3 & 0xff] = bVar2 + 0x2b + (byte)dVar1;
+  sci_transmit_byte_count = (char)uVar3 + 1;
+  sci_next_byte_handler = cm848_dispatchSciCommand;
+  cm848_sciCancelCallbackTimeout();
+  cm848_sciStartTransmit();
   return;
 }
 
 
 
 //
-// Function: cm848_fuelDemandCommand44Handler @ 0x00521e04
+// Function: cm848_sciCommand44SendSecurityKey @ 0x00521e04
 //
 
-/* fuelDemand SCI command 0x2c handler (dispatch table 0x53a9a0) */
+/* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
+   command 0x2c (44): installs the key callback that runs cm848_sciValidateSecurityKey |
+   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High */
 
-void cm848_fuelDemandCommand44Handler(void)
+void cm848_sciCommand44SendSecurityKey(void)
 
 {
   DAT_003fcf8e = 0;
-  fuel_demand_callback_ptr = &LAB_00521e68;
-  fuelDemandSerialStartTransmit();
+  sci_next_byte_handler = &LAB_00521e68;
+  cm848_sciStartTransmit();
   return;
 }
 
 
 
 //
-// Function: cm848_protection_cooldownTimer_decrement @ 0x00521e40
+// Function: cm848_sciDecrementKeyRetryDelay @ 0x00521e40
 //
 
-void cm848_protection_cooldownTimer_decrement(void)
+/* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
+   counts the failed-key delay down | review-function-readability reviewed 2026-11-12 - Readability
+   Medium Accuracy Confidence High */
+
+void cm848_sciDecrementKeyRetryDelay(void)
 
 {
-  if (protection_cooldown_timer != 0) {
-    protection_cooldown_timer = protection_cooldown_timer - 1;
+  if (sci_key_retry_delay != 0) {
+    sci_key_retry_delay = sci_key_retry_delay - 1;
   }
   return;
 }
@@ -76719,31 +76844,38 @@ void cm848_protection_cooldownTimer_decrement(void)
 
 
 //
-// Function: cm848_fuelDemandCommand49Handler @ 0x00522044
+// Function: cm848_sciCommand49Handler @ 0x00522044
 //
 
-/* fuelDemand SCI command 0x31 handler (dispatch table 0x53a9a0) */
+/* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
+   command 0x31 (49) handler | review-function-readability reviewed 2026-11-12 - Readability Medium
+   Accuracy Confidence Low */
 
-void cm848_fuelDemandCommand49Handler(void)
+void cm848_sciCommand49Handler(void)
 
 {
-  fuel_demand_callback_ptr = &LAB_00522158;
-  fuelDemandSerialStartTransmit();
+  sci_next_byte_handler = &LAB_00522158;
+  cm848_sciStartTransmit();
   return;
 }
 
 
 
 //
-// Function: j1939InitiateFuelDemand @ 0x00522074
+// Function: cm848_sciTransmitSingleByteOne @ 0x00522074
 //
 
-void j1939InitiateFuelDemand(void)
+/* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
+   loads sci_buffer[0] = 1 and transmits that single byte (called from mpc555_processJ1939RxQueue;
+   purpose unconfirmed) | review-function-readability reviewed 2026-11-12 - Readability Medium
+   Accuracy Confidence Low */
+
+void cm848_sciTransmitSingleByteOne(void)
 
 {
-  fuel_demand_state_queue = 1;
-  fuel_demand_queue_write_index = 1;
-  fuelDemandSerialStartTransmit();
+  sci_buffer = 1;
+  sci_transmit_byte_count = 1;
+  cm848_sciStartTransmit();
   return;
 }
 
@@ -76780,12 +76912,14 @@ undefined1 cm848_memoryBlock_checksum_validate(uint param_1,undefined4 param_2,i
 
 
 //
-// Function: cm848_fuelDemandReportProtectionEventSpns @ 0x00522224
+// Function: cm848_sciCommand50ReportProtectionEventSpns @ 0x00522224
 //
 
-/* fuelDemand SCI command 0x32 - reports protection_event_spn_history (up to 8 SPNs + checksum) */
+/* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
+   command 0x32 (50): reports protection event SPNs | review-function-readability reviewed
+   2026-11-12 - Readability Medium Accuracy Confidence Medium */
 
-void cm848_fuelDemandReportProtectionEventSpns(void)
+void cm848_sciCommand50ReportProtectionEventSpns(void)
 
 {
   ushort uVar1;
@@ -76800,38 +76934,39 @@ void cm848_fuelDemandReportProtectionEventSpns(void)
   do {
     cVar4 = (char)sVar3;
     if (((&protection_event_spn_history)[uVar6] == 0) ||
-       (uVar5 = (uint)fuel_demand_queue_write_index, 0x1f < uVar5 + 5)) break;
+       (uVar5 = (uint)sci_transmit_byte_count, 0x1f < uVar5 + 5)) break;
     uVar1 = (&protection_event_spn_history)[uVar6];
-    (&fuel_demand_state_queue)[uVar5] = (byte)(uVar1 >> 8);
+    (&sci_buffer)[uVar5] = (byte)(uVar1 >> 8);
     wVar2 = (&protection_event_spn_history)[uVar6];
-    (&fuel_demand_state_queue)[uVar5 + 1 & 0xff] = (byte)wVar2;
+    (&sci_buffer)[uVar5 + 1 & 0xff] = (byte)wVar2;
     sVar3 = sVar3 + (uVar1 >> 8) + wVar2;
     cVar4 = (char)sVar3;
-    fuel_demand_queue_write_index = (char)(uVar5 + 1) + 1;
+    sci_transmit_byte_count = (char)(uVar5 + 1) + 1;
     uVar6 = uVar6 + 1 & 0xffff;
   } while (uVar6 < 8);
-  (&fuel_demand_state_queue)[fuel_demand_queue_write_index] = 0xfe;
-  uVar6 = fuel_demand_queue_write_index + 1 & 0xff;
-  (&fuel_demand_state_queue)[uVar6] = 0xfe;
+  (&sci_buffer)[sci_transmit_byte_count] = 0xfe;
+  uVar6 = sci_transmit_byte_count + 1 & 0xff;
+  (&sci_buffer)[uVar6] = 0xfe;
   uVar6 = uVar6 + 1;
-  (&fuel_demand_state_queue)[uVar6 & 0xff] = cVar4 - 4;
-  fuel_demand_queue_write_index = (char)uVar6 + 1;
-  fuel_demand_callback_ptr = cm848_dispatchFuelDemandSerialCommand;
-  cm848_cancelFuelDemandCountdown();
-  fuelDemandSerialStartTransmit();
+  (&sci_buffer)[uVar6 & 0xff] = cVar4 - 4;
+  sci_transmit_byte_count = (char)uVar6 + 1;
+  sci_next_byte_handler = cm848_dispatchSciCommand;
+  cm848_sciCancelCallbackTimeout();
+  cm848_sciStartTransmit();
   return;
 }
 
 
 
 //
-// Function: cm848_fuelDemandReportActiveFaultSpns @ 0x00522314
+// Function: cm848_sciCommand51ReportActiveFaultSpns @ 0x00522314
 //
 
-/* fuelDemand SCI command 0x33 - reports active fault SPNs from fault_status_word_array (+ checksum)
-    */
+/* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
+   command 0x33 (51): reports active fault SPNs | review-function-readability reviewed 2026-11-12 -
+   Readability Medium Accuracy Confidence Medium */
 
-void cm848_fuelDemandReportActiveFaultSpns(void)
+void cm848_sciCommand51ReportActiveFaultSpns(void)
 
 {
   ushort uVar1;
@@ -76849,43 +76984,46 @@ void cm848_fuelDemandReportActiveFaultSpns(void)
       uVar1 = (&DAT_0005b57c)[uVar4];
       uVar5 = (uint)uVar1;
       if (uVar5 != 0) {
-        uVar6 = (uint)fuel_demand_queue_write_index;
+        uVar6 = (uint)sci_transmit_byte_count;
         if (0x1f < uVar6 + 5) break;
-        (&fuel_demand_state_queue)[uVar6] = (byte)(uVar1 >> 8);
-        (&fuel_demand_state_queue)[uVar6 + 1 & 0xff] = (byte)uVar1;
+        (&sci_buffer)[uVar6] = (byte)(uVar1 >> 8);
+        (&sci_buffer)[uVar6 + 1 & 0xff] = (byte)uVar1;
         iVar2 = iVar2 + ((int)uVar5 >> 8) + uVar5;
-        fuel_demand_queue_write_index = (char)(uVar6 + 1) + 1;
+        sci_transmit_byte_count = (char)(uVar6 + 1) + 1;
       }
     }
     cVar3 = (char)iVar2;
     uVar4 = uVar4 + 1 & 0xffff;
   } while (uVar4 < 0xaa);
-  (&fuel_demand_state_queue)[fuel_demand_queue_write_index] = 0xfe;
-  uVar4 = fuel_demand_queue_write_index + 1 & 0xff;
-  (&fuel_demand_state_queue)[uVar4] = 0xfe;
+  (&sci_buffer)[sci_transmit_byte_count] = 0xfe;
+  uVar4 = sci_transmit_byte_count + 1 & 0xff;
+  (&sci_buffer)[uVar4] = 0xfe;
   uVar4 = uVar4 + 1;
-  (&fuel_demand_state_queue)[uVar4 & 0xff] = cVar3 - 4;
-  fuel_demand_queue_write_index = (char)uVar4 + 1;
-  fuel_demand_callback_ptr = cm848_dispatchFuelDemandSerialCommand;
-  cm848_cancelFuelDemandCountdown();
-  fuelDemandSerialStartTransmit();
+  (&sci_buffer)[uVar4 & 0xff] = cVar3 - 4;
+  sci_transmit_byte_count = (char)uVar4 + 1;
+  sci_next_byte_handler = cm848_dispatchSciCommand;
+  cm848_sciCancelCallbackTimeout();
+  cm848_sciStartTransmit();
   return;
 }
 
 
 
 //
-// Function: cm848_fuelDemandCommand52Handler @ 0x0052242c
+// Function: cm848_sciCommand52ReportFaultStatusBySpn @ 0x0052242c
 //
 
-/* fuelDemand SCI command 0x34 handler (dispatch table 0x53a9a0) */
+/* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
+   command 0x34 (52): SPN -> fault status (cm848_isFaultGroupStatusBitSet) |
+   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
+    */
 
-void cm848_fuelDemandCommand52Handler(void)
+void cm848_sciCommand52ReportFaultStatusBySpn(void)
 
 {
   DAT_003fcf92 = 0;
-  fuel_demand_callback_ptr = &LAB_0052252c;
-  fuelDemandSerialStartTransmit();
+  sci_next_byte_handler = &LAB_0052252c;
+  cm848_sciStartTransmit();
   return;
 }
 
@@ -76959,16 +77097,15 @@ bool cm848_isFaultGroupStatusBitSet(uint param_1)
 void cm848_sciValidateSecurityKey(void)
 
 {
-  if ((((fault_timing_counter_snapshot ^
-         *(ushort *)(&DAT_0053abfe + (fault_timing_counter_snapshot >> 0xc & 0xf) * 2) ^
-         (uint)*(ushort *)(&DAT_0053abfe + (fault_timing_counter_snapshot >> 8 & 0xf) * 2) ^
-         (uint)*(ushort *)(&DAT_0053abfe + (fault_timing_counter_snapshot >> 4 & 0xf) * 2) ^
-         (uint)*(ushort *)(&DAT_0053abfe + (fault_timing_counter_snapshot & 0xf) * 2) ^ 0x1911) &
-       0xffff) == (uint)DAT_0040b5d8) || (checksum_validation_step_counter == 0xff)) {
-    fuel_demand_state_gate_flag = 1;
+  if ((((sci_security_seed ^ *(ushort *)(&DAT_0053abfe + (sci_security_seed >> 0xc & 0xf) * 2) ^
+         (uint)*(ushort *)(&DAT_0053abfe + (sci_security_seed >> 8 & 0xf) * 2) ^
+         (uint)*(ushort *)(&DAT_0053abfe + (sci_security_seed >> 4 & 0xf) * 2) ^
+         (uint)*(ushort *)(&DAT_0053abfe + (sci_security_seed & 0xf) * 2) ^ 0x1911) & 0xffff) ==
+       (uint)DAT_0040b5d8) || (checksum_validation_step_counter == 0xff)) {
+    sci_security_key_matched_flag = 1;
   }
   else {
-    fuel_demand_state_gate_flag = 0;
+    sci_security_key_matched_flag = 0;
   }
   return;
 }

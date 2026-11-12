@@ -1336,18 +1336,18 @@ address,name
 0x0003e400,cm848_initTorqueLimitState
 0x0003e42c,cm848_calculateTorqueCurveValue
 0x0003e520,cm848_initTorqueCurveState
-0x0003e578,cm848_clearFuelDemandState
-0x0003e5ac,cm848_dispatchFuelDemandCallback
-0x0003e5f0,cm848_registerFuelDemandCallback
-0x0003e620,cm848_processFuelDemandCallback
-0x0003e7c0,cm848_registerFuelDemandCallback2
-0x0003e7f0,cm848_processFuelDemandCallback2
-0x0003e8d8,cm848_processFuelDemandTimeout
-0x0003e914,cm848_transitionFuelDemandStateImmediate
+0x0003e578,cm848_sciResetReceiveState,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): resets the SCI buffer cursor + direction and clears mode bit 0x01 | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
+0x0003e5ac,cm848_dispatchSciInterrupt,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): routes the SCI1 interrupt to cm848_sciReceiveHandler (direction 0) or cm848_sciTransmitHandler (direction 1) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
+0x0003e5f0,cm848_sciCommand35Handler,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): command 0x23 (35) handler from the 0x53a9a0 table: installs cm848_sciCommand35Callback | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
+0x0003e620,cm848_sciCommand35Callback,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): next-byte callback for command 0x23 (35) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Low
+0x0003e7c0,cm848_sciCommand53Handler,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): command 0x35 (53) handler from the 0x53a9a0 table: installs cm848_sciCommand53Callback | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
+0x0003e7f0,cm848_sciCommand53Callback,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): next-byte callback for command 0x35 (53) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Low
+0x0003e8d8,cm848_sciCallbackTimeout,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): when sci_callback_timeout_countdown expires restores the default command handler and ends the transfer | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
+0x0003e914,cm848_sciRestoreDefaultCallback,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): sci_next_byte_handler = sci_default_command_handler then ends the transfer | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
 # Remaining ROM unnamed functions - 2026-05-22
-0x0003e938,cm848_startFuelDemandCountdown
-0x0003e948,cm848_cancelFuelDemandCountdown
-0x0003e958,cm848_initFuelDemandDispatchCallback
+0x0003e938,cm848_sciStartCallbackTimeout,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): sci_callback_timeout_countdown = 17 | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
+0x0003e948,cm848_sciCancelCallbackTimeout,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): sci_callback_timeout_countdown = 0 | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
+0x0003e958,cm848_sciInitDefaultCallback,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): sci_default_command_handler = cm848_dispatchSciCommand | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
 0x0003e96c,cm848_processSensorInputFiltering
 0x0003e974,cm848_calculateTorqueLimitType1
 0x0003e984,cm848_calculateTorqueLimits
@@ -2173,17 +2173,17 @@ address,name
 0x0051d5bc,cm848_sciLookupEepromSettingAddressForRead,SCI diagnostic link (the fuelDemand* family on QSMCM SCI1): pass-through to cm848_sciLookupEepromSettingAddress for SCI command 0x28 (read setting) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
 0x0051d5dc,cm848_sciBuildStatusFlagsByte,SCI diagnostic link (the fuelDemand* family on QSMCM SCI1): packs 0x40edfc / 0x40ee00 / 0x40ee4a / 0x40eebc into bits 0x80 / 0x40 / 0x20 / 0x10 of 0x3fcf17 (table 253 entry 152 and the SCI 0x14 response); bit meanings unknown | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Low
 0x0051d638,cm848_sciHighSpeedLookupTableAddress,SCI diagnostic link (the fuelDemand* family on QSMCM SCI1): table + offset -> address (245 via 0x53a380 / 253 via 0x53a5ec after refreshing the status byte / 250 and 252 via cm848_sciLookupTable250Or252Address; 0x3fcf16 = unsupported) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
-0x0051d70c,fuelDemandCallbackDispatcher
-0x0051d810,initFuelDemandCallback
+0x0051d70c,cm848_sciCallbackDispatcher,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): runs the current next-byte handler / callback timeout for the SCI link | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
+0x0051d810,cm848_sciInitCommandCallback,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): installs the default SCI command callback | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
 0x0051d840,phaseGroupB_ControlDispatchers
-0x0051d86c,fuelDemandSerialStartTransmit
-0x0051d780,cm848_dispatchFuelDemandSerialCommand
-0x0051d8c8,fuelDemandSerialReceiveHandler
-0x0051d9a0,fuelDemandSerialTransmitHandler
-0x0051da38,fuel_demandQueue_reset
-0x0051da58,fuelDemandShutdown
-0x0051dab0,fuel_demandQueue_serialMode_enable
-0x0051dad4,initSerialPort1_FuelDemand
+0x0051d86c,cm848_sciStartTransmit,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): starts transmitting sci_buffer (sci_transmit_byte_count bytes) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
+0x0051d780,cm848_dispatchSciCommand,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): looks the received command byte up in the 19-entry table at 0x53a9a0 and runs its handler | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
+0x0051d8c8,cm848_sciReceiveHandler,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): SCI1 receive interrupt: stores the byte / counts errors / runs sci_next_byte_handler | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
+0x0051d9a0,cm848_sciTransmitHandler,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): SCI1 transmit interrupt: sends the next byte; when done sets SCC1R0 to 0x14 (high-speed) or 0xa0 (normal) by sci_mode_flags bit 0x02 | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
+0x0051da38,cm848_sciResetBuffer,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): resets the SCI buffer state | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
+0x0051da58,cm848_sciEndTransfer,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): ends the current SCI transfer and returns to receive | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
+0x0051dab0,cm848_sciEnableSerialMode,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): sets the SCI serial mode bit | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Low
+0x0051dad4,cm848_sciInitPort1,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): configures QSMCM SCI1 (SCC1R0 = 0xa0 normal speed) for the SCI link | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
 0x0051db0c,configurationValidationCheck
 0x0051e490,diag_protection_event_clear
 0x0051e514,diag_protection_fault_init_all
@@ -2193,8 +2193,8 @@ address,name
 0x00520684,governor_speedLimitFloor_decrement
 0x00521474,protectionVoltageTimeoutControl
 0x005216cc,initProtectionVoltageTimer
-0x00521e40,cm848_protection_cooldownTimer_decrement
-0x00522074,j1939InitiateFuelDemand
+0x00521e40,cm848_sciDecrementKeyRetryDelay,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): counts the failed-key delay down | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
+0x00522074,cm848_sciTransmitSingleByteOne,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): loads sci_buffer[0] = 1 and transmits that single byte (called from mpc555_processJ1939RxQueue; purpose unconfirmed) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Low
 0x005220b4,cm848_memoryBlock_checksum_validate
 0x00522700,bufferManagementWithBounds
 0x00522788,initMessageBufferPointers
@@ -2402,28 +2402,28 @@ address,name
 0x00539d18,cm848_initProtectionTimers
 0x0053a110,hpcr_protectionTimerMonitor
 # fuelDemand SCI command handlers — dispatch table @ 0x53a9a0 (FUN_0051d780). Name uses DECIMAL command code (convention); hex in comment.
-0x0051dbd4,cm848_fuelDemandCommand18Handler,fuelDemand SCI command 0x12 - sets UART mode bit1 + cancels countdown + acks
+0x0051dbd4,cm848_sciCommand18EnterHighSpeedMode,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): command 0x12 (18): sets sci_mode_flags bit 0x02 (SCI1 switches to the 8x faster SCC1R0 = 0x14) and installs the table-select callback (0xF5-0xFD select tables / 0xFE exits) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
 0x0051dd6c,cm848_sciHighSpeedHandleTableSelect,SCI diagnostic link (the fuelDemand* family on QSMCM SCI1): received 0xF5 / 0xF8 / 0xF9 / 0xFA-0xFD selects a table callback; 0xFE leaves high-speed mode | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
 0x0051dfac,cm848_sciHighSpeedClearWordLatch,SCI diagnostic link (the fuelDemand* family on QSMCM SCI1): clears the last table / offset / address / cached word latch | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
 0x0051e048,cm848_sciPackEventHistoryWords,SCI diagnostic link (the fuelDemand* family on QSMCM SCI1): packs 8 protection event history bytes into words 0x3fcf28-0x3fcf2e (table 251 entries 93-96) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
 0x0051e0c4,cm848_sciHighSpeedReadTableByte,SCI diagnostic link (the fuelDemand* family on QSMCM SCI1): high-speed mode read of table 245 / 250 / 251 / 252 / 253 at the received offset (table 251 = word pointer table 0x53aa12 - entry 0 is engine RPM 0x40b7ba); latches 16-bit words so both halves come from one sample | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
-0x0051e460,cm848_fuelDemandCommand19Handler,fuelDemand SCI command 0x13 handler (dispatch table 0x53a9a0)
+0x0051e460,cm848_sciCommand19StartOutputTest,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): command 0x13 (19): installs the timed output-test callback (cm848_sciStartTimedOutputTest) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
 0x0051e894,cm848_sciStartTimedOutputTest,SCI diagnostic link (the fuelDemand* family on QSMCM SCI1): SCI 0x13 output test (only while cranking): arms a protection event at priority 5 for a duration so its output line (protection_event_output_line_cal) is driven; code 0 stops all tests | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
-0x0051eef0,cm848_fuelDemandCommand20Handler,fuelDemand SCI command 0x14 handler (dispatch table 0x53a9a0)
-0x005204f8,cm848_fuelDemandClearDiagnostics,fuelDemand SCI command 0x17 - requests DTC clear (diagnostic_clear_request_state=3) during cranking
-0x00520654,cm848_fuelDemandCommand25Handler,fuelDemand SCI command 0x19 handler (dispatch table 0x53a9a0)
-0x0052072c,cm848_fuelDemandCommand26Handler,fuelDemand SCI command 0x1a handler (dispatch table 0x53a9a0)
-0x00520ad8,cm848_fuelDemandCommand37Handler,fuelDemand SCI command 0x25 handler (dispatch table 0x53a9a0)
-0x005216f4,cm848_fuelDemandCommand39Handler,fuelDemand SCI command 0x27 handler (dispatch table 0x53a9a0)
-0x00521908,cm848_fuelDemandCommand40Handler,fuelDemand SCI command 0x28 handler (dispatch table 0x53a9a0)
-0x00521a60,cm848_fuelDemandCommand41Handler,fuelDemand SCI command 0x29 handler (dispatch table 0x53a9a0)
-0x00521b6c,cm848_fuelDemandCommand42Handler,fuelDemand SCI command 0x2a handler (dispatch table 0x53a9a0)
-0x00521d3c,cm848_fuelDemandReportFaultTiming,fuelDemand SCI command 0x2b - reports fault_timing_snapshot (2 bytes + checksum)
-0x00521e04,cm848_fuelDemandCommand44Handler,fuelDemand SCI command 0x2c handler (dispatch table 0x53a9a0)
-0x00522044,cm848_fuelDemandCommand49Handler,fuelDemand SCI command 0x31 handler (dispatch table 0x53a9a0)
-0x00522224,cm848_fuelDemandReportProtectionEventSpns,fuelDemand SCI command 0x32 - reports protection_event_spn_history (up to 8 SPNs + checksum)
-0x00522314,cm848_fuelDemandReportActiveFaultSpns,fuelDemand SCI command 0x33 - reports active fault SPNs from fault_status_word_array (+ checksum)
-0x0052242c,cm848_fuelDemandCommand52Handler,fuelDemand SCI command 0x34 handler (dispatch table 0x53a9a0)
+0x0051eef0,cm848_sciCommand20Handler,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): command 0x14 (20) handler | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Low
+0x005204f8,cm848_sciCommand23ClearDiagnostics,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): command 0x17 (23): clears diagnostic / fault records (was cm848_fuelDemandClearDiagnostics) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
+0x00520654,cm848_sciCommand25Handler,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): command 0x19 (25) handler | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Low
+0x0052072c,cm848_sciCommand26Handler,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): command 0x1a (26) handler | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Low
+0x00520ad8,cm848_sciCommand37Handler,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): command 0x25 (37) handler | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Low
+0x005216f4,cm848_sciCommand39WriteEepromSetting,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): command 0x27 (39): installs the EEPROM setting write callback (requires the unlocked security state) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
+0x00521908,cm848_sciCommand40ReadEepromSetting,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): command 0x28 (40): installs the EEPROM setting read callback (cm848_sciLookupEepromSettingAddressForRead) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
+0x00521a60,cm848_sciCommand41WriteTableValue,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): command 0x29 (41): installs the table 250/252 write callback | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
+0x00521b6c,cm848_sciCommand42Handler,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): command 0x2a (42) handler | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Low
+0x00521d3c,cm848_sciCommand43RequestSecuritySeed,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): command 0x2b (43): returns the security seed (sci_security_seed) (was cm848_fuelDemandReportFaultTiming) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
+0x00521e04,cm848_sciCommand44SendSecurityKey,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): command 0x2c (44): installs the key callback that runs cm848_sciValidateSecurityKey | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
+0x00522044,cm848_sciCommand49Handler,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): command 0x31 (49) handler | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Low
+0x00522224,cm848_sciCommand50ReportProtectionEventSpns,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): command 0x32 (50): reports protection event SPNs | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
+0x00522314,cm848_sciCommand51ReportActiveFaultSpns,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): command 0x33 (51): reports active fault SPNs | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
+0x0052242c,cm848_sciCommand52ReportFaultStatusBySpn,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): command 0x34 (52): SPN -> fault status (cm848_isFaultGroupStatusBitSet) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
 0x0051ef20,cm848_encodeGovernorFuelModeStatus,encodes governor_fuel_mode + cruise_control_state + governor_fuel_mode_d into the fuelDemand SCI status byte
 0x00522468,cm848_lookupFaultSpnIndex,searches the SPN table DAT_0005b57c for a matching SPN and returns its table index
 0x005224b0,cm848_isFaultGroupStatusBitSet,SCI diagnostic link (the fuelDemand* family on QSMCM SCI1): for SCI 0x34: finds the fault index row in ROM table 0x5b6e6 and returns that bit of the 32-bit word at 0x40aefe | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Low
