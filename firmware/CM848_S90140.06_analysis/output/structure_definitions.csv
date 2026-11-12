@@ -773,7 +773,7 @@ protection_threshold_set_t,0x0040a502,threshold_base,word,2,Base protection thre
 # Note: fault_entry_table_base (0x003fe678) is at offset +4 (the fault_code byte), not struct base
 fault_entry_t,0x003fe674,timing_snapshot,dword,4,Fuel timing advance value at capture time,,verified
 fault_entry_t,0x003fe674,fault_code,byte,1,Fault code ID (0xAA = empty/available slot),,verified
-fault_entry_t,0x003fe674,temperature_trim,word,2,Temperature compensation trim calculation,,verified
+fault_entry_t,0x003fe674,vehicle_speed,word,2,Vehicle speed when the fault was captured (copy of vehicle_speed - 1/256 mph) (was temperature_trim),,verified
 fault_entry_t,0x003fe674,target_rpm,word,2,Target engine RPM at fault time,,verified
 fault_entry_t,0x003fe674,sensor_scale_1,word,2,Sensor scale factor 1,,verified
 fault_entry_t,0x003fe674,fault_status,word,2,Fault active status value at capture,,verified

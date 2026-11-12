@@ -1516,9 +1516,9 @@ address,name,type,comment
 0x003fb4cc,qspi_active_queue_index,byte,Queue (0 or 1) whose job the QSPI is running
 0x003fb4d0,qspi_job_rejected_count,dword,Jobs rejected by cm848_queueQspiJob (bad job or full queue)
 0x003fb4d4,qspi_last_rejected_job,pointer,Last job rejected by cm848_queueQspiJob
-0x003fb4d8,fuel_temp_trim_working,word,
-0x003fb4da,fuel_temp_trim_scaled_snapshot,dword,
-0x003fb4de,fault_trigger_count,word,
+0x003fb4d8,vehicle_speed_last_accepted,word,Last accepted unfiltered speed - held while samples are rejected (was fuel_temp_trim_working)
+0x003fb4da,vehicle_speed_sensor_reference_period,dword,Scaled period of the last accepted sample - reference for the jump check (was fuel_temp_trim_scaled_snapshot)
+0x003fb4de,vehicle_speed_rejected_sample_count,word,Consecutive rejected speed samples (was fault_trigger_count)
 0x003fb4e0,temperature_protection_timer,word,
 0x003fb4e2,cold_start_qualifier_prev_flag,word,
 0x003fb4e4,sci_callback_timeout_countdown,byte,SCI link: per-command callback timeout (17 ticks) - expiry restores the default handler (was fault_retry_countdown)
@@ -2001,10 +2001,10 @@ address,name,type,comment
 0x003fd8da,protection_confirm_mode_flag,word,
 0x003fd8dc,protection_ema_override_enable_flag,word,
 0x003fd8e8,governor_temp_protection_disable,word,Nonzero disables governor temperature protection - bypasses channel-10 threshold processing in sensorChannelTypeB_configInit and the temp-derate computation in governorGovernorTempCompute (read-only ROM-copy constant; lhz word access verified)
-0x003fd8f0,fuel_temp_trim_shift_cal,word,
-0x003fd8f4,fuel_temp_trim_denominator,word,
-0x003fd8f6,fuel_temp_trim_lower_threshold_a,word,
-0x003fd8fa,fuel_temp_fault_upper_threshold,word,
+0x003fd8f0,vehicle_speed_sensor_pulses_per_mile_cal,dword,EEPROM-backed (EEPROM 0x46e): speed-sensor pulses per mile - 8000 in this calibration (the Chrysler standard) (was fuel_temp_trim_shift_cal)
+0x003fd8f4,vehicle_speed_sensor_period_scale_cal,word,EEPROM-backed (EEPROM 0x472): multiplies both the period and the numerator so it cancels in the speed formula - 9 in this calibration (was fuel_temp_trim_denominator)
+0x003fd8f6,vehicle_speed_sensor_max_scaled_period_cal,dword,EEPROM-backed (EEPROM 0x474): longest accepted scaled period - 632812 = the 2 mph period x 9 (was fuel_temp_trim_lower_threshold_a)
+0x003fd8fa,vehicle_speed_sensor_min_scaled_period_cal,dword,EEPROM-backed (EEPROM 0x478): shortest accepted scaled period - 8437 = the 150 mph period x 9 (was fuel_temp_fault_upper_threshold)
 0x003fd902,j1939_governor_feature_byte,byte,
 0x003fd920,fuel_flow_rpm_mode_flag,word,
 0x003fd924,intercooler_rpm_threshold_cal,word,
@@ -3357,14 +3357,14 @@ address,name,type,comment
 0x00408ab2,cruise_debounce_fuel_threshold_cal,word,
 0x00408ab4,cruise_fuel_temp_trim_threshold_cal,word,
 0x00408ab6,cruise_debounce_timer_b_init_cal,word,
-0x00408b5a,fuel_temp_cap_from_shaft_speed,word,Fixed max fuel-temp value; caps the shaft-speed-derived estimate (min) before the (word) store in cm848_fuelTrimFromOutputShaftSpeed - prevents 16-bit wrap that would falsely disengage thermal protection
-0x00408b5c,fuel_temp_trim_upper_limit_default_cal,word,
-0x00408b5e,fuel_temp_trim_filter_state_cal,byte,
-0x00408b60,fuel_temp_trim_mode_cal,word,
-0x00408b64,fuel_temp_trim_step_cal,word,
-0x00408b66,fuel_temp_trim_scale_cal,word,
-0x00408b68,fuel_temp_fault_trigger_upper_cal,word,
-0x00408b6a,fuel_temp_fault_trigger_count_max_cal,word,
+0x00408b5a,vehicle_speed_maximum_from_output_shaft,word,Cap on the output-shaft-derived speed - 38400 = 150 mph (was fuel_temp_cap_from_shaft_speed)
+0x00408b5c,vehicle_speed_minimum,word,512 = 2 mph: reported while the period is longer than the 2 mph period; the drivetrain ratio needs at least this speed (was fuel_temp_trim_upper_limit_default_cal)
+0x00408b5e,vehicle_speed_filter_coefficient,word,Vehicle speed EMA coefficient (was fuel_temp_trim_filter_state_cal)
+0x00408b60,vehicle_speed_override_mode,word,1 = vehicle speed fixed at vehicle_speed_override_value / 2 = add it (was fuel_temp_trim_mode_cal)
+0x00408b64,vehicle_speed_override_value,word,Speed used by vehicle_speed_override_mode (was fuel_temp_trim_step_cal)
+0x00408b66,vehicle_speed_jump_check_ratio,word,Per mille: a scaled period below reference x this / 1000 counts as an implausible jump (100 = a 10x speed jump) (was fuel_temp_trim_scale_cal - same name as 0x408ba4)
+0x00408b68,vehicle_speed_jump_check_max_scaled_period,word,The jump check applies below this scaled period (8437 = 150 mph) (was fuel_temp_fault_trigger_upper_cal)
+0x00408b6a,vehicle_speed_max_rejected_samples,word,Consecutive samples that may be rejected before a new period is accepted (was fuel_temp_fault_trigger_count_max_cal)
 0x00408b6c,temperature_torque_limit_ramp_cal,word,
 0x00408b6e,temperature_protection_fuel_lower_cal,word,
 0x00408b70,temperature_protection_fuel_upper_cal,word,
@@ -3924,15 +3924,15 @@ address,name,type,comment
 0x0040a26c,fuel_mode_switch_state,word,
 0x0040a26e,governor_load_percent_snapshot,word,
 0x0040a270,governor_request_processing_state,word,
-0x0040a272,fuel_temperature_trim,word,
-0x0040a274,engine_temp_protection_input,word,
+0x0040a272,vehicle_speed,word,Vehicle speed - 1/256 mph per bit - EMA of vehicle_speed_unfiltered; the CCVS1 broadcast sends it x 412/256 as wheel-based vehicle speed (SPN 84 1/256 km/h) clamped at 156 mph; 0 on this truck (no speed sensor wired) (was fuel_temperature_trim)
+0x0040a274,drivetrain_ratio,word,EMA of drivetrain_ratio_raw (engine speed over vehicle or output-shaft speed x 2048) (was engine_temp_protection_input)
 0x0040a276,fuel_trim_speed_override_flag,word,
 0x0040a278,torque_limit_fuel_abs_min,word,
 0x0040a27a,torque_limit_fuel_minimum_snapshot,word,
 0x0040a27c,j1939_build_state_machine,word,
 0x0040a27e,j1939_cruise_speed_setpoint,word,
 0x0040a280,torque_limit_init_flag,dword,
-0x0040a28e,fuel_temp_trim_condition_flag,word,
+0x0040a28e,vehicle_speed_sensor_ok_flag,word,1 while condition_monitor bit 13 (vehicle speed sensor signal-loss fault) is clear (was fuel_temp_trim_condition_flag)
 0x0040a290,governor_load_percent_output,word,
 0x0040a292,j1939_diag_code,dword,
 0x0040a298,protection_temp_scale_factor,word,
@@ -3946,7 +3946,7 @@ address,name,type,comment
 0x0040a2c2,j1939_prop_status_tx_state,word,
 0x0040a2c4,governor_startup_threshold,word,
 0x0040a2c8,fuel_demand_enable_sync_flag,word,
-0x0040a2ca,fuel_temp_trim_snapshot,word,
+0x0040a2ca,vehicle_speed_copy,word,Copy of vehicle_speed taken at the end of cm848_calculateVehicleSpeed - read by the cam timing / governor / cruise code (was fuel_temp_trim_snapshot)
 0x0040a2ce,fuel_demand_computed,word,
 0x0040a2d0,governor_mode_code,word,
 0x0040a2d2,fuel_demand_arbitration_working,word,
@@ -5135,11 +5135,11 @@ address,name,type,comment
 0x0040b56e,fuel_state_index,word,
 0x0040b58e,protection_throttle_error,dword,signed error protection_derate_rpm_limit - protection_ramp_position_b; drives protection-phase throttle controller - proportional via squared polynomial in cm848_throttleGain_loadBased_calc, derivative DAT_0040b596, integral DAT_0040b59a
 0x0040b592,protection_ramp_position_b,word,
-0x0040b5a8,fuel_temp_trim_raw,word,
-0x0040b5aa,fuel_temp_trim_numerator,dword,
-0x0040b5ae,fuel_temp_trim_product_prev,dword,
-0x0040b5b2,fuel_temp_trim_filter_state,dword,
-0x0040b5b6,fuel_temp_trim_init_flag,dword,
+0x0040b5a8,vehicle_speed_unfiltered,word,Vehicle speed before the EMA (1/256 mph) - from the speed-sensor period or (J1939 automatic) the output shaft speed (was fuel_temp_trim_raw)
+0x0040b5aa,vehicle_speed_conversion_numerator,dword,Period-to-speed numerator set by cm848_initVehicleSpeedCalculation (was fuel_temp_trim_numerator)
+0x0040b5ae,vehicle_speed_sensor_scaled_period,dword,vehicle_speed_sensor_period x vehicle_speed_sensor_period_scale_cal (was fuel_temp_trim_product_prev)
+0x0040b5b2,vehicle_speed_filter_state,dword,EMA state word 0: pointer to vehicle_speed_filter_coefficient (was fuel_temp_trim_filter_state)
+0x0040b5b6,vehicle_speed_filter_accumulator,dword,EMA state word 1: 16.16 accumulator (was fuel_temp_trim_init_flag)
 0x0040b5ba,fuel_temp_trim_active_flag,word,
 0x0040b5bc,cruise_speed_limit_working,word,working cruise/governor speed limit = min(cruise_speed_setpoint_default, temp-trim-reduced value); compared with cruise_speed_high_limit/_setpoint_adjusted/_command; feeds governor_override_threshold (77316). Renamed from fuel_pressure_threshold_working (mislabeled - a speed)
 0x0040b5be,cruise_speed_limit_prev,word,prior snapshot of cruise_speed_limit_working (cm848_calculateTorqueCurveValue:39602). Renamed from fuel_pressure_threshold_prev (mislabeled - a speed)
@@ -5212,7 +5212,7 @@ address,name,type,comment
 0x0040b6ec,engine_temp_protection_input_q16,dword,Q16 fixed-point (value << 16) of engine_temp_protection_input (or default DAT_0005c936); published in protectionTimeoutControl / initGovernorJ1939Bypass; write-only in ROM (consumed by diagnostics/CLIP)
 0x0040b6f0,governor_bypass_threshold_low,word,per-cycle published threshold = ((DAT_00408b78 + 25600) * DAT_003fd918) / 25600, clamped to DAT_0005c932; in protectionTimeoutControl, engine_temp_protection_input < this -> governor_j1939_bypass_flag = 1 (full bypass)
 0x0040b6f2,governor_bypass_threshold_high,word,per-cycle published threshold = ((DAT_00408b78 + 25600) * DAT_003fd900) / 25600, clamped to DAT_0005c932; engine_temp_protection_input between low and this -> bypass_flag = 2 (partial), above -> 3 (none)
-0x0040b6f4,engine_temp_protection_input_raw,word,raw (pre-EMA) governor speed ratio; clamped to 0x7ffd; computed per drivetrain mode (target_rpm/shaft_speed in J1939/auto-trans paths, temp-correction ratio in standalone); exponentialMovingAverage(this) -> engine_temp_protection_input (0x40a274) -> fuel_flow_rpm_divisor. Writers: initGovernorJ1939Bypass, protectionTimeoutControl, fuelTempTrimUpperLimitCheck, cm848_fuel_temperature_trim_calculation, cm848_transmission_phase_group_a_calc
+0x0040b6f4,drivetrain_ratio_raw,word,Engine speed over vehicle / output-shaft speed x 2048 before the EMA; 0x7ffd = not computable; computed per drivetrain type (was engine_temp_protection_input_raw)
 0x0040b6f6,fuel_flow_rpm_divisor,word,
 0x0040b6f8,fuel_flow_divisor_invalid_flag,word,0 = smoothed divisor valid/in-window; 1 = out-of-tolerance (protectionTimeoutControl) or = j1939_tsc1_override_state.etc1_disable_control (etcTransmissionModeControl); signals the speed-ratio result should not be trusted this cycle
 0x0040b6fa,fuel_trim_override_hold_counter,word,countdown decremented while (current_rpm > 8000 OR fuel_temperature_trim <= DAT_0005c93c) and != 0; must reach 0 (with settle/release timers) to clear fuel_trim_speed_override_flag in protectionTimeoutControl
@@ -5225,11 +5225,11 @@ address,name,type,comment
 0x0040b708,cruise_speed_override_flag,word,
 0x0040b70a,cruise_speed_offset_saved,word,
 0x0040b70c,system_speed_limit_working,word,
-0x0040b70e,fuel_temp_correction_factor,dword,
+0x0040b70e,vehicle_speed_sensor_period,dword,TPU-B channel 2 measured period (PARAM4:PARAM5) in 3.2 us ticks; 0x5e7fb044 = no pulse since start-up (its value in the RAM dump) (was fuel_temp_correction_factor)
 0x0040b712,protection_timeout_divisor,dword,denominator for the standalone temp-correction ratio (fuel_temp_correction_factor * DAT_003fd930 * 16) / this; only ever set = 0 in this calibration, so that division path is dormant and engine_temp_protection_input_raw takes the 0x7ffd clamp
-0x0040b716,injection_timing_done_flag,word,
-0x0040b71e,injection_timing_prev_value,word,
-0x0040b720,injection_timing_cylinder_index,word,
+0x0040b716,vehicle_speed_pulse_timeout,word,Reloaded on every speed-sensor interrupt and counted down by cm848_calculateVehicleSpeed; 0 = no pulses -> vehicle speed 0 (was injection_timing_done_flag)
+0x0040b71e,vehicle_speed_sensor_pulse_total,word,Running speed-sensor pulse count (the interrupt adds the pulses per measurement); PCI transmit message 11 carries its delta (was injection_timing_prev_value)
+0x0040b720,vehicle_speed_sensor_tpu_channel,word,TPU-B channel of the vehicle speed sensor (2) (was injection_timing_cylinder_index)
 0x0040b722,protection_param_1_channel_state,byte,
 0x0040b72e,protection_param_2_channel_state,byte,
 0x0040b73a,governor_fuel_demand_setpoint,word,
@@ -7009,6 +7009,7 @@ address,name,type,comment
 0x003fbd52,fuel_demand_active_sensor_valid_bits,word,fuel-demand-active condition bit (0x100) for sensor validation
 0x003fd8de,pci_normal_transmit_disabled_initial_cal,byte,EEPROM-shadowed (EEPROM offset 0x45c; 0 in dump) - boot value of pci_normal_transmit_disabled
 0x003fd8df,pci_receive_processing_disabled_initial_cal,byte,EEPROM-shadowed (EEPROM offset 0x45d; 0 in dump) - boot value of pci_receive_processing_disabled
+0x00408b62,vehicle_speed_pulse_timeout_reload,word,Pulse timeout reload value (25)
 0x0040aaaa,j1939_received_accelerator_interlock_switch,byte,J1939 input received over PGN 61441 EBC1 byte 4 bits 1-2 (SPN 972 Accelerator Interlock Switch); 2-bit switch states use J1939 0 off / 1 on / 3 not available
 0x0040aaab,j1939_received_engine_auxiliary_shutdown_switch,byte,J1939 input received over PGN 61441 EBC1 byte 4 bits 5-6 (SPN 970 Engine Auxiliary Shutdown Switch); 2-bit switch states use J1939 0 off / 1 on / 3 not available
 0x0040aaac,j1939_received_brake_switch,byte,J1939 input received over PGN 65265 CCVS1 byte 4 bits 5-6 (SPN 597 Brake Switch); 2-bit switch states use J1939 0 off / 1 on / 3 not available

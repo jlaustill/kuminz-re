@@ -1330,9 +1330,9 @@ address,name
 0x0003dd28,mpc555_initQsmcmQspiModule
 0x0003dd88,cm848_clearEngineConditionCounter
 0x0003dd98,cm848_processEngineConditionFlags
-0x0003dfb8,cm848_calculateFuelDemandValue
+0x0003dfb8,cm848_calculateVehicleSpeed,Vehicle speed from the speed-sensor period: vehicle_speed_unfiltered = vehicle_speed_conversion_numerator / vehicle_speed_sensor_scaled_period in 1/256 mph (= 3.6e7 / period ticks at 8000 pulses per mile); a period shorter than vehicle_speed_sensor_min_scaled_period_cal (150 mph) or a jump past vehicle_speed_jump_check_ratio holds vehicle_speed_last_accepted up to vehicle_speed_max_rejected_samples times; a period longer than vehicle_speed_sensor_max_scaled_period_cal reports vehicle_speed_minimum (2 mph); 0 once vehicle_speed_pulse_timeout expires; EMA into vehicle_speed; vehicle_speed_override_mode 1 = fixed vehicle_speed_override_value / 2 = add it (was cm848_calculateFuelDemandValue) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
 0x0003e210,cm848_setFuelDemandActiveFlag
-0x0003e230,cm848_initFuelDemandFilterState
+0x0003e230,cm848_initVehicleSpeedCalculation,Resets the vehicle speed EMA (coefficient vehicle_speed_filter_coefficient) and sets vehicle_speed_conversion_numerator = period_scale x 921600 x 40000000 / (vehicle_speed_sensor_pulses_per_mile_cal x 128): 3600 s/h x 256 over 3.2 us TPU ticks gives 1/256 mph (was cm848_initFuelDemandFilterState - same name as 0x1350c) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
 0x0003e2bc,cm848_processTorqueLimitConfig
 0x0003e400,cm848_initTorqueLimitState
 0x0003e42c,cm848_calculateTorqueCurveValue
@@ -2260,19 +2260,19 @@ address,name
 0x00525de4,initCruiseConfirmFlags
 0x00525e54,protectionTimeoutControl
 0x005263a8,initGovernorJ1939Bypass
-0x00526414,fuelTempTrimUpperLimitCheck
+0x00526414,cm848_calculateDrivetrainRatioFromGearRatio,J1939 automatic drivetrains above vehicle_speed_minimum while etc1_load_timer_active_flag is 1: drivetrain_ratio_raw = DAT_0040a2aa x 2048 / 1000 (a 0.001/bit gear ratio) capped at 0x7ffd (was fuelTempTrimUpperLimitCheck) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Low
 0x005264d4,etcTransmissionModeControl
-0x00526560,cm848_fuel_temperature_trim_calculation
-0x005266fc,cm848_transmission_phase_group_a_calc
+0x00526560,cm848_calculateDrivetrainRatioFromVehicleSpeed,DRIVETRAIN_AUTO_J1939_ETC1 above vehicle_speed_minimum: drivetrain_ratio_raw = engine speed (engine_rpm_state.target_rpm) over the speed-sensor speed with the axle divisor picked by protection_control_licensed and switch 31; 0x7ffd when it cannot be computed (was cm848_fuel_temperature_trim_calculation) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
+0x005266fc,cm848_calculateTransmissionRatioFromOutputShaft,DRIVETRAIN_AUTO_J1939_FULL above vehicle_speed_minimum: drivetrain_ratio_raw = engine speed x 2048 / average output shaft speed (0x7ffd when the shaft speed is 0) (was cm848_transmission_phase_group_a_calc) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
 0x005267e0,cm848_output_shaft_speed_save,jlaustill reviewed 2026-6-4 - naming makes since, hopefully accurate
-0x005267f4,cm848_fuelTrimFromOutputShaftSpeed,jlaustill reviewed 2026-6-2 - reads better than before, but very low confidence
+0x005267f4,cm848_calculateVehicleSpeedFromOutputShaft,jlaustill reviewed 2026-6-2 - reads better than before, but very low confidence | J1939 automatic drivetrain (DRIVETRAIN_AUTO_J1939_FULL): vehicle_speed_unfiltered = output_shaft_speed_current x 0x3c000 / axle divisor - protection_trim_divisor_cal (the second axle ratio) when protection_control_licensed and switch 31 are set else protection_trim_divisor_working - capped at vehicle_speed_maximum_from_output_shaft (150 mph) (was cm848_fuelTrimFromOutputShaftSpeed) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
 0x005268e8,cm848_computeProtectionTrimDivisors
-0x00526924,diag_fuelTempTrim_overtemp_check
+0x00526924,cm848_detectVehicleSpeedSensorSignalLoss,Sets condition_monitor bit 13 (vehicle speed sensor fault) when the sensor reads 0 while vehicle_speed is still above DAT_0005c96c and protection_channel_load_raw >= DAT_0005c970 (signal lost while moving under load); vehicle_speed_sensor_ok_flag mirrors the bit (was diag_fuelTempTrim_overtemp_check) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
 0x005269c0,diag_boostLoad_overtemp_monitor
 0x00526bc8,diag_boostLoad_overtemp_clear
 0x00526c80,cm848_calibration_group30_execute
 0x00526cb8,cm848_state_variables_reset
-0x00527050,cm848_tpu_channel2_fuel_init
+0x00527050,cm848_initVehicleSpeedSensorChannel,Configures TPU-B channel 2 (function 0xD period measurement) as the vehicle speed sensor input: vehicle_speed_sensor_period = 0x5e7fb044 (no pulse yet) / channel interrupt enabled / vehicle_speed_sensor_tpu_channel = 2 (was cm848_tpu_channel2_fuel_init) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
 0x00527860,cm848_protection_threshold_load
 0x005278ac,cm848_fuel_demand_state_capture
 0x00527958,cm848_timer_state_preservation
@@ -2463,7 +2463,7 @@ address,name
 0x005224b0,cm848_isFaultGroupStatusBitSet,SCI diagnostic link (the fuelDemand* family on QSMCM SCI1): for SCI 0x34: finds the fault index row in ROM table 0x5b6e6 and returns that bit of the 32-bit word at 0x40aefe | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Low
 0x0052252c,cm848_sciCommand52ReportFaultStatusBySpnCallback,SCI diagnostic link next-byte callback: command 52 SPN -> fault status | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Medium
 0x00522674,cm848_sciValidateSecurityKey,SCI diagnostic link (the fuelDemand* family on QSMCM SCI1): SCI 0x2C key check: expected = seed XOR the 0x53abfe nibble-table entries for all 4 seed nibbles XOR 0x1911; match (or checksum_validation_step_counter 0xff) sets the key-ok flag | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
-0x00526ce4,mpc555_tpuBChannel2AndMiosFlag13InterruptHandler,Shared interrupt handler for TPU-B channel 2 and MIOS flag 13: captures the active injection channel's PARAM4/5 timing (re-arming that TPU-B channel on manual-transmission TPU builds) and averages the crank period accumulators into protection_timeout_divisor; was wrongly listed in deleted_functions.csv
+0x00526ce4,cm848_vehicleSpeedSensorInterruptHandler,TPU-B channel 2 (vehicle speed sensor) interrupt - shared with MIOS flag 13: reloads vehicle_speed_pulse_timeout from vehicle_speed_pulse_timeout_reload / copies the measured period (PARAM4:PARAM5) into vehicle_speed_sensor_period / adds the pulse count to vehicle_speed_sensor_pulse_total (the DRIVETRAIN_MANUAL_TPU build re-arms the channel instead); then averages the crank period accumulators into protection_timeout_divisor (was mpc555_tpuBChannel2AndMiosFlag13InterruptHandler - restored from deleted_functions.csv) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
 0x0052731c,engine_injectionAngle_updateCutoutAndTimingDemand,Debounced cylinder-cutout evaluation (fault masks 0x55 / 0xaa per bank -> protection_fault_eval_input; can clear TPU-A channel 4 enable bit) then the per-cylinder timing demand: rate-limits injection_timing_demand_working and computes engine_timing_reference / cam_timing_reference_offset / engine_timing_delta with the cylinder trim | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
 0x00527938,engine_injectionAngle_accumulateCrankPeriod,crank_period_running_total += crank_sync_period_snapshot | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
 0x005283d0,engine_injectionAngle_tpuChannel10CylinderEventHandler,TPU-A channel 10 interrupt: advances cylinder_event_index (wrapping at cylinder_event_count_max -> mpc555_evaluateProtectionSyncFaults) and starts the next injection-angle sequence (state 4 + schedule_crankValid when injection_tpu_timing_mode is 0x12 / else state 1 + schedule_crankInvalid). Was missing from every build | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
