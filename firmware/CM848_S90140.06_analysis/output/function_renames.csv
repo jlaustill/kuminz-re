@@ -2017,6 +2017,7 @@ address,name
 0x0050f178,governor_speedReference_ramp_calc
 0x0050f3b4,fuel_smokeLimit_transient_counter
 0x0050f4c0,phase_group_b_updateBoostBlendingControl
+0x0050f680,mpc555_tpuBChannel1InterruptHandler,TPU-B channel 1 interrupt (entry 1 of tpu_b_channel_interrupt_handler_table): latches the channel's captured period into boost_blend_tpu_ch1_period_working and reloads boost_blend_dwell_countdown; previously had no function at all
 0x0050f6c4,hpcr_configureTPUTimerInterrupts
 0x0050f834,engine_protection_speedTracking_calc
 0x0050fa7c,engine_protection_speedTracking_rampUpdate
@@ -2089,6 +2090,7 @@ address,name
 0x00515bd4,j1939_message_handler_initialize
 0x00515d78,tpu_rpm_measurement_control
 0x005161c0,tpu_rpm_measurement_initialize
+0x00516274,mpc555_tpuBChannel9InterruptHandler,TPU-B channel 9 interrupt (entry 9 of tpu_b_channel_interrupt_handler_table): converts the captured period at 0x304598 into tpu_rpm_reference_period (x1000000 / 0x4c4b4) and reloads tpu_rpm_startup_blank_countdown; was wrongly listed in deleted_functions.csv
 0x005162ec,tpu_rpm_timer_setup
 0x00516428,cm848_calibBlock1_adaptiveTrim_init
 0x00516454,cm848_calibBlock1_trim_eepromWrite
@@ -2399,3 +2401,11 @@ address,name
 0x0052242c,cm848_fuelDemandCommand52Handler,fuelDemand SCI command 0x34 handler (dispatch table 0x53a9a0)
 0x0051ef20,cm848_encodeGovernorFuelModeStatus,encodes governor_fuel_mode + cruise_control_state + governor_fuel_mode_d into the fuelDemand SCI status byte
 0x00522468,cm848_lookupFaultSpnIndex,searches the SPN table DAT_0005b57c for a matching SPN and returns its table index
+0x00526ce4,mpc555_tpuBChannel2AndMiosFlag13InterruptHandler,Shared interrupt handler for TPU-B channel 2 and MIOS flag 13: captures the active injection channel's PARAM4/5 timing (re-arming that TPU-B channel on manual-transmission TPU builds) and averages the crank period accumulators into protection_timeout_divisor; was wrongly listed in deleted_functions.csv
+0x0052731c,engine_injectionAngle_updateCutoutAndTimingDemand,Debounced cylinder-cutout evaluation (fault masks 0x55 / 0xaa per bank -> protection_fault_eval_input; can clear TPU-A channel 4 enable bit) then the per-cylinder timing demand: rate-limits injection_timing_demand_working and computes engine_timing_reference / cam_timing_reference_offset / engine_timing_delta with the cylinder trim | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
+0x00527938,engine_injectionAngle_accumulateCrankPeriod,crank_period_running_total += crank_sync_period_snapshot | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+0x005283d0,engine_injectionAngle_tpuChannel10CylinderEventHandler,TPU-A channel 10 interrupt: advances cylinder_event_index (wrapping at cylinder_event_count_max -> mpc555_evaluateProtectionSyncFaults) and starts the next injection-angle sequence (state 4 + schedule_crankValid when injection_tpu_timing_mode is 0x12 / else state 1 + schedule_crankInvalid). Was missing from every build | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
+0x00528508,engine_injectionAngle_writeTpuEvent,Converts an injection angle for a cylinder (wraps at 0x7800) into crank tooth number + fraction (tooth math from crank_sync_tooth_count_cal) and writes it to TPU-A channel 5 parameter slot param_4 (4 / 8 / 0xc) with the quantity in the paired parameter at 0x304152 + slot; quantity forced to 0 during shutdown / protection unless the engine is starting | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
+0x0052877c,engine_injectionAngle_selectCylinderInjector,Per-cylinder injector selection from ROM tables 0x5f14e (bank) / 0x5f156 / 0x5f15e (output index; shifted by injection_cylinder_fault_index_offset when the cylinder's fault bits are set): programs TPU-A channel 4 or the bank-B channel PARAM0 plus channel 2 or 7 mode then a host service request | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
+0x00528978,engine_injectionAngle_lookupTimingTableOffset,injection_timing_table_offset = RPM-indexed table lookup (table state 0x3fd0b0) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+0x00529640,engine_injectionAngle_tpuChannel6EventHandler,TPU-A channel 6 interrupt (injection per the channel map): injection-angle state machine on injection_angle_sequence_state 1/2/4/8 - per step runs engine position + timing tables and schedules three injection events per cylinder via engine_injectionAngle_writeTpuEvent (slots 4 / 8 / 0xc with fuel_quantity_trim / fuel_quantity_active / injection_timing_active_flag) then engine_injectionAngle_selectCylinderInjector. Was missing from every build (wrongly in deleted_functions.csv) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium

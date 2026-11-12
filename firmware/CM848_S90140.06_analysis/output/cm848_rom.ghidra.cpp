@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Wed Nov 11 16:17:33 MST 2026
+// Generated: Wed Nov 11 19:39:17 MST 2026
 
 
 //
@@ -54854,7 +54854,7 @@ void mpc555_miosInterruptDispatcher(void)
   if (uVar4 < 0x10) {
     wVar1 = mios1_isr.FLG;
     mios1_isr.FLG = wVar1 & ~uVar3;
-    (**(code **)(&tpuChannelHandler_ptr0 + uVar4 * 4))();
+    (*(code *)mios_interrupt_handler_table[uVar4])();
   }
   return;
 }
@@ -56075,82 +56075,83 @@ void cm848_copyDataBuffer(int param_1,int param_2)
 {
   byte bVar1;
   uint uVar2;
-  int iVar3;
+  undefined **ppuVar3;
   int iVar4;
-  uint uVar5;
-  int iVar6;
-  byte *pbVar7;
-  uint uVar8;
-  byte *pbVar9;
-  undefined1 *puVar10;
-  int iVar11;
-  byte bVar12;
+  int iVar5;
+  uint uVar6;
+  int iVar7;
+  byte *pbVar8;
+  uint uVar9;
+  byte *pbVar10;
+  undefined1 *puVar11;
+  int iVar12;
+  byte bVar13;
   undefined1 uStack_19;
   byte local_18 [16];
   
-  iVar11 = 0;
-  puVar10 = &uStack_19;
+  iVar12 = 0;
+  puVar11 = &uStack_19;
   do {
-    puVar10 = puVar10 + 1;
-    *puVar10 = 0;
-    iVar11 = iVar11 + 1;
-  } while (iVar11 < 10);
-  uVar5 = 0;
-  iVar3 = 0;
-  iVar6 = 0;
-  iVar4 = 9;
-  iVar11 = 0;
+    puVar11 = puVar11 + 1;
+    *puVar11 = 0;
+    iVar12 = iVar12 + 1;
+  } while (iVar12 < 10);
+  uVar6 = 0;
+  iVar4 = 0;
+  iVar7 = 0;
+  iVar5 = 9;
+  iVar12 = 0;
   do {
-    uVar8 = 0;
-    bVar1 = (&DAT_0005839a)[iVar11];
+    uVar9 = 0;
+    bVar1 = (&DAT_0005839a)[iVar12];
     do {
-      uVar2 = (uint)*(byte *)(param_1 + iVar11) << (uVar8 & 0x3f) & 0x80;
-      if (((uint)bVar1 << (uVar8 & 0x3f) & 0x80) == 0) {
-        bVar12 = 0;
+      uVar2 = (uint)*(byte *)(param_1 + iVar12) << (uVar9 & 0x3f) & 0x80;
+      if (((uint)bVar1 << (uVar9 & 0x3f) & 0x80) == 0) {
+        bVar13 = 0;
         if (uVar2 != 0) {
-          bVar12 = (byte)(1 << (7U - iVar6 & 0x3f));
+          bVar13 = (byte)(1 << (7U - iVar7 & 0x3f));
         }
-        local_18[iVar3] = bVar12 | local_18[iVar3];
-        iVar6 = iVar6 + 1;
-        if ((char)iVar6 == '\b') {
-          iVar6 = 0;
-          iVar3 = iVar3 + 1;
+        local_18[iVar4] = bVar13 | local_18[iVar4];
+        iVar7 = iVar7 + 1;
+        if ((char)iVar7 == '\b') {
+          iVar7 = 0;
+          iVar4 = iVar4 + 1;
         }
       }
       else {
-        bVar12 = 0;
+        bVar13 = 0;
         if (uVar2 != 0) {
-          bVar12 = (byte)(1 << (uVar5 & 0x3f));
+          bVar13 = (byte)(1 << (uVar6 & 0x3f));
         }
-        local_18[iVar4] = bVar12 | local_18[iVar4];
-        uVar5 = uVar5 + 1;
-        if ((char)uVar5 == '\b') {
-          uVar5 = 0;
-          iVar4 = iVar4 + -1;
+        local_18[iVar5] = bVar13 | local_18[iVar5];
+        uVar6 = uVar6 + 1;
+        if ((char)uVar6 == '\b') {
+          uVar6 = 0;
+          iVar5 = iVar5 + -1;
         }
       }
-      uVar8 = uVar8 + 1;
-    } while ((int)uVar8 < 8);
-    iVar11 = iVar11 + 1;
-  } while (iVar11 < 10);
-  iVar11 = 0;
-  pbVar9 = local_18;
-  pbVar7 = (byte *)0x583a3;
+      uVar9 = uVar9 + 1;
+    } while ((int)uVar9 < 8);
+    iVar12 = iVar12 + 1;
+  } while (iVar12 < 10);
+  iVar12 = 0;
+  pbVar10 = local_18;
+  pbVar8 = (byte *)0x583a3;
   do {
-    pbVar7 = pbVar7 + 1;
-    *pbVar9 = *pbVar9 ^ local_18[*pbVar7];
-    pbVar9 = pbVar9 + 1;
-    iVar11 = iVar11 + 1;
-  } while (iVar11 < 10);
-  iVar11 = 0;
-  pbVar7 = &tpuBChannelHandler_ptr0;
-  puVar10 = &uStack_19;
+    pbVar8 = pbVar8 + 1;
+    *pbVar10 = *pbVar10 ^ local_18[*pbVar8];
+    pbVar10 = pbVar10 + 1;
+    iVar12 = iVar12 + 1;
+  } while (iVar12 < 10);
+  iVar12 = 0;
+  ppuVar3 = tpu_b_channel_interrupt_handler_table;
+  puVar11 = &uStack_19;
   do {
-    pbVar7 = pbVar7 + -1;
-    puVar10 = puVar10 + 1;
-    *(undefined1 *)(param_2 + (uint)*pbVar7) = *puVar10;
-    iVar11 = iVar11 + 1;
-  } while (iVar11 < 10);
+    ppuVar3 = (undefined **)((int)ppuVar3 + -1);
+    puVar11 = puVar11 + 1;
+    *(undefined1 *)(param_2 + (uint)*(byte *)ppuVar3) = *puVar11;
+    iVar12 = iVar12 + 1;
+  } while (iVar12 < 10);
   return;
 }
 
@@ -56432,7 +56433,7 @@ void mpc555_tpuBInterruptDispatcher(void)
   if ((uVar3 & 0xff) < 0x10) {
     wVar1 = tpu_b_mcr.CISR;
     tpu_b_mcr.CISR = wVar1 & ~(ushort)(1 << (uVar3 & 0x3f));
-    (**(code **)(&tpuBChannelHandler_ptr0 + (uVar3 & 0xff) * 4))();
+    (*(code *)tpu_b_channel_interrupt_handler_table[uVar3 & 0xff])();
   }
   return;
 }
@@ -56464,7 +56465,7 @@ void mpc555_tpuAInterruptDispatcher(void)
   if ((uVar3 & 0xff) < 0x10) {
     wVar1 = tpu_a_mcr.CISR;
     tpu_a_mcr.CISR = wVar1 & ~(ushort)(1 << (uVar3 & 0x3f));
-    (**(code **)(&tpuAChannelHandler_ptr0 + (uVar3 & 0xff) * 4))();
+    (*(code *)tpu_a_channel_interrupt_handler_table[uVar3 & 0xff])();
   }
   return;
 }
@@ -67700,6 +67701,29 @@ void phase_group_b_updateBoostBlendingControl(void)
 
 
 //
+// Function: mpc555_tpuBChannel1InterruptHandler @ 0x0050f680
+//
+
+/* TPU-B channel 1 interrupt (entry 1 of tpu_b_channel_interrupt_handler_table): latches the
+   channel's captured period into boost_blend_tpu_ch1_period_working and reloads
+   boost_blend_dwell_countdown; previously had no function at all */
+
+void mpc555_tpuBChannel1InterruptHandler(void)
+
+{
+  word wVar1;
+  
+  boost_blend_tpu_ch1_period_working = DAT_00304518;
+  DAT_00304518 = 0;
+  wVar1 = tpu_b_mcr.CISR;
+  tpu_b_mcr.CISR = wVar1 & 0xfffd;
+  boost_blend_dwell_countdown = DAT_003ff70a;
+  return;
+}
+
+
+
+//
 // Function: hpcr_configureTPUTimerInterrupts @ 0x0050f6c4
 //
 
@@ -71341,6 +71365,30 @@ void tpu_rpm_measurement_initialize(void)
   tpu_rpm_raw_period =
        (dword)(CONCAT44((int)((ulonglong)(uVar1 * 0x3c) * 1000000 >> 0x20),uVar1 * 60000000) /
               (ulonglong)tpu_rpm_timer_prescaler);
+  return;
+}
+
+
+
+//
+// Function: mpc555_tpuBChannel9InterruptHandler @ 0x00516274
+//
+
+/* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+/* TPU-B channel 9 interrupt (entry 9 of tpu_b_channel_interrupt_handler_table): converts the
+   captured period at 0x304598 into tpu_rpm_reference_period (x1000000 / 0x4c4b4) and reloads
+   tpu_rpm_startup_blank_countdown; was wrongly listed in deleted_functions.csv */
+
+void mpc555_tpuBChannel9InterruptHandler(void)
+
+{
+  uint uVar1;
+  
+  tpu_rpm_startup_blank_countdown = DAT_004088d6;
+  uVar1 = DAT_00304598;
+  DAT_00304598._0_2_ = 0;
+  tpu_rpm_reference_period =
+       (dword)(CONCAT44((int)((ulonglong)uVar1 * 1000000 >> 0x20),uVar1 * 1000000) / 0x4c4b4);
   return;
 }
 
@@ -76085,6 +76133,8 @@ void FUN_0051e894(short *param_1,undefined4 param_2,short param_3)
 // Function: cm848_fuelDemandCommand20Handler @ 0x0051eef0
 //
 
+/* fuelDemand SCI command 0x14 handler (dispatch table 0x53a9a0) */
+
 void cm848_fuelDemandCommand20Handler(void)
 
 {
@@ -76196,6 +76246,9 @@ int cm848_encodeGovernorFuelModeStatus(void)
 // Function: cm848_fuelDemandClearDiagnostics @ 0x005204f8
 //
 
+/* fuelDemand SCI command 0x17 - requests DTC clear (diagnostic_clear_request_state=3) during
+   cranking */
+
 void cm848_fuelDemandClearDiagnostics(void)
 
 {
@@ -76257,6 +76310,8 @@ void cm848_countdown_timer_update(void)
 // Function: cm848_fuelDemandCommand25Handler @ 0x00520654
 //
 
+/* fuelDemand SCI command 0x19 handler (dispatch table 0x53a9a0) */
+
 void cm848_fuelDemandCommand25Handler(void)
 
 {
@@ -76290,6 +76345,8 @@ void governor_speedLimitFloor_decrement(void)
 // Function: cm848_fuelDemandCommand26Handler @ 0x0052072c
 //
 
+/* fuelDemand SCI command 0x1a handler (dispatch table 0x53a9a0) */
+
 void cm848_fuelDemandCommand26Handler(void)
 
 {
@@ -76303,6 +76360,8 @@ void cm848_fuelDemandCommand26Handler(void)
 //
 // Function: cm848_fuelDemandCommand37Handler @ 0x00520ad8
 //
+
+/* fuelDemand SCI command 0x25 handler (dispatch table 0x53a9a0) */
 
 void cm848_fuelDemandCommand37Handler(void)
 
@@ -76397,6 +76456,8 @@ void initProtectionVoltageTimer(void)
 // Function: cm848_fuelDemandCommand39Handler @ 0x005216f4
 //
 
+/* fuelDemand SCI command 0x27 handler (dispatch table 0x53a9a0) */
+
 void cm848_fuelDemandCommand39Handler(void)
 
 {
@@ -76411,6 +76472,8 @@ void cm848_fuelDemandCommand39Handler(void)
 //
 // Function: cm848_fuelDemandCommand40Handler @ 0x00521908
 //
+
+/* fuelDemand SCI command 0x28 handler (dispatch table 0x53a9a0) */
 
 void cm848_fuelDemandCommand40Handler(void)
 
@@ -76427,6 +76490,8 @@ void cm848_fuelDemandCommand40Handler(void)
 // Function: cm848_fuelDemandCommand41Handler @ 0x00521a60
 //
 
+/* fuelDemand SCI command 0x29 handler (dispatch table 0x53a9a0) */
+
 void cm848_fuelDemandCommand41Handler(void)
 
 {
@@ -76442,6 +76507,8 @@ void cm848_fuelDemandCommand41Handler(void)
 // Function: cm848_fuelDemandCommand42Handler @ 0x00521b6c
 //
 
+/* fuelDemand SCI command 0x2a handler (dispatch table 0x53a9a0) */
+
 void cm848_fuelDemandCommand42Handler(void)
 
 {
@@ -76455,6 +76522,8 @@ void cm848_fuelDemandCommand42Handler(void)
 //
 // Function: cm848_fuelDemandReportFaultTiming @ 0x00521d3c
 //
+
+/* fuelDemand SCI command 0x2b - reports fault_timing_snapshot (2 bytes + checksum) */
 
 void cm848_fuelDemandReportFaultTiming(void)
 
@@ -76492,6 +76561,8 @@ void cm848_fuelDemandReportFaultTiming(void)
 // Function: cm848_fuelDemandCommand44Handler @ 0x00521e04
 //
 
+/* fuelDemand SCI command 0x2c handler (dispatch table 0x53a9a0) */
+
 void cm848_fuelDemandCommand44Handler(void)
 
 {
@@ -76521,6 +76592,8 @@ void cm848_protection_cooldownTimer_decrement(void)
 //
 // Function: cm848_fuelDemandCommand49Handler @ 0x00522044
 //
+
+/* fuelDemand SCI command 0x31 handler (dispatch table 0x53a9a0) */
 
 void cm848_fuelDemandCommand49Handler(void)
 
@@ -76581,6 +76654,8 @@ undefined1 cm848_memoryBlock_checksum_validate(uint param_1,undefined4 param_2,i
 // Function: cm848_fuelDemandReportProtectionEventSpns @ 0x00522224
 //
 
+/* fuelDemand SCI command 0x32 - reports protection_event_spn_history (up to 8 SPNs + checksum) */
+
 void cm848_fuelDemandReportProtectionEventSpns(void)
 
 {
@@ -76623,6 +76698,9 @@ void cm848_fuelDemandReportProtectionEventSpns(void)
 //
 // Function: cm848_fuelDemandReportActiveFaultSpns @ 0x00522314
 //
+
+/* fuelDemand SCI command 0x33 - reports active fault SPNs from fault_status_word_array (+ checksum)
+    */
 
 void cm848_fuelDemandReportActiveFaultSpns(void)
 
@@ -76670,6 +76748,8 @@ void cm848_fuelDemandReportActiveFaultSpns(void)
 //
 // Function: cm848_fuelDemandCommand52Handler @ 0x0052242c
 //
+
+/* fuelDemand SCI command 0x34 handler (dispatch table 0x53a9a0) */
 
 void cm848_fuelDemandCommand52Handler(void)
 
@@ -79291,6 +79371,94 @@ void cm848_state_variables_reset(void)
 
 
 //
+// Function: mpc555_tpuBChannel2AndMiosFlag13InterruptHandler @ 0x00526ce4
+//
+
+/* Shared interrupt handler for TPU-B channel 2 and MIOS flag 13: captures the active injection
+   channel's PARAM4/5 timing (re-arming that TPU-B channel on manual-transmission TPU builds) and
+   averages the crank period accumulators into protection_timeout_divisor; was wrongly listed in
+   deleted_functions.csv */
+
+void mpc555_tpuBChannel2AndMiosFlag13InterruptHandler(void)
+
+{
+  word wVar1;
+  int iVar2;
+  int iVar3;
+  ushort *puVar4;
+  uint uVar5;
+  
+  injection_timing_done_flag = DAT_00408b62;
+  if (((drivetrain_type == DRIVETRAIN_MANUAL_TPU) && (DAT_0040b71c == 0)) && (DAT_0040b718 == 0)) {
+    DAT_003fd078 = DAT_003fd078 + 1;
+    if (1 < DAT_003fd078) {
+      uVar5 = (uint)injection_timing_cylinder_index;
+      DAT_0040b718._0_2_ = (&tpu_b_mcr)[uVar5].PARAM4;
+      DAT_0040b718._2_2_ = (&tpu_b_mcr)[uVar5].PARAM5;
+      DAT_0040b71c = 1;
+      iVar2 = uVar5 + ((int)uVar5 >> 3) * -8;
+      puVar4 = (ushort *)((int)&tpu_b_mcr + ((int)uVar5 >> 3) * -2 + 0x1e);
+      *puVar4 = *puVar4 & ~(ushort)(3 << (iVar2 * 2 & 0x3fU)) | (ushort)(0 << (iVar2 * 2 & 0x3fU));
+      wVar1 = tpu_b_mcr.CIER;
+      tpu_b_mcr.CIER = wVar1 & ~(ushort)(1 << (uVar5 & 0x3f));
+      wVar1 = tpu_b_mcr.CISR;
+      tpu_b_mcr.CISR = wVar1 & ~(ushort)(1 << (injection_timing_cylinder_index & 0x3f));
+      uVar5 = (uint)injection_timing_cylinder_index;
+      iVar2 = uVar5 + ((int)uVar5 >> 2) * -4;
+      puVar4 = (ushort *)((int)&tpu_b_mcr + ((int)uVar5 >> 2) * -2 + 0x12);
+      *puVar4 = *puVar4 & ~(ushort)(0xf << (iVar2 * 4 & 0x3cU)) |
+                (ushort)(0xd << (iVar2 * 4 & 0x3cU));
+      (&tpu_b_mcr)[uVar5].PARAM1 = 0x100;
+      (&tpu_b_mcr)[uVar5].PARAM3 = 0;
+      (&tpu_b_mcr)[uVar5].PARAM4 = 0;
+      (&tpu_b_mcr)[uVar5].PARAM5 = 0;
+      (&tpu_b_mcr)[uVar5].PARAM0 = 0xb;
+      iVar2 = (int)uVar5 >> 3;
+      iVar3 = uVar5 + iVar2 * -8;
+      puVar4 = (ushort *)((int)&tpu_b_mcr + iVar2 * -2 + 0x16);
+      *puVar4 = *puVar4 & ~(ushort)(3 << (iVar3 * 2 & 0x3fU)) | (ushort)(3 << (iVar3 * 2 & 0x3fU));
+      *(short *)((int)&tpu_b_mcr + iVar2 * -2 + 0x1a) = (short)(3 << (iVar3 * 2 & 0x3fU));
+      puVar4 = (ushort *)((int)&tpu_b_mcr + iVar2 * -2 + 0x1e);
+      *puVar4 = *puVar4 & ~(ushort)(3 << (iVar3 * 2 & 0x3fU)) | (ushort)(2 << (iVar3 * 2 & 0x3fU));
+      wVar1 = tpu_b_mcr.CIER;
+      tpu_b_mcr.CIER = wVar1 | (ushort)(1 << (injection_timing_cylinder_index & 0x3f));
+    }
+  }
+  else if (drivetrain_type == DRIVETRAIN_MANUAL_TPU) {
+    fuel_temp_correction_factor._0_2_ = (&tpu_b_mcr)[injection_timing_cylinder_index].PARAM4;
+    fuel_temp_correction_factor._2_2_ = (&tpu_b_mcr)[injection_timing_cylinder_index].PARAM5;
+  }
+  else {
+    fuel_temp_correction_factor._0_2_ = (&tpu_b_mcr)[injection_timing_cylinder_index].PARAM4;
+    fuel_temp_correction_factor._2_2_ = (&tpu_b_mcr)[injection_timing_cylinder_index].PARAM5;
+    (&tpu_b_mcr)[injection_timing_cylinder_index].PARAM4 = 0;
+    injection_timing_prev_value = injection_timing_prev_value + DAT_003fd07a;
+  }
+  if ((engine_event_active_flag == 0) && (engine_rpm_state_t_0040b7ac.reserved_0a != 0)) {
+    protection_timeout_divisor =
+         (uint)engine_rpm_state_t_0040b7ac._2_4_ / (uint)engine_rpm_state_t_0040b7ac.reserved_0a;
+    engine_rpm_state_t_0040b7ac.reserved_02 = 0;
+    engine_rpm_state_t_0040b7ac.reserved_04 = 0;
+    engine_rpm_state_t_0040b7ac.reserved_0a = 0;
+    protection_timeout_enable_flag = 1;
+  }
+  else if ((engine_event_active_flag == 1) && (engine_rpm_state_t_0040b7ac.reserved_0c != 0)) {
+    protection_timeout_divisor =
+         (uint)engine_rpm_state_t_0040b7ac._6_4_ / (uint)engine_rpm_state_t_0040b7ac.reserved_0c;
+    engine_rpm_state_t_0040b7ac.reserved_06 = 0;
+    engine_rpm_state_t_0040b7ac.reserved_08 = 0;
+    engine_rpm_state_t_0040b7ac.reserved_0c = 0;
+    protection_timeout_enable_flag = 1;
+  }
+  else {
+    protection_timeout_enable_flag = 0;
+  }
+  return;
+}
+
+
+
+//
 // Function: cm848_tpu_channel2_fuel_init @ 0x00527050
 //
 
@@ -79355,12 +79523,18 @@ void cm848_tpu_channel2_fuel_init(void)
 
 
 //
-// Function: FUN_0052731c @ 0x0052731c
+// Function: engine_injectionAngle_updateCutoutAndTimingDemand @ 0x0052731c
 //
 
 /* WARNING: Removing unreachable block (ram,0x005277a4) */
+/* Debounced cylinder-cutout evaluation (fault masks 0x55 / 0xaa per bank ->
+   protection_fault_eval_input; can clear TPU-A channel 4 enable bit) then the per-cylinder timing
+   demand: rate-limits injection_timing_demand_working and computes engine_timing_reference /
+   cam_timing_reference_offset / engine_timing_delta with the cylinder trim |
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
+    */
 
-void FUN_0052731c(void)
+void engine_injectionAngle_updateCutoutAndTimingDemand(void)
 
 {
   word wVar1;
@@ -79550,10 +79724,13 @@ void cm848_fuel_demand_state_capture(void)
 
 
 //
-// Function: FUN_00527938 @ 0x00527938
+// Function: engine_injectionAngle_accumulateCrankPeriod @ 0x00527938
 //
 
-void FUN_00527938(void)
+/* crank_period_running_total += crank_sync_period_snapshot | review-function-readability reviewed
+   2026-11-11 - Readability Medium Accuracy Confidence High */
+
+void engine_injectionAngle_accumulateCrankPeriod(void)
 
 {
   crank_period_running_total = crank_period_running_total + crank_sync_period_snapshot;
@@ -79900,6 +80077,39 @@ LAB_00528338:
 
 
 //
+// Function: engine_injectionAngle_tpuChannel10CylinderEventHandler @ 0x005283d0
+//
+
+/* TPU-A channel 10 interrupt: advances cylinder_event_index (wrapping at cylinder_event_count_max
+   -> mpc555_evaluateProtectionSyncFaults) and starts the next injection-angle sequence (state 4 +
+   schedule_crankValid when injection_tpu_timing_mode is 0x12 / else state 1 +
+   schedule_crankInvalid). Was missing from every build | review-function-readability reviewed
+   2026-11-11 - Readability Medium Accuracy Confidence Medium */
+
+void engine_injectionAngle_tpuChannel10CylinderEventHandler(void)
+
+{
+  cylinder_event_index = cylinder_event_index + 1;
+  if (cylinder_event_count_max <= cylinder_event_index) {
+    cylinder_event_index = 0;
+    mpc555_evaluateProtectionSyncFaults();
+  }
+  if (injection_tpu_timing_mode == 0x12) {
+    injection_angle_sequence_state_prev = injection_angle_sequence_state;
+    injection_angle_sequence_state = 4;
+    engine_injectionAngle_schedule_crankValid();
+  }
+  else {
+    injection_angle_sequence_state_prev = injection_angle_sequence_state;
+    injection_angle_sequence_state = 1;
+    engine_injectionAngle_schedule_crankInvalid();
+  }
+  return;
+}
+
+
+
+//
 // Function: cm848_tpu_configuration_setup @ 0x00528474
 //
 
@@ -79927,10 +80137,17 @@ void cm848_tpu_configuration_setup(void)
 
 
 //
-// Function: FUN_00528508 @ 0x00528508
+// Function: engine_injectionAngle_writeTpuEvent @ 0x00528508
 //
 
-void FUN_00528508(int param_1,int param_2,undefined2 param_3,int param_4)
+/* Converts an injection angle for a cylinder (wraps at 0x7800) into crank tooth number + fraction
+   (tooth math from crank_sync_tooth_count_cal) and writes it to TPU-A channel 5 parameter slot
+   param_4 (4 / 8 / 0xc) with the quantity in the paired parameter at 0x304152 + slot; quantity
+   forced to 0 during shutdown / protection unless the engine is starting |
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
+    */
+
+void engine_injectionAngle_writeTpuEvent(int param_1,int param_2,undefined2 param_3,int param_4)
 
 {
   uint uVar1;
@@ -80016,10 +80233,16 @@ LAB_005286f0:
 
 
 //
-// Function: FUN_0052877c @ 0x0052877c
+// Function: engine_injectionAngle_selectCylinderInjector @ 0x0052877c
 //
 
-void FUN_0052877c(int param_1)
+/* Per-cylinder injector selection from ROM tables 0x5f14e (bank) / 0x5f156 / 0x5f15e (output index;
+   shifted by injection_cylinder_fault_index_offset when the cylinder's fault bits are set):
+   programs TPU-A channel 4 or the bank-B channel PARAM0 plus channel 2 or 7 mode then a host
+   service request | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy
+   Confidence Medium */
+
+void engine_injectionAngle_selectCylinderInjector(int param_1)
 
 {
   word wVar1;
@@ -80076,10 +80299,13 @@ void FUN_0052877c(int param_1)
 
 
 //
-// Function: FUN_00528978 @ 0x00528978
+// Function: engine_injectionAngle_lookupTimingTableOffset @ 0x00528978
 //
 
-void FUN_00528978(void)
+/* injection_timing_table_offset = RPM-indexed table lookup (table state 0x3fd0b0) |
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+
+void engine_injectionAngle_lookupTimingTableOffset(void)
 
 {
   injection_timing_table_offset =
@@ -80484,6 +80710,129 @@ LAB_005295d8:
   tpu_a_mcr.HSRR1 = 0x3000;
   injection_angle_sequence_state_prev = injection_angle_sequence_state;
   injection_angle_sequence_state = 2;
+  return;
+}
+
+
+
+//
+// Function: engine_injectionAngle_tpuChannel6EventHandler @ 0x00529640
+//
+
+/* TPU-A channel 6 interrupt (injection per the channel map): injection-angle state machine on
+   injection_angle_sequence_state 1/2/4/8 - per step runs engine position + timing tables and
+   schedules three injection events per cylinder via engine_injectionAngle_writeTpuEvent (slots 4 /
+   8 / 0xc with fuel_quantity_trim / fuel_quantity_active / injection_timing_active_flag) then
+   engine_injectionAngle_selectCylinderInjector. Was missing from every build (wrongly in
+   deleted_functions.csv) | review-function-readability reviewed 2026-11-11 - Readability Medium
+   Accuracy Confidence Medium */
+
+void engine_injectionAngle_tpuChannel6EventHandler(void)
+
+{
+  bool bVar1;
+  short sVar2;
+  short sVar3;
+  ushort uVar4;
+  short sVar5;
+  short sVar6;
+  byte bVar7;
+  
+  if (injection_angle_sequence_state == 1) {
+    cm848_processEnginePositionData();
+    cam_timing_source_1 = cam_sync_position;
+    cm848_updateSyncOffsetCounter();
+    engine_injectionAngle_updateCutoutAndTimingDemand();
+    engine_injectionAngle_lookupTimingTableOffset();
+    cm848_selectGovernorFilterOutput();
+    cm848_updateEngineStatusTimers();
+    engine_injectionAngle_computeLoadCh6();
+    cm848_processFaultScanLookup();
+    engine_injectionAngle_tpuUpdate();
+  }
+  else {
+    if (injection_angle_sequence_state == 2) {
+      cm848_processEnginePositionData();
+      cam_timing_source_0 = cam_sync_position;
+      cm848_calculateEngineTimingInterpolation();
+      cm848_calculateTimingWithTables();
+      if (injection_timing_timing_mode_cal == 0) {
+        sVar5 = 0;
+      }
+      else {
+        sVar5 = (short)(((uint)fuel_quantity_active * (uint)cam_sync_position_high_byte * 0x100) /
+                       crank_period_accumulator);
+      }
+      bVar1 = (int)(short)injection_timing_cam_angle_correction - (int)DAT_004090f8 <
+              (int)DAT_0040b87d + (int)sVar5;
+      if (bVar1) {
+        sVar5 = (injection_timing_cam_angle_correction - DAT_004090f8) - DAT_0040b87d;
+      }
+      cm848_calculateEngineFaultTiming(bVar1);
+      engine_injectionAngle_writeTpuEvent
+                (DAT_0040b870,(int)DAT_0040b873,(int)(short)fuel_quantity_trim,4);
+      engine_injectionAngle_writeTpuEvent
+                (DAT_0040b870,(int)DAT_0040b871,(int)(short)fuel_quantity_active,8);
+      engine_injectionAngle_writeTpuEvent
+                (DAT_0040b870,(int)(short)(DAT_0040b87d + sVar5),
+                 (int)(short)injection_timing_active_flag,0xc);
+      engine_injectionAngle_selectCylinderInjector(cylinder_event_index & 0xff);
+      engine_injectionAngle_accumulateCrankPeriod();
+      bVar7 = 8;
+    }
+    else {
+      if (injection_angle_sequence_state == 4) {
+        cm848_processEnginePositionData();
+        cam_timing_source_1 = cam_sync_position;
+        if (injection_angle_sequence_state_prev == 2) {
+          uVar4 = (ushort)DAT_0040b870;
+          sVar5 = DAT_0040b873;
+          sVar3 = DAT_0040b871;
+          sVar2 = DAT_0040b87d;
+        }
+        else {
+          cm848_updateSyncOffsetCounter();
+          engine_injectionAngle_updateCutoutAndTimingDemand();
+          engine_injectionAngle_lookupTimingTableOffset();
+          cm848_selectGovernorFilterOutput();
+          cm848_updateEngineStatusTimers();
+          uVar4 = cylinder_event_index & 0xff;
+          sVar5 = cam_sync_period_reference_a * -5;
+          sVar3 = injection_period_capture_a * -5;
+          sVar2 = cam_sync_period_reference_b * -5;
+        }
+        cm848_calculateEngineTimingInterpolation();
+        cm848_calculateTimingWithTables();
+        if (injection_timing_timing_mode_cal == 0) {
+          sVar6 = (short)(((uint)fuel_quantity_active * (uint)cam_sync_position_high_byte * 0x100) /
+                         crank_period_accumulator);
+        }
+        else {
+          sVar6 = 0;
+        }
+        bVar1 = (int)(short)injection_timing_cam_angle_correction - (int)DAT_004090f8 <
+                (int)DAT_0040b87d + (int)sVar6;
+        if (bVar1) {
+          sVar6 = (injection_timing_cam_angle_correction - DAT_004090f8) - DAT_0040b87d;
+        }
+        cm848_calculateEngineFaultTiming(bVar1);
+        engine_injectionAngle_writeTpuEvent(uVar4,(int)sVar5,(int)(short)fuel_quantity_trim,4);
+        engine_injectionAngle_writeTpuEvent(uVar4,(int)sVar3,(int)(short)fuel_quantity_active,8);
+        engine_injectionAngle_writeTpuEvent
+                  (uVar4,(int)(short)(sVar2 + sVar6),(int)(short)injection_timing_active_flag,0xc);
+        engine_injectionAngle_selectCylinderInjector(cylinder_event_index & 0xff);
+        engine_injectionAngle_accumulateCrankPeriod();
+        cm848_processFaultScanLookup();
+        engine_injectionAngle_tpuUpdate();
+        injection_angle_sequence_state_prev = injection_angle_sequence_state;
+        injection_angle_sequence_state = 8;
+        return;
+      }
+      bVar7 = 0;
+    }
+    injection_angle_sequence_state_prev = injection_angle_sequence_state;
+    injection_angle_sequence_state = bVar7;
+  }
   return;
 }
 
@@ -88734,4 +89083,4 @@ void hpcr_protectionTimerMonitor(void)
 
 
 
-// Export complete - 2057 functions processed
+// Export complete - 2062 functions processed

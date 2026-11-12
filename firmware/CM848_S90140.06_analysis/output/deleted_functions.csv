@@ -20,7 +20,6 @@ address,reason
 0x0050c734,spurious mid-function split (Bank2, no incoming refs)
 0x0050c7b0,spurious mid-function split (Bank2, no incoming refs)
 0x0050c81c,spurious mid-function split (Bank2, no incoming refs)
-0x00516274,spurious mid-function split (Bank2, no incoming refs)
 0x0051dc1c,spurious mid-function split (Bank2, no incoming refs)
 0x0051dea8,spurious mid-function split (Bank2, no incoming refs)
 0x0051e384,spurious mid-function split (Bank2, no incoming refs)
@@ -29,35 +28,17 @@ address,reason
 0x0051e408,spurious mid-function split (Bank2, no incoming refs)
 0x0051e434,spurious mid-function split (Bank2, no incoming refs)
 0x0051e914,spurious mid-function split (Bank2, no incoming refs)
-0x0051eef0,spurious mid-function split (Bank2, no incoming refs)
 0x0051f0b8,spurious mid-function split (Bank2, no incoming refs)
-0x005204f8,spurious mid-function split (Bank2, no incoming refs)
-0x00520654,spurious mid-function split (Bank2, no incoming refs)
 0x005206c4,spurious mid-function split (Bank2, no incoming refs)
-0x0052072c,spurious mid-function split (Bank2, no incoming refs)
 0x0052075c,spurious mid-function split (Bank2, no incoming refs)
-0x00520ad8,spurious mid-function split (Bank2, no incoming refs)
 0x00520b14,spurious mid-function split (Bank2, no incoming refs)
-0x005216f4,spurious mid-function split (Bank2, no incoming refs)
 0x00521730,spurious mid-function split (Bank2, no incoming refs)
-0x00521908,spurious mid-function split (Bank2, no incoming refs)
 0x00521944,spurious mid-function split (Bank2, no incoming refs)
-0x00521a60,spurious mid-function split (Bank2, no incoming refs)
 0x00521a9c,spurious mid-function split (Bank2, no incoming refs)
-0x00521b6c,spurious mid-function split (Bank2, no incoming refs)
 0x00521b9c,spurious mid-function split (Bank2, no incoming refs)
-0x00521d3c,spurious mid-function split (Bank2, no incoming refs)
-0x00521e04,spurious mid-function split (Bank2, no incoming refs)
 0x00521e68,spurious mid-function split (Bank2, no incoming refs)
-0x00522044,spurious mid-function split (Bank2, no incoming refs)
 0x00522158,spurious mid-function split (Bank2, no incoming refs)
-0x00522224,spurious mid-function split (Bank2, no incoming refs)
-0x00522314,spurious mid-function split (Bank2, no incoming refs)
-0x0052242c,spurious mid-function split (Bank2, no incoming refs)
 0x0052252c,spurious mid-function split (Bank2, no incoming refs)
-0x00526ce4,spurious mid-function split (Bank2, no incoming refs)
-0x005283d0,spurious mid-function split (Bank2, no incoming refs)
-0x00529640,spurious mid-function split (Bank2, no incoming refs)
 # 2026-11-11 (PR #46): spurious fall-through splits inside the SPI EEPROM driver (classifyfuncs: 0 call / 0 jump refs); their function_renames rows were removed so import does not recreate them
 0x0004cb6c,spurious split inside SPI EEPROM driver
 0x0004cb84,spurious split inside SPI EEPROM driver
@@ -66,3 +47,7 @@ address,reason
 0x0004bd74,spurious split inside SPI EEPROM driver
 0x0004bfc8,spurious split inside SPI EEPROM driver
 0x0004c0a8,spurious split inside SPI EEPROM driver
+# 2026-11-11 (PR #46): REMOVED 19 entries that are real functions reached only through pointer tables
+# (classifyfuncs cannot see untyped table pointers): 15 fuelDemand command handlers in the 0x53a9a0 dispatch
+# table, and TPU-A ch6 / ch10 + TPU-B ch9 + TPU-B ch2/MIOS flag 13 interrupt handlers. Before adding an entry
+# here, also search ROM + flash2 for a 32-bit pointer to the address.

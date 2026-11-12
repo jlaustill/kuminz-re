@@ -42,3 +42,6 @@ address,array_name,element_type,element_count,comment
 0x003fb836,eeprom_transmit_words,word,32,SPI EEPROM transmit words: opcode / address / data or dummy words (were sensor_validation_period_array + aliases)
 0x003fb876,eeprom_command_bytes,byte,32,QSPI command bytes per word (0x9E/0xCE/0x8E/0x4E/0x0E - chip select PCS0 held between words) (was sensor_validation_phase_array)
 0x003fb896,eeprom_receive_words,word,32,SPI EEPROM receive words (status register / read data) (was sensor_validation_reference_array)
+0x000582da,mios_interrupt_handler_table,pointer,16,MIOS interrupt handlers indexed by MIOS1 flag bit (mpc555_miosInterruptDispatcher); default entry mpc555_infiniteLoopHalt (was tpuChannelHandler_ptr0)
+0x000583ae,tpu_b_channel_interrupt_handler_table,pointer,16,TPU-B channel interrupt handlers indexed by channel 0-15 (mpc555_tpuBInterruptDispatcher); default cm848_emptyStubFunction (was tpuBChannelHandler_ptr0)
+0x000583ee,tpu_a_channel_interrupt_handler_table,pointer,16,TPU-A channel interrupt handlers indexed by channel 0-15; default cm848_emptyStubFunction (was tpuAChannelHandler_ptr0)
