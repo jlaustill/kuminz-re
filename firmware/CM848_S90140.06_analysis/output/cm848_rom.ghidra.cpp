@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Nov 12 13:04:48 MST 2026
+// Generated: Thu Nov 12 13:12:03 MST 2026
 
 
 //
@@ -22265,110 +22265,41 @@ void cm848_j1939BuildEngineStatusByte(void)
   byte bVar2;
   
   if (qadc_control_word_cal._2_2_ == 0) {
-    bVar1 = 0xc0;
+    bVar2 = 0xc0;
 LAB_00024080:
-    bVar1 = bVar1 | 3;
+    bVar2 = bVar2 | 3;
   }
   else {
     if ((switch_input_state_bits[2] & 8) == 0) {
-      bVar1 = 0;
+      bVar2 = 0;
       goto LAB_00024080;
     }
-    bVar1 = 0x43;
+    bVar2 = 0x43;
   }
   if (qadc_init_done_flag == 0) {
-    bVar2 = 0x30;
+    bVar1 = 0x30;
+LAB_000240c0:
+    bVar2 = bVar2 | bVar1;
   }
   else {
-    if ((switch_input_state_bits[1] & 8) != 0) {
-      j1939_pgn65269_tx_data = bVar1 | 0x10;
-      goto cm848_prepareAndSendJ1939Frame;
+    if ((switch_input_state_bits[1] & 8) == 0) {
+      bVar1 = 0;
+      goto LAB_000240c0;
     }
-    bVar2 = 0;
+    bVar2 = bVar2 | 0x10;
   }
-  j1939_pgn65269_tx_data = bVar1 | bVar2;
-cm848_prepareAndSendJ1939Frame:
   if (protection_j1939_mode_enable_flag == 0) {
     bVar1 = 0xc;
   }
   else {
     if ((switch_input_state_bits[0] & 4) != 0) {
-      cm848_j1939SendPgn65269_FEF5_AmbientConditions
-                (&j1939_pgn65269_tx_data,j1939_pgn65269_tx_data,j1939_pgn65269_tx_data | 4);
-      return;
+      j1939_pgn65269_tx_data = bVar2 | 4;
+      goto LAB_00024104;
     }
     bVar1 = 0;
   }
-  j1939_pgn65269_tx_data = j1939_pgn65269_tx_data | bVar1;
-  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65241_tx_header);
-  return;
-}
-
-
-
-//
-// Function: cm848_prepareAndSendJ1939Frame @ 0x000240b8
-//
-
-void cm848_prepareAndSendJ1939Frame(byte *param_1,undefined4 param_2,int param_3,uint param_4)
-
-{
-  byte bVar1;
-  
-  *param_1 = (byte)param_4;
-  if (*(short *)(param_3 + 4) == 0) {
-    bVar1 = 0xc;
-  }
-  else {
-    if ((switch_input_state_bits[0] & 4) != 0) {
-      cm848_j1939SendPgn65269_FEF5_AmbientConditions(param_1,param_4,param_4 | 4);
-      return;
-    }
-    bVar1 = 0;
-  }
-  *param_1 = (byte)param_4 | bVar1;
-  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65241_tx_header);
-  return;
-}
-
-
-
-//
-// Function: cm848_prepareAndSendJ1939Frame @ 0x000240c4
-//
-
-void cm848_prepareAndSendJ1939Frame(byte *param_1,undefined4 param_2,int param_3,uint param_4)
-
-{
-  byte bVar1;
-  
-  *param_1 = (byte)param_4;
-  if (*(short *)(param_3 + 4) == 0) {
-    bVar1 = 0xc;
-  }
-  else {
-    if ((switch_input_state_bits[0] & 4) != 0) {
-      cm848_j1939SendPgn65269_FEF5_AmbientConditions(param_1,param_4,param_4 | 4);
-      return;
-    }
-    bVar1 = 0;
-  }
-  *param_1 = (byte)param_4 | bVar1;
-  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65241_tx_header);
-  return;
-}
-
-
-
-//
-// Function: cm848_j1939SendPgn65269_FEF5_AmbientConditions @ 0x00024104
-//
-
-void cm848_j1939SendPgn65269_FEF5_AmbientConditions
-               (undefined1 *param_1,undefined4 param_2,undefined1 param_3)
-
-{
-  *param_1 = param_3;
+  j1939_pgn65269_tx_data = bVar2 | bVar1;
+LAB_00024104:
   sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65241_tx_header);
   return;
 }
@@ -22392,10 +22323,19 @@ void cm848_initJ1939EngineStatusBuffer(void)
 
 
 //
-// Function: j1939HandlePgn65265CruiseVehicleSpeed @ 0x00024178
+// Function: cm848_buildPgn65265CruiseControlVehicleSpeedMessage @ 0x00024178
 //
 
-void j1939HandlePgn65265CruiseVehicleSpeed(void)
+/* Builds and sends the ECM's own CCVS1 broadcast (PGN 65265): byte 1 two-speed axle field / bytes
+   2-3 wheel-based vehicle speed (vehicle_speed x 412/256) / byte 4 cruise active + cruise enable +
+   brake (switch 11) + clutch (switch 15) / byte 5 set-coast-resume-accelerate / byte 6 cruise set
+   speed / byte 7 PTO + cruise state / byte 8 idle and test-mode switch fields; a datalink-sourced
+   switch is reported as not available; most switch fields come from switch 31 (was
+   j1939HandlePgn65265CruiseVehicleSpeed - a transmit builder - its tail was also split off as five
+   fake functions) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy
+   Confidence Medium */
+
+void cm848_buildPgn65265CruiseControlVehicleSpeedMessage(void)
 
 {
   byte bVar1;
@@ -22404,16 +22344,16 @@ void j1939HandlePgn65265CruiseVehicleSpeed(void)
   undefined1 local_8;
   
   if (protection_control_licensed == 0) {
-    j1939_dm1_status_byte = 0xff;
+    j1939_ccvs1_two_speed_axle_byte = 0xff;
   }
   else if ((switch_input_state_bits[3] & 0x80) == 0) {
-    j1939_dm1_status_byte = 0xfc;
+    j1939_ccvs1_two_speed_axle_byte = 0xfc;
   }
   else {
-    j1939_dm1_status_byte = 0xfd;
+    j1939_ccvs1_two_speed_axle_byte = 0xfd;
   }
   if ((short)drivetrain_type < 1) {
-    etc1_transmission_ratio_scaled = 0xffff;
+    j1939_ccvs1_wheel_based_vehicle_speed = 0xffff;
   }
   else {
     puVar2 = (undefined *)(uint)vehicle_speed;
@@ -22421,18 +22361,19 @@ void j1939HandlePgn65265CruiseVehicleSpeed(void)
       puVar2 = &DAT_00009c00;
     }
     local_8 = (undefined1)((uint)((int)puVar2 * 0x19c) >> 0x10);
-    etc1_transmission_ratio_scaled = CONCAT11((char)((uint)((int)puVar2 * 0x19c) >> 8),local_8);
+    j1939_ccvs1_wheel_based_vehicle_speed =
+         CONCAT11((char)((uint)((int)puVar2 * 0x19c) >> 8),local_8);
   }
   if ((switch_input_datalink_source_bits_cal[1] & 0x80) == 0) {
     if ((switch_input_state_bits[1] & 0x80) == 0) {
-      j1939_ccvs1_override_status = 0;
+      j1939_ccvs1_cruise_brake_clutch_byte = 0;
     }
     else {
-      j1939_ccvs1_override_status = 0x40;
+      j1939_ccvs1_cruise_brake_clutch_byte = 0x40;
     }
   }
   else {
-    j1939_ccvs1_override_status = 0xc0;
+    j1939_ccvs1_cruise_brake_clutch_byte = 0xc0;
   }
   if ((switch_input_datalink_source_bits_cal[1] & 8) == 0) {
     if ((switch_input_state_bits[1] & 8) != 0) {
@@ -22443,12 +22384,12 @@ void j1939HandlePgn65265CruiseVehicleSpeed(void)
   else {
     bVar3 = 0x30;
 LAB_000242b4:
-    j1939_ccvs1_override_status = j1939_ccvs1_override_status | bVar3;
+    j1939_ccvs1_cruise_brake_clutch_byte = j1939_ccvs1_cruise_brake_clutch_byte | bVar3;
   }
   if ((j1939_governor_feature_cal & 0x40) == 0) {
     bVar3 = 0xf;
 LAB_0002432c:
-    j1939_ccvs1_override_status = j1939_ccvs1_override_status | bVar3;
+    j1939_ccvs1_cruise_brake_clutch_byte = j1939_ccvs1_cruise_brake_clutch_byte | bVar3;
   }
   else {
     if ((switch_input_datalink_source_bits_cal[3] & 0x80) == 0) {
@@ -22460,7 +22401,7 @@ LAB_0002432c:
     else {
       bVar3 = 0xc;
 LAB_00024304:
-      j1939_ccvs1_override_status = j1939_ccvs1_override_status | bVar3;
+      j1939_ccvs1_cruise_brake_clutch_byte = j1939_ccvs1_cruise_brake_clutch_byte | bVar3;
     }
     if (governor_override_active_flag != 0) {
       bVar3 = 1;
@@ -22468,7 +22409,7 @@ LAB_00024304:
     }
   }
   if ((j1939_governor_feature_cal & 0x40) == 0) {
-    j1939_ccvs1_control_byte = 0xff;
+    j1939_ccvs1_cruise_set_resume_byte = 0xff;
   }
   else {
     if ((((switch_input_datalink_source_bits_cal[3] & 0x80) == 0) ||
@@ -22476,14 +22417,14 @@ LAB_00024304:
        (((switch_input_datalink_source_bits_cal[3] & 0x80) == 0 ||
         ((switch_input_state_bits[3] & 0x80) != 0)))) {
       if ((switch_input_state_bits[3] & 0x80) == 0) {
-        j1939_ccvs1_control_byte = 0;
+        j1939_ccvs1_cruise_set_resume_byte = 0;
       }
       else {
-        j1939_ccvs1_control_byte = 0x40;
+        j1939_ccvs1_cruise_set_resume_byte = 0x40;
       }
     }
     else {
-      j1939_ccvs1_control_byte = 0xc0;
+      j1939_ccvs1_cruise_set_resume_byte = 0xc0;
     }
     if ((switch_input_datalink_source_bits_cal[3] & 0x80) == 0) {
       if ((((switch_input_state_bits[3] & 0x80) != 0) ||
@@ -22496,7 +22437,7 @@ LAB_00024304:
     else {
       bVar3 = 0x30;
 LAB_00024424:
-      j1939_ccvs1_control_byte = j1939_ccvs1_control_byte | bVar3;
+      j1939_ccvs1_cruise_set_resume_byte = j1939_ccvs1_cruise_set_resume_byte | bVar3;
     }
     if ((((switch_input_datalink_source_bits_cal[3] & 0x80) == 0) ||
         ((switch_input_state_bits[3] & 0x80) != 0)) &&
@@ -22510,7 +22451,7 @@ LAB_00024424:
     else {
       bVar3 = 0xc;
 LAB_00024494:
-      j1939_ccvs1_control_byte = j1939_ccvs1_control_byte | bVar3;
+      j1939_ccvs1_cruise_set_resume_byte = j1939_ccvs1_cruise_set_resume_byte | bVar3;
     }
     if ((switch_input_datalink_source_bits_cal[3] & 0x80) == 0) {
       if ((((switch_input_state_bits[3] & 0x80) == 0) &&
@@ -22522,14 +22463,14 @@ LAB_00024494:
     else {
       bVar3 = 3;
     }
-    j1939_ccvs1_control_byte = j1939_ccvs1_control_byte | bVar3;
+    j1939_ccvs1_cruise_set_resume_byte = j1939_ccvs1_cruise_set_resume_byte | bVar3;
   }
 LAB_00024514:
   if ((j1939_governor_feature_cal & 0x40) == 0) {
-    j1939_cruise_speed_byte = 0xff;
+    j1939_ccvs1_cruise_set_speed_byte = 0xff;
   }
   else {
-    j1939_cruise_speed_byte = (byte)((uint)cruise_speed_command * 0x19c >> 0x10);
+    j1939_ccvs1_cruise_set_speed_byte = (byte)((uint)cruise_speed_command * 0x19c >> 0x10);
   }
   if ((short)j1939_status_field_3bit < 8) {
     bVar3 = (byte)((int)(short)j1939_status_field_3bit << 5);
@@ -22543,17 +22484,17 @@ LAB_00024514:
   else {
     bVar1 = (byte)protection_event_code;
   }
-  j1939_ccvs1_event_bits = bVar3 | bVar1;
+  j1939_ccvs1_pto_and_cruise_state_byte = bVar3 | bVar1;
   if ((switch_input_datalink_source_bits_cal[3] & 0x80) == 0) {
     if ((switch_input_state_bits[3] & 0x80) == 0) {
-      j1939_ccvs1_pto_flags = 0xc0;
+      j1939_ccvs1_idle_switches_byte = 0xc0;
     }
     else {
-      j1939_ccvs1_pto_flags = 0xd0;
+      j1939_ccvs1_idle_switches_byte = 0xd0;
     }
   }
   else {
-    j1939_ccvs1_pto_flags = 0xf0;
+    j1939_ccvs1_idle_switches_byte = 0xf0;
   }
   if ((switch_input_datalink_source_bits_cal[3] & 0x80) == 0) {
     if ((switch_input_state_bits[3] & 0x80) != 0) {
@@ -22564,7 +22505,7 @@ LAB_00024514:
   else {
     bVar3 = 0xcc;
 LAB_00024604:
-    j1939_ccvs1_pto_flags = j1939_ccvs1_pto_flags | bVar3;
+    j1939_ccvs1_idle_switches_byte = j1939_ccvs1_idle_switches_byte | bVar3;
   }
   if ((switch_input_datalink_source_bits_cal[3] & 0x80) == 0) {
     if ((switch_input_state_bits[3] & 0x80) == 0) goto LAB_00024648;
@@ -22573,557 +22514,7 @@ LAB_00024604:
   else {
     bVar3 = 0xc3;
   }
-  j1939_ccvs1_pto_flags = j1939_ccvs1_pto_flags | bVar3;
-LAB_00024648:
-  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65265_tx_header);
-  return;
-}
-
-
-
-//
-// Function: buildPgn65228Dm3ClearInitMessage @ 0x00024230
-//
-
-void buildPgn65228Dm3ClearInitMessage(void)
-
-{
-  byte bVar1;
-  byte bVar2;
-  int in_r7;
-  undefined1 uVar3;
-  
-  *(undefined2 *)(in_r7 + 1) = 0xffff;
-  if ((switch_input_datalink_source_bits_cal[1] & 0x80) == 0) {
-    if ((switch_input_state_bits[1] & 0x80) == 0) {
-      bVar1 = 0;
-    }
-    else {
-      bVar1 = 0x40;
-    }
-  }
-  else {
-    bVar1 = 0xc0;
-  }
-  *(byte *)(in_r7 + 3) = bVar1;
-  if ((switch_input_datalink_source_bits_cal[1] & 8) == 0) {
-    if ((switch_input_state_bits[1] & 8) != 0) {
-      bVar2 = 0x10;
-      goto LAB_000242b4;
-    }
-  }
-  else {
-    bVar2 = 0x30;
-LAB_000242b4:
-    *(byte *)(in_r7 + 3) = bVar1 | bVar2;
-  }
-  if ((j1939_governor_feature_cal & 0x40) == 0) {
-    bVar1 = 0xf;
-LAB_0002432c:
-    *(byte *)(in_r7 + 3) = *(byte *)(in_r7 + 3) | bVar1;
-  }
-  else {
-    if ((switch_input_datalink_source_bits_cal[3] & 0x80) == 0) {
-      if ((switch_input_state_bits[3] & 0x80) != 0) {
-        bVar1 = 4;
-        goto LAB_00024304;
-      }
-    }
-    else {
-      bVar1 = 0xc;
-LAB_00024304:
-      *(byte *)(in_r7 + 3) = *(byte *)(in_r7 + 3) | bVar1;
-    }
-    if (governor_override_active_flag != 0) {
-      bVar1 = 1;
-      goto LAB_0002432c;
-    }
-  }
-  if ((j1939_governor_feature_cal & 0x40) == 0) {
-    bVar1 = 0xff;
-LAB_00024510:
-    *(byte *)(in_r7 + 4) = bVar1;
-  }
-  else {
-    if ((((switch_input_datalink_source_bits_cal[3] & 0x80) == 0) ||
-        ((switch_input_state_bits[3] & 0x80) == 0)) &&
-       (((switch_input_datalink_source_bits_cal[3] & 0x80) == 0 ||
-        ((switch_input_state_bits[3] & 0x80) != 0)))) {
-      if ((switch_input_state_bits[3] & 0x80) == 0) {
-        bVar1 = 0;
-      }
-      else {
-        bVar1 = 0x40;
-      }
-    }
-    else {
-      bVar1 = 0xc0;
-    }
-    *(byte *)(in_r7 + 4) = bVar1;
-    if ((switch_input_datalink_source_bits_cal[3] & 0x80) == 0) {
-      if ((((switch_input_state_bits[3] & 0x80) != 0) ||
-          ((j1939_tsc1_active_flag == 0 && ((switch_input_state_bits[3] & 0x80) != 0)))) ||
-         ((j1939_tsc1_active_flag != 0 && ((switch_input_state_bits[3] & 0x80) != 0)))) {
-        bVar2 = 0x10;
-        goto LAB_00024424;
-      }
-    }
-    else {
-      bVar2 = 0x30;
-LAB_00024424:
-      *(byte *)(in_r7 + 4) = bVar1 | bVar2;
-    }
-    if ((((switch_input_datalink_source_bits_cal[3] & 0x80) == 0) ||
-        ((switch_input_state_bits[3] & 0x80) != 0)) &&
-       (((switch_input_datalink_source_bits_cal[3] & 0x80) == 0 ||
-        ((switch_input_state_bits[3] & 0x80) == 0)))) {
-      if ((switch_input_state_bits[3] & 0x80) != 0) {
-        bVar1 = 4;
-        goto LAB_00024494;
-      }
-    }
-    else {
-      bVar1 = 0xc;
-LAB_00024494:
-      *(byte *)(in_r7 + 4) = *(byte *)(in_r7 + 4) | bVar1;
-    }
-    if ((switch_input_datalink_source_bits_cal[3] & 0x80) != 0) {
-      bVar1 = 3;
-LAB_00024500:
-      bVar1 = *(byte *)(in_r7 + 4) | bVar1;
-      goto LAB_00024510;
-    }
-    if ((((switch_input_state_bits[3] & 0x80) != 0) ||
-        ((j1939_tsc1_active_flag != 0 && ((switch_input_state_bits[3] & 0x80) != 0)))) ||
-       ((j1939_tsc1_active_flag == 0 && ((switch_input_state_bits[3] & 0x80) != 0)))) {
-      bVar1 = 1;
-      goto LAB_00024500;
-    }
-  }
-  if ((j1939_governor_feature_cal & 0x40) == 0) {
-    uVar3 = 0xff;
-  }
-  else {
-    uVar3 = (undefined1)((uint)cruise_speed_command * 0x19c >> 0x10);
-  }
-  *(undefined1 *)(in_r7 + 5) = uVar3;
-  if ((short)j1939_status_field_3bit < 8) {
-    bVar1 = (byte)((int)(short)j1939_status_field_3bit << 5);
-  }
-  else {
-    bVar1 = 0;
-  }
-  *(byte *)(in_r7 + 6) = bVar1;
-  if ((j1939_governor_feature_cal & 0x10) == 0) {
-    bVar2 = 0x1f;
-  }
-  else {
-    bVar2 = (byte)protection_event_code;
-  }
-  *(byte *)(in_r7 + 6) = bVar1 | bVar2;
-  if ((switch_input_datalink_source_bits_cal[3] & 0x80) == 0) {
-    if ((switch_input_state_bits[3] & 0x80) == 0) {
-      bVar1 = 0xc0;
-    }
-    else {
-      bVar1 = 0xd0;
-    }
-  }
-  else {
-    bVar1 = 0xf0;
-  }
-  *(byte *)(in_r7 + 7) = bVar1;
-  if ((switch_input_datalink_source_bits_cal[3] & 0x80) == 0) {
-    if ((switch_input_state_bits[3] & 0x80) != 0) {
-      bVar2 = 0xc4;
-      goto LAB_00024604;
-    }
-  }
-  else {
-    bVar2 = 0xcc;
-LAB_00024604:
-    *(byte *)(in_r7 + 7) = bVar1 | bVar2;
-  }
-  if ((switch_input_datalink_source_bits_cal[3] & 0x80) == 0) {
-    if ((switch_input_state_bits[3] & 0x80) == 0) goto LAB_00024648;
-    bVar1 = 0xc1;
-  }
-  else {
-    bVar1 = 0xc3;
-  }
-  *(byte *)(in_r7 + 7) = *(byte *)(in_r7 + 7) | bVar1;
-LAB_00024648:
-  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65265_tx_header);
-  return;
-}
-
-
-
-//
-// Function: cm848_j1939SendPgn65241_FED9 @ 0x000242a0
-//
-
-void cm848_j1939SendPgn65241_FED9
-               (undefined4 param_1,undefined4 param_2,int param_3,undefined4 param_4,int param_5,
-               byte param_6)
-
-{
-  byte bVar1;
-  byte bVar2;
-  undefined1 uVar3;
-  int in_r12;
-  
-  if ((*(byte *)(in_r12 + -0x3faf) & 8) != 0) {
-    *(byte *)(param_5 + 3) = param_6 | 0x10;
-  }
-  if ((j1939_governor_feature_cal & 0x40) == 0) {
-    bVar2 = 0xf;
-LAB_0002432c:
-    *(byte *)(param_5 + 3) = *(byte *)(param_5 + 3) | bVar2;
-  }
-  else {
-    if ((*(byte *)(param_3 + 3) & 0x80) == 0) {
-      if ((switch_input_state_bits[3] & 0x80) != 0) {
-        bVar2 = 4;
-        goto LAB_00024304;
-      }
-    }
-    else {
-      bVar2 = 0xc;
-LAB_00024304:
-      *(byte *)(param_5 + 3) = *(byte *)(param_5 + 3) | bVar2;
-    }
-    if (governor_override_active_flag != 0) {
-      bVar2 = 1;
-      goto LAB_0002432c;
-    }
-  }
-  if ((j1939_governor_feature_cal & 0x40) == 0) {
-    bVar2 = 0xff;
-LAB_00024510:
-    *(byte *)(param_5 + 4) = bVar2;
-  }
-  else {
-    if ((((*(byte *)(param_3 + 3) & 0x80) == 0) || ((switch_input_state_bits[3] & 0x80) == 0)) &&
-       (((*(byte *)(param_3 + 3) & 0x80) == 0 || ((switch_input_state_bits[3] & 0x80) != 0)))) {
-      if ((switch_input_state_bits[3] & 0x80) == 0) {
-        bVar2 = 0;
-      }
-      else {
-        bVar2 = 0x40;
-      }
-    }
-    else {
-      bVar2 = 0xc0;
-    }
-    *(byte *)(param_5 + 4) = bVar2;
-    if ((*(byte *)(param_3 + 3) & 0x80) == 0) {
-      if ((((switch_input_state_bits[3] & 0x80) != 0) ||
-          ((j1939_tsc1_active_flag == 0 && ((switch_input_state_bits[3] & 0x80) != 0)))) ||
-         ((j1939_tsc1_active_flag != 0 && ((switch_input_state_bits[3] & 0x80) != 0)))) {
-        bVar1 = 0x10;
-        goto LAB_00024424;
-      }
-    }
-    else {
-      bVar1 = 0x30;
-LAB_00024424:
-      *(byte *)(param_5 + 4) = bVar2 | bVar1;
-    }
-    if ((((*(byte *)(param_3 + 3) & 0x80) == 0) || ((switch_input_state_bits[3] & 0x80) != 0)) &&
-       (((*(byte *)(param_3 + 3) & 0x80) == 0 || ((switch_input_state_bits[3] & 0x80) == 0)))) {
-      if ((switch_input_state_bits[3] & 0x80) != 0) {
-        bVar2 = 4;
-        goto LAB_00024494;
-      }
-    }
-    else {
-      bVar2 = 0xc;
-LAB_00024494:
-      *(byte *)(param_5 + 4) = *(byte *)(param_5 + 4) | bVar2;
-    }
-    if ((*(byte *)(param_3 + 3) & 0x80) != 0) {
-      bVar2 = 3;
-LAB_00024500:
-      bVar2 = *(byte *)(param_5 + 4) | bVar2;
-      goto LAB_00024510;
-    }
-    if ((((switch_input_state_bits[3] & 0x80) != 0) ||
-        ((j1939_tsc1_active_flag != 0 && ((switch_input_state_bits[3] & 0x80) != 0)))) ||
-       ((j1939_tsc1_active_flag == 0 && ((switch_input_state_bits[3] & 0x80) != 0)))) {
-      bVar2 = 1;
-      goto LAB_00024500;
-    }
-  }
-  if ((j1939_governor_feature_cal & 0x40) == 0) {
-    uVar3 = 0xff;
-  }
-  else {
-    uVar3 = (undefined1)((uint)cruise_speed_command * 0x19c >> 0x10);
-  }
-  *(undefined1 *)(param_5 + 5) = uVar3;
-  if ((short)j1939_status_field_3bit < 8) {
-    bVar2 = (byte)((int)(short)j1939_status_field_3bit << 5);
-  }
-  else {
-    bVar2 = 0;
-  }
-  *(byte *)(param_5 + 6) = bVar2;
-  if ((j1939_governor_feature_cal & 0x10) == 0) {
-    bVar1 = 0x1f;
-  }
-  else {
-    bVar1 = (byte)protection_event_code;
-  }
-  *(byte *)(param_5 + 6) = bVar2 | bVar1;
-  if ((*(byte *)(param_3 + 3) & 0x80) == 0) {
-    if ((switch_input_state_bits[3] & 0x80) == 0) {
-      bVar2 = 0xc0;
-    }
-    else {
-      bVar2 = 0xd0;
-    }
-  }
-  else {
-    bVar2 = 0xf0;
-  }
-  *(byte *)(param_5 + 7) = bVar2;
-  if ((*(byte *)(param_3 + 3) & 0x80) == 0) {
-    if ((switch_input_state_bits[3] & 0x80) != 0) {
-      bVar1 = 0xc4;
-      goto LAB_00024604;
-    }
-  }
-  else {
-    bVar1 = 0xcc;
-LAB_00024604:
-    *(byte *)(param_5 + 7) = bVar2 | bVar1;
-  }
-  if ((*(byte *)(param_3 + 3) & 0x80) == 0) {
-    if ((switch_input_state_bits[3] & 0x80) == 0) goto LAB_00024648;
-    bVar2 = 0xc1;
-  }
-  else {
-    bVar2 = 0xc3;
-  }
-  *(byte *)(param_5 + 7) = *(byte *)(param_5 + 7) | bVar2;
-LAB_00024648:
-  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65265_tx_header);
-  return;
-}
-
-
-
-//
-// Function: cm848_buildDiagnosticStatusMessage @ 0x0002439c
-//
-
-void cm848_buildDiagnosticStatusMessage
-               (undefined4 param_1,undefined4 param_2,int param_3,int param_4,int param_5)
-
-{
-  byte bVar1;
-  byte bVar2;
-  undefined1 uVar3;
-  int in_r12;
-  
-  if ((*(byte *)(in_r12 + -0x3fad) & 0x80) == 0) {
-    bVar1 = 0;
-  }
-  else {
-    bVar1 = 0x40;
-  }
-  *(byte *)(param_5 + 4) = bVar1;
-  if ((*(byte *)(param_3 + 3) & 0x80) == 0) {
-    if ((((switch_input_state_bits[3] & 0x80) != 0) ||
-        ((j1939_tsc1_active_flag == 0 && ((switch_input_state_bits[3] & 0x80) != 0)))) ||
-       ((j1939_tsc1_active_flag != 0 && ((switch_input_state_bits[3] & 0x80) != 0)))) {
-      bVar2 = 0x10;
-      goto LAB_00024424;
-    }
-  }
-  else {
-    bVar2 = 0x30;
-LAB_00024424:
-    *(byte *)(param_5 + 4) = bVar1 | bVar2;
-  }
-  if ((((*(byte *)(param_3 + 3) & 0x80) == 0) || ((switch_input_state_bits[3] & 0x80) != 0)) &&
-     (((*(byte *)(param_3 + 3) & 0x80) == 0 || ((switch_input_state_bits[3] & 0x80) == 0)))) {
-    if ((switch_input_state_bits[3] & 0x80) != 0) {
-      bVar1 = 4;
-      goto LAB_00024494;
-    }
-  }
-  else {
-    bVar1 = 0xc;
-LAB_00024494:
-    *(byte *)(param_5 + 4) = *(byte *)(param_5 + 4) | bVar1;
-  }
-  if ((*(byte *)(param_3 + 3) & 0x80) == 0) {
-    if ((((switch_input_state_bits[3] & 0x80) != 0) ||
-        ((j1939_tsc1_active_flag != 0 && ((switch_input_state_bits[3] & 0x80) != 0)))) ||
-       ((j1939_tsc1_active_flag == 0 && ((switch_input_state_bits[3] & 0x80) != 0)))) {
-      bVar1 = 1;
-      goto LAB_00024500;
-    }
-  }
-  else {
-    bVar1 = 3;
-LAB_00024500:
-    *(byte *)(param_5 + 4) = *(byte *)(param_5 + 4) | bVar1;
-  }
-  if ((*(ushort *)(param_4 + 6) & 0x40) == 0) {
-    uVar3 = 0xff;
-  }
-  else {
-    uVar3 = (undefined1)((uint)cruise_speed_command * 0x19c >> 0x10);
-  }
-  *(undefined1 *)(param_5 + 5) = uVar3;
-  if ((short)j1939_status_field_3bit < 8) {
-    bVar1 = (byte)((int)(short)j1939_status_field_3bit << 5);
-  }
-  else {
-    bVar1 = 0;
-  }
-  *(byte *)(param_5 + 6) = bVar1;
-  if ((*(ushort *)(param_4 + 6) & 0x10) == 0) {
-    bVar2 = 0x1f;
-  }
-  else {
-    bVar2 = (byte)protection_event_code;
-  }
-  *(byte *)(param_5 + 6) = bVar1 | bVar2;
-  if ((*(byte *)(param_3 + 3) & 0x80) == 0) {
-    if ((switch_input_state_bits[3] & 0x80) == 0) {
-      bVar1 = 0xc0;
-    }
-    else {
-      bVar1 = 0xd0;
-    }
-  }
-  else {
-    bVar1 = 0xf0;
-  }
-  *(byte *)(param_5 + 7) = bVar1;
-  if ((*(byte *)(param_3 + 3) & 0x80) == 0) {
-    if ((switch_input_state_bits[3] & 0x80) != 0) {
-      bVar2 = 0xc4;
-      goto LAB_00024604;
-    }
-  }
-  else {
-    bVar2 = 0xcc;
-LAB_00024604:
-    *(byte *)(param_5 + 7) = bVar1 | bVar2;
-  }
-  if ((*(byte *)(param_3 + 3) & 0x80) == 0) {
-    if ((switch_input_state_bits[3] & 0x80) == 0) goto LAB_00024648;
-    bVar1 = 0xc1;
-  }
-  else {
-    bVar1 = 0xc3;
-  }
-  *(byte *)(param_5 + 7) = *(byte *)(param_5 + 7) | bVar1;
-LAB_00024648:
-  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65265_tx_header);
-  return;
-}
-
-
-
-//
-// Function: cm848_j1939SendPgn65265_FEF1_CruiseVehicleSpeed @ 0x000243f0
-//
-
-void cm848_j1939SendPgn65265_FEF1_CruiseVehicleSpeed
-               (undefined4 param_1,int param_2,int param_3,int param_4,int param_5,byte param_6)
-
-{
-  byte bVar1;
-  undefined1 uVar2;
-  byte bVar3;
-  
-  if (((j1939_tsc1_active_flag == 0) && (param_2 != 0)) ||
-     ((j1939_tsc1_active_flag != 0 && (param_2 != 0)))) {
-    *(byte *)(param_5 + 4) = param_6 | 0x10;
-  }
-  if ((((*(byte *)(param_3 + 3) & 0x80) == 0) || ((switch_input_state_bits[3] & 0x80) != 0)) &&
-     (((*(byte *)(param_3 + 3) & 0x80) == 0 || ((switch_input_state_bits[3] & 0x80) == 0)))) {
-    if ((switch_input_state_bits[3] & 0x80) != 0) {
-      bVar1 = 4;
-      goto LAB_00024494;
-    }
-  }
-  else {
-    bVar1 = 0xc;
-LAB_00024494:
-    *(byte *)(param_5 + 4) = *(byte *)(param_5 + 4) | bVar1;
-  }
-  if ((*(byte *)(param_3 + 3) & 0x80) == 0) {
-    if ((((switch_input_state_bits[3] & 0x80) != 0) ||
-        ((j1939_tsc1_active_flag != 0 && ((switch_input_state_bits[3] & 0x80) != 0)))) ||
-       ((j1939_tsc1_active_flag == 0 && ((switch_input_state_bits[3] & 0x80) != 0)))) {
-      bVar1 = 1;
-      goto LAB_00024500;
-    }
-  }
-  else {
-    bVar1 = 3;
-LAB_00024500:
-    *(byte *)(param_5 + 4) = *(byte *)(param_5 + 4) | bVar1;
-  }
-  if ((*(ushort *)(param_4 + 6) & 0x40) == 0) {
-    uVar2 = 0xff;
-  }
-  else {
-    uVar2 = (undefined1)((uint)cruise_speed_command * 0x19c >> 0x10);
-  }
-  *(undefined1 *)(param_5 + 5) = uVar2;
-  if ((short)j1939_status_field_3bit < 8) {
-    bVar1 = (byte)((int)(short)j1939_status_field_3bit << 5);
-  }
-  else {
-    bVar1 = 0;
-  }
-  *(byte *)(param_5 + 6) = bVar1;
-  if ((*(ushort *)(param_4 + 6) & 0x10) == 0) {
-    bVar3 = 0x1f;
-  }
-  else {
-    bVar3 = (byte)protection_event_code;
-  }
-  *(byte *)(param_5 + 6) = bVar1 | bVar3;
-  if ((*(byte *)(param_3 + 3) & 0x80) == 0) {
-    if ((switch_input_state_bits[3] & 0x80) == 0) {
-      bVar1 = 0xc0;
-    }
-    else {
-      bVar1 = 0xd0;
-    }
-  }
-  else {
-    bVar1 = 0xf0;
-  }
-  *(byte *)(param_5 + 7) = bVar1;
-  if ((*(byte *)(param_3 + 3) & 0x80) == 0) {
-    if ((switch_input_state_bits[3] & 0x80) != 0) {
-      bVar3 = 0xc4;
-      goto LAB_00024604;
-    }
-  }
-  else {
-    bVar3 = 0xcc;
-LAB_00024604:
-    *(byte *)(param_5 + 7) = bVar1 | bVar3;
-  }
-  if ((*(byte *)(param_3 + 3) & 0x80) == 0) {
-    if ((switch_input_state_bits[3] & 0x80) == 0) goto LAB_00024648;
-    bVar1 = 0xc1;
-  }
-  else {
-    bVar1 = 0xc3;
-  }
-  *(byte *)(param_5 + 7) = *(byte *)(param_5 + 7) | bVar1;
+  j1939_ccvs1_idle_switches_byte = j1939_ccvs1_idle_switches_byte | bVar3;
 LAB_00024648:
   sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65265_tx_header);
   return;
@@ -23141,11 +22532,11 @@ void cm848_initPgn65265CruiseSpeedHandler(void)
   j1939_pgn65265_tx_header = CONCAT13(((byte)j1939_cruise_ctrl_priority & 7) << 2,0xfef100);
   j1939_pgn65265_tx_header = CONCAT31(j1939_pgn65265_tx_header._0_3_,(char)j1939_source_address);
   j1939_dm1_tx_length = 8;
-  j1939_dm1_status_data_ptr = &j1939_dm1_status_byte;
+  j1939_dm1_status_data_ptr = &j1939_ccvs1_two_speed_axle_byte;
   j1939_dm1_payload_end_ptr = &DAT_003faafa;
-  j1939_dm1_status_byte = 0xf3;
+  j1939_ccvs1_two_speed_axle_byte = 0xf3;
   j1939_status_field_3bit = 7;
-  cm848_j1939RegisterPgnHandler(0xfef1,j1939HandlePgn65265CruiseVehicleSpeed);
+  cm848_j1939RegisterPgnHandler(0xfef1,cm848_buildPgn65265CruiseControlVehicleSpeedMessage);
   return;
 }
 
@@ -23235,42 +22626,15 @@ void cm848_j1939HandlePgn65259ComponentId(void)
     (&DAT_003fab28)[uVar1] = s__CMMNS00000000000000000_003fd653[uVar1 + 6];
     uVar1 = uVar1 + 1 & 0xff;
   } while (uVar1 < 0x11);
-  uRam003fab39 = 0x2a;
-  cm848_governorDroopCalculation(s__CMMNS00000000000000000_003fd653 + 0x17,0x3fab3a,8);
-  uRam003fab42 = 0x2a;
+  DAT_003fab39 = 0x2a;
+  cm848_governorDroopCalculation(s__CMMNS00000000000000000_003fd653 + 0x17,&DAT_003fab3a,8);
+  LAB_003fab40_2 = 0x2a;
   uVar1 = 0;
   do {
-    *(char *)(uVar1 + 0x3fab43) = s_00000000000000000000000000000000_003fd71b[uVar1 + 0x28];
+    (&LAB_003fab40_3)[uVar1] = s_00000000000000000000000000000000_003fd71b[uVar1 + 0x28];
     uVar1 = uVar1 + 1 & 0xff;
   } while (uVar1 < 10);
-  uRam003fab4d = 0x2a;
-  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65259_tx_header);
-  return;
-}
-
-
-
-//
-// Function: cm848_appendGovernorDroopDataToMessage @ 0x000248dc
-//
-
-void cm848_appendGovernorDroopDataToMessage(void)
-
-{
-  int unaff_r29;
-  int unaff_r30;
-  undefined1 unaff_r31;
-  uint uVar1;
-  
-  *(undefined1 *)(unaff_r30 + 0x17) = unaff_r31;
-  cm848_governorDroopCalculation(unaff_r29 + 0x16,unaff_r30 + 0x18,8);
-  *(undefined1 *)(unaff_r30 + 0x20) = unaff_r31;
-  uVar1 = 0;
-  do {
-    *(undefined1 *)(unaff_r30 + uVar1 + 0x21) = *(undefined1 *)(unaff_r29 + uVar1 + 0xef);
-    uVar1 = uVar1 + 1 & 0xff;
-  } while (uVar1 < 10);
-  *(undefined1 *)(unaff_r30 + 0x2b) = 0x2a;
+  LAB_003fab4c_1 = 0x2a;
   sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65259_tx_header);
   return;
 }
@@ -23552,18 +22916,6 @@ void cm848_j1939HandlePgn65227Dm2PreviousDtc(void)
     }
     sendJ1939Message((j1939_tx_msg_t *)&j1939_dm2_tx_header);
   }
-  return;
-}
-
-
-
-//
-// Function: cm848_j1939SendPgn65226_FECA_Dm1ActiveFaults @ 0x00024ff0
-//
-
-void cm848_j1939SendPgn65226_FECA_Dm1ActiveFaults(void)
-
-{
   return;
 }
 
@@ -23900,22 +23252,7 @@ void cm848_initJ1939Etc1ControlBuffer(void)
   DAT_003fad7a = 0xff;
   DAT_003fad79 = 0xff;
   j1939_pgn61441_data_ptr = &DAT_003fad78;
-  uRam003fad8a = 0x3fad8e;
-  return;
-}
-
-
-
-//
-// Function: cm848_setEngineControllerStateCode @ 0x00025884
-//
-
-void cm848_setEngineControllerStateCode(undefined4 param_1,undefined4 param_2,int param_3)
-
-{
-  undefined4 in_r9;
-  
-  *(undefined4 *)(param_3 + 10) = in_r9;
+  PTR_DAT_003fad8a = &DAT_003fad8e;
   return;
 }
 
@@ -23934,28 +23271,29 @@ void j1939GetEngineStateCode(void)
   byte bStack_7;
   
   if (j1939_tsc1_override_state.governor_mode != 0) {
-    if (((governor_mode_code != 2) && (governor_mode_code != 1)) && (governor_mode_code != 0x14)) {
-      cm848_j1939BuildPgn61441_F001_Etc2(0xfe);
-      return;
-    }
-    if (_j1939_governor_source_index != 1) {
-      if (_j1939_governor_source_index == 2) {
-        cm848_j1939BuildPgn61441_F001_Etc2(0xf7);
-        return;
+    if (((governor_mode_code == 2) || (governor_mode_code == 1)) || (governor_mode_code == 0x14)) {
+      if (_j1939_governor_source_index == 1) {
+        j1939_engine_status_byte = 0xf6;
       }
-      if (_j1939_governor_source_index == 3) {
-        cm848_j1939BuildPgn61441_F001_Etc2(0xf5);
-        return;
+      else if (_j1939_governor_source_index == 2) {
+        j1939_engine_status_byte = 0xf7;
       }
-      cm848_j1939SendEtc1NotAvailable();
-      return;
+      else {
+        if (_j1939_governor_source_index != 3) {
+          cm848_j1939SendEtc1NotAvailable();
+          return;
+        }
+        j1939_engine_status_byte = 0xf5;
+      }
     }
-    j1939_engine_status_byte = 0xf6;
-    goto code_r0x00025a28;
+    else {
+      j1939_engine_status_byte = 0xfe;
+    }
+    goto LAB_00025a28;
   }
   if ((int)(short)governor_fuel_mode_command == (int)(short)governor_mode_code) {
-    cm848_j1939BuildPgn61441_F001_Etc2(0xf8);
-    return;
+    j1939_engine_status_byte = 0xf8;
+    goto LAB_00025a28;
   }
   switch((int)(short)governor_mode_code) {
   case 0:
@@ -23967,8 +23305,8 @@ void j1939GetEngineStateCode(void)
   case 3:
     goto LAB_000259f4;
   case 4:
-    cm848_j1939BuildPgn61441_F001_Etc2(0xf3);
-    return;
+    j1939_engine_status_byte = 0xf3;
+    goto LAB_00025a28;
   case 5:
     break;
   case 6:
@@ -23978,17 +23316,17 @@ void j1939GetEngineStateCode(void)
   case 8:
     goto LAB_000259f4;
   case 9:
-    cm848_j1939BuildPgn61441_F001_Etc2(0xf2);
-    return;
+    j1939_engine_status_byte = 0xf2;
+    goto LAB_00025a28;
   case 10:
-    cm848_j1939BuildPgn61441_F001_Etc2(0xf4);
-    return;
+    j1939_engine_status_byte = 0xf4;
+    goto LAB_00025a28;
   case 0xb:
-    cm848_j1939BuildPgn61441_F001_Etc2(0xf0);
-    return;
+    j1939_engine_status_byte = 0xf0;
+    goto LAB_00025a28;
   case 0xc:
-    cm848_j1939BuildPgn61441_F001_Etc2(0xf9);
-    return;
+    j1939_engine_status_byte = 0xf9;
+    goto LAB_00025a28;
   case 0xd:
     break;
   case 0xe:
@@ -24012,8 +23350,8 @@ void j1939GetEngineStateCode(void)
   case 0x17:
     break;
   case 0x18:
-    cm848_j1939BuildPgn61441_F001_Etc2(0xfa);
-    return;
+    j1939_engine_status_byte = 0xfa;
+    goto LAB_00025a28;
   case 0x19:
     break;
   case 0x1a:
@@ -24040,11 +23378,11 @@ void j1939GetEngineStateCode(void)
     break;
   case 0x25:
 LAB_000259f4:
-    cm848_j1939BuildPgn61441_F001_Etc2(0xf1);
-    return;
+    j1939_engine_status_byte = 0xf1;
+    goto LAB_00025a28;
   }
   j1939_engine_status_byte = 0xfe;
-code_r0x00025a28:
+LAB_00025a28:
   cm848_selectTorqueLimitStateMachine();
   j1939_eec1_driver_demand_torque_byte = (char)(j1939_dm1_spn_b_word >> 8) + 0x7d;
   cm848_calculateLoadRateOfChange();
@@ -24063,62 +23401,17 @@ code_r0x00025a28:
 
 
 //
-// Function: cm848_j1939BuildPgn61441_F001_Etc2 @ 0x000258f4
-//
-
-void cm848_j1939BuildPgn61441_F001_Etc2(byte param_1)
-
-{
-  word wVar1;
-  byte bStack00000008;
-  byte bStack00000009;
-  
-  j1939_engine_status_byte = param_1;
-  cm848_selectTorqueLimitStateMachine();
-  j1939_eec1_driver_demand_torque_byte = (char)(j1939_dm1_spn_b_word >> 8) + 0x7d;
-  cm848_calculateLoadRateOfChange();
-  j1939_dm1_spn_fmi_byte = (char)(j1939_dm1_spn_a_word >> 8) + 0x7d;
-  if (j1939_broadcast_enable_flag._0_2_ == 1) {
-    j1939_dm1_spn_fmi_byte = 0xfe;
-  }
-  _bStack00000008 = engine_rpm_state_t_0040b7ac.current_rpm;
-  wVar1 = _bStack00000008;
-  bStack00000009 = (byte)engine_rpm_state_t_0040b7ac.current_rpm;
-  j1939_eec1_engine_speed_low_byte = bStack00000009;
-  bStack00000008 = (byte)(engine_rpm_state_t_0040b7ac.current_rpm >> 8);
-  j1939_eec1_engine_speed_high_byte = bStack00000008;
-  _bStack00000008 = wVar1;
-  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn61444_tx_header);
-  return;
-}
-
-
-
-//
 // Function: cm848_j1939SendEtc1NotAvailable @ 0x00025908
 //
 
 void cm848_j1939SendEtc1NotAvailable(void)
 
 {
-  cm848_j1939BuildPgn61441_F001_Etc2(0xfe);
-  return;
-}
-
-
-
-//
-// Function: cm848_j1939BuildPgn61441_F001_Etc2 @ 0x00025a28
-//
-
-void cm848_j1939BuildPgn61441_F001_Etc2(byte param_1)
-
-{
   word wVar1;
   byte bStack00000008;
   byte bStack00000009;
   
-  j1939_engine_status_byte = param_1;
+  j1939_engine_status_byte = 0xfe;
   cm848_selectTorqueLimitStateMachine();
   j1939_eec1_driver_demand_torque_byte = (char)(j1939_dm1_spn_b_word >> 8) + 0x7d;
   cm848_calculateLoadRateOfChange();
@@ -24134,19 +23427,6 @@ void cm848_j1939BuildPgn61441_F001_Etc2(byte param_1)
   j1939_eec1_engine_speed_high_byte = bStack00000008;
   _bStack00000008 = wVar1;
   sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn61444_tx_header);
-  return;
-}
-
-
-
-//
-// Function: cm848_transmitEngineStatusMessage @ 0x00025a9c
-//
-
-void cm848_transmitEngineStatusMessage(int param_1)
-
-{
-  sendJ1939Message((j1939_tx_msg_t *)(param_1 + -0x5268));
   return;
 }
 
@@ -24163,32 +23443,25 @@ void cm848_initEec1TxDescriptor(void)
   j1939_pgn61444_tx_header = CONCAT31(j1939_pgn61444_tx_header._0_3_,(char)j1939_source_address);
   j1939_pgn61444_tx_byte_count = 5;
   j1939_pgn61444_data_ptr = &j1939_engine_status_byte;
-  uRam003fada2 = 0x3fada6;
+  PTR_DAT_003fada2 = &DAT_003fada6;
   return;
 }
 
 
 
 //
-// Function: cm848_j1939SendPgn61444_F004_EngineSpeedTorqueEec1 @ 0x00025b04
+// Function: cm848_buildPgn61443ElectronicEngineController2Message @ 0x00025b10
 //
 
-void cm848_j1939SendPgn61444_F004_EngineSpeedTorqueEec1(int param_1)
+/* Builds and sends the ECM's own EEC2 broadcast (PGN 61443): byte 1 accelerator low idle switch
+   (SPN 558 from fuel_demand_control_t.accelerator_off_idle - 3 when switch 7 is datalink-sourced -
+   2 on pedal faults) + kickdown field / byte 2 accelerator pedal position 1 =
+   fuel_demand_governor_output x 0.625 (0xFF in J1939-pedal mode) / byte 3 percent load at current
+   speed / byte 4 remote accelerator position (0xFF unless system_feature_config_flags bit 12) /
+   bytes 5-8 0xFF (was j1939HandlePgn61443Eec2 - a transmit builder) | review-function-readability
+   reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium */
 
-{
-  int in_r10;
-  
-  *(int *)(param_1 + 10) = in_r10 + -0x525a;
-  return;
-}
-
-
-
-//
-// Function: j1939HandlePgn61443Eec2 @ 0x00025b10
-//
-
-void j1939HandlePgn61443Eec2(void)
+void cm848_buildPgn61443ElectronicEngineController2Message(void)
 
 {
   byte bVar1;
@@ -24198,19 +23471,19 @@ void j1939HandlePgn61443Eec2(void)
       ((system_status_flags_t_003fe974.enable_state & 0x400) == 0)) &&
      ((system_status_flags_t_003fe974.enable_state & 0x800) == 0)) {
     if (DAT_0005c392 < fuel_demand_governor_output) {
-      j1939_status_byte_b = 0xf4;
+      j1939_eec2_low_idle_and_kickdown_byte = 0xf4;
     }
     else {
-      j1939_status_byte_b = 0xf0;
+      j1939_eec2_low_idle_and_kickdown_byte = 0xf0;
     }
   }
   else {
-    j1939_status_byte_b = 0xf8;
+    j1939_eec2_low_idle_and_kickdown_byte = 0xf8;
   }
   if ((switch_input_datalink_source_bits_cal[0] & 0x80) == 0) {
     if (((system_status_flags_t_003fe974.safety_bits_2 & 0x10) != 0) ||
        ((system_status_flags_t_003fe974.safety_bits_1 & 0x4000) != 0)) {
-      j1939_status_byte_b = j1939_status_byte_b | 2;
+      j1939_eec2_low_idle_and_kickdown_byte = j1939_eec2_low_idle_and_kickdown_byte | 2;
       goto LAB_00025c0c;
     }
     if (fuel_demand_control_t_0040a57a.accelerator_off_idle != 0) goto LAB_00025c0c;
@@ -24219,7 +23492,7 @@ void j1939HandlePgn61443Eec2(void)
   else {
     bVar1 = 3;
   }
-  j1939_status_byte_b = j1939_status_byte_b | bVar1;
+  j1939_eec2_low_idle_and_kickdown_byte = j1939_eec2_low_idle_and_kickdown_byte | bVar1;
 LAB_00025c0c:
   if ((((system_status_flags_t_003fe974.safety_bits_1 & 0x8000) == 0) &&
       ((system_status_flags_t_003fe974.safety_bits_2 & 0x10) == 0)) &&
@@ -24238,9 +23511,9 @@ LAB_00025c0c:
     j1939_eec2_accel_pedal_byte = 0xfe;
   }
   cm848_calculateLoadToFuelRatio();
-  DAT_003fadaa = (undefined1)(j1939_engine_torque_output_a >> 8);
+  j1939_eec2_percent_load_byte = (byte)(j1939_engine_torque_output_a >> 8);
   if (j1939_broadcast_enable_flag._0_2_ == 1) {
-    DAT_003fadaa = 0xfe;
+    j1939_eec2_percent_load_byte = 0xfe;
   }
   if (((system_feature_config_flags & 0x1000) == 0) || ((fuel_demand_feature_flags & 0x100) != 0)) {
     j1939_eec2_remote_accel_pedal_byte = 0xff;
@@ -24255,28 +23528,9 @@ LAB_00025c0c:
     j1939_eec2_remote_accel_pedal_byte = 0xfe;
   }
   DAT_003fadac = 0xff;
-  uRam003fadad = 0xff;
-  uRam003fadae = 0xff;
-  uRam003fadaf = 0xff;
-  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn61443_tx_header);
-  return;
-}
-
-
-
-//
-// Function: cm848_sendEec2WithDefaultValues @ 0x00025d30
-//
-
-void cm848_sendEec2WithDefaultValues(void)
-
-{
-  int unaff_r30;
-  undefined1 unaff_r31;
-  
-  *(undefined1 *)(unaff_r30 + 5) = unaff_r31;
-  *(undefined1 *)(unaff_r30 + 6) = unaff_r31;
-  *(undefined1 *)(unaff_r30 + 7) = unaff_r31;
+  DAT_003fadad = 0xff;
+  DAT_003fadae = 0xff;
+  DAT_003fadaf = 0xff;
   sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn61443_tx_header);
   return;
 }
@@ -24293,10 +23547,10 @@ void cm848_initPgn61443Eec2Handler(void)
   j1939_pgn61443_tx_header = CONCAT13(((byte)j1939_pgn61443_priority & 7) << 2,0xf00300);
   j1939_pgn61443_tx_header = CONCAT31(j1939_pgn61443_tx_header._0_3_,(char)j1939_source_address);
   DAT_003fadb4 = 5;
-  PTR_j1939_status_byte_b_003fadb6 = &j1939_status_byte_b;
+  PTR_j1939_status_byte_b_003fadb6 = &j1939_eec2_low_idle_and_kickdown_byte;
   PTR_DAT_003fadba = &DAT_003fadbe;
   emptyStubFunction3();
-  cm848_j1939RegisterPgnHandler(0xf003,j1939HandlePgn61443Eec2);
+  cm848_j1939RegisterPgnHandler(0xf003,cm848_buildPgn61443ElectronicEngineController2Message);
   return;
 }
 
@@ -24400,15 +23654,14 @@ void cm848_j1939HandlePgn65262EngineTemp(void)
 
 {
   int iVar1;
-  short asStack_8 [2];
+  short local_8 [2];
   
   if (((system_status_flags_t_003fe974.condition_monitor & 1) == 0) &&
      ((system_status_flags_t_003fe974.condition_monitor & 2) == 0)) {
     iVar1 = (((short)sensor_readings_t_0040baf2.coolant_temp >> 6) * 5 + -0xa0) / 9 + 0x28;
-    asStack_8[0] = (short)iVar1;
-    if (asStack_8[0] < 0) {
-      cm848_j1939BuildPgn65247_FEDF_Eec3(&system_status_flags_t_003fe974,0);
-      return;
+    local_8[0] = (short)iVar1;
+    if (local_8[0] < 0) {
+      iVar1 = 0;
     }
   }
   else {
@@ -24418,8 +23671,8 @@ void cm848_j1939HandlePgn65262EngineTemp(void)
   if (((system_status_flags_t_003fe974.reserved_04 & 0x8000) == 0) &&
      ((system_status_flags_t_003fe974.safety_bits_1 & 1) == 0)) {
     iVar1 = (((short)fuel_temp_raw >> 6) * 5 + -0xa0) / 9 + 0x28;
-    asStack_8[0] = (short)iVar1;
-    if (asStack_8[0] < 0) {
+    local_8[0] = (short)iVar1;
+    if (local_8[0] < 0) {
       iVar1 = 0;
     }
   }
@@ -24429,146 +23682,12 @@ void cm848_j1939HandlePgn65262EngineTemp(void)
   j1939_et1_fuel_temp_byte = (byte)iVar1;
   if (((system_status_flags_t_003fe974.condition_monitor & 0x40) == 0) &&
      ((system_status_flags_t_003fe974.condition_monitor & 0x80) == 0)) {
-    asStack_8[0] = (short)(((short)intercooler_temp_raw * 0xa0 + -0x50000) / 0x240) + 0x2220;
-    j1939_pgn65262_intercooler_temp = j1939_reverseByteOrder16(asStack_8);
+    local_8[0] = (short)(((short)intercooler_temp_raw * 0xa0 + -0x50000) / 0x240) + 0x2220;
+    j1939_pgn65262_intercooler_temp = j1939_reverseByteOrder16(local_8);
   }
   else {
     j1939_pgn65262_intercooler_temp = 0xfefe;
   }
-  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65262_tx_header);
-  return;
-}
-
-
-
-//
-// Function: cm848_j1939BuildPgn65247_FEDF_Eec3 @ 0x00026060
-//
-
-void cm848_j1939BuildPgn65247_FEDF_Eec3(int param_1,byte param_2)
-
-{
-  int iVar1;
-  short sStack00000008;
-  
-  if (((*(ushort *)(param_1 + 4) & 0x8000) == 0) && ((*(ushort *)(param_1 + 6) & 1) == 0)) {
-    iVar1 = (((short)fuel_temp_raw >> 6) * 5 + -0xa0) / 9 + 0x28;
-    sStack00000008 = (short)iVar1;
-    if (sStack00000008 < 0) {
-      iVar1 = 0;
-    }
-  }
-  else {
-    iVar1 = 0xfe;
-  }
-  j1939_et1_fuel_temp_byte = (byte)iVar1;
-  j1939_et1_coolant_temp_byte = param_2;
-  if (((*(ushort *)(param_1 + 2) & 0x40) == 0) && ((*(ushort *)(param_1 + 2) & 0x80) == 0)) {
-    sStack00000008 = (short)(((short)intercooler_temp_raw * 0xa0 + -0x50000) / 0x240) + 0x2220;
-    j1939_pgn65262_intercooler_temp = j1939_reverseByteOrder16(&stack0x00000008);
-  }
-  else {
-    j1939_pgn65262_intercooler_temp = 0xfefe;
-  }
-  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65262_tx_header);
-  return;
-}
-
-
-
-//
-// Function: cm848_j1939BuildPgn65247_FEDF_Eec3 @ 0x000260a8
-//
-
-void cm848_j1939BuildPgn65247_FEDF_Eec3(int param_1,byte param_2)
-
-{
-  int iVar1;
-  short sStack00000008;
-  
-  if (((*(ushort *)(param_1 + 4) & 0x8000) == 0) && ((*(ushort *)(param_1 + 6) & 1) == 0)) {
-    iVar1 = (((short)fuel_temp_raw >> 6) * 5 + -0xa0) / 9 + 0x28;
-    sStack00000008 = (short)iVar1;
-    if (sStack00000008 < 0) {
-      iVar1 = 0;
-    }
-  }
-  else {
-    iVar1 = 0xfe;
-  }
-  j1939_et1_fuel_temp_byte = (byte)iVar1;
-  j1939_et1_coolant_temp_byte = param_2;
-  if (((*(ushort *)(param_1 + 2) & 0x40) == 0) && ((*(ushort *)(param_1 + 2) & 0x80) == 0)) {
-    sStack00000008 = (short)(((short)intercooler_temp_raw * 0xa0 + -0x50000) / 0x240) + 0x2220;
-    j1939_pgn65262_intercooler_temp = j1939_reverseByteOrder16(&stack0x00000008);
-  }
-  else {
-    j1939_pgn65262_intercooler_temp = 0xfefe;
-  }
-  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65262_tx_header);
-  return;
-}
-
-
-
-//
-// Function: cm848_buildEngineTempWithConditionCheck @ 0x000260d4
-//
-
-void cm848_buildEngineTempWithConditionCheck(int param_1)
-
-{
-  undefined2 uVar1;
-  int iVar2;
-  int unaff_r31;
-  byte in_cr0;
-  short sStack00000008;
-  
-  if ((bool)(in_cr0 >> 1 & 1)) {
-    iVar2 = (((short)fuel_temp_raw >> 6) * 5 + -0xa0) / 9 + 0x28;
-    sStack00000008 = (short)iVar2;
-    if (sStack00000008 < 0) {
-      iVar2 = 0;
-    }
-  }
-  else {
-    iVar2 = 0xfe;
-  }
-  *(char *)(unaff_r31 + 1) = (char)iVar2;
-  if (((*(ushort *)(param_1 + 2) & 0x40) == 0) && ((*(ushort *)(param_1 + 2) & 0x80) == 0)) {
-    sStack00000008 = (short)(((short)intercooler_temp_raw * 0xa0 + -0x50000) / 0x240) + 0x2220;
-    uVar1 = j1939_reverseByteOrder16(&stack0x00000008);
-  }
-  else {
-    uVar1 = 0xfefe;
-  }
-  *(undefined2 *)(unaff_r31 + 2) = uVar1;
-  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65262_tx_header);
-  return;
-}
-
-
-
-//
-// Function: cm848_j1939SendPgn65263_FEEF_FluidLevelPressure @ 0x0002612c
-//
-
-void cm848_j1939SendPgn65263_FEEF_FluidLevelPressure(int param_1)
-
-{
-  undefined2 uVar1;
-  int in_r12;
-  int unaff_r31;
-  short sStack00000008;
-  
-  if ((in_r12 == 0) && ((*(ushort *)(param_1 + 2) & 0x80) == 0)) {
-    sStack00000008 = (short)(((short)intercooler_temp_raw * 0xa0 + -0x50000) / 0x240) + 0x2220;
-    uVar1 = j1939_reverseByteOrder16(&stack0x00000008);
-  }
-  else {
-    uVar1 = 0xfefe;
-  }
-  *(undefined2 *)(unaff_r31 + 2) = uVar1;
   sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65262_tx_header);
   return;
 }
@@ -24591,18 +23710,6 @@ void cm848_initPgn65262EngineTempHandler(void)
   DAT_003fae04 = 0xff;
   DAT_003fae05 = 0xff;
   cm848_j1939RegisterPgnHandler(0xfeee,cm848_j1939HandlePgn65262EngineTemp);
-  return;
-}
-
-
-
-//
-// Function: cm848_emptyStubFunctionJ1939A @ 0x0002622c
-//
-
-void cm848_emptyStubFunctionJ1939A(void)
-
-{
   return;
 }
 
@@ -24677,64 +23784,6 @@ LAB_00026340:
 
 
 //
-// Function: cm848_j1939SendPgn65262_FEEE_EngineTemp1 @ 0x0002629c
-//
-
-void cm848_j1939SendPgn65262_FEEE_EngineTemp1(byte param_1,int param_2)
-
-{
-  byte bVar1;
-  byte in_cr0;
-  
-  if ((!(bool)(in_cr0 >> 1 & 1)) && (param_2 != 1)) goto LAB_00026340;
-  if (governor_request_processing_state == 1) {
-LAB_000262e8:
-    if (j1939_build_state_machine == 1) {
-      bVar1 = 6;
-    }
-    else {
-      if (j1939_build_state_machine != 3) {
-        if (j1939_build_state_machine == 2) {
-          bVar1 = 7;
-          goto LAB_00026320;
-        }
-        bVar1 = 0xe;
-        goto LAB_0002632c;
-      }
-      bVar1 = 5;
-    }
-    j1939_vehicle_op_status_byte = param_1 | bVar1;
-  }
-  else {
-    if (governor_request_processing_state == 2) {
-      bVar1 = 2;
-LAB_00026320:
-      j1939_vehicle_op_status_byte = param_1 | bVar1;
-      goto LAB_00026340;
-    }
-    if (governor_request_processing_state != 3) {
-      if (governor_request_processing_state != 4) goto LAB_00026340;
-      goto LAB_000262e8;
-    }
-    bVar1 = 1;
-LAB_0002632c:
-    j1939_vehicle_op_status_byte = param_1 | bVar1;
-  }
-LAB_00026340:
-  if ((j1939_dm_feature_mode == 0) || ((j1939_dm_control_flags & 8) == 0)) {
-    j1939_pgn61440_engine_load_byte = 0xff;
-  }
-  else {
-    cm848_calculateSpeedControlError();
-    j1939_pgn61440_engine_load_byte = 0x7d - (char)(j1939_engine_torque_encoded >> 8);
-  }
-  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn61440_tx_header);
-  return;
-}
-
-
-
-//
 // Function: cm848_initJ1939SpeedControlMessage @ 0x000263a4
 //
 
@@ -24781,27 +23830,9 @@ void cm848_initJ1939BrakeRetarderBuffer(void)
 {
   j1939_pgn65213_tx_header = CONCAT13(((byte)j1939_pgn65213_source_address_bits & 7) << 2,0xfebd00);
   j1939_pgn65213_tx_header = CONCAT31(j1939_pgn65213_tx_header._0_3_,(char)j1939_source_address);
-  uRam003fae2c = 2;
-  pbRam003fae2e = &j1939_pgn65213_diag_param_byte;
-  puRam003fae32 = &DAT_003fae36;
-  return;
-}
-
-
-
-//
-// Function: cm848_j1939SendPgn61440_F000 @ 0x000264b0
-//
-
-void cm848_j1939SendPgn61440_F000(int param_1)
-
-{
-  undefined1 in_r9;
-  
-  *(undefined1 *)(param_1 + 3) = in_r9;
-  *(undefined2 *)(param_1 + 4) = 2;
-  *(byte **)(param_1 + 6) = &j1939_pgn65213_diag_param_byte;
-  *(undefined **)(param_1 + 10) = &DAT_003fae36;
+  DAT_003fae2c = 2;
+  PTR_j1939_pgn65213_diag_param_byte_003fae2e = &j1939_pgn65213_diag_param_byte;
+  PTR_DAT_003fae32 = &DAT_003fae36;
   return;
 }
 
@@ -24868,19 +23899,20 @@ void cm848_initJ1939InletExhaustConditionsBuffer(void)
 void cm848_j1939BuildProtocolModeStatus(void)
 
 {
-  undefined1 uStack_8;
+  undefined1 local_8;
   undefined1 uStack_7;
   
   if ((DAT_003fae71 & 0xf0) == 0) {
-    if (1 < j1939_dm_feature_mode) {
-      cm848_j1939BuildPgn65213_FEBD_BrakeJobber(j1939_dm_feature_mode,3);
-      return;
-    }
-    if (j1939_dm_feature_mode == 1) {
-      j1939_pgn_dest_address = 0x14;
+    if (j1939_dm_feature_mode < 2) {
+      if (j1939_dm_feature_mode == 1) {
+        j1939_pgn_dest_address = 0x14;
+      }
+      else {
+        j1939_pgn_dest_address = 0xff;
+      }
     }
     else {
-      j1939_pgn_dest_address = 0xff;
+      j1939_pgn_dest_address = 3;
     }
     if (cal_fuel_operation_mode_1_en == 0) {
       j1939_pgn65249_byte0 = 0xff;
@@ -24899,263 +23931,35 @@ void cm848_j1939BuildProtocolModeStatus(void)
     }
     uStack_7 = (undefined1)j1939_pgn65249_cal_a;
     DAT_003fae52 = uStack_7;
-    uStack_8 = (undefined1)(j1939_pgn65249_cal_a >> 8);
-    DAT_003fae53 = uStack_8;
+    local_8 = (undefined1)(j1939_pgn65249_cal_a >> 8);
+    DAT_003fae53 = local_8;
     DAT_003fae54 = '}' - (char)((ushort)DAT_0005c376 >> 8);
     uStack_7 = (undefined1)j1939_pgn65249_cal_b;
     DAT_003fae55 = uStack_7;
-    uStack_8 = (undefined1)(j1939_pgn65249_cal_b >> 8);
-    DAT_003fae56 = uStack_8;
+    local_8 = (undefined1)(j1939_pgn65249_cal_b >> 8);
+    DAT_003fae56 = local_8;
     DAT_003fae57 = '}' - (char)(j1939_dtc_spn_cal_a >> 8);
     uStack_7 = (undefined1)j1939_protocol_mode_fuel_cal_c;
     DAT_003fae58 = uStack_7;
-    uStack_8 = (undefined1)(j1939_protocol_mode_fuel_cal_c >> 8);
-    DAT_003fae59 = uStack_8;
+    local_8 = (undefined1)(j1939_protocol_mode_fuel_cal_c >> 8);
+    DAT_003fae59 = local_8;
     DAT_003fae5a = '}' - (char)(j1939_dtc_spn_cal_b >> 8);
     uStack_7 = (undefined1)j1939_protocol_mode_fuel_cal_d;
     DAT_003fae5b = uStack_7;
-    uStack_8 = (undefined1)(j1939_protocol_mode_fuel_cal_d >> 8);
-    DAT_003fae5c = uStack_8;
+    local_8 = (undefined1)(j1939_protocol_mode_fuel_cal_d >> 8);
+    DAT_003fae5c = local_8;
     DAT_003fae5d = '}' - (char)(j1939_dtc_spn_cal_c >> 8);
     uStack_7 = (undefined1)j1939_protocol_mode_fuel_cal_b;
     DAT_003fae5e = uStack_7;
-    uStack_8 = (undefined1)(j1939_protocol_mode_fuel_cal_b >> 8);
-    DAT_003fae5f = uStack_8;
+    local_8 = (undefined1)(j1939_protocol_mode_fuel_cal_b >> 8);
+    DAT_003fae5f = local_8;
     uStack_7 = (undefined1)j1939_protocol_mode_speed_cal;
     DAT_003fae60 = uStack_7;
-    uStack_8 = (undefined1)(j1939_protocol_mode_speed_cal >> 8);
-    DAT_003fae61 = uStack_8;
+    local_8 = (undefined1)(j1939_protocol_mode_speed_cal >> 8);
+    DAT_003fae61 = local_8;
     DAT_003fae62 = '}' - (char)(j1939_dtc_spn_cal_d >> 8);
     sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65249_tx_header);
   }
-  return;
-}
-
-
-
-//
-// Function: cm848_j1939BuildPgn65213_FEBD_BrakeJobber @ 0x00026694
-//
-
-void cm848_j1939BuildPgn65213_FEBD_BrakeJobber(undefined4 param_1,byte param_2)
-
-{
-  word wVar1;
-  undefined1 uStack00000008;
-  undefined1 uStack00000009;
-  
-  if (cal_fuel_operation_mode_1_en == 0) {
-    j1939_pgn65249_byte0 = 0xff;
-  }
-  else if (cal_fuel_operation_mode_1_en == 1) {
-    j1939_pgn65249_byte0 = 6;
-  }
-  else if (cal_fuel_operation_mode_1_en == 2) {
-    j1939_pgn65249_byte0 = 3;
-  }
-  else if (cal_fuel_operation_mode_1_en == 3) {
-    j1939_pgn65249_byte0 = 2;
-  }
-  else if (cal_fuel_operation_mode_1_en == 6) {
-    j1939_pgn65249_byte0 = 1;
-  }
-  uStack00000009 = (undefined1)j1939_pgn65249_cal_a;
-  DAT_003fae52 = uStack00000009;
-  uStack00000008 = (undefined1)(j1939_pgn65249_cal_a >> 8);
-  DAT_003fae53 = uStack00000008;
-  DAT_003fae54 = '}' - (char)((ushort)DAT_0005c376 >> 8);
-  uStack00000009 = (undefined1)j1939_pgn65249_cal_b;
-  DAT_003fae55 = uStack00000009;
-  uStack00000008 = (undefined1)(j1939_pgn65249_cal_b >> 8);
-  DAT_003fae56 = uStack00000008;
-  DAT_003fae57 = '}' - (char)(j1939_dtc_spn_cal_a >> 8);
-  uStack00000009 = (undefined1)j1939_protocol_mode_fuel_cal_c;
-  DAT_003fae58 = uStack00000009;
-  uStack00000008 = (undefined1)(j1939_protocol_mode_fuel_cal_c >> 8);
-  DAT_003fae59 = uStack00000008;
-  DAT_003fae5a = '}' - (char)(j1939_dtc_spn_cal_b >> 8);
-  uStack00000009 = (undefined1)j1939_protocol_mode_fuel_cal_d;
-  DAT_003fae5b = uStack00000009;
-  uStack00000008 = (undefined1)(j1939_protocol_mode_fuel_cal_d >> 8);
-  DAT_003fae5c = uStack00000008;
-  DAT_003fae5d = '}' - (char)(j1939_dtc_spn_cal_c >> 8);
-  uStack00000009 = (undefined1)j1939_protocol_mode_fuel_cal_b;
-  DAT_003fae5e = uStack00000009;
-  uStack00000008 = (undefined1)(j1939_protocol_mode_fuel_cal_b >> 8);
-  DAT_003fae5f = uStack00000008;
-  _uStack00000008 = j1939_protocol_mode_speed_cal;
-  wVar1 = _uStack00000008;
-  uStack00000009 = (undefined1)j1939_protocol_mode_speed_cal;
-  DAT_003fae60 = uStack00000009;
-  uStack00000008 = (undefined1)(j1939_protocol_mode_speed_cal >> 8);
-  DAT_003fae61 = uStack00000008;
-  DAT_003fae62 = '}' - (char)(j1939_dtc_spn_cal_d >> 8);
-  j1939_pgn_dest_address = param_2;
-  _uStack00000008 = wVar1;
-  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65249_tx_header);
-  return;
-}
-
-
-
-//
-// Function: cm848_j1939BuildPgn65213_FEBD_BrakeJobber @ 0x0002669c
-//
-
-void cm848_j1939BuildPgn65213_FEBD_BrakeJobber(undefined4 param_1,byte param_2)
-
-{
-  word wVar1;
-  undefined1 uStack00000008;
-  undefined1 uStack00000009;
-  
-  if (cal_fuel_operation_mode_1_en == 0) {
-    j1939_pgn65249_byte0 = 0xff;
-  }
-  else if (cal_fuel_operation_mode_1_en == 1) {
-    j1939_pgn65249_byte0 = 6;
-  }
-  else if (cal_fuel_operation_mode_1_en == 2) {
-    j1939_pgn65249_byte0 = 3;
-  }
-  else if (cal_fuel_operation_mode_1_en == 3) {
-    j1939_pgn65249_byte0 = 2;
-  }
-  else if (cal_fuel_operation_mode_1_en == 6) {
-    j1939_pgn65249_byte0 = 1;
-  }
-  uStack00000009 = (undefined1)j1939_pgn65249_cal_a;
-  DAT_003fae52 = uStack00000009;
-  uStack00000008 = (undefined1)(j1939_pgn65249_cal_a >> 8);
-  DAT_003fae53 = uStack00000008;
-  DAT_003fae54 = '}' - (char)((ushort)DAT_0005c376 >> 8);
-  uStack00000009 = (undefined1)j1939_pgn65249_cal_b;
-  DAT_003fae55 = uStack00000009;
-  uStack00000008 = (undefined1)(j1939_pgn65249_cal_b >> 8);
-  DAT_003fae56 = uStack00000008;
-  DAT_003fae57 = '}' - (char)(j1939_dtc_spn_cal_a >> 8);
-  uStack00000009 = (undefined1)j1939_protocol_mode_fuel_cal_c;
-  DAT_003fae58 = uStack00000009;
-  uStack00000008 = (undefined1)(j1939_protocol_mode_fuel_cal_c >> 8);
-  DAT_003fae59 = uStack00000008;
-  DAT_003fae5a = '}' - (char)(j1939_dtc_spn_cal_b >> 8);
-  uStack00000009 = (undefined1)j1939_protocol_mode_fuel_cal_d;
-  DAT_003fae5b = uStack00000009;
-  uStack00000008 = (undefined1)(j1939_protocol_mode_fuel_cal_d >> 8);
-  DAT_003fae5c = uStack00000008;
-  DAT_003fae5d = '}' - (char)(j1939_dtc_spn_cal_c >> 8);
-  uStack00000009 = (undefined1)j1939_protocol_mode_fuel_cal_b;
-  DAT_003fae5e = uStack00000009;
-  uStack00000008 = (undefined1)(j1939_protocol_mode_fuel_cal_b >> 8);
-  DAT_003fae5f = uStack00000008;
-  _uStack00000008 = j1939_protocol_mode_speed_cal;
-  wVar1 = _uStack00000008;
-  uStack00000009 = (undefined1)j1939_protocol_mode_speed_cal;
-  DAT_003fae60 = uStack00000009;
-  uStack00000008 = (undefined1)(j1939_protocol_mode_speed_cal >> 8);
-  DAT_003fae61 = uStack00000008;
-  DAT_003fae62 = '}' - (char)(j1939_dtc_spn_cal_d >> 8);
-  j1939_pgn_dest_address = param_2;
-  _uStack00000008 = wVar1;
-  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65249_tx_header);
-  return;
-}
-
-
-
-//
-// Function: cm848_buildProtocolModeStatusMessage @ 0x000266f8
-//
-
-void cm848_buildProtocolModeStatusMessage(int param_1)
-
-{
-  word wVar1;
-  undefined1 uStack00000008;
-  undefined1 uStack00000009;
-  
-  *(undefined1 *)(param_1 + 1) = 1;
-  wVar1 = j1939_pgn65249_cal_a;
-  uStack00000009 = (undefined1)j1939_pgn65249_cal_a;
-  *(undefined1 *)(param_1 + 2) = uStack00000009;
-  uStack00000008 = (undefined1)(wVar1 >> 8);
-  *(undefined1 *)(param_1 + 3) = uStack00000008;
-  *(char *)(param_1 + 4) = '}' - (char)((ushort)DAT_0005c376 >> 8);
-  wVar1 = j1939_pgn65249_cal_b;
-  uStack00000009 = (undefined1)j1939_pgn65249_cal_b;
-  *(undefined1 *)(param_1 + 5) = uStack00000009;
-  uStack00000008 = (undefined1)(wVar1 >> 8);
-  *(undefined1 *)(param_1 + 6) = uStack00000008;
-  *(char *)(param_1 + 7) = '}' - (char)(j1939_dtc_spn_cal_a >> 8);
-  wVar1 = j1939_protocol_mode_fuel_cal_c;
-  uStack00000009 = (undefined1)j1939_protocol_mode_fuel_cal_c;
-  *(undefined1 *)(param_1 + 8) = uStack00000009;
-  uStack00000008 = (undefined1)(wVar1 >> 8);
-  *(undefined1 *)(param_1 + 9) = uStack00000008;
-  *(char *)(param_1 + 10) = '}' - (char)(j1939_dtc_spn_cal_b >> 8);
-  wVar1 = j1939_protocol_mode_fuel_cal_d;
-  uStack00000009 = (undefined1)j1939_protocol_mode_fuel_cal_d;
-  *(undefined1 *)(param_1 + 0xb) = uStack00000009;
-  uStack00000008 = (undefined1)(wVar1 >> 8);
-  *(undefined1 *)(param_1 + 0xc) = uStack00000008;
-  *(char *)(param_1 + 0xd) = '}' - (char)(j1939_dtc_spn_cal_c >> 8);
-  wVar1 = j1939_protocol_mode_fuel_cal_b;
-  uStack00000009 = (undefined1)j1939_protocol_mode_fuel_cal_b;
-  *(undefined1 *)(param_1 + 0xe) = uStack00000009;
-  uStack00000008 = (undefined1)(wVar1 >> 8);
-  *(undefined1 *)(param_1 + 0xf) = uStack00000008;
-  wVar1 = j1939_protocol_mode_speed_cal;
-  _uStack00000008 = j1939_protocol_mode_speed_cal;
-  uStack00000009 = (undefined1)j1939_protocol_mode_speed_cal;
-  *(undefined1 *)(param_1 + 0x10) = uStack00000009;
-  uStack00000008 = (undefined1)(wVar1 >> 8);
-  *(undefined1 *)(param_1 + 0x11) = uStack00000008;
-  *(char *)(param_1 + 0x12) = '}' - (char)(j1939_dtc_spn_cal_d >> 8);
-  _uStack00000008 = wVar1;
-  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65249_tx_header);
-  return;
-}
-
-
-
-//
-// Function: cm848_j1939SendPgn65270_FEF6_InletExhaustConditions @ 0x00026750
-//
-
-void cm848_j1939SendPgn65270_FEF6_InletExhaustConditions(int param_1,char param_2)
-
-{
-  word wVar1;
-  undefined1 uStack00000008;
-  undefined1 uStack00000009;
-  
-  *(char *)(param_1 + 7) = param_2 - (char)(j1939_dtc_spn_cal_a >> 8);
-  wVar1 = j1939_protocol_mode_fuel_cal_c;
-  uStack00000009 = (undefined1)j1939_protocol_mode_fuel_cal_c;
-  *(undefined1 *)(param_1 + 8) = uStack00000009;
-  uStack00000008 = (undefined1)(wVar1 >> 8);
-  *(undefined1 *)(param_1 + 9) = uStack00000008;
-  *(char *)(param_1 + 10) = param_2 - (char)(j1939_dtc_spn_cal_b >> 8);
-  wVar1 = j1939_protocol_mode_fuel_cal_d;
-  uStack00000009 = (undefined1)j1939_protocol_mode_fuel_cal_d;
-  *(undefined1 *)(param_1 + 0xb) = uStack00000009;
-  uStack00000008 = (undefined1)(wVar1 >> 8);
-  *(undefined1 *)(param_1 + 0xc) = uStack00000008;
-  *(char *)(param_1 + 0xd) = param_2 - (char)(j1939_dtc_spn_cal_c >> 8);
-  wVar1 = j1939_protocol_mode_fuel_cal_b;
-  uStack00000009 = (undefined1)j1939_protocol_mode_fuel_cal_b;
-  *(undefined1 *)(param_1 + 0xe) = uStack00000009;
-  uStack00000008 = (undefined1)(wVar1 >> 8);
-  *(undefined1 *)(param_1 + 0xf) = uStack00000008;
-  wVar1 = j1939_protocol_mode_speed_cal;
-  _uStack00000008 = j1939_protocol_mode_speed_cal;
-  uStack00000009 = (undefined1)j1939_protocol_mode_speed_cal;
-  *(undefined1 *)(param_1 + 0x10) = uStack00000009;
-  uStack00000008 = (undefined1)(wVar1 >> 8);
-  *(undefined1 *)(param_1 + 0x11) = uStack00000008;
-  *(char *)(param_1 + 0x12) = param_2 - (char)(j1939_dtc_spn_cal_d >> 8);
-  _uStack00000008 = wVar1;
-  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65249_tx_header);
   return;
 }
 
@@ -25170,28 +23974,9 @@ void cm848_initJ1939ProtocolModeStatusBuffer(void)
 {
   j1939_pgn65249_tx_header = CONCAT13(((byte)j1939_pgn65249_source_address_bits & 7) << 2,0xfee100);
   j1939_pgn65249_tx_header = CONCAT31(j1939_pgn65249_tx_header._0_3_,(char)j1939_source_address_b);
-  uRam003fae67 = 0x13;
-  pbRam003fae69 = &j1939_pgn_dest_address;
-  puRam003fae6d = &DAT_003fae71;
-  return;
-}
-
-
-
-//
-// Function: cm848_initPgn65256VehicleMaintenanceHandler @ 0x00026850
-//
-
-void cm848_initPgn65256VehicleMaintenanceHandler(undefined1 *param_1)
-
-{
-  undefined1 in_r0;
-  
-  *param_1 = in_r0;
-  param_1[3] = (char)j1939_source_address_b;
-  *(undefined2 *)(param_1 + 4) = 0x13;
-  *(byte **)(param_1 + 6) = &j1939_pgn_dest_address;
-  *(undefined1 **)(param_1 + 10) = &DAT_003fae71;
+  DAT_003fae67 = 0x13;
+  PTR_j1939_pgn_dest_address_003fae69 = &j1939_pgn_dest_address;
+  PTR_DAT_003fae6d = &DAT_003fae71;
   return;
 }
 
@@ -25218,12 +24003,12 @@ void cm848_initPgn65242SoftwareIdHandler(void)
 
 {
   uint uVar1;
-  undefined1 uStack_10;
+  undefined1 local_10;
   undefined1 uStack_f;
   
-  uRam003fae76 = 0x2f;
-  pbRam003fae78 = &j1939_pgn65242_field_count_byte;
-  puRam003fae7c = &DAT_003faeaf;
+  DAT_003fae76 = 0x2f;
+  PTR_j1939_pgn65242_field_count_byte_003fae78 = &j1939_pgn65242_field_count_byte;
+  PTR_DAT_003fae7c = &DAT_003faeaf;
   j1939_pgn65242_can_header = CONCAT31(0x18feda,(char)j1939_source_address);
   j1939_pgn65242_field_count_byte = 6;
   cm848_governorDroopCalculation(&DAT_003fd69b,&DAT_003fae81,8);
@@ -25238,68 +24023,16 @@ void cm848_initPgn65242SoftwareIdHandler(void)
   DAT_003fae9f = 0x2a;
   cm848_governorDroopCalculation(&DAT_0000b74a,&DAT_003faea0,1);
   DAT_003faea8 = 0x2a;
-  uStack_10 = (undefined1)(sensor_channel_index_working >> 8);
-  DAT_003faea9 = uStack_10;
+  local_10 = (undefined1)(sensor_channel_index_working >> 8);
+  DAT_003faea9 = local_10;
   uStack_f = (undefined1)sensor_channel_index_working;
   DAT_003faeaa = uStack_f;
   DAT_003faeab = 0x2a;
-  uStack_10 = (undefined1)(j1939_pgn_priority_cal >> 8);
-  DAT_003faeac = uStack_10;
+  local_10 = (undefined1)(j1939_pgn_priority_cal >> 8);
+  DAT_003faeac = local_10;
   uStack_f = (undefined1)j1939_pgn_priority_cal;
   DAT_003faead = uStack_f;
   DAT_003faeae = 0x2a;
-  cm848_j1939RegisterPgnHandler(0xfeda,cm848_j1939HandlePgn65242SoftwareId);
-  return;
-}
-
-
-
-//
-// Function: cm848_j1939SendPgn65249_FEE1 @ 0x000268c8
-//
-
-void cm848_j1939SendPgn65249_FEE1(void)
-
-{
-  word wVar1;
-  uint in_r11;
-  uint *unaff_r30;
-  uint uVar2;
-  undefined1 uStack00000008;
-  undefined1 uStack00000009;
-  
-  *unaff_r30 = in_r11 | 0xda00;
-  *(byte *)unaff_r30 = *(byte *)unaff_r30 & 0xe3 | 0x18;
-  *(undefined2 *)(unaff_r30 + 1) = 0x2f;
-  *(byte **)((int)unaff_r30 + 6) = &j1939_pgn65242_field_count_byte;
-  *(undefined **)((int)unaff_r30 + 10) = &DAT_003faeaf;
-  *(byte *)((int)unaff_r30 + 3) = (byte)j1939_source_address;
-  j1939_pgn65242_field_count_byte = 6;
-  cm848_governorDroopCalculation(&DAT_003fd69b,&DAT_003fae81,8);
-  DAT_003fae89 = 0x2a;
-  cm848_governorDroopCalculation(&DAT_003fd69f,&DAT_003fae8a,8);
-  DAT_003fae92 = 0x2a;
-  uVar2 = 0;
-  do {
-    (&DAT_003fae93)[uVar2] = s_0000000000000000000000_003fd6a5[uVar2 + 10];
-    uVar2 = uVar2 + 1 & 0xff;
-  } while (uVar2 < 0xc);
-  DAT_003fae9f = 0x2a;
-  cm848_governorDroopCalculation(&DAT_0000b74a,&DAT_003faea0,1);
-  DAT_003faea8 = 0x2a;
-  uStack00000008 = (undefined1)(sensor_channel_index_working >> 8);
-  DAT_003faea9 = uStack00000008;
-  uStack00000009 = (undefined1)sensor_channel_index_working;
-  DAT_003faeaa = uStack00000009;
-  DAT_003faeab = 0x2a;
-  _uStack00000008 = j1939_pgn_priority_cal;
-  wVar1 = _uStack00000008;
-  uStack00000008 = (undefined1)(j1939_pgn_priority_cal >> 8);
-  DAT_003faeac = uStack00000008;
-  uStack00000009 = (undefined1)j1939_pgn_priority_cal;
-  DAT_003faead = uStack00000009;
-  DAT_003faeae = 0x2a;
-  _uStack00000008 = wVar1;
   cm848_j1939RegisterPgnHandler(0xfeda,cm848_j1939HandlePgn65242SoftwareId);
   return;
 }
@@ -25322,9 +24055,9 @@ void cm848_j1939HandlePgn65504ProprietaryA(void)
     j1939_rpm_tx_word = 0;
     j1939_etc1_speed_offset_tx_word = 0;
     DAT_003faeb4 = 0;
-    bRam003faeb5 = 0;
+    DAT_003faeb5 = 0;
     DAT_003faeb6 = 0;
-    bRam003faeb7 = 0;
+    DAT_003faeb7 = 0;
   }
   else {
     local_18 = (undefined1)(engine_rpm_state_t_0040b7ac.current_rpm >> 8);
@@ -25341,42 +24074,10 @@ void cm848_j1939HandlePgn65504ProprietaryA(void)
     uVar1 = TBLr;
     DAT_003faeb4 = (byte)(uVar2 >> 1) & 0x52 | (byte)(uVar1 >> 7) & 0xad;
     uVar1 = TBLr;
-    bRam003faeb5 = (byte)uVar2 & 0x41 | (byte)(uVar1 >> 7) & 0xbe;
+    DAT_003faeb5 = (byte)uVar2 & 0x41 | (byte)(uVar1 >> 7) & 0xbe;
     uVar1 = TBLr;
-    bRam003faeb7 = (byte)((uVar2 & 0x1a) << 3) | (byte)(uVar1 >> 7) & 0x2f;
+    DAT_003faeb7 = (byte)((uVar2 & 0x1a) << 3) | (byte)(uVar1 >> 7) & 0x2f;
   }
-  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn57344_tx_header);
-  return;
-}
-
-
-
-//
-// Function: cm848_buildVehicleMaintenanceStatusBits @ 0x00026aa4
-//
-
-void cm848_buildVehicleMaintenanceStatusBits(int param_1)
-
-{
-  uint uVar1;
-  uint uVar2;
-  byte bVar3;
-  int unaff_r28;
-  byte unaff_r29;
-  byte unaff_r30;
-  int unaff_r31;
-  
-  uVar2 = TBLr;
-  uVar1 = 0x20U - param_1 & 0x1f;
-  *(byte *)(unaff_r31 + 4) =
-       unaff_r29 | ((byte)(uVar2 << uVar1) | (byte)(uVar2 >> 0x20 - uVar1)) & 0xad;
-  *(byte *)(unaff_r31 + 5) = unaff_r30 & 0x41;
-  uVar1 = TBLr;
-  *(byte *)(unaff_r31 + 5) = unaff_r30 & 0x41 | (byte)(uVar1 >> 7) & 0xbe;
-  bVar3 = (unaff_r30 & 0x1a) << 3;
-  *(byte *)(unaff_r31 + 7) = bVar3;
-  uVar1 = TBLr;
-  *(byte *)(unaff_r28 + 7) = bVar3 | (byte)(uVar1 >> 7) & 0x2f;
   sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn57344_tx_header);
   return;
 }
@@ -25495,18 +24196,6 @@ void cm848_j1939HandlePgn65260VehicleId(void)
 
 
 //
-// Function: cm848_emptyStubFunctionJ1939B @ 0x00026dd0
-//
-
-void cm848_emptyStubFunctionJ1939B(void)
-
-{
-  return;
-}
-
-
-
-//
 // Function: cm848_initPgn65260VehicleIdHandler @ 0x00026ddc
 //
 
@@ -25571,22 +24260,8 @@ void cm848_initJ1939SafetyStatusBuffer(void)
   DAT_003faf1f = 0xff;
   DAT_003faf20 = 0xff;
   DAT_003faf21 = 0xff;
-  uRam003faf22 = 0xff;
-  uRam003faf23 = 0xff;
-  return;
-}
-
-
-
-//
-// Function: cm848_j1939SendPgn65271_FEF7_VehicleElectricalPower @ 0x00026f68
-//
-
-void cm848_j1939SendPgn65271_FEF7_VehicleElectricalPower(int param_1,undefined1 param_2)
-
-{
-  *(undefined1 *)(param_1 + 6) = param_2;
-  *(undefined1 *)(param_1 + 7) = param_2;
+  DAT_003faf22 = 0xff;
+  DAT_003faf23 = 0xff;
   return;
 }
 
@@ -25668,80 +24343,6 @@ void cm848_j1939FormatDm1Message(void)
   j1939_tsc1_override_state.etc1_control_flags = 0;
   j1939_tsc1_override_state.etc1_speed_error_timeout = 0;
   j1939_tsc1_override_state.etc1_activation_confirm_timer = 0;
-  return;
-}
-
-
-
-//
-// Function: cm848_updateGovernorTorqueLimit @ 0x00026fb8
-//
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
-void cm848_updateGovernorTorqueLimit
-               (undefined2 *param_1,undefined2 *param_2,undefined4 param_3,undefined2 *param_4,
-               int param_5)
-
-{
-  uint uVar1;
-  
-  if ((param_5 < (int)(uint)etc1_fuel_demand_high_limit) &&
-     (j1939_tsc1_override_state.etc1_speed_error_timeout_flag == 1)) {
-    if (fuel_demand_timing_enable_flag == 1) {
-      if (etc1_torque_limit_integrator < -(uint)DAT_0005c3b2 - 1) {
-        etc1_torque_limit_integrator = etc1_torque_limit_integrator + DAT_0005c3b2;
-      }
-      else {
-        etc1_torque_limit_integrator = 0xffffffff;
-      }
-      uVar1 = etc1_torque_limit_integrator >> 6;
-      if (0xfffe < uVar1) {
-        uVar1 = 0xffff;
-      }
-      j1939_tsc1_override_state.etc1_mode3_torque_limit = (word)uVar1;
-      if ((int)(uint)j1939_tsc1_override_state.etc1_torque_limit_value <
-          (int)(0xffff - (uint)DAT_0005c3b0)) {
-        j1939_tsc1_override_state.etc1_torque_limit_value =
-             j1939_tsc1_override_state.etc1_torque_limit_value + DAT_0005c3b0;
-      }
-      else {
-        j1939_tsc1_override_state.etc1_torque_limit_value = 0xffff;
-      }
-    }
-    *param_2 = 3;
-    j1939_tsc1_override_state.etc1_control_flags = 0;
-    *param_1 = 0;
-  }
-  else {
-    j1939_tsc1_override_state.etc1_mode3_torque_limit = DAT_0005c3ae;
-    if (((int)(uint)etc1_fuel_demand_high_limit <= param_5) &&
-       (j1939_tsc1_override_state.etc1_speed_error_timeout_flag == 1)) {
-      j1939_tsc1_override_state.etc1_mode3_torque_limit = 0xffff;
-    }
-    *param_2 = 0;
-    j1939_tsc1_override_state.etc1_control_flags = 0;
-    *param_4 = 0;
-    _j1939_governor_source_index = 0;
-    etc1_torque_limit_integrator = (uint)j1939_tsc1_override_state.etc1_mode3_torque_limit << 6;
-    j1939_tsc1_override_state.etc1_torque_limit_value = engine_rpm_state_t_0040b7ac.current_rpm;
-  }
-  j1939_tsc1_override_state.etc1_speed_error_timeout = 0;
-  *param_1 = 0;
-  return;
-}
-
-
-
-//
-// Function: cm848_j1939SendPgn65279_FEFF @ 0x00027108
-//
-
-void cm848_j1939SendPgn65279_FEFF(word *param_1,word param_2)
-
-{
-  j1939_tsc1_override_state.etc1_speed_error_timeout = param_2;
-  *param_1 = param_2;
   return;
 }
 
@@ -26088,351 +24689,6 @@ LAB_000279f0:
   cold_start_state_flag_b = 0;
 LAB_00027ae8:
   if (bVar7) {
-    if (etc1_state_timer_b < DAT_0005c39c) {
-      etc1_state_timer_b = etc1_state_timer_b + 1;
-    }
-    else {
-      system_status_flags_t_003fe974.emission_faults =
-           system_status_flags_t_003fe974.emission_faults | 1;
-      etc1_state_timer_b = 0;
-    }
-  }
-  else {
-    if (cold_start_state_flag_a != 1) {
-      return;
-    }
-    if ((system_status_flags_t_003fe974.emission_faults & 1) != 0) {
-      if ((emission_faults_shadow_flags & 1) == 0) {
-        return;
-      }
-      system_status_flags_t_003fe974.emission_faults =
-           system_status_flags_t_003fe974.emission_faults & 0xfffe;
-      emission_faults_shadow_flags = emission_faults_shadow_flags & 0xfffe;
-    }
-  }
-  cold_start_state_flag_a = 0;
-  return;
-}
-
-
-
-//
-// Function: cm848_selectTorqueLimitByStateMachine @ 0x00027174
-//
-
-void cm848_selectTorqueLimitByStateMachine(void)
-
-{
-  bool bVar1;
-  bool bVar2;
-  undefined4 uVar3;
-  int unaff_r18;
-  int unaff_r24;
-  int iVar4;
-  word *pwStack00000008;
-  
-  bVar2 = false;
-  bVar1 = false;
-  if ((j1939_tsc1_override_snapshot != j1939_tsc1_override_state.torque_limit_mode_select) &&
-     (j1939_tsc1_override_state.torque_limit_mode_select == 1)) {
-    bVar1 = true;
-  }
-  if (j1939_tsc1_override_state.etc1_torque_mode_timer != 0) {
-    j1939_tsc1_override_state.etc1_torque_mode_timer =
-         j1939_tsc1_override_state.etc1_torque_mode_timer - 1;
-    bVar1 = true;
-  }
-  if (j1939_tsc1_override_state.etc1_torque_mode_timer == 1) {
-    if (j1939_tsc1_override_state.etc1_torque_limit_active == 0) {
-      unaff_r24 = 1;
-    }
-    j1939_tsc1_override_state.torque_limit_mode_select = 0;
-    j1939_tsc1_override_state.etc1_torque_limit_active = 0;
-    j1939_tsc1_override_state.speed_control_target =
-         j1939_tsc1_override_state.speed_control_target & 3;
-    j1939_tsc1_override_state.etc1_torque_mode_timer = 0;
-    j1939_tsc1_override_state.etc1_torque_active_timer = 0;
-  }
-  if (j1939_tsc1_override_state.etc1_torque_active_timer != 0) {
-    j1939_tsc1_override_state.etc1_torque_active_timer =
-         j1939_tsc1_override_state.etc1_torque_active_timer - 1;
-  }
-  if (j1939_tsc1_override_state.etc1_torque_active_timer == 1) {
-    j1939_tsc1_override_state.torque_limit_mode_select = 0;
-    j1939_tsc1_override_state.etc1_torque_limit_active = 1;
-    j1939_tsc1_override_state.speed_control_target =
-         j1939_tsc1_override_state.speed_control_target | 4;
-    j1939_tsc1_override_state.etc1_torque_mode_timer = etc1_torque_mode_timeout_cal + 1;
-  }
-  if (((j1939_tsc1_override_state.etc1_torque_limit_timer != 0) &&
-      (j1939_tsc1_override_state.etc1_torque_limit_timer =
-            j1939_tsc1_override_state.etc1_torque_limit_timer - 1,
-      j1939_etc1_speed_mode_snapshot !=
-      j1939_tsc1_override_state.etc1_spn607_progressive_shift_disable)) &&
-     (j1939_tsc1_override_state.etc1_spn607_progressive_shift_disable == 1)) {
-    bVar1 = true;
-  }
-  if (j1939_tsc1_override_state.etc1_torque_limit_timer == 1) {
-    j1939_tsc1_override_state.etc1_spn607_progressive_shift_disable = 0;
-    j1939_tsc1_override_state.etc1_torque_limit_timer = 0;
-    unaff_r24 = 1;
-  }
-  pwStack00000008 = &j1939_tsc1_override_state.etc1_disable_control;
-  if (((j1939_tsc1_override_state.etc1_speed_override_timer != 0) &&
-      (j1939_tsc1_override_state.etc1_speed_override_timer =
-            j1939_tsc1_override_state.etc1_speed_override_timer - 1,
-      j1939_etc1_torque_limit_snapshot != j1939_tsc1_override_state.etc1_disable_control)) &&
-     (j1939_tsc1_override_state.etc1_disable_control == 1)) {
-    bVar1 = true;
-  }
-  if (j1939_tsc1_override_state.etc1_speed_override_timer == 1) {
-    j1939_tsc1_override_state.etc1_disable_control = 0;
-    j1939_tsc1_override_state.etc1_speed_override_timer = 0;
-    unaff_r24 = 1;
-  }
-  if (((j1939_tsc1_override_state.etc1_mode_transition_timer != 0) &&
-      (j1939_tsc1_override_state.etc1_mode_transition_timer =
-            j1939_tsc1_override_state.etc1_mode_transition_timer - 1,
-      governor_mode_state_prev != governor_mode_state)) && (governor_mode_state == 0)) {
-    bVar1 = true;
-  }
-  if (j1939_tsc1_override_state.etc1_mode_transition_timer == 1) {
-    j1939_tsc1_override_state.etc1_mode_transition_timer = 0;
-    unaff_r24 = 1;
-  }
-  if (j1939_tsc1_override_state.etc1_message_timeout != 0) {
-    j1939_tsc1_override_state.etc1_message_timeout =
-         j1939_tsc1_override_state.etc1_message_timeout - 1;
-  }
-  if (j1939_tsc1_override_state.etc1_message_timeout == 1) {
-    j1939_tsc1_override_state.etc1_message_timeout = 0;
-    j1939_tsc1_override_state.etc1_spn574_shift_in_process = 0;
-  }
-  if (governor_timeout_countdown != 0) {
-    governor_timeout_countdown = governor_timeout_countdown - 1;
-  }
-  if (governor_timeout_countdown == 1) {
-    governor_timeout_countdown = 0;
-    j1939_tsc1_override_state.etc1_address_filter = 0xff;
-  }
-  if (j1939_tsc1_override_state.etc1_override_timeout != 0) {
-    j1939_tsc1_override_state.etc1_override_timeout =
-         j1939_tsc1_override_state.etc1_override_timeout - 1;
-  }
-  if (j1939_tsc1_override_state.etc1_override_timeout == 1) {
-    j1939_tsc1_override_state.etc1_spn573_tc_lockup_disengage = 0;
-    j1939_tsc1_override_state.etc1_override_timeout = 0;
-  }
-  if ((drivetrain_type == DRIVETRAIN_AUTO_J1939_FULL) ||
-     (drivetrain_type == DRIVETRAIN_AUTO_J1939_ETC1)) {
-    if (j1939_tsc1_override_state.etc1_mode_timeout != 0) {
-      j1939_tsc1_override_state.etc1_mode_timeout = j1939_tsc1_override_state.etc1_mode_timeout - 1;
-    }
-    if ((j1939_tsc1_override_state.etc1_mode_timeout == 1) ||
-       (j1939_tsc1_override_state.etc1_message_timeout == 0)) {
-      j1939_tsc1_override_state.etc1_mode_timeout = 0;
-      j1939_tsc1_override_state.etc1_control_active = 0;
-    }
-    if ((governor_load_timer_b != 0) &&
-       (governor_load_timer_b = governor_load_timer_b - 1, governor_load_timer_b == 1)) {
-      etc1_load_timer_active_flag = 0;
-      unaff_r24 = 1;
-    }
-  }
-  if (drivetrain_type == DRIVETRAIN_AUTO_J1939_FULL) {
-    if (((cold_start_phase == CSP_AT_GOVERNOR_SETPOINT) ||
-        (cold_start_phase == CSP_FUEL_MODE_SWITCH)) || (cold_start_phase == CSP_SUSPENDED)) {
-      j1939_tsc1_override_state.governor_mode_transition_counter =
-           j1939_tsc1_override_state.governor_mode_transition_counter + 1;
-    }
-    else {
-      j1939_tsc1_override_state.governor_mode_transition_counter = 0;
-    }
-    if ((switch_input_state_bits[0] & 1) == 0) {
-      j1939_tsc1_override_state.etc1_handler_initialized = 1;
-    }
-    else if ((cold_start_phase == CSP_CRANKING) ||
-            (DAT_0005c3a8 <= j1939_tsc1_override_state.governor_mode_transition_counter)) {
-      j1939_tsc1_override_state.etc1_handler_initialized = 0;
-    }
-    else {
-      j1939_tsc1_override_state.etc1_handler_initialized = 1;
-    }
-    if (j1939_tsc1_override_state.etc1_speed_cmd_timeout != 0) {
-      j1939_tsc1_override_state.etc1_speed_cmd_timeout =
-           j1939_tsc1_override_state.etc1_speed_cmd_timeout - 1;
-    }
-    if (((j1939_tsc1_override_state.etc1_speed_cmd_timeout == 0) &&
-        (j1939_tsc1_override_state.etc1_handler_initialized == 0)) &&
-       ((system_status_flags_t_003fe974.condition_monitor & 0x2000) == 0)) {
-      output_shaft_speed_current = 0;
-      system_status_flags_t_003fe974.condition_monitor =
-           system_status_flags_t_003fe974.condition_monitor | 0x2000;
-    }
-  }
-  if (((governor_mode_snapshot == j1939_tsc1_override_state.governor_mode) &&
-      ((int)(short)etc1_active_state_snapshot ==
-       (int)(short)j1939_tsc1_override_state.etc1_active_state)) &&
-     (j1939_tsc1_spn1482_source_addr_prev == j1939_tsc1_override_state.etc1_spn1482_source_address))
-  {
-    if (j1939_tsc1_override_state.etc1_speed_error_timeout != 0) {
-      j1939_tsc1_override_state.etc1_speed_error_timeout =
-           j1939_tsc1_override_state.etc1_speed_error_timeout - 1;
-    }
-    if (j1939_tsc1_override_state.etc1_activation_confirm_timer != 0) {
-      j1939_tsc1_override_state.etc1_activation_confirm_timer =
-           j1939_tsc1_override_state.etc1_activation_confirm_timer - 1;
-    }
-    j1939_tsc1_override_state.etc1_speed_error_timeout_flag =
-         (word)(j1939_tsc1_override_state.etc1_speed_error_timeout < 2);
-    if (j1939_tsc1_override_state.governor_mode == 0) {
-      j1939_tsc1_override_state.torque_limit_mode_select = 0;
-      if (j1939_tsc1_override_state.etc1_speed_error_timeout < 2) {
-        cm848_j1939FormatDm1Message();
-      }
-    }
-    else {
-      if (j1939_tsc1_override_state.governor_mode == 1) {
-        if (j1939_tsc1_override_state.etc1_speed_error_timeout != 1) {
-          uVar3 = 1;
-LAB_00027800:
-          if (j1939_tsc1_override_state.etc1_activation_confirm_timer == 1) {
-            cm848_addCoolantCalEntry
-                      ((int)(short)j1939_tsc1_override_state.etc1_active_state,
-                       j1939_tsc1_override_state.etc1_spn1482_source_address,uVar3);
-            j1939_tsc1_override_state.speed_control_target =
-                 j1939_tsc1_override_state.speed_control_target | 1;
-            cm848_j1939FormatDm1Message();
-          }
-          goto LAB_00027848;
-        }
-      }
-      else if (j1939_tsc1_override_state.governor_mode == 2) {
-        j1939_tsc1_override_state.torque_limit_mode_select = 0;
-        if (j1939_tsc1_override_state.etc1_speed_error_timeout != 1) {
-          uVar3 = 2;
-          goto LAB_00027800;
-        }
-      }
-      else if ((j1939_tsc1_override_state.governor_mode != 3) ||
-              (j1939_tsc1_override_state.torque_limit_mode_select = 0,
-              1 < j1939_tsc1_override_state.etc1_speed_error_timeout)) goto LAB_00027848;
-      j1939_tsc1_override_state.torque_limit_mode_select = 0;
-      cm848_j1939FormatDm1Message();
-      unaff_r24 = 1;
-    }
-  }
-  else if (j1939_tsc1_override_state.governor_mode == 0) {
-    j1939_tsc1_override_state.etc1_activation_confirm_timer = 0;
-  }
-  else {
-    if (j1939_tsc1_override_state.governor_mode == 1) {
-      iVar4 = 6;
-    }
-    else {
-      if (j1939_tsc1_override_state.governor_mode != 2) {
-        if (j1939_tsc1_override_state.governor_mode == 3) {
-          j1939_tsc1_override_state.etc1_activation_confirm_timer = 0;
-          bVar1 = true;
-        }
-        goto LAB_00027848;
-      }
-      iVar4 = 10;
-    }
-    j1939_tsc1_override_state.etc1_activation_confirm_timer =
-         *(short *)((int)&(j1939_tsc1_override_state.etc1_active_config_ptr)->match_key + iVar4) + 1
-    ;
-    bVar1 = true;
-  }
-LAB_00027848:
-  if (unaff_r24 == 1) {
-    if (j1939_tsc1_override_state.etc1_active_state == 1) {
-      unaff_r18 = 1;
-    }
-    else {
-      bVar2 = true;
-    }
-  }
-  else if (bVar1) {
-    if (j1939_tsc1_override_state.etc1_active_state == 1) {
-      cold_start_state_flag_a = 1;
-    }
-    else {
-      cold_start_state_flag_b = 1;
-    }
-  }
-  governor_mode_snapshot = j1939_tsc1_override_state.governor_mode;
-  etc1_active_state_snapshot = j1939_tsc1_override_state.etc1_active_state;
-  j1939_tsc1_spn1482_source_addr_prev = j1939_tsc1_override_state.etc1_spn1482_source_address;
-  j1939_tsc1_override_snapshot = j1939_tsc1_override_state.torque_limit_mode_select;
-  j1939_etc1_speed_mode_snapshot = j1939_tsc1_override_state.etc1_spn607_progressive_shift_disable;
-  j1939_etc1_torque_limit_snapshot = *pwStack00000008;
-  if ((governor_mode_state_prev == governor_mode_state) &&
-     (governor_mode_transition_state_prev == governor_mode_transition_state)) {
-    if (j1939_tsc1_override_state.etc1_multiframe_timeout != 0) {
-      j1939_tsc1_override_state.etc1_multiframe_timeout =
-           j1939_tsc1_override_state.etc1_multiframe_timeout - 1;
-    }
-    if (j1939_tsc1_override_state.etc1_error_fault_timer != 0) {
-      j1939_tsc1_override_state.etc1_error_fault_timer =
-           j1939_tsc1_override_state.etc1_error_fault_timer - 1;
-    }
-    if (governor_mode_state == 2) {
-      if (j1939_tsc1_override_state.etc1_multiframe_timeout == 1) {
-LAB_000279e8:
-        cm848_resetGovernorState();
-        unaff_r18 = 1;
-      }
-      else if (j1939_tsc1_override_state.etc1_error_fault_timer == 1) {
-        cm848_addCoolantCalEntryAlt(governor_mode_transition_state & 0xff,2);
-        j1939_tsc1_override_state.speed_control_target =
-             j1939_tsc1_override_state.speed_control_target | 2;
-        cm848_resetGovernorState();
-      }
-    }
-    else if ((governor_mode_state == 3) && (j1939_tsc1_override_state.etc1_multiframe_timeout == 1))
-    goto LAB_000279e8;
-  }
-  else {
-    if (governor_mode_state == 2) {
-      j1939_tsc1_override_state.etc1_error_fault_timer =
-           *(short *)(j1939_tsc1_override_state.etc1_secondary_config_ptr + 0x10) + 1;
-    }
-    else {
-      j1939_tsc1_override_state.etc1_error_fault_timer = 0;
-      if (governor_mode_state != 3) goto LAB_000279f0;
-    }
-    cold_start_state_flag_a = 1;
-  }
-LAB_000279f0:
-  governor_mode_state_prev = governor_mode_state;
-  governor_mode_transition_state_prev = (byte)governor_mode_transition_state;
-  if (bVar2) {
-    if ((int)(uint)etc1_state_timeout_counter < (int)(DAT_0005c39c - 1)) {
-      etc1_state_timeout_counter = etc1_state_timeout_counter + 1;
-    }
-    else {
-      system_status_flags_t_003fe974.lamp_status =
-           system_status_flags_t_003fe974.lamp_status | 0x4000;
-      etc1_state_timeout_counter = 0;
-    }
-  }
-  else {
-    if (cold_start_state_flag_b != 1) goto LAB_00027ae8;
-    if ((system_status_flags_t_003fe974.lamp_status & 0x4000) != 0) {
-      if ((j1939_tsc1_status_shadow & 0x4000) != 0) {
-        system_status_flags_t_003fe974.lamp_status =
-             system_status_flags_t_003fe974.lamp_status & 0xbfff;
-        j1939_tsc1_status_shadow = j1939_tsc1_status_shadow & 0xbfff;
-        cold_start_state_flag_b = 0;
-        etc1_state_timeout_counter = 0;
-      }
-      goto LAB_00027ae8;
-    }
-  }
-  cold_start_state_flag_b = 0;
-LAB_00027ae8:
-  if (unaff_r18 == 1) {
     if (etc1_state_timer_b < DAT_0005c39c) {
       etc1_state_timer_b = etc1_state_timer_b + 1;
     }
@@ -35897,8 +34153,8 @@ void cm848_checkPciMessageTimeouts(void)
   word *transmit_timer;
   dword message_index;
   uint uVar1;
-  ushort receive_interval;
   byte all_transmits_overdue;
+  ushort receive_interval;
   
   all_transmits_overdue = 1;
   if ((governor_system_config_flags & 0x40) != 0) {
@@ -90243,9 +88499,11 @@ void cm848_j1939_system_init(void)
   cm848_initJ1939ProprietaryPgn65504Buffer();
   cm848_initPgn65226Dm1Handler();
   cm848_initJ1939EngineControlBuffer();
-  diag_record_queue_add_entry(0,0xfef1,100,0x46,j1939HandlePgn65265CruiseVehicleSpeed);
+  diag_record_queue_add_entry(0,0xfef1,100,0x46,cm848_buildPgn65265CruiseControlVehicleSpeedMessage)
+  ;
   diag_record_queue_add_entry(0,0xf004,0x14,0,j1939GetEngineStateCode);
-  diag_record_queue_add_entry(0,0xf003,0x14,10,j1939HandlePgn61443Eec2);
+  diag_record_queue_add_entry
+            (0,0xf003,0x14,10,cm848_buildPgn61443ElectronicEngineController2Message);
   diag_record_queue_add_entry(0,0xfedf,0x32,0x1e,cm848_j1939SendOilPressureStatus);
   diag_record_queue_add_entry(0,0xfee3,5000,0x6e,cm848_sendFaultTimerMessage);
   diag_record_queue_add_entry(1,0xf000,100,0x32,cm848_j1939BuildVehicleOperatingStatus);
@@ -90782,4 +89040,4 @@ void hpcr_protectionTimerMonitor(void)
 
 
 
-// Export complete - 2097 functions processed
+// Export complete - 2063 functions processed

@@ -1055,14 +1055,14 @@ address,name,type,comment
 0x003faae8,j1939_dm1_tx_length,word,
 0x003faaea,j1939_dm1_status_data_ptr,pointer,
 0x003faaee,j1939_dm1_payload_end_ptr,pointer,
-0x003faaf2,j1939_dm1_status_byte,byte,
-0x003faaf3,etc1_transmission_ratio_scaled,word,
-0x003faaf4,etc1_transmission_ratio_scaled+1,,
-0x003faaf5,j1939_ccvs1_override_status,byte,
-0x003faaf6,j1939_ccvs1_control_byte,byte,
-0x003faaf7,j1939_cruise_speed_byte,byte,
-0x003faaf8,j1939_ccvs1_event_bits,byte,
-0x003faaf9,j1939_ccvs1_pto_flags,byte,
+0x003faaf2,j1939_ccvs1_two_speed_axle_byte,byte,CCVS1 transmit byte 1: bits 1-2 two-speed axle switch (SPN 69) from switch 31 - 0xFF when protection_control_licensed is 0 (was j1939_dm1_status_byte)
+0x003faaf3,j1939_ccvs1_wheel_based_vehicle_speed,word,CCVS1 transmit bytes 2-3 (low byte first): wheel-based vehicle speed (SPN 84 1/256 km/h) = vehicle_speed x 412/256 clamped at 156 mph - 0xFFFF when drivetrain_type < 1 (was etc1_transmission_ratio_scaled)
+0x003faaf4,j1939_ccvs1_wheel_based_vehicle_speed+1,,
+0x003faaf5,j1939_ccvs1_cruise_brake_clutch_byte,byte,CCVS1 transmit byte 4: bits 1-2 cruise control active (governor_override_active_flag) / 3-4 cruise control enable switch (switch 31) / 5-6 brake switch (switch 11) / 7-8 clutch switch (switch 15); 3 = not available when the switch is datalink-sourced (was j1939_ccvs1_override_status)
+0x003faaf6,j1939_ccvs1_cruise_set_resume_byte,byte,CCVS1 transmit byte 5: set / coast / resume / accelerate switch fields - all derived from switch 31 and j1939_tsc1_active_flag; 0xFF when j1939_governor_feature_cal bit 6 is clear (was j1939_ccvs1_control_byte)
+0x003faaf7,j1939_ccvs1_cruise_set_speed_byte,byte,CCVS1 transmit byte 6: cruise control set speed (SPN 86 km/h) = cruise_speed_command x 412 >> 16; 0xFF when j1939_governor_feature_cal bit 6 is clear (was j1939_cruise_speed_byte)
+0x003faaf8,j1939_ccvs1_pto_and_cruise_state_byte,byte,CCVS1 transmit byte 7: bits 1-5 PTO governor state (SPN 976) = protection_event_code when j1939_governor_feature_cal bit 4 else 0x1F / bits 6-8 cruise control state (SPN 527) = j1939_status_field_3bit (was j1939_ccvs1_event_bits)
+0x003faaf9,j1939_ccvs1_idle_switches_byte,byte,CCVS1 transmit byte 8: idle increment / idle decrement / test mode fields derived from switch 31 - shutdown override always not available (was j1939_ccvs1_pto_flags)
 0x003faafc,j1939_pgn65261_tx_header,dword,
 0x003faaff,j1939_pgn65261_tx_header+3,,
 0x003fab00,j1939_pgn65261_tx_length,word,
@@ -1129,7 +1129,7 @@ address,name,type,comment
 0x003fad9b,j1939_pgn61444_tx_header+3,,
 0x003fad9c,j1939_pgn61444_tx_byte_count,word,
 0x003fad9e,j1939_pgn61444_data_ptr,pointer,
-0x003fada8,j1939_status_byte_b,byte,
+0x003fada8,j1939_eec2_low_idle_and_kickdown_byte,byte,EEC2 transmit byte 1: bits 1-2 accelerator low idle switch (SPN 558) / bits 3-4 kickdown (pedal above DAT_0005c392 - 2 on safety faults) / bits 5-8 not available (was j1939_status_byte_b)
 0x003fadb0,j1939_pgn61443_tx_header,dword,
 0x003fadb3,j1939_pgn61443_tx_header+3,,
 0x003fadb6,PTR_j1939_status_byte_b_003fadb6,pointer,
@@ -6702,6 +6702,7 @@ address,name,type,comment
 0x003fad93,j1939_eec1_engine_speed_low_byte,byte,EEC1 engine speed LSB (SPN 190)
 0x003fad94,j1939_eec1_engine_speed_high_byte,byte,EEC1 engine speed MSB (SPN 190)
 0x003fada9,j1939_eec2_accel_pedal_byte,byte,EEC2 accel pedal position byte (SPN 91)
+0x003fadaa,j1939_eec2_percent_load_byte,byte,EEC2 transmit byte 3: engine percent load at current speed (SPN 92) = j1939_engine_torque_output_a >> 8 (0xFE while j1939_broadcast_enable_flag is 1)
 0x003fadab,j1939_eec2_remote_accel_pedal_byte,byte,EEC2 remote accel pedal byte (SPN 974)
 0x003fae20,j1939_pgn65213_diag_param_byte,byte,PGN 65213 scaled diagnostic parameter byte
 0x003fb00c,fuel_demand_hysteresis_init_flag,byte,one-shot fuel-demand hysteresis init flag
