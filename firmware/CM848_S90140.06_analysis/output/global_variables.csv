@@ -97,6 +97,9 @@ address,name,type,comment
 0x0005c2a4,fuel_demand_rate_limit_debounce_cal,word,Default debounce count for the fuel-demand rate limiter; per-mode increment reaching it latches a protection safety bit (safety_bits_1 0x4000/0x8000 or safety_bits_2 0x10)
 0x0005c306,timing_limit_lower,word,
 0x0005c30c,timing_limit_upper,word,
+0x0005c340,j1939_input_source_priority,word,ROM constant (0): priority level the J1939 input layer writes switches and inputs at
+0x0005c342,j1939_engine_retarder_selection_default_percent,word,ROM constant (0): retarder selection used while the J1939 value is missing
+0x0005c344,j1939_engine_fan_requested_speed_default,word,ROM constant (0): fan request used while the J1939 value is missing
 0x0005c34e,protection_threshold_scale_cal,word,
 0x0005c350,protection_threshold_base_cal,word,
 0x0005c356,protection_output_select_cal,word,
@@ -799,7 +802,7 @@ address,name,type,comment
 0x003fa6e8,throttle_fuel_demand_tracked,word,
 0x003fa6ea,throttle_fuel_demand_lower_bound,word,
 0x003fa6ec,throttle_fuel_demand_upper_bound,word,
-0x003fa6ee,throttle_fuel_demand_adjusted,word,
+0x003fa6ee,accelerator_pedal_sensor_counts,word,Copy of accelerator_pedal_sensor_filtered taken by cm848_fuelDemandBaseCalculation; compared with the idle position by cm848_evaluateIdleValidationSwitches (was throttle_fuel_demand_adjusted)
 0x003fa6f0,throttle_fuel_enable_flag,dword,
 0x003fa6f2,throttle_fuel_enable_flag+2,,
 0x003fa6f4,throttle_fuel_pgn_handler_pointer,pointer,
@@ -1745,7 +1748,7 @@ address,name,type,comment
 0x003fb8fa,mios_ch11_duty_cycle_complement,word,
 0x003fb8fc,mios_ch13_duty_cycle_complement,word,
 0x003fb8fe,mios_ch12_duty_cycle_complement,word,
-0x003fb910,fault_scan_phase_counter,byte,
+0x003fb910,switch_input_debounce_sample_index,byte,0-3: which debounce history slot cm848_scanAndDebounceSwitchInputs writes next (was fault_scan_phase_counter)
 0x003fb912,crank_high_bit_prev_flag,dword,
 0x003fb914,crank_high_bit_prev_flag+2,,
 0x003fb916,fault_severity_data_array,word,
@@ -2038,9 +2041,6 @@ address,name,type,comment
 0x003fdbc2,qadc_control_word_e,word,
 0x003fdbc6,qadc_control_word_f,word,
 0x003fdbca,qadc_control_word_g,word,
-0x003fdbce,qadc_control_word_h,word,
-0x003fdbcf,qadc_control_word_h+1,,
-0x003fdbd1,protection_override_flags,byte,
 0x003fdbd2,protection_event_output_polarity_bits_cal,dword,Application: bit N = output polarity for protection event N (selects mpc555_driveOutputLineLow vs mpc555_driveOutputLineHigh on protection_event_output_line_cal[N]); read-only in the app and inside the EEPROM image range (0x3fd482+; unconfirmed). TIME-SHARED: the boot reflash kernel uses the low half as its CMF high-voltage pulse step count (was qadc_fault_bit_array)
 0x003fdbd4,protection_event_output_polarity_bits_cal+2,,
 0x003fdbd6,cmf_control_base,dword,CMFCTL base value (timing bits) for flash program/erase
@@ -3798,7 +3798,7 @@ address,name,type,comment
 0x0040a0fe,sensor_channel11_ram,byte,
 0x0040a10a,sensor_channel12_ram,byte,
 0x0040a116,sensor_channel13_ram,byte,
-0x0040a11e,fuel_demand_feature_threshold,word,
+0x0040a11e,j1939_accelerator_pedal_source_priority,byte,Set to j1939_input_source_priority when the J1939 pedal writes; cm848_fuelDemandFinalCalculation skips the rate-limit / override stage while it is above that level (was fuel_demand_feature_threshold)
 0x0040a122,sensor_channel14_ram,byte,
 0x0040a13a,sensor_channel15_ram,byte,
 0x0040a146,fuel_demand_table_xaxis_base,word,
@@ -4447,7 +4447,7 @@ address,name,type,comment
 0x0040aa98,engine_shutdown_active_flag,word,
 0x0040aa9a,j1939_standby_flag,J1939_STANDBY_STATE,
 0x0040aaa2,j1939_engine_torque_encoded,word,
-0x0040aac2,governor_load_percent_computed,word,
+0x0040aac2,j1939_engine_retarder_selection_percent,word,Engine retarder selection from EBC1 SPN 973 (1 %/bit) - read by cm848_processProtectionSystemBit4 (was governor_load_percent_computed)
 0x0040aaca,j1939_input_monitor_inhibit_flag,word,1 = J1939 input faults are held off (start-up delay not elapsed or engine not enabled) (was governor_load_startup_inhibit_flag)
 0x0040aacc,engine_data_log_buffer,byte,
 0x0040ac16,PTR_DAT_0040ac16,pointer,
@@ -5413,7 +5413,7 @@ address,name,type,comment
 0x0040bb02,engine_load_output_value,word,
 0x0040bb04,fuel_quantity_demand_input,word,
 0x0040bb06,intercooler_temp_raw,word,
-0x0040bb0a,throttle_fuel_demand_adjusted,word,
+0x0040bb0a,accelerator_pedal_sensor_filtered,word,sensor_channel_filtered_output[13]: filtered accelerator pedal sensor counts (channel 13 = the pedal sensor); read by cm848_fuelDemandBaseCalculation and cm848_fuelDemandFinalCalculation (was throttle_fuel_demand_adjusted - same name as 0x3fa6ee)
 0x0040bb16,fuel_quantity_mode_raw,word,
 0x0040bb18,j1939_coolant_temp_raw,word,
 0x0040bb3c,governor_integrator_bound_b,word,
@@ -5521,14 +5521,6 @@ address,name,type,comment
 0x0040be74,scheduler_task_stat_t_0040be6a.overrun_count,,
 0x0040c04a,diagnostic_session_state,DIAG_SESSION_STATE,
 0x0040c04c,sensor_validation_result,word,
-0x0040c050,protection_enable_t_0040c050,protection_enable_t,
-0x0040c051,protection_enable_t_0040c050.system_enable_bits,,
-0x0040c052,protection_enable_t_0040c050.reserved_02,,
-0x0040c053,protection_enable_t_0040c050.protection_active,,
-0x0040c054,protection_output_state_bits,byte,
-0x0040c058,fault_confirmation_snapshot_array,byte,
-0x0040c078,engine_output_state_bits,byte,
-0x0040c07c,j1939_fault_bit_array,byte,
 0x0040c080,protection_fault_status_bits,byte,
 0x0040c081,fuel_demand_config_flags,byte,
 0x0040c082,protection_action_mode_bits,word,
@@ -5805,10 +5797,10 @@ address,name,type,comment
 0x0040b9b9,fuel_correction_below_target_count,byte,consecutive cycles fuel timing actual<target
 0x0040b9c2,fuel_correction_ramp_step_count,word,phase step counter for fuel correction ramp
 0x0040b0fa,protection_throttle_clamp_eval_flags,byte,med throttle clamp in-range/out-of-range bits
-0x0040aaa6,emission_feature_engage_flag,byte,set when emission feature needs to engage
+0x0040aaa6,j1939_accelerator_position_error_fallback_flag,byte,1 = the J1939 pedal position reports error (0xFE) while the low idle switch is valid - the off-idle flag then follows the switch; read by cm848_transitionEngineOperatingMode (was emission_feature_engage_flag)
 0x0040b9bc,fuel_correction_timing_target,word,target injection timing offset for protection fuel correction
 0x0040b5a0,protection_throttle_position_measured,word,captured throttle position (or IAT in IAT-mode) for protection phase A
-0x0040a11c,emission_fuel_demand_output,word,low write-only emission fuel demand output
+0x0040a11c,j1939_accelerator_pedal_position,word,Accelerator pedal position 1 from EEC2 SPN 91 (raw x 16 / 10 = 0.25 %/bit - the local pedal scale); written only by cm848_processJ1939AcceleratorPedalPosition - NO reader in S90140.06 (was emission_fuel_demand_output)
 0x0040a5f4,cold_start_phase26_fuel_mode_flag,word,cold-start phase 2.6 fuel mode flag
 0x0040a600,injection_timing_cylinder_check_flags,word,per-cylinder injection timing shortfall bitmask
 0x0040a6b6,governor_speed_sync_stable_flag,word,governor speed sync stable gate for diag counter
@@ -5946,8 +5938,8 @@ address,name,type,comment
 0x003fe9e8,governor_cal_status_shadow_flags,word,shadow of governor/sensor-cal status bits
 0x003fe9c0,egr_smoke_limit_status_flags,word,EGR overpressure/upper-range/transient bits
 0x003fea24,egr_smoke_limit_status_shadow,word,shadow copy of egr_smoke_limit_status_flags
-0x003fbd66,fuel_demand_protection_hysteresis_counter,word,countdown (init 100
-0x003fbd69,fuel_demand_protection_init_flag,word,first-entry sentinel arming the hysteresis counter
+0x003fbd66,accelerator_idle_switch_debounce_timer,word,Idle switch debounce for cm848_updateIdleSwitchesFromLocalInputs: 100 then minus 50 per unchanged pass; the switch is accepted at 0 (was fuel_demand_protection_hysteresis_counter)
+0x003fbd69,accelerator_idle_switch_debounce_armed_flag,word,1 once the debounce timer has been armed; written with sth at this odd address (was fuel_demand_protection_init_flag)
 0x003fcfbc,j1939_fuel_demand_tick_remainder,word,fractional crank-period sub-tick accumulator (low 12 bits)
 0x003fee64,j1939_fuel_demand_timing_flags,word,injection-timing quality event bits
 0x003fee66,j1939_fuel_demand_overflow_flags,word,overflow bits for the 4 fuel-demand accumulators
@@ -6196,9 +6188,9 @@ address,name,type,comment
 0x003fb40c,injection_timing_cycle_counter,byte,cycle counter in protection timing energy calc
 0x003fb4e8,torque_limit_fuel_table_dims,word,dualAxis table dims base (torque limit fuel)
 0x003fbd18,governor_speed_stability_sample_counter,word,sample counter for governor speed sync-stable diag
-0x003fbd5a,fault_flag_bitmap,dword,32-bit fault-active flag bitmap
-0x003fbd5e,fault_reason_bitmap,dword,32-bit fault-reason bitmap
-0x003fbd62,fault_count_bitmap,dword,32-bit fault-count bitmap
+0x003fbd5a,j1939_input_data_error_bitmap,dword,Bit N = J1939 input N received a not-available or out-of-range value (cm848_set/clearJ1939InputDataErrorBit) (was fault_flag_bitmap)
+0x003fbd5e,j1939_input_timeout_bitmap,dword,Bit N = J1939 input N's message timed out (was fault_reason_bitmap)
+0x003fbd62,j1939_pedal_input_timeout_bitmap,dword,Bits 6 / 7 = the accelerator J1939 inputs lost their message (was fault_count_bitmap)
 0x003fbd70,etc1_active_state_transition_snapshot,word,snapshot of TSC1 etc1_active_state for transition detect
 0x003feb54,etc1_governor_mode_history_write_index,word,write index for ETC1 governor-mode history ring
 0x003feb6e,governor_mode_history_write_index,word,write index for governor-mode-state history ring
@@ -6223,8 +6215,8 @@ address,name,type,comment
 0x003fd47a,j1939_data_log_handler_count,byte,registered handler count in secondary J1939 PGN table (ROM-aliased)
 0x003fdfde,cold_start_fault_timing_log,dword,5x8B cold-start fault timing record array base
 0x003feb8a,governor_calib_snapshot_write_index,word,write index for governor calibration snapshot ring
-0x0040aaa7,emission_feature_fault_active_flag,byte,emission feature mode-3 fault flag; suppresses demand output
-0x0040aaa8,fuel_demand_fault_count_nonzero_flag,byte,set when fault_count_bitmap nonzero; gates fuel demand
+0x0040aaa7,j1939_accelerator_low_idle_switch_unavailable_flag,byte,1 = the J1939 low idle switch reports not available - the J1939 pedal position is then not used (was emission_feature_fault_active_flag)
+0x0040aaa8,j1939_pedal_input_timeout_active_flag,byte,1 while any j1939_pedal_input_timeout_bitmap bit is set - cm848_processJ1939AcceleratorIdleSwitchPair then leaves switches 7 / 8 alone (was fuel_demand_fault_count_nonzero_flag)
 0x0040a546,fuel_qty_ema_filtered_rpm_normalized,word,fuel_quantity_ema_filtered normalized by rpm factor (<<7)
 0x0040a56c,fuel_demand_qty_boost_corrected,word,combined fuel demand qty with efficiency+boost corrections
 0x0040a56e,fuel_demand_qty_load_cap,word,engine-load-derived cap on fuel_demand_qty_boost_corrected
@@ -6462,7 +6454,7 @@ address,name,type,comment
 0x0040a692,throttle_trim_predictor_output,word,predictor-corrected throttle trim raw
 0x0040a696,throttle_trim_predictor_gain,word,gain coefficient for throttle trim predictor
 0x0040a74c,governor_faultDerate_ch0_threshold_exceeded,word,channel-0 fault-derate threshold-exceeded flag
-0x0040aac6,fuel_demand_protection_pedal_raw,word,raw QADC pedal in alternate fuel-demand protection mode
+0x0040aac6,idle_check_accelerator_pedal_raw,word,Raw pedal sensor (sensor channel 13 or sensor_channel_diag_override[13]) compared with 360 counts in the analog off-idle fallback (was fuel_demand_protection_pedal_raw)
 0x0040adf2,can_j1939_tx_mailbox_alloc_index,word,running CAN TX mailbox slot allocation index
 0x0040aff2,governor_speed_ramp_target,word,raw speed-reference target before rate-limiting
 0x0040aff4,governor_speed_ramp_ema,word,EMA of step-rate-limited speed reference
@@ -6694,7 +6686,7 @@ address,name,type,comment
 0x003fd412,j1939_periodic_queue1_current_tick,word,current tick for J1939 diag queue 1
 0x003fd47e,protection_timer_b_tick_divider,word,divide-by-2 tick for protection timer b
 0x003fdb46,torque_limit_setpoint_qadc_channel_index,word,ROM QADC channel index for torque-limit setpoint
-0x003fefbc,emission_fuel_demand_default_output,word,ROM fallback emission fuel demand output
+0x003fefbc,j1939_accelerator_pedal_default_position,word,Position used while the J1939 pedal is suspended / lost / invalid; never written by code (was emission_fuel_demand_default_output)
 0x003ff067,fuel_boost_final_fault_gate_enable,byte,ROM fault-gate bitmask (fuel boost final)
 0x003ff06b,fuel_timing_demand_fault_gate_enable,byte,ROM fault-gate bitmask (fuel timing demand)
 0x003ff06f,fuel_boost_protect_fault_gate_enable,byte,ROM fault-gate bitmask (boost protection)
@@ -6733,8 +6725,8 @@ address,name,type,comment
 0x003fb8f3,sensor_scan_count_a_limit,byte,spin-delay limit for sensor_scan_counter_a
 0x003fb8f4,sensor_scan_count_b_limit,byte,spin-delay limit for sensor_scan_counter_b
 0x003fb8f5,sensor_scan_count_c_limit,byte,spin-delay limit for sensor_scan_counter_c
-0x003fb900,engine_output_state_phase_buffer,byte,4-phase x 4-byte engine output state buffer base
-0x003fdb8e,engine_output_channel_protection_table,word,32-entry output-channel protection config base
+0x003fb900,switch_input_debounce_history,byte,Base of 16 bytes: 4 samples x 4 bytes of switch_input_sample_bits indexed by switch_input_debounce_sample_index (was engine_output_state_phase_buffer)
+0x003fdb8e,switch_input_hardware_line_cal,word,EEPROM-backed (EEPROM 0x70c) base of 32 words (0x3fdb8e-0x3fdbcd): discrete input line read for each logical switch (0 = no hardware input - the switch keeps its software-set state); this calibration: 0:128 1:132 3:148 5:138 6:137 7:144 8:145 9:130 10:131 11:147 12:149 14:150 19:148 20:13 21:18 22:154 23:153 24:156 25:152 27:155 28:22; the range is time-shared with boot-kernel variables (was engine_output_channel_protection_table)
 0x003fba2a,fuel_demand_min_rate_limited,word,rate-limited output of fuel demand max-select chain
 0x003fba2c,fuel_demand_min_rate_limiter_prev,word,prev-cycle state for fuel demand rate limiter
 0x003fba38,fuel_demand_timing_demand_ring_buf,word,150-element ring buffer base (fuel demand timing window)
@@ -6743,7 +6735,7 @@ address,name,type,comment
 0x003fbcf8,throttle_trim_predictor_gain_lookup,word,throttle trim predictor gain (table lookup)
 0x003fbd1a,governor_speed_at_target_prev_flag,word,prev governor_speed_at_target_flag (edge detect)
 0x003fbd40,governor_derate_j1939_protection_active_prev,word,prev protection_active for j1939 derate edge
-0x003fbd68,fuel_demand_protection_prev_warning_state,byte,prev protection warning bit 8 (hysteresis)
+0x003fbd68,accelerator_idle_switch_previous_state,byte,Last hardware off-idle switch reading (0xFF after reset) (was fuel_demand_protection_prev_warning_state)
 0x003fcd28,boost_demand_diag_debounce_count,word,boost demand diagnostic entry debounce
 0x003fcd7c,j1939_tsc1_timing_fault_cycle_count,word,TSC1 timing fault cycle count
 0x003fcdbe,cold_start_rpm_fuel_limit_prev,word,prev cold_start_rpm_fuel_limit (edge detect)
@@ -6768,7 +6760,7 @@ address,name,type,comment
 0x003fcfb2,sensor_validation_accum_table_index,byte,index into sensor validation accum table (0-3)
 0x003fcfdb,sensor_checksum_session_counter,byte,nonce counter for sensor checksum session
 0x003fd293,crank_counter_mainloop_prev,word,prev cold_start_crank_counter (mainloop change detect)
-0x003fd5d4,governor_calibration_phase_config_flags,word,ROM flags; bit 0x400 gates phase-group-A calibration
+0x003fd5d4,j1939_input_processing_enable_cal,word,EEPROM-backed (EEPROM 0x152): bit 10 (0x400) enables the J1939 input layer (supervision tick plus both input tasks); 0x0000 in this calibration = the whole layer is off (was governor_calibration_phase_config_flags)
 0x003fdb88,sensor_validation_startup_accumulator,word,sensor validation accumulator during engine start
 0x003fdb92,protection_j1939_mode_enable_flag,word,ROM flag gating J1939-triggered protection mode bit 2
 0x003feccc,diag_serial_crc_match_flag,byte,serial response CRC16 match result
@@ -7028,11 +7020,15 @@ address,name,type,comment
 0x0040aab2,j1939_received_engine_idle_decrement_switch,byte,J1939 input received over PGN 65265 CCVS1 byte 8 bits 3-4 (SPN 967 Engine Idle Decrement Switch); 2-bit switch states use J1939 0 off / 1 on / 3 not available
 0x0040aab3,j1939_received_engine_retarder_selection,byte,J1939 input received over PGN 61441 EBC1 byte 5 (SPN 973 Engine Retarder Selection); 2-bit switch states use J1939 0 off / 1 on / 3 not available
 0x0040aab5,j1939_received_engine_idle_increment_switch,byte,J1939 input received over PGN 65265 CCVS1 byte 8 bits 1-2 (SPN 968 Engine Idle Increment Switch); 2-bit switch states use J1939 0 off / 1 on / 3 not available
+0x0040aab6,j1939_received_engine_fan_requested_percent_speed,byte,J1939 input received over PGN 57344 CM1 byte 1 (SPN 986 Engine Fan 1 Requested Percent Speed - 0.4 %/bit; position per J1939-71 - the local J1939 database has no positions for CM1)
 0x0040aaba,j1939_received_accelerator_pedal_position_2,byte,J1939 input received over PGN 61443 EEC2 byte 5 (SPN 29 Accelerator Pedal Position 2 - 0.4 %/bit); 2-bit switch states use J1939 0 off / 1 on / 3 not available
 0x0040aabc,j1939_received_remote_accelerator_pedal_position,byte,J1939 input received over PGN 61443 EEC2 byte 4 (SPN 974 Remote Accelerator Pedal Position - 0.4 %/bit); 2-bit switch states use J1939 0 off / 1 on / 3 not available
 0x0040aabd,j1939_received_remote_accelerator_enable_switch,byte,J1939 input received over PGN 61441 EBC1 byte 4 bits 7-8 (SPN 969 Remote Accelerator Enable Switch); 2-bit switch states use J1939 0 off / 1 on / 3 not available
 0x0040aabe,j1939_received_engine_diagnostic_test_mode_switch,byte,J1939 input received over PGN 65265 CCVS1 byte 8 bits 5-6 (SPN 966 Engine Diagnostic Test Mode Switch); 2-bit switch states use J1939 0 off / 1 on / 3 not available
 0x0040aabf,j1939_received_engine_derate_switch,byte,J1939 input received over PGN 61441 EBC1 byte 4 bits 3-4 (SPN 971 Engine Derate Switch); 2-bit switch states use J1939 0 off / 1 on / 3 not available
+0x0040aac0,j1939_engine_retarder_selection_source_priority,byte,cm848_processJ1939EngineRetarderSelection skips the input while this is above j1939_input_source_priority
+0x0040aac1,j1939_engine_fan_request_source_priority,byte,cm848_processJ1939EngineFanRequestedSpeed skips the input while this is above j1939_input_source_priority
+0x0040aac4,j1939_engine_fan_requested_speed,word,Engine fan requested speed from CM1 SPN 986 (0.25 %/bit) - no reader in S90140.06
 0x0040ad52,j1939_received_source_address,byte,Source address of the J1939 frame being handled (compared with j1939_input_source_address_filter_cal by the input handlers)
 0x0040b357,pci_controller_command_job,qspi_job_t,QSPI job that sends pci_controller_transmit_word to the external J1850 controller; completion_callback = the PCI transmit path
 0x0040b36d,pci_controller_receive_job,qspi_job_t,QSPI job that reads pci_controller_receive_word; completion_callback = cm848_onPciControllerReceiveWord

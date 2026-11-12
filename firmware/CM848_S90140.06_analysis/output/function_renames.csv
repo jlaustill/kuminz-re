@@ -710,8 +710,8 @@ address,name
 0x00016f9c,cm848_storeFuelLimitValues
 0x00016ffc,mpc555_initFuelTimingTablePointers
 0x0001702c,cm848_fuelDemandBaseCalculation
-0x00017150,cm848_fuelDemandModeSelector
-0x000172b0,cm848_fuelDemandEnableChecker
+0x00017150,cm848_evaluateIdleValidationSwitches,Idle validation: compares logical switches 7 (accelerator at idle) / 8 (off idle) with accelerator_pedal_sensor_counts against the idle position and the band (idle position +/- offsets) -> fuel_demand_control_t.idle_validation_state 0-8 (was cm848_fuelDemandModeSelector) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
+0x000172b0,cm848_updateOffIdleFromIdleValidation,fuel_demand_control_t.accelerator_off_idle = 1 for idle_validation_state 1 / 3 / 5 (off-idle switch agrees / off-idle switch with a low pedal / no switch with a high pedal) (was cm848_fuelDemandEnableChecker) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
 0x000172e8,cm848_fuelDemandRateLimiterStateMachine
 0x000173a8,cm848_fuelDemandOverrideHandler
 0x00017560,cm848_fuelDemandSmoothingController
@@ -1686,13 +1686,13 @@ address,name
 0x0004e9cc,cm848_tpuOutput15Enable
 0x0004e9f0,cm848_tpuOutput15Disable
 0x0004ea18,cm848_tpuOutput15SetPeriod
-0x0004ea40,cm848_setEngineCycleBitmapBitIfGreater
+0x0004ea40,cm848_setDatalinkSwitchStateIfPriority,(switch / priority): when switch_input_source_priority[switch] <= priority claims the switch at that priority and sets its bit in switch_input_datalink_state_bits (was cm848_setEngineCycleBitmapBitIfGreater) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
 0x0004ea78,cm848_orBitsInArray
-0x0004ea84,cm848_clearEngineCycleBitmapBitIfGreater
+0x0004ea84,cm848_clearDatalinkSwitchStateIfPriority,(switch / priority): when switch_input_source_priority[switch] <= priority claims the switch at that priority and clears its bit in switch_input_datalink_state_bits (was cm848_clearEngineCycleBitmapBitIfGreater) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
 0x0004eabc,cm848_clearBitsInArray
-0x0004eac8,cm848_checkProtectionWarningBitState
+0x0004eac8,cm848_readSwitchHardwareInput,(switch): reads the switch's hardware input line (switch_input_hardware_line_cal[switch]) with cm848_readDiscreteInputLine and applies its switch_input_polarity_bits_cal bit (was cm848_checkProtectionWarningBitState) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
 0x0004eb00,cm848_checkProtectionBitWarningState
-0x0004eb48,mpc555_updateEngineCycleOutputs
+0x0004eb48,cm848_scanAndDebounceSwitchInputs,32 logical switch inputs: datalink-sourced switches (switch_input_datalink_source_bits_cal) take switch_input_datalink_state_bits / hardware switches read their line from the input-line image at 0x40c0f8 XOR switch_input_polarity_bits_cal / switches with no line keep their software-set state; 4-sample debounce (all 4 set -> set / all 4 clear -> clear / else hold) into switch_input_state_bits; also counts MIOS1ER bit 15 falling edges into cold_start_crank_counter (was mpc555_updateEngineCycleOutputs) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
 0x0004eeb8,hpcr_initProtectionAndOutputCycle
 0x0004ef24,cm848_setEngineProtectionFault
 0x0004ef5c,setBitInArray
@@ -1705,7 +1705,7 @@ address,name
 0x0004f0dc,cm848_checkProtectionModeFlags
 0x0004f190,cm848_protectionAlarmHandler
 0x0004f2b0,cm848_processProtectionFaultsAndTiming
-0x0004f2ec,hpcr_protectionWarningHandler
+0x0004f2ec,cm848_readDiscreteInputLine,(line): reads the port holding discrete input line N (MIOS1 / SIU_SGPIODT1 / SIU_SGPIODT2 / MIOS pin states / RAM status bytes for lines 128-151) into the input-line image at 0x40c0f8 + N/8 and returns the line's bit; lines below 8 and above 151 are not read (was hpcr_protectionWarningHandler) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
 0x0004f324,hpcr_evaluateHardwareTimerState
 0x0004f6f0,mpc555_driveOutputLineHigh,Sets output line N (8+) high: ORs bit N into the shadow byte output_lines_<range>_state and the owning port register (MIOS port / SIU_SGPIODT1 / SIU_SGPIODT2 ...); lines below 8 are ignored. Was clearModuleSyncFlag (nothing to do with sync) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
 0x00051038,mpc555_driveOutputLineLow,Sets output line N (8+) low: clears bit N in the shadow byte and the owning port register; counterpart of mpc555_driveOutputLineHigh. Was updateEngineSyncStatus (nothing to do with engine sync) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
@@ -1952,26 +1952,26 @@ address,name
 0x00509ce4,j1939_diagService4DisableBroadcast,Application CLIP diagnostic service handler registered with cm848_processJ1939DiagnosticRequest: service 4 - cm848_updateJ1939BroadcastEnableMask with enable 0 | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence High
 0x00509d0c,j1939_diagService5EnableBroadcast,Application CLIP diagnostic service handler registered with cm848_processJ1939DiagnosticRequest: service 5 - cm848_updateJ1939BroadcastEnableMask with enable 1 | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence High
 0x00509d34,j1939_diag_request_batch_init
-0x00509d98,fault_flag_clear_bitmap
-0x00509dd8,fault_count_clear_bitmap
-0x00509e18,fault_reason_clear_bitmap
-0x00509e58,governor_tableA_nonzero_check
-0x00509e98,governor_tableB_nonzero_check
-0x00509ed8,governor_tableC_nonzero_check
-0x00509f18,fault_flag_set_bitmap
-0x00509f54,fault_count_set_bitmap
-0x00509f90,fault_reason_set_bitmap
-0x00509fcc,governor_loadPercent_channel5_update
-0x0050a0cc,governor_loadPercent_channel0_update
-0x0050a1b4,governor_loadPercent_channel6_update
-0x0050a2cc,fuel_demand_protection_loop
-0x0050a4a0,diag_faultChannel_bitmap_update
+0x00509d98,cm848_clearJ1939InputDataErrorBit,Clears bit N (J1939 input N) of j1939_input_data_error_bitmap (was fault_flag_clear_bitmap) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
+0x00509dd8,cm848_clearJ1939PedalInputTimeoutBit,Clears bit N (J1939 input N) of j1939_pedal_input_timeout_bitmap (was fault_count_clear_bitmap) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
+0x00509e18,cm848_clearJ1939InputTimeoutBit,Clears bit N (J1939 input N) of j1939_input_timeout_bitmap (was fault_reason_clear_bitmap) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
+0x00509e58,cm848_anyJ1939InputDataErrorActive,Returns 1 while any j1939_input_data_error_bitmap bit is set (was governor_tableA_nonzero_check) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
+0x00509e98,cm848_anyJ1939PedalInputTimeoutActive,Returns 1 while any j1939_pedal_input_timeout_bitmap bit is set (was governor_tableB_nonzero_check) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
+0x00509ed8,cm848_anyJ1939InputTimeoutActive,Returns 1 while any j1939_input_timeout_bitmap bit is set (was governor_tableC_nonzero_check) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
+0x00509f18,cm848_setJ1939InputDataErrorBit,Sets bit N: J1939 input N received a not-available or out-of-range value (was fault_flag_set_bitmap) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
+0x00509f54,cm848_setJ1939PedalInputTimeoutBit,Sets bit N: accelerator J1939 input N (6 or 7) lost its message (was fault_count_set_bitmap) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
+0x00509f90,cm848_setJ1939InputTimeoutBit,Sets bit N: J1939 input N's message timed out (its j1939_input_signal_timeouts slot reached 0) (was fault_reason_set_bitmap) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
+0x00509fcc,cm848_processJ1939EngineRetarderSelection,J1939 input 5: EBC1 (PGN 61441) byte 5 Engine Retarder Selection (SPN 973 - 0.4 %/bit) -> j1939_engine_retarder_selection_percent (raw x 4 / 10 = 1 %/bit); message lost or not available -> j1939_engine_retarder_selection_default_percent plus the timeout / data-error bit; runs only when fault_feature_config_flags bit 0 is set (0x0024 in this calibration = off) (was governor_loadPercent_channel5_update) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
+0x0050a0cc,cm848_processJ1939EngineFanRequestedSpeed,J1939 input 0: CM1 (PGN 57344) byte 1 (SPN 986 Engine Fan 1 Requested Percent Speed - 0.4 %/bit - position per J1939-71) -> j1939_engine_fan_requested_speed (raw x 16 / 10 = 0.25 %/bit); message lost or invalid -> j1939_engine_fan_requested_speed_default; runs only when governor_mode_config_flags bit 15 is set (0 in this calibration); the output has no reader in S90140.06 (was governor_loadPercent_channel0_update) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
+0x0050a1b4,cm848_processJ1939AcceleratorLowIdleSwitch,J1939 input 6: EEC2 (PGN 61443) byte 1 bits 1-2 Accelerator Pedal 1 Low Idle Switch (SPN 558) -> logical switch 7 (accelerator at idle) through cm848_setDatalinkSwitchStateIfPriority; error / not available use j1939_switch_input_default_state_bits; runs only when switch 7 is datalink-sourced (switch_input_datalink_source_bits_cal) (was governor_loadPercent_channel6_update) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
+0x0050a2cc,cm848_updateIdleSwitchesFromLocalInputs,Fallback used when the J1939 accelerator pedal message is lost: governor_mode_config_flags bit 3 clear -> debounces the hardware off-idle switch (logical switch 8 via cm848_readSwitchHardwareInput - accelerator_idle_switch_debounce_timer 100 minus 50 per pass) / set -> off idle while the raw pedal sensor (sensor channel 13 or its diagnostic override) is above 360 counts; drives logical switches 7 (at idle) and 8 (off idle) plus fuel_demand_control_t.accelerator_off_idle (was fuel_demand_protection_loop) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
+0x0050a4a0,cm848_copyStatusBitToDatalinkSwitch,(switch / status bit): when the switch is datalink-sourced copies bit status_bit of protection_fault_status_bits into it through the priority helpers; the priority test reads switch_input_source_priority[status_bit] - for status bit 35 that is past the 32-entry array - looks like a firmware slip for the switch index (was diag_faultChannel_bitmap_update) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
 0x0050a57c,cm848_evaluateJ1939InputSignalFault,Per entry of j1939_input_signal_descriptor_table: clears the entry's fault bits / when its fault bit is enabled sets the 'message lost' fault once its timeout reaches 0 or the 'not available' fault when the received 2-bit value is 3 (held off by j1939_input_monitor_inhibit_flag) (was diag_faultEntry_channelProcess) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
-0x0050a700,fuel_demandFeature_emission_update
-0x0050a9d4,fuel_demandFeature_faultBitmap_update
-0x0050aba8,phase_group_a_adjustCalibrationParameters
-0x0050ad1c,phase_group_a_performCalibrationUpdate
-0x0050ae5c,cm848_initializeDiagnosticStateCounters
+0x0050a700,cm848_processJ1939AcceleratorPedalPosition,J1939 input 7: EEC2 (PGN 61443) byte 2 Accelerator Pedal Position 1 (SPN 91 - 0.4 %/bit) -> j1939_accelerator_pedal_position (raw x 16 / 10 = 0.25 %/bit - the local pedal scale) and fuel_demand_control_t.accelerator_off_idle; 0xFE (error) sets emission_faults bit 15 and falls back to the low idle switch; message lost runs cm848_updateIdleSwitchesFromLocalInputs; runs only when fuel_demand_feature_flags bit 13 (J1939 pedal) is set and switch 7 is datalink-sourced; j1939_accelerator_pedal_position has NO reader in S90140.06 so a J1939 pedal never reaches fueling (was fuel_demandFeature_emission_update) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
+0x0050a9d4,cm848_processJ1939AcceleratorIdleSwitchPair,J1939 pedal mode (fuel_demand_feature_flags bit 13): Accelerator Pedal 1 Low Idle Switch (SPN 558) -> logical switches 7 (at idle) and 8 (off idle); error sets emission_faults bit 15 / not available sets j1939_accelerator_low_idle_switch_unavailable_flag and the input 7 data-error bit; skipped while j1939_pedal_input_timeout_active_flag is set (was fuel_demandFeature_faultBitmap_update) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
+0x0050aba8,cm848_processJ1939SwitchAndRequestInputs,J1939 input task (from cm848_phase_group_a_processing): when j1939_input_processing_enable_cal bit 10 is set runs cm848_evaluateJ1939InputSignalFault for the 17 table entries / the fan request (input 0) and retarder selection (input 5) processors / five status-bit copies (switch 31 from status bits 1 35 0 5 and switch 4 from bit 4); then sets system_status_flags reserved_10 bit 2 while any data-error bit is set and bit 0 while any timeout bit is set (was phase_group_a_adjustCalibrationParameters) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
+0x0050ad1c,cm848_processJ1939AcceleratorInputs,J1939 accelerator input task (from cm848_periodicTaskGroup18_calibration6): when j1939_input_processing_enable_cal bit 10 is set runs the low idle switch (input 6) / idle switch pair and pedal position (input 7) processors then the same reserved_10 bit 2 / bit 0 summary and j1939_pedal_input_timeout_active_flag (was phase_group_a_performCalibrationUpdate) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
+0x0050ae5c,cm848_initJ1939InputProcessing,Start-up / exception reset of the J1939 input layer: idle switch debounce (previous state 0xFF and timer 100) / clears the data-error fault bit (reserved_10 bit 2) and j1939_accelerator_low_idle_switch_unavailable_flag / sets j1939_input_monitor_inhibit_flag (was cm848_initializeDiagnosticStateCounters) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
 0x0050aec0,governor_resetModeStateOnCondition
 0x0050af58,j1939_writeDiagMemory,Application CLIP diagnostic stack (PGN 61184): memory write worker (twin of boot cm848_writeDiagMemory): length cap 1764 / optional 10-byte auth trailer / region by uds_validateMemoryRegion - EEPROM (type 5) via cm848_queueEepromByteWrites or the RAM mirror / RAM (type 3) with the 0x3fd480 window protected | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
 0x0050b1b8,j1939_writeDiagMemoryByParameterId,Application CLIP diagnostic stack (PGN 61184): services 0x44 / 0x45 / 0x47 / 0x49 (via undefined stubs): resolves the parameter ID (0x539768; 8 = unknown) then j1939_writeDiagMemory at base + offset; twin of boot cm848_memoryWriteByParameterId | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High

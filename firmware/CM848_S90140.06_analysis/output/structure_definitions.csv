@@ -32,8 +32,8 @@ uds_response_t,0x0040b492,transmit_timer,word,2,This buffer is pci_transmit_mess
 # Used by calculateFuelDemandValue and related fuel control functions
 # Total size: 28 bytes (0x0040a57a-0x0040a594)
 fuel_demand_control_t,0x0040a57a,calculated,word,2,Final calculated fuel demand value,,verified
-fuel_demand_control_t,0x0040a57a,mode,word,2,Fuel demand mode selector (0=normal),,verified
-fuel_demand_control_t,0x0040a57a,enable_flag,word,2,Fuel demand enable flag (1=enabled),,verified
+fuel_demand_control_t,0x0040a57a,idle_validation_state,word,2,cm848_evaluateIdleValidationSwitches: 0 at-idle switch + pedal at idle / 1 off-idle switch + pedal above idle / 2 at-idle switch but pedal above the band / 3 off-idle switch but pedal below the band / 4 both switches + pedal outside the band / 5 no switch + pedal above the band / 6 no switch + pedal below the band / 7 equal switches + pedal inside the band / 8 valid pair + pedal between idle and the band edge (was mode),,verified
+fuel_demand_control_t,0x0040a57a,accelerator_off_idle,word,2,1 = accelerator demand off idle: idle validation states 1 / 3 / 5 / pedal sensor above threshold / J1939 SPN 558 / or speed-governor demand above cruise_governor_demand_enable_threshold_cal while fuel_demand_enable_flag; the EEC2 broadcast reports it as SPN 558 (was enable_flag),,verified
 fuel_demand_control_t,0x0040a57a,rate_limiter_state,word,2,Rate limiter state machine value,,verified
 fuel_demand_control_t,0x0040a57a,rate_delta,word,2,Fuel demand rate of change delta,,verified
 fuel_demand_control_t,0x0040a57a,throttle_based,word,2,Throttle-based fuel demand component,,verified
@@ -143,13 +143,6 @@ pci_link_state_t,0x0040b34e,tx_match_index,byte,1,pci_transmit_message_table ent
 pci_link_state_t,0x0040b34e,receive_byte_count,byte,1,Bytes stored in pci_receive_frame_buffer for the current frame,,verified
 pci_link_state_t,0x0040b34e,init_complete_marker,byte,1,Set to 1 at the end of cm848_initJ1939CommunicationSystem; no reader found,,verified
 pci_link_state_t,0x0040b34e,link_event_code,dword,4,PCI link event 1..7 (all stw/lwz); cm848_handlePciLinkEvent maps each to a recovery-action mask at 0x3fd8e0..0x3fd8e7; 7 = every scheduled PCI transmit overdue (set by cm848_checkPciMessageTimeouts); was dm1_pending (word),,verified
-# Protection System Enable - master protection control bits
-# Used by protectionEnableCheck and protection initialization
-# Total size: 4 bytes (0x0040c050-0x0040c053)
-protection_enable_t,0x0040c050,mode_bits,byte,1,Protection mode selection bits,,verified
-protection_enable_t,0x0040c050,system_enable_bits,byte,1,Protection subsystem enable flags,,verified
-protection_enable_t,0x0040c050,reserved_02,byte,1,Gap/reserved,,needs_review
-protection_enable_t,0x0040c050,protection_active,bitfield:1@7,1,Runtime protection-engaged boolean - bit7 (0x80); 1=limiting active. Ghidra 12.1+ renders the mask away,,verified
 # Fault List Management - DTC list indices and counters
 # Used by fault logging and DM1/DM2 message generation
 # Total size: 8 bytes (0x003fe11a-0x003fe121)
