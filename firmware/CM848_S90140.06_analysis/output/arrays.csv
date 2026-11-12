@@ -45,3 +45,5 @@ address,array_name,element_type,element_count,comment
 0x000582da,mios_interrupt_handler_table,pointer,16,MIOS interrupt handlers indexed by MIOS1 flag bit (mpc555_miosInterruptDispatcher); default entry mpc555_infiniteLoopHalt (was tpuChannelHandler_ptr0)
 0x000583ae,tpu_b_channel_interrupt_handler_table,pointer,16,TPU-B channel interrupt handlers indexed by channel 0-15 (mpc555_tpuBInterruptDispatcher); default cm848_emptyStubFunction (was tpuBChannelHandler_ptr0)
 0x000583ee,tpu_a_channel_interrupt_handler_table,pointer,16,TPU-A channel interrupt handlers indexed by channel 0-15; default cm848_emptyStubFunction (was tpuAChannelHandler_ptr0)
+0x003feaa4,j1939_input_signal_timeouts,word,25,J1939 input message timeouts per slot - reloaded by the receive handlers (500 / 50 / 25 ticks) and counted down by cm848_tickJ1939InputSupervision; 0 = message lost (was governor_load_channel_fault_confirm_timers)
+0x003fd81e,j1939_input_source_address_filter_cal,byte,23,EEPROM-backed: source address each J1939 input signal is accepted from (0xFF = any source - every entry is 0xFF in this calibration)

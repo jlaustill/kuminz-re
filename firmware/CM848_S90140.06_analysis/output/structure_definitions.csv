@@ -1559,3 +1559,25 @@ memory_region_t,0x003f9844,,,,region 2 0x3f9800 type 3 (end 0x302000 is below st
 memory_region_t,0x003f984e,,,,region 3 0x302000-0x3fffff RAM - marker,,verified
 memory_region_t,0x003f9858,,,,region 4 0x1000000-0x1003fff EEPROM - marker,,verified
 memory_region_t,0x003f9862,,,,region 5 0x2fc000-0x307fff internal registers - marker,,verified
+
+# --- j1939_input_signal_descriptor_t: J1939 input supervision table (10 bytes x 17 @ Bank 2 0x53a278) ---
+j1939_input_signal_descriptor_t,0x0053a278,signal_value,byte*,4,Received signal byte (j1939_received_*),,verified
+j1939_input_signal_descriptor_t,0x0053a278,timeout_slot,byte,1,Index into j1939_input_signal_timeouts (also the fault bitmap index),,verified
+j1939_input_signal_descriptor_t,0x0053a278,reserved_5,byte,1,Always 0,,verified
+j1939_input_signal_descriptor_t,0x0053a278,fault_bit_index,dword,4,Bit index into the fault-enable bitmask and the fault confirmation arrays (0x1f for most entries),,verified
+j1939_input_signal_descriptor_t,0x0053a282,,,,descriptor 1 - marker,,verified
+j1939_input_signal_descriptor_t,0x0053a28c,,,,descriptor 2 - marker,,verified
+j1939_input_signal_descriptor_t,0x0053a296,,,,descriptor 3 - marker,,verified
+j1939_input_signal_descriptor_t,0x0053a2a0,,,,descriptor 4 - marker,,verified
+j1939_input_signal_descriptor_t,0x0053a2aa,,,,descriptor 5 - marker,,verified
+j1939_input_signal_descriptor_t,0x0053a2b4,,,,descriptor 6 - marker,,verified
+j1939_input_signal_descriptor_t,0x0053a2be,,,,descriptor 7 - marker,,verified
+j1939_input_signal_descriptor_t,0x0053a2c8,,,,descriptor 8 - marker,,verified
+j1939_input_signal_descriptor_t,0x0053a2d2,,,,descriptor 9 - marker,,verified
+j1939_input_signal_descriptor_t,0x0053a2dc,,,,descriptor 10 - marker,,verified
+j1939_input_signal_descriptor_t,0x0053a2e6,,,,descriptor 11 - marker,,verified
+j1939_input_signal_descriptor_t,0x0053a2f0,,,,descriptor 12 - marker,,verified
+j1939_input_signal_descriptor_t,0x0053a2fa,,,,descriptor 13 - marker,,verified
+j1939_input_signal_descriptor_t,0x0053a304,,,,descriptor 14 - marker,,verified
+j1939_input_signal_descriptor_t,0x0053a30e,,,,descriptor 15 - marker,,verified
+j1939_input_signal_descriptor_t,0x0053a318,,,,descriptor 16 - marker,,verified

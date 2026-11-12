@@ -4448,7 +4448,7 @@ address,name,type,comment
 0x0040aa9a,j1939_standby_flag,J1939_STANDBY_STATE,
 0x0040aaa2,j1939_engine_torque_encoded,word,
 0x0040aac2,governor_load_percent_computed,word,
-0x0040aaca,governor_load_startup_inhibit_flag,word,set in phase_group_a_updateStartupTimer: 1 when load-governor feature disabled (protection_enable.mode_bits&1==0) or still in cold-start startup delay; 0 once enabled+past-cranking+startup-timer DAT_0040aac8 reaches DAT_0005c346. Consumers treat ==0 as active (compute load %, allow fault set), !=0 as inhibited (use default, suppress faults)
+0x0040aaca,j1939_input_monitor_inhibit_flag,word,1 = J1939 input faults are held off (start-up delay not elapsed or engine not enabled) (was governor_load_startup_inhibit_flag)
 0x0040aacc,engine_data_log_buffer,byte,
 0x0040ac16,PTR_DAT_0040ac16,pointer,
 0x0040ac22,engine_data_log_buffer_limit,byte,
@@ -5633,7 +5633,6 @@ address,name,type,comment
 0x0052fb28,switchD,,
 0x00530214,switchD,,
 0x0053307c,switchD,,
-0x0053a278,PTR_DAT_0053a278,pointer,
 0x0053a33e,PTR_DAT_0053a33e,pointer,
 0x0053a344,PTR_flash2_command_register_0053a344,pointer,
 0x0053a9a2,PTR_FUN_0053a9a2,pointer,
@@ -5801,7 +5800,7 @@ address,name,type,comment
 0x0040b5a2,protection_throttle_setpoint,word,clamped throttle setpoint for protection phase group A
 0x0040b5ce,sci_mode_flags,byte,SCI link mode: bit 0x02 = high-speed (SCC1R0 0x14) / bit 0x01 cleared by cm848_sciResetReceiveState (was fuel_demand_uart_mode_flags)
 0x0040b9b6,protection_cssc_oilDelta_state,word,cold-start oil/coolant temp differential monitor state
-0x0040aab4,emission_feature_mode_select,byte,med read-only; selects engine-cycle bitmap channel routing
+0x0040aab4,j1939_received_accelerator_pedal_1_low_idle_switch,byte,J1939 input received over PGN 61443 EEC2 byte 1 bits 1-2 (SPN 558 Accelerator Pedal 1 Low Idle Switch); 2-bit switch states use J1939 0 off / 1 on / 3 not available (was emission_feature_mode_select)
 0x0040b9b8,fuel_correction_above_target_count,byte,consecutive cycles fuel timing actual>=target
 0x0040b9b9,fuel_correction_below_target_count,byte,consecutive cycles fuel timing actual<target
 0x0040b9c2,fuel_correction_ramp_step_count,word,phase step counter for fuel correction ramp
@@ -5847,7 +5846,7 @@ address,name,type,comment
 0x0040655c,fuel_blend_compensation_limit,dword,read-only ROM upper clamp for blend compensation integrator
 0x0040a5c6,fuel_blend_compensation_direction_flag,word,blend compensation error-direction flag
 0x0040a44e,boost_correction_eligible_flag,word,set when all boost-correction conditions met
-0x0040aac8,governor_load_startup_timer,word,up-counter clearing governor_load_startup_inhibit at limit
+0x0040aac8,j1939_input_monitor_startup_timer,word,Counts up after the cold-start phases until J1939 input fault monitoring is allowed (was governor_load_startup_timer)
 0x0040b04a,protection_speed_error_over_threshold_flag,word,set when speed error exceeds tracking threshold
 0x0040b540,fuel_temp_trim_deviation_ema,word,EMA of RPM/trim deviation stability metric
 0x0040a5be,fuel_demand_boost_compensation_accumulated,dword,boost demand compensation accumulator clamped to limit
@@ -7018,10 +7017,27 @@ address,name,type,comment
 0x003fbd52,fuel_demand_active_sensor_valid_bits,word,fuel-demand-active condition bit (0x100) for sensor validation
 0x003fd8de,pci_normal_transmit_disabled_initial_cal,byte,EEPROM-shadowed (EEPROM offset 0x45c; 0 in dump) - boot value of pci_normal_transmit_disabled
 0x003fd8df,pci_receive_processing_disabled_initial_cal,byte,EEPROM-shadowed (EEPROM offset 0x45d; 0 in dump) - boot value of pci_receive_processing_disabled
-0x003feaa4,governor_load_channel_fault_confirm_timers,word,25-word per-channel governor load fault-confirm timers (base)
+0x0040aaaa,j1939_received_accelerator_interlock_switch,byte,J1939 input received over PGN 61441 EBC1 byte 4 bits 1-2 (SPN 972 Accelerator Interlock Switch); 2-bit switch states use J1939 0 off / 1 on / 3 not available
+0x0040aaab,j1939_received_engine_auxiliary_shutdown_switch,byte,J1939 input received over PGN 61441 EBC1 byte 4 bits 5-6 (SPN 970 Engine Auxiliary Shutdown Switch); 2-bit switch states use J1939 0 off / 1 on / 3 not available
+0x0040aaac,j1939_received_brake_switch,byte,J1939 input received over PGN 65265 CCVS1 byte 4 bits 5-6 (SPN 597 Brake Switch); 2-bit switch states use J1939 0 off / 1 on / 3 not available
+0x0040aaad,j1939_received_clutch_switch,byte,J1939 input received over PGN 65265 CCVS1 byte 4 bits 7-8 (SPN 598 Clutch Switch); 2-bit switch states use J1939 0 off / 1 on / 3 not available
+0x0040aaae,j1939_received_accelerator_pedal_position_1,byte,J1939 input received over PGN 61443 EEC2 byte 2 (SPN 91 Accelerator Pedal Position 1 - 0.4 %/bit); 2-bit switch states use J1939 0 off / 1 on / 3 not available
+0x0040aaaf,j1939_received_cruise_control_enable_switch,byte,J1939 input received over PGN 65265 CCVS1 byte 4 bits 3-4 (SPN 596 Cruise Control Enable Switch); 2-bit switch states use J1939 0 off / 1 on / 3 not available
+0x0040aab0,j1939_received_cruise_control_resume_switch,byte,J1939 input received over PGN 65265 CCVS1 byte 5 bits 5-6 (SPN 601 Cruise Control Resume Switch); 2-bit switch states use J1939 0 off / 1 on / 3 not available
+0x0040aab1,j1939_received_cruise_control_set_switch,byte,J1939 input received over PGN 65265 CCVS1 byte 5 bits 1-2 (SPN 599 Cruise Control Set Switch); 2-bit switch states use J1939 0 off / 1 on / 3 not available
+0x0040aab2,j1939_received_engine_idle_decrement_switch,byte,J1939 input received over PGN 65265 CCVS1 byte 8 bits 3-4 (SPN 967 Engine Idle Decrement Switch); 2-bit switch states use J1939 0 off / 1 on / 3 not available
+0x0040aab3,j1939_received_engine_retarder_selection,byte,J1939 input received over PGN 61441 EBC1 byte 5 (SPN 973 Engine Retarder Selection); 2-bit switch states use J1939 0 off / 1 on / 3 not available
+0x0040aab5,j1939_received_engine_idle_increment_switch,byte,J1939 input received over PGN 65265 CCVS1 byte 8 bits 1-2 (SPN 968 Engine Idle Increment Switch); 2-bit switch states use J1939 0 off / 1 on / 3 not available
+0x0040aaba,j1939_received_accelerator_pedal_position_2,byte,J1939 input received over PGN 61443 EEC2 byte 5 (SPN 29 Accelerator Pedal Position 2 - 0.4 %/bit); 2-bit switch states use J1939 0 off / 1 on / 3 not available
+0x0040aabc,j1939_received_remote_accelerator_pedal_position,byte,J1939 input received over PGN 61443 EEC2 byte 4 (SPN 974 Remote Accelerator Pedal Position - 0.4 %/bit); 2-bit switch states use J1939 0 off / 1 on / 3 not available
+0x0040aabd,j1939_received_remote_accelerator_enable_switch,byte,J1939 input received over PGN 61441 EBC1 byte 4 bits 7-8 (SPN 969 Remote Accelerator Enable Switch); 2-bit switch states use J1939 0 off / 1 on / 3 not available
+0x0040aabe,j1939_received_engine_diagnostic_test_mode_switch,byte,J1939 input received over PGN 65265 CCVS1 byte 8 bits 5-6 (SPN 966 Engine Diagnostic Test Mode Switch); 2-bit switch states use J1939 0 off / 1 on / 3 not available
+0x0040aabf,j1939_received_engine_derate_switch,byte,J1939 input received over PGN 61441 EBC1 byte 4 bits 3-4 (SPN 971 Engine Derate Switch); 2-bit switch states use J1939 0 off / 1 on / 3 not available
+0x0040ad52,j1939_received_source_address,byte,Source address of the J1939 frame being handled (compared with j1939_input_source_address_filter_cal by the input handlers)
 0x0040b357,pci_controller_command_job,qspi_job_t,QSPI job that sends pci_controller_transmit_word to the external J1850 controller; completion_callback = the PCI transmit path
 0x0040b36d,pci_controller_receive_job,qspi_job_t,QSPI job that reads pci_controller_receive_word; completion_callback = cm848_onPciControllerReceiveWord
 0x0040b3f1,pci_receive_message_4_status,byte,PCI RX[4] header 2D status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
 0x0040b45c,pci_transmit_message_4_status,byte,PCI TX[4] header D1 03 status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
 0x0040b463,pci_transmit_message_5_status,byte,PCI TX[5] header 53 status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
 0x0040b4a8,pci_receive_message_13_status,byte,PCI RX[13] header 92 status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
+0x0053a278,j1939_input_signal_descriptor_table,j1939_input_signal_descriptor_t,17 J1939 2-bit switch inputs supervised by cm848_evaluateJ1939InputSignalFault (value pointer / timeout slot / fault bit index)
