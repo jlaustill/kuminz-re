@@ -3030,12 +3030,12 @@ address,name,type,comment
 0x00407a44,protection_overtemp_coolant_output_b_cal,byte,
 0x00407a56,protection_fuel_threshold_l3_rpm_axis_cal,byte,
 0x00407a66,protection_fuel_threshold_l3_rpm_output_cal,byte,
-0x00407a76,fourth_gear_tcc_lockup_output_speed_axis,word,Output speed axis of the base fourth gear TCC lockup table (no cruise / switch 12 clear or bypass set): byte length then the transmission_output_speed_in_use breakpoints; used by cm848_applyConverterLockupSchedule (was protection_oil_pressure_load_axis_cal) (Medium confidence)
+0x00407a76,fourth_gear_tcc_lockup_output_speed_axis,word,Output speed axis of the base fourth gear TCC lockup table (no cruise / switch 12 clear or bypass set): byte length 16 then 8 transmission_output_speed_in_use breakpoints (1/8 rpm) = 0 / 1998 to 3200 rpm; ROM 0x6d690 image; read by cm848_applyConverterLockupSchedule (was protection_oil_pressure_load_axis_cal)
 0x00407a88,fourth_gear_tcc_lockup_boost_axis,word,Boost axis of the base fourth gear TCC lockup table: byte length then the fourth_gear_tcc_lockup_boost_input breakpoints (was protection_oil_pressure_ystart_cal) (Medium confidence)
 0x00407a92,fourth_gear_tcc_lockup_fuel_demand_thresholds,word,Fuel demand thresholds of the base fourth gear TCC lockup table (output speed x boost) (was protection_oil_pressure_yend_cal) (Medium confidence)
 0x00407ad2,protection_fuel_threshold_l4_rpm_axis_cal,byte,
 0x00407ae4,protection_fuel_threshold_l4_rpm_output_cal,byte,
-0x00407af6,fourth_gear_tcc_lockup_cruise_output_speed_axis,word,Output speed axis of the cruise fourth gear TCC lockup table (condition_flags_1 bit 4 = cruise engaged / switch 12 clear): byte length then the transmission_output_speed_in_use breakpoints (was protection_oil_pressure_load_axis_b_cal) (Medium confidence)
+0x00407af6,fourth_gear_tcc_lockup_cruise_output_speed_axis,word,Output speed axis of the cruise fourth gear TCC lockup table (condition_flags_1 bit 4 = cruise engaged / switch 12 clear): byte length 16 then the same 8 transmission_output_speed_in_use breakpoints as fourth_gear_tcc_lockup_output_speed_axis; ROM 0x6d710 image (was protection_oil_pressure_load_axis_b_cal)
 0x00407b08,fourth_gear_tcc_lockup_cruise_boost_axis,word,Boost axis of the cruise fourth gear TCC lockup table: byte length 8 then 0 / 629 / 754 / 1257 (0 / 10 / 12 / 20 inHg) for the boost word 0x40b0e2; picked when condition_flags_1 bit 4 (cruise engaged) is set; ROM 0x6d722 image - no _cal (was protection_oil_pressure_ystart_b_cal)
 0x00407b12,fourth_gear_tcc_lockup_cruise_fuel_demand_thresholds,word,8 x 4 fuel demand thresholds (row per boost breakpoint) of the cruise fourth gear TCC lockup table: up to 10 inHg 0 0 220 227 348 361 402 667 / from 12 inHg 0 0 120 140 160 361 404 667; fuel_demand_control_t.calculated below the cell sets lockup request 18 (was protection_oil_pressure_yend_b_cal)
 0x00407b52,protection_threshold_l2_axis_b_cal,byte,

@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 13 06:42:19 MST 2026
+// Generated: Fri Nov 13 06:58:30 MST 2026
 
 
 //
@@ -73948,7 +73948,7 @@ void cm848_processImmobilizerSeedAndKey(void)
         uVar2 = 3;
         immobilizer_seed = uVar1;
         do {
-          (&pci_transmit_message_7_payload)[uVar2 & 0xff] = (byte)uVar1;
+          pci_transmit_message_7_payload[uVar2 & 0xff] = (byte)uVar1;
           uVar1 = uVar1 >> 8;
           bVar3 = bVar3 + 1;
           uVar2 = uVar2 + 0xff;
@@ -74013,7 +74013,7 @@ void cm848_storeImmobilizerSecretKey(void)
     uVar3 = 3;
     immobilizer_seed = uVar2;
     do {
-      (&pci_transmit_message_7_payload)[uVar3 & 0xff] = (byte)uVar2;
+      pci_transmit_message_7_payload[uVar3 & 0xff] = (byte)uVar2;
       uVar2 = uVar2 >> 8;
       bVar4 = bVar4 + 1;
       uVar3 = uVar3 + 0xff;
