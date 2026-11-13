@@ -581,7 +581,7 @@ address,name
 0x0000d9b0,cm848_sensorChannel15_process
 0x0000da3c,cm848_sensorChannel16_init
 0x0000db50,cm848_sensorChannel16_process
-0x0000dc64,cm848_oilPressureDeltaCalculation
+0x0000dc64,cm848_calculateBoostPressure,Boost (gauge) pressure: with protection_sensor_mode_flag set returns intake manifold pressure minus barometric pressure (or minus boost_pressure_fixed_reference when boost_uses_barometric_pressure_flag is 0) clamped at 0 - otherwise the absolute intake manifold pressure; 1/18.56 kPa per count (0.0159 inHg) (was cm848_oilPressureDeltaCalculation - the sensor_readings_t field it reads was misnamed oil_pressure) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
 0x0000dcdc,cm848_fuelDemandBlendCalculator
 0x0000e09c,cm848_initFuelTableSizes
 0x0000e0c4,cm848_trackMinimumFuelDemand
@@ -884,13 +884,11 @@ address,name
 # Governor/protection init
 0x000222f8,cm848_resetGovernorControlState
 0x00022318,cm848_initGovernorDerivativeTerms
-# 0x0002235c is the epilogue of cm848_initGovernorControlHandler (not a separate function).
-# Previously misidentified as cm848_noOperation because e2m Flash2 (V11.20.13.16) had
-# bl instructions targeting this address where cm848_processJ1939DiagnosticRequest lived
-# in the old ROM version. After switching to cm848_flash2_live.bin (V11.46.06), this
-# address is no longer called from Bank 2.  Remove from CSV so Ghidra merges it back
-# into the parent function.
-# 0x0002235c,cm848_noOperation
+# 0x0002232c (was cm848_initGovernorControlHandler) and 0x0002235c (was cm848_noOperation) are
+# mid-function points inside cm848_initGovernorDerivativeTerms - both rows removed 2026-11-12 and
+# listed in deleted_functions.csv. They were bl targets in the old e2m Flash2 (V11.20.13.16),
+# where cm848_processJ1939DiagnosticRequest lived in that ROM version; the live flash2
+# (V11.46.06) no longer calls either address.
 0x0002236c,cm848_processSecurityAccessRequest
 0x000223f4,cm848_processGovernorControlMessage
 0x00022674,cm848_j1939HandlePgn65228Dm3ClearDiag
@@ -918,7 +916,7 @@ address,name
 0x00023d3c,cm848_sendJ1939AcknowledgeMessage
 0x00023dbc,cm848_sendJ1939NegativeAck
 0x00023e40,cm848_initJ1939AckBuffer
-0x00023e8c,cm848_j1939HandlePgn65269AmbientConditions
+0x00023e8c,cm848_buildPgn65269AmbientConditionsMessage,Builds and sends the ECM's AMB broadcast (PGN 65269): byte 1 barometric pressure (SPN 108 - 0.5 kPa/bit from sensor_readings_t.barometric_pressure - 0xFE on its fault bits) / bytes 4-5 ambient air temperature (SPN 171 from j1939_coolant_temp_raw - 0xFFFF unless j1939_feature_enable_flags bits 0 and 1) / the rest not available (was cm848_j1939HandlePgn65269AmbientConditions - a transmit builder) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
 0x00023fb8,cm848_initJ1939AmbientConditionsBuffer
 0x00024028,cm848_j1939BuildEngineStatusByte
 0x00024124,cm848_initJ1939EngineStatusBuffer
@@ -950,17 +948,17 @@ address,name
 0x00025ab8,cm848_initEec1TxDescriptor
 0x00025b10,cm848_buildPgn61443ElectronicEngineController2Message,Builds and sends the ECM's own EEC2 broadcast (PGN 61443): byte 1 accelerator low idle switch (SPN 558 from fuel_demand_control_t.accelerator_off_idle - 3 when switch 7 is datalink-sourced - 2 on pedal faults) + kickdown field / byte 2 accelerator pedal position 1 = fuel_demand_governor_output x 0.625 (0xFF in J1939-pedal mode) / byte 3 percent load at current speed / byte 4 remote accelerator position (0xFF unless system_feature_config_flags bit 12) / bytes 5-8 0xFF (was j1939HandlePgn61443Eec2 - a transmit builder) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
 0x00025d60,cm848_initPgn61443Eec2Handler
-0x00025de8,cm848_j1939SendOilPressureStatus
-0x00025e5c,cm848_initJ1939OilPressureBuffer
-0x00025eb4,cm848_j1939HandlePgn65263FluidLevelPressure
+0x00025de8,cm848_buildPgn65247ElectronicEngineController3Message,Builds and sends the ECM's EEC3 broadcast (PGN 65247): byte 1 nominal friction percent torque (SPN 514 = j1939_engine_torque_output_b high byte + 125) / bytes 2-3 engine's desired operating speed (SPN 515 from the ROM word at 0x5c382) / byte 4 desired operating speed asymmetry adjustment (SPN 519 from the ROM word at 0x5c384) (was cm848_j1939SendOilPressureStatus - nothing in it is oil pressure) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
+0x00025e5c,cm848_initPgn65247ElectronicEngineController3Buffer,Sets up the EEC3 (PGN 65247) transmit descriptor: header 0xFEDF with j1939_pgn65247_priority / own source address / 4 data bytes at 0x3fadc0 (was cm848_initJ1939OilPressureBuffer) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
+0x00025eb4,cm848_buildPgn65263EngineFluidLevelPressure1Message,Builds and sends the ECM's EFL/P1 broadcast (PGN 65263): byte 1 fuel delivery pressure (SPN 94 - 4 kPa/bit from fuel_delivery_pressure_sensor_filtered - 0xFF unless j1939_feature_enable_flags bit 12) / byte 4 engine oil pressure (SPN 100 - 4 kPa/bit from oil_pressure_sensor_filtered) / byte 7 coolant pressure (SPN 109 - 2 kPa/bit from coolant_pressure_sensor_filtered - 0xFF unless j1939_output_config_bits bit 3) (was cm848_j1939HandlePgn65263FluidLevelPressure - a transmit builder) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
 0x00025fb4,cm848_initJ1939FluidLevelPressureBuffer
-0x00026024,cm848_j1939HandlePgn65262EngineTemp
+0x00026024,cm848_buildPgn65262EngineTemperature1Message,Builds and sends the ECM's ET1 broadcast (PGN 65262): byte 1 coolant temperature (SPN 110) / byte 2 fuel temperature (SPN 174) / bytes 3-4 engine oil temperature (SPN 175 - 0.03125 deg C/bit from oil_temperature_sensor_filtered) - each 0xFE / 0xFEFE on its sensor fault bits (was cm848_j1939HandlePgn65262EngineTemp - a transmit builder) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
 0x0002619c,cm848_initPgn65262EngineTempHandler
 0x00026238,cm848_j1939BuildVehicleOperatingStatus
 0x000263a4,cm848_initJ1939SpeedControlMessage
 0x0002641c,cm848_j1939SendDiagnosticStatusMessage
 0x00026480,cm848_initJ1939BrakeRetarderBuffer
-0x000264d8,cm848_j1939HandlePgn65270InletExhaustConditions
+0x000264d8,cm848_buildPgn65270InletExhaustConditions1Message,Builds and sends the ECM's IC1 broadcast (PGN 65270): byte 2 boost pressure (SPN 102 - 2 kPa/bit - sent from the absolute intake manifold pressure) / byte 3 intake manifold temperature (SPN 105 from intake_manifold_temperature_sensor_filtered) - 0xFE on their fault bits / the rest not available (was cm848_j1939HandlePgn65270InletExhaustConditions - a transmit builder) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
 0x000265d8,cm848_initJ1939InletExhaustConditionsBuffer
 0x00026650,cm848_j1939BuildProtocolModeStatus
 0x0002682c,cm848_initJ1939ProtocolModeStatusBuffer
@@ -1115,8 +1113,8 @@ address,name
 0x00034f4c,cm848_processProtectionRateLimitFlags
 0x00035154,cm848_calculateProtectionThresholdLimit
 0x00035328,cm848_processProtectionStateMachine
-0x00035370,cm848_updateSensorBufferValues
-0x00035518,cm848_copySensorValuesToBuffer
+0x00035370,cm848_selectSensorValuesInUse,Copies the sensor values the engine protection and the freeze frame use; with protection_feature_flags bit 1 set each one is replaced by its low or high substitute while the matching system_status_flags fault bit is set: intake_manifold_pressure_in_use (enable_state bits 8/9) / coolant_temperature_in_use (condition_monitor bits 0/1) / intake_manifold_temperature_in_use (bits 3/4) / protection_fuel_demand_snapshot (was cm848_updateSensorBufferValues) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
+0x00035518,cm848_copySensorValuesInUseUnchecked,Copies intake manifold pressure / coolant temperature / intake manifold temperature / fuel demand into the in-use values without the fault substitution of cm848_selectSensorValuesInUse (was cm848_copySensorValuesToBuffer) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
 0x00035558,cm848_processSensorLookupTable5
 0x000355e4,cm848_initSensorLookupTable5
 0x00035670,cm848_sensorChannel69_init,review-function-readability reviewed 2026-06-12 - Readability High Accuracy Confidence High - Type A sensor channel on ADC index 0x45(69) via sensorChannelConfigInit. Was misnamed calculateSensorLookupValue (no calc/lookup - it is sensor acquisition). Despite the _init suffix this is the PERIODIC sampler (called from periodicTaskSet_sensors2); _init follows the sensorChannelN family convention where the configInit wrapper is _init and the boot-time update sibling is _process
@@ -1216,12 +1214,12 @@ address,name
 0x0003c140,cm848_convertProtectionTemperatureToScale
 0x0003c188,cm848_emptyStub11
 0x0003c18c,cm848_selectProtectionChannelMode
-0x0003c26c,cm848_processEngineRpmMonitoring
+0x0003c26c,cm848_buildPciTransmitMessage0EngineSpeedAndVehicleSpeed,Builds the PCI (J1850) TX[0] header 0x10 payload: bytes 1-2 engine speed in 0.25 rpm (current_rpm / 2) / bytes 3-4 vehicle speed in 1/128 km/h (vehicle_speed x 206 / 256) / byte 5 intake manifold pressure in kPa (intake_manifold_pressure_in_use x 100 / 1856 clamped at 255 - the PCI database calls byte 5 engine load) (was cm848_processEngineRpmMonitoring) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
 0x0003c2f0,cm848_buildOutputChannelStatusWord
 0x0003c5f0,cm848_processProtectionStateChange
 0x0003c6b0,cm848_processProtectionTimingCounter
 0x0003c880,cm848_updateCbdThresholdState
-0x0003c8ec,hpcr_validateBatteryVoltageInput
+0x0003c8ec,cm848_buildPciTransmitMessage14VoltageOilPressureTemperatures,Builds the PCI (J1850) TX[14] header 0xC0 payload (cluster gauge values): byte 1 battery voltage in 1/16 V (battery_voltage_default_cal while battery_voltage_status_flags bit 1 or 5 is set) / byte 2 oil pressure in 4 kPa (oil_pressure_sensor_filtered - or engine_oil_pressure when governor_system_config_flags bit 2 is set - x 100 / 7426) / byte 3 coolant temperature in deg C + 40 (coolant_temperature_in_use filtered into coolant_temp_filtered) / byte 4 protection_oilTemp_proxy in deg C + 40 (the PCI database calls byte 4 intake air temperature) (was hpcr_validateBatteryVoltageInput) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
 0x0003ca90,mpc555_initFuelDemandFilterPointers
 0x0003cab0,cm848_buildProtectionStatusByte
 0x0003cbd4,cm848_calculateProtectionUnitConversion
@@ -1675,7 +1673,7 @@ address,name
 0x00500a4c,updateSensorChannelWithConfig
 0x005011c4,cm848_protection_init_configBundle
 0x00501250,cm848_protection_update_configBundle
-0x005012dc,sensorChannelTypeB_configInit,review-function-readability reviewed 2026-06-12 - Readability MEDIUM (irreducible converging-epilogue gotos + 3 split-remnant scratch temps Ghidra will not let CSV name) Accuracy Confidence High. config_ptr typed as sensor_channel_config_t* (7 default/threshold/debounce fields render); DAT_003fd8e8 -> governor_temp_protection_disable; 11 locals named; 2 array globals renamed. 13-param PowerPC prototype; params 4-6 passed but unused.
+0x005012dc,sensorChannelTypeB_configInit,review-function-readability reviewed 2026-06-12 - Readability MEDIUM (irreducible converging-epilogue gotos + 3 split-remnant scratch temps Ghidra will not let CSV name) Accuracy Confidence High. config_ptr typed as sensor_channel_config_t* (7 default/threshold/debounce fields render); DAT_003fd8e8 -> governor_temp_protection_disable (now oil_pressure_switch_only_cal); 11 locals named; 2 array globals renamed. 13-param PowerPC prototype; params 4-6 passed but unused.
 0x00501b4c,sensorChannelTypeB_update,review-function-readability reviewed 2026-06-12 - Readability MEDIUM (irreducible converging-epilogue gotos + split-remnant scratch temps) Accuracy Confidence High. Boot-time twin of configInit; same config_ptr struct typing, named global, and named locals; 13-param prototype.
 0x005022cc,hpcr_fuelFinal_periodic
 0x0050241c,cm848_initialization_step
@@ -2019,7 +2017,7 @@ address,name
 0x00519e2c,protection_fuel_demand_limiting
 0x00519ffc,protection_speed_limit_initialize
 0x0051a018,initDiagnosticShadowFlags
-0x0051a0a8,governorGovernorTempCompute
+0x0051a0a8,cm848_processEngineOilPressure,Engine oil pressure and the low-oil-pressure check (only when governor_system_config_flags bit 2 is set): with a sensor engine_oil_pressure = oil_pressure_sensor_filtered minus barometric pressure; with oil_pressure_switch_only_cal set (this truck) it is an RPM-indexed model (table 0x3fceae + EMA) and the low-oil-pressure switch (switch 14) drives the fault; above low_oil_pressure_check_minimum_rpm a debounced low reading sets engine_diag_shadow_flags 0x200 + low_oil_pressure_active_flag + low_oil_pressure_derate_flag; a switch that never shows low pressure with the engine stopped sets j1939_receive_status_flags 0x20 (was governorGovernorTempCompute) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
 0x0051a5f8,initGovernorTempTableParams
 0x0051a648,fuelTempTrimComputation
 0x0051a878,governorCruiseTimerManagement

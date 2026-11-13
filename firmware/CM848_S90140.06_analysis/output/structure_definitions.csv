@@ -101,10 +101,10 @@ engine_rpm_state_t,0x0040b7ac,current_rpm,word,2,Current engine RPM measurement,
 # Primary Sensor Readings - core engine sensor inputs
 # Used by sensor processing and protection monitoring
 # Total size: 8 bytes (0x0040baf2-0x0040baf9)
-sensor_readings_t,0x0040baf2,oil_pressure,word,2,Oil pressure sensor reading (PSI scaled),,verified
-sensor_readings_t,0x0040baf2,coolant_temp,word,2,Coolant temperature sensor (deg C scaled),,verified
-sensor_readings_t,0x0040baf2,intake_air_temp,word,2,Intake manifold air temperature,,verified
-sensor_readings_t,0x0040baf2,battery_voltage,word,2,Battery voltage raw ADC value,,verified
+sensor_readings_t,0x0040baf2,intake_manifold_pressure,word,2,Intake manifold (boost) absolute pressure - sensor_channel_filtered_output[1] - 1/18.56 kPa per count (0.0159 inHg); boost = this minus barometric_pressure (cm848_calculateBoostPressure); J1939 IC1 byte 2 / OBD-II intake manifold pressure; 1700 in the RAM dump with the engine stopped (was oil_pressure),,verified
+sensor_readings_t,0x0040baf2,coolant_temp,word,2,Coolant temperature - sensor_channel_filtered_output[2] - 1/64 deg F per count; J1939 ET1 byte 1 (SPN 110),,verified
+sensor_readings_t,0x0040baf2,barometric_pressure,word,2,Barometric pressure - sensor_channel_filtered_output[3] - 1/18.56 kPa per count; J1939 AMB byte 1 (SPN 108) / the reference subtracted for boost and oil pressure; 1647 (88.5 kPa) in the RAM dump (was intake_air_temp),,verified
+sensor_readings_t,0x0040baf2,battery_voltage,word,2,Battery voltage - sensor_channel_filtered_output[4] - 1/16 V per count (192 = 12.0 V in the RAM dump); PCI 0xC0 byte 1,,verified
 # EEPROM Header Block - calibration validation and configuration
 # Located in RAM copy of EEPROM data at 0x003fee08
 # Total size: 32 bytes (0x003fee08-0x003fee27)
@@ -778,10 +778,10 @@ fault_entry_t,0x003fe674,target_rpm,word,2,Target engine RPM at fault time,,veri
 fault_entry_t,0x003fe674,sensor_scale_1,word,2,Sensor scale factor 1,,verified
 fault_entry_t,0x003fe674,fault_status,word,2,Fault active status value at capture,,verified
 fault_entry_t,0x003fe674,protection_high,word,2,Protection output high word,,verified
-fault_entry_t,0x003fe674,protection_low,word,2,Protection output low word,,verified
-fault_entry_t,0x003fe674,timing_param_1,word,2,Fuel timing parameter 1,,verified
-fault_entry_t,0x003fe674,timing_param_2,word,2,Fuel timing parameter 2,,verified
-fault_entry_t,0x003fe674,timing_param_3,word,2,Fuel timing parameter 3,,verified
+fault_entry_t,0x003fe674,intake_manifold_pressure,word,2,intake_manifold_pressure_in_use at capture (was protection_low),,verified
+fault_entry_t,0x003fe674,coolant_temperature,word,2,coolant_temperature_in_use at capture (1/64 deg F) (was timing_param_1),,verified
+fault_entry_t,0x003fe674,intake_manifold_temperature,word,2,intake_manifold_temperature_in_use at capture (1/64 deg F) (was timing_param_2),,verified
+fault_entry_t,0x003fe674,oil_pressure,word,2,oil_pressure_sensor_filtered at capture (was timing_param_3),,verified
 fault_entry_t,0x003fe674,sensor_scale_2,word,2,Sensor scale factor 2,,verified
 fault_entry_t,0x003fe674,reserved,dword,4,Reserved gap (not written by set/capture functions),,verified
 fault_entry_t,0x003fe674,pressure_adj,byte,1,Pressure fuel adjustment byte,,verified
@@ -793,7 +793,7 @@ fault_entry_t,0x003fe674,diagnostic_byte_3,byte,1,Diagnostic data byte 3,,verifi
 fault_entry_t,0x003fe674,diagnostic_byte_4,byte,1,Diagnostic data byte 4,,verified
 fault_entry_t,0x003fe674,diagnostic_word_2,word,2,Diagnostic data word 2,,verified
 fault_entry_t,0x003fe674,diagnostic_word_3,word,2,Diagnostic data word 3,,verified
-fault_entry_t,0x003fe674,coolant_temp_raw,word,2,Coolant temperature raw sensor value,,verified
+fault_entry_t,0x003fe674,fuel_temperature,word,2,fuel_temperature_sensor_filtered at capture (1/64 deg F) - not coolant (was coolant_temp_raw),,verified
 fault_entry_t,0x003fe674,status_flags,word,2,Fault entry status/severity flags (bit 0 = newly active),,verified
 # Boost In Range (BIR) Configuration - ROM calibration thresholds for P0069/Fault 433
 # Loaded from EEPROM at boot, maps to BIR parameters (DGBSHTTD, DGSTBSTD, DGLWTD, etc.)

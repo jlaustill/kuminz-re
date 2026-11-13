@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Nov 12 22:52:50 MST 2026
+// Generated: Thu Nov 12 23:20:35 MST 2026
 
 
 //
@@ -6578,7 +6578,7 @@ void cm848_periodicTaskSet_sensorProcessing(void)
   cm848_calculateSpeedRateLimiting();
   cm848_processEngineRpmDiagnostic();
   cm848_setFuelDemandActiveFlag();
-  cm848_updateSensorBufferValues();
+  cm848_selectSensorValuesInUse();
   diagnosticMainStateProcessor();
   cm848_calculateDrivetrainRatioFromVehicleSpeed();
   fuel_quantity_demand_monitor();
@@ -6775,7 +6775,7 @@ void cm848_periodicTaskSet_monitoring(void)
 {
   cm848_sensorChannel16_init();
   cm848_calculateVehicleSpeedFromOutputShaft();
-  cm848_processEngineRpmMonitoring();
+  cm848_buildPciTransmitMessage0EngineSpeedAndVehicleSpeed();
   cm848_initProtectionParameter2();
   return;
 }
@@ -7149,7 +7149,7 @@ void hpcr_periodicTaskGroup20_calibration(void)
 void cm848_periodicTaskGroup21_calibration(void)
 
 {
-  governorGovernorTempCompute();
+  cm848_processEngineOilPressure();
   cm848_calibration_group21_load();
   cm848_calibration_group21_load_cont();
   return;
@@ -8244,23 +8244,32 @@ void cm848_sensorChannel16_process(void)
 
 
 //
-// Function: cm848_oilPressureDeltaCalculation @ 0x0000dc64
+// Function: cm848_calculateBoostPressure @ 0x0000dc64
 //
 
-word cm848_oilPressureDeltaCalculation(void)
+/* Boost (gauge) pressure: with protection_sensor_mode_flag set returns intake manifold pressure
+   minus barometric pressure (or minus boost_pressure_fixed_reference when
+   boost_uses_barometric_pressure_flag is 0) clamped at 0 - otherwise the absolute intake manifold
+   pressure; 1/18.56 kPa per count (0.0159 inHg) (was cm848_oilPressureDeltaCalculation - the
+   sensor_readings_t field it reads was misnamed oil_pressure) | review-function-readability
+   reviewed 2026-11-12 - Readability Medium Accuracy Confidence High */
+
+word cm848_calculateBoostPressure(void)
 
 {
   word wVar1;
   
-  wVar1 = sensor_readings_t_0040baf2.oil_pressure;
+  wVar1 = sensor_readings_t_0040baf2.intake_manifold_pressure;
   if (protection_sensor_mode_flag != 0) {
-    if (oil_pressure_sensor_init_flag == 0) {
-      if (oil_pressure_baseline_ref < sensor_readings_t_0040baf2.oil_pressure) {
-        return sensor_readings_t_0040baf2.oil_pressure - oil_pressure_baseline_ref;
+    if (boost_uses_barometric_pressure_flag == 0) {
+      if (boost_pressure_fixed_reference < sensor_readings_t_0040baf2.intake_manifold_pressure) {
+        return sensor_readings_t_0040baf2.intake_manifold_pressure - boost_pressure_fixed_reference;
       }
     }
-    else if (sensor_readings_t_0040baf2.intake_air_temp < sensor_readings_t_0040baf2.oil_pressure) {
-      return sensor_readings_t_0040baf2.oil_pressure - sensor_readings_t_0040baf2.intake_air_temp;
+    else if (sensor_readings_t_0040baf2.barometric_pressure <
+             sensor_readings_t_0040baf2.intake_manifold_pressure) {
+      return sensor_readings_t_0040baf2.intake_manifold_pressure -
+             sensor_readings_t_0040baf2.barometric_pressure;
     }
     wVar1 = 0;
   }
@@ -8283,11 +8292,11 @@ void cm848_fuelDemandBlendCalculator(void)
   int iVar3;
   
   if ((fault_management_status_flags & 8) == 0) {
-    cm848_oilPressureDeltaCalculation();
+    cm848_calculateBoostPressure();
     uVar1 = cm848_dualAxisTableInterpolation
                       (&diag_state_group1_a_state,engine_rpm_state_t_0040b7ac.current_rpm,0xb94c);
     if ((governor_fault_status_flags & 2) != 0) {
-      cm848_oilPressureDeltaCalculation();
+      cm848_calculateBoostPressure();
       uVar2 = cm848_dualAxisTableInterpolation
                         (&diag_state_group1_c_state,engine_rpm_state_t_0040b7ac.current_rpm,0xbbc4);
       oil_pressure_fuel_limit = (ushort)uVar1;
@@ -8906,8 +8915,8 @@ LAB_0000ecec:
         fuel_trim_speed_filtered = wVar9;
       }
       uVar17 = (uint)engine_rpm_state_t_0040b7ac.current_rpm + (uint)rpm_oil_pressure_offset_cal +
-               ((uint)rpm_oil_pressure_gain_cal * (uint)sensor_readings_t_0040baf2.oil_pressure >> 7
-               );
+               ((uint)rpm_oil_pressure_gain_cal *
+                (uint)sensor_readings_t_0040baf2.intake_manifold_pressure >> 7);
       if ((uVar17 & 0xffff) < (uint)fuel_trim_speed_filtered) {
         fuel_trim_speed_filtered = (word)uVar17;
       }
@@ -9255,7 +9264,7 @@ LAB_0000f700:
   else {
     engine_rpm_delta = 0;
   }
-  if (sensor_readings_t_0040baf2.oil_pressure < oil_pressure_fuel_trim_threshold) {
+  if (sensor_readings_t_0040baf2.intake_manifold_pressure < oil_pressure_fuel_trim_threshold) {
     sVar12 = 0;
     fuel_demand_integrator_b._0_2_ = 0;
   }
@@ -16479,7 +16488,7 @@ void cm848_calculateIntakeAirAdjustment(void)
   
   if (((system_status_flags_t_003fe974.condition_monitor & 8) == 0) &&
      ((system_status_flags_t_003fe974.condition_monitor & 0x10) == 0)) {
-    iVar1 = (int)(short)engine_load_output_value;
+    iVar1 = (int)(short)intake_manifold_temperature_sensor_filtered;
     if ((short)fuel_timing_correction_offset_cal < iVar1) {
       if ((short)fuel_timing_correction_load_max_cal <= iVar1) {
         fuel_timing_correction_a = fuel_timing_correction_a_high_cal;
@@ -17672,11 +17681,11 @@ void hpcr_setFaultActiveStatus(int param_1,uint param_2)
     *(word *)(&DAT_003fe7f9 + iVar2) = vehicle_speed;
     *(word *)(&DAT_003fe7fb + iVar2) = engine_rpm_state_t_0040b7ac.target_rpm;
     *(word *)(&DAT_003fe801 + iVar2) = protection_fuel_demand_snapshot;
-    *(word *)(&DAT_003fe803 + iVar2) = protection_fuel_low_snapshot;
+    *(word *)(&DAT_003fe803 + iVar2) = intake_manifold_pressure_in_use;
     *(dword *)(&DAT_003fe7f4 + iVar2) = fault_timing_snapshot;
-    *(word *)(&DAT_003fe805 + iVar2) = protection_coolant_temp_active;
-    *(word *)(&DAT_003fe807 + iVar2) = fault_timing_snapshot;
-    *(word *)(&DAT_003fe809 + iVar2) = fuel_quantity_demand_input;
+    *(word *)(&DAT_003fe805 + iVar2) = coolant_temperature_in_use;
+    *(word *)(&DAT_003fe807 + iVar2) = intake_manifold_temperature_in_use;
+    *(word *)(&DAT_003fe809 + iVar2) = oil_pressure_sensor_filtered;
     *(word *)(&DAT_003fe7fd + iVar2) = diagnostic_fault_flags_a;
     *(word *)(&DAT_003fe80b + iVar2) = diagnostic_fault_flags_b;
     (&DAT_003fe811)[iVar2] = (char)governor_mode_code;
@@ -17688,7 +17697,7 @@ void hpcr_setFaultActiveStatus(int param_1,uint param_2)
     (&DAT_003fe81b)[iVar2] = engine_position_diag_snapshot;
     *(word *)(&DAT_003fe81c + iVar2) = engine_timing_diagnostic_word;
     *(word *)(&DAT_003fe81e + iVar2) = cam_timing_measured;
-    *(word *)(&DAT_003fe820 + iVar2) = fuel_temp_raw;
+    *(word *)(&DAT_003fe820 + iVar2) = fuel_temperature_sensor_filtered;
   }
   bVar1 = (&fault_entry_t_003fe674)[param_1].fault_code != param_2;
   if (bVar1) {
@@ -17697,11 +17706,12 @@ void hpcr_setFaultActiveStatus(int param_1,uint param_2)
     (&fault_entry_t_003fe674)[param_1].vehicle_speed = vehicle_speed;
     (&fault_entry_t_003fe674)[param_1].target_rpm = engine_rpm_state_t_0040b7ac.target_rpm;
     (&fault_entry_t_003fe674)[param_1].protection_high = protection_fuel_demand_snapshot;
-    (&fault_entry_t_003fe674)[param_1].protection_low = protection_fuel_low_snapshot;
+    (&fault_entry_t_003fe674)[param_1].intake_manifold_pressure = intake_manifold_pressure_in_use;
     (&fault_entry_t_003fe674)[param_1].timing_snapshot = fault_timing_snapshot;
-    (&fault_entry_t_003fe674)[param_1].timing_param_1 = protection_coolant_temp_active;
-    (&fault_entry_t_003fe674)[param_1].timing_param_2 = fault_timing_snapshot;
-    (&fault_entry_t_003fe674)[param_1].timing_param_3 = fuel_quantity_demand_input;
+    (&fault_entry_t_003fe674)[param_1].coolant_temperature = coolant_temperature_in_use;
+    (&fault_entry_t_003fe674)[param_1].intake_manifold_temperature =
+         intake_manifold_temperature_in_use;
+    (&fault_entry_t_003fe674)[param_1].oil_pressure = oil_pressure_sensor_filtered;
     (&fault_entry_t_003fe674)[param_1].sensor_scale_1 = diagnostic_fault_flags_a;
     (&fault_entry_t_003fe674)[param_1].sensor_scale_2 = diagnostic_fault_flags_b;
     (&fault_entry_t_003fe674)[param_1].pressure_adj = (byte)governor_mode_code;
@@ -17713,7 +17723,7 @@ void hpcr_setFaultActiveStatus(int param_1,uint param_2)
     (&fault_entry_t_003fe674)[param_1].diagnostic_byte_4 = engine_position_diag_snapshot;
     (&fault_entry_t_003fe674)[param_1].diagnostic_word_2 = engine_timing_diagnostic_word;
     (&fault_entry_t_003fe674)[param_1].diagnostic_word_3 = cam_timing_measured;
-    (&fault_entry_t_003fe674)[param_1].coolant_temp_raw = fuel_temp_raw;
+    (&fault_entry_t_003fe674)[param_1].fuel_temperature = fuel_temperature_sensor_filtered;
   }
   if ((fault_management_status_flags & 0x400) != 0) {
     if (((&fault_entry_flags)[param_2 * 6] & 1) != 0) {
@@ -20811,10 +20821,10 @@ void cm848_initJ1939ProtocolHandlers(void)
   cm848_initPgn65248VehicleDistanceHandler();
   cm848_initPgn65260VehicleIdHandler();
   cm848_j1939RegisterPgnHandler(0xfeed,j1939HandlePgn65261CruiseControlSetup);
-  cm848_j1939RegisterPgnHandler(0xfeef,cm848_j1939HandlePgn65263FluidLevelPressure);
+  cm848_j1939RegisterPgnHandler(0xfeef,cm848_buildPgn65263EngineFluidLevelPressure1Message);
   cm848_j1939RegisterPgnHandler(0xfef0,cm848_j1939HandlePgn65264Pto);
-  cm848_j1939RegisterPgnHandler(0xfef5,cm848_j1939HandlePgn65269AmbientConditions);
-  cm848_j1939RegisterPgnHandler(0xfef6,cm848_j1939HandlePgn65270InletExhaustConditions);
+  cm848_j1939RegisterPgnHandler(0xfef5,cm848_buildPgn65269AmbientConditionsMessage);
+  cm848_j1939RegisterPgnHandler(0xfef6,cm848_buildPgn65270InletExhaustConditions1Message);
   cm848_j1939RegisterPgnHandler(0xfef7,cm848_j1939HandlePgn65271VehicleElectrical);
   cm848_j1939RegisterPgnHandler(0xffe0,cm848_j1939HandlePgn65504ProprietaryA);
   cm848_initPgn65226Dm1Handler();
@@ -21268,22 +21278,29 @@ void cm848_initJ1939AckBuffer(void)
 
 
 //
-// Function: cm848_j1939HandlePgn65269AmbientConditions @ 0x00023e8c
+// Function: cm848_buildPgn65269AmbientConditionsMessage @ 0x00023e8c
 //
 
-void cm848_j1939HandlePgn65269AmbientConditions(void)
+/* Builds and sends the ECM's AMB broadcast (PGN 65269): byte 1 barometric pressure (SPN 108 - 0.5
+   kPa/bit from sensor_readings_t.barometric_pressure - 0xFE on its fault bits) / bytes 4-5 ambient
+   air temperature (SPN 171 from j1939_coolant_temp_raw - 0xFFFF unless j1939_feature_enable_flags
+   bits 0 and 1) / the rest not available (was cm848_j1939HandlePgn65269AmbientConditions - a
+   transmit builder) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy
+   Confidence High */
+
+void cm848_buildPgn65269AmbientConditionsMessage(void)
 
 {
   short local_8 [2];
   
   if (((system_status_flags_t_003fe974.condition_monitor & 0x200) == 0) &&
      ((system_status_flags_t_003fe974.condition_monitor & 0x400) == 0)) {
-    j1939_pgn65269_tx_iat_byte =
-         (byte)((((uint)sensor_readings_t_0040baf2.intake_air_temp * 2 & 0xffff) * 0x1afa) / 1000 >>
-               7);
+    j1939_amb_barometric_pressure =
+         (byte)((((uint)sensor_readings_t_0040baf2.barometric_pressure * 2 & 0xffff) * 0x1afa) /
+                1000 >> 7);
   }
   else {
-    j1939_pgn65269_tx_iat_byte = 0xfe;
+    j1939_amb_barometric_pressure = 0xfe;
   }
   if (((j1939_feature_enable_flags & 1) == 0) || ((j1939_feature_enable_flags & 2) == 0)) {
     DAT_003faac5 = 0xffff;
@@ -21311,7 +21328,7 @@ void cm848_initJ1939AmbientConditionsBuffer(void)
 {
   j1939_pgn65269_tx_header = CONCAT13(((byte)j1939_pgn65269_priority & 7) << 2,0xfef500);
   j1939_pgn65269_tx_length = 8;
-  j1939_pgn65269_data_ptr = &j1939_pgn65269_tx_iat_byte;
+  j1939_pgn65269_data_ptr = &j1939_amb_barometric_pressure;
   j1939_pgn65269_end_ptr = &DAT_003faaca;
   j1939_pgn65269_tx_header = CONCAT31(j1939_pgn65269_tx_header._0_3_,(char)j1939_source_address);
   j1939_pgn65269_field1_init = 0xffff;
@@ -22079,8 +22096,8 @@ void cm848_j1939BuildDm4FreezeFrame(int param_1)
       local_18 = uVar1;
     }
     pbVar6[5] = 0xff;
-    uVar7 = ((uint)(&fault_entry_t_003fe674)[uVar9 * 8 + param_1].protection_low * 0x1afa) / 0x1f400
-    ;
+    uVar7 = ((uint)(&fault_entry_t_003fe674)[uVar9 * 8 + param_1].intake_manifold_pressure * 0x1afa)
+            / 0x1f400;
     if (500 < uVar7) {
       uVar7 = 500;
     }
@@ -22088,8 +22105,8 @@ void cm848_j1939BuildDm4FreezeFrame(int param_1)
     uVar4 = j1939_reverseByteOrder16(&(&fault_entry_t_003fe674)[uVar9 * 8 + param_1].target_rpm);
     *(undefined2 *)(pbVar6 + 7) = uVar4;
     pbVar6[9] = (byte)((&fault_entry_t_003fe674)[uVar9 * 8 + param_1].fault_status >> 8);
-    iVar8 = (((short)(&fault_entry_t_003fe674)[uVar9 * 8 + param_1].timing_param_1 >> 6) * 5 + -0xa0
-            ) / 9;
+    iVar8 = (((short)(&fault_entry_t_003fe674)[uVar9 * 8 + param_1].coolant_temperature >> 6) * 5 +
+            -0xa0) / 9;
     if ((short)iVar8 < -0x28) {
       iVar8 = -0x28;
     }
@@ -22590,22 +22607,29 @@ void cm848_initPgn61443Eec2Handler(void)
 
 
 //
-// Function: cm848_j1939SendOilPressureStatus @ 0x00025de8
+// Function: cm848_buildPgn65247ElectronicEngineController3Message @ 0x00025de8
 //
 
-void cm848_j1939SendOilPressureStatus(void)
+/* Builds and sends the ECM's EEC3 broadcast (PGN 65247): byte 1 nominal friction percent torque
+   (SPN 514 = j1939_engine_torque_output_b high byte + 125) / bytes 2-3 engine's desired operating
+   speed (SPN 515 from the ROM word at 0x5c382) / byte 4 desired operating speed asymmetry
+   adjustment (SPN 519 from the ROM word at 0x5c384) (was cm848_j1939SendOilPressureStatus - nothing
+   in it is oil pressure) | review-function-readability reviewed 2026-11-12 - Readability Medium
+   Accuracy Confidence High */
+
+void cm848_buildPgn65247ElectronicEngineController3Message(void)
 
 {
-  undefined1 local_8;
-  undefined1 uStack_7;
+  byte local_8;
+  byte bStack_7;
   
   cm848_calculateOilPressureRateOfChange();
-  DAT_003fadc0 = (char)(j1939_engine_torque_output_b >> 8) + '}';
-  uStack_7 = (undefined1)DAT_0005c382;
-  DAT_003fadc1 = uStack_7;
-  local_8 = (undefined1)((ushort)DAT_0005c382 >> 8);
-  DAT_003fadc2 = local_8;
-  DAT_003fadc3 = (undefined1)DAT_0005c384;
+  j1939_eec3_nominal_friction_percent_torque = (char)(j1939_engine_torque_output_b >> 8) + 0x7d;
+  bStack_7 = (byte)DAT_0005c382;
+  j1939_eec3_desired_operating_speed_low_byte = bStack_7;
+  local_8 = (byte)((ushort)DAT_0005c382 >> 8);
+  j1939_eec3_desired_operating_speed_high_byte = local_8;
+  j1939_eec3_desired_operating_speed_asymmetry = (byte)DAT_0005c384;
   sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65247_tx_header);
   return;
 }
@@ -22613,16 +22637,20 @@ void cm848_j1939SendOilPressureStatus(void)
 
 
 //
-// Function: cm848_initJ1939OilPressureBuffer @ 0x00025e5c
+// Function: cm848_initPgn65247ElectronicEngineController3Buffer @ 0x00025e5c
 //
 
-void cm848_initJ1939OilPressureBuffer(void)
+/* Sets up the EEC3 (PGN 65247) transmit descriptor: header 0xFEDF with j1939_pgn65247_priority /
+   own source address / 4 data bytes at 0x3fadc0 (was cm848_initJ1939OilPressureBuffer) |
+   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High */
+
+void cm848_initPgn65247ElectronicEngineController3Buffer(void)
 
 {
   j1939_pgn65247_tx_header = CONCAT13(((byte)j1939_pgn65247_priority & 7) << 2,0xfedf00);
   j1939_pgn65247_tx_header = CONCAT31(j1939_pgn65247_tx_header._0_3_,(char)j1939_source_address);
   j1939_pgn65247_tx_byte_count = 4;
-  j1939_pgn65247_data_ptr = &DAT_003fadc0;
+  j1939_pgn65247_data_ptr = &j1939_eec3_nominal_friction_percent_torque;
   j1939_pgn65247_data2_ptr = &DAT_003fadd6;
   return;
 }
@@ -22630,28 +22658,39 @@ void cm848_initJ1939OilPressureBuffer(void)
 
 
 //
-// Function: cm848_j1939HandlePgn65263FluidLevelPressure @ 0x00025eb4
+// Function: cm848_buildPgn65263EngineFluidLevelPressure1Message @ 0x00025eb4
 //
 
-void cm848_j1939HandlePgn65263FluidLevelPressure(void)
+/* Builds and sends the ECM's EFL/P1 broadcast (PGN 65263): byte 1 fuel delivery pressure (SPN 94 -
+   4 kPa/bit from fuel_delivery_pressure_sensor_filtered - 0xFF unless j1939_feature_enable_flags
+   bit 12) / byte 4 engine oil pressure (SPN 100 - 4 kPa/bit from oil_pressure_sensor_filtered) /
+   byte 7 coolant pressure (SPN 109 - 2 kPa/bit from coolant_pressure_sensor_filtered - 0xFF unless
+   j1939_output_config_bits bit 3) (was cm848_j1939HandlePgn65263FluidLevelPressure - a transmit
+   builder) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy
+   Confidence High */
+
+void cm848_buildPgn65263EngineFluidLevelPressure1Message(void)
 
 {
   if ((j1939_feature_enable_flags & 0x1000) == 0) {
-    j1939_engine_load_byte = 0xff;
+    j1939_eflp1_fuel_delivery_pressure = 0xff;
   }
   else if (((system_status_flags_t_003fe974.reserved_16 & 0x10) == 0) &&
           ((system_status_flags_t_003fe974.reserved_16 & 8) == 0)) {
-    j1939_engine_load_byte = (byte)(((uint)(engine_load_demand_raw >> 7) * 0x1afa) / 1000 >> 2);
+    j1939_eflp1_fuel_delivery_pressure =
+         (byte)(((uint)(fuel_delivery_pressure_sensor_filtered >> 7) * 0x1afa) / 1000 >> 2);
   }
   else {
-    j1939_engine_load_byte = 0xfe;
+    j1939_eflp1_fuel_delivery_pressure = 0xfe;
   }
-  DAT_003faddc = (undefined1)(((uint)(fuel_quantity_demand_input >> 7) * 0x1afa) / 1000 >> 2);
+  j1939_eflp1_engine_oil_pressure =
+       (byte)(((uint)(oil_pressure_sensor_filtered >> 7) * 0x1afa) / 1000 >> 2);
   if ((j1939_output_config_bits & 8) == 0) {
-    DAT_003faddf = 0xff;
+    j1939_eflp1_coolant_pressure = 0xff;
   }
   else {
-    DAT_003faddf = (undefined1)(((uint)(fuel_quantity_mode_raw >> 7) * 0x1afa) / 1000 >> 1);
+    j1939_eflp1_coolant_pressure =
+         (byte)(((uint)(coolant_pressure_sensor_filtered >> 7) * 0x1afa) / 1000 >> 1);
   }
   sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65263_tx_header);
   return;
@@ -22668,7 +22707,7 @@ void cm848_initJ1939FluidLevelPressureBuffer(void)
 {
   j1939_pgn65263_tx_header = CONCAT13(((byte)j1939_pgn65263_priority & 7) << 2,0xfeef00);
   DAT_003fade5 = 8;
-  PTR_j1939_engine_load_byte_003fade7 = &j1939_engine_load_byte;
+  PTR_j1939_engine_load_byte_003fade7 = &j1939_eflp1_fuel_delivery_pressure;
   PTR_DAT_003fadeb = &DAT_003fadd8;
   j1939_pgn65263_tx_header = CONCAT31(j1939_pgn65263_tx_header._0_3_,(char)j1939_source_address);
   DAT_003fadda = 0xff;
@@ -22680,10 +22719,16 @@ void cm848_initJ1939FluidLevelPressureBuffer(void)
 
 
 //
-// Function: cm848_j1939HandlePgn65262EngineTemp @ 0x00026024
+// Function: cm848_buildPgn65262EngineTemperature1Message @ 0x00026024
 //
 
-void cm848_j1939HandlePgn65262EngineTemp(void)
+/* Builds and sends the ECM's ET1 broadcast (PGN 65262): byte 1 coolant temperature (SPN 110) / byte
+   2 fuel temperature (SPN 174) / bytes 3-4 engine oil temperature (SPN 175 - 0.03125 deg C/bit from
+   oil_temperature_sensor_filtered) - each 0xFE / 0xFEFE on its sensor fault bits (was
+   cm848_j1939HandlePgn65262EngineTemp - a transmit builder) | review-function-readability reviewed
+   2026-11-12 - Readability Medium Accuracy Confidence High */
+
+void cm848_buildPgn65262EngineTemperature1Message(void)
 
 {
   int iVar1;
@@ -22703,7 +22748,7 @@ void cm848_j1939HandlePgn65262EngineTemp(void)
   j1939_et1_coolant_temp_byte = (byte)iVar1;
   if (((system_status_flags_t_003fe974.reserved_04 & 0x8000) == 0) &&
      ((system_status_flags_t_003fe974.safety_bits_1 & 1) == 0)) {
-    iVar1 = (((short)fuel_temp_raw >> 6) * 5 + -0xa0) / 9 + 0x28;
+    iVar1 = (((short)fuel_temperature_sensor_filtered >> 6) * 5 + -0xa0) / 9 + 0x28;
     local_8[0] = (short)iVar1;
     if (local_8[0] < 0) {
       iVar1 = 0;
@@ -22715,11 +22760,12 @@ void cm848_j1939HandlePgn65262EngineTemp(void)
   j1939_et1_fuel_temp_byte = (byte)iVar1;
   if (((system_status_flags_t_003fe974.condition_monitor & 0x40) == 0) &&
      ((system_status_flags_t_003fe974.condition_monitor & 0x80) == 0)) {
-    local_8[0] = (short)(((short)intercooler_temp_raw * 0xa0 + -0x50000) / 0x240) + 0x2220;
-    j1939_pgn65262_intercooler_temp = j1939_reverseByteOrder16(local_8);
+    local_8[0] = (short)(((short)oil_temperature_sensor_filtered * 0xa0 + -0x50000) / 0x240) +
+                 0x2220;
+    j1939_et1_engine_oil_temperature = j1939_reverseByteOrder16(local_8);
   }
   else {
-    j1939_pgn65262_intercooler_temp = 0xfefe;
+    j1939_et1_engine_oil_temperature = 0xfefe;
   }
   sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65262_tx_header);
   return;
@@ -22742,7 +22788,7 @@ void cm848_initPgn65262EngineTempHandler(void)
   j1939_pgn65262_field1_init_word = 0xffff;
   DAT_003fae04 = 0xff;
   DAT_003fae05 = 0xff;
-  cm848_j1939RegisterPgnHandler(0xfeee,cm848_j1939HandlePgn65262EngineTemp);
+  cm848_j1939RegisterPgnHandler(0xfeee,cm848_buildPgn65262EngineTemperature1Message);
   return;
 }
 
@@ -22872,28 +22918,35 @@ void cm848_initJ1939BrakeRetarderBuffer(void)
 
 
 //
-// Function: cm848_j1939HandlePgn65270InletExhaustConditions @ 0x000264d8
+// Function: cm848_buildPgn65270InletExhaustConditions1Message @ 0x000264d8
 //
 
 /* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+/* Builds and sends the ECM's IC1 broadcast (PGN 65270): byte 2 boost pressure (SPN 102 - 2 kPa/bit
+   - sent from the absolute intake manifold pressure) / byte 3 intake manifold temperature (SPN 105
+   from intake_manifold_temperature_sensor_filtered) - 0xFE on their fault bits / the rest not
+   available (was cm848_j1939HandlePgn65270InletExhaustConditions - a transmit builder) |
+   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High */
 
-void cm848_j1939HandlePgn65270InletExhaustConditions(void)
+void cm848_buildPgn65270InletExhaustConditions1Message(void)
 
 {
   if (((system_status_flags_t_003fe974.enable_state & 0x100) == 0) &&
      ((system_status_flags_t_003fe974.enable_state & 0x200) == 0)) {
-    DAT_003fae47 = (undefined1)
-                   (((uint)sensor_readings_t_0040baf2.oil_pressure * 0x1afa) / 0x1f400 >> 1);
+    j1939_ic1_boost_pressure =
+         (byte)(((uint)sensor_readings_t_0040baf2.intake_manifold_pressure * 0x1afa) / 0x1f400 >> 1)
+    ;
   }
   else {
-    DAT_003fae47 = 0xfe;
+    j1939_ic1_boost_pressure = 0xfe;
   }
   if (((system_status_flags_t_003fe974.condition_monitor & 8) == 0) &&
      ((system_status_flags_t_003fe974.condition_monitor & 0x10) == 0)) {
-    DAT_003fae48 = (char)((((short)engine_load_output_value >> 6) * 5 + -0xa0) / 9) + '(';
+    j1939_ic1_intake_manifold_temperature =
+         (char)((((short)intake_manifold_temperature_sensor_filtered >> 6) * 5 + -0xa0) / 9) + 0x28;
   }
   else {
-    DAT_003fae48 = -2;
+    j1939_ic1_intake_manifold_temperature = 0xfe;
   }
   sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65270_tx_header);
   return;
@@ -24589,7 +24642,8 @@ void cm848_calculateProtectionSpeedLimits(void)
         (short)governor_speed_limit_coolant_threshold_cal)))) &&
      (((((switch_input_state_bits[1] & 8) == 0 &&
         (((switch_input_state_bits[0] & 4) == 0 &&
-         ((short)engine_load_output_value <= (short)governor_speed_limit_load_threshold_cal)))) &&
+         ((short)intake_manifold_temperature_sensor_filtered <=
+          (short)governor_speed_limit_load_threshold_cal)))) &&
        (fuel_demand_control_t_0040a57a.accelerator_off_idle == 0)) &&
       (vehicle_speed <= governor_speed_limit_fuel_temp_threshold_cal)))) {
     governor_speed_limit_exceeded_flag._0_2_ = 1;
@@ -24617,7 +24671,7 @@ void cm848_calculateProtectionSpeedLimits(void)
   else {
     uVar2 = 1;
     do {
-      if ((int)(short)sensor_readings_t_0040baf2.intake_air_temp <=
+      if ((int)(short)sensor_readings_t_0040baf2.barometric_pressure <=
           (int)(uint)(ushort)(&DAT_0005c4da)[uVar2]) break;
       uVar2 = uVar2 + 1 & 0xffff;
     } while (uVar2 < 6);
@@ -24628,7 +24682,7 @@ void cm848_calculateProtectionSpeedLimits(void)
       governor_protection_phase_b_flag = 1;
     }
     else if (((ram0x0040aec8 >> 8 != (uint)*(ushort *)(&DAT_0005c4e6 + uVar2 * 2)) && (1 < uVar2))
-            && ((int)((int)(short)sensor_readings_t_0040baf2.intake_air_temp -
+            && ((int)((int)(short)sensor_readings_t_0040baf2.barometric_pressure -
                      (uint)governor_iat_correction_enable_cal) <=
                 (int)(uint)(ushort)(&DAT_0005c4d8)[uVar2])) {
       uVar2 = uVar2 + 0xffff & 0xffff;
@@ -24992,7 +25046,7 @@ void cm848_processEngineConfigSpeedControl(void)
   word x_input;
   
   if ((governor_system_config_flags & 0x100) != 0) {
-    x_input = cm848_oilPressureDeltaCalculation();
+    x_input = cm848_calculateBoostPressure();
     injection_timing_demand_floor =
          cm848_dualAxisTableInterpolation(&injection_timing_interp_state_b,x_input,0xc4f2);
   }
@@ -25032,7 +25086,7 @@ void cm848_checkSensorDeviationFlags(void)
       (((system_status_flags_t_003fe974.enable_state & 0x200) == 0 &&
        ((system_status_flags_t_003fe974.enable_state & 0x1000) == 0)))) &&
      ((system_status_flags_t_003fe974.enable_state & 0x2000) == 0)) {
-    uVar2 = (uint)sensor_readings_t_0040baf2.intake_air_temp;
+    uVar2 = (uint)sensor_readings_t_0040baf2.barometric_pressure;
     uVar1 = cm848_absoluteValue16(uVar2 - governor_integrator_bound_a);
     uVar2 = cm848_absoluteValue16(uVar2 - governor_integrator_bound_b);
     if (((uint)governor_speed_margin_cal_a + (uint)governor_speed_margin_cal_b < (uVar1 & 0xffff))
@@ -25045,7 +25099,7 @@ void cm848_checkSensorDeviationFlags(void)
       j1939_tsc1_mode_shadow = j1939_tsc1_mode_shadow & 0xfffb;
     }
     uVar2 = (uint)governor_integrator_bound_a;
-    uVar1 = cm848_absoluteValue16(uVar2 - sensor_readings_t_0040baf2.intake_air_temp);
+    uVar1 = cm848_absoluteValue16(uVar2 - sensor_readings_t_0040baf2.barometric_pressure);
     uVar2 = cm848_absoluteValue16(uVar2 - governor_integrator_bound_b);
     if (((uint)governor_speed_margin_cal_b + (uint)governor_speed_margin_cal_a < (uVar1 & 0xffff))
        && ((uint)governor_speed_margin_cal_b + (uint)governor_speed_margin_cal_c < (uVar2 & 0xffff))
@@ -25057,7 +25111,7 @@ void cm848_checkSensorDeviationFlags(void)
       j1939_tsc1_mode_shadow = j1939_tsc1_mode_shadow & 0xfff7;
     }
     uVar2 = (uint)governor_integrator_bound_b;
-    uVar1 = cm848_absoluteValue16(uVar2 - sensor_readings_t_0040baf2.intake_air_temp);
+    uVar1 = cm848_absoluteValue16(uVar2 - sensor_readings_t_0040baf2.barometric_pressure);
     uVar2 = cm848_absoluteValue16(uVar2 - governor_integrator_bound_a);
     if (((uint)governor_speed_margin_cal_c + (uint)governor_speed_margin_cal_a < (uVar1 & 0xffff))
        && ((uint)governor_speed_margin_cal_c + (uint)governor_speed_margin_cal_b < (uVar2 & 0xffff))
@@ -29905,7 +29959,7 @@ void mpc555_initProtectionFilterVariables(void)
   protection_status_flags_t_0040b0f2.flags[0] = protection_status_flags_t_0040b0f2.flags[0] & 0x1f;
   protection_condition_flags_t_0040b0e8.action_flags =
        protection_condition_flags_t_0040b0e8.action_flags & 0xfc;
-  protection_oil_pressure_input = sensor_readings_t_0040baf2.oil_pressure;
+  protection_oil_pressure_input = sensor_readings_t_0040baf2.intake_manifold_pressure;
   protection_rpm_limit_table_overload_state = 2;
   protection_rpm_limit_table_preentry_state = 2;
   DAT_003fb0de = 2;
@@ -30022,22 +30076,23 @@ void cm848_evaluateProtectionModeFlags(void)
            protection_condition_flags_t_0040b0e8.condition_flags_1 & 0xef;
     }
     if (protection_sensor_mode_flag == 0) {
-      protection_oil_pressure_input = sensor_readings_t_0040baf2.oil_pressure;
+      protection_oil_pressure_input = sensor_readings_t_0040baf2.intake_manifold_pressure;
     }
     else {
-      if (oil_pressure_sensor_init_flag == 0) {
-        if (oil_pressure_baseline_ref < sensor_readings_t_0040baf2.oil_pressure) {
+      if (boost_uses_barometric_pressure_flag == 0) {
+        if (boost_pressure_fixed_reference < sensor_readings_t_0040baf2.intake_manifold_pressure) {
           protection_mode_changed_flag = 1;
           protection_oil_pressure_input =
-               sensor_readings_t_0040baf2.oil_pressure - oil_pressure_baseline_ref;
+               sensor_readings_t_0040baf2.intake_manifold_pressure - boost_pressure_fixed_reference;
           return;
         }
       }
-      else if (sensor_readings_t_0040baf2.intake_air_temp < sensor_readings_t_0040baf2.oil_pressure)
-      {
+      else if (sensor_readings_t_0040baf2.barometric_pressure <
+               sensor_readings_t_0040baf2.intake_manifold_pressure) {
         protection_mode_changed_flag = 1;
         protection_oil_pressure_input =
-             sensor_readings_t_0040baf2.oil_pressure - sensor_readings_t_0040baf2.intake_air_temp;
+             sensor_readings_t_0040baf2.intake_manifold_pressure -
+             sensor_readings_t_0040baf2.barometric_pressure;
         return;
       }
       protection_oil_pressure_input = 0;
@@ -30906,55 +30961,63 @@ void cm848_processProtectionStateMachine(void)
 
 
 //
-// Function: cm848_updateSensorBufferValues @ 0x00035370
+// Function: cm848_selectSensorValuesInUse @ 0x00035370
 //
 
-void cm848_updateSensorBufferValues(void)
+/* Copies the sensor values the engine protection and the freeze frame use; with
+   protection_feature_flags bit 1 set each one is replaced by its low or high substitute while the
+   matching system_status_flags fault bit is set: intake_manifold_pressure_in_use (enable_state bits
+   8/9) / coolant_temperature_in_use (condition_monitor bits 0/1) /
+   intake_manifold_temperature_in_use (bits 3/4) / protection_fuel_demand_snapshot (was
+   cm848_updateSensorBufferValues) | review-function-readability reviewed 2026-11-12 - Readability
+   Medium Accuracy Confidence Medium */
+
+void cm848_selectSensorValuesInUse(void)
 
 {
   word *pwVar1;
   int iVar2;
   
   if ((protection_feature_flags & 2) == 0) {
-    protection_fuel_low_snapshot = sensor_readings_t_0040baf2.oil_pressure;
+    intake_manifold_pressure_in_use = sensor_readings_t_0040baf2.intake_manifold_pressure;
     protection_fuel_demand_snapshot = fuel_demand_control_t_0040a57a.calculated;
-    protection_coolant_temp_active = sensor_readings_t_0040baf2.coolant_temp;
-    fault_timing_snapshot = engine_load_output_value;
+    coolant_temperature_in_use = sensor_readings_t_0040baf2.coolant_temp;
+    intake_manifold_temperature_in_use = intake_manifold_temperature_sensor_filtered;
     return;
   }
   if ((system_status_flags_t_003fe974.condition_monitor & 1) == 0) {
-    protection_coolant_temp_active = protection_coolant_temp_active_default_cal;
+    coolant_temperature_in_use = coolant_temperature_high_substitute;
     if ((system_status_flags_t_003fe974.condition_monitor & 2) == 0) {
       pwVar1 = &sensor_readings_t_0040baf2.coolant_temp;
       goto LAB_000353cc;
     }
   }
   else {
-    pwVar1 = &protection_coolant_temp_snapshot_cal;
+    pwVar1 = &coolant_temperature_low_substitute;
 LAB_000353cc:
-    protection_coolant_temp_active = *pwVar1;
+    coolant_temperature_in_use = *pwVar1;
   }
   if ((system_status_flags_t_003fe974.condition_monitor & 8) == 0) {
-    fault_timing_snapshot = protection_timing_snapshot_default_cal;
+    intake_manifold_temperature_in_use = intake_manifold_temperature_high_substitute;
     if ((system_status_flags_t_003fe974.condition_monitor & 0x10) == 0) {
-      pwVar1 = &engine_load_output_value;
+      pwVar1 = &intake_manifold_temperature_sensor_filtered;
       goto LAB_00035418;
     }
   }
   else {
-    pwVar1 = &protection_load_snapshot_cal;
+    pwVar1 = &intake_manifold_temperature_low_substitute;
 LAB_00035418:
-    fault_timing_snapshot = *pwVar1;
+    intake_manifold_temperature_in_use = *pwVar1;
   }
   if ((system_status_flags_t_003fe974.enable_state & 0x100) == 0) {
-    protection_fuel_low_snapshot = protection_fuel_low_default_cal;
+    intake_manifold_pressure_in_use = intake_manifold_pressure_low_substitute;
     if ((system_status_flags_t_003fe974.enable_state & 0x200) != 0) goto LAB_00035468;
-    pwVar1 = &sensor_readings_t_0040baf2.oil_pressure;
+    pwVar1 = &sensor_readings_t_0040baf2.intake_manifold_pressure;
   }
   else {
-    pwVar1 = &protection_oil_pressure_snapshot_cal;
+    pwVar1 = &intake_manifold_pressure_high_substitute;
   }
-  protection_fuel_low_snapshot = ((sensor_readings_t *)pwVar1)->oil_pressure;
+  intake_manifold_pressure_in_use = ((sensor_readings_t *)pwVar1)->intake_manifold_pressure;
 LAB_00035468:
   if (fuel_demand_enable_flag == 1) {
     if ((j1939_receive_status_flags & 0x1000) != 0) {
@@ -30981,15 +31044,20 @@ LAB_00035468:
 
 
 //
-// Function: cm848_copySensorValuesToBuffer @ 0x00035518
+// Function: cm848_copySensorValuesInUseUnchecked @ 0x00035518
 //
 
-void cm848_copySensorValuesToBuffer(void)
+/* Copies intake manifold pressure / coolant temperature / intake manifold temperature / fuel demand
+   into the in-use values without the fault substitution of cm848_selectSensorValuesInUse (was
+   cm848_copySensorValuesToBuffer) | review-function-readability reviewed 2026-11-12 - Readability
+   Medium Accuracy Confidence Medium */
+
+void cm848_copySensorValuesInUseUnchecked(void)
 
 {
-  protection_fuel_low_snapshot = sensor_readings_t_0040baf2.oil_pressure;
-  protection_coolant_temp_active = sensor_readings_t_0040baf2.coolant_temp;
-  fault_timing_snapshot = engine_load_output_value;
+  intake_manifold_pressure_in_use = sensor_readings_t_0040baf2.intake_manifold_pressure;
+  coolant_temperature_in_use = sensor_readings_t_0040baf2.coolant_temp;
+  intake_manifold_temperature_in_use = intake_manifold_temperature_sensor_filtered;
   protection_fuel_demand_snapshot = fuel_demand_control_t_0040a57a.calculated;
   return;
 }
@@ -31258,17 +31326,18 @@ void cm848_initSensorLookupTableInit1(void)
 void cm848_processSensorTemperatureData(void)
 
 {
-  oil_pressure_reading_snapshot = sensor_readings_t_0040baf2.oil_pressure;
+  oil_pressure_reading_snapshot = sensor_readings_t_0040baf2.intake_manifold_pressure;
   if (protection_iat_scale_pending_flag != 0) {
     protection_iat_scaled =
-         (word)(((uint)sensor_readings_t_0040baf2.intake_air_temp *
+         (word)(((uint)sensor_readings_t_0040baf2.barometric_pressure *
                 (uint)protection_iat_scale_factor_cal) / 100);
     protection_iat_scale_pending_flag = 0;
   }
-  if ((uint)sensor_readings_t_0040baf2.intake_air_temp <
-      (uint)sensor_readings_t_0040baf2.oil_pressure) {
+  if ((uint)sensor_readings_t_0040baf2.barometric_pressure <
+      (uint)sensor_readings_t_0040baf2.intake_manifold_pressure) {
     temperature_differential =
-         sensor_readings_t_0040baf2.oil_pressure - sensor_readings_t_0040baf2.intake_air_temp;
+         sensor_readings_t_0040baf2.intake_manifold_pressure -
+         sensor_readings_t_0040baf2.barometric_pressure;
   }
   else {
     temperature_differential = 0;
@@ -32983,8 +33052,8 @@ void cm848_checkPciMessageTimeouts(void)
   word *transmit_timer;
   dword message_index;
   uint uVar1;
-  ushort receive_interval;
   byte all_transmits_overdue;
+  ushort receive_interval;
   
   all_transmits_overdue = 1;
   if ((governor_system_config_flags & 0x40) != 0) {
@@ -35242,10 +35311,16 @@ void cm848_selectProtectionChannelMode(void)
 
 
 //
-// Function: cm848_processEngineRpmMonitoring @ 0x0003c26c
+// Function: cm848_buildPciTransmitMessage0EngineSpeedAndVehicleSpeed @ 0x0003c26c
 //
 
-void cm848_processEngineRpmMonitoring(void)
+/* Builds the PCI (J1850) TX[0] header 0x10 payload: bytes 1-2 engine speed in 0.25 rpm (current_rpm
+   / 2) / bytes 3-4 vehicle speed in 1/128 km/h (vehicle_speed x 206 / 256) / byte 5 intake manifold
+   pressure in kPa (intake_manifold_pressure_in_use x 100 / 1856 clamped at 255 - the PCI database
+   calls byte 5 engine load) (was cm848_processEngineRpmMonitoring) | review-function-readability
+   reviewed 2026-11-12 - Readability Medium Accuracy Confidence High */
+
+void cm848_buildPciTransmitMessage0EngineSpeedAndVehicleSpeed(void)
 
 {
   uint uVar1;
@@ -35255,14 +35330,14 @@ void cm848_processEngineRpmMonitoring(void)
   
   local_8 = engine_rpm_state_t_0040b7ac.current_rpm >> 1;
   local_6 = (short)((uint)vehicle_speed * 0xce >> 8);
-  uVar1 = ((uint)protection_fuel_low_snapshot * 100) / 0x740;
+  uVar1 = ((uint)intake_manifold_pressure_in_use * 100) / 0x740;
   if (0xff < uVar1) {
     uVar1 = 0xff;
   }
   local_4 = (char)uVar1;
   uVar1 = 0;
   do {
-    (&j1939_uds_response_buffer)[uVar1] = *(byte *)((int)&local_8 + uVar1);
+    pci_transmit_message_0_payload[uVar1] = *(byte *)((int)&local_8 + uVar1);
     uVar1 = uVar1 + 1 & 0xff;
   } while (uVar1 < 5);
   return;
@@ -35489,10 +35564,19 @@ void cm848_updateCbdThresholdState(void)
 
 
 //
-// Function: hpcr_validateBatteryVoltageInput @ 0x0003c8ec
+// Function: cm848_buildPciTransmitMessage14VoltageOilPressureTemperatures @ 0x0003c8ec
 //
 
-void hpcr_validateBatteryVoltageInput(void)
+/* Builds the PCI (J1850) TX[14] header 0xC0 payload (cluster gauge values): byte 1 battery voltage
+   in 1/16 V (battery_voltage_default_cal while battery_voltage_status_flags bit 1 or 5 is set) /
+   byte 2 oil pressure in 4 kPa (oil_pressure_sensor_filtered - or engine_oil_pressure when
+   governor_system_config_flags bit 2 is set - x 100 / 7426) / byte 3 coolant temperature in deg C +
+   40 (coolant_temperature_in_use filtered into coolant_temp_filtered) / byte 4
+   protection_oilTemp_proxy in deg C + 40 (the PCI database calls byte 4 intake air temperature)
+   (was hpcr_validateBatteryVoltageInput) | review-function-readability reviewed 2026-11-12 -
+   Readability Medium Accuracy Confidence Medium */
+
+void cm848_buildPciTransmitMessage14VoltageOilPressureTemperatures(void)
 
 {
   word *pwVar1;
@@ -35510,10 +35594,10 @@ void hpcr_validateBatteryVoltageInput(void)
   }
   local_8[0] = (byte)wVar4;
   if ((governor_system_config_flags & 4) == 0) {
-    pwVar1 = &fuel_quantity_demand_input;
+    pwVar1 = &oil_pressure_sensor_filtered;
   }
   else {
-    pwVar1 = &j1939_fuel_quantity_input;
+    pwVar1 = &engine_oil_pressure;
   }
   uVar3 = ((uint)*pwVar1 * 100) / 0x1d02;
   if (0xfe < uVar3) {
@@ -35522,7 +35606,7 @@ void hpcr_validateBatteryVoltageInput(void)
   local_8[1] = (byte)uVar3;
   coolant_temp_filtered =
        cm848_signedFirstOrderFilter
-                 ((int)(short)protection_coolant_temp_active,&coolant_temp_filter_state_ptr);
+                 ((int)(short)coolant_temperature_in_use,&coolant_temp_filter_state_ptr);
   uVar3 = (uint)(short)((short)(((short)(coolant_temp_filtered - 0x800) * 5) / 9) + 0xa00);
   iVar2 = ((int)uVar3 >> 6) + (uint)((int)uVar3 < 0 && (uVar3 & 0x3f) != 0);
   if ((short)iVar2 < 0xff) {
@@ -35547,7 +35631,7 @@ void hpcr_validateBatteryVoltageInput(void)
   local_8[3] = (char)iVar2;
   uVar3 = 0;
   do {
-    (&j1939_data_buffer_d)[uVar3] = local_8[uVar3];
+    pci_transmit_message_14_payload[uVar3] = local_8[uVar3];
     uVar3 = uVar3 + 1 & 0xff;
   } while (uVar3 < 4);
   return;
@@ -38452,11 +38536,11 @@ void cm848_processProtectionSystemBit3(void)
   if ((protection_config_flags_b & 4) != 0) {
     governor_j1939_fuel_input_counter = (ushort)((protection_condition_state._0_1_ & 1) != 0);
   }
-  if ((((((short)intercooler_temp_raw < (short)intercooler_temp_threshold) &&
+  if ((((((short)oil_temperature_sensor_filtered < (short)intercooler_temp_threshold) &&
         (intercooler_rpm_threshold_low_cal < engine_rpm_state_t_0040b7ac.current_rpm)) ||
-       (((short)intercooler_temp_threshold <= (short)intercooler_temp_raw &&
+       (((short)intercooler_temp_threshold <= (short)oil_temperature_sensor_filtered &&
         (intercooler_rpm_threshold_high_cal < engine_rpm_state_t_0040b7ac.current_rpm)))) &&
-      (uVar1 = cm848_oilPressureDeltaCalculation(), uVar1 < oil_pressure_delta_tc_threshold_cal)) &&
+      (uVar1 = cm848_calculateBoostPressure(), uVar1 < oil_pressure_delta_tc_threshold_cal)) &&
      ((((((governor_fuel_demand_mode != 0xb && (governor_fuel_demand_mode != 4)) &&
          (fuel_demand_computed <= fuel_demand_computed_min_cal)) ||
         ((governor_fuel_demand_mode == 0xb &&
@@ -38487,9 +38571,9 @@ void cm848_processProtectionSystemBit3(void)
   else {
     fuel_demand_idle_validated_flag = false;
   }
-  if ((((((short)intercooler_temp_raw < (short)intercooler_temp_threshold) &&
+  if ((((((short)oil_temperature_sensor_filtered < (short)intercooler_temp_threshold) &&
         (engine_rpm_state_t_0040b7ac.current_rpm < intercooler_rpm_exit_threshold_cal)) ||
-       (((short)intercooler_temp_threshold <= (short)intercooler_temp_raw &&
+       (((short)intercooler_temp_threshold <= (short)oil_temperature_sensor_filtered &&
         (engine_rpm_state_t_0040b7ac.current_rpm <= intercooler_rpm_threshold_cal)))) ||
       (((governor_fuel_demand_mode != 0xb && (governor_fuel_demand_mode != 4)) &&
        ((fuel_demand_computed_min_cal < governor_fuel_demand_value &&
@@ -39666,7 +39750,8 @@ LAB_000434f0:
      (((engine_crank_state_t_0040b80a.run_state != 4 || (crank_state_debounce_timer != 0)) ||
       ((crank_sync_fuel_temp_threshold_cal < vehicle_speed ||
        (((short)sensor_readings_t_0040baf2.coolant_temp <= (short)crank_sync_coolant_threshold_cal
-        || ((short)engine_load_output_value <= (short)crank_sync_load_threshold_cal)))))))) {
+        || ((short)intake_manifold_temperature_sensor_filtered <=
+            (short)crank_sync_load_threshold_cal)))))))) {
     uVar15 = 0;
     if (uVar16 != 0) {
       do {
@@ -41246,7 +41331,7 @@ void cm848_calculateGovernorOutput(void)
   int iVar7;
   word wStack_2e;
   
-  x_input_00 = engine_load_output_value;
+  x_input_00 = intake_manifold_temperature_sensor_filtered;
   x_input = sensor_readings_t_0040baf2.coolant_temp;
   sVar4 = 0;
   sVar5 = 0;
@@ -41260,7 +41345,7 @@ void cm848_calculateGovernorOutput(void)
     crank_sync_state_counter = 7;
     return;
   }
-  cm848_oilPressureDeltaCalculation();
+  cm848_calculateBoostPressure();
   injection_timing_factor_cyl6_a = cm848_dualAxisTableInterpolation(&DAT_003fb606,x_input,0xcd72);
   injection_timing_factor_cyl6_b =
        cm848_dualAxisTableInterpolation
@@ -42256,7 +42341,7 @@ LAB_00048114:
     iVar11 = (int)*(short *)((int)&sensor_channel_filtered_output + iVar11);
   }
   else if (engine_sync_state_a == 2) {
-    iVar11 = (int)(short)engine_load_output_value;
+    iVar11 = (int)(short)intake_manifold_temperature_sensor_filtered;
   }
   else {
     if (engine_sync_state_a == 3) {
@@ -42272,8 +42357,8 @@ LAB_00048114:
     }
     else {
       iVar11 = (int)(short)sensor_readings_t_0040baf2.coolant_temp;
-      if ((short)engine_load_output_value < iVar11) {
-        iVar11 = (int)(short)engine_load_output_value;
+      if ((short)intake_manifold_temperature_sensor_filtered < iVar11) {
+        iVar11 = (int)(short)intake_manifold_temperature_sensor_filtered;
       }
       if ((short)protection_oilTemp_proxy < iVar11) {
         iVar11 = (int)(short)protection_oilTemp_proxy;
@@ -43369,7 +43454,7 @@ void cm848_calculateEngineTimingData(void)
   int iVar7;
   
   coolant_temp_snapshot = sensor_readings_t_0040baf2.coolant_temp;
-  engine_load_snapshot = engine_load_output_value;
+  engine_load_snapshot = intake_manifold_temperature_sensor_filtered;
   if (((cold_start_phase == CSP_ABOVE_RPM_TRIGGER) || (cold_start_phase == CSP_ABOVE_RPM_VIA_EVENTS)
       ) || (cold_start_phase == CSP_SETPOINT_UNDERRUN)) {
     injection_timing_demand =
@@ -43381,8 +43466,8 @@ void cm848_calculateEngineTimingData(void)
     torque_limit_arb_t_0040a2f6.source_priority = 5;
     goto LAB_0004b524;
   }
-  intake_air_temp_snapshot = sensor_readings_t_0040baf2.intake_air_temp;
-  fuel_temp_b_snapshot = fuel_temp_raw;
+  intake_air_temp_snapshot = sensor_readings_t_0040baf2.barometric_pressure;
+  fuel_temp_b_snapshot = fuel_temperature_sensor_filtered;
   injection_timing_factor_cyl3_a =
        cm848_dualAxisTableInterpolation
                  (&torque_limit_init_state_6,engine_rpm_state_t_0040b7ac.current_rpm,0xeba);
@@ -43401,7 +43486,7 @@ void cm848_calculateEngineTimingData(void)
        lookupTableInterpolation((table_interp_args_t *)&torque_limit_init_state_4);
   injection_timing_factor_base_b =
        lookupTableInterpolation((table_interp_args_t *)&torque_limit_init_state_5);
-  cm848_oilPressureDeltaCalculation();
+  cm848_calculateBoostPressure();
   injection_timing_factor_cyl4_b =
        cm848_dualAxisTableInterpolation
                  (&torque_limit_init_state_14,engine_rpm_state_t_0040b7ac.current_rpm,0x1402);
@@ -50209,7 +50294,7 @@ void hpcr_exceptionHandler(void)
   cm848_initSensorLookupTable1();
   initSensorValidationTable();
   mpc555_initSensorCalibrationTables();
-  cm848_copySensorValuesToBuffer();
+  cm848_copySensorValuesInUseUnchecked();
   initGovernorModeControl();
   tpu_rpm_measurement_initialize();
   tpu_rpm_timer_setup();
@@ -53049,8 +53134,9 @@ void cm848_protection_update_configBundle(void)
 /* review-function-readability reviewed 2026-06-12 - Readability MEDIUM (irreducible
    converging-epilogue gotos + 3 split-remnant scratch temps Ghidra will not let CSV name) Accuracy
    Confidence High. config_ptr typed as sensor_channel_config_t* (7 default/threshold/debounce
-   fields render); DAT_003fd8e8 -> governor_temp_protection_disable; 11 locals named; 2 array
-   globals renamed. 13-param PowerPC prototype; params 4-6 passed but unused. */
+   fields render); DAT_003fd8e8 -> governor_temp_protection_disable (now
+   oil_pressure_switch_only_cal); 11 locals named; 2 array globals renamed. 13-param PowerPC
+   prototype; params 4-6 passed but unused. */
 
 void sensorChannelTypeB_configInit
                (sensor_channel_config_t *config_ptr,word *state_ptr,
@@ -53190,7 +53276,7 @@ void sensorChannelTypeB_configInit
   state_ptr[5] = (word)uVar3;
   if ((((channel_index != 0x2f) || (j1939_cruise_engaged != 0)) &&
       ((channel_index != 0x47 || (diag_clear_flags_t_003fedfc._0_2_ != 0)))) &&
-     ((channel_index != 10 || (governor_temp_protection_disable == 0)))) {
+     ((channel_index != 10 || (oil_pressure_switch_only_cal == 0)))) {
     if ((uint)config_ptr->high_threshold < (uVar3 & 0xffff)) {
       uVar1 = config_ptr->debounce_limit;
       if ((uint)state_ptr[2] < (uint)uVar1) {
@@ -53751,7 +53837,7 @@ void cm848_calibrationGroup5_periodic(void)
         return;
       }
       unaff_r27 = (int)(short)j1939_coolant_temp_raw;
-      wVar4 = sensor_readings_t_0040baf2.intake_air_temp;
+      wVar4 = sensor_readings_t_0040baf2.barometric_pressure;
     }
     fuel_correction_temp_band_lower =
          cm848_dualAxisTableInterpolation(&fuel_correction_temp_band_dims_b,wVar4,0xc1a4);
@@ -57134,7 +57220,7 @@ undefined2 threshold_value_interpolate(int param_1,int param_2,short param_3)
 void hpcr_initFuelTemperatureSensorChannel(void)
 
 {
-  PTR_fuel_temp_raw_0040a734 = (undefined *)&fuel_temp_raw;
+  PTR_fuel_temp_raw_0040a734 = (undefined *)&fuel_temperature_sensor_filtered;
   PTR_DAT_0040a73e = (undefined *)&DAT_000597bc;
   PTR_DAT_0040a742 = (undefined *)&DAT_000597be;
   PTR_DAT_0040a746 = &DAT_000597c0;
@@ -64480,22 +64566,21 @@ void protection_fault_latch_update(void)
     protection_fault_latch_flag = 1;
   }
   DAT_0040b216 = protection_fault_latch_flag;
-  if ((coolant_bucket_overheat_detected_flag == 0) && (governor_temp_protection_active_flag == 0)) {
+  if ((coolant_bucket_overheat_detected_flag == 0) && (low_oil_pressure_active_flag == 0)) {
     protection_sensor_state_b = 0;
   }
   else {
     protection_sensor_state_b = 1;
   }
   if ((coolant_bucket_overheat_active_flag == 0) || (DAT_003fcdb4 != 0)) {
-    if ((governor_temp_protection_ramp_flag == 0) || (DAT_003fcdb6 != 0)) {
+    if ((low_oil_pressure_derate_flag == 0) || (DAT_003fcdb6 != 0)) {
       if ((protection_coolant_classb_active_flag == 0) || (DAT_003fcdb2 != 0)) {
         if ((protection_sensor_fault_active_flag == 0) || (DAT_003fcdb8 != 0)) {
           if ((protection_fault_latch_flag == 0) || (DAT_003fcdba != 0)) {
             if (((coolant_bucket_overheat_active_flag == 0) &&
-                (((governor_temp_protection_ramp_flag == 0 &&
-                  (protection_coolant_classb_active_flag == 0)) &&
-                 (protection_sensor_fault_active_flag == 0)))) && (protection_fault_latch_flag == 0)
-               ) {
+                (((low_oil_pressure_derate_flag == 0 && (protection_coolant_classb_active_flag == 0)
+                  ) && (protection_sensor_fault_active_flag == 0)))) &&
+               (protection_fault_latch_flag == 0)) {
               protection_ramp_step_current = 0;
             }
           }
@@ -64540,7 +64625,7 @@ void protection_fault_latch_update(void)
     protection_ramp_step_current = protection_ramp_step_current - 1;
   }
   DAT_003fcdb4 = coolant_bucket_overheat_active_flag;
-  DAT_003fcdb6 = governor_temp_protection_ramp_flag;
+  DAT_003fcdb6 = low_oil_pressure_derate_flag;
   DAT_003fcdb2 = protection_coolant_classb_active_flag;
   DAT_003fcdb8 = protection_sensor_fault_active_flag;
   DAT_003fcdba = protection_fault_latch_flag;
@@ -65273,7 +65358,8 @@ LAB_005148b8:
   wVar7 = egr_load_speed_floor_min;
   if (cold_start_phase == CSP_AT_GOVERNOR_SETPOINT) {
     egr_load_filtered =
-         cm848_signedFirstOrderFilter((int)(short)engine_load_output_value,&PTR_DAT_0040b2ec);
+         cm848_signedFirstOrderFilter
+                   ((int)(short)intake_manifold_temperature_sensor_filtered,&PTR_DAT_0040b2ec);
     iVar8 = (int)(short)egr_load_filtered;
     if (egr_load_floor_temp_source_select != 0) {
       if (egr_load_floor_temp_source_select == 1) {
@@ -67253,7 +67339,7 @@ void protection_diagnostics_periodic(void)
       cm848_checkSpeedDerivativeMode();
     }
     if ((uint)protection_diagnostics_periodic_tick % 6 == 1) {
-      hpcr_validateBatteryVoltageInput();
+      cm848_buildPciTransmitMessage14VoltageOilPressureTemperatures();
       cm848_updateCbdThresholdState();
     }
     if ((uint)protection_diagnostics_periodic_tick % 0xc == 3) {
@@ -67551,7 +67637,7 @@ LAB_00519640:
         uVar6 = uVar6 + 1 & 0xff;
       } while ((uVar6 < 8) && (!bVar2));
       if (!bVar2) break;
-      uVar1 = (&fault_entry_t_003fe674)[uVar6].timing_param_1;
+      uVar1 = (&fault_entry_t_003fe674)[uVar6].coolant_temperature;
       iVar8 = ((short)(((short)uVar1 >> 6) + (ushort)((short)uVar1 < 0 && (uVar1 & 0x3f) != 0) +
                       -0x20) * 5) / 9;
       if ((short)iVar8 < -0x28) {
@@ -67582,9 +67668,9 @@ LAB_00519640:
         uVar6 = uVar6 + 1 & 0xff;
       } while ((uVar6 < 8) && (!bVar2));
       if (!bVar2) break;
-      uVar6 = (uint)(CONCAT44((&fault_entry_t_003fe674)[uVar6].protection_low / 0xf355,
-                              (uint)(&fault_entry_t_003fe674)[uVar6].protection_low * 0x10d54) /
-                    0x138800);
+      uVar6 = (uint)(CONCAT44((&fault_entry_t_003fe674)[uVar6].intake_manifold_pressure / 0xf355,
+                              (uint)(&fault_entry_t_003fe674)[uVar6].intake_manifold_pressure *
+                              0x10d54) / 0x138800);
       goto LAB_00519104;
     case 0xc:
       uVar6 = 0;
@@ -67632,7 +67718,7 @@ LAB_00518fd4:
         uVar6 = uVar6 + 1 & 0xff;
       } while ((uVar6 < 8) && (!bVar2));
       if (!bVar2) break;
-      uVar1 = (&fault_entry_t_003fe674)[uVar6].timing_param_2;
+      uVar1 = (&fault_entry_t_003fe674)[uVar6].intake_manifold_temperature;
       iVar8 = ((short)(((short)uVar1 >> 6) + (ushort)((short)uVar1 < 0 && (uVar1 & 0x3f) != 0) +
                       -0x20) * 5) / 9;
       if ((short)iVar8 < -0x28) {
@@ -67727,9 +67813,9 @@ LAB_00519120:
     uVar6 = ((uint)protection_channel_load_raw * 0xff) / 0x6400;
     goto LAB_00518b58;
   case 5:
-    iVar8 = ((short)(((short)protection_coolant_temp_active >> 6) +
-                     (ushort)((short)protection_coolant_temp_active < 0 &&
-                             (protection_coolant_temp_active & 0x3f) != 0) + -0x20) * 5) / 9;
+    iVar8 = ((short)(((short)coolant_temperature_in_use >> 6) +
+                     (ushort)((short)coolant_temperature_in_use < 0 &&
+                             (coolant_temperature_in_use & 0x3f) != 0) + -0x20) * 5) / 9;
     if ((short)iVar8 < -0x28) {
       iVar8 = -0x28;
     }
@@ -67749,8 +67835,8 @@ LAB_00519120:
   case 10:
     break;
   case 0xb:
-    uVar6 = (uint)(CONCAT44(protection_fuel_low_snapshot / 0xf355,
-                            (uint)protection_fuel_low_snapshot * 0x10d54) / 0x138800);
+    uVar6 = (uint)(CONCAT44(intake_manifold_pressure_in_use / 0xf355,
+                            (uint)intake_manifold_pressure_in_use * 0x10d54) / 0x138800);
     goto LAB_00518b58;
   case 0xc:
     j1939_dm_scratch_buffer[3] = (byte)(engine_rpm_state_t_0040b7ac.current_rpm >> 9);
@@ -67767,9 +67853,9 @@ LAB_00519120:
   case 0xe:
     break;
   case 0xf:
-    iVar8 = ((short)(((short)fault_timing_snapshot >> 6) +
-                     (ushort)((short)fault_timing_snapshot < 0 &&
-                             (fault_timing_snapshot & 0x3f) != 0) + -0x20) * 5) / 9;
+    iVar8 = ((short)(((short)intake_manifold_temperature_in_use >> 6) +
+                     (ushort)((short)intake_manifold_temperature_in_use < 0 &&
+                             (intake_manifold_temperature_in_use & 0x3f) != 0) + -0x20) * 5) / 9;
     if ((short)iVar8 < -0x28) {
       iVar8 = -0x28;
     }
@@ -68155,11 +68241,11 @@ void protection_speed_limit_initialize(void)
 void initDiagnosticShadowFlags(void)
 
 {
-  governor_temp_protection_active_flag = 0;
-  governor_temp_protection_ramp_flag = 0;
+  low_oil_pressure_active_flag = 0;
+  low_oil_pressure_derate_flag = 0;
   engine_diag_shadow_flags = engine_diag_shadow_flags & 0xfdff;
   engine_diag_shadow_flags_b = engine_diag_shadow_flags_b & 0xfdff;
-  governor_temp_diag_debounce_count = 0;
+  low_oil_pressure_debounce_count = 0;
   DAT_003fceae = 2;
   DAT_003fceb0 = 2;
   DAT_003fceb8 = 0;
@@ -68170,10 +68256,20 @@ void initDiagnosticShadowFlags(void)
 
 
 //
-// Function: governorGovernorTempCompute @ 0x0051a0a8
+// Function: cm848_processEngineOilPressure @ 0x0051a0a8
 //
 
-void governorGovernorTempCompute(void)
+/* Engine oil pressure and the low-oil-pressure check (only when governor_system_config_flags bit 2
+   is set): with a sensor engine_oil_pressure = oil_pressure_sensor_filtered minus barometric
+   pressure; with oil_pressure_switch_only_cal set (this truck) it is an RPM-indexed model (table
+   0x3fceae + EMA) and the low-oil-pressure switch (switch 14) drives the fault; above
+   low_oil_pressure_check_minimum_rpm a debounced low reading sets engine_diag_shadow_flags 0x200 +
+   low_oil_pressure_active_flag + low_oil_pressure_derate_flag; a switch that never shows low
+   pressure with the engine stopped sets j1939_receive_status_flags 0x20 (was
+   governorGovernorTempCompute) | review-function-readability reviewed 2026-11-12 - Readability
+   Medium Accuracy Confidence Medium */
+
+void cm848_processEngineOilPressure(void)
 
 {
   uint uVar1;
@@ -68181,103 +68277,102 @@ void governorGovernorTempCompute(void)
   if ((governor_system_config_flags & 4) == 0) {
     return;
   }
-  governor_temp_diag_debounce_limit = DAT_0005b4d4;
+  low_oil_pressure_debounce_limit = DAT_0005b4d4;
   uVar1 = 4;
   do {
     if ((short)sensor_readings_t_0040baf2.coolant_temp < *(short *)(uVar1 * 2 + 0x5b4be)) {
-      governor_temp_diag_debounce_limit = *(word *)(uVar1 * 2 + 0x5b4ca);
+      low_oil_pressure_debounce_limit = *(word *)(uVar1 * 2 + 0x5b4ca);
     }
     uVar1 = uVar1 + 0xffff & 0xffff;
   } while (uVar1 != 0);
-  if (governor_temp_protection_disable == 0) {
-    if (fuel_quantity_demand_input < sensor_readings_t_0040baf2.intake_air_temp) {
-      j1939_fuel_quantity_input = 0;
+  if (oil_pressure_switch_only_cal == 0) {
+    if (oil_pressure_sensor_filtered < sensor_readings_t_0040baf2.barometric_pressure) {
+      engine_oil_pressure = 0;
     }
     else {
-      j1939_fuel_quantity_input =
-           fuel_quantity_demand_input - sensor_readings_t_0040baf2.intake_air_temp;
+      engine_oil_pressure =
+           oil_pressure_sensor_filtered - sensor_readings_t_0040baf2.barometric_pressure;
     }
     if (((((system_status_flags_t_003fe974.enable_state & 0x2000) == 0) &&
          ((system_status_flags_t_003fe974.enable_state & 0x1000) == 0)) &&
         ((system_status_flags_t_003fe974.condition_monitor & 0x400) == 0)) &&
        (((system_status_flags_t_003fe974.condition_monitor & 0x200) == 0 &&
-        (governor_temp_diag_rpm_enable_threshold < engine_rpm_state_t_0040b7ac.current_rpm)))) {
-      if ((j1939_fuel_quantity_input < governor_temp_protection_fuel_qty_min) &&
-         (governor_temp_diag_debounce_count < governor_temp_diag_debounce_limit)) {
-        governor_temp_diag_debounce_count = governor_temp_diag_debounce_count + 1;
+        (low_oil_pressure_check_minimum_rpm < engine_rpm_state_t_0040b7ac.current_rpm)))) {
+      if ((engine_oil_pressure < low_oil_pressure_threshold) &&
+         (low_oil_pressure_debounce_count < low_oil_pressure_debounce_limit)) {
+        low_oil_pressure_debounce_count = low_oil_pressure_debounce_count + 1;
       }
-      if ((j1939_fuel_quantity_input < governor_temp_protection_fuel_qty_min) &&
-         (governor_temp_diag_debounce_limit <= governor_temp_diag_debounce_count)) {
+      if ((engine_oil_pressure < low_oil_pressure_threshold) &&
+         (low_oil_pressure_debounce_limit <= low_oil_pressure_debounce_count)) {
         engine_diag_shadow_flags = engine_diag_shadow_flags | 0x200;
-        governor_temp_protection_active_flag = 1;
-        governor_temp_protection_ramp_flag = 1;
+        low_oil_pressure_active_flag = 1;
+        low_oil_pressure_derate_flag = 1;
       }
-      if (j1939_fuel_quantity_input < governor_temp_protection_fuel_qty_min) {
+      if (engine_oil_pressure < low_oil_pressure_threshold) {
         return;
       }
     }
     engine_diag_shadow_flags_b = engine_diag_shadow_flags_b & 0xfdff;
     engine_diag_shadow_flags = engine_diag_shadow_flags & 0xfdff;
-    governor_temp_diag_debounce_count = 0;
-    governor_temp_protection_active_flag = 0;
-    governor_temp_protection_ramp_flag = 0;
+    low_oil_pressure_debounce_count = 0;
+    low_oil_pressure_active_flag = 0;
+    low_oil_pressure_derate_flag = 0;
     return;
   }
-  governor_temp_fuel_qty_table_raw =
+  oil_pressure_model_unfiltered =
        cm848_dualAxisTableInterpolation
                  (&DAT_003fceae,engine_rpm_state_t_0040b7ac.current_rpm,0xb474);
-  j1939_fuel_quantity_input =
-       exponentialMovingAverage(governor_temp_fuel_qty_table_raw,&PTR_DAT_003fceb4);
-  if (governor_temp_diag_rpm_enable_threshold < engine_rpm_state_t_0040b7ac.current_rpm) {
+  engine_oil_pressure = exponentialMovingAverage(oil_pressure_model_unfiltered,&PTR_DAT_003fceb4);
+  if (low_oil_pressure_check_minimum_rpm < engine_rpm_state_t_0040b7ac.current_rpm) {
     if (((switch_input_state_bits[1] & 0x40) != 0) &&
-       (governor_temp_diag_debounce_count < governor_temp_diag_debounce_limit)) {
-      governor_temp_diag_debounce_count = governor_temp_diag_debounce_count + 1;
+       (low_oil_pressure_debounce_count < low_oil_pressure_debounce_limit)) {
+      low_oil_pressure_debounce_count = low_oil_pressure_debounce_count + 1;
     }
     if (((switch_input_state_bits[1] & 0x40) != 0) &&
-       (governor_temp_diag_debounce_limit <= governor_temp_diag_debounce_count)) {
+       (low_oil_pressure_debounce_limit <= low_oil_pressure_debounce_count)) {
       engine_diag_shadow_flags = engine_diag_shadow_flags | 0x200;
-      governor_temp_protection_active_flag = 1;
-      governor_temp_protection_ramp_flag = 1;
-      j1939_fuel_quantity_input = 0;
+      low_oil_pressure_active_flag = 1;
+      low_oil_pressure_derate_flag = 1;
+      engine_oil_pressure = 0;
     }
     if ((switch_input_state_bits[1] & 0x40) != 0) goto LAB_0051a478;
   }
   engine_diag_shadow_flags_b = engine_diag_shadow_flags_b & 0xfdff;
   engine_diag_shadow_flags = engine_diag_shadow_flags & 0xfdff;
-  governor_temp_protection_active_flag = 0;
-  governor_temp_protection_ramp_flag = 0;
-  governor_temp_diag_debounce_count = 0;
+  low_oil_pressure_active_flag = 0;
+  low_oil_pressure_derate_flag = 0;
+  low_oil_pressure_debounce_count = 0;
 LAB_0051a478:
   if ((engine_rpm_state_t_0040b7ac.current_rpm == 0) && ((switch_input_state_bits[1] & 0x40) == 0))
   {
-    governor_temp_diag_zero_rpm_count = governor_temp_diag_zero_rpm_count + 1;
+    oil_pressure_switch_stuck_count = oil_pressure_switch_stuck_count + 1;
   }
   else {
-    governor_temp_diag_zero_rpm_count = 0;
+    oil_pressure_switch_stuck_count = 0;
   }
-  if (governor_temp_diag_zero_rpm_count_max <= governor_temp_diag_zero_rpm_count) {
+  if (oil_pressure_switch_stuck_count_limit <= oil_pressure_switch_stuck_count) {
     j1939_receive_status_flags = j1939_receive_status_flags | 0x20;
-    governor_temp_diag_zero_rpm_count = governor_temp_diag_zero_rpm_count_max;
+    oil_pressure_switch_stuck_count = oil_pressure_switch_stuck_count_limit;
   }
   if (((j1939_receive_status_flags & 0x20) != 0) && ((switch_input_state_bits[1] & 0x40) != 0)) {
     j1939_receive_status_flags = j1939_receive_status_flags & 0xffdf;
     protection_enable_shadow_flags = protection_enable_shadow_flags & 0xffdf;
-    governor_temp_protection_active_flag = 0;
-    governor_temp_protection_ramp_flag = 0;
+    low_oil_pressure_active_flag = 0;
+    low_oil_pressure_derate_flag = 0;
   }
   if (((j1939_receive_status_flags & 0x20) == 0) || (cold_start_phase != CSP_AT_GOVERNOR_SETPOINT))
   {
-    governor_temp_diag_cold_start_j1939_count = 0;
+    oil_pressure_switch_fault_running_count = 0;
   }
   else {
-    governor_temp_diag_cold_start_j1939_count = governor_temp_diag_cold_start_j1939_count + 1;
+    oil_pressure_switch_fault_running_count = oil_pressure_switch_fault_running_count + 1;
   }
-  if (governor_temp_diag_cold_start_j1939_count_max <= governor_temp_diag_cold_start_j1939_count) {
-    j1939_fuel_quantity_input = DAT_00408992;
-    governor_temp_diag_cold_start_j1939_count = governor_temp_diag_cold_start_j1939_count_max;
+  if (oil_pressure_switch_fault_running_count_limit <= oil_pressure_switch_fault_running_count) {
+    engine_oil_pressure = DAT_00408992;
+    oil_pressure_switch_fault_running_count = oil_pressure_switch_fault_running_count_limit;
     if (DAT_0040898e != 0) {
-      governor_temp_protection_active_flag = 1;
-      governor_temp_protection_ramp_flag = 1;
+      low_oil_pressure_active_flag = 1;
+      low_oil_pressure_derate_flag = 1;
     }
   }
   return;
@@ -69208,7 +69303,7 @@ void protectionPhaseGroupA_Init(void)
      ((protection_status_flags_t_0040b0f2.output_flags & 1) == 0)) {
     if ((protection_status_flags_t_0040b0f2.rate_limit_flags & 1) == 0) {
       if (DAT_00408b26 == '\x01') {
-        protection_throttle_position_measured = sensor_readings_t_0040baf2.intake_air_temp;
+        protection_throttle_position_measured = sensor_readings_t_0040baf2.barometric_pressure;
         protection_throttle_clamp_eval_flags = protection_throttle_clamp_eval_flags | 1;
       }
       else {
@@ -75308,7 +75403,7 @@ void cm848_auxiliary_boundary_condition_eval(void)
   word wStack_2e;
   int iVar2;
   
-  x_input = engine_load_output_value;
+  x_input = intake_manifold_temperature_sensor_filtered;
   sVar5 = 0;
   sVar6 = 0;
   if (DAT_00409090 != 0) {
@@ -75358,7 +75453,7 @@ void cm848_auxiliary_boundary_condition_eval(void)
     wStack_2e = 0x400;
   }
   injection_timing_aux_load_limit = wStack_2e;
-  cm848_oilPressureDeltaCalculation();
+  cm848_calculateBoostPressure();
   injection_timing_aux_oil_factor_a =
        cm848_dualAxisTableInterpolation
                  (&DAT_003fd09e,engine_rpm_state_t_0040b7ac.current_rpm,0xe3e2);
@@ -76579,7 +76674,7 @@ void cm848_sensor_channel_state_load(void)
   int iVar11;
   int unaff_r28;
   
-  x_input = engine_load_output_value;
+  x_input = intake_manifold_temperature_sensor_filtered;
   wVar10 = sensor_readings_t_0040baf2.coolant_temp;
   if (cam_timing_override_mode == 1) {
     cam_timing_measured = cam_timing_override_value;
@@ -77281,14 +77376,14 @@ void cm848_torque_limit_state_update(void)
   dword dVar7;
   uint uVar8;
   
-  x_input = engine_load_output_value;
+  x_input = intake_manifold_temperature_sensor_filtered;
   wVar1 = sensor_readings_t_0040baf2.coolant_temp;
   if (((crank_position_valid_flag != 0) && (DAT_00409e62 != 0)) ||
      (((governor_mode_code == 0x2f ||
        ((int)(uint)DAT_00409e5a < (int)(short)governor_speed_error_b_filtered)) &&
       (((vehicle_speed < DAT_00409e5c &&
         (DAT_00409e5e < (short)sensor_readings_t_0040baf2.coolant_temp)) &&
-       (DAT_00409e60 < (short)engine_load_output_value)))))) {
+       (DAT_00409e60 < (short)intake_manifold_temperature_sensor_filtered)))))) {
     uVar8 = 0;
     engine_timing_arb_byte_16_23 = 0xe;
     _timing_limit_slew_q16 = uVar8;
@@ -77334,7 +77429,7 @@ void cm848_torque_limit_state_update(void)
        cm848_dualAxisTableInterpolation(&DAT_003fd110,wVar1,0x2a36);
   sVar5 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fd10c);
   sVar3 = cm848_dualAxisTableInterpolation(&DAT_003fd11c,x_input,0x1c4c);
-  cm848_oilPressureDeltaCalculation();
+  cm848_calculateBoostPressure();
   torque_limit_timing_load_base_factor =
        cm848_dualAxisTableInterpolation(&DAT_003fd128,torque_limit_rpm_slewed,0x1f94);
   sVar4 = cm848_dualAxisTableInterpolation(&DAT_003fd124,torque_limit_rpm_slewed,0x14c4);
@@ -77610,8 +77705,8 @@ void engine_injectionTiming_arbitration_calc(void)
   int iVar6;
   
   DAT_003fd16a = sensor_readings_t_0040baf2.coolant_temp;
-  DAT_003fd16c = engine_load_output_value;
-  DAT_003fd168 = sensor_readings_t_0040baf2.intake_air_temp;
+  DAT_003fd16c = intake_manifold_temperature_sensor_filtered;
+  DAT_003fd168 = sensor_readings_t_0040baf2.barometric_pressure;
   if (((cold_start_phase == CSP_ABOVE_RPM_TRIGGER) || (cold_start_phase == CSP_ABOVE_RPM_VIA_EVENTS)
       ) || (cold_start_phase == CSP_SETPOINT_UNDERRUN)) {
     injection_timing_offset_arbitrated =
@@ -77713,7 +77808,7 @@ LAB_0052c910:
        (short)((int)uVar2 >> 0xc) + (ushort)((int)uVar2 < 0 && (uVar2 & 0xfff) != 0);
   injection_timing_arb_comp5_rpm_factor_a =
        cm848_dualAxisTableInterpolation(&DAT_003fd154,injection_timing_rpm_axis,0x3550);
-  cm848_oilPressureDeltaCalculation();
+  cm848_calculateBoostPressure();
   DAT_0040b980 = cm848_dualAxisTableInterpolation(&DAT_003fd150,injection_timing_rpm_axis,0x36a2);
   uVar2 = (int)(short)injection_timing_arb_comp5_rpm_factor_a * (int)DAT_0040b980;
   injection_timing_arb_component_5 =
@@ -77968,7 +78063,7 @@ void hpcr_calibration_group36_load(void)
   if ((system_status_flags_t_003fe974.condition_monitor & 0x400) != 0) {
     return;
   }
-  if (DAT_00409e80 < sensor_readings_t_0040baf2.intake_air_temp) {
+  if (DAT_00409e80 < sensor_readings_t_0040baf2.barometric_pressure) {
     if ((int)(uint)iat_protection_derate_integrator_max <= (int)iat_protection_derate_integrator)
     goto LAB_0052d4b0;
     iVar1 = 1;
@@ -78066,8 +78161,8 @@ void cm848_calibration_group21_load(void)
      (protection_group21_qualifying_event_count = protection_group21_qualifying_event_count + 1,
      DAT_000642c0 <= protection_group21_qualifying_event_count)) {
     protection_group21_qualifying_epoch_count = protection_group21_qualifying_epoch_count + 1;
-    uVar5 = (uint)sensor_readings_t_0040baf2.intake_air_temp;
-    uVar2 = (uint)sensor_readings_t_0040baf2.oil_pressure;
+    uVar5 = (uint)sensor_readings_t_0040baf2.barometric_pressure;
+    uVar2 = (uint)sensor_readings_t_0040baf2.intake_manifold_pressure;
     if (((system_status_flags_t_003fe974.enable_state & 0x200) == 0) &&
        (((system_status_flags_t_003fe974.enable_state & 0x100) == 0 &&
         (cold_start_phase == CSP_CRANKING)))) {
@@ -78123,7 +78218,7 @@ void cm848_calibration_group21_load(void)
     if (protection_group21_pathA_dwell_count == DAT_000642c2) {
       uVar1 = temperature_differential;
       if (protection_sensor_mode_flag == 0) {
-        uVar1 = sensor_readings_t_0040baf2.oil_pressure;
+        uVar1 = sensor_readings_t_0040baf2.intake_manifold_pressure;
       }
       if (uVar1 < DAT_000642ca) {
         if (protection_group21_pathA_vote_count <= DAT_000642c6) {
@@ -78171,7 +78266,7 @@ LAB_0052d9e8:
   if (protection_group21_pathB_dwell_count == DAT_000642b4) {
     uVar1 = temperature_differential;
     if (protection_sensor_mode_flag == 0) {
-      uVar1 = sensor_readings_t_0040baf2.oil_pressure;
+      uVar1 = sensor_readings_t_0040baf2.intake_manifold_pressure;
     }
     if (DAT_000642bc < uVar1) {
       if (DAT_000642b6 < protection_group21_pathB_vote_count) goto LAB_0052dbd8;
@@ -78318,9 +78413,10 @@ void cm848_calibration_group29_load(void)
     protection_group29_startup_timer_count = 0xffff;
     protection_group29_coolant_temp_snapshot = sensor_readings_t_0040baf2.coolant_temp;
     DAT_003fd186 = protection_oilTemp_proxy;
-    DAT_003fd184 = engine_load_output_value;
+    DAT_003fd184 = intake_manifold_temperature_sensor_filtered;
     if ((int)(uint)DAT_000642de <=
-        (int)(short)engine_load_output_value - (int)(short)protection_oilTemp_proxy) {
+        (int)(short)intake_manifold_temperature_sensor_filtered -
+        (int)(short)protection_oilTemp_proxy) {
       protection_group29_startup_timer_count = 0xffff;
       return;
     }
@@ -78333,7 +78429,7 @@ void cm848_calibration_group29_load(void)
       return;
     }
     protection_group29_conditions_met_flag = 1;
-    if ((int)DAT_000642ce <= (int)(short)engine_load_output_value) {
+    if ((int)DAT_000642ce <= (int)(short)intake_manifold_temperature_sensor_filtered) {
       protection_group29_startup_timer_count = 0xffff;
       protection_group29_conditions_met_flag = 1;
       return;
@@ -79538,7 +79634,7 @@ void cm848_calibration_group37_load(void)
             ((int)(short)sensor_readings_t_0040baf2.coolant_temp -
              (int)(short)protection_oilTemp_proxy < (int)(uint)DAT_00064300)))))) &&
          (cold_start_phase == CSP_CRANKING)) {
-        if (DAT_000642fc < (short)fuel_temp_raw) {
+        if (DAT_000642fc < (short)fuel_temperature_sensor_filtered) {
           protection_monitor_shadow = protection_monitor_shadow | 4;
           protection_cssc_oilDelta_state = 2;
         }
@@ -80320,7 +80416,8 @@ void hpcr_camTimingMonitor(void)
           ((cam_sync_disable_cal == 0 &&
            (DAT_0006441a <= (short)sensor_readings_t_0040baf2.coolant_temp)))) &&
          (((short)sensor_readings_t_0040baf2.coolant_temp <= DAT_00064418 &&
-          ((DAT_0006441e <= (short)fuel_temp_raw && ((short)fuel_temp_raw <= DAT_0006441c)))))) &&
+          ((DAT_0006441e <= (short)fuel_temperature_sensor_filtered &&
+           ((short)fuel_temperature_sensor_filtered <= DAT_0006441c)))))) &&
         (((protection_feature_status_flags & 0x80) != 0 &&
          ((governor_inhibit_flag == 0 && (DAT_00064422 <= engine_rpm_state_t_0040b7ac.target_rpm))))
         )))) {
@@ -80373,7 +80470,8 @@ void hpcr_throttlePositionDiagnostic(void)
   hpcr_pressure_diag_ring_index = 0;
   hpcr_pressure_diag_reference_avg = 0;
   hpcr_pressure_diag_sample_sum_state0 = 0;
-  uVar1 = (int)(short)protection_oilTemp_proxy - (int)(short)engine_load_output_value;
+  uVar1 = (int)(short)protection_oilTemp_proxy -
+          (int)(short)intake_manifold_temperature_sensor_filtered;
   if (((power_state_status_flags & 0x800) == 0) && ((power_state_status_flags & 0x1000) == 0)) {
     if ((int)uVar1 < 0) {
       uVar1 = -uVar1;
@@ -80404,7 +80502,7 @@ undefined4 engine_protection_batteryLoad_check(void)
   undefined4 uVar1;
   
   uVar1 = 0;
-  if (((((((short)engine_load_output_value < DAT_00064432) ||
+  if (((((((short)intake_manifold_temperature_sensor_filtered < DAT_00064432) ||
          ((system_status_flags_t_003fe974.condition_monitor & 8) != 0)) ||
         ((system_status_flags_t_003fe974.condition_monitor & 0x10) != 0)) ||
        (((system_status_flags_t_003fe974.pending_faults & 0x40) != 0 ||
@@ -81498,11 +81596,11 @@ undefined4 diag_faultEntry_conditions_validate(uint param_1)
     return 0;
   }
   if ((DAT_0005a9bc < (short)sensor_readings_t_0040baf2.coolant_temp) ||
-     (DAT_0005a9bc < (short)(&fault_entry_t_003fe674)[uVar2].timing_param_1)) {
+     (DAT_0005a9bc < (short)(&fault_entry_t_003fe674)[uVar2].coolant_temperature)) {
     if ((short)sensor_readings_t_0040baf2.coolant_temp <= DAT_0005a9bc) {
       return 0;
     }
-    if ((short)(&fault_entry_t_003fe674)[uVar2].timing_param_1 <= DAT_0005a9bc) {
+    if ((short)(&fault_entry_t_003fe674)[uVar2].coolant_temperature <= DAT_0005a9bc) {
       return 0;
     }
   }
@@ -82633,7 +82731,7 @@ void hpcr_injectPressureDiagnostic(void)
     cam_sync_validation_j1939_coolant_snapshot = j1939_coolant_temp_raw;
     cam_sync_validation_oil_temp_snapshot = protection_oilTemp_proxy;
     cam_sync_validation_coolant_temp_snapshot = sensor_readings_t_0040baf2.coolant_temp;
-    DAT_003fd236 = engine_load_output_value;
+    DAT_003fd236 = intake_manifold_temperature_sensor_filtered;
     if ((((((cam_sync_crossval_b_state == 4) || (cam_sync_crossval_b_state == 2)) ||
           (cam_sync_crossval_b_state == 3)) ||
          ((cam_sync_fueltemp_validation_state == 4 || (cam_sync_fueltemp_validation_state == 2))))
@@ -83007,7 +83105,8 @@ void hpcr_injectSystemDiagnostic(void)
         (((((cam_sync_disable_cal == 0 &&
             (DAT_00409fd6 <= (short)sensor_readings_t_0040baf2.coolant_temp)) &&
            ((short)sensor_readings_t_0040baf2.coolant_temp <= DAT_00409fd4)) &&
-          ((DAT_00409fda <= (short)fuel_temp_raw && ((short)fuel_temp_raw <= DAT_00409fd8)))) &&
+          ((DAT_00409fda <= (short)fuel_temperature_sensor_filtered &&
+           ((short)fuel_temperature_sensor_filtered <= DAT_00409fd8)))) &&
          (((protection_feature_status_flags & 0x80) != 0 &&
           ((DAT_00409fde <= engine_rpm_state_t_0040b7ac.target_rpm && (governor_inhibit_flag == 0)))
           ))))))) {
@@ -83083,7 +83182,7 @@ void hpcr_fuelPressureControl(void)
        ((system_status_flags_t_003fe974.safety_bits_2 & 1) == 0)) {
       if ((governor_mode_code == 0x10) &&
          ((((protection_sensor_mode_flag == 0 &&
-            (DAT_00064566 < sensor_readings_t_0040baf2.oil_pressure)) ||
+            (DAT_00064566 < sensor_readings_t_0040baf2.intake_manifold_pressure)) ||
            ((protection_sensor_mode_flag != 0 && (DAT_00064566 < temperature_differential)))) &&
           (DAT_00064562 < engine_rpm_state_t_0040b7ac.current_rpm)))) {
         if ((hpcr_oil_pressure_protection_debounce_count < DAT_0006456c) &&
@@ -83102,8 +83201,8 @@ void hpcr_fuelPressureControl(void)
       }
       if ((DAT_0006456a < fault_status_active) &&
          (((((protection_sensor_mode_flag == 0 &&
-             (sensor_readings_t_0040baf2.oil_pressure < DAT_00064564)) &&
-            (DAT_00064568 < sensor_readings_t_0040baf2.oil_pressure)) ||
+             (sensor_readings_t_0040baf2.intake_manifold_pressure < DAT_00064564)) &&
+            (DAT_00064568 < sensor_readings_t_0040baf2.intake_manifold_pressure)) ||
            (((protection_sensor_mode_flag != 0 && (temperature_differential < DAT_00064564)) &&
             (DAT_00064568 < temperature_differential)))) &&
           (DAT_00064562 < engine_rpm_state_t_0040b7ac.current_rpm)))) {
@@ -83172,9 +83271,9 @@ void hpcr_fuelDemandProc(void)
   if (((DAT_00409fe0 < j1939_calib_handler_param) ||
       (engine_rpm_state_t_0040b7ac.current_rpm < hpcr_fuel_demand_rpm_threshold)) ||
      (((protection_sensor_mode_flag != 0 ||
-       (sensor_readings_t_0040baf2.oil_pressure < hpcr_fuel_demand_protection_threshold)) &&
-      ((protection_sensor_mode_flag == 0 ||
-       (temperature_differential < hpcr_fuel_demand_protection_threshold)))))) {
+       (sensor_readings_t_0040baf2.intake_manifold_pressure < hpcr_fuel_demand_protection_threshold)
+       ) && ((protection_sensor_mode_flag == 0 ||
+             (temperature_differential < hpcr_fuel_demand_protection_threshold)))))) {
     if (hpcr_fuel_demand_protection_debounce_count == 0) goto LAB_005377b0;
     sVar2 = -1;
   }
@@ -83199,11 +83298,11 @@ LAB_005377b0:
   if (((protection_channel_load_raw < DAT_00409fe4) ||
       (engine_rpm_state_t_0040b7ac.current_rpm < hpcr_fuel_demand_rpm_threshold)) ||
      (((protection_sensor_mode_flag != 0 ||
-       ((hpcr_fuel_demand_fault_upper_limit < sensor_readings_t_0040baf2.oil_pressure ||
-        (sensor_readings_t_0040baf2.oil_pressure < hpcr_fuel_demand_fault_lower_limit)))) &&
-      ((protection_sensor_mode_flag == 0 ||
-       ((hpcr_fuel_demand_fault_upper_limit < temperature_differential ||
-        (temperature_differential < hpcr_fuel_demand_fault_lower_limit)))))))) {
+       ((hpcr_fuel_demand_fault_upper_limit < sensor_readings_t_0040baf2.intake_manifold_pressure ||
+        (sensor_readings_t_0040baf2.intake_manifold_pressure < hpcr_fuel_demand_fault_lower_limit)))
+       ) && ((protection_sensor_mode_flag == 0 ||
+             ((hpcr_fuel_demand_fault_upper_limit < temperature_differential ||
+              (temperature_differential < hpcr_fuel_demand_fault_lower_limit)))))))) {
     if (hpcr_fuel_demand_fault_debounce_count != 0) {
       hpcr_fuel_demand_fault_debounce_count = hpcr_fuel_demand_fault_debounce_count - 1;
     }
@@ -84040,7 +84139,7 @@ void cm848_j1939_system_init(void)
   cm848_initJ1939Etc1ControlBuffer();
   cm848_initEec1TxDescriptor();
   cm848_initPgn61443Eec2Handler();
-  cm848_initJ1939OilPressureBuffer();
+  cm848_initPgn65247ElectronicEngineController3Buffer();
   initFaultTimerMessage();
   cm848_initJ1939SpeedControlMessage();
   cm848_initJ1939BrakeRetarderBuffer();
@@ -84062,16 +84161,18 @@ void cm848_j1939_system_init(void)
   diag_record_queue_add_entry(0,0xf004,0x14,0,j1939GetEngineStateCode);
   diag_record_queue_add_entry
             (0,0xf003,0x14,10,cm848_buildPgn61443ElectronicEngineController2Message);
-  diag_record_queue_add_entry(0,0xfedf,0x32,0x1e,cm848_j1939SendOilPressureStatus);
+  diag_record_queue_add_entry
+            (0,0xfedf,0x32,0x1e,cm848_buildPgn65247ElectronicEngineController3Message);
   diag_record_queue_add_entry(0,0xfee3,5000,0x6e,cm848_sendFaultTimerMessage);
   diag_record_queue_add_entry(1,0xf000,100,0x32,cm848_j1939BuildVehicleOperatingStatus);
   diag_record_queue_add_entry(1,0xfee1,5000,0x12d,cm848_j1939BuildProtocolModeStatus);
-  diag_record_queue_add_entry(0,0xfeee,1000,0x1ae,cm848_j1939HandlePgn65262EngineTemp);
+  diag_record_queue_add_entry(0,0xfeee,1000,0x1ae,cm848_buildPgn65262EngineTemperature1Message);
   diag_record_queue_add_entry(0,0xfed9,0xfa,200,cm848_j1939BuildEngineStatusByte);
-  diag_record_queue_add_entry(0,0xfeef,500,0x82,cm848_j1939HandlePgn65263FluidLevelPressure);
+  diag_record_queue_add_entry(0,0xfeef,500,0x82,cm848_buildPgn65263EngineFluidLevelPressure1Message)
+  ;
   diag_record_queue_add_entry(0,0xfef0,100,0x96,cm848_j1939HandlePgn65264Pto);
-  diag_record_queue_add_entry(0,0xfef5,1000,0xaa,cm848_j1939HandlePgn65269AmbientConditions);
-  diag_record_queue_add_entry(0,0xfef6,500,0xbe,cm848_j1939HandlePgn65270InletExhaustConditions);
+  diag_record_queue_add_entry(0,0xfef5,1000,0xaa,cm848_buildPgn65269AmbientConditionsMessage);
+  diag_record_queue_add_entry(0,0xfef6,500,0xbe,cm848_buildPgn65270InletExhaustConditions1Message);
   diag_record_queue_add_entry(0,0xfef7,1000,0xd2,cm848_j1939HandlePgn65271VehicleElectrical);
   diag_record_queue_add_entry(0,0xffe0,200,0xfa,cm848_j1939HandlePgn65504ProprietaryA);
   diag_record_queue_add_entry(0,0xfeca,1000,500,cm848_processDm1FaultBroadcast);

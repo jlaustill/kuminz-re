@@ -2,7 +2,7 @@ address,constant_name,value,comment
 # Temperature raw format: Q6 Fahrenheit (raw = °F × 64)
 # Conversion formula used throughout: (raw >> 6) is °F; then Celsius = (°F - 32) × 5/9
 # In code: (((short)raw >> 6) * 5 + -0xa0) / 9  (-0xa0 = -160 = -32 × 5)
-# Variables using this format: j1939_coolant_temp_raw, fuel_temp_raw, sensor_readings_t.coolant_temp
+# Variables using this format: j1939_coolant_temp_raw, fuel_temperature_sensor_filtered, sensor_readings_t.coolant_temp
 # J1939 Kelvin encoding: result + 0x111 (* 0x20 for 1/32K units per SAE J1939-71)
 # Q7 weighted blend: (0x80 - w) * A + w * B >> 7
 # w is a weight in range [0, 0x80] (0=pure A, 128=pure B); divisor 128 = 2^7

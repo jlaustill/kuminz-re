@@ -66,7 +66,7 @@ address,name,type,comment
 0x00057e12,PTR_DAT_00057e12,pointer,
 0x00057e82,PTR_DAT_00057e82,pointer,
 0x00057eca,PTR_DAT_00057eca,pointer,
-0x000592a4,oil_pressure_baseline_ref,word,
+0x000592a4,boost_pressure_fixed_reference,word,ROM constant 1132 (61 kPa): subtracted from intake manifold pressure instead of barometric pressure when boost_uses_barometric_pressure_flag is 0 (cm848_calculateBoostPressure / cm848_evaluateProtectionModeFlags) (was oil_pressure_baseline_ref)
 0x0005936a,boost_pressure_sensor_config,byte,
 0x0005937a,boost_pressure_linearization_x_axis,byte,
 0x0005938c,boost_pressure_linearization_y_axis,byte,
@@ -1139,7 +1139,7 @@ address,name,type,comment
 0x003fadcc,j1939_pgn65247_tx_byte_count,word,
 0x003fadce,j1939_pgn65247_data_ptr,pointer,
 0x003fadd2,j1939_pgn65247_data2_ptr,pointer,
-0x003fadd9,j1939_engine_load_byte,byte,
+0x003fadd9,j1939_eflp1_fuel_delivery_pressure,byte,EFL/P1 (PGN 65263) transmit byte 1: fuel delivery pressure (SPN 94 - 4 kPa/bit) from fuel_delivery_pressure_sensor_filtered (was j1939_engine_load_byte)
 0x003faddd,j1939_diag_response_word_b,word,
 0x003fade1,j1939_pgn65263_tx_header,dword,
 0x003fade4,j1939_pgn65263_tx_header+3,,
@@ -1150,7 +1150,7 @@ address,name,type,comment
 0x003fadf4,j1939_pgn65262_tx_byte_count,word,
 0x003fadf6,j1939_pgn65262_data_ptr,pointer,
 0x003fadfa,j1939_pgn65262_data2_ptr,pointer,
-0x003fae00,j1939_pgn65262_intercooler_temp,word,
+0x003fae00,j1939_et1_engine_oil_temperature,word,ET1 (PGN 65262) transmit bytes 3-4 (low byte first): engine oil temperature (SPN 175 - 0.03125 deg C/bit - offset -273) from oil_temperature_sensor_filtered; 0xFEFE on its fault bits (was j1939_pgn65262_intercooler_temp)
 0x003fae02,j1939_pgn65262_field1_init_word,word,
 0x003fae08,j1939_vehicle_op_status_byte,byte,
 0x003fae10,j1939_pgn61440_tx_header,dword,
@@ -1991,7 +1991,7 @@ address,name,type,comment
 0x003fd8d8,protection_load_override_enable_flag,word,
 0x003fd8da,protection_confirm_mode_flag,word,
 0x003fd8dc,protection_ema_override_enable_flag,word,
-0x003fd8e8,governor_temp_protection_disable,word,Nonzero disables governor temperature protection - bypasses channel-10 threshold processing in sensorChannelTypeB_configInit and the temp-derate computation in governorGovernorTempCompute (read-only ROM-copy constant; lhz word access verified)
+0x003fd8e8,oil_pressure_switch_only_cal,word,EEPROM 0x466 - nonzero (this truck: 1) = no oil pressure sensor: engine_oil_pressure is an RPM-indexed model and the low-oil-pressure switch (switch 14) sets the fault (was governor_temp_protection_disable)
 0x003fd8f0,vehicle_speed_sensor_pulses_per_mile_cal,dword,EEPROM-backed (EEPROM 0x46e): speed-sensor pulses per mile - 8000 in this calibration (the Chrysler standard) (was fuel_temp_trim_shift_cal)
 0x003fd8f4,vehicle_speed_sensor_period_scale_cal,word,EEPROM-backed (EEPROM 0x472): multiplies both the period and the numerator so it cancels in the speed formula - 9 in this calibration (was fuel_temp_trim_denominator)
 0x003fd8f6,vehicle_speed_sensor_max_scaled_period_cal,dword,EEPROM-backed (EEPROM 0x474): longest accepted scaled period - 632812 = the 2 mph period x 9 (was fuel_temp_trim_lower_threshold_a)
@@ -2142,10 +2142,10 @@ address,name,type,comment
 0x003fe67d,fault_entry_t_003fe674.sensor_scale_1,,
 0x003fe67f,fault_entry_t_003fe674.fault_status,,
 0x003fe681,fault_entry_t_003fe674.protection_high,,
-0x003fe683,fault_entry_t_003fe674.protection_low,,
-0x003fe685,fault_entry_t_003fe674.timing_param_1,,
-0x003fe687,fault_entry_t_003fe674.timing_param_2,,
-0x003fe689,fault_entry_t_003fe674.timing_param_3,,
+0x003fe683,fault_entry_t_003fe674.intake_manifold_pressure,,
+0x003fe685,fault_entry_t_003fe674.coolant_temperature,,
+0x003fe687,fault_entry_t_003fe674.intake_manifold_temperature,,
+0x003fe689,fault_entry_t_003fe674.oil_pressure,,
 0x003fe68b,fault_entry_t_003fe674.sensor_scale_2,,
 0x003fe691,fault_entry_t_003fe674.pressure_adj,,
 0x003fe6a2,fault_entry_t_003fe674.status_flags,,
@@ -2322,7 +2322,7 @@ address,name,type,comment
 0x003fefea,governor_integrator_deadband_cal,word,
 0x003feff0,fuel_demand_correction_step_cal,word,
 0x003feff2,fuel_demand_load_base_cal,word,
-0x003feff4,oil_pressure_sensor_init_flag,word,
+0x003feff4,boost_uses_barometric_pressure_flag,word,Nonzero: boost = intake manifold pressure minus barometric pressure / 0: minus boost_pressure_fixed_reference (cm848_calculateBoostPressure / cm848_evaluateProtectionModeFlags); no direct writer - 1 in the RAM dump (was oil_pressure_sensor_init_flag)
 0x003feff6,protection_sensor_mode_flag,word,
 0x003feff8,fuel_demand_load_threshold_c,word,
 0x003feffa,fuel_demand_load_threshold_b,word,
@@ -3228,14 +3228,14 @@ address,name,type,comment
 0x00408648,protection_fuel_derate3_values_cal,byte,
 0x0040865e,protection_fuel_derate4_axis_cal,byte,
 0x00408674,protection_fuel_derate4_values_cal,byte,
-0x0040868a,protection_oil_pressure_snapshot_cal,word,
-0x0040868c,protection_fuel_low_default_cal,word,
+0x0040868a,intake_manifold_pressure_high_substitute,word,Value used for intake_manifold_pressure_in_use while system_status_flags enable_state bit 8 is set (7261 = 391 kPa); working RAM - not EEPROM-backed (was protection_oil_pressure_snapshot_cal)
+0x0040868c,intake_manifold_pressure_low_substitute,word,Value used for intake_manifold_pressure_in_use while enable_state bit 9 is set (0); working RAM - not EEPROM-backed (was protection_fuel_low_default_cal)
 0x0040868e,protection_fuel_demand_snapshot_init_cal,word,
 0x00408690,protection_fuel_demand_snapshot_default_cal,word,
-0x00408692,protection_coolant_temp_snapshot_cal,word,
-0x00408694,protection_coolant_temp_active_default_cal,word,
-0x00408696,protection_load_snapshot_cal,word,
-0x00408698,protection_timing_snapshot_default_cal,word,
+0x00408692,coolant_temperature_low_substitute,word,Value used for coolant_temperature_in_use while condition_monitor bit 0 is set (-3200 = -50 deg F) (was protection_coolant_temp_snapshot_cal)
+0x00408694,coolant_temperature_high_substitute,word,Value used for coolant_temperature_in_use while condition_monitor bit 1 is set (16383 = 256 deg F) (was protection_coolant_temp_active_default_cal)
+0x00408696,intake_manifold_temperature_low_substitute,word,Value used for intake_manifold_temperature_in_use while condition_monitor bit 3 is set (-50 deg F) (was protection_load_snapshot_cal)
+0x00408698,intake_manifold_temperature_high_substitute,word,Value used for intake_manifold_temperature_in_use while condition_monitor bit 4 is set (256 deg F) (was protection_timing_snapshot_default_cal)
 0x0040869c,protection_interval_multiplier_cal,word,
 0x004086c6,protection_iat_scale_factor_cal,word,
 0x00408706,protection_fuel_temp_ratio_upper_cal,word,
@@ -4834,10 +4834,10 @@ address,name,type,comment
 0x0040b148,protection_derate_measurement,word,
 0x0040b14a,protection_load_rate_delta,word,
 0x0040b14c,protection_monitor_countdown,word,
-0x0040b14e,protection_fuel_low_snapshot,word,
+0x0040b14e,intake_manifold_pressure_in_use,word,Intake manifold pressure the engine protection uses (cm848_selectSensorValuesInUse - a substitute on its fault bits); PCI 0x10 byte 5 in kPa / OBD-II intake manifold pressure / freeze frame (was protection_fuel_low_snapshot)
 0x0040b150,protection_fuel_demand_snapshot,word,
-0x0040b152,protection_coolant_temp_active,word,
-0x0040b154,fault_timing_snapshot,word,
+0x0040b152,coolant_temperature_in_use,word,Coolant temperature (1/64 deg F) the engine protection uses (cm848_selectSensorValuesInUse - a substitute on its fault bits); filtered for PCI 0xC0 byte 3 / freeze frame (was protection_coolant_temp_active)
+0x0040b154,intake_manifold_temperature_in_use,word,Intake manifold temperature (1/64 deg F) the engine protection uses (cm848_selectSensorValuesInUse - a substitute on its fault bits); freeze frame (was fault_timing_snapshot - the same name as the dword at 0x40a64c)
 0x0040b156,sensor_channel_5_state,byte,
 0x0040b162,sensor_channel_6_state,byte,
 0x0040b16e,cruise_switch_channel_state,byte,Per-channel state byte for the cruise-control switch QADC channel (0x2f/47); param_2 of cm848_processCruiseSwitchChannel / cm848_initCruiseSwitchChannel; working RAM so no _cal
@@ -5008,7 +5008,7 @@ address,name,type,comment
 0x0040b44e,pci_transmit_frame_length,byte,Byte count of pci_transmit_frame_buffer (0 = nothing to send)
 0x0040b44f,j1939_dm_response_length,byte,Payload byte count for slot T DM response message (2/4/5/6/7/8)
 0x0040b450,uds_response_type_code,byte,
-0x0040b451,j1939_uds_response_buffer,byte,
+0x0040b451,pci_transmit_message_0_payload,byte[5],PCI TX[0] header 0x10 payload (cm848_buildPciTransmitMessage0EngineSpeedAndVehicleSpeed): bytes 1-2 engine speed 0.25 rpm / 3-4 vehicle speed 1/128 km/h / 5 intake manifold pressure kPa (was j1939_uds_response_buffer)
 0x0040b456,pci_transmit_message_0_status,byte,PCI TX[0] header 10 status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
 0x0040b457,pci_transmit_message_0_timer,word,PCI TX[0] header 10 age timer (send interval 87); other modules write interval+10 to force an immediate send
 0x0040b459,fuel_quantity_demand_byte,byte,
@@ -5056,7 +5056,7 @@ address,name,type,comment
 0x0040b4ab,eeprom_cal_byte_b4ab,byte,
 0x0040b4ac,pci_transmit_message_13_status,byte,PCI TX[13] header A4 status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
 0x0040b4ad,pci_transmit_message_13_timer,word,PCI TX[13] header A4 age timer (send interval 1204); other modules write interval+10 to force an immediate send
-0x0040b4af,j1939_data_buffer_d,byte,
+0x0040b4af,pci_transmit_message_14_payload,byte[4],PCI TX[14] header 0xC0 payload (cm848_buildPciTransmitMessage14VoltageOilPressureTemperatures): battery voltage 1/16 V / oil pressure 4 kPa / coolant temperature deg C + 40 / protection_oilTemp_proxy deg C + 40 (was j1939_data_buffer_d)
 0x0040b4b3,pci_transmit_message_14_status,byte,PCI TX[14] header C0 status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
 0x0040b4b4,pci_transmit_message_14_timer,word,PCI TX[14] header C0 age timer (send interval 1392); other modules write interval+10 to force an immediate send
 0x0040b4bb,j1939_msg_slot_x_status,byte,
@@ -5106,7 +5106,7 @@ address,name,type,comment
 0x0040b527,tsc1_condition_active_flag,byte,
 0x0040b528,governor_speed_derivative_active_flag,byte,
 0x0040b52a,coolant_temp_filtered,word,
-0x0040b538,j1939_fuel_quantity_input,word,
+0x0040b538,engine_oil_pressure,word,Engine oil pressure (gauge - 1/18.56 kPa per count) from cm848_processEngineOilPressure: oil_pressure_sensor_filtered minus barometric pressure - or the RPM model when oil_pressure_switch_only_cal is set; feeds the low-oil-pressure check and PCI 0xC0 byte 2 (was j1939_fuel_quantity_input)
 0x0040b53c,fuel_demand_rate_output,word,
 0x0040b53e,governor_integral_accumulator,word,
 0x0040b546,protection_condition_cleared_flag,byte,
@@ -5395,16 +5395,16 @@ address,name,type,comment
 0x0040baf0,sensor_channel_filtered_output,word,Per-sensor-channel EMA-filtered output array (128 entries); written by exponentialMovingAverage result in sensorChannelTypeB_configInit/update; indexed by channel number (e.g. 0x1c=28 for sensor channel 28); 43 refs across sensor processing functions
 0x0040baf2,sensor_readings_t_0040baf2,sensor_readings_t,
 0x0040baf4,sensor_readings_t_0040baf2.coolant_temp,,
-0x0040baf6,sensor_readings_t_0040baf2.intake_air_temp,,
+0x0040baf6,sensor_readings_t_0040baf2.barometric_pressure,,
 0x0040baf8,sensor_readings_t_0040baf2.battery_voltage,,
-0x0040bafc,engine_load_demand_raw,word,
-0x0040bafe,fuel_temp_raw,word,
+0x0040bafc,fuel_delivery_pressure_sensor_filtered,word,sensor_channel_filtered_output[6]: fuel delivery pressure (1/18.56 kPa per count) - sent as J1939 EFL/P1 byte 1 (SPN 94); 0 in the RAM dump (was engine_load_demand_raw)
+0x0040bafe,fuel_temperature_sensor_filtered,word,sensor_channel_filtered_output[7]: fuel temperature in 1/64 deg F - sent as J1939 ET1 byte 2 (SPN 174) and stored in the freeze frame (fault_entry_t.fuel_temperature) (was fuel_temp_raw)
 0x0040bb00,governor_torque_output,word,
-0x0040bb02,engine_load_output_value,word,
-0x0040bb04,fuel_quantity_demand_input,word,
-0x0040bb06,intercooler_temp_raw,word,
+0x0040bb02,intake_manifold_temperature_sensor_filtered,word,sensor_channel_filtered_output[9]: intake manifold temperature in 1/64 deg F - sent as J1939 IC1 byte 3 (SPN 105); copied to intake_manifold_temperature_in_use (was engine_load_output_value)
+0x0040bb04,oil_pressure_sensor_filtered,word,sensor_channel_filtered_output[10]: engine oil pressure (1/18.56 kPa per count) - sent as J1939 EFL/P1 byte 4 (SPN 100) and PCI 0xC0 byte 2; cm848_processEngineOilPressure subtracts barometric pressure; 832 in the RAM dump with the engine stopped (was fuel_quantity_demand_input)
+0x0040bb06,oil_temperature_sensor_filtered,word,sensor_channel_filtered_output[11]: engine oil temperature in 1/64 deg F - sent as J1939 ET1 bytes 3-4 (SPN 175); 0 in the RAM dump (was intercooler_temp_raw)
 0x0040bb0a,accelerator_pedal_sensor_filtered,word,sensor_channel_filtered_output[13]: filtered accelerator pedal sensor counts (channel 13 = the pedal sensor); read by cm848_fuelDemandBaseCalculation and cm848_fuelDemandFinalCalculation (was throttle_fuel_demand_adjusted - same name as 0x3fa6ee)
-0x0040bb16,fuel_quantity_mode_raw,word,
+0x0040bb16,coolant_pressure_sensor_filtered,word,sensor_channel_filtered_output[19]: coolant pressure (1/18.56 kPa per count) - sent as J1939 EFL/P1 byte 7 (SPN 109) when j1939_output_config_bits bit 3 is set (was fuel_quantity_mode_raw)
 0x0040bb18,j1939_coolant_temp_raw,word,
 0x0040bb3c,governor_integrator_bound_b,word,
 0x0040bb7a,protection_oilTemp_proxy,word,Coolant-derived oil temp proxy; real AN1 reading when sensor connected; fallback to coolant model when not
@@ -5765,8 +5765,8 @@ address,name,type,comment
 0x0040b23c,cold_start_fuel_demand_proportional,word,proportional term of cold-start coolant-temp correction
 0x0040b23e,cold_start_coolant_temp_setpoint,word,latched coolant-temp threshold at overheat trip
 0x0040b254,cold_start_fuel_limit_reason_code,word,diagnostic code 0-9 for which cold-start fuel-limit sub-path ran
-0x0040b532,governor_temp_protection_active_flag,word,set when j1939 fuel qty below threshold for N cycles; drives protection_sensor_state_b
-0x0040b534,governor_temp_protection_ramp_flag,word,gates protection ramp step; written in sync with b532
+0x0040b532,low_oil_pressure_active_flag,word,Set by cm848_processEngineOilPressure after a debounced low engine_oil_pressure (or the switch) above the minimum RPM; read by protection_fault_latch_update (was governor_temp_protection_active_flag)
+0x0040b534,low_oil_pressure_derate_flag,word,Set together with low_oil_pressure_active_flag; protection_fault_latch_update gates the protection ramp on it (was governor_temp_protection_ramp_flag)
 0x0040a162,boost_pressure_fuel_working,word,selected boost pressure input for fuel demand (raw or filtered by fault)
 0x0040a198,boost_pressure_fuel_mode_state,word,mode 0/1/2 normal/degraded/fault for boost-pressure fuel path
 0x0040a19c,fuel_demand_timing_mode_state,word,mode 0/1/2 gating the timing/blend filter
@@ -5859,7 +5859,7 @@ address,name,type,comment
 0x0040b200,protection_mode_b_enable_event_count,word,counts protection-enable transitions (mode B) sets engine_diag 0x800
 0x0040b2d0,cold_start_emission_fault_restart_counter,word,drives two-phase fuel schedule on emission-fault restart
 0x0040b2d2,cold_start_emission_fault_active_flag,byte,set when j1939 emission-fault debounce expires
-0x0040b536,governor_temp_diag_debounce_limit,word,temp-compensated limit for governor temp diag counter
+0x0040b536,low_oil_pressure_debounce_limit,word,Debounce limit for the low-oil-pressure check - picked by coolant temperature from the ROM tables at 0x5b4be / 0x5b4ca (default from 0x5b4d4) (was governor_temp_diag_debounce_limit)
 0x0040b59a,protection_throttle_integral_accumulator,dword,protection throttle PID integral accumulator
 0x0040b8d4,cam_timing_speed_window_debounce_count,word,debounce for cam speed window; safety_bits_1 0x200
 0x0040b8d6,cam_sync_reference_a_debounce_count,word,debounce for cam sync ref A; safety_bits_1 0x400
@@ -6017,9 +6017,9 @@ address,name,type,comment
 0x003fcd6e,protection_event26_post_fault_holdoff_count_b,word,post-fault holdoff debounce B (cond code 0xd)
 0x003fcdb0,protection_ramp_step_current,word,current protection ramp step (counts down while active)
 0x003fce7a,protection_diagnostics_periodic_tick,byte,scheduler tick 0-59 for protection diagnostics subtasks
-0x003fceac,governor_temp_diag_debounce_count,word,debounce for governor over-fuel temperature diagnostic
-0x003fceb2,governor_temp_diag_zero_rpm_count,word,cycles RPM==0 with protection enable clear
-0x003fcebc,governor_temp_diag_cold_start_j1939_count,word,cold-start governor setpoint J1939 active duration
+0x003fceac,low_oil_pressure_debounce_count,word,Counts low engine_oil_pressure samples up to low_oil_pressure_debounce_limit (was governor_temp_diag_debounce_count)
+0x003fceb2,oil_pressure_switch_stuck_count,word,Counts passes with the engine stopped while the low-oil-pressure switch still reads pressure; at oil_pressure_switch_stuck_count_limit sets j1939_receive_status_flags 0x20 (switch fault) (was governor_temp_diag_zero_rpm_count)
+0x003fcebc,oil_pressure_switch_fault_running_count,word,Counts passes with the switch fault set while cold_start_phase is at the governor setpoint; at its limit engine_oil_pressure = the word at 0x408992 and the derate may latch (was governor_temp_diag_cold_start_j1939_count)
 0x003fcf96,message_buffer_scan_cursor,dword,scan cursor into message buffer 0x3f9808..0x3f9ff8
 0x003fd082,injection_load_snapshot,word,torque-limit snapshot for injection angle calc
 0x003fd088,protection_shutdown_cycle_count,byte,count of protection shutdown cycles issued
@@ -6433,7 +6433,7 @@ address,name,type,comment
 0x004086c8,j1939_tsc1_active_duration_reload,word,ROM reload/max for TSC1 active duration counter
 0x00408788,protection_fault_severity_code,word,ROM severity/event code for protection faults
 0x00408952,fuel_demand_active_correction_increment,word,ROM per-mode increment for active correction sum
-0x0040898c,governor_temp_protection_fuel_qty_min,word,ROM fuel-qty min below which gov temp protection fires
+0x0040898c,low_oil_pressure_threshold,word,engine_oil_pressure below this counts as low (sensor mode) (was governor_temp_protection_fuel_qty_min)
 0x00409e9a,boost_corr_crank_dwell_b_limit,word,ROM limit for boost_corr_crank_phase_dwell_b
 0x00409e9c,boost_corr_diag_neg_accum_limit,word,ROM limit for boost_corr_diag_neg_accumulator
 0x00409ea6,boost_corr_diag_neg_accum_b_limit,word,ROM limit for boost_corr_diag_neg_accumulator_b
@@ -6687,14 +6687,22 @@ address,name,type,comment
 0x003fa6d6,fuel_load_correction_timing_interp_state,word,interp state base (fuel load correction timing)
 0x003fa978,j1939_governor_speed_override_bits,byte,J1939 governor speed override mode bits
 0x003faa65,j1939_proprietary_cmd_byte1,byte,proprietary J1939 command byte 1
-0x003faac2,j1939_pgn65269_tx_iat_byte,byte,PGN 65269 ambient conditions IAT byte
+0x003faac2,j1939_amb_barometric_pressure,byte,AMB (PGN 65269) transmit byte 1: barometric pressure (SPN 108 - 0.5 kPa/bit) from sensor_readings_t.barometric_pressure; 0xFE on its fault bits (was j1939_pgn65269_tx_iat_byte)
 0x003fad91,j1939_eec1_driver_demand_torque_byte,byte,EEC1 driver demand torque byte (SPN 512)
 0x003fad93,j1939_eec1_engine_speed_low_byte,byte,EEC1 engine speed LSB (SPN 190)
 0x003fad94,j1939_eec1_engine_speed_high_byte,byte,EEC1 engine speed MSB (SPN 190)
 0x003fada9,j1939_eec2_accel_pedal_byte,byte,EEC2 accel pedal position byte (SPN 91)
 0x003fadaa,j1939_eec2_percent_load_byte,byte,EEC2 transmit byte 3: engine percent load at current speed (SPN 92) = j1939_engine_torque_output_a >> 8 (0xFE while j1939_broadcast_enable_flag is 1)
 0x003fadab,j1939_eec2_remote_accel_pedal_byte,byte,EEC2 remote accel pedal byte (SPN 974)
+0x003fadc0,j1939_eec3_nominal_friction_percent_torque,byte,EEC3 (PGN 65247) transmit byte 1: nominal friction percent torque (SPN 514 - offset -125) = j1939_engine_torque_output_b high byte + 125
+0x003fadc1,j1939_eec3_desired_operating_speed_low_byte,byte,EEC3 transmit byte 2: engine's desired operating speed low byte (SPN 515 - 0.125 rpm/bit) from the ROM word at 0x5c382
+0x003fadc2,j1939_eec3_desired_operating_speed_high_byte,byte,EEC3 transmit byte 3: engine's desired operating speed high byte (SPN 515)
+0x003fadc3,j1939_eec3_desired_operating_speed_asymmetry,byte,EEC3 transmit byte 4: engine's desired operating speed asymmetry adjustment (SPN 519) - low byte of the ROM word at 0x5c384
+0x003faddc,j1939_eflp1_engine_oil_pressure,byte,EFL/P1 (PGN 65263) transmit byte 4: engine oil pressure (SPN 100 - 4 kPa/bit) from oil_pressure_sensor_filtered
+0x003faddf,j1939_eflp1_coolant_pressure,byte,EFL/P1 (PGN 65263) transmit byte 7: coolant pressure (SPN 109 - 2 kPa/bit) from coolant_pressure_sensor_filtered - 0xFF unless j1939_output_config_bits bit 3
 0x003fae20,j1939_pgn65213_diag_param_byte,byte,PGN 65213 scaled diagnostic parameter byte
+0x003fae47,j1939_ic1_boost_pressure,byte,IC1 (PGN 65270) transmit byte 2: boost pressure (SPN 102 - 2 kPa/bit) - sent from the absolute intake manifold pressure; 0xFE on its fault bits
+0x003fae48,j1939_ic1_intake_manifold_temperature,byte,IC1 (PGN 65270) transmit byte 3: intake manifold temperature (SPN 105 - deg C + 40) from intake_manifold_temperature_sensor_filtered; 0xFE on its fault bits
 0x003fb00c,fuel_demand_hysteresis_init_flag,byte,one-shot fuel-demand hysteresis init flag
 0x003fb00d,protection_mode_enable_flag_prev,byte,prev protection_mode_enable_flag (edge detect)
 0x003fb26f,supervisor_register_162_read_job,qspi_job_t,Supervisor chip job: read register 0xA2
@@ -6887,10 +6895,10 @@ address,name,type,comment
 0x004088ba,cold_start_emission_fault_off_dwell_count,word,ROM off-period dwell for emission-fault restart cycle
 0x004088bc,cold_start_emission_fault_pgn_cycle_count_max,word,ROM on-period/cap for emission-fault restart cycle
 0x0040c19c,cold_start_fuel_handler_period_us,dword,1e6/freq period for cold-start fuel J1939 handler
-0x00408986,governor_temp_diag_rpm_enable_threshold,word,ROM RPM above which gov-temp diag activates
-0x00408988,governor_temp_diag_zero_rpm_count_max,word,ROM cap for gov-temp zero-RPM counter
-0x00408990,governor_temp_diag_cold_start_j1939_count_max,word,ROM cap for gov-temp cold-start J1939 counter
-0x0040b53a,governor_temp_fuel_qty_table_raw,word,raw 2D-table gov-temp fuel qty (pre-EMA)
+0x00408986,low_oil_pressure_check_minimum_rpm,word,The low-oil-pressure check runs only above this engine speed (4000 = 500 rpm) (was governor_temp_diag_rpm_enable_threshold)
+0x00408988,oil_pressure_switch_stuck_count_limit,word,Limit for oil_pressure_switch_stuck_count (was governor_temp_diag_zero_rpm_count_max)
+0x00408990,oil_pressure_switch_fault_running_count_limit,word,Limit for oil_pressure_switch_fault_running_count (was governor_temp_diag_cold_start_j1939_count_max)
+0x0040b53a,oil_pressure_model_unfiltered,word,RPM-indexed oil pressure model (table 0x3fceae) before the EMA - used when oil_pressure_switch_only_cal is set (was governor_temp_fuel_qty_table_raw)
 0x00408a52,fuel_temp_trim_comp_ema_fault_threshold,word,ROM lower EMA bound for fuel-temp-trim fault
 0x00408a56,fuel_temp_trim_comp_ema_clear_threshold,word,ROM upper EMA bound for fuel-temp-trim clear
 0x00408a5a,fuel_temp_trim_deviation_ema_clear_threshold,word,ROM deviation threshold for fuel-temp-trim clear

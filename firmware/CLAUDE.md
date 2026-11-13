@@ -390,6 +390,29 @@ Scripts used: `BatchForceAnalyze.java`, `BatchForceAnalyzeNamed.java`, `ExportBa
 - Pressure scale factor: 0.0159064138077 IN_HG per raw count (16-bit range = ~35 bar max)
 - See `CM848_S90140.06_analysis/output/10bar_map_conversion.md` for complete parameter documentation
 
+### CM848 sensor channel identities (proved by the ECM's own broadcasts, 2026-11-12)
+`sensor_channel_filtered_output[]` (0x40baf0, words) slots are identified by the J1939 SPN or PCI byte each one is
+broadcast as — the SPN fixes both the signal and the unit. Pressures are all **1/18.56 kPa per count** (= the
+0.0159 inHg above); temperatures are **1/64 °F per count** (`(raw >> 6)` = °F). Older names were wrong for most slots.
+
+| Slot | Address | Name now | Was | Proof |
+|---|---|---|---|---|
+| 1 | 0x40baf2 | `sensor_readings_t.intake_manifold_pressure` | `.oil_pressure` | IC1 SPN 102, OBD-II MAP, PCI 0x10 byte 5 (kPa); boost = this − slot 3 |
+| 2 | 0x40baf4 | `sensor_readings_t.coolant_temp` | (right) | ET1 SPN 110 |
+| 3 | 0x40baf6 | `sensor_readings_t.barometric_pressure` | `.intake_air_temp` | AMB SPN 108 (0.5 kPa/bit math matches) |
+| 4 | 0x40baf8 | `sensor_readings_t.battery_voltage` | (right) | PCI 0xC0 byte 1, 1/16 V |
+| 6 | 0x40bafc | `fuel_delivery_pressure_sensor_filtered` | `engine_load_demand_raw` | EFL/P1 SPN 94 |
+| 7 | 0x40bafe | `fuel_temperature_sensor_filtered` | `fuel_temp_raw` | ET1 SPN 174 |
+| 9 | 0x40bb02 | `intake_manifold_temperature_sensor_filtered` | `engine_load_output_value` | IC1 SPN 105 |
+| 10 | 0x40bb04 | `oil_pressure_sensor_filtered` | `fuel_quantity_demand_input` | EFL/P1 SPN 100, PCI 0xC0 byte 2 |
+| 11 | 0x40bb06 | `oil_temperature_sensor_filtered` | `intercooler_temp_raw` | ET1 SPN 175 |
+| 13 | 0x40bb0a | `accelerator_pedal_sensor_filtered` | — | (PR #46 earlier) |
+| 19 | 0x40bb16 | `coolant_pressure_sensor_filtered` | `fuel_quantity_mode_raw` | EFL/P1 SPN 109 |
+
+- The "oil pressure" functions/globals that read slot 1 are **boost**: `cm848_calculateBoostPressure` (was `cm848_oilPressureDeltaCalculation`). Other `*oil_pressure*` names in the 0x407xxx/0x408xxx protection tables are still unverified — check which slot they read before trusting them.
+- Real oil pressure: `cm848_processEngineOilPressure` (0x51a0a8) → `engine_oil_pressure` (0x40b538, gauge). On this truck `oil_pressure_switch_only_cal` (EEPROM 0x466) = 1, so the dash oil-pressure value is an **RPM-indexed model**, and only the low-oil-pressure switch (switch 14, line 150) can drop it to 0.
+- `cm848_selectSensorValuesInUse` substitutes a low/high value per fault direction into `intake_manifold_pressure_in_use` / `coolant_temperature_in_use` / `intake_manifold_temperature_in_use` (what protection, PCI 0x10/0xC0, OBD-II and the freeze frame use).
+
 ### Live Data Reading (CM848 Service 0x4A)
 
 Verified memory addresses for live ECU queries:
