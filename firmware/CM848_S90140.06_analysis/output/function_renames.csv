@@ -196,7 +196,7 @@
 # Thermal phase transition variant B
 # Evaluates thermal_injection_timing_range_high/low
 # 6 calls - thermal protection state machine for injection timing ranges
-# Sets protection_inhibit_flag and related DAT values
+# Sets supervisor_register_36_bit_1_low_flag and related DAT values
 # Complex function with many register parameters
 # Complex control loop variant B
 # Warmup protection limit calculation variant
@@ -567,8 +567,8 @@ address,name
 0x0000d208,cm848_sensorChannel8_process
 0x0000d294,cm848_sensorChannel9_init
 0x0000d320,cm848_sensorChannel9_process
-0x0000d3ac,cm848_sensorChannel10_oilTempInit
-0x0000d438,cm848_sensorChannel10_oilTempProcess
+0x0000d3ac,cm848_sensorChannel10_intakeManifoldTemperatureInit,Periodic Type A sampler for sensor slot 9 = intake manifold temperature (intake_manifold_temperature_sensor_filtered - circuit faults 0x13 / 0x14 = P0113 / P0112) - not oil temperature - _init is the family name of the periodic sampler (was cm848_sensorChannel10_oilTempInit) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x0000d438,cm848_sensorChannel10_intakeManifoldTemperatureProcess,Boot-time update twin of cm848_sensorChannel10_intakeManifoldTemperatureInit (updateSensorChannelWithConfig with the same slot 9 intake manifold temperature arguments) called once from hpcr_exceptionHandler (was cm848_sensorChannel10_oilTempProcess) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x0000d4c4,cm848_sensorChannel11_init
 0x0000d550,cm848_sensorChannel11_process
 0x0000d5dc,cm848_sensorChannel12_init
@@ -598,7 +598,7 @@ address,name
 0x0000e8ac,cm848_initTemperatureTrimTableSizes
 0x0000e8cc,cm848_initTemperatureTrimCoeff
 0x0000e8dc,cm848_fuelTimingRateLimitedBlend
-0x0000ea00,fuelTimingOilPressureModeController
+0x0000ea00,cm848_runOperatingModeSpeedGovernor,Closed-loop engine speed governor run only in engine_operating_mode 7 / 2 / 30 / 37: reference speed (mode 2 = J1939 TSC1 speed) / PID on reference minus governor_rpm_actual with fuel_demand_pid_coeffs / rpm-drop fuel term / output governor_proportional_gain (was fuelTimingOilPressureModeController) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x0000fabc,cm848_initFuelDemandVariables
 0x0000fb28,cm848_restoreEngineOperatingMode
 0x0000fcd0,cm848_calculateFuelTimingBlend
@@ -716,7 +716,7 @@ address,name
 0x00017b84,cm848_calculateFuelFlowRate
 0x00017d54,cm848_selectFuelFlowMode
 0x00017e54,mpc555_initFuelFlowRateVariables
-0x00017eb8,cm848_calculateOilPressureProtection
+0x00017eb8,cm848_calculateEngineOutputTorque,Engine output torque in lb-ft into 0x40a622: (fuel_demand_computed minus friction fuel fuel_demand_base_offset) / (fuel_demand_load_axis minus friction fuel) x fuel_demand_filter_dimension (maximum torque at this speed) - clamped 0 to that maximum (was cm848_calculateOilPressureProtection) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x00017f50,cm848_calculateFuelFlowWithMode
 0x0001806c,emptyStubFunction3
 0x00018070,cm848_throttlePositionProcessing
@@ -849,7 +849,7 @@ address,name
 0x000209e8,cm848_calculateLoadRateOfChange
 0x00020a58,cm848_calculateLoadToFuelRatio
 0x00020aec,emptyStubFunction3
-0x00020af0,cm848_calculateOilPressureRateOfChange
+0x00020af0,cm848_calculateNominalFrictionPercentTorque,J1939 nominal friction percent torque (SPN 514) in 1/256 percent: (fuel_demand_base_offset minus fuel_demand_norm_zero_cal) x 100 percent / (fuel_demand_norm_fullscale minus zero) clamped at 125 percent into j1939_engine_torque_output_b for EEC3 (was cm848_calculateOilPressureRateOfChange) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x00020b84,cm848_updateProtectionParameters
 0x00020bfc,cm848_updateProtectionInputs
 0x00020c64,cm848_processJ1939RxMessage
@@ -880,24 +880,25 @@ address,name
 0x000220e4,cm848_processJ1939DiagnosticRequest
 0x00022128,cm848_j1939DiagnosticServiceHandler
 0x000221f0,cm848_initJ1939DiagnosticServiceHandler
-0x00022220,cm848_updateGovernorTimers
+0x00022220,cm848_tickJ1939Dm13Timers,100 ms DM13 tick: counts the three stop broadcast timers down (an expired slot returns to flags 0xFFFF = broadcasts resume) and j1939_dm13_hold_timer; recomputes j1939_dm13_broadcast_enable_flags; clears j1939_dm13_fault_log_inhibit_flag once every timer is 0 (was cm848_updateGovernorTimers) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 # Governor/protection init
-0x000222f8,cm848_resetGovernorControlState
-0x00022318,cm848_initGovernorDerivativeTerms
+0x000222f8,cm848_onJ1939Dm13SeenOnBus,Called by the J1939 receive dispatcher for every DM13 (PF 0xDF) on the bus - any destination - when DM13EN is set: sets j1939_dm13_fault_log_inhibit_flag and loads j1939_dm13_hold_timer (6 s) so J1939 input timeouts freeze (was cm848_resetGovernorControlState) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x00022318,cm848_initJ1939Dm13Handler,Start-up (from cm848_j1939_system_init): sets the three requester broadcast enable flags and j1939_dm13_broadcast_enable_flags to 0xFFFF (nothing suspended) and registers cm848_processJ1939Dm13StopStartBroadcast for PGN 57088 (was cm848_initGovernorDerivativeTerms) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 # 0x0002232c (was cm848_initGovernorControlHandler) and 0x0002235c (was cm848_noOperation) are
-# mid-function points inside cm848_initGovernorDerivativeTerms - both rows removed 2026-11-12 and
+# mid-function points inside cm848_initJ1939Dm13Handler - both rows removed 2026-11-12 and
 # listed in deleted_functions.csv. They were bl targets in the old e2m Flash2 (V11.20.13.16),
 # where cm848_processJ1939DiagnosticRequest lived in that ROM version; the live flash2
 # (V11.46.06) no longer calls either address.
-0x0002236c,cm848_processSecurityAccessRequest
-0x000223f4,cm848_processGovernorControlMessage
+0x0002236c,cm848_clearJ1939Dm13StoppedNetworkBits,DM13 helper (slot index): clears the slot's broadcast enable flags for each network the DM13 told to stop (00): J1587 bit 0 / J1922 bit 1 / J1939 network 1 bits 2 3 7 (mask 0xff73) - nothing to do with security access (was cm848_processSecurityAccessRequest) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x000223f4,cm848_processJ1939Dm13StopStartBroadcast,J1939 DM13 (PGN 57088) handler - needs DM13EN (j1939_feature_enable_flags_cal bit 8 - 0 in this truck's EEPROM): at RPM 0 and speed 0 updates the sender's requester slot / else frees all slots and zeroes the hold timer and fault log inhibit (was cm848_processGovernorControlMessage) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x00022674,cm848_j1939HandlePgn65228Dm3ClearDiag
 0x00022770,cm848_initPgn65228Dm3Handler
 0x000227a0,cm848_j1939HandleDm1RequestMessage
 0x00022840,cm848_initJ1939Dm1RequestHandler
 0x00022870,cm848_j1939ProcessPgn61442Etc1
 0x00022bc4,cm848_initJ1939Pgn61442Etc1Handler
-0x00022d18,cm848_initEtc2Handler,Registers the J1939 ETC2 (PGN 61445 / 0xf005) receive handler (DAT_00022c5c) and primes transmission RX state (clears tsc1_received.auxiliary_state, sets etc1_address_filter=0xff). NOT vehicle speed - prior name cm848_initJ1939VehicleSpeedHandler was wrong; ETC2 carries gear/range, and the MANUAL_VSS cal has no J1939 speed-in path.
+0x00022c5c,cm848_j1939ProcessPgn61445Etc2,J1939 ETC2 (PGN 61445) receive callback registered by cm848_initEtc2Handler: 8-byte frames from j1939_tsc1_auth_primary_sa (any when 0xff) - byte 1 (SPN 524 selected gear) into j1939_tsc1_override_state.etc2_transmission_selected_gear and reloads governor_timeout_countdown (0x40ae50 - misnamed ETC2 timeout) / bytes 2-3 (SPN 526 actual gear ratio 0.001/bit - valid below 0xfb00 - floor 100) into etc2_actual_gear_ratio with etc2_gear_ratio_valid_flag = 1 and the ratio timeout governor_load_timer_b (0x40a266); the previous ratio goes to j1939_tsc1_received at 0x3fa98c; the gear drives transmission_park_or_neutral_flag (was part of cm848_initJ1939Pgn61442Etc1Handler) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x00022d18,cm848_initEtc2Handler,Registers the J1939 ETC2 (PGN 61445 / 0xf005) receive callback cm848_j1939ProcessPgn61445Etc2 and primes the ETC2 receive state (clears the previous gear ratio word j1939_tsc1_received.auxiliary_state at 0x3fa98c / sets the ETC2 selected gear to 0xff = none). NOT vehicle speed - prior name cm848_initJ1939VehicleSpeedHandler was wrong; ETC2 carries gear / gear ratio (was cm848_initJ1939VehicleSpeedHandler) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x00022d60,torqueControlModeHandler
 0x00023188,cm848_j1939RegisterPgnHandler
 0x000231cc,cm848_j1939DispatchPgnHandler,jlaustill reviewed 2026-5-25 - mostly readable, hopefully accurate
@@ -916,7 +917,7 @@ address,name
 0x00023d3c,cm848_sendJ1939AcknowledgeMessage
 0x00023dbc,cm848_sendJ1939NegativeAck
 0x00023e40,cm848_initJ1939AckBuffer
-0x00023e8c,cm848_buildPgn65269AmbientConditionsMessage,Builds and sends the ECM's AMB broadcast (PGN 65269): byte 1 barometric pressure (SPN 108 - 0.5 kPa/bit from sensor_readings_t.barometric_pressure - 0xFE on its fault bits) / bytes 4-5 ambient air temperature (SPN 171 from j1939_coolant_temp_raw - 0xFFFF unless j1939_feature_enable_flags bits 0 and 1) / the rest not available (was cm848_j1939HandlePgn65269AmbientConditions - a transmit builder) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
+0x00023e8c,cm848_buildPgn65269AmbientConditionsMessage,Builds and sends the ECM's AMB broadcast (PGN 65269): byte 1 barometric pressure (SPN 108 - 0.5 kPa/bit from sensor_readings_t.barometric_pressure - 0xFE on its fault bits) / bytes 4-5 ambient air temperature (SPN 171 from ambient_air_temperature_sensor_filtered - 0xFFFF unless j1939_feature_enable_flags_cal bits 0 and 1) / the rest not available (was cm848_j1939HandlePgn65269AmbientConditions - a transmit builder) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
 0x00023fb8,cm848_initJ1939AmbientConditionsBuffer
 0x00024028,cm848_j1939BuildEngineStatusByte
 0x00024124,cm848_initJ1939EngineStatusBuffer
@@ -950,7 +951,7 @@ address,name
 0x00025d60,cm848_initPgn61443Eec2Handler
 0x00025de8,cm848_buildPgn65247ElectronicEngineController3Message,Builds and sends the ECM's EEC3 broadcast (PGN 65247): byte 1 nominal friction percent torque (SPN 514 = j1939_engine_torque_output_b high byte + 125) / bytes 2-3 engine's desired operating speed (SPN 515 from the ROM word at 0x5c382) / byte 4 desired operating speed asymmetry adjustment (SPN 519 from the ROM word at 0x5c384) (was cm848_j1939SendOilPressureStatus - nothing in it is oil pressure) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
 0x00025e5c,cm848_initPgn65247ElectronicEngineController3Buffer,Sets up the EEC3 (PGN 65247) transmit descriptor: header 0xFEDF with j1939_pgn65247_priority / own source address / 4 data bytes at 0x3fadc0 (was cm848_initJ1939OilPressureBuffer) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
-0x00025eb4,cm848_buildPgn65263EngineFluidLevelPressure1Message,Builds and sends the ECM's EFL/P1 broadcast (PGN 65263): byte 1 fuel delivery pressure (SPN 94 - 4 kPa/bit from fuel_delivery_pressure_sensor_filtered - 0xFF unless j1939_feature_enable_flags bit 12) / byte 4 engine oil pressure (SPN 100 - 4 kPa/bit from oil_pressure_sensor_filtered) / byte 7 coolant pressure (SPN 109 - 2 kPa/bit from coolant_pressure_sensor_filtered - 0xFF unless j1939_output_config_bits bit 3) (was cm848_j1939HandlePgn65263FluidLevelPressure - a transmit builder) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
+0x00025eb4,cm848_buildPgn65263EngineFluidLevelPressure1Message,Builds and sends the ECM's EFL/P1 broadcast (PGN 65263): byte 1 fuel delivery pressure (SPN 94 - 4 kPa/bit from fuel_delivery_pressure_sensor_filtered - 0xFF unless j1939_feature_enable_flags_cal bit 12) / byte 4 engine oil pressure (SPN 100 - 4 kPa/bit from oil_pressure_sensor_filtered) / byte 7 coolant pressure (SPN 109 - 2 kPa/bit from coolant_pressure_sensor_filtered - 0xFF unless j1939_output_config_bits bit 3) (was cm848_j1939HandlePgn65263FluidLevelPressure - a transmit builder) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
 0x00025fb4,cm848_initJ1939FluidLevelPressureBuffer
 0x00026024,cm848_buildPgn65262EngineTemperature1Message,Builds and sends the ECM's ET1 broadcast (PGN 65262): byte 1 coolant temperature (SPN 110) / byte 2 fuel temperature (SPN 174) / bytes 3-4 engine oil temperature (SPN 175 - 0.03125 deg C/bit from oil_temperature_sensor_filtered) - each 0xFE / 0xFEFE on its sensor fault bits (was cm848_j1939HandlePgn65262EngineTemp - a transmit builder) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
 0x0002619c,cm848_initPgn65262EngineTempHandler
@@ -1034,12 +1035,12 @@ address,name
 0x0002c0fc,cm848_emptyStubFunction6
 0x0002c100,cm848_initProtectionLimitVariables
 0x0002c114,cm848_updateTorqueLimitFromProtection
-0x0002c180,cm848_trackFuelDemandThreshold
-0x0002c23c,cm848_processProtectionLimitActivation
-0x0002c318,cm848_checkSafetyConditionsForProtection
-0x0002c3c8,cm848_processProtectionControlLogic
-0x0002c4fc,cm848_updateRpmProtectionLimits
-0x0002c6c4,cm848_updateProtectionEntryConditions
+0x0002c180,cm848_countAcceleratorPedalPresses,fuel_demand_control_t.calculated (400 = 100 percent) reaching accelerator_pedal_press_threshold (70 percent) sets accelerator_pedal_pressed_flag; dropping to accelerator_pedal_release_threshold (30 percent) clears it and adds 1 to accelerator_pedal_press_count (was cm848_trackFuelDemandThreshold) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x0002c23c,cm848_detectThreeAcceleratorPedalPresses,First press zeroes accelerator_pedal_press_window_timer (100 ms passes); a 3rd press with the timer at most accelerator_pedal_press_window_limit (50 = 5 s) sets switch 31 for one pass; a late window clears both; no counting while switch 31 is held (was cm848_processProtectionLimitActivation) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x0002c318,cm848_checkAcceleratorPedalSensorFaults,accelerator_pedal_sensor_fault_hold_flag = 1 when j1939_feature_enable_flags_cal bit 11 is set and an accelerator pedal sensor fault bit is active: fault bits 10 P2123 / 11 P2122 / 63 P2121 / 62 P2127 / 68 P2128 plus 52 / 53 (no OBD code) (was cm848_checkSafetyConditionsForProtection) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x0002c3c8,cm848_updateSwitch31FromAcceleratorPedal,Key on (switch 0) + engine stopped (cold_start_phase 1) + j1939_feature_enable_flags_cal bit 10 (0 here): each 100 ms clears switch 31 then sets it while a pedal fault holds it or for one pass after 3 presses in 5 s; else clears it and resets the detector (was cm848_processProtectionControlLogic) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x0002c4fc,cm848_checkSwitch31OnTimeFault,20 ms task after cm848_scanAndDebounceSwitchInputs: 4 stores of switch 31 back onto itself in 3 gated blocks (no-ops here); with switch_31_on_time_fault_enable (ROM 0) counts passes with switch 31 on and at 50 (1 s) sets fault bit 73; else clears it (was cm848_updateRpmProtectionLimits) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x0002c6c4,cm848_updateVariableSpeedGovernorSelection,Governor type switch - only with the accelerator released and fuel_demand_computed <= fuel_demand_base_offset + fuel_demand_speed_deadband_cal: governor_system_config_flags bit 3 (0 here) + switch 31 invert variable_speed_governor_default_cal / else use it (was cm848_updateProtectionEntryConditions) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium
 0x0002c764,cm848_processProtectionEntry
 0x0002c9bc,mpc555_initFuelControlModeVariables
 0x0002ca14,cm848_calculateSpeedControlLimit
@@ -1087,8 +1088,8 @@ address,name
 0x0002f920,cm848_protectionOverloadHandler
 0x0002fe48,cm848_protectionCleanupHandler
 0x0003004c,cm848_protectionShutdownHandler
-0x00030194,cm848_protectionOutputController
-0x00030ad4,cm848_protectionFinalizeState
+0x00030194,cm848_applyConverterLockupSchedule,Converter clutch engage: above 52 deg F and out of park/neutral it sets logical output 18 when fuel demand is below the per-gear (2 / 3 / 4) table for the output speed - hot-mode tables while hot_mode_flag (was cm848_protectionOutputController) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x00030ad4,cm848_applyConverterUnlockConditions,Converter clutch release (clears logical output 18): fuel demand above the per-gear table / park or neutral / lever moved from 2 to drive / engine below output x 1.45 in second or below output speed during the 3-4 upshift (was cm848_protectionFinalizeState) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x00031320,cm848_protectionFuelDemandCheck
 0x0003148c,cm848_protectionTimeoutHandler
 0x00031584,cm848_protectionWarmupHandler
@@ -1099,12 +1100,12 @@ address,name
 0x0003241c,cm848_calculateProtectionFuelDemandThreshold
 0x0003257c,cm848_processProtectionStateFlags
 0x00032b00,cm848_protectionThresholdMonitor
-0x00032efc,cm848_protectionStateMachine
+0x00032efc,cm848_runTransmissionControl,Transmission control step: below 32 deg F the cold curve / transfer-case low range / standstill / normal / wide open throttle handlers set governor_pressure_target and status_code and the 3-4 / 4-3 requests - then converter clutch engage and release (was cm848_protectionStateMachine) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium
 0x000331cc,mpc555_initProtectionFilterVariables
 0x00033488,cm848_evaluateProtectionModeFlags
 0x000335e4,cm848_decrementProtectionTimers
-0x00033948,cm848_calculateProtectionConditions
-0x000343ac,processProtectionFlagConditions
+0x00033948,cm848_determineCurrentGearAndLockupInhibit,Computes transmission_speed_ratio and transmission_current_gear 1-4 from the ratio thresholds and the overdrive solenoid; sets the fuel-demand lockup inhibit and relock delays; brake (switch 11) or switch 2 lockup release only when 0x408388 is 0 (1 here) (was cm848_calculateProtectionConditions) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x000343ac,cm848_updateTransmissionConditionFlags,Transmission flags: transfer-case low range (output / vehicle speed) / transmission_temperature_range / hot_mode_flag / overheat / overdrive heat lockout and cold bits / high fuel demand flags and the learned values per temperature range (was processProtectionFlagConditions) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium
 0x0003491c,cm848_filterProtectionLoadValue
 0x00034a30,cm848_evaluateProtectionFaultCondition
 0x00034abc,cm848_processCalibrationTablesMain
@@ -1131,21 +1132,21 @@ address,name
 0x00035c74,cm848_initSensorLookupTableInit1
 0x00035d00,cm848_processSensorTemperatureData
 0x00035d70,cm848_enableSensorFilterUpdate
-0x00035d80,cm848_processSensorFilterCalibration
+0x00035d80,cm848_learnOutputSpeedToVehicleSpeedRatio,After more than 3 rises above 40 mph and once until reserved_04 bit 5 clears: with output shaft speed above 100 rpm and no low range or sensor fault stores output shaft speed x 4096 / vehicle_speed (clamp 35-52 rpm per mph) and sets 0x3fedfb bit 0 (was cm848_processSensorFilterCalibration) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x00035f14,mpc555_initSensorCalibrationTables
 0x00035fa8,cm848_processFaultScanLookup
 0x000367a4,cm848_queueSupervisorStatusRead,Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status registers; command byte 0x5D): queues reads of registers 0x4E / 0x5A / 0x5C (3 words) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
-0x000367f0,cm848_onSupervisorStatusRead,Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status registers; command byte 0x5D): completion of the 0x4E/0x5A/0x5C read: stores the replies in fault_report_parameter_byte / j1939_lamp_status_cache bits / j1939_fault_occurrence_count (application meaning of those globals not reviewed) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
-0x0003682c,cm848_queueSupervisorOutputWrite,Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status registers; command byte 0x5D): writes register 0x92 with the low byte of j1939_lamp_status_cache (output control) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
+0x000367f0,cm848_onSupervisorStatusRead,Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status registers; command byte 0x5D): completion of the 0x4E/0x5A/0x5C read: stores the replies in supervisor_input_lines_136_to_143_state / supervisor_register_146_output_value bits / supervisor_input_lines_144_to_151_state (application meaning of those globals not reviewed) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
+0x0003682c,cm848_queueSupervisorOutputWrite,Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status registers; command byte 0x5D): writes register 0x92 with the low byte of supervisor_register_146_output_value (output control) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
 0x0003686c,cm848_queueSupervisorRegister36Read,Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status registers; command byte 0x5D): queues a read of register 0x24 (36) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
-0x00036898,cm848_onSupervisorRegister36Read,Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status registers; command byte 0x5D): completion of the register 0x24 read: inverted bit 1 -> protection_inhibit_flag and the delayed governor_inhibit_flag | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
+0x00036898,cm848_onSupervisorRegister36Read,Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status registers; command byte 0x5D): completion of the register 0x24 read: inverted bit 1 -> supervisor_register_36_bit_1_low_flag and the delayed supervisor_register_36_bit_1_low_held_flag | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
 0x0003691c,cm848_answerSupervisorWatchdog,Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status registers; command byte 0x5D): answers the watchdog's current question with four 0xE0xx words from the answer tables at ROM 0x576e4-0x57714 (same tables as the boot kernel) + a 0xF200 status read; retries on the high-priority queue if the queue is full (was j1939CheckTxTimeouts) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
 0x000369cc,cm848_runSupervisorWatchdogCycle,Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status registers; command byte 0x5D): first call sends the 0x18xx window setting + 0x2E00 reads; afterwards parses the reply (supervisor_watchdog_question / supervisor_watchdog_error_count) / tracks the peak and serious-error count / then answers (was j1939UpdateTxTimers) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
 0x00036b10,cm848_paceSupervisorWatchdogCycle,Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status registers; command byte 0x5D): runs cm848_runSupervisorWatchdogCycle every j1939_tx_periodic_rate_cal calls | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
 0x00036b68,cm848_queueSupervisorRegister46Read,Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status registers; command byte 0x5D): queues a 0x2E (46) access with j1939_message_word_b220 when no diagnostic session is active | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
 0x00036bc4,cm848_onSupervisorRegister46Read,Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status registers; command byte 0x5D): completion of the register 0x2E read: copies the reply to 0x40b222 | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
 0x00036bd8,cm848_queueSupervisorRegister162Read,Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status registers; command byte 0x5D): queues a read of register 0xA2 (162) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
-0x00036c04,cm848_onSupervisorRegister162Read,Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status registers; command byte 0x5D): completion of the register 0xA2 read: low byte -> engine_idle_mode_flags (that global's name is unverified) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
+0x00036c04,cm848_onSupervisorRegister162Read,Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status registers; command byte 0x5D): completion of the register 0xA2 read: low byte -> supervisor_register_162_status (that global's name is unverified) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
 0x00036c1c,cm848_writeSupervisorConfiguration,Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status registers; command byte 0x5D): writes configuration registers 0x94 / 0x98 / 0x9E / 0xA4 from the j1939_status_*_cal calibrations (names of those cals unverified) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
 0x00036cec,cm848_runSupervisorChipSchedule,Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status registers; command byte 0x5D): periodic schedule: status read + register 0x24 read every call / watchdog cycle every j1939_tx_periodic_rate_cal / 0x2E every 100 / 0xA2 every 20 / configuration rewrite every 100 when no diagnostic session | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
 0x00036de0,cm848_configureSupervisorChip,Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status registers; command byte 0x5D): start-up configuration: repeats 0x8C02 / 0x0C00 / 0xC2xx / 0xC4xx / 0xC8xx until the chip reports state 2 then writes 0xDA / 0xDC / 0xD0 / 0xD6 (period = 30000000 / (factor a x factor b)); uses a stack qspi_job_t | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
@@ -1190,39 +1191,39 @@ address,name
 0x0003a080,cm848_resetPciTransmitState,Clears tx_match_index and pci_transmit_frame_buffer and returns pci_transmit_state to idle (link-event action bit 0x04)
 0x0003a0cc,cm848_pulsePciControllerLine124,Drives output line 124 low (twice) then high via mpc555_driveOutputLineLow / mpc555_driveOutputLineHigh - the same pulse the PCI init starts with; line 124 is most likely the external J1850 controller's reset (link-event action bit 0x08). Purpose of the line not yet confirmed
 0x0003a100,hpcr_initPciMessageTimers,Initializes every PCI message timer: RX timers to 0xff37 (never received) and TX timers to staggered start values so the broadcasts do not all fire together; also arms the 0x26 diagnostic response (timer 1) (link-event action bit 0x10)
-0x0003a290,cm848_handlePciLinkEvent,Maps link_event_code 1..7 to pci_link_event_action_mask_cal and performs the recovery actions (count toward pci_link_error_limit -> power_state_status_flags 0x8000 + mpc555_driveOutputLineLow(124) / reset receive state / reset transmit state / pulse controller line 124 / re-init message timers); returns 1 when the mask asks for a controller resend (bit 0x20) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
-0x0003a450,hpcr_initJ1939MessageTables
+0x0003a290,cm848_handlePciLinkEvent,Maps link_event_code 1..7 to pci_link_event_action_mask_cal and performs the recovery actions (count toward pci_link_error_limit -> fault_detected_bits_368_to_383 0x8000 + mpc555_driveOutputLineLow(124) / reset receive state / reset transmit state / pulse controller line 124 / re-init message timers); returns 1 when the mask asks for a controller resend (bit 0x20) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
+0x0003a450,cm848_initPciMessagePayloads,Power-up fill of every PCI RX / TX payload buffer (cm848_initJ1939CommunicationSystem from hpcr_exceptionHandler): zeroes most / TX[10] 0x26 = pci_ecm_address + ROM 0x57bb6 / TX[19] 0xED from ROM / TX[20]-TX[24] F0 xx = vehicle_vin_string / RX[0] source 0xF0 (was hpcr_initJ1939MessageTables) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x0003a9a4,hpcr_initJ1939BufferValues
-0x0003aaf0,cm848_initJ1939BufferParams
+0x0003aaf0,cm848_initPciInFrameResponseBytes,Writes the two zero-terminated J1850 in-frame response strings: 0x40b4fd = 0x60 0 (the cluster node address that TX[3] 0xB0 expects back) / 0x40b4fb = 0x18 0 (no descriptor points at it) (was cm848_initJ1939BufferParams) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x0003ab20,cm848_clearCanMessageBuffers
 0x0003abc4,mpc555_initJ1939TransmitSchedule
 0x0003ad04,cm848_initJ1939CommunicationSystem
 0x0003ad80,cm848_j1939TransmitScheduleCallback
 0x0003adcc,cm848_schedulePciTransmit,When pci_transmit_state is idle builds the first overdue pci_transmit_message_table entry (header + payload) into pci_transmit_frame_buffer; counts passes waiting for an expected in-frame response (timeout -> cm848_handlePciInFrameResponseTimeout); starts transmission via cm848_servicePciTransmit | review-function-readability reviewed 2026-11-11 - Readability High Accuracy Confidence Medium
 # Protection system functions
-0x0003af7c,cm848_applyProtectionSpeedLimitOverride
-0x0003afb8,cm848_calculateSecurityChecksum
-0x0003b030,cm848_processUdsSecurityService
-0x0003b910,cm848_processProtectionCounters
-0x0003bb28,cm848_selectProtectionOverrideMode
+0x0003af7c,cm848_latchPciIdleSpeedRequest,PCI RX[2] header 0x0E consumer: when payload byte 1 bit 7 is set and pci_receive_message_2_status has no timeout or error bits (& 0x3f) stores (byte & 0x7f) << 7 (16 rpm steps in 1/8 rpm) in pci_requested_idle_speed - otherwise keeps the old value (was cm848_applyProtectionSpeedLimitOverride) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium
+0x0003afb8,cm848_validatePciSecurityKey,Returns 1 when the key (param 2) equals the seed (param 1) XOR the pci_security_key_table words picked by its 4 nibbles XOR 0x1911 (or checksum_validation_step_counter is 0xFF) - else 0. Same algorithm and table as cm848_sciValidateSecurityKey (was cm848_calculateSecurityChecksum) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x0003b030,cm848_processPciDiagnosticRequest,PCI (J1850) diagnostic service (SAE J2190 style): request pci_receive_message_1 (header 24: module 0x10 or 0xFE / service / 5 data bytes) - reply pci_transmit_message_10 (header 26). Serves 0x20 0x27 0x28 0x29 0xA1 0xA4 / 0x11 0x22 7F xx 12 / rest 7F xx 11 (was cm848_processUdsSecurityService) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x0003b910,cm848_diagnoseClusterLampStatusMessage,Diagnoses PCI RX[4] 0x2D (cluster lamp status) every ~200 ms: receive errors (status & 0x3f) with PCI transmit on count to 200 (~40 s) and set slot 14 = P1652 / node 0x10 byte 2 bit 0x08 or 0x10 counts to 5 (~1 s) and sets slot 15 = P0381 wait to start lamp (was cm848_processProtectionCounters) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x0003bb28,cm848_updateSelectedGearFromShiftLever,PCI RX[5] header 0x37 consumer: shift lever -> transmission_selected_gear (J1939 SPN 524 coding) - lever 0 keeps the last gear / invalid message = 0xFF / drive follows transmission_type_cal and drops a gear while overdrive is off (switch 21 or above 270 F) (was cm848_selectProtectionOverrideMode) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x0003bd10,cm848_emptyStub10
-0x0003bd14,cm848_validateCalibrationAgainstEeprom
-0x0003be30,cm848_updateProtectionEnableFromInjectionState
-0x0003be90,cm848_processProtectionFaultFlags
-0x0003c018,cm848_checkSpeedDerivativeMode
-0x0003c044,cm848_buildPciTransmitMessage12StatusBits,Builds the PCI (J1850) TX[12] header 0x98 status byte: bit 0 = transmission_hot_flag (270 deg F) / bit 1 = transmission_overheat_flag (284 deg F) or engine_run_mode_flag / bit 4 = cleared while protection_condition_flags_t condition_flags_1 bit 2 or protection_condition_cleared_flag is set; any change of bits 0 or 4 sends the message at once (timer pushed past its 2816 interval) (was cm848_updateProtectionOverrideFlags) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
+0x0003bd14,cm848_latchAndCheckEngineOffTime,Once per power-up on the first valid PCI 0x42 frame: latches the engine-off time into engine_off_time_at_key_on / counts key cycles within 2 of the previous value (EEPROM mirror 0x3fee20 / 0x3fee22) / 16 in a row sets fault word 19 bit 4 (stuck - no DTC) (was cm848_validateCalibrationAgainstEeprom) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium
+0x0003be30,cm848_updateAirConditioningSwitchFromPci,If switch 13 has no hardware line (switch_input_13_hardware_line_cal = 0) sets switch 13 (switch_input_state_bits[1] bit 5) to PCI RX[10] 0x52 payload bit 7 while the message is valid (status & 0x3f = 0) - else clears it; likely the A/C request (was cm848_updateProtectionEnableFromInjectionState) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium
+0x0003be90,cm848_processPciRemoteFaultStatus,PCI RX[8] header 0x6C consumer: byte 4 bit 7 = MIL request (pci_received_mil_request_flag) / byte 4 bits 0-6 and bytes 2 3 5 set or clear fault word 25 bits 4 and 5 / an all-zero report drops fault slot 125 (P0720); timed out on this truck (was cm848_processProtectionFaultFlags) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium
+0x0003c018,cm848_decodePciReceiveMessage13State,Every 4th PCI application tick sets pci_receive_message_13_state_2_flag = (PCI RX[13] header 0x92 payload byte 1 & 7) = 2; no message-status check; the flag has no reader (was cm848_checkSpeedDerivativeMode) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x0003c044,cm848_buildPciTransmitMessage12StatusBits,Builds the PCI (J1850) TX[12] header 0x98 status byte: bit 0 = overdrive_off_flag (O/D OFF lamp) / bit 1 = transmission_overheat_flag (284 deg F) or torque_converter_slip_warning_flag (converter slip - likely the TRANS TEMP lamp) / bit 4 = 1 in high range - cleared while condition_flags_1 bit 2 (transfer case low range) or engine_to_vehicle_speed_ratio_high_flag is set; a change of bits 0 or 4 sends at once (timer pushed past its 2816 interval) (was cm848_updateProtectionOverrideFlags) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium
 0x0003c140,cm848_buildPciTransmitMessage18TransmissionTemperature,Builds the PCI (J1850) TX[18] header 0xEA payload: byte 1 = transmission_temperature_in_use in deg C + 40 (clamped at 255) (was cm848_convertProtectionTemperatureToScale) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
 0x0003c188,cm848_emptyStub11
-0x0003c18c,cm848_buildPciTransmitMessage4EngineLoadAndStatus,Builds the PCI (J1850) TX[4] header D1 03 payload: byte 1 engine load 0-255 (engine_load_percent x 255 / 25600 - the PCI database's unexplained fuel metric that reads 0 during decel fuel cut) / byte 2 status bits (bit 0 from emission / protection / sensor fault flags - bit 1 condition_monitor 0x2000 - bit 2 engine_diag_shadow_flags 0x2000) (was cm848_selectProtectionChannelMode) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
+0x0003c18c,cm848_buildPciTransmitMessage4EngineLoadAndStatus,Builds the PCI (J1850) TX[4] header D1 03 payload: byte 1 engine load 0-255 (engine_load_percent x 255 / 25600 - the PCI database's unexplained fuel metric that reads 0 during decel fuel cut) / byte 2 status bits (bit 0 from emission / protection / sensor fault flags - bit 1 condition_monitor 0x2000 - bit 2 fault_detected_bits_384_to_399 0x2000) (was cm848_selectProtectionChannelMode) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
 0x0003c26c,cm848_buildPciTransmitMessage0EngineSpeedAndVehicleSpeed,Builds the PCI (J1850) TX[0] header 0x10 payload: bytes 1-2 engine speed in 0.25 rpm (current_rpm / 2) / bytes 3-4 vehicle speed in 1/128 km/h (vehicle_speed x 206 / 256) / byte 5 intake manifold pressure in kPa (intake_manifold_pressure_in_use x 100 / 1856 clamped at 255 - the PCI database calls byte 5 engine load) (was cm848_processEngineRpmMonitoring) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
-0x0003c2f0,cm848_buildOutputChannelStatusWord
-0x0003c5f0,cm848_processProtectionStateChange
+0x0003c2f0,cm848_buildPciTransmitMessage2CruiseControlAndStatusBits,Builds PCI TX[2] 0x35: key valid / speed control on - override - engaged (from RX[3] 0x1A until the switches are learned) / auto or manual / request 4 or P1221-P1223 / water in fuel / OK to lock doors / brake / A/C off / in gear; sent at once on change (was cm848_buildOutputChannelStatusWord) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x0003c5f0,cm848_buildPciTransmitMessage5EngineWarningBits,Builds PCI (J1850) TX[5] header 0x53: byte 1 bit 5 = engine_warning_alert_flag / bit 4 = coolant_overheat_or_low_oil_pressure_flag / byte 2 = 0; when either flag changes it copies both bytes and sets the timer to 1002 (interval 1000 ms) to send at once (was cm848_processProtectionStateChange) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x0003c6b0,cm848_buildPciTransmitMessage11DistanceAndFuelUsed,Builds the PCI (J1850) TX[11] header 0x5D payload once per send (when pci_transmit_message_11_timer drops): byte 1 vehicle speed sensor pulses since the last send (the TPU-B channel PARAM1 low byte on the first send after the pulses resume) / bytes 2-3 fuel used since the last send = (fuel_quantity_active + fuel_quantity_trim) x passes x rpm x 3 / 768000 (3 injections per revolution) / bytes 4-5 a second fuel total from fuel_demand_computed x fuel_demand_scale_factor x passes x rpm x 12 / 282624000; probably the overhead console's trip computer source (was cm848_processProtectionTimingCounter) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
-0x0003c880,cm848_updateCbdThresholdState
-0x0003c8ec,cm848_buildPciTransmitMessage14VoltageOilPressureTemperatures,Builds the PCI (J1850) TX[14] header 0xC0 payload (cluster gauge values): byte 1 battery voltage in 1/16 V (battery_voltage_default_cal while battery_voltage_status_flags bit 1 or 5 is set) / byte 2 oil pressure in 4 kPa (oil_pressure_sensor_filtered - or engine_oil_pressure when engine_feature_enable_flags_cal bit 2 is set - x 100 / 7426) / byte 3 coolant temperature in deg C + 40 (coolant_temperature_in_use filtered into coolant_temp_filtered) / byte 4 protection_oilTemp_proxy in deg C + 40 (the PCI database calls byte 4 intake air temperature) (was hpcr_validateBatteryVoltageInput) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
+0x0003c880,cm848_buildPciTransmitMessage13FuelLevel,Builds PCI (J1850) TX[13] header 0xA4 byte 1 = fuel level in 1/2.55 percent (eeprom_shadow_header.calibration_block1[2]) - 0 while fault_reaction_request_bits is nonzero; timer kept at 1 (no send) until fuel_level_ready_flag then sent at once (1214) (was cm848_updateCbdThresholdState) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x0003c8ec,cm848_buildPciTransmitMessage14VoltageOilPressureTemperatures,Builds the PCI (J1850) TX[14] header 0xC0 payload (cluster gauge values): byte 1 battery voltage in 1/16 V (battery_voltage_default_cal while battery_voltage_status_flags bit 1 or 5 is set) / byte 2 oil pressure in 4 kPa (oil_pressure_sensor_filtered - or engine_oil_pressure when engine_feature_enable_flags_cal bit 2 is set - x 100 / 7426) / byte 3 coolant temperature in deg C + 40 (coolant_temperature_in_use filtered into coolant_temp_filtered) / byte 4 battery temperature (slot 69 battery_temperature_sensor_filtered) in deg C + 40 (was hpcr_validateBatteryVoltageInput) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium
 0x0003ca90,mpc555_initFuelDemandFilterPointers
-0x0003cab0,cm848_buildProtectionStatusByte
-0x0003cbd4,cm848_calculateProtectionUnitConversion
+0x0003cab0,cm848_buildPciTransmitMessage17FaultBits,Builds PCI (J1850) TX[17] D1 01 payload byte 2 from fault-detected bits: 0x01 coolant temperature sensor / 0x02 accelerator pedal sensor / 0x04 charging system / 0x08 charging voltage high / 0x10 A/C pressure sensor / 0x80 battery temperature sensor / keeps 0x60 (was cm848_buildProtectionStatusByte) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x0003cbd4,cm848_buildPciTransmitMessage16AirConditioningPressure,Builds PCI (J1850) TX[16] header 0xD2: bytes 1 / 2 / 4 = 0xFF / byte 3 = A/C high-side pressure in 2.03 psi (air_conditioning_pressure_sensor_filtered x 3847514 / 1e9) or 0xFF when sensor channel 71 is disabled and fault bits 384 and 385 are both set (was cm848_calculateProtectionUnitConversion) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x0003cc98,cm848_buildPciTransmitMessage15DistanceHighByte,Builds the PCI (J1850) TX[15] header 0xDF payload: byte 1 = lifetime_distance_pulses >> 22 (about 524 miles per count at 8000 pulses per mile) (was cm848_captureVehicleDistanceHighByte) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
 0x0003ccb4,cm848_calculateFuelDemandLimit
 0x0003cefc,cm848_trackFuelDemandMinimum
@@ -1259,7 +1260,7 @@ address,name
 0x0003e938,cm848_sciStartCallbackTimeout,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): sci_callback_timeout_countdown = 17 | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
 0x0003e948,cm848_sciCancelCallbackTimeout,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): sci_callback_timeout_countdown = 0 | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
 0x0003e958,cm848_sciInitDefaultCallback,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): sci_default_command_handler = cm848_dispatchSciCommand | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
-0x0003e96c,cm848_processSensorInputFiltering
+0x0003e96c,cm848_monitorConverterSlipAndFuelLimit,Automatic transmissions only: a fuel limit from a fuel-demand table (minimum in park/neutral) and the converter slip counter that sets torque_converter_slip_warning_flag (PCI 0x98 bit 1 - probably the TRANS TEMP lamp) (was cm848_processSensorInputFiltering) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium
 0x0003eca4,mpc555_initThermalProtectionFilters
 0x0003eccc,cm848_setThermalProtectionMode5
 0x0003ecdc,cm848_evaluateThermalProtectionActive
@@ -1271,9 +1272,9 @@ address,name
 0x0003f2b0,cm848_processThermalProtection
 0x0003f35c,cm848_applyThermalFuelLimit
 0x0003f38c,cm848_initThermalProtectionState
-0x0003f3f0,cm848_processEngineLoadData
+0x0003f3f0,cm848_selectTransmissionTemperatureInUse,Selects transmission_temperature_in_use: the sensor / with P0711-P0713 a coolant model (0.4375 x coolant + 87 deg F) / with coolant faults too a 180 deg F substitute; forces the sensor value while the raw QADC reading changes until it repeats 3 times (was cm848_processEngineLoadData) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x0003f6fc,cm848_resetEngineLoadTracker
-0x0003f734,cm848_processEngineLoadFilters
+0x0003f734,cm848_calculateTransmissionOutputSpeed,Computes transmission_output_speed_in_use_unfiltered (1/8 rpm) from the output speed sensor period - or from vehicle_speed x a learned or default ratio while P0720 has the sensor faulted - and its EMA transmission_output_speed_in_use (was cm848_processEngineLoadFilters) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x0003f9c4,cm848_initEngineLoadFilterState
 0x0003fa5c,mpc555_calculateTimerFrequencyConversion
 0x0003fad4,mpc555_initTpuBConfiguration
@@ -1575,7 +1576,7 @@ address,name
 0x0004ea40,cm848_setDatalinkSwitchStateIfPriority,(switch / priority): when switch_input_source_priority[switch] <= priority claims the switch at that priority and sets its bit in switch_input_datalink_state_bits (was cm848_setEngineCycleBitmapBitIfGreater) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
 0x0004ea84,cm848_clearDatalinkSwitchStateIfPriority,(switch / priority): when switch_input_source_priority[switch] <= priority claims the switch at that priority and clears its bit in switch_input_datalink_state_bits (was cm848_clearEngineCycleBitmapBitIfGreater) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
 0x0004eac8,cm848_readSwitchHardwareInput,(switch): reads the switch's hardware input line (switch_input_hardware_line_cal[switch]) with cm848_readDiscreteInputLine and applies its switch_input_polarity_bits_cal bit (was cm848_checkProtectionWarningBitState) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
-0x0004eb48,cm848_scanAndDebounceSwitchInputs,32 logical switch inputs: datalink-sourced switches (switch_input_datalink_source_bits_cal) take switch_input_datalink_state_bits / hardware switches read their line from the input-line image at 0x40c0f8 XOR switch_input_polarity_bits_cal / switches with no line keep their software-set state; 4-sample debounce (all 4 set -> set / all 4 clear -> clear / else hold) into switch_input_state_bits; also counts MIOS1ER bit 15 falling edges into cold_start_crank_counter (was mpc555_updateEngineCycleOutputs) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
+0x0004eb48,cm848_scanAndDebounceSwitchInputs,32 logical switch inputs: datalink-sourced switches (switch_input_datalink_source_bits_cal) take switch_input_datalink_state_bits / hardware switches read their line from the input-line image at 0x40c0f8 XOR switch_input_polarity_bits_cal / switches with no line keep their software-set state; 4-sample debounce (all 4 set -> set / all 4 clear -> clear / else hold) into switch_input_state_bits; also counts MIOS1ER bit 15 falling edges into ignition_key_off_count (was mpc555_updateEngineCycleOutputs) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
 0x0004eeb8,hpcr_initProtectionAndOutputCycle
 0x0004ef24,cm848_setEngineProtectionFault
 0x0004ef74,cm848_clearProtectionFault
@@ -1823,7 +1824,7 @@ address,name
 0x0050ad1c,cm848_processJ1939AcceleratorInputs,J1939 accelerator input task (from cm848_periodicTaskGroup18_calibration6): when j1939_input_processing_enable_cal bit 10 is set runs the low idle switch (input 6) / idle switch pair and pedal position (input 7) processors then the same reserved_10 bit 2 / bit 0 summary and j1939_pedal_input_timeout_active_flag (was phase_group_a_performCalibrationUpdate) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
 0x0050ae5c,cm848_initJ1939InputProcessing,Start-up / exception reset of the J1939 input layer: idle switch debounce (previous state 0xFF and timer 100) / clears the data-error fault bit (reserved_10 bit 2) and j1939_accelerator_low_idle_switch_unavailable_flag / sets j1939_input_monitor_inhibit_flag (was cm848_initializeDiagnosticStateCounters) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
 0x0050aec0,governor_resetModeStateOnCondition
-0x0050af58,j1939_writeDiagMemory,Application CLIP diagnostic stack (PGN 61184): memory write worker (twin of boot cm848_writeDiagMemory): length cap 1764 / optional 10-byte auth trailer / region by uds_validateMemoryRegion - EEPROM (type 5) via cm848_queueEepromByteWrites or the RAM mirror / RAM (type 3) with the 0x3fd480 window protected | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+0x0050af58,j1939_writeDiagMemory,Application CLIP diagnostic stack (PGN 61184): memory write worker (twin of boot cm848_writeDiagMemory): length cap 1764 / optional 10-byte auth trailer / region by cm848_lookupApplicationMemoryRegionType - EEPROM (type 5) via cm848_queueEepromByteWrites or the RAM mirror / RAM (type 3) with the 0x3fd480 window protected | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
 0x0050b1b8,j1939_writeDiagMemoryByParameterId,Application CLIP diagnostic stack (PGN 61184): services 0x44 / 0x45 / 0x47 / 0x49 (via undefined stubs): resolves the parameter ID (0x539768; 8 = unknown) then j1939_writeDiagMemory at base + offset; twin of boot cm848_memoryWriteByParameterId | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
 0x0050b228,j1939_diagService68_memoryWriteByParameterId,Application CLIP diagnostic service handler registered with cm848_processJ1939DiagnosticRequest: service 0x44 - write by parameter ID (j1939_writeDiagMemoryByParameterId) | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence High
 0x0050b298,j1939_diagService69_memoryWriteByParameterIdExt,Application CLIP diagnostic service handler registered with cm848_processJ1939DiagnosticRequest: service 0x45 - write by parameter ID with a long length | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence High
@@ -1843,12 +1844,12 @@ address,name
 0x0050b98c,j1939_receivePgn65252Handler,J1939 receive handler registered with j1939_handlerInitializer for PGN 65252: unpacks the message into working RAM (signal globals at 0x40aaa9-0x40aabf / 0x3feaa6-0x3fead0 not yet named) | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Low
 0x0050b9d8,j1939_receivePgn65264Handler,J1939 receive handler registered with j1939_handlerInitializer for PGN 65264 (PTO): unpacks the message into working RAM (signal globals at 0x40aaa9-0x40aabf / 0x3feaa6-0x3fead0 not yet named) | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Medium
 0x0050bacc,j1939_receivePgn65265Handler,J1939 receive handler registered with j1939_handlerInitializer for PGN 65265 (CCVS - cruise control / vehicle speed): unpacks the message into working RAM (signal globals at 0x40aaa9-0x40aabf / 0x3feaa6-0x3fead0 not yet named) | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Medium
-0x0050bca0,cm848_tickJ1939InputSupervision,Ticks the J1939 input supervision: start-up delay (j1939_input_monitor_startup_timer / j1939_input_monitor_inhibit_flag after the cold-start phases) then counts every j1939_input_signal_timeouts slot down unless governor_derivative_active_flag is set (suspected DM13 suspend - unverified); also decrements governor_table_check_startup_delay (was phase_group_a_updateStartupTimer) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
+0x0050bca0,cm848_tickJ1939InputSupervision,Ticks the J1939 input supervision: start-up delay (j1939_input_monitor_startup_timer / j1939_input_monitor_inhibit_flag after the cold-start phases) then counts every j1939_input_signal_timeouts slot down unless j1939_dm13_fault_log_inhibit_flag is set (suspected DM13 suspend - unverified); also decrements governor_table_check_startup_delay (was phase_group_a_updateStartupTimer) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
 0x0050bdcc,j1939_pgn_handler_init_batch
 0x0050be6c,governor_calibSnapshot_rollingBuffer_update
 0x0050beec,governor_sourceData_init
 0x0050bff4,phase_group_a_setupETC1Controller
-0x0050c318,j1939_diagService65_getAddressByParameterId,Application CLIP diagnostic service handler registered with cm848_processJ1939DiagnosticRequest: service 0x41 - resolves a parameter ID (uds_conditionEvaluator) to an address | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Medium
+0x0050c318,j1939_diagService65_getAddressByParameterId,Application CLIP diagnostic service handler registered with cm848_processJ1939DiagnosticRequest: service 0x41 - resolves a parameter ID (cm848_lookupParameterIdAddress) to an address | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Medium
 0x0050c400,j1939_diag_request_41_handler
 0x0050c42c,j1939_readDiagMemoryAndRespond,Application CLIP diagnostic stack (PGN 61184): memory read + response (twin of boot cm848_diagMemoryReadHandler): response service from 0x53a330 (0x43->0x45 or 0x44 / 0x46->0x47 / 0x48->0x49 / 0x4A->0x4B / 0x4C->0x4D) on CAN ID 0xEF0000 to the requester; also called directly by the 0x4A / 0x4C stubs | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
 0x0050c5d0,j1939_readDiagMemoryByParameterId,Application CLIP diagnostic stack (PGN 61184): services 0x43 / 0x46 / 0x48 (via undefined stubs): resolves the parameter ID then j1939_readDiagMemoryAndRespond | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
@@ -1874,14 +1875,14 @@ address,name
 0x0050d60c,phase_group_a_triggerControllerUpdates
 0x0050d688,j1939_selectResponseBuffer
 0x0050d700,j1939_pgn_handler_init_ec00eb00
-0x0050d784,uds_validateMemoryRegion
+0x0050d784,cm848_lookupApplicationMemoryRegionType,Application twin of the boot cm848_lookupMemoryRegionType: type of the 0x53a33a region (7 x {start / end / type if STANDING_BY / else}) holding address..address+length-1: 4 ROM / 2 flash2 / 3 RAM to 0x40c26e / 0 RAM above / 5 EEPROM / 3 or 10 registers / 9 unmapped (was uds_validateMemoryRegion) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x0050d864,cm848_calculateAuxiliaryTorqueLimitFromEngineRPM
 0x0050da7c,fuel_demand_periodSnapshot_save
 0x0050daac,cm848_transitionEngineOperatingMode
 0x0050db88,cm848_initDroopModeStateVariables
 0x0050dba8,governor_computeSpeedTargetWithThermalCorrection
 0x0050dd10,cm848_initInterpolationStateCounters
-0x0050dd40,main_loop_validateDiagnosticChannels
+0x0050dd40,cm848_updateMilOnRequest,Sets the MIL request at 0x40af08: 1 while any of the 170 fault slots has fault_status_array bit 0x10 (the same test as OBD mode 1 PID 1 byte A bit 7) or diagnostic_suppress_flag is 1 / 0 when no slot has it and the flag is 0 (was main_loop_validateDiagnosticChannels) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x0050ddb4,diag_suppress_stateMachine
 0x0050de54,cm848_calculateEngineLoadPercentages,engine_load_percent = fuel_demand_computed above fuel_demand_base_offset over the full load axis (fuel_demand_load_axis) / engine_load_at_current_speed_percent = the same fuel over what is available at the current engine speed (it falls above the governor breakpoint) - both 1/256 percent (0x6400 = 100 - clamped at 0x7f80); the second is 100 percent in governor mode 12 (was cm848_adjustFuelDemandWithOffset) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
 0x0050e000,cm848_validateFuelDemandRelativeToTiming
@@ -1916,7 +1917,7 @@ address,name
 0x0051027c,phase_group_b_filterGovernorRpmSquaredMovingAverage
 0x005102d4,fuel_demand_boost_initialize
 0x005103ac,sensor_fault_safety_check
-0x00510520,protection_overtemp_monitor
+0x00510520,cm848_processOverdriveSwitchAndShift,Overdrive-off switch 21 toggle (overdrive_off_flag) and the 3-4 shift: sets logical output 17 (overdrive solenoid) on an upshift request / clears 17 and 18 for a 4-3 (shift schedule or cruise request / above 270 deg F / overdrive off) below 3100 output rpm (was protection_overtemp_monitor) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x00510978,protection_event_11_reset
 0x005109bc,sensorChannelTypeB_configInit_axis1
 0x00510a48,sensorChannelTypeB_update_axis1
@@ -1932,26 +1933,26 @@ address,name
 0x00510fa0,engine_protection_fuelMass_rpmCheck
 0x00511078,engine_protection_conditionCode_evaluate
 0x005118f8,hpcr_fuel_mode_state_transition
-0x0051193c,fuel_temp_protection_monitor
-0x00511b64,fuel_demand_timing_control
+0x0051193c,cm848_updateParkNeutralExitTorqueLimitWindow,Park/neutral exit torque limit timing (fuel_feature_control_flags bit 3): while switch 20 (park/neutral) is set with fuel demand 20-400 it loads the countdown from a transmission temperature table; once the switch clears the active flag is 1 until it runs out (was fuel_temp_protection_monitor) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x00511b64,cm848_updateParkNeutralFlagAndTsc1Activity,Sets transmission_park_or_neutral_flag from the ETC2 selected gear (0xfb / 0x7d) or - without ETC2 - the park/neutral switch 20 or transmission_selected_gear; then runs the TSC1 activity counter and its source-address list entries (was fuel_demand_timing_control) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium
 0x00511ea8,fuel_demand_timing_initialize
 0x00511ed4,protection_j1939_control_logic
 0x00512130,protection_enable_state_machine
 0x00512554,governor_fuel_mode_initialization
 0x005125f4,governor_cruise_coastButton_handler,Cruise switch-request state 2 (COAST button - confirmed live 2026-06-12) -> CRUISE_CONTROL_STATE: returns CRUISE_DECELERATE(3)/CRUISE_DECELERATE_2(5) via the holdoff countdown. Was governor_cruiseOverride_state2_handler.
-0x00512678,protection_control_state_check_1
+0x00512678,cm848_updateCruiseControlOnOffToggle,Returns the speed control ON/OFF state: flips it on each new ON/OFF press - 0 on P0580 / P0581 (fault_detected_bits_368_to_383 0x40 / 0x20) or P0500 (condition_monitor 0x2000) or before cold start reaches governor setpoint or while fault_reaction_request_bits is set (was protection_control_state_check_1) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x00512724,governor_cruise_baseState_get,Base CRUISE_CONTROL_STATE from override/enable flags: CRUISE_ACTIVE_HOLD(7) if override active; else CRUISE_STANDBY(8) if governor_fuel_enable_state set; else CRUISE_OFF(0). This is the FIRST write to cruise_control_state each cycle in cm848_periodicProtectionControl before the button handlers may overwrite it. Was governor_fuelMode_state_get.
 0x0051275c,governor_cruise_rpmRatio_ema
 0x005127d8,governor_cruise_speedError_integrate
 0x00512878,governor_cruise_resumeButton_handler,Cruise switch-request state 4 (RESUME/ACCEL button) -> CRUISE_CONTROL_STATE: override-off with fuel-enable set returns CRUISE_RESUME(2); held returns CRUISE_ACCELERATE(4)/CRUISE_ACCELERATE_2(6). Was governor_cruiseOverride_state4_handler.
-0x0051291c,governor_cruise_setButton_handler,Cruise switch-request state 3 (SET/COAST button) -> CRUISE_CONTROL_STATE: rising edge (state_b==3 && prev!=3) with cruise_speed_setpoint_adjusted>=cruise_speed_min_cal returns CRUISE_SET(1) to LATCH the setpoint; held returns CRUISE_DECELERATE(3). Was governor_cruiseOverride_state3_handler. NOTE the SET capture only runs when governor_cruise_fuelCorrection_inhibitCheck()==0.
+0x0051291c,governor_cruise_setButton_handler,Cruise switch-request state 3 (SET/COAST button) -> CRUISE_CONTROL_STATE: rising edge (state_b==3 && prev!=3) with cruise_speed_setpoint_adjusted>=cruise_speed_min_cal returns CRUISE_SET(1) to LATCH the setpoint; held returns CRUISE_DECELERATE(3). Was governor_cruiseOverride_state3_handler. NOTE the SET capture only runs when governor_cruise_deniedStatus_update()==0.
 0x005129b0,protection_control_state_check_2
-0x00512a60,governor_cruise_fuelCorrection_inhibitCheck
-0x00512e70,governor_cruise_engage_check,review-function-readability reviewed 2026-06-11 - Readability High Accuracy Confidence High - returns 1 when cruise may engage: cruise-switch ADC (chan 0x2f/47, or override) inside valid window AND governor_speed_request_state_b==0 AND _prev==5; caller sets j1939_cruise_engaged
+0x00512a60,governor_cruise_deniedStatus_update,Returns 1 when cruise is denied and stores the reason code 1-12 in cruise_control_denied_status (and in cruise_control_last_cutout_reason while engaged) - codes in the DRB S/C DENIED STATUS order (was governor_cruise_fuelCorrection_inhibitCheck) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x00512e70,governor_cruise_engage_check,review-function-readability reviewed 2026-06-11 - Readability High Accuracy Confidence High - returns 1 when cruise may engage: cruise-switch ADC (chan 0x2f/47, or override) inside valid window AND governor_speed_request_state_b==0 AND _prev==5; caller sets cruise_control_switches_learned_flag
 0x00512f18,governor_cruise_standbyState_get,Returns the CRUISE_CONTROL_STATE used when the button-override path is inhibited: CRUISE_STANDBY(8) if all engage conditions hold AND governor_fuel_enable_state!=0 else CRUISE_OFF(0). Legacy name governor_cruise_disengage_check was misleading - it is a state getter not a boolean check.
 0x00512ff4,cm848_periodicProtectionControl
-0x00513200,protection_fault_latch_update
-0x005134e8,protection_sensor_state_initialize
+0x00513200,cm848_updateEngineWarningFlags,Once per 40-phase main loop (200 ms derived): protection_fault_latch_flag = any of safety_bits_1 bits 9-12; coolant_overheat_or_low_oil_pressure_flag; a rising edge of one of five inputs loads engine_warning_alert_countdown that drives engine_warning_alert_flag (was protection_fault_latch_update) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x005134e8,cm848_initEngineWarningFlags,Clears engine_warning_alert_flag / coolant_overheat_or_low_oil_pressure_flag / engine_warning_alert_countdown (was protection_sensor_state_initialize) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x00513508,engine_coolantTemp_bucket_accumulate
 0x0051361c,engine_coolant_overheat_check
 0x0051375c,engine_sensor_check_overheat
@@ -1979,21 +1980,21 @@ address,name
 0x005161c0,tpu_rpm_measurement_initialize
 0x00516274,mpc555_tpuBChannel9InterruptHandler,TPU-B channel 9 interrupt (entry 9 of tpu_b_channel_interrupt_handler_table): converts the captured period at 0x304598 into tpu_rpm_reference_period (x1000000 / 0x4c4b4) and reloads tpu_rpm_startup_blank_countdown; was wrongly listed in deleted_functions.csv
 0x005162ec,tpu_rpm_timer_setup
-0x00516428,cm848_calibBlock1_adaptiveTrim_init
-0x00516454,cm848_calibBlock1_trim_eepromWrite
+0x00516428,cm848_initFuelLevelPowerUpCheck,Arms the once-per-power-up fuel level check: dwell counter = ROM 0x5b32e (0 here) / fuel_level_first_sample_flag = 1 / fuel_level_power_up_check_pending_flag = 0 (was cm848_calibBlock1_adaptiveTrim_init) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x00516454,cm848_qualifyFuelLevelSample,Returns 1 when the fuel level sample may be filtered (switch 0 on - apparently ignition - and fuel_level_unfiltered within 20 of the last sample); arms the power-up check on the first; engine_feature_enable_flags_cal bit 5 clear = copy the sensor instead (was cm848_calibBlock1_trim_eepromWrite) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium
 0x00516578,cm848_calibBlock1_counters_reset
-0x00516590,cm848_calibBlock1_inRange_debounce
-0x00516680,cm848_calibBlock1_trim_commit
-0x0051674c,cm848_calibBlock1_adaptiveTrim_update
+0x00516590,cm848_debounceFuelLevelSensorHighVoltage,After the first sample: raw fuel level ADC 766-1023 (beyond the table empty point at 720) for 320 samples sets fuel_level_sensor_high_voltage_flag / outside that band for 38 samples clears it (was cm848_calibBlock1_inRange_debounce) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x00516680,cm848_checkFuelLevelChangeAtPowerUp,Runs once per power-up while the check is pending: if fuel_level_unfiltered differs from the stored slow level by 63 or more (about 25 percent - e.g. after refuelling) all stored bytes and filters jump to it; then sets fuel_level_ready_flag (was cm848_calibBlock1_trim_commit) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x0051674c,cm848_filterFuelLevelFast,Fast fuel level filter: fuel_level_fast_filter (x 256) moves 3341/65536 of the way to fuel_level_unfiltered each run and stored byte [0] = filter / 256 (seeded from the sample when [0] is 0) (was cm848_calibBlock1_adaptiveTrim_update) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x00516834,cm848_calibBlock1_trimTimer_reset
-0x00516844,cm848_calibBlock1_learnedTrim_update
+0x00516844,cm848_filterFuelLevelSlow,Slow fuel level filter behind the 0xA4 broadcast: averages the fast filter into fuel_level_slow_filter with weight 12 after 76 runs at standstill or 376 while moving (moving samples 51 or more off the reference skipped); stored bytes [1] and [2] = result (was cm848_calibBlock1_learnedTrim_update) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x00516a10,cm848_calibBlock1_warmupFlag_reset
-0x00516a20,eeprom_calibration_load_initialize
-0x00516a94,cm848_calibBlock1_warmupFlag_update
-0x00516bb0,eeprom_calibration_load_periodic
+0x00516a20,cm848_initFuelLevelFilter,Boot-time fuel level init (called once from hpcr_exceptionHandler): resets the power-up check / high-voltage debounce / standstill timer / fault substitution and seeds the fast / slow / reference filters (x 256) from the EEPROM-mirror bytes [0] / [2] / [1] (was eeprom_calibration_load_initialize) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x00516a94,cm848_substituteFuelLevelOnSensorFault,Fuel level fault substitution: P0463 (fault bit 381) or the high-voltage flag sets broadcast byte [2] = 255 / P0462 (bit 382) alone = 0 and sets the substitution flag; when all clear bytes [1] and [2] restart from the fast level [0] (was cm848_calibBlock1_warmupFlag_update) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x00516bb0,cm848_updateFuelLevel,Main-loop fuel level task: every 4th pass runs cm848_qualifyFuelLevelSample and when it returns nonzero the high-voltage debounce / power-up check / fast filter / slow filter / fault substitution (was eeprom_calibration_load_periodic) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x00516c18,fuel_quantity_demand_monitor
 0x00516df8,fuel_quantity_demand_initialize
-0x00516e5c,protection_iat_oilTemp_initialize
+0x00516e5c,cm848_initIntakeAirHeaterControl,Reset-path init of the intake air heater (grid heater) control: clears output requests 43 / 44 (heater relays A / B - driver faults P0541 P0542 / P2607 P2608 - B only when governor_fuel_feature_flags bit 4 is clear) and zeroes its state and counters (was protection_iat_oilTemp_initialize) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x00516f9c,diag_iat_protectionLimit_calc
 0x00517120,diag_iat_protectionLimit_update
 0x0051736c,diag_iat_protection_rpmDerate_update
@@ -2003,34 +2004,34 @@ address,name
 0x00517a5c,diag_iat_protection_shutdownEvent
 0x00517b70,diag_iat_protection_stateMachine_update
 0x00517f48,battery_voltage_protection_control
-0x00518324,protection_oilTemp_source_resetInitFlag
-0x00518334,oilTemp_sensorSource_select
-0x005183b4,protection_oilTemp_source_update
-0x00518538,protection_diagnostics_periodic
+0x00518324,cm848_resetIntakeAirHeaterStartTemperatureCapture,Reset path (hpcr_exceptionHandler): clears intake_air_heater_start_temperature_captured_flag so the next cm848_updateIntakeAirHeaterAmbientTemperature captures a new start temperature (was protection_oilTemp_source_resetInitFlag) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x00518334,cm848_captureIntakeAirHeaterStartTemperature,One-shot (first cm848_updateIntakeAirHeaterAmbientTemperature run after reset): intake_air_heater_start_temperature = the converted intake manifold temperature reading when its raw ADC is inside the channel limits / else the coolant reading / else 0 F (ROM 0x5c7ac) (was oilTemp_sensorSource_select) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x005183b4,cm848_updateIntakeAirHeaterAmbientTemperature,Periodic if governor_fuel_feature_flags bit 0: captures the start temperature once / sets intake_air_heater_ambient_temperature = min(fuel temperature if configured else ambient air / battery temperature) - the healthy one on a fault - else start temperature (was protection_oilTemp_source_update) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium
+0x00518538,cm848_runPciMessageHandlers,PCI (J1850) application task every ~100 ms gated by engine_feature_enable_flags_cal bit 0x40 (the PCI link layer gate): runs the TX2-5 / TX11-18 builders and the RX2-5 / 8 / 10 / 13 / 14 consumers on every / even / odd / mod 4 / 6 / 12 / 14 passes of a 0-59 tick (was protection_diagnostics_periodic) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x00518680,cm848_processPciObdRequest,SAE J1979 OBD-II service on the PCI (J1850) bus - answers a request in pci_receive_message_0 (header 68 6A - requester address 0xF0-0xFD) with pci_transmit_message_8 (header 48 6B): mode 1 current data (PID 0 supported PIDs / 1 DTC count + MIL + monitor bytes / 4 engine load / 5 coolant temperature / 0x0B intake manifold pressure / 0x0C engine speed / 0x0D vehicle speed / 0x0F intake temperature = intake manifold temperature / 0x11 accelerator pedal / 0x1C OBD standard) / mode 2 the same PIDs from the freeze frame (+ PID 2 = the DTC that stored it) / modes 3 and 7 stored and pending DTCs three per frame from obd_dtc_code_table / mode 4 clears DTCs (only while cold_start_phase is CSP_CRANKING) / mode 9 VIN (5 frames) + calibration ID + CVN (was j1939_dm_message_processor - nothing in it is J1939) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
 0x005196f0,j1939_fault_processor_initialize
 0x0051972c,hpcr_periodicTaskGroup20_empty_stub
-0x00519730,j1939_dm1_faultList_transmit
-0x00519c64,j1939_communication_init
+0x00519730,cm848_buildPciTransmitMessage3MilAndDtcDisplay,Builds PCI TX[3] 0xB0 to the cluster: byte 1 bit 7 MIL (MIL request or RX[8] / forced on when stopped from builder tick 150) / bit 6 DTC display once key-off count is 2 past 0x3fce9e / bit 5 diag_suppress_active_flag if engine_sync_type_code 5100 / bytes 2-3 DTC (was j1939_dm1_faultList_transmit) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x00519c64,cm848_initPciTransmitMessage3State,Boot init of the PCI TX[3] 0xB0 builder state: copies the key-off count (0x3fdda8) into the DTC display baseline 0x3fce9e and clears the builder flags 0x3fcea1 (was j1939_communication_init) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x00519c84,protection_exception_event_35_init
 0x00519cc4,protection_ambient_qualification
 0x00519e2c,protection_fuel_demand_limiting
 0x00519ffc,protection_speed_limit_initialize
 0x0051a018,initDiagnosticShadowFlags
-0x0051a0a8,cm848_processEngineOilPressure,Engine oil pressure and the low-oil-pressure check (only when engine_feature_enable_flags_cal bit 2 is set): with a sensor engine_oil_pressure = oil_pressure_sensor_filtered minus barometric pressure; with oil_pressure_switch_only_cal set (this truck) it is an RPM-indexed model (table 0x3fceae + EMA) and the low-oil-pressure switch (switch 14) drives the fault; above low_oil_pressure_check_minimum_rpm a debounced low reading sets engine_diag_shadow_flags 0x200 + low_oil_pressure_active_flag + low_oil_pressure_derate_flag; a switch that never shows low pressure with the engine stopped sets j1939_receive_status_flags 0x20 (was governorGovernorTempCompute) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
+0x0051a0a8,cm848_processEngineOilPressure,Engine oil pressure and the low-oil-pressure check (only when engine_feature_enable_flags_cal bit 2 is set): with a sensor engine_oil_pressure = oil_pressure_sensor_filtered minus barometric pressure; with oil_pressure_switch_only_cal set (this truck) it is an RPM-indexed model (table 0x3fceae + EMA) and the low-oil-pressure switch (switch 14) drives the fault; above low_oil_pressure_check_minimum_rpm a debounced low reading sets fault_detected_bits_384_to_399 0x200 + low_oil_pressure_active_flag + low_oil_pressure_derate_flag; a switch that never shows low pressure with the engine stopped sets j1939_receive_status_flags 0x20 (was governorGovernorTempCompute) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
 0x0051a5f8,initGovernorTempTableParams
-0x0051a648,fuelTempTrimComputation
+0x0051a648,cm848_monitorEngineToVehicleSpeedRatio,Needs fuel_feature_control_flags bit 5 / EEPROM 0x3fd934 = 0 / engine running (unmet in this calibration): filters vehicle speed and engine rpm over vehicle speed (8 counts per rpm per mph); sets engine_to_vehicle_speed_ratio_high_flag over 300 rpm per mph under 44 mph (was fuelTempTrimComputation) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x0051a878,governorCruiseTimerManagement
 0x0051ab50,initFuelCorrectionTableParams
-0x0051ab70,j1939FaultStateUpdate
+0x0051ab70,cm848_monitorGovernorPressureSensorOffset,P1762 governor pressure sensor offset: in park/neutral (switch 20) at light throttle and 133-220 deg F governor_pressure must stay within 0-2650 (0-20.7 psi) else 0x3fe986 bit 5 is set after repeated trips (was j1939FaultStateUpdate) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x0051aecc,initHpcr_FaultCounters
-0x0051aef8,protectionColdStartControl
-0x0051b56c,protectionFuelTempDerate
-0x0051b978,initFuelTempDerateState
-0x0051b9a0,engine_targetRpmPerLoad_calc
+0x0051aef8,cm848_monitorGovernorPressureTracking,P1757 / P1756 governor pressure monitors (in gear at light throttle and 133-220 deg F): above 3 psi (384) with a 0 target at 0 mph / outside 29-44 psi (3712-5632) with a 33-40 psi target (4224-5120); sets 0x3fe9a4 bits 7 / 8 (was protectionColdStartControl) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x0051b56c,cm848_monitorParkNeutralSwitch,P0850 park/neutral switch (switch 20) check: fails when over 9 stopped run-up samples read in gear (start check) or 30 samples read park/neutral above 10 mph with the output shaft turning (driving check); result in park_neutral_switch_monitor_state / reserved_12 bit 4 (was protectionFuelTempDerate) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x0051b978,cm848_initParkNeutralSwitchMonitor,Clears park_neutral_switch_monitor_state / the start and driving check done flags (0x3fcef4 / 0x3fcef8) and park_neutral_switch_start_check_delay_count (was initFuelTempDerateState) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x0051b9a0,cm848_calculateEngineToOutputSpeedRatio,Returns engine_rpm_state_t.target_rpm (the EMA-filtered engine speed) x 256 / transmission_output_speed_in_use (256 = 1.00 / 0xffff when the output speed is 0 or on overflow) for the P1740 converter clutch and overdrive check (was engine_targetRpmPerLoad_calc) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x0051ba1c,cm848_pidIntegrator_accumulate
 0x0051ba6c,cm848_pidError_calc
-0x0051babc,protectionOutputAssembly
+0x0051babc,cm848_monitorConverterClutchAndOverdrivePerformance,P1740 converter clutch / overdrive solenoid performance: with output 18 on at steady fuel demand checks the engine / output ratio (186-266 in third / at most 186 with overdrive) and sets status word 0x3fe99a bit 15 after repeated misses (was protectionOutputAssembly) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium
 0x0051c2d0,initProtectionOutputFlags
 0x0051c2e4,cm848_throttlePosition_clamp_update
 0x0051c3d8,protectionPhaseGroupA_Init
@@ -2038,7 +2039,7 @@ address,name
 0x0051c6c8,cm848_throttleGain_loadBased_calc
 0x0051c948,cm848_throttleGain_velocityBased_calc
 0x0051c9f0,cm848_throttleGain_timedAccumulate_update
-0x0051cad4,protectionPhaseGroupA_Control
+0x0051cad4,cm848_controlGovernorPressureSolenoid,Governor pressure closed loop: governor_pressure from the sensor minus its zero / error to governor_pressure_target through the PID gain helpers / writes the solenoid duty and its 671 Hz period through the output driver table (was protectionPhaseGroupA_Control) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x0051cd88,initHpcr_HandlerRoutines
 0x0051ce14,cm848_sciLookupTable250Or252Address,SCI diagnostic link (the fuelDemand* family on QSMCM SCI1): table 250 (computed: cold-start fault timing log + fault RPM log) / table 252 (0x53a4b0); also used by the SCI 0x29 write path | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
 0x0051cf74,cm848_sciLookupEepromSettingAddress,SCI diagnostic link (the fuelDemand* family on QSMCM SCI1): (page 0/1/2 + ID) -> byte pointer inside eeprom_mirror (VIN / CMMNS string / settings; page 2 bit-addressed); also used by the SCI 0x27 write path (requires the unlocked security state) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
@@ -2075,7 +2076,7 @@ address,name
 0x00522a04,initCruiseStateVariables
 0x00522a30,diag_eepromFault_pendingStatus_update
 0x00522ab0,diag_faultRing_readPtr_sync
-0x00522b64,governorDataValidation
+0x00522b64,cm848_checkTransmissionTemperatureSensorPerformance,P0711 transmission fluid temperature rationality: after a soak (coolant under 9 F above slot 69 / engine-off time 200 or more) fails if the reading starts too hot or does not rise enough while driving; sets or clears fault word 18 bit 10; skips on P0712 / P0713 (was governorDataValidation) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x00523068,cm848_recordLifetimeDistanceEvery8Miles,Once lifetime_distance_pulses passes 1 mile: when lifetime_distance_pulses / 64000 (8-mile units) exceeds the newest entry of lifetime_distance_8_mile_record it advances lifetime_distance_8_mile_record_index (0-3) and stores the new value - a 4-entry ring at EEPROM 0x19ce that moves with the lifetime distance (201 202 203 200 = 1624 mi in the original dump) and that HP Tuners resets with it (was sensorChannelValidationIndex) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
 0x005230f4,initSensorTableIndexing
 0x00523148,cm848_updateTripAndLifetimeCounters,Trip and lifetime counters (when engine_feature_enable_flags_cal bit 13 is set - EEPROM 0x16a = 0x27EF here): a pending trip reset (SCI command 35) zeroes the trip set first; counts engine-run time and time at governed speed (governor mode 11 within +/-400 rpm of its target - probably idle); on each PCI 0x5D send adds the injected fuel since the last send (injected_fuel_running_total delta >> 12) and - with the vehicle moving - the speed sensor pulses (trip = the dword at 0x3fee28 / EEPROM 0x19a6 - it renders as ram0x003fee28 because the boot ROM's eeprom_shadow_header is defined over the same RAM) then recomputes trip_average_fuel_economy; each counter has an overflow bit in trip_and_lifetime_overflow_flags. HP Tuners zeroes all of them (was j1939FuelDemandProcessing) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
@@ -2083,16 +2084,16 @@ address,name
 0x00523760,sensorDiagnosticsConfiguration
 0x00523798,governorSpeedCompensation
 0x00523858,initGovernorSpeedControl
-0x0052390c,j1939_msgSlotM_switchInputBits_update
-0x00523a9c,j1939_msgSlotU_eepromPayload_toggle
-0x00523b5c,initGovernorModeControl
-0x00523ba4,j1939_sourceAddress_lookup
-0x00523bc4,j1939_checksum_xor_calc
-0x00523c00,sensor_checksum_calculate_composite
-0x00523c98,sensor_checksum_verify_session
-0x00523d38,j1939_msgSlotE_governorAuth_check
-0x00523e88,j1939_msgSlotE_eepromWrite_stage
-0x00523f60,governorModeTransitionControl
+0x0052390c,cm848_processImmobilizerStatusMessage,Per new valid PCI RX[12] 0xB1 frame: copies bits 0/1/4/5/6 to immobilizer_status_bits / sets authorization flag bit 3 / in CSP_CRANKING sets immobilizer_present_flag / bit 5 with bit 6 rising or bit 4 falling restarts the window and clears the fuel cut (was j1939_msgSlotM_switchInputBits_update) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x00523a9c,cm848_buildPciTransmitMessage9ImmobilizerSecretKey,Builds PCI TX[9] 4F 10 when its timer is idle: frame 1 = 01 + secret-key bytes 0-2 (0x3fee2c-0x3fee2e) / frame 2 = 02 + bytes 3-4 + 00 then clears immobilizer_secret_key_send_enable - puts the stored immobilizer secret key back on the bus (was j1939_msgSlotU_eepromPayload_toggle) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x00523b5c,cm848_resetImmobilizerHandshake,Resets the immobilizer handshake: immobilizer_expected_key = 0xFFFFFF and received key / wait counter / valid-key flag / secret-key frame toggle / fuel-cut flag = 0 - called at boot and by the periodic task while the key is off (was initGovernorModeControl) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x00523ba4,cm848_getVinCharacter,Returns VIN character n (1-based) = vehicle_vin_string[n - 1] - only caller cm848_calculateImmobilizerExpectedKey mixes characters 9 / 14 / 16 / 17 with the seed into the PCI 4F C0 expected key - nothing to do with J1939 source addresses (was j1939_sourceAddress_lookup) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x00523bc4,cm848_immobilizerKeyMixRound,one add / XOR mixing round over a 24-bit value and an 8-bit key byte - the core of the immobilizer seed and key derivation (was j1939_checksum_xor_calc) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x00523c00,cm848_calculateImmobilizerExpectedKey,Computes the expected immobilizer key: the 24-bit seed folded through cm848_immobilizerKeyMixRound with VIN characters 17 then 16 then 14 then 9 (1-based) - stores immobilizer_expected_key (was sensor_checksum_calculate_composite) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x00523c98,cm848_generateImmobilizerSeed,24-bit immobilizer seed: increments immobilizer_seed_counter then XORs mix(timebase / counter) with mix(fault_timing_snapshot / counter) - returns the fixed seed at 0x3fcfd0 if the word at 0x3fcfcd is nonzero and no diagnostic session (neither has a writer) (was sensor_checksum_verify_session) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x00523d38,cm848_processImmobilizerSeedAndKey,SKIM immobilizer handshake - command 0x80 makes a seed and the expected key from VIN chars 9/14/16/17 - command 0 checks the returned key and grants start (was j1939_msgSlotE_governorAuth_check) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x00523e88,cm848_storeImmobilizerSecretKey,Immobilizer commands 1 / 2 on PCI 4F C0: store the 5-byte secret key in the EEPROM mirror (command 1 = bytes 0-2 at 0x3fee2c / command 2 = bytes 3-4 at 0x3fee2f) then send a fresh seed on PCI 3F without recomputing the expected key (was j1939_msgSlotE_eepromWrite_stage) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x00523f60,cm848_runImmobilizerTask,Every 2nd pass flags VIN blank (word 21 bit 8 = P0630) / PCI 0x72 odometer 0 (bit 9); decodes new 0xB1 frames; with immobilizer_present_flag set: flags a blank secret key (bit 10 = P0633) / runs the 4F C0 handshake / cuts fuel when the window ends unauthorized (was governorModeTransitionControl) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x00524360,governorSpeedLimitTable
 0x00524594,governorOverrideSpeedControl
 0x005246b0,governorLoadMinimumUpdate
@@ -2110,12 +2111,12 @@ address,name
 0x00525de4,initCruiseConfirmFlags
 0x00525e54,protectionTimeoutControl
 0x005263a8,initGovernorJ1939Bypass
-0x00526414,cm848_calculateDrivetrainRatioFromGearRatio,J1939 automatic drivetrains above vehicle_speed_minimum while etc1_load_timer_active_flag is 1: drivetrain_ratio_raw = DAT_0040a2aa x 2048 / 1000 (a 0.001/bit gear ratio) capped at 0x7ffd (was fuelTempTrimUpperLimitCheck) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Low
+0x00526414,cm848_calculateDrivetrainRatioFromGearRatio,J1939 automatic drivetrains above vehicle_speed_minimum while etc2_gear_ratio_valid_flag is 1: drivetrain_ratio_raw = etc2_actual_gear_ratio x 2048 / 1000 (a 0.001/bit gear ratio) capped at 0x7ffd (was fuelTempTrimUpperLimitCheck) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Low
 0x005264d4,etcTransmissionModeControl
-0x00526560,cm848_calculateDrivetrainRatioFromVehicleSpeed,DRIVETRAIN_AUTO_J1939_ETC1 above vehicle_speed_minimum: drivetrain_ratio_raw = engine speed (engine_rpm_state.target_rpm) over the speed-sensor speed with the axle divisor picked by protection_control_licensed and switch 31; 0x7ffd when it cannot be computed (was cm848_fuel_temperature_trim_calculation) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
+0x00526560,cm848_calculateDrivetrainRatioFromVehicleSpeed,DRIVETRAIN_AUTO_J1939_ETC1 above vehicle_speed_minimum: drivetrain_ratio_raw = engine speed (engine_rpm_state.target_rpm) over the speed-sensor speed with the axle divisor picked by two_speed_axle_enable_cal and switch 31; 0x7ffd when it cannot be computed (was cm848_fuel_temperature_trim_calculation) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
 0x005266fc,cm848_calculateTransmissionRatioFromOutputShaft,DRIVETRAIN_AUTO_J1939_FULL above vehicle_speed_minimum: drivetrain_ratio_raw = engine speed x 2048 / average output shaft speed (0x7ffd when the shaft speed is 0) (was cm848_transmission_phase_group_a_calc) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
 0x005267e0,cm848_output_shaft_speed_save,jlaustill reviewed 2026-6-4 - naming makes since, hopefully accurate
-0x005267f4,cm848_calculateVehicleSpeedFromOutputShaft,jlaustill reviewed 2026-6-2 - reads better than before, but very low confidence | J1939 automatic drivetrain (DRIVETRAIN_AUTO_J1939_FULL): vehicle_speed_unfiltered = output_shaft_speed_current x 0x3c000 / axle divisor - protection_trim_divisor_cal (the second axle ratio) when protection_control_licensed and switch 31 are set else protection_trim_divisor_working - capped at vehicle_speed_maximum_from_output_shaft (150 mph) (was cm848_fuelTrimFromOutputShaftSpeed) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
+0x005267f4,cm848_calculateVehicleSpeedFromOutputShaft,jlaustill reviewed 2026-6-2 - reads better than before, but very low confidence | J1939 automatic drivetrain (DRIVETRAIN_AUTO_J1939_FULL): vehicle_speed_unfiltered = output_shaft_speed_current x 0x3c000 / axle divisor - protection_trim_divisor_cal (the second axle ratio) when two_speed_axle_enable_cal and switch 31 are set else protection_trim_divisor_working - capped at vehicle_speed_maximum_from_output_shaft (150 mph) (was cm848_fuelTrimFromOutputShaftSpeed) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
 0x005268e8,cm848_computeProtectionTrimDivisors
 0x00526924,cm848_detectVehicleSpeedSensorSignalLoss,Sets condition_monitor bit 13 (vehicle speed sensor fault) when the sensor reads 0 while vehicle_speed is still above DAT_0005c96c and engine_load_percent >= DAT_0005c970 (signal lost while moving under load); vehicle_speed_sensor_ok_flag mirrors the bit (was diag_fuelTempTrim_overtemp_check) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
 0x005269c0,diag_boostLoad_overtemp_monitor
@@ -2158,7 +2159,7 @@ address,name
 0x0052dcd0,cm848_initialization_group21_state
 0x0052dd28,cm848_initialization_group22_state
 0x0052dd64,diag_faultRing_pendingBit_update
-0x0052de14,cm848_calibration_group29_load
+0x0052de14,cm848_checkCoolantTemperatureSensorPerformance,P0116 coolant temperature rationality: after a soak (intake air under 10 F above slot 69 / engine-off time 480 or more) fails at once if coolant reads above 140 F with intake air below 80 F else watches coolant rise while running; fault word 25 bit 1 (was cm848_calibration_group29_load) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x0052e24c,cm848_initialization_group29_state
 0x0052e29c,cm848_calibration_group22_load
 0x0052eac8,cm848_initialization_group22_state_cont
@@ -2188,7 +2189,7 @@ address,name
 0x00530c54,fuel_injector_timing_interpolate
 0x00530d08,engine_protection_fuelCorrection_stateMachine
 0x005311e4,cm848_calibration_group26_load
-0x00531370,hpcr_calibration_group36_load_cont
+0x00531370,hpcr_checkRailPressureSensorBeforeStart,P0191 rail pressure sensor check after an engine-off time of 480 or more: in CSP_CRANKING (key on - not started) counts sensor voltage samples below 246 or above 573 (x 0.0012 V = 0.30 / 0.69 V); 20 or more fails (fault word 25 bit 14); skips on P0192 / P0193 (was hpcr_calibration_group36_load_cont) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x0053168c,cm848_initialization_group26_state
 0x005316ac,hpcr_calibration_group25_load_cont
 0x005318e8,cm848_initialization_group25_state_cont
@@ -2231,28 +2232,28 @@ address,name
 0x0053515c,diag_mainStateHandler
 0x00535270,diag_stateTransition
 0x00535344,cm848_initFaultManagement
-0x005353c8,engine_camSync_crossValidation_update
+0x005353c8,cm848_crossCheckTemperatureSensorsBeforeStart,In CSP_CRANKING (key on - not started) after an engine-off time of 480 or more compares coolant / intake air / slot 69 snapshots: an intake air outlier counts toward P0111 (fault word 22 bit 6) / a slot 69 outlier toward P0514 battery temperature (bit 7) (was engine_camSync_crossValidation_update) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x00535868,engine_camSync_validation_confirm
-0x00535964,engine_camSync_fuelTemp_validate
-0x00535b58,engine_camSync_oilTemp_validate
+0x00535964,cm848_checkBatteryTemperatureKeyOnRationality,Battery temperature key-on rationality (P0514) re-check from 1 mph once the cranking cross-check flagged the battery: counts samples over 27 F off key-on coolant and ambient while those agree within 10 F - 0x409fa4 = 0 makes the first sample a fail (was engine_camSync_fuelTemp_validate) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x00535b58,cm848_checkAmbientAirTemperatureKeyOnRationality,Ambient air temperature key-on rationality (P0071): with key-on coolant and battery temperatures within 10 F it passes when the ambient sample is within 20 F of both - fails (sets P0071) after 300 cycles above 25 mph still off - else aborts (state 4) (was engine_camSync_oilTemp_validate) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x00535d34,engine_perCylinder_faultDetection_update
 0x0053624c,hpcr_injectPressureDiagnostic
 0x00536638,cm848_initCommunication
 0x0053664c,cm848_initMemoryLayout
 0x0053665c,cm848_initDataStructures
-0x005366a0,engine_cssc_oilTemp_state_update
-0x005367bc,engine_cssc_oilTemp_verify
-0x005368a0,diag_faultRing_cssc_update
-0x00536958,cm848_auxiliarySensorTask
+0x005366a0,cm848_decideThermostatMonitorAtTargetTemperature,Thermostat monitor (P0128) decision when coolant reaches 170 F: pass (state 2 - clears P0128) if fuel used since start is below thermostat_monitor_maximum_fuel_to_pass - else abort (state 6) on the cold-soak / sensor checks - else fail (state 4 - sets P0128) (was engine_cssc_oilTemp_state_update) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x005367bc,cm848_decideThermostatMonitorBelowTargetTemperature,Thermostat monitor (P0128) decision when the warm-up budget runs out below the 170 F target: fail (state 4 - sets the P0128 bit) once the fuel used since start reaches thermostat_monitor_minimum_fuel_to_fail - else no decision (state 6) (was engine_cssc_oilTemp_verify) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x005368a0,cm848_completeThermostatMonitorReport,Once protection_monitor_shadow bit 0 (P0128) matches protection_monitor_shadow_snapshot: sets bit 14 of diagnostic_monitor_complete_bits (a per-monitor bit word) - clears bit 14 of fault_pending_flags or its _b twin - moves thermostat_monitor_state 2 -> 3 or 4 -> 5 (was diag_faultRing_cssc_update) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium
+0x00536958,cm848_runThermostatMonitor,OBD-II thermostat monitor (P0128): one start test at the first governed-speed run (coolant 20-130 F) - a load-weighted test timer - decides on fuel used at 170 F or timer expiry - blocks a fail if coolant started over battery + 10 F / on P0116 or battery sensor faults (was cm848_auxiliarySensorTask) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x00536e30,engine_cssc_counters_reset
 0x00536e4c,hpcr_injectSystemDiagnostic
 0x005371f4,cm848_initTimerInterrupts
-0x0053729c,cm848_initCommunicationState
-0x005372c4,hpcr_fuelPressureControl
+0x0053729c,cm848_initOverboostMonitor,Boot init: zeroes the overboost debounce 0x3fd268 / the boost-band debounce 0x3fd26a and the boost-band event and time counters 0x40ba6a / 0x40ba6c used by cm848_monitorOverboostAndHighLoadBoostBand (was cm848_initCommunicationState) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x005372c4,cm848_monitorOverboostAndHighLoadBoostBand,In governor mode 16 above 2200 rpm boost above 58 inHg (ROM 0x64566) for 25 passes sets protection_monitor_shadow bit 15 (P0234 overboost) - counting back down clears it; also counts high-load boost band events and time (0x40ba6a / 0x40ba6c) (was hpcr_fuelPressureControl) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x00537584,hpcr_fuelDemandProc
 0x00537944,cm848_initAdaptiveControl
-0x005379b4,cm848_initOilPressure
-0x005379d8,hpcr_oilPressureLimited
+0x005379b4,cm848_initWaterInFuelDistanceMonitor,Boot init: arms the water-in-fuel distance monitor (sets 0x3fd278 to 1) when switch 0 (switch_input_state_bits[0] bit 0) is set; runs once from the hpcr_exceptionHandler boot list (was cm848_initOilPressure) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x005379d8,cm848_monitorWaterInFuelDistance,While P2269 water in fuel (safety_bits_1 bit 8) is set integrates vehicle_speed into the EEPROM-mirror count 0x3feeb8 (36000 per count = 1/256 mile at 100 ms) - else zeroes it; at 128000 (500 miles) sets the P0169 bit 0x3fe99e bit 0 and stops; P2266 (bit 7) stops it (was hpcr_oilPressureLimited) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x00537acc,cm848_mainLoopDispatcher
 0x00537b50,sensorChannelConditionValidator
 0x00537c64,diag_faultMatch_outputCheck_update
@@ -2262,12 +2263,12 @@ address,name
 0x005389c4,uds_session_state_init
 0x00538a84,cm848_initProtectionModule
 0x00538c8c,diag_record_queue_add_entry
-0x00538d3c,cm848_phaseAProcessing
+0x00538d3c,cm848_runJ1939PeriodicTransmitQueues,10 ms J1939 periodic transmit scheduler (from cm848_phase_group_a_processing): when J1939 is enabled (0x3fd5b2 bit 3) runs queue 0 (20 entries at 0x3fd2e2) while the broadcast enable and DM13 bit 2 are set and queue 1 (10 at 0x3fd3aa) on bit 3 calling each due builder (was cm848_phaseAProcessing) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x00538eac,cm848_exceptionHandler
 0x00538eb0,j1939_handlerInitializer
-0x00538ef4,cm848_phaseACompletion
+0x00538ef4,cm848_dispatchJ1939ReceivedMessages,J1939 receive dispatcher: drains the CAN receive ring within a time budget - notes every DM13 (PF 0xDF) via cm848_onJ1939Dm13SeenOnBus / ignores PDU1 frames for other addresses / skips listed source addresses / calls the handler registered for the PGN (was cm848_phaseACompletion) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x00539190,cm848_j1939_system_init
-0x00539768,uds_conditionEvaluator
+0x00539768,cm848_lookupParameterIdAddress,Finds a 16-bit parameter ID in the {ID / address} table 0x53be38 (6-byte entries / hash index 0x53af76 = ID mod 1889) and stores its address in *param 2 (EEPROM 0x1000000-0x10008e7 -> RAM mirror unless cal_write_mode 0xEE and no boot fault). Returns 0 found / 1 unknown (was uds_conditionEvaluator) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x00539868,cm848_initCanHardware
 0x00539938,engine_protection_timer_sync
 0x00539a78,engine_start_completion_sequence
@@ -2304,7 +2305,7 @@ address,name
 0x00522224,cm848_sciCommand50ReportProtectionEventSpns,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): command 0x32 (50): reports protection event SPNs | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
 0x00522314,cm848_sciCommand51ReportActiveFaultSpns,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): command 0x33 (51): reports active fault SPNs | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
 0x0052242c,cm848_sciCommand52ReportFaultStatusBySpn,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): command 0x34 (52): SPN -> fault status (cm848_isFaultGroupStatusBitSet) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
-0x0051ef20,cm848_encodeGovernorFuelModeStatus,encodes governor_fuel_mode + cruise_control_state + governor_fuel_mode_d into the fuelDemand SCI status byte
+0x0051ef20,cm848_encodeGovernorFuelModeStatus,encodes cruise_control_denied_status + cruise_control_state + cruise_control_last_cutout_reason into the fuelDemand SCI status byte
 0x00521730,cm848_sciCommand39WriteEepromSettingCallback,SCI diagnostic link next-byte callback: command 39 EEPROM setting write (requires sci_security_state 1) | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Medium
 0x00521944,cm848_sciCommand40ReadEepromSettingCallback,SCI diagnostic link next-byte callback: command 40 EEPROM setting read | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Medium
 0x00521a9c,cm848_sciCommand41WriteTableValueCallback,SCI diagnostic link next-byte callback: command 41 table 250 / 252 value write | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Medium
@@ -2313,7 +2314,7 @@ address,name
 0x005224b0,cm848_isFaultGroupStatusBitSet,SCI diagnostic link (the fuelDemand* family on QSMCM SCI1): for SCI 0x34: finds the fault index row in ROM table 0x5b6e6 and returns that bit of the 32-bit word at 0x40aefe | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Low
 0x0052252c,cm848_sciCommand52ReportFaultStatusBySpnCallback,SCI diagnostic link next-byte callback: command 52 SPN -> fault status | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Medium
 0x00522674,cm848_sciValidateSecurityKey,SCI diagnostic link (the fuelDemand* family on QSMCM SCI1): SCI 0x2C key check: expected = seed XOR the 0x53abfe nibble-table entries for all 4 seed nibbles XOR 0x1911; match (or checksum_validation_step_counter 0xff) sets the key-ok flag | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
-0x00526ce4,cm848_vehicleSpeedSensorInterruptHandler,TPU-B channel 2 (vehicle speed sensor) interrupt - shared with MIOS flag 13: reloads vehicle_speed_pulse_timeout from vehicle_speed_pulse_timeout_reload / copies the measured period (PARAM4:PARAM5) into vehicle_speed_sensor_period / adds the pulse count to vehicle_speed_sensor_pulse_total (the DRIVETRAIN_MANUAL_TPU build re-arms the channel instead); then averages the crank period accumulators into protection_timeout_divisor (was mpc555_tpuBChannel2AndMiosFlag13InterruptHandler - restored from deleted_functions.csv) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
+0x00526ce4,cm848_vehicleSpeedSensorInterruptHandler,TPU-B channel 2 (vehicle speed sensor) interrupt - shared with MIOS flag 13: reloads vehicle_speed_pulse_timeout from vehicle_speed_pulse_timeout_reload / copies the measured period (PARAM4:PARAM5) into vehicle_speed_sensor_period / adds the pulse count to vehicle_speed_sensor_pulse_total (the DRIVETRAIN_MANUAL_TPU build re-arms the channel instead); then averages the crank period accumulators into drivetrain_ratio_engine_period_average (was mpc555_tpuBChannel2AndMiosFlag13InterruptHandler - restored from deleted_functions.csv) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
 0x0052731c,engine_injectionAngle_updateCutoutAndTimingDemand,Debounced cylinder-cutout evaluation (fault masks 0x55 / 0xaa per bank -> protection_fault_eval_input; can clear TPU-A channel 4 enable bit) then the per-cylinder timing demand: rate-limits injection_timing_demand_working and computes engine_timing_reference / cam_timing_reference_offset / engine_timing_delta with the cylinder trim | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
 0x00527938,engine_injectionAngle_accumulateInjectedFuel,injected_fuel_running_total += injection_fuel_quantity_snapshot - once per injection from the TPU-A channel 6 injection interrupt (was engine_injectionAngle_accumulateCrankPeriod) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
 0x005283d0,engine_injectionAngle_tpuChannel10CylinderEventHandler,TPU-A channel 10 interrupt: advances cylinder_event_index (wrapping at cylinder_event_count_max -> mpc555_evaluateProtectionSyncFaults) and starts the next injection-angle sequence (state 4 + schedule_crankValid when injection_tpu_timing_mode is 0x12 / else state 1 + schedule_crankInvalid). Was missing from every build | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium

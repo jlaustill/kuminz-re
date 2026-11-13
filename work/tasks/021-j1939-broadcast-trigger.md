@@ -130,6 +130,12 @@ Variable at 0x0040C04A. Name "output_enable_bitmap" was misleading:
 
 ### Governor Derivative Term Array (Three-Channel)
 
+> **Corrected 2026-11-13 (PR #46):** this is the J1939 **DM13** (stop / start broadcast) requester table, not a governor:
+> struct `j1939_dm13_requester_slot_t` (`broadcast_enable_flags` / `stop_broadcast_source_address` / `stop_broadcast_timer`),
+> slot 0 = `j1939_dm13_requester_slot_0`, slots 1-2 = `j1939_dm13_broadcast_enable_flags_1/2` + `j1939_dm13_stop_broadcast_timer_1/2`;
+> `cm848_updateGovernorTimers` is `cm848_tickJ1939Dm13Timers` and the handler is `cm848_processJ1939Dm13StopStartBroadcast`.
+> The original notes below keep the old names.
+
 `cm848_updateGovernorTimers` proves this is a stride-3 array:
 - `governor_derivative_term` (0x0040ADDC) — channel 0
 - `governor_derivative_term_1` (0x0040ADE2) — channel 1

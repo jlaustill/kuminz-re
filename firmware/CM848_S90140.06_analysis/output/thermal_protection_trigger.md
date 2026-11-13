@@ -1,5 +1,18 @@
 # CM848 Thermal Protection Trigger — what engages the `fuel_temp_trim_raw` protection loop
 
+> **SUPERSEDED (2026-11-13, PR #46) — there is no thermal protection loop here.** `fuel_temp_trim_raw` /
+> `fuel_temperature_trim` are the vehicle speed chain (`vehicle_speed`, 1/256 mph), and the gate threshold
+> `0x0005c2a0` is `idle_validation_fault_minimum_vehicle_speed` (10 mph — the idle validation fault debounce
+> P2121 / P2127 / P2128 only advances above it). The rest of the chain is the accelerator-pedal / switch-31 logic:
+> `cm848_checkSafetyConditionsForProtection` = `cm848_checkAcceleratorPedalSensorFaults`,
+> `protection_mode_enable_flag` = `accelerator_pedal_sensor_fault_hold_flag`, `cm848_processProtectionControlLogic`
+> = `cm848_updateSwitch31FromAcceleratorPedal` (the "protection_active" bit was logical switch 31 in
+> `switch_input_state_bits`), `cm848_fuelTrimFromOutputShaftSpeed` = `cm848_calculateVehicleSpeedFromOutputShaft`
+> (switch 31 picks the second axle ratio), `j1939_feature_enable_flags` = `j1939_feature_enable_flags_cal`,
+> `protection_fault_latch_update` = `cm848_updateEngineWarningFlags`, `j1939FaultStateUpdate` =
+> `cm848_monitorGovernorPressureSensorOffset`. Kept below for history; current picture in `firmware/CLAUDE.md`
+> (switch-input layer, vehicle speed).
+
 **Status:** investigation, 2026-06-03. Medium confidence on the loop structure; lower on the
 physical meaning of the modeled quantity (see Caveats).
 

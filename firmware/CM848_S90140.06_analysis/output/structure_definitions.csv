@@ -21,13 +21,14 @@ tsc1_payload_t,0x00302020,reserved,byte,4,Reserved bytes 4-7 per J1939-71,,needs
 # UDS Response Buffer - diagnostic response structure at 0x0040b492
 # Used by processUdsTransmitBuffer and related diagnostic handlers
 # Total size: 11 bytes (0x0040b492-0x0040b49c)
-uds_response_t,0x0040b492,source_address,byte,1,Destination address for J1939 response message,,verified
-uds_response_t,0x0040b492,service_id,byte,1,UDS service ID (0x67=SecAccess 0x7F=NegResp 0x60/0x68=Cummins),,verified
-uds_response_t,0x0040b492,subfunction,byte,1,UDS subfunction code for service routing,,verified
-uds_response_t,0x0040b492,error_code,byte,1,Negative response error code (0x11=serviceNotSupported 0x37=requiredTimeDelayNotExpired),,verified
-uds_response_t,0x0040b492,data_length,byte,1,Length of data payload in response,,verified
-uds_response_t,0x0040b492,data,byte,5,Variable response payload (security seeds etc),DAT_0040b497-0x49b,verified
-uds_response_t,0x0040b492,transmit_timer,word,2,This buffer is pci_transmit_message_table[10] (header 0x26 diagnostic response) and this word is its timer (sth): writing 1 queues the response on the PCI bus (was response_pending byte),,verified
+pci_diagnostic_response_t,0x0040b492,source_address,byte,1,Reply byte 1: the ECM's own PCI address (pci_ecm_address 0x10) - comment fix only: it is the responder not a J1939 destination,,verified
+pci_diagnostic_response_t,0x0040b492,response_service_id,byte,1,Reply byte 2: request service + 0x40 (60 / 67 / 68 / 69 / E1 / E4) or 0x7F for a negative reply (was service_id),,verified
+pci_diagnostic_response_t,0x0040b492,data_1,byte,1,Reply byte 3: sub-function echo (0x27: 1 or 2 / 0x28: request byte 3) / the refused service in a 7F reply / 0xA4 memory byte 1 / 0xA1 the byte written (was subfunction),,verified
+pci_diagnostic_response_t,0x0040b492,data_2,byte,1,Reply byte 4: the 7F reply code (0x11 / 0x12 / 0x33 / 0x35 / 0x36 / 0x37 / 0x40 / 0x42 / 0x52 / 0x90 / 0xC0) / seed high byte / 0xA4 memory byte 2 / 0x62 in the E1 reply (was error_code),,verified
+pci_diagnostic_response_t,0x0040b492,data_3,byte,1,Reply byte 5: seed low byte / 0xA4 memory byte 3 / otherwise 0 - never a length (was data_length),,verified
+pci_diagnostic_response_t,0x0040b492,data_4_to_7,byte,4,Reply bytes 6 on: element 0 = 0xA4 memory byte 4; elements 1-3 unused; element 4 (0x40b49b) is the TX[10] descriptor status byte (0x80 at init) - split into data_4_to_7 byte[4] + status (was data),DAT_0040b497-0x49b,verified
+pci_diagnostic_response_t,0x0040b492,status,byte,1,PCI TX[10] descriptor status byte (hpcr_initJ1939BufferValues writes 0x80 / cm848_completePciFrame ORs the completion bits in),,verified
+pci_diagnostic_response_t,0x0040b492,transmit_timer,word,2,This buffer is pci_transmit_message_table[10] (header 0x26 diagnostic response) and this word is its timer (sth): writing 1 queues the response on the PCI bus (was response_pending byte),,verified
 # Fuel Demand Control State - fuel demand calculation and rate limiting
 # Used by calculateFuelDemandValue and related fuel control functions
 # Total size: 28 bytes (0x0040a57a-0x0040a594)
@@ -51,7 +52,7 @@ fuel_demand_control_t,0x0040a57a,delta_filtered,word,2,Filtered fuel demand delt
 protection_condition_flags_t,0x0040b0e8,condition_eval,byte,1,Protection condition evaluation result,,verified
 protection_condition_flags_t,0x0040b0e8,condition_flags_1,byte,1,Protection condition flags set 1,,verified
 protection_condition_flags_t,0x0040b0e8,load_condition_flags,byte,1,Load-based protection condition flags,,verified
-protection_condition_flags_t,0x0040b0e8,overtemp_flags,byte,1,Overtemperature protection flags,,verified
+protection_condition_flags_t,0x0040b0e8,overdrive_control_flags,byte,1,bit 0 cruise 4-3 request / 1 cold lockout also checks the slot 69 temperature (config) / 2 overdrive-off switch released / 3 overdrive solenoid off / 5 overdrive off by switch / 6 overdrive locked out above 270 deg F / 7 overdrive locked out below 19.4 deg F (was overtemp_flags) (Medium confidence),,verified
 protection_condition_flags_t,0x0040b0e8,reserved_04,byte,1,Gap/reserved byte at offset 0x04,,needs_review
 protection_condition_flags_t,0x0040b0e8,condition_flags_3,byte,1,Protection condition flags set 3,,verified
 protection_condition_flags_t,0x0040b0e8,condition_flags_2,byte,1,Protection condition flags set 2,,verified
@@ -179,7 +180,7 @@ system_status_flags_t,0x003fe974,safety_bits_2,word,2,Safety condition bits set 
 system_status_flags_t,0x003fe974,sensor_diag,word,2,Sensor diagnostic flags,,verified
 system_status_flags_t,0x003fe974,lamp_status,word,2,Fault lamp status (MIL/warning),,verified
 system_status_flags_t,0x003fe974,emission_faults,word,2,Emission-related fault flags,,verified
-system_status_flags_t,0x003fe974,reserved_10,word,2,Gap (0x3fe984-0x3fe985),,needs_review
+system_status_flags_t,0x003fe974,fault_detected_bits_128_to_143,word,2,Word 8 of the fault-present bit array at 0x3fe974 (fault bit = word x 16 + bit): bit 0 any J1939 input timeout / bit 1 read by the J1939 pedal rate-limit check / bit 2 any J1939 input data error / bits 8-15 DTC slots 128-135 = P0883 P0882 P0974 P0973 P2770 P2769 P0588 P0587 (was reserved_10),,needs_review
 system_status_flags_t,0x003fe974,reserved_12,word,2,Gap (0x3fe986-0x3fe987),,needs_review
 system_status_flags_t,0x003fe974,system_faults,word,2,System fault flags,,verified
 system_status_flags_t,0x003fe974,reserved_16,word,2,Gap (0x3fe98a-0x3fe98f),,needs_review
@@ -747,9 +748,9 @@ scheduler_task_stat_t,0x0040be6a,overrun_count,word,2,Number of deadline overrun
 # Accessed via (&governor_derivative_term)[uVar1 * 3] with while (uVar1 < 3)
 # processGovernorControlMessage matches channels by identifier, updates derivative bits
 # processSecurityAccessRequest clears bits per channel
-governor_channel_t,0x0040addc,derivative_term,word,2,Governor derivative term bitmask (0xFFFF=inactive),,verified
-governor_channel_t,0x0040addc,channel_identifier,word,2,Channel ID for matching incoming governor commands,,verified
-governor_channel_t,0x0040addc,gain_schedule,word,2,Gain schedule countdown timer (0=expired),,verified
+j1939_dm13_requester_slot_t,0x0040addc,broadcast_enable_flags,word,2,Cummins DM13BRDn - broadcast enable flags requested by this source (0xFFFF = nothing suspended): DM13 stop (00) clears J1587 bit 0 / J1922 bit 1 / J1939 network 1 bits 2 3 7 and start (01) sets them; back to 0xFFFF when the stop broadcast timer expires (was derivative_term),,verified
+j1939_dm13_requester_slot_t,0x0040addc,stop_broadcast_source_address,word,2,Cummins STPBRDSn - J1939 source address of the device whose DM13 asked this ECM to stop broadcasting; matched against the source address of each received DM13 (was channel_identifier),,verified
+j1939_dm13_requester_slot_t,0x0040addc,stop_broadcast_timer,word,2,Cummins DM13BDTn (0.1 s): reloaded with j1939_dm13_stop_broadcast_time_limit_cal (60 = 6 s) by this source's stop or hold message (byte 4 hold signal 0 or 1) and counted down; 0 = free slot and its flags return to 0xFFFF (was gain_schedule),,verified
 
 # Protection Threshold Lookup Results - fuel demand and RPM-corrected protection thresholds
 # 2 consecutive sets at 0x0040a502, 10 bytes each (5 u16 fields per set, 20 bytes total)
@@ -868,7 +869,7 @@ etc1_governor_state_t,0x0040adf8,etc1_spn573_tc_lockup_disengage,word,2,1=ETC1 d
 etc1_governor_state_t,0x0040adf8,etc1_handler_initialized,word,2,1=ETC1 handler init complete,,verified
 etc1_governor_state_t,0x0040adf8,speed_control_target,word,2,Bitmask: bit0=mode1 active bit1=mode2 active bit2=torque active,,verified
 etc1_governor_state_t,0x0040adf8,etc1_spn574_shift_in_process,byte,1,1=coast/brake mode from ETC1 byte0 bits 0x30==0x10,,verified
-etc1_governor_state_t,0x0040adf8,etc1_address_filter,byte,1,Source address filter (0xFF=accept all),,verified
+etc1_governor_state_t,0x0040adf8,etc2_transmission_selected_gear,byte,1,J1939 ETC2 (PGN 61445) byte 1 = SPN 524 transmission selected gear - stored by the ETC2 handler at 0x22c5c when DLC is 8; 0xFF at init or when governor_timeout_countdown (ETC2 timeout) expires; 0xFB or 0x7D sets transmission_park_or_neutral_flag; RAM dump 0xFF (was etc1_address_filter),,verified
 etc1_governor_state_t,0x0040adf8,proprietary_offset_value,word,2,Proprietary PGN offset value,,needs_review
 etc1_governor_state_t,0x0040adf8,etc1_speed_error_timeout_flag,word,2,1=speed error timeout has fired,,verified
 etc1_governor_state_t,0x0040adf8,etc1_activation_confirm_timer,word,2,Countdown: loaded from config+6/+10 by gov mode; fires to confirm mode transition and log fault,,verified
@@ -1429,7 +1430,7 @@ mios1_isr_t,0x00306c00,EN,word,2,MIOS1 interrupt enable register (channel mask),
 # ==============================================================================
 diag_clear_flags_t,0x003fedfc,diag_response_write_count,byte,1,Diagnostic response write count pending,,best_guess
 diag_clear_flags_t,0x003fedfc,diag_eeprom_work_byte,byte,1,EEPROM channel scratch byte,,best_guess
-diag_clear_flags_t,0x003fedfc,fuel_temp_protection_ratio,word,2,Fuel temperature protection ratio,,best_guess
+diag_clear_flags_t,0x003fedfc,learned_output_speed_to_vehicle_speed_ratio,word,2,EEPROM-backed learned ratio = output shaft speed x 4096 / vehicle_speed (5141 = 40.2 rpm per mph) clamped 4480-6656; synthesizes the output shaft speed on sensor fault; 0x3fedfb bit 0 marks it learned (was fuel_temp_protection_ratio),,best_guess
 # ==============================================================================
 # Dual-axis lookup table dimension descriptor
 # Passed as first arg to cm848_dualAxisTableInterpolation to describe table size
