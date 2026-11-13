@@ -5920,7 +5920,7 @@ address,name,type,comment
 0x003fee9b,diag_suppress_request_flag,byte,set=1 by protection FSMs to request diag suppression
 0x003fd940,battery_voltage_protection_state_flags,byte,bit5 battery voltage protection active
 0x003fea68,injection_fault_shadow_snapshot,word,snapshot of injection_fault_shadow_flags for change detect
-0x003fee50,sensor_validation_accum_table,word,4-element sensor validation accumulators (array base)
+0x003fee50,lifetime_distance_8_mile_record,word,EEPROM 0x19ce: 4-entry ring of lifetime_distance_pulses / 64000 (8-mile units) written by cm848_recordLifetimeDistanceEvery8Miles (was sensor_validation_accum_table)
 0x003fce9e,j1939_dm1_crank_counter_prev,word,previous-cycle cold_start_crank_counter for DM1 crank detect
 0x003fcea2,j1939_dm1_cycle_tick,word,running tick for DM1 message scheduling (mod-10)
 0x003fda48,sensor_channel_enable_flags,word,NEVER-WRITTEN ROM; per-group channel enable bits (array base)
@@ -6756,7 +6756,7 @@ address,name,type,comment
 0x003fce78,protection_oilTemp_source_init_done_flag,byte,one-shot oil-temp source select guard
 0x003fcea8,protection_fuel_demand_ramp_locked_flag,word,protection fuel demand ramp converged/locked
 0x003fcf5e,governor_speed_limit_floor_countdown,word,countdown clearing governor speed limit floors
-0x003fcfb2,sensor_validation_accum_table_index,byte,index into sensor validation accum table (0-3)
+0x003fcfb2,lifetime_distance_8_mile_record_index,byte,Newest entry (0-3) of lifetime_distance_8_mile_record (was sensor_validation_accum_table_index)
 0x003fcfdb,sensor_checksum_session_counter,byte,nonce counter for sensor checksum session
 0x003fd293,crank_counter_mainloop_prev,word,prev cold_start_crank_counter (mainloop change detect)
 0x003fd5d4,j1939_input_processing_enable_cal,word,EEPROM-backed (EEPROM 0x152): bit 10 (0x400) enables the J1939 input layer (supervision tick plus both input tasks); 0x0000 in this calibration = the whole layer is off (was governor_calibration_phase_config_flags)

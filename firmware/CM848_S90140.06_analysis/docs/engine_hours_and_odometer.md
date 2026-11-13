@@ -28,6 +28,21 @@ be re-verified on the bench before being trusted — see
 | **Engine run time (engine-running s)** | *none*                     | `0x0111BC00` is **not a physical address** — unreachable via known services | **Blocked** (see dead end below) |
 | **PGN 0xFEE5 (Engine Hours/Revs)**     | **Does not exist in firmware** | —                                 | Ruled out        |
 
+> **Correction 2026-11-12 (PR #46, firmware + the four EEPROM dumps):** the ECM's own odometer is **not**
+> EEPROM `0xBD8`. The firmware's distance counters are `lifetime_distance_pulses` at **EEPROM 0x8ea** (u32,
+> speed-sensor pulses, 8000 per mile — the only source of PGN 0xFEE0 total distance), the trip copy at
+> **0x19a6**, and an every-8-miles record at **0x19ce** (4 × u16 = lifetime pulses / 64000, written by
+> `cm848_recordLifetimeDistanceEvery8Miles`). All three move together across the dumps and HP Tuners resets them
+> (1,630.6 → 181.1 → 0 → 0 mi; the 0x19ce record 1,624 → 176 → 8 → 8 mi). The u32 at `0xBD8` is **not
+> monotonic** (5,139.6 → 7,236.7 → 5,137.7 → 5,137.7 mi in dump order — the runtime counter at 0x30 proves the
+> order), and the firmware's direct accesses touch only its first byte, as a byte: the pending-fault count used by
+> the DM1 / DM4 / DM5 and fault-list code (27 accesses, all `lbz`/`stb`; nothing reads it as a 32-bit distance). `0x1A84` holds 0x0280 in every dump and sits past the
+> part of the EEPROM the app mirrors (0x0-0x1a3f). So `tools/update_odometer.sh` writes a fault byte plus three
+> unknown bytes and leaves the J1939 distance untouched. Restoring what an ELD reads means writing miles × 8000
+> to 0x8ea (and 0x19a6, and miles / 8 into the 0x19ce record) and fixing the block checksum (EEPROM 0x8ea-0x1a3d
+> vs 0x5c). Untested on the truck. Also: RAM `0x0040B150` is now `accelerator_pedal_position_in_use` (OBD-II
+> PID 0x11 reports it), so the 1.5 Hz "session counter" bench label below was likely a wrong address.
+
 ---
 
 ## Update 2026-06-07 — static re-analysis (post working-RAM naming campaign)
@@ -65,7 +80,7 @@ the 1.5 Hz tick:
 
 | Address | Campaign name (asm-derived) | This doc's bench label |
 |---------|------------------------------|------------------------|
-| `0x0040B150` | `protection_fuel_demand_snapshot` (written by sensor-buffer copy) | `session_time_counter` (1.5 Hz) |
+| `0x0040B150` | `accelerator_pedal_position_in_use` (was `protection_fuel_demand_snapshot`; written by the sensor-value copy; OBD-II PID 0x11) | `session_time_counter` (1.5 Hz) |
 | `0x0040B2C2` | `cold_start_injection_protection_flag` (bit7 protection cfg) | "copy of session_time_counter" |
 | `0x0040BDF6` | `sensor_channel102_raw` | "scatter write pointer" |
 

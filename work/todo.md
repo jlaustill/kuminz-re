@@ -30,3 +30,5 @@
 020 [ ] [all] Test coverage implementation - Catch2 for C++, Vitest for TypeScript, 6 phases by priority
 021 [?] [firmware/kuminz-cli] CM848D J1939 broadcast trigger - EF00 0x0a→0x07 (or 0x16 alone) — needs live truck test to verify broadcasts start
 022 [>] [firmware/oct] CM848D J1939 drive-by-wire — trace j1939_governor_config_flags gate, enable TSC1 speed control
+023 [ ] [firmware/tools] CM848D odometer restore — update_odometer.sh writes EEPROM 0xBD8 (a fault-count byte, not monotonic across dumps); retarget to lifetime 0x8ea + trip 0x19a6 + 8-mile ring 0x19ce + block checksum, then bench-verify PGN 65248 (PR #46)
+024 [ ] [firmware/truck] CM848D TRANS TEMP lamp — live-read sensor slot 103 (0x40bbbe) + PCI 0x98 status byte (0x40b409) with the lamp on to confirm the floating C2-29 theory (PR #46)

@@ -2076,7 +2076,7 @@ address,name
 0x00522a30,diag_eepromFault_pendingStatus_update
 0x00522ab0,diag_faultRing_readPtr_sync
 0x00522b64,governorDataValidation
-0x00523068,sensorChannelValidationIndex
+0x00523068,cm848_recordLifetimeDistanceEvery8Miles,Once lifetime_distance_pulses passes 1 mile: when lifetime_distance_pulses / 64000 (8-mile units) exceeds the newest entry of lifetime_distance_8_mile_record it advances lifetime_distance_8_mile_record_index (0-3) and stores the new value - a 4-entry ring at EEPROM 0x19ce that moves with the lifetime distance (201 202 203 200 = 1624 mi in the original dump) and that HP Tuners resets with it (was sensorChannelValidationIndex) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
 0x005230f4,initSensorTableIndexing
 0x00523148,cm848_updateTripAndLifetimeCounters,Trip and lifetime counters (when engine_feature_enable_flags_cal bit 13 is set - EEPROM 0x16a = 0x27EF here): a pending trip reset (SCI command 35) zeroes the trip set first; counts engine-run time and time at governed speed (governor mode 11 within +/-400 rpm of its target - probably idle); on each PCI 0x5D send adds the injected fuel since the last send (injected_fuel_running_total delta >> 12) and - with the vehicle moving - the speed sensor pulses (trip = the dword at 0x3fee28 / EEPROM 0x19a6 - it renders as ram0x003fee28 because the boot ROM's eeprom_shadow_header is defined over the same RAM) then recomputes trip_average_fuel_economy; each counter has an overflow bit in trip_and_lifetime_overflow_flags. HP Tuners zeroes all of them (was j1939FuelDemandProcessing) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
 0x00523750,initGovernorFlagsAux

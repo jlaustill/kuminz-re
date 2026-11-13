@@ -187,6 +187,11 @@ CAN ID for TSC1 → ECU: `0x0C000003` (priority 3, PGN 0, dest=ECU addr 0x00, sr
 
 ## Investigation Log
 
+### 2026-11-12 — PR #46 naming rounds (no DBW change)
+- EEC2 accelerator-pedal-over-J1939 is a dead end: the computed J1939 pedal value has no reader, so TSC1 stays the only J1939 fueling path.
+- Side findings that touch this task: `accelerator_pedal_position_in_use` (0x40b150, OBD-II PID 0x11), `engine_load_percent` / `engine_load_at_current_speed_percent` (`cm848_calculateEngineLoadPercentages`), and the sensor-slot table in `firmware/CLAUDE.md` (slot 13 = accelerator pedal).
+- New follow-up tasks 023 (odometer restore target) and 024 (TRANS TEMP lamp) were added to `work/todo.md`.
+
 ### 2026-05-26 — Phase 3 complete — full TSC1 dispatch path traced
 
 **Dispatch**: PGN 0 registered via `j1939_handlerInitializer(0, cm848_j1939DispatchAddressHandler)`.

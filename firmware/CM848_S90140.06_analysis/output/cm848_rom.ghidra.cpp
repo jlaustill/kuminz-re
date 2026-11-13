@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Nov 12 23:46:12 MST 2026
+// Generated: Thu Nov 12 23:59:11 MST 2026
 
 
 //
@@ -7368,7 +7368,7 @@ void main_loop(void)
     cm848_periodicTaskSet_sensors();
     cm848_periodicTaskGroup15_calibration4();
     cm848_periodicTaskGroup38_calibration17();
-    sensorChannelValidationIndex();
+    cm848_recordLifetimeDistanceEvery8Miles();
     main_loop_scheduler_phase = 0xe;
     break;
   case 0xe:
@@ -70178,25 +70178,25 @@ byte * cm848_sciLookupEepromSettingAddress(int param_1,uint param_2)
   case 0xf9:
     iVar3 = 4;
 LAB_0051d504:
-    pbVar1 = (byte *)((int)&sensor_validation_accum_table + iVar3);
+    pbVar1 = (byte *)((int)&lifetime_distance_8_mile_record + iVar3);
     uVar2 = 0;
     goto LAB_0051d5a4;
   case 0xfa:
     iVar3 = 4;
 LAB_0051d51c:
-    pbVar1 = (byte *)((int)&sensor_validation_accum_table + iVar3);
+    pbVar1 = (byte *)((int)&lifetime_distance_8_mile_record + iVar3);
     uVar2 = 1;
     goto LAB_0051d5a4;
   case 0xfb:
     iVar3 = 6;
 LAB_0051d534:
-    pbVar1 = (byte *)((int)&sensor_validation_accum_table + iVar3);
+    pbVar1 = (byte *)((int)&lifetime_distance_8_mile_record + iVar3);
     uVar2 = 0;
     goto LAB_0051d5a4;
   case 0xfc:
     iVar3 = 6;
 LAB_0051d54c:
-    pbVar1 = (byte *)((int)&sensor_validation_accum_table + iVar3);
+    pbVar1 = (byte *)((int)&lifetime_distance_8_mile_record + iVar3);
     uVar2 = 1;
 LAB_0051d5a4:
     return (byte *)((int)pbVar1 + (uVar2 & 0xffff));
@@ -72844,31 +72844,38 @@ void governorDataValidation(void)
 
 
 //
-// Function: sensorChannelValidationIndex @ 0x00523068
+// Function: cm848_recordLifetimeDistanceEvery8Miles @ 0x00523068
 //
 
-void sensorChannelValidationIndex(void)
+/* Once lifetime_distance_pulses passes 1 mile: when lifetime_distance_pulses / 64000 (8-mile units)
+   exceeds the newest entry of lifetime_distance_8_mile_record it advances
+   lifetime_distance_8_mile_record_index (0-3) and stores the new value - a 4-entry ring at EEPROM
+   0x19ce that moves with the lifetime distance (201 202 203 200 = 1624 mi in the original dump) and
+   that HP Tuners resets with it (was sensorChannelValidationIndex) | review-function-readability
+   reviewed 2026-11-12 - Readability Medium Accuracy Confidence High */
+
+void cm848_recordLifetimeDistanceEvery8Miles(void)
 
 {
   uint uVar1;
   uint uVar2;
   
   if (8000 < lifetime_distance_pulses) {
-    uVar1 = (uint)sensor_validation_accum_table_index;
-    if ((&sensor_validation_accum_table)[uVar1] < 0xffff) {
+    uVar1 = (uint)lifetime_distance_8_mile_record_index;
+    if ((&lifetime_distance_8_mile_record)[uVar1] < 0xffff) {
       uVar2 = lifetime_distance_pulses / 64000;
       if (0xffff < uVar2) {
         uVar2 = 0xffff;
       }
-      if ((&sensor_validation_accum_table)[uVar1] < uVar2) {
+      if ((&lifetime_distance_8_mile_record)[uVar1] < uVar2) {
         if (uVar1 < 3) {
           uVar1 = uVar1 + 1;
         }
         else {
           uVar1 = 0;
         }
-        sensor_validation_accum_table_index = (byte)uVar1;
-        (&sensor_validation_accum_table)[uVar1 & 0xff] = (word)uVar2;
+        lifetime_distance_8_mile_record_index = (byte)uVar1;
+        (&lifetime_distance_8_mile_record)[uVar1 & 0xff] = (word)uVar2;
       }
     }
   }
@@ -72890,12 +72897,12 @@ void initSensorTableIndexing(void)
   uVar2 = 1;
   uVar1 = 0;
   do {
-    if ((&sensor_validation_accum_table)[uVar1] < (&sensor_validation_accum_table)[uVar2]) {
+    if ((&lifetime_distance_8_mile_record)[uVar1] < (&lifetime_distance_8_mile_record)[uVar2]) {
       uVar1 = uVar2;
     }
     uVar2 = uVar2 + 1 & 0xff;
   } while (uVar2 < 4);
-  sensor_validation_accum_table_index = (byte)uVar1;
+  lifetime_distance_8_mile_record_index = (byte)uVar1;
   return;
 }
 
