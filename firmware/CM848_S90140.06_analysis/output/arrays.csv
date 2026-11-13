@@ -61,6 +61,7 @@ address,array_name,element_type,element_count,comment
 0x0005b57c,obd_dtc_code_table,word,170,OBD-II DTC code (BCD - e.g. 0x0524 = P0524 oil pressure too low) per fault slot; modes 2 / 3 / 7
 0x0005c7ca,obd_mode_9_message_counts,byte,2,OBD-II mode 9 message counts: [0] calibration ID / [1] CVN
 0x003fb3eb,pci_diagnostic_read_buffer,byte,4,PCI diagnostic memory read bytes
+0x003fdb30,diagnostic_service_dispatch_table,byte,100,Reflash-kernel diagnostic dispatch table: 20 packed 5-byte entries { byte service_id - void* handler } filled by cm848_registerDiagnosticService / scanned by cm848_dispatchDiagnosticService (count in diag_scan_step_counter)
 0x003fe05b,active_dtc_slot_list,byte,31,Fault slots active now (count in active_dtc_count)
 0x003fe07b,previously_active_dtc_slot_list,byte,31,Fault slots active before and now cleared (count in previously_active_dtc_count)
 0x0040b404,pci_receive_message_7_payload,byte,2,PCI RX[7] header 0x63 payload

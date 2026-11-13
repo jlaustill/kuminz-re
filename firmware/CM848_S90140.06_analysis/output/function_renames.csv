@@ -341,10 +341,11 @@ address,name
 0x00000340,cm848_copyBootKernelToRam,Boot ROM: copies the boot reflash kernel (ROM 0x3c30-0x7f60) to RAM 0x3f9800-0x3fdb30 so it can run while flash is programmed
 0x0000037c,cm848_registerStandardDiagServices
 0x000003ec,cm848_eepromProgressNotify
+0x00000420,cm848_diagServiceAcknowledgeNoOperation,Diagnostic service no-op (li r3 0; blr = returns 0 success): registered for services 11 / 16 / 24 in diagnostic_service_dispatch_table - accepts the request and does nothing
 0x00000428,mpc555_loadEepromCalibration
-0x000008d4,cm848_diagServiceDownloadCalibration
+0x000008d4,cm848_diagServiceDownloadCalibration,dispatched as diagnostic service 7 via diagnostic_service_dispatch_table (cm848_dispatchDiagnosticService) - not a dead function
 0x000008fc,mpc555_initEepromTransfer
-0x000009e4,mpc555_diagServiceInitEepromTransfer
+0x000009e4,mpc555_diagServiceInitEepromTransfer,dispatched as diagnostic service 2 via diagnostic_service_dispatch_table (cm848_dispatchDiagnosticService) - not a dead function
 0x00000a40,cm848_computeCrcCcitt
 0x00000b44,mpc555_updatePowerStateOutputs,Boot ROM (from mpc555_bootStateMachine): copies the MIOS1ER bit 15 input into ecu_power_state_flags.capability_flags bit 0 then drives SIU_SGPIODT1 bit 0x400 from flag bit 1 and the MIOS port bit 0x2000 from flag bit 4 (likely power-hold style outputs; exact pins unconfirmed) - was mpc555_updateCapabilityFlags | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
 0x00000be8,cm848_stubFunction1
@@ -365,18 +366,18 @@ address,name
 # Hardware initialization
 0x000016dc,cm848_initClockAndTimers
 0x0000183c,cm848_stubFunction2
-0x00001840,mpc555_diagService25_executeFunction
+0x00001840,mpc555_diagService25_executeFunction,dispatched as diagnostic service 25 via diagnostic_service_dispatch_table (cm848_dispatchDiagnosticService) - not a dead function
 0x0000191c,cm848_initService25Handler
 0x00001948,cm848_registerPgnResponseHandler
 0x0000198c,cm848_initDataBasedDiagServices,Boot path (reset -> mpc555_initDiagnosticSubsystem): registers boot reflash kernel memory-write services 0x44 / 0x45 / 0x4B / 0x4D with handlers at their RAM-copy addresses 0x3fb368 / 0x3fb3d8 / 0x3fb440 / 0x3fb4b8 (= ROM 0x5798 / 0x5808 / 0x5870 / 0x58e8). The arguments render as application variables because the running app reuses that RAM
-0x000019e8,cm848_diagService65_handler
+0x000019e8,cm848_diagService65_handler,dispatched as diagnostic service 65 via diagnostic_service_dispatch_table (cm848_dispatchDiagnosticService) - not a dead function
 0x00001ad0,cm848_registerService65Handler
 0x00001afc,cm848_registerMemoryReadServices
 0x00001b48,cm848_diagMemoryReadHandler
 0x00001cf8,cm848_diagMemoryReadWithBaseOffset
-0x00001d5c,cm848_diagService67_memoryReadOffset
-0x00001dc4,cm848_diagService74_memoryRead
-0x00001e30,cm848_diagService76_memoryReadExt
+0x00001d5c,cm848_diagService67_memoryReadOffset,dispatched as diagnostic service 67 via diagnostic_service_dispatch_table (cm848_dispatchDiagnosticService) - not a dead function
+0x00001dc4,cm848_diagService74_memoryRead,dispatched as diagnostic service 74 via diagnostic_service_dispatch_table (cm848_dispatchDiagnosticService) - not a dead function
+0x00001e30,cm848_diagService76_memoryReadExt,dispatched as diagnostic service 76 via diagnostic_service_dispatch_table (cm848_dispatchDiagnosticService) - not a dead function
 0x00001e94,mpc555_initDiagResponseHandlers
 0x00001ef8,cm848_diagSendResponseCode
 0x00001fa4,mpc555_processDiagnosticAndEepromRequests,review-function-readability reviewed 2026-06-10 - Readability Medium Accuracy Confidence High
@@ -391,10 +392,10 @@ address,name
 0x00002504,mpc555_systemInitialization
 0x00002694,mpc555_hardwareInitialization
 0x00002970,mpc555_initCanController
-0x00002a40,mpc555_initDiagnosticSubsystem
+0x00002a40,mpc555_initDiagnosticSubsystem,registers every diagnostic_service_dispatch_table entry at boot (services 2 7 11 16 24 25 65 67 68 69 74 75 76 77)
 0x00002b7c,cm848_clearRamRegions
 0x00002bc8,cm848_softReset
-0x00002c94,cm848_registerDiagnosticService
+0x00002c94,cm848_registerDiagnosticService,fills diagnostic_service_dispatch_table (entry = byte service_id + void* handler - max 20); returns true when full
 0x00002cd8,cm848_registerPgnEf00Handler
 0x00002d08,cm848_lookupEepromParameterAddress
 0x00002de4,cm848_handleEepromDiagnosticCallback
@@ -485,7 +486,7 @@ address,name
 0x00006bac,cm848_copyBytes,Byte copy (destination / source / count) - a plain memcpy used throughout the boot reflash kernel | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
 0x00006bdc,mpc555_runPeriodicInterruptTimerTick,Boot reflash kernel: on each PIT tick (PISCR flag): mpc555_tickTransferTimeoutAndRuntimeCounter then a 4-slot rotation - CAN slots run the CAN dispatcher + transport sessions (mode 0x81) / serial slots run the serial dispatcher (mode 0x82) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
 0x00006ca4,cm848_runBootKernelLoop,Boot reflash kernel: main loop entered from the boot loop when a reflash mode is set (0x81 CAN / 0x82 serial) and the EEPROM magic is 0x1d0a: flash state machine + serial poll + external watchdog + CAN transmit + PIT tick | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
-0x00006d24,cm848_dispatchDiagnosticService
+0x00006d24,cm848_dispatchDiagnosticService,scans diagnostic_service_dispatch_table for service_code - validates length/auth - calls the handler pointer (reflash memory read/write/download services)
 0x00006e1c,cm848_sendSerialDownloadStatusResponse,Boot reflash kernel: serial service 0x34 subfunction 0x11: reports download status (positive 0x74 with 0x78 pending or the latched status / else negative 0x7F) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
 0x00006eac,mpc555_sciHandleDownloadStart,Boot reflash kernel: serial service 0x34 subfunction 0x03: needs EEPROM magic 0x1d0a / latches start address + block length / checks the region (positive 0x73 or negative 0x74 illegal address) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
 0x00006f54,mpc555_sciHandleDownloadDataBlock,Boot reflash kernel: serial service 0x34 subfunction 0x10: writes a data block at start + bytes transferred by region (2 Bank-2 flash / 4 main flash via cm848_dataTransferBufferWrite mode 2 / 5 EEPROM) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
