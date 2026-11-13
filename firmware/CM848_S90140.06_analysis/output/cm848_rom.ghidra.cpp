@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Nov 12 23:20:35 MST 2026
+// Generated: Thu Nov 12 23:34:51 MST 2026
 
 
 //
@@ -7058,7 +7058,7 @@ void periodicTaskSet_fuelDemand(void)
 
 {
   cm848_fuelDemandCoordinator();
-  j1939FuelDemandProcessing();
+  cm848_updateTripAndLifetimeCounters();
   cm848_fuelDemand_periodic();
   hpcr_fuelDemandProc();
   return;
@@ -17203,7 +17203,7 @@ void cm848_clearDiagnosticState(void)
     fault_list_state_t_003fe11a.read_index = 0;
     fault_list_state_t_003fe11a.total_emission_faults = 0;
     emission_fault_overflow_flag = 0;
-    if (eeprom_saved_block <= (uint)sensor_validation_timeout_cal._0_1_ * 8000) {
+    if (lifetime_distance_pulses <= (uint)sensor_validation_timeout_cal._0_1_ * 8000) {
       diag_clear_flags_t_003fedfc.diag_response_write_count = 0;
       diag_clear_flags_t_003fedfc.diag_eeprom_work_byte = 0;
       protection_b_fault_active_flag = 0;
@@ -19049,7 +19049,7 @@ uint cm848_calculateEffectiveFuelLimit(void)
   if (fuel_demand_limit_input < uVar4) {
     uVar4 = (uint)fuel_demand_limit_input;
   }
-  if (((governor_system_config_flags & 0x800) == 0) || (governor_fuel_mode_command == 0x14)) {
+  if (((engine_feature_enable_flags_cal & 0x800) == 0) || (governor_fuel_mode_command == 0x14)) {
     uVar2 = fuel_trim_speed_filtered - uVar2;
     if (engine_operating_mode == 7) {
       governor_speed_scale_factor_snapshot = governor_speed_scale_factor;
@@ -23203,8 +23203,8 @@ void cm848_j1939HandlePgn65248VehicleDistance(void)
                        protection_freq_divisor_working * 0xc47400) / 64000000);
   j1939_pgn65248_field1_tx_dword = j1939_reverseByteOrder32(&local_10);
   local_10 = (undefined4)
-             (CONCAT44((int)((ulonglong)eeprom_saved_block * 0xc47400 >> 0x20),
-                       eeprom_saved_block * 0xc47400) / 0xdcd65000);
+             (CONCAT44((int)((ulonglong)lifetime_distance_pulses * 0xc47400 >> 0x20),
+                       lifetime_distance_pulses * 0xc47400) / 0xdcd65000);
   j1939_pgn65248_field2_tx_dword = j1939_reverseByteOrder32(&local_10);
   sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65248_tx_header);
   return;
@@ -25045,7 +25045,7 @@ void cm848_processEngineConfigSpeedControl(void)
 {
   word x_input;
   
-  if ((governor_system_config_flags & 0x100) != 0) {
+  if ((engine_feature_enable_flags_cal & 0x100) != 0) {
     x_input = cm848_calculateBoostPressure();
     injection_timing_demand_floor =
          cm848_dualAxisTableInterpolation(&injection_timing_interp_state_b,x_input,0xc4f2);
@@ -25677,7 +25677,7 @@ void cm848_processProtectionControlStateMachine(void)
   word wVar3;
   
   protection_control_state_flags = (protection_control_state_flags & 0x55555) * 2;
-  if ((governor_system_config_flags & 0x200) == 0) {
+  if ((engine_feature_enable_flags_cal & 0x200) == 0) {
     if ((switch_input_state_bits[3] & 0x80) != 0) {
       protection_control_state_flags = protection_control_state_flags | 1;
     }
@@ -25758,8 +25758,8 @@ LAB_0002b0f0:
     else if (((((fault_management_status_flags & 0x800) == 0) ||
               ((protection_control_state_flags & 0x10000) == 0)) &&
              ((protection_control_state_flags & 0x40000) == 0)) &&
-            ((((governor_system_config_flags & 0x400) == 0 || (fuel_correction_mode_flag != 0)) &&
-             (protection_override_active_flag._0_2_ != 1)))) {
+            ((((engine_feature_enable_flags_cal & 0x400) == 0 || (fuel_correction_mode_flag != 0))
+             && (protection_override_active_flag._0_2_ != 1)))) {
       protection_eval_state = 1;
       wVar3 = (&protection_rpm_reference_snapshot)[protection_eval_step_index];
 LAB_0002b88c:
@@ -25784,7 +25784,7 @@ LAB_0002b3d0:
               ((((fault_management_status_flags & 0x800) != 0 &&
                 ((protection_control_state_flags & 0x10000) != 0)) ||
                ((protection_control_state_flags & 0x40000) != 0)))))) ||
-            (((governor_system_config_flags & 0x400) != 0 && (fuel_correction_mode_flag == 0))))
+            (((engine_feature_enable_flags_cal & 0x400) != 0 && (fuel_correction_mode_flag == 0))))
     goto LAB_0002b5f4;
   }
   else if (protection_eval_state == 2) {
@@ -25808,12 +25808,12 @@ LAB_0002b3d0:
             ((fault_management_status_flags & 0x1000) == 0)) &&
            (((((protection_control_state_flags & 0x10000) == 0 ||
               ((fault_management_status_flags & 0x800) == 0)) &&
-             ((((governor_system_config_flags & 0x400) == 0 || (fuel_correction_mode_flag != 0)) &&
-              (((protection_control_state_flags & 0xc0) == 0x80 ||
-               (((((protection_control_state_flags & 0x300) == 0x200 ||
-                  ((protection_control_state_flags & 0xc00) == 0x800)) ||
-                 ((protection_control_state_flags & 800) == 0x100)) ||
-                ((protection_control_state_flags & 0xe0) == 0x40)))))))) &&
+             ((((engine_feature_enable_flags_cal & 0x400) == 0 || (fuel_correction_mode_flag != 0))
+              && (((protection_control_state_flags & 0xc0) == 0x80 ||
+                  (((((protection_control_state_flags & 0x300) == 0x200 ||
+                     ((protection_control_state_flags & 0xc00) == 0x800)) ||
+                    ((protection_control_state_flags & 800) == 0x100)) ||
+                   ((protection_control_state_flags & 0xe0) == 0x40)))))))) &&
             (protection_transition_block_flag == 0)))))))) {
         protection_eval_state = 3;
         wVar3 = protection_rpm_reference_b;
@@ -25851,9 +25851,9 @@ LAB_0002b3d0:
               (cold_start_phase == CSP_CRANKING)) ||
              ((cold_start_phase == CSP_ENGINE_STANDBY ||
               ((protection_control_state_flags & 0x40000) != 0)))) ||
-            (((governor_system_config_flags & 0x400) != 0 && (fuel_correction_mode_flag == 0)))) ||
-           ((protection_override_active_flag._0_2_ != 0 &&
-            ((protection_control_state_flags & 0x1000) == 0)))))))) goto LAB_0002b5f4;
+            (((engine_feature_enable_flags_cal & 0x400) != 0 && (fuel_correction_mode_flag == 0))))
+           || ((protection_override_active_flag._0_2_ != 0 &&
+               ((protection_control_state_flags & 0x1000) == 0)))))))) goto LAB_0002b5f4;
     }
     else {
       protection_eval_state = 0;
@@ -32443,7 +32443,7 @@ void cm848_processProtectionCoolantLookup(void)
   short sVar2;
   
   wVar1 = battery_voltage_prev;
-  if (((governor_system_config_flags & 1) != 0) &&
+  if (((engine_feature_enable_flags_cal & 1) != 0) &&
      (wVar1 = battery_voltage_correction_default_cal, battery_voltage_correction_enable_cal == 0)) {
     sVar2 = lookupTableInterpolation((table_interp_args_t *)&can_subsystem_init_state_a);
     wVar1 = sVar2 + battery_voltage_oil_temp_addend_cal;
@@ -32461,7 +32461,7 @@ void cm848_processProtectionCoolantLookup(void)
 void cm848_processProtectionVoltageOffset(void)
 
 {
-  if ((governor_system_config_flags & 1) != 0) {
+  if ((engine_feature_enable_flags_cal & 1) != 0) {
     battery_voltage_delta_snapshot = battery_voltage_delta;
     battery_voltage_delta = battery_voltage_prev - sensor_readings_t_0040baf2.battery_voltage;
     battery_voltage_filtered =
@@ -32483,7 +32483,7 @@ void cm848_processProtectionVoltageOffset(void)
 void cm848_dispatchProtectionOutputMode(void)
 
 {
-  if ((governor_system_config_flags & 1) != 0) {
+  if ((engine_feature_enable_flags_cal & 1) != 0) {
     cruise_prev_state_index = cruise_state_machine_index;
     cruise_state_machine_index = (*(code *)(&PTR_LAB_00057730)[cruise_state_machine_index])();
   }
@@ -32502,7 +32502,7 @@ void cm848_filterProtectionOutput(void)
   uint uVar1;
   uint uVar2;
   
-  if ((governor_system_config_flags & 1) != 0) {
+  if ((engine_feature_enable_flags_cal & 1) != 0) {
     cold_start_fuel_ema =
          (word)((int)((uint)cold_start_fuel_ema * (0x10000 - (uint)cold_start_fuel_ema_coeff_cal) +
                      (uint)protection_fuel_output_target * (uint)cold_start_fuel_ema_coeff_cal) /
@@ -32638,7 +32638,7 @@ void cm848_applyProtectionOutputDemand(void)
   word wVar2;
   dword dVar1;
   
-  if ((governor_system_config_flags & 1) != 0) {
+  if ((engine_feature_enable_flags_cal & 1) != 0) {
     if ((system_status_flags_t_003fe974.safety_bits_2 & 4) != 0) {
       protection_fuel_output_target = protection_fuel_output_safety_cal;
     }
@@ -33039,7 +33039,7 @@ void cm848_initProtectionFilterLimits(void)
 //
 
 /* WARNING: Unable to use type for symbol receive_interval */
-/* J1850 PCI message-timeout monitor (not J1939): gated on governor_system_config_flags bit 0x40;
+/* J1850 PCI message-timeout monitor (not J1939): gated on engine_feature_enable_flags_cal bit 0x40;
    ages every pci_transmit_message_table / pci_receive_message_table timer by 10 (interrupts masked
    via EID/EIE around each entry) and sets status bit 0x10 once timer exceeds interval +
    pci_message_timeout_grace; if every timed TX entry is overdue it raises link_event_code 7 |
@@ -33056,7 +33056,7 @@ void cm848_checkPciMessageTimeouts(void)
   ushort receive_interval;
   
   all_transmits_overdue = 1;
-  if ((governor_system_config_flags & 0x40) != 0) {
+  if ((engine_feature_enable_flags_cal & 0x40) != 0) {
     if (pci_normal_transmit_disabled == 0) {
       message_index = 0;
       if (pci_transmit_message_count != 0) {
@@ -33118,7 +33118,7 @@ void mpc555_triggerJ1939TransmitMessage(void)
   
   uVar1 = USIU_SIPEND._0_2_;
   USIU_SIPEND._0_2_ = uVar1 | 0x200;
-  if ((governor_system_config_flags & 0x40) != 0) {
+  if ((engine_feature_enable_flags_cal & 0x40) != 0) {
     pci_qspi_queue_result =
          cm848_queueQspiJob(&pci_controller_receive_job,(uint)pci_qspi_queue_priority);
   }
@@ -33708,7 +33708,7 @@ void cm848_servicePciTransmit(void)
   byte queue_priority;
   
   resend_requested = 0;
-  if ((governor_system_config_flags & 0x40) != 0) {
+  if ((engine_feature_enable_flags_cal & 0x40) != 0) {
     if (pci_link_state.link_event_code != 0) {
       resend_requested = cm848_handlePciLinkEvent();
       pci_link_state.link_event_code = 0;
@@ -34107,7 +34107,7 @@ void hpcr_initJ1939MessageTables(void)
     *puVar3 = 0;
     iVar7 = iVar7 + 1;
   } while (iVar7 < 4);
-  j1939_msg_slot_x_status = 0;
+  pci_transmit_message_15_payload = 0;
   iVar7 = 0;
   puVar3 = (undefined1 *)((int)&pci_transmit_message_15_timer + 1);
   do {
@@ -34481,7 +34481,7 @@ void cm848_schedulePciTransmit(void)
   dword payload_index;
   dword frame_index;
   
-  if (((pci_transmit_state == 4) && ((governor_system_config_flags & 0x40) != 0)) &&
+  if (((pci_transmit_state == 4) && ((engine_feature_enable_flags_cal & 0x40) != 0)) &&
      (pci_normal_transmit_disabled == 0)) {
     transmit_index = 0;
     if (pci_transmit_message_count != 0) {
@@ -35476,12 +35476,20 @@ void cm848_processProtectionStateChange(void)
 
 
 //
-// Function: cm848_processProtectionTimingCounter @ 0x0003c6b0
+// Function: cm848_buildPciTransmitMessage11DistanceAndFuelUsed @ 0x0003c6b0
 //
 
 /* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+/* Builds the PCI (J1850) TX[11] header 0x5D payload once per send (when
+   pci_transmit_message_11_timer drops): byte 1 vehicle speed sensor pulses since the last send (the
+   TPU-B channel PARAM1 low byte on the first send after the pulses resume) / bytes 2-3 fuel used
+   since the last send = (fuel_quantity_active + fuel_quantity_trim) x passes x rpm x 3 / 768000 (3
+   injections per revolution) / bytes 4-5 a second fuel total from fuel_demand_computed x
+   fuel_demand_scale_factor x passes x rpm x 12 / 282624000; probably the overhead console's trip
+   computer source (was cm848_processProtectionTimingCounter) | review-function-readability reviewed
+   2026-11-12 - Readability Medium Accuracy Confidence Medium */
 
-void cm848_processProtectionTimingCounter(void)
+void cm848_buildPciTransmitMessage11DistanceAndFuelUsed(void)
 
 {
   word wVar1;
@@ -35491,22 +35499,26 @@ void cm848_processProtectionTimingCounter(void)
   undefined2 local_1d;
   
   wVar1 = pci_transmit_message_11_timer;
-  injection_timing_cycle_counter = injection_timing_cycle_counter + 1;
+  pci_transmit_message_11_pass_count = pci_transmit_message_11_pass_count + 1;
   if (pci_transmit_message_11_timer < pci_transmit_message_11_timer_previous) {
-    if ((vehicle_speed_pulse_timeout == 0) && (injection_timing_done_snapshot != 0)) {
-      injection_timing_delta = (&tpu_b_mcr)[vehicle_speed_sensor_tpu_channel].PARAM1 & 0xff;
+    if ((vehicle_speed_pulse_timeout == 0) && (pci_transmit_message_11_pulse_timeout_previous != 0))
+    {
+      pci_transmit_message_11_distance_pulses =
+           (&tpu_b_mcr)[vehicle_speed_sensor_tpu_channel].PARAM1 & 0xff;
     }
-    else if (vehicle_speed_sensor_pulse_total < injection_timing_capture_prev) {
-      injection_timing_delta = vehicle_speed_sensor_pulse_total - injection_timing_capture_prev;
+    else if (vehicle_speed_sensor_pulse_total < pci_transmit_message_11_pulse_total_previous) {
+      pci_transmit_message_11_distance_pulses =
+           vehicle_speed_sensor_pulse_total - pci_transmit_message_11_pulse_total_previous;
     }
     else {
-      injection_timing_delta = vehicle_speed_sensor_pulse_total - injection_timing_capture_prev;
+      pci_transmit_message_11_distance_pulses =
+           vehicle_speed_sensor_pulse_total - pci_transmit_message_11_pulse_total_previous;
     }
-    local_20 = (byte)injection_timing_delta;
-    injection_timing_capture_prev = vehicle_speed_sensor_pulse_total;
-    injection_timing_done_snapshot = vehicle_speed_pulse_timeout;
-    uVar2 = (uint)injection_timing_cycle_counter * (uint)engine_rpm_state_t_0040b7ac.current_rpm * 3
-    ;
+    local_20 = (byte)pci_transmit_message_11_distance_pulses;
+    pci_transmit_message_11_pulse_total_previous = vehicle_speed_sensor_pulse_total;
+    pci_transmit_message_11_pulse_timeout_previous = vehicle_speed_pulse_timeout;
+    uVar2 = (uint)pci_transmit_message_11_pass_count * (uint)engine_rpm_state_t_0040b7ac.current_rpm
+            * 3;
     uVar2 = (uint)(CONCAT44((int)((ulonglong)((uint)fuel_quantity_active + (uint)fuel_quantity_trim)
                                   * (ulonglong)uVar2 >> 0x20),
                             ((uint)fuel_quantity_active + (uint)fuel_quantity_trim) * uVar2) /
@@ -35515,8 +35527,8 @@ void cm848_processProtectionTimingCounter(void)
       uVar2 = 0xffff;
     }
     local_1f = (short)uVar2;
-    uVar2 = (uint)injection_timing_cycle_counter * (uint)engine_rpm_state_t_0040b7ac.current_rpm *
-            0xc;
+    uVar2 = (uint)pci_transmit_message_11_pass_count * (uint)engine_rpm_state_t_0040b7ac.current_rpm
+            * 0xc;
     uVar2 = (uint)(CONCAT44((int)((ulonglong)
                                   ((uint)fuel_demand_computed * (uint)fuel_demand_scale_factor) *
                                   (ulonglong)uVar2 >> 0x20),
@@ -35526,11 +35538,11 @@ void cm848_processProtectionTimingCounter(void)
       uVar2 = 0xffff;
     }
     local_1d = (short)uVar2;
-    injection_timing_cycle_counter = 0;
-    fuel_temperature_trim_working = vehicle_speed;
+    pci_transmit_message_11_pass_count = 0;
+    pci_transmit_message_11_vehicle_speed_at_send = vehicle_speed;
     uVar2 = 0;
     do {
-      (&j1939_data_buffer_c)[uVar2] = (&local_20)[uVar2];
+      pci_transmit_message_11_payload[uVar2] = (&local_20)[uVar2];
       uVar2 = uVar2 + 1 & 0xff;
     } while (uVar2 < 5);
   }
@@ -35570,8 +35582,8 @@ void cm848_updateCbdThresholdState(void)
 /* Builds the PCI (J1850) TX[14] header 0xC0 payload (cluster gauge values): byte 1 battery voltage
    in 1/16 V (battery_voltage_default_cal while battery_voltage_status_flags bit 1 or 5 is set) /
    byte 2 oil pressure in 4 kPa (oil_pressure_sensor_filtered - or engine_oil_pressure when
-   governor_system_config_flags bit 2 is set - x 100 / 7426) / byte 3 coolant temperature in deg C +
-   40 (coolant_temperature_in_use filtered into coolant_temp_filtered) / byte 4
+   engine_feature_enable_flags_cal bit 2 is set - x 100 / 7426) / byte 3 coolant temperature in deg
+   C + 40 (coolant_temperature_in_use filtered into coolant_temp_filtered) / byte 4
    protection_oilTemp_proxy in deg C + 40 (the PCI database calls byte 4 intake air temperature)
    (was hpcr_validateBatteryVoltageInput) | review-function-readability reviewed 2026-11-12 -
    Readability Medium Accuracy Confidence Medium */
@@ -35593,7 +35605,7 @@ void cm848_buildPciTransmitMessage14VoltageOilPressureTemperatures(void)
     wVar4 = 0xff;
   }
   local_8[0] = (byte)wVar4;
-  if ((governor_system_config_flags & 4) == 0) {
+  if ((engine_feature_enable_flags_cal & 4) == 0) {
     pwVar1 = &oil_pressure_sensor_filtered;
   }
   else {
@@ -35714,13 +35726,17 @@ void cm848_calculateProtectionUnitConversion(void)
 
 
 //
-// Function: cm848_captureVehicleDistanceHighByte @ 0x0003cc98
+// Function: cm848_buildPciTransmitMessage15DistanceHighByte @ 0x0003cc98
 //
 
-void cm848_captureVehicleDistanceHighByte(void)
+/* Builds the PCI (J1850) TX[15] header 0xDF payload: byte 1 = lifetime_distance_pulses >> 22 (about
+   524 miles per count at 8000 pulses per mile) (was cm848_captureVehicleDistanceHighByte) |
+   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High */
+
+void cm848_buildPciTransmitMessage15DistanceHighByte(void)
 
 {
-  j1939_msg_slot_x_status = (byte)((eeprom_saved_block >> 6) >> 0x10);
+  pci_transmit_message_15_payload = (byte)((lifetime_distance_pulses >> 6) >> 0x10);
   return;
 }
 
@@ -36805,7 +36821,7 @@ void cm848_sciCommand35Callback(void)
           fuel_demand_cmd20_pending_flag = 1;
         }
         else if (cVar1 == '\x15') {
-          fuel_demand_cmd21_pending_flag = 1;
+          trip_counters_reset_pending_flag = 1;
         }
         (&sci_buffer)[sci_transmit_byte_count] = 0xf0;
         sci_transmit_byte_count = sci_transmit_byte_count + 1;
@@ -37099,7 +37115,7 @@ void cm848_evaluateThermalProtectionActive(void)
 
 {
   if (fuel_correction_active_flag == 0) {
-    if (((governor_system_config_flags & 0x1000) == 0) ||
+    if (((engine_feature_enable_flags_cal & 0x1000) == 0) ||
        ((vehicle_speed != 0 && (drivetrain_ratio < engine_temp_protection_threshold_cal)))) {
       torque_limit_active_flag = 0;
       if ((protection_feature_flags & 0x1000) != 0) {
@@ -37310,8 +37326,8 @@ void cm848_calculateThermalFuelLimit(void)
 void cm848_processThermalProtection(void)
 
 {
-  if ((((governor_system_config_flags & 0x1000) == 0) && ((protection_feature_flags & 0x1000) == 0))
-     || (fuel_correction_active_flag == 3)) {
+  if ((((engine_feature_enable_flags_cal & 0x1000) == 0) &&
+      ((protection_feature_flags & 0x1000) == 0)) || (fuel_correction_active_flag == 3)) {
     protection_fuel_min_source = 0x1700;
   }
   else {
@@ -38562,7 +38578,7 @@ void cm848_processProtectionSystemBit3(void)
     fuel_correction_enter_condition_flag = false;
   }
   if ((((fuel_demand_control_t_0040a57a.calculated == 0) &&
-       ((governor_fuel_active_flag == 0 || ((governor_system_config_flags & 0x8000) == 0)))) &&
+       ((governor_fuel_active_flag == 0 || ((engine_feature_enable_flags_cal & 0x8000) == 0)))) &&
       (((switch_input_state_bits[1] & 0x80) == 0 || ((governor_feature_config_word & 0x40) == 0))))
      && (((engine_idle_validation_flag == 1 || ((system_feature_config_flags & 0x4000) == 0)) ||
          (governor_mode_request_code == 2)))) {
@@ -38596,7 +38612,7 @@ void cm848_processProtectionSystemBit3(void)
     fuel_correction_exit_condition_flag = false;
   }
   if (((fuel_demand_control_t_0040a57a.calculated == 0) &&
-      ((governor_fuel_active_flag == 0 || ((governor_system_config_flags & 0x8000) == 0)))) &&
+      ((governor_fuel_active_flag == 0 || ((engine_feature_enable_flags_cal & 0x8000) == 0)))) &&
      (((switch_input_state_bits[1] & 0x80) == 0 || ((governor_feature_config_word & 0x40) == 0)))) {
     fuel_demand_idle_active_flag = false;
   }
@@ -38653,7 +38669,7 @@ void cm848_processProtectionSystemBit4(void)
     governor_load_percent_output = 100;
   }
   governor_load_percent_snapshot = governor_load_percent_output;
-  if (((governor_system_config_flags & 0x4000) != 0) &&
+  if (((engine_feature_enable_flags_cal & 0x4000) != 0) &&
      (((system_status_flags_t_003fe974.reserved_04 & 0x400) != 0 ||
       ((system_status_flags_t_003fe974.reserved_04 & 0x200) != 0)))) {
     governor_load_percent_snapshot = 0;
@@ -40729,7 +40745,7 @@ LAB_00045154:
       }
       crank_tooth_count_b = crank_tooth_count_b + 1;
     }
-    crank_sync_period_captured._0_2_ = crank_sync_period_snapshot;
+    crank_sync_period_captured._0_2_ = injection_fuel_quantity_snapshot;
   }
   if ((engine_crank_state_t_0040b80a.run_state == 3) &&
      ((short)cam_sync_position < (short)cam_sync_position_min)) {
@@ -44299,8 +44315,9 @@ void cm848_runEepromPageWrite(void)
 
 /* SPI serial EEPROM driver (QSPI PCS0; 25xx opcodes 3 READ / 2 WRITE / 6 write-enable / 5
    read-status): saves the checksummed EEPROM block back from the RAM mirror: page writes of 0x1154
-   bytes at EEPROM 0x8ea from eeprom_saved_block; the entry at 0x4c6d4 was a spurious split |
-   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+   bytes at EEPROM 0x8ea from lifetime_distance_pulses (the block start); the entry at 0x4c6d4 was a
+   spurious split | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy
+   Confidence High */
 
 void cm848_startEepromMirrorSave(void)
 
@@ -44312,7 +44329,7 @@ void cm848_startEepromMirrorSave(void)
   eeprom_mirror_checksum = 0;
   eeprom_page_write_address = 0x8ea;
   eeprom_page_write_remaining_bytes = 0x1154;
-  eeprom_page_write_source_pointer = (undefined *)&eeprom_saved_block;
+  eeprom_page_write_source_pointer = (undefined *)&lifetime_distance_pulses;
   cm848_runEepromPageWrite();
   return;
 }
@@ -63294,7 +63311,7 @@ void protection_exception_event_26_init(void)
 void engine_protection_fuelMass_rpmCheck(void)
 
 {
-  if (((governor_system_config_flags & 8) != 0) &&
+  if (((engine_feature_enable_flags_cal & 8) != 0) &&
      (protection_event26_rpm_high_gate_lower < engine_rpm_state_t_0040b7ac.current_rpm)) {
     if (j1939_tsc1_override_state.etc1_spn574_shift_in_process == 0) {
       protection_event26_tsc1_shift_debounce_count = 0;
@@ -63413,7 +63430,7 @@ void engine_protection_conditionCode_evaluate(void)
   }
   bVar3 = true;
   protection_event26_condition_code = 0xe;
-  if ((governor_system_config_flags & 8) == 0) {
+  if ((engine_feature_enable_flags_cal & 8) == 0) {
     protection_event26_condition_code = 1;
     if ((protection_enable_byte_34 & 0x40) != 0) {
       protection_event26_condition_code_b = 1;
@@ -65064,7 +65081,7 @@ void governor_fuel_limit_initialize(void)
 void governor_fuel_limit_update(void)
 
 {
-  if ((governor_system_config_flags & 2) == 0) {
+  if ((engine_feature_enable_flags_cal & 2) == 0) {
     cold_start_fuel_demand_ramp_output = 0x6400;
     cold_start_fuel_limit_reason_code = 0;
   }
@@ -66232,7 +66249,7 @@ undefined4 cm848_calibBlock1_trim_eepromWrite(void)
         safety_condition_active_flag._2_2_ = 0;
         calibBlock1_eeprom_write_pending_flag = 1;
       }
-      if ((governor_system_config_flags & 0x20) != 0) {
+      if ((engine_feature_enable_flags_cal & 0x20) != 0) {
         uVar1 = 1;
         goto LAB_0051656c;
       }
@@ -67312,8 +67329,8 @@ LAB_0051851c:
 void protection_diagnostics_periodic(void)
 
 {
-  if ((governor_system_config_flags & 0x40) != 0) {
-    cm848_processProtectionTimingCounter();
+  if ((engine_feature_enable_flags_cal & 0x40) != 0) {
+    cm848_buildPciTransmitMessage11DistanceAndFuelUsed();
     cm848_applyProtectionSpeedLimitOverride();
     j1939_dm1_faultList_transmit();
     hpcr_periodicTaskGroup20_empty_stub();
@@ -67343,7 +67360,7 @@ void protection_diagnostics_periodic(void)
       cm848_updateCbdThresholdState();
     }
     if ((uint)protection_diagnostics_periodic_tick % 0xc == 3) {
-      cm848_captureVehicleDistanceHighByte();
+      cm848_buildPciTransmitMessage15DistanceHighByte();
     }
     if ((uint)protection_diagnostics_periodic_tick % 0xe == 0) {
       cm848_calculateProtectionUnitConversion();
@@ -68259,8 +68276,8 @@ void initDiagnosticShadowFlags(void)
 // Function: cm848_processEngineOilPressure @ 0x0051a0a8
 //
 
-/* Engine oil pressure and the low-oil-pressure check (only when governor_system_config_flags bit 2
-   is set): with a sensor engine_oil_pressure = oil_pressure_sensor_filtered minus barometric
+/* Engine oil pressure and the low-oil-pressure check (only when engine_feature_enable_flags_cal bit
+   2 is set): with a sensor engine_oil_pressure = oil_pressure_sensor_filtered minus barometric
    pressure; with oil_pressure_switch_only_cal set (this truck) it is an RPM-indexed model (table
    0x3fceae + EMA) and the low-oil-pressure switch (switch 14) drives the fault; above
    low_oil_pressure_check_minimum_rpm a debounced low reading sets engine_diag_shadow_flags 0x200 +
@@ -68274,7 +68291,7 @@ void cm848_processEngineOilPressure(void)
 {
   uint uVar1;
   
-  if ((governor_system_config_flags & 4) == 0) {
+  if ((engine_feature_enable_flags_cal & 4) == 0) {
     return;
   }
   low_oil_pressure_debounce_limit = DAT_0005b4d4;
@@ -68472,16 +68489,16 @@ void governorCruiseTimerManagement(void)
   
   if (((fault_management_status_flags & 0x2000) != 0) && ((j1939_governor_feature_byte & 4) != 0)) {
     if (cold_start_phase != CSP_CRANKING) {
-      _sensor_validation_delta = eeprom_saved_block - DAT_003fee42;
+      _sensor_validation_delta = lifetime_distance_pulses - DAT_003fee42;
       governor_cruise_period_scale_factor =
            cm848_dualAxisTableInterpolation
                      (&DAT_003fced8,sensor_readings_t_0040baf2.coolant_temp,0xc80e);
       governor_cruise_period_accum =
            governor_cruise_period_accum +
            (int)(CONCAT44((int)((ulonglong)
-                                (crank_period_running_total - governor_cruise_crank_period_snapshot)
-                                * (ulonglong)(uint)governor_cruise_period_scale_factor >> 0x20),
-                          (crank_period_running_total - governor_cruise_crank_period_snapshot) *
+                                (injected_fuel_running_total - governor_cruise_crank_period_snapshot
+                                ) * (ulonglong)(uint)governor_cruise_period_scale_factor >> 0x20),
+                          (injected_fuel_running_total - governor_cruise_crank_period_snapshot) *
                           (uint)governor_cruise_period_scale_factor) / 100);
       if (0x8809a < governor_cruise_period_accum) {
         register0x0000002c = ram0x003fee36 + 1;
@@ -68513,12 +68530,12 @@ void governorCruiseTimerManagement(void)
       ram0x003fee36 = 0;
       sensor_init_retry_timer = 0;
       sensor_initialization_sequence_count._0_2_ = 0;
-      DAT_003fee42 = eeprom_saved_block;
+      DAT_003fee42 = lifetime_distance_pulses;
       DAT_0040ae5e = 0;
       j1939_feature_enable_cmd_flag = 0;
     }
   }
-  governor_cruise_crank_period_snapshot = crank_period_running_total;
+  governor_cruise_crank_period_snapshot = injected_fuel_running_total;
   return;
 }
 
@@ -72797,10 +72814,10 @@ void sensorChannelValidationIndex(void)
   uint uVar1;
   uint uVar2;
   
-  if (8000 < eeprom_saved_block) {
+  if (8000 < lifetime_distance_pulses) {
     uVar1 = (uint)sensor_validation_accum_table_index;
     if ((&sensor_validation_accum_table)[uVar1] < 0xffff) {
-      uVar2 = eeprom_saved_block / 64000;
+      uVar2 = lifetime_distance_pulses / 64000;
       if (0xffff < uVar2) {
         uVar2 = 0xffff;
       }
@@ -72846,179 +72863,186 @@ void initSensorTableIndexing(void)
 
 
 //
-// Function: j1939FuelDemandProcessing @ 0x00523148
+// Function: cm848_updateTripAndLifetimeCounters @ 0x00523148
 //
 
 /* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Trip and lifetime counters (when engine_feature_enable_flags_cal bit 13 is set - EEPROM 0x16a =
+   0x27EF here): a pending trip reset (SCI command 35) zeroes the trip set first; counts engine-run
+   time and time at governed speed (governor mode 11 within +/-400 rpm of its target - probably
+   idle); on each PCI 0x5D send adds the injected fuel since the last send
+   (injected_fuel_running_total delta >> 12) and - with the vehicle moving - the speed sensor pulses
+   (trip = the dword at 0x3fee28 / EEPROM 0x19a6 - it renders as ram0x003fee28 because the boot
+   ROM's eeprom_shadow_header is defined over the same RAM) then recomputes
+   trip_average_fuel_economy; each counter has an overflow bit in trip_and_lifetime_overflow_flags.
+   HP Tuners zeroes all of them (was j1939FuelDemandProcessing) | review-function-readability
+   reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium */
 
-void j1939FuelDemandProcessing(void)
+void cm848_updateTripAndLifetimeCounters(void)
 
 {
   uint uVar1;
   uint uVar2;
   
-  if ((governor_system_config_flags & 0x2000) != 0) {
-    if (fuel_demand_cmd21_pending_flag == 1) {
-      DAT_003fdd74 = 0;
+  if ((engine_feature_enable_flags_cal & 0x2000) != 0) {
+    if (trip_counters_reset_pending_flag == 1) {
+      trip_average_fuel_economy = 0;
       ram0x003fee28 = 0;
-      j1939_fuel_demand_tick_total = 0;
-      j1939_fuel_demand_tick_at_target_rpm = 0;
-      j1939_fuel_demand_time_at_target_rpm = 0;
-      j1939_fuel_demand_engine_on_time = 0;
-      j1939_fuel_demand_timing_flags = j1939_fuel_demand_timing_flags & 0xffcf;
-      j1939_fuel_demand_overflow_flags = j1939_fuel_demand_overflow_flags & 0xc3f7;
-      fuel_demand_cmd21_pending_flag = 0;
+      trip_fuel_used = 0;
+      trip_fuel_used_at_governed_speed = 0;
+      trip_time_at_governed_speed = 0;
+      trip_engine_run_time = 0;
+      trip_counter_status_flags = trip_counter_status_flags & 0xffcf;
+      trip_and_lifetime_overflow_flags = trip_and_lifetime_overflow_flags & 0xc3f7;
+      trip_counters_reset_pending_flag = 0;
     }
     uVar2 = (uint)engine_rpm_state_t_0040b7ac.current_rpm;
     if (((governor_fuel_demand_mode == 0xb) &&
         ((int)(governor_output_t_0040aec2.integrator._0_2_ - 400) <= (int)uVar2)) &&
        (uVar2 <= governor_output_t_0040aec2.integrator._0_2_ + 400)) {
-      j1939_fuel_demand_at_target_rpm_flag = 1;
+      engine_at_governed_speed_flag = 1;
     }
     else {
-      j1939_fuel_demand_at_target_rpm_flag = 0;
+      engine_at_governed_speed_flag = 0;
     }
     if (uVar2 != 0) {
-      if (j1939_fuel_demand_engine_on_time < 0xfffffffe) {
-        j1939_fuel_demand_engine_on_time = j1939_fuel_demand_engine_on_time + 1;
+      if (trip_engine_run_time < 0xfffffffe) {
+        trip_engine_run_time = trip_engine_run_time + 1;
       }
       else {
-        j1939_fuel_demand_overflow_flags = j1939_fuel_demand_overflow_flags | 0x400;
-        j1939_fuel_demand_engine_on_time = 0;
+        trip_and_lifetime_overflow_flags = trip_and_lifetime_overflow_flags | 0x400;
+        trip_engine_run_time = 0;
       }
-      if (ram0x003fee60 < 0xfffffffe) {
-        register0x0000007c = ram0x003fee60 + 1;
+      if (lifetime_engine_run_time < 0xfffffffe) {
+        lifetime_engine_run_time = lifetime_engine_run_time + 1;
       }
       else {
-        j1939_fuel_demand_overflow_flags = j1939_fuel_demand_overflow_flags | 0x10;
-        register0x0000007c = 0;
+        trip_and_lifetime_overflow_flags = trip_and_lifetime_overflow_flags | 0x10;
+        lifetime_engine_run_time = 0;
       }
     }
-    if (j1939_fuel_demand_at_target_rpm_flag == 1) {
-      if (_DAT_003fee5c < 0xfffffffe) {
-        _DAT_003fee5c = _DAT_003fee5c + 1;
+    if (engine_at_governed_speed_flag == 1) {
+      if (lifetime_time_at_governed_speed < 0xfffffffe) {
+        lifetime_time_at_governed_speed = lifetime_time_at_governed_speed + 1;
       }
       else {
-        j1939_fuel_demand_overflow_flags = j1939_fuel_demand_overflow_flags | 0x80;
-        _DAT_003fee5c = 0;
+        trip_and_lifetime_overflow_flags = trip_and_lifetime_overflow_flags | 0x80;
+        lifetime_time_at_governed_speed = 0;
       }
-      if (j1939_fuel_demand_time_at_target_rpm < 0xfffffffe) {
-        j1939_fuel_demand_time_at_target_rpm = j1939_fuel_demand_time_at_target_rpm + 1;
+      if (trip_time_at_governed_speed < 0xfffffffe) {
+        trip_time_at_governed_speed = trip_time_at_governed_speed + 1;
       }
       else {
-        j1939_fuel_demand_overflow_flags = j1939_fuel_demand_overflow_flags | 0x2000;
-        j1939_fuel_demand_time_at_target_rpm = 0;
+        trip_and_lifetime_overflow_flags = trip_and_lifetime_overflow_flags | 0x2000;
+        trip_time_at_governed_speed = 0;
       }
     }
-    if (pci_transmit_message_11_timer < pci_transmit_message_11_timer_previous_b) {
+    if (pci_transmit_message_11_timer < trip_counters_message_11_timer_previous) {
       if (uVar2 != 0) {
-        if (crank_period_running_total < j1939_fuel_demand_crank_period_prev) {
-          _j1939_fuel_demand_tick_remainder =
-               _j1939_fuel_demand_tick_remainder + crank_period_running_total +
-               (-1 - j1939_fuel_demand_crank_period_prev);
+        if (injected_fuel_running_total < injected_fuel_total_previous) {
+          injected_fuel_remainder =
+               injected_fuel_remainder + injected_fuel_running_total +
+               (-1 - injected_fuel_total_previous);
         }
         else {
-          _j1939_fuel_demand_tick_remainder =
-               _j1939_fuel_demand_tick_remainder +
-               (crank_period_running_total - j1939_fuel_demand_crank_period_prev);
+          injected_fuel_remainder =
+               injected_fuel_remainder +
+               (injected_fuel_running_total - injected_fuel_total_previous);
         }
-        if (_j1939_fuel_demand_tick_remainder < 0x1000) {
-          fuel_consumption_tick_increment = 0;
-        }
-        else {
-          fuel_consumption_tick_increment = _j1939_fuel_demand_tick_remainder >> 0xc;
-          _j1939_fuel_demand_tick_remainder = _j1939_fuel_demand_tick_remainder & 0xfff;
-        }
-        uVar1 = -fuel_consumption_tick_increment - 1;
-        if (j1939_fuel_demand_tick_total < uVar1) {
-          j1939_fuel_demand_tick_total =
-               j1939_fuel_demand_tick_total + fuel_consumption_tick_increment;
+        if (injected_fuel_remainder < 0x1000) {
+          fuel_used_increment = 0;
         }
         else {
-          j1939_fuel_demand_overflow_flags = j1939_fuel_demand_overflow_flags | 0x800;
-          j1939_fuel_demand_tick_total = 0;
+          fuel_used_increment = injected_fuel_remainder >> 0xc;
+          injected_fuel_remainder = injected_fuel_remainder & 0xfff;
         }
-        if (j1939_fuel_demand_tick_total_b < uVar1) {
-          j1939_fuel_demand_tick_total_b =
-               j1939_fuel_demand_tick_total_b + fuel_consumption_tick_increment;
+        uVar1 = -fuel_used_increment - 1;
+        if (trip_fuel_used < uVar1) {
+          trip_fuel_used = trip_fuel_used + fuel_used_increment;
         }
         else {
-          j1939_fuel_demand_overflow_flags = j1939_fuel_demand_overflow_flags | 0x20;
-          j1939_fuel_demand_tick_total_b = 0;
+          trip_and_lifetime_overflow_flags = trip_and_lifetime_overflow_flags | 0x800;
+          trip_fuel_used = 0;
         }
-        if (j1939_fuel_demand_at_target_rpm_flag == 1) {
-          if (j1939_fuel_demand_tick_at_target_rpm < uVar1) {
-            j1939_fuel_demand_tick_at_target_rpm =
-                 j1939_fuel_demand_tick_at_target_rpm + fuel_consumption_tick_increment;
+        if (lifetime_fuel_used < uVar1) {
+          lifetime_fuel_used = lifetime_fuel_used + fuel_used_increment;
+        }
+        else {
+          trip_and_lifetime_overflow_flags = trip_and_lifetime_overflow_flags | 0x20;
+          lifetime_fuel_used = 0;
+        }
+        if (engine_at_governed_speed_flag == 1) {
+          if (trip_fuel_used_at_governed_speed < uVar1) {
+            trip_fuel_used_at_governed_speed =
+                 trip_fuel_used_at_governed_speed + fuel_used_increment;
           }
           else {
-            j1939_fuel_demand_overflow_flags = j1939_fuel_demand_overflow_flags | 0x1000;
-            j1939_fuel_demand_tick_at_target_rpm = 0;
+            trip_and_lifetime_overflow_flags = trip_and_lifetime_overflow_flags | 0x1000;
+            trip_fuel_used_at_governed_speed = 0;
           }
-          if (j1939_fuel_demand_tick_at_target_rpm_b < uVar1) {
-            j1939_fuel_demand_tick_at_target_rpm_b =
-                 j1939_fuel_demand_tick_at_target_rpm_b + fuel_consumption_tick_increment;
+          if (lifetime_fuel_used_at_governed_speed < uVar1) {
+            lifetime_fuel_used_at_governed_speed =
+                 lifetime_fuel_used_at_governed_speed + fuel_used_increment;
           }
           else {
-            j1939_fuel_demand_overflow_flags = j1939_fuel_demand_overflow_flags | 0x40;
-            j1939_fuel_demand_tick_at_target_rpm_b = 0;
+            trip_and_lifetime_overflow_flags = trip_and_lifetime_overflow_flags | 0x40;
+            lifetime_fuel_used_at_governed_speed = 0;
           }
         }
-        j1939_fuel_demand_crank_period_prev = crank_period_running_total;
+        injected_fuel_total_previous = injected_fuel_running_total;
       }
       if ((vehicle_speed != 0) && (uVar2 != 0)) {
-        if ((vehicle_speed_pulse_timeout == 0) &&
-           (j1939_fuel_demand_injection_timing_done_prev != 0)) {
-          injection_timing_period_delta_raw =
+        if ((vehicle_speed_pulse_timeout == 0) && (trip_counter_pulse_timeout_previous != 0)) {
+          trip_counter_pulse_delta_raw =
                (&tpu_b_mcr)[vehicle_speed_sensor_tpu_channel].PARAM1 & 0xff;
         }
-        else if (vehicle_speed_sensor_pulse_total < j1939_fuel_demand_injection_timing_prev) {
-          injection_timing_period_delta_raw =
-               vehicle_speed_sensor_pulse_total - j1939_fuel_demand_injection_timing_prev;
+        else if (vehicle_speed_sensor_pulse_total < trip_counter_pulse_total_previous) {
+          trip_counter_pulse_delta_raw =
+               vehicle_speed_sensor_pulse_total - trip_counter_pulse_total_previous;
         }
         else {
-          injection_timing_period_delta_raw =
-               vehicle_speed_sensor_pulse_total - j1939_fuel_demand_injection_timing_prev;
+          trip_counter_pulse_delta_raw =
+               vehicle_speed_sensor_pulse_total - trip_counter_pulse_total_previous;
         }
-        injection_timing_period_delta = (dword)injection_timing_period_delta_raw;
-        j1939_fuel_demand_injection_timing_prev = vehicle_speed_sensor_pulse_total;
-        j1939_fuel_demand_injection_timing_done_prev = vehicle_speed_pulse_timeout;
+        trip_counter_pulse_delta = (dword)trip_counter_pulse_delta_raw;
+        trip_counter_pulse_total_previous = vehicle_speed_sensor_pulse_total;
+        trip_counter_pulse_timeout_previous = vehicle_speed_pulse_timeout;
         if (((system_status_flags_t_003fe974.condition_monitor & 0x2000) == 0) &&
            ((system_status_flags_t_003fe974.condition_monitor & 0x4000) == 0)) {
-          j1939_fuel_demand_timing_fault_count = 0;
+          distance_sensor_fault_count = 0;
         }
-        else if (DAT_00408d74 < j1939_fuel_demand_timing_fault_count) {
-          j1939_fuel_demand_timing_flags = j1939_fuel_demand_timing_flags | 0x12;
-        }
-        else {
-          j1939_fuel_demand_timing_fault_count = j1939_fuel_demand_timing_fault_count + 1;
-        }
-        if (ram0x003fee28 < -injection_timing_period_delta - 1) {
-          register0x00000074 = ram0x003fee28 + injection_timing_period_delta;
+        else if (DAT_00408d74 < distance_sensor_fault_count) {
+          trip_counter_status_flags = trip_counter_status_flags | 0x12;
         }
         else {
-          j1939_fuel_demand_timing_flags = j1939_fuel_demand_timing_flags | 0x20;
+          distance_sensor_fault_count = distance_sensor_fault_count + 1;
+        }
+        if (ram0x003fee28 < -trip_counter_pulse_delta - 1) {
+          register0x00000074 = ram0x003fee28 + trip_counter_pulse_delta;
+        }
+        else {
+          trip_counter_status_flags = trip_counter_status_flags | 0x20;
           register0x00000074 = 0;
         }
-        if (eeprom_saved_block < -injection_timing_period_delta - 1) {
-          eeprom_saved_block = eeprom_saved_block + injection_timing_period_delta;
+        if (lifetime_distance_pulses < -trip_counter_pulse_delta - 1) {
+          lifetime_distance_pulses = lifetime_distance_pulses + trip_counter_pulse_delta;
         }
         else {
-          j1939_fuel_demand_timing_flags = j1939_fuel_demand_timing_flags | 4;
-          eeprom_saved_block = 0;
+          trip_counter_status_flags = trip_counter_status_flags | 4;
+          lifetime_distance_pulses = 0;
         }
       }
     }
-    pci_transmit_message_11_timer_previous_b = pci_transmit_message_11_timer;
-    if (j1939_fuel_demand_tick_total != 0) {
+    trip_counters_message_11_timer_previous = pci_transmit_message_11_timer;
+    if (trip_fuel_used != 0) {
       uVar2 = (uint)(CONCAT44((int)((ulonglong)ram0x003fee28 * 0x3523 >> 0x20),
-                              ram0x003fee28 * 0x3523) / (ulonglong)j1939_fuel_demand_tick_total);
+                              ram0x003fee28 * 0x3523) / (ulonglong)trip_fuel_used);
       uVar2 = (uint)(CONCAT44(uVar2 >> 0x1d,uVar2 << 3) / 8000);
       if (0xffff < uVar2) {
         uVar2 = 0xffff;
       }
-      DAT_003fdd74 = (undefined2)uVar2;
+      trip_average_fuel_economy = (word)uVar2;
     }
   }
   return;
@@ -73047,7 +73071,7 @@ void sensorDiagnosticsConfiguration(void)
 
 {
   if ((system_status_flags_t_003fe974.sensor_diag & 0x200) != 0) {
-    j1939_fuel_demand_overflow_flags = j1939_fuel_demand_overflow_flags | 0x208;
+    trip_and_lifetime_overflow_flags = trip_and_lifetime_overflow_flags | 0x208;
   }
   return;
 }
@@ -75336,16 +75360,17 @@ void cm848_fuel_demand_state_capture(void)
 
 
 //
-// Function: engine_injectionAngle_accumulateCrankPeriod @ 0x00527938
+// Function: engine_injectionAngle_accumulateInjectedFuel @ 0x00527938
 //
 
-/* crank_period_running_total += crank_sync_period_snapshot | review-function-readability reviewed
-   2026-11-11 - Readability Medium Accuracy Confidence High */
+/* injected_fuel_running_total += injection_fuel_quantity_snapshot - once per injection from the
+   TPU-A channel 6 injection interrupt (was engine_injectionAngle_accumulateCrankPeriod) |
+   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High */
 
-void engine_injectionAngle_accumulateCrankPeriod(void)
+void engine_injectionAngle_accumulateInjectedFuel(void)
 
 {
-  crank_period_running_total = crank_period_running_total + crank_sync_period_snapshot;
+  injected_fuel_running_total = injected_fuel_running_total + injection_fuel_quantity_snapshot;
   return;
 }
 
@@ -75863,7 +75888,7 @@ void engine_injectionAngle_selectCylinderInjector(int param_1)
   uint uVar4;
   int iVar5;
   
-  crank_sync_period_snapshot = engine_timing_reference;
+  injection_fuel_quantity_snapshot = engine_timing_reference;
   engine_load_input_b = engine_timing_reference;
   uVar3 = 0;
   if ((&DAT_0005f14e)[param_1] == '\0') {
@@ -76389,7 +76414,7 @@ void engine_injectionAngle_tpuChannel6EventHandler(void)
                 (DAT_0040b870,(int)(short)(DAT_0040b87d + sVar5),
                  (int)(short)injection_timing_active_flag,0xc);
       engine_injectionAngle_selectCylinderInjector(cylinder_event_index & 0xff);
-      engine_injectionAngle_accumulateCrankPeriod();
+      engine_injectionAngle_accumulateInjectedFuel();
       bVar7 = 8;
     }
     else {
@@ -76433,7 +76458,7 @@ void engine_injectionAngle_tpuChannel6EventHandler(void)
         engine_injectionAngle_writeTpuEvent
                   (uVar4,(int)(short)(sVar2 + sVar6),(int)(short)injection_timing_active_flag,0xc);
         engine_injectionAngle_selectCylinderInjector(cylinder_event_index & 0xff);
-        engine_injectionAngle_accumulateCrankPeriod();
+        engine_injectionAngle_accumulateInjectedFuel();
         cm848_processFaultScanLookup();
         engine_injectionAngle_tpuUpdate();
         injection_angle_sequence_state_prev = injection_angle_sequence_state;
@@ -78054,7 +78079,7 @@ void hpcr_calibration_group36_load(void)
 {
   int iVar1;
   
-  if ((governor_system_config_flags & 0x80) == 0) {
+  if ((engine_feature_enable_flags_cal & 0x80) == 0) {
     return;
   }
   if ((system_status_flags_t_003fe974.condition_monitor & 0x200) != 0) {
@@ -79462,7 +79487,7 @@ LAB_0052ffc8:
 void hpcr_calibration_group25_load(void)
 
 {
-  if ((uint)sensor_validation_timeout_cal._0_1_ * 8000 < eeprom_saved_block) {
+  if ((uint)sensor_validation_timeout_cal._0_1_ * 8000 < lifetime_distance_pulses) {
     diag_suppress_stateMachine(0);
   }
   else if (engine_sync_type_code == 0x13ec) {
@@ -82930,8 +82955,8 @@ void cm848_auxiliarySensorTask(void)
                 cssc_coolant_temp_deficit = 0;
               }
               cssc_start_time_snapshot =
-                   (word)(CONCAT44((int)((ulonglong)crank_period_running_total * 0x1900 >> 0x20),
-                                   crank_period_running_total * 0x1900) / 0x21366040);
+                   (word)(CONCAT44((int)((ulonglong)injected_fuel_running_total * 0x1900 >> 0x20),
+                                   injected_fuel_running_total * 0x1900) / 0x21366040);
               cssc_oiltemp_state_update_time_threshold =
                    (word)(((short)cssc_coolant_temp_deficit * 0x140) /
                          ((int)DAT_00409fc2 + (int)DAT_00409fc4));
@@ -83005,8 +83030,8 @@ LAB_00536b90:
       }
       if ((cssc_warmup_budget_remaining == 0) || ((short)cssc_target_coolant_temp <= (short)wVar2))
       {
-        uVar1 = CONCAT44((int)((ulonglong)crank_period_running_total * 0x1900 >> 0x20),
-                         crank_period_running_total * 0x1900) / 0x21366040;
+        uVar1 = CONCAT44((int)((ulonglong)injected_fuel_running_total * 0x1900 >> 0x20),
+                         injected_fuel_running_total * 0x1900) / 0x21366040;
         DAT_0040ba4c = (short)uVar1;
         if ((uint)cssc_start_time_snapshot < (uint)uVar1) {
           cssc_elapsed_time_delta = DAT_0040ba4c - cssc_start_time_snapshot;

@@ -811,8 +811,6 @@ boost_in_range_config_t,0x0005c994,consecutive_high_threshold,word,2,BIR consecu
 # Total size: 10 bytes (0x003fd064-0x003fd06d)
 # Boost In Range (BIR) Counters - RAM fault accumulation counters
 # Total size: 4 bytes (0x003fee5e-0x003fee61)
-boost_in_range_counters_t,0x003fee5e,deviation_count,word,2,BIR boost deviation event count,,needs_review
-boost_in_range_counters_t,0x003fee5e,operating_time_counter,word,2,BIR time at operating condition counter,,needs_review
 # =============================================================================
 # USIU PIT Sub-structure - Periodic Interrupt Timer registers at 0x002FC240
 # Reference: RTEMS MPC555 BSP usiu_ struct; confirmed by firmware access patterns

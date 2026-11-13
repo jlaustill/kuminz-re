@@ -1497,10 +1497,10 @@ address,name,type,comment
 0x003fb402,engine_status_flags_snapshot,word,
 0x003fb404,protection_sensor_state_a_snapshot,word,
 0x003fb406,protection_sensor_state_b_snapshot,word,
-0x003fb408,injection_timing_done_snapshot,word,
-0x003fb40a,injection_timing_capture_prev,word,
-0x003fb40d,fuel_temperature_trim_working,word,
-0x003fb40f,pci_transmit_message_11_timer_previous,word,Last seen pci_transmit_message_11_timer (header 5D); a drop means the message was just sent - used by cm848_processProtectionTimingCounter
+0x003fb408,pci_transmit_message_11_pulse_timeout_previous,word,vehicle_speed_pulse_timeout at the last PCI 0x5D send - nonzero then means the pulses had stopped (was injection_timing_done_snapshot)
+0x003fb40a,pci_transmit_message_11_pulse_total_previous,word,vehicle_speed_sensor_pulse_total at the last PCI 0x5D send (was injection_timing_capture_prev)
+0x003fb40d,pci_transmit_message_11_vehicle_speed_at_send,word,vehicle_speed copied at each PCI 0x5D send; no reader found (was fuel_temperature_trim_working)
+0x003fb40f,pci_transmit_message_11_timer_previous,word,Last seen pci_transmit_message_11_timer (header 5D); a drop means the message was just sent - used by cm848_buildPciTransmitMessage11DistanceAndFuelUsed
 0x003fb412,cbd_enable_state_prev,word,
 0x003fb414,coolant_temp_filter_state_ptr,pointer,IIR filter state ptr for coolant temp
 0x003fb420,fuel_demand_rate_limiter_state,word,
@@ -1892,7 +1892,7 @@ address,name,type,comment
 0x003fd5d6,j1939_feature_enable_flags,word,
 0x003fd5da,injection_timing_enable_flags,word,
 0x003fd5dc,governor_fuel_feature_flags,word,
-0x003fd5ec,governor_system_config_flags,word,
+0x003fd5ec,engine_feature_enable_flags_cal,word,EEPROM 0x16a (0x27EF here) - feature enables read across protection / PCI / thermal code: bit 2 oil pressure processing (cm848_processEngineOilPressure + PCI 0xC0 source) / bit 6 PCI message timeouts / bit 13 trip and lifetime counters (was governor_system_config_flags - the same name as 0x3fd5d2)
 0x003fd5ee,operating_mode_flags,word,
 0x003fd5f0,protection_feature_flags,word,
 0x003fd5f2,fuel_feature_control_flags,word,
@@ -2097,7 +2097,7 @@ address,name,type,comment
 0x003fdd50,protection_rpm_reference_a,word,
 0x003fdd54,protection_rpm_reference_b,word,
 0x003fdd6a,eeprom_checksummed_block_start,word,EEPROM offset 0x8e8 in the mirror; the checksummed / saved block follows (was sensor_validation_array)
-0x003fdd6c,eeprom_saved_block,dword,EEPROM offset 0x8ea in the mirror: start of the 0x1154-byte block cm848_startEepromMirrorSave writes back (was sensor_validation_accum)
+0x003fdd6c,lifetime_distance_pulses,dword,Lifetime distance in speed-sensor pulses (EEPROM 0x8ea - 8000 per mile); cm848_updateTripAndLifetimeCounters is the only writer; J1939 PGN 65248 reports it as total vehicle distance and PCI 0xDF sends it >> 22; it is also the start of the 0x1154-byte block cm848_startEepromMirrorSave writes back; HP Tuners zeroes it (was eeprom_saved_block)
 0x003fdd6e,sensor_validation_accum+2,,
 0x003fdd70,protection_freq_divisor_working,dword,
 0x003fdd7a,cruise_speed_blend_working,word,
@@ -2306,8 +2306,7 @@ address,name,type,comment
 0x003fee49,sensor_val_state_t_003fee48.sensor_val_pad_01,,
 0x003fee4a,sensor_validation_ready_flag,word,
 0x003fee4b,sensor_val_state_t_003fee4a.sensor_val_pad_03,,
-0x003fee5e,boost_in_range_counters_t_003fee5e,boost_in_range_counters_t,
-0x003fee60,boost_in_range_counters_t_003fee5e.operating_time_counter,,
+0x003fee60,lifetime_engine_run_time,dword,Lifetime passes with the engine running (EEPROM 0x19de) - 3196806 in the older dump (was the operating_time_counter field of a boost_in_range_counters_t laid over 0x3fee5e)
 0x003fee78,cruise_speed_cmd_working,word,
 0x003fee7a,protection_timing_period_cal,word,
 0x003fee7c,protection_timing_counter,word,
@@ -3982,7 +3981,7 @@ address,name,type,comment
 0x0040a32a,torque_limit_lookup_disable_flag,word,
 0x0040a32c,torque_limit_fuel_ramp,word,
 0x0040a32e,torque_limit_load_snapshot,word,
-0x0040a330,crank_sync_period_snapshot,word,
+0x0040a330,injection_fuel_quantity_snapshot,word,This injection's fuel quantity (engine_timing_reference at injector selection) for injected_fuel_running_total (was crank_sync_period_snapshot)
 0x0040a334,engine_start_inhibit_flag,word,
 0x0040a336,j1939_broadcast_enable_flag,dword,
 0x0040a33a,fuel_timing_arbitration_output,word,
@@ -5048,7 +5047,7 @@ address,name,type,comment
 0x0040b497,uds_response_t_0040b492.data[0],,
 0x0040b49b,uds_response_t_0040b492.data[4],,
 0x0040b49c,uds_response_t_0040b492.transmit_timer,,
-0x0040b49e,j1939_data_buffer_c,byte,
+0x0040b49e,pci_transmit_message_11_payload,byte[5],PCI TX[11] header 0x5D payload (cm848_buildPciTransmitMessage11DistanceAndFuelUsed): byte 1 speed sensor pulses since the last send / bytes 2-3 fuel used / bytes 4-5 a second fuel total (was j1939_data_buffer_c)
 0x0040b4a3,pci_transmit_message_11_status,byte,PCI TX[11] header 5D status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
 0x0040b4a4,pci_transmit_message_11_timer,word,PCI TX[11] header 5D age timer (send interval 348); other modules write interval+10 to force an immediate send
 0x0040b4a6,j1939_msg_slot_v_status,byte,
@@ -5059,7 +5058,7 @@ address,name,type,comment
 0x0040b4af,pci_transmit_message_14_payload,byte[4],PCI TX[14] header 0xC0 payload (cm848_buildPciTransmitMessage14VoltageOilPressureTemperatures): battery voltage 1/16 V / oil pressure 4 kPa / coolant temperature deg C + 40 / protection_oilTemp_proxy deg C + 40 (was j1939_data_buffer_d)
 0x0040b4b3,pci_transmit_message_14_status,byte,PCI TX[14] header C0 status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
 0x0040b4b4,pci_transmit_message_14_timer,word,PCI TX[14] header C0 age timer (send interval 1392); other modules write interval+10 to force an immediate send
-0x0040b4bb,j1939_msg_slot_x_status,byte,
+0x0040b4bb,pci_transmit_message_15_payload,byte,PCI TX[15] header 0xDF payload byte 1 = lifetime_distance_pulses >> 22 (was j1939_msg_slot_x_status)
 0x0040b4bc,pci_transmit_message_15_status,byte,PCI TX[15] header DF status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
 0x0040b4bd,pci_transmit_message_15_timer,word,PCI TX[15] header DF age timer (send interval 2784); other modules write interval+10 to force an immediate send
 0x0040b4bf,j1939_address_filter_byte_a,byte,
@@ -5093,7 +5092,7 @@ address,name,type,comment
 0x0040b4ff,protection_ramp_position,byte,
 0x0040b500,governor_speed_limit_droop,word,
 0x0040b502,diagnostic_active_flag,byte,
-0x0040b503,fuel_demand_cmd21_pending_flag,byte,
+0x0040b503,trip_counters_reset_pending_flag,byte,Set by SCI command 35 (cm848_sciCommand35Callback); cm848_updateTripAndLifetimeCounters zeroes the trip set and clears it (was fuel_demand_cmd21_pending_flag)
 0x0040b512,j1939_governor_auth_granted,word,
 0x0040b516,governor_mode_override_active,word,
 0x0040b51c,j1939_tsc1_override_enable,byte,
@@ -5160,7 +5159,7 @@ address,name,type,comment
 0x0040b630,engine_load_raw,word,
 0x0040b632,fuel_consumption_accumulator,dword,
 0x0040b636,fuel_flow_ema,word,
-0x0040b640,injection_timing_delta,word,
+0x0040b640,pci_transmit_message_11_distance_pulses,word,Speed sensor pulses since the last PCI 0x5D send (payload byte 1) (was injection_timing_delta)
 0x0040b648,governor_active_flag_b648,word,
 0x0040b64e,fuel_demand_d_term,dword,
 0x0040b652,engine_load_trim_rpm,dword,
@@ -5727,9 +5726,9 @@ address,name,type,comment
 0x0040b32c,calibBlock1_eeprom_write_pending_flag,word,calibBlock1 trim EEPROM-write pending 0/1
 0x0040b52e,protection_fuel_demand_limit_ramp,word,protection fuel-demand ramp-down ceiling
 0x0040b530,protection_fuel_demand_debounce_count,word,protection fuel-demand limiting debounce counter
-0x0040b638,fuel_consumption_tick_increment,dword,per-loop overflow count advancing J1939 fuel counters (stw=dword)
-0x0040b63c,injection_timing_period_delta,dword,per-injection timing delta into fuel tracking (stw=dword)
-0x0040b788,crank_period_running_total,dword,free-running crank period accumulator; engine timestamp (lwz=dword)
+0x0040b638,fuel_used_increment,dword,Fuel counts added to the trip and lifetime fuel totals at this send (was fuel_consumption_tick_increment)
+0x0040b63c,trip_counter_pulse_delta,dword,trip_counter_pulse_delta_raw widened - added to the trip and lifetime distance (was injection_timing_period_delta)
+0x0040b788,injected_fuel_running_total,dword,Running sum of every injection's fuel quantity (injection_fuel_quantity_snapshot added once per injection by engine_injectionAngle_accumulateInjectedFuel); wraps; its deltas >> 12 are the trip / lifetime fuel counts and the warm-up model reads it too (was crank_period_running_total)
 0x0040ba48,cssc_elapsed_time_delta,word,CSSC elapsed scaled engine time delta
 0x0040ba52,cssc_coolant_temp_snapshot,word,CSSC coolant temp at monitor start
 0x0040ba56,cssc_oiltemp_baseline,word,CSSC oil-proxy temp baseline at start
@@ -5930,13 +5929,13 @@ address,name,type,comment
 0x003fea24,egr_smoke_limit_status_shadow,word,shadow copy of egr_smoke_limit_status_flags
 0x003fbd66,accelerator_idle_switch_debounce_timer,word,Idle switch debounce for cm848_updateIdleSwitchesFromLocalInputs: 100 then minus 50 per unchanged pass; the switch is accepted at 0 (was fuel_demand_protection_hysteresis_counter)
 0x003fbd69,accelerator_idle_switch_debounce_armed_flag,word,1 once the debounce timer has been armed; written with sth at this odd address (was fuel_demand_protection_init_flag)
-0x003fcfbc,j1939_fuel_demand_tick_remainder,word,fractional crank-period sub-tick accumulator (low 12 bits)
-0x003fee64,j1939_fuel_demand_timing_flags,word,injection-timing quality event bits
-0x003fee66,j1939_fuel_demand_overflow_flags,word,overflow bits for the 4 fuel-demand accumulators
-0x003fee68,j1939_fuel_demand_tick_total,dword,total fuel-demand ticks (ratio divisor)
-0x003fee6c,j1939_fuel_demand_tick_at_target_rpm,dword,fuel-demand ticks while at target RPM
-0x003fee70,j1939_fuel_demand_time_at_target_rpm,dword,engine-on time at target RPM
-0x003fee74,j1939_fuel_demand_engine_on_time,dword,total engine-on time (RPM nonzero)
+0x003fcfbc,injected_fuel_remainder,dword,Fuel below one count (the low 12 bits of the injected_fuel_running_total deltas) carried to the next send (was j1939_fuel_demand_tick_remainder)
+0x003fee64,trip_counter_status_flags,word,EEPROM 0x19e2: 0x04 lifetime distance overflow / 0x20 trip distance overflow / 0x12 speed sensor faulted while counting; a trip reset clears 0x30 (was j1939_fuel_demand_timing_flags)
+0x003fee66,trip_and_lifetime_overflow_flags,word,EEPROM 0x19e4 overflow bits: 0x10 lifetime run time / 0x20 lifetime fuel / 0x40 lifetime fuel at governed speed / 0x80 lifetime time at governed speed / 0x400 trip run time / 0x800 trip fuel / 0x1000 trip fuel at governed speed / 0x2000 trip time at governed speed; a trip reset clears the trip bits (was j1939_fuel_demand_overflow_flags)
+0x003fee68,trip_fuel_used,dword,Trip injected fuel (EEPROM 0x19e6) - the divisor of trip_average_fuel_economy (was j1939_fuel_demand_tick_total)
+0x003fee6c,trip_fuel_used_at_governed_speed,dword,Trip injected fuel while engine_at_governed_speed_flag is set (EEPROM 0x19ea) (was j1939_fuel_demand_tick_at_target_rpm)
+0x003fee70,trip_time_at_governed_speed,dword,Trip passes with engine_at_governed_speed_flag set (EEPROM 0x19ee) (was j1939_fuel_demand_time_at_target_rpm)
+0x003fee74,trip_engine_run_time,dword,Trip passes with the engine running (EEPROM 0x19f2) (was j1939_fuel_demand_engine_on_time)
 0x003fd0c6,cam_timing_advance_slew_working,word,slew filter tracking cam_timing_advance_target (x100)
 0x003fd0c4,cam_timing_demand_rate_limited,word,rate-limited cam timing demand output
 0x003fd0ca,cam_timing_advance_table_interp_states,word,16-element dualAxis interp state block (array base)
@@ -6175,7 +6174,7 @@ address,name,type,comment
 0x003fb0ee,protection_rpm_limit_table_idle_state,word,interp state for protection RPM limit table (idle path)
 0x003fb0f0,protection_rpm_limit_table_derate1_state,word,interp state for protection RPM limit table (derate 1)
 0x003fb341,governor_inhibit_delay_counter,word,countdown clearing governor_inhibit_flag
-0x003fb40c,injection_timing_cycle_counter,byte,cycle counter in protection timing energy calc
+0x003fb40c,pci_transmit_message_11_pass_count,byte,Builder passes since the last PCI 0x5D send - the elapsed-time factor of its fuel totals (was injection_timing_cycle_counter)
 0x003fb4e8,torque_limit_fuel_table_dims,word,dualAxis table dims base (torque limit fuel)
 0x003fbd18,governor_speed_stability_sample_counter,word,sample counter for governor speed sync-stable diag
 0x003fbd5a,j1939_input_data_error_bitmap,dword,Bit N = J1939 input N received a not-available or out-of-range value (cm848_set/clearJ1939InputDataErrorBit) (was fault_flag_bitmap)
@@ -6409,8 +6408,8 @@ address,name,type,comment
 0x0040c1c0,protection_throttle_hpcr_period,dword,1000000/period_cal HPCR rate for J1939 dispatch
 0x0040b5d5,sci_receive_error_count,byte,SCI link: receive error count (was fuel_demand_uart_error_count)
 0x0040b5d6,sci_byte_pending,byte,SCI link: byte pending flag (was fuel_demand_uart_byte_pending)
-0x0040b644,j1939_fuel_demand_at_target_rpm_flag,word,RPM within +/-400 of governor demand 0/1
-0x0040b646,injection_timing_period_delta_raw,word,staging word for injection timing period delta
+0x0040b644,engine_at_governed_speed_flag,word,1 while governor_fuel_demand_mode is 11 and engine speed is within +/-400 rpm of the governor target (probably idle) - selects the at-governed-speed counters (was j1939_fuel_demand_at_target_rpm_flag)
+0x0040b646,trip_counter_pulse_delta_raw,word,Speed sensor pulses since the last send (or the TPU-B PARAM1 low byte after the pulses resume) (was injection_timing_period_delta_raw)
 0x0040b64c,governor_speed_compensation_steps,word,countdown steps for governor speed compensation
 0x0040b90a,cam_timing_correction_enable_flag,byte,cam timing position correction enable gate
 0x0040b9a2,cssc_coolant_monitoring_cycle_count,word,CSSC coolant thermostat monitoring cycle count
@@ -6605,11 +6604,11 @@ address,name,type,comment
 0x003fcfaf,governor_datavalid_wait_count,word,governor data-validation dwell count
 0x003fee4c,governor_datavalid_load_overload_flag,byte,load exceeds cal limit during validation
 0x003fee4d,governor_datavalid_range_pass_flag,byte,load range passed validation
-0x003fcfb8,j1939_fuel_demand_timing_fault_count,word,injection timing quality fault debounce
-0x003fcfc0,j1939_fuel_demand_crank_period_prev,dword,prev crank-period total for tick delta
-0x003fcfc4,j1939_fuel_demand_injection_timing_prev,word,prev injection timing for period delta
-0x003fdd76,j1939_fuel_demand_tick_at_target_rpm_b,dword,secondary at-target-RPM tick accumulator
-0x003fee58,j1939_fuel_demand_tick_total_b,dword,secondary total fuel-demand tick accumulator
+0x003fcfb8,distance_sensor_fault_count,word,Sends counted while the speed sensor fault bits (condition_monitor 0x2000 / 0x4000) are set; past the ROM limit at 0x408d74 sets trip_counter_status_flags 0x12 (was j1939_fuel_demand_timing_fault_count)
+0x003fcfc0,injected_fuel_total_previous,dword,injected_fuel_running_total at the last send (was j1939_fuel_demand_crank_period_prev)
+0x003fcfc4,trip_counter_pulse_total_previous,word,vehicle_speed_sensor_pulse_total at the last send - for the distance delta (was j1939_fuel_demand_injection_timing_prev)
+0x003fdd76,lifetime_fuel_used_at_governed_speed,dword,Lifetime injected fuel while engine_at_governed_speed_flag is set (EEPROM 0x8f4) (was j1939_fuel_demand_tick_at_target_rpm_b)
+0x003fee58,lifetime_fuel_used,dword,Lifetime injected fuel (EEPROM 0x19d6) - about 1/10882 gallon per count if trip_average_fuel_economy is 0.1 mpg (was j1939_fuel_demand_tick_total_b)
 0x003fcfca,j1939_msg_slot_u_payload_toggle,byte,slot-U EEPROM payload buffer toggle
 0x003fcfd4,governor_mode_transition_period_counter,byte,periodic re-check counter (governor mode transition)
 0x003fcfda,j1939_msg_slot_m_switch_bits_prev,byte,prev slot-M switch input bits (edge detect)
@@ -6997,8 +6996,8 @@ address,name,type,comment
 0x003fcc1a,governor_speed_reference_raw_prev,word,previous-cycle governor_speed_reference_raw
 0x003fd8b2,egr_smoke_limit_speed_ref_select,word,ROM selector for EGR smoke-limit alt speed reference
 0x003ff716,governor_speed_ramp_step_size,word,ROM per-cycle step under governor speed ramp rate limit
-0x003fcfb4,j1939_fuel_demand_injection_timing_done_prev,word,previous injection_timing_done_flag (edge detect)
-0x003fcfb6,pci_transmit_message_11_timer_previous_b,word,Second last-seen copy of pci_transmit_message_11_timer (header 5D) kept by j1939FuelDemandProcessing; a drop means the message was just sent
+0x003fcfb4,trip_counter_pulse_timeout_previous,word,vehicle_speed_pulse_timeout at the last send (was j1939_fuel_demand_injection_timing_done_prev)
+0x003fcfb6,trip_counters_message_11_timer_previous,word,Last-seen pci_transmit_message_11_timer kept by cm848_updateTripAndLifetimeCounters; a drop means PCI 0x5D was just sent (was pci_transmit_message_11_timer_previous_b)
 0x003fd1b6,protection_active_fault_severity_snapshot,word,saved severity of active fault for clear-path
 0x003fd1b8,protection_active_fault_severity_param,word,severity param stored at fault activation
 0x003fd2e0,sensor_cal_ring_cycle_count,word,count of complete passes over sensor cal ring
@@ -7008,6 +7007,8 @@ address,name,type,comment
 0x003fbd52,fuel_demand_active_sensor_valid_bits,word,fuel-demand-active condition bit (0x100) for sensor validation
 0x003fd8de,pci_normal_transmit_disabled_initial_cal,byte,EEPROM-shadowed (EEPROM offset 0x45c; 0 in dump) - boot value of pci_normal_transmit_disabled
 0x003fd8df,pci_receive_processing_disabled_initial_cal,byte,EEPROM-shadowed (EEPROM offset 0x45d; 0 in dump) - boot value of pci_receive_processing_disabled
+0x003fdd74,trip_average_fuel_economy,word,Trip average fuel economy (EEPROM 0x8f2) = trip distance pulses x 13603 x 8 / (trip_fuel_used x 8000) - 0.1 mpg per count (reproduces the stored 94 / 90); zeroed by a trip reset
+0x003fee5c,lifetime_time_at_governed_speed,dword,Lifetime passes with engine_at_governed_speed_flag set (EEPROM 0x19da) - probably idle time
 0x00408b62,vehicle_speed_pulse_timeout_reload,word,Pulse timeout reload value (25)
 0x0040aaaa,j1939_received_accelerator_interlock_switch,byte,J1939 input received over PGN 61441 EBC1 byte 4 bits 1-2 (SPN 972 Accelerator Interlock Switch); 2-bit switch states use J1939 0 off / 1 on / 3 not available
 0x0040aaab,j1939_received_engine_auxiliary_shutdown_switch,byte,J1939 input received over PGN 61441 EBC1 byte 4 bits 5-6 (SPN 970 Engine Auxiliary Shutdown Switch); 2-bit switch states use J1939 0 off / 1 on / 3 not available
