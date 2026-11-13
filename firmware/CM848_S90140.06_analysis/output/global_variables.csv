@@ -445,7 +445,7 @@ address,name,type,comment
 0x003045e6,TPUB_CH14_PARAM0.PARAM3,,
 0x003045e8,TPUB_CH14_PARAM4,,
 0x003045f0,TPUB_CH15_PARAM0,word,
-0x00304800,qadc_b_mcr,qadc64_regs_t,
+0x00304800,QADC64A_MCR,qadc64_regs_t,QADC64 module A register block (module B is QADC64B_MCR at 0x304c00; results QADC-A 0x304a80 / QADC-B 0x304e80) - was qadc_b_mcr
 0x00304802,QADC64A_TEST,,
 0x00304804,QADC64A_INTC,,
 0x00304806,QADC64A_PORTQA,,
@@ -608,12 +608,8 @@ address,name,type,comment
 0x003060ea,MIOS_MPWMSM5_PULR,,
 0x003060ec,MIOS_MPWMSM5_CNTR,,
 0x003060ee,MIOS_MPWMSM5_SCR,,
-0x003060f0,MIOS_MCPSMSCR,mios1_global_regs_t,
-0x003060f2,MIOS_MIOS1SR0,,
-0x003060f4,MIOS_MIOS1SR1,,
-0x003060f6,mios_key_off_detection,,
-0x003060f8,MIOS_MIOS1RPR,,
-0x003060fc,MIOS_MIOS1LVL,,
+0x003060f0,mios_mdasm30,mios_mdasm_t,MIOS1 submodule 30 (0x306000 + 8 x 30): cm848_miosChannel30* pass this base; SCRD (+6) bit 15 = the MDA30 pin = the ignition key line (1 = key on; discrete input line 128 = switch 0). Was MIOS_MCPSMSCR (mios1_global_regs_t) + mios_key_off_detection: the real MCPSMSCR is 0x306816 (mios1_ext_816) and the MIOS1 interrupt registers are at 0x306c00 (mios1_isr)
+0x003060f8,mios_mdasm31,mios_mdasm_t,MIOS1 submodule 31: cm848_miosChannel31* pass this base (was MIOS_MIOS1RPR / MIOS_MIOS1LVL)
 0x00306100,mios1_ext_ctrl,mios1_ext_ctrl_t,
 0x00306102,mios1_ext_ctrl_b,,
 0x00306816,mios1_ext_816,word,
@@ -1763,7 +1759,7 @@ address,name,type,comment
 0x003fb8fc,mios_ch13_duty_cycle_complement,word,
 0x003fb8fe,mios_ch12_duty_cycle_complement,word,
 0x003fb910,switch_input_debounce_sample_index,byte,0-3: which debounce history slot cm848_scanAndDebounceSwitchInputs writes next (was fault_scan_phase_counter)
-0x003fb912,ignition_key_line_previous_state,dword,Ignition key line state (0x3060f6 bit 15 - shown as MIOS_MCPSMSCR.MIOS1ER - 1 = key on) at the previous 20 ms switch scan; a 1 -> 0 change adds one to ignition_key_off_count (was crank_high_bit_prev_flag)
+0x003fb912,ignition_key_line_previous_state,dword,Ignition key line state (0x3060f6 bit 15 = mios_mdasm30.SCRD - 1 = key on) at the previous 20 ms switch scan; a 1 -> 0 change adds one to ignition_key_off_count (was crank_high_bit_prev_flag)
 0x003fb916,fault_severity_data_array,word,
 0x003fb966,fault_entry_data_array,byte,
 0x003fb9a2,coolant_cal_entry_count_a,byte,
@@ -2026,8 +2022,8 @@ address,name,type,comment
 0x003fdb96,kernel_watchdog_question,word,Boot reflash kernel: current supervisor-watchdog question (reply word 4 low 4 bits) (was injector_sequence_index)
 0x003fdb98,kernel_watchdog_last_service_time,word,Boot reflash kernel: MIOS counter value at the last watchdog answer (was tpu3_timer_capture_value)
 0x003fdb9a,kernel_watchdog_error_count,word,Boot reflash kernel: supervisor-watchdog error counter (reply word 4 bits 4-6) (was tpu3_channel_status_count)
-0x003fdb9c,bus_hardware_status_byte,dword,
-0x003fdb9e,bus_hardware_status_byte+2,,
+0x003fdb9c,boot_mode_strap_pins_high,word,1 when all four strap pins read high (mpc555_areBootModeStrapPinsHigh): mpc555_hardwareInitialization then stays in the boot service loop and cm848_initSupervisorWatchdog leaves the supervisor watchdog unarmed. sth 0x2928 / lhz 0x7d0c (was bus_hardware_status_byte)
+0x003fdb9e,supervisor_watchdog_not_armed_flag,word,cm848_initSupervisorWatchdog: 0 after arming the supervisor watchdog with 0x1440 / 1 after the 0x1400 command (debugger attached or strap pins high or watchdog errors). One store found (sth 0x7d44) and no reader in either bank by a displacement-form scan (was bus_hardware_status_byte+2)
 0x003fdba0,kernel_watchdog_error_count_peak,word,Boot reflash kernel: highest watchdog error count seen (was tpu3_channel_status_snapshot)
 0x003fdba2,kernel_watchdog_status_at_peak,word,Boot reflash kernel: reply word 5 captured when the error count rose (was tpu3_rx5_capture_snapshot)
 0x003fdba4,qadc_init_done_flag,word,TIME-SHARED RAM: during boot/reflash the CMF flash driver uses this as cmf test-step count (0 = CMFTST unused); the running application later reads it (protection_enable_state_machine / cm848_j1939BuildEngineStatusByte) - application meaning not yet reviewed, so the original name is kept

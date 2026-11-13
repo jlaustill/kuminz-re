@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 13 13:34:41 MST 2026
+// Generated: Fri Nov 13 14:40:22 MST 2026
 
 
 //
@@ -38,8 +38,8 @@ void mpc555_reset_vector(void)
   mios_mmcsm_cnt.CNT = 0;
   mios_mmcsm_cnt.ML = 0;
   _usiu_ext_004 = 0xffa0;
-  MIOS_MCPSMSCR.MIOS1ER = 3;
-  cm848_waitForBusStable(0x1000);
+  mios_mdasm30.SCRD = 3;
+  cm848_waitForStableIgnitionKeyOn();
   mpc555_hardwareInitialization();
   return;
 }
@@ -58,7 +58,7 @@ void mpc555_keyOnStateMachine(void)
   
   dVar1 = ecu_power_state_flags.state;
   if (dVar1 == 0) {
-    wVar2 = MIOS_MCPSMSCR.MIOS1ER;
+    wVar2 = mios_mdasm30.SCRD;
     if ((wVar2 & 0x8000) == 0) {
       ecu_power_state_flags.state = 1;
     }
@@ -67,7 +67,7 @@ void mpc555_keyOnStateMachine(void)
     }
   }
   else if (dVar1 == 1) {
-    wVar2 = MIOS_MCPSMSCR.MIOS1ER;
+    wVar2 = mios_mdasm30.SCRD;
     if ((wVar2 & 0x8000) == 0) {
       wVar2 = eeprom_block_tracking.watchdog_counter;
       if (0x2903 < wVar2) {
@@ -351,7 +351,7 @@ void mpc555_loadEepromCalibration(undefined4 param_1,int param_2)
           uVar7 = uVar7 + 1;
         } while (uVar7 < 0x32);
       }
-      wVar4 = MIOS_MCPSMSCR.MIOS1ER;
+      wVar4 = mios_mdasm30.SCRD;
       if ((wVar4 & 0x8000) != 0) {
         cm848_forceSupervisorWatchdogReset();
         mpc555_reset_vector();
@@ -482,9 +482,9 @@ uint cm848_computeCrcCcitt(undefined4 *param_1,uint param_2)
 // Function: mpc555_updatePowerStateOutputs @ 0x00000b44
 //
 
-/* Boot ROM (from mpc555_bootStateMachine): copies the MIOS1ER bit 15 input into
-   ecu_power_state_flags.capability_flags bit 0 then drives SIU_SGPIODT1 bit 0x400 from flag bit 1
-   and the MIOS port bit 0x2000 from flag bit 4 (likely power-hold style outputs; exact pins
+/* Boot ROM (from mpc555_bootStateMachine): copies the ignition key line (mios_mdasm30.SCRD bit 15)
+   into ecu_power_state_flags.capability_flags bit 0 then drives SIU_SGPIODT1 bit 0x400 from flag
+   bit 1 and the MIOS port bit 0x2000 from flag bit 4 (likely power-hold style outputs; exact pins
    unconfirmed) - was mpc555_updateCapabilityFlags | review-function-readability reviewed 2026-11-11
    - Readability Medium Accuracy Confidence Medium */
 
@@ -496,7 +496,7 @@ void mpc555_updatePowerStateOutputs(void)
   ushort uVar3;
   uint uVar4;
   
-  wVar2 = MIOS_MCPSMSCR.MIOS1ER;
+  wVar2 = mios_mdasm30.SCRD;
   if ((wVar2 & 0x8000) == 0) {
     dVar1 = ecu_power_state_flags.capability_flags;
     uVar4 = dVar1 & 0xfffffffe;
@@ -1046,8 +1046,8 @@ void mpc555_initSystemRegisters(void)
   mios_mmcsm_cnt.CNT = 0;
   mios_mmcsm_cnt.ML = 0;
   _usiu_ext_004 = 0xffa0;
-  MIOS_MCPSMSCR.MIOS1ER = 3;
-  cm848_waitForBusStable(0x1000);
+  mios_mdasm30.SCRD = 3;
+  cm848_waitForStableIgnitionKeyOn();
   mpc555_hardwareInitialization();
   return;
 }
@@ -1090,8 +1090,8 @@ void cm848_initClockAndTimers(void)
   mios_mmcsm_cnt.CNT = 0;
   mios_mmcsm_cnt.ML = 0;
   _usiu_ext_004 = 0xffa0;
-  MIOS_MCPSMSCR.MIOS1ER = 3;
-  cm848_waitForBusStable(0x1000);
+  mios_mdasm30.SCRD = 3;
+  cm848_waitForStableIgnitionKeyOn();
   mpc555_hardwareInitialization();
   return;
 }
@@ -1716,10 +1716,11 @@ void mpc555_eepromValidationCycle(void)
    loop (addi / clrlwi / cmpwi / blt) - no timer and no watchdog service. Both counters are 16-bit.
    A pass is at least 8888 clocks (0.22 ms at the nominal 40 MHz system clock if every instruction
    took one clock); flash-fetch and taken-branch stalls make it longer, so the real pass time is a
-   bench measurement. Callers: mpc555_checkBusHardwareStatus (1 pass after each QADC port write
-   before reading the pins back) and cm848_waitForBusStable (2 passes between samples of an MIOS
-   input bit). Was cm848_busWaitCycles: it waits on no bus and the argument is not CPU cycles |
-   review-function-readability reviewed 2026-11-13 - Readability High Accuracy Confidence High */
+   bench measurement. Callers: mpc555_areBootModeStrapPinsHigh (1 pass after each QADC port write
+   before reading the pins back) and cm848_waitForStableIgnitionKeyOn (2 passes between samples of
+   the ignition key line). Was cm848_busWaitCycles: it waits on no bus and the argument is not CPU
+   cycles | review-function-readability reviewed 2026-11-13 - Readability High Accuracy Confidence
+   High */
 
 void cm848_busyWaitDelay(int pass_count)
 
@@ -1744,69 +1745,93 @@ void cm848_busyWaitDelay(int pass_count)
 
 
 //
-// Function: mpc555_checkBusHardwareStatus @ 0x000023b8
+// Function: mpc555_areBootModeStrapPinsHigh @ 0x000023b8
 //
 
-bool mpc555_checkBusHardwareStatus(void)
+/* Samples four QADC port pins at reset and returns true only if all four read 1: QADC-B port word
+   bit 0 (PQB0) and bit 12 (PQA4) then QADC-A port word bit 10 (PQA2) and bit 11 (PQA3). Before each
+   sample it writes a direction register back unchanged and writes 0 to a port data register (QADC-B
+   for samples 1 2 and 4 / QADC-A for sample 3) then waits one cm848_busyWaitDelay pass - so the
+   fourth sample sets up the QADC-B pair but reads the QADC-A port. mpc555_hardwareInitialization
+   stores the result in boot_mode_strap_pins_high: when it is 1 (or the EEPROM magic is not 0x600d)
+   the ECM enters the boot service loop (mpc555_systemInitialization never returns) instead of
+   starting the application - and cm848_initSupervisorWatchdog then sends the unarmed 0x1400
+   command. Which connector pins these are is a wiring / bench question. Was
+   mpc555_checkBusHardwareStatus: no bus is involved | review-function-readability reviewed
+   2026-11-13 - Readability Medium Accuracy Confidence Medium */
+
+bool mpc555_areBootModeStrapPinsHigh(void)
 
 {
-  ushort uVar1;
-  ushort uVar2;
-  ushort uVar3;
-  word wVar4;
-  ushort uVar5;
-  word *pwVar6;
-  word *pwVar7;
-  word *pwVar8;
+  word wVar1;
+  word port_output_zero;
+  word *qadc_b_port;
+  word *qadc_a_port;
+  word *qadc_b_direction;
+  word qadc_b_pqb0_sample;
+  word qadc_b_pqa4_sample;
+  word qadc_a_pqa2_sample;
+  word direction_register_value;
   
-  pwVar8 = &QADC64B_MCR.DDRQA_B;
-  wVar4 = QADC64B_MCR.DDRQA_B;
-  QADC64B_MCR.DDRQA_B = wVar4;
-  pwVar6 = &QADC64B_MCR.PORTQA_B;
-  uVar5 = 0;
+  qadc_b_direction = &QADC64B_MCR.DDRQA_B;
+  wVar1 = QADC64B_MCR.DDRQA_B;
+  QADC64B_MCR.DDRQA_B = wVar1;
+  qadc_b_port = &QADC64B_MCR.PORTQA_B;
+  port_output_zero = 0;
   QADC64B_MCR.PORTQA_B = 0;
   cm848_busyWaitDelay(1);
-  uVar1 = *pwVar6;
-  *pwVar8 = *pwVar8;
-  *pwVar6 = uVar5;
+  qadc_b_pqb0_sample = *qadc_b_port;
+  *qadc_b_direction = *qadc_b_direction;
+  *qadc_b_port = port_output_zero;
   cm848_busyWaitDelay(1);
-  uVar2 = *pwVar6;
-  wVar4 = qadc_b_mcr.DDRQA_B;
-  qadc_b_mcr.DDRQA_B = wVar4;
-  pwVar7 = &qadc_b_mcr.PORTQA_B;
-  qadc_b_mcr.PORTQA_B = uVar5;
+  qadc_b_pqa4_sample = *qadc_b_port;
+  direction_register_value = QADC64A_MCR.DDRQA_B;
+  QADC64A_MCR.DDRQA_B = direction_register_value;
+  qadc_a_port = &QADC64A_MCR.PORTQA_B;
+  QADC64A_MCR.PORTQA_B = port_output_zero;
   cm848_busyWaitDelay(1);
-  uVar3 = *pwVar7;
-  *pwVar8 = *pwVar8;
-  *pwVar6 = uVar5;
+  qadc_a_pqa2_sample = *qadc_a_port;
+  *qadc_b_direction = *qadc_b_direction;
+  *qadc_b_port = port_output_zero;
   cm848_busyWaitDelay(1);
-  return (((uVar1 & 1) != 0 && (uVar2 & 0x1000) != 0) && (uVar3 & 0x400) != 0) &&
-         (*pwVar7 & 0x800) != 0;
+  return (((qadc_b_pqb0_sample & 1) != 0 && (qadc_b_pqa4_sample & 0x1000) != 0) &&
+         (qadc_a_pqa2_sample & 0x400) != 0) && (*qadc_a_port & 0x800) != 0;
 }
 
 
 
 //
-// Function: cm848_waitForBusStable @ 0x000024a0
+// Function: cm848_waitForStableIgnitionKeyOn @ 0x000024a0
 //
 
-void cm848_waitForBusStable(void)
+/* Reset-time wait for the ignition key: samples mios_mdasm30.SCRD bit 15 (the MDA30 pin = the
+   ignition key line - 1 = key on; the same bit cm848_readDiscreteInputLine reads as line 128 and
+   mpc555_keyOnStateMachine tests) every 2 cm848_busyWaitDelay passes and returns once 5 consecutive
+   samples read 1; any 0 restarts the count - so it never returns while the key is off. Called by
+   mpc555_reset_vector / mpc555_initSystemRegisters / cm848_initClockAndTimers right after they
+   write 3 (MDASM mode 3 = input capture) to that register. Was cm848_waitForBusStable: no bus is
+   involved | review-function-readability reviewed 2026-11-13 - Readability High Accuracy Confidence
+   High */
+
+void cm848_waitForStableIgnitionKeyOn(void)
 
 {
-  word *pwVar1;
-  uint uVar2;
+  word *key_line_status_register;
+  uint key_on_sample_count;
   
-  uVar2 = 0;
-  pwVar1 = &MIOS_MCPSMSCR.MIOS1ER;
+  key_on_sample_count = 0;
+  key_line_status_register = &mios_mdasm30.SCRD;
   do {
-    if ((*pwVar1 & 0x8000) == 0) {
-      uVar2 = 0;
+                    /* Constant: MDASM_PIN_STATE_BIT = 0x8000 */
+    if ((*key_line_status_register & 0x8000) == 0) {
+      key_on_sample_count = 0;
     }
     else {
-      uVar2 = uVar2 + 1 & 0xff;
+      key_on_sample_count = key_on_sample_count + 1 & 0xff;
     }
     cm848_busyWaitDelay(2);
-  } while ((int)uVar2 < 5);
+                    /* Constant: IGNITION_KEY_ON_SAMPLES_REQUIRED = 5 */
+  } while ((int)key_on_sample_count < 5);
   return;
 }
 
@@ -1911,14 +1936,14 @@ void mpc555_hardwareInitialization(void)
   tpu_b_mcr.TPUMCR = 0x8000;
   tpu_a_mcr.R028 = 0x80;
   tpu_b_mcr.R028 = 0x80;
-  qadc_b_mcr.MCR = 0;
-  qadc_b_mcr.INTC = 0;
-  qadc_b_mcr.PORTQA_B = 0;
-  qadc_b_mcr.DDRQA_B = 0;
-  qadc_b_mcr.CCW = 0;
-  qadc_b_mcr.RJURR = 0;
-  qadc_b_mcr.LJSRR = 0;
-  qadc_b_mcr.LJURR = 0;
+  QADC64A_MCR.MCR = 0;
+  QADC64A_MCR.INTC = 0;
+  QADC64A_MCR.PORTQA_B = 0;
+  QADC64A_MCR.DDRQA_B = 0;
+  QADC64A_MCR.CCW = 0;
+  QADC64A_MCR.RJURR = 0;
+  QADC64A_MCR.LJSRR = 0;
+  QADC64A_MCR.LJURR = 0;
   QADC64B_MCR.MCR = 0;
   QADC64B_MCR.INTC = 0;
   QADC64B_MCR.PORTQA_B = 0;
@@ -1957,9 +1982,9 @@ LAB_00002900:
   }
   USIU_BR0.OR0 = uVar5;
 LAB_0000291c:
-  uVar4 = mpc555_checkBusHardwareStatus();
-  bus_hardware_status_byte._0_2_ = uVar4 & 0xff;
-  if ((bus_hardware_status_byte._0_2_ != 0) || (eeprom_shadow_header.magic != 0x600d)) {
+  uVar4 = mpc555_areBootModeStrapPinsHigh();
+  boot_mode_strap_pins_high = uVar4 & 0xff;
+  if ((boot_mode_strap_pins_high != 0) || (eeprom_shadow_header.magic != 0x600d)) {
     mpc555_systemInitialization();
   }
   (*(code *)systemStartupInit_ptr)(0);
@@ -6399,14 +6424,14 @@ void cm848_initSupervisorWatchdog(void)
     }
     kernel_watchdog_error_count_peak = 0;
     *pwVar6 = 0x100;
-    if (((in_DER == 0x2002000f) && (bus_hardware_status_byte._0_2_ == 0)) &&
+    if (((in_DER == 0x2002000f) && (boot_mode_strap_pins_high == 0)) &&
        (kernel_watchdog_error_count == 0)) {
       qsmcm_tranram.TX0 = 0x1440;
-      bus_hardware_status_byte._2_2_ = 0;
+      supervisor_watchdog_not_armed_flag = 0;
     }
     else {
       qsmcm_tranram.TX0 = 0x1400;
-      bus_hardware_status_byte._2_2_ = 1;
+      supervisor_watchdog_not_armed_flag = 1;
     }
     qsmcm_comdram_0 = 0x5d;
     qsmcm_tranram.TX1 = 0xf200;
@@ -16885,7 +16910,7 @@ LAB_0001c480:
       }
     }
     else {
-      wVar2 = MIOS_MCPSMSCR.MIOS1ER;
+      wVar2 = mios_mdasm30.SCRD;
       if ((((wVar2 & 0x8000) == 0) && (engine_shutdown_active_flag == 0)) || (engine_starting == 1))
       {
         cold_start_phase = CSP_ENGINE_STANDBY;
@@ -16921,8 +16946,8 @@ LAB_0001c5e0:
       cold_start_phase = CSP_SETPOINT_UNDERRUN;
       goto LAB_0001c8b8;
     }
-    if ((((engine_start_inhibit_flag != 0) || (wVar2 = MIOS_MCPSMSCR.MIOS1ER, (wVar2 & 0x8000) != 0)
-         ) || (engine_shutdown_active_flag != 0)) &&
+    if ((((engine_start_inhibit_flag != 0) || (wVar2 = mios_mdasm30.SCRD, (wVar2 & 0x8000) != 0)) ||
+        (engine_shutdown_active_flag != 0)) &&
        ((engine_start_inhibit_flag != 1 && (engine_starting != 1)))) {
       if (cold_start_mode_enabled_flag == 1) {
         cold_start_phase = CSP_SUSPENDED;
@@ -16950,14 +16975,14 @@ LAB_0001c714:
     break;
   case CSP_ENGINE_STANDBY:
     if ((((engine_starting == 1) && (engine_rpm_state_t_0040b7ac.current_rpm == 0)) ||
-        ((engine_starting == 0 && (wVar2 = MIOS_MCPSMSCR.MIOS1ER, (wVar2 & 0x8000) != 0)))) &&
+        ((engine_starting == 0 && (wVar2 = mios_mdasm30.SCRD, (wVar2 & 0x8000) != 0)))) &&
        (((engine_start_inhibit_flag != 1 &&
          (cold_start_phase = CSP_CRANKING, engine_rpm_state_t_0040b7ac.current_rpm == 0)) &&
         (engine_starting == 1)))) {
       engine_starting = 0;
     }
     if (((engine_rpm_state_t_0040b7ac.current_rpm == 0) &&
-        (wVar2 = MIOS_MCPSMSCR.MIOS1ER, (wVar2 & 0x8000) == 0)) &&
+        (wVar2 = mios_mdasm30.SCRD, (wVar2 & 0x8000) == 0)) &&
        ((engine_shutdown_active_flag == 0 && (engine_start_inhibit_flag != 1)))) {
       governor_speed_engage_count = governor_speed_engage_count + 1;
     }
@@ -16975,13 +17000,13 @@ LAB_0001c714:
     }
     goto LAB_0001c8b8;
   }
-  wVar2 = MIOS_MCPSMSCR.MIOS1ER;
+  wVar2 = mios_mdasm30.SCRD;
   if ((((wVar2 & 0x8000) == 0) && (engine_shutdown_active_flag == 0)) || (engine_starting == 1)) {
 LAB_0001c754:
     cold_start_phase = CSP_ENGINE_STANDBY;
   }
 LAB_0001c8b8:
-  wVar2 = MIOS_MCPSMSCR.MIOS1ER;
+  wVar2 = mios_mdasm30.SCRD;
   if (((wVar2 & 0x8000) != 0) && (mios_timer_active_flag == 0)) {
     engine_shutdown_active_flag = 0;
   }
@@ -16998,7 +17023,7 @@ LAB_0001c8b8:
   else {
     cold_start_phase_2_6_flag = 0;
   }
-  wVar2 = MIOS_MCPSMSCR.MIOS1ER;
+  wVar2 = mios_mdasm30.SCRD;
   mios_timer_active_flag = 1 - ((wVar2 & 0x8000) == 0);
   return;
 }
@@ -44095,7 +44120,7 @@ void mpc555_evaluateProtectionSyncFaults(void)
   ushort uVar3;
   ushort uVar4;
   
-  wVar1 = MIOS_MCPSMSCR.MIOS1ER;
+  wVar1 = mios_mdasm30.SCRD;
   if ((((wVar1 & 0x8000) != 0) && ((protection_config_flags & 0x40) == 0)) &&
      (supervisor_register_36_bit_1_low_held_flag == 0)) {
     dVar2 = cm848_getProtectionSyncState();
@@ -45711,7 +45736,7 @@ void cm848_miosChannel29SetPwm(undefined4 param_1)
 void cm848_miosChannel30Enable(void)
 
 {
-  cm848_miosChannelEnable(&MIOS_MCPSMSCR);
+  cm848_miosChannelEnable(&mios_mdasm30);
   return;
 }
 
@@ -45724,7 +45749,7 @@ void cm848_miosChannel30Enable(void)
 void cm848_miosChannel30ReadStatus(undefined4 param_1)
 
 {
-  mpc555_miosReadChannelStatus(&MIOS_MCPSMSCR,param_1);
+  mpc555_miosReadChannelStatus(&mios_mdasm30,param_1);
   return;
 }
 
@@ -45737,7 +45762,7 @@ void cm848_miosChannel30ReadStatus(undefined4 param_1)
 void cm848_miosChannel30SetPwm(undefined4 param_1)
 
 {
-  mpc555_miosSetPwmOutput(&MIOS_MCPSMSCR,param_1);
+  mpc555_miosSetPwmOutput(&mios_mdasm30,param_1);
   return;
 }
 
@@ -45750,7 +45775,7 @@ void cm848_miosChannel30SetPwm(undefined4 param_1)
 void cm848_miosChannel31Enable(void)
 
 {
-  cm848_miosChannelEnable(0x3060f8);
+  cm848_miosChannelEnable(&mios_mdasm31);
   return;
 }
 
@@ -45763,7 +45788,7 @@ void cm848_miosChannel31Enable(void)
 void cm848_miosChannel31ReadStatus(undefined4 param_1)
 
 {
-  mpc555_miosReadChannelStatus(0x3060f8,param_1);
+  mpc555_miosReadChannelStatus(&mios_mdasm31,param_1);
   return;
 }
 
@@ -45776,7 +45801,7 @@ void cm848_miosChannel31ReadStatus(undefined4 param_1)
 void cm848_miosChannel31SetPwm(undefined4 param_1)
 
 {
-  mpc555_miosSetPwmOutput(0x3060f8,param_1);
+  mpc555_miosSetPwmOutput(&mios_mdasm31,param_1);
   return;
 }
 
@@ -47655,9 +47680,9 @@ byte cm848_readSwitchHardwareInput(uint param_1)
    switch_input_datalink_state_bits / hardware switches read their line from the input-line image at
    0x40c0f8 XOR switch_input_polarity_bits_cal / switches with no line keep their software-set
    state; 4-sample debounce (all 4 set -> set / all 4 clear -> clear / else hold) into
-   switch_input_state_bits; also counts MIOS1ER bit 15 falling edges into ignition_key_off_count
-   (was mpc555_updateEngineCycleOutputs) | review-function-readability reviewed 2026-11-12 -
-   Readability Medium Accuracy Confidence High */
+   switch_input_state_bits; also counts falling edges of the ignition key line (mios_mdasm30.SCRD
+   bit 15) into ignition_key_off_count (was mpc555_updateEngineCycleOutputs) |
+   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High */
 
 void cm848_scanAndDebounceSwitchInputs(void)
 
@@ -47727,7 +47752,7 @@ void cm848_scanAndDebounceSwitchInputs(void)
   if (3 < switch_input_debounce_sample_index) {
     switch_input_debounce_sample_index = 0;
   }
-  wVar3 = MIOS_MCPSMSCR.MIOS1ER;
+  wVar3 = mios_mdasm30.SCRD;
   uVar6 = (uint)((wVar3 & 0x8000) != 0);
   if ((ignition_key_line_previous_state != 0) && (uVar6 == 0)) {
     ignition_key_off_count = ignition_key_off_count + 1;
@@ -48143,7 +48168,7 @@ LAB_0004f6a0:
     param_4 = 0x7f;
     break;
   case 0x80:
-    wVar2 = MIOS_MCPSMSCR.MIOS1ER;
+    wVar2 = mios_mdasm30.SCRD;
     if ((wVar2 & 0x8000) == 0) {
       param_4 = 0xfe;
       j1939_protection_config_byte = j1939_protection_config_byte & 0xfe;
@@ -49994,7 +50019,7 @@ void hpcr_injectorPulseWidthCalc(void)
   else {
     io_pin_status_byte = bVar3 | 0x80;
   }
-  wVar2 = MIOS_MCPSMSCR.MIOS1ER;
+  wVar2 = mios_mdasm30.SCRD;
   if ((wVar2 & 0x8000) == 0) {
     bVar3 = j1939_protection_config_byte & 0xfe;
   }
@@ -51649,14 +51674,14 @@ void initQadcModule(void)
   ushort *puVar1;
   uint uVar2;
   
-  qadc_b_mcr.MCR = 0;
-  qadc_b_mcr.PORTQA_B = 0;
-  qadc_b_mcr.CCW = 0x1f7;
+  QADC64A_MCR.MCR = 0;
+  QADC64A_MCR.PORTQA_B = 0;
+  QADC64A_MCR.CCW = 0x1f7;
   QADC64B_MCR.MCR = 0;
   QADC64B_MCR.PORTQA_B = 0;
   QADC64B_MCR.CCW = 0x81f7;
-  qadc_b_mcr.RJURR = 0;
-  qadc_b_mcr.LJSRR = 0x1100;
+  QADC64A_MCR.RJURR = 0;
+  QADC64A_MCR.LJSRR = 0x1100;
   QADC64B_MCR.RJURR = 0;
   QADC64B_MCR.LJSRR = 0x1100;
   uVar2 = 0;
@@ -75811,7 +75836,7 @@ void cm848_runImmobilizerTask(void)
   }
   *pwVar4 = wVar2;
   if (immobilizer_present_flag != 0) {
-    wVar2 = MIOS_MCPSMSCR.MIOS1ER;
+    wVar2 = mios_mdasm30.SCRD;
     if ((wVar2 & 0x8000) == 0) {
       cm848_resetImmobilizerHandshake();
       immobilizer_handshake_status_flags = immobilizer_handshake_status_flags & 0xf0;
@@ -86218,7 +86243,7 @@ void cm848_mainLoopMonitor(void)
   
   if ((crank_counter_mainloop_prev < ignition_key_off_count) ||
      (supervisor_register_36_bit_1_low_held_flag != 0)) {
-    wVar1 = MIOS_MCPSMSCR.MIOS1ER;
+    wVar1 = mios_mdasm30.SCRD;
     if (((wVar1 & 0x8000) != 0) && (supervisor_register_36_bit_1_low_flag == 0)) {
       if ((protection_enable_byte_35 & 8) != 0) {
         cm848_clearLogicalOutputAndDriveLine(0x2b);
@@ -87025,7 +87050,7 @@ void engine_start_completion_sequence(void)
   sVar7 = cm848_isEepromMirrorSaveIdle();
   while (sVar7 == 0) {
     cm848_delayMicroseconds(0x13);
-    wVar6 = MIOS_MCPSMSCR.MIOS1ER;
+    wVar6 = mios_mdasm30.SCRD;
     if ((wVar6 & 0x8000) == 0) {
       uVar8 = 0;
     }
@@ -87203,7 +87228,7 @@ void cm848_initProtectionTimers(void)
     uVar6 = TBLr;
     for (uVar6 = (uVar6 >> 7 & 0xffff) - uVar5; (uVar6 & 0xffff) < 0x13;
         uVar6 = (uVar6 >> 7 & 0xffff) - uVar5) {
-      wVar4 = MIOS_MCPSMSCR.MIOS1ER;
+      wVar4 = mios_mdasm30.SCRD;
       if ((wVar4 & 0x8000) != 0) {
         cm848_setLogicalOutputAndDriveLine(0x1b);
         engine_protection_timer_sync();
@@ -87218,7 +87243,7 @@ void cm848_initProtectionTimers(void)
     bVar9 = bVar9 + 1;
     cm848_delayMicroseconds(0x186);
   } while (bVar9 < 4);
-  wVar4 = MIOS_MCPSMSCR.MIOS1ER;
+  wVar4 = mios_mdasm30.SCRD;
   if ((wVar4 & 0x8000) != 0) {
     engine_protection_timer_sync();
   }
@@ -87242,7 +87267,7 @@ void cm848_initProtectionTimers(void)
     uVar8 = uVar8 + 1;
   } while (uVar8 < 1000);
   do {
-    wVar4 = MIOS_MCPSMSCR.MIOS1ER;
+    wVar4 = mios_mdasm30.SCRD;
   } while ((wVar4 & 0x8000) == 0);
   engine_protection_timer_sync();
   return;

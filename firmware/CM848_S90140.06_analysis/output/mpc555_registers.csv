@@ -414,12 +414,12 @@ address,name,type,comment
 0x003060ea,MIOS_MPWMSM5_PULR,u16,MPWMSM5 Pulse Width Register
 0x003060ec,MIOS_MPWMSM5_CNTR,u16,MPWMSM5 Counter Register
 0x003060ee,MIOS_MPWMSM5_SCR,u16,MPWMSM5 Status/Control Register
-0x003060f0,MIOS_MCPSMSCR,u16,MIOS Counter Prescaler Status/Control
-0x003060f2,MIOS_MIOS1SR0,u16,MIOS1 Status Register 0
-0x003060f4,MIOS_MIOS1SR1,u16,MIOS1 Status Register 1
-0x003060f6,MIOS_MIOS1ER,u16,MIOS1 Enable Register
-0x003060f8,MIOS_MIOS1RPR,u16,MIOS1 Request Pending Register
-0x003060fc,MIOS_MIOS1LVL,u16,MIOS1 Interrupt Level Register
+0x003060f0,MIOS_MDASM30_AR,u16,MDASM30 A Register (was mislabeled MIOS_MCPSMSCR - the real MCPSMSCR is 0x306816)
+0x003060f2,MIOS_MDASM30_BR,u16,MDASM30 B Register
+0x003060f4,MIOS_MDASM30_XR,u16,MDASM30 X Register
+0x003060f6,MIOS_MDASM30_SCRD,u16,MDASM30 Status/Control Register (bit 15 = MDA30 pin = ignition key line)
+0x003060f8,MIOS_MDASM31_AR,u16,MDASM31 A Register
+0x003060fc,MIOS_MDASM31_XR,u16,MDASM31 X Register
 
 # =============================================================================
 # TouCAN A - CAN Controller A (0x307000 - 0x30707F)

@@ -1190,18 +1190,14 @@ qsmcm_sci1_regs_t,0x00305008,SCC1R1,word,2,SCI1 Control Register 1 (interrupt en
 qsmcm_sci1_regs_t,0x00305008,SC1SR,word,2,SCI1 Status Register (TDRE/RDRF/OR/FE/NF/PF),,verified
 qsmcm_sci1_regs_t,0x00305008,SC1DR,word,2,SCI1 Data Register (read=RX data write=TX data),,verified
 # =============================================================================
-# MIOS1 Global Registers - 14 bytes at MIOS_base+0xF0
-# MCPSMSCR: prescaler control; MIOS1SR0/1: interrupt status; MIOS1ER: enable
-# MIOS1RPR: request pending; MIOS1LVL: interrupt level
-# Used by mpc555_updateCapabilityFlags to read MIOS1ER (bit 15 = channel live)
+# MDASM30 / MDASM31 - MIOS1 submodules 30 and 31 (base 0x306000 + 8 x n) - instances of mios_mdasm_t
+# cm848_miosChannel30* / cm848_miosChannel31* pass these bases to the generic MDASM driver.
+# MDASM30 SCRD (+6) bit 15 = the MDA30 pin = the ignition key line (1 = key on).
+# This range was mislabeled mios1_global_regs_t (MCPSMSCR / MIOS1SR0 / MIOS1ER / ...): the real
+# MCPSMSCR is 0x306816 (mios1_ext_816) and the MIOS1 interrupt registers are at 0x306c00 (mios1_isr). (PR #48)
 # =============================================================================
-mios1_global_regs_t,0x003060f0,MCPSMSCR,word,2,MIOS Counter Prescaler Status/Control Register,,verified
-mios1_global_regs_t,0x003060f0,MIOS1SR0,word,2,MIOS1 Interrupt Status Register 0,,verified
-mios1_global_regs_t,0x003060f0,MIOS1SR1,word,2,MIOS1 Interrupt Status Register 1,,verified
-mios1_global_regs_t,0x003060f0,MIOS1ER,word,2,MIOS1 Interrupt Enable Register (bit15=ch0 live),,verified
-mios1_global_regs_t,0x003060f0,MIOS1RPR,word,2,MIOS1 Request Pending Register,,verified
-mios1_global_regs_t,0x003060f0,_pad,word,2,Reserved,,verified
-mios1_global_regs_t,0x003060f0,MIOS1LVL,word,2,MIOS1 Interrupt Level Register,,verified
+mios_mdasm_t,0x003060f0,,,,MDASM30 instance - marker only,,verified
+mios_mdasm_t,0x003060f8,,,,MDASM31 instance - marker only,,verified
 # =============================================================================
 # QSMCM QSPI runtime control registers
 # 0x30501a: QSPI control (bit 15 = SPE/start transfer); 0x30501c = SPCR2 (ENDQP/NEWQP)

@@ -40,6 +40,7 @@ function_address,function_name,param_index,name,type,comment
 # to the signed tests (cmpwi r3 0 / cmpw r4 r3); an undefined type locks the name but lets the decompiler infer int.
 0x00002384,cm848_busyWaitDelay,return,,void,No return value - r3 is only read
 0x00002384,cm848_busyWaitDelay,0,pass_count,undefined4,Number of delay passes of SPINS_PER_DELAY_PASS spins each (signed; 0 or less returns at once)
+0x000024a0,cm848_waitForStableIgnitionKeyOn,return,,void,explicit void(void) - r3 is written before it is read - clears the phantom 0x1000 argument at its 3 call sites
 
 # -----------------------------------------------------------------------------
 # J1939 PGN Handlers - Common pattern for diagnostic message handlers
