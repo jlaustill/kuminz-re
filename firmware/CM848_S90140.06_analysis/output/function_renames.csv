@@ -18,7 +18,8 @@
 #   CM848D periodicTaskSet_communication  ↔ CM550 diagnosticCommunicationSlowCycle10Coordinator
 #   CM848D periodicTaskSet_protection     ↔ CM550 periodicTaskSet_governorProtection
 #   CM848D periodicTaskSet_fuelDemand     ↔ CM550 periodicTaskSet_fuelDemand
-#   CM848D setBitInArray                  ↔ CM550 setBitInArray
+#   (a CM848D setBitInArray entry was removed 2026-11-12: its address 0x4ef5c is mid-function inside
+#    cm848_setEngineProtectionFault, which is a priority-gated byte-array set - not CM550's setBitInArray)
 # See docs/cross-firmware-analysis.md for complete mapping table.
 #
 # RAM copy: ROM 0x526C -> RAM 0x3FAE3C (called from mainLoopIteration via bl)
@@ -533,7 +534,6 @@ address,name
 0x0000be5c,cm848_periodicTaskGroup31_calibration13
 0x0000be88,cm848_periodicTaskGroup32_calibration14
 0x0000beb4,cm848_periodicTaskSet_protection3
-0x0000bec8,cm848_schedulerPhaseDispatcher
 0x0000bee0,cm848_periodicTaskSet_auxiliary
 0x0000bf08,periodicTaskSet_fuelDemand
 0x0000bf34,hpcr_periodicTaskGroup36_calibration15
@@ -581,7 +581,6 @@ address,name
 0x0000d9b0,cm848_sensorChannel15_process
 0x0000da3c,cm848_sensorChannel16_init
 0x0000db50,cm848_sensorChannel16_process
-0x0000db88,cm848_sensorChannel16BProcessOilPressure
 0x0000dc64,cm848_oilPressureDeltaCalculation
 0x0000dcdc,cm848_fuelDemandBlendCalculator
 0x0000e09c,cm848_initFuelTableSizes
@@ -599,7 +598,6 @@ address,name
 0x0000e8ac,cm848_initTemperatureTrimTableSizes
 0x0000e8cc,cm848_initTemperatureTrimCoeff
 0x0000e8dc,cm848_fuelTimingRateLimitedBlend
-0x0000e8f0,cm848_fuelTimingCompensation
 0x0000ea00,fuelTimingOilPressureModeController
 0x0000fabc,cm848_initFuelDemandVariables
 0x0000fb28,cm848_restoreEngineOperatingMode
@@ -676,8 +674,6 @@ address,name
 0x00014304,cm848_setFuelStatusFlags
 0x00014374,cm848_calculateRpmLoadLimit
 0x00014430,cm848_selectFinalLoadLimit
-0x0001444c,cm848_setFuelDemandVariable
-0x00014458,cm848_setFuelDemandVariable
 0x00014464,cm848_selectFuelLoadOverride
 0x00014498,cm848_processFuelLimitCalculations
 0x000144d0,mpc555_initFuelLimitTableSizes
@@ -695,8 +691,6 @@ address,name
 0x00015e08,cm848_interpolateFuelMapTable
 0x00015f34,cm848_processFuelMapInterpolation
 0x000160ac,cm848_calculateFuelBlendModeSelection
-0x00016408,cm848_calculateFuelBlendMode
-0x0001640c,cm848_calculateFuelBlendMode
 0x000164ac,cm848_processFuelDemandCalculations
 0x000164e4,cm848_fuelDemandTableLookup
 0x00016724,cm848_fuelDemandRpmCorrection
@@ -795,10 +789,8 @@ address,name
 #                                   — jumps into j1939GetEngineStateCode @ 0x2588c
 #   0x00026060 thunk_FUN_000260a8 = TX handler for PGN 65247 (0xFEDF, EEC3)
 #   0x00026694 thunk_FUN_0002669c = TX handler for PGN 65213 (0xFEBD)
-0x0001b9a8,cm848_j1939SendPgn65251_FEE3_EngineConfig
 0x0001bb30,cm848_initColdStartLimits
 0x0001bb48,cm848_calculateColdStartRpmAdjust
-0x0001bb78,cm848_calculateColdStartFuelOffset
 0x0001bc30,cm848_calculateColdStartTempTable
 0x0001bd44,cm848_selectColdStartRpmLimit
 0x0001bd74,cm848_calculateIntakeAirAdjustment
@@ -818,7 +810,6 @@ address,name
 0x0001ce28,cm848_findFaultByTypeAndSeverity
 0x0001cea4,cm848_registerFaultInActiveList
 0x0001d01c,cm848_clearDiagnosticState
-0x0001d11c,cm848_clearAllDiagnosticFaults
 0x0001d224,cm848_faultTableEntryProcessor
 0x0001d8f8,cm848_buildFaultConditionMask
 0x0001d9b8,diagnosticMainStateProcessor
@@ -827,8 +818,6 @@ address,name
 0x0001de4c,cm848_updateFaultEntryCounters
 0x0001dee0,cm848_resetFaultStatus
 0x0001df64,hpcr_setFaultActiveStatus
-0x0001df88,hpcr_captureFreezeFrameData
-0x0001e158,hpcr_processDiagnosticFrame
 0x0001e22c,cm848_selectFuelDemandSource
 0x0001e4d8,cm848_clearFuelDemandFlag
 0x0001e4e8,cm848_calculateProtectionRateLimited
@@ -863,7 +852,6 @@ address,name
 0x00020af0,cm848_calculateOilPressureRateOfChange
 0x00020b84,cm848_updateProtectionParameters
 0x00020bfc,cm848_updateProtectionInputs
-0x00020c60,cm848_initProtectionDefaults
 0x00020c64,cm848_processJ1939RxMessage
 0x00020d10,cm848_updateProtectionStateMachine
 0x000212dc,cm848_initProtectionDelayDefaults
@@ -884,10 +872,8 @@ address,name
 0x00021918,cm848_validateCalibrationMemory
 0x00021a24,cm848_registerJ1939DiagnosticHandlers
 0x00021ac0,cm848_initUdsServiceHandlers
-0x00021b28,cm848_applyFuelDemandFilter
 0x00021bf8,cm848_getHighestPriorityBit
 0x00021c3c,cm848_updateProtectionThresholdsIfLow
-0x00021c9c,cm848_setProtectionThresholdParameters
 0x00021cd4,cm848_updateProtectionDiagnostics
 0x00021fc4,j1939_receivePgn56576Handler,J1939 receive handler registered with j1939_handlerInitializer for PGN 56576: unpacks the message into working RAM (signal globals at 0x40aaa9-0x40aabf / 0x3feaa6-0x3fead0 not yet named) | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Low
 0x000220b4,cm848_initJ1939DiagnosticCallback
@@ -898,8 +884,6 @@ address,name
 # Governor/protection init
 0x000222f8,cm848_resetGovernorControlState
 0x00022318,cm848_initGovernorDerivativeTerms
-0x0002232c,cm848_initGovernorControlHandler
-0x0002235c,cm848_noOperation
 # 0x0002235c is the epilogue of cm848_initGovernorControlHandler (not a separate function).
 # Previously misidentified as cm848_noOperation because e2m Flash2 (V11.20.13.16) had
 # bl instructions targeting this address where cm848_processJ1939DiagnosticRequest lived
@@ -908,22 +892,15 @@ address,name
 # into the parent function.
 # 0x0002235c,cm848_noOperation
 0x0002236c,cm848_processSecurityAccessRequest
-0x000223a0,cm848_clearGovernorDerivativeMode
 0x000223f4,cm848_processGovernorControlMessage
-0x00022468,cm848_initializeGovernorDerivatives
-0x00022570,cm848_matchSecurityRequest
-0x00022590,cm848_processGovernorSecurityAccessRequest
 0x00022674,cm848_j1939HandlePgn65228Dm3ClearDiag
 0x00022770,cm848_initPgn65228Dm3Handler
 0x000227a0,cm848_j1939HandleDm1RequestMessage
 0x00022840,cm848_initJ1939Dm1RequestHandler
 0x00022870,cm848_j1939ProcessPgn61442Etc1
-0x00022ab8,cm848_selectTorqueLimitMode
 0x00022bc4,cm848_initJ1939Pgn61442Etc1Handler
 0x00022d18,cm848_initEtc2Handler,Registers the J1939 ETC2 (PGN 61445 / 0xf005) receive handler (DAT_00022c5c) and primes transmission RX state (clears tsc1_received.auxiliary_state, sets etc1_address_filter=0xff). NOT vehicle speed - prior name cm848_initJ1939VehicleSpeedHandler was wrong; ETC2 carries gear/range, and the MANUAL_VSS cal has no J1939 speed-in path.
 0x00022d60,torqueControlModeHandler
-0x00022e3c,cm848_processGovernorSpeedControlRequest
-0x00022f90,cm848_processGovernorSpeedRequest
 0x00023188,cm848_j1939RegisterPgnHandler
 0x000231cc,cm848_j1939DispatchPgnHandler,jlaustill reviewed 2026-5-25 - mostly readable, hopefully accurate
 0x000232b4,cm848_initJ1939ProtocolHandlers
@@ -931,8 +908,6 @@ address,name
 0x0002343c,cm848_initJ1939ProprietaryHandler
 0x0002346c,cm848_j1939SetupMultiFrameTransfer
 0x000234a4,j1939FormatMultiFrameResponse
-0x0002352c,cm848_routeGovernorHandlerByTable
-0x000236b4,cm848_setGovernorHandlerDefault
 0x000236f0,cm848_j1939ProcessGovernorRequest
 0x00023a9c,cm848_initGovernorProtectionState
 0x00023b38,cm848_j1939DispatchAddressHandler
@@ -940,13 +915,10 @@ address,name
 0x00023be0,cm848_sendJ1939ProprietaryStatus
 # J1939 TX frame buffer initializers (PGN embedded in name where possible)
 0x00023cd4,cm848_initJ1939ProprietaryStatusBuffer
-0x00023d14,cm848_initJ1939DmHandlerBuffer
 0x00023d3c,cm848_sendJ1939AcknowledgeMessage
 0x00023dbc,cm848_sendJ1939NegativeAck
-0x00023e2c,cm848_flushJ1939FrameBuffer
 0x00023e40,cm848_initJ1939AckBuffer
 0x00023e8c,cm848_j1939HandlePgn65269AmbientConditions
-0x00023f4c,cm848_sendJ1939ErrorFrame
 0x00023fb8,cm848_initJ1939AmbientConditionsBuffer
 0x00024028,cm848_j1939BuildEngineStatusByte
 0x00024124,cm848_initJ1939EngineStatusBuffer
@@ -975,7 +947,6 @@ address,name
 0x0002567c,cm848_j1939BuildEngineControlByte
 0x00025824,cm848_initJ1939Etc1ControlBuffer
 0x0002588c,j1939GetEngineStateCode
-0x00025908,cm848_j1939SendEtc1NotAvailable
 0x00025ab8,cm848_initEec1TxDescriptor
 0x00025b10,cm848_buildPgn61443ElectronicEngineController2Message,Builds and sends the ECM's own EEC2 broadcast (PGN 61443): byte 1 accelerator low idle switch (SPN 558 from fuel_demand_control_t.accelerator_off_idle - 3 when switch 7 is datalink-sourced - 2 on pedal faults) + kickdown field / byte 2 accelerator pedal position 1 = fuel_demand_governor_output x 0.625 (0xFF in J1939-pedal mode) / byte 3 percent load at current speed / byte 4 remote accelerator position (0xFF unless system_feature_config_flags bit 12) / bytes 5-8 0xFF (was j1939HandlePgn61443Eec2 - a transmit builder) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
 0x00025d60,cm848_initPgn61443Eec2Handler
@@ -1062,11 +1033,9 @@ address,name
 0x0002bed4,cm848_initJ1939PtoBuffer
 0x0002bf44,cm848_updateFaultOnKeyoff
 0x0002bf6c,cm848_calculateRpmLimitsFromProtection
-0x0002bfd0,cm848_j1939SendPgn65264_FEF0_PowerTakeoff
 0x0002c0fc,cm848_emptyStubFunction6
 0x0002c100,cm848_initProtectionLimitVariables
 0x0002c114,cm848_updateTorqueLimitFromProtection
-0x0002c14c,cm848_updateTorqueLimitFromThreshold
 0x0002c180,cm848_trackFuelDemandThreshold
 0x0002c23c,cm848_processProtectionLimitActivation
 0x0002c318,cm848_checkSafetyConditionsForProtection
@@ -1163,12 +1132,10 @@ address,name
 0x00035be8,cm848_processSensorLookupTable1
 0x00035c74,cm848_initSensorLookupTableInit1
 0x00035d00,cm848_processSensorTemperatureData
-0x00035d48,cm848_computeTemperatureDifferential
 0x00035d70,cm848_enableSensorFilterUpdate
 0x00035d80,cm848_processSensorFilterCalibration
 0x00035f14,mpc555_initSensorCalibrationTables
 0x00035fa8,cm848_processFaultScanLookup
-0x00036220,cm848_processMultiAxisInterpolation
 0x000367a4,cm848_queueSupervisorStatusRead,Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status registers; command byte 0x5D): queues reads of registers 0x4E / 0x5A / 0x5C (3 words) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
 0x000367f0,cm848_onSupervisorStatusRead,Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status registers; command byte 0x5D): completion of the 0x4E/0x5A/0x5C read: stores the replies in fault_report_parameter_byte / j1939_lamp_status_cache bits / j1939_fault_occurrence_count (application meaning of those globals not reviewed) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
 0x0003682c,cm848_queueSupervisorOutputWrite,Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status registers; command byte 0x5D): writes register 0x92 with the low byte of j1939_lamp_status_cache (output control) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
@@ -1237,49 +1204,29 @@ address,name
 # Protection system functions
 0x0003af7c,cm848_applyProtectionSpeedLimitOverride
 0x0003afb8,cm848_calculateSecurityChecksum
-0x0003afc8,cm848_validateDataWithChecksumTable
 0x0003b030,cm848_processUdsSecurityService
 0x0003b910,cm848_processProtectionCounters
-0x0003b95c,cm848_decrementProtectionChannelValue
 0x0003bb28,cm848_selectProtectionOverrideMode
-0x0003bb74,cm848_indirectJumpDispatcher
 0x0003bd10,cm848_emptyStub10
 0x0003bd14,cm848_validateCalibrationAgainstEeprom
-0x0003bd5c,cm848_validateCalibratedParameterDelta
-0x0003bd60,cm848_validateCalibratedParameterChange
 0x0003be30,cm848_updateProtectionEnableFromInjectionState
-0x0003be7c,cm848_thunk_setByteAtOffset1
-0x0003be88,cm848_setByteAtOffset1
 0x0003be90,cm848_processProtectionFaultFlags
-0x0003bedc,cm848_initProtectionChannelState
 0x0003c018,cm848_checkSpeedDerivativeMode
 0x0003c044,cm848_updateProtectionOverrideFlags
-0x0003c064,cm848_processProtectionChannelConfig
-0x0003c090,cm848_evaluateProtectionChannelInput
 0x0003c140,cm848_convertProtectionTemperatureToScale
 0x0003c188,cm848_emptyStub11
 0x0003c18c,cm848_selectProtectionChannelMode
-0x0003c1d4,cm848_updateProtectionChannelOutput
-0x0003c1d8,cm848_finalizeProtectionChannelState
 0x0003c26c,cm848_processEngineRpmMonitoring
 0x0003c2f0,cm848_buildOutputChannelStatusWord
-0x0003c33c,cm848_configureOutputChannelFlags
 0x0003c5f0,cm848_processProtectionStateChange
-0x0003c62c,cm848_updateProtectionModeState
 0x0003c6b0,cm848_processProtectionTimingCounter
-0x0003c6ec,cm848_evaluateProtectionTimerThreshold
 0x0003c880,cm848_updateCbdThresholdState
-0x0003c8bc,cm848_checkProtectionVoltageInput
 0x0003c8ec,hpcr_validateBatteryVoltageInput
-0x0003c928,hpcr_processVoltageProtectionState
 0x0003ca90,mpc555_initFuelDemandFilterPointers
 0x0003cab0,cm848_buildProtectionStatusByte
-0x0003caec,cm848_evaluateVoltageThresholds
 0x0003cbd4,cm848_calculateProtectionUnitConversion
-0x0003cc10,cm848_storePressureConversionResult
 0x0003cc98,cm848_captureVehicleDistanceHighByte
 0x0003ccb4,cm848_calculateFuelDemandLimit
-0x0003ccd4,cm848_calculateFuelDemandLimitState
 0x0003cefc,cm848_trackFuelDemandMinimum
 0x0003cf40,mpc555_initFuelDemandTrackingState
 0x0003cf68,cm848_processFaultPendingFlags
@@ -1310,15 +1257,11 @@ address,name
 0x0003e7c0,cm848_sciCommand53Handler,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): command 0x35 (53) handler from the 0x53a9a0 table: installs cm848_sciCommand53Callback | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
 0x0003e7f0,cm848_sciCommand53Callback,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): next-byte callback for command 0x35 (53) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Low
 0x0003e8d8,cm848_sciCallbackTimeout,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): when sci_callback_timeout_countdown expires restores the default command handler and ends the transfer | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
-0x0003e914,cm848_sciRestoreDefaultCallback,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): sci_next_byte_handler = sci_default_command_handler then ends the transfer | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
 # Remaining ROM unnamed functions - 2026-05-22
 0x0003e938,cm848_sciStartCallbackTimeout,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): sci_callback_timeout_countdown = 17 | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
 0x0003e948,cm848_sciCancelCallbackTimeout,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): sci_callback_timeout_countdown = 0 | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
 0x0003e958,cm848_sciInitDefaultCallback,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): sci_default_command_handler = cm848_dispatchSciCommand | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
 0x0003e96c,cm848_processSensorInputFiltering
-0x0003e974,cm848_calculateTorqueLimitType1
-0x0003e984,cm848_calculateTorqueLimits
-0x0003e994,cm848_calculateTorqueLimitType2
 0x0003eca4,mpc555_initThermalProtectionFilters
 0x0003eccc,cm848_setThermalProtectionMode5
 0x0003ecdc,cm848_evaluateThermalProtectionActive
@@ -1411,23 +1354,17 @@ address,name
 0x000466a8,cm848_calculateGovernorOutput
 0x00046cf8,mpc555_initFuelFilterStates
 0x00046d90,cm848_updateEngineStatusTimers
-0x00046dc8,mpc555_updateEngineStatusWord
 0x00046f64,cm848_clearTimingAccumulators
 0x00046f7c,cm848_calculateTimingWithTables
-0x00046fb4,cm848_interpolateFuelTableValue
 0x00047140,cm848_calculateEngineTimingInterpolation
-0x00047178,cm848_processDualAxisLookup
 0x00047394,cm848_calculateEngineFaultTiming
-0x000473cc,cm848_validateSyncCount
 0x0004769c,cm848_selectGovernorFilterOutput
-0x000476d4,cm848_checkEngineSyncPulse
 0x00047784,mpc555_clearTimingDataAndFilters
 0x00047838,cm848_protectionRecoveryHandler
 0x00047978,cm848_protectionModeSelector
 0x00047a88,cm848_protectionStateHandler
 0x00047bd0,cm848_calculateEngineTimingOffset
 0x00048fa0,cm848_updateSyncOffsetCounter
-0x00048fd8,cm848_advanceSyncPointer
 0x00049004,cm848_resetEngineSyncState
 0x0004922c,cm848_filterEngineSensorValue
 0x00049264,cm848_processEnginePositionDiagnostics
@@ -1439,7 +1376,6 @@ address,name
 0x0004a2f8,mpc555_calculateTpuTimingPeriod
 0x0004a37c,mpc555_initTpuTimingInterrupts
 0x0004a490,cm848_processEnginePositionData
-0x0004a4c8,cm848_processCommunicationDiagnostic
 0x0004a748,cm848_updateEnginePositionErrors
 0x0004a7ac,cm848_filterEnginePositionDelta
 0x0004a858,cm848_initEnginePositionState
@@ -1447,14 +1383,12 @@ address,name
 0x0004a968,cm848_updateProtectionBitFlags
 0x0004aaac,cm848_protectionFaultEvaluator
 0x0004ac3c,mpc555_evaluateProtectionSyncFaults
-0x0004ac74,cm848_evaluateProtectionSyncStateConditional
 0x0004ad8c,cm848_initTimingFilterStates
 0x0004ae20,cm848_calculateEngineTimingData
 0x0004b5b8,cm848_updateEngineStatusFlags
 0x0004b6cc,cm848_calculateFuel2DTableLookup
 0x0004b9ac,cm848_applyProtectionLimit
 0x0004ba48,cm848_processMemoryScanValidation
-0x0004ba80,cm848_evaluateConditionDescriptor
 0x0004bd00,cm848_copyRomToRamBuffer
 0x0004bd3c,cm848_isEepromWriteQueueEmpty,SPI serial EEPROM driver (QSPI PCS0; 25xx opcodes 3 READ / 2 WRITE / 6 write-enable / 5 read-status): true when no byte writes are queued | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
 0x0004bd5c,cm848_startEepromBlockRead,SPI serial EEPROM driver (QSPI PCS0; 25xx opcodes 3 READ / 2 WRITE / 6 write-enable / 5 read-status): READ (3) of 30 words at eeprom_mirror_load_offset into eeprom_receive_words; completion -> cm848_onEepromBlockRead | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
@@ -1517,29 +1451,17 @@ address,name
 0x0004d570,cm848_miosTimer3SetValue
 0x0004d59c,cm848_miosTimer16InitPeriod
 0x0004d5c4,cm848_miosTimer16ScaleByPercent
-0x0004d5d4,cm848_miosTimer16ScaleOutput
 0x0004d5f0,cm848_miosTimer16SetValue
-0x0004d5fc,cm848_miosTimer16SetOutput
 0x0004d61c,cm848_miosTimer17InitPeriod
-0x0004d628,cm848_miosTimer17InitPeriodAlt
 0x0004d644,cm848_miosTimer17ScaleByPercent
-0x0004d654,cm848_miosTimer17ScaleDefault
 0x0004d670,cm848_miosTimer17SetValue
-0x0004d67c,cm848_miosTimer17SetValueAlt
 0x0004d69c,cm848_miosTimer18InitPeriod
-0x0004d6a8,cm848_miosTimer18InitPeriodAlt
 0x0004d6c4,cm848_miosTimer18ScaleByPercent
-0x0004d6d4,cm848_miosTimer18ScaleDefault
 0x0004d6f0,cm848_miosTimer18SetValue
-0x0004d6fc,cm848_miosTimer18SetValueAlt
 0x0004d71c,cm848_miosTimer19InitPeriod
-0x0004d728,cm848_miosTimer19InitPeriodAlt
 0x0004d744,cm848_miosTimer19ScaleByPercent
-0x0004d754,cm848_miosTimer19ScaleDefault
 0x0004d770,cm848_miosTimer19SetValue
-0x0004d77c,cm848_miosTimer19SetValueAlt
 0x0004d79c,cm848_tpuChannel0Reset
-0x0004d7a8,cm848_miosTimer20Configure
 0x0004d7c0,cm848_tpuChannel0SetDuty
 0x0004d7e8,cm848_tpuChannel0Configure
 0x0004d810,cm848_tpuChannel1Reset
@@ -1653,26 +1575,18 @@ address,name
 0x0004e9f0,cm848_tpuOutput15Disable
 0x0004ea18,cm848_tpuOutput15SetPeriod
 0x0004ea40,cm848_setDatalinkSwitchStateIfPriority,(switch / priority): when switch_input_source_priority[switch] <= priority claims the switch at that priority and sets its bit in switch_input_datalink_state_bits (was cm848_setEngineCycleBitmapBitIfGreater) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
-0x0004ea78,cm848_orBitsInArray
 0x0004ea84,cm848_clearDatalinkSwitchStateIfPriority,(switch / priority): when switch_input_source_priority[switch] <= priority claims the switch at that priority and clears its bit in switch_input_datalink_state_bits (was cm848_clearEngineCycleBitmapBitIfGreater) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
-0x0004eabc,cm848_clearBitsInArray
 0x0004eac8,cm848_readSwitchHardwareInput,(switch): reads the switch's hardware input line (switch_input_hardware_line_cal[switch]) with cm848_readDiscreteInputLine and applies its switch_input_polarity_bits_cal bit (was cm848_checkProtectionWarningBitState) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
-0x0004eb00,cm848_checkProtectionBitWarningState
 0x0004eb48,cm848_scanAndDebounceSwitchInputs,32 logical switch inputs: datalink-sourced switches (switch_input_datalink_source_bits_cal) take switch_input_datalink_state_bits / hardware switches read their line from the input-line image at 0x40c0f8 XOR switch_input_polarity_bits_cal / switches with no line keep their software-set state; 4-sample debounce (all 4 set -> set / all 4 clear -> clear / else hold) into switch_input_state_bits; also counts MIOS1ER bit 15 falling edges into cold_start_crank_counter (was mpc555_updateEngineCycleOutputs) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
 0x0004eeb8,hpcr_initProtectionAndOutputCycle
 0x0004ef24,cm848_setEngineProtectionFault
-0x0004ef5c,setBitInArray
 0x0004ef74,cm848_clearProtectionFault
-0x0004efac,cm848_dispatchSyncUpdateByFlag
 0x0004f000,cm848_triggerProtectionEvent
-0x0004f038,cm848_clearEventFlag
 0x0004f050,cm848_protectionFlagManager
-0x0004f088,cm848_conditionalSyncFlagUpdate
 0x0004f0dc,cm848_checkProtectionModeFlags
 0x0004f190,cm848_protectionAlarmHandler
 0x0004f2b0,cm848_processProtectionFaultsAndTiming
 0x0004f2ec,cm848_readDiscreteInputLine,(line): reads the port holding discrete input line N (MIOS1 / SIU_SGPIODT1 / SIU_SGPIODT2 / MIOS pin states / RAM status bytes for lines 128-151) into the input-line image at 0x40c0f8 + N/8 and returns the line's bit; lines below 8 and above 151 are not read (was hpcr_protectionWarningHandler) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
-0x0004f324,hpcr_evaluateHardwareTimerState
 0x0004f6f0,mpc555_driveOutputLineHigh,Sets output line N (8+) high: ORs bit N into the shadow byte output_lines_<range>_state and the owning port register (MIOS port / SIU_SGPIODT1 / SIU_SGPIODT2 ...); lines below 8 are ignored. Was clearModuleSyncFlag (nothing to do with sync) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
 0x00051038,mpc555_driveOutputLineLow,Sets output line N (8+) low: clears bit N in the shadow byte and the owning port register; counterpart of mpc555_driveOutputLineHigh. Was updateEngineSyncStatus (nothing to do with engine sync) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
 0x000529b8,cm848_refreshOutputPortsAndReadback,Periodic output refresh: snapshots every output port (j1939_dm1_prev_b0..b10 = previous port states) / reads back MIOS PWM + DASM pin states into j1939_lamp_status_byte_a..c / forces the DASM outputs from injector_control_t.output_ch0 / applies the 80 protection-event outputs / then rewrites SIU_SGPIODT1/2 + the MIOS port + the supervisor output register + the serial output driver (lines 152-159) from their output_lines_*_state shadows. Not injector timing (was injectorTimingCalculation) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
@@ -1680,9 +1594,7 @@ address,name
 0x000535e8,mpc555_processJ1939TxBufferSend
 0x00053720,mpc555_queueCanReceiveMessage
 0x00053858,mpc555_sendJ1939SingleFrame
-0x00053890,mpc555_enqueueCanTransmitFrame
 0x000539fc,sendJ1939Message,jlaustill reviewed 2026-5-26 - reads nicely, hopefully accurate
-0x00053a34,cm848_validateDiagnosticResponseWrapper
 0x00053a4c,cm848_lookupJ1939SourceAddressIndex
 0x00053aa8,cm848_handleCanMailboxTransmitComplete
 0x00053ae0,cm848_handleCanMailboxTransmitRange
@@ -1693,11 +1605,9 @@ address,name
 0x00053c68,cm848_findJ1939MessageEntry
 0x00053cd8,cm848_addCoolantCalEntry
 0x00053d3c,cm848_addCoolantCalEntry
-0x00053d74,cm848_setDefaultCalibrationValue
 0x00053d84,cm848_addCoolantCalEntryAlt
 0x00053dc8,cm848_processCoolantCalEntries
 0x00053fa8,cm848_removeCoolantCalEntryByParams
-0x00053fe0,cm848_removeCalibrationListEntry
 0x00054064,cm848_removeCoolantCalEntry
 0x00054100,mpc555_miosInterruptDispatcher
 0x0005419c,mpc555_infiniteLoopHalt
@@ -1706,7 +1616,6 @@ address,name
 0x00054224,cm848_checkRpmOverspeedProtection
 0x00054380,mpc555_systemStartupInitialization
 0x000544c4,hpcr_exceptionHandler
-0x00054a9c,cm848_initializationContinuation
 0x00054d30,cm848_engineStartCompletionB
 0x00054e10,cm848_miosSetChannelDutyCycle
 0x00054eac,cm848_miosChannelDisable
@@ -1725,7 +1634,6 @@ address,name
 0x00055500,initQadcModule
 0x000555cc,cm848_copyDataBuffer
 0x0005573c,cm848_processSecurityCodeConversion
-0x0005576c,cm848_validateSecurityCode
 0x0005586c,cm848_processEngineRpmDiagnostic
 0x00055a40,cm848_dispatchCalibrationFunctions
 0x00055c1c,mpc555_initTpuConfiguration
@@ -1733,52 +1641,30 @@ address,name
 0x00055de4,mpc555_tpuAInterruptDispatcher
 0x00055e9c,cm848_emptyStubFunction
 0x00055ea0,cm848_calculateCrc16Simple
-0x00055ed0,cm848_calculateCrc16
 0x00055ef4,lookupTableInterpolation
-0x00055f24,cm848_linearInterpolate1D
 0x00056184,cm848_extendedDivisionWithRemainder
 0x00056260,cm848_signedDivisionWithSaturation
 0x000562fc,cm848_clampedDivisionWithBounds
-0x0005632c,cm848_noOperation2
-0x000563e4,cm848_noOperation2
 0x000563e8,cm848_saturatingDivision16
 0x0005644c,cm848_signedFirstOrderFilter
-0x0005647c,cm848_signedFilterWithWeight
-0x00056488,cm848_signedFilterWithWeight
 0x000564c0,cm848_secondOrderFilter
-0x000564f0,cm848_multiplyAccumulateFixed32
 0x00056594,exponentialMovingAverage
-0x000565c4,cm848_filterWithWeight
-0x000565d0,cm848_filterWithWeight
 0x00056608,cm848_interpolateTableLinearStep
-0x00056638,cm848_lookupTableByIndex
 0x000566cc,cm848_dualAxisTableInterpolation
-0x000566fc,cm848_interpolateWithIndex
 0x00056c80,cm848_ringBufferWriteByte
 0x00056d38,cm848_ringBufferInit
 0x00056d58,cm848_memcpyBytes
 0x00056d88,cm848_delayMicroseconds
-0x00056db8,cm848_waitForTimeBaseTicks
 0x00056e0c,cm848_delayMicroseconds2
-0x00056e3c,cm848_waitForTimeBaseDelay
 0x00056e90,cm848_unsignedDivision64by32
 0x000570f0,cm848_signedDivision32
-0x00057120,cm848_signedDivision64
 0x000571b0,cm848_unsignedDivision32
-0x000571e0,cm848_unsignedDivision64Wrapper
 0x00057204,cm848_mathMultiplyDivide32
 0x00057498,cm848_conditionalMultiplyDivide
 0x00057520,emptyStubFunction2
 0x00057524,cm848_calibrationTableLookup1D
 0x0005759c,cm848_saveRegistersToStack
 0x000575a0,cm848_calibrationTableLookup2D
-0x0006432c,cm848_invalidInstructionData
-0x003f997c,sendDiagResponse
-0x003f9af0,enqueueJ1939Response
-0x003f9b40,lookupTableEntryByKey_ramcopy
-0x003fa2f0,BYTE_003fa2f0
-0x003fab3c,BYTE_003fab3c
-0x003fd6d8,BYTE_003fd6d8
 # Bank 2 (Flash2) functions — 0x00500000-0x0053DFFF
 0x00500004,cm848_sensorChannelGeneric_init_configBundle
 0x00500090,cm848_sensorChannelGeneric_update_configBundle

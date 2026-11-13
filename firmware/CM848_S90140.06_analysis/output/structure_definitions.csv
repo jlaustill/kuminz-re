@@ -767,7 +767,7 @@ protection_threshold_set_t,0x0040a502,threshold_base,word,2,Base protection thre
 # Primary array: 8 entries at 0x003fe674, 48 bytes each (0x30 stride)
 # Shadow array: 8 entries at 0x003fe7f4, same layout (always updated on fault)
 # Primary only updates when fault code changes; shadow updates every activation
-# Code evidence: setFaultActiveStatus (0x0001df64), captureFreezeFrameData (0x0001df88)
+# Code evidence: hpcr_setFaultActiveStatus (0x0001df64) - it also captures the freeze frame
 # Iteration: addFaultToActiveList (0x0001cea4) uses pbVar3 += 0x30 with limit < 8
 # findFaultByTypeAndSeverity (0x0001ce28) uses puVar3 = &DAT_003fe674, puVar3 += 0xc (as dword*)
 # Note: fault_entry_table_base (0x003fe678) is at offset +4 (the fault_code byte), not struct base
@@ -1425,7 +1425,7 @@ mios1_isr_t,0x00306c00,_pad2,word,2,Reserved,,verified
 mios1_isr_t,0x00306c00,EN,word,2,MIOS1 interrupt enable register (channel mask),,verified
 # ==============================================================================
 # Diagnostic clear state flags - 4 bytes zeroed together by stw r0 in
-# cm848_clearDiagnosticState and cm848_clearAllDiagnosticFaults.
+# cm848_clearDiagnosticState (including its tail at 0x1d11c, once split off as a separate function).
 # Originally one bogus 4-byte pointer (sensor_channel_cmd_address).
 # These bytes serve different roles in different execution contexts (type-punned).
 # ==============================================================================

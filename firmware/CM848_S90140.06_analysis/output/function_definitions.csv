@@ -256,11 +256,6 @@ function_address,function_name,param_index,name,type,comment
 0x00056e90,cm848_unsignedDivision64by32,1,dividend_lo,uint,Low 32 bits of 64-bit dividend
 0x00056e90,cm848_unsignedDivision64by32,2,divisor_hi,uint,High 32 bits of divisor (usually 0)
 0x00056e90,cm848_unsignedDivision64by32,3,divisor_lo,uint,Low 32 bits of divisor
-0x00057120,cm848_signedDivision64,return,,int,Quotient of 64-bit/32-bit signed division (worker)
-0x00057120,cm848_signedDivision64,0,dividend_hi,int,High 32 bits of 64-bit dividend
-0x00057120,cm848_signedDivision64,1,dividend_lo,uint,Low 32 bits of 64-bit dividend
-0x00057120,cm848_signedDivision64,2,divisor_hi,int,High 32 bits of divisor (usually sign-extension)
-0x00057120,cm848_signedDivision64,3,divisor_lo,int,Low 32 bits of divisor
 
 # -----------------------------------------------------------------------------
 # Multiply-Divide helper - quotient/result returned in r4 (same shape as division)
