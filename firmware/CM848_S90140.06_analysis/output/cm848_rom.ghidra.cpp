@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 13 14:40:22 MST 2026
+// Generated: Fri Nov 13 14:59:24 MST 2026
 
 
 //
@@ -45658,7 +45658,7 @@ void cm848_miosChannel27SetPwm(undefined4 param_1)
 void cm848_miosChannel28Enable(void)
 
 {
-  cm848_miosChannelEnable(&MIOS_MIOS1TPCR);
+  cm848_miosChannelEnable(&mios_mdasm28);
   return;
 }
 
@@ -45671,7 +45671,7 @@ void cm848_miosChannel28Enable(void)
 void cm848_miosChannel28ReadStatus(undefined4 param_1)
 
 {
-  mpc555_miosReadChannelStatus(&MIOS_MIOS1TPCR,param_1);
+  mpc555_miosReadChannelStatus(&mios_mdasm28,param_1);
   return;
 }
 
@@ -45684,7 +45684,7 @@ void cm848_miosChannel28ReadStatus(undefined4 param_1)
 void cm848_miosChannel28SetPwm(undefined4 param_1)
 
 {
-  mpc555_miosSetPwmOutput(&MIOS_MIOS1TPCR,param_1);
+  mpc555_miosSetPwmOutput(&mios_mdasm28,param_1);
   return;
 }
 
@@ -45697,7 +45697,7 @@ void cm848_miosChannel28SetPwm(undefined4 param_1)
 void cm848_miosChannel29Enable(void)
 
 {
-  cm848_miosChannelEnable(&MIOS_MPWMSM5_PERR);
+  cm848_miosChannelEnable(&mios_mdasm29);
   return;
 }
 
@@ -45710,7 +45710,7 @@ void cm848_miosChannel29Enable(void)
 void cm848_miosChannel29ReadStatus(undefined4 param_1)
 
 {
-  mpc555_miosReadChannelStatus(&MIOS_MPWMSM5_PERR,param_1);
+  mpc555_miosReadChannelStatus(&mios_mdasm29,param_1);
   return;
 }
 
@@ -45723,7 +45723,7 @@ void cm848_miosChannel29ReadStatus(undefined4 param_1)
 void cm848_miosChannel29SetPwm(undefined4 param_1)
 
 {
-  mpc555_miosSetPwmOutput(&MIOS_MPWMSM5_PERR,param_1);
+  mpc555_miosSetPwmOutput(&mios_mdasm29,param_1);
   return;
 }
 
@@ -45970,7 +45970,7 @@ void cm848_miosTimer3SetValue(undefined4 param_1)
 void cm848_miosTimer16InitPeriod(void)
 
 {
-  cm848_miosInitChannelPeriod(&MIOS_MDASM0_AR);
+  cm848_miosInitChannelPeriod(&MIOS_MPWMSM16_PERR);
   return;
 }
 
@@ -45983,7 +45983,7 @@ void cm848_miosTimer16InitPeriod(void)
 void cm848_miosTimer16ScaleByPercent(undefined4 param_1)
 
 {
-  cm848_scalePwmByPercent(&MIOS_MDASM0_AR,param_1);
+  cm848_scalePwmByPercent(&MIOS_MPWMSM16_PERR,param_1);
   return;
 }
 
@@ -45996,7 +45996,7 @@ void cm848_miosTimer16ScaleByPercent(undefined4 param_1)
 void cm848_miosTimer16SetValue(undefined4 param_1)
 
 {
-  cm848_miosSetChannelValue(&MIOS_MDASM0_AR,param_1);
+  cm848_miosSetChannelValue(&MIOS_MPWMSM16_PERR,param_1);
   return;
 }
 
@@ -46009,7 +46009,7 @@ void cm848_miosTimer16SetValue(undefined4 param_1)
 void cm848_miosTimer17InitPeriod(void)
 
 {
-  cm848_miosInitChannelPeriod(&MIOS_MDASM1_AR);
+  cm848_miosInitChannelPeriod(&MIOS_MPWMSM17_PERR);
   return;
 }
 
@@ -46022,7 +46022,7 @@ void cm848_miosTimer17InitPeriod(void)
 void cm848_miosTimer17ScaleByPercent(undefined4 param_1)
 
 {
-  cm848_scalePwmByPercent(&MIOS_MDASM1_AR,param_1);
+  cm848_scalePwmByPercent(&MIOS_MPWMSM17_PERR,param_1);
   return;
 }
 
@@ -46035,7 +46035,7 @@ void cm848_miosTimer17ScaleByPercent(undefined4 param_1)
 void cm848_miosTimer17SetValue(undefined4 param_1)
 
 {
-  cm848_miosSetChannelValue(&MIOS_MDASM1_AR,param_1);
+  cm848_miosSetChannelValue(&MIOS_MPWMSM17_PERR,param_1);
   return;
 }
 
@@ -46048,7 +46048,7 @@ void cm848_miosTimer17SetValue(undefined4 param_1)
 void cm848_miosTimer18InitPeriod(void)
 
 {
-  cm848_miosInitChannelPeriod(&MIOS_MDASM2_AR);
+  cm848_miosInitChannelPeriod(&MIOS_MPWMSM18_PERR);
   return;
 }
 
@@ -46061,7 +46061,7 @@ void cm848_miosTimer18InitPeriod(void)
 void cm848_miosTimer18ScaleByPercent(undefined4 param_1)
 
 {
-  cm848_scalePwmByPercent(&MIOS_MDASM2_AR,param_1);
+  cm848_scalePwmByPercent(&MIOS_MPWMSM18_PERR,param_1);
   return;
 }
 
@@ -46074,7 +46074,7 @@ void cm848_miosTimer18ScaleByPercent(undefined4 param_1)
 void cm848_miosTimer18SetValue(undefined4 param_1)
 
 {
-  cm848_miosSetChannelValue(&MIOS_MDASM2_AR,param_1);
+  cm848_miosSetChannelValue(&MIOS_MPWMSM18_PERR,param_1);
   return;
 }
 
@@ -46087,7 +46087,7 @@ void cm848_miosTimer18SetValue(undefined4 param_1)
 void cm848_miosTimer19InitPeriod(void)
 
 {
-  cm848_miosInitChannelPeriod(&MIOS_MDASM3_AR);
+  cm848_miosInitChannelPeriod(&MIOS_MPWMSM19_PERR);
   return;
 }
 
@@ -46100,7 +46100,7 @@ void cm848_miosTimer19InitPeriod(void)
 void cm848_miosTimer19ScaleByPercent(undefined4 param_1)
 
 {
-  cm848_scalePwmByPercent(&MIOS_MDASM3_AR,param_1);
+  cm848_scalePwmByPercent(&MIOS_MPWMSM19_PERR,param_1);
   return;
 }
 
@@ -46113,7 +46113,7 @@ void cm848_miosTimer19ScaleByPercent(undefined4 param_1)
 void cm848_miosTimer19SetValue(undefined4 param_1)
 
 {
-  cm848_miosSetChannelValue(&MIOS_MDASM3_AR,param_1);
+  cm848_miosSetChannelValue(&MIOS_MPWMSM19_PERR,param_1);
   return;
 }
 
@@ -46806,8 +46806,8 @@ void cm848_setTpuDutyWithTrack10(undefined4 param_1)
 void mpc555_resetMiosTpuChannel29_11(void)
 
 {
-  MIOS_MPWMSM5_PERR._0_4_ = 0;
-  MIOS_MPWMSM5_PERR.SCR = 0x801;
+  mios_mdasm29._0_4_ = 0;
+  mios_mdasm29.SCRD = 0x801;
   mpc555_tpuResetChannel(0xb);
   return;
 }
@@ -48152,7 +48152,7 @@ LAB_0004f6a0:
     param_4 = 0xdf;
     break;
   case 0x7e:
-    wVar2 = MIOS_MPWMSM4_SCR;
+    wVar2 = mios_mdasm28.SCRD;
     if ((wVar2 & 0x8000) != 0) {
       param_4 = 0x40;
       goto LAB_0004f5b4;
@@ -48160,7 +48160,7 @@ LAB_0004f6a0:
     param_4 = 0xbf;
     break;
   case 0x7f:
-    wVar2 = MIOS_MPWMSM5_PERR.SCR;
+    wVar2 = mios_mdasm29.SCRD;
     if ((wVar2 & 0x8000) != 0) {
       param_4 = 0x80;
       goto LAB_0004f5b4;
@@ -48210,8 +48210,8 @@ void mpc555_driveOutputLineHigh(uint param_1)
   dword dVar1;
   word wVar2;
   mios_mpwmsm3_t *pmVar3;
-  mios_mdasm0_t *pmVar4;
-  mios_mdasm1_t *pmVar5;
+  mios_mpwmsm16_t *pmVar4;
+  mios_mpwmsm17_t *pmVar5;
   int iVar6;
   dword *pdVar7;
   mios1_ext_ctrl_t *pmVar8;
@@ -48864,11 +48864,11 @@ LAB_00050f6c:
     goto LAB_00050f6c;
   case 0x82:
     injector_control_t_0040c117.fault_flags = injector_control_t_0040c117.fault_flags | 4;
-    pmVar5 = (mios_mdasm1_t *)&MIOS_MPWMSM0_PERR;
+    pmVar5 = (mios_mpwmsm17_t *)&MIOS_MPWMSM0_PERR;
     goto LAB_00050ed8;
   case 0x83:
     injector_control_t_0040c117.fault_flags = injector_control_t_0040c117.fault_flags | 8;
-    pmVar4 = (mios_mdasm0_t *)&MIOS_MPWMSM1_PERR;
+    pmVar4 = (mios_mpwmsm16_t *)&MIOS_MPWMSM1_PERR;
     goto LAB_00050ea0;
   case 0x84:
     injector_control_t_0040c117.fault_flags = injector_control_t_0040c117.fault_flags | 0x10;
@@ -48882,27 +48882,27 @@ LAB_00050e68:
     break;
   case 0x86:
     injector_control_t_0040c117.fault_flags = injector_control_t_0040c117.fault_flags | 0x40;
-    pmVar4 = &MIOS_MDASM0_AR;
+    pmVar4 = &MIOS_MPWMSM16_PERR;
 LAB_00050ea0:
-    pmVar4->SCRD = pmVar4->SCRD | 0x4800;
+    ((mios_mpwmsm1_t *)pmVar4)->SCR = ((mios_mpwmsm1_t *)pmVar4)->SCR | 0x4800;
     break;
   case 0x87:
     injector_control_t_0040c117.fault_flags = injector_control_t_0040c117.fault_flags | 0x80;
-    pmVar5 = &MIOS_MDASM1_AR;
+    pmVar5 = &MIOS_MPWMSM17_PERR;
 LAB_00050ed8:
-    pmVar5->SCRD = pmVar5->SCRD | 0x4800;
+    ((mios_mpwmsm_t *)pmVar5)->SCR = ((mios_mpwmsm_t *)pmVar5)->SCR | 0x4800;
     break;
   case 0x88:
     injector_control_t_0040c117.output_ch1 = injector_control_t_0040c117.output_ch1 | 1;
-    wVar2 = MIOS_MDASM2_AR.SCRD;
+    wVar2 = MIOS_MPWMSM18_PERR.SCR;
     local_8 = wVar2 | 0x4800;
-    pmVar8 = (mios1_ext_ctrl_t *)&MIOS_MDASM2_AR.SCRD;
+    pmVar8 = (mios1_ext_ctrl_t *)&MIOS_MPWMSM18_PERR.SCR;
     goto LAB_00050f24;
   case 0x89:
     injector_control_t_0040c117.output_ch1 = injector_control_t_0040c117.output_ch1 | 2;
-    wVar2 = MIOS_MDASM3_AR.SCRD;
+    wVar2 = MIOS_MPWMSM19_PERR.SCR;
     local_8 = wVar2 | 0x4800;
-    pmVar8 = (mios1_ext_ctrl_t *)&MIOS_MDASM3_AR.SCRD;
+    pmVar8 = (mios1_ext_ctrl_t *)&MIOS_MPWMSM19_PERR.SCR;
     goto LAB_00050f60;
   }
   return;
@@ -48925,8 +48925,8 @@ void mpc555_driveOutputLineLow(uint param_1)
   dword dVar1;
   word wVar2;
   mios_mpwmsm3_t *pmVar3;
-  mios_mdasm0_t *pmVar4;
-  mios_mdasm1_t *pmVar5;
+  mios_mpwmsm16_t *pmVar4;
+  mios_mpwmsm17_t *pmVar5;
   int iVar6;
   dword *pdVar7;
   mios1_ext_ctrl_t *pmVar8;
@@ -49579,11 +49579,11 @@ LAB_000528e4:
     goto LAB_000528e4;
   case 0x82:
     injector_control_t_0040c117.fault_flags = injector_control_t_0040c117.fault_flags & 0xfb;
-    pmVar5 = (mios_mdasm1_t *)&MIOS_MPWMSM0_PERR;
+    pmVar5 = (mios_mpwmsm17_t *)&MIOS_MPWMSM0_PERR;
     goto LAB_00052850;
   case 0x83:
     injector_control_t_0040c117.fault_flags = injector_control_t_0040c117.fault_flags & 0xf7;
-    pmVar4 = (mios_mdasm0_t *)&MIOS_MPWMSM1_PERR;
+    pmVar4 = (mios_mpwmsm16_t *)&MIOS_MPWMSM1_PERR;
     goto LAB_00052818;
   case 0x84:
     injector_control_t_0040c117.fault_flags = injector_control_t_0040c117.fault_flags & 0xef;
@@ -49597,27 +49597,27 @@ LAB_000527e0:
     break;
   case 0x86:
     injector_control_t_0040c117.fault_flags = injector_control_t_0040c117.fault_flags & 0xbf;
-    pmVar4 = &MIOS_MDASM0_AR;
+    pmVar4 = &MIOS_MPWMSM16_PERR;
 LAB_00052818:
-    pmVar4->SCRD = pmVar4->SCRD & 0xf7ff;
+    ((mios_mpwmsm1_t *)pmVar4)->SCR = ((mios_mpwmsm1_t *)pmVar4)->SCR & 0xf7ff;
     break;
   case 0x87:
     injector_control_t_0040c117.fault_flags = injector_control_t_0040c117.fault_flags & 0x7f;
-    pmVar5 = &MIOS_MDASM1_AR;
+    pmVar5 = &MIOS_MPWMSM17_PERR;
 LAB_00052850:
-    pmVar5->SCRD = pmVar5->SCRD & 0xf7ff;
+    ((mios_mpwmsm_t *)pmVar5)->SCR = ((mios_mpwmsm_t *)pmVar5)->SCR & 0xf7ff;
     break;
   case 0x88:
     injector_control_t_0040c117.output_ch1 = injector_control_t_0040c117.output_ch1 & 0xfe;
-    wVar2 = MIOS_MDASM2_AR.SCRD;
+    wVar2 = MIOS_MPWMSM18_PERR.SCR;
     local_8 = wVar2 & 0xf7ff;
-    pmVar8 = (mios1_ext_ctrl_t *)&MIOS_MDASM2_AR.SCRD;
+    pmVar8 = (mios1_ext_ctrl_t *)&MIOS_MPWMSM18_PERR.SCR;
     goto LAB_0005289c;
   case 0x89:
     injector_control_t_0040c117.output_ch1 = injector_control_t_0040c117.output_ch1 & 0xfd;
-    wVar2 = MIOS_MDASM3_AR.SCRD;
+    wVar2 = MIOS_MPWMSM19_PERR.SCR;
     local_8 = wVar2 & 0xf7ff;
-    pmVar8 = (mios1_ext_ctrl_t *)&MIOS_MDASM3_AR.SCRD;
+    pmVar8 = (mios1_ext_ctrl_t *)&MIOS_MPWMSM19_PERR.SCR;
     goto LAB_000528d8;
   }
   return;
@@ -49737,28 +49737,28 @@ void cm848_refreshOutputPortsAndReadback(void)
   else {
     bVar7 = bVar7 | 0x20;
   }
-  wVar9 = MIOS_MDASM0_AR.SCRD;
+  wVar9 = MIOS_MPWMSM16_PERR.SCR;
   if ((wVar9 & 0x800) == 0) {
     bVar7 = bVar7 & 0xbf;
   }
   else {
     bVar7 = bVar7 | 0x40;
   }
-  wVar9 = MIOS_MDASM1_AR.SCRD;
+  wVar9 = MIOS_MPWMSM17_PERR.SCR;
   if ((wVar9 & 0x800) == 0) {
     j1939_lamp_status_byte_b = bVar7 & 0x7f;
   }
   else {
     j1939_lamp_status_byte_b = bVar7 | 0x80;
   }
-  wVar9 = MIOS_MDASM2_AR.SCRD;
+  wVar9 = MIOS_MPWMSM18_PERR.SCR;
   if ((wVar9 & 0x800) == 0) {
     bVar7 = j1939_lamp_status_byte_c & 0xfe;
   }
   else {
     bVar7 = j1939_lamp_status_byte_c | 1;
   }
-  wVar9 = MIOS_MDASM3_AR.SCRD;
+  wVar9 = MIOS_MPWMSM19_PERR.SCR;
   if ((wVar9 & 0x800) == 0) {
     j1939_lamp_status_byte_c = bVar7 & 0xfd;
   }
@@ -49816,41 +49816,41 @@ void cm848_refreshOutputPortsAndReadback(void)
   }
   MIOS_MPWMSM3_PERR.SCR = uVar12;
   if ((injector_control_t_0040c117.fault_flags & 0x40) == 0) {
-    wVar9 = MIOS_MDASM0_AR.SCRD;
+    wVar9 = MIOS_MPWMSM16_PERR.SCR;
     uVar12 = wVar9 & 0xf7ff;
   }
   else {
-    wVar9 = MIOS_MDASM0_AR.SCRD;
+    wVar9 = MIOS_MPWMSM16_PERR.SCR;
     uVar12 = wVar9 | 0x4800;
   }
-  MIOS_MDASM0_AR.SCRD = uVar12;
+  MIOS_MPWMSM16_PERR.SCR = uVar12;
   if ((injector_control_t_0040c117.fault_flags & 0x80) == 0) {
-    wVar9 = MIOS_MDASM1_AR.SCRD;
+    wVar9 = MIOS_MPWMSM17_PERR.SCR;
     uVar12 = wVar9 & 0xf7ff;
   }
   else {
-    wVar9 = MIOS_MDASM1_AR.SCRD;
+    wVar9 = MIOS_MPWMSM17_PERR.SCR;
     uVar12 = wVar9 | 0x4800;
   }
-  MIOS_MDASM1_AR.SCRD = uVar12;
+  MIOS_MPWMSM17_PERR.SCR = uVar12;
   if ((injector_control_t_0040c117.output_ch1 & 1) == 0) {
-    wVar9 = MIOS_MDASM2_AR.SCRD;
+    wVar9 = MIOS_MPWMSM18_PERR.SCR;
     uVar12 = wVar9 & 0xf7ff;
   }
   else {
-    wVar9 = MIOS_MDASM2_AR.SCRD;
+    wVar9 = MIOS_MPWMSM18_PERR.SCR;
     uVar12 = wVar9 | 0x4800;
   }
-  MIOS_MDASM2_AR.SCRD = uVar12;
+  MIOS_MPWMSM18_PERR.SCR = uVar12;
   if ((injector_control_t_0040c117.output_ch1 & 2) == 0) {
-    wVar9 = MIOS_MDASM3_AR.SCRD;
+    wVar9 = MIOS_MPWMSM19_PERR.SCR;
     uVar12 = wVar9 & 0xf7ff;
   }
   else {
-    wVar9 = MIOS_MDASM3_AR.SCRD;
+    wVar9 = MIOS_MPWMSM19_PERR.SCR;
     uVar12 = wVar9 | 0x4800;
   }
-  MIOS_MDASM3_AR.SCRD = uVar12;
+  MIOS_MPWMSM19_PERR.SCR = uVar12;
   uVar8 = 0;
   do {
     uVar12 = (&protection_event_output_line_cal)[uVar8];
@@ -50005,14 +50005,14 @@ void hpcr_injectorPulseWidthCalc(void)
   else {
     bVar3 = bVar3 | 0x20;
   }
-  wVar2 = MIOS_MPWMSM4_SCR;
+  wVar2 = mios_mdasm28.SCRD;
   if ((wVar2 & 0x8000) == 0) {
     bVar3 = bVar3 & 0xbf;
   }
   else {
     bVar3 = bVar3 | 0x40;
   }
-  wVar2 = MIOS_MPWMSM5_PERR.SCR;
+  wVar2 = mios_mdasm29.SCRD;
   if ((wVar2 & 0x8000) == 0) {
     io_pin_status_byte = bVar3 & 0x7f;
   }
@@ -51354,8 +51354,8 @@ void mpc555_miosReadChannelStatus(undefined4 *param_1,ushort param_2)
       local_8 = 0x7fff;
     }
     else {
-      wVar1 = MIOS_MDASM6_BR;
-      wVar2 = MIOS_MDASM6_BR;
+      wVar1 = mios_mmcsm22.ML;
+      wVar2 = mios_mmcsm22.ML;
       local_8 = CONCAT22(0x7fff,(short)(((0xffff - wVar2 & 0xffff) * (uint)param_2) / 0x6400) +
                                 (wVar1 & 0x7fff));
     }
@@ -51384,7 +51384,7 @@ void mpc555_miosSetPwmOutput(undefined4 param_1,uint param_2)
   else {
     wVar1 = 0x8000;
   }
-  MIOS_MDASM6_BR = wVar1;
+  mios_mmcsm22.ML = wVar1;
   return;
 }
 

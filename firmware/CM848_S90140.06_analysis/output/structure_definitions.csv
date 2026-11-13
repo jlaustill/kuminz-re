@@ -985,12 +985,9 @@ mios_mdasm_t,0x00306058,BR,word,2,B Register (capture/compare value B),,verified
 mios_mdasm_t,0x00306058,XR,word,2,X Register (extended capture/status value),,verified
 mios_mdasm_t,0x00306058,SCRD,word,2,Status/Control Register D (0x9=enable output),,verified
 # =============================================================================
-# MIOS Modulus Counter Submodule (MMCSM) - 4 x u16 = 8 bytes
-# MMCSM6 used as reference timebase for mpc555_miosReadChannelStatus
-mios_mmcsm_t,0x00306020,CNT,word,2,Up-Counter Register (current count),,verified
-mios_mmcsm_t,0x00306020,ML,word,2,Modulus Latch Register (period/reload value),,verified
-mios_mmcsm_t,0x00306020,_pad,word,2,Reserved/unused padding byte,,verified
-mios_mmcsm_t,0x00306020,SCRD,word,2,Status/Control Register D,,verified
+# MIOS Modulus Counter Submodule (MMCSM) - 4 x u16 = 8 bytes: type mios_mmcsm_b_t (defined further down)
+# MMCSM6 = mios_mmcsm_cnt at 0x306030 and MMCSM22 = mios_mmcsm22 at 0x3060b0 (submodule n at 0x306000 + 8 x n).
+# The old mios_mmcsm_t at 0x306020 was a fake: this firmware never accesses 0x306020-0x30602f. (PR #48)
 # =============================================================================
 # QADC64 Peripheral Struct - Queued ADC module register layout
 # Applied at QADC64A (0x304800) and QADC64B (0x304C00) bus-interface blocks
@@ -1099,12 +1096,12 @@ tpub_ch14_params_t,0x003045e0,PARAM5,word,2,TPUB Channel 14 parameter 5,,verifie
 tpub_ch14_params_t,0x003045e0,PARAM6,word,2,TPUB Channel 14 parameter 6,,verified
 tpub_ch14_params_t,0x003045e0,PARAM7,word,2,TPUB Channel 14 parameter 7,,verified
 # =============================================================================
-# MIOS additional channel submodule instances
-# MPWMSM = PWM Submodule (PERR/PULR/CNTR/SCR) - channels 1-3 at +8/+10/+18
-# MMCSM  = Modulus Counter Submodule (CNT/ML/_pad/SCRD) - second instance at +30
-# MDASM  = Double Action Submodule (AR/BR/XR/SCRD) - channels 12/15/0-3
-# MPWMSM5 = fifth PWM submodule at MIOS_base+0xE8
-# Separate type per instance required — ApplyStructures constraint
+# MIOS additional channel submodule instances - MIOS1 submodule n sits at 0x306000 + 8 x n (PR #48)
+# MPWMSM = PWM Submodule (PERR/PULR/CNTR/SCR) - MPWMSM1-3 at +0x08/+0x10/+0x18 and MPWMSM16-19 at +0x80/+0x88/+0x90/+0x98
+#          (16-19 were mislabeled MDASM0-3: cm848_miosTimer16-19* drive them with the same PWM helpers as MPWMSM0-3)
+# MMCSM  = Modulus Counter Submodule (CNT/ML/_pad/SCRD) - MMCSM6 at +0x30 and MMCSM22 at +0xB0 (marker row)
+# MDASM  = Double Action Submodule (AR/BR/XR/SCRD) - MDASM12 / MDASM15 here; MDASM11 and 28-31 use mios_mdasm_t
+# Per-channel types predate the marker-row pattern; they are kept (renamed in place) so decompiler casts stay stable
 # =============================================================================
 mios_mpwmsm1_t,0x00306008,PERR,word,2,MPWMSM1 Period Register,,verified
 mios_mpwmsm1_t,0x00306008,PULR,word,2,MPWMSM1 Pulse Width Register,,verified
@@ -1123,6 +1120,7 @@ mios_mmcsm_b_t,0x00306030,CNT,word,2,Up-Counter Register,,verified
 mios_mmcsm_b_t,0x00306030,ML,word,2,Modulus Latch Register (period/reload value),,verified
 mios_mmcsm_b_t,0x00306030,_pad,word,2,Reserved/unused padding,,verified
 mios_mmcsm_b_t,0x00306030,SCRD,word,2,Status/Control Register D,,verified
+mios_mmcsm_b_t,0x003060b0,,,,MMCSM22 instance - marker only,,verified
 mios_mdasm12_t,0x00306060,AR,word,2,MDASM12 A Register,,verified
 mios_mdasm12_t,0x00306060,BR,word,2,MDASM12 B Register,,verified
 mios_mdasm12_t,0x00306060,XR,word,2,MDASM12 X Register (extended status),,verified
@@ -1131,26 +1129,22 @@ mios_mdasm15_t,0x00306078,AR,word,2,MDASM15 A Register,,verified
 mios_mdasm15_t,0x00306078,BR,word,2,MDASM15 B Register,,verified
 mios_mdasm15_t,0x00306078,XR,word,2,MDASM15 X Register,,verified
 mios_mdasm15_t,0x00306078,SCRD,word,2,MDASM15 Status/Control Register D,,verified
-mios_mdasm0_t,0x00306080,AR,word,2,MDASM0 A Register,,verified
-mios_mdasm0_t,0x00306080,BR,word,2,MDASM0 B Register,,verified
-mios_mdasm0_t,0x00306080,XR,word,2,MDASM0 X Register,,verified
-mios_mdasm0_t,0x00306080,SCRD,word,2,MDASM0 Status/Control Register D,,verified
-mios_mdasm1_t,0x00306088,AR,word,2,MDASM1 A Register,,verified
-mios_mdasm1_t,0x00306088,BR,word,2,MDASM1 B Register,,verified
-mios_mdasm1_t,0x00306088,XR,word,2,MDASM1 X Register,,verified
-mios_mdasm1_t,0x00306088,SCRD,word,2,MDASM1 Status/Control Register D,,verified
-mios_mdasm2_t,0x00306090,AR,word,2,MDASM2 A Register,,verified
-mios_mdasm2_t,0x00306090,BR,word,2,MDASM2 B Register,,verified
-mios_mdasm2_t,0x00306090,XR,word,2,MDASM2 X Register,,verified
-mios_mdasm2_t,0x00306090,SCRD,word,2,MDASM2 Status/Control Register D,,verified
-mios_mdasm3_t,0x00306098,AR,word,2,MDASM3 A Register,,verified
-mios_mdasm3_t,0x00306098,BR,word,2,MDASM3 B Register,,verified
-mios_mdasm3_t,0x00306098,XR,word,2,MDASM3 X Register,,verified
-mios_mdasm3_t,0x00306098,SCRD,word,2,MDASM3 Status/Control Register D,,verified
-mios_mpwmsm5_t,0x003060e8,PERR,word,2,MPWMSM5 Period Register,,verified
-mios_mpwmsm5_t,0x003060e8,PULR,word,2,MPWMSM5 Pulse Width Register,,verified
-mios_mpwmsm5_t,0x003060e8,CNTR,word,2,MPWMSM5 Counter Register,,verified
-mios_mpwmsm5_t,0x003060e8,SCR,word,2,MPWMSM5 Status/Control Register,,verified
+mios_mpwmsm16_t,0x00306080,PERR,word,2,MPWMSM16 Period Register,,verified
+mios_mpwmsm16_t,0x00306080,PULR,word,2,MPWMSM16 Pulse Width Register,,verified
+mios_mpwmsm16_t,0x00306080,CNTR,word,2,MPWMSM16 Counter Register,,verified
+mios_mpwmsm16_t,0x00306080,SCR,word,2,MPWMSM16 Status/Control Register,,verified
+mios_mpwmsm17_t,0x00306088,PERR,word,2,MPWMSM17 Period Register,,verified
+mios_mpwmsm17_t,0x00306088,PULR,word,2,MPWMSM17 Pulse Width Register,,verified
+mios_mpwmsm17_t,0x00306088,CNTR,word,2,MPWMSM17 Counter Register,,verified
+mios_mpwmsm17_t,0x00306088,SCR,word,2,MPWMSM17 Status/Control Register,,verified
+mios_mpwmsm18_t,0x00306090,PERR,word,2,MPWMSM18 Period Register,,verified
+mios_mpwmsm18_t,0x00306090,PULR,word,2,MPWMSM18 Pulse Width Register,,verified
+mios_mpwmsm18_t,0x00306090,CNTR,word,2,MPWMSM18 Counter Register,,verified
+mios_mpwmsm18_t,0x00306090,SCR,word,2,MPWMSM18 Status/Control Register,,verified
+mios_mpwmsm19_t,0x00306098,PERR,word,2,MPWMSM19 Period Register,,verified
+mios_mpwmsm19_t,0x00306098,PULR,word,2,MPWMSM19 Pulse Width Register,,verified
+mios_mpwmsm19_t,0x00306098,CNTR,word,2,MPWMSM19 Counter Register,,verified
+mios_mpwmsm19_t,0x00306098,SCR,word,2,MPWMSM19 Status/Control Register,,verified
 # =============================================================================
 # TouCAN A Message Buffer structs - 16 bytes each (8 x u16)
 # MB area starts at TouCAN_A_base + 0x80; each MB = 16 bytes (spacing confirmed)
@@ -1190,12 +1184,15 @@ qsmcm_sci1_regs_t,0x00305008,SCC1R1,word,2,SCI1 Control Register 1 (interrupt en
 qsmcm_sci1_regs_t,0x00305008,SC1SR,word,2,SCI1 Status Register (TDRE/RDRF/OR/FE/NF/PF),,verified
 qsmcm_sci1_regs_t,0x00305008,SC1DR,word,2,SCI1 Data Register (read=RX data write=TX data),,verified
 # =============================================================================
-# MDASM30 / MDASM31 - MIOS1 submodules 30 and 31 (base 0x306000 + 8 x n) - instances of mios_mdasm_t
-# cm848_miosChannel30* / cm848_miosChannel31* pass these bases to the generic MDASM driver.
+# MDASM28-31 - MIOS1 submodules 28-31 (base 0x306000 + 8 x n) - instances of mios_mdasm_t
+# cm848_miosChannel28* - cm848_miosChannel31* pass these bases to the generic MDASM driver.
+# SCRD (+6) bit 15 = the pin state: discrete input lines 126 / 127 / 128 read MDA28 / MDA29 / MDA30.
 # MDASM30 SCRD (+6) bit 15 = the MDA30 pin = the ignition key line (1 = key on).
 # This range was mislabeled mios1_global_regs_t (MCPSMSCR / MIOS1SR0 / MIOS1ER / ...): the real
 # MCPSMSCR is 0x306816 (mios1_ext_816) and the MIOS1 interrupt registers are at 0x306c00 (mios1_isr). (PR #48)
 # =============================================================================
+mios_mdasm_t,0x003060e0,,,,MDASM28 instance - marker only (was MIOS_MIOS1TPCR / MIOS_MPWMSM4_*),,verified
+mios_mdasm_t,0x003060e8,,,,MDASM29 instance - marker only (was mios_mpwmsm5_t),,verified
 mios_mdasm_t,0x003060f0,,,,MDASM30 instance - marker only,,verified
 mios_mdasm_t,0x003060f8,,,,MDASM31 instance - marker only,,verified
 # =============================================================================
