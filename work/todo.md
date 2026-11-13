@@ -30,6 +30,6 @@
 020 [ ] [all] Test coverage implementation - Catch2 for C++, Vitest for TypeScript, 6 phases by priority
 021 [?] [firmware/kuminz-cli] CM848D J1939 broadcast trigger - EF00 0x0a→0x07 (or 0x16 alone) — needs live truck test to verify broadcasts start
 022 [>] [firmware/oct] CM848D J1939 drive-by-wire — trace j1939_governor_config_flags gate, enable TSC1 speed control
-023 [ ] [firmware/tools] CM848D odometer restore — update_odometer.sh writes EEPROM 0xBD8 = the stored active-DTC list (count + slots; DO NOT RUN it); retarget to lifetime 0x8ea + trip 0x19a6 + 8-mile ring 0x19ce + block checksum, seeding from the dash odometer the ECM holds at RAM 0x40B471 (PCI 0x72, 1/8000 mi), then bench-verify PGN 65248 (PR #46)
+023 [?] [firmware/tools] CM848D odometer restore — update_odometer.sh RETARGETED (f2fc982) to lifetime 0x8ea + trip 0x19a6 + 8-mile ring 0x19ce (0xBD8 = DTC list, no longer written); --from-dash reads RAM 0x40B471; checksum self-heals at engine start. REMAINING: bench-test the EEPROM write + verify PGN 65248 reports it (PR #46)
 025 [ ] [firmware] CM848D next naming wave — the 2026-11-13 wave's open questions + skeptic "missed" lists (work/tasks/025-cm848-naming-wave-followups.md) (PR #46)
 024 [ ] [firmware/truck] CM848D TRANS TEMP lamp — likely the 48RE converter-slip warning (PCI 0x98 bit 1 = overheat OR slip), armed since the Allison ETC2 forward clears the park/neutral flag; with the lamp on live-read 0x40B614 (slip flag, expect 1) / 0x40AF54 (park-neutral, expect 0) / 0x40B409 (bit 1) / slot 103 0x40BBBE (PR #46)
